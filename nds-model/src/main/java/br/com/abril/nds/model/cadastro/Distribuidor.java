@@ -920,5 +920,17 @@ public class Distribuidor {
 	public void setEnderecoDistribuidor(EnderecoDistribuidor enderecoDistribuidor) {
 		this.enderecoDistribuidor = enderecoDistribuidor;
 	}
+	
+	/**
+	 * Conforme esclarecido pela àrea de negócios qualquer
+	 * valor de {@link ObrigacaoFiscal} atribuído ao Distribuidor
+	 * indica que este possui obrigação fiscal.
+	 * 
+	 * @return true se o Distribuidor possui obrigação
+	 * fiscal, false caso contrário
+	 */
+	public boolean possuiObrigacaoFiscal() {
+	    return obrigacaoFiscal != null;
+	}
 
 }

@@ -1,11 +1,14 @@
 package br.com.abril.nds.service;
 
+import java.util.Collection;
 import java.util.List;
 
 import br.com.abril.nds.dto.ContagemDevolucaoConferenciaCegaDTO;
 import br.com.abril.nds.dto.ContagemDevolucaoDTO;
 import br.com.abril.nds.dto.InfoContagemDevolucaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroDigitacaoContagemDevolucaoDTO;
+import br.com.abril.nds.model.estoque.CEDevolucaoFornecedor;
+import br.com.abril.nds.model.estoque.ConferenciaEncalheParcial;
 import br.com.abril.nds.model.seguranca.Usuario;
 
 public interface ContagemDevolucaoService {
@@ -21,12 +24,9 @@ public interface ContagemDevolucaoService {
 
 	public abstract void gerarNotasFiscaisPorFornecedor(List<ContagemDevolucaoDTO> listaContagemDevolucaoAprovada);
 	
-	/**
-	 * Gera a CE de Devolução
-	 * @param listaContagemDevolucaoAprovada lista de contagens parciais aprovadas
-	 * @return PDF com a CE de Devolução gerada
-	 */
-	public byte[] gerarCEDevolucao(List<ContagemDevolucaoDTO> listaContagemDevolucaoAprovada);
+	public Collection<CEDevolucaoFornecedor> gerarCEDevolucao(Collection<ConferenciaEncalheParcial> conferencias);
+	
+	public byte[] gerarImpressaoCEDevolucao(Collection<CEDevolucaoFornecedor> devolucoes);
 	
 	
 }

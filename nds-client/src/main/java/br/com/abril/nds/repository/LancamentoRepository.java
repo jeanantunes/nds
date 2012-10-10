@@ -277,6 +277,20 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	 * @return {@link br.com.abril.nds.model.planejamento.Lancamento}
 	 */
 	Lancamento obterProximoLancamento(Lancamento lancamentoAtual);
+	
+    /**
+     * Obtem o lançamento que está sendo devolvido ao fornecedor de acordo com a
+     * data de recolhimento e o produto edição
+     * 
+     * @param data
+     *            data de recolhimento
+     * @param idProdutoEdicao
+     *            identificador do produto edição
+     * @return lançamento do produto que está sendo devolvido ao fornecedor
+     */
+	Lancamento obterLancamentoDevolucaoFornecedor(Date data,  Long idProdutoEdicao);
+	
+
 }
 	
 	

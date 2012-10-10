@@ -7,6 +7,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -58,6 +59,10 @@ public class ConferenciaEncalheParcial {
 	
 	@ManyToOne(optional = true)
 	private ProdutoEdicao produtoEdicao;
+	
+	@ManyToOne(optional = true)
+	@JoinColumn(name = "CE_DEVOLUCAO_FORNECEDOR_ID")
+	private CEDevolucaoFornecedor ceDevolucao;
 
 	public Long getId() {
 		return id;
@@ -138,5 +143,13 @@ public class ConferenciaEncalheParcial {
 	public void setNfParcialGerada(Boolean nfParcialGerada) {
 		this.nfParcialGerada = nfParcialGerada;
 	}
+
+    public CEDevolucaoFornecedor getCeDevolucao() {
+        return ceDevolucao;
+    }
+
+    public void setCeDevolucao(CEDevolucaoFornecedor ceDevolucao) {
+        this.ceDevolucao = ceDevolucao;
+    }
 	
 }

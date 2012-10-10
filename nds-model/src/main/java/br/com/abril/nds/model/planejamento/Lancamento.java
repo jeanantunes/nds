@@ -2,6 +2,7 @@ package br.com.abril.nds.model.planejamento;
 import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -33,6 +34,7 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.Expedicao;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
+import br.com.abril.nds.model.fiscal.NotaFiscalEntrada;
 
 /**
  * @author T30541
@@ -371,8 +373,19 @@ public class Lancamento implements Serializable {
 	public void setAlteradoInteface(boolean alteradoInteface) {
 		this.alteradoInteface = alteradoInteface;
 	}
-
 	
 	
+    /**
+     * Retorna a coleção de notas de recebimento do lançamento
+     * 
+     * @return coleção de notas de recebimento associadas ao lançamento
+     */
+	public Collection<NotaFiscalEntrada> getNotasRecebimento() {
+	    List<NotaFiscalEntrada> notas = new ArrayList<NotaFiscalEntrada>();
+	    for (ItemRecebimentoFisico itemRecebimento : recebimentos) {
+	        notas.add(itemRecebimento.getItemNotaFiscal().getNotaFiscal());
+	    }
+	    return notas;
+	}
 
 }

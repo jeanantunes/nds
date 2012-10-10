@@ -242,6 +242,20 @@ public class Fornecedor implements Serializable {
 	public void setCotas(Set<Cota> cotas) {
 		this.cotas = cotas;
 	}
+	
+    /**
+     * Recupera o endereço principal do fornecedor
+     * 
+     * @return endereço principal do fornecedor
+     */
+	public EnderecoFornecedor getEnderecoPrincipal() {
+	    for (EnderecoFornecedor endereco : this.enderecos) {
+	        if(endereco.isPrincipal()) {
+	            return endereco;
+	        }
+	    }
+	    return null;
+	}
 
 	@Override
 	public int hashCode() {

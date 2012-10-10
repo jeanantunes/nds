@@ -15,7 +15,6 @@ import java.util.TreeMap;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Projection;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanResultTransformer;
@@ -1363,6 +1362,27 @@ public class LancamentoRepositoryImpl extends
 		criteria.setMaxResults(1);
 		
 		return (Lancamento) criteria.uniqueResult();
+	}
+	
+	/**
+     * {@inheritDoc}
+     */
+    @Override
+	public Lancamento obterLancamentoDevolucaoFornecedor(Date data,  Long idProdutoEdicao) {
+	    StringBuilder hql = new StringBuilder("select lancamento from ConferenciaEncalhe conferencia ");
+	    hql.append("join conferencia.chamadaEncalheCota chamadaEncalheCota ");
+	    hql.append("join chamadaEncalheCota.chamadaEncalhe chamadaEncalhe ");
+	    hql.append("join chamadaEncalhe.lancamentos lancamento ");
+	    hql.append("where conferencia.movimentoEstoqueCota.data = :data ");
+	    hql.append("and conferencia.produtoEdicao.id = :idProdutoEdicao ");
+	    hql.append("order by lancamento.dataRecolhimentoDistribuidor desc ");
+	    
+	    Query query = getSession().createQuery(hql.toString());
+	    query.setParameter("data", data);
+	    query.setParameter("idProdutoEdicao", idProdutoEdicao);
+	    query.setMaxResults(1);
+	    
+	    return (Lancamento) query.uniqueResult();
 	}
 	
 }

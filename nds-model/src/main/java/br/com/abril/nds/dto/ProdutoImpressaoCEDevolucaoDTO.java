@@ -39,7 +39,7 @@ public class ProdutoImpressaoCEDevolucaoDTO implements Serializable {
     
     private BigDecimal precoDesconto;
     
-    private BigDecimal valorVenda;
+    private BigDecimal valorTotal;
 
     /**
      * @return the codigo
@@ -194,21 +194,21 @@ public class ProdutoImpressaoCEDevolucaoDTO implements Serializable {
     public void setPrecoDesconto(BigDecimal precoDesconto) {
         this.precoDesconto = precoDesconto;
     }
-
-    /**
-     * @return the valorVenda
-     */
-    public BigDecimal getValorVenda() {
-        return valorVenda;
-    }
-
-    /**
-     * @param valorVenda the valorVenda to set
-     */
-    public void setValorVenda(BigDecimal valorVenda) {
-        this.valorVenda = valorVenda;
-    }
     
+    /**
+     * @return the valorTotal
+     */
+    public BigDecimal getValorTotal() {
+        return valorTotal;
+    }
+
+    /**
+     * @param valorTotal the valorTotal to set
+     */
+    public void setValorTotal(BigDecimal valorTotal) {
+        this.valorTotal = valorTotal;
+    }
+
     public void addNotaEnvio(Long notaEnvio) {
         if (notasEnvio == null) {
             notasEnvio = new ArrayList<Long>();
