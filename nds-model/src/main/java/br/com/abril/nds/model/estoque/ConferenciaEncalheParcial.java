@@ -32,13 +32,25 @@ public class ConferenciaEncalheParcial {
 	@GeneratedValue(generator = "CONFERENCIA_ENC_PARCIAL_SEQ")
 	private Long id;
 	
+	/**
+	 * Data em que ocorreu a conferencia de encalhe (Funcionalidade Conferencia Encalhe Cota) 
+	 * do produto no distribuidor. 
+	 */
 	@Temporal(value=TemporalType.DATE)
 	@Column(name = "DATA_MOVIMENTO", nullable = false)
 	private Date dataMovimento;
 	
+	/**
+	 * Data na qual foi criado este registro de ConferenciaEncalheParcial
+	 * (Na funcionalidade Digitacao Contagem Devolução).
+	 */
 	@Column(name = "DATA_CONF_ENC_PARCIAL", nullable = false)
 	private Date dataConfEncalheParcial;
 	
+	/**
+	 * Data na qual ocorreu a confirmação deste registro.
+	 * (Na funcionalidade Digitacao Contagem Devolução).
+	 */
 	@Column(name = "DATA_APROVACAO")
 	private Date dataAprovacao;
 	

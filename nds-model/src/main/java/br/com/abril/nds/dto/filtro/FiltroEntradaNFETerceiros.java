@@ -30,7 +30,8 @@ public class FiltroEntradaNFETerceiros implements Serializable{
 	private Date dataFinal;
 
 	private StatusNotaFiscalEntrada statusNotaFiscalEntrada;
-//	private Long codigoNota;
+	
+	private TipoNota tipoNota;
 	
 	private PaginacaoVO paginacao;
 	
@@ -58,6 +59,27 @@ public class FiltroEntradaNFETerceiros implements Serializable{
 			}
 			return null;
 		}
+	}
+	
+	public enum TipoNota {
+		
+		TODAS("Todas"),
+		ENTRADA("Entrada"),
+		COMPLEMENTAR("Complementar");
+		
+		private String descricao;
+		
+		private TipoNota(String descricao) {
+			this.descricao = descricao;
+		}
+
+		/**
+		 * @return the descricao
+		 */
+		public String getDescricao() {
+			return descricao;
+		}
+		
 	}
 
 	public StatusNotaFiscalEntrada getStatusNotaFiscalEntrada() {
@@ -144,6 +166,20 @@ public class FiltroEntradaNFETerceiros implements Serializable{
 	 */
 	public void setCota(Cota cota) {
 		this.cota = cota;
+	}
+
+	/**
+	 * @return the tipoNota
+	 */
+	public TipoNota getTipoNota() {
+		return tipoNota;
+	}
+
+	/**
+	 * @param tipoNota the tipoNota to set
+	 */
+	public void setTipoNota(TipoNota tipoNota) {
+		this.tipoNota = tipoNota;
 	}
 
 
