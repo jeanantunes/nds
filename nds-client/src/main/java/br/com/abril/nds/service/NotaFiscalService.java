@@ -170,6 +170,9 @@ public interface NotaFiscalService {
 			Fornecedor fornecedor, List<ItemNotaFiscal> listItemNotaFiscal, InformacaoTransporte transporte, InformacaoAdicional informacaoAdicional, List<NotaFiscalReferenciada> listNotaFiscalReferenciada,
 			Set<Processo> processos, Condicao condicao);
 
+	public abstract void exportarNotasFiscais(Long... idNotaFiscals)
+			throws FileNotFoundException, IOException;
+
 
 		
 }

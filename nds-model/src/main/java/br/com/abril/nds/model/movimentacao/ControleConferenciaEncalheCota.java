@@ -13,7 +13,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -22,6 +21,7 @@ import javax.persistence.TemporalType;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.estoque.ConferenciaEncalhe;
+import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaCota;
 import br.com.abril.nds.model.seguranca.Usuario;
 
@@ -68,9 +68,8 @@ public class ControleConferenciaEncalheCota {
 	@JoinColumn(name = "CTRL_CONF_ENCALHE_ID")
 	private ControleConferenciaEncalhe controleConferenciaEncalhe;
 	
-	@OneToOne(optional = true)
-	@JoinColumn(name="NOTA_FISCAL_ENTRADA_COTA_ID")
-	private NotaFiscalEntradaCota notaFiscalEntradaCota;
+	@OneToMany(mappedBy="controleConferenciaEncalheCota")
+	private List<NotaFiscalEntradaCota> notaFiscalEntradaCota = new ArrayList<NotaFiscalEntradaCota>();
 
 	@OneToMany(mappedBy = "controleConferenciaEncalheCota")
 	private List<ConferenciaEncalhe> conferenciasEncalhe = new ArrayList<ConferenciaEncalhe>();
@@ -206,14 +205,6 @@ public class ControleConferenciaEncalheCota {
 		this.controleConferenciaEncalhe = controleConferenciaEncalhe;
 	}
 
-	public NotaFiscalEntradaCota getNotaFiscalEntradaCota() {
-		return notaFiscalEntradaCota;
-	}
-
-	public void setNotaFiscalEntradaCota(NotaFiscalEntradaCota notaFiscalEntradaCota) {
-		this.notaFiscalEntradaCota = notaFiscalEntradaCota;
-	}
-
 	/**
 	 * Obtém conferenciasEncalhe
 	 *
@@ -278,5 +269,39 @@ public class ControleConferenciaEncalheCota {
 	public void setNumeroSlip(Long numeroSlip) {
 		this.numeroSlip = numeroSlip;
 	}
+
+	/**
+	 * @return the notaFiscalEntradaCota
+	 */
+	public List<NotaFiscalEntradaCota> getNotaFiscalEntradaCota() {
+		return notaFiscalEntradaCota;
+	}
+
+	/**
+	 * @param notaFiscalEntradaCota the notaFiscalEntradaCota to set
+	 */
+	public void setNotaFiscalEntradaCota(
+			List<NotaFiscalEntradaCota> notaFiscalEntradaCota) {
+		this.notaFiscalEntradaCota = notaFiscalEntradaCota;
+	}
 	
+	/**
+	 * @return the notaFiscalEntradaCota
+	 */
+	public NotaFiscalEntradaCota getNotaFiscalEntradaCotaPricipal() {
+		if (notaFiscalEntradaCota != null && !notaFiscalEntradaCota.isEmpty()) {
+			for (NotaFiscalEntradaCota notaFiscal: notaFiscalEntradaCota) {
+				if (notaFiscal != null
+						&& notaFiscal.getTipoNotaFiscal() != null
+						&& notaFiscal.getTipoNotaFiscal().getGrupoNotaFiscal() != null
+						&& notaFiscal.getTipoNotaFiscal().getGrupoNotaFiscal() != GrupoNotaFiscal.NF_TERCEIRO_COMPLEMENTAR) {
+					
+					return notaFiscal;
+					
+				}
+			}
+		}
+		return null;
+	}
+
 }
