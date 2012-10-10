@@ -245,7 +245,7 @@ public class ImpressaoBoletosController {
 	}
 	
 	@Post
-	public void gerarDivida(){
+	public void gerarDivida() throws IOException{
 
 		try {
 			this.gerarCobrancaService.gerarCobranca(null, this.getUsuario().getId(), new HashSet<String>());
