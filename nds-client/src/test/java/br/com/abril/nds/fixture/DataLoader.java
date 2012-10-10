@@ -1207,8 +1207,8 @@ public class DataLoader {
 		criarBanco(session);		
 		
 		//Remover Depois
-		criarBox(session);criarDistribuidor
-		(session);
+		criarBox(session);
+		criarDistribuidor(session);
 		
 		criarEnderecoDistribuidor(session);
 		criarTelefoneDistribuidor(session);
@@ -1220,6 +1220,7 @@ public class DataLoader {
 		criarFeriado(session);		
 		
 		criarUsuarioAdministrador(session); 
+		criarUsuarioImportacao(session); 
 		
 		criarTiposMovimento(session);
 		gerarTiposPontoPDV(session);
@@ -1249,6 +1250,30 @@ public class DataLoader {
 		session.save(admin);
 
 	}
+	private static void criarUsuarioImportacao(Session session) {
+
+		GrupoPermissao grupoAdmin = new GrupoPermissao();
+		grupoAdmin.setNome("IMPORTACAO");
+		grupoAdmin.setPermissoes( new HashSet<Permissao>(Arrays.asList(Permissao.values())) );
+		
+		session.save(grupoAdmin);
+
+		Usuario importacao = new Usuario();
+		importacao.setLogin("importacao");
+		importacao.setSenha("81dc9bdb52d04dc20036dbd8313ed055"); // Senha: 1234
+		importacao.setNome("Importacao");
+		importacao.setContaAtiva(true);
+		importacao.setEmail("adminteste@abril.com.br");
+		
+		Set<GrupoPermissao> gruposPermissoes = new HashSet<GrupoPermissao>();
+		gruposPermissoes.add(grupoAdmin);
+		
+		importacao.setGruposPermissoes(gruposPermissoes);
+		
+		session.save(importacao);
+
+	}
+	
 	
 	private static void criarControleNumeracaoSlip(Session session) {
 

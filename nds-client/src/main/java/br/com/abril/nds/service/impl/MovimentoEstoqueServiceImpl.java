@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.exception.ImportacaoException;
@@ -476,6 +477,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 	}
 
 	@Override
+	@Transactional
 	public void processarRegistroHistoricoVenda(HistoricoVendaInput vendaInput) {
 		
 		Integer reparte = vendaInput.getQuantidadeRecebidaProduto();
