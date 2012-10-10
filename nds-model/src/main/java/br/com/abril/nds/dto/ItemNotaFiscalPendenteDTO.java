@@ -57,11 +57,11 @@ public class ItemNotaFiscalPendenteDTO implements Serializable {
 		this.numeroEdicao = numeroEdicao;
 		this.qtdInformada = qtdInformada;
 		this.qtdRecebida = qtdRecebida;
-		this.precoCapa = precoCapa;
-		this.precoDesconto = precoDesconto;
-		this.totalDoItem = totalDoItem;
-		this.dataConferenciaEncalhe = dataConferenciaEncalhe;
-		this.dataChamadaEncalhe = dataChamadaEncalhe;
+		this.setPrecoCapa(precoCapa);
+		this.setPrecoDesconto(precoDesconto);
+		this.setTotalDoItem(totalDoItem);
+		this.setDataConferenciaEncalhe(dataConferenciaEncalhe);
+		this.setDataChamadaEncalhe(dataChamadaEncalhe);
 	}
 
 
@@ -92,8 +92,6 @@ public class ItemNotaFiscalPendenteDTO implements Serializable {
 	
 	@Export(label = "Dia", alignment=Alignment.CENTER, exhibitionOrder = 4)
 	public String getDia() {
-		Long qtdDiferencaDias = DateUtil.obterDiferencaDias(getDataConferenciaEncalhe(), getDataChamadaEncalhe());
-		dia = qtdDiferencaDias.toString() + "°";
 		return dia;
 	}
 	
@@ -172,6 +170,8 @@ public class ItemNotaFiscalPendenteDTO implements Serializable {
 	}
 
 	public void setDataConferenciaEncalhe(Date dataConferenciaEncalhe) {
+		Long qtdDiferencaDias = DateUtil.obterDiferencaDias(getDataConferenciaEncalhe(), getDataChamadaEncalhe());
+		this.dia = qtdDiferencaDias.toString() + "° dia";
 		this.dataConferenciaEncalhe = dataConferenciaEncalhe;
 	}
 
@@ -180,6 +180,8 @@ public class ItemNotaFiscalPendenteDTO implements Serializable {
 	}
 
 	public void setDataChamadaEncalhe(Date dataChamadaEncalhe) {
+		Long qtdDiferencaDias = DateUtil.obterDiferencaDias(getDataConferenciaEncalhe(), getDataChamadaEncalhe());
+		this.dia = qtdDiferencaDias.toString() + "° dia";
 		this.dataChamadaEncalhe = dataChamadaEncalhe;
 	}
 
