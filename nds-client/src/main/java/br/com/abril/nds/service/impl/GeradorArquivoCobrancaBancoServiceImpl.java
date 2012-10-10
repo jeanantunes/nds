@@ -18,6 +18,7 @@ import br.com.abril.nds.export.cnab.cobranca.Header;
 import br.com.abril.nds.export.cnab.cobranca.Trailer;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.Moeda;
 import br.com.abril.nds.model.cadastro.ParametroSistema;
 import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.model.financeiro.Boleto;
@@ -56,8 +57,6 @@ public class GeradorArquivoCobrancaBancoServiceImpl implements GeradorArquivoCob
 	@Override
 	public void prepararGerarArquivoCobrancaCnab() throws IOException {
 		
-		// TODO: chamar o metodo prepararGerarArquivoCobrancaCnab após o processo de geração de cobrança
-		
 		Map<Banco, List<DetalheSegmentoP>> mapaDadosArquivoCobranca =
 			this.prepararDadosArquivoCobranca();
 		
@@ -85,30 +84,45 @@ public class GeradorArquivoCobrancaBancoServiceImpl implements GeradorArquivoCob
 		Header header = null;
 		Trailer trailer = null;
 		
-		Distribuidor distribuidor = distribuidorRepository.obter();
+		Distribuidor distribuidor = this.getDistribuidor();
 		
 		for (Map.Entry<Banco, List<DetalheSegmentoP>> entry : mapaArquivoCobranca.entrySet()) {
 		
 			conteudoLinhas = new ArrayList<String>();
 		
-			header = this.getHeader(entry.getKey(),distribuidor);
+			Banco banco = entry.getKey();
+			
+			header = this.getHeader(banco, distribuidor);
 			
 			conteudoLinhas.add(manager.export(header));
 			
-			//Banco banco = entry.getKey();
 			List<DetalheSegmentoP> listaDetalheSegmentoP = entry.getValue();
+			
+			Long quantidadeRegistros = 0L;
 			
 			for (DetalheSegmentoP detalheSegmentoP : listaDetalheSegmentoP) {
 				
 				conteudoLinhas.add(manager.export(detalheSegmentoP));
+				
+				quantidadeRegistros ++;
 			}
 		
-			trailer = this.getTrailer();
+			trailer = this.getTrailer(banco, quantidadeRegistros);
 			
 			conteudoLinhas.add(manager.export(trailer));
 			
 			this.criarArquivo(conteudoLinhas, diretorioArquivoCobranca);
 		}
+	}
+
+	/**
+	 * Obtém o distribuidor.
+	 */
+	protected Distribuidor getDistribuidor() {
+		
+		Distribuidor distribuidor = distribuidorRepository.obter();
+		
+		return distribuidor;
 	}
 
 	/**
@@ -120,7 +134,6 @@ public class GeradorArquivoCobrancaBancoServiceImpl implements GeradorArquivoCob
 			new File(diretorioArquivoCobranca, this.getNomeArquivoCobranca());
 		
 		if (file != null) {
-
 		
 			FileUtils.writeLines(file, "UTF8", conteudoLinhas);
 		}
@@ -145,7 +158,7 @@ public class GeradorArquivoCobrancaBancoServiceImpl implements GeradorArquivoCob
 
 		if (parametroSistema != null) {
 			
-			new File(parametroSistema.getValor());
+			return new File(parametroSistema.getValor());
 		}
 		
 		return null;
@@ -160,10 +173,10 @@ public class GeradorArquivoCobrancaBancoServiceImpl implements GeradorArquivoCob
 		header.setLote(0000L);
 	
 		//Serviço
-		header.setOperacao("R");
+		header.setOperacao("R"); //Opreação do tipo de remessa de arquivo
 		
 		//Empresa
-		header.setTipoInscicao(2L); //Opção CNPJ
+		header.setTipoInscicao(2L);  //Opção CNPJ
 		header.setNumeroInscricao(Long.parseLong(distribuidor.getJuridica().getCnpj()));
 		header.setConvenio(null);//Código que identifica o contato entre o distribuidor e o banco
 		
@@ -177,16 +190,15 @@ public class GeradorArquivoCobrancaBancoServiceImpl implements GeradorArquivoCob
 		return header;
 	}
 	
-	private Trailer getTrailer() {
+	private Trailer getTrailer(Banco banco,Long quantidadeRegistros) {
 		
 		Trailer trailer = new Trailer();
 		
 		// Controle
-		trailer.setCodigoBanco(null);
+		trailer.setCodigoBanco(Long.parseLong(banco.getNumeroBanco()));
 		trailer.setLote(9999L);
 		
-		trailer.setCnab(null);
-		trailer.setQuantidadeRegistros(null);
+		trailer.setQuantidadeRegistros(quantidadeRegistros);
 		
 		// Totalização da Cobrança Simples
 		trailer.setQtdTitulosCobrancaSimples(null);
@@ -205,7 +217,6 @@ public class GeradorArquivoCobrancaBancoServiceImpl implements GeradorArquivoCob
 		trailer.setValorTitulosCobrancaDescontada(null);
 		
 		trailer.setNumeroAviso(null);
-		trailer.setCnab2(null);
 		
 		return trailer;
 	}
@@ -220,13 +231,15 @@ public class GeradorArquivoCobrancaBancoServiceImpl implements GeradorArquivoCob
 		
 		Map<Banco, List<DetalheSegmentoP>> inputDados = new HashMap<Banco, List<DetalheSegmentoP>>();
 		
-		Distribuidor distribuidor = distribuidorRepository.obter();
+		Distribuidor distribuidor = getDistribuidor();
 		
 		List<Boleto> cobrancas = boletoRepository.obterBoletosGeradosNaDataOperacaoDistribuidor(distribuidor.getDataOperacao());
 		
+		Long numeroLote = 1L;
+		
 		for(Boleto cobranca : cobrancas){
 			
-			DetalheSegmentoP detalhe = obterDetalheSegmentoP(cobranca);
+			DetalheSegmentoP detalhe = obterDetalheSegmentoP(cobranca, numeroLote++);
 			
 			Banco banco = cobranca.getBanco();
 			
@@ -249,67 +262,63 @@ public class GeradorArquivoCobrancaBancoServiceImpl implements GeradorArquivoCob
 	 * 
 	 * @return DetalheSegmentoP
 	 */
-	private DetalheSegmentoP obterDetalheSegmentoP(Boleto cobranca) {
+	private DetalheSegmentoP obterDetalheSegmentoP(Boleto cobranca,Long numeroLote) {
 		
 		DetalheSegmentoP detalheSegmentoP = new DetalheSegmentoP();
 		
 		Banco banco = cobranca.getBanco();
 		
-		
 		//Controle
 		detalheSegmentoP.setCodigoBanco(Long.parseLong(banco.getNumeroBanco()));
 		
-		//TODO Gerar Numero Sequencial para identificar o lote de serviço,esse número não pode ser repitido no arquivo (G002)
-		detalheSegmentoP.setLote(null);
+		detalheSegmentoP.setLote(numeroLote);
 		
 		//Serviço
-		detalheSegmentoP.setNumeroRegistro(null);
-		detalheSegmentoP.setSegmento(null);
-		detalheSegmentoP.setCnab1(null);
-		detalheSegmentoP.setCodigoMovimento(null);
+		detalheSegmentoP.setNumeroRegistro(null); //TODO Sera o mesmo numero do lote
+		detalheSegmentoP.setSegmento(null);//TODO
+		detalheSegmentoP.setCodigoMovimento(null);//TODO;
 		
 		//Conta Corrente
 		detalheSegmentoP.setCodigoAgencia(banco.getAgencia());
 		detalheSegmentoP.setDvAgencia(banco.getDvAgencia());
 		detalheSegmentoP.setNumeroConta(Long.parseLong(banco.getNumeroBanco()));
 		detalheSegmentoP.setDvConta(banco.getDvConta());
-		detalheSegmentoP.setDvAgenciaConta(null);
-		detalheSegmentoP.setNossoNumero(cobranca.getNossoNumero());
+		detalheSegmentoP.setNossoNumero(cobranca.getNossoNumeroCompleto());
 		
 		//Caracteristica Cobrança
 		detalheSegmentoP.setCodigoCarteira(banco.getCarteira().longValue());
-		detalheSegmentoP.setCadastramento(null);
-		detalheSegmentoP.setTipoDocumento(null);
-		detalheSegmentoP.setEmissaoBloqueto(null);
-		detalheSegmentoP.setDistribuicaoBloqueto(null);
-		detalheSegmentoP.setNumeroDocumento(null);
+		detalheSegmentoP.setCadastramento(null);//TODO
+		detalheSegmentoP.setTipoDocumento(null);//TODO
+		detalheSegmentoP.setEmissaoBloqueto(null);//TODO
+		detalheSegmentoP.setDistribuicaoBloqueto(null);//TODO;
+		detalheSegmentoP.setNumeroDocumento(cobranca.getNossoNumeroCompleto());
 		detalheSegmentoP.setDataVencimento(this.getDataFormatoCNAB(cobranca.getDataVencimento()));
 		detalheSegmentoP.setValorTitulo(this.getValorFormatoCNAB(cobranca.getValor()));
 		detalheSegmentoP.setAgenciaCobradora(banco.getAgencia());
-		detalheSegmentoP.setEspecieTitulo(null);
-		detalheSegmentoP.setAceite(null);
+		detalheSegmentoP.setEspecieTitulo(null);//TODO
+		detalheSegmentoP.setAceite(null);//TODO
 		detalheSegmentoP.setDataEmissaoTitulo(this.getDataFormatoCNAB(cobranca.getDataEmissao()));
 		
 		//Juros
-		detalheSegmentoP.setCodigoJurosMora(null);
-		detalheSegmentoP.setDataJurosMora(null);
-		detalheSegmentoP.setJurosMora(null);
+		detalheSegmentoP.setCodigoJurosMora(null);//TODO
+		detalheSegmentoP.setDataJurosMora(null);//TODO
+		detalheSegmentoP.setJurosMora(null);//TODO
 		
 		//Desconto
-		detalheSegmentoP.setCodigoDesconto(null);
-		detalheSegmentoP.setDataDesconto(null);
-		detalheSegmentoP.setDesconto(null);
-		detalheSegmentoP.setValorIOF(null);
-		detalheSegmentoP.setValorAbatimento(null);
-		detalheSegmentoP.setIdentificacaoTituloEmpresa(null);
-		detalheSegmentoP.setCodigoProtesto(null);
-		detalheSegmentoP.setPrazoProtesto(null);
-		detalheSegmentoP.setCodigoBaixaDevolucao(null);
-		detalheSegmentoP.setPrazoBaixaDevolucao(null);
-		detalheSegmentoP.setCodigoMoeda(null);
-		detalheSegmentoP.setUsoLivre(null);
+		detalheSegmentoP.setCodigoDesconto(null);//TODO;
+		detalheSegmentoP.setDataDesconto(null);//TODO
+		detalheSegmentoP.setDesconto(null);//TODO
+		detalheSegmentoP.setValorIOF(null);//TODO
+		detalheSegmentoP.setValorAbatimento(null);//TODO
+		detalheSegmentoP.setIdentificacaoTituloEmpresa(null);//TODO
+		detalheSegmentoP.setCodigoProtesto(null);//TODO
+		detalheSegmentoP.setPrazoProtesto(null);//TODO
+		detalheSegmentoP.setCodigoBaixaDevolucao(null);//TODO
+		detalheSegmentoP.setPrazoBaixaDevolucao(null);//TODO
+		detalheSegmentoP.setCodigoMoeda(Moeda.REAL.getCodigo());
+		detalheSegmentoP.setNumeroContrato(null);//TODO
 		
-		return null;
+		return detalheSegmentoP;
 	}
 	
 	private Long getValorFormatoCNAB(BigDecimal valor){

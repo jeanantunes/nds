@@ -71,6 +71,7 @@ fieldset label {
 	</form>
 	<form id="form-nfe">
 		<div id="dialog-nfe" title="NF-e">
+			<input type="hidden" id="idControleConferenciaEncalheCota" />
 			<fieldset style="width: 310px !important;">
 				<legend>Incluir NF-e</legend>
 				<table width="280" border="0" cellspacing="1" cellpadding="0">
@@ -150,15 +151,12 @@ fieldset label {
 	<div class="areaBts">
 		<div class="area">
 
-			<span class="bt_novos"><a href="javascript:;"
+			<span class="bt_novos" id="btnRegistrarNFe" style="display:none"><a href="javascript:;"
 				onclick="entradaNFETerceirosController.popup_nfe('0','0');"
 				rel="tipsy" title="Registrar NF-e"> <img border="0" hspace="5"
 					src="${pageContext.request.contextPath}/images/ico_add_novo.gif"></a>
-			</span> <span class="bt_novos"> <a href="javascript:;"
-				onclick="entradaNFETerceirosController.popup_confirmar();"
-				rel="tipsy" title="Gerar"> <img border="0" hspace="5"
-					src="${pageContext.request.contextPath}/images/ico_distribuicao_bup.gif"></a>
-			</span> <span class="bt_arq"> <a
+			</span> 
+			<span class="bt_arq"> <a
 				href="${pageContext.request.contextPath}/nfe/entradaNFETerceiros/exportar?fileType=XLS"
 				rel="tipsy" title="Gerar Arquivo"> <img
 					src="${pageContext.request.contextPath}/images/ico_excel.png"
@@ -237,11 +235,6 @@ fieldset label {
 			<div id="pendenteRecEmissao" style="display: none;">
 				<table class="encalheNfeGrid"></table>
 			</div>
-			<span class="bt_sellAll" style="float: right;"><label
-				for="sel">Selecionar Todos</label><input type="checkbox" id="checkAll"
-				name="todos" onclick="entradaNFETerceirosController.checkAll(this);"
-				style="float: left; margin-right: 25px;" /></span>
-
 		</div>
 
 	</fieldset>

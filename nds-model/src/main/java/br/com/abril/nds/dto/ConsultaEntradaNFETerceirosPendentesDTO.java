@@ -27,7 +27,7 @@ public class ConsultaEntradaNFETerceirosPendentesDTO implements Serializable {
 	private String dataEncalhe;
 	
 	@Export(label = "Tipo de Nota", alignment=Alignment.LEFT, exhibitionOrder = 4)
-	private TipoOperacao tipoNotaFiscal;
+	private String tipoNotaFiscal;
 	
 	private BigDecimal valorNota;
 	
@@ -156,20 +156,6 @@ public class ConsultaEntradaNFETerceirosPendentesDTO implements Serializable {
 	}
 
 	/**
-	 * @return the tipoNotaFiscal
-	 */
-	public TipoOperacao getTipoNotaFiscal() {
-		return tipoNotaFiscal;
-	}
-
-	/**
-	 * @param tipoNotaFiscal the tipoNotaFiscal to set
-	 */
-	public void setTipoNotaFiscal(TipoOperacao tipoNotaFiscal) {
-		this.tipoNotaFiscal = tipoNotaFiscal;
-	}
-
-	/**
 	 * @return the idControleConferenciaEncalheCota
 	 */
 	public Long getIdControleConferenciaEncalheCota() {
@@ -182,6 +168,20 @@ public class ConsultaEntradaNFETerceirosPendentesDTO implements Serializable {
 	public void setIdControleConferenciaEncalheCota(
 			Long idControleConferenciaEncalheCota) {
 		this.idControleConferenciaEncalheCota = idControleConferenciaEncalheCota;
+	}
+
+	/**
+	 * @return the tipoNotaFiscal
+	 */
+	public String getTipoNotaFiscal() {
+		return tipoNotaFiscal;
+	}
+
+	/**
+	 * @param tipoNotaFiscal the tipoNotaFiscal to set
+	 */
+	public void setTipoNotaFiscal(String tipoNotaFiscal) {
+		this.tipoNotaFiscal = tipoNotaFiscal;
 	}
 	
 }

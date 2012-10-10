@@ -153,7 +153,7 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 				Set<Processo> processos = new HashSet<Processo>();
 				processos.add(Processo.GERACAO_NF_E);
 				
-				Long idNotaFiscal = this.notaFiscalService.emitiNotaFiscal(idTipoNotaFiscal, dataEmissao, idCota, 
+				Long idNotaFiscal = this.notaFiscalService.emitiNotaFiscal(idTipoNotaFiscal, dataEmissao, cota, 
 						listItemNotaFiscal, transporte, null, listaNotasFiscaisReferenciadas, processos);
 				
 				NotaFiscal notaFiscal = this.notaFiscalRepository.buscarPorId(idNotaFiscal);
