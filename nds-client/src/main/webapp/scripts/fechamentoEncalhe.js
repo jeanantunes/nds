@@ -228,9 +228,9 @@ var fechamentoEncalheController = $.extend(true, {
 	replicar : function(index) {
 		
 		var tabela = $('.fechamentoGrid', fechamentoEncalheController.workspace).get(0);
-		var valor = tabela.rows[index].cells[4].firstChild.innerHTML;
-		var campo = tabela.rows[index].cells[6].firstChild.firstChild;
-		var diferenca = tabela.rows[index].cells[7].firstChild;
+		var valor = tabela.rows[index].cells[5].firstChild.innerHTML;
+		var campo = tabela.rows[index].cells[7].firstChild.firstChild;
+		var diferenca = tabela.rows[index].cells[8].firstChild;
 
 		campo.value = valor;
 		diferenca.innerHTML = "0";
@@ -239,8 +239,8 @@ var fechamentoEncalheController = $.extend(true, {
 	onChangeFisico : function(campo, index) {
 		
 		var tabela = $('.fechamentoGrid', fechamentoEncalheController.workspace).get(0);
-		var devolucao = parseInt(tabela.rows[index].cells[4].firstChild.innerHTML);
-		var diferenca = tabela.rows[index].cells[7].firstChild;
+		var devolucao = parseInt(tabela.rows[index].cells[5].firstChild.innerHTML);
+		var diferenca = tabela.rows[index].cells[8].firstChild;
 		
 		if (campo.value == "") {
 			diferenca.innerHTML = "";
