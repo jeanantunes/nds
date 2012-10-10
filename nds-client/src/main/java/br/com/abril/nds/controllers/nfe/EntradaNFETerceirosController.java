@@ -47,6 +47,7 @@ import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.util.export.NDSFileHeader;
 import br.com.abril.nds.vo.PaginacaoVO;
+import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
@@ -298,25 +299,12 @@ public class EntradaNFETerceirosController {
 	@Post
 	@Path("/cadastrarNota")
 	public void cadastrarNota(NotaFiscalEntradaCota nota, Integer numeroCota, Long idControleConferenciaEncalheCota){
-		Cota cota = this.cotaService.obterPorNumeroDaCota(numeroCota);
-		CFOP cfop  = this.cfopService.buscarPorId(1l);
-		PessoaJuridica pj = this.pessoaJuridicaService.buscarPorId(1L);
-		TipoNotaFiscal tp = this.tipoNotaFiscalService.obterPorId(1L);
+
+		this.notaFiscalEntradaService.inserirNotaFiscal(nota, numeroCota, idControleConferenciaEncalheCota);
+
+		ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.SUCCESS, "Cadastro efetuado com sucesso.");
 		
-		nota.setDataEmissao(new Date());
-		nota.setDataExpedicao(new Date());
-		nota.setOrigem(Origem.INTERFACE);
-		nota.setValorBruto(BigDecimal.TEN);
-		nota.setValorLiquido(BigDecimal.TEN);
-		nota.setValorDesconto(BigDecimal.TEN);
-		nota.setCota(cota);
-		nota.setStatusNotaFiscal(StatusNotaFiscalEntrada.RECEBIDA);
-		
-		nota.setCfop(cfop);
-		nota.setTipoNotaFiscal(tp);
-		
-		this.notaFiscalEntradaService.inserirNotaFiscal(nota);
-		
+		this.result.use(Results.json()).from(validacao, "result").recursive().serialize();
 	}
 	
 	private void validarEntrada(FiltroEntradaNFETerceiros filtro) {
