@@ -85,11 +85,13 @@ public class GeradorArquivoCobrancaBancoServiceImpl implements GeradorArquivoCob
 		Header header = null;
 		Trailer trailer = null;
 		
+		Distribuidor distribuidor = distribuidorRepository.obter();
+		
 		for (Map.Entry<Banco, List<DetalheSegmentoP>> entry : mapaArquivoCobranca.entrySet()) {
 		
 			conteudoLinhas = new ArrayList<String>();
 		
-			header = this.getHeader();
+			header = this.getHeader(entry.getKey(),distribuidor);
 			
 			conteudoLinhas.add(manager.export(header));
 			
@@ -118,6 +120,7 @@ public class GeradorArquivoCobrancaBancoServiceImpl implements GeradorArquivoCob
 			new File(diretorioArquivoCobranca, this.getNomeArquivoCobranca());
 		
 		if (file != null) {
+
 		
 			FileUtils.writeLines(file, "UTF8", conteudoLinhas);
 		}
@@ -139,7 +142,7 @@ public class GeradorArquivoCobrancaBancoServiceImpl implements GeradorArquivoCob
 		ParametroSistema parametroSistema =
 			this.parametroSistemaRepository.buscarParametroPorTipoParametro(
 				TipoParametroSistema.PATH_GERACAO_ARQUIVO_COBRANCA);
-		
+
 		if (parametroSistema != null) {
 			
 			new File(parametroSistema.getValor());
@@ -148,12 +151,29 @@ public class GeradorArquivoCobrancaBancoServiceImpl implements GeradorArquivoCob
 		return null;
 	}
 	
-	private Header getHeader() {
+	private Header getHeader(Banco banco, Distribuidor distribuidor) {
 		
 		Header header = new Header();
+
+		//Controle
+		header.setCodigoBanco(Long.parseLong(banco.getNumeroBanco()));
+		header.setLote(0000L);
+	
+		//Serviço
+		header.setOperacao("R");
 		
-		// TODO: Popular Header
+		//Empresa
+		header.setTipoInscicao(2L); //Opção CNPJ
+		header.setNumeroInscricao(Long.parseLong(distribuidor.getJuridica().getCnpj()));
+		header.setConvenio(null);//Código que identifica o contato entre o distribuidor e o banco
 		
+		header.setCodigoAgencia(banco.getAgencia());
+		header.setNumeroConta(banco.getConta());
+		header.setDvAgencia(banco.getDvAgencia());
+		header.setDvAgenciaConta(banco.getDvConta());
+		header.setNomeEmpresa(distribuidor.getJuridica().getRazaoSocial());	
+		header.setDataGravacaoRemessaRetorno(this.getDataFormatoCNAB(distribuidor.getDataOperacao()));
+	
 		return header;
 	}
 	
@@ -161,7 +181,31 @@ public class GeradorArquivoCobrancaBancoServiceImpl implements GeradorArquivoCob
 		
 		Trailer trailer = new Trailer();
 		
-		// TODO: Popular Trailer
+		// Controle
+		trailer.setCodigoBanco(null);
+		trailer.setLote(9999L);
+		
+		trailer.setCnab(null);
+		trailer.setQuantidadeRegistros(null);
+		
+		// Totalização da Cobrança Simples
+		trailer.setQtdTitulosCobrancaSimples(null);
+		trailer.setValorTitulosCobrancaSimples(null);
+		
+		//Totalização da Cobrança Vinculada
+		trailer.setQtdTitulosCobrancaVinculada(null);
+		trailer.setValorTitulosCobrancaVinculada(null);
+		
+		//Totalização da Cobrança Caucionada
+		trailer.setQtdTitulosCobrancaCaucionada(null);
+		trailer.setValorTitulosCobrancaCaucionada(null);
+		
+		// Totalização da Cobrança Descontada
+		trailer.setQtdTitulosCobrancaDescontada(null);
+		trailer.setValorTitulosCobrancaDescontada(null);
+		
+		trailer.setNumeroAviso(null);
+		trailer.setCnab2(null);
 		
 		return trailer;
 	}
@@ -214,6 +258,8 @@ public class GeradorArquivoCobrancaBancoServiceImpl implements GeradorArquivoCob
 		
 		//Controle
 		detalheSegmentoP.setCodigoBanco(Long.parseLong(banco.getNumeroBanco()));
+		
+		//TODO Gerar Numero Sequencial para identificar o lote de serviço,esse número não pode ser repitido no arquivo (G002)
 		detalheSegmentoP.setLote(null);
 		
 		//Serviço
