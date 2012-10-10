@@ -30,7 +30,6 @@ import br.com.abril.nds.model.fiscal.CFOP;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaCota;
 import br.com.abril.nds.model.fiscal.StatusNotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
-import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.CFOPService;
@@ -134,15 +133,17 @@ public class EntradaNFETerceirosController {
 	
 	private TableModel<CellModelKeyValue<ConsultaEntradaNFETerceirosRecebidasDTO>> efetuarConsultaNotasRecebidas(FiltroEntradaNFETerceiros filtro) {
 		
-		/*List<ConsultaEntradaNFETerceirosRecebidasDTO> listaNotasRecebidas = this.entradaNFETerceirosService.buscarNFNotasRecebidas(filtro, true);
+		List<ConsultaEntradaNFETerceirosRecebidasDTO> listaNotasRecebidas = this.entradaNFETerceirosService.buscarNFNotasRecebidas(filtro, true);
+
+		Integer tamanhoListaNotasRecebidas = this.entradaNFETerceirosService.buscarTodasNFNotas(filtro);
 		
 		TableModel<CellModelKeyValue<ConsultaEntradaNFETerceirosRecebidasDTO>> tableModel = new TableModel<CellModelKeyValue<ConsultaEntradaNFETerceirosRecebidasDTO>>();
 		
 		if(listaNotasRecebidas.size() == 0){
 			throw new ValidacaoException(TipoMensagem.WARNING, "A pesquisa realizada não obteve resultado.");
-		}*/
+		}
 		
-		List<ConsultaEntradaNFETerceirosRecebidasDTO> listaNotasRecebidas = new ArrayList<ConsultaEntradaNFETerceirosRecebidasDTO>();
+		/*List<ConsultaEntradaNFETerceirosRecebidasDTO> listaNotasRecebidas = new ArrayList<ConsultaEntradaNFETerceirosRecebidasDTO>();
 		
 		ConsultaEntradaNFETerceirosRecebidasDTO nota1 = new ConsultaEntradaNFETerceirosRecebidasDTO();
 		nota1.setChaveAcesso("chaveAcesso");
@@ -151,7 +152,7 @@ public class EntradaNFETerceirosController {
 		nota1.setNome("Victor Henrique");
 		nota1.setNumeroNota(new Long("12231"));
 		nota1.setSerie("192837456");
-		nota1.setTipoNotaFiscal(TipoOperacao.SAIDA);
+		nota1.setTipoNotaFiscal("SAIDA");
 		nota1.setValorNota(new BigDecimal(9090));
 		
 		ConsultaEntradaNFETerceirosRecebidasDTO nota2 = new ConsultaEntradaNFETerceirosRecebidasDTO();
@@ -161,19 +162,19 @@ public class EntradaNFETerceirosController {
 		nota2.setNome("Victor Henrique");
 		nota2.setNumeroNota(new Long(445566));
 		nota2.setSerie("910293758921");
-		nota2.setTipoNotaFiscal(TipoOperacao.SAIDA);
+		nota2.setTipoNotaFiscal("SAIDA");
 		nota2.setValorNota(new BigDecimal(9090));
 		
 		listaNotasRecebidas.add(nota1);
 		listaNotasRecebidas.add(nota2);
 		
-		TableModel<CellModelKeyValue<ConsultaEntradaNFETerceirosRecebidasDTO>> tableModel = new TableModel<CellModelKeyValue<ConsultaEntradaNFETerceirosRecebidasDTO>>();
+		TableModel<CellModelKeyValue<ConsultaEntradaNFETerceirosRecebidasDTO>> tableModel = new TableModel<CellModelKeyValue<ConsultaEntradaNFETerceirosRecebidasDTO>>();*/
 		
 		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaNotasRecebidas));
 		
 		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
 		
-		tableModel.setTotal(listaNotasRecebidas.size());
+		tableModel.setTotal(tamanhoListaNotasRecebidas);
 		
 		return tableModel;
 	}
@@ -196,16 +197,17 @@ public class EntradaNFETerceirosController {
 	private TableModel<CellModelKeyValue<ConsultaEntradaNFETerceirosPendentesDTO>> efetuarConsultaNotasPendentes(FiltroEntradaNFETerceiros filtro) {
 
 
-		/*List<ConsultaEntradaNFETerceirosPendentesDTO> listaNotasPendentes = this.entradaNFETerceirosService.buscarNFNotasPendentes(filtro, true);
+		List<ConsultaEntradaNFETerceirosPendentesDTO> listaNotasPendentes = this.entradaNFETerceirosService.buscarNFNotasPendentes(filtro, true);
 
+		Integer tamanhoListaNotasPendentes = this.entradaNFETerceirosService.buscarTodasNFNotas(filtro);
 		
 		TableModel<CellModelKeyValue<ConsultaEntradaNFETerceirosPendentesDTO>> tableModel = new TableModel<CellModelKeyValue<ConsultaEntradaNFETerceirosPendentesDTO>>();
 		
 		if(listaNotasPendentes.size() == 0){
 			throw new ValidacaoException(TipoMensagem.WARNING, "A pesquisa realizada não obteve resultado.");
-		}*/
+		}
 		
-		List<ConsultaEntradaNFETerceirosPendentesDTO> listaNotasPendentes = new ArrayList<ConsultaEntradaNFETerceirosPendentesDTO>();
+		/*List<ConsultaEntradaNFETerceirosPendentesDTO> listaNotasPendentes = new ArrayList<ConsultaEntradaNFETerceirosPendentesDTO>();
 		
 		ConsultaEntradaNFETerceirosPendentesDTO nota1 = new ConsultaEntradaNFETerceirosPendentesDTO();
 		nota1.setChaveAcesso("1234");
@@ -217,7 +219,7 @@ public class EntradaNFETerceirosController {
 		nota1.setNumeroNfe(new Long(778899));
 		nota1.setSerie("4356");
 		nota1.setStatus("APROVADO");
-		nota1.setTipoNotaFiscal(TipoOperacao.ENTRADA);
+		nota1.setTipoNotaFiscal("Entrada");
 		nota1.setValorNota(new BigDecimal(999));
 		nota1.setValorReal(new BigDecimal(999));
 		
@@ -231,20 +233,20 @@ public class EntradaNFETerceirosController {
 		nota2.setNumeroNfe(new Long(778899));
 		nota2.setSerie("4356");
 		nota2.setStatus("APROVADO");
-		nota2.setTipoNotaFiscal(TipoOperacao.ENTRADA);
+		nota2.setTipoNotaFiscal("Complementar");
 		nota2.setValorNota(new BigDecimal(999));
 		nota2.setValorReal(new BigDecimal(999));
 		
 		listaNotasPendentes.add(nota1);
 		listaNotasPendentes.add(nota2);
 		
-		TableModel<CellModelKeyValue<ConsultaEntradaNFETerceirosPendentesDTO>> tableModel = new TableModel<CellModelKeyValue<ConsultaEntradaNFETerceirosPendentesDTO>>();
+		TableModel<CellModelKeyValue<ConsultaEntradaNFETerceirosPendentesDTO>> tableModel = new TableModel<CellModelKeyValue<ConsultaEntradaNFETerceirosPendentesDTO>>();*/
 		
 		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaNotasPendentes));
 		
 		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
 		
-		tableModel.setTotal(listaNotasPendentes.size());
+		tableModel.setTotal(tamanhoListaNotasPendentes);
 		
 		return tableModel;
 	}

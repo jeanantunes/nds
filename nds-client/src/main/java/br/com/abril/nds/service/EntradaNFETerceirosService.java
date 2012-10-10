@@ -11,7 +11,7 @@ public interface EntradaNFETerceirosService {
 	
 	List<ConsultaEntradaNFETerceirosRecebidasDTO> buscarNFNotasRecebidas(FiltroEntradaNFETerceiros filtro, boolean limitar);
 	
-	Integer buscarTodasNFENotasRecebidas(FiltroEntradaNFETerceiros filtro);
+	Integer buscarTodasNFNotas(FiltroEntradaNFETerceiros filtro);
 	
 	List<ConsultaEntradaNFETerceirosPendentesDTO> buscarNFNotasPendentes(FiltroEntradaNFETerceiros filtro, boolean limitar);
 	

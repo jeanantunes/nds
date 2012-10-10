@@ -148,7 +148,7 @@ public class FecharDiaController {
 		
 		BigDecimal totalReparte = this.resumoFecharDiaService.obterValorReparte(distribuidor.getDataOperacao());
 		
-		List<BigDecimal> listaTeste = new ArrayList<>();
+		List<BigDecimal> listaTeste = new ArrayList<BigDecimal>();
 		listaTeste.add(totalReparte);
 		
 		result.use(Results.json()).from(listaTeste, "result").serialize();
