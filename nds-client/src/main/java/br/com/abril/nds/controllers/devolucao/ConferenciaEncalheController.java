@@ -576,8 +576,10 @@ public class ConferenciaEncalheController {
 			
 		}
 		
-		controleConfEncalheCota.setNotaFiscalEntradaCota(notaFiscal);
-		
+		List<NotaFiscalEntradaCota> notaFiscalEntradaCotas = new ArrayList<NotaFiscalEntradaCota>();
+		notaFiscalEntradaCotas.add(notaFiscal);
+		controleConfEncalheCota.setNotaFiscalEntradaCota(notaFiscalEntradaCotas);
+				
 		Box boxEncalhe = new Box();
 		boxEncalhe.setId((Long) this.session.getAttribute(ID_BOX_LOGADO));
 		
@@ -670,10 +672,12 @@ public class ConferenciaEncalheController {
 				dadosDocumentacaoConfEncalheCota.getNossoNumero()!= null && 
 				!dadosDocumentacaoConfEncalheCota.getNossoNumero().isEmpty()) {
 			
-			byte[] slip =  conferenciaEncalheService.gerarDocumentosConferenciaEncalhe(dadosDocumentacaoConfEncalheCota, TipoDocumentoConferenciaEncalhe.SLIP);
-			byte[] boletoOuRecibo = conferenciaEncalheService.gerarDocumentosConferenciaEncalhe(dadosDocumentacaoConfEncalheCota, TipoDocumentoConferenciaEncalhe.BOLETO_OU_RECIBO);
+			List<byte[]> arquivos = new ArrayList<byte[]>();
+			
+			arquivos.add(conferenciaEncalheService.gerarDocumentosConferenciaEncalhe(dadosDocumentacaoConfEncalheCota, TipoDocumentoConferenciaEncalhe.SLIP));
+			arquivos.add(conferenciaEncalheService.gerarDocumentosConferenciaEncalhe(dadosDocumentacaoConfEncalheCota, TipoDocumentoConferenciaEncalhe.BOLETO_OU_RECIBO));
 						
-			retorno = PDFUtil.mergePDFs(slip, boletoOuRecibo);
+			retorno = PDFUtil.mergePDFs(arquivos);
 			
 			escreverArquivoParaResponse(retorno, "slipBoleto");
 		} else {
@@ -734,7 +738,9 @@ public class ConferenciaEncalheController {
 				
 			}
 			
-			controleConfEncalheCota.setNotaFiscalEntradaCota(notaFiscal);
+			List<NotaFiscalEntradaCota> notaFiscalEntradaCotas = new ArrayList<NotaFiscalEntradaCota>();
+			notaFiscalEntradaCotas.add(notaFiscal);
+			controleConfEncalheCota.setNotaFiscalEntradaCota(notaFiscalEntradaCotas);
 			
 			Box boxEncalhe = new Box();
 			boxEncalhe.setId((Long) this.session.getAttribute(ID_BOX_LOGADO));

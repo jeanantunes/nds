@@ -168,7 +168,10 @@ public class FechamentoEncalheController {
 		
 		if (dataEncalhe != null && dataEncalhe.after(dataPostergacao)) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Postergação não pode ser realizada antes da data atual!");
+		} else if (  fechamentoEncalheService.buscarUtimoDiaDaSemanaRecolhimento().before(dataPostergacao) ){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Postergação deve ter como limite, a data final da semana de recolhimento em vigência!");
 		}
+		
 		
 		try {
 			
@@ -480,7 +483,6 @@ public class FechamentoEncalheController {
 		
 		this.result.use(Results.nothing());
 	}
-	
 	
 	
 		

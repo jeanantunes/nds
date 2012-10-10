@@ -30,6 +30,7 @@ import br.com.abril.nds.dto.filtro.FiltroMapaAbastecimentoDTO.ColunaOrdenacaoDet
 import br.com.abril.nds.dto.filtro.FiltroMapaAbastecimentoDTO.ColunaOrdenacaoEntregador;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.FormaComercializacao;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.OperacaoEstoque;
@@ -54,19 +55,52 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 	 * @see br.com.abril.nds.repository.MovimentoEstoqueCotaRepository#obterListaMovimentoEstoqueCotaParaOperacaoConferenciaEncalhe(java.lang.Long)
 	 */
 	@SuppressWarnings("unchecked")
-	public List<MovimentoEstoqueCota> obterListaMovimentoEstoqueCotaParaOperacaoConferenciaEncalhe(Long idControleConferenciaEncalheCota) {
+	public List<MovimentoEstoqueCota> obterListaMovimentoEstoqueCotaParaOperacaoConferenciaEncalhe(Long idControleConferenciaEncalheCota, FormaComercializacao formaComercializacao, boolean consideraFormaComercializacaoNula) {
 		
 		StringBuffer hql = new StringBuffer();
 		
-		hql.append(" select conferenciaEncalhe.movimentoEstoqueCota  ");			
+		hql.append(" select movimentoEstoqueCota  ");			
 		
 		hql.append(" from ConferenciaEncalhe conferenciaEncalhe ");
 		
-		hql.append(" where conferenciaEncalhe.controleConferenciaEncalheCota.id = :idControleConferenciaEncalheCota ");
+		hql.append(" join conferenciaEncalhe.movimentoEstoqueCota movimentoEstoqueCota ");
+		
+		String j=" WHERE ";
+		
+		if (formaComercializacao!=null){
+		
+			hql.append(" join movimentoEstoqueCota.produtoEdicao produtoEdicao ");
+		
+	    	hql.append(" join produtoEdicao.produto produto ");
+	    	
+	    	if(consideraFormaComercializacaoNula){
+	    		
+	    		hql.append(j+" ((produto.formaComercializacao is null) ");
+	    		
+	    		j=" OR ";
+	    	}
+	    	else{
+	    		
+		    	hql.append(j+" ((produto.formaComercializacao is not null) ");
+	    		
+	    		j=" AND ";
+	    	}
+	    	
+	    	hql.append(j+" (produto.formaComercializacao = :formaComercializacao)) ");
+	    	
+	    	j=" AND ";
+		}
+		
+		hql.append(j+" conferenciaEncalhe.controleConferenciaEncalheCota.id = :idControleConferenciaEncalheCota ");
 		
 		Query query = getSession().createQuery(hql.toString());
 		
 		query.setParameter("idControleConferenciaEncalheCota", idControleConferenciaEncalheCota);
+		
+		if (formaComercializacao!=null){
+			
+			query.setParameter("formaComercializacao", formaComercializacao);
+		}
 		
 		return query.list();
 		
@@ -108,8 +142,46 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		return (BigInteger) query.uniqueResult();
 		
 	}
-
 	
+	/*
+	 * (non-Javadoc)
+	 * @see br.com.abril.nds.repository.MovimentoEstoqueCotaRepository#obterQtdeMovimentoEstoqueCotaParaProdutoEdicaoNoPeriodo(java.lang.Long, java.lang.Long, java.util.Date, java.util.Date, br.com.abril.nds.model.estoque.OperacaoEstoque)
+	 */
+	@Override
+	public BigDecimal obterValorTotalMovimentoEstoqueCotaParaProdutoEdicaoNoPeriodo(
+			Long idCota,
+			Long idProdutoEdicao,
+			Date dataInicial, 
+			Date dataFinal,
+			OperacaoEstoque operacaoEstoque) {
+		
+		StringBuffer hql = new StringBuffer();
+		
+		hql.append(" select sum(movimentoEstoqueCota.qtde * produtoEdicao.precoVenda) ");			
+		
+		hql.append(" from MovimentoEstoqueCota movimentoEstoqueCota ");
+		
+		hql.append(" join movimentoEstoqueCota.produtoEdicao produtoEdicao  ");
+		
+		hql.append(" where movimentoEstoqueCota.data between :dataInicial and :dataFinal and ");
+
+		hql.append(" movimentoEstoqueCota.cota.id = :idCota and ");
+		
+		hql.append(" movimentoEstoqueCota.produtoEdicao.id = :idProdutoEdicao and ");
+		
+		hql.append(" movimentoEstoqueCota.tipoMovimento.operacaoEstoque = :operacaoEstoque ");
+		
+		Query query = getSession().createQuery(hql.toString());
+		
+		query.setParameter("dataInicial", dataInicial);
+		query.setParameter("dataFinal", dataFinal);
+		query.setParameter("idCota", idCota);
+		query.setParameter("idProdutoEdicao", idProdutoEdicao);
+		query.setParameter("operacaoEstoque", operacaoEstoque);
+		
+		return (BigDecimal) query.uniqueResult();
+		
+	}
 	
 	/*
 	 * (non-Javadoc)

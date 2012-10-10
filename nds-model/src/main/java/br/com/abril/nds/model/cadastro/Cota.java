@@ -149,7 +149,7 @@ public class Cota implements Serializable {
 	private Set<HistoricoNumeroCota> historicoNumeroCota;
 	
 	@OneToMany(mappedBy="cota", cascade={CascadeType.REMOVE})
-	private Set<DescontoProdutoEdicao> descontosProdutoEdicao;
+	private Set<DescontoProdutoEdicao> descontosProdutoEdicao = new HashSet<DescontoProdutoEdicao>();
 
 	@ManyToMany(mappedBy="cotas", targetEntity=GrupoCota.class)
 	private Set<GrupoCota> grupos;
@@ -158,7 +158,7 @@ public class Cota implements Serializable {
 	 * Histórico de titulares da cota
 	 */
 	@OneToMany(mappedBy = "cota", cascade = {CascadeType.ALL})
-	private Set<HistoricoTitularidadeCota> titularesCota;
+	private Set<HistoricoTitularidadeCota> titularesCota =new HashSet<HistoricoTitularidadeCota>();
 	
 	/**
 	 * Referente a garantias da cota.

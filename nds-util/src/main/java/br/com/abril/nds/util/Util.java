@@ -152,7 +152,8 @@ public abstract class Util {
 				return codSacado + auxData + n1 + n2 + n3 + idMovimentoFinanceiro + (idFornecedor == null ? "0" : idFornecedor);
 				
 			case HSBC:
-				return Util.padLeft(codSacado + auxData + n1 + n2 + n3 + idMovimentoFinanceiro + (idFornecedor == null ? "0" : idFornecedor), "0", 13);
+				//alterado para não ultrapassar 13 caracteres
+				return Util.padLeft(codSacado + auxData + idMovimentoFinanceiro, "0", 13);
 				
 			case MERCANTIL_DO_BRASIL:
 				return codSacado + auxData + n1 + n2 + n3 + idMovimentoFinanceiro + (idFornecedor == null ? "0" : idFornecedor);

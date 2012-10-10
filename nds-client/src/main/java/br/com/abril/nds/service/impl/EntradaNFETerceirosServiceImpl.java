@@ -31,9 +31,9 @@ public class EntradaNFETerceirosServiceImpl implements
 
 	@Override
 	@Transactional
-	public Integer buscarTodasNFENotasRecebidas(
+	public Integer buscarTodasNFNotas(
 			FiltroEntradaNFETerceiros filtro) {
-		return this.entradaNFETerceirosRepository.buscarTotalNotasRecebidas(filtro);
+		return this.entradaNFETerceirosRepository.buscarTotalNotas(filtro);
 	}
 
 	@Override

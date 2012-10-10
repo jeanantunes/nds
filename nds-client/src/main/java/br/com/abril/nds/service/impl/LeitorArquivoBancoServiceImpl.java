@@ -13,6 +13,7 @@ import br.com.abril.nds.dto.ArquivoPagamentoBancoDTO;
 import br.com.abril.nds.dto.PagamentoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.service.LeitorArquivoBancoService;
+import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.vo.ValidacaoVO;
@@ -27,8 +28,6 @@ import br.com.abril.nds.vo.ValidacaoVO;
 public class LeitorArquivoBancoServiceImpl implements LeitorArquivoBancoService {
 
 	private static final String[] EXTENSOES_ARQUIVO_VALIDAS = {"dat", "ret"};
-	
-	private static final String FORMATO_DATA_ARQUIVO = "ddMMyy";
 	
 	private static final String REGISTRO_TIPO_HEADER = "0";
 	private static final String REGISTRO_TIPO_DETALHE = "1";
@@ -136,7 +135,7 @@ public class LeitorArquivoBancoServiceImpl implements LeitorArquivoBancoService 
 					pagamento.setDataPagamento(
 						DateUtil.parseData(
 							line.substring(INDEX_CNAB_400_DATA_PAGAMENTO_INICIO, INDEX_CNAB_400_DATA_PAGAMENTO_FIM),
-							FORMATO_DATA_ARQUIVO));
+							Constantes.FORMATO_DATA_ARQUIVO_CNAB));
 					
 					pagamento.setNossoNumero(line.substring(INDEX_CNAB_400_NOSSO_NUMERO_INICIO,
 															INDEX_CNAB_400_NOSSO_NUMERO_FIM));

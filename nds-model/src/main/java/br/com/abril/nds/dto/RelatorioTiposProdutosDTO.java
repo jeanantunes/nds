@@ -2,16 +2,15 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.Date;
 
 public class RelatorioTiposProdutosDTO implements Serializable {
 
 	private static final long serialVersionUID = -9000972218243942262L;
 	
-	private BigInteger codigo;
+	private Long codigo;
 	private String produto;
-	private BigInteger edicao;
+	private Long edicao;
 	private BigDecimal precoCapa;
 	private BigDecimal faturamento;
 	private String tipoProduto;
@@ -19,10 +18,10 @@ public class RelatorioTiposProdutosDTO implements Serializable {
 	private Date recolhimento;
 	
 	
-	public BigInteger getCodigo() {
+	public Long getCodigo() {
 		return codigo;
 	}
-	public void setCodigo(BigInteger codigo) {
+	public void setCodigo(Long codigo) {
 		this.codigo = codigo;
 	}
 	public String getProduto() {
@@ -31,10 +30,10 @@ public class RelatorioTiposProdutosDTO implements Serializable {
 	public void setProduto(String produto) {
 		this.produto = produto;
 	}
-	public BigInteger getEdicao() {
+	public Long getEdicao() {
 		return edicao;
 	}
-	public void setEdicao(BigInteger edicao) {
+	public void setEdicao(Long edicao) {
 		this.edicao = edicao;
 	}
 	public BigDecimal getPrecoCapa() {

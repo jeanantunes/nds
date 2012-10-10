@@ -1,6 +1,8 @@
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -20,19 +22,31 @@ import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.GrupoProduto;
+import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
+import br.com.abril.nds.model.cadastro.Produto;
+import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoFornecedor;
+import br.com.abril.nds.model.cadastro.TipoProduto;
+import br.com.abril.nds.model.cadastro.TributacaoFiscal;
+import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
 import br.com.abril.nds.model.fiscal.CFOP;
+import br.com.abril.nds.model.fiscal.NCM;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaCota;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
 import br.com.abril.nds.model.fiscal.StatusEmissaoNfe;
+import br.com.abril.nds.model.fiscal.StatusNotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.TipoEmissaoNfe;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalhe;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
 import br.com.abril.nds.model.movimentacao.StatusOperacao;
+import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
+import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
+import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.EntradaNFETerceirosRepository;
 import br.com.abril.nds.vo.PaginacaoVO;
@@ -41,7 +55,7 @@ public class EntradaNFETerceirosRepositoryImplTest
 		extends AbstractRepositoryImplTest {
 
 	@Autowired
-	private EntradaNFETerceirosRepository entradaNFETerceirosRepositoryRepository;
+	private EntradaNFETerceirosRepository entradaNFETerceirosRepository;
 	
 	@Before
 	public void setUp() {
@@ -236,6 +250,39 @@ public class EntradaNFETerceirosRepositoryImplTest
 
 		save(notaFiscalEntradaFornecedor);
 		
+		NCM ncmRevista = Fixture.ncm(49029000l,"REVISTAS","KG");
+		save(ncmRevista);
+
+		TipoProduto tipoProdutoRevista = Fixture.tipoProduto("Revistas", GrupoProduto.REVISTA, ncmRevista, "4902.90.00", 001L);
+		save(tipoProdutoRevista);
+		
+		Produto produtoCE = Fixture.produto("00086", "Produto CE 3", "ProdutoCE_3", PeriodicidadeProduto.MENSAL, tipoProdutoRevista, 5, 5, new Long(10000), TributacaoFiscal. TRIBUTADO);
+		save(produtoCE);
+
+		ProdutoEdicao produtoEdicaoCE = Fixture.produtoEdicao("COD_PP", 86L, 10, 7,
+				new Long(100), BigDecimal.TEN, new BigDecimal(90), "EZ8", 31L, produtoCE, null, false, "Produto CE 3");
+		save(produtoEdicaoCE);
+
+		EstoqueProdutoCota estoqueProdutoCotaJohny =
+				Fixture.estoqueProdutoCota(
+				produtoEdicaoCE, cotaJohnyConsultaEncalhe, BigInteger.TEN, BigInteger.ZERO);
+		save(estoqueProdutoCotaJohny);
+		
+		ChamadaEncalhe chamadaEncalhe = Fixture.chamadaEncalhe(
+				Fixture.criarData(28, Calendar.FEBRUARY, 2012),
+				produtoEdicaoCE,
+				TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO);
+
+		save(chamadaEncalhe);
+
+		ChamadaEncalheCota chamadaEncalheCota_3 = Fixture.chamadaEncalheCota(
+				chamadaEncalhe,
+				false,
+				cotaJohnyConsultaEncalhe,
+				BigInteger.TEN);
+		save(chamadaEncalheCota_3);
+
+
 		ControleConferenciaEncalhe controleConferenciaEncalhe = 
 				Fixture.controleConferenciaEncalhe(StatusOperacao.EM_ANDAMENTO, Fixture.criarData(28, Calendar.FEBRUARY, 2012));
 		save(controleConferenciaEncalhe);
@@ -249,7 +296,10 @@ public class EntradaNFETerceirosRepositoryImplTest
 				StatusOperacao.CONCLUIDO,
 				usuarioJoao,
 				box1);
-		controleConferenciaEncalheCota.setNotaFiscalEntradaCota(notaFiscalEntradaCota);
+		
+		List<NotaFiscalEntradaCota> notaFiscalEntradaCotas = new ArrayList<NotaFiscalEntradaCota>();	
+		notaFiscalEntradaCotas.add(notaFiscalEntradaCota);
+		controleConferenciaEncalheCota.setNotaFiscalEntradaCota(notaFiscalEntradaCotas);
 
 		save(controleConferenciaEncalheCota);
 
@@ -264,7 +314,7 @@ public class EntradaNFETerceirosRepositoryImplTest
 		filtro.setPaginacao(new PaginacaoVO());
 		
 		List<ItemNotaFiscalPendenteDTO> lista = 
-				this.entradaNFETerceirosRepositoryRepository.buscarItensPorNota(
+				this.entradaNFETerceirosRepository.buscarItensPorNota(
 						filtro);
 		
 		Assert.assertNotNull(lista);
@@ -275,7 +325,7 @@ public class EntradaNFETerceirosRepositoryImplTest
 		FiltroEntradaNFETerceiros filtro = new FiltroEntradaNFETerceiros();
 		filtro.setPaginacao(new PaginacaoVO());
 		
-		List<ConsultaEntradaNFETerceirosRecebidasDTO> lista = entradaNFETerceirosRepositoryRepository.buscarNFNotasRecebidas(filtro, false);
+		List<ConsultaEntradaNFETerceirosRecebidasDTO> lista = entradaNFETerceirosRepository.buscarNFNotasRecebidas(filtro, false);
 
 		Assert.assertNotNull(lista);
 
@@ -290,13 +340,44 @@ public class EntradaNFETerceirosRepositoryImplTest
 		FiltroEntradaNFETerceiros filtro = new FiltroEntradaNFETerceiros();
 		filtro.setPaginacao(new PaginacaoVO());
 		
-		List<ConsultaEntradaNFETerceirosPendentesDTO> lista = entradaNFETerceirosRepositoryRepository.buscarNFNotasPendentes(filtro, false);
+		List<ConsultaEntradaNFETerceirosPendentesDTO> lista = entradaNFETerceirosRepository.buscarNFNotasPendentes(filtro, false);
 
 		Assert.assertNotNull(lista);
 
 		int tamanhoEsperado = 1;
 		
 		Assert.assertEquals(tamanhoEsperado, lista.size());
+		
+	}
+	
+	public void buscarQtdeNFNotasRecebidas(){
+		FiltroEntradaNFETerceiros filtro = new FiltroEntradaNFETerceiros();
+		filtro.setStatusNotaFiscalEntrada(StatusNotaFiscalEntrada.RECEBIDA);
+		filtro.setPaginacao(new PaginacaoVO());
+		
+		Integer tamanho = entradaNFETerceirosRepository.buscarTotalNotas(filtro);
+
+		Assert.assertNotNull(tamanho);
+
+		Integer tamanhoEsperado = 2;
+		
+		Assert.assertEquals(tamanhoEsperado, tamanho);
+		
+	}
+	
+	@Test
+	public void buscarQtdeNFNotasPendentes(){
+		FiltroEntradaNFETerceiros filtro = new FiltroEntradaNFETerceiros();
+		filtro.setStatusNotaFiscalEntrada(StatusNotaFiscalEntrada.PENDENTE_RECEBIMENTO);
+		filtro.setPaginacao(new PaginacaoVO());
+		
+		Integer tamanho = entradaNFETerceirosRepository.buscarTotalNotas(filtro);
+
+		Assert.assertNotNull(tamanho);
+
+		Integer tamanhoEsperado = 1;
+		
+		Assert.assertEquals(tamanhoEsperado, tamanho);
 		
 	}
 	

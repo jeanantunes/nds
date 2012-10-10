@@ -3397,6 +3397,10 @@ public class DataLoader {
 				"\\procuracao\\"));	// windows;
 //				"/procuracao/"));		// linux;
 		
+		save(session, Fixture.parametroSistema(TipoParametroSistema.PATH_GERACAO_ARQUIVO_COBRANCA,
+				"C:\\nds-client\\arquivo_cobranca\\")); // windows;
+//				"???"));					// linux;
+		
 		save(session, Fixture.parametroSistema(TipoParametroSistema.NUMERO_DIAS_PERMITIDO_LANCAMENTO_FALTA_DE, "7"));
 		save(session, Fixture.parametroSistema(TipoParametroSistema.NUMERO_DIAS_PERMITIDO_LANCAMENTO_FALTA_EM, "7"));
 		save(session, Fixture.parametroSistema(TipoParametroSistema.NUMERO_DIAS_PERMITIDO_LANCAMENTO_SOBRA_EM, "7"));
