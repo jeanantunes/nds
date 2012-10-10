@@ -17,4 +17,6 @@ public interface TelefoneFornecedorRepository extends Repository<TelefoneFornece
 	List<Telefone> buscarTelefonesPessoaPorFornecedor(Long idFornecedor);
 	
 	TelefoneFornecedor obterTelefoneFornecedor(Long idTelefone, Long idFornecedor);
+
+	public abstract TelefoneFornecedor obterTelefonePrincipal(long idFornecedor);
 }
