@@ -119,12 +119,12 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 	
 	@Autowired
 	private ControleNumeracaoNotaFiscalService controleNumeracaoNotaFiscalService;
-	
+
 	@Autowired
 	private NotaFiscalService notaFiscalService;
+
 	@Autowired
 	private EdicoesFechadasService edicoesFechadasService;
-	
 	
 	@Transactional
 	public InfoContagemDevolucaoDTO obterInfoContagemDevolucao(FiltroDigitacaoContagemDevolucaoDTO filtroPesquisa, boolean indPerfilUsuarioEncarregado) {
@@ -926,7 +926,6 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 		
 	}
 
-
 	@Override
 	@Transactional
 	public List<ContagemDevolucaoDTO> obterContagemDevolucaoEdicaoFechada(
@@ -976,7 +975,7 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 		
 		return listaContagemEdicaoFechada;
 	}
-	
+
 
 	
 }

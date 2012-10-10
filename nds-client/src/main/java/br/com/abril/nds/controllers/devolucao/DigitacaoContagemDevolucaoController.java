@@ -669,4 +669,5 @@ public class DigitacaoContagemDevolucaoController  {
 		
 		result.use(FlexiGridJson.class).from(edicoesFechadasVOs).total(quantidade.intValue()).page(page).serialize();
 	}
+
 }

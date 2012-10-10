@@ -70,7 +70,7 @@ public class ConferenciaEncalheParcial {
 	
 	@ManyToOne(optional = true)
 	private ProdutoEdicao produtoEdicao;
-
+	
 	public Long getId() {
 		return id;
 	}
