@@ -2,7 +2,7 @@ var cotaAusenteController = $.extend(true, {
 	
 	numCotasAusente : null,
 	mov : null,
-	indiceAtual : null,
+	movAtual : null,
 	cotaAtual : '',
 
 	init : function() {
@@ -298,8 +298,10 @@ var cotaAusenteController = $.extend(true, {
 		
 		var tabMovimentos = $("#idMovimentos", cotaAusenteController.workspace);	
 		var cabecalho = $("#idCabecalhoMovimentos", cotaAusenteController.workspace);
-			
-		tabMovimentos.clear();
+		
+		$("#idMovimentos TR", cotaAusenteController.workspace).remove();
+		
+		$("#idMovimentos", cotaAusenteController.workspace);	
 		
 		tabMovimentos.append(cabecalho);
 		
@@ -311,12 +313,14 @@ var cotaAusenteController = $.extend(true, {
 			var edicao = document.createElement("TD");
 			var reparte = document.createElement("TD");
 			var botao = document.createElement("TD");
+			botao.setAttribute('align','center');
 					
 			codigo.innerHTML = movimento.codigoProd;
 			produto.innerHTML = movimento.nomeProd;
 			edicao.innerHTML = movimento.edicaoProd;
 			reparte.innerHTML = movimento.qtdeReparte;
-			botao.innerHTML = "<a onclick=\"cotaAusenteController.gerarGridRateios("+index+");\" href=\"javascript:;\"><img src=\"" + contextPath + "/images/ico_negociar.png\" border=\"0\" /></a>";
+			
+			botao.innerHTML = "<input type=\"checkbox\" class=\"checkgroup\" name=\"checkgroup\" indice="+index+" onclick=\"cotaAusenteController.tratarSelecaoProduto();\" />";
 			
 			novaLinha.append(codigo);
 			novaLinha.append(produto);
@@ -331,14 +335,78 @@ var cotaAusenteController = $.extend(true, {
 			tabMovimentos.append(novaLinha);
 		});
 	},
+	
+	selecionarTodos : function(value) {
+		
+		$('.checkgroup').attr('checked', value);		
+		cotaAusenteController.tratarSelecaoProduto();
+	},
+	
+	limparRateios : function() {
+				
+		$.each(cotaAusenteController.mov,function(index, movimento) {			
+			movimento.rateios = [];			
+	  	});
+		
+	},
+	
+	atualizarRateiosProdutos : function() {
+		
+		cotaAusenteController.limparRateios();
+		
+		var numCota = $('#idNumCotaDestino').val();
+		var nomeCota = $('#idNomeCotaDestino').val();
+				
+		if(!numCota || !nomeCota || numCota.length === 0 || nomeCota.length === 0) {
+			cotaAusenteController.limparRateios;
+			exibirMensagemDialog('WARNING', ['Nenhuma cota foi selecionada.']);
+			return false;
+		}
+		
+		cotaAusenteController.limparRateios();
+		
+		$("input[name='checkgroup']:checked ").each(function(){
+			 var indice = $(this).attr('indice');
+			 var movimento =  cotaAusenteController.mov[indice];
+			 
+			 movimento.rateios.push({"numCota":numCota, "nomeCota":nomeCota, "qtde":movimento.qtdeReparte});
+		});
+				
+		return true;		
+	},
 
-	gerarGridRateios : function(indice) {
+	tratarSelecaoProduto : function() {
 		
-		indiceAtual = indice;
-		
+		var qtdeSelecionada = $("input[name='checkgroup']:checked ").length;
+				
+		cotaAusenteController.limparRateios();
+				
+		if(qtdeSelecionada === 0) {
+			$('#idFieldRateioMultiproduto').hide();
+			$('#idFieldRateios').hide();
+		} else if(qtdeSelecionada === 1) {
+			
+			$('#idFieldRateioMultiproduto').hide();
+			$('#idFieldRateios').show();
+			
+			var indiceSelecionado = $("input[name='checkgroup']:checked").attr('indice');			
+			
+			cotaAusenteController.movAtual = cotaAusenteController.mov[indiceSelecionado];
+			
+			cotaAusenteController.gerarGridRateios(cotaAusenteController.movAtual);
+			
+		} else {
+			$('#idFieldRateioMultiproduto').show();
+			$('#idFieldRateios').hide();
+		}
+				
+	},
+	
+	gerarGridRateios : function(movimento) {
+			
 		$("#idFieldRateios", cotaAusenteController.workspace).attr("style","");
 
-		document.getElementById("idLegendRateios", cotaAusenteController.workspace).innerHTML= "Redistribuição - "+mov[indice].nomeProd;
+		document.getElementById("idLegendRateios", cotaAusenteController.workspace).innerHTML= "Redistribuição - "+movimento.nomeProd;
 		
 		var tabRateios = $("#idRateios", cotaAusenteController.workspace);	
 		var cabecalho = $("#idCabecalhoRateios", cotaAusenteController.workspace);
@@ -348,42 +416,41 @@ var cotaAusenteController = $.extend(true, {
 		
 		var proxIndice;
 		
-		if(mov[indice].rateios) {
-		
-			proxIndice = mov[indice].rateios.length;
+		if(movimento.rateios) {
+					
+			proxIndice = movimento.rateios.length;
 			
-			$.each(mov[indice].rateios, function(index, rateio) {
+			$.each(movimento.rateios, function(index, rateio) {
 				
 				cotaAusenteController.gerarLinhaNova(index,rateio.numCota,rateio.nomeCota,rateio.qtde);
 			});
 			
 		}  else {
-			mov[indice]["rateios"] = new Array();
+			movimento["rateios"] = new Array();
 			proxIndice = 0;
 		}	
 		
 		cotaAusenteController.gerarLinhaNova(proxIndice,"","","");
 		
-		var qtdeRateios = mov[indiceAtual].rateios.length;
+		var qtdeRateios = movimento.rateios.length;
 		document.getElementById('idNum'+ qtdeRateios).focus();
 	},
 		
 	gerarNovoRateio : function(indiceLinhaAlterada) {
-				
+		
 		var numCota = $("#idNum" + indiceLinhaAlterada, cotaAusenteController.workspace).attr("value");
 		var nomeCota = $("#idNom" + indiceLinhaAlterada, cotaAusenteController.workspace).attr("value");
 		var qtde = $("#idQtde" + indiceLinhaAlterada, cotaAusenteController.workspace).attr("value");
-		
-			
-		var totalRateado = 0 * 1;
-		$.each(mov[indiceAtual].rateios, function(index, rateio) {		
+					
+		var totalRateado = 0;
+		$.each(cotaAusenteController.movAtual.rateios, function(index, rateio) {		
 			totalRateado = totalRateado*1 + rateio.qtde*1;
 		});
 		
 		var soma = totalRateado*1 + qtde*1; 
 		
-		if( soma > mov[indiceAtual].qtdeReparte) {
-			exibirMensagemDialog("WARNING",["N&atildeo h&aacute reparte suficiente."]);	
+		if( soma > cotaAusenteController.movAtual.qtdeReparte) {
+			exibirMensagemDialog("WARNING",["Não há reparte suficiente."]);	
 			
 			alterarEvento(
 					"idQtde"+indiceLinhaAlterada,
@@ -395,11 +462,11 @@ var cotaAusenteController = $.extend(true, {
 		}
 		
 		
-		var qtdeRateios = mov[indiceAtual].rateios.length;
+		var qtdeRateios = cotaAusenteController.movAtual.rateios.length;
 		
 		if( indiceLinhaAlterada == (qtdeRateios) ) {
 			
-			mov[indiceAtual].rateios.push({"numCota":numCota, "nomeCota":nomeCota, "qtde":qtde});
+			cotaAusenteController.movAtual.rateios.push({"numCota":numCota, "nomeCota":nomeCota, "qtde":qtde});
 					
 			cotaAusenteController.gerarLinhaNova( (qtdeRateios + 1) ,"","","");
 					
@@ -410,7 +477,7 @@ var cotaAusenteController = $.extend(true, {
 			
 		} else {
 			
-			mov[indiceAtual].rateios[indiceLinhaAlterada] = {"numCota":numCota, "nomeCota":nomeCota, "qtde":qtde};
+			cotaAusenteController.movAtual.rateios[indiceLinhaAlterada] = {"numCota":numCota, "nomeCota":nomeCota, "qtde":qtde};
 			
 			cotaAusenteController.alterarEvento(
 					"idQtde"+indiceLinhaAlterada,
@@ -421,9 +488,9 @@ var cotaAusenteController = $.extend(true, {
 			
 		if($.trim(numCota) == "" || $.trim(nomeCota) == "" || $.trim(qtde) == "" || $.trim(qtde) == "0") {
 			
-			mov[indiceAtual].rateios.splice(indiceLinhaAlterada,indiceLinhaAlterada + 1);
+			cotaAusenteController.movAtual.rateios.splice(indiceLinhaAlterada,indiceLinhaAlterada + 1);
 			
-			cotaAusenteController.gerarGridRateios(indiceAtual);
+			cotaAusenteController.gerarGridRateios(cotaAusenteController.movAtual);
 			return;
 		}
 	},
@@ -649,12 +716,9 @@ var cotaAusenteController = $.extend(true, {
 		
 	popupRateio : function(movimentos) {
 		
-		mov = movimentos;
+		cotaAusenteController.mov = movimentos;
 			
 		cotaAusenteController.gerarMovimentos(movimentos);
-		
-		if(movimentos[0])
-			cotaAusenteController.gerarGridRateios(0);
 		
 		var parametros = [];
 		
@@ -681,6 +745,17 @@ var cotaAusenteController = $.extend(true, {
 							}, null);	
 				},
 				"Redistribuir": function() {
+					debugger;
+					var qtdeProdutoSeleciodo =  $("input[name='checkgroup']:checked ").length;
+					
+					if(qtdeProdutoSeleciodo === 0) {
+						exibirMensagemDialog("WARNING",["Nenhum produto foi selecionado."]);
+						return;
+					} else if(qtdeProdutoSeleciodo > 1) {
+						
+						if( !cotaAusenteController.atualizarRateiosProdutos() )
+							return;
+					}
 					
 					var parametros = cotaAusenteController.getParametrosFromMovimentos();
 					
@@ -702,7 +777,7 @@ var cotaAusenteController = $.extend(true, {
 		
 		var parametros = [];
 		
-		$.each(mov, function(index, movimento) {
+		$.each(cotaAusenteController.mov, function(index, movimento) {
 			
 			parametros.push({name:'movimentos['+ index +'].idCota', value: movimento.idCota});
 			parametros.push({name:'movimentos['+ index +'].idProdEd', value: movimento.idProdEd});
