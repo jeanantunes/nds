@@ -168,6 +168,15 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			throw new GerarCobrancaValidacaoException(
 					new ValidacaoException(TipoMensagem.WARNING, "O fechamento de encalhe deve ser concluído antes de gerar dívidas."));
 		}
+	
+		this.gerarCobrancaCota(idCota, idUsuario, setNossoNumero);
+	}	
+		
+	@Override
+	@Transactional(noRollbackFor = GerarCobrancaValidacaoException.class)
+	public void gerarCobrancaCota(Long idCota, Long idUsuario, Set<String> setNossoNumero) throws GerarCobrancaValidacaoException {
+		
+		Distribuidor distribuidor = this.distribuidorRepository.obter();
 		
 		//Caso esteja gerando cobrança para uma única cota
 		if (idCota != null){

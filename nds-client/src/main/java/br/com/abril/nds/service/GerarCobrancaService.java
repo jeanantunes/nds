@@ -9,6 +9,9 @@ public interface GerarCobrancaService {
 	void gerarCobranca(Long idCota, Long idUsuario, Set<String> setNossoNumero)
 		throws GerarCobrancaValidacaoException;
 	
+	void gerarCobrancaCota(Long idCota, Long idUsuario, Set<String> setNossoNumero)
+			throws GerarCobrancaValidacaoException;
+	
 	Boolean validarDividaGeradaDataOperacao();
 	
 	void cancelarDividaCobranca(Set<Long> idMovimentoFinanceiroCota);
