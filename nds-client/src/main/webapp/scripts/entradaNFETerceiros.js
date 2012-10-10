@@ -31,6 +31,7 @@ var entradaNFETerceirosController = $.extend(true, {
 					{ name: "nota.serie", value: $('#serieNotaCadastroNota', this.workspace).val() },
 					{ name: "nota.chaveAcesso", value: $('#chaveAcessoCadastroNota', this.workspace).val() },
 					{ name: "numeroCota", value: $('#cotaCadastroNota', this.workspace).val() },
+					{ name: "idControleConferenciaEncalheCota", value: $('#idControleConferenciaEncalheCota', this.workspace).val() }
 				],
 				function(result) {
 					alert(result);					
@@ -56,15 +57,18 @@ var entradaNFETerceirosController = $.extend(true, {
 	pesquisarEncalhe : function(){
 		$(".dadosFiltro", this.workspace).show();		
 		var status = $('#situacaoNfe', this.workspace).val();		
+
+		$("#btnRegistrarNFe").hide();
 		
 		if(status != ''){
-			if(status == 'RECEBIDA'){			
+			if(status == 'RECEBIDA'){
+				$("#btnRegistrarNFe").show();
 				this.pesquisarNotaRecebidas();		
 			}else{			
 				this.pesquisarNotasPendente();
 			}
 		}else{
-			exibirMensagem("WARNING", "[Escolha o status da nota]");
+			exibirMensagem("WARNING", ["Escolha o status da nota"]);
 			
 		}
 		
@@ -98,27 +102,6 @@ var entradaNFETerceirosController = $.extend(true, {
 		$(".nfes", this.workspace).show();
 	},
 	
-	checkAll : function (check) {
-		
-		$(".checkNota").each(function(index, element) {
-			element.checked = check.checked;
-		});
-		entradaNFETerceirosController.verificarCheck();
-	},
-	
-	verificarCheck : function() {
-		
-		var todosChecados = true;
-
-		$(".checkNota", this.workspace).each(function(index, element) {	
-			if (!element.checked) {
-				todosChecados = false;
-			}
-		});
-		
-		$("#checkAll").get(0).checked = todosChecados;
-	},
-
 	executarPreProcessamento : function(resultado) {
 			
 		if (resultado.mensagens) {
@@ -147,6 +130,8 @@ var entradaNFETerceirosController = $.extend(true, {
 			
 			$.each(resultado.rows, function(index, row) {					
 				
+				$("#idControleConferenciaEncalheCota").val(row.cell.idControleConferenciaEncalheCota);
+				
 				var linkLancamento = '<a href="javascript:;"  onclick="entradaNFETerceirosController.popup_nfe(\''+row.cell.numeroCota+'\',\''+row.cell.nome+'\');" style="cursor:pointer">' +
 								   	 '<img title="Lançamentos da Edição" src="' + contextPath + '/images/bt_lancamento.png" hspace="5" border="0px" />' +
 								   '</a>';
@@ -158,16 +143,38 @@ var entradaNFETerceirosController = $.extend(true, {
 					   																		+row.cell.idNotaFiscalEntrada+');" style="cursor:pointer">' +
 							   	 '<img title="Lançamentos da Edição" src="' + contextPath + '/images/bt_cadastros.png" hspace="5" border="0px" />' +
 		                         '</a>';
-               var checkBox = '<input type="checkbox" class="checkNota" name="checkNota" onclick="entradaNFETerceirosController.verificarCheck()" />';
-				
-				row.cell.acao = linkLancamento + linkCadastro;
-				row.cell.sel = checkBox;
+
+			   row.cell.acao = linkLancamento + linkCadastro;
 			});
 		
 		}
 		
 		$(".grids", this.workspace).show();
 		
+		return resultado;
+	},
+
+	executarPreProcessamentoProdutosNotaFiscal: function(resultado) {
+		
+		if (resultado.mensagens) {
+
+			exibirMensagem(
+				resultado.mensagens.tipoMensagem, 
+				resultado.mensagens.listaMensagens
+			);
+
+			return resultado;
+		}
+
+		$.each(resultado.rows, function(index, row) {
+
+			var inputQtdeInfo  = "<input type='text' name='inputQtdeInfo' style='text-align:center' size='5' value='" + row.cell.qtdInformada + "' />";
+			var inputPrecoCapa = "<input type='text' name='inputPrecoCapa' style='text-align:right' size='10' value='" + row.cell.precoCapaFormatado + "' />";
+
+			row.cell.qtdInformada = inputQtdeInfo;
+			row.cell.precoCapaFormatado = inputPrecoCapa;
+		});
+
 		return resultado;
 	},
 	
@@ -278,8 +285,11 @@ var entradaNFETerceirosController = $.extend(true, {
 		$('#serieNotaFiscalPopUp', this.workspace).text(serie);
 		$('#valorNotaFiscalPopUp', this.workspace).text(valorNota);
 		
+		var params = $("#form-pesquisa-nfe").serializeArray();
+		
 		$(".pesquisarProdutosNotaGrid", entradaNFETerceirosController.workspace).flexOptions({
 			url: contextPath + "/nfe/entradaNFETerceiros/pesquisarItensPorNota",
+			params: params,
 			dataType : 'json'
 		});
 
@@ -301,8 +311,6 @@ var entradaNFETerceirosController = $.extend(true, {
 				}
 			},
 			form: $("#dialog-dadosNotaFiscal", this.workspace).parents("form")
-		
-		
 		});	
 		      
 	},
@@ -335,9 +343,11 @@ var entradaNFETerceirosController = $.extend(true, {
 		
 		if(numeroCota != '0'){
 			$('#cotaCadastroNota', this.workspace).val(numeroCota);
+			$('#cotaCadastroNota', this.workspace).attr('readonly', true);
 			$('#nomeCotaCadastroNota', this.workspace).val(nome);			
 		}else{
 			$('#cotaCadastroNota', this.workspace).val('');
+			$('#cotaCadastroNota', this.workspace).attr('readonly', false);
 			$('#nomeCotaCadastroNota', this.workspace).val('');
 		}
 		$('#nomeCotaCadastroNota', this.workspace).attr('readonly', true);
@@ -349,7 +359,7 @@ var entradaNFETerceirosController = $.extend(true, {
 			modal: true,
 			buttons: {
 				"Confirmar": function() {
-					this.cadastrarNota();
+					entradaNFETerceirosController.cadastrarNota();
 					$( this ).dialog( "close" );					
 				},
 				"Cancelar": function() {
@@ -416,12 +426,6 @@ var entradaNFETerceirosController = $.extend(true, {
 					display : 'Ação',
 					name : 'acao',
 					width : 50,
-					sortable : true,
-					align : 'center'
-				}, {
-					display : ' ',
-					name : 'sel',
-					width : 20,
 					sortable : true,
 					align : 'center'
 				}],
@@ -501,8 +505,8 @@ var entradaNFETerceirosController = $.extend(true, {
 	},
 	
 	initPesqProdutosNotaGrid : function() {
-		$(".pesqProdutosNotaGrid", this.workspace).flexigrid({
-			preProcess: this.executarPreProcessamento,
+		$(".pesquisarProdutosNotaGrid", this.workspace).flexigrid({
+			preProcess: this.executarPreProcessamentoProdutosNotaFiscal,
 			dataType : 'json',
 				colModel : [ {
 					display : 'Código',
@@ -545,7 +549,7 @@ var entradaNFETerceirosController = $.extend(true, {
 					name : 'precoCapaFormatado',
 					width : 80,
 					sortable : true,
-					align : 'right'
+					align : 'center'
 				}, {
 					display : 'Preço Desc R$',
 					name : 'precoDescontoFormatado',
@@ -559,6 +563,8 @@ var entradaNFETerceirosController = $.extend(true, {
 					sortable : true,
 					align : 'right'
 				}],
+				sortname : "codigoProduto",
+				sortorder : "asc",
 				width : 810,
 				height : 250
 			});

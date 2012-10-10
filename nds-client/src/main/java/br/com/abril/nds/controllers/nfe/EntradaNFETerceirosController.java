@@ -297,7 +297,7 @@ public class EntradaNFETerceirosController {
 
 	@Post
 	@Path("/cadastrarNota")
-	public void cadastrarNota(NotaFiscalEntradaCota nota, Integer numeroCota){
+	public void cadastrarNota(NotaFiscalEntradaCota nota, Integer numeroCota, Long idControleConferenciaEncalheCota){
 		Cota cota = this.cotaService.obterPorNumeroDaCota(numeroCota);
 		CFOP cfop  = this.cfopService.buscarPorId(1l);
 		PessoaJuridica pj = this.pessoaJuridicaService.buscarPorId(1L);
