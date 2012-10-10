@@ -27,11 +27,13 @@ public class ConsultaFollowupNegociacaoDTO implements Serializable {
     private String descricaoFormaPagamento;    
 	@Export(label = "Data Vencto", alignment=Alignment.CENTER, exhibitionOrder = 6)
    	private Date dataVencimento;   	
+	
+	private Long idNegociacao;
 
    	public ConsultaFollowupNegociacaoDTO() {   		
    	}
 
-   	public ConsultaFollowupNegociacaoDTO(Long numeroCota, String nomeJornaleiro, String descricaoNegociacao,    
+   	public ConsultaFollowupNegociacaoDTO(Long idNegociacao, Long numeroCota, String nomeJornaleiro, String descricaoNegociacao,    
    	    String descricaoParcelamento, String descricaoFormaPagamento, Date dataVencimento ) {   	
    	    this.numeroCota = numeroCota;    
    	    this.nomeJornaleiro = nomeJornaleiro;	
@@ -39,6 +41,7 @@ public class ConsultaFollowupNegociacaoDTO implements Serializable {
    	    this.descricaoParcelamento = descricaoParcelamento; 
    	    this.descricaoFormaPagamento = descricaoFormaPagamento; 
    	    this.dataVencimento = dataVencimento; 
+   	    this.idNegociacao = idNegociacao;
    	}
    	
 	public Long getNumeroCota() {
@@ -87,6 +90,14 @@ public class ConsultaFollowupNegociacaoDTO implements Serializable {
 
 	public void setDataVencimento(Date dataVencimento) {
 		this.dataVencimento = dataVencimento;
+	}
+
+	public Long getIdNegociacao() {
+		return idNegociacao;
+	}
+
+	public void setIdNegociacao(Long idNegociacao) {
+		this.idNegociacao = idNegociacao;
 	}
 
 }
