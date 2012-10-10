@@ -376,7 +376,7 @@ var cotaAusenteController = $.extend(true, {
 	},
 
 	tratarSelecaoProduto : function() {
-		
+				
 		var qtdeSelecionada = $("input[name='checkgroup']:checked ").length;
 				
 		cotaAusenteController.limparRateios();
@@ -394,6 +394,8 @@ var cotaAusenteController = $.extend(true, {
 			cotaAusenteController.movAtual = cotaAusenteController.mov[indiceSelecionado];
 			
 			cotaAusenteController.gerarGridRateios(cotaAusenteController.movAtual);
+			
+			cotaAusenteController.atualizarTotal();
 			
 		} else {
 			$('#idFieldRateioMultiproduto').show();
@@ -491,8 +493,9 @@ var cotaAusenteController = $.extend(true, {
 			cotaAusenteController.movAtual.rateios.splice(indiceLinhaAlterada,indiceLinhaAlterada + 1);
 			
 			cotaAusenteController.gerarGridRateios(cotaAusenteController.movAtual);
-			return;
 		}
+		
+		cotaAusenteController.atualizarTotal();
 	},
 
 	alterarEvento : function(idFocoAtual, idNovoFoco, evento) {
@@ -536,12 +539,16 @@ var cotaAusenteController = $.extend(true, {
 				null,
 				"pesquisaCotaCotaAusente.autoCompletarPorNome('#idNom"+indice+"')"));
 		
-		qtde.append(cotaAusenteController.getInput(
+		var inputQtde = cotaAusenteController.getInput(
 				qtd,
 				"idQtde"+indice ,
 				"60px",
 				"center",
-				"cotaAusenteController.gerarNovoRateio("+indice+");"));
+				"cotaAusenteController.gerarNovoRateio("+indice+");");
+		
+		inputQtde.className="numSoma";
+		
+		qtde.append(inputQtde);
 		
 		novaLinha.append(numCota);
 		novaLinha.append(nomeCota);
@@ -553,6 +560,13 @@ var cotaAusenteController = $.extend(true, {
 		$("#idNum"+indice, cotaAusenteController.workspace).numeric();
 		$("#idQtde"+indice, cotaAusenteController.workspace).numeric();
 		$("#idNom"+indice, cotaAusenteController.workspace).autocomplete({source: ""});
+	},
+	
+	atualizarTotal : function() {
+		
+		var qtdeTotal = $(".numSoma").sum();
+		
+		$('#qtdeTotal').text(qtdeTotal);
 	},
 	
 	deletarInputVazio : function(elemento) {
