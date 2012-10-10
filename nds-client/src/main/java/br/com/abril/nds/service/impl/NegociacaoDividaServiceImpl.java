@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -101,10 +102,9 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService{
 
 	@Override
 	@Transactional
-	public byte[] criarNegociacao(Integer numeroCota, List<ParcelaNegociacao> parcelas, BigDecimal valorDividaParaComissao, 
+	public Long criarNegociacao(Integer numeroCota, List<ParcelaNegociacao> parcelas, BigDecimal valorDividaParaComissao, 
 			List<Long> idsCobrancasOriginarias, Usuario usuarioResponsavel, boolean negociacaoAvulsa, Integer ativarCotaAposParcela,
-			BigDecimal comissaoParaSaldoDivida, boolean isentaEncargos, FormaCobranca formaCobranca,
-			boolean gerarBoleto) {
+			BigDecimal comissaoParaSaldoDivida, boolean isentaEncargos, FormaCobranca formaCobranca) {
 		
 		//lista para mensagens de validação
 		List<String> msgs = new ArrayList<String>();
@@ -157,8 +157,6 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService{
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, msgs);
 		}
-		
-		String nossoNumeroPrimieroBoleto = null;
 		
 		//caso a negociacão seja feita em parcelas
 		if (parcelas != null){
@@ -259,11 +257,6 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService{
 					
 					this.dividaRepository.adicionar(divida);
 					this.cobrancaRepository.adicionar(cobranca);
-					
-					if (nossoNumeroPrimieroBoleto == null){
-						
-						nossoNumeroPrimieroBoleto = cobranca.getNossoNumero();
-					}
 				}
 			}
 			
@@ -281,15 +274,7 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService{
 		negociacao.setParcelas(parcelas);
 		negociacao.setValorDividaPagaComissao(valorDividaParaComissao);
 		
-		this.negociacaoDividaRepository.adicionar(negociacao);
-		
-		if (gerarBoleto && nossoNumeroPrimieroBoleto != null){
-			
-			return this.documentoCobrancaService.gerarDocumentoCobranca(nossoNumeroPrimieroBoleto);
-		} else {
-			
-			return null;
-		}
+		return this.negociacaoDividaRepository.adicionar(negociacao);
 	}
 
 	private void validarDadosEntrada(List<String> msgs, Date dataAtual,
@@ -368,5 +353,42 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService{
 				}
 			}
 		}
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public Negociacao obterNegociacaoPorId(Long idNegociacao) {
+		
+		Negociacao negociacao = this.negociacaoDividaRepository.buscarPorId(idNegociacao);
+		
+		Hibernate.initialize(negociacao.getParcelas());
+		Hibernate.initialize(negociacao.getCobrancasOriginarias());
+		
+		return negociacao;
+	}
+
+	@Override
+	@Transactional
+	public List<byte[]> gerarBoletosNegociacao(Long idNegociacao) {
+		
+		List<byte[]> boletos = new ArrayList<byte[]>();
+		
+		Negociacao negociacao = this.negociacaoDividaRepository.buscarPorId(idNegociacao);
+		
+		if (negociacao != null){
+			
+			if (negociacao.isNegociacaoAvulsa()){
+				
+				for (ParcelaNegociacao parcelaNegociacao : negociacao.getParcelas()){
+					
+					String nossoNumero = this.cobrancaRepository.obterNossoNumeroPorMovimentoFinanceiroCota(
+							parcelaNegociacao.getMovimentoFinanceiroCota().getId());
+					
+					boletos.add(this.documentoCobrancaService.gerarDocumentoCobranca(nossoNumero));
+				}
+			}
+		}
+		
+		return boletos;
 	}
 }

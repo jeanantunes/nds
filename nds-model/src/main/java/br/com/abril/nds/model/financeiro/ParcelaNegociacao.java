@@ -1,5 +1,6 @@
 package br.com.abril.nds.model.financeiro;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -30,6 +31,9 @@ public class ParcelaNegociacao {
 	
 	@Column(name = "DATA_VENCIMENTO")
 	private Date dataVencimento;
+	
+	@Column(name = "ENCARGOS")
+	private BigDecimal encargos;
 
 	public Long getId() {
 		return id;
@@ -62,5 +66,13 @@ public class ParcelaNegociacao {
 
 	public void setDataVencimento(Date dataVencimento) {
 		this.dataVencimento = dataVencimento;
+	}
+
+	public BigDecimal getEncargos() {
+		return encargos;
+	}
+
+	public void setEncargos(BigDecimal encargos) {
+		this.encargos = encargos;
 	}
 }

@@ -138,4 +138,5 @@ public interface CobrancaService {
 	 * @return
 	 */
 	BigDecimal obterSaldoDivida(Long idCobranca);
+	
 }
