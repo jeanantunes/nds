@@ -50,7 +50,7 @@ var fechamentoEncalheController = $.extend(true, {
 				sortable : true,
 				align : 'left'
 			}, {
-				display : 'A&ccedil;ao?',
+				display : 'A&ccedil;ao',
 				name : 'acao',
 				width : 110,
 				sortable : true,

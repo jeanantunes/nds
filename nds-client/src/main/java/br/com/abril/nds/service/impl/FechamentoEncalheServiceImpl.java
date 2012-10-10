@@ -16,6 +16,7 @@ import br.com.abril.nds.dto.CotaAusenteEncalheDTO;
 import br.com.abril.nds.dto.FechamentoFisicoLogicoDTO;
 import br.com.abril.nds.dto.MovimentoFinanceiroCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroFechamentoEncalheDTO;
+import br.com.abril.nds.exception.GerarCobrancaValidacaoException;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.TipoEdicao;
@@ -327,9 +328,9 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 			
 		} catch (ValidacaoException e) {
 			throw new ValidacaoException(e.getValidacao());
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		} catch (GerarCobrancaValidacaoException e) {
+			throw e.getValidacaoException();
+		} 
 	}
 
 	@Override
