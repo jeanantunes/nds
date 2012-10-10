@@ -9,6 +9,7 @@ import java.util.Scanner;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.exception.ImportacaoException;
 import br.com.abril.nds.service.vo.RetornoImportacaoArquivoVO;
@@ -34,7 +35,7 @@ public abstract class ImportacaoAbstractStrategy {
 	 * Efetua o processamento do dados referente ao arquivo
 	 *
 	 * @param input -input de dados referente a leitura da linha do arquivo
-	 */
+	 */	
 	protected abstract void processarDados(Object input);
 
 	/**
