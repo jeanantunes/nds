@@ -362,36 +362,6 @@ public class EntradaNFETerceirosController {
 			/*if(listaNotasRecebidas.isEmpty()) {
 				throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");
 			}*/
-			ConsultaEntradaNFETerceirosPendentesDTO nota1 = new ConsultaEntradaNFETerceirosPendentesDTO();
-			nota1.setChaveAcesso("1234");
-			nota1.setDataEncalhe(new Date());
-			nota1.setDiferenca(new BigDecimal(444));
-			nota1.setIdNotaFiscalEntrada(new Long(15));
-			nota1.setNome("Victor Montanher");
-			nota1.setNumeroCota(new Integer(1234));
-			nota1.setNumeroNfe(new Long(778899));
-			nota1.setSerie("4356");
-			nota1.setStatus("APROVADO");
-			nota1.setTipoNotaFiscal(TipoOperacao.ENTRADA);
-			nota1.setValorNota(new BigDecimal(999));
-			nota1.setValorReal(new BigDecimal(999));
-			
-			ConsultaEntradaNFETerceirosPendentesDTO nota2 = new ConsultaEntradaNFETerceirosPendentesDTO();
-			nota2.setChaveAcesso("9876");
-			nota2.setDataEncalhe(new Date());
-			nota2.setDiferenca(new BigDecimal(444));
-			nota2.setIdNotaFiscalEntrada(new Long(15));
-			nota2.setNome("Victor Henrique Montanher");
-			nota2.setNumeroCota(new Integer(1234));
-			nota2.setNumeroNfe(new Long(778899));
-			nota2.setSerie("4356");
-			nota2.setStatus("APROVADO");
-			nota2.setTipoNotaFiscal(TipoOperacao.ENTRADA);
-			nota2.setValorNota(new BigDecimal(999));
-			nota2.setValorReal(new BigDecimal(999));
-			
-			listaNotasPendentes.add(nota1);
-			listaNotasPendentes.add(nota2);
 			
 			FileExporter.to("consulta_notas_pendentes", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, null, 
 					listaNotasPendentes, ConsultaEntradaNFETerceirosPendentesDTO.class, this.httpResponse);
