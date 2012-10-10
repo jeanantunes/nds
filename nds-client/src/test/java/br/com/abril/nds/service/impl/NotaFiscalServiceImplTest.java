@@ -52,6 +52,7 @@ import br.com.abril.nds.model.fiscal.CFOP;
 import br.com.abril.nds.model.fiscal.NCM;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
+import br.com.abril.nds.model.fiscal.nota.Condicao;
 import br.com.abril.nds.model.fiscal.nota.EncargoFinanceiroProduto;
 import br.com.abril.nds.model.fiscal.nota.ICMS;
 import br.com.abril.nds.model.fiscal.nota.Identificacao;
@@ -63,6 +64,7 @@ import br.com.abril.nds.model.fiscal.nota.InformacaoTransporte;
 import br.com.abril.nds.model.fiscal.nota.InformacaoValoresTotais;
 import br.com.abril.nds.model.fiscal.nota.ItemNotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
+import br.com.abril.nds.model.fiscal.nota.NotaFiscalReferenciada;
 import br.com.abril.nds.model.fiscal.nota.Origem;
 import br.com.abril.nds.model.fiscal.nota.ProdutoServico;
 import br.com.abril.nds.model.fiscal.nota.RetornoComunicacaoEletronica;
@@ -100,6 +102,8 @@ public class NotaFiscalServiceImplTest extends AbstractRepositoryImplTest {
 	private ProdutoEdicao produtoEdicaoComDesconto;
 
 	private TipoNotaFiscal tipoNotaFiscalDevolucao;
+
+	private Fornecedor dinap;
 
 	@Before
 	public void setup() {
@@ -238,7 +242,7 @@ public class NotaFiscalServiceImplTest extends AbstractRepositoryImplTest {
 				.tipoFornecedorPublicacao();
 		save(tipoFornecedorPublicacao);
 
-		Fornecedor dinap = Fixture.fornecedorDinap(tipoFornecedorPublicacao);
+		dinap = Fixture.fornecedorDinap(tipoFornecedorPublicacao);
 		save(dinap);
 
 		NCM ncmRevistas = Fixture.ncm(49029000l, "REVISTAS", "KG");
@@ -472,7 +476,29 @@ public class NotaFiscalServiceImplTest extends AbstractRepositoryImplTest {
 		Set<Processo> processos = new HashSet<Processo>();
 		processos.add(Processo.GERACAO_NF_E);
 
-		notaFiscalService.emitiNotaFiscal(tipoNotaFiscalDevolucao.getId(), new Date(), cotaManoel.getId(), listItemNotaFiscal, informacaoTransporte, informacaoAdicional, null, processos);
+		notaFiscalService.emitiNotaFiscal(tipoNotaFiscalDevolucao.getId(), new Date(), cotaManoel, listItemNotaFiscal, informacaoTransporte, informacaoAdicional, null, processos);
+	}
+	
+	
+	@Test
+	public void emitiNotaFiscalFornecedor(){
+		List<ItemNotaFiscal> listItemNotaFiscal = new ArrayList<ItemNotaFiscal>();
+		
+		
+		listItemNotaFiscal.add(new ItemNotaFiscal(produtoEdicaoComDesconto.getId(), BigInteger.TEN, BigDecimal.TEN, "091"));
+		
+		Endereco enderecoTransporte = Fixture.criarEndereco(
+				TipoEndereco.COMERCIAL, "10500250", "Rua Nova", "1000",
+				"Bairro Novo", "Olimpia", "SP",1);
+		save(enderecoTransporte);
+		InformacaoTransporte informacaoTransporte = Fixture
+				.informacaoTransporte("88416646000103", enderecoTransporte,
+						"IEstd", 132, "municipio", "nome", null, "SP", null);
+		InformacaoAdicional informacaoAdicional = new InformacaoAdicional();
+
+		Set<Processo> processos = new HashSet<Processo>();
+		processos.add(Processo.GERACAO_NF_E);
+		notaFiscalService.emitiNotaFiscal(tipoNotaFiscalDevolucao.getId(), new Date(), dinap, listItemNotaFiscal, informacaoTransporte, informacaoAdicional, null, processos, Condicao.DEVOLUCAO_ENCALHE);
 	}
 	
 	@Test
