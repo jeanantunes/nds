@@ -25,4 +25,10 @@ public class BairroRepositoryImpl extends AbstractRepositoryModel<Bairro, Long> 
 		
 		return query.list();
 	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Bairro> pesquisarTodosBairros() {
+		return this.getSession().createQuery("select l from Bairro l").list();
+	}
 }

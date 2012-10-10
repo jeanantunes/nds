@@ -16,6 +16,7 @@ import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDetalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroDigitacaoContagemDevolucaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroMapaAbastecimentoDTO;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.FormaComercializacao;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.OperacaoEstoque;
@@ -32,9 +33,13 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 	 * 
 	 * @param idControleConferenciaEncalheCota
 	 * 
+	 * @param formaComercializacao
+	 * 
+	 * @param consideraFormaComercializacaoNula
+	 * 
 	 * @return List - MovimentoEstoqueCota
 	 */
-	public List<MovimentoEstoqueCota> obterListaMovimentoEstoqueCotaParaOperacaoConferenciaEncalhe(Long idControleConferenciaEncalheCota);
+	public List<MovimentoEstoqueCota> obterListaMovimentoEstoqueCotaParaOperacaoConferenciaEncalhe(Long idControleConferenciaEncalheCota, FormaComercializacao formaComercializacao, boolean consideraFormaComercializacaoNula);
 	
 	/**
 	 * Obtém a quantidade de tipos de produtoEdicao da consulta de encalhe.
@@ -147,6 +152,26 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 	 * @return BigInteger
 	 */
 	public BigInteger obterQtdeMovimentoEstoqueCotaParaProdutoEdicaoNoPeriodo(
+			Long idCota,
+			Long idProdutoEdicao,
+			Date dataInicial, 
+			Date dataFinal,
+			OperacaoEstoque operacaoEstoque);
+	
+	/**
+	 * 
+	 * Obtém a o valor total referente ao movimento para determinados produtoEdicao e cota de
+	 * acordo com o range de data informado.
+	 * 
+	 * @param idCota
+	 * @param idProdutoEdicao
+	 * @param dataInicial
+	 * @param dataFinal
+	 * @param operacaoEstoque
+	 * 
+	 * @return BigInteger
+	 */
+	public BigDecimal obterValorTotalMovimentoEstoqueCotaParaProdutoEdicaoNoPeriodo(
 			Long idCota,
 			Long idProdutoEdicao,
 			Date dataInicial, 

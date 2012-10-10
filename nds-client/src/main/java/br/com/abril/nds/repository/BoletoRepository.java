@@ -183,4 +183,13 @@ public interface BoletoRepository extends Repository<Boleto,Long> {
 	 */
 	List<DetalheBaixaBoletoDTO> obterTotalBancario(FiltroDetalheBaixaBoletoDTO filtro);
 	
+	/**
+	 * Obtém os boletos que foram gerados na data de operação do distribuidor.
+	 * 
+	 * @param dataOperacao - data de operação do distribuidor
+	 * 
+	 * @return List<Boleto>
+	 */
+	List<Boleto> obterBoletosGeradosNaDataOperacaoDistribuidor(Date dataOperacao);
+	
 }

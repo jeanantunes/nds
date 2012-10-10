@@ -359,7 +359,10 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 					gerarArquivoSlipVenda(TipoVendaEncalhe.SUPLEMENTAR,
 										  obterDadosSlipVenda(vendasEfetivadasSuplementar.toArray(new VendaProduto[] {})));
 			
-			relatorio = PDFUtil.mergePDFs(relatorioSuplementar,relatorioEncalhe);
+			List<byte[]> arquivos = new ArrayList<byte[]>();
+			arquivos.add(relatorioSuplementar);
+			arquivos.add(relatorioEncalhe);
+			relatorio = PDFUtil.mergePDFs(arquivos);
 		}
 		else{
 			

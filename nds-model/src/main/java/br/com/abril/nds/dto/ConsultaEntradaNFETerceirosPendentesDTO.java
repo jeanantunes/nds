@@ -44,7 +44,7 @@ public class ConsultaEntradaNFETerceirosPendentesDTO implements Serializable {
 	
 	private String chaveAcesso;
 	
-	private Long idNotaFiscalEntrada;
+	private Long idControleConferenciaEncalheCota;
 	
 	private String valorNotaFormatado;
 	private String valorRealFormatado;
@@ -155,14 +155,6 @@ public class ConsultaEntradaNFETerceirosPendentesDTO implements Serializable {
 		this.status = status;
 	}
 
-	public Long getIdNotaFiscalEntrada() {
-		return idNotaFiscalEntrada;
-	}
-
-	public void setIdNotaFiscalEntrada(Long idNotaFiscalEntrada) {
-		this.idNotaFiscalEntrada = idNotaFiscalEntrada;
-	}
-
 	/**
 	 * @return the tipoNotaFiscal
 	 */
@@ -175,6 +167,21 @@ public class ConsultaEntradaNFETerceirosPendentesDTO implements Serializable {
 	 */
 	public void setTipoNotaFiscal(TipoOperacao tipoNotaFiscal) {
 		this.tipoNotaFiscal = tipoNotaFiscal;
+	}
+
+	/**
+	 * @return the idControleConferenciaEncalheCota
+	 */
+	public Long getIdControleConferenciaEncalheCota() {
+		return idControleConferenciaEncalheCota;
+	}
+
+	/**
+	 * @param idControleConferenciaEncalheCota the idControleConferenciaEncalheCota to set
+	 */
+	public void setIdControleConferenciaEncalheCota(
+			Long idControleConferenciaEncalheCota) {
+		this.idControleConferenciaEncalheCota = idControleConferenciaEncalheCota;
 	}
 	
 }

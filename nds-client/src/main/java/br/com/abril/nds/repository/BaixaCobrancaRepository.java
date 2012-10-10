@@ -30,4 +30,5 @@ public interface BaixaCobrancaRepository extends Repository<BaixaCobranca,Long> 
 	
 	public List<CobrancaVO> buscarCobrancasBaixadas(Integer numCota, String nossoNumero);
 	
+	public BaixaCobranca obterUltimaBaixaCobranca(Long idCobranca);
 }

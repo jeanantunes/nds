@@ -22,8 +22,8 @@ import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfWriter;
 
 public class PDFUtil {
-
-	public static byte[] mergePDFs(byte[]... arquivos) {
+	
+	public static byte[] mergePDFs(List<byte[]> arquivos) {
 
 		try {
 			List<InputStream> pdfs = new ArrayList<InputStream>();
