@@ -1,6 +1,6 @@
 var relatorioTiposProdutosController = $.extend(true, {
 	
-	path : contextPath + '/lancamento/relatorioTiposProdutos',
+	path : contextPath + '/lancamento/relatorioTiposProdutos/',
 
 
 	init : function() {
@@ -34,15 +34,22 @@ var relatorioTiposProdutosController = $.extend(true, {
 	
 	
 	pesquisar : function() {
-		
+
 		var params = $("#relatorioTiposProdutosForm", this.workspace).serialize();
 		
 		$(".tiposProdutosGrid", this.workspace).flexOptions({
 			url : this.path + 'pesquisar.json?' + params, 
-			newp : 1
-		});
+			newp : 1,
+			preProcess: relatorioTiposProdutosController.processarRetornoPesquisa
+		}); 
 		
 		$(".tiposProdutosGrid", this.workspace).flexReload();
+	},
+	
+	processarRetornoPesquisa : function(result) {
+		$(".grids", relatorioTiposProdutosController.workspace).show();
+
+		return result;
 	},
 	
 	
