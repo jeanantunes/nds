@@ -1033,7 +1033,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 					controleConferenciaEncalheCota.getCota().getId(), 
 					controleConferenciaEncalheCota.getUsuario().getId(), 
 					nossoNumeroCollection);
-		} catch (GerarCobrancaValidacaoException e) {
+		} catch (Exception e) {
 			
 			// TODO Auto-generated catch block
 			e.printStackTrace();
