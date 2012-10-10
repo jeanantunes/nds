@@ -210,7 +210,7 @@ public class EntradaNFETerceirosController {
 		nota1.setChaveAcesso("1234");
 		nota1.setDataEncalhe(new Date());
 		nota1.setDiferenca(new BigDecimal(444));
-		nota1.setIdNotaFiscalEntrada(new Long(15));
+//		nota1.setIdNotaFiscalEntrada(new Long(15));
 		nota1.setNome("Victor Montanher");
 		nota1.setNumeroCota(new Integer(1234));
 		nota1.setNumeroNfe(new Long(778899));
@@ -224,7 +224,7 @@ public class EntradaNFETerceirosController {
 		nota2.setChaveAcesso("9876");
 		nota2.setDataEncalhe(new Date());
 		nota2.setDiferenca(new BigDecimal(444));
-		nota2.setIdNotaFiscalEntrada(new Long(15));
+//		nota2.setIdNotaFiscalEntrada(new Long(15));
 		nota2.setNome("Victor Henrique Montanher");
 		nota2.setNumeroCota(new Integer(1234));
 		nota2.setNumeroNfe(new Long(778899));
