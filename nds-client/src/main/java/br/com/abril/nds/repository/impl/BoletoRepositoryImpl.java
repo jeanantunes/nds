@@ -661,4 +661,13 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 		query.setResultTransformer(new AliasToBeanResultTransformer(DetalheBaixaBoletoDTO.class));
 	}
 	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Boleto> obterBoletosGeradosNaDataOperacaoDistribuidor(Date dataOperacao) {
+		
+		Criteria criteria = this.getSession().createCriteria(Boleto.class);
+		criteria.add(Restrictions.eq("dataEmissao", dataOperacao));
+	
+		return criteria.list();
+	}
 }

@@ -38,7 +38,7 @@ var relatorioTiposProdutosController = $.extend(true, {
 		var params = $("#relatorioTiposProdutosForm", this.workspace).serialize();
 		
 		$(".tiposProdutosGrid", this.workspace).flexOptions({
-			url : this.path + 'pesquisar.json?' + params, 
+			url : this.path + '/pesquisar.json?' + params, 
 			newp : 1
 		});
 		
@@ -112,3 +112,5 @@ var relatorioTiposProdutosController = $.extend(true, {
 	
 	
 }, BaseController);
+
+//@ sourceURL=relatorioTiposProdutos.js
