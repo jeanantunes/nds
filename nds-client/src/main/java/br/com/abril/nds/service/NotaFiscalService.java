@@ -13,6 +13,7 @@ import br.com.abril.nds.dto.RetornoNFEDTO;
 import br.com.abril.nds.dto.filtro.FiltroImpressaoNFEDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.Processo;
 import br.com.abril.nds.model.envio.nota.NotaEnvio;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
@@ -93,9 +94,8 @@ public interface NotaFiscalService {
 	 */
 	void exportarNotasFiscais(List<NotaFiscal> notasFiscaisParaExportacao) throws FileNotFoundException, IOException; 
 	
-	@Deprecated
 	public Long emitiNotaFiscal(long idTipoNotaFiscal, Date dataEmissao,
-			Long idCota, List<ItemNotaFiscal> listItemNotaFiscal,
+			Cota cota, List<ItemNotaFiscal> listItemNotaFiscal,
 			InformacaoTransporte transporte,
 			InformacaoAdicional informacaoAdicional,
 			List<NotaFiscalReferenciada> listNotaFiscalReferenciada, 
@@ -155,7 +155,13 @@ public interface NotaFiscalService {
 	byte[] imprimirNotasEnvio(List<NotaEnvio> notasEnvio);
 
 	public abstract Long emitiNotaFiscal(long idTipoNotaFiscal, Date dataEmissao,
-			Long idCota, List<ItemNotaFiscal> listItemNotaFiscal, InformacaoTransporte transporte, InformacaoAdicional informacaoAdicional, List<NotaFiscalReferenciada> listNotaFiscalReferenciada,
+			Cota cota, List<ItemNotaFiscal> listItemNotaFiscal, InformacaoTransporte transporte, InformacaoAdicional informacaoAdicional, List<NotaFiscalReferenciada> listNotaFiscalReferenciada,
 			Set<Processo> processos, Condicao condicao);
+
+	public abstract Long emitiNotaFiscal(long idTipoNotaFiscal, Date dataEmissao,
+			Fornecedor fornecedor, List<ItemNotaFiscal> listItemNotaFiscal, InformacaoTransporte transporte, InformacaoAdicional informacaoAdicional, List<NotaFiscalReferenciada> listNotaFiscalReferenciada,
+			Set<Processo> processos, Condicao condicao);
+
+
 		
 }
