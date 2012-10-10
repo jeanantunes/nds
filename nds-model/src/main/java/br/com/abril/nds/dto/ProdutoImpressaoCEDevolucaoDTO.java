@@ -37,8 +37,6 @@ public class ProdutoImpressaoCEDevolucaoDTO implements Serializable {
     
     private BigInteger devolucao;
     
-    private BigInteger venda;
-    
     private BigDecimal precoDesconto;
     
     private BigDecimal valorVenda;
@@ -181,20 +179,6 @@ public class ProdutoImpressaoCEDevolucaoDTO implements Serializable {
      */
     public void setDevolucao(BigInteger devolucao) {
         this.devolucao = devolucao;
-    }
-
-    /**
-     * @return the venda
-     */
-    public BigInteger getVenda() {
-        return venda;
-    }
-
-    /**
-     * @param venda the venda to set
-     */
-    public void setVenda(BigInteger venda) {
-        this.venda = venda;
     }
 
     /**

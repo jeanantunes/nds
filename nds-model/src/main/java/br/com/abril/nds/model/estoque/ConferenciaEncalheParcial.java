@@ -1,6 +1,5 @@
 package br.com.abril.nds.model.estoque;
 
-import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 

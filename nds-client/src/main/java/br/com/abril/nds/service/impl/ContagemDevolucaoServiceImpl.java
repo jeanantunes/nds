@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.client.report.ImpressaoCECollectionDataSource;
 import br.com.abril.nds.client.report.ImpressaoCEDataSource;
 import br.com.abril.nds.dto.ContagemDevolucaoConferenciaCegaDTO;
 import br.com.abril.nds.dto.ContagemDevolucaoDTO;
@@ -864,11 +865,8 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
                 "61.438.248/0062-45", "060084472"));
 
         dto.setNumero(Long.MAX_VALUE);
-     
-        BigDecimal totalBruto = BigDecimal.ZERO;
-        BigDecimal totalDesconto = BigDecimal.ZERO;
-        BigDecimal totalLiquido = BigDecimal.ZERO;
-        for (int i = 1; i <= 20; i++) {
+
+        for (int i = 1; i <= 2; i++) {
             ProdutoImpressaoCEDevolucaoDTO produto = new ProdutoImpressaoCEDevolucaoDTO();
             produto.setCodigo(String.valueOf(i));
             produto.setDataLancamento(new Date());
@@ -880,26 +878,28 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
             produto.setReparte(BigInteger.valueOf(100));
             produto.setSequenciaMatriz(i);
             produto.setValorVenda(BigDecimal.valueOf(810));
-            produto.setVenda(BigInteger.valueOf(90));
             produto.setTipoRecolhimento("P");
             produto.addNotaEnvio(1210L);
             produto.addNotaEnvio(1220L);
             produto.addNotaEnvio(1310L);
-            totalDesconto = totalDesconto.multiply(produto.getDesconto().multiply(new BigDecimal(produto.getVenda())));
-            totalBruto = totalBruto.add(totalLiquido.add(totalDesconto));
             dto.addProduto(produto);
         }
-        dto.setTotalBruto(totalBruto);
-        dto.setTotalDesconto(totalDesconto);
-        dto.setTotalLiquido(totalBruto.subtract(totalDesconto));
+        dto.setTotalBruto(BigDecimal.valueOf(10000));
+        dto.setTotalDesconto(BigDecimal.valueOf(1000));
+        dto.setTotalLiquido(BigDecimal.valueOf(9000));
+        
+        List<ImpressaoCEDevolucaoDTO> dtos = new ArrayList<ImpressaoCEDevolucaoDTO>();
+        dtos.add(dto);
+        dtos.add(dto);
+        dtos.add(dto);
         
         URL url = 
-            Thread.currentThread().getContextClassLoader().getResource("/reports/CEDevolucao.jasper");
+            Thread.currentThread().getContextClassLoader().getResource("/reports/CEDevolucaoLote.jasper");
         
         try {
             String path = url.toURI().getPath();
             return JasperRunManager.runReportToPdf(path,
-                    new HashMap<String, Object>(), new ImpressaoCEDataSource(dto));
+                    new HashMap<String, Object>(), new ImpressaoCECollectionDataSource(dtos));
         } catch (Exception ex) {
             LOG.error("Erro gerando arquivo CE Devolução!", ex);
             throw new RuntimeException("Erro gerando arquivo CE Devolução!", ex);
