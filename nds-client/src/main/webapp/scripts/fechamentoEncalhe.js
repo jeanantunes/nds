@@ -50,7 +50,7 @@ var fechamentoEncalheController = $.extend(true, {
 				sortable : true,
 				align : 'left'
 			}, {
-				display : 'A&ccedil;ao?',
+				display : 'A&ccedil;ao',
 				name : 'acao',
 				width : 110,
 				sortable : true,
@@ -438,7 +438,7 @@ var fechamentoEncalheController = $.extend(true, {
 					fechamentoEncalheController.postergarCotas();
 				},
 				"Cobrar": function() {
-					cobrarCotas();
+					fechamentoEncalheController.cobrarCotas();
 				},
 				"Cancelar": function() {
 					$(this).dialog( "close" );
@@ -581,7 +581,7 @@ var fechamentoEncalheController = $.extend(true, {
 		var dataOperacao = $("#datepickerDe", fechamentoEncalheController.workspace).val();
 		
 		$.postJSON(contextPath + "/devolucao/fechamentoEncalhe/cobrarCotas",
-					{ 'dataOperacao' : dataOperacao, 'idsCotas' : obterCotasMarcadas() },
+					{ 'dataOperacao' : dataOperacao, 'idsCotas' : fechamentoEncalheController.obterCotasMarcadas() },
 					function (result) {
 						
 						var tipoMensagem = result.tipoMensagem;
