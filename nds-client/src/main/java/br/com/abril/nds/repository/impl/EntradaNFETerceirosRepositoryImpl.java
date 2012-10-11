@@ -6,8 +6,8 @@ import org.hibernate.Query;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
-import br.com.abril.nds.dto.ConsultaEntradaNFETerceirosRecebidasDTO;
 import br.com.abril.nds.dto.ConsultaEntradaNFETerceirosPendentesDTO;
+import br.com.abril.nds.dto.ConsultaEntradaNFETerceirosRecebidasDTO;
 import br.com.abril.nds.dto.ItemNotaFiscalPendenteDTO;
 import br.com.abril.nds.dto.filtro.FiltroEntradaNFETerceiros;
 import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
@@ -124,7 +124,11 @@ public class EntradaNFETerceirosRepositoryImpl extends AbstractRepositoryModel<N
 		}
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" order by nota.numero ");
+		if (StatusNotaFiscalEntrada.NAO_RECEBIDA.equals(filtro.getStatusNotaFiscalEntrada())) {
+			hql.append(" order by notaFiscalEntrada.numero ");
+		} else {
+			hql.append(" order by cota.numeroCota ");
+		}
 		
 		if (filtro.getPaginacao().getOrdenacao() != null) {
 			hql.append( filtro.getPaginacao().getOrdenacao().toString());
@@ -143,11 +147,15 @@ public class EntradaNFETerceirosRepositoryImpl extends AbstractRepositoryModel<N
 			query.setParameter("complementar", GrupoNotaFiscal.NF_TERCEIRO_COMPLEMENTAR);
 		}
 
-		if(filtro.getCota() != null) { 
+		if (filtro.getCota() != null && filtro.getCota().getPessoa() != null
+				&& filtro.getCota().getPessoa().getId() != null) {
 			query.setParameter("idCota", filtro.getCota().getPessoa().getId());
 		}
 
-		if(filtro.getFornecedor() != null) { 
+		if (filtro.getFornecedor() != null
+				&& filtro.getFornecedor().getId() != null
+				&& filtro.getFornecedor().getId() > 0
+				&& StatusNotaFiscalEntrada.RECEBIDA.equals(filtro.getStatusNotaFiscalEntrada())) {
 			query.setParameter("idFornecedor", filtro.getFornecedor().getJuridica().getId());
 		}
 

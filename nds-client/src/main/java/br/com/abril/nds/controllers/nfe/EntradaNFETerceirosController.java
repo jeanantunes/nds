@@ -110,7 +110,6 @@ public class EntradaNFETerceirosController {
 		
 		comboStatusNota.add(new ItemDTO(StatusNotaFiscalEntrada.RECEBIDA.name(), StatusNotaFiscalEntrada.RECEBIDA.getDescricao()));
 		comboStatusNota.add(new ItemDTO(StatusNotaFiscalEntrada.PENDENTE_RECEBIMENTO.name(), StatusNotaFiscalEntrada.PENDENTE_RECEBIMENTO.getDescricao()));
-		comboStatusNota.add(new ItemDTO(StatusNotaFiscalEntrada.PENDENTE_EMISAO.name(), StatusNotaFiscalEntrada.PENDENTE_EMISAO.getDescricao()));
 
 		result.include("comboStatusNota", comboStatusNota);
 		
@@ -303,6 +302,31 @@ public class EntradaNFETerceirosController {
 		if(filtro.getStatusNotaFiscalEntrada() == null){
 			throw new ValidacaoException(TipoMensagem.WARNING, "Pelo menos um filtro deve ser preenchido!");			
 		}
+		
+		if (filtro.getCota() != null && filtro.getCota().getNumeroCota() != null) {
+			Cota cota = notaFiscalEntradaService.obterPorNumerDaCota(filtro.getCota().getNumeroCota());
+			if (cota != null) {
+				filtro.setCota(cota);
+			} else {
+				throw new ValidacaoException(TipoMensagem.WARNING, "Número da cota inválido!");			
+			}
+		} else {
+			filtro.setCota(null);
+		}
+		
+		if (filtro.getFornecedor() != null
+				&& filtro.getFornecedor().getId() != null
+				&& filtro.getFornecedor().getId() > 0) {
+			Fornecedor fornecedor = notaFiscalEntradaService.obterFornecedorPorID(filtro.getFornecedor().getId());
+			if (fornecedor != null) {
+				filtro.setFornecedor(fornecedor);
+			} else {
+				throw new ValidacaoException(TipoMensagem.WARNING, "Fornecedor não encotrado!");			
+			}
+		} else {
+			filtro.setFornecedor(null);
+		}
+		
 	}
 	
 	private void tratarFiltro(FiltroEntradaNFETerceiros filtroAtual) {
