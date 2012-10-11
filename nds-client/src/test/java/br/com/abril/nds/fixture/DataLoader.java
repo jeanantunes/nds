@@ -5095,8 +5095,29 @@ public class DataLoader {
 
 		save(session, tipoNotaFiscalRecebimento, tipoNotaFiscalDevolucao);
 
+		TipoNotaFiscal tipoNotaFiscalTerceiroMercantil = Fixture.tipoNotaFiscalRecebimento();
+		tipoNotaFiscalTerceiroMercantil.setGrupoNotaFiscal(GrupoNotaFiscal.NF_TERCEIRO);
+		tipoNotaFiscalTerceiroMercantil.setContribuinte(true);
+		tipoNotaFiscalTerceiroMercantil.setTipoAtividade(TipoAtividade.MERCANTIL);
+		
+		TipoNotaFiscal tipoNotaFiscalTerceiroMercantilComplementar = Fixture.tipoNotaFiscalRecebimento();
+		tipoNotaFiscalTerceiroMercantilComplementar.setGrupoNotaFiscal(GrupoNotaFiscal.NF_TERCEIRO_COMPLEMENTAR);
+		tipoNotaFiscalTerceiroMercantilComplementar.setContribuinte(true);
+		tipoNotaFiscalTerceiroMercantilComplementar.setTipoAtividade(TipoAtividade.MERCANTIL);
+		
 
-		session.save(tipoNotaFiscalRecebimento);
+		TipoNotaFiscal tipoNotaFiscalTerceiroPrestadorServicos = Fixture.tipoNotaFiscalRecebimento();
+		tipoNotaFiscalTerceiroPrestadorServicos.setGrupoNotaFiscal(GrupoNotaFiscal.NF_TERCEIRO);
+		tipoNotaFiscalTerceiroPrestadorServicos.setContribuinte(true);
+		tipoNotaFiscalTerceiroPrestadorServicos.setTipoAtividade(TipoAtividade.PRESTADOR_SERVICO);
+		
+		TipoNotaFiscal tipoNotaFiscalTerceiroPrestadorServicosComplementar = Fixture.tipoNotaFiscalRecebimento();
+		tipoNotaFiscalTerceiroPrestadorServicosComplementar.setGrupoNotaFiscal(GrupoNotaFiscal.NF_TERCEIRO_COMPLEMENTAR);
+		tipoNotaFiscalTerceiroPrestadorServicosComplementar.setContribuinte(true);
+		tipoNotaFiscalTerceiroPrestadorServicosComplementar.setTipoAtividade(TipoAtividade.PRESTADOR_SERVICO);
+		
+		save(session, tipoNotaFiscalTerceiroMercantil, tipoNotaFiscalTerceiroMercantilComplementar,
+					  tipoNotaFiscalTerceiroPrestadorServicos, tipoNotaFiscalTerceiroPrestadorServicosComplementar);
 	}
 
 	private static void criarCFOP(Session session) {
