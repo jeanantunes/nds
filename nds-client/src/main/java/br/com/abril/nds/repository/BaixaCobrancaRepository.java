@@ -5,6 +5,7 @@ import java.util.List;
 
 import br.com.abril.nds.client.vo.CobrancaVO;
 import br.com.abril.nds.model.financeiro.BaixaCobranca;
+import br.com.abril.nds.model.financeiro.BaixaManual;
 
 /**
  * Interface que define as regras de acesso a dados referentes a entidade
@@ -31,4 +32,7 @@ public interface BaixaCobrancaRepository extends Repository<BaixaCobranca,Long> 
 	public List<CobrancaVO> buscarCobrancasBaixadas(Integer numCota, String nossoNumero);
 	
 	public BaixaCobranca obterUltimaBaixaCobranca(Long idCobranca);
+	
+	List<BaixaManual> obterBaixasManual(List<Long> idsCobranca);
+	
 }
