@@ -131,6 +131,11 @@ public class NotaFiscalEntradaServiceImpl implements NotaFiscalEntradaService {
 		
 		TipoNotaFiscal tipoNotaFiscal = this.tipoNotaFiscalRepository.obterTipoNotaFiscal(grupoNotaFiscal, tipoAtividade, isContribuinte);
 
+		if (tipoNotaFiscal == null) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Tipo da nota fiscal não foi encontrado.");
+		}
+		
 		notaFiscal.setTipoNotaFiscal(tipoNotaFiscal);
 
 		this.notaFiscalRepository.adicionar(notaFiscal); 
