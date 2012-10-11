@@ -816,4 +816,23 @@ public class DescontoServiceImpl implements DescontoService {
         }
         return Util.nvl(percentual, BigDecimal.ZERO);
     }
+	
+	@Override
+	@Transactional(readOnly = true)
+	public BigDecimal obterComissaoCota(Integer numeroCota){
+		
+		BigDecimal desc = BigDecimal.ZERO;
+		
+		FiltroTipoDescontoCotaDTO filtro = new FiltroTipoDescontoCotaDTO();
+		filtro.setNumeroCota(numeroCota);
+		
+		List<TipoDescontoCotaDTO> descontos = this.descontoCotaRepository.obterDescontoCota(filtro);
+		
+		for (TipoDescontoCotaDTO dto : descontos){
+			
+			desc = desc.add(dto.getDesconto());
+		}
+		
+		return desc.divide(new BigDecimal(descontos.size()));
+	}
 }
