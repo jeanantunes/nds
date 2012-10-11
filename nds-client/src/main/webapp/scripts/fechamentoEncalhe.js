@@ -201,11 +201,9 @@ var fechamentoEncalheController = $.extend(true, {
 			
 			
 			var valorFisico = row.cell.fisico == null ? '' : row.cell.fisico;
-			
-			if (  ( row.cell.diferenca == "0" && valorFisico == '' ) ||  valorFisico == '' ) {
-				row.cell.diferenca = "";
+			if ( ( row.cell.diferenca == "0" && valorFisico == '' ) ||  valorFisico == '' ) {
+					row.cell.diferenca = "";
 			}
-			
 			
 			var fechado = row.cell.fechado == false ? '' : 'disabled="disabled"';
 			row.cell.fisico = '<input type="text" style="width: 60px" id = "'+row.cell.produtoEdicao+'"  name="fisico" value="' + valorFisico + '" onchange="fechamentoEncalheController.onChangeFisico(this, ' + index + ')" ' + fechado + '/>';
