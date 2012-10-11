@@ -77,11 +77,12 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 			
 			$("#contagemDevolucaoGrid", digitacaoContagemDevolucaoController.workspace).flexOptions({
 				url: contextPath + "/devolucao/digitacao/contagem/pesquisar",
-				params: formData
+				params: formData,
+				onSuccess: function(){$(".edicaoFechada").parents("tr").css("background", "#ffeeee");}
 			});
 			
 			$("#contagemDevolucaoGrid", digitacaoContagemDevolucaoController.workspace).flexReload();
-
+			
 		},
 		
 		/**
@@ -107,13 +108,15 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 				
 				var idInput = "valorExemplarNota" + index ;
 				
-				var inputExemplarNota = '<input id="'+idInput+'" name="qtdNota" class="input-exemplar-nota" type="text" style="width:80px; text-align: center;"  maxlength="17" value="'+row.cell.qtdNota+'"/>';
+				var classEdicaoFechada = row.cell.isEdicaoFechada ? "edicaoFechada" : "";
 				
+				var inputExemplarNota = '<input id="'+idInput+'" name="qtdNota" class="input-exemplar-nota '+classEdicaoFechada+' " type="text" style="width:80px; text-align: center;"  maxlength="17" value="'+row.cell.qtdNota+'"/>';
+										
 				if(!digitacaoContagemDevolucaoController.isRoleOperador()){
 					
-					inputExemplarNota = '<input id="'+idInput+'" name="qtdNota" maxlength="17" class="input-exemplar-nota" type="text" style="width:80px; text-align: center;"  value="'+row.cell.qtdNota+'" onchange="digitacaoContagemDevolucaoController.limparCheck(\'ch'+index+'\')"/>';
+					inputExemplarNota = '<input id="'+idInput+'" name="qtdNota" maxlength="17" class="input-exemplar-nota '+classEdicaoFechada+' " type="text" style="width:80px; text-align: center;"  value="'+row.cell.qtdNota+'" onkeypress="digitacaoContagemDevolucaoController.limparCheck(\'ch'+index+'\')"/>';
 					
-					var inputCheckReplicarValor = '<input type="checkbox" id="ch'+index+'" name="checkgroup" onclick="digitacaoContagemDevolucaoController.replicarValor(this,\''+idInput+'\','+row.cell.qtdDevolucao+');"/>';
+					var inputCheckReplicarValor = '<input type="checkbox" id="ch'+index+'" class="chBoxReplicar" name="checkgroup"  "/>';
 					
 					//Altera cor do valor da quantidade, caso seja um valo negativo
 					if(row.cell.diferenca < 0){
@@ -139,24 +142,7 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 				
 			return resultado.tableModel;
 		},
-		
-		/**
-		*	Replica o valor do campo exemplar devolução para o campo exemplares de nota. 
-		**/	
-		replicarValor: function (input,id,valor){
-			
-			valor = (input.checked == false)?"":valor;
-			
-			$('#'+id, digitacaoContagemDevolucaoController.workspace).val(valor);
-			
-			if(input.checked == false) {
-				$('#'+id, digitacaoContagemDevolucaoController.workspace).prop('disabled', false);
-			} else {
-				$('#'+id,digitacaoContagemDevolucaoController.workspace).prop('disabled', true);
-			}
-			
-		},
-		
+
 		/**
 			Limpa os valores do checked. 
 		**/
@@ -165,32 +151,27 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 			$('#'+id, digitacaoContagemDevolucaoController.workspace).attr("checked",false);	
 		},
 		
-		/**
-			Replica todos os valores do campo exemplar devolução para os campos exemplares de nota. 
-		**/
-		replicarValorAll: function(){
+		replicarValores : function() {
 			
-			var linhasDaGrid = $("#contagemDevolucaoGrid tr", digitacaoContagemDevolucaoController.workspace);
-			
-			$.each(linhasDaGrid, function(index, value) {
-
-				var linha = $(value);
+			$("#contagemDevolucaoGrid tr", digitacaoContagemDevolucaoController.workspace).each( function(index, input) { 
 				
-				var colunaExemplarDevolucao = linha.find("td")[4];
-				var colunaExemplarNota = linha.find("td")[6];
-				var colunaReplicarValor = linha.find("td")[8];
+				var row = $(input); 
+				var value = $(row.find("td")[4]).find("div").html();
+				var qtdNota = row.find("input[name='qtdNota']");
 				
-				var vlQntDevolucao = $(colunaExemplarDevolucao).find("div").html();
 				
-				$(colunaExemplarNota, digitacaoContagemDevolucaoController.workspace).find("div").find('input[name="qtdNota"]').val(vlQntDevolucao);
-				
-				$(colunaExemplarNota, digitacaoContagemDevolucaoController.workspace).find("div").find('input[name="qtdNota"]').prop('disabled', true);
-				
-				$(colunaReplicarValor, digitacaoContagemDevolucaoController.workspace).find("div").find('input[name="checkgroup"]').attr("checked",true);
+				if(row.find(".chBoxReplicar").is(":checked")){ 
+					qtdNota.val(value);
+					qtdNota.prop('disabled', true); 
+				} else {
+					qtdNota.val("");
+					qtdNota.prop('disabled', false); 
+				}
 				
 			});
 		},
 		
+				
 		/**
 			Verifica se todos os itens do grid estão selecionados. 
 			Se itens  selecionados, limpa todos os valores de exemplar de nota.
@@ -199,12 +180,10 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 		checkAllReplicarValor: function (todos, checkgroupName) {
 			
 			if(todos.checked == false) {
-				
 				digitacaoContagemDevolucaoController.limparValorAll();
 			}		
 			else {										
-				
-				digitacaoContagemDevolucaoController.replicarValorAll();
+				$(".chBoxReplicar").attr("checked", true);
 			}	
 		},
 		
@@ -315,11 +294,14 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 				var colunaCodigoProduto = linha.find("td")[0];
 				var colunaNumeroEdicao = linha.find("td")[2];
 				var colunaExemplarNota = linha.find("td")[indexColunaExemplarNota];
+				var colunaDiferenca = linha.find("td")[8];
 				
 				var codigoProduto = $(colunaCodigoProduto, digitacaoContagemDevolucaoController.workspace).find("div").html();
 				
 				var numeroEdicao = $(colunaNumeroEdicao, digitacaoContagemDevolucaoController.workspace).find("div").html();
-
+				
+				var diferenca = $(colunaDiferenca, digitacaoContagemDevolucaoController.workspace).find("span").html();
+				
 				var qtdNota = $(colunaExemplarNota, digitacaoContagemDevolucaoController.workspace).find("div").find('input[name="qtdNota"]').val();
 				
 				var dataRecolhimentoDistribuidor = $(colunaExemplarNota, digitacaoContagemDevolucaoController.workspace).find("div").find('input[name="idDataRecolhimentoDist"]').val();
@@ -335,6 +317,10 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 
 					digitacaoContagemDevolucao += 'listaDigitacaoContagemDevolucao[' + index + '].dataRecolhimentoDistribuidor=' + dataRecolhimentoDistribuidor  + '&';
 					
+					if (diferenca) {
+						digitacaoContagemDevolucao += 'listaDigitacaoContagemDevolucao[' + index + '].diferenca=' + diferenca  + '&';
+					}
+					
 					digitacaoContagemDevolucao += 'listaDigitacaoContagemDevolucao[' + index + '].qtdNota=' + qtdNota  + '&';
 
 				listaDigitacaoContagemDevolucao = (listaDigitacaoContagemDevolucao + digitacaoContagemDevolucao);
@@ -348,28 +334,9 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 		**/
 		limparValorAll: function (){
 			
-			var linhasDaGrid = $("#contagemDevolucaoGrid tr", digitacaoContagemDevolucaoController.workspace);
-			
-			$.each(linhasDaGrid, function(index, value) {
-
-				var linha = $(value);
-
-				var colunaExemplarNota = linha.find("td")[6];
-				var colunaReplicarValor = linha.find("td")[8];
-				
-				var inputReplicarValor = $(colunaReplicarValor, digitacaoContagemDevolucaoController.workspace).find("div").find('input[name="checkgroup"]');
-				
-				if(inputReplicarValor.attr('checked')){
-					
-					$(colunaExemplarNota, digitacaoContagemDevolucaoController.workspace).find("div").find('input[name="qtdNota"]').val("");
-					
-					$(colunaExemplarNota, digitacaoContagemDevolucaoController.workspace).find("div").find('input[name="qtdNota"]').prop('disabled', false);
-					
-				}
-				
-				$(colunaReplicarValor, digitacaoContagemDevolucaoController.workspace).find("div").find('input[name="checkgroup"]').attr("checked",false);
-				
-			});
+			$(".chBoxReplicar").attr("checked", false);
+			digitacaoContagemDevolucaoController.replicarValores();	
+		
 		},
 		
 		/**
@@ -495,8 +462,9 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 				buttons: {
 					"Confirmar": function() {
 						if ($(dialogEdicoesFechadasSelAll, _this.workspace).is(":checked")) {
-							//TODO Adcionar todos.
-							console.log("todos");
+							
+							_this.adicionarEdicoesFechadas(true, null);
+							
 						}else{
 							//{codigoProduto:codigoProduto,edicaoProduto:edicaoProduto,parcial:parcial,idProdutoEdicao:idProdutoEdicao}
 							var listInserirEdicoesFechadas = new Array();
@@ -505,8 +473,7 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 										.push(_this.hashInserirEdicoesFechadas[id]);
 							}							
 							if(listInserirEdicoesFechadas.length > 0){
-								//TODO: adcionar listInserirEdicoesFechadas na grid
-								console.log("Lista");
+								_this.adicionarEdicoesFechadas(false, listInserirEdicoesFechadas);
 							}
 							
 						}
@@ -526,6 +493,26 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 				
 			}).flexReload();
 		},
+		
+		adicionarEdicoesFechadas : function(checkAll, listInserirEdicoesFechadas) {
+			
+			var param = {"checkAll" : checkAll};
+			
+			if (listInserirEdicoesFechadas) {
+				params += serializeArrayToPost("listaEdicoesFechadas",listInserirEdicoesFechadas);
+			}
+			
+			$.postJSON(
+				contextPath + "/devolucao/digitacao/contagem/adicionarEdicoesFechadas", 
+				param,
+				function(result) {
+					digitacaoContagemDevolucaoController.pesquisar();
+				},
+				digitacaoContagemDevolucaoController.tratarErro, false
+			);
+			
+		},
+		
 		edicoesFechadasCheckAll :function(checkbox){
 			
 			$('.consultaEdicoesFechadasGrid tr td', this.workspace).each( function(){ 
@@ -533,6 +520,7 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 			});
 			
 		},
+		
 		clickEdicoesFechada : function(idProdutoEdicao,codigoProduto,edicaoProduto, parcial, checkbox){
 			if($(checkbox, this.workspace).is(":checked")){
 				this.hashInserirEdicoesFechadas[idProdutoEdicao] = {codigoProduto:codigoProduto,edicaoProduto:edicaoProduto,parcial:parcial,idProdutoEdicao:idProdutoEdicao};
@@ -542,6 +530,7 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 			
 			$("#dialogEdicoesFechadasSelAll", this.workspace).attr("checked",false);
 		},
+		
 		montaGridEdicoesFechadas :function(){
 			$(".consultaEdicoesFechadasGrid", this.workspace).flexigrid({
 				
