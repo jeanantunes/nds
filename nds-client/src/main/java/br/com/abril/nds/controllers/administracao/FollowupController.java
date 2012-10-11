@@ -178,14 +178,14 @@ public class FollowupController {
 		
 		List<ConsultaFollowupNegociacaoDTO> lista = new ArrayList<ConsultaFollowupNegociacaoDTO>();
 		
-		lista.add(new ConsultaFollowupNegociacaoDTO(1L, 1L, "Jornaleiro1", "DescNegoc1", "DescParc1", "DescPag1", new Date()));
-		lista.add(new ConsultaFollowupNegociacaoDTO(2L, 1L, "Jornaleiro2", "DescNegoc1", "DescParc1", "DescPag1", new Date()));
-		lista.add(new ConsultaFollowupNegociacaoDTO(3L, 1L, "Jornaleiro3", "DescNegoc1", "DescParc1", "DescPag1", new Date()));
-		lista.add(new ConsultaFollowupNegociacaoDTO(4L, 1L, "Jornaleiro4", "DescNegoc1", "DescParc1", "DescPag1", new Date()));
-		lista.add(new ConsultaFollowupNegociacaoDTO(5L, 1L, "Jornaleiro5", "DescNegoc1", "DescParc1", "DescPag1", new Date()));
-		lista.add(new ConsultaFollowupNegociacaoDTO(6L, 1L, "Jornaleiro6", "DescNegoc1", "DescParc1", "DescPag1", new Date()));
-		lista.add(new ConsultaFollowupNegociacaoDTO(7L, 1L, "Jornaleiro7", "DescNegoc1", "DescParc1", "DescPag1", new Date()));
-		lista.add(new ConsultaFollowupNegociacaoDTO(8L, 1L, "Jornaleiro8", "DescNegoc1", "DescParc1", "DescPag1", new Date()));
+		lista.add(new ConsultaFollowupNegociacaoDTO(1L, 1L, "Jornaleiro1", new BigDecimal(10), "DescParc1", "DescPag1", new Date()));
+		lista.add(new ConsultaFollowupNegociacaoDTO(2L, 1L, "Jornaleiro2", new BigDecimal(11), "DescParc1", "DescPag1", new Date()));
+		lista.add(new ConsultaFollowupNegociacaoDTO(3L, 1L, "Jornaleiro3", new BigDecimal(12), "DescParc1", "DescPag1", new Date()));
+		lista.add(new ConsultaFollowupNegociacaoDTO(4L, 1L, "Jornaleiro4", new BigDecimal(13), "DescParc1", "DescPag1", new Date()));
+		lista.add(new ConsultaFollowupNegociacaoDTO(5L, 1L, "Jornaleiro5", new BigDecimal(20), "DescParc1", "DescPag1", new Date()));
+		lista.add(new ConsultaFollowupNegociacaoDTO(6L, 1L, "Jornaleiro6", new BigDecimal(30), "DescParc1", "DescPag1", new Date()));
+		lista.add(new ConsultaFollowupNegociacaoDTO(7L, 1L, "Jornaleiro7", new BigDecimal(40), "DescParc1", "DescPag1", new Date()));
+		lista.add(new ConsultaFollowupNegociacaoDTO(8L, 1L, "Jornaleiro8", new BigDecimal(50), "DescParc1", "DescPag1", new Date()));
 		
 		return lista;
 	}
