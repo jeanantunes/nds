@@ -208,46 +208,53 @@ var followUpSistemaController = $.extend(true, {
 		}));
 
 		$(".negociacaoGrid", followUpSistemaController.workspace).flexigrid({
+			url : contextPath + '/followup/pesquisaDadosNegociacao',
 	        preProcess:  followUpSistemaController.exPreProcFollowupNegociacao, 
 			dataType : 'json',
 			colModel : [ {
 				display : 'Cota',
-				name : 'cota',
-				width : 100,
+				name : 'numeroCota',
+				width : 65,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Nome',
-				name : 'nome',
-				width : 240,
+				name : 'nomeJornaleiro',
+				width : 210,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Negociação',
-				name : 'negociacao',
+				name : 'valorParcelaFormatado',
 				width : 120,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Parcela',
-				name : 'parcela',
+				name : 'descricaoParcelamento',
 				width : 100,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Forma de Pagamento',
-				name : 'formaPagto',
+				name : 'descricaoFormaPagamento',
 				width : 140,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Data Vencto',
-				name : 'dtVencto',
+				name : 'dataVencimento',
 				width : 85,
 				sortable : true,
 				align : 'center'
+			},{
+				display : 'Ação',
+				name : 'acao',
+				width : 50,
+				sortable : true,
+				align : 'center'
 			}],
-			sortname : "cota",
+			sortname : "nomeJornaleiro",
 			sortorder : "asc",
 			usepager : true,
 			useRp : true,
@@ -293,8 +300,21 @@ var followUpSistemaController = $.extend(true, {
 	},
 		
 	exPreProcFollowupNegociacao : function (resultado) {
-		//alert("exefollowPreProcessamentoNegociacao");
+	
+		$.each(resultado.rows, function(index, negociacao) {
+			negociacao.cell.acao = "<a href=\"javascript:;\" onclick=\"followUpSistemaController.cancelarNegociacao("+negociacao.cell.idNegociacao+");\"> "+
+			 "<img src=\"" + contextPath + "/images/ico_excluir.gif\" title=\"Excluir\" hspace=\"5\" border=\"0\" /></a>";
+		});
+		
 		return resultado;
+	},
+	
+	cancelarNegociacao : function(idNegociacao) {
+		
+		var parametro = {'idNegociacao' : idNegociacao};
+		
+		$.postJSON(contextPath + "/followup/cancelarNegociacao", 
+				parametro);				
 	},
 	
 	exPreProcFollowupChamadao : function(resultado) {

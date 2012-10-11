@@ -22,6 +22,7 @@ import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Processo;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
+import br.com.abril.nds.model.fiscal.nota.Condicao;
 import br.com.abril.nds.model.fiscal.nota.InformacaoTransporte;
 import br.com.abril.nds.model.fiscal.nota.ItemNotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
@@ -112,7 +113,7 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 			Intervalo<Integer> intervalorCota,
 			Intervalo<Date> intervaloDateMovimento,
 			List<Long> listIdFornecedor, List<Long> listIdProduto,
-			Long idTipoNotaFiscal, Date dataEmissao, List<Long> idCotasSuspensas) throws FileNotFoundException, IOException {
+			Long idTipoNotaFiscal, Date dataEmissao, List<Long> idCotasSuspensas, Condicao condicao) throws FileNotFoundException, IOException {
 		
 		Set<Long> listaIdCota = this.cotaRepository.obterIdCotasEntre(intervalorCota,intervaloBox, null, null, null);
 		
@@ -154,7 +155,7 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 				processos.add(Processo.GERACAO_NF_E);
 				
 				Long idNotaFiscal = this.notaFiscalService.emitiNotaFiscal(idTipoNotaFiscal, dataEmissao, cota, 
-						listItemNotaFiscal, transporte, null, listaNotasFiscaisReferenciadas, processos);
+						listItemNotaFiscal, transporte, null, listaNotasFiscaisReferenciadas, processos, condicao);
 				
 				NotaFiscal notaFiscal = this.notaFiscalRepository.buscarPorId(idNotaFiscal);
 				

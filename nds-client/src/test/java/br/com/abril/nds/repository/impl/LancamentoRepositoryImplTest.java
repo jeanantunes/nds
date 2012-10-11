@@ -78,10 +78,18 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 	private ChamadaEncalhe chamadaEncalhe;
 	private ChamadaEncalhe chamadaEncalhe1;
 	private ChamadaEncalhe chamadaEncalhe2;
+	
+	private Editor abril;
+    private NCM ncmRevistas;
+    private TipoProduto tipoRevista;
+
+    private Produto veja;
+
+    private Produto quatroRodas;
 
 	@Before
 	public void setUp() {
-		Editor abril = Fixture.editoraAbril();
+		abril = Fixture.editoraAbril();
 		save(abril);
 		
 		tipoFornecedorPublicacao = Fixture.tipoFornecedorPublicacao();
@@ -89,20 +97,20 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 		fornecedorDinap = Fixture.fornecedorDinap(tipoFornecedorPublicacao);
 		save(fornecedorFC, fornecedorDinap);
 
-		NCM ncmRevistas = Fixture.ncm(49029000l,"REVISTAS","KG");
+		ncmRevistas = Fixture.ncm(49029000l,"REVISTAS","KG");
 		save(ncmRevistas);
 		NCM ncmCromo = Fixture.ncm(48205000l,"CROMO","KG");
 		save(ncmCromo);
 		
-		TipoProduto tipoRevista = Fixture.tipoRevista(ncmRevistas);
+		tipoRevista = Fixture.tipoRevista(ncmRevistas);
 		tipoCromo = Fixture.tipoCromo(ncmCromo);
 		save(tipoRevista, tipoCromo);
 		
-		Produto veja = Fixture.produtoVeja(tipoRevista);
+		veja = Fixture.produtoVeja(tipoRevista);
 		veja.setEditor(abril);
 		veja.addFornecedor(fornecedorDinap);
 
-		Produto quatroRodas = Fixture.produtoQuatroRodas(tipoRevista);
+		quatroRodas = Fixture.produtoQuatroRodas(tipoRevista);
 		quatroRodas.setEditor(abril);
 		quatroRodas.addFornecedor(fornecedorDinap);
 
@@ -474,4 +482,5 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 
 		Assert.assertEquals(proximoLancamentoObtido.getId(), proximoLancamentoVeja.getId());
 	}
+   
 }

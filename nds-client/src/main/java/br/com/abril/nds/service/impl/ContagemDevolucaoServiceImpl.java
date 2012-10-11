@@ -119,12 +119,12 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 	
 	@Autowired
 	private ControleNumeracaoNotaFiscalService controleNumeracaoNotaFiscalService;
-	
+
 	@Autowired
 	private NotaFiscalService notaFiscalService;
+
 	@Autowired
 	private EdicoesFechadasService edicoesFechadasService;
-	
 	
 	@Transactional
 	public InfoContagemDevolucaoDTO obterInfoContagemDevolucao(FiltroDigitacaoContagemDevolucaoDTO filtroPesquisa, boolean indPerfilUsuarioEncarregado) {
@@ -801,9 +801,6 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 		
 		TipoNotaFiscal tipoNotaFiscal = this.tipoNotaFiscalRepository.obterTipoNotaFiscal(GrupoNotaFiscal.NF_DEVOLUCAO_MERCADORIA_RECEBIA_CONSIGNACAO);
 		
-		
-		
-		
 		List<ItemNotaFiscal> listItemNotaFiscal = carregarDadosNFSaida(listaAgrupadaContagemDevolucao);
 		InformacaoTransporte transporte = new InformacaoTransporte();
 		transporte.setModalidadeFrente(0);
@@ -929,7 +926,6 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 		
 	}
 
-
 	@Override
 	@Transactional
 	public List<ContagemDevolucaoDTO> obterContagemDevolucaoEdicaoFechada(
@@ -979,7 +975,7 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 		
 		return listaContagemEdicaoFechada;
 	}
-	
+
 
 	
 }

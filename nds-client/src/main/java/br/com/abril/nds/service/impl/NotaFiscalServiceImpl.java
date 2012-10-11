@@ -870,18 +870,9 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 
 		return produtoServico;
 	}
-	@Override
-	@Transactional
-	public Long emitiNotaFiscal(long idTipoNotaFiscal, Date dataEmissao,
-			Cota cota, List<ItemNotaFiscal> listItemNotaFiscal,
-			InformacaoTransporte transporte,
-			InformacaoAdicional informacaoAdicional,
-			List<NotaFiscalReferenciada> listNotaFiscalReferenciada,
-			Set<Processo> processos) {
-		return this.emitiNotaFiscal(idTipoNotaFiscal, dataEmissao, cota, listItemNotaFiscal, transporte, informacaoAdicional, listNotaFiscalReferenciada, processos, null);
-	}
 	
 	@Override
+	@Transactional
 	public Long emitiNotaFiscal(long idTipoNotaFiscal, Date dataEmissao,
 			Fornecedor fornecedor, List<ItemNotaFiscal> listItemNotaFiscal,
 			InformacaoTransporte transporte,

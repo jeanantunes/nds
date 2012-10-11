@@ -139,4 +139,6 @@ public interface CobrancaService {
 	 */
 	BigDecimal obterSaldoDivida(Long idCobranca);
 	
+	void confirmarBaixaManualDividas(List<Long> idsBaixaCobranca);
+	
 }
