@@ -5,8 +5,10 @@ import java.util.List;
 import br.com.abril.nds.dto.NfeDTO;
 import br.com.abril.nds.dto.filtro.FiltroImpressaoNFEDTO;
 import br.com.abril.nds.dto.filtro.FiltroMonitorNfeDTO;
+import br.com.abril.nds.model.fiscal.ItemNotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.StatusProcessamentoInterno;
+import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 public interface NotaFiscalRepository extends Repository<NotaFiscal, Long>  {
 

@@ -422,7 +422,7 @@ public class CotaAusenteController {
 	 * @param numCota
 	 */
 	@Post
-	public void realizarRateio(List<MovimentoEstoqueCotaDTO> movimentos, Integer numCota) {
+	public void realizarRateio(List<MovimentoEstoqueCotaDTO> movimentos, List<Integer> numCotas) {
 		
 		TipoMensagem status = TipoMensagem.SUCCESS;
 		
@@ -430,10 +430,10 @@ public class CotaAusenteController {
 		
 		try {
 			
-			if(numCota == null) 
+			if(numCotas == null) 
 				throw new ValidacaoException(TipoMensagem.WARNING, WARNING_NUMERO_COTA_NAO_INFORMADO);
 			
-			cotaAusenteService.declararCotaAusenteRatearReparte(numCota, new Date(), this.getUsuario().getId() , movimentos);
+			cotaAusenteService.declararCotaAusenteRatearReparte(numCotas, new Date(), this.getUsuario().getId() , movimentos);
 			
 			mensagens.add(SUCESSO_RATEIO);
 			

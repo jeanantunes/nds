@@ -469,6 +469,9 @@ public class EntregadorRepositoryImpl extends AbstractRepositoryModel<Entregador
 		criteria.add(Restrictions.or(Restrictions.like("pessoa.nome", nome, MatchMode.ANYWHERE),
 				Restrictions.like("pessoa.razaoSocial", nome, MatchMode.ANYWHERE)));
 
+		if(criteria.list().size() == 0) 
+			return null;
+		
 		return (Entregador) criteria.uniqueResult();
 	}
 }

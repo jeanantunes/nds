@@ -293,13 +293,12 @@ var entradaNFETerceirosController = $.extend(true, {
 		$('#serieNotaFiscalPopUp', this.workspace).text(serie);
 		$('#valorNotaFiscalPopUp', this.workspace).text(valorNota);
 		
-		var params = $("#form-pesquisa-nfe").serializeArray();
 		
 		params.push({name: 'idControleConferenciaEncalheCota', value: idControleConferenciaEncalheCota});
 		
 		$(".pesquisarProdutosNotaGrid", entradaNFETerceirosController.workspace).flexOptions({
 			url: contextPath + "/nfe/entradaNFETerceiros/pesquisarItensPorNota",
-			params: params,
+			params: {idNotaFiscalEntrada:idNotaFiscalEntrada},
 			dataType : 'json'
 		});
 

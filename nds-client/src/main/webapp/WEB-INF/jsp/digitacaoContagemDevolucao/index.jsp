@@ -68,7 +68,6 @@ $(function(){
 				    </td>
 				  </tr>
 			  </table>
-			
 		</form>
 	</fieldset>
 	
@@ -124,7 +123,7 @@ $(function(){
 							</span>
 							
 							<span class="bt_novos" title="Replicar Quantidades">
-							<a href="javascript:;">
+							<a href="javascript:digitacaoContagemDevolucaoController.replicarValores();">
 							<img src="${pageContext.request.contextPath}/images/ico_integrar.png" hspace="5" border="0">
 							Replicar
 							</a>

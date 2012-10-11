@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.exception.ImportacaoException;
@@ -130,8 +131,10 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 	@Transactional
 	public void enviarSuplementarCotaAusente(Date data, Long idCota,List<MovimentoEstoqueCota> listaMovimentoCota) throws TipoMovimentoEstoqueInexistenteException{
 		
+		Cota cota = cotaRepository.buscarPorId(idCota);
+		
 		if(listaMovimentoCota==null || listaMovimentoCota.isEmpty()) {
-			throw new ValidacaoException(TipoMensagem.WARNING, "Cota não possui reparte na data.");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Cota '" +cota.getNumeroCota()+ "' não possui reparte na data.");
 		}
 		
 		TipoMovimentoEstoque tipoMovimento = 
@@ -474,6 +477,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 	}
 
 	@Override
+	@Transactional
 	public void processarRegistroHistoricoVenda(HistoricoVendaInput vendaInput) {
 		
 		Integer reparte = vendaInput.getQuantidadeRecebidaProduto();

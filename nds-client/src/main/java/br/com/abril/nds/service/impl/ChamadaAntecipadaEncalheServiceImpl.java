@@ -407,4 +407,9 @@ public class ChamadaAntecipadaEncalheServiceImpl implements ChamadaAntecipadaEnc
 		return retorno;
 	}
 	
+	@Transactional
+	public Date obterProximaDataEncalhe(Date base) {
+		return chamadaEncalheRepository.obterProximaDataEncalhe(base);
+	}
+	
 }
