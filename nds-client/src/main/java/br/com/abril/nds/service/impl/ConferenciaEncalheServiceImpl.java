@@ -511,7 +511,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			
 			infoConfereciaEncalheCota.setIdControleConferenciaEncalheCota(controleConferenciaEncalheCota.getId());
 			
-			infoConfereciaEncalheCota.setNotaFiscalEntradaCota(controleConferenciaEncalheCota.getNotaFiscalEntradaCota());
+			infoConfereciaEncalheCota.setNotaFiscalEntradaCota(controleConferenciaEncalheCota.getNotaFiscalEntradaCotaPricipal());
 			
 		} else {
 			
@@ -1033,7 +1033,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 					controleConferenciaEncalheCota.getCota().getId(), 
 					controleConferenciaEncalheCota.getUsuario().getId(), 
 					nossoNumeroCollection);
-		} catch (GerarCobrancaValidacaoException e) {
+		} catch (Exception e) {
 			
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -1101,7 +1101,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		NotaFiscalEntradaCota notaFiscalEntradaCota = atualizarCabecalhoNotaFiscalEntradaCota(
 				controleConfEncalheCota.getId(),
-				controleConfEncalheCota.getNotaFiscalEntradaCota(), 
+				controleConfEncalheCota.getNotaFiscalEntradaCotaPricipal(), 
 				numeroCota, 
 				usuario, 
 				dataCriacao);
@@ -1111,7 +1111,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				notaFiscalEntradaCota, 
 				listaConferenciaEncalhe);
 		
-		controleConfEncalheCota.setNotaFiscalEntradaCota(notaFiscalEntradaCota);
+		List<NotaFiscalEntradaCota> notaFiscalEntradaCotas = new ArrayList<NotaFiscalEntradaCota>();
+		notaFiscalEntradaCotas.add(notaFiscalEntradaCota);
+		controleConfEncalheCota.setNotaFiscalEntradaCota(notaFiscalEntradaCotas);
 			
 		
 		ControleConferenciaEncalheCota controleConferenciaEncalheCota = 
@@ -1421,7 +1423,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			ControleConferenciaEncalheCota controleConferenciaEncalheCotaFromBD = 			
 					controleConferenciaEncalheCotaRepository.buscarPorId(idControleConferenciaEncalheCota);
 			
-			notaFiscalEntradaCotaFromBD = controleConferenciaEncalheCotaFromBD.getNotaFiscalEntradaCota();
+			notaFiscalEntradaCotaFromBD = controleConferenciaEncalheCotaFromBD.getNotaFiscalEntradaCotaPricipal();
 			
 			
 		}

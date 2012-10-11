@@ -8,6 +8,10 @@ public enum GrupoNotaFiscal {
 
 	RECEBIMENTO_MERCADORIAS_ENCALHE(TipoOperacao.ENTRADA),
 	
+	NF_TERCEIRO_COMPLEMENTAR(TipoOperacao.ENTRADA),
+
+	NF_TERCEIRO(TipoOperacao.ENTRADA),
+	
 	/**
 	 * Notas Fiscais referente às movimentações de Reparte e Suplmentar.
 	 */

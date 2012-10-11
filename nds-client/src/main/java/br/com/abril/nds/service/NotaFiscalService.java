@@ -2,6 +2,7 @@ package br.com.abril.nds.service;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -161,6 +162,9 @@ public interface NotaFiscalService {
 	public abstract Long emitiNotaFiscal(long idTipoNotaFiscal, Date dataEmissao,
 			Fornecedor fornecedor, List<ItemNotaFiscal> listItemNotaFiscal, InformacaoTransporte transporte, InformacaoAdicional informacaoAdicional, List<NotaFiscalReferenciada> listNotaFiscalReferenciada,
 			Set<Processo> processos, Condicao condicao);
+
+	public abstract void exportarNotasFiscais(Long... idNotaFiscals)
+			throws FileNotFoundException, IOException, IllegalArgumentException, IllegalAccessException, InvocationTargetException;
 
 
 		

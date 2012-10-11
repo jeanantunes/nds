@@ -12,7 +12,7 @@ public interface EntradaNFETerceirosRepository extends Repository<NotaFiscalEntr
 	
 	List<ConsultaEntradaNFETerceirosRecebidasDTO> buscarNFNotasRecebidas(FiltroEntradaNFETerceiros filtro, boolean limitar);
 	
-	Integer buscarTotalNotasRecebidas(FiltroEntradaNFETerceiros filtro);
+	Integer buscarTotalNotas(FiltroEntradaNFETerceiros filtro);
 	
 	List<ConsultaEntradaNFETerceirosPendentesDTO> buscarNFNotasPendentes(FiltroEntradaNFETerceiros filtro, boolean limitar);
 	

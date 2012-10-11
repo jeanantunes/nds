@@ -40,6 +40,7 @@ import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.util.export.NDSFileHeader;
 import br.com.abril.nds.vo.PaginacaoVO;
+import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Resource;
@@ -283,10 +284,9 @@ public class InadimplenciaController {
 	 * @param idDivida
 	 */
 	public void getDividaComissao(Long idDivida) {
-		
 		DividaComissaoDTO resultado = dividaService.obterDadosDividaComissao(idDivida);
 		
-		result.use(Results.json()).from(resultado, "result").serialize();
+		result.use(Results.json()).from(resultado, "result").serialize();			
 	}	
 	
 	/**
