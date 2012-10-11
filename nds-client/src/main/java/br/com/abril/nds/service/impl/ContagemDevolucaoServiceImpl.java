@@ -48,7 +48,6 @@ import br.com.abril.nds.model.fiscal.nota.Condicao;
 import br.com.abril.nds.model.fiscal.nota.InformacaoAdicional;
 import br.com.abril.nds.model.fiscal.nota.InformacaoTransporte;
 import br.com.abril.nds.model.fiscal.nota.ItemNotaFiscal;
-import br.com.abril.nds.model.fiscal.nota.NotaFiscalReferenciada;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalhe;
 import br.com.abril.nds.model.movimentacao.ControleContagemDevolucao;
 import br.com.abril.nds.model.movimentacao.StatusOperacao;
@@ -71,6 +70,7 @@ import br.com.abril.nds.service.EdicoesFechadasService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.NotaFiscalService;
 import br.com.abril.nds.util.TipoMensagem;
+import br.com.abril.nds.vo.ValidacaoVO;
 
 @Service
 public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
@@ -410,7 +410,8 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 			}
 		}
 		
-		//gerarNotasFiscaisPorFornecedor(listaContagemDevolucao);
+		//FIXME: ajustar função de confirmar para geração de notas ou impressão de CE de acordo com a obrigação fiscal.
+		gerarNotasFiscaisPorFornecedor(listaContagemDevolucao);
 		
 		verificarConferenciaEncalheFinalizada(usuario);
 		
@@ -810,7 +811,11 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 		Set<Processo> processos = new HashSet<Processo>(1);		
 		processos.add(Processo.DEVOLUCAO_AO_FORNECEDOR);
 		Long idNota = notaFiscalService.emitiNotaFiscal(tipoNotaFiscal.getId(), new Date(), fornecedor, listItemNotaFiscal, transporte, informacaoAdicional, null, processos, Condicao.DEVOLUCAO_ENCALHE);
-		notaFiscalService.exportarNotasFiscais(idNota);
+		try {
+			notaFiscalService.exportarNotasFiscais(idNota);
+		} catch (Exception e) {
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Falha ao gerar arquivo de NFe"));
+		}
 	}
 	
 	

@@ -239,7 +239,7 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 		geraNota :function(){
 			
 			var param = digitacaoContagemDevolucaoController.obterListaDigitacaoContagemDevolucao();
-			
+			debugger;
 			$.postJSON(
 				contextPath + "/devolucao/digitacao/contagem/geraNota", 
 				param,
