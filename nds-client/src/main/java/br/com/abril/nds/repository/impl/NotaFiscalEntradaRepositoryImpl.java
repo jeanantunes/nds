@@ -287,11 +287,7 @@ public class NotaFiscalEntradaRepositoryImpl extends AbstractRepositoryModel<Not
 	@Override	
 	public void inserirNotaFiscal(NotaFiscalEntrada notaFiscal){
 		
-		if (notaFiscal == null) {
-			throw new IllegalArgumentException("Erro inesperado. Nota Fiscal não definida.");
-		}else{
 			this.adicionar(notaFiscal);
-		}
 	}
 	@Override	
 	public NotaFiscalEntrada obterNotaFiscalPorNumero(String numero){

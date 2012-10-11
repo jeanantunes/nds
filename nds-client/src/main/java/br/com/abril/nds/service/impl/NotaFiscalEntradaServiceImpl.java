@@ -3,6 +3,7 @@ package br.com.abril.nds.service.impl;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,16 +15,26 @@ import br.com.abril.nds.dto.DetalheNotaFiscalDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaNotaFiscalDTO;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.model.cadastro.PessoaJuridica;
-import br.com.abril.nds.model.fiscal.CFOP;
+import br.com.abril.nds.integracao.service.DistribuidorService;
+import br.com.abril.nds.model.Origem;
+import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.TipoAtividade;
+import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntrada;
+import br.com.abril.nds.model.fiscal.NotaFiscalEntradaCota;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
+import br.com.abril.nds.model.fiscal.StatusNotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
+import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
 import br.com.abril.nds.repository.CFOPRepository;
+import br.com.abril.nds.repository.ControleConferenciaEncalheCotaRepository;
 import br.com.abril.nds.repository.NotaFiscalEntradaRepository;
 import br.com.abril.nds.repository.PessoaJuridicaRepository;
 import br.com.abril.nds.repository.TipoNotaFiscalRepository;
+import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.NotaFiscalEntradaService;
+import br.com.abril.nds.service.TipoNotaFiscalService;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.vo.PeriodoVO;
@@ -44,20 +55,75 @@ public class NotaFiscalEntradaServiceImpl implements NotaFiscalEntradaService {
 	@Autowired
 	private TipoNotaFiscalRepository tipoNotaFiscalRepository;
 	
+	@Autowired
+	private CotaService cotaService;
+	
+	@Autowired
+	private TipoNotaFiscalService tipoNotaFiscalService;
+	
+	@Autowired
+	private ControleConferenciaEncalheCotaRepository conferenciaEncalheCotaRepository;
+	
+	@Autowired
+	private DistribuidorService distribuidorService;
+	
 	@Override
 	@Transactional
 	public Integer obterQuantidadeNotasFicaisCadastradas(FiltroConsultaNotaFiscalDTO filtroConsultaNotaFiscal) {
 		return notaFiscalDAO.obterQuantidadeNotasFicaisCadastradas(filtroConsultaNotaFiscal);
 	}
-	
 
 	@Autowired
 	private NotaFiscalEntradaRepository notaFiscalRepository;
 
-		
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	@Transactional
-	public void inserirNotaFiscal(NotaFiscalEntrada notaFiscal){
-		this.notaFiscalRepository.inserirNotaFiscal(notaFiscal); 
+	public void inserirNotaFiscal(NotaFiscalEntradaCota notaFiscal, Integer numeroCota, Long idControleConferenciaEncalheCota) {
+
+		if (notaFiscal == null) {
+
+			throw new IllegalArgumentException("Erro inesperado. Nota Fiscal não definida.");
+		}
+
+		Cota cota = this.cotaService.obterPorNumeroDaCota(numeroCota);
+		
+		TipoAtividade tipoAtividade = this.distribuidorService.obter().getTipoAtividade();
+
+		GrupoNotaFiscal grupoNotaFiscal = GrupoNotaFiscal.NF_TERCEIRO;
+		
+		boolean isContribuinte = true;
+
+		notaFiscal.setCota(cota);
+		notaFiscal.setDataEmissao(new Date());
+		notaFiscal.setDataExpedicao(new Date());
+		notaFiscal.setOrigem(Origem.MANUAL);
+		notaFiscal.setValorBruto(BigDecimal.ZERO);
+		notaFiscal.setValorLiquido(BigDecimal.ZERO);
+		notaFiscal.setValorDesconto(BigDecimal.ZERO);
+		notaFiscal.setStatusNotaFiscal(StatusNotaFiscalEntrada.RECEBIDA);
+
+		if (idControleConferenciaEncalheCota != null) {
+
+			ControleConferenciaEncalheCota conferenciaEncalheCota = this.conferenciaEncalheCotaRepository.buscarPorId(idControleConferenciaEncalheCota);
+
+			if (conferenciaEncalheCota != null 
+					&& conferenciaEncalheCota.getNotaFiscalEntradaCota() != null 
+					&& !conferenciaEncalheCota.getNotaFiscalEntradaCota().isEmpty()) {
+				
+				grupoNotaFiscal = GrupoNotaFiscal.NF_TERCEIRO_COMPLEMENTAR;
+			}
+
+			notaFiscal.setControleConferenciaEncalheCota(conferenciaEncalheCota);
+		}
+		
+		TipoNotaFiscal tipoNotaFiscal = this.tipoNotaFiscalRepository.obterTipoNotaFiscal(grupoNotaFiscal, tipoAtividade, isContribuinte);
+
+		notaFiscal.setTipoNotaFiscal(tipoNotaFiscal);
+
+		this.notaFiscalRepository.adicionar(notaFiscal); 
 	}
 
 	private void validarPeriodo(FiltroConsultaNotaFiscalDTO filtroConsultaNotaFiscal) {
