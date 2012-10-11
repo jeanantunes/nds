@@ -173,7 +173,7 @@ public class GeracaoNFeController {
 		
 		try {
 			this.geracaoNFeService.gerarNotaFiscal(intervaloBox, intervalorCota, intervaloDateMovimento, 
-					listIdFornecedor, null, tipoNotaFiscal, dataEmissao, idCotasSuspensas);
+					listIdFornecedor, null, tipoNotaFiscal, dataEmissao, idCotasSuspensas, null);
 			
 		} catch (IOException ioe){
 			throw new ValidacaoException(TipoMensagem.WARNING, ioe.getMessage());

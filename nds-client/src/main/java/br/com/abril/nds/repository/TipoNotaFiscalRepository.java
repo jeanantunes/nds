@@ -29,6 +29,9 @@ public interface TipoNotaFiscalRepository extends Repository<TipoNotaFiscal, Lon
 	
 	List<TipoNotaFiscal> consultarTipoNotaFiscal(FiltroCadastroTipoNotaDTO filtro);
 	
+	
+
+	List<TipoNotaFiscal> obterTiposNotaFiscal(GrupoNotaFiscal grupoNotaFiscal);
 	/**
 	 * Obtem tipo de nota fiscal.
 	 * 
@@ -39,4 +42,5 @@ public interface TipoNotaFiscalRepository extends Repository<TipoNotaFiscal, Lon
 	 */
 	TipoNotaFiscal obterTipoNotaFiscal(GrupoNotaFiscal grupoNotaFiscal, TipoAtividade tipoAtividade, boolean isContribuinte);
 	
+
 }

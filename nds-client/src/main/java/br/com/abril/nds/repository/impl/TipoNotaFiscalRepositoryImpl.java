@@ -231,5 +231,18 @@ public class TipoNotaFiscalRepositoryImpl extends AbstractRepositoryModel<TipoNo
 
 		return hql.toString();
 	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List <TipoNotaFiscal> obterTiposNotaFiscal(GrupoNotaFiscal grupoNotaFiscal) {
+		
+		String hql = " from TipoNotaFiscal tipoNotaFiscal where tipoNotaFiscal.grupoNotaFiscal = :grupoNotaFiscal group by tipoNotaFiscal.id  ";
+		
+		Query query = getSession().createQuery(hql);
+		
+		query.setParameter("grupoNotaFiscal", grupoNotaFiscal);
+		
+		return query.list();
+	}
 
 }
