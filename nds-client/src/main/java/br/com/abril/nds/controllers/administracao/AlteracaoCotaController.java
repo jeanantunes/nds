@@ -14,6 +14,7 @@ import br.com.abril.nds.client.util.PessoaUtil;
 import br.com.abril.nds.dto.ConsultaAlteracaoCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroAlteracaoCotaDTO;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.DescricaoTipoEntrega;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.desconto.TipoDesconto;
 import br.com.abril.nds.model.seguranca.Permissao;
@@ -81,7 +82,7 @@ public class AlteracaoCotaController {
 			listaVencimento.add(i);
 		}
 		result.include("listaVencimento", listaVencimento);
-		result.include("listTipoEntrega", tipoEntregaService.obterTodos());
+		result.include("listTipoEntrega", DescricaoTipoEntrega.values());
 		result.include("listTipoDesconto", TipoDesconto.values());
 		
 		result.include("listHistoricoTitularidadeCotaFinanceiro", historicoTitularidadeCotaFinanceiroService.pesquisarTodos());

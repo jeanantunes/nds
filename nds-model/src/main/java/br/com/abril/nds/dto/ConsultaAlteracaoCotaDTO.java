@@ -40,13 +40,25 @@ public class ConsultaAlteracaoCotaDTO implements Serializable {
 		this.numeroCota = numeroCota;
 		this.nomeRazaoSocial = nomeRazaoSocial;
 		this.nomeFornecedor = nomeFornecedor;
-		if(tipoDesconto!= null)
+		if(tipoDesconto!= null){
 			this.tipoDesconto = tipoDesconto.getDescricao();
+		} else {
+			this.tipoDesconto = "";
+		}	
 		this.vencimento = vencimento;
-		if(financeiro != null)
+		if(financeiro != null){
 			this.valorMinimo = financeiro.toString();
-		if(tipoEntrega != null)
+		} else {
+			this.valorMinimo = BigDecimal.ZERO.toString();
+		}	
+		if(tipoEntrega != null) {
 			this.tipoEntrega = tipoEntrega.getValue();
+		} else {
+			this.tipoEntrega ="";
+		}	
+		
+		
+		
 		this.box = box;
 	}
 
