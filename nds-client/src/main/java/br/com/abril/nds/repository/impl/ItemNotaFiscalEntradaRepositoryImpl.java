@@ -124,6 +124,9 @@ public class ItemNotaFiscalEntradaRepositoryImpl extends
 		Criteria criteria = getSession().createCriteria(ItemNotaFiscalEntrada.class);		
 		criteria.createAlias("notaFiscal", "notaFiscal");
 		criteria.createAlias("notaFiscal.controleConferenciaEncalheCota", "controleConferenciaEncalheCota");
+		
+		criteria.createAlias("produtoEdicao", "produtoEdicao");
+		criteria.createAlias("produtoEdicao.produto", "produto");
 		criteria.add(Restrictions.eq("controleConferenciaEncalheCota.id", idControleConferencia));
 		return criteria;
 	}
