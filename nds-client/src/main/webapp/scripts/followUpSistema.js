@@ -293,7 +293,7 @@ var followUpSistemaController = $.extend(true, {
 	},
 		
 	exPreProcFollowupNegociacao : function (resultado) {
-		//alert("exefollowPreProcessamentoNegociacao");
+		alert("exefollowPreProcessamentoNegociacao");
 		return resultado;
 	},
 	
