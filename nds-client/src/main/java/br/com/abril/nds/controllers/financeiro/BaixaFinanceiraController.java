@@ -620,6 +620,7 @@ public class BaixaFinanceiraController {
         //CONFIGURAR PAGINA DE PESQUISA
 		FiltroConsultaDividasCotaDTO filtroAtual = new FiltroConsultaDividasCotaDTO(numCota, distribuidor.getDataOperacao(),StatusCobranca.NAO_PAGO);
 		PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortorder);
+		filtroAtual.setSomenteBaixadas(false);
 		filtroAtual.setPaginacao(paginacao);
 		filtroAtual.setOrdenacaoColuna(Util.getEnumByStringValue(OrdenacaoColunaDividas.values(), sortname));
 	    
@@ -666,11 +667,11 @@ public class BaixaFinanceiraController {
 	@Post
 	@Path("/buscaDividasBaixadas")
 	public void buscaDividasBaixadas(Integer numCota,
-							String nossoNumero,
-			                 String sortorder, 
-			                 String sortname,
-			                 int page, 
-			                 int rp){
+									 String nossoNumero,
+					                 String sortorder, 
+					                 String sortname,
+					                 int page, 
+					                 int rp){
 		if (numCota==null){
 		    throw new ValidacaoException(TipoMensagem.WARNING, "Digite o número da cota ou o número do boleto.");
 		}
@@ -681,6 +682,8 @@ public class BaixaFinanceiraController {
         //CONFIGURAR PAGINA DE PESQUISA
 		FiltroConsultaDividasCotaDTO filtroAtual = new FiltroConsultaDividasCotaDTO(numCota, distribuidor.getDataOperacao(),StatusCobranca.PAGO);
 		PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortorder);
+		filtroAtual.setNossoNumero(nossoNumero);
+		filtroAtual.setSomenteBaixadas(true);
 		filtroAtual.setPaginacao(paginacao);
 		filtroAtual.setOrdenacaoColuna(Util.getEnumByStringValue(OrdenacaoColunaDividas.values(), sortname));
 	    
@@ -694,7 +697,7 @@ public class BaixaFinanceiraController {
 		
 		
 		//BUSCA COBRANCAS
-		List<CobrancaVO> cobrancasVO = this.baixaCobrancaService.buscarCobrancasBaixadas(numCota, nossoNumero); 
+		List<CobrancaVO> cobrancasVO = this.baixaCobrancaService.buscarCobrancasBaixadas(filtroAtual); 
 
 		if ((cobrancasVO==null)||(cobrancasVO.size()<=0)) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Não há cobranças baixadas nesta data para esta Cota.");
@@ -1000,8 +1003,12 @@ public class BaixaFinanceiraController {
 	 * @throws IOException Exceção de E/S
 	 */
 	public void exportar(FileType fileType) throws IOException {
+
 		FiltroConsultaDividasCotaDTO filtro = this.obterFiltroExportacao();
-		List<CobrancaVO> cobrancasVO = this.cobrancaService.obterDadosCobrancasPorCota(filtro);
+
+		List<CobrancaVO> cobrancasVO = filtro.isSomenteBaixadas() ? this.baixaCobrancaService.buscarCobrancasBaixadas(filtro)
+																  : this.cobrancaService.obterDadosCobrancasPorCota(filtro);
+		
 		FileExporter.to("dividas-cota", fileType)
 			.inHTTPResponse(this.getNDSFileHeader(), filtro, null, 
 					cobrancasVO, CobrancaVO.class, this.httpResponse);
