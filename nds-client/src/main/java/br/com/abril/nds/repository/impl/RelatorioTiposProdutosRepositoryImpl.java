@@ -36,7 +36,7 @@ public class RelatorioTiposProdutosRepositoryImpl extends AbstractRepository imp
 				" - " +
 				"   (select sum(mec.qtde) from MovimentoEstoqueCota mec where mec.tipoMovimento.operacaoEstoque = 'ENTRADA' and mec.lancamento.id = l.id)" +
 				" )" +
-//				" * pe.precoVenda" +
+				" * pe.precoVenda" +
 				") AS faturamento, " +
 				"t.descricao AS tipoProduto, " +
 				"l.dataRecolhimentoDistribuidor AS recolhimento, " +
