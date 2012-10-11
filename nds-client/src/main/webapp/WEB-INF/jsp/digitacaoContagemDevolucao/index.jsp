@@ -139,7 +139,7 @@ $(function(){
 					</tr>
 						<td>
 							<span class="bt_novos" title="Imprimir CE Devolução">
-							<a href="javascript:;">
+							<a href="javascript:alert('impressão CE Devolução ainda não implementada');">
 							<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0">
 							CE Devolução
 							</a>
