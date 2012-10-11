@@ -275,11 +275,30 @@
 								</a>
 							</span>
 		                </td>
+						
+						<td width="30%">   
+		                    <div id="botoesDividasNaoPagas" style="display: none;">
+			                    <span id="bt_aVista" class="bt_confirmar_novo" title="Pagar Dívida"><a onclick="baixaFinanceiraController.obterPagamentoDividas();" href="javascript:;"><img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif">À Vista</a></span>
+			                    <span id="bt_negociar" class="bt_confirmar_novo" title="Negociar Dívida"><a onclick="baixaFinanceiraController.obterNegociacao();" href="javascript:;"><img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif">Negociar</a></span>
+			                    <span id="bt_postergar" class="bt_confirmar_novo" title="Postergar Dívida"><a onclick="baixaFinanceiraController.obterPostergacao();" href="javascript:;"><img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif">Postergar</a></span>
+		                    </div>
 
-		                <td width="30%">   
-		                    <span id="bt_aVista" class="bt_confirmar_novo" title="Pagar Dívida"><a onclick="baixaFinanceiraController.obterPagamentoDividas();" href="javascript:;"><img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif">À Vista</a></span>
-		                    <span id="bt_negociar" class="bt_confirmar_novo" title="Negociar Dívida"><a onclick="baixaFinanceiraController.obterNegociacao();" href="javascript:;"><img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif">Negociar</a></span>
-		                    <span id="bt_postergar" class="bt_confirmar_novo" title="Postergar Dívida"><a onclick="baixaFinanceiraController.obterPostergacao();" href="javascript:;"><img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif">Postergar</a></span>
+		                    <div id="botoesDividasNaoPagas">
+			                    <span id="bt_aVista" class="bt_confirmar_novo" title="Confirmar Baixa">
+			                    	<a onclick="baixaFinanceiraController.confirmarBaixa();"
+			                    	   href="javascript:;">
+			                    	   	<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif">
+			                    	   		Confirmar
+			                    	</a>
+			                    </span>
+			                    <span id="bt_negociar" class="bt_confirmar_novo" title="Cancelar Baixa">
+			                    	<a onclick="baixaFinanceiraController.cancelarBaixa();"
+			                    	   href="javascript:;">
+			                    	   	<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif">
+			                    	   		Cancelar
+			                    	</a>
+			                    </span>
+		                    </div>
 		                </td>
 		                
 		                <td width="14%">

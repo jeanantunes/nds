@@ -277,6 +277,8 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	 * @return {@link br.com.abril.nds.model.planejamento.Lancamento}
 	 */
 	Lancamento obterProximoLancamento(Lancamento lancamentoAtual);
+	
+
 }
 	
 	

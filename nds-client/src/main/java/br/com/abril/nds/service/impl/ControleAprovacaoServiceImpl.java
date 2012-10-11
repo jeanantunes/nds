@@ -82,7 +82,7 @@ public class ControleAprovacaoServiceImpl implements ControleAprovacaoService {
 		movimento.setStatus(StatusAprovacao.APROVADO);
 		movimento.setAprovador(usuario);
 		
-		this.movimentoRepository.alterar(movimento);
+		this.movimentoRepository.merge(movimento);
 		
 		if (movimento instanceof MovimentoEstoque) {
 			

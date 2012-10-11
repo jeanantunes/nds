@@ -70,10 +70,11 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 					hql += "order by diferenca.tipoDiferenca ";
 					break;
 				case VALOR_TOTAL_DIFERENCA:
+					//+  " diferenca.qtde * diferenca.produtoEdicao.pacotePadrao * (diferenca.produtoEdicao.precoVenda - (diferenca.produtoEdicao.precoVenda * desconto / 100))) "
 					hql += " order by "
 						+  " case when (diferenca.tipoDiferenca = 'FALTA_DE' or "
 						+  " diferenca.tipoDiferenca = 'SOBRA_DE') then ("
-						+  " diferenca.qtde * diferenca.produtoEdicao.pacotePadrao * (diferenca.produtoEdicao.precoVenda - (diferenca.produtoEdicao.precoVenda * desconto / 100))) "
+						+  " diferenca.qtde * (diferenca.produtoEdicao.precoVenda - (diferenca.produtoEdicao.precoVenda * desconto / 100))) "
 						+  " when (diferenca.tipoDiferenca = 'FALTA_EM' or diferenca.tipoDiferenca = 'SOBRA_EM') then ("
 						+  " diferenca.qtde * (diferenca.produtoEdicao.precoVenda - (diferenca.produtoEdicao.precoVenda * desconto / 100))) "
 						+  " else 0 end ";
@@ -176,10 +177,11 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 
 			String innerHQLDesconto = this.obterHQLDesconto(null);  
 
+			//+ " diferenca.qtde * diferenca.produtoEdicao.pacotePadrao * (diferenca.produtoEdicao.precoVenda - (diferenca.produtoEdicao.precoVenda * ("+ innerHQLDesconto +") / 100))) "
 			hql = " select diferenca, "
 				+ " (case when (diferenca.tipoDiferenca = 'FALTA_DE' or "
 				+ " diferenca.tipoDiferenca = 'SOBRA_DE') then ("
-				+ " diferenca.qtde * diferenca.produtoEdicao.pacotePadrao * (diferenca.produtoEdicao.precoVenda - (diferenca.produtoEdicao.precoVenda * ("+ innerHQLDesconto +") / 100))) "
+				+ " diferenca.qtde * (diferenca.produtoEdicao.precoVenda - (diferenca.produtoEdicao.precoVenda * ("+ innerHQLDesconto +") / 100))) "
 				+ " when (diferenca.tipoDiferenca = 'FALTA_EM' or diferenca.tipoDiferenca = 'SOBRA_EM') then ("
 				+ " diferenca.qtde * (diferenca.produtoEdicao.precoVenda - (diferenca.produtoEdicao.precoVenda * ("+ innerHQLDesconto +") / 100))) "
 				+ " else 0 end) as valorTotalDiferenca ";
@@ -272,10 +274,11 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 					hql += "order by diferenca.statusConfirmacao ";
 					break;
 				case VALOR_TOTAL_DIFERENCA:
+					 //+ " diferenca.qtde * diferenca.produtoEdicao.pacotePadrao * (diferenca.produtoEdicao.precoVenda - (diferenca.produtoEdicao.precoVenda * desconto / 100))) "
 					hql += " order by "
 						 + " case when (diferenca.tipoDiferenca = 'FALTA_DE' or "
 						 + " diferenca.tipoDiferenca = 'SOBRA_DE') then ("
-						 + " diferenca.qtde * diferenca.produtoEdicao.pacotePadrao * (diferenca.produtoEdicao.precoVenda - (diferenca.produtoEdicao.precoVenda * desconto / 100))) "
+						 + " diferenca.qtde * (diferenca.produtoEdicao.precoVenda - (diferenca.produtoEdicao.precoVenda * desconto / 100))) "
 						 + " when (diferenca.tipoDiferenca = 'FALTA_EM' or diferenca.tipoDiferenca = 'SOBRA_EM') then ("
 						 + " diferenca.qtde * (diferenca.produtoEdicao.precoVenda - (diferenca.produtoEdicao.precoVenda * desconto / 100))) "
 						 + " else 0 end ";
@@ -357,10 +360,11 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 			
 			String innerHQLDesconto = this.obterHQLDesconto(filtro.getIdCota());  
 
+			//+ " diferenca.qtde * diferenca.produtoEdicao.pacotePadrao * (diferenca.produtoEdicao.precoVenda - (diferenca.produtoEdicao.precoVenda * ("+ innerHQLDesconto +") / 100))) "
 			hql = " select diferenca, "
 				+ " (case when (diferenca.tipoDiferenca = 'FALTA_DE' or "
 				+ " diferenca.tipoDiferenca = 'SOBRA_DE') then ("
-				+ " diferenca.qtde * diferenca.produtoEdicao.pacotePadrao * (diferenca.produtoEdicao.precoVenda - (diferenca.produtoEdicao.precoVenda * ("+ innerHQLDesconto +") / 100))) "
+				+ " diferenca.qtde * (diferenca.produtoEdicao.precoVenda - (diferenca.produtoEdicao.precoVenda * ("+ innerHQLDesconto +") / 100))) "
 				+ " when (diferenca.tipoDiferenca = 'FALTA_EM' or diferenca.tipoDiferenca = 'SOBRA_EM') then ("
 				+ " diferenca.qtde * (diferenca.produtoEdicao.precoVenda - (diferenca.produtoEdicao.precoVenda * ("+ innerHQLDesconto +") / 100))) "
 				+ " else 0 end) as valorTotalDiferenca, "
@@ -497,13 +501,15 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 		
 		hql.append("select sum( ")
 			
+			//.append(" (- diferenca.qtde * produtoEdicao.pacotePadrao) ")
 			.append(" case when (diferenca.tipoDiferenca = 'FALTA_DE') then ")
-			.append(" (- diferenca.qtde * produtoEdicao.pacotePadrao) ")
+			.append(" (- diferenca.qtde) ")
 			.append(" when (diferenca.tipoDiferenca = 'FALTA_EM') then ")
 			.append(" (- diferenca.qtde) ")
 			
+			//.append(" (diferenca.qtde * produtoEdicao.pacotePadrao) ")
 			.append(" when (diferenca.tipoDiferenca = 'SOBRA_DE') then ")
-			.append(" (diferenca.qtde * produtoEdicao.pacotePadrao) ")
+			.append(" (diferenca.qtde) ")
 			.append(" when (diferenca.tipoDiferenca = 'SOBRA_EM') then ")
 			.append(" (diferenca.qtde) ")
 			

@@ -306,16 +306,11 @@ public class EntradaNFETerceirosRepositoryImplTest
 	}
 	
 	@Test
-	@Ignore
 	public void buscarItensPorNota(){
 		
-		FiltroEntradaNFETerceiros filtro = new FiltroEntradaNFETerceiros();
-//		filtro.setCodigoNota(1L);
-		filtro.setPaginacao(new PaginacaoVO());
 		
 		List<ItemNotaFiscalPendenteDTO> lista = 
-				this.entradaNFETerceirosRepository.buscarItensPorNota(
-						filtro);
+				this.entradaNFETerceirosRepository.buscarItensPorNota(1L, null, null, 1, 15);
 		
 		Assert.assertNotNull(lista);
 	}

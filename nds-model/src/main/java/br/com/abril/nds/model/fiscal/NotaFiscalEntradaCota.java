@@ -18,7 +18,7 @@ public class NotaFiscalEntradaCota extends NotaFiscalEntrada {
 	private Cota cota;
 	
 	@ManyToOne
-	@JoinColumn(name = "NOTA_FISCAL_ENTRADA_ID", referencedColumnName="ID", insertable = false, updatable = false)
+	@JoinColumn(name = "CONTROLE_CONFERENCIA_ENCALHE_COTA_ID", referencedColumnName="ID", insertable = false, updatable = false)
 	private ControleConferenciaEncalheCota controleConferenciaEncalheCota;
 	
 	public Cota getCota() {
