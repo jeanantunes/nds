@@ -909,10 +909,13 @@ public class DiferencaEstoqueController {
 		
 		if (TipoDiferenca.FALTA_DE.equals(tipoDiferenca)
 				|| TipoDiferenca.SOBRA_DE.equals(tipoDiferenca)) {
-			
+
 			valorTotalDiferenca =
+					produtoEdicao.getPrecoVenda().multiply( new BigDecimal( diferenca ) );
+			
+			/*valorTotalDiferenca =
 				produtoEdicao.getPrecoVenda().multiply(new BigDecimal(produtoEdicao.getPacotePadrao()))
-					.multiply( new BigDecimal( diferenca ) );
+					.multiply( new BigDecimal( diferenca ) );*/
 			
 		} else if (TipoDiferenca.FALTA_EM.equals(tipoDiferenca)
 						|| TipoDiferenca.SOBRA_EM.equals(tipoDiferenca)) {
@@ -2165,8 +2168,9 @@ public class DiferencaEstoqueController {
 				|| TipoDiferenca.FALTA_EM.equals(tipoDiferenca)) {
 		
 			if(TipoDiferenca.FALTA_DE.equals(tipoDiferenca)){
-				
-				if(qtdeEstoqueAtual.compareTo(quantidade.multiply(valorPacotePadrao)) < 0){
+
+				if(qtdeEstoqueAtual.compareTo(quantidade) < 0){
+				//if(qtdeEstoqueAtual.compareTo(quantidade.multiply(valorPacotePadrao)) < 0){
 					
 					return (!isRateioCota)?
 								"Quantidade de Diferença para o tipo de diferença '" + tipoDiferenca.getDescricao() 
@@ -2463,8 +2467,10 @@ public class DiferencaEstoqueController {
 		
 		} else if (diferencaVO.getTipoDiferenca().equals(TipoDiferenca.FALTA_DE)) {
 			
+			/*quantidadeAtualEstoque =
+				quantidadeAtualEstoque.add(diferencaVO.getQuantidade().multiply(pacotePadrao));*/
 			quantidadeAtualEstoque =
-				quantidadeAtualEstoque.add(diferencaVO.getQuantidade().multiply(pacotePadrao));
+					quantidadeAtualEstoque.add(diferencaVO.getQuantidade());
 		
 		} else if (diferencaVO.getTipoDiferenca().equals(TipoDiferenca.SOBRA_EM)) {
 			
@@ -2472,8 +2478,10 @@ public class DiferencaEstoqueController {
 		
 		} else if (diferencaVO.getTipoDiferenca().equals(TipoDiferenca.SOBRA_DE)) {
 			
+			/*quantidadeAtualEstoque =
+				quantidadeAtualEstoque.subtract(diferencaVO.getQuantidade().multiply(pacotePadrao));*/
 			quantidadeAtualEstoque =
-				quantidadeAtualEstoque.subtract(diferencaVO.getQuantidade().multiply(pacotePadrao));
+					quantidadeAtualEstoque.subtract(diferencaVO.getQuantidade());
 		}
 		
 		return quantidadeAtualEstoque;
@@ -2640,7 +2648,9 @@ public class DiferencaEstoqueController {
 		} else if (diferenca.getTipoDiferenca().equals(TipoDiferenca.FALTA_DE)) {
 			
 			quantidadeEstoque =
-				quantidadeEstoque.subtract(diferenca.getQuantidade().multiply(pacotePadrao));
+					quantidadeEstoque.subtract(diferenca.getQuantidade());
+			/*quantidadeEstoque =
+				quantidadeEstoque.subtract(diferenca.getQuantidade().multiply(pacotePadrao));*/
 		
 		} else if (diferenca.getTipoDiferenca().equals(TipoDiferenca.SOBRA_EM)) {
 			
@@ -2648,8 +2658,10 @@ public class DiferencaEstoqueController {
 		
 		} else if (diferenca.getTipoDiferenca().equals(TipoDiferenca.SOBRA_DE)) {
 			
+			/*quantidadeEstoque =
+				quantidadeEstoque.add(diferenca.getQuantidade().multiply(pacotePadrao));*/
 			quantidadeEstoque =
-				quantidadeEstoque.add(diferenca.getQuantidade().multiply(pacotePadrao));
+					quantidadeEstoque.add(diferenca.getQuantidade());
 		}
 		
 		return quantidadeEstoque;
