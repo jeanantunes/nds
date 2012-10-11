@@ -459,6 +459,8 @@ var fecharDiaController =  $.extend(true, {
 		$.postJSON(contextPath + "/administracao/fecharDia/obterResumoQuadroReparte", null,
 				function(result){					
 					$("#totalReparte").html(result[0]);
+					$("#totalSobras").html(result[1]);
+					$("#totalFaltas").html(result[2]);
 				}
 			);
 	}

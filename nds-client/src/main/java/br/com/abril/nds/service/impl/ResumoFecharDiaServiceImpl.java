@@ -22,4 +22,16 @@ public class ResumoFecharDiaServiceImpl  implements ResumoFecharDiaService {
 		return resumoFecharDiaRepository.obterValorReparte(dataOperacaoDistribuidor);
 	}
 
+	@Override
+	@Transactional
+	public BigDecimal obterValorSobras(Date dataOperacao) {		
+		return this.resumoFecharDiaRepository.obterValorSobras(dataOperacao);
+	}
+
+	@Override
+	@Transactional
+	public BigDecimal obterValorFaltas(Date dataOperacao) {		 
+		return this.resumoFecharDiaRepository.obterValorFaltas(dataOperacao);
+	}
+
 }

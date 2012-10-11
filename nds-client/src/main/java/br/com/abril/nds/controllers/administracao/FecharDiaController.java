@@ -148,10 +148,15 @@ public class FecharDiaController {
 		
 		BigDecimal totalReparte = this.resumoFecharDiaService.obterValorReparte(distribuidor.getDataOperacao());
 		
-		List<BigDecimal> listaTeste = new ArrayList<BigDecimal>();
-		listaTeste.add(totalReparte);
+		List<BigDecimal> listaDeResultados = new ArrayList<BigDecimal>();
+		listaDeResultados.add(totalReparte);
+		BigDecimal totalSobras = this.resumoFecharDiaService.obterValorSobras(distribuidor.getDataOperacao());
+		listaDeResultados.add(totalSobras);
+		BigDecimal totalFaltas = this.resumoFecharDiaService.obterValorFaltas(distribuidor.getDataOperacao());
+		listaDeResultados.add(totalFaltas);
 		
-		result.use(Results.json()).from(listaTeste, "result").serialize();
+		
+		result.use(Results.json()).from(listaDeResultados, "result").serialize();
 		
 	}
 

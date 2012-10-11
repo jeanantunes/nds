@@ -313,11 +313,11 @@
       </tr>
       <tr>
         <td align="left" style="border-bottom:1px solid #ccc;">(+) Sobras</td>
-        <td align="right" style="border-bottom:1px solid #ccc;">83,90</td>
+        <td align="right" style="border-bottom:1px solid #ccc;"><div id="totalSobras"></div></td>
       </tr>
       <tr>
         <td align="left" style="border-bottom:1px solid #ccc;">(-) Faltas</td>
-        <td align="right" style="border-bottom:1px solid #ccc;">143,62</td>
+        <td align="right" style="border-bottom:1px solid #ccc;"><div id="totalFaltas"></div></td>
       </tr>
       <tr>
         <td align="left" style="border-bottom:1px solid #ccc;">(+) Transferência</td>

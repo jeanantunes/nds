@@ -7,4 +7,8 @@ public interface ResumoFecharDiaRepository {
 	
 	BigDecimal obterValorReparte(Date dataOperacaoDistribuidor);
 
+	BigDecimal obterValorSobras(Date dataOperacao);
+
+	BigDecimal obterValorFaltas(Date dataOperacao);
+
 }
