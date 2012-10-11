@@ -1268,6 +1268,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 		
 		Criteria criteria = super.getSession().createCriteria(Cota.class);
 		criteria.createAlias("box", "box");
+		criteria.createAlias("pdvs", "pdvs");
 		criteria.setProjection(Projections.id());
 		if (intervaloCota != null && intervaloCota.getDe() != null) {
 			
@@ -1286,7 +1287,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 		if(situacao != null){
 			criteria.add(Restrictions.eq("situacaoCadastro", situacao));
 		}
-		if(idRoteiro != null || idRoteiro != null){
+		if(idRoteiro != null || idRota != null){
 			criteria.createAlias("pdvs.rotas", "rotaPdv");
 		    criteria.createAlias("rotaPdv.rota", "rota");
 			criteria.createAlias("rota.roteiro", "roteiro");
@@ -1299,7 +1300,6 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 		
 		if (idRota != null){
 			
-			criteria.createAlias("roteiro.rotas", "rota");
 			criteria.add(Restrictions.eq("rota.id", idRota));
 		}
 		

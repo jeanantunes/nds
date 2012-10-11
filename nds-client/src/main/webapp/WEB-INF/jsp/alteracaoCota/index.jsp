@@ -428,7 +428,7 @@
 					<select name="filtroAlteracaoCotaDTO.idTpDesconto" id="idTpDesconto" style="width:100px;">
               			<option selected="selected" value="-1"></option>
 						<c:forEach items="${listTipoDesconto}" var="tipoDesconto">
-							<option value="${tipoDesconto.descricao}">${tipoDesconto.descricao}</option>
+							<option value="${tipoDesconto}">${tipoDesconto.descricao}</option>
 						</c:forEach>
 					</select>
               	</td>
@@ -442,7 +442,7 @@
 					</select>              	
               	</td>
 
-              	<td><span class="bt_pesquisar"><a href="javascript:;" onclick="mostrar();alteracaoCotaController.pesquisar()">Pesquisar</a></span></td>
+              	<td><span class="bt_pesquisar"><a href="javascript:;" onclick="alteracaoCotaController.pesquisar();">Pesquisar</a></span></td>
             </tr>
 		</table>
 	</fieldset>
