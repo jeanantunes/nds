@@ -283,6 +283,30 @@ public class EntradaNFETerceirosController {
 	
 	private void validarEntrada(FiltroEntradaNFETerceiros filtro) {
 				
+		if (filtro.getCota() != null && filtro.getCota().getNumeroCota() != null) {
+			Cota cota = notaFiscalEntradaService.obterPorNumerDaCota(filtro.getCota().getNumeroCota());
+			if (cota != null) {
+				filtro.setCota(cota);
+			} else {
+				throw new ValidacaoException(TipoMensagem.WARNING, "Número da cota inválido!");			
+			}
+		} else {
+			filtro.setCota(null);
+		}
+		
+		if (filtro.getFornecedor() != null
+				&& filtro.getFornecedor().getId() != null
+				&& filtro.getFornecedor().getId() > 0) {
+			Fornecedor fornecedor = notaFiscalEntradaService.obterFornecedorPorID(filtro.getFornecedor().getId());
+			if (fornecedor != null) {
+				filtro.setFornecedor(fornecedor);
+			} else {
+				throw new ValidacaoException(TipoMensagem.WARNING, "Fornecedor não encotrado!");			
+			}
+		} else {
+			filtro.setFornecedor(null);
+		}
+		
 		if(filtro.getStatusNotaFiscalEntrada() == null){
 			throw new ValidacaoException(TipoMensagem.WARNING, "Pelo menos um filtro deve ser preenchido!");			
 		}
