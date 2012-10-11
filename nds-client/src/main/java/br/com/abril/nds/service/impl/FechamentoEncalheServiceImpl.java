@@ -16,6 +16,7 @@ import br.com.abril.nds.dto.CotaAusenteEncalheDTO;
 import br.com.abril.nds.dto.FechamentoFisicoLogicoDTO;
 import br.com.abril.nds.dto.MovimentoFinanceiroCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroFechamentoEncalheDTO;
+import br.com.abril.nds.exception.GerarCobrancaValidacaoException;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.TipoEdicao;
@@ -307,7 +308,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 				
 				this.movimentoFinanceiroCotaService.gerarMovimentosFinanceirosDebitoCredito(movimentoFinanceiroCotaDTO);
 	
-				this.gerarCobrancaService.gerarCobranca(cota.getId(), usuario.getId(), new HashSet<String>());
+				this.gerarCobrancaService.gerarCobrancaCota(cota.getId(), usuario.getId(), new HashSet<String>());
 				
 				List<ChamadaEncalhe> listaChamadaEncalhe = 
 					this.chamadaEncalheRepository.obterChamadasEncalhePor(dataOperacao, cota.getId());
@@ -327,9 +328,9 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 			
 		} catch (ValidacaoException e) {
 			throw new ValidacaoException(e.getValidacao());
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		} catch (GerarCobrancaValidacaoException e) {
+			throw e.getValidacaoException();
+		} 
 	}
 
 	@Override
