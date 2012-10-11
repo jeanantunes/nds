@@ -2,6 +2,7 @@ package br.com.abril.nds.controllers.administracao;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -29,6 +30,7 @@ import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.FollowupCadastroParcialService;
 import br.com.abril.nds.service.FollowupCadastroService;
 import br.com.abril.nds.service.FollowupChamadaoService;
@@ -147,17 +149,17 @@ public class FollowupController {
 	@Post
 	@Path("/pesquisaDadosNegociacao")
 	public void pesquisaDadosNegociacao( String sortorder, String sortname, int page, int rp ) {
-		
+				
 		FiltroFollowupNegociacaoDTO filtroNegociacao = 
     		new FiltroFollowupNegociacaoDTO(Calendar.getInstance().getTime());
 		
 		filtroNegociacao.setPaginacao(new PaginacaoVO(page, rp, sortorder, sortname));
+
+		//TODO implementar consulta
 		
-		this.tratarFiltroNegociacao(filtroNegociacao);
+		List<ConsultaFollowupNegociacaoDTO> negociacoes = getMockNegociacao();
 		
-		TableModel<CellModelKeyValue<ConsultaFollowupNegociacaoDTO>> tableModel = efetuarConsultaDadosNegociacao(filtroNegociacao);
-		 
-		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+		result.use(FlexiGridJson.class).from(negociacoes).page(page).total(negociacoes.size()).serialize();
 	}
 	
 	private void tratarFiltroNegociacao(FiltroFollowupNegociacaoDTO filtroNegociacao) {
@@ -170,30 +172,30 @@ public class FollowupController {
 		}
 		session.setAttribute(FILTRO_FOLLOWUP_NEGOCIACAO_SESSION_ATTRIBUTE, filtroNegociacao);
 	}
-
-	private TableModel<CellModelKeyValue<ConsultaFollowupNegociacaoDTO>> efetuarConsultaDadosNegociacao(
-			FiltroFollowupNegociacaoDTO filtroNegociacao) {
+	
+	//TODO Remover Mock	
+	public List<ConsultaFollowupNegociacaoDTO> getMockNegociacao() {
 		
-		List<ConsultaFollowupNegociacaoDTO> listacadastral = this.followupnegociacaoService.obterNegociacoes(filtroNegociacao);
+		List<ConsultaFollowupNegociacaoDTO> lista = new ArrayList<ConsultaFollowupNegociacaoDTO>();
 		
-		TableModel<CellModelKeyValue<ConsultaFollowupNegociacaoDTO>> tableModel = new TableModel<CellModelKeyValue<ConsultaFollowupNegociacaoDTO>>();
+		lista.add(new ConsultaFollowupNegociacaoDTO(1L, 1L, "Jornaleiro1", "DescNegoc1", "DescParc1", "DescPag1", new Date()));
+		lista.add(new ConsultaFollowupNegociacaoDTO(2L, 1L, "Jornaleiro2", "DescNegoc1", "DescParc1", "DescPag1", new Date()));
+		lista.add(new ConsultaFollowupNegociacaoDTO(3L, 1L, "Jornaleiro3", "DescNegoc1", "DescParc1", "DescPag1", new Date()));
+		lista.add(new ConsultaFollowupNegociacaoDTO(4L, 1L, "Jornaleiro4", "DescNegoc1", "DescParc1", "DescPag1", new Date()));
+		lista.add(new ConsultaFollowupNegociacaoDTO(5L, 1L, "Jornaleiro5", "DescNegoc1", "DescParc1", "DescPag1", new Date()));
+		lista.add(new ConsultaFollowupNegociacaoDTO(6L, 1L, "Jornaleiro6", "DescNegoc1", "DescParc1", "DescPag1", new Date()));
+		lista.add(new ConsultaFollowupNegociacaoDTO(7L, 1L, "Jornaleiro7", "DescNegoc1", "DescParc1", "DescPag1", new Date()));
+		lista.add(new ConsultaFollowupNegociacaoDTO(8L, 1L, "Jornaleiro8", "DescNegoc1", "DescParc1", "DescPag1", new Date()));
 		
-		Integer totalRegistros = listacadastral.size();
-		
-		if(totalRegistros == 0){
-			throw new ValidacaoException(TipoMensagem.WARNING, "Negociação: Não foram encontrados resultados para Follow Up.");
-		}
-
-		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listacadastral));
-		
-		tableModel.setPage(filtroNegociacao.getPaginacao().getPaginaAtual());
-		
-		tableModel.setTotal(totalRegistros);
-		
-		return tableModel;
+		return lista;
 	}
 	
-
+	public void cancelarNegociacao(Long idNegociacao) {
+		//TODO
+		System.out.println("IMPLEMENTAR EXCLUSÃO DE CANCELAMENTO - ID = " + idNegociacao);
+		
+		result.use(Results.json()).withoutRoot().from("").recursive().serialize();	
+	}	
 	@Path("/pesquisaDadosStatusCota")
 	public void pesquisaDadosStatusCota( String sortorder, String sortname, int page, int rp ) {
 		FiltroFollowupStatusCotaDTO filtroStatusCota = new FiltroFollowupStatusCotaDTO();
@@ -405,6 +407,18 @@ public class FollowupController {
 		
 		if(tipoExportacao.equals("negociacao")){
 			
+			FiltroFollowupCadastroParcialDTO filtro = (FiltroFollowupCadastroParcialDTO) session.getAttribute(FILTRO_FOLLOWUP_CADASTRO_PARCIAL_SESSION_ATTRIBUTE);
+			
+			//TODO implementar consulta
+			List<ConsultaFollowupNegociacaoDTO> lista = this.getMockNegociacao();
+			
+			if(lista.isEmpty()) {
+				throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");
+			}
+			
+			FileExporter.to("FollowUp_dados_negociacao", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, null, 
+					lista, ConsultaFollowupNegociacaoDTO.class, this.httpResponse);
+			
 		}else if(tipoExportacao.equals("chamadao")){
 			FiltroFollowupChamadaoDTO filtro = (FiltroFollowupChamadaoDTO) session.getAttribute(FILTRO_FOLLOWUP_CONSIGNADOS_SESSION_ATTRIBUTE);
 			List<ConsultaFollowupChamadaoDTO> listadechamadao = this.followupchamadaoService.obterConsignados(filtro);
@@ -473,7 +487,7 @@ public class FollowupController {
 			
 			FileExporter.to("FollowUp_dados_cadastrais", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, null, 
 					lista, ConsultaFollowupCadastroParcialDTO.class, this.httpResponse);
-		}
+		} 
 		
 		result.nothing();
 	}

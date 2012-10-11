@@ -46,6 +46,7 @@ public class ConsultaFollowupNegociacaoDTO implements Serializable {
    	public ConsultaFollowupNegociacaoDTO() {   		
    	}
 
+   	public ConsultaFollowupNegociacaoDTO(Long idNegociacao,Long numeroCota, String nomeJornaleiro, String descricaoNegociacao,    
    	public ConsultaFollowupNegociacaoDTO(Long numeroCota, String nomeJornaleiro, BigDecimal valorParcela,    
    	    String descricaoParcelamento, String descricaoFormaPagamento, Date dataVencimento ) {   	
    	    this.numeroCota = numeroCota;    
@@ -54,6 +55,7 @@ public class ConsultaFollowupNegociacaoDTO implements Serializable {
    	    this.descricaoParcelamento = descricaoParcelamento; 
    	    this.descricaoFormaPagamento = descricaoFormaPagamento; 
    	    this.dataVencimento = dataVencimento; 
+   	    this.idNegociacao = idNegociacao;
    	}
 
    	
