@@ -199,15 +199,19 @@ var fechamentoEncalheController = $.extend(true, {
 		
 		$.each(resultado.rows, function(index, row) {
 			
-			if (row.cell.diferenca == "0") {
+			
+			var valorFisico = row.cell.fisico == null ? '' : row.cell.fisico;
+			
+			if (  ( row.cell.diferenca == "0" && valorFisico == '' ) ||  valorFisico == '' ) {
 				row.cell.diferenca = "";
 			}
 			
-			var valorFisico = row.cell.fisico == null ? '' : row.cell.fisico;
+			
 			var fechado = row.cell.fechado == false ? '' : 'disabled="disabled"';
 			row.cell.fisico = '<input type="text" style="width: 60px" id = "'+row.cell.produtoEdicao+'"  name="fisico" value="' + valorFisico + '" onchange="fechamentoEncalheController.onChangeFisico(this, ' + index + ')" ' + fechado + '/>';
 			
 			row.cell.replicar = '<span title="Replicar"><a href="javascript:;" onclick="fechamentoEncalheController.replicar(' + index + ')"><img src="' + contextPath + '/images/ico_atualizar.gif" border="0" /></a></span>';
+			
 			
 			if (fechado != '') {
 				$('#divBotoesPrincipais', fechamentoEncalheController.workspace).hide();
@@ -221,7 +225,7 @@ var fechamentoEncalheController = $.extend(true, {
 	
 		var tabela = $('.fechamentoGrid', fechamentoEncalheController.workspace).get(0);
 		for (i=0; i<tabela.rows.length; i++) {
-			replicar(i);
+			fechamentoEncalheController.replicar(i);
 		}
 	},
 	

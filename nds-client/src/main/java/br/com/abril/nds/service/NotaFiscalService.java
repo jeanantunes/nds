@@ -94,13 +94,6 @@ public interface NotaFiscalService {
 	 */
 	void exportarNotasFiscais(List<NotaFiscal> notasFiscaisParaExportacao) throws FileNotFoundException, IOException; 
 	
-	public Long emitiNotaFiscal(long idTipoNotaFiscal, Date dataEmissao,
-			Cota cota, List<ItemNotaFiscal> listItemNotaFiscal,
-			InformacaoTransporte transporte,
-			InformacaoAdicional informacaoAdicional,
-			List<NotaFiscalReferenciada> listNotaFiscalReferenciada, 
-			Set<Processo> processos);	
-	
 	/**
 	 * Obtém itens para nota fiscal respeitando os parametros.
 	 * 
