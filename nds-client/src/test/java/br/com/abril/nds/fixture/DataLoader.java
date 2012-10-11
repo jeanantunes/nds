@@ -17,6 +17,7 @@ import java.util.Set;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.hibernate.mapping.Array;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -134,6 +135,7 @@ import br.com.abril.nds.model.estoque.TipoDirecionamentoDiferenca;
 import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.financeiro.Boleto;
+import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.financeiro.CobrancaCheque;
 import br.com.abril.nds.model.financeiro.CobrancaDeposito;
 import br.com.abril.nds.model.financeiro.CobrancaDinheiro;
@@ -144,6 +146,8 @@ import br.com.abril.nds.model.financeiro.Divida;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.financeiro.HistoricoAcumuloDivida;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
+import br.com.abril.nds.model.financeiro.Negociacao;
+import br.com.abril.nds.model.financeiro.ParcelaNegociacao;
 import br.com.abril.nds.model.financeiro.StatusDivida;
 import br.com.abril.nds.model.financeiro.StatusInadimplencia;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
@@ -924,6 +928,12 @@ public class DataLoader {
 
 	private static Object tipoMovimentoEstornoCompraEncalhe;
 
+	private static ConsolidadoFinanceiroCota consolidadoDividaCobrancaOriginariaNegociacao;
+
+	private static Divida dividaCobrancaOriginariaNegociacao;
+
+	private static CobrancaDinheiro cobrancaOriginariaNegociacao;
+
 	public static void main(String[] args) {
 		ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext(
 				"classpath:/applicationContext-dataLoader.xml");
@@ -1099,6 +1109,8 @@ public class DataLoader {
 		gerarGrupos(session);
 		
 		criarDescontoLogistica(session);
+		
+		criarCobrancasNegociacao(session);
 	}
 
 	
@@ -2466,13 +2478,219 @@ public class DataLoader {
                  BigDecimal.ZERO, new BigDecimal(210),
 				"TIPO_BAIXA", "ACAO", StatusCobranca.PAGO,
 				cotaMariana, bancoHSBC, dividaAcumuladaMariana1,1);
-
+		
+		
+		
 		save(session, cobrancaGuilherme1, cobrancaGuilherme2, cobrancaGuilherme3,
 				cobrancaMurilo1, cobrancaMurilo2, cobrancaMurilo3,
 				cobrancaMariana1, cobrancaMariana2,
 				cobrancaOrlando,
 				cobrancaAcumuloGuilherme1,cobrancaAcumuloGuilherme2,cobrancaAcumuloMariana1,cobrancaAcumuloMurilo1);
 
+	}
+	
+	private static void criarCobrancasNegociacao(Session session){
+		
+		//Lupe
+		
+		consolidadoDividaCobrancaOriginariaNegociacao =
+				Fixture.consolidadoFinanceiroCota(null, cotaJose,
+												  Fixture.criarData(1, 1, 2010), 
+												  new BigDecimal(200), 
+												  new BigDecimal(230), 
+												  new BigDecimal(180), 
+												  new BigDecimal(180), 
+												  new BigDecimal(180), 
+												  new BigDecimal(45), 
+												  new BigDecimal(25));
+		dividaCobrancaOriginariaNegociacao = 
+				Fixture.divida(consolidadoDividaCobrancaOriginariaNegociacao, 
+								cotaJose, Fixture.criarData(1, 1, 2010),
+							    usuarioJoao, StatusDivida.NEGOCIADA, new BigDecimal(200),false);
+		
+		cobrancaOriginariaNegociacao = 
+				Fixture.criarCobrancaDinheiro("7234567890823",
+		                					   new Date(),  
+		                					   Fixture.criarData(1, 1, 2010),
+		                					   new Date(), 
+		                					   BigDecimal.ZERO, 
+		                					   new BigDecimal(200),
+		                					   "TIPO_BAIXA", "ACAO", StatusCobranca.NAO_PAGO,
+		                					   cotaJose, bancoHSBC,dividaCobrancaOriginariaNegociacao,1);
+		
+		save(session,consolidadoDividaCobrancaOriginariaNegociacao,dividaCobrancaOriginariaNegociacao,cobrancaOriginariaNegociacao);
+		
+		MovimentoFinanceiroCota movimentoFinanceiroPrimeiraParcela = 
+				Fixture.movimentoFinanceiroCota(cotaJose, tipoMovimentoFinanceiroRecebimentoReparte, usuarioJoao,
+				obterValorMovimentosEstoque(Arrays.asList(movimentoEstoqueCota1)), null,StatusAprovacao.APROVADO, new Date(), true);
+
+		MovimentoFinanceiroCota movimentoFinanceiroSegundaParcela = 
+				Fixture.movimentoFinanceiroCota(cotaJose, tipoMovimentoFinanceiroRecebimentoReparte, usuarioJoao,
+				obterValorMovimentosEstoque(Arrays.asList(movimentoEstoqueCota1)), null,StatusAprovacao.APROVADO, new Date(), true);
+
+		MovimentoFinanceiroCota movimentoFinanceiroTerceiraParcela = 
+				Fixture.movimentoFinanceiroCota(cotaJose, tipoMovimentoFinanceiroRecebimentoReparte, usuarioJoao,
+				obterValorMovimentosEstoque(Arrays.asList(movimentoEstoqueCota1)), null,StatusAprovacao.APROVADO, new Date(), true);
+
+		MovimentoFinanceiroCota movimentoFinanceiroQuartaParcela = 
+				Fixture.movimentoFinanceiroCota(cotaJose, tipoMovimentoFinanceiroRecebimentoReparte, usuarioJoao,
+				obterValorMovimentosEstoque(Arrays.asList(movimentoEstoqueCota1)), null,StatusAprovacao.APROVADO, new Date(), true);
+		
+		save(session,movimentoFinanceiroPrimeiraParcela,movimentoFinanceiroSegundaParcela,movimentoFinanceiroTerceiraParcela,movimentoFinanceiroQuartaParcela);
+		
+		///Primeira Parcela
+		
+		ConsolidadoFinanceiroCota consolidadoDividaCobrancaPrimeiraParcela =
+				Fixture.consolidadoFinanceiroCota(null, cotaJose,
+												  Fixture.criarData(1, 1, 2010), 
+												  new BigDecimal(200), 
+												  new BigDecimal(230), 
+												  new BigDecimal(180), 
+												  new BigDecimal(180), 
+												  new BigDecimal(180), 
+												  new BigDecimal(45), 
+												  new BigDecimal(25));
+		
+		consolidadoDividaCobrancaPrimeiraParcela.setMovimentos(Arrays.asList(movimentoFinanceiroPrimeiraParcela));
+		
+		Divida dividaCobrancaPrimeiraParcela= 
+				Fixture.divida(consolidadoDividaCobrancaPrimeiraParcela, 
+								cotaJose, Fixture.criarData(1, 1, 2010),
+							    usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200),false);
+		
+		Cobranca cobrancaPrimeiraParcela= 
+				Fixture.criarCobrancaDinheiro("8234567858823",
+		                					   new Date(),  
+		                					   Fixture.criarData(1, 1, 2010),
+		                					   new Date(), 
+		                					   BigDecimal.ZERO, 
+		                					   new BigDecimal(200),
+		                					   "TIPO_BAIXA", "ACAO", StatusCobranca.NAO_PAGO,
+		                					   cotaJose, bancoHSBC,dividaCobrancaPrimeiraParcela,1);
+		
+		save(session,consolidadoDividaCobrancaPrimeiraParcela,dividaCobrancaPrimeiraParcela,cobrancaPrimeiraParcela);
+		
+		//Segunda parcela
+		ConsolidadoFinanceiroCota consolidadoDividaCobrancaSegundaParcela =
+				Fixture.consolidadoFinanceiroCota(null, cotaJose,
+												  Fixture.criarData(1, 1, 2010), 
+												  new BigDecimal(200), 
+												  new BigDecimal(230), 
+												  new BigDecimal(180), 
+												  new BigDecimal(180), 
+												  new BigDecimal(180), 
+												  new BigDecimal(45), 
+												  new BigDecimal(25));
+		consolidadoDividaCobrancaSegundaParcela.setMovimentos(Arrays.asList(movimentoFinanceiroSegundaParcela));
+		
+		Divida dividaCobrancaSegundaParcela= 
+				Fixture.divida(consolidadoDividaCobrancaSegundaParcela, 
+								cotaJose, Fixture.criarData(1, 1, 2010),
+							    usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200),false);
+		
+		Cobranca cobrancaSegundaParcela= 
+				Fixture.criarCobrancaDinheiro("1294567858823",
+		                					   new Date(),  
+		                					   Fixture.criarData(1, 1, 2010),
+		                					   new Date(), 
+		                					   BigDecimal.ZERO, 
+		                					   new BigDecimal(200),
+		                					   "TIPO_BAIXA", "ACAO", StatusCobranca.NAO_PAGO,
+		                					   cotaJose, bancoHSBC,dividaCobrancaSegundaParcela,1);
+		
+		save(session,consolidadoDividaCobrancaSegundaParcela,dividaCobrancaSegundaParcela,cobrancaSegundaParcela);
+		
+		//Terceira parcela
+		ConsolidadoFinanceiroCota consolidadoDividaCobrancaTerceiraParcela =
+				Fixture.consolidadoFinanceiroCota(null, cotaJose,
+												  Fixture.criarData(1, 1, 2010), 
+												  new BigDecimal(200), 
+												  new BigDecimal(230), 
+												  new BigDecimal(180), 
+												  new BigDecimal(180), 
+												  new BigDecimal(180), 
+												  new BigDecimal(45), 
+												  new BigDecimal(25));
+		
+		consolidadoDividaCobrancaTerceiraParcela.setMovimentos(Arrays.asList(movimentoFinanceiroTerceiraParcela));
+		
+		Divida dividaCobrancaTerceiraParcela= 
+				Fixture.divida(consolidadoDividaCobrancaTerceiraParcela, 
+								cotaJose, Fixture.criarData(1, 1, 2010),
+							    usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200),false);
+		
+		Cobranca cobrancaTerceiraParcela= 
+				Fixture.criarCobrancaDinheiro("1934567858823",
+		                					   new Date(),  
+		                					   Fixture.criarData(1, 1, 2010),
+		                					   new Date(), 
+		                					   BigDecimal.ZERO, 
+		                					   new BigDecimal(200),
+		                					   "TIPO_BAIXA", "ACAO", StatusCobranca.NAO_PAGO,
+		                					   cotaJose, bancoHSBC,dividaCobrancaTerceiraParcela,1);
+		
+		save(session,consolidadoDividaCobrancaTerceiraParcela,dividaCobrancaTerceiraParcela,cobrancaTerceiraParcela);
+		
+		//Quarta parcela
+		ConsolidadoFinanceiroCota consolidadoDividaCobrancaQuartaParcela =
+				Fixture.consolidadoFinanceiroCota(null, cotaJose,
+												  Fixture.criarData(1, 1, 2010), 
+												  new BigDecimal(200), 
+												  new BigDecimal(230), 
+												  new BigDecimal(180), 
+												  new BigDecimal(180), 
+												  new BigDecimal(180), 
+												  new BigDecimal(45), 
+												  new BigDecimal(25));
+		
+		consolidadoDividaCobrancaQuartaParcela.setMovimentos(Arrays.asList(movimentoFinanceiroQuartaParcela));
+		
+		Divida dividaCobrancaQuartaParcela= 
+				Fixture.divida(consolidadoDividaCobrancaQuartaParcela, 
+								cotaJose, Fixture.criarData(1, 1, 2010),
+							    usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200),false);
+		
+		Cobranca cobrancaQuartaParcela= 
+				Fixture.criarCobrancaDinheiro("9234567858823",
+		                					   new Date(),  
+		                					   Fixture.criarData(1, 1, 2010),
+		                					   new Date(), 
+		                					   BigDecimal.ZERO, 
+		                					   new BigDecimal(200),
+		                					   "TIPO_BAIXA", "ACAO", StatusCobranca.NAO_PAGO,
+		                					   cotaJose, bancoHSBC,dividaCobrancaQuartaParcela,1);
+		
+		save(session,consolidadoDividaCobrancaQuartaParcela,dividaCobrancaQuartaParcela,cobrancaQuartaParcela);
+		
+		List<Cobranca> cobrancas = new ArrayList<Cobranca>();
+		cobrancas.add(cobrancaOriginariaNegociacao);
+		
+		//Gerar Negociacao 
+		Negociacao negociacao = new Negociacao();
+		negociacao.setCobrancasOriginarias(cobrancas);
+		
+		//Gerar parcelas Negociacao
+		ParcelaNegociacao primeiraParcela = new ParcelaNegociacao();
+		primeiraParcela.setDataVencimento(Fixture.criarData(1, 1, 2010));
+		primeiraParcela.setNegociacao(negociacao);
+		primeiraParcela.setMovimentoFinanceiroCota(movimentoFinanceiroPrimeiraParcela);
+		
+		ParcelaNegociacao segundaParcela = new ParcelaNegociacao();
+		segundaParcela.setDataVencimento(Fixture.criarData(10, 1, 2010));
+		segundaParcela.setNegociacao(negociacao);
+		segundaParcela.setMovimentoFinanceiroCota(movimentoFinanceiroSegundaParcela);
+		
+		ParcelaNegociacao terceiraParcela = new ParcelaNegociacao();
+		terceiraParcela.setDataVencimento(Fixture.criarData(20, 1, 2010));
+		terceiraParcela.setNegociacao(negociacao);
+		terceiraParcela.setMovimentoFinanceiroCota(movimentoFinanceiroTerceiraParcela);
+		
+		ParcelaNegociacao quartaParcela = new ParcelaNegociacao();
+		quartaParcela .setDataVencimento(Fixture.criarData(30, 1, 2010));
+		quartaParcela .setNegociacao(negociacao);
+		quartaParcela .setMovimentoFinanceiroCota(movimentoFinanceiroQuartaParcela);
+		
+		save(session,negociacao,primeiraParcela,segundaParcela,terceiraParcela,quartaParcela);
 	}
 
 
