@@ -211,6 +211,7 @@ var followUpSistemaController = $.extend(true, {
 			url : contextPath + '/followup/pesquisaDadosNegociacao',
 	        preProcess:  followUpSistemaController.exPreProcFollowupNegociacao, 
 			dataType : 'json',
+			newp: 1,
 			colModel : [ {
 				display : 'Cota',
 				name : 'numeroCota',
@@ -233,7 +234,7 @@ var followUpSistemaController = $.extend(true, {
 				display : 'Parcela',
 				name : 'descricaoParcelamento',
 				width : 100,
-				sortable : true,
+				sortable : false,
 				align : 'left'
 			}, {
 				display : 'Forma de Pagamento',
@@ -243,7 +244,7 @@ var followUpSistemaController = $.extend(true, {
 				align : 'left'
 			}, {
 				display : 'Data Vencto',
-				name : 'dataVencimento',
+				name : 'dataVencimentoFormatada',
 				width : 85,
 				sortable : true,
 				align : 'center'
@@ -251,7 +252,7 @@ var followUpSistemaController = $.extend(true, {
 				display : 'Ação',
 				name : 'acao',
 				width : 50,
-				sortable : true,
+				sortable : false,
 				align : 'center'
 			}],
 			sortname : "nomeJornaleiro",
@@ -303,7 +304,7 @@ var followUpSistemaController = $.extend(true, {
 	
 		$.each(resultado.rows, function(index, negociacao) {
 			negociacao.cell.acao = "<a href=\"javascript:;\" onclick=\"followUpSistemaController.cancelarNegociacao("+negociacao.cell.idNegociacao+");\"> "+
-			 "<img src=\"" + contextPath + "/images/ico_excluir.gif\" title=\"Excluir\" hspace=\"5\" border=\"0\" /></a>";
+			 "<img src=\"" + contextPath + "/images/ico_negociar.png\" title=\"Reverter Pagamento Negociação\" hspace=\"5\" border=\"0\" /></a>";
 		});
 		
 		return resultado;
@@ -314,7 +315,14 @@ var followUpSistemaController = $.extend(true, {
 		var parametro = {'idNegociacao' : idNegociacao};
 		
 		$.postJSON(contextPath + "/followup/cancelarNegociacao", 
-				parametro);				
+					parametro, 
+					function(result){
+							exibirMensagem(
+									result.tipoMensagem, 
+									result.listaMensagens
+							);
+					});
+		
 	},
 	
 	exPreProcFollowupChamadao : function(resultado) {

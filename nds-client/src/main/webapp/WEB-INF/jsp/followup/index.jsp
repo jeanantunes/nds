@@ -23,7 +23,7 @@
                 
                 
             </ul>
-            <div id="tabNegocia">
+            <div id="tabNegocia" style="height:auto">
                <fieldset style="width:880px!important;">
                	  <legend>Negociação</legend>
                     <table class="negociacaoGrid"></table>

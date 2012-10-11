@@ -34,4 +34,16 @@ public class NegociacaoRepositoryImplTest extends AbstractRepositoryImplTest {
 		
 		Assert.assertTrue(true);
 	}
+	
+	@Test
+	public void bterIdCobrancaPorNegociacaoFollowup(){
+		
+		negociacaoDividaRepository.obterIdCobrancaPor(1L);
+		
+		Assert.assertTrue(true);
+	}
+	
+	
+	
+	
 }
