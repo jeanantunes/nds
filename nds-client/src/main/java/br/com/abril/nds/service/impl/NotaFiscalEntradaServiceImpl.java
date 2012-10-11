@@ -14,12 +14,13 @@ import br.com.abril.nds.dto.DetalheNotaFiscalDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaNotaFiscalDTO;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.model.cadastro.PessoaJuridica;
-import br.com.abril.nds.model.fiscal.CFOP;
+import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
-import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.repository.CFOPRepository;
+import br.com.abril.nds.repository.CotaRepository;
+import br.com.abril.nds.repository.FornecedorRepository;
 import br.com.abril.nds.repository.NotaFiscalEntradaRepository;
 import br.com.abril.nds.repository.PessoaJuridicaRepository;
 import br.com.abril.nds.repository.TipoNotaFiscalRepository;
@@ -44,6 +45,12 @@ public class NotaFiscalEntradaServiceImpl implements NotaFiscalEntradaService {
 	@Autowired
 	private TipoNotaFiscalRepository tipoNotaFiscalRepository;
 	
+	@Autowired
+	private CotaRepository cotaRepository;
+	
+	@Autowired
+	private FornecedorRepository fornecedorRepository;
+	
 	@Override
 	@Transactional
 	public Integer obterQuantidadeNotasFicaisCadastradas(FiltroConsultaNotaFiscalDTO filtroConsultaNotaFiscal) {
@@ -58,6 +65,16 @@ public class NotaFiscalEntradaServiceImpl implements NotaFiscalEntradaService {
 	@Transactional
 	public void inserirNotaFiscal(NotaFiscalEntrada notaFiscal){
 		this.notaFiscalRepository.inserirNotaFiscal(notaFiscal); 
+	}
+
+	@Transactional
+	public Cota obterPorNumerDaCota(Integer numeroCota) {
+		return this.cotaRepository.obterPorNumerDaCota(numeroCota); 
+	}
+
+	@Transactional
+	public Fornecedor obterFornecedorPorID(Long idFornecedor) {
+		return this.fornecedorRepository.buscarPorId(idFornecedor); 
 	}
 
 	private void validarPeriodo(FiltroConsultaNotaFiscalDTO filtroConsultaNotaFiscal) {
