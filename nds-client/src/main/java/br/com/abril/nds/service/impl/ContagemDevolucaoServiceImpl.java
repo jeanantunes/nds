@@ -4,9 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -14,39 +12,24 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import net.sf.jasperreports.engine.JasperRunManager;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import br.com.abril.nds.client.report.ImpressaoCECollectionDataSource;
 import br.com.abril.nds.client.vo.ProdutoEdicaoFechadaVO;
 import br.com.abril.nds.client.vo.RegistroEdicoesFechadasVO;
 import br.com.abril.nds.dto.ContagemDevolucaoConferenciaCegaDTO;
 import br.com.abril.nds.dto.ContagemDevolucaoDTO;
-import br.com.abril.nds.dto.EnderecoDTO;
-import br.com.abril.nds.dto.IdentificacaoImpressaoCEDevolucaoDTO;
-import br.com.abril.nds.dto.ImpressaoCEDevolucaoDTO;
 import br.com.abril.nds.dto.InfoContagemDevolucaoDTO;
-import br.com.abril.nds.dto.ProdutoImpressaoCEDevolucaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroDigitacaoContagemDevolucaoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
-import br.com.abril.nds.model.cadastro.DescontoLogistica;
 import br.com.abril.nds.model.cadastro.Distribuidor;
-import br.com.abril.nds.model.cadastro.EnderecoDistribuidor;
-import br.com.abril.nds.model.cadastro.EnderecoFornecedor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
-import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.Processo;
-import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
-import br.com.abril.nds.model.estoque.CEDevolucaoFornecedor;
 import br.com.abril.nds.model.estoque.ConferenciaEncalheParcial;
 import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
@@ -57,7 +40,6 @@ import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.fiscal.CFOP;
 import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
 import br.com.abril.nds.model.fiscal.ItemNotaFiscalSaida;
-import br.com.abril.nds.model.fiscal.NotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.NotaFiscalSaidaFornecedor;
 import br.com.abril.nds.model.fiscal.ParametroEmissaoNotaFiscal;
 import br.com.abril.nds.model.fiscal.StatusEmissaoNotaFiscal;
@@ -69,15 +51,12 @@ import br.com.abril.nds.model.fiscal.nota.ItemNotaFiscal;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalhe;
 import br.com.abril.nds.model.movimentacao.ControleContagemDevolucao;
 import br.com.abril.nds.model.movimentacao.StatusOperacao;
-import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
-import br.com.abril.nds.repository.CEDevolucaoFornecedorRepository;
 import br.com.abril.nds.repository.ConferenciaEncalheParcialRepository;
 import br.com.abril.nds.repository.ControleConferenciaEncalheRepository;
 import br.com.abril.nds.repository.ControleContagemDevolucaoRepository;
 import br.com.abril.nds.repository.DiferencaEstoqueRepository;
 import br.com.abril.nds.repository.ItemNotaFiscalSaidaRepository;
-import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.repository.NotaFiscalSaidaRepository;
 import br.com.abril.nds.repository.ParametroEmissaoNotaFiscalRepository;
@@ -90,7 +69,6 @@ import br.com.abril.nds.service.DiferencaEstoqueService;
 import br.com.abril.nds.service.EdicoesFechadasService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.NotaFiscalService;
-import br.com.abril.nds.util.MathUtil;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.vo.ValidacaoVO;
 
@@ -141,21 +119,12 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 	
 	@Autowired
 	private ControleNumeracaoNotaFiscalService controleNumeracaoNotaFiscalService;
-	
-	@Autowired
-
-	private CEDevolucaoFornecedorRepository ceDevolucaoRepository;
-	
-	@Autowired
-	private LancamentoRepository lancamentoRepository;
 
 	@Autowired
 	private NotaFiscalService notaFiscalService;
+
 	@Autowired
 	private EdicoesFechadasService edicoesFechadasService;
-	
-	private static final Logger LOG = LoggerFactory.getLogger(ContagemDevolucaoServiceImpl.class);
-	
 	
 	@Transactional
 	public InfoContagemDevolucaoDTO obterInfoContagemDevolucao(FiltroDigitacaoContagemDevolucaoDTO filtroPesquisa, boolean indPerfilUsuarioEncarregado) {
@@ -959,219 +928,6 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 		}
 		
 	}
-
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	@Transactional
-	public Collection<CEDevolucaoFornecedor> gerarCEDevolucao(Collection<ConferenciaEncalheParcial> conferencias) {
-	    Distribuidor distribuidor = distribuidorService.obter();
-	    if (distribuidor.possuiObrigacaoFiscal()) {
-	        throw new IllegalStateException("Distribuidor possui obrigação fiscal. CE de Devolução não deve ser gerada!");
-	    }
-	    Map<Fornecedor, CEDevolucaoFornecedor> mapaFornecedores = new HashMap<Fornecedor, CEDevolucaoFornecedor>();
-	    for (ConferenciaEncalheParcial conferencia : conferencias) {
-	       if (conferencia.getStatusAprovacao() != StatusAprovacao.APROVADO) {
-	           throw new IllegalStateException("A conferência de encalhe parcial deve estar aprovada para inclusão na CE de Devolução!");
-	       }
-	       Fornecedor fornecedor = conferencia.getProdutoEdicao().getProduto().getFornecedor();
-	       if (mapaFornecedores.keySet().contains(fornecedor)) {
-	           mapaFornecedores.get(fornecedor).addConferencia(conferencia);
-	       } else {
-	           CEDevolucaoFornecedor ceDevolucao = new CEDevolucaoFornecedor();
-	           ceDevolucao.setFornecedor(fornecedor);
-	           ceDevolucao.addConferencia(conferencia);
-	           ceDevolucao.setDataDevolucao(conferencia.getDataMovimento());
-	           mapaFornecedores.put(fornecedor, ceDevolucao);
-	       }
-	    }
-	    Collection<CEDevolucaoFornecedor> devolucoes = mapaFornecedores.values();
-	    for (CEDevolucaoFornecedor devolucaoFornecedor : devolucoes) {
-	        ceDevolucaoRepository.adicionar(devolucaoFornecedor);
-	    }
-	    return devolucoes;
-	}
-
-	/**
-     * {@inheritDoc}
-     */
-    @Override
-    @Transactional
-    public byte[] gerarImpressaoCEDevolucao(Collection<CEDevolucaoFornecedor> devolucoes) {
-       List<ImpressaoCEDevolucaoDTO> impressoes = new ArrayList<ImpressaoCEDevolucaoDTO>();
-       Distribuidor distribuidor = distribuidorService.obter();
-       for (CEDevolucaoFornecedor devolucao : devolucoes) {
-           ImpressaoCEDevolucaoDTO impressao = new ImpressaoCEDevolucaoDTO();
-           impressao.setDataEmissao(new Date());
-           impressao.setDataRecolhimento(devolucao.getDataDevolucao());
-           
-           processarFornecedorImpressaoCEDevolucao(devolucao, impressao);
-           
-           processarDistribuidorImpressaoCEDevolucao(distribuidor, impressao);
-           
-           BigDecimal totalBruto = BigDecimal.ZERO;
-           BigDecimal totalLiquido = BigDecimal.ZERO;
-           for (ConferenciaEncalheParcial conferencia : devolucao.getConferencias()) {
-               Date dataMovimento = conferencia.getDataMovimento();
-               ProdutoEdicao produtoEdicao = conferencia.getProdutoEdicao();
-               Produto produto = produtoEdicao.getProduto();
-               
-               ProdutoImpressaoCEDevolucaoDTO produtoImpressao = new ProdutoImpressaoCEDevolucaoDTO();
-               produtoImpressao.setCodigo(produto.getCodigo());
-               produtoImpressao.setEdicao(produtoEdicao.getNumeroEdicao());
-               produtoImpressao.setProduto(produto.getNome());
-               
-               BigInteger qtdeDevolucao = conferencia.getQtde();
-               produtoImpressao.setDevolucao(qtdeDevolucao);
-               
-               BigDecimal percentualDesconto = recuperarDescontoProdutoEdicaoImpressaoCEDevolucao(dataMovimento, produtoEdicao);
-               produtoImpressao.setDesconto(percentualDesconto);
-               BigDecimal precoVenda = produtoEdicao.getPrecoVenda();
-               BigDecimal valorDesconto = MathUtil.calculatePercentageValue(precoVenda, percentualDesconto);
-               BigDecimal precoDesconto = precoVenda.subtract(valorDesconto);
-               produtoImpressao.setPrecoDesconto(precoDesconto);
-               BigDecimal valorTotalDesconto = precoDesconto.multiply(new BigDecimal(qtdeDevolucao));
-               produtoImpressao.setValorTotal(valorTotalDesconto);
-               BigDecimal valorTotal = precoVenda.multiply(new BigDecimal(qtdeDevolucao));
-               totalBruto = totalBruto.add(valorTotal);
-               totalLiquido = totalLiquido.add(valorTotalDesconto);
-
-               processarLancamentoImpressaoCEDevolucao(dataMovimento, produtoEdicao, produtoImpressao);
-               processarDevolucaoFinalImpressaoCE(dataMovimento, produtoEdicao, produtoImpressao);
-           }
-           BigDecimal totalDesconto = totalBruto.subtract(totalLiquido);
-           impressao.setTotalBruto(totalBruto);
-           impressao.setTotalDesconto(totalDesconto);
-           impressao.setTotalLiquido(totalLiquido);
-       }
-       
-        URL url = 
-            Thread.currentThread().getContextClassLoader().getResource("/reports/CEDevolucaoLote.jasper");
-        
-        try {
-            String path = url.toURI().getPath();
-            return JasperRunManager.runReportToPdf(path,
-                    new HashMap<String, Object>(), new ImpressaoCECollectionDataSource(impressoes));
-        } catch (Exception ex) {
-            LOG.error("Erro gerando arquivo CE Devolução!", ex);
-            throw new RuntimeException("Erro gerando arquivo CE Devolução!", ex);
-        }
-    }
-
-
-    /**
-     * Recupera o percentual de desconto do produto edição a ser utilizado
-     * para a impressão de CE de Devolução ao Fornecedor
-     * @param dataDevolucao data de devolução do fornecedor
-     * @param produtoEdicao produto edição para recuperação do desconto
-     * @return percentual de desconto do produto
-     */
-    private BigDecimal recuperarDescontoProdutoEdicaoImpressaoCEDevolucao(Date dataDevolucao, ProdutoEdicao produtoEdicao) {
-        BigDecimal percentualDesconto = BigDecimal.ZERO;
-        DescontoLogistica desconto = produtoEdicao.getDescontoLogistica();
-        if (desconto != null) {
-            if (dataDevolucao.after(desconto.getDataInicioVigencia())) {
-                percentualDesconto = BigDecimal.valueOf(desconto.getPercentualDesconto());
-            }
-        }
-        return percentualDesconto;
-    }
-
-
-    /**
-     * Processa as informações do lançamento do produto edição para impressão da CE de
-     * Devolução ao Fornecedor
-     * 
-     * @param dataRecolhimento
-     *            data de recolhimento para recuperação do lançamento
-     * @param produtoEdicao
-     *            produto edição para recuperação do lançamento
-     * @param produtoImpressao
-     *            DTO com informações do produto na impressão da CE Devolução
-     *            para preenchimento das informações do lançamento recuperado
-     */
-    private void processarLancamentoImpressaoCEDevolucao(Date dataRecolhimento, ProdutoEdicao produtoEdicao, ProdutoImpressaoCEDevolucaoDTO produtoImpressao) {
-        Lancamento lancamento = lancamentoRepository.obterLancamentoDevolucaoFornecedor(dataRecolhimento, produtoEdicao.getId());
-        produtoImpressao.setSequenciaMatriz(lancamento.getSequenciaMatriz());
-        produtoImpressao.setDataLancamento(lancamento.getDataLancamentoDistribuidor());
-        produtoImpressao.setReparte(lancamento.getReparte());
-        for (NotaFiscalEntrada nota : lancamento.getNotasRecebimento()) {
-            produtoImpressao.addNotaEnvio(nota.getNumero());
-        }
-    }
-
-
-    /**
-     * Processa as informações do Distribuidor para a impressão da CE de Devolução
-     * ao fornecedor
-     * 
-     * @param distribuidor para preenchimento das informações do
-     * Distribuidor na CE de Devolução ao Fornecedor
-     *            
-     * @param impressao
-     *            DTO com as informações para a impressão da CE de Devolução
-     *            para preenchimento das informações do distribuidor
-     */
-    private void processarDistribuidorImpressaoCEDevolucao(Distribuidor distribuidor, ImpressaoCEDevolucaoDTO impressao) {
-           PessoaJuridica pj = distribuidor.getJuridica();
-           EnderecoDistribuidor endereco = distribuidor.getEnderecoDistribuidor();
-           EnderecoDTO enderecoDTO;
-           if (endereco == null) {
-               enderecoDTO = new EnderecoDTO();
-           } else {
-               enderecoDTO = EnderecoDTO.fromEndereco(endereco.getEndereco());
-           }
-           impressao.setDistribuidor(new IdentificacaoImpressaoCEDevolucaoDTO(pj.getRazaoSocial(), enderecoDTO,
-                    pj.getCnpj(), pj.getInscricaoEstadual()));
-    }
-
-    /**
-     * Processa as informações do Fornecedor para a impressão da CE de Devolução
-     * ao fornecedor
-     * 
-     * @param devolucao
-     *            CE de Devolução ao Fornecedor
-     * @param impressao
-     *            DTO com as informações para a impressão da CE de Devolução
-     *            para preenchimento das informações do fornecedor
-     */
-    private void processarFornecedorImpressaoCEDevolucao(CEDevolucaoFornecedor devolucao, ImpressaoCEDevolucaoDTO impressao) {
-        Fornecedor fornecedor = devolucao.getFornecedor();
-        EnderecoFornecedor endereco = fornecedor.getEnderecoPrincipal();
-        EnderecoDTO enderecoDTO;
-        if (endereco == null) {
-            enderecoDTO = new EnderecoDTO();
-        } else {
-            enderecoDTO = EnderecoDTO.fromEndereco(endereco.getEndereco());
-        }
-        PessoaJuridica pj = fornecedor.getJuridica();
-        impressao.setFornecedor(new IdentificacaoImpressaoCEDevolucaoDTO(pj.getRazaoSocial(), enderecoDTO,
-                pj.getCnpj(), pj.getInscricaoEstadual()));
-    }
-
-
-    /**
-     * Processa a informação do tipo de devolução, parcial caso o processo de
-     * contagem devolução para a produto edição ainda esteja em andamento ou
-     * final caso o processo de contagem de devolução já estaja concluído
-     * 
-     * @param dataMovimento
-     *            data do movimento para recuperação do controle de contagem
-     * @param produtoEdicao
-     *            produto edição para recuperação cdo controle de contagem
-     * @param produtoImpressao
-     *            DTO com as informações para impressão na CE de Devolução
-     */
-    private void processarDevolucaoFinalImpressaoCE(Date dataMovimento, ProdutoEdicao produtoEdicao, ProdutoImpressaoCEDevolucaoDTO produtoImpressao) {
-        ControleContagemDevolucao controleDevolucao = controleContagemDevolucaoRepository
-                .obterControleContagemDevolucao(dataMovimento, produtoEdicao.getId());
-        String tipoRecolhimento = controleDevolucao.getStatus() == StatusOperacao.CONCLUIDO ? "F" : "P";
-        produtoImpressao.setTipoRecolhimento(tipoRecolhimento);
-    }
-
-
 
 	@Override
 	@Transactional

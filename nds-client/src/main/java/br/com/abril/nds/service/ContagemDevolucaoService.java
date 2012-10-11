@@ -1,9 +1,7 @@
 package br.com.abril.nds.service;
 
-import java.util.Collection;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-
 import java.util.List;
 
 import br.com.abril.nds.client.vo.ProdutoEdicaoFechadaVO;
@@ -11,8 +9,6 @@ import br.com.abril.nds.dto.ContagemDevolucaoConferenciaCegaDTO;
 import br.com.abril.nds.dto.ContagemDevolucaoDTO;
 import br.com.abril.nds.dto.InfoContagemDevolucaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroDigitacaoContagemDevolucaoDTO;
-import br.com.abril.nds.model.estoque.CEDevolucaoFornecedor;
-import br.com.abril.nds.model.estoque.ConferenciaEncalheParcial;
 import br.com.abril.nds.model.seguranca.Usuario;
 
 public interface ContagemDevolucaoService {
@@ -30,10 +26,6 @@ public interface ContagemDevolucaoService {
 
 	public List<ContagemDevolucaoDTO> obterContagemDevolucaoEdicaoFechada(
 			boolean checkAll, List<ProdutoEdicaoFechadaVO> listaEdicoesFechadas, FiltroDigitacaoContagemDevolucaoDTO filtro);
-	
-	public Collection<CEDevolucaoFornecedor> gerarCEDevolucao(Collection<ConferenciaEncalheParcial> conferencias);
-	
-	public byte[] gerarImpressaoCEDevolucao(Collection<CEDevolucaoFornecedor> devolucoes);
 	
 	
 }
