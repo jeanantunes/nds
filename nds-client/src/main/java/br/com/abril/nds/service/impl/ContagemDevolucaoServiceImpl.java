@@ -899,6 +899,9 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 	    }
 	    Map<Fornecedor, CEDevolucaoFornecedor> mapaFornecedores = new HashMap<Fornecedor, CEDevolucaoFornecedor>();
 	    for (ConferenciaEncalheParcial conferencia : conferencias) {
+	       if (conferencia.getStatusAprovacao() != StatusAprovacao.APROVADO) {
+	           throw new IllegalStateException("A conferência de encalhe parcial deve estar aprovada para inclusão na CE de Devolução!");
+	       }
 	       Fornecedor fornecedor = conferencia.getProdutoEdicao().getProduto().getFornecedor();
 	       if (mapaFornecedores.keySet().contains(fornecedor)) {
 	           mapaFornecedores.get(fornecedor).addConferencia(conferencia);
