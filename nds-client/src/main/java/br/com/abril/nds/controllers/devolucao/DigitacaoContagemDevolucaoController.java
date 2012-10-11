@@ -478,6 +478,8 @@ public class DigitacaoContagemDevolucaoController  {
 			
 			digitacaoContagemDevolucaoVO.setDataRecolhimentoDistribuidor(DateUtil.formatarDataPTBR((dto.getDataMovimento())));
 			
+			digitacaoContagemDevolucaoVO.setEdicaoFechada(dto.isEdicaoFechada());
+			
 			listaResultadosVO.add(digitacaoContagemDevolucaoVO);
 		}
 		

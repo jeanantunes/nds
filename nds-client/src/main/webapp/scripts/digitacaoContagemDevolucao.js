@@ -77,11 +77,12 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 			
 			$("#contagemDevolucaoGrid", digitacaoContagemDevolucaoController.workspace).flexOptions({
 				url: contextPath + "/devolucao/digitacao/contagem/pesquisar",
-				params: formData
+				params: formData,
+				onSuccess: function(){$(".edicaoFechada").parents("tr").css("background", "#ffeeee");}
 			});
 			
 			$("#contagemDevolucaoGrid", digitacaoContagemDevolucaoController.workspace).flexReload();
-
+			
 		},
 		
 		/**
@@ -107,11 +108,13 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 				
 				var idInput = "valorExemplarNota" + index ;
 				
-				var inputExemplarNota = '<input id="'+idInput+'" name="qtdNota" class="input-exemplar-nota" type="text" style="width:80px; text-align: center;"  maxlength="17" value="'+row.cell.qtdNota+'"/>';
+				var classEdicaoFechada = row.cell.isEdicaoFechada ? "edicaoFechada" : "";
 				
+				var inputExemplarNota = '<input id="'+idInput+'" name="qtdNota" class="input-exemplar-nota '+classEdicaoFechada+' " type="text" style="width:80px; text-align: center;"  maxlength="17" value="'+row.cell.qtdNota+'"/>';
+										
 				if(!digitacaoContagemDevolucaoController.isRoleOperador()){
 					
-					inputExemplarNota = '<input id="'+idInput+'" name="qtdNota" maxlength="17" class="input-exemplar-nota" type="text" style="width:80px; text-align: center;"  value="'+row.cell.qtdNota+'" onkeypress="digitacaoContagemDevolucaoController.limparCheck(\'ch'+index+'\')"/>';
+					inputExemplarNota = '<input id="'+idInput+'" name="qtdNota" maxlength="17" class="input-exemplar-nota '+classEdicaoFechada+' " type="text" style="width:80px; text-align: center;"  value="'+row.cell.qtdNota+'" onkeypress="digitacaoContagemDevolucaoController.limparCheck(\'ch'+index+'\')"/>';
 					
 					var inputCheckReplicarValor = '<input type="checkbox" id="ch'+index+'" class="chBoxReplicar" name="checkgroup"  "/>';
 					
