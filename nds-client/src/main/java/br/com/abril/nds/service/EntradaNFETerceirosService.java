@@ -17,9 +17,10 @@ public interface EntradaNFETerceirosService {
 	
 	List<ConsultaEntradaNFETerceirosPendentesDTO> buscarNFNotasPendentes(FiltroEntradaNFETerceiros filtro, boolean limitar);
 	
-	List<ItemNotaFiscalPendenteDTO> buscarItensPorNota(FiltroEntradaNFETerceiros filtro);
+	List<ItemNotaFiscalPendenteDTO> buscarItensPorNota(
+			Long idConferenciaCota, String  orderBy,Ordenacao ordenacao, Integer firstResult, Integer maxResults);
 	
-	Integer buscarTodasItensPorNota(FiltroEntradaNFETerceiros filtro);
+	Integer buscarTodasItensPorNota(Long idConferenciaCota);
 
 	public abstract List<ItemNotaFiscalEntrada> obtemItemNotaFiscalEntradaPorControleConferenciaEncalheCota(
 			long idControleConferencia, String orderBy, Ordenacao ordenacao, Integer firstResult, Integer maxResults);
