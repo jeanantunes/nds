@@ -203,6 +203,8 @@ public class NotaFiscalEntradaRepositoryImpl extends AbstractRepositoryModel<Not
 						orderByColumn += " notaFiscal.tipoNotaFiscal.descricao ";
 						break;
 					default:
+						orderByColumn += orderByColumn.equals("") ? "" : ",";
+						orderByColumn += " notaFiscal.dataEmissao ";
 						break;
 				}
 			}
