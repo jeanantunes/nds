@@ -395,8 +395,8 @@ function showCamposSuspensao(show){
 }
 
 function tipoEntregaPj(opcao){
-	var entregaBancaPj = document.getElementById("entregaBancaPj"); 
-	var entregadorPf = document.getElementById("entregadorPj");
+	var entregaBancaPj = $("entregaBancaPj"); 
+	var entregadorPf = $("entregadorPj");
 	
 	
 	switch (opcao) {   
