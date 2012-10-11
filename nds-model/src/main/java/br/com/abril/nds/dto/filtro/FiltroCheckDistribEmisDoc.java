@@ -8,14 +8,14 @@ import br.com.abril.nds.util.export.Exportable;
 public class FiltroCheckDistribEmisDoc implements Serializable{
 	
 	
-	private boolean isSkipImpresso;
-	private boolean isSkipEmail;
+	private boolean isSlipImpresso;
+	private boolean isSlipEmail;
 	
 	private boolean isBoletoImpresso;
 	private boolean isBoletoEmail;
 
-	private boolean isBoletoSkipImpresso;
-	private boolean isBoletoSkipEmail;
+	private boolean isBoletoSlipImpresso;
+	private boolean isBoletoSlipEmail;
 
 	private boolean isReciboImpresso;
 	private boolean isReciboEmail;
@@ -26,17 +26,17 @@ public class FiltroCheckDistribEmisDoc implements Serializable{
 	private boolean isChamdaEncalheImpresso;
 	private boolean isChamdaEncalheEmail;
 	
-	public boolean getIsSkipImpresso() {
-		return isSkipImpresso;
+	public boolean getIsSlipImpresso() {
+		return isSlipImpresso;
 	}
-	public void setIsSkipImpresso(boolean isSkipImpresso) {
-		this.isSkipImpresso = isSkipImpresso;
+	public void setIsSlipImpresso(boolean isSkipImpresso) {
+		this.isSlipImpresso = isSkipImpresso;
 	}
-	public boolean getIsSkipEmail() {
-		return isSkipEmail;
+	public boolean getIsSlipEmail() {
+		return isSlipEmail;
 	}
-	public void setIsSkipEmail(boolean isSkipEmail) {
-		this.isSkipEmail = isSkipEmail;
+	public void setIsSlipEmail(boolean isSkipEmail) {
+		this.isSlipEmail = isSkipEmail;
 	}
 	public boolean getIsBoletoImpresso() {
 		return isBoletoImpresso;
@@ -50,17 +50,17 @@ public class FiltroCheckDistribEmisDoc implements Serializable{
 	public void setIsBoletoEmail(boolean isBoletoEmail) {
 		this.isBoletoEmail = isBoletoEmail;
 	}
-	public boolean getIsBoletoSkipImpresso() {
-		return isBoletoSkipImpresso;
+	public boolean getIsBoletoSlipImpresso() {
+		return isBoletoSlipImpresso;
 	}
-	public void setIsBoletoSkipImpresso(boolean isBoletoSkipImpresso) {
-		this.isBoletoSkipImpresso = isBoletoSkipImpresso;
+	public void setIsBoletoSlipImpresso(boolean isBoletoSkipImpresso) {
+		this.isBoletoSlipImpresso = isBoletoSkipImpresso;
 	}
-	public boolean getIsBoletoSkipEmail() {
-		return isBoletoSkipEmail;
+	public boolean getIsBoletoSlipEmail() {
+		return isBoletoSlipEmail;
 	}
-	public void setIsBoletoSkipEmail(boolean isBoletoSkipEmail) {
-		this.isBoletoSkipEmail = isBoletoSkipEmail;
+	public void setIsBoletoSlipEmail(boolean isBoletoSkipEmail) {
+		this.isBoletoSlipEmail = isBoletoSkipEmail;
 	}
 	public boolean getIsReciboImpresso() {
 		return isReciboImpresso;
