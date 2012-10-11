@@ -49,7 +49,7 @@ public class EntradaNFETerceirosRepositoryImpl extends AbstractRepositoryModel<N
 		hql.append("        notaFiscalEntrada.valorBruto as valorNota, ");		
 		hql.append("        ( CASE WHEN ");		
 		hql.append("          ( ");		
-		hql.append("             SELECT SUM(notaFiscalEntradaCotaCCE.valorNF) ");
+		hql.append("             SELECT SUM(COALESCE(notaFiscalEntradaCotaCCE.valorNF, notaFiscalEntradaCotaCCE.valorProdutos, notaFiscalEntradaCotaCCE.valorLiquido, 0)) ");
 		hql.append("             FROM ControleConferenciaEncalheCota controleConferenciaEncalheCota ");
 		hql.append("               LEFT JOIN controleConferenciaEncalheCota.notaFiscalEntradaCota as notaFiscalEntradaCotaCCE ");
 		hql.append("             WHERE controleConferenciaEncalheCota = controleConferenciaEncalheCotaNF ");
@@ -103,16 +103,20 @@ public class EntradaNFETerceirosRepositoryImpl extends AbstractRepositoryModel<N
 			}
 		}
 
-		if(filtro.getCota() != null) {			
+		if (filtro.getCota() != null && filtro.getCota().getPessoa() != null
+				&& filtro.getCota().getPessoa().getId() != null) {
 			hql.append( " and cota.id = :idCota ");
 		}
 		
-		if(filtro.getFornecedor() != null) {			
+		if (filtro.getFornecedor() != null
+				&& filtro.getFornecedor().getId() != null
+				&& filtro.getFornecedor().getId() > 0
+				&& StatusNotaFiscalEntrada.RECEBIDA.equals(filtro.getStatusNotaFiscalEntrada())) {
 			hql.append( " and fornecedor.id = :idFornecedor ");
 		}
 		
 		if(filtro.getDataInicial() != null && filtro.getDataFinal() != null){
-			hql.append( " and date(notaCota.dataEmissao) between :dataInicial and :dataFinal ");
+			hql.append( " and date(notaFiscalEntrada.dataEmissao) between :dataInicial and :dataFinal ");
 		}
 
 		return hql.toString();
@@ -210,19 +214,20 @@ public class EntradaNFETerceirosRepositoryImpl extends AbstractRepositoryModel<N
 		hql.append("               AND tipoNotaFiscal.grupoNotaFiscal = :complementar ");
 		hql.append("        ) = 0 THEN 'Entrada' ELSE 'Complementar' END  as tipoNotaFiscal, ");
 		hql.append("        ( ");
-		hql.append("             SELECT SUM(notaFiscalEntradaCota.valorNF) ");
+		hql.append("             SELECT SUM(COALESCE(notaFiscalEntradaCota.valorNF, notaFiscalEntradaCota.valorProdutos, notaFiscalEntradaCota.valorLiquido, 0)) ");
 		hql.append("             FROM ControleConferenciaEncalheCota controleConferenciaEncalheCotaNF ");
 		hql.append("               LEFT JOIN controleConferenciaEncalheCotaNF.notaFiscalEntradaCota as notaFiscalEntradaCota ");
 		hql.append("             WHERE controleConferenciaEncalheCotaNF = controleConferenciaEncalheCota ");
 		hql.append("        ) as valorNota, ");
 		hql.append("        (conferenciasEncalhe.qtde * conferenciasEncalhe.precoCapaInformado ) as valorReal, ");
 		hql.append("        ((conferenciasEncalhe.qtdeInformada * conferenciasEncalhe.precoCapaInformado) - ( ");
-		hql.append("             SELECT SUM(notaFiscalEntradaCota.valorNF) ");
+		hql.append("             SELECT SUM(COALESCE(notaFiscalEntradaCota.valorNF, notaFiscalEntradaCota.valorProdutos, notaFiscalEntradaCota.valorLiquido, 0)) ");
 		hql.append("             FROM ControleConferenciaEncalheCota controleConferenciaEncalheCotaNF ");
 		hql.append("               LEFT JOIN controleConferenciaEncalheCotaNF.notaFiscalEntradaCota as notaFiscalEntradaCota ");
 		hql.append("             WHERE controleConferenciaEncalheCotaNF = controleConferenciaEncalheCota ");
 		hql.append("        )) as diferenca, ");
-		hql.append("        'Pendente' as status ");
+		hql.append("        'Pendente' as status, ");
+		hql.append(" controleConferenciaEncalheCota.id  as idControleConferenciaEncalheCota ");
 		
 		hql.append(getSqlFromEWhereNotaPendente(filtro));
 		
@@ -255,7 +260,7 @@ public class EntradaNFETerceirosRepositoryImpl extends AbstractRepositoryModel<N
 		hql.append(" LEFT JOIN controleConferenciaEncalheCota.conferenciasEncalhe as conferenciasEncalhe");
 		
 		hql.append(" where ( ");
-		hql.append("            SELECT SUM(notaFiscalEntradaCota.valorNF) ");
+		hql.append("            SELECT SUM(COALESCE(notaFiscalEntradaCota.valorNF, notaFiscalEntradaCota.valorProdutos, notaFiscalEntradaCota.valorLiquido, 0)) ");
 		hql.append("            FROM ControleConferenciaEncalheCota controleConferenciaEncalheCotaNF ");
 		hql.append("              LEFT JOIN controleConferenciaEncalheCotaNF.notaFiscalEntradaCota as notaFiscalEntradaCota ");
 		hql.append("            WHERE controleConferenciaEncalheCotaNF = controleConferenciaEncalheCota ");
@@ -287,7 +292,7 @@ public class EntradaNFETerceirosRepositoryImpl extends AbstractRepositoryModel<N
 		}
 		
 		if(filtro.getDataInicial() != null && filtro.getDataFinal() != null){
-			hql.append( " and date(notaCota.dataEmissao) between :dataInicial and :dataFinal ");
+			hql.append( " and date(controleConferenciaEncalheCota.dataOperacao) between :dataInicial and :dataFinal ");
 		}
 
 		return hql.toString();

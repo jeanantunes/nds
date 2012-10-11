@@ -46,6 +46,18 @@
      
     </table>
     
+     <span class="bt_sellAll" style="float:right;margin-right:20px; ">
+    	
+    	<table>
+    		<tr>
+    			<td> <label for="sel"><strong>Total Redistribuido:</strong></label> </td> 
+    			<td> <div id="qtdeTotal"></div> </td> 
+    			<td> exes </td> 
+    		</tr>
+    	</table>
+    	
+    </span>
+    
     </fieldset>
     
      <fieldset id="idFieldRateioMultiproduto" style="display: none">
