@@ -56,6 +56,8 @@ public class ContagemDevolucaoDTO implements Serializable {
 	
 	private StatusAprovacao statusAprovacao;
 	
+	private boolean isEdicaoFechada;
+	
 	public ContagemDevolucaoDTO(){}
 	
 	
@@ -177,6 +179,14 @@ public class ContagemDevolucaoDTO implements Serializable {
 
 	public void setTotalComDesconto(BigDecimal totalComDesconto) {
 		this.totalComDesconto = totalComDesconto;
+	}
+
+	public boolean isEdicaoFechada() {
+		return isEdicaoFechada;
+	}
+
+	public void setEdicaoFechada(boolean isEdicaoFechada) {
+		this.isEdicaoFechada = isEdicaoFechada;
 	}
 	
 }

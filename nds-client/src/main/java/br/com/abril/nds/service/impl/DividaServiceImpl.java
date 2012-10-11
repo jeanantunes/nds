@@ -282,6 +282,9 @@ public class DividaServiceImpl implements DividaService {
 
 		Negociacao negociacao = negociacaoRepository.obterNegociacaoPorCobranca(cobranca.getId());
 		
+		if(negociacao == null)
+			throw new ValidacaoException(TipoMensagem.WARNING, "Não há negociação associada a essa dívida");
+		
 		BigDecimal valorPago = negociacao.getValorDividaPagaComissao();
 		if(valorPago == null) {
 			valorPago = BigDecimal.ZERO;

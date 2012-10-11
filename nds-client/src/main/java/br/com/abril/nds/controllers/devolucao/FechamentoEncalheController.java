@@ -1,5 +1,8 @@
 package br.com.abril.nds.controllers.devolucao;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -26,6 +29,7 @@ import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.BoxService;
 import br.com.abril.nds.service.CalendarioService;
+import br.com.abril.nds.service.ChamadaAntecipadaEncalheService;
 import br.com.abril.nds.service.FechamentoEncalheService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.util.DateUtil;
@@ -70,6 +74,9 @@ public class FechamentoEncalheController {
 	
 	@Autowired
 	private CalendarioService calendarioService;
+	
+	@Autowired
+	private ChamadaAntecipadaEncalheService chamadaAntecipadaEncalheService;
 	
 	@Path("/")
 	@Rules(Permissao.ROLE_RECOLHIMENTO_FECHAMENTO_ENCALHE)
@@ -186,6 +193,15 @@ public class FechamentoEncalheController {
 		this.result.use(Results.json()).from(
 			new ValidacaoVO(TipoMensagem.SUCCESS, "Cotas postergadas com sucesso!"), "result").recursive().serialize();
 	}
+	
+	@Path("/dataSugestaoPostergarCota")
+	public void carregarDataSugestaoPostergarCota(String dataEncalhe) throws ParseException {
+		Date date = new SimpleDateFormat("dd/MM/yyyy").parse(dataEncalhe);
+				
+		Date resultado = chamadaAntecipadaEncalheService.obterProximaDataEncalhe(date);
+		
+		this.result.use(Results.json()).from(resultado, "resultado").serialize();
+	}
 
 	@Path("/cobrarCotas")
 	public void cobrarCotas(Date dataOperacao, List<Long> idsCotas) {
@@ -295,10 +311,14 @@ public class FechamentoEncalheController {
 	
 	@Path("/verificarEncerrarOperacaoEncalhe")
 	public void verificarEncerrarOperacaoEncalhe(Date dataEncalhe, String operacao) {
-		if (dataEncalhe == null || Calendar.getInstance().getTime().before(dataEncalhe)) {
-			this.result.use(Results.json()).from(
-				new ValidacaoVO(TipoMensagem.WARNING, "Data de encalhe inválida!"), "result").recursive().serialize();
-			throw new ValidacaoException();
+		if (dataEncalhe == null) {
+			
+			if(verificarDataEncalhe(dataEncalhe)) {
+				this.result.use(Results.json()).from(
+					new ValidacaoVO(TipoMensagem.WARNING, "Data de encalhe inválida!"), "result").recursive().serialize();
+				
+				throw new ValidacaoException();
+			}
 		}
 		
 		int totalCotasAusentes =
@@ -328,6 +348,13 @@ public class FechamentoEncalheController {
 
 		this.result.use(Results.json()).from(
 			new ValidacaoVO(TipoMensagem.SUCCESS, "Operação de encalhe encerrada com sucesso!"), "result").recursive().serialize();
+	}
+
+	private boolean verificarDataEncalhe(Date dataEncalhe) {
+		
+		DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+		
+		return formatter.format(dataEncalhe).equals(formatter.format(new Date()));
 	}
 
 	/**

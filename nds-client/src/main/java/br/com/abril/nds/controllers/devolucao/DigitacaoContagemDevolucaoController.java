@@ -1,5 +1,6 @@
 package br.com.abril.nds.controllers.devolucao;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.DigitacaoContagemDevolucaoVO;
+import br.com.abril.nds.client.vo.ProdutoEdicaoFechadaVO;
 import br.com.abril.nds.client.vo.RegistroEdicoesFechadasVO;
 import br.com.abril.nds.client.vo.ResultadoDigitacaoContagemDevolucaoVO;
 import br.com.abril.nds.dto.ContagemDevolucaoConferenciaCegaDTO;
@@ -87,6 +89,7 @@ public class DigitacaoContagemDevolucaoController  {
 	
 	private static final String USUARIO_PERFIL_OPERADOR = "userProfileOperador";
 
+	private static final String LISTA_EDICOES_FECHADAS = "listaEdicoesFechadas";
 	
 	@Autowired
 	private DistribuidorService distribuidorService;
@@ -316,7 +319,13 @@ public class DigitacaoContagemDevolucaoController  {
 		
 		List<ContagemDevolucaoDTO> listaResultados = infoContagem.getListaContagemDevolucao();
 		
-		if (listaResultados == null || listaResultados.isEmpty()){
+		if (listaResultados == null) {
+			listaResultados = new ArrayList<ContagemDevolucaoDTO>();
+		}
+		
+		listaResultados.addAll(0, this.obterListaEdicoesFechadas());
+		
+		 if (listaResultados.isEmpty()){
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
 		}
 		
@@ -345,6 +354,39 @@ public class DigitacaoContagemDevolucaoController  {
 	}
 	
 	
+	@SuppressWarnings("unchecked")
+	private List<ContagemDevolucaoDTO> obterListaEdicoesFechadas() {
+		
+		List<ContagemDevolucaoDTO> listaContagem = (List<ContagemDevolucaoDTO>) this.session.getAttribute(LISTA_EDICOES_FECHADAS);
+		
+		if (listaContagem == null) {
+			listaContagem = new ArrayList<ContagemDevolucaoDTO>();
+		}
+		
+		return listaContagem;
+	}
+
+	@Post
+	public void adicionarEdicoesFechadas(boolean checkAll, List<ProdutoEdicaoFechadaVO> listaEdicoesFechadas ) {
+		
+		FiltroDigitacaoContagemDevolucaoDTO filtro = 
+				(FiltroDigitacaoContagemDevolucaoDTO) this.session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
+		
+		if (filtro == null) {
+			throw new ValidacaoException(TipoMensagem.ERROR, "Essa operação só pode ser realizada após a pesquisa");
+		}
+		
+		List<ContagemDevolucaoDTO> listaContagemEdicoesFechadasDTO = this.obterListaEdicoesFechadas();
+		
+		listaContagemEdicoesFechadasDTO.addAll(
+				this.contagemDevolucaoService.obterContagemDevolucaoEdicaoFechada(checkAll, listaEdicoesFechadas, filtro));
+		
+		this.session.setAttribute(LISTA_EDICOES_FECHADAS, listaContagemEdicoesFechadasDTO);
+		
+		this.result.use(Results.nothing());
+	}
+	
+	
 	@Post
 	@Path("/salvar")
 	public void salvar(List<DigitacaoContagemDevolucaoVO> listaDigitacaoContagemDevolucao) {
@@ -364,7 +406,7 @@ public class DigitacaoContagemDevolucaoController  {
 	
 	@Post
 	@Path("/confirmar")
-	public void confirmar(List<DigitacaoContagemDevolucaoVO> listaDigitacaoContagemDevolucao) {
+	public void confirmar(List<DigitacaoContagemDevolucaoVO> listaDigitacaoContagemDevolucao) throws IOException {
 		
 		if (listaDigitacaoContagemDevolucao == null 
 				|| listaDigitacaoContagemDevolucao.isEmpty()) {
@@ -381,11 +423,9 @@ public class DigitacaoContagemDevolucaoController  {
 		
 	}
 	
-	
-	
 	@Post
 	@Path("/geraNota")
-	public void geraNota(List<DigitacaoContagemDevolucaoVO> listaDigitacaoContagemDevolucao) {
+	public void geraNota(List<DigitacaoContagemDevolucaoVO> listaDigitacaoContagemDevolucao) throws IOException {
 		
 		if (listaDigitacaoContagemDevolucao == null 
 				|| listaDigitacaoContagemDevolucao.isEmpty()) {
@@ -438,6 +478,8 @@ public class DigitacaoContagemDevolucaoController  {
 			
 			digitacaoContagemDevolucaoVO.setDataRecolhimentoDistribuidor(DateUtil.formatarDataPTBR((dto.getDataMovimento())));
 			
+			digitacaoContagemDevolucaoVO.setEdicaoFechada(dto.isEdicaoFechada());
+			
 			listaResultadosVO.add(digitacaoContagemDevolucaoVO);
 		}
 		
@@ -462,7 +504,7 @@ public class DigitacaoContagemDevolucaoController  {
 			contagemDevolucaoDTO.setNumeroEdicao(Long.parseLong(vo.getNumeroEdicao()));
 			contagemDevolucaoDTO.setQtdNota(new BigInteger(vo.getQtdNota()));
 			contagemDevolucaoDTO.setDataMovimento( ( vo.getDataRecolhimentoDistribuidor() == null ) ? null : DateUtil.parseData(vo.getDataRecolhimentoDistribuidor(),"dd/MM/yyyy"));
-			
+			contagemDevolucaoDTO.setDiferenca(StringUtil.isEmpty(vo.getDiferenca()) ? null : new BigInteger(vo.getDiferenca()));
 			listaResultadosDto.add(contagemDevolucaoDTO);
 		}
 		
@@ -614,6 +656,8 @@ public class DigitacaoContagemDevolucaoController  {
 		
 		FiltroDigitacaoContagemDevolucaoDTO filtro = 
 				(FiltroDigitacaoContagemDevolucaoDTO) this.session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
+		
+		configurarPaginacaoPesquisa(filtro, sortorder, sortname, page, rp);
 		
 		Long quantidade = edicoesFechadasService.quantidadeResultadoEdicoesFechadas(filtro.getDataInicial(), filtro.getDataFinal(), filtro.getIdFornecedor());
 		if(quantidade == 0){
