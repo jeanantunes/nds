@@ -2,6 +2,7 @@ package br.com.abril.nds.repository.impl;
 
 import java.util.List;
 
+import org.hibernate.NonUniqueResultException;
 import org.hibernate.Query;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.transform.Transformers;
@@ -144,7 +145,7 @@ public class NegociacaoDividaRepositoryImpl extends AbstractRepositoryModel<Nego
 			
 			.append(" negociacao.formaCobranca.tipoCobranca as tipoCobranca , ")
 			
-			.append("(").append(this.obterSubSelectDataVencimentoParcela()).append(")").append(" as dataVencimento, ")
+			.append("(").append(this.obterSubSelectDataVencimentoParcela(" negociacao.id ")).append(")").append(" as dataVencimento, ")
 			
 			.append("(").append(this.obterSubSelectValorParcela()).append(")").append(" as valorParcela, ")
 			
@@ -214,7 +215,7 @@ public class NegociacaoDividaRepositoryImpl extends AbstractRepositoryModel<Nego
 		return hql.toString();
 	}
 	
-	private String obterSubSelectDataVencimentoParcela(){
+	private String obterSubSelectDataVencimentoParcela(String nomeParametroNegociacao){
 		
 		StringBuilder hql = new StringBuilder();
 		
@@ -232,7 +233,7 @@ public class NegociacaoDividaRepositoryImpl extends AbstractRepositoryModel<Nego
 			
 			.append(" join parcelaData.negociacao negociacaoData ")
 			
-			.append(" where negociacaoData.id = negociacao.id ")
+			.append(" where negociacaoData.id = "+nomeParametroNegociacao+" ")
 			
 			.append(" and cobrancaData.statusCobranca = :statusCobranca ");
 		
@@ -261,7 +262,7 @@ public class NegociacaoDividaRepositoryImpl extends AbstractRepositoryModel<Nego
 			
 			.append(" and cobrancaValor.statusCobranca = :statusCobranca ")
 			
-			.append(" and parcelaValor.dataVencimento = ( ").append(obterSubSelectDataVencimentoParcela()).append(" ) ");
+			.append(" and parcelaValor.dataVencimento = ( ").append(obterSubSelectDataVencimentoParcela(" negociacao.id ")).append(" ) ");
 		
 		return hql.toString();
 	}
@@ -301,9 +302,50 @@ public class NegociacaoDividaRepositoryImpl extends AbstractRepositoryModel<Nego
 			
 			.append(" where negociacaoNumeroParcela.id = negociacao.id ")
 			
-			.append(" and parcelaNumeroParcela.dataVencimento <= (").append(obterSubSelectDataVencimentoParcela()).append(" ) ");
+			.append(" and parcelaNumeroParcela.dataVencimento <= (").append(obterSubSelectDataVencimentoParcela(" negociacao.id ")).append(" ) ");
 			
 		return hql.toString();
+	}
+	
+	public Long obterIdCobrancaPor(Long idNegociacao) {
+
+		StringBuilder hql = new StringBuilder();
+
+		hql.append(" select cobrancaValor.id ")
+
+				.append(" from Cobranca cobrancaValor ")
+
+				.append(" join cobrancaValor.divida dividaValor ")
+
+				.append(" join dividaValor.consolidado consolidadoValor ")
+
+				.append(" join consolidadoValor.movimentos movimentoFinanceiroValor ")
+
+				.append(" join movimentoFinanceiroValor.parcelaNegociacao parcelaValor ")
+
+				.append(" join parcelaValor.negociacao negociacaoValor ")
+
+				.append(" where negociacaoValor.id = :idNegociacao ")
+
+				.append(" and cobrancaValor.statusCobranca = :statusCobranca ")
+
+				.append(" and parcelaValor.dataVencimento = ( ")
+				.append(obterSubSelectDataVencimentoParcela(" :idNegociacao "))
+				.append(" ) ");
+
+		Query query = this.getSession().createQuery(hql.toString());
+
+		query.setParameter("idNegociacao", idNegociacao);
+		query.setParameter("statusCobranca", StatusCobranca.NAO_PAGO);
+
+		try {
+
+			return (Long) query.uniqueResult();
+
+		} catch (NonUniqueResultException e) {
+
+			return null;
+		}
 	}
 	
 }

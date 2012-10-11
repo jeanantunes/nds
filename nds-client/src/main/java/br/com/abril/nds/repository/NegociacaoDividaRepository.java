@@ -21,4 +21,6 @@ public interface NegociacaoDividaRepository extends Repository<Negociacao, Long>
 	List<ConsultaFollowupNegociacaoDTO>obterNegociacaoFollowup(FiltroFollowupNegociacaoDTO filtro);
 	
 	Long obterQuantidadeNegociacaoFollowup(FiltroFollowupNegociacaoDTO filtro);
+	
+	Long obterIdCobrancaPor(Long idNegociacao);
 }

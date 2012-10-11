@@ -1,6 +1,7 @@
 package br.com.abril.nds.service.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -11,6 +12,8 @@ import br.com.abril.nds.dto.ConsultaFollowupNegociacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroFollowupNegociacaoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.repository.FollowupNegociacaoRepository;
+import br.com.abril.nds.repository.NegociacaoDividaRepository;
+import br.com.abril.nds.service.CobrancaService;
 import br.com.abril.nds.service.FollowupNegociacaoService;
 import br.com.abril.nds.util.TipoMensagem;
 
@@ -20,6 +23,12 @@ public class FollowupNegociacaoServiceImpl implements FollowupNegociacaoService 
 	@Autowired
 	protected FollowupNegociacaoRepository followupChamadaoRepository;
 
+	@Autowired
+	protected NegociacaoDividaRepository negociacaoDividaRepository;
+	
+	@Autowired
+	protected CobrancaService cobrancaService;
+	
 	@Override
 	public List<ConsultaFollowupNegociacaoDTO> obterNegociacoes(FiltroFollowupNegociacaoDTO filtro) {
 		
@@ -51,4 +60,12 @@ public class FollowupNegociacaoServiceImpl implements FollowupNegociacaoService 
 		return listanegociacao;		
 	}
 
+	public void cancelarBaixaNegociacao(Long idNegociacao) {
+		
+		Long idCobranca = this.negociacaoDividaRepository.obterIdCobrancaPor(idNegociacao);
+		
+		this.cobrancaService.reverterBaixaManualDividas(Arrays.asList(idCobranca));
+		
+	}
+	
 }
