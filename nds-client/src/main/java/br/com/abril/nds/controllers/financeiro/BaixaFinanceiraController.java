@@ -1218,5 +1218,37 @@ public class BaixaFinanceiraController {
 			.inHTTPResponse(this.getNDSFileHeader(), filtro, null, 
 					lista, tipoBaixaBoleto.getTipoImpressaoVO(), this.httpResponse);
 	}
+
+	@Post
+	public void confirmarBaixaDividas(List<Long> idCobrancas) {
+		
+		if (idCobrancas == null || idCobrancas.isEmpty()) {
+			
+			throw new ValidacaoException(
+				TipoMensagem.WARNING, "É necessário selecionar ao menos uma dívida!");
+		}
+		
+		this.cobrancaService.confirmarBaixaManualDividas(idCobrancas);
+		
+		this.result.use(Results.json()).from(
+			new ValidacaoVO(TipoMensagem.SUCCESS, "Baixa confirmada com sucesso!"),
+			Constantes.PARAM_MSGS).recursive().serialize();
+	}
+	
+	@Post
+	public void cancelarBaixaDividas(List<Long> idCobrancas) {
+		
+		if (idCobrancas == null || idCobrancas.isEmpty()) {
+			
+			throw new ValidacaoException(
+				TipoMensagem.WARNING, "É necessário selecionar ao menos uma dívida!");
+		}
+		
+		this.cobrancaService.reverterBaixaManualDividas(idCobrancas);
+		
+		this.result.use(Results.json()).from(
+			new ValidacaoVO(TipoMensagem.SUCCESS, "Baixa cancelada com sucesso!"),
+			Constantes.PARAM_MSGS).recursive().serialize();
+	}
 	
 }

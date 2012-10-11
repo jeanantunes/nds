@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.hibernate.Criteria;
 import org.hibernate.Query;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanResultTransformer;
@@ -14,6 +15,7 @@ import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.financeiro.BaixaAutomatica;
 import br.com.abril.nds.model.financeiro.BaixaCobranca;
+import br.com.abril.nds.model.financeiro.BaixaManual;
 import br.com.abril.nds.model.financeiro.StatusDivida;
 import br.com.abril.nds.repository.BaixaCobrancaRepository;
 
@@ -80,15 +82,17 @@ public class BaixaCobrancaRepositoryImpl extends AbstractRepositoryModel<BaixaCo
 		hql.append(" AND cobranca.statusCobranca = :statusCobranca ");
 		hql.append(" AND divida.status = :statusDivida ");
 		hql.append(" AND cota.numeroCota = :numCota ");
+		
 		if(nossoNumero !=  null && !nossoNumero.trim().isEmpty()){
 			hql.append(" AND cobranca.nossoNumero = :nossoNumero ");
 		}
+		
 		Query query = getSession().createQuery(hql.toString());
 		
 		query.setParameter("numCota", numCota);
 		query.setParameter("statusCobranca", StatusCobranca.PAGO);
 		query.setParameter("statusDivida", StatusDivida.QUITADA);
-		query.setParameter("statusAprovacao", StatusAprovacao.APROVADO);
+		query.setParameter("statusAprovacao", StatusAprovacao.PENDENTE);
 		
 		if(nossoNumero !=  null && !nossoNumero.trim().isEmpty()){
 			query.setParameter("nossoNumero", nossoNumero);
@@ -106,8 +110,24 @@ public class BaixaCobrancaRepositoryImpl extends AbstractRepositoryModel<BaixaCo
 	public BaixaCobranca obterUltimaBaixaCobranca(Long idCobranca) {
 
 		Criteria criteria = getSession().createCriteria(BaixaCobranca.class);
-		criteria.setProjection(Projections.max("dataBaixa"));
+		
 		criteria.add(Restrictions.eq("cobranca.id", idCobranca));
+		criteria.addOrder(Order.desc("dataBaixa"));
+		
+		criteria.setMaxResults(1);
+		
 		return (BaixaCobranca) criteria.uniqueResult();
 	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<BaixaManual> obterBaixasManual(List<Long> idsCobranca) {
+		
+		Criteria criteria = getSession().createCriteria(BaixaManual.class);
+		
+		criteria.add(Restrictions.in("cobranca.id", idsCobranca));
+		
+		return criteria.list();
+	}
+	
 }
