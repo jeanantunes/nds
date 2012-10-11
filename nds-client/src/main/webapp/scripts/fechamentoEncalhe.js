@@ -489,7 +489,15 @@ var fechamentoEncalheController = $.extend(true, {
 	},
 	
 	postergarCotas : function() {
-
+		var dataEncalhe = $("#datepickerDe", fechamentoEncalheController.workspace).val();
+		$.postJSON(contextPath + "/devolucao/fechamentoEncalhe/dataSugestaoPostergarCota",
+				{ 'dataEncalhe' : dataEncalhe},
+				function (result) {
+					$("#dtPostergada", fechamentoEncalheController.workspace).val(result.resultado);
+				}
+		);
+		
+		
 		var cotasSelecionadas = fechamentoEncalheController.obterCotasMarcadas();
 
 		if (cotasSelecionadas.length > 0) {

@@ -277,7 +277,7 @@ var entradaNFETerceirosController = $.extend(true, {
 		});
 	},
 	
-	popup_dadosNotaFiscal : function(numeroNfe, dataEncalhe, chaveAcesso, serie, valorNota, statusNotaFiscalEntrada) {
+	popup_dadosNotaFiscal : function(numeroNfe, dataEncalhe, chaveAcesso, serie, valorNota, statusNotaFiscalEntrada,idNotaFiscalEntrada) {
 		
 		$('#numeroNotaFiscalPopUp', this.workspace).text(numeroNfe);
 		$('#dataNotaFiscalPopUp', this.workspace).text(dataEncalhe);
@@ -285,11 +285,10 @@ var entradaNFETerceirosController = $.extend(true, {
 		$('#serieNotaFiscalPopUp', this.workspace).text(serie);
 		$('#valorNotaFiscalPopUp', this.workspace).text(valorNota);
 		
-		var params = $("#form-pesquisa-nfe").serializeArray();
 		
 		$(".pesquisarProdutosNotaGrid", entradaNFETerceirosController.workspace).flexOptions({
 			url: contextPath + "/nfe/entradaNFETerceiros/pesquisarItensPorNota",
-			params: params,
+			params: {idNotaFiscalEntrada:idNotaFiscalEntrada},
 			dataType : 'json'
 		});
 

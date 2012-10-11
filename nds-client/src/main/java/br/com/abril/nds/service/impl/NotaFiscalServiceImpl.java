@@ -463,6 +463,20 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 			this.notaFiscalRepository.merge(notaFiscal);
 		}
 	}
+	
+	@Override
+	@Transactional
+	public synchronized void exportarNotasFiscais(
+			Long... idNotaFiscals)
+			throws FileNotFoundException, IOException, IllegalArgumentException, IllegalAccessException, InvocationTargetException{
+		List<NotaFiscal> notasFiscaisParaExportacao = new ArrayList<NotaFiscal>(idNotaFiscals.length);
+		for (Long id : idNotaFiscals) {
+			notasFiscaisParaExportacao.add(notaFiscalRepository.buscarPorId(id));
+		}
+		
+		exportarNotasFiscais(notasFiscaisParaExportacao);
+		gerarArquivoNota(notasFiscaisParaExportacao);
+	}
 
 	/*
 	 * (non-Javadoc)

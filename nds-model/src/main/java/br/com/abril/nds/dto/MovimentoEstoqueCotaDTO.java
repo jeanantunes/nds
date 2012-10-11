@@ -1,6 +1,7 @@
 package br.com.abril.nds.dto;
 
 import java.io.Serializable;
+import java.math.BigInteger;
 import java.util.List;
 
 public class MovimentoEstoqueCotaDTO implements Serializable {
@@ -64,8 +65,8 @@ public class MovimentoEstoqueCotaDTO implements Serializable {
 	public Integer getQtdeReparte() {
 		return qtdeReparte;
 	}
-	public void setQtdeReparte(Integer qtdeReparte) {
-		this.qtdeReparte = qtdeReparte;
+	public void setQtdeReparte(BigInteger qtdeReparte) {
+		this.qtdeReparte = qtdeReparte.intValue();
 	}
 	public List<RateioDTO> getRateios() {
 		return rateios;
