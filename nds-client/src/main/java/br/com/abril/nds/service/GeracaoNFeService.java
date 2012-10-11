@@ -7,6 +7,7 @@ import java.util.List;
 
 import br.com.abril.nds.dto.CotaExemplaresDTO;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.model.fiscal.nota.Condicao;
 import br.com.abril.nds.util.Intervalo;
 
 public interface GeracaoNFeService {
@@ -48,6 +49,6 @@ public interface GeracaoNFeService {
 	 */
 	public abstract void gerarNotaFiscal(Intervalo<Integer> intervaloBox, Intervalo<Integer> intervalorCota,
 			Intervalo<Date> intervaloDateMovimento, List<Long> listIdFornecedor, List<Long> listIdProduto, 
-			Long idTipoNotaFiscal, Date dataEmissao, List<Long> idCotasSuspensas) throws FileNotFoundException, IOException;
+			Long idTipoNotaFiscal, Date dataEmissao, List<Long> idCotasSuspensas,  Condicao condicao) throws FileNotFoundException, IOException;
 
 }
