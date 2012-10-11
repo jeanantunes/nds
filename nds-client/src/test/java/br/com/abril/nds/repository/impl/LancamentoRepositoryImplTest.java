@@ -21,35 +21,25 @@ import br.com.abril.nds.dto.ResumoPeriodoBalanceamentoDTO;
 import br.com.abril.nds.dto.SumarioLancamentosDTO;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.StatusConfirmacao;
-import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Editor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
-import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
-import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoFornecedor;
 import br.com.abril.nds.model.cadastro.TipoProduto;
-import br.com.abril.nds.model.estoque.ConferenciaEncalhe;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
-import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.RecebimentoFisico;
-import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.fiscal.CFOP;
 import br.com.abril.nds.model.fiscal.ItemNotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.NCM;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
-import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalhe;
-import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
-import br.com.abril.nds.model.movimentacao.StatusOperacao;
 import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
-import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.model.planejamento.Lancamento;
@@ -63,7 +53,6 @@ import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.util.CurrencyUtil;
-import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
@@ -493,98 +482,5 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 
 		Assert.assertEquals(proximoLancamentoObtido.getId(), proximoLancamentoVeja.getId());
 	}
-	
-	
-    @Test
-    public void obterLancamentoDevolucaoFornecedor() {
-        Date data = Fixture.criarData(10, Calendar.OCTOBER, 2012);
-        
-        ProdutoEdicao veja150 = Fixture.produtoEdicao("150", 10L, 10, 7,
-                new Long(100), BigDecimal.TEN, new BigDecimal(15), "ZCDCDEFGHIJKLMNOPQ", 1L, veja, null, false);
-        save(veja150);
-        
-        Lancamento lancamentoVeja150 = Fixture.lancamento(TipoLancamento.LANCAMENTO, veja150,
-                DateUtil.adicionarDias(data, -7),
-                data,
-                data,
-                data,
-                BigInteger.valueOf(100),
-                StatusLancamento.CONFIRMADO, null, 1);
-        save(lancamentoVeja150);
-        
-        Lancamento lancamentoVeja150Suplementar = Fixture.lancamento(TipoLancamento.SUPLEMENTAR, veja150,
-                DateUtil.adicionarDias(data, -8),
-                DateUtil.adicionarDias(data, -1),
-                data,
-                data,
-                BigInteger.valueOf(100),
-                StatusLancamento.CONFIRMADO, null, 1);
-        save(lancamentoVeja150Suplementar);
-        
-        Usuario usuarioJoao = Fixture.usuarioJoao();
-        save(usuarioJoao);
-        
-        PessoaFisica manoel = Fixture.pessoaFisica("123.456.789-00",
-                "manoel@mail.com", "Manoel da Silva");
-        save(manoel);
-        
-        Box box1 = Fixture.criarBox(1, "BX-001", TipoBox.LANCAMENTO);
-        save(box1);
-        
-        Cota cotaManoel = Fixture.cota(123, manoel, SituacaoCadastro.ATIVO, box1);
-        save(cotaManoel);
-        
-        ControleConferenciaEncalhe controleConferenciaEncalhe = 
-                Fixture.controleConferenciaEncalhe(StatusOperacao.EM_ANDAMENTO, data);
-        save(controleConferenciaEncalhe);
-        
-        ControleConferenciaEncalheCota controleConferenciaEncalheCota = Fixture.controleConferenciaEncalheCota(
-                controleConferenciaEncalhe, 
-                cotaManoel, 
-                data, 
-                data, 
-                data, 
-                StatusOperacao.CONCLUIDO, usuarioJoao, box1);
-        
-        save(controleConferenciaEncalheCota);       
-        
-        TipoMovimentoEstoque tipoMovimentoEnvioEncalhe = Fixture.tipoMovimentoEnvioEncalhe();
-        save(tipoMovimentoEnvioEncalhe);
-
-        EstoqueProdutoCota estoqueProdutoCotaVeja150 = Fixture.estoqueProdutoCota(
-                veja150, cotaManoel, BigInteger.TEN, BigInteger.ZERO);
-        save(estoqueProdutoCotaVeja150);
-        
-        MovimentoEstoqueCota mecVeja150 = Fixture.movimentoEstoqueCotaEnvioEncalhe( 
-                data, 
-                veja150,
-                tipoMovimentoEnvioEncalhe, 
-                usuarioJoao, 
-                estoqueProdutoCotaVeja150,
-                BigInteger.valueOf(8), cotaManoel, StatusAprovacao.APROVADO, "Aprovado");
-        
-        save(mecVeja150);
-        
-        ChamadaEncalhe chamadaEncalheVeja150 = Fixture.chamadaEncalhe(data, veja150, TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO);
-        chamadaEncalheVeja150.getLancamentos().add(lancamentoVeja150);
-        chamadaEncalheVeja150.getLancamentos().add(lancamentoVeja150Suplementar);
-        save(chamadaEncalheVeja150);
-        
-        ChamadaEncalheCota chamadaEncalheCota = Fixture.chamadaEncalheCota(
-                chamadaEncalheVeja150, 
-                false, 
-                cotaManoel, 
-                BigInteger.TEN);
-        save(chamadaEncalheCota);
-        
-        ConferenciaEncalhe conferenciaEncalhe = Fixture.conferenciaEncalhe(
-                mecVeja150, chamadaEncalheCota, controleConferenciaEncalheCota, 
-                new Date(), BigInteger.valueOf(8),BigInteger.valueOf(8), veja150);
-        save(conferenciaEncalhe);
-        
-        Lancamento lancamentoDevolucao = lancamentoRepository
-                .obterLancamentoDevolucaoFornecedor(new Date(), veja150.getId());
-        Assert.assertNotNull(lancamentoVeja150);
-        Assert.assertEquals(lancamentoVeja150.getId(), lancamentoDevolucao.getId());
-    }
+   
 }
