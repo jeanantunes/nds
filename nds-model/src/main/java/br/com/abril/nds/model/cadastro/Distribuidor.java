@@ -279,6 +279,9 @@ public class Distribuidor {
 	@OneToOne(mappedBy = "distribuidor", cascade={CascadeType.PERSIST, CascadeType.MERGE})
 	private EnderecoDistribuidor enderecoDistribuidor;
 	
+	@Column(name = "CONTROLE_ARQUIVO_COBRANCA", nullable = true)
+	private Long controleArquivoCobranca;
+	
 	public Long getId() {
 		return id;
 	}
@@ -919,8 +922,22 @@ public class Distribuidor {
 	 */
 	public void setEnderecoDistribuidor(EnderecoDistribuidor enderecoDistribuidor) {
 		this.enderecoDistribuidor = enderecoDistribuidor;
-	}
+	}	
 	
+	/**
+	 * @return the controleArquivoCobranca
+	 */
+	public Long getControleArquivoCobranca() {
+		return controleArquivoCobranca;
+	}
+
+	/**
+	 * @param controleArquivoCobranca the controleArquivoCobranca to set
+	 */
+	public void setControleArquivoCobranca(Long controleArquivoCobranca) {
+		this.controleArquivoCobranca = controleArquivoCobranca;
+	}
+
 	/**
 	 * Conforme esclarecido pela àrea de negócios qualquer
 	 * valor de {@link ObrigacaoFiscal} atribuído ao Distribuidor
