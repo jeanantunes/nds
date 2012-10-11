@@ -29,6 +29,7 @@ public interface TipoNotaFiscalRepository extends Repository<TipoNotaFiscal, Lon
 	
 	List<TipoNotaFiscal> consultarTipoNotaFiscal(FiltroCadastroTipoNotaDTO filtro);
 	
+	
 
 	List<TipoNotaFiscal> obterTiposNotaFiscal(GrupoNotaFiscal grupoNotaFiscal);
 	/**
