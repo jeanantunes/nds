@@ -349,7 +349,7 @@ public class MovimentoEstoqueCotaServiceImpl implements MovimentoEstoqueCotaServ
 		movimentoEstoque.setUsuario(usuario);
 
 		if (movimentoEstoque.getTipoMovimento().isAprovacaoAutomatica()) {
-
+			
 			this.controleAprovacaoService.realizarAprovacaoMovimento(movimentoEstoque, usuario);
 		}
 
