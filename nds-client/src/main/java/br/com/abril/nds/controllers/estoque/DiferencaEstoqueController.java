@@ -2824,7 +2824,7 @@ public class DiferencaEstoqueController {
 		);
 		
 		this.httpSession.setAttribute(FILTRO_DETALHE_DIFERENCA_COTA, filtro);
-
+ 
 		return filtro;
 	}
 
