@@ -131,8 +131,10 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 	@Transactional
 	public void enviarSuplementarCotaAusente(Date data, Long idCota,List<MovimentoEstoqueCota> listaMovimentoCota) throws TipoMovimentoEstoqueInexistenteException{
 		
+		Cota cota = cotaRepository.buscarPorId(idCota);
+		
 		if(listaMovimentoCota==null || listaMovimentoCota.isEmpty()) {
-			throw new ValidacaoException(TipoMensagem.WARNING, "Cota não possui reparte na data.");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Cota '" +cota.getNumeroCota()+ "' não possui reparte na data.");
 		}
 		
 		TipoMovimentoEstoque tipoMovimento = 
