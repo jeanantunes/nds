@@ -8,6 +8,7 @@ import br.com.abril.nds.dto.filtro.FiltroConsultaNotaFiscalDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntrada;
+import br.com.abril.nds.model.fiscal.NotaFiscalEntradaCota;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
 
 public interface NotaFiscalEntradaService {
@@ -18,7 +19,7 @@ public interface NotaFiscalEntradaService {
 	
 	DetalheNotaFiscalDTO obterDetalhesNotaFical(Long idNotaFiscal);
 
-	void inserirNotaFiscal(NotaFiscalEntrada notaFiscal);
+	void inserirNotaFiscal(NotaFiscalEntradaCota notaFiscal, Integer numeroCota, Long idControleConferenciaEncalheCota);
 	
 	NotaFiscalEntrada obterNotaFiscalPorNumero(String numero);
 	
