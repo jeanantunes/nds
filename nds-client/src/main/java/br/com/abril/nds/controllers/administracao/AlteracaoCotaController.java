@@ -2,6 +2,7 @@ package br.com.abril.nds.controllers.administracao;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -9,14 +10,17 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
+import br.com.abril.nds.client.util.PessoaUtil;
 import br.com.abril.nds.dto.ConsultaAlteracaoCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroAlteracaoCotaDTO;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.desconto.TipoDesconto;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.CustomMapJson;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.AlteracaoCotaService;
+import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.EnderecoService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.HistoricoTitularidadeCotaFinanceiroService;
@@ -48,6 +52,9 @@ public class AlteracaoCotaController {
 	
 	@Autowired
 	private HttpSession session;
+	
+	@Autowired
+	private CotaService cotaService;
 
 	@Autowired
 	private HistoricoTitularidadeCotaFinanceiroService historicoTitularidadeCotaFinanceiroService;
@@ -90,6 +97,8 @@ public class AlteracaoCotaController {
 		paginacao.setOrdenacao(paginacao.getOrdenacao().ASC);
 		filtroAlteracaoCotaDTO.setPaginacao(paginacao);
 		
+		filtroAlteracaoCotaDTO.setNomeCota(PessoaUtil.removerSufixoDeTipo(filtroAlteracaoCotaDTO.getNomeCota()));
+		
 		List<ConsultaAlteracaoCotaDTO> lista = this.alteracaoCotaService.pesquisarAlteracaoCota(filtroAlteracaoCotaDTO);
 		
 		
@@ -130,6 +139,7 @@ public class AlteracaoCotaController {
 			filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setIsRecebeRecolheProdutosParciais(true);
 			filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setIdTipoEntrega(2l);
 			
+			//COTA SERVICE
 			filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().getFiltroCheckDistribEmisDoc().setIsSkipImpresso(true);
 			filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().getFiltroCheckDistribEmisDoc().setIsSkipEmail(false);
 			filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().getFiltroCheckDistribEmisDoc().setIsBoletoImpresso(false);
@@ -150,7 +160,57 @@ public class AlteracaoCotaController {
 	
 	@Post
 	public void salvarAlteracao(FiltroAlteracaoCotaDTO filtroAlteracaoCotaDTO, String sortname, int page, int rp) {
-		System.out.println("Salvar");
+		
+		
+		//****FORNECEDORES****//
+		//Encontra Cota a Ser Alterada
+		Cota cota = cotaService.obterPorId(filtroAlteracaoCotaDTO.getIdCota());
+		
+		//Altera Fornecedores da Cota
+		Set<Fornecedor> fornecedoresCota = cota.getFornecedores();
+		fornecedoresCota.clear();
+		for (Long  id : filtroAlteracaoCotaDTO.getFiltroModalFornecedor().getListaFornecedoresSelecionados()){
+			fornecedoresCota.add(fornecedorService.obterFornecedorPorId(id));
+		}
+		cota.setFornecedores(fornecedoresCota);
+		
+		
+		//****FINANCEIRO****//
+		//Sugere Suspensao
+		cota.setSugereSuspensao(filtroAlteracaoCotaDTO.getFiltroModalFinanceiro().getIsSugereSuspensao());
+		
+		
+
+		
+		filtroAlteracaoCotaDTO.getFiltroModalFinanceiro().getIdVencimento();
+		filtroAlteracaoCotaDTO.getFiltroModalFinanceiro().setVrMinimo("123,33");
+		filtroAlteracaoCotaDTO.getFiltroModalFinanceiro().setIsSugereSuspensao(true);
+		filtroAlteracaoCotaDTO.getFiltroModalFinanceiro().setQtdDividaEmAberto(12);
+		filtroAlteracaoCotaDTO.getFiltroModalFinanceiro().setVrDividaEmAberto("123,33");
+		
+		filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setNmAssitPromoComercial("Tonhao");
+		filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setNmGerenteComercial("Gabril");
+		filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setObservacao("lalalalala");
+		filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setIsRepartePontoVenda(true);
+		filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setIsSolicitacaoNumAtrasoInternet(false);
+		filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setIsRecebeRecolheProdutosParciais(true);
+		filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setIdTipoEntrega(2l);
+		
+		//COTA SERVICE
+		filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().getFiltroCheckDistribEmisDoc().setIsSkipImpresso(true);
+		filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().getFiltroCheckDistribEmisDoc().setIsSkipEmail(false);
+		filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().getFiltroCheckDistribEmisDoc().setIsBoletoImpresso(false);
+		filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().getFiltroCheckDistribEmisDoc().setIsBoletoEmail(true);
+		filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().getFiltroCheckDistribEmisDoc().setIsBoletoSkipImpresso(true);
+		filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().getFiltroCheckDistribEmisDoc().setIsBoletoSkipEmail(false);
+		filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().getFiltroCheckDistribEmisDoc().setIsReciboImpresso(true);
+		filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().getFiltroCheckDistribEmisDoc().setIsReciboEmail(true);
+		filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().getFiltroCheckDistribEmisDoc().setIsNoteEnvioImpresso(false);
+		filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().getFiltroCheckDistribEmisDoc().setIsNoteEnvioEmail(true);
+		filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().getFiltroCheckDistribEmisDoc().setIsChamdaEncalheImpresso(false);
+		filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().getFiltroCheckDistribEmisDoc().setIsChamdaEncalheEmail(false);
+		cotaService.alterarCota(cota);
+		
 	}
  
 

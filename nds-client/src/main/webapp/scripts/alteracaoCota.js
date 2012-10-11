@@ -46,7 +46,7 @@ var alteracaoCotaController = $.extend(true, {
 				align : 'left'
 			}, {
 				display : 'Desconto',
-				name : 'valorDesconto',
+				name : 'tipoDesconto',
 				width : 110,
 				sortable : true,
 				align : 'left'
@@ -64,7 +64,7 @@ var alteracaoCotaController = $.extend(true, {
 				align : 'center'
 			}, {
 				display : 'Tipo Entrega',
-				name : 'tpEntrega',
+				name : 'tipoEntrega',
 				width : 65,
 				sortable : true,
 				align : 'center'
@@ -99,10 +99,14 @@ var alteracaoCotaController = $.extend(true, {
 		
 		$(".alteracaoGrid", this.workspace).flexOptions({
 			url: contextPath + "/administracao/alteracaoCota/pesquisarAlteracaoCota.json?"+params,
-			newp: 1,
+			newp: 1
 		});
+	
 		
-		$(".alteracaoGrid").flexReload();
+		$(".alteracaoGrid", this.workspace).flexReload();
+		$(".grids", this.workspace).show();
+				
+
 	},
 	
 	executarPreProcessamento : function(resultado) {
@@ -121,7 +125,7 @@ var alteracaoCotaController = $.extend(true, {
 	
 	callBackSuccess:function () {
 		
-		pesquisaCotaAlteracaoCota.obterPorNumeroCota($("#numeroCota",alteracaoCotaController.workspace).val(), false, function(result) {
+		pesquisaCotaAlteracaoCota.pesquisarPorNumeroCota($("#numeroCota", "#nomeCota",alteracaoCotaController.workspace).val(), false, function(result) {
 
 			if (!result) {
 
@@ -137,14 +141,14 @@ var alteracaoCotaController = $.extend(true, {
 	},
 	
 	carregarAlteracao : function() {
-	/*	var linhasSelecionadas = 0;
+		var linhasSelecionadas = 0;
 		$(".selectLine", this.workspace).each(function(index, element) {	
 			if(element.checked){
 				linhasSelecionadas++;
 			}
 			
 		});
-		if(linhasSelecionadas > 0){*/
+		if(linhasSelecionadas > 0){
 			$("#dialog-novo", this.workspace).dialog({
 				resizable: false,
 				height:550,
@@ -162,9 +166,9 @@ var alteracaoCotaController = $.extend(true, {
 				form: $("#dialog-novo", this.workspace).parents("form")
 			});
 			this.carregarCamposAlteracao();
-		/*}else{
+		}else{
 			exibirMensagem("WARNING", ["Selecione ao menos uma cota."]);
-		}*/
+		}
 	},
 	
 	carregarCamposAlteracao : function() {

@@ -1,7 +1,6 @@
 package br.com.abril.nds.dto.filtro;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,7 +10,7 @@ import br.com.abril.nds.util.export.Exportable;
 @Exportable
 public class FiltroAlteracaoCotaDTO extends FiltroDTO implements Serializable {
 
-	private Integer idCota;
+	private Long idCota;
 	private Integer numeroCota; 
 	private String nomeCota; 
 	private Long idFornecedor;
@@ -96,10 +95,10 @@ public class FiltroAlteracaoCotaDTO extends FiltroDTO implements Serializable {
 			FiltroModalDistribuicao filtroModalDistribuicao) {
 		this.filtroModalDistribuicao = filtroModalDistribuicao;
 	}
-	public Integer getIdCota() {
+	public Long getIdCota() {
 		return idCota;
 	}
-	public void setIdCota(Integer idCota) {
+	public void setIdCota(Long idCota) {
 		this.idCota = idCota;
 	}
 	public Long getIdVrMinimo() {
