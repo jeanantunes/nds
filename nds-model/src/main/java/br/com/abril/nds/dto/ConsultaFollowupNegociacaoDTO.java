@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 import br.com.abril.nds.model.cadastro.TipoCobranca;
+import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Export.Alignment;
 import br.com.abril.nds.util.export.Exportable;
@@ -23,8 +24,10 @@ public class ConsultaFollowupNegociacaoDTO implements Serializable {
 	@Export(label = "Nome", alignment=Alignment.CENTER, exhibitionOrder = 2)
 	private String nomeJornaleiro;	
 	
+	private BigDecimal valorParcela;    
+	
 	@Export(label = "Negociacao", alignment=Alignment.CENTER, exhibitionOrder = 3)
-    private BigDecimal valorParcela;    
+    private String valorParcelaFormatado;
 	
 	@Export(label = "Parcela", alignment=Alignment.CENTER, exhibitionOrder = 4)
     private String descricaoParcelamento;    
@@ -34,7 +37,7 @@ public class ConsultaFollowupNegociacaoDTO implements Serializable {
 	
 	@Export(label = "Data Vencto", alignment=Alignment.CENTER, exhibitionOrder = 6)
    	private Date dataVencimento;   	
-	
+		
 	private Long idNegociacao;
 	
 	private Long numeroParcelaAtual;
@@ -45,15 +48,17 @@ public class ConsultaFollowupNegociacaoDTO implements Serializable {
 	
    	public ConsultaFollowupNegociacaoDTO() {   		
    	}
-
-   	public ConsultaFollowupNegociacaoDTO(Long numeroCota, String nomeJornaleiro, BigDecimal valorParcela,    
+   	
+   	public ConsultaFollowupNegociacaoDTO(Long idNegociacao,Long numeroCota, String nomeJornaleiro, BigDecimal valorParcela,    
    	    String descricaoParcelamento, String descricaoFormaPagamento, Date dataVencimento ) {   	
    	    this.numeroCota = numeroCota;    
    	    this.nomeJornaleiro = nomeJornaleiro;	
-   	    this.valorParcela = valorParcela;     
+   	    this.valorParcela = valorParcela;    
+   	    this.valorParcelaFormatado = CurrencyUtil.formatarValor(valorParcela);   	    
    	    this.descricaoParcelamento = descricaoParcelamento; 
    	    this.descricaoFormaPagamento = descricaoFormaPagamento; 
    	    this.dataVencimento = dataVencimento; 
+   	    this.idNegociacao = idNegociacao;
    	}
 
    	
@@ -165,6 +170,14 @@ public class ConsultaFollowupNegociacaoDTO implements Serializable {
 
 	public void setDataVencimento(Date dataVencimento) {
 		this.dataVencimento = dataVencimento;
+	}
+
+	public String getValorParcelaFormatado() {
+		return valorParcelaFormatado;
+	}
+
+	public void setValorParcelaFormatado(String valorParcelaFormatado) {
+		this.valorParcelaFormatado = valorParcelaFormatado;
 	}
 
 }
