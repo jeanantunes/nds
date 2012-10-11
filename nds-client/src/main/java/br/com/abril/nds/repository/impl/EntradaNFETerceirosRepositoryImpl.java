@@ -226,7 +226,8 @@ public class EntradaNFETerceirosRepositoryImpl extends AbstractRepositoryModel<N
 		hql.append("               LEFT JOIN controleConferenciaEncalheCotaNF.notaFiscalEntradaCota as notaFiscalEntradaCota ");
 		hql.append("             WHERE controleConferenciaEncalheCotaNF = controleConferenciaEncalheCota ");
 		hql.append("        )) as diferenca, ");
-		hql.append("        'Pendente' as status ");
+		hql.append("        'Pendente' as status, ");
+		hql.append(" controleConferenciaEncalheCota.id  as idControleConferenciaEncalheCota ");
 		
 		hql.append(getSqlFromEWhereNotaPendente(filtro));
 		
