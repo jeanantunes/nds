@@ -1,8 +1,9 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>NDS - Novo Distrib</title>
-<script type="text/javascript"
-	src="${pageContext.request.contextPath}/scripts/entradaNFETerceiros.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/entradaNFETerceiros.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.price_format.1.7.js"></script>
+	
 <script language="javascript" type="text/javascript">
 	$(function() {
 		entradaNFETerceirosController.init();
@@ -71,7 +72,6 @@ fieldset label {
 	</form>
 	<form id="form-nfe">
 		<div id="dialog-nfe" title="NF-e">
-			<input type="hidden" id="idControleConferenciaEncalheCota" />
 			<fieldset style="width: 310px !important;">
 				<legend>Incluir NF-e</legend>
 				<table width="280" border="0" cellspacing="1" cellpadding="0">
