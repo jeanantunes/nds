@@ -25,12 +25,12 @@ public interface CotaAusenteService {
 	 * outras cotas
 	 * 
 	 * @param movimentosRateio - Movimentos com rateios definidos
-	 * @param numCota - Número da cota
+	 * @param numCotas - Número da cota
 	 * @param data - Data em que a cota será declarada ausente
 	 * @param idUsuario - Códifo do usuário
 	 * @throws TipoMovimentoEstoqueInexistenteException - Exceção para TipoMovimentoInexistente não registrado no banco
 	 */
-	void declararCotaAusenteRatearReparte(Integer numCota, Date data, Long idUsuario, List<MovimentoEstoqueCotaDTO> movimentosRateio) throws TipoMovimentoEstoqueInexistenteException;
+	void declararCotaAusenteRatearReparte(List<Integer> numCotas, Date data, Long idUsuario, List<MovimentoEstoqueCotaDTO> movimentosRateio) throws TipoMovimentoEstoqueInexistenteException;
 	
 	/**
 	 * Obtém lista de Cotas Ausentes de acordo com o filtro

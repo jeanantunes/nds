@@ -18,6 +18,7 @@ import br.com.abril.nds.dto.AnaliticoEncalheDTO;
 import br.com.abril.nds.dto.CotaAusenteEncalheDTO;
 import br.com.abril.nds.dto.FechamentoFisicoLogicoDTO;
 import br.com.abril.nds.dto.filtro.FiltroFechamentoEncalheDTO;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.estoque.ConferenciaEncalhe;
 import br.com.abril.nds.model.estoque.ControleFechamentoEncalhe;
 import br.com.abril.nds.model.estoque.FechamentoEncalhe;
@@ -405,6 +406,23 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 			
 
 		return ((Long)query.uniqueResult()).intValue();
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<Cota> buscarCotaChamadaEncalhe(Date dataEncalhe) {
+		StringBuffer hql = new StringBuffer();
+		hql.append("   SELECT cota  ");
+		hql.append("   FROM ChamadaEncalheCota  cec");
+		hql.append("   JOIN cec.chamadaEncalhe as ce");
+		hql.append("   JOIN cec.cota as  cota");
+		hql.append("   WHERE ce.dataRecolhimento= :dataEncalhe");
+		hql.append("   AND cec.fechado= false");
+		hql.append("   AND cec.postergado= false");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setDate("dataEncalhe", dataEncalhe);
+        
+		return query.list();
 	}
 
 	private void getQueryAnalitico(FiltroFechamentoEncalheDTO filtro,

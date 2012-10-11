@@ -122,6 +122,8 @@ public interface ChamadaAntecipadaEncalheService {
 	 * @return ChamadaAntecipadaEncalheDTO
 	 */
 	ChamadaAntecipadaEncalheDTO obterChamadaEncalheAntecipada(FiltroChamadaAntecipadaEncalheDTO filtro);
+
+	Date obterProximaDataEncalhe(Date base);
 	
 	
 }

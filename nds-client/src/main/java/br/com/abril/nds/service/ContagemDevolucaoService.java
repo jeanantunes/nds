@@ -6,6 +6,7 @@ import java.io.IOException;
 
 import java.util.List;
 
+import br.com.abril.nds.client.vo.ProdutoEdicaoFechadaVO;
 import br.com.abril.nds.dto.ContagemDevolucaoConferenciaCegaDTO;
 import br.com.abril.nds.dto.ContagemDevolucaoDTO;
 import br.com.abril.nds.dto.InfoContagemDevolucaoDTO;
@@ -26,6 +27,9 @@ public interface ContagemDevolucaoService {
 			boolean indPerfilUsuarioEncarregado);
 
 	public abstract void gerarNotasFiscaisPorFornecedor(List<ContagemDevolucaoDTO> listaContagemDevolucaoAprovada) throws FileNotFoundException, IOException;
+
+	public List<ContagemDevolucaoDTO> obterContagemDevolucaoEdicaoFechada(
+			boolean checkAll, List<ProdutoEdicaoFechadaVO> listaEdicoesFechadas, FiltroDigitacaoContagemDevolucaoDTO filtro);
 	
 	public Collection<CEDevolucaoFornecedor> gerarCEDevolucao(Collection<ConferenciaEncalheParcial> conferencias);
 	
