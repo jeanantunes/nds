@@ -94,7 +94,7 @@ public class AlteracaoCotaRepositoryImpl extends AbstractRepositoryModel<Cota, L
 			//addedAnd = true;
 		}
 		
-		if (filtroAlteracaoCotaDTO.getIdTpDesconto() != null && !filtroAlteracaoCotaDTO.getIdTpDesconto().isEmpty() && !"-1".equals(filtroAlteracaoCotaDTO.getIdTpDesconto())) {
+		if (filtroAlteracaoCotaDTO.getTipoDesconto() != null ) {
 			//if(addedAnd)
 				hql.append(" and ");	
 			
@@ -109,6 +109,12 @@ public class AlteracaoCotaRepositoryImpl extends AbstractRepositoryModel<Cota, L
 			hql.append(" financeiro.id = :idVrMinimo ");
 		//	addedAnd = true;
 		}
+		
+		if (filtroAlteracaoCotaDTO.getDescricaoTipoEntrega() != null ) {
+			hql.append(" and parametroDistribuicao.descricaoTipoEntrega = :descricaoTipoEntrega ");
+			//addedAnd = true;
+		}
+		
 		
 		
 		
@@ -139,13 +145,19 @@ public class AlteracaoCotaRepositoryImpl extends AbstractRepositoryModel<Cota, L
 			query.setParameter("idFornecedor", filtroAlteracaoCotaDTO.getIdFornecedor());
 		}
 		
-		if (filtroAlteracaoCotaDTO.getIdTpDesconto() != null && !filtroAlteracaoCotaDTO.getIdTpDesconto().isEmpty() && !"-1".equals(filtroAlteracaoCotaDTO.getIdTpDesconto())) {
-			query.setParameter("tipoDesconto", filtroAlteracaoCotaDTO.getIdTpDesconto());
+		if (filtroAlteracaoCotaDTO.getTipoDesconto() != null) {
+			query.setParameter("tipoDesconto", filtroAlteracaoCotaDTO.getTipoDesconto());
 		}
 		
 		if (filtroAlteracaoCotaDTO.getIdVrMinimo() != null && !filtroAlteracaoCotaDTO.getIdVrMinimo().toString().isEmpty() && filtroAlteracaoCotaDTO.getIdVrMinimo().doubleValue() > 0) {
 			query.setParameter("idVrMinimo", filtroAlteracaoCotaDTO.getIdVrMinimo());
 		}
+		
+		if (filtroAlteracaoCotaDTO.getDescricaoTipoEntrega() != null ) {
+			query.setParameter("descricaoTipoEntrega",filtroAlteracaoCotaDTO.getDescricaoTipoEntrega());
+		}
+		
+		
 		
 		return query.list();
 	}
