@@ -3,6 +3,8 @@ package br.com.abril.nds.dto.filtro;
 import java.io.Serializable;
 import java.util.Date;
 
+import br.com.abril.nds.vo.PaginacaoVO;
+
 public class FiltroRelatorioTiposProdutos implements Serializable {
 
 	private static final long serialVersionUID = 104473624178466067L;
@@ -12,6 +14,8 @@ public class FiltroRelatorioTiposProdutos implements Serializable {
 	private Date dataLancamentoAte;
 	private Date dataRecolhimentoDe;
 	private Date dataRecolhimentoAte;
+	
+	private PaginacaoVO paginacaoVO;
 	
 	
 	public Long getTipoProduto() {
@@ -43,5 +47,11 @@ public class FiltroRelatorioTiposProdutos implements Serializable {
 	}
 	public void setDataRecolhimentoAte(Date dataRecolhimentoAte) {
 		this.dataRecolhimentoAte = dataRecolhimentoAte;
+	}
+	public PaginacaoVO getPaginacaoVO() {
+		return paginacaoVO;
+	}
+	public void setPaginacaoVO(PaginacaoVO paginacaoVO) {
+		this.paginacaoVO = paginacaoVO;
 	}
 }

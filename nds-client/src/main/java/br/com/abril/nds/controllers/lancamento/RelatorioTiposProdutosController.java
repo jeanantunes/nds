@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.RelatorioTiposProdutosVO;
 import br.com.abril.nds.dto.RelatorioTiposProdutosDTO;
+import br.com.abril.nds.dto.filtro.FiltroCotaInadimplenteDTO;
 import br.com.abril.nds.dto.filtro.FiltroRelatorioTiposProdutos;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Distribuidor;
@@ -25,6 +26,7 @@ import br.com.abril.nds.service.TipoProdutoService;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.util.export.NDSFileHeader;
+import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
@@ -72,10 +74,21 @@ public class RelatorioTiposProdutosController {
 	@Path("/pesquisar.json")
 	public void pesquisar(FiltroRelatorioTiposProdutos filtro, String sortname, String sortorder, int rp, int page) {
 		
+//		FiltroRelatorioTiposProdutos filtroSession = (FiltroRelatorioTiposProdutos) session
+//				.getAttribute(FILTRO_RELATORIO_TIPOS_PRODUTOS);
+		
+		PaginacaoVO vo = new PaginacaoVO();
+		vo.setSortColumn(sortname);
+		vo.setSortOrder(sortorder);
+		vo.setQtdResultadosPorPagina(rp);
+		vo.setPaginaAtual(page);
+		
+		filtro.setPaginacaoVO(vo);
+		
 		this.session.setAttribute(FILTRO_RELATORIO_TIPOS_PRODUTOS, filtro);
 		
-		List<RelatorioTiposProdutosVO> list = this.convertList(service.gerarRelatorio(filtro));
-		result.use(FlexiGridJson.class).from(list).total(list.size()).page(page).serialize();
+ 		List<RelatorioTiposProdutosVO> list = this.convertList(service.gerarRelatorio(filtro));
+		result.use(FlexiGridJson.class).from(list).total(filtro.getPaginacaoVO().getQtdResultadosTotal()).page(page).serialize();
 	}
 	
 	
