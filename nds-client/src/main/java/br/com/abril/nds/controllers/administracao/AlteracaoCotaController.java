@@ -2,6 +2,7 @@ package br.com.abril.nds.controllers.administracao;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -156,14 +157,14 @@ public class AlteracaoCotaController {
 		for(String idCota : filtroAlteracaoCotaDTO.getListaLinhaSelecao()){
 			//****FORNECEDORES****//
 			//Encontra Cota a Ser Alterada
-			Cota cota = cotaService.obterPorId(new Long(idCota));
+			Cota cota = alteracaoCotaService.obterCotaComHistoricoTitularidade(new Long(idCota));
 			
 			//Altera Fornecedores da Cota
-			Set<Fornecedor> fornecedoresCota = cota.getFornecedores();
-			fornecedoresCota.clear();
-			for (Long  id : filtroAlteracaoCotaDTO.getFiltroModalFornecedor().getListaFornecedoresSelecionados()){
-				fornecedoresCota.add(fornecedorService.obterFornecedorPorId(id));
-			}
+			Set<Fornecedor> fornecedoresCota = new HashSet<Fornecedor>();
+			fornecedoresCota.add(fornecedorService.obterFornecedorPorId(new Long(2)));
+			/*for (Long  id : filtroAlteracaoCotaDTO.getFiltroModalFornecedor().getListaFornecedoresSelecionados()){
+				;
+			}*/
 			cota.setFornecedores(fornecedoresCota);
 			
 			

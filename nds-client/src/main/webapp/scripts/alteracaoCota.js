@@ -266,8 +266,8 @@ var alteracaoCotaController = $.extend(true, {
 	
 	salvarAlteracao : function() {
 
-		$.postJSON(contextPath + "/administracao/alteracaoCota/salvarAlteracao.json?"+$("#pesquisarForm", this.workspace).serialize(),  
-			   	null,
+		$.postJSON(contextPath + "/administracao/alteracaoCota/salvarAlteracao",
+				$("#pesquisarForm", this.workspace).serialize(),  
 			   	function (result) {
 
 					var tipoMensagem = result.tipoMensagem;
