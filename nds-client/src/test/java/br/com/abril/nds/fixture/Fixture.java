@@ -136,6 +136,7 @@ import br.com.abril.nds.model.estoque.TipoDirecionamentoDiferenca;
 import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.financeiro.BaixaAutomatica;
+import br.com.abril.nds.model.financeiro.BaixaManual;
 import br.com.abril.nds.model.financeiro.Boleto;
 import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.financeiro.CobrancaCheque;
@@ -3837,6 +3838,24 @@ public class Fixture {
     	
     	return baixaAutomatica;
     }
+    
+    
+    public static BaixaManual baixaManual(Cobranca cobranca, Date dataBaixa, 
+    									  StatusBaixa status, BigDecimal valorPago, 
+    									  Banco banco, StatusAprovacao statusAprovacao) {
+
+		BaixaManual baixaManual= new BaixaManual();
+		
+		baixaManual.setCobranca(cobranca);
+		baixaManual.setDataBaixa(dataBaixa);
+		baixaManual.setStatus(status);
+		baixaManual.setValorPago(valorPago);
+		baixaManual.setBanco(banco);
+		baixaManual.setStatusAprovacao(statusAprovacao);
+	
+	return baixaManual;
+	}
+
 
 
 	public static TipoMovimentoEstoque tipoMovimentoCompraEncalhe() {

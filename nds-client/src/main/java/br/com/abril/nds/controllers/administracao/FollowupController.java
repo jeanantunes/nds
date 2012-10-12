@@ -2,7 +2,6 @@ package br.com.abril.nds.controllers.administracao;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -30,7 +29,6 @@ import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
-import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.FollowupCadastroParcialService;
 import br.com.abril.nds.service.FollowupCadastroService;
 import br.com.abril.nds.service.FollowupChamadaoService;
@@ -38,12 +36,16 @@ import br.com.abril.nds.service.FollowupNegociacaoService;
 import br.com.abril.nds.service.FollowupPendenciaNFeService;
 import br.com.abril.nds.service.FollowupStatusCotaService;
 import br.com.abril.nds.util.CellModelKeyValue;
+import br.com.abril.nds.util.CurrencyUtil;
+import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
+import br.com.abril.nds.util.Util;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.util.export.NDSFileHeader;
 import br.com.abril.nds.vo.PaginacaoVO;
+import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
@@ -150,51 +152,75 @@ public class FollowupController {
 	@Path("/pesquisaDadosNegociacao")
 	public void pesquisaDadosNegociacao( String sortorder, String sortname, int page, int rp ) {
 				
-		FiltroFollowupNegociacaoDTO filtroNegociacao = 
-    		new FiltroFollowupNegociacaoDTO(Calendar.getInstance().getTime());
+		FiltroFollowupNegociacaoDTO filtroNegociacao = new FiltroFollowupNegociacaoDTO(new Date());
 		
 		filtroNegociacao.setPaginacao(new PaginacaoVO(page, rp, sortorder, sortname));
-
-		//TODO implementar consulta
 		
-		List<ConsultaFollowupNegociacaoDTO> negociacoes = getMockNegociacao();
+		filtroNegociacao.setOrdenacaoColuna(Util.getEnumByStringValue(FiltroFollowupNegociacaoDTO.OrdenacaoColuna.values(),sortname));
 		
-		result.use(FlexiGridJson.class).from(negociacoes).page(page).total(negociacoes.size()).serialize();
+		tratarFiltroNegociacao(filtroNegociacao);
+		
+		TableModel<CellModelKeyValue<ConsultaFollowupNegociacaoDTO>>  negociacoes = efetuarConsultaDadosNegociacao(filtroNegociacao);
+		
+		result.use(Results.json()).withoutRoot().from(negociacoes).recursive().serialize();
 	}
 	
 	private void tratarFiltroNegociacao(FiltroFollowupNegociacaoDTO filtroNegociacao) {
 		
 		FiltroFollowupNegociacaoDTO filtroSession = (FiltroFollowupNegociacaoDTO) session.getAttribute(FILTRO_FOLLOWUP_NEGOCIACAO_SESSION_ATTRIBUTE);
 		
-		if (filtroSession != null && filtroSession.equals(filtroNegociacao)) {
+		if (filtroSession != null && !filtroSession.equals(filtroNegociacao)) {
 			
 			filtroNegociacao.getPaginacao().setPaginaAtual(1);
 		}
 		session.setAttribute(FILTRO_FOLLOWUP_NEGOCIACAO_SESSION_ATTRIBUTE, filtroNegociacao);
 	}
+
+	private TableModel<CellModelKeyValue<ConsultaFollowupNegociacaoDTO>> efetuarConsultaDadosNegociacao(
+			FiltroFollowupNegociacaoDTO filtroNegociacao) {
+		
+		Long totalRegistros = this.followupnegociacaoService.obterQuantidadeNegociacaoFollowup(filtroNegociacao);
+		
+		if(totalRegistros == 0){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Negociação: Não foram encontrados resultados para Follow Up.");
+		}
+
+		List<ConsultaFollowupNegociacaoDTO> listacadastral = this.followupnegociacaoService.obterNegociacoes(filtroNegociacao);
+		
+		this.formatarCamposNegociacao(listacadastral);
+		
+		TableModel<CellModelKeyValue<ConsultaFollowupNegociacaoDTO>> tableModel = new TableModel<CellModelKeyValue<ConsultaFollowupNegociacaoDTO>>();
+		
+		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listacadastral));
+		
+		tableModel.setPage((filtroNegociacao.getPaginacao()== null)?1:filtroNegociacao.getPaginacao().getPaginaAtual());
+		
+		tableModel.setTotal(totalRegistros.intValue());
+		
+		return tableModel;
+	}
 	
-	//TODO Remover Mock	
-	public List<ConsultaFollowupNegociacaoDTO> getMockNegociacao() {
+	private void formatarCamposNegociacao(List<ConsultaFollowupNegociacaoDTO> lista){
 		
-		List<ConsultaFollowupNegociacaoDTO> lista = new ArrayList<ConsultaFollowupNegociacaoDTO>();
+		if(lista == null || lista.isEmpty()){
+			return;
+		}
 		
-		lista.add(new ConsultaFollowupNegociacaoDTO(1L, 1L, "Jornaleiro1", new BigDecimal(10), "DescParc1", "DescPag1", new Date()));
-		lista.add(new ConsultaFollowupNegociacaoDTO(2L, 1L, "Jornaleiro2", new BigDecimal(11), "DescParc1", "DescPag1", new Date()));
-		lista.add(new ConsultaFollowupNegociacaoDTO(3L, 1L, "Jornaleiro3", new BigDecimal(12), "DescParc1", "DescPag1", new Date()));
-		lista.add(new ConsultaFollowupNegociacaoDTO(4L, 1L, "Jornaleiro4", new BigDecimal(13), "DescParc1", "DescPag1", new Date()));
-		lista.add(new ConsultaFollowupNegociacaoDTO(5L, 1L, "Jornaleiro5", new BigDecimal(20), "DescParc1", "DescPag1", new Date()));
-		lista.add(new ConsultaFollowupNegociacaoDTO(6L, 1L, "Jornaleiro6", new BigDecimal(30), "DescParc1", "DescPag1", new Date()));
-		lista.add(new ConsultaFollowupNegociacaoDTO(7L, 1L, "Jornaleiro7", new BigDecimal(40), "DescParc1", "DescPag1", new Date()));
-		lista.add(new ConsultaFollowupNegociacaoDTO(8L, 1L, "Jornaleiro8", new BigDecimal(50), "DescParc1", "DescPag1", new Date()));
-		
-		return lista;
+		for(ConsultaFollowupNegociacaoDTO dto : lista ){
+			dto.setDescricaoFormaPagamento( (dto.getTipoCobranca() == null)? "" : dto.getTipoCobranca().getDescricao());
+			dto.setDescricaoParcelamento(dto.getNumeroParcelaAtual() + " / " + dto.getQuantidadeParcelas());
+			dto.setValorParcelaFormatado(CurrencyUtil.formatarValor(dto.getValorParcela()));
+			dto.setDataVencimentoFormatada(DateUtil.formatarDataPTBR(dto.getDataVencimento()));
+		}
 	}
 	
 	public void cancelarNegociacao(Long idNegociacao) {
-		//TODO
-		System.out.println("IMPLEMENTAR EXCLUSÃO DE CANCELAMENTO - ID = " + idNegociacao);
 		
-		result.use(Results.json()).withoutRoot().from("").recursive().serialize();	
+		followupnegociacaoService.cancelarBaixaNegociacao(idNegociacao);
+		
+		result.use(Results.json()).from(
+				new ValidacaoVO(TipoMensagem.SUCCESS, "Reversão de pagamento da negociação efetuada com sucesso!"),
+								"result").recursive().serialize();
 	}	
 	@Path("/pesquisaDadosStatusCota")
 	public void pesquisaDadosStatusCota( String sortorder, String sortname, int page, int rp ) {
@@ -407,16 +433,27 @@ public class FollowupController {
 		
 		if(tipoExportacao.equals("negociacao")){
 			
-			FiltroFollowupCadastroParcialDTO filtro = (FiltroFollowupCadastroParcialDTO) session.getAttribute(FILTRO_FOLLOWUP_CADASTRO_PARCIAL_SESSION_ATTRIBUTE);
+			FiltroFollowupNegociacaoDTO filtroNegociacao = (FiltroFollowupNegociacaoDTO) session.getAttribute(FILTRO_FOLLOWUP_NEGOCIACAO_SESSION_ATTRIBUTE);
 			
-			//TODO implementar consulta
-			List<ConsultaFollowupNegociacaoDTO> lista = this.getMockNegociacao();
+			if (filtroNegociacao != null) {
+				
+				if (filtroNegociacao.getPaginacao() != null) {
+					
+					filtroNegociacao.getPaginacao().setPaginaAtual(null);
+					filtroNegociacao.getPaginacao().setQtdResultadosPorPagina(null);
+					filtroNegociacao.setOrdenacaoColuna(null);
+				}
+			}
+			
+			List<ConsultaFollowupNegociacaoDTO> lista = this.followupnegociacaoService.obterNegociacoes(filtroNegociacao);
+			
+			this.formatarCamposNegociacao(lista);
 			
 			if(lista.isEmpty()) {
 				throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");
 			}
 			
-			FileExporter.to("FollowUp_dados_negociacao", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, null, 
+			FileExporter.to("FollowUp_dados_negociacao", fileType).inHTTPResponse(this.getNDSFileHeader(), filtroNegociacao, null, 
 					lista, ConsultaFollowupNegociacaoDTO.class, this.httpResponse);
 			
 		}else if(tipoExportacao.equals("chamadao")){
