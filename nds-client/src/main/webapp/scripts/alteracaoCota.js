@@ -266,21 +266,12 @@ var alteracaoCotaController = $.extend(true, {
 	
 	salvarAlteracao : function() {
 
-		$.postJSON(contextPath + "/administracao/alteracaoCota/salvarAlteracao.json?"+$("#pesquisarForm", this.workspace).serialize(),  
-			   	null,
-			   	function (result) {
-
-					var tipoMensagem = result.tipoMensagem;
-					var listaMensagens = result.listaMensagens;
+		$.postJSON(contextPath + "/administracao/alteracaoCota/salvarAlteracao",
+				$("#pesquisarForm", this.workspace).serialize(),  
+			   	function () {
+					$("#dialog-novo", this.workspace).dialog( "close" );
+					alteracaoCotaController.pesquisar();
 					
-					if (tipoMensagem && listaMensagens) {
-						exibirMensagem(tipoMensagem, listaMensagens);
-					} 
-
-					if (tipoMensagem == 'SUCCESS') {
-						$("#dialog-novo", this.workspace).dialog( "close" );
-						alteracaoCotaController.pesquisar();
-					}
 				},
 			  	null,
 			   	true,
