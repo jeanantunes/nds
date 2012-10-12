@@ -19,7 +19,7 @@ public class ConsultaFollowupNegociacaoDTO implements Serializable {
 	private static final long serialVersionUID = -3176883412810853021L;
 	
 	@Export(label = "Cota", alignment=Alignment.CENTER, exhibitionOrder = 1)
-    private Long numeroCota;   
+    private Integer numeroCota;   
 	
 	@Export(label = "Nome", alignment=Alignment.CENTER, exhibitionOrder = 2)
 	private String nomeJornaleiro;	
@@ -36,7 +36,9 @@ public class ConsultaFollowupNegociacaoDTO implements Serializable {
     private String descricaoFormaPagamento;    
 	
 	@Export(label = "Data Vencto", alignment=Alignment.CENTER, exhibitionOrder = 6)
-   	private Date dataVencimento;   	
+   	private String dataVencimentoFormatada;
+	
+	private Date dataVencimento;
 		
 	private Long idNegociacao;
 	
@@ -49,7 +51,7 @@ public class ConsultaFollowupNegociacaoDTO implements Serializable {
    	public ConsultaFollowupNegociacaoDTO() {   		
    	}
    	
-   	public ConsultaFollowupNegociacaoDTO(Long idNegociacao,Long numeroCota, String nomeJornaleiro, BigDecimal valorParcela,    
+   	public ConsultaFollowupNegociacaoDTO(Long idNegociacao,Integer numeroCota, String nomeJornaleiro, BigDecimal valorParcela,    
    	    String descricaoParcelamento, String descricaoFormaPagamento, Date dataVencimento ) {   	
    	    this.numeroCota = numeroCota;    
    	    this.nomeJornaleiro = nomeJornaleiro;	
@@ -61,7 +63,21 @@ public class ConsultaFollowupNegociacaoDTO implements Serializable {
    	    this.idNegociacao = idNegociacao;
    	}
 
-   	
+  
+	/**
+	 * @return the dataVencimentoFormatada
+	 */
+	public String getDataVencimentoFormatada() {
+		return dataVencimentoFormatada;
+	}
+
+	/**
+	 * @param dataVencimentoFormatada the dataVencimentoFormatada to set
+	 */
+	public void setDataVencimentoFormatada(String dataVencimentoFormatada) {
+		this.dataVencimentoFormatada = dataVencimentoFormatada;
+	}
+
 	/**
 	 * @return the tipoCobranca
 	 */
@@ -118,11 +134,11 @@ public class ConsultaFollowupNegociacaoDTO implements Serializable {
 		this.idNegociacao = idNegociacao;
 	}
 
-	public Long getNumeroCota() {
+	public Integer getNumeroCota() {
 		return numeroCota;
 	}
 
-	public void setNumeroCota(Long numeroCota) {
+	public void setNumeroCota(Integer numeroCota) {
 		this.numeroCota = numeroCota;
 	}
 
