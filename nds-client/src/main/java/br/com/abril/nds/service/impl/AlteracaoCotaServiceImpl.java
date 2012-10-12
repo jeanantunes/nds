@@ -2,6 +2,7 @@ package br.com.abril.nds.service.impl;
 
 import java.util.List;
 
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,7 +41,7 @@ public class AlteracaoCotaServiceImpl implements AlteracaoCotaService {
     public Cota obterCotaComHistoricoTitularidade(Long idCota) {
      
     	Cota cota = cotaService.obterPorId(idCota);
-    	cota.getTitularesCota();
+    	Hibernate.initialize(cota.getTitularesCota());
         return cota;
     }
 
