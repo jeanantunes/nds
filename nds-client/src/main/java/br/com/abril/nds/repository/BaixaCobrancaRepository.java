@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import br.com.abril.nds.client.vo.CobrancaVO;
+import br.com.abril.nds.dto.filtro.FiltroConsultaDividasCotaDTO;
 import br.com.abril.nds.model.financeiro.BaixaCobranca;
 import br.com.abril.nds.model.financeiro.BaixaManual;
 
@@ -29,7 +30,7 @@ public interface BaixaCobrancaRepository extends Repository<BaixaCobranca,Long> 
 	public Date buscarDiaUltimaBaixaAutomatica();
 	
 	
-	public List<CobrancaVO> buscarCobrancasBaixadas(Integer numCota, String nossoNumero);
+	public List<CobrancaVO> buscarCobrancasBaixadas(FiltroConsultaDividasCotaDTO filtroConsultaDividasCota);
 	
 	public BaixaCobranca obterUltimaBaixaCobranca(Long idCobranca);
 	
