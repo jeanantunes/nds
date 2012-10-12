@@ -152,7 +152,7 @@ var alteracaoCotaController = $.extend(true, {
 			$("#dialog-novo", this.workspace).dialog({
 				resizable: false,
 				height:550,
-				width:850,
+				width:900,
 				modal: true,
 				buttons: {
 					"Confirmar": function() {
@@ -288,6 +288,31 @@ var alteracaoCotaController = $.extend(true, {
 		);
 	},
 	
+	
+	selectTipoEntregaDistribuicao : function() {
+
+		var tipoEntrega = $('#idModalIdTipoEntrega', this.workspace).val();
+		if ( tipoEntrega == 'COTA_RETIRA' ) {
+			$('#entregaBancaPj', this.workspace).hide();
+			$('#entregadorPj', this.workspace).hide();
+			
+		} else if (tipoEntrega == 'ENTREGA_EM_BANCA'  ){
+			$('#entregaBancaPj', this.workspace).show();
+			$('#entregadorPj', this.workspace).hide();
+			
+		} else if (tipoEntrega == 'ENTREGADOR'  ){
+			$('#entregadorPj', this.workspace).show();
+			$('#entregaBancaPj', this.workspace).hide();
+			
+		}
+		
+		
+		
+		
+	}
+	
+
+	
 
 }, BaseController);
 
@@ -419,3 +444,5 @@ function tipoEntregaPj(opcao){
 function mostraTermoPf(){
 	$('.termoPf').show();
 	}
+
+//@ sourceURL=alteracaoCota.js

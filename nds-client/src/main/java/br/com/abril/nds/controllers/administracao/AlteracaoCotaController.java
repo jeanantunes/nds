@@ -135,12 +135,12 @@ public class AlteracaoCotaController {
 			filtroAlteracaoCotaDTO.getFiltroModalFinanceiro().setIsSugereSuspensao(cota.isSugereSuspensao());
 			
 			
-			if(cota.getTitularesCota().iterator().hasNext()){
-				
-				HistoricoTitularidadeCota historicoTitularidadeCota = cota.getTitularesCota().iterator().next();
-				preencherFiltroFinanceiro(filtroAlteracaoCotaDTO, historicoTitularidadeCota);
-				preencherFiltroDistribuicao(filtroAlteracaoCotaDTO, historicoTitularidadeCota);
-			}
+//			if(cota.getTitularesCota().iterator().hasNext()){
+//				
+//				HistoricoTitularidadeCota historicoTitularidadeCota = cota.getTitularesCota().iterator().next();
+//				preencherFiltroFinanceiro(filtroAlteracaoCotaDTO, historicoTitularidadeCota);
+//				preencherFiltroDistribuicao(filtroAlteracaoCotaDTO, historicoTitularidadeCota);
+//			}
 
 			
 		}else{
