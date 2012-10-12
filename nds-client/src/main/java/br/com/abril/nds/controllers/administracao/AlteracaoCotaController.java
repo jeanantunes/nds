@@ -9,13 +9,13 @@ import java.util.Set;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.util.PessoaUtil;
 import br.com.abril.nds.dto.ConsultaAlteracaoCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroAlteracaoCotaDTO;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.DescricaoTipoEntrega;
 import br.com.abril.nds.model.cadastro.Fornecedor;
@@ -31,7 +31,9 @@ import br.com.abril.nds.service.EnderecoService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.HistoricoTitularidadeCotaFinanceiroService;
 import br.com.abril.nds.service.TipoEntregaService;
+import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.vo.PaginacaoVO;
+import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
@@ -161,18 +163,17 @@ public class AlteracaoCotaController {
 			Cota cota = alteracaoCotaService.obterCotaComHistoricoTitularidade(new Long(idCota));
 			
 			//Altera Fornecedores da Cota
-			Set<Fornecedor> fornecedoresCota = new HashSet<Fornecedor>();
+			/*Set<Fornecedor> fornecedoresCota = new HashSet<Fornecedor>();
 			fornecedoresCota.add(fornecedorService.obterFornecedorPorId(new Long(2)));
-			/*for (Long  id : filtroAlteracaoCotaDTO.getFiltroModalFornecedor().getListaFornecedoresSelecionados()){
+			for (Long  id : filtroAlteracaoCotaDTO.getFiltroModalFornecedor().getListaFornecedoresSelecionados()){
 				;
-			}*/
-			cota.setFornecedores(fornecedoresCota);
+			}
+			cota.setFornecedores(fornecedoresCota);*/
 			
 			
 			//****FINANCEIRO****//
 			//Sugere Suspensao
 			cota.setSugereSuspensao(filtroAlteracaoCotaDTO.getFiltroModalFinanceiro().getIsSugereSuspensao());
-		
 			if(cota.getTitularesCota().iterator().hasNext()){
 				
 				HistoricoTitularidadeCota historicoTitularidadeCota = cota.getTitularesCota().iterator().next();
@@ -218,6 +219,8 @@ public class AlteracaoCotaController {
 			cotaService.alterarCota(cota);
 		}
 		
+		throw new ValidacaoException(TipoMensagem.SUCCESS, "Cota alterada com sucesso.");
+		
 	}
 	
 	
@@ -239,7 +242,7 @@ public class AlteracaoCotaController {
 		filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setIsRepartePontoVenda(historicoTitularidadeCota.getDistribuicao().getEntregaReparteVenda());
 		filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setIsSolicitacaoNumAtrasoInternet(historicoTitularidadeCota.getDistribuicao().getSolicitaNumAtrasados());
 		filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setIsRecebeRecolheProdutosParciais(historicoTitularidadeCota.getDistribuicao().getRecebeRecolheParcias());
-		//filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setIdTipoEntrega(historicoTitularidadeCota.getDistribuicao());
+		//filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setIdTipoEntrega(historicoTitularidadeCota.getDistribuicao().getTipoEntrega());
 		
 		//--Emissao Documentos
 		filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().getFiltroCheckDistribEmisDoc().setIsSlipImpresso(historicoTitularidadeCota.getDistribuicao().getSlipImpresso());

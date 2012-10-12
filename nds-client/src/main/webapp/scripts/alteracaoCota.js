@@ -268,19 +268,10 @@ var alteracaoCotaController = $.extend(true, {
 
 		$.postJSON(contextPath + "/administracao/alteracaoCota/salvarAlteracao",
 				$("#pesquisarForm", this.workspace).serialize(),  
-			   	function (result) {
-
-					var tipoMensagem = result.tipoMensagem;
-					var listaMensagens = result.listaMensagens;
+			   	function () {
+					$("#dialog-novo", this.workspace).dialog( "close" );
+					alteracaoCotaController.pesquisar();
 					
-					if (tipoMensagem && listaMensagens) {
-						exibirMensagem(tipoMensagem, listaMensagens);
-					} 
-
-					if (tipoMensagem == 'SUCCESS') {
-						$("#dialog-novo", this.workspace).dialog( "close" );
-						alteracaoCotaController.pesquisar();
-					}
 				},
 			  	null,
 			   	true,
