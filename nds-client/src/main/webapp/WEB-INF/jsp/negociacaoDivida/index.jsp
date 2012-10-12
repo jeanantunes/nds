@@ -102,7 +102,7 @@
 				<table width="640" border="0" cellspacing="1" cellpadding="1">
 					<tr>
 						<td width="20"><input name="tipoPgtos" type="radio" value=""
-							onclick="negociacaoDividaController.comissaoCota();" /></td>
+							id="negociacaoPorComissao" onclick="negociacaoDividaController.comissaoCota();" /></td>
 						<td width="118">Comiss&atilde;o da Cota</td>
 						<td width="502"></td>
 					</tr>
@@ -111,11 +111,11 @@
 					<table width="100%" border="0" cellspacing="0" cellpadding="2">
 						<tr>
 							<td width="6%">Atual:</td>
-							<td width="12%"><input name="" type="text"
+							<td width="12%"><input name="" type="text" id="comissaoAtualCota"
 								style="width: 80px;" /></td>
 							<td width="5%">%</td>
 							<td width="7%">Utilizar:</td>
-							<td width="13%"><input name="" type="text"
+							<td width="13%"><input name="" type="text" id="comissaoUtilizar"
 								style="width: 80px;" /></td>
 							<td width="57%" colspan="3">% para pagamento da
 								d&iacute;vida</td>
@@ -193,24 +193,13 @@
 				
 				
 				<table width="100%" border="0" cellspacing="1" cellpadding="1"
-					class="quinzenal">
+					class="quinzenalMensal">
 					<tr>
 						<td width="68">Todo dia:</td>
-						<td width="66"><input type="text" name="filtro.quinzenalDia1"
-							id="quinzenalDia1" style="width: 60px;" /></td>
-						<td width="21">&nbsp; e:</td>
+						<td width="66"><input type="text" name="filtro.quinzenalDia1" style="width: 60px;" /></td>
+						<td id="textoDiaInputQuinzenal" width="21">&nbsp; e:</td>
 						<td width="522"><input type="text" name="filtro.quinzenalDia2"
-							id="quinzenalDia2" style="width: 60px;" /></td>
-					</tr>
-				</table>
-				
-				
-				<table width="100%" border="0" cellspacing="1" cellpadding="1"
-					class="mensal">
-					<tr>
-						<td width="68">Todo dia:</td>
-						<td width="615"><input type="text" name="filtro.mensalDia"
-							id="mensalDia" style="width: 60px;" /></td>
+							id="diaInputQuinzenal" style="width: 60px;" /></td>
 					</tr>
 				</table>
 				
@@ -218,26 +207,26 @@
 				<table width="100%" border="0" cellspacing="1" cellpadding="1"
 					class="semanal">
 					<tr>
-						<td width="20"><input type="checkbox" name="filtro.semanalDias"
-							value="0" id="checkbSegunda" /></td>
+						<td width="20"><input type="checkbox" name="semanalDias"
+							value="2" id="checkbSegunda" /></td>
 						<td width="86">Segunda-feira</td>
-						<td width="20"><input type="checkbox" name="filtro.semanalDias"
-							value="1"id="checkTerca" /></td>
+						<td width="20"><input type="checkbox" name="semanalDias"
+							value="3"id="checkTerca" /></td>
 						<td width="70">Ter&ccedil;a-feira</td>
-						<td width="20"><input type="checkbox" name="filtro.semanalDias"
-							value="2"id="checkQuarta" /></td>
+						<td width="20"><input type="checkbox" name="semanalDias"
+							value="4"id="checkQuarta" /></td>
 						<td width="78">Quarta-feira</td>
-						<td width="20"><input type="checkbox" name="filtro.semanalDias"
-							value="3" id="checkQuinta" /></td>
+						<td width="20"><input type="checkbox" name="semanalDias"
+							value="5" id="checkQuinta" /></td>
 						<td width="78">Quinta-feira</td>
-						<td width="20"><input type="checkbox" name="filtro.semanalDias"
-							value="4" id="checkSexta" /></td>
+						<td width="20"><input type="checkbox" name="semanalDias"
+							value="6" id="checkSexta" /></td>
 						<td width="70">Sexta-feira</td>
-						<td width="20"><input type="checkbox" name="filtro.semanalDias"
-							value="5"id="checkSabado" /></td>
+						<td width="20"><input type="checkbox" name="semanalDias"
+							value="7"id="checkSabado" /></td>
 						<td width="53">S&aacute;bado</td>
-						<td width="20"><input type="checkbox" name="filtro.semanalDias"
-							value="6" id="checkDomingo" /></td>
+						<td width="20"><input type="checkbox" name="semanalDias"
+							value="1" id="checkDomingo" /></td>
 						<td width="72">Domingo</td>
 					</tr>
 				</table>
@@ -350,21 +339,26 @@
 					</tr>
 				</table>
 
-				<br clear="all" /> <input name="" type="checkbox" value=""
+				<br clear="all" /> <input name="" type="checkbox" id="isentaEncargos"
 					style="float: left;" /><span style="float: left; margin-top: 8px;">Isenta
 					Encargos</span>
 			</fieldset>
-			<span class="bt_novos" title="Imprimir"><a href="javascript:;"><img
-					src="${pageContext.request.contextPath}/images/ico_impressora.gif"
-					hspace="5" border="0" />Imprimir Negocia&ccedil;&atilde;o</a></span> <span
-				class="bt_novos" title="Imprimir Boletos"><a
-				href="javascript:;"><img
-					src="${pageContext.request.contextPath}/images/ico_impressora.gif"
-					hspace="5" border="0" />Imprimir Boletos</a></span>
+			<span class="bt_novos" title="Imprimir">
+				<a href="${pageContext.request.contextPath}/financeiro/negociacaoDivida/imprimirNegociacao">
+					<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
+						Imprimir Negocia&ccedil;&atilde;o
+				</a>
+			</span>
+			<span class="bt_novos" title="Imprimir Boletos">
+				<a href="${pageContext.request.contextPath}/financeiro/negociacaoDivida/imprimirBoletos">
+					<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
+						Imprimir Boletos
+				</a>
+			</span>
 			</form> 
 		</div>
 
-		<div id="dialog-excluir" title="Baixa Bancária" style="display:none;">
+		<div id="dialog-excluir" title="Baixa Bancï¿½ria" style="display:none;">
 			<p>Deseja confirmar Baixa Manual deste Boleto?</p>
 		</div>
 
