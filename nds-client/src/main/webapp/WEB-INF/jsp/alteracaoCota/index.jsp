@@ -185,7 +185,7 @@
 										<select name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.idTipoEntrega" id="idModalIdTipoEntrega" style="width:100px;">
 					              			<option selected="selected" value="-1"></option>
 											<c:forEach items="${listTipoEntrega}" var="tipoEntrega">
-												<option value="${tipoEntrega.id}">${tipoEntrega.descricaoTipoEntrega}</option>
+												<option value="${tipoEntrega}">${tipoEntrega.value}</option>
 											</c:forEach>
 										</select>
 									</td>
@@ -413,10 +413,10 @@
               	</td>
               	<td width="76" nowrap="nowrap">Tipo Entrega:</td>
               	<td width="102">
-					<select name="filtroAlteracaoCotaDTO.idTpEntrega" id="idTpEntrega" style="width:100px;">
+					<select name="filtroAlteracaoCotaDTO.descricaoTipoEntrega" id="idTpEntrega" style="width:100px;">
               			<option selected="selected" value="-1"></option>
 						<c:forEach items="${listTipoEntrega}" var="tipoEntrega">
-							<option value="${tipoEntrega.id}">${tipoEntrega.descricaoTipoEntrega}</option>
+							<option value="${tipoEntrega}">${tipoEntrega.value}</option>
 						</c:forEach>
 					</select>
               	</td>
@@ -425,7 +425,7 @@
             <tr>
               	<td>Desconto:</td>
               	<td colspan="3">
-					<select name="filtroAlteracaoCotaDTO.idTpDesconto" id="idTpDesconto" style="width:100px;">
+					<select name="filtroAlteracaoCotaDTO.tipoDesconto" id="idTpDesconto" style="width:100px;">
               			<option selected="selected" value="-1"></option>
 						<c:forEach items="${listTipoDesconto}" var="tipoDesconto">
 							<option value="${tipoDesconto}">${tipoDesconto.descricao}</option>
