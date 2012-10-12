@@ -2,12 +2,17 @@ package br.com.abril.nds.dto.filtro;
 
 import java.io.Serializable;
 
+import br.com.abril.nds.model.cadastro.DescricaoTipoEntrega;
 import br.com.abril.nds.util.export.Exportable;
 
 @Exportable
 public class FiltroModalDistribuicao implements Serializable{
 	
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -544142158601446426L;
 	private String nmAssitPromoComercial;
 	private String nmGerenteComercial;
 	private String observacao;
@@ -16,7 +21,7 @@ public class FiltroModalDistribuicao implements Serializable{
 	private boolean isSolicitacaoNumAtrasoInternet;
 	private boolean isRecebeRecolheProdutosParciais;
 
-	private Long idTipoEntrega;
+	private DescricaoTipoEntrega descricaoTipoEntrega; 
 	
 	private FiltroCheckDistribEmisDoc filtroCheckDistribEmisDoc = new FiltroCheckDistribEmisDoc();
 
@@ -70,13 +75,6 @@ public class FiltroModalDistribuicao implements Serializable{
 		this.isRecebeRecolheProdutosParciais = isRecebeRecolheProdutosParciais;
 	}
 
-	public Long getIdTipoEntrega() {
-		return idTipoEntrega;
-	}
-
-	public void setIdTipoEntrega(Long idTipoEntrega) {
-		this.idTipoEntrega = idTipoEntrega;
-	}
 
 	public FiltroCheckDistribEmisDoc getFiltroCheckDistribEmisDoc() {
 		return filtroCheckDistribEmisDoc;
@@ -85,6 +83,14 @@ public class FiltroModalDistribuicao implements Serializable{
 	public void setFiltroCheckDistribEmisDoc(
 			FiltroCheckDistribEmisDoc filtroCheckDistribEmisDoc) {
 		this.filtroCheckDistribEmisDoc = filtroCheckDistribEmisDoc;
+	}
+
+	public DescricaoTipoEntrega getDescricaoTipoEntrega() {
+		return descricaoTipoEntrega;
+	}
+
+	public void setDescricaoTipoEntrega(DescricaoTipoEntrega descricaoTipoEntrega) {
+		this.descricaoTipoEntrega = descricaoTipoEntrega;
 	}
 
 	
