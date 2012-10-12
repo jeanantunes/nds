@@ -758,7 +758,7 @@ public class HistoricoTitularidadeServiceImpl implements HistoricoTitularidadeSe
 		historicoTitularidadeCotaDistribuicao.setNotaEnvioImpresso(parametroDistribuicaoCota.getNotaEnvioImpresso());
 		historicoTitularidadeCotaDistribuicao.setObservacao(parametroDistribuicaoCota.getObservacao());
 		historicoTitularidadeCotaDistribuicao.setQtdePDV(parametroDistribuicaoCota.getQtdePDV());
-		historicoTitularidadeCotaDistribuicao.setRecebeRecolheParcias(parametroDistribuicaoCota.getRecebeRecolheParcias());
+		historicoTitularidadeCotaDistribuicao.setRecebeRecolheParcias(parametroDistribuicaoCota.getRecebeRecolheParciais());
 		historicoTitularidadeCotaDistribuicao.setEntregaReparteVenda(parametroDistribuicaoCota.getRepartePorPontoVenda());
 		historicoTitularidadeCotaDistribuicao.setSlipEmail(parametroDistribuicaoCota.getSlipEmail());
 		historicoTitularidadeCotaDistribuicao.setSlipImpresso(parametroDistribuicaoCota.getSlipImpresso());

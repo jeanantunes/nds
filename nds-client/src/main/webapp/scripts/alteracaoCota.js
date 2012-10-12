@@ -201,16 +201,16 @@ var alteracaoCotaController = $.extend(true, {
 						$("#idModalIdTipoEntrega").val(filtro.filtroModalDistribuicao.idTipoEntrega);
 	
 						//Checks Emissao Documento
-						$("#isSkipImpresso").attr("checked", filtro.filtroModalDistribuicao.filtroCheckDistribEmisDoc.isSkipImpresso);
-						$("#isSkipEmail").attr("checked", filtro.filtroModalDistribuicao.filtroCheckDistribEmisDoc.isSkipEmail);
+						$("#isSlipImpresso").attr("checked", filtro.filtroModalDistribuicao.filtroCheckDistribEmisDoc.isSlipImpresso);
+						$("#isSlipEmail").attr("checked", filtro.filtroModalDistribuicao.filtroCheckDistribEmisDoc.isSlipEmail);
 						$("#isBoletoImpresso").attr("checked", filtro.filtroModalDistribuicao.filtroCheckDistribEmisDoc.isBoletoImpresso);
 						$("#isBoletoEmail").attr("checked", filtro.filtroModalDistribuicao.filtroCheckDistribEmisDoc.isBoletoEmail);
-						$("#isBoletoSkipImpresso").attr("checked", filtro.filtroModalDistribuicao.filtroCheckDistribEmisDoc.isBoletoSkipImpresso);
-						$("#isBoletoSkipEmail").attr("checked", filtro.filtroModalDistribuicao.filtroCheckDistribEmisDoc.isBoletoSkipEmail);
+						$("#isBoletoSlipImpresso").attr("checked", filtro.filtroModalDistribuicao.filtroCheckDistribEmisDoc.isBoletoSlipImpresso);
+						$("#isBoletoSlipEmail").attr("checked", filtro.filtroModalDistribuicao.filtroCheckDistribEmisDoc.isBoletoSlipEmail);
 						$("#isReciboImpresso").attr("checked", filtro.filtroModalDistribuicao.filtroCheckDistribEmisDoc.isReciboImpresso);
 						$("#isReciboEmail").attr("checked", filtro.filtroModalDistribuicao.filtroCheckDistribEmisDoc.isReciboEmail);
-						$("#isNoteEnvioImpresso").attr("checked", filtro.filtroModalDistribuicao.filtroCheckDistribEmisDoc.isNoteEnvioImpresso);
-						$("#isNoteEnvioEmail").attr("checked", filtro.filtroModalDistribuicao.filtroCheckDistribEmisDoc.isNoteEnvioEmail);
+						$("#isNotaEnvioImpresso").attr("checked", filtro.filtroModalDistribuicao.filtroCheckDistribEmisDoc.isNotaEnvioImpresso);
+						$("#isNotaEnvioEmail").attr("checked", filtro.filtroModalDistribuicao.filtroCheckDistribEmisDoc.isNotaEnvioEmail);
 						$("#isChamdaEncalheImpresso").attr("checked", filtro.filtroModalDistribuicao.filtroCheckDistribEmisDoc.isChamdaEncalheImpresso);
 						$("#isChamdaEncalheEmail").attr("checked", filtro.filtroModalDistribuicao.filtroCheckDistribEmisDoc.isChamdaEncalheEmail);
 					}else{
@@ -242,16 +242,16 @@ var alteracaoCotaController = $.extend(true, {
 		$("#idModalIdTipoEntrega").val("");
 
 		//Checks Emissao Documento
-		$("#isSkipImpresso").attr("checked", false);
-		$("#isSkipEmail").attr("checked", false);
+		$("#isSlipImpresso").attr("checked", false);
+		$("#isSlipEmail").attr("checked", false);
 		$("#isBoletoImpresso").attr("checked", false);
 		$("#isBoletoEmail").attr("checked", false);
-		$("#isBoletoSkipImpresso").attr("checked", false);
-		$("#isBoletoSkipEmail").attr("checked", false);
+		$("#isBoletoSlipImpresso").attr("checked", false);
+		$("#isBoletoSlipEmail").attr("checked", false);
 		$("#isReciboImpresso").attr("checked", false);
 		$("#isReciboEmail").attr("checked", false);
-		$("#isNoteEnvioImpresso").attr("checked", false);
-		$("#isNoteEnvioEmail").attr("checked", false);
+		$("#isNotaEnvioImpresso").attr("checked", false);
+		$("#isNotaEnvioEmail").attr("checked", false);
 		$("#isChamdaEncalheImpresso").attr("checked", false);
 		$("#isChamdaEncalheEmail").attr("checked", false);
 	},
@@ -265,7 +265,7 @@ var alteracaoCotaController = $.extend(true, {
 	},
 	
 	salvarAlteracao : function() {
-
+		alert($("#pesquisarForm", this.workspace).serialize());
 		$.postJSON(contextPath + "/administracao/alteracaoCota/salvarAlteracao",
 				$("#pesquisarForm", this.workspace).serialize(),  
 			   	function () {
