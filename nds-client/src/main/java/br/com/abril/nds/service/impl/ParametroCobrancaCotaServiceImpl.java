@@ -1054,4 +1054,10 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
         return HistoricoTitularidadeCotaDTOAssembler.toFormaCobrancaDTO(formaPagto);
     }
 	
+	@Override
+	@Transactional
+	public void alterarParametro(ParametroCobrancaCota parametroCobrancaCota){
+		this.parametroCobrancaCotaRepository.alterar(parametroCobrancaCota);
+	}
+	
 }

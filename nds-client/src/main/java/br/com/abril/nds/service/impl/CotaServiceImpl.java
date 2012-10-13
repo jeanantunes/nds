@@ -719,7 +719,7 @@ public class CotaServiceImpl implements CotaService {
 		dto.setObservacao(parametro.getObservacao());
 		dto.setRepPorPontoVenda(parametro.getRepartePorPontoVenda());
 		dto.setSolNumAtras(parametro.getSolicitaNumAtras());
-		dto.setRecebeRecolhe(parametro.getRecebeRecolheParcias());
+		dto.setRecebeRecolhe(parametro.getRecebeRecolheParciais());
 		dto.setNeImpresso(parametro.getNotaEnvioImpresso());
 		dto.setNeEmail(parametro.getNotaEnvioEmail());
 		dto.setCeImpresso(parametro.getChamadaEncalheImpresso());
@@ -778,7 +778,7 @@ public class CotaServiceImpl implements CotaService {
 		parametros.setObservacao(dto.getObservacao());
 		parametros.setRepartePorPontoVenda(dto.getRepPorPontoVenda());
 		parametros.setSolicitaNumAtras(dto.getSolNumAtras());
-		parametros.setRecebeRecolheParcias(dto.getRecebeRecolhe());
+		parametros.setRecebeRecolheParciais(dto.getRecebeRecolhe());
 		parametros.setNotaEnvioImpresso(dto.getNeImpresso());
 		parametros.setNotaEnvioEmail(dto.getNeEmail());
 		parametros.setChamadaEncalheImpresso(dto.getCeImpresso());
