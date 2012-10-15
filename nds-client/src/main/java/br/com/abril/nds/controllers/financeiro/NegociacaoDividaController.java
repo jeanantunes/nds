@@ -28,7 +28,6 @@ import br.com.abril.nds.dto.NegociacaoDividaPaginacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroCalculaParcelas;
 import br.com.abril.nds.dto.filtro.FiltroConsultaBancosDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaNegociacaoDivida;
-import br.com.abril.nds.dto.filtro.FiltroTipoDescontoCotaDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.DiaSemana;
@@ -293,7 +292,8 @@ public class NegociacaoDividaController {
 	public void confirmarNegociacao(boolean porComissao, BigDecimal comissaoAtualCota, BigDecimal comissaoUtilizar, 
 			TipoCobranca tipoCobranca, TipoFormaCobranca tipoFormaCobranca, List<DiaSemana> diasSemana,
 			Integer diaInicio, Integer diaFim, boolean negociacaoAvulsa, boolean isentaEncargos,
-			Integer ativarAposPagar, List<ParcelaNegociacao> parcelas, List<Long> idsCobrancas, Long idBanco){
+			Integer ativarAposPagar, List<ParcelaNegociacao> parcelas, List<Long> idsCobrancas, Long idBanco,
+			BigDecimal valorDividaComissao){
 		
 		Long idNegociacao = (Long) this.session.getAttribute(ID_ULTIMA_NEGOCIACAO);
 		
@@ -308,7 +308,6 @@ public class NegociacaoDividaController {
 				this.session.getAttribute(FILTRO_NEGOCIACAO_DIVIDA);
 		
 		FormaCobranca formaCobranca = null;
-		BigDecimal valorDividaComissao = null;
 		
 		if (porComissao){
 			
