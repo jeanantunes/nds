@@ -266,7 +266,7 @@ var negociacaoDividaController = $.extend(true, {
 			function(result) {
 			
 	            if (result.tipoMensagem && result.listaMensagens) {
-	                debugger;
+	                
 	            	exibirMensagemDialog(result.tipoMensagem, result.listaMensagens);
 	            }
 			}							
