@@ -216,8 +216,15 @@
 														<input name="uploadedFileTermo" type="file" id="uploadedFileTermo" size="30" />
 												</div>
 										</td>
+										
 									</tr>
 									
+									<tr>
+										<td>&nbsp;</td>
+										<td olspan="2">
+											<span id="nomeArquivoTermoAdesao"></span>
+										</td>
+									</tr>
 									
 									<tr>
 										<td>Percentual Faturamento:</td>
@@ -268,18 +275,21 @@
 									<tr>
 										<td>Arquivo:</td>
 										<td colspan="2">
-										<form action="<c:url value='/administracao/alteracaoCota/uploadProcuracao' />" id="formUploadProcuracao"
-												  method="post" enctype="multipart/form-data" >		
-												<input type="hidden" name="formUploadAjax" value="true" />
-												<input type="hidden" name="numCotaUpload" value="1234"/>
 											   	<div id="uploadProcuracao">
 														<input name="uploadedFileProcuracao" type="file" id="uploadedFileProcuracao"
 														   size="30"/>
 												</div>
-		
-										</form>
 										</td>
 									</tr>
+									
+									
+									<tr>
+										<td>&nbsp;</td>
+										<td olspan="2">
+											<span id="nomeArquivoProcuracao"></span>
+										</td>
+									</tr>
+									
 									<tr>
 										<td width="145">Percentual Faturamento:</td>
 										<td colspan="2"><input type="text" name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.percentualFaturamentoEntregador" id="percentualFaturamentoEntregador" 	style="width: 70px; text-align: right;" /></td>

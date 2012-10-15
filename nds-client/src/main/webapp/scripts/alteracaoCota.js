@@ -61,7 +61,7 @@ var alteracaoCotaController = $.extend(true, {
     	$('#uploadedFileProcuracao').fileupload(
 						{
 							url :"administracao/alteracaoCota/uploadProcuracao",
-							sequentialUploads: true,
+							sequentialUploads: false,
 							dataType : 'json',
 							paramName : 'uploadedFileProcuracao',
 							replaceFileInput: false,
@@ -69,23 +69,19 @@ var alteracaoCotaController = $.extend(true, {
 								data = $("#pesquisarForm", this.workspace).serialize();
 
 							},
-							done : function(e, data) {
-							//	 $('#uploadedFileProcuracao').destroy();
+							success : function(e, data) {
+								$("#nomeArquivoProcuracao").html(e.result);
 							},
-							progressall : function(e, data) {
-								
-							},
-							send : function(e, data) {
-
+							fail : function(e, data) {
+								alert('erro');
 							}
-							 
 						});
     	
     	
     	$('#uploadedFileTermo').fileupload(
 				{
-					url :"administracao/alteracaoCota/uploadedFileTermo",
-					sequentialUploads: true,
+					url :"administracao/alteracaoCota/uploadTermoAdesao",
+					sequentialUploads: false,
 					dataType : 'json',
 					paramName : 'uploadedFileTermo',
 					replaceFileInput: false,
@@ -93,14 +89,8 @@ var alteracaoCotaController = $.extend(true, {
 						data = $("#pesquisarForm", this.workspace).serialize();
 
 					},
-					done : function(e, data) {
-					//	 $('#uploadedFileProcuracao').destroy();
-					},
-					progressall : function(e, data) {
-						
-					},
-					send : function(e, data) {
-
+					success : function(e, data) {
+						$("#nomeArquivoTermoAdesao").html(e.result);
 					}
 					 
 				});

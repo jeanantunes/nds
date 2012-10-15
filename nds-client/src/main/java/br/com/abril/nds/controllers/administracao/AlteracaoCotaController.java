@@ -2,6 +2,7 @@ package br.com.abril.nds.controllers.administracao;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -14,6 +15,8 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import com.sun.mail.handlers.image_gif;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.util.PessoaUtil;
@@ -425,6 +428,9 @@ public class AlteracaoCotaController {
 			fileService.setArquivoTemp(dirBase, uploadedFile.getFileName(), uploadedFile.getFile());
 			
 			fileName = uploadedFile.getFileName();
+			InputStream inputStream = uploadedFile.getFile();
+			inputStream.close();
+			
 		}
 		
 		this.result.use(PlainJSONSerialization.class)
