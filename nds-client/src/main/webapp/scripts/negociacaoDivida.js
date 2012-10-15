@@ -261,12 +261,17 @@ var negociacaoDividaController = $.extend(true, {
 			value: $("#selectBancosBoleto", negociacaoDividaController.wokspace).val()
 		});
 		
+		params.push({
+			name: 'valorDividaComissao',
+			value: priceToFloat($('#totalSelecionado', negociacaoDividaController.wokspace).html())
+		});
+		
 		$.postJSON(contextPath + '/financeiro/negociacaoDivida/confirmarNegociacao',
 			params, 
 			function(result) {
 			
 	            if (result.tipoMensagem && result.listaMensagens) {
-	                debugger;
+	                
 	            	exibirMensagemDialog(result.tipoMensagem, result.listaMensagens);
 	            }
 			}							

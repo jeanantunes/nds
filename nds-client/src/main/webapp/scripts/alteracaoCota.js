@@ -7,6 +7,9 @@ $(document).ready(function() {
 		showCamposSuspensao($("#idIsSugereSuspensaoModal").attr("checked") == "checked");
 	});
 	
+	
+	
+	
 });
 
 var alteracaoCotaController = $.extend(true, {
@@ -18,6 +21,88 @@ var alteracaoCotaController = $.extend(true, {
 		
 		this.iniciarGrid();
 		
+		$("#percentualFaturamentoEntregaBranca", this.workspace).mask("99.99");
+		$("#taxaFixaEntregaBranca", this.workspace).numeric();
+		$("#carenciaInicioEntregaBranca", this.workspace).mask("99/99/9999");
+		$("#carenciaFimEntregaBranca", this.workspace).mask("99/99/9999");
+		
+		$("#percentualFaturamentoEntregador", this.workspace).mask("99.99");
+		$("#carenciaInicioEntregador", this.workspace).mask("99/99/9999");
+		$("#carenciaFimEntregado", this.workspace).mask("99/99/9999");
+		
+		
+		$("#carenciaInicioEntregaBranca", this.workspace).datepicker({
+			showOn: "button",
+			buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
+			buttonImageOnly: true
+		});
+		$("#carenciaFimEntregaBranca", this.workspace).datepicker({
+			showOn: "button",
+			buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
+			buttonImageOnly: true
+		});
+		
+		
+		$("#carenciaInicioEntregador", this.workspace).datepicker({
+			showOn: "button",
+			buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
+			buttonImageOnly: true
+		});
+		$("#carenciaFimEntregador", this.workspace).datepicker({
+			showOn: "button",
+			buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
+			buttonImageOnly: true
+		});
+		
+		
+	
+    	$('#uploadedFileProcuracao').fileupload(
+						{
+							url :"administracao/alteracaoCota/uploadProcuracao",
+							sequentialUploads: true,
+							dataType : 'json',
+							paramName : 'uploadedFileProcuracao',
+							replaceFileInput: false,
+							submit : function(e, data) {
+								data = $("#pesquisarForm", this.workspace).serialize();
+
+							},
+							done : function(e, data) {
+							//	 $('#uploadedFileProcuracao').destroy();
+							},
+							progressall : function(e, data) {
+								
+							},
+							send : function(e, data) {
+
+							}
+							 
+						});
+    	
+    	
+    	$('#uploadedFileTermo').fileupload(
+				{
+					url :"administracao/alteracaoCota/uploadedFileTermo",
+					sequentialUploads: true,
+					dataType : 'json',
+					paramName : 'uploadedFileTermo',
+					replaceFileInput: false,
+					submit : function(e, data) {
+						data = $("#pesquisarForm", this.workspace).serialize();
+
+					},
+					done : function(e, data) {
+					//	 $('#uploadedFileProcuracao').destroy();
+					},
+					progressall : function(e, data) {
+						
+					},
+					send : function(e, data) {
+
+					}
+					 
+				});
+			
 	},
 	
 	iniciarGrid : function() {
@@ -152,7 +237,7 @@ var alteracaoCotaController = $.extend(true, {
 			$("#dialog-novo", this.workspace).dialog({
 				resizable: false,
 				height:550,
-				width:850,
+				width:900,
 				modal: true,
 				buttons: {
 					"Confirmar": function() {
@@ -309,6 +394,63 @@ var alteracaoCotaController = $.extend(true, {
 		);
 	},
 	
+	
+	selectTipoEntregaDistribuicao : function() {
+
+		var tipoEntrega = $('#idModalIdTipoEntrega', this.workspace).val();
+		if ( tipoEntrega == 'COTA_RETIRA' ) {
+			$('#entregaBancaPj', this.workspace).hide();
+			$('#entregadorPj', this.workspace).hide();
+			
+		} else if (tipoEntrega == 'ENTREGA_EM_BANCA'  ){
+			$('#entregaBancaPj', this.workspace).show();
+			$('#entregadorPj', this.workspace).hide();
+			
+		} else if (tipoEntrega == 'ENTREGADOR'  ){
+			$('#entregadorPj', this.workspace).show();
+			$('#entregaBancaPj', this.workspace).hide();
+			
+		}
+		
+	},
+	
+	uploadArquivo : function(file, formId) {
+		$('#' + formId).submit();
+		
+	},
+	
+   tratarRetornoUpload : function(data) {
+		
+		data = replaceAll(data, "<pre>", "");
+		data = replaceAll(data, "</pre>", "");
+		
+		data = replaceAll(data, "<PRE>", "");
+		data = replaceAll(data, "</PRE>", "");
+		
+		var responseJson = jQuery.parseJSON(data);
+		
+		if (responseJson.mensagens) {
+
+			exibirMensagemDialog(
+				responseJson.mensagens.tipoMensagem, 
+				responseJson.mensagens.listaMensagens, "dialog-cota"
+			);
+		}
+
+	},
+	
+	downloadTermoAdesao : function() {
+		document.location.assign(contextPath + "/cadastro/cota/downloadTermoAdesao?termoAdesaoRecebido="+D.get("termoAdesaoRecebido")+"&numeroCota="+D.get("numCota")+"&taxa="+D.get("taxaFixaEntregaBanca")+"&percentual="+D.get("percentualFaturamentoEntregaBanca"));
+	},
+	
+	downloadProcuracao : function() {
+		
+		document.location.assign(contextPath + "/cadastro/cota/downloadProcuracao?procuracaoRecebida="+D.get("procuracaoRecebida")+"&numeroCota="+D.get("numCota"));
+	}
+	
+	
+
+	
 
 }, BaseController);
 
@@ -440,3 +582,5 @@ function tipoEntregaPj(opcao){
 function mostraTermoPf(){
 	$('.termoPf').show();
 	}
+
+//@ sourceURL=alteracaoCota.js
