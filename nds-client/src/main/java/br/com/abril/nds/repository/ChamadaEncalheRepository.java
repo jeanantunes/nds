@@ -29,4 +29,6 @@ public interface ChamadaEncalheRepository extends Repository<ChamadaEncalhe, Lon
 	
 	List<CapaDTO> obterIdsCapasChamadaEncalhe(Date dataDe, Date dataAte);
 
+	Date obterProximaDataEncalhe(Date base);
+
 }

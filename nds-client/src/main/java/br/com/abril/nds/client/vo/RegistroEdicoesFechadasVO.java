@@ -1,7 +1,6 @@
 package br.com.abril.nds.client.vo;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 
@@ -140,5 +139,39 @@ public class RegistroEdicoesFechadasVO implements Serializable {
 	public void setIdProdutoEdicao(Long idProdutoEdicao) {
 		this.idProdutoEdicao = idProdutoEdicao;
 	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((idProdutoEdicao == null) ? 0 : idProdutoEdicao.hashCode());
+		return result;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		RegistroEdicoesFechadasVO other = (RegistroEdicoesFechadasVO) obj;
+		if (idProdutoEdicao == null) {
+			if (other.idProdutoEdicao != null)
+				return false;
+		} else if (!idProdutoEdicao.equals(other.idProdutoEdicao))
+			return false;
+		return true;
+	}
+	
+	
 	
 }

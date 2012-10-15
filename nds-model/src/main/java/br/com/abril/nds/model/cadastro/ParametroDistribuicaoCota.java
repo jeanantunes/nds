@@ -41,7 +41,7 @@ public class ParametroDistribuicaoCota implements Serializable {
 	private Boolean solicitaNumAtras;
 	
 	@Column(name = "RECEBE_RECOLHE_PARCIAIS", nullable = true)
-	private Boolean recebeRecolheParcias;
+	private Boolean recebeRecolheParciais;
 	
 	@Column(name = "NOTA_ENVIO_IMPRESSO", nullable = true)
 	private Boolean notaEnvioImpresso;
@@ -114,7 +114,7 @@ public class ParametroDistribuicaoCota implements Serializable {
 			String assistenteComercial, DescricaoTipoEntrega descricaoTipoEntrega,
 			String observacao,
 			Boolean repartePorPontoVenda, Boolean solicitaNumAtras,
-			Boolean recebeRecolheParcias, Boolean notaEnvioImpresso,
+			Boolean recebeRecolheParciais, Boolean notaEnvioImpresso,
 			Boolean notaEnvioEmail, Boolean chamadaEncalheImpresso,
 			Boolean chamadaEncalheEmail, Boolean slipImpresso, Boolean slipEmail) {
 		super();
@@ -124,7 +124,7 @@ public class ParametroDistribuicaoCota implements Serializable {
 		this.observacao = observacao;
 		this.repartePorPontoVenda = repartePorPontoVenda;
 		this.solicitaNumAtras = solicitaNumAtras;
-		this.recebeRecolheParcias = recebeRecolheParcias;
+		this.recebeRecolheParciais = recebeRecolheParciais;
 		this.notaEnvioImpresso = notaEnvioImpresso;
 		this.notaEnvioEmail = notaEnvioEmail;
 		this.chamadaEncalheImpresso = chamadaEncalheImpresso;
@@ -215,15 +215,15 @@ public class ParametroDistribuicaoCota implements Serializable {
 	/**
 	 * @return the recebeRecolheParcias
 	 */
-	public Boolean getRecebeRecolheParcias() {
-		return recebeRecolheParcias;
+	public Boolean getRecebeRecolheParciais() {
+		return recebeRecolheParciais;
 	}
 
 	/**
 	 * @param recebeRecolheParcias the recebeRecolheParcias to set
 	 */
-	public void setRecebeRecolheParcias(Boolean recebeRecolheParcias) {
-		this.recebeRecolheParcias = recebeRecolheParcias;
+	public void setRecebeRecolheParciais(Boolean recebeRecolheParciais) {
+		this.recebeRecolheParciais = recebeRecolheParciais;
 	}
 
 	/**

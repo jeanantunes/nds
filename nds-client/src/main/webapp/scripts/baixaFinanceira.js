@@ -612,7 +612,7 @@ var baixaFinanceiraController = $.extend(true, {
 				sortable : false,
 				align : 'center',
 			}],
-			sortname : "Data Vencimento",
+			sortname : "dataVencimento",
 			sortorder : "asc",
 			usepager : true,
 			useRp : true,
@@ -811,14 +811,14 @@ var baixaFinanceiraController = $.extend(true, {
 		var nossoNumero = $("#filtroNossoNumero", baixaFinanceiraController.workspace).val();
 		var numCota = $("#filtroNumCota", baixaFinanceiraController.workspace).val();
 		
-		var btAVista =$("#bt_aVista");
-		var btNegociar =$("#bt_negociar");
-		var btPostergar =$("#bt_postergar");
+		var botoesDividasNaoPagas = $("#botoesDividasNaoPagas");
+		var botoesDividasPagas = $("#botoesDividasPagas");
 	
 		if($("#checkCobrancasBaixadas", baixaFinanceiraController.workspace).is(':checked')){
-			btAVista.hide();
-			btNegociar.hide();
-			btPostergar.hide();
+			
+			botoesDividasPagas.show();
+			botoesDividasNaoPagas.hide();
+			
 			/*BAIXA MANUAL DE DIVIDAS BAIXADAS*/
 			$(".liberaDividaGrid", baixaFinanceiraController.workspace).flexOptions({
 				url: contextPath + "/financeiro/buscaDividasBaixadas",
@@ -836,9 +836,10 @@ var baixaFinanceiraController = $.extend(true, {
 			baixaFinanceiraController.dividaManualCota();
 			
 		}else{
-			btAVista.show();
-			btNegociar.show();
-			btPostergar.show();
+			
+			botoesDividasPagas.hide();
+			botoesDividasNaoPagas.show();
+			
 			if (nossoNumero==''){
 				
 				/*BAIXA MANUAL DE DIVIDAS*/
@@ -1664,7 +1665,23 @@ var baixaFinanceiraController = $.extend(true, {
 				'<a href="javascript:;" onclick="baixaFinanceiraController.mostrarGridTotalBancario();" />'
 			);
 		} 
-	}
+	},
+	
+    confirmarBaixa : function() {
+		
+    	$.postJSON(contextPath + "/financeiro/confirmarBaixaDividas",
+				   baixaFinanceiraController.obterCobrancasDividasMarcadas(),
+				   function() { baixaFinanceiraController.buscaManual(); }
+    	);
+	},
+	
+	cancelarBaixa : function() {
+		
+		$.postJSON(contextPath + "/financeiro/cancelarBaixaDividas",
+				   baixaFinanceiraController.obterCobrancasDividasMarcadas(),
+				   function() { baixaFinanceiraController.buscaManual(); }
+		);
+	},
 
 }, BaseController);
 

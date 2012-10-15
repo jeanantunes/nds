@@ -3,7 +3,6 @@ package br.com.abril.nds.service.impl;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,6 +16,7 @@ import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.repository.DistribuidorRepository;
+import br.com.abril.nds.util.DateUtil;
 
 public class GeradorArquivoCobrancaBancoServiceImplTest {
 	
@@ -38,7 +38,7 @@ public class GeradorArquivoCobrancaBancoServiceImplTest {
 		Mockito.doReturn(this.getDistribuidorMock())
 			.when(serviceMock).getDistribuidor();
 		
-		serviceMock.prepararGerarArquivoCobrancaCnab();
+		serviceMock.processarGeracaoArquivoCobrancaCnab();
 	}
 	
 	private Distribuidor getDistribuidorMock() {
@@ -50,7 +50,7 @@ public class GeradorArquivoCobrancaBancoServiceImplTest {
 		
 		Distribuidor distribuidor = new Distribuidor();
 		
-		distribuidor.setDataOperacao(new Date());
+		distribuidor.setDataOperacao(DateUtil.parseDataPTBR("11/11/2012"));
 		distribuidor.setJuridica(juridica);
 		
 		return distribuidor;

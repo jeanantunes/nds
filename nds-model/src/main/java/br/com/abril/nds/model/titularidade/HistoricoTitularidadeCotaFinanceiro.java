@@ -46,7 +46,7 @@ public class HistoricoTitularidadeCotaFinanceiro implements Serializable {
      * Fator de vencimento nas cobranças
      */
     @Column(name = "FATOR_VENCIMENTO")
-    private int fatorVencimento;
+    private Integer fatorVencimento;
     
     /**
      * Valor mínimo de cobrança
@@ -117,14 +117,14 @@ public class HistoricoTitularidadeCotaFinanceiro implements Serializable {
     /**
      * @return the fatorVencimento
      */
-    public int getFatorVencimento() {
+    public Integer getFatorVencimento() {
         return fatorVencimento;
     }
 
     /**
      * @param fatorVencimento the fatorVencimento to set
      */
-    public void setFatorVencimento(int fatorVencimento) {
+    public void setFatorVencimento(Integer fatorVencimento) {
         this.fatorVencimento = fatorVencimento;
     }
 

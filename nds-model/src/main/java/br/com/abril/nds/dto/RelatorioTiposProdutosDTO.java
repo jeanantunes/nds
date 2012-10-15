@@ -2,6 +2,7 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Date;
 
 public class RelatorioTiposProdutosDTO implements Serializable {
@@ -43,10 +44,12 @@ public class RelatorioTiposProdutosDTO implements Serializable {
 		this.precoCapa = precoCapa;
 	}
 	public BigDecimal getFaturamento() {
+		if(faturamento == null)
+			return BigDecimal.ZERO;
 		return faturamento;
 	}
 	public void setFaturamento(BigDecimal faturamento) {
-		this.faturamento = faturamento;
+		this.faturamento = (BigDecimal) faturamento;
 	}
 	public String getTipoProduto() {
 		return tipoProduto;

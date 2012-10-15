@@ -242,6 +242,7 @@ public class Fornecedor implements Serializable {
 	public void setCotas(Set<Cota> cotas) {
 		this.cotas = cotas;
 	}
+	
 
 	@Override
 	public int hashCode() {
