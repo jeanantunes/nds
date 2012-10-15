@@ -243,6 +243,10 @@ public class AlteracaoCotaController {
 	
 	public void preencherFiltroDistribuicao(FiltroAlteracaoCotaDTO filtroAlteracaoCotaDTO, Cota cota){
 		
+		if (cota.getParametroDistribuicao() == null){
+			return;
+		}
+		
 		//DISTRIBUICAO
 		if(cota.getParametroDistribuicao().getAssistenteComercial() != null)
 			filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setNmAssitPromoComercial(cota.getParametroDistribuicao().getAssistenteComercial());
