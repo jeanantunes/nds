@@ -1,5 +1,6 @@
 package br.com.abril.nds.controllers.administracao;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -16,27 +17,35 @@ import br.com.abril.nds.client.util.PessoaUtil;
 import br.com.abril.nds.dto.ConsultaAlteracaoCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroAlteracaoCotaDTO;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.integracao.service.ParametroSistemaService;
+import br.com.abril.nds.model.cadastro.BaseCalculo;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.DescricaoTipoEntrega;
 import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.ParametroSistema;
 import br.com.abril.nds.model.cadastro.PoliticaSuspensao;
+import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.model.cadastro.desconto.TipoDesconto;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.CustomMapJson;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
+import br.com.abril.nds.serialization.custom.PlainJSONSerialization;
 import br.com.abril.nds.service.AlteracaoCotaService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.EnderecoService;
+import br.com.abril.nds.service.FileService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.HistoricoTitularidadeCotaFinanceiroService;
 import br.com.abril.nds.service.ParametroCobrancaCotaService;
 import br.com.abril.nds.service.TipoEntregaService;
 import br.com.abril.nds.util.TipoMensagem;
+import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
 
 @Resource
 @Path("/administracao/alteracaoCota")
@@ -69,6 +78,15 @@ public class AlteracaoCotaController {
 	@Autowired
 	private HistoricoTitularidadeCotaFinanceiroService historicoTitularidadeCotaFinanceiroService;
 	
+	@Autowired
+	private FileService fileService; 
+	
+	@Autowired
+	private ParametroSistemaService parametroSistemaService;
+	
+	public static final FileType[] extensoesAceitas = 
+		{FileType.DOC, FileType.DOCX, FileType.BMP, FileType.GIF, FileType.PDF, FileType.JPEG, FileType.JPG, FileType.PNG};
+	
 	
 	private Result result;
 	
@@ -93,7 +111,7 @@ public class AlteracaoCotaController {
 		result.include("listaVencimento", listaVencimento);
 		result.include("listTipoEntrega", DescricaoTipoEntrega.values());
 		result.include("listTipoDesconto", TipoDesconto.values());
-		
+		result.include("listBaseCalculo", BaseCalculo.values());
 		result.include("listHistoricoTitularidadeCotaFinanceiro", historicoTitularidadeCotaFinanceiroService.pesquisarTodos());
 		
 	}
@@ -120,6 +138,7 @@ public class AlteracaoCotaController {
 	public void carregarCamposAlteracao(FiltroAlteracaoCotaDTO filtroAlteracaoCotaDTO, String sortname, int page, int rp) {
 		
 		List<Fornecedor> listaFornecedoresAtivos = fornecedorService.obterFornecedoresAtivos();
+		
 		
 		//Carregará os dados apenas se o usuário selecionar uma linha do grid p/ alteração.
 		if(filtroAlteracaoCotaDTO != null && filtroAlteracaoCotaDTO.getListaLinhaSelecao() != null && filtroAlteracaoCotaDTO.getListaLinhaSelecao().size() == 1){
@@ -357,5 +376,41 @@ public class AlteracaoCotaController {
 				}
 			}
 		}
+	}
+	
+	
+	@Post
+	public void uploadTermoAdesao(UploadedFile uploadedFileTermo, Integer numCotaUpload) throws IOException {		
+		upload(uploadedFileTermo, numCotaUpload, TipoParametroSistema.PATH_TERMO_ADESAO);
+	}
+	
+	@Post
+	public void uploadProcuracao(UploadedFile uploadedFileProcuracao, Integer numCotaUpload) throws IOException {		
+		upload(uploadedFileProcuracao, numCotaUpload, TipoParametroSistema.PATH_PROCURACAO);
+	}
+	
+	private void upload(UploadedFile uploadedFile, Integer numCota, TipoParametroSistema parametroPath ) throws IOException {		
+		
+		String fileName = "";
+		
+		if(uploadedFile != null) {
+			
+			this.fileService.validarArquivo(1, uploadedFile, extensoesAceitas);
+			
+			ParametroSistema raiz = 
+					this.parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_ARQUIVOS_DISTRIBUICAO_COTA);
+			
+			ParametroSistema path = 
+					this.parametroSistemaService.buscarParametroPorTipoParametro(parametroPath);								
+			
+			String dirBase = (raiz.getValor() + path.getValor() + numCota.toString() ).replace("\\", "/");
+			
+			fileService.setArquivoTemp(dirBase, uploadedFile.getFileName(), uploadedFile.getFile());
+			
+			fileName = uploadedFile.getFileName();
+		}
+		
+		this.result.use(PlainJSONSerialization.class)
+			.from(fileName, "result").recursive().serialize();
 	}
 }
