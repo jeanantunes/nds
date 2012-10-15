@@ -202,7 +202,7 @@
 										<td width="153">Termo Ades&atilde;o:</td>
 										<td width="20"><input type="checkbox" name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.termoAdesao" id="termoAdesao" /></td>
 										<td width="216"><span class="bt_imprimir" style="display: block;">
-											<a href="" target="_blank">Termo</a></span>
+											<a href="javaScript:alteracaoCotaController.downloadTermoAdesao()" target="_blank">Termo</a></span>
 										</td>
 									</tr>
 									<tr>
@@ -266,7 +266,7 @@
 										<td width="20"><input type="checkbox" name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.procuracao"  id="procuracao" /></td>
 										<td width="201" class="procuracaoPj"><span
 											class="bt_imprimir" style="display: block;"><a
-												href="../procuracao.htm" target="_blank">Procura&ccedil;&atilde;o</a></span></td>
+												href="javaScript:alteracaoCotaController.downloadProcuracao()" target="_blank">Procura&ccedil;&atilde;o</a></span></td>
 									</tr>
 									<tr>
 										<td>Procura&ccedil;&atilde;o Recebida?</td>

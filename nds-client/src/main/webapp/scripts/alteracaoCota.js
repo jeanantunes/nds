@@ -67,13 +67,9 @@ var alteracaoCotaController = $.extend(true, {
 							replaceFileInput: false,
 							submit : function(e, data) {
 								data = $("#pesquisarForm", this.workspace).serialize();
-
 							},
 							success : function(e, data) {
 								$("#nomeArquivoProcuracao").html(e.result);
-							},
-							fail : function(e, data) {
-								alert('erro');
 							}
 						});
     	
@@ -400,15 +396,21 @@ var alteracaoCotaController = $.extend(true, {
 	},
 	
 	downloadTermoAdesao : function() {
-		document.location.assign(contextPath + "/cadastro/cota/downloadTermoAdesao?termoAdesaoRecebido="+D.get("termoAdesaoRecebido")+"&numeroCota="+D.get("numCota")+"&taxa="+D.get("taxaFixaEntregaBanca")+"&percentual="+D.get("percentualFaturamentoEntregaBanca"));
+		document.location.assign("administracao/alteracaoCota/downloadTermoAdesao?termoAdesaoRecebido=true&numeroCota=1234");
 	},
 	
 	downloadProcuracao : function() {
-		
-		document.location.assign(contextPath + "/cadastro/cota/downloadProcuracao?procuracaoRecebida="+D.get("procuracaoRecebida")+"&numeroCota="+D.get("numCota"));
-	}
 	
+		for	(i=0;i<2;i++){
+			alteracaoCotaController.newDoc();
+		}
+	},
 	
+	 newDoc : function()
+	  {
+//	  window.location.assign("http://www.w3schools.com")
+		 document.location.assign("administracao/alteracaoCota/downloadProcuracao?procuracaoRecebida=true&numeroCota=1");
+	  }
 
 	
 
