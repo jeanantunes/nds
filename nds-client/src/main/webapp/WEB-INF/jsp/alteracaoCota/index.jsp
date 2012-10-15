@@ -61,7 +61,7 @@
 
 								<fieldset style="width: 250px;">
 									<legend>Selecione os Fornecedores</legend>
-				              		<select name="filtroAlteracaoCotaDTO.filtroModalFornecedor.listFornecedores" multiple="multiple" id="idListFornecedores" style="height:270px; width:245px;">
+				              		<select name="idListFornecedores" multiple="multiple" id="idListFornecedores" style="height:270px; width:245px;">
 										<%-- 
 										<c:forEach items="${listFornecedores}" var="fornecedor">
 											<option value="${fornecedor.id}">${fornecedor.juridica.razaoSocial}</option>
@@ -80,7 +80,7 @@
 
 								<fieldset style="width: 250px;">
 									<legend>Fornecedores Selecionados</legend>
-				              		<select name="filtroAlteracaoCotaDTO.filtroModalFornecedor.listaFornecedoresSelecionados" multiple="multiple" id="idListaFornecedorAssociado" style="height:270px; width:245px;">
+				              		<select name="idListaFornecedorAssociado" multiple="multiple" id="idListaFornecedorAssociado" style="height:270px; width:245px;">
 				              		<%-- 
 										<c:forEach items="${listaFornecedorAssociado}" var="fornecedor">
 											<option value="${fornecedor.id}">${fornecedor.juridica.razaoSocial}</option>
@@ -456,9 +456,9 @@
   				<tr>
     				<td width="502"><span class="bt_novos" title="Novo"><a href="javascript:;" onclick="alteracaoCotaController.carregarAlteracao();"><img src="${pageContext.request.contextPath}/images/ico_editar.gif" hspace="5" border="0"/>Alterar</a></span></td>
     				<td width="168"><strong>Total de Cotas Selecionadas:</strong></td>
-    				<td width="141">4</td>
+    				<td width="141"><span id="totalCotasSelecionadas"></span></td>
     				<td width="91">Selecionar Todos</td>
-    				<td width="48"><input type="checkbox" name="checkbox3" id="acionador" /></td>
+    				<td width="48"><input type="checkbox" name="checkbox3" id="acionador" onclick="alteracaoCotaController.checkAll(); alteracaoCotaController.verificarCheck();" /></td>
   				</tr>
 			</table>
         </div>

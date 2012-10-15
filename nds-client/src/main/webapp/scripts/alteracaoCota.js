@@ -1,7 +1,5 @@
 $(document).ready(function() {
-	$("#acionador").click(function() {
-		$(".selectLine").attr("checked", this.checked);
-	});
+	
 	
 	showCamposSuspensao($("#idIsSugereSuspensaoModal").attr("checked") == "checked");
 	
@@ -113,7 +111,7 @@ var alteracaoCotaController = $.extend(true, {
 
 		$.each(resultado.rows, function(index, row) {
 			
-			var campoSelect = "<input name='filtroAlteracaoCotaDTO.listaLinhaSelecao["+index+"]' class='selectLine' type='checkbox' value='"+row.cell.idCota+"'>";
+			var campoSelect = "<input name='filtroAlteracaoCotaDTO.listaLinhaSelecao["+ index +"]' class='selectLine' type='checkbox' value='"+row.cell.idCota+"' onclick='alteracaoCotaController.verificarCheck();'>";
 			
 			row.cell.acao = campoSelect;
 		});
@@ -142,8 +140,10 @@ var alteracaoCotaController = $.extend(true, {
 	
 	carregarAlteracao : function() {
 		var linhasSelecionadas = 0;
+		
 		$(".selectLine", this.workspace).each(function(index, element) {	
 			if(element.checked){
+				element.name = 'filtroAlteracaoCotaDTO.listaLinhaSelecao['+ linhasSelecionadas +']';
 				linhasSelecionadas++;
 			}
 			
@@ -264,10 +264,40 @@ var alteracaoCotaController = $.extend(true, {
 		$(combo).clear().append(opcoes);
 	},
 	
+	verificarCheck : function(){
+		var selecionados = 0;
+		var totalCotas = $("#totalCotasSelecionadas", this.workspace);
+		
+		$(".selectLine", this.workspace).each(function(index, element) {	
+			if(element.checked){
+				selecionados++;
+			}
+			
+		});
+		totalCotas.html(selecionados);
+	},
+	
+	checkAll : function(){
+		
+		$(".selectLine", this.workspace).each(function(index, element) {
+			element.checked = true;
+		});
+		alteracaoCotaController.verificarCheck();
+	},
+	
 	salvarAlteracao : function() {
-		alert($("#pesquisarForm", this.workspace).serialize());
+		
+		var  dataForm = $("#pesquisarForm", this.workspace).serializeArray();
+		$("#idListaFornecedorAssociado option", this.workspace).each(function (index) {
+			 dataForm.push({name: 'filtroAlteracaoCotaDTO.filtroModalFornecedor.listaFornecedoresSelecionados['+index+']', value:$(this, this.workspace).val() } );
+			 
+
+		});
+		
+	
+		
 		$.postJSON(contextPath + "/administracao/alteracaoCota/salvarAlteracao",
-				$("#pesquisarForm", this.workspace).serialize(),  
+				dataForm,  
 			   	function () {
 					$("#dialog-novo", this.workspace).dialog( "close" );
 					alteracaoCotaController.pesquisar();

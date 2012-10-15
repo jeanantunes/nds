@@ -19,6 +19,8 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.DescricaoTipoEntrega;
 import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
+import br.com.abril.nds.model.cadastro.ParametroDistribuicaoCota;
 import br.com.abril.nds.model.cadastro.PoliticaSuspensao;
 import br.com.abril.nds.model.cadastro.desconto.TipoDesconto;
 import br.com.abril.nds.model.seguranca.Permissao;
@@ -171,6 +173,9 @@ public class AlteracaoCotaController {
 			//****FINANCEIRO****//
 			//Sugere Suspensao
 			cota.setSugereSuspensao(filtroAlteracaoCotaDTO.getFiltroModalFinanceiro().getIsSugereSuspensao());
+			if(cota.getParametroCobranca() == null){
+				cota.setParametroCobranca(new ParametroCobrancaCota());
+			}
 			//Fator Vencimento
 			cota.getParametroCobranca().setFatorVencimento(filtroAlteracaoCotaDTO.getFiltroModalFinanceiro().getIdVencimento());
 			try {
@@ -189,6 +194,9 @@ public class AlteracaoCotaController {
 				throw new ValidacaoException(TipoMensagem.WARNING, "Valor inválido");
 			}
 			//****DISTRIBUICAO****//
+			if(cota.getParametroDistribuicao() == null){
+				cota.setParametroDistribuicao(new ParametroDistribuicaoCota());
+			}
 			cota.getParametroDistribuicao().setAssistenteComercial(filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().getNmAssitPromoComercial());
 			cota.getParametroDistribuicao().setGerenteComercial(filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().getNmGerenteComercial());
 			cota.getParametroDistribuicao().setObservacao(filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().getObservacao());
@@ -227,81 +235,84 @@ public class AlteracaoCotaController {
 	public void preencherFiltroFinanceiro(FiltroAlteracaoCotaDTO filtroAlteracaoCotaDTO, Cota cota){
 		
 		//FINANCEIRO
-		if(cota.getParametroCobranca().getFatorVencimento() != null)
-			filtroAlteracaoCotaDTO.getFiltroModalFinanceiro().setIdVencimento(cota.getParametroCobranca().getFatorVencimento());
-		
-		if(cota.getParametroCobranca().getValorMininoCobranca() != null)
-			filtroAlteracaoCotaDTO.getFiltroModalFinanceiro().setVrMinimo(String.valueOf(cota.getParametroCobranca().getValorMininoCobranca()));
-		if(cota.getParametroCobranca().getPoliticaSuspensao() != null){
-			if(cota.getParametroCobranca().getPoliticaSuspensao().getNumeroAcumuloDivida() != null)
-				filtroAlteracaoCotaDTO.getFiltroModalFinanceiro().setQtdDividaEmAberto(cota.getParametroCobranca().getPoliticaSuspensao().getNumeroAcumuloDivida());
-		
-			if(cota.getParametroCobranca().getPoliticaSuspensao().getValor() != null)
-				filtroAlteracaoCotaDTO.getFiltroModalFinanceiro().setVrDividaEmAberto(String.valueOf(cota.getParametroCobranca().getPoliticaSuspensao().getValor()));
+		if(cota.getParametroCobranca() != null){
+			if(cota.getParametroCobranca().getFatorVencimento() != null)
+				filtroAlteracaoCotaDTO.getFiltroModalFinanceiro().setIdVencimento(cota.getParametroCobranca().getFatorVencimento());
+			
+			if(cota.getParametroCobranca().getValorMininoCobranca() != null)
+				filtroAlteracaoCotaDTO.getFiltroModalFinanceiro().setVrMinimo(String.valueOf(cota.getParametroCobranca().getValorMininoCobranca()));
+			if(cota.getParametroCobranca().getPoliticaSuspensao() != null){
+				if(cota.getParametroCobranca().getPoliticaSuspensao().getNumeroAcumuloDivida() != null)
+					filtroAlteracaoCotaDTO.getFiltroModalFinanceiro().setQtdDividaEmAberto(cota.getParametroCobranca().getPoliticaSuspensao().getNumeroAcumuloDivida());
+			
+				if(cota.getParametroCobranca().getPoliticaSuspensao().getValor() != null)
+					filtroAlteracaoCotaDTO.getFiltroModalFinanceiro().setVrDividaEmAberto(String.valueOf(cota.getParametroCobranca().getPoliticaSuspensao().getValor()));
+			}
 		}
 	}
 	
 	public void preencherFiltroDistribuicao(FiltroAlteracaoCotaDTO filtroAlteracaoCotaDTO, Cota cota){
 		
 		//DISTRIBUICAO
-		if(cota.getParametroDistribuicao().getAssistenteComercial() != null)
-			filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setNmAssitPromoComercial(cota.getParametroDistribuicao().getAssistenteComercial());
-		
-		if(cota.getParametroDistribuicao().getGerenteComercial() != null)
-			filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setNmGerenteComercial(cota.getParametroDistribuicao().getGerenteComercial());
-		
-		if(cota.getParametroDistribuicao().getObservacao() != null)
-			filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setObservacao(cota.getParametroDistribuicao().getObservacao());
-		
-		if(cota.getParametroDistribuicao().getRepartePorPontoVenda() != null)
-			filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setIsRepartePontoVenda(cota.getParametroDistribuicao().getRepartePorPontoVenda());
-		
-		if(cota.getParametroDistribuicao().getSolicitaNumAtras() != null)
-			filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setIsSolicitacaoNumAtrasoInternet(cota.getParametroDistribuicao().getSolicitaNumAtras());
-		
-		if(cota.getParametroDistribuicao().getRecebeRecolheParciais() != null)
-			filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setIsRecebeRecolheProdutosParciais(cota.getParametroDistribuicao().getRecebeRecolheParciais());
-		
-		if(cota.getParametroDistribuicao().getDescricaoTipoEntrega() != null)
-			filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setDescricaoTipoEntrega(cota.getParametroDistribuicao().getDescricaoTipoEntrega());
-		
-		//--Emissao Documentos
-		if(cota.getParametroDistribuicao().getSlipImpresso() != null)
-		filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().getFiltroCheckDistribEmisDoc().setIsSlipImpresso(cota.getParametroDistribuicao().getSlipImpresso());
-		
-		if(cota.getParametroDistribuicao().getSlipEmail() != null)
-		filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().getFiltroCheckDistribEmisDoc().setIsSlipEmail(cota.getParametroDistribuicao().getSlipEmail());
-		
-		if(cota.getParametroDistribuicao().getBoletoImpresso() != null)
-		filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().getFiltroCheckDistribEmisDoc().setIsBoletoImpresso(cota.getParametroDistribuicao().getBoletoImpresso());
-		
-		if(cota.getParametroDistribuicao().getBoletoEmail() != null)
-		filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().getFiltroCheckDistribEmisDoc().setIsBoletoEmail(cota.getParametroDistribuicao().getBoletoEmail());
-		
-		if(cota.getParametroDistribuicao().getBoletoSlipImpresso() != null)
-		filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().getFiltroCheckDistribEmisDoc().setIsBoletoSlipImpresso(cota.getParametroDistribuicao().getBoletoSlipImpresso());
-		
-		if(cota.getParametroDistribuicao().getBoletoSlipEmail() != null)
-		filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().getFiltroCheckDistribEmisDoc().setIsBoletoSlipEmail(cota.getParametroDistribuicao().getBoletoSlipEmail());
-		
-		if(cota.getParametroDistribuicao().getReciboImpresso() != null)
-		filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().getFiltroCheckDistribEmisDoc().setIsReciboImpresso(cota.getParametroDistribuicao().getReciboImpresso());
-		
-		if(cota.getParametroDistribuicao().getReciboEmail() != null)
-		filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().getFiltroCheckDistribEmisDoc().setIsReciboEmail(cota.getParametroDistribuicao().getReciboEmail());
-		
-		if(cota.getParametroDistribuicao().getNotaEnvioImpresso() != null)
-		filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().getFiltroCheckDistribEmisDoc().setIsNotaEnvioImpresso(cota.getParametroDistribuicao().getNotaEnvioImpresso());
-		
-		if(cota.getParametroDistribuicao().getNotaEnvioEmail() != null)
-		filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().getFiltroCheckDistribEmisDoc().setIsNotaEnvioEmail(cota.getParametroDistribuicao().getNotaEnvioEmail());
-		
-		if(cota.getParametroDistribuicao().getChamadaEncalheImpresso() != null)
-		filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().getFiltroCheckDistribEmisDoc().setIsChamdaEncalheImpresso(cota.getParametroDistribuicao().getChamadaEncalheImpresso());
-		
-		if(cota.getParametroDistribuicao().getChamadaEncalheEmail() != null)
-		filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().getFiltroCheckDistribEmisDoc().setIsChamdaEncalheEmail(cota.getParametroDistribuicao().getChamadaEncalheEmail());
-		
+		if(cota.getParametroDistribuicao() != null){
+			if(cota.getParametroDistribuicao().getAssistenteComercial() != null)
+				filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setNmAssitPromoComercial(cota.getParametroDistribuicao().getAssistenteComercial());
+			
+			if(cota.getParametroDistribuicao().getGerenteComercial() != null)
+				filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setNmGerenteComercial(cota.getParametroDistribuicao().getGerenteComercial());
+			
+			if(cota.getParametroDistribuicao().getObservacao() != null)
+				filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setObservacao(cota.getParametroDistribuicao().getObservacao());
+			
+			if(cota.getParametroDistribuicao().getRepartePorPontoVenda() != null)
+				filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setIsRepartePontoVenda(cota.getParametroDistribuicao().getRepartePorPontoVenda());
+			
+			if(cota.getParametroDistribuicao().getSolicitaNumAtras() != null)
+				filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setIsSolicitacaoNumAtrasoInternet(cota.getParametroDistribuicao().getSolicitaNumAtras());
+			
+			if(cota.getParametroDistribuicao().getRecebeRecolheParciais() != null)
+				filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setIsRecebeRecolheProdutosParciais(cota.getParametroDistribuicao().getRecebeRecolheParciais());
+			
+			if(cota.getParametroDistribuicao().getDescricaoTipoEntrega() != null)
+				filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setDescricaoTipoEntrega(cota.getParametroDistribuicao().getDescricaoTipoEntrega());
+			
+			//--Emissao Documentos
+			if(cota.getParametroDistribuicao().getSlipImpresso() != null)
+			filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().getFiltroCheckDistribEmisDoc().setIsSlipImpresso(cota.getParametroDistribuicao().getSlipImpresso());
+			
+			if(cota.getParametroDistribuicao().getSlipEmail() != null)
+			filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().getFiltroCheckDistribEmisDoc().setIsSlipEmail(cota.getParametroDistribuicao().getSlipEmail());
+			
+			if(cota.getParametroDistribuicao().getBoletoImpresso() != null)
+			filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().getFiltroCheckDistribEmisDoc().setIsBoletoImpresso(cota.getParametroDistribuicao().getBoletoImpresso());
+			
+			if(cota.getParametroDistribuicao().getBoletoEmail() != null)
+			filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().getFiltroCheckDistribEmisDoc().setIsBoletoEmail(cota.getParametroDistribuicao().getBoletoEmail());
+			
+			if(cota.getParametroDistribuicao().getBoletoSlipImpresso() != null)
+			filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().getFiltroCheckDistribEmisDoc().setIsBoletoSlipImpresso(cota.getParametroDistribuicao().getBoletoSlipImpresso());
+			
+			if(cota.getParametroDistribuicao().getBoletoSlipEmail() != null)
+			filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().getFiltroCheckDistribEmisDoc().setIsBoletoSlipEmail(cota.getParametroDistribuicao().getBoletoSlipEmail());
+			
+			if(cota.getParametroDistribuicao().getReciboImpresso() != null)
+			filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().getFiltroCheckDistribEmisDoc().setIsReciboImpresso(cota.getParametroDistribuicao().getReciboImpresso());
+			
+			if(cota.getParametroDistribuicao().getReciboEmail() != null)
+			filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().getFiltroCheckDistribEmisDoc().setIsReciboEmail(cota.getParametroDistribuicao().getReciboEmail());
+			
+			if(cota.getParametroDistribuicao().getNotaEnvioImpresso() != null)
+			filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().getFiltroCheckDistribEmisDoc().setIsNotaEnvioImpresso(cota.getParametroDistribuicao().getNotaEnvioImpresso());
+			
+			if(cota.getParametroDistribuicao().getNotaEnvioEmail() != null)
+			filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().getFiltroCheckDistribEmisDoc().setIsNotaEnvioEmail(cota.getParametroDistribuicao().getNotaEnvioEmail());
+			
+			if(cota.getParametroDistribuicao().getChamadaEncalheImpresso() != null)
+			filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().getFiltroCheckDistribEmisDoc().setIsChamdaEncalheImpresso(cota.getParametroDistribuicao().getChamadaEncalheImpresso());
+			
+			if(cota.getParametroDistribuicao().getChamadaEncalheEmail() != null)
+			filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().getFiltroCheckDistribEmisDoc().setIsChamdaEncalheEmail(cota.getParametroDistribuicao().getChamadaEncalheEmail());
+		}
 	}
 	
 
