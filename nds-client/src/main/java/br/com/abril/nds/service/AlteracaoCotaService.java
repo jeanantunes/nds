@@ -13,6 +13,5 @@ public interface AlteracaoCotaService {
 
 	List<ConsultaAlteracaoCotaDTO> pesquisarAlteracaoCota(FiltroAlteracaoCotaDTO filtroAlteracaoCotaDTO); 
 	
-	Cota obterCotaComHistoricoTitularidade (Long idCota);
 	
 }

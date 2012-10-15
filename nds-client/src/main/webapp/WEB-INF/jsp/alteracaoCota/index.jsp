@@ -64,7 +64,7 @@
 
 								<fieldset style="width: 250px;">
 									<legend>Selecione os Fornecedores</legend>
-				              		<select name="filtroAlteracaoCotaDTO.listFornecedores" multiple="multiple" id="idListFornecedores" style="height:270px; width:245px;">
+				              		<select name="filtroAlteracaoCotaDTO.filtroModalFornecedor.listFornecedores" multiple="multiple" id="idListFornecedores" style="height:270px; width:245px;">
 										<%-- 
 										<c:forEach items="${listFornecedores}" var="fornecedor">
 											<option value="${fornecedor.id}">${fornecedor.juridica.razaoSocial}</option>
@@ -82,7 +82,7 @@
 							<td width="285" valign="top">
 
 								<fieldset style="width: 250px;">
-									<legend>Fornecedores selecionados</legend>
+									<legend>Fornecedores Selecionados</legend>
 				              		<select name="filtroAlteracaoCotaDTO.filtroModalFornecedor.listaFornecedoresSelecionados" multiple="multiple" id="idListaFornecedorAssociado" style="height:270px; width:245px;">
 				              		<%-- 
 										<c:forEach items="${listaFornecedorAssociado}" var="fornecedor">
@@ -108,7 +108,7 @@
 							<td width="167">Fator Vencimento em D+:</td>
 							<td width="60">
 							
-								<select name="filtroAlteracaoCotaDTO.filtroModalFinanceiro.idVencimento" id="idVencimentoModal" size="1" style="width: 50px; height: 19px;">
+								<select name="filtroAlteracaoCotaDTO.filtroModalFinanceiro.idVencimento" id="idVencimentoModal" size="1" style="width: 70px; height: 19px;">
 			              			<option selected="selected" value="-1"></option>	
 									<c:forEach items="${listaVencimento}" var="vencimento">
 										<option value="${vencimento}">D+ ${vencimento}</option>
@@ -312,8 +312,8 @@
 									</tr>
 									<tr>
 										<td>Slip</td>
-										<td align="center"><input type="checkbox" name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.filtroCheckDistribEmisDoc.isSkipImpresso" id="isSkipImpresso" /></td>
-										<td align="center"><input type="checkbox" name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.filtroCheckDistribEmisDoc.isSkipEmail" id="isSkipEmail" /></td>
+										<td align="center"><input type="checkbox" name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.filtroCheckDistribEmisDoc.isSlipImpresso" id="isSlipImpresso" /></td>
+										<td align="center"><input type="checkbox" name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.filtroCheckDistribEmisDoc.isSlipEmail" id="isSlipEmail" /></td>
 									</tr>
 									<tr>
 										<td>Boleto</td>
@@ -322,8 +322,8 @@
 									</tr>
 									<tr>
 										<td>Boleto + Slip</td>
-										<td align="center"><input type="checkbox" name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.filtroCheckDistribEmisDoc.isBoletoSkipImpresso" id="isBoletoSkipImpresso" /></td>
-										<td align="center"><input type="checkbox" name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.filtroCheckDistribEmisDoc.isBoletoEmail" id="isBoletoEmail" /></td>
+										<td align="center"><input type="checkbox" name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.filtroCheckDistribEmisDoc.isBoletoSlipImpresso" id="isBoletoSlipImpresso" /></td>
+										<td align="center"><input type="checkbox" name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.filtroCheckDistribEmisDoc.isBoletoSlipEmail" id="isBoletoSlipEmail" /></td>
 									</tr>
 									<tr>
 										<td>Recibo</td>
@@ -331,9 +331,9 @@
 										<td align="center"><input type="checkbox" name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.filtroCheckDistribEmisDoc.isReciboEmail" id="isReciboEmail" /></td>
 									</tr>
 									<tr>
-										<td>Note de Envio</td>
-										<td align="center"><input type="checkbox" name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.filtroCheckDistribEmisDoc.isNoteEnvioImpresso" id="isNoteEnvioImpresso" /></td>
-										<td align="center"><input type="checkbox" name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.filtroCheckDistribEmisDoc.isReciboEmail" id="isReciboEmail" /></td>
+										<td>Nota de Envio</td>
+										<td align="center"><input type="checkbox" name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.filtroCheckDistribEmisDoc.isNotaEnvioImpresso" id="isNotaEnvioImpresso" /></td>
+										<td align="center"><input type="checkbox" name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.filtroCheckDistribEmisDoc.isNotaEnvioEmail" id="isNotaEnvioEmail" /></td>
 									</tr>
 									<tr>
 										<td>Chamda de encalhe:</td>

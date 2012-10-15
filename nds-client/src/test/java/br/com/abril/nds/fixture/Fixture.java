@@ -3003,7 +3003,7 @@ public class Fixture {
 			String assistenteComercial, DescricaoTipoEntrega descricaoTipoEntrega,
 			String observacao,
 			Boolean repartePorPontoVenda, Boolean solicitaNumAtras,
-			Boolean recebeRecolheParcias, Boolean notaEnvioImpresso,
+			Boolean recebeRecolheParciais, Boolean notaEnvioImpresso,
 			Boolean notaEnvioEmail, Boolean chamadaEncalheImpresso,
 			Boolean chamadaEncalheEmail, Boolean slipImpresso, Boolean slipEmail) {
 		
@@ -3015,7 +3015,7 @@ public class Fixture {
 		parametroDistribuicaoCota.setObservacao(observacao);
 		parametroDistribuicaoCota.setRepartePorPontoVenda(repartePorPontoVenda);
 		parametroDistribuicaoCota.setSolicitaNumAtras(solicitaNumAtras);
-		parametroDistribuicaoCota.setRecebeRecolheParcias(recebeRecolheParcias);
+		parametroDistribuicaoCota.setRecebeRecolheParciais(recebeRecolheParciais);
 		parametroDistribuicaoCota.setNotaEnvioImpresso(notaEnvioImpresso);
 		parametroDistribuicaoCota.setNotaEnvioEmail(notaEnvioEmail);
 		parametroDistribuicaoCota.setChamadaEncalheImpresso(chamadaEncalheImpresso);

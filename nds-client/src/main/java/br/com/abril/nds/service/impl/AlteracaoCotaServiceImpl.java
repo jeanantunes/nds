@@ -37,13 +37,5 @@ public class AlteracaoCotaServiceImpl implements AlteracaoCotaService {
 		return alteracaoCotaRepository.pesquisarAlteracaoCota(filtroAlteracaoCotaDTO);
 	}
 	
-	 @Transactional(readOnly = true)
-    public Cota obterCotaComHistoricoTitularidade(Long idCota) {
-     
-    	Cota cota = cotaService.obterPorId(idCota);
-    	Hibernate.initialize(cota.getTitularesCota());
-        return cota;
-    }
-
 		
 }

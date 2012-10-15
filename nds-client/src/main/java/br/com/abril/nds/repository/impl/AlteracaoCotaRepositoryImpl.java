@@ -38,7 +38,7 @@ public class AlteracaoCotaRepositoryImpl extends AbstractRepositoryModel<Cota, L
 		//boolean addedAnd = false;
 		
 		hql.append(" select new ").append(ConsultaAlteracaoCotaDTO.class.getCanonicalName());
-		hql.append(" (cota.id, cota.numeroCota, pessoa.nome, pessoapj.razaoSocial, descontosProdutoEdicao.tipoDesconto, financeiro.fatorVencimento, financeiro.valorMininoCobranca, parametroDistribuicao.descricaoTipoEntrega, box.nome) ");
+		hql.append(" (cota.id, cota.numeroCota, pessoa.nome, pessoapj.razaoSocial, descontosProdutoEdicao.tipoDesconto, parametroCobranca.fatorVencimento, parametroCobranca.valorMininoCobranca, parametroDistribuicao.descricaoTipoEntrega, box.nome) ");
 		hql.append(" from Cota cota ");
 		hql.append(" JOIN cota.fornecedores fornecedor ");
 		hql.append(" JOIN fornecedor.juridica pessoapj ");
@@ -49,13 +49,13 @@ public class AlteracaoCotaRepositoryImpl extends AbstractRepositoryModel<Cota, L
 		hql.append(" JOIN cota.enderecos enderecoCota 	");
 		hql.append(" JOIN enderecoCota.endereco endereco 	");
         hql.append(" JOIN cota.box box ");
-        hql.append(" JOIN cota.titularesCota titularesCota ");
-        hql.append(" JOIN titularesCota.financeiro financeiro ");
+        hql.append(" JOIN cota.parametroCobranca parametroCobranca ");
+       // hql.append(" JOIN titularesCota.financeiro financeiro ");
         
 		hql.append(" where ");
 
-		hql.append(" titularesCota.numeroCota = cota.numeroCota ");
-		hql.append(" and fornecedorDescontosProdutoEdicao.id = fornecedor.id ");
+		//hql.append(" titularesCota.numeroCota = cota.numeroCota ");
+		hql.append(" fornecedorDescontosProdutoEdicao.id = fornecedor.id ");
 		
 		if (filtroAlteracaoCotaDTO.getNumeroCota() != null && filtroAlteracaoCotaDTO.getNumeroCota()>0) {
 			hql.append(" and cota.numeroCota = :numeroCota ");
@@ -106,7 +106,7 @@ public class AlteracaoCotaRepositoryImpl extends AbstractRepositoryModel<Cota, L
 			//if(addedAnd)
 				hql.append(" and ");	
 			
-			hql.append(" financeiro.id = :idVrMinimo ");
+			hql.append(" parametroCobranca.id = :idVrMinimo ");
 		//	addedAnd = true;
 		}
 		
