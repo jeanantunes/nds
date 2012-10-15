@@ -2,6 +2,9 @@
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/alteracaoCota.js"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaCota.js"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/utils.js"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.form.js"></script>
+	<script	src="${pageContext.request.contextPath}/scripts/jquery-upload/js/jquery.iframe-transport.js"	type="text/javascript"></script>
+	<script	src="${pageContext.request.contextPath}/scripts/jquery-upload/js/jquery.fileupload.js"	type="text/javascript"></script>
 	
 	<script type="text/javascript">
 
@@ -182,7 +185,7 @@
 								<tr>
 									<td width="106">Tipo de Entrega:</td>
 									<td width="177">
-										<select name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.idTipoEntrega" id="idModalIdTipoEntrega" style="width:100px;">
+										<select name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.descricaoTipoEntrega" id="idModalIdTipoEntrega" style="width:100px;" onchange="alteracaoCotaController.selectTipoEntregaDistribuicao()">
 					              			<option selected="selected" value="-1"></option>
 											<c:forEach items="${listTipoEntrega}" var="tipoEntrega">
 												<option value="${tipoEntrega}">${tipoEntrega.value}</option>
@@ -198,7 +201,7 @@
 										<td width="153">Termo Ades&atilde;o:</td>
 										<td width="20"><input type="checkbox" name="checkbox15" id="checkbox15" onclick="mostraTermoPf();" /></td>
 										<td width="216"><span class="bt_imprimir" style="display: block;">
-											<a href="../termo_adesao.html" target="_blank">Termo</a></span>
+											<a href="" target="_blank">Termo</a></span>
 										</td>
 									</tr>
 									<tr>
@@ -207,16 +210,15 @@
 									</tr>
 									<tr>
 										<td>Arquivo:</td>
-										<td colspan="2"><input name="fileField" type="file"
-											id="fileField" size="15" /></td>
+										<td colspan="2">
+											   	<div id="uploadTermo">
+														<input name="uploadedFileTermo" type="file" id="uploadedFileTermo"
+														   size="30" onchange="alteracaoCotaController.uploadArquivo('formUploadTermoAdesao')" />
+												</div>
+										</td>
 									</tr>
-									<tr>
-										<td>&nbsp;</td>
-										<td colspan="2"><a href="javascript:;">nome_do_arquivo</a>
-											<a href="javascript:;"><img
-												src="${pageContext.request.contextPath}/images/ico_excluir.gif"
-												alt="Excluir arquivo" width="15" height="15" border="0" /></a></td>
-									</tr>
+									
+									
 									<tr>
 										<td>Percentual Faturamento:</td>
 										<td colspan="2"><input type="text"
@@ -228,19 +230,19 @@
 											style="width: 70px; text-align: right;" /></td>
 									</tr>
 									<tr>
-										<td>Base de Cálculo:</td>
+										<td>Base de C&aacute;lculo:</td>
 										<td colspan="2"><select name="select" id="select3"
 											style="width: 107px;">
 										</select></td>
 									</tr>
 									<tr>
-										<td>Per&iacute;odo Carência:</td>
+										<td>Per&iacute;odo Car&ecirc;ncia:</td>
 										<td colspan="2"><table width="100%" border="0"
 												cellspacing="0" cellpadding="0">
 												<tr>
 													<td width="27%"><input name="carenciaDe2" type="text"
 														id="carenciaDe2" style="width: 70px" /></td>
-													<td width="6%">Até</td>
+													<td width="6%">At&eacute; </td>
 													<td width="34%"><input name="carenciaAte2"
 														type="text" id="carenciaAte2" style="width: 70px" /></td>
 												</tr>
@@ -266,15 +268,18 @@
 									</tr>
 									<tr>
 										<td>Arquivo:</td>
-										<td colspan="2"><input name="fileField" type="file"
-											id="fileField" size="15" /></td>
-									</tr>
-									<tr>
-										<td>&nbsp;</td>
-										<td colspan="2"><a href="javascript:;">nome_do_arquivo</a>
-											<a href="javascript:;"><img
-												src="${pageContext.request.contextPath}/images/ico_excluir.gif"
-												alt="Excluir arquivo" width="15" height="15" border="0" /></a></td>
+										<td colspan="2">
+										<form action="<c:url value='/administracao/alteracaoCota/uploadProcuracao' />" id="formUploadProcuracao"
+												  method="post" enctype="multipart/form-data" >		
+												<input type="hidden" name="formUploadAjax" value="true" />
+												<input type="hidden" name="numCotaUpload" value="1234"/>
+											   	<div id="uploadProcuracao">
+														<input name="uploadedFileProcuracao" type="file" id="uploadedFileProcuracao"
+														   size="30"/>
+												</div>
+		
+										</form>
+										</td>
 									</tr>
 									<tr>
 										<td width="145">Percentual Faturamento:</td>
@@ -282,13 +287,13 @@
 											style="width: 70px; text-align: right;" /></td>
 									</tr>
 									<tr>
-										<td>Per&iacute;odo Carência:</td>
+										<td>Per&iacute;odo Car&ecirc;ncia:</td>
 										<td colspan="2"><table width="100%" border="0"
 												cellspacing="0" cellpadding="0">
 												<tr>
 													<td width="43%"><input name="carenciaPjDe"
 														type="text" id="carenciaPjDe" style="width: 70px" /></td>
-													<td width="14%">Até</td>
+													<td width="14%">At&eacute; </td>
 													<td width="43%"><input name="carenciaPjAte"
 														type="text" id="carenciaPjAte" style="width: 70px" /></td>
 												</tr>

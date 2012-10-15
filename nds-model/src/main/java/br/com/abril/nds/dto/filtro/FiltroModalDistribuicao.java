@@ -9,10 +9,6 @@ import br.com.abril.nds.util.export.Exportable;
 public class FiltroModalDistribuicao implements Serializable{
 	
 	
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -544142158601446426L;
 	private String nmAssitPromoComercial;
 	private String nmGerenteComercial;
 	private String observacao;

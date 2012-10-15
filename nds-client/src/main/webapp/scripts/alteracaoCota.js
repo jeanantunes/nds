@@ -9,6 +9,9 @@ $(document).ready(function() {
 		showCamposSuspensao($("#idIsSugereSuspensaoModal").attr("checked") == "checked");
 	});
 	
+	
+	
+	
 });
 
 var alteracaoCotaController = $.extend(true, {
@@ -19,6 +22,50 @@ var alteracaoCotaController = $.extend(true, {
 		this.pesquisaCotaAlteracaoCota = pesquisaCota;
 		
 		this.iniciarGrid();
+		
+		var options = {
+				success: alteracaoCotaController.tratarRetornoUpload
+		    };
+			
+			$('#formUploadTermoAdesao').ajaxForm(options);
+			
+			$('#formUploadProcuracao').ajaxForm(options);
+
+			 $('#uploadedFileProcuracao').fileupload(
+						{
+							url :"administracao/alteracaoCota/uploadProcuracao",
+							sequentialUploads: true,
+							dataType : 'json',
+							paramName : 'uploadedFileProcuracao',
+							replaceFileInput: false,
+							submit : function(e, data) {
+								data.formData = {
+									'numCotaUpload' : '1234'
+								};
+
+							},
+							done : function(e, data) {
+							//	 $('#uploadedFileProcuracao').destroy();
+							},
+							progressall : function(e, data) {
+								
+							},
+							send : function(e, data) {
+
+							}
+							 
+						});
+			
+			$('#uploadedFileProcuracao').bind('change', function (e) {
+			   
+				
+				
+			});
+			
+			
+			
+			
+			
 		
 	},
 	
@@ -266,21 +313,12 @@ var alteracaoCotaController = $.extend(true, {
 	
 	salvarAlteracao : function() {
 
-		$.postJSON(contextPath + "/administracao/alteracaoCota/salvarAlteracao.json?"+$("#pesquisarForm", this.workspace).serialize(),  
-			   	null,
-			   	function (result) {
-
-					var tipoMensagem = result.tipoMensagem;
-					var listaMensagens = result.listaMensagens;
+		$.postJSON(contextPath + "/administracao/alteracaoCota/salvarAlteracao",
+				$("#pesquisarForm", this.workspace).serialize(),  
+			   	function () {
+					$("#dialog-novo", this.workspace).dialog( "close" );
+					alteracaoCotaController.pesquisar();
 					
-					if (tipoMensagem && listaMensagens) {
-						exibirMensagem(tipoMensagem, listaMensagens);
-					} 
-
-					if (tipoMensagem == 'SUCCESS') {
-						$("#dialog-novo", this.workspace).dialog( "close" );
-						alteracaoCotaController.pesquisar();
-					}
 				},
 			  	null,
 			   	true,
@@ -306,10 +344,45 @@ var alteracaoCotaController = $.extend(true, {
 			
 		}
 		
+	},
+	
+	uploadArquivo : function(file, formId) {
+		$('#' + formId).submit();
 		
+	},
+	
+   tratarRetornoUpload : function(data) {
 		
+		data = replaceAll(data, "<pre>", "");
+		data = replaceAll(data, "</pre>", "");
 		
-	}
+		data = replaceAll(data, "<PRE>", "");
+		data = replaceAll(data, "</PRE>", "");
+		
+		var responseJson = jQuery.parseJSON(data);
+		
+		if (responseJson.mensagens) {
+
+			exibirMensagemDialog(
+				responseJson.mensagens.tipoMensagem, 
+				responseJson.mensagens.listaMensagens, "dialog-cota"
+			);
+		}
+			
+//		var fileName = responseJson.result;
+//		
+//		var tipoEntrega = D.get('tipoEntrega');
+//		
+//		if (tipoEntrega == 'ENTREGA_EM_BANCA') {
+//
+//			D.setNomeTermoAdesao(fileName);
+//			
+//		} else if (tipoEntrega == 'ENTREGADOR') {
+//			
+//			D.setNomeProcuracao(fileName);
+//		}
+	},
+	
 	
 
 	

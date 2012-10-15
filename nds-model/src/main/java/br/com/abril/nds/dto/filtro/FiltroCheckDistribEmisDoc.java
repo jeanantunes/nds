@@ -20,8 +20,8 @@ public class FiltroCheckDistribEmisDoc implements Serializable{
 	private boolean isReciboImpresso;
 	private boolean isReciboEmail;
 
-	private boolean isNoteEnvioImpresso;
-	private boolean isNoteEnvioEmail;
+	private boolean isNotaEnvioImpresso;
+	private boolean isNotaEnvioEmail;
 
 	private boolean isChamdaEncalheImpresso;
 	private boolean isChamdaEncalheEmail;
@@ -74,17 +74,18 @@ public class FiltroCheckDistribEmisDoc implements Serializable{
 	public void setIsReciboEmail(boolean isReciboEmail) {
 		this.isReciboEmail = isReciboEmail;
 	}
-	public boolean getIsNoteEnvioImpresso() {
-		return isNoteEnvioImpresso;
+	public boolean getIsNotaEnvioImpresso() {
+		return isNotaEnvioImpresso;
 	}
-	public void setIsNoteEnvioImpresso(boolean isNoteEnvioImpresso) {
-		this.isNoteEnvioImpresso = isNoteEnvioImpresso;
+	public void setIsNotaEnvioImpresso(boolean isNotaEnvioImpresso) {
+		this.isNotaEnvioImpresso = isNotaEnvioImpresso;
 	}
-	public boolean getIsNoteEnvioEmail() {
-		return isNoteEnvioEmail;
+	
+	public boolean getIsNotaEnvioEmail() {
+		return isNotaEnvioEmail;
 	}
-	public void setIsNoteEnvioEmail(boolean isNoteEnvioEmail) {
-		this.isNoteEnvioEmail = isNoteEnvioEmail;
+	public void setIsNotaEnvioEmail(boolean isNotaEnvioEmail) {
+		this.isNotaEnvioEmail = isNotaEnvioEmail;
 	}
 	public boolean getIsChamdaEncalheImpresso() {
 		return isChamdaEncalheImpresso;
