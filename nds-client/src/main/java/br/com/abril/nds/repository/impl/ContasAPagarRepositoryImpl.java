@@ -7,6 +7,8 @@ import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.ContasAPagarConsultaProdutoDTO;
+import br.com.abril.nds.dto.ContasApagarConsultaPorProdutoDTO;
+import br.com.abril.nds.dto.filtro.FiltroContasAPagarDTO;
 import br.com.abril.nds.repository.ContasAPagarRepository;
 
 @Repository
@@ -47,5 +49,36 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
 		query.setResultTransformer(new AliasToBeanResultTransformer(ContasAPagarConsultaProdutoDTO.class));
 		
 		return query.list();
+	}
+
+
+	@Override
+	public List<ContasApagarConsultaPorProdutoDTO> pesquisaContasAPagarPorProduto(
+			FiltroContasAPagarDTO dto) {
+		StringBuffer sql = new StringBuffer("");
+		
+		sql.append("SELECT l.dataRecolhimentoPrevista as Rctl");
+		sql.append("	   p.codigo as Codigo");
+		sql.append("	   p.nome as Produto");
+		sql.append("	   pe.numeroEdicao as Edicao");
+		sql.append("	   pe.parcial as Tipo");
+		sql.append("	   l.reparte as Reparte");
+		sql.append("	   ep.qtdeSuplementar as Suplementacao");
+		sql.append("	   ep.qtdeDevolucaoEncalhe as Encalhe");
+		sql.append("	   SUM(d.qtde) as FaltasSobras");
+		sql.append("	   null as DebitosCreditos");
+		
+		sql.append("FROM	");
+		sql.append("	   MovimentoEstoque me, lancamento l, Diferenca d ");
+		sql.append("	   JOIN me.estoqueProduto as ep");
+		sql.append("	   JOIN me.produtoEdicao as me_pe");
+		sql.append("	   JOIN pe.produto as p");
+		sql.append("	   JOIN l.produtoEdicao as l_pe");
+		sql.append("	   JOIN d.produtoEdicao as d_pe");
+		
+		sql.append("WHERE 	");
+		sql.append("	   p.codigo as Codigo");
+
+			return null;
 	}
 }

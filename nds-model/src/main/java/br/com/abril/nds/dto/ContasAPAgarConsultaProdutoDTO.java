@@ -54,8 +54,8 @@ public class ContasAPagarConsultaProdutoDTO implements Serializable{
 	public Long getProdutoEdicaoID() {
 		return produtoEdicaoID;
 	}
-	public void setProdutoEdicaoID(Long produtoEdicaoID) {
-		this.produtoEdicaoID = produtoEdicaoID;
+	public void setProdutoEdicaoId(Long produtoEdicaoId) {
+		this.produtoEdicaoID = produtoEdicaoId;
 	}
 	
 	

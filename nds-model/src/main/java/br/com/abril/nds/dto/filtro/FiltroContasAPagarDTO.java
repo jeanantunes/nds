@@ -2,6 +2,7 @@ package br.com.abril.nds.dto.filtro;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 public class FiltroContasAPagarDTO implements Serializable {
 
@@ -12,7 +13,7 @@ public class FiltroContasAPagarDTO implements Serializable {
 	private String produto;
 	private Long edicao;
 	
-	
+	private	List <Long> produtoEdicaoIDs;
 	
 	public Date getDataDe() {
 		return dataDe;
@@ -44,7 +45,13 @@ public class FiltroContasAPagarDTO implements Serializable {
 	public void setEdicao(Long edicao) {
 		this.edicao = edicao;
 	}
-	
+	public List<Long> getProdutoEdicaoIDs() {
+		return produtoEdicaoIDs;
+	}
+	public void setProdutoEdicaoIDs(List<Long> produtoEdicaoIDs) {
+		this.produtoEdicaoIDs = produtoEdicaoIDs;
+	}
+
 	
 	
 	

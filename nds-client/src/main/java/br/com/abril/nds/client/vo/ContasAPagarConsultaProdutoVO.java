@@ -42,6 +42,8 @@ public class ContasAPagarConsultaProdutoVO implements Serializable{
 			this.precoCapa = CurrencyUtil.formatarValor(dto.getPrecoCapa());
 			this.produto=dto.getProduto();
 			this.edicao=dto.getEdicao().toString();
+			this.produtoEdicaoID=dto.getProdutoEdicaoID().toString();
+			
 			
 		}
 

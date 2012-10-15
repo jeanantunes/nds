@@ -56,7 +56,13 @@ public class ContasAPagarController {
 	
 	@Path("/pesquisar.json")
 	public void pesquisar(FiltroContasAPagarDTO filtro){
-		System.out.println("teste");
+		
+		System.out.println("teste"+filtro.getProdutoEdicaoIDs().get(0));
+		
+	
+		
+		//result.use(FlexiGridJson.class).from(busca).total(busca.size()).serialize();
+	
 		
 	}
 	
@@ -74,7 +80,6 @@ public class ContasAPagarController {
 		}
 		
 		result.use(FlexiGridJson.class).from(produtosVO).total(produtosVO.size()).serialize();
-		
 		
 	}
 	

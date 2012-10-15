@@ -53,26 +53,44 @@ var contasAPagarController = $.extend(true, {
 	 * */
 	
 	pesquisar : function(){
-		var params = $("#contasAPagarForm", this.workspace).serialize();
 		
+		
+	
 		if ($("#contasAPagarRadioDistribuidor").get(0).checked) {
-			$(".porDistrFornecedorGrid", this.workspace).flexOptions({
-				url : this.path + 'pesquisar.json?' + params, 
-				//preProcess : contasAPagarController.insereLinksContasAPagarPorDistribuidores,
-				newp : 1
-			});
+			
+			var params = $("#contasAPagarForm", this.workspace).serialize();
+			
+			alert(params);
+			
+					$(".porDistrFornecedorGrid", this.workspace).flexOptions({
+						url : this.path + 'pesquisar.json?' + params, 
+						preProcess : contasAPagarController.insereLinksContasAPagarPorDistribuidores,
+						newp : 1
+					});
 
-			//$(".porProdutosGrid", this.workspace).flexReload();
-			$('.gridDistrib').show();
+					$(".porProdutosGrid", this.workspace).flexReload();
+					$('.gridDistrib').show();
 			
 		}
 		else if ($("#contasAPagarRadioProduto").get(0).checked) {
 			
-			$(".porProdutosGrid", this.workspace).flexOptions({
-				url : this.path + 'pesquisar.json?' + params, 
-				//preProcess : contasAPagarController.insereLinksContasAPagarPorProdutos,
-				newp : 1
-			});
+			var params = contasAPagarController.obterSelecaoColunaCheckProdutoEdicao();
+			var dat =  $("#contasAPagarForm").serialize();
+			//alert(dat);			
+			//alert(params);
+			params+=","+dat;
+			
+			alert(params);
+			
+
+					$(".porProdutosGrid", this.workspace).flexOptions({
+						url : this.path + 'pesquisar.json?' + params, 
+						preProcess : contasAPagarController.montaColunaCheckProdutoEdicao,
+						newp : 1
+					});
+
+					$(".contasAPagarListaProdutosGrid").flexReload();
+
 
 			//$(".porProdutosGrid", this.workspace).flexReload();
 			$('.gridProduto').show();
@@ -82,10 +100,13 @@ var contasAPagarController = $.extend(true, {
 	},
 	
 	
+	
+	
+	
 	pesquisarProdutoEdicao : function(){
 		var params = $("#contasAPagarPesquisaProdutoEdicaoForm").serialize();
 		
-	
+		//alert (params);
 		
 		$(".contasAPagarListaProdutosGrid").flexOptions({
 			url : this.path + 'pesquisarProduto.json?' + params, 
@@ -97,6 +118,34 @@ var contasAPagarController = $.extend(true, {
 		
 		
 	},
+	/*
+	 * *************************
+	 * Parametros de envio Pesquisa por produto
+	 * *************************
+	 * */
+	
+obterSelecaoColunaCheckProdutoEdicao : function (){
+
+		
+		var dados ="";
+
+		$("input[type=checkbox][name='checkProdutoContasAPagar']:checked").each(function(i,element){
+			if(dados!="")
+				dados+="&";
+				//dados+=",";
+			
+			var produtoEdicaoId = element.value;
+			
+			//dados+='{name:"filtro.produtoEdicaoIDs['+i+']",value:"'+produtoEdicaoId+'"}';
+			dados+='filtro.produtoEdicaoIDs='+produtoEdicaoId+'"';
+			//alert(dados);
+		});
+		
+		//var params = '['+dados+']';
+		//return eval(params);
+		return dados;
+	},
+	
 	
 	
 	/*
@@ -105,25 +154,12 @@ var contasAPagarController = $.extend(true, {
 	 * *************************
 	 * */
 	
-	/*mantemSelecaoColunaCheckProdutoEdicao : function (data){
-		
-		
-		$.each(data.rows, function(index, value) {
-			
-			if(value.cell.sel.checked)
-			var selecionados;
-
-		}
-		 
-		return data;
-		
-	}*/
 	
 	montaColunaCheckProdutoEdicao : function(data) {
 		
 		$.each(data.rows, function(index, value) {
 			
-			var checkbox = '<input type="checkbox" id="contasAPagarCheckSelecionarTodos" name="selecionado"  style="float:left;"/>';
+			var checkbox = '<input type="checkbox" value="'+ value.cell.produtoEdicaoID + '" name="checkProdutoContasAPagar" class="contasApagarCheck"  style="float:left;"/>';
 						
 			value.cell.sel = checkbox;
 
@@ -157,15 +193,10 @@ var contasAPagarController = $.extend(true, {
 		
 		/*$.each(data.rows, function(index, value) {
 			
-			var linkConsignado = '<a href="javascript:;" onclick="contasAPagarController.popup_consignado();" title="Detalhe Consignado">'+value.cell.consignado+'</a>';
-			
-			var linkEncalhe = '<a href="javascript:;" onclick="contasAPagarController.popup_encalhe();" title="Detalhe Consignado">'+value.cell.encalhe+'</a>';
-			
-			var linkFS = '<a href="javascript:;" onclick="contasAPagarController.popup_faltasSobras();" title="Detalhe Consignado">'+value.cell.faltasSobras+'</a>';
-						
-			value.cell.consignado = linkConsignado;
-			value.cell.encalhe = linkEncalhe;
-			value.cell.faltasSobras = linkFS;
+			var linkTipo = '<a href="javascript:;" onclick="contasAPagarController.popup_consignado();" title="Detalhe Consignado">'+value.cell.tipo+'</a>';
+							
+			value.cell.tipo = linkTipo;
+
 		});
 	
 		return data;*/
@@ -192,6 +223,67 @@ var contasAPagarController = $.extend(true, {
 			}
 		});
 	},	
+	
+	
+
+	function popup_consignado() {
+			//$( "#dialog:ui-dialog" ).dialog( "destroy" );
+		
+			$( "#dialog-novo" ).dialog({
+				resizable: false,
+				height:490,
+				width:890,
+				modal: true,
+				buttons: {
+					"Fechar": function() {
+						$( this ).dialog( "close" );
+						
+						$(".grids").show();
+						
+					},
+					
+				}
+			});
+		};
+		
+	function popup_encalhe() {
+			//$( "#dialog:ui-dialog" ).dialog( "destroy" );
+		
+			$( "#dialog-encalhe" ).dialog({
+				resizable: false,
+				height:460,
+				width:860,
+				modal: true,
+				buttons: {
+					"Fechar": function() {
+						$( this ).dialog( "close" );
+						
+						$(".grids").show();
+						
+					}
+				}
+			});
+		};
+
+	function popup_faltasSobras() {
+			//$( "#dialog:ui-dialog" ).dialog( "destroy" );
+		
+			$( "#dialog-encalhe_2" ).dialog({
+				resizable: false,
+				height:460,
+				width:860,
+				modal: true,
+				buttons: {
+					"Fechar": function() {
+						$( this ).dialog( "close" );
+						
+						$(".grids").show();
+						
+					}
+				}
+			});
+		};
+
 	
 	/*
 	 * *************************
@@ -241,7 +333,7 @@ var contasAPagarController = $.extend(true, {
 				display : '',
 				name : 'sel',
 				width : 20,
-				sortable : true,
+				sortable : false,
 				align : 'center'
 			}],
 			sortname : "codigo",
@@ -444,68 +536,10 @@ function gridProduto(){
 
 
 
-/*	
+	
 
 
-function popup_consignado() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
-	
-		$( "#dialog-novo" ).dialog({
-			resizable: false,
-			height:490,
-			width:890,
-			modal: true,
-			buttons: {
-				"Fechar": function() {
-					$( this ).dialog( "close" );
-					
-					$(".grids").show();
-					
-				},
-				
-			}
-		});
-	};
-	
-function popup_encalhe() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
-	
-		$( "#dialog-encalhe" ).dialog({
-			resizable: false,
-			height:460,
-			width:860,
-			modal: true,
-			buttons: {
-				"Fechar": function() {
-					$( this ).dialog( "close" );
-					
-					$(".grids").show();
-					
-				}
-			}
-		});
-	};
-
-function popup_faltasSobras() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
-	
-		$( "#dialog-encalhe_2" ).dialog({
-			resizable: false,
-			height:460,
-			width:860,
-			modal: true,
-			buttons: {
-				"Fechar": function() {
-					$( this ).dialog( "close" );
-					
-					$(".grids").show();
-					
-				}
-			}
-		});
-	};
-
-		
+	/*		
 function popup_contaCorrente() {
 		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
 	
@@ -610,47 +644,7 @@ function popup_encargos() {
 
 //janelas de detalhamento de busca 
 /*
-function popup_consignado() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
-	
-		$( "#dialog-consignado" ).dialog({
-			resizable: false,
-			height:480,
-			width:940,
-			modal: true,
-			buttons: {
-				"Fechar": function() {
-					$( this ).dialog( "close" );
-					
-					$(".grids").show();
-					
-				},
-				
-			}
-		});
-	};
-	
-	
-	
-function popup_encalhe() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
-	
-		$( "#dialog-encalhe" ).dialog({
-			resizable: false,
-			height:460,
-			width:860,
-			modal: true,
-			buttons: {
-				"Fechar": function() {
-					$( this ).dialog( "close" );
-					
-					$(".grids").show();
-					
-				}
-			}
-		});
-	};
-	
+
 	
 function popup_edit_produto() {
 		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
@@ -671,6 +665,8 @@ function popup_edit_produto() {
 			}
 		});
 	};
+	
+	
 function popup_num_nota() {
 		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
 	
