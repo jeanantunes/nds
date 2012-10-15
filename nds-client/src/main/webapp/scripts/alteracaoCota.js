@@ -23,15 +23,33 @@ var alteracaoCotaController = $.extend(true, {
 		
 		this.iniciarGrid();
 		
-		var options = {
-				success: alteracaoCotaController.tratarRetornoUpload
-		    };
-			
-			$('#formUploadTermoAdesao').ajaxForm(options);
-			
-			$('#formUploadProcuracao').ajaxForm(options);
-
-			 $('#uploadedFileProcuracao').fileupload(
+		
+		$("#carenciaInicioEntregaBranca", this.workspace).datepicker({
+			showOn: "button",
+			buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
+			buttonImageOnly: true
+		});
+		$("#carenciaFimEntregaBranca", this.workspace).datepicker({
+			showOn: "button",
+			buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
+			buttonImageOnly: true
+		});
+		
+		
+		$("#carenciaInicioEntregador", this.workspace).datepicker({
+			showOn: "button",
+			buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
+			buttonImageOnly: true
+		});
+		$("#carenciaFimEntregador", this.workspace).datepicker({
+			showOn: "button",
+			buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
+			buttonImageOnly: true
+		});
+		
+		
+		$("#percentualFaturamentoEntregado", this.workspace).mask("99.99");
+    	$('#uploadedFileProcuracao').fileupload(
 						{
 							url :"administracao/alteracaoCota/uploadProcuracao",
 							sequentialUploads: true,
@@ -55,18 +73,33 @@ var alteracaoCotaController = $.extend(true, {
 							}
 							 
 						});
+    	
+    	
+    	$('#uploadedFileTermo').fileupload(
+				{
+					url :"administracao/alteracaoCota/uploadedFileTermo",
+					sequentialUploads: true,
+					dataType : 'json',
+					paramName : 'uploadedFileTermo',
+					replaceFileInput: false,
+					submit : function(e, data) {
+						data.formData = {
+							'numCotaUpload' : '1234'
+						};
+
+					},
+					done : function(e, data) {
+					//	 $('#uploadedFileProcuracao').destroy();
+					},
+					progressall : function(e, data) {
+						
+					},
+					send : function(e, data) {
+
+					}
+					 
+				});
 			
-			$('#uploadedFileProcuracao').bind('change', function (e) {
-			   
-				
-				
-			});
-			
-			
-			
-			
-			
-		
 	},
 	
 	iniciarGrid : function() {
