@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
+import br.com.abril.nds.client.vo.ContasAPagarConsultaPorProdutoVO;
 import br.com.abril.nds.client.vo.ContasAPagarConsultaProdutoVO;
 import br.com.abril.nds.dto.ContasAPagarConsultaProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroContasAPagarDTO;
@@ -57,13 +58,31 @@ public class ContasAPagarController {
 	@Path("/pesquisar.json")
 	public void pesquisar(FiltroContasAPagarDTO filtro){
 		
-		System.out.println("teste"+filtro.getProdutoEdicaoIDs().get(0));
+		List<ContasAPagarConsultaPorProdutoVO> listVO = new ArrayList<ContasAPagarConsultaPorProdutoVO>();
 		
-	
+		// Mock
+		ContasAPagarConsultaPorProdutoVO vo = new ContasAPagarConsultaPorProdutoVO();
+		vo.setProdutoEdicaoId("1");
+		vo.setRctl("15/12/2011");
+		vo.setCodigo("9090");
+		vo.setProduto("Veja");
+		vo.setEdicao("4343");
+		vo.setTipo("P");
+		vo.setReparte("20");
+		vo.setSuplementacao("5");
+		vo.setEncalhe("10");
+		vo.setVenda("10");
+		vo.setFaltasSobras("848");
+		vo.setDebitosCreditos("848");
+		vo.setSaldoAPagar("2.000,00");
+		vo.setFornecedor("FC");
+		vo.setDataLcto("12/02/2012");
+		vo.setDataFinal("10/04/2012");
+		listVO.add(vo);
 		
-		//result.use(FlexiGridJson.class).from(busca).total(busca.size()).serialize();
-	
 		
+		
+		result.use(FlexiGridJson.class).from(listVO).total(listVO.size()).serialize();
 	}
 	
 	@Path("/pesquisarProduto.json")
@@ -74,9 +93,7 @@ public class ContasAPagarController {
 		List<ContasAPagarConsultaProdutoVO> produtosVO = new ArrayList<ContasAPagarConsultaProdutoVO>();
 		
 		for(ContasAPagarConsultaProdutoDTO dto : produtos){
-			
 			produtosVO.add(new ContasAPagarConsultaProdutoVO(dto));
-			
 		}
 		
 		result.use(FlexiGridJson.class).from(produtosVO).total(produtosVO.size()).serialize();
