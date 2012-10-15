@@ -1,4 +1,4 @@
-package br.com.abril.nds.repository.impl;
+package br.com.abril.nds.service.impl;
 
 import java.util.List;
 
@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.dto.ContasAPagarConsultaProdutoDTO;
 import br.com.abril.nds.repository.ContasAPagarRepository;
+import br.com.abril.nds.repository.impl.AbstractRepositoryImplTest;
 
 public class ContasAPagarRepositoryImplTest extends AbstractRepositoryImplTest {
 	
