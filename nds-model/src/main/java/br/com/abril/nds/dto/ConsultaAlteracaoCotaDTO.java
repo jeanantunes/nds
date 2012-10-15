@@ -21,13 +21,13 @@ public class ConsultaAlteracaoCotaDTO implements Serializable {
 
 	private String nomeFornecedor;
 	
-	private TipoDesconto tipoDesconto;
+	private String tipoDesconto;
 	
 	private Integer vencimento;
 	
 	private String valorMinimo;
 	
-	private DescricaoTipoEntrega tipoEntrega;
+	private String tipoEntrega;
 	
 	private String box;
 
@@ -40,13 +40,25 @@ public class ConsultaAlteracaoCotaDTO implements Serializable {
 		this.numeroCota = numeroCota;
 		this.nomeRazaoSocial = nomeRazaoSocial;
 		this.nomeFornecedor = nomeFornecedor;
-		if(tipoDesconto!= null)
-			this.tipoDesconto = tipoDesconto;
+		if(tipoDesconto!= null){
+			this.tipoDesconto = tipoDesconto.getDescricao();
+		} else {
+			this.tipoDesconto = "";
+		}	
 		this.vencimento = vencimento;
-		if(financeiro != null)
+		if(financeiro != null){
 			this.valorMinimo = financeiro.toString();
-		if(tipoEntrega != null)
-			this.tipoEntrega = tipoEntrega;
+		} else {
+			this.valorMinimo = BigDecimal.ZERO.toString();
+		}	
+		if(tipoEntrega != null) {
+			this.tipoEntrega = tipoEntrega.getValue();
+		} else {
+			this.tipoEntrega ="";
+		}	
+		
+		
+		
 		this.box = box;
 	}
 
@@ -74,14 +86,6 @@ public class ConsultaAlteracaoCotaDTO implements Serializable {
 		this.nomeFornecedor = nomeFornecedor;
 	}
 
-	public TipoDesconto getVrDesconto() {
-		return tipoDesconto;
-	}
-
-	public void setVrDesconto(TipoDesconto vrDesconto) {
-		this.tipoDesconto = vrDesconto;
-	}
-
 	public Integer getVencimento() {
 		return vencimento;
 	}
@@ -96,14 +100,6 @@ public class ConsultaAlteracaoCotaDTO implements Serializable {
 
 	public void setValorMinimo(String valorMinimo) {
 		this.valorMinimo = valorMinimo;
-	}
-
-	public DescricaoTipoEntrega getTipoEntrega() {
-		return tipoEntrega;
-	}
-
-	public void setTipoEntrega(DescricaoTipoEntrega tipoEntrega) {
-		this.tipoEntrega = tipoEntrega;
 	}
 
 	public String getBox() {
@@ -122,12 +118,21 @@ public class ConsultaAlteracaoCotaDTO implements Serializable {
 		this.idCota = idCota;
 	}
 
-	public TipoDesconto getTipoDesconto() {
+	public String getTipoDesconto() {
 		return tipoDesconto;
 	}
 
-	public void setTipoDesconto(TipoDesconto tipoDesconto) {
+	public void setTipoDesconto(String tipoDesconto) {
 		this.tipoDesconto = tipoDesconto;
 	}
+
+	public String getTipoEntrega() {
+		return tipoEntrega;
+	}
+
+	public void setTipoEntrega(String tipoEntrega) {
+		this.tipoEntrega = tipoEntrega;
+	}
+
 	
 }

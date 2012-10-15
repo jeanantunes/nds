@@ -1,31 +1,31 @@
 package br.com.abril.nds.dto.filtro;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import br.com.abril.nds.model.cadastro.DescricaoTipoEntrega;
 import br.com.abril.nds.model.cadastro.desconto.TipoDesconto;
 import br.com.abril.nds.util.export.Exportable;
 
 @Exportable
 public class FiltroAlteracaoCotaDTO extends FiltroDTO implements Serializable {
 
-	private Integer idCota;
+	private Long idCota;
 	private Integer numeroCota; 
 	private String nomeCota; 
 	private Long idFornecedor;
 	private Integer idBairro;
 	private String idMunicipio; 
-	private String idTpDesconto; 
-	private TipoDesconto idTpEntrega;
+	private DescricaoTipoEntrega descricaoTipoEntrega; 
+	private TipoDesconto tipoDesconto;
 	private Long idVrMinimo;
 	
 	private FiltroModalFornecedor filtroModalFornecedor = new FiltroModalFornecedor();
 	private FiltroModalFinanceiro filtroModalFinanceiro = new FiltroModalFinanceiro();
 	private FiltroModalDistribuicao filtroModalDistribuicao = new FiltroModalDistribuicao();
 	
-	private List<String> listaLinhaSelecao = new ArrayList<String>(); 
+	private List<Long> listaLinhaSelecao = new ArrayList<Long>(); 
 	
 	public Integer getNumeroCota() {
 		return numeroCota;
@@ -57,22 +57,11 @@ public class FiltroAlteracaoCotaDTO extends FiltroDTO implements Serializable {
 	public void setIdMunicipio(String idMunicipio) {
 		this.idMunicipio = idMunicipio;
 	}
-	public String getIdTpDesconto() {
-		return idTpDesconto;
-	}
-	public void setIdTpDesconto(String idTpDesconto) {
-		this.idTpDesconto = idTpDesconto;
-	}
-	public TipoDesconto getIdTpEntrega() {
-		return idTpEntrega;
-	}
-	public void setIdTpEntrega(TipoDesconto idTpEntrega) {
-		this.idTpEntrega = idTpEntrega;
-	}
-	public List<String> getListaLinhaSelecao() {
+
+	public List<Long> getListaLinhaSelecao() {
 		return listaLinhaSelecao;
 	}
-	public void setListaLinhaSelecao(List<String> listaLinhaSelecao) {
+	public void setListaLinhaSelecao(List<Long> listaLinhaSelecao) {
 		this.listaLinhaSelecao = listaLinhaSelecao;
 	}
 	
@@ -96,10 +85,10 @@ public class FiltroAlteracaoCotaDTO extends FiltroDTO implements Serializable {
 			FiltroModalDistribuicao filtroModalDistribuicao) {
 		this.filtroModalDistribuicao = filtroModalDistribuicao;
 	}
-	public Integer getIdCota() {
+	public Long getIdCota() {
 		return idCota;
 	}
-	public void setIdCota(Integer idCota) {
+	public void setIdCota(Long idCota) {
 		this.idCota = idCota;
 	}
 	public Long getIdVrMinimo() {
@@ -108,6 +97,19 @@ public class FiltroAlteracaoCotaDTO extends FiltroDTO implements Serializable {
 	public void setIdVrMinimo(Long idVrMinimo) {
 		this.idVrMinimo = idVrMinimo;
 	}
+	public DescricaoTipoEntrega getDescricaoTipoEntrega() {
+		return descricaoTipoEntrega;
+	}
+	public void setDescricaoTipoEntrega(DescricaoTipoEntrega descricaoTipoEntrega) {
+		this.descricaoTipoEntrega = descricaoTipoEntrega;
+	}
+	public TipoDesconto getTipoDesconto() {
+		return tipoDesconto;
+	}
+	public void setTipoDesconto(TipoDesconto tipoDesconto) {
+		this.tipoDesconto = tipoDesconto;
+	}
+
 	
 	
 }

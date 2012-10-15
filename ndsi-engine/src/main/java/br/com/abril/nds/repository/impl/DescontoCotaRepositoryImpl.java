@@ -70,6 +70,11 @@ public class DescontoCotaRepositoryImpl extends AbstractRepositoryModel<Desconto
 	 */
 	private StringBuilder ordenacaoDescontoCota(FiltroTipoDescontoCotaDTO filtro,StringBuilder hql){
 		
+		if (filtro.getOrdenacaoColuna() == null){
+			
+			return hql;
+		}
+		
 		OrdenacaoColunaConsulta coluna = filtro.getOrdenacaoColuna();
 		
 		if (coluna == null) {

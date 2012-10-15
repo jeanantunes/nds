@@ -1,5 +1,6 @@
 package br.com.abril.nds.service.impl;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -57,6 +58,7 @@ import br.com.abril.nds.service.CobrancaService;
 import br.com.abril.nds.service.DocumentoCobrancaService;
 import br.com.abril.nds.service.EmailService;
 import br.com.abril.nds.service.FornecedorService;
+import br.com.abril.nds.service.GeradorArquivoCobrancaBancoService;
 import br.com.abril.nds.service.GerarCobrancaService;
 import br.com.abril.nds.service.ParametroCobrancaCotaService;
 import br.com.abril.nds.service.PoliticaCobrancaService;
@@ -127,6 +129,8 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 	@Autowired
 	private UsuarioRepository usuarioRepository;
 	
+	@Autowired
+	private GeradorArquivoCobrancaBancoService geradorArquivoCobrancaBancoService;
 	
 	/**
 	 * Obtém a situação da cota
@@ -152,11 +156,19 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 	@Override
 	@Transactional(noRollbackFor = GerarCobrancaValidacaoException.class)
 	public void gerarCobranca(Long idCota, Long idUsuario, Set<String> setNossoNumero)
-		throws GerarCobrancaValidacaoException{
+		throws GerarCobrancaValidacaoException, IOException{
 		
+		this.processarCobranca(idCota, idUsuario, setNossoNumero);
+		
+		this.geradorArquivoCobrancaBancoService.prepararGerarArquivoCobrancaCnab();
+	}
+
+
+	private void processarCobranca(Long idCota, Long idUsuario,
+			Set<String> setNossoNumero) throws GerarCobrancaValidacaoException {
 		Distribuidor distribuidor = this.distribuidorRepository.obter();
 		
-		if (this.consolidadoFinanceiroRepository.obterQuantidadeDividasGeradasData((distribuidor.getDataOperacao())) >= 0){
+		if (this.consolidadoFinanceiroRepository.obterQuantidadeDividasGeradasData((distribuidor.getDataOperacao())) > 0){
 			
 			throw new GerarCobrancaValidacaoException(
 					new ValidacaoException(TipoMensagem.WARNING, "Já foram geradas dívidas para esta data de operação."));
@@ -168,6 +180,15 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			throw new GerarCobrancaValidacaoException(
 					new ValidacaoException(TipoMensagem.WARNING, "O fechamento de encalhe deve ser concluído antes de gerar dívidas."));
 		}
+	
+		this.gerarCobrancaCota(idCota, idUsuario, setNossoNumero);
+	}	
+		
+	@Override
+	@Transactional(noRollbackFor = GerarCobrancaValidacaoException.class)
+	public void gerarCobrancaCota(Long idCota, Long idUsuario, Set<String> setNossoNumero) throws GerarCobrancaValidacaoException {
+		
+		Distribuidor distribuidor = this.distribuidorRepository.obter();
 		
 		//Caso esteja gerando cobrança para uma única cota
 		if (idCota != null){

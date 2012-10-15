@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -12,6 +13,7 @@ import java.util.Map;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.export.cnab.cobranca.DetalheSegmentoP;
 import br.com.abril.nds.export.cnab.cobranca.Header;
@@ -55,14 +57,29 @@ public class GeradorArquivoCobrancaBancoServiceImpl implements GeradorArquivoCob
 	private ParametroSistemaRepository parametroSistemaRepository;
 	
 	@Override
+	@Transactional
 	public void prepararGerarArquivoCobrancaCnab() throws IOException {
 		
-		// TODO: chamar o metodo prepararGerarArquivoCobrancaCnab após o processo de geração de cobrança
+		Long controleArquivoCobranca = processarGeracaoArquivoCobrancaCnab();
+		
+		if (controleArquivoCobranca != null) {
+			
+			Distribuidor distribuidor = this.getDistribuidor();
+			
+			distribuidor.setControleArquivoCobranca(controleArquivoCobranca);
+			
+			this.distribuidorRepository.merge(distribuidor);
+		}
+	}
+	
+	protected Long processarGeracaoArquivoCobrancaCnab() throws IOException {
 		
 		Map<Banco, List<DetalheSegmentoP>> mapaDadosArquivoCobranca =
 			this.prepararDadosArquivoCobranca();
 		
-		this.gerarArquivo(mapaDadosArquivoCobranca);
+		Long controleArquivoCobranca = this.gerarArquivo(mapaDadosArquivoCobranca);
+		
+		return controleArquivoCobranca;
 	}
 	
 	/**
@@ -72,10 +89,10 @@ public class GeradorArquivoCobrancaBancoServiceImpl implements GeradorArquivoCob
 	 * 
 	 * @throws IOException
 	 */
-	private void gerarArquivo(Map<Banco, List<DetalheSegmentoP>> mapaArquivoCobranca) throws IOException {
+	private Long gerarArquivo(Map<Banco, List<DetalheSegmentoP>> mapaArquivoCobranca) throws IOException {
 		
 		if (mapaArquivoCobranca == null || mapaArquivoCobranca.isEmpty()) {
-			return;
+			return null;
 		}
 		
 		File diretorioArquivoCobranca = this.getFilePathParametroSistema();
@@ -86,17 +103,21 @@ public class GeradorArquivoCobrancaBancoServiceImpl implements GeradorArquivoCob
 		Header header = null;
 		Trailer trailer = null;
 		
-		Distribuidor distribuidor = distribuidorRepository.obter();
+		Distribuidor distribuidor = this.getDistribuidor();
+		
+		Long controleArquivoCobranca = (distribuidor.getControleArquivoCobranca() == null)
+											? 0L : distribuidor.getControleArquivoCobranca();
 		
 		for (Map.Entry<Banco, List<DetalheSegmentoP>> entry : mapaArquivoCobranca.entrySet()) {
 		
 			conteudoLinhas = new ArrayList<String>();
 		
-			header = this.getHeader(entry.getKey(),distribuidor);
+			Banco banco = entry.getKey();
+			
+			header = this.getHeader(banco, distribuidor);
 			
 			conteudoLinhas.add(manager.export(header));
 			
-			//Banco banco = entry.getKey();
 			List<DetalheSegmentoP> listaDetalheSegmentoP = entry.getValue();
 			
 			Long quantidadeRegistros = 0L;
@@ -108,24 +129,39 @@ public class GeradorArquivoCobrancaBancoServiceImpl implements GeradorArquivoCob
 				quantidadeRegistros ++;
 			}
 		
-			trailer = this.getTrailer(entry.getKey(),quantidadeRegistros);
+			trailer = this.getTrailer(banco, quantidadeRegistros);
 			
 			conteudoLinhas.add(manager.export(trailer));
 			
-			this.criarArquivo(conteudoLinhas, diretorioArquivoCobranca);
+			this.criarArquivo(
+				conteudoLinhas, diretorioArquivoCobranca, distribuidor, ++controleArquivoCobranca);
 		}
+		
+		return controleArquivoCobranca;
 	}
 
 	/**
-	 * Cria o arquivo informado de acordo com o conteúdo informado.
+	 * Obtém o distribuidor.
 	 */
-	private void criarArquivo(List<String> conteudoLinhas, File diretorioArquivoCobranca) throws IOException {
+	protected Distribuidor getDistribuidor() {
 		
-		File file =
-			new File(diretorioArquivoCobranca, this.getNomeArquivoCobranca());
+		Distribuidor distribuidor = distribuidorRepository.obter();
+		
+		return distribuidor;
+	}
+
+	/**
+	 * Cria o arquivo informado de acordo com o conteúdo informado. 
+	 */
+	private void criarArquivo(List<String> conteudoLinhas,
+							  File diretorioArquivoCobranca,
+							  Distribuidor distribuidor,
+							  Long controleArquivoCobranca) throws IOException {
+		
+		File file = new File(diretorioArquivoCobranca,
+			this.getNomeArquivoCobranca(distribuidor, controleArquivoCobranca));
 		
 		if (file != null) {
-
 		
 			FileUtils.writeLines(file, "UTF8", conteudoLinhas);
 		}
@@ -134,11 +170,20 @@ public class GeradorArquivoCobrancaBancoServiceImpl implements GeradorArquivoCob
 	/**
 	 * Obtém o nome do arquivo de cobrança.
 	 */
-	private String getNomeArquivoCobranca() {
+	private String getNomeArquivoCobranca(Distribuidor distribuidor,
+										  Long controleArquivoCobranca) {
 		
-		return "cnab_" + new Date().getTime() + ".dat";
+		Date dataOperacao = distribuidor.getDataOperacao();
+		
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(dataOperacao);
+		
+		int day = cal.get(Calendar.DAY_OF_MONTH);
+		int month = cal.get(Calendar.MONTH);
+		
+		return "CB" + String.format("%02d", day) + String.format("%02d", month + 1) + controleArquivoCobranca + ".rem";
 	}
-
+	
 	/**
 	 * Obtém o file contendo o diretório parametrizada para geração do arquivo de cobrança.
 	 */
@@ -150,7 +195,7 @@ public class GeradorArquivoCobrancaBancoServiceImpl implements GeradorArquivoCob
 
 		if (parametroSistema != null) {
 			
-			new File(parametroSistema.getValor());
+			return new File(parametroSistema.getValor());
 		}
 		
 		return null;
@@ -223,7 +268,7 @@ public class GeradorArquivoCobrancaBancoServiceImpl implements GeradorArquivoCob
 		
 		Map<Banco, List<DetalheSegmentoP>> inputDados = new HashMap<Banco, List<DetalheSegmentoP>>();
 		
-		Distribuidor distribuidor = distribuidorRepository.obter();
+		Distribuidor distribuidor = getDistribuidor();
 		
 		List<Boleto> cobrancas = boletoRepository.obterBoletosGeradosNaDataOperacaoDistribuidor(distribuidor.getDataOperacao());
 		
@@ -310,7 +355,7 @@ public class GeradorArquivoCobrancaBancoServiceImpl implements GeradorArquivoCob
 		detalheSegmentoP.setCodigoMoeda(Moeda.REAL.getCodigo());
 		detalheSegmentoP.setNumeroContrato(null);//TODO
 		
-		return null;
+		return detalheSegmentoP;
 	}
 	
 	private Long getValorFormatoCNAB(BigDecimal valor){

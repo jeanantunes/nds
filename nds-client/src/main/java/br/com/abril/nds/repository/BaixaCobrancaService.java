@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import br.com.abril.nds.client.vo.CobrancaVO;
+import br.com.abril.nds.dto.filtro.FiltroConsultaDividasCotaDTO;
 
 /**
  * Classe de interface de serviços referentes a entidade
@@ -28,6 +29,6 @@ public interface BaixaCobrancaService {
 	 */
 	public Date buscarDiaUltimaBaixaAutomatica();
 	
-	public List<CobrancaVO> buscarCobrancasBaixadas(Integer numCota, String nossoNumero);
+	public List<CobrancaVO> buscarCobrancasBaixadas(FiltroConsultaDividasCotaDTO filtroConsultaDividasCota);
 	
 }

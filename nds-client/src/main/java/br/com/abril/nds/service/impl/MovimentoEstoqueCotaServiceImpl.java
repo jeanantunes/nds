@@ -84,27 +84,7 @@ public class MovimentoEstoqueCotaServiceImpl implements MovimentoEstoqueCotaServ
 	@Transactional
 	public List<MovimentoEstoqueCotaDTO> obterMovimentoDTOCotaPorTipoMovimento(Date data, List<Integer> numCotas, GrupoMovimentoEstoque grupoMovimentoEstoque) {
 	
-		//TODO - Remover get(0)
-		List<MovimentoEstoqueCota> movimentos = this.obterMovimentoCotaPorTipoMovimento(data, numCotas.get(0), grupoMovimentoEstoque);
-				
-		List<MovimentoEstoqueCotaDTO> movimentosDTO = new ArrayList<MovimentoEstoqueCotaDTO>();
-		
-		//TODO - Remover get(0)
-		Cota cota = cotaRepository.obterPorNumerDaCota(numCotas.get(0));
-		
-		for(MovimentoEstoqueCota movimento : movimentos) {
-			
-			movimentosDTO.add(new MovimentoEstoqueCotaDTO(
-					cota.getId(), 
-					movimento.getProdutoEdicao().getId(), 
-					movimento.getProdutoEdicao().getProduto().getCodigo(), 
-					movimento.getProdutoEdicao().getNumeroEdicao(), 
-					movimento.getProdutoEdicao().getProduto().getNome(), 
-					movimento.getQtde().intValue(), 
-					null));
-		}
-		
-		return movimentosDTO;
+		return movimentoEstoqueCotaRepository.obterMovimentoCotasPorTipoMovimento(data, numCotas, grupoMovimentoEstoque);
 	}
 
 	/* (non-Javadoc)
@@ -369,7 +349,7 @@ public class MovimentoEstoqueCotaServiceImpl implements MovimentoEstoqueCotaServ
 		movimentoEstoque.setUsuario(usuario);
 
 		if (movimentoEstoque.getTipoMovimento().isAprovacaoAutomatica()) {
-
+			
 			this.controleAprovacaoService.realizarAprovacaoMovimento(movimentoEstoque, usuario);
 		}
 

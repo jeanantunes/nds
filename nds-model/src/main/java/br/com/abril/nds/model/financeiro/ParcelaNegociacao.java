@@ -8,6 +8,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -34,6 +36,10 @@ public class ParcelaNegociacao {
 	
 	@Column(name = "ENCARGOS")
 	private BigDecimal encargos;
+	
+	@ManyToOne
+	@JoinColumn(name = "NEGOCIACAO_ID")
+	private Negociacao negociacao;
 
 	public Long getId() {
 		return id;
@@ -75,4 +81,20 @@ public class ParcelaNegociacao {
 	public void setEncargos(BigDecimal encargos) {
 		this.encargos = encargos;
 	}
+
+	/**
+	 * @return the negociacao
+	 */
+	public Negociacao getNegociacao() {
+		return negociacao;
+	}
+
+	/**
+	 * @param negociacao the negociacao to set
+	 */
+	public void setNegociacao(Negociacao negociacao) {
+		this.negociacao = negociacao;
+	}
+	
+	
 }

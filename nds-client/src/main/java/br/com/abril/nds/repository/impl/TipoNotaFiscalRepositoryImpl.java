@@ -55,6 +55,28 @@ public class TipoNotaFiscalRepositoryImpl extends AbstractRepositoryModel<TipoNo
 		return (TipoNotaFiscal) query.uniqueResult();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public TipoNotaFiscal obterTipoNotaFiscal(GrupoNotaFiscal grupoNotaFiscal, TipoAtividade tipoAtividade, boolean isContribuinte) {
+
+		StringBuilder hql = new StringBuilder();
+
+		hql.append(" from TipoNotaFiscal tipoNotaFiscal ")
+		   .append(" where tipoNotaFiscal.grupoNotaFiscal = :grupoNotaFiscal ")
+		   .append(" and tipoNotaFiscal.contribuinte = :isContribuinte ")
+		   .append(" and tipoNotaFiscal.tipoAtividade = :tipoAtividade ");
+		
+		Query query = getSession().createQuery(hql.toString());
+
+		query.setParameter("grupoNotaFiscal", grupoNotaFiscal);
+		query.setParameter("isContribuinte", isContribuinte);
+		query.setParameter("tipoAtividade", tipoAtividade);
+
+		return (TipoNotaFiscal) query.uniqueResult();
+	}
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<TipoNotaFiscal> consultarTipoNotaFiscal(FiltroCadastroTipoNotaDTO filtro){
@@ -208,6 +230,19 @@ public class TipoNotaFiscalRepositoryImpl extends AbstractRepositoryModel<TipoNo
 		}
 
 		return hql.toString();
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List <TipoNotaFiscal> obterTiposNotaFiscal(GrupoNotaFiscal grupoNotaFiscal) {
+		
+		String hql = " from TipoNotaFiscal tipoNotaFiscal where tipoNotaFiscal.grupoNotaFiscal = :grupoNotaFiscal group by tipoNotaFiscal.id  ";
+		
+		Query query = getSession().createQuery(hql);
+		
+		query.setParameter("grupoNotaFiscal", grupoNotaFiscal);
+		
+		return query.list();
 	}
 
 }

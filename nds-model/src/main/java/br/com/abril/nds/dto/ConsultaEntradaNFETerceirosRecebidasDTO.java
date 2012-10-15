@@ -29,7 +29,7 @@ public class ConsultaEntradaNFETerceirosRecebidasDTO implements Serializable {
 	private String dataEmissao;
 
 	@Export(label = "Tipo Nota", alignment = Alignment.LEFT)
-	private TipoOperacao tipoNotaFiscal;
+	private String tipoNotaFiscal;
 
 	@Export(label = "Fornecedor/Cota", alignment = Alignment.LEFT)
 	private String nome;
@@ -131,20 +131,6 @@ public class ConsultaEntradaNFETerceirosRecebidasDTO implements Serializable {
 	}
 
 	/**
-	 * @return the tipoNotaFiscal
-	 */
-	public TipoOperacao getTipoNotaFiscal() {
-		return tipoNotaFiscal;
-	}
-
-	/**
-	 * @param tipoNotaFiscal the tipoNotaFiscal to set
-	 */
-	public void setTipoNotaFiscal(TipoOperacao tipoNotaFiscal) {
-		this.tipoNotaFiscal = tipoNotaFiscal;
-	}
-
-	/**
 	 * @return the dataEmissao
 	 */
 	public String getDataEmissao() {
@@ -156,6 +142,20 @@ public class ConsultaEntradaNFETerceirosRecebidasDTO implements Serializable {
 	 */
 	public void setDataEmissao(Date dataEmissao) {
 		this.dataEmissao = DateUtil.formatarData(dataEmissao, Constantes.DATE_PATTERN_PT_BR);
+	}
+
+	/**
+	 * @return the tipoNotaFiscal
+	 */
+	public String getTipoNotaFiscal() {
+		return tipoNotaFiscal;
+	}
+
+	/**
+	 * @param tipoNotaFiscal the tipoNotaFiscal to set
+	 */
+	public void setTipoNotaFiscal(String tipoNotaFiscal) {
+		this.tipoNotaFiscal = tipoNotaFiscal;
 	}
 
 }

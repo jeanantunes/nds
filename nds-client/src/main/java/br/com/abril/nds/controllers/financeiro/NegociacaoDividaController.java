@@ -1,11 +1,15 @@
 package br.com.abril.nds.controllers.financeiro;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -13,7 +17,10 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
+import br.com.abril.nds.client.util.PDFUtil;
 import br.com.abril.nds.client.vo.CalculaParcelasVO;
+import br.com.abril.nds.client.vo.ImpressaoNegociacaoParecelaVO;
+import br.com.abril.nds.client.vo.ImpressaoNegociacaoVO;
 import br.com.abril.nds.client.vo.NegociacaoDividaDetalheVO;
 import br.com.abril.nds.client.vo.NegociacaoDividaVO;
 import br.com.abril.nds.dto.NegociacaoDividaDTO;
@@ -21,24 +28,37 @@ import br.com.abril.nds.dto.NegociacaoDividaPaginacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroCalculaParcelas;
 import br.com.abril.nds.dto.filtro.FiltroConsultaBancosDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaNegociacaoDivida;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
+import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.cadastro.Banco;
+import br.com.abril.nds.model.cadastro.ConcentracaoCobrancaCota;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
+import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
+import br.com.abril.nds.model.financeiro.Cobranca;
+import br.com.abril.nds.model.financeiro.Negociacao;
+import br.com.abril.nds.model.financeiro.ParcelaNegociacao;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.BancoService;
 import br.com.abril.nds.service.CobrancaService;
 import br.com.abril.nds.service.CotaService;
+import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.service.NegociacaoDividaService;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.util.export.NDSFileHeader;
 import br.com.abril.nds.vo.PaginacaoVO;
+import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Path;
+import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
@@ -48,6 +68,8 @@ import br.com.caelum.vraptor.view.Results;
 public class NegociacaoDividaController {
 	
 	private static final String FILTRO_NEGOCIACAO_DIVIDA = "FILTRO_NEGOCIACAO_DIVIDA";
+
+	private static final String ID_ULTIMA_NEGOCIACAO = "ID_ULTIMA_NEGOCIACAO";
 	
 	@Autowired
 	private NegociacaoDividaService negociacaoDividaService;
@@ -70,6 +92,8 @@ public class NegociacaoDividaController {
 	@Autowired
 	private HttpSession session;
 	
+	@Autowired
+	private DescontoService descontoService;
 	
 	private Result result;
 	
@@ -99,10 +123,14 @@ public class NegociacaoDividaController {
 		result.include("qntdParcelas", parcelas);
 		result.include("bancos", bancos);
 		result.include("tipoPagamento", TipoCobranca.values());
+		
+		this.session.setAttribute(ID_ULTIMA_NEGOCIACAO, null);
 	}
 	
 	@Path("/pesquisar.json")
 	public void pesquisar(FiltroConsultaNegociacaoDivida filtro, String sortname, String sortorder, int rp, int page) {
+		
+		this.session.setAttribute(ID_ULTIMA_NEGOCIACAO, null);
 		
 		filtro.setPaginacaoVO(new PaginacaoVO(page, rp, sortorder, sortname));
 		
@@ -260,6 +288,78 @@ public class NegociacaoDividaController {
 		result.use(Results.nothing());
 	}
 	
+	@Post
+	public void confirmarNegociacao(boolean porComissao, BigDecimal comissaoAtualCota, BigDecimal comissaoUtilizar, 
+			TipoCobranca tipoCobranca, TipoFormaCobranca tipoFormaCobranca, List<DiaSemana> diasSemana,
+			Integer diaInicio, Integer diaFim, boolean negociacaoAvulsa, boolean isentaEncargos,
+			Integer ativarAposPagar, List<ParcelaNegociacao> parcelas, List<Long> idsCobrancas, Long idBanco,
+			BigDecimal valorDividaComissao){
+		
+		Long idNegociacao = (Long) this.session.getAttribute(ID_ULTIMA_NEGOCIACAO);
+		
+		if (idNegociacao != null){
+			
+			this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Negociação já efetuada."), "result").recursive().serialize();
+			
+			return;
+		}
+		
+		FiltroConsultaNegociacaoDivida filtro = (FiltroConsultaNegociacaoDivida) 
+				this.session.getAttribute(FILTRO_NEGOCIACAO_DIVIDA);
+		
+		FormaCobranca formaCobranca = null;
+		
+		if (porComissao){
+			
+			parcelas = null;
+		} else {
+			
+			formaCobranca = new FormaCobranca();
+			formaCobranca.setTipoCobranca(tipoCobranca);
+			formaCobranca.setTipoFormaCobranca(tipoFormaCobranca);
+			
+			Set<ConcentracaoCobrancaCota> concentracaoCobrancaCota = new HashSet<ConcentracaoCobrancaCota>();
+			if (diasSemana != null){
+				for (DiaSemana codigoDia : diasSemana){
+					
+					ConcentracaoCobrancaCota concentracao = new ConcentracaoCobrancaCota();
+					concentracao.setDiaSemana(codigoDia);
+					concentracao.setFormaCobranca(formaCobranca);
+					
+					concentracaoCobrancaCota.add(concentracao);
+				}
+			}
+			
+			formaCobranca.setConcentracaoCobrancaCota(concentracaoCobrancaCota);
+			comissaoUtilizar = null;
+		}
+		
+		idNegociacao = this.negociacaoDividaService.criarNegociacao(
+				filtro.getNumeroCota(), 
+				parcelas, 
+				valorDividaComissao,
+				idsCobrancas, 
+				this.getUsuario(), 
+				negociacaoAvulsa, 
+				ativarAposPagar, 
+				comissaoUtilizar, 
+				isentaEncargos,
+				formaCobranca,
+				idBanco);
+		
+		this.session.setAttribute(ID_ULTIMA_NEGOCIACAO, idNegociacao);
+		
+		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Negociação efetuada."), "result").recursive().serialize();
+	}
+	
+	@Post
+	public void buscarComissaoCota(){
+		
+		FiltroConsultaNegociacaoDivida filtro = (FiltroConsultaNegociacaoDivida) this.session.getAttribute(FILTRO_NEGOCIACAO_DIVIDA);
+		
+		this.result.use(Results.json()).from(this.descontoService.obterComissaoCota(filtro.getNumeroCota()), "result").serialize();
+	}
+	
 	private NDSFileHeader getNDSFileHeader() {
 
 		NDSFileHeader ndsFileHeader = new NDSFileHeader();
@@ -285,7 +385,151 @@ public class NegociacaoDividaController {
 		return usuario;
 	}
 	
-
+	public void imprimirNegociacao() throws IOException{
+		
+		Long idNegociacao = (Long) this.session.getAttribute(ID_ULTIMA_NEGOCIACAO);
+		
+		if (idNegociacao == null){
+			
+			throw new ValidacaoException(
+					TipoMensagem.WARNING, "É necessário confirmar a negociação antes de imprimir.");
+		}
+		
+		Negociacao negociacao = this.negociacaoDividaService.obterNegociacaoPorId(idNegociacao);
+		
+		if (negociacao == null){
+			
+			throw new ValidacaoException(
+					TipoMensagem.WARNING, "Negociação não encontrada.");
+		}
+			
+		Cota cota = negociacao.getCobrancasOriginarias().get(0).getCota();
+		
+		BigDecimal totalDividaSelecionada = BigDecimal.ZERO;
+		
+		for (Cobranca cobranca : negociacao.getCobrancasOriginarias()){
+			
+			totalDividaSelecionada = totalDividaSelecionada.add(cobranca.getValor());
+		}
+		
+		ImpressaoNegociacaoVO impressaoNegociacaoVO = new ImpressaoNegociacaoVO();
+		//campo cota(numero)
+		impressaoNegociacaoVO.setNumeroCota(cota.getNumeroCota());
+		//campo nome
+		impressaoNegociacaoVO.setNomeCota(cota.getPessoa().getNome());
+		//campo divida selecionada
+		impressaoNegociacaoVO.setTotalDividaSelecionada(
+				totalDividaSelecionada.setScale(2, RoundingMode.HALF_EVEN));
+		//campo forma de pagamento
+		impressaoNegociacaoVO.setFormaPagamento(
+				negociacao.getComissaoParaSaldoDivida() == null ? "Parcelado" : "Comissão da Cota");
+		//campo pagamento em
+		impressaoNegociacaoVO.setQuantidadeParcelas(
+				negociacao.getParcelas() != null && !negociacao.getParcelas().isEmpty() 
+				? negociacao.getParcelas().size() 
+				: null);
+		//campo tipo de pagamento
+		impressaoNegociacaoVO.setTipoPagamento(
+				negociacao.getFormaCobranca() != null
+				? negociacao.getFormaCobranca().getTipoCobranca().getDescricao()
+				: null);
+		
+		//campo Comissão da Cota para pagamento da dívida
+		impressaoNegociacaoVO.setComissaoParaPagamento(negociacao.getComissaoParaSaldoDivida().setScale(2, RoundingMode.HALF_EVEN));
+		
+		//campo Comissão da Cota
+		
+		//campo Comissão da Cota enquanto houver saldo de dívida
+		
+		//campo frequencia de pagamento
+		if (negociacao.getFormaCobranca() != null){
+			
+			String aux = "";
+			
+			TipoFormaCobranca tipoFormaCobranca = negociacao.getFormaCobranca().getTipoFormaCobranca();
+			
+			switch (tipoFormaCobranca){
+				case DIARIA:
+					
+				break;
+				case MENSAL:
+					aux = "Todo dia " + negociacao.getFormaCobranca().getDiasDoMes().get(0);
+				break;
+				case QUINZENAL:
+					aux = "Todo dia " + negociacao.getFormaCobranca().getDiasDoMes().get(0) +
+							" e " + negociacao.getFormaCobranca().getDiasDoMes().get(1);
+				break;
+				case SEMANAL:
+					for (ConcentracaoCobrancaCota concen : negociacao.getFormaCobranca().getConcentracaoCobrancaCota()){
+						
+						aux = aux + concen.getDiaSemana().getDescricaoDiaSemana();
+					}
+				break;
+			}
+			
+			impressaoNegociacaoVO.setFrequenciaPagamento(
+					negociacao.getFormaCobranca().getTipoFormaCobranca().getDescricao() + ": " + aux);
+			
+			Banco banco = negociacao.getFormaCobranca().getBanco();
+			
+			impressaoNegociacaoVO.setNumeroBanco(banco.getNumeroBanco());
+			impressaoNegociacaoVO.setNomeBanco(banco.getNome());
+			impressaoNegociacaoVO.setAgenciaBanco(banco.getAgencia());
+			impressaoNegociacaoVO.setContaBanco(banco.getConta());
+		}
+		
+		//campo negociacao avulsa
+		impressaoNegociacaoVO.setNegociacaoAvulsa(negociacao.isNegociacaoAvulsa() ? "Sim" : "Não");
+		//campo isenta encargos
+		impressaoNegociacaoVO.setIsentaEncargos(negociacao.isIsentaEncargos() ? "Sim" : "Não");
+		
+		List<ImpressaoNegociacaoParecelaVO> lista = new ArrayList<ImpressaoNegociacaoParecelaVO>();
+		ImpressaoNegociacaoParecelaVO v = new ImpressaoNegociacaoParecelaVO();
+		lista.add(v);
+		for (ParcelaNegociacao parcela : negociacao.getParcelas()){
+			
+			ImpressaoNegociacaoParecelaVO vo = new ImpressaoNegociacaoParecelaVO();
+			vo.setDataVencimento(parcela.getDataVencimento());
+			vo.setNumeroCheque(parcela.getNumeroCheque());
+			vo.setValor(parcela.getMovimentoFinanceiroCota().getValor().setScale(2, RoundingMode.HALF_EVEN));
+			
+			BigDecimal encargos = parcela.getEncargos() == null ? BigDecimal.ZERO : parcela.getEncargos();
+			
+			vo.setEncagos(encargos.setScale(2, RoundingMode.HALF_EVEN));
+			vo.setParcelaTotal(
+					parcela.getMovimentoFinanceiroCota().getValor().add(encargos).setScale(2, RoundingMode.HALF_EVEN));
+			
+			lista.add(vo);
+		}
+		
+		FileExporter.to("negociação", FileType.PDF).inHTTPResponse(this.getNDSFileHeader(), impressaoNegociacaoVO, null, 
+				lista, ImpressaoNegociacaoParecelaVO.class, this.httpServletResponse);
+	}
 	
-	
+	public void imprimirBoletos() throws IOException{
+		
+		Long idNegociacao = (Long) this.session.getAttribute(ID_ULTIMA_NEGOCIACAO);
+		
+		if (idNegociacao == null){
+			
+			throw new ValidacaoException(
+					TipoMensagem.WARNING, "É necessário confirmar a negociação antes de imprimir.");
+		}
+		
+		List<byte[]> lista = this.negociacaoDividaService.gerarBoletosNegociacao(idNegociacao);
+		
+		byte[] arquivo = PDFUtil.mergePDFs(lista);
+		
+		this.httpServletResponse.setContentType("application/pdf");
+		
+		this.httpServletResponse.setHeader("Content-Disposition", "attachment; filename=boletos.pdf");
+		
+		OutputStream output = this.httpServletResponse.getOutputStream();
+		
+		output.write(arquivo);
+		
+		this.httpServletResponse.getOutputStream().close();
+		
+		result.use(Results.nothing());
+	}
 }
