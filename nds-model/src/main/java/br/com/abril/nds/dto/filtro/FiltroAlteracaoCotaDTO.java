@@ -25,7 +25,7 @@ public class FiltroAlteracaoCotaDTO extends FiltroDTO implements Serializable {
 	private FiltroModalFinanceiro filtroModalFinanceiro = new FiltroModalFinanceiro();
 	private FiltroModalDistribuicao filtroModalDistribuicao = new FiltroModalDistribuicao();
 	
-	private List<String> listaLinhaSelecao = new ArrayList<String>(); 
+	private List<Long> listaLinhaSelecao = new ArrayList<Long>(); 
 	
 	public Integer getNumeroCota() {
 		return numeroCota;
@@ -58,10 +58,10 @@ public class FiltroAlteracaoCotaDTO extends FiltroDTO implements Serializable {
 		this.idMunicipio = idMunicipio;
 	}
 
-	public List<String> getListaLinhaSelecao() {
+	public List<Long> getListaLinhaSelecao() {
 		return listaLinhaSelecao;
 	}
-	public void setListaLinhaSelecao(List<String> listaLinhaSelecao) {
+	public void setListaLinhaSelecao(List<Long> listaLinhaSelecao) {
 		this.listaLinhaSelecao = listaLinhaSelecao;
 	}
 	
