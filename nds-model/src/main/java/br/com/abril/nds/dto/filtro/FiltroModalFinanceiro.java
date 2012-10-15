@@ -6,6 +6,9 @@ import br.com.abril.nds.util.export.Exportable;
 
 @Exportable
 public class FiltroModalFinanceiro implements Serializable{
+
+	private static final long serialVersionUID = -3166338130272277038L;
+	
 	private Integer idVencimento; 
 	private String vrMinimo;
 	private boolean isSugereSuspensao;

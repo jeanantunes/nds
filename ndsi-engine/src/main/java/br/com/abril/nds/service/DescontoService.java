@@ -121,5 +121,7 @@ public interface DescontoService {
 	 * @return percentual de desconto a ser utilizado
 	 */
 	BigDecimal obterDescontoPorCotaProdutoEdicao(Cota cota, ProdutoEdicao produtoEdicao);
+
+	BigDecimal obterComissaoCota(Integer numeroCota);
 }
 	

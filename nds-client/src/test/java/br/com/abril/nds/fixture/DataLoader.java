@@ -134,6 +134,7 @@ import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.estoque.TipoDirecionamentoDiferenca;
 import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
+import br.com.abril.nds.model.financeiro.BaixaManual;
 import br.com.abril.nds.model.financeiro.Boleto;
 import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.financeiro.CobrancaCheque;
@@ -148,6 +149,7 @@ import br.com.abril.nds.model.financeiro.HistoricoAcumuloDivida;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.Negociacao;
 import br.com.abril.nds.model.financeiro.ParcelaNegociacao;
+import br.com.abril.nds.model.financeiro.StatusBaixa;
 import br.com.abril.nds.model.financeiro.StatusDivida;
 import br.com.abril.nds.model.financeiro.StatusInadimplencia;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
@@ -2491,8 +2493,7 @@ public class DataLoader {
 	
 	private static void criarCobrancasNegociacao(Session session){
 		
-		//Lupe
-		
+	
 		consolidadoDividaCobrancaOriginariaNegociacao =
 				Fixture.consolidadoFinanceiroCota(null, cotaJose,
 												  Fixture.criarData(1, 1, 2010), 
@@ -2515,7 +2516,7 @@ public class DataLoader {
 		                					   new Date(), 
 		                					   BigDecimal.ZERO, 
 		                					   new BigDecimal(200),
-		                					   "TIPO_BAIXA", "ACAO", StatusCobranca.NAO_PAGO,
+		                					   "TIPO_BAIXA", "ACAO", StatusCobranca.PAGO,
 		                					   cotaJose, bancoHSBC,dividaCobrancaOriginariaNegociacao,1);
 		
 		save(session,consolidadoDividaCobrancaOriginariaNegociacao,dividaCobrancaOriginariaNegociacao,cobrancaOriginariaNegociacao);
@@ -2565,10 +2566,15 @@ public class DataLoader {
 		                					   new Date(), 
 		                					   BigDecimal.ZERO, 
 		                					   new BigDecimal(200),
-		                					   "TIPO_BAIXA", "ACAO", StatusCobranca.NAO_PAGO,
+		                					   "TIPO_BAIXA", "ACAO", StatusCobranca.PAGO,
 		                					   cotaJose, bancoHSBC,dividaCobrancaPrimeiraParcela,1);
 		
-		save(session,consolidadoDividaCobrancaPrimeiraParcela,dividaCobrancaPrimeiraParcela,cobrancaPrimeiraParcela);
+		BaixaManual baixaManualparcela1 =
+				Fixture.baixaManual(cobrancaPrimeiraParcela, new Date(), StatusBaixa.PAGAMENTO_PARCIAL, BigDecimal.TEN, null, StatusAprovacao.APROVADO);
+					
+			
+		
+		save(session,consolidadoDividaCobrancaPrimeiraParcela,dividaCobrancaPrimeiraParcela,cobrancaPrimeiraParcela,baixaManualparcela1);
 		
 		//Segunda parcela
 		ConsolidadoFinanceiroCota consolidadoDividaCobrancaSegundaParcela =
@@ -2595,10 +2601,14 @@ public class DataLoader {
 		                					   new Date(), 
 		                					   BigDecimal.ZERO, 
 		                					   new BigDecimal(200),
-		                					   "TIPO_BAIXA", "ACAO", StatusCobranca.NAO_PAGO,
+		                					   "TIPO_BAIXA", "ACAO", StatusCobranca.PAGO,
 		                					   cotaJose, bancoHSBC,dividaCobrancaSegundaParcela,1);
 		
-		save(session,consolidadoDividaCobrancaSegundaParcela,dividaCobrancaSegundaParcela,cobrancaSegundaParcela);
+		BaixaManual baixaManualparcela2 =
+				Fixture.baixaManual(cobrancaSegundaParcela, new Date(), StatusBaixa.PAGAMENTO_PARCIAL, BigDecimal.TEN, null, StatusAprovacao.PENDENTE);
+		
+		
+		save(session,consolidadoDividaCobrancaSegundaParcela,dividaCobrancaSegundaParcela,cobrancaSegundaParcela,baixaManualparcela2);
 		
 		//Terceira parcela
 		ConsolidadoFinanceiroCota consolidadoDividaCobrancaTerceiraParcela =
@@ -2629,7 +2639,10 @@ public class DataLoader {
 		                					   "TIPO_BAIXA", "ACAO", StatusCobranca.NAO_PAGO,
 		                					   cotaJose, bancoHSBC,dividaCobrancaTerceiraParcela,1);
 		
-		save(session,consolidadoDividaCobrancaTerceiraParcela,dividaCobrancaTerceiraParcela,cobrancaTerceiraParcela);
+		BaixaManual baixaManualparcela3 =
+				Fixture.baixaManual(cobrancaTerceiraParcela, new Date(), StatusBaixa.PAGAMENTO_PARCIAL, BigDecimal.TEN, null, StatusAprovacao.PENDENTE);
+		
+		save(session,consolidadoDividaCobrancaTerceiraParcela,dividaCobrancaTerceiraParcela,cobrancaTerceiraParcela,baixaManualparcela3);
 		
 		//Quarta parcela
 		ConsolidadoFinanceiroCota consolidadoDividaCobrancaQuartaParcela =
@@ -2660,7 +2673,11 @@ public class DataLoader {
 		                					   "TIPO_BAIXA", "ACAO", StatusCobranca.NAO_PAGO,
 		                					   cotaJose, bancoHSBC,dividaCobrancaQuartaParcela,1);
 		
-		save(session,consolidadoDividaCobrancaQuartaParcela,dividaCobrancaQuartaParcela,cobrancaQuartaParcela);
+		BaixaManual baixaManualparcela4 =
+				Fixture.baixaManual(cobrancaQuartaParcela, new Date(), StatusBaixa.PAGAMENTO_PARCIAL, BigDecimal.TEN, null, StatusAprovacao.PENDENTE);
+	
+		
+		save(session,consolidadoDividaCobrancaQuartaParcela,dividaCobrancaQuartaParcela,cobrancaQuartaParcela,baixaManualparcela4);
 		
 		List<Cobranca> cobrancas = new ArrayList<Cobranca>();
 		cobrancas.add(cobrancaOriginariaNegociacao);

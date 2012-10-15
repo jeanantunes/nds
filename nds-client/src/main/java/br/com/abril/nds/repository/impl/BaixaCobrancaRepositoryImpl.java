@@ -11,6 +11,7 @@ import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.client.vo.CobrancaVO;
+import br.com.abril.nds.dto.filtro.FiltroConsultaDividasCotaDTO;
 import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.financeiro.BaixaAutomatica;
@@ -65,7 +66,11 @@ public class BaixaCobrancaRepositoryImpl extends AbstractRepositoryModel<BaixaCo
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<CobrancaVO> buscarCobrancasBaixadas(Integer numCota, String nossoNumero) {
+	public List<CobrancaVO> buscarCobrancasBaixadas(FiltroConsultaDividasCotaDTO filtro) {
+		
+		Integer numCota = filtro.getNumeroCota();
+		String nossoNumero = filtro.getNossoNumero();
+		
 		StringBuilder hql = new StringBuilder();
 		
 		hql.append(" SELECT cast(cobranca.id as string) as codigo, ");
@@ -87,6 +92,15 @@ public class BaixaCobrancaRepositoryImpl extends AbstractRepositoryModel<BaixaCo
 			hql.append(" AND cobranca.nossoNumero = :nossoNumero ");
 		}
 		
+		if (filtro.getPaginacao() != null) {
+			
+			String sortOrder = " " + filtro.getPaginacao().getSortOrder();
+			
+			hql.append(" order by ");
+			hql.append(filtro.getOrdenacaoColuna());
+			hql.append(filtro.getPaginacao().getSortOrder() == null ? " asc " : sortOrder);
+		}
+
 		Query query = getSession().createQuery(hql.toString());
 		
 		query.setParameter("numCota", numCota);
@@ -96,6 +110,19 @@ public class BaixaCobrancaRepositoryImpl extends AbstractRepositoryModel<BaixaCo
 		
 		if(nossoNumero !=  null && !nossoNumero.trim().isEmpty()){
 			query.setParameter("nossoNumero", nossoNumero);
+		}
+
+		if (filtro.getPaginacao() != null) {
+			
+			if (filtro.getPaginacao().getPosicaoInicial() != null) {
+
+				query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
+			}
+
+			if (filtro.getPaginacao().getQtdResultadosPorPagina() != null) {
+
+				query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
+			}
 		}
 
 		query.setResultTransformer(new AliasToBeanResultTransformer(CobrancaVO.class));

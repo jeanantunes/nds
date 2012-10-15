@@ -45,13 +45,8 @@ public class EntradaNFETerceirosServiceImpl implements
 	@Override
 	@Transactional
 	public List<ConsultaEntradaNFETerceirosPendentesDTO> buscarNFNotasPendentes(FiltroEntradaNFETerceiros filtro, boolean limitar) {
-		List<ConsultaEntradaNFETerceirosPendentesDTO> listaAux = this.entradaNFETerceirosRepository.buscarNFNotasPendentes(filtro, limitar);
-		List<ConsultaEntradaNFETerceirosPendentesDTO> listaRetorno = new ArrayList<ConsultaEntradaNFETerceirosPendentesDTO>(); 
-		for(ConsultaEntradaNFETerceirosPendentesDTO dto: listaAux){
-			dto.setStatus("Pendente");
-			listaRetorno.add(dto);
-		}
-		return listaRetorno;
+		List<ConsultaEntradaNFETerceirosPendentesDTO> listaConsultaEntradaNFETerceirosPendentesDTOs = this.entradaNFETerceirosRepository.buscarNFNotasPendentes(filtro, limitar);
+		return listaConsultaEntradaNFETerceirosPendentesDTOs;
 	}
 
 	@Override

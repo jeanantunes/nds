@@ -38,10 +38,10 @@
               <td width="115">Tipo de Baixa:</td>
               <td colspan="3"><table width="100%" border="0" cellspacing="0" cellpadding="0">
                 <tr>
-                  <td width="7%"><input type="radio" name="baixaFinanceira" id="radioBaixaManual" onclick="baixaFinanceiraController.mostrarBaixaManual();"/></td>
-                  <td width="22%">Manual</td>
                   <td width="8%"><input type="radio" name="baixaFinanceira" id="radioBaixaAutomatica" onclick="baixaFinanceiraController.mostrarBaixaAuto();" /></td>
                   <td width="63%">Automatica</td>
+                  <td width="7%"><input type="radio" name="baixaFinanceira" id="radioBaixaManual" onclick="baixaFinanceiraController.mostrarBaixaManual();"/></td>
+                  <td width="22%">Manual</td>
                 </tr>
               </table></td>
               <td width="112">&nbsp;</td>
@@ -101,7 +101,7 @@
 		
 		<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro" id="tableBaixaManual">
             <tr>
-				<td width="29">Cota:</td>
+				<td width="20">Cota:</td>
                 
                 <td>
               
@@ -114,9 +114,9 @@
              		onchange="pesquisaCotaBaixaFinanceira.pesquisarPorNumeroCota('#filtroNumCota', '#descricaoCota');" />
 				</td>
 				
-				<td width="39">Nome:</td>
+				<td width="30">Nome:</td>
              	
-             	<td width="185">
+             	<td width="150">
 		        	<input name="descricaoCota" 
 		      		 	   id="descricaoCota" 
 		      		 	   type="text"
@@ -128,10 +128,10 @@
 		        </td>
 			  
 				<td width="100">Nosso Número:</td>
-				<td width="240"><input maxlength="100" type="text" name="filtroNossoNumero" id="filtroNossoNumero" style="width: 200px;" /></td>
-				<td width="240">Exibir apenas Cobran&ccedil;as Baixadas:</td>
-				<td width="50"><input type="checkbox" id="checkCobrancasBaixadas"/></td>
-				<td width="104"><span class="bt_pesquisar"><a href="javascript:;" onclick="baixaFinanceiraController.buscaManual();"></a></span></td>
+				<td width="200"><input maxlength="100" type="text" name="filtroNossoNumero" id="filtroNossoNumero" style="width: 200px;" /></td>
+				<td width="280">Exibir apenas Cobran&ccedil;as pagas com pendencia</td>
+				<td width="30"><input type="checkbox" id="checkCobrancasBaixadas"/></td>
+				<td width="30"><span class="bt_pesquisar"><a href="javascript:;" onclick="baixaFinanceiraController.buscaManual();"></a></span></td>
 			</tr>
         </table>
         
@@ -279,11 +279,10 @@
 						<td width="30%">   
 		                    <div id="botoesDividasNaoPagas" style="display: none;">
 			                    <span id="bt_aVista" class="bt_confirmar_novo" title="Pagar Dívida"><a onclick="baixaFinanceiraController.obterPagamentoDividas();" href="javascript:;"><img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif">À Vista</a></span>
-			                    <span id="bt_negociar" class="bt_confirmar_novo" title="Negociar Dívida"><a onclick="baixaFinanceiraController.obterNegociacao();" href="javascript:;"><img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif">Negociar</a></span>
 			                    <span id="bt_postergar" class="bt_confirmar_novo" title="Postergar Dívida"><a onclick="baixaFinanceiraController.obterPostergacao();" href="javascript:;"><img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif">Postergar</a></span>
 		                    </div>
 
-		                    <div id="botoesDividasNaoPagas">
+		                    <div id="botoesDividasPagas">
 			                    <span id="bt_aVista" class="bt_confirmar_novo" title="Confirmar Baixa">
 			                    	<a onclick="baixaFinanceiraController.confirmarBaixa();"
 			                    	   href="javascript:;">

@@ -20,7 +20,7 @@ public class PoliticaSuspensao implements Serializable {
 	@Column(name = "VALOR_SUSPENSAO",nullable=true)
 	private BigDecimal valor;
 	
-	public int getNumeroAcumuloDivida() {
+	public Integer getNumeroAcumuloDivida() {
 		return numeroAcumuloDivida;
 	}
 	
