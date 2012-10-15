@@ -15,7 +15,6 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.TipoEdicao;
-import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.Diferenca;
@@ -23,17 +22,15 @@ import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.estoque.RecebimentoFisico;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
-import br.com.abril.nds.model.estoque.TipoDirecionamentoDiferenca;
-import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.fiscal.CFOP;
 import br.com.abril.nds.model.fiscal.ItemNotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntrada;
-import br.com.abril.nds.model.fiscal.NotaFiscalEntradaCota;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
 import br.com.abril.nds.model.fiscal.StatusNotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
+import br.com.abril.nds.model.fiscal.TipoUsuarioNotaFiscal;
 import br.com.abril.nds.model.planejamento.HistoricoLancamento;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
@@ -287,7 +284,7 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 	@Transactional
 	public List<TipoNotaFiscal> obterTiposNotasFiscais(TipoOperacao tipoOperacao) {
 		
-		return tipoNotaFiscalRepository.obterTiposNotasFiscais(tipoOperacao);
+		return tipoNotaFiscalRepository.obterTiposNotasFiscais(tipoOperacao, TipoUsuarioNotaFiscal.COTA, null);
 		
 	}
 	

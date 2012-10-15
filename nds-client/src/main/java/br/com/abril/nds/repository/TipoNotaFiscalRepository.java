@@ -7,12 +7,20 @@ import br.com.abril.nds.model.cadastro.TipoAtividade;
 import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
+import br.com.abril.nds.model.fiscal.TipoUsuarioNotaFiscal;
 
 public interface TipoNotaFiscalRepository extends Repository<TipoNotaFiscal, Long> {
 
 	List<TipoNotaFiscal> obterTiposNotasFiscais();
 	
-	List<TipoNotaFiscal> obterTiposNotasFiscais(TipoOperacao tipoOperacao);
+	/**
+	 * Retorna os tipos de notas fiscais baseado no tipo de operação e no tipo de destinatario
+	 * @param tipoOperacao
+	 * @param tipoDestinatario
+	 * @param tipoEmitente TODO
+	 * @return
+	 */
+	List<TipoNotaFiscal> obterTiposNotasFiscais(TipoOperacao tipoOperacao, TipoUsuarioNotaFiscal tipoDestinatario, TipoUsuarioNotaFiscal tipoEmitente);
 
 	TipoNotaFiscal obterTipoNotaFiscal(GrupoNotaFiscal grupoNotaFiscal);
 

@@ -4,9 +4,8 @@ import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
-import java.util.Set;
 
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.vo.PaginacaoVO;
@@ -17,9 +16,9 @@ public class FiltroImpressaoNFEDTO implements Serializable {
 	
 	private String tipoNFe;
 	
-	private Date dataInicialMovimento;
+	private Date dataMovimentoInicial;
 	
-	private Date dataFinalMovimento;
+	private Date dataMovimentoFinal;
 	
 	private Date dataEmissao;
 	
@@ -37,9 +36,9 @@ public class FiltroImpressaoNFEDTO implements Serializable {
 	
 	private Long idBoxFinal;
 	
-	private Set<Long> idsFornecedores;
+	private List<Long> idsFornecedores;
 	
-	private Set<Long> idsProdutos;
+	private List<Long> codigosProdutos;
 	
 	private PaginacaoVO paginacao;
 	
@@ -78,7 +77,7 @@ public class FiltroImpressaoNFEDTO implements Serializable {
 	}
 	
 	/**
-	 * Valida se o filtro é válido. Se for retorna null, se não, retorna os erros
+	 * Valida se o filtro é válido. Se for, retorna null, se não, retorna os erros
 	 * 
 	 * @return
 	 * @throws Exception
@@ -92,26 +91,29 @@ public class FiltroImpressaoNFEDTO implements Serializable {
 			erros.put("tipoNFe", "O Tipo de NF-e é inválido.");
 		}
 		
-		if( this.getDataInicialMovimento() != null 
-				&& !DateUtil.isValidDatePTBR(sdf.format(this.getDataInicialMovimento())) ) {
-			erros.put("dataInicialMovimento", "A Data Inicial é inválida.");
+		if( this.getDataMovimentoInicial() != null 
+				&& !DateUtil.isValidDatePTBR(sdf.format(this.getDataMovimentoInicial())) ) {
+			erros.put("dataInicialMovimento", "A Data Inicial de Movimento é inválida.");
 		}
 			
-		if( this.getDataFinalMovimento() != null) {
+		if( this.getDataMovimentoFinal() != null) {
 		
-			if( !DateUtil.isValidDatePTBR(sdf.format(this.getDataFinalMovimento())) ) {
-				erros.put("dataInicialMovimento", "A Data Final é inválida.");
+			if( !DateUtil.isValidDatePTBR(sdf.format(this.getDataMovimentoFinal())) ) {
+				erros.put("dataInicialMovimento", "A Data Final de Movimento é inválida.");
 			} 
 			
 			if(erros.get("dataFinalMovimento") == null) {
-				if( DateUtil.isDataInicialMaiorDataFinal(this.getDataInicialMovimento(), this.getDataFinalMovimento()) ) {
-					erros.put("dataFinalMovimento", "A Data Final é inválida por ser menor que a Data Inicial.");
+				if( DateUtil.isDataInicialMaiorDataFinal(this.getDataMovimentoInicial(), this.getDataMovimentoFinal()) ) {
+					erros.put("dataFinalMovimento", "A Data Final de Movimento é inválida por ser menor que a Data Inicial.");
 				}
 			}			
 		}
 				
-		if( this.getDataEmissao() == null
-				|| (this.getDataEmissao() != null && !DateUtil.isValidDatePTBR(sdf.format(this.getDataEmissao()))) ) {
+		if( this.getDataEmissao() == null ) {
+			erros.put("dataEmissao", "A Data de Emissão é obrigatória.");
+		} 
+		
+		if( this.getDataEmissao() != null && !DateUtil.isValidDatePTBR(sdf.format(this.getDataEmissao())) ) {
 			erros.put("dataEmissao", "A Data de Emissão é inválida.");
 		}
 		
@@ -124,7 +126,7 @@ public class FiltroImpressaoNFEDTO implements Serializable {
 				erros.put("idCotaFinal", "A Cota Inicial é inválida.");
 			}
 			
-			if(erros.get("idCotaFinal") == null) {
+			if(erros.get("idCotaFinal") == null && this.getIdCotaInicial() != null) {
 				if(this.getIdCotaFinal().longValue() < this.getIdCotaInicial().longValue()) {
 					erros.put("idCotaFinal", "A Cota Final é inválida por ser menor que a Cota Inicial.");
 				}
@@ -140,8 +142,8 @@ public class FiltroImpressaoNFEDTO implements Serializable {
 				erros.put("idBoxFinal", "O Box Inicial é inválido.");
 			}
 			
-			if(erros.get("idBoxFinal") == null) {
-				if(this.getIdCotaFinal().longValue() < this.getIdCotaInicial().longValue()) {
+			if(erros.get("idBoxFinal") == null && this.getIdBoxFinal() != null) {
+				if(this.getIdBoxFinal().longValue() < this.getIdBoxInicial().longValue()) {
 					erros.put("idBoxFinal", "O Box Final é inválido por ser menor que o Box Inicial.");
 				}
 			}
@@ -174,20 +176,20 @@ public class FiltroImpressaoNFEDTO implements Serializable {
 		this.tipoNFe = tipoNFe;
 	}
 
-	public Date getDataInicialMovimento() {
-		return dataInicialMovimento;
+	public Date getDataMovimentoInicial() {
+		return dataMovimentoInicial;
 	}
 
-	public void setDataInicialMovimento(Date dataInicialMovimento) {
-		this.dataInicialMovimento = dataInicialMovimento;
+	public void setDataMovimentoInicial(Date dataMovimentoInicial) {
+		this.dataMovimentoInicial = dataMovimentoInicial;
 	}
 
-	public Date getDataFinalMovimento() {
-		return dataFinalMovimento;
+	public Date getDataMovimentoFinal() {
+		return dataMovimentoFinal;
 	}
 
-	public void setDataFinalMovimento(Date dataFinalMovimento) {
-		this.dataFinalMovimento = dataFinalMovimento;
+	public void setDataMovimentoFinal(Date dataMovimentoFinal) {
+		this.dataMovimentoFinal = dataMovimentoFinal;
 	}
 
 	public Date getDataEmissao() {
@@ -254,20 +256,20 @@ public class FiltroImpressaoNFEDTO implements Serializable {
 		this.idBoxFinal = idBoxFinal;
 	}
 
-	public Set<Long> getIdsFornecedores() {
+	public List<Long> getIdsFornecedores() {
 		return idsFornecedores;
 	}
 
-	public void setIdsFornecedores(Set<Long> idsFornecedores) {
+	public void setIdsFornecedores(List<Long> idsFornecedores) {
 		this.idsFornecedores = idsFornecedores;
 	}
 
-	public Set<Long> getIdsProdutos() {
-		return idsProdutos;
+	public List<Long> getCodigosProdutos() {
+		return codigosProdutos;
 	}
 
-	public void setIdsProdutos(Set<Long> idsProdutos) {
-		this.idsProdutos = idsProdutos;
+	public void setCodigosProdutos(List<Long> codigosProdutos) {
+		this.codigosProdutos = codigosProdutos;
 	}
 
 	public PaginacaoVO getPaginacao() {

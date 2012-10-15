@@ -12,6 +12,8 @@ import br.com.abril.nds.dto.filtro.FiltroCadastroTipoNotaDTO;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.TipoAtividade;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
+import br.com.abril.nds.model.fiscal.TipoOperacao;
+import br.com.abril.nds.model.fiscal.TipoUsuarioNotaFiscal;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.SerieRepository;
 import br.com.abril.nds.repository.TipoNotaFiscalRepository;
@@ -75,6 +77,26 @@ public class TipoNotaFiscalServiceImpl implements TipoNotaFiscalService {
 			
 		return listaItensNotasFiscais;
 	}
+	
+	@Override
+	@Transactional
+	public List<ItemDTO<Long, String>> carregarComboTiposNotasFiscais(TipoOperacao tipoOperacao) {
+		List<TipoNotaFiscal> listaTipoNotaFiscal = this.tipoNotaFiscalRepository.obterTiposNotasFiscais(tipoOperacao, TipoUsuarioNotaFiscal.COTA, TipoUsuarioNotaFiscal.DISTRIBUIDOR);
+		
+		List<ItemDTO<Long, String>> listaItensNotasFiscais = new ArrayList<ItemDTO<Long,String>>();
+		
+		for (TipoNotaFiscal tipoNotaFiscal : listaTipoNotaFiscal) {
+			
+			ItemDTO<Long, String> itemNotaFiscal = new ItemDTO<Long, String>();
+			
+			itemNotaFiscal.setKey(tipoNotaFiscal.getId());
+			itemNotaFiscal.setValue(tipoNotaFiscal.getDescricao());
+			
+			listaItensNotasFiscais.add(itemNotaFiscal);
+		}
+		
+		return listaItensNotasFiscais;
+	}
 
 	/**
 	 * {@inheritDoc}
@@ -100,4 +122,5 @@ public class TipoNotaFiscalServiceImpl implements TipoNotaFiscalService {
 		
 		return tipoNotaFiscalRepository.consultarTipoNotaFiscal(filtro);
 	}
+
 }

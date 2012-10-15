@@ -26,7 +26,7 @@ public class ImpressaoNFEServiceImpl implements ImpressaoNFEService {
 	 * @see br.com.abril.nds.service.ImpressaoNFEService#obterProdutosExpedicaoConfirmada(java.util.List)
 	 */
 	@Override
-	public List<ProdutoLancamentoDTO> obterProdutosExpedicaoConfirmada(List<Fornecedor> fornecedores) {
+	public List<ProdutoLancamentoDTO> obterProdutosExpedicaoConfirmada(List<Fornecedor> fornecedores, Date data) {
 		List<Long> idsFornecedores = new ArrayList<Long>();
 		for (Fornecedor fornecedor : fornecedores) {
 			idsFornecedores.add(fornecedor.getId());
@@ -35,7 +35,7 @@ public class ImpressaoNFEServiceImpl implements ImpressaoNFEService {
 		FiltroLancamentoDTO filtroLancamento = new FiltroLancamentoDTO(new Date(), idsFornecedores);
 		
 		// Retorna uma lista de produtos da data apontada no service
-		return matrizLancamentoService.obterMatrizLancamento(filtroLancamento, false).getMatrizLancamento().get(new Date());
+		return matrizLancamentoService.obterMatrizLancamento(filtroLancamento, false).getMatrizLancamento().get(data);
 	}
 
 }

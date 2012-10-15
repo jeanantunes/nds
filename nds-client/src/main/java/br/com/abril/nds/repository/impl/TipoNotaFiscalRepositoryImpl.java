@@ -10,6 +10,7 @@ import br.com.abril.nds.model.cadastro.TipoAtividade;
 import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
+import br.com.abril.nds.model.fiscal.TipoUsuarioNotaFiscal;
 import br.com.abril.nds.repository.TipoNotaFiscalRepository;
 
 @Repository
@@ -31,14 +32,35 @@ public class TipoNotaFiscalRepositoryImpl extends AbstractRepositoryModel<TipoNo
 		return query.list();
 	}
 	
-	
 	@SuppressWarnings("unchecked")
-	public List<TipoNotaFiscal> obterTiposNotasFiscais(TipoOperacao tipoOperacao) {
+	public List<TipoNotaFiscal> obterTiposNotasFiscais(TipoOperacao tipoOperacao, TipoUsuarioNotaFiscal tipoDestinatario, TipoUsuarioNotaFiscal tipoEmitente) {
 
-		String hql = " from TipoNotaFiscal tipoNotaFiscal where tipoNotaFiscal.tipoOperacao = :tipoOperacao group by tipoNotaFiscal.id ";
 		
-		Query query = getSession().createQuery(hql);
-		query.setParameter("tipoOperacao", tipoOperacao);
+		StringBuilder hql = new StringBuilder("");
+		hql.append("from TipoNotaFiscal tipoNotaFiscal ");
+		hql.append("where 1=1 ");
+		
+		if(tipoOperacao != null)
+			hql.append("and tipoNotaFiscal.tipoOperacao = :tipoOperacao ");
+		
+		if(tipoDestinatario != null)
+			hql.append("and tipoNotaFiscal.destinatario = :tipoDestinatario ");
+		
+		if(tipoEmitente != null)
+			hql.append("and tipoNotaFiscal.emitente = :tipoEmitente ");
+		
+		hql.append("order by tipoNotaFiscal.descricao ");
+		
+		Query query = getSession().createQuery(hql.toString());
+		
+		if(tipoOperacao != null)
+			query.setParameter("tipoOperacao", tipoOperacao);
+		
+		if(tipoDestinatario != null)
+			query.setParameter("tipoDestinatario", tipoDestinatario);
+		
+		if(tipoEmitente != null)
+			query.setParameter("tipoEmitente", tipoEmitente);
 		
 		return query.list();
 	}
