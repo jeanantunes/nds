@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.client.vo.CobrancaVO;
+import br.com.abril.nds.dto.filtro.FiltroConsultaDividasCotaDTO;
 import br.com.abril.nds.repository.BaixaCobrancaRepository;
 import br.com.abril.nds.repository.BaixaCobrancaService;
 
@@ -42,8 +43,8 @@ public class BaixaCobrancaServiceImpl implements BaixaCobrancaService {
 
 	@Override
 	@Transactional(readOnly=true)
-	public List<CobrancaVO> buscarCobrancasBaixadas(Integer numCota,String nossoNumero) {
-		return baixaCobrancaRepository.buscarCobrancasBaixadas(numCota, nossoNumero);
+	public List<CobrancaVO> buscarCobrancasBaixadas(FiltroConsultaDividasCotaDTO filtroConsultaDividasCota) {
+		return baixaCobrancaRepository.buscarCobrancasBaixadas(filtroConsultaDividasCota);
 	}
 
 }

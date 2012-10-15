@@ -9,6 +9,8 @@ import br.com.abril.nds.util.export.Exportable;
 
 @Exportable
 public class FiltroModalFornecedor implements Serializable{
+
+	private static final long serialVersionUID = 5178425158044489594L;
 	
 	private List<Fornecedor> listFornecedores = new ArrayList<Fornecedor>();
 	private List<Fornecedor> listaFornecedorAssociado = new ArrayList<Fornecedor>();
@@ -18,8 +20,7 @@ public class FiltroModalFornecedor implements Serializable{
 		return listaFornecedoresSelecionados;
 	}
 
-	public void setListaFornecedoresSelecionados(
-			List<Long> listaFornecedoresSelecionados) {
+	public void setListaFornecedoresSelecionados(List<Long> listaFornecedoresSelecionados) {
 		this.listaFornecedoresSelecionados = listaFornecedoresSelecionados;
 	}
 
@@ -35,8 +36,7 @@ public class FiltroModalFornecedor implements Serializable{
 		return listaFornecedorAssociado;
 	}
 
-	public void setListaFornecedorAssociado(
-			List<Fornecedor> listaFornecedorAssociado) {
+	public void setListaFornecedorAssociado(List<Fornecedor> listaFornecedorAssociado) {
 		this.listaFornecedorAssociado = listaFornecedorAssociado;
 	}
 	

@@ -470,13 +470,16 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	@Transactional
 	public synchronized void exportarNotasFiscais(
 			Long... idNotaFiscals)
-					throws FileNotFoundException, IOException{
+			throws FileNotFoundException, IOException, IllegalArgumentException, IllegalAccessException, InvocationTargetException{
+
 		List<NotaFiscal> notasFiscaisParaExportacao = new ArrayList<NotaFiscal>(idNotaFiscals.length);
 		for (Long id : idNotaFiscals) {
 			notasFiscaisParaExportacao.add(notaFiscalRepository.buscarPorId(id));
 		}
 
 		exportarNotasFiscais(notasFiscaisParaExportacao);
+
+		gerarArquivoNota(notasFiscaisParaExportacao);
 
 	}
 
@@ -872,18 +875,9 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 
 		return produtoServico;
 	}
-	@Override
-	@Transactional
-	public Long emitiNotaFiscal(long idTipoNotaFiscal, Date dataEmissao,
-			Cota cota, List<ItemNotaFiscal> listItemNotaFiscal,
-			InformacaoTransporte transporte,
-			InformacaoAdicional informacaoAdicional,
-			List<NotaFiscalReferenciada> listNotaFiscalReferenciada,
-			Set<Processo> processos) {
-		return this.emitiNotaFiscal(idTipoNotaFiscal, dataEmissao, cota, listItemNotaFiscal, transporte, informacaoAdicional, listNotaFiscalReferenciada, processos, null);
-	}
 
 	@Override
+	@Transactional
 	public Long emitiNotaFiscal(long idTipoNotaFiscal, Date dataEmissao,
 			Fornecedor fornecedor, List<ItemNotaFiscal> listItemNotaFiscal,
 			InformacaoTransporte transporte,

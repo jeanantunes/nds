@@ -37,6 +37,26 @@ public class EnderecoDTO implements Serializable {
     private String uf;
 
     private Integer codigoUf;
+    
+    public EnderecoDTO() {
+    }    
+    
+    public EnderecoDTO(Integer codigoBairro, String bairro, String cep,
+            Integer codigoCidadeIBGE, String cidade, String complemento,
+            String tipoLogradouro, String logradouro, String numero, String uf,
+            Integer codigoUf) {
+        this.codigoBairro = codigoBairro;
+        this.bairro = bairro;
+        this.cep = cep;
+        this.codigoCidadeIBGE = codigoCidadeIBGE;
+        this.cidade = cidade;
+        this.complemento = complemento;
+        this.tipoLogradouro = tipoLogradouro;
+        this.logradouro = logradouro;
+        this.numero = numero;
+        this.uf = uf;
+        this.codigoUf = codigoUf;
+    }
 
     public Long getId() {
         return id;

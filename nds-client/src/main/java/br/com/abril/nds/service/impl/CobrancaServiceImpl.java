@@ -673,5 +673,20 @@ public class CobrancaServiceImpl implements CobrancaService {
 	    }
 		return res;
 	}
+	
+	@Override
+	@Transactional
+	public void confirmarBaixaManualDividas(List<Long> idsCobranca) {
+
+		List<BaixaManual> baixasManual =
+			this.baixaCobrancaRepository.obterBaixasManual(idsCobranca);
+
+		for (BaixaManual baixaManual : baixasManual) {
+
+			baixaManual.setStatusAprovacao(StatusAprovacao.APROVADO);
+
+	    	this.baixaCobrancaRepository.merge(baixaManual);
+		}
+	}
 
 }

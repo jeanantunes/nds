@@ -2,13 +2,19 @@ package br.com.abril.nds.repository.impl;
 
 import java.util.List;
 
+import org.hibernate.Criteria;
+import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.ItemDanfe;
 import br.com.abril.nds.model.fiscal.ItemNotaFiscalEntrada;
 import br.com.abril.nds.repository.ItemNotaFiscalEntradaRepository;
+import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 /**
  * Classe de implementação referente ao acesso a dados da entidade
@@ -76,6 +82,66 @@ public class ItemNotaFiscalEntradaRepositoryImpl extends
 		query.setParameter("idNotaFiscal", idNotaFiscal);
 		
 		return query.list();
+		
+	}
+	
+	@Override
+	public List<ItemNotaFiscalEntrada> obtemPorControleConferenciaEncalheCota(
+			long idControleConferencia,String  orderBy,Ordenacao ordenacao, Integer firstResult, Integer maxResults) {
+		
+		
+		Criteria criteria = consultaPorControleConferenciaEncalheCota(idControleConferencia);
+		
+		if(Ordenacao.ASC ==  ordenacao){
+			criteria.addOrder(Order.asc(orderBy));
+		}else if(Ordenacao.DESC ==  ordenacao){
+			criteria.addOrder(Order.desc(orderBy));
+		}
+		
+		if(firstResult != null) {
+			
+			criteria.setFirstResult(firstResult);
+			
+		}
+		
+		if(maxResults != null) {
+			
+			criteria.setMaxResults(maxResults);
+			
+		}
+		
+		
+		return criteria.list();
+	}
+
+	/**
+	 * @param idControleConferencia
+	 * @return
+	 * @throws HibernateException
+	 */
+	private Criteria consultaPorControleConferenciaEncalheCota(
+			long idControleConferencia) throws HibernateException {
+		Criteria criteria = getSession().createCriteria(ItemNotaFiscalEntrada.class);		
+		criteria.createAlias("notaFiscal", "notaFiscal");
+		criteria.createAlias("notaFiscal.controleConferenciaEncalheCota", "controleConferenciaEncalheCota");
+		
+		criteria.createAlias("produtoEdicao", "produtoEdicao");
+		criteria.createAlias("produtoEdicao.produto", "produto");
+		criteria.add(Restrictions.eq("controleConferenciaEncalheCota.id", idControleConferencia));
+		return criteria;
+	}
+	
+	@Override
+	public Long quantidadePorControleConferenciaEncalheCota(
+			long idControleConferencia){
+		
+
+		Criteria criteria = consultaPorControleConferenciaEncalheCota(idControleConferencia);
+		
+		criteria.setProjection(Projections.rowCount());
+		
+		
+		return (Long) criteria.uniqueResult();
 		
 	}
 	

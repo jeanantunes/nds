@@ -6,8 +6,8 @@ import org.hibernate.Query;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
-import br.com.abril.nds.dto.ConsultaEntradaNFETerceirosRecebidasDTO;
 import br.com.abril.nds.dto.ConsultaEntradaNFETerceirosPendentesDTO;
+import br.com.abril.nds.dto.ConsultaEntradaNFETerceirosRecebidasDTO;
 import br.com.abril.nds.dto.ItemNotaFiscalPendenteDTO;
 import br.com.abril.nds.dto.filtro.FiltroEntradaNFETerceiros;
 import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
@@ -15,6 +15,7 @@ import br.com.abril.nds.model.fiscal.NotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.StatusNotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.repository.EntradaNFETerceirosRepository;
+import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 @Repository
 public class EntradaNFETerceirosRepositoryImpl extends AbstractRepositoryModel<NotaFiscalEntrada, Long> implements
@@ -48,7 +49,7 @@ public class EntradaNFETerceirosRepositoryImpl extends AbstractRepositoryModel<N
 		hql.append("        notaFiscalEntrada.valorBruto as valorNota, ");		
 		hql.append("        ( CASE WHEN ");		
 		hql.append("          ( ");		
-		hql.append("             SELECT SUM(notaFiscalEntradaCotaCCE.valorNF) ");
+		hql.append("             SELECT SUM(COALESCE(notaFiscalEntradaCotaCCE.valorNF, notaFiscalEntradaCotaCCE.valorProdutos, notaFiscalEntradaCotaCCE.valorLiquido, 0)) ");
 		hql.append("             FROM ControleConferenciaEncalheCota controleConferenciaEncalheCota ");
 		hql.append("               LEFT JOIN controleConferenciaEncalheCota.notaFiscalEntradaCota as notaFiscalEntradaCotaCCE ");
 		hql.append("             WHERE controleConferenciaEncalheCota = controleConferenciaEncalheCotaNF ");
@@ -102,16 +103,20 @@ public class EntradaNFETerceirosRepositoryImpl extends AbstractRepositoryModel<N
 			}
 		}
 
-		if(filtro.getCota() != null) {			
+		if (filtro.getCota() != null && filtro.getCota().getPessoa() != null
+				&& filtro.getCota().getPessoa().getId() != null) {
 			hql.append( " and cota.id = :idCota ");
 		}
 		
-		if(filtro.getFornecedor() != null) {			
+		if (filtro.getFornecedor() != null
+				&& filtro.getFornecedor().getId() != null
+				&& filtro.getFornecedor().getId() > 0
+				&& StatusNotaFiscalEntrada.RECEBIDA.equals(filtro.getStatusNotaFiscalEntrada())) {
 			hql.append( " and fornecedor.id = :idFornecedor ");
 		}
 		
 		if(filtro.getDataInicial() != null && filtro.getDataFinal() != null){
-			hql.append( " and date(notaCota.dataEmissao) between :dataInicial and :dataFinal ");
+			hql.append( " and date(notaFiscalEntrada.dataEmissao) between :dataInicial and :dataFinal ");
 		}
 
 		return hql.toString();
@@ -124,7 +129,11 @@ public class EntradaNFETerceirosRepositoryImpl extends AbstractRepositoryModel<N
 		}
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" order by nota.numero ");
+		if (StatusNotaFiscalEntrada.NAO_RECEBIDA.equals(filtro.getStatusNotaFiscalEntrada())) {
+			hql.append(" order by notaFiscalEntrada.numero ");
+		} else {
+			hql.append(" order by cota.numeroCota ");
+		}
 		
 		if (filtro.getPaginacao().getOrdenacao() != null) {
 			hql.append( filtro.getPaginacao().getOrdenacao().toString());
@@ -143,11 +152,15 @@ public class EntradaNFETerceirosRepositoryImpl extends AbstractRepositoryModel<N
 			query.setParameter("complementar", GrupoNotaFiscal.NF_TERCEIRO_COMPLEMENTAR);
 		}
 
-		if(filtro.getCota() != null) { 
+		if (filtro.getCota() != null && filtro.getCota().getPessoa() != null
+				&& filtro.getCota().getPessoa().getId() != null) {
 			query.setParameter("idCota", filtro.getCota().getPessoa().getId());
 		}
 
-		if(filtro.getFornecedor() != null) { 
+		if (filtro.getFornecedor() != null
+				&& filtro.getFornecedor().getId() != null
+				&& filtro.getFornecedor().getId() > 0
+				&& StatusNotaFiscalEntrada.RECEBIDA.equals(filtro.getStatusNotaFiscalEntrada())) {
 			query.setParameter("idFornecedor", filtro.getFornecedor().getJuridica().getId());
 		}
 
@@ -201,19 +214,20 @@ public class EntradaNFETerceirosRepositoryImpl extends AbstractRepositoryModel<N
 		hql.append("               AND tipoNotaFiscal.grupoNotaFiscal = :complementar ");
 		hql.append("        ) = 0 THEN 'Entrada' ELSE 'Complementar' END  as tipoNotaFiscal, ");
 		hql.append("        ( ");
-		hql.append("             SELECT SUM(notaFiscalEntradaCota.valorNF) ");
+		hql.append("             SELECT SUM(COALESCE(notaFiscalEntradaCota.valorNF, notaFiscalEntradaCota.valorProdutos, notaFiscalEntradaCota.valorLiquido, 0)) ");
 		hql.append("             FROM ControleConferenciaEncalheCota controleConferenciaEncalheCotaNF ");
 		hql.append("               LEFT JOIN controleConferenciaEncalheCotaNF.notaFiscalEntradaCota as notaFiscalEntradaCota ");
 		hql.append("             WHERE controleConferenciaEncalheCotaNF = controleConferenciaEncalheCota ");
 		hql.append("        ) as valorNota, ");
 		hql.append("        (conferenciasEncalhe.qtde * conferenciasEncalhe.precoCapaInformado ) as valorReal, ");
 		hql.append("        ((conferenciasEncalhe.qtdeInformada * conferenciasEncalhe.precoCapaInformado) - ( ");
-		hql.append("             SELECT SUM(notaFiscalEntradaCota.valorNF) ");
+		hql.append("             SELECT SUM(COALESCE(notaFiscalEntradaCota.valorNF, notaFiscalEntradaCota.valorProdutos, notaFiscalEntradaCota.valorLiquido, 0)) ");
 		hql.append("             FROM ControleConferenciaEncalheCota controleConferenciaEncalheCotaNF ");
 		hql.append("               LEFT JOIN controleConferenciaEncalheCotaNF.notaFiscalEntradaCota as notaFiscalEntradaCota ");
 		hql.append("             WHERE controleConferenciaEncalheCotaNF = controleConferenciaEncalheCota ");
 		hql.append("        )) as diferenca, ");
-		hql.append("        'Pendente' as status ");
+		hql.append("        'Pendente' as status, ");
+		hql.append(" controleConferenciaEncalheCota.id  as idControleConferenciaEncalheCota ");
 		
 		hql.append(getSqlFromEWhereNotaPendente(filtro));
 		
@@ -246,7 +260,7 @@ public class EntradaNFETerceirosRepositoryImpl extends AbstractRepositoryModel<N
 		hql.append(" LEFT JOIN controleConferenciaEncalheCota.conferenciasEncalhe as conferenciasEncalhe");
 		
 		hql.append(" where ( ");
-		hql.append("            SELECT SUM(notaFiscalEntradaCota.valorNF) ");
+		hql.append("            SELECT SUM(COALESCE(notaFiscalEntradaCota.valorNF, notaFiscalEntradaCota.valorProdutos, notaFiscalEntradaCota.valorLiquido, 0)) ");
 		hql.append("            FROM ControleConferenciaEncalheCota controleConferenciaEncalheCotaNF ");
 		hql.append("              LEFT JOIN controleConferenciaEncalheCotaNF.notaFiscalEntradaCota as notaFiscalEntradaCota ");
 		hql.append("            WHERE controleConferenciaEncalheCotaNF = controleConferenciaEncalheCota ");
@@ -278,7 +292,7 @@ public class EntradaNFETerceirosRepositoryImpl extends AbstractRepositoryModel<N
 		}
 		
 		if(filtro.getDataInicial() != null && filtro.getDataFinal() != null){
-			hql.append( " and date(notaCota.dataEmissao) between :dataInicial and :dataFinal ");
+			hql.append( " and date(controleConferenciaEncalheCota.dataOperacao) between :dataInicial and :dataFinal ");
 		}
 
 		return hql.toString();
@@ -303,7 +317,7 @@ public class EntradaNFETerceirosRepositoryImpl extends AbstractRepositoryModel<N
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<ItemNotaFiscalPendenteDTO> buscarItensPorNota(
-			FiltroEntradaNFETerceiros filtro) {
+			Long idConferenciaCota, String  orderBy,Ordenacao ordenacao, Integer firstResult, Integer maxResults) {
 		
 		StringBuilder hql = new StringBuilder();
 		
@@ -321,37 +335,42 @@ public class EntradaNFETerceirosRepositoryImpl extends AbstractRepositoryModel<N
 		hql.append("conf.data as dataConferenciaEncalhe, ");
 		hql.append("chamadaEncalhe.dataRecolhimento as dataChamadaEncalhe ");
 		
-		hql.append(getHqlFromEWhereItensPendentes(filtro));
+		hql.append(getHqlFromEWhereItensPendentes());
 		
 		Query query =  getSession().createQuery(hql.toString());
+		
+		query.setParameter("idConferenciaCota", idConferenciaCota);
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(
 				ItemNotaFiscalPendenteDTO.class));
 		
-		if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
-			query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
+		if(firstResult != null) 
+			query.setFirstResult(firstResult);
 		
-		if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
-			query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());			
+		if(maxResults != null) 
+			query.setMaxResults(maxResults);			
 		 
 		return query.list();		 
 		
 	}
 	
-	private String getHqlFromEWhereItensPendentes(FiltroEntradaNFETerceiros filtro) {
+	private String getHqlFromEWhereItensPendentes() {
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" from ItemNotaFiscalEntrada as item, ControleConferenciaEncalheCota as confCota ");
-		hql.append(" LEFT JOIN item.notaFiscal as nf ");
-		hql.append(" LEFT JOIN item.produtoEdicao as produtoEdicao ");
+		hql.append(" from ItemNotaFiscalEntrada as item ");
+		hql.append(" JOIN item.notaFiscal as nf ");
+		hql.append(" JOIN nf.controleConferenciaEncalheCota as confCota ");
+		hql.append(" JOIN item.produtoEdicao as produtoEdicao ");
 		hql.append(" LEFT JOIN produtoEdicao.produto as produto ");
 		hql.append(" LEFT JOIN produto.fornecedores as fornecedores ");
 		hql.append(" left join confCota.conferenciasEncalhe as conf  ");
 		hql.append(" left join conf.chamadaEncalheCota as chamadaCota  ");
 		hql.append(" left join chamadaCota.chamadaEncalhe chamadaEncalhe  ");
 		
-		hql.append(" WHERE confCota.notaFiscalEntradaCota.id = nf.id  and nf.id = :idNota ");
+		hql.append(" WHERE ");
+		
+		hql.append(" confCota.id = :idConferenciaCota ");
 		
 		return hql.toString();
 	}
@@ -370,15 +389,14 @@ public class EntradaNFETerceirosRepositoryImpl extends AbstractRepositoryModel<N
 	}
 
 	@Override
-	public Integer buscarTodasItensPorNota(FiltroEntradaNFETerceiros filtro) {
+	public Integer buscarTodasItensPorNota(Long idConferenciaCota) {
 		
 		StringBuilder hql = new StringBuilder();
-		hql.append(" select count(produto.codigo) ");		
-		
-		hql.append(getHqlFromEWhereItensPendentes(filtro));
-		
+		hql.append(" select count(item.id) ");			
+		hql.append(getHqlFromEWhereItensPendentes());		
 		Query query =  getSession().createQuery(hql.toString());
 		
+		query.setParameter("idConferenciaCota", idConferenciaCota);
 		Long totalRegistros = (Long) query.uniqueResult();
 		
 		return (totalRegistros == null) ? 0 : totalRegistros.intValue();

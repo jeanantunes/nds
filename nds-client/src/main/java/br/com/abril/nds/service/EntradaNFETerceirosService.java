@@ -6,6 +6,8 @@ import br.com.abril.nds.dto.ConsultaEntradaNFETerceirosPendentesDTO;
 import br.com.abril.nds.dto.ConsultaEntradaNFETerceirosRecebidasDTO;
 import br.com.abril.nds.dto.ItemNotaFiscalPendenteDTO;
 import br.com.abril.nds.dto.filtro.FiltroEntradaNFETerceiros;
+import br.com.abril.nds.model.fiscal.ItemNotaFiscalEntrada;
+import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 public interface EntradaNFETerceirosService {
 	
@@ -15,8 +17,15 @@ public interface EntradaNFETerceirosService {
 	
 	List<ConsultaEntradaNFETerceirosPendentesDTO> buscarNFNotasPendentes(FiltroEntradaNFETerceiros filtro, boolean limitar);
 	
-	List<ItemNotaFiscalPendenteDTO> buscarItensPorNota(FiltroEntradaNFETerceiros filtro);
+	List<ItemNotaFiscalPendenteDTO> buscarItensPorNota(
+			Long idConferenciaCota, String  orderBy,Ordenacao ordenacao, Integer firstResult, Integer maxResults);
 	
-	Integer buscarTodasItensPorNota(FiltroEntradaNFETerceiros filtro);
+	Integer buscarTodasItensPorNota(Long idConferenciaCota);
+
+	public abstract List<ItemNotaFiscalEntrada> obtemItemNotaFiscalEntradaPorControleConferenciaEncalheCota(
+			long idControleConferencia, String orderBy, Ordenacao ordenacao, Integer firstResult, Integer maxResults);
+
+	public abstract Long quantidadeItemNotaFiscalEntradaPorControleConferenciaEncalheCota(
+			long idControleConferencia);
 	
 }

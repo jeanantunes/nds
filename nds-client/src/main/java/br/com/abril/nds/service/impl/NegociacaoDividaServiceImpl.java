@@ -16,6 +16,7 @@ import br.com.abril.nds.dto.filtro.FiltroConsultaNegociacaoDivida;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
+import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.financeiro.Boleto;
@@ -34,6 +35,7 @@ import br.com.abril.nds.model.financeiro.ParcelaNegociacao;
 import br.com.abril.nds.model.financeiro.StatusDivida;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.repository.BancoRepository;
 import br.com.abril.nds.repository.CobrancaRepository;
 import br.com.abril.nds.repository.ConsolidadoFinanceiroRepository;
 import br.com.abril.nds.repository.CotaRepository;
@@ -81,6 +83,9 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService{
 	@Autowired
 	private DocumentoCobrancaService documentoCobrancaService;
 	
+	@Autowired
+	private BancoRepository bancoRepository;
+	
 	@Override
 	@Transactional(readOnly = true)
 	public NegociacaoDividaPaginacaoDTO obterDividasPorCotaPaginado(FiltroConsultaNegociacaoDivida filtro) {
@@ -104,11 +109,17 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService{
 	@Transactional
 	public Long criarNegociacao(Integer numeroCota, List<ParcelaNegociacao> parcelas, BigDecimal valorDividaParaComissao, 
 			List<Long> idsCobrancasOriginarias, Usuario usuarioResponsavel, boolean negociacaoAvulsa, Integer ativarCotaAposParcela,
-			BigDecimal comissaoParaSaldoDivida, boolean isentaEncargos, FormaCobranca formaCobranca) {
+			BigDecimal comissaoParaSaldoDivida, boolean isentaEncargos, FormaCobranca formaCobranca, Long idBanco) {
 		
 		//lista para mensagens de validação
 		List<String> msgs = new ArrayList<String>();
 		Date dataAtual = new Date();
+		
+		if (formaCobranca != null){
+		
+			Banco banco = this.bancoRepository.buscarPorId(idBanco);
+			formaCobranca.setBanco(banco);
+		}
 		
 		//valida dados de entrada
 		this.validarDadosEntrada(msgs, dataAtual, parcelas, valorDividaParaComissao, usuarioResponsavel, 
@@ -274,7 +285,9 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService{
 		negociacao.setParcelas(parcelas);
 		negociacao.setValorDividaPagaComissao(valorDividaParaComissao);
 		
-		return this.negociacaoDividaRepository.adicionar(negociacao);
+		this.negociacaoDividaRepository.adicionar(negociacao);
+		
+		return negociacao.getId();
 	}
 
 	private void validarDadosEntrada(List<String> msgs, Date dataAtual,
@@ -296,19 +309,19 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService{
 				
 				if (parcelaNegociacao.getDataVencimento() == null){
 					
-					msgs.add("Data de vencimento da parcela " + parcelas.indexOf(parcelaNegociacao) + 1 + " inválido.");
+					msgs.add("Data de vencimento da parcela " + (parcelas.indexOf(parcelaNegociacao) + 1) + " inválido.");
 				}
 				
 				MovimentoFinanceiroCota mov = parcelaNegociacao.getMovimentoFinanceiroCota();
 				
 				if (mov == null){
 					
-					msgs.add("Valor da parcela " + parcelas.indexOf(parcelaNegociacao) + 1 + " inválido.");
+					msgs.add("Valor da parcela " + (parcelas.indexOf(parcelaNegociacao) + 1) + " inválido.");
 				} else {
 				
 					if (mov.getValor() == null || mov.getValor().equals(BigDecimal.ZERO)){
 						
-						msgs.add("Valor da parcela " + parcelas.indexOf(parcelaNegociacao) + 1 + " inválido.");
+						msgs.add("Valor da parcela " + (parcelas.indexOf(parcelaNegociacao) + 1) + " inválido.");
 					}
 				}
 			}
@@ -341,15 +354,42 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService{
 					msgs.add("Parâmetro Tipo de Cobrança inválido.");
 				}
 				
-				if (formaCobranca.getTipoFormaCobranca() == null){
-					
-					msgs.add("Parâmetro Tipo de Forma de Cobrança inválido.");
-				}
-				
 				if (formaCobranca.getBanco() == null || 
 						formaCobranca.getBanco().getId() == null){
 					
 					msgs.add("Banco é obrigatório.");
+				}
+				
+				if (formaCobranca.getTipoFormaCobranca() == null){
+					
+					msgs.add("Frequência da cobrança é obrigatório.");
+				} else {
+				
+					switch (formaCobranca.getTipoFormaCobranca()){
+						case DIARIA:
+						break;
+						case MENSAL:
+							if (formaCobranca.getDiasDoMes() == null || 
+									formaCobranca.getDiasDoMes().isEmpty() || 
+									formaCobranca.getDiasDoMes().size() != 2){
+							
+								msgs.add("Parâmetro dias da cobrança inválidos.");
+							}
+						break;
+						case QUINZENAL:
+							if (formaCobranca.getDiasDoMes() == null || 
+									formaCobranca.getDiasDoMes().isEmpty() || 
+									formaCobranca.getDiasDoMes().size() != 2){
+								
+								msgs.add("Parâmetro dias da cobrança inválidos.");
+							}
+						break;
+						case SEMANAL:
+							if (formaCobranca.getConcentracaoCobrancaCota() == null || formaCobranca.getConcentracaoCobrancaCota().isEmpty() ){
+								msgs.add("Selecione pelo menos um dia da semana.");
+							}
+						break;
+					}
 				}
 			}
 		}

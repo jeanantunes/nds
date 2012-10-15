@@ -21,7 +21,7 @@ public class DigitacaoContagemDevolucaoVO implements Serializable {
 	private String valorTotalComDesconto;
 	private String diferenca;
 	private String dataRecolhimentoDistribuidor;
-	
+	private boolean isEdicaoFechada;
 	
 	/**
 	 * @return the idConferenciaEncParcial
@@ -166,6 +166,18 @@ public class DigitacaoContagemDevolucaoVO implements Serializable {
 	 */
 	public void setValorTotalComDesconto(String valorTotalComDesconto) {
 		this.valorTotalComDesconto = valorTotalComDesconto;
+	}
+	/**
+	 * @return the isEdicaoFechada
+	 */
+	public boolean isEdicaoFechada() {
+		return isEdicaoFechada;
+	}
+	/**
+	 * @param isEdicaoFechada the isEdicaoFechada to set
+	 */
+	public void setEdicaoFechada(boolean isEdicaoFechada) {
+		this.isEdicaoFechada = isEdicaoFechada;
 	}
 	
 }

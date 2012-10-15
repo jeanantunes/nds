@@ -44,7 +44,7 @@ public class ParametroCobrancaCota implements Serializable {
 	private BigDecimal valorMininoCobranca;
 	
 	@Column(name = "FATOR_VENCIMENTO")
-	private int fatorVencimento;
+	private Integer fatorVencimento;
 	
 	@Embedded
 	private PoliticaSuspensao politicaSuspensao;
@@ -77,11 +77,11 @@ public class ParametroCobrancaCota implements Serializable {
 		this.valorMininoCobranca = valorMininoCobranca;
 	}
 
-	public int getFatorVencimento() {
+	public Integer getFatorVencimento() {
 		return fatorVencimento;
 	}
 
-	public void setFatorVencimento(int fatorVencimento) {
+	public void setFatorVencimento(Integer fatorVencimento) {
 		this.fatorVencimento = fatorVencimento;
 	}
 	

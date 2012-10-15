@@ -402,4 +402,20 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		
 		return hql.toString();
 	}
+
+	@Override
+	public Date obterProximaDataEncalhe(Date base) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("select o.dataRecolhimento from ChamadaEncalhe o where o.dataRecolhimento > :dataBase order by o.dataRecolhimento");
+		
+		Query query = getSession().createQuery(sb.toString());
+		query.setParameter("dataBase", base);
+		
+		List result = query.list();
+		
+		if(result.size() == 0)
+			return null;
+		
+		return (Date) result.get(0);
+	}
 }

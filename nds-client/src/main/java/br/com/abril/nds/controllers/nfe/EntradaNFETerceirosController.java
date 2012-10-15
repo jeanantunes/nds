@@ -1,7 +1,6 @@
 package br.com.abril.nds.controllers.nfe;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -19,19 +18,17 @@ import br.com.abril.nds.dto.ItemNotaFiscalPendenteDTO;
 import br.com.abril.nds.dto.filtro.FiltroEntradaNFETerceiros;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
-import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
-import br.com.abril.nds.model.fiscal.CFOP;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaCota;
 import br.com.abril.nds.model.fiscal.StatusNotaFiscalEntrada;
-import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.CFOPService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.EntradaNFETerceirosService;
@@ -46,6 +43,8 @@ import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.util.export.NDSFileHeader;
 import br.com.abril.nds.vo.PaginacaoVO;
+import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
+import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
@@ -250,79 +249,64 @@ public class EntradaNFETerceirosController {
 		return tableModel;
 	}
 	
-	@Post
+	
 	@Path("/pesquisarItensPorNota")
-	public void pesquisarItensPorNota(FiltroEntradaNFETerceiros filtro, String sortorder, String sortname, int page, int rp){
+	public void pesquisarItensPorNota(long idControleConferencia,String sortorder, String sortname, int page, int rp){
 		
-		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder, sortname));
+		Integer total = this.entradaNFETerceirosService.buscarTodasItensPorNota(idControleConferencia);
 		
-		this.tratarFiltro(filtro);
-		
-		TableModel<CellModelKeyValue<ItemNotaFiscalPendenteDTO>> tableModel = efetuarConsultaItensPorNota(filtro);
-		
-		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
-		
-	}
-	
-	private TableModel<CellModelKeyValue<ItemNotaFiscalPendenteDTO>> efetuarConsultaItensPorNota(FiltroEntradaNFETerceiros filtro) {
-		
-		/*List<ItemNotaFiscalPendenteDTO> listaNotasRecebidas = this.entradaNFETerceirosService.buscarItensPorNota(filtro);
-		
-		TableModel<CellModelKeyValue<ItemNotaFiscalPendenteDTO>> tableModel = new TableModel<CellModelKeyValue<ItemNotaFiscalPendenteDTO>>();
-		
-		Integer totalRegistros = this.entradaNFETerceirosService.buscarTodasItensPorNota(filtro);
-		if(totalRegistros == 0){
+		if (total <= 0) {		
+
 			throw new ValidacaoException(TipoMensagem.WARNING, "A pesquisa realizada não obteve resultado.");
-		}*/
+			
+		}
+		List<ItemNotaFiscalPendenteDTO> listItemNota = this.entradaNFETerceirosService.buscarItensPorNota  (
+						idControleConferencia, sortname,
+						Ordenacao.valueOf(sortorder.toUpperCase()), page
+								* rp - rp, rp);
 		
-		List<ItemNotaFiscalPendenteDTO> listaItens =  new ArrayList<ItemNotaFiscalPendenteDTO>();
+		result.use(FlexiGridJson.class).from(listItemNota).page(page).total(total).serialize();
 		
-		ItemNotaFiscalPendenteDTO item1 = new ItemNotaFiscalPendenteDTO("1234", "Prod Teste", new Long(444), new BigDecimal(10), new BigDecimal(10), 
-				new BigDecimal(10), new BigDecimal(5), new BigDecimal(10), new Date(), new Date());
-		ItemNotaFiscalPendenteDTO item2 = new ItemNotaFiscalPendenteDTO("4321", "Prod Teste2", new Long(555), new BigDecimal(55), new BigDecimal(55), 
-				new BigDecimal(20), new BigDecimal(20), new BigDecimal(10), new Date(), new Date());
-		
-		listaItens.add(item1);
-		listaItens.add(item2);
-		
-		TableModel<CellModelKeyValue<ItemNotaFiscalPendenteDTO>> tableModel = new TableModel<CellModelKeyValue<ItemNotaFiscalPendenteDTO>>();
-
-		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaItens));
-		
-		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
-		
-		tableModel.setTotal(listaItens.size());
-		
-		return tableModel;
 	}
-	
 
+	
 	@Post
 	@Path("/cadastrarNota")
 	public void cadastrarNota(NotaFiscalEntradaCota nota, Integer numeroCota, Long idControleConferenciaEncalheCota){
-		Cota cota = this.cotaService.obterPorNumeroDaCota(numeroCota);
-		CFOP cfop  = this.cfopService.buscarPorId(1l);
-		PessoaJuridica pj = this.pessoaJuridicaService.buscarPorId(1L);
-		TipoNotaFiscal tp = this.tipoNotaFiscalService.obterPorId(1L);
+		this.notaFiscalEntradaService.inserirNotaFiscal(nota, numeroCota, idControleConferenciaEncalheCota);
+
+		ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.SUCCESS, "Cadastro efetuado com sucesso.");
 		
-		nota.setDataEmissao(new Date());
-		nota.setDataExpedicao(new Date());
-		nota.setOrigem(Origem.INTERFACE);
-		nota.setValorBruto(BigDecimal.TEN);
-		nota.setValorLiquido(BigDecimal.TEN);
-		nota.setValorDesconto(BigDecimal.TEN);
-		nota.setCota(cota);
-		nota.setStatusNotaFiscal(StatusNotaFiscalEntrada.RECEBIDA);
-		
-		nota.setCfop(cfop);
-		nota.setTipoNotaFiscal(tp);
-		
-		this.notaFiscalEntradaService.inserirNotaFiscal(nota);
+		this.result.use(Results.json()).from(validacao, "result").recursive().serialize();
 		
 	}
 	
 	private void validarEntrada(FiltroEntradaNFETerceiros filtro) {
 				
+		if (filtro.getCota() != null && filtro.getCota().getNumeroCota() != null) {
+			Cota cota = notaFiscalEntradaService.obterPorNumerDaCota(filtro.getCota().getNumeroCota());
+			if (cota != null) {
+				filtro.setCota(cota);
+			} else {
+				throw new ValidacaoException(TipoMensagem.WARNING, "Número da cota inválido!");			
+			}
+		} else {
+			filtro.setCota(null);
+		}
+		
+		if (filtro.getFornecedor() != null
+				&& filtro.getFornecedor().getId() != null
+				&& filtro.getFornecedor().getId() > 0) {
+			Fornecedor fornecedor = notaFiscalEntradaService.obterFornecedorPorID(filtro.getFornecedor().getId());
+			if (fornecedor != null) {
+				filtro.setFornecedor(fornecedor);
+			} else {
+				throw new ValidacaoException(TipoMensagem.WARNING, "Fornecedor não encotrado!");			
+			}
+		} else {
+			filtro.setFornecedor(null);
+		}
+		
 		if(filtro.getStatusNotaFiscalEntrada() == null){
 			throw new ValidacaoException(TipoMensagem.WARNING, "Pelo menos um filtro deve ser preenchido!");			
 		}
