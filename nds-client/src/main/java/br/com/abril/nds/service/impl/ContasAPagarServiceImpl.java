@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.ContasAPagarConsultaProdutoDTO;
+import br.com.abril.nds.dto.ContasApagarConsultaPorProdutoDTO;
 import br.com.abril.nds.repository.ContasAPagarRepository;
 import br.com.abril.nds.service.ContasAPagarService;
 
@@ -28,6 +29,13 @@ public class ContasAPagarServiceImpl implements ContasAPagarService{
 	public List<ContasAPagarConsultaProdutoDTO> pesquisaProdutoContasAPagar(
 			String codigoProduto, Long edicao) {
 		return contasAPagarRepository.pesquisaProdutoContasAPagar(codigoProduto, edicao);
+	}
+
+	@Override
+	public List<ContasApagarConsultaPorProdutoDTO> pesquisaContasAPagarPorProduto(
+			List<Long> produtoEdicaoID) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 
