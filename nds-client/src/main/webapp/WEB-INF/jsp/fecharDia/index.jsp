@@ -45,7 +45,7 @@
 	<form id="form-popup-validacao-recebimento-fisico">
 		<div id="dialog-recebe-fisico" title="Recebimento F�sico" style="display:none;">
 		<fieldset style="width:350px;">
-	    	<legend>Recebimento Físico</legend>
+	    	<legend>Recebimento F�sico</legend>
 	        <table class="recebeFisicoGrid"></table>
 	    </fieldset>
 	    <br clear="all" />
@@ -148,13 +148,13 @@
 	<form id="form-repartes">
 		<div id="dialog-repartes" title="Movimento" style="display:none;">
 			<fieldset style="width:850px;">
-		    	<legend>Lançamento</legend>
+		    	<legend>Lan�amento</legend>
 		        <table class="reparteDialogGrid"></table>
 		    </fieldset>
 		    <br clear="all" />
 		    <span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="../images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
 		
-		<span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="../images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
+			<span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="../images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
 		
 		</div>
 	</form>
@@ -321,23 +321,23 @@
       </tr>
       <tr>
         <td align="left" style="border-bottom:1px solid #ccc;">(+) Transferência</td>
-        <td align="right" style="border-bottom:1px solid #ccc;">0,00</td>
+        <td align="right" style="border-bottom:1px solid #ccc;"><div id="totalTransferencia"></div></td>
       </tr>
       <tr>
         <td align="left" style="border-bottom:1px solid #ccc;">(=) A Distribuir</td>
-        <td align="right" style="border-bottom:1px solid #ccc;">135.311,38</td>
+        <td align="right" style="border-bottom:1px solid #ccc;"><div id="totalADistribuir"></div></td>
         </tr>
       <tr>
         <td align="left" style="border-bottom:1px solid #ccc;">Distribuido</td>
-        <td align="right" style="border-bottom:1px solid #ccc;">135.227,48</td>
+        <td align="right" style="border-bottom:1px solid #ccc;"><div id="totalDistribuido"></div></td>
         </tr>
       <tr>
         <td align="left" style="border-bottom:1px solid #ccc;">Sobra Dist.</td>
-        <td align="right" style="border-bottom:1px solid #ccc;">83,90</td>
+        <td align="right" style="border-bottom:1px solid #ccc;"><div id="totalSobraDistribuido"></div></td>
         </tr>
       <tr>
         <td align="left" style="border-bottom:1px solid #ccc;">Diferença</td>
-        <td align="right" style="border-bottom:1px solid #ccc;">0,00</td>
+        <td align="right" style="border-bottom:1px solid #ccc;"><div id="totalDiferenca"></div></td>
       </tr>
       <tr>
         <td align="left">&nbsp;</td>

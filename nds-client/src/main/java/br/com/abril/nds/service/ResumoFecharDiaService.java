@@ -2,13 +2,21 @@ package br.com.abril.nds.service;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
+
+import br.com.abril.nds.dto.ReparteFecharDiaDTO;
+
 
 public interface ResumoFecharDiaService {
 	
-	BigDecimal obterValorReparte(Date dataOperacaoDistribuidor);
+	List<ReparteFecharDiaDTO> obterValorReparte(Date dataOperacaoDistribuidor, boolean soma);
 
-	BigDecimal obterValorSobras(Date dataOperacao);
+	List<ReparteFecharDiaDTO> obterValorDiferenca(Date dataOperacao, boolean soma, String tipoDiferenca);
 
-	BigDecimal obterValorFaltas(Date dataOperacao);
+	BigDecimal obterValorTransferencia(Date dataOperacao);
+
+	BigDecimal obterValorDistribuido(Date dataOperacao);
+
+	List<ReparteFecharDiaDTO> obterResumoReparte(Date dataOperacao);
 
 }

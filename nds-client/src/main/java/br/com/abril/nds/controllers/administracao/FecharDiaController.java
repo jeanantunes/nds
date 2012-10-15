@@ -7,6 +7,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
+import br.com.abril.nds.dto.ReparteFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoConfirmacaoDeExpedicaoFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoControleDeAprovacaoFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoLancamentoFaltaESobraFecharDiaDTO;
@@ -146,17 +147,50 @@ public class FecharDiaController {
 	@Path("obterResumoQuadroReparte")
 	public void obterResumoQuadroReparte(){
 		
-		BigDecimal totalReparte = this.resumoFecharDiaService.obterValorReparte(distribuidor.getDataOperacao());
-		
 		List<BigDecimal> listaDeResultados = new ArrayList<BigDecimal>();
+
+		List<ReparteFecharDiaDTO> lista = this.resumoFecharDiaService.obterValorReparte(distribuidor.getDataOperacao(), true);
+		
+		BigDecimal totalReparte = lista.get(0).getValorTotalReparte();
 		listaDeResultados.add(totalReparte);
-		BigDecimal totalSobras = this.resumoFecharDiaService.obterValorSobras(distribuidor.getDataOperacao());
+		
+		lista = this.resumoFecharDiaService.obterValorDiferenca(distribuidor.getDataOperacao(), true, "sobra");
+		BigDecimal totalSobras = lista.get(0).getSobras();
 		listaDeResultados.add(totalSobras);
-		BigDecimal totalFaltas = this.resumoFecharDiaService.obterValorFaltas(distribuidor.getDataOperacao());
+		
+		
+		lista = this.resumoFecharDiaService.obterValorDiferenca(distribuidor.getDataOperacao(), true, "falta");
+		BigDecimal totalFaltas = lista.get(0).getFaltas();
 		listaDeResultados.add(totalFaltas);
 		
 		
+		BigDecimal totalTranferencia = this.resumoFecharDiaService.obterValorTransferencia(distribuidor.getDataOperacao());
+		listaDeResultados.add(totalTranferencia);
+		BigDecimal totalADistribuir = (totalReparte.add(totalSobras)).subtract(totalFaltas);
+		listaDeResultados.add(totalADistribuir);
+		BigDecimal totalDistribuido = this.resumoFecharDiaService.obterValorDistribuido(distribuidor.getDataOperacao());
+		listaDeResultados.add(totalDistribuido);		
+		BigDecimal sobraDistribuido = totalADistribuir.subtract(totalDistribuido);
+		listaDeResultados.add(sobraDistribuido);
+		BigDecimal diferenca = totalDistribuido.subtract(sobraDistribuido);
+		listaDeResultados.add(diferenca);
+		
 		result.use(Results.json()).from(listaDeResultados, "result").serialize();
+	}
+	
+	@Post
+	@Path("/obterGridReparte")
+	public void obterGridReparte(){
+		
+		List<ReparteFecharDiaDTO> listaReparte = this.resumoFecharDiaService.obterResumoReparte(distribuidor.getDataOperacao());
+		
+		TableModel<CellModelKeyValue<ReparteFecharDiaDTO>> tableModel = new TableModel<CellModelKeyValue<ReparteFecharDiaDTO>>();
+		
+		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaReparte));
+		
+		tableModel.setTotal(listaReparte.size());
+		
+		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
 		
 	}
 
