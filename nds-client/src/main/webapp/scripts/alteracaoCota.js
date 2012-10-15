@@ -23,15 +23,42 @@ var alteracaoCotaController = $.extend(true, {
 		
 		this.iniciarGrid();
 		
-		var options = {
-				success: alteracaoCotaController.tratarRetornoUpload
-		    };
-			
-			$('#formUploadTermoAdesao').ajaxForm(options);
-			
-			$('#formUploadProcuracao').ajaxForm(options);
-
-			 $('#uploadedFileProcuracao').fileupload(
+		$("#percentualFaturamentoEntregaBranca", this.workspace).mask("99.99");
+		$("#taxaFixaEntregaBranca", this.workspace).numeric();
+		$("#carenciaInicioEntregaBranca", this.workspace).mask("99/99/9999");
+		$("#carenciaFimEntregaBranca", this.workspace).mask("99/99/9999");
+		
+		$("#percentualFaturamentoEntregador", this.workspace).mask("99.99");
+		$("#carenciaInicioEntregador", this.workspace).mask("99/99/9999");
+		$("#carenciaFimEntregado", this.workspace).mask("99/99/9999");
+		
+		
+		$("#carenciaInicioEntregaBranca", this.workspace).datepicker({
+			showOn: "button",
+			buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
+			buttonImageOnly: true
+		});
+		$("#carenciaFimEntregaBranca", this.workspace).datepicker({
+			showOn: "button",
+			buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
+			buttonImageOnly: true
+		});
+		
+		
+		$("#carenciaInicioEntregador", this.workspace).datepicker({
+			showOn: "button",
+			buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
+			buttonImageOnly: true
+		});
+		$("#carenciaFimEntregador", this.workspace).datepicker({
+			showOn: "button",
+			buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
+			buttonImageOnly: true
+		});
+		
+		
+	
+    	$('#uploadedFileProcuracao').fileupload(
 						{
 							url :"administracao/alteracaoCota/uploadProcuracao",
 							sequentialUploads: true,
@@ -39,9 +66,7 @@ var alteracaoCotaController = $.extend(true, {
 							paramName : 'uploadedFileProcuracao',
 							replaceFileInput: false,
 							submit : function(e, data) {
-								data.formData = {
-									'numCotaUpload' : '1234'
-								};
+								data = $("#pesquisarForm", this.workspace).serialize();
 
 							},
 							done : function(e, data) {
@@ -55,18 +80,31 @@ var alteracaoCotaController = $.extend(true, {
 							}
 							 
 						});
+    	
+    	
+    	$('#uploadedFileTermo').fileupload(
+				{
+					url :"administracao/alteracaoCota/uploadedFileTermo",
+					sequentialUploads: true,
+					dataType : 'json',
+					paramName : 'uploadedFileTermo',
+					replaceFileInput: false,
+					submit : function(e, data) {
+						data = $("#pesquisarForm", this.workspace).serialize();
+
+					},
+					done : function(e, data) {
+					//	 $('#uploadedFileProcuracao').destroy();
+					},
+					progressall : function(e, data) {
+						
+					},
+					send : function(e, data) {
+
+					}
+					 
+				});
 			
-			$('#uploadedFileProcuracao').bind('change', function (e) {
-			   
-				
-				
-			});
-			
-			
-			
-			
-			
-		
 	},
 	
 	iniciarGrid : function() {
@@ -368,20 +406,17 @@ var alteracaoCotaController = $.extend(true, {
 				responseJson.mensagens.listaMensagens, "dialog-cota"
 			);
 		}
-			
-//		var fileName = responseJson.result;
-//		
-//		var tipoEntrega = D.get('tipoEntrega');
-//		
-//		if (tipoEntrega == 'ENTREGA_EM_BANCA') {
-//
-//			D.setNomeTermoAdesao(fileName);
-//			
-//		} else if (tipoEntrega == 'ENTREGADOR') {
-//			
-//			D.setNomeProcuracao(fileName);
-//		}
+
 	},
+	
+	downloadTermoAdesao : function() {
+		document.location.assign(contextPath + "/cadastro/cota/downloadTermoAdesao?termoAdesaoRecebido="+D.get("termoAdesaoRecebido")+"&numeroCota="+D.get("numCota")+"&taxa="+D.get("taxaFixaEntregaBanca")+"&percentual="+D.get("percentualFaturamentoEntregaBanca"));
+	},
+	
+	downloadProcuracao : function() {
+		
+		document.location.assign(contextPath + "/cadastro/cota/downloadProcuracao?procuracaoRecebida="+D.get("procuracaoRecebida")+"&numeroCota="+D.get("numCota"));
+	}
 	
 	
 
