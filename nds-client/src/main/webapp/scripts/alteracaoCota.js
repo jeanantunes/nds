@@ -23,6 +23,15 @@ var alteracaoCotaController = $.extend(true, {
 		
 		this.iniciarGrid();
 		
+		$("#percentualFaturamentoEntregaBranca", this.workspace).mask("99.99");
+		$("#taxaFixaEntregaBranca", this.workspace).numeric();
+		$("#carenciaInicioEntregaBranca", this.workspace).mask("99/99/9999");
+		$("#carenciaFimEntregaBranca", this.workspace).mask("99/99/9999");
+		
+		$("#percentualFaturamentoEntregador", this.workspace).mask("99.99");
+		$("#carenciaInicioEntregador", this.workspace).mask("99/99/9999");
+		$("#carenciaFimEntregado", this.workspace).mask("99/99/9999");
+		
 		
 		$("#carenciaInicioEntregaBranca", this.workspace).datepicker({
 			showOn: "button",
@@ -48,7 +57,7 @@ var alteracaoCotaController = $.extend(true, {
 		});
 		
 		
-		$("#percentualFaturamentoEntregado", this.workspace).mask("99.99");
+	
     	$('#uploadedFileProcuracao').fileupload(
 						{
 							url :"administracao/alteracaoCota/uploadProcuracao",
@@ -57,9 +66,7 @@ var alteracaoCotaController = $.extend(true, {
 							paramName : 'uploadedFileProcuracao',
 							replaceFileInput: false,
 							submit : function(e, data) {
-								data.formData = {
-									'numCotaUpload' : '1234'
-								};
+								data = $("#pesquisarForm", this.workspace).serialize();
 
 							},
 							done : function(e, data) {
@@ -83,9 +90,7 @@ var alteracaoCotaController = $.extend(true, {
 					paramName : 'uploadedFileTermo',
 					replaceFileInput: false,
 					submit : function(e, data) {
-						data.formData = {
-							'numCotaUpload' : '1234'
-						};
+						data = $("#pesquisarForm", this.workspace).serialize();
 
 					},
 					done : function(e, data) {
@@ -401,20 +406,17 @@ var alteracaoCotaController = $.extend(true, {
 				responseJson.mensagens.listaMensagens, "dialog-cota"
 			);
 		}
-			
-//		var fileName = responseJson.result;
-//		
-//		var tipoEntrega = D.get('tipoEntrega');
-//		
-//		if (tipoEntrega == 'ENTREGA_EM_BANCA') {
-//
-//			D.setNomeTermoAdesao(fileName);
-//			
-//		} else if (tipoEntrega == 'ENTREGADOR') {
-//			
-//			D.setNomeProcuracao(fileName);
-//		}
+
 	},
+	
+	downloadTermoAdesao : function() {
+		document.location.assign(contextPath + "/cadastro/cota/downloadTermoAdesao?termoAdesaoRecebido="+D.get("termoAdesaoRecebido")+"&numeroCota="+D.get("numCota")+"&taxa="+D.get("taxaFixaEntregaBanca")+"&percentual="+D.get("percentualFaturamentoEntregaBanca"));
+	},
+	
+	downloadProcuracao : function() {
+		
+		document.location.assign(contextPath + "/cadastro/cota/downloadProcuracao?procuracaoRecebida="+D.get("procuracaoRecebida")+"&numeroCota="+D.get("numCota"));
+	}
 	
 	
 
