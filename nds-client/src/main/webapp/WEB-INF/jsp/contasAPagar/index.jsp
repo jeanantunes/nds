@@ -74,9 +74,9 @@
 	                	<span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="../images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
 						<span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="../images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
 					</td>
-	                <td width="220" align="right"><strong>Total Bruto R$: 999.999,99</strong></td>
-	                <td width="243" align="right"><strong>Total Desconto R$: 999.999,99</strong></td>
-	                <td width="197" align="right"><strong>Saldo a Pagar R$: 999.999,99</strong></td>
+	                <td width="220" align="right"><strong>Total Bruto R$: <span id="contasAPagar_gridFornecedorTotalBruto"></span></strong></td>
+	                <td width="243" align="right"><strong>Total Desconto R$: <span id="contasAPagar_gridFornecedorTotalDesconto"></span></strong></td>
+	                <td width="197" align="right"><strong>Saldo a Pagar R$: <span id="contasAPagar_gridFornecedorSaldo"></span></strong></td>
               </tr>
             </table>
           </div>

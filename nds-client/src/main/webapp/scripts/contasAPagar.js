@@ -53,26 +53,32 @@ var contasAPagarController = $.extend(true, {
 	
 	pesquisar : function(){
 	
+		var params = $("#contasAPagarForm", this.workspace).serialize();
+		
 		if ($("#contasAPagarRadioDistribuidor").get(0).checked) {
 			
-			var params = $("#contasAPagarForm", this.workspace).serialize();
-			
-			$(".porDistrFornecedorGrid", this.workspace).flexOptions({
-				url : this.path + 'pesquisar.json?' + params, 
-				preProcess : contasAPagarController.insereLinksContasAPagarPorDistribuidores,
-				newp : 1
-			});
+			$.postJSON(
+				contasAPagarController.path + 'pesquisarPorFornecedor.json?' + params,
+				null,
+				function(result) {
+					
+					$("#contasAPagar_gridFornecedorTotalBruto").html(result.totalBruto);
+					$("#contasAPagar_gridFornecedorTotalDesconto").html(result.totalDesconto);
+					$("#contasAPagar_gridFornecedorSaldo").html(result.saldo);
+					
+					$(".porDistrFornecedorGrid", contasAPagarController.workspace).flexAddData({rows: toFlexiGridObject(result.grid), page : 1, total : result.totalGrid});
+				},
+				null,
+				true
+			);
 
-			$(".porDistrFornecedorGrid", this.workspace).flexReload();
 			$('.gridDistrib').show();
 			
 		}
 		else if ($("#contasAPagarRadioProduto").get(0).checked) {
 			
-			var params = contasAPagarController.obterSelecaoColunaCheckProdutoEdicao();
-			
 			$.postJSON(
-				contasAPagarController.path + 'pesquisar.json?' + params,
+				contasAPagarController.path + 'pesquisarPorProduto.json?' + params + '&' + contasAPagarController.obterSelecaoColunaCheckProdutoEdicao(),
 				null,
 				function(result) {
 					
