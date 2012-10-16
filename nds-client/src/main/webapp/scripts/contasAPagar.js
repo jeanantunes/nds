@@ -21,6 +21,7 @@ var contasAPagarController = $.extend(true, {
 		this.initGridPesquisarPorProduto();
 		this.initGridPesquisarPorFornecedor();
 		this.initGridParciais();
+		this.initGridConsignado();
 	},
 	
 	
@@ -249,29 +250,43 @@ var contasAPagarController = $.extend(true, {
 	},
 	
 	
+	popup_consignado : function() {
+		
+		var params = $("#contasAPagarForm").serialize();
+		
+		$.postJSON(
+			contasAPagarController.path + 'pesquisarConsignado.json?' + params,
+			null,
+			function(result) {
+				
+				// TODO: tabela totais
+				
+				$(".contasAPagar-consignadoGrid").flexAddData({rows: toFlexiGridObject(result.grid), page : 1, total : result.totalGrid});
+			},
+			null,
+			true
+		);
+	
+		// abre popup
+		$("#dialog-contasAPagar-consignado").dialog({
+			resizable: false,
+			height:480,
+			width:940,
+			modal: true,
+			buttons: {
+				"Fechar": function() {
+					$( this ).dialog( "close" );
+					$(".grids").show();
+				},
+			}
+		});
+	},
+	
 	
 	
 	
 /*
-	function popup_consignado() {
-			//$( "#dialog:ui-dialog" ).dialog( "destroy" );
-		
-			$( "#dialog-novo" ).dialog({
-				resizable: false,
-				height:490,
-				width:890,
-				modal: true,
-				buttons: {
-					"Fechar": function() {
-						$( this ).dialog( "close" );
-						
-						$(".grids").show();
-						
-					},
-					
-				}
-			});
-		};
+	
 		
 	function popup_encalhe() {
 			//$( "#dialog:ui-dialog" ).dialog( "destroy" );
@@ -616,7 +631,95 @@ var contasAPagarController = $.extend(true, {
 		});
 	},
 	
-	
+
+	initGridConsignado : function() {
+		$(".contasAPagar-consignadoGrid").flexigrid({
+			dataType : 'json',
+			colModel : [ {
+				display : 'Código',
+				name : 'codigo',
+				width : 40,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Produto',
+				name : 'produto',
+				width : 60,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Edição',
+				name : 'edicao',
+				width : 40,
+				sortable : true,
+				align : 'center'
+			}, {
+				display : 'Preço Capa R$',
+				name : 'precoCapa',
+				width : 80,
+				sortable : true,
+				align : 'right',
+			}, {
+				display : 'Preço c/ Desc. R$',
+				name : 'desconto',
+				width : 60,
+				sortable : true,
+				align : 'right',
+			}, {
+				display : 'Reparte Sug.',
+				name : 'reparte',
+				width : 70,
+				sortable : true,
+				align : 'center'
+			}, {
+				display : 'Reparte Final',
+				name : 'reparteFinal',
+				width : 70,
+				sortable : true,
+				align : 'center'
+			}, {
+				display : 'Dif.',
+				name : 'diferenca',
+				width : 30,
+				sortable : true,
+				align : 'center'
+			}, {
+				display : 'Motivo',
+				name : 'motivo',
+				width : 40,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Fornecedor',
+				name : 'fornecedor',
+				width : 70,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Valor R$',
+				name : 'vlr',
+				width : 40,
+				sortable : true,
+				align : 'right'
+			}, {
+				display : 'Valor c/Desc R$',
+				name : 'vlrDesc',
+				width : 60,
+				sortable : true,
+				align : 'right'
+			}, {
+				display : 'N° NF-e',
+				name : 'numNfe',
+				width : 57,
+				sortable : true,
+				align : 'left'
+			}],
+			sortname : "codigo",
+			sortorder : "asc",
+			width : 895,
+			height : 200
+		});
+	},
 	
 }, BaseController);
 
