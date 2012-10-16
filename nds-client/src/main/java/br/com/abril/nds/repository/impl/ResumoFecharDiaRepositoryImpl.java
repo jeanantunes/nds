@@ -1,6 +1,5 @@
 package br.com.abril.nds.repository.impl;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -104,13 +103,25 @@ public class ResumoFecharDiaRepositoryImpl  extends AbstractRepository implement
 		return query.list();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public BigDecimal obterValorTransferencia(Date dataOperacaoDistribuidor) {
+	public List<ReparteFecharDiaDTO> obterValorTransferencia(Date dataOperacaoDistribuidor, boolean soma) {
 		 
 		StringBuilder hql = new StringBuilder();
-		hql.append(" SELECT SUM(pe.precoVenda) from MovimentoEstoque me ");
+		
+
+		if(soma){
+			hql.append(" SELECT SUM(pe.precoVenda) as transferencias ");			
+		}else{
+			hql.append(" SELECT p.codigo as codigo,  ");
+			hql.append(" p.nome as nomeProduto, ");
+			hql.append(" pe.numeroEdicao as numeroEdicao ");
+		}
+		
+		hql.append(" from MovimentoEstoque me ");
 		hql.append(" JOIN me.tipoMovimento as tm ");
 		hql.append(" JOIN me.produtoEdicao as pe ");
+		hql.append(" JOIN pe.produto as p ");
 		hql.append(" WHERE me.dataCriacao = :dataOperacaoDistribuidor ");
 		hql.append(" AND tm.grupoMovimentoEstoque IN (:listaGrupoMovimentoEstoque) ");
 		
@@ -127,16 +138,29 @@ public class ResumoFecharDiaRepositoryImpl  extends AbstractRepository implement
 		
 		query.setParameterList("listaGrupoMovimentoEstoque", listaGrupoMovimentoEstoque);
 		
-		return (BigDecimal) query.uniqueResult();
+		query.setResultTransformer(new AliasToBeanResultTransformer(ReparteFecharDiaDTO.class));
+		
+		return query.list();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public BigDecimal obterValorDistribuido(Date dataOperacaoDistribuidor) {
+	public List<ReparteFecharDiaDTO> obterValorDistribuido(Date dataOperacaoDistribuidor , boolean soma) {
 		 
 		StringBuilder hql = new StringBuilder();
-		hql.append(" SELECT SUM(pe.precoVenda) from MovimentoEstoque me ");
+		
+
+		if(soma){
+			hql.append(" SELECT SUM(pe.precoVenda) as distribuidos ");			
+		}else{
+			hql.append(" SELECT p.codigo as codigo,  ");
+			hql.append(" p.nome as nomeProduto, ");
+			hql.append(" pe.numeroEdicao as numeroEdicao ");
+		}
+		hql.append(" from MovimentoEstoque me ");
 		hql.append(" JOIN me.tipoMovimento as tm ");
 		hql.append(" JOIN me.produtoEdicao as pe ");
+		hql.append(" JOIN pe.produto as p ");
 		hql.append(" WHERE me.dataCriacao = :dataOperacaoDistribuidor ");
 		hql.append(" AND tm.grupoMovimentoEstoque = :grupoMovimento ");
 		hql.append(" AND me.status = :status ");
@@ -148,8 +172,10 @@ public class ResumoFecharDiaRepositoryImpl  extends AbstractRepository implement
 		query.setParameter("grupoMovimento", GrupoMovimentoEstoque.ENVIO_JORNALEIRO);		
 		query.setParameter("status", StatusAprovacao.APROVADO);		
 		
+		query.setResultTransformer(new AliasToBeanResultTransformer(ReparteFecharDiaDTO.class));
 		
-		return (BigDecimal) query.uniqueResult();
+		
+		return query.list();
 	}
 	
 	@SuppressWarnings("unchecked")

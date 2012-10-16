@@ -1,6 +1,5 @@
 package br.com.abril.nds.repository;
 
-import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -10,11 +9,11 @@ public interface ResumoFecharDiaRepository {
 	
 	List<ReparteFecharDiaDTO> obterValorDiferenca(Date dataOperacao, boolean soma, String tipoDiferenca);
 
-	BigDecimal obterValorTransferencia(Date dataOperacao);
+	List<ReparteFecharDiaDTO> obterValorTransferencia(Date dataOperacao, boolean soma);
 
 	List<ReparteFecharDiaDTO> obterValorReparte(Date dataOperacaoDistribuidor, boolean soma);
 
-	BigDecimal obterValorDistribuido(Date dataOperacao);
+	List<ReparteFecharDiaDTO> obterValorDistribuido(Date dataOperacao, boolean soma);
 
 	List<ReparteFecharDiaDTO> obterResumoReparte(Date dataOperacao);
 

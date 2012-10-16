@@ -1,6 +1,5 @@
 package br.com.abril.nds.service.impl;
 
-import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -32,14 +31,14 @@ public class ResumoFecharDiaServiceImpl  implements ResumoFecharDiaService {
 
 	@Override
 	@Transactional
-	public BigDecimal obterValorTransferencia(Date dataOperacao) {		 
-		return this.resumoFecharDiaRepository.obterValorTransferencia(dataOperacao);
+	public List<ReparteFecharDiaDTO> obterValorTransferencia(Date dataOperacao, boolean soma) {		 
+		return this.resumoFecharDiaRepository.obterValorTransferencia(dataOperacao, soma);
 	}
 
 	@Override
 	@Transactional
-	public BigDecimal obterValorDistribuido(Date dataOperacao) {		 
-		return this.resumoFecharDiaRepository.obterValorDistribuido(dataOperacao);
+	public List<ReparteFecharDiaDTO> obterValorDistribuido(Date dataOperacao, boolean soma) {		 
+		return this.resumoFecharDiaRepository.obterValorDistribuido(dataOperacao, soma);
 	}
 
 	@Override

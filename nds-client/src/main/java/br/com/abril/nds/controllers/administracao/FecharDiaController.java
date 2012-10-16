@@ -164,12 +164,18 @@ public class FecharDiaController {
 		listaDeResultados.add(totalFaltas);
 		
 		
-		BigDecimal totalTranferencia = this.resumoFecharDiaService.obterValorTransferencia(distribuidor.getDataOperacao());
+		lista = this.resumoFecharDiaService.obterValorTransferencia(distribuidor.getDataOperacao(), true);
+		BigDecimal totalTranferencia = lista.get(0).getTransferencias();
 		listaDeResultados.add(totalTranferencia);
+		
+		
 		BigDecimal totalADistribuir = (totalReparte.add(totalSobras)).subtract(totalFaltas);
 		listaDeResultados.add(totalADistribuir);
-		BigDecimal totalDistribuido = this.resumoFecharDiaService.obterValorDistribuido(distribuidor.getDataOperacao());
-		listaDeResultados.add(totalDistribuido);		
+		
+		lista = this.resumoFecharDiaService.obterValorDistribuido(distribuidor.getDataOperacao(), true);
+		BigDecimal totalDistribuido = lista.get(0).getDistribuidos();
+		listaDeResultados.add(totalDistribuido);
+		
 		BigDecimal sobraDistribuido = totalADistribuir.subtract(totalDistribuido);
 		listaDeResultados.add(sobraDistribuido);
 		BigDecimal diferenca = totalDistribuido.subtract(sobraDistribuido);
