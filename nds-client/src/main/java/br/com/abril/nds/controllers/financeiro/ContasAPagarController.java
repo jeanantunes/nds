@@ -49,7 +49,7 @@ public class ContasAPagarController {
 	}
 	
 	@Path("/pesquisar.json")
-	public void pesquisar(FiltroContasAPagarDTO filtro) {
+	public void pesquisar(FiltroContasAPagarDTO filtro, String sortname, String sortorder, int rp, int page) {
 		
 		List<ContasAPagarConsultaPorProdutoVO> listVO = new ArrayList<ContasAPagarConsultaPorProdutoVO>();
 		
@@ -92,7 +92,7 @@ public class ContasAPagarController {
 	
 	
 	@Path("/pesquisarParcial.json")
-	public void pesquisarParcial(FiltroContasAPagarDTO filtro){
+	public void pesquisarParcial(FiltroContasAPagarDTO filtro, String sortname, String sortorder, int rp, int page){
 		
 		
 	}
