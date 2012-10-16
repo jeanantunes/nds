@@ -20,13 +20,6 @@ import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 
-/**
- * Classe responsável pelo controle das ações referentes à tela de Follow Up do
- * Sistema.
- * 
- * @author InfoA2 - Alex
- */
-
 @Resource
 @Path("financeiro/contasAPagar")
 public class ContasAPagarController {
@@ -40,6 +33,7 @@ public class ContasAPagarController {
 	@Autowired
 	private ContasAPagarService contasAPagarService;
 	
+	
 	public ContasAPagarController(Result result) {
 		super();
 		this.result = result;
@@ -49,14 +43,13 @@ public class ContasAPagarController {
 	@Rules(Permissao.ROLE_FINANCEIRO_CONTAS_A_PAGAR)
 	public void index() {
 		
-		List<Fornecedor> fornecedores = fornecedorService.obterFornecedores(
-				true, SituacaoCadastro.ATIVO);
+		List<Fornecedor> fornecedores = fornecedorService.obterFornecedores(true, SituacaoCadastro.ATIVO);
 		result.include("fornecedores", fornecedores);
 		
 	}
 	
 	@Path("/pesquisar.json")
-	public void pesquisar(FiltroContasAPagarDTO filtro){
+	public void pesquisar(FiltroContasAPagarDTO filtro) {
 		
 		List<ContasAPagarConsultaPorProdutoVO> listVO = new ArrayList<ContasAPagarConsultaPorProdutoVO>();
 		
@@ -80,16 +73,14 @@ public class ContasAPagarController {
 		vo.setDataFinal("10/04/2012");
 		listVO.add(vo);
 		
-		
-		
 		result.use(FlexiGridJson.class).from(listVO).total(listVO.size()).serialize();
 	}
 	
+
 	@Path("/pesquisarProduto.json")
-	public void pesquisarProduto(FiltroContasAPagarDTO filtro){
-		System.out.println("teste");
-		
-		List<ContasAPagarConsultaProdutoDTO> produtos = contasAPagarService.pesquisaProdutoContasAPagar(filtro.getProduto(), filtro.getEdicao());
+	public void pesquisarProduto(FiltroContasAPagarDTO filtro) {
+
+		List<ContasAPagarConsultaProdutoDTO> produtos = contasAPagarService.pesquisarProdutos(filtro);
 		List<ContasAPagarConsultaProdutoVO> produtosVO = new ArrayList<ContasAPagarConsultaProdutoVO>();
 		
 		for(ContasAPagarConsultaProdutoDTO dto : produtos){
@@ -97,11 +88,14 @@ public class ContasAPagarController {
 		}
 		
 		result.use(FlexiGridJson.class).from(produtosVO).total(produtosVO.size()).serialize();
-		
 	}
 	
 	
-	
+	@Path("/pesquisarParcial.json")
+	public void pesquisarParcial(FiltroContasAPagarDTO filtro){
+		
+		
+	}
 	
 }
 
