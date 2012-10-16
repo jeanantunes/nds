@@ -71,13 +71,21 @@ var contasAPagarController = $.extend(true, {
 			
 			var params = contasAPagarController.obterSelecaoColunaCheckProdutoEdicao();
 			
-			$(".porProdutosGrid", this.workspace).flexOptions({
-				url : this.path + 'pesquisar.json?' + params, 
-				preProcess : contasAPagarController.insereLinksContasAPagarPorProdutos,
-				newp : 1
-			});
-
-			$(".porProdutosGrid").flexReload();
+			$.postJSON(
+				contasAPagarController.path + 'pesquisar.json?' + params,
+				null,
+				function(result) {
+					
+					$("#contasAPagar_gridProdutoTotalPagto").html(result.totalPagto);
+					$("#contasAPagar_gridProdutoTotalDesconto").html(result.totalDesconto);
+					$("#contasAPagar_gridProdutoValorLiquido").html(result.valorLiquido);
+					
+					$(".porProdutosGrid", contasAPagarController.workspace).flexAddData({rows: toFlexiGridObject(result.grid), page : 1, total : result.totalGrid});
+				},
+				null,
+				true
+			);
+			
 			$('.gridProduto').show();
 		}
 	},
@@ -427,9 +435,10 @@ var contasAPagarController = $.extend(true, {
 		
 		$(".porProdutosGrid").flexigrid({
 			dataType : 'json',
+			preProcess : contasAPagarController.insereLinksContasAPagarPorProdutos,
 			colModel : [ {
-				display : 'rctl',
-				name : 'data',
+				display : 'Rclt',
+				name : 'rctl',
 				width : 60,
 				sortable : true,
 				align : 'left'
