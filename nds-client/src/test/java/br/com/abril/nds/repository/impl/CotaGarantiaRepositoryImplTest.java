@@ -128,6 +128,39 @@ public class CotaGarantiaRepositoryImplTest extends AbstractRepositoryImplTest {
 		List<GarantiaCadastradaDTO> garantias = this.cotaGarantiaRepository.obterGarantiasCadastradas();
 		
 		Assert.assertNotNull(garantias);
+		
+		int expectedListSize = 6;
+		int actualListSize = garantias.size();
+		
+		Assert.assertEquals(expectedListSize, actualListSize);
+		
+		for (GarantiaCadastradaDTO garantia : garantias) {
+			
+			switch (garantia.getTipoGarantia()) {
+			
+			case CAUCAO_LIQUIDA:
+				Assert.assertEquals(new BigDecimal(200), garantia.getValorTotal());
+				break;
+			case CHEQUE_CAUCAO:
+				Assert.assertEquals(new BigDecimal(25), garantia.getValorTotal());
+				break;
+			case FIADOR:
+				Assert.assertEquals(new BigDecimal(200), garantia.getValorTotal());
+				break;
+			case IMOVEL:
+				Assert.assertEquals(new BigDecimal(200), garantia.getValorTotal());
+				break;
+			case NOTA_PROMISSORIA:
+				Assert.assertEquals(new BigDecimal(50), garantia.getValorTotal());
+				break;
+			case OUTROS:
+				Assert.assertEquals(new BigDecimal(200), garantia.getValorTotal());
+				break;
+			default:
+				Assert.fail();
+				break;
+			}
+		}
 	}
 	
 	private void criarGarantiasCaucaoLiquida() {
@@ -237,8 +270,6 @@ public class CotaGarantiaRepositoryImplTest extends AbstractRepositoryImplTest {
 		cheque2.setValidade(new Date());
 		cheque2.setValor(15D);
 
-//		save(cheque1, cheque2);
-		
 		CotaGarantiaChequeCaucao garantiaChequeCaucao1 = new CotaGarantiaChequeCaucao();
 		CotaGarantiaChequeCaucao garantiaChequeCaucao2 = new CotaGarantiaChequeCaucao();
 
