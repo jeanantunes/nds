@@ -8,8 +8,8 @@ import br.com.abril.nds.dto.filtro.FiltroContasAPagarDTO;
 
 public interface ContasAPagarRepository {
 	
-	 List<ContasAPagarConsultaProdutoDTO> pesquisaProdutoContasAPagar(String codigoProduto, Long edicao);
+	 List<ContasAPagarConsultaProdutoDTO> pesquisarProdutos(FiltroContasAPagarDTO filtro);
 	 
-	 List<ContasApagarConsultaPorProdutoDTO> pesquisaContasAPagarPorProduto(FiltroContasAPagarDTO dto);
+	 List<ContasApagarConsultaPorProdutoDTO> pesquisarPorProduto(FiltroContasAPagarDTO dto);
 
 }
