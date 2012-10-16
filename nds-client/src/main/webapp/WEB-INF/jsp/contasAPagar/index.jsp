@@ -168,7 +168,7 @@
 
 	<fieldset>
 		<legend>Parciais</legend>
-	    <table class="parciaispopGrid"></table>
+	    <table class="contasAPagar_parciaispopGrid"></table>
 	</fieldset>
 
 	<br clear="all" />
