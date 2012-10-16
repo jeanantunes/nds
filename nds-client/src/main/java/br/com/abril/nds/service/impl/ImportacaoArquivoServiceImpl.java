@@ -16,17 +16,11 @@ import br.com.abril.nds.util.TipoImportacaoArquivo;
 public class ImportacaoArquivoServiceImpl implements ImportacaoArquivoService{
 
 	@Autowired
-	private ImportacaoArquivoStrategy importacaoDeArquivoMatrizStrategy;
-	
-	@Autowired
 	private ImportacaoArquivoStrategy importacaoDeArquivoHistoricoVendaStrategy;
 
 	@Autowired
 	private ImportacaoArquivoStrategy importacaoDeArquivoHistoricoFinanceiroStrategy;	
-	
-	@Autowired
-	private ImportacaoArquivoStrategy importacaoDeArquivoProdutoStrategy;
-	
+		
 	@Override
 	public RetornoImportacaoArquivoVO processarImportacaoArquivo(File arquivo, TipoImportacaoArquivo tipoImportacaoArquivo) {
 		
@@ -59,18 +53,6 @@ public class ImportacaoArquivoServiceImpl implements ImportacaoArquivoService{
 			case HISTORICO_FINANCEIRO:
 				
 				importacaoArquivoStrategy = importacaoDeArquivoHistoricoFinanceiroStrategy;
-				
-				break;
-				
-			case MATRIZ:
-				
-				importacaoArquivoStrategy = importacaoDeArquivoMatrizStrategy;
-				
-				break;
-	
-			case PRODUTO:
-				
-				importacaoArquivoStrategy = importacaoDeArquivoProdutoStrategy;
 				
 				break;
 				
