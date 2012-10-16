@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.ContasAPagarConsignadoVO;
+import br.com.abril.nds.client.vo.ContasAPagarConsultaPorProdutoVO;
 import br.com.abril.nds.client.vo.ContasAPagarConsultaProdutoVO;
 import br.com.abril.nds.client.vo.ContasAPagarEncalheVO;
 import br.com.abril.nds.client.vo.ContasAPagarFaltasSobrasVO;
@@ -16,8 +17,8 @@ import br.com.abril.nds.dto.ContasAPagarConsignadoDTO;
 import br.com.abril.nds.dto.ContasAPagarConsultaProdutoDTO;
 import br.com.abril.nds.dto.ContasAPagarEncalheDTO;
 import br.com.abril.nds.dto.ContasAPagarFaltasSobrasDTO;
-import br.com.abril.nds.dto.ContasAPagarGridPrincipalProdutoDTO;
 import br.com.abril.nds.dto.ContasAPagarParcialDTO;
+import br.com.abril.nds.dto.FlexiGridDTO;
 import br.com.abril.nds.dto.filtro.FiltroContasAPagarDTO;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
@@ -60,43 +61,43 @@ public class ContasAPagarController {
 	@Path("/pesquisar.json")
 	public void pesquisar(FiltroContasAPagarDTO filtro, String sortname, String sortorder, int rp, int page) {
 		
-		ContasAPagarGridPrincipalProdutoDTO dto = contasAPagarService.pesquisarPorProduto(filtro, sortname, sortorder, rp, page);
-		
-		if (dto == null) {
-			// TODO: msg erro busca sem resultados
-		}
-		
-		result.use(Results.json()).from(new ContasAPagarGridPrincipalProdutoVO(dto), "result").recursive().serialize();
+//		ContasAPagarGridPrincipalProdutoDTO dto = contasAPagarService.pesquisarPorProduto(filtro, sortname, sortorder, rp, page);
+//		
+//		if (dto == null) {
+//			// TODO: msg erro busca sem resultados
+//		}
+//		
+//		result.use(Results.json()).from(new ContasAPagarGridPrincipalProdutoVO(dto), "result").recursive().serialize();
 		
 		// mock
-//		List<ContasAPagarConsultaPorProdutoVO> listVO = new ArrayList<ContasAPagarConsultaPorProdutoVO>();
-//		ContasAPagarConsultaPorProdutoVO vo = new ContasAPagarConsultaPorProdutoVO();
-//		vo.setProdutoEdicaoId("1");
-//		vo.setRctl("15/12/2011");
-//		vo.setCodigo("9090");
-//		vo.setProduto("Veja");
-//		vo.setEdicao("4343");
-//		vo.setTipo("P");
-//		vo.setReparte("20");
-//		vo.setSuplementacao("5");
-//		vo.setEncalhe("10");
-//		vo.setVenda("10");
-//		vo.setFaltasSobras("848");
-//		vo.setDebitosCreditos("848");
-//		vo.setSaldoAPagar("2.000,00");
-//		vo.setFornecedor("FC");
-//		vo.setDataLcto("12/02/2012");
-//		vo.setDataFinal("10/04/2012");
-//		listVO.add(vo);
-//		
-//		ContasAPagarGridPrincipalProdutoVO gridVO = new ContasAPagarGridPrincipalProdutoVO();
-//		gridVO.setTotalPagto("111.111,00");
-//		gridVO.setTotalDesconto("22.222,00");
-//		gridVO.setValorLiquido("3.333,00");
-//		gridVO.setGrid(listVO);
-//		gridVO.setTotalGrid(34L);
-//		
-//		result.use(Results.json()).from(gridVO, "result").recursive().serialize();
+		List<ContasAPagarConsultaPorProdutoVO> listVO = new ArrayList<ContasAPagarConsultaPorProdutoVO>();
+		ContasAPagarConsultaPorProdutoVO vo = new ContasAPagarConsultaPorProdutoVO();
+		vo.setProdutoEdicaoId("1");
+		vo.setRctl("15/12/2011");
+		vo.setCodigo("9090");
+		vo.setProduto("Veja");
+		vo.setEdicao("4343");
+		vo.setTipo("P");
+		vo.setReparte("20");
+		vo.setSuplementacao("5");
+		vo.setEncalhe("10");
+		vo.setVenda("10");
+		vo.setFaltasSobras("848");
+		vo.setDebitosCreditos("848");
+		vo.setSaldoAPagar("2.000,00");
+		vo.setFornecedor("FC");
+		vo.setDataLcto("12/02/2012");
+		vo.setDataFinal("10/04/2012");
+		listVO.add(vo);
+		
+		ContasAPagarGridPrincipalProdutoVO gridVO = new ContasAPagarGridPrincipalProdutoVO();
+		gridVO.setTotalPagto("111.111,00");
+		gridVO.setTotalDesconto("22.222,00");
+		gridVO.setValorLiquido("3.333,00");
+		gridVO.setGrid(listVO);
+		gridVO.setTotalGrid(34);
+		
+		result.use(Results.json()).from(gridVO, "result").recursive().serialize();
 	}
 	
 
@@ -118,13 +119,13 @@ public class ContasAPagarController {
 	public void pesquisarParcial(FiltroContasAPagarDTO filtro, String sortname, String sortorder, int rp, int page) {
 		
 		List<ContasAPagarParcialVO> listVO = new ArrayList<ContasAPagarParcialVO>();
-		List<ContasAPagarParcialDTO> listDTO = contasAPagarService.pesquisarParcial(filtro, sortname, sortorder, rp, page);
+		FlexiGridDTO<ContasAPagarParcialDTO> flexiDTO = contasAPagarService.pesquisarParcial(filtro, sortname, sortorder, rp, page);
 		
-		for (ContasAPagarParcialDTO dto : listDTO) {
+		for (ContasAPagarParcialDTO dto : flexiDTO.getGrid()) {
 			listVO.add(new ContasAPagarParcialVO(dto));
 		}
 		
-		result.use(FlexiGridJson.class).from(listVO).total(listVO.size()).serialize();
+		result.use(FlexiGridJson.class).from(listVO).total(flexiDTO.getTotalGrid()).serialize();
 	}
 	
 	
