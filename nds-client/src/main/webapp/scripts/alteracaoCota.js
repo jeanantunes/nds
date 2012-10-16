@@ -30,7 +30,7 @@ var alteracaoCotaController = $.extend(true, {
 		
 		$("#percentualFaturamentoEntregador", this.workspace).mask("99.99");
 		$("#carenciaInicioEntregador", this.workspace).mask("99/99/9999");
-		$("#carenciaFimEntregado", this.workspace).mask("99/99/9999");
+		$("#carenciaFimEntregador", this.workspace).mask("99/99/9999");
 		
 		
 		$("#carenciaInicioEntregaBranca", this.workspace).datepicker({
@@ -94,6 +94,8 @@ var alteracaoCotaController = $.extend(true, {
 	},
 	
 	iniciarGrid : function() {
+		
+	
 		$(".alteracaoGrid", this.workspace).flexigrid({
 			dataType : 'json',
 			preProcess: alteracaoCotaController.executarPreProcessamento,
@@ -325,6 +327,8 @@ var alteracaoCotaController = $.extend(true, {
 		$("#isNotaEnvioEmail").attr("checked", false);
 		$("#isChamdaEncalheImpresso").attr("checked", false);
 		$("#isChamdaEncalheEmail").attr("checked", false);
+		alteracaoCotaController.limparCamposTipoEntrega();
+		
 	},
 	
 	popularComboFornecedor : function(data, combo) {
@@ -352,7 +356,7 @@ var alteracaoCotaController = $.extend(true, {
 	
 	
 	selectTipoEntregaDistribuicao : function() {
-
+		alteracaoCotaController.limparCamposTipoEntrega();
 		var tipoEntrega = $('#idModalIdTipoEntrega', this.workspace).val();
 		if ( tipoEntrega == 'COTA_RETIRA' ) {
 			$('#entregaBancaPj', this.workspace).hide();
@@ -406,11 +410,79 @@ var alteracaoCotaController = $.extend(true, {
 		}
 	},
 	
-	 newDoc : function()
+	limparCamposTipoEntrega : function()
 	  {
-//	  window.location.assign("http://www.w3schools.com")
-		 document.location.assign("administracao/alteracaoCota/downloadProcuracao?procuracaoRecebida=true&numeroCota=1");
+		$("#percentualFaturamentoEntregaBranca", this.workspace).val("");
+		$("#taxaFixaEntregaBranca", this.workspace).val("");
+		$("#carenciaInicioEntregaBranca", this.workspace).val("");
+		$("#carenciaFimEntregaBranca", this.workspace).val("");
+		
+		$("#percentualFaturamentoEntregador", this.workspace).val("");
+		$("#carenciaInicioEntregador", this.workspace).val("");
+		$("#carenciaFimEntregador", this.workspace).val("");
+		
+		$("#procuracao", this.workspace ).attr("checked", false);
+		$("#procuracaoRecebida", this.workspace).attr("checked", false);
+		$("#termoAdesaoRecebido", this.workspace).attr("checked", false);
+		$("#termoAdesao", this.workspace).attr("checked", false);
+		$("#uploadTermo", this.workspace).hide();
+		$("#termoArquivoRecebido", this.workspace).hide();
+		$("#termoRecebidoDownload", this.workspace).hide();
+		$("#uploadedFileTermoDiv", this.workspace).hide();
+		
+		$("#uploadProcuracao", this.workspace).hide();
+		$("#procuracaoArquivoRecebido", this.workspace).hide();
+		$("#procuracaoRecebidoDownload", this.workspace).hide();
+		$("#uploadedFileProcuracaoDiv", this.workspace).hide();
+		
+	  },
+	  mostrarEsconderDivUtilizaArquivoTermo :function(){
+		  
+	      if ( $('#termoAdesao', this.workspace).is(':checked') ) {
+			  $("#uploadTermo", this.workspace).show();
+			  $("#termoArquivoRecebido", this.workspace).show();
+			  $("#termoRecebidoDownload", this.workspace).show();
+	      } else {
+			  $("#uploadTermo", this.workspace).hide();
+			  $("#termoArquivoRecebido", this.workspace).hide();
+			  $("#termoRecebidoDownload", this.workspace).hide();
+			  
+	      }
+	  },
+	  
+	  
+	  mostrarEsconderDivArquivoUpLoadTermo :function(){
+		  if ( $('#termoAdesaoRecebido', this.workspace).is(':checked') ) {
+			  $("#uploadedFileTermoDiv", this.workspace).show();
+	      } else {
+			  $("#uploadedFileTermoDiv", this.workspace).hide();
+	      }
+	  },
+	  
+	  mostrarEsconderDivUtilizaArquivoProcuracao :function(){
+		  
+	      if ( $('#procuracao', this.workspace).is(':checked') ) {
+			  $("#uploadProcuracao", this.workspace).show();
+			  $("#procuracaoArquivoRecebido", this.workspace).show();
+			  $("#procuracaoRecebidoDownload", this.workspace).show();
+	      } else {
+			  $("#uploadProcuracao", this.workspace).hide();
+			  $("#procuracaoArquivoRecebido", this.workspace).hide();
+			  $("#procuracaoRecebidoDownload", this.workspace).hide();
+			  
+			  
+	      }
+	  },
+	  
+	  
+	  mostrarEsconderDivArquivoUpLoadProcuracao :function(){
+		  if ( $('#procuracaoRecebida', this.workspace).is(':checked') ) {
+			  $("#uploadedFileProcuracaoDiv", this.workspace).show();
+	      } else {
+			  $("#uploadedFileProcuracaoDiv", this.workspace).hide();
+	      }
 	  }
+	  
 
 	
 

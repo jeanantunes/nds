@@ -199,33 +199,49 @@
 							<div id="entregaBancaPj" style="display: none;">
 								<table width="399" border="0" cellspacing="1" cellpadding="1">
 									<tr>
-										<td width="153">Termo Ades&atilde;o:</td>
-										<td width="20"><input type="checkbox" name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.termoAdesao" id="termoAdesao" /></td>
-										<td width="216"><span class="bt_imprimir" style="display: block;">
-											<a href="javaScript:alteracaoCotaController.downloadTermoAdesao()" target="_blank">Termo</a></span>
-										</td>
-									</tr>
-									<tr>
-										<td>Termo Ades&atilde;o Recebido?</td>
-										<td colspan="2"><input type="checkbox" name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.termoAdesaoRecebido" id="termoAdesaoRecebido"  /></td>
-									</tr>
-									<tr>
-										<td>Arquivo:</td>
-										<td colspan="2">
-											   	<div id="uploadTermo">
-														<input name="uploadedFileTermo" type="file" id="uploadedFileTermo" size="30" />
-												</div>
+										<td width="115">Termo Ades&atilde;o:</td>
+										<td width="20"><input type="checkbox" name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.termoAdesao" id="termoAdesao"  onclick="alteracaoCotaController.mostrarEsconderDivUtilizaArquivoTermo()"/></td>
+									
+										<td width="216">
+										<div id="termoRecebidoDownload">
+											<span class="bt_imprimir" style="display: block;">
+												<a href="javaScript:alteracaoCotaController.downloadTermoAdesao()" target="_blank">Termo</a></span>
+										</div>		
 										</td>
 										
 									</tr>
+							      	</table>
+									<div id="termoArquivoRecebido">
+									<table width="399" border="0" cellspacing="1" cellpadding="1">
+									<tr>
+										<td width="130">Termo Ades&atilde;o Recebido?</td>
+										<td colspan="2" width="20"><input type="checkbox" name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.termoAdesaoRecebido" id="termoAdesaoRecebido"   onclick="alteracaoCotaController.mostrarEsconderDivArquivoUpLoadTermo()"   /></td>
+									</tr>
+									</table>
 									
+									<div id="uploadedFileTermoDiv">
+									<table width="399" border="0" cellspacing="1" cellpadding="1">
+								
+									<tr>
+									
+										<td>Arquivo:</td>
+										<td colspan="2">
+											<input name="uploadedFileTermo" type="file" id="uploadedFileTermo" size="30" />
+										</td>
+										
+									</tr>
+								
 									<tr>
 										<td>&nbsp;</td>
 										<td olspan="2">
 											<span id="nomeArquivoTermoAdesao"></span>
 										</td>
 									</tr>
+									</table>	
+									</div>	
 									
+									</div>
+								<table width="399" border="0" cellspacing="1" cellpadding="1">	
 									<tr>
 										<td>Percentual Faturamento:</td>
 										<td colspan="2"><input type="text"  name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.percentualFaturamentoEntregaBranca"   id="percentualFaturamentoEntregaBranca" 	style="width: 70px; text-align: right;" /></td>
@@ -233,17 +249,6 @@
 									<tr>
 										<td>Taxa Fixa R$</td>
 										<td colspan="2"><input type="text"  name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.taxaFixaEntregaBranca" id="taxaFixaEntregaBranca"	style="width: 70px; text-align: right;" /></td>
-									</tr>
-									<tr>
-										<td>Base de C&aacute;lculo:</td>
-										<td colspan="2">
-										<select name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.baseCalculo" id="baseCalculo"	style="width: 107px;">
-										
-										<c:forEach items="${listBaseCalculo}" var="baseCalculo">
-												<option value="${baseCalculo}">${baseCalculo.value}</option>
-											</c:forEach>
-										</select>
-										</td>
 									</tr>
 									<tr>
 										<td>Per&iacute;odo Car&ecirc;ncia:</td>
@@ -262,46 +267,65 @@
 							<div id="entregadorPj" style="display: none;">
 								<table width="399" border="0" cellspacing="1" cellpadding="1">
 									<tr>
-										<td>Utiliza Procura&ccedil;&atilde;o?</td>
-										<td width="20"><input type="checkbox" name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.procuracao"  id="procuracao" /></td>
-										<td width="201" class="procuracaoPj"><span
-											class="bt_imprimir" style="display: block;"><a
-												href="javaScript:alteracaoCotaController.downloadProcuracao()" target="_blank">Procura&ccedil;&atilde;o</a></span></td>
+										<td width="115">Utiliza Procura&ccedil;&atilde;o?</td>
+										<td width="20"><input type="checkbox" name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.procuracao"  id="procuracao"   onclick="alteracaoCotaController.mostrarEsconderDivUtilizaArquivoProcuracao()"/></td>
+									
+										<td width="216">
+										<div id="procuracaoRecebidoDownload">
+											<span class="bt_imprimir" style="display: block;"><a
+												href="javaScript:alteracaoCotaController.downloadProcuracao()" target="_blank">Procura&ccedil;&atilde;o</a></span>
+										</div>		
+										</td>
+										
 									</tr>
+							      	</table>
+									<div id="procuracaoArquivoRecebido">
+									<table width="399" border="0" cellspacing="1" cellpadding="1">
 									<tr>
-										<td>Procura&ccedil;&atilde;o Recebida?</td>
-										<td colspan="2"><input type="checkbox"  name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.procuracaoRecebida" id="procuracaoRecebida" /></td>
+										<td width="130">Procura&ccedil;&atilde;o Recebida?</td>
+										<td colspan="2" width="20"><input type="checkbox" name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.procuracaoRecebida" id="procuracaoRecebida"   onclick="alteracaoCotaController.mostrarEsconderDivArquivoUpLoadProcuracao()"   /></td>
 									</tr>
+									</table>
+									
+									<div id="uploadedFileProcuracaoDiv">
+									<table width="399" border="0" cellspacing="1" cellpadding="1">
+								
 									<tr>
+									
 										<td>Arquivo:</td>
 										<td colspan="2">
-											   	<div id="uploadProcuracao">
-														<input name="uploadedFileProcuracao" type="file" id="uploadedFileProcuracao"
-														   size="30"/>
-												</div>
+											<input name="uploadedFileProcuracao" type="file" id="uploadedFileProcuracao" size="30" />
 										</td>
+										
 									</tr>
-									
-									
+								
 									<tr>
 										<td>&nbsp;</td>
 										<td olspan="2">
 											<span id="nomeArquivoProcuracao"></span>
 										</td>
 									</tr>
+									</table>	
+									</div>	
 									
+									</div>
+								<table width="399" border="0" cellspacing="1" cellpadding="1">	
 									<tr>
-										<td width="145">Percentual Faturamento:</td>
-										<td colspan="2"><input type="text" name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.percentualFaturamentoEntregador" id="percentualFaturamentoEntregador" 	style="width: 70px; text-align: right;" /></td>
+										<td>Percentual Faturamento:</td>
+										<td colspan="2"><input type="text"  name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.percentualFaturamentoEntregaBranca"   id="percentualFaturamentoEntregaBranca" 	style="width: 70px; text-align: right;" /></td>
+									</tr>
+									<tr>
+										<td>Taxa Fixa R$</td>
+										<td colspan="2"><input type="text"  name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.taxaFixaEntregaBranca" id="taxaFixaEntregaBranca"	style="width: 70px; text-align: right;" /></td>
 									</tr>
 									<tr>
 										<td>Per&iacute;odo Car&ecirc;ncia:</td>
 										<td colspan="2"><table width="100%" border="0"
 												cellspacing="0" cellpadding="0">
 												<tr>
-													<td width="43%"><input name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.carenciaInicioEntregador" 	type="text" id="carenciaInicioEntregador" style="width: 70px" /></td>
-													<td width="14%">At&eacute; </td>
-													<td width="43%"><input name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.carenciaFimEntregador" 	 type="text" id="carenciaFimEntregador" style="width: 70px" /></td>
+													<td width="27%"><input name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.carenciaInicioEntregaBranca" type="text" id="carenciaInicioEntregaBranca" style="width: 70px" /></td>
+													<td width="6%">At&eacute; </td>
+													<td width="34%"><input name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.carenciaFimEntregaBranca"	type="text" id="carenciaFimEntregaBranca" style="width: 70px" /></td>
 												</tr>
 											</table></td>
 									</tr>
