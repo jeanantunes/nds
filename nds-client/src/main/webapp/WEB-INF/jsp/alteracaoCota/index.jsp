@@ -65,7 +65,7 @@
 
 								<fieldset style="width: 250px;">
 									<legend>Selecione os Fornecedores</legend>
-				              		<select name="filtroAlteracaoCotaDTO.filtroModalFornecedor.listFornecedores" multiple="multiple" id="idListFornecedores" style="height:270px; width:245px;">
+				              		<select name="idListFornecedores" multiple="multiple" id="idListFornecedores" style="height:270px; width:245px;">
 										<%-- 
 										<c:forEach items="${listFornecedores}" var="fornecedor">
 											<option value="${fornecedor.id}">${fornecedor.juridica.razaoSocial}</option>
@@ -84,7 +84,7 @@
 
 								<fieldset style="width: 250px;">
 									<legend>Fornecedores Selecionados</legend>
-				              		<select name="filtroAlteracaoCotaDTO.filtroModalFornecedor.listaFornecedoresSelecionados" multiple="multiple" id="idListaFornecedorAssociado" style="height:270px; width:245px;">
+				              		<select name="idListaFornecedorAssociado" multiple="multiple" id="idListaFornecedorAssociado" style="height:270px; width:245px;">
 				              		<%-- 
 										<c:forEach items="${listaFornecedorAssociado}" var="fornecedor">
 											<option value="${fornecedor.id}">${fornecedor.juridica.razaoSocial}</option>
@@ -186,7 +186,7 @@
 								<tr>
 									<td width="106">Tipo de Entrega:</td>
 									<td width="177">
-										<select name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.descricaoTipoEntrega" id="idModalIdTipoEntrega" style="width:100px;" onchange="alteracaoCotaController.selectTipoEntregaDistribuicao()">
+										<select name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.descricaoTipoEntrega" id="idModalIdTipoEntrega" style="width:125px;" onchange="alteracaoCotaController.selectTipoEntregaDistribuicao()">
 					              			<option selected="selected" value="-1"></option>
 											<c:forEach items="${listTipoEntrega}" var="tipoEntrega">
 												<option value="${tipoEntrega}">${tipoEntrega.value}</option>
@@ -230,7 +230,7 @@
 									<tr>
 										<td>Base de C&aacute;lculo:</td>
 										<td colspan="2">
-										<select name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.baseCalculo" id="baseCalculo"	style="width: 107px;">
+										<select name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.baseCalculo" id="baseCalculo"	style="width: 140px;">
 										
 										<c:forEach items="${listBaseCalculo}" var="baseCalculo">
 												<option value="${baseCalculo}">${baseCalculo.value}</option>
@@ -407,8 +407,8 @@
               	<td width="106">
               		<select name="filtroAlteracaoCotaDTO.idVrMinimo" id="idVrMinimo" style="width:80px;">
               			<option selected="selected" value="-1"></option>
-						<c:forEach items="${listHistoricoTitularidadeCotaFinanceiro}" var="historico">
-							<option value="${historico.id}">${historico.valorMininoCobranca}</option>
+						<c:forEach items="${listValoresMinimos}" var="valor">
+							<option value="${valor}">${valor}</option>
 						</c:forEach>
 					</select> 
               	</td>
@@ -457,9 +457,9 @@
   				<tr>
     				<td width="502"><span class="bt_novos" title="Novo"><a href="javascript:;" onclick="alteracaoCotaController.carregarAlteracao();"><img src="${pageContext.request.contextPath}/images/ico_editar.gif" hspace="5" border="0"/>Alterar</a></span></td>
     				<td width="168"><strong>Total de Cotas Selecionadas:</strong></td>
-    				<td width="141">4</td>
+    				<td width="141"><span id="totalCotasSelecionadas"></span></td>
     				<td width="91">Selecionar Todos</td>
-    				<td width="48"><input type="checkbox" name="checkbox3" id="acionador" /></td>
+    				<td width="48"><input type="checkbox" name="checkAll" id="alteracaoCotaCheckAll" onclick="alteracaoCotaController.checkAll(this); alteracaoCotaController.verificarCheck();" /></td>
   				</tr>
 			</table>
         </div>

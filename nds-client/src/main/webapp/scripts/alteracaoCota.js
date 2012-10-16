@@ -1,7 +1,5 @@
 $(document).ready(function() {
-	$("#acionador").click(function() {
-		$(".selectLine").attr("checked", this.checked);
-	});
+	
 	
 	showCamposSuspensao($("#idIsSugereSuspensaoModal").attr("checked") == "checked");
 	
@@ -179,7 +177,7 @@ var alteracaoCotaController = $.extend(true, {
 	},
 	
 	pesquisar : function() {
-		
+		alteracaoCotaController.verificarCheck();
 		var params = $("#pesquisarForm", this.workspace).serialize();
 		
 		$(".alteracaoGrid", this.workspace).flexOptions({
@@ -198,7 +196,7 @@ var alteracaoCotaController = $.extend(true, {
 
 		$.each(resultado.rows, function(index, row) {
 			
-			var campoSelect = "<input name='filtroAlteracaoCotaDTO.listaLinhaSelecao["+index+"]' class='selectLine' type='checkbox' value='"+row.cell.idCota+"'>";
+			var campoSelect = "<input name='filtroAlteracaoCotaDTO.listaLinhaSelecao["+ index +"]' class='selectLine' type='checkbox' value='"+row.cell.idCota+"' onclick='alteracaoCotaController.verificarCheck();'>";
 			
 			row.cell.acao = campoSelect;
 		});
@@ -227,8 +225,10 @@ var alteracaoCotaController = $.extend(true, {
 	
 	carregarAlteracao : function() {
 		var linhasSelecionadas = 0;
+		
 		$(".selectLine", this.workspace).each(function(index, element) {	
 			if(element.checked){
+				element.name = 'filtroAlteracaoCotaDTO.listaLinhaSelecao['+ linhasSelecionadas +']';
 				linhasSelecionadas++;
 			}
 			
@@ -283,8 +283,28 @@ var alteracaoCotaController = $.extend(true, {
 						$("#idModalIsRepartePontoVenda").attr("checked", filtro.filtroModalDistribuicao.isRepartePontoVenda);
 						$("#idModalIsSolicitacaoNumAtrasoInternet").attr("checked", filtro.filtroModalDistribuicao.isSolicitacaoNumAtrasoInternet);
 						$("#idModalIsRecebeRecolheProdutosParciais").attr("checked", filtro.filtroModalDistribuicao.isRecebeRecolheProdutosParciais);
-						$("#idModalIdTipoEntrega").val(filtro.filtroModalDistribuicao.idTipoEntrega);
-	
+						
+						//Tipo Entrega
+						$("#idModalIdTipoEntrega").val(filtro.filtroModalDistribuicao.descricaoTipoEntrega);
+						alteracaoCotaController.selectTipoEntregaDistribuicao()
+							
+						if($("#idModalIdTipoEntrega").val() == 'ENTREGA_EM_BANCA'){
+							//Entrega em Banca
+							$("#termoAdesao").attr("checked", filtro.filtroModalDistribuicao.termoAdesao);
+							$("#termoAdesaoRecebido").attr("checked", filtro.filtroModalDistribuicao.termoAdesaoRecebido);
+							$("#percentualFaturamentoEntregaBranca").val(filtro.filtroModalDistribuicao.percentualFaturamentoEntregaBranca);
+							$("#taxaFixaEntregaBranca").val(filtro.filtroModalDistribuicao.taxaFixaEntregaBranca);
+							$("#carenciaInicioEntregaBranca").val(filtro.filtroModalDistribuicao.carenciaInicioEntregaBranca);
+							$("#carenciaFimEntregaBranca").val(filtro.filtroModalDistribuicao.carenciaFimEntregaBranca);
+						}else if($("#idModalIdTipoEntrega").val() == 'ENTREGADOR'){
+							$("#procuracao").attr("checked", filtro.filtroModalDistribuicao.procuracao);
+							$("#procuracaoRecebida").attr("checked", filtro.filtroModalDistribuicao.procuracaoRecebida);
+							$("#percentualFaturamentoEntregador").val(filtro.filtroModalDistribuicao.percentualFaturamentoEntregador);
+							$("#carenciaInicioEntregador").val(filtro.filtroModalDistribuicao.carenciaInicioEntregador);
+							$("#carenciaFimEntregador").val(filtro.filtroModalDistribuicao.carenciaFimEntregador);
+						}
+						
+						
 						//Checks Emissao Documento
 						$("#isSlipImpresso").attr("checked", filtro.filtroModalDistribuicao.filtroCheckDistribEmisDoc.isSlipImpresso);
 						$("#isSlipEmail").attr("checked", filtro.filtroModalDistribuicao.filtroCheckDistribEmisDoc.isSlipEmail);
@@ -325,6 +345,24 @@ var alteracaoCotaController = $.extend(true, {
 		$("#idModalIsSolicitacaoNumAtrasoInternet").attr("checked", false);
 		$("#idModalIsRecebeRecolheProdutosParciais").attr("checked", false);
 		$("#idModalIdTipoEntrega").val("");
+			//Entrega em Banca
+		$("#entregaBancaPj").hide();
+		$("#termoAdesao").attr("checked", false);
+		$("#termoAdesaoRecebido").attr("checked", false);
+		$("#uploadedFileTermo").val("");
+		$("#percentualFaturamentoEntregaBranca").val("");
+		$("#taxaFixaEntregaBranca").val("");
+		$("#carenciaInicioEntregaBranca").val("");
+		$("#carenciaFimEntregaBranca").val("");
+			//Entregador
+		$("#entregadorPj").hide();
+		$("#procuracao").attr("checked", false);
+		$("#procuracaoRecebida").attr("checked", false);
+		$("#uploadedFileProcuracao").val("");
+		$("#percentualFaturamentoEntregador").val("");
+		$("#carenciaInicioEntregador").val("");
+		$("#carenciaFimEntregador").val("");
+		
 
 		//Checks Emissao Documento
 		$("#isSlipImpresso").attr("checked", false);
@@ -349,10 +387,40 @@ var alteracaoCotaController = $.extend(true, {
 		$(combo).clear().append(opcoes);
 	},
 	
+	verificarCheck : function(){
+		var todosChecados = true;
+		var selecionados = 0;
+		var totalCotas = $("#totalCotasSelecionadas", this.workspace);
+		
+		$(".selectLine", this.workspace).each(function(index, element) {	
+			if(element.checked){
+				selecionados++;
+			}else{
+				todosChecados = false;
+			}
+			
+		});
+		totalCotas.html(selecionados);
+		$("#alteracaoCotaCheckAll", this.workspace).get(0).checked = todosChecados;
+	},
+	
+	checkAll : function(check){
+		
+		$(".selectLine", this.workspace).each(function(index, element) {
+			element.checked = check.checked;
+		});
+		alteracaoCotaController.verificarCheck();
+	},
+	
 	salvarAlteracao : function() {
-		alert($("#pesquisarForm", this.workspace).serialize());
+		
+		var  dataForm = $("#pesquisarForm", this.workspace).serializeArray();
+		$("#idListaFornecedorAssociado option", this.workspace).each(function (index) {
+			 dataForm.push({name: 'filtroAlteracaoCotaDTO.filtroModalFornecedor.listaFornecedoresSelecionados['+index+']', value:$(this, this.workspace).val() } );
+		});
+		
 		$.postJSON(contextPath + "/administracao/alteracaoCota/salvarAlteracao",
-				$("#pesquisarForm", this.workspace).serialize(),  
+				dataForm,  
 			   	function () {
 					$("#dialog-novo", this.workspace).dialog( "close" );
 					alteracaoCotaController.pesquisar();
