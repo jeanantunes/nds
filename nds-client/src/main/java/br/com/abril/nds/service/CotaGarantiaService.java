@@ -3,6 +3,7 @@ import java.util.List;
 
 import br.com.abril.nds.dto.CotaGarantiaDTO;
 import br.com.abril.nds.dto.FormaCobrancaCaucaoLiquidaDTO;
+import br.com.abril.nds.dto.GarantiaCadastradaDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.NotaPromissoriaDTO;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -254,4 +255,7 @@ public interface CotaGarantiaService {
      * @return imagem do cheque caução do histórico de titularidade da cota
      */
 	byte[] getImagemChequeCaucaoHistoricoTitularidade(Long idCota, Long idHistorico);
+
+	List<GarantiaCadastradaDTO> obterGarantiasCadastradas();
+
 }
