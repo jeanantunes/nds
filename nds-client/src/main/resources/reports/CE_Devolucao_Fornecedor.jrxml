@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="CE_Devolucao_Fornecedor" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="814" leftMargin="14" rightMargin="14" topMargin="6" bottomMargin="6">
-	<property name="ireport.zoom" value="4.0"/>
-	<property name="ireport.x" value="2456"/>
-	<property name="ireport.y" value="760"/>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="CE_Devolucao_Fornecedor" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="BlankPage" columnWidth="814" leftMargin="14" rightMargin="14" topMargin="6" bottomMargin="6">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="303"/>
+	<property name="ireport.y" value="0"/>
 	<style name="zebrado">
 		<conditionalStyle>
 			<conditionExpression><![CDATA[$V{REPORT_COUNT}%2 == 1]]></conditionExpression>
@@ -19,7 +19,7 @@
 				<textElement>
 					<font fontName="Times New Roman" size="7"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["" + "TREELOG S.A. LOGISTICA E DISTR"]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[ "TREELOG S.A. LOGISTICA E DISTR"]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="301" y="0" width="136" height="11"/>
@@ -33,7 +33,7 @@
 				<textElement>
 					<font fontName="Times New Roman" size="7"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[""+"12.123.456/0001-00"]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA["12.123.456/0001-00"]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="492" y="0" width="33" height="11"/>
@@ -54,21 +54,21 @@
 				<textElement>
 					<font fontName="Times New Roman" size="7"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[""+"119747"]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA["119747"]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="51" y="10" width="203" height="11"/>
 				<textElement>
 					<font fontName="Times New Roman" size="7"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["" + "R DR KENKITI SHIMOMOTO 1678 - OSASCO - SP"]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA["R DR KENKITI SHIMOMOTO 1678 - OSASCO - SP"]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="541" y="10" width="63" height="11"/>
 				<textElement>
 					<font fontName="Times New Roman" size="7"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[""+"492127567118"]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA["492127567118"]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="492" y="10" width="50" height="11"/>
@@ -82,21 +82,21 @@
 				<textElement>
 					<font fontName="Times New Roman" size="7"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["" + "ESTABELECIMENTO-DIST.SERGIPANA DE PUBLIC.LTDA."]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA["ESTABELECIMENTO-DIST.SERGIPANA DE PUBLIC.LTDA."]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="286" y="20" width="151" height="11"/>
 				<textElement>
 					<font fontName="Times New Roman" size="7"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["" + "END- AV PEDRO CALAZANS 230"]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA["END- AV PEDRO CALAZANS 230"]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="563" y="20" width="94" height="11"/>
 				<textElement>
 					<font fontName="Times New Roman" size="7"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["" + "ARACAJU"]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA["ARACAJU"]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="541" y="20" width="23" height="11"/>
@@ -110,7 +110,7 @@
 				<textElement>
 					<font fontName="Times New Roman" size="7"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[""+"49055520"]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA["49055520"]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="721" y="20" width="18" height="11"/>
@@ -131,14 +131,14 @@
 				<textElement>
 					<font fontName="Times New Roman" size="7"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[""+"SE"]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA["SE"]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="83" y="30" width="80" height="11"/>
 				<textElement>
 					<font fontName="Times New Roman" size="7"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["" + "3147049/0001-60"]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA["3147049/0001-60"]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="51" y="30" width="33" height="11"/>
@@ -159,7 +159,7 @@
 				<textElement>
 					<font fontName="Times New Roman" size="7"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[""+"270985565"]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA["270985565"]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="412" y="30" width="50" height="11"/>
@@ -173,7 +173,7 @@
 				<textElement>
 					<font fontName="Times New Roman" size="7"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[""+"2918/2949 - DEV.MERC.CONSIG/DEV.MERC.DISTRIB"]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA["2918/2949 - DEV.MERC.CONSIG/DEV.MERC.DISTRIB"]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="308" y="40" width="35" height="11"/>
@@ -229,7 +229,7 @@
 				<textElement>
 					<font fontName="Times New Roman" size="7"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["" + "11/10/2012"]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA["11/10/2012"]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="191" y="40" width="40" height="11"/>
@@ -243,42 +243,42 @@
 				<textElement>
 					<font fontName="Times New Roman" size="7"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["" + "11"]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA["11"]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="308" y="50" width="35" height="11"/>
 				<textElement>
 					<font fontName="Times New Roman" size="7"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["" + "2678001"]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA["2678001"]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="361" y="50" width="40" height="11"/>
 				<textElement>
 					<font fontName="Times New Roman" size="7"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["" + "503695"]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA["503695"]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="412" y="50" width="43" height="11"/>
 				<textElement>
 					<font fontName="Times New Roman" size="7"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["" + "27/09/2012"]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA["27/09/2012"]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="493" y="50" width="32" height="11"/>
 				<textElement textAlignment="Center">
 					<font fontName="Times New Roman" size="7"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["" + "41"]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA["41"]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="557" y="50" width="45" height="11"/>
 				<textElement textAlignment="Center">
 					<font fontName="Times New Roman" size="7"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["" + "2337628"]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA["2337628"]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="634" y="50" width="69" height="11"/>
@@ -292,7 +292,7 @@
 				<textElement textAlignment="Center">
 					<font fontName="Times New Roman" size="7"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["" + "27/09/2012"]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA["27/09/2012"]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="51" y="50" width="44" height="11"/>
@@ -306,14 +306,14 @@
 				<textElement>
 					<font fontName="Times New Roman" size="7"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["" + "BANCAS DE JORNAIS DIVERSAS (MERCADORIAS"]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA["BANCAS DE JORNAIS DIVERSAS (MERCADORIAS"]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="96" y="60" width="231" height="11"/>
 				<textElement>
 					<font fontName="Times New Roman" size="7"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["" + "A SEREM RECOLHIDAS PELO ESTABELECIMENTO ACIMA)"]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA["A SEREM RECOLHIDAS PELO ESTABELECIMENTO ACIMA)"]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageHeader>
@@ -1729,7 +1729,4 @@
 			</staticText>
 		</band>
 	</pageFooter>
-	<summary>
-		<band height="42" splitType="Stretch"/>
-	</summary>
 </jasperReport>

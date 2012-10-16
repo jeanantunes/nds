@@ -1,0 +1,816 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="resumo_CE_Devolucao_Fornecedor" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="BlankPage" columnWidth="814" leftMargin="14" rightMargin="14" topMargin="6" bottomMargin="6">
+	<property name="ireport.zoom" value="3.0"/>
+	<property name="ireport.x" value="905"/>
+	<property name="ireport.y" value="346"/>
+	<property name="ireport.layers" value="##Mon Oct 15 15:28:00 BRT 2012\nlayer.1.name=Layer 1\nlayer.1.visible=true\nlayer.1.id=1\nlayer.0.name=Background\nlayer.0.visible=true\nlayer.0.id=0"/>
+	<style name="zebrado">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$V{REPORT_COUNT}%2 == 1]]></conditionExpression>
+			<style backcolor="#CCCCCC"/>
+		</conditionalStyle>
+	</style>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<pageHeader>
+		<band height="75" splitType="Stretch">
+			<textField>
+				<reportElement x="51" y="0" width="180" height="11"/>
+				<textElement>
+					<font fontName="Times New Roman" size="7"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["TREELOG S.A. LOGISTICA E DISTR"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="301" y="0" width="136" height="11"/>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="7"/>
+				</textElement>
+				<text><![CDATA[** CHAMADA DE ENCALHE **]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="524" y="0" width="78" height="11"/>
+				<textElement>
+					<font fontName="Times New Roman" size="7"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["12.123.456/0001-00"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="492" y="0" width="33" height="11"/>
+				<textElement>
+					<font fontName="Times New Roman" size="7"/>
+				</textElement>
+				<text><![CDATA[CNPJ - ]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="51" y="10" width="203" height="11"/>
+				<textElement>
+					<font fontName="Times New Roman" size="7"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["R DR KENKITI SHIMOMOTO 1678 - OSASCO - SP"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="541" y="10" width="63" height="11"/>
+				<textElement>
+					<font fontName="Times New Roman" size="7"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["492127567118"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="492" y="10" width="50" height="11"/>
+				<textElement>
+					<font fontName="Times New Roman" size="7"/>
+				</textElement>
+				<text><![CDATA[INSC. EST. -]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="51" y="20" width="221" height="11"/>
+				<textElement>
+					<font fontName="Times New Roman" size="7"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["ESTABELECIMENTO-DIST.SERGIPANA DE PUBLIC.LTDA."]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="286" y="20" width="151" height="11"/>
+				<textElement>
+					<font fontName="Times New Roman" size="7"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["END- AV PEDRO CALAZANS 230"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="563" y="20" width="94" height="11"/>
+				<textElement>
+					<font fontName="Times New Roman" size="7"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["ARACAJU"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="541" y="20" width="23" height="11"/>
+				<textElement>
+					<font fontName="Times New Roman" size="7"/>
+				</textElement>
+				<text><![CDATA[CID-]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="738" y="20" width="47" height="11"/>
+				<textElement>
+					<font fontName="Times New Roman" size="7"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["49055520"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="721" y="20" width="18" height="11"/>
+				<textElement>
+					<font fontName="Times New Roman" size="7"/>
+				</textElement>
+				<text><![CDATA[CEP-]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="688" y="20" width="15" height="11"/>
+				<textElement>
+					<font fontName="Times New Roman" size="7"/>
+				</textElement>
+				<text><![CDATA[UF-]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="702" y="20" width="20" height="11"/>
+				<textElement>
+					<font fontName="Times New Roman" size="7"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["SE"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="83" y="30" width="80" height="11"/>
+				<textElement>
+					<font fontName="Times New Roman" size="7"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["3147049/0001-60"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="51" y="30" width="33" height="11"/>
+				<textElement>
+					<font fontName="Times New Roman" size="7"/>
+				</textElement>
+				<text><![CDATA[CNPJ - ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="254" y="30" width="55" height="11"/>
+				<textElement>
+					<font fontName="Times New Roman" size="7"/>
+				</textElement>
+				<text><![CDATA[INSC. EST. -]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="308" y="30" width="61" height="11"/>
+				<textElement>
+					<font fontName="Times New Roman" size="7"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["270985565"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="412" y="30" width="50" height="11"/>
+				<textElement>
+					<font fontName="Times New Roman" size="7"/>
+				</textElement>
+				<text><![CDATA[NAT.OPER:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="461" y="30" width="207" height="11"/>
+				<textElement>
+					<font fontName="Times New Roman" size="7"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["2918/2949 - DEV.MERC.CONSIG/DEV.MERC.DISTRIB"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="308" y="40" width="35" height="11"/>
+				<textElement>
+					<font fontName="Times New Roman" size="7"/>
+				</textElement>
+				<text><![CDATA[CODIGO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="361" y="40" width="40" height="11"/>
+				<textElement>
+					<font fontName="Times New Roman" size="7"/>
+				</textElement>
+				<text><![CDATA[NUM.C.E]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="412" y="40" width="43" height="11"/>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="7"/>
+				</textElement>
+				<text><![CDATA[DT.EMISSAO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="493" y="40" width="32" height="11"/>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="7"/>
+				</textElement>
+				<text><![CDATA[SEMANA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="557" y="40" width="45" height="11"/>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="7"/>
+				</textElement>
+				<text><![CDATA[CONTROLE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="634" y="40" width="114" height="11"/>
+				<textElement>
+					<font fontName="Times New Roman" size="7"/>
+				</textElement>
+				<text><![CDATA[PRAZO LIMITE PARA CHEGADA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="191" y="40" width="40" height="11"/>
+				<textElement>
+					<font fontName="Times New Roman" size="7"/>
+				</textElement>
+				<text><![CDATA[TIPO DE CE.]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="231" y="40" width="28" height="11"/>
+				<textElement>
+					<font fontName="Times New Roman" size="7"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["11"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="308" y="50" width="35" height="11"/>
+				<textElement>
+					<font fontName="Times New Roman" size="7"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["2678001"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="361" y="50" width="40" height="11"/>
+				<textElement>
+					<font fontName="Times New Roman" size="7"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["503695"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="412" y="50" width="43" height="11"/>
+				<textElement>
+					<font fontName="Times New Roman" size="7"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["27/09/2012"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="493" y="50" width="32" height="11"/>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="7"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["41"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="557" y="50" width="45" height="11"/>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="7"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["2337628"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="634" y="50" width="69" height="11"/>
+				<textElement>
+					<font fontName="Times New Roman" size="7"/>
+				</textElement>
+				<text><![CDATA[NOSSO ARMAZEM]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="702" y="50" width="46" height="11"/>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="7"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["27/09/2012"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="51" y="50" width="44" height="11"/>
+				<textElement>
+					<font fontName="Times New Roman" size="7"/>
+				</textElement>
+				<text><![CDATA[REMETENTE:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="96" y="50" width="205" height="11"/>
+				<textElement>
+					<font fontName="Times New Roman" size="7"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["BANCAS DE JORNAIS DIVERSAS (MERCADORIAS"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="96" y="60" width="231" height="11"/>
+				<textElement>
+					<font fontName="Times New Roman" size="7"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["A SEREM RECOLHIDAS PELO ESTABELECIMENTO ACIMA)"]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="43" splitType="Stretch">
+			<staticText>
+				<reportElement x="10" y="10" width="796" height="17"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="7"/>
+				</textElement>
+				<text><![CDATA[RESUMO DA CHAMADA DE ENCALHE]]></text>
+			</staticText>
+			<elementGroup>
+				<staticText>
+					<reportElement x="3" y="0" width="7" height="11"/>
+					<textElement textAlignment="Center">
+						<font fontName="Times New Roman" size="7"/>
+					</textElement>
+					<text><![CDATA[#]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="3" y="18" width="7" height="9"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Times New Roman" size="7"/>
+					</textElement>
+					<text><![CDATA[*]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="3" y="10" width="7" height="9"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Times New Roman" size="7"/>
+					</textElement>
+					<text><![CDATA[*]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="3" y="26" width="7" height="9"/>
+					<textElement textAlignment="Center">
+						<font fontName="Times New Roman" size="7"/>
+					</textElement>
+					<text><![CDATA[*]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="3" y="34" width="7" height="9"/>
+					<textElement textAlignment="Center">
+						<font fontName="Times New Roman" size="7"/>
+					</textElement>
+					<text><![CDATA[*]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="31" y="26" width="7" height="11"/>
+					<textElement textAlignment="Center">
+						<font fontName="Times New Roman" size="7"/>
+					</textElement>
+					<text><![CDATA[*]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="147" y="26" width="7" height="11"/>
+					<textElement textAlignment="Center">
+						<font fontName="Times New Roman" size="7"/>
+					</textElement>
+					<text><![CDATA[*]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="276" y="26" width="7" height="11"/>
+					<textElement textAlignment="Center">
+						<font fontName="Times New Roman" size="7"/>
+					</textElement>
+					<text><![CDATA[*]]></text>
+				</staticText>
+			</elementGroup>
+			<elementGroup>
+				<staticText>
+					<reportElement x="806" y="0" width="7" height="11"/>
+					<textElement textAlignment="Center">
+						<font fontName="Times New Roman" size="7"/>
+					</textElement>
+					<text><![CDATA[#]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="806" y="20" width="7" height="11"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Times New Roman" size="7"/>
+					</textElement>
+					<text><![CDATA[*]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="806" y="10" width="7" height="11"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Times New Roman" size="7"/>
+					</textElement>
+					<text><![CDATA[*]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="806" y="30" width="7" height="11"/>
+					<textElement textAlignment="Center">
+						<font fontName="Times New Roman" size="7"/>
+					</textElement>
+					<text><![CDATA[*]]></text>
+				</staticText>
+			</elementGroup>
+			<staticText>
+				<reportElement x="10" y="26" width="22" height="11"/>
+				<textElement>
+					<font fontName="Times New Roman" size="7"/>
+				</textElement>
+				<text><![CDATA[LINHA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="37" y="26" width="111" height="11"/>
+				<textElement>
+					<font fontName="Times New Roman" size="7"/>
+				</textElement>
+				<text><![CDATA[DOCUMENTO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="153" y="26" width="43" height="11"/>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="7"/>
+				</textElement>
+				<text><![CDATA[VENCTO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="195" y="26" width="82" height="11"/>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="7"/>
+				</textElement>
+				<text><![CDATA[VALOR DCTO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="282" y="26" width="82" height="11"/>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="7"/>
+				</textElement>
+				<text><![CDATA[VALOR MARGEM]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="363" y="26" width="7" height="9"/>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="7"/>
+				</textElement>
+				<text><![CDATA[*]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="363" y="34" width="7" height="9"/>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="7"/>
+				</textElement>
+				<text><![CDATA[*]]></text>
+			</staticText>
+			<line>
+				<reportElement x="10" y="40" width="352" height="1"/>
+				<graphicElement>
+					<pen lineWidth="0.25"/>
+				</graphicElement>
+			</line>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="18" splitType="Stretch">
+			<elementGroup/>
+			<textField>
+				<reportElement x="10" y="2" width="22" height="15"/>
+				<box>
+					<bottomPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" markup="none">
+					<font fontName="Times New Roman" size="7"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["1"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="31" y="2" width="7" height="15"/>
+				<box>
+					<bottomPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="7"/>
+				</textElement>
+				<text><![CDATA[*]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="37" y="2" width="111" height="15"/>
+				<box>
+					<bottomPen lineWidth="0.25"/>
+				</box>
+				<textElement markup="none">
+					<font fontName="Times New Roman" size="7"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["TOTAL DOCTO N. - 119747"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="147" y="2" width="7" height="15"/>
+				<box>
+					<bottomPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="7"/>
+				</textElement>
+				<text><![CDATA[*]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="153" y="2" width="42" height="15"/>
+				<box>
+					<bottomPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" markup="none">
+					<font fontName="Times New Roman" size="7"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["11/10/2012 -"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="194" y="2" width="82" height="15"/>
+				<box>
+					<bottomPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Right" markup="none">
+					<font fontName="Times New Roman" size="7"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["279,05"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="275" y="2" width="7" height="15"/>
+				<box>
+					<bottomPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="7"/>
+				</textElement>
+				<text><![CDATA[*]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="281" y="2" width="82" height="15"/>
+				<box>
+					<bottomPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Right" markup="none">
+					<font fontName="Times New Roman" size="7"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["41,45"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="363" y="1" width="7" height="9"/>
+				<box>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="7"/>
+				</textElement>
+				<text><![CDATA[*]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="363" y="9" width="7" height="9"/>
+				<box>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="7"/>
+				</textElement>
+				<text><![CDATA[*]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="3" y="9" width="7" height="9"/>
+				<box>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="7"/>
+				</textElement>
+				<text><![CDATA[*]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="3" y="1" width="7" height="9"/>
+				<box>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="7"/>
+				</textElement>
+				<text><![CDATA[*]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="806" y="1" width="7" height="9"/>
+				<box>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="7"/>
+				</textElement>
+				<text><![CDATA[*]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="806" y="9" width="7" height="9"/>
+				<box>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="7"/>
+				</textElement>
+				<text><![CDATA[*]]></text>
+			</staticText>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="52" splitType="Stretch">
+			<staticText>
+				<reportElement x="151" y="0" width="125" height="11"/>
+				<textElement>
+					<font fontName="Times New Roman" size="7"/>
+				</textElement>
+				<text><![CDATA[TOTAL MARGEM DO DISTRIBUIDOR]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="275" y="0" width="7" height="11"/>
+				<box>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="7"/>
+				</textElement>
+				<text><![CDATA[*]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="281" y="0" width="82" height="11"/>
+				<box>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" markup="none">
+					<font fontName="Times New Roman" size="7"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["4.078.71"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="275" y="10" width="7" height="11"/>
+				<box>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="7"/>
+				</textElement>
+				<text><![CDATA[*]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="363" y="10" width="7" height="11"/>
+				<box>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="7"/>
+				</textElement>
+				<text><![CDATA[*]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="363" y="0" width="7" height="11"/>
+				<box>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="7"/>
+				</textElement>
+				<text><![CDATA[*]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="275" y="20" width="7" height="11"/>
+				<box>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="7"/>
+				</textElement>
+				<text><![CDATA[#]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="363" y="20" width="7" height="11"/>
+				<box>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="7"/>
+				</textElement>
+				<text><![CDATA[*]]></text>
+			</staticText>
+			<line>
+				<reportElement x="283" y="30" width="79" height="1"/>
+				<graphicElement>
+					<pen lineWidth="0.25"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement x="806" y="10" width="7" height="11"/>
+				<box>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="7"/>
+				</textElement>
+				<text><![CDATA[*]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="806" y="0" width="7" height="11"/>
+				<box>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="7"/>
+				</textElement>
+				<text><![CDATA[*]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="806" y="20" width="7" height="11"/>
+				<box>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="7"/>
+				</textElement>
+				<text><![CDATA[*]]></text>
+			</staticText>
+			<line>
+				<reportElement x="369" y="50" width="436" height="1"/>
+				<graphicElement>
+					<pen lineWidth="0.25"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement x="369" y="0" width="156" height="11"/>
+				<textElement>
+					<font fontName="Times New Roman" size="7"/>
+				</textElement>
+				<text><![CDATA[( A ) SUB TOTAL DAS VENDAS (LINHA 1 A 14)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="369" y="40" width="156" height="11"/>
+				<textElement>
+					<font fontName="Times New Roman" size="7"/>
+				</textElement>
+				<text><![CDATA[( C ) VALOR A PAGAR EM 11/10/2012 ( A - B )]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="363" y="30" width="7" height="11"/>
+				<box>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="7"/>
+				</textElement>
+				<text><![CDATA[*]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="370" y="20" width="156" height="11"/>
+				<textElement>
+					<font fontName="Times New Roman" size="7"/>
+				</textElement>
+				<text><![CDATA[( B ) VALOR A ABATER PROJETOS ESPECIAIS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="363" y="40" width="7" height="11"/>
+				<box>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="7"/>
+				</textElement>
+				<text><![CDATA[*]]></text>
+			</staticText>
+		</band>
+	</columnFooter>
+	<pageFooter>
+		<band height="40" splitType="Stretch">
+			<staticText>
+				<reportElement x="10" y="0" width="22" height="9"/>
+				<textElement>
+					<font fontName="Times New Roman" size="7"/>
+				</textElement>
+				<text><![CDATA[OBS:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="629" y="0" width="177" height="9"/>
+				<textElement textAlignment="Center" markup="none">
+					<font fontName="Times New Roman" size="7"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[" > > > > > >   503695   < < < < < < "]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="587" y="0" width="42" height="9"/>
+				<textElement textAlignment="Right">
+					<font fontName="Times New Roman" size="7"/>
+				</textElement>
+				<text><![CDATA[ABERTA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="32" y="0" width="369" height="9"/>
+				<textElement>
+					<font fontName="Times New Roman" size="7"/>
+				</textElement>
+				<text><![CDATA[A LETRA "D" APOS O NUMERO DA N.E. INDICA UMA OU MAIS N.E'S OU C.C.F'S ALTERANDO AS QUANTIDADES]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="32" y="8" width="369" height="9"/>
+				<textElement>
+					<font fontName="Times New Roman" size="7"/>
+				</textElement>
+				<text><![CDATA[NAO CONSIDERAR O VALOR DA MARGEM QUANDO APURAR O VALOR A PAGAR]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="FixRelativeToBottom" mode="Opaque" x="10" y="29" width="796" height="11" backcolor="#CCCCCC"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[>  >  >  >  >   A DEVOLUÇÃO DESTA FOLHA 'PREENCHIDA' É OBRIGATÓRIA. DEVOLVER JUNTO COM A CHAMADA DE ENCALHE.   <  <  <  <  <  ]]></text>
+			</staticText>
+		</band>
+	</pageFooter>
+</jasperReport>
