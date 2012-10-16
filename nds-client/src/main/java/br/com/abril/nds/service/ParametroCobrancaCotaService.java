@@ -1,6 +1,7 @@
 package br.com.abril.nds.service;
 
 import java.io.File;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -228,4 +229,6 @@ public interface ParametroCobrancaCotaService {
 	FormaCobrancaDTO obterFormaPagamentoHistoricoTitularidade(Long idFormaPagto);
 	
 	void alterarParametro(ParametroCobrancaCota parametroCobrancaCota);
+	
+	List<BigDecimal> comboValoresMinimos();
 }

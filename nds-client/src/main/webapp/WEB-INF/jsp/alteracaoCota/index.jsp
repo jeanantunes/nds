@@ -65,7 +65,7 @@
 
 								<fieldset style="width: 250px;">
 									<legend>Selecione os Fornecedores</legend>
-				              		<select name="filtroAlteracaoCotaDTO.filtroModalFornecedor.listFornecedores" multiple="multiple" id="idListFornecedores" style="height:270px; width:245px;">
+				              		<select name="idListFornecedores" multiple="multiple" id="idListFornecedores" style="height:270px; width:245px;">
 										<%-- 
 										<c:forEach items="${listFornecedores}" var="fornecedor">
 											<option value="${fornecedor.id}">${fornecedor.juridica.razaoSocial}</option>
@@ -84,7 +84,7 @@
 
 								<fieldset style="width: 250px;">
 									<legend>Fornecedores Selecionados</legend>
-				              		<select name="filtroAlteracaoCotaDTO.filtroModalFornecedor.listaFornecedoresSelecionados" multiple="multiple" id="idListaFornecedorAssociado" style="height:270px; width:245px;">
+				              		<select name="idListaFornecedorAssociado" multiple="multiple" id="idListaFornecedorAssociado" style="height:270px; width:245px;">
 				              		<%-- 
 										<c:forEach items="${listaFornecedorAssociado}" var="fornecedor">
 											<option value="${fornecedor.id}">${fornecedor.juridica.razaoSocial}</option>
@@ -186,7 +186,7 @@
 								<tr>
 									<td width="106">Tipo de Entrega:</td>
 									<td width="177">
-										<select name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.descricaoTipoEntrega" id="idModalIdTipoEntrega" style="width:100px;" onchange="alteracaoCotaController.selectTipoEntregaDistribuicao()">
+										<select name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.descricaoTipoEntrega" id="idModalIdTipoEntrega" style="width:125px;" onchange="alteracaoCotaController.selectTipoEntregaDistribuicao()">
 					              			<option selected="selected" value="-1"></option>
 											<c:forEach items="${listTipoEntrega}" var="tipoEntrega">
 												<option value="${tipoEntrega}">${tipoEntrega.value}</option>
@@ -244,20 +244,20 @@
 								<table width="399" border="0" cellspacing="1" cellpadding="1">	
 									<tr>
 										<td>Percentual Faturamento:</td>
-										<td colspan="2"><input type="text"  name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.percentualFaturamentoEntregaBranca"   id="percentualFaturamentoEntregaBranca" 	style="width: 70px; text-align: right;" /></td>
+										<td colspan="2"><input type="text"  name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.percentualFaturamentoEntregaBanca"   id="percentualFaturamentoEntregaBanca" 	style="width: 70px; text-align: right;" /></td>
 									</tr>
 									<tr>
 										<td>Taxa Fixa R$</td>
-										<td colspan="2"><input type="text"  name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.taxaFixaEntregaBranca" id="taxaFixaEntregaBranca"	style="width: 70px; text-align: right;" /></td>
+										<td colspan="2"><input type="text"  name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.taxaFixaEntregaBanca" id="taxaFixaEntregaBanca"	style="width: 70px; text-align: right;" /></td>
 									</tr>
 									<tr>
 										<td>Per&iacute;odo Car&ecirc;ncia:</td>
 										<td colspan="2"><table width="100%" border="0"
 												cellspacing="0" cellpadding="0">
 												<tr>
-													<td width="27%"><input name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.carenciaInicioEntregaBranca" type="text" id="carenciaInicioEntregaBranca" style="width: 70px" /></td>
+													<td width="27%"><input name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.carenciaInicioEntregaBanca" type="text" id="carenciaInicioEntregaBanca" style="width: 70px" /></td>
 													<td width="6%">At&eacute; </td>
-													<td width="34%"><input name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.carenciaFimEntregaBranca"	type="text" id="carenciaFimEntregaBranca" style="width: 70px" /></td>
+													<td width="34%"><input name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.carenciaFimEntregaBanca"	type="text" id="carenciaFimEntregaBanca" style="width: 70px" /></td>
 												</tr>
 											</table></td>
 									</tr>
@@ -312,20 +312,20 @@
 								<table width="399" border="0" cellspacing="1" cellpadding="1">	
 									<tr>
 										<td>Percentual Faturamento:</td>
-										<td colspan="2"><input type="text"  name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.percentualFaturamentoEntregaBranca"   id="percentualFaturamentoEntregaBranca" 	style="width: 70px; text-align: right;" /></td>
+										<td colspan="2"><input type="text"  name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.percentualFaturamentoEntregador"   id="percentualFaturamentoEntregador" 	style="width: 70px; text-align: right;" /></td>
 									</tr>
 									<tr>
 										<td>Taxa Fixa R$</td>
-										<td colspan="2"><input type="text"  name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.taxaFixaEntregaBranca" id="taxaFixaEntregaBranca"	style="width: 70px; text-align: right;" /></td>
+										<td colspan="2"><input type="text"  name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.taxaFixaEntregador" id="taxaFixaEntregador"	style="width: 70px; text-align: right;" /></td>
 									</tr>
 									<tr>
 										<td>Per&iacute;odo Car&ecirc;ncia:</td>
 										<td colspan="2"><table width="100%" border="0"
 												cellspacing="0" cellpadding="0">
 												<tr>
-													<td width="27%"><input name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.carenciaInicioEntregaBranca" type="text" id="carenciaInicioEntregaBranca" style="width: 70px" /></td>
+													<td width="27%"><input name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.carenciaInicioEntragador" type="text" id="carenciaInicioEntregador" style="width: 70px" /></td>
 													<td width="6%">At&eacute; </td>
-													<td width="34%"><input name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.carenciaFimEntregaBranca"	type="text" id="carenciaFimEntregaBranca" style="width: 70px" /></td>
+													<td width="34%"><input name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.carenciaFimEntregador"	type="text" id="carenciaFimEntregador" style="width: 70px" /></td>
 												</tr>
 											</table></td>
 									</tr>
@@ -441,8 +441,8 @@
               	<td width="106">
               		<select name="filtroAlteracaoCotaDTO.idVrMinimo" id="idVrMinimo" style="width:80px;">
               			<option selected="selected" value="-1"></option>
-						<c:forEach items="${listHistoricoTitularidadeCotaFinanceiro}" var="historico">
-							<option value="${historico.id}">${historico.valorMininoCobranca}</option>
+						<c:forEach items="${listValoresMinimos}" var="valor">
+							<option value="${valor}">${valor}</option>
 						</c:forEach>
 					</select> 
               	</td>
@@ -491,9 +491,9 @@
   				<tr>
     				<td width="502"><span class="bt_novos" title="Novo"><a href="javascript:;" onclick="alteracaoCotaController.carregarAlteracao();"><img src="${pageContext.request.contextPath}/images/ico_editar.gif" hspace="5" border="0"/>Alterar</a></span></td>
     				<td width="168"><strong>Total de Cotas Selecionadas:</strong></td>
-    				<td width="141">4</td>
+    				<td width="141"><span id="totalCotasSelecionadas"></span></td>
     				<td width="91">Selecionar Todos</td>
-    				<td width="48"><input type="checkbox" name="checkbox3" id="acionador" /></td>
+    				<td width="48"><input type="checkbox" name="checkAll" id="alteracaoCotaCheckAll" onclick="alteracaoCotaController.checkAll(this); alteracaoCotaController.verificarCheck();" /></td>
   				</tr>
 			</table>
         </div>

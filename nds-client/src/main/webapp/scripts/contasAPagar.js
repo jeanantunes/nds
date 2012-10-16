@@ -20,6 +20,7 @@ var contasAPagarController = $.extend(true, {
 		this.initcontasAPagarListaProdutosGrid();		
 		this.initGridPesquisarPorProduto();
 		this.initGridPesquisarPorFornecedor();
+		this.initGridParciais();
 	},
 	
 	
@@ -70,25 +71,29 @@ var contasAPagarController = $.extend(true, {
 			
 			var params = contasAPagarController.obterSelecaoColunaCheckProdutoEdicao();
 			
-			$(".porProdutosGrid", this.workspace).flexOptions({
-				url : this.path + 'pesquisar.json?' + params, 
-				preProcess : contasAPagarController.insereLinksContasAPagarPorProdutos,
-				newp : 1
-			});
-
-			$(".porProdutosGrid").flexReload();
+			$.postJSON(
+				contasAPagarController.path + 'pesquisar.json?' + params,
+				null,
+				function(result) {
+					
+					$("#contasAPagar_gridProdutoTotalPagto").html(result.totalPagto);
+					$("#contasAPagar_gridProdutoTotalDesconto").html(result.totalDesconto);
+					$("#contasAPagar_gridProdutoValorLiquido").html(result.valorLiquido);
+					
+					$(".porProdutosGrid", contasAPagarController.workspace).flexAddData({rows: toFlexiGridObject(result.grid), page : 1, total : result.totalGrid});
+				},
+				null,
+				true
+			);
+			
 			$('.gridProduto').show();
 		}
 	},
 	
 	
-	
-	
-	
 	pesquisarProdutoEdicao : function(){
-		var params = $("#contasAPagarPesquisaProdutoEdicaoForm").serialize();
 		
-		//alert (params);
+		var params = $("#contasAPagarPesquisaProdutoEdicaoForm").serialize();
 		
 		$(".contasAPagarListaProdutosGrid").flexOptions({
 			url : this.path + 'pesquisarProduto.json?' + params, 
@@ -97,34 +102,26 @@ var contasAPagarController = $.extend(true, {
 		});
 
 		$(".contasAPagarListaProdutosGrid").flexReload();
-		
-		
 	},
+	
+	
 	/*
 	 * *************************
 	 * Parametros de envio Pesquisa por produto
 	 * *************************
 	 * */
-	
-obterSelecaoColunaCheckProdutoEdicao : function (){
-
+	obterSelecaoColunaCheckProdutoEdicao : function () {
 		
 		var dados ="";
 
-		$("input[type=checkbox][name='checkProdutoContasAPagar']:checked").each(function(i,element){
-			if(dados!="")
+		$("input[type=checkbox][name='checkProdutoContasAPagar']:checked").each(function(i,element) {
+			if(dados!="") {
 				dados+="&";
-				//dados+=",";
-			
+			}
 			var produtoEdicaoId = element.value;
-			
-			//dados+='{name:"filtro.produtoEdicaoIDs['+i+']",value:"'+produtoEdicaoId+'"}';
 			dados+='filtro.produtoEdicaoIDs='+produtoEdicaoId+'"';
-			//alert(dados);
 		});
 		
-		//var params = '['+dados+']';
-		//return eval(params);
 		return dados;
 	},
 	
@@ -142,15 +139,13 @@ obterSelecaoColunaCheckProdutoEdicao : function (){
 		$.each(data.rows, function(index, value) {
 			
 			var checkbox = '<input type="checkbox" value="'+ value.cell.produtoEdicaoID + '" name="checkProdutoContasAPagar" class="contasApagarCheck"  style="float:left;"/>';
-						
 			value.cell.sel = checkbox;
-
 		});
 		 
 		return data;
-		
 	},
 	
+
 	insereLinksContasAPagarPorDistribuidores : function(data) {
 		
 		$.each(data.rows, function(index, value) {
@@ -223,7 +218,14 @@ obterSelecaoColunaCheckProdutoEdicao : function (){
 		$("#contasAPagar_popupTipo_dataFinal").html(dataFinal);
 	
 		// preenche grid
-		// TODO
+		var params = $("#contasAPagarPesquisaProdutoEdicaoForm").serialize();
+		
+		$(".contasAPagar_parciaispopGrid").flexOptions({
+			url : this.path + 'pesquisarParcial.json?' + params, 
+			newp : 1
+		});
+
+		$(".contasAPagar_parciaispopGrid").flexReload();
 		
 		// abre popup
 		$("#dialog-contasAPagar-tipo").dialog({
@@ -433,9 +435,10 @@ obterSelecaoColunaCheckProdutoEdicao : function (){
 		
 		$(".porProdutosGrid").flexigrid({
 			dataType : 'json',
+			preProcess : contasAPagarController.insereLinksContasAPagarPorProdutos,
 			colModel : [ {
-				display : 'rctl',
-				name : 'data',
+				display : 'Rclt',
+				name : 'rctl',
 				width : 60,
 				sortable : true,
 				align : 'left'
@@ -514,6 +517,96 @@ obterSelecaoColunaCheckProdutoEdicao : function (){
 			sortorder : "asc",
 			width : 960,
 			height : 255
+		});
+	},
+	
+	
+	
+	initGridParciais : function () {
+		
+		$(".contasAPagar_parciaispopGrid").flexigrid({
+			dataType : 'json',
+			colModel : [ {
+				display : 'Lcto',
+				name : 'dtLancamento',
+				width : 60,
+				sortable : true,
+				align : 'center'
+			}, {
+				display : 'Rclt',
+				name : 'dtRecolhimento',
+				width : 60,
+				sortable : true,
+				align : 'center'
+			}, {
+				display : 'Reparte',
+				name : 'reparte',
+				width : 50,
+				sortable : true,
+				align : 'center'
+			}, {
+				display : 'Suplementação',
+				name : 'suplementacao',
+				width : 90,
+				sortable : true,
+				align : 'center'
+			}, {
+				display : 'Encalhe',
+				name : 'encalhe',
+				width : 50,
+				sortable : true,
+				align : 'center'
+			}, {
+				display : 'Venda',
+				name : 'venda',
+				width : 50,
+				sortable : true,
+				align : 'center'
+			}, {
+				display : '% Venda',
+				name : 'percVenda',
+				width : 50,
+				sortable : true,
+				align : 'center'
+			}, {
+				display : 'Venda CE',
+				name : 'vendaCE',
+				width : 60,
+				sortable : true,
+				align : 'center'
+			}, {
+				display : 'Reparte Acum.',
+				name : 'reparteAcumulado',
+				width : 70,
+				sortable : true,
+				align : 'center'
+			}, {
+				display : 'Venda Acum.',
+				name : 'vendaAcumulada',
+				width : 70,
+				sortable : true,
+				align : 'center'
+			}, {
+				display : '% Venda Acum.',
+				name : 'percVendaAcumulada',
+				width : 70,
+				sortable : true,
+				align : 'center'
+			}, {
+				display : 'N° NF-e',
+				name : 'numNfe',
+				width : 50,
+				sortable : true,
+				align : 'left'
+			}],
+			sortname : "dtLancamento",
+			sortorder : "asc",
+			usepager : true,
+			useRp : true,
+			rp : 15,
+			showTableToggleBtn : true,
+			width : 900,
+			height : 200
 		});
 	},
 	
