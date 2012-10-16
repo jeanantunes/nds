@@ -1,5 +1,8 @@
 package br.com.abril.nds.repository;
 
+import java.math.BigDecimal;
+import java.util.List;
+
 import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
 
 /**
@@ -11,6 +14,6 @@ import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
  */
 public interface ParametroCobrancaCotaRepository extends Repository<ParametroCobrancaCota,Long>{
 	
-	
+	List<BigDecimal> comboValoresMinimos();
 
 }
