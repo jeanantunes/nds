@@ -477,3 +477,5 @@ var produtoController = $.extend(true, {
 	},
 
 }, BaseController);
+
+//@ sourceURL=produto.js

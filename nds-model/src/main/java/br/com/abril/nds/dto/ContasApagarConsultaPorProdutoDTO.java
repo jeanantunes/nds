@@ -9,6 +9,7 @@ public class ContasApagarConsultaPorProdutoDTO implements Serializable{
 	
 	private static final long serialVersionUID = 3890007339807389818L;
 	
+	private Long produtoEdicaoId;
 	private Date rctl;
 	private String codigo;
 	private String produto;
@@ -17,10 +18,23 @@ public class ContasApagarConsultaPorProdutoDTO implements Serializable{
 	private BigInteger reparte;
 	private BigInteger suplementacao;
 	private BigInteger encalhe;
+	private BigInteger venda;
 	private BigInteger faltasSobras;
-	private BigDecimal debitosCreditos;
+	private BigInteger debitosCreditos;
+	private BigDecimal saldoAPagar;
+	
+	// Dados do cabecalho da popup "Tipo"
+	private String fornecedor;
+	private Date dataLcto;
+	private Date dataFinal;
 	
 	
+	public Long getProdutoEdicaoId() {
+		return produtoEdicaoId;
+	}
+	public void setProdutoEdicaoId(Long produtoEdicaoId) {
+		this.produtoEdicaoId = produtoEdicaoId;
+	}
 	public Date getRctl() {
 		return rctl;
 	}
@@ -69,19 +83,46 @@ public class ContasApagarConsultaPorProdutoDTO implements Serializable{
 	public void setEncalhe(BigInteger encalhe) {
 		this.encalhe = encalhe;
 	}
+	public BigInteger getVenda() {
+		return venda;
+	}
+	public void setVenda(BigInteger venda) {
+		this.venda = venda;
+	}
 	public BigInteger getFaltasSobras() {
 		return faltasSobras;
 	}
 	public void setFaltasSobras(BigInteger faltasSobras) {
 		this.faltasSobras = faltasSobras;
 	}
-	public BigDecimal getDebitosCreditos() {
+	public BigInteger getDebitosCreditos() {
 		return debitosCreditos;
 	}
-	public void setDebitosCreditos(BigDecimal debitosCreditos) {
+	public void setDebitosCreditos(BigInteger debitosCreditos) {
 		this.debitosCreditos = debitosCreditos;
 	}
-	
-	
-	
+	public BigDecimal getSaldoAPagar() {
+		return saldoAPagar;
+	}
+	public void setSaldoAPagar(BigDecimal saldoAPagar) {
+		this.saldoAPagar = saldoAPagar;
+	}
+	public String getFornecedor() {
+		return fornecedor;
+	}
+	public void setFornecedor(String fornecedor) {
+		this.fornecedor = fornecedor;
+	}
+	public Date getDataLcto() {
+		return dataLcto;
+	}
+	public void setDataLcto(Date dataLcto) {
+		this.dataLcto = dataLcto;
+	}
+	public Date getDataFinal() {
+		return dataFinal;
+	}
+	public void setDataFinal(Date dataFinal) {
+		this.dataFinal = dataFinal;
+	}
 }
