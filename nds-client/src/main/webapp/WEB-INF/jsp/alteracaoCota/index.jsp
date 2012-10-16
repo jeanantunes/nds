@@ -186,7 +186,7 @@
 								<tr>
 									<td width="106">Tipo de Entrega:</td>
 									<td width="177">
-										<select name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.descricaoTipoEntrega" id="idModalIdTipoEntrega" style="width:100px;" onchange="alteracaoCotaController.selectTipoEntregaDistribuicao()">
+										<select name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.descricaoTipoEntrega" id="idModalIdTipoEntrega" style="width:125px;" onchange="alteracaoCotaController.selectTipoEntregaDistribuicao()">
 					              			<option selected="selected" value="-1"></option>
 											<c:forEach items="${listTipoEntrega}" var="tipoEntrega">
 												<option value="${tipoEntrega}">${tipoEntrega.value}</option>
@@ -230,7 +230,7 @@
 									<tr>
 										<td>Base de C&aacute;lculo:</td>
 										<td colspan="2">
-										<select name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.baseCalculo" id="baseCalculo"	style="width: 107px;">
+										<select name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.baseCalculo" id="baseCalculo"	style="width: 140px;">
 										
 										<c:forEach items="${listBaseCalculo}" var="baseCalculo">
 												<option value="${baseCalculo}">${baseCalculo.value}</option>
@@ -459,7 +459,7 @@
     				<td width="168"><strong>Total de Cotas Selecionadas:</strong></td>
     				<td width="141"><span id="totalCotasSelecionadas"></span></td>
     				<td width="91">Selecionar Todos</td>
-    				<td width="48"><input type="checkbox" name="checkbox3" id="acionador" onclick="alteracaoCotaController.checkAll(); alteracaoCotaController.verificarCheck();" /></td>
+    				<td width="48"><input type="checkbox" name="checkAll" id="alteracaoCotaCheckAll" onclick="alteracaoCotaController.checkAll(this); alteracaoCotaController.verificarCheck();" /></td>
   				</tr>
 			</table>
         </div>
