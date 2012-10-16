@@ -177,7 +177,7 @@ var alteracaoCotaController = $.extend(true, {
 	},
 	
 	pesquisar : function() {
-		
+		alteracaoCotaController.verificarCheck();
 		var params = $("#pesquisarForm", this.workspace).serialize();
 		
 		$(".alteracaoGrid", this.workspace).flexOptions({
@@ -417,11 +417,7 @@ var alteracaoCotaController = $.extend(true, {
 		var  dataForm = $("#pesquisarForm", this.workspace).serializeArray();
 		$("#idListaFornecedorAssociado option", this.workspace).each(function (index) {
 			 dataForm.push({name: 'filtroAlteracaoCotaDTO.filtroModalFornecedor.listaFornecedoresSelecionados['+index+']', value:$(this, this.workspace).val() } );
-			 
-
 		});
-		
-	
 		
 		$.postJSON(contextPath + "/administracao/alteracaoCota/salvarAlteracao",
 				dataForm,  

@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -122,11 +124,12 @@ public class AlteracaoCotaController {
 		for(int i = 1; i < 31; i++){
 			listaVencimento.add(i);
 		}
+		
 		result.include("listaVencimento", listaVencimento);
 		result.include("listTipoEntrega", DescricaoTipoEntrega.values());
 		result.include("listTipoDesconto", TipoDesconto.values());
 		result.include("listBaseCalculo", BaseCalculo.values());
-		result.include("listHistoricoTitularidadeCotaFinanceiro", historicoTitularidadeCotaFinanceiroService.pesquisarTodos());
+		result.include("listValoresMinimos", parametroCobrancaCotaService.comboValoresMinimos());
 		
 	}
 	
@@ -173,8 +176,11 @@ public class AlteracaoCotaController {
 			
 			filtroAlteracaoCotaDTO.getFiltroModalFinanceiro().setIsSugereSuspensao(cota.isSugereSuspensao());
 			
-			preencherFiltroFinanceiro(filtroAlteracaoCotaDTO, cota);
-			preencherFiltroDistribuicao(filtroAlteracaoCotaDTO, cota);
+			if(cota.getParametroCobranca() != null)
+				preencherFiltroFinanceiro(filtroAlteracaoCotaDTO, cota);
+			
+			if(cota.getParametroDistribuicao() != null)
+				preencherFiltroDistribuicao(filtroAlteracaoCotaDTO, cota);
 
 			
 		}else{
@@ -195,7 +201,6 @@ public class AlteracaoCotaController {
 			
 			//Altera Fornecedores da Cota
 			Set<Fornecedor> fornecedoresCota = new HashSet<Fornecedor>();
-			//fornecedoresCota.add(fornecedorService.obterFornecedorPorId(new Long(2)));
 			for (Long  id : filtroAlteracaoCotaDTO.getFiltroModalFornecedor().getListaFornecedoresSelecionados()){
 				fornecedoresCota.add(fornecedorService.obterFornecedorPorId(id));
 			}
@@ -244,7 +249,7 @@ public class AlteracaoCotaController {
 			
 			
 			if(filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().getDescricaoTipoEntrega() != null){
-				if(filtroAlteracaoCotaDTO.getDescricaoTipoEntrega().equals(DescricaoTipoEntrega.ENTREGA_EM_BANCA)){
+				if(filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().getDescricaoTipoEntrega().equals(DescricaoTipoEntrega.ENTREGA_EM_BANCA)){
 					cota.getParametroDistribuicao().setUtilizaTermoAdesao(filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().isTermoAdesao());
 					cota.getParametroDistribuicao().setTermoAdesaoRecebido(filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().isTermoAdesaoRecebido());
 					// TODO arquivo
@@ -308,7 +313,7 @@ public class AlteracaoCotaController {
 	}
 	
 	public void preencherFiltroDistribuicao(FiltroAlteracaoCotaDTO filtroAlteracaoCotaDTO, Cota cota){
-	
+		
 		if(cota.getParametroDistribuicao().getAssistenteComercial() != null)
 			filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setNmAssitPromoComercial(cota.getParametroDistribuicao().getAssistenteComercial());
 		

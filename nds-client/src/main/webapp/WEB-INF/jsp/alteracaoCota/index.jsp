@@ -407,8 +407,8 @@
               	<td width="106">
               		<select name="filtroAlteracaoCotaDTO.idVrMinimo" id="idVrMinimo" style="width:80px;">
               			<option selected="selected" value="-1"></option>
-						<c:forEach items="${listHistoricoTitularidadeCotaFinanceiro}" var="historico">
-							<option value="${historico.id}">${historico.valorMininoCobranca}</option>
+						<c:forEach items="${listValoresMinimos}" var="valor">
+							<option value="${valor}">${valor}</option>
 						</c:forEach>
 					</select> 
               	</td>

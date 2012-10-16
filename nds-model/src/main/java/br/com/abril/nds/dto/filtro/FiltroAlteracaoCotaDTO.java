@@ -1,6 +1,7 @@
 package br.com.abril.nds.dto.filtro;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,7 +20,8 @@ public class FiltroAlteracaoCotaDTO extends FiltroDTO implements Serializable {
 	private String idMunicipio; 
 	private DescricaoTipoEntrega descricaoTipoEntrega; 
 	private TipoDesconto tipoDesconto;
-	private Long idVrMinimo;
+	private BigDecimal idVrMinimo;
+	private Integer idVencimento;
 	
 	private FiltroModalFornecedor filtroModalFornecedor = new FiltroModalFornecedor();
 	private FiltroModalFinanceiro filtroModalFinanceiro = new FiltroModalFinanceiro();
@@ -91,10 +93,10 @@ public class FiltroAlteracaoCotaDTO extends FiltroDTO implements Serializable {
 	public void setIdCota(Long idCota) {
 		this.idCota = idCota;
 	}
-	public Long getIdVrMinimo() {
+	public BigDecimal getIdVrMinimo() {
 		return idVrMinimo;
 	}
-	public void setIdVrMinimo(Long idVrMinimo) {
+	public void setIdVrMinimo(BigDecimal idVrMinimo) {
 		this.idVrMinimo = idVrMinimo;
 	}
 	public DescricaoTipoEntrega getDescricaoTipoEntrega() {
@@ -108,6 +110,12 @@ public class FiltroAlteracaoCotaDTO extends FiltroDTO implements Serializable {
 	}
 	public void setTipoDesconto(TipoDesconto tipoDesconto) {
 		this.tipoDesconto = tipoDesconto;
+	}
+	public Integer getIdVencimento() {
+		return idVencimento;
+	}
+	public void setIdVencimento(Integer idVencimento) {
+		this.idVencimento = idVencimento;
 	}
 
 	
