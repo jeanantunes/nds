@@ -93,9 +93,9 @@
 	                		<span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="../images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
 							<span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="../images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
 						</td>
-		                <td width="226" align="right"><strong>Total Pagto R$: 999.999,99</strong></td>
-		                <td width="216" align="right"><strong>Total Desconto R$: 999.999,99</strong></td>
-		                <td width="254" align="right"><strong>Valor L&iacute;quido a Pagar R$: 999.999,99</strong></td>
+		                <td width="226" align="right"><strong>Total Pagto R$: <span id="contasAPagar_gridProdutoTotalPagto"></span></strong></td>
+		                <td width="216" align="right"><strong>Total Desconto R$: <span id="contasAPagar_gridProdutoTotalDesconto"></span></strong></td>
+		                <td width="254" align="right"><strong>Valor L&iacute;quido a Pagar R$: <span id="contasAPagar_gridProdutoValorLiquido"></span></strong></td>
 	              	</tr>
 	            </table>
 			</div>
@@ -168,7 +168,7 @@
 
 	<fieldset>
 		<legend>Parciais</legend>
-	    <table class="parciaispopGrid"></table>
+	    <table class="contasAPagar_parciaispopGrid"></table>
 	</fieldset>
 
 	<br clear="all" />
