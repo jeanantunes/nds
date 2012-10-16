@@ -82,20 +82,37 @@ public class ProdutoRepositoryImpl extends AbstractRepositoryModel<Produto, Long
 			String fornecedor, String editor, Long codigoTipoProduto,
 			String sortorder, String sortname, int page, int rp) {
 		
-		String hql = "select produto.id as id, produto.codigo as codigo, produto.nome as produtoDescricao, ";
-		hql += " tipoProduto.descricao as tipoProdutoDescricao, ";
-		hql += " case when editor.pessoaJuridica.razaoSocial is null then '' else editor.pessoaJuridica.razaoSocial end as nomeEditor, ";
-		hql += " juridica.razaoSocial as tipoContratoFornecedor, ";
-		hql += " produto.peb as peb, produto.pacotePadrao as pacotePadrao, ";
-		hql += " coalesce(descontoLogistica.percentualDesconto, 0) as percentualDesconto, ";
-		hql += " produto.periodicidade as periodicidade ";
+		StringBuffer hql = new StringBuffer();
+		
+		hql.append(" select  ");
+		
+		hql.append(" produto.id as id, 								");
+		hql.append(" produto.codigo as codigo, 						");
+		hql.append(" produto.nome as produtoDescricao, 				");
+		hql.append(" tipoProduto.descricao as tipoProdutoDescricao, ");
+		
+		hql.append(" ( select case when editor.id is null then '' 	");
+		hql.append(" else editor.pessoaJuridica.razaoSocial end		");
+		hql.append(" from Produto p left join p.editor as editor 	");
+		hql.append(" where p.id = produto.id ) as nomeEditor, 		");
+		
+		hql.append(" ( select "); 
+		hql.append(" case when count(f.id)>1 then 'Diversos' 				");
+		hql.append(" else f.juridica.razaoSocial end 						");
+		hql.append(" from Produto p join p.fornecedores f 					");
+		hql.append(" where p.id = produto.id ) as tipoContratoFornecedor, 	");
+		
+		hql.append(" produto.peb as peb,  						");
+		hql.append(" produto.pacotePadrao as pacotePadrao, 		");
+		hql.append(" coalesce(descontoLogistica.percentualDesconto, 0) as percentualDesconto, ");
+		hql.append(" produto.periodicidade as periodicidade 	");
 		
 		try {
 			
 			Query query = 
 				this.getQueryBuscaProdutos(
 					hql, codigo, produto, fornecedor, 
-					editor, codigoTipoProduto, sortname, sortorder);
+					editor, codigoTipoProduto, sortname, sortorder, false);
 			
 			query.setResultTransformer(
 				new AliasToBeanResultTransformer(
@@ -115,14 +132,14 @@ public class ProdutoRepositoryImpl extends AbstractRepositoryModel<Produto, Long
 	public Integer pesquisarCountProdutos(String codigo, String produto,
 			String fornecedor, String editor, Long codigoTipoProduto) {
 		
-		String hql = "select count(produto.id) ";
+		StringBuffer hql = new StringBuffer(" select count(distinct produto.id) ");
 		
 		try {
 
 			Query query = 
 				this.getQueryBuscaProdutos(
 					hql, codigo, produto, fornecedor, 
-					editor, codigoTipoProduto, null, null);
+					editor, codigoTipoProduto, null, null, true);
 			
 			return ((Long) query.uniqueResult()).intValue();
 			
@@ -131,47 +148,74 @@ public class ProdutoRepositoryImpl extends AbstractRepositoryModel<Produto, Long
 		}
 	}
 	
-	private Query getQueryBuscaProdutos(String hql, String codigo, String produto,
-			String fornecedor, String editor, Long codigoTipoProduto, String sortname, String sortorder) {
+	private Query getQueryBuscaProdutos(StringBuffer hql, String codigo, String produto,
+			String fornecedor, String editor, Long codigoTipoProduto, String sortname, String sortorder, boolean isCount) {
 		
-		hql += " from Produto produto ";
-		hql += " join produto.fornecedores fornecedor ";
-		hql += " join fornecedor.juridica juridica ";
-		hql += " join produto.tipoProduto tipoProduto ";
-		hql += " left join produto.descontoLogistica descontoLogistica ";
-		hql += " left join produto.editor as editor ";
+		hql.append(" from ");
+		hql.append(" Produto produto ");
+		hql.append(" join produto.tipoProduto tipoProduto 					");
+		hql.append(" left join produto.descontoLogistica descontoLogistica 	");
+
+		if (fornecedor != null && !fornecedor.isEmpty()) {
+			hql.append(" join produto.fornecedores fornecedorProd ");
+		}
+		
+		if (editor != null && !editor.isEmpty()) {
+			hql.append(" join produto.editor editorProd ");
+		}
 		
 		String auxHql = " where ";
 		
 		if (codigo != null && !codigo.isEmpty()) {
-			hql += auxHql+" upper(produto.codigo) = :codigo ";
+			hql.append(auxHql).append(" upper(produto.codigo) = :codigo ");
 			auxHql = " and ";
 		}
 		
 		if (produto != null && !produto.isEmpty()) {
-			hql += auxHql+" produto.nome like :produto ";
+			hql.append(auxHql).append(" produto.nome like :produto ");
 			auxHql = " and ";
 		}
 		
 		if (fornecedor != null && !fornecedor.isEmpty()) {
-			hql += auxHql+" fornecedor.juridica.razaoSocial like :fornecedor ";
+			
+			hql.append(auxHql);
+			hql.append(" fornecedorProd.juridica.razaoSocial like :fornecedor ");
 			auxHql = " and ";
 		}
 		
 		if (editor != null && !editor.isEmpty()) {
-			hql += auxHql+" editor.pessoaJuridica.razaoSocial like :nomeEditor ";
+			
+			hql.append(auxHql);
+			hql.append(" editorProd.pessoaJuridica.razaoSocial like :nomeEditor ");
 			auxHql = " and ";
 		}
 
 		if (codigoTipoProduto != null && codigoTipoProduto > 0) {
-			hql += auxHql+" tipoProduto.id = :codigoTipoProduto ";
+			hql.append(auxHql).append(" tipoProduto.id = :codigoTipoProduto ");
 		}
 
+		if(!isCount) {
+		
+			hql.append(" group by  			");
+			hql.append(" produto.id, 		");
+			hql.append(" produto.codigo, 	");
+			hql.append(" produto.nome,      ");
+			hql.append(" tipoProduto.descricao, ");
+			hql.append(" col_4_0_, 				");
+			hql.append(" col_5_0_,				");
+			hql.append(" produto.peb,			");
+			hql.append(" produto.pacotePadrao,  ");
+			hql.append(" col_8_0_, 				");
+			hql.append(" produto.periodicidade  ");
+			
+		}
+
+		
 		if (sortname != null && sortorder != null) {
-			hql += " order by " + sortname + " " + sortorder;
+			hql.append(" order by ").append(sortname).append(" ").append(sortorder);
 		}
 		
-		Query query = super.getSession().createQuery(hql);
+		Query query = super.getSession().createQuery(hql.toString());
 
 		if (codigo != null && !codigo.isEmpty()) {
 			query.setParameter("codigo", codigo.toUpperCase());

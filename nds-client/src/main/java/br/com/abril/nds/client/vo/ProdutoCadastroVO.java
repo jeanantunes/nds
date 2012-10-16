@@ -403,7 +403,7 @@ public class ProdutoCadastroVO implements Serializable {
 	public void setTemaSecundario(String temaSecundario) {
 		this.temaSecundario = temaSecundario;
 	}
-
+	
 	public static ProdutoCadastroVO parseProdutoToProdutoCadastroVO(Produto produto) {
 
 		if (produto == null) {
@@ -427,7 +427,8 @@ public class ProdutoCadastroVO implements Serializable {
 			produto.getEditor()!=null?produto.getEditor().getId():0, 
 			produto.getSlogan(), 
 			produto.getTipoProduto().getId(), 
-			formaComercializacao != null ? formaComercializacao.toString() : "", produto.getPeb(), 
+			formaComercializacao != null ? formaComercializacao.name() : "", 
+			produto.getPeb(), 
 			produto.getPacotePadrao(), codigoTipoDesconto, periodicidade != null ? periodicidade.toString() : "", 
 			produto.getGrupoEditorial(), produto.getSubGrupoEditorial(), tributacaoFiscal != null ? tributacaoFiscal.toString() : "",
 			produto.getSegmentacao()!=null?(produto.getSegmentacao().getClasseSocial()!=null?produto.getSegmentacao().getClasseSocial().name():""):"",
