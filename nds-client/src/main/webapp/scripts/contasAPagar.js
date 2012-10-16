@@ -20,10 +20,9 @@ var contasAPagarController = $.extend(true, {
 		this.initcontasAPagarListaProdutosGrid();		
 		this.initGridPesquisarPorProduto();
 		this.initGridPesquisarPorFornecedor();
-		
-		
-		
+		this.initGridParciais();
 	},
+	
 	
 	verificarCheck : function() {
 		
@@ -53,60 +52,40 @@ var contasAPagarController = $.extend(true, {
 	 * */
 	
 	pesquisar : function(){
-		
-		
 	
 		if ($("#contasAPagarRadioDistribuidor").get(0).checked) {
 			
 			var params = $("#contasAPagarForm", this.workspace).serialize();
 			
-			alert(params);
-			
-					$(".porDistrFornecedorGrid", this.workspace).flexOptions({
-						url : this.path + 'pesquisar.json?' + params, 
-						preProcess : contasAPagarController.insereLinksContasAPagarPorDistribuidores,
-						newp : 1
-					});
+			$(".porDistrFornecedorGrid", this.workspace).flexOptions({
+				url : this.path + 'pesquisar.json?' + params, 
+				preProcess : contasAPagarController.insereLinksContasAPagarPorDistribuidores,
+				newp : 1
+			});
 
-					$(".porProdutosGrid", this.workspace).flexReload();
-					$('.gridDistrib').show();
+			$(".porDistrFornecedorGrid", this.workspace).flexReload();
+			$('.gridDistrib').show();
 			
 		}
 		else if ($("#contasAPagarRadioProduto").get(0).checked) {
 			
 			var params = contasAPagarController.obterSelecaoColunaCheckProdutoEdicao();
-			var dat =  $("#contasAPagarForm").serialize();
-			//alert(dat);			
-			//alert(params);
-			params+=","+dat;
 			
-			alert(params);
-			
+			$(".porProdutosGrid", this.workspace).flexOptions({
+				url : this.path + 'pesquisar.json?' + params, 
+				preProcess : contasAPagarController.insereLinksContasAPagarPorProdutos,
+				newp : 1
+			});
 
-					$(".porProdutosGrid", this.workspace).flexOptions({
-						url : this.path + 'pesquisar.json?' + params, 
-						preProcess : contasAPagarController.montaColunaCheckProdutoEdicao,
-						newp : 1
-					});
-
-					$(".contasAPagarListaProdutosGrid").flexReload();
-
-
-			//$(".porProdutosGrid", this.workspace).flexReload();
+			$(".porProdutosGrid").flexReload();
 			$('.gridProduto').show();
-			
 		}
-
 	},
 	
 	
-	
-	
-	
 	pesquisarProdutoEdicao : function(){
-		var params = $("#contasAPagarPesquisaProdutoEdicaoForm").serialize();
 		
-		//alert (params);
+		var params = $("#contasAPagarPesquisaProdutoEdicaoForm").serialize();
 		
 		$(".contasAPagarListaProdutosGrid").flexOptions({
 			url : this.path + 'pesquisarProduto.json?' + params, 
@@ -115,34 +94,26 @@ var contasAPagarController = $.extend(true, {
 		});
 
 		$(".contasAPagarListaProdutosGrid").flexReload();
-		
-		
 	},
+	
+	
 	/*
 	 * *************************
 	 * Parametros de envio Pesquisa por produto
 	 * *************************
 	 * */
-	
-obterSelecaoColunaCheckProdutoEdicao : function (){
-
+	obterSelecaoColunaCheckProdutoEdicao : function () {
 		
 		var dados ="";
 
-		$("input[type=checkbox][name='checkProdutoContasAPagar']:checked").each(function(i,element){
-			if(dados!="")
+		$("input[type=checkbox][name='checkProdutoContasAPagar']:checked").each(function(i,element) {
+			if(dados!="") {
 				dados+="&";
-				//dados+=",";
-			
+			}
 			var produtoEdicaoId = element.value;
-			
-			//dados+='{name:"filtro.produtoEdicaoIDs['+i+']",value:"'+produtoEdicaoId+'"}';
 			dados+='filtro.produtoEdicaoIDs='+produtoEdicaoId+'"';
-			//alert(dados);
 		});
 		
-		//var params = '['+dados+']';
-		//return eval(params);
 		return dados;
 	},
 	
@@ -160,15 +131,13 @@ obterSelecaoColunaCheckProdutoEdicao : function (){
 		$.each(data.rows, function(index, value) {
 			
 			var checkbox = '<input type="checkbox" value="'+ value.cell.produtoEdicaoID + '" name="checkProdutoContasAPagar" class="contasApagarCheck"  style="float:left;"/>';
-						
 			value.cell.sel = checkbox;
-
 		});
 		 
 		return data;
-		
 	},
 	
+
 	insereLinksContasAPagarPorDistribuidores : function(data) {
 		
 		$.each(data.rows, function(index, value) {
@@ -187,19 +156,24 @@ obterSelecaoColunaCheckProdutoEdicao : function (){
 		return data;
 	},
 	
+	
 	insereLinksContasAPagarPorProdutos : function(data) {	
 		
-		//Codigo de Exemplo
-		
-		/*$.each(data.rows, function(index, value) {
+		$.each(data.rows, function(index, value) {
 			
-			var linkTipo = '<a href="javascript:;" onclick="contasAPagarController.popup_consignado();" title="Detalhe Consignado">'+value.cell.tipo+'</a>';
-							
+			var params = "'" + value.cell.produtoEdicaoId + "', '" 
+							 + value.cell.codigo          + "', '"
+							 + value.cell.produto         + "', '"
+							 + value.cell.edicao          + "', '"
+			                 + value.cell.fornecedor      + "', '" 
+			                 + value.cell.dataLcto        + "', '" 
+			                 + value.cell.dataFinal       + "'";
+			
+			var linkTipo = '<a href="javascript:;" onclick="contasAPagarController.popup_detalhes(' + params + ');" title="Detalhe Consignado">' + value.cell.tipo + '</a>';
 			value.cell.tipo = linkTipo;
-
 		});
 	
-		return data;*/
+		return data;
 	},
 	
 	
@@ -222,10 +196,49 @@ obterSelecaoColunaCheckProdutoEdicao : function (){
 				}
 			}
 		});
-	},	
+	},
 	
 	
+	popup_detalhes : function (produtoEdicaoId, codigo, produto, edicao, fornecedor, dataLcto, dataFinal) {
+		
+		// popula cabecalho
+		$("#contasAPagar_popupTipo_codigo").html(codigo);
+		$("#contasAPagar_popupTipo_produto").html(produto);
+		$("#contasAPagar_popupTipo_edicao").html(edicao);
+		$("#contasAPagar_popupTipo_fornecedor").html(fornecedor);
+		$("#contasAPagar_popupTipo_dataLcto").html(dataLcto);
+		$("#contasAPagar_popupTipo_dataFinal").html(dataFinal);
+	
+		// preenche grid
+		var params = $("#contasAPagarPesquisaProdutoEdicaoForm").serialize();
+		
+		$(".contasAPagar_parciaispopGrid").flexOptions({
+			url : this.path + 'pesquisarParcial.json?' + params, 
+			newp : 1
+		});
 
+		$(".contasAPagar_parciaispopGrid").flexReload();
+		
+		// abre popup
+		$("#dialog-contasAPagar-tipo").dialog({
+			resizable: false,
+			height:500,
+			width:950,
+			modal: true,
+			buttons: {
+				"Fechar": function() {
+					$( this ).dialog( "close" );
+				
+				},
+			 }
+		});
+	},
+	
+	
+	
+	
+	
+/*
 	function popup_consignado() {
 			//$( "#dialog:ui-dialog" ).dialog( "destroy" );
 		
@@ -284,7 +297,7 @@ obterSelecaoColunaCheckProdutoEdicao : function (){
 			});
 		};
 
-	
+*/	
 	/*
 	 * *************************
 	 * Configurações do Grid
@@ -415,7 +428,7 @@ obterSelecaoColunaCheckProdutoEdicao : function (){
 		$(".porProdutosGrid").flexigrid({
 			dataType : 'json',
 			colModel : [ {
-				display : 'Rclt',
+				display : 'rctl',
 				name : 'data',
 				width : 60,
 				sortable : true,
@@ -476,13 +489,13 @@ obterSelecaoColunaCheckProdutoEdicao : function (){
 				align : 'center'
 			}, {
 				display : 'Deb/Cred.',
-				name : 'debitoCredito',
+				name : 'debitosCreditos',
 				width : 60,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Saldo a Pagar R$',
-				name : 'saldoPagar',
+				name : 'saldoAPagar',
 				width : 100,
 				sortable : true,
 				align : 'right'
@@ -495,6 +508,96 @@ obterSelecaoColunaCheckProdutoEdicao : function (){
 			sortorder : "asc",
 			width : 960,
 			height : 255
+		});
+	},
+	
+	
+	
+	initGridParciais : function () {
+		
+		$(".contasAPagar_parciaispopGrid").flexigrid({
+			dataType : 'json',
+			colModel : [ {
+				display : 'Lcto',
+				name : 'dtLancamento',
+				width : 60,
+				sortable : true,
+				align : 'center'
+			}, {
+				display : 'Rclt',
+				name : 'dtRecolhimento',
+				width : 60,
+				sortable : true,
+				align : 'center'
+			}, {
+				display : 'Reparte',
+				name : 'reparte',
+				width : 50,
+				sortable : true,
+				align : 'center'
+			}, {
+				display : 'Suplementação',
+				name : 'suplementacao',
+				width : 90,
+				sortable : true,
+				align : 'center'
+			}, {
+				display : 'Encalhe',
+				name : 'encalhe',
+				width : 50,
+				sortable : true,
+				align : 'center'
+			}, {
+				display : 'Venda',
+				name : 'venda',
+				width : 50,
+				sortable : true,
+				align : 'center'
+			}, {
+				display : '% Venda',
+				name : 'percVenda',
+				width : 50,
+				sortable : true,
+				align : 'center'
+			}, {
+				display : 'Venda CE',
+				name : 'vendaCE',
+				width : 60,
+				sortable : true,
+				align : 'center'
+			}, {
+				display : 'Reparte Acum.',
+				name : 'reparteAcumulado',
+				width : 70,
+				sortable : true,
+				align : 'center'
+			}, {
+				display : 'Venda Acum.',
+				name : 'vendaAcumulada',
+				width : 70,
+				sortable : true,
+				align : 'center'
+			}, {
+				display : '% Venda Acum.',
+				name : 'percVendaAcumulada',
+				width : 70,
+				sortable : true,
+				align : 'center'
+			}, {
+				display : 'N° NF-e',
+				name : 'numNfe',
+				width : 50,
+				sortable : true,
+				align : 'left'
+			}],
+			sortname : "dtLancamento",
+			sortorder : "asc",
+			usepager : true,
+			useRp : true,
+			rp : 15,
+			showTableToggleBtn : true,
+			width : 900,
+			height : 200
 		});
 	},
 	
@@ -600,24 +703,6 @@ function popup_encargos() {
 			}
 		});
 	};
-	
-	function popup_detalhes() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
-	
-		$( "#dialog-detalhes-tipo" ).dialog({
-			resizable: false,
-			height:500,
-			width:950,
-			modal: true,
-			buttons: {
-				"Fechar": function() {
-					$( this ).dialog( "close" );
-				
-				},
-			 }
-		});
-	};
-	
 	
 	function detalheVenda() {
 		//$( "#dialog:ui-dialog" ).dialog( "destroy" );

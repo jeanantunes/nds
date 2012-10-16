@@ -134,6 +134,50 @@
 
 					</div> 
       
+
+
+
+<div id="dialog-contasAPagar-tipo" title="Parcial" style="display:none;">
+	
+	<fieldset>
+		<legend>Dados da Parcial</legend>
+    	
+    	<table width="740" border="0" cellpadding="2" cellspacing="1">
+        	<tr>
+            	<td width="81"><strong>C&oacute;digo:</strong></td>
+              	<td width="94"><span id="contasAPagar_popupTipo_codigo"></span></td>
+              	<td width="115"><strong>Produto:</strong></td>
+              	<td width="211"><span id="contasAPagar_popupTipo_produto"></span></td>
+              	<td width="68"><strong>Edi&ccedil;&atilde;o:</strong></td>
+              	<td width="140"><span id="contasAPagar_popupTipo_edicao"></span></td>
+            </tr>
+            <tr>
+              	<td><strong>Fornecedor:</strong></td>
+              	<td><span id="contasAPagar_popupTipo_fornecedor"></span></td>
+              	<td><strong>Data Lan&ccedil;amento:</strong></td>
+              	<td><span id="contasAPagar_popupTipo_dataLcto"></span></td>
+              	<td><strong>Data Final:</strong></td>
+              	<td><span id="contasAPagar_popupTipo_dataFinal"></span></td>
+            </tr>
+		</table>
+    </fieldset>
+
+	<br />
+	<br clear="all" />
+	<br />
+
+	<fieldset>
+		<legend>Parciais</legend>
+	    <table class="contasAPagar_parciaispopGrid"></table>
+	</fieldset>
+
+	<br clear="all" />
+	<br />
+
+	<span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="../images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
+	<span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="../images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
+</div>
+
       
 
 <script type="text/javascript">
