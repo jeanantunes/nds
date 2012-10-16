@@ -5,6 +5,7 @@
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.form.js"></script>
 	<script	src="${pageContext.request.contextPath}/scripts/jquery-upload/js/jquery.iframe-transport.js"	type="text/javascript"></script>
 	<script	src="${pageContext.request.contextPath}/scripts/jquery-upload/js/jquery.fileupload.js"	type="text/javascript"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
 	
 	<script type="text/javascript">
 
@@ -229,7 +230,7 @@
 									<tr>
 										<td>Base de C&aacute;lculo:</td>
 										<td colspan="2">
-										<select name="select" name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.baseCalculo" id="baseCalculo"	style="width: 107px;">
+										<select name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.baseCalculo" id="baseCalculo"	style="width: 107px;">
 										
 										<c:forEach items="${listBaseCalculo}" var="baseCalculo">
 												<option value="${baseCalculo}">${baseCalculo.value}</option>
