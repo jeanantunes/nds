@@ -93,7 +93,7 @@ public class ContasAPagarController {
 		if (filtro.isPrimeiraCarga()) {
 			result.use(Results.json()).from(vo, "result").recursive().serialize();
 		} else {
-			result.use(FlexiGridJson.class).from(vo.getGrid()).total(dto.getTotalGrid()).page(page).serialize();
+			result.use(FlexiGridJson.class).from(vo.getGrid()).total(vo.getTotalGrid()).page(page).serialize();
 		}
 	}
 	
@@ -108,7 +108,7 @@ public class ContasAPagarController {
 			listVO.add(new ContasAPagarParcialVO(dto));
 		}
 		
-		result.use(FlexiGridJson.class).from(listVO).total(flexiDTO.getTotalGrid()).serialize();
+		result.use(FlexiGridJson.class).from(listVO).total(flexiDTO.getTotalGrid()).page(page).serialize();
 	}
 	
 	
@@ -121,7 +121,13 @@ public class ContasAPagarController {
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "A busca não retornou resultados"));
 		}
 		
-		result.use(Results.json()).from(new ContasAPagarGridPrincipalFornecedorVO(dto), "result").recursive().serialize();
+		ContasAPagarGridPrincipalFornecedorVO vo = new ContasAPagarGridPrincipalFornecedorVO(dto);
+		
+		if (filtro.isPrimeiraCarga()) {
+			result.use(Results.json()).from(vo, "result").recursive().serialize();
+		} else {
+			result.use(FlexiGridJson.class).from(vo.getGrid()).total(vo.getTotalGrid()).page(page).serialize();
+		}
 	}
 	
 	
