@@ -994,7 +994,7 @@ public class TransportadorServiceImpl implements TransportadorService {
 
 	@Override
 	public List<MovimentoFinanceiroDTO> obterDetalhesTrasportadorPorCota(
-			Date dataDe, Date dataAte, Long idTransportador) {
+			Date dataDe, Date dataAte, Long idTransportador, Long idCota) {
 		// TODO Auto-generated method stub
 		return null;
 	}

@@ -86,6 +86,6 @@ public interface TransportadorService {
 	
 	List<CotaTransportadorDTO> obterResumoTransportadorCota(Date dataDe, Date dataAte, Long idTransportador);
 	
-	List<MovimentoFinanceiroDTO> obterDetalhesTrasportadorPorCota(Date dataDe, Date dataAte, Long idTransportador);
+	List<MovimentoFinanceiroDTO> obterDetalhesTrasportadorPorCota(Date dataDe, Date dataAte, Long idTransportador, Long idCota);
 	
 }
