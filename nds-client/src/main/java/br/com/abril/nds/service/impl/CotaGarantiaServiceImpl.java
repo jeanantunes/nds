@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.abril.nds.client.assembler.HistoricoTitularidadeCotaDTOAssembler;
 import br.com.abril.nds.dto.CotaGarantiaDTO;
 import br.com.abril.nds.dto.FormaCobrancaCaucaoLiquidaDTO;
+import br.com.abril.nds.dto.GarantiaCadastradaDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.NotaPromissoriaDTO;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -930,5 +931,14 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
         HistoricoTitularidadeCotaCaucaoLiquida caucao = historico.getGarantiaCaucaoLiquida();
         return caucao == null ? null : HistoricoTitularidadeCotaDTOAssembler.toFormaCobrancaCaucaoLiquidaDTO(caucao);
     }
-	
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional
+	public List<GarantiaCadastradaDTO> obterGarantiasCadastradas() {
+		
+		return this.cotaGarantiaRepository.obterGarantiasCadastradas();
+	}
 }

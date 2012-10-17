@@ -1,5 +1,8 @@
 package br.com.abril.nds.repository;
 
+import java.util.List;
+
+import br.com.abril.nds.dto.GarantiaCadastradaDTO;
 import br.com.abril.nds.model.cadastro.Cheque;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantia;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaFiador;
@@ -54,4 +57,6 @@ public interface CotaGarantiaRepository extends Repository<CotaGarantia,Long>{
 
 	CotaGarantiaFiador obterCotaGarantiaFiadorPorIdFiador(Long idFiador);
 
+	List<GarantiaCadastradaDTO> obterGarantiasCadastradas();
+	
 }
