@@ -1,6 +1,7 @@
 package br.com.abril.nds.service.impl;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -13,8 +14,10 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.abril.nds.client.vo.CotaAtendidaTransportadorVO;
 import br.com.abril.nds.dto.AssociacaoVeiculoMotoristaRotaDTO;
 import br.com.abril.nds.dto.ConsultaTransportadorDTO;
+import br.com.abril.nds.dto.CotaTransportadorDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.EnderecoDTO;
+import br.com.abril.nds.dto.MovimentoFinanceiroDTO;
 import br.com.abril.nds.dto.RotaRoteiroDTO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.dto.TelefoneDTO;
@@ -979,5 +982,20 @@ public class TransportadorServiceImpl implements TransportadorService {
 			Long idTransportador, String sortorder, String sortname) {
 		
 		return this.transportadorRepository.buscarCotasAtendidadas(idTransportador, sortorder, sortname);
+	}
+
+	@Override
+	public List<CotaTransportadorDTO> obterResumoTransportadorCota(Date dataDe,
+			Date dataAte, Long idTransportador) {
+		// TODO Auto-generated method stub
+		
+		return null;
+	}
+
+	@Override
+	public List<MovimentoFinanceiroDTO> obterDetalhesTrasportadorPorCota(
+			Date dataDe, Date dataAte, Long idTransportador, Long idCota) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

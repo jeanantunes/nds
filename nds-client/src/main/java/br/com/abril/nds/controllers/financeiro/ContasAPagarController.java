@@ -18,7 +18,6 @@ import br.com.abril.nds.client.vo.ContasAPagarFaltasSobrasVO;
 import br.com.abril.nds.client.vo.ContasAPagarGridPrincipalFornecedorVO;
 import br.com.abril.nds.client.vo.ContasAPagarGridPrincipalProdutoVO;
 import br.com.abril.nds.client.vo.ContasAPagarParcialVO;
-import br.com.abril.nds.client.vo.VisaoEstoqueConferenciaCegaVO;
 import br.com.abril.nds.dto.ContasAPagarConsignadoDTO;
 import br.com.abril.nds.dto.ContasAPagarConsultaProdutoDTO;
 import br.com.abril.nds.dto.ContasAPagarEncalheDTO;
@@ -26,11 +25,9 @@ import br.com.abril.nds.dto.ContasAPagarFaltasSobrasDTO;
 import br.com.abril.nds.dto.ContasAPagarGridPrincipalFornecedorDTO;
 import br.com.abril.nds.dto.ContasAPagarGridPrincipalProdutoDTO;
 import br.com.abril.nds.dto.ContasAPagarParcialDTO;
-import br.com.abril.nds.dto.ContasApagarConsultaPorProdutoDTO;
 import br.com.abril.nds.dto.FlexiGridDTO;
-import br.com.abril.nds.dto.VisaoEstoqueDTO;
-import br.com.abril.nds.dto.filtro.FiltroConsultaVisaoEstoque;
 import br.com.abril.nds.dto.filtro.FiltroContasAPagarDTO;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
@@ -40,9 +37,10 @@ import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.ContasAPagarService;
 import br.com.abril.nds.service.FornecedorService;
-import br.com.abril.nds.util.export.FileExporter;
-import br.com.abril.nds.util.export.NDSFileHeader;
+import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.export.FileExporter.FileType;
+import br.com.abril.nds.util.export.NDSFileHeader;
+import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
@@ -109,10 +107,16 @@ public class ContasAPagarController {
 		ContasAPagarGridPrincipalProdutoDTO dto = contasAPagarService.pesquisarPorProduto(filtro, sortname, sortorder, rp, page);
 
 		if (dto == null) {
-			// TODO: msg erro busca sem resultados
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "A busca não retornou resultados"));
 		}
 		
-		result.use(Results.json()).from(new ContasAPagarGridPrincipalProdutoVO(dto), "result").recursive().serialize();
+		ContasAPagarGridPrincipalProdutoVO vo = new ContasAPagarGridPrincipalProdutoVO(dto);
+		
+		if (filtro.isPrimeiraCarga()) {
+			result.use(Results.json()).from(vo, "result").recursive().serialize();
+		} else {
+			result.use(FlexiGridJson.class).from(vo.getGrid()).total(vo.getTotalGrid()).page(page).serialize();
+		}
 	}
 
 
@@ -126,7 +130,12 @@ public class ContasAPagarController {
 			listVO.add(new ContasAPagarParcialVO(dto));
 		}
 
+
 		result.use(FlexiGridJson.class).from(listVO).total(flexiDTO.getTotalGrid()).serialize();
+
+		
+		result.use(FlexiGridJson.class).from(listVO).total(flexiDTO.getTotalGrid()).page(page).serialize();
+
 	}
 
 
@@ -136,10 +145,21 @@ public class ContasAPagarController {
 		ContasAPagarGridPrincipalFornecedorDTO dto = contasAPagarService.pesquisarPorDistribuidor(filtro, sortname, sortorder, rp, page);
 
 		if (dto == null) {
-			// TODO: msg erro busca sem resultados
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "A busca não retornou resultados"));
 		}
 
+
 		result.use(Results.json()).from(new ContasAPagarGridPrincipalFornecedorVO(dto), "result").recursive().serialize();
+
+		
+		ContasAPagarGridPrincipalFornecedorVO vo = new ContasAPagarGridPrincipalFornecedorVO(dto);
+		
+		if (filtro.isPrimeiraCarga()) {
+			result.use(Results.json()).from(vo, "result").recursive().serialize();
+		} else {
+			result.use(FlexiGridJson.class).from(vo.getGrid()).total(vo.getTotalGrid()).page(page).serialize();
+		}
+
 	}
 
 
