@@ -115,13 +115,19 @@ public class ImpressaoNFEController {
 				ValidacaoVO validacaoVO = new ValidacaoVO(TipoMensagem.ERROR, listaMensagemValidacao);
 				throw new ValidacaoException(validacaoVO);
 			}
-
+			
+			result.use(Results.nothing());
 		}
 
-		//notaFiscalService.obterItensNotaFiscalPor(distribuidor, cota, periodo, listaIdFornecedores, listaIdProdutos, tipoNotaFiscal)
 		TableModel<CellModelKeyValue<NfeImpressaoDTO>> tableModel = new TableModel<CellModelKeyValue<NfeImpressaoDTO>>();
 
 		List<NfeImpressaoDTO> listaNFe = notaFiscalService.buscarNFeParaImpressao(filtro);
+		
+		//TODO: Sérgio - Retirar - usado apenas para marcar a tela
+		for(NfeImpressaoDTO nnnn : listaNFe) {
+			if(nnnn.getIdCota().longValue() > 3)
+				nnnn.setNotaImpressa(true);
+		}
 		
 		tableModel.setTotal(notaFiscalService.buscarNFeParaImpressaoTotalQtd(filtro));
 
@@ -165,8 +171,13 @@ public class ImpressaoNFEController {
 
 		long start = System.currentTimeMillis();
 		@SuppressWarnings("deprecation")
-		List<ProdutoLancamentoDTO> listaProdutoLancamentoUnordered = impressaoNFEService.obterProdutosExpedicaoConfirmada(fornecedores, new Date(112,9,11));
+		List<ProdutoLancamentoDTO> listaProdutoLancamentoUnordered = impressaoNFEService.obterProdutosExpedicaoConfirmada(fornecedores, new Date(112,9,18));
 
+		if(listaProdutoLancamentoUnordered == null) {
+			result.use(Results.nothing());
+			return;
+		}
+			
 		ordenarLista(sortname, sortorder, listaProdutoLancamentoUnordered);
 		
 		List<ProdutoLancamentoDTO> listaProdutoLancamentoRefinada = buscarProdutosNaLista(listaProdutoLancamentoUnordered, codigoProduto, nomeProduto);
@@ -176,7 +187,7 @@ public class ImpressaoNFEController {
 		long end = System.currentTimeMillis();
 		System.out.printf("Total: %.3f ms%n", (end - start) / 1000d);  
 
-		tableModel.setTotal(listaProdutoLancamento.size());
+		tableModel.setTotal(listaProdutoLancamento != null ? listaProdutoLancamento.size() : 0);
 
 		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaProdutoLancamento));
 
@@ -195,6 +206,10 @@ public class ImpressaoNFEController {
 	 */
 	@SuppressWarnings("unchecked")
 	private void ordenarLista(String sortname, String sortorder, List<ProdutoLancamentoDTO> listaProdutoLancamento) {
+		
+		if(listaProdutoLancamento == null)
+			return;
+		
 		if(sortname != null && !sortname.isEmpty())
 			Collections.sort(listaProdutoLancamento, new BeanComparator(sortname, new NullComparator()));
 
@@ -203,15 +218,17 @@ public class ImpressaoNFEController {
 	}
 
 	private List<ProdutoLancamentoDTO> removerItensDuplicados(List<ProdutoLancamentoDTO> listaProdutoLancamentoUnordered) {
+		
+		if(listaProdutoLancamentoUnordered == null)
+			return listaProdutoLancamentoUnordered;
+		
 		Set<ProdutoLancamentoDTO> s = new TreeSet<ProdutoLancamentoDTO>(new Comparator<ProdutoLancamentoDTO>() {
 			@Override
 			public int compare(ProdutoLancamentoDTO o1, ProdutoLancamentoDTO o2) {
 				if(o1.getCodigoProduto().equalsIgnoreCase(o2.getCodigoProduto()))
 					return 0;
-				if(o1.getCodigoProduto().equalsIgnoreCase(o2.getCodigoProduto()))
-					return -1;
-				else
-					return 1;
+				
+				return -1;
 			}
 		});
 

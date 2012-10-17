@@ -43,7 +43,7 @@
 					<td>
 						<div id="rotaContainer">
 							<select name="idRota" id="idRota" style="width: 200px; font-size: 11px !important">
-								<option>Selecione...</option>
+								<option value="-1">Selecione...</option>
 								<c:forEach items="${rotas}" var="rota">
 									<option value="${rota.id}">${rota.descricaoRota}</option>
 								</c:forEach>
@@ -115,7 +115,7 @@
 						hspace="5" border="0" />Arquivo</a></span> <span class="bt_novos" title="Imprimir"><a href="../nota_envio.html"
 					target="_blank"><img src="images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />Imprimir Documento</a></span>
 				<span class="bt_sellAll" style="float: right;" id="btSel"><label for="sel">Selecionar Todos</label><input
-					type="checkbox" id="sel" name="Todos" onclick="checkAll();" style="float: left; margin-right: 30px;" /></span>
+					type="checkbox" id="selTodasAsCotas" name="Todos" onclick="impressaoNfeController.checkTodasAsCotas();" style="float: left; margin-right: 30px;" /></span>
 			</div>
 
 		</fieldset>
@@ -131,7 +131,7 @@
 						<td width="88"><input type="text" id="dialog-pesqProdutos-codigoProduto" name="dialog-pesqProdutos-codigoProduto" style="width: 80px;" /></td>
 						<td width="45">Produto:</td>
 						<td width="180"><input type="text" id="dialog-pesqProdutos-nomeProduto" name="dialog-pesqProdutos-nomeProduto"  style="width: 180px;" /></td>
-						<td width="15"><span class="classPesquisar"> <a href="javascript:impressaoNfeController.filtrarProdutos($('#dialog-pesqProdutos-codigoProduto', impressaoNfeController.workspace).val(), $('#dialog-pesqProdutos-nomeProduto', impressaoNfeController.workspace).val());"> </a>
+						<td width="15"><span class="classPesquisar"> <a href="javascript:this.filtrarProdutos($('#dialog-pesqProdutos-codigoProduto', this.workspace).val(), $('#dialog-pesqProdutos-nomeProduto', this.workspace).val());"> </a>
 						</span></td>
 					</tr>
 				</table>
@@ -146,6 +146,10 @@
 				        <td width="65" align="left" valign="top"><span class="bt_sellAll"><input type="checkbox" id="selecionarTodosProdutosCheck" name="selecionarTodosProdutosCheck" onclick="impressaoNfeController.checkTodosProdutos(this.checked);"/></span></td>
 				    </tr>
 				</table>
+			</fieldset>
+			<fieldset style="width: 400px !important; margin-top: 5px;">
+			<legend>Produtos Filtrados</legend>
+				<table class="produtosAdicionadosPesqGrid"></table>
 			</fieldset>
 			
 		</div>

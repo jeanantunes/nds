@@ -1653,6 +1653,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	public List<NfeImpressaoDTO> buscarNFeParaImpressao(FiltroImpressaoNFEDTO filtro) {
 
 		List<NfeImpressaoDTO> cotas = notaFiscalRepository.buscarNFeParaImpressao(filtro);
+		List<NfeImpressaoDTO> cotasARemover = new ArrayList<NfeImpressaoDTO>();
 
 		Distribuidor distribuidor = this.distribuidorRepository.obter();
 
@@ -1661,27 +1662,46 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		for (NfeImpressaoDTO itemCota : cotas) {
 
 			List<MovimentoEstoqueCota> listaMovimentoEstoqueCota = obterItensNotaVenda(
-					distribuidor, itemCota.getIdCota(), intervaloDateMovimento, filtro.getIdsFornecedores());
+					distribuidor, itemCota.getIdCota(), intervaloDateMovimento, filtro.getIdsFornecedores(), filtro.getCodigosProdutos());
 
+			if(listaMovimentoEstoqueCota == null || listaMovimentoEstoqueCota.size() < 1)
+				cotasARemover.add(itemCota);
+			
 			this.sumarizarTotalItensNota(listaMovimentoEstoqueCota, itemCota);
 
 		}
 
+		cotas.removeAll(cotasARemover);
+		
 		return cotas;
 	}
 
 	@Transactional
 	private List<MovimentoEstoqueCota> obterItensNotaVenda(Distribuidor distribuidor,
-			Long idCota, Intervalo<Date> periodo, List<Long> listaIdFornecedores) {
+			Long idCota, Intervalo<Date> periodo, List<Long> listaIdFornecedores, List<Long> listaCodigosProdutos) {
 
 		List<GrupoMovimentoEstoque> listaGrupoMovimentoEstoques = new ArrayList<GrupoMovimentoEstoque>();
 
-		listaGrupoMovimentoEstoques.add(GrupoMovimentoEstoque.ENVIO_JORNALEIRO);
+		//TODO: Sérgio - Complementar a lista com os movimentos de estoque possíveis
+		listaGrupoMovimentoEstoques.add(GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
 
-		return movimentoEstoqueCotaRepository
-				.obterMovimentoEstoqueCotaPor(distribuidor, idCota , listaGrupoMovimentoEstoques
-											, periodo, listaIdFornecedores);
-
+		List<MovimentoEstoqueCota> movEstCota = movimentoEstoqueCotaRepository
+				.obterMovimentoEstoqueCotaPor(distribuidor, idCota, listaGrupoMovimentoEstoques, periodo, listaIdFornecedores);
+		
+		
+		if(listaCodigosProdutos != null && listaCodigosProdutos.size() > 0) {
+			List<MovimentoEstoqueCota> movEstCotaFiltrado = new ArrayList<MovimentoEstoqueCota>();
+			
+			for(MovimentoEstoqueCota mec : movEstCota) {
+				if(listaCodigosProdutos.contains(Long.parseLong(mec.getProdutoEdicao().getProduto().getCodigo()))) {
+					movEstCotaFiltrado.add(mec);
+				}				
+			}
+			
+			return movEstCotaFiltrado;
+		}
+		
+		return movEstCota;
 	}
 
 	@Transactional
@@ -1699,12 +1719,10 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 			BigDecimal precoVenda = produtoEdicao.getPrecoVenda();
 			BigDecimal percentualDesconto = descontoService
 					.obterDescontoPorCotaProdutoEdicao(cotaRepository.buscarPorId(itemCota.getIdCota()), produtoEdicao);
-			BigDecimal valorDesconto = MathUtil.calculatePercentageValue(
-					precoVenda, percentualDesconto);			
+			BigDecimal valorDesconto = MathUtil.calculatePercentageValue(precoVenda, percentualDesconto);			
 			quantidade = quantidade.add(movimento.getQtde());
 			preco = preco.add(precoVenda.multiply(new BigDecimal(movimento.getQtde())));
-			precoComDesconto = precoComDesconto.add(
-					precoVenda.subtract(valorDesconto, new MathContext(3)));	
+			precoComDesconto = precoComDesconto.add(precoVenda.subtract(valorDesconto, new MathContext(3)));	
 
 			if(!movimento.getListaItemNotaEnvio().isEmpty()){
 				itemCota.setNotaImpressa(true);
