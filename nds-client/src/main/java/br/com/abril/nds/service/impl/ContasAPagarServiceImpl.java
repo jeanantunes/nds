@@ -17,6 +17,7 @@ import br.com.abril.nds.dto.ContasAPagarFaltasSobrasDTO;
 import br.com.abril.nds.dto.ContasAPagarGridPrincipalFornecedorDTO;
 import br.com.abril.nds.dto.ContasAPagarGridPrincipalProdutoDTO;
 import br.com.abril.nds.dto.ContasAPagarParcialDTO;
+import br.com.abril.nds.dto.ContasApagarConsultaPorDistribuidorDTO;
 import br.com.abril.nds.dto.ContasApagarConsultaPorProdutoDTO;
 import br.com.abril.nds.dto.FlexiGridDTO;
 import br.com.abril.nds.dto.filtro.FiltroContasAPagarDTO;
@@ -82,14 +83,92 @@ public class ContasAPagarServiceImpl implements ContasAPagarService {
 	@Override
 	public FlexiGridDTO<ContasAPagarParcialDTO> pesquisarParcial(FiltroContasAPagarDTO filtro, String sortname, String sortorder, int rp, int page) {
 		// TODO Auto-generated method stub
-		return null;
+		
+		//MOCK
+		FlexiGridDTO<ContasAPagarParcialDTO> to = new FlexiGridDTO<ContasAPagarParcialDTO>();
+        
+        ContasAPagarParcialDTO dto = new ContasAPagarParcialDTO();
+        dto.setEncalhe(1);
+        dto.setLcto(new Date());
+        dto.setNfe("NFE");
+        dto.setPctVenda(BigDecimal.TEN);
+        dto.setPctVendaAcum(BigDecimal.TEN);
+        dto.setRclt(new Date());
+        dto.setReparte(1);
+        dto.setReparteAcum(1);
+        dto.setSuplementacao(1);
+        dto.setVenda(1);
+        dto.setVendaAcum(1);
+        dto.setVendaCe(1);
+        
+        to.setGrid(new ArrayList<ContasAPagarParcialDTO>());
+        to.getGrid().add(dto);
+        to.getGrid().add(dto);
+        to.getGrid().add(dto);
+        to.getGrid().add(dto);
+        to.getGrid().add(dto);
+        to.getGrid().add(dto);
+        to.getGrid().add(dto);
+        to.getGrid().add(dto);
+        to.getGrid().add(dto);
+        to.getGrid().add(dto);
+        to.getGrid().add(dto);
+        to.getGrid().add(dto);
+        to.getGrid().add(dto);
+        to.getGrid().add(dto);
+        to.getGrid().add(dto);
+        to.getGrid().add(dto);
+        to.getGrid().add(dto);
+        to.getGrid().add(dto);
+        to.getGrid().add(dto);
+        to.getGrid().add(dto);
+        to.getGrid().add(dto);
+        to.getGrid().add(dto);
+        
+        to.setTotalGrid(30);
+        return to;
+		
 	}
 
 	@Transactional
 	@Override
 	public ContasAPagarGridPrincipalFornecedorDTO pesquisarPorDistribuidor(FiltroContasAPagarDTO filtro, String sortname, String sortorder, int rp, int page) {
+		
+		
+		
+		ContasAPagarGridPrincipalFornecedorDTO to = new ContasAPagarGridPrincipalFornecedorDTO();
+        to.setSaldo(BigDecimal.TEN);
+        to.setTotalBruto(BigDecimal.TEN);
+        to.setTotalDesconto(BigDecimal.TEN);
+        
+        ContasApagarConsultaPorDistribuidorDTO dto = new ContasApagarConsultaPorDistribuidorDTO();
+        dto.setConsignado(BigDecimal.TEN);
+        dto.setData(new Date());
+        dto.setDebitoCredito(BigDecimal.TEN);
+        dto.setEncalhe(BigDecimal.TEN);
+        dto.setFaltasSobras(BigDecimal.TEN);
+        dto.setSaldo(BigDecimal.TEN);
+        dto.setSuplementacao(BigDecimal.TEN);
+        dto.setVenda(BigDecimal.TEN);
+        
+        to.setGrid(new ArrayList<ContasApagarConsultaPorDistribuidorDTO>());
+        to.getGrid().add(dto);
+        to.getGrid().add(dto);
+        to.getGrid().add(dto);
+        to.getGrid().add(dto);
+        to.getGrid().add(dto);
+        to.getGrid().add(dto);
+        to.getGrid().add(dto);
+        to.getGrid().add(dto);
+        to.getGrid().add(dto);
+        to.getGrid().add(dto);
+        to.getGrid().add(dto);
+        
+        to.setTotalGrid(30);
+        
+        return to;
+
 		// TODO Auto-generated method stub
-		return null;
 	}
 
 	@Transactional

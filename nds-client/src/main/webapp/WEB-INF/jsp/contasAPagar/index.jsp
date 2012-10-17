@@ -90,8 +90,9 @@
 	            <table width="950" border="0" cellspacing="1" cellpadding="1">
 					<tr>
 	                	<td width="241">
-	                		<span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="../images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
-							<span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="../images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
+							<span class="bt_arquivo"><a href="${pageContext.request.contextPath}/financeiro/contasAPagar/exportPesquisarPorProduto?fileType=XLS">Arquivo</a></span>
+							<span class="bt_imprimir"><a href="${pageContext.request.contextPath}/financeiro/contasAPagar/exportPesquisarPorProduto?fileType=PDF">Imprimir</a></span>
+					
 						</td>
 		                <td width="226" align="right"><strong>Total Pagto R$: <span id="contasAPagar_gridProdutoTotalPagto"></span></strong></td>
 		                <td width="216" align="right"><strong>Total Desconto R$: <span id="contasAPagar_gridProdutoTotalDesconto"></span></strong></td>

@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.ContasAPagarConsignadoVO;
+import br.com.abril.nds.client.vo.ContasAPagarConsultaPorProdutoVO;
 import br.com.abril.nds.client.vo.ContasAPagarConsultaProdutoVO;
 import br.com.abril.nds.client.vo.ContasAPagarEncalheVO;
 import br.com.abril.nds.client.vo.ContasAPagarFaltasSobrasVO;
@@ -25,6 +26,7 @@ import br.com.abril.nds.dto.ContasAPagarFaltasSobrasDTO;
 import br.com.abril.nds.dto.ContasAPagarGridPrincipalFornecedorDTO;
 import br.com.abril.nds.dto.ContasAPagarGridPrincipalProdutoDTO;
 import br.com.abril.nds.dto.ContasAPagarParcialDTO;
+import br.com.abril.nds.dto.ContasApagarConsultaPorProdutoDTO;
 import br.com.abril.nds.dto.FlexiGridDTO;
 import br.com.abril.nds.dto.filtro.FiltroContasAPagarDTO;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -38,6 +40,7 @@ import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.ContasAPagarService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.util.TipoMensagem;
+import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.util.export.NDSFileHeader;
 import br.com.abril.nds.vo.ValidacaoVO;
@@ -208,19 +211,20 @@ public class ContasAPagarController {
 	public void exportPesquisarPorProduto(FileType fileType) throws IOException {
 		
 		
-		/*FiltroContasAPagarDTO filtro = (FiltroContasAPagarDTO) this.session.getAttribute(FILTRO_CONTAS_A_PAGAR);
-		String sortname;
-		String sortorder;
-		int rp;
-		int page;
+		FiltroContasAPagarDTO filtro = (FiltroContasAPagarDTO) this.session.getAttribute(FILTRO_CONTAS_A_PAGAR);
 		
-		ContasAPagarGridPrincipalProdutoDTO listContasAPagar =  contasAPagarService.pesquisarPorProduto(filtro, sortname, sortorder, rp, page);
+		ContasAPagarGridPrincipalProdutoDTO listContasAPagar =  contasAPagarService.pesquisarPorProduto(filtro, null, null, 0, 0);
+		List <ContasAPagarConsultaPorProdutoVO> listVO = new ArrayList<ContasAPagarConsultaPorProdutoVO>();
 		
-		FileExporter.to("contas-a-pagar", fileType).inHTTPResponse(new Date(), null, null,
-		new ContasAPagarGridPrincipalProdutoVO(listContasAPagar), ContasAPagarGridPrincipalProdutoVO.class,
+		for(ContasApagarConsultaPorProdutoDTO dto : listContasAPagar.getGrid() ){
+			listVO.add(new ContasAPagarConsultaPorProdutoVO(dto));
+		}
+		
+		FileExporter.to("contas-a-pagar", fileType).inHTTPResponse(this.getNDSFileHeader(new Date()), null, null,
+		listVO, ContasAPagarConsultaPorProdutoVO.class,
 		this.httpServletResponse);
 		
-		result.use(Results.nothing());*/
+		result.use(Results.nothing());
 	}
 	
 	@Path("/exportPesquisarParcial")
