@@ -1,6 +1,7 @@
 package br.com.abril.nds.dto;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 public class CotaTransportadorDTO implements Serializable {
 
@@ -11,7 +12,7 @@ public class CotaTransportadorDTO implements Serializable {
 	private String rota;
 	private Integer numCota;
 	private String nomeCota;
-	private String valor;
+	private BigDecimal valor;
 	
 	private Long idTransportador;
 	private Long idCota;
@@ -21,7 +22,7 @@ public class CotaTransportadorDTO implements Serializable {
 	}
 		
 	public CotaTransportadorDTO(String transportador, String roteiro,
-			String rota, Integer numCota, String nomeCota, String valor,
+			String rota, Integer numCota, String nomeCota, BigDecimal valor,
 			Long idTransportador, Long idCota) {
 		super();
 		this.transportador = transportador;
@@ -64,10 +65,10 @@ public class CotaTransportadorDTO implements Serializable {
 	public void setNomeCota(String nomeCota) {
 		this.nomeCota = nomeCota;
 	}
-	public String getValor() {
+	public BigDecimal getValor() {
 		return valor;
 	}
-	public void setValor(String valor) {
+	public void setValor(BigDecimal valor) {
 		this.valor = valor;
 	}
 	public Long getIdTransportador() {
