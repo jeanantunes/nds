@@ -115,7 +115,7 @@ public class MatrizLancamentoController {
 		ResultadoResumoBalanceamentoVO resultadoResumoBalanceamento = 
 			this.obterResultadoResumoLancamento(balanceamentoLancamento);
 						
-		this.result.use(CustomJson.class).put("resultado", resultadoResumoBalanceamento).serialize();
+		this.result.use(CustomJson.class).from(resultadoResumoBalanceamento, "resultado").recursive().serialize();
 		
 	}
 	
