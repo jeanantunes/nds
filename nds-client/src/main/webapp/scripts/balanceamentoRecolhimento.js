@@ -804,7 +804,7 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 		
 		var linhasDaGrid = $('.balanceamentoGrid tr');
 		
-		var listaProdutoRecolhimento = "";
+		var listaProdutoRecolhimento = new Array();
 		
 		var checkAllSelected = balanceamentoRecolhimentoController.verifyCheckAll();
 			
@@ -827,11 +827,7 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 				var sequencia = balanceamentoRecolhimentoController.obterValorInputColuna(linha, 0, "sequencia");
 				var novaData = balanceamentoRecolhimentoController.obterValorInputColuna(linha, 16, "novaData");
 				
-				var linhaSelecionada = 'listaProdutoRecolhimento[' + index + '].idLancamento=' + idLancamento + '&';
-				linhaSelecionada += 'listaProdutoRecolhimento[' + index + '].sequencia=' + sequencia + '&';
-				linhaSelecionada += 'listaProdutoRecolhimento[' + index + '].novaData=' + novaData + '&';
-				
-				listaProdutoRecolhimento = (listaProdutoRecolhimento + linhaSelecionada);
+				listaProdutoRecolhimento.push({idLancamento:idLancamento,sequencia:sequencia,novaData:novaData});
 			}
 		});
 		
@@ -839,11 +835,14 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 		
 		var dataAntiga = $("#dataBalanceamentoHidden", balanceamentoRecolhimentoController.workspace).val();
 		
+		var param = {selecionarTodos:checkAllSelected,
+				novaDataFormatada:novaData,
+				dataAntigaFormatada:dataAntiga};
+		
+		param = serializeArrayToPost("listaProdutoRecolhimento", listaProdutoRecolhimento, param);
+		
 		$.postJSON(contextPath + "/devolucao/balanceamentoMatriz/reprogramarSelecionados",
-				   listaProdutoRecolhimento
-				   		+ "&selecionarTodos=" + checkAllSelected
-				   		+ "&novaDataFormatada=" + novaData
-				   		+ "&dataAntigaFormatada=" + dataAntiga,
+				   param,
 				   function(result) {
 				   		
 						$("#dialogReprogramarBalanceamento", balanceamentoRecolhimentoController.workspace).dialog("close");
@@ -861,7 +860,7 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 		
 		var linhasDaGrid = $('.balanceamentoGrid tr', balanceamentoRecolhimentoController.workspace);
 		
-		var linhaSelecionada;
+		var linhaSelecionada = null;
 		
 		$.each(linhasDaGrid, function(index, value) {
 			
@@ -876,16 +875,18 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 				var sequencia = balanceamentoRecolhimentoController.obterValorInputColuna(linha, 0, "sequencia");
 				var novaData = balanceamentoRecolhimentoController.obterValorInputColuna(linha, 16, "novaData");
 				
-				linhaSelecionada = 'produtoRecolhimento.idLancamento=' + idLancamento + '&';
-				linhaSelecionada += 'produtoRecolhimento.sequencia=' + sequencia + '&';
-				linhaSelecionada += 'produtoRecolhimento.novaData=' + novaData + '&';
+				linhaSelecionada = {idLancamento:idLancamento,sequencia:sequencia,novaData:novaData};
 			}
 		});
 		
 		var dataAntiga = $("#dataBalanceamentoHidden", balanceamentoRecolhimentoController.workspace).val();
 		
-		$.postJSON(contextPath + "/devolucao/balanceamentoMatriz/reprogramarRecolhimentoUnico",   linhaSelecionada
-				   		+ "&dataAntigaFormatada=" + dataAntiga,
+		var param = {dataAntigaFormatada:dataAntiga};
+		if(linhaSelecionada){
+			param =  serializeObjectToPost('produtoRecolhimento', linhaSelecionada,param);
+		}
+		
+		$.postJSON(contextPath + "/devolucao/balanceamentoMatriz/reprogramarRecolhimentoUnico",param,
 				   function(result) {
 				   
 				   		balanceamentoRecolhimentoController.atualizarResumoBalanceamento();

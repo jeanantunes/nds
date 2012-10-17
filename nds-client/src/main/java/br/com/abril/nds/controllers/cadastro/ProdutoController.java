@@ -599,8 +599,14 @@ public class ProdutoController {
 		List<BaseComboVO> listaBaseComboVO = new ArrayList<BaseComboVO>();
 		
 		listaBaseComboVO.add(getDefaultBaseComboVO());
+
+		List<DescontoLogistica> listaDescontos = descontoLogisticaService.obterTodos();
+
+		for (DescontoLogistica descontoLogistica : listaDescontos) {
+			listaBaseComboVO.add(new BaseComboVO(descontoLogistica.getId(), descontoLogistica.getDescricao()));                       
+		}
 		
-		listaBaseComboVO.add(new BaseComboVO(1l,"NORMAL"));                       
+		/*listaBaseComboVO.add(new BaseComboVO(1l,"NORMAL"));                       
 		listaBaseComboVO.add(new BaseComboVO(2l,"PRODUTOS TRIBUTADOS"));          
 		listaBaseComboVO.add(new BaseComboVO(3l,"VIDEO PRINT DE 1/1/96 A 1/1/97"));
 		listaBaseComboVO.add(new BaseComboVO(4l,"CROMOS - NORMAL EXC. JUIZ E BH"));
@@ -609,7 +615,7 @@ public class ProdutoController {
 		listaBaseComboVO.add(new BaseComboVO(7l,"ESPECIAL GLOBO"));
 		listaBaseComboVO.add(new BaseComboVO(8l,"MAGALI FOME ZERO"));
 		listaBaseComboVO.add(new BaseComboVO(9l,"IMPORTADAS MAG"));
-		listaBaseComboVO.add(new BaseComboVO(11l,"IMPORTADAS MAGEXPRESS"));
+		listaBaseComboVO.add(new BaseComboVO(11l,"IMPORTADAS MAGEXPRESS"));*/
 
 		return listaBaseComboVO;
 	}
