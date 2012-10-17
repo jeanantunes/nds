@@ -67,7 +67,11 @@ var contasAPagarController = $.extend(true, {
 					$("#contasAPagar_gridFornecedorTotalDesconto").html(result.totalDesconto);
 					$("#contasAPagar_gridFornecedorSaldo").html(result.saldo);
 					
-					$(".porDistrFornecedorGrid", contasAPagarController.workspace).flexAddData({rows: toFlexiGridObject(result.grid), page : 1, total : result.totalGrid});
+					$(".porDistrFornecedorGrid", contasAPagarController.workspace).flexAddData({
+								rows  : toFlexiGridObject(result.grid), 
+								page  : 1, 
+								total : result.totalGrid
+					});
 				},
 				null,
 				true
@@ -78,8 +82,16 @@ var contasAPagarController = $.extend(true, {
 		}
 		else if ($("#contasAPagarRadioProduto").get(0).checked) {
 			
+			var url = contasAPagarController.path + 'pesquisarPorProduto.json?' + params + '&' + contasAPagarController.obterSelecaoColunaCheckProdutoEdicao(); 
+			
+			$(".porProdutosGrid").flexOptions({
+				url : url,
+				preProcess : contasAPagarController.insereLinksContasAPagarPorProdutos,
+				newp : 1
+			});
+			
 			$.postJSON(
-				contasAPagarController.path + 'pesquisarPorProduto.json?' + params + '&' + contasAPagarController.obterSelecaoColunaCheckProdutoEdicao(),
+				url + '&filtro.primeiraCarga=true',
 				null,
 				function(result) {
 					
@@ -456,7 +468,6 @@ var contasAPagarController = $.extend(true, {
 		
 		$(".porProdutosGrid").flexigrid({
 			dataType : 'json',
-			preProcess : contasAPagarController.insereLinksContasAPagarPorProdutos,
 			colModel : [ {
 				display : 'Rclt',
 				name : 'rctl',

@@ -22,12 +22,15 @@ import br.com.abril.nds.dto.ContasAPagarGridPrincipalProdutoDTO;
 import br.com.abril.nds.dto.ContasAPagarParcialDTO;
 import br.com.abril.nds.dto.FlexiGridDTO;
 import br.com.abril.nds.dto.filtro.FiltroContasAPagarDTO;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.ContasAPagarService;
 import br.com.abril.nds.service.FornecedorService;
+import br.com.abril.nds.util.TipoMensagem;
+import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
@@ -82,10 +85,16 @@ public class ContasAPagarController {
 		ContasAPagarGridPrincipalProdutoDTO dto = contasAPagarService.pesquisarPorProduto(filtro, sortname, sortorder, rp, page);
 		
 		if (dto == null) {
-			// TODO: msg erro busca sem resultados
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "A busca não retornou resultados"));
 		}
 		
-		result.use(Results.json()).from(new ContasAPagarGridPrincipalProdutoVO(dto), "result").recursive().serialize();
+		ContasAPagarGridPrincipalProdutoVO vo = new ContasAPagarGridPrincipalProdutoVO(dto);
+		
+		if (filtro.isPrimeiraCarga()) {
+			result.use(Results.json()).from(vo, "result").recursive().serialize();
+		} else {
+			result.use(FlexiGridJson.class).from(vo.getGrid()).total(dto.getTotalGrid()).page(page).serialize();
+		}
 	}
 	
 
@@ -109,7 +118,7 @@ public class ContasAPagarController {
 		ContasAPagarGridPrincipalFornecedorDTO dto = contasAPagarService.pesquisarPorDistribuidor(filtro, sortname, sortorder, rp, page);
 		
 		if (dto == null) {
-			// TODO: msg erro busca sem resultados
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "A busca não retornou resultados"));
 		}
 		
 		result.use(Results.json()).from(new ContasAPagarGridPrincipalFornecedorVO(dto), "result").recursive().serialize();
