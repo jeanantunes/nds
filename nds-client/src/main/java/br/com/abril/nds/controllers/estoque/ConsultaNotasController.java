@@ -147,8 +147,10 @@ public class ConsultaNotasController {
 				Collections.sort(listaCellModel, new Comparator<CellModel>() {
 					@Override
 					public int compare(CellModel o1, CellModel o2) {
-						BigDecimal cellO1 = new BigDecimal((String) o1.getCell()[7]);
-						BigDecimal cellO2 = new BigDecimal((String) o2.getCell()[7]);
+						/*BigDecimal cellO1 = new BigDecimal((String) o1.getCell()[5]);
+						BigDecimal cellO2 = new BigDecimal((String) o2.getCell()[5]);*/
+						BigDecimal cellO1 = CurrencyUtil.converterValor((String) o1.getCell()[5]);
+						BigDecimal cellO2 = CurrencyUtil.converterValor((String) o2.getCell()[5]);
 						return cellO1.compareTo(cellO2);
 					}
 				});
