@@ -144,6 +144,8 @@ public class ContasAPagarController {
 
 	@Path("/pesquisarPorFornecedor.json")
 	public void pesquisarPorFornecedor(FiltroContasAPagarDTO filtro, String sortname, String sortorder, int rp, int page) {
+		
+		this.session.setAttribute(FILTRO_CONTAS_A_PAGAR, filtro);
 
 		ContasAPagarGridPrincipalFornecedorDTO dto = contasAPagarService.pesquisarPorDistribuidor(filtro, sortname, sortorder, rp, page);
 
