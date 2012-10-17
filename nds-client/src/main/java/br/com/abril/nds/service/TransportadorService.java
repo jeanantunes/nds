@@ -17,6 +17,7 @@ import br.com.abril.nds.model.cadastro.AssociacaoVeiculoMotoristaRota;
 import br.com.abril.nds.model.cadastro.Motorista;
 import br.com.abril.nds.model.cadastro.Transportador;
 import br.com.abril.nds.model.cadastro.Veiculo;
+import br.com.abril.nds.vo.PaginacaoVO;
 
 public interface TransportadorService {
 
@@ -84,7 +85,7 @@ public interface TransportadorService {
 	List<CotaAtendidaTransportadorVO> buscarCotasAtendidadas(
 			Long idTransportador, String sortorder, String sortname);
 	
-	List<CotaTransportadorDTO> obterResumoTransportadorCota(Date dataDe, Date dataAte, Long idTransportador);
+	List<CotaTransportadorDTO> obterResumoTransportadorCota(Date dataDe, Date dataAte, Long idTransportador, PaginacaoVO paginacaoVO);
 	
 	List<MovimentoFinanceiroDTO> obterDetalhesTrasportadorPorCota(Date dataDe, Date dataAte, Long idTransportador, Long idCota);
 	

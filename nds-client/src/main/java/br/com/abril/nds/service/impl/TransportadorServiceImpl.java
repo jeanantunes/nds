@@ -986,7 +986,7 @@ public class TransportadorServiceImpl implements TransportadorService {
 
 	@Override
 	public List<CotaTransportadorDTO> obterResumoTransportadorCota(Date dataDe,
-			Date dataAte, Long idTransportador) {
+			Date dataAte, Long idTransportador, PaginacaoVO paginacaoVO) {
 		// TODO Auto-generated method stub
 		
 		return null;
