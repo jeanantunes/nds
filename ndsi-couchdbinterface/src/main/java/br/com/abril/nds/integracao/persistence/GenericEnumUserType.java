@@ -158,17 +158,43 @@ public class GenericEnumUserType implements UserType, ParameterizedType {
 	}
 
 	@Override
-	public Object nullSafeGet(ResultSet arg0, String[] arg1,
-			SessionImplementor arg2, Object arg3) throws HibernateException,
-			SQLException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
+	public Object nullSafeGet(ResultSet rs, String[] names,
+		SessionImplementor sess, Object arg3) throws HibernateException,
+		SQLException {
+	
+        Object identifier = type.get(rs, names[0], sess);
+        if (rs.wasNull()) {
+            return null;
+        }
+        
+        try {
+            return valueOfMethod.invoke(enumClass, new Object[] { identifier });
+        } catch (Exception e) {
+            throw new HibernateException("Exception while invoking valueOf method '" + valueOfMethod.getName() + "' of " +
+                    "enumeration class '" + enumClass + "'", e);
+        }
+    }
+	
 	@Override
-	public void nullSafeSet(PreparedStatement arg0, Object arg1, int arg2,
-			SessionImplementor arg3) throws HibernateException, SQLException {
-		// TODO Auto-generated method stub
-		
-	}
+	public void nullSafeSet(PreparedStatement st, Object value, int index,
+		SessionImplementor arg3) throws HibernateException, SQLException {
+	// TODO Auto-generated method stub
+
+        try {
+            if (value == null) {
+                st.setNull(index, ((AbstractSingleColumnStandardBasicType<?>) type).sqlType());
+            } else {
+        	   Object identifier = null;
+               if (value instanceof String) {
+                    identifier = value;
+                } else {
+                    identifier = identifierMethod.invoke(value, new Object[0]);
+                }
+                type.nullSafeSet(st, identifier, index, arg3);
+            }
+        } catch (Exception e) {
+            throw new HibernateException("Exception while invoking identifierMethod '" + identifierMethod.getName() + "' of " +
+                    "enumeration class '" + enumClass + "'", e);
+        }
+    }
 }
