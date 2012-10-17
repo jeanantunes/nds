@@ -17,7 +17,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializationConfig;
 import org.codehaus.jackson.map.module.SimpleModule;
 
-import br.com.abril.nds.serialization.custom.CustomJson.PropertyExcludeModule;
+import br.com.abril.nds.serialization.custom.CustomJson2.PropertyExcludeModule;
 import br.com.caelum.vraptor.View;
 import br.com.caelum.vraptor.core.Localization;
 import br.com.caelum.vraptor.ioc.Component;
