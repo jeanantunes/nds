@@ -355,10 +355,12 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
      * OBS: Específico para matrizLancamento\index.jsp
      */
 	this.confirmarMatrizLancamento = function (){
-
+		
+		var param = serializeArrayToPost('datasConfirmadas', balanceamento.obterDatasMarcadasConfirmacao());
+		
 		$.postJSON(
 			pathTela + "/matrizLancamento/confirmarMatrizLancamento", 
-			balanceamento.obterDatasMarcadasConfirmacao(),
+			param,
 			function(mensagens) {
 				
 	           $("#dialog-confirm-balanceamento", _workspace).dialog("close");

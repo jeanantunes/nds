@@ -8,9 +8,9 @@
 	<form id="contasAPagarForm">
 		<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 			<tr>
-				<td width="20" align="right"><input  type="radio" name="radio" id="contasAPagarRadioDistribuidor" value="radio" onchange="pesqDistribuidor();" /></td>
+				<td width="20" align="right"><input  type="radio" name="radio" id="contasAPagarRadioDistribuidor" value="radio" onchange="contasAPagarController.pesqDistribuidor();" /></td>
 	            <td width="69">Distribuidor</td>
-	            <td width="20"><input  type="radio" name="radio" id="contasAPagarRadioProduto" value="radio" onchange="pesqProduto();" /></td>
+	            <td width="20"><input  type="radio" name="radio" id="contasAPagarRadioProduto" value="radio" onchange="contasAPagarController.pesqProduto();" /></td>
 	            <td width="47">Produto</td>
 	            <td width="195">
 	            	
@@ -220,8 +220,39 @@
 
 </div>
 
-      
-      
+
+
+
+<div id="contasAPagar_popupFaltasSobras" title="Venda de Encalhe" style="display:none;">
+	<fieldset style="width:800px!important;">
+    	<legend>14/12/2011</legend>
+        <table class="contasAPagar_faltasSobrasGrid"></table>
+        <span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="../images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
+		<span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="../images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
+       	<table width="290" border="0" cellspacing="2" cellpadding="2"  style="float:right; margin-top: 7px;">
+        	<tr>
+            	<td width="109"><strong>Total R$:</strong></td>
+                <td width="53"><strong>Dinap:</strong></td>
+                <td width="92" align="right">999.999,99</td>
+                <td width="10">&nbsp;</td>
+            </tr>
+            <tr>
+                <td height="23" align="right"></td>
+                <td><strong>FC:</strong></td>
+                <td align="right">999.999,99</td>
+                <td>&nbsp;</td>
+            </tr>
+        </table>
+    </fieldset>
+</div>
+
+
+
+
+
+
+
+
 
 <script type="text/javascript">
 		$(function(){
