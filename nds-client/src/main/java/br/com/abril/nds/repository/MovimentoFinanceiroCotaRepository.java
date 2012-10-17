@@ -111,13 +111,4 @@ public interface MovimentoFinanceiroCotaRepository extends Repository<MovimentoF
 	 */
 	List<DebitoCreditoCotaDTO> obterDebitoCreditoPorPeriodoOperacao(FiltroConsultaEncalheDTO filtro, List<TipoMovimentoFinanceiro> tiposMovimentoFinanceiroIgnorados);
 	
-	/**
-	 * Obtém dados de transportador por periodo
-	 * 
-	 * @param dataDe
-	 * @param dataAte
-	 * @param idTransportador
-	 * @return
-	 */
-	List<CotaTransportadorDTO> obterDadosTransportador(Date dataDe, Date dataAte, Long idTransportador); 
 }

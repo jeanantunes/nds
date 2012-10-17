@@ -13,6 +13,27 @@ public class CotaTransportadorDTO implements Serializable {
 	private String nomeCota;
 	private String valor;
 	
+	private Long idTransportador;
+	private Long idCota;
+	
+	public CotaTransportadorDTO() {
+		
+	}
+		
+	public CotaTransportadorDTO(String transportador, String roteiro,
+			String rota, Integer numCota, String nomeCota, String valor,
+			Long idTransportador, Long idCota) {
+		super();
+		this.transportador = transportador;
+		this.roteiro = roteiro;
+		this.rota = rota;
+		this.numCota = numCota;
+		this.nomeCota = nomeCota;
+		this.valor = valor;
+		this.idTransportador = idTransportador;
+		this.idCota = idCota;
+	}
+
 	public String getTransportador() {
 		return transportador;
 	}
@@ -48,6 +69,18 @@ public class CotaTransportadorDTO implements Serializable {
 	}
 	public void setValor(String valor) {
 		this.valor = valor;
+	}
+	public Long getIdTransportador() {
+		return idTransportador;
+	}
+	public void setIdTransportador(Long idTransportador) {
+		this.idTransportador = idTransportador;
+	}
+	public Long getIdCota() {
+		return idCota;
+	}
+	public void setIdCota(Long idCota) {
+		this.idCota = idCota;
 	}
 		
 	

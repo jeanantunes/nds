@@ -1,12 +1,15 @@
 package br.com.abril.nds.service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
 import br.com.abril.nds.client.vo.CotaAtendidaTransportadorVO;
 import br.com.abril.nds.dto.AssociacaoVeiculoMotoristaRotaDTO;
 import br.com.abril.nds.dto.ConsultaTransportadorDTO;
+import br.com.abril.nds.dto.CotaTransportadorDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
+import br.com.abril.nds.dto.MovimentoFinanceiroDTO;
 import br.com.abril.nds.dto.RotaRoteiroDTO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaTransportadorDTO;
@@ -80,4 +83,9 @@ public interface TransportadorService {
 
 	List<CotaAtendidaTransportadorVO> buscarCotasAtendidadas(
 			Long idTransportador, String sortorder, String sortname);
+	
+	List<CotaTransportadorDTO> obterResumoTransportadorCota(Date dataDe, Date dataAte, Long idTransportador);
+	
+	List<MovimentoFinanceiroDTO> obterDetalhesTrasportadorPorCota(Date dataDe, Date dataAte, Long idTransportador);
+	
 }
