@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import java.util.Properties;
 
 import org.hibernate.HibernateException;
+import org.hibernate.engine.spi.SessionImplementor;
 import org.hibernate.type.AbstractSingleColumnStandardBasicType;
 import org.hibernate.type.AbstractStandardBasicType;
 import org.hibernate.type.TypeResolver;
@@ -81,46 +82,7 @@ public class GenericEnumUserType implements UserType, ParameterizedType {
 		return enumClass;
 	}
 
-	public Object nullSafeGet(ResultSet rs, String[] names, Object owner)
-			throws HibernateException, SQLException {
-		Object identifier = type.get(rs, names[0], null);
-		if (rs.wasNull()) {
-			return null;
-		}
-
-		try {
-			return valueOfMethod.invoke(null, new Object[] { identifier });
-		} catch (Exception e) {
-			throw new HibernateException(
-					"Exception while invoking valueOf method '"
-							+ valueOfMethod.getName() + "' of "
-							+ "enumeration class '" + enumClass + "'", e);
-		}
-	}
-
-	public void nullSafeSet(PreparedStatement st, Object value, int index)
-			throws SQLException {
-		try {
-			if (value == null) {
-				st.setNull(index,
-						((AbstractSingleColumnStandardBasicType<?>) type)
-								.sqlType());
-			} else {
-				Object identifier = null;
-				if (value instanceof String) {
-					identifier = value;
-				} else {
-					identifier = identifierMethod.invoke(value, new Object[0]);
-				}
-				type.nullSafeSet(st, identifier, index, null);
-			}
-		} catch (Exception e) {
-			throw new HibernateException(
-					"Exception while invoking identifierMethod '"
-							+ identifierMethod.getName() + "' of "
-							+ "enumeration class '" + enumClass + "'", e);
-		}
-	}
+	
 
 	public int[] sqlTypes() {
 		return sqlTypes;
@@ -155,4 +117,45 @@ public class GenericEnumUserType implements UserType, ParameterizedType {
 			throws HibernateException {
 		return original;
 	}
+
+	@Override
+	public Object nullSafeGet(ResultSet rs, String[] names,
+		SessionImplementor sess, Object arg3) throws HibernateException,
+		SQLException {
+	
+        Object identifier = type.get(rs, names[0], sess);
+        if (rs.wasNull()) {
+            return null;
+        }
+        
+        try {
+            return valueOfMethod.invoke(enumClass, new Object[] { identifier });
+        } catch (Exception e) {
+            throw new HibernateException("Exception while invoking valueOf method '" + valueOfMethod.getName() + "' of " +
+                    "enumeration class '" + enumClass + "'", e);
+        }
+    }
+	
+	@Override
+	public void nullSafeSet(PreparedStatement st, Object value, int index,
+		SessionImplementor arg3) throws HibernateException, SQLException {
+	// TODO Auto-generated method stub
+
+        try {
+            if (value == null) {
+                st.setNull(index, ((AbstractSingleColumnStandardBasicType<?>) type).sqlType());
+            } else {
+        	   Object identifier = null;
+               if (value instanceof String) {
+                    identifier = value;
+                } else {
+                    identifier = identifierMethod.invoke(value, new Object[0]);
+                }
+                type.nullSafeSet(st, identifier, index, arg3);
+            }
+        } catch (Exception e) {
+            throw new HibernateException("Exception while invoking identifierMethod '" + identifierMethod.getName() + "' of " +
+                    "enumeration class '" + enumClass + "'", e);
+        }
+    }
 }

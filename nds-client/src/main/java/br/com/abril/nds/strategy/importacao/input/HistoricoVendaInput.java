@@ -1,9 +1,12 @@
 package br.com.abril.nds.strategy.importacao.input;
 
 import java.io.Serializable;
+import java.util.StringTokenizer;
+
+
 
 public class HistoricoVendaInput implements Serializable{
-	
+		
 	private static final long serialVersionUID = 1L;
 
 	private String codigoProduto;
@@ -104,5 +107,9 @@ public class HistoricoVendaInput implements Serializable{
 		this.quantidadeDevolvidaProduto = quantidadeDevolvidaProduto;
 	}
 	
-	
+
+	public String getCVSFormat() {
+		return new StringTokenizer("x numeroCota codigoProduto quantidadeRecebidaProduto quantidadeDevolvidaProduto"," ").toString();
+
+	}
 }
