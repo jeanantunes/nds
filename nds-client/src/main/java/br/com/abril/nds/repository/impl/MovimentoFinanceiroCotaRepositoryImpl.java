@@ -9,6 +9,7 @@ import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.CotaFaturamentoDTO;
+import br.com.abril.nds.dto.CotaTransportadorDTO;
 import br.com.abril.nds.dto.DebitoCreditoCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroDebitoCreditoDTO;
@@ -617,5 +618,69 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 
 	    return hql.toString();
 	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<CotaTransportadorDTO> obterDadosTransportador(Date dataDe, Date dataAte, Long idTransportador) {
+
+		StringBuilder hql = new StringBuilder();
+		
+		addFromObterDadosTransportador(hql, dataDe, dataAte, idTransportador);
+		
+		getOrderByObterMovimentosFinanceiroCota(filtroDebitoCreditoDTO); 
+
+		Query query = criarQueryObterMovimentosFinanceiroCota(hql, filtroDebitoCreditoDTO);
+
+		if (filtroDebitoCreditoDTO.getPaginacao() != null 
+				&& filtroDebitoCreditoDTO.getPaginacao().getPosicaoInicial() != null) { 
+			
+			query.setFirstResult(filtroDebitoCreditoDTO.getPaginacao().getPosicaoInicial());
+			
+			query.setMaxResults(filtroDebitoCreditoDTO.getPaginacao().getQtdResultadosPorPagina());
+		}
+		
+		return query.list();
+	}
+	
+
+	private void addFromObterDadosTransportador(StringBuilder hql, Date dataDe, Date dataAte, Long idTransportador) {
+
+		hql.append(" from MovimentoFinanceiroCota movimentoFinanceiroCota ");
+
+		String conditions = "";
+
+		if (filtroDebitoCreditoDTO.getIdTipoMovimento() != null) {
+
+			conditions += conditions == "" ? " where " : " and ";
+
+			conditions += " movimentoFinanceiroCota.tipoMovimento.id = :idTipoMovimento ";
+		}
+
+		if (filtroDebitoCreditoDTO.getDataLancamentoInicio() != null && 
+				filtroDebitoCreditoDTO.getDataLancamentoFim() != null) {
+			
+			conditions += conditions == "" ? " where " : " and ";
+
+			conditions += " movimentoFinanceiroCota.dataCriacao between :dataLancamentoInicio and :dataLancamentoFim ";
+		}
+		
+		if (filtroDebitoCreditoDTO.getDataVencimentoInicio() != null && 
+				filtroDebitoCreditoDTO.getDataVencimentoFim() != null) {
+			
+			conditions += conditions == "" ? " where " : " and ";
+
+			conditions += " movimentoFinanceiroCota.data between :dataVencimentoInicio and :dataVencimentoFim ";
+		}
+
+		if (filtroDebitoCreditoDTO.getNumeroCota() != null) {
+
+			conditions += conditions == "" ? " where " : " and ";
+
+			conditions += " movimentoFinanceiroCota.cota.numeroCota = :numeroCota ";
+		}
+
+		hql.append(conditions);
+	}
+
 	
 }

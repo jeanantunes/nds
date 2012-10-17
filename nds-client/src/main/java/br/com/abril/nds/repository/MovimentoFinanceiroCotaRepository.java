@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import br.com.abril.nds.dto.CotaFaturamentoDTO;
+import br.com.abril.nds.dto.CotaTransportadorDTO;
 import br.com.abril.nds.dto.DebitoCreditoCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroDebitoCreditoDTO;
@@ -110,4 +111,13 @@ public interface MovimentoFinanceiroCotaRepository extends Repository<MovimentoF
 	 */
 	List<DebitoCreditoCotaDTO> obterDebitoCreditoPorPeriodoOperacao(FiltroConsultaEncalheDTO filtro, List<TipoMovimentoFinanceiro> tiposMovimentoFinanceiroIgnorados);
 	
+	/**
+	 * Obtém dados de transportador por periodo
+	 * 
+	 * @param dataDe
+	 * @param dataAte
+	 * @param idTransportador
+	 * @return
+	 */
+	List<CotaTransportadorDTO> obterDadosTransportador(Date dataDe, Date dataAte, Long idTransportador); 
 }
