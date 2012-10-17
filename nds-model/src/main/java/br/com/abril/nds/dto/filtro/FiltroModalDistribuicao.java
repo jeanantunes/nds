@@ -28,15 +28,13 @@ public class FiltroModalDistribuicao implements Serializable{
 	
 	private boolean termoAdesaoRecebido;
 	
-	private BigDecimal percentualFaturamentoEntregaBranca;
+	private BigDecimal percentualFaturamentoEntregaBanca;
 	
-	private BigDecimal taxaFixaEntregaBranca;
+	private BigDecimal taxaFixaEntregaBanca;
 	
-	private BaseCalculo baseCalculo;
+	private Date carenciaInicioEntregaBanca;
 	
-	private Date carenciaInicioEntregaBranca;
-	
-	private Date  carenciaFimEntregaBranca;
+	private Date  carenciaFimEntregaBanca;
 	
 	
 	
@@ -135,38 +133,10 @@ public class FiltroModalDistribuicao implements Serializable{
 		this.termoAdesaoRecebido = termoAdesaoRecebido;
 	}
 
-	public BigDecimal getPercentualFaturamentoEntregaBranca() {
-		return percentualFaturamentoEntregaBranca;
-	}
 
-	public void setPercentualFaturamentoEntregaBranca(
-			BigDecimal percentualFaturamentoEntregaBranca) {
-		this.percentualFaturamentoEntregaBranca = percentualFaturamentoEntregaBranca;
-	}
 
-	public BigDecimal getTaxaFixaEntregaBranca() {
-		return taxaFixaEntregaBranca;
-	}
 
-	public void setTaxaFixaEntregaBranca(BigDecimal taxaFixaEntregaBranca) {
-		this.taxaFixaEntregaBranca = taxaFixaEntregaBranca;
-	}
 
-	public Date getCarenciaInicioEntregaBranca() {
-		return carenciaInicioEntregaBranca;
-	}
-
-	public void setCarenciaInicioEntregaBranca(Date carenciaInicioEntregaBranca) {
-		this.carenciaInicioEntregaBranca = carenciaInicioEntregaBranca;
-	}
-
-	public Date getCarenciaFimEntregaBranca() {
-		return carenciaFimEntregaBranca;
-	}
-
-	public void setCarenciaFimEntregaBranca(Date carenciaFimEntregaBranca) {
-		this.carenciaFimEntregaBranca = carenciaFimEntregaBranca;
-	}
 
 	public boolean isProcuracao() {
 		return procuracao;
@@ -209,13 +179,39 @@ public class FiltroModalDistribuicao implements Serializable{
 		this.carenciaFimEntregador = carenciaFimEntregador;
 	}
 
-	public BaseCalculo getBaseCalculo() {
-		return baseCalculo;
+	public BigDecimal getPercentualFaturamentoEntregaBanca() {
+		return percentualFaturamentoEntregaBanca;
 	}
 
-	public void setBaseCalculo(BaseCalculo baseCalculo) {
-		this.baseCalculo = baseCalculo;
+	public void setPercentualFaturamentoEntregaBanca(
+			BigDecimal percentualFaturamentoEntregaBanca) {
+		this.percentualFaturamentoEntregaBanca = percentualFaturamentoEntregaBanca;
 	}
+
+	public BigDecimal getTaxaFixaEntregaBanca() {
+		return taxaFixaEntregaBanca;
+	}
+
+	public void setTaxaFixaEntregaBanca(BigDecimal taxaFixaEntregaBanca) {
+		this.taxaFixaEntregaBanca = taxaFixaEntregaBanca;
+	}
+
+	public Date getCarenciaInicioEntregaBanca() {
+		return carenciaInicioEntregaBanca;
+	}
+
+	public void setCarenciaInicioEntregaBanca(Date carenciaInicioEntregaBanca) {
+		this.carenciaInicioEntregaBanca = carenciaInicioEntregaBanca;
+	}
+
+	public Date getCarenciaFimEntregaBanca() {
+		return carenciaFimEntregaBanca;
+	}
+
+	public void setCarenciaFimEntregaBanca(Date carenciaFimEntregaBanca) {
+		this.carenciaFimEntregaBanca = carenciaFimEntregaBanca;
+	}
+
 
 	
 }

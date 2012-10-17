@@ -2,17 +2,15 @@ package br.com.abril.nds.controllers.administracao;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,9 +41,7 @@ import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.EnderecoService;
 import br.com.abril.nds.service.FileService;
 import br.com.abril.nds.service.FornecedorService;
-import br.com.abril.nds.service.HistoricoTitularidadeCotaFinanceiroService;
 import br.com.abril.nds.service.ParametroCobrancaCotaService;
-import br.com.abril.nds.service.TipoEntregaService;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.vo.PaginacaoVO;
@@ -55,6 +51,7 @@ import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
+import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/administracao/alteracaoCota")
@@ -63,8 +60,6 @@ public class AlteracaoCotaController {
 	@Autowired
 	private FornecedorService fornecedorService;
 	
-	@Autowired
-	private TipoEntregaService tipoEntregaService;
 	
 	@Autowired
 	private EnderecoService enderecoService;
@@ -73,19 +68,10 @@ public class AlteracaoCotaController {
 	private AlteracaoCotaService alteracaoCotaService;
 	
 	@Autowired
-	private HttpServletResponse httpServletResponse;
-	
-	@Autowired
-	private HttpSession session;
-	
-	@Autowired
 	private CotaService cotaService;
 	
 	@Autowired
 	private ParametroCobrancaCotaService parametroCobrancaCotaService;
-
-	@Autowired
-	private HistoricoTitularidadeCotaFinanceiroService historicoTitularidadeCotaFinanceiroService;
 	
 	@Autowired
 	private FileService fileService; 
@@ -253,10 +239,10 @@ public class AlteracaoCotaController {
 					cota.getParametroDistribuicao().setUtilizaTermoAdesao(filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().isTermoAdesao());
 					cota.getParametroDistribuicao().setTermoAdesaoRecebido(filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().isTermoAdesaoRecebido());
 					// TODO arquivo
-					cota.getParametroDistribuicao().setPercentualFaturamento(filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().getPercentualFaturamentoEntregaBranca());
-					cota.getParametroDistribuicao().setTaxaFixa(filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().getTaxaFixaEntregaBranca());
-					cota.getParametroDistribuicao().setInicioPeriodoCarencia(filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().getCarenciaInicioEntregaBranca());
-					cota.getParametroDistribuicao().setFimPeriodoCarencia(filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().getCarenciaFimEntregaBranca());
+					cota.getParametroDistribuicao().setPercentualFaturamento(filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().getPercentualFaturamentoEntregaBanca());
+					cota.getParametroDistribuicao().setTaxaFixa(filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().getTaxaFixaEntregaBanca());
+					cota.getParametroDistribuicao().setInicioPeriodoCarencia(filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().getCarenciaInicioEntregaBanca());
+					cota.getParametroDistribuicao().setFimPeriodoCarencia(filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().getCarenciaFimEntregaBanca());
 				}else{
 					cota.getParametroDistribuicao().setUtilizaProcuracao(filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().isProcuracao());
 					cota.getParametroDistribuicao().setProcuracaoRecebida(filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().isProcuracaoRecebida());
@@ -343,13 +329,13 @@ public class AlteracaoCotaController {
 					filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setTermoAdesaoRecebido(cota.getParametroDistribuicao().getTermoAdesaoRecebido());
 				// TODO arquivo
 				if(cota.getParametroDistribuicao().getPercentualFaturamento() != null)
-					filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setPercentualFaturamentoEntregaBranca(cota.getParametroDistribuicao().getPercentualFaturamento());
+					filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setPercentualFaturamentoEntregaBanca(cota.getParametroDistribuicao().getPercentualFaturamento());
 				if(cota.getParametroDistribuicao().getTaxaFixa() != null)
-					filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setTaxaFixaEntregaBranca(cota.getParametroDistribuicao().getTaxaFixa());
+					filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setTaxaFixaEntregaBanca(cota.getParametroDistribuicao().getTaxaFixa());
 				if(cota.getParametroDistribuicao().getInicioPeriodoCarencia() != null)
-					filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setCarenciaInicioEntregaBranca(cota.getParametroDistribuicao().getInicioPeriodoCarencia());
+					filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setCarenciaInicioEntregaBanca(cota.getParametroDistribuicao().getInicioPeriodoCarencia());
 				if(cota.getParametroDistribuicao().getFimPeriodoCarencia() != null)
-					filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setCarenciaFimEntregaBranca(cota.getParametroDistribuicao().getFimPeriodoCarencia());
+					filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setCarenciaFimEntregaBanca(cota.getParametroDistribuicao().getFimPeriodoCarencia());
 			}else{
 				if(cota.getParametroDistribuicao().getUtilizaProcuracao() != null)
 					filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setProcuracao(cota.getParametroDistribuicao().getUtilizaProcuracao());
@@ -489,10 +475,21 @@ public class AlteracaoCotaController {
 			fileService.setArquivoTemp(dirBase, uploadedFile.getFileName(), uploadedFile.getFile());
 			
 			fileName = uploadedFile.getFileName();
+			InputStream inputStream = uploadedFile.getFile();
+			inputStream.close();
+			
 		}
 		
 		this.result.use(PlainJSONSerialization.class)
 			.from(fileName, "result").recursive().serialize();
+	}
+	
+	@Post
+	public void validarValoresParaDownload(BigDecimal taxa, BigDecimal percentual) {
+		
+		this.validarPercentualTaxa(percentual, taxa);
+		
+		this.result.use(Results.json()).from("", "result").serialize();
 	}
 	
 	@Get
@@ -561,4 +558,14 @@ public class AlteracaoCotaController {
 		httpResponse.flushBuffer();
 		
 	}
+	
+	private void validarPercentualTaxa(BigDecimal percentualFaturamento, BigDecimal taxaFixa) {
+		
+		if (percentualFaturamento == null && taxaFixa == null) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING,
+				"O Percentual de Faturamento ou a Taxa Fixa devem ser preenchidos!");
+		}
+	}
+
 }

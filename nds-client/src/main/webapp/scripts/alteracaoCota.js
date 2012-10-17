@@ -21,22 +21,22 @@ var alteracaoCotaController = $.extend(true, {
 		
 		this.iniciarGrid();
 		
-		$("#percentualFaturamentoEntregaBranca", this.workspace).mask("99.99");
-		$("#taxaFixaEntregaBranca", this.workspace).numeric();
-		$("#carenciaInicioEntregaBranca", this.workspace).mask("99/99/9999");
-		$("#carenciaFimEntregaBranca", this.workspace).mask("99/99/9999");
+		$("#percentualFaturamentoEntregaBanca", this.workspace).mask("99.99");
+		$("#taxaFixaEntregaBanca", this.workspace).numeric();
+		$("#carenciaInicioEntregaBanca", this.workspace).mask("99/99/9999");
+		$("#carenciaFimEntregaBanca", this.workspace).mask("99/99/9999");
 		
 		$("#percentualFaturamentoEntregador", this.workspace).mask("99.99");
 		$("#carenciaInicioEntregador", this.workspace).mask("99/99/9999");
-		$("#carenciaFimEntregado", this.workspace).mask("99/99/9999");
+		$("#carenciaFimEntregador", this.workspace).mask("99/99/9999");
 		
 		
-		$("#carenciaInicioEntregaBranca", this.workspace).datepicker({
+		$("#carenciaInicioEntregaBanca", this.workspace).datepicker({
 			showOn: "button",
 			buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
 			buttonImageOnly: true
 		});
-		$("#carenciaFimEntregaBranca", this.workspace).datepicker({
+		$("#carenciaFimEntregaBanca", this.workspace).datepicker({
 			showOn: "button",
 			buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
 			buttonImageOnly: true
@@ -59,31 +59,23 @@ var alteracaoCotaController = $.extend(true, {
     	$('#uploadedFileProcuracao').fileupload(
 						{
 							url :"administracao/alteracaoCota/uploadProcuracao",
-							sequentialUploads: true,
+							sequentialUploads: false,
 							dataType : 'json',
 							paramName : 'uploadedFileProcuracao',
 							replaceFileInput: false,
 							submit : function(e, data) {
 								data = $("#pesquisarForm", this.workspace).serialize();
-
 							},
-							done : function(e, data) {
-							//	 $('#uploadedFileProcuracao').destroy();
-							},
-							progressall : function(e, data) {
-								
-							},
-							send : function(e, data) {
-
+							success : function(e, data) {
+								$("#nomeArquivoProcuracao").html(e.result);
 							}
-							 
 						});
     	
     	
     	$('#uploadedFileTermo').fileupload(
 				{
-					url :"administracao/alteracaoCota/uploadedFileTermo",
-					sequentialUploads: true,
+					url :"administracao/alteracaoCota/uploadTermoAdesao",
+					sequentialUploads: false,
 					dataType : 'json',
 					paramName : 'uploadedFileTermo',
 					replaceFileInput: false,
@@ -91,14 +83,8 @@ var alteracaoCotaController = $.extend(true, {
 						data = $("#pesquisarForm", this.workspace).serialize();
 
 					},
-					done : function(e, data) {
-					//	 $('#uploadedFileProcuracao').destroy();
-					},
-					progressall : function(e, data) {
-						
-					},
-					send : function(e, data) {
-
+					success : function(e, data) {
+						$("#nomeArquivoTermoAdesao").html(e.result);
 					}
 					 
 				});
@@ -106,6 +92,8 @@ var alteracaoCotaController = $.extend(true, {
 	},
 	
 	iniciarGrid : function() {
+		
+	
 		$(".alteracaoGrid", this.workspace).flexigrid({
 			dataType : 'json',
 			preProcess: alteracaoCotaController.executarPreProcessamento,
@@ -178,6 +166,9 @@ var alteracaoCotaController = $.extend(true, {
 	
 	pesquisar : function() {
 		alteracaoCotaController.verificarCheck();
+		$("#totalCotasSelecionadas", this.workspace).html(0);
+		$("#alteracaoCotaCheckAll", this.workspace).attr("checked",false);
+		
 		var params = $("#pesquisarForm", this.workspace).serialize();
 		
 		$(".alteracaoGrid", this.workspace).flexOptions({
@@ -292,17 +283,23 @@ var alteracaoCotaController = $.extend(true, {
 							//Entrega em Banca
 							$("#termoAdesao").attr("checked", filtro.filtroModalDistribuicao.termoAdesao);
 							$("#termoAdesaoRecebido").attr("checked", filtro.filtroModalDistribuicao.termoAdesaoRecebido);
-							$("#percentualFaturamentoEntregaBranca").val(filtro.filtroModalDistribuicao.percentualFaturamentoEntregaBranca);
-							$("#taxaFixaEntregaBranca").val(filtro.filtroModalDistribuicao.taxaFixaEntregaBranca);
-							$("#carenciaInicioEntregaBranca").val(filtro.filtroModalDistribuicao.carenciaInicioEntregaBranca);
-							$("#carenciaFimEntregaBranca").val(filtro.filtroModalDistribuicao.carenciaFimEntregaBranca);
+							$("#percentualFaturamentoEntregaBanca").val(filtro.filtroModalDistribuicao.percentualFaturamentoEntregaBanca);
+							$("#taxaFixaEntregaBanca").val(filtro.filtroModalDistribuicao.taxaFixaEntregaBanca);
+							$("#carenciaInicioEntregaBanca").val(filtro.filtroModalDistribuicao.carenciaInicioEntregaBanca);
+							$("#carenciaFimEntregaBanca").val(filtro.filtroModalDistribuicao.carenciaFimEntregaBanca);
+							alteracaoCotaController.mostrarEsconderDivUtilizaArquivoTermo();
+							alteracaoCotaController.mostrarEsconderDivArquivoUpLoadTermo();
 						}else if($("#idModalIdTipoEntrega").val() == 'ENTREGADOR'){
 							$("#procuracao").attr("checked", filtro.filtroModalDistribuicao.procuracao);
 							$("#procuracaoRecebida").attr("checked", filtro.filtroModalDistribuicao.procuracaoRecebida);
 							$("#percentualFaturamentoEntregador").val(filtro.filtroModalDistribuicao.percentualFaturamentoEntregador);
 							$("#carenciaInicioEntregador").val(filtro.filtroModalDistribuicao.carenciaInicioEntregador);
 							$("#carenciaFimEntregador").val(filtro.filtroModalDistribuicao.carenciaFimEntregador);
+							alteracaoCotaController.mostrarEsconderDivUtilizaArquivoProcuracao();
+							alteracaoCotaController.mostrarEsconderDivArquivoUpLoadProcuracao();
 						}
+						
+						
 						
 						
 						//Checks Emissao Documento
@@ -318,6 +315,9 @@ var alteracaoCotaController = $.extend(true, {
 						$("#isNotaEnvioEmail").attr("checked", filtro.filtroModalDistribuicao.filtroCheckDistribEmisDoc.isNotaEnvioEmail);
 						$("#isChamdaEncalheImpresso").attr("checked", filtro.filtroModalDistribuicao.filtroCheckDistribEmisDoc.isChamdaEncalheImpresso);
 						$("#isChamdaEncalheEmail").attr("checked", filtro.filtroModalDistribuicao.filtroCheckDistribEmisDoc.isChamdaEncalheEmail);
+						
+					
+						
 					}else{
 						alteracaoCotaController.limparCamposAbas();
 					}
@@ -350,10 +350,10 @@ var alteracaoCotaController = $.extend(true, {
 		$("#termoAdesao").attr("checked", false);
 		$("#termoAdesaoRecebido").attr("checked", false);
 		$("#uploadedFileTermo").val("");
-		$("#percentualFaturamentoEntregaBranca").val("");
-		$("#taxaFixaEntregaBranca").val("");
-		$("#carenciaInicioEntregaBranca").val("");
-		$("#carenciaFimEntregaBranca").val("");
+		$("#percentualFaturamentoEntregaBanca").val("");
+		$("#taxaFixaEntregaBanca").val("");
+		$("#carenciaInicioEntregaBanca").val("");
+		$("#carenciaFimEntregaBanca").val("");
 			//Entregador
 		$("#entregadorPj").hide();
 		$("#procuracao").attr("checked", false);
@@ -377,6 +377,8 @@ var alteracaoCotaController = $.extend(true, {
 		$("#isNotaEnvioEmail").attr("checked", false);
 		$("#isChamdaEncalheImpresso").attr("checked", false);
 		$("#isChamdaEncalheEmail").attr("checked", false);
+		alteracaoCotaController.limparCamposTipoEntrega();
+		
 	},
 	
 	popularComboFornecedor : function(data, combo) {
@@ -419,6 +421,7 @@ var alteracaoCotaController = $.extend(true, {
 			 dataForm.push({name: 'filtroAlteracaoCotaDTO.filtroModalFornecedor.listaFornecedoresSelecionados['+index+']', value:$(this, this.workspace).val() } );
 		});
 		
+		
 		$.postJSON(contextPath + "/administracao/alteracaoCota/salvarAlteracao",
 				dataForm,  
 			   	function () {
@@ -434,7 +437,7 @@ var alteracaoCotaController = $.extend(true, {
 	
 	
 	selectTipoEntregaDistribuicao : function() {
-
+		alteracaoCotaController.limparCamposTipoEntrega();
 		var tipoEntrega = $('#idModalIdTipoEntrega', this.workspace).val();
 		if ( tipoEntrega == 'COTA_RETIRA' ) {
 			$('#entregaBancaPj', this.workspace).hide();
@@ -478,15 +481,114 @@ var alteracaoCotaController = $.extend(true, {
 	},
 	
 	downloadTermoAdesao : function() {
-		document.location.assign(contextPath + "/cadastro/cota/downloadTermoAdesao?termoAdesaoRecebido="+D.get("termoAdesaoRecebido")+"&numeroCota="+D.get("numCota")+"&taxa="+D.get("taxaFixaEntregaBanca")+"&percentual="+D.get("percentualFaturamentoEntregaBanca"));
+	
+		$.postJSON("/nds-client/administracao/alteracaoCota/validarValoresParaDownload",
+				"taxa="+$("#taxaFixaEntregaBanca").val()+"&percentual="+$("#percentualFaturamentoEntregaBanca").val(),
+				function() {
+					document.location.assign("/nds-client/administracao/alteracaoCota/downloadTermoAdesao?termoAdesaoRecebido="+ $('#termoAdesaoRecebido', this.workspace).is(':checked')+"&numeroCota="+alteracaoCotaController.buscaIdPrimeiraCotaSelecionada()+"&taxa="+$("#taxaFixaEntregaBanca").val()+"&percentual="+$("#percentualFaturamentoEntregaBanca").val());
+				},
+				null,
+				true,
+				"dialog-cota");
 	},
 	
 	downloadProcuracao : function() {
 		
-		document.location.assign(contextPath + "/cadastro/cota/downloadProcuracao?procuracaoRecebida="+D.get("procuracaoRecebida")+"&numeroCota="+D.get("numCota"));
-	}
+		document.location.assign("/nds-client/administracao/alteracaoCota/downloadProcuracao?procuracaoRecebida="+$('#procuracaoRecebida', this.workspace).is(':checked')+"&numeroCota="+alteracaoCotaController.buscaIdPrimeiraCotaSelecionada());
+	},
 	
-	
+	limparCamposTipoEntrega : function()
+	  {
+		$("#percentualFaturamentoEntregaBanca", this.workspace).val("");
+		$("#taxaFixaEntregaBanca", this.workspace).val("");
+		$("#carenciaInicioEntregaBanca", this.workspace).val("");
+		$("#carenciaFimEntregaBanca", this.workspace).val("");
+		
+		$("#percentualFaturamentoEntregador", this.workspace).val("");
+		$("#carenciaInicioEntregador", this.workspace).val("");
+		$("#carenciaFimEntregador", this.workspace).val("");
+		
+		$("#procuracao", this.workspace ).attr("checked", false);
+		$("#procuracaoRecebida", this.workspace).attr("checked", false);
+		$("#termoAdesaoRecebido", this.workspace).attr("checked", false);
+		$("#termoAdesao", this.workspace).attr("checked", false);
+		$("#uploadTermo", this.workspace).hide();
+		$("#termoArquivoRecebido", this.workspace).hide();
+		$("#termoRecebidoDownload", this.workspace).hide();
+		$("#uploadedFileTermoDiv", this.workspace).hide();
+		$('#uploadedFileTermo').val('');
+		$('#uploadedFileProcuracao').val('');
+		$('#nomeArquivoTermoAdesao').val('');
+		$('#nomeArquivoProcuracao').val('');
+		
+		
+		
+		
+		$("#uploadProcuracao", this.workspace).hide();
+		$("#procuracaoArquivoRecebido", this.workspace).hide();
+		$("#procuracaoRecebidoDownload", this.workspace).hide();
+		$("#uploadedFileProcuracaoDiv", this.workspace).hide();
+		
+	  },
+	  mostrarEsconderDivUtilizaArquivoTermo :function(){
+		  
+	      if ( $('#termoAdesao', this.workspace).is(':checked') ) {
+			  $("#uploadTermo", this.workspace).show();
+			  $("#termoArquivoRecebido", this.workspace).show();
+			  $("#termoRecebidoDownload", this.workspace).show();
+	      } else {
+			  $("#uploadTermo", this.workspace).hide();
+			  $("#termoArquivoRecebido", this.workspace).hide();
+			  $("#termoRecebidoDownload", this.workspace).hide();
+			  
+	      }
+	  },
+	  
+	  
+	  mostrarEsconderDivArquivoUpLoadTermo :function(){
+		  if ( $('#termoAdesaoRecebido', this.workspace).is(':checked') ) {
+			  $("#uploadedFileTermoDiv", this.workspace).show();
+	      } else {
+			  $("#uploadedFileTermoDiv", this.workspace).hide();
+	      }
+	  },
+	  
+	  mostrarEsconderDivUtilizaArquivoProcuracao :function(){
+		  
+	      if ( $('#procuracao', this.workspace).is(':checked') ) {
+			  $("#uploadProcuracao", this.workspace).show();
+			  $("#procuracaoArquivoRecebido", this.workspace).show();
+			  $("#procuracaoRecebidoDownload", this.workspace).show();
+	      } else {
+			  $("#uploadProcuracao", this.workspace).hide();
+			  $("#procuracaoArquivoRecebido", this.workspace).hide();
+			  $("#procuracaoRecebidoDownload", this.workspace).hide();
+			  
+			  
+	      }
+	  },
+	  
+	  
+	  mostrarEsconderDivArquivoUpLoadProcuracao :function(){
+		  if ( $('#procuracaoRecebida', this.workspace).is(':checked') ) {
+			  $("#uploadedFileProcuracaoDiv", this.workspace).show();
+	      } else {
+			  $("#uploadedFileProcuracaoDiv", this.workspace).hide();
+	      }
+	  },
+	  
+	  buscaIdPrimeiraCotaSelecionada : function(){
+		
+		  id = null
+	   $(".selectLine", this.workspace).each(function(index, element) {	
+			if(element.checked){
+				id = element.value;
+			}
+			
+		});
+	  
+	   return id;
+	  }
 
 	
 
