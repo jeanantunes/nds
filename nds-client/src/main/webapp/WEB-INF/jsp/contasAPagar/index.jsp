@@ -74,9 +74,9 @@
 	                	<span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="../images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
 						<span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="../images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
 					</td>
-	                <td width="220" align="right"><strong>Total Bruto R$: 999.999,99</strong></td>
-	                <td width="243" align="right"><strong>Total Desconto R$: 999.999,99</strong></td>
-	                <td width="197" align="right"><strong>Saldo a Pagar R$: 999.999,99</strong></td>
+	                <td width="220" align="right"><strong>Total Bruto R$: <span id="contasAPagar_gridFornecedorTotalBruto"></span></strong></td>
+	                <td width="243" align="right"><strong>Total Desconto R$: <span id="contasAPagar_gridFornecedorTotalDesconto"></span></strong></td>
+	                <td width="197" align="right"><strong>Saldo a Pagar R$: <span id="contasAPagar_gridFornecedorSaldo"></span></strong></td>
               </tr>
             </table>
           </div>
@@ -93,9 +93,9 @@
 	                		<span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="../images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
 							<span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="../images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
 						</td>
-		                <td width="226" align="right"><strong>Total Pagto R$: 999.999,99</strong></td>
-		                <td width="216" align="right"><strong>Total Desconto R$: 999.999,99</strong></td>
-		                <td width="254" align="right"><strong>Valor L&iacute;quido a Pagar R$: 999.999,99</strong></td>
+		                <td width="226" align="right"><strong>Total Pagto R$: <span id="contasAPagar_gridProdutoTotalPagto"></span></strong></td>
+		                <td width="216" align="right"><strong>Total Desconto R$: <span id="contasAPagar_gridProdutoTotalDesconto"></span></strong></td>
+		                <td width="254" align="right"><strong>Valor L&iacute;quido a Pagar R$: <span id="contasAPagar_gridProdutoValorLiquido"></span></strong></td>
 	              	</tr>
 	            </table>
 			</div>
@@ -133,6 +133,92 @@
 					  </fieldset>
 
 					</div> 
+      
+
+
+
+<div id="dialog-contasAPagar-tipo" title="Parcial" style="display:none;">
+	
+	<fieldset>
+		<legend>Dados da Parcial</legend>
+    	
+    	<table width="740" border="0" cellpadding="2" cellspacing="1">
+        	<tr>
+            	<td width="81"><strong>C&oacute;digo:</strong></td>
+              	<td width="94"><span id="contasAPagar_popupTipo_codigo"></span></td>
+              	<td width="115"><strong>Produto:</strong></td>
+              	<td width="211"><span id="contasAPagar_popupTipo_produto"></span></td>
+              	<td width="68"><strong>Edi&ccedil;&atilde;o:</strong></td>
+              	<td width="140"><span id="contasAPagar_popupTipo_edicao"></span></td>
+            </tr>
+            <tr>
+              	<td><strong>Fornecedor:</strong></td>
+              	<td><span id="contasAPagar_popupTipo_fornecedor"></span></td>
+              	<td><strong>Data Lan&ccedil;amento:</strong></td>
+              	<td><span id="contasAPagar_popupTipo_dataLcto"></span></td>
+              	<td><strong>Data Final:</strong></td>
+              	<td><span id="contasAPagar_popupTipo_dataFinal"></span></td>
+            </tr>
+		</table>
+    </fieldset>
+
+	<br />
+	<br clear="all" />
+	<br />
+
+	<fieldset>
+		<legend>Parciais</legend>
+	    <table class="contasAPagar_parciaispopGrid"></table>
+	</fieldset>
+
+	<br clear="all" />
+	<br />
+
+	<span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="../images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
+	<span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="../images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
+</div>
+
+      
+      
+<div id="dialog-contasAPagar-consignado" title="Consignados" style="display:none;">
+	
+	<fieldset style="width:895px!important;">
+		<legend>Pesquisar Produtos</legend>
+       	<table width="530" border="0" cellspacing="0" cellpadding="0">
+         		<tr>
+           		<td width="96">C&oacute;digo / Produto:</td>
+           		<td width="311"><input type="text" name="produtos2" id="produtos2" style="width:290px;" /></td>
+           		<td width="40">Edi&ccedil;&oacute;o:</td>
+           		<td width="83" align="right"><input type="text" name="textfield9" id="textfield9" style="width:60px;" /></td>
+         		</tr>
+       	</table>
+    </fieldset>
+    
+	<fieldset style="width:895px!important; margin-top:10px;">
+    	<legend>14/12/2011 - Cota: 26 1335 - CGB Distribuidora de Jornais e Revistas</legend>
+        <table class="contasAPagar-consignadoGrid"></table>
+    
+        <span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="../images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
+		<span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="../images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
+    
+       	<table width="290" border="0" cellspacing="2" cellpadding="2"  style="float:right; margin-top: 7px;">
+        	<tr>
+            	<td width="109"><strong>Total R$:</strong></td>
+                <td width="53"><strong>Dinap:</strong></td>
+                <td width="92" align="right">999.999,99</td>
+                <td width="10">&nbsp;</td>
+            </tr>
+            <tr>
+                <td height="23" align="right"></td>
+                <td><strong>FC:</strong></td>
+                <td align="right">999.999,99</td>
+                <td>&nbsp;</td>
+            </tr>
+        </table>
+	</fieldset>
+
+</div>
+
       
       
 

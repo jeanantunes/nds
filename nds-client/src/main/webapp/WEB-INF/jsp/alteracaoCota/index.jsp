@@ -5,6 +5,7 @@
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.form.js"></script>
 	<script	src="${pageContext.request.contextPath}/scripts/jquery-upload/js/jquery.iframe-transport.js"	type="text/javascript"></script>
 	<script	src="${pageContext.request.contextPath}/scripts/jquery-upload/js/jquery.fileupload.js"	type="text/javascript"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
 	
 	<script type="text/javascript">
 
@@ -64,7 +65,7 @@
 
 								<fieldset style="width: 250px;">
 									<legend>Selecione os Fornecedores</legend>
-				              		<select name="filtroAlteracaoCotaDTO.filtroModalFornecedor.listFornecedores" multiple="multiple" id="idListFornecedores" style="height:270px; width:245px;">
+				              		<select name="idListFornecedores" multiple="multiple" id="idListFornecedores" style="height:270px; width:245px;">
 										<%-- 
 										<c:forEach items="${listFornecedores}" var="fornecedor">
 											<option value="${fornecedor.id}">${fornecedor.juridica.razaoSocial}</option>
@@ -83,7 +84,7 @@
 
 								<fieldset style="width: 250px;">
 									<legend>Fornecedores Selecionados</legend>
-				              		<select name="filtroAlteracaoCotaDTO.filtroModalFornecedor.listaFornecedoresSelecionados" multiple="multiple" id="idListaFornecedorAssociado" style="height:270px; width:245px;">
+				              		<select name="idListaFornecedorAssociado" multiple="multiple" id="idListaFornecedorAssociado" style="height:270px; width:245px;">
 				              		<%-- 
 										<c:forEach items="${listaFornecedorAssociado}" var="fornecedor">
 											<option value="${fornecedor.id}">${fornecedor.juridica.razaoSocial}</option>
@@ -185,7 +186,7 @@
 								<tr>
 									<td width="106">Tipo de Entrega:</td>
 									<td width="177">
-										<select name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.descricaoTipoEntrega" id="idModalIdTipoEntrega" style="width:100px;" onchange="alteracaoCotaController.selectTipoEntregaDistribuicao()">
+										<select name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.descricaoTipoEntrega" id="idModalIdTipoEntrega" style="width:125px;" onchange="alteracaoCotaController.selectTipoEntregaDistribuicao()">
 					              			<option selected="selected" value="-1"></option>
 											<c:forEach items="${listTipoEntrega}" var="tipoEntrega">
 												<option value="${tipoEntrega}">${tipoEntrega.value}</option>
@@ -198,53 +199,65 @@
 							<div id="entregaBancaPj" style="display: none;">
 								<table width="399" border="0" cellspacing="1" cellpadding="1">
 									<tr>
-										<td width="153">Termo Ades&atilde;o:</td>
-										<td width="20"><input type="checkbox" name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.termoAdesao" id="termoAdesao" /></td>
-										<td width="216"><span class="bt_imprimir" style="display: block;">
-											<a href="" target="_blank">Termo</a></span>
+										<td width="115">Termo Ades&atilde;o:</td>
+										<td width="20"><input type="checkbox" name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.termoAdesao" id="termoAdesao"  onclick="alteracaoCotaController.mostrarEsconderDivUtilizaArquivoTermo()"/></td>
+									
+										<td width="216">
+										<div id="termoRecebidoDownload">
+											<span class="bt_imprimir" style="display: block;">
+												<a href="javaScript:alteracaoCotaController.downloadTermoAdesao()" target="_blank">Termo</a></span>
+										</div>		
 										</td>
+										
 									</tr>
+							      	</table>
+									<div id="termoArquivoRecebido">
+									<table width="399" border="0" cellspacing="1" cellpadding="1">
 									<tr>
-										<td>Termo Ades&atilde;o Recebido?</td>
-										<td colspan="2"><input type="checkbox" name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.termoAdesaoRecebido" id="termoAdesaoRecebido"  /></td>
+										<td width="130">Termo Ades&atilde;o Recebido?</td>
+										<td colspan="2" width="20"><input type="checkbox" name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.termoAdesaoRecebido" id="termoAdesaoRecebido"   onclick="alteracaoCotaController.mostrarEsconderDivArquivoUpLoadTermo()"   /></td>
 									</tr>
+									</table>
+									
+									<div id="uploadedFileTermoDiv">
+									<table width="399" border="0" cellspacing="1" cellpadding="1">
+								
 									<tr>
+									
 										<td>Arquivo:</td>
 										<td colspan="2">
-											   	<div id="uploadTermo">
-														<input name="uploadedFileTermo" type="file" id="uploadedFileTermo" size="30" />
-												</div>
+											<input name="uploadedFileTermo" type="file" id="uploadedFileTermo" size="30" />
+										</td>
+										
+									</tr>
+								
+									<tr>
+										<td>&nbsp;</td>
+										<td olspan="2">
+											<span id="nomeArquivoTermoAdesao"></span>
 										</td>
 									</tr>
+									</table>	
+									</div>	
 									
-									
+									</div>
+								<table width="399" border="0" cellspacing="1" cellpadding="1">	
 									<tr>
 										<td>Percentual Faturamento:</td>
-										<td colspan="2"><input type="text"  name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.percentualFaturamentoEntregaBranca"   id="percentualFaturamentoEntregaBranca" 	style="width: 70px; text-align: right;" /></td>
+										<td colspan="2"><input type="text"  name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.percentualFaturamentoEntregaBanca"   id="percentualFaturamentoEntregaBanca" 	style="width: 70px; text-align: right;" /></td>
 									</tr>
 									<tr>
 										<td>Taxa Fixa R$</td>
-										<td colspan="2"><input type="text"  name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.taxaFixaEntregaBranca" id="taxaFixaEntregaBranca"	style="width: 70px; text-align: right;" /></td>
-									</tr>
-									<tr>
-										<td>Base de C&aacute;lculo:</td>
-										<td colspan="2">
-										<select name="select" name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.baseCalculo" id="baseCalculo"	style="width: 107px;">
-										
-										<c:forEach items="${listBaseCalculo}" var="baseCalculo">
-												<option value="${baseCalculo}">${baseCalculo.value}</option>
-											</c:forEach>
-										</select>
-										</td>
+										<td colspan="2"><input type="text"  name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.taxaFixaEntregaBanca" id="taxaFixaEntregaBanca"	style="width: 70px; text-align: right;" /></td>
 									</tr>
 									<tr>
 										<td>Per&iacute;odo Car&ecirc;ncia:</td>
 										<td colspan="2"><table width="100%" border="0"
 												cellspacing="0" cellpadding="0">
 												<tr>
-													<td width="27%"><input name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.carenciaInicioEntregaBranca" type="text" id="carenciaInicioEntregaBranca" style="width: 70px" /></td>
+													<td width="27%"><input name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.carenciaInicioEntregaBanca" type="text" id="carenciaInicioEntregaBanca" style="width: 70px" /></td>
 													<td width="6%">At&eacute; </td>
-													<td width="34%"><input name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.carenciaFimEntregaBranca"	type="text" id="carenciaFimEntregaBranca" style="width: 70px" /></td>
+													<td width="34%"><input name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.carenciaFimEntregaBanca"	type="text" id="carenciaFimEntregaBanca" style="width: 70px" /></td>
 												</tr>
 											</table></td>
 									</tr>
@@ -254,43 +267,65 @@
 							<div id="entregadorPj" style="display: none;">
 								<table width="399" border="0" cellspacing="1" cellpadding="1">
 									<tr>
-										<td>Utiliza Procura&ccedil;&atilde;o?</td>
-										<td width="20"><input type="checkbox" name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.procuracao"  id="procuracao" /></td>
-										<td width="201" class="procuracaoPj"><span
-											class="bt_imprimir" style="display: block;"><a
-												href="../procuracao.htm" target="_blank">Procura&ccedil;&atilde;o</a></span></td>
+										<td width="115">Utiliza Procura&ccedil;&atilde;o?</td>
+										<td width="20"><input type="checkbox" name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.procuracao"  id="procuracao"   onclick="alteracaoCotaController.mostrarEsconderDivUtilizaArquivoProcuracao()"/></td>
+									
+										<td width="216">
+										<div id="procuracaoRecebidoDownload">
+											<span class="bt_imprimir" style="display: block;"><a
+												href="javaScript:alteracaoCotaController.downloadProcuracao()" target="_blank">Procura&ccedil;&atilde;o</a></span>
+										</div>		
+										</td>
+										
 									</tr>
+							      	</table>
+									<div id="procuracaoArquivoRecebido">
+									<table width="399" border="0" cellspacing="1" cellpadding="1">
 									<tr>
-										<td>Procura&ccedil;&atilde;o Recebida?</td>
-										<td colspan="2"><input type="checkbox"  name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.procuracaoRecebida" id="procuracaoRecebida" /></td>
+										<td width="130">Procura&ccedil;&atilde;o Recebida?</td>
+										<td colspan="2" width="20"><input type="checkbox" name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.procuracaoRecebida" id="procuracaoRecebida"   onclick="alteracaoCotaController.mostrarEsconderDivArquivoUpLoadProcuracao()"   /></td>
 									</tr>
+									</table>
+									
+									<div id="uploadedFileProcuracaoDiv">
+									<table width="399" border="0" cellspacing="1" cellpadding="1">
+								
 									<tr>
+									
 										<td>Arquivo:</td>
 										<td colspan="2">
-										<form action="<c:url value='/administracao/alteracaoCota/uploadProcuracao' />" id="formUploadProcuracao"
-												  method="post" enctype="multipart/form-data" >		
-												<input type="hidden" name="formUploadAjax" value="true" />
-												<input type="hidden" name="numCotaUpload" value="1234"/>
-											   	<div id="uploadProcuracao">
-														<input name="uploadedFileProcuracao" type="file" id="uploadedFileProcuracao"
-														   size="30"/>
-												</div>
-		
-										</form>
+											<input name="uploadedFileProcuracao" type="file" id="uploadedFileProcuracao" size="30" />
+										</td>
+										
+									</tr>
+								
+									<tr>
+										<td>&nbsp;</td>
+										<td olspan="2">
+											<span id="nomeArquivoProcuracao"></span>
 										</td>
 									</tr>
+									</table>	
+									</div>	
+									
+									</div>
+								<table width="399" border="0" cellspacing="1" cellpadding="1">	
 									<tr>
-										<td width="145">Percentual Faturamento:</td>
-										<td colspan="2"><input type="text" name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.percentualFaturamentoEntregador" id="percentualFaturamentoEntregador" 	style="width: 70px; text-align: right;" /></td>
+										<td>Percentual Faturamento:</td>
+										<td colspan="2"><input type="text"  name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.percentualFaturamentoEntregador"   id="percentualFaturamentoEntregador" 	style="width: 70px; text-align: right;" /></td>
+									</tr>
+									<tr>
+										<td>Taxa Fixa R$</td>
+										<td colspan="2"><input type="text"  name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.taxaFixaEntregador" id="taxaFixaEntregador"	style="width: 70px; text-align: right;" /></td>
 									</tr>
 									<tr>
 										<td>Per&iacute;odo Car&ecirc;ncia:</td>
 										<td colspan="2"><table width="100%" border="0"
 												cellspacing="0" cellpadding="0">
 												<tr>
-													<td width="43%"><input name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.carenciaInicioEntregador" 	type="text" id="carenciaInicioEntregador" style="width: 70px" /></td>
-													<td width="14%">At&eacute; </td>
-													<td width="43%"><input name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.carenciaFimEntregador" 	 type="text" id="carenciaFimEntregador" style="width: 70px" /></td>
+													<td width="27%"><input name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.carenciaInicioEntragador" type="text" id="carenciaInicioEntregador" style="width: 70px" /></td>
+													<td width="6%">At&eacute; </td>
+													<td width="34%"><input name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.carenciaFimEntregador"	type="text" id="carenciaFimEntregador" style="width: 70px" /></td>
 												</tr>
 											</table></td>
 									</tr>
@@ -406,8 +441,8 @@
               	<td width="106">
               		<select name="filtroAlteracaoCotaDTO.idVrMinimo" id="idVrMinimo" style="width:80px;">
               			<option selected="selected" value="-1"></option>
-						<c:forEach items="${listHistoricoTitularidadeCotaFinanceiro}" var="historico">
-							<option value="${historico.id}">${historico.valorMininoCobranca}</option>
+						<c:forEach items="${listValoresMinimos}" var="valor">
+							<option value="${valor}">${valor}</option>
 						</c:forEach>
 					</select> 
               	</td>
@@ -456,9 +491,9 @@
   				<tr>
     				<td width="502"><span class="bt_novos" title="Novo"><a href="javascript:;" onclick="alteracaoCotaController.carregarAlteracao();"><img src="${pageContext.request.contextPath}/images/ico_editar.gif" hspace="5" border="0"/>Alterar</a></span></td>
     				<td width="168"><strong>Total de Cotas Selecionadas:</strong></td>
-    				<td width="141">4</td>
+    				<td width="141"><span id="totalCotasSelecionadas"></span></td>
     				<td width="91">Selecionar Todos</td>
-    				<td width="48"><input type="checkbox" name="checkbox3" id="acionador" /></td>
+    				<td width="48"><input type="checkbox" name="checkAll" id="alteracaoCotaCheckAll" onclick="alteracaoCotaController.checkAll(this); alteracaoCotaController.verificarCheck();" /></td>
   				</tr>
 			</table>
         </div>
