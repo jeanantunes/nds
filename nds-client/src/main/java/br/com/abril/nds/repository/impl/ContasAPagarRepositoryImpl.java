@@ -16,8 +16,7 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<ContasAPagarConsultaProdutoDTO> pesquisaProdutoContasAPagar(
-			String codigoProduto, Long edicao) {
+	public List<ContasAPagarConsultaProdutoDTO> pesquisarProdutos(FiltroContasAPagarDTO filtro) {
 		
 		StringBuffer sql = new StringBuffer("");
 		
@@ -37,14 +36,17 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
 		sql.append("  		JOIN e.pessoaJuridica  as pj" );
 		sql.append("  WHERE p.codigo = :codigoProduto");
 		sql.append("  AND   pe.produto = p");
-		if(edicao!=null)
-		sql.append("  AND   pe.numeroEdicao = :edicao");
+		if(filtro.getEdicao() != null) {
+			sql.append("  AND   pe.numeroEdicao = :edicao");
+		}
 		
 		Query query = getSession().createQuery(sql.toString());
 		
-		query.setParameter("codigoProduto", codigoProduto);
-		if(edicao!=null)
-			query.setParameter("edicao", edicao);
+		query.setParameter("codigoProduto", filtro.getProduto());
+		
+		if(filtro.getEdicao() != null) {
+			query.setParameter("edicao", filtro.getEdicao());
+		}
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(ContasAPagarConsultaProdutoDTO.class));
 		
@@ -53,8 +55,7 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
 
 
 	@Override
-	public List<ContasApagarConsultaPorProdutoDTO> pesquisaContasAPagarPorProduto(
-			FiltroContasAPagarDTO dto) {
+	public List<ContasApagarConsultaPorProdutoDTO> pesquisarPorProduto(FiltroContasAPagarDTO dto) {
 		StringBuffer sql = new StringBuffer("");
 		
 		sql.append("SELECT l.dataRecolhimentoPrevista as Rctl");
@@ -79,6 +80,6 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
 		sql.append("WHERE 	");
 		sql.append("	   p.codigo as Codigo");
 
-			return null;
+		return null;
 	}
 }

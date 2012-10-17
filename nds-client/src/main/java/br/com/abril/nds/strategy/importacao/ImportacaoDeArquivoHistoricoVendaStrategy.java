@@ -2,6 +2,9 @@ package br.com.abril.nds.strategy.importacao;
 
 import java.io.File;
 
+
+import org.codehaus.jackson.map.JsonSerializer;
+import org.codehaus.jackson.map.MappingIterator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -44,7 +47,7 @@ public class ImportacaoDeArquivoHistoricoVendaStrategy extends ImportacaoAbstrac
 
 	@Override
 	protected HistoricoVendaInput parseDados(String linha) {
-		
+						
 		String[] dados = linha.split(IDENTIFICADOR_LINHA);
 		
 		if(dados == null){

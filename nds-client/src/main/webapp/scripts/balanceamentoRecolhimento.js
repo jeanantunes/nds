@@ -670,10 +670,10 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 	},
 	
 	confirmarBalanceamento : function() {
-		
+		var param = serializeArrayToPost('datasConfirmadas', this.balanceamento.obterDatasMarcadasConfirmacao());
 		$.postJSON(
 			contextPath + "/devolucao/balanceamentoMatriz/confirmar",
-			this.balanceamento.obterDatasMarcadasConfirmacao(),
+			param,
 			function(result) {
 		
 				balanceamentoRecolhimentoController.fecharGridBalanceamento();
