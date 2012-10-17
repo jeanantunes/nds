@@ -57,44 +57,68 @@ var contasAPagarController = $.extend(true, {
 		var params = $("#contasAPagarForm", this.workspace).serialize();
 		
 		if ($("#contasAPagarRadioDistribuidor").get(0).checked) {
-			
-			$.postJSON(
-				contasAPagarController.path + 'pesquisarPorFornecedor.json?' + params,
-				null,
-				function(result) {
-					
-					$("#contasAPagar_gridFornecedorTotalBruto").html(result.totalBruto);
-					$("#contasAPagar_gridFornecedorTotalDesconto").html(result.totalDesconto);
-					$("#contasAPagar_gridFornecedorSaldo").html(result.saldo);
-					
-					$(".porDistrFornecedorGrid", contasAPagarController.workspace).flexAddData({rows: toFlexiGridObject(result.grid), page : 1, total : result.totalGrid});
-				},
-				null,
-				true
-			);
+			this.pesquisarPorFornecedor(params);
+		} else if ($("#contasAPagarRadioProduto").get(0).checked) {
+			this.pesquisarPorProduto(params);
+		}
+	},
+	
+	
+	pesquisarPorProduto : function(params) {
+		
+		var url = contasAPagarController.path + 'pesquisarPorProduto.json?' + params + '&' + contasAPagarController.obterSelecaoColunaCheckProdutoEdicao(); 
+		
+		$(".porProdutosGrid").flexOptions({
+			url : url,
+			preProcess : contasAPagarController.insereLinksContasAPagarPorProdutos,
+			newp : 1
+		});
+		
+		$.postJSON(
+			url + '&filtro.primeiraCarga=true',
+			null,
+			function(result) {
+				
+				$("#contasAPagar_gridProdutoTotalPagto").html(result.totalPagto);
+				$("#contasAPagar_gridProdutoTotalDesconto").html(result.totalDesconto);
+				$("#contasAPagar_gridProdutoValorLiquido").html(result.valorLiquido);
+				
+				$(".porProdutosGrid", contasAPagarController.workspace).flexAddData({rows: toFlexiGridObject(result.grid), page: 1, total: result.totalGrid});
+			},
+			null,
+			true
+		);
+		
+		$('.gridProduto').show();
+	},
+	
+	
+	pesquisarPorFornecedor : function (params) {
+		
+		var url = contasAPagarController.path + 'pesquisarPorFornecedor.json?' + params; 
+		
+		$(".porDistrFornecedorGrid").flexOptions({
+			url : url,
+			preProcess : contasAPagarController.insereLinksContasAPagarPorDistribuidores,
+			newp : 1
+		});
+		
+		$.postJSON(
+			url + '&filtro.primeiraCarga=true',
+			null,
+			function(result) {
+				
+				$("#contasAPagar_gridFornecedorTotalBruto").html(result.totalBruto);
+				$("#contasAPagar_gridFornecedorTotalDesconto").html(result.totalDesconto);
+				$("#contasAPagar_gridFornecedorSaldo").html(result.saldo);
+				
+				$(".porDistrFornecedorGrid", contasAPagarController.workspace).flexAddData({rows: toFlexiGridObject(result.grid), page: 1, total: result.totalGrid});
+			},
+			null,
+			true
+		);
 
-			$('.gridDistrib').show();
-			
-		}
-		else if ($("#contasAPagarRadioProduto").get(0).checked) {
-			
-			$.postJSON(
-				contasAPagarController.path + 'pesquisarPorProduto.json?' + params + '&' + contasAPagarController.obterSelecaoColunaCheckProdutoEdicao(),
-				null,
-				function(result) {
-					
-					$("#contasAPagar_gridProdutoTotalPagto").html(result.totalPagto);
-					$("#contasAPagar_gridProdutoTotalDesconto").html(result.totalDesconto);
-					$("#contasAPagar_gridProdutoValorLiquido").html(result.valorLiquido);
-					
-					$(".porProdutosGrid", contasAPagarController.workspace).flexAddData({rows: toFlexiGridObject(result.grid), page : 1, total : result.totalGrid});
-				},
-				null,
-				true
-			);
-			
-			$('.gridProduto').show();
-		}
+		$('.gridDistrib').show();
 	},
 	
 	
@@ -456,7 +480,6 @@ var contasAPagarController = $.extend(true, {
 		
 		$(".porProdutosGrid").flexigrid({
 			dataType : 'json',
-			preProcess : contasAPagarController.insereLinksContasAPagarPorProdutos,
 			colModel : [ {
 				display : 'Rclt',
 				name : 'rctl',
@@ -549,13 +572,13 @@ var contasAPagarController = $.extend(true, {
 			dataType : 'json',
 			colModel : [ {
 				display : 'Lcto',
-				name : 'dtLancamento',
+				name : 'lcto',
 				width : 60,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Rclt',
-				name : 'dtRecolhimento',
+				name : 'rclt',
 				width : 60,
 				sortable : true,
 				align : 'center'
@@ -585,37 +608,37 @@ var contasAPagarController = $.extend(true, {
 				align : 'center'
 			}, {
 				display : '% Venda',
-				name : 'percVenda',
+				name : 'pctVenda',
 				width : 50,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Venda CE',
-				name : 'vendaCE',
+				name : 'vendaCe',
 				width : 60,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Reparte Acum.',
-				name : 'reparteAcumulado',
+				name : 'reparteAcum',
 				width : 70,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Venda Acum.',
-				name : 'vendaAcumulada',
+				name : 'vendaAcum',
 				width : 70,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : '% Venda Acum.',
-				name : 'percVendaAcumulada',
+				name : 'pctVendaAcum',
 				width : 70,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'N° NF-e',
-				name : 'numNfe',
+				name : 'nfe',
 				width : 50,
 				sortable : true,
 				align : 'left'
