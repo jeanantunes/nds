@@ -30,6 +30,7 @@ import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.ContasAPagarService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.util.TipoMensagem;
+import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Resource;
@@ -115,7 +116,10 @@ public class ContasAPagarController {
 	@Path("/pesquisarPorFornecedor.json")
 	public void pesquisarPorFornecedor(FiltroContasAPagarDTO filtro, String sortname, String sortorder, int rp, int page) {
 		
-		ContasAPagarGridPrincipalFornecedorDTO dto = contasAPagarService.pesquisarPorDistribuidor(filtro, sortname, sortorder, rp, page);
+		PaginacaoVO paginacaoVO = new PaginacaoVO(page, rp, sortorder, sortname);
+		filtro.setPaginacaoVO(paginacaoVO);
+		
+		ContasAPagarGridPrincipalFornecedorDTO dto = contasAPagarService.pesquisarPorDistribuidor(filtro);
 		
 		if (dto == null) {
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "A busca não retornou resultados"));
