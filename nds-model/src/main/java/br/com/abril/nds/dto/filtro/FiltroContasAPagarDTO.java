@@ -7,6 +7,9 @@ import java.util.List;
 public class FiltroContasAPagarDTO implements Serializable {
 
 	private static final long serialVersionUID = 5604665210912108694L;
+	
+	private boolean primeiraCarga; /** define se a flexigrid está sendo carregada pela primeira vez */
+	
 	private Date dataDe;
 	private Date dataAte;
 	private Integer ce;
@@ -17,6 +20,13 @@ public class FiltroContasAPagarDTO implements Serializable {
 	
 	private List<Long> idsFornecedores;
 	
+	
+	public boolean isPrimeiraCarga() {
+		return primeiraCarga;
+	}
+	public void setPrimeiraCarga(boolean primeiraCarga) {
+		this.primeiraCarga = primeiraCarga;
+	}
 	public Date getDataDe() {
 		return dataDe;
 	}

@@ -1,14 +1,22 @@
 package br.com.abril.nds.repository.impl;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Query;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
-import br.com.abril.nds.dto.ContasAPagarConsultaProdutoDTO;
-import br.com.abril.nds.dto.ContasApagarConsultaPorProdutoDTO;
+import br.com.abril.nds.dto.ConsultaConsignadoCotaDTO;
+import br.com.abril.nds.dto.ContasApagarConsultaPorDistribuidorDTO;
 import br.com.abril.nds.dto.filtro.FiltroContasAPagarDTO;
+import br.com.abril.nds.model.aprovacao.StatusAprovacao;
+import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
+import br.com.abril.nds.model.estoque.TipoDiferenca;
+import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.repository.ContasAPagarRepository;
 
 @Repository
@@ -16,70 +24,252 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<ContasAPagarConsultaProdutoDTO> pesquisarProdutos(FiltroContasAPagarDTO filtro) {
+	public List<Date> buscarDatasLancamentoContasAPagar(FiltroContasAPagarDTO filtro) {
 		
-		StringBuffer sql = new StringBuffer("");
+		Query query = this.getSession().createQuery(
+				this.montarQueryPorDistribuidor(true, filtro));
 		
-		sql.append("SELECT pe.precoVenda as precoCapa");
-		sql.append("      ,pe.numeroEdicao as edicao ");
-		sql.append("      ,pe.id as produtoEdicaoID ");
-		sql.append("      ,p.codigo as codigo");
-		sql.append("      ,p.nome as produto");
-		sql.append("      ,pj.nomeFantasia as editor");
-		sql.append("      ,j.nomeFantasia as fornecedor");
-
-		sql.append("  FROM ProdutoEdicao as pe");
-		sql.append("  		JOIN pe.produto as p");
-		sql.append(" 	    JOIN p.fornecedores as f");
-		sql.append("  		JOIN f.juridica  as j" );
-		sql.append("  		JOIN p.editor  as e" );
-		sql.append("  		JOIN e.pessoaJuridica  as pj" );
-		sql.append("  WHERE p.codigo = :codigoProduto");
-		sql.append("  AND   pe.produto = p");
-		if(filtro.getEdicao() != null) {
-			sql.append("  AND   pe.numeroEdicao = :edicao");
-		}
+		this.setarParametrosQueryporDistribuidor(query, filtro, null);
 		
-		Query query = getSession().createQuery(sql.toString());
+		return query.list();
+	}	
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ContasApagarConsultaPorDistribuidorDTO> pesquisarPorDistribuidor(FiltroContasAPagarDTO filtro,
+			Date dataMovimento) {
 		
-		query.setParameter("codigoProduto", filtro.getProduto());
+		Query query = this.getSession().createQuery(
+				this.montarQueryPorDistribuidor(false, filtro));
 		
-		if(filtro.getEdicao() != null) {
-			query.setParameter("edicao", filtro.getEdicao());
-		}
+		this.setarParametrosQueryporDistribuidor(query, filtro, dataMovimento);
 		
-		query.setResultTransformer(new AliasToBeanResultTransformer(ContasAPagarConsultaProdutoDTO.class));
+		query.setResultTransformer(new AliasToBeanResultTransformer(
+				ConsultaConsignadoCotaDTO.class));
 		
 		return query.list();
 	}
-
-
+	
+	private String montarQueryPorDistribuidor(boolean buscarDatas, FiltroContasAPagarDTO filtro){
+		
+		StringBuilder hql = new StringBuilder();
+		
+		if (buscarDatas){
+			
+			hql.append("select (l.dataRecolhimentoDistribuidor) ");
+		} else {
+			
+			hql.append("select l.dataRecolhimentoDistribuidor as data, ")
+			   .append(" sum(l.produtoEdicao.precoVenda * l.reparte) as consignado ")
+			   
+			   //pesquisaPorDistribuidorValorPorGrupoMovimento
+			   .append(",(select sum(m.qtde * m.produtoEdicao.precoVenda) ")
+			   .append(" from MovimentoEstoque m ")
+			   .append(" where m.data = l.dataRecolhimentoDistribuidor ")
+			   .append(" and m.qtde is not null ")
+			   .append(" and m.produtoEdicao.precoVenda is not null")
+			   .append(" and m.tipoMovimento.grupoMovimentoEstoque in (:movimentosSuplementar)) as suplementacao ")
+			   
+			   //TODO fazer o mesmo para movimentos de grupo de estoque suplementar de saida
+			   
+			   //pesquisaPorDistribuidorFaltasSobras
+			   .append(",(select sum(l3.diferenca.qtde * l3.diferenca.produtoEdicao.precoVenda) ")
+			   .append(" from LancamentoDiferenca l3 ")
+			   .append(" where l3.dataProcessamento = l.dataRecolhimentoDistribuidor ")
+			   .append(" and l3.diferenca.qtde is not null ")
+			   .append(" and l3.diferenca.produtoEdicao.precoVenda is not null")
+			   .append(" and (l3.diferenca.tipoDiferenca = :tipoDiferencaEm or l3.diferenca.tipoDiferenca = :tipoDiferencaDe)")
+			   .append(" group by l3.diferenca.tipoDiferenca) as faltasSobras ")
+			   
+			   //TODO fazer o mesmo para os outros movimentos de falta e sobra
+			   
+			   //pesquisaPorDistribuidorPerdasGanhos
+			   .append(",(select sum(l2.diferenca.qtde * l2.diferenca.produtoEdicao.precoVenda) ")
+			   .append(" from LancamentoDiferenca l2 ")
+			   .append(" where l2.dataProcessamento = l.dataRecolhimentoDistribuidor ")
+			   .append(" and l2.diferenca.qtde is not null ")
+			   .append(" and l2.diferenca.produtoEdicao.precoVenda is not null ")
+			   .append(" and l2.status = :statusPerda ")
+			   .append(" group by l2.diferenca.tipoDiferenca) as debitoCredito ")
+			   
+			   //TODO fazer o mesmo para os outros status de ganho
+			   
+			   .append("");
+		}
+		
+		hql.append(" from Lancamento l ")
+		   .append(" join l.produtoEdicao.produto.fornecedores f ")
+		   .append(" where l.dataLancamentoDistribuidor ");
+		
+		if (buscarDatas){
+			
+			hql.append(" between :inicio and :fim ");
+		} else {
+			
+			hql.append(" = :dataLancamento ");
+		}
+		
+		hql.append(" and l.reparte is not null ")
+		   .append(" and l.produtoEdicao.precoVenda is not null ")
+		   .append(" and l.status = :statusLancamento ");
+		
+		if (filtro.getIdsFornecedores() != null && !filtro.getIdsFornecedores().isEmpty()){
+			
+			hql.append(" and f.id in (:idsFornecedores) ");
+		}
+		
+		hql.append(" group by l.dataRecolhimentoDistribuidor ")
+		   .append(" order by l.dataRecolhimentoDistribuidor asc ");
+		
+		return hql.toString();
+	}
+	
+	private void setarParametrosQueryporDistribuidor(Query query, FiltroContasAPagarDTO filtro,
+			Date dataLancamento){
+		
+		if (dataLancamento == null){
+			
+			query.setParameter("inicio", filtro.getDataDe());
+			query.setParameter("fim", filtro.getDataAte());
+			
+//			List<GrupoMovimentoEstoque> movimentosSuplementar = new ArrayList<GrupoMovimentoEstoque>();
+//			movimentosSuplementar.add(GrupoMovimentoEstoque.SUPLEMENTAR_COTA_AUSENTE);
+//			movimentosSuplementar.add(GrupoMovimentoEstoque.SUPLEMENTAR_ENVIO_ENCALHE_ANTERIOR_PROGRAMACAO);
+//			movimentosSuplementar.add(GrupoMovimentoEstoque.ESTORNO_VENDA_ENCALHE_SUPLEMENTAR);
+//			movimentosSuplementar.add(GrupoMovimentoEstoque.ENTRADA_SUPLEMENTAR_ENVIO_REPARTE);
+//			movimentosSuplementar.add(GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_SUPLEMENTAR);
+//			query.setParameterList("movimentosSuplementar", movimentosSuplementar);
+//			//TODO fazer o mesmo para movimentos de grupo de estoque suplementar de saida
+//			
+//			query.setParameter("tipoDiferencaEm", TipoDiferenca.FALTA_EM);
+//			query.setParameter("tipoDiferencaDe", TipoDiferenca.FALTA_DE);
+//			//TODO fazer o mesmo para os outros movimentos de falta e sobra
+//			
+//			query.setParameter("statusPerda", StatusAprovacao.PERDA);
+			//TODO fazer o mesmo para os outros status de ganho
+		} else {
+			
+			query.setParameter("dataLancamento", dataLancamento);
+		}
+		
+		query.setParameter("statusLancamento", StatusLancamento.CONFIRMADO);
+		
+		if (filtro.getIdsFornecedores() != null && !filtro.getIdsFornecedores().isEmpty()){
+			
+			query.setParameterList("idsFornecedores", filtro.getIdsFornecedores());
+		}
+	}
+	
 	@Override
-	public List<ContasApagarConsultaPorProdutoDTO> pesquisarPorProduto(FiltroContasAPagarDTO dto) {
-		StringBuffer sql = new StringBuffer("");
+	public BigDecimal pesquisaPorDistribuidorValorPorGrupoMovimento(Date dataMovimento, 
+			List<GrupoMovimentoEstoque> movimentosSuplementar){
 		
-		sql.append("SELECT l.dataRecolhimentoPrevista as Rctl");
-		sql.append("	   p.codigo as Codigo");
-		sql.append("	   p.nome as Produto");
-		sql.append("	   pe.numeroEdicao as Edicao");
-		sql.append("	   pe.parcial as Tipo");
-		sql.append("	   l.reparte as Reparte");
-		sql.append("	   ep.qtdeSuplementar as Suplementacao");
-		sql.append("	   ep.qtdeDevolucaoEncalhe as Encalhe");
-		sql.append("	   SUM(d.qtde) as FaltasSobras");
-		sql.append("	   null as DebitosCreditos");
+		StringBuilder hql = new StringBuilder("select sum(m.qtde * m.produtoEdicao.precoVenda) ");
+		hql.append(" from MovimentoEstoque m ")
+		   .append(" where m.data = :dataMovimento ")
+		   .append(" and m.qtde is not null ")
+		   .append(" and m.produtoEdicao.precoVenda is not null")
+		   .append(" and m.tipoMovimento.grupoMovimentoEstoque in (:movimentosSuplementar) ");
 		
-		sql.append("FROM	");
-		sql.append("	   MovimentoEstoque me, lancamento l, Diferenca d ");
-		sql.append("	   JOIN me.estoqueProduto as ep");
-		sql.append("	   JOIN me.produtoEdicao as me_pe");
-		sql.append("	   JOIN pe.produto as p");
-		sql.append("	   JOIN l.produtoEdicao as l_pe");
-		sql.append("	   JOIN d.produtoEdicao as d_pe");
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("dataMovimento", dataMovimento);
 		
-		sql.append("WHERE 	");
-		sql.append("	   p.codigo as Codigo");
-
-		return null;
+		query.setParameterList("movimentosSuplementar", movimentosSuplementar);
+		
+		return (BigDecimal) query.uniqueResult();
+	}
+	
+//	@Override
+//	public BigDecimal pesquisaPorDistribuidorSuplementacaoEntrada(Date dataMovimento){
+//		
+//		StringBuilder hql = new StringBuilder("select sum(m.qtde * m.produtoEdicao.precoVenda) ");
+//		hql.append(" from MovimentoEstoque m ")
+//		   .append(" where m.data = :dataMovimento ")
+//		   .append(" and m.qtde is not null ")
+//		   .append(" and m.produtoEdicao.precoVenda is not null")
+//		   .append(" and m.tipoMovimento.grupoMovimentoEstoque in (:movimentosSuplementar) ");
+//		
+//		Query query = this.getSession().createQuery(hql.toString());
+//		query.setParameter("dataMovimento", dataMovimento);
+//		
+//		List<GrupoMovimentoEstoque> movimentosSuplementar = new ArrayList<GrupoMovimentoEstoque>();
+//		movimentosSuplementar.add(GrupoMovimentoEstoque.SUPLEMENTAR_COTA_AUSENTE);
+//		movimentosSuplementar.add(GrupoMovimentoEstoque.SUPLEMENTAR_ENVIO_ENCALHE_ANTERIOR_PROGRAMACAO);
+//		movimentosSuplementar.add(GrupoMovimentoEstoque.ESTORNO_VENDA_ENCALHE_SUPLEMENTAR);
+//		movimentosSuplementar.add(GrupoMovimentoEstoque.ENTRADA_SUPLEMENTAR_ENVIO_REPARTE);
+//		movimentosSuplementar.add(GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_SUPLEMENTAR);
+//		
+//		query.setParameterList("movimentosSuplementar", movimentosSuplementar);
+//		
+//		return (BigDecimal) query.uniqueResult();
+//	}
+//	
+//	@Override
+//	public BigDecimal pesquisaPorDistribuidorSuplementacaoSaida(Date dataMovimento){
+//		
+//		StringBuilder hql = new StringBuilder("select sum(m.qtde * m.produtoEdicao.precoVenda) ");
+//		hql.append(" from MovimentoEstoque m ")
+//		   .append(" where m.data = :dataMovimento ")
+//		   .append(" and m.qtde is not null ")
+//		   .append(" and m.produtoEdicao.precoVenda is not null")
+//		   .append(" and m.tipoMovimento.grupoMovimentoEstoque in (:movimentosSuplementar) ");
+//		
+//		Query query = this.getSession().createQuery(hql.toString());
+//		query.setParameter("dataMovimento", dataMovimento);
+//		
+//		List<GrupoMovimentoEstoque> movimentosSuplementar = new ArrayList<GrupoMovimentoEstoque>();
+//		movimentosSuplementar.add(GrupoMovimentoEstoque.REPARTE_COTA_AUSENTE);
+//		movimentosSuplementar.add(GrupoMovimentoEstoque.VENDA_ENCALHE_SUPLEMENTAR);
+//		movimentosSuplementar.add(GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_SUPLEMENTAR);
+//		
+//		query.setParameterList("movimentosSuplementar", movimentosSuplementar);
+//		
+//		return (BigDecimal) query.uniqueResult();
+//	}
+	
+	@Override
+	public BigDecimal pesquisaPorDistribuidorFaltasSobras(Date dataMovimento, TipoDiferenca tipoDiferenca){
+		
+		StringBuilder hql = new StringBuilder("select sum(l.diferenca.qtde * l.diferenca.produtoEdicao.precoVenda) ");
+		hql.append(" from LancamentoDiferenca l ")
+		   .append(" where l.dataProcessamento = :dataMovimento ")
+		   .append(" and l.diferenca.qtde is not null ")
+		   .append(" and l.diferenca.produtoEdicao.precoVenda is not null")
+		   .append(" and (l.diferenca.tipoDiferenca = :tipoDiferencaEm or l.diferenca.tipoDiferenca = :tipoDiferencaDe)")
+		   .append(" group by l.diferenca.tipoDiferenca ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("dataMovimento", dataMovimento);
+		
+		if (TipoDiferenca.FALTA_DE.equals(tipoDiferenca) || TipoDiferenca.FALTA_EM.equals(tipoDiferenca)){
+			
+			query.setParameter("tipoDiferencaEm", TipoDiferenca.FALTA_EM);
+			query.setParameter("tipoDiferencaDe", TipoDiferenca.FALTA_DE);
+		} else {
+			
+			query.setParameter("tipoDiferencaEm", TipoDiferenca.SOBRA_EM);
+			query.setParameter("tipoDiferencaDe", TipoDiferenca.SOBRA_DE);
+		}
+		
+		return (BigDecimal) query.uniqueResult();
+	}
+	
+	@Override
+	public BigDecimal pesquisaPorDistribuidorPerdasGanhos(Date dataMovimento, StatusAprovacao status){
+		
+		StringBuilder hql = new StringBuilder("select sum(l.diferenca.qtde * l.diferenca.produtoEdicao.precoVenda) ");
+		hql.append(" from LancamentoDiferenca l ")
+		   .append(" where l.dataProcessamento = :dataMovimento ")
+		   .append(" and l.diferenca.qtde is not null ")
+		   .append(" and l.diferenca.produtoEdicao.precoVenda is not null")
+		   .append(" and l.status = :status")
+		   .append(" group by l.diferenca.tipoDiferenca ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("dataMovimento", dataMovimento);
+		query.setParameter("status", status);
+		
+		
+		return (BigDecimal) query.uniqueResult();
 	}
 }
