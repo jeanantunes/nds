@@ -30,6 +30,8 @@ import br.com.abril.nds.model.movimentacao.TipoMovimento;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.EstoqueProdutoRespository;
+import br.com.abril.nds.repository.LancamentoParcialRepository;
+import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueRepository;
 import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
@@ -64,6 +66,12 @@ public class MovimentoEstoqueCotaServiceImpl implements MovimentoEstoqueCotaServ
 	
 	@Autowired
 	private MovimentoEstoqueRepository movimentoEstoqueRepository;
+	
+	@Autowired
+	private LancamentoParcialRepository lancamentoParcialRepository;
+	
+	@Autowired
+	private LancamentoRepository lancamentoRepository;
 	
 	@Transactional
 	public List<MovimentoEstoqueCota> obterMovimentoCotaPorTipoMovimento(Date data, Long idCota, GrupoMovimentoEstoque grupoMovimentoEstoque){
@@ -386,4 +394,6 @@ public class MovimentoEstoqueCotaServiceImpl implements MovimentoEstoqueCotaServ
 		}
 		
 	}
+	
+	
 }

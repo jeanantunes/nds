@@ -145,8 +145,8 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 		T.lancamentos = [];
 		
 		$("#valorTotal", _workspace).html(data[1]);
-		$.each(data.rows, function(index,row){ T.processarLinha(index, row);});
-		return data;
+		$.each(data[0].rows, function(index,row){ T.processarLinha(index, row);});
+		return data[0];
 	},
 		
 	this.popularResumoPeriodo = function(data) {

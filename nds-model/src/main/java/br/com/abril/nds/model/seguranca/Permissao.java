@@ -63,6 +63,7 @@ public enum Permissao
 	ROLE_RECOLHIMENTO_DIGICACAO_CONTAGEM_DEVOLUCAO("Devolução ao Fornecedor",	 						   Permissao.ROLE_RECOLHIMENTO),
 	ROLE_RECOLHIMENTO_CHAMADAO("Chamadão", 														  		   Permissao.ROLE_RECOLHIMENTO),
 	ROLE_RECOLHIMENTO_CONSULTA_ENCALHE_COTA("Consulta Encalhe",    								  	   	   Permissao.ROLE_RECOLHIMENTO),
+	ROLE_RECOLHIMENTO_EMISSAO_BANDEIRA("Emissão das Bandeiras",											   Permissao.ROLE_RECOLHIMENTO),
 	ROLE_RECOLHIMENTO_HELP("Help", 									   							 		   Permissao.ROLE_RECOLHIMENTO),
 
 	ROLE_NFE("NF-e",																	  	   			   null),

@@ -33,7 +33,6 @@ import br.com.abril.nds.dto.InfoConferenciaEncalheCota;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoSlipDTO;
 import br.com.abril.nds.dto.SlipDTO;
-import br.com.abril.nds.exception.GerarCobrancaValidacaoException;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.Origem;
@@ -922,12 +921,10 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		} 			
 		
 		controleConfEncalheCota = inserirDadosConferenciaEncalhe(controleConfEncalheCota, listaConferenciaEncalhe, listaIdConferenciaEncalheParaExclusao, usuario, StatusOperacao.CONCLUIDO);
-		
-		Distribuidor distribuidor = distribuidorService.obter();
-		Long idDistribuidor = distribuidor.getId();
+
 		
 		BigDecimal valorTotalEncalheOperacaoConferenciaEncalhe = 
-				conferenciaEncalheRepository.obterValorTotalEncalheOperacaoConferenciaEncalhe(controleConfEncalheCota.getId(),idDistribuidor,null,false);
+				conferenciaEncalheRepository.obterValorTotalEncalheOperacaoConferenciaEncalhe(controleConfEncalheCota.getId());
 		
 		this.abaterNegociacaoPorComissao(controleConfEncalheCota.getCota().getId(), valorTotalEncalheOperacaoConferenciaEncalhe);
 		
@@ -2661,6 +2658,26 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		}
 		
+	}
+	
+	
+	/**
+	 * Obtem valor total para geração de crédito na C.E.
+	 * @param idControleConferenciaEncalheCota
+	 * @return BigDecimal
+	 */
+	@Transactional
+	@Override
+	public BigDecimal obterValorTotalConferenciaEncalhe(Long idControleConferenciaEncalheCota){
+		
+		 BigDecimal valorTotalEncalheOperacaoConferenciaEncalhe = 
+					conferenciaEncalheRepository.obterValorTotalEncalheOperacaoConferenciaEncalhe(idControleConferenciaEncalheCota);
+			
+		 if(valorTotalEncalheOperacaoConferenciaEncalhe == null) {
+		     valorTotalEncalheOperacaoConferenciaEncalhe = BigDecimal.ZERO;
+		 }
+		
+		 return valorTotalEncalheOperacaoConferenciaEncalhe;
 	}
 	
 }
