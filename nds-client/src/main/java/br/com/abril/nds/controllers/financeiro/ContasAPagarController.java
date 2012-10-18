@@ -19,6 +19,7 @@ import br.com.abril.nds.client.vo.ContasAPagarFaltasSobrasVO;
 import br.com.abril.nds.client.vo.ContasAPagarGridPrincipalFornecedorVO;
 import br.com.abril.nds.client.vo.ContasAPagarGridPrincipalProdutoVO;
 import br.com.abril.nds.client.vo.ContasAPagarParcialVO;
+import br.com.abril.nds.client.vo.ContasApagarConsultaPorDistribuidorVO;
 import br.com.abril.nds.dto.ContasAPagarConsignadoDTO;
 import br.com.abril.nds.dto.ContasAPagarConsultaProdutoDTO;
 import br.com.abril.nds.dto.ContasAPagarEncalheDTO;
@@ -26,6 +27,7 @@ import br.com.abril.nds.dto.ContasAPagarFaltasSobrasDTO;
 import br.com.abril.nds.dto.ContasAPagarGridPrincipalFornecedorDTO;
 import br.com.abril.nds.dto.ContasAPagarGridPrincipalProdutoDTO;
 import br.com.abril.nds.dto.ContasAPagarParcialDTO;
+import br.com.abril.nds.dto.ContasApagarConsultaPorDistribuidorDTO;
 import br.com.abril.nds.dto.ContasApagarConsultaPorProdutoDTO;
 import br.com.abril.nds.dto.FlexiGridDTO;
 import br.com.abril.nds.dto.filtro.FiltroContasAPagarDTO;
@@ -54,6 +56,14 @@ import br.com.caelum.vraptor.view.Results;
 public class ContasAPagarController {
 	private static final String FILTRO_CONTAS_A_PAGAR = "FILTRO_CONTAS_A_PAGAR";
 
+	private static final String FILTRO_DETALHE_PARCIAL = "FILTRO_DETALHE_PARCIAL";
+	
+	private static final String FILTRO_DETALHE_CONSIGNADO = "FILTRO_DETALHE_CONSIGNADO";
+	
+	private static final String FILTRO_DETALHE_ENCALHE = "FILTRO_DETALHE_ENCALHE";
+	
+	private static final String FILTRO_DETALHE_FALTAS_SOBRAS = "FILTRO_DETALHE_FALTAS_SOBRAS";
+	
 	@Autowired
 	private Result result;
 
@@ -125,6 +135,8 @@ public class ContasAPagarController {
 
 	@Path("/pesquisarParcial.json")
 	public void pesquisarParcial(FiltroContasAPagarDTO filtro, String sortname, String sortorder, int rp, int page) {
+		
+		this.session.setAttribute(FILTRO_DETALHE_PARCIAL, filtro);
 
 		List<ContasAPagarParcialVO> listVO = new ArrayList<ContasAPagarParcialVO>();
 		FlexiGridDTO<ContasAPagarParcialDTO> flexiDTO = contasAPagarService.pesquisarParcial(filtro, sortname, sortorder, rp, page);
@@ -170,6 +182,8 @@ public class ContasAPagarController {
 
 	@Path("/pesquisarConsignado.json")
 	public void pesquisarConsignado(FiltroContasAPagarDTO filtro, String sortname, String sortorder, int rp, int page) {
+		
+		this.session.setAttribute(FILTRO_DETALHE_CONSIGNADO, filtro);
 
 		List<ContasAPagarConsignadoVO> listVO = new ArrayList<ContasAPagarConsignadoVO>();
 		List<ContasAPagarConsignadoDTO> listDTO = contasAPagarService.pesquisarDetalheConsignado(filtro, sortname, sortorder, rp, page);
@@ -185,6 +199,8 @@ public class ContasAPagarController {
 	@Path("/pesquisarEncalhe.json")
 	public void pesquisarEncalhe(FiltroContasAPagarDTO filtro, String sortname, String sortorder, int rp, int page) {
 
+		this.session.setAttribute(FILTRO_DETALHE_ENCALHE, filtro);
+		
 		List<ContasAPagarEncalheVO> listVO = new ArrayList<ContasAPagarEncalheVO>();
 		List<ContasAPagarEncalheDTO> listDTO = contasAPagarService.pesquisarDetalheEncalhe(filtro, sortname, sortorder, rp, page);
 
@@ -199,6 +215,8 @@ public class ContasAPagarController {
 	@Path("/pesquisarFaltasSobras.json")
 	public void pesquisarFaltasSobras(FiltroContasAPagarDTO filtro, String sortname, String sortorder, int rp, int page) {
 
+		this.session.setAttribute(FILTRO_DETALHE_FALTAS_SOBRAS, filtro);
+		
 		List<ContasAPagarFaltasSobrasVO> listVO = new ArrayList<ContasAPagarFaltasSobrasVO>();
 		List<ContasAPagarFaltasSobrasDTO> listDTO = contasAPagarService.pesquisarDetalheFaltasSobras(filtro, sortname, sortorder, rp, page);
 
@@ -223,22 +241,50 @@ public class ContasAPagarController {
 		}
 		
 		FileExporter.to("contas-a-pagar", fileType).inHTTPResponse(this.getNDSFileHeader(new Date()), null, null,
-		listVO, ContasAPagarConsultaPorProdutoVO.class,
-		this.httpServletResponse);
+						listVO, ContasAPagarConsultaPorProdutoVO.class,
+						this.httpServletResponse);
 		
 		result.use(Results.nothing());
-	}
-	
-	@Path("/exportPesquisarParcial")
-	public void exportPesquisarParcial(FileType fileType) throws IOException {
-		
-		// TODO
 	}
 	
 	@Path("/exportPesquisarPorDistribuidor")
 	public void exportPesquisarPorDistribuidor(FileType fileType) throws IOException {
 		
-		// TODO
+		FiltroContasAPagarDTO filtro = (FiltroContasAPagarDTO) this.session.getAttribute(FILTRO_CONTAS_A_PAGAR);
+		
+		ContasAPagarGridPrincipalFornecedorDTO listContasAPagar = contasAPagarService.pesquisarPorDistribuidor(filtro, null, null, 0, 0);
+		List <ContasApagarConsultaPorDistribuidorVO> listVO = new ArrayList<ContasApagarConsultaPorDistribuidorVO>();
+		
+		for(ContasApagarConsultaPorDistribuidorDTO dto : listContasAPagar.getGrid()){
+			listVO.add(new ContasApagarConsultaPorDistribuidorVO(dto));
+		}
+		
+		FileExporter.to("contas-a-pagar",fileType).inHTTPResponse(this.getNDSFileHeader(new Date()), null, null, 
+						listVO, ContasApagarConsultaPorDistribuidorVO.class, 
+						this.httpServletResponse);
+		
+		result.use(Results.nothing());
+		
+		
+	}
+	
+	@Path("/exportPesquisarParcial")
+	public void exportPesquisarParcial(FileType fileType) throws IOException {
+		
+		FiltroContasAPagarDTO filtro = (FiltroContasAPagarDTO) this.session.getAttribute(FILTRO_DETALHE_PARCIAL);
+		
+		List <ContasAPagarParcialVO> listVO = new ArrayList<ContasAPagarParcialVO>(); 
+		FlexiGridDTO<ContasAPagarParcialDTO> listDTO = contasAPagarService.pesquisarParcial(filtro, null, null, 0, 0);
+		
+		for(ContasAPagarParcialDTO dto : listDTO.getGrid()){
+			listVO.add(new ContasAPagarParcialVO(dto));
+		}
+		
+		FileExporter.to("detalhe-consignado", fileType).inHTTPResponse(this.getNDSFileHeader(new Date()), null, null,
+						listVO, ContasAPagarParcialVO.class, 
+						this.httpServletResponse);
+		
+		result.use(Results.nothing());
 	}
 	
 	@Path("/exportPesquisarDetalheConsignado")
