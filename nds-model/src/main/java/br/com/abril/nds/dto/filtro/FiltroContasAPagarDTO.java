@@ -8,7 +8,7 @@ public class FiltroContasAPagarDTO implements Serializable {
 
 	private static final long serialVersionUID = 5604665210912108694L;
 	
-	private boolean primeiraCarga; /** define se a flexigrid está sendo carregada pela primeira vez */
+	private boolean primeiraCarga; /** define se a flexigrid esta sendo carregada pela primeira vez */
 	
 	private Date dataDe;
 	private Date dataAte;

@@ -266,7 +266,7 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
 		
 		BigDecimal valorCobrancaNaoPago = this.obterValorNaoPagoCobranca(numeroCota); 
 		
-		return valorCobrancaNaoPago.subtract(valorPagoBaixaCobranca);
+		return valorCobrancaNaoPago!=null?valorCobrancaNaoPago.subtract(valorPagoBaixaCobranca!=null?valorPagoBaixaCobranca:BigDecimal.ZERO):BigDecimal.ZERO;
 	}
 	
 	/**
@@ -310,7 +310,7 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
 		hql.append(" select sum(baixa.valorPago) ")
 			.append(" from Cobranca cobranca ")
 			.append(" inner join cobranca.cota cota  ")
-			.append(" inner join cobranca.baixaCobranca baixa ")
+			.append(" inner join cobranca.baixasCobranca baixa ")
 			.append(" where cota.numeroCota		   = :numeroCota ")
 			.append(" and cobranca.statusCobranca  = :status ")
 			.append(" and baixa.status 			   IN (:statusBaixa) ");

@@ -1,9 +1,12 @@
 package br.com.abril.nds.model.estoque;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -12,6 +15,7 @@ import javax.persistence.Table;
 
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.envio.nota.ItemNotaEnvio;
+import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.fiscal.nota.ProdutoServico;
 import br.com.abril.nds.model.movimentacao.AbstractMovimentoEstoque;
 import br.com.abril.nds.model.planejamento.EstudoCota;
@@ -53,7 +57,25 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque {
 
 	@ManyToMany(mappedBy="listaMovimentoEstoqueCota")
 	private List<ItemNotaEnvio> listaItemNotaEnvio;
-	
+
+	@Column(name = "STATUS_ESTOQUE_FINANCEIRO")
+	private StatusEstoqueFinanceiro statusEstoqueFinanceiro;
+
+	/**
+	 * @return the statusEstoqueFinanceiro
+	 */
+	public StatusEstoqueFinanceiro getStatusEstoqueFinanceiro() {
+		return statusEstoqueFinanceiro;
+	}
+
+	/**
+	 * @param statusEstoqueFinanceiro the statusEstoqueFinanceiro to set
+	 */
+	public void setStatusEstoqueFinanceiro(
+			StatusEstoqueFinanceiro statusEstoqueFinanceiro) {
+		this.statusEstoqueFinanceiro = statusEstoqueFinanceiro;
+	}
+
 	public Cota getCota() {
 		return cota;
 	}
