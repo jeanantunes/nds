@@ -405,6 +405,23 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
 					"Atualizacao da Tributação Fiscal para: " + tributacaoFiscal);
 		}
+		
+		if (produto.getFormaComercializacao().equals(
+					(input.getFormaComercializacao().equals("CON") 
+							? FormaComercializacao.CONSIGNADO 
+							: FormaComercializacao.CONTA_FIRME
+					)
+				)) {
+				produto.setFormaComercializacao(
+						(input.getFormaComercializacao().equals("CON") 
+								? FormaComercializacao.CONSIGNADO 
+								: FormaComercializacao.CONTA_FIRME
+						) );
+				this.ndsiLoggerFactory.getLogger().logInfo(message,
+						EventoExecucaoEnum.INF_DADO_ALTERADO,
+						"Atualizacao da Forma de Comercializacao para: " + produto.getFormaComercializacao().getValue());
+
+		}		
 
 	}
 
