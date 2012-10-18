@@ -154,7 +154,7 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 		$("#tableResumoPeriodo", _workspace).clear();
 		
 		var rows='<tr>';
-		$.each(data.listaResumoPeriodoBalanceamento, function(index, resumo){
+		$.each(data.resultado.listaResumoPeriodoBalanceamento, function(index, resumo){
 			  rows+='<td>';
 			  rows+='<div class="box_resumo">';
 			  rows+='<label>'+ resumo.dataFormatada +'</label>';
@@ -166,7 +166,7 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 				  rows+='<span class="span_1">Qtde. Exempl.:</span>';
 				  rows+='<span name="qtdeExemplares" class="span_2 redLabel"';
 				  rows+='title="A quantidade de exemplares excede a capacidade de manuseio ';
-				  rows+=data.capacidadeRecolhimentoDistribuidor + ' do distribuidor">';
+				  rows+=data.resultado.capacidadeRecolhimentoDistribuidor + ' do distribuidor">';
 				  rows+=resumo.qtdeExemplaresFormatado + '</span>';
 			  
 			  } else {

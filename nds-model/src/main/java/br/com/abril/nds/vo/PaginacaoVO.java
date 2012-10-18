@@ -69,6 +69,8 @@ public class PaginacaoVO implements Serializable {
 			
 			this.qtdResultadosPorPagina = rp;
 			
+			this.sortOrder = sortOrder;
+			
 			if (ASC.equalsIgnoreCase(sortOrder)) {
 				
 				this.ordenacao = Ordenacao.ASC;

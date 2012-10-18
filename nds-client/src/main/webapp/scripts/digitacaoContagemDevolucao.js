@@ -192,7 +192,7 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 		**/
 		salvar:function(){
 			
-			var param = digitacaoContagemDevolucaoController.obterListaDigitacaoContagemDevolucao();
+			var param = serializeArrayToPost('listaDigitacaoContagemDevolucao', digitacaoContagemDevolucaoController.obterListaDigitacaoContagemDevolucao());		
 			
 			$.postJSON(
 				contextPath + "/devolucao/digitacao/contagem/salvar", 
@@ -223,7 +223,7 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 		**/
 		confirmarOperacao: function (){
 			
-			var param = digitacaoContagemDevolucaoController.obterListaDigitacaoContagemDevolucao();
+			var param = serializeArrayToPost('listaDigitacaoContagemDevolucao', digitacaoContagemDevolucaoController.obterListaDigitacaoContagemDevolucao());	
 			
 			$.postJSON(
 				contextPath + "/devolucao/digitacao/contagem/confirmar", 
@@ -237,9 +237,7 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 		
 		
 		geraNota :function(){
-			
-			var param = digitacaoContagemDevolucaoController.obterListaDigitacaoContagemDevolucao();
-			debugger;
+			var param = serializeArrayToPost('listaDigitacaoContagemDevolucao', digitacaoContagemDevolucaoController.obterListaDigitacaoContagemDevolucao());	
 			$.postJSON(
 				contextPath + "/devolucao/digitacao/contagem/geraNota", 
 				param,
@@ -282,7 +280,7 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 
 			var linhasDaGrid = $("#contagemDevolucaoGrid tr", digitacaoContagemDevolucaoController.workspace);
 
-			var listaDigitacaoContagemDevolucao = "";
+			var listaDigitacaoContagemDevolucao = new Array();
 			
 			//Verifica o role do usuario para obter o indice da coluna com os valores do exemplar nota
 			var indexColunaExemplarNota = (digitacaoContagemDevolucaoController.isRoleOperador())?5:7;
@@ -311,19 +309,17 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 					return true;
 				}
 
-				var digitacaoContagemDevolucao = 'listaDigitacaoContagemDevolucao[' + index + '].codigoProduto=' + codigoProduto + '&';
-
-					digitacaoContagemDevolucao += 'listaDigitacaoContagemDevolucao[' + index + '].numeroEdicao=' + numeroEdicao + '&';
-
-					digitacaoContagemDevolucao += 'listaDigitacaoContagemDevolucao[' + index + '].dataRecolhimentoDistribuidor=' + dataRecolhimentoDistribuidor  + '&';
-					
+				var digitacaoContagemDevolucao = {codigoProduto:codigoProduto,
+												  numeroEdicao:numeroEdicao,
+												  dataRecolhimentoDistribuido:dataRecolhimentoDistribuidor,
+												  qtdNota:qtdNota};
+				
 					if (diferenca) {
-						digitacaoContagemDevolucao += 'listaDigitacaoContagemDevolucao[' + index + '].diferenca=' + diferenca  + '&';
+						
+						digitacaoContagemDevolucao.diferenca =diferenca;
 					}
-					
-					digitacaoContagemDevolucao += 'listaDigitacaoContagemDevolucao[' + index + '].qtdNota=' + qtdNota  + '&';
 
-				listaDigitacaoContagemDevolucao = (listaDigitacaoContagemDevolucao + digitacaoContagemDevolucao);
+				listaDigitacaoContagemDevolucao.push(digitacaoContagemDevolucao);
 			});
 
 			return listaDigitacaoContagemDevolucao;
@@ -499,7 +495,7 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 			var param = {"checkAll" : checkAll};
 			
 			if (listInserirEdicoesFechadas) {
-				params += serializeArrayToPost("listaEdicoesFechadas",listInserirEdicoesFechadas);
+				params = serializeArrayToPost("listaEdicoesFechadas",listInserirEdicoesFechadas,params);
 			}
 			
 			$.postJSON(

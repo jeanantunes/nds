@@ -148,7 +148,7 @@ public class CotaGarantiaController {
 	        CotaGarantiaDTO<CotaGarantia> cotaGarantia = cotaGarantiaService.getByCota(idCota);
 	        
 	        if (cotaGarantia != null && cotaGarantia.getCotaGarantia() != null) {			
-	            result.use(CustomJson.class).from(cotaGarantia).exclude(EnderecoFiador.class, "fiador").serialize();		
+	            result.use(CustomJson.class).from(cotaGarantia).exclude("fiador").serialize();		
 	        }else{			
 	            result.use(CustomJson.class).from("OK").serialize();		
 	        }	
