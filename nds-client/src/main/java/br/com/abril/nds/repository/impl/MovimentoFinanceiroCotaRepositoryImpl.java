@@ -13,6 +13,7 @@ import org.springframework.stereotype.Repository;
 import br.com.abril.nds.dto.CotaFaturamentoDTO;
 import br.com.abril.nds.dto.CotaTransportadorDTO;
 import br.com.abril.nds.dto.DebitoCreditoCotaDTO;
+import br.com.abril.nds.dto.MovimentoFinanceiroDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroDebitoCreditoDTO;
 import br.com.abril.nds.dto.filtro.FiltroDebitoCreditoDTO.ColunaOrdenacao;
@@ -632,16 +633,20 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 				
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append("select 	 pessoaTransportador.nome as transportador, " +
-						 	"roteiro.descricao as roteiro, " +
-						 	"rota.descricao as rota, " +
+		hql.append("select 	 pessoaTransportador.razaoSocial as transportador, " +
+						 	"roteiro.descricaoRoteiro as roteiro, " +
+						 	"rota.descricaoRota as rota, " +
 						 	"cota.numeroCota as numCota, " +
 						 	"pessoaCota.nome as nomeCota, " +
 						 	"sum(movimento.valor) as valor, " +
-						 	"transportador.idTransportador as idTransportador, " +
+						 	"transportador.id as idTransportador, " +
 						 	"cota.id as idCota ");
 		
-		addFromWhereObterDadosTransportador(hql, dataDe, dataAte, idTransportador, param);
+		addFromJoinObterDadosTransportador(hql);
+		
+		addWhereObterDadosTransportador(hql, dataDe, dataAte, idTransportador, param);
+		
+		hql.append(" group by transportador.id ");
 		
 		getOrderByObterResumoTransportadorCota(paginacaoVO); 
 		
@@ -685,7 +690,7 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 		return orderBy;
 	}
 
-	private void addFromWhereObterDadosTransportador(StringBuilder hql, Date dataDe, Date dataAte, Long idTransportador, HashMap<String, Object> params) {
+	private void addFromJoinObterDadosTransportador(StringBuilder hql) {
 
 		hql.append(" from MovimentoFinanceiroCota movimento ");
 		hql.append(" 	join movimento.cota cota ");
@@ -698,7 +703,11 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 		hql.append("    join assossiacaoRotaVeiculo.transportador transportador ");
 		hql.append("    join transportador.pessoaJuridica pessoaTransportador ");
 		
-		hql.append("movimento.tipoMovimento.grupoMovimentoFinaceiro = :grupoMovimento");
+	}
+	
+	private void addWhereObterDadosTransportador(StringBuilder hql, Date dataDe, Date dataAte, Long idTransportador, HashMap<String, Object> params) {
+
+		hql.append(" where movimento.tipoMovimento.grupoMovimentoFinaceiro = :grupoMovimento");
 		params.put("grupoMovimento", GrupoMovimentoFinaceiro.RECEBIMENTO_REPARTE);
 		
 		if (dataDe != null) {
@@ -712,10 +721,66 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 		}
 	
 		if (idTransportador != null) {
-			hql.append(" and transportador.id = :dataAte ");
+			hql.append(" and transportador.id = :idTransportador ");
 			params.put("idTransportador", idTransportador);
 		}		
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<MovimentoFinanceiroDTO> obterDetalhesTrasportadorPorCota(
+			Date dataDe, Date dataAte, Long idTransportador, Long idCota) {
+		
+		HashMap<String, Object> param = new HashMap<String, Object>();
+		
+		StringBuilder hql = new StringBuilder();
+				
+		hql.append("select 	 movimento.observacao as descricao, " +
+						 	"movimento.valor as valor, " +
+						 	"movimento.dataCriacao as data  ");
+		
+		addFromJoinObterDadosTransportador(hql);
+		
+		addWhereobterDetalhesTrasportadorPorCota(hql, dataDe, dataAte, idTransportador, idCota, param);
+				
+		hql.append(" order by movimento.dataCriacao asc ");
+		
+		Query query = getSession().createQuery(hql.toString());
+		
+		for(String key : param.keySet()){
+			query.setParameter(key, param.get(key));
+		}
+	
+		query.setResultTransformer(Transformers.aliasToBean(MovimentoFinanceiroDTO.class));
+		
+		return query.list();
+	}
+
+
+	private void addWhereobterDetalhesTrasportadorPorCota(StringBuilder hql, Date dataDe, Date dataAte, Long idTransportador, Long idCota, HashMap<String, Object> params) {
+
+		hql.append(" where movimento.tipoMovimento.grupoMovimentoFinaceiro = :grupoMovimento");
+		params.put("grupoMovimento", GrupoMovimentoFinaceiro.RECEBIMENTO_REPARTE);
+		
+		if (dataDe != null) {
+			hql.append(" and movimento.dataCriacao >= :dataDe ");			
+			params.put("dataDe", dataDe);
+		}
+
+		if (dataAte != null) {
+			hql.append(" and movimento.dataCriacao <= :dataAte ");
+			params.put("dataAte", dataAte);
+		}
+	
+		if (idTransportador != null) {
+			hql.append(" and transportador.id = :idTransportador ");
+			params.put("idTransportador", idTransportador);
+		}		
+		
+		if (idCota != null) {
+			hql.append(" and cota.id = :idCota");
+			params.put("idCota", idCota);
+		}		
+	}
 	
 }

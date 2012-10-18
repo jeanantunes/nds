@@ -7,6 +7,7 @@ import java.util.List;
 import br.com.abril.nds.dto.CotaFaturamentoDTO;
 import br.com.abril.nds.dto.CotaTransportadorDTO;
 import br.com.abril.nds.dto.DebitoCreditoCotaDTO;
+import br.com.abril.nds.dto.MovimentoFinanceiroDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroDebitoCreditoDTO;
 import br.com.abril.nds.model.cadastro.Cota;
@@ -122,4 +123,15 @@ public interface MovimentoFinanceiroCotaRepository extends Repository<MovimentoF
 	 * @return
 	 */
 	List<CotaTransportadorDTO> obterResumoTransportadorCota(Date dataDe, Date dataAte, Long idTransportador, PaginacaoVO paginacaoVO); 
+	
+	/**
+	 * Obtém detalhes Financeiros do envio de Reparte das Cotas de determinado Transportador
+	 * 
+	  * @param dataDe - Data de início da pesquisa
+	 * @param dataAte - Data de fim da pesquisa
+	 * @param idTransportador - Identificador do Transportador
+	 * @param idCota - Identificador da cota
+	 * @return
+	 */
+	List<MovimentoFinanceiroDTO> obterDetalhesTrasportadorPorCota(Date dataDe, Date dataAte, Long idTransportador, Long idCota);
 }

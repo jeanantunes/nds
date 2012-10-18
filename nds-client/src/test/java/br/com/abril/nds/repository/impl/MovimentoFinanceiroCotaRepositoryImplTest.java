@@ -96,7 +96,7 @@ public class MovimentoFinanceiroCotaRepositoryImplTest extends AbstractRepositor
 		save(usuarioJoao);
 		
 		Box box = Fixture.criarBox(1, "BX-001", TipoBox.LANCAMENTO);
-		//save(box);
+		save(box);
 		
 		PessoaFisica manoel = Fixture.pessoaFisica("319.435.088-95",
 				"developertestermail@gmail.com", "Manoel da Silva");
@@ -305,17 +305,5 @@ public class MovimentoFinanceiroCotaRepositoryImplTest extends AbstractRepositor
 
 		return filtroDebitoCreditoDTO;
 	}
-	
-	@Test
-	public void obterResumoTransportadorCotaSucesso() {
-		
-		Date dtInicial = Fixture.criarData(1, 1, 2000);
-		Date dtFinal = Fixture.criarData(1, 1, 3000);
-		
-		try {
-			movimentoFinanceiroCotaRepository.obterResumoTransportadorCota(dtInicial, dtFinal, 1L, new PaginacaoVO(1, 50, "asc" , "transportador"));
-		} catch(Exception e) {
-			e.printStackTrace();
-		}
-	}
+
 }
