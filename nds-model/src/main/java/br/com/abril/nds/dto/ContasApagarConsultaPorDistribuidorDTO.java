@@ -35,7 +35,9 @@ public class ContasApagarConsultaPorDistribuidorDTO implements Serializable {
 		
 		this.debitoCredito = perdasGanhos;
 		
-		this.saldo = consignado.subtract(this.encalhe).subtract(this.faltasSobras).subtract(this.debitoCredito);
+		this.saldo = consignado.subtract(this.encalhe == null ? BigDecimal.ZERO : this.encalhe)
+				.subtract(this.faltasSobras == null ? BigDecimal.ZERO : this.faltasSobras)
+				.subtract(this.debitoCredito == null ? BigDecimal.ZERO : this.debitoCredito);
 	}
 	
 	private Date data;
