@@ -8,7 +8,7 @@ public class FiltroContasAPagarDTO implements Serializable {
 
 	private static final long serialVersionUID = 5604665210912108694L;
 	
-	private boolean primeiraCarga; /** define se a flexigrid est√° sendo carregada pela primeira vez */
+	private boolean primeiraCarga; /** define se a flexigrid est· sendo carregada pela primeira vez */
 	
 	private Date dataDe;
 	private Date dataAte;
@@ -17,6 +17,8 @@ public class FiltroContasAPagarDTO implements Serializable {
 	private Long edicao;
 	
 	private	List <Long> produtoEdicaoIDs;
+	
+	private List<Long> idsFornecedores;
 	
 	
 	public boolean isPrimeiraCarga() {
@@ -61,10 +63,10 @@ public class FiltroContasAPagarDTO implements Serializable {
 	public void setProdutoEdicaoIDs(List<Long> produtoEdicaoIDs) {
 		this.produtoEdicaoIDs = produtoEdicaoIDs;
 	}
-
-	
-	
-	
-	
-
+	public List<Long> getIdsFornecedores() {
+		return idsFornecedores;
+	}
+	public void setIdsFornecedores(List<Long> idsFornecedores) {
+		this.idsFornecedores = idsFornecedores;
+	}
 }
