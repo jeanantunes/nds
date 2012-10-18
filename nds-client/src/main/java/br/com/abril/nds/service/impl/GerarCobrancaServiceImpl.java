@@ -620,21 +620,41 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		int fatorVencimento = cota.getParametroCobranca() != null ? cota.getParametroCobranca().getFatorVencimento() : 0;
 		
 		switch(formaCobrancaPrincipal.getTipoFormaCobranca()){
+
+			case DIARIA:
+				dataVencimento = 
+				this.calendarioService.adicionarDiasUteis(consolidadoFinanceiroCota.getDataConsolidado(), 
+														  fatorVencimento, 
+														  null, 
+														  null); 
+				
+			break;
+			
+			case QUINZENAL:
+				dataVencimento = 
+				this.calendarioService.adicionarDiasUteis(consolidadoFinanceiroCota.getDataConsolidado(), 
+														  fatorVencimento,
+														  null, 
+														  formaCobrancaPrincipal.getDiasDoMes()); 
+
+			break;
+			
 			case MENSAL:
 				dataVencimento = 
-				this.calendarioService.adicionarDiasUteis(
-						consolidadoFinanceiroCota.getDataConsolidado(), fatorVencimento,
-						null, formaCobrancaPrincipal.getDiasDoMes().get(0));
+				this.calendarioService.adicionarDiasUteis(consolidadoFinanceiroCota.getDataConsolidado(), 
+														  fatorVencimento,
+														  null, 
+														  formaCobrancaPrincipal.getDiasDoMes());
 			break;
 			
 			case SEMANAL:
-				diasSemanaConcentracaoPagamento = 
-						this.cotaRepository.obterDiasConcentracaoPagamentoCota(cota.getId());
+				diasSemanaConcentracaoPagamento = this.cotaRepository.obterDiasConcentracaoPagamentoCota(cota.getId());
 				
 				dataVencimento = 
-						this.calendarioService.adicionarDiasUteis(
-								consolidadoFinanceiroCota.getDataConsolidado(), fatorVencimento,
-								diasSemanaConcentracaoPagamento, null);
+				this.calendarioService.adicionarDiasUteis(consolidadoFinanceiroCota.getDataConsolidado(), 
+														  fatorVencimento,
+														  diasSemanaConcentracaoPagamento, 
+														  null);
 			break;
 		}
 		

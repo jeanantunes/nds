@@ -44,15 +44,5 @@ public interface MovimentoFinanceiroCotaService {
 	 * @param controleConferenciaEncalheCota
 	 */
 	void gerarMovimentoFinanceiroCotaRecolhimento(ControleConferenciaEncalheCota controleConferenciaEncalheCota);
-	
-	/**
-	 * Gera movimento financeiro para cota na Expedição.
-	 * @param movimentosEstoqueCota
-	 * @param dataOperacao
-	 * @param usuario
-	 */
-	void gerarMovimentoFinanceiroCotaExpedicao(MovimentoEstoqueCota movimentosEstoqueCota,
-									           Date dataOperacao,
-									           Usuario usuario);
 
 }
