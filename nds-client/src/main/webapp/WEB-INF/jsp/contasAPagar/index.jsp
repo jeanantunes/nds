@@ -46,9 +46,9 @@
 		            
 	            </td>
 	            <td width="46">Per&iacute;odo:</td>
-	            <td width="92"><input type="text" name="filtro.dataDe" id="contasAPagar_Filtro_De" style="width:60px;"/></td>
+	            <td width="102"><input type="text" name="filtro.dataDe" id="contasAPagar_Filtro_De" style="width:80px;"/></td>
 	            <td width="28">At&eacute;:</td>
-	            <td width="87"><input type="text" name="filtro.dataAte" id="contasAPagar_Filtro_Ate" style="width:60px;"/></td>
+	            <td width="107"><input type="text" name="filtro.dataAte" id="contasAPagar_Filtro_Ate" style="width:80px;"/></td>
 	            <td width="67">Semana CE:</td>
 	            <td width="71"><input type="text" name="filtro.ce" id="textfield6" style="width:50px;"/></td>
 	           
