@@ -14,8 +14,7 @@ public interface ContasAPagarRepository {
 	
 	List<Date> buscarDatasLancamentoContasAPagar(FiltroContasAPagarDTO filtro);
 	
-	List<ContasApagarConsultaPorDistribuidorDTO> pesquisarPorDistribuidor(FiltroContasAPagarDTO filtro,
-			Date dataMovimento);
+	List<ContasApagarConsultaPorDistribuidorDTO> pesquisarPorDistribuidor(FiltroContasAPagarDTO filtro);
 
 	BigDecimal pesquisaPorDistribuidorValorPorGrupoMovimento(
 			Date dataMovimento, List<GrupoMovimentoEstoque> movimentosSuplementar);

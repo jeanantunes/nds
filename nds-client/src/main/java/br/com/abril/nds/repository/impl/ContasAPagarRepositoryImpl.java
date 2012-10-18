@@ -1,8 +1,6 @@
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -29,20 +27,19 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
 		Query query = this.getSession().createQuery(
 				this.montarQueryPorDistribuidor(true, filtro));
 		
-		this.setarParametrosQueryporDistribuidor(query, filtro, null);
+		this.setarParametrosQueryporDistribuidor(query, filtro);
 		
 		return query.list();
 	}	
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<ContasApagarConsultaPorDistribuidorDTO> pesquisarPorDistribuidor(FiltroContasAPagarDTO filtro,
-			Date dataMovimento) {
+	public List<ContasApagarConsultaPorDistribuidorDTO> pesquisarPorDistribuidor(FiltroContasAPagarDTO filtro) {
 		
 		Query query = this.getSession().createQuery(
 				this.montarQueryPorDistribuidor(false, filtro));
 		
-		this.setarParametrosQueryporDistribuidor(query, filtro, dataMovimento);
+		this.setarParametrosQueryporDistribuidor(query, filtro);
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(
 				ConsultaConsignadoCotaDTO.class));
@@ -124,34 +121,27 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
 		return hql.toString();
 	}
 	
-	private void setarParametrosQueryporDistribuidor(Query query, FiltroContasAPagarDTO filtro,
-			Date dataLancamento){
+	private void setarParametrosQueryporDistribuidor(Query query, FiltroContasAPagarDTO filtro){
+			
+		query.setParameter("inicio", filtro.getDataDe());
+		query.setParameter("fim", filtro.getDataAte());
 		
-		if (dataLancamento == null){
-			
-			query.setParameter("inicio", filtro.getDataDe());
-			query.setParameter("fim", filtro.getDataAte());
-			
-//			List<GrupoMovimentoEstoque> movimentosSuplementar = new ArrayList<GrupoMovimentoEstoque>();
-//			movimentosSuplementar.add(GrupoMovimentoEstoque.SUPLEMENTAR_COTA_AUSENTE);
-//			movimentosSuplementar.add(GrupoMovimentoEstoque.SUPLEMENTAR_ENVIO_ENCALHE_ANTERIOR_PROGRAMACAO);
-//			movimentosSuplementar.add(GrupoMovimentoEstoque.ESTORNO_VENDA_ENCALHE_SUPLEMENTAR);
-//			movimentosSuplementar.add(GrupoMovimentoEstoque.ENTRADA_SUPLEMENTAR_ENVIO_REPARTE);
-//			movimentosSuplementar.add(GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_SUPLEMENTAR);
-//			query.setParameterList("movimentosSuplementar", movimentosSuplementar);
-//			//TODO fazer o mesmo para movimentos de grupo de estoque suplementar de saida
-//			
-//			query.setParameter("tipoDiferencaEm", TipoDiferenca.FALTA_EM);
-//			query.setParameter("tipoDiferencaDe", TipoDiferenca.FALTA_DE);
-//			//TODO fazer o mesmo para os outros movimentos de falta e sobra
-//			
-//			query.setParameter("statusPerda", StatusAprovacao.PERDA);
-			//TODO fazer o mesmo para os outros status de ganho
-		} else {
-			
-			query.setParameter("dataLancamento", dataLancamento);
-		}
-		
+//		List<GrupoMovimentoEstoque> movimentosSuplementar = new ArrayList<GrupoMovimentoEstoque>();
+//		movimentosSuplementar.add(GrupoMovimentoEstoque.SUPLEMENTAR_COTA_AUSENTE);
+//		movimentosSuplementar.add(GrupoMovimentoEstoque.SUPLEMENTAR_ENVIO_ENCALHE_ANTERIOR_PROGRAMACAO);
+//		movimentosSuplementar.add(GrupoMovimentoEstoque.ESTORNO_VENDA_ENCALHE_SUPLEMENTAR);
+//		movimentosSuplementar.add(GrupoMovimentoEstoque.ENTRADA_SUPLEMENTAR_ENVIO_REPARTE);
+//		movimentosSuplementar.add(GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_SUPLEMENTAR);
+//		query.setParameterList("movimentosSuplementar", movimentosSuplementar);
+//		//TODO fazer o mesmo para movimentos de grupo de estoque suplementar de saida
+//		
+//		query.setParameter("tipoDiferencaEm", TipoDiferenca.FALTA_EM);
+//		query.setParameter("tipoDiferencaDe", TipoDiferenca.FALTA_DE);
+//		//TODO fazer o mesmo para os outros movimentos de falta e sobra
+//		
+//		query.setParameter("statusPerda", StatusAprovacao.PERDA);
+		//TODO fazer o mesmo para os outros status de ganho
+				
 		query.setParameter("statusLancamento", StatusLancamento.CONFIRMADO);
 		
 		if (filtro.getIdsFornecedores() != null && !filtro.getIdsFornecedores().isEmpty()){
