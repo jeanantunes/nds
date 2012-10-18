@@ -50,8 +50,7 @@ public class ValidacaoInterceptor implements Interceptor {
 						  ResourceMethod method,
 						  Object resourceInstance) throws InterceptionException {
 
-		try {
-			
+		try {			
 			stack.next(method, resourceInstance);
 			
 		} catch (Throwable throwable ) {
