@@ -22,6 +22,27 @@ var contasAPagarController = $.extend(true, {
 		this.initGridPesquisarPorFornecedor();
 		this.initGridParciais();
 		this.initGridConsignado();
+		this.initGridFaltasSobras();
+	},
+	
+	
+	pesqDistribuidor : function() {
+		$('.distrFornecedor', this.workspace).show();
+		$('.filtroFornecedor', this.workspace).show();
+		$('.porProdutos', this.workspace).hide();
+		$('.filtroProduto', this.workspace).hide();
+		$('.filtroBusca', this.workspace).show();
+		$('.grids', this.workspace).show();
+	},
+	
+
+	pesqProduto : function() {
+		$('.distrFornecedor', this.workspace).hide();
+		$('.filtroFornecedor', this.workspace).hide();
+		$('.porProdutos', this.workspace).show();
+		$('.filtroProduto', this.workspace).show();
+		$('.filtroBusca', this.workspace).show();
+		$('.grids', this.workspace).show();
 	},
 	
 	
@@ -181,11 +202,11 @@ var contasAPagarController = $.extend(true, {
 		
 		$.each(data.rows, function(index, value) {
 			
-			var linkConsignado = '<a href="javascript:;" onclick="contasAPagarController.popup_consignado();" title="Detalhe Consignado">'+value.cell.consignado+'</a>';
+			var linkConsignado = '<a href="javascript:;" onclick="contasAPagarController.popup_consignado("' + value.cell.data + '");" title="Detalhe Consignado">'+value.cell.consignado+'</a>';
 			
-			var linkEncalhe = '<a href="javascript:;" onclick="contasAPagarController.popup_encalhe();" title="Detalhe Consignado">'+value.cell.encalhe+'</a>';
+			var linkEncalhe = '<a href="javascript:;" onclick="contasAPagarController.popup_encalhe("' + value.cell.data + '");" title="Detalhe Encalhe">'+value.cell.encalhe+'</a>';
 			
-			var linkFS = '<a href="javascript:;" onclick="contasAPagarController.popup_faltasSobras();" title="Detalhe Consignado">'+value.cell.faltasSobras+'</a>';
+			var linkFS = '<a href="javascript:;" onclick="contasAPagarController.popup_faltasSobras("' + value.cell.data + '");" title="Detalhe Faltas e Sobras">'+value.cell.faltasSobras+'</a>';
 						
 			value.cell.consignado = linkConsignado;
 			value.cell.encalhe = linkEncalhe;
@@ -306,51 +327,42 @@ var contasAPagarController = $.extend(true, {
 		});
 	},
 	
-	
-	
-	
-/*
-	
-		
-	function popup_encalhe() {
-			//$( "#dialog:ui-dialog" ).dialog( "destroy" );
-		
-			$( "#dialog-encalhe" ).dialog({
-				resizable: false,
-				height:460,
-				width:860,
-				modal: true,
-				buttons: {
-					"Fechar": function() {
-						$( this ).dialog( "close" );
-						
-						$(".grids").show();
-						
-					}
-				}
-			});
-		};
 
-	function popup_faltasSobras() {
-			//$( "#dialog:ui-dialog" ).dialog( "destroy" );
+	popup_encalhe : function() {
 		
-			$( "#dialog-encalhe_2" ).dialog({
-				resizable: false,
-				height:460,
-				width:860,
-				modal: true,
-				buttons: {
-					"Fechar": function() {
-						$( this ).dialog( "close" );
-						
-						$(".grids").show();
-						
-					}
+		$( "#dialog-encalhe" ).dialog({
+			resizable: false,
+			height:460,
+			width:860,
+			modal: true,
+			buttons: {
+				"Fechar": function() {
+					$( this ).dialog( "close" );
+					$(".grids").show();
 				}
-			});
-		};
+			}
+		});
+	},
+	
+	
+	popup_faltasSobras : function() {
+	
+		$("#contasAPagar_popupFaltasSobras").dialog({
+			resizable: false,
+			height:460,
+			width:860,
+			modal: true,
+			buttons: {
+				"Fechar": function() {
+					$( this ).dialog( "close" );
+					$(".grids").show();
+				}
+			}
+		});
+	},
 
-*/	
+	
+	
 	/*
 	 * *************************
 	 * Configurações do Grid
@@ -412,67 +424,66 @@ var contasAPagarController = $.extend(true, {
 	
 	initGridPesquisarPorFornecedor : function(){
 	
-	$(".porDistrFornecedorGrid").flexigrid({
-		dataType : 'json',
-		colModel : [ {
-			display : 'Data',
-			name : 'data',
-			width : 100,
-			sortable : true,
-			align : 'left'
-		}, {
-			display : 'Consignado R$',
-			name : 'consignado',
-			width : 110,
-			sortable : true,
-			align : 'right'
-		}, {
-			display : 'Suplementação R$',
-			name : 'suplementacao',
-			width : 100,
-			sortable : true,
-			align : 'right'
-		}, {
-			display : 'Encalhe R$',
-			name : 'encalhe',
-			width : 110,
-			sortable : true,
-			align : 'right',
-		}, {
-			display : 'Venda R$',
-			name : 'venda',
-			width : 100,
-			sortable : true,
-			align : 'right',
-		}, {
-			display : 'Faltas Sobras R$',
-			name : 'faltasSobras',
-			width : 110,
-			sortable : true,
-			align : 'right'
-		}, {
-			display : 'Deb/Cred R$',
-			name : 'debCredito',
-			width : 110,
-			sortable : true,
-			align : 'right'
-		}, {
-			display : 'Saldo a Pagar R$',
-			name : 'saldoPagar',
-			width : 100,
-			sortable : true,
-			align : 'right'
-		}],
-		usepager : true,
-		useRp : true,
-		rp : 15,
-		showTableToggleBtn : true,
-		sortname : "data",
-		sortorder : "asc",
-		width : 960,
-		height : 255
-	});
-	
+		$(".porDistrFornecedorGrid").flexigrid({
+			dataType : 'json',
+			colModel : [ {
+				display : 'Data',
+				name : 'data',
+				width : 100,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Consignado R$',
+				name : 'consignado',
+				width : 110,
+				sortable : true,
+				align : 'right'
+			}, {
+				display : 'Suplementação R$',
+				name : 'suplementacao',
+				width : 100,
+				sortable : true,
+				align : 'right'
+			}, {
+				display : 'Encalhe R$',
+				name : 'encalhe',
+				width : 110,
+				sortable : true,
+				align : 'right',
+			}, {
+				display : 'Venda R$',
+				name : 'venda',
+				width : 100,
+				sortable : true,
+				align : 'right',
+			}, {
+				display : 'Faltas Sobras R$',
+				name : 'faltasSobras',
+				width : 110,
+				sortable : true,
+				align : 'right'
+			}, {
+				display : 'Deb/Cred R$',
+				name : 'debitoCredito',
+				width : 110,
+				sortable : true,
+				align : 'right'
+			}, {
+				display : 'Saldo a Pagar R$',
+				name : 'saldo',
+				width : 100,
+				sortable : true,
+				align : 'right'
+			}],
+			usepager : true,
+			useRp : true,
+			rp : 15,
+			showTableToggleBtn : true,
+			sortname : "data",
+			sortorder : "asc",
+			width : 960,
+			height : 255
+		});
 	},
 	
 	
@@ -744,172 +755,72 @@ var contasAPagarController = $.extend(true, {
 		});
 	},
 	
+	
+	initGridFaltasSobras : function () {
+		$(".contasAPagar_faltasSobrasGrid").flexigrid({
+			url : '../xml/encalhes_2-xml.xml',
+			dataType : 'xml',
+			colModel : [ {
+				display : 'Código',
+				name : 'codigo',
+				width : 60,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Produto',
+				name : 'produto',
+				width : 150,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Edição',
+				name : 'edicao',
+				width : 60,
+				sortable : true,
+				align : 'center'
+			}, {
+				display : 'Preço de Capa R$',
+				name : 'valor',
+				width : 90,
+				sortable : true,
+				align : 'right'
+			}, {
+				display : 'Preço c/ Desc. R$',
+				name : 'desconto',
+				width : 60,
+				sortable : true,
+				align : 'right'
+			}, {
+				display : 'Box',
+				name : 'box',
+				width : 40,
+				sortable : true,
+				align : 'center'
+			}, {
+				display : 'Exemplares',
+				name : 'exemplares',
+				width : 60,
+				sortable : true,
+				align : 'center'
+			}, {
+				display : 'Fornecedor',
+				name : 'fornecedor',
+				width : 80,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Valor R$',
+				name : 'valor',
+				width : 70,
+				sortable : true,
+				align : 'right',
+			}],
+			sortname : "codigo",
+			sortorder : "asc",
+			width : 800,
+			height : 200
+		});
+	},
+	
 }, BaseController);
-
-
-//Funções internas
-
-function pesqDistribuidor(){
-	$('.distrFornecedor').show();
-	$('.filtroFornecedor').show();
-	$('.porProdutos').hide();
-	$('.filtroProduto').hide();
-	$('.filtroBusca').show();
-	$('.grids').show();
-}
-
-function pesqProduto(){
-	$('.distrFornecedor').hide();
-	$('.filtroFornecedor').hide();
-	$('.porProdutos').show();
-	$('.filtroProduto').show();
-	$('.filtroBusca').show();
-	$('.grids').show();
-}
-
-function gridDistrib(){
-	$('.gridDistrib').show();
-	$('.gridProduto').hide();
-	}
-function gridProduto(){
-	$('.gridDistrib').hide();
-	$('.gridProduto').show();
-	}
-
-
-
-
-
-	
-
-
-	/*		
-function popup_contaCorrente() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
-	
-		$( "#dialog-conta" ).dialog({
-			resizable: false,
-			height:340,
-			width:660,
-			modal: true,
-			buttons: {
-				"Fechar": function() {
-					$( this ).dialog( "close" );
-					
-					$(".grids").show();
-					
-				}
-			}
-		});
-	};	
-function popup_encargos() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
-	
-		$( "#dialog-encargos" ).dialog({
-			resizable: false,
-			height:'auto',
-			width:450,
-			modal: true,
-			buttons: {
-				"Fechar": function() {
-					$( this ).dialog( "close" );
-					
-					$(".grids").show();
-					
-				}
-			}
-		});
-	};
-	function popup_email() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
-	
-		$( "#dialog-email" ).dialog({
-			resizable: false,
-			height:400,
-			width:490,
-			modal: true,
-			buttons: {
-				"Confirmar": function() {
-					$( this ).dialog( "close" );
-					$("#effect").show("highlight", {}, 1000, callback);
-					
-				},
-				"Cancelar": function() {
-					$( this ).dialog( "close" );
-					
-				}
-				
-				
-				
-			}
-		});
-	};
-	
-	function detalheVenda() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
-	
-		$( "#dialog-detalhe-venda" ).dialog({
-			resizable: false,
-			height:420,
-			width:650,
-			modal: true,
-			buttons: {
-				"Fechar": function() {
-					$( this ).dialog( "close" );
-					
-				},
-			}
-		});
-	};
-	
-	*/
-	
-	
-
-
-
-//janelas de detalhamento de busca 
-/*
-
-	
-function popup_edit_produto() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
-	
-		$( "#dialog-edit-produto" ).dialog({
-			resizable: false,
-			height:360,
-			width:500,
-			modal: true,
-			buttons: {
-				"Confirmar": function() {
-					$( this ).dialog( "close" );
-					$("#effect").show("highlight", {}, 1000, callback);
-				},
-				"Cancelar": function() {
-					$( this ).dialog( "close" );
-				}
-			}
-		});
-	};
-	
-	
-function popup_num_nota() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
-	
-		$( "#dialog-num-nota" ).dialog({
-			resizable: false,
-			height:'auto',
-			width:350,
-			modal: true,
-			buttons: {
-				"Fechar": function() {
-					$( this ).dialog( "close" );
-				}
-			}
-		});
-	};
-*/
-
-
-
 

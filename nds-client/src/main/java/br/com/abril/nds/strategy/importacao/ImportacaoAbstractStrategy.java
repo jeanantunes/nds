@@ -150,18 +150,22 @@ public abstract class ImportacaoAbstractStrategy {
 			throw new ImportacaoException(e.getMessage());
 		}
 
-		return new RetornoImportacaoArquivoVO(true) ;
 		/*
 		CsvMapper mapper = new CsvMapper();
-			MappingIterator<Entry> it = mapper
-				    .reader(User.class)
-				    .with(schema)
-				    .readValues(new File("Users.csv"());
-				  List<User> users = new ArrayList<User>();
-				  while (it.hasNextValue()) {
-				    User user = it.nextValue();
-				    // do something?
-				    list.add(user);
-				  }*/
+		CsvSchema schema = mapper.schemaFor(User.class);
+		  
+		CsvMapper mapper = new CsvMapper();
+		MappingIterator<Entry> it = mapper
+			    .reader(User.class)
+			    .with(schema)
+			    .readValues(new File("Users.csv"());
+		List<User> users = new ArrayList<User>();
+		while (it.hasNextValue()) {
+			User user = it.nextValue();
+			// do something?
+			list.add(user);
+		}
+ 			*/	  
+		return new RetornoImportacaoArquivoVO(true) ;
 	}
 }

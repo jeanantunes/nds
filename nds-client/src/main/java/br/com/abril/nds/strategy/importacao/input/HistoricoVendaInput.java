@@ -3,8 +3,21 @@ package br.com.abril.nds.strategy.importacao.input;
 import java.io.Serializable;
 import java.util.StringTokenizer;
 
+import org.codehaus.jackson.annotate.JsonPropertyOrder;
 
-
+@JsonPropertyOrder({ 
+	""	 								//1	
+	, "numeroCota" 						//2
+	, "codigoProduto" 					//3
+	, "" 								//4
+	, "" 								//5
+	, "" 								//6
+	, "quantidadeDevolvidaProduto" 		//7
+	, ""  								//8
+	, ""  								//9
+	, ""  								//10
+	, "quantidadeRecebidaProduto"		//11
+	})
 public class HistoricoVendaInput implements Serializable{
 		
 	private static final long serialVersionUID = 1L;
@@ -107,9 +120,4 @@ public class HistoricoVendaInput implements Serializable{
 		this.quantidadeDevolvidaProduto = quantidadeDevolvidaProduto;
 	}
 	
-
-	public String getCVSFormat() {
-		return new StringTokenizer("x numeroCota codigoProduto quantidadeRecebidaProduto quantidadeDevolvidaProduto"," ").toString();
-
-	}
 }
