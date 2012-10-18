@@ -132,21 +132,24 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 		return false;
 	},
 		
-	this.processaRetornoPesquisa = function(data) {
+	this.processaRetornoPesquisa = function(resultadoPesquisa) {
 		
-		if(data.mensagens) {
-			exibirMensagem(data.mensagens.tipoMensagem, data.mensagens.listaMensagens);
-			return data.rows;
+		if(resultadoPesquisa.mensagens) {
+			exibirMensagem(resultadoPesquisa.mensagens.tipoMensagem, resultadoPesquisa.mensagens.listaMensagens);
+			return resultadoPesquisa.rows;
 		}
 		
 		$("#valorTotal", _workspace).clear();
 		
 		T.linhasDestacadas = [];
+		
 		T.lancamentos = [];
 		
-		$("#valorTotal", _workspace).html(data[1]);
-		$.each(data.rows, function(index,row){ T.processarLinha(index, row);});
-		return data;
+		$("#valorTotal", _workspace).html(resultadoPesquisa[1]);
+		
+		$.each(resultadoPesquisa[0].rows, function(index,row){ T.processarLinha(index, row);});
+		
+		return resultadoPesquisa[0];
 	},
 		
 	this.popularResumoPeriodo = function(data) {
