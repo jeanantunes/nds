@@ -18,7 +18,7 @@ import br.com.abril.nds.vo.ValidacaoVO;
 
 @Repository
 public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distribuidor, Long> implements RelatorioVendasRepository {
-
+	
 	public RelatorioVendasRepositoryImpl() {
 		super(Distribuidor.class);
 	}
@@ -62,7 +62,10 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		.append("   case when sum(pdv) is null then 0 else sum(pdv) end, " )
 		.append("   endereco.cidade, " )
 		.append("   (sum(estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida)), ")
-		.append("   ( sum((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * (estoqueProdutoCota.produtoEdicao.precoVenda - ( "+this.obterSQLDesconto()+" ))) ) ) ");
+		.append("   ( sum((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * (estoqueProdutoCota.produtoEdicao.precoVenda - ( "+this.obterSQLDesconto()+" ))) ) , ")
+		.append("  estoqueProdutoCota.produtoEdicao.produto.id ,")
+		.append("  estoqueProdutoCota.cota.id )");
+		
 
 		hql.append(getWhereQueryObterCurvaABCDistribuidor(filtro));
 		hql.append(getGroupQueryObterCurvaABCDistribuidor(filtro));
@@ -119,7 +122,7 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 			hql.append("AND estoqueProdutoCota.produtoEdicao.produto.editor.codigo = :codigoEditor ");
 		}
 
-		if (filtro.getCodigoCota() != null && !filtro.getCodigoCota().isEmpty()) {
+		if (filtro.getCodigoCota() != null) {
 			hql.append("AND estoqueProdutoCota.cota.numeroCota = :codigoCota ");
 		}
 
@@ -185,8 +188,8 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 			param.put("codigoEditor", Long.parseLong(filtro.getCodigoEditor()));
 		}
 
-		if (filtro.getCodigoCota() != null && !filtro.getCodigoCota().isEmpty()) {
-			param.put("codigoCota", filtro.getCodigoCota().toString());
+		if (filtro.getCodigoCota() != null ) {
+			param.put("codigoCota", filtro.getCodigoCota());
 		}
 
 		if (filtro.getNomeCota() != null && !filtro.getNomeCota().isEmpty()) {
@@ -222,14 +225,10 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 
 		BigDecimal participacaoRegistro = new BigDecimal(0);
 		BigDecimal participacaoAcumulada = new BigDecimal(0);
-
-		RegistroCurvaABCDistribuidorVO registro = null;
-
+		
 		// Verifica o percentual dos valores em relação ao total de participacao
-		for (int i=0; i<lista.size(); i++) {
-
-			registro = (RegistroCurvaABCDistribuidorVO) lista.get(i);
-
+		for (RegistroCurvaABCDistribuidorVO registro : lista) {
+			
 			// Partipacao do registro em relacao a participacao total no periodo
 			if ( participacaoTotal.doubleValue() != 0 ) {
 				participacaoRegistro = new BigDecimal((registro.getFaturamentoCapa().doubleValue()*100)/participacaoTotal.doubleValue());
@@ -238,15 +237,11 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 
 			participacaoAcumulada.add(participacaoRegistro);
 			registro.setParticipacaoAcumulada(participacaoAcumulada);
-
-			// Substitui o registro pelo registro atualizado (com participacao total)
-			lista.set(i, registro);
-
 		}
 
 		return lista;
 	}
-
+	
 	private String obterSQLDesconto(){
 		
 		StringBuilder hql = new StringBuilder("select view.desconto ");
