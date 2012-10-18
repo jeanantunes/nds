@@ -687,7 +687,7 @@ public class MatrizLancamentoController {
 		
 		Object[] resultado = {tm, CurrencyUtil.formatarValor(valorTotal)};
 		
-		result.use(Results.json()).withoutRoot().from(resultado).serialize();
+		result.use(Results.json()).withoutRoot().from(resultado).recursive().serialize();
 	}
 	
 	private Double getValorTotal(List<ProdutoLancamentoDTO> listaProdutoLancamento) {

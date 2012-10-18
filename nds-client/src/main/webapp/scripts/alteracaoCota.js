@@ -481,11 +481,15 @@ var alteracaoCotaController = $.extend(true, {
 	},
 	
 	downloadTermoAdesao : function() {
+		var taxaFixaEntregaBanca =  $("#taxaFixaEntregaBanca", this.workspace).val();
+		var percentualFaturamentoEntregaBanca = $("#percentualFaturamentoEntregaBanca", this.workspace).val();
+		
 	
-		$.postJSON("/nds-client/administracao/alteracaoCota/validarValoresParaDownload",
-				"taxa="+$("#taxaFixaEntregaBanca").val()+"&percentual="+$("#percentualFaturamentoEntregaBanca").val(),
+		$.postJSON(contextPath + "/administracao/alteracaoCota/validarValoresParaDownload",
+				[{name : "taxa", value : taxaFixaEntregaBanca} ,{
+				 name : "percentual", value : percentualFaturamentoEntregaBanca } ],
 				function() {
-					document.location.assign("/nds-client/administracao/alteracaoCota/downloadTermoAdesao?termoAdesaoRecebido="+ $('#termoAdesaoRecebido', this.workspace).is(':checked')+"&numeroCota="+alteracaoCotaController.buscaIdPrimeiraCotaSelecionada()+"&taxa="+$("#taxaFixaEntregaBanca").val()+"&percentual="+$("#percentualFaturamentoEntregaBanca").val());
+					document.location.assign(contextPath + "/administracao/alteracaoCota/downloadTermoAdesao?termoAdesaoRecebido="+ $('#termoAdesaoRecebido', this.workspace).is(':checked')+"&numeroCota="+alteracaoCotaController.buscaIdPrimeiraCotaSelecionada()+"&taxa="+$("#taxaFixaEntregaBanca").val()+"&percentual="+$("#percentualFaturamentoEntregaBanca").val());
 				},
 				null,
 				true,
@@ -494,7 +498,7 @@ var alteracaoCotaController = $.extend(true, {
 	
 	downloadProcuracao : function() {
 		
-		document.location.assign("/nds-client/administracao/alteracaoCota/downloadProcuracao?procuracaoRecebida="+$('#procuracaoRecebida', this.workspace).is(':checked')+"&numeroCota="+alteracaoCotaController.buscaIdPrimeiraCotaSelecionada());
+		document.location.assign(contextPath + "/administracao/alteracaoCota/downloadProcuracao?procuracaoRecebida="+$('#procuracaoRecebida', this.workspace).is(':checked')+"&numeroCota="+alteracaoCotaController.buscaIdPrimeiraCotaSelecionada());
 	},
 	
 	limparCamposTipoEntrega : function()

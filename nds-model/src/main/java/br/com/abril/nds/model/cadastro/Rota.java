@@ -55,6 +55,9 @@ public class Rota implements Serializable {
     @Column(name = "ORDEM", nullable = false)
     private Integer ordem;
 
+    @OneToMany(mappedBy = "rota")
+	private List<AssociacaoVeiculoMotoristaRota> associacoesVeiculoMotoristaRota;
+    
     public Rota() {
     }
 
@@ -237,5 +240,14 @@ public class Rota implements Serializable {
                 .append(" - Descrição: ").append(descricaoRota);
         return builder.toString();
     }
+
+	public List<AssociacaoVeiculoMotoristaRota> getAssociacoesVeiculoMotoristaRota() {
+		return associacoesVeiculoMotoristaRota;
+	}
+
+	public void setAssociacoesVeiculoMotoristaRota(
+			List<AssociacaoVeiculoMotoristaRota> associacoesVeiculoMotoristaRota) {
+		this.associacoesVeiculoMotoristaRota = associacoesVeiculoMotoristaRota;
+	}
 
 }
