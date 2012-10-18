@@ -403,7 +403,7 @@ public class ConsultaNotasController {
 							itemExibicaoToString(decimalFormat.format(detalheNotaFiscalVO.getPrecoVenda())),
 							itemExibicaoToString(detalheNotaFiscalVO.getQuantidadeExemplares().intValue()),
 							sobrasFaltas, 
-							itemExibicaoToString(decimalFormat.format(detalheNotaFiscalVO.getValorTotal())));
+							itemExibicaoToString(detalheNotaFiscalVO.getValorTotal().setScale(2, BigDecimal.ROUND_DOWN)));
 
 			listaCellModels.add(cellModel);
 		}
