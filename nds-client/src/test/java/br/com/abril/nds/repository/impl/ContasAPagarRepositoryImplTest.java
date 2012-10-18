@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import br.com.abril.nds.dto.ContasApagarConsultaPorDistribuidorDTO;
 import br.com.abril.nds.dto.filtro.FiltroContasAPagarDTO;
 import br.com.abril.nds.repository.ContasAPagarRepository;
+import br.com.abril.nds.vo.PaginacaoVO;
 
 public class ContasAPagarRepositoryImplTest extends AbstractRepositoryImplTest {
 
@@ -41,19 +42,21 @@ public class ContasAPagarRepositoryImplTest extends AbstractRepositoryImplTest {
 	}
 	
 	@Test
-	public void testBuscarDatasLancamentoContasAPagar(){
+	public void testPesquisarPorDistribuidorCount(){
 		
-		List<Date> lista = 
-				this.contasAPagarRepository.buscarDatasLancamentoContasAPagar(this.getFiltroPesquisaPorDistribuidor());
-		
-		Assert.assertNotNull(lista);
+		this.contasAPagarRepository.pesquisarPorDistribuidorCount(this.getFiltroPesquisaPorDistribuidor());
 	}
 	
 	@Test
 	public void testPesquisarPorDistribuidor(){
 		
+		PaginacaoVO paginacaoVO = new PaginacaoVO(1, 10, PaginacaoVO.Ordenacao.ASC.getOrdenacao(), "suplementacao");
+		
+		FiltroContasAPagarDTO filtroContasAPagarDTO = this.getFiltroPesquisaPorDistribuidor();
+		filtroContasAPagarDTO.setPaginacaoVO(paginacaoVO);
+		
 		List<ContasApagarConsultaPorDistribuidorDTO> lista = 
-				this.contasAPagarRepository.pesquisarPorDistribuidor(this.getFiltroPesquisaPorDistribuidor());
+				this.contasAPagarRepository.pesquisarPorDistribuidor(filtroContasAPagarDTO);
 		
 		Assert.assertNotNull(lista);
 	}
