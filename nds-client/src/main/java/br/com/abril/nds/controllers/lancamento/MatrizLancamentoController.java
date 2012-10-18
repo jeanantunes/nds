@@ -681,13 +681,17 @@ public class MatrizLancamentoController {
 		List<CellModelKeyValue<ProdutoLancamentoVO>> cells = CellModelKeyValue
 				.toCellModelKeyValue(listaProdutoBalanceamentoVO);
 		
+		List<Object> resultado = new ArrayList<Object>();
+		
 		tm.setRows(cells);
 		tm.setPage(paginacao.getPaginaAtual());
 		tm.setTotal(filtro.getTotalRegistrosEncontrados());
-		
-		Object[] resultado = {tm, CurrencyUtil.formatarValor(valorTotal)};
+
+		resultado.add(tm);
+		resultado.add(CurrencyUtil.formatarValor(valorTotal));
 		
 		result.use(Results.json()).withoutRoot().from(resultado).recursive().serialize();
+		
 	}
 	
 	private Double getValorTotal(List<ProdutoLancamentoDTO> listaProdutoLancamento) {
