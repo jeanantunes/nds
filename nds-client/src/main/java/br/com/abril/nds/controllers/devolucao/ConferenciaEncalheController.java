@@ -1323,7 +1323,7 @@ public class ConferenciaEncalheController {
 		
 		boolean quantidadeInformadaEmExemplares = false; 
 		
-		ProdutoEdicao produtoEdicao = this.produtoEdicaoService.obterProdutoEdicao(idProdutoEdicao);
+		ProdutoEdicao produtoEdicao = this.produtoEdicaoService.obterProdutoEdicao(idProdutoEdicao, false);
 		
 		GrupoProduto grupoProduto = produtoEdicao.getProduto().getTipoProduto().getGrupoProduto();
 		

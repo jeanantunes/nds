@@ -1,6 +1,9 @@
 var relatorioVendasController = $.extend(true, {
 	init : function() {
-
+		
+		$("#numeroCota", relatorioVendasController.workspace).numeric();
+		$("#edicaoProduto", relatorioVendasController.workspace).numeric();
+		
 		$("#datepickerDe", relatorioVendasController.workspace).datepicker({
 			showOn : "button",
 			buttonImage: contextPath + "/images/calendar.gif",
@@ -182,7 +185,13 @@ var relatorioVendasController = $.extend(true, {
 		$(".abcDistribuidorGrid", relatorioVendasController.workspace).flexigrid({
 			preProcess: relatorioVendasController.executarPreProcessamentoDistribuidor,
 			dataType : 'json',
-			colModel : [ {
+			colModel : [{ 
+				display : 'Ranking',
+				name : 'rkCota',
+				width : 50,
+				sortable : false,
+				align : 'left'
+			},{
 				display : 'Cota',
 				name : 'numeroCota',
 				width : 60,
@@ -191,7 +200,7 @@ var relatorioVendasController = $.extend(true, {
 			}, {
 				display : 'Nome',
 				name : 'nomeCota',
-				width : 210,
+				width : 150,
 				sortable : true,
 				align : 'left'
 			}, {
@@ -244,7 +253,19 @@ var relatorioVendasController = $.extend(true, {
 		$(".abcProdutoGrid", relatorioVendasController.workspace).flexigrid({
 			preProcess: relatorioVendasController.executarPreProcessamentoProduto,
 			dataType : 'json',
-			colModel : [ {
+			colModel : [{ 
+				display : 'Rk.Prod.',
+				name : 'rkProduto',
+				width : 50,
+				sortable : false,
+				align : 'left'
+			},{
+				display : 'Rk.Cota.',
+				name : 'rkCota',
+				width : 50,
+				sortable : false,
+				align : 'left'
+			},  {
 				display : 'Cota',
 				name : 'numeroCota',
 				width : 60,
@@ -253,7 +274,7 @@ var relatorioVendasController = $.extend(true, {
 			}, {
 				display : 'Nome',
 				name : 'nomeCota',
-				width : 210,
+				width : 145,
 				sortable : true,
 				align : 'left'
 			}, {
@@ -277,19 +298,19 @@ var relatorioVendasController = $.extend(true, {
 			}, {
 				display : 'Faturamento Capa R$',
 				name : 'faturamentoCapaFormatado',
-				width : 120,
+				width : 90,
 				sortable : true,
 				align : 'right'
 			}, {
 				display : 'Part. %',
 				name : 'participacaoFormatado',
-				width : 52,
+				width : 40,
 				sortable : true,
 				align : 'right'
 			}, {
 				display : 'Part. Acum. %',
 				name : 'participacaoAcumuladaFormatado',
-				width : 90,
+				width : 70,
 				sortable : true,
 				align : 'right'
 			} ],
@@ -306,7 +327,13 @@ var relatorioVendasController = $.extend(true, {
 		$(".abcCotaGrid",relatorioVendasController.workspace).flexigrid({
 			preProcess: relatorioVendasController.executarPreProcessamentoCota,
 			dataType : 'json',
-			colModel : [ {
+			colModel : [ { 
+				display : 'Ranking',
+				name : 'rkProduto',
+				width : 50,
+				sortable : false,
+				align : 'left'
+			},{
 				display : 'Código',
 				name : 'codigoProduto',
 				width : 60,
@@ -315,7 +342,7 @@ var relatorioVendasController = $.extend(true, {
 			}, {
 				display : 'Produto',
 				name : 'nomeProduto',
-				width : 220,
+				width : 170,
 				sortable : true,
 				align : 'left'
 			}, {
@@ -455,7 +482,7 @@ var relatorioVendasController = $.extend(true, {
 		var nomeProduto      = $("#nomeProduto", relatorioVendasController.workspace).val();
 		var edicao           = $("#edicaoProduto", relatorioVendasController.workspace).val();
 		var selectEditor     = $("select#selectEditor", relatorioVendasController.workspace).val();
-		var numerocota       = $("#numerocota", relatorioVendasController.workspace).val();
+		var numerocota       = $("#numeroCota", relatorioVendasController.workspace).val();
 		var nomeCota         = $("#nomeCota", relatorioVendasController.workspace).val();
 		var selectMunicipio  = $("select#selectMunicipio", relatorioVendasController.workspace).val();
 		

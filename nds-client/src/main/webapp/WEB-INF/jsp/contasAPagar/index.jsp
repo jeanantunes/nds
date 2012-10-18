@@ -71,8 +71,8 @@
             <table width="950" border="0" cellspacing="1" cellpadding="1">
 				<tr>
 	                <td width="277">
-	                	<span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="../images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
-						<span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="../images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
+	                	<span class="bt_arquivo"><a href="${pageContext.request.contextPath}/financeiro/contasAPagar/exportPesquisarPorDistribuidor?fileType=XLS">Arquivo</a></span>
+						<span class="bt_imprimir"><a href="${pageContext.request.contextPath}/financeiro/contasAPagar/exportPesquisarPorDistribuidor?fileType=PDF">Imprimir</a></span>
 					</td>
 	                <td width="220" align="right"><strong>Total Bruto R$: <span id="contasAPagar_gridFornecedorTotalBruto"></span></strong></td>
 	                <td width="243" align="right"><strong>Total Desconto R$: <span id="contasAPagar_gridFornecedorTotalDesconto"></span></strong></td>
@@ -90,8 +90,9 @@
 	            <table width="950" border="0" cellspacing="1" cellpadding="1">
 					<tr>
 	                	<td width="241">
-	                		<span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="../images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
-							<span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="../images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
+							<span class="bt_arquivo"><a href="${pageContext.request.contextPath}/financeiro/contasAPagar/exportPesquisarPorProduto?fileType=XLS">Arquivo</a></span>
+							<span class="bt_imprimir"><a href="${pageContext.request.contextPath}/financeiro/contasAPagar/exportPesquisarPorProduto?fileType=PDF">Imprimir</a></span>
+					
 						</td>
 		                <td width="226" align="right"><strong>Total Pagto R$: <span id="contasAPagar_gridProdutoTotalPagto"></span></strong></td>
 		                <td width="216" align="right"><strong>Total Desconto R$: <span id="contasAPagar_gridProdutoTotalDesconto"></span></strong></td>
@@ -224,24 +225,14 @@
 
 <div id="contasAPagar_popupFaltasSobras" title="Venda de Encalhe" style="display:none;">
 	<fieldset style="width:800px!important;">
-    	<legend>14/12/2011</legend>
+    	<legend><span id="contasAPagar_legend_popupFaltasSobras"></span></legend>
         <table class="contasAPagar_faltasSobrasGrid"></table>
         <span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="../images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
 		<span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="../images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
-       	<table width="290" border="0" cellspacing="2" cellpadding="2"  style="float:right; margin-top: 7px;">
-        	<tr>
-            	<td width="109"><strong>Total R$:</strong></td>
-                <td width="53"><strong>Dinap:</strong></td>
-                <td width="92" align="right">999.999,99</td>
-                <td width="10">&nbsp;</td>
-            </tr>
-            <tr>
-                <td height="23" align="right"></td>
-                <td><strong>FC:</strong></td>
-                <td align="right">999.999,99</td>
-                <td>&nbsp;</td>
-            </tr>
-        </table>
+		<table id="contasAPagar_table_popupFaltasSobras" width="180" border="0" cellspacing="2" cellpadding="2" style="float:right; margin-top: 7px;"></table>
+        <table width="109" border="0" cellspacing="2" cellpadding="2"  style="float:right; margin-top: 7px;">
+			<tr><td><strong>Total R$:</strong></td></tr>
+		</table>
     </fieldset>
 </div>
 

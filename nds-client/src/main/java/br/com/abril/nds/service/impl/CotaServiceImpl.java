@@ -97,6 +97,7 @@ import br.com.abril.nds.repository.ParametroSistemaRepository;
 import br.com.abril.nds.repository.PdvRepository;
 import br.com.abril.nds.repository.PessoaFisicaRepository;
 import br.com.abril.nds.repository.PessoaJuridicaRepository;
+import br.com.abril.nds.repository.RankingRepository;
 import br.com.abril.nds.repository.ReferenciaCotaRepository;
 import br.com.abril.nds.repository.RotaRepository;
 import br.com.abril.nds.repository.TelefoneCotaRepository;
@@ -211,6 +212,9 @@ public class CotaServiceImpl implements CotaService {
 	
 	@Autowired
 	private HistoricoTitularidadeService historicoTitularidadeService;
+	
+	@Autowired
+	private RankingRepository rankingRepository;
 	
 	@Transactional(readOnly = true)
 	@Override
@@ -1714,7 +1718,17 @@ public class CotaServiceImpl implements CotaService {
 	@Override
 	@Transactional(readOnly = true)
 	public List<RegistroCurvaABCCotaDTO> obterCurvaABCCota(FiltroCurvaABCCotaDTO filtroCurvaABCCotaDTO) {
-		return cotaRepository.obterCurvaABCCota(filtroCurvaABCCotaDTO);
+		
+		List<RegistroCurvaABCCotaDTO> lista = cotaRepository.obterCurvaABCCota(filtroCurvaABCCotaDTO);
+		
+		if(!lista.isEmpty()){
+			
+			for(RegistroCurvaABCCotaDTO dto : lista){
+				dto.setRkProduto(rankingRepository.obterRankingProdutoCota(dto.getIdCota(),dto.getIdProduto()));
+			}
+		}
+		
+		return lista;
 	}
 
 	/**

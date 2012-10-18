@@ -12,10 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.dto.ContasApagarConsultaPorDistribuidorDTO;
 import br.com.abril.nds.dto.filtro.FiltroContasAPagarDTO;
-import br.com.abril.nds.model.aprovacao.StatusAprovacao;
-import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
-import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.repository.ContasAPagarRepository;
+import br.com.abril.nds.vo.PaginacaoVO;
 
 public class ContasAPagarRepositoryImplTest extends AbstractRepositoryImplTest {
 
@@ -38,51 +36,28 @@ public class ContasAPagarRepositoryImplTest extends AbstractRepositoryImplTest {
 		cal.set(2013, 1, 1);
 		filtro.setDataAte(cal.getTime());
 		filtro.setEdicao(1L);
-		//filtro.setIdsFornecedores(idsFornecedores);
+		filtro.setIdsFornecedores(idsFornecedores);
 		
 		return filtro;
 	}
 	
 	@Test
-	public void testBuscarDatasLancamentoContasAPagar(){
+	public void testPesquisarPorDistribuidorCount(){
 		
-		List<Date> lista = 
-				this.contasAPagarRepository.buscarDatasLancamentoContasAPagar(this.getFiltroPesquisaPorDistribuidor());
-		
-		Assert.assertNotNull(lista);
+		this.contasAPagarRepository.pesquisarPorDistribuidorCount(this.getFiltroPesquisaPorDistribuidor());
 	}
 	
-	//@Test
+	@Test
 	public void testPesquisarPorDistribuidor(){
 		
+		PaginacaoVO paginacaoVO = new PaginacaoVO(1, 10, PaginacaoVO.Ordenacao.ASC.getOrdenacao(), "suplementacao");
+		
+		FiltroContasAPagarDTO filtroContasAPagarDTO = this.getFiltroPesquisaPorDistribuidor();
+		filtroContasAPagarDTO.setPaginacaoVO(paginacaoVO);
+		
 		List<ContasApagarConsultaPorDistribuidorDTO> lista = 
-				this.contasAPagarRepository.pesquisarPorDistribuidor(this.getFiltroPesquisaPorDistribuidor());
+				this.contasAPagarRepository.pesquisarPorDistribuidor(filtroContasAPagarDTO);
 		
 		Assert.assertNotNull(lista);
-	}
-	
-	//@Test
-	public void testPesquisaPorDistribuidorSuplementacaoEntrada(){
-		
-		List<GrupoMovimentoEstoque> movimentosSuplementar = new ArrayList<GrupoMovimentoEstoque>();
-		movimentosSuplementar.add(GrupoMovimentoEstoque.SUPLEMENTAR_COTA_AUSENTE);
-		movimentosSuplementar.add(GrupoMovimentoEstoque.SUPLEMENTAR_ENVIO_ENCALHE_ANTERIOR_PROGRAMACAO);
-		movimentosSuplementar.add(GrupoMovimentoEstoque.ESTORNO_VENDA_ENCALHE_SUPLEMENTAR);
-		movimentosSuplementar.add(GrupoMovimentoEstoque.ENTRADA_SUPLEMENTAR_ENVIO_REPARTE);
-		movimentosSuplementar.add(GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_SUPLEMENTAR);
-		
-		this.contasAPagarRepository.pesquisaPorDistribuidorValorPorGrupoMovimento(new Date(), movimentosSuplementar);
-	}
-	
-	//@Test
-	public void testPesquisaPorDistribuidorFaltasSobras(){
-		
-		this.contasAPagarRepository.pesquisaPorDistribuidorFaltasSobras(new Date(), TipoDiferenca.FALTA_DE);
-	}
-	
-	//@Test
-	public void testPesquisaPorDistribuidorPerdasGanhos(){
-		
-		this.contasAPagarRepository.pesquisaPorDistribuidorPerdasGanhos(new Date(), StatusAprovacao.GANHO);
 	}
 }
