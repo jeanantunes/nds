@@ -2497,7 +2497,7 @@ public class DiferencaEstoqueController {
 				
 		Long qtde = movimentoEstoqueCotaService.obterQuantidadeReparteProdutoCota(idProdutoEdicao, numeroCota);
 				
-		ProdutoEdicao pe = produtoEdicaoService.obterProdutoEdicao(idProdutoEdicao);
+		ProdutoEdicao pe = produtoEdicaoService.obterProdutoEdicao(idProdutoEdicao, false);
 		
 		Object[] dados = new Object[2];
 		dados[0] = qtde;
