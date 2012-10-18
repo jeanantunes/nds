@@ -164,10 +164,6 @@ public class ContasAPagarController {
 		if (dto == null) {
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "A busca não retornou resultados"));
 		}
-
-
-		result.use(Results.json()).from(new ContasAPagarGridPrincipalFornecedorVO(dto), "result").recursive().serialize();
-
 		
 		ContasAPagarGridPrincipalFornecedorVO vo = new ContasAPagarGridPrincipalFornecedorVO(dto);
 		

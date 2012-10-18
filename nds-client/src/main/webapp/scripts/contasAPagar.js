@@ -78,8 +78,10 @@ var contasAPagarController = $.extend(true, {
 		var params = $("#contasAPagarForm", this.workspace).serialize();
 		
 		if ($("#contasAPagarRadioDistribuidor").get(0).checked) {
-			this.pesquisarPorFornecedor(params);
-		} else if ($("#contasAPagarRadioProduto").get(0).checked) {
+			this.pesquisarPorFornecedor(params);	
+		} 
+		
+		else if ($("#contasAPagarRadioProduto").get(0).checked) {
 			this.pesquisarPorProduto(params);
 		}
 	},
@@ -134,6 +136,8 @@ var contasAPagarController = $.extend(true, {
 				$("#contasAPagar_gridFornecedorSaldo").html(result.saldo);
 				
 				$(".porDistrFornecedorGrid", contasAPagarController.workspace).flexAddData({rows: toFlexiGridObject(result.grid), page: 1, total: result.totalGrid});
+				
+				
 			},
 			null,
 			true
@@ -758,8 +762,7 @@ var contasAPagarController = $.extend(true, {
 	
 	initGridFaltasSobras : function () {
 		$(".contasAPagar_faltasSobrasGrid").flexigrid({
-			url : '../xml/encalhes_2-xml.xml',
-			dataType : 'xml',
+			dataType : 'json',
 			colModel : [ {
 				display : 'Código',
 				name : 'codigo',

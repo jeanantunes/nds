@@ -3,20 +3,48 @@ package br.com.abril.nds.client.vo;
 import br.com.abril.nds.dto.ContasAPagarParcialDTO;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.export.Export;
+import br.com.abril.nds.util.export.Export.Alignment;
+import br.com.abril.nds.util.export.Exportable;
 
+
+@Exportable
 public class ContasAPagarParcialVO {
 
+	@Export(label="Lcto", alignment=Alignment.CENTER, exhibitionOrder = 1)
 	private String lcto;
+	
+	@Export(label="Rctl", alignment=Alignment.CENTER, exhibitionOrder = 2)
 	private String rclt;
+	
+	@Export(label="Reparte", alignment=Alignment.CENTER, exhibitionOrder = 3)
 	private String reparte;
+	
+	@Export(label="Suplementação", alignment=Alignment.CENTER, exhibitionOrder = 4)
 	private String suplementacao;
+	
+	@Export(label="Encalhe", alignment=Alignment.CENTER, exhibitionOrder = 5)
 	private String encalhe;
+	
+	@Export(label="Venda", alignment=Alignment.CENTER, exhibitionOrder = 6)
 	private String venda;
+	
+	@Export(label="% Venda", alignment=Alignment.CENTER, exhibitionOrder = 7)
 	private String pctVenda;
+	
+	@Export(label="Venda CE", alignment=Alignment.CENTER, exhibitionOrder = 8)
 	private String vendaCe;
+	
+	@Export(label="Reparte Acum.", alignment=Alignment.CENTER, exhibitionOrder = 9)
 	private String reparteAcum;
+	
+	@Export(label="Venda Acum.", alignment=Alignment.CENTER, exhibitionOrder = 10)
 	private String vendaAcum;
+	
+	@Export(label="% Venda Acum.", alignment=Alignment.CENTER, exhibitionOrder = 11)
 	private String pctVendaAcum;
+	
+	@Export(label="N° NF-e", alignment=Alignment.CENTER, exhibitionOrder = 12)
 	private String nfe;
 	
 	public ContasAPagarParcialVO() 

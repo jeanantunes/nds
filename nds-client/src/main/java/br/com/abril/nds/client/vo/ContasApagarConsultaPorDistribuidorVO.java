@@ -3,16 +3,35 @@ package br.com.abril.nds.client.vo;
 import br.com.abril.nds.dto.ContasApagarConsultaPorDistribuidorDTO;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.export.Export;
+import br.com.abril.nds.util.export.Exportable;
+import br.com.abril.nds.util.export.Export.Alignment;
 
+@Exportable
 public class ContasApagarConsultaPorDistribuidorVO {
 
+	@Export(label = "Data", alignment=Alignment.LEFT, exhibitionOrder = 1)
 	private String data;
+	
+	@Export(label = "Consignado R$", alignment=Alignment.RIGHT, exhibitionOrder = 2)
 	private String consignado;
+	
+	@Export(label = "Suplementação R$", alignment=Alignment.RIGHT, exhibitionOrder = 3)
 	private String suplementacao;
+	
+	@Export(label = "Encalhe R$", alignment=Alignment.RIGHT, exhibitionOrder = 4)
 	private String encalhe;
+	
+	@Export(label = "Venda R$", alignment=Alignment.RIGHT, exhibitionOrder = 5)
 	private String venda;
+	
+	@Export(label = "Faltas Sobras R$", alignment=Alignment.RIGHT, exhibitionOrder = 6)
 	private String faltasSobras;
+	
+	@Export(label = "Deb/Cred R$", alignment=Alignment.RIGHT, exhibitionOrder = 7)
 	private String debitoCredito;
+	
+	@Export(label = "Saldo a Pagar R$", alignment=Alignment.RIGHT, exhibitionOrder = 8)
 	private String saldo;
 	
 	
