@@ -463,6 +463,8 @@ public class InterfaceExecutor {
 		logExecucao.setDataInicio(dataInicio);
 		logExecucao.setInterfaceExecucao(interfaceExecucao);
 		logExecucao.setNomeLoginUsuario(nomeLoginUsuario);
+		logExecucao.setDataFim(dataInicio);
+		logExecucao.setStatus(StatusExecucaoEnum.SUCESSO);
 		
 		return logExecucaoDAO.inserir(logExecucao);
 	}

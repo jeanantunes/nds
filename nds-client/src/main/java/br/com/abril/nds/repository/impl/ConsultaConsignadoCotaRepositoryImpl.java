@@ -295,6 +295,16 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		} else {
 			listaGrupoMovimentoEstoquesEntrada.add(GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
 			listaGrupoMovimentoEstoques = listaGrupoMovimentoEstoquesEntrada;
+			
+			for(GrupoMovimentoEstoque grupoMovimentoEstoque: GrupoMovimentoEstoque.values()) {
+				if(Dominio.COTA.equals(grupoMovimentoEstoque.getDominio())) {
+					if(OperacaoEstoque.SAIDA.equals(grupoMovimentoEstoque.getOperacaoEstoque())){
+						listaGrupoMovimentoEstoquesSaida.add(grupoMovimentoEstoque);
+					}
+				}
+			}
+			listaGrupoMovimentoEstoques.addAll(listaGrupoMovimentoEstoquesSaida);
+			
 		}
 		
 		
