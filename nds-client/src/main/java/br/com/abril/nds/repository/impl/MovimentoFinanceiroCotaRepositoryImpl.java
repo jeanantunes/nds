@@ -2,10 +2,12 @@ package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import org.hibernate.Query;
 import org.hibernate.transform.AliasToBeanResultTransformer;
+import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.CotaFaturamentoDTO;
@@ -17,11 +19,13 @@ import br.com.abril.nds.dto.filtro.FiltroDebitoCreditoDTO.ColunaOrdenacao;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
 import br.com.abril.nds.model.financeiro.StatusBaixa;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.repository.MovimentoFinanceiroCotaRepository;
+import br.com.abril.nds.vo.PaginacaoVO;
 
 @Repository
 public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryModel<MovimentoFinanceiroCota, Long> 
@@ -618,5 +622,100 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 
 	    return hql.toString();
 	}
+	
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<CotaTransportadorDTO> obterResumoTransportadorCota(Date dataDe, Date dataAte, Long idTransportador, PaginacaoVO paginacaoVO) {
+
+		HashMap<String, Object> param = new HashMap<String, Object>();
+				
+		StringBuilder hql = new StringBuilder();
 		
+		hql.append("select 	 pessoaTransportador.nome as transportador, " +
+						 	"roteiro.descricao as roteiro, " +
+						 	"rota.descricao as rota, " +
+						 	"cota.numeroCota as numCota, " +
+						 	"pessoaCota.nome as nomeCota, " +
+						 	"sum(movimento.valor) as valor, " +
+						 	"transportador.idTransportador as idTransportador, " +
+						 	"cota.id as idCota ");
+		
+		addFromWhereObterDadosTransportador(hql, dataDe, dataAte, idTransportador, param);
+		
+		getOrderByObterResumoTransportadorCota(paginacaoVO); 
+		
+		Query query = getSession().createQuery(hql.toString());
+		
+		for(String key : param.keySet()){
+			query.setParameter(key, param.get(key));
+		}
+		
+		if (paginacaoVO != null && paginacaoVO.getPosicaoInicial() != null) { 
+			
+			query.setFirstResult(paginacaoVO.getPosicaoInicial());
+			
+			query.setMaxResults(paginacaoVO.getQtdResultadosPorPagina());
+		}
+		
+		query.setResultTransformer(Transformers.aliasToBean(CotaTransportadorDTO.class));
+		
+		return query.list();
+	}
+		
+	private String getOrderByObterResumoTransportadorCota(PaginacaoVO paginacaoVO) {
+
+		String orderBy = " order by ";
+		
+		String coluna = paginacaoVO.getSortColumn();
+		
+		if ("roteiro".equals(coluna))
+			orderBy += " roteiro ";
+		else if("rota".equals(coluna))
+			orderBy += " rota ";
+		else if("numCota".equals(coluna))
+			orderBy += " numCota ";
+		else if("nomeCota".equals(coluna))
+			orderBy += " nomeCota ";
+		else if("valor".equals(coluna))
+			orderBy += " valor ";
+		
+		orderBy += paginacaoVO.getSortOrder();
+		
+		return orderBy;
+	}
+
+	private void addFromWhereObterDadosTransportador(StringBuilder hql, Date dataDe, Date dataAte, Long idTransportador, HashMap<String, Object> params) {
+
+		hql.append(" from MovimentoFinanceiroCota movimento ");
+		hql.append(" 	join movimento.cota cota ");
+		hql.append("    join cota.pdvs pdv ");
+		hql.append("    join cota.pessoa pessoaCota ");
+		hql.append("    join pdv.rotas rotaPDV  ");
+		hql.append("    join rotaPDV.rota rota ");
+		hql.append("    join rota.roteiro roteiro ");
+		hql.append("    join rota.associacoesVeiculoMotoristaRota assossiacaoRotaVeiculo ");
+		hql.append("    join assossiacaoRotaVeiculo.transportador transportador ");
+		hql.append("    join transportador.pessoaJuridica pessoaTransportador ");
+		
+		hql.append("movimento.tipoMovimento.grupoMovimentoFinaceiro = :grupoMovimento");
+		params.put("grupoMovimento", GrupoMovimentoFinaceiro.RECEBIMENTO_REPARTE);
+		
+		if (dataDe != null) {
+			hql.append(" and movimento.dataCriacao >= :dataDe ");			
+			params.put("dataDe", dataDe);
+		}
+
+		if (dataAte != null) {
+			hql.append(" and movimento.dataCriacao <= :dataAte ");
+			params.put("dataAte", dataAte);
+		}
+	
+		if (idTransportador != null) {
+			hql.append(" and transportador.id = :dataAte ");
+			params.put("idTransportador", idTransportador);
+		}		
+	}
+
+	
 }
