@@ -259,7 +259,7 @@ public class ContasAPagarController {
 		
 		FiltroContasAPagarDTO filtro = (FiltroContasAPagarDTO) this.session.getAttribute(FILTRO_CONTAS_A_PAGAR);
 		
-		ContasAPagarGridPrincipalFornecedorDTO listContasAPagar = contasAPagarService.pesquisarPorDistribuidor(filtro, null, null, 0, 0);
+		ContasAPagarGridPrincipalFornecedorDTO listContasAPagar = contasAPagarService.pesquisarPorDistribuidor(filtro);
 		List <ContasApagarConsultaPorDistribuidorVO> listVO = new ArrayList<ContasApagarConsultaPorDistribuidorVO>();
 		
 		for(ContasApagarConsultaPorDistribuidorDTO dto : listContasAPagar.getGrid()){
