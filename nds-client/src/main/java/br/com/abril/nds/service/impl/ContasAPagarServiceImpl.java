@@ -1,9 +1,5 @@
 package br.com.abril.nds.service.impl;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,8 +13,7 @@ import br.com.abril.nds.dto.ContasAPagarFaltasSobrasDTO;
 import br.com.abril.nds.dto.ContasAPagarGridPrincipalFornecedorDTO;
 import br.com.abril.nds.dto.ContasAPagarGridPrincipalProdutoDTO;
 import br.com.abril.nds.dto.ContasAPagarParcialDTO;
-import br.com.abril.nds.dto.ContasApagarConsultaPorDistribuidorDTO;
-import br.com.abril.nds.dto.ContasApagarConsultaPorProdutoDTO;
+import br.com.abril.nds.dto.ContasAPagarTotalDistribDTO;
 import br.com.abril.nds.dto.FlexiGridDTO;
 import br.com.abril.nds.dto.filtro.FiltroContasAPagarDTO;
 import br.com.abril.nds.repository.ContasAPagarRepository;
@@ -40,154 +35,45 @@ public class ContasAPagarServiceImpl implements ContasAPagarService {
 	@Override
 	public ContasAPagarGridPrincipalProdutoDTO pesquisarPorProduto(FiltroContasAPagarDTO filtro, String sortname, String sortorder, int rp, int page) {
 		// TODO Auto-generated method stub
-		
-		//MOCK
-		ContasAPagarGridPrincipalProdutoDTO dto = new ContasAPagarGridPrincipalProdutoDTO();
-        dto.setTotalDesconto(BigDecimal.TEN);
-        dto.setTotalPagto(BigDecimal.TEN);
-        dto.setValorLiquido(BigDecimal.TEN);
-        
-        ContasApagarConsultaPorProdutoDTO obj = new ContasApagarConsultaPorProdutoDTO();
-        obj.setCodigo("1");
-        obj.setDataFinal(new Date());
-        obj.setDataLcto(new Date());
-        obj.setDebitosCreditos(BigInteger.TEN);
-        obj.setEdicao(1L);
-        obj.setEncalhe(BigInteger.TEN);
-        obj.setFaltasSobras(BigInteger.TEN);
-        obj.setFornecedor("FC");
-        obj.setProduto("Veja");
-        obj.setProdutoEdicaoId(1000L);
-        obj.setRctl(new Date());
-        obj.setReparte(BigInteger.TEN);
-        obj.setSaldoAPagar(BigDecimal.TEN);
-        obj.setSuplementacao(BigInteger.TEN);
-        obj.setTipo(true);
-        obj.setVenda(BigInteger.TEN);
-        
-        dto.setGrid(new ArrayList<ContasApagarConsultaPorProdutoDTO>());
-        dto.getGrid().add(obj);
-        dto.getGrid().add(obj);
-        dto.getGrid().add(obj);
-        dto.getGrid().add(obj);
-        dto.getGrid().add(obj);
-        dto.getGrid().add(obj);
-        
-        dto.setTotalGrid(dto.getGrid().size());
-        
-        return dto;
-
+		return null;
 	}
 
 	@Transactional
 	@Override
 	public FlexiGridDTO<ContasAPagarParcialDTO> pesquisarParcial(FiltroContasAPagarDTO filtro, String sortname, String sortorder, int rp, int page) {
 		// TODO Auto-generated method stub
-		
-		//MOCK
-		FlexiGridDTO<ContasAPagarParcialDTO> to = new FlexiGridDTO<ContasAPagarParcialDTO>();
-        
-        ContasAPagarParcialDTO dto = new ContasAPagarParcialDTO();
-        dto.setEncalhe(1);
-        dto.setLcto(new Date());
-        dto.setNfe("NFE");
-        dto.setPctVenda(BigDecimal.TEN);
-        dto.setPctVendaAcum(BigDecimal.TEN);
-        dto.setRclt(new Date());
-        dto.setReparte(1);
-        dto.setReparteAcum(1);
-        dto.setSuplementacao(1);
-        dto.setVenda(1);
-        dto.setVendaAcum(1);
-        dto.setVendaCe(1);
-        
-        to.setGrid(new ArrayList<ContasAPagarParcialDTO>());
-        to.getGrid().add(dto);
-        to.getGrid().add(dto);
-        to.getGrid().add(dto);
-        to.getGrid().add(dto);
-        to.getGrid().add(dto);
-        to.getGrid().add(dto);
-        to.getGrid().add(dto);
-        to.getGrid().add(dto);
-        to.getGrid().add(dto);
-        to.getGrid().add(dto);
-        to.getGrid().add(dto);
-        to.getGrid().add(dto);
-        to.getGrid().add(dto);
-        to.getGrid().add(dto);
-        to.getGrid().add(dto);
-        to.getGrid().add(dto);
-        to.getGrid().add(dto);
-        to.getGrid().add(dto);
-        to.getGrid().add(dto);
-        to.getGrid().add(dto);
-        to.getGrid().add(dto);
-        to.getGrid().add(dto);
-        
-        to.setTotalGrid(30);
-        return to;
-		
+		return null;
 	}
 
 	@Transactional
 	@Override
-	public ContasAPagarGridPrincipalFornecedorDTO pesquisarPorDistribuidor(FiltroContasAPagarDTO filtro, String sortname, String sortorder, int rp, int page) {
+	public ContasAPagarGridPrincipalFornecedorDTO pesquisarPorDistribuidor(FiltroContasAPagarDTO filtro) {
 		
+		ContasAPagarGridPrincipalFornecedorDTO retorno = new ContasAPagarGridPrincipalFornecedorDTO();
 		
+		retorno.setGrid(this.contasAPagarRepository.pesquisarPorDistribuidor(filtro));
+		retorno.setTotalGrid(this.contasAPagarRepository.pesquisarPorDistribuidorCount(filtro));
 		
-		ContasAPagarGridPrincipalFornecedorDTO to = new ContasAPagarGridPrincipalFornecedorDTO();
-        to.setSaldo(BigDecimal.TEN);
-        to.setTotalBruto(BigDecimal.TEN);
-        to.setTotalDesconto(BigDecimal.TEN);
-        
-        ContasApagarConsultaPorDistribuidorDTO dto = new ContasApagarConsultaPorDistribuidorDTO();
-        dto.setConsignado(BigDecimal.TEN);
-        dto.setData(new Date());
-        dto.setDebitoCredito(BigDecimal.TEN);
-        dto.setEncalhe(BigDecimal.TEN);
-        dto.setFaltasSobras(BigDecimal.TEN);
-        dto.setSaldo(BigDecimal.TEN);
-        dto.setSuplementacao(BigDecimal.TEN);
-        dto.setVenda(BigDecimal.TEN);
-        
-        to.setGrid(new ArrayList<ContasApagarConsultaPorDistribuidorDTO>());
-        to.getGrid().add(dto);
-        to.getGrid().add(dto);
-        to.getGrid().add(dto);
-        to.getGrid().add(dto);
-        to.getGrid().add(dto);
-        to.getGrid().add(dto);
-        to.getGrid().add(dto);
-        to.getGrid().add(dto);
-        to.getGrid().add(dto);
-        to.getGrid().add(dto);
-        to.getGrid().add(dto);
-        
-        to.setTotalGrid(30);
-        
-        return to;
-
-		// TODO Auto-generated method stub
+		return retorno;
 	}
 
 	@Transactional
 	@Override
-	public List<ContasAPagarConsignadoDTO> pesquisarDetalheConsignado(FiltroContasAPagarDTO filtro, String sortname, String sortorder, int rp, int page) {
+	public ContasAPagarTotalDistribDTO<ContasAPagarConsignadoDTO> pesquisarDetalheConsignado(FiltroContasAPagarDTO filtro, String sortname, String sortorder, int rp, int page) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Transactional
 	@Override
-	public List<ContasAPagarEncalheDTO> pesquisarDetalheEncalhe(FiltroContasAPagarDTO filtro, String sortname, String sortorder, int rp, int page) {
+	public ContasAPagarTotalDistribDTO<ContasAPagarEncalheDTO> pesquisarDetalheEncalhe(FiltroContasAPagarDTO filtro, String sortname, String sortorder, int rp, int page) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Transactional
 	@Override
-	public List<ContasAPagarFaltasSobrasDTO> pesquisarDetalheFaltasSobras(FiltroContasAPagarDTO filtro, String sortname, String sortorder, int rp, int page) {
+	public ContasAPagarTotalDistribDTO<ContasAPagarFaltasSobrasDTO> pesquisarDetalheFaltasSobras(FiltroContasAPagarDTO filtro, String sortname, String sortorder, int rp, int page) {
 		// TODO Auto-generated method stub
 		return null;
 	}

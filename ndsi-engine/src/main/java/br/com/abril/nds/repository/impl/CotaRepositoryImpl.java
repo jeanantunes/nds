@@ -65,7 +65,7 @@ import br.com.abril.nds.util.Intervalo;
 @Repository
 public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 		implements CotaRepository {
-    
+	
     private static final Logger LOG = LoggerFactory.getLogger(CotaRepositoryImpl.class);
 
 	@Value("#{queries.suspensaoCota}")
@@ -73,6 +73,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 
 	@Value("#{queries.countSuspensaoCota}")
 	protected String queryCountSuspensaoCota;
+	
 
 	/**
 	 * Construtor.
@@ -1023,7 +1024,8 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 		.append("   estoqueProdutoCota.produtoEdicao.numeroEdicao , ")
 		.append("   (sum(movimentos.qtde)) , ")
 		.append("   (sum(estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida)), ")
-		.append("   ( sum((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * (estoqueProdutoCota.produtoEdicao.precoVenda - ( "+this.obterSQLDesconto()+" ))) ) ) ");
+		.append("   ( sum((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * (estoqueProdutoCota.produtoEdicao.precoVenda - ( "+this.obterSQLDesconto()+" ))) ) , ")
+		.append("     estoqueProdutoCota.cota.id , estoqueProdutoCota.produtoEdicao.produto.id ) ");
 
 		hql.append(getWhereQueryObterCurvaABCCota(filtro));
 		hql.append(getGroupQueryObterCurvaABCCota(filtro));
@@ -1080,7 +1082,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 			hql.append("AND estoqueProdutoCota.produtoEdicao.produto.editor.codigo = :codigoEditor ");
 		}
 
-		if (filtro.getCodigoCota() != null && !filtro.getCodigoCota().isEmpty()) {
+		if (filtro.getCodigoCota() != null ) {
 			hql.append("AND estoqueProdutoCota.cota.numeroCota = :codigoCota ");
 		}
 
@@ -1126,8 +1128,8 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 
 		param.put("grupoMovimentoEstoque", GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
 		
-		if (filtro.getCodigoCota() != null && !filtro.getCodigoCota().isEmpty()) {
-			param.put("codigoCota", Integer.parseInt(filtro.getCodigoCota().toString()));
+		if (filtro.getCodigoCota() != null) {
+			param.put("codigoCota", filtro.getCodigoCota());
 		}
 
 		if (filtro.getNomeCota() != null && !filtro.getNomeCota().isEmpty()) {
@@ -1206,7 +1208,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 			
 			participacaoAcumulada.add(participacaoRegistro);
 			registro.setParticipacaoAcumulada(participacaoAcumulada);
-
+			
 			// Substitui o registro pelo registro atualizado (com participacao total)
 			lista.set(i, registro);
 
