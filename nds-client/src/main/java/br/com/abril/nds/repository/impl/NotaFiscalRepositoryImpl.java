@@ -13,6 +13,8 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanResultTransformer;
+import org.hibernate.type.LongType;
+import org.hibernate.type.StringType;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -497,9 +499,9 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 
 		SQLQuery sqlQuery = getSession().createSQLQuery(sql.toString());
 
-		sqlQuery.addScalar("idNotaFiscal", Hibernate.LONG);
-		sqlQuery.addScalar("numero", Hibernate.LONG);
-		sqlQuery.addScalar("serie", Hibernate.STRING);;
+		sqlQuery.addScalar("idNotaFiscal", LongType.INSTANCE);
+		sqlQuery.addScalar("numero", LongType.INSTANCE);
+		sqlQuery.addScalar("serie", StringType.INSTANCE);;
 		sqlQuery.addScalar("emissao");
 		sqlQuery.addScalar("tipoEmissao");
 		sqlQuery.addScalar("cnpjDestinatario");

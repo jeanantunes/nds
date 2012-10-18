@@ -28,6 +28,8 @@ public class ContasAPagarGridPrincipalFornecedorVO extends FlexiGridVO<ContasApa
 		for (ContasApagarConsultaPorDistribuidorDTO obj : dto.getGrid()) {
 			this.grid.add(new ContasApagarConsultaPorDistribuidorVO(obj));
 		}
+		
+		this.totalGrid = dto.getTotalGrid();
 	}
 	
 	

@@ -2,26 +2,20 @@ package br.com.abril.nds.strategy.importacao;
 
 import java.io.File;
 
-
-import org.codehaus.jackson.map.JsonSerializer;
-import org.codehaus.jackson.map.MappingIterator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import br.com.abril.nds.model.seguranca.Usuario;
-import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.exception.ImportacaoException;
+import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.service.vo.RetornoImportacaoArquivoVO;
-import br.com.abril.nds.strategy.importacao.input.HistoricoVendaInput;
+import br.com.abril.nds.strategy.importacao.input.HistoricoFinanceiroInput;
 
 /**
- * Estratégia de importação de arquivos referente a Histórico de Vendas
+ * Estratégia de importação de arquivos referente a Histórico Financeiro
  * 
- * @author Discover Technology
- *
- */
-@Component("importacaoDeArquivoHistoricoVendaStrategy")
-public class ImportacaoDeArquivoHistoricoVendaStrategy extends ImportacaoAbstractStrategy implements ImportacaoArquivoStrategy {
+ *  */
+@Component("importacaoDeArquivoHistoricoFinanceiroStrategy")
+public class ImportacaoDeArquivoHistoricoFinanceiroStrategy extends ImportacaoAbstractStrategy implements ImportacaoArquivoStrategy {
 
 	private static final String IDENTIFICADOR_LINHA = ";";
 	
@@ -46,22 +40,22 @@ public class ImportacaoDeArquivoHistoricoVendaStrategy extends ImportacaoAbstrac
 	}
 
 	@Override
-	protected HistoricoVendaInput parseDados(String linha) {
-						
+	protected HistoricoFinanceiroInput parseDados(String linha) {
+		
 		String[] dados = linha.split(IDENTIFICADOR_LINHA);
 		
 		if(dados == null){
 			throw new ImportacaoException(MENSAGEM_ERRO_FORMATO_DADOS);
 		}
 		
-		HistoricoVendaInput historicoVenda = new HistoricoVendaInput();
+		HistoricoFinanceiroInput historicoFinanceiro = new HistoricoFinanceiroInput();
 		
 		try{
 			
-			atribuirValorCodigoProdutoNumeroEdicao(historicoVenda, dados);
-			atribuirValorNumeroCota(historicoVenda, dados);
-			atribuirValorQuantidadeDevolvidaProduto(historicoVenda, dados);
-			atribuirValorQuantidadeRecebidaProduto(historicoVenda, dados);
+			atribuirValorCodigoProdutoNumeroEdicao(historicoFinanceiro, dados);
+			atribuirValorNumeroCota(historicoFinanceiro, dados);
+			atribuirValorQuantidadeDevolvidaProduto(historicoFinanceiro, dados);
+			atribuirValorQuantidadeRecebidaProduto(historicoFinanceiro, dados);
 			
 		}catch ( java.lang.NumberFormatException e) {
 			
@@ -72,16 +66,16 @@ public class ImportacaoDeArquivoHistoricoVendaStrategy extends ImportacaoAbstrac
 			throw new ImportacaoException(MENSAGEM_ERRO_FORMATO_DADOS);
 		}
 	
-		return historicoVenda;
+		return historicoFinanceiro;
 	}
 	/**
 	 * 
 	 * Valida e atribui os valores de código do produto e número edição
 	 * 
-	 * @param historicoVenda
+	 * @param historicoFinanceiro
 	 * @param dados
 	 */
-	private void atribuirValorCodigoProdutoNumeroEdicao(HistoricoVendaInput historicoVenda, String[]dados){
+	private void atribuirValorCodigoProdutoNumeroEdicao(HistoricoFinanceiroInput historicoFinanceiro, String[]dados){
 		
 		if(dados[POSICAO_CODIGO_PRODUTO] == null || dados[POSICAO_CODIGO_PRODUTO].isEmpty() ){
 			throw new ImportacaoException(MENSAGEM_ERRO_FORMATO_DADOS);
@@ -93,17 +87,17 @@ public class ImportacaoDeArquivoHistoricoVendaStrategy extends ImportacaoAbstrac
 			throw new ImportacaoException(MENSAGEM_ERRO_FORMATO_DADOS);
 		}
 		
-		atribuirValorCodigoProduto(historicoVenda, codigoPublicacao);
-		atribuirValorNumeroEdicao(historicoVenda, codigoPublicacao);
+		atribuirValorCodigoProduto(historicoFinanceiro, codigoPublicacao);
+		atribuirValorNumeroEdicao(historicoFinanceiro, codigoPublicacao);
 	}
 	
 	/**
 	 * Valida e atribui o valor do código do produto
 	 * 
-	 * @param historicoVenda
+	 * @param historicoFinanceiro
 	 * @param codigoPublicacao
 	 */
-	private void atribuirValorCodigoProduto(HistoricoVendaInput historicoVenda,String codigoPublicacao){
+	private void atribuirValorCodigoProduto(HistoricoFinanceiroInput historicoFinanceiro,String codigoPublicacao){
 		
 		Integer codigoProduto = Integer.parseInt(codigoPublicacao.trim().substring(0,8));
 		
@@ -111,16 +105,16 @@ public class ImportacaoDeArquivoHistoricoVendaStrategy extends ImportacaoAbstrac
 			throw new ImportacaoException(MENSAGEM_ERRO_FORMATO_DADOS);
 		}
 		
-		historicoVenda.setCodigoProduto(codigoPublicacao.trim().substring(0,8));
+		//historicoFinanceiro.setCodigoProduto(codigoPublicacao.trim().substring(0,8));
 	}
 	
 	/**
 	 * Valida e atribui o valor do número de edição
 	 * 
-	 * @param historicoVenda
+	 * @param historicoFinanceiro
 	 * @param codigoPublicacao
 	 */
-	private void atribuirValorNumeroEdicao(HistoricoVendaInput historicoVenda, String codigoPublicacao){
+	private void atribuirValorNumeroEdicao(HistoricoFinanceiroInput historicoFinanceiro, String codigoPublicacao){
 		
 		Integer numeroEdicao = Integer.parseInt(codigoPublicacao.trim().substring(8,12));
 		
@@ -128,16 +122,16 @@ public class ImportacaoDeArquivoHistoricoVendaStrategy extends ImportacaoAbstrac
 			throw new ImportacaoException(MENSAGEM_ERRO_FORMATO_DADOS);
 		}
 		
-		historicoVenda.setNumeroEdicao(numeroEdicao);
+		//historicoFinanceiro.setNumeroEdicao(numeroEdicao);
 	}
 	
 	/**
 	 * Valida e atribui o valor do número da cota
 	 * 
-	 * @param historicoVenda
+	 * @param historicoFinanceiro
 	 * @param dados
 	 */
-	private void atribuirValorNumeroCota(HistoricoVendaInput historicoVenda, String[]dados){
+	private void atribuirValorNumeroCota(HistoricoFinanceiroInput historicoFinanceiro, String[]dados){
 		
 		if(dados[POSICAO_NUMERO_COTA] == null || dados[POSICAO_NUMERO_COTA].trim().isEmpty()){
 			throw new ImportacaoException(MENSAGEM_ERRO_FORMATO_DADOS);
@@ -145,15 +139,15 @@ public class ImportacaoDeArquivoHistoricoVendaStrategy extends ImportacaoAbstrac
 		
 		Integer numeroCota = Integer.parseInt(dados[POSICAO_NUMERO_COTA].trim());
 		
-		historicoVenda.setNumeroCota(numeroCota);
+		historicoFinanceiro.setNumeroCota(numeroCota);
 	}
 	/**
 	 * Valida e atribui o valor da quantidade devolvida de produto
 	 * 
-	 * @param historicoVenda
+	 * @param historicoFinanceiro
 	 * @param dados
 	 */
-	private void atribuirValorQuantidadeDevolvidaProduto(HistoricoVendaInput historicoVenda,String[]dados){
+	private void atribuirValorQuantidadeDevolvidaProduto(HistoricoFinanceiroInput historicoFinanceiro,String[]dados){
 		
 		if(dados[POSICAO_QNT_DEVOLVIDA_PRODUTO] == null || dados[POSICAO_QNT_DEVOLVIDA_PRODUTO].trim().isEmpty()){
 			throw new ImportacaoException(MENSAGEM_ERRO_FORMATO_DADOS);
@@ -161,17 +155,17 @@ public class ImportacaoDeArquivoHistoricoVendaStrategy extends ImportacaoAbstrac
 		
 		Integer quantidadeDevolvidaProduto = Integer.parseInt(dados[POSICAO_QNT_DEVOLVIDA_PRODUTO].trim());
 	
-		historicoVenda.setQuantidadeDevolvidaProduto(quantidadeDevolvidaProduto);
+		//historicoFinanceiro.setQuantidadeDevolvidaProduto(quantidadeDevolvidaProduto);
 	}
 	
 	/**
 	 * 
 	 * Valida e atribui o valor da quantidade recebida de produto
 	 * 
-	 * @param historicoVenda
+	 * @param historicoFinanceiro
 	 * @param dados
 	 */
-	private void atribuirValorQuantidadeRecebidaProduto(HistoricoVendaInput historicoVenda,String[]dados){
+	private void atribuirValorQuantidadeRecebidaProduto(HistoricoFinanceiroInput historicoFinanceiro,String[]dados){
 		
 		if(dados[POSICAO_QNT_RECEBIDA_PRODUTO] == null || dados[POSICAO_QNT_RECEBIDA_PRODUTO].trim().isEmpty()){
 			throw new ImportacaoException(MENSAGEM_ERRO_FORMATO_DADOS);
@@ -179,15 +173,15 @@ public class ImportacaoDeArquivoHistoricoVendaStrategy extends ImportacaoAbstrac
 		
 		Integer quantidadeRecebidaProduto = Integer.parseInt(dados[POSICAO_QNT_RECEBIDA_PRODUTO].trim());
 	
-		historicoVenda.setQuantidadeRecebidaProduto(quantidadeRecebidaProduto);
+		//historicoFinanceiro.setQuantidadeRecebidaProduto(quantidadeRecebidaProduto);
 	}
 	
 	@Override
 	protected void processarDados(Object input) {
 		
-		HistoricoVendaInput vendaInput = (HistoricoVendaInput) input;
+		HistoricoFinanceiroInput vendaInput = (HistoricoFinanceiroInput) input;
 		
-		movimentoEstoqueService.processarRegistroHistoricoVenda(vendaInput);
+//		movimentoEstoqueService.processarRegistrohistoricoFinanceiro(vendaInput);
 	}
 	
 }
