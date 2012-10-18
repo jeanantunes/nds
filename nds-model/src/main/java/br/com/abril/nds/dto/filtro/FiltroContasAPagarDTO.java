@@ -15,6 +15,8 @@ public class FiltroContasAPagarDTO implements Serializable {
 	
 	private	List <Long> produtoEdicaoIDs;
 	
+	private List<Long> idsFornecedores;
+	
 	public Date getDataDe() {
 		return dataDe;
 	}
@@ -51,10 +53,10 @@ public class FiltroContasAPagarDTO implements Serializable {
 	public void setProdutoEdicaoIDs(List<Long> produtoEdicaoIDs) {
 		this.produtoEdicaoIDs = produtoEdicaoIDs;
 	}
-
-	
-	
-	
-	
-
+	public List<Long> getIdsFornecedores() {
+		return idsFornecedores;
+	}
+	public void setIdsFornecedores(List<Long> idsFornecedores) {
+		this.idsFornecedores = idsFornecedores;
+	}
 }
