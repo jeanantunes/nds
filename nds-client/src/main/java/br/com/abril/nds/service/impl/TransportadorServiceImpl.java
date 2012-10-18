@@ -36,6 +36,7 @@ import br.com.abril.nds.model.cadastro.Veiculo;
 import br.com.abril.nds.repository.AssociacaoVeiculoMotoristaRotaRepository;
 import br.com.abril.nds.repository.EnderecoTransportadorRepository;
 import br.com.abril.nds.repository.MotoristaRepository;
+import br.com.abril.nds.repository.MovimentoFinanceiroCotaRepository;
 import br.com.abril.nds.repository.ParametroCobrancaTransportadorRepository;
 import br.com.abril.nds.repository.PessoaRepository;
 import br.com.abril.nds.repository.RotaRepository;
@@ -85,6 +86,9 @@ public class TransportadorServiceImpl implements TransportadorService {
 	
 	@Autowired
 	private ParametroCobrancaTransportadorRepository parametroCobrancaTransportadorRepository;
+	
+	@Autowired
+	private MovimentoFinanceiroCotaRepository movimentoFinanceiroCotaRepository;
 	
 	@Override
 	@Transactional(readOnly = true)
@@ -987,15 +991,14 @@ public class TransportadorServiceImpl implements TransportadorService {
 	@Override
 	public List<CotaTransportadorDTO> obterResumoTransportadorCota(Date dataDe,
 			Date dataAte, Long idTransportador, PaginacaoVO paginacaoVO) {
-		// TODO Auto-generated method stub
 		
-		return null;
+		return movimentoFinanceiroCotaRepository.obterResumoTransportadorCota(dataDe, dataAte, idTransportador, paginacaoVO);
 	}
 
 	@Override
 	public List<MovimentoFinanceiroDTO> obterDetalhesTrasportadorPorCota(
 			Date dataDe, Date dataAte, Long idTransportador, Long idCota) {
-		// TODO Auto-generated method stub
-		return null;
+		
+		return movimentoFinanceiroCotaRepository.obterDetalhesTrasportadorPorCota(dataDe, dataAte, idTransportador, idCota);
 	}
 }

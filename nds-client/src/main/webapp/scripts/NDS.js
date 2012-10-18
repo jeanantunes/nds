@@ -171,6 +171,10 @@ function adicionarMascaraCEP(cep) {
 	return cep;
 }
 
+
+function serializeParamsToFlexiGridPost(params){
+	return $.map(params,function(value,key){ return {name:key,value:value};});
+}
 function serializeObjectToPost(objectName, object, obj) {
 	obj = (obj)?obj:new Object();
 	for ( var propriedade in object) {

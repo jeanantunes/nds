@@ -427,16 +427,11 @@ var chamadaoController = $.extend(true, {
 	},
 	
 	realizarChamadao : function() {
+		var param ={novaDataChamadaoFormatada:$("#novaDataChamadao").val(), chamarTodos:chamadaoController.verifyCheckAll()};
 		
-		var listaChamadao = chamadaoController.getListaChamadao();
+		param = serializeArrayToPost('listaChamadao', chamadaoController.getListaChamadao(), param);
 		
-		var checkAllSelected = chamadaoController.verifyCheckAll();
-		
-		var novaDataChamadao = $("#novaDataChamadao").val();
-		
-		$.postJSON(contextPath + "/devolucao/chamadao/confirmarChamadao",
-				   listaChamadao + "&chamarTodos=" + checkAllSelected +
-				   "&novaDataChamadaoFormatada=" + novaDataChamadao,
+		$.postJSON(contextPath + "/devolucao/chamadao/confirmarChamadao",param,
 				   function(result) {
 						
 						$("#dialog-confirm", chamadaoController.workspace).dialog("close");
@@ -462,7 +457,7 @@ var chamadaoController = $.extend(true, {
 		
 		var linhasDaGrid = $('.chamadaoGrid tr', chamadaoController.workspace);
 		
-		var listaChamadao = "";
+		var listaChamadao = new Array();
 		
 		var checkAllSelected = chamadaoController.verifyCheckAll();
 		
@@ -488,11 +483,8 @@ var chamadaoController = $.extend(true, {
 					var numEdicao = $(colunaNumEdicao).find("div").html();
 					var lancamento = $($(inputHiddenLancamento).find("div").html()).val();
 					
-					var linhaSelecionada = 'listaChamadao[' + index + '].codigoProduto=' + codProduto + '&';
-					linhaSelecionada += 'listaChamadao[' + index + '].numeroEdicao=' + numEdicao + '&';
-					linhaSelecionada += 'listaChamadao[' + index + '].idLancamento=' + lancamento + '&';
 					
-					listaChamadao = (listaChamadao + linhaSelecionada);
+					listaChamadao.push({codigoProduto:codProduto,numeroEdicao:numEdicao,idLancamento:lancamento});
 				}
 			});
 		}
@@ -501,13 +493,11 @@ var chamadaoController = $.extend(true, {
 	},
 	
 	cancelarChamadao : function() {
-		
-		var listaChamadao = chamadaoController.getListaChamadao();
-		
-		var checkAllSelected = chamadaoController.verifyCheckAll();
+		var param = {chamarTodos:chamadaoController.verifyCheckAll() };
+		param = serializeArrayToPost('fornecedores', fornecedores, param);
 		
 		$.postJSON(contextPath + "/devolucao/chamadao/cancelarChamadao",
-				   listaChamadao + "&chamarTodos=" + checkAllSelected,
+					param,
 				   function(result) {
 						
 						var tipoMensagem = result.tipoMensagem;

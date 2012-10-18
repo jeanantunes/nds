@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
+import br.com.abril.nds.vo.PaginacaoVO;
+
 public class FiltroContasAPagarDTO implements Serializable {
 
 	private static final long serialVersionUID = 5604665210912108694L;
@@ -20,6 +22,7 @@ public class FiltroContasAPagarDTO implements Serializable {
 	
 	private List<Long> idsFornecedores;
 	
+	private PaginacaoVO paginacaoVO;
 	
 	public boolean isPrimeiraCarga() {
 		return primeiraCarga;
@@ -68,5 +71,11 @@ public class FiltroContasAPagarDTO implements Serializable {
 	}
 	public void setIdsFornecedores(List<Long> idsFornecedores) {
 		this.idsFornecedores = idsFornecedores;
+	}
+	public PaginacaoVO getPaginacaoVO() {
+		return paginacaoVO;
+	}
+	public void setPaginacaoVO(PaginacaoVO paginacaoVO) {
+		this.paginacaoVO = paginacaoVO;
 	}
 }

@@ -35,16 +35,16 @@ var descontoCotaController = $.extend(true,{
 		var cotaEspecifica = $("#numCotaEspecifico",this.workspace).val();
 		var descontoEspecifico = $("#descontoEspecifico",this.workspace).val();
 		
-		var fornecedores ="";
+		var fornecedores = new Array();
 		
 		$("#selectFornecedorSelecionado_option_especifico option",this.workspace).each(function (index) {
-			 fornecedores = fornecedores + "fornecedores["+index+"]="+ $(this).val() +"&";
+			 fornecedores.push($(this).val());
 		});
 		
-		$.postJSON(contextPath+"/financeiro/tipoDescontoCota/novoDescontoEspecifico",
-				"numeroCota=" + cotaEspecifica	+				
-				"&desconto=" + descontoEspecifico + "&" +
-				fornecedores,				   
+		var param = {numeroCota:cotaEspecifica,desconto:descontoEspecifico};		
+		param = serializeArrayToPost('fornecedores', fornecedores, param);
+		
+		$.postJSON(contextPath+"/financeiro/tipoDescontoCota/novoDescontoEspecifico",param,				   
 				function(result) {
 			           
 						 if (result.tipoMensagem && result.tipoMensagem !="SUCCESS" && result.listaMensagens) {			      
