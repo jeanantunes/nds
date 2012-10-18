@@ -94,14 +94,22 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 	
 	@Override
 	@Transactional(readOnly = true)
-	public ProdutoEdicao obterProdutoEdicao(Long idProdutoEdicao) {
+	public ProdutoEdicao obterProdutoEdicao(Long idProdutoEdicao, boolean indCarregaFornecedores) {
 		
 		if (idProdutoEdicao == null || Long.valueOf(0).equals(idProdutoEdicao)) {
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, 
 					"Código de identificação da Edição é inválida!"));
 		}
+
+		ProdutoEdicao produtoEdicao = produtoEdicaoRepository.buscarPorId(idProdutoEdicao);
+
 		
-		return produtoEdicaoRepository.buscarPorId(idProdutoEdicao);
+		if(indCarregaFornecedores) {
+			produtoEdicao.getProduto().getFornecedor().getJuridica();
+			produtoEdicao.getProduto().getFornecedores();
+		}
+		
+		return produtoEdicao;
 	}	
 	
 	@Override
@@ -694,7 +702,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		if (idProdutoEdicao != null && Util.isLong(idProdutoEdicao)) {
 
 			Long id = Long.valueOf(idProdutoEdicao);
-			ProdutoEdicao pe = this.obterProdutoEdicao(id);
+			ProdutoEdicao pe = this.obterProdutoEdicao(id, false);
 
 			dto.setId(id);
 			
