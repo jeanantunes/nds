@@ -202,11 +202,11 @@ var contasAPagarController = $.extend(true, {
 		
 		$.each(data.rows, function(index, value) {
 			
-			var linkConsignado = '<a href="javascript:;" onclick="contasAPagarController.popup_consignado("' + value.cell.data + '");" title="Detalhe Consignado">'+value.cell.consignado+'</a>';
+			var linkConsignado = '<a href="javascript:;" onclick="contasAPagarController.popup_consignado(\'' + value.cell.data + '\');" title="Detalhe Consignado">'+value.cell.consignado+'</a>';
 			
-			var linkEncalhe = '<a href="javascript:;" onclick="contasAPagarController.popup_encalhe("' + value.cell.data + '");" title="Detalhe Encalhe">'+value.cell.encalhe+'</a>';
+			var linkEncalhe = '<a href="javascript:;" onclick="contasAPagarController.popup_encalhe(\'' + value.cell.data + '\');" title="Detalhe Encalhe">'+value.cell.encalhe+'</a>';
 			
-			var linkFS = '<a href="javascript:;" onclick="contasAPagarController.popup_faltasSobras("' + value.cell.data + '");" title="Detalhe Faltas e Sobras">'+value.cell.faltasSobras+'</a>';
+			var linkFS = '<a href="javascript:;" onclick="contasAPagarController.popup_faltasSobras(\'' + value.cell.data + '\');" title="Detalhe Faltas e Sobras">'+value.cell.faltasSobras+'</a>';
 						
 			value.cell.consignado = linkConsignado;
 			value.cell.encalhe = linkEncalhe;
@@ -234,6 +234,28 @@ var contasAPagarController = $.extend(true, {
 		});
 	
 		return data;
+	},
+	
+	
+	montaTabelaTotaisDistribuidores : function(table, data) {
+		
+		for(var i=0; i<data.length; i++) {
+		
+			var tr = table.insertRow(-1);
+			
+			var td1 = tr.insertCell(0);
+			td1.style.width = 53;
+			td1.innerHTML = '<strong>' + data[i].nome + '</strong>';
+			
+			var td2 = tr.insertCell(1);
+			td2.style.width = 92;
+			td2.style.textAlign = 'right';
+			td2.innerHTML = '<strong>' + data[i].total + '</strong>';
+			
+			var td3 = tr.insertCell(2);
+			td3.style.width = 10;
+			td3.innerHTML = '&nbsp;';
+		}
 	},
 	
 	
@@ -345,7 +367,21 @@ var contasAPagarController = $.extend(true, {
 	},
 	
 	
-	popup_faltasSobras : function() {
+	popup_faltasSobras : function(data) {
+		
+		// TODO: data
+		var params = $("#contasAPagarForm").serialize();
+		
+		$.postJSON(
+			this.path + "pesquisarFaltasSobras.json?" + params,
+			null,
+			function(result) {
+				contasAPagarController.montaTabelaTotaisDistribuidores($("#contasAPagar_table_popupFaltasSobras").get(0), result.totalDistrib);
+				$(".contasAPagar_faltasSobrasGrid").flexAddData({rows: toFlexiGridObject(result.grid), page : 1, total : 1});
+			}
+		);
+		
+		$("#contasAPagar_legend_popupFaltasSobras").html(data);
 	
 		$("#contasAPagar_popupFaltasSobras").dialog({
 			resizable: false,
@@ -360,7 +396,6 @@ var contasAPagarController = $.extend(true, {
 			}
 		});
 	},
-
 	
 	
 	/*
@@ -758,8 +793,7 @@ var contasAPagarController = $.extend(true, {
 	
 	initGridFaltasSobras : function () {
 		$(".contasAPagar_faltasSobrasGrid").flexigrid({
-			url : '../xml/encalhes_2-xml.xml',
-			dataType : 'xml',
+			dataType : 'json',
 			colModel : [ {
 				display : 'Código',
 				name : 'codigo',
@@ -780,13 +814,13 @@ var contasAPagarController = $.extend(true, {
 				align : 'center'
 			}, {
 				display : 'Preço de Capa R$',
-				name : 'valor',
+				name : 'precoCapa',
 				width : 90,
 				sortable : true,
 				align : 'right'
 			}, {
 				display : 'Preço c/ Desc. R$',
-				name : 'desconto',
+				name : 'precoComDesconto',
 				width : 60,
 				sortable : true,
 				align : 'right'
