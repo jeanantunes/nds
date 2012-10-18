@@ -75,7 +75,7 @@ var contasAPagarController = $.extend(true, {
 	
 	pesquisar : function(){
 	
-		var params = $("#contasAPagarForm", this.workspace).serialize();
+		var params = $("#contasAPagarForm", this.workspace).serializeObject();
 		
 		if ($("#contasAPagarRadioDistribuidor").get(0).checked) {
 			this.pesquisarPorFornecedor(params);
@@ -87,17 +87,23 @@ var contasAPagarController = $.extend(true, {
 	
 	pesquisarPorProduto : function(params) {
 		
-		var url = contasAPagarController.path + 'pesquisarPorProduto.json?' + params + '&' + contasAPagarController.obterSelecaoColunaCheckProdutoEdicao(); 
+		var url = contasAPagarController.path + 'pesquisarPorProduto.json';
+		
+		
+		params = serializeArrayToPost('filtro.produtoEdicaoIDs', contasAPagarController.obterSelecaoColunaCheckProdutoEdicao(), params);
 		
 		$(".porProdutosGrid").flexOptions({
 			url : url,
+			params: serializeParamsToFlexiGridPost(params),
 			preProcess : contasAPagarController.insereLinksContasAPagarPorProdutos,
 			newp : 1
 		});
 		
+		params['filtro.primeiraCarga'] = true;
+		
 		$.postJSON(
-			url + '&filtro.primeiraCarga=true',
-			null,
+			url,
+			params,
 			function(result) {
 				
 				$("#contasAPagar_gridProdutoTotalPagto").html(result.totalPagto);
@@ -116,17 +122,20 @@ var contasAPagarController = $.extend(true, {
 	
 	pesquisarPorFornecedor : function (params) {
 		
-		var url = contasAPagarController.path + 'pesquisarPorFornecedor.json?' + params; 
+		params = serializeArrayToPost('filtro.produtoEdicaoIDs', contasAPagarController.obterSelecaoColunaCheckProdutoEdicao(), params);
+		
+		var url = contasAPagarController.path + 'pesquisarPorFornecedor.json'; 
 		
 		$(".porDistrFornecedorGrid").flexOptions({
 			url : url,
+			params: serializeParamsToFlexiGridPost(params),
 			preProcess : contasAPagarController.insereLinksContasAPagarPorDistribuidores,
 			newp : 1
 		});
-		
+		params['filtro.primeiraCarga'] = true;
 		$.postJSON(
-			url + '&filtro.primeiraCarga=true',
-			null,
+			url,
+			params,
 			function(result) {
 				
 				$("#contasAPagar_gridFornecedorTotalBruto").html(result.totalBruto);
@@ -164,17 +173,13 @@ var contasAPagarController = $.extend(true, {
 	 * */
 	obterSelecaoColunaCheckProdutoEdicao : function () {
 		
-		var dados ="";
+		var produtoEdicaoIDs = new Array();
 
-		$("input[type=checkbox][name='checkProdutoContasAPagar']:checked").each(function(i,element) {
-			if(dados!="") {
-				dados+="&";
-			}
-			var produtoEdicaoId = element.value;
-			dados+='filtro.produtoEdicaoIDs='+produtoEdicaoId+'"';
+		$("input[type=checkbox][name='checkProdutoContasAPagar']:checked").each(function(i,element) {			
+			produtoEdicaoIDs.push(element.value);
 		});
 		
-		return dados;
+		return produtoEdicaoIDs;
 	},
 	
 	
@@ -319,11 +324,11 @@ var contasAPagarController = $.extend(true, {
 	
 	popup_consignado : function() {
 		
-		var params = $("#contasAPagarForm").serialize();
+		var params = $("#contasAPagarForm").serializeObject();
 		
 		$.postJSON(
-			contasAPagarController.path + 'pesquisarConsignado.json?' + params,
-			null,
+			contasAPagarController.path + 'pesquisarConsignado.json',
+			params,
 			function(result) {
 				
 				// TODO: tabela totais

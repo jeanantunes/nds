@@ -109,7 +109,7 @@ var controleAprovacaoController = $.extend(true, {
 				"Confirmar" : function() {
 					
 					$.postJSON(contextPath + "/administracao/controleAprovacao/aprovarMovimento", 
-							   "idMovimento=" + idMovimento,
+							   {idMovimento:idMovimento},
 							   function(result) {
 							   		
 									$("#dialog-confirm", controleAprovacaoController.workspace).dialog("close");
@@ -154,8 +154,7 @@ var controleAprovacaoController = $.extend(true, {
 					$("#motivoRejeicao", controleAprovacaoController.workspace).val(motivoRejeicao.trim());
 					
 					$.postJSON(contextPath + "/administracao/controleAprovacao/rejeitarMovimento", 
-							   "idMovimento=" + idMovimento +
-							   "&motivo=" + motivoRejeicao,
+							   {idMovimento:idMovimento,motivo:motivoRejeicao},
 							   function(result) {
 							   		
 									$("#dialog-rejeitar", controleAprovacaoController.workspace).dialog("close");
