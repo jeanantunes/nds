@@ -3,6 +3,7 @@ package br.com.abril.nds.repository.impl;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -30,10 +31,10 @@ import br.com.abril.nds.dto.filtro.FiltroMapaAbastecimentoDTO.ColunaOrdenacaoDet
 import br.com.abril.nds.dto.filtro.FiltroMapaAbastecimentoDTO.ColunaOrdenacaoEntregador;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Distribuidor;
-import br.com.abril.nds.model.cadastro.FormaComercializacao;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.OperacaoEstoque;
+import br.com.abril.nds.model.estoque.StatusEstoqueFinanceiro;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.Status;
@@ -55,9 +56,10 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 	 * @see br.com.abril.nds.repository.MovimentoEstoqueCotaRepository#obterListaMovimentoEstoqueCotaParaOperacaoConferenciaEncalhe(java.lang.Long)
 	 */
 	@SuppressWarnings("unchecked")
-	public List<MovimentoEstoqueCota> obterListaMovimentoEstoqueCotaParaOperacaoConferenciaEncalhe(Long idControleConferenciaEncalheCota, FormaComercializacao formaComercializacao, boolean consideraFormaComercializacaoNula) {
+	public List<MovimentoEstoqueCota> obterListaMovimentoEstoqueCotaParaOperacaoConferenciaEncalhe(Long idControleConferenciaEncalheCota) {
 		
-		StringBuffer hql = new StringBuffer();
+		
+		StringBuilder hql = new StringBuilder();
 		
 		hql.append(" select movimentoEstoqueCota  ");			
 		
@@ -65,47 +67,173 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		hql.append(" join conferenciaEncalhe.movimentoEstoqueCota movimentoEstoqueCota ");
 		
-		String j=" WHERE ";
-		
-		if (formaComercializacao!=null){
-		
-			hql.append(" join movimentoEstoqueCota.produtoEdicao produtoEdicao ");
-		
-	    	hql.append(" join produtoEdicao.produto produto ");
-	    	
-	    	if(consideraFormaComercializacaoNula){
-	    		
-	    		hql.append(j+" ((produto.formaComercializacao is null) ");
-	    		
-	    		j=" OR ";
-	    	}
-	    	else{
-	    		
-		    	hql.append(j+" ((produto.formaComercializacao is not null) ");
-	    		
-	    		j=" AND ";
-	    	}
-	    	
-	    	hql.append(j+" (produto.formaComercializacao = :formaComercializacao)) ");
-	    	
-	    	j=" AND ";
-		}
-		
-		hql.append(j+" conferenciaEncalhe.controleConferenciaEncalheCota.id = :idControleConferenciaEncalheCota ");
+		hql.append(" WHERE conferenciaEncalhe.controleConferenciaEncalheCota.id = :idControleConferenciaEncalheCota ");
 		
 		Query query = getSession().createQuery(hql.toString());
 		
 		query.setParameter("idControleConferenciaEncalheCota", idControleConferenciaEncalheCota);
 		
-		if (formaComercializacao!=null){
-			
-			query.setParameter("formaComercializacao", formaComercializacao);
-		}
 		
 		return query.list();
 		
 	}
+	
+	/**
+	 * Obtém movimentos de estoque da cota que ainda não geraram movimento financeiro
+	 * Considera movimentos de estoque provenientes dos fluxos de Expedição e Conferência de Encalhe
+	 * @param idCota
+	 * @return List<MovimentoEstoqueCota>
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<MovimentoEstoqueCota> obterMovimentosPendentesGerarFinanceiro(Long idCota) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select mec  ");			
+		
+		hql.append(" from MovimentoEstoqueCota mec ");
+		
+		hql.append(" join mec.tipoMovimento tipoMovimento ");
+		
+		hql.append(" join mec.cota cota ");
+		
+		hql.append(" where tipoMovimento.grupoMovimentoEstoque in (:gruposMovimento) ");
+		
+		hql.append(" and ((mec.statusEstoqueFinanceiro is null) or (mec.statusEstoqueFinanceiro = :statusFinanceiro )) ");
+		
+		hql.append(" and mec.status = :statusAprovacao ");
 
+		hql.append(" and cota.id = :idCota ");
+		
+		Query query = getSession().createQuery(hql.toString());
+		
+		query.setParameterList("gruposMovimento", Arrays.asList(GrupoMovimentoEstoque.COMPRA_SUPLEMENTAR, 
+				                                                GrupoMovimentoEstoque.COMPRA_ENCALHE, 
+				                                                GrupoMovimentoEstoque.ENVIO_JORNALEIRO));
+		
+		query.setParameter("statusFinanceiro", StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO);
+		query.setParameter("statusAprovacao", StatusAprovacao.APROVADO);
+		query.setParameter("idCota", idCota);
+		
+		return query.list();
+		
+	}
+	
+	/**
+	 * Obtém movimentos de estoque da cota que forão estornados
+	 * Considera movimentos de estoque provenientes dos fluxos de Venda de Encalhe e Suplementar
+	 * @param idCota
+	 * @return List<MovimentoEstoqueCota>
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<MovimentoEstoqueCota> obterMovimentosEstornados(Long idCota) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select mec  ");			
+		
+		hql.append(" from MovimentoEstoqueCota mec ");
+		
+		hql.append(" join mec.tipoMovimento tipoMovimento ");
+		
+		hql.append(" join mec.cota cota ");
+		
+		hql.append(" where tipoMovimento.grupoMovimentoEstoque in (:gruposMovimento) ");
+
+		hql.append(" and cota.id = :idCota ");
+		
+		Query query = getSession().createQuery(hql.toString());
+		
+		query.setParameterList("gruposMovimento", Arrays.asList(GrupoMovimentoEstoque.ESTORNO_COMPRA_ENCALHE, 
+				                                                GrupoMovimentoEstoque.ESTORNO_COMPRA_SUPLEMENTAR));
+		
+		query.setParameter("idCota", idCota);
+		
+		return query.list();
+		
+	}
+	
+	/**
+	 * Obtém o Valor Total dos movimentos de estoque da cota que ainda não geraram movimento financeiro
+	 * Considera movimentos de estoque provenientes dos fluxos de Expedição e Conferência de Encalhe
+	 * @param idCota
+	 * @return List<MovimentoEstoqueCota>
+	 */
+	@Override
+	public BigDecimal obterValorTotalMovimentosPendentesGerarFinanceiro(Long idCota) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select sum(COALESCE(mec.qtde * pe.precoVenda,0))  ");			
+		
+		hql.append(" from MovimentoEstoqueCota mec ");
+		
+		hql.append(" join mec.tipoMovimento tipoMovimento ");
+		
+		hql.append(" join mec.cota cota ");
+		
+        hql.append(" join mec.produtoEdicao pe ");
+		
+		hql.append(" where tipoMovimento.grupoMovimentoEstoque in (:gruposMovimento) ");
+		
+		hql.append(" and ((mec.statusEstoqueFinanceiro is null) or (mec.statusEstoqueFinanceiro = :statusFinanceiro )) ");
+		
+		hql.append(" and mec.status = :statusAprovacao ");
+
+		hql.append(" and cota.id = :idCota ");
+		
+		Query query = getSession().createQuery(hql.toString());
+		
+		query.setParameterList("gruposMovimento", Arrays.asList(GrupoMovimentoEstoque.COMPRA_SUPLEMENTAR, 
+				                                                GrupoMovimentoEstoque.COMPRA_ENCALHE, 
+				                                                GrupoMovimentoEstoque.ENVIO_JORNALEIRO));
+		
+		query.setParameter("statusFinanceiro", StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO);
+		query.setParameter("statusAprovacao", StatusAprovacao.APROVADO);
+		query.setParameter("idCota", idCota);
+		
+		return (BigDecimal) query.uniqueResult();
+		
+	}
+	
+	/**
+	 * Obtém o Valor Total dos movimentos de estoque da cota que forão estornados
+	 * Considera movimentos de estoque provenientes dos fluxos de Venda de Encalhe e Suplementar
+	 * @param idCota
+	 * @return List<MovimentoEstoqueCota>
+	 */
+	@Override
+	public BigDecimal obterValorTotalMovimentosEstornados(Long idCota) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select sum(COALESCE(mec.qtde * pe.precoVenda,0))  ");			
+		
+		hql.append(" from MovimentoEstoqueCota mec ");
+		
+		hql.append(" join mec.tipoMovimento tipoMovimento ");
+		
+		hql.append(" join mec.cota cota ");
+		
+		hql.append(" join mec.produtoEdicao pe ");
+		
+		hql.append(" where tipoMovimento.grupoMovimentoEstoque in (:gruposMovimento) ");
+
+		hql.append(" and cota.id = :idCota ");
+		
+		Query query = getSession().createQuery(hql.toString());
+		
+		query.setParameterList("gruposMovimento", Arrays.asList(GrupoMovimentoEstoque.ESTORNO_COMPRA_ENCALHE, 
+				                                                GrupoMovimentoEstoque.ESTORNO_COMPRA_SUPLEMENTAR));
+		
+		query.setParameter("idCota", idCota);
+		
+		return (BigDecimal) query.uniqueResult();
+		
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * @see br.com.abril.nds.repository.MovimentoEstoqueCotaRepository#obterQtdeMovimentoEstoqueCotaParaProdutoEdicaoNoPeriodo(java.lang.Long, java.lang.Long, java.util.Date, java.util.Date, br.com.abril.nds.model.estoque.OperacaoEstoque)
@@ -818,7 +946,6 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 	}	
 	
-	@SuppressWarnings("unchecked")
 	@Override
 	public ConsultaEncalheRodapeDTO obterValoresTotais(FiltroConsultaEncalheDTO filtro) {
 

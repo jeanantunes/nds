@@ -165,7 +165,7 @@ function Balanceamento(pathTela, descInstancia) {
 	 */
 	this.obterDatasMarcadasConfirmacao = function(){
 
-		var datasConfirmadas='';
+		var datasConfirmadas=new Array();
 		var table = document.getElementById("tableConfirmaBalanceamento");
 		
 		for(var i = 0; i < table.rows.length; i++){   
@@ -173,8 +173,7 @@ function Balanceamento(pathTela, descInstancia) {
 			if(document.getElementById("checkConfirmar_"+i)!=null){
 				
 				if (document.getElementById("checkConfirmar_"+i).checked){
-				    table.rows[i].cells[0].textContent; 
-				    datasConfirmadas+='datasConfirmadas='+ table.rows[i].cells[0].textContent + '&';
+					datasConfirmadas. push(table.rows[i].cells[0].textContent);
 			    }
 				
 		    }

@@ -4,5 +4,6 @@ public enum TipoImportacaoArquivo {
 	
 	PRODUTO,
 	MATRIZ,
-	HISTORICO_VENDA
+	HISTORICO_VENDA,
+	HISTORICO_FINANCEIRO
 }

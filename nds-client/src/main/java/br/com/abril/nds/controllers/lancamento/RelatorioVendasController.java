@@ -1,6 +1,7 @@
 package br.com.abril.nds.controllers.lancamento;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -15,6 +16,7 @@ import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.util.PaginacaoUtil;
 import br.com.abril.nds.client.vo.RegistroCurvaABCDistribuidorVO;
 import br.com.abril.nds.client.vo.RegistroCurvaABCEditorVO;
+import br.com.abril.nds.client.vo.RegistroCurvaABCExportacaoDistribuidorVO;
 import br.com.abril.nds.client.vo.RegistroHistoricoEditorVO;
 import br.com.abril.nds.client.vo.ResultadoCurvaABCDistribuidor;
 import br.com.abril.nds.client.vo.ResultadoCurvaABCEditor;
@@ -22,6 +24,7 @@ import br.com.abril.nds.dto.RegistroCurvaABCCotaDTO;
 import br.com.abril.nds.dto.ResultadoCurvaABCCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCDistribuidorDTO;
+import br.com.abril.nds.dto.filtro.FiltroCurvaABCDistribuidorDTO.TipoConsultaCurvaABC;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCEditorDTO;
 import br.com.abril.nds.dto.filtro.FiltroPesquisarHistoricoEditorDTO;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -167,6 +170,13 @@ public class RelatorioVendasController {
 		}
 		
 		List<RegistroCurvaABCDistribuidorVO> lista = relatorioVendasService.obterCurvaABCDistribuidor(filtroSessao);
+		
+		List<RegistroCurvaABCExportacaoDistribuidorVO> exportacao = new ArrayList<RegistroCurvaABCExportacaoDistribuidorVO>();
+		
+		for(RegistroCurvaABCDistribuidorVO item: lista){
+			exportacao.add(new RegistroCurvaABCExportacaoDistribuidorVO(item));
+		}
+		
 		ResultadoCurvaABCDistribuidor resultadoTotal = relatorioVendasService.obterCurvaABCDistribuidorTotal(filtroSessao);
 		
 		String nomeArquivo = "";
@@ -177,7 +187,7 @@ public class RelatorioVendasController {
 			nomeArquivo = "relatorio-vendas-curva-abc-produto";
 		}
 
-		FileExporter.to(nomeArquivo, fileType).inHTTPResponse(this.getNDSFileHeader(), filtroSessao, resultadoTotal, lista, RegistroCurvaABCDistribuidorVO.class, this.httpServletResponse);
+		FileExporter.to(nomeArquivo, fileType).inHTTPResponse(this.getNDSFileHeader(), filtroSessao, resultadoTotal, exportacao, RegistroCurvaABCExportacaoDistribuidorVO.class, this.httpServletResponse);
 
 	}
 	
@@ -306,7 +316,7 @@ public class RelatorioVendasController {
 	 * @param codigoCota
 	 * @param nomeCota
 	 */
-	private void validarDadosEntradaPesquisaCota(String dataDe, String dataAte, String codigoCota, String nomeCota) {
+	private void validarDadosEntradaPesquisaCota(String dataDe, String dataAte, Integer codigoCota, String nomeCota) {
 		List<String> listaMensagemValidacao = new ArrayList<String>();
 
 		if (dataDe == null || dataDe.isEmpty()) {
@@ -319,7 +329,7 @@ public class RelatorioVendasController {
 					.add("O preenchimento do campo Período Até é obrigatório!");
 		}
 
-		if ((codigoCota == null || codigoCota.isEmpty()) && (nomeCota == null || nomeCota.isEmpty())) {
+		if ((codigoCota == null) && (nomeCota == null || nomeCota.isEmpty())) {
 			listaMensagemValidacao.add("O preenchimento do campo nome da Cota ou Código da Cota é obrigatório!");
 		}
 		
@@ -395,7 +405,7 @@ public class RelatorioVendasController {
 	public void pesquisarCurvaABCDistribuidor(String dataDe, String dataAte,
 			String sortorder, String sortname, int page, int rp)
 			throws Exception {
-		pesquisarCurvaABCDistribuidor(dataDe, dataAte, 0L, "", "", "", 0L, "",
+		pesquisarCurvaABCDistribuidor(dataDe, dataAte, 0L, "", "", "", 0L, null,
 				"", "", sortorder, sortname, page, rp);
 	}
 
@@ -421,10 +431,22 @@ public class RelatorioVendasController {
 	@Path("/pesquisarCurvaABCDistribuidorAvancada")
 	public void pesquisarCurvaABCDistribuidor(String dataDe, String dataAte,
 			Long codigoFornecedor, String codigoProduto, String nomeProduto,
-			String edicaoProduto, Long codigoEditor, String codigoCota,
+			String edicaoProduto, Long codigoEditor, Integer codigoCota,
 			String nomeCota, String municipio, String sortorder,
 			String sortname, int page, int rp) throws Exception {
 
+		consultarCurvaABCDistribuidorProduto(dataDe, dataAte, codigoFornecedor,
+				codigoProduto, nomeProduto, edicaoProduto, codigoEditor,
+				codigoCota, nomeCota, municipio, sortorder, sortname, page, rp,TipoConsultaCurvaABC.DISTRIBUIDOR);
+
+	}
+
+	private void consultarCurvaABCDistribuidorProduto(String dataDe, String dataAte,
+			Long codigoFornecedor, String codigoProduto, String nomeProduto,
+			String edicaoProduto, Long codigoEditor, Integer codigoCota,
+			String nomeCota, String municipio, String sortorder,
+			String sortname, int page, int rp,TipoConsultaCurvaABC tipoConsulta) throws ParseException, Exception {
+		
 		this.validarDadosEntradaPesquisa(dataDe, dataAte);
 
 		SimpleDateFormat sdf = new SimpleDateFormat(Constantes.DATE_PATTERN_PT_BR);
@@ -432,6 +454,8 @@ public class RelatorioVendasController {
 		FiltroCurvaABCDistribuidorDTO filtro = carregarFiltroPesquisaDistribuidor(sdf.parse(dataDe), sdf.parse(dataAte), codigoFornecedor,
 				codigoProduto, nomeProduto, edicaoProduto, codigoEditor,
 				codigoCota, nomeCota, municipio, sortorder, sortname, page, rp);
+		
+		filtro.setTipoConsultaCurvaABC(tipoConsulta);
 
 		List<RegistroCurvaABCDistribuidorVO> resultadoCurvaABCDistribuidor = null;
 		try {
@@ -468,7 +492,6 @@ public class RelatorioVendasController {
 			result.use(Results.json()).withoutRoot().from(resultado).recursive().serialize();
 
 		}
-
 	}
 
 	/**
@@ -486,7 +509,7 @@ public class RelatorioVendasController {
 	public void pesquisarCurvaABCEditor(String dataDe, String dataAte, String sortorder,
 			String sortname, int page, int rp)
 			throws Exception {
-		pesquisarCurvaABCEditor(dataDe, dataAte, 0L, "", "", "", 0L, "",
+		pesquisarCurvaABCEditor(dataDe, dataAte, 0L, "", "", "", 0L, null,
 				"", "", sortorder, sortname, page, rp);
 	}
 
@@ -512,7 +535,7 @@ public class RelatorioVendasController {
 	@Path("/pesquisarCurvaABCEditorAvancada")
 	public void pesquisarCurvaABCEditor(String dataDe, String dataAte,
 			Long codigoFornecedor, String codigoProduto, String nomeProduto,
-			String edicaoProduto, Long codigoEditor, String codigoCota,
+			String edicaoProduto, Long codigoEditor, Integer codigoCota,
 			String nomeCota, String municipio, String sortorder,
 			String sortname, int page, int rp) throws Exception {
 
@@ -578,7 +601,7 @@ public class RelatorioVendasController {
 	public void pesquisarCurvaABCProduto(String dataDe, String dataAte,
 			String codigoProduto, String nomeProduto, String sortorder,
 			String sortname, int page, int rp) throws Exception {
-		pesquisarCurvaABCProduto(dataDe, dataAte, 0L, codigoProduto, nomeProduto, "", 0L, "", "", "", sortorder, sortname, page, rp);
+		pesquisarCurvaABCProduto(dataDe, dataAte, 0L, codigoProduto, nomeProduto, "", 0L, null, "", "", sortorder, sortname, page, rp);
 	}
 	
 	/**
@@ -603,12 +626,14 @@ public class RelatorioVendasController {
 	@Path("/pesquisarCurvaABCProdutoAvancada")
 	public void pesquisarCurvaABCProduto(String dataDe, String dataAte,
 			Long codigoFornecedor, String codigoProduto, String nomeProduto,
-			String edicaoProduto, Long codigoEditor, String codigoCota,
+			String edicaoProduto, Long codigoEditor, Integer codigoCota,
 			String nomeCota, String municipio, String sortorder,
 			String sortname, int page, int rp) throws Exception {
 			validarDadosEntradaPesquisaProduto(dataDe, dataAte, codigoProduto, nomeProduto);
-			pesquisarCurvaABCDistribuidor(dataDe, dataAte, codigoFornecedor, codigoProduto, nomeProduto, edicaoProduto, codigoEditor, codigoCota,
-					nomeCota, municipio, sortorder, sortname, page, rp);
+			
+			consultarCurvaABCDistribuidorProduto(dataDe, dataAte, codigoFornecedor,
+					codigoProduto, nomeProduto, edicaoProduto, codigoEditor,
+					codigoCota, nomeCota, municipio, sortorder, sortname, page, rp,TipoConsultaCurvaABC.PRODUTO);
 	}
 
 	/**
@@ -626,7 +651,7 @@ public class RelatorioVendasController {
 	@Post
 	@Path("/pesquisarCurvaABCCota")
 	public void pesquisarCurvaABCCota(String dataDe, String dataAte, 
-			String codigoCota, String nomeCota, String sortorder,
+			Integer codigoCota, String nomeCota, String sortorder,
 			String sortname, int page, int rp)
 			throws Exception {
 		pesquisarCurvaABCCota(dataDe, dataAte, 0L, "", "", "", 0L, codigoCota, nomeCota, "", sortorder, sortname, page, rp);
@@ -654,7 +679,7 @@ public class RelatorioVendasController {
 	@Path("/pesquisarCurvaABCCotaAvancada")
 	public void pesquisarCurvaABCCota(String dataDe, String dataAte,
 			Long codigoFornecedor, String codigoProduto, String nomeProduto,
-			String edicaoProduto, Long codigoEditor, String codigoCota,
+			String edicaoProduto, Long codigoEditor, Integer codigoCota,
 			String nomeCota, String municipio, String sortorder,
 			String sortname, int page, int rp) throws Exception {
 		
@@ -723,7 +748,7 @@ public class RelatorioVendasController {
 	 */
 	private FiltroCurvaABCEditorDTO carregarFiltroPesquisaEditor(Date dataDe, Date dataAte, Long codigoFornecedor, 
 			String codigoProduto, String nomeProduto, String edicaoProduto, Long codigoEditor,
-			String codigoCota, String nomeCota, String municipio,
+			Integer codigoCota, String nomeCota, String municipio,
 			String sortorder, String sortname, int page, int rp) {
 
 		FiltroCurvaABCEditorDTO filtro = new FiltroCurvaABCEditorDTO(dataDe, dataAte, (codigoFornecedor == null ? "" : codigoFornecedor.toString()),
@@ -764,7 +789,7 @@ public class RelatorioVendasController {
 	 */
 	private FiltroCurvaABCDistribuidorDTO carregarFiltroPesquisaDistribuidor(Date dataDe, Date dataAte, Long codigoFornecedor, 
 			String codigoProduto, String nomeProduto, String edicaoProduto, Long codigoEditor,
-			String codigoCota, String nomeCota, String municipio,
+			Integer codigoCota, String nomeCota, String municipio,
 			String sortorder, String sortname, int page, int rp) {
 
 		FiltroCurvaABCDistribuidorDTO filtro = new FiltroCurvaABCDistribuidorDTO(dataDe, dataAte, (codigoFornecedor == null ? "" : codigoFornecedor.toString()),
@@ -804,7 +829,7 @@ public class RelatorioVendasController {
 	 */
 	private FiltroCurvaABCCotaDTO carregarFiltroPesquisaCota(Date dataDe, Date dataAte, Long codigoFornecedor, 
 			String codigoProduto, String nomeProduto, String edicaoProduto, Long codigoEditor,
-			String codigoCota, String nomeCota, String municipio,
+			Integer codigoCota, String nomeCota, String municipio,
 			String sortorder, String sortname, int page, int rp) {
 
 		FiltroCurvaABCCotaDTO filtro = new FiltroCurvaABCCotaDTO(dataDe, dataAte, (codigoFornecedor == null ? "" : codigoFornecedor.toString()),
