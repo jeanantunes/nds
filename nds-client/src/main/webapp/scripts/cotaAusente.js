@@ -840,7 +840,7 @@ var cotaAusenteController = $.extend(true, {
 					"Confirmar": function() {
 						
 						$.postJSON(contextPath + "/cotaAusente/cancelarCotaAusente", 
-								"idCotaAusente="+idCotaAusente, 
+								{idCotaAusente:idCotaAusente}, 
 								cotaAusenteController.retornoExlusaoCotaAusente);
 						
 						$( this ).dialog( "close" );

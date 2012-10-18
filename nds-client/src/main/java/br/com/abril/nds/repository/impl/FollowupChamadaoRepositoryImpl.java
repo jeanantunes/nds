@@ -29,14 +29,11 @@ public class FollowupChamadaoRepositoryImpl  extends AbstractRepositoryModel<Con
 		hql.append("pessoa.nome as nomeJornaleiro, ");
 		hql.append("sum((produtoEdicao.precoVenda - ");
 		
-		hql.append(" ( "+obterHQLDesconto("cota.id","produto.id","fornecedor.id")+" )");
+		hql.append(" ( "+obterHQLDesconto("cota.id","produtoEdicao.id","fornecedor.id")+" )");
 		
 		hql.append(") * (estoqueProdCota.qtdeRecebida - estoqueProdCota.qtdeDevolvida)) as valorTotalConsignado,  ");
 		hql.append("lancamento.dataRecolhimentoPrevista as dataProgramadoChamadao, ");
 		hql.append("historico.dataEdicao as dataHistoricoEdicao");
-		
-		hql.append("  join produtoEdicao.produto produto ");
-		hql.append("  join produto.fornecedores fornecedor ");
 		
 		hql.append(getSqlFromEWhereChamadao(filtro));
 		
@@ -64,18 +61,19 @@ public class FollowupChamadaoRepositoryImpl  extends AbstractRepositoryModel<Con
 		
 		StringBuilder hql = new StringBuilder();	
 
-		hql.append(" from EstoqueProdutoCota estoqueProdCota,  HistoricoSituacaoCota as historico, Lancamento as lancamento, ChamadaEncalheCota as cec, ");
-		hql.append(" Cota as cota, ChamadaEncalhe as ce, Pessoa as pessoa, ProdutoEdicao produtoEdicao ");		
+		hql.append(" from EstoqueProdutoCota estoqueProdCota ");
+		hql.append("  join estoqueProdCota.cota cota ");
+		hql.append("  join cota.pessoa pessoa ");
+		hql.append("  join cota.historicos historico ");
+		hql.append("  join cota.chamadaEncalheCotas cec ");
+		hql.append("  join cec.chamadaEncalhe ce ");
+		hql.append("  join estoqueProdCota.produtoEdicao produtoEdicao ");
+		hql.append("  join produtoEdicao.produto produto ");
+		hql.append("  join produto.fornecedores fornecedor ");
+		hql.append("  join produtoEdicao.lancamentos lancamento ");
 		
 		hql.append(" WHERE cota.situacaoCadastro = 'SUSPENSO' ");
 		hql.append(" AND ce.tipoChamadaEncalhe = 'CHAMADAO' ");
-		hql.append(" AND historico.cota.id = cota.id ");
-		hql.append(" AND lancamento.produtoEdicao.id = produtoEdicao.id ");
-		hql.append(" AND cec.cota.id = cota.id ");
-		hql.append(" AND estoqueProdCota.cota.id = cota.id ");
-		hql.append(" AND cec.chamadaEncalhe.id = ce.id ");
-		hql.append(" AND cota.pessoa.id = pessoa.id ");
-		hql.append(" AND estoqueProdCota.produtoEdicao.id = produtoEdicao.id ");
 		
 		hql.append(" GROUP BY cota.id  ");		
 
@@ -111,7 +109,7 @@ public class FollowupChamadaoRepositoryImpl  extends AbstractRepositoryModel<Con
    	    }
 
         if (produto!=null && !"".equals(produto)){
-	       hql.append(auxC+" view.produtoId = "+produto);
+	       hql.append(auxC+" view.produtoEdicaoId = "+produto);
 	 	   auxC = " and ";
 	    }
 

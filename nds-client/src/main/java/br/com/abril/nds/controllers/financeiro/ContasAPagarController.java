@@ -6,20 +6,18 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
-import br.com.abril.nds.client.vo.ContasAPagarConsignadoVO;
 import br.com.abril.nds.client.vo.ContasAPagarConsultaProdutoVO;
-import br.com.abril.nds.client.vo.ContasAPagarEncalheVO;
 import br.com.abril.nds.client.vo.ContasAPagarFaltasSobrasVO;
 import br.com.abril.nds.client.vo.ContasAPagarGridPrincipalFornecedorVO;
 import br.com.abril.nds.client.vo.ContasAPagarGridPrincipalProdutoVO;
 import br.com.abril.nds.client.vo.ContasAPagarParcialVO;
-import br.com.abril.nds.dto.ContasAPagarConsignadoDTO;
+import br.com.abril.nds.client.vo.ContasAPagarTotalDistribVO;
 import br.com.abril.nds.dto.ContasAPagarConsultaProdutoDTO;
-import br.com.abril.nds.dto.ContasAPagarEncalheDTO;
 import br.com.abril.nds.dto.ContasAPagarFaltasSobrasDTO;
 import br.com.abril.nds.dto.ContasAPagarGridPrincipalFornecedorDTO;
 import br.com.abril.nds.dto.ContasAPagarGridPrincipalProdutoDTO;
 import br.com.abril.nds.dto.ContasAPagarParcialDTO;
+import br.com.abril.nds.dto.ContasAPagarTotalDistribDTO;
 import br.com.abril.nds.dto.FlexiGridDTO;
 import br.com.abril.nds.dto.filtro.FiltroContasAPagarDTO;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -138,41 +136,43 @@ public class ContasAPagarController {
 	@Path("/pesquisarConsignado.json")
 	public void pesquisarConsignado(FiltroContasAPagarDTO filtro, String sortname, String sortorder, int rp, int page) {
 		
-		List<ContasAPagarConsignadoVO> listVO = new ArrayList<ContasAPagarConsignadoVO>();
-		List<ContasAPagarConsignadoDTO> listDTO = contasAPagarService.pesquisarDetalheConsignado(filtro, sortname, sortorder, rp, page);
-		
-		for (ContasAPagarConsignadoDTO dto : listDTO) {
-			listVO.add(new ContasAPagarConsignadoVO(dto));
-		}
-		
-		result.use(FlexiGridJson.class).from(listVO).total(listVO.size()).serialize();
+//		List<ContasAPagarConsignadoVO> listVO = new ArrayList<ContasAPagarConsignadoVO>();
+//		List<ContasAPagarConsignadoDTO> listDTO = contasAPagarService.pesquisarDetalheConsignado(filtro, sortname, sortorder, rp, page);
+//		
+//		for (ContasAPagarConsignadoDTO dto : listDTO) {
+//			listVO.add(new ContasAPagarConsignadoVO(dto));
+//		}
+//		
+//		result.use(FlexiGridJson.class).from(listVO).total(listVO.size()).serialize();
 	}
 	
 	
 	@Path("/pesquisarEncalhe.json")
 	public void pesquisarEncalhe(FiltroContasAPagarDTO filtro, String sortname, String sortorder, int rp, int page) {
 		
-		List<ContasAPagarEncalheVO> listVO = new ArrayList<ContasAPagarEncalheVO>();
-		List<ContasAPagarEncalheDTO> listDTO = contasAPagarService.pesquisarDetalheEncalhe(filtro, sortname, sortorder, rp, page);
-		
-		for (ContasAPagarEncalheDTO dto : listDTO) {
-			listVO.add(new ContasAPagarEncalheVO(dto));
-		}
-		
-		result.use(FlexiGridJson.class).from(listVO).total(listVO.size()).serialize();
+//		List<ContasAPagarEncalheVO> listVO = new ArrayList<ContasAPagarEncalheVO>();
+//		List<ContasAPagarEncalheDTO> listDTO = contasAPagarService.pesquisarDetalheEncalhe(filtro, sortname, sortorder, rp, page);
+//		
+//		for (ContasAPagarEncalheDTO dto : listDTO) {
+//			listVO.add(new ContasAPagarEncalheVO(dto));
+//		}
+//		
+//		result.use(FlexiGridJson.class).from(listVO).total(listVO.size()).serialize();
 	}
 	
 	
 	@Path("/pesquisarFaltasSobras.json")
 	public void pesquisarFaltasSobras(FiltroContasAPagarDTO filtro, String sortname, String sortorder, int rp, int page) {
 		
-		List<ContasAPagarFaltasSobrasVO> listVO = new ArrayList<ContasAPagarFaltasSobrasVO>();
-		List<ContasAPagarFaltasSobrasDTO> listDTO = contasAPagarService.pesquisarDetalheFaltasSobras(filtro, sortname, sortorder, rp, page);
+		ContasAPagarTotalDistribDTO<ContasAPagarFaltasSobrasDTO> dto = contasAPagarService.pesquisarDetalheFaltasSobras(filtro, sortname, sortorder, rp, page);
 		
-		for (ContasAPagarFaltasSobrasDTO dto : listDTO) {
-			listVO.add(new ContasAPagarFaltasSobrasVO(dto));
+		ContasAPagarTotalDistribVO<ContasAPagarFaltasSobrasVO, ContasAPagarFaltasSobrasDTO> vo = 
+				new ContasAPagarTotalDistribVO<ContasAPagarFaltasSobrasVO, ContasAPagarFaltasSobrasDTO>(dto);
+		
+		for (ContasAPagarFaltasSobrasDTO to : dto.getGrid()) {
+			vo.getGrid().add(new ContasAPagarFaltasSobrasVO(to));
 		}
 		
-		result.use(FlexiGridJson.class).from(listVO).total(listVO.size()).serialize();
+		result.use(Results.json()).from(vo, "result").recursive().serialize();
 	}
 }
