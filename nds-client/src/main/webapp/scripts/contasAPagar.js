@@ -78,8 +78,10 @@ var contasAPagarController = $.extend(true, {
 		var params = $("#contasAPagarForm", this.workspace).serializeObject();
 		
 		if ($("#contasAPagarRadioDistribuidor").get(0).checked) {
-			this.pesquisarPorFornecedor(params);
-		} else if ($("#contasAPagarRadioProduto").get(0).checked) {
+			this.pesquisarPorFornecedor(params);	
+		} 
+		
+		else if ($("#contasAPagarRadioProduto").get(0).checked) {
 			this.pesquisarPorProduto(params);
 		}
 	},
@@ -143,6 +145,8 @@ var contasAPagarController = $.extend(true, {
 				$("#contasAPagar_gridFornecedorSaldo").html(result.saldo);
 				
 				$(".porDistrFornecedorGrid", contasAPagarController.workspace).flexAddData({rows: toFlexiGridObject(result.grid), page: 1, total: result.totalGrid});
+				
+				
 			},
 			null,
 			true
