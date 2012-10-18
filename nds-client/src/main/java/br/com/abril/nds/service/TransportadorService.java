@@ -85,8 +85,26 @@ public interface TransportadorService {
 	List<CotaAtendidaTransportadorVO> buscarCotasAtendidadas(
 			Long idTransportador, String sortorder, String sortname);
 	
+	/**
+	 * Obtém dados de Envio de Reparte de determinada cota para determinado transportador
+	 * 
+	 * @param dataDe - Data de início da pesquisa
+	 * @param dataAte - Data de fim da pesquisa
+	 * @param idTransportador - Identificador do Transportador
+	 * @param paginacaoVO - VO com dados de paginação e ordenação
+	 * @return
+	 */
 	List<CotaTransportadorDTO> obterResumoTransportadorCota(Date dataDe, Date dataAte, Long idTransportador, PaginacaoVO paginacaoVO);
 	
+	/**
+	 * Obtém detalhes Financeiros do envio de Reparte das Cotas de determinado Transportador
+	 * 
+	  * @param dataDe - Data de início da pesquisa
+	 * @param dataAte - Data de fim da pesquisa
+	 * @param idTransportador - Identificador do Transportador
+	 * @param idCota - Identificador da cota
+	 * @return
+	 */
 	List<MovimentoFinanceiroDTO> obterDetalhesTrasportadorPorCota(Date dataDe, Date dataAte, Long idTransportador, Long idCota);
 	
 }

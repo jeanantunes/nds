@@ -53,7 +53,7 @@ public class MovimentoFinanceiroCotaRepositoryImplTest extends AbstractRepositor
 	
 	@Before
 	public void setup() {
-		
+		try {
 		Banco banco = Fixture.hsbc(); 
 		save(banco);
 		
@@ -121,8 +121,11 @@ public class MovimentoFinanceiroCotaRepositoryImplTest extends AbstractRepositor
 		ConsolidadoFinanceiroCota consolidadoFinanceiroCota = 
 				Fixture.consolidadoFinanceiroCota(lista, cotaManoel, new Date(), BigDecimal.TEN, new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
 		save(consolidadoFinanceiroCota);
-	}
 	
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
 	@Test
 	public void obterMovimentoFinanceiroCotaDataOperacao() {
 		
@@ -302,4 +305,5 @@ public class MovimentoFinanceiroCotaRepositoryImplTest extends AbstractRepositor
 
 		return filtroDebitoCreditoDTO;
 	}
+
 }
