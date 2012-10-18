@@ -83,7 +83,7 @@ public class ContasAPagarController {
 		
 		ContasAPagarGridPrincipalProdutoDTO dto = contasAPagarService.pesquisarPorProduto(filtro, sortname, sortorder, rp, page);
 		
-		if (dto == null) {
+		if (dto == null || dto.getGrid() == null || dto.getGrid().size() == 0) {
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "A busca não retornou resultados"));
 		}
 		
@@ -119,7 +119,7 @@ public class ContasAPagarController {
 		
 		ContasAPagarGridPrincipalFornecedorDTO dto = contasAPagarService.pesquisarPorDistribuidor(filtro);
 		
-		if (dto == null) {
+		if (dto == null || dto.getGrid() == null || dto.getGrid().size() == 0) {
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "A busca não retornou resultados"));
 		}
 		

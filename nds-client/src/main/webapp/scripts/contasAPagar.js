@@ -207,15 +207,20 @@ var contasAPagarController = $.extend(true, {
 		
 		$.each(data.rows, function(index, value) {
 			
-			var linkConsignado = '<a href="javascript:;" onclick="contasAPagarController.popup_consignado(\'' + value.cell.data + '\');" title="Detalhe Consignado">'+value.cell.consignado+'</a>';
+			if (value.cell.consignado != "0,00") {
+				var linkConsignado = '<a href="javascript:;" onclick="contasAPagarController.popup_consignado(\'' + value.cell.data + '\');" title="Detalhe Consignado">'+value.cell.consignado+'</a>';
+				value.cell.consignado = linkConsignado;
+			}
+		
+			if (value.cell.encalhe != "0,00") {
+				var linkEncalhe = '<a href="javascript:;" onclick="contasAPagarController.popup_encalhe(\'' + value.cell.data + '\');" title="Detalhe Encalhe">'+value.cell.encalhe+'</a>';
+				value.cell.encalhe = linkEncalhe;
+			}
 			
-			var linkEncalhe = '<a href="javascript:;" onclick="contasAPagarController.popup_encalhe(\'' + value.cell.data + '\');" title="Detalhe Encalhe">'+value.cell.encalhe+'</a>';
-			
-			var linkFS = '<a href="javascript:;" onclick="contasAPagarController.popup_faltasSobras(\'' + value.cell.data + '\');" title="Detalhe Faltas e Sobras">'+value.cell.faltasSobras+'</a>';
-						
-			value.cell.consignado = linkConsignado;
-			value.cell.encalhe = linkEncalhe;
-			value.cell.faltasSobras = linkFS;
+			if (value.cell.faltasSobras != "0,00") {
+				var linkFS = '<a href="javascript:;" onclick="contasAPagarController.popup_faltasSobras(\'' + value.cell.data + '\');" title="Detalhe Faltas e Sobras">'+value.cell.faltasSobras+'</a>';
+				value.cell.faltasSobras = linkFS;
+			}
 		});
 	
 		return data;
