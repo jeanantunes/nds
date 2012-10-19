@@ -135,23 +135,25 @@ public class TransportadorRepositoryImpl extends
 		
 		StringBuilder hql = new StringBuilder("select new ");
 		hql.append(CotaAtendidaTransportadorVO.class.getCanonicalName())
-		   .append("(roteirizacao.pdv.cota.numeroCota, roteirizacao.pdv.cota.pessoa.nome, roteirizacao.pdv.cota.box.nome || '-' || roteirizacao.pdv.cota.box.codigo, ")
+		   .append("(cota.numeroCota, cota.pessoa.nome, cota.box.nome || '-' || cota.box.codigo, ")
 		   .append(" assoc.rota.roteiro.descricaoRoteiro, assoc.rota.descricaoRota, ")
-		   .append(" coalesce(roteirizacao.pdv.cota.parametroDistribuicao.taxaFixa, roteirizacao.pdv.cota.parametroDistribuicao.percentualFaturamento || '%'))")
+		   .append(" coalesce(cota.parametroDistribuicao.taxaFixa, cota.parametroDistribuicao.percentualFaturamento || '%'))")
 		   .append(" from AssociacaoVeiculoMotoristaRota assoc ")
-		   .append(" join assoc.rota.roteiro roteiro ")
-		   .append(" join assoc.roteiro.roteirizacao roteirizacao ")
+		   .append(" join assoc.rota rota ")
+		   .append(" join rota.rotaPDVs rotaPDV ")
+		   .append(" join rotaPDV.pdv pdv ")
+		   .append(" join pdv.cota cota ")
 		   .append(" where assoc.transportador.id = :idTransportador ");
 		
 		if ("numeroCota".equals(sortname)){
 			
-			hql.append(" order by roteirizacao.pdv.cota.numeroCota ");
+			hql.append(" order by cota.numeroCota ");
 		} else if ("nomeCota".equals(sortname)){
 			
-			hql.append(" order by roteirizacao.pdv.cota.pessoa.nome ");
+			hql.append(" order by cota.pessoa.nome ");
 		} else if ("box".equals(sortname)){
 			
-			hql.append(" order by roteirizacao.pdv.cota.box.nome ");
+			hql.append(" order by cota.box.nome ");
 		} else if ("roteiro".equals(sortname)){
 			
 			hql.append(" order by assoc.rota.roteiro.descricaoRoteiro ");
@@ -160,7 +162,7 @@ public class TransportadorRepositoryImpl extends
 			hql.append(" order by assoc.rota.descricaoRota ");
 		} else {
 			
-			hql.append(" order by roteirizacao.pdv.cota.numeroCota ");
+			hql.append(" order by cota.numeroCota ");
 		}
 		
 		if ("asc".equals(sortorder)){
