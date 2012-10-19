@@ -13,14 +13,12 @@ import org.lightcouch.CouchDbClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Component;
 
 import br.com.abril.nds.client.util.AuditoriaUtil;
 import br.com.abril.nds.dto.auditoria.AuditoriaDTO;
-import br.com.abril.nds.dto.auditoria.AuditoriaDTO.TipoOperacaoAuditoria;
 import br.com.abril.nds.integracao.couchdb.CouchDbProperties;
+import br.com.abril.nds.util.TipoOperacaoSQL;
 
-@Component
 public class AuditLogInterceptor extends EmptyInterceptor {
 
 	private static final long serialVersionUID = -1965590377590000239L;
@@ -42,7 +40,7 @@ public class AuditLogInterceptor extends EmptyInterceptor {
 		Object user = SecurityContextHolder.getContext().getAuthentication().getPrincipal(); 
 
 		AuditoriaDTO auditoriaDTO = AuditoriaUtil.generateAuditoriaDTO(
-			entity, null, Thread.currentThread(), user, TipoOperacaoAuditoria.INSERT
+			entity, null, entity.getClass().getSimpleName(), Thread.currentThread(), user, TipoOperacaoSQL.INSERT
 		);
 		
 		audit.add(auditoriaDTO);
@@ -57,7 +55,7 @@ public class AuditLogInterceptor extends EmptyInterceptor {
 		Object user = SecurityContextHolder.getContext().getAuthentication().getPrincipal(); 
 
 		AuditoriaDTO auditoriaDTO = AuditoriaUtil.generateAuditoriaDTO(
-			null, entity, Thread.currentThread(), user, TipoOperacaoAuditoria.DELETE
+			null, entity, entity.getClass().getSimpleName(), Thread.currentThread(), user, TipoOperacaoSQL.DELETE
 		);
 
 		audit.add(auditoriaDTO);
@@ -77,7 +75,7 @@ public class AuditLogInterceptor extends EmptyInterceptor {
 		getSession().close();
 
 		AuditoriaDTO auditoriaDTO = AuditoriaUtil.generateAuditoriaDTO(
-			entity, oldEntity, Thread.currentThread(), user, TipoOperacaoAuditoria.UPDATE
+			entity, oldEntity, entity.getClass().getSimpleName(), Thread.currentThread(), user, TipoOperacaoSQL.UPDATE
 		);
 		
 		audit.add(auditoriaDTO);
@@ -88,14 +86,19 @@ public class AuditLogInterceptor extends EmptyInterceptor {
 	@Override
 	public void afterTransactionCompletion(Transaction tx) {
 
+		if (this.audit.isEmpty()) {
+
+			return;
+		}
+	
 		CouchDbClient client = new CouchDbClient(
 			DB_NAME,
 			true,
-			properties.getProtocol(), 
-			properties.getHost(), 
-			properties.getPort(), 
-			properties.getUsername(), 
-			properties.getPassword()
+			this.properties.getProtocol(), 
+			this.properties.getHost(), 
+			this.properties.getPort(), 
+			this.properties.getUsername(), 
+			this.properties.getPassword()
 		);
 
 		for (Iterator<AuditoriaDTO> auditedEntities = audit.iterator(); auditedEntities.hasNext();) {
@@ -104,6 +107,8 @@ public class AuditLogInterceptor extends EmptyInterceptor {
 
 			client.save(auditoria);
 		}
+		
+		 this.audit = new HashSet<AuditoriaDTO>();
 	}
 	
 	private Session getSession() {

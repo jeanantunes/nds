@@ -18,12 +18,14 @@ import org.hibernate.annotations.ManyToAny;
 
 import br.com.abril.nds.dto.auditoria.AtributoDTO;
 import br.com.abril.nds.dto.auditoria.AuditoriaDTO;
-import br.com.abril.nds.dto.auditoria.AuditoriaDTO.TipoOperacaoAuditoria;
+import br.com.abril.nds.util.TipoOperacaoSQL;
 import br.com.caelum.vraptor.Path;
 
 public class AuditoriaUtil {
 
 	private static final String GETTER_PREFIX = "get";
+	
+	private static final String IS_PREFIX = "is";
 
 	private static final String EXCLUDED_GETTER = "getClass";
 	
@@ -37,15 +39,15 @@ public class AuditoriaUtil {
 	
 	private static final String SLASH = "/";
 
-	public static AuditoriaDTO generateAuditoriaDTO(Object newEntity, Object oldEntity, Thread currentThread, 
-													Object user, TipoOperacaoAuditoria tipoOperacaoAuditoria) {
+	public static AuditoriaDTO generateAuditoriaDTO(Object newEntity, Object oldEntity, String entityType, Thread currentThread, 
+													Object user, TipoOperacaoSQL tipoOperacaoAuditoria) {
 		
 		AuditoriaDTO auditoria = new AuditoriaDTO();
 
 		auditoria.setDadosAntigos(AuditoriaUtil.entityToDTO(oldEntity));
 		auditoria.setDadosNovos(AuditoriaUtil.entityToDTO(newEntity));
 		auditoria.setDataAuditoria(new Date());
-		auditoria.setEntidadeAuditada(newEntity.getClass().getSimpleName());
+		auditoria.setEntidadeAuditada(entityType);
 		auditoria.setNdsStackTrace(AuditoriaUtil.getNDSStackTrace(currentThread));
 		auditoria.setTipoOperacaoAuditoria(tipoOperacaoAuditoria);
 		auditoria.setUrlAcesso(AuditoriaUtil.getURLFromController(currentThread));
@@ -121,7 +123,7 @@ public class AuditoriaUtil {
 				url = pathValueFromClass 
 					+ (pathValueFromClass.endsWith(SLASH) || pathValueFromMethod.startsWith(SLASH) 
 							? "" : SLASH)
-					+ pathValueFromMethod;
+					+ ((pathValueFromMethod == null) ? methodName : pathValueFromMethod);
 				
 				break;
 			}
@@ -149,7 +151,7 @@ public class AuditoriaUtil {
 	
 	private static boolean isValidEntityMethods(Method method) {
 
-		return method.getName().startsWith(GETTER_PREFIX)
+		return (method.getName().startsWith(GETTER_PREFIX) || method.getName().startsWith(IS_PREFIX))
 				&& !method.getName().equals(EXCLUDED_GETTER)
 				&& !method.isAnnotationPresent(OneToMany.class)
 				&& !method.isAnnotationPresent(OneToOne.class)
@@ -219,8 +221,7 @@ public class AuditoriaUtil {
 			for (Method method : methods) {
 
 				if (method.getName().equals(methodName) 
-						&& method.isAnnotationPresent(Path.class)
-						&& method.isAccessible()) {
+						&& method.isAnnotationPresent(Path.class)) {
 					
 					Path path = method.getAnnotation(Path.class);
 
