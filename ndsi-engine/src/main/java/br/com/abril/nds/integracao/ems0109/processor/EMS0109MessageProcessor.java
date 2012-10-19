@@ -12,7 +12,6 @@ import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.engine.data.Message;
 import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
 import br.com.abril.nds.integracao.model.canonic.EMS0109Input;
-import br.com.abril.nds.integracao.service.PeriodicidadeProdutoService;
 import br.com.abril.nds.model.cadastro.DescontoLogistica;
 import br.com.abril.nds.model.cadastro.Editor;
 import br.com.abril.nds.model.cadastro.FormaComercializacao;
@@ -30,9 +29,6 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 
 	@Autowired
 	private NdsiLoggerFactory ndsiLoggerFactory;
-
-	@Autowired
-	private PeriodicidadeProdutoService periodicidadeProdutoService;
 
 	@Override
 	public void preProcess(AtomicReference<Object> tempVar) {
@@ -102,13 +98,7 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 
 		return (Produto) query.uniqueResult();
 
-	}
-
-	private PeriodicidadeProduto findPeriodicidadeProduto(Integer periodicidade) {
-
-		return this.periodicidadeProdutoService
-				.getPeriodicidadeProdutoAsArchive(periodicidade);
-	}
+	}	
 
 	private Editor findEditorByID(Message message) {
 		EMS0109Input input = (EMS0109Input) message.getBody();
@@ -202,8 +192,6 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 
 		Produto produto = new Produto();
 
-		PeriodicidadeProduto periodicidadeProduto = this
-				.findPeriodicidadeProduto(input.getPeb());
 		Fornecedor fornecedor = this
 				.findFornecedor(input.getCodigoFornecedor());
 		DescontoLogistica descontoLogistica = this
@@ -214,7 +202,7 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 		produto.setCodigoContexto(input.getContextoPublicacao());
 		produto.setDescricao(input.getNomePublicacao());
 		produto.setEditor(editor);
-		produto.setPeriodicidade(periodicidadeProduto);
+		produto.setPeriodicidade(PeriodicidadeProduto.values()[input.getPeriodicidade()]);
 		produto.setSlogan(input.getSlogan());
 		produto.setPeb(input.getPeb());
 		produto.setPeso(input.getPeso());
@@ -252,8 +240,7 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 
 		EMS0109Input input = (EMS0109Input) message.getBody();
 
-		PeriodicidadeProduto periodicidadeProduto = this
-				.findPeriodicidadeProduto(input.getPeb());
+		
 		Fornecedor fornecedor = this
 				.findFornecedor(input.getCodigoFornecedor());
 		DescontoLogistica descontoLogistica = this
@@ -302,14 +289,14 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
 					"Atualizacao do Editor para: " + editor.getPessoaJuridica().getNome());
 		}
-		if (produto.getPeriodicidade() != periodicidadeProduto) {
+		if (produto.getPeriodicidade() != PeriodicidadeProduto.values()[input.getPeriodicidade()]) {
 
-			produto.setPeriodicidade(periodicidadeProduto);
+			produto.setPeriodicidade(PeriodicidadeProduto.values()[input.getPeriodicidade()]);
 			this.ndsiLoggerFactory.getLogger().logInfo(
 					message,
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
 					"Atualizacao da Periodicidade para: "
-							+ periodicidadeProduto);
+							+ PeriodicidadeProduto.values()[input.getPeriodicidade()]);
 		}
 		if (!produto.getSlogan().equals(input.getSlogan())) {
 
@@ -418,6 +405,23 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
 					"Atualizacao da Tributação Fiscal para: " + tributacaoFiscal);
 		}
+		
+		if (produto.getFormaComercializacao().equals(
+					(input.getFormaComercializacao().equals("CON") 
+							? FormaComercializacao.CONSIGNADO 
+							: FormaComercializacao.CONTA_FIRME
+					)
+				)) {
+				produto.setFormaComercializacao(
+						(input.getFormaComercializacao().equals("CON") 
+								? FormaComercializacao.CONSIGNADO 
+								: FormaComercializacao.CONTA_FIRME
+						) );
+				this.ndsiLoggerFactory.getLogger().logInfo(message,
+						EventoExecucaoEnum.INF_DADO_ALTERADO,
+						"Atualizacao da Forma de Comercializacao para: " + produto.getFormaComercializacao().getValue());
+
+		}		
 
 	}
 

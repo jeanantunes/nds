@@ -32,6 +32,8 @@ public class DetalheItemNotaFiscalDTO implements Serializable {
 	
 	protected Integer pacotePadrao;
 	
+	private BigDecimal desconto;
+	
 	public DetalheItemNotaFiscalDTO() { }
 
 	/**
@@ -186,6 +188,14 @@ public class DetalheItemNotaFiscalDTO implements Serializable {
 	 */
 	public void setPacotePadrao(Integer pacotePadrao) {
 		this.pacotePadrao = pacotePadrao;
+	}
+
+	public BigDecimal getDesconto() {
+		return desconto;
+	}
+
+	public void setDesconto(BigDecimal desconto) {
+		this.desconto = desconto;
 	}
 	
 }

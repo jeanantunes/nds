@@ -14,6 +14,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -54,7 +55,7 @@ import br.com.abril.nds.model.estoque.TipoDirecionamentoDiferenca;
 import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
-import br.com.abril.nds.serialization.custom.CustomMapJson;
+import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DiferencaEstoqueService;
@@ -2361,16 +2362,29 @@ public class DiferencaEstoqueController {
 					diferencaVO.setQtdeEstoque(this.obterQuantidadeReparteNota(pe, rateiosDiferenca));
 				}
 				
-				result.use(CustomMapJson.class).put("diferenca", diferencaVO).put("idProdutoEdicao", pe.getId()).put("rateios",rateiosDiferenca).serialize();
+				Map<String, Object> mapa = new TreeMap<String, Object>();
+				mapa.put("diferenca", diferencaVO);
+				mapa.put("idProdutoEdicao", pe.getId());
+				mapa.put("rateios",rateiosDiferenca);
+				
+				result.use(CustomJson.class).from(mapa).serialize();
 			}
 			else{
-				
-				result.use(CustomMapJson.class).put("diferenca", diferencaVO).put("idProdutoEdicao", pe.getId()).serialize();
+
+				Map<String, Object> mapa = new TreeMap<String, Object>();
+				mapa.put("diferenca", diferencaVO);
+				mapa.put("idProdutoEdicao", pe.getId());
+
+				result.use(CustomJson.class).from(mapa).serialize();
 			}
 		}
 		else{
 			
-			result.use(CustomMapJson.class).put("diferenca", diferencaVO).put("idProdutoEdicao", pe.getId()).serialize();
+			Map<String, Object> mapa = new TreeMap<String, Object>();
+			mapa.put("diferenca", diferencaVO);
+			mapa.put("idProdutoEdicao", pe.getId());
+
+			result.use(CustomJson.class).from(mapa).serialize();
 		}
 	}
 
@@ -2497,7 +2511,7 @@ public class DiferencaEstoqueController {
 				
 		Long qtde = movimentoEstoqueCotaService.obterQuantidadeReparteProdutoCota(idProdutoEdicao, numeroCota);
 				
-		ProdutoEdicao pe = produtoEdicaoService.obterProdutoEdicao(idProdutoEdicao);
+		ProdutoEdicao pe = produtoEdicaoService.obterProdutoEdicao(idProdutoEdicao, false);
 		
 		Object[] dados = new Object[2];
 		dados[0] = qtde;

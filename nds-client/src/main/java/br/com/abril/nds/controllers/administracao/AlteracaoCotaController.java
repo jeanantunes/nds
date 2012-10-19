@@ -33,7 +33,7 @@ import br.com.abril.nds.model.cadastro.PoliticaSuspensao;
 import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.model.cadastro.desconto.TipoDesconto;
 import br.com.abril.nds.model.seguranca.Permissao;
-import br.com.abril.nds.serialization.custom.CustomMapJson;
+import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.serialization.custom.PlainJSONSerialization;
 import br.com.abril.nds.service.AlteracaoCotaService;
@@ -174,7 +174,7 @@ public class AlteracaoCotaController {
 		}
 
 		
-		result.use(CustomMapJson.class).put("filtroAlteracaoCotaDTO", filtroAlteracaoCotaDTO).serialize();
+		result.use(CustomJson.class).from(filtroAlteracaoCotaDTO, "filtroAlteracaoCotaDTO").serialize();
 	}
 	
 	@Post

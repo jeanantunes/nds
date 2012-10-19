@@ -11,15 +11,19 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
+import br.com.abril.nds.client.vo.ContasAPagarConsignadoVO;
 import br.com.abril.nds.client.vo.ContasAPagarConsultaPorProdutoVO;
 import br.com.abril.nds.client.vo.ContasAPagarConsultaProdutoVO;
+import br.com.abril.nds.client.vo.ContasAPagarEncalheVO;
 import br.com.abril.nds.client.vo.ContasAPagarFaltasSobrasVO;
 import br.com.abril.nds.client.vo.ContasAPagarGridPrincipalFornecedorVO;
 import br.com.abril.nds.client.vo.ContasAPagarGridPrincipalProdutoVO;
 import br.com.abril.nds.client.vo.ContasAPagarParcialVO;
 import br.com.abril.nds.client.vo.ContasAPagarTotalDistribVO;
 import br.com.abril.nds.client.vo.ContasApagarConsultaPorDistribuidorVO;
+import br.com.abril.nds.dto.ContasAPagarConsignadoDTO;
 import br.com.abril.nds.dto.ContasAPagarConsultaProdutoDTO;
+import br.com.abril.nds.dto.ContasAPagarEncalheDTO;
 import br.com.abril.nds.dto.ContasAPagarFaltasSobrasDTO;
 import br.com.abril.nds.dto.ContasAPagarGridPrincipalFornecedorDTO;
 import br.com.abril.nds.dto.ContasAPagarGridPrincipalProdutoDTO;
@@ -145,14 +149,12 @@ public class ContasAPagarController {
 		}
 		
 		result.use(FlexiGridJson.class).from(listVO).total(flexiDTO.getTotalGrid()).page(page).serialize();
-
 	}
 
 
 	@Path("/pesquisarPorFornecedor.json")
 	public void pesquisarPorFornecedor(FiltroContasAPagarDTO filtro, String sortname, String sortorder, int rp, int page) {
 		
-
 		this.session.setAttribute(FILTRO_CONTAS_A_PAGAR, filtro);
 
 		PaginacaoVO paginacaoVO = new PaginacaoVO(page, rp, sortorder, sortname);
@@ -172,24 +174,24 @@ public class ContasAPagarController {
 		} else {
 			result.use(FlexiGridJson.class).from(vo.getGrid()).total(vo.getTotalGrid()).page(page).serialize();
 		}
-
 	}
 
 
 	@Path("/pesquisarConsignado.json")
 	public void pesquisarConsignado(FiltroContasAPagarDTO filtro, String sortname, String sortorder, int rp, int page) {
-		
 
 		this.session.setAttribute(FILTRO_DETALHE_CONSIGNADO, filtro);
-//		List<ContasAPagarConsignadoVO> listVO = new ArrayList<ContasAPagarConsignadoVO>();
-//		List<ContasAPagarConsignadoDTO> listDTO = contasAPagarService.pesquisarDetalheConsignado(filtro, sortname, sortorder, rp, page);
-//		
-//		for (ContasAPagarConsignadoDTO dto : listDTO) {
-//			listVO.add(new ContasAPagarConsignadoVO(dto));
-//		}
-//		
-//		result.use(FlexiGridJson.class).from(listVO).total(listVO.size()).serialize();
-
+		
+		ContasAPagarTotalDistribDTO<ContasAPagarConsignadoDTO> dto = contasAPagarService.pesquisarDetalheConsignado(filtro, sortname, sortorder, rp, page);
+		
+		ContasAPagarTotalDistribVO<ContasAPagarConsignadoVO, ContasAPagarConsignadoDTO> vo = 
+				new ContasAPagarTotalDistribVO<ContasAPagarConsignadoVO, ContasAPagarConsignadoDTO>(dto);
+		
+		for (ContasAPagarConsignadoDTO to : dto.getGrid()) {
+			vo.getGrid().add(new ContasAPagarConsignadoVO(to));
+		}
+		
+		result.use(Results.json()).from(vo, "result").recursive().serialize();
 	}
 
 
@@ -198,16 +200,16 @@ public class ContasAPagarController {
 
 		this.session.setAttribute(FILTRO_DETALHE_ENCALHE, filtro);
 		
-
-//		List<ContasAPagarEncalheVO> listVO = new ArrayList<ContasAPagarEncalheVO>();
-//		List<ContasAPagarEncalheDTO> listDTO = contasAPagarService.pesquisarDetalheEncalhe(filtro, sortname, sortorder, rp, page);
-//		
-//		for (ContasAPagarEncalheDTO dto : listDTO) {
-//			listVO.add(new ContasAPagarEncalheVO(dto));
-//		}
-//		
-//		result.use(FlexiGridJson.class).from(listVO).total(listVO.size()).serialize();
-
+		ContasAPagarTotalDistribDTO<ContasAPagarEncalheDTO> dto = contasAPagarService.pesquisarDetalheEncalhe(filtro, sortname, sortorder, rp, page);
+		
+		ContasAPagarTotalDistribVO<ContasAPagarEncalheVO, ContasAPagarEncalheDTO> vo = 
+				new ContasAPagarTotalDistribVO<ContasAPagarEncalheVO, ContasAPagarEncalheDTO>(dto);
+		
+		for (ContasAPagarEncalheDTO to : dto.getGrid()) {
+			vo.getGrid().add(new ContasAPagarEncalheVO(to));
+		}
+		
+		result.use(Results.json()).from(vo, "result").recursive().serialize();
 	}
 
 
@@ -215,7 +217,6 @@ public class ContasAPagarController {
 	public void pesquisarFaltasSobras(FiltroContasAPagarDTO filtro, String sortname, String sortorder, int rp, int page) {
 
 		this.session.setAttribute(FILTRO_DETALHE_FALTAS_SOBRAS, filtro);
-		
 
 		ContasAPagarTotalDistribDTO<ContasAPagarFaltasSobrasDTO> dto = contasAPagarService.pesquisarDetalheFaltasSobras(filtro, sortname, sortorder, rp, page);
 		
@@ -227,8 +228,8 @@ public class ContasAPagarController {
 		}
 		
 		result.use(Results.json()).from(vo, "result").recursive().serialize();
-
 	}
+
 	
 	@Path("/exportPesquisarPorProduto")
 	public void exportPesquisarPorProduto(FileType fileType) throws IOException {
