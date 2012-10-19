@@ -190,7 +190,10 @@ var alteracaoCotaController = $.extend(true, {
 			var campoSelect = "<input name='filtroAlteracaoCotaDTO.listaLinhaSelecao["+ index +"]' class='selectLine' type='checkbox' value='"+row.cell.idCota+"' onclick='alteracaoCotaController.verificarCheck();'>";
 			
 			row.cell.acao = campoSelect;
+			
+			row.cell.vencimento = row.cell.vencimento == null || row.cell.vencimento == -1 ? '' : row.cell.vencimento;
 		});
+
 			
 		$(".grids", this.workspace).show();
 		

@@ -36,6 +36,13 @@ public class AlteracaoCotaServiceImpl implements AlteracaoCotaService {
 	public List<ConsultaAlteracaoCotaDTO> pesquisarAlteracaoCota(FiltroAlteracaoCotaDTO filtroAlteracaoCotaDTO) {
 		return alteracaoCotaRepository.pesquisarAlteracaoCota(filtroAlteracaoCotaDTO);
 	}
+
+
+	@Override
+	@Transactional(readOnly = true)
+	public List<ConsultaAlteracaoCotaDTO> pesquisarAlteracaoCotaFornecedor(FiltroAlteracaoCotaDTO filtroAlteracaoCotaDTO) {
+		return alteracaoCotaRepository.pesquisarAlteracaoCotaFornecedor(filtroAlteracaoCotaDTO);
+	}
 	
 		
 }

@@ -33,6 +33,7 @@ import br.com.abril.nds.model.cadastro.PoliticaSuspensao;
 import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.model.cadastro.desconto.TipoDesconto;
 import br.com.abril.nds.model.seguranca.Permissao;
+import br.com.abril.nds.repository.impl.DescontoProdutoEdicaoRepositoryImpl;
 import br.com.abril.nds.serialization.custom.CustomMapJson;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.serialization.custom.PlainJSONSerialization;
@@ -130,7 +131,62 @@ public class AlteracaoCotaController {
 		
 		filtroAlteracaoCotaDTO.setNomeCota(PessoaUtil.removerSufixoDeTipo(filtroAlteracaoCotaDTO.getNomeCota()));
 		
-		List<ConsultaAlteracaoCotaDTO> lista = this.alteracaoCotaService.pesquisarAlteracaoCota(filtroAlteracaoCotaDTO);
+		List<ConsultaAlteracaoCotaDTO> listaCotas = this.alteracaoCotaService.pesquisarAlteracaoCota(filtroAlteracaoCotaDTO);
+		List<ConsultaAlteracaoCotaDTO> listaFornecedores = this.alteracaoCotaService.pesquisarAlteracaoCotaFornecedor(filtroAlteracaoCotaDTO);
+		
+		
+		
+		for (ConsultaAlteracaoCotaDTO consultaAlteracaoCotaDTO : listaFornecedores) {	
+			if(listaCotas.contains(consultaAlteracaoCotaDTO)){ 
+				
+				ConsultaAlteracaoCotaDTO dto = listaCotas.get(listaCotas.indexOf(consultaAlteracaoCotaDTO));
+				
+				if(dto.getTipoDesconto() == null){
+					if(consultaAlteracaoCotaDTO.getTipoDesconto() != null)
+						dto.setTipoDesconto(consultaAlteracaoCotaDTO.getTipoDesconto());
+					if(dto.getNomeFornecedor()!= null)
+						dto.setTipoDesconto("/ ");
+				}else if (consultaAlteracaoCotaDTO.getTipoDesconto() == null && dto.getNomeFornecedor()!= null)
+					dto.setTipoDesconto(dto.getTipoDesconto()+"/ ");
+				else
+					dto.setTipoDesconto(dto.getTipoDesconto()+"/"+consultaAlteracaoCotaDTO.getTipoDesconto());
+				
+				if(dto.getNomeFornecedor() == null)
+					dto.setNomeFornecedor(consultaAlteracaoCotaDTO.getNomeFornecedor());
+				else
+					dto.setNomeFornecedor(dto.getNomeFornecedor()+"/"+consultaAlteracaoCotaDTO.getNomeFornecedor());
+				
+				
+				
+			}	 
+		}
+		
+		List<ConsultaAlteracaoCotaDTO> lista = new ArrayList<ConsultaAlteracaoCotaDTO>(listaCotas);
+		for (ConsultaAlteracaoCotaDTO consultaAlteracaoCotaDTO : listaCotas){
+			if((filtroAlteracaoCotaDTO.getIdFornecedor() != null || filtroAlteracaoCotaDTO.getTipoDesconto() != null)
+					&& consultaAlteracaoCotaDTO.getNomeFornecedor() == null)
+				lista.remove(consultaAlteracaoCotaDTO);
+			
+				if(consultaAlteracaoCotaDTO.getNomeFornecedor() == null)
+					consultaAlteracaoCotaDTO.setNomeFornecedor("");
+				
+				if(consultaAlteracaoCotaDTO.getTipoDesconto() == null)
+					consultaAlteracaoCotaDTO.setTipoDesconto("");
+				
+				if(consultaAlteracaoCotaDTO.getTipoEntrega() == null)
+					consultaAlteracaoCotaDTO.setTipoEntrega("");
+				
+				if(consultaAlteracaoCotaDTO.getValorMinimo() == null)
+					consultaAlteracaoCotaDTO.setValorMinimo("");
+				
+				if(consultaAlteracaoCotaDTO.getBox() == null)
+					consultaAlteracaoCotaDTO.setBox("");
+				
+				if(consultaAlteracaoCotaDTO.getNomeRazaoSocial() == null)
+					consultaAlteracaoCotaDTO.setNomeRazaoSocial("");
+			
+		}
+		
 		
 		
 		this.result.use(FlexiGridJson.class).from(lista).total(lista.size()).page(page).serialize();
@@ -198,6 +254,7 @@ public class AlteracaoCotaController {
 			
 			if(cota.getParametroCobranca() == null){
 				cota.setParametroCobranca(new ParametroCobrancaCota());
+				cota.getParametroCobranca().setCota(cota);
 			}
 			//Fator Vencimento
 			cota.getParametroCobranca().setFatorVencimento(filtroAlteracaoCotaDTO.getFiltroModalFinanceiro().getIdVencimento());

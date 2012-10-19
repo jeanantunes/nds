@@ -14,4 +14,5 @@ public interface AlteracaoCotaRepository extends Repository<Cota, Long> {
 
 	
 	List<ConsultaAlteracaoCotaDTO> pesquisarAlteracaoCota(FiltroAlteracaoCotaDTO dto);
+	List<ConsultaAlteracaoCotaDTO> pesquisarAlteracaoCotaFornecedor(FiltroAlteracaoCotaDTO dto);
 }
