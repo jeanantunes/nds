@@ -65,7 +65,6 @@ public class ContasAPagarRepositoryImplTest extends AbstractRepositoryImplTest {
 	@Test
 	public void testBuscarTotalPesquisarPorDistribuidor(){
 		
-		BigDecimal a = this.contasAPagarRepository.buscarTotalPesquisarPorDistribuidor(this.getFiltroPesquisaPorDistribuidor(), false);
-		System.out.println(a);
+		this.contasAPagarRepository.buscarTotalPesquisarPorDistribuidor(this.getFiltroPesquisaPorDistribuidor(), false);
 	}
 }
