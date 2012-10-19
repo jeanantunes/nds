@@ -4,6 +4,7 @@
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaProduto.js"></script>
 <script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.multiselects-0.3.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.justPercent.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/cadastroTipoDesconto.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/cadastroTipoDescontoDistribuidor.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/cadastroTipoDescontoCota.js"></script>
