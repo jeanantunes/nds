@@ -1,23 +1,22 @@
 package br.com.abril.nds.client.vo;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import br.com.abril.nds.dto.ContasAPagarGridPrincipalProdutoDTO;
 import br.com.abril.nds.dto.ContasApagarConsultaPorProdutoDTO;
 import br.com.abril.nds.util.CurrencyUtil;
 
-public class ContasAPagarGridPrincipalProdutoVO {
+public class ContasAPagarGridPrincipalProdutoVO extends FlexiGridVO<ContasAPagarConsultaPorProdutoVO>{
 
 	private String totalPagto;
 	private String totalDesconto;
 	private String valorLiquido;
-	private List<ContasAPagarConsultaPorProdutoVO> grid;
-	private Long totalGrid;
 	
 	
 	public ContasAPagarGridPrincipalProdutoVO()
-	{}
+	{
+		super();
+	}
 	
 	
 	public ContasAPagarGridPrincipalProdutoVO(ContasAPagarGridPrincipalProdutoDTO dto) {
@@ -51,17 +50,5 @@ public class ContasAPagarGridPrincipalProdutoVO {
 	}
 	public void setValorLiquido(String valorLiquido) {
 		this.valorLiquido = valorLiquido;
-	}
-	public List<ContasAPagarConsultaPorProdutoVO> getGrid() {
-		return grid;
-	}
-	public void setGrid(List<ContasAPagarConsultaPorProdutoVO> grid) {
-		this.grid = grid;
-	}
-	public Long getTotalGrid() {
-		return totalGrid;
-	}
-	public void setTotalGrid(Long totalGrid) {
-		this.totalGrid = totalGrid;
 	}
 }

@@ -9,20 +9,18 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.abril.nds.service.ImportacaoArquivoService;
 import br.com.abril.nds.service.vo.RetornoImportacaoArquivoVO;
 import br.com.abril.nds.strategy.importacao.ImportacaoArquivoStrategy;
+import br.com.abril.nds.strategy.importacao.ImportacaoDeArquivoHistoricoFinanceiroStrategy;
 import br.com.abril.nds.util.TipoImportacaoArquivo;
 
 @Service
 public class ImportacaoArquivoServiceImpl implements ImportacaoArquivoService{
 
 	@Autowired
-	private ImportacaoArquivoStrategy importacaoDeArquivoMatrizStrategy;
-	
-	@Autowired
 	private ImportacaoArquivoStrategy importacaoDeArquivoHistoricoVendaStrategy;
-	
+
 	@Autowired
-	private ImportacaoArquivoStrategy importacaoDeArquivoProdutoStrategy;
-	
+	private ImportacaoArquivoStrategy importacaoDeArquivoHistoricoFinanceiroStrategy;	
+		
 	@Override
 	public RetornoImportacaoArquivoVO processarImportacaoArquivo(File arquivo, TipoImportacaoArquivo tipoImportacaoArquivo) {
 		
@@ -52,15 +50,9 @@ public class ImportacaoArquivoServiceImpl implements ImportacaoArquivoService{
 				
 				break;
 				
-			case MATRIZ:
+			case HISTORICO_FINANCEIRO:
 				
-				importacaoArquivoStrategy = importacaoDeArquivoMatrizStrategy;
-				
-				break;
-	
-			case PRODUTO:
-				
-				importacaoArquivoStrategy = importacaoDeArquivoProdutoStrategy;
+				importacaoArquivoStrategy = importacaoDeArquivoHistoricoFinanceiroStrategy;
 				
 				break;
 				

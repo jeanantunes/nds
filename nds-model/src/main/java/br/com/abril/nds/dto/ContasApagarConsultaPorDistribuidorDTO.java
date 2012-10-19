@@ -8,6 +8,38 @@ public class ContasApagarConsultaPorDistribuidorDTO implements Serializable {
 
 	private static final long serialVersionUID = -3369681441745266318L;
 	
+	public ContasApagarConsultaPorDistribuidorDTO(){}
+	
+	public ContasApagarConsultaPorDistribuidorDTO(Date dataMovimento, BigDecimal consignado, BigDecimal encalhe, 
+			BigDecimal suplementacao, BigDecimal faltasSobras, BigDecimal perdasGanhos){
+		
+		this.data = dataMovimento;
+		this.consignado = consignado;
+		this.encalhe = encalhe;
+		
+		if (consignado == null){
+			
+			consignado = BigDecimal.ZERO;
+		}
+		
+		if (encalhe == null){
+			
+			encalhe = BigDecimal.ZERO;
+		}
+		
+		this.venda = consignado.subtract(encalhe);
+		
+		this.suplementacao = suplementacao;
+		
+		this.faltasSobras = faltasSobras;
+		
+		this.debitoCredito = perdasGanhos;
+		
+		this.saldo = consignado.subtract(this.encalhe == null ? BigDecimal.ZERO : this.encalhe)
+				.subtract(this.faltasSobras == null ? BigDecimal.ZERO : this.faltasSobras)
+				.subtract(this.debitoCredito == null ? BigDecimal.ZERO : this.debitoCredito);
+	}
+	
 	private Date data;
 	private BigDecimal consignado;
 	private BigDecimal suplementacao;

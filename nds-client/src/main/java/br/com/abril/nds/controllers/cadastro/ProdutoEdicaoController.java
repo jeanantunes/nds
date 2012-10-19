@@ -240,7 +240,7 @@ public class ProdutoEdicaoController {
 		
 		if(dto.getId()!=null) {
 
-			pe = peService.obterProdutoEdicao(dto.getId());
+			pe = peService.obterProdutoEdicao(dto.getId(), false);
 			
 			if(pe == null) {
 				throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Produto Edição inválido!"));
@@ -374,7 +374,7 @@ public class ProdutoEdicaoController {
 		
 		DetalheProdutoVO produtoLancamentoVO = null;
 		
-		ProdutoEdicao produtoEdicao = produtoEdicaoService.obterProdutoEdicao(idProdutoEdicao);
+		ProdutoEdicao produtoEdicao = produtoEdicaoService.obterProdutoEdicao(idProdutoEdicao, true);
 		
 		if (produtoEdicao!=null){
 		    

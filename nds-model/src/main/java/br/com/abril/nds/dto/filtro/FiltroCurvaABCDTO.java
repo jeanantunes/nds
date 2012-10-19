@@ -27,7 +27,7 @@ public abstract class FiltroCurvaABCDTO extends FiltroDTO {
 	
 	private String codigoEditor;
 	
-	private String codigoCota;
+	private Integer codigoCota;
 	
 	private String nomeCota;
 	
@@ -67,11 +67,11 @@ public abstract class FiltroCurvaABCDTO extends FiltroDTO {
 		this.nomeProduto = nomeProduto;
 	}
 
-	public String getCodigoCota() {
+	public Integer getCodigoCota() {
 		return codigoCota;
 	}
 
-	public void setCodigoCota(String codigoCota) {
+	public void setCodigoCota(Integer codigoCota) {
 		this.codigoCota = codigoCota;
 	}
 

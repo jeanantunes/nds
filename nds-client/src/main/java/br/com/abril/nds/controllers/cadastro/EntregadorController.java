@@ -12,6 +12,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -48,7 +49,7 @@ import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.TelefoneEntregador;
 import br.com.abril.nds.model.seguranca.Permissao;
-import br.com.abril.nds.serialization.custom.CustomMapJson;
+import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.EntregadorService;
 import br.com.abril.nds.service.PessoaFisicaService;
@@ -508,7 +509,14 @@ public class EntregadorController {
 			novoCodigoEntregador = this.entregadorService.obterMinCodigoEntregadorDisponivel();
 		}
 		
-		this.result.use(CustomMapJson.class).put("data", DateUtil.formatarDataPTBR(new Date())).put("nextCodigo", novoCodigoEntregador).serialize();
+		Map<String, Object> mapa = new TreeMap();
+		mapa.put("data", DateUtil.formatarDataPTBR(new Date()));
+		
+		if (novoCodigoEntregador != null) {
+			mapa.put("nextCodigo", novoCodigoEntregador);
+		}
+		
+		this.result.use(CustomJson.class).from(mapa).serialize();
 		
 	}
 	

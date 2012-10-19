@@ -113,7 +113,9 @@ var fiadorController = $.extend(true, {
 		},
 		
 		exibirGridFiadoresCadastrados:function (){
-			var data = "filtro.nome=" + $("#fiadorController-nomeFiadorPesquisa", fiadorController.workspace).val() + "&filtro.cpfCnpj=" + $("#fiadorController-cpfCnpjFiadorPesquisa", fiadorController.workspace).val();
+			var data = {"filtro.nome": $("#fiadorController-nomeFiadorPesquisa", fiadorController.workspace).val(),
+					"filtro.cpfCnpj":$("#fiadorController-cpfCnpjFiadorPesquisa", fiadorController.workspace).val()};
+			
 			$.postJSON(contextPath + '/cadastro/fiador/pesquisarFiador', data, 
 				function(result){
 					
@@ -372,7 +374,7 @@ var fiadorController = $.extend(true, {
 		
 		editarFiador:function (idFiador){
 			var _this = this;
-			$.postJSON(contextPath +'/cadastro/fiador/editarFiador', "idFiador=" + idFiador, 
+			$.postJSON(contextPath +'/cadastro/fiador/editarFiador', {idFiado:idFiador}, 
 				function(result) {
 					
 					$(".fiadorController-inicioAtividadeNovo", fiadorController.workspace).hide();
@@ -444,7 +446,7 @@ var fiadorController = $.extend(true, {
 					"Confirmar": function() {
 						$(this).dialog("close");
 						
-						$.postJSON(contextPath + '/cadastro/fiador/excluirFiador', "idFiador=" + idFiador, 
+						$.postJSON(contextPath + '/cadastro/fiador/excluirFiador', {idFiador:idFiador}, 
 							function(result) {
 								
 								if (result[0].tipoMensagem){
@@ -503,11 +505,11 @@ var fiadorController = $.extend(true, {
 			var _this = this;
 			this.fecharModalCadastroFiador = true;
 			
-			var data = "fiador.razaoSocial=" + $("#fiadorController-razaoSocialFiador", fiadorController.workspace).val() + "&" +
-			           "fiador.nomeFantasia=" + $("#fiadorController-nomeFantasiaFiador", fiadorController.workspace).val() + "&" +
-			           "fiador.inscricaoEstadual=" + $("#fiadorController-inscricaoEstadualFiador", fiadorController.workspace).val() + "&" +
-			           "fiador.cnpj=" + $("#fiadorController-cnpjFiador", fiadorController.workspace).val() + "&" +
-			           "fiador.email=" + $("#fiadorController-emailFiadorCnpj", fiadorController.workspace).val();
+			var data = {"fiador.razaoSocial" : $("#fiadorController-razaoSocialFiador", fiadorController.workspace).val(),
+			           "fiador.nomeFantasia" : $("#fiadorController-nomeFantasiaFiador", fiadorController.workspace).val(),
+			           "fiador.inscricaoEstadual" : $("#fiadorController-inscricaoEstadualFiador", fiadorController.workspace).val() ,
+			           "fiador.cnpj" : $("#fiadorController-cnpjFiador", fiadorController.workspace).val() ,
+			           "fiador.email" : $("#fiadorController-emailFiadorCnpj", fiadorController.workspace).val()};
 			
 			$.postJSON(contextPath + '/cadastro/fiador/cadastrarFiadorCnpj', data, 
 				function(result){
@@ -551,7 +553,7 @@ var fiadorController = $.extend(true, {
 			
 			if (cnpj != "__.___.___/____-__" && cnpj != ""){
 				
-				$.postJSON(contextPath + '/cadastro/fiador/buscarPessoaCNPJ', "cnpj=" + cnpj, 
+				$.postJSON(contextPath + '/cadastro/fiador/buscarPessoaCNPJ', {cnpj:cnpj}, 
 					function(result) {
 						
 						if (result[0] != undefined){
@@ -582,29 +584,32 @@ var fiadorController = $.extend(true, {
 			var _this = this;
 			this.fecharModalCadastroFiador = true;
 			
-			var data = "pessoa.nome=" + $("#fiadorController-nomeFiadorCpf", fiadorController.workspace).val() + "&" +
-			           "pessoa.email=" + $("#fiadorController-emailFiadorCpf", fiadorController.workspace).val() + "&" +
-			           "pessoa.cpf=" + $("#fiadorController-cpfFiador", fiadorController.workspace).val() + "&" +
-			           "pessoa.rg=" + $("#fiadorController-rgFiador", fiadorController.workspace).val() + "&" +
-			           "pessoa.dataNascimento=" + $("#fiadorController-dataNascimentoFiadorCpf", fiadorController.workspace).val() + "&" +
-			           "pessoa.orgaoEmissor=" + $("#fiadorController-orgaoEmissorFiadorCpf", fiadorController.workspace).val() + "&" +
-			           "pessoa.ufOrgaoEmissor=" + $("#fiadorController-selectUfOrgaoEmiCpf", fiadorController.workspace).val() + "&" +
-			           "pessoa.estadoCivil=" + $("#fiadorController-estadoCivilFiadorCpf", fiadorController.workspace).val() + "&" +
-			           "pessoa.sexo=" + $("#fiadorController-selectSexoFiador", fiadorController.workspace).val() + "&" +
-			           "pessoa.nacionalidade=" + $("#fiadorController-nacionalidadeFiadorCpf", fiadorController.workspace).val() + "&" +
-			           "pessoa.natural=" + $("#fiadorController-naturalFiadorCpf", fiadorController.workspace).val();
+			
+			var data = {"pessoa.nome" : $("#fiadorController-nomeFiadorCpf", fiadorController.workspace).val(), 
+						"pessoa.email" : $("#fiadorController-emailFiadorCpf", fiadorController.workspace).val(), 
+						"pessoa.cpf" : $("#fiadorController-cpfFiador", fiadorController.workspace).val(), 
+						"pessoa.rg" : $("#fiadorController-rgFiador", fiadorController.workspace).val(), 
+						"pessoa.dataNascimento" : $("#fiadorController-dataNascimentoFiadorCpf", fiadorController.workspace).val(), 
+						"pessoa.orgaoEmissor" : $("#fiadorController-orgaoEmissorFiadorCpf", fiadorController.workspace).val(), 
+						"pessoa.ufOrgaoEmissor" : $("#fiadorController-selectUfOrgaoEmiCpf", fiadorController.workspace).val(), 
+						"pessoa.estadoCivil" : $("#fiadorController-estadoCivilFiadorCpf", fiadorController.workspace).val(), 
+						"pessoa.sexo" : $("#fiadorController-selectSexoFiador", fiadorController.workspace).val(), 
+						"pessoa.nacionalidade" : $("#fiadorController-nacionalidadeFiadorCpf", fiadorController.workspace).val(), 
+						"pessoa.natural" : $("#fiadorController-naturalFiadorCpf", fiadorController.workspace).val()};
 			
 			if (this.addConjuge){ 
-			           data = data + "&pessoa.conjuge.nome=" + $("#fiadorController-nomeConjugeCpf", fiadorController.workspace).val() + "&" +
-			           "pessoa.conjuge.email=" + $("#fiadorController-emailConjugeCpf", fiadorController.workspace).val() + "&" +
-			           "pessoa.conjuge.cpf=" + $("#fiadorController-cpfConjuge", fiadorController.workspace).val() + "&" +
-			           "pessoa.conjuge.rg=" + $("#fiadorController-rgConjuge", fiadorController.workspace).val() + "&" +
-			           "pessoa.conjuge.dataNascimento=" + $("#fiadorController-dataNascimentoConjugeCpf", fiadorController.workspace).val() + "&" +
-			           "pessoa.conjuge.orgaoEmissor=" + $("#fiadorController-orgaoEmissorConjugeCpf", fiadorController.workspace).val() + "&" +
-			           "pessoa.conjuge.ufOrgaoEmissor=" + $("#fiadorController-selectUfOrgaoEmiConjugeCpf", fiadorController.workspace).val() + "&" +
-			           "pessoa.conjuge.sexo=" + $("#fiadorController-selectSexoConjuge", fiadorController.workspace).val() + "&" +
-			           "pessoa.conjuge.nacionalidade=" + $("#fiadorController-nacionalidadeConjugeCpf", fiadorController.workspace).val() + "&" +
-			           "pessoa.conjuge.natural=" + $("#fiadorController-naturalConjugeCpf", fiadorController.workspace).val();
+			          var conjuge = {"nome" : $("#fiadorController-nomeConjugeCpf", fiadorController.workspace).val(),
+			        		  "email" : $("#fiadorController-emailConjugeCpf", fiadorController.workspace).val(),
+			        		  "cpf" : $("#fiadorController-cpfConjuge", fiadorController.workspace).val(),
+			        		  "rg" : $("#fiadorController-rgConjuge", fiadorController.workspace).val(),
+			        		  "dataNascimento" : $("#fiadorController-dataNascimentoConjugeCpf", fiadorController.workspace).val(),
+			        		  "orgaoEmissor" : $("#fiadorController-orgaoEmissorConjugeCpf", fiadorController.workspace).val(),
+			        		  "ufOrgaoEmissor" : $("#fiadorController-selectUfOrgaoEmiConjugeCpf", fiadorController.workspace).val(),
+			        		  "sexo" : $("#fiadorController-selectSexoConjuge", fiadorController.workspace).val(),
+			        		  "nacionalidade" : $("#fiadorController-nacionalidadeConjugeCpf", fiadorController.workspace).val(),
+			        		  "natural" : $("#fiadorController-naturalConjugeCpf", fiadorController.workspace).val()};
+			          
+			          data = serializeObjectToPost('pessoa.conjuge', conjuge, data);
 			}
 			
 			$.postJSON(contextPath + '/cadastro/fiador/cadastrarFiadorCpf', data, 
@@ -648,8 +653,7 @@ var fiadorController = $.extend(true, {
 			
 			if (cpf != "___.___.___-__" && cpf != ""){
 				
-				var data = "cpf=" + cpf + "&isFiador=" + fiador + "&cpfConjuge=" + $('#fiadorController-cpfConjuge', fiadorController.workspace).val() +
-					"&socio=" + (!fiador);
+				var data = {cpf : cpf,isFiador:fiador,cpfConjuge : $('#fiadorController-cpfConjuge', fiadorController.workspace).val() ,socio:(!fiador)};
 				
 				$.postJSON(contextPath +  '/cadastro/fiador/buscarPessoaCPF', data, 
 					function(result) {
@@ -768,33 +772,34 @@ var fiadorController = $.extend(true, {
 		},
 		
 		adicionarSocio: function (){
-			var data = "pessoa.nome=" + $('#fiadorController-socio-nomeFiadorCpf', fiadorController.workspace).val() + "&" +
-				"pessoa.email=" + $('#fiadorController-socio-emailFiadorCpf', fiadorController.workspace).val() + "&" +
-		        "pessoa.cpf=" + $('#fiadorController-socio-cpfFiador', fiadorController.workspace).val() + "&" +
-		        "pessoa.rg=" + $('#fiadorController-socio-rgFiador', fiadorController.workspace).val() + "&" +
-		        "pessoa.dataNascimento=" + $('#fiadorController-socio-dataNascimentoFiadorCpf', fiadorController.workspace).val() + "&" +
-		        "pessoa.orgaoEmissor=" + $('#fiadorController-socio-orgaoEmissorFiadorCpf', fiadorController.workspace).val() + "&" +
-		        "pessoa.ufOrgaoEmissor=" + $('#fiadorController-socio-selectUfOrgaoEmiCpf', fiadorController.workspace).val() + "&" +
-		        "pessoa.estadoCivil=" + $('#fiadorController-socio-estadoCivilFiadorCpf', fiadorController.workspace).val() + "&" +
-		        "pessoa.sexo=" + $('#fiadorController-socio-selectSexoFiador', fiadorController.workspace).val() + "&" +
-		        "pessoa.nacionalidade=" + $('#fiadorController-socio-nacionalidadeFiadorCpf', fiadorController.workspace).val() + "&" +
-		        "pessoa.natural=" + $('#fiadorController-socio-naturalFiadorCpf', fiadorController.workspace).val() + "&" +
-		        "pessoa.socioPrincipal=" + ("" + $('#fiadorController-socio-checkboxSocioPrincipal', fiadorController.workspace).attr("checked") == 'checked');
+			var data = {
+					"referencia" : $("#fiadorController-socio-idSocioEdicao", fiadorController.workspace).val(),
+					"pessoa.nome" : $('#fiadorController-socio-nomeFiadorCpf', fiadorController.workspace).val(),
+					"pessoa.email" : $('#fiadorController-socio-emailFiadorCpf', fiadorController.workspace).val(),
+					"pessoa.cpf" : $('#fiadorController-socio-cpfFiador', fiadorController.workspace).val(),
+					"pessoa.rg" : $('#fiadorController-socio-rgFiador', fiadorController.workspace).val(),
+					"pessoa.dataNascimento" : $('#fiadorController-socio-dataNascimentoFiadorCpf', fiadorController.workspace).val(),
+					"pessoa.orgaoEmissor" : $('#fiadorController-socio-orgaoEmissorFiadorCpf', fiadorController.workspace).val(),
+					"pessoa.ufOrgaoEmissor" : $('#fiadorController-socio-selectUfOrgaoEmiCpf', fiadorController.workspace).val(),
+					"pessoa.estadoCivil" : $('#fiadorController-socio-estadoCivilFiadorCpf', fiadorController.workspace).val(),
+					"pessoa.sexo" : $('#fiadorController-socio-selectSexoFiador', fiadorController.workspace).val(),
+					"pessoa.nacionalidade" : $('#fiadorController-socio-nacionalidadeFiadorCpf', fiadorController.workspace).val(),
+					"pessoa.natural" : $('#fiadorController-socio-naturalFiadorCpf', fiadorController.workspace).val(),
+					"pessoa.socioPrincipal" : ("" + $('#fiadorController-socio-checkboxSocioPrincipal', fiadorController.workspace).attr("checked") == 'checked')};
 		    
 		    if (this.addConjuge){ 
-		        data = data + "&pessoa.conjuge.nome=" + $('#fiadorController-socio-nomeConjugeCpf', fiadorController.workspace).val() + "&" +
-		        "pessoa.conjuge.email=" + $('#fiadorController-socio-emailConjugeCpf', fiadorController.workspace).val() + "&" +
-		        "pessoa.conjuge.cpf=" + $('#fiadorController-socio-cpfConjuge', fiadorController.workspace).val() + "&" +
-		        "pessoa.conjuge.rg=" + $('#fiadorController-socio-rgConjuge', fiadorController.workspace).val() + "&" +
-		        "pessoa.conjuge.dataNascimento=" + $('#fiadorController-socio-dataNascimentoConjugeCpf', fiadorController.workspace).val() + "&" +
-		        "pessoa.conjuge.orgaoEmissor=" + $('#fiadorController-socio-orgaoEmissorConjugeCpf', fiadorController.workspace).val() + "&" +
-		        "pessoa.conjuge.ufOrgaoEmissor=" + $('#fiadorController-socio-selectUfOrgaoEmiConjugeCpf', fiadorController.workspace).val() + "&" +
-		        "pessoa.conjuge.sexo=" + $('#fiadorController-socio-selectSexoConjuge', fiadorController.workspace).val() + "&" +
-		        "pessoa.conjuge.nacionalidade=" + $('#fiadorController-socio-nacionalidadeConjugeCpf', fiadorController.workspace).val() + "&" +
-		        "pessoa.conjuge.natural=" + $('#fiadorController-socio-naturalConjugeCpf', fiadorController.workspace).val();
+		        var conjuge ={"nome" : $('#fiadorController-socio-nomeConjugeCpf', fiadorController.workspace).val(),
+		        		"email" : $('#fiadorController-socio-emailConjugeCpf', fiadorController.workspace).val(),
+		        		"cpf" : $('#fiadorController-socio-cpfConjuge', fiadorController.workspace).val(),
+		        		"rg" : $('#fiadorController-socio-rgConjuge', fiadorController.workspace).val(),
+		        		"dataNascimento" : $('#fiadorController-socio-dataNascimentoConjugeCpf', fiadorController.workspace).val(),
+		        		"orgaoEmissor" : $('#fiadorController-socio-orgaoEmissorConjugeCpf', fiadorController.workspace).val(),
+		        		"ufOrgaoEmissor" : $('#fiadorController-socio-selectUfOrgaoEmiConjugeCpf', fiadorController.workspace).val(),
+		        		"sexo" : $('#fiadorController-socio-selectSexoConjuge', fiadorController.workspace).val(),
+		        		"nacionalidade" : $('#fiadorController-socio-nacionalidadeConjugeCpf', fiadorController.workspace).val(),
+		        		"natural" : $('#fiadorController-socio-naturalConjugeCpf', fiadorController.workspace).val()};
+		        data =  serializeObjectToPost('pessoa.conjuge', conjuge, data);
 		    }
-		    
-		    data = data + "&referencia=" + $("#fiadorController-socio-idSocioEdicao", fiadorController.workspace).val();
 		    var _this =this;
 			$.postJSON(contextPath +'/cadastro/fiador/adicionarSocio', data, 
 				function(result){
@@ -823,7 +828,7 @@ var fiadorController = $.extend(true, {
 		
 		editarSocio : function (referencia){
 			var _this = this;
-			$.postJSON(contextPath + '/cadastro/fiador/editarSocio', "referencia=" + referencia, 
+			$.postJSON(contextPath + '/cadastro/fiador/editarSocio', {referencia:referencia}, 
 				function(result) {
 					
 				_this.limparDadosCadastraisCPFSocio();
@@ -895,7 +900,7 @@ var fiadorController = $.extend(true, {
 					"Confirmar": function() {
 						$(this).dialog("close");
 						
-						$.postJSON(contextPath + '/cadastro/fiador/removerSocio', "referencia=" + referencia, 
+						$.postJSON(contextPath + '/cadastro/fiador/removerSocio', {referencia : referencia}, 
 							function(result) {
 								$(".sociosGrid", fiadorController.workspace).flexAddData({
 									page: 1, total: 1, rows: result.rows
@@ -979,9 +984,9 @@ var fiadorController = $.extend(true, {
 		},
 		
 		adicionarEditarGarantia:function (){
-			var data = "garantia.valor=" + $("#fiadorController-garantia-valorGarantia", fiadorController.workspace).floatValue() + "&" +
-	        		   "garantia.descricao=" + $("#fiadorController-garantia-descricaoGarantia", fiadorController.workspace).val() + "&" +
-	        		   "referencia=" + $("#fiadorController-garantia-referenciaGarantia", fiadorController.workspace).val();
+			var data = {"garantia.valor": $("#fiadorController-garantia-valorGarantia", fiadorController.workspace).floatValue(),
+					"garantia.descricao": $("#fiadorController-garantia-descricaoGarantia", fiadorController.workspace).val(),
+				    "referencia" : $("#fiadorController-garantia-referenciaGarantia", fiadorController.workspace).val()};
 			
 			$.postJSON(contextPath + '/cadastro/fiador/adicionarGarantia', data, 
 				function(result) {
@@ -1001,7 +1006,7 @@ var fiadorController = $.extend(true, {
 		},
 		
 		editarGarantia:function (referencia){
-			$.postJSON(contextPath + '/cadastro/fiador/editarGarantia', "referencia=" + referencia, 
+			$.postJSON(contextPath + '/cadastro/fiador/editarGarantia', {referencia: referencia}, 
 				function(result) {
 					
 					$("#fiadorController-botaoAddEditarGarantia", fiadorController.workspace).text("Editar");
@@ -1025,7 +1030,7 @@ var fiadorController = $.extend(true, {
 					"Confirmar": function() {
 						$(this).dialog("close");
 						
-						$.postJSON(contextPath + '/cadastro/fiador/excluirGarantia', "referencia=" + referencia, 
+						$.postJSON(contextPath + '/cadastro/fiador/excluirGarantia', {referencia: referencia}, 
 							function(result) {
 								
 								$(".fiadorController-imoveisGrid", fiadorController.workspace).flexAddData({
@@ -1113,8 +1118,8 @@ var fiadorController = $.extend(true, {
 		},
 		
 		adicionarAssociacaoCota:	function (){
-			var data = "numeroCota=" + $("#fiadorController-cotasAssociadas-numeroCota", fiadorController.workspace).val() + "&nomeCota=" + $("#fiadorController-cotasAssociadas-nomeCota", fiadorController.workspace).val();
-			
+			var data = {"numeroCota" : $("#fiadorController-cotasAssociadas-numeroCota", fiadorController.workspace).val(),
+					"nomeCota" : $("#fiadorController-cotasAssociadas-nomeCota", fiadorController.workspace).val()};
 			$.postJSON(contextPath + '/cadastro/fiador/adicionarAssociacaoCota', data, 
 				function(result) {
 					$(".fiadorController-cotasAssociadasGrid", fiadorController.workspace).flexAddData({
@@ -1140,7 +1145,7 @@ var fiadorController = $.extend(true, {
 					"Confirmar": function() {
 						$(this).dialog("close");
 						
-						$.postJSON(contextPath +'/cadastro/fiador/removerAssociacaoCota', "referencia=" + referencia, 
+						$.postJSON(contextPath +'/cadastro/fiador/removerAssociacaoCota', {referencia:referencia}, 
 							function(result) {
 								$(".fiadorController-cotasAssociadasGrid", fiadorController.workspace).flexAddData({
 									page: 1, total: 1, rows: result.rows

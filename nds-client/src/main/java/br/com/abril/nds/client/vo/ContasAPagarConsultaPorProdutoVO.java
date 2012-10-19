@@ -3,24 +3,56 @@ package br.com.abril.nds.client.vo;
 import br.com.abril.nds.dto.ContasApagarConsultaPorProdutoDTO;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.export.Export;
+import br.com.abril.nds.util.export.Exportable;
+import br.com.abril.nds.util.export.Export.Alignment;
 
+@Exportable
 public class ContasAPagarConsultaPorProdutoVO {
 	
+	
 	private String produtoEdicaoId;
+	
+	@Export(label = "Rctl", alignment=Alignment.CENTER, exhibitionOrder = 1)
 	private String rctl;
+	
+	@Export(label = "Código", alignment=Alignment.CENTER, exhibitionOrder = 2)
 	private String codigo;
+	
+	@Export(label = "Produto", alignment=Alignment.LEFT, exhibitionOrder = 3)
 	private String produto;
+	
+	@Export(label = "Edição", alignment=Alignment.CENTER, exhibitionOrder = 4)
 	private String edicao;
+	
+	@Export(label = "Tipo", alignment=Alignment.CENTER, exhibitionOrder = 5)
 	private String tipo;
+	
+	@Export(label = "Reparte", alignment=Alignment.CENTER, exhibitionOrder = 6)
 	private String reparte;
+	
+	@Export(label = "Suplementação", alignment=Alignment.CENTER, exhibitionOrder = 7)
 	private String suplementacao;
+	
+	@Export(label = "Encalhe", alignment=Alignment.CENTER, exhibitionOrder = 8)
 	private String encalhe;
+	
+	@Export(label = "Venda", alignment=Alignment.CENTER, exhibitionOrder = 9)
 	private String venda;
+	
+	@Export(label = "Faltas/Sobras", alignment=Alignment.CENTER, exhibitionOrder = 10)
 	private String faltasSobras;
+	
+	@Export(label = "Deb/Cred.", alignment=Alignment.CENTER, exhibitionOrder = 11)
 	private String debitosCreditos;
+	
+	@Export(label = "Saldo a Pagar R$", alignment=Alignment.RIGHT, exhibitionOrder = 12)
 	private String saldoAPagar;
+	
 	private String fornecedor;
+	
 	private String dataLcto;
+	
 	private String dataFinal;
 	
 	public ContasAPagarConsultaPorProdutoVO() 
