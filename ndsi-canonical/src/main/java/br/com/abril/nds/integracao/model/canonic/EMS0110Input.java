@@ -72,6 +72,8 @@ public class EMS0110Input extends IntegracaoDocument implements Serializable {
 	private String codColecao;
 	private String formaInclusao;
 	private String codPublicacao;
+	private String campoObscuro;
+	private String nomeComercial;
 	
 	@Field(offset = 1, length = 7)
 	public String getCodDistrib() {
@@ -550,6 +552,24 @@ public class EMS0110Input extends IntegracaoDocument implements Serializable {
 		this.codPublicacao = codPublicacao;
 	}
 
+	@Field(offset = 620, length = 6)
+	public String getCampoObscuro() {
+		return campoObscuro;
+	}
+	
+	public void setCampoObscuro(String campoObscuro) {
+		this.campoObscuro = campoObscuro;
+	}
+
+	@Field(offset = 626, length = 45)
+	public String getNomeComercial() {
+		return nomeComercial;
+	}
+	
+	public void setNomeComercial(String nomeComercial) {
+		this.nomeComercial = nomeComercial;
+	}
+
 	
 	@Override
 	public int hashCode() {
@@ -689,6 +709,14 @@ public class EMS0110Input extends IntegracaoDocument implements Serializable {
 		result = prime
 				* result
 				+ ((valorValeDesconto == null) ? 0 : valorValeDesconto
+						.hashCode());
+		result = prime
+				* result
+				+ ((campoObscuro == null) ? 0 : campoObscuro
+						.hashCode());
+		result = prime
+				* result
+				+ ((nomeComercial == null) ? 0 : nomeComercial
 						.hashCode());
 		return result;
 	}
@@ -961,6 +989,17 @@ public class EMS0110Input extends IntegracaoDocument implements Serializable {
 				return false;
 		} else if (!valorValeDesconto.equals(other.valorValeDesconto))
 			return false;
+		if (campoObscuro == null) {
+			if (other.campoObscuro != null)
+				return false;
+		} else if (!campoObscuro.equals(other.campoObscuro))
+			return false;
+		if (nomeComercial == null) {
+			if (other.nomeComercial != null)
+				return false;
+		} else if (!nomeComercial.equals(other.nomeComercial))
+			return false;
+
 		return true;
 	}
 
@@ -1004,6 +1043,8 @@ public class EMS0110Input extends IntegracaoDocument implements Serializable {
 				+ ", contextoPublicacao=" + contextoPublicacao
 				+ ", codFornecPublicacao=" + codFornecPublicacao
 				+ ", codColecao=" + codColecao + ", formaInclusao="
-				+ formaInclusao + ", codPublicacao=" + codPublicacao + "]";
+				+ formaInclusao + ", codPublicacao=" + codPublicacao 
+				+ ", campoObscuro=" + campoObscuro 
+				+ ", nomeComercial=" + nomeComercial + "]";
 	}	
 }

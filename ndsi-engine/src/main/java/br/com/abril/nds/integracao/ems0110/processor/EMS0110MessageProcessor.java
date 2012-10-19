@@ -191,6 +191,16 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 					"Atualizacao do Codigo NBM para: " + input.getCodNBM());
 		}
 
+		if (!produto.getNomeComercial().equals(input.getNomeComercial())) {
+
+			produto.setNomeComercial(input.getNomeComercial());
+			this.ndsiLoggerFactory.getLogger().logInfo(
+					message,
+					EventoExecucaoEnum.INF_DADO_ALTERADO,
+					"Atualizacao do Nome Comercial para: "
+							+ input.getNomeComercial());
+		}
+		
 		edicao.setProduto(produto);
 
 		dimensao.setLargura(input.getLargura());
@@ -295,6 +305,18 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 					"Atualizacao do Codigo Contexto Produto para: "
 							+ input.getContextoProd());
 		}
+		
+		if (!edicao.getProduto().getNomeComercial()
+				.equals(input.getNomeComercial())) {
+
+			edicao.getProduto().setNomeComercial(input.getNomeComercial());
+			this.ndsiLoggerFactory.getLogger().logInfo(
+					message,
+					EventoExecucaoEnum.INF_DADO_ALTERADO,
+					"Atualizacao do nome Comercial do Produto para: "
+							+ input.getNomeComercial());
+		}
+		
 		if (!edicao.getProduto().getTipoProduto().getCodigoNBM()
 				.equals(input.getCodNBM())) {
 

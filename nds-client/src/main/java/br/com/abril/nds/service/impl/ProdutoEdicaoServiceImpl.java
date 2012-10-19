@@ -248,22 +248,22 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<ProdutoEdicaoDTO> pesquisarEdicoes(String codigoProduto, String nomeProduto,
+	public List<ProdutoEdicaoDTO> pesquisarEdicoes(String codigoProduto, String nomeComercial,
 			Intervalo<Date> dataLancamento, Intervalo<BigDecimal> preco , StatusLancamento statusLancamento,
 			String codigoDeBarras, boolean brinde,
 			String sortorder, String sortname, int page, int maxResults) {
 		
 		final int initialResult = ((page * maxResults) - maxResults);
-		return this.produtoEdicaoRepository.pesquisarEdicoes(codigoProduto, nomeProduto, dataLancamento, preco, statusLancamento, codigoDeBarras, brinde, sortorder, sortname, initialResult, maxResults);
+		return this.produtoEdicaoRepository.pesquisarEdicoes(codigoProduto, nomeComercial, dataLancamento, preco, statusLancamento, codigoDeBarras, brinde, sortorder, sortname, initialResult, maxResults);
 	}
 	
 	@Override
 	@Transactional(readOnly = true)
-	public Long countPesquisarEdicoes(String codigoProduto, String nomeProduto,
+	public Long countPesquisarEdicoes(String codigoProduto, String nomeComercial,
 			Intervalo<Date> dataLancamento, Intervalo<BigDecimal> preco , StatusLancamento statusLancamento,
 			String codigoDeBarras, boolean brinde) {
 		
-		return this.produtoEdicaoRepository.countPesquisarEdicoes(codigoProduto, nomeProduto, dataLancamento, preco, statusLancamento, codigoDeBarras, brinde);
+		return this.produtoEdicaoRepository.countPesquisarEdicoes(codigoProduto, nomeComercial, dataLancamento, preco, statusLancamento, codigoDeBarras, brinde);
 	}
 	
 	@Override
@@ -519,7 +519,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			dimEdicao.setEspessura(dto.getEspessura());
 			produtoEdicao.setDimensao(dimEdicao);
 			
-			produtoEdicao.getProduto().setNomeComercial(dto.getDescricaoProduto());
+			produtoEdicao.getProduto().setNomeComercial(dto.getNomeComercial());
 			
 			// Texto boletim informativo:
 			produtoEdicao.setBoletimInformativo(dto.getBoletimInformativo());
@@ -693,7 +693,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		dto.setPacotePadrao(produto.getPacotePadrao());
 		dto.setPeso(produto.getPeso());
 		dto.setDescricaoDesconto("");
-		dto.setDescricaoProduto(produto.getNomeComercial());
+		dto.setNomeComercial(produto.getNomeComercial());
 		dto.setDesconto(produto.getDescontoLogistica() == null 
 				? BigDecimal.ZERO : BigDecimal.valueOf(
 						produto.getDescontoLogistica().getPercentualDesconto()));

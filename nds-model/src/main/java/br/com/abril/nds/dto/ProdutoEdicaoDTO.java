@@ -29,7 +29,7 @@ public class ProdutoEdicaoDTO implements Serializable {
 	private String codigoProduto;
 	private String nomeProduto;
 	
-	private String descricaoProduto;
+	private String nomeComercial;
 	private boolean possuiBrinde;
 	private String descricaoBrinde;
 	
@@ -545,14 +545,14 @@ public class ProdutoEdicaoDTO implements Serializable {
 	/**
 	 * @return the descricaoProduto
 	 */
-	public String getDescricaoProduto() {
-		return descricaoProduto;
+	public String getNomeComercial() {
+		return nomeComercial;
 	}
 	/**
-	 * @param descricaoProduto the descricaoProduto to set
+	 * @param nomeComercial the descricaoProduto to set
 	 */
-	public void setDescricaoProduto(String descricaoProduto) {
-		this.descricaoProduto = descricaoProduto;
+	public void setNomeComercial(String nomeComercial) {
+		this.nomeComercial = nomeComercial;
 	}
 	
 }

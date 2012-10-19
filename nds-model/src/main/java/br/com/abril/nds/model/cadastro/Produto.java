@@ -54,7 +54,7 @@ public class Produto implements Serializable {
 	@Column(name = "NOME", nullable = false, unique = false, length = 60)
 	private String nome;
 	
-	@Column(name = "DESCRICAO")
+	@Column(name = "NOME_COMERCIAL")
 	private String nomeComercial;
 	
 	@ManyToMany(fetch=FetchType.LAZY)

@@ -71,7 +71,7 @@ public class ProdutoEdicaoController {
 	
 	@Post
 	@Path("/pesquisarEdicoes.json")
-	public void pesquisarEdicoes(String codigoProduto, String nomeProduto,
+	public void pesquisarEdicoes(String codigoProduto, String nomeComercial,
 			Date dataLancamentoDe, Date dataLancamentoAte, BigDecimal precoDe,BigDecimal precoAte , String situacaoLancamento,
 			String codigoDeBarras, boolean brinde,
             String sortorder, String sortname, int page, int rp) {
@@ -79,7 +79,7 @@ public class ProdutoEdicaoController {
 		Intervalo<Date> intervaloLancamento = null;
 		// Validar:
 		if ((codigoProduto == null || codigoProduto.trim().isEmpty()) 
-				|| (nomeProduto == null || nomeProduto.trim().isEmpty())) {
+				|| (nomeComercial == null || nomeComercial.trim().isEmpty())) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Por favor, preencha o campo 'Código' ou 'Produto'!");
 		}
 		if(dataLancamentoDe == null ^ dataLancamentoAte == null ){
@@ -108,9 +108,9 @@ public class ProdutoEdicaoController {
 		}		
 	
 		// Pesquisar:
-		Long qtd = peService.countPesquisarEdicoes(codigoProduto, nomeProduto, intervaloLancamento, intervaloPreco, statusLancamento, codigoDeBarras, brinde);
+		Long qtd = peService.countPesquisarEdicoes(codigoProduto, nomeComercial, intervaloLancamento, intervaloPreco, statusLancamento, codigoDeBarras, brinde);
 		if(qtd > 0){			
-			List<ProdutoEdicaoDTO> lst = peService.pesquisarEdicoes(codigoProduto, nomeProduto, intervaloLancamento, intervaloPreco, statusLancamento, codigoDeBarras, brinde, sortorder, sortname, page, rp);
+			List<ProdutoEdicaoDTO> lst = peService.pesquisarEdicoes(codigoProduto, nomeComercial, intervaloLancamento, intervaloPreco, statusLancamento, codigoDeBarras, brinde, sortorder, sortname, page, rp);
 			
 			this.result.use(FlexiGridJson.class).from(lst).total(qtd.intValue()).page(page).serialize();
 		}else{
@@ -185,7 +185,7 @@ public class ProdutoEdicaoController {
 		dto.setPossuiBrinde(possuiBrinde);
 		dto.setNumeroLancamento(numeroLancamento);
 		dto.setDescricaoBrinde(descricaoBrinde);
-		dto.setDescricaoProduto(descricaoProduto);
+		dto.setNomeComercial(descricaoProduto);
 		
 		ValidacaoVO vo = null;
 		 
