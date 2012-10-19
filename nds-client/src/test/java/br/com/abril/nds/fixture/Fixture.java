@@ -531,7 +531,6 @@ public class Fixture {
 			BigDecimal expectativaVenda, boolean parcial,String nomeComercial) {
 		
 		ProdutoEdicao produtoEdicao = new ProdutoEdicao();
-		produtoEdicao.setCodigo(codigoProdutoEdicao);
 		produtoEdicao.setNumeroEdicao(numeroEdicao);
 		produtoEdicao.setPacotePadrao(pacotePadrao);
 		produtoEdicao.setPeb(peb);
@@ -554,7 +553,6 @@ public class Fixture {
 			BigDecimal expectativaVenda, boolean parcial) {
 		
 		ProdutoEdicao produtoEdicao = new ProdutoEdicao();
-		produtoEdicao.setCodigo(codigoProdutoEdicao);
 		produtoEdicao.setNumeroEdicao(numeroEdicao);
 		produtoEdicao.setPacotePadrao(pacotePadrao);
 		produtoEdicao.setPeb(peb);

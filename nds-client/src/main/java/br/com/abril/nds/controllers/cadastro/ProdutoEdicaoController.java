@@ -401,7 +401,7 @@ public class ProdutoEdicaoController {
 			
 			produtoLancamentoVO = new DetalheProdutoVO(produtoEdicao.getId(),
 													   produtoEdicao.getProduto().getNome(),
-													   produtoEdicao.getCodigo(),
+													   produtoEdicao.getProduto().getCodigo(),
 										               (precoVenda!=null?CurrencyUtil.formatarValor(precoVenda):""),
 										               (precoComDesconto!=null?CurrencyUtil.formatarValor(precoComDesconto):""),
 										               (produtoEdicao.getProduto()!=null?(produtoEdicao.getProduto().getFornecedor()!=null?produtoEdicao.getProduto().getFornecedor().getJuridica().getNome():""):""),

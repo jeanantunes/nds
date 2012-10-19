@@ -55,10 +55,6 @@ public class ProdutoEdicao implements Serializable {
 	@Column(name = "ID")
 	protected Long id;
 	
-	//@Column(name = "CODIGO", nullable = false, unique = true)
-	@Column(name = "CODIGO", nullable = true, length=8)
-	protected String codigo;
-
 	@Column(name  = "CODIGO_DE_BARRAS", nullable = true, length=18)
 	protected String codigoDeBarras;
 	
@@ -459,20 +455,6 @@ public class ProdutoEdicao implements Serializable {
 	 */
 	public void setReparteDistribuido(BigInteger reparteDistribuido) {
 		this.reparteDistribuido = reparteDistribuido;
-	}
-
-	/**
-	 * @return the codigo
-	 */
-	public String getCodigo() {
-		return codigo;
-	}
-
-	/**
-	 * @param codigo the codigo to set
-	 */
-	public void setCodigo(String codigo) {
-		this.codigo = codigo;
 	}
 
 	/**

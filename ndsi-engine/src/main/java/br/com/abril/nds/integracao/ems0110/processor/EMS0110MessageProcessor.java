@@ -375,15 +375,6 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 					"Atualizacao do Codigo de Barra para: "
 							+ input.getCodBarra());
 		}
-		if (!edicao.getNumeroEdicao().equals(input.getEdicaoProd())) {
-
-			edicao.setNumeroEdicao(input.getEdicaoProd());
-			this.ndsiLoggerFactory.getLogger().logInfo(
-					message,
-					EventoExecucaoEnum.INF_DADO_ALTERADO,
-					"Atualizacao do Numero da Publicacao para: "
-							+ input.getEdicaoProd());
-		}
 		if (!edicao.getDataDesativacao().equals(input.getDataDesativacao())) {
 
 			edicao.setDataDesativacao(input.getDataDesativacao());

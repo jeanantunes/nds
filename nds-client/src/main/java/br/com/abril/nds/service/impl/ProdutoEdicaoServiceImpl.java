@@ -392,8 +392,8 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		 */
 		if (produtoEdicaoRepository.isProdutoEdicaoJaPublicada(produtoEdicao.getId())) {
 			
-			// Campo: Código do ProdutoEdicao:
-			if (produtoEdicao.getCodigo()!=null && !produtoEdicao.getCodigo().equals(dto.getCodigoProduto())) {
+
+			if (produtoEdicao.getProduto().getCodigo()!=null && !produtoEdicao.getProduto().getCodigo().equals(dto.getCodigoProduto())) {
 				throw new ValidacaoException(TipoMensagem.ERROR, 
 						"Não é permitido alterar o código de uma Edição já publicada!");
 			}
@@ -493,7 +493,6 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			// Campos exclusivos para o Distribuidor::
 			
 			// Identificação:
-			produtoEdicao.setCodigo(dto.getCodigoProduto());	// View: Codigo da Edição;
 			produtoEdicao.setNomeComercial(dto.getNomeComercialProduto());
 			produtoEdicao.setNumeroEdicao(dto.getNumeroEdicao());
 			produtoEdicao.setPacotePadrao(dto.getPacotePadrao());
