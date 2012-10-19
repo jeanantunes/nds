@@ -370,7 +370,7 @@ var contasAPagarController = $.extend(true, {
 			null,
 			function(result) {
 				contasAPagarController.montaTabelaTotaisDistribuidores($("#contasAPagar_table_popupEncalhe").get(0), result.totalDistrib);
-				$(".contasAPagar_EncalheGrid").flexAddData({rows: toFlexiGridObject(result.grid), page : 1, total : 1});
+				$(".contasAPagar_encalheGrid").flexAddData({rows: toFlexiGridObject(result.grid), page : 1, total : 1});
 			}
 		);
 		
@@ -844,7 +844,7 @@ var contasAPagarController = $.extend(true, {
 				align : 'right'
 			}, {
 				display : 'Preço c/ Desc. R$',
-				name : 'desconto',
+				name : 'precoComDesconto',
 				width : 95,
 				sortable : true,
 				align : 'right'
@@ -862,7 +862,7 @@ var contasAPagarController = $.extend(true, {
 				align : 'left'
 			}, {
 				display : 'Valor R$',
-				name : 'total',
+				name : 'valor',
 				width : 75,
 				sortable : true,
 				align : 'right',
