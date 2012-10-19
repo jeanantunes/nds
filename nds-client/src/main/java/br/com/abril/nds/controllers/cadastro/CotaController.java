@@ -957,7 +957,9 @@ public class CotaController {
 							   String logradouro, String bairro, String municipio,
 			 				   String sortname, int page, int rp){
 		
-		numeroCpfCnpj = numeroCpfCnpj.replace(".", "").replace("-", "").replace("/", "");
+		if (numeroCpfCnpj != null) {
+			numeroCpfCnpj = numeroCpfCnpj.replace(".", "").replace("-", "").replace("/", "");
+		}
 		
 		validarParametrosPesquisa(numCota,nomeCota,numeroCpfCnpj, logradouro, bairro, municipio);
 		
