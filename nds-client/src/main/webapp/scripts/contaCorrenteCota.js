@@ -40,10 +40,7 @@ var contaCorrenteCotaController = $.extend(true, {
 
 		var cota = $("#cota", contaCorrenteCotaController.workspace).val();
 		
-		var dadosPesquisa = 
-			"numeroCota=" 			+ cota;			
-		
-		//limparCampos();
+		var dadosPesquisa = {numeroCota:cota};
 		
 		$.postJSON(contextPath + "/financeiro/contaCorrenteCota/verificarContaCorrenteCotaExistente", 
 					   dadosPesquisa,

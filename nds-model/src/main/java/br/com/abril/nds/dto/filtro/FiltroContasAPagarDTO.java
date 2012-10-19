@@ -4,11 +4,13 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
+import br.com.abril.nds.vo.PaginacaoVO;
+
 public class FiltroContasAPagarDTO implements Serializable {
 
 	private static final long serialVersionUID = 5604665210912108694L;
 	
-	private boolean primeiraCarga; /** define se a flexigrid está sendo carregada pela primeira vez */
+	private boolean primeiraCarga; /** define se a flexigrid esta sendo carregada pela primeira vez */
 	
 	private Date dataDe;
 	private Date dataAte;
@@ -18,6 +20,9 @@ public class FiltroContasAPagarDTO implements Serializable {
 	
 	private	List <Long> produtoEdicaoIDs;
 	
+	private List<Long> idsFornecedores;
+	
+	private PaginacaoVO paginacaoVO;
 	
 	public boolean isPrimeiraCarga() {
 		return primeiraCarga;
@@ -61,10 +66,16 @@ public class FiltroContasAPagarDTO implements Serializable {
 	public void setProdutoEdicaoIDs(List<Long> produtoEdicaoIDs) {
 		this.produtoEdicaoIDs = produtoEdicaoIDs;
 	}
-
-	
-	
-	
-	
-
+	public List<Long> getIdsFornecedores() {
+		return idsFornecedores;
+	}
+	public void setIdsFornecedores(List<Long> idsFornecedores) {
+		this.idsFornecedores = idsFornecedores;
+	}
+	public PaginacaoVO getPaginacaoVO() {
+		return paginacaoVO;
+	}
+	public void setPaginacaoVO(PaginacaoVO paginacaoVO) {
+		this.paginacaoVO = paginacaoVO;
+	}
 }
