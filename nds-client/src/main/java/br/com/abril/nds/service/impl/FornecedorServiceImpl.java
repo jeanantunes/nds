@@ -341,9 +341,9 @@ public class FornecedorServiceImpl implements FornecedorService {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Filtro obrigatório para a pesquisa.");
 		}
 
-		if (filtroConsultaFornecedor.getCnpj() == null && filtroConsultaFornecedor.getCnpj().isEmpty() 
-				&& filtroConsultaFornecedor.getRazaoSocial() == null && filtroConsultaFornecedor.getRazaoSocial().isEmpty()
-				&& filtroConsultaFornecedor.getNomeFantasia() == null && filtroConsultaFornecedor.getNomeFantasia().isEmpty()) {
+		if ((filtroConsultaFornecedor.getCnpj() == null || filtroConsultaFornecedor.getCnpj().isEmpty()) 
+				&& (filtroConsultaFornecedor.getRazaoSocial() == null || filtroConsultaFornecedor.getRazaoSocial().isEmpty())
+				&& (filtroConsultaFornecedor.getNomeFantasia() == null || filtroConsultaFornecedor.getNomeFantasia().isEmpty())) {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Digite ao menos um filtro para realizar a pesquisa.");
 		}
