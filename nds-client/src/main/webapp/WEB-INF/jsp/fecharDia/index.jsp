@@ -352,26 +352,26 @@
       </tr>
       <tr>
         <td align="left" style="border-bottom:1px solid #ccc;">Lógico</td>
-        <td align="right" style="border-bottom:1px solid #ccc;">&nbsp;</td>
+        <td align="right" style="border-bottom:1px solid #ccc;"><div id="totalEncalheLogico"></div></td>
       </tr>
       <tr>
         <td width="130" align="left" style="border-bottom:1px solid #ccc;">Físico</td>
-        <td width="62" align="right" style="border-bottom:1px solid #ccc;">71.826,79</td>
+        <td width="62" align="right" style="border-bottom:1px solid #ccc;"><div id="totalEncalheFisico"></div></td>
       </tr>
       <tr>
         <td align="left" style="border-bottom:1px solid #ccc;">Juramentado</td>
-        <td align="right" style="border-bottom:1px solid #ccc;">71.789,79</td>
+        <td align="right" style="border-bottom:1px solid #ccc;"><div id="totalEncalheJuramentada"></div></td>
       </tr>
       <tr>
         <td align="left" style="border-bottom:1px solid #ccc;">Venda</td>
-        <td align="right" style="border-bottom:1px solid #ccc;"><a href="javascript:;" onclick="fecharDiaController.popup_vendasTot();">10.000,00</a></td>
+        <td align="right" style="border-bottom:1px solid #ccc;"><a href="javascript:;" onclick="fecharDiaController.popup_vendasTot();"><div id="vendaEncalhe"></div></a></td>
       </tr>
       <tr>
-        <td align="left" style="border-bottom:1px solid #ccc;">Sobras em</td>
+        <td align="left" style="border-bottom:1px solid #ccc;">Sobras</td>
         <td align="right" style="border-bottom:1px solid #ccc;">37,00</td>
       </tr>
       <tr>
-        <td align="left" style="border-bottom:1px solid #ccc;">Faltas em</td>
+        <td align="left" style="border-bottom:1px solid #ccc;">Faltas</td>
         <td align="right" style="border-bottom:1px solid #ccc;">37,00</td>
       </tr>
       <tr>
@@ -391,7 +391,7 @@
         </tr>
       <tr>
         <td width="109" align="left" style="border-bottom:1px solid #ccc;">Estoque Lógico</td>
-        <td width="103" align="right" style="border-bottom:1px solid #ccc;">505,47</td>
+        <td width="103" align="right" style="border-bottom:1px solid #ccc;"><div id="totalSuplementarEstoqueLogico"></div></td>
         </tr>
       <tr>
         <td align="left" style="border-bottom:1px solid #ccc;">Transferências</td>

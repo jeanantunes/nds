@@ -18,7 +18,9 @@ import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.FecharDiaService;
-import br.com.abril.nds.service.ResumoFecharDiaService;
+import br.com.abril.nds.service.ResumoEncalheFecharDiaService;
+import br.com.abril.nds.service.ResumoReparteFecharDiaService;
+import br.com.abril.nds.service.ResumoSuplementarFecharDiaService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.DateUtil;
@@ -37,7 +39,13 @@ public class FecharDiaController {
 	private FecharDiaService fecharDiaService;
 	
 	@Autowired
-	private ResumoFecharDiaService resumoFecharDiaService;
+	private ResumoReparteFecharDiaService resumoFecharDiaService;
+	
+	@Autowired
+	private ResumoEncalheFecharDiaService resumoEncalheFecharDiaService;
+	
+	@Autowired
+	private ResumoSuplementarFecharDiaService resumoSuplementarFecharDiaService;
 	
 	@Autowired
 	private DistribuidorService distribuidorService;
@@ -165,7 +173,10 @@ public class FecharDiaController {
 		
 		
 		lista = this.resumoFecharDiaService.obterValorTransferencia(distribuidor.getDataOperacao(), true);
-		BigDecimal totalTranferencia = lista.get(0).getTransferencias();
+		BigDecimal totalTranferencia = BigDecimal.ZERO;
+		if(lista.get(0).getTransferencias() != null){
+			totalTranferencia = lista.get(0).getTransferencias();			
+		}
 		listaDeResultados.add(totalTranferencia);
 		
 		
@@ -182,6 +193,42 @@ public class FecharDiaController {
 		listaDeResultados.add(diferenca);
 		
 		result.use(Results.json()).from(listaDeResultados, "result").serialize();
+	}
+	
+	@Post
+	@Path("obterResumoQuadroEncalhe")
+	public void obterResumoQuadroEncalhe(){
+		
+		List<BigDecimal> listaDeEncalhes = new ArrayList<BigDecimal>();
+		
+		BigDecimal totalLogico = this.resumoEncalheFecharDiaService.obterValorEncalheLogico(distribuidor.getDataOperacao());
+		listaDeEncalhes.add(totalLogico);
+		
+		BigDecimal totalFisico = this.resumoEncalheFecharDiaService.obterValorEncalheFisico(distribuidor.getDataOperacao(), false);
+		listaDeEncalhes.add(totalFisico);
+		
+		BigDecimal totalJuramentado = this.resumoEncalheFecharDiaService.obterValorEncalheFisico(distribuidor.getDataOperacao(), true);;
+		listaDeEncalhes.add(totalJuramentado);
+		
+		List<ReparteFecharDiaDTO> lista = this.resumoFecharDiaService.obterValorReparte(distribuidor.getDataOperacao(), true);
+		BigDecimal venda = lista.get(0).getValorTotalReparte().subtract(totalFisico) ;
+		listaDeEncalhes.add(venda);
+		
+		result.use(Results.json()).from(listaDeEncalhes, "result").recursive().serialize();
+		
+	}
+	
+
+	@Post
+	@Path("obterResumoQuadroSuplementar")
+	public void obterResumoQuadroSuplementar(){
+		
+		List<BigDecimal> listaDeSuplementares = new ArrayList<BigDecimal>();
+		
+		BigDecimal totalEstoqueLogico = this.resumoSuplementarFecharDiaService.obterValorEstoqueLogico(distribuidor.getDataOperacao());
+		listaDeSuplementares.add(totalEstoqueLogico);
+		
+		result.use(Results.json()).from(listaDeSuplementares, "result").recursive().serialize();
 	}
 	
 	@Post

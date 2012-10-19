@@ -13,10 +13,10 @@ import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
-import br.com.abril.nds.repository.ResumoFecharDiaRepository;
+import br.com.abril.nds.repository.ResumoReparteFecharDiaRepository;
 
 @Repository
-public class ResumoFecharDiaRepositoryImpl  extends AbstractRepository implements ResumoFecharDiaRepository {
+public class ResumoReparteFecharDiaRepositoryImpl  extends AbstractRepository implements ResumoReparteFecharDiaRepository {
 
 	@SuppressWarnings("unchecked")
 	@Override

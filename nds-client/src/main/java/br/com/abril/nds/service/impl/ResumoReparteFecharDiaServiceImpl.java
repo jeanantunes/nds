@@ -8,14 +8,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.ReparteFecharDiaDTO;
-import br.com.abril.nds.repository.ResumoFecharDiaRepository;
-import br.com.abril.nds.service.ResumoFecharDiaService;
+import br.com.abril.nds.repository.ResumoReparteFecharDiaRepository;
+import br.com.abril.nds.service.ResumoReparteFecharDiaService;
 
 @Service
-public class ResumoFecharDiaServiceImpl  implements ResumoFecharDiaService {
+public class ResumoReparteFecharDiaServiceImpl  implements ResumoReparteFecharDiaService {
 
 	@Autowired
-	private ResumoFecharDiaRepository resumoFecharDiaRepository;
+	private ResumoReparteFecharDiaRepository resumoFecharDiaRepository;
 	
 	@Override
 	@Transactional

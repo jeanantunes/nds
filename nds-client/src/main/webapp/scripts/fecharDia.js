@@ -407,7 +407,9 @@ var fecharDiaController =  $.extend(true, {
 				"Fechar": function() {
 					$( this ).dialog( "close" );
 					$(".grids").show();
-					fecharDiaController.iniciarResumo();
+					fecharDiaController.iniciarResumoReparte();
+					fecharDiaController.iniciarResumoEncalhe();
+					fecharDiaController.iniciarResumoSuplementar();
 				}
 			},
 			form: $("#dialog-processos", fecharDiaController.workspace).parents("form")
@@ -567,7 +569,7 @@ var fecharDiaController =  $.extend(true, {
 		}
 	},
 	
-	iniciarResumo : function(){
+	iniciarResumoReparte : function(){
 		
 		$.postJSON(contextPath + "/administracao/fecharDia/obterResumoQuadroReparte", null,
 				function(result){					
@@ -579,6 +581,25 @@ var fecharDiaController =  $.extend(true, {
 					$("#totalDistribuido").html(result[5]);
 					$("#totalSobraDistribuido").html(result[6]);
 					$("#totalDiferenca").html(result[7]);
+				}
+			);
+	},
+	
+	iniciarResumoEncalhe : function(){
+		$.postJSON(contextPath + "/administracao/fecharDia/obterResumoQuadroEncalhe", null,
+				function(result){
+					$("#totalEncalheLogico").html(result[0]);
+					$("#totalEncalheFisico").html(result[1]);
+					$("#totalEncalheJuramentada").html(result[2]);
+					$("#vendaEncalhe").html(result[3]);
+				}
+			);
+	},
+	
+	iniciarResumoSuplementar : function(){
+		$.postJSON(contextPath + "/administracao/fecharDia/obterResumoQuadroSuplementar", null,
+				function(result){
+					$("#totalSuplementarEstoqueLogico").html(result[0]);
 				}
 			);
 	}
