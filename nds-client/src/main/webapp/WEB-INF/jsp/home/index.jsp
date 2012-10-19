@@ -132,7 +132,10 @@
 							},
 							addTab : function(title, url, className) {
 								var self = this.element, o = this.options, add = true;
-								$("li", self).each(function() {
+								
+								var ulTabs = $("ul.ui-tabs-nav", self)[0];
+								
+								$("li", ulTabs).each(function() {
 									if ($("a", this).html() == title) {
 										var index = $("li", self).index(this);
 										self.tabs('select', index);
@@ -142,7 +145,7 @@
 								if (add) {									
 									tab = self.tabs('add', url, title);									
 									$span = $("<span>").addClass(className);
-									$('a:contains(' + title + ')', '#workspace').parent().prepend($span);
+									$('a:contains(' + title + ')', ulTabs).parent().prepend($span);
 									
 								}
 							},
@@ -292,6 +295,7 @@
 		
 	});
 	
+	//@ sourceURL=home.js
 	
 </script>
 

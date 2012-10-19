@@ -9,6 +9,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 import javax.servlet.http.HttpSession;
 
@@ -30,7 +31,7 @@ import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoFornecedor;
 import br.com.abril.nds.model.seguranca.Permissao;
-import br.com.abril.nds.serialization.custom.CustomMapJson;
+import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.PessoaJuridicaService;
 import br.com.abril.nds.service.TipoFornecedorService;
@@ -251,7 +252,15 @@ public class FornecedorController {
 			novoCodigoInterface = this.fornecedorService.obterMinCodigoInterfaceDisponivel();
 		}
 		
-		this.result.use(CustomMapJson.class).put("data", DateUtil.formatarDataPTBR(new Date())).put("nextCodigo", novoCodigoInterface).serialize();
+		Map<String, Object> mapa = new TreeMap<String, Object>(); 
+		
+		mapa.put("data", DateUtil.formatarDataPTBR(new Date()));
+		
+		if (novoCodigoInterface != null) {
+			mapa.put("nextCodigo", novoCodigoInterface);
+		}
+		
+		this.result.use(CustomJson.class).from(mapa).serialize();
 	}
 	
 	private void obterTiposFornecedor() {

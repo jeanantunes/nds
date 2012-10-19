@@ -1,6 +1,7 @@
 package br.com.abril.nds.service.impl;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -18,11 +19,9 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.Cota;
-import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.TipoAtividade;
 import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
-import br.com.abril.nds.model.cadastro.Cota;
-import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaCota;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
@@ -233,19 +232,22 @@ public class NotaFiscalEntradaServiceImpl implements NotaFiscalEntradaService {
 		
 		detalheNotaFiscalDTO.setItensDetalhados(itensDetalhados);
 		
-		double totalExemplares = 0.0;
-		double totalSumarizado = 0.0;
+		BigInteger totalExemplares = BigInteger.ZERO;
+		BigDecimal totalSumarizado = BigDecimal.ZERO;
+		
+		totalSumarizado = totalSumarizado.setScale(2, BigDecimal.ROUND_DOWN);
 		
 		for (DetalheItemNotaFiscalDTO item : itensDetalhados) {
 			
-			totalExemplares += 
-					item.getQuantidadeExemplares() == null ? 0.0 : item.getQuantidadeExemplares().doubleValue();
-			totalSumarizado += 
-					item.getPrecoVenda() == null ? 0.0 : item.getValorTotal().doubleValue();
+			totalExemplares = totalExemplares.add(item.getQuantidadeExemplares() == null ? BigInteger.ZERO : item.getQuantidadeExemplares());
+			totalSumarizado = totalSumarizado.add(item.getPrecoVenda() == null ? BigDecimal.ZERO : item.getValorTotal().setScale(2, BigDecimal.ROUND_DOWN));
+			/*if (item.getPrecoVenda() != null && item.getDesconto() != null) {
+				totalSumarizado = totalSumarizado.subtract(item.getValorTotal().multiply(item.getDesconto()));
+			}*/
 		}
 
-		detalheNotaFiscalDTO.setTotalExemplares(new BigDecimal(totalExemplares));
-		detalheNotaFiscalDTO.setValorTotalSumarizado(new BigDecimal(totalSumarizado));
+		detalheNotaFiscalDTO.setTotalExemplares(totalExemplares);
+		detalheNotaFiscalDTO.setValorTotalSumarizado(totalSumarizado);
 		
 		return detalheNotaFiscalDTO;
 	}

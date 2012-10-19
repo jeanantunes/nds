@@ -37,7 +37,7 @@ import br.com.abril.nds.model.fiscal.NotaFiscalEntradaCota;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
-import br.com.abril.nds.serialization.custom.CustomMapJson;
+import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.service.ConferenciaEncalheService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.exception.ChamadaEncalheCotaInexistenteException;
@@ -117,7 +117,7 @@ public class ConferenciaEncalheController {
 				
 			}
 			
-			this.result.use(CustomMapJson.class).put("boxes", mapBox).serialize();
+			this.result.use(CustomJson.class).from(mapBox, "boxes").serialize();
 
 			
 		} else {
@@ -265,7 +265,7 @@ public class ConferenciaEncalheController {
 		
 		this.calcularTotais(dados);
 		
-		result.use(CustomMapJson.class).put("result", dados).serialize();
+		result.use(CustomJson.class).from(dados, "result").serialize();
 	}
 	
 	/**
@@ -495,7 +495,7 @@ public class ConferenciaEncalheController {
 		
 		this.calcularTotais(dados);
 		
-		this.result.use(CustomMapJson.class).put("result", dados == null ? "" : dados).serialize();
+		this.result.use(CustomJson.class).from(dados == null ? "" : dados, "result").serialize();
 	}
 
 	@Post
@@ -535,7 +535,7 @@ public class ConferenciaEncalheController {
 		
 		this.calcularTotais(dados);
 		
-		this.result.use(CustomMapJson.class).put("result", dados == null ? "" : dados).serialize();
+		this.result.use(CustomJson.class).from(dados == null ? "" : dados, "result").serialize();
 		
 	}
 
@@ -810,7 +810,7 @@ public class ConferenciaEncalheController {
 			}
 
 			
-			this.result.use(CustomMapJson.class).put("result", dados).serialize();			
+			this.result.use(CustomJson.class).from(dados, "result").serialize();			
 			
 		} else {
 			
@@ -976,7 +976,7 @@ public class ConferenciaEncalheController {
 		
 		if(dadosNotaFiscal!=null) {
 
-			this.result.use(CustomMapJson.class).put("result", dadosNotaFiscal).serialize();
+			this.result.use(CustomJson.class).from(dadosNotaFiscal, "result").serialize();
 			
 		} else {
 
@@ -1033,7 +1033,7 @@ public class ConferenciaEncalheController {
 			
 			resultadoValidacao.put("mensagemConfirmacao", "Valor CE jornaleiro informado inválido, Deseja continuar?");
 			
-			this.result.use(CustomMapJson.class).put("result", resultadoValidacao).serialize();
+			this.result.use(CustomJson.class).from(resultadoValidacao, "result").serialize();
 
 		} else {
 
@@ -1074,13 +1074,13 @@ public class ConferenciaEncalheController {
 			
 			resultadoValidacao.put("mensagemConfirmacao", "Qtde total do encalhe difere da quantidade CE jornaleiro informado, Deseja continuar?");
 			
-			this.result.use(CustomMapJson.class).put("result", resultadoValidacao).serialize();
+			this.result.use(CustomJson.class).from(resultadoValidacao, "result").serialize();
 			
 		} else {
 
 			resultadoValidacao.put("valorCEInformadoValido", true);
 			
-			this.result.use(CustomMapJson.class).put("result", resultadoValidacao).serialize();
+			this.result.use(CustomJson.class).from(resultadoValidacao, "result").serialize();
 
 		}
 		
@@ -1109,13 +1109,13 @@ public class ConferenciaEncalheController {
 			
 			resultadoValidacao.put("mensagemConfirmacao", "Valor total do encalhe difere do valor CE jornaleiro informado, Deseja continuar?");
 			
-			this.result.use(CustomMapJson.class).put("result", resultadoValidacao).serialize();
+			this.result.use(CustomJson.class).from(resultadoValidacao, "result").serialize();
 			
 		} else {
 
 			resultadoValidacao.put("valorCEInformadoValido", true);
 			
-			this.result.use(CustomMapJson.class).put("result", resultadoValidacao).serialize();
+			this.result.use(CustomJson.class).from(resultadoValidacao, "result").serialize();
 
 		}
 		
@@ -1140,7 +1140,7 @@ public class ConferenciaEncalheController {
 				dados.put("desconto", p.getDesconto());
 			}
 			
-			this.result.use(CustomMapJson.class).put("result", dados).serialize();
+			this.result.use(CustomJson.class).from(dados, "result").serialize();
 			
 		} catch (ChamadaEncalheCotaInexistenteException e) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Não existe chamada de encalhe deste produto para essa cota.");

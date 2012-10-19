@@ -21,7 +21,7 @@ import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
-import br.com.abril.nds.serialization.custom.CustomMapJson;
+import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.FornecedorService;
@@ -156,7 +156,7 @@ public class GeracaoNFeController {
 		if (cotasSuspensas != null && !cotasSuspensas.isEmpty())
 			hasCotasSuspensas = true;
 		
-		result.use(CustomMapJson.class).put("cotasSuspensas", hasCotasSuspensas).serialize();
+		result.use(CustomJson.class).from(hasCotasSuspensas, "cotasSuspensas").serialize();
 	}
 	
 	@Post("/gerar.json")
@@ -179,7 +179,7 @@ public class GeracaoNFeController {
 			throw new ValidacaoException(TipoMensagem.WARNING, ioe.getMessage());
 		} 
 		
-		result.use(CustomMapJson.class).put("result", true).serialize();
+		result.use(CustomJson.class).from(true, "result").serialize();
 	}
 	
 	@Post("/transferirSuplementar.json")
@@ -187,7 +187,7 @@ public class GeracaoNFeController {
 		
 		//TODO
 		
-		result.use(CustomMapJson.class).put("result", true).serialize();
+		result.use(CustomJson.class).from(true, "result").serialize();
 	}
 	
 	public List<ItemDTO<Long, String>> carregarTipoNotaFiscal() {
