@@ -131,7 +131,7 @@ function Endereco(paramTela, paramMessage) {
 		
 		$.postJSON(
 			contextPath+'/cadastro/endereco/pesquisarEnderecos',
-			"tela=" + paramTela,
+			{tela:paramTela},
 			function(result) {
 				$("."+paramTela+"enderecosGrid", Endereco.workspace).flexAddData({
 					page: result.page, total: result.total, rows: result.rows
@@ -185,7 +185,7 @@ function Endereco(paramTela, paramMessage) {
 		$("#"+paramTela+"btnIncluirNovoEndereco", Endereco.workspace).removeClass("bt_add");
 		$("#"+paramTela+"btnIncluirNovoEndereco", Endereco.workspace).addClass("bt_novos");
 		
-		var data = "tela=" + paramTela +"&idEnderecoAssociacao=" + idEndereco;
+		var data = {tela:paramTela,idEnderecoAssociacao:idEndereco};
 		
 		$.postJSON(
 				contextPath+'/cadastro/endereco/editarEndereco',
@@ -216,7 +216,7 @@ function Endereco(paramTela, paramMessage) {
 		
 		var _this = this;
 		
-		var data = "tela=" + paramTela +"&idEnderecoAssociacao=" + idEndereco;
+		var data = {tela:paramTela,idEnderecoAssociacao:idEndereco};
 		
 		$.postJSON(
 			contextPath+'/cadastro/endereco/removerEndereco',

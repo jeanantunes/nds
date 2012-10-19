@@ -22,7 +22,7 @@ import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.serialization.custom.CustomJson;
-import br.com.abril.nds.serialization.custom.CustomMapJson;
+
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.FornecedorService;
@@ -188,7 +188,7 @@ public class GeracaoNFeController {
 		
 		//TODO
 		
-		result.use(CustomMapJson.class).put("result", true).serialize();
+		result.use(CustomJson.class).from(true, "result").serialize();
 	}
 	
 	public List<ItemDTO<Long, String>> carregarTipoNotaFiscal() {

@@ -32,6 +32,8 @@ var descontoDistribuidorController = $.extend(true,{
 		},
 
 		novoDescontoGeral:function () {
+
+			var descontoGeral = $("#descontoGeral",this.workspace).justPercent("floatValue");;
 			
 			var fornecedores = new Array();
 			
@@ -77,7 +79,7 @@ var descontoDistribuidorController = $.extend(true,{
 			
 			$("select[name='selectFornecedor']",this.workspace).multiSelect("select[name='selectFornecedorSelecionado']", {trigger: "#linkFornecedorEnviarTodos"});
 			
-			$("#descontoGeral",this.workspace).mask("99.99");
+			$("#descontoGeral",this.workspace).justPercent();
 			
 			$(".tiposDescGeralGrid",this.workspace).flexigrid({
 				preProcess: tipoDescontoController.executarPreProcessamento,

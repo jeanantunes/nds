@@ -2,6 +2,10 @@ package br.com.abril.nds.strategy.importacao;
 
 import java.io.File;
 
+import org.apache.poi.ss.formula.functions.T;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+
 import br.com.abril.nds.exception.ImportacaoException;
 import br.com.abril.nds.service.vo.RetornoImportacaoArquivoVO;
 
@@ -16,12 +20,4 @@ public interface ImportacaoArquivoStrategy {
 	 */
 	RetornoImportacaoArquivoVO processarImportacaoArquivo(File arquivo);
 	
-	/**
-	 * Efetua o processamento da importação do arquivo.
-	 * 
-	 * @param input - Objeto com os input para importação dos dados
-	 *  
-	 * @throws  ImportacaoException - lança exceptio caso ocorra algum erro de logica de inserção e alteração
-	 */
-	void processarImportacaoDados(Object input) throws ImportacaoException;
 }

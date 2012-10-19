@@ -7,6 +7,8 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -15,7 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.DividaGeradaVO;
-import br.com.abril.nds.client.vo.RotaRoteiroVO;
 import br.com.abril.nds.dto.GeraDividaDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.filtro.FiltroDividaGeradaDTO;
@@ -25,18 +26,16 @@ import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
-import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.Rota;
-import br.com.abril.nds.model.cadastro.Roteirizacao;
 import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
-import br.com.abril.nds.serialization.custom.CustomMapJson;
+import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.service.BoxService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.GerarCobrancaService;
@@ -241,7 +240,11 @@ public class ImpressaoBoletosController {
 			rotas = roteirizacaoService.buscarRotas();
 		}
 		
-		result.use(CustomMapJson.class).put("rotas", getRotas(rotas)).put("roteiros", getRoteiros(roteirosBox)).serialize();
+		Map<String, Object> mapa = new TreeMap<String, Object>();
+		mapa.put("rotas", getRotas(rotas));
+		mapa.put("roteiros", getRoteiros(roteirosBox));
+		
+		result.use(CustomJson.class).from(mapa).serialize();
 	}
 	
 	@Post
@@ -668,7 +671,7 @@ public class ImpressaoBoletosController {
 			isAcaoGeraDivida = false;
 		}
 		
-		result.use(CustomMapJson.class).put("isAcaoGeraDivida", isAcaoGeraDivida).serialize();
+		result.use(CustomJson.class).from(isAcaoGeraDivida, "isAcaoGeraDivida").serialize();
 	}
 	
 }

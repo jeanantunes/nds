@@ -115,7 +115,7 @@ var lancamentoController = $.extend(true, {
 		
 		$.postJSON(
 			contextPath + "/estoque/diferenca/lancamento/limparSessao", 
-			'confirmado=' + confirmado,
+			{confirmado:confirmado},
 			function(result) {
 
 				if (!result.confirmado) {
