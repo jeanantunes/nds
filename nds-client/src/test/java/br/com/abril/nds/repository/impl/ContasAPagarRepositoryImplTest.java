@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository.impl;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -59,5 +60,12 @@ public class ContasAPagarRepositoryImplTest extends AbstractRepositoryImplTest {
 				this.contasAPagarRepository.pesquisarPorDistribuidor(filtroContasAPagarDTO);
 		
 		Assert.assertNotNull(lista);
+	}
+	
+	@Test
+	public void testBuscarTotalPesquisarPorDistribuidor(){
+		
+		BigDecimal a = this.contasAPagarRepository.buscarTotalPesquisarPorDistribuidor(this.getFiltroPesquisaPorDistribuidor(), false);
+		System.out.println(a);
 	}
 }
