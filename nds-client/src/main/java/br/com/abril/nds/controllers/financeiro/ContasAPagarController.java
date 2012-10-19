@@ -143,10 +143,6 @@ public class ContasAPagarController {
 		for (ContasAPagarParcialDTO dto : flexiDTO.getGrid()) {
 			listVO.add(new ContasAPagarParcialVO(dto));
 		}
-
-
-		result.use(FlexiGridJson.class).from(listVO).total(flexiDTO.getTotalGrid()).serialize();
-
 		
 		result.use(FlexiGridJson.class).from(listVO).total(flexiDTO.getTotalGrid()).page(page).serialize();
 
@@ -306,11 +302,26 @@ public class ContasAPagarController {
 		// TODO
 	}
 	
+	
 	@Path("/exportPesquisarDetalheFaltasSobras")
 	public void exportPesquisarDetalheFaltasSobras(FileType fileType) throws IOException {
 		
-		// TODO
+		FiltroContasAPagarDTO filtro = (FiltroContasAPagarDTO) session.getAttribute(FILTRO_CONTAS_A_PAGAR);
+		
+		ContasAPagarTotalDistribDTO<ContasAPagarFaltasSobrasDTO> dto = contasAPagarService.pesquisarDetalheFaltasSobras(filtro, null, null, 0, 0);
+
+		List <ContasAPagarFaltasSobrasVO> listVO = new ArrayList<ContasAPagarFaltasSobrasVO>();
+		
+		for (ContasAPagarFaltasSobrasDTO to : dto.getGrid()) {
+			listVO.add(new ContasAPagarFaltasSobrasVO(to));
+		}
+		
+		FileExporter.to("faltas-sobras", fileType).inHTTPResponse(this.getNDSFileHeader(new Date()), null, null,
+				listVO, ContasAPagarFaltasSobrasVO.class, this.httpServletResponse);
+		
+		result.use(Results.nothing());
 	}
+	
 	
 	private NDSFileHeader getNDSFileHeader(Date data) {
 

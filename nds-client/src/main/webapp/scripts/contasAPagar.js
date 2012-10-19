@@ -77,6 +77,7 @@ var contasAPagarController = $.extend(true, {
 	
 		var params = $("#contasAPagarForm", this.workspace).serializeObject();
 		
+		
 		if ($("#contasAPagarRadioDistribuidor").get(0).checked) {
 			this.pesquisarPorFornecedor(params);	
 		} 
