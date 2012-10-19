@@ -283,7 +283,7 @@ public class ContasAPagarController {
 			listVO.add(new ContasAPagarParcialVO(dto));
 		}
 		
-		FileExporter.to("detalhe-consignado", fileType).inHTTPResponse(this.getNDSFileHeader(new Date()), null, null,
+		FileExporter.to("detalhe-parcial", fileType).inHTTPResponse(this.getNDSFileHeader(new Date()), null, null,
 						listVO, ContasAPagarParcialVO.class, 
 						this.httpServletResponse);
 		
@@ -316,7 +316,7 @@ public class ContasAPagarController {
 			listVO.add(new ContasAPagarFaltasSobrasVO(to));
 		}
 		
-		FileExporter.to("faltas-sobras", fileType).inHTTPResponse(this.getNDSFileHeader(new Date()), null, null,
+		FileExporter.to("detalhe-faltas-sobras", fileType).inHTTPResponse(this.getNDSFileHeader(new Date()), null, null,
 				listVO, ContasAPagarFaltasSobrasVO.class, this.httpServletResponse);
 		
 		result.use(Results.nothing());

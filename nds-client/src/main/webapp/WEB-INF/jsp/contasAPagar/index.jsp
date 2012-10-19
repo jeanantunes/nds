@@ -227,8 +227,10 @@
 	<fieldset style="width:800px!important;">
     	<legend><span id="contasAPagar_legend_popupFaltasSobras"></span></legend>
         <table class="contasAPagar_faltasSobrasGrid"></table>
-        <span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="../images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
-		<span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="../images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
+        
+	<span class="bt_arquivo"><a href="${pageContext.request.contextPath}/financeiro/contasAPagar/exportPesquisarDetalheFaltasSobras?fileType=XLS">Arquivo</a></span>
+	<span class="bt_imprimir"><a href="${pageContext.request.contextPath}/financeiro/contasAPagar/exportPesquisarDetalheFaltasSobras?fileType=PDF">Imprimir</a></span>
+		
 		<table id="contasAPagar_table_popupFaltasSobras" width="180" border="0" cellspacing="2" cellpadding="2" style="float:right; margin-top: 7px;"></table>
         <table width="109" border="0" cellspacing="2" cellpadding="2"  style="float:right; margin-top: 7px;">
 			<tr><td><strong>Total R$:</strong></td></tr>
