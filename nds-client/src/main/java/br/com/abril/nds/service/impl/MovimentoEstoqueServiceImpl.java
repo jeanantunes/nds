@@ -481,8 +481,8 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 	@Transactional
 	public void processarRegistroHistoricoVenda(HistoricoVendaInput vendaInput) {
 		
-		Integer reparte = vendaInput.getQuantidadeRecebidaProduto();
-		Integer encalhe = vendaInput.getQuantidadeDevolvidaProduto();
+		Integer reparte = vendaInput.getQtdReparte();
+		Integer encalhe = vendaInput.getQtdEncalhe();
 		
 		ProdutoEdicao edicao = produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(
 				vendaInput.getCodigoProduto().toString(), vendaInput.getNumeroEdicao().longValue());

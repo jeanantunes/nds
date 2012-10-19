@@ -5,15 +5,27 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.sql.Date;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map.Entry;
 import java.util.Scanner;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.codehaus.jackson.map.MappingIterator;
+import org.apache.poi.ss.formula.functions.T;
+
 import org.springframework.transaction.annotation.Transactional;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.MappingIterator;
+import com.fasterxml.jackson.dataformat.csv.CsvMapper;
+import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 
 import br.com.abril.nds.exception.ImportacaoException;
 import br.com.abril.nds.service.vo.RetornoImportacaoArquivoVO;
+import br.com.abril.nds.strategy.importacao.input.HistoricoVendaInput;
 
 /**
  *
@@ -22,7 +34,7 @@ import br.com.abril.nds.service.vo.RetornoImportacaoArquivoVO;
  * @author Discover Technology
  *
  */
-public abstract class ImportacaoAbstractStrategy {
+public abstract class ImportacaoAbstractStrategy<T> {
 
 	private static final Logger logger = Logger.getLogger(ImportacaoAbstractStrategy.class);
 
@@ -39,133 +51,53 @@ public abstract class ImportacaoAbstractStrategy {
 	 */	
 	protected abstract void processarDados(Object input);
 
-	/**
-	 *
-	 * Efetua o parse da linha do arquivo em um objeto
-	 *
-	 * @param linha - linha do arquivo
-	 * @return Object
-	 */
-	protected abstract Object parseDados(String linha);
 
-	/**
-	 * Efetua o processamento do arquivo informado
-	 *
-	 * @param arquivo - arquivo a ser importado
-	 * @return RetornoImportacaoArquivoVO
-	 */
-	protected RetornoImportacaoArquivoVO processarArquivo(File arquivo){
-
-		dataCriacaoArquivo = new Date(arquivo.lastModified());
-
-		FileReader in = null;
-		try {
-			in = new FileReader(arquivo);
-		} catch (FileNotFoundException ex) {
-			logger.fatal("Erro na leitura de arquivo", ex);
-			throw new ImportacaoException(ex.getMessage());
-		}
-
-		Scanner scanner = new Scanner(in);
-		int linhaArquivo = 0;
-
-		while (scanner.hasNextLine()) {
-
-			String linha = scanner.nextLine();
-			linhaArquivo++;
-
-			// Ignora linha vazia e aquele caracter estranho em formato de seta para direita
-			if (StringUtils.isEmpty(linha) ||  ((int) linha.charAt(0)  == 26) ) {
-				continue;
-			}
-
-			try {
-
-				Object  input = parseDados(linha);
-
-				processarDados(input);
-
-			} catch (ImportacaoException e) {
-
-				RetornoImportacaoArquivoVO retorno = new RetornoImportacaoArquivoVO(new String[]{e.getMessage()},linhaArquivo,linha,false);
-				logger.error(retorno.toString());
-				//return retorno;
-			}
-		}
-
-		try {
-			in.close();
-		} catch (IOException e) {
-			logger.fatal("Erro na leitura de arquivo", e);
-			throw new ImportacaoException(e.getMessage());
-		}
-
-		return new RetornoImportacaoArquivoVO(true) ;
-	}
 	
 	
-	protected RetornoImportacaoArquivoVO processarArquivo2(File arquivo){
+	protected RetornoImportacaoArquivoVO processarArquivo(File arquivo, Class<T> clazz){
 	// simple filtering of properties (build, description)
 		dataCriacaoArquivo = new Date(arquivo.lastModified());
-
-		FileReader in = null;
+				
+		CsvMapper mapper = new CsvMapper();		
+		CsvSchema schema = mapper
+				.schemaFor(clazz)
+				.withColumnSeparator(';');
+		
+		  
+		MappingIterator<Entry> it;
 		try {
-			in = new FileReader(arquivo);
-		} catch (FileNotFoundException ex) {
+			it = mapper
+				    .reader(clazz)
+				    .with(schema)				    
+				    .readValues(arquivo);
+		
+			int linhaArquivo = 0;
+		
+			while (it.hasNextValue()) {
+				linhaArquivo++;
+				try {
+					
+					Object input = it.nextValue();
+					processarDados((T)input);
+
+				} catch (ImportacaoException e) {
+
+					RetornoImportacaoArquivoVO retorno = new RetornoImportacaoArquivoVO(
+							new String[]{
+									e.getMessage()}
+									, linhaArquivo
+									, it.toString()
+									, false
+								);
+					logger.error(retorno.toString());
+					//return retorno;
+				}
+			}
+		} catch (IOException ex) {
 			logger.fatal("Erro na leitura de arquivo", ex);
 			throw new ImportacaoException(ex.getMessage());
-		}
+		} 		
 
-		Scanner scanner = new Scanner(in);
-		int linhaArquivo = 0;
-
-		while (scanner.hasNextLine()) {
-
-			String linha = scanner.nextLine();
-			linhaArquivo++;
-
-			// Ignora linha vazia e aquele caracter estranho em formato de seta para direita
-			if (StringUtils.isEmpty(linha) ||  ((int) linha.charAt(0)  == 26) ) {
-				continue;
-			}
-
-			try {
-
-				Object  input = parseDados(linha);
-
-				processarDados(input);
-
-			} catch (ImportacaoException e) {
-
-				RetornoImportacaoArquivoVO retorno = new RetornoImportacaoArquivoVO(new String[]{e.getMessage()},linhaArquivo,linha,false);
-				logger.error(retorno.toString());
-				//return retorno;
-			}
-		}
-
-		try {
-			in.close();
-		} catch (IOException e) {
-			logger.fatal("Erro na leitura de arquivo", e);
-			throw new ImportacaoException(e.getMessage());
-		}
-
-		/*
-		CsvMapper mapper = new CsvMapper();
-		CsvSchema schema = mapper.schemaFor(User.class);
-		  
-		CsvMapper mapper = new CsvMapper();
-		MappingIterator<Entry> it = mapper
-			    .reader(User.class)
-			    .with(schema)
-			    .readValues(new File("Users.csv"());
-		List<User> users = new ArrayList<User>();
-		while (it.hasNextValue()) {
-			User user = it.nextValue();
-			// do something?
-			list.add(user);
-		}
- 			*/	  
 		return new RetornoImportacaoArquivoVO(true) ;
 	}
 }
