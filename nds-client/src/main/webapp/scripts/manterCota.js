@@ -282,7 +282,7 @@ var MANTER_COTA = $.extend(true, {
         MANTER_COTA.fecharModalCadastroCota = false;
 
         $.postJSON(contextPath + "/cadastro/cota/editar",
-            "idCota="+idCota,
+            {idCota:idCota},
             function(result){
 
                 if(result){
@@ -304,7 +304,7 @@ var MANTER_COTA = $.extend(true, {
     excluir:function(idCota){
 
         $.postJSON(contextPath + "/cadastro/cota/excluir",
-            "idCota="+idCota,
+        		{idCota:idCota},
             function(){
                 MANTER_COTA.pesquisar();
             }
@@ -334,7 +334,7 @@ var MANTER_COTA = $.extend(true, {
 
         $.postJSON(
             contextPath + "/cadastro/cota/salvarEnderecos",
-            "idCota="+ MANTER_COTA.idCota,
+            {idCota:MANTER_COTA.idCota},
             null,
             null,
             true
@@ -346,7 +346,7 @@ var MANTER_COTA = $.extend(true, {
 
         $.postJSON(
             contextPath + "/cadastro/cota/salvarTelefones",
-            "idCota="+ MANTER_COTA.idCota,
+            {idCota:MANTER_COTA.idCota},
             MANTER_COTA.carregarTelefones,
             null,
             true
@@ -532,7 +532,7 @@ var MANTER_COTA = $.extend(true, {
 
             $.postJSON(
                 contextPath + "/cadastro/cota/validarNumeroCotaHistoricoBase",
-                "&numeroCota="+ $(idCampoNumeroCota, this.workspace).val(),
+                {numeroCota:$(idCampoNumeroCota, this.workspace).val()},
                 null,
                 function(){
                     $(idCampoNumeroCota, this.workspace).focus();
@@ -563,7 +563,7 @@ var MANTER_COTA = $.extend(true, {
         if (nomeLogra && nomeLogra.length > 2) {
 
             $.postJSON(
-                contextPath + "/cadastro/endereco/pesquisarLogradouros", "nomeLogradouro=" + nomeLogra,
+                contextPath + "/cadastro/endereco/pesquisarLogradouros", {nomeLogradouro:nomeLogra},
                 function(result) {
                     MANTER_COTA.exibirAutoComplete(result, idCampoPesquisa);
                 }
@@ -582,7 +582,7 @@ var MANTER_COTA = $.extend(true, {
         if (nomeBairro && nomeBairro.length > 2) {
 
             $.postJSON(
-                contextPath + "/cadastro/endereco/pesquisarBairros", "nomeBairro=" + nomeBairro,
+                contextPath + "/cadastro/endereco/pesquisarBairros", {nomeBairro:nomeBairro},
                 function(result) {
                     MANTER_COTA.exibirAutoComplete(result, idCampoPesquisa);
                 }
@@ -652,7 +652,7 @@ var MANTER_COTA = $.extend(true, {
         if (nomeMunicipio && nomeMunicipio.length > 2) {
 
             $.postJSON(
-                contextPath + "/cadastro/endereco/pesquisarLocalidades", "nomeLocalidade=" + nomeMunicipio,
+                contextPath + "/cadastro/endereco/pesquisarLocalidades", {nomeLocalidade:nomeMunicipio},
                 function(result) {
                     MANTER_COTA.exibirAutoComplete(result, idCampoPesquisa);
                 }
@@ -951,16 +951,19 @@ var COTA_FORNECEDOR = $.extend(true, {
 
     salvarFornecedores: function(){
 
-        var fornecedores ="";
+        var fornecedores = new Array();
 
         $("#selectFornecedorSelecionado_option_cnpj option", this.workspace).each(function (index) {
-            fornecedores = fornecedores + "fornecedores["+index+"]="+ $(this, this.workspace).val() +"&";
+            fornecedores.push($(this, this.workspace).val());
         });
+        
+        var param = {idCota:MANTER_COTA.idCota};
+        
+        param = serializeArrayToPost('fornecedores', fornecedores, param)
 
         $.postJSON(
             contextPath + "/cadastro/cota/salvarFornecedores",
-            fornecedores +
-                "idCota="+ MANTER_COTA.idCota,
+            param,
             null,
             function(mensagens){
 
@@ -1188,7 +1191,7 @@ var COTA_CNPJ = $.extend(true, {
     carregarDadosCNPJ: function(idCampo){
 
         $.postJSON(contextPath + "/cadastro/cota/obterDadosCNPJ",
-            "numeroCnpj="+$(idCampo, this.workspace).val() ,
+            {numeroCnpj:+$(idCampo, this.workspace).val()} ,
             function(result){
 
                 if (result.email){$("#email", this.workspace).val(result.email);}
@@ -1366,7 +1369,7 @@ var COTA_CPF = $.extend(true, {
     carregarDadosCPF: function(idCampo){
 
         $.postJSON(contextPath + "/cadastro/cota/obterDadosCPF",
-            "numeroCPF="+$(idCampo, this.workspace).val() ,
+            {numeroCPF:$(idCampo, this.workspace).val()} ,
             function(result){
 
                 if(result.email)$("#emailCPF", this.workspace).val(result.email);
@@ -1593,7 +1596,7 @@ var SOCIO_COTA = $.extend(true, {
     salvarSocios:function(){
 
         $.postJSON(contextPath + "/cadastro/cota/confirmarSocioCota",
-            "idCota=" + MANTER_COTA.idCota,
+            {idCota:MANTER_COTA.idCota},
             function(mensagens) {
 
                 if (mensagens) {
