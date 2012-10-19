@@ -13,6 +13,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.dto.BandeirasDTO;
 import br.com.abril.nds.dto.CotaEmissaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroEmissaoCE;
 import br.com.abril.nds.fixture.Fixture;
@@ -44,6 +45,7 @@ import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.ChamadaEncalheRepository;
+import br.com.abril.nds.util.Intervalo;
 
 public class ChamadaEncalheRepositoryImplTest extends AbstractRepositoryImplTest {
 	
@@ -231,13 +233,19 @@ public class ChamadaEncalheRepositoryImplTest extends AbstractRepositoryImplTest
 		fornecedores.add(1L);
 		filtro.setFornecedores(fornecedores);
 		
-		try {
-			List<CotaEmissaoDTO> lista =  chamadaEncalheRepository.obterDadosEmissaoChamadasEncalhe(filtro);
+		List<CotaEmissaoDTO> lista =  chamadaEncalheRepository.obterDadosEmissaoChamadasEncalhe(filtro);
 		
+	}
+	
+	@Test
+	public void obterBandeirasNoIntervalo() {
+
+		Intervalo<Date> intervalor = new Intervalo<Date>(
+				Fixture.criarData(1, 1, 2000),
+				Fixture.criarData(1, 1, 2020));
+		
+		List<BandeirasDTO> lista = chamadaEncalheRepository.obterBandeirasNoIntervalo(intervalor);
 				
-			Assert.assertTrue(1!= 1+1);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		Assert.assertEquals(lista.size(), 10);
 	}
 }

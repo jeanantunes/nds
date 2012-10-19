@@ -8,8 +8,10 @@ import org.hibernate.FetchMode;
 import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanResultTransformer;
+import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.dto.BandeirasDTO;
 import br.com.abril.nds.dto.CapaDTO;
 import br.com.abril.nds.dto.CotaEmissaoDTO;
 import br.com.abril.nds.dto.ProdutoEmissaoDTO;
@@ -20,6 +22,7 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.repository.ChamadaEncalheRepository;
+import br.com.abril.nds.util.Intervalo;
 
 @Repository
 public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<ChamadaEncalhe,Long> implements ChamadaEncalheRepository{
@@ -417,5 +420,32 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 			return null;
 		
 		return (Date) result.get(0);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<BandeirasDTO> obterBandeirasNoIntervalo(
+			Intervalo<Date> intervalo) {
+	
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select produtoEdicao.codigo as codProduto, ")
+			.append(" produto.descricao as nomeProduto, ")
+			.append(" produtoEdicao.numeroEdicao as edProduto, ")
+			.append(" produtoEdicao.pacotePadrao as pctPadrao ")
+			.append(" from ChamadaEncalhe chamadaEncalhe ")
+			.append(" join chamadaEncalhe.produtoEdicao produtoEdicao ")
+			.append(" join produtoEdicao.produto produto ")
+			.append(" where chamadaEncalhe.dataRecolhimento >= :dataDe ")
+			.append(" and chamadaEncalhe.dataRecolhimento <= :dataAte ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		query.setParameter("dataDe", intervalo.getDe());
+		query.setParameter("dataAte", intervalo.getAte());
+		
+		query.setResultTransformer(Transformers.aliasToBean(BandeirasDTO.class));
+		
+		return query.list();
 	}
 }
