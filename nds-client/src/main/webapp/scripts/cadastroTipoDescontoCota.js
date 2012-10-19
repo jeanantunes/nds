@@ -6,7 +6,7 @@ var descontoCotaController = $.extend(true,{
 		$("#selectFornecedor_option_especifico",this.workspace).clear();
 		
 		$("#numCotaEspecifico",this.workspace).val("");
-		$("#descontoEspecifico",this.workspace).val("");
+		$("#descontoEspecifico",this.workspace).justPercent("floatValue");
 		$("#descricaoCotaEspecifico",this.workspace).val("");
 		
 		$( "#dialog-especifico",this.workspace ).dialog({
@@ -33,7 +33,7 @@ var descontoCotaController = $.extend(true,{
 	novoDescontoEspecifico:function() {
 		
 		var cotaEspecifica = $("#numCotaEspecifico",this.workspace).val();
-		var descontoEspecifico = $("#descontoEspecifico",this.workspace).val();
+		var descontoEspecifico = $("#descontoEspecifico",this.workspace).justPercent("floatValue");
 		
 		var fornecedores = new Array();
 		
@@ -115,7 +115,7 @@ var descontoCotaController = $.extend(true,{
 		
 		$("select[name='selectFornecedor_especifico']",this.workspace).multiSelect("select[name='selectFornecedorSelecionado_especifico']", {trigger: "#linkFornecedorEnviarTodos_especifico"});
 		
-		$("#descontoEspecifico",this.workspace).mask("99.99");
+		$("#descontoEspecifico",this.workspace).justPercent();
 		
 		$(".tiposDescEspecificoGrid",this.workspace).flexigrid({
 			preProcess: tipoDescontoController.executarPreProcessamento,

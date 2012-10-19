@@ -6,6 +6,8 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -29,7 +31,7 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.TipoVendaEncalhe;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
-import br.com.abril.nds.serialization.custom.CustomMapJson;
+import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
@@ -176,7 +178,7 @@ public class VendaEncalheController {
 			codBox = cota.getBox().getCodigo() + " - " + cota.getBox().getNome(); 
 		}
 		
-		result.use(CustomMapJson.class).put("box", codBox).serialize();
+		result.use(CustomJson.class).from(codBox, "box").serialize();
 	}
 	
 	@Post
@@ -188,7 +190,11 @@ public class VendaEncalheController {
 		
 		BigDecimal total = CurrencyUtil.converterValor(precoProduto).multiply((new BigDecimal(qntSolicitada)));
 		
-		result.use(CustomMapJson.class).put("totalFormatado", CurrencyUtil.formatarValor(total)).put("total",total).serialize();
+		Map<String, Object> mapa = new TreeMap<String, Object>();
+		mapa.put("totalFormatado", CurrencyUtil.formatarValor(total));
+		mapa.put("total",total);
+		
+		result.use(CustomJson.class).from(mapa).serialize();
 	}
 	
 	@Post
@@ -207,9 +213,12 @@ public class VendaEncalheController {
 			dataVencimentoDebito = DateUtil.adicionarDias(dataVencimentoDebito,qntDias);
 		} 
 		
-		result.use(CustomMapJson.class)
-				.put("data", DateUtil.formatarDataPTBR(new Date()))
-				.put("dataVencimentoDebito",DateUtil.formatarDataPTBR(dataVencimentoDebito))
+		Map<String, Object> mapa = new TreeMap<String, Object>();
+		mapa.put("data", DateUtil.formatarDataPTBR(new Date()));
+		mapa.put("dataVencimentoDebito",DateUtil.formatarDataPTBR(dataVencimentoDebito));
+		
+		result.use(CustomJson.class)
+				.from(mapa)
 				.serialize();
 	}
 	
@@ -227,7 +236,7 @@ public class VendaEncalheController {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Produto não possui itens em estoque para venda!");
 		}
 		
-		result.use(CustomMapJson.class).put("produto", getVendaEncalheVO(encalheDTO)).serialize();
+		result.use(CustomJson.class).from(getVendaEncalheVO(encalheDTO), "produto").serialize();
 	}
 	
 	@Post
@@ -239,7 +248,14 @@ public class VendaEncalheController {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Produto com o código de barras \""+codBarra+"\" não encontrado!");
 		}
 		
-		result.use(CustomMapJson.class).put("codigoProduto", produtoEdicao.getProduto().getCodigo()).put("nuemroEdicao", produtoEdicao.getNumeroEdicao()).serialize();
+		Map<String, Object> mapa = new TreeMap<String, Object>();
+		
+		if (produtoEdicao.getProduto() != null) {
+			mapa.put("codigoProduto", produtoEdicao.getProduto().getCodigo());
+		}
+		mapa.put("nuemroEdicao", produtoEdicao.getNumeroEdicao());
+		
+		result.use(CustomJson.class).from(mapa).serialize();
 	}
 	
 	@Post

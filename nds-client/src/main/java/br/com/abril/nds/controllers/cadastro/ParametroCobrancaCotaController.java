@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletResponse;
@@ -36,7 +38,7 @@ import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
 import br.com.abril.nds.model.cadastro.TipoParametroSistema;
-import br.com.abril.nds.serialization.custom.CustomMapJson;
+import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.serialization.custom.PlainJSONSerialization;
 import br.com.abril.nds.service.BancoService;
 import br.com.abril.nds.service.CotaService;
@@ -465,7 +467,17 @@ public class ParametroCobrancaCotaController {
 				this.result.include("fileName", fileName);
 			}
 			
-			result.use(CustomMapJson.class).put("fileName", fileName).put("isRecebido",  contrato.isRecebido()).serialize();
+			Map<String, Object> mapa = new TreeMap<String, Object>();
+			
+			if (fileName != null) {
+				mapa.put("fileName", fileName);
+			}
+			
+			if (contrato != null) {
+				mapa.put("isRecebido",  contrato.isRecebido());
+			}
+			
+			result.use(CustomJson.class).from(mapa).serialize();
 		} else {
 			this.result.nothing();
 		}
