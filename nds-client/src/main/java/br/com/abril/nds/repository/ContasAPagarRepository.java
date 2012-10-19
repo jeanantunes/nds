@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import br.com.abril.nds.dto.ContasApagarConsultaPorDistribuidorDTO;
@@ -18,4 +19,7 @@ public interface ContasAPagarRepository {
 	 * @return List<ContasApagarConsultaPorProdutoDTO>
 	 */
 	List<ContasApagarConsultaPorProdutoDTO> pesquisarPorProduto(FiltroContasAPagarDTO filtro);
+
+	BigDecimal buscarTotalPesquisarPorDistribuidor(
+			FiltroContasAPagarDTO filtro, boolean desconto);
 }
