@@ -14,7 +14,7 @@ var negociacaoDividaController = $.extend(true, {
 		$(".grids", this.workspace).hide();
 		
 		$.postJSON(contextPath + '/cadastro/cota/pesquisarPorNumero',
-				"numeroCota=" + numeroCota, 
+				{numeroCota:numeroCota}, 
 				function(result) {
 					$('#negociacaoDivida_statusCota').html(result.status);
 					$('#negociacaoDivida_nomeCota').html(result.nome);
