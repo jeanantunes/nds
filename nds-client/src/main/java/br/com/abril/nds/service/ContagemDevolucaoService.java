@@ -27,5 +27,7 @@ public interface ContagemDevolucaoService {
 	public List<ContagemDevolucaoDTO> obterContagemDevolucaoEdicaoFechada(
 			boolean checkAll, List<ProdutoEdicaoFechadaVO> listaEdicoesFechadas, FiltroDigitacaoContagemDevolucaoDTO filtro);
 	
+	public byte[] gerarCEDevolucao();
+	
 	
 }

@@ -1,14 +1,46 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="CE_Devolucao_Fornecedor" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="BlankPage" columnWidth="814" leftMargin="14" rightMargin="14" topMargin="6" bottomMargin="6">
-	<property name="ireport.zoom" value="1.5"/>
-	<property name="ireport.x" value="303"/>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="CE_Devolucao_Fornecedor" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="BlankPage" columnWidth="814" leftMargin="14" rightMargin="14" topMargin="6" bottomMargin="6" isSummaryNewPage="true">
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="841"/>
 	<property name="ireport.y" value="0"/>
-	<style name="zebrado">
-		<conditionalStyle>
-			<conditionExpression><![CDATA[$V{REPORT_COUNT}%2 == 1]]></conditionExpression>
-			<style backcolor="#CCCCCC"/>
-		</conditionalStyle>
-	</style>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["C:\\workspace\\NDS\\nds-client\\src\\main\\resources\\reports\\"]]></defaultValueExpression>
+	</parameter>
+	<field name="numeroDocumento" class="java.lang.Long"/>
+	<field name="identificacao.tipoCE" class="java.lang.String"/>
+	<field name="identificacao.dataVencimento" class="java.util.Date"/>
+	<field name="identificacao.codigo" class="java.lang.Long"/>
+	<field name="identificacao.numeroCE" class="java.lang.Long"/>
+	<field name="identificacao.dataEmissao" class="java.util.Date"/>
+	<field name="identificacao.numeroSemana" class="java.lang.Integer"/>
+	<field name="identificacao.controle" class="java.lang.Long"/>
+	<field name="identificacao.dataLimiteChegada" class="java.util.Date"/>
+	<field name="identificacao.codigoNaturezaOperacao" class="java.lang.String"/>
+	<field name="identificacao.descricaoNaturezaOperacao" class="java.lang.String"/>
+	<field name="porcentagemDesconto" class="java.math.BigDecimal"/>
+	<field name="margemDistribuidor" class="java.math.BigDecimal"/>
+	<field name="totalLiquido" class="java.math.BigDecimal"/>
+	<field name="totalDesconto" class="java.math.BigDecimal"/>
+	<field name="totalBruto" class="java.math.BigDecimal"/>
+	<field name="totalQtdeDevolvido" class="java.lang.Long"/>
+	<field name="totalQtdeVenda" class="java.lang.Long"/>
+	<field name="fornecedor.razaoSocial" class="java.lang.String"/>
+	<field name="fornecedor.cnpj" class="java.lang.String"/>
+	<field name="fornecedor.inscricaoEstadual" class="java.lang.String"/>
+	<field name="fornecedor.logradouro" class="java.lang.String"/>
+	<field name="fornecedor.numero" class="java.lang.Integer"/>
+	<field name="fornecedor.cidade" class="java.lang.String"/>
+	<field name="fornecedor.uf" class="java.lang.String"/>
+	<field name="distribuidor.razaoSocial" class="java.lang.String"/>
+	<field name="distribuidor.logradouro" class="java.lang.String"/>
+	<field name="distribuidor.numero" class="java.lang.Integer"/>
+	<field name="distribuidor.cidade" class="java.lang.String"/>
+	<field name="distribuidor.uf" class="java.lang.String"/>
+	<field name="distribuidor.cep" class="java.lang.String"/>
+	<field name="distribuidor.cnpj" class="java.lang.String"/>
+	<field name="distribuidor.inscricaoEstadual" class="java.lang.String"/>
+	<field name="itens" class="java.util.Collection"/>
+	<field name="totalMargemDistribuidor" class="java.math.BigDecimal"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -19,7 +51,7 @@
 				<textElement>
 					<font fontName="Times New Roman" size="7"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[ "TREELOG S.A. LOGISTICA E DISTR"]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{fornecedor.razaoSocial}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="301" y="0" width="136" height="11"/>
@@ -33,7 +65,7 @@
 				<textElement>
 					<font fontName="Times New Roman" size="7"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["12.123.456/0001-00"]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{fornecedor.cnpj}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="492" y="0" width="33" height="11"/>
@@ -54,21 +86,21 @@
 				<textElement>
 					<font fontName="Times New Roman" size="7"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["119747"]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{numeroDocumento}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="51" y="10" width="203" height="11"/>
 				<textElement>
 					<font fontName="Times New Roman" size="7"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["R DR KENKITI SHIMOMOTO 1678 - OSASCO - SP"]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[String.format("%s, %s - %s - %s", $F{fornecedor.logradouro}, $F{fornecedor.numero}, $F{fornecedor.cidade}, $F{fornecedor.uf})]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="541" y="10" width="63" height="11"/>
 				<textElement>
 					<font fontName="Times New Roman" size="7"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["492127567118"]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{fornecedor.inscricaoEstadual}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="492" y="10" width="50" height="11"/>
@@ -82,21 +114,21 @@
 				<textElement>
 					<font fontName="Times New Roman" size="7"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["ESTABELECIMENTO-DIST.SERGIPANA DE PUBLIC.LTDA."]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA["ESTABELECIMENTO "  + $F{distribuidor.razaoSocial}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="286" y="20" width="151" height="11"/>
 				<textElement>
 					<font fontName="Times New Roman" size="7"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["END- AV PEDRO CALAZANS 230"]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[String.format("END- %s , %s", $F{distribuidor.logradouro}, $F{distribuidor.numero})]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="563" y="20" width="94" height="11"/>
 				<textElement>
 					<font fontName="Times New Roman" size="7"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["ARACAJU"]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{distribuidor.cidade}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="541" y="20" width="23" height="11"/>
@@ -110,7 +142,7 @@
 				<textElement>
 					<font fontName="Times New Roman" size="7"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["49055520"]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{distribuidor.cep}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="721" y="20" width="18" height="11"/>
@@ -131,14 +163,14 @@
 				<textElement>
 					<font fontName="Times New Roman" size="7"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["SE"]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{distribuidor.uf}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="83" y="30" width="80" height="11"/>
 				<textElement>
 					<font fontName="Times New Roman" size="7"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["3147049/0001-60"]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{distribuidor.cnpj}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="51" y="30" width="33" height="11"/>
@@ -159,7 +191,7 @@
 				<textElement>
 					<font fontName="Times New Roman" size="7"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["270985565"]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{distribuidor.inscricaoEstadual}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="412" y="30" width="50" height="11"/>
@@ -169,15 +201,15 @@
 				<text><![CDATA[NAT.OPER:]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="461" y="30" width="207" height="11"/>
+				<reportElement x="461" y="30" width="55" height="11"/>
 				<textElement>
 					<font fontName="Times New Roman" size="7"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["2918/2949 - DEV.MERC.CONSIG/DEV.MERC.DISTRIB"]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{identificacao.codigoNaturezaOperacao}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="308" y="40" width="35" height="11"/>
-				<textElement>
+				<textElement textAlignment="Center">
 					<font fontName="Times New Roman" size="7"/>
 				</textElement>
 				<text><![CDATA[CODIGO]]></text>
@@ -190,7 +222,7 @@
 				<text><![CDATA[NUM.C.E]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="412" y="40" width="43" height="11"/>
+				<reportElement x="412" y="40" width="45" height="11"/>
 				<textElement textAlignment="Center">
 					<font fontName="Times New Roman" size="7"/>
 				</textElement>
@@ -224,61 +256,61 @@
 				</textElement>
 				<text><![CDATA[DATA DE VENCIMENTO]]></text>
 			</staticText>
-			<textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
 				<reportElement x="132" y="40" width="54" height="11"/>
-				<textElement>
+				<textElement textAlignment="Center">
 					<font fontName="Times New Roman" size="7"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["11/10/2012"]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{identificacao.dataVencimento}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="191" y="40" width="40" height="11"/>
+				<reportElement x="191" y="40" width="42" height="11"/>
 				<textElement>
 					<font fontName="Times New Roman" size="7"/>
 				</textElement>
 				<text><![CDATA[TIPO DE CE.]]></text>
 			</staticText>
-			<textField>
-				<reportElement x="231" y="40" width="28" height="11"/>
-				<textElement>
+			<textField isBlankWhenNull="true">
+				<reportElement x="234" y="40" width="28" height="11"/>
+				<textElement textAlignment="Center">
 					<font fontName="Times New Roman" size="7"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["11"]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{identificacao.tipoCE}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement x="308" y="50" width="35" height="11"/>
-				<textElement>
+				<textElement textAlignment="Right">
 					<font fontName="Times New Roman" size="7"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["2678001"]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{identificacao.codigo}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement x="361" y="50" width="40" height="11"/>
 				<textElement>
 					<font fontName="Times New Roman" size="7"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["503695"]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{identificacao.numeroCE}]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement x="412" y="50" width="43" height="11"/>
-				<textElement>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="412" y="50" width="45" height="11"/>
+				<textElement textAlignment="Center">
 					<font fontName="Times New Roman" size="7"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["27/09/2012"]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{identificacao.dataEmissao}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement x="493" y="50" width="32" height="11"/>
 				<textElement textAlignment="Center">
 					<font fontName="Times New Roman" size="7"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["41"]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{identificacao.numeroSemana}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement x="557" y="50" width="45" height="11"/>
 				<textElement textAlignment="Center">
 					<font fontName="Times New Roman" size="7"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["2337628"]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{identificacao.controle}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="634" y="50" width="69" height="11"/>
@@ -287,12 +319,12 @@
 				</textElement>
 				<text><![CDATA[NOSSO ARMAZEM]]></text>
 			</staticText>
-			<textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
 				<reportElement x="702" y="50" width="46" height="11"/>
 				<textElement textAlignment="Center">
 					<font fontName="Times New Roman" size="7"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["27/09/2012"]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{identificacao.dataLimiteChegada}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="51" y="50" width="44" height="11"/>
@@ -314,6 +346,13 @@
 					<font fontName="Times New Roman" size="7"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA["A SEREM RECOLHIDAS PELO ESTABELECIMENTO ACIMA)"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="516" y="30" width="232" height="11"/>
+				<textElement>
+					<font fontName="Times New Roman" size="7"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{identificacao.descricaoNaturezaOperacao}]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageHeader>
@@ -502,7 +541,7 @@
 				<text><![CDATA[PREÇO CAPA]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="670" y="21" width="80" height="22"/>
+				<reportElement x="670" y="21" width="94" height="22"/>
 				<box>
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -516,7 +555,7 @@
 				<text><![CDATA[VALOR VENDA]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="750" y="21" width="42" height="22"/>
+				<reportElement x="764" y="21" width="42" height="22"/>
 				<box>
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -528,20 +567,6 @@
 					<font fontName="Times New Roman" size="7"/>
 				</textElement>
 				<text><![CDATA[PACOTE PADRÃO]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="792" y="21" width="14" height="22"/>
-				<box>
-					<pen lineWidth="0.25"/>
-					<topPen lineWidth="0.25"/>
-					<leftPen lineWidth="0.25"/>
-					<bottomPen lineWidth="0.25"/>
-					<rightPen lineWidth="0.25"/>
-				</box>
-				<textElement textAlignment="Center">
-					<font fontName="Times New Roman" size="7"/>
-				</textElement>
-				<text><![CDATA[CH.]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="503" y="21" width="42" height="22"/>
@@ -575,239 +600,12 @@
 	</columnHeader>
 	<detail>
 		<band height="11" splitType="Stretch">
-			<textField isStretchWithOverflow="true">
-				<reportElement style="zebrado" stretchType="RelativeToTallestObject" mode="Opaque" x="10" y="0" width="32" height="11"/>
-				<box>
-					<pen lineWidth="0.25"/>
-					<topPen lineWidth="0.25"/>
-					<leftPen lineWidth="0.25"/>
-					<bottomPen lineWidth="0.25"/>
-					<rightPen lineWidth="0.25"/>
-				</box>
-				<textElement textAlignment="Center" markup="none">
-					<font fontName="Times New Roman" size="7"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["1422"]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement style="zebrado" stretchType="RelativeToTallestObject" mode="Opaque" x="301" y="0" width="42" height="11"/>
-				<box>
-					<pen lineWidth="0.25"/>
-					<topPen lineWidth="0.25"/>
-					<leftPen lineWidth="0.25"/>
-					<bottomPen lineWidth="0.25"/>
-					<rightPen lineWidth="0.25"/>
-				</box>
-				<textElement textAlignment="Center" markup="none">
-					<font fontName="Times New Roman" size="7"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["INTEIRO"]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement style="zebrado" stretchType="RelativeToTallestObject" mode="Opaque" x="343" y="0" width="42" height="11"/>
-				<box>
-					<pen lineWidth="0.25"/>
-					<topPen lineWidth="0.25"/>
-					<leftPen lineWidth="0.25"/>
-					<bottomPen lineWidth="0.25"/>
-					<rightPen lineWidth="0.25"/>
-				</box>
-				<textElement textAlignment="Center" markup="none">
-					<font fontName="Times New Roman" size="7"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["03/10/2012"]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement style="zebrado" stretchType="RelativeToTallestObject" mode="Opaque" x="385" y="0" width="42" height="11"/>
-				<box>
-					<pen lineWidth="0.25"/>
-					<topPen lineWidth="0.25"/>
-					<leftPen lineWidth="0.25"/>
-					<bottomPen lineWidth="0.25"/>
-					<rightPen lineWidth="0.25"/>
-				</box>
-				<textElement textAlignment="Center" markup="none">
-					<font fontName="Times New Roman" size="7"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[675699]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement style="zebrado" stretchType="RelativeToTallestObject" mode="Opaque" x="427" y="0" width="26" height="11"/>
-				<box>
-					<pen lineWidth="0.25"/>
-					<topPen lineWidth="0.25"/>
-					<leftPen lineWidth="0.25"/>
-					<bottomPen lineWidth="0.25"/>
-					<rightPen lineWidth="0.25"/>
-				</box>
-				<textElement textAlignment="Center" markup="none">
-					<font fontName="Times New Roman" size="7"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["001"]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement style="zebrado" stretchType="RelativeToTallestObject" mode="Opaque" x="453" y="0" width="8" height="11"/>
-				<box>
-					<pen lineWidth="0.25"/>
-					<topPen lineWidth="0.25"/>
-					<leftPen lineWidth="0.25"/>
-					<bottomPen lineWidth="0.25"/>
-					<rightPen lineWidth="0.25"/>
-				</box>
-				<textElement textAlignment="Center" markup="none">
-					<font fontName="Times New Roman" size="7"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["N"]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement style="zebrado" stretchType="RelativeToTallestObject" mode="Opaque" x="461" y="0" width="42" height="11"/>
-				<box>
-					<pen lineWidth="0.25"/>
-					<topPen lineWidth="0.25"/>
-					<leftPen lineWidth="0.25"/>
-					<bottomPen lineWidth="0.25"/>
-					<rightPen lineWidth="0.25"/>
-				</box>
-				<textElement textAlignment="Center" markup="none">
-					<font fontName="Times New Roman" size="7"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["100"]]></textFieldExpression>
-			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement style="zebrado" stretchType="RelativeToTallestObject" mode="Opaque" x="503" y="0" width="42" height="11"/>
-				<box>
-					<pen lineWidth="0.25"/>
-					<topPen lineWidth="0.25"/>
-					<leftPen lineWidth="0.25"/>
-					<bottomPen lineWidth="0.25"/>
-					<rightPen lineWidth="0.25"/>
-				</box>
-				<textElement textAlignment="Center" markup="none">
-					<font fontName="Times New Roman" size="7"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["67"]]></textFieldExpression>
-			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement style="zebrado" stretchType="RelativeToTallestObject" mode="Opaque" x="545" y="0" width="42" height="11"/>
-				<box>
-					<pen lineWidth="0.25"/>
-					<topPen lineWidth="0.25"/>
-					<leftPen lineWidth="0.25"/>
-					<bottomPen lineWidth="0.25"/>
-					<rightPen lineWidth="0.25"/>
-				</box>
-				<textElement textAlignment="Center" markup="none">
-					<font fontName="Times New Roman" size="7"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["33"]]></textFieldExpression>
-			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement style="zebrado" stretchType="RelativeToTallestObject" mode="Opaque" x="587" y="0" width="42" height="11"/>
-				<box>
-					<pen lineWidth="0.25"/>
-					<topPen lineWidth="0.25"/>
-					<leftPen lineWidth="0.25"/>
-					<bottomPen lineWidth="0.25"/>
-					<rightPen lineWidth="0.25"/>
-				</box>
-				<textElement textAlignment="Center" markup="none">
-					<font fontName="Times New Roman" size="7"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[""]]></textFieldExpression>
-			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement style="zebrado" stretchType="RelativeToTallestObject" mode="Opaque" x="629" y="0" width="41" height="11"/>
-				<box leftPadding="0" rightPadding="2">
-					<topPen lineWidth="0.25"/>
-					<leftPen lineWidth="0.25"/>
-					<bottomPen lineWidth="0.25"/>
-					<rightPen lineWidth="0.25"/>
-				</box>
-				<textElement textAlignment="Right" markup="none">
-					<font fontName="Times New Roman" size="7"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["12,95"]]></textFieldExpression>
-			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement style="zebrado" stretchType="RelativeToTallestObject" mode="Opaque" x="670" y="0" width="80" height="11"/>
-				<box rightPadding="2">
-					<topPen lineWidth="0.25"/>
-					<leftPen lineWidth="0.25"/>
-					<bottomPen lineWidth="0.25"/>
-					<rightPen lineWidth="0.25"/>
-				</box>
-				<textElement textAlignment="Right" markup="none">
-					<font fontName="Times New Roman" size="7"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["427,35"]]></textFieldExpression>
-			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement style="zebrado" stretchType="RelativeToTallestObject" mode="Opaque" x="750" y="0" width="42" height="11"/>
-				<box>
-					<topPen lineWidth="0.25"/>
-					<leftPen lineWidth="0.25"/>
-					<bottomPen lineWidth="0.25"/>
-					<rightPen lineWidth="0.25"/>
-				</box>
-				<textElement textAlignment="Center" markup="none">
-					<font fontName="Times New Roman" size="7"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["20"]]></textFieldExpression>
-			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement style="zebrado" stretchType="RelativeToTallestObject" mode="Opaque" x="792" y="0" width="14" height="11"/>
-				<box>
-					<topPen lineWidth="0.25"/>
-					<leftPen lineWidth="0.25"/>
-					<bottomPen lineWidth="0.25"/>
-					<rightPen lineWidth="0.25"/>
-				</box>
-				<textElement textAlignment="Center" markup="none">
-					<font fontName="Times New Roman" size="7"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["48"]]></textFieldExpression>
-			</textField>
-			<elementGroup>
-				<textField>
-					<reportElement style="zebrado" stretchType="RelativeToTallestObject" mode="Opaque" x="279" y="0" width="22" height="11"/>
-					<box>
-						<pen lineWidth="0.25"/>
-						<topPen lineWidth="0.25"/>
-						<leftPen lineWidth="0.25"/>
-						<bottomPen lineWidth="0.25"/>
-						<rightPen lineWidth="0.25"/>
-					</box>
-					<textElement textAlignment="Center" markup="none">
-						<font fontName="Times New Roman" size="7"/>
-					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA["1"]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="true">
-					<reportElement style="zebrado" stretchType="RelativeToTallestObject" mode="Opaque" x="42" y="0" width="189" height="11"/>
-					<box leftPadding="2">
-						<topPen lineWidth="0.25"/>
-						<leftPen lineWidth="0.25"/>
-						<bottomPen lineWidth="0.25"/>
-					</box>
-					<textElement markup="none">
-						<font fontName="Times New Roman" size="7"/>
-					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA["G. SAUD ALM MEM" + "\n" +
-"GUIA DE SAUDE ALIMENTOS PA"]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="true">
-					<reportElement style="zebrado" stretchType="RelativeToTallestObject" mode="Opaque" x="230" y="0" width="49" height="11"/>
-					<box rightPadding="2">
-						<topPen lineWidth="0.25"/>
-						<bottomPen lineWidth="0.25"/>
-						<rightPen lineWidth="0.25"/>
-					</box>
-					<textElement textAlignment="Right" markup="none">
-						<font fontName="Times New Roman" size="7"/>
-					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA["36341001"]]></textFieldExpression>
-				</textField>
-			</elementGroup>
+			<elementGroup/>
+			<subreport isUsingCache="false">
+				<reportElement x="10" y="0" width="796" height="11"/>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{itens})]]></dataSourceExpression>
+				<subreportExpression class="java.lang.String"><![CDATA[Thread.currentThread().getContextClassLoader().getResource("/reports/CE_Devolucao_Fornecedor_itens.jasper").toURI().getPath()]]></subreportExpression>
+			</subreport>
 		</band>
 	</detail>
 	<columnFooter>
@@ -833,10 +631,10 @@
 						<textElement textAlignment="Center" markup="none">
 							<font fontName="Times New Roman" size="7"/>
 						</textElement>
-						<textFieldExpression class="java.lang.String"><![CDATA["67"]]></textFieldExpression>
+						<textFieldExpression class="java.lang.String"><![CDATA[$F{totalQtdeDevolvido}]]></textFieldExpression>
 					</textField>
-					<textField isBlankWhenNull="true">
-						<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="167" y="0" width="80" height="11" backcolor="#CCCCCC"/>
+					<textField pattern="#,##0.00" isBlankWhenNull="true">
+						<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="167" y="0" width="94" height="11" backcolor="#CCCCCC"/>
 						<box rightPadding="2">
 							<topPen lineWidth="0.0"/>
 							<leftPen lineWidth="0.25"/>
@@ -845,10 +643,10 @@
 						<textElement textAlignment="Right" markup="none">
 							<font fontName="Times New Roman" size="7"/>
 						</textElement>
-						<textFieldExpression class="java.lang.String"><![CDATA["427,35"]]></textFieldExpression>
+						<textFieldExpression class="java.lang.String"><![CDATA[$F{totalBruto}]]></textFieldExpression>
 					</textField>
 					<textField isBlankWhenNull="true">
-						<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="247" y="0" width="42" height="11" backcolor="#CCCCCC"/>
+						<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="261" y="0" width="42" height="11" backcolor="#CCCCCC"/>
 						<box>
 							<topPen lineWidth="0.0"/>
 							<leftPen lineWidth="0.25"/>
@@ -870,7 +668,7 @@
 						<textElement textAlignment="Center" markup="none">
 							<font fontName="Times New Roman" size="7"/>
 						</textElement>
-						<textFieldExpression class="java.lang.String"><![CDATA["33"]]></textFieldExpression>
+						<textFieldExpression class="java.lang.String"><![CDATA[$F{totalQtdeVenda}]]></textFieldExpression>
 					</textField>
 					<textField isBlankWhenNull="true">
 						<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="126" y="0" width="41" height="11" backcolor="#CCCCCC"/>
@@ -896,18 +694,6 @@
 							<font fontName="Times New Roman" size="7"/>
 						</textElement>
 					</textField>
-					<textField isBlankWhenNull="true">
-						<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="289" y="0" width="14" height="11" backcolor="#CCCCCC"/>
-						<box>
-							<topPen lineWidth="0.0"/>
-							<leftPen lineWidth="0.25"/>
-							<bottomPen lineWidth="0.0"/>
-							<rightPen lineWidth="0.25"/>
-						</box>
-						<textElement textAlignment="Center" markup="none">
-							<font fontName="Times New Roman" size="7"/>
-						</textElement>
-					</textField>
 				</elementGroup>
 				<elementGroup>
 					<textField isBlankWhenNull="true">
@@ -923,7 +709,7 @@
 						</textElement>
 					</textField>
 					<textField isBlankWhenNull="true">
-						<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="167" y="11" width="80" height="11"/>
+						<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="167" y="11" width="94" height="11"/>
 						<box rightPadding="2">
 							<topPen lineWidth="0.0"/>
 							<leftPen lineWidth="0.25"/>
@@ -934,7 +720,7 @@
 						</textElement>
 					</textField>
 					<textField isBlankWhenNull="true">
-						<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="247" y="11" width="42" height="11"/>
+						<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="261" y="11" width="42" height="11"/>
 						<box>
 							<topPen lineWidth="0.0"/>
 							<leftPen lineWidth="0.25"/>
@@ -981,18 +767,6 @@
 							<font fontName="Times New Roman" size="7"/>
 						</textElement>
 					</textField>
-					<textField isBlankWhenNull="true">
-						<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="289" y="11" width="14" height="11"/>
-						<box>
-							<topPen lineWidth="0.0"/>
-							<leftPen lineWidth="0.25"/>
-							<bottomPen lineWidth="0.0"/>
-							<rightPen lineWidth="0.25"/>
-						</box>
-						<textElement textAlignment="Center" markup="none">
-							<font fontName="Times New Roman" size="7"/>
-						</textElement>
-					</textField>
 				</elementGroup>
 				<elementGroup>
 					<textField isBlankWhenNull="true">
@@ -1007,8 +781,8 @@
 							<font fontName="Times New Roman" size="7"/>
 						</textElement>
 					</textField>
-					<textField isBlankWhenNull="true">
-						<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="167" y="22" width="80" height="11" backcolor="#CCCCCC"/>
+					<textField pattern="#,##0.00" isBlankWhenNull="true">
+						<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="167" y="22" width="94" height="11" backcolor="#CCCCCC"/>
 						<box rightPadding="2">
 							<topPen lineWidth="0.0"/>
 							<leftPen lineWidth="0.25"/>
@@ -1017,10 +791,10 @@
 						<textElement textAlignment="Right" markup="none">
 							<font fontName="Times New Roman" size="7"/>
 						</textElement>
-						<textFieldExpression class="java.lang.String"><![CDATA["148,30"]]></textFieldExpression>
+						<textFieldExpression class="java.lang.String"><![CDATA[$F{totalDesconto}]]></textFieldExpression>
 					</textField>
 					<textField isBlankWhenNull="true">
-						<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="247" y="22" width="42" height="11" backcolor="#CCCCCC"/>
+						<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="261" y="22" width="42" height="11" backcolor="#CCCCCC"/>
 						<box>
 							<topPen lineWidth="0.0"/>
 							<leftPen lineWidth="0.25"/>
@@ -1067,18 +841,6 @@
 							<font fontName="Times New Roman" size="7"/>
 						</textElement>
 					</textField>
-					<textField isBlankWhenNull="true">
-						<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="289" y="22" width="14" height="11" backcolor="#CCCCCC"/>
-						<box>
-							<topPen lineWidth="0.0"/>
-							<leftPen lineWidth="0.25"/>
-							<bottomPen lineWidth="0.0"/>
-							<rightPen lineWidth="0.25"/>
-						</box>
-						<textElement textAlignment="Center" markup="none">
-							<font fontName="Times New Roman" size="7"/>
-						</textElement>
-					</textField>
 				</elementGroup>
 				<elementGroup>
 					<textField isBlankWhenNull="true">
@@ -1094,7 +856,7 @@
 						</textElement>
 					</textField>
 					<textField isBlankWhenNull="true">
-						<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="167" y="33" width="80" height="11"/>
+						<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="167" y="33" width="94" height="11"/>
 						<box rightPadding="2">
 							<topPen lineWidth="0.0"/>
 							<leftPen lineWidth="0.25"/>
@@ -1105,7 +867,7 @@
 						</textElement>
 					</textField>
 					<textField isBlankWhenNull="true">
-						<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="247" y="33" width="42" height="11"/>
+						<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="261" y="33" width="42" height="11"/>
 						<box>
 							<topPen lineWidth="0.0"/>
 							<leftPen lineWidth="0.25"/>
@@ -1152,18 +914,6 @@
 							<font fontName="Times New Roman" size="7"/>
 						</textElement>
 					</textField>
-					<textField isBlankWhenNull="true">
-						<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="289" y="33" width="14" height="11"/>
-						<box>
-							<topPen lineWidth="0.0"/>
-							<leftPen lineWidth="0.25"/>
-							<bottomPen lineWidth="0.0"/>
-							<rightPen lineWidth="0.25"/>
-						</box>
-						<textElement textAlignment="Center" markup="none">
-							<font fontName="Times New Roman" size="7"/>
-						</textElement>
-					</textField>
 				</elementGroup>
 				<elementGroup>
 					<textField isBlankWhenNull="true">
@@ -1178,8 +928,8 @@
 							<font fontName="Times New Roman" size="7"/>
 						</textElement>
 					</textField>
-					<textField isBlankWhenNull="true">
-						<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="167" y="44" width="80" height="11" backcolor="#CCCCCC"/>
+					<textField pattern="#,##0.00" isBlankWhenNull="true">
+						<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="167" y="44" width="94" height="11" backcolor="#CCCCCC"/>
 						<box rightPadding="2">
 							<topPen lineWidth="0.0"/>
 							<leftPen lineWidth="0.25"/>
@@ -1188,10 +938,10 @@
 						<textElement textAlignment="Right" markup="none">
 							<font fontName="Times New Roman" size="7"/>
 						</textElement>
-						<textFieldExpression class="java.lang.String"><![CDATA["279,05"]]></textFieldExpression>
+						<textFieldExpression class="java.lang.String"><![CDATA[$F{totalLiquido}]]></textFieldExpression>
 					</textField>
 					<textField isBlankWhenNull="true">
-						<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="247" y="44" width="42" height="11" backcolor="#CCCCCC"/>
+						<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="261" y="44" width="42" height="11" backcolor="#CCCCCC"/>
 						<box>
 							<topPen lineWidth="0.0"/>
 							<leftPen lineWidth="0.25"/>
@@ -1238,18 +988,6 @@
 							<font fontName="Times New Roman" size="7"/>
 						</textElement>
 					</textField>
-					<textField isBlankWhenNull="true">
-						<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="289" y="44" width="14" height="11" backcolor="#CCCCCC"/>
-						<box>
-							<topPen lineWidth="0.0"/>
-							<leftPen lineWidth="0.25"/>
-							<bottomPen lineWidth="0.0"/>
-							<rightPen lineWidth="0.25"/>
-						</box>
-						<textElement textAlignment="Center" markup="none">
-							<font fontName="Times New Roman" size="7"/>
-						</textElement>
-					</textField>
 				</elementGroup>
 				<elementGroup>
 					<textField isBlankWhenNull="true">
@@ -1265,7 +1003,7 @@
 						</textElement>
 					</textField>
 					<textField isBlankWhenNull="true">
-						<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="167" y="55" width="80" height="11"/>
+						<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="167" y="55" width="94" height="11"/>
 						<box rightPadding="2">
 							<topPen lineWidth="0.0"/>
 							<leftPen lineWidth="0.25"/>
@@ -1276,7 +1014,7 @@
 						</textElement>
 					</textField>
 					<textField isBlankWhenNull="true">
-						<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="247" y="55" width="42" height="11"/>
+						<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="261" y="55" width="42" height="11"/>
 						<box>
 							<topPen lineWidth="0.0"/>
 							<leftPen lineWidth="0.25"/>
@@ -1313,18 +1051,6 @@
 					</textField>
 					<textField isBlankWhenNull="true">
 						<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="84" y="55" width="42" height="11"/>
-						<box>
-							<topPen lineWidth="0.0"/>
-							<leftPen lineWidth="0.25"/>
-							<bottomPen lineWidth="0.25"/>
-							<rightPen lineWidth="0.25"/>
-						</box>
-						<textElement textAlignment="Center" markup="none">
-							<font fontName="Times New Roman" size="7"/>
-						</textElement>
-					</textField>
-					<textField isBlankWhenNull="true">
-						<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="289" y="55" width="14" height="11"/>
 						<box>
 							<topPen lineWidth="0.0"/>
 							<leftPen lineWidth="0.25"/>
@@ -1388,12 +1114,12 @@
 					</textElement>
 					<text><![CDATA[-]]></text>
 				</staticText>
-				<textField>
+				<textField pattern="#,##0.000 %" isBlankWhenNull="true">
 					<reportElement x="116" y="26" width="116" height="13"/>
 					<textElement textAlignment="Center" markup="none">
 						<font fontName="Times New Roman" size="7"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA["34,700"]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{porcentagemDesconto}]]></textFieldExpression>
 				</textField>
 				<elementGroup>
 					<staticText>
@@ -1431,20 +1157,6 @@
 						</textElement>
 						<text><![CDATA[*]]></text>
 					</staticText>
-					<textField>
-						<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="291" y="52" width="42" height="13"/>
-						<box>
-							<pen lineWidth="0.25"/>
-							<topPen lineWidth="0.0"/>
-							<leftPen lineWidth="0.0"/>
-							<bottomPen lineWidth="0.0"/>
-							<rightPen lineWidth="0.0"/>
-						</box>
-						<textElement textAlignment="Center" markup="none">
-							<font fontName="Times New Roman" size="7"/>
-						</textElement>
-						<textFieldExpression class="java.lang.String"><![CDATA["41,45"]]></textFieldExpression>
-					</textField>
 					<staticText>
 						<reportElement x="253" y="52" width="18" height="13"/>
 						<textElement textAlignment="Center">
@@ -1452,7 +1164,7 @@
 						</textElement>
 						<text><![CDATA[#]]></text>
 					</staticText>
-					<textField>
+					<textField pattern="#,##0.000 %" isBlankWhenNull="true">
 						<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="420" y="13" width="35" height="11"/>
 						<box>
 							<pen lineWidth="0.25"/>
@@ -1464,7 +1176,7 @@
 						<textElement textAlignment="Center" markup="none">
 							<font fontName="Times New Roman" size="7"/>
 						</textElement>
-						<textFieldExpression class="java.lang.String"><![CDATA["9,700%"]]></textFieldExpression>
+						<textFieldExpression class="java.lang.String"><![CDATA[$F{margemDistribuidor}]]></textFieldExpression>
 					</textField>
 					<staticText>
 						<reportElement x="428" y="52" width="18" height="13"/>
@@ -1488,6 +1200,13 @@
 						<text><![CDATA[*]]></text>
 					</staticText>
 				</elementGroup>
+				<textField pattern="#,##0.00" isBlankWhenNull="true">
+					<reportElement x="271" y="52" width="75" height="13"/>
+					<textElement textAlignment="Center" markup="none">
+						<font fontName="Times New Roman" size="7"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{totalMargemDistribuidor}]]></textFieldExpression>
+				</textField>
 			</frame>
 			<frame>
 				<reportElement x="10" y="66" width="796" height="30"/>
@@ -1718,7 +1437,7 @@
 				<textElement textAlignment="Center" markup="none">
 					<font fontName="Times New Roman" size="7"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[" > > > > > >   503695   < < < < < < "]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[" > > > > > >   " + $F{identificacao.numeroCE} + "   < < < < < < "]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="587" y="0" width="42" height="13"/>

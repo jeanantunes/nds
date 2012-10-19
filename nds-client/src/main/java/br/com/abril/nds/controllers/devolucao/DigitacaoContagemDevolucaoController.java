@@ -1,6 +1,8 @@
 package br.com.abril.nds.controllers.devolucao;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -21,12 +23,14 @@ import br.com.abril.nds.dto.ContagemDevolucaoConferenciaCegaDTO;
 import br.com.abril.nds.dto.ContagemDevolucaoDTO;
 import br.com.abril.nds.dto.InfoContagemDevolucaoDTO;
 import br.com.abril.nds.dto.ItemDTO;
+import br.com.abril.nds.dto.filtro.FiltroConsultaNotaEnvioDTO;
 import br.com.abril.nds.dto.filtro.FiltroDigitacaoContagemDevolucaoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
+import br.com.abril.nds.model.envio.nota.NotaEnvio;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
@@ -52,6 +56,8 @@ import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.interceptor.download.Download;
+import br.com.caelum.vraptor.interceptor.download.InputStreamDownload;
 import br.com.caelum.vraptor.view.Results;
 
 /**
@@ -669,5 +675,17 @@ public class DigitacaoContagemDevolucaoController  {
 		
 		result.use(FlexiGridJson.class).from(edicoesFechadasVOs).total(quantidade.intValue()).page(page).serialize();
 	}
+	
+	@Get
+    public Download gerarCEDevolucao() {
+        byte[] ceDevolucao = contagemDevolucaoService.gerarCEDevolucao();
+            
+        if (ceDevolucao != null) {
+            long size = ceDevolucao.length;
+            InputStream inputStream = new ByteArrayInputStream(ceDevolucao);
+            return new InputStreamDownload(inputStream, FileType.PDF.getContentType(), "ce-devolucao.pdf", true, size);
+        }
+        return null;
+    }
 
 }
