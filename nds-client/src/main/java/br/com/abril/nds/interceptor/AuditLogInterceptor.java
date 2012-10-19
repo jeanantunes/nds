@@ -5,7 +5,9 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.hibernate.CallbackException;
 import org.hibernate.EmptyInterceptor;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -19,6 +21,7 @@ import br.com.abril.nds.client.util.AuditoriaUtil;
 import br.com.abril.nds.dto.auditoria.AuditoriaDTO;
 import br.com.abril.nds.dto.auditoria.AuditoriaDTO.TipoOperacaoAuditoria;
 import br.com.abril.nds.integracao.couchdb.CouchDbProperties;
+import br.com.abril.nds.model.cadastro.Distribuidor;
 
 @Component
 public class AuditLogInterceptor extends EmptyInterceptor {
@@ -39,6 +42,8 @@ public class AuditLogInterceptor extends EmptyInterceptor {
 	public boolean onSave(Object entity, Serializable id, Object[] state,
 			String[] propertyNames, org.hibernate.type.Type[] types) {
 
+		this.validarAndamnetoFechamentoDiario();
+		
 		Object user = SecurityContextHolder.getContext().getAuthentication().getPrincipal(); 
 
 		AuditoriaDTO auditoriaDTO = AuditoriaUtil.generateAuditoriaDTO(
@@ -54,6 +59,8 @@ public class AuditLogInterceptor extends EmptyInterceptor {
 	public void onDelete(Object entity, Serializable id, Object[] state,
 			String[] propertyNames, org.hibernate.type.Type[] types) {
 
+		this.validarAndamnetoFechamentoDiario();
+		
 		Object user = SecurityContextHolder.getContext().getAuthentication().getPrincipal(); 
 
 		AuditoriaDTO auditoriaDTO = AuditoriaUtil.generateAuditoriaDTO(
@@ -68,6 +75,8 @@ public class AuditLogInterceptor extends EmptyInterceptor {
 			Object[] currentState, Object[] previousState,
 			String[] propertyNames, org.hibernate.type.Type[] types) {
 
+		this.validarAndamnetoFechamentoDiario();
+		
 		Object user = SecurityContextHolder.getContext().getAuthentication().getPrincipal(); 
 		
 		getSession().beginTransaction();
@@ -83,6 +92,21 @@ public class AuditLogInterceptor extends EmptyInterceptor {
 		audit.add(auditoriaDTO);
 
 		return false;
+	}
+	
+	@Override
+	public String onPrepareStatement(String sql) {
+		
+		if (sql != null && !sql.trim().isEmpty()) {
+			
+			if (sql.trim().toUpperCase().startsWith("DELETE") 
+					|| sql.trim().toUpperCase().startsWith("UPDATE")) {
+				
+				this.validarAndamnetoFechamentoDiario();
+			}
+		}
+		
+		return super.onPrepareStatement(sql);
 	}
 
 	@Override
@@ -112,4 +136,20 @@ public class AuditLogInterceptor extends EmptyInterceptor {
 		
 		return bean.openSession();
 	}
+	
+	private void validarAndamnetoFechamentoDiario() {
+		
+		Query query = getSession().createQuery("from Distribuidor");
+		
+		query.setMaxResults(1);
+		
+		Distribuidor distribuidor = (Distribuidor) query.uniqueResult();
+		
+		if (distribuidor != null 
+				&& Boolean.TRUE.equals(distribuidor.getFechamentoDiarioEmAndamento())) {
+			
+			throw new RuntimeException("Fechamento diário em andamento! Por favor aguarde.");
+		}
+	}
+	
 }
