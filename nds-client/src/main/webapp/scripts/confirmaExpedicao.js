@@ -130,7 +130,7 @@ var confirmaExpedicaoController = $.extend(true, {
 		}
 		
 		$.postJSON(contextPath + "/confirmacaoExpedicao/selecionarLancamento", 
-				"idLancamento="+id +"&selecionado="+check.checked, 
+				{idLancamento:id,selecionado:check.checked}, 
 				retornoSemAcao);				
 	},
 	
@@ -139,12 +139,10 @@ var confirmaExpedicaoController = $.extend(true, {
 	},
 	
 	selecionarTodos : function (elementoCheck) {
-		
-		//var selects =  document.getElementsByName("selecao");
 		var selects =  $("[name='selecao']");
 
 		$.postJSON(contextPath + "/confirmacaoExpedicao/selecionarTodos", 
-				"selecionado="+elementoCheck.checked, 
+				{selecionado:elementoCheck.checked}, 
 				confirmaExpedicaoController.retornoSemAcao);	
 		
 		$.each(selects, function(index, row) {

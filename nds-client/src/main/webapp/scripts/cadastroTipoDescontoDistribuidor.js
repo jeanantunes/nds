@@ -33,16 +33,18 @@ var descontoDistribuidorController = $.extend(true,{
 
 		novoDescontoGeral:function () {
 
-			var descontoGeral = $("#descontoGeral",this.workspace).val();
+			var descontoGeral = $("#descontoGeral",this.workspace).justPercent("floatValue");;
 			
-			var fornecedores ="";
+			var fornecedores = new Array();
 			
 		    $("#selectFornecedorSelecionado_option option",this.workspace).each(function (index) {
-		    	fornecedores = fornecedores + "fornecedores["+index+"]="+ $(this).val() +"&";
+		    	fornecedores.push($(this).val());
 		    });
+		    var param = {desconto:$("#descontoGeral",this.workspace).val()};
+		    
+		    param = serializeArrayToPost('fornecedores', fornecedores, param);
 
-			$.postJSON(contextPath +"/financeiro/tipoDescontoCota/novoDescontoGeral",
-					"desconto="+descontoGeral + "&" + fornecedores,				   
+			$.postJSON(contextPath +"/financeiro/tipoDescontoCota/novoDescontoGeral",param,				   
 				   function(result) {
 			        
 					   if (result.tipoMensagem && result.tipoMensagem !="SUCCESS" && result.listaMensagens) {			      
@@ -77,7 +79,7 @@ var descontoDistribuidorController = $.extend(true,{
 			
 			$("select[name='selectFornecedor']",this.workspace).multiSelect("select[name='selectFornecedorSelecionado']", {trigger: "#linkFornecedorEnviarTodos"});
 			
-			$("#descontoGeral",this.workspace).mask("99.99");
+			$("#descontoGeral",this.workspace).justPercent();
 			
 			$(".tiposDescGeralGrid",this.workspace).flexigrid({
 				preProcess: tipoDescontoController.executarPreProcessamento,

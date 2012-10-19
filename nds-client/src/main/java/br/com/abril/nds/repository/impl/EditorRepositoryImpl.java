@@ -134,7 +134,7 @@ public class EditorRepositoryImpl extends AbstractRepositoryModel<Editor, Long> 
 			hql.append("AND editor.codigo = :codigoEditor ");
 		}
 
-		if (filtro.getCodigoCota() != null && !filtro.getCodigoCota().isEmpty()) {
+		if (filtro.getCodigoCota() != null ) {
 			hql.append("AND estoqueProdutoCota.cota.numeroCota = :codigoCota ");
 		}
 
@@ -190,8 +190,8 @@ public class EditorRepositoryImpl extends AbstractRepositoryModel<Editor, Long> 
 
 		param.put("grupoMovimentoEstoque", GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
 		
-		if (filtro.getCodigoCota() != null && !filtro.getCodigoCota().isEmpty()) {
-			param.put("codigoCota", Integer.parseInt(filtro.getCodigoCota().toString()));
+		if (filtro.getCodigoCota() != null ) {
+			param.put("codigoCota", filtro.getCodigoCota());
 		}
 
 		if (filtro.getNomeCota() != null && !filtro.getNomeCota().isEmpty()) {

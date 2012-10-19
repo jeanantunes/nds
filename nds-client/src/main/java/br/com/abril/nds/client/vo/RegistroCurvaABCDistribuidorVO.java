@@ -24,36 +24,104 @@ public class RegistroCurvaABCDistribuidorVO extends RegistroCurvaABCDTO implemen
 
 	private Integer numeroCota;
 
-	@Export(label = "Cota", exhibitionOrder = 2)
+	@Export(label = "Cota", exhibitionOrder = 4)
 	private String nomeCota;
 
 	private Integer quantidadePdvs;
 
-	@Export(label = "Municipio", exhibitionOrder = 4)
+	@Export(label = "Municipio", exhibitionOrder = 5)
 	private String municipio;
 
 	private BigInteger vendaExemplares;
 
 	private BigDecimal faturamentoCapa;
 
-	@Export(label = "Venda de Exemplares", exhibitionOrder = 5)
+	@Export(label = "Venda de Exemplares", exhibitionOrder = 7)
 	private String vendaExemplaresFormatado;
 	
-	@Export(label = "Faturamento da Capa", exhibitionOrder = 6)
+	@Export(label = "Faturamento da Capa", exhibitionOrder = 8)
 	private String faturamentoCapaFormatado;
+	
+	@Export(label = "RK.Produto", exhibitionOrder = 1)
+	private Long rkProduto;
+	
+	@Export(label = "RK. Cota", exhibitionOrder = 2)
+	private Long rkCota;
+	
+	private Long idProduto;
+	
+	private Long idCota;
+	
+	@Export(label = "Número", exhibitionOrder = 3)
+	public String getNumeroCotaString() {
+		return this.getNumeroCota().toString();
+	}
+
+	@Export(label = "Quantidade de Pdvs", exhibitionOrder = 6)
+	public String getQuantidadePdvsString() {
+		return this.getQuantidadePdvs().toString();
+	}
+
+	@Export(label = "Participação", exhibitionOrder = 9)
+	public String getParticipacaoString() {
+		return getParticipacaoFormatado();
+	}
+
+	@Export(label = "Participação Acumulada", exhibitionOrder = 10)
+	public String getParticipacaoAcumuladaString() {
+		return getParticipacaoAcumuladaFormatado();
+	}
 	
 	public RegistroCurvaABCDistribuidorVO() {
 	}
 
 	public RegistroCurvaABCDistribuidorVO(Integer numeroCota, String nomeCota,
-			Integer quantidadePdvs, String municipio, BigInteger vendaExemplares, BigDecimal faturamento) {
+			Integer quantidadePdvs, String municipio, BigInteger vendaExemplares, BigDecimal faturamento,Long idProduto,Long idCota) {
 		this.numeroCota = numeroCota;
 		this.nomeCota = nomeCota;
 		this.quantidadePdvs = quantidadePdvs;
 		this.municipio = municipio;
 		this.vendaExemplares = vendaExemplares;
 		this.faturamentoCapa = faturamento;
+		this.idProduto = idProduto;
+		this.idCota = idCota;
 		this.formatarCampos();
+	}
+	
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
+
+	public Long getIdCota() {
+		return idCota;
+	}
+
+	public void setIdCota(Long idCota) {
+		this.idCota = idCota;
+	}
+
+	public Long getIdProduto() {
+		return idProduto;
+	}
+
+	public void setIdProduto(Long idProduto) {
+		this.idProduto = idProduto;
+	}
+
+	public Long getRkProduto() {
+		return rkProduto;
+	}
+
+	public void setRkProduto(Long rkProduto) {
+		this.rkProduto = rkProduto;
+	}
+
+	public Long getRkCota() {
+		return rkCota;
+	}
+
+	public void setRkCota(Long rkCota) {
+		this.rkCota = rkCota;
 	}
 
 	public Integer getNumeroCota() {
@@ -103,27 +171,6 @@ public class RegistroCurvaABCDistribuidorVO extends RegistroCurvaABCDTO implemen
 	public void setFaturamentoCapa(BigDecimal faturamentoCapa) {
 		this.faturamentoCapa = faturamentoCapa;
 	}
-
-	@Export(label = "Número", exhibitionOrder = 1)
-	public String getNumeroCotaString() {
-		return this.getNumeroCota().toString();
-	}
-
-	@Export(label = "Quantidade de Pdvs", exhibitionOrder = 3)
-	public String getQuantidadePdvsString() {
-		return this.getQuantidadePdvs().toString();
-	}
-
-	@Export(label = "Participação", exhibitionOrder = 7)
-	public String getParticipacaoString() {
-		return getParticipacaoFormatado();
-	}
-
-	@Export(label = "Participação Acumulada", exhibitionOrder = 8)
-	public String getParticipacaoAcumuladaString() {
-		return getParticipacaoAcumuladaFormatado();
-	}
-
 	public String getVendaExemplaresFormatado() {
 		return vendaExemplaresFormatado;
 	}

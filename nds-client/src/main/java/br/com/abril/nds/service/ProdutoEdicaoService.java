@@ -25,10 +25,11 @@ public interface ProdutoEdicaoService {
 	 * Obtém o ProdutoEdição.
 	 * 
 	 * @param idProdutoEdicao
+	 * @param indCarregaFornecedores
 	 * 
 	 * @return
 	 */
-	public ProdutoEdicao obterProdutoEdicao(Long idProdutoEdicao);
+	public ProdutoEdicao obterProdutoEdicao(Long idProdutoEdicao, boolean indCarregaFornecedores);
 	
 	/**
 	 * Obtém os produtos edição de acordo com o nome do produto.

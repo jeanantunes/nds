@@ -203,6 +203,8 @@ public class NotaFiscalEntradaRepositoryImpl extends AbstractRepositoryModel<Not
 						orderByColumn += " notaFiscal.tipoNotaFiscal.descricao ";
 						break;
 					default:
+						orderByColumn += orderByColumn.equals("") ? "" : ",";
+						orderByColumn += " notaFiscal.dataEmissao ";
 						break;
 				}
 			}
@@ -266,9 +268,10 @@ public class NotaFiscalEntradaRepositoryImpl extends AbstractRepositoryModel<Not
 				   + " itemNotaFiscal.produtoEdicao.numeroEdicao as numeroEdicao, "
 				   + " itemNotaFiscal.preco as precoVenda, "
 				   + " itemNotaFiscal.qtde as quantidadeExemplares, " 
-				   + " (itemNotaFiscal.qtde * itemNotaFiscal.preco) as valorTotal, "
+				   + " (itemNotaFiscal.qtde * itemNotaFiscal.preco) - (itemNotaFiscal.qtde * itemNotaFiscal.preco * itemNotaFiscal.desconto) as valorTotal, "
 				   + " diferenca.qtde as sobrasFaltas, " 
-				   + " diferenca.tipoDiferenca as tipoDiferenca " 
+				   + " diferenca.tipoDiferenca as tipoDiferenca, " 
+				   + " itemNotaFiscal.desconto as desconto " 
 				   + " from ItemNotaFiscalEntrada itemNotaFiscal "
 				   + " left join itemNotaFiscal.recebimentoFisico.diferenca as diferenca "
 				   + " where itemNotaFiscal.notaFiscal.id = :idNotaFiscal "
