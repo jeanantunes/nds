@@ -139,7 +139,8 @@ public class TransportadorRepositoryImpl extends
 		   .append(" assoc.rota.roteiro.descricaoRoteiro, assoc.rota.descricaoRota, ")
 		   .append(" coalesce(roteirizacao.pdv.cota.parametroDistribuicao.taxaFixa, roteirizacao.pdv.cota.parametroDistribuicao.percentualFaturamento || '%'))")
 		   .append(" from AssociacaoVeiculoMotoristaRota assoc ")
-		   .append(" join assoc.rota.roteirizacao roteirizacao ")
+		   .append(" join assoc.rota.roteiro roteiro ")
+		   .append(" join assoc.roteiro.roteirizacao roteirizacao ")
 		   .append(" where assoc.transportador.id = :idTransportador ");
 		
 		if ("numeroCota".equals(sortname)){
