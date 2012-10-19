@@ -294,13 +294,44 @@ public class ContasAPagarController {
 	@Path("/exportPesquisarDetalheConsignado")
 	public void exportPesquisarDetalheConsignado(FileType fileType) throws IOException {
 		
-		// TODO
+		FiltroContasAPagarDTO filtro = (FiltroContasAPagarDTO) session.getAttribute(FILTRO_DETALHE_CONSIGNADO);
+		
+		ContasAPagarTotalDistribDTO<ContasAPagarConsignadoDTO> dto = contasAPagarService.pesquisarDetalheConsignado(filtro, null, null, 0, 0);
+		
+		List <ContasAPagarConsignadoVO> listVO = new ArrayList<ContasAPagarConsignadoVO>();
+		
+		for(ContasAPagarConsignadoDTO dt : dto.getGrid()){
+			
+			listVO.add(new ContasAPagarConsignadoVO(dt));
+		}
+		
+		FileExporter.to("detalhe-consignado", fileType).inHTTPResponse(this.getNDSFileHeader(new Date()), null, null,
+						listVO, ContasAPagarConsignadoVO.class,
+						this.httpServletResponse);
+		result.use(Results.nothing());
+
 	}
 	
 	@Path("/exportPesquisarDetalheEncalhe")
 	public void exportPesquisarDetalheEncalhe(FileType fileType) throws IOException {
 		
-		// TODO
+		FiltroContasAPagarDTO filtro = (FiltroContasAPagarDTO) session.getAttribute(FILTRO_DETALHE_ENCALHE);
+		
+		ContasAPagarTotalDistribDTO<ContasAPagarEncalheDTO> dto = contasAPagarService.pesquisarDetalheEncalhe(filtro, null, null, 0, 0);
+		
+		List <ContasAPagarEncalheVO> listVO = new ArrayList<ContasAPagarEncalheVO>();
+		
+		for(ContasAPagarEncalheDTO dt : dto.getGrid()){
+			
+			listVO.add(new ContasAPagarEncalheVO(dt));
+		}
+		
+		FileExporter.to("detalhe-encalhe", fileType).inHTTPResponse(this.getNDSFileHeader(new Date()), null, null,
+						listVO, ContasAPagarEncalheVO.class, 
+						this.httpServletResponse);
+		
+		result.use(Results.nothing());
+
 	}
 	
 	
