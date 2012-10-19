@@ -665,7 +665,8 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 	/**
 	 * Monta o perídodo de recolhimento de acordo com a semana informada.
 	 */
-	private Intervalo<Date> getPeriodoRecolhimento(Distribuidor distribuidor,
+	@Override
+	public Intervalo<Date> getPeriodoRecolhimento(Distribuidor distribuidor,
 												   Integer numeroSemana,
 												   Date dataBalanceamento) {
 		
