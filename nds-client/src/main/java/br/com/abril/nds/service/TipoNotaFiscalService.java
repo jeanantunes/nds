@@ -5,8 +5,10 @@ import java.util.List;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.filtro.FiltroCadastroTipoNotaDTO;
 import br.com.abril.nds.model.cadastro.TipoAtividade;
+import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
+import br.com.abril.nds.model.fiscal.TipoUsuarioNotaFiscal;
 
 public interface TipoNotaFiscalService {
 
@@ -34,6 +36,17 @@ public interface TipoNotaFiscalService {
 	 * @return
 	 */
 	List<ItemDTO<Long, String>> carregarComboTiposNotasFiscais(TipoOperacao tipoOperacao);
+	
+	/**
+	 * Carrega combo tipo notas ficais de acordo com o tipo de operação, tipo de destinatário, tipo de emitente e grupo denota fiscal
+	 * 
+	 * @param tipoOperacao
+	 * @param tipoDestinatario
+	 * @param tipoEmitente
+	 * @param grupoNotaFiscal
+	 * @return
+	 */
+	List<ItemDTO<Long, String>> carregarComboTiposNotasFiscais(TipoOperacao tipoOperacao, TipoUsuarioNotaFiscal tipoDestinatario, TipoUsuarioNotaFiscal tipoEmitente, GrupoNotaFiscal[] grupoNotaFiscal);
 	
 	List<TipoNotaFiscal> obterTiposNotasFiscaisPorTipoAtividadeDistribuidor(Long idDistribuidor);
 	

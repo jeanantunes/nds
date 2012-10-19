@@ -33,8 +33,7 @@ public class TipoNotaFiscalRepositoryImpl extends AbstractRepositoryModel<TipoNo
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<TipoNotaFiscal> obterTiposNotasFiscais(TipoOperacao tipoOperacao, TipoUsuarioNotaFiscal tipoDestinatario, TipoUsuarioNotaFiscal tipoEmitente) {
-
+	public List<TipoNotaFiscal> obterTiposNotasFiscais(TipoOperacao tipoOperacao) {
 		
 		StringBuilder hql = new StringBuilder("");
 		hql.append("from TipoNotaFiscal tipoNotaFiscal ");
@@ -43,24 +42,12 @@ public class TipoNotaFiscalRepositoryImpl extends AbstractRepositoryModel<TipoNo
 		if(tipoOperacao != null)
 			hql.append("and tipoNotaFiscal.tipoOperacao = :tipoOperacao ");
 		
-		if(tipoDestinatario != null)
-			hql.append("and tipoNotaFiscal.destinatario = :tipoDestinatario ");
-		
-		if(tipoEmitente != null)
-			hql.append("and tipoNotaFiscal.emitente = :tipoEmitente ");
-		
 		hql.append("order by tipoNotaFiscal.descricao ");
 		
 		Query query = getSession().createQuery(hql.toString());
 		
 		if(tipoOperacao != null)
 			query.setParameter("tipoOperacao", tipoOperacao);
-		
-		if(tipoDestinatario != null)
-			query.setParameter("tipoDestinatario", tipoDestinatario);
-		
-		if(tipoEmitente != null)
-			query.setParameter("tipoEmitente", tipoEmitente);
 		
 		return query.list();
 	}
@@ -265,6 +252,48 @@ public class TipoNotaFiscalRepositoryImpl extends AbstractRepositoryModel<TipoNo
 		query.setParameter("grupoNotaFiscal", grupoNotaFiscal);
 		
 		return query.list();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<TipoNotaFiscal> obterTiposNotasFiscais(TipoOperacao tipoOperacao,
+			TipoUsuarioNotaFiscal tipoDestinatario, TipoUsuarioNotaFiscal tipoEmitente,
+			GrupoNotaFiscal[] grupoNotaFiscal) {
+
+		StringBuilder hql = new StringBuilder("");
+		hql.append("from TipoNotaFiscal tipoNotaFiscal ");
+		hql.append("where 1=1 ");
+		
+		if(tipoOperacao != null)
+			hql.append("and tipoNotaFiscal.tipoOperacao = :tipoOperacao ");
+		
+		if(tipoDestinatario != null)
+			hql.append("and tipoNotaFiscal.destinatario = :tipoDestinatario ");
+		
+		if(tipoEmitente != null)
+			hql.append("and tipoNotaFiscal.emitente = :tipoEmitente ");
+		
+		if(grupoNotaFiscal != null && grupoNotaFiscal.length > 0)
+			hql.append("and tipoNotaFiscal.grupoNotaFiscal IN (:grupoNotaFiscal) ");
+		
+		hql.append("order by tipoNotaFiscal.descricao ");
+		
+		Query query = getSession().createQuery(hql.toString());
+		
+		if(tipoOperacao != null)
+			query.setParameter("tipoOperacao", tipoOperacao);
+		
+		if(tipoDestinatario != null)
+			query.setParameter("tipoDestinatario", tipoDestinatario);
+		
+		if(tipoEmitente != null)
+			query.setParameter("tipoEmitente", tipoEmitente);
+		
+		if(grupoNotaFiscal != null && grupoNotaFiscal.length > 0)
+			query.setParameterList("grupoNotaFiscal", grupoNotaFiscal);
+		
+		return query.list();
+		
 	}
 
 }

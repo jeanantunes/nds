@@ -1,24 +1,17 @@
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigInteger;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.hibernate.Criteria;
-import org.hibernate.Hibernate;
-import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.type.LongType;
 import org.hibernate.type.StringType;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.NfeDTO;
-import br.com.abril.nds.dto.NfeImpressaoDTO;
-import br.com.abril.nds.dto.filtro.FiltroImpressaoNFEDTO;
 import br.com.abril.nds.dto.filtro.FiltroMonitorNfeDTO;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.StatusProcessamentoInterno;
@@ -565,190 +558,5 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 
 		return sqlQuery.list();
 	}	
-
-	@Transactional(readOnly=true)
-	public List<NfeImpressaoDTO> buscarNFeParaImpressao(FiltroImpressaoNFEDTO filtro) {
-
-		StringBuilder sql = new StringBuilder();
-		sql.append("select new br.com.abril.nds.dto.NfeImpressaoDTO(cota, SUM(nf.informacaoValoresTotais.valorProdutos) as vlrTotal, SUM(nf.informacaoValoresTotais.valorDesconto) as vlrTotalDesconto) ");
-		
-		//Complementa o HQL com as clausulas de filtro
-		Query q = mountarFiltroConsultaNfeParaImpressao(filtro, sql, filtro.getPaginacao());
-
-		return q.list();
-		
-	}
-
-	@Transactional(readOnly=true)
-	public Integer buscarNFeParaImpressaoTotalQtd(FiltroImpressaoNFEDTO filtro) {
-
-		StringBuilder sql = new StringBuilder();
-		sql.append("select count(*) ");
-		
-		//Complementa o HQL com as clausulas de filtro
-		Query q = mountarFiltroConsultaNfeParaImpressao(filtro, sql, null);
-		
-		return q.list().size();
-	}
-	
-	//Torna reaproveitavel a parte de filtro da query
-	private Query mountarFiltroConsultaNfeParaImpressao(FiltroImpressaoNFEDTO filtro, StringBuilder sql, PaginacaoVO paginacao) {
-		
-		sql.append("from NotaFiscal nf, Cota cota ");
-		
-		if(filtro.getDataMovimentoInicial() != null || filtro.getDataMovimentoFinal() != null) {
-			sql.append(", MovimentoEstoqueCota movEstCota ");
-		}
-		
-		if(filtro.getIdRoteiro() != null && filtro.getIdRoteiro() > -1) {
-			sql.append(", Roteiro roteiro ");
-		}
-		
-		if(filtro.getIdRoteiro() != null && filtro.getIdRoteiro() > -1 
-				&& filtro.getIdRota() != null && filtro.getIdRota() > -1) {
-			sql.append("join roteiro.rotas rota ");
-		}
-				
-		sql.append("WHERE 1 = 1 ");
-		sql.append("and nf.identificacaoDestinatario.pessoaDestinatarioReferencia.id = cota.pessoa.id ");
-		sql.append("and nf.identificacao.dataEmissao = :dataEmissao ");
-		
-		//Filtra por datas de movimento de, entre e ate
-		if(filtro.getDataMovimentoInicial() != null || filtro.getDataMovimentoFinal() != null) {
-			if(filtro.getDataMovimentoInicial() != null && filtro.getDataMovimentoFinal() == null) {
-				sql.append("and cota.id = movEstCota.cota.id ");
-				sql.append("and movEstCota.data >= :dataInicialMovimento ");
-			} else if(filtro.getDataMovimentoInicial() != null && filtro.getDataMovimentoFinal() != null) {
-				sql.append("and cota.id = movEstCota.cota.id ");
-				sql.append("and movEstCota.data between :dataInicialMovimento and :dataFinalMovimento ");
-			} else {
-				sql.append("and cota.id = movEstCota.cota.id ");
-				sql.append("and movEstCota.data <= :dataFinalMovimento ");
-			}
-		}
-		
-		if(filtro.getTipoNFe() != null && Long.parseLong(filtro.getTipoNFe()) > -1) {
-			sql.append("and nf.identificacao.tipoNotaFiscal.id = :tipoNotaFiscal ");			
-		}
-		
-		//TODO: Sérgio - Acertar o id do box de roteirizacao
-		if(filtro.getIdRoteiro() != null && filtro.getIdRoteiro() > -1) {
-			sql.append("and roteiro.roteirizacao.id = cota.box.id ");
-			sql.append("and roteiro.id = :idRoteiro ");
-		}
-		
-		if(filtro.getIdRoteiro() != null && filtro.getIdRoteiro() > -1 
-				&& filtro.getIdRota() != null && filtro.getIdRota() > -1) {
-			sql.append("and rota.id = :idRota ");
-		}
-		
-		if(filtro.getIdCotaInicial() != null || filtro.getIdCotaFinal() != null) {
-			if(filtro.getIdCotaInicial() != null && filtro.getIdCotaFinal() == null) {
-				sql.append("and cota.id >= :idCotaInicial ");
-			} else if(filtro.getIdCotaInicial() != null && filtro.getIdCotaFinal() != null) {
-				sql.append("and cota.id between :idCotaInicial and :idCotaFinal ");
-			} else {
-				sql.append("and cota.id <= :idCotaFinal ");
-			}
-		}
-		
-		if(filtro.getIdBoxInicial() != null || filtro.getIdBoxFinal() != null) {
-			if(filtro.getIdBoxInicial() != null && filtro.getIdBoxFinal() == null) {
-				sql.append("and cota.box.id >= :idBoxInicial ");
-			} else if(filtro.getIdBoxInicial() != null && filtro.getIdBoxFinal() != null) {
-				sql.append("and cota.box.id between :idBoxInicial and :idBoxFinal ");
-			} else {
-				sql.append("and cota.box.id <= :idBoxFinal ");
-			}
-		}
-				
-		sql.append("group by cota ");
-		
-		//Monta a ordenacao
-		if (paginacao != null) {
-
-			Map<String, String> columnToSort = new HashMap<String, String>();
-			columnToSort.put("idCota", "cota.id");
-			columnToSort.put("nomeCota", "cota.pessoa.nome");
-			columnToSort.put("vlrTotal", "vlrTotal");
-			columnToSort.put("vlrTotalDesconto", "vlrTotalDesconto");
-			
-			//Verifica a entrada para evitar expressoes SQL
-			if (paginacao.getSortColumn() == null 
-					|| paginacao.getSortColumn() != null 
-					&& !paginacao.getSortColumn().matches("[a-zA-Z0-9\\._]*")) {
-				paginacao.setSortColumn("idCota");
-	        }
-						
-			sql.append("order by "+ columnToSort.get(paginacao.getSortColumn())+ " ");
-
-			String orderByColumn = "";
-
-			sql.append(orderByColumn);
-
-			if (paginacao.getOrdenacao() != null) {
-				sql.append(paginacao.getOrdenacao().toString());
-			}
-
-		}
-		
-		Query q = getSession().createQuery(sql.toString());
-		
-		q.setParameter("dataEmissao", new java.sql.Date(filtro.getDataEmissao().getTime()));
-		
-		if(filtro.getTipoNFe() != null && Long.parseLong(filtro.getTipoNFe()) > -1) {
-			q.setParameter("tipoNotaFiscal", Long.parseLong(filtro.getTipoNFe()) );
-		}
-		
-		if(filtro.getDataMovimentoInicial() != null || filtro.getDataMovimentoFinal() != null) {
-			if(filtro.getDataMovimentoInicial() != null && filtro.getDataMovimentoFinal() == null) {
-				q.setParameter("dataInicialMovimento", new java.sql.Date(filtro.getDataMovimentoInicial().getTime()));
-			} else if(filtro.getDataMovimentoInicial() != null && filtro.getDataMovimentoFinal() != null) {
-				q.setParameter("dataInicialMovimento", new java.sql.Date(filtro.getDataMovimentoInicial().getTime()));
-				q.setParameter("dataFinalMovimento", new java.sql.Date(filtro.getDataMovimentoFinal().getTime()));
-			} else {
-				q.setParameter("dataFinalMovimento", new java.sql.Date(filtro.getDataMovimentoFinal().getTime()));
-			}
-		}
-		
-		if(filtro.getIdRoteiro() != null && filtro.getIdRoteiro() > -1) {
-			q.setParameter("idRoteiro", filtro.getIdRoteiro() );
-		}
-		
-		if(filtro.getIdRota() != null && filtro.getIdRota() > -1) {
-			q.setParameter("idRota", filtro.getIdRota() );
-		}
-		
-		if(filtro.getIdCotaInicial() != null || filtro.getIdCotaFinal() != null) {
-			if(filtro.getIdCotaInicial() != null && filtro.getIdCotaFinal() == null) {
-				q.setParameter("idCotaInicial", filtro.getIdCotaInicial());
-			} else if(filtro.getIdCotaInicial() != null && filtro.getIdCotaFinal() != null) {
-				q.setParameter("idCotaInicial", filtro.getIdCotaInicial());
-				q.setParameter("idCotaFinal", filtro.getIdCotaFinal());
-			} else {
-				q.setParameter("idCotaFinal", filtro.getIdCotaFinal());
-			}
-		}
-		
-		if(filtro.getIdBoxInicial() != null || filtro.getIdBoxFinal() != null) {
-			if(filtro.getIdBoxInicial() != null && filtro.getIdBoxFinal() == null) {
-				q.setParameter("idBoxInicial", filtro.getIdBoxInicial());
-			} else if(filtro.getIdBoxInicial() != null && filtro.getIdBoxFinal() != null) {
-				q.setParameter("idBoxInicial", filtro.getIdBoxInicial());
-				q.setParameter("idBoxFinal", filtro.getIdBoxFinal());
-			} else {
-				q.setParameter("idBoxFinal", filtro.getIdBoxFinal());
-			}
-		}
-		
-		if (paginacao != null && paginacao.getQtdResultadosPorPagina() != null) {
-			q.setFirstResult( paginacao.getQtdResultadosPorPagina() * ( (paginacao.getPaginaAtual() - 1 )))
-            .setMaxResults( paginacao.getQtdResultadosPorPagina() );
-		}
-		
-		return q;
-		
-	}
-	
 
 }

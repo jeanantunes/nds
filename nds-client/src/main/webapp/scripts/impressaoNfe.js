@@ -18,6 +18,10 @@ var impressaoNfeController = $.extend(true, {
 			buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
 			buttonImageOnly: true
 		});
+		
+		$( "#dataEmissao", impressaoNfeController.workspace ).mask("99/99/9999");
+		$( "#dataMovimentoInicial", impressaoNfeController.workspace ).mask("99/99/9999");
+		$( "#dataMovimentoFinal", impressaoNfeController.workspace ).mask("99/99/9999");
 
 		$(".produtosPesqGrid", impressaoNfeController.workspace).flexigrid({
 			preProcess : impressaoNfeController.prepararJSONPesquisaProdutos,
@@ -330,7 +334,7 @@ var impressaoNfeController = $.extend(true, {
 			data : params
 		});
 	},
-
+	
 	/**
 	 * Marca todas as cotas do grid
 	 */
@@ -390,12 +394,12 @@ var impressaoNfeController = $.extend(true, {
 		impressaoNfeController.atualizarProdutosFiltrados( data );
 
 	},
-
+	
 	filtrarProdutos : function(codigoProduto, nomeProduto) {
-		params = [ 	{name:'codigoProduto', value:$('#dialog-pesqProdutos-codigoProduto', impressaoNfeController.workspace).val()},
-		           	{name:'nomeProduto', value:$('#dialog-pesqProdutos-nomeProduto', impressaoNfeController.workspace).val()},
+		params = [ 	{name:'codigoProduto', value:$('#dialog-pesqProdutos-codigoProduto').val()},
+		           	{name:'nomeProduto', value:$('#dialog-pesqProdutos-nomeProduto').val()},
 		           	]
-		$(".produtosPesqGrid", impressaoNfeController.workspace).flexOptions({params: params}).flexReload();
+		$(".produtosPesqGrid").flexOptions({params: params}).flexReload();
 	},
 
 	adicionarAosProdutosFiltradosERecarregar : function(check, codigoProduto, nomeProduto) {

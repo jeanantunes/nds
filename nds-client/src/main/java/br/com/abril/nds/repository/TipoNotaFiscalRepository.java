@@ -16,13 +16,13 @@ public interface TipoNotaFiscalRepository extends Repository<TipoNotaFiscal, Lon
 	/**
 	 * Retorna os tipos de notas fiscais baseado no tipo de operação e no tipo de destinatario
 	 * @param tipoOperacao
-	 * @param tipoDestinatario
-	 * @param tipoEmitente TODO
 	 * @return
 	 */
-	List<TipoNotaFiscal> obterTiposNotasFiscais(TipoOperacao tipoOperacao, TipoUsuarioNotaFiscal tipoDestinatario, TipoUsuarioNotaFiscal tipoEmitente);
+	List<TipoNotaFiscal> obterTiposNotasFiscais(TipoOperacao tipoOperacao);
 
 	TipoNotaFiscal obterTipoNotaFiscal(GrupoNotaFiscal grupoNotaFiscal);
+	
+	List<TipoNotaFiscal> obterTiposNotasFiscais(TipoOperacao tipoOperacao, TipoUsuarioNotaFiscal tipoDestinatario, TipoUsuarioNotaFiscal tipoEmitente, GrupoNotaFiscal[] grupoNotaFiscal);
 
 	public Integer obterQuantidadeTiposNotasFiscais(FiltroCadastroTipoNotaDTO filtro);
 	

@@ -11,6 +11,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.MathContext;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -19,14 +20,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import net.sf.jasperreports.engine.JRDataSource;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.ConsultaLoteNotaFiscalDTO;
-import br.com.abril.nds.dto.NfeImpressaoDTO;
+import br.com.abril.nds.dto.CotasImpressaoNfeDTO;
 import br.com.abril.nds.dto.QuantidadePrecoItemNotaDTO;
 import br.com.abril.nds.dto.RetornoNFEDTO;
+import br.com.abril.nds.dto.TermoAdesaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroImpressaoNFEDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.ParametroSistemaService;
@@ -1649,100 +1654,24 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		return novoEndereco;
 	}
 
-	@Transactional
-	public List<NfeImpressaoDTO> buscarNFeParaImpressao(FiltroImpressaoNFEDTO filtro) {
-
-		List<NfeImpressaoDTO> cotas = notaFiscalRepository.buscarNFeParaImpressao(filtro);
-		List<NfeImpressaoDTO> cotasARemover = new ArrayList<NfeImpressaoDTO>();
-
-		Distribuidor distribuidor = this.distribuidorRepository.obter();
-
-		Intervalo<Date> intervaloDateMovimento = new Intervalo<Date>(filtro.getDataMovimentoInicial(), filtro.getDataMovimentoFinal());
-
-		for (NfeImpressaoDTO itemCota : cotas) {
-
-			List<MovimentoEstoqueCota> listaMovimentoEstoqueCota = obterItensNotaVenda(
-					distribuidor, itemCota.getIdCota(), intervaloDateMovimento, filtro.getIdsFornecedores(), filtro.getCodigosProdutos());
-
-			if(listaMovimentoEstoqueCota == null || listaMovimentoEstoqueCota.size() < 1)
-				cotasARemover.add(itemCota);
-			
-			this.sumarizarTotalItensNota(listaMovimentoEstoqueCota, itemCota);
-
-		}
-
-		cotas.removeAll(cotasARemover);
-		
-		return cotas;
-	}
-
-	@Transactional
-	private List<MovimentoEstoqueCota> obterItensNotaVenda(Distribuidor distribuidor,
-			Long idCota, Intervalo<Date> periodo, List<Long> listaIdFornecedores, List<Long> listaCodigosProdutos) {
-
-		List<GrupoMovimentoEstoque> listaGrupoMovimentoEstoques = new ArrayList<GrupoMovimentoEstoque>();
-
-		//TODO: Sérgio - Complementar a lista com os movimentos de estoque possíveis
-		listaGrupoMovimentoEstoques.add(GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
-
-		List<MovimentoEstoqueCota> movEstCota = movimentoEstoqueCotaRepository
-				.obterMovimentoEstoqueCotaPor(distribuidor, idCota, listaGrupoMovimentoEstoques, periodo, listaIdFornecedores);
-		
-		
-		if(listaCodigosProdutos != null && listaCodigosProdutos.size() > 0) {
-			List<MovimentoEstoqueCota> movEstCotaFiltrado = new ArrayList<MovimentoEstoqueCota>();
-			
-			for(MovimentoEstoqueCota mec : movEstCota) {
-				if(listaCodigosProdutos.contains(Long.parseLong(mec.getProdutoEdicao().getProduto().getCodigo()))) {
-					movEstCotaFiltrado.add(mec);
-				}				
-			}
-			
-			return movEstCotaFiltrado;
-		}
-		
-		return movEstCota;
-	}
-
-	@Transactional
-	private void sumarizarTotalItensNota(
-			List<MovimentoEstoqueCota> listaMovimentoEstoqueCota,
-			NfeImpressaoDTO itemCota) {
-
-		BigInteger quantidade = BigInteger.ZERO;
-		BigDecimal preco = BigDecimal.ZERO;
-		BigDecimal precoComDesconto = BigDecimal.ZERO;
-		itemCota.setNotaImpressa(false);
-
-		for (MovimentoEstoqueCota movimento : listaMovimentoEstoqueCota) {
-			ProdutoEdicao produtoEdicao = movimento.getProdutoEdicao();
-			BigDecimal precoVenda = produtoEdicao.getPrecoVenda();
-			BigDecimal percentualDesconto = descontoService
-					.obterDescontoPorCotaProdutoEdicao(cotaRepository.buscarPorId(itemCota.getIdCota()), produtoEdicao);
-			BigDecimal valorDesconto = MathUtil.calculatePercentageValue(precoVenda, percentualDesconto);			
-			quantidade = quantidade.add(movimento.getQtde());
-			preco = preco.add(precoVenda.multiply(new BigDecimal(movimento.getQtde())));
-			precoComDesconto = precoComDesconto.add(precoVenda.subtract(valorDesconto, new MathContext(3)));	
-
-			if(!movimento.getListaItemNotaEnvio().isEmpty()){
-				itemCota.setNotaImpressa(true);
-			}
-
-		}
-
-		//itemCota.setTotal(preco);
-		//itemCota.setTotalDesconto(precoComDesconto);
-		itemCota.setTotalExemplares(quantidade);
-
-	}
-
-	public Integer buscarNFeParaImpressaoTotalQtd(FiltroImpressaoNFEDTO filtro) {
-		return notaFiscalRepository.buscarNFeParaImpressaoTotalQtd(filtro);
-	}
-
 	public byte[] imprimirNotasEnvio(List<NotaEnvio> notasEnvio) {
-		// TODO Auto-generated method stub
-		return null;
+		
+		
+		Map<String, Object> parameters = new HashMap<String, Object>();
+		parameters.put("SUBREPORT_DIR",
+				Thread.currentThread().getContextClassLoader().getResource("/reports/").getPath());
+		
+		parameters.put("infoComp", this.distribuidorRepository.obterInformacoesComplementaresTermoAdesao());
+		
+		List<TermoAdesaoDTO> listaDTO = new ArrayList<TermoAdesaoDTO>();
+		
+		JRDataSource jrDataSource = new JRBeanCollectionDataSource(listaDTO);
+		
+		URL url = Thread.currentThread().getContextClassLoader().getResource("/reports/termo_adesao.jasper");
+		
+		//String path = url.toURI().getPath();
+		 
+		return null; //JasperRunManager.runReportToPdf(path, parameters, jrDataSource);
 	}
 
 }

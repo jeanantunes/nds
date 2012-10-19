@@ -16,19 +16,27 @@
 			<legend> Pesquisar NF-e</legend>
 			<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 				<tr>
+					<c:if test="${tipoNotas == null}">
 					<td width="82">Tipo de Nota:</td>
-					<td width="209"><select name="tipoNFe" id="tipoNFe" style="width: 200px; font-size: 11px !important">
+					<td width="209"></td>
+					</c:if>
+					<c:if test="${tipoNotas != null}">
+					<td width="82">Tipo de Nota:</td>
+					<td width="209">
+					<select name="tipoNFe" id="tipoNFe" style="width: 200px; font-size: 11px !important">
 							<option value="-1">Selecione...</option>
 							<c:forEach items="${tipoNotas}" var="tipoNota">
 								<option value="${tipoNota.key}">${tipoNota.value}</option>
 							</c:forEach>
-					</select></td>
+					</select>
+					</td>
+					</c:if>
 					<td width="97">Data Movimento:</td>
-					<td width="238"><input name="dataMovimentoInicial" type="text" id="dataMovimentoInicial" style="width: 76px;" />
-						&nbsp;&nbsp;Até&nbsp; <input name="dataMovimentoFinal" type="text" id="dataMovimentoFinal" style="width: 76px;" /></td>
+					<td width="238"><input name="dataMovimentoInicial" type="text" id="dataMovimentoInicial" style="width: 76px;" maxlength="10" />
+						&nbsp;&nbsp;Até&nbsp; <input name="dataMovimentoFinal" type="text" id="dataMovimentoFinal" style="width: 76px;" maxlength="10" /></td>
 					<td width="83">Data Emissão:</td>
 					<td width="210"><input name="dataEmissao" type="text" id="dataEmissao" style="width: 80px;"
-						value="${dataAtual}" /></td>
+						value="${dataAtual}" maxlength="10" /></td>
 				</tr>
 				<tr>
 					<td>Roteiro:</td>
@@ -112,8 +120,10 @@
 				<table class="impressaoGrid"></table>
 
 				<span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="images/ico_excel.png"
-						hspace="5" border="0" />Arquivo</a></span> <span class="bt_novos" title="Imprimir"><a href="../nota_envio.html"
-					target="_blank"><img src="images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />Imprimir Documento</a></span>
+						hspace="5" border="0" />Arquivo</a></span> <span class="bt_novos" title="Imprimir">
+				<a href="${pageContext.request.contextPath}/nfe/impressaoNFE/imprimirNFe?fileType=PDF">
+					<img src="images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />Imprimir Documento</a>
+					</span>
 				<span class="bt_sellAll" style="float: right;" id="btSel"><label for="sel">Selecionar Todos</label><input
 					type="checkbox" id="selTodasAsCotas" name="Todos" onclick="impressaoNfeController.checkTodasAsCotas();" style="float: left; margin-right: 30px;" /></span>
 			</div>
@@ -131,7 +141,7 @@
 						<td width="88"><input type="text" id="dialog-pesqProdutos-codigoProduto" name="dialog-pesqProdutos-codigoProduto" style="width: 80px;" /></td>
 						<td width="45">Produto:</td>
 						<td width="180"><input type="text" id="dialog-pesqProdutos-nomeProduto" name="dialog-pesqProdutos-nomeProduto"  style="width: 180px;" /></td>
-						<td width="15"><span class="classPesquisar"> <a href="javascript:this.filtrarProdutos($('#dialog-pesqProdutos-codigoProduto', this.workspace).val(), $('#dialog-pesqProdutos-nomeProduto', this.workspace).val());"> </a>
+						<td width="15"><span class="classPesquisar"> <a href="#" onclick="impressaoNfeController.filtrarProdutos($('#dialog-pesqProdutos-codigoProduto', this.workspace).val(), $('#dialog-pesqProdutos-nomeProduto', this.workspace).val());"> </a>
 						</span></td>
 					</tr>
 				</table>

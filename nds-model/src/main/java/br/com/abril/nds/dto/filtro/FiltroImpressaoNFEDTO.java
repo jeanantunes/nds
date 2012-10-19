@@ -13,52 +13,52 @@ import br.com.abril.nds.vo.PaginacaoVO;
 public class FiltroImpressaoNFEDTO implements Serializable {
 
 	private static final long serialVersionUID = -750037999779899243L;
-	
+
 	private String tipoNFe;
-	
+
+	private Date dataEmissao;
+
 	private Date dataMovimentoInicial;
 	
 	private Date dataMovimentoFinal;
-	
-	private Date dataEmissao;
-	
-	private Long idRoteiro;
-	
-	private Long idRota;
-	
-	private Long idTipoEmissao;
-	
+
 	private Long idCotaInicial;
 	
 	private Long idCotaFinal;
 	
 	private Long idBoxInicial;
-	
+
 	private Long idBoxFinal;
-	
+
+	private Long idRoteiro;
+
+	private Long idRota;
+
+	private Long idTipoEmissao;
+
 	private List<Long> idsFornecedores;
-	
+
 	private List<Long> codigosProdutos;
-	
+
 	private PaginacaoVO paginacao;
-	
+
 	private ColunaOrdenacaoImpressaoNFE ordenacaoColuna;
-	
+
 	public enum ColunaOrdenacaoImpressaoNFE {
 
 		COTA("cota");
-		
+
 		private String nomeColuna;
-		
+
 		private ColunaOrdenacaoImpressaoNFE(String nomeColuna) {
 			this.nomeColuna = nomeColuna;
 		}
-		
+
 		@Override
 		public String toString() {
 			return this.nomeColuna;
 		}
-		
+
 		public static ColunaOrdenacaoImpressaoNFE getPorDescricao(String descricao) {
 			for(ColunaOrdenacaoImpressaoNFE coluna: ColunaOrdenacaoImpressaoNFE.values()) {
 				if(coluna.toString().equals(descricao))
@@ -72,10 +72,10 @@ public class FiltroImpressaoNFEDTO implements Serializable {
 		if(	this.validarFiltro() != null ) {
 			return false;			
 		}
-		
+
 		return true;
 	}
-	
+
 	/**
 	 * Valida se o filtro é válido. Se for, retorna null, se não, retorna os erros
 	 * 
@@ -83,74 +83,74 @@ public class FiltroImpressaoNFEDTO implements Serializable {
 	 * @throws Exception
 	 */
 	public HashMap<String, String> validarFiltro() {
-	
+
 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", new Locale("PT_BR"));
 		HashMap<String,String> erros = new HashMap<String,String>();
-		
+
 		if(	(this.getTipoNFe() == null || this.getTipoNFe() != null && this.getTipoNFe().isEmpty()) ) {
 			erros.put("tipoNFe", "O Tipo de NF-e é inválido.");
 		}
-		
+
 		if( this.getDataMovimentoInicial() != null 
 				&& !DateUtil.isValidDatePTBR(sdf.format(this.getDataMovimentoInicial())) ) {
 			erros.put("dataInicialMovimento", "A Data Inicial de Movimento é inválida.");
 		}
-			
+
 		if( this.getDataMovimentoFinal() != null) {
-		
+
 			if( !DateUtil.isValidDatePTBR(sdf.format(this.getDataMovimentoFinal())) ) {
 				erros.put("dataInicialMovimento", "A Data Final de Movimento é inválida.");
 			} 
-			
+
 			if(erros.get("dataFinalMovimento") == null) {
 				if( DateUtil.isDataInicialMaiorDataFinal(this.getDataMovimentoInicial(), this.getDataMovimentoFinal()) ) {
 					erros.put("dataFinalMovimento", "A Data Final de Movimento é inválida por ser menor que a Data Inicial.");
 				}
 			}			
 		}
-				
+
 		if( this.getDataEmissao() == null ) {
 			erros.put("dataEmissao", "A Data de Emissão é obrigatória.");
 		} 
-		
+
 		if( this.getDataEmissao() != null && !DateUtil.isValidDatePTBR(sdf.format(this.getDataEmissao())) ) {
 			erros.put("dataEmissao", "A Data de Emissão é inválida.");
 		}
-		
+
 		if( this.getIdCotaInicial() != null && this.getIdCotaInicial().longValue() < 0 ) {
 			erros.put("idCotaInicial", "A Cota Inicial é inválida.");
 		}
-		
+
 		if( this.getIdCotaFinal() != null ) {
 			if( this.getIdCotaFinal().longValue() < 0 ) {
 				erros.put("idCotaFinal", "A Cota Inicial é inválida.");
 			}
-			
+
 			if(erros.get("idCotaFinal") == null && this.getIdCotaInicial() != null) {
 				if(this.getIdCotaFinal().longValue() < this.getIdCotaInicial().longValue()) {
 					erros.put("idCotaFinal", "A Cota Final é inválida por ser menor que a Cota Inicial.");
 				}
 			}
 		}
-		
+
 		if( this.getIdBoxInicial() != null && this.getIdBoxInicial().longValue() < 0) {
 			erros.put("idBoxInicial", "O Box Inicial é inválido.");
 		}
-		
+
 		if( this.getIdBoxFinal() != null ) {
 			if( this.getIdBoxFinal().longValue() < 0 ) {
 				erros.put("idBoxFinal", "O Box Inicial é inválido.");
 			}
-			
+
 			if(erros.get("idBoxFinal") == null && this.getIdBoxFinal() != null) {
 				if(this.getIdBoxFinal().longValue() < this.getIdBoxInicial().longValue()) {
 					erros.put("idBoxFinal", "O Box Final é inválido por ser menor que o Box Inicial.");
 				}
 			}
 		}
-		
+
 		return (erros != null && erros.size() > 0) ? erros : null;
-		
+
 		//TODO : Sérgio : Verificar se necessita validação
 		/*
 		if( this.getIdRoteiro() != null ) { }
@@ -160,20 +160,16 @@ public class FiltroImpressaoNFEDTO implements Serializable {
 		if( this.getIdsProdutos() != null ) { }
 		if( this.getPaginacao() != null ) { }
 		if( this.getOrdenacaoColuna() != null) { }
-		*/
-		
+		 */
+
 	}
-	
+
 	/*
 	 * Getters / Setters
 	 */
-	
+
 	public String getTipoNFe() {
 		return tipoNFe;
-	}
-
-	public void setTipoNFe(String tipoNFe) {
-		this.tipoNFe = tipoNFe;
 	}
 
 	public Date getDataMovimentoInicial() {
@@ -190,38 +186,6 @@ public class FiltroImpressaoNFEDTO implements Serializable {
 
 	public void setDataMovimentoFinal(Date dataMovimentoFinal) {
 		this.dataMovimentoFinal = dataMovimentoFinal;
-	}
-
-	public Date getDataEmissao() {
-		return dataEmissao;
-	}
-
-	public void setDataEmissao(Date dataEmissao) {
-		this.dataEmissao = dataEmissao;
-	}
-
-	public Long getIdRoteiro() {
-		return idRoteiro;
-	}
-
-	public void setIdRoteiro(Long idRoteiro) {
-		this.idRoteiro = idRoteiro;
-	}
-
-	public Long getIdRota() {
-		return idRota;
-	}
-
-	public void setIdRota(Long idRota) {
-		this.idRota = idRota;
-	}
-
-	public Long getIdTipoEmissao() {
-		return idTipoEmissao;
-	}
-
-	public void setIdTipoEmissao(Long idTipoEmissao) {
-		this.idTipoEmissao = idTipoEmissao;
 	}
 
 	public Long getIdCotaInicial() {
@@ -254,6 +218,42 @@ public class FiltroImpressaoNFEDTO implements Serializable {
 
 	public void setIdBoxFinal(Long idBoxFinal) {
 		this.idBoxFinal = idBoxFinal;
+	}
+
+	public void setTipoNFe(String tipoNFe) {
+		this.tipoNFe = tipoNFe;
+	}
+
+	public Date getDataEmissao() {
+		return dataEmissao;
+	}
+
+	public void setDataEmissao(Date dataEmissao) {
+		this.dataEmissao = dataEmissao;
+	}
+
+	public Long getIdRoteiro() {
+		return idRoteiro;
+	}
+
+	public void setIdRoteiro(Long idRoteiro) {
+		this.idRoteiro = idRoteiro;
+	}
+
+	public Long getIdRota() {
+		return idRota;
+	}
+
+	public void setIdRota(Long idRota) {
+		this.idRota = idRota;
+	}
+
+	public Long getIdTipoEmissao() {
+		return idTipoEmissao;
+	}
+
+	public void setIdTipoEmissao(Long idTipoEmissao) {
+		this.idTipoEmissao = idTipoEmissao;
 	}
 
 	public List<Long> getIdsFornecedores() {

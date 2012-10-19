@@ -194,7 +194,9 @@ public class MonitorNFEServiceImpl implements MonitorNFEService {
 			ISSQNValor 				= valoresTotaisISSQN.getValorISS();
 		}
 		
-		String informacoesComplementares 	= informacaoAdicional.getInformacoesComplementares();
+		String informacoesComplementares = "";
+		if(informacaoAdicional != null)
+			informacoesComplementares 	= informacaoAdicional.getInformacoesComplementares();
 		
 		String numeroFatura 				=  "";//TODO obter campo
 		BigDecimal valorFatura 				= BigDecimal.ZERO; //TODO obter campo
