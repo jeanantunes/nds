@@ -3,6 +3,7 @@ package br.com.abril.nds.service;
 import java.util.Date;
 import java.util.List;
 
+import br.com.abril.nds.dto.BandeirasDTO;
 import br.com.abril.nds.dto.CapaDTO;
 import br.com.abril.nds.dto.CotaEmissaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroEmissaoCE;
@@ -23,5 +24,13 @@ public interface ChamadaEncalheService {
 
 	List<CapaDTO> obterIdsCapasChamadaEncalhe(Date dtRecolhimentoDe,
 			Date dtRecolhimentoAte);
+	
+	/**
+	 * Obtem Produtos com Recolhimento na semana informada
+	 * 
+	 * @param semana número da semana
+	 * @return
+	 */
+	List<BandeirasDTO> obterBandeirasDaSemana(Integer semana);
 	
 }

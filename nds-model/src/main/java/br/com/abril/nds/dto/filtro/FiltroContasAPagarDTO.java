@@ -17,12 +17,11 @@ public class FiltroContasAPagarDTO implements Serializable {
 	private Integer ce;
 	private String produto;
 	private Long edicao;
-	
 	private	List <Long> produtoEdicaoIDs;
-	
 	private List<Long> idsFornecedores;
-	
 	private PaginacaoVO paginacaoVO;
+	private Date dataDetalhe;
+	
 	
 	public boolean isPrimeiraCarga() {
 		return primeiraCarga;
@@ -77,5 +76,11 @@ public class FiltroContasAPagarDTO implements Serializable {
 	}
 	public void setPaginacaoVO(PaginacaoVO paginacaoVO) {
 		this.paginacaoVO = paginacaoVO;
+	}
+	public Date getDataDetalhe() {
+		return dataDetalhe;
+	}
+	public void setDataDetalhe(Date dataDetalhe) {
+		this.dataDetalhe = dataDetalhe;
 	}
 }
