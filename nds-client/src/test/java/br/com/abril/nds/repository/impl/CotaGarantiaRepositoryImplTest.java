@@ -72,7 +72,7 @@ public class CotaGarantiaRepositoryImplTest extends AbstractRepositoryImplTest {
 	
 	@Before
 	public void setup() {
-
+		
 		box300 = Fixture.boxReparte300();
 
 		juridicaFC = Fixture.juridicaFC();
