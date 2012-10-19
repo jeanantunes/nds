@@ -83,7 +83,7 @@ var descontoProdutoController = $.extend(true,{
 			quantidadeEdicoes 	= $("#quantidadeEdicoes",this.workspace).val();
 		}
 		
-		var descontoProduto = $("#descontoProduto",this.workspace).val();
+		var descontoProduto = $("#descontoProduto",this.workspace).justPercent("floatValue");
 		var descontoPredominante = $("#descontoPredominante",this.workspace).attr("checked") ? true : false;
 		var hasCotaEspecifica = document.getElementById("radioCotasEspecificas",this.workspace).checked;
 		var isTodasCotas = document.getElementById("radioTodasCotas",this.workspace).checked;
@@ -194,7 +194,7 @@ var descontoProdutoController = $.extend(true,{
 		
 		descontoProdutoController.pesquisaCota = pesquisaCota;
 		
-		$("#descontoProduto",this.workspace).mask("99.99");
+		$("#descontoProduto",this.workspace).justPercent();
 		
 		$(".tiposDescProdutoGrid",this.workspace).flexigrid({
 			preProcess: tipoDescontoController.executarPreProcessamento,
