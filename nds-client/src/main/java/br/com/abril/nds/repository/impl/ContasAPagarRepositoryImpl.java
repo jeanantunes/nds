@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository.impl;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,7 +23,7 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
 	public Integer pesquisarPorDistribuidorCount(FiltroContasAPagarDTO filtro) {
 		
 		Query query = this.getSession().createQuery(
-				this.montarQueryPorDistribuidor(true, filtro));
+				this.montarQueryPorDistribuidor(true, false, false, filtro));
 		
 		this.setarParametrosQueryporDistribuidor(query, filtro, true);
 		
@@ -34,7 +35,7 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
 	public List<ContasApagarConsultaPorDistribuidorDTO> pesquisarPorDistribuidor(FiltroContasAPagarDTO filtro) {
 		
 		Query query = this.getSession().createQuery(
-				this.montarQueryPorDistribuidor(false, filtro));
+				this.montarQueryPorDistribuidor(false, false, false, filtro));
 		
 		this.setarParametrosQueryporDistribuidor(query, filtro, false);
 		
@@ -49,7 +50,17 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
 		return query.list();
 	}
 	
-	private String montarQueryPorDistribuidor(boolean count, FiltroContasAPagarDTO filtro){
+	public BigDecimal buscarTotalPesquisarPorDistribuidor(FiltroContasAPagarDTO filtro, boolean desconto){
+		
+		Query query = this.getSession().createQuery(
+				this.montarQueryPorDistribuidor(false, true, desconto, filtro));
+		
+		this.setarParametrosQueryporDistribuidor(query, filtro, false);
+		
+		return (BigDecimal) query.uniqueResult();
+	}
+	
+	private String montarQueryPorDistribuidor(boolean count, boolean totais, boolean desconto, FiltroContasAPagarDTO filtro){
 		
 		StringBuilder hql = new StringBuilder();
 		
@@ -70,7 +81,7 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
 			   .append(" join chamadaEncalheCota.chamadaEncalhe chamadaEncalhe ")
 			   .append(" where chamadaEncalhe.dataRecolhimento = l.dataRecolhimentoDistribuidor) as encalhe ")
 			   
-			   //pesquisaPorDistribuidorValorPorGrupoMovimento
+			   //suplementar
 			   .append(",(select sum(m.qtde * m.produtoEdicao.precoVenda) ")
 			   .append(" from MovimentoEstoque m ")
 			   .append(" where m.data = l.dataRecolhimentoDistribuidor ")
@@ -85,7 +96,7 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
 			   .append(" and m2.produtoEdicao.precoVenda is not null")
 			   .append(" and m2.tipoMovimento.grupoMovimentoEstoque in (:movimentosSuplementarSaida)) as suplementacao ")
 			   
-			   //pesquisaPorDistribuidorFaltasSobras
+			   //FaltasSobras
 			   .append(",(select sum(ld2.diferenca.qtde * ld2.diferenca.produtoEdicao.precoVenda) ")
 			   .append(" from LancamentoDiferenca ld2 ")
 			   .append(" where ld2.dataProcessamento = l.dataRecolhimentoDistribuidor ")
@@ -102,7 +113,7 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
 			   .append(" and (ld.diferenca.tipoDiferenca = :tipoDiferencaFaltaEm or ld.diferenca.tipoDiferenca = :tipoDiferencaFaltaDe)")
 			   .append(" group by ld.diferenca.tipoDiferenca) as faltasSobras ")
 			   
-			   //pesquisaPorDistribuidorPerdasGanhos
+			   //PerdasGanhos
 			   .append(",(select sum(ld3.diferenca.qtde * ld3.diferenca.produtoEdicao.precoVenda) ")
 			   .append(" from LancamentoDiferenca ld3 ")
 			   .append(" where ld3.dataProcessamento = l.dataRecolhimentoDistribuidor ")
@@ -122,9 +133,14 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
 			   .append(")");
 		}
 		
-		hql.append(" from Lancamento l ")
-		   .append(" join l.produtoEdicao.produto.fornecedores f ")
-		   .append(" where l.dataLancamentoDistribuidor between :inicio and :fim ")
+		hql.append(" from Lancamento l ");
+		
+		if (filtro.getIdsFornecedores() != null && !filtro.getIdsFornecedores().isEmpty()){
+		
+			hql.append(" join l.produtoEdicao.produto.fornecedores f ");
+		}
+		
+		hql.append(" where l.dataLancamentoDistribuidor between :inicio and :fim ")
 		   .append(" and l.reparte is not null ")
 		   .append(" and l.produtoEdicao.precoVenda is not null ")
 		   .append(" and l.status = :statusLancamento ");
