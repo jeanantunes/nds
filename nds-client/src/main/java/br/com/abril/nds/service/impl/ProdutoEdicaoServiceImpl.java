@@ -519,7 +519,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			dimEdicao.setEspessura(dto.getEspessura());
 			produtoEdicao.setDimensao(dimEdicao);
 			
-			produtoEdicao.getProduto().setDescricao(dto.getDescricaoProduto());
+			produtoEdicao.getProduto().setNomeComercial(dto.getDescricaoProduto());
 			
 			// Texto boletim informativo:
 			produtoEdicao.setBoletimInformativo(dto.getBoletimInformativo());
@@ -693,7 +693,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		dto.setPacotePadrao(produto.getPacotePadrao());
 		dto.setPeso(produto.getPeso());
 		dto.setDescricaoDesconto("");
-		dto.setDescricaoProduto(produto.getDescricao());
+		dto.setDescricaoProduto(produto.getNomeComercial());
 		dto.setDesconto(produto.getDescontoLogistica() == null 
 				? BigDecimal.ZERO : BigDecimal.valueOf(
 						produto.getDescontoLogistica().getPercentualDesconto()));

@@ -200,7 +200,7 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 		produto.setTipoProduto(tipoProduto);
 		produto.setNome(input.getNomePublicacao());
 		produto.setCodigoContexto(input.getContextoPublicacao());
-		produto.setDescricao(input.getNomePublicacao());
+		produto.setNomeComercial(input.getNomePublicacao());
 		produto.setEditor(editor);
 		produto.setPeriodicidade(PeriodicidadeProduto.values()[input.getPeriodicidade()]);
 		produto.setSlogan(input.getSlogan());
@@ -273,9 +273,9 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 					"Atualizacao do Contexto Publicacao para: "
 							+ input.getContextoPublicacao());
 		}
-		if (!produto.getDescricao().equals(input.getNomePublicacao())) {
+		if (!produto.getNomeComercial().equals(input.getNomePublicacao())) {
 
-			produto.setDescricao(input.getNomePublicacao());
+			produto.setNomeComercial(input.getNomePublicacao());
 			this.ndsiLoggerFactory.getLogger().logInfo(
 					message,
 					EventoExecucaoEnum.INF_DADO_ALTERADO,

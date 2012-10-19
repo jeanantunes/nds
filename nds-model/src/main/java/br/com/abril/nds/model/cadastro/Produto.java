@@ -55,7 +55,7 @@ public class Produto implements Serializable {
 	private String nome;
 	
 	@Column(name = "DESCRICAO")
-	private String descricao;
+	private String nomeComercial;
 	
 	@ManyToMany(fetch=FetchType.LAZY)
 	private Set<Fornecedor> fornecedores = new HashSet<Fornecedor>();
@@ -189,12 +189,12 @@ public class Produto implements Serializable {
 		this.nome = nome;
 	}
 	
-	public String getDescricao() {
-		return descricao;
+	public String getNomeComercial() {
+		return nomeComercial;
 	}
 	
-	public void setDescricao(String descricao) {
-		this.descricao = descricao;
+	public void setNomeComercial(String nomeComercial) {
+		this.nomeComercial = nomeComercial;
 	}
 	
 	public Set<Fornecedor> getFornecedores() {

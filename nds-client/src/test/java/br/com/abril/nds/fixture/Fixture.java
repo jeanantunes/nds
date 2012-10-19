@@ -514,7 +514,7 @@ public class Fixture {
 		
 		Produto produto = new Produto();
 		produto.setCodigo(codigo);
-		produto.setDescricao(descricao);
+		produto.setNomeComercial(descricao);
 		produto.setNome(nome);
 		produto.setPeriodicidade(periodicidade);
 		produto.setTipoProduto(tipo);
