@@ -10,47 +10,34 @@ public class ContasApagarConsultaPorDistribuidorDTO implements Serializable {
 	
 	public ContasApagarConsultaPorDistribuidorDTO(){}
 	
-	public ContasApagarConsultaPorDistribuidorDTO(Date dataMovimento, BigDecimal consignado, BigDecimal suplementacaoEntrada,
-			BigDecimal suplementacaoSaida, BigDecimal faltas, BigDecimal sobras, BigDecimal perdas, BigDecimal ganhos){
+	public ContasApagarConsultaPorDistribuidorDTO(Date dataMovimento, BigDecimal consignado, BigDecimal encalhe, 
+			BigDecimal suplementacao, BigDecimal faltasSobras, BigDecimal perdasGanhos){
 		
 		this.data = dataMovimento;
 		this.consignado = consignado;
+		this.encalhe = encalhe;
 		
-		if (suplementacaoEntrada == null){
+		if (consignado == null){
 			
-			suplementacaoEntrada = BigDecimal.ZERO;
+			consignado = BigDecimal.ZERO;
 		}
 		
-		if (suplementacaoSaida == null){
+		if (encalhe == null){
 			
-			suplementacaoSaida = BigDecimal.ZERO;
+			encalhe = BigDecimal.ZERO;
 		}
 		
-		this.suplementacao = suplementacaoEntrada.subtract(suplementacaoSaida);
+		this.venda = consignado.subtract(encalhe);
 		
-		if (faltas == null){
-			
-			faltas = BigDecimal.ZERO;
-		}
+		this.suplementacao = suplementacao;
 		
-		if (sobras == null){
-			
-			sobras = BigDecimal.ZERO;
-		}
+		this.faltasSobras = faltasSobras;
 		
-		this.faltasSobras = sobras.subtract(faltas);
+		this.debitoCredito = perdasGanhos;
 		
-		if (perdas == null){
-			
-			perdas = BigDecimal.ZERO;
-		}
-		
-		if (ganhos == null){
-			
-			ganhos = BigDecimal.ZERO;
-		}
-		
-		this.debitoCredito = ganhos.subtract(perdas);
+		this.saldo = consignado.subtract(this.encalhe == null ? BigDecimal.ZERO : this.encalhe)
+				.subtract(this.faltasSobras == null ? BigDecimal.ZERO : this.faltasSobras)
+				.subtract(this.debitoCredito == null ? BigDecimal.ZERO : this.debitoCredito);
 	}
 	
 	private Date data;

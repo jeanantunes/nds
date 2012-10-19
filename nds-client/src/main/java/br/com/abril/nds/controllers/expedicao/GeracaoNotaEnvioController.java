@@ -25,7 +25,7 @@ import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.envio.nota.NotaEnvio;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
-import br.com.abril.nds.serialization.custom.CustomMapJson;
+import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.GeracaoNotaEnvioService;
@@ -150,7 +150,7 @@ public class GeracaoNotaEnvioController {
 		if (cotasAusentes != null && !cotasAusentes.isEmpty())
 			hasCotasAusentes = true;
 		
-		result.use(CustomMapJson.class).put("cotasAusentes", hasCotasAusentes).serialize();
+		result.use(CustomJson.class).from(hasCotasAusentes, "cotasAusentes").serialize();
 	}
 	
 	@Post

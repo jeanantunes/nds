@@ -17,7 +17,6 @@ import java.util.Set;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import org.hibernate.mapping.Array;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -1110,8 +1109,6 @@ public class DataLoader {
 		
 		gerarGrupos(session);
 		
-		criarDescontoLogistica(session);
-		
 		criarCobrancasNegociacao(session);
 	}
 
@@ -1239,6 +1236,7 @@ public class DataLoader {
 		criarTiposMovimento(session);
 		gerarTiposPontoPDV(session);
 		
+		criarDescontoLogistica(session);
 	}
 
 	private static void criarUsuarioAdministrador(Session session) {
@@ -11942,12 +11940,18 @@ public class DataLoader {
 	}
 	
 	private static void criarDescontoLogistica(Session session){
+				
+		DescontoLogistica dl1 = Fixture.descontoLogistica(new Date(2007,01,01), 27f, 0f, new Integer(1), "NORMAL");
+		DescontoLogistica dl2 = Fixture.descontoLogistica(new Date(2007,01,01), 20f, 0f, new Integer(2), "PRODUTOS TRIBUTADOS");
+		DescontoLogistica dl3 = Fixture.descontoLogistica(new Date(2007,01,01), 10f, 0f, new Integer(3), "VIDEO PRINT DE 1/1/96 A 1/1/197");
+		DescontoLogistica dl4 = Fixture.descontoLogistica(new Date(2007,01,01), 10f, 0f, new Integer(4), "CROMOS - NORMAL EXC. JUIZ E BH");
+		DescontoLogistica dl5 = Fixture.descontoLogistica(new Date(2007,01,01), 25f, 0f, new Integer(5), "IMPORTADAS - ELETROLIBER");
+		DescontoLogistica dl6 = Fixture.descontoLogistica(new Date(2007,01,01), 18f, 0f, new Integer(6), "PROMOÇÕES");
+		DescontoLogistica dl7 = Fixture.descontoLogistica(new Date(2007,01,01), 23f, 0f, new Integer(7), "ESPECIAL GLOBO");
+		DescontoLogistica dl8 = Fixture.descontoLogistica(new Date(2007,01,01), 5f, 0f, new Integer(8), "FOME ZERO");
+		DescontoLogistica dl9 = Fixture.descontoLogistica(new Date(2007,01,01), 25f, 0f, new Integer(9), "IMPORTADAS MAG");
+		DescontoLogistica dl10 = Fixture.descontoLogistica(new Date(2007,01,01), 25f, 0f, new Integer(11), "IMPORTADAS MAGEXPRESS");
 		
-        Set<Produto> produtos = new LinkedHashSet<Produto>();
-		
-        produtos.add(produtoVeja);
-		
-		DescontoLogistica dl = Fixture.descontoLogistica(new Date(), 25f, 25f, new Integer(1),produtos);
-	    save(session,dl);
+	    save(session,dl1,dl2,dl3,dl4,dl5,dl6,dl7,dl8,dl9,dl10);
 	}
 }

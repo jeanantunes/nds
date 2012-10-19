@@ -132,21 +132,24 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 		return false;
 	},
 		
-	this.processaRetornoPesquisa = function(data) {
+	this.processaRetornoPesquisa = function(resultadoPesquisa) {
 		
-		if(data.mensagens) {
-			exibirMensagem(data.mensagens.tipoMensagem, data.mensagens.listaMensagens);
-			return data.rows;
+		if(resultadoPesquisa.mensagens) {
+			exibirMensagem(resultadoPesquisa.mensagens.tipoMensagem, resultadoPesquisa.mensagens.listaMensagens);
+			return resultadoPesquisa.rows;
 		}
 		
 		$("#valorTotal", _workspace).clear();
 		
 		T.linhasDestacadas = [];
+		
 		T.lancamentos = [];
 		
-		$("#valorTotal", _workspace).html(data[1]);
-		$.each(data[0].rows, function(index,row){ T.processarLinha(index, row);});
-		return data[0];
+		$("#valorTotal", _workspace).html(resultadoPesquisa[1]);
+		
+		$.each(resultadoPesquisa[0].rows, function(index,row){ T.processarLinha(index, row);});
+		
+		return resultadoPesquisa[0];
 	},
 		
 	this.popularResumoPeriodo = function(data) {
@@ -167,12 +170,12 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 				  rows+='<span name="qtdeExemplares" class="span_2 redLabel"';
 				  rows+='title="A quantidade de exemplares excede a capacidade de manuseio ';
 				  rows+=data.resultado.capacidadeRecolhimentoDistribuidor + ' do distribuidor">';
-				  rows+=resumo.qtdeExemplaresFormatado + '</span>';
+				  rows+=resumo.qtdeExemplaresFormatada + '</span>';
 			  
 			  } else {
 				  
 				  rows+='<span class="span_1">Qtde. Exempl.:</span>';	
-				  rows+='<span class="span_2">' + resumo.qtdeExemplaresFormatado + '</span>';
+				  rows+='<span class="span_2">' + resumo.qtdeExemplaresFormatada + '</span>';
 			  }
 			  
 			  rows+='<span class="span_1">Qtde. Parciais:</span>';

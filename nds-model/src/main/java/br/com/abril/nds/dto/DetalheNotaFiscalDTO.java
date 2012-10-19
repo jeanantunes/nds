@@ -2,6 +2,7 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.List;
 
 public class DetalheNotaFiscalDTO implements Serializable {
@@ -10,7 +11,7 @@ public class DetalheNotaFiscalDTO implements Serializable {
 
 	private List<DetalheItemNotaFiscalDTO> itensDetalhados;
 	
-	private BigDecimal totalExemplares;
+	private BigInteger totalExemplares;
 	
 	private BigDecimal valorTotalSumarizado;
 
@@ -28,17 +29,11 @@ public class DetalheNotaFiscalDTO implements Serializable {
 		this.itensDetalhados = itensDetalhados;
 	}
 
-	/**
-	 * @return the totalExemplares
-	 */
-	public BigDecimal getTotalExemplares() {
+	public BigInteger getTotalExemplares() {
 		return totalExemplares;
 	}
 
-	/**
-	 * @param totalExemplares the totalExemplares to set
-	 */
-	public void setTotalExemplares(BigDecimal totalExemplares) {
+	public void setTotalExemplares(BigInteger totalExemplares) {
 		this.totalExemplares = totalExemplares;
 	}
 

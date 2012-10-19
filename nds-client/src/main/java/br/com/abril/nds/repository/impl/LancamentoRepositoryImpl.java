@@ -1092,7 +1092,7 @@ public class LancamentoRepositoryImpl extends
 		sql.append(" on lancamentoParcial.ID = periodoLancamentoParcial.LANCAMENTO_PARCIAL_ID ");
 		
 		sql.append(" where ");
-		sql.append(" tipoProduto.GRUPO_PRODUTO in ( :tiposProduto ) ");
+		sql.append("  UPPER(tipoProduto.GRUPO_PRODUTO) in ( :tiposProduto ) ");
 		
 		sql.append(" and ( ");
 		sql.append(" 	select fornecedor.ID from PRODUTO_FORNECEDOR produtoFornecedor, FORNECEDOR fornecedor ");
@@ -1104,9 +1104,9 @@ public class LancamentoRepositoryImpl extends
 		
 		sql.append(" and ( ");
 		sql.append("	(lancamento.DATA_LCTO_PREVISTA between :periodoInicial and :periodoFinal ");
-		sql.append("		and lancamento.STATUS in ( :statusLancamentoNoPeriodo )) ");
+		sql.append("		and  UPPER(lancamento.STATUS) in ( :statusLancamentoNoPeriodo )) ");
 		sql.append(" 	or (lancamento.DATA_LCTO_PREVISTA < :periodoInicial ");
-		sql.append("		and lancamento.STATUS in ( :statusLancamentoDataMenorInicial )) "); 
+		sql.append("		and UPPER(lancamento.STATUS) in ( :statusLancamentoDataMenorInicial )) "); 
 		sql.append(" ) ");
 		
 		return sql.toString();
@@ -1149,20 +1149,21 @@ public class LancamentoRepositoryImpl extends
 								   Intervalo<Date> periodoDistribuicao,
 								   List<Long> fornecedores) {
 		
-		String[] arrayStatusLancamentoNoPeriodo = {StatusLancamento.PLANEJADO.toString(),
-												   StatusLancamento.CONFIRMADO.toString(),
-												   StatusLancamento.BALANCEADO.toString(),
-												   StatusLancamento.ESTUDO_FECHADO.toString(),
+		String[] arrayStatusLancamentoNoPeriodo = {StatusLancamento.PLANEJADO.name(),
+												   StatusLancamento.CONFIRMADO.name(),
+												   StatusLancamento.BALANCEADO.name(),
+												   StatusLancamento.ESTUDO_FECHADO.name(),
 												   StatusLancamento.FURO.toString()};
 		
-		String[] arrayStatusLancamentoDataMenorInicial = {StatusLancamento.PLANEJADO.toString(),
-				  										  StatusLancamento.CONFIRMADO.toString()};
+		String[] arrayStatusLancamentoDataMenorInicial = {StatusLancamento.PLANEJADO.name(),
+				  										  StatusLancamento.CONFIRMADO.name()};
 		
-		String[] arrayTipoProduto = {GrupoProduto.REVISTA.toString(),
-									 GrupoProduto.CROMO.toString(),
-									 GrupoProduto.CARTELA.toString(),
-									 GrupoProduto.LIVRO.toString(),
-									 GrupoProduto.COLECIONAVEL.toString()};
+		String[] arrayTipoProduto = {GrupoProduto.OUTROS.name(),
+									 GrupoProduto.REVISTA.name(),
+									 GrupoProduto.CROMO.name(),
+									 GrupoProduto.CARTELA.name(),
+									 GrupoProduto.LIVRO.name(),
+									 GrupoProduto.COLECIONAVEL.name()};
 		
 		List<String> statusLancamentoNoPeriodo = Arrays.asList(arrayStatusLancamentoNoPeriodo);
 		
