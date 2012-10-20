@@ -284,7 +284,7 @@ public class ContasAPagarController {
 			listVO.add(new ContasAPagarParcialVO(dto));
 		}
 		
-		FileExporter.to("detalhe-consignado", fileType).inHTTPResponse(this.getNDSFileHeader(new Date()), null, null,
+		FileExporter.to("detalhe-parcial", fileType).inHTTPResponse(this.getNDSFileHeader(new Date()), null, null,
 						listVO, ContasAPagarParcialVO.class, 
 						this.httpServletResponse);
 		
@@ -294,20 +294,66 @@ public class ContasAPagarController {
 	@Path("/exportPesquisarDetalheConsignado")
 	public void exportPesquisarDetalheConsignado(FileType fileType) throws IOException {
 		
-		// TODO
+		FiltroContasAPagarDTO filtro = (FiltroContasAPagarDTO) session.getAttribute(FILTRO_DETALHE_CONSIGNADO);
+		
+		ContasAPagarTotalDistribDTO<ContasAPagarConsignadoDTO> dto = contasAPagarService.pesquisarDetalheConsignado(filtro, null, null, 0, 0);
+		
+		List <ContasAPagarConsignadoVO> listVO = new ArrayList<ContasAPagarConsignadoVO>();
+		
+		for(ContasAPagarConsignadoDTO dt : dto.getGrid()){
+			
+			listVO.add(new ContasAPagarConsignadoVO(dt));
+		}
+		
+		FileExporter.to("detalhe-consignado", fileType).inHTTPResponse(this.getNDSFileHeader(new Date()), null, null,
+						listVO, ContasAPagarConsignadoVO.class,
+						this.httpServletResponse);
+		result.use(Results.nothing());
+
 	}
 	
 	@Path("/exportPesquisarDetalheEncalhe")
 	public void exportPesquisarDetalheEncalhe(FileType fileType) throws IOException {
 		
-		// TODO
+		FiltroContasAPagarDTO filtro = (FiltroContasAPagarDTO) session.getAttribute(FILTRO_DETALHE_ENCALHE);
+		
+		ContasAPagarTotalDistribDTO<ContasAPagarEncalheDTO> dto = contasAPagarService.pesquisarDetalheEncalhe(filtro, null, null, 0, 0);
+		
+		List <ContasAPagarEncalheVO> listVO = new ArrayList<ContasAPagarEncalheVO>();
+		
+		for(ContasAPagarEncalheDTO dt : dto.getGrid()){
+			
+			listVO.add(new ContasAPagarEncalheVO(dt));
+		}
+		
+		FileExporter.to("detalhe-encalhe", fileType).inHTTPResponse(this.getNDSFileHeader(new Date()), null, null,
+						listVO, ContasAPagarEncalheVO.class, 
+						this.httpServletResponse);
+		
+		result.use(Results.nothing());
+
 	}
+	
 	
 	@Path("/exportPesquisarDetalheFaltasSobras")
 	public void exportPesquisarDetalheFaltasSobras(FileType fileType) throws IOException {
 		
-		// TODO
+		FiltroContasAPagarDTO filtro = (FiltroContasAPagarDTO) session.getAttribute(FILTRO_CONTAS_A_PAGAR);
+		
+		ContasAPagarTotalDistribDTO<ContasAPagarFaltasSobrasDTO> dto = contasAPagarService.pesquisarDetalheFaltasSobras(filtro, null, null, 0, 0);
+
+		List <ContasAPagarFaltasSobrasVO> listVO = new ArrayList<ContasAPagarFaltasSobrasVO>();
+		
+		for (ContasAPagarFaltasSobrasDTO to : dto.getGrid()) {
+			listVO.add(new ContasAPagarFaltasSobrasVO(to));
+		}
+		
+		FileExporter.to("detalhe-faltas-sobras", fileType).inHTTPResponse(this.getNDSFileHeader(new Date()), null, null,
+				listVO, ContasAPagarFaltasSobrasVO.class, this.httpServletResponse);
+		
+		result.use(Results.nothing());
 	}
+	
 	
 	private NDSFileHeader getNDSFileHeader(Date data) {
 
