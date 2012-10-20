@@ -18,6 +18,7 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Dimensao;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.fiscal.nota.Origem;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
@@ -229,9 +230,7 @@ public class ProdutoEdicaoController {
 	private void validarProdutoEdicao(ProdutoEdicaoDTO dto, String codigoProduto) {
 		
 		List<String> listaMensagens = new ArrayList<String>();
-		
-		boolean origemManual = false;
-		
+						
 		ProdutoEdicao pe = null;
 		
 		if(codigoProduto == null) {
@@ -246,10 +245,9 @@ public class ProdutoEdicaoController {
 				throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Produto Edição inválido!"));
 			}
 			
-			origemManual = (pe.getOrigemInterface() == null) ? true : pe.getOrigemInterface().booleanValue();
 		}
 		
-		if (pe == null || origemManual) {
+		if (pe == null || (pe.getOrigem().equals(br.com.abril.nds.model.Origem.MANUAL))) {
 			
 			// Distribuidor:
 			if (dto.getCodigoProduto() == null || dto.getCodigoProduto().trim().length() <= 0) {

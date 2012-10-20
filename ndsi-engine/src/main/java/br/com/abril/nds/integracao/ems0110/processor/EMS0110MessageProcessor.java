@@ -14,6 +14,7 @@ import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.engine.data.Message;
 import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
 import br.com.abril.nds.integracao.model.canonic.EMS0110Input;
+import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.Brinde;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Dimensao;
@@ -220,6 +221,8 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 		edicao.setPossuiBrinde(input.isContemBrinde());
 		edicao.setDataDesativacao(input.getDataDesativacao());
 		edicao.setChamadaCapa(input.getChamadaCapa());
+		edicao.setOrigem(Origem.INTERFACE);
+
 		this.getSession().persist(edicao);
 		
 		inserirDescontoProdutoEdicao(edicao, produto);
@@ -294,6 +297,8 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 	private void atualizaProdutoEdicaoConformeInput(ProdutoEdicao edicao,
 			Message message) {
 		EMS0110Input input = (EMS0110Input) message.getBody();
+
+		edicao.setOrigem(Origem.INTERFACE);
 
 		if (!edicao.getProduto().getCodigoContexto()
 				.equals(input.getContextoProd())) {

@@ -12,6 +12,7 @@ import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.engine.data.Message;
 import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
 import br.com.abril.nds.integracao.model.canonic.EMS0109Input;
+import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.DescontoLogistica;
 import br.com.abril.nds.model.cadastro.Editor;
 import br.com.abril.nds.model.cadastro.FormaComercializacao;
@@ -220,6 +221,8 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 		String codigoSituacaoTributaria = input.getCodigoSituacaoTributaria();
 		produto.setTributacaoFiscal(this.getTributacaoFiscal(codigoSituacaoTributaria));
 
+		produto.setOrigem(Origem.INTERFACE);
+		
 		if (fornecedor != null) {
 
 			produto.addFornecedor(fornecedor);
@@ -245,7 +248,8 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 				.findFornecedor(input.getCodigoFornecedor());
 		DescontoLogistica descontoLogistica = this
 				.findDescontoLogisticaByTipoDesconto(Integer.parseInt( input.getTipoDesconto()) );
-
+		
+		produto.setOrigem(Origem.INTERFACE);
 		if (produto.getTipoProduto() != tipoProduto) {
 
 			produto.setTipoProduto(tipoProduto);

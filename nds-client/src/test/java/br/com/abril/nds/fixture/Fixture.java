@@ -543,7 +543,7 @@ public class Fixture {
 		produtoEdicao.setParcial(parcial);
 		produtoEdicao.setNomeComercial(nomeComercial);
 		
-		produtoEdicao.setOrigemInterface(Boolean.TRUE);
+		produtoEdicao.setOrigem(br.com.abril.nds.model.Origem.INTERFACE);
 		return produtoEdicao;
 	}
 	
@@ -564,7 +564,7 @@ public class Fixture {
 		produtoEdicao.setExpectativaVenda(expectativaVenda);
 		produtoEdicao.setParcial(parcial);
 		
-		produtoEdicao.setOrigemInterface(Boolean.TRUE);
+		produtoEdicao.setOrigem(br.com.abril.nds.model.Origem.INTERFACE);
 		return produtoEdicao;
 	}
 	

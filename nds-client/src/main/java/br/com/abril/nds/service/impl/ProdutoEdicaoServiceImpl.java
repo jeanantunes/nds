@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.abril.nds.dto.FuroProdutoDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.Brinde;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Dimensao;
@@ -345,7 +346,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		if (indNovoProdutoEdicao) {
 			produtoEdicao = new ProdutoEdicao();
 			produtoEdicao.setProduto(produtoRepository.obterProdutoPorCodigo(codigoProduto));
-			produtoEdicao.setOrigemInterface(Boolean.FALSE);
+			produtoEdicao.setOrigem(Origem.MANUAL);
 		} else {
 			produtoEdicao = produtoEdicaoRepository.buscarPorId(dto.getId());
 		}		
@@ -487,9 +488,8 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		BigInteger repartePromocional = (dto.getRepartePromocional() == null) 
 				? BigInteger.ZERO : dto.getRepartePromocional();
 		
-		boolean origemManual = (produtoEdicao.getOrigemInterface() == null) ? true :  !produtoEdicao.getOrigemInterface().booleanValue();
 		
-		if (origemManual) {
+		if ((produtoEdicao.getOrigem().equals(br.com.abril.nds.model.Origem.MANUAL))) {
 			// Campos exclusivos para o Distribuidor::
 			
 			// Identificação:
@@ -566,10 +566,8 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 	private void salvarLancamento(ProdutoEdicaoDTO dto, ProdutoEdicao produtoEdicao) {
 		
 		// Só pode alterar quando o ProdutoEdicao for criado pelo Distribuidor:
-		
-		boolean origemInterface = (produtoEdicao.getOrigemInterface() == null) ?  false : produtoEdicao.getOrigemInterface().booleanValue();
-		
-		if (origemInterface) {
+			
+		if ((produtoEdicao.getOrigem().equals(br.com.abril.nds.model.Origem.INTERFACE))) {
 			return;
 		}
 		
@@ -724,7 +722,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 
 			dto.setPeso(pe.getPeso());
 			dto.setBoletimInformativo(pe.getBoletimInformativo());
-			dto.setOrigemInterface(pe.getOrigemInterface());
+			dto.setOrigemInterface(pe.getOrigem().equals(br.com.abril.nds.model.Origem.INTERFACE));
 			dto.setNumeroLancamento(pe.getNumeroLancamento());
 			dto.setPeb(pe.getPeb());
 			dto.setEditor(pe.getProduto().getEditor().getPessoaJuridica().getNome());

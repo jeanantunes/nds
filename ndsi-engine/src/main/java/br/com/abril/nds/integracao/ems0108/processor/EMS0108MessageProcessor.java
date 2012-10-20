@@ -14,6 +14,7 @@ import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.engine.data.Message;
 import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
 import br.com.abril.nds.integracao.service.DistribuidorService;
+import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
@@ -238,7 +239,8 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 		produtoEdicao.setAtivo(true);
 		produtoEdicao.setPacotePadrao(produto.getPacotePadrao());
 		produtoEdicao.setPeb(produto.getPeb());
-		
+		produtoEdicao.setOrigem(Origem.INTERFACE);
+
 		this.getSession().persist(produtoEdicao);
 		
 		return produtoEdicao;

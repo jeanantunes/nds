@@ -61,7 +61,7 @@ public class Produto implements Serializable {
 	private Set<Fornecedor> fornecedores = new HashSet<Fornecedor>();
 
 	@Enumerated(EnumType.STRING)
-	@Column(name = "ORIGEM")
+	@Column(name = "ORIGEM", nullable = false)
 	private Origem origem;
 	
 	@ManyToOne(optional = false)
@@ -101,12 +101,6 @@ public class Produto implements Serializable {
 	@Column(name = "PESO", nullable = false)
 	protected Long peso;
 	
-	/**
-	 * Flag que indica se o Produto foi criado atraves de interface de sistemas ou por cadastro
-	 */
-	@Column(name = "ORIGEM_INTERFACE", nullable = true)
-	private Boolean origemInterface;
-
 	/**
 	 * Dimensões do produto (largura, etc)
 	 */
@@ -353,13 +347,7 @@ public class Produto implements Serializable {
 		this.peso = peso;
 	}
 
-	public Boolean getOrigemInterface() {
-		return origemInterface;
-	}
-
-	public void setOrigemInterface(Boolean origemInterface) {
-		this.origemInterface = origemInterface;
-	}
+	
 
 	/**
 	 * @return the lancamentoImediato
