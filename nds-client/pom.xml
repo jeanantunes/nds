@@ -73,20 +73,10 @@
 		<dependency>
 			<groupId>br.com.caelum</groupId>
 			<artifactId>vraptor</artifactId>
-			<exclusions>
-				<exclusion>  <!-- excluido para usar Ognl devido vir parametros nulos ao inves de vazio-->
-					<groupId>br.com.caelum</groupId>
-					<artifactId>iogi</artifactId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>jstl</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>ognl</groupId>
-			<artifactId>ognl</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>mysql</groupId>

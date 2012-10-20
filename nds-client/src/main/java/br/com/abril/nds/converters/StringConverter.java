@@ -8,17 +8,16 @@ import br.com.caelum.vraptor.Convert;
 import br.com.caelum.vraptor.Converter;
 import br.com.caelum.vraptor.ioc.RequestScoped;
 
-@Convert(Integer.class)
+@Convert(String.class)
 @RequestScoped
-public class IntegerConverter implements Converter<Integer> {
+public class StringConverter implements Converter<String> {
 	
 	@Override
-	public Integer convert(String value, Class<? extends Integer> type, ResourceBundle bundle) {
+	public String convert(String value, Class<? extends String> type, ResourceBundle bundle) {
 		if (isNullOrEmpty(value)) {
-			return null;
+			return "";
 		}
-		return Integer.parseInt(value);
-		
+		return value;
 	}
 
 }
