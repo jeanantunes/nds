@@ -46,7 +46,7 @@
 			</props>
 		</property>
 		<property name="entityInterceptor">
-    		<bean class="br.com.abril.nds.interceptor.AuditLogInterceptor"/>
+    		<bean class="br.com.abril.nds.interceptor.EntityInterceptor"/>
   		</property>
   		
 	</bean>

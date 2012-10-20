@@ -118,7 +118,6 @@ public class ImpressaoNFEController {
 	@Post
 	public void pesquisarImpressaoNFE(FiltroImpressaoNFEDTO filtro, String sortorder, String sortname, int page, int rp){
 
-		
 		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder, sortname));
 
 		if(!filtro.isFiltroValido()) {
