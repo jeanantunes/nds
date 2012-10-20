@@ -156,7 +156,7 @@ public class GeracaoNFeController {
 		if (cotasSuspensas != null && !cotasSuspensas.isEmpty())
 			hasCotasSuspensas = true;
 		
-		result.use(CustomJson.class).from(hasCotasSuspensas, "cotasSuspensas").serialize();
+		result.use(CustomJson.class).from(hasCotasSuspensas).serialize();
 	}
 	
 	@Post("/gerar.json")
@@ -179,7 +179,7 @@ public class GeracaoNFeController {
 			throw new ValidacaoException(TipoMensagem.WARNING, ioe.getMessage());
 		} 
 		
-		result.use(CustomJson.class).from(true, "result").serialize();
+		result.use(CustomJson.class).from(true).serialize();
 	}
 	
 	@Post("/transferirSuplementar.json")
@@ -187,7 +187,7 @@ public class GeracaoNFeController {
 		
 		//TODO
 		
-		result.use(CustomJson.class).from(true, "result").serialize();
+		result.use(CustomJson.class).from(true).serialize();
 	}
 	
 	public List<ItemDTO<Long, String>> carregarTipoNotaFiscal() {

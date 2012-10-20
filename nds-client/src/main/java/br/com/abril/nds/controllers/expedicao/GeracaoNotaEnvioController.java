@@ -150,7 +150,7 @@ public class GeracaoNotaEnvioController {
 		if (cotasAusentes != null && !cotasAusentes.isEmpty())
 			hasCotasAusentes = true;
 		
-		result.use(CustomJson.class).from(hasCotasAusentes, "cotasAusentes").serialize();
+		result.use(CustomJson.class).from(hasCotasAusentes).serialize();
 	}
 	
 	@Post
