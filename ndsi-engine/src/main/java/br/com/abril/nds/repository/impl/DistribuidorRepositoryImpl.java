@@ -9,6 +9,7 @@ import org.hibernate.Query;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.model.cadastro.DistribuicaoDistribuidor;
 import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
@@ -30,7 +31,6 @@ public class DistribuidorRepositoryImpl extends
 	}
 
 	@Override
-	
 	public Distribuidor obter() {
 		String hql = "from Distribuidor";
 		Query query = getSession().createQuery(hql);
