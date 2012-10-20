@@ -671,7 +671,7 @@ public class ImpressaoBoletosController {
 			isAcaoGeraDivida = false;
 		}
 		
-		result.use(CustomJson.class).from(isAcaoGeraDivida, "isAcaoGeraDivida").serialize();
+		result.use(CustomJson.class).from(isAcaoGeraDivida).serialize();
 	}
 	
 }
