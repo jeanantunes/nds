@@ -1758,7 +1758,7 @@ public class DataLoader {
 		ProdutoEdicao cromoBrasileiraoEd1 = Fixture.produtoEdicao("COD_FF", 1L, 5, 30,
 				new Long(50), new BigDecimal(100), new BigDecimal(100), "3333", 0L, cromoBrasileirao, null, false,"Cromo Brasileirão");
 		cromoBrasileiraoEd1.setParcial(true);
-		cromoBrasileiraoEd1.setOrigemInterface(false);
+		cromoBrasileiraoEd1.setOrigem(br.com.abril.nds.model.Origem.MANUAL);
 		
 		ProdutoEdicao guiaViagemEd1 = Fixture.produtoEdicao("COD_GG", 1L, 5, 30,
 				new Long(50), new BigDecimal(100), new BigDecimal(100), "2231", 0L, guiaViagem, null, false,"Guia Viagem");

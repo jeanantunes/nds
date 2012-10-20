@@ -514,7 +514,7 @@ public class Fixture {
 		
 		Produto produto = new Produto();
 		produto.setCodigo(codigo);
-		produto.setDescricao(descricao);
+		produto.setNomeComercial(descricao);
 		produto.setNome(nome);
 		produto.setPeriodicidade(periodicidade);
 		produto.setTipoProduto(tipo);
@@ -531,7 +531,6 @@ public class Fixture {
 			BigDecimal expectativaVenda, boolean parcial,String nomeComercial) {
 		
 		ProdutoEdicao produtoEdicao = new ProdutoEdicao();
-		produtoEdicao.setCodigo(codigoProdutoEdicao);
 		produtoEdicao.setNumeroEdicao(numeroEdicao);
 		produtoEdicao.setPacotePadrao(pacotePadrao);
 		produtoEdicao.setPeb(peb);
@@ -544,7 +543,7 @@ public class Fixture {
 		produtoEdicao.setParcial(parcial);
 		produtoEdicao.setNomeComercial(nomeComercial);
 		
-		produtoEdicao.setOrigemInterface(Boolean.TRUE);
+		produtoEdicao.setOrigem(br.com.abril.nds.model.Origem.INTERFACE);
 		return produtoEdicao;
 	}
 	
@@ -554,7 +553,6 @@ public class Fixture {
 			BigDecimal expectativaVenda, boolean parcial) {
 		
 		ProdutoEdicao produtoEdicao = new ProdutoEdicao();
-		produtoEdicao.setCodigo(codigoProdutoEdicao);
 		produtoEdicao.setNumeroEdicao(numeroEdicao);
 		produtoEdicao.setPacotePadrao(pacotePadrao);
 		produtoEdicao.setPeb(peb);
@@ -566,7 +564,7 @@ public class Fixture {
 		produtoEdicao.setExpectativaVenda(expectativaVenda);
 		produtoEdicao.setParcial(parcial);
 		
-		produtoEdicao.setOrigemInterface(Boolean.TRUE);
+		produtoEdicao.setOrigem(br.com.abril.nds.model.Origem.INTERFACE);
 		return produtoEdicao;
 	}
 	

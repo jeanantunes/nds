@@ -20,7 +20,7 @@ public interface ProdutoRepository extends Repository<Produto, Long> {
 	 * 
 	 * @return {@link List<Produto>}
 	 */
-	List<Produto> obterProdutoLikeNomeProduto(String nome);
+	List<Produto> obterProdutoLikeNomeComercial(String nome);
 	
 	/**
 	 * Obtém um produto de acordo com o número do produto.
@@ -29,7 +29,7 @@ public interface ProdutoRepository extends Repository<Produto, Long> {
 	 * 
 	 * @return {@link Produto}
 	 */
-	Produto obterProdutoPorNomeProduto(String nome);
+	Produto obterProdutoPorNomeComercial(String nome);
 	
 	/**
 	 * Obtém um produto de acordo com o código do produto.

@@ -31,25 +31,25 @@ public class ProdutoRepositoryImpl extends AbstractRepositoryModel<Produto, Long
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Produto> obterProdutoLikeNomeProduto(String nome) {
+	public List<Produto> obterProdutoLikeNomeComercial(String nomeComercial) {
 		String hql = "from Produto produto "
-				   + " where upper(produto.nome) like upper(:nome) order by produto.nome";
+				   + " where upper(produto.nomeComercial) like upper(:nomeComercial) order by produto.nomeComercial";
 		
 		Query query = super.getSession().createQuery(hql);
 
-		query.setParameter("nome", "%" + nome + "%");
+		query.setParameter("nomeComercial", "%" + nomeComercial + "%");
 		
 		return query.list();
 	}
 	
 	@Override
-	public Produto obterProdutoPorNomeProduto(String nome) {
+	public Produto obterProdutoPorNomeComercial(String nomeComercial) {
 		String hql = "from Produto produto "
-				   + " where upper(produto.nome) = upper(:nome) order by produto.nome";
+				   + " where upper(produto.nomeComercial) = upper(:nomeComercial) order by produto.nomeComercial";
 		
 		Query query = super.getSession().createQuery(hql);
 
-		query.setParameter("nome", nome);
+		query.setParameter("nomeComercial", nomeComercial);
 		
 		query.setMaxResults(1);
 		
@@ -148,7 +148,7 @@ public class ProdutoRepositoryImpl extends AbstractRepositoryModel<Produto, Long
 		}
 	}
 	
-	private Query getQueryBuscaProdutos(StringBuffer hql, String codigo, String produto,
+	private Query getQueryBuscaProdutos(StringBuffer hql, String codigo, String nomeComercial,
 			String fornecedor, String editor, Long codigoTipoProduto, String sortname, String sortorder, boolean isCount) {
 		
 		hql.append(" from ");
@@ -171,8 +171,8 @@ public class ProdutoRepositoryImpl extends AbstractRepositoryModel<Produto, Long
 			auxHql = " and ";
 		}
 		
-		if (produto != null && !produto.isEmpty()) {
-			hql.append(auxHql).append(" produto.nome like :produto ");
+		if (nomeComercial != null && !nomeComercial.isEmpty()) {
+			hql.append(auxHql).append(" produto.nomeComercial like :nomeComercial ");
 			auxHql = " and ";
 		}
 		
@@ -199,7 +199,7 @@ public class ProdutoRepositoryImpl extends AbstractRepositoryModel<Produto, Long
 			hql.append(" group by  			");
 			hql.append(" produto.id, 		");
 			hql.append(" produto.codigo, 	");
-			hql.append(" produto.nome,      ");
+			hql.append(" produto.nomeComercial,      ");
 			hql.append(" tipoProduto.descricao, ");
 			hql.append(" col_4_0_, 				");
 			hql.append(" col_5_0_,				");
@@ -221,8 +221,8 @@ public class ProdutoRepositoryImpl extends AbstractRepositoryModel<Produto, Long
 			query.setParameter("codigo", codigo.toUpperCase());
 		}
 		
-		if (produto != null && !produto.isEmpty()) {
-			query.setParameter("produto", "%" + produto + "%");
+		if (nomeComercial != null && !nomeComercial.isEmpty()) {
+			query.setParameter("nomeComercial", "%" + nomeComercial + "%");
 		}
 		
 		if (fornecedor != null && !fornecedor.isEmpty()) {
