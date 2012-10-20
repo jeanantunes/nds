@@ -153,7 +153,7 @@ public class EMS0110Input extends IntegracaoDocument implements Serializable {
 		this.nomeProd = nomeProd;
 	}
 	
-	@Field(offset = 76, length = 17)
+	@Field(offset = 76, length = 18)
 	public String getCodBarra() {
 		return codBarra;
 	}
