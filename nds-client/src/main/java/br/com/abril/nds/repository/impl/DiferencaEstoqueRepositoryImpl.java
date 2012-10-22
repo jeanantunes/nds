@@ -49,7 +49,7 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 					hql += "order by diferenca.produtoEdicao.produto.codigo ";
 					break;
 				case DESCRICAO_PRODUTO:
-					hql += "order by diferenca.produtoEdicao.produto.descricao ";
+					hql += "order by diferenca.produtoEdicao.produto.nome ";
 					break;
 				case QUANTIDADE:
 					hql += "order by diferenca.qtde ";
