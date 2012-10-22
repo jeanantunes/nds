@@ -336,6 +336,7 @@
 					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>tomcat-maven-plugin</artifactId>
+						<version>1.1</version>						
 						<configuration>
 							<server>tomcat-server</server>
 							<url>http://177.71.255.76:8080/manager/text</url>
@@ -357,6 +358,7 @@
 					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>tomcat-maven-plugin</artifactId>
+						<version>1.1</version>
 						<configuration>
 							<server>tomcat-server-homolog-abril</server>
 							<url>http://177.71.255.76:8080/manager/text</url>
@@ -381,6 +383,7 @@
 					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>tomcat-maven-plugin</artifactId>
+						<version>1.1</version>
 						<configuration>
 							<server>tomcat-server-qa</server>
 							<url>http://10.10.50.197:8080/manager/text</url>
@@ -405,6 +408,7 @@
 					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>tomcat-maven-plugin</artifactId>
+						<version>1.1</version>
 						<configuration>
 							<server>tomcat-server-qa</server>
 							<url>http://10.10.50.202:8080/manager/text</url>
@@ -429,6 +433,7 @@
 					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>tomcat-maven-plugin</artifactId>
+						<version>1.1</version>
 						<configuration>
 							<server>tomcat-server-qa</server>
 							<url>http://10.10.50.198:8080/manager/text</url>
@@ -453,6 +458,7 @@
 					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>tomcat-maven-plugin</artifactId>
+						<version>1.1</version>
 						<configuration>
 							<server>tomcat-server-qa</server>
 							<url>http://10.10.50.195:8080/manager/text</url>
