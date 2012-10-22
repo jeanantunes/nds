@@ -373,10 +373,3 @@ var diferencaEstoqueController = $.extend(true, {
 
 }, BaseController);
 
-$(function() {
-	
-	diferencaEstoqueController.init();
-				
-});
-
-//@ sourceURL=dif.js
