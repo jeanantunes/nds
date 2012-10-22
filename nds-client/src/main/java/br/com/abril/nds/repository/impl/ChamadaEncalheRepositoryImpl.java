@@ -440,7 +440,7 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		StringBuilder hql = new StringBuilder();
 		
 		hql.append(" select produtoEdicao.codigo as codProduto, ")
-			.append(" produto.descricao as nomeProduto, ")
+			.append(" produto.nome as nomeProduto, ")
 			.append(" produtoEdicao.numeroEdicao as edProduto, ")
 			.append(" produtoEdicao.pacotePadrao as pctPadrao ")
 			.append(" from ChamadaEncalhe chamadaEncalhe ")
