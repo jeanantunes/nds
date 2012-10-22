@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.util.export.Exportable;
 
 @Exportable
@@ -12,8 +12,8 @@ public class FiltroModalFornecedor implements Serializable{
 
 	private static final long serialVersionUID = 5178425158044489594L;
 	
-	private List<Fornecedor> listFornecedores = new ArrayList<Fornecedor>();
-	private List<Fornecedor> listaFornecedorAssociado = new ArrayList<Fornecedor>();
+	private List<ItemDTO<Long, String>> listFornecedores = new ArrayList<ItemDTO<Long, String>>();
+	private List<ItemDTO<Long, String>> listaFornecedorAssociado = new ArrayList<ItemDTO<Long, String>>();
 	private List<Long> listaFornecedoresSelecionados = new ArrayList<Long>();
 
 	public List<Long> getListaFornecedoresSelecionados() {
@@ -24,20 +24,20 @@ public class FiltroModalFornecedor implements Serializable{
 		this.listaFornecedoresSelecionados = listaFornecedoresSelecionados;
 	}
 
-	public List<Fornecedor> getListFornecedores() {
+	public List<ItemDTO<Long, String>> getListFornecedores() {
 		return listFornecedores;
 	}
 
-	public void setListFornecedores(List<Fornecedor> listFornecedores) {
-		this.listFornecedores = listFornecedores;
+	public void setListFornecedores(List<ItemDTO<Long, String>> fornecedoresAtivos) {
+		this.listFornecedores = fornecedoresAtivos;
 	}
 
-	public List<Fornecedor> getListaFornecedorAssociado() {
+	public List<ItemDTO<Long, String>> getListaFornecedorAssociado() {
 		return listaFornecedorAssociado;
 	}
 
-	public void setListaFornecedorAssociado(List<Fornecedor> listaFornecedorAssociado) {
-		this.listaFornecedorAssociado = listaFornecedorAssociado;
+	public void setListaFornecedorAssociado(List<ItemDTO<Long,String>> listFornecedoresCota) {
+		this.listaFornecedorAssociado = listFornecedoresCota;
 	}
 	
 }

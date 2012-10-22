@@ -176,7 +176,7 @@
 							
 							<br	clear="all" /> 
 							
-							<input type="checkbox"	name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.isRecebeRecolheProdutosParciais" id="idModalIsRecebeRecolheProdutosParciais"  />
+							<input type="checkbox"name="filtroAlteracaoCotaDTO.filtroModalDistribuicao.isRecebeRecolheProdutosParciais" id="idModalIsRecebeRecolheProdutosParciais"  />
 							<label for="recebeRecolhe">Recebe / Recolhe produtos parciais</label>
 						</td>
 						<td width="12" style="width: 10px;">&nbsp;</td>
@@ -489,7 +489,7 @@
        		<table class="alteracaoGrid"></table>
             <table width="950" border="0" cellspacing="0" cellpadding="0">
   				<tr>
-    				<td width="502"><span class="bt_novos" title="Novo"><a href="javascript:;" onclick="alteracaoCotaController.carregarAlteracao();"><img src="${pageContext.request.contextPath}/images/ico_editar.gif" hspace="5" border="0"/>Alterar</a></span></td>
+    				<td width="502"><span class="bt_novos" title="Alterar"><a href="javascript:;" onclick="alteracaoCotaController.carregarAlteracao();"><img src="${pageContext.request.contextPath}/images/ico_editar.gif" hspace="5" border="0"/>Alterar</a></span></td>
     				<td width="168"><strong>Total de Cotas Selecionadas:</strong></td>
     				<td width="141"><span id="totalCotasSelecionadas"></span></td>
     				<td width="91">Selecionar Todos</td>
