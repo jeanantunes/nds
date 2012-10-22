@@ -10,6 +10,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 
 import br.com.abril.nds.exception.ImportacaoException;
 import br.com.abril.nds.service.MovimentoEstoqueService;
+import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
 import br.com.abril.nds.service.vo.RetornoImportacaoArquivoVO;
 import br.com.abril.nds.strategy.importacao.input.HistoricoFinanceiroInput;
 
@@ -22,14 +23,14 @@ public class ImportacaoDeArquivoHistoricoFinanceiroStrategy extends ImportacaoAb
 
 	
 	@Autowired
-	private MovimentoEstoqueService movimentoEstoqueService;
+	private MovimentoFinanceiroCotaService movimentoFinanceiroCotaService;
 		
 	@Override
 	protected void processarDados(Object input) {
 		
 		HistoricoFinanceiroInput vendaInput = (HistoricoFinanceiroInput) input;
 		
-//		movimentoEstoqueService.processarRegistrohistoricoFinanceiro(vendaInput);
+		movimentoFinanceiroCotaService.processarRegistrohistoricoFinanceiro(vendaInput);
 	}
 
 	@Override

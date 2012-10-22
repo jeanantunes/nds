@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.abril.nds.dto.CotaFaturamentoDTO;
 import br.com.abril.nds.dto.MovimentoFinanceiroCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroDebitoCreditoDTO;
+import br.com.abril.nds.exception.ImportacaoException;
 import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.BaseCalculo;
@@ -25,26 +26,34 @@ import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoCota;
-import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.StatusEstoqueFinanceiro;
+import br.com.abril.nds.model.financeiro.ConsolidadoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.financeiro.HistoricoMovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
+import br.com.abril.nds.model.movimentacao.TipoMovimento;
 import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.repository.ConsolidadoFinanceiroRepository;
 import br.com.abril.nds.repository.HistoricoMovimentoFinanceiroCotaRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.repository.MovimentoFinanceiroCotaRepository;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
+import br.com.abril.nds.repository.UsuarioRepository;
 import br.com.abril.nds.service.ConferenciaEncalheService;
+import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
+import br.com.abril.nds.strategy.importacao.input.HistoricoFinanceiroInput;
 
 @Service
 public class MovimentoFinanceiroCotaServiceImpl implements
 		MovimentoFinanceiroCotaService {
 
+	@Autowired
+	private CotaService cotaService;
+	
 	@Autowired
 	private MovimentoFinanceiroCotaRepository movimentoFinanceiroCotaRepository;
 
@@ -60,6 +69,11 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 	@Autowired
 	private ConferenciaEncalheService conferenciaEncalheService;
 	
+	@Autowired
+	private ConsolidadoFinanceiroRepository consolidadoFinanceiroRepository;  
+	
+	@Autowired
+	private UsuarioRepository usuarioRepository;
 	
 	@Override
 	@Transactional
@@ -586,6 +600,104 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 			}
 		}
     	
+	}
+
+	@Override
+	public void processarRegistrohistoricoFinanceiro(
+			HistoricoFinanceiroInput valorInput) {
+		if (valorInput.getNumeroCota() == null) {
+			throw new ImportacaoException("Cota não Informada."); 
+		}
+		
+		if (
+				valorInput.getValorFuturo() == null  
+				|| valorInput.getValorPendente() == null  
+				|| valorInput.getValorPostergado() == null  
+			) {
+			throw new ImportacaoException("Valor nulo."); 
+		}
+		
+		if (!(
+				valorInput.getValorFuturo().equals(BigDecimal.ZERO)  
+				^ valorInput.getValorPendente().equals(BigDecimal.ZERO)  
+				^ valorInput.getValorPostergado().equals(BigDecimal.ZERO)  
+			)) {
+			throw new ImportacaoException("Mais de um valor com valor."); 
+		}
+		
+		if (
+				valorInput.getValorFuturo().equals(BigDecimal.ZERO)  
+				&& valorInput.getValorPendente().equals(BigDecimal.ZERO)  
+				&& valorInput.getValorPostergado().equals(BigDecimal.ZERO)  
+			) {
+			throw new ImportacaoException("Todos os Valores Zerados.");
+		}
+		
+		Cota cota = cotaService.obterCotaPDVPorNumeroDaCota(valorInput.getNumeroCota());		
+		if (cota == null) {
+			throw new ImportacaoException("Cota inexistente."); 
+		}
+		
+		MovimentoFinanceiroCota movimento = new MovimentoFinanceiroCota();
+		movimento.setCota(cota);
+		movimento.setData(valorInput.getData());
+		movimento.setDataAprovacao(new Date());
+		movimento.setDataCriacao(new Date());
+		movimento.setStatus(StatusAprovacao.APROVADO);
+		movimento.setAprovadoAutomaticamente(true);
+		movimento.setMotivo("VIRADA NDS");
+		movimento.setAprovador(usuarioRepository.getUsuarioImportacao());
+		movimento.setUsuario(usuarioRepository.getUsuarioImportacao());
+		
+		ConsolidadoFinanceiroCota cfc = consolidadoFinanceiroRepository.buscarPorCotaEData(cota, valorInput.getData());
+		
+		if (cfc == null) {
+			cfc = new ConsolidadoFinanceiroCota();				
+			cfc.setCota(cota);
+			cfc.setDataConsolidado(valorInput.getData());
+		} 		
+
+		if (!valorInput.getValorPendente().equals(BigDecimal.ZERO)) {
+			
+			movimento.setValor(valorInput.getValorPendente());
+			movimento.setTipoMovimento(tipoMovimentoFinanceiroRepository.buscarPorDescricao("Pendente"));	
+			
+			cfc.setPendente(valorInput.getValorPendente());
+			
+		}
+		
+		if (!valorInput.getValorPostergado().equals(BigDecimal.ZERO)) {
+			
+			movimento.setValor(valorInput.getValorPostergado());
+			movimento.setTipoMovimento(tipoMovimentoFinanceiroRepository.buscarPorDescricao("Postergado"));		
+	
+			cfc.setValorPostergado(valorInput.getValorPostergado());
+			
+		}
+		
+		if (!valorInput.getValorFuturo().equals(BigDecimal.ZERO)) {
+			
+			movimento.setValor(valorInput.getValorFuturo());
+			movimento.setTipoMovimento(
+					tipoMovimentoFinanceiroRepository.buscarPorDescricao( 
+							( valorInput.getValorFuturo().compareTo(BigDecimal.ZERO)  > 0 ?  "Crédito" : "Débito") 
+					) 
+			);
+			
+			cfc.setDebitoCredito(valorInput.getValorFuturo());
+			
+		}
+		
+		if (cfc.getId() == null) {						
+			cfc.setTotal(movimento.getValor());
+			cfc.getMovimentos().add(movimento);
+			consolidadoFinanceiroRepository.adicionar(cfc);
+		} else {
+			cfc.getTotal().add( movimento.getValor() );
+			cfc.getMovimentos().add(movimento);
+			consolidadoFinanceiroRepository.alterar(cfc);				
+		}
+		
 	}
 	
 }
