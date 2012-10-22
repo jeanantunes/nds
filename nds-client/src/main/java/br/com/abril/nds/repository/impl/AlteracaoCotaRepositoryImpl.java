@@ -135,7 +135,7 @@ public class AlteracaoCotaRepositoryImpl extends AbstractRepositoryModel<Cota, L
 		
 		
 		
-		if (filtroAlteracaoCotaDTO.getPaginacao().getSortOrder() != null && filtroAlteracaoCotaDTO.getPaginacao().getSortOrder() != null) {
+		if (filtroAlteracaoCotaDTO.getPaginacao() != null && filtroAlteracaoCotaDTO.getPaginacao().getSortOrder() != null) {
 			hql.append(" order by ").append(filtroAlteracaoCotaDTO.getPaginacao().getSortOrder()).append(" ").append(filtroAlteracaoCotaDTO.getPaginacao().getOrdenacao().getOrdenacao());
 		}
 		

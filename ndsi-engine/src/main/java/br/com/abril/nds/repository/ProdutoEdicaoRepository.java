@@ -250,7 +250,7 @@ public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long>
 
 	List<ProdutoEdicao> buscarProdutosLancadosData(Date data);
 
-	public String buscarNomeComercial(Long long1);
+	public String buscarNome(Long long1);
 	
 	/**
 	 * Obtém o último número da edição

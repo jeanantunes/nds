@@ -952,7 +952,7 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 			ConferenciaEncalheParcial conferenciaEncalheParcial = 
 					this.conferenciaEncalheParcialRepository.obterConferenciaEncalheParcialPor(produtoEdicao.getId(), registroEdicoesFechadas.getDataLancamento());
 						
-			contagem.setCodigoProduto(produtoEdicao.getCodigo());
+			contagem.setCodigoProduto(produtoEdicao.getProduto().getCodigo());
 			contagem.setPrecoVenda(produtoEdicao.getPrecoVenda());
 			contagem.setIdProdutoEdicao(produtoEdicao.getId());
 			contagem.setNomeProduto(produtoEdicao.getProduto().getNome());

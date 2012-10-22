@@ -18,15 +18,15 @@ import org.hibernate.annotations.ManyToAny;
 
 import br.com.abril.nds.dto.auditoria.AtributoDTO;
 import br.com.abril.nds.dto.auditoria.AuditoriaDTO;
-import br.com.abril.nds.dto.auditoria.AuditoriaDTO.TipoOperacaoAuditoria;
+import br.com.abril.nds.util.TipoOperacaoSQL;
 import br.com.caelum.vraptor.Path;
 
 public class AuditoriaUtil {
 
 	private static final String GETTER_PREFIX = "get";
-
-	private static final String EXCLUDED_GETTER = "getClass";
 	
+	private static final String IS_PREFIX = "is";
+
 	private static final String EXCLUDED_FIELD = "serialVersionUID";
 	
 	private static final String CONTROLLER_SUFIX = "Controller";
@@ -37,15 +37,15 @@ public class AuditoriaUtil {
 	
 	private static final String SLASH = "/";
 
-	public static AuditoriaDTO generateAuditoriaDTO(Object newEntity, Object oldEntity, Thread currentThread, 
-													Object user, TipoOperacaoAuditoria tipoOperacaoAuditoria) {
+	public static AuditoriaDTO generateAuditoriaDTO(Object newEntity, Object oldEntity, String entityType, Thread currentThread, 
+													Object user, TipoOperacaoSQL tipoOperacaoAuditoria) {
 		
 		AuditoriaDTO auditoria = new AuditoriaDTO();
 
 		auditoria.setDadosAntigos(AuditoriaUtil.entityToDTO(oldEntity));
 		auditoria.setDadosNovos(AuditoriaUtil.entityToDTO(newEntity));
 		auditoria.setDataAuditoria(new Date());
-		auditoria.setEntidadeAuditada(newEntity.getClass().getSimpleName());
+		auditoria.setEntidadeAuditada(entityType);
 		auditoria.setNdsStackTrace(AuditoriaUtil.getNDSStackTrace(currentThread));
 		auditoria.setTipoOperacaoAuditoria(tipoOperacaoAuditoria);
 		auditoria.setUrlAcesso(AuditoriaUtil.getURLFromController(currentThread));
@@ -65,7 +65,7 @@ public class AuditoriaUtil {
 
 		List<String> embeddedFieldsName = getEmbeddedEntityFields(entity); 
 
-		Method[] methods = entity.getClass().getMethods();
+		List<Method> methods = getValidMethods(entity);
 
 		for (Method method : methods) {
 
@@ -77,15 +77,16 @@ public class AuditoriaUtil {
 					result.addAll(entityToDTO(method.invoke(entity, new Object[0])));
 				}
 
-				if (isValidEntityMethods(method)) {
+				AtributoDTO atributo = new AtributoDTO();
 
-					AtributoDTO atributo = new AtributoDTO();
+				String atributeName = method.getName().startsWith(GETTER_PREFIX) ?
+							method.getName().replaceFirst(GETTER_PREFIX, "") : 
+							method.getName().replaceFirst(IS_PREFIX, "");
+				
+				atributo.setNome(atributeName);
+				atributo.setValor(method.invoke(entity, new Object[0]));
 
-					atributo.setNome(method.getName().replaceFirst(GETTER_PREFIX, ""));
-					atributo.setValor(method.invoke(entity, new Object[0]));
-
-					result.add(atributo);
-				}
+				result.add(atributo);
 
 			} catch (IllegalAccessException e) {
 				continue;
@@ -121,7 +122,7 @@ public class AuditoriaUtil {
 				url = pathValueFromClass 
 					+ (pathValueFromClass.endsWith(SLASH) || pathValueFromMethod.startsWith(SLASH) 
 							? "" : SLASH)
-					+ pathValueFromMethod;
+					+ ((pathValueFromMethod == null || pathValueFromMethod.isEmpty()) ? methodName : pathValueFromMethod);
 				
 				break;
 			}
@@ -147,22 +148,41 @@ public class AuditoriaUtil {
 		return ndsStacktrace;
 	}
 	
-	private static boolean isValidEntityMethods(Method method) {
+	private static List<Method> getValidMethods(Object entity) {
 
-		return method.getName().startsWith(GETTER_PREFIX)
-				&& !method.getName().equals(EXCLUDED_GETTER)
-				&& !method.isAnnotationPresent(OneToMany.class)
-				&& !method.isAnnotationPresent(OneToOne.class)
-				&& !method.isAnnotationPresent(ManyToAny.class)
-				&& !method.isAnnotationPresent(ManyToMany.class)
-				&& !method.isAnnotationPresent(ManyToOne.class);
+		List<Method> validMethods = new ArrayList<Method>();
+
+		Field[] allFields = entity.getClass().getDeclaredFields();
+
+		for (Field field : allFields) { 
+
+			if (!field.getName().equals(EXCLUDED_FIELD)
+					&& !field.isAnnotationPresent(OneToMany.class)
+					&& !field.isAnnotationPresent(OneToOne.class)
+					&& !field.isAnnotationPresent(ManyToAny.class)
+					&& !field.isAnnotationPresent(ManyToMany.class)
+					&& !field.isAnnotationPresent(ManyToOne.class)) {
+
+				for (Method method : entity.getClass().getMethods()) {
+
+					if (method.getName().endsWith(upperCaseFirstLetter(field.getName()))) {
+
+						validMethods.add(method);
+						
+						break;
+					}
+				}
+			}
+		}
+
+		return validMethods;
 	}
 	
 	private static List<String> getEmbeddedEntityFields(Object entity) {
 		
 		List<String> fields = new ArrayList<String>();
 		
-		for (Field field : entity.getClass().getFields()) {
+		for (Field field : entity.getClass().getDeclaredFields()) {
 
 			if (!EXCLUDED_FIELD.equals(field.getName())
 					&& (field.isAnnotationPresent(Embedded.class)
@@ -219,13 +239,11 @@ public class AuditoriaUtil {
 			for (Method method : methods) {
 
 				if (method.getName().equals(methodName) 
-						&& method.isAnnotationPresent(Path.class)
-						&& method.isAccessible()) {
+						&& method.isAnnotationPresent(Path.class)) {
 					
 					Path path = method.getAnnotation(Path.class);
 
-					pathValue = path.value()[0] != null ? 
-							    path.value()[0] : method.getName();
+					pathValue = path.value()[0];
 							    
 					break;
 				}

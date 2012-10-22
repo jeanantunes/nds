@@ -113,7 +113,7 @@
 					            <td width="311"><input type="text"  name="filtro.produto" style="width:290px;" onchange="contasAPagarController.pesquisarProdutoEdicao();"/></td>
 					           
 					            <td width="40">Edi&ccedil;&atilde;o:</td>
-					            <td width="83" align="right"><input type="text" name="filtro.edicao" id="textfield9" style="width:60px;" /></td>
+					            <td width="83" align="right"><input type="text" name="filtro.edicao" id="textfield9" style="width:60px; onchange="contasAPagarController.pesquisarProdutoEdicao(); " /></td>
 					         
 					         
 					          </tr>
@@ -170,8 +170,8 @@
 	<br clear="all" />
 	<br />
 
-	<span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="../images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
-	<span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="../images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
+			<span class="bt_arquivo"><a href="${pageContext.request.contextPath}/financeiro/contasAPagar/exportPesquisarParcial?fileType=XLS">Arquivo</a></span>
+			<span class="bt_imprimir"><a href="${pageContext.request.contextPath}/financeiro/contasAPagar/exportPesquisarParcial?fileType=PDF">Imprimir</a></span>
 </div>
 
       
@@ -194,8 +194,8 @@
     	<legend><span id="contasAPagar_legend_popupConsignado"></span></legend>
         <table class="contasAPagar-consignadoGrid"></table>
     
-        <span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="../images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
-		<span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="../images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
+        <span class="bt_arquivo"><a href="${pageContext.request.contextPath}/financeiro/contasAPagar/exportPesquisarDetalheConsignado?fileType=XLS">Arquivo</a></span>
+		<span class="bt_imprimir"><a href="${pageContext.request.contextPath}/financeiro/contasAPagar/exportPesquisarDetalheConsignado?fileType=PDF">Imprimir</a></span>
     
        	<table id="contasAPagar_table_popupConsignado" width="180" border="0" cellspacing="2" cellpadding="2" style="float:right; margin-top: 7px;"></table>
         <table width="109" border="0" cellspacing="2" cellpadding="2"  style="float:right; margin-top: 7px;">
@@ -215,8 +215,8 @@
         
         <table class="contasAPagar_encalheGrid"></table>
         
-        <span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="../images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
-		<span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="../images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
+        <span class="bt_arquivo"><a href="${pageContext.request.contextPath}/financeiro/contasAPagar/exportPesquisarDetalheEncalhe?fileType=XLS">Arquivo</a></span>
+		<span class="bt_imprimir"><a href="${pageContext.request.contextPath}/financeiro/contasAPagar/exportPesquisarDetalheEncalhe?fileType=PDF">Imprimir</a></span>
         
         <table id="contasAPagar_table_popupEncalhe" width="180" border="0" cellspacing="2" cellpadding="2" style="float:right; margin-top: 7px;"></table>
         <table width="109" border="0" cellspacing="2" cellpadding="2"  style="float:right; margin-top: 7px;">
@@ -233,8 +233,8 @@
         
         <table class="contasAPagar_faltasSobrasGrid"></table>
         
-        <span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="../images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
-		<span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="../images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
+        <span class="bt_arquivo"><a href="${pageContext.request.contextPath}/financeiro/contasAPagar/exportPesquisarDetalheFaltasSobras?fileType=XLS">Arquivo</a></span>
+		<span class="bt_imprimir"><a href="${pageContext.request.contextPath}/financeiro/contasAPagar/exportPesquisarDetalheFaltasSobras?fileType=PDF">Imprimir</a></span>
 		
 		<table id="contasAPagar_table_popupFaltasSobras" width="180" border="0" cellspacing="2" cellpadding="2" style="float:right; margin-top: 7px;"></table>
         <table width="109" border="0" cellspacing="2" cellpadding="2"  style="float:right; margin-top: 7px;">

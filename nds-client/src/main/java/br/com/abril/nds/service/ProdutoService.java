@@ -21,7 +21,7 @@ public interface ProdutoService {
 	 * 
 	 * @return {@link Produto}
 	 */
-	Produto obterProdutoPorNomeProduto(String nome);
+	Produto obterProdutoPorNome(String nome);
 	
 	/**
 	 * Obtém produtos cujo nome começa com o nome informado.
@@ -30,7 +30,7 @@ public interface ProdutoService {
 	 * 
 	 * @return {@link List<Produto>}
 	 */
-	List<Produto> obterProdutoLikeNomeProduto(String nome);
+	List<Produto> obterProdutoLikeNome(String nome);
 	
 	/**
 	 * Obtém um produto de acordo com o código do produto.

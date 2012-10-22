@@ -1,5 +1,6 @@
 package br.com.abril.nds.service.impl;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,8 @@ import br.com.abril.nds.dto.FlexiGridDTO;
 import br.com.abril.nds.dto.filtro.FiltroContasAPagarDTO;
 import br.com.abril.nds.repository.ContasAPagarRepository;
 import br.com.abril.nds.service.ContasAPagarService;
+import br.com.abril.nds.vo.PaginacaoVO;
+import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 @Service
 public class ContasAPagarServiceImpl implements ContasAPagarService {
@@ -34,8 +37,29 @@ public class ContasAPagarServiceImpl implements ContasAPagarService {
 	@Transactional
 	@Override
 	public ContasAPagarGridPrincipalProdutoDTO pesquisarPorProduto(FiltroContasAPagarDTO filtro, String sortname, String sortorder, int rp, int page) {
-		// TODO Auto-generated method stub
-		return null;
+		
+		PaginacaoVO paginacao = new PaginacaoVO();
+		paginacao.setSortColumn(sortname);
+		paginacao.setSortOrder(sortorder);
+		paginacao.setPaginaAtual(page);
+		paginacao.setQtdResultadosPorPagina(rp);
+		
+		filtro.setPaginacaoVO(paginacao);
+		
+        ContasAPagarGridPrincipalProdutoDTO retorno = new ContasAPagarGridPrincipalProdutoDTO();
+		
+        
+        
+        retorno.setValorLiquido(BigDecimal.ZERO);
+        retorno.setTotalDesconto(BigDecimal.ZERO);
+        retorno.setTotalPagto(BigDecimal.ZERO);
+        
+        
+        
+		retorno.setGrid(this.contasAPagarRepository.pesquisarPorProduto(filtro));
+		retorno.setTotalGrid(this.contasAPagarRepository.pesquisarCountPorProduto(filtro));
+		
+		return retorno;
 	}
 
 	@Transactional
@@ -49,10 +73,31 @@ public class ContasAPagarServiceImpl implements ContasAPagarService {
 	@Override
 	public ContasAPagarGridPrincipalFornecedorDTO pesquisarPorDistribuidor(FiltroContasAPagarDTO filtro) {
 		
+		//TODO validar filtro e range de datas x semana ce
+		
 		ContasAPagarGridPrincipalFornecedorDTO retorno = new ContasAPagarGridPrincipalFornecedorDTO();
 		
 		retorno.setGrid(this.contasAPagarRepository.pesquisarPorDistribuidor(filtro));
 		retorno.setTotalGrid(this.contasAPagarRepository.pesquisarPorDistribuidorCount(filtro));
+		
+		BigDecimal totalBruto = this.contasAPagarRepository.buscarTotalPesquisarPorDistribuidor(filtro, false);
+		
+		if (totalBruto == null){
+			
+			totalBruto = BigDecimal.ZERO;
+		}
+				
+		retorno.setTotalBruto(totalBruto);
+		
+		BigDecimal totalDesconto = this.contasAPagarRepository.buscarTotalPesquisarPorDistribuidor(filtro, true);
+		
+		if (totalDesconto == null){
+			
+			totalDesconto = BigDecimal.ZERO;
+		}
+				
+		retorno.setTotalDesconto(totalDesconto);
+		retorno.setSaldo(totalBruto.subtract(totalDesconto));
 		
 		return retorno;
 	}

@@ -38,7 +38,7 @@ var gruposPermissaoController = $.extend(true, {
 				buttons: {
 					"Confirmar": function() {
 						
-						var obj = $("#novo_grupo_form", gruposPermissaoController.workspace).serialize();
+						var obj = $("#novo_grupo_form", gruposPermissaoController.workspace).serializeObject();
 						//var obj = $("#novo_grupo_form", gruposPermissaoController.workspace).serialize();
 						
 						var permissoes = "";
@@ -49,7 +49,7 @@ var gruposPermissaoController = $.extend(true, {
 							permissoes += $(this).val();
 					    });
 
-						obj += "&grupoPermissaoDTO.permissoesSelecionadas=" + permissoes;
+						obj['grupoPermissaoDTO.permissoesSelecionadas'] = permissoes;
 						
 						$.postJSON(gruposPermissaoController.path + '/salvarGrupoPermissao', obj, function(data) {
 							var tipoMensagem = data.tipoMensagem;

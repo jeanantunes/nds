@@ -31,7 +31,7 @@ public class ProdutoRepositoryImpl extends AbstractRepositoryModel<Produto, Long
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Produto> obterProdutoLikeNomeProduto(String nome) {
+	public List<Produto> obterProdutoLikeNome(String nome) {
 		String hql = "from Produto produto "
 				   + " where upper(produto.nome) like upper(:nome) order by produto.nome";
 		
@@ -43,7 +43,7 @@ public class ProdutoRepositoryImpl extends AbstractRepositoryModel<Produto, Long
 	}
 	
 	@Override
-	public Produto obterProdutoPorNomeProduto(String nome) {
+	public Produto obterProdutoPorNome(String nome) {
 		String hql = "from Produto produto "
 				   + " where upper(produto.nome) = upper(:nome) order by produto.nome";
 		
@@ -148,7 +148,7 @@ public class ProdutoRepositoryImpl extends AbstractRepositoryModel<Produto, Long
 		}
 	}
 	
-	private Query getQueryBuscaProdutos(StringBuffer hql, String codigo, String produto,
+	private Query getQueryBuscaProdutos(StringBuffer hql, String codigo, String nome,
 			String fornecedor, String editor, Long codigoTipoProduto, String sortname, String sortorder, boolean isCount) {
 		
 		hql.append(" from ");
@@ -171,8 +171,8 @@ public class ProdutoRepositoryImpl extends AbstractRepositoryModel<Produto, Long
 			auxHql = " and ";
 		}
 		
-		if (produto != null && !produto.isEmpty()) {
-			hql.append(auxHql).append(" produto.nome like :produto ");
+		if (nome != null && !nome.isEmpty()) {
+			hql.append(auxHql).append(" produto.nome like :nome ");
 			auxHql = " and ";
 		}
 		
@@ -221,8 +221,8 @@ public class ProdutoRepositoryImpl extends AbstractRepositoryModel<Produto, Long
 			query.setParameter("codigo", codigo.toUpperCase());
 		}
 		
-		if (produto != null && !produto.isEmpty()) {
-			query.setParameter("produto", "%" + produto + "%");
+		if (nome != null && !nome.isEmpty()) {
+			query.setParameter("nome", "%" + nome + "%");
 		}
 		
 		if (fornecedor != null && !fornecedor.isEmpty()) {

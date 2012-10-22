@@ -488,7 +488,8 @@ public class EnderecoController {
 			}
 		}
 
-		this.result.use(Results.json()).from(enderecoAssociacao, "result").recursive().exclude("endereco.pessoa").serialize();
+		//this.result.use(Results.json()).from(enderecoAssociacao, "result").recursive().exclude("endereco.pessoa").serialize();
+		this.result.use(Results.json()).from(enderecoAssociacao, "result").recursive().serialize();
 	}
 
 	/**

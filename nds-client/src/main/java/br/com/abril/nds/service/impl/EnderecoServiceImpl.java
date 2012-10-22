@@ -278,7 +278,7 @@ public class EnderecoServiceImpl implements EnderecoService {
 	@Transactional(readOnly = true)
 	public List<Bairro> pesquisarTodosBairros() {
 		
-		return this.bairroRepository.pesquisarTodosBairros();
+		return this.bairroRepository.buscarTodos();
 	}
 	
 	@Override

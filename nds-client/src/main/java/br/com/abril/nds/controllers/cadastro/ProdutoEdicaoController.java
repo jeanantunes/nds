@@ -18,6 +18,7 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Dimensao;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.fiscal.nota.Origem;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
@@ -71,7 +72,7 @@ public class ProdutoEdicaoController {
 	
 	@Post
 	@Path("/pesquisarEdicoes.json")
-	public void pesquisarEdicoes(String codigoProduto, String nomeProduto,
+	public void pesquisarEdicoes(String codigoProduto, String nome,
 			Date dataLancamentoDe, Date dataLancamentoAte, BigDecimal precoDe,BigDecimal precoAte , String situacaoLancamento,
 			String codigoDeBarras, boolean brinde,
             String sortorder, String sortname, int page, int rp) {
@@ -79,7 +80,7 @@ public class ProdutoEdicaoController {
 		Intervalo<Date> intervaloLancamento = null;
 		// Validar:
 		if ((codigoProduto == null || codigoProduto.trim().isEmpty()) 
-				|| (nomeProduto == null || nomeProduto.trim().isEmpty())) {
+				|| (nome == null || nome.trim().isEmpty())) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Por favor, preencha o campo 'Código' ou 'Produto'!");
 		}
 		if(dataLancamentoDe == null ^ dataLancamentoAte == null ){
@@ -108,9 +109,9 @@ public class ProdutoEdicaoController {
 		}		
 	
 		// Pesquisar:
-		Long qtd = peService.countPesquisarEdicoes(codigoProduto, nomeProduto, intervaloLancamento, intervaloPreco, statusLancamento, codigoDeBarras, brinde);
+		Long qtd = peService.countPesquisarEdicoes(codigoProduto, nome, intervaloLancamento, intervaloPreco, statusLancamento, codigoDeBarras, brinde);
 		if(qtd > 0){			
-			List<ProdutoEdicaoDTO> lst = peService.pesquisarEdicoes(codigoProduto, nomeProduto, intervaloLancamento, intervaloPreco, statusLancamento, codigoDeBarras, brinde, sortorder, sortname, page, rp);
+			List<ProdutoEdicaoDTO> lst = peService.pesquisarEdicoes(codigoProduto, nome, intervaloLancamento, intervaloPreco, statusLancamento, codigoDeBarras, brinde, sortorder, sortname, page, rp);
 			
 			this.result.use(FlexiGridJson.class).from(lst).total(qtd.intValue()).page(page).serialize();
 		}else{
@@ -185,7 +186,7 @@ public class ProdutoEdicaoController {
 		dto.setPossuiBrinde(possuiBrinde);
 		dto.setNumeroLancamento(numeroLancamento);
 		dto.setDescricaoBrinde(descricaoBrinde);
-		dto.setDescricaoProduto(descricaoProduto);
+		dto.setNomeComercial(descricaoProduto);
 		
 		ValidacaoVO vo = null;
 		 
@@ -229,9 +230,7 @@ public class ProdutoEdicaoController {
 	private void validarProdutoEdicao(ProdutoEdicaoDTO dto, String codigoProduto) {
 		
 		List<String> listaMensagens = new ArrayList<String>();
-		
-		boolean origemManual = false;
-		
+						
 		ProdutoEdicao pe = null;
 		
 		if(codigoProduto == null) {
@@ -246,10 +245,9 @@ public class ProdutoEdicaoController {
 				throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Produto Edição inválido!"));
 			}
 			
-			origemManual = (pe.getOrigemInterface() == null) ? true : pe.getOrigemInterface().booleanValue();
 		}
 		
-		if (pe == null || origemManual) {
+		if (pe == null || (pe.getOrigem().equals(br.com.abril.nds.model.Origem.MANUAL))) {
 			
 			// Distribuidor:
 			if (dto.getCodigoProduto() == null || dto.getCodigoProduto().trim().length() <= 0) {
@@ -401,7 +399,7 @@ public class ProdutoEdicaoController {
 			
 			produtoLancamentoVO = new DetalheProdutoVO(produtoEdicao.getId(),
 													   produtoEdicao.getProduto().getNome(),
-													   produtoEdicao.getCodigo(),
+													   produtoEdicao.getProduto().getCodigo(),
 										               (precoVenda!=null?CurrencyUtil.formatarValor(precoVenda):""),
 										               (precoComDesconto!=null?CurrencyUtil.formatarValor(precoComDesconto):""),
 										               (produtoEdicao.getProduto()!=null?(produtoEdicao.getProduto().getFornecedor()!=null?produtoEdicao.getProduto().getFornecedor().getJuridica().getNome():""):""),

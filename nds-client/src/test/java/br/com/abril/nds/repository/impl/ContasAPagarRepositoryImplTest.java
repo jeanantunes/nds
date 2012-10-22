@@ -1,9 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import junit.framework.Assert;
@@ -12,6 +10,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.dto.ContasApagarConsultaPorDistribuidorDTO;
+import br.com.abril.nds.dto.ContasApagarConsultaPorProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroContasAPagarDTO;
 import br.com.abril.nds.repository.ContasAPagarRepository;
 import br.com.abril.nds.vo.PaginacaoVO;
@@ -42,6 +41,33 @@ public class ContasAPagarRepositoryImplTest extends AbstractRepositoryImplTest {
 		return filtro;
 	}
 	
+    private FiltroContasAPagarDTO getFiltroPesquisaPorProduto(){
+		
+		List<Long> produtoEdicaoIDs = new ArrayList<Long>();
+		produtoEdicaoIDs.add(1L);
+		produtoEdicaoIDs.add(2L);
+		produtoEdicaoIDs.add(3L);
+		produtoEdicaoIDs.add(4L);
+		produtoEdicaoIDs.add(5L);
+		produtoEdicaoIDs.add(6L);
+		produtoEdicaoIDs.add(7L);
+		produtoEdicaoIDs.add(8L);
+		
+		Calendar cal = Calendar.getInstance();
+		cal.set(2012, 10, 1);
+		
+		FiltroContasAPagarDTO filtro = new FiltroContasAPagarDTO();
+		filtro.setCe(1);
+		filtro.setDataDe(cal.getTime());
+		cal.clear();
+		cal.set(2099, 1, 1);
+		filtro.setDataAte(cal.getTime());
+		filtro.setEdicao(1L);
+		filtro.setProdutoEdicaoIDs(produtoEdicaoIDs);
+		
+		return filtro;
+	}
+
 	@Test
 	public void testPesquisarPorDistribuidorCount(){
 		
@@ -67,4 +93,34 @@ public class ContasAPagarRepositoryImplTest extends AbstractRepositoryImplTest {
 		
 		this.contasAPagarRepository.buscarTotalPesquisarPorDistribuidor(this.getFiltroPesquisaPorDistribuidor(), false);
 	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	@Test
+	public void testPesquisarPorProdutoCount(){
+		
+		this.contasAPagarRepository.pesquisarCountPorProduto(this.getFiltroPesquisaPorProduto());
+	}
+	
+	@Test
+	public void testPesquisarPorProduto(){
+		
+		PaginacaoVO paginacaoVO = new PaginacaoVO(1, 10, PaginacaoVO.Ordenacao.ASC.getOrdenacao(), "suplementacao");
+		
+		FiltroContasAPagarDTO filtroContasAPagarDTO = this.getFiltroPesquisaPorProduto();
+		filtroContasAPagarDTO.setPaginacaoVO(paginacaoVO);
+		
+		List<ContasApagarConsultaPorProdutoDTO> lista = this.contasAPagarRepository.pesquisarPorProduto(filtroContasAPagarDTO);
+		
+		Assert.assertNotNull(lista);
+	}
+
+	
+	
 }
