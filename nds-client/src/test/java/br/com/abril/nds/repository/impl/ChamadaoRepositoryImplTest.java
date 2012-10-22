@@ -3,9 +3,9 @@ package br.com.abril.nds.repository.impl;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.TreeSet;
 
 import junit.framework.Assert;
 
@@ -61,7 +61,7 @@ public class ChamadaoRepositoryImplTest extends AbstractRepositoryImplTest  {
 		fornecedor = Fixture.fornecedorFC(fornecedorPublicacao);
 		save(fornecedor);
 		
-		Set<Fornecedor> fornecedores = new TreeSet<Fornecedor>();
+		Set<Fornecedor> fornecedores = new HashSet<Fornecedor>();
 		fornecedores.add(fornecedor);
 		
 		NCM ncmRevistas = Fixture.ncm(49029000l,"REVISTAS","KG");
