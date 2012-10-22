@@ -12,6 +12,8 @@ import br.com.abril.nds.util.export.Exportable;
 @Exportable
 public class FiltroAlteracaoCotaDTO extends FiltroDTO implements Serializable {
 
+	private static final long serialVersionUID = -9068411972805292601L;
+	
 	private Long idCota;
 	private Integer numeroCota; 
 	private String nomeCota; 
