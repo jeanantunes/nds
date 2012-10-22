@@ -48,7 +48,8 @@ public class BoxServiceImpl implements BoxService {
 
 		if (!boxRepository.hasCotasVinculadas(id)
 				&& !boxRepository.hasCotasVinculadas(id)) {
-			boxRepository.removerPorId(id);
+			Box box = this.boxRepository.buscarPorId(id);
+			this.boxRepository.remover(box);
 		} else {
 			throw new RelationshipRestrictionException(
 					"Box está em uso e não pode ser removido.");

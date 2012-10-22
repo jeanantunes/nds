@@ -6,6 +6,7 @@ import java.util.List;
 import br.com.abril.nds.dto.BandeirasDTO;
 import br.com.abril.nds.dto.CapaDTO;
 import br.com.abril.nds.dto.CotaEmissaoDTO;
+import br.com.abril.nds.dto.FornecedoresBandeiraDTO;
 import br.com.abril.nds.dto.filtro.FiltroEmissaoCE;
 
 
@@ -32,5 +33,13 @@ public interface ChamadaEncalheService {
 	 * @return
 	 */
 	List<BandeirasDTO> obterBandeirasDaSemana(Integer semana);
+	
+	/**
+	 * Obtém Dados dos Fornecedores para impressão de Bandeira
+	 * 
+	 * @param semana - Número da semana
+	 * @return
+	 */
+	List<FornecedoresBandeiraDTO> obterDadosFornecedoresParaImpressaoBandeira(Integer semana);
 	
 }
