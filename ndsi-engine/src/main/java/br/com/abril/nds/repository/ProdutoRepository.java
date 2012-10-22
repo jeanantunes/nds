@@ -21,7 +21,7 @@ public interface ProdutoRepository extends Repository<Produto, Long> {
 	 * 
 	 * @return {@link List<Produto>}
 	 */
-	List<Produto> obterProdutoLikeNomeProduto(String nome);
+	List<Produto> obterProdutoLikeNome(String nome);
 	
 	/**
 	 * Obtém um produto de acordo com o número do produto.
@@ -30,7 +30,7 @@ public interface ProdutoRepository extends Repository<Produto, Long> {
 	 * 
 	 * @return {@link Produto}
 	 */
-	Produto obterProdutoPorNomeProduto(String nome);
+	Produto obterProdutoPorNome(String nome);
 	
 	/**
 	 * Obtém um produto de acordo com o código do produto.
@@ -59,12 +59,5 @@ public interface ProdutoRepository extends Repository<Produto, Long> {
 	 */
 	Produto obterProdutoPorNomeProdutoOuCodigo(String nome, String codigo);
 	
-	/**
-	 * Obtém o Grupo ao qual o produto pertence.
-	 * 
-	 * @param codigoProduto
-	 * 
-	 * @return GrupoProduto
-	 */
 	GrupoProduto obterGrupoProduto(String codigoProduto);
 }
