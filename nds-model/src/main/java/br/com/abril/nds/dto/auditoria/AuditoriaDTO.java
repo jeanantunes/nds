@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
+import br.com.abril.nds.util.TipoOperacaoSQL;
+
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -36,14 +38,7 @@ public class AuditoriaDTO implements Serializable {
 
 	private List<AtributoDTO> dadosNovos;
 
-	private TipoOperacaoAuditoria tipoOperacaoAuditoria;
-	
-	public enum TipoOperacaoAuditoria {
-		
-		DELETE,
-		UPDATE,
-		INSERT
-	}
+	private TipoOperacaoSQL tipoOperacaoAuditoria;
 	
 	/**
 	 * @return the idAuditoria
@@ -174,14 +169,14 @@ public class AuditoriaDTO implements Serializable {
 	/**
 	 * @return the tipoOperacaoAuditoria
 	 */
-	public TipoOperacaoAuditoria getTipoOperacaoAuditoria() {
+	public TipoOperacaoSQL getTipoOperacaoAuditoria() {
 		return tipoOperacaoAuditoria;
 	}
 
 	/**
 	 * @param tipoOperacaoAuditoria the tipoOperacaoAuditoria to set
 	 */
-	public void setTipoOperacaoAuditoria(TipoOperacaoAuditoria tipoOperacaoAuditoria) {
+	public void setTipoOperacaoAuditoria(TipoOperacaoSQL tipoOperacaoAuditoria) {
 		this.tipoOperacaoAuditoria = tipoOperacaoAuditoria;
 	}
 }
