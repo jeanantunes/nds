@@ -20,7 +20,7 @@ public interface ContasAPagarService {
 	
 	/** Pesquisa quando filtro selecionado por produtos */
 	ContasAPagarGridPrincipalProdutoDTO pesquisarPorProduto(FiltroContasAPagarDTO filtro, String sortname, String sortorder, int rp, int page);
-
+	
 	/** Pesquisa da parcial de produtos (link na grid, coluna Tipo) */
 	FlexiGridDTO<ContasAPagarParcialDTO> pesquisarParcial(FiltroContasAPagarDTO filtro, String sortname, String sortorder, int rp, int page);
 	

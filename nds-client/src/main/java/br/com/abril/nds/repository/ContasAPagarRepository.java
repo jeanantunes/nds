@@ -22,4 +22,11 @@ public interface ContasAPagarRepository {
 
 	BigDecimal buscarTotalPesquisarPorDistribuidor(
 			FiltroContasAPagarDTO filtro, boolean desconto);
+	
+	/**
+	 * Busca quantidade de Contas a Pagar por Produto
+	 * @param filtro
+	 * @return Integer
+	 */
+	Integer pesquisarCountPorProduto(FiltroContasAPagarDTO filtro);
 }
