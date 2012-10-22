@@ -83,7 +83,7 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
 			}
 			
 			
-			   hql.append(" sum(l.produtoEdicao.precoVenda * l.reparte) ");
+			   hql.append(" sum(coalesce(l.produtoEdicao.precoVenda, 0) * coalesce(l.reparte,0)) ");
 			   
 			   if (totais){
 				   
@@ -94,7 +94,7 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
 			   }
 			   
 			   //encalhe
-			   hql.append("(select sum(movimento.qtde * conferencia.produtoEdicao.precoVenda) from ConferenciaEncalhe conferencia ")
+			   hql.append("(select sum(coalesce(movimento.qtde,0) * coalesce(conferencia.produtoEdicao.precoVenda,0)) from ConferenciaEncalhe conferencia ")
 			      .append(" join conferencia.movimentoEstoqueCota movimento ")
 			      .append(" join conferencia.chamadaEncalheCota chamadaEncalheCota ")
 			      .append(" join chamadaEncalheCota.chamadaEncalhe chamadaEncalhe ")
@@ -109,14 +109,14 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
 			   }
 			   
 			   //suplementar
-			   hql.append("(select sum(m.qtde * m.produtoEdicao.precoVenda) ")
+			   hql.append("(select sum(coalesce(m.qtde,0) * coalesce(m.produtoEdicao.precoVenda,0)) ")
 			   	  .append(" from MovimentoEstoque m ")
 			   	  .append(" where m.data = l.dataRecolhimentoDistribuidor ")
 			   	  .append(" and m.qtde is not null ")
 			   	  .append(" and m.produtoEdicao.precoVenda is not null")
 			   	  .append(" and m.tipoMovimento.grupoMovimentoEstoque in (:movimentosSuplementarEntrada)) - ")
 			   
-			      .append("(select sum(m2.qtde * m2.produtoEdicao.precoVenda) ")
+			      .append("(select sum(coalesce(m2.qtde,0) * coalesce(m2.produtoEdicao.precoVenda,0)) ")
 			      .append(" from MovimentoEstoque m2 ")
 			      .append(" where m2.data = l.dataRecolhimentoDistribuidor ")
 			      .append(" and m2.qtde is not null ")
@@ -132,7 +132,7 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
 			   }
 			   
 			   //FaltasSobras
-			   hql.append("(select sum(ld2.diferenca.qtde * ld2.diferenca.produtoEdicao.precoVenda) ")
+			   hql.append("(select sum(coalesce(ld2.diferenca.qtde,0) * coalesce(ld2.diferenca.produtoEdicao.precoVenda,0)) ")
 			      .append(" from LancamentoDiferenca ld2 ")
 			      .append(" where ld2.dataProcessamento = l.dataRecolhimentoDistribuidor ")
 			      .append(" and ld2.diferenca.qtde is not null ")
@@ -140,7 +140,7 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
 			      .append(" and (ld2.diferenca.tipoDiferenca = :tipoDiferencaSobraEm or ld2.diferenca.tipoDiferenca = :tipoDiferencaSobraDe)")
 			      .append(" group by ld2.diferenca.tipoDiferenca) - ")
 			   
-			      .append("(select sum(ld.diferenca.qtde * ld.diferenca.produtoEdicao.precoVenda) ")
+			      .append("(select sum(coalesce(ld.diferenca.qtde,0) * coalesce(ld.diferenca.produtoEdicao.precoVenda,0)) ")
 			      .append(" from LancamentoDiferenca ld ")
 			      .append(" where ld.dataProcessamento = l.dataRecolhimentoDistribuidor ")
 			      .append(" and ld.diferenca.qtde is not null ")
@@ -157,7 +157,7 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
 			   }
 			   
 			   //PerdasGanhos
-			   hql.append("(select sum(ld3.diferenca.qtde * ld3.diferenca.produtoEdicao.precoVenda) ")
+			   hql.append("(select sum(coalesce(ld3.diferenca.qtde,0) * coalesce(ld3.diferenca.produtoEdicao.precoVenda,0)) ")
 			   .append(" from LancamentoDiferenca ld3 ")
 			   .append(" where ld3.dataProcessamento = l.dataRecolhimentoDistribuidor ")
 			   .append(" and ld3.diferenca.qtde is not null ")
@@ -165,7 +165,7 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
 			   .append(" and ld3.status = :statusPerda ")
 			   .append(" group by ld3.diferenca.tipoDiferenca) + ")
 			   
-			   .append("(select sum(ld4.diferenca.qtde * ld4.diferenca.produtoEdicao.precoVenda) ")
+			   .append("(select sum(coalesce(ld4.diferenca.qtde,0) * coalesce(ld4.diferenca.produtoEdicao.precoVenda,0)) ")
 			   .append(" from LancamentoDiferenca ld4 ")
 			   .append(" where ld4.dataProcessamento = l.dataRecolhimentoDistribuidor ")
 			   .append(" and ld4.diferenca.qtde is not null ")

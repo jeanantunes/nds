@@ -322,7 +322,7 @@ public class ConfirmacaoExpedicaoController {
 			retorno[1] = mensagens;
 			retorno[2] = status;
 			
-			result.use(Results.json()).withoutRoot().from(retorno).serialize();						
+			result.use(Results.json()).withoutRoot().from(retorno).recursive().serialize();						
 		}	
 			
 		/**

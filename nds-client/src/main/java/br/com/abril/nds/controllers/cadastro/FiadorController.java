@@ -40,8 +40,8 @@ import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.PaginacaoVO;
-import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
+import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.stella.validation.CNPJValidator;
 import br.com.caelum.stella.validation.CPFValidator;
 import br.com.caelum.stella.validation.InvalidStateException;
@@ -165,6 +165,8 @@ public class FiadorController {
 				result[0] = new ValidacaoVO(TipoMensagem.WARNING, "Nenhum registro encontrado.");
 			} else {
 				ValidacaoVO vo = (ValidacaoVO) result[0];
+				if(vo.getListaMensagens() ==  null)
+					vo.setListaMensagens(new ArrayList<String>());
 				vo.getListaMensagens().add("Nenhum registro encontrado.");
 			}
 			

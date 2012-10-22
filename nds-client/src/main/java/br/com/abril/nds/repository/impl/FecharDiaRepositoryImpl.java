@@ -43,7 +43,7 @@ public class FecharDiaRepositoryImpl extends AbstractRepository implements Fecha
 
 		StringBuilder hql = new StringBuilder();
 
-		hql.append(" select notaFiscal from NotaFiscalEntradaFornecedor notaFiscal ");		
+		hql.append(" SELECT notaFiscal from NotaFiscalEntradaFornecedor notaFiscal ");		
 		hql.append("WHERE notaFiscal.statusNotaFiscal != :statusNF AND notaFiscal.dataEmissao = :dataOperacao ");
 		
 		Query query = super.getSession().createQuery(hql.toString());

@@ -72,6 +72,10 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 			return;
 		}
 		
+		if (input.getRepartePrevisto().equals(0L)) {
+			return;
+		}
+		
 		// Validar Distribuidor:
 		final Number codDistribuidorSistema = (Number) message.getHeader().get(
 				MessageHeaderProperties.CODIGO_DISTRIBUIDOR.name());

@@ -4,7 +4,7 @@ import java.math.BigInteger;
 
 public class ProdutoEdicaoSuplementarDTO {
 
-	private String codigoProdutoEdicao;
+	private String codigoProduto;
 	
 	private String nomeProdutoEdicao;
 	
@@ -16,12 +16,12 @@ public class ProdutoEdicaoSuplementarDTO {
 	
 	private BigInteger quantidadeDisponivel;
 
-	public String getCodigoProdutoEdicao() {
-		return codigoProdutoEdicao;
+	public String getCodigoProduto() {
+		return codigoProduto;
 	}
 
-	public void setCodigoProdutoEdicao(String codigoProdutoEdicao) {
-		this.codigoProdutoEdicao = codigoProdutoEdicao;
+	public void setCodigoProduto(String codigoProduto) {
+		this.codigoProduto = codigoProduto;
 	}
 
 	public String getNomeProdutoEdicao() {

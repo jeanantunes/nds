@@ -191,14 +191,14 @@ var inadimplenciaController = $.extend(true, {
 	getDetalhes : function(idDivida, nome) {
 		nomeCota = nome;
 		$.postJSON(contextPath + "/inadimplencia/getDetalhesDivida", 
-				"idDivida="+idDivida+"&method='get'", 
+				{idDivida:idDivida,method:'get'}, 
 				inadimplenciaController.popupDetalhes);	
 	},
 	
 	getDetalhesComissaoCota : function(idDivida, nome) {
 		nomeCota = nome;
 		$.postJSON(contextPath + "/inadimplencia/getDividaComissao", 
-				"idDivida="+idDivida+"&method='get'", 
+				{idDivida:idDivida,method:'get'}, 
 				inadimplenciaController.popupDetalhesComissaoCota);	
 	},
 

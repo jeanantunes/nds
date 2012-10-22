@@ -47,10 +47,10 @@ var furoProdutoController = $.extend(true, {
 		
 		$("#resultado", furoProdutoController.workspace).hide();
 		
-		var data = "codigo=" + $("#codigo", furoProdutoController.workspace).val() +
-		  "&produto=" + $("#produto", furoProdutoController.workspace).val() +
-		  "&edicao=" + $("#edicao", furoProdutoController.workspace).val() +
-		  "&dataLancamento=" + $("#dataLancamento", furoProdutoController.workspace).val();
+		var data = {codigo: $("#codigo", furoProdutoController.workspace).val(),
+				produto: $("#produto", furoProdutoController.workspace).val(),
+				edicao: $("#edicao", furoProdutoController.workspace).val(),
+				dataLancamento: $("#dataLancamento", furoProdutoController.workspace).val()};
 		$.postJSON(contextPath + "/lancamento/furoProduto/pesquisar", data, furoProdutoController.exibirProduto);
 	},
 	
@@ -78,7 +78,7 @@ var furoProdutoController = $.extend(true, {
 		var produto = $("#produto", furoProdutoController.workspace).val();
 		
 		if (produto && produto.length > 0){
-			$.postJSON(contextPath + "/lancamento/furoProduto/pesquisarPorNomeProduto", "nomeProduto=" + produto, furoProdutoController.exibirAutoComplete);
+			$.postJSON(contextPath + "/lancamento/furoProduto/pesquisarPorNomeProduto", {nomeProduto:produto}, furoProdutoController.exibirAutoComplete);
 		}
 	},
 	
@@ -97,9 +97,10 @@ var furoProdutoController = $.extend(true, {
 	},
 	
 	confirmar : function(){
-		var data = "codigoProduto=" + $("#codigoProdutoHidden", furoProdutoController.workspace).val() + "&idProdutoEdicao=" + $("#produtoEdicaoHidden", furoProdutoController.workspace).val() +
-		  "&novaData=" + $("#novaData", furoProdutoController.workspace).val() +
-		  "&idLancamento=" + $("#lancamentoHidden", furoProdutoController.workspace).val();
+		var data = {codigoProduto:$("#codigoProdutoHidden", furoProdutoController.workspace).val(),
+				idProdutoEdicao:$("#produtoEdicaoHidden", furoProdutoController.workspace).val(),
+				novaData:$("#novaData", furoProdutoController.workspace).val(),
+				idLancamento:$("#lancamentoHidden", furoProdutoController.workspace).val()};
 		$.postJSON(contextPath + "/lancamento/furoProduto/confirmarFuro", data, furoProdutoController.limparCampos);
 	},
 	
@@ -115,7 +116,7 @@ var furoProdutoController = $.extend(true, {
 	
 	buscarNomeProduto : function(){
 		if ($("#codigo", furoProdutoController.workspace).val().length > 0){
-			var data = "codigoProduto=" + $("#codigo", furoProdutoController.workspace).val();
+			var data = {codigoProduto: $("#codigo", furoProdutoController.workspace).val()};
 			$.postJSON(contextPath + "/lancamento/furoProduto/buscarNomeProduto", data,
 				function(result){
 					if (result && result.string != ""){
