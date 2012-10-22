@@ -24,7 +24,7 @@
 <div id="dialog-pallets" title="Pallets">
 <fieldset>
 	<legend>Informe a quantidade de pallets</legend>
-    Número de Pallets: <input name="" type="text" style="width:40px; margin-left:10px; text-align:center;" />
+    N&uacute;mero de Pallets: <input id="numeroPallets" type="text" style="width:40px; margin-left:10px; text-align:center;" />
 
 </fieldset>
 </div>

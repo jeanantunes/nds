@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.EmissaoBandeiraVO;
+import br.com.abril.nds.client.vo.ImpressaoBandeiraVO;
 import br.com.abril.nds.dto.EmissaoBandeiraDTO;
 import br.com.abril.nds.dto.SlipVendaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroVendaEncalheDTO;
@@ -94,6 +95,18 @@ public class EmissaoBandeiraController {
 		emissaoBandeiraDTO.setDestino("SERVICE MAIL");
 		emissaoBandeiraDTO.setPrioridade(1);
 		listaEmissaoBandeiraDTO.add(emissaoBandeiraDTO);
+		
+		
+		emissaoBandeiraDTO = new EmissaoBandeiraDTO();
+		emissaoBandeiraDTO.setCodigoProduto("2");
+		emissaoBandeiraDTO.setNomeProduto("VEJA");
+		emissaoBandeiraDTO.setEdicao(1000l);
+		emissaoBandeiraDTO.setPacotePadrao(32);
+		emissaoBandeiraDTO.setData(new Date());
+		emissaoBandeiraDTO.setDestino("SERVICE MAIL");
+		emissaoBandeiraDTO.setPrioridade(1);
+		
+		listaEmissaoBandeiraDTO.add(emissaoBandeiraDTO);
 		return listaEmissaoBandeiraDTO;
 	}
 	
@@ -166,9 +179,9 @@ public class EmissaoBandeiraController {
 	}
 
 	@Get("/imprimirBandeira")
-	public Download imprimirBandeira() throws Exception{
+	public Download imprimirBandeira(Integer semana, Integer numeroPallets  ) throws Exception{
 		
-		byte[] comprovate = this.gerarDocumentoIreport(null);
+		byte[] comprovate = this.gerarDocumentoIreport(semana,numeroPallets);
 		
 		return new ByteArrayDownload(comprovate,"application/pdf", "imprimirBandeira.pdf", true);
 	}
@@ -185,28 +198,39 @@ public class EmissaoBandeiraController {
 	 * @throws JRException
 	 * @throws URISyntaxException
 	 */
-	private byte[] gerarDocumentoIreport(String pathJasper) throws JRException, URISyntaxException {
+	private byte[] gerarDocumentoIreport(Integer semana, Integer numeroPallets ) throws JRException, URISyntaxException {
 		Map<String, Object> parameters = new HashMap<String, Object>();
-//		parameters.put("NUMERO_COTA", slipVendaEncalhe.getNumeroCota());
-//		parameters.put("NOME_COTA", slipVendaEncalhe.getNomeCota());
-//		parameters.put("CODIGO_BOX", slipVendaEncalhe.getNumeroBox());
-//		parameters.put("DESC_BOX", slipVendaEncalhe.getDescricaoBox());
-//		parameters.put("DATA_VENDA", slipVendaEncalhe.getData());
-//		parameters.put("HORA_VENDA", slipVendaEncalhe.getHora());
-//		parameters.put("USUARIO", slipVendaEncalhe.getUsuario());
-//		parameters.put("QNT_TOTAL_A_VISTA",slipVendaEncalhe.getQuantidadeTotalVista());
-//		parameters.put("VALOR_TOTAL_A_VISTA",slipVendaEncalhe.getValorTotalVista());
-//		parameters.put("QNT_TOTAL_A_PRAZO",slipVendaEncalhe.getQuantidadeTotalPrazo());
-//		parameters.put("VALOR_TOTAL_A_PRAZO",slipVendaEncalhe.getValorTotalPrazo());
-//		parameters.put("QNT_TOTAL_GERAL",slipVendaEncalhe.getQuantidadeTotalGeral());
-//		parameters.put("VALOR_TOTAL_GERAL",slipVendaEncalhe.getValorTotalGeral());
+	    JRBeanCollectionDataSource ds = new JRBeanCollectionDataSource( getListaImpressaoBandeiraVO(semana,numeroPallets)); 
 		URL url = Thread.currentThread().getContextClassLoader().getResource("/reports/emissao_bandeira.jasper");
-
 		String path = url.toURI().getPath();
-
-		return JasperRunManager.runReportToPdf(path, parameters);
+		return JasperRunManager.runReportToPdf(path, parameters,ds);
 	}
 
+	
+
+	private List<ImpressaoBandeiraVO> getListaImpressaoBandeiraVO(Integer semana, Integer numeroPallets ) {
+		List<ImpressaoBandeiraVO> listaImpressaoBandeiraVO = new ArrayList<ImpressaoBandeiraVO>();
+		
+		for(int i=1; i <= numeroPallets;i++){
+			ImpressaoBandeiraVO impressaoBandeiraVO = new ImpressaoBandeiraVO();
+			
+			if (i%2 == 0){
+				impressaoBandeiraVO.setTipoOperacao("FC");
+			} else {
+				impressaoBandeiraVO.setTipoOperacao("DINAP");
+			}
+			
+			impressaoBandeiraVO.setSemana(semana);
+			impressaoBandeiraVO.setCodigoPracaProcon("148018"+i);
+			impressaoBandeiraVO.setPraca("FORTALEZA");
+			impressaoBandeiraVO.setDestino("ENCALHE");
+			impressaoBandeiraVO.setCanal("BANCAS");
+			listaImpressaoBandeiraVO.add(impressaoBandeiraVO);
+		}
+		
+		
+		return listaImpressaoBandeiraVO;
+	}
 	
 		
 	

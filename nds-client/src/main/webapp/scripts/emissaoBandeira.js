@@ -3,6 +3,7 @@ var emissaoBandeiraController = $.extend(true, {
 	init : function() {
 		this.iniciarGrid();
 		$("#senama", this.workspace).numeric();
+		$("#numeroPallets", this.workspace).numeric();
 				
 	},
 	
@@ -94,11 +95,36 @@ var emissaoBandeiraController = $.extend(true, {
 	
 	imprimirBandeira:function(){
 		
-		document.location.assign(contextPath + "/devolucao/emissaoBandeira/imprimirBandeira");
+		var semana = $.trim($("#senama", this.workspace).val());
+		var numeroPallets =$.trim( $("#numeroPallets").val());
+		
+		$( "#dialog-pallets", this.workspace).dialog({
+			resizable: false,
+			height:'auto',
+			width:'auto',
+			modal: true,
+			buttons: {
+				"Confirmar": function() {
+					$( this ).dialog( "close" );
+					window.location = contextPath + "/devolucao/emissaoBandeira/imprimirBandeira?semana=" + semana+ "&numeroPallets=" + $.trim( $("#numeroPallets").val());
+			
+
+					
+				},
+				"Cancelar": function() {
+					$( this ).dialog( "close" );
+				}
+			}
+		});
+		
+		
+		
+		return false;
+
 	}
 
 	
 }, BaseController);
 
 
-//@ sourceURL=alteracaoCota.js
+//@ sourceURL=emissaoBandeira.js
