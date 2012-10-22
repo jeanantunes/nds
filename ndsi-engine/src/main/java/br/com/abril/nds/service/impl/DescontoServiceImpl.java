@@ -26,20 +26,24 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.desconto.DescontoCota;
 import br.com.abril.nds.model.cadastro.desconto.DescontoDistribuidor;
 import br.com.abril.nds.model.cadastro.desconto.DescontoProduto;
 import br.com.abril.nds.model.cadastro.desconto.TipoDesconto;
+import br.com.abril.nds.model.financeiro.DescontoProximosLancamentos;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DescontoCotaRepository;
 import br.com.abril.nds.repository.DescontoDistribuidorRepository;
 import br.com.abril.nds.repository.DescontoProdutoEdicaoRepository;
 import br.com.abril.nds.repository.DescontoProdutoRepository;
+import br.com.abril.nds.repository.DescontoProximosLancamentosRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.FornecedorRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
+import br.com.abril.nds.repository.ProdutoRepository;
 import br.com.abril.nds.repository.UsuarioRepository;
 import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.util.TipoMensagem;
@@ -80,6 +84,12 @@ public class DescontoServiceImpl implements DescontoService {
 	@Autowired
 	private DescontoProdutoEdicaoRepository descontoProdutoEdicaoRepository;
 
+	@Autowired
+	private DescontoProximosLancamentosRepository descontoProximosLancamentosRepository;
+	
+	@Autowired
+	private ProdutoRepository produtoRepository;
+	
 	@Override
 	@Transactional(readOnly=true)
 	public List<TipoDescontoDTO> buscarTipoDesconto(FiltroTipoDescontoDTO filtro) {
@@ -241,27 +251,19 @@ public class DescontoServiceImpl implements DescontoService {
 				produtosEdicao.add(produtoEdicao);
 
 			} else if (desconto.getQuantidadeEdicoes() != null) {
-
-				List<ProdutoEdicao> listaProdutoEdicao = 
-					this.produtoEdicaoRepository.obterProdutosEdicoesPorCodigoProdutoLimitado(
-						desconto.getCodigoProduto(), desconto.getQuantidadeEdicoes()
-					);
-
-				for (ProdutoEdicao produtoEdicao : listaProdutoEdicao) {
-
-					DescontoProduto descontoProduto = new DescontoProduto();
-
-					descontoProduto.setDesconto(desconto.getDescontoProduto());
-					descontoProduto.setDataAlteracao(new Date());
-					descontoProduto.setCotas(cotas);
-					descontoProduto.setDistribuidor(distribuidor);
-					descontoProduto.setProdutoEdicao(produtoEdicao);
-					descontoProduto.setUsuario(usuarioRepository.buscarPorId(usuario.getId()));
-
-					this.descontoProdutoRepository.adicionar(descontoProduto);
-				}
 				
-				produtosEdicao.addAll(listaProdutoEdicao);
+				Produto produto = produtoRepository.obterProdutoPorCodigo(desconto.getCodigoProduto());
+				
+				DescontoProximosLancamentos descontoProximosLancamentos = new DescontoProximosLancamentos();
+				
+				descontoProximosLancamentos.setDataInicioDesconto(new Date());
+				descontoProximosLancamentos.setProduto(produto);
+				descontoProximosLancamentos.setQuantidadeProximosLancamaentos(desconto.getQuantidadeEdicoes());
+				descontoProximosLancamentos.setValorDesconto(desconto.getDescontoProduto());
+				descontoProximosLancamentos.setCotas(cotas);
+				descontoProximosLancamentos.setUsuario(usuario);
+				descontoProximosLancamentos.setDistribuidor(distribuidor);
+				this.descontoProximosLancamentosRepository.adicionar(descontoProximosLancamentos);
 			}
 			
 		} else {
@@ -283,10 +285,7 @@ public class DescontoServiceImpl implements DescontoService {
 				}
 				
 				produtosEdicao.addAll(listaProdutoEdicao);
-
-			
 		}
-		
 		
 		processarDescontoProduto(produtosEdicao, cotas, desconto.getDescontoProduto(),
 								 desconto.isDescontoPredominante());
