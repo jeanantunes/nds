@@ -605,38 +605,8 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 	@Override
 	public void processarRegistrohistoricoFinanceiro(
 			HistoricoFinanceiroInput valorInput) {
-		if (valorInput.getNumeroCota() == null) {
-			throw new ImportacaoException("Cota não Informada."); 
-		}
 		
-		if (
-				valorInput.getValorFuturo() == null  
-				|| valorInput.getValorPendente() == null  
-				|| valorInput.getValorPostergado() == null  
-			) {
-			throw new ImportacaoException("Valor nulo."); 
-		}
-		
-		if (!(
-				valorInput.getValorFuturo().equals(BigDecimal.ZERO)  
-				^ valorInput.getValorPendente().equals(BigDecimal.ZERO)  
-				^ valorInput.getValorPostergado().equals(BigDecimal.ZERO)  
-			)) {
-			throw new ImportacaoException("Mais de um valor com valor."); 
-		}
-		
-		if (
-				valorInput.getValorFuturo().equals(BigDecimal.ZERO)  
-				&& valorInput.getValorPendente().equals(BigDecimal.ZERO)  
-				&& valorInput.getValorPostergado().equals(BigDecimal.ZERO)  
-			) {
-			throw new ImportacaoException("Todos os Valores Zerados.");
-		}
-		
-		Cota cota = cotaService.obterCotaPDVPorNumeroDaCota(valorInput.getNumeroCota());		
-		if (cota == null) {
-			throw new ImportacaoException("Cota inexistente."); 
-		}
+		Cota cota = validarHistoricoFinanceiroInput(valorInput);
 		
 		MovimentoFinanceiroCota movimento = new MovimentoFinanceiroCota();
 		movimento.setCota(cota);
@@ -698,6 +668,43 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 			consolidadoFinanceiroRepository.alterar(cfc);				
 		}
 		
+	}
+
+	private Cota validarHistoricoFinanceiroInput(
+			HistoricoFinanceiroInput valorInput) throws ImportacaoException {
+		if (valorInput.getNumeroCota() == null) {
+			throw new ImportacaoException("Cota não Informada."); 
+		}
+		
+		if (
+				valorInput.getValorFuturo() == null  
+				|| valorInput.getValorPendente() == null  
+				|| valorInput.getValorPostergado() == null  
+			) {
+			throw new ImportacaoException("Valor nulo."); 
+		}
+		
+		if (!(
+				valorInput.getValorFuturo().equals(BigDecimal.ZERO)  
+				^ valorInput.getValorPendente().equals(BigDecimal.ZERO)  
+				^ valorInput.getValorPostergado().equals(BigDecimal.ZERO)  
+			)) {
+			throw new ImportacaoException("Mais de um valor com valor."); 
+		}
+		
+		if (
+				valorInput.getValorFuturo().equals(BigDecimal.ZERO)  
+				&& valorInput.getValorPendente().equals(BigDecimal.ZERO)  
+				&& valorInput.getValorPostergado().equals(BigDecimal.ZERO)  
+			) {
+			throw new ImportacaoException("Todos os Valores Zerados.");
+		}
+		
+		Cota cota = cotaService.obterCotaPDVPorNumeroDaCota(valorInput.getNumeroCota());		
+		if (cota == null) {
+			throw new ImportacaoException("Cota inexistente."); 
+		}
+		return cota;
 	}
 	
 }
