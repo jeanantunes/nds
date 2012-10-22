@@ -90,7 +90,7 @@ public class ProdutoRepositoryImpl extends AbstractRepositoryModel<Produto, Long
 		hql.append(" produto.id as id, 								");
 		hql.append(" produto.codigo as codigo, 						");
 		hql.append(" produto.nome as produtoDescricao, 				");
-		hql.append(" tipoproduto.descricao as tipoProdutoDescricao, ");
+		hql.append(" tipoProduto.descricao as tipoProdutoDescricao, ");
 		
 		hql.append(" ( select case when editor.id is null then '' 	");
 		hql.append(" else editor.pessoaJuridica.razaoSocial end		");
