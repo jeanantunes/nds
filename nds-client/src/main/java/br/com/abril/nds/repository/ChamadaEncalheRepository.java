@@ -6,6 +6,7 @@ import java.util.List;
 import br.com.abril.nds.dto.BandeirasDTO;
 import br.com.abril.nds.dto.CapaDTO;
 import br.com.abril.nds.dto.CotaEmissaoDTO;
+import br.com.abril.nds.dto.FornecedoresBandeiraDTO;
 import br.com.abril.nds.dto.ProdutoEmissaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroEmissaoCE;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
@@ -35,5 +36,8 @@ public interface ChamadaEncalheRepository extends Repository<ChamadaEncalhe, Lon
 
 	List<BandeirasDTO> obterBandeirasNoIntervalo(
 			Intervalo<Date> intervaloRecolhimento);
+
+	List<FornecedoresBandeiraDTO> obterDadosFornecedoresParaImpressaoBandeira(
+			Intervalo<Date> intervalo);
 
 }
