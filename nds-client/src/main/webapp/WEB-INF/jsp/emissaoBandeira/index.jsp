@@ -79,7 +79,7 @@
        	  <legend> Bandeiras Pesquisadas</legend>
         
 		  <table class="bandeirasRcltoGrid"></table>
-          <span class="bt_novos" title="Imprimir Bandeira"><a href="javascript:;" onclick="mostrar_pallets();" rel="bandeira"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir Bandeiras</a></span>
+          <span class="bt_novos" title="Imprimir Bandeira"><a href="javascript:;" onclick="emissaoBandeiraController.imprimirBandeira();" rel="bandeira"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir Bandeiras</a></span>
 <!--imprimir_bandeira.htm target="_blank"-->
 
 		<span class="bt_novos" title="Imprimir Relat&oacute;rio"><a href="javascript:;" onclick="emissaoBandeiraController.imprimirArquivo('PDF')" target="_blank"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir Relat&oacute;rio</a></span>

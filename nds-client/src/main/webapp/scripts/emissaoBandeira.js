@@ -91,7 +91,13 @@ var emissaoBandeiraController = $.extend(true, {
 
 		return false;
 	},
+	
+	imprimirBandeira:function(){
+		
+		document.location.assign(contextPath + "/devolucao/emissaoBandeira/imprimirBandeira");
+	}
 
+	
 }, BaseController);
 
 
