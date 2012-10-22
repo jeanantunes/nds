@@ -253,19 +253,19 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<ProdutoEdicaoDTO> pesquisarEdicoes(String codigoProduto, String nomeComercial,
+	public List<ProdutoEdicaoDTO> pesquisarEdicoes(String codigoProduto, String nome,
 			Intervalo<Date> dataLancamento, Intervalo<BigDecimal> preco , StatusLancamento statusLancamento,
 			String codigoDeBarras, boolean brinde,
 			String sortorder, String sortname, int initialResult, int maxResults) {
 		
 		StringBuilder hql = new StringBuilder();
-		hql.append(" SELECT pe.id as id, pr.codigo as codigoProduto, pe.nomeComercial as nomeComercial, ");
+		hql.append(" SELECT pe.id as id, pr.codigo as codigoProduto, pe.nome as nome, ");
 		hql.append("        pe.numeroEdicao as numeroEdicao, jr.razaoSocial as nomeFornecedor, ");
 		hql.append("        ln.tipoLancamento as statusLancamento, ln.status as statusSituacao, ");
 		hql.append("        pe.possuiBrinde as temBrinde ");
 		
 		// Corpo da consulta com os filtros:
-		Query query = this.queryBodyPesquisarEdicoes(hql, codigoProduto, nomeComercial, dataLancamento, preco, statusLancamento, codigoDeBarras, brinde, sortname, sortorder);
+		Query query = this.queryBodyPesquisarEdicoes(hql, codigoProduto, nome, dataLancamento, preco, statusLancamento, codigoDeBarras, brinde, sortname, sortorder);
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(ProdutoEdicaoDTO.class));
 		query.setFirstResult(initialResult);
@@ -316,7 +316,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 	 * 
 	 * @return
 	 */
-	private Query queryBodyPesquisarEdicoes(StringBuilder hql, String codigoProduto, String nomeComercial,
+	private Query queryBodyPesquisarEdicoes(StringBuilder hql, String codigoProduto, String nome,
 			Intervalo<Date> dataLancamento, Intervalo<BigDecimal> preco , StatusLancamento statusLancamento,
 			String codigoDeBarras, boolean brinde, String sortname, String sortorder) {
 		
@@ -342,8 +342,8 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		if (!StringUtil.isEmpty(codigoProduto)) {
 			hql.append("  AND UPPER(pr.codigo) LIKE UPPER(:codigoProduto) ");
 		}
-		if (!StringUtil.isEmpty(nomeComercial)) {
-			hql.append("  AND UPPER(pr.nomeComercial) LIKE UPPER(:nomeComercial) ");
+		if (!StringUtil.isEmpty(nome)) {
+			hql.append("  AND UPPER(pr.nome) LIKE UPPER(:nome) ");
 		}
 		if (!StringUtil.isEmpty(codigoDeBarras)) {
 			hql.append("  AND pe.codigoDeBarras LIKE :codigoDeBarras ");
@@ -377,8 +377,8 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		if (!StringUtil.isEmpty(codigoProduto)) {
 			query.setString("codigoProduto", codigoProduto);
 		}
-		if (!StringUtil.isEmpty(nomeComercial))  {
-			query.setString("nomeComercial", nomeComercial);
+		if (!StringUtil.isEmpty(nome))  {
+			query.setString("nome", nome);
 		}
 		if (!StringUtil.isEmpty(codigoDeBarras)){
 			query.setString("codigoDeBarras", codigoDeBarras);
@@ -499,7 +499,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 				   + " join fetch produtoEdicao.produto " 
 				   + " where ((produtoEdicao.produto.id = :idProduto "
 				   + " and 	 produtoEdicao.numeroEdicao   = :numeroEdicao)"
-				   + " or 	 (produtoEdicao.nomeComercial  = :nome))";
+				   + " or 	 (produtoEdicao.nome  = :nome))";
 		
 		Query query = super.getSession().createQuery(hql);
 
@@ -585,11 +585,11 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 
 
 	@Override
-	public String buscarNomeComercial(Long idProdutoEdicao) {
+	public String buscarNome(Long idProdutoEdicao) {
 		
 		Query query = 
 			this.getSession().createQuery(
-				"select nomeComercial from ProdutoEdicao where id = :idProdutoEdicao");
+				"select nome from ProdutoEdicao where id = :idProdutoEdicao");
 		
 		query.setParameter("idProdutoEdicao", idProdutoEdicao);
 		
