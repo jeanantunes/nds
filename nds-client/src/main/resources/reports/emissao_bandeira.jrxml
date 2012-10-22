@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="cobranca" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="40" bottomMargin="40">
+	<property name="ireport.zoom" value="1.0263162364614133"/>
+	<property name="ireport.x" value="3"/>
+	<property name="ireport.y" value="738"/>
+	<queryString language="SQL">
+		<![CDATA[]]>
+	</queryString>
+	<field name="semana" class="java.lang.Integer"/>
+	<field name="codigoPracaProcon" class="java.lang.String"/>
+	<field name="praca" class="java.lang.String"/>
+	<field name="canal" class="java.lang.String"/>
+	<field name="destino" class="java.lang.String"/>
+	<field name="tipoOperacao" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<detail>
+		<band height="515">
+			<printWhenExpression><![CDATA[$F{tipoOperacao}.toUpperCase().equals("DINAP")]]></printWhenExpression>
+			<elementGroup>
+				<image>
+					<reportElement x="11" y="5" width="172" height="102"/>
+					<imageExpression><![CDATA[Thread.currentThread().getContextClassLoader().getResource("/reports/logo.jpg").toURI().getPath()]]></imageExpression>
+				</image>
+				<rectangle>
+					<reportElement x="183" y="5" width="376" height="102"/>
+					<graphicElement>
+						<pen lineWidth="0.25"/>
+					</graphicElement>
+				</rectangle>
+				<textField>
+					<reportElement x="183" y="10" width="376" height="92"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="50" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{tipoOperacao}.toUpperCase()]]></textFieldExpression>
+				</textField>
+				<rectangle>
+					<reportElement x="569" y="5" width="223" height="102"/>
+					<graphicElement>
+						<pen lineWidth="0.25"/>
+					</graphicElement>
+				</rectangle>
+				<textField>
+					<reportElement x="585" y="29" width="80" height="49"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="14" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["SEMANA"]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="672" y="10" width="112" height="92"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="52" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{semana}]]></textFieldExpression>
+				</textField>
+				<rectangle>
+					<reportElement x="11" y="113" width="450" height="113"/>
+					<graphicElement>
+						<pen lineWidth="0.75"/>
+					</graphicElement>
+				</rectangle>
+				<textField>
+					<reportElement mode="Opaque" x="14" y="115" width="443" height="19" backcolor="#CCCCCC"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="12" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["CÓDIGO DA PRAÇA NO PROCON"]]></textFieldExpression>
+				</textField>
+				<rectangle>
+					<reportElement x="470" y="113" width="322" height="113"/>
+				</rectangle>
+				<textField>
+					<reportElement mode="Opaque" x="471" y="115" width="318" height="19" backcolor="#CCCCCC"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="12" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["PRAÇA"]]></textFieldExpression>
+				</textField>
+				<rectangle>
+					<reportElement x="11" y="233" width="781" height="113" backcolor="#000000"/>
+				</rectangle>
+				<rectangle>
+					<reportElement x="11" y="355" width="450" height="110" isRemoveLineWhenBlank="true" backcolor="#FFFFFF"/>
+				</rectangle>
+				<textField pattern="">
+					<reportElement mode="Transparent" x="50" y="241" width="729" height="99" forecolor="#FFFFFF" backcolor="#FFFFFF"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="60" isBold="true" isStrikeThrough="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{destino}.toUpperCase()]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="50" y="356" width="405" height="107" backcolor="#FFFFFF"/>
+					<textElement verticalAlignment="Middle">
+						<font size="58" isBold="true" isStrikeThrough="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{canal}.toUpperCase()]]></textFieldExpression>
+				</textField>
+				<rectangle>
+					<reportElement x="470" y="355" width="326" height="110"/>
+				</rectangle>
+				<textField>
+					<reportElement mode="Opaque" x="472" y="357" width="322" height="19" backcolor="#CCCCCC"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="12" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["VOLUMES"]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement mode="Transparent" x="474" y="380" width="318" height="82" backcolor="#FFFFFF"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="46" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{PAGE_NUMBER} + " / " +$V{REPORT_COUNT}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement mode="Transparent" x="470" y="135" width="322" height="88" backcolor="#FFFFFF"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="40" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{praca}.toUpperCase()]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="22" y="370" width="26" height="81"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle" rotation="Left">
+						<font size="14"/>
+					</textElement>
+					<textFieldExpression><![CDATA["CANAL"]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="22" y="252" width="28" height="81" forecolor="#FFFFFF"/>
+					<textElement textAlignment="Center" rotation="Left">
+						<font size="14"/>
+					</textElement>
+					<textFieldExpression><![CDATA["DESTINO"]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement mode="Transparent" x="13" y="135" width="440" height="88" backcolor="#FFFFFF"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="40" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{codigoPracaProcon}.toUpperCase()]]></textFieldExpression>
+				</textField>
+			</elementGroup>
+		</band>
+		<band height="515">
+			<printWhenExpression><![CDATA[$F{tipoOperacao}.toUpperCase().equals("DINAP") == false]]></printWhenExpression>
+			<image>
+				<reportElement x="10" y="10" width="172" height="102"/>
+				<imageExpression><![CDATA[Thread.currentThread().getContextClassLoader().getResource("/reports/logo.jpg").toURI().getPath()]]></imageExpression>
+			</image>
+			<rectangle>
+				<reportElement x="182" y="10" width="376" height="102"/>
+				<graphicElement>
+					<pen lineWidth="0.25"/>
+				</graphicElement>
+			</rectangle>
+			<textField>
+				<reportElement x="183" y="15" width="376" height="92"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="50" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tipoOperacao}.toUpperCase()]]></textFieldExpression>
+			</textField>
+			<rectangle>
+				<reportElement x="568" y="10" width="223" height="102"/>
+				<graphicElement>
+					<pen lineWidth="0.25"/>
+				</graphicElement>
+			</rectangle>
+			<textField>
+				<reportElement x="584" y="34" width="80" height="49"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["SEMANA"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="671" y="15" width="112" height="92"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="52" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{semana}]]></textFieldExpression>
+			</textField>
+			<rectangle>
+				<reportElement x="10" y="118" width="450" height="113"/>
+				<graphicElement>
+					<pen lineWidth="0.75"/>
+				</graphicElement>
+			</rectangle>
+			<textField>
+				<reportElement mode="Opaque" x="13" y="120" width="443" height="19" backcolor="#CCCCCC"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["CÓDIGO DA PRAÇA NO PROCON"]]></textFieldExpression>
+			</textField>
+			<rectangle>
+				<reportElement x="469" y="118" width="322" height="113"/>
+			</rectangle>
+			<textField>
+				<reportElement mode="Opaque" x="470" y="120" width="318" height="19" backcolor="#CCCCCC"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["PRAÇA"]]></textFieldExpression>
+			</textField>
+			<rectangle>
+				<reportElement x="10" y="238" width="781" height="113" backcolor="#000000"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="10" y="360" width="450" height="110" isRemoveLineWhenBlank="true" backcolor="#999999"/>
+			</rectangle>
+			<textField pattern="">
+				<reportElement mode="Transparent" x="49" y="246" width="729" height="99" forecolor="#FFFFFF" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="60" isBold="true" isStrikeThrough="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{destino}.toUpperCase()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="49" y="361" width="405" height="107" forecolor="#FFFFFF" backcolor="#FFFFFF"/>
+				<textElement verticalAlignment="Middle">
+					<font size="58" isBold="true" isStrikeThrough="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{canal}.toUpperCase()]]></textFieldExpression>
+			</textField>
+			<rectangle>
+				<reportElement x="469" y="360" width="326" height="110"/>
+			</rectangle>
+			<textField>
+				<reportElement mode="Opaque" x="471" y="362" width="322" height="19" backcolor="#CCCCCC"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["VOLUMES"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement mode="Transparent" x="473" y="385" width="318" height="82" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="46" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER} + " / " +$V{COLUMN_COUNT}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement mode="Transparent" x="469" y="140" width="322" height="88" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="40" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{praca}.toUpperCase()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="21" y="375" width="26" height="81" forecolor="#FFFFFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="Left">
+					<font size="14"/>
+				</textElement>
+				<textFieldExpression><![CDATA["CANAL"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="21" y="257" width="28" height="81" forecolor="#FFFFFF"/>
+				<textElement textAlignment="Center" rotation="Left">
+					<font size="14"/>
+				</textElement>
+				<textFieldExpression><![CDATA["DESTINO"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement mode="Transparent" x="12" y="140" width="440" height="88" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="40" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{codigoPracaProcon}.toUpperCase()]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>
