@@ -178,7 +178,7 @@ public class VendaEncalheController {
 			codBox = cota.getBox().getCodigo() + " - " + cota.getBox().getNome(); 
 		}
 		
-		result.use(CustomJson.class).from(codBox, "box").serialize();
+		result.use(CustomJson.class).from(codBox).serialize();
 	}
 	
 	@Post
@@ -236,7 +236,7 @@ public class VendaEncalheController {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Produto não possui itens em estoque para venda!");
 		}
 		
-		result.use(CustomJson.class).from(getVendaEncalheVO(encalheDTO), "produto").serialize();
+		result.use(CustomJson.class).from(getVendaEncalheVO(encalheDTO)).serialize();
 	}
 	
 	@Post

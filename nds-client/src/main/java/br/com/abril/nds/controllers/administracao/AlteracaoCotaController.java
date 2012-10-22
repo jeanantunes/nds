@@ -174,7 +174,7 @@ public class AlteracaoCotaController {
 		}
 
 		
-		result.use(CustomJson.class).from(filtroAlteracaoCotaDTO, "filtroAlteracaoCotaDTO").serialize();
+		result.use(CustomJson.class).from(filtroAlteracaoCotaDTO).serialize();
 	}
 	
 	@Post

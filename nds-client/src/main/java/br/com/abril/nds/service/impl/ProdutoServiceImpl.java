@@ -62,22 +62,22 @@ public class ProdutoServiceImpl implements ProdutoService {
 	
 	@Override
 	@Transactional(readOnly = true)
-	public Produto obterProdutoPorNomeProduto(String nome) {
+	public Produto obterProdutoPorNomeComercial(String nome) {
 		if (nome == null || nome.isEmpty()){
 			throw new ValidacaoException(TipoMensagem.ERROR, "Nome é obrigatório.");
 		}
 		
-		return produtoRepository.obterProdutoPorNomeProduto(nome);
+		return produtoRepository.obterProdutoPorNomeComercial(nome);
 	}
 	
 	@Override
 	@Transactional(readOnly = true)
-	public List<Produto> obterProdutoLikeNomeProduto(String nome) {
+	public List<Produto> obterProdutoLikeNomeComercial(String nome) {
 		if (nome == null || nome.isEmpty()){
 			throw new ValidacaoException(TipoMensagem.ERROR, "Nome é obrigatório.");
 		}
 		
-		return produtoRepository.obterProdutoLikeNomeProduto(nome);
+		return produtoRepository.obterProdutoLikeNomeComercial(nome);
 	}
 	
 	@Override

@@ -374,7 +374,7 @@ var fiadorController = $.extend(true, {
 		
 		editarFiador:function (idFiador){
 			var _this = this;
-			$.postJSON(contextPath +'/cadastro/fiador/editarFiador', {idFiado:idFiador}, 
+			$.postJSON(contextPath +'/cadastro/fiador/editarFiador', {idFiador:idFiador}, 
 				function(result) {
 					
 					$(".fiadorController-inicioAtividadeNovo", fiadorController.workspace).hide();

@@ -1041,7 +1041,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		
 		List<String> codigosProduto = new ArrayList<String>();
 		
-		codigosProduto.add(veja1.getCodigo());
+		codigosProduto.add(veja1.getProduto().getCodigo());
 		
 		FiltroMapaAbastecimentoDTO filtro = new FiltroMapaAbastecimentoDTO();
 		filtro.setDataDate(new Date());
@@ -1063,7 +1063,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		
 		List<String> codigosProduto = new ArrayList<String>();
 		
-		codigosProduto.add(veja1.getCodigo());
+		codigosProduto.add(veja1.getProduto().getCodigo());
 		
 		FiltroMapaAbastecimentoDTO filtro = new FiltroMapaAbastecimentoDTO();
 		filtro.setDataDate(new Date());

@@ -1,32 +1,22 @@
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigInteger;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.Criteria;
-import org.hibernate.Hibernate;
-import org.hibernate.HibernateException;
-import org.hibernate.Query;
 import org.hibernate.SQLQuery;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.type.LongType;
 import org.hibernate.type.StringType;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.NfeDTO;
-import br.com.abril.nds.dto.filtro.FiltroImpressaoNFEDTO;
 import br.com.abril.nds.dto.filtro.FiltroMonitorNfeDTO;
-import br.com.abril.nds.model.fiscal.ItemNotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.StatusProcessamentoInterno;
 import br.com.abril.nds.repository.NotaFiscalRepository;
 import br.com.abril.nds.vo.PaginacaoVO;
-import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 @Repository
 public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal, Long> implements NotaFiscalRepository {
@@ -568,199 +558,5 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 
 		return sqlQuery.list();
 	}	
-
-	@Transactional
-	public List<NotaFiscal> buscarNFeParaImpressao(FiltroImpressaoNFEDTO filtro) {
-
-		StringBuffer sql = new StringBuffer();
-		sql.append("from NotaFiscal nf ");
-		
-		sql.append("inner join nf.identificacaoDestinatario AS idest ");
-		sql.append("inner join idest.pessoaDestinatarioReferencia AS p ");
-		//sql.append("inner join Cota.pessoa AS c ");
-		//sql.append("AND nf.identificacaoDestinatario.pessoa.id = c.pessoa.id ");
-		
-		if(filtro.getIdRoteiro() != null && filtro.getIdRoteiro() > 0) {
-			
-		}
-		
-		sql.append("WHERE 1 = 1 ");		
-		
-		Query q = getSession().createQuery(sql.toString());
-		
-		return q.list();
-		
-		/*
-		boolean indAnd = false;
-		
-		StringBuffer sql = new StringBuffer("");
-
-		sql.append(" SELECT ");	
-		sql.append(" NOTA_FISCAL_NOVO.ID as idNotaFiscal, 					"); 
-		sql.append(" NOTA_FISCAL_NOVO.NUMERO_DOCUMENTO_FISCAL as numero, 	"); 
-		sql.append(" NOTA_FISCAL_NOVO.SERIE as serie, 						"); 
-		sql.append(" NOTA_FISCAL_NOVO.DATA_EMISSAO as emissao, 				"); 
-		sql.append(" 'NORMAL' as tipoEmissao, 		"); 	
-		sql.append(" CASE WHEN PESSOA_DESTINATARIO.TIPO = 'J'  THEN NOTA_FISCAL_NOVO.DOCUMENTO_DESTINATARIO 	ELSE NULL END AS  cnpjDestinatario,	");
-		sql.append(" CASE WHEN PESSOA_REMETENTE.TIPO 	= 'J'  THEN NOTA_FISCAL_NOVO.DOCUMENTO_EMITENTE 	 	ELSE NULL END AS  cnpjRemetente,	");
-		sql.append(" CASE WHEN PESSOA_REMETENTE.TIPO 	= 'F'  THEN NOTA_FISCAL_NOVO.DOCUMENTO_EMITENTE 		ELSE NULL END AS  cpfRemetente,		");
-		sql.append(" NOTA_FISCAL_NOVO.STATUS as statusNfe,  "); 
-		sql.append(" CASE WHEN NOTA_FISCAL_NOVO.TIPO_OPERACAO = 0 THEN 'ENTRADA' ELSE 'SAIDA' END AS tipoNfe,	");
-		sql.append(" NOTA_FISCAL_NOVO.MOTIVO as movimentoIntegracao ");
-		sql.append(" from NOTA_FISCAL_NOVO ");
-
-		if(filtro.getIdBoxInicial()!=null) {
-
-			sql.append(" INNER JOIN COTA ON ");
-			sql.append(" ( NOTA_FISCAL_NOVO.PESSOA_DESTINATARIO_ID_REFERENCIA = COTA.PESSOA_ID ) ");
-
-			sql.append(" INNER JOIN BOX ON ");
-			sql.append(" (BOX.ID = COTA.BOX_ID) ");
-
-		}
-
-		if(!filtro.isFiltroVazio()) { 
-			sql.append("WHERE 1 = 1");
-		}
-
-		if(filtro.getTipoNFe()!=null && !filtro.getTipoNFe().isEmpty()) {
-			sql.append("AND EXISTS(SELECT * FROM NOTA_FISCAL_PROCESSO ")
-			.append(" WHERE NOTA_FISCAL_PROCESSO.NOTA_FISCAL_ID = NOTA_FISCAL_NOVO.ID ")
-			.append(" AND NOTA_FISCAL_PROCESSO.PROCESSO = :tipoEmissaoNFe) ");
-		}
-
-		if(filtro.getDataInicialMovimento()!=null) {
-			sql.append("AND BOX.CODIGO = :codigoBox ");
-		}
-
-		PaginacaoVO paginacao = filtro.getPaginacao();
-
-		if (filtro.getOrdenacaoColuna() != null) {
-
-			sql.append(" ORDER BY ");
-
-			String orderByColumn = "";
-
-			switch (filtro.getOrdenacaoColuna()) {
-
-			case COTA:
-				orderByColumn = " NOTA_FISCAL_NOVO.NUMERO_DOCUMENTO_FISCAL ";
-				break;
-			
-			default:
-				break;
-			}
-
-			sql.append(orderByColumn);
-
-			if (paginacao.getOrdenacao() != null) {
-				sql.append(paginacao.getOrdenacao().toString());
-			}
-
-		}
-
-		SQLQuery sqlQuery = getSession().createSQLQuery(sql.toString());
-
-		sqlQuery.addScalar("idNotaFiscal", Hibernate.LONG);
-		sqlQuery.addScalar("numero", Hibernate.LONG);
-		sqlQuery.addScalar("serie", Hibernate.STRING);;
-		sqlQuery.addScalar("emissao");
-		sqlQuery.addScalar("tipoEmissao");
-		sqlQuery.addScalar("cnpjDestinatario");
-		sqlQuery.addScalar("cnpjRemetente");
-		sqlQuery.addScalar("cpfRemetente");
-		sqlQuery.addScalar("statusNfe");
-		sqlQuery.addScalar("tipoNfe");
-
-		sqlQuery.setResultTransformer(new AliasToBeanResultTransformer(NfeDTO.class));
-
-		if(filtro.getBox()!=null) {
-			sqlQuery.setParameter("codigoBox", filtro.getBox());
-		}
-
-		if(filtro.getDataInicial()!=null) {
-			sqlQuery.setParameter("dataInicial", filtro.getDataInicial());
-		}
-
-		if(filtro.getDataFinal()!=null) {
-			sqlQuery.setParameter("dataFinal", filtro.getDataFinal());
-		}
-
-		if(filtro.getDocumentoPessoa()!=null && !filtro.getDocumentoPessoa().isEmpty()) {
-			sqlQuery.setParameter("documento", filtro.getDocumentoPessoa());
-		}
-
-		if(filtro.getTipoNfe()!=null && !filtro.getTipoNfe().isEmpty()) {
-			sqlQuery.setParameter("tipoEmissaoNfe", filtro.getTipoNfe());
-		}
-
-		if(filtro.getNumeroNotaInicial()!=null) {
-			sqlQuery.setParameter("numeroInicial", filtro.getNumeroNotaInicial());
-		}
-
-		if(filtro.getNumeroNotaFinal()!=null) {
-			sqlQuery.setParameter("numeroFinal", filtro.getNumeroNotaFinal());
-		}
-
-		if(filtro.getChaveAcesso()!=null && !filtro.getChaveAcesso().isEmpty()) {
-			sqlQuery.setParameter("chaveAcesso", filtro.getChaveAcesso());
-		}
-
-		if(filtro.getSituacaoNfe()!=null && !filtro.getSituacaoNfe().isEmpty()) {
-			sqlQuery.setParameter("situacaoNfe", filtro.getSituacaoNfe());
-		}
-
-		if(filtro.getSerie()!=null) {
-			sqlQuery.setParameter("serie", filtro.getSerie());
-		}
-
-		if (paginacao != null) {
-
-			if (paginacao.getPosicaoInicial() != null) {
-
-				sqlQuery.setFirstResult(paginacao.getPosicaoInicial());
-			}
-
-			if (paginacao.getQtdResultadosPorPagina() != null) {
-
-				sqlQuery.setMaxResults(paginacao.getQtdResultadosPorPagina());
-			}
-		}
-
-		return sqlQuery.list();
-		*/
-	}
-
-	private List<NfeDTO> loadMockNFe() {
-		List<NfeDTO> nfs = new ArrayList<NfeDTO>();
-		
-		/*NotaEnvio ne = new NotaEnvio();
-		IdentificacaoDestinatario ides = new IdentificacaoDestinatario();
-		Box b = new Box();
-		b.set
-		ides.setBoxReferencia();
-		ne.setDestinatario(destinatario)
-		*/
-		NfeDTO nf1 = new NfeDTO();
-		nf1.setIdNotaFiscal(1L);
-		nfs.add(nf1);
-		
-		NfeDTO nf2 = new NfeDTO();
-		nf2.setIdNotaFiscal(1L);
-		nfs.add(nf2);
-		
-		return nfs;
-	}
-
-	@Transactional
-	public Integer buscarNFeParaImpressaoQtd(FiltroImpressaoNFEDTO filtro) {
-
-		Criteria criteria = getSession().createCriteria(NotaFiscal.class);
-
-		criteria.add(Restrictions.eq("id", filtro.getIdRoteiro()));
-
-		return 2; //criteria.list().size();
-	}
-	
 
 }

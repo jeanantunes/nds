@@ -22,6 +22,7 @@ import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.serialization.custom.CustomJson;
+
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.FornecedorService;
@@ -156,7 +157,7 @@ public class GeracaoNFeController {
 		if (cotasSuspensas != null && !cotasSuspensas.isEmpty())
 			hasCotasSuspensas = true;
 		
-		result.use(CustomJson.class).from(hasCotasSuspensas, "cotasSuspensas").serialize();
+		result.use(CustomJson.class).from(hasCotasSuspensas).serialize();
 	}
 	
 	@Post("/gerar.json")
@@ -179,7 +180,7 @@ public class GeracaoNFeController {
 			throw new ValidacaoException(TipoMensagem.WARNING, ioe.getMessage());
 		} 
 		
-		result.use(CustomJson.class).from(true, "result").serialize();
+		result.use(CustomJson.class).from(true).serialize();
 	}
 	
 	@Post("/transferirSuplementar.json")
@@ -187,7 +188,7 @@ public class GeracaoNFeController {
 		
 		//TODO
 		
-		result.use(CustomJson.class).from(true, "result").serialize();
+		result.use(CustomJson.class).from(true).serialize();
 	}
 	
 	public List<ItemDTO<Long, String>> carregarTipoNotaFiscal() {

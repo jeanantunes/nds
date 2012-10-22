@@ -2,17 +2,39 @@ package br.com.abril.nds.client.vo;
 
 import br.com.abril.nds.dto.ContasAPagarFaltasSobrasDTO;
 import br.com.abril.nds.util.CurrencyUtil;
+import br.com.abril.nds.util.export.Export;
+import br.com.abril.nds.util.export.Exportable;
+import br.com.abril.nds.util.export.Export.Alignment;
 
+@Exportable
 public class ContasAPagarFaltasSobrasVO {
 
+	@Export(label="Código", alignment=Alignment.LEFT, exhibitionOrder = 1)
 	private String codigo;
+	
+	@Export(label="Produto", alignment=Alignment.LEFT, exhibitionOrder = 2)
 	private String produto;
+	
+	@Export(label="Edição", alignment=Alignment.CENTER, exhibitionOrder = 3)
 	private String edicao;
+	
+	@Export(label="Preço de Capa R$", alignment=Alignment.RIGHT, exhibitionOrder = 4)
 	private String precoCapa;
+	
+	@Export(label="Preço c/ Desc. R$", alignment=Alignment.RIGHT, exhibitionOrder = 5)
 	private String precoComDesconto;
+	
+	@Export(label="Box", alignment=Alignment.CENTER, exhibitionOrder = 6)
 	private String box;
+	
+	
+	@Export(label="Exemplares", alignment=Alignment.CENTER, exhibitionOrder = 7)
 	private String exemplares;
+	
+	@Export(label="Fornecedor", alignment=Alignment.LEFT, exhibitionOrder = 8)
 	private String fornecedor;
+	
+	@Export(label="Valor R$", alignment=Alignment.RIGHT, exhibitionOrder = 9)
 	private String valor;
 	
 	

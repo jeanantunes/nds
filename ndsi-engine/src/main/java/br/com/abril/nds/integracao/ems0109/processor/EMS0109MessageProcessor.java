@@ -12,6 +12,7 @@ import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.engine.data.Message;
 import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
 import br.com.abril.nds.integracao.model.canonic.EMS0109Input;
+import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.DescontoLogistica;
 import br.com.abril.nds.model.cadastro.Editor;
 import br.com.abril.nds.model.cadastro.FormaComercializacao;
@@ -200,7 +201,7 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 		produto.setTipoProduto(tipoProduto);
 		produto.setNome(input.getNomePublicacao());
 		produto.setCodigoContexto(input.getContextoPublicacao());
-		produto.setDescricao(input.getNomePublicacao());
+		produto.setNomeComercial(input.getNomePublicacao());
 		produto.setEditor(editor);
 		produto.setPeriodicidade(PeriodicidadeProduto.values()[input.getPeriodicidade()]);
 		produto.setSlogan(input.getSlogan());
@@ -220,6 +221,8 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 		String codigoSituacaoTributaria = input.getCodigoSituacaoTributaria();
 		produto.setTributacaoFiscal(this.getTributacaoFiscal(codigoSituacaoTributaria));
 
+		produto.setOrigem(Origem.INTERFACE);
+		
 		if (fornecedor != null) {
 
 			produto.addFornecedor(fornecedor);
@@ -245,7 +248,8 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 				.findFornecedor(input.getCodigoFornecedor());
 		DescontoLogistica descontoLogistica = this
 				.findDescontoLogisticaByTipoDesconto(Integer.parseInt( input.getTipoDesconto()) );
-
+		
+		produto.setOrigem(Origem.INTERFACE);
 		if (produto.getTipoProduto() != tipoProduto) {
 
 			produto.setTipoProduto(tipoProduto);
@@ -273,9 +277,9 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 					"Atualizacao do Contexto Publicacao para: "
 							+ input.getContextoPublicacao());
 		}
-		if (!produto.getDescricao().equals(input.getNomePublicacao())) {
+		if (!produto.getNomeComercial().equals(input.getNomePublicacao())) {
 
-			produto.setDescricao(input.getNomePublicacao());
+			produto.setNomeComercial(input.getNomePublicacao());
 			this.ndsiLoggerFactory.getLogger().logInfo(
 					message,
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
