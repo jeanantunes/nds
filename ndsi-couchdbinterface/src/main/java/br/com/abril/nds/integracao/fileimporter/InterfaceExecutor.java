@@ -222,7 +222,6 @@ public class InterfaceExecutor {
 				e.printStackTrace();
 			}
 			
-			//imagem.delete();
 		}
 		
 		couchDbClient.shutdown();

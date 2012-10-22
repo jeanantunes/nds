@@ -54,14 +54,14 @@ public class Produto implements Serializable {
 	@Column(name = "NOME", nullable = false, unique = false, length = 60)
 	private String nome;
 	
-	@Column(name = "DESCRICAO")
-	private String descricao;
+	@Column(name = "NOME_COMERCIAL")
+	private String nomeComercial;
 	
 	@ManyToMany(fetch=FetchType.LAZY)
 	private Set<Fornecedor> fornecedores = new HashSet<Fornecedor>();
 
 	@Enumerated(EnumType.STRING)
-	@Column(name = "ORIGEM")
+	@Column(name = "ORIGEM", nullable = false)
 	private Origem origem;
 	
 	@ManyToOne(optional = false)
@@ -101,12 +101,6 @@ public class Produto implements Serializable {
 	@Column(name = "PESO", nullable = false)
 	protected Long peso;
 	
-	/**
-	 * Flag que indica se o Produto foi criado atraves de interface de sistemas ou por cadastro
-	 */
-	@Column(name = "ORIGEM_INTERFACE", nullable = true)
-	private Boolean origemInterface;
-
 	/**
 	 * Dimensões do produto (largura, etc)
 	 */
@@ -189,12 +183,12 @@ public class Produto implements Serializable {
 		this.nome = nome;
 	}
 	
-	public String getDescricao() {
-		return descricao;
+	public String getNomeComercial() {
+		return nomeComercial;
 	}
 	
-	public void setDescricao(String descricao) {
-		this.descricao = descricao;
+	public void setNomeComercial(String nomeComercial) {
+		this.nomeComercial = nomeComercial;
 	}
 	
 	public Set<Fornecedor> getFornecedores() {
@@ -353,13 +347,7 @@ public class Produto implements Serializable {
 		this.peso = peso;
 	}
 
-	public Boolean getOrigemInterface() {
-		return origemInterface;
-	}
-
-	public void setOrigemInterface(Boolean origemInterface) {
-		this.origemInterface = origemInterface;
-	}
+	
 
 	/**
 	 * @return the lancamentoImediato

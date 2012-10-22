@@ -282,6 +282,9 @@ public class Distribuidor {
 	@Column(name = "CONTROLE_ARQUIVO_COBRANCA", nullable = true)
 	private Long controleArquivoCobranca;
 	
+	@Column(name = "FECHAMENTO_DIARIO_EM_ANDAMENTO", nullable = true)
+	private Boolean fechamentoDiarioEmAndamento;
+	
 	public Long getId() {
 		return id;
 	}
@@ -948,6 +951,20 @@ public class Distribuidor {
 	 */
 	public boolean possuiObrigacaoFiscal() {
 	    return obrigacaoFiscal != null;
+	}
+
+	/**
+	 * @return the fechamentoDiarioEmAndamento
+	 */
+	public Boolean getFechamentoDiarioEmAndamento() {
+		return fechamentoDiarioEmAndamento;
+	}
+
+	/**
+	 * @param fechamentoDiarioEmAndamento the fechamentoDiarioEmAndamento to set
+	 */
+	public void setFechamentoDiarioEmAndamento(Boolean fechamentoDiarioEmAndamento) {
+		this.fechamentoDiarioEmAndamento = fechamentoDiarioEmAndamento;
 	}
 
 }

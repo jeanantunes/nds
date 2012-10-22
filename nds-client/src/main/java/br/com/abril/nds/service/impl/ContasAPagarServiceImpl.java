@@ -1,5 +1,6 @@
 package br.com.abril.nds.service.impl;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,10 +50,31 @@ public class ContasAPagarServiceImpl implements ContasAPagarService {
 	@Override
 	public ContasAPagarGridPrincipalFornecedorDTO pesquisarPorDistribuidor(FiltroContasAPagarDTO filtro) {
 		
+		//TODO validar filtro e range de datas x semana ce
+		
 		ContasAPagarGridPrincipalFornecedorDTO retorno = new ContasAPagarGridPrincipalFornecedorDTO();
 		
 		retorno.setGrid(this.contasAPagarRepository.pesquisarPorDistribuidor(filtro));
 		retorno.setTotalGrid(this.contasAPagarRepository.pesquisarPorDistribuidorCount(filtro));
+		
+		BigDecimal totalBruto = this.contasAPagarRepository.buscarTotalPesquisarPorDistribuidor(filtro, false);
+		
+		if (totalBruto == null){
+			
+			totalBruto = BigDecimal.ZERO;
+		}
+				
+		retorno.setTotalBruto(totalBruto);
+		
+		BigDecimal totalDesconto = this.contasAPagarRepository.buscarTotalPesquisarPorDistribuidor(filtro, true);
+		
+		if (totalDesconto == null){
+			
+			totalDesconto = BigDecimal.ZERO;
+		}
+				
+		retorno.setTotalDesconto(totalDesconto);
+		retorno.setSaldo(totalBruto.subtract(totalDesconto));
 		
 		return retorno;
 	}

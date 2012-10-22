@@ -135,7 +135,7 @@ public class RomaneioServiceImpl implements RomaneioService {
 				
 				ProdutoEdicao produtoEdicao = this.produtoEdicaoRepository.buscarPorId(idProdutoEdicao);
 				
-				dto.setCodigoProduto(produtoEdicao.getCodigo());
+				dto.setCodigoProduto(produtoEdicao.getProduto().getCodigo());
 				dto.setNomeProduto(produtoEdicao.getNomeComercial());
 				dto.setEdicao(produtoEdicao.getNumeroEdicao());
 				dto.setPacotePadrao(new Long(produtoEdicao.getPacotePadrao()));

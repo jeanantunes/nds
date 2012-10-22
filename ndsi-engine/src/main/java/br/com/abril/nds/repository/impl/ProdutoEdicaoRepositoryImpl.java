@@ -253,19 +253,19 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<ProdutoEdicaoDTO> pesquisarEdicoes(String codigoProduto, String nomeProduto,
+	public List<ProdutoEdicaoDTO> pesquisarEdicoes(String codigoProduto, String nomeComercial,
 			Intervalo<Date> dataLancamento, Intervalo<BigDecimal> preco , StatusLancamento statusLancamento,
 			String codigoDeBarras, boolean brinde,
 			String sortorder, String sortname, int initialResult, int maxResults) {
 		
 		StringBuilder hql = new StringBuilder();
-		hql.append(" SELECT pe.id as id, pr.codigo as codigoProduto, pe.nomeComercial as nomeProduto, ");
+		hql.append(" SELECT pe.id as id, pr.codigo as codigoProduto, pe.nomeComercial as nomeComercial, ");
 		hql.append("        pe.numeroEdicao as numeroEdicao, jr.razaoSocial as nomeFornecedor, ");
 		hql.append("        ln.tipoLancamento as statusLancamento, ln.status as statusSituacao, ");
 		hql.append("        pe.possuiBrinde as temBrinde ");
 		
 		// Corpo da consulta com os filtros:
-		Query query = this.queryBodyPesquisarEdicoes(hql, codigoProduto, nomeProduto, dataLancamento, preco, statusLancamento, codigoDeBarras, brinde, sortname, sortorder);
+		Query query = this.queryBodyPesquisarEdicoes(hql, codigoProduto, nomeComercial, dataLancamento, preco, statusLancamento, codigoDeBarras, brinde, sortname, sortorder);
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(ProdutoEdicaoDTO.class));
 		query.setFirstResult(initialResult);
@@ -316,7 +316,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 	 * 
 	 * @return
 	 */
-	private Query queryBodyPesquisarEdicoes(StringBuilder hql, String codigoProduto, String nomeProduto,
+	private Query queryBodyPesquisarEdicoes(StringBuilder hql, String codigoProduto, String nomeComercial,
 			Intervalo<Date> dataLancamento, Intervalo<BigDecimal> preco , StatusLancamento statusLancamento,
 			String codigoDeBarras, boolean brinde, String sortname, String sortorder) {
 		
@@ -342,8 +342,8 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		if (!StringUtil.isEmpty(codigoProduto)) {
 			hql.append("  AND UPPER(pr.codigo) LIKE UPPER(:codigoProduto) ");
 		}
-		if (!StringUtil.isEmpty(nomeProduto)) {
-			hql.append("  AND UPPER(pr.descricao) LIKE UPPER(:nomeProduto) ");
+		if (!StringUtil.isEmpty(nomeComercial)) {
+			hql.append("  AND UPPER(pr.nomeComercial) LIKE UPPER(:nomeComercial) ");
 		}
 		if (!StringUtil.isEmpty(codigoDeBarras)) {
 			hql.append("  AND pe.codigoDeBarras LIKE :codigoDeBarras ");
@@ -377,8 +377,8 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		if (!StringUtil.isEmpty(codigoProduto)) {
 			query.setString("codigoProduto", codigoProduto);
 		}
-		if (!StringUtil.isEmpty(nomeProduto))  {
-			query.setString("nomeProduto", nomeProduto);
+		if (!StringUtil.isEmpty(nomeComercial))  {
+			query.setString("nomeComercial", nomeComercial);
 		}
 		if (!StringUtil.isEmpty(codigoDeBarras)){
 			query.setString("codigoDeBarras", codigoDeBarras);
