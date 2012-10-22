@@ -48,7 +48,6 @@ public class ResumoSuplementarFecharDiaRepositoryImpl extends AbstractRepository
 		query.setParameter("suplementarCotaAusente", GrupoMovimentoEstoque.SUPLEMENTAR_COTA_AUSENTE);
 		query.setParameter("reparteCotaAusente", GrupoMovimentoEstoque.REPARTE_COTA_AUSENTE);
 		
-		
 		BigDecimal total =  (BigDecimal) query.uniqueResult();
 		
 		return total != null ? total : BigDecimal.ZERO ;
