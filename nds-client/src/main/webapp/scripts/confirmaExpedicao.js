@@ -232,3 +232,4 @@ var confirmaExpedicaoController = $.extend(true, {
 	}
 
 }, BaseController);
+//@ sourceURL=confirmaExpedicao.js

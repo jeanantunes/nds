@@ -14,6 +14,7 @@ import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.engine.data.Message;
 import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
 import br.com.abril.nds.integracao.model.canonic.EMS0110Input;
+import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.Brinde;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Dimensao;
@@ -191,6 +192,16 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 					"Atualizacao do Codigo NBM para: " + input.getCodNBM());
 		}
 
+		if (!produto.getNomeComercial().equals(input.getNomeComercial())) {
+
+			produto.setNomeComercial(input.getNomeComercial());
+			this.ndsiLoggerFactory.getLogger().logInfo(
+					message,
+					EventoExecucaoEnum.INF_DADO_ALTERADO,
+					"Atualizacao do Nome Comercial para: "
+							+ input.getNomeComercial());
+		}
+		
 		edicao.setProduto(produto);
 
 		dimensao.setLargura(input.getLargura());
@@ -210,6 +221,8 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 		edicao.setPossuiBrinde(input.isContemBrinde());
 		edicao.setDataDesativacao(input.getDataDesativacao());
 		edicao.setChamadaCapa(input.getChamadaCapa());
+		edicao.setOrigem(Origem.INTERFACE);
+
 		this.getSession().persist(edicao);
 		
 		inserirDescontoProdutoEdicao(edicao, produto);
@@ -285,6 +298,8 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 			Message message) {
 		EMS0110Input input = (EMS0110Input) message.getBody();
 
+		edicao.setOrigem(Origem.INTERFACE);
+
 		if (!edicao.getProduto().getCodigoContexto()
 				.equals(input.getContextoProd())) {
 
@@ -295,6 +310,18 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 					"Atualizacao do Codigo Contexto Produto para: "
 							+ input.getContextoProd());
 		}
+		
+		if (!edicao.getProduto().getNomeComercial()
+				.equals(input.getNomeComercial())) {
+
+			edicao.getProduto().setNomeComercial(input.getNomeComercial());
+			this.ndsiLoggerFactory.getLogger().logInfo(
+					message,
+					EventoExecucaoEnum.INF_DADO_ALTERADO,
+					"Atualizacao do nome Comercial do Produto para: "
+							+ input.getNomeComercial());
+		}
+		
 		if (!edicao.getProduto().getTipoProduto().getCodigoNBM()
 				.equals(input.getCodNBM())) {
 
@@ -374,15 +401,6 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
 					"Atualizacao do Codigo de Barra para: "
 							+ input.getCodBarra());
-		}
-		if (!edicao.getNumeroEdicao().equals(input.getEdicaoProd())) {
-
-			edicao.setNumeroEdicao(input.getEdicaoProd());
-			this.ndsiLoggerFactory.getLogger().logInfo(
-					message,
-					EventoExecucaoEnum.INF_DADO_ALTERADO,
-					"Atualizacao do Numero da Publicacao para: "
-							+ input.getEdicaoProd());
 		}
 		if (!edicao.getDataDesativacao().equals(input.getDataDesativacao())) {
 

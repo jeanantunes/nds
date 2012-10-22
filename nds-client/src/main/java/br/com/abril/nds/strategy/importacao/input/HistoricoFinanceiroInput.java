@@ -2,7 +2,20 @@ package br.com.abril.nds.strategy.importacao.input;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.sql.Date;
 
+import org.codehaus.jackson.annotate.JsonPropertyOrder;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonFormat.Shape;
+
+@JsonPropertyOrder({ 
+	"numeroCota"	 					//1	
+	, "valorPendente" 					//2
+	, "valorPostergado" 				//3
+	, "valorFuturo" 					//4
+	, "data" 							//5
+	})
 public class HistoricoFinanceiroInput implements Serializable{
 	
 	private static final long serialVersionUID = 1L;
@@ -15,7 +28,8 @@ public class HistoricoFinanceiroInput implements Serializable{
 	
 	private BigDecimal valorFuturo;
 	
-	private BigDecimal data;
+	@JsonFormat(shape = Shape.STRING, pattern = "dd/MM/yyyy")
+	private Date data;
 
 
 	/**
@@ -77,14 +91,14 @@ public class HistoricoFinanceiroInput implements Serializable{
 	/**
 	 * @return the data
 	 */
-	public BigDecimal getData() {
+	public Date getData() {
 		return data;
 	}
 
 	/**
 	 * @param data the data to set
 	 */
-	public void setData(BigDecimal data) {
+	public void setData(Date data) {
 		this.data = data;
 	}
 

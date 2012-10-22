@@ -22,6 +22,7 @@ var contasAPagarController = $.extend(true, {
 		this.initGridPesquisarPorFornecedor();
 		this.initGridParciais();
 		this.initGridConsignado();
+		this.initGridEncalhe();
 		this.initGridFaltasSobras();
 	},
 	
@@ -77,6 +78,7 @@ var contasAPagarController = $.extend(true, {
 	
 		var params = $("#contasAPagarForm", this.workspace).serializeObject();
 		
+		
 		if ($("#contasAPagarRadioDistribuidor").get(0).checked) {
 			this.pesquisarPorFornecedor(params);	
 		} 
@@ -90,8 +92,6 @@ var contasAPagarController = $.extend(true, {
 	pesquisarPorProduto : function(params) {
 		
 		var url = contasAPagarController.path + 'pesquisarPorProduto.json';
-		
-		
 		params = serializeArrayToPost('filtro.produtoEdicaoIDs', contasAPagarController.obterSelecaoColunaCheckProdutoEdicao(), params);
 		
 		$(".porProdutosGrid").flexOptions({
@@ -124,8 +124,7 @@ var contasAPagarController = $.extend(true, {
 	
 	pesquisarPorFornecedor : function (params) {
 		
-		params = serializeArrayToPost('filtro.produtoEdicaoIDs', contasAPagarController.obterSelecaoColunaCheckProdutoEdicao(), params);
-		
+		params['filtro.primeiraCarga'] = true;
 		var url = contasAPagarController.path + 'pesquisarPorFornecedor.json'; 
 		
 		$(".porDistrFornecedorGrid").flexOptions({
@@ -134,7 +133,7 @@ var contasAPagarController = $.extend(true, {
 			preProcess : contasAPagarController.insereLinksContasAPagarPorDistribuidores,
 			newp : 1
 		});
-		params['filtro.primeiraCarga'] = true;
+
 		$.postJSON(
 			url,
 			params,
@@ -145,8 +144,6 @@ var contasAPagarController = $.extend(true, {
 				$("#contasAPagar_gridFornecedorSaldo").html(result.saldo);
 				
 				$(".porDistrFornecedorGrid", contasAPagarController.workspace).flexAddData({rows: toFlexiGridObject(result.grid), page: 1, total: result.totalGrid});
-				
-				
 			},
 			null,
 			true
@@ -331,24 +328,24 @@ var contasAPagarController = $.extend(true, {
 	},
 	
 	
-	popup_consignado : function() {
+	popup_consignado : function(data) {
 		
+		$("#contasAPagar_dataDetalhe").val(data);
 		var params = $("#contasAPagarForm").serializeObject();
 		
 		$.postJSON(
 			contasAPagarController.path + 'pesquisarConsignado.json',
 			params,
 			function(result) {
-				
-				// TODO: tabela totais
-				
-				$(".contasAPagar-consignadoGrid").flexAddData({rows: toFlexiGridObject(result.grid), page : 1, total : result.totalGrid});
+				contasAPagarController.montaTabelaTotaisDistribuidores($("#contasAPagar_table_popupConsignado").get(0), result.totalDistrib);
+				$(".contasAPagar-consignadoGrid").flexAddData({rows: toFlexiGridObject(result.grid), page : 1, total : 1});
 			},
 			null,
 			true
 		);
+		
+		$("#contasAPagar_legend_popupConsignado").html(data);
 	
-		// abre popup
 		$("#dialog-contasAPagar-consignado").dialog({
 			resizable: false,
 			height:480,
@@ -364,9 +361,23 @@ var contasAPagarController = $.extend(true, {
 	},
 	
 
-	popup_encalhe : function() {
+	popup_encalhe : function(data) {
 		
-		$( "#dialog-encalhe" ).dialog({
+		$("#contasAPagar_dataDetalhe").val(data);
+		var params = $("#contasAPagarForm").serialize();
+		
+		$.postJSON(
+			this.path + "pesquisarEncalhe.json?" + params,
+			null,
+			function(result) {
+				contasAPagarController.montaTabelaTotaisDistribuidores($("#contasAPagar_table_popupEncalhe").get(0), result.totalDistrib);
+				$(".contasAPagar_encalheGrid").flexAddData({rows: toFlexiGridObject(result.grid), page : 1, total : 1});
+			}
+		);
+		
+		$("#contasAPagar_legend_popupEncalhe").html(data);
+		
+		$("#contasAPagar_popupEncalhe").dialog({
 			resizable: false,
 			height:460,
 			width:860,
@@ -383,7 +394,7 @@ var contasAPagarController = $.extend(true, {
 	
 	popup_faltasSobras : function(data) {
 		
-		// TODO: data
+		$("#contasAPagar_dataDetalhe").val(data);
 		var params = $("#contasAPagarForm").serialize();
 		
 		$.postJSON(
@@ -744,13 +755,13 @@ var contasAPagarController = $.extend(true, {
 				align : 'right',
 			}, {
 				display : 'Preço c/ Desc. R$',
-				name : 'desconto',
+				name : 'precoComDesconto',
 				width : 60,
 				sortable : true,
 				align : 'right',
 			}, {
 				display : 'Reparte Sug.',
-				name : 'reparte',
+				name : 'reparteSugerido',
 				width : 70,
 				sortable : true,
 				align : 'center'
@@ -780,19 +791,19 @@ var contasAPagarController = $.extend(true, {
 				align : 'left'
 			}, {
 				display : 'Valor R$',
-				name : 'vlr',
+				name : 'valor',
 				width : 40,
 				sortable : true,
 				align : 'right'
 			}, {
 				display : 'Valor c/Desc R$',
-				name : 'vlrDesc',
+				name : 'valorComDesconto',
 				width : 60,
 				sortable : true,
 				align : 'right'
 			}, {
 				display : 'N° NF-e',
-				name : 'numNfe',
+				name : 'nfe',
 				width : 57,
 				sortable : true,
 				align : 'left'
@@ -800,6 +811,66 @@ var contasAPagarController = $.extend(true, {
 			sortname : "codigo",
 			sortorder : "asc",
 			width : 895,
+			height : 200
+		});
+	},
+	
+	
+	initGridEncalhe : function() {
+		$(".contasAPagar_encalheGrid").flexigrid({
+			dataType : 'json',
+			colModel : [ {
+				display : 'Código',
+				name : 'codigo',
+				width : 50,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Produto',
+				name : 'produto',
+				width : 130,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Edição',
+				name : 'edicao',
+				width : 70,
+				sortable : true,
+				align : 'center'
+			}, {
+				display : 'Preço Capa R$',
+				name : 'valor',
+				width : 95,
+				sortable : true,
+				align : 'right'
+			}, {
+				display : 'Preço c/ Desc. R$',
+				name : 'precoComDesconto',
+				width : 95,
+				sortable : true,
+				align : 'right'
+			}, {
+				display : 'Encalhe',
+				name : 'encalhe',
+				width : 70,
+				sortable : true,
+				align : 'center'
+			}, {
+				display : 'Fornecedor',
+				name : 'fornecedor',
+				width : 100,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Valor R$',
+				name : 'valor',
+				width : 75,
+				sortable : true,
+				align : 'right',
+			}],
+			sortname : "Nome",
+			sortorder : "asc",
+			width : 800,
 			height : 200
 		});
 	},
