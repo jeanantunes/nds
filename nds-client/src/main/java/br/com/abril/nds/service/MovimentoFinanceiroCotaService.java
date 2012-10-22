@@ -13,6 +13,7 @@ import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
 import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.strategy.importacao.input.HistoricoFinanceiroInput;
 
 public interface MovimentoFinanceiroCotaService {
 	
@@ -44,5 +45,8 @@ public interface MovimentoFinanceiroCotaService {
 	 * @param controleConferenciaEncalheCota
 	 */
 	void gerarMovimentoFinanceiroCotaRecolhimento(ControleConferenciaEncalheCota controleConferenciaEncalheCota);
+
+	void processarRegistrohistoricoFinanceiro(
+			HistoricoFinanceiroInput vendaInput);
 
 }
