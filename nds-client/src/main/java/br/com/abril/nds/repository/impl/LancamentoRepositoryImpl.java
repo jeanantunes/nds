@@ -248,7 +248,7 @@ public class LancamentoRepositoryImpl extends
 		
 		if (data != null) {
 			
-			hql.append(" AND lancamento.dataLancamentoPrevista = :data");
+			hql.append(" AND lancamento.dataLancamentoDistribuidor = :data");
 			
 			parametros.put("data", data);
 		}				
@@ -1319,7 +1319,7 @@ public class LancamentoRepositoryImpl extends
 		
 		hql.append(" select ") 
 		   .append(" lancamento.produtoEdicao.produto.codigo as codigo, ")
-		   .append(" lancamento.produtoEdicao.produto.descricao as produto, ")
+		   .append(" lancamento.produtoEdicao.produto.nomeComercial as produto, ")
 		   .append(" lancamento.produtoEdicao.numeroEdicao as numeroEdicao, ")
 		   .append(" lancamento.reparte as reparte, ")
 		   .append(" lancamento.dataLancamentoPrevista as dataLancamento")
