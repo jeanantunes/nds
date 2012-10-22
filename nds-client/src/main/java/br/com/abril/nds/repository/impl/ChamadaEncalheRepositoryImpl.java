@@ -14,6 +14,7 @@ import org.springframework.stereotype.Repository;
 import br.com.abril.nds.dto.BandeirasDTO;
 import br.com.abril.nds.dto.CapaDTO;
 import br.com.abril.nds.dto.CotaEmissaoDTO;
+import br.com.abril.nds.dto.FornecedoresBandeiraDTO;
 import br.com.abril.nds.dto.ProdutoEmissaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroEmissaoCE;
 import br.com.abril.nds.dto.filtro.FiltroEmissaoCE.ColunaOrdenacao;
@@ -445,6 +446,35 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		query.setParameter("dataAte", intervalo.getAte());
 		
 		query.setResultTransformer(Transformers.aliasToBean(BandeirasDTO.class));
+		
+		return query.list();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<FornecedoresBandeiraDTO> obterDadosFornecedoresParaImpressaoBandeira(
+			Intervalo<Date> intervalo) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select pessoaFornecedor.razaoSocial as nome, ")
+			.append(" fornecedores.codigoInterface as codigoInterface ")
+			
+			.append(" from ChamadaEncalhe chamadaEncalhe ")
+			.append(" join chamadaEncalhe.produtoEdicao produtoEdicao ")
+			.append(" join produtoEdicao.produto produto ")
+			.append(" join produto.fornecedores fornecedores ")
+			.append(" join fornecedores.juridica pessoaFornecedor ")
+			.append(" where chamadaEncalhe.dataRecolhimento >= :dataDe ")
+			.append(" and chamadaEncalhe.dataRecolhimento <= :dataAte ")
+			.append(" group by fornecedores.id ");
+					
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		query.setParameter("dataDe", intervalo.getDe());
+		query.setParameter("dataAte", intervalo.getAte());
+		
+		query.setResultTransformer(Transformers.aliasToBean(FornecedoresBandeiraDTO.class));
 		
 		return query.list();
 	}
