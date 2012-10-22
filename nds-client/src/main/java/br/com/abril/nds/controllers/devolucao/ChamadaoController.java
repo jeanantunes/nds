@@ -364,7 +364,12 @@ public class ChamadaoController {
 		this.validarDadosConfirmarChamadao(
 			listaChamadao, chamarTodos, novaDataChamadaoFormatada, filtroSessao.isChamadaEncalhe());
 		
-		Date novaDataChamadao = DateUtil.parseDataPTBR(novaDataChamadaoFormatada);
+		Date novaDataChamadao = null;
+		
+		if (filtroSessao.isChamadaEncalhe()) {
+			
+			novaDataChamadao = DateUtil.parseDataPTBR(novaDataChamadaoFormatada);
+		}
 		
 		this.chamadaoService.confirmarChamadao(
 			listaChamadao, filtro, chamarTodos, obterUsuario(), novaDataChamadao);

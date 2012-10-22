@@ -115,7 +115,7 @@ public class MatrizLancamentoController {
 		ResultadoResumoBalanceamentoVO resultadoResumoBalanceamento = 
 			this.obterResultadoResumoLancamento(balanceamentoLancamento);
 						
-		this.result.use(CustomJson.class).put("resultado", resultadoResumoBalanceamento).serialize();
+		this.result.use(CustomJson.class).from(resultadoResumoBalanceamento, "resultado").recursive().serialize();
 		
 	}
 	
@@ -681,13 +681,17 @@ public class MatrizLancamentoController {
 		List<CellModelKeyValue<ProdutoLancamentoVO>> cells = CellModelKeyValue
 				.toCellModelKeyValue(listaProdutoBalanceamentoVO);
 		
+		List<Object> resultado = new ArrayList<Object>();
+		
 		tm.setRows(cells);
 		tm.setPage(paginacao.getPaginaAtual());
 		tm.setTotal(filtro.getTotalRegistrosEncontrados());
+
+		resultado.add(tm);
+		resultado.add(CurrencyUtil.formatarValor(valorTotal));
 		
-		Object[] resultado = {tm, CurrencyUtil.formatarValor(valorTotal)};
+		result.use(Results.json()).withoutRoot().from(resultado).recursive().serialize();
 		
-		result.use(Results.json()).withoutRoot().from(resultado).serialize();
 	}
 	
 	private Double getValorTotal(List<ProdutoLancamentoDTO> listaProdutoLancamento) {

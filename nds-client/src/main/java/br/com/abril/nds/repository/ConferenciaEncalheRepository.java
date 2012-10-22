@@ -8,7 +8,6 @@ import java.util.Set;
 import br.com.abril.nds.dto.ComposicaoCobrancaSlipDTO;
 import br.com.abril.nds.dto.ConferenciaEncalheDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoSlipDTO;
-import br.com.abril.nds.model.cadastro.FormaComercializacao;
 import br.com.abril.nds.model.estoque.ConferenciaEncalhe;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
@@ -56,15 +55,9 @@ public interface ConferenciaEncalheRepository extends Repository<ConferenciaEnca
 	 * 
 	 * @param idControleConferenciaEncalhe
 	 * 
-	 * @param formaComercializacao
-	 * 
-	 * @param idDistribuidor
-	 * 
-	 * @param consideraFormaComercializacaoNula
-	 * 
 	 * @return BigDecimal
 	 */
-	public BigDecimal obterValorTotalEncalheOperacaoConferenciaEncalhe(Long idControleConferenciaEncalhe, Long idDistribuidor, FormaComercializacao formaComercializacao, boolean consideraFormaComercializacaoNula);
+	public BigDecimal obterValorTotalEncalheOperacaoConferenciaEncalhe(Long idControleConferenciaEncalhe);
 
 	/**
 	 * Obtem dados relativos a uma slip de acordo com ControleConferenciaEncalheCota 

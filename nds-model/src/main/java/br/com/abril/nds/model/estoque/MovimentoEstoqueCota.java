@@ -2,6 +2,7 @@ package br.com.abril.nds.model.estoque;
 
 import java.util.List;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
@@ -53,7 +54,25 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque {
 
 	@ManyToMany(mappedBy="listaMovimentoEstoqueCota")
 	private List<ItemNotaEnvio> listaItemNotaEnvio;
-	
+
+	@Column(name = "STATUS_ESTOQUE_FINANCEIRO")
+	private StatusEstoqueFinanceiro statusEstoqueFinanceiro;
+
+	/**
+	 * @return the statusEstoqueFinanceiro
+	 */
+	public StatusEstoqueFinanceiro getStatusEstoqueFinanceiro() {
+		return statusEstoqueFinanceiro;
+	}
+
+	/**
+	 * @param statusEstoqueFinanceiro the statusEstoqueFinanceiro to set
+	 */
+	public void setStatusEstoqueFinanceiro(
+			StatusEstoqueFinanceiro statusEstoqueFinanceiro) {
+		this.statusEstoqueFinanceiro = statusEstoqueFinanceiro;
+	}
+
 	public Cota getCota() {
 		return cota;
 	}

@@ -132,21 +132,24 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 		return false;
 	},
 		
-	this.processaRetornoPesquisa = function(data) {
+	this.processaRetornoPesquisa = function(resultadoPesquisa) {
 		
-		if(data.mensagens) {
-			exibirMensagem(data.mensagens.tipoMensagem, data.mensagens.listaMensagens);
-			return data.rows;
+		if(resultadoPesquisa.mensagens) {
+			exibirMensagem(resultadoPesquisa.mensagens.tipoMensagem, resultadoPesquisa.mensagens.listaMensagens);
+			return resultadoPesquisa.rows;
 		}
 		
 		$("#valorTotal", _workspace).clear();
 		
 		T.linhasDestacadas = [];
+		
 		T.lancamentos = [];
 		
-		$("#valorTotal", _workspace).html(data[1]);
-		$.each(data[0].rows, function(index,row){ T.processarLinha(index, row);});
-		return data[0];
+		$("#valorTotal", _workspace).html(resultadoPesquisa[1]);
+		
+		$.each(resultadoPesquisa[0].rows, function(index,row){ T.processarLinha(index, row);});
+		
+		return resultadoPesquisa[0];
 	},
 		
 	this.popularResumoPeriodo = function(data) {
@@ -154,7 +157,7 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 		$("#tableResumoPeriodo", _workspace).clear();
 		
 		var rows='<tr>';
-		$.each(data.listaResumoPeriodoBalanceamento, function(index, resumo){
+		$.each(data.resultado.listaResumoPeriodoBalanceamento, function(index, resumo){
 			  rows+='<td>';
 			  rows+='<div class="box_resumo">';
 			  rows+='<label>'+ resumo.dataFormatada +'</label>';
@@ -166,13 +169,13 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 				  rows+='<span class="span_1">Qtde. Exempl.:</span>';
 				  rows+='<span name="qtdeExemplares" class="span_2 redLabel"';
 				  rows+='title="A quantidade de exemplares excede a capacidade de manuseio ';
-				  rows+=data.capacidadeRecolhimentoDistribuidor + ' do distribuidor">';
-				  rows+=resumo.qtdeExemplaresFormatado + '</span>';
+				  rows+=data.resultado.capacidadeRecolhimentoDistribuidor + ' do distribuidor">';
+				  rows+=resumo.qtdeExemplaresFormatada + '</span>';
 			  
 			  } else {
 				  
 				  rows+='<span class="span_1">Qtde. Exempl.:</span>';	
-				  rows+='<span class="span_2">' + resumo.qtdeExemplaresFormatado + '</span>';
+				  rows+='<span class="span_2">' + resumo.qtdeExemplaresFormatada + '</span>';
 			  }
 			  
 			  rows+='<span class="span_1">Qtde. Parciais:</span>';
@@ -355,10 +358,12 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
      * OBS: Específico para matrizLancamento\index.jsp
      */
 	this.confirmarMatrizLancamento = function (){
-
+		
+		var param = serializeArrayToPost('datasConfirmadas', balanceamento.obterDatasMarcadasConfirmacao());
+		
 		$.postJSON(
 			pathTela + "/matrizLancamento/confirmarMatrizLancamento", 
-			balanceamento.obterDatasMarcadasConfirmacao(),
+			param,
 			function(mensagens) {
 				
 	           $("#dialog-confirm-balanceamento", _workspace).dialog("close");

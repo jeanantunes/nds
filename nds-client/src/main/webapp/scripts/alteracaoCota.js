@@ -227,6 +227,7 @@ var alteracaoCotaController = $.extend(true, {
 			}
 			
 		});
+		
 		if(linhasSelecionadas > 0){
 			$("#dialog-novo", this.workspace).dialog({
 				resizable: false,
@@ -254,8 +255,23 @@ var alteracaoCotaController = $.extend(true, {
 		
 		alteracaoCotaController.limparCamposAbas();
 		
+		var params = $("#pesquisarForm", this.workspace).serialize();
+		
+		alert(params);
+		
+		
+
 		$.postJSON(contextPath + "/administracao/alteracaoCota/carregarCamposAlteracao",
-				$("#pesquisarForm", this.workspace).serialize(),
+				null,
+				function(result) {
+					
+				},
+				null,
+				true
+		);
+		
+		/*$.postJSON(contextPath + "/administracao/alteracaoCota/carregarCamposAlteracao",
+				params,
 				function (result) {
 					var filtro = result["filtroAlteracaoCotaDTO"];
 					alteracaoCotaController.popularComboFornecedor(filtro.filtroModalFornecedor.listFornecedores, $("#idListFornecedores", this.workspace));
@@ -280,7 +296,7 @@ var alteracaoCotaController = $.extend(true, {
 						
 						//Tipo Entrega
 						$("#idModalIdTipoEntrega").val(filtro.filtroModalDistribuicao.descricaoTipoEntrega);
-						alteracaoCotaController.selectTipoEntregaDistribuicao()
+						alteracaoCotaController.selectTipoEntregaDistribuicao();
 							
 						if($("#idModalIdTipoEntrega").val() == 'ENTREGA_EM_BANCA'){
 							//Entrega em Banca
@@ -326,9 +342,8 @@ var alteracaoCotaController = $.extend(true, {
 					}
 					
 				},
-			  	null,
-			   	true
-		);
+			  	null
+		);*/
 	},
 	
 	limparCamposAbas : function(){
@@ -484,11 +499,15 @@ var alteracaoCotaController = $.extend(true, {
 	},
 	
 	downloadTermoAdesao : function() {
+		var taxaFixaEntregaBanca =  $("#taxaFixaEntregaBanca", this.workspace).val();
+		var percentualFaturamentoEntregaBanca = $("#percentualFaturamentoEntregaBanca", this.workspace).val();
+		
 	
-		$.postJSON("/nds-client/administracao/alteracaoCota/validarValoresParaDownload",
-				"taxa="+$("#taxaFixaEntregaBanca").val()+"&percentual="+$("#percentualFaturamentoEntregaBanca").val(),
+		$.postJSON(contextPath + "/administracao/alteracaoCota/validarValoresParaDownload",
+				[{name : "taxa", value : taxaFixaEntregaBanca} ,{
+				 name : "percentual", value : percentualFaturamentoEntregaBanca } ],
 				function() {
-					document.location.assign("/nds-client/administracao/alteracaoCota/downloadTermoAdesao?termoAdesaoRecebido="+ $('#termoAdesaoRecebido', this.workspace).is(':checked')+"&numeroCota="+alteracaoCotaController.buscaIdPrimeiraCotaSelecionada()+"&taxa="+$("#taxaFixaEntregaBanca").val()+"&percentual="+$("#percentualFaturamentoEntregaBanca").val());
+					document.location.assign(contextPath + "/administracao/alteracaoCota/downloadTermoAdesao?termoAdesaoRecebido="+ $('#termoAdesaoRecebido', this.workspace).is(':checked')+"&numeroCota="+alteracaoCotaController.buscaIdPrimeiraCotaSelecionada()+"&taxa="+$("#taxaFixaEntregaBanca").val()+"&percentual="+$("#percentualFaturamentoEntregaBanca").val());
 				},
 				null,
 				true,
@@ -497,7 +516,7 @@ var alteracaoCotaController = $.extend(true, {
 	
 	downloadProcuracao : function() {
 		
-		document.location.assign("/nds-client/administracao/alteracaoCota/downloadProcuracao?procuracaoRecebida="+$('#procuracaoRecebida', this.workspace).is(':checked')+"&numeroCota="+alteracaoCotaController.buscaIdPrimeiraCotaSelecionada());
+		document.location.assign(contextPath + "/administracao/alteracaoCota/downloadProcuracao?procuracaoRecebida="+$('#procuracaoRecebida', this.workspace).is(':checked')+"&numeroCota="+alteracaoCotaController.buscaIdPrimeiraCotaSelecionada());
 	},
 	
 	limparCamposTipoEntrega : function()
@@ -582,7 +601,7 @@ var alteracaoCotaController = $.extend(true, {
 	  
 	  buscaIdPrimeiraCotaSelecionada : function(){
 		
-		  id = null
+		  id = null;
 	   $(".selectLine", this.workspace).each(function(index, element) {	
 			if(element.checked){
 				id = element.value;

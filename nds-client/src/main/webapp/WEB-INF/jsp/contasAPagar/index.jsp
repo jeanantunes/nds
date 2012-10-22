@@ -6,11 +6,12 @@
 <fieldset class="classFieldset">
 	<legend> Pesquisar Contas a Pagar</legend>
 	<form id="contasAPagarForm">
+	<input type="hidden" name="filtro.dataDetalhe" id="contasAPagar_dataDetalhe"/>
 		<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 			<tr>
-				<td width="20" align="right"><input  type="radio" name="radio" id="contasAPagarRadioDistribuidor" value="radio" onchange="pesqDistribuidor();" /></td>
+				<td width="20" align="right"><input  type="radio" name="radio" id="contasAPagarRadioDistribuidor" value="radio" onchange="contasAPagarController.pesqDistribuidor();" /></td>
 	            <td width="69">Distribuidor</td>
-	            <td width="20"><input  type="radio" name="radio" id="contasAPagarRadioProduto" value="radio" onchange="pesqProduto();" /></td>
+	            <td width="20"><input  type="radio" name="radio" id="contasAPagarRadioProduto" value="radio" onchange="contasAPagarController.pesqProduto();" /></td>
 	            <td width="47">Produto</td>
 	            <td width="195">
 	            	
@@ -22,15 +23,12 @@
 	                	 		<input type="checkbox" id="contasAPagarCheckSelecionarTodos" name="Todos1" onclick="contasAPagarController.checkAll(this);" style="float:left;"/><label for="sel">Selecionar Todos</label>
 	                	 	</span>
 	                    	<br clear="all" />
-	                    
-	                  		  <!-- Carrega lista de fornecedoles como checkbok --> 
 	                  		  
-		                  		  <c:forEach items="${fornecedores}" var="fornecedor">
-			                      <input id="fornecedor_${fornecedor.id}" value="${fornecedor.id}"  name="checkgroup_menu" onclick="contasAPagarController.verificarCheck();" type="checkbox" class="contasApagarCheck"/>
-			                      <label for="fornecedor_${fornecedor.id}">${fornecedor.juridica.nomeFantasia}</label>
-			                      <br clear="all" />
-			                   	  </c:forEach> 
-	                  		  
+		                  	<c:forEach items="${fornecedores}" var="fornecedor">
+			                <input id="fornecedor_${fornecedor.id}" value="${fornecedor.id}"  name="filtro.idsFornecedores" onclick="contasAPagarController.verificarCheck();" type="checkbox" class="contasApagarCheck"/>
+			                <label for="fornecedor_${fornecedor.id}">${fornecedor.juridica.nomeFantasia}</label>
+			                <br clear="all" />
+			                </c:forEach> 
 	                    
 	              		</div>
 	            	</div>
@@ -41,14 +39,11 @@
 		            	<a href="javascript:;" onclick="contasAPagarController.popup_pesq_produto();">Clique e Selecione o Produto</a>              
 		            </div>
 		            
-		            
-		            
-		            
 	            </td>
 	            <td width="46">Per&iacute;odo:</td>
-	            <td width="92"><input type="text" name="filtro.dataDe" id="contasAPagar_Filtro_De" style="width:60px;"/></td>
+	            <td width="102"><input type="text" name="filtro.dataDe" id="contasAPagar_Filtro_De" style="width:80px;"/></td>
 	            <td width="28">At&eacute;:</td>
-	            <td width="87"><input type="text" name="filtro.dataAte" id="contasAPagar_Filtro_Ate" style="width:60px;"/></td>
+	            <td width="107"><input type="text" name="filtro.dataAte" id="contasAPagar_Filtro_Ate" style="width:80px;"/></td>
 	            <td width="67">Semana CE:</td>
 	            <td width="71"><input type="text" name="filtro.ce" id="textfield6" style="width:50px;"/></td>
 	           
@@ -71,8 +66,8 @@
             <table width="950" border="0" cellspacing="1" cellpadding="1">
 				<tr>
 	                <td width="277">
-	                	<span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="../images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
-						<span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="../images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
+	                	<span class="bt_arquivo"><a href="${pageContext.request.contextPath}/financeiro/contasAPagar/exportPesquisarPorDistribuidor?fileType=XLS">Arquivo</a></span>
+						<span class="bt_imprimir"><a href="${pageContext.request.contextPath}/financeiro/contasAPagar/exportPesquisarPorDistribuidor?fileType=PDF">Imprimir</a></span>
 					</td>
 	                <td width="220" align="right"><strong>Total Bruto R$: <span id="contasAPagar_gridFornecedorTotalBruto"></span></strong></td>
 	                <td width="243" align="right"><strong>Total Desconto R$: <span id="contasAPagar_gridFornecedorTotalDesconto"></span></strong></td>
@@ -90,8 +85,9 @@
 	            <table width="950" border="0" cellspacing="1" cellpadding="1">
 					<tr>
 	                	<td width="241">
-	                		<span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="../images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
-							<span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="../images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
+							<span class="bt_arquivo"><a href="${pageContext.request.contextPath}/financeiro/contasAPagar/exportPesquisarPorProduto?fileType=XLS">Arquivo</a></span>
+							<span class="bt_imprimir"><a href="${pageContext.request.contextPath}/financeiro/contasAPagar/exportPesquisarPorProduto?fileType=PDF">Imprimir</a></span>
+					
 						</td>
 		                <td width="226" align="right"><strong>Total Pagto R$: <span id="contasAPagar_gridProdutoTotalPagto"></span></strong></td>
 		                <td width="216" align="right"><strong>Total Desconto R$: <span id="contasAPagar_gridProdutoTotalDesconto"></span></strong></td>
@@ -188,39 +184,72 @@
          		<tr>
            		<td width="96">C&oacute;digo / Produto:</td>
            		<td width="311"><input type="text" name="produtos2" id="produtos2" style="width:290px;" /></td>
-           		<td width="40">Edi&ccedil;&oacute;o:</td>
+           		<td width="40">Edi&ccedil;&atilde;o:</td>
            		<td width="83" align="right"><input type="text" name="textfield9" id="textfield9" style="width:60px;" /></td>
          		</tr>
        	</table>
     </fieldset>
     
 	<fieldset style="width:895px!important; margin-top:10px;">
-    	<legend>14/12/2011 - Cota: 26 1335 - CGB Distribuidora de Jornais e Revistas</legend>
+    	<legend><span id="contasAPagar_legend_popupConsignado"></span></legend>
         <table class="contasAPagar-consignadoGrid"></table>
     
         <span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="../images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
 		<span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="../images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
     
-       	<table width="290" border="0" cellspacing="2" cellpadding="2"  style="float:right; margin-top: 7px;">
-        	<tr>
-            	<td width="109"><strong>Total R$:</strong></td>
-                <td width="53"><strong>Dinap:</strong></td>
-                <td width="92" align="right">999.999,99</td>
-                <td width="10">&nbsp;</td>
-            </tr>
-            <tr>
-                <td height="23" align="right"></td>
-                <td><strong>FC:</strong></td>
-                <td align="right">999.999,99</td>
-                <td>&nbsp;</td>
-            </tr>
-        </table>
+       	<table id="contasAPagar_table_popupConsignado" width="180" border="0" cellspacing="2" cellpadding="2" style="float:right; margin-top: 7px;"></table>
+        <table width="109" border="0" cellspacing="2" cellpadding="2"  style="float:right; margin-top: 7px;">
+			<tr><td><strong>Total R$:</strong></td></tr>
+		</table>
 	</fieldset>
 
 </div>
 
-      
-      
+
+
+
+
+<div id="contasAPagar_popupEncalhe" title="Encalhe da Cota" style="display:none;">
+	<fieldset style="width:810px!important;">
+    	<legend><span id="contasAPagar_legend_popupEncalhe"></span></legend>
+        
+        <table class="contasAPagar_encalheGrid"></table>
+        
+        <span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="../images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
+		<span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="../images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
+        
+        <table id="contasAPagar_table_popupEncalhe" width="180" border="0" cellspacing="2" cellpadding="2" style="float:right; margin-top: 7px;"></table>
+        <table width="109" border="0" cellspacing="2" cellpadding="2"  style="float:right; margin-top: 7px;">
+			<tr><td><strong>Total R$:</strong></td></tr>
+		</table>
+    </fieldset>
+</div>
+
+
+
+<div id="contasAPagar_popupFaltasSobras" title="Venda de Encalhe" style="display:none;">
+	<fieldset style="width:800px!important;">
+    	<legend><span id="contasAPagar_legend_popupFaltasSobras"></span></legend>
+        
+        <table class="contasAPagar_faltasSobrasGrid"></table>
+        
+        <span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="../images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
+		<span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="../images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
+		
+		<table id="contasAPagar_table_popupFaltasSobras" width="180" border="0" cellspacing="2" cellpadding="2" style="float:right; margin-top: 7px;"></table>
+        <table width="109" border="0" cellspacing="2" cellpadding="2"  style="float:right; margin-top: 7px;">
+			<tr><td><strong>Total R$:</strong></td></tr>
+		</table>
+    </fieldset>
+</div>
+
+
+
+
+
+
+
+
 
 <script type="text/javascript">
 		$(function(){

@@ -2,13 +2,15 @@ package br.com.abril.nds.model.cadastro;
 
 public enum PeriodicidadeProduto {
 	
-	SEMANAL(1),
-	QUINZENAL(2), 
-	MENSAL(3), 
-	BIMESTRAL(4),
-	TRIMESTRAL(5), 
-	SEMESTRAL(6), 
-	ANUAL(7);
+	DIARIO(1),
+	SEMANAL(2),
+	QUINZENAL(3), 
+	MENSAL(4), 
+	BIMESTRAL(5),
+	TRIMESTRAL(6), 
+	SEMESTRAL(7), 
+	ANUAL(8),
+	INDEFINIDO(9);
 
 	private Integer ordem;
 	
@@ -22,5 +24,7 @@ public enum PeriodicidadeProduto {
 	public Integer getOrdem() {
 		return ordem;
 	}
+
+	
 	
 }

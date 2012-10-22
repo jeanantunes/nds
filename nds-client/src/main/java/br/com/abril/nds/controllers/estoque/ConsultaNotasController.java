@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -139,7 +141,24 @@ public class ConsultaNotasController {
 				throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
 			} 
 			
-			TableModel<CellModel> tableModel = getTableModelNotasFiscais(listaNotasFiscais);
+			List<CellModel> listaCellModel = getTableModelNotasFiscais(listaNotasFiscais);
+			
+			if (FiltroConsultaNotaFiscalDTO.ColunaOrdenacao.VALOR.toString().equals(sortname)) {
+				Collections.sort(listaCellModel, new Comparator<CellModel>() {
+					@Override
+					public int compare(CellModel o1, CellModel o2) {
+						/*BigDecimal cellO1 = new BigDecimal((String) o1.getCell()[5]);
+						BigDecimal cellO2 = new BigDecimal((String) o2.getCell()[5]);*/
+						BigDecimal cellO1 = CurrencyUtil.converterValor((String) o1.getCell()[5]);
+						BigDecimal cellO2 = CurrencyUtil.converterValor((String) o2.getCell()[5]);
+						return cellO1.compareTo(cellO2);
+					}
+				});
+			}
+			
+			TableModel<CellModel> tableModel = new TableModel();
+			tableModel.setRows(listaCellModel);
+			
 			tableModel.setTotal(quantidadeRegistros);
 			tableModel.setPage(filtroConsultaNotaFiscal.getPaginacao().getPaginaAtual());
 
@@ -306,7 +325,7 @@ public class ConsultaNotasController {
 		
 	}
 	
-	private TableModel<CellModel> getTableModelNotasFiscais(List<NotaFiscalEntradaFornecedor> listaNotasFiscais) {
+	private List<CellModel> getTableModelNotasFiscais(List<NotaFiscalEntradaFornecedor> listaNotasFiscais) {
 
 		Map<Long, String> mapaFornecedorNotaFiscal = obterMapaFornecedorNotaFiscal(listaNotasFiscais);
 		
@@ -337,9 +356,11 @@ public class ConsultaNotasController {
 		
 		TableModel<CellModel> tableModel = new TableModel<CellModel>();
 		
-		tableModel.setRows(listaCellModels);
+		return (listaCellModels);
 
-		return tableModel;
+		/*tableModel.setRows(listaCellModels);
+
+		return tableModel;*/
 	}
 	
 	private BigDecimal obterValorTotalNota(Long idNotaFiscal) {
@@ -382,7 +403,7 @@ public class ConsultaNotasController {
 							itemExibicaoToString(decimalFormat.format(detalheNotaFiscalVO.getPrecoVenda())),
 							itemExibicaoToString(detalheNotaFiscalVO.getQuantidadeExemplares().intValue()),
 							sobrasFaltas, 
-							itemExibicaoToString(decimalFormat.format(detalheNotaFiscalVO.getValorTotal())));
+							itemExibicaoToString(detalheNotaFiscalVO.getValorTotal().setScale(2, BigDecimal.ROUND_DOWN)));
 
 			listaCellModels.add(cellModel);
 		}

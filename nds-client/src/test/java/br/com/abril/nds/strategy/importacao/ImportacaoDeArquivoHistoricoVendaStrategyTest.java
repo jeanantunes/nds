@@ -109,11 +109,11 @@ public class ImportacaoDeArquivoHistoricoVendaStrategyTest extends AbstractRepos
 		
 		input.setCodigoProduto(produtoVeja.getCodigo());
 		input.setNumeroCota(cotaManoel.getNumeroCota());
-		input.setNumeroEdicao(produtoEdicaoVeja1.getNumeroEdicao().intValue());
-		input.setQuantidadeDevolvidaProduto(10);
-		input.setQuantidadeRecebidaProduto(5);
+//		input.setNumeroEdicao(produtoEdicaoVeja1.getNumeroEdicao().intValue());
+		input.setQtdEncalhe(10);
+		input.setQtdReparte(5);
 		try {
-		arquivoHistoricoVendaStrategy.processarImportacaoDados(input);
+		//arquivoHistoricoVendaStrategy.processarImportacaoDados(input);
 		}catch(Exception e) { 
 			e.printStackTrace();
 		}

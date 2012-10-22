@@ -311,7 +311,7 @@ public class EntregadorRepositoryImpl extends AbstractRepositoryModel<Entregador
 		
 		StringBuilder hql = new StringBuilder();
 		hql.append("select new ").append(EntregadorCotaProcuracaoVO.class.getCanonicalName()).append("(")
-		   .append(" cota.numeroCota, cota.pessoa.nome, cota.parametroDistribuicao.procuracaoAssinada ")
+		   .append(" cota.numeroCota, cota.pessoa.nome, cota.parametroDistribuicao.procuracaoRecebida ")
 		   .append(") ")
 		   .append(" from Entregador e join e.rota.roteiro.roteirizacao.box.cotas cota ")
 		   .append(" where e.id = :idEntregador ");
