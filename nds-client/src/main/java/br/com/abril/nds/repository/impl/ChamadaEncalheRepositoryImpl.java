@@ -24,6 +24,7 @@ import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.repository.ChamadaEncalheRepository;
 import br.com.abril.nds.util.Intervalo;
+import br.com.abril.nds.vo.PaginacaoVO;
 
 @Repository
 public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<ChamadaEncalhe,Long> implements ChamadaEncalheRepository{
@@ -426,7 +427,7 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<BandeirasDTO> obterBandeirasNoIntervalo(
-			Intervalo<Date> intervalo) {
+			Intervalo<Date> intervalo, PaginacaoVO paginacaoVO) {
 	
 		StringBuilder hql = new StringBuilder();
 		
@@ -445,11 +446,40 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		query.setParameter("dataDe", intervalo.getDe());
 		query.setParameter("dataAte", intervalo.getAte());
 		
+		getOrderByobterBandeirasNoIntervalo(paginacaoVO); 
+		
+		if (paginacaoVO != null && paginacaoVO.getPosicaoInicial() != null) { 
+			
+			query.setFirstResult(paginacaoVO.getPosicaoInicial());
+			
+			query.setMaxResults(paginacaoVO.getQtdResultadosPorPagina());
+		}
+		
 		query.setResultTransformer(Transformers.aliasToBean(BandeirasDTO.class));
 		
 		return query.list();
 	}
+	
+	private String getOrderByobterBandeirasNoIntervalo(PaginacaoVO paginacaoVO) {
 
+		String orderBy = " order by ";
+		
+		String coluna = paginacaoVO.getSortColumn();
+				
+		if ("codProduto".equals(coluna))
+			orderBy += " produtoEdicao.codigo ";
+		else if("nomeProduto".equals(coluna))
+			orderBy += " produto.descricao ";
+		else if("edProduto".equals(coluna))
+			orderBy += " produtoEdicao.numeroEdicao ";
+		else if("pctPadrao".equals(coluna))
+			orderBy += " produtoEdicao.pacotePadrao ";
+		
+		orderBy += paginacaoVO.getSortOrder();
+		
+		return orderBy;
+	}
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<FornecedoresBandeiraDTO> obterDadosFornecedoresParaImpressaoBandeira(

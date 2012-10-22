@@ -11,6 +11,12 @@ public class BandeirasDTO  implements Serializable{
 	private Long edProduto;
 	private Integer pctPadrao;
 	
+	//TODO De onde vem?
+	private String destino;
+	//TODO De onde vem?
+	private Integer prioridade;
+	private BigInteger qtde;
+	
 	public BandeirasDTO() {
 		
 	}
