@@ -86,6 +86,92 @@ var fecharDiaController =  $.extend(true, {
 			height : 155
 		});
 		
+		$(".reparteDialogGrid").flexigrid({
+			preProcess: fecharDiaController.executarPreProcessamentoReparte,
+			dataType : 'json',
+			colModel : [ {
+				display : 'Código',
+				name : 'codigo',
+				width : 60,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Produto',
+				name : 'nomeProduto',
+				width : 110,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Edição',
+				name : 'numeroEdicao',
+				width : 60,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Preço Capa R$',
+				name : 'precoCapa',
+				width : 60,
+				sortable : true,
+				align : 'right'
+			}, {
+				display : 'Reparte',
+				name : 'reparte',
+				width : 50,
+				sortable : true,
+				align : 'center'
+			}, {
+				display : 'Sobra em',
+				name : 'sobras',
+				width : 50,
+				sortable : true,
+				align : 'center'
+			}, {
+				display : 'Falta em',
+				name : 'faltaEm',
+				width : 50,
+				sortable : true,
+				align : 'center'
+			}, {
+				display : 'Transf.',
+				name : 'transf',
+				width : 50,
+				sortable : true,
+				align : 'center'
+			}, {
+				display : 'A Distr',
+				name : 'aDistr',
+				width : 50,
+				sortable : true,
+				align : 'center'
+			}, {
+				display : 'Distribuido',
+				name : 'distribuido',
+				width : 50,
+				sortable : true,
+				align : 'center'
+			}, {
+				display : 'Sobra Distr',
+				name : 'sobraDistri',
+				width : 55,
+				sortable : true,
+				align : 'center'
+			}, {
+				display : 'Dif.',
+				name : 'dif',
+				width : 40,
+				sortable : true,
+				align : 'center'
+			}],
+			sortname : "codigo",
+			sortorder : "asc",
+			usepager : true,
+			useRp : true,
+			rp : 15,
+			showTableToggleBtn : true,
+			width : 850,
+			height : 255
+		});
+		
 	},
 	
 	executarPreProcessamentoRecebimentoFisicoNaoConfirmado : function(resultado){
@@ -144,6 +230,24 @@ var fecharDiaController =  $.extend(true, {
 		
 	},
 	
+	executarPreProcessamentoReparte : function(resultado){
+		if (resultado.mensagens) {
+
+			exibirMensagem(
+				resultado.mensagens.tipoMensagem, 
+				resultado.mensagens.listaMensagens
+			);
+			
+			$(".dialog-repartes", fecharDiaController.workspace).hide();
+
+			return resultado;
+		}
+		
+		$("#dialog-repartes", fecharDiaController.workspace).show();
+		
+		return resultado;
+	},
+	
 	popup : function() {	
 		
 		$( "#dialog-novo", fecharDiaController.workspace ).dialog({
@@ -166,7 +270,15 @@ var fecharDiaController =  $.extend(true, {
 		});
 	},
 	
-	popup_repartes : function() {		
+	popup_repartes : function() {
+		
+		$(".reparteDialogGrid", fecharDiaController.workspace).flexOptions({
+			url: contextPath + "/administracao/fecharDia/obterGridReparte",
+			dataType : 'json',
+			params: []
+		});
+		
+		$(".reparteDialogGrid", fecharDiaController.workspace).flexReload();
 		
 		$( "#dialog-repartes", fecharDiaController.workspace).dialog({
 			resizable: false,
@@ -295,7 +407,9 @@ var fecharDiaController =  $.extend(true, {
 				"Fechar": function() {
 					$( this ).dialog( "close" );
 					$(".grids").show();
-					fecharDiaController.iniciarResumo();
+					fecharDiaController.iniciarResumoReparte();
+					fecharDiaController.iniciarResumoEncalhe();
+					fecharDiaController.iniciarResumoSuplementar();
 				}
 			},
 			form: $("#dialog-processos", fecharDiaController.workspace).parents("form")
@@ -455,10 +569,37 @@ var fecharDiaController =  $.extend(true, {
 		}
 	},
 	
-	iniciarResumo : function(){
+	iniciarResumoReparte : function(){
+		
 		$.postJSON(contextPath + "/administracao/fecharDia/obterResumoQuadroReparte", null,
 				function(result){					
 					$("#totalReparte").html(result[0]);
+					$("#totalSobras").html(result[1]);
+					$("#totalFaltas").html(result[2]);
+					$("#totalTransferencia").html(result[3]);
+					$("#totalADistribuir").html(result[4]);
+					$("#totalDistribuido").html(result[5]);
+					$("#totalSobraDistribuido").html(result[6]);
+					$("#totalDiferenca").html(result[7]);
+				}
+			);
+	},
+	
+	iniciarResumoEncalhe : function(){
+		$.postJSON(contextPath + "/administracao/fecharDia/obterResumoQuadroEncalhe", null,
+				function(result){
+					$("#totalEncalheLogico").html(result[0]);
+					$("#totalEncalheFisico").html(result[1]);
+					$("#totalEncalheJuramentada").html(result[2]);
+					$("#vendaEncalhe").html(result[3]);
+				}
+			);
+	},
+	
+	iniciarResumoSuplementar : function(){
+		$.postJSON(contextPath + "/administracao/fecharDia/obterResumoQuadroSuplementar", null,
+				function(result){
+					$("#totalSuplementarEstoqueLogico").html(result[0]);
 				}
 			);
 	}

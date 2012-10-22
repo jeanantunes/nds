@@ -14,6 +14,7 @@ import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.engine.data.Message;
 import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
 import br.com.abril.nds.integracao.service.DistribuidorService;
+import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
@@ -70,7 +71,7 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 	}
 
 	private void regraRecolhimento(Message message, EMS0108Input input) {
-		if (!input.getEdicaoRecolhimento().equals(0)) {
+		if (!input.getEdicaoRecolhimento().equals(0L)) {
 			ProdutoEdicao produtoEdicaoRecolhimento = this.recuperarProdutoEdicao(input.getCodigoPublicacao(), input.getEdicaoRecolhimento());		
 			if (null == produtoEdicaoRecolhimento) {
 				
@@ -112,7 +113,7 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 
 	private void regraLancamento(Message message, EMS0108Input input,
 			Produto produto) {
-		if (!input.getEdicaoLancamento().equals(0)) {
+		if (!input.getEdicaoLancamento().equals(0L)) {
 			ProdutoEdicao produtoEdicaoLancamento = this.recuperarProdutoEdicao(input.getCodigoPublicacao(), input.getEdicaoLancamento());		
 			if (null == produtoEdicaoLancamento) {
 				produtoEdicaoLancamento = inserirProdutoEdicao(input, produto);
@@ -238,7 +239,8 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 		produtoEdicao.setAtivo(true);
 		produtoEdicao.setPacotePadrao(produto.getPacotePadrao());
 		produtoEdicao.setPeb(produto.getPeb());
-		
+		produtoEdicao.setOrigem(Origem.INTERFACE);
+
 		this.getSession().persist(produtoEdicao);
 		
 		return produtoEdicao;

@@ -530,7 +530,7 @@ public class GruposAcessoController {
 		dto.setGrupos(grupos);
 		
 		
-		result.use(CustomJson.class).from(dto, "usuarioDTO").serialize();
+		result.use(CustomJson.class).from(dto).serialize();
 	}
 
 	

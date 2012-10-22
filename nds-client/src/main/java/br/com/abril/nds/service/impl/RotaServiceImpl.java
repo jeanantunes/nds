@@ -23,4 +23,10 @@ public class RotaServiceImpl implements RotaService {
 		return rotaRepository.buscarRota("descricaoRota", Ordenacao.ASC);
 	}
 
+	@Override
+	@Transactional(readOnly = true)
+	public List<Rota> buscarRotaPorRoteiro(Long roteiroId) {
+		return rotaRepository.buscarRotaPorRoteiro(roteiroId, "descricaoRota", Ordenacao.ASC);
+	}
+
 }
