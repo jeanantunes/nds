@@ -11,7 +11,10 @@ import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.filtro.FiltroCadastroTipoNotaDTO;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.TipoAtividade;
+import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
+import br.com.abril.nds.model.fiscal.TipoOperacao;
+import br.com.abril.nds.model.fiscal.TipoUsuarioNotaFiscal;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.SerieRepository;
 import br.com.abril.nds.repository.TipoNotaFiscalRepository;
@@ -22,17 +25,17 @@ public class TipoNotaFiscalServiceImpl implements TipoNotaFiscalService {
 
 	@Autowired
 	private TipoNotaFiscalRepository tipoNotaFiscalRepository;
-	
+
 	@Autowired
 	private DistribuidorRepository distribuidorRepository;
-	
+
 	@Autowired 
 	private SerieRepository serieRepository;
 
 	@Override
 	@Transactional
 	public TipoNotaFiscal obterPorId(Long id) {
-		
+
 		return this.tipoNotaFiscalRepository.buscarPorId(id);
 	}
 
@@ -58,21 +61,47 @@ public class TipoNotaFiscalServiceImpl implements TipoNotaFiscalService {
 	@Override
 	@Transactional
 	public List<ItemDTO<Long, String>> carregarComboTiposNotasFiscais(TipoAtividade tipoAtividade) {
-			
-			List<TipoNotaFiscal> listaTipoNotaFiscal = this.tipoNotaFiscalRepository.obterTiposNotasFiscaisCotasNaoContribuintesPor(tipoAtividade);
-			
-			List<ItemDTO<Long, String>> listaItensNotasFiscais = new ArrayList<ItemDTO<Long,String>>();
-			
-			for (TipoNotaFiscal tipoNotaFiscal : listaTipoNotaFiscal) {
-				
-				ItemDTO<Long, String> itemNotaFiscal = new ItemDTO<Long, String>();
-				
-				itemNotaFiscal.setKey(tipoNotaFiscal.getId());
-				itemNotaFiscal.setValue(tipoNotaFiscal.getDescricao());
-				
-				listaItensNotasFiscais.add(itemNotaFiscal);
-			}
-			
+
+		List<TipoNotaFiscal> listaTipoNotaFiscal = this.tipoNotaFiscalRepository.obterTiposNotasFiscaisCotasNaoContribuintesPor(tipoAtividade);
+
+		List<ItemDTO<Long, String>> listaItensNotasFiscais = new ArrayList<ItemDTO<Long,String>>();
+
+		for (TipoNotaFiscal tipoNotaFiscal : listaTipoNotaFiscal) {
+
+			ItemDTO<Long, String> itemNotaFiscal = new ItemDTO<Long, String>();
+
+			itemNotaFiscal.setKey(tipoNotaFiscal.getId());
+			itemNotaFiscal.setValue(tipoNotaFiscal.getDescricao());
+
+			listaItensNotasFiscais.add(itemNotaFiscal);
+		}
+
+		return listaItensNotasFiscais;
+	}
+
+	@Override
+	@Transactional
+	public List<ItemDTO<Long, String>> carregarComboTiposNotasFiscais(TipoOperacao tipoOperacao) {//, TipoUsuarioNotaFiscal tipoDestinatario, TipoUsuarioNotaFiscal tipoEmitente, GrupoNotaFiscal[] grupoNotaFiscal) {
+
+		Distribuidor distribuidor = this.distribuidorRepository.obter();
+
+		if(distribuidor.getObrigacaoFiscal() == null)
+			return null;
+
+		List<TipoNotaFiscal> listaTipoNotaFiscal = this.tipoNotaFiscalRepository.obterTiposNotasFiscais(tipoOperacao);
+
+		List<ItemDTO<Long, String>> listaItensNotasFiscais = new ArrayList<ItemDTO<Long,String>>();
+
+		for (TipoNotaFiscal tipoNotaFiscal : listaTipoNotaFiscal) {
+
+			ItemDTO<Long, String> itemNotaFiscal = new ItemDTO<Long, String>();
+
+			itemNotaFiscal.setKey(tipoNotaFiscal.getId());
+			itemNotaFiscal.setValue(tipoNotaFiscal.getDescricao());
+
+			listaItensNotasFiscais.add(itemNotaFiscal);
+		}
+
 		return listaItensNotasFiscais;
 	}
 
@@ -84,20 +113,51 @@ public class TipoNotaFiscalServiceImpl implements TipoNotaFiscalService {
 	public List<TipoNotaFiscal> obterTiposNotasFiscaisPorTipoAtividadeDistribuidor(Long idDistribuidor) {
 
 		Distribuidor distribuidor = this.distribuidorRepository.buscarPorId(idDistribuidor);
-		
+
 		if (distribuidor == null) {
-			
+
 			return null;
 		}
-		
+
 		return tipoNotaFiscalRepository.obterTiposNotasFiscaisPorTipoAtividadeDistribuidor(
 				distribuidor.getTipoAtividade());
 	}
-	
+
 	@Transactional
 	@Override
 	public List<TipoNotaFiscal> consultarTipoNotaFiscal(FiltroCadastroTipoNotaDTO filtro){
-		
+
 		return tipoNotaFiscalRepository.consultarTipoNotaFiscal(filtro);
+
 	}
+
+	@Override
+	@Transactional
+	public List<ItemDTO<Long, String>> carregarComboTiposNotasFiscais(TipoOperacao tipoOperacao,
+			TipoUsuarioNotaFiscal tipoDestinatario, TipoUsuarioNotaFiscal tipoEmitente,
+			GrupoNotaFiscal[] grupoNotaFiscal) {
+
+		Distribuidor distribuidor = this.distribuidorRepository.obter();
+
+		if(distribuidor.getObrigacaoFiscal() == null)
+			return null;
+
+		List<TipoNotaFiscal> listaTipoNotaFiscal = this.tipoNotaFiscalRepository.obterTiposNotasFiscais(tipoOperacao, tipoDestinatario, tipoEmitente, grupoNotaFiscal);
+
+		List<ItemDTO<Long, String>> listaItensNotasFiscais = new ArrayList<ItemDTO<Long,String>>();
+
+		for (TipoNotaFiscal tipoNotaFiscal : listaTipoNotaFiscal) {
+
+			ItemDTO<Long, String> itemNotaFiscal = new ItemDTO<Long, String>();
+
+			itemNotaFiscal.setKey(tipoNotaFiscal.getId());
+			itemNotaFiscal.setValue(tipoNotaFiscal.getDescricao());
+
+			listaItensNotasFiscais.add(itemNotaFiscal);
+		}
+
+		return listaItensNotasFiscais;
+
+	}
+
 }

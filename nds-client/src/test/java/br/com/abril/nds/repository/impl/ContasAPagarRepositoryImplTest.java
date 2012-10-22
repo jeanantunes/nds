@@ -2,7 +2,6 @@ package br.com.abril.nds.repository.impl;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import junit.framework.Assert;
@@ -27,13 +26,13 @@ public class ContasAPagarRepositoryImplTest extends AbstractRepositoryImplTest {
 		idsFornecedores.add(2L);
 		
 		Calendar cal = Calendar.getInstance();
-		cal.set(2010, 1, 1);
+		cal.set(2000, 1, 1);
 		
 		FiltroContasAPagarDTO filtro = new FiltroContasAPagarDTO();
 		filtro.setCe(1);
 		filtro.setDataDe(cal.getTime());
 		cal.clear();
-		cal.set(2013, 1, 1);
+		cal.set(2099, 1, 1);
 		filtro.setDataAte(cal.getTime());
 		filtro.setEdicao(1L);
 		filtro.setIdsFornecedores(idsFornecedores);
@@ -59,5 +58,11 @@ public class ContasAPagarRepositoryImplTest extends AbstractRepositoryImplTest {
 				this.contasAPagarRepository.pesquisarPorDistribuidor(filtroContasAPagarDTO);
 		
 		Assert.assertNotNull(lista);
+	}
+	
+	@Test
+	public void testBuscarTotalPesquisarPorDistribuidor(){
+		
+		this.contasAPagarRepository.buscarTotalPesquisarPorDistribuidor(this.getFiltroPesquisaPorDistribuidor(), false);
 	}
 }

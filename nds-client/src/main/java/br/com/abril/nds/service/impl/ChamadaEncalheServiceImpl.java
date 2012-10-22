@@ -7,19 +7,26 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.dto.BandeirasDTO;
 import br.com.abril.nds.dto.CapaDTO;
 import br.com.abril.nds.dto.CotaEmissaoDTO;
 import br.com.abril.nds.dto.ProdutoEmissaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroEmissaoCE;
+import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.repository.ChamadaEncalheRepository;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.service.ChamadaEncalheService;
+import br.com.abril.nds.service.RecolhimentoService;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.Intervalo;
+import br.com.abril.nds.util.TipoMensagem;
 
 /**
  * Classe de implementação referentes a serviços de chamada encalhe. 
@@ -37,6 +44,12 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 	@Autowired
 	private CotaRepository cotaRepository;
 
+	@Autowired
+	private RecolhimentoService recolhimentoService;
+	
+	@Autowired
+	private DistribuidorService distribuidorService;
+		
 	@Override
 	@Transactional
 	public List<CotaEmissaoDTO> obterDadosEmissaoChamadasEncalhe(FiltroEmissaoCE filtro) {
@@ -108,10 +121,7 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 			dto.setVlrComDesconto(CurrencyUtil.formatarValor(vlrDesconto));
 			dto.setVlrReparteLiquido(CurrencyUtil.formatarValor(vlrReparteLiquido));
 			dto.setVlrEncalhe(CurrencyUtil.formatarValor(vlrEncalhe));
-			dto.setVlrTotalLiquido(CurrencyUtil.formatarValor(totalLiquido));
-			
-			
-			
+			dto.setVlrTotalLiquido(CurrencyUtil.formatarValor(totalLiquido));			
 		}
 		
 		return lista;
@@ -125,5 +135,22 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 		
 		return chamadaEncalheRepository.obterIdsCapasChamadaEncalhe(dtRecolhimentoDe, dtRecolhimentoAte);
 	}
+	
+	@Override
+	@Transactional
+	public List<BandeirasDTO> obterBandeirasDaSemana(Integer semana) {
 		
+		Distribuidor distribuidor = distribuidorService.obter();
+		
+		Intervalo<Date> periodoRecolhimento = null;
+		
+		try {
+			periodoRecolhimento = recolhimentoService.getPeriodoRecolhimento(distribuidor, semana, new Date());
+		} catch (IllegalArgumentException e) {
+			throw new ValidacaoException(TipoMensagem.WARNING, e.getMessage());
+		}
+		
+		return chamadaEncalheRepository.obterBandeirasNoIntervalo(periodoRecolhimento);
+	}
+	
 }

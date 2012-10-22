@@ -19,7 +19,7 @@ function MapaAbastecimento(pathTela, objName, workspace) {
 		if (codigoProduto && codigoProduto.length > 0) {
 			
 			$.postJSON(contextPath + "/produto/pesquisarPorCodigoProduto",
-					   "codigoProduto=" + codigoProduto,
+					   {codigoProduto:codigoProduto},
 					   function(result) {
 							
 							T.adicionarProduto(result.codigo, result.descricao);

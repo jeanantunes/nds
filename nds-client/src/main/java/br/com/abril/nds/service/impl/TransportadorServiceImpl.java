@@ -989,6 +989,7 @@ public class TransportadorServiceImpl implements TransportadorService {
 	}
 
 	@Override
+	@Transactional
 	public List<CotaTransportadorDTO> obterResumoTransportadorCota(Date dataDe,
 			Date dataAte, Long idTransportador, PaginacaoVO paginacaoVO) {
 		
@@ -996,6 +997,7 @@ public class TransportadorServiceImpl implements TransportadorService {
 	}
 
 	@Override
+	@Transactional
 	public List<MovimentoFinanceiroDTO> obterDetalhesTrasportadorPorCota(
 			Date dataDe, Date dataAte, Long idTransportador, Long idCota) {
 		
