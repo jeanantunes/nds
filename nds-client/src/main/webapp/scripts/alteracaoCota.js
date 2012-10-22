@@ -257,20 +257,18 @@ var alteracaoCotaController = $.extend(true, {
 		
 		var params = $("#pesquisarForm", this.workspace).serialize();
 		
-		alert(params);
-		
 		
 
-		$.postJSON(contextPath + "/administracao/alteracaoCota/carregarCamposAlteracao",
+		/*$.postJSON(contextPath + "/administracao/alteracaoCota/carregarCamposAlteracao",
 				null,
 				function(result) {
 					
 				},
 				null,
 				true
-		);
+		);*/
 		
-		/*$.postJSON(contextPath + "/administracao/alteracaoCota/carregarCamposAlteracao",
+		$.postJSON(contextPath + "/administracao/alteracaoCota/carregarCamposAlteracao",
 				params,
 				function (result) {
 					var filtro = result["filtroAlteracaoCotaDTO"];
@@ -343,7 +341,7 @@ var alteracaoCotaController = $.extend(true, {
 					
 				},
 			  	null
-		);*/
+		);
 	},
 	
 	limparCamposAbas : function(){
@@ -402,7 +400,7 @@ var alteracaoCotaController = $.extend(true, {
 	popularComboFornecedor : function(data, combo) {
 		opcoes = "";
 		$.each(data, function(i,n){
-			opcoes+="<option value="+n.id+">"+n.juridica.razaoSocial+"</option>";
+			opcoes+="<option value="+n.key.$+">"+n.value.$+"</option>";
 		});
 		$(combo).clear().append(opcoes);
 	},
