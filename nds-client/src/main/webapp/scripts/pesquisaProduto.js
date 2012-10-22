@@ -45,7 +45,7 @@ function PesquisaProduto(workspace) {
 		var nomeProduto = $(idProduto, pesquisaProduto.workspace).val();
 		
 		if (nomeProduto && nomeProduto.length > 2) {
-			$.postJSON(contextPath + "/produto/autoCompletarPorNome", "nomeProduto=" + nomeProduto,
+			$.postJSON(contextPath + "/produto/autoCompletarPorNome", "nome=" + nomeProduto,
 					   function(result) { pesquisaProduto.exibirAutoComplete(result, idProduto); },
 					   null, isFromModal);
 		}
@@ -151,7 +151,7 @@ function PesquisaProduto(workspace) {
 		$(idEdicao, pesquisaProduto.workspace).attr("disabled", "disabled");
 		
 		if (nomeProduto && nomeProduto.length > 0) {
-			$.postJSON(contextPath + "/produto/pesquisarPorNomeComercial", "nomeProduto=" + nomeProduto,
+			$.postJSON(contextPath + "/produto/pesquisarPorNome", "nome=" + nomeProduto,
 					   function(result) { pesquisaProduto.pesquisarPorNomeSuccessCallBack(result, idCodigo, idProduto, idEdicao, successCallBack); },
 					   function() { pesquisaProduto.pesquisarPorNomeErrorCallBack(idCodigo, idProduto, idEdicao, errorCallBack); }, isFromModal);
 		} else {

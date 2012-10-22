@@ -104,7 +104,8 @@ var produtoEdicaoController =$.extend(true,  {
 					produtoEdicaoController.descricaoAtribuida = true;
 				},
 				minLength: 4,
-				dNome});
+				delay : 0,
+			});
 		},
 
 		// Pesquisar por nome do produto
@@ -403,7 +404,7 @@ var produtoEdicaoController =$.extend(true,  {
 			$(".edicoesGrid",this.workspace).flexOptions({
 				url: contextPath + "/cadastro/edicao/pesquisarEdicoes.json",
 				params: [{name:'codigoProduto', value: codigoProduto },
-				         {name:'nomeComercial', value: nomeComercial },
+				         {name:'nome', value: nome },
 				         {name:'dataLancamentoDe', value: dataLancamentoDe },
 				         {name:'dataLancamentoAte', value: dataLancamentoAte },
 				         {name:'precoDe', value: precoDe },
