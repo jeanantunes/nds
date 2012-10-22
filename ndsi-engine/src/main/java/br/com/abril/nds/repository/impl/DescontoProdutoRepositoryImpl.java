@@ -169,9 +169,9 @@ public class DescontoProdutoRepositoryImpl extends AbstractRepositoryModel<Desco
 		hql.append(" descontoProduto.dataAlteracao as dataAlteracao, ");
 		hql.append(" usuario.nome as nomeUsuario ");
 		hql.append(" from DescontoProduto as descontoProduto ");
-		hql.append(" join descontoProduto.produtoEdicao as produtoEdicao ");
 		hql.append(" join descontoProduto.cotas as cota ");
 		hql.append(" join descontoProduto.usuario as usuario ");
+		hql.append(" join descontoProduto.produtoEdicao as produtoEdicao ");
 		
 		if (idCota!=null){
 		    hql.append(" where cota.id = :idCota ");
