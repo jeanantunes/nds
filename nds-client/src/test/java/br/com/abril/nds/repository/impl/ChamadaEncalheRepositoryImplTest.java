@@ -84,13 +84,14 @@ public class ChamadaEncalheRepositoryImplTest extends
 
 		save(veja, quatroRodas);
 
-		veja1 = Fixture.produtoEdicao("1", 1L, 10, 7, new Long(100),
-				BigDecimal.TEN, new BigDecimal(15), "ABCDEFGHIJKLMNOPQ", 1L,
+		veja1 = Fixture.produtoEdicao(1L, 10, 7, new Long(100),
+				BigDecimal.TEN, new BigDecimal(15), "ABCDEFGHIJKLMNOPQ", 
 				veja, null, false);
 
-		ProdutoEdicao quatroRoda2 = Fixture.produtoEdicao("1", 2L, 15, 30,
+		ProdutoEdicao quatroRoda2 = Fixture.produtoEdicao(2L, 15, 30,
 				new Long(100), BigDecimal.TEN, BigDecimal.TEN,
-				"ABCDEFGHIJKNOPQ", 2L, quatroRodas, null, false);
+				"ABCDEFGHIJKNOPQ", quatroRodas, null, false);
+
 
 		save(veja1, quatroRoda2);
 
