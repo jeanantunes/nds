@@ -487,8 +487,7 @@ public class EnderecoController {
 				this.session.setAttribute(ATRIBUTO_SESSAO_LISTA_ENDERECOS_SALVAR, listaEnderecoAssociacao);
 			}
 		}
-
-		//this.result.use(Results.json()).from(enderecoAssociacao, "result").recursive().exclude("endereco.pessoa").serialize();
+		
 		this.result.use(Results.json()).from(enderecoAssociacao, "result").recursive().serialize();
 	}
 
