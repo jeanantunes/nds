@@ -483,6 +483,7 @@ public class Fixture {
 		fornecedor.setCodigoInterface(codigoInterface);
 		fornecedor.setOrigem(Origem.MANUAL);
 		fornecedor.setEmailNfe("teste@gmail.com");
+		fornecedor.setMargemDistribuidor(BigDecimal.TEN);
 		return fornecedor;
 	}
 	

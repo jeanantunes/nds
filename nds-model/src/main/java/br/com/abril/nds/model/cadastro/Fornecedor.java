@@ -1,6 +1,7 @@
 package br.com.abril.nds.model.cadastro;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -103,6 +104,17 @@ public class Fornecedor implements Serializable {
 	inverseJoinColumns = {@JoinColumn(name = "COTA_ID")})
 	private Set<Cota> cotas = new HashSet<Cota>();
 	
+	@Column(name="MARGEM_DISTRIBUIDOR")
+	private BigDecimal margemDistribuidor;
+	
+	public BigDecimal getMargemDistribuidor() {
+		return margemDistribuidor;
+	}
+
+	public void setMargemDistribuidor(BigDecimal margemDistribuidor) {
+		this.margemDistribuidor = margemDistribuidor;
+	}
+
 	public Long getId() {
 		return id;
 	}
