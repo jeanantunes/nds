@@ -45,7 +45,7 @@ public class ChamadaEncalheFornecedorDTO implements Serializable {
     
     private List<ItemChamadaEncalheFornecedorDTO> itens = new ArrayList<ItemChamadaEncalheFornecedorDTO>();
 
-    public ChamadaEncalheFornecedorDTO(
+    ChamadaEncalheFornecedorDTO(
             PessoaJuridicaChamadaEncalheFornecedorDTO fornecedor,
             PessoaJuridicaChamadaEncalheFornecedorDTO distribuidor,
             IdentificacaoChamadaEncalheFornecedorDTO identificacao) {

@@ -122,9 +122,9 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 		produto.setEditor(abril);
 		save(produto);
 		
-		ProdutoEdicao produtoEdicaoVeja1 = Fixture.produtoEdicao("1", 1L, 10, 14,
-				new Long(100), BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQ", 1L,
-				produto, null, false);
+		ProdutoEdicao produtoEdicaoVeja1 = Fixture.produtoEdicao(1L, 10, 14, new Long(100),
+				BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQ", produto, 
+				null, false);
 		
 		save(produtoEdicaoVeja1);
 		
@@ -264,9 +264,9 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 		produtoVeja.setEditor(abril);
 		save(produtoVeja);
 		
-		ProdutoEdicao produtoEdicaoVeja1 = Fixture.produtoEdicao("1", 1L, 10, 14,
-				new Long(100), BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPA", 2L,
-				produtoVeja, null, false);
+		ProdutoEdicao produtoEdicaoVeja1 = Fixture.produtoEdicao(1L, 10, 14, new Long(100),
+				BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPA", produtoVeja, 
+				null, false);
 		save(produtoEdicaoVeja1);
 		
 		EstoqueProdutoCota estoqueProdutoCota = Fixture.estoqueProdutoCota(

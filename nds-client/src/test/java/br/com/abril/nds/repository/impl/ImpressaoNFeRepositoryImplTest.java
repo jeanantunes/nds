@@ -345,8 +345,8 @@ public class ImpressaoNFeRepositoryImplTest  extends AbstractRepositoryImplTest 
 
 		save(produtoCE);
 
-		produtoEdicaoCE = Fixture.produtoEdicao(codigoProdutoEdicao, numeroEdicao, pacotePadrao, peb,
-				peso, precoCusto, precoVenda, codigoDeBarras, null, produtoCE, expectativaVenda, parcial);
+		produtoEdicaoCE = Fixture.produtoEdicao(numeroEdicao, pacotePadrao, peb, peso,
+				precoCusto, precoVenda, codigoDeBarras, produtoCE, expectativaVenda, parcial);
 
 		save(produtoEdicaoCE);
 		

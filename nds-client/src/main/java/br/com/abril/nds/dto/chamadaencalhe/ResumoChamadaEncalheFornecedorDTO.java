@@ -32,7 +32,7 @@ public class ResumoChamadaEncalheFornecedorDTO implements Serializable {
     
     private List<ItemResumoChamadaEncalheFornecedorDTO> itens = new ArrayList<>();
  
-    public ResumoChamadaEncalheFornecedorDTO(PessoaJuridicaChamadaEncalheFornecedorDTO fornecedor,
+    ResumoChamadaEncalheFornecedorDTO(PessoaJuridicaChamadaEncalheFornecedorDTO fornecedor,
             PessoaJuridicaChamadaEncalheFornecedorDTO distribuidor, IdentificacaoChamadaEncalheFornecedorDTO identificacao) {
         this.fornecedor = fornecedor;
         this.distribuidor = distribuidor;
