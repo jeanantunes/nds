@@ -248,7 +248,7 @@ public class LancamentoRepositoryImpl extends
 		
 		if (data != null) {
 			
-			hql.append(" AND lancamento.dataLancamentoPrevista = :data");
+			hql.append(" AND lancamento.dataLancamentoDistribuidor = :data");
 			
 			parametros.put("data", data);
 		}				
