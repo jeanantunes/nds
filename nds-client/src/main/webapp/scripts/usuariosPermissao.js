@@ -18,7 +18,7 @@ var usuariosPermissaoController = $.extend(true, {
 			
 			$.getJSON(
 					this.path + "/editarUsuario",
-					"codigoUsuario=" + idUsuario, 
+					{codigoUsuario:idUsuario}, 
 					function(result) {
 						if (result) {
 							usuariosPermissaoController.bindData(result, $("#alterar_senha_form", usuariosPermissaoController.workspace));
@@ -101,7 +101,7 @@ var usuariosPermissaoController = $.extend(true, {
 			
 			$.getJSON(
 					this.path + "/editarUsuario",
-					"codigoUsuario=" + idGrupo, 
+					{codigoUsuario:idGrupo}, 
 					function(result) {
 						if (result) {
 							
@@ -205,7 +205,7 @@ var usuariosPermissaoController = $.extend(true, {
 					"Confirmar": function() {
 						$.getJSON(
 								usuariosPermissaoController.path + "/excluirUsuario",
-								"codigoUsuario=" + codigoUsuario, 
+								{codigoUsuario:codigoUsuario}, 
 								function(result) {
 
 									var tipoMensagem = result.tipoMensagem;
