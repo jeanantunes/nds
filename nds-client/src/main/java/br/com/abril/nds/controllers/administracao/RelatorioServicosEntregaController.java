@@ -17,6 +17,7 @@ import br.com.abril.nds.dto.FlexiGridDTO;
 import br.com.abril.nds.dto.RelatorioServicosEntregaDTO;
 import br.com.abril.nds.dto.RelatorioServicosEntregaDetalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroRelatorioServicosEntregaDTO;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Transportador;
@@ -25,10 +26,12 @@ import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.RelatorioServicosEntregaService;
 import br.com.abril.nds.service.TransportadorService;
+import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.util.export.NDSFileHeader;
 import br.com.abril.nds.vo.PaginacaoVO;
+import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
@@ -78,6 +81,10 @@ public class RelatorioServicosEntregaController {
 		this.session.setAttribute(this.FILTRO_PESQUISA, filtro);
 		
 		FlexiGridDTO<RelatorioServicosEntregaDTO> flexiDTO = this.relatorioServicosEntregaService.pesquisar(filtro);
+		
+		if (flexiDTO == null || flexiDTO.getGrid() == null || flexiDTO.getGrid().isEmpty()) {
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "A busca não retornou resultados"));
+		}
 		
 		List<RelatorioServicosEntregaVO> listVO = new ArrayList<RelatorioServicosEntregaVO>();
 		for (RelatorioServicosEntregaDTO dto : flexiDTO.getGrid()) {

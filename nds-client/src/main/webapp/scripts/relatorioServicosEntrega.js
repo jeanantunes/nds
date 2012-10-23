@@ -17,6 +17,9 @@ relatorioServicosEntregaController = $.extend(true, {
 			buttonImageOnly: true
 		});
 		
+		$("#relatorioServicosEntrega_filtro_dataDe", this.workspace).mask("99/99/9999");
+		$("#relatorioServicosEntrega_filtro_dataAte", this.workspace).mask("99/99/9999");
+		
 		this.initGridTransportadores();
 		this.initGridDetalhe();
 	},
