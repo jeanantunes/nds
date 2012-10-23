@@ -12,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.dto.TelefoneDTO;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.TelefoneEntregador;
 import br.com.abril.nds.model.cadastro.TipoTelefone;
@@ -31,32 +30,7 @@ public class TelefoneServiceImpl implements TelefoneService {
 	@Autowired
 	private TelefoneRepository telefoneRepository;
 	
-	@Transactional
-	@Override
-	public void cadastrarTelefone(List<TelefoneAssociacaoDTO> listaTelefones, Pessoa pessoa){
-		
-		if (listaTelefones == null){
-			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Lista de telefones é obrigatória.");
-		}
-		
-		validarTelefonePrincipal(listaTelefones);
-		
-		for (TelefoneAssociacaoDTO associacaoTelefone : listaTelefones){
-			TelefoneDTO dto = associacaoTelefone.getTelefone();
-            
-			Telefone telefone = new Telefone(dto.getId(), dto.getNumero(), dto.getRamal(),dto.getDdd(), pessoa);
-			this.validarTelefone(telefone, associacaoTelefone.getTipoTelefone());
-			
-			if (telefone.getId() == null){
-				this.telefoneRepository.adicionar(telefone);
-			} else {
-				this.telefoneRepository.alterar(telefone);
-			}
-		}
-	}
-	
-	private void validarTelefone(Telefone telefone, TipoTelefone tipoTelefone){
+	public void validarTelefone(TelefoneDTO telefone, TipoTelefone tipoTelefone) {
 		
 		List<String> mensagensValidacao = new ArrayList<String>();
 		
@@ -129,7 +103,7 @@ public class TelefoneServiceImpl implements TelefoneService {
 					throw new ValidacaoException(TipoMensagem.ERROR, "Telefone entregador é obrigatório.");
 				}
 				
-				this.validarTelefone(telefoneEntregador.getTelefone(), telefoneEntregador.getTipoTelefone());
+				// TODO: this.validarTelefone(telefoneEntregador.getTelefone(), telefoneEntregador.getTipoTelefone());
 				
 				if (isTelefonePrincipal && telefoneEntregador.isPrincipal()) {
 					
@@ -207,12 +181,8 @@ public class TelefoneServiceImpl implements TelefoneService {
 		return this.telefoneRepository.buscarPorId(longValue);
 	}
 	
-	/**
-	 * Valida se a lista tem pelo menos um e somente um telefone principal
-	 * 
-	 * @param listaTelefones lista de telefones para serem validados
-	 */
-	private void validarTelefonePrincipal(List<TelefoneAssociacaoDTO> listaTelefones) {
+	@Override
+	public void validarTelefonePrincipal(List<TelefoneAssociacaoDTO> listaTelefones) {
 		boolean isTelefonePrincipal = false;
 		boolean hasTelefonePrincipal = false;
 		for (TelefoneAssociacaoDTO dto : listaTelefones){

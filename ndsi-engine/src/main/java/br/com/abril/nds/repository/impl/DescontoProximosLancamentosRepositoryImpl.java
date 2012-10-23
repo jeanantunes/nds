@@ -1,8 +1,8 @@
 package br.com.abril.nds.repository.impl;
 
 import java.util.Date;
-import java.util.List;
 
+import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
 
@@ -17,9 +17,9 @@ implements DescontoProximosLancamentosRepository{
 		super(DescontoProximosLancamentos.class);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@Override
-	public List<DescontoProximosLancamentos> obterDescontoProximosLancamentosPor(
+	public DescontoProximosLancamentos obterDescontoProximosLancamentosPor(
 			Long idProduto, Date dataLancamento) {
 		
 		StringBuilder jpql = new StringBuilder();
@@ -33,8 +33,12 @@ implements DescontoProximosLancamentosRepository{
 		query.setParameter("idProduto", idProduto);
 		query.setParameter("dataLancamento", dataLancamento);
 		
+		try {
+			return (DescontoProximosLancamentos) query.uniqueResult();
+		} catch(HibernateException e) {
+			return null;
+		}
 		
-		return query.list();
 	}
 
 }
