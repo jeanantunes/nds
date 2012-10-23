@@ -21,6 +21,7 @@ import br.com.abril.nds.model.planejamento.HistoricoLancamento;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.repository.DescontoProximosLancamentosRepository;
 import br.com.abril.nds.repository.ExpedicaoRepository;
 import br.com.abril.nds.repository.HistoricoLancamentoRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
@@ -48,6 +49,9 @@ public class LancamentoServiceImpl implements LancamentoService {
 	
 	@Autowired
 	private ExpedicaoRepository expedicaoRepository;
+	
+	@Autowired
+	private DescontoProximosLancamentosRepository descontoProximosLancamentosRepository;
 	
 	@Override
 	@Transactional
@@ -154,6 +158,8 @@ public class LancamentoServiceImpl implements LancamentoService {
 				lancamento.getDataLancamentoPrevista(), 
 				lancamento.getProdutoEdicao().getId(),
 				idUsuario);
+		
+		
 	}
 
 	@Override
