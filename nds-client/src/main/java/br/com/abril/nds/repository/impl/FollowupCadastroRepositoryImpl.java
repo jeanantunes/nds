@@ -37,15 +37,15 @@ public class FollowupCadastroRepositoryImpl extends AbstractRepositoryModel<Cota
 	private List<ConsultaFollowupCadastroDTO> getContratos(
 			FiltroFollowupCadastroDTO filtro) {
 		StringBuilder hql = new StringBuilder();
-		hql.append("SELECT cota.numeroCota as numeroCota ");
-		hql.append(" , pessoa.nome as nomeJornaleiro ");
-		hql.append(" , pdv.contato as responsavel");
-		hql.append(" , contrato.dataTermino as dataVencimento, ");
-		hql.append(" , 'Contrato' as tipo ");
-		hql.append(" , 0.0 as valor ");
+		hql.append("SELECT cota.numeroCota as numeroCota, ");
+		hql.append("       pessoa.nome as nomeJornaleiro, ");
+		hql.append("       pdv.contato as responsavel, ");
+		hql.append("       contrato.dataTermino as dataVencimento, ");
+		hql.append("       'Contrato' as tipo, ");
+		hql.append("       0.0 as valor ");
 		hql.append(" from Cota as cota, ");
-		hql.append(" Distribuidor as distribuidor ");
-		hql.append("  JOIN cota.contratoCota as contrato ");
+		hql.append("      Distribuidor as distribuidor ");
+		hql.append(" JOIN cota.contratoCota as contrato ");
 		hql.append(" LEFT JOIN cota.pessoa as pessoa ");
 		hql.append(" LEFT JOIN cota.pdvs as pdv ");		
 		hql.append(" WHERE datediff(contrato.dataTermino, sysdate()) < distribuidor.prazoFollowUp ");

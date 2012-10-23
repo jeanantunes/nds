@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.abril.nds.dto.BandeirasDTO;
 import br.com.abril.nds.dto.CapaDTO;
 import br.com.abril.nds.dto.CotaEmissaoDTO;
+import br.com.abril.nds.dto.FornecedoresBandeiraDTO;
 import br.com.abril.nds.dto.ProdutoEmissaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroEmissaoCE;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -49,7 +50,10 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 	
 	@Autowired
 	private DistribuidorService distribuidorService;
-		
+	
+	private static final Integer CODIGO_DINAP_INTERFACE = 9999999;
+	private static final Integer CODIGO_FC_INTERFACE = 9999998;
+	
 	@Override
 	@Transactional
 	public List<CotaEmissaoDTO> obterDadosEmissaoChamadasEncalhe(FiltroEmissaoCE filtro) {
@@ -151,6 +155,38 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 		}
 		
 		return chamadaEncalheRepository.obterBandeirasNoIntervalo(periodoRecolhimento);
+	}
+	
+	@Override
+	@Transactional
+	public List<FornecedoresBandeiraDTO> obterDadosFornecedoresParaImpressaoBandeira(Integer semana) {
+		
+		Distribuidor distribuidor = distribuidorService.obter();
+		
+		Intervalo<Date> periodoRecolhimento = null;
+		
+		try {
+			periodoRecolhimento = recolhimentoService.getPeriodoRecolhimento(distribuidor, semana, new Date());
+		} catch (IllegalArgumentException e) {
+			throw new ValidacaoException(TipoMensagem.WARNING, e.getMessage());
+		}
+		
+		List<FornecedoresBandeiraDTO>  fornecedores = chamadaEncalheRepository.obterDadosFornecedoresParaImpressaoBandeira(periodoRecolhimento);
+		
+		for(FornecedoresBandeiraDTO dto: fornecedores) {
+			
+			dto.setPraca(distribuidor.getEnderecoDistribuidor().getEndereco().getCidade());
+			
+			if(dto.getCodigoInterface().equals(CODIGO_DINAP_INTERFACE))
+				dto.setCodigoPracaNoProdin(distribuidor.getCodigoDistribuidorDinap());
+			
+			else if(dto.getCodigoInterface().equals(CODIGO_FC_INTERFACE))				
+				dto.setCodigoPracaNoProdin(distribuidor.getCodigoDistribuidorFC());
+			
+			dto.setSemana(semana);
+		}
+		
+		return fornecedores;
 	}
 	
 }

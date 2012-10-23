@@ -522,6 +522,7 @@ public class Fixture {
 		produto.setPacotePadrao(pacotePadrao);
 		produto.setPeso(peso);
 		produto.setTributacaoFiscal(tributacaoFiscal);
+		produto.setOrigem(Origem.INTERFACE);
 		return produto;
 	}
 
@@ -542,8 +543,7 @@ public class Fixture {
 		produtoEdicao.setExpectativaVenda(expectativaVenda);
 		produtoEdicao.setParcial(parcial);
 		produtoEdicao.setNomeComercial(nomeComercial);
-		
-		produtoEdicao.setOrigem(br.com.abril.nds.model.Origem.INTERFACE);
+		produtoEdicao.setOrigem(Origem.INTERFACE);
 		return produtoEdicao;
 	}
 	
@@ -1227,6 +1227,22 @@ public class Fixture {
 		tipoMovimento.setGrupoMovimentoFinaceiro(GrupoMovimentoFinaceiro.DEBITO);
 		return tipoMovimento;
 	}
+	
+	public static TipoMovimentoFinanceiro tipoMovimentoFinanceiroDebitoPostergado() {
+		TipoMovimentoFinanceiro tipoMovimento = new TipoMovimentoFinanceiro();
+		tipoMovimento.setAprovacaoAutomatica(true);
+		tipoMovimento.setDescricao("Postergado");
+		tipoMovimento.setGrupoMovimentoFinaceiro(GrupoMovimentoFinaceiro.DEBITO);
+		return tipoMovimento;
+	}	
+	
+	public static TipoMovimentoFinanceiro tipoMovimentoFinanceiroDebitoPendente() {
+		TipoMovimentoFinanceiro tipoMovimento = new TipoMovimentoFinanceiro();
+		tipoMovimento.setAprovacaoAutomatica(true);
+		tipoMovimento.setDescricao("Pendente");
+		tipoMovimento.setGrupoMovimentoFinaceiro(GrupoMovimentoFinaceiro.DEBITO);
+		return tipoMovimento;
+	}	
 	
 	public static TipoMovimentoFinanceiro tipoMovimentoFinanceiroDebitoNA() {
 		TipoMovimentoFinanceiro tipoMovimento = new TipoMovimentoFinanceiro();

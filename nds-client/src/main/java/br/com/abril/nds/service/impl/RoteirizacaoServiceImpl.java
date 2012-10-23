@@ -261,7 +261,10 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 	public void excluirRoteirizacao(List<Long> roteirizacaoId) {
 
 		for (Long id : roteirizacaoId ){
-			roteirizacaoRepository.removerPorId(id);
+			
+			Roteirizacao roteirizacao = this.roteirizacaoRepository.buscarPorId(id);
+			
+			roteirizacaoRepository.remover(roteirizacao);
 		}	
 		
 	}

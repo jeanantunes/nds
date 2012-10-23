@@ -190,7 +190,10 @@ var alteracaoCotaController = $.extend(true, {
 			var campoSelect = "<input name='filtroAlteracaoCotaDTO.listaLinhaSelecao["+ index +"]' class='selectLine' type='checkbox' value='"+row.cell.idCota+"' onclick='alteracaoCotaController.verificarCheck();'>";
 			
 			row.cell.acao = campoSelect;
+			
+			row.cell.vencimento = row.cell.vencimento == null || row.cell.vencimento == -1 ? '' : row.cell.vencimento;
 		});
+
 			
 		$(".grids", this.workspace).show();
 		
@@ -224,6 +227,7 @@ var alteracaoCotaController = $.extend(true, {
 			}
 			
 		});
+		
 		if(linhasSelecionadas > 0){
 			$("#dialog-novo", this.workspace).dialog({
 				resizable: false,
@@ -251,8 +255,21 @@ var alteracaoCotaController = $.extend(true, {
 		
 		alteracaoCotaController.limparCamposAbas();
 		
+		var params = $("#pesquisarForm", this.workspace).serialize();
+		
+		
+
+		/*$.postJSON(contextPath + "/administracao/alteracaoCota/carregarCamposAlteracao",
+				null,
+				function(result) {
+					
+				},
+				null,
+				true
+		);*/
+		
 		$.postJSON(contextPath + "/administracao/alteracaoCota/carregarCamposAlteracao",
-				$("#pesquisarForm", this.workspace).serialize(),
+				params,
 				function (result) {
 					var filtro = result["filtroAlteracaoCotaDTO"];
 					alteracaoCotaController.popularComboFornecedor(filtro.filtroModalFornecedor.listFornecedores, $("#idListFornecedores", this.workspace));
@@ -277,7 +294,7 @@ var alteracaoCotaController = $.extend(true, {
 						
 						//Tipo Entrega
 						$("#idModalIdTipoEntrega").val(filtro.filtroModalDistribuicao.descricaoTipoEntrega);
-						alteracaoCotaController.selectTipoEntregaDistribuicao()
+						alteracaoCotaController.selectTipoEntregaDistribuicao();
 							
 						if($("#idModalIdTipoEntrega").val() == 'ENTREGA_EM_BANCA'){
 							//Entrega em Banca
@@ -323,8 +340,7 @@ var alteracaoCotaController = $.extend(true, {
 					}
 					
 				},
-			  	null,
-			   	true
+			  	null
 		);
 	},
 	
@@ -384,7 +400,7 @@ var alteracaoCotaController = $.extend(true, {
 	popularComboFornecedor : function(data, combo) {
 		opcoes = "";
 		$.each(data, function(i,n){
-			opcoes+="<option value="+n.id+">"+n.juridica.razaoSocial+"</option>";
+			opcoes+="<option value="+n.key.$+">"+n.value.$+"</option>";
 		});
 		$(combo).clear().append(opcoes);
 	},
@@ -583,7 +599,7 @@ var alteracaoCotaController = $.extend(true, {
 	  
 	  buscaIdPrimeiraCotaSelecionada : function(){
 		
-		  id = null
+		  id = null;
 	   $(".selectLine", this.workspace).each(function(index, element) {	
 			if(element.checked){
 				id = element.value;
