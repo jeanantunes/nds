@@ -30,7 +30,7 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 		hql.append("SELECT cota.numeroCota as numeroCota, ");
 		hql.append("pessoa.nome as nome, ");
 		hql.append("cota.id as idCota, ");
-		hql.append("rota.id as idRota, ");
+		hql.append("rotaPDV.id as idRota, ");
 		hql.append("itemNota.itemNotaEnvioPK.notaEnvio.numero as numeroNotaEnvio ");
 		
 		if (filtro.getProdutos() != null && filtro.getProdutos().size() == 1){
@@ -136,7 +136,8 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 		hql.append(" JOIN cota.pessoa as pessoa ");
 		hql.append(" JOIN cota.box as box ");
 		hql.append(" JOIN cota.pdvs as pdv ");
-		hql.append(" JOIN pdv.rotas as rota ");
+		hql.append(" JOIN pdv.rotas as rotaPDV ");
+		hql.append(" JOIN rotaPDV.rota as rota ");
 		hql.append(" JOIN rota.roteiro as roteiro ");
 		hql.append(" JOIN lancamento.movimentoEstoqueCotas as movimentoEstoque ");
 		hql.append(" JOIN movimentoEstoque.listaItemNotaEnvio as itemNota ");
@@ -168,7 +169,7 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 		
 		if(filtro.getIdRota() != null){
 			
-			hql.append( " and rota.id = :idRota ");
+			hql.append( " and rotaPDV.id = :idRota ");
 		}
 		
 		if(filtro.getData() != null){
@@ -192,11 +193,11 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" order by rota.id asc ");
+		hql.append(" order by rotaPDV.id asc ");
 		
 		if(filtro.getIdRoteiro() == null && filtro.getIdRota() != null){
 			
-			hql.append(", rota.ordem ");
+			hql.append(", rotaPDV.ordem ");
 		}
 		
 		if(filtro.getIdRoteiro() != null && filtro.getIdRota() == null){
@@ -206,7 +207,7 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 		
 		if(filtro.getIdRoteiro() != null && filtro.getIdRota() != null){
 			
-			hql.append(", roteiro.ordem asc, rota.ordem asc ");
+			hql.append(", roteiro.ordem asc, rotaPDV.ordem asc ");
 		}
 		
 		if ("numeroCota".equals(filtro.getPaginacao().getSortColumn())){
