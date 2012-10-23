@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.ConsultaProdutoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.DescontoLogistica;
 import br.com.abril.nds.model.cadastro.Editor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
@@ -239,5 +240,11 @@ public class ProdutoServiceImpl implements ProdutoService {
 		
 		return produtoRepository.buscarTodos();
 	}
+
+	@Transactional(readOnly=true)
+	public List<Produto> obterProdutosOrganizadosNome() {
+		return produtoRepository.buscarProdutosOrganizadosNome();
+	}
+	
 	
 }

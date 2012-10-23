@@ -111,7 +111,7 @@ public class MapaAbastecimentoController {
 	 */
 	private List<ItemDTO<String, String>> carregarProdutos() {
 		
-		List<Produto> listaProdutos = produtoService.obterProdutos();
+		List<Produto> listaProdutos = produtoService.obterProdutosOrganizadosNome();
 		
 		List<ItemDTO<String, String>> listaProdutosCombo = new ArrayList<ItemDTO<String,String>>();
 				
@@ -442,11 +442,19 @@ public class MapaAbastecimentoController {
 	public void impressaoFalha(String mensagemErro){
 		result.include(mensagemErro);					
 	}
+
+	private void mostrarMensagemListaVazia() {
+		throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado na pesquisa.");
+	}
 	
 	private void popularGridPorBox(FiltroMapaAbastecimentoDTO filtro) {
 		
 		List<AbastecimentoDTO> lista = this.mapaAbastecimentoService.obterDadosAbastecimento(filtro);
-		
+
+		if (lista == null || lista.isEmpty()) {
+			mostrarMensagemListaVazia();
+		}
+
 		Long totalRegistros = this.mapaAbastecimentoService.countObterDadosAbastecimento(filtro);
 
 		result.use(FlexiGridJson.class).from(lista).page(filtro.getPaginacao().getPaginaAtual()).total(totalRegistros.intValue()).serialize();
@@ -455,6 +463,10 @@ public class MapaAbastecimentoController {
 	private void popularGridPorCota(FiltroMapaAbastecimentoDTO filtro) {
 
 		List<ProdutoAbastecimentoDTO> lista = this.mapaAbastecimentoService.obterMapaAbastecimentoPorCota(filtro);
+		
+		if (lista == null || lista.isEmpty()) {
+			mostrarMensagemListaVazia();
+		}
 		
 		Long totalRegistros = mapaAbastecimentoService.countObterMapaAbastecimentoPorCota(filtro);
 
@@ -465,6 +477,10 @@ public class MapaAbastecimentoController {
 
 		List<ProdutoAbastecimentoDTO> lista = this.mapaAbastecimentoService.obterMapaAbastecimentoPorBoxRota(filtro);
 		
+		if (lista == null || lista.isEmpty()) {
+			mostrarMensagemListaVazia();
+		}
+		
 		Long totalRegistros = mapaAbastecimentoService.countObterMapaAbastecimentoPorBoxRota(filtro);
 
 		result.use(FlexiGridJson.class).from(lista).page(filtro.getPaginacao().getPaginaAtual()).total(totalRegistros.intValue()).serialize();
@@ -473,6 +489,10 @@ public class MapaAbastecimentoController {
 	private void popularGridPorProduto(FiltroMapaAbastecimentoDTO filtro) {
 
 		List<ProdutoAbastecimentoDTO> lista = this.mapaAbastecimentoService.obterMapaAbastecimentoPorCota(filtro);
+		
+		if (lista == null || lista.isEmpty()) {
+			mostrarMensagemListaVazia();
+		}
 		
 		Long totalRegistros = mapaAbastecimentoService.countObterMapaAbastecimentoPorCota(filtro);
 
@@ -483,6 +503,10 @@ public class MapaAbastecimentoController {
 
 		List<ProdutoAbastecimentoDTO> lista = this.mapaAbastecimentoService.obterMapaAbastecimentoPorProdutoEdicao(filtro);
 		
+		if (lista == null || lista.isEmpty()) {
+			mostrarMensagemListaVazia();
+		}
+		
 		Long totalRegistros = mapaAbastecimentoService.countObterMapaAbastecimentoPorProdutoEdicao(filtro);
 
 		result.use(FlexiGridJson.class).from(lista).page(filtro.getPaginacao().getPaginaAtual()).total(totalRegistros.intValue()).serialize();
@@ -492,6 +516,10 @@ public class MapaAbastecimentoController {
 
 		List<ProdutoAbastecimentoDTO> lista = this.mapaAbastecimentoService.obterMapaDeAbastecimentoPorProdutoQuebrandoPorCota(filtro);
 		
+		if (lista == null || lista.isEmpty()) {
+			mostrarMensagemListaVazia();
+		}
+		
 		Long totalRegistros = mapaAbastecimentoService.countObterMapaDeAbastecimentoPorProdutoQuebrandoPorCota(filtro);
 
 		result.use(FlexiGridJson.class).from(lista).page(filtro.getPaginacao().getPaginaAtual()).total(totalRegistros.intValue()).serialize();
@@ -500,6 +528,10 @@ public class MapaAbastecimentoController {
 	private void popularGridPorEntregador(FiltroMapaAbastecimentoDTO filtro) {
 		
 		List<ProdutoAbastecimentoDTO> lista = this.mapaAbastecimentoService.obterMapaDeAbastecimentoPorEntregador(filtro);
+		
+		if (lista == null || lista.isEmpty()) {
+			mostrarMensagemListaVazia();
+		}
 		
 		Long totalRegistros = mapaAbastecimentoService.countObterMapaDeAbastecimentoPorEntregador(filtro);
 
