@@ -13,7 +13,7 @@ var produtoEdicaoController =$.extend(true,  {
 			if (codigoProduto && codigoProduto.length > 0) {
 
 				$.postJSON(contextPath + "/produto/pesquisarPorCodigoProduto",
-						"codigoProduto=" + codigoProduto,
+						{codigoProduto:codigoProduto},
 						function(result) { produtoEdicaoController.pesquisarPorCodigoSuccessCallBack(result, idProduto, successCallBack); },
 						function() { produtoEdicaoController.pesquisarPorCodigoErrorCallBack(idCodigo, errorCallBack); }, isFromModal);
 
@@ -38,7 +38,7 @@ var produtoEdicaoController =$.extend(true,  {
 			if (codigoProduto && codigoProduto.length > 0) {
 
 				$.postJSON(contextPath + "/produto/pesquisarPorCodigoProduto",
-						"codigoProduto=" + codigoProduto,
+						{codigoProduto:codigoProduto},
 						function(result) { produtoEdicaoController.pesquisarPorCodigoSuccessCallBack(result, idProduto, successCallBack, idCodigo, isFromModal); },
 						null, isFromModal);
 
@@ -52,7 +52,7 @@ var produtoEdicaoController =$.extend(true,  {
 
 		pesquisarPorCodigoSuccessCallBack : function(result, idProduto, successCallBack, idCodigo, isFromModal) {
 
-			$(idProduto,this.workspace).val(result.nome);
+			$(idProduto,this.workspace).val(result.nomeComercial);
 
 			produtoEdicaoController.pesquisaRealizada = true;
 
@@ -71,14 +71,14 @@ var produtoEdicaoController =$.extend(true,  {
 		},
 
 		// Mostrar auto complete por nome do produto
-		autoCompletarPorNome : function(idProduto, isFromModal) {
+		autoCompletarPorNomeComercial : function(idProduto, isFromModal) {
 			
 			produtoEdicaoController.pesquisaRealizada = false;
 
-			var nome = $(idProduto,this.workspace).val();
+			var nomeComercial = $(idProduto,this.workspace).val();
 
-			if (nome && nome.length > 2) {
-				$.postJSON(contextPath + "/produto/autoCompletarPorNome", {"nome" : nome},
+			if (nomeComercial && nomeComercial.length > 2) {
+				$.postJSON(contextPath + "/produto/autoCompletarPorNomeComercial", {"nomeComercial" : nomeComercial},
 						function(result) { produtoEdicaoController.exibirAutoComplete(result, idProduto); },
 						null, isFromModal);
 			}
@@ -109,7 +109,7 @@ var produtoEdicaoController =$.extend(true,  {
 		},
 
 		// Pesquisar por nome do produto
-		pesquisarPorNome : function(idCodigo, idProduto, isFromModal, successCallBack, errorCallBack) {
+		pesquisarPorNomeComercial : function(idCodigo, idProduto, isFromModal, successCallBack, errorCallBack) {
 			
 			setTimeout(function() {
 				
@@ -128,7 +128,7 @@ var produtoEdicaoController =$.extend(true,  {
 						return;
 					}
 
-					produtoEdicaoController.pesquisarPorNomeAposIntervalo(idCodigo, idProduto,
+					produtoEdicaoController.pesquisarPorNomeComercialAposIntervalo(idCodigo, idProduto,
 							isFromModal, successCallBack, errorCallBack);
 				}
 
@@ -136,20 +136,20 @@ var produtoEdicaoController =$.extend(true,  {
 
 		},
 
-		pesquisarPorNomeAposIntervalo : function(idCodigo, idProduto, isFromModal, successCallBack, errorCallBack) {
+		pesquisarPorNomeComercialAposIntervalo : function(idCodigo, idProduto, isFromModal, successCallBack, errorCallBack) {
 			
 			clearInterval(produtoEdicaoController.intervalo);
 
 			produtoEdicaoController.pesquisaRealizada = true;
 
-			var nome = $(idProduto,this.workspace).val();
+			var nomeComercial = $(idProduto,this.workspace).val();
 
-			nome = $.trim(nome);
+			nomeComercial = $.trim(nomeComercial);
 
 			$(idCodigo,this.workspace).val("");
 
-			if (nome && nome.length > 0) {
-				$.postJSON(contextPath + "/produto/pesquisarPorNome", {"nome" : nome},
+			if (nomeComercial && nomeComercial.length > 0) {
+				$.postJSON(contextPath + "/produto/pesquisarPorNomeComercial", {"nomeComercial" : nomeComercial},
 						function(result) { produtoEdicaoController.pesquisarPorNomeSuccessCallBack(result, idCodigo, idProduto, successCallBack); },
 						function() { produtoEdicaoController.pesquisarPorNomeErrorCallBack(idCodigo, idProduto, errorCallBack); }, isFromModal);
 			} else {
@@ -163,7 +163,7 @@ var produtoEdicaoController =$.extend(true,  {
 		pesquisarPorNomeSuccessCallBack : function(result, idCodigo, idProduto, successCallBack) {
 			if (result != "") {
 				$(idCodigo,this.workspace).val(result.codigo);
-				$(idProduto,this.workspace).val(result.nome);
+				$(idProduto,this.workspace).val(result.nomeComercial);
 
 				if (successCallBack) {
 					successCallBack();
@@ -387,7 +387,7 @@ var produtoEdicaoController =$.extend(true,  {
 		pesquisarEdicoes : function() {
 
 			var codigoProduto = $("#produtoEdicaoController-pCodigoProduto",this.workspace).val();
-			var nome = $("#produtoEdicaoController-pNome",this.workspace).val();
+			var nomeComercial = $("#produtoEdicaoController-pNomeComercial",this.workspace).val();
 			var dataLancamentoDe = $("#produtoEdicaoController-pDateLanctoDe",this.workspace).val();	
 			var precoDe = $("#produtoEdicaoController-pPrecoDe",this.workspace).val();
 			var precoAte = $("#produtoEdicaoController-pPrecoAte",this.workspace).val();
@@ -404,7 +404,7 @@ var produtoEdicaoController =$.extend(true,  {
 			$(".edicoesGrid",this.workspace).flexOptions({
 				url: contextPath + "/cadastro/edicao/pesquisarEdicoes.json",
 				params: [{name:'codigoProduto', value: codigoProduto },
-				         {name:'nome', value: nome },
+				         {name:'nomeComercial', value: nomeComercial },
 				         {name:'dataLancamentoDe', value: dataLancamentoDe },
 				         {name:'dataLancamentoAte', value: dataLancamentoAte },
 				         {name:'precoDe', value: precoDe },

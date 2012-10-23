@@ -71,7 +71,7 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 		},
 		
 		getCodigoProdutoPesquisa: function (){
-			return  "codigoProduto=" + $("#codigoProduto",this.workspace).val();
+			return  {"codigoProduto": $("#codigoProduto",this.workspace).val()};
 		},
 			
 		pesquisar: function(){
@@ -120,25 +120,18 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 		
 		gravar: function (){
 			
-			var listaChamadaEncalheAntecipada ="";
+			var listaChamadaEncalheAntecipada = null;
 			
-			var dataRecolhimento = $("#dataAntecipacao",this.workspace).val();
-			
-			var paramProduto = "&codigoProduto="+chamdaEncalheAnteipadaController.getHiddenProduto();
-			var paramEdicao = "&numeroEdicao=" +chamdaEncalheAnteipadaController.getHiddenNumeroEdicao();
-			var paramDataRecolhimento = "dataRecolhimento=" +dataRecolhimento;
-			var paramDataProgramada = "&dataProgramada=" + $("#dataProgramada").val();
+			var params = {'codigoProduto':chamdaEncalheAnteipadaController.getHiddenProduto(),
+				'numeroEdicao':chamdaEncalheAnteipadaController.getHiddenNumeroEdicao(),
+				'dataRecolhimento':$("#dataAntecipacao",this.workspace).val(),
+				'dataProgramada':$("#dataProgramada").val()};
 			
 			if(chamdaEncalheAnteipadaController.tipoPesquisaGridCota == chamdaEncalheAnteipadaController.tipoPesquisaSelecionado){
 				
-				listaChamadaEncalheAntecipada = chamdaEncalheAnteipadaController.obterParametrosGrid(chamdaEncalheAnteipadaController.nameGridPesquisaCota);
+				params = serializeArrayToPost('listaChamadaEncalheAntecipada', chamdaEncalheAnteipadaController.obterParametrosGrid(chamdaEncalheAnteipadaController.nameGridPesquisaCota),params);
 				
-				$.postJSON(contextPath + "/devolucao/chamadaEncalheAntecipada/gravarCotasPesquisa",
-						 listaChamadaEncalheAntecipada 
-						 + paramDataRecolhimento
-						 + paramProduto
-						 + paramEdicao
-						 + paramDataProgramada, 
+				$.postJSON(contextPath + "/devolucao/chamadaEncalheAntecipada/gravarCotasPesquisa",params, 
 						 function (result){
 					 
 							 chamdaEncalheAnteipadaController.montarGridPesquisaCotas();
@@ -158,17 +151,13 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 				
 				if(typeof checkTodos == "undefined" || !checkTodos == 'checked'){
 					
-					listaChamadaEncalheAntecipada  = chamdaEncalheAnteipadaController.obterParametrosGrid(chamdaEncalheAnteipadaController.nameGrid);
+					params = serializeArrayToPost('listaChamadaEncalheAntecipada', chamdaEncalheAnteipadaController.obterParametrosGrid(chamdaEncalheAnteipadaController.nameGrid),params);
 					checkTodos="";
 				}
+				params['gravarTodos'] = checkTodos;
 			
 				$.postJSON(contextPath + "/devolucao/chamadaEncalheAntecipada/gravarCotas",
-						listaChamadaEncalheAntecipada 
-						+ paramDataRecolhimento
-						+ paramProduto
-						+ paramEdicao
-						+ paramDataProgramada
-						+ "&gravarTodos=" + checkTodos , 
+						params , 
 						function (result){
 					
 							chamdaEncalheAnteipadaController.pesquisarCotasPorProduto();
@@ -658,7 +647,7 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 			
 			var linhasDaGrid = $('#'+grid+' tr',this.workspace);
 			
-			var listaChamadaEncalheAntecipada = "";
+			var listaChamadaEncalheAntecipada = new Array();
 			
 			var groupName = (chamdaEncalheAnteipadaController.nameGridPesquisaCota == grid)
 							? chamdaEncalheAnteipadaController.groupNameCheckGridCota
@@ -691,23 +680,16 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 					return true;
 				}
 				
-				var cotaSelecionada = 'listaChamadaEncalheAntecipada[' + index + '].codigoProduto=' + chamdaEncalheAnteipadaController.getHiddenProduto() + '&';
-
-				cotaSelecionada += 'listaChamadaEncalheAntecipada[' + index + '].numeroEdicao=' + chamdaEncalheAnteipadaController.getHiddenNumeroEdicao() + '&';
-
-				cotaSelecionada += 'listaChamadaEncalheAntecipada[' + index + '].numeroCota=' + codigoCota  + '&';
-				
-				cotaSelecionada += 'listaChamadaEncalheAntecipada[' + index + '].nomeCota=' + nomeCota  + '&';
-				
-				cotaSelecionada += 'listaChamadaEncalheAntecipada[' + index + '].id=' + id  + '&';
-				
-				cotaSelecionada += 'listaChamadaEncalheAntecipada[' + index + '].qntExemplares =' + qntExemplares  + '&';
-				
-				cotaSelecionada += 'listaChamadaEncalheAntecipada[' + index + '].codigoChamdaEncalhe =' + codigoChamdaEncalhe  + '&';
-				
-				cotaSelecionada += 'listaChamadaEncalheAntecipada[' + index + '].idLancamento =' + idLancamento  + '&';
+				var cotaSelecionada = {'codigoProduto':chamdaEncalheAnteipadaController.getHiddenProduto(),
+						'numeroEdicao':chamdaEncalheAnteipadaController.getHiddenNumeroEdicao(),
+						'numeroCota=':codigoCota,
+						'nomeCota':nomeCota,
+						'id':id,
+						'qntExemplares':qntExemplares,
+						'codigoChamdaEncalhe':codigoChamdaEncalhe,
+						'idLancamento':idLancamento};
 			
-				listaChamadaEncalheAntecipada = (listaChamadaEncalheAntecipada + cotaSelecionada);
+				listaChamadaEncalheAntecipada.push(cotaSelecionada);
 				
 			});
 			
@@ -745,7 +727,8 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 					return;
 				}
 				
-				var listaChamadaEncalheAntecipada = chamdaEncalheAnteipadaController.obterParametrosGrid(chamdaEncalheAnteipadaController.nameGridPesquisaCota);
+				var listaChamadaEncalheAntecipada = serializeArrayToPost('listaChamadaEncalheAntecipada', chamdaEncalheAnteipadaController.obterParametrosGrid(chamdaEncalheAnteipadaController.nameGridPesquisaCota));
+				
 				
 				$.postJSON(contextPath + "/devolucao/chamadaEncalheAntecipada/validarCotasPesquisa",
 						 listaChamadaEncalheAntecipada, function (result){
@@ -827,20 +810,15 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 		
 		cancelarProgramacaoAntecipacaoEncalhe:function(){
 			
-			var listaChamadaEncalheAntecipada ="";
 
-			var paramProduto = "&codigoProduto="+chamdaEncalheAnteipadaController.getHiddenProduto();
-			var paramEdicao = "&numeroEdicao=" +chamdaEncalheAnteipadaController.getHiddenNumeroEdicao();
-			
+			var params = {codigoProduto:chamdaEncalheAnteipadaController.getHiddenProduto(),
+					numeroEdicao:chamdaEncalheAnteipadaController.getHiddenNumeroEdicao()};
 
-			if(chamdaEncalheAnteipadaController.tipoPesquisaGridCota == chamdaEncalheAnteipadaController.tipoPesquisaSelecionado){
-				
-				listaChamadaEncalheAntecipada = chamdaEncalheAnteipadaController.obterParametrosGrid(chamdaEncalheAnteipadaController.nameGridPesquisaCota);
+			if(chamdaEncalheAnteipadaController.tipoPesquisaGridCota == chamdaEncalheAnteipadaController.tipoPesquisaSelecionado){				
+				params = serializeArrayToPost('listaChamadaEncalheAntecipada', chamdaEncalheAnteipadaController.obterParametrosGrid(chamdaEncalheAnteipadaController.nameGridPesquisaCota), params);
 				
 				$.postJSON(contextPath + "/devolucao/chamadaEncalheAntecipada/cancelarChamdaEncalheCotasPesquisa",
-						listaChamadaEncalheAntecipada 
-						+ paramProduto
-						+ paramEdicao,
+						params,
 						function (result){
 					 
 							 chamdaEncalheAnteipadaController.montarGridPesquisaCotas();
@@ -860,15 +838,14 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 				
 				if(typeof checkTodos == "undefined" || !checkTodos == 'checked'){
 					
-					listaChamadaEncalheAntecipada  = chamdaEncalheAnteipadaController.obterParametrosGrid(chamdaEncalheAnteipadaController.nameGrid);
+					params = serializeArrayToPost('listaChamadaEncalheAntecipada', chamdaEncalheAnteipadaController.obterParametrosGrid(chamdaEncalheAnteipadaController.nameGrid), params);
+					
 					checkTodos="";
 				}
+				params['cancelarTodos']=checkTodos;
 				
 				$.postJSON(contextPath + "/devolucao/chamadaEncalheAntecipada/cancelarChamdaEncalheCotas",
-						listaChamadaEncalheAntecipada 
-						+ paramProduto
-						+ paramEdicao
-						+ "&cancelarTodos=" + checkTodos  , 
+						params, 
 						function (result){
 					
 							chamdaEncalheAnteipadaController.pesquisarCotasPorProduto();
@@ -887,25 +864,19 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 		
 		reprogramarAntecipacaoEncalhe:function(){
 			
-			var listaChamadaEncalheAntecipada ="";
 			
-			var dataRecolhimento = $("#dataAntecipacao",this.workspace).val();
 			
-			var paramProduto = "&codigoProduto="+chamdaEncalheAnteipadaController.getHiddenProduto();
-			var paramEdicao = "&numeroEdicao=" +chamdaEncalheAnteipadaController.getHiddenNumeroEdicao();
-			var paramDataRecolhimento = "dataRecolhimento=" +dataRecolhimento;
-			var paramDataProgramada = "&dataProgramada=" + $("#dataProgramada",this.workspace).val();
+			var params ={'codigoProduto':chamdaEncalheAnteipadaController.getHiddenProduto(),
+					'numeroEdicao':chamdaEncalheAnteipadaController.getHiddenNumeroEdicao(),
+					'dataRecolhimento':$("#dataAntecipacao",this.workspace).val(),
+					'dataProgramada': $("#dataProgramada",this.workspace).val()};
 			
 			if(chamdaEncalheAnteipadaController.tipoPesquisaGridCota == chamdaEncalheAnteipadaController.tipoPesquisaSelecionado){
 				
-				listaChamadaEncalheAntecipada = chamdaEncalheAnteipadaController.obterParametrosGrid(chamdaEncalheAnteipadaController.nameGridPesquisaCota);
-				
+				params = serializeArrayToPost('listaChamadaEncalheAntecipada',chamdaEncalheAnteipadaController.obterParametrosGrid(chamdaEncalheAnteipadaController.nameGridPesquisaCota),params);
+								
 				$.postJSON(contextPath + "/devolucao/chamadaEncalheAntecipada/reprogramarCotasPesquisa",
-						 listaChamadaEncalheAntecipada 
-						 + paramDataRecolhimento
-						 + paramProduto
-						 + paramEdicao
-						 + paramDataProgramada, 
+						params, 
 						 function (result){
 					 
 							 chamdaEncalheAnteipadaController.montarGridPesquisaCotas();
@@ -924,18 +895,14 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 				var checkTodos  = $("#sel",this.workspace).attr('checked');
 				
 				if(typeof checkTodos == "undefined" || !checkTodos == 'checked'){
+					params = serializeArrayToPost('listaChamadaEncalheAntecipada',chamdaEncalheAnteipadaController.obterParametrosGrid(chamdaEncalheAnteipadaController.nameGrid),params);
 					
-					listaChamadaEncalheAntecipada  = chamdaEncalheAnteipadaController.obterParametrosGrid(chamdaEncalheAnteipadaController.nameGrid);
 					checkTodos="";
 				}
-			
+				
+				params['cancelarTodos']=checkTodos;
 				$.postJSON(contextPath + "/devolucao/chamadaEncalheAntecipada/reprogramarCotas",
-						listaChamadaEncalheAntecipada 
-						+ paramDataRecolhimento
-						+ paramProduto
-						+ paramEdicao
-						+ paramDataProgramada
-						+ "&gravarTodos=" + checkTodos , 
+						params, 
 						function (result){
 							chamdaEncalheAnteipadaController.pesquisarCotasPorProduto();
 							chamdaEncalheAnteipadaController.zerarTotais();

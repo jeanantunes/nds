@@ -166,7 +166,7 @@ var vendaProdutoController = $.extend(true, {
 	
 	buscarNomeProduto : function(){
 		if ($("#codigo", vendaProdutoController.workspace).val().length > 0){
-			var data = "codigoProduto=" + $("#codigo", vendaProdutoController.workspace).val();
+			var data = {codigoProduto:$("#codigo", vendaProdutoController.workspace).val()};
 			$.postJSON(contextPath + "/lancamento/furoProduto/buscarNomeProduto", data,
 				function(result){
 					if (result && result.string != ""){
@@ -185,7 +185,7 @@ var vendaProdutoController = $.extend(true, {
 		var produto = $("#produto", vendaProdutoController.workspace).val();
 		
 		if (produto && produto.length > 0){
-			$.postJSON(contextPath + "/lancamento/furoProduto/pesquisarPorNomeProduto", "nomeProduto=" + produto, vendaProdutoController.exibirAutoComplete);
+			$.postJSON(contextPath + "/lancamento/furoProduto/pesquisarPorNomeProduto", {nomeProduto:produto}, vendaProdutoController.exibirAutoComplete);
 		}
 	},
 	

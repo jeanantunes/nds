@@ -143,7 +143,7 @@ var romaneiosController = $.extend(true, {
 		if (data){
 		
 			$.postJSON(contextPath + "/romaneio/carregarProdutosDataLancamento",
-				"data=" + data,
+				{data:data},
 				function(result) {
 					
 					if (result.mensagens) {
