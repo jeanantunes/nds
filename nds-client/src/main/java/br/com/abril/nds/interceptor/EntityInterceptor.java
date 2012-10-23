@@ -55,8 +55,6 @@ public class EntityInterceptor extends EmptyInterceptor {
 
 		this.validarAndamnetoFechamentoDiario();
 		
-//		this.removerMascaraCNPJ(entity);
-		
 		Object user = SecurityContextHolder.getContext().getAuthentication().getPrincipal(); 
 
 		AuditoriaDTO auditoriaDTO = AuditoriaUtil.generateAuditoriaDTO(
@@ -92,7 +90,7 @@ public class EntityInterceptor extends EmptyInterceptor {
 		
 		Object user = SecurityContextHolder.getContext().getAuthentication().getPrincipal(); 
 		
-		Object oldEntity = this.getFuckingNewSession().get(entity.getClass(), id);
+		Object oldEntity = this.getNewSession().get(entity.getClass(), id);
 		
 		AuditoriaDTO auditoriaDTO = AuditoriaUtil.generateAuditoriaDTO(
 			entity, oldEntity, entity.getClass().getSimpleName(), Thread.currentThread(), user, TipoOperacaoSQL.UPDATE
@@ -168,7 +166,7 @@ public class EntityInterceptor extends EmptyInterceptor {
 		return this.session;
 	}
 
-	private Session getFuckingNewSession() {
+	private Session getNewSession() {
 
 		Session session = getSessionFactory().openSession();
 
@@ -192,13 +190,4 @@ public class EntityInterceptor extends EmptyInterceptor {
 			throw new RuntimeException("Fechamento diario em andamento! Por favor aguarde.");
 		}
 	}
-	
-	private void removerMascaraCNPJ(Object entity) {
-		
-		if(entity instanceof PessoaJuridica){
-			PessoaJuridica pessoaJuridica = (PessoaJuridica) entity;
-			pessoaJuridica.removeMaskCnpj();
-		}
-	}
-	
 }
