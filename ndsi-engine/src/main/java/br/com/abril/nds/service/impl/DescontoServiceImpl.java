@@ -832,6 +832,6 @@ public class DescontoServiceImpl implements DescontoService {
 			desc = desc.add(dto.getDesconto());
 		}
 		
-		return desc.divide(new BigDecimal(descontos.size()));
+		return desc.compareTo(BigDecimal.ZERO) > 0 ? desc.divide(new BigDecimal(descontos.size())) : BigDecimal.ZERO;
 	}
 }
