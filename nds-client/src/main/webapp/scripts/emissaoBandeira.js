@@ -121,8 +121,41 @@ var emissaoBandeiraController = $.extend(true, {
 		
 		return false;
 
-	}
+	},
+	
+	bandeiraManual : function() {
+		$('#workspace').tabs('addTab', "Bandeira Manual", contextPath + "/devolucao/emissaoBandeira/bandeiraManual");
+	},
+	imprimirBandeiraManual:function(){
+	
+		
+		$( "#dialog-pallets-bandeira-manual", this.workspace).dialog({
+			resizable: false,
+			height:'auto',
+			width:'auto',
+			modal: true,
+			buttons: {
+				"Confirmar": function() {
+					$( this ).dialog( "close" );
+					window.location = contextPath + "/devolucao/emissaoBandeira/imprimirBandeiraManual?"+
+					"semana=" + $.trim( $("#semanaBandeiraManual").val())
+					+ "&numeroPallets=" + $.trim( $("#numeroPalletsBandeiraManual").val())
+					+"&tipoOperacao="+$.trim( $("#tipoOperacaoBandeiraManual").val())
+					+"&codigoPracaProcon="+$.trim( $("#codigoPracaProconBandeiraManual").val())
+					+"&praca="+$.trim( $("#pracaBandeiraManual").val())
+					+"&destino="+$.trim( $("#destinoBandeiraManual").val())
+					+"&canal="+$.trim( $("#canalBandeiraManual").val());
 
+					
+				},
+				"Cancelar": function() {
+					$( this ).dialog( "close" );
+				}
+			}
+		});
+		return false;
+
+	},
 	
 }, BaseController);
 
