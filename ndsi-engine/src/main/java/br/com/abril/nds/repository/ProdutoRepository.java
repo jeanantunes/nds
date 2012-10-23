@@ -60,4 +60,7 @@ public interface ProdutoRepository extends Repository<Produto, Long> {
 	Produto obterProdutoPorNomeProdutoOuCodigo(String nome, String codigo);
 	
 	GrupoProduto obterGrupoProduto(String codigoProduto);
+	
+	List<Produto> buscarProdutosOrganizadosNome();
+	
 }
