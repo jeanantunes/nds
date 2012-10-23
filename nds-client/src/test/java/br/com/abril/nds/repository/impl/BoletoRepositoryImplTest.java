@@ -3,6 +3,7 @@ package br.com.abril.nds.repository.impl;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import br.com.abril.nds.dto.DetalheBaixaBoletoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaBoletosCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroDetalheBaixaBoletoDTO;
+import br.com.abril.nds.dto.filtro.FiltroConsultaBoletosCotaDTO.OrdenacaoColunaBoletos;
 import br.com.abril.nds.dto.filtro.FiltroDetalheBaixaBoletoDTO.OrdenacaoColunaDetalheBaixaBoleto;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.StatusCobranca;
@@ -44,6 +46,7 @@ import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.BoletoRepository;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.vo.PaginacaoVO;
+import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 
 public class BoletoRepositoryImplTest extends AbstractRepositoryImplTest  {
@@ -213,7 +216,7 @@ public class BoletoRepositoryImplTest extends AbstractRepositoryImplTest  {
 	}
 	
 	@Test
-	public void obterBoletosPorNumeroDaCota() {
+	public void obterBoletosPorCota() {
 		
 		FiltroConsultaBoletosCotaDTO filtro = new FiltroConsultaBoletosCotaDTO(NUMERO_COTA,
                 															   DT_VENCTO_DE,
@@ -236,6 +239,125 @@ public class BoletoRepositoryImplTest extends AbstractRepositoryImplTest  {
 		}
 	}
 
+	@Test
+	public void obterBoletosPorCotaDatadeVencimentoDeTest() {
+		FiltroConsultaBoletosCotaDTO filtro = new FiltroConsultaBoletosCotaDTO();
+		filtro.setDataVencimentoDe(Fixture.criarData(18, Calendar.OCTOBER, 2011));
+		
+		List<Boleto> listaBoletos= boletoRepository.obterBoletosPorCota(filtro);
+		
+		Assert.assertNotNull(listaBoletos);
+		
+	}
+	
+	@Test
+	public void obterBoletosPorCotaDatadeVencimentoAteTest() {
+		FiltroConsultaBoletosCotaDTO filtro = new FiltroConsultaBoletosCotaDTO();
+		filtro.setDataVencimentoAte(Fixture.criarData(28, Calendar.OCTOBER, 2011));
+		
+		List<Boleto> listaBoletos= boletoRepository.obterBoletosPorCota(filtro);
+		
+		Assert.assertNotNull(listaBoletos);
+		
+	}
+	
+	@Test
+	public void obterBoletosPorCotaStatusTest() {
+		FiltroConsultaBoletosCotaDTO filtro = new FiltroConsultaBoletosCotaDTO();
+		filtro.setStatus(StatusCobranca.PAGO);
+		
+		
+		List<Boleto> listaBoletos= boletoRepository.obterBoletosPorCota(filtro);
+		
+		Assert.assertNotNull(listaBoletos);
+		
+	}
+	
+	@Test
+	public void obterBoletosPorCotaOrdenacaoColunaNNumeroTest() {
+		FiltroConsultaBoletosCotaDTO filtro = new FiltroConsultaBoletosCotaDTO();
+		filtro.setOrdenacaoColuna(OrdenacaoColunaBoletos.NOSSO_NUMERO);
+		filtro.setPaginacao(new PaginacaoVO());
+		
+		List<Boleto> listaBoletos= boletoRepository.obterBoletosPorCota(filtro);
+		
+		Assert.assertNotNull(listaBoletos);
+		
+	}
+	
+	@Test
+	public void obterBoletosPorCotaOrdenacaoColunaDTEmissaoTest() {
+		FiltroConsultaBoletosCotaDTO filtro = new FiltroConsultaBoletosCotaDTO();
+		filtro.setOrdenacaoColuna(OrdenacaoColunaBoletos.DATA_EMISSAO);
+		filtro.setPaginacao(new PaginacaoVO());
+		
+		List<Boleto> listaBoletos= boletoRepository.obterBoletosPorCota(filtro);
+		
+		Assert.assertNotNull(listaBoletos);
+		
+	}
+	
+	@Test
+	public void obterBoletosPorCotaOrdenacaoColunaDTVencimentoTest() {
+		FiltroConsultaBoletosCotaDTO filtro = new FiltroConsultaBoletosCotaDTO();
+		filtro.setOrdenacaoColuna(OrdenacaoColunaBoletos.DATA_VENCIMENTO);
+		filtro.setPaginacao(new PaginacaoVO());
+		
+		List<Boleto> listaBoletos= boletoRepository.obterBoletosPorCota(filtro);
+		
+		Assert.assertNotNull(listaBoletos);
+		
+	}
+	
+	@Test
+	public void obterBoletosPorCotaOrdenacaoColunaDTPagamentoTest() {
+		FiltroConsultaBoletosCotaDTO filtro = new FiltroConsultaBoletosCotaDTO();
+		filtro.setOrdenacaoColuna(OrdenacaoColunaBoletos.DATA_PAGAMENTO);
+		filtro.setPaginacao(new PaginacaoVO());
+		
+		List<Boleto> listaBoletos= boletoRepository.obterBoletosPorCota(filtro);
+		
+		Assert.assertNotNull(listaBoletos);
+		
+	}
+	
+	@Test
+	public void obterBoletosPorCotaOrdenacaoColunaEncargosTest() {
+		FiltroConsultaBoletosCotaDTO filtro = new FiltroConsultaBoletosCotaDTO();
+		filtro.setOrdenacaoColuna(OrdenacaoColunaBoletos.ENCARGOS);
+		filtro.setPaginacao(new PaginacaoVO());
+		
+		List<Boleto> listaBoletos= boletoRepository.obterBoletosPorCota(filtro);
+		
+		Assert.assertNotNull(listaBoletos);
+		
+	}
+
+	@Test
+	public void obterBoletosPorCotaOrdenacaoColunaTPBaixaTest() {
+		FiltroConsultaBoletosCotaDTO filtro = new FiltroConsultaBoletosCotaDTO();
+		filtro.setOrdenacaoColuna(OrdenacaoColunaBoletos.TIPO_BAIXA);
+		filtro.setPaginacao(new PaginacaoVO());
+		
+		List<Boleto> listaBoletos= boletoRepository.obterBoletosPorCota(filtro);
+		
+		Assert.assertNotNull(listaBoletos);
+		
+	}
+	
+	@Test
+	public void obterBoletosPorCotaOrdenacaoColunaStatusCobrancaTest() {
+		FiltroConsultaBoletosCotaDTO filtro = new FiltroConsultaBoletosCotaDTO();
+		filtro.setOrdenacaoColuna(OrdenacaoColunaBoletos.STATUS_COBRANCA);
+		filtro.setPaginacao(new PaginacaoVO());
+		filtro.getPaginacao().setOrdenacao(Ordenacao.ASC);
+		
+		List<Boleto> listaBoletos= boletoRepository.obterBoletosPorCota(filtro);
+		
+		Assert.assertNotNull(listaBoletos);
+}
+	
+	
 	@Test
 	public void obterQuantidadeDeBoletosPorNumeroDaCota() {
 		
@@ -261,9 +383,24 @@ public class BoletoRepositoryImplTest extends AbstractRepositoryImplTest  {
 	}
 	
 	@Test
+	public void obterPorNossoNumeroDividaAcumulada() {
+		Boleto boleto = boletoRepository.obterPorNossoNumero("5", false);
+				
+		Assert.assertNotNull(boleto);	
+	}
+	
+	@Test
 	public void obterPorNossoNumeroCompleto() {
 		
 		Boleto boleto = boletoRepository.obterPorNossoNumeroCompleto("5", null);
+		
+		Assert.assertNotNull(boleto);	
+	}
+	
+	@Test
+	public void obterPorNossoNumeroCompletoDividaAcululadaTest() {
+		
+		Boleto boleto = boletoRepository.obterPorNossoNumeroCompleto("5", false);
 		
 		Assert.assertNotNull(boleto);	
 	}
@@ -389,6 +526,37 @@ public class BoletoRepositoryImplTest extends AbstractRepositoryImplTest  {
 	}
 	
 	@Test
+	public void obterBoletosPrevistosPaginacaoNulo() {
+
+		FiltroDetalheBaixaBoletoDTO filtro = new FiltroDetalheBaixaBoletoDTO();
+
+		PaginacaoVO paginacaoVO = new PaginacaoVO(1, 3, "asc");
+
+		filtro.setData(dataAtual);
+		
+
+		List<DetalheBaixaBoletoDTO> boletosPrevistos =
+				this.boletoRepository.obterBoletosPrevistos(filtro);
+		
+		Assert.assertNotNull(boletosPrevistos);
+		Assert.assertEquals(3, boletosPrevistos.size());
+		
+		DetalheBaixaBoletoDTO detalheBaixaBoleto = boletosPrevistos.get(0);
+
+		DetalheBaixaBoletoDTO detalheBaixaBoleto1 = boletosPrevistos.get(1);
+		
+		DetalheBaixaBoletoDTO detalheBaixaBoleto2 = boletosPrevistos.get(2);
+		
+		boolean ordenacaoNossoNumero = detalheBaixaBoleto.getNossoNumero().compareTo(detalheBaixaBoleto1.getNossoNumero()) < 0;
+		
+		Assert.assertTrue(ordenacaoNossoNumero);
+		
+		ordenacaoNossoNumero = detalheBaixaBoleto1.getNossoNumero().compareTo(detalheBaixaBoleto2.getNossoNumero()) < 0;
+		
+		Assert.assertTrue(ordenacaoNossoNumero);
+	}
+	
+	@Test
 	public void obterBoletosBaixados() {
 		
         FiltroDetalheBaixaBoletoDTO filtro = new FiltroDetalheBaixaBoletoDTO();
@@ -398,6 +566,22 @@ public class BoletoRepositoryImplTest extends AbstractRepositoryImplTest  {
 		filtro.setData(dataAtual);
 		filtro.setPaginacao(paginacaoVO);
 		filtro.setOrdenacaoColuna(OrdenacaoColunaDetalheBaixaBoleto.DATA_VENCIMENTO);
+		
+		List<DetalheBaixaBoletoDTO> boletosBaixados =
+			this.boletoRepository.obterBoletosBaixados(filtro);
+		
+		Assert.assertNotNull(boletosBaixados);
+	}
+	
+	@Test
+	public void obterBoletosBaixadosPaginacaoNulo() {
+		
+        FiltroDetalheBaixaBoletoDTO filtro = new FiltroDetalheBaixaBoletoDTO();
+		
+		PaginacaoVO paginacaoVO = new PaginacaoVO(1, 1, "desc");
+
+		filtro.setData(dataAtual);
+		
 		
 		List<DetalheBaixaBoletoDTO> boletosBaixados =
 			this.boletoRepository.obterBoletosBaixados(filtro);
@@ -424,6 +608,24 @@ public class BoletoRepositoryImplTest extends AbstractRepositoryImplTest  {
 	}
 	
 	@Test
+	public void obterBoletosRejeitadosPaginacaoNulo() {
+
+		FiltroDetalheBaixaBoletoDTO filtro = new FiltroDetalheBaixaBoletoDTO();
+		
+		PaginacaoVO paginacaoVO = new PaginacaoVO(1, 1, null);
+
+		filtro.setData(dataAtual);
+		
+		
+		List<DetalheBaixaBoletoDTO> boletosRejeitados =
+				this.boletoRepository.obterBoletosRejeitados(filtro);
+		
+		Assert.assertNotNull(boletosRejeitados);
+		Assert.assertEquals(1, boletosRejeitados.size());
+	}
+	
+	
+	@Test
 	public void obterBoletosBaixadosComDivergencia() {
 		
 		FiltroDetalheBaixaBoletoDTO filtro = new FiltroDetalheBaixaBoletoDTO();
@@ -433,6 +635,29 @@ public class BoletoRepositoryImplTest extends AbstractRepositoryImplTest  {
 		filtro.setData(dataAtual);
 		filtro.setPaginacao(paginacaoVO);
 		filtro.setOrdenacaoColuna(OrdenacaoColunaDetalheBaixaBoleto.MOTIVO_DIVERGENCIA);
+		
+		List<DetalheBaixaBoletoDTO> boletosDivergentes =
+				this.boletoRepository.obterBoletosBaixadosComDivergencia(filtro);
+		
+		Assert.assertNotNull(boletosDivergentes);
+		Assert.assertEquals(1, boletosDivergentes.size());
+		
+		DetalheBaixaBoletoDTO resultado = boletosDivergentes.get(0);
+		
+		BigDecimal valorDiferencaCorreto = resultado.getValorBoleto().subtract(resultado.getValorPago());
+		
+		Assert.assertEquals(valorDiferencaCorreto, resultado.getValorDiferenca());
+	}
+	
+	@Test
+	public void obterBoletosBaixadosComDivergenciaPaginacaoNulo() {
+		
+		FiltroDetalheBaixaBoletoDTO filtro = new FiltroDetalheBaixaBoletoDTO();
+		
+		PaginacaoVO paginacaoVO = new PaginacaoVO(1, 1, "desc");
+
+		filtro.setData(dataAtual);
+		
 		
 		List<DetalheBaixaBoletoDTO> boletosDivergentes =
 				this.boletoRepository.obterBoletosBaixadosComDivergencia(filtro);
@@ -466,6 +691,24 @@ public class BoletoRepositoryImplTest extends AbstractRepositoryImplTest  {
 	}
 	
 	@Test
+	public void obterBoletosInadimplentesPaginacaoNulo() {
+		
+        FiltroDetalheBaixaBoletoDTO filtro = new FiltroDetalheBaixaBoletoDTO();
+		
+		PaginacaoVO paginacaoVO = new PaginacaoVO(1, 1, "desc");
+
+		filtro.setData(dataAtual);
+		filtro.setDataVencimento(dataAtual);
+		
+		
+		List<DetalheBaixaBoletoDTO> boletosInadimplentes =
+			this.boletoRepository.obterBoletosInadimplentes(filtro);
+		
+		Assert.assertNotNull(boletosInadimplentes);
+	}
+	
+	
+	@Test
 	public void obterTotalBancario() {
 
 		FiltroDetalheBaixaBoletoDTO filtro = new FiltroDetalheBaixaBoletoDTO();
@@ -482,5 +725,23 @@ public class BoletoRepositoryImplTest extends AbstractRepositoryImplTest  {
 		Assert.assertNotNull(detalheValorTotalBancario);
 		Assert.assertEquals(2, detalheValorTotalBancario.size());
 	}
+	
+	@Test
+	public void obterTotalBancarioPaginacaoNulo() {
+
+		FiltroDetalheBaixaBoletoDTO filtro = new FiltroDetalheBaixaBoletoDTO();
+		
+		PaginacaoVO paginacaoVO = new PaginacaoVO(1, 10, null);
+
+		filtro.setData(dataAtual);
+		
+		
+		List<DetalheBaixaBoletoDTO> detalheValorTotalBancario =
+			this.boletoRepository.obterTotalBancario(filtro);
+		
+		Assert.assertNotNull(detalheValorTotalBancario);
+		Assert.assertEquals(2, detalheValorTotalBancario.size());
+	}
+	
 	
 }

@@ -228,6 +228,12 @@ public class FecharDiaController {
 		BigDecimal totalEstoqueLogico = this.resumoSuplementarFecharDiaService.obterValorEstoqueLogico(distribuidor.getDataOperacao());
 		listaDeSuplementares.add(totalEstoqueLogico);
 		
+		BigDecimal totalTransferencia = this.resumoSuplementarFecharDiaService.obterValorTransferencia(distribuidor.getDataOperacao());
+		listaDeSuplementares.add(totalTransferencia);
+		
+		BigDecimal totalVenda = this.resumoSuplementarFecharDiaService.obterValorVenda(distribuidor.getDataOperacao());
+		listaDeSuplementares.add(totalVenda);
+		
 		result.use(Results.json()).from(listaDeSuplementares, "result").recursive().serialize();
 	}
 	

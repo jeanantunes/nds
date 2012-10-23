@@ -249,22 +249,22 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<ProdutoEdicaoDTO> pesquisarEdicoes(String codigoProduto, String nomeComercial,
+	public List<ProdutoEdicaoDTO> pesquisarEdicoes(String codigoProduto, String nome,
 			Intervalo<Date> dataLancamento, Intervalo<BigDecimal> preco , StatusLancamento statusLancamento,
 			String codigoDeBarras, boolean brinde,
 			String sortorder, String sortname, int page, int maxResults) {
 		
 		final int initialResult = ((page * maxResults) - maxResults);
-		return this.produtoEdicaoRepository.pesquisarEdicoes(codigoProduto, nomeComercial, dataLancamento, preco, statusLancamento, codigoDeBarras, brinde, sortorder, sortname, initialResult, maxResults);
+		return this.produtoEdicaoRepository.pesquisarEdicoes(codigoProduto, nome, dataLancamento, preco, statusLancamento, codigoDeBarras, brinde, sortorder, sortname, initialResult, maxResults);
 	}
 	
 	@Override
 	@Transactional(readOnly = true)
-	public Long countPesquisarEdicoes(String codigoProduto, String nomeComercial,
+	public Long countPesquisarEdicoes(String codigoProduto, String nome,
 			Intervalo<Date> dataLancamento, Intervalo<BigDecimal> preco , StatusLancamento statusLancamento,
 			String codigoDeBarras, boolean brinde) {
 		
-		return this.produtoEdicaoRepository.countPesquisarEdicoes(codigoProduto, nomeComercial, dataLancamento, preco, statusLancamento, codigoDeBarras, brinde);
+		return this.produtoEdicaoRepository.countPesquisarEdicoes(codigoProduto, nome, dataLancamento, preco, statusLancamento, codigoDeBarras, brinde);
 	}
 	
 	@Override

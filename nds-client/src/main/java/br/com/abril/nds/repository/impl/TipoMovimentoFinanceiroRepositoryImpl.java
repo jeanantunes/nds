@@ -27,4 +27,15 @@ public class TipoMovimentoFinanceiroRepositoryImpl extends AbstractRepositoryMod
 		
 		return (TipoMovimentoFinanceiro) criteria.uniqueResult();
 	}
+
+	@Override
+	public TipoMovimentoFinanceiro buscarPorDescricao(String descricao) {
+		Criteria criteria = super.getSession().createCriteria(TipoMovimentoFinanceiro.class);
+		
+		criteria.add(Restrictions.eq("descricao", descricao ) );
+		
+		criteria.setMaxResults(1);
+		
+		return (TipoMovimentoFinanceiro) criteria.uniqueResult();
+	}
 }

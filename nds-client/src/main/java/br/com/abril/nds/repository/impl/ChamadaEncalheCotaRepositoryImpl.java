@@ -15,180 +15,168 @@ import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.repository.ChamadaEncalheCotaRepository;
 
 @Repository
-public class ChamadaEncalheCotaRepositoryImpl extends AbstractRepositoryModel<ChamadaEncalheCota, Long> implements ChamadaEncalheCotaRepository {
+public class ChamadaEncalheCotaRepositoryImpl extends
+		AbstractRepositoryModel<ChamadaEncalheCota, Long> implements
+		ChamadaEncalheCotaRepository {
 
 	public ChamadaEncalheCotaRepositoryImpl() {
 		super(ChamadaEncalheCota.class);
 	}
 
-	
 	@SuppressWarnings("unchecked")
-	public List<Long> obterListaIdProdutoEdicaoChamaEncalheCota (
-			Integer numeroCota, 
-			Date dataOperacao, 
-			boolean indPesquisaCEFutura, 
-			boolean conferido, 
-			boolean postergado) {
-		
+	public List<Long> obterListaIdProdutoEdicaoChamaEncalheCota(
+			Integer numeroCota, Date dataOperacao, boolean indPesquisaCEFutura,
+			boolean conferido, boolean postergado) {
+
 		StringBuilder hql = new StringBuilder();
-		
+
 		hql.append(" select chamadaEncalheCota.chamadaEncalhe.produtoEdicao.id ");
-		
+
 		hql.append(" from ChamadaEncalheCota chamadaEncalheCota ");
-		
+
 		hql.append(" where ");
-		
+
 		hql.append(" chamadaEncalheCota.cota.numeroCota = :numeroCota ");
-		
+
 		hql.append(" and chamadaEncalheCota.fechado = :conferido ");
 
 		hql.append(" and chamadaEncalheCota.postergado = :postergado ");
 
-		
-		if(indPesquisaCEFutura) {
+		if (indPesquisaCEFutura) {
 			hql.append(" and chamadaEncalheCota.chamadaEncalhe.dataRecolhimento >= :dataOperacao ");
 		} else {
 			hql.append(" and chamadaEncalheCota.chamadaEncalhe.dataRecolhimento = :dataOperacao ");
 		}
-		
+
 		Query query = this.getSession().createQuery(hql.toString());
-		
+
 		query.setParameter("numeroCota", numeroCota);
 
 		query.setParameter("conferido", conferido);
 
 		query.setParameter("postergado", postergado);
-		
+
 		query.setParameter("dataOperacao", dataOperacao);
-		
-		return  query.list();
-		
+
+		return query.list();
+
 	}
-	
-	public Long obterQtdListaChamaEncalheCota(
-			Integer numeroCota, 
-			Date dataOperacao, 
-			Long idProdutoEdicao, 
-			boolean indPesquisaCEFutura, 
-			boolean conferido,
-			boolean postergado) {
-		
+
+	public Long obterQtdListaChamaEncalheCota(Integer numeroCota,
+			Date dataOperacao, Long idProdutoEdicao,
+			boolean indPesquisaCEFutura, boolean conferido, boolean postergado) {
+
 		StringBuilder hql = new StringBuilder();
-		
+
 		hql.append(" select count(chamadaEncalheCota.id) ");
-		
+
 		hql.append(" from ChamadaEncalheCota chamadaEncalheCota ");
-		
+
 		hql.append(" where ");
-		
+
 		hql.append(" chamadaEncalheCota.cota.numeroCota = :numeroCota ");
-		
+
 		hql.append(" and chamadaEncalheCota.fechado = :conferido ");
 
 		hql.append(" and chamadaEncalheCota.postergado = :postergado ");
 
-		
-		if(indPesquisaCEFutura) {
+		if (indPesquisaCEFutura) {
 			hql.append(" and chamadaEncalheCota.chamadaEncalhe.dataRecolhimento >= :dataOperacao ");
 		} else {
 			hql.append(" and chamadaEncalheCota.chamadaEncalhe.dataRecolhimento = :dataOperacao ");
 		}
-		
-		if(idProdutoEdicao!=null) {
+
+		if (idProdutoEdicao != null) {
 			hql.append(" and chamadaEncalheCota.chamadaEncalhe.produtoEdicao.id = :idProdutoEdicao ");
 		}
-		
+
 		Query query = this.getSession().createQuery(hql.toString());
-		
+
 		query.setParameter("numeroCota", numeroCota);
-		
+
 		query.setParameter("conferido", conferido);
-		
+
 		query.setParameter("dataOperacao", dataOperacao);
-		
+
 		query.setParameter("postergado", postergado);
-		
-		
-		if(idProdutoEdicao!=null) {
+
+		if (idProdutoEdicao != null) {
 			query.setParameter("idProdutoEdicao", idProdutoEdicao);
 		}
-		
+
 		Long qtde = (Long) query.uniqueResult();
-		
+
 		return (qtde == null) ? 0 : qtde;
-		
+
 	}
 
 	@SuppressWarnings("unchecked")
 	public List<ChamadaEncalheCota> obterListaChamaEncalheCota(
-			Integer numeroCota, 
-			Date dataOperacao, 
-			Long idProdutoEdicao, 
-			boolean indPesquisaCEFutura, 
-			boolean conferido,
-			boolean postergado) {
-		
+			Integer numeroCota, Date dataOperacao, Long idProdutoEdicao,
+			boolean indPesquisaCEFutura, boolean conferido, boolean postergado) {
+
 		StringBuilder hql = new StringBuilder();
-		
+
 		hql.append(" select chamadaEncalheCota ");
-		
+
 		hql.append(" from ChamadaEncalheCota chamadaEncalheCota ");
-		
+
 		hql.append(" where ");
-		
+
 		hql.append(" chamadaEncalheCota.cota.numeroCota = :numeroCota ");
-		
+
 		hql.append(" and chamadaEncalheCota.fechado = :conferido ");
-		
+
 		hql.append(" and chamadaEncalheCota.postergado = :postergado ");
-		
-		if(indPesquisaCEFutura) {
+
+		if (indPesquisaCEFutura) {
 			hql.append(" and chamadaEncalheCota.chamadaEncalhe.dataRecolhimento >= :dataOperacao ");
 		} else {
 			hql.append(" and chamadaEncalheCota.chamadaEncalhe.dataRecolhimento = :dataOperacao ");
 		}
-		
-		if(idProdutoEdicao!=null) {
+
+		if (idProdutoEdicao != null) {
 			hql.append(" and chamadaEncalheCota.chamadaEncalhe.produtoEdicao.id = :idProdutoEdicao ");
 		}
-		
+
 		Query query = this.getSession().createQuery(hql.toString());
-		
+
 		query.setParameter("numeroCota", numeroCota);
-		
+
 		query.setParameter("conferido", conferido);
-		
+
 		query.setParameter("postergado", postergado);
-		
+
 		query.setParameter("dataOperacao", dataOperacao);
-		
-		if(idProdutoEdicao!=null) {
+
+		if (idProdutoEdicao != null) {
 			query.setParameter("idProdutoEdicao", idProdutoEdicao);
 		}
-		
+
 		return query.list();
-		
+
 	}
-	
-	public ChamadaEncalheCota buscarPorChamadaEncalheECota(Long idChamadaEncalhe,Long idCota){
-		
+
+	public ChamadaEncalheCota buscarPorChamadaEncalheECota(
+			Long idChamadaEncalhe, Long idCota) {
+
 		StringBuilder hql = new StringBuilder();
-		
+
 		hql.append(" select o from ChamadaEncalheCota o ")
-			.append(" WHERE o.cota.id =:idCota ")
-			.append(" AND o.chamadaEncalhe.id=:idChamadaEncalhe ");
-		
-		Query query  = getSession().createQuery(hql.toString());
+				.append(" WHERE o.cota.id =:idCota ")
+				.append(" AND o.chamadaEncalhe.id=:idChamadaEncalhe ");
+
+		Query query = getSession().createQuery(hql.toString());
 		query.setParameter("idChamadaEncalhe", idChamadaEncalhe);
 		query.setParameter("idCota", idCota);
-		
-		return (ChamadaEncalheCota)query.uniqueResult();
-		
+
+		return (ChamadaEncalheCota) query.uniqueResult();
+
 	}
-	
-	
+
 	@Override
-	public BigDecimal obterQntExemplaresComProgramacaoAntecipadaEncalheCota(FiltroChamadaAntecipadaEncalheDTO filtro) {
+	public BigDecimal obterQntExemplaresComProgramacaoAntecipadaEncalheCota(
+			FiltroChamadaAntecipadaEncalheDTO filtro) {
 
 		StringBuilder hql = new StringBuilder();
 
@@ -208,9 +196,10 @@ public class ChamadaEncalheCotaRepositoryImpl extends AbstractRepositoryModel<Ch
 
 		return (BigDecimal) query.uniqueResult();
 	}
-	
+
 	@Override
-	public Long obterQntCotasProgramadaParaAntecipacoEncalhe(FiltroChamadaAntecipadaEncalheDTO filtro) {
+	public Long obterQntCotasProgramadaParaAntecipacoEncalhe(
+			FiltroChamadaAntecipadaEncalheDTO filtro) {
 
 		StringBuilder hql = new StringBuilder();
 
@@ -227,22 +216,22 @@ public class ChamadaEncalheCotaRepositoryImpl extends AbstractRepositoryModel<Ch
 		}
 		return (Long) query.uniqueResult();
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	public List<ChamadaAntecipadaEncalheDTO> obterCotasProgramadaParaAntecipacoEncalhe(FiltroChamadaAntecipadaEncalheDTO filtro) {
-		
+	public List<ChamadaAntecipadaEncalheDTO> obterCotasProgramadaParaAntecipacoEncalhe(
+			FiltroChamadaAntecipadaEncalheDTO filtro) {
+
 		StringBuilder hql = new StringBuilder();
 
 		hql.append("SELECT new ")
-		.append(ChamadaAntecipadaEncalheDTO.class.getCanonicalName())
+				.append(ChamadaAntecipadaEncalheDTO.class.getCanonicalName())
 				.append(" (box.codigo, ")
 				.append(" box.nome, ")
 				.append(" cota.numeroCota, ")
 				.append(" chamadaEncalheCota.qtdePrevista,")
 				.append(" case when (pessoa.nome is not null) then ( pessoa.nome )")
 				.append(" when (pessoa.razaoSocial is not null) then ( pessoa.razaoSocial )")
-				.append(" else null end ,")
-				.append(" chamadaEncalheCota.id ")
+				.append(" else null end ,").append(" chamadaEncalheCota.id ")
 				.append(" ) ");
 
 		hql.append(getSqlFromEWhereCotasProgramadaParaAntecipacaoEncalhe(filtro));
@@ -250,7 +239,7 @@ public class ChamadaEncalheCotaRepositoryImpl extends AbstractRepositoryModel<Ch
 		hql.append(getOrderByCotasProgramadaParaAntecipacaoEncalhe(filtro));
 
 		Query query = this.getSession().createQuery(hql.toString());
-		
+
 		HashMap<String, Object> param = getParametrosCotasProgramadaParaAntecipacaoEncalhe(filtro);
 
 		for (String key : param.keySet()) {
@@ -272,15 +261,15 @@ public class ChamadaEncalheCotaRepositoryImpl extends AbstractRepositoryModel<Ch
 		return query.list();
 	}
 
-	private HashMap<String, Object> getParametrosCotasProgramadaParaAntecipacaoEncalhe(FiltroChamadaAntecipadaEncalheDTO filtro) {
-		
+	private HashMap<String, Object> getParametrosCotasProgramadaParaAntecipacaoEncalhe(
+			FiltroChamadaAntecipadaEncalheDTO filtro) {
+
 		HashMap<String, Object> param = new HashMap<String, Object>();
 
 		param.put("codigoProduto", filtro.getCodigoProduto());
 		param.put("numeroEdicao", filtro.getNumeroEdicao());
 		param.put("tipoChamadaEncalhe", TipoChamadaEncalhe.ANTECIPADA);
 		param.put("dataOperacao", filtro.getDataOperacao());
-		
 
 		if (filtro.getNumeroCota() != null) {
 			param.put("numeroCota", filtro.getNumeroCota());
@@ -293,28 +282,29 @@ public class ChamadaEncalheCotaRepositoryImpl extends AbstractRepositoryModel<Ch
 		if (filtro.getBox() != null) {
 			param.put("box", filtro.getBox());
 		}
-		
-		if(filtro.getRota()!= null){
-			param.put("rota",filtro.getRota());
+
+		if (filtro.getRota() != null) {
+			param.put("rota", filtro.getRota());
 		}
-		
-		if(filtro.getRoteiro()!= null){
-			param.put("roteiro",filtro.getRoteiro());
+
+		if (filtro.getRoteiro() != null) {
+			param.put("roteiro", filtro.getRoteiro());
 		}
-		
-		if(filtro.getCodMunicipio()!= null){
-			param.put("codigoCidadeIBGE",filtro.getCodMunicipio());
+
+		if (filtro.getCodMunicipio() != null) {
+			param.put("codigoCidadeIBGE", filtro.getCodMunicipio());
 		}
-		
-		if(filtro.getCodTipoPontoPDV()!= null){
+
+		if (filtro.getCodTipoPontoPDV() != null) {
 			param.put("codigoTipoPontoPDV", filtro.getCodTipoPontoPDV());
 		}
 
 		return param;
 	}
 
-	private Object getOrderByCotasProgramadaParaAntecipacaoEncalhe(FiltroChamadaAntecipadaEncalheDTO filtro) {
-		
+	private Object getOrderByCotasProgramadaParaAntecipacaoEncalhe(
+			FiltroChamadaAntecipadaEncalheDTO filtro) {
+
 		if (filtro == null || filtro.getOrdenacaoColuna() == null) {
 			return "";
 		}
@@ -360,9 +350,10 @@ public class ChamadaEncalheCotaRepositoryImpl extends AbstractRepositoryModel<Ch
 			.append(" JOIN cota.pessoa pessoa ")
 			.append(" JOIN cota.box box ")
 			.append(" JOIN cota.pdvs pdv ")
-			.append(" LEFT JOIN pdv.roteirizacao roteirizacao ")
-			.append(" LEFT JOIN roteirizacao.rota rota  ")
+			.append(" LEFT JOIN pdv.rotas rotaPdv  ")
+			.append(" LEFT JOIN rotaPdv.rota rota  ")
 			.append(" LEFT JOIN rota.roteiro roteiro ");
+
 			
 		if (filtro.getFornecedor() != null) {
 			hql.append(" JOIN produto.fornecedores fornecedor ");
@@ -415,16 +406,16 @@ public class ChamadaEncalheCotaRepositoryImpl extends AbstractRepositoryModel<Ch
 		
 		return hql;
 	}
-	
+
 	@Override
 	public Long obterQntChamadaEncalheCota(Long idChamadaEncalhe) {
-		
+
 		String hql = " select count(chamadaEncalheCota.id) from ChamadaEncalheCota chamadaEncalheCota where chamadaEncalheCota.chamadaEncalhe.id=:idChamada ";
-		
+
 		Query query = getSession().createQuery(hql);
-		
+
 		query.setParameter("idChamada", idChamadaEncalhe);
-		
+
 		return (Long) query.uniqueResult();
 	}
 }

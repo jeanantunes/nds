@@ -13,7 +13,7 @@ var produtoEdicaoController =$.extend(true,  {
 			if (codigoProduto && codigoProduto.length > 0) {
 
 				$.postJSON(contextPath + "/produto/pesquisarPorCodigoProduto",
-						"codigoProduto=" + codigoProduto,
+						{codigoProduto:codigoProduto},
 						function(result) { produtoEdicaoController.pesquisarPorCodigoSuccessCallBack(result, idProduto, successCallBack); },
 						function() { produtoEdicaoController.pesquisarPorCodigoErrorCallBack(idCodigo, errorCallBack); }, isFromModal);
 
@@ -38,7 +38,7 @@ var produtoEdicaoController =$.extend(true,  {
 			if (codigoProduto && codigoProduto.length > 0) {
 
 				$.postJSON(contextPath + "/produto/pesquisarPorCodigoProduto",
-						"codigoProduto=" + codigoProduto,
+						{codigoProduto:codigoProduto},
 						function(result) { produtoEdicaoController.pesquisarPorCodigoSuccessCallBack(result, idProduto, successCallBack, idCodigo, isFromModal); },
 						null, isFromModal);
 

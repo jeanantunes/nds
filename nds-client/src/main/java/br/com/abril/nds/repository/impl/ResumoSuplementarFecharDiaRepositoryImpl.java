@@ -18,27 +18,28 @@ public class ResumoSuplementarFecharDiaRepositoryImpl extends AbstractRepository
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append("SELECT SUM (");
-			hql.append(" ( ");
-				hql.append("  (SELECT me.qtde from TipoMovimento as tm ");       
-				hql.append(" WHERE tm.grupoMovimentoEstoque = :entradaSuplementarEnvioReparte");
-				hql.append(" AND me.dataCriacao = :dataOperacao)");
+		hql.append("SELECT ");
+				hql.append("( ");
+				hql.append(" coalesce( (SELECT me2.qtde from MovimentoEstoque as me2 ");       
+				hql.append(" JOIN me2.tipoMovimento as tm2 ");       
+				hql.append(" WHERE tm2.grupoMovimentoEstoque = :entradaSuplementarEnvioReparte");
+				hql.append(" AND me2.data = :dataOperacao), 0)");
 			hql.append(" + ");
-				hql.append("  (SELECT me.qtde from TipoMovimento as tm ");       
-				hql.append(" WHERE tm.grupoMovimentoEstoque = :suplementarCotaAusente");
-				hql.append(" AND me.dataCriacao = :dataOperacao)");
-			hql.append(" ) ");
-			hql.append(" - ");
-			hql.append(" (");
-				hql.append("  (SELECT me.qtde from TipoMovimento as tm ");       
-				hql.append(" WHERE tm.grupoMovimentoEstoque = :reparteCotaAusente");
-				hql.append(" AND me.dataCriacao = :dataOperacao)");
-			hql.append(" )");
-		hql.append(" ) * pe.precoVenda");
+				hql.append(" coalesce( (SELECT me2.qtde from MovimentoEstoque as me2");       
+				hql.append(" JOIN me2.tipoMovimento as tm2 ");       
+				hql.append(" WHERE tm2.grupoMovimentoEstoque = :suplementarCotaAusente");
+				hql.append(" AND me2.data = :dataOperacao),0) ");
+			hql.append(" - ");							
+				hql.append(" coalesce( (SELECT me2.qtde from MovimentoEstoque as me2");       
+				hql.append(" JOIN me2.tipoMovimento as tm2 ");       
+				hql.append(" WHERE tm2.grupoMovimentoEstoque = :reparteCotaAusente");
+				hql.append(" AND me2.data = :dataOperacao),0)");
+				hql.append(" ) ");
+		hql.append("  * pe.precoVenda");
 		hql.append(" FROM MovimentoEstoque as me ");
-		hql.append(" JOIN me.estoqueProduto as ep ");
-		hql.append(" JOIN ep.produtoEdicao as pe ");
-		hql.append(" WHERE me.dataCriacao = :dataOperacao");
+		hql.append(" JOIN me.produtoEdicao as pe ");		
+		hql.append(" WHERE me.data = :dataOperacao");
+		hql.append(" GROUP BY me.data");
 		
 		Query query = super.getSession().createQuery(hql.toString());
 		
@@ -48,10 +49,69 @@ public class ResumoSuplementarFecharDiaRepositoryImpl extends AbstractRepository
 		query.setParameter("suplementarCotaAusente", GrupoMovimentoEstoque.SUPLEMENTAR_COTA_AUSENTE);
 		query.setParameter("reparteCotaAusente", GrupoMovimentoEstoque.REPARTE_COTA_AUSENTE);
 		
+		BigDecimal total =  (BigDecimal) query.uniqueResult();
+		
+		return total != null ? total : BigDecimal.ZERO ;
+	}
+
+	@Override
+	public BigDecimal obterValorTransferencia(Date dataOperacao) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+			hql.append("SELECT ");
+			hql.append("( ");
+				hql.append(" coalesce( (SELECT me2.qtde from MovimentoEstoque as me2 ");       
+				hql.append(" JOIN me2.tipoMovimento as tm2 ");       
+				hql.append(" WHERE tm2.grupoMovimentoEstoque = :transferenciaEntradaSuplementar");
+				hql.append(" AND me2.data = :dataOperacao), 0)");
+			hql.append(" - ");
+				hql.append(" coalesce( (SELECT me2.qtde from MovimentoEstoque as me2");       
+				hql.append(" JOIN me2.tipoMovimento as tm2 ");       
+				hql.append(" WHERE tm2.grupoMovimentoEstoque = :suplementarCotaAusente");
+				hql.append(" AND me2.data = :dataOperacao),0) ");			
+			hql.append(" ) ");
+			hql.append("  * pe.precoVenda");
+			hql.append(" FROM MovimentoEstoque as me ");
+			hql.append(" JOIN me.produtoEdicao as pe ");		
+			hql.append(" WHERE me.data = :dataOperacao");
+			hql.append(" GROUP BY me.data");
+		
+
+		Query query = super.getSession().createQuery(hql.toString());
+		
+		query.setParameter("dataOperacao", dataOperacao);
+		
+		query.setParameter("transferenciaEntradaSuplementar", GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_SUPLEMENTAR );
+		query.setParameter("suplementarCotaAusente", GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_SUPLEMENTAR);
 		
 		BigDecimal total =  (BigDecimal) query.uniqueResult();
 		
 		return total != null ? total : BigDecimal.ZERO ;
+	}
+
+	@Override
+	public BigDecimal obterValorVenda(Date dataOperacao) {
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append("SELECT (me.qtde * pe.precoVenda) as venda  ");			
+		hql.append(" FROM MovimentoEstoque as me ");
+		hql.append(" JOIN me.tipoMovimento as tm "); 
+		hql.append(" JOIN me.produtoEdicao as pe ");		
+		hql.append(" WHERE me.data = :dataOperacao");
+		hql.append(" AND tm.grupoMovimentoEstoque = :vendaEncalheSuplementar");		
+		hql.append(" GROUP BY me.data");
+	
+
+	Query query = super.getSession().createQuery(hql.toString());
+	
+	query.setParameter("dataOperacao", dataOperacao);
+	
+	query.setParameter("vendaEncalheSuplementar", GrupoMovimentoEstoque.VENDA_ENCALHE_SUPLEMENTAR );
+	
+	BigDecimal total =  (BigDecimal) query.uniqueResult();
+	
+	return total != null ? total : BigDecimal.ZERO ;
 	}
 
 }

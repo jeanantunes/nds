@@ -158,11 +158,10 @@ public class ConsultaConsignadoCotaController {
 		
 	}
 	
-	
 	@Post
 	@Path("pesquisarConsignadoCota")
 	public void pesquisarConsignadoCota(FiltroConsultaConsignadoCotaDTO filtro, String sortorder, String sortname, int page, int rp){
-		
+	
 		cota = obterCota(filtro.getIdCota().intValue());
 		if(cota == null){
 			throw new ValidacaoException(TipoMensagem.WARNING, "Cota inesxistente.");

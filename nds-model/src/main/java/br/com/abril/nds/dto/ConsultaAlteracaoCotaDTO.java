@@ -31,20 +31,15 @@ public class ConsultaAlteracaoCotaDTO implements Serializable {
 	
 	private String box;
 
-	
-	public ConsultaAlteracaoCotaDTO(Long idCota, Integer numeroCota, String nomeRazaoSocial,
-			String nomeFornecedor, TipoDesconto tipoDesconto, Integer vencimento,
+	public ConsultaAlteracaoCotaDTO(){
+		
+	}
+	public ConsultaAlteracaoCotaDTO(Long idCota, Integer numeroCota, String nomeRazaoSocial, Integer vencimento,
 			BigDecimal financeiro, DescricaoTipoEntrega tipoEntrega, String box) {
 		super();
 		this.idCota = idCota;
 		this.numeroCota = numeroCota;
 		this.nomeRazaoSocial = nomeRazaoSocial;
-		this.nomeFornecedor = nomeFornecedor;
-		if(tipoDesconto!= null){
-			this.tipoDesconto = tipoDesconto.getDescricao();
-		} else {
-			this.tipoDesconto = "";
-		}	
 		this.vencimento = vencimento;
 		if(financeiro != null){
 			this.valorMinimo = financeiro.toString();
@@ -61,7 +56,16 @@ public class ConsultaAlteracaoCotaDTO implements Serializable {
 		
 		this.box = box;
 	}
-
+	
+	public ConsultaAlteracaoCotaDTO(Long idCota, String nomeFornecedor, String tipoDesconto){
+		this.idCota = idCota;
+		this.nomeFornecedor = nomeFornecedor;
+		if(tipoDesconto!= null){
+			this.tipoDesconto = tipoDesconto;
+		} else {
+			this.tipoDesconto = "";
+		}	
+	}
 	public Integer getNumeroCota() {
 		return numeroCota;
 	}
@@ -132,6 +136,31 @@ public class ConsultaAlteracaoCotaDTO implements Serializable {
 
 	public void setTipoEntrega(String tipoEntrega) {
 		this.tipoEntrega = tipoEntrega;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((idCota == null) ? 0 : idCota.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ConsultaAlteracaoCotaDTO other = (ConsultaAlteracaoCotaDTO) obj;
+		if (idCota == null) {
+			if (other.idCota != null)
+				return false;
+		} else if (!idCota.equals(other.idCota))
+			return false;
+		return true;
 	}
 
 	

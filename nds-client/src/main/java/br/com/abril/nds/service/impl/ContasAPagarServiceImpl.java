@@ -19,6 +19,7 @@ import br.com.abril.nds.dto.FlexiGridDTO;
 import br.com.abril.nds.dto.filtro.FiltroContasAPagarDTO;
 import br.com.abril.nds.repository.ContasAPagarRepository;
 import br.com.abril.nds.service.ContasAPagarService;
+import br.com.abril.nds.vo.PaginacaoVO;
 
 @Service
 public class ContasAPagarServiceImpl implements ContasAPagarService {
@@ -35,8 +36,21 @@ public class ContasAPagarServiceImpl implements ContasAPagarService {
 	@Transactional
 	@Override
 	public ContasAPagarGridPrincipalProdutoDTO pesquisarPorProduto(FiltroContasAPagarDTO filtro, String sortname, String sortorder, int rp, int page) {
-		// TODO Auto-generated method stub
-		return null;
+		
+		PaginacaoVO paginacao = new PaginacaoVO();
+		paginacao.setSortColumn(sortname);
+		paginacao.setSortOrder(sortorder);
+		paginacao.setPaginaAtual(page);
+		paginacao.setQtdResultadosPorPagina(rp);
+		
+		filtro.setPaginacaoVO(paginacao);
+		
+        ContasAPagarGridPrincipalProdutoDTO retorno = this.contasAPagarRepository.pesquisarTotaisPorProduto(filtro);
+
+		retorno.setGrid(this.contasAPagarRepository.pesquisarPorProduto(filtro));
+		retorno.setTotalGrid(this.contasAPagarRepository.pesquisarCountPorProduto(filtro).intValue());
+		
+		return retorno;
 	}
 
 	@Transactional

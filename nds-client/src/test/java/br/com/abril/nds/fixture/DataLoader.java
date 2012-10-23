@@ -303,6 +303,8 @@ public class DataLoader {
 	private static TipoMovimentoFinanceiro tipoMovimentoFinanceiroCredito;
 	private static TipoMovimentoFinanceiro tipoMovimentoFinanceiroDebito;
 	private static TipoMovimentoFinanceiro tipoMovimentoFinanceiroDebitoNA;
+	private static TipoMovimentoFinanceiro tipoMovimentoFinanceiroDebitoPendente;	
+	private static TipoMovimentoFinanceiro tipoMovimentoFinanceiroDebitoPostergado;		
 	private static TipoMovimentoFinanceiro tipoMovimentoFinanceiroDebitoFaturamento;
 	private static TipoMovimentoFinanceiro tipoMovimentoFinanceiroRecebimentoReparte;
 
@@ -5407,6 +5409,7 @@ public class DataLoader {
 	}
 
 	private static void criarTiposMovimento(Session session) {
+		
 		tipoMovimentoFaltaEm = Fixture.tipoMovimentoFaltaEm();
 		tipoMovimentoFaltaDe = Fixture.tipoMovimentoFaltaDe();
 		tipoMovimentoSobraEm = Fixture.tipoMovimentoSobraEm();
@@ -5464,6 +5467,8 @@ public class DataLoader {
 		tipoMovimentoFinanceiroJuros = Fixture.tipoMovimentoFinanceiroJuros();
 		tipoMovimentoFinanceiroMulta = Fixture.tipoMovimentoFinanceiroMulta();
 		tipoMovimentoFinanceiroEnvioEncalhe = Fixture.tipoMovimentoFinanceiroEnvioEncalhe();
+		tipoMovimentoFinanceiroDebitoPendente = Fixture.tipoMovimentoFinanceiroDebitoPendente();
+		tipoMovimentoFinanceiroDebitoPostergado = Fixture.tipoMovimentoFinanceiroDebitoPostergado();
 
 		tipoMovimentoEnvioJornaleiro = Fixture.tipoMovimentoEnvioJornaleiro();
 

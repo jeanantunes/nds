@@ -388,6 +388,11 @@
 				<artifactId>maven-resources-plugin</artifactId>
 				<version>2.5</version>
 				<configuration>
+				
+					<nonFilteredFileExtensions>
+						<nonFilteredFileExtension>jasper</nonFilteredFileExtension> 
+					</nonFilteredFileExtensions>
+					
 					<encoding>UTF-8</encoding>
 				</configuration>
 			</plugin>

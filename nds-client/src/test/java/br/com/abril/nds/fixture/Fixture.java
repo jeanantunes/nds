@@ -1232,6 +1232,22 @@ public class Fixture {
 		return tipoMovimento;
 	}
 	
+	public static TipoMovimentoFinanceiro tipoMovimentoFinanceiroDebitoPostergado() {
+		TipoMovimentoFinanceiro tipoMovimento = new TipoMovimentoFinanceiro();
+		tipoMovimento.setAprovacaoAutomatica(true);
+		tipoMovimento.setDescricao("Postergado");
+		tipoMovimento.setGrupoMovimentoFinaceiro(GrupoMovimentoFinaceiro.DEBITO);
+		return tipoMovimento;
+	}	
+	
+	public static TipoMovimentoFinanceiro tipoMovimentoFinanceiroDebitoPendente() {
+		TipoMovimentoFinanceiro tipoMovimento = new TipoMovimentoFinanceiro();
+		tipoMovimento.setAprovacaoAutomatica(true);
+		tipoMovimento.setDescricao("Pendente");
+		tipoMovimento.setGrupoMovimentoFinaceiro(GrupoMovimentoFinaceiro.DEBITO);
+		return tipoMovimento;
+	}	
+	
 	public static TipoMovimentoFinanceiro tipoMovimentoFinanceiroDebitoNA() {
 		TipoMovimentoFinanceiro tipoMovimento = new TipoMovimentoFinanceiro();
 		tipoMovimento.setAprovacaoAutomatica(true);
