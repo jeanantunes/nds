@@ -260,7 +260,7 @@ public class EntradaNFETerceirosRepositoryImplTest
 		save(produtoCE);
 
 		ProdutoEdicao produtoEdicaoCE = Fixture.produtoEdicao("COD_PP", 86L, 10, 7,
-				new Long(100), BigDecimal.TEN, new BigDecimal(90), "EZ8", 31L, produtoCE, null, false, "Produto CE 3");
+				new Long(100), BigDecimal.TEN, new BigDecimal(90), "EZ8", produtoCE, null, false, "Produto CE 3");
 		save(produtoEdicaoCE);
 
 		EstoqueProdutoCota estoqueProdutoCotaJohny =

@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="CE_Devolucao_Fornecedor_lote" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="842" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isSummaryNewPage="true">
+	<property name="ireport.zoom" value="3.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="66"/>
+	<field name="documentos" class="java.util.List"/>
+	<field name="resumo" class="java.lang.Object"/>
+	<field name="fornecedor.razaoSocial" class="java.lang.String"/>
+	<field name="fornecedor.cnpj" class="java.lang.String"/>
+	<field name="fornecedor.inscricaoEstadual" class="java.lang.String"/>
+	<field name="fornecedor.logradouro" class="java.lang.String"/>
+	<field name="fornecedor.numero" class="java.lang.Integer"/>
+	<field name="fornecedor.cidade" class="java.lang.String"/>
+	<field name="fornecedor.uf" class="java.lang.String"/>
+	<field name="distribuidor.razaoSocial" class="java.lang.String"/>
+	<field name="distribuidor.logradouro" class="java.lang.String"/>
+	<field name="distribuidor.numero" class="java.lang.Integer"/>
+	<field name="distribuidor.cidade" class="java.lang.String"/>
+	<field name="distribuidor.uf" class="java.lang.String"/>
+	<field name="distribuidor.cep" class="java.lang.String"/>
+	<field name="distribuidor.cnpj" class="java.lang.String"/>
+	<field name="distribuidor.inscricaoEstadual" class="java.lang.String"/>
+	<field name="identificacao.tipoCE" class="java.lang.String"/>
+	<field name="identificacao.dataVencimento" class="java.util.Date"/>
+	<field name="identificacao.codigo" class="java.lang.Long"/>
+	<field name="identificacao.numeroCE" class="java.lang.Long"/>
+	<field name="identificacao.dataEmissao" class="java.util.Date"/>
+	<field name="identificacao.numeroSemana" class="java.lang.Integer"/>
+	<field name="identificacao.controle" class="java.lang.Long"/>
+	<field name="identificacao.dataLimiteChegada" class="java.util.Date"/>
+	<field name="identificacao.codigoNaturezaOperacao" class="java.lang.String"/>
+	<field name="identificacao.descricaoNaturezaOperacao" class="java.lang.String"/>
+	<detail>
+		<band height="12" splitType="Stretch">
+			<subreport isUsingCache="false">
+				<reportElement x="0" y="0" width="802" height="12"/>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{documentos})]]></dataSourceExpression>
+				<subreportExpression class="java.lang.String"><![CDATA[Thread.currentThread().getContextClassLoader().getResource("/reports/CE_Devolucao_Fornecedor.jasper").toURI().getPath()]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+	<summary>
+		<band height="104">
+			<subreport isUsingCache="false">
+				<reportElement x="0" y="2" width="802" height="16"/>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource(Arrays.asList($F{resumo}))]]></dataSourceExpression>
+				<subreportExpression class="java.lang.String"><![CDATA[Thread.currentThread().getContextClassLoader().getResource("/reports/resumo_CE_Devolucao_Fornecedor.jasper").toURI().getPath()]]></subreportExpression>
+			</subreport>
+			<break>
+				<reportElement x="0" y="28" width="100" height="1"/>
+			</break>
+			<subreport isUsingCache="false">
+				<reportElement x="0" y="29" width="802" height="16"/>
+				<subreportParameter name="numeroFornecedor">
+					<subreportParameterExpression><![CDATA[$F{fornecedor.numero}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="logradouroFornecedor">
+					<subreportParameterExpression><![CDATA[$F{fornecedor.logradouro}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="numeroCE">
+					<subreportParameterExpression><![CDATA[$F{identificacao.numeroCE}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="nomeVia">
+					<subreportParameterExpression><![CDATA["DISTRIBUIDOR"]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="cepDistribuidor">
+					<subreportParameterExpression><![CDATA[$F{distribuidor.cep}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="cnpjDistribuidor">
+					<subreportParameterExpression><![CDATA[$F{distribuidor.cnpj}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="controle">
+					<subreportParameterExpression><![CDATA[$F{identificacao.controle}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="codigo">
+					<subreportParameterExpression><![CDATA[$F{identificacao.codigo}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="tipoCE">
+					<subreportParameterExpression><![CDATA[$F{identificacao.tipoCE}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="numeroDistribuidor">
+					<subreportParameterExpression><![CDATA[$F{distribuidor.numero}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="inscricaoEstadualDistribuidor">
+					<subreportParameterExpression><![CDATA[$F{distribuidor.inscricaoEstadual}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="numeroSemana">
+					<subreportParameterExpression><![CDATA[$F{identificacao.numeroSemana}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="cidadeDistribuidor">
+					<subreportParameterExpression><![CDATA[$F{distribuidor.cidade}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ufFornecedor">
+					<subreportParameterExpression><![CDATA[$F{fornecedor.uf}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="inscricaoEstadualFornecedor">
+					<subreportParameterExpression><![CDATA[$F{fornecedor.inscricaoEstadual}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="cnpjForncecedor">
+					<subreportParameterExpression><![CDATA[$F{fornecedor.cnpj}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="codigoNaturezaOperacao">
+					<subreportParameterExpression><![CDATA[$F{identificacao.codigoNaturezaOperacao}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="dataLimiteChegada">
+					<subreportParameterExpression><![CDATA[$F{identificacao.dataLimiteChegada}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="logradouroDistribuidor">
+					<subreportParameterExpression><![CDATA[$F{distribuidor.logradouro}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="dataEmissao">
+					<subreportParameterExpression><![CDATA[$F{identificacao.dataEmissao}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="cidadeFornecedor">
+					<subreportParameterExpression><![CDATA[$F{fornecedor.cidade}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ufDistribuidor">
+					<subreportParameterExpression><![CDATA[$F{distribuidor.uf}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="descricaoNaturezaOperacao">
+					<subreportParameterExpression><![CDATA[$F{identificacao.descricaoNaturezaOperacao}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="numeroVia">
+					<subreportParameterExpression><![CDATA["1"]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="razaoSocialFornecedor">
+					<subreportParameterExpression><![CDATA[$F{fornecedor.razaoSocial}]]></subreportParameterExpression>
+				</subreportParameter>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.JREmptyDataSource()]]></dataSourceExpression>
+				<subreportExpression class="java.lang.String"><![CDATA[Thread.currentThread().getContextClassLoader().getResource("/reports/protocolo_CE_Devolucao_Fornecedor.jasper").toURI().getPath()]]></subreportExpression>
+			</subreport>
+			<break>
+				<reportElement x="0" y="58" width="100" height="1"/>
+			</break>
+			<subreport isUsingCache="false">
+				<reportElement x="0" y="59" width="802" height="16"/>
+				<subreportParameter name="numeroFornecedor">
+					<subreportParameterExpression><![CDATA[$F{fornecedor.numero}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="logradouroFornecedor">
+					<subreportParameterExpression><![CDATA[$F{fornecedor.logradouro}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="numeroCE">
+					<subreportParameterExpression><![CDATA[$F{identificacao.numeroCE}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="nomeVia">
+					<subreportParameterExpression><![CDATA["RT (DINAP)"]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="cepDistribuidor">
+					<subreportParameterExpression><![CDATA[$F{distribuidor.cep}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="cnpjDistribuidor">
+					<subreportParameterExpression><![CDATA[$F{distribuidor.cnpj}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="controle">
+					<subreportParameterExpression><![CDATA[$F{identificacao.controle}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="codigo">
+					<subreportParameterExpression><![CDATA[$F{identificacao.codigo}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="tipoCE">
+					<subreportParameterExpression><![CDATA[$F{identificacao.tipoCE}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="numeroDistribuidor">
+					<subreportParameterExpression><![CDATA[$F{distribuidor.numero}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="inscricaoEstadualDistribuidor">
+					<subreportParameterExpression><![CDATA[$F{distribuidor.inscricaoEstadual}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="numeroSemana">
+					<subreportParameterExpression><![CDATA[$F{identificacao.numeroSemana}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="cidadeDistribuidor">
+					<subreportParameterExpression><![CDATA[$F{distribuidor.cidade}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ufFornecedor">
+					<subreportParameterExpression><![CDATA[$F{fornecedor.uf}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="inscricaoEstadualFornecedor">
+					<subreportParameterExpression><![CDATA[$F{fornecedor.inscricaoEstadual}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="cnpjForncecedor">
+					<subreportParameterExpression><![CDATA[$F{fornecedor.cnpj}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="codigoNaturezaOperacao">
+					<subreportParameterExpression><![CDATA[$F{identificacao.codigoNaturezaOperacao}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="dataLimiteChegada">
+					<subreportParameterExpression><![CDATA[$F{identificacao.dataLimiteChegada}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="logradouroDistribuidor">
+					<subreportParameterExpression><![CDATA[$F{distribuidor.logradouro}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="dataEmissao">
+					<subreportParameterExpression><![CDATA[$F{identificacao.dataEmissao}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="cidadeFornecedor">
+					<subreportParameterExpression><![CDATA[$F{fornecedor.cidade}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ufDistribuidor">
+					<subreportParameterExpression><![CDATA[$F{distribuidor.uf}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="descricaoNaturezaOperacao">
+					<subreportParameterExpression><![CDATA[$F{identificacao.descricaoNaturezaOperacao}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="numeroVia">
+					<subreportParameterExpression><![CDATA["2"]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="razaoSocialFornecedor">
+					<subreportParameterExpression><![CDATA[$F{fornecedor.razaoSocial}]]></subreportParameterExpression>
+				</subreportParameter>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.JREmptyDataSource()]]></dataSourceExpression>
+				<subreportExpression class="java.lang.String"><![CDATA[Thread.currentThread().getContextClassLoader().getResource("/reports/protocolo_CE_Devolucao_Fornecedor.jasper").toURI().getPath()]]></subreportExpression>
+			</subreport>
+			<break>
+				<reportElement x="0" y="78" width="100" height="1"/>
+			</break>
+			<subreport isUsingCache="false">
+				<reportElement x="0" y="88" width="802" height="16"/>
+				<subreportParameter name="numeroFornecedor">
+					<subreportParameterExpression><![CDATA[$F{fornecedor.numero}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="logradouroFornecedor">
+					<subreportParameterExpression><![CDATA[$F{fornecedor.logradouro}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="numeroCE">
+					<subreportParameterExpression><![CDATA[$F{identificacao.numeroCE}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="nomeVia">
+					<subreportParameterExpression><![CDATA["TRANSPORTADORA"]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="cepDistribuidor">
+					<subreportParameterExpression><![CDATA[$F{distribuidor.cep}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="cnpjDistribuidor">
+					<subreportParameterExpression><![CDATA[$F{distribuidor.cnpj}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="controle">
+					<subreportParameterExpression><![CDATA[$F{identificacao.controle}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="codigo">
+					<subreportParameterExpression><![CDATA[$F{identificacao.codigo}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="tipoCE">
+					<subreportParameterExpression><![CDATA[$F{identificacao.tipoCE}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="numeroDistribuidor">
+					<subreportParameterExpression><![CDATA[$F{distribuidor.numero}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="inscricaoEstadualDistribuidor">
+					<subreportParameterExpression><![CDATA[$F{distribuidor.inscricaoEstadual}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="numeroSemana">
+					<subreportParameterExpression><![CDATA[$F{identificacao.numeroSemana}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="cidadeDistribuidor">
+					<subreportParameterExpression><![CDATA[$F{distribuidor.cidade}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ufFornecedor">
+					<subreportParameterExpression><![CDATA[$F{fornecedor.uf}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="inscricaoEstadualFornecedor">
+					<subreportParameterExpression><![CDATA[$F{fornecedor.inscricaoEstadual}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="cnpjForncecedor">
+					<subreportParameterExpression><![CDATA[$F{fornecedor.cnpj}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="codigoNaturezaOperacao">
+					<subreportParameterExpression><![CDATA[$F{identificacao.codigoNaturezaOperacao}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="dataLimiteChegada">
+					<subreportParameterExpression><![CDATA[$F{identificacao.dataLimiteChegada}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="dataEmissao">
+					<subreportParameterExpression><![CDATA[$F{identificacao.dataEmissao}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="logradouroDistribuidor">
+					<subreportParameterExpression><![CDATA[$F{distribuidor.logradouro}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="cidadeFornecedor">
+					<subreportParameterExpression><![CDATA[$F{fornecedor.cidade}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ufDistribuidor">
+					<subreportParameterExpression><![CDATA[$F{distribuidor.uf}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="descricaoNaturezaOperacao">
+					<subreportParameterExpression><![CDATA[$F{identificacao.descricaoNaturezaOperacao}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="razaoSocialFornecedor">
+					<subreportParameterExpression><![CDATA[$F{fornecedor.razaoSocial}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="numeroVia">
+					<subreportParameterExpression><![CDATA["3"]]></subreportParameterExpression>
+				</subreportParameter>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.JREmptyDataSource()]]></dataSourceExpression>
+				<subreportExpression class="java.lang.String"><![CDATA[Thread.currentThread().getContextClassLoader().getResource("/reports/protocolo_CE_Devolucao_Fornecedor.jasper").toURI().getPath()]]></subreportExpression>
+			</subreport>
+		</band>
+	</summary>
+</jasperReport>

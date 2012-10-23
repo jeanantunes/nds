@@ -100,7 +100,7 @@ var gruposPermissaoController = $.extend(true, {
 					"Confirmar": function() {
 						$.getJSON(
 								gruposPermissaoController.path + "/excluirGrupoPermissao",
-								"codigoGrupo=" + codigoGrupo, 
+								{codigoGrupo:codigoGrupo}, 
 								function(result) {
 
 									var tipoMensagem = result.tipoMensagem;
@@ -141,7 +141,7 @@ var gruposPermissaoController = $.extend(true, {
 			
 			$.getJSON(
 					this.path + "/editarGrupoPermissao",
-					"codigoGrupo=" + idGrupo, 
+					{codigoGrupo:idGrupo}, 
 					function(result) {
 						if (result) {
 							

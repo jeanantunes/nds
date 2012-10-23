@@ -163,14 +163,14 @@ public class ChamadaAntecipadaEncalheRepositoryImplTest extends AbstractReposito
 		produtoVeja.setEditor(editoraAbril);
 		save(produtoVeja);
 
-		ProdutoEdicao produtoEdicaoVeja1 = Fixture.produtoEdicao("1", 1L, 10, 14,
-				new Long(100), BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQ", 1L,
-				produtoVeja, null, false);
+		ProdutoEdicao produtoEdicaoVeja1 = Fixture.produtoEdicao(1L, 10, 14, new Long(100),
+				BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQ", produtoVeja,
+				null, false);
 		save(produtoEdicaoVeja1);
 		
-		ProdutoEdicao produtoEdicaoVeja2 = Fixture.produtoEdicao("1", 2L, 10, 14,
-				new Long(100), BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJOPA", 2L,
-				produtoVeja, null, false);
+		ProdutoEdicao produtoEdicaoVeja2 = Fixture.produtoEdicao(2L, 10, 14, new Long(100),
+				BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJOPA", produtoVeja,
+				null, false);
 		save(produtoEdicaoVeja2);
 		
 		CFOP cfop5102 = Fixture.cfop5102();
