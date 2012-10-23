@@ -543,42 +543,47 @@ public class FornecedorServiceImpl implements FornecedorService {
 	
 	private void salvarTelefonesFornecedor(List<TelefoneAssociacaoDTO> listaTelefoneFornecedor,
 										   Fornecedor fornecedor) {
+			
+		if (listaTelefoneFornecedor == null || listaTelefoneFornecedor.isEmpty()) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Lista de telefones é obrigatória.");
+		}
 		
-		if (listaTelefoneFornecedor != null && !listaTelefoneFornecedor.isEmpty()){
+		this.telefoneService.validarTelefonePrincipal(listaTelefoneFornecedor);
+        
+		PessoaJuridica juridica = fornecedor.getJuridica();
+		
+		for (TelefoneAssociacaoDTO dto : listaTelefoneFornecedor) {
 			
-			PessoaJuridica juridica = fornecedor.getJuridica();
-            this.telefoneService.cadastrarTelefone(listaTelefoneFornecedor, juridica);
+			TelefoneDTO telefoneDTO = dto.getTelefone();
 			
-			for (TelefoneAssociacaoDTO dto : listaTelefoneFornecedor){
+			this.telefoneService.validarTelefone(telefoneDTO, dto.getTipoTelefone());
+			
+            TelefoneFornecedor telefoneFornecedor =
+				this.telefoneFornecedorRepository.obterTelefoneFornecedor(
+					telefoneDTO.getId(), fornecedor.getId());
+			
+			if (telefoneFornecedor == null){
 				
-				TelefoneDTO telefoneDTO = dto.getTelefone();
+				telefoneFornecedor = new TelefoneFornecedor();
 				
-                TelefoneFornecedor telefoneFornecedor =
-					this.telefoneFornecedorRepository.obterTelefoneFornecedor(
-						telefoneDTO.getId(), fornecedor.getId());
+				telefoneFornecedor.setFornecedor(fornecedor);
+				telefoneFornecedor.setPrincipal(dto.isPrincipal());
+				Telefone telefone = new Telefone(telefoneDTO.getId(), telefoneDTO.getNumero(), telefoneDTO.getRamal(), telefoneDTO.getDdd(), juridica);
+				telefoneFornecedor.setTelefone(telefone);
+				telefoneFornecedor.setTipoTelefone(dto.getTipoTelefone());
 				
-				if (telefoneFornecedor == null){
-					
-					telefoneFornecedor = new TelefoneFornecedor();
-					
-					telefoneFornecedor.setFornecedor(fornecedor);
-					telefoneFornecedor.setPrincipal(dto.isPrincipal());
-					Telefone telefone = new Telefone(telefoneDTO.getId(), telefoneDTO.getNumero(), telefoneDTO.getRamal(), telefoneDTO.getDdd(), juridica);
-					telefoneFornecedor.setTelefone(telefone);
-					telefoneFornecedor.setTipoTelefone(dto.getTipoTelefone());
-					
-					this.telefoneFornecedorRepository.adicionar(telefoneFornecedor);
-					
-				} else {
-					Telefone telefone = telefoneFornecedor.getTelefone();
-					telefone.setDdd(telefoneDTO.getDdd());
-					telefone.setNumero(telefoneDTO.getNumero());
-					telefone.setRamal(telefoneDTO.getRamal());
-					telefoneFornecedor.setPrincipal(dto.isPrincipal());
-					telefoneFornecedor.setTipoTelefone(dto.getTipoTelefone());
-					
-					this.telefoneFornecedorRepository.alterar(telefoneFornecedor);
-				}
+				this.telefoneFornecedorRepository.adicionar(telefoneFornecedor);
+				
+			} else {
+				Telefone telefone = telefoneFornecedor.getTelefone();
+				telefone.setDdd(telefoneDTO.getDdd());
+				telefone.setNumero(telefoneDTO.getNumero());
+				telefone.setRamal(telefoneDTO.getRamal());
+				telefoneFornecedor.setPrincipal(dto.isPrincipal());
+				telefoneFornecedor.setTipoTelefone(dto.getTipoTelefone());
+				
+				this.telefoneFornecedorRepository.alterar(telefoneFornecedor);
 			}
 		}
 	}

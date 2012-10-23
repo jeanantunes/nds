@@ -469,9 +469,21 @@ public class ProdutoController {
 		if (produto != null) {
 
 			if (produto.getCodigo() == null || produto.getCodigo().trim().isEmpty()) {
+				
 				listaMensagens.add("O preenchimento do campo [Código] é obrigatório!");
+				
 			} else {
+				
+				Produto produtoExistente = produtoService.obterProdutoPorCodigo(produto.getCodigo());
+				
+				if(produtoExistente != null && !produtoExistente.getId().equals(produto.getId())){
+					
+					listaMensagens.add(" O código [" + produto.getCodigo() + "] já esta sendo utilizado por outro produto ");
+				}
+				
 				produto.setCodigo(produto.getCodigo().trim());
+				
+				
 			}
 
 			if (produto.getNome() == null || produto.getNome().trim().isEmpty()) {

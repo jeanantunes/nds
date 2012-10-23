@@ -109,24 +109,24 @@ public class ChamadaEncalheCotaRepositoryImplTest extends
 		cromoReiLeao.addFornecedor(fornecedorDinap);
 		save(cromoReiLeao);
 
-		veja1 = Fixture.produtoEdicao("1", 1L, 10, 7, new Long(100),
-				BigDecimal.TEN, new BigDecimal(15), "ABCDEFGHIJKLMNOPQ", 1L,
+		veja1 = Fixture.produtoEdicao(1L, 10, 7, new Long(100),
+				BigDecimal.TEN, new BigDecimal(15), "ABCDEFGHIJKLMNOPQ", 
 				veja, null, false);
 
-		quatroRoda2 = Fixture.produtoEdicao("1", 2L, 15, 30, new Long(100),
-				BigDecimal.TEN, BigDecimal.TEN, "ABCDEFGHIJKNOPA", 2L,
+		quatroRoda2 = Fixture.produtoEdicao(2L, 15, 30, new Long(100),
+				BigDecimal.TEN, BigDecimal.TEN, "ABCDEFGHIJKNOPA", 
 				quatroRodas, null, false);
 
-		ProdutoEdicao infoExame3 = Fixture.produtoEdicao("1", 3L, 5, 30,
+		ProdutoEdicao infoExame3 = Fixture.produtoEdicao(3L, 5, 30,
 				new Long(100), BigDecimal.TEN, new BigDecimal(12),
-				"ABCDGHIJKLMNOPB", 3L, infoExame, null, false);
+				"ABCDGHIJKLMNOPB", infoExame, null, false);
 
-		ProdutoEdicao capricho1 = Fixture.produtoEdicao("1", 1L, 10, 15,
+		ProdutoEdicao capricho1 = Fixture.produtoEdicao(1L, 10, 15,
 				new Long(120), BigDecimal.TEN, BigDecimal.TEN,
-				"ABCDEFGHIJKLMNU", 4L, capricho, null, false);
+				"ABCDEFGHIJKLMNU", capricho, null, false);
 
-		ProdutoEdicao cromoReiLeao1 = Fixture.produtoEdicao("1", 1L, 100, 60,
-				new Long(10), BigDecimal.ONE, new BigDecimal(1.5), "ABCTU", 5L,
+		ProdutoEdicao cromoReiLeao1 = Fixture.produtoEdicao(1L, 100, 60,
+				new Long(10), BigDecimal.ONE, new BigDecimal(1.5), "ABCTU", 
 				cromoReiLeao, null, false);
 
 		save(veja1, quatroRoda2, infoExame3, capricho1, cromoReiLeao1);

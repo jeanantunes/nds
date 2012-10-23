@@ -8,6 +8,7 @@ import org.hibernate.Query;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.dto.ContasAPagarGridPrincipalProdutoDTO;
 import br.com.abril.nds.dto.ContasApagarConsultaPorDistribuidorDTO;
 import br.com.abril.nds.dto.ContasApagarConsultaPorProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroContasAPagarDTO;
@@ -286,19 +287,31 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
 	}
 	
 	@Override
-	public Integer pesquisarCountPorProduto(FiltroContasAPagarDTO filtro) {
+	public ContasAPagarGridPrincipalProdutoDTO pesquisarTotaisPorProduto(FiltroContasAPagarDTO filtro) {
+		
+		Query query = this.getSession().createQuery(this.montarQueryTotaisPorProduto(filtro));
+
+		this.setarParametrosQueryContasAPagar(query, filtro, true);
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(ContasAPagarGridPrincipalProdutoDTO.class));
+		
+		return (ContasAPagarGridPrincipalProdutoDTO) query.uniqueResult();
+	}
+	
+	@Override
+	public Long pesquisarCountPorProduto(FiltroContasAPagarDTO filtro) {
 		
 		Query query = this.getSession().createQuery(this.montarQueryQuantidadePorProduto(filtro));
 
 		this.setarParametrosQueryContasAPagar(query, filtro, true);
 		
-		return (Integer) query.list().size();
+		return (Long) query.uniqueResult();
 	}
 	
 	private String montarQueryPorProduto(FiltroContasAPagarDTO filtro){
 		
 		StringBuilder hql = new StringBuilder();
-		
+
 		hql.append("select new ")
 		   .append(ContasApagarConsultaPorProdutoDTO.class.getCanonicalName())
 		   .append("(")
@@ -308,14 +321,17 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
 		   .append("       produto.nome as produto, ")
 		   .append("       produtoEdicao.numeroEdicao as edicao, ")
 		   .append("       produtoEdicao.parcial as tipo, ")	   
-		   .append("       produtoEdicao.reparteDistribuido as reparte ");
+		   .append("       produtoEdicao.reparteDistribuido as reparte ")
 		
-		hql.append(this.queryPorProduto(filtro))
-		   .append(")");
+		   .append(",") 
 		
-		hql.append(this.queryPorProdutoFrom(filtro));
+		   .append(this.queryPorProduto(filtro))
+		
+		   .append(")")
+		
+		   .append(this.queryPorProdutoFrom(filtro))
          
-		hql.append(" group by l.dataRecolhimentoDistribuidor ");
+		   .append(" group by l.dataRecolhimentoDistribuidor ");
 	    
         PaginacaoVO paginacaoVO = filtro.getPaginacaoVO();
 		
@@ -336,9 +352,21 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
 
     	hql.append(" Select count(distinct l.dataRecolhimentoDistribuidor) ")
     	
-	       .append(this.queryPorProdutoFrom(filtro))
+	       .append(this.queryPorProdutoFrom(filtro));
+
+		return hql.toString();
+    }
+	
+	private String montarQueryTotaisPorProduto(FiltroContasAPagarDTO filtro){    	
     	
-		   .append(" group by l.dataRecolhimentoDistribuidor ");
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select ")
+		   .append("       COALESCE(sum(produtoEdicao.precoVenda * l.reparte),0) as totalPagto, ")     
+		   .append("       COALESCE(sum(produtoEdicao.precoVenda),0) as totalDesconto, ")
+		   .append("       COALESCE(sum(produtoEdicao.precoVenda),0) as valorLiquido ")
+
+	       .append(this.queryPorProdutoFrom(filtro));
 
 		return hql.toString();
     }
@@ -347,75 +375,124 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
 
 		StringBuilder hql = new StringBuilder();
 			
-		hql.append(",      ((select sum(m.qtde) ")
-		   .append("         from MovimentoEstoque m ")
-		   .append(" 		 where m.data = l.dataRecolhimentoDistribuidor ")
-		   .append(" 		 and m.qtde is not null ")
-		   .append(" 		 and m.produtoEdicao.id = produtoEdicao.id ")
-		   .append(" 		 and m.produtoEdicao.precoVenda is not null ")
-	       .append(" 		 and m.tipoMovimento.grupoMovimentoEstoque in (:movimentosSuplementarEntrada)) - ")			   
-		   .append("	    (select sum(m2.qtde) ")
-		   .append(" 		 from MovimentoEstoque m2 ")
-		   .append(" 		 where m2.data = l.dataRecolhimentoDistribuidor ")
-		   .append(" 		 and m2.qtde is not null ")
-		   .append(" 		 and m2.produtoEdicao.id = produtoEdicao.id ")	    
-		   .append(" 		 and m2.produtoEdicao.precoVenda is not null")
-		   .append(" 		 and m2.tipoMovimento.grupoMovimentoEstoque in (:movimentosSuplementarSaida)) ")
+		hql.append("       (COALESCE((select sum(m.qtde) ")
+		   .append("           		  from MovimentoEstoque m ")
+		   .append(" 		 		  where m.data = l.dataRecolhimentoDistribuidor ")
+		   .append(" 		 		  and m.qtde is not null ")
+		   .append(" 		 		  and m.produtoEdicao.id = produtoEdicao.id ")
+		   .append(" 		 		  and m.produtoEdicao.precoVenda is not null ")
+	       .append(" 		 		  and m.tipoMovimento.grupoMovimentoEstoque in (:movimentosSuplementarEntrada)) ")
+	       .append("        ,0) - ")			   
+		   .append("	    COALESCE((select sum(m2.qtde) ")
+		   .append(" 		          from MovimentoEstoque m2 ")
+		   .append(" 		          where m2.data = l.dataRecolhimentoDistribuidor ")
+		   .append(" 		 		  and m2.qtde is not null ")
+		   .append(" 		 		  and m2.produtoEdicao.id = produtoEdicao.id ")	    
+		   .append(" 		 		  and m2.produtoEdicao.precoVenda is not null")
+		   .append(" 		 		  and m2.tipoMovimento.grupoMovimentoEstoque in (:movimentosSuplementarSaida)) ")
+		   .append("        ,0) ")
 		   .append("       ) as suplementacao, ")
 			   
-		   .append("       (select sum(movimento.qtde) from ConferenciaEncalhe conferencia ")
-		   .append("        join conferencia.movimentoEstoqueCota movimento ")
-		   .append("        join conferencia.chamadaEncalheCota chamadaEncalheCota ")
-		   .append("        join chamadaEncalheCota.chamadaEncalhe chamadaEncalhe ")
-		   .append("        where chamadaEncalhe.dataRecolhimento = l.dataRecolhimentoDistribuidor ")
-		   .append(" 		and movimento.produtoEdicao.id = produtoEdicao.id ")	    
-		   .append("       ) as encalhe, ")
-        
-		   .append("       ((l.produtoEdicao.reparteDistribuido) - ")
-		   .append("        (select sum(movimento.qtde) from ConferenciaEncalhe conferencia ")
-		   .append("         join conferencia.movimentoEstoqueCota movimento ")
-		   .append("         join conferencia.chamadaEncalheCota chamadaEncalheCota ")
-		   .append("         join chamadaEncalheCota.chamadaEncalhe chamadaEncalhe ")
-		   .append("         where chamadaEncalhe.dataRecolhimento = l.dataRecolhimentoDistribuidor ")
-		   .append(" 		 and movimento.produtoEdicao.id = produtoEdicao.id) ")	    
-		   .append("       ) as venda, ")
+		   .append("       COALESCE((select sum(movimento.qtde) from ConferenciaEncalhe conferencia ")
+		   .append("                 join conferencia.movimentoEstoqueCota movimento ")
+		   .append("        		 join conferencia.chamadaEncalheCota chamadaEncalheCota ")
+		   .append("        		 join chamadaEncalheCota.chamadaEncalhe chamadaEncalhe ")
+		   .append("        		 where chamadaEncalhe.dataRecolhimento = l.dataRecolhimentoDistribuidor ")
+		   .append(" 				 and movimento.produtoEdicao.id = produtoEdicao.id ")	    
+		   .append("       ),0) as encalhe, ")
 
-		   .append("	   ((select sum(ld2.diferenca.qtde) ")
-		   .append("        from LancamentoDiferenca ld2 ")
-		   .append(" 		 where ld2.dataProcessamento = l.dataRecolhimentoDistribuidor ")
-		   .append(" 		 and ld2.diferenca.qtde is not null ")
-		   .append(" 		 and ld2.diferenca.produtoEdicao.precoVenda is not null")
-		   .append(" 		 and (ld2.diferenca.tipoDiferenca = :tipoDiferencaSobraEm or ld2.diferenca.tipoDiferenca = :tipoDiferencaSobraDe)")
-		   .append(" 		 and ld2.diferenca.produtoEdicao.id = produtoEdicao.id ")	    
-		   .append(" 		 group by ld2.diferenca.tipoDiferenca) - ")		   
-		   .append("	    (select sum(ld.diferenca.qtde) ")
-		   .append(" 		 from LancamentoDiferenca ld ")
-		   .append(" 		 where ld.dataProcessamento = l.dataRecolhimentoDistribuidor ")
-		   .append(" 		 and ld.diferenca.qtde is not null ")
-		   .append(" 		 and ld.diferenca.produtoEdicao.precoVenda is not null")
-		   .append(" 		 and (ld.diferenca.tipoDiferenca = :tipoDiferencaFaltaEm or ld.diferenca.tipoDiferenca = :tipoDiferencaFaltaDe)")
-		   .append(" 		 and ld.diferenca.produtoEdicao.id = produtoEdicao.id ")	    
-		   .append(" 		 group by ld.diferenca.tipoDiferenca) ")
+		   .append("	   (COALESCE((select sum(ld2.diferenca.qtde) ")
+		   .append("                  from LancamentoDiferenca ld2 ")
+		   .append(" 		          where ld2.dataProcessamento = l.dataRecolhimentoDistribuidor ")
+		   .append(" 		          and ld2.diferenca.qtde is not null ")
+		   .append(" 		          and ld2.diferenca.produtoEdicao.precoVenda is not null")
+		   .append(" 		          and (ld2.diferenca.tipoDiferenca = :tipoDiferencaSobraEm or ld2.diferenca.tipoDiferenca = :tipoDiferencaSobraDe)")
+		   .append(" 		          and ld2.diferenca.produtoEdicao.id = produtoEdicao.id ")	    
+		   .append(" 		          group by ld2.diferenca.tipoDiferenca) ")
+		   .append("        ,0) - ")		   
+		   .append("	    COALESCE((select sum(ld.diferenca.qtde) ")
+		   .append(" 		          from LancamentoDiferenca ld ")
+		   .append(" 		          where ld.dataProcessamento = l.dataRecolhimentoDistribuidor ")
+		   .append(" 		          and ld.diferenca.qtde is not null ")
+		   .append(" 		          and ld.diferenca.produtoEdicao.precoVenda is not null")
+		   .append(" 		          and (ld.diferenca.tipoDiferenca = :tipoDiferencaFaltaEm or ld.diferenca.tipoDiferenca = :tipoDiferencaFaltaDe)")
+		   .append(" 		          and ld.diferenca.produtoEdicao.id = produtoEdicao.id ")	    
+		   .append(" 		          group by ld.diferenca.tipoDiferenca) ")
+		   .append("        ,0) ")
 	       .append("       ) as faltasSobras, ")
 		
-		   .append("       ((select sum(ld3.diferenca.qtde) ")
-		   .append("  		 from LancamentoDiferenca ld3 ")
-		   .append("         where ld3.dataProcessamento = l.dataRecolhimentoDistribuidor ")
-		   .append("         and ld3.diferenca.qtde is not null ")
-		   .append("         and ld3.diferenca.produtoEdicao.precoVenda is not null ")	  
-		   .append("         and ld3.diferenca.produtoEdicao.id = produtoEdicao.id ")	   
-		   .append("         and ld3.status = :statusPerda ")
-	       .append("         group by ld3.diferenca.tipoDiferenca) + ")		   
-		   .append("        (select sum(ld4.diferenca.qtde) ")
-		   .append("         from LancamentoDiferenca ld4 ")
-		   .append("         where ld4.dataProcessamento = l.dataRecolhimentoDistribuidor ")
-		   .append("         and ld4.diferenca.qtde is not null ")
-		   .append("         and ld4.diferenca.produtoEdicao.precoVenda is not null ")	    
-		   .append("         and ld4.diferenca.produtoEdicao.id = produtoEdicao.id ")	
-		   .append("         and ld4.status = :statusGanho ")
-		   .append("         group by ld4.diferenca.tipoDiferenca)")
-		   .append("       ) as debitosCreditos ");
+		   .append("       (COALESCE((select sum(ld3.diferenca.qtde) ")
+		   .append("  		          from LancamentoDiferenca ld3 ")
+		   .append("                  where ld3.dataProcessamento = l.dataRecolhimentoDistribuidor ")
+		   .append("                  and ld3.diferenca.qtde is not null ")
+		   .append("                  and ld3.diferenca.produtoEdicao.precoVenda is not null ")	  
+		   .append("                  and ld3.diferenca.produtoEdicao.id = produtoEdicao.id ")	   
+		   .append("                  and ld3.status = :statusPerda ")
+	       .append("                  group by ld3.diferenca.tipoDiferenca) ")
+	       .append("        ,0) + ")		   
+		   .append("        COALESCE((select sum(ld4.diferenca.qtde) ")
+		   .append("                  from LancamentoDiferenca ld4 ")
+		   .append("                  where ld4.dataProcessamento = l.dataRecolhimentoDistribuidor ")
+		   .append("                  and ld4.diferenca.qtde is not null ")
+		   .append("                  and ld4.diferenca.produtoEdicao.precoVenda is not null ")	    
+		   .append("                  and ld4.diferenca.produtoEdicao.id = produtoEdicao.id ")	
+		   .append("                  and ld4.status = :statusGanho ")
+		   .append("                  group by ld4.diferenca.tipoDiferenca) ")
+		   .append("        ,0)")
+		   .append("       ) as debitosCreditos, ")
+           
+		   .append(" ( ")
+		   .append("       COALESCE(sum(produtoEdicao.precoVenda * l.reparte),0) - ")
+		   
+		   .append("       COALESCE((select sum(movimento.qtde * conferencia.produtoEdicao.precoVenda) from ConferenciaEncalhe conferencia ")
+		   .append("                 join conferencia.movimentoEstoqueCota movimento ")
+		   .append("        		 join conferencia.chamadaEncalheCota chamadaEncalheCota ")
+		   .append("        		 join chamadaEncalheCota.chamadaEncalhe chamadaEncalhe ")
+		   .append("        		 where chamadaEncalhe.dataRecolhimento = l.dataRecolhimentoDistribuidor ")
+		   .append(" 				 and movimento.produtoEdicao.id = produtoEdicao.id ")	    
+		   .append("       ),0) - ")
+
+		   .append("	   (COALESCE((select sum(ld2.diferenca.qtde * ld2.diferenca.produtoEdicao.precoVenda) ")
+		   .append("                  from LancamentoDiferenca ld2 ")
+		   .append(" 		          where ld2.dataProcessamento = l.dataRecolhimentoDistribuidor ")
+		   .append(" 		          and ld2.diferenca.qtde is not null ")
+		   .append(" 		          and ld2.diferenca.produtoEdicao.precoVenda is not null")
+		   .append(" 		          and (ld2.diferenca.tipoDiferenca = :tipoDiferencaSobraEm or ld2.diferenca.tipoDiferenca = :tipoDiferencaSobraDe)")
+		   .append(" 		          and ld2.diferenca.produtoEdicao.id = produtoEdicao.id ")	    
+		   .append(" 		          group by ld2.diferenca.tipoDiferenca) ")
+		   .append("        ,0) - ")		   
+		   .append("	    COALESCE((select sum(ld.diferenca.qtde * ld.diferenca.produtoEdicao.precoVenda) ")
+		   .append(" 		          from LancamentoDiferenca ld ")
+		   .append(" 		          where ld.dataProcessamento = l.dataRecolhimentoDistribuidor ")
+		   .append(" 		          and ld.diferenca.qtde is not null ")
+		   .append(" 		          and ld.diferenca.produtoEdicao.precoVenda is not null")
+		   .append(" 		          and (ld.diferenca.tipoDiferenca = :tipoDiferencaFaltaEm or ld.diferenca.tipoDiferenca = :tipoDiferencaFaltaDe)")
+		   .append(" 		          and ld.diferenca.produtoEdicao.id = produtoEdicao.id ")	    
+		   .append(" 		          group by ld.diferenca.tipoDiferenca) ")
+		   .append("        ,0) ")
+	       .append("       ) - ")
 		
+		   .append("       (COALESCE((select sum(ld3.diferenca.qtde * ld3.diferenca.produtoEdicao.precoVenda) ")
+		   .append("  		          from LancamentoDiferenca ld3 ")
+		   .append("                  where ld3.dataProcessamento = l.dataRecolhimentoDistribuidor ")
+		   .append("                  and ld3.diferenca.qtde is not null ")
+		   .append("                  and ld3.diferenca.produtoEdicao.precoVenda is not null ")	  
+		   .append("                  and ld3.diferenca.produtoEdicao.id = produtoEdicao.id ")	   
+		   .append("                  and ld3.status = :statusPerda ")
+	       .append("                  group by ld3.diferenca.tipoDiferenca) ")
+	       .append("        ,0) + ")		   
+		   .append("        COALESCE((select sum(ld4.diferenca.qtde * ld4.diferenca.produtoEdicao.precoVenda) ")
+		   .append("                  from LancamentoDiferenca ld4 ")
+		   .append("                  where ld4.dataProcessamento = l.dataRecolhimentoDistribuidor ")
+		   .append("                  and ld4.diferenca.qtde is not null ")
+		   .append("                  and ld4.diferenca.produtoEdicao.precoVenda is not null ")	    
+		   .append("                  and ld4.diferenca.produtoEdicao.id = produtoEdicao.id ")	
+		   .append("                  and ld4.status = :statusGanho ")
+		   .append("                  group by ld4.diferenca.tipoDiferenca) ")
+		   .append("        ,0)")
+		   .append("       ) ")
+	       .append(" ) as saldoAPagar ");
+           
 		return hql.toString();
 	}
 
