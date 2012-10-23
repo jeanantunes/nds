@@ -4,23 +4,13 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import net.sf.jasperreports.engine.JRDataSource;
-import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JasperRunManager;
-import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
-import net.sf.jasperreports.engine.data.JRMapCollectionDataSource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,13 +23,6 @@ import br.com.abril.nds.client.vo.RegistroEdicoesFechadasVO;
 import br.com.abril.nds.dto.ContagemDevolucaoConferenciaCegaDTO;
 import br.com.abril.nds.dto.ContagemDevolucaoDTO;
 import br.com.abril.nds.dto.InfoContagemDevolucaoDTO;
-import br.com.abril.nds.dto.chamadaencalhe.ChamadaEncalheFornecedorDTO;
-import br.com.abril.nds.dto.chamadaencalhe.ChamadasEncalheFornecedorDTO;
-import br.com.abril.nds.dto.chamadaencalhe.IdentificacaoChamadaEncalheFornecedorDTO;
-import br.com.abril.nds.dto.chamadaencalhe.ItemChamadaEncalheFornecedorDTO;
-import br.com.abril.nds.dto.chamadaencalhe.ItemResumoChamadaEncalheFornecedorDTO;
-import br.com.abril.nds.dto.chamadaencalhe.PessoaJuridicaChamadaEncalheFornecedorDTO;
-import br.com.abril.nds.dto.chamadaencalhe.ResumoChamadaEncalheFornecedorDTO;
 import br.com.abril.nds.dto.filtro.FiltroDigitacaoContagemDevolucaoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
@@ -88,7 +71,6 @@ import br.com.abril.nds.service.DiferencaEstoqueService;
 import br.com.abril.nds.service.EdicoesFechadasService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.NotaFiscalService;
-import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.vo.ValidacaoVO;
 
@@ -997,105 +979,5 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 		
 		return listaContagemEdicaoFechada;
 	}
-
-
-    @Override
-    public byte[] gerarCEDevolucao() {
-        PessoaJuridicaChamadaEncalheFornecedorDTO fornecedor = new PessoaJuridicaChamadaEncalheFornecedorDTO(
-                Long.valueOf(1), "Treelog S.A. Logistica e Distr",
-                "61438248/0001-23", "492127567118", "R Dr. Kenkiti Shimomoto",
-                Integer.valueOf(1678), "Osasco", "SP", "49055520");
-        
-        PessoaJuridicaChamadaEncalheFornecedorDTO distribuidor = new PessoaJuridicaChamadaEncalheFornecedorDTO(
-                Long.valueOf(2), "Dist.Sergipana de Public.Ltda",
-                "03147049/0001-60", "270985565", "Av Pedro Calazans",
-                Integer.valueOf(230), "Aracaju", "SE", "49055520");
-        
-        IdentificacaoChamadaEncalheFornecedorDTO identificacao = new IdentificacaoChamadaEncalheFornecedorDTO(
-                "11", Long.valueOf(2678001), Long.valueOf(503695),
-                Long.valueOf(23773628), "2918/2949",
-                "DEV.MERC.CONSIG/DEV.MERC.DISTRIB",
-                DateUtil.parseDataPTBR("11/10/2012"),
-                DateUtil.parseDataPTBR("27/09/2012"), 41,
-                DateUtil.parseDataPTBR("17/10/2012"));
-
-        List<ChamadasEncalheFornecedorDTO> chamadas = new ArrayList<>();
-        ChamadasEncalheFornecedorDTO chamada = new ChamadasEncalheFornecedorDTO(fornecedor, distribuidor, identificacao);
-        chamadas.add(chamada);
-        
-        ChamadaEncalheFornecedorDTO documento = chamada.newDocumento();
-        documento.setNumeroDocumento(Long.valueOf(119747));
- 
-        documento.setPorcentagemDesconto(BigDecimal.valueOf(34.7).divide(BigDecimal.valueOf(100)));
-        documento.setMargemDistribuidor(BigDecimal.valueOf(9.7).divide(BigDecimal.valueOf(100)));
-        documento.setTotalQtdeDevolvido(Long.valueOf(67));
-        documento.setTotalQtdeVenda(Long.valueOf(33));
-        documento.setTotalBruto(BigDecimal.valueOf(427.35));
-        documento.setTotalDesconto(BigDecimal.valueOf(148.30));
-        documento.setTotalLiquido(BigDecimal.valueOf(279.05));
-        documento.setTotalMargemDistribuidor(BigDecimal.valueOf(41.45));
-        
-        ItemChamadaEncalheFornecedorDTO item1 = new ItemChamadaEncalheFornecedorDTO();
-        item1.setEditor(Long.valueOf(1422));
-        item1.setNome("G. SAUD ALM MEM");
-        item1.setDescricao("GUIA DE SAUDE ALIMENTOS PA");
-        item1.setCodigo(Long.valueOf(36341001));
-        item1.setEdicao(Long.valueOf(1));
-        item1.setFormaDevolucao("INTEIRO");
-        item1.setDataRecolhimento(DateUtil.parseDataPTBR("03/10/2012"));
-        item1.setNotaEnvio(Long.valueOf(676699));
-        item1.setItem(Integer.valueOf(1));
-        item1.setTipoRecolhimento("N");
-        item1.setQtdeEnviada(Long.valueOf(100));
-        item1.setQtdeDevolvida(Long.valueOf(67));
-        item1.setQtdeVenda(Long.valueOf(33));
-        item1.setPrecoCapa(BigDecimal.valueOf(12.95));
-        item1.setValorVenda(BigDecimal.valueOf(427.35));
-        item1.setPacotePadrao(Integer.valueOf(20));
-        
-        ItemChamadaEncalheFornecedorDTO item2 = new ItemChamadaEncalheFornecedorDTO();
-        item2.setEditor(Long.valueOf(1422));
-        item2.setNome("ANIMAIS FEROZES");
-        item2.setDescricao("ANIMAIS FEROZES");
-        item2.setCodigo(Long.valueOf(36939001));
-        item2.setEdicao(Long.valueOf(1));
-        item2.setFormaDevolucao("INTEIRO");
-        item2.setDataRecolhimento(DateUtil.parseDataPTBR("05/10/2012"));
-        item2.setNotaEnvio(Long.valueOf(676699));
-        item2.setItem(Integer.valueOf(2));
-        item2.setTipoRecolhimento("N");
-        item2.setQtdeEnviada(Long.valueOf(50));
-        item2.setQtdeDevolvida(Long.valueOf(37));
-        item2.setQtdeVenda(Long.valueOf(13));
-        item2.setPrecoCapa(BigDecimal.valueOf(29.90));
-        item2.setValorVenda(BigDecimal.valueOf(427.35));
-        item2.setPacotePadrao(Integer.valueOf(10));
-        
-        documento.addItem(item1);
-        documento.addItem(item2);
-        
-        ResumoChamadaEncalheFornecedorDTO resumo = chamada.newResumo();
-        resumo.setSubTotalVendas(BigDecimal.valueOf(27458.78));
-        resumo.setTotalMargemDistribuidor(BigDecimal.valueOf(4078.71));
-        resumo.setValorPagar(BigDecimal.valueOf(27458.78));
-        
-        ItemResumoChamadaEncalheFornecedorDTO itemResumo = resumo.newItem();
-        itemResumo.setLinha(1);
-        itemResumo.setNumeroDocumento(documento.getNumeroDocumento());
-        itemResumo.setValorDocumento(documento.getTotalLiquido());
-        itemResumo.setValorMargem(documento.getTotalMargemDistribuidor());
-        
-
-        URL url = Thread.currentThread().getContextClassLoader()
-                   .getResource("/reports/CE_Devolucao_Fornecedor_lote.jasper");
-        try {
-            JRDataSource dataSource = new JRBeanCollectionDataSource(chamadas);
-            String path = url.toURI().getPath();
-            return  JasperRunManager.runReportToPdf(path, new HashMap<String, Object>(), dataSource);
-        } catch (URISyntaxException | JRException ex) {
-            LOG.error("Erro gerando arquivo CE Devolução!", ex);
-            throw new RuntimeException("Erro gerando arquivo CE Devolução!", ex);
-        }
-    }
 	
 }

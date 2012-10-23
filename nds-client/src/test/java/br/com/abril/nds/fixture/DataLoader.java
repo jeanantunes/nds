@@ -1126,8 +1126,7 @@ public class DataLoader {
 		gerarGrupos(session);
 		
 		criarCobrancasNegociacao(session);
-		
-		criarDadosChamadaEncalheFornecedor(session);
+
 	}
 
 	
