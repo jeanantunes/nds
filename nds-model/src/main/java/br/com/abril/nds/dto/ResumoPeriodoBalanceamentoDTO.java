@@ -58,7 +58,7 @@ public class ResumoPeriodoBalanceamentoDTO implements Serializable {
 		}
 	}
 	
-	public String getQtdeExemplaresFormatado() {
+	public String getQtdeExemplaresFormatada() {
 		return qtdeExemplaresFormatada;
 	}
 	
