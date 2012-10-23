@@ -1,11 +1,17 @@
 package br.com.abril.nds.repository.impl;
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Query;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
+import br.com.abril.nds.model.cadastro.PoliticaSuspensao;
+import br.com.abril.nds.model.cadastro.TipoCota;
+import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.ParametroCobrancaCotaRepository;
 
 @Repository
@@ -34,6 +40,5 @@ public class ParametroCobrancaCotaRepositoryImpl extends AbstractRepositoryModel
 		return query.list();
 		
 	}
-	
-	
+
 }

@@ -84,7 +84,7 @@
 
 		<span class="bt_novos" title="Imprimir Relat&oacute;rio"><a href="javascript:;" onclick="emissaoBandeiraController.imprimirArquivo('PDF')" target="_blank"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir Relat&oacute;rio</a></span>
         
-        <span class="bt_novos" title="Bandeira Manual"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/bt_expedicao.png" hspace="5" border="0" />Bandeira Manual</a></span>
+        <span class="bt_novos" title="Bandeira Manual"><a href="javascript:;" onclick="emissaoBandeiraController.bandeiraManual()"  ><img src="${pageContext.request.contextPath}/images/bt_expedicao.png" hspace="5" border="0" />Bandeira Manual</a></span>
      
          
 
