@@ -395,11 +395,11 @@
         </tr>
       <tr>
         <td align="left" style="border-bottom:1px solid #ccc;">Transferências</td>
-        <td align="right" style="border-bottom:1px solid #ccc;">542,35</td>
+        <td align="right" style="border-bottom:1px solid #ccc;"><div id="totalSuplementarTransferencia"></div></td>
         </tr>
       <tr>
         <td align="left" style="border-bottom:1px solid #ccc;">Vendas</td>
-        <td align="right" style="border-bottom:1px solid #ccc;"><a href="javascript:;" onclick="popup_vendasTot();">10.000,00</a></td>
+        <td align="right" style="border-bottom:1px solid #ccc;"><a href="javascript:;" onclick="popup_vendasTot();"><div id="totalSuplementarVenda"></div></a></td>
         </tr>
       <tr>
         <td align="left" style="border-bottom:1px solid #ccc;">Saldo</td>

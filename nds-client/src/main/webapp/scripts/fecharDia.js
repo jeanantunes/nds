@@ -600,6 +600,8 @@ var fecharDiaController =  $.extend(true, {
 		$.postJSON(contextPath + "/administracao/fecharDia/obterResumoQuadroSuplementar", null,
 				function(result){
 					$("#totalSuplementarEstoqueLogico").html(result[0]);
+					$("#totalSuplementarTransferencia").html(result[1]);
+					$("#totalSuplementarVenda").html(result[2]);
 				}
 			);
 	}
