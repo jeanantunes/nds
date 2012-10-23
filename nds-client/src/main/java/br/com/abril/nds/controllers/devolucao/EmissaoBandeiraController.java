@@ -232,6 +232,54 @@ public class EmissaoBandeiraController {
 		return listaImpressaoBandeiraVO;
 	}
 	
+	
+	
+	
+	
+
+	@Path("/bandeiraManual")
+	public void bandeiraManual() {
 		
+	}
+	
+	@Get("/imprimirBandeiraManual")
+	public Download imprimirBandeiraManual(Integer semana, Integer numeroPallets,String tipoOperacao, String codigoPracaProcon, String praca, String destino, String canal ) throws Exception{
+		
+		byte[] comprovate = this.gerarDocumentoIreport(semana,  numeroPallets, tipoOperacao,  codigoPracaProcon,  praca,  destino,  canal);
+		
+		return new ByteArrayDownload(comprovate,"application/pdf", "imprimirBandeira.pdf", true);
+	}
+	
+	
+	
+	
+	private List<ImpressaoBandeiraVO> getListaImpressaoBandeiraVO(Integer semana, Integer numeroPallets,String tipoOperacao, String codigoPracaProcon, String praca, String destino, String canal ) {
+		List<ImpressaoBandeiraVO> listaImpressaoBandeiraVO = new ArrayList<ImpressaoBandeiraVO>();
+		
+		for(int i=1; i <= numeroPallets;i++){
+			ImpressaoBandeiraVO impressaoBandeiraVO = new ImpressaoBandeiraVO();
+			impressaoBandeiraVO.setTipoOperacao(tipoOperacao);
+			
+			impressaoBandeiraVO.setSemana(semana);
+			impressaoBandeiraVO.setCodigoPracaProcon(codigoPracaProcon);
+			impressaoBandeiraVO.setPraca(praca);
+			impressaoBandeiraVO.setDestino(destino);
+			impressaoBandeiraVO.setCanal(canal);
+			listaImpressaoBandeiraVO.add(impressaoBandeiraVO);
+		}
+		
+		
+		return listaImpressaoBandeiraVO;
+	}
+	
+	
+	private byte[] gerarDocumentoIreport(Integer semana, Integer numeroPallets,String tipoOperacao, String codigoPracaProcon, String praca, String destino, String canal ) throws JRException, URISyntaxException {
+		Map<String, Object> parameters = new HashMap<String, Object>();
+	    JRBeanCollectionDataSource ds = new JRBeanCollectionDataSource( getListaImpressaoBandeiraVO( semana,  numeroPallets, tipoOperacao,  codigoPracaProcon,  praca,  destino,  canal )); 
+		URL url = Thread.currentThread().getContextClassLoader().getResource("/reports/emissao_bandeira.jasper");
+		String path = url.toURI().getPath();
+		return JasperRunManager.runReportToPdf(path, parameters,ds);
+	}
+
 	
 }
