@@ -9,4 +9,8 @@ public interface ResumoSuplementarFecharDiaService {
 
 	BigDecimal obterValorEstoqueLogico(Date dataOperacao);
 
+	BigDecimal obterValorTransferencia(Date dataOperacao);
+
+	BigDecimal obterValorVenda(Date dataOperacao);
+
 }
