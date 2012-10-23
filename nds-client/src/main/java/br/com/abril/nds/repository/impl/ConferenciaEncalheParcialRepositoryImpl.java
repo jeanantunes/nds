@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Criteria;
+import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.Transformers;
@@ -349,8 +350,13 @@ public class ConferenciaEncalheParcialRepositoryImpl extends AbstractRepositoryM
 			
 		criteria.add(Restrictions.eq("produtoEdicao.id", idProdutoEdicao));
 		criteria.add(Restrictions.eq("dataMovimento", dataMovimento));
+				
+		try {
+			return (ConferenciaEncalheParcial) criteria.uniqueResult();
+		} catch (HibernateException e) {
+			return null;
+		}
 		
-		return (ConferenciaEncalheParcial) criteria.list();
 	}
 	
 	
