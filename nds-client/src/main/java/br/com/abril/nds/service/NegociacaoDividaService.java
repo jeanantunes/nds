@@ -25,4 +25,6 @@ public interface NegociacaoDividaService {
 	Negociacao obterNegociacaoPorId(Long idNegociacao);
 	
 	List<byte[]> gerarBoletosNegociacao(Long idNegociacao);
+
+	byte[] imprimirNegociacao(Long idNegociacao) throws Exception;
 }

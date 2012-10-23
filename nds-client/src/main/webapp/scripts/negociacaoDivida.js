@@ -176,11 +176,11 @@ var negociacaoDividaController = $.extend(true, {
               },
               {
             	  name: "diaInicio",
-            	  value: $("#quinzenal", negociacaoDividaController.workspace).val()
+            	  value: $("#diaInputQuinzenal1", negociacaoDividaController.workspace).val()
               },
               {
             	  name: "diaFim",
-            	  value: $("#mensal", negociacaoDividaController.workspace).val()
+            	  value: $("#diaInputQuinzenal2", negociacaoDividaController.workspace).val()
               },
               {
             	  name: "negociacaoAvulsa",
@@ -192,7 +192,7 @@ var negociacaoDividaController = $.extend(true, {
               },
               {
             	  name: "ativarAposPagar",
-            	  value: $("[name=radioAtivarApos]:checked", negociacaoDividaController.workspace).val()
+            	  value: $("[name=radioAtivarApos]:checked", negociacaoDividaController.workspace).val() ? $("[name=radioAtivarApos]:checked", negociacaoDividaController.workspace).val() : ""
               }
 		];
 		
