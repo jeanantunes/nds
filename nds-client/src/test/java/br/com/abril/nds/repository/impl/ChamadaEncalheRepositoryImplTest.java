@@ -13,6 +13,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.dto.BandeirasDTO;
 import br.com.abril.nds.dto.CapaDTO;
 import br.com.abril.nds.dto.CotaEmissaoDTO;
 import br.com.abril.nds.dto.ProdutoEmissaoDTO;
@@ -46,6 +47,7 @@ import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.ChamadaEncalheRepository;
+import br.com.abril.nds.util.Intervalo;
 
 public class ChamadaEncalheRepositoryImplTest extends
 		AbstractRepositoryImplTest {
@@ -82,13 +84,14 @@ public class ChamadaEncalheRepositoryImplTest extends
 
 		save(veja, quatroRodas);
 
-		veja1 = Fixture.produtoEdicao("1", 1L, 10, 7, new Long(100),
-				BigDecimal.TEN, new BigDecimal(15), "ABCDEFGHIJKLMNOPQ", 1L,
+		veja1 = Fixture.produtoEdicao(1L, 10, 7, new Long(100),
+				BigDecimal.TEN, new BigDecimal(15), "ABCDEFGHIJKLMNOPQ", 
 				veja, null, false);
 
-		ProdutoEdicao quatroRoda2 = Fixture.produtoEdicao("1", 2L, 15, 30,
+		ProdutoEdicao quatroRoda2 = Fixture.produtoEdicao(2L, 15, 30,
 				new Long(100), BigDecimal.TEN, BigDecimal.TEN,
-				"ABCDEFGHIJKNOPQ", 2L, quatroRodas, null, false);
+				"ABCDEFGHIJKNOPQ", quatroRodas, null, false);
+
 
 		save(veja1, quatroRoda2);
 

@@ -123,25 +123,25 @@ public class ExpectativaEncalheDataTest extends AbstractRepositoryImplTest {
 		cromoReiLeao.addFornecedor(fornecedorDinap);
 		save(cromoReiLeao);
 
-		ProdutoEdicao veja1 = Fixture.produtoEdicao("1", 1L, 10, 7,
-				new Long(100), BigDecimal.TEN, new BigDecimal(15), "ABCDEFGHIJKLMNOPQ", 1L,
-			veja, porcentagemExpectativaVenda, false);
+		ProdutoEdicao veja1 = Fixture.produtoEdicao(1L, 10, 7, new Long(100),
+				BigDecimal.TEN, new BigDecimal(15), "ABCDEFGHIJKLMNOPQ", veja, 
+			porcentagemExpectativaVenda, false);
 
-		ProdutoEdicao quatroRoda2 = Fixture.produtoEdicao("1", 2L, 15, 30,
-				new Long(100), BigDecimal.TEN, BigDecimal.TEN, "ABCDEFGHIJKLMNOPA", 2L,
-			quatroRodas, porcentagemExpectativaVenda, false);
+		ProdutoEdicao quatroRoda2 = Fixture.produtoEdicao(2L, 15, 30, new Long(100),
+				BigDecimal.TEN, BigDecimal.TEN, "ABCDEFGHIJKLMNOPA", quatroRodas, 
+			porcentagemExpectativaVenda, false);
 		
-		ProdutoEdicao infoExame3 = Fixture.produtoEdicao("1", 3L, 5, 30,
-				new Long(100), BigDecimal.TEN, new BigDecimal(12), "ABCDEFGHIJKLMNOPC", 3L,
-			infoExame, porcentagemExpectativaVenda, false);
+		ProdutoEdicao infoExame3 = Fixture.produtoEdicao(3L, 5, 30, new Long(100),
+				BigDecimal.TEN, new BigDecimal(12), "ABCDEFGHIJKLMNOPC", infoExame, 
+			porcentagemExpectativaVenda, false);
 		
-		ProdutoEdicao capricho1 = Fixture.produtoEdicao("1", 1L, 10, 15,
-				new Long(120), BigDecimal.TEN, BigDecimal.TEN, "ABCDEFGHIJKLMNOPD", 4L,
-			capricho, porcentagemExpectativaVenda, false);
+		ProdutoEdicao capricho1 = Fixture.produtoEdicao(1L, 10, 15, new Long(120),
+				BigDecimal.TEN, BigDecimal.TEN, "ABCDEFGHIJKLMNOPD", capricho, 
+			porcentagemExpectativaVenda, false);
 		
-		ProdutoEdicao cromoReiLeao1 = Fixture.produtoEdicao("1", 1L, 100, 60,
-				new Long(10), BigDecimal.ONE, new BigDecimal(1.5), "ABCDEFGHIJKLMNOPE", 5L,
-			cromoReiLeao, porcentagemExpectativaVenda, false);
+		ProdutoEdicao cromoReiLeao1 = Fixture.produtoEdicao(1L, 100, 60, new Long(10),
+				BigDecimal.ONE, new BigDecimal(1.5), "ABCDEFGHIJKLMNOPE", cromoReiLeao, 
+			porcentagemExpectativaVenda, false);
 		
 		save(veja1, quatroRoda2, infoExame3, capricho1, cromoReiLeao1);
 		

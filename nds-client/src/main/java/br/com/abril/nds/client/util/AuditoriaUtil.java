@@ -157,8 +157,6 @@ public class AuditoriaUtil {
 		for (Field field : allFields) { 
 
 			if (!field.getName().equals(EXCLUDED_FIELD)
-					&& !field.isAnnotationPresent(OneToMany.class)
-					&& !field.isAnnotationPresent(OneToOne.class)
 					&& !field.isAnnotationPresent(ManyToAny.class)
 					&& !field.isAnnotationPresent(ManyToMany.class)
 					&& !field.isAnnotationPresent(ManyToOne.class)) {
@@ -186,7 +184,9 @@ public class AuditoriaUtil {
 
 			if (!EXCLUDED_FIELD.equals(field.getName())
 					&& (field.isAnnotationPresent(Embedded.class)
-							|| field.isAnnotationPresent(EmbeddedId.class))) {
+							|| field.isAnnotationPresent(EmbeddedId.class))
+							|| field.isAnnotationPresent(OneToOne.class)
+							|| field.isAnnotationPresent(OneToMany.class)) {
 
 				fields.add(upperCaseFirstLetter(field.getName()));
 			}

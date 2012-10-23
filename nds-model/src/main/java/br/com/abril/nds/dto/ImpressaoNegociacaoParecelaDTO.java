@@ -1,34 +1,29 @@
-package br.com.abril.nds.client.vo;
+package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
-import br.com.abril.nds.util.export.Export;
-import br.com.abril.nds.util.export.Exportable;
-
-@Exportable
-public class ImpressaoNegociacaoParecelaVO implements Serializable {
+public class ImpressaoNegociacaoParecelaDTO implements Serializable {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -8408093325685999145L;
 
-	@Export(label = "Vencimento")
 	private Date dataVencimento;
 	
-	@Export(label = "Num. Cheque")
 	private String numeroCheque;
 	
-	@Export(label = "Parcela/Valor R$")
 	private BigDecimal valor;
 	
-	@Export(label = "Parc. Total")
 	private BigDecimal parcelaTotal;
 	
-	@Export(label = "Encargos")
 	private BigDecimal encagos;
+	
+	private boolean ativarAoPagar;
+	
+	private int numeroParcela;
 
 	public Date getDataVencimento() {
 		return dataVencimento;
@@ -68,5 +63,21 @@ public class ImpressaoNegociacaoParecelaVO implements Serializable {
 
 	public void setEncagos(BigDecimal encagos) {
 		this.encagos = encagos;
+	}
+
+	public boolean isAtivarAoPagar() {
+		return ativarAoPagar;
+	}
+
+	public void setAtivarAoPagar(boolean ativarAoPagar) {
+		this.ativarAoPagar = ativarAoPagar;
+	}
+
+	public int getNumeroParcela() {
+		return numeroParcela;
+	}
+
+	public void setNumeroParcela(int numeroParcela) {
+		this.numeroParcela = numeroParcela;
 	}
 }

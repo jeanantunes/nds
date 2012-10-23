@@ -13,6 +13,7 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.util.Intervalo;
+import br.com.abril.nds.vo.PaginacaoVO;
 
 public interface ChamadaEncalheRepository extends Repository<ChamadaEncalhe, Long> {
 	
@@ -35,7 +36,7 @@ public interface ChamadaEncalheRepository extends Repository<ChamadaEncalhe, Lon
 	Date obterProximaDataEncalhe(Date base);
 
 	List<BandeirasDTO> obterBandeirasNoIntervalo(
-			Intervalo<Date> intervaloRecolhimento);
+			Intervalo<Date> intervaloRecolhimento, PaginacaoVO paginacaoVO);
 
 	List<FornecedoresBandeiraDTO> obterDadosFornecedoresParaImpressaoBandeira(
 			Intervalo<Date> intervalo);
