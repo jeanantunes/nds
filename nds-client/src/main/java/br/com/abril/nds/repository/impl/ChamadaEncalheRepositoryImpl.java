@@ -24,6 +24,7 @@ import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.repository.ChamadaEncalheRepository;
 import br.com.abril.nds.util.Intervalo;
+import br.com.abril.nds.vo.PaginacaoVO;
 
 @Repository
 public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<ChamadaEncalhe,Long> implements ChamadaEncalheRepository{
@@ -435,30 +436,70 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<BandeirasDTO> obterBandeirasNoIntervalo(
-			Intervalo<Date> intervalo) {
+			Intervalo<Date> intervalo, PaginacaoVO paginacaoVO) {
 	
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" select produtoEdicao.codigo as codProduto, ")
+		hql.append(" select produto.codigo as codProduto, ")
 			.append(" produto.nome as nomeProduto, ")
 			.append(" produtoEdicao.numeroEdicao as edProduto, ")
-			.append(" produtoEdicao.pacotePadrao as pctPadrao ")
+			.append(" produtoEdicao.pacotePadrao as pctPadrao, ")
+			.append(" sum(chamadaEncalheCotas.qtdePrevista) as qtde, ")
+			.append(" pessoaFornecedor.razaoSocial as destino ")
 			.append(" from ChamadaEncalhe chamadaEncalhe ")
 			.append(" join chamadaEncalhe.produtoEdicao produtoEdicao ")
 			.append(" join produtoEdicao.produto produto ")
+			.append(" left join chamadaEncalhe.chamadaEncalheCotas chamadaEncalheCotas ")
+			.append(" join produto.fornecedores fornecedores ")
+			.append(" join fornecedores.juridica pessoaFornecedor ")
 			.append(" where chamadaEncalhe.dataRecolhimento >= :dataDe ")
-			.append(" and chamadaEncalhe.dataRecolhimento <= :dataAte ");
+			.append(" and chamadaEncalhe.dataRecolhimento <= :dataAte ")
+			.append(" group by chamadaEncalhe.id ");
 		
 		Query query = this.getSession().createQuery(hql.toString());
 		
 		query.setParameter("dataDe", intervalo.getDe());
 		query.setParameter("dataAte", intervalo.getAte());
 		
+		if (paginacaoVO != null)		
+			getOrderByobterBandeirasNoIntervalo(paginacaoVO); 
+		
+		if (paginacaoVO != null && paginacaoVO.getPosicaoInicial() != null) { 
+			
+			query.setFirstResult(paginacaoVO.getPosicaoInicial());
+			
+			query.setMaxResults(paginacaoVO.getQtdResultadosPorPagina());
+		}
+		
 		query.setResultTransformer(Transformers.aliasToBean(BandeirasDTO.class));
 		
 		return query.list();
 	}
+	
+	private String getOrderByobterBandeirasNoIntervalo(PaginacaoVO paginacaoVO) {
 
+
+		String coluna = paginacaoVO.getSortColumn();
+		
+		if(coluna == null || coluna.isEmpty())
+			return "";
+		
+		String orderBy = " order by ";
+						
+		if ("codProduto".equals(coluna))
+			orderBy += " produtoEdicao.codigo ";
+		else if("nomeProduto".equals(coluna))
+			orderBy += " produto.descricao ";
+		else if("edProduto".equals(coluna))
+			orderBy += " produtoEdicao.numeroEdicao ";
+		else if("pctPadrao".equals(coluna))
+			orderBy += " produtoEdicao.pacotePadrao ";
+		
+		orderBy += paginacaoVO.getSortOrder();
+		
+		return orderBy;
+	}
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<FornecedoresBandeiraDTO> obterDadosFornecedoresParaImpressaoBandeira(

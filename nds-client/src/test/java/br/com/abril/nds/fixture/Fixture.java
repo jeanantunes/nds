@@ -211,6 +211,10 @@ import br.com.abril.nds.model.planejamento.StatusLancamentoParcial;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
+import br.com.abril.nds.model.planejamento.fornecedor.ChamadaEncalheFornecedor;
+import br.com.abril.nds.model.planejamento.fornecedor.FormaDevolucao;
+import br.com.abril.nds.model.planejamento.fornecedor.ItemChamadaEncalheFornecedor;
+import br.com.abril.nds.model.planejamento.fornecedor.RegimeRecolhimento;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCota;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaBanco;
@@ -528,7 +532,7 @@ public class Fixture {
 
 	public static ProdutoEdicao produtoEdicao(String codigoProdutoEdicao, Long numeroEdicao, 
 			int pacotePadrao, int peb, Long peso, BigDecimal precoCusto,
-			BigDecimal precoVenda, String codigoDeBarras, Long cdSMNotUsedAnyMore, Produto produto, 
+			BigDecimal precoVenda, String codigoDeBarras, Produto produto, 
 			BigDecimal expectativaVenda, boolean parcial,String nomeComercial) {
 		
 		ProdutoEdicao produtoEdicao = new ProdutoEdicao();
@@ -547,10 +551,10 @@ public class Fixture {
 		return produtoEdicao;
 	}
 	
-	public static ProdutoEdicao produtoEdicao(String codigoProdutoEdicao, Long numeroEdicao, 
-			int pacotePadrao, int peb, Long peso, BigDecimal precoCusto,
-			BigDecimal precoVenda, String codigoDeBarras, Long cdSMNotUsedAnyMore, Produto produto, 
-			BigDecimal expectativaVenda, boolean parcial) {
+	public static ProdutoEdicao produtoEdicao(Long numeroEdicao, int pacotePadrao, 
+			int peb, Long peso, BigDecimal precoCusto, BigDecimal precoVenda,
+			String codigoDeBarras, Produto produto, BigDecimal expectativaVenda, 
+			boolean parcial) {
 		
 		ProdutoEdicao produtoEdicao = new ProdutoEdicao();
 		produtoEdicao.setNumeroEdicao(numeroEdicao);
@@ -3905,5 +3909,73 @@ public class Fixture {
 		
 		return tipoMovimento;
 	}
+
+    public static ChamadaEncalheFornecedor newChamadaEncalheFornecedor(
+            Long codigoDistribuidor, Fornecedor fornecedor, Long numero,
+            Long controle, Integer tipo, Integer anoReferencia, Integer semana,
+            Date dataLimite, Date dataEmissao, BigDecimal totalCreditoApurado,
+            BigDecimal totalCreditoInformado, BigDecimal totalMargemApurado,
+            BigDecimal totalMargemInformado, BigDecimal totalVendaApurado,
+            BigDecimal totalVendaInformada, String status,
+            String codigoPreenchimento, BigDecimal notaValoresDiversos) {
+        
+        ChamadaEncalheFornecedor ce = new ChamadaEncalheFornecedor();
+        ce.setCodigoDistribuidor(codigoDistribuidor);
+        ce.setFornecedor(fornecedor);
+        ce.setNumeroChamadaEncalhe(numero);
+        ce.setControle(controle);
+        ce.setTipoChamadaEncalhe(tipo);
+        ce.setAnoReferencia(anoReferencia);
+        ce.setNumeroSemana(semana);
+        ce.setDataLimiteRecebimento(dataLimite);
+        ce.setCodigoPreenchimento(codigoPreenchimento);
+        ce.setDataEmissao(dataEmissao);
+        ce.setNotaValoresDiversos(notaValoresDiversos);
+        ce.setStatus(status);
+        ce.setTotalCreditoApurado(totalCreditoApurado);
+        ce.setTotalCreditoInformado(totalCreditoInformado);
+        ce.setTotalMargemApurado(totalMargemApurado);
+        ce.setTotalMargemInformado(totalMargemInformado);
+        ce.setTotalVendaApurada(totalVendaApurado);
+        ce.setTotalVendaInformada(totalVendaInformada);
+
+        return ce;
+    }
+	
+    public static ItemChamadaEncalheFornecedor newItemChamadaEncalheFornecedor(
+            ChamadaEncalheFornecedor chamada, ProdutoEdicao pe, Integer controle, Long numeroDocumento,
+            Integer numeroItem, Long qtdeEnviada, BigDecimal precoUnitario,
+            FormaDevolucao formaDevolucao,
+            RegimeRecolhimento regimeRecolhimento,
+            BigDecimal valorMargemApurado, 
+            Long numeroNota,
+            Long qtdeVendaInformada,
+            BigDecimal valorVendaInformado, 
+            BigDecimal valorVendaApurado, 
+            Long qtdeDevolucaoInformada, Date dataRecolhimento, String status, String tipoProduto) {
+
+        ItemChamadaEncalheFornecedor item = new ItemChamadaEncalheFornecedor();
+        item.setChamadaEncalheFornecedor(chamada);
+        chamada.getItens().add(item);
+        item.setProdutoEdicao(pe);
+        item.setControle(controle);
+        item.setNumeroDocumento(numeroDocumento);
+        item.setNumeroItem(numeroItem);
+        item.setQtdeEnviada(qtdeEnviada);
+        item.setPrecoUnitario(precoUnitario);
+        item.setFormaDevolucao(formaDevolucao);
+        item.setRegimeRecolhimento(regimeRecolhimento);
+        item.setValorMargemApurado(valorMargemApurado);
+        item.setNumeroNotaEnvio(numeroNota);
+        item.setQtdeVendaInformada(qtdeVendaInformada);
+        item.setValorVendaInformado(valorVendaInformado);
+        item.setValorVendaApurado(valorVendaApurado);
+        item.setQtdeDevolucaoInformada(qtdeDevolucaoInformada);
+        item.setDataRecolhimento(dataRecolhimento);
+        item.setStatus(status);
+        item.setTipoProduto(tipoProduto);
+
+        return item;
+    }
 
 }

@@ -5,9 +5,6 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 
-import br.com.abril.nds.util.CurrencyUtil;
-import br.com.abril.nds.util.DateUtil;
-
 public class ContasApagarConsultaPorProdutoDTO implements Serializable{
 	
 	private static final long serialVersionUID = 3890007339807389818L;
@@ -45,15 +42,13 @@ public class ContasApagarConsultaPorProdutoDTO implements Serializable{
 	 * @param reparte
 	 * @param suplementacao
 	 * @param encalhe
-	 * @param venda
 	 * @param faltasSobras
 	 * @param debitosCreditos
 	 * @param saldoAPagar
 	 */
 	public ContasApagarConsultaPorProdutoDTO(Long produtoEdicaoId, Date rctl, String codigo,
-			String produto, Long edicao, boolean tipo, BigInteger reparte,
-			BigInteger suplementacao, BigInteger encalhe, BigInteger venda,
-			BigInteger faltasSobras, BigInteger debitosCreditos) {
+			String produto, Long edicao, boolean tipo, BigInteger reparte, BigInteger suplementacao, 
+			BigInteger encalhe,BigInteger faltasSobras, BigInteger debitosCreditos, BigDecimal saldoAPagar) {
 		
 		super();
 		
@@ -66,12 +61,12 @@ public class ContasApagarConsultaPorProdutoDTO implements Serializable{
 		this.reparte = reparte!=null?reparte:BigInteger.ZERO;
 		this.suplementacao = suplementacao!=null?suplementacao:BigInteger.ZERO;
 		this.encalhe = encalhe!=null?encalhe:BigInteger.ZERO;
-		this.venda = venda!=null?venda:BigInteger.ZERO;
 		this.faltasSobras = faltasSobras!=null?faltasSobras:BigInteger.ZERO;
 		this.debitosCreditos = debitosCreditos!=null?debitosCreditos:BigInteger.ZERO;
 		
-		this.saldoAPagar = BigDecimal.valueOf(this.encalhe.subtract(this.faltasSobras == null ? BigInteger.ZERO : this.faltasSobras)
-				                              .subtract(this.debitosCreditos == null ? BigInteger.ZERO : this.debitosCreditos).longValue());
+		this.venda = this.reparte.subtract(this.encalhe);
+		
+		this.saldoAPagar = saldoAPagar;
 	}
 	
 	public Long getProdutoEdicaoId() {

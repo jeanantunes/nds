@@ -343,10 +343,7 @@ var PDV =  $.extend(true, {
 		salvarPDV : function(){
 	
 			$.postJSON(contextPath + "/cadastro/pdv/salvar",
-					this.getDadosBasico() +"&" +
-					this.getDadosCaracteristica() +"&" +
-					this.getDadosGeradorFluxo()  +"&" +
-					this.getDadosMap(), function(result){
+					this.getDadosBasico(), function(result){
 			
 				if(result.listaMensagens){
 					
@@ -376,79 +373,57 @@ var PDV =  $.extend(true, {
 
 		getDadosBasico: function (){
 			
-			var dados = 
-				"pdvDTO.idCota="								+PDV.idCota + "&" +
-				"pdvDTO.id="									+$("#idPDV", this.workspace).val() + "&" +
-				"pdvDTO.statusPDV="  							+$("#selectStatus", this.workspace).val() + "&" +
-				"pdvDTO.dataInicio="							+$("#dataInicio", this.workspace).val()+ "&" +
-				"pdvDTO.nomePDV="								+$("#nomePDV", this.workspace).val()+ "&" +
-				"pdvDTO.contato="								+$("#contatoPDV", this.workspace).val()+ "&" +
-				"pdvDTO.site="									+$("#sitePDV", this.workspace).val()+ "&" +
-				"pdvDTO.email="									+$("#emailPDV", this.workspace).val()+ "&" +
-				"pdvDTO.pontoReferencia="						+$("#pontoReferenciaPDV", this.workspace).val()+ "&" +
-				"pdvDTO.dentroOutroEstabelecimento="	 		+this.isChecked("#dentroOutroEstabelecimento", this.workspace) + "&" +
-				"pdvDTO.arrendatario="	 						+this.isChecked("#arrendatario", this.workspace) + "&" +
-				"pdvDTO.caracteristicaDTO.pontoPrincipal=" 		+ this.isChecked("#ptoPrincipal", this.workspace) +"&"+
-				"pdvDTO.tipoEstabelecimentoAssociacaoPDV.codigo="	+$("#selectTipoEstabelecimento", this.workspace).val()+ "&" +
-				"pdvDTO.tamanhoPDV="							+$("#selectTamanhoPDV", this.workspace).val()+ "&" +
-				"pdvDTO.qtdeFuncionarios="						+$("#qntFuncionarios", this.workspace).val()+ "&" +
-				"pdvDTO.sistemaIPV="							+this.isChecked("#sistemaIPV", this.workspace)+ "&" +
-				"pdvDTO.porcentagemFaturamento="				+$("#porcentagemFaturamento", this.workspace).val()+ "&" +
-				"pdvDTO.tipoLicencaMunicipal.id="				+$("#selectTipoLicenca", this.workspace).val()+ "&" +
-				"pdvDTO.numeroLicenca="							+$("#numerolicenca", this.workspace).val()+ "&" +
-				"pdvDTO.nomeLicenca="							+$("#nomeLicenca", this.workspace).val();
+			var dados = {"pdvDTO.idCota":PDV.idCota , 
+					"pdvDTO.id":$("#idPDV", this.workspace).val() , 
+					"pdvDTO.statusPDV":$("#selectStatus", this.workspace).val() , 
+					"pdvDTO.dataInicio":$("#dataInicio", this.workspace).val(), 
+					"pdvDTO.nomePDV":$("#nomePDV", this.workspace).val(), 
+					"pdvDTO.contato":$("#contatoPDV", this.workspace).val(), 
+					"pdvDTO.site":$("#sitePDV", this.workspace).val(), 
+					"pdvDTO.email":$("#emailPDV", this.workspace).val(), 
+					"pdvDTO.pontoReferencia":$("#pontoReferenciaPDV", this.workspace).val(), 
+					"pdvDTO.dentroOutroEstabelecimento":this.isChecked("#dentroOutroEstabelecimento", this.workspace) , 
+					"pdvDTO.arrendatario":this.isChecked("#arrendatario", this.workspace) , 
+					"pdvDTO.caracteristicaDTO.pontoPrincipal":this.isChecked("#ptoPrincipal", this.workspace),
+					"pdvDTO.tipoEstabelecimentoAssociacaoPDV.codigo":$("#selectTipoEstabelecimento", this.workspace).val(), 
+					"pdvDTO.tamanhoPDV":$("#selectTamanhoPDV", this.workspace).val(), 
+					"pdvDTO.qtdeFuncionarios":$("#qntFuncionarios", this.workspace).val(), 
+					"pdvDTO.sistemaIPV":this.isChecked("#sistemaIPV", this.workspace), 
+					"pdvDTO.porcentagemFaturamento":$("#porcentagemFaturamento", this.workspace).val(), 
+					"pdvDTO.tipoLicencaMunicipal.id":$("#selectTipoLicenca", this.workspace).val(), 
+					"pdvDTO.numeroLicenca":$("#numerolicenca", this.workspace).val(), 
+					"pdvDTO.nomeLicenca":$("#nomeLicenca", this.workspace).val(),
+					"pdvDTO.caracteristicaDTO.balcaoCentral":this.isChecked("#balcaoCentral"),
+					"pdvDTO.caracteristicaDTO.temComputador":this.isChecked("#temComputador"),
+					"pdvDTO.caracteristicaDTO.possuiCartao":this.isChecked("#possuiCartao"),
+					"pdvDTO.caracteristicaDTO.luminoso":this.isChecked("#luminoso"),
+					"pdvDTO.caracteristicaDTO.textoLuminoso":$("#textoLuminoso",this.workspace).val(),
+					"pdvDTO.caracteristicaDTO.tipoPonto":$("#selectdTipoPonto",this.workspace).val(),
+					"pdvDTO.caracteristicaDTO.tipoCaracteristicaSegmentacaoPDV":$("#selectCaracteristica",this.workspace).val(),
+					"pdvDTO.caracteristicaDTO.areaInfluencia":$("#selectAreainfluencia",this.workspace).val(),
+					"pdvDTO.geradorFluxoPrincipal":$("#hiddenGeradorFluxoPrincipal", this.workspace).val(),
+					"pdvDTO.expositor":PDV.isChecked("#expositor"), 
+					"pdvDTO.tipoExpositor":$("#tipoExpositor", this.workspace).val()};
 			
-			$.each(PDV.diasFuncionamento, function(index, diaFuncionamento) {
-				
-				dados += '&pdvDTO.periodosFuncionamentoDTO['+ index +'].tipoPeriodo=' + diaFuncionamento.tipoPeriodo +
-				'&pdvDTO.periodosFuncionamentoDTO['+ index +'].inicio='+diaFuncionamento.inicio +
-				'&pdvDTO.periodosFuncionamentoDTO['+ index +'].fim='+diaFuncionamento.fim;
-		  	});
+			dados = serializeArrayToPost('pdvDTO.periodosFuncionamentoDTO', PDV.diasFuncionamento, dados);	
 			
-			return dados;
-		},
-		
-				
-		getDadosCaracteristica: function (){
-			
-			var dados =	              
-	              "pdvDTO.caracteristicaDTO.balcaoCentral="  + 						this.isChecked("#balcaoCentral")+"&"+
-	              "pdvDTO.caracteristicaDTO.temComputador="  + 						this.isChecked("#temComputador")+"&"+
-	              "pdvDTO.caracteristicaDTO.possuiCartao="  + 						this.isChecked("#possuiCartao")+"&"+
-	              "pdvDTO.caracteristicaDTO.luminoso="       + 						this.isChecked("#luminoso")+"&"+
-	              "pdvDTO.caracteristicaDTO.textoLuminoso="  + 						$("#textoLuminoso", this.workspace).val()+"&"+
-	              "pdvDTO.caracteristicaDTO.tipoPonto="      +						$("#selectdTipoPonto", this.workspace).val()+"&"+
-	              "pdvDTO.caracteristicaDTO.tipoCaracteristicaSegmentacaoPDV="+		$("#selectCaracteristica", this.workspace).val()+"&"+
-	              "pdvDTO.caracteristicaDTO.areaInfluencia=" + 						$("#selectAreainfluencia", this.workspace).val();
-						
-			return dados;
-		},
-		
-		getDadosGeradorFluxo: function (){
-			
-			 var listaFluxoSecundario ="";
-			
+			 var listaFluxoSecundario = new Array();				
 			 $("#selectFluxoSecundario option", this.workspace).each(function (index) {
-				 listaFluxoSecundario = listaFluxoSecundario + "pdvDTO.geradorFluxoSecundario["+index+"]="+ $(this).val() +"&";
+				 listaFluxoSecundario.push($(this).val());
 			 });
 			 
-			 listaFluxoSecundario = listaFluxoSecundario + "pdvDTO.geradorFluxoPrincipal="+ $("#hiddenGeradorFluxoPrincipal", this.workspace).val() +"&";
- 
-			 return listaFluxoSecundario;	
-		},
-		
-		getDadosMap: function (){
-			
-			var listaMaps ="";
-			
+			 dados =  serializeArrayToPost('pdvDTO.geradorFluxoSecundario', listaFluxoSecundario, dados);
+			 
+			 var listaMaps = new Array();
+				
 			 $("#selectMap option", this.workspace).each(function (index) {
-				 listaMaps = listaMaps + "pdvDTO.maps["+index+"]="+ $(this).val() +"&";
+				 listaMaps.push($(this).val());
+				 
             });
 			 
-			 listaMaps = listaMaps +  "pdvDTO.expositor="+PDV.isChecked("#expositor")+"&" 
-			 					   +  "pdvDTO.tipoExpositor="+$("#tipoExpositor", this.workspace).val(); 
-  
-			return listaMaps;
+			 dados = serializeArrayToPost('pdvDTO.maps', listaMaps, dados);
+			 
+			return dados;
 		},
 		
 		isChecked : function (idCampo){	
@@ -708,7 +683,7 @@ var PDV =  $.extend(true, {
 			PDV.diasFuncionamento = [];
 			
 			$.postJSON(contextPath + "/cadastro/pdv/novo",
-					"idCota="+PDV.idCota, 
+					{idCota:PDV.idCota}, 
 					function(){
 						PDV.popup_novoPdv();
 						PDV.fecharModalCadastroPDV = false;
@@ -744,8 +719,7 @@ var PDV =  $.extend(true, {
 
                             if ($("#ptoPrincipal", this.workspace).attr("checked")){
 
-                                data = "idCota=" + PDV.idCota +
-                                    "&" + "idPdv=" + $("#idPDV").val();
+                                data = {idCota:PDV.idCota,idPdv:$("#idPDV").val()};
 
                                 $.postJSON(contextPath + "/cadastro/pdv/verificarPontoPrincipal",
                                     data,
@@ -877,7 +851,7 @@ var PDV =  $.extend(true, {
 		excluirImagem :function (idPDV) {
 			
 			$.postJSON(contextPath + "/cadastro/pdv/excluirImagem",
-					   "idPdv=" + idPDV, 
+					   {idPdv:idPDV}, 
 					   function(result){
 				
 				var mensagens = result[0];
@@ -1118,8 +1092,7 @@ var PDV =  $.extend(true, {
 					
 					if ($("#ptoPrincipal", this.workspace).attr("checked")){
 						
-						data = "idCota=" + PDV.idCota + 
-						       "&" + "idPdv=" + $("#idPDV").val();
+						data = {idCota:PDV.idCota,idPdv:$("#idPDV").val()};
 						
 						$.postJSON(contextPath + "/cadastro/pdv/verificarPontoPrincipal", 
 								data, 

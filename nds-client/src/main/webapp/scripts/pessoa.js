@@ -11,7 +11,7 @@ var PESSOA = {
 			if (nomePessoa && nomePessoa.length > 2) {
 				
 				$.postJSON(
-					contextPath + "/pessoa/autoCompletarPorNome", "nomePessoa=" + nomePessoa,
+					contextPath + "/pessoa/autoCompletarPorNome", {nomePessoa:nomePessoa},
 					function(result) { 
 						PESSOA.exibirAutoComplete(result, idCampoNome); 
 					},
