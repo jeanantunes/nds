@@ -7,19 +7,13 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.PersistenceContext;
-
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.DetalheProdutoVO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.model.cadastro.Dimensao;
-import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
-import br.com.abril.nds.model.fiscal.nota.Origem;
-import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Permissao;
@@ -29,7 +23,6 @@ import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.util.CurrencyUtil;
-import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.MathUtil;
 import br.com.abril.nds.util.TipoMensagem;
@@ -72,7 +65,7 @@ public class ProdutoEdicaoController {
 	
 	@Post
 	@Path("/pesquisarEdicoes.json")
-	public void pesquisarEdicoes(String codigoProduto, String nome,
+	public void pesquisarEdicoes(String codigoProduto, String nomeComercial,
 			Date dataLancamentoDe, Date dataLancamentoAte, BigDecimal precoDe,BigDecimal precoAte , String situacaoLancamento,
 			String codigoDeBarras, boolean brinde,
             String sortorder, String sortname, int page, int rp) {
@@ -80,7 +73,7 @@ public class ProdutoEdicaoController {
 		Intervalo<Date> intervaloLancamento = null;
 		// Validar:
 		if ((codigoProduto == null || codigoProduto.trim().isEmpty()) 
-				|| (nome == null || nome.trim().isEmpty())) {
+				|| (nomeComercial == null || nomeComercial.trim().isEmpty())) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Por favor, preencha o campo 'Código' ou 'Produto'!");
 		}
 		if(dataLancamentoDe == null ^ dataLancamentoAte == null ){
@@ -109,9 +102,9 @@ public class ProdutoEdicaoController {
 		}		
 	
 		// Pesquisar:
-		Long qtd = peService.countPesquisarEdicoes(codigoProduto, nome, intervaloLancamento, intervaloPreco, statusLancamento, codigoDeBarras, brinde);
+		Long qtd = peService.countPesquisarEdicoes(codigoProduto, nomeComercial, intervaloLancamento, intervaloPreco, statusLancamento, codigoDeBarras, brinde);
 		if(qtd > 0){			
-			List<ProdutoEdicaoDTO> lst = peService.pesquisarEdicoes(codigoProduto, nome, intervaloLancamento, intervaloPreco, statusLancamento, codigoDeBarras, brinde, sortorder, sortname, page, rp);
+			List<ProdutoEdicaoDTO> lst = peService.pesquisarEdicoes(codigoProduto, nomeComercial, intervaloLancamento, intervaloPreco, statusLancamento, codigoDeBarras, brinde, sortorder, sortname, page, rp);
 			
 			this.result.use(FlexiGridJson.class).from(lst).total(qtd.intValue()).page(page).serialize();
 		}else{
