@@ -196,10 +196,10 @@
 					class="quinzenalMensal">
 					<tr>
 						<td width="68">Todo dia:</td>
-						<td width="66"><input type="text" name="filtro.quinzenalDia1" style="width: 60px;" /></td>
+						<td width="66"><input type="text" name="filtro.quinzenalDia1" style="width: 60px;" id="diaInputQuinzenal1" /></td>
 						<td id="textoDiaInputQuinzenal" width="21">&nbsp; e:</td>
 						<td width="522"><input type="text" name="filtro.quinzenalDia2"
-							id="diaInputQuinzenal" style="width: 60px;" /></td>
+							id="diaInputQuinzenal2" style="width: 60px;" /></td>
 					</tr>
 				</table>
 				
