@@ -407,7 +407,7 @@ public class BoxRepositoryImpl extends AbstractRepositoryModel<Box,Long> impleme
 			}
 		}
 		
-		return (long) query.uniqueResult();
+		return (Long) query.uniqueResult();
 	}
 
 

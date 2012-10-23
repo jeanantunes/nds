@@ -1,6 +1,7 @@
 package br.com.abril.nds.dto;
 
 import java.io.Serializable;
+import java.math.BigInteger;
 
 public class BandeirasDTO  implements Serializable{
 
@@ -11,9 +12,7 @@ public class BandeirasDTO  implements Serializable{
 	private Long edProduto;
 	private Integer pctPadrao;
 	
-	//TODO De onde vem?
 	private String destino;
-	//TODO De onde vem?
 	private Integer prioridade;
 	private BigInteger qtde;
 	
@@ -53,5 +52,29 @@ public class BandeirasDTO  implements Serializable{
 	}
 	public void setPctPadrao(Integer pctPadrao) {
 		this.pctPadrao = pctPadrao;
+	}
+
+	public Integer getPrioridade() {
+		return prioridade;
+	}
+
+	public void setPrioridade(Integer prioridade) {
+		this.prioridade = prioridade;
+	}
+
+	public BigInteger getQtde() {
+		return qtde;
+	}
+
+	public void setQtde(BigInteger qtde) {
+		this.qtde = (qtde== null) ? BigInteger.ZERO : qtde;
+	}
+
+	public String getDestino() {
+		return destino;
+	}
+
+	public void setDestino(String destino) {
+		this.destino = destino;
 	}	
 }

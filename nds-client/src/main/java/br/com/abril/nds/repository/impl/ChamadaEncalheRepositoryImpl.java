@@ -440,22 +440,29 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 	
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" select produtoEdicao.codigo as codProduto, ")
+		hql.append(" select produto.codigo as codProduto, ")
 			.append(" produto.nome as nomeProduto, ")
 			.append(" produtoEdicao.numeroEdicao as edProduto, ")
-			.append(" produtoEdicao.pacotePadrao as pctPadrao ")
+			.append(" produtoEdicao.pacotePadrao as pctPadrao, ")
+			.append(" sum(chamadaEncalheCotas.qtdePrevista) as qtde, ")
+			.append(" pessoaFornecedor.razaoSocial as destino ")
 			.append(" from ChamadaEncalhe chamadaEncalhe ")
 			.append(" join chamadaEncalhe.produtoEdicao produtoEdicao ")
 			.append(" join produtoEdicao.produto produto ")
+			.append(" left join chamadaEncalhe.chamadaEncalheCotas chamadaEncalheCotas ")
+			.append(" join produto.fornecedores fornecedores ")
+			.append(" join fornecedores.juridica pessoaFornecedor ")
 			.append(" where chamadaEncalhe.dataRecolhimento >= :dataDe ")
-			.append(" and chamadaEncalhe.dataRecolhimento <= :dataAte ");
+			.append(" and chamadaEncalhe.dataRecolhimento <= :dataAte ")
+			.append(" group by chamadaEncalhe.id ");
 		
 		Query query = this.getSession().createQuery(hql.toString());
 		
 		query.setParameter("dataDe", intervalo.getDe());
 		query.setParameter("dataAte", intervalo.getAte());
 		
-		getOrderByobterBandeirasNoIntervalo(paginacaoVO); 
+		if (paginacaoVO != null)		
+			getOrderByobterBandeirasNoIntervalo(paginacaoVO); 
 		
 		if (paginacaoVO != null && paginacaoVO.getPosicaoInicial() != null) { 
 			
@@ -471,10 +478,14 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 	
 	private String getOrderByobterBandeirasNoIntervalo(PaginacaoVO paginacaoVO) {
 
-		String orderBy = " order by ";
-		
+
 		String coluna = paginacaoVO.getSortColumn();
-				
+		
+		if(coluna == null || coluna.isEmpty())
+			return "";
+		
+		String orderBy = " order by ";
+						
 		if ("codProduto".equals(coluna))
 			orderBy += " produtoEdicao.codigo ";
 		else if("nomeProduto".equals(coluna))
