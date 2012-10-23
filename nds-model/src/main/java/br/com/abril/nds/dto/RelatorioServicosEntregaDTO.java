@@ -7,6 +7,7 @@ public class RelatorioServicosEntregaDTO implements Serializable {
 	
 	private static final long serialVersionUID = -7333083999971377674L;
 	
+	private Integer transportadorId;
 	private String nomeTransportador;
 	private String descricaoRoteiro;
 	private String descricaoRota;
@@ -15,6 +16,12 @@ public class RelatorioServicosEntregaDTO implements Serializable {
 	private BigDecimal valor;
 	
 	
+	public Integer getTransportadorId() {
+		return transportadorId;
+	}
+	public void setTransportadorId(Integer transportadorId) {
+		this.transportadorId = transportadorId;
+	}
 	public String getNomeTransportador() {
 		return nomeTransportador;
 	}

@@ -11,9 +11,11 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
+import br.com.abril.nds.client.vo.RelatorioServicosEntregaDetalheVO;
 import br.com.abril.nds.client.vo.RelatorioServicosEntregaVO;
 import br.com.abril.nds.dto.FlexiGridDTO;
 import br.com.abril.nds.dto.RelatorioServicosEntregaDTO;
+import br.com.abril.nds.dto.RelatorioServicosEntregaDetalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroRelatorioServicosEntregaDTO;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Distribuidor;
@@ -86,7 +88,20 @@ public class RelatorioServicosEntregaController {
 	}
 	
 	
-	
+	@Path("/pesquisarDetalhe.json")
+	public void pesquisarDetalhe(FiltroRelatorioServicosEntregaDTO filtro, String sortname, String sortorder, int rp, int page) {
+		
+		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder, sortname));
+		
+		List<RelatorioServicosEntregaDetalheDTO> listDTO = this.relatorioServicosEntregaService.pesquisarDetalhe(filtro);
+		
+		List<RelatorioServicosEntregaDetalheVO> listVO = new ArrayList<RelatorioServicosEntregaDetalheVO>();
+		for (RelatorioServicosEntregaDetalheDTO dto : listDTO) {
+			listVO.add(new RelatorioServicosEntregaDetalheVO(dto));
+		}
+		
+		result.use(FlexiGridJson.class).from(listVO).total(listVO.size()).page(1).serialize();
+	}
 	
 	
 	@Path("/exportar")

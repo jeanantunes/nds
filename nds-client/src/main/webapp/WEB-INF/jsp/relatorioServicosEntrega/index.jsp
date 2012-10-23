@@ -5,18 +5,19 @@
 <body>
 
 	<form id="relatorioServicosEntregaForm">
+	<input type="hidden" name="filtro.transportadorDetalhe" id="relatorioServicosEntrega_transportadorDetalhe"/>
 	
 	<fieldset class="classFieldset">
    	    <legend>Pesquisar Transportador</legend>
    	    <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
             <tr>
               	<td width="114">Per&iacute;odo de Entrega  :</td>
-              	<td width="108"><input type="text" name="filtro.entregaDataInicio" id="relatorioServicosEntrega_filtro_dataDe" style="width:80px;"/></td>
+              	<td width="108"><input type="text" name="filtro.entregaDataInicio" id="relatorioServicosEntrega_filtro_dataDe" style="width:80px;" onchange="relatorioServicosEntregaController.escondeGrid();"/></td>
               	<td width="23">At&eacute;</td>
-              	<td width="111"><input type="text" name="filtro.entregaDataFim" id="relatorioServicosEntrega_filtro_dataAte" style="width:80px;"/></td> 
+              	<td width="111"><input type="text" name="filtro.entregaDataFim" id="relatorioServicosEntrega_filtro_dataAte" style="width:80px;" onchange="relatorioServicosEntregaController.escondeGrid();"/></td> 
               	<td width="86">Transportador:</td>
               	<td width="368">
-              		<select name="filtro.idTransportador" id="relatorioServicosEntrega_filtro_transportador" style="width:300px;">
+              		<select name="filtro.idTransportador" id="relatorioServicosEntrega_filtro_transportador" style="width:300px;" onchange="relatorioServicosEntregaController.escondeGrid();">
                 		<option selected="selected" value="-1"></option>
 						<c:forEach items="${listTransportadores}" var="transportador">
 							<option value="${transportador.id}">${transportador.pessoaJuridica.razaoSocial}</option>
@@ -44,10 +45,10 @@
     
     <div class="linha_separa_fields">&nbsp;</div>
 
-	<div id="dialog-detalhe" title="Detalhes" style="width: 450px!important; display: none;">
+	<div id="relatorioServicosEntrega_dialogDetalhe" title="Detalhes" style="width: 450px!important; display: none;">
   		<fieldset>
   			<legend>Transportador 1</legend>
-    		<table class="transportadorDetalheGrid"></table>
+    		<table class="relatorioServicosEntrega_detalheGrid"></table>
   		</fieldset>
 	</div>
 	

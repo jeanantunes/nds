@@ -8,6 +8,8 @@ import br.com.abril.nds.util.export.Exportable;
 
 @Exportable
 public class RelatorioServicosEntregaVO {
+	
+	private String transportadorId;
 
 	@Export(label="Transportador", alignment=Alignment.LEFT, exhibitionOrder=1)
 	private String nomeTransportador;
@@ -34,6 +36,7 @@ public class RelatorioServicosEntregaVO {
 	
 	public RelatorioServicosEntregaVO(RelatorioServicosEntregaDTO dto)
 	{
+		this.transportadorId = dto.getTransportadorId().toString();
 		this.nomeTransportador = dto.getNomeTransportador();
 		this.descricaoRoteiro = dto.getDescricaoRoteiro();
 		this.descricaoRota = dto.getDescricaoRota();
@@ -44,6 +47,12 @@ public class RelatorioServicosEntregaVO {
 	
 	
 	
+	public String getTransportadorId() {
+		return transportadorId;
+	}
+	public void setTransportadorId(String transportadorId) {
+		this.transportadorId = transportadorId;
+	}
 	public String getNomeTransportador() {
 		return nomeTransportador;
 	}

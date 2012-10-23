@@ -22,6 +22,11 @@ relatorioServicosEntregaController = $.extend(true, {
 	},
 	
 	
+	escondeGrid : function() {
+		$('.grids', this.workspace).hide();
+	},
+	
+	
 	pesquisar : function() {
 		
 		var params = $("#relatorioServicosEntregaForm").serialize();
@@ -41,10 +46,37 @@ relatorioServicosEntregaController = $.extend(true, {
 	insereLinks : function(data) {
 		
 		$.each(data.rows, function(index, value) {
-			
+			value.cell.valor = '<a href="javascript:;" onclick="relatorioServicosEntregaController.pesquisarDetalhe(' + value.cell.transportadorId + ');">' + value.cell.valor + '</a>';
 		});
 		
 		return data;
+	},
+	
+	
+	pesquisarDetalhe : function(transportadorId) {
+		
+		$("#relatorioServicosEntrega_transportadorDetalhe").val(transportadorId);
+		var params = $("#relatorioServicosEntregaForm").serialize();
+		
+		$(".relatorioServicosEntrega_detalheGrid").flexOptions({
+			url : this.path + 'pesquisarDetalhe.json',
+			params: serializeParamsToFlexiGridPost(params),
+			newp : 1
+		});
+		
+		$(".relatorioServicosEntrega_detalheGrid").flexReload();
+		
+		$("#relatorioServicosEntrega_dialogDetalhe").dialog({
+			resizable: false,
+			height:'auto',
+			width:500,
+			modal: true,
+			buttons: {
+				"Fechar": function() {
+					$( this ).dialog( "close" );
+				}
+			}
+		});
 	},
 	
 	
@@ -103,7 +135,7 @@ relatorioServicosEntregaController = $.extend(true, {
 	
 	initGridDetalhe : function() {
 		
-		$(".transportadorDetalheGrid").flexigrid({
+		$(".relatorioServicosEntrega_detalheGrid").flexigrid({
 			dataType : 'json',
 			colModel : [ {
 				display : 'Descrição',

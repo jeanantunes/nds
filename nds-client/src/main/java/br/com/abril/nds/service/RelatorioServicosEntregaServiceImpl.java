@@ -2,6 +2,7 @@ package br.com.abril.nds.service;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -9,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.FlexiGridDTO;
 import br.com.abril.nds.dto.RelatorioServicosEntregaDTO;
+import br.com.abril.nds.dto.RelatorioServicosEntregaDetalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroRelatorioServicosEntregaDTO;
 
 @Service
@@ -20,6 +22,7 @@ public class RelatorioServicosEntregaServiceImpl implements RelatorioServicosEnt
 
 		// Mock
 		RelatorioServicosEntregaDTO dto = new RelatorioServicosEntregaDTO();
+		dto.setTransportadorId(1);
 		dto.setDescricaoRota("rota");
 		dto.setDescricaoRoteiro("roteiro");
 		dto.setNomeJornaleiro("cota");
@@ -38,6 +41,25 @@ public class RelatorioServicosEntregaServiceImpl implements RelatorioServicosEnt
 		flexiDTO.setTotalGrid(4);
 		
 		return flexiDTO;
+	}
+
+	@Transactional
+	@Override
+	public List<RelatorioServicosEntregaDetalheDTO> pesquisarDetalhe(FiltroRelatorioServicosEntregaDTO filtro) {
+		
+		// Mock
+		RelatorioServicosEntregaDetalheDTO dto = new RelatorioServicosEntregaDetalheDTO();
+		dto.setDescricao("Descrição");
+		dto.setData(new Date());
+		dto.setValor(BigDecimal.TEN);
+		
+		List<RelatorioServicosEntregaDetalheDTO> list = new ArrayList<RelatorioServicosEntregaDetalheDTO>();
+		list.add(dto);
+		list.add(dto);
+		list.add(dto);
+		list.add(dto);
+
+		return list;
 	}
 
 }
