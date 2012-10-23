@@ -220,7 +220,7 @@ var VENDA_PRODUTO = {
 		$("#span_nome_cota_venda", VENDA_PRODUTO.workspace).html($("#descricaoCotaVenda", VENDA_PRODUTO.workspace).val());
 		
 		$.postJSON(contextPath + "/devolucao/vendaEncalhe/obterBoxCota", 
-					"numeroCota=" + $("#numCotaVenda", VENDA_PRODUTO.workspace).val(),
+					{numeroCota:$("#numCotaVenda", VENDA_PRODUTO.workspace).val()},
 					function(result) {
 			 			$("#span_nome_box_venda", VENDA_PRODUTO.workspace).html(result.box);			
 					},null,true);
@@ -732,7 +732,7 @@ var VENDA_PRODUTO = {
  		}
  		
  		$.postJSON(contextPath + "/devolucao/vendaEncalhe/pesquisarProdutoCodBarra",
-				"codBarra="+$(idCodBarras).val(), 
+				{codBarra:$(idCodBarras).val()}, 
 				function(result){
 					
  					VENDA_PRODUTO.obterDadosProduto(result.codigoProduto,result.nuemroEdicao,index);						

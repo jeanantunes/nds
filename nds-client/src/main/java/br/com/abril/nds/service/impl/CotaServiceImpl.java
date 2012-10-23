@@ -93,6 +93,7 @@ import br.com.abril.nds.repository.EntregadorRepository;
 import br.com.abril.nds.repository.EstoqueProdutoCotaRepository;
 import br.com.abril.nds.repository.HistoricoNumeroCotaRepository;
 import br.com.abril.nds.repository.HistoricoSituacaoCotaRepository;
+import br.com.abril.nds.repository.ParametroCobrancaCotaRepository;
 import br.com.abril.nds.repository.ParametroSistemaRepository;
 import br.com.abril.nds.repository.PdvRepository;
 import br.com.abril.nds.repository.PessoaFisicaRepository;
@@ -232,7 +233,6 @@ public class CotaServiceImpl implements CotaService {
 	
 	@Transactional(readOnly = true)
 	public Cota obterPorNumeroDaCota(Integer numeroCota) {
-		
 		return this.cotaRepository.obterPorNumerDaCota(numeroCota);
 	}
 	
@@ -357,11 +357,13 @@ public class CotaServiceImpl implements CotaService {
 		validarEnderecoPrincipalPorCota(listaEnderecoAssociacao, cota);
 		
 		Pessoa pessoa = cota.getPessoa();
-        
-		enderecoService.cadastrarEnderecos(listaEnderecoAssociacao, pessoa);
 		
 		for (EnderecoAssociacaoDTO enderecoAssociacao : listaEnderecoAssociacao) {
 
+			EnderecoDTO enderecoDTO = enderecoAssociacao.getEndereco();
+			
+			this.enderecoService.validarEndereco(enderecoDTO, enderecoAssociacao.getTipoEndereco());
+			
 			EnderecoCota enderecoCota = this.enderecoCotaRepository.buscarPorId(enderecoAssociacao.getId());
 
 			if (enderecoCota == null) {
@@ -371,9 +373,7 @@ public class CotaServiceImpl implements CotaService {
 				enderecoCota.setCota(cota);
 			}
 
-			EnderecoDTO enderecoDTO = enderecoAssociacao.getEndereco();
-			
-            Endereco endereco = new Endereco(enderecoDTO.getCodigoBairro(),
+			Endereco endereco = new Endereco(enderecoDTO.getCodigoBairro(),
                     enderecoDTO.getBairro(), enderecoDTO.getCep(),
                     enderecoDTO.getCodigoCidadeIBGE(), enderecoDTO.getCidade(),
                     enderecoDTO.getComplemento(),
@@ -493,17 +493,24 @@ public class CotaServiceImpl implements CotaService {
 
 	private void salvarTelefonesCota(Cota cota, List<TelefoneAssociacaoDTO> listaTelefonesCota) {
 		
+		if (listaTelefonesCota == null || listaTelefonesCota.isEmpty()) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Lista de telefones é obrigatória.");
+		}
+		
+		this.telefoneService.validarTelefonePrincipal(listaTelefonesCota);
+		
 		Pessoa pessoa = cota.getPessoa();
         
-		this.telefoneService.cadastrarTelefone(listaTelefonesCota, pessoa);
-		
 		if (listaTelefonesCota != null){
 			
-			for (TelefoneAssociacaoDTO dto : listaTelefonesCota){
-					
+			for (TelefoneAssociacaoDTO dto : listaTelefonesCota) {
+				
 				TelefoneCota telefoneCota = null;
 				
 				TelefoneDTO telefoneDTO = dto.getTelefone();
+				
+				this.telefoneService.validarTelefone(telefoneDTO, dto.getTipoTelefone());
 				
                 if(telefoneDTO!= null && telefoneDTO.getId()!= null){
 					telefoneCota = cotaRepository.obterTelefonePorTelefoneCota(telefoneDTO.getId(), cota.getId());

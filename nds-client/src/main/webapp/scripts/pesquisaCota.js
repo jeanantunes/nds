@@ -16,7 +16,7 @@ function PesquisaCota(workspace) {
 		if (numeroCota && numeroCota.length > 0) {
 			
 			$.postJSON(contextPath + "/cadastro/cota/pesquisarPorNumero",
-				"numeroCota=" + numeroCota,
+					{numeroCota:numeroCota},
 				function(result) { 
 					pesquisaCota.pesquisarPorNumeroSuccessCallBack(result, idCampoNomeCota, successCallBack); 
 				},
@@ -74,7 +74,7 @@ function PesquisaCota(workspace) {
 		if (nomeCota && nomeCota.length > 2) {
 			
 			$.postJSON(
-				contextPath + "/cadastro/cota/autoCompletarPorNome", "nomeCota=" + nomeCota,
+				contextPath + "/cadastro/cota/autoCompletarPorNome", {nomeCota:nomeCota},
 				function(result) { 
 					pesquisaCota.exibirAutoComplete(result, idCampoNomeCota); 
 				},
@@ -147,7 +147,7 @@ function PesquisaCota(workspace) {
 		if (nomeCota && nomeCota.length > 0) {
 			$.postJSON(
 				contextPath + "/cadastro/cota/pesquisarPorNome", 
-				"nomeCota=" + nomeCota,
+				{nomeCota:nomeCota},
 				function(result) {
 					pesquisaCota.pesquisarPorNomeSuccessCallBack(result, idCampoNumeroCota, idCampoNomeCota, successCallBack);
 				},
@@ -197,7 +197,7 @@ function PesquisaCota(workspace) {
 		if (numeroCota && numeroCota.length > 0) {
 
 			$.postJSON(contextPath + "/cadastro/cota/pesquisarPorNumero",
-				"numeroCota=" + numeroCota,
+				{numeroCota:numeroCota},
 				function(result) { 
 					successCallback(result); 
 				},

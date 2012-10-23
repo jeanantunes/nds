@@ -360,7 +360,7 @@ public class BoxRepositoryImpl extends AbstractRepositoryModel<Box,Long> impleme
 	 * @return Número de Cotas encontradas
 	 */
 	@Override
-	public long obterQuantidadeCotasPorBoxRoteiroRota(Long idBox, Long idRoteiro, Long idRota) {
+	public Long obterQuantidadeCotasPorBoxRoteiroRota(Long idBox, Long idRoteiro, Long idRota) {
         
 		StringBuilder hql = new StringBuilder();
 		

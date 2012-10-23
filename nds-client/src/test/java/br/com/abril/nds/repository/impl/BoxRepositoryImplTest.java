@@ -243,7 +243,7 @@ public class BoxRepositoryImplTest extends AbstractRepositoryImplTest {
 	@Test
 	public void testarObterQuantidadeCotasPorBoxRoteiroRota() {
 		
-		long quantidadeCotas;
+		Long quantidadeCotas;
 		
 		Long idBox = 1L;
 		Long idRoteiro = 2L;
