@@ -556,7 +556,9 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 		
 		rateioDiferencaRepository.removerRateioDiferencaPorDiferenca(idDiferenca);
 		
-		diferencaEstoqueRepository.removerPorId(idDiferenca);
+		Diferenca diferenca = this.diferencaEstoqueRepository.buscarPorId(idDiferenca);
+		
+		this.diferencaEstoqueRepository.remover(diferenca);
 	}
 	
 	@Override

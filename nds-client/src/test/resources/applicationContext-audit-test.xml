@@ -22,7 +22,7 @@
 		<property name="password" value="${testDataSourcePassword}" />
     </bean> 
 
-	<bean id="interceptor" class="br.com.abril.nds.interceptor.AuditLogInterceptor" />
+	<bean id="interceptor" class="br.com.abril.nds.interceptor.EntityInterceptor" />
 
 	<bean id="sessionFactory"
 		class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">

@@ -13,5 +13,7 @@ public interface AlteracaoCotaService {
 
 	List<ConsultaAlteracaoCotaDTO> pesquisarAlteracaoCota(FiltroAlteracaoCotaDTO filtroAlteracaoCotaDTO); 
 	
+	List<ConsultaAlteracaoCotaDTO> pesquisarAlteracaoCotaFornecedor(FiltroAlteracaoCotaDTO filtroAlteracaoCotaDTO); 
 	
+	FiltroAlteracaoCotaDTO preencherFiltroAlteracaoCotaDTO(FiltroAlteracaoCotaDTO filtroAlteracaoCotaDTO);
 }

@@ -177,7 +177,7 @@ public class LancamentoRepositoryImpl extends
 		} else if(sortOrder.equals(LancamentoNaoExpedidoDTO.SortColumn.EDICAO)) {
 			order =  "produtoEdicao.numeroEdicao";
 		} else if(sortOrder.equals(LancamentoNaoExpedidoDTO.SortColumn.CLASSIFICACAO_PRODUTO)) {
-			order = "produto.tipoProduto.descricao";
+			order = "produto.tipoproduto.nome";
 		} else if(sortOrder.equals(LancamentoNaoExpedidoDTO.SortColumn.PRECO_PRODUTO)) {
 			order =  "produtoEdicao.precoVenda";
 		} else if(sortOrder.equals(LancamentoNaoExpedidoDTO.SortColumn.QTDE_PACOTE_PADRAO)) {
@@ -1319,7 +1319,7 @@ public class LancamentoRepositoryImpl extends
 		
 		hql.append(" select ") 
 		   .append(" lancamento.produtoEdicao.produto.codigo as codigo, ")
-		   .append(" lancamento.produtoEdicao.produto.descricao as produto, ")
+		   .append(" lancamento.produtoEdicao.produto.nome as produto, ")
 		   .append(" lancamento.produtoEdicao.numeroEdicao as numeroEdicao, ")
 		   .append(" lancamento.reparte as reparte, ")
 		   .append(" lancamento.dataLancamentoPrevista as dataLancamento")

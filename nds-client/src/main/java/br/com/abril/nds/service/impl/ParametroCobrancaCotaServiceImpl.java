@@ -1057,7 +1057,7 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 	@Override
 	@Transactional
 	public void alterarParametro(ParametroCobrancaCota parametroCobrancaCota){
-		this.parametroCobrancaCotaRepository.alterar(parametroCobrancaCota);
+		this.parametroCobrancaCotaRepository.merge(parametroCobrancaCota);
 	}
 	
 	@Transactional(readOnly = true)

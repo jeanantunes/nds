@@ -667,7 +667,7 @@ public class MonitorNFEServiceImpl implements MonitorNFEService {
 	
 	protected URL obterDiretorioReports() {
 		
-		URL urlDanfe = Thread.currentThread().getContextClassLoader().getResource("/reports/");
+		URL urlDanfe = Thread.currentThread().getContextClassLoader().getResource("reports");
 		
 		return urlDanfe;
 	}
