@@ -452,14 +452,14 @@ public class FiadorServiceImpl implements FiadorService {
 		
 		Pessoa pessoa = fiador.getPessoa();
 		
-        this.enderecoService.cadastrarEnderecos(listaEnderecoAssociacao, pessoa);
-		
-		for (EnderecoAssociacaoDTO enderecoAssociacao : listaEnderecoAssociacao) {
+        for (EnderecoAssociacaoDTO enderecoAssociacao : listaEnderecoAssociacao) {
 
 			EnderecoFiador enderecoFiador = 
 					this.enderecoFiadorRepository.buscarEnderecoPorEnderecoFiador(enderecoAssociacao.getId(), fiador.getId());
 
 			EnderecoDTO dto = enderecoAssociacao.getEndereco();
+			
+			this.enderecoService.validarEndereco(dto, enderecoAssociacao.getTipoEndereco());
 			
             Endereco endereco = new Endereco(dto.getCodigoBairro(),
                     dto.getBairro(), dto.getCep(), dto.getCodigoCidadeIBGE(),
@@ -528,38 +528,42 @@ public class FiadorServiceImpl implements FiadorService {
 
 	private void salvarTelefonesFiador(Fiador fiador, List<TelefoneAssociacaoDTO> listaTelefones) {
 		
-		if (listaTelefones != null && !listaTelefones.isEmpty()){
+		if (listaTelefones == null || listaTelefones.isEmpty()){
 			
-			Pessoa pessoa = fiador.getPessoa();
+			throw new ValidacaoException(TipoMensagem.WARNING, "Lista de telefones é obrigatória.");
+		}
+		
+		this.telefoneService.validarTelefonePrincipal(listaTelefones);
+		
+		Pessoa pessoa = fiador.getPessoa();
+		
+        for (TelefoneAssociacaoDTO dto : listaTelefones){
 			
-            this.telefoneService.cadastrarTelefone(listaTelefones, pessoa);
+			TelefoneDTO telefoneDTO = dto.getTelefone();
 			
-			for (TelefoneAssociacaoDTO dto : listaTelefones){
+			this.telefoneService.validarTelefone(telefoneDTO, dto.getTipoTelefone());
+			
+            TelefoneFiador telefoneFiador = this.telefoneFiadorRepository.obterTelefonePorTelefoneFiador(telefoneDTO.getId(), fiador.getId());
+			
+			if (telefoneFiador == null){
+				telefoneFiador = new TelefoneFiador();
 				
-				TelefoneDTO telefoneDTO = dto.getTelefone();
+				telefoneFiador.setFiador(fiador);
+				telefoneFiador.setPrincipal(dto.isPrincipal());
+				Telefone telefone = new Telefone(telefoneDTO.getId(), telefoneDTO.getNumero(), telefoneDTO.getRamal(), telefoneDTO.getDdd(), pessoa);
+				telefoneFiador.setTelefone(telefone);
+				telefoneFiador.setTipoTelefone(dto.getTipoTelefone());
 				
-                TelefoneFiador telefoneFiador = this.telefoneFiadorRepository.obterTelefonePorTelefoneFiador(telefoneDTO.getId(), fiador.getId());
+				this.telefoneFiadorRepository.adicionar(telefoneFiador);
+			} else {
+				Telefone telefone = telefoneFiador.getTelefone();
+				telefone.setDdd(telefoneDTO.getDdd());
+				telefone.setNumero(telefoneDTO.getNumero());
+				telefone.setRamal(telefone.getRamal());
+				telefoneFiador.setPrincipal(dto.isPrincipal());
+				telefoneFiador.setTipoTelefone(dto.getTipoTelefone());
 				
-				if (telefoneFiador == null){
-					telefoneFiador = new TelefoneFiador();
-					
-					telefoneFiador.setFiador(fiador);
-					telefoneFiador.setPrincipal(dto.isPrincipal());
-					Telefone telefone = new Telefone(telefoneDTO.getId(), telefoneDTO.getNumero(), telefoneDTO.getRamal(), telefoneDTO.getDdd(), pessoa);
-					telefoneFiador.setTelefone(telefone);
-					telefoneFiador.setTipoTelefone(dto.getTipoTelefone());
-					
-					this.telefoneFiadorRepository.adicionar(telefoneFiador);
-				} else {
-					Telefone telefone = telefoneFiador.getTelefone();
-					telefone.setDdd(telefoneDTO.getDdd());
-					telefone.setNumero(telefoneDTO.getNumero());
-					telefone.setRamal(telefone.getRamal());
-					telefoneFiador.setPrincipal(dto.isPrincipal());
-					telefoneFiador.setTipoTelefone(dto.getTipoTelefone());
-					
-					this.telefoneFiadorRepository.alterar(telefoneFiador);
-				}
+				this.telefoneFiadorRepository.alterar(telefoneFiador);
 			}
 		}
 	}

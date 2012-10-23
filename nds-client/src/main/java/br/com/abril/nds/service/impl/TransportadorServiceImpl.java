@@ -382,41 +382,45 @@ public class TransportadorServiceImpl implements TransportadorService {
 	private void processarTelefones(Transportador transportador, List<TelefoneAssociacaoDTO> listaTelefoneAdicionar,
 			Set<Long> listaTelefoneRemover) {
 		
-		if (listaTelefoneAdicionar != null && !listaTelefoneAdicionar.isEmpty()){
+		if (listaTelefoneAdicionar == null || listaTelefoneAdicionar.isEmpty()){
 			
-			PessoaJuridica pessoaJuridica = transportador.getPessoaJuridica();
-            this.telefoneService.cadastrarTelefone(listaTelefoneAdicionar, pessoaJuridica);
+			throw new ValidacaoException(TipoMensagem.WARNING, "Lista de telefones é obrigatória.");
+		}
+		
+		this.telefoneService.validarTelefonePrincipal(listaTelefoneAdicionar);
 			
-			for (TelefoneAssociacaoDTO dto : listaTelefoneAdicionar){
-				
-				TelefoneDTO telefoneDTO = dto.getTelefone();
-				
+		PessoaJuridica pessoaJuridica = transportador.getPessoaJuridica();
+		
+		for (TelefoneAssociacaoDTO dto : listaTelefoneAdicionar) {
 			
-                TelefoneTransportador telefoneTransportador = 
-						this.telefoneTransportadorRepositoty.buscarTelefonePorTelefoneTransportador(
-								telefoneDTO.getId(), 
-								transportador.getId());
+			TelefoneDTO telefoneDTO = dto.getTelefone();
+			
+			this.telefoneService.validarTelefone(telefoneDTO, dto.getTipoTelefone());
+		
+            TelefoneTransportador telefoneTransportador = 
+					this.telefoneTransportadorRepositoty.buscarTelefonePorTelefoneTransportador(
+							telefoneDTO.getId(), 
+							transportador.getId());
+			
+			if (telefoneTransportador == null){
 				
-				if (telefoneTransportador == null){
-					
-					telefoneTransportador = new TelefoneTransportador();
-					telefoneTransportador.setPrincipal(dto.isPrincipal());
-					Telefone telefone = new Telefone(telefoneDTO.getId(), telefoneDTO.getNumero(), telefoneDTO.getRamal(), telefoneDTO.getDdd(), pessoaJuridica);
-					telefoneTransportador.setTelefone(telefone);
-					telefoneTransportador.setTipoTelefone(dto.getTipoTelefone());
-					telefoneTransportador.setTransportador(transportador);
-					
-					this.telefoneTransportadorRepositoty.adicionar(telefoneTransportador);
-				} else {
-					Telefone telefone = telefoneTransportador.getTelefone();
-					telefone.setDdd(telefoneDTO.getDdd());
-					telefone.setNumero(telefoneDTO.getNumero());
-					telefone.setRamal(telefoneDTO.getRamal());
-					telefoneTransportador.setPrincipal(dto.isPrincipal());
-					telefoneTransportador.setTipoTelefone(dto.getTipoTelefone());
-					
-					this.telefoneTransportadorRepositoty.alterar(telefoneTransportador);
-				}
+				telefoneTransportador = new TelefoneTransportador();
+				telefoneTransportador.setPrincipal(dto.isPrincipal());
+				Telefone telefone = new Telefone(telefoneDTO.getId(), telefoneDTO.getNumero(), telefoneDTO.getRamal(), telefoneDTO.getDdd(), pessoaJuridica);
+				telefoneTransportador.setTelefone(telefone);
+				telefoneTransportador.setTipoTelefone(dto.getTipoTelefone());
+				telefoneTransportador.setTransportador(transportador);
+				
+				this.telefoneTransportadorRepositoty.adicionar(telefoneTransportador);
+			} else {
+				Telefone telefone = telefoneTransportador.getTelefone();
+				telefone.setDdd(telefoneDTO.getDdd());
+				telefone.setNumero(telefoneDTO.getNumero());
+				telefone.setRamal(telefoneDTO.getRamal());
+				telefoneTransportador.setPrincipal(dto.isPrincipal());
+				telefoneTransportador.setTipoTelefone(dto.getTipoTelefone());
+				
+				this.telefoneTransportadorRepositoty.alterar(telefoneTransportador);
 			}
 		}
 		
@@ -435,8 +439,6 @@ public class TransportadorServiceImpl implements TransportadorService {
 			
 			PessoaJuridica pessoaJuridica = transportador.getPessoaJuridica();
 			
-            this.enderecoService.cadastrarEnderecos(listaEnderecosAdicionar, pessoaJuridica);
-			
 			for (EnderecoAssociacaoDTO dto : listaEnderecosAdicionar){
 				
 				EnderecoTransportador enderecoTransportador = 
@@ -445,6 +447,9 @@ public class TransportadorServiceImpl implements TransportadorService {
 								transportador.getId());
 				
 				EnderecoDTO enderecoDTO = dto.getEndereco();
+				
+				this.enderecoService.validarEndereco(enderecoDTO, dto.getTipoEndereco());
+				
                 Endereco endereco = new Endereco(enderecoDTO.getCodigoBairro(),
                         enderecoDTO.getBairro(), enderecoDTO.getCep(),
                         enderecoDTO.getCodigoCidadeIBGE(),
@@ -467,7 +472,7 @@ public class TransportadorServiceImpl implements TransportadorService {
 					this.enderecoTransportadorRepository.adicionar(enderecoTransportador);
 				} else {
 					
-					enderecoTransportador.setEndereco(endereco);
+					//enderecoTransportador.setEndereco(endereco);
 					enderecoTransportador.setPrincipal(dto.isEnderecoPrincipal());
 					enderecoTransportador.setTipoEndereco(dto.getTipoEndereco());
 					
