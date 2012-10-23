@@ -35,6 +35,8 @@ public class EntityInterceptor extends EmptyInterceptor {
 	
 	@Autowired
 	private ApplicationContext applicationContext;
+
+	private SessionFactory sessionFactory;
 	
 	private Session session;
 	
@@ -53,7 +55,7 @@ public class EntityInterceptor extends EmptyInterceptor {
 
 		this.validarAndamnetoFechamentoDiario();
 		
-		this.removerMascaraCNPJ(entity);
+//		this.removerMascaraCNPJ(entity);
 		
 		Object user = SecurityContextHolder.getContext().getAuthentication().getPrincipal(); 
 
@@ -90,12 +92,8 @@ public class EntityInterceptor extends EmptyInterceptor {
 		
 		Object user = SecurityContextHolder.getContext().getAuthentication().getPrincipal(); 
 		
-		getSession().beginTransaction();
+		Object oldEntity = this.getFuckingNewSession().get(entity.getClass(), id);
 		
-		Object oldEntity = getSession().get(entity.getClass(), id);
-		
-		getSession().close();
-
 		AuditoriaDTO auditoriaDTO = AuditoriaUtil.generateAuditoriaDTO(
 			entity, oldEntity, entity.getClass().getSimpleName(), Thread.currentThread(), user, TipoOperacaoSQL.UPDATE
 		);
@@ -148,18 +146,38 @@ public class EntityInterceptor extends EmptyInterceptor {
 		 this.audit = new HashSet<AuditoriaDTO>();
 	}
 	
+	private SessionFactory getSessionFactory() {
+		
+		if (this.session == null) {
+
+			this.sessionFactory = this.applicationContext.getBean(SessionFactory.class);
+		}
+		
+		return this.sessionFactory;
+	}
+	
 	private Session getSession() {
 
 		if (this.session == null) {
 
-			SessionFactory sessionFactory = this.applicationContext.getBean(SessionFactory.class);
+			SessionFactory sessionFactory = getSessionFactory();
 
 			this.session = sessionFactory.openSession();
 		}
 		
 		return this.session;
 	}
-	
+
+	private Session getFuckingNewSession() {
+
+		Session session = getSessionFactory().openSession();
+
+		session.sessionWithOptions().interceptor(EmptyInterceptor.INSTANCE);
+
+		return session;
+	}
+
+
 	private void validarAndamnetoFechamentoDiario() {
 		
 		Query query = getSession().createQuery("from Distribuidor");
