@@ -7,4 +7,6 @@ public interface TipoMovimentoFinanceiroRepository extends Repository<TipoMovime
 	
 	TipoMovimentoFinanceiro buscarTipoMovimentoFinanceiro(GrupoMovimentoFinaceiro grupoMovimentoFinanceiro);
 
+	TipoMovimentoFinanceiro buscarPorDescricao(String string);
+
 }

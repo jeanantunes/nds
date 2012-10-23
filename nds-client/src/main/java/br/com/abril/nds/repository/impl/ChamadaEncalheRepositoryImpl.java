@@ -14,6 +14,7 @@ import org.springframework.stereotype.Repository;
 import br.com.abril.nds.dto.BandeirasDTO;
 import br.com.abril.nds.dto.CapaDTO;
 import br.com.abril.nds.dto.CotaEmissaoDTO;
+import br.com.abril.nds.dto.FornecedoresBandeiraDTO;
 import br.com.abril.nds.dto.ProdutoEmissaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroEmissaoCE;
 import br.com.abril.nds.dto.filtro.FiltroEmissaoCE.ColunaOrdenacao;
@@ -144,67 +145,75 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		   .append(" join chamadaEncalhe.produtoEdicao produtoEdicao ")
 		   .append(" join produtoEdicao.produto produto ")
 		   .append(" join produto.fornecedores fornecedores ")
+		   .append(" JOIN cota.box box ")
+		   .append(" JOIN cota.pdvs pdv ")
+		   .append(" JOIN pdv.rotas rotaPdv ")
+		   .append(" JOIN rotaPdv.rota rota ")
+		   .append(" JOIN rota.roteiro roteiro ");
 		   
-		   .append(" join roterizacao.rota rota ")
-		   .append(" join roterizacao.pdv pdv ")
-		   .append(" join pdv.cota cotaPdv ")
-		   .append(" join rota.roteiro roteiro ")
-		   .append(" join roterizacao.box box ")
-		   .append(" where cotaPdv.id=cota.id ");
-		
+		boolean contemWhere = false;
 		
 		
 		if(filtro.getDtRecolhimentoDe() != null) {
 			
-			hql.append(" and chamadaEncalhe.dataRecolhimento >=:dataDe ");
+			hql.append(((contemWhere)?" and ":" where ")+" chamadaEncalhe.dataRecolhimento >=:dataDe ");
 			param.put("dataDe", filtro.getDtRecolhimentoDe());
+			contemWhere = true;
 		}
 		
 		if(filtro.getDtRecolhimentoAte() != null) {
-			hql.append(" and chamadaEncalhe.dataRecolhimento <=:dataAte ");
+			hql.append(((contemWhere)?" and ":" where ")+" chamadaEncalhe.dataRecolhimento <=:dataAte ");
 			param.put("dataAte", filtro.getDtRecolhimentoAte());
+			contemWhere = true;
 		}
 		
 		if(filtro.getNumCotaDe() != null) {
 
-			hql.append(" and cota.numeroCota >=:cotaDe ");
+			hql.append(((contemWhere)?"and":"where")+" cota.numeroCota >=:cotaDe ");
 			param.put("cotaDe", filtro.getNumCotaDe());
+			contemWhere = true;
 		}
 		
 		if(filtro.getNumCotaAte() != null) {
 			
-			hql.append(" and cota.numeroCota <=:cotaAte ");
+			hql.append(((contemWhere)?"and":"where")+" cota.numeroCota <=:cotaAte ");
 			param.put("cotaAte", filtro.getNumCotaAte());
+			contemWhere = true;
 		}
 		
 		if(filtro.getIdRoteiro() != null) {
 			
-			hql.append(" and roteiro.id <=:idRoteiro ");
+			hql.append(((contemWhere)?"and":"where")+" roteiro.id <=:idRoteiro ");
 			param.put("idRoteiro", filtro.getIdRoteiro());
+			contemWhere = true;
 		}
 				
 		if(filtro.getIdRota() != null) {
 			
-			hql.append(" and rota.id <=:idRota ");
+			hql.append(((contemWhere)?"and":"where")+" rota.id <=:idRota ");
 			param.put("idRota", filtro.getIdRota());
+			contemWhere = true;
 		}
 		
 		if(filtro.getIdBoxDe() != null) {
 			
-			hql.append(" and box.codigo >=:codBox ");
+			hql.append(((contemWhere)?"and":"where")+" box.codigo >=:codBox ");
 			param.put("codBox", filtro.getIdBoxDe());
+			contemWhere = true;
 		}
 		
 		if(filtro.getIdBoxAte() != null) {
 			
-			hql.append(" and box.codigo <=:codBox");
+			hql.append(((contemWhere)?"and":"where")+" box.codigo <=:codBox");
 			param.put("codBox", filtro.getIdBoxAte());
+			contemWhere = true;
 		}
 		
 		if(filtro.getFornecedores() != null && !filtro.getFornecedores().isEmpty()) {
 			
-			hql.append(" and fornecedores.id in (:listaFornecedores) ");
+			hql.append(((contemWhere)?"and":"where")+" fornecedores.id in (:listaFornecedores) ");
 			param.put("listaFornecedores", filtro.getFornecedores());
+			contemWhere = true;
 		}
 		
 
@@ -414,6 +423,7 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		Query query = getSession().createQuery(sb.toString());
 		query.setParameter("dataBase", base);
 		
+		@SuppressWarnings("rawtypes")
 		List result = query.list();
 		
 		if(result.size() == 0)
@@ -430,7 +440,7 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		StringBuilder hql = new StringBuilder();
 		
 		hql.append(" select produtoEdicao.codigo as codProduto, ")
-			.append(" produto.nomeComercial as nomeProduto, ")
+			.append(" produto.nome as nomeProduto, ")
 			.append(" produtoEdicao.numeroEdicao as edProduto, ")
 			.append(" produtoEdicao.pacotePadrao as pctPadrao ")
 			.append(" from ChamadaEncalhe chamadaEncalhe ")
@@ -445,6 +455,35 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		query.setParameter("dataAte", intervalo.getAte());
 		
 		query.setResultTransformer(Transformers.aliasToBean(BandeirasDTO.class));
+		
+		return query.list();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<FornecedoresBandeiraDTO> obterDadosFornecedoresParaImpressaoBandeira(
+			Intervalo<Date> intervalo) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select pessoaFornecedor.razaoSocial as nome, ")
+			.append(" fornecedores.codigoInterface as codigoInterface ")
+			
+			.append(" from ChamadaEncalhe chamadaEncalhe ")
+			.append(" join chamadaEncalhe.produtoEdicao produtoEdicao ")
+			.append(" join produtoEdicao.produto produto ")
+			.append(" join produto.fornecedores fornecedores ")
+			.append(" join fornecedores.juridica pessoaFornecedor ")
+			.append(" where chamadaEncalhe.dataRecolhimento >= :dataDe ")
+			.append(" and chamadaEncalhe.dataRecolhimento <= :dataAte ")
+			.append(" group by fornecedores.id ");
+					
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		query.setParameter("dataDe", intervalo.getDe());
+		query.setParameter("dataAte", intervalo.getAte());
+		
+		query.setResultTransformer(Transformers.aliasToBean(FornecedoresBandeiraDTO.class));
 		
 		return query.list();
 	}

@@ -113,7 +113,7 @@
 					            <td width="311"><input type="text"  name="filtro.produto" style="width:290px;" onchange="contasAPagarController.pesquisarProdutoEdicao();"/></td>
 					           
 					            <td width="40">Edi&ccedil;&atilde;o:</td>
-					            <td width="83" align="right"><input type="text" name="filtro.edicao" id="textfield9" style="width:60px;" /></td>
+					            <td width="83" align="right"><input type="text" name="filtro.edicao" id="textfield9" style="width:60px; onchange="contasAPagarController.pesquisarProdutoEdicao(); " /></td>
 					         
 					         
 					          </tr>

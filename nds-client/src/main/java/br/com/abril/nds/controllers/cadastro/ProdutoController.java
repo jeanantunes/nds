@@ -127,8 +127,8 @@ public class ProdutoController {
 	}
 
 	@Post
-	public void autoCompletarPorNomeComercial(String nomeComercial) {
-		List<Produto> listaProduto = this.produtoService.obterProdutoLikeNomeComercial(nomeComercial);
+	public void autoCompletarPorNome(String nome) {
+		List<Produto> listaProduto = this.produtoService.obterProdutoLikeNome(nome);
 		
 		List<ItemAutoComplete> listaProdutos = new ArrayList<ItemAutoComplete>();
 		
@@ -140,7 +140,7 @@ public class ProdutoController {
 				produtoAutoComplete.setCodigo(produto.getCodigo());
 				
 				ItemAutoComplete itemAutoComplete =
-					new ItemAutoComplete(produto.getNomeComercial(), null, produtoAutoComplete);
+					new ItemAutoComplete(produto.getNome(), null, produtoAutoComplete);
 				
 				listaProdutos.add(itemAutoComplete);
 			}
@@ -194,12 +194,12 @@ public class ProdutoController {
 	}
 		
 	@Post
-	public void pesquisarPorNomeComercial(String nomeComercial) {
-		Produto produto = this.produtoService.obterProdutoPorNomeComercial(nomeComercial);
+	public void pesquisarPorNome(String nome) {
+		Produto produto = this.produtoService.obterProdutoPorNome(nome);
 		
 		if (produto == null) {
 		
-			throw new ValidacaoException(TipoMensagem.WARNING, "Produto \"" + nomeComercial + "\" não encontrado!");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Produto \"" + nome + "\" não encontrado!");
 		
 		}
 			

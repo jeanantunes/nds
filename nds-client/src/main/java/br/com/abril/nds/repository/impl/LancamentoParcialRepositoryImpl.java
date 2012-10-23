@@ -170,7 +170,7 @@ public class LancamentoParcialRepositoryImpl extends AbstractRepositoryModel<Lan
 				hql.append(" order by juridica.razaoSocial ");
 				break;	
 			case NOME_PRODUTO:
-				hql.append(" order by produto.nomeComercial ");
+				hql.append(" order by produto.nome ");
 				break;	
 			case NUM_EDICAO:
 				hql.append(" order by produtoEdicao.numeroEdicao ");
