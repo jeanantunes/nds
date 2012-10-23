@@ -11,21 +11,26 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.dto.DescontoProdutoDTO;
 import br.com.abril.nds.dto.InformeEncalheDTO;
 import br.com.abril.nds.dto.LancamentoNaoExpedidoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.TipoEdicao;
+import br.com.abril.nds.model.cadastro.desconto.DescontoProduto;
 import br.com.abril.nds.model.estoque.Expedicao;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
+import br.com.abril.nds.model.financeiro.DescontoProximosLancamentos;
 import br.com.abril.nds.model.planejamento.HistoricoLancamento;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.repository.DescontoProdutoRepository;
 import br.com.abril.nds.repository.DescontoProximosLancamentosRepository;
 import br.com.abril.nds.repository.ExpedicaoRepository;
 import br.com.abril.nds.repository.HistoricoLancamentoRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.UsuarioRepository;
+import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.util.TipoMensagem;
@@ -52,6 +57,9 @@ public class LancamentoServiceImpl implements LancamentoService {
 	
 	@Autowired
 	private DescontoProximosLancamentosRepository descontoProximosLancamentosRepository;
+	
+	@Autowired
+	private DescontoProdutoRepository descontoProdutoRepository;
 	
 	@Override
 	@Transactional
@@ -160,6 +168,28 @@ public class LancamentoServiceImpl implements LancamentoService {
 				idUsuario);
 		
 		
+		DescontoProximosLancamentos desconto = this.descontoProximosLancamentosRepository.
+		obterDescontoProximosLancamentosPor(lancamento.getProdutoEdicao().getProduto().getId(), 
+				lancamento.getDataLancamentoPrevista());
+				
+		if (desconto != null) {	
+		
+			Integer quantidade = desconto.getQuantidadeProximosLancamaentos();
+						
+			DescontoProduto descontoProduto = new DescontoProduto();
+			
+			descontoProduto.setCotas(desconto.getCotas());
+			descontoProduto.setDataAlteracao(new Date());
+			descontoProduto.setDesconto(desconto.getValorDesconto());
+			descontoProduto.setProdutoEdicao(lancamento.getProdutoEdicao());
+			descontoProduto.setDistribuidor(desconto.getDistribuidor());
+			descontoProduto.setUsuario(usuario);
+			
+			this.descontoProdutoRepository.adicionar(descontoProduto);
+			
+			desconto.setQuantidadeProximosLancamaentos(--quantidade);
+			this.descontoProximosLancamentosRepository.alterar(desconto);
+		}
 	}
 
 	@Override
