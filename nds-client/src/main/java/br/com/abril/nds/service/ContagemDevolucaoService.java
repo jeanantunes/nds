@@ -27,5 +27,18 @@ public interface ContagemDevolucaoService {
 	public List<ContagemDevolucaoDTO> obterContagemDevolucaoEdicaoFechada(
 			boolean checkAll, List<ProdutoEdicaoFechadaVO> listaEdicoesFechadas, FiltroDigitacaoContagemDevolucaoDTO filtro);
 	
+    /**
+     * Gera o arquivo para impressão das chamadas de encalhe dos fornecedores de
+     * acordo com os parâmetros de filtro
+     * 
+     * @param filtro
+     *            filtro para geração do arquivo de impressão das chamadas de
+     *            encalhe do fornecedor
+     * @return arquivo gerado com as informações de chamada de encalhe dos
+     *         fornecedor de acordo com os parâmetros do filtro
+     */
+	public byte[] gerarImpressaoChamadaEncalheFornecedor(FiltroDigitacaoContagemDevolucaoDTO filtro);
+    
+    
 	
 }

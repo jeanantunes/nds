@@ -23,14 +23,23 @@ import br.com.abril.nds.client.vo.RegistroEdicoesFechadasVO;
 import br.com.abril.nds.dto.ContagemDevolucaoConferenciaCegaDTO;
 import br.com.abril.nds.dto.ContagemDevolucaoDTO;
 import br.com.abril.nds.dto.InfoContagemDevolucaoDTO;
+import br.com.abril.nds.dto.chamadaencalhe.ChamadaEncalheFornecedorDTO;
+import br.com.abril.nds.dto.chamadaencalhe.ChamadasEncalheFornecedorDTO;
+import br.com.abril.nds.dto.chamadaencalhe.IdentificacaoChamadaEncalheFornecedorDTO;
+import br.com.abril.nds.dto.chamadaencalhe.ItemChamadaEncalheFornecedorDTO;
+import br.com.abril.nds.dto.chamadaencalhe.PessoaJuridicaChamadaEncalheFornecedorDTO;
 import br.com.abril.nds.dto.filtro.FiltroDigitacaoContagemDevolucaoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.Editor;
+import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.Processo;
+import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.ConferenciaEncalheParcial;
 import br.com.abril.nds.model.estoque.Diferenca;
@@ -53,6 +62,8 @@ import br.com.abril.nds.model.fiscal.nota.ItemNotaFiscal;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalhe;
 import br.com.abril.nds.model.movimentacao.ControleContagemDevolucao;
 import br.com.abril.nds.model.movimentacao.StatusOperacao;
+import br.com.abril.nds.model.planejamento.fornecedor.ChamadaEncalheFornecedor;
+import br.com.abril.nds.model.planejamento.fornecedor.ItemChamadaEncalheFornecedor;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.ConferenciaEncalheParcialRepository;
 import br.com.abril.nds.repository.ControleConferenciaEncalheRepository;
@@ -980,4 +991,127 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 		return listaContagemEdicaoFechada;
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional
+	public byte[] gerarImpressaoChamadaEncalheFornecedor(FiltroDigitacaoContagemDevolucaoDTO filtro) {
+	    //TODO: Recuperar chamadas encalhe fornecedor de acordo com filtro
+	    List<ChamadaEncalheFornecedor> chamadasEncalheFornecedor = new ArrayList<>();
+
+	    Distribuidor distribuidor = distribuidorService.obter();
+	    PessoaJuridicaChamadaEncalheFornecedorDTO distribuidorDTO = criarDistribuidor(distribuidor);
+
+	    
+	    Map<Long, ChamadasEncalheFornecedorDTO> mapaChamadasDTO = new HashMap<>();
+
+        for (ChamadaEncalheFornecedor cef : chamadasEncalheFornecedor) {
+            for (ItemChamadaEncalheFornecedor icef : cef.getItens()) {
+                Long numeroDocumento = icef.getNumeroDocumento();
+                ChamadasEncalheFornecedorDTO chamadasDTO = mapaChamadasDTO.get(numeroDocumento);
+                if (chamadasDTO == null) {
+                    chamadasDTO = new ChamadasEncalheFornecedorDTO(criarFornecedor(cef.getFornecedor()), distribuidorDTO, criarIdentificacao(cef));
+                    mapaChamadasDTO.put(numeroDocumento, chamadasDTO);
+                }
+                ChamadaEncalheFornecedorDTO cefDTO = chamadasDTO.newDocumento();
+                cefDTO.setNumeroDocumento(icef.getNumeroDocumento());
+              
+                ItemChamadaEncalheFornecedorDTO icefDTO = new ItemChamadaEncalheFornecedorDTO();
+                
+                ProdutoEdicao produtoEdicao = icef.getProdutoEdicao();
+                Produto produto = produtoEdicao.getProduto();
+                Editor editor = produto.getEditor();
+                String formaDevolucao = icef.getFormaDevolucao() == null ? null : icef.getFormaDevolucao().getDescricao();
+                String tipoRecolhimento = icef.getRegimeRecolhimento() == null ? null : icef.getRegimeRecolhimento().getCodigo();
+                
+                icefDTO.setEditor(editor.getCodigo());
+                icefDTO.setDescricao(produto.getNomeComercial());
+                icefDTO.setNome(produto.getNome());
+                icefDTO.setCodigo(produto.getCodigo());
+                icefDTO.setEdicao(produtoEdicao.getNumeroEdicao());
+                icefDTO.setFormaDevolucao(formaDevolucao);
+                icefDTO.setItem(icef.getNumeroItem());
+                icefDTO.setDataRecolhimento(icef.getDataRecolhimento());
+                icefDTO.setNotaEnvio(icef.getNumeroNotaEnvio());
+                icefDTO.setPacotePadrao(produtoEdicao.getPacotePadrao());
+                icefDTO.setPrecoCapa(icef.getPrecoUnitario());
+                icefDTO.setQtdeDevolvida(icef.getQtdeDevolucaoApurada());
+                icefDTO.setQtdeEnviada(icef.getQtdeEnviada());
+                icefDTO.setQtdeVenda(icef.getQtdeVendaApurada());
+                icefDTO.setTipoRecolhimento(tipoRecolhimento);
+                icefDTO.setValorVenda(icef.getValorVendaApurado());
+                
+                cefDTO.setTotalBruto(cef.getTotalVendaApurada());
+                cefDTO.setTotalDesconto(cef.getTotalMargemApurado());
+                BigDecimal porcentagemDesconto = (cef.getTotalMargemApurado()
+                        .divide(cef.getTotalVendaApurada()))
+                        .multiply(BigDecimal.valueOf(100));
+                cefDTO.setPorcentagemDesconto(porcentagemDesconto);
+                
+            }
+            
+
+           
+            
+        }
+	    
+	    
+	    return null;
+	}
+
+    private PessoaJuridicaChamadaEncalheFornecedorDTO criarDistribuidor(final Distribuidor distribuidor) {
+        Endereco endereco = null;
+        if (distribuidor.getEnderecoDistribuidor() != null) {
+            endereco = distribuidor.getEnderecoDistribuidor().getEndereco();
+        }
+        PessoaJuridicaChamadaEncalheFornecedorDTO distribuidorDTO = criarPessoaJuridicaChamadaEncalheFornecedor(distribuidor.getId(), 
+                distribuidor.getJuridica(), endereco);
+        return distribuidorDTO;
+    }
+    
+    private PessoaJuridicaChamadaEncalheFornecedorDTO criarFornecedor(final Fornecedor fornecedor) {
+        Endereco endereco = null;
+        if (fornecedor.getEnderecoPrincipal() != null) {
+            endereco = fornecedor.getEnderecoPrincipal().getEndereco();
+        }
+        
+        PessoaJuridicaChamadaEncalheFornecedorDTO distribuidorDTO = criarPessoaJuridicaChamadaEncalheFornecedor(fornecedor.getId(), 
+                fornecedor.getJuridica(), endereco);
+        return distribuidorDTO;
+    }
+ 
+    private PessoaJuridicaChamadaEncalheFornecedorDTO criarPessoaJuridicaChamadaEncalheFornecedor(Long id, PessoaJuridica pj, Endereco endereco) {
+        String logradouro = endereco == null ? "" : String.format("%s %s", endereco.getTipoLogradouro(), endereco.getLogradouro());
+        String numero = endereco == null ? "" : endereco.getNumero();
+        String cidade = endereco == null ? "" : endereco.getCidade();
+        String uf = endereco == null ? "" : endereco.getUf();
+        String cep = endereco == null ? "" : endereco.getCep();
+        
+        PessoaJuridicaChamadaEncalheFornecedorDTO pjDTO = new PessoaJuridicaChamadaEncalheFornecedorDTO(id, 
+                pj.getRazaoSocial(), pj.getCnpj(), pj.getInscricaoEstadual(), logradouro, numero, cidade, uf, cep);
+        
+        return pjDTO;
+    }
+	
+    private IdentificacaoChamadaEncalheFornecedorDTO criarIdentificacao(
+            ChamadaEncalheFornecedor ceFornecedor) {
+        String codigoCFOP = "";
+        String descricaoCFOP = ""; 
+        if (ceFornecedor.getCfop() != null) {
+            codigoCFOP = ceFornecedor.getCfop().getCodigo();
+            descricaoCFOP = ceFornecedor.getCfop().getDescricao();
+        }
+        
+        IdentificacaoChamadaEncalheFornecedorDTO identificacaoDTO = new IdentificacaoChamadaEncalheFornecedorDTO(
+                ceFornecedor.getTipoChamadaEncalhe(),
+                ceFornecedor.getCodigoDistribuidor(),
+                ceFornecedor.getNumeroChamadaEncalhe(),
+                ceFornecedor.getControle(), codigoCFOP,
+                descricaoCFOP, ceFornecedor.getDataVencimento(),
+                ceFornecedor.getDataEmissao(), ceFornecedor.getNumeroSemana(),
+                ceFornecedor.getDataLimiteRecebimento());
+        return identificacaoDTO;
+    }
+    
 }

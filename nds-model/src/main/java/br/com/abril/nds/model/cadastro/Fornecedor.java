@@ -243,6 +243,15 @@ public class Fornecedor implements Serializable {
 		this.cotas = cotas;
 	}
 	
+	public EnderecoFornecedor getEnderecoPrincipal() {
+	    for (EnderecoFornecedor endereco : enderecos) {
+	        if (endereco.isPrincipal()) {
+	            return endereco;
+	        }
+	    }
+	    return null;
+	}
+	
 
 	@Override
 	public int hashCode() {

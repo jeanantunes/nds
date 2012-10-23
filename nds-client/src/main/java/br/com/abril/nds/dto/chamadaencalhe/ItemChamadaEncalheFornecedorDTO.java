@@ -21,7 +21,7 @@ public class ItemChamadaEncalheFornecedorDTO implements Serializable {
     
     private String descricao;
     
-    private Long codigo;
+    private String codigo;
     
     private Long edicao;
     
@@ -94,14 +94,14 @@ public class ItemChamadaEncalheFornecedorDTO implements Serializable {
     /**
      * @return the codigo
      */
-    public Long getCodigo() {
+    public String getCodigo() {
         return codigo;
     }
 
     /**
      * @param codigo the codigo to set
      */
-    public void setCodigo(Long codigo) {
+    public void setCodigo(String codigo) {
         this.codigo = codigo;
     }
 
