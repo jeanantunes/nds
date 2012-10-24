@@ -457,14 +457,14 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 			.append(" and chamadaEncalhe.dataRecolhimento <= :dataAte ")
 			.append(" group by chamadaEncalhe.id ");
 		
+		if (paginacaoVO != null)		
+			hql.append(getOrderByobterBandeirasNoIntervalo(paginacaoVO)); 
+				
 		Query query = this.getSession().createQuery(hql.toString());
 		
 		query.setParameter("dataDe", intervalo.getDe());
 		query.setParameter("dataAte", intervalo.getAte());
-		
-		if (paginacaoVO != null)		
-			getOrderByobterBandeirasNoIntervalo(paginacaoVO); 
-		
+				
 		if (paginacaoVO != null && paginacaoVO.getPosicaoInicial() != null) { 
 			
 			query.setFirstResult(paginacaoVO.getPosicaoInicial());
