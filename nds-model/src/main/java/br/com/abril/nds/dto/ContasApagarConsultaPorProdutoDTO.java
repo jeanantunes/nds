@@ -44,11 +44,12 @@ public class ContasApagarConsultaPorProdutoDTO implements Serializable{
 	 * @param encalhe
 	 * @param faltasSobras
 	 * @param debitosCreditos
+	 * @param venda
 	 * @param saldoAPagar
 	 */
 	public ContasApagarConsultaPorProdutoDTO(Long produtoEdicaoId, Date rctl, String codigo,
 			String produto, Long edicao, boolean tipo, BigInteger reparte, BigInteger suplementacao, 
-			BigInteger encalhe,BigInteger faltasSobras, BigInteger debitosCreditos, BigDecimal saldoAPagar) {
+			BigInteger encalhe,BigInteger faltasSobras, BigInteger debitosCreditos, BigInteger venda, BigDecimal saldoAPagar) {
 		
 		super();
 		
@@ -63,9 +64,7 @@ public class ContasApagarConsultaPorProdutoDTO implements Serializable{
 		this.encalhe = encalhe!=null?encalhe:BigInteger.ZERO;
 		this.faltasSobras = faltasSobras!=null?faltasSobras:BigInteger.ZERO;
 		this.debitosCreditos = debitosCreditos!=null?debitosCreditos:BigInteger.ZERO;
-		
-		this.venda = this.reparte.subtract(this.encalhe);
-		
+		this.venda = venda;
 		this.saldoAPagar = saldoAPagar;
 	}
 	
