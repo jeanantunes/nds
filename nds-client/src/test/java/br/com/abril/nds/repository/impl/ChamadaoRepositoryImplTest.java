@@ -17,7 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import br.com.abril.nds.dto.ConsignadoCotaChamadaoDTO;
 import br.com.abril.nds.dto.ResumoConsignadoCotaChamadaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroChamadaoDTO;
-import br.com.abril.nds.dto.filtro.FiltroChamadaAntecipadaEncalheDTO.OrdenacaoColuna;
 import br.com.abril.nds.dto.filtro.FiltroChamadaoDTO.OrdenacaoColunaChamadao;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.cadastro.Box;
@@ -77,14 +76,15 @@ public class ChamadaoRepositoryImplTest extends AbstractRepositoryImplTest {
 		Produto produtoVeja = Fixture.produtoVeja(tipoProdutoRevista);
 		produtoVeja.setFornecedores(fornecedores);
 		save(produtoVeja);
-
-		ProdutoEdicao produtoEdicaoVeja1 = Fixture.produtoEdicao("1", 1L, 10,
-				14, new Long(100), BigDecimal.TEN, new BigDecimal(20),
-				"ABCDEFGHIJKLMNOPQ", 1L, produtoVeja, null, false);
-
-		ProdutoEdicao produtoEdicaoVeja2 = Fixture.produtoEdicao("2", 2L, 10,
-				14, new Long(100), BigDecimal.TEN, new BigDecimal(20),
-				"ABCDEFGHIJKLMNOPQ", 1L, produtoVeja, null, false);
+		
+		ProdutoEdicao produtoEdicaoVeja1 =
+			Fixture.produtoEdicao(1L, 10, 14, new Long(100), BigDecimal.TEN,
+								  new BigDecimal(20), "ABCDEFGHIJKLMNOPQ", produtoVeja, null, false);
+		
+		ProdutoEdicao produtoEdicaoVeja2 =
+			Fixture.produtoEdicao(2L, 10, 14, new Long(100), BigDecimal.TEN,
+								  new BigDecimal(20), "ABCDEFGHIJKLMNOPQ", produtoVeja, null, false);
+		
 
 		save(produtoEdicaoVeja1, produtoEdicaoVeja2);
 

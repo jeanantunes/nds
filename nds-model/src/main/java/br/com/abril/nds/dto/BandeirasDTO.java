@@ -12,16 +12,10 @@ public class BandeirasDTO  implements Serializable{
 	private String nomeProduto;
 	private Long edProduto;
 	private Integer pctPadrao;
-	
-	//TODO De onde vem?
 	private String destino;
-	//TODO De onde vem?
 	private Integer prioridade;
-
 	private BigInteger qtde;
-	
 	private Date data;
-
 	
 	public BandeirasDTO() {
 		
@@ -56,22 +50,6 @@ public class BandeirasDTO  implements Serializable{
 		this.pctPadrao = pctPadrao;
 	}
 
-	public Long getEdProduto() {
-		return edProduto;
-	}
-
-	public void setEdProduto(Long edProduto) {
-		this.edProduto = edProduto;
-	}
-
-	public String getDestino() {
-		return destino;
-	}
-
-	public void setDestino(String destino) {
-		this.destino = destino;
-	}
-
 	public Integer getPrioridade() {
 		return prioridade;
 	}
@@ -85,7 +63,23 @@ public class BandeirasDTO  implements Serializable{
 	}
 
 	public void setQtde(BigInteger qtde) {
-		this.qtde = qtde;
+		this.qtde = (qtde== null) ? BigInteger.ZERO : qtde;
+	}
+
+	public String getDestino() {
+		return destino;
+	}
+
+	public void setDestino(String destino) {
+		this.destino = destino;
+	}
+
+	public Long getEdProduto() {
+		return edProduto;
+	}
+
+	public void setEdProduto(Long edProduto) {
+		this.edProduto = edProduto;
 	}
 
 	public Date getData() {

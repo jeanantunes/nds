@@ -154,10 +154,10 @@ var boxController = $.extend(true, {
 			if( typeof data.mensagens == "object") {
 				exibirMensagem(data.mensagens.tipoMensagem, data.mensagens.listaMensagens);
 			} else {
-				$("#boxId").val(data.box.id);
-				$("#boxCodigo").val(data.box.codigo);
-				$("#boxNome").val(data.box.nome);
-				$("#boxTipoBox").val(data.box.tipoBox);
+				$("#boxId").val(data.id);
+				$("#boxCodigo").val(data.codigo);
+				$("#boxNome").val(data.nome);
+				$("#boxTipoBox").val(data.tipoBox);
 				boxController.showPopupEditar('Editar Box');
 			}
 		});

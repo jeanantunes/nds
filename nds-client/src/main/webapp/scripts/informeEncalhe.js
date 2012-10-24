@@ -35,6 +35,11 @@ InformeEncalhe.prototype.initGrid = function() {
 					} else {
 						$.each(data.rows, function(index, value) {
 							var acao = "";
+							
+							if(typeof value.cell.sequenciaMatriz == 'undefined' || value.cell.sequenciaMatriz == null ) {
+								value.cell.sequenciaMatriz = '';
+							} 
+							
 							value.cell.acao = acao;
 							if (!value.cell.chamadaCapa) {
 								value.cell.chamadaCapa = '';
@@ -456,3 +461,5 @@ function CapaUpload(idProdutoEdicao, callBack) {
 
 					});
 }
+
+//@ sourceURL=informeEncalhe.js

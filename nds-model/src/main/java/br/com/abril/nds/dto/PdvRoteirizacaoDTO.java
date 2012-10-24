@@ -32,7 +32,13 @@ public class PdvRoteirizacaoDTO implements Serializable {
 			Endereco endereco, Integer cota, String nome, Integer ordem) {
 		this.id = id;
 		this.pdv = pdv;
-		this.origem = origem.getDescricao();
+		
+		if(origem==null) {
+			this.origem = "";
+		} else {
+			this.origem = origem.getDescricao();
+		}
+		
 		if (endereco != null) {
             this.endereco = String.format(FORMATO_ENDERECO,
                     Util.nvl(endereco.getTipoLogradouro(), ""), Util.nvl(endereco.getLogradouro(), ""),
