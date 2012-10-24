@@ -92,6 +92,8 @@ public class ContasAPagarRepositoryImplTest extends AbstractRepositoryImplTest {
 	public void testBuscarTotalPesquisarPorDistribuidor(){
 		
 		this.contasAPagarRepository.buscarTotalPesquisarPorDistribuidor(this.getFiltroPesquisaPorDistribuidor(), false);
+		
+		this.contasAPagarRepository.buscarTotalPesquisarPorDistribuidor(this.getFiltroPesquisaPorDistribuidor(), true);
 	}
 	
 	
