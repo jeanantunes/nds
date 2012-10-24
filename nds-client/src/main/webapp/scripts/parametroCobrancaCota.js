@@ -412,7 +412,7 @@ var parametroCobrancaCotaController = $.extend(true, {
 			"parametroCobranca.contrato":contrato,         
 			"parametroCobranca.valorMinimo":valorMinimo,   
 			"parametroCobranca.qtdDividasAberto":qtdDividasAberto,  
-			"parametroCobranca.vrDividasAberto":vrDividasAberto+
+			"parametroCobranca.vrDividasAberto":vrDividasAberto,
 			"parametroCobranca.tipoCota":tipoCota},
 				   function(){
 			           return true;
