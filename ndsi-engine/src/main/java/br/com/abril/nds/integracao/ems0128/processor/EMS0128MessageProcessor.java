@@ -60,18 +60,19 @@ public class EMS0128MessageProcessor extends AbstractRepository implements Messa
 		sql.append("WHERE tm.grupoMovimentoEstoque in (:grupoMovimentoEstoque) ");
 		
 		Query query = getSession().createQuery(sql.toString());
+/*		
 		query.setParameterList("grupoMovimentoEstoque", (new GrupoMovimentoEstoque[]{ 
 				GrupoMovimentoEstoque.ENVIO_JORNALEIRO
 				, GrupoMovimentoEstoque.RECEBIMENTO_ENCALHE
 		}) );
-/*
+*/
 		query.setParameterList("grupoMovimentoEstoque", (new GrupoMovimentoEstoque[]{ 
 				GrupoMovimentoEstoque.SOBRA_EM
 				, GrupoMovimentoEstoque.SOBRA_DE
 				, GrupoMovimentoEstoque.FALTA_EM
 				, GrupoMovimentoEstoque.FALTA_DE
 		}) );
-*/
+
 		tempVar.set( query.list() );		
 		
 		input = new EMS0128Input();
@@ -109,19 +110,23 @@ public class EMS0128MessageProcessor extends AbstractRepository implements Messa
 		item.setNumeroEdicao(me.getProdutoEdicao().getNumeroEdicao());
 		item.setQtd(me.getQtde());
 		item.setPrecoCapa(me.getProdutoEdicao().getPrecoVenda());
-		item.setPercentualDesconto(me.getProdutoEdicao().getProduto().getDescontoLogistica().getPercentualDesconto());
+		if (null != me.getProdutoEdicao().getProduto().getDescontoLogistica()) {
+			item.setPercentualDesconto(me.getProdutoEdicao().getProduto().getDescontoLogistica().getPercentualDesconto());
+		}
 		item.setSituacaoAcerto("SOLICITADO");
 		
 		input.getItems().add(item);
 		
-		CouchDbClient cdbc = this.getCouchDBClient(message.getHeader().get(MessageHeaderProperties.CODIGO_DISTRIBUIDOR.getValue()).toString());		
-		cdbc.save((MovimentoEstoque)message.getBody());
 	}
 
 	@Override
 	public void posProcess(Object tempVar) {
 		// TODO Auto-generated method stub
-		
+		if (!input.getItem().isEmpty()) {
+			CouchDbClient cdbc = this.getCouchDBClient(input.getCodigoDistribuidor());		
+			cdbc.save(input);
+			cdbc.shutdown();
+		}		
 	}
 	
 	
