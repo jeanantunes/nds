@@ -123,6 +123,7 @@ var emissaoBandeiraController = $.extend(true, {
 	
 	bandeiraManual : function() {
 		$('#workspace').tabs('addTab', "Bandeira Manual", contextPath + "/devolucao/emissaoBandeira/bandeiraManual");
+		$("#semanaBandeiraManual").numeric();
 	},
 	imprimirBandeiraManual:function(){
 	
