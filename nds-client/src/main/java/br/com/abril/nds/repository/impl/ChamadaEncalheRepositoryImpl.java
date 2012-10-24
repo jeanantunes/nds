@@ -445,7 +445,44 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 			.append(" produtoEdicao.numeroEdicao as edProduto, ")
 			.append(" produtoEdicao.pacotePadrao as pctPadrao, ")
 			.append(" sum(chamadaEncalheCotas.qtdePrevista) as qtde, ")
-			.append(" pessoaFornecedor.razaoSocial as destino ")
+			.append(" pessoaFornecedor.razaoSocial as destino, ")
+			.append(" chamadaEncalhe.dataRecolhimento as data ")
+			.append(" from ChamadaEncalhe chamadaEncalhe ")
+			.append(" join chamadaEncalhe.produtoEdicao produtoEdicao ")
+			.append(" join produtoEdicao.produto produto ")
+			.append(" left join chamadaEncalhe.chamadaEncalheCotas chamadaEncalheCotas ")
+			.append(" join produto.fornecedores fornecedores ")
+			.append(" join fornecedores.juridica pessoaFornecedor ")
+			.append(" where chamadaEncalhe.dataRecolhimento >= :dataDe ")
+			.append(" and chamadaEncalhe.dataRecolhimento <= :dataAte ")
+			.append(" group by chamadaEncalhe.id ");
+		
+		if (paginacaoVO != null)		
+			hql.append(getOrderByobterBandeirasNoIntervalo(paginacaoVO)); 
+				
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		query.setParameter("dataDe", intervalo.getDe());
+		query.setParameter("dataAte", intervalo.getAte());
+				
+		if (paginacaoVO != null && paginacaoVO.getPosicaoInicial() != null) { 
+			
+			query.setFirstResult(paginacaoVO.getPosicaoInicial());
+			
+			query.setMaxResults(paginacaoVO.getQtdResultadosPorPagina());
+		}
+		
+		query.setResultTransformer(Transformers.aliasToBean(BandeirasDTO.class));
+		
+		return query.list();
+	}
+	
+	@Override
+	public Long countObterBandeirasNoIntervalo(Intervalo<Date> intervalo) {
+	
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select count(chamadaEncalhe.id) ")
 			.append(" from ChamadaEncalhe chamadaEncalhe ")
 			.append(" join chamadaEncalhe.produtoEdicao produtoEdicao ")
 			.append(" join produtoEdicao.produto produto ")
@@ -460,20 +497,8 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		
 		query.setParameter("dataDe", intervalo.getDe());
 		query.setParameter("dataAte", intervalo.getAte());
-		
-		if (paginacaoVO != null)		
-			getOrderByobterBandeirasNoIntervalo(paginacaoVO); 
-		
-		if (paginacaoVO != null && paginacaoVO.getPosicaoInicial() != null) { 
-			
-			query.setFirstResult(paginacaoVO.getPosicaoInicial());
-			
-			query.setMaxResults(paginacaoVO.getQtdResultadosPorPagina());
-		}
-		
-		query.setResultTransformer(Transformers.aliasToBean(BandeirasDTO.class));
-		
-		return query.list();
+				
+		return (Long) query.uniqueResult();
 	}
 	
 	private String getOrderByobterBandeirasNoIntervalo(PaginacaoVO paginacaoVO) {
@@ -487,7 +512,7 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		String orderBy = " order by ";
 						
 		if ("codProduto".equals(coluna))
-			orderBy += " produtoEdicao.codigo ";
+			orderBy += " produto.codigo ";
 		else if("nomeProduto".equals(coluna))
 			orderBy += " produto.descricao ";
 		else if("edProduto".equals(coluna))

@@ -61,7 +61,7 @@ public class EmissaoBandeiraController {
 	@Path("/pesquisar")
 	public void pesquisar(Integer semana, String sortname, String sortorder, int rp, int page) {
 		
-		PaginacaoVO paginacaoVO = new PaginacaoVO(page, rp, sortorder);
+		PaginacaoVO paginacaoVO = new PaginacaoVO(page, rp, sortorder, sortname);
 		
 		List<BandeirasDTO> listaBandeiraDTO = chamadaEncalheService.obterBandeirasDaSemana(semana,paginacaoVO); 
 		
@@ -74,7 +74,9 @@ public class EmissaoBandeiraController {
 		if (listaEmissaoBandeiraVO.isEmpty()) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
 		} else {
-			this.result.use(FlexiGridJson.class).from(listaEmissaoBandeiraVO).total(listaEmissaoBandeiraVO.size()).page(page).serialize();
+			
+			 
+			this.result.use(FlexiGridJson.class).from(listaEmissaoBandeiraVO).total(chamadaEncalheService.countObterBandeirasDaSemana(semana).intValue()).page(page).serialize();
 		}
 	}
 
@@ -83,9 +85,8 @@ public class EmissaoBandeiraController {
 	@Get
 	@Path("/imprimirArquivo")
 	public void imprimirArquivo(Integer semana,	String sortname, String sortorder, int rp, int page, FileType fileType) {
-		
-	PaginacaoVO paginacaoVO = new PaginacaoVO(page, rp, sortorder);
-	List<BandeirasDTO> listaBandeiraDTO = chamadaEncalheService.obterBandeirasDaSemana(semana, paginacaoVO); 
+	
+	List<BandeirasDTO> listaBandeiraDTO = chamadaEncalheService.obterBandeirasDaSemana(semana, null); 
 		
 	List<EmissaoBandeiraVO> listaEmissaoBandeiraVO =  new ArrayList<EmissaoBandeiraVO>();
 		
