@@ -12,6 +12,7 @@ import br.com.abril.nds.dto.ValidacaoConfirmacaoDeExpedicaoFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoControleDeAprovacaoFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoLancamentoFaltaESobraFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoRecebimentoFisicoFecharDiaDTO;
+import br.com.abril.nds.dto.VendaSuplementarDTO;
 import br.com.abril.nds.dto.filtro.FecharDiaDTO;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
@@ -234,6 +235,9 @@ public class FecharDiaController {
 		BigDecimal totalVenda = this.resumoSuplementarFecharDiaService.obterValorVenda(distribuidor.getDataOperacao());
 		listaDeSuplementares.add(totalVenda);
 		
+		BigDecimal totalFisico = this.resumoSuplementarFecharDiaService.obterValorFisico(distribuidor.getDataOperacao());
+		listaDeSuplementares.add(totalEstoqueLogico.subtract(totalFisico));
+		
 		result.use(Results.json()).from(listaDeSuplementares, "result").recursive().serialize();
 	}
 	
@@ -244,6 +248,22 @@ public class FecharDiaController {
 		List<ReparteFecharDiaDTO> listaReparte = this.resumoFecharDiaService.obterResumoReparte(distribuidor.getDataOperacao());
 		
 		TableModel<CellModelKeyValue<ReparteFecharDiaDTO>> tableModel = new TableModel<CellModelKeyValue<ReparteFecharDiaDTO>>();
+		
+		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaReparte));
+		
+		tableModel.setTotal(listaReparte.size());
+		
+		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+		
+	}
+	
+	@Post
+	@Path("/obterGridVendaSuplemntar")
+	public void obterGridVendaSuplemntar(){
+		
+		List<VendaSuplementarDTO> listaReparte = resumoSuplementarFecharDiaService.obterVendasSuplementar(distribuidor.getDataOperacao());
+		
+		TableModel<CellModelKeyValue<VendaSuplementarDTO>> tableModel = new TableModel<CellModelKeyValue<VendaSuplementarDTO>>();
 		
 		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaReparte));
 		

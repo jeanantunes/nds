@@ -399,11 +399,11 @@
         </tr>
       <tr>
         <td align="left" style="border-bottom:1px solid #ccc;">Vendas</td>
-        <td align="right" style="border-bottom:1px solid #ccc;"><a href="javascript:;" onclick="popup_vendasTot();"><div id="totalSuplementarVenda"></div></a></td>
+        <td align="right" style="border-bottom:1px solid #ccc;"><a href="javascript:;" onclick="fecharDiaController.popup_vendasTot();"><div id="totalSuplementarVenda"></div></a></td>
         </tr>
       <tr>
         <td align="left" style="border-bottom:1px solid #ccc;">Saldo</td>
-        <td align="right" style="border-bottom:1px solid #ccc;">83,90</td>
+        <td align="right" style="border-bottom:1px solid #ccc;"><div id="totalSuplementarSaldo"></div></td>
         </tr>
       <tr>
         <td align="left">&nbsp;</td>
@@ -806,55 +806,7 @@ $(".popCotasGrid").flexigrid({
 			width : 330,
 			height : 200
 		});
-$(".vendasDialogGrid").flexigrid({
-			url : '../xml/vendasDialogGrid-xml.xml',
-			dataType : 'xml',
-			colModel : [ {
-				display : 'Código',
-				name : 'codigo',
-				width : 60,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Produto',
-				name : 'produto',
-				width : 250,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Edição',
-				name : 'edicao',
-				width : 130,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Qtde',
-				name : 'qtde',
-				width : 110,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Valor R$',
-				name : 'valor',
-				width : 100,
-				sortable : true,
-				align : 'right'
-			}, {
-				display : 'Dt. Rclto',
-				name : 'dtRecolto',
-				width : 90,
-				sortable : true,
-				align : 'center'
-			}],
-			sortname : "codigo",
-			sortorder : "asc",
-			usepager : true,
-			useRp : true,
-			rp : 15,
-			showTableToggleBtn : true,
-			width : 850,
-			height : 255
-		});
+
 
 	
 	

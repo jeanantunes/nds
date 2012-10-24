@@ -172,6 +172,56 @@ var fecharDiaController =  $.extend(true, {
 			height : 255
 		});
 		
+		$(".vendasDialogGrid").flexigrid({
+			preProcess: fecharDiaController.executarPreProcessamentoVendaSuplementar,
+			dataType : 'json',
+			colModel : [ {
+				display : 'Código',
+				name : 'codigo',
+				width : 60,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Produto',
+				name : 'nomeProduto',
+				width : 250,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Edição',
+				name : 'numeroEdicao',
+				width : 130,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Qtde',
+				name : 'qtde',
+				width : 110,
+				sortable : true,
+				align : 'center'
+			}, {
+				display : 'Valor R$',
+				name : 'valor',
+				width : 100,
+				sortable : true,
+				align : 'right'
+			}, {
+				display : 'Dt. Rclto',
+				name : 'dataRecolhimento',
+				width : 90,
+				sortable : true,
+				align : 'center'
+			}],
+			sortname : "codigo",
+			sortorder : "asc",
+			usepager : true,
+			useRp : true,
+			rp : 15,
+			showTableToggleBtn : true,
+			width : 850,
+			height : 255
+		});
+		
 	},
 	
 	executarPreProcessamentoRecebimentoFisicoNaoConfirmado : function(resultado){
@@ -244,6 +294,24 @@ var fecharDiaController =  $.extend(true, {
 		}
 		
 		$("#dialog-repartes", fecharDiaController.workspace).show();
+		
+		return resultado;
+	},
+	
+	executarPreProcessamentoVendaSuplementar : function(resultado){
+		if (resultado.mensagens) {
+
+			exibirMensagem(
+				resultado.mensagens.tipoMensagem, 
+				resultado.mensagens.listaMensagens
+			);
+			
+			$(".dialog-venda-total", fecharDiaController.workspace).hide();
+
+			return resultado;
+		}
+		
+		$("#dialog-venda-total", fecharDiaController.workspace).show();
 		
 		return resultado;
 	},
@@ -332,7 +400,15 @@ var fecharDiaController =  $.extend(true, {
 		      
 	},
 	
-	popup_vendasTot : function() {		
+	popup_vendasTot : function() {
+		alert('entrou na função.');
+		$(".vendasDialogGrid", fecharDiaController.workspace).flexOptions({
+			url: contextPath + "/administracao/fecharDia/obterGridVendaSuplemntar",
+			dataType : 'json',
+			params: []
+		});
+		
+		$(".vendasDialogGrid", fecharDiaController.workspace).flexReload();
 		
 		$( "#dialog-venda-total",  fecharDiaController.workspace ).dialog({
 			resizable: false,
@@ -602,6 +678,7 @@ var fecharDiaController =  $.extend(true, {
 					$("#totalSuplementarEstoqueLogico").html(result[0]);
 					$("#totalSuplementarTransferencia").html(result[1]);
 					$("#totalSuplementarVenda").html(result[2]);
+					$("#totalSuplementarSaldo").html(result[3]);
 				}
 			);
 	}
