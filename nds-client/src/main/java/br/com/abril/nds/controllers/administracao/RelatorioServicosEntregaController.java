@@ -13,9 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.RelatorioServicosEntregaDetalheVO;
 import br.com.abril.nds.client.vo.RelatorioServicosEntregaVO;
+import br.com.abril.nds.dto.CotaTransportadorDTO;
 import br.com.abril.nds.dto.FlexiGridDTO;
-import br.com.abril.nds.dto.RelatorioServicosEntregaDTO;
-import br.com.abril.nds.dto.RelatorioServicosEntregaDetalheDTO;
+import br.com.abril.nds.dto.MovimentoFinanceiroDTO;
 import br.com.abril.nds.dto.filtro.FiltroRelatorioServicosEntregaDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
@@ -24,7 +24,6 @@ import br.com.abril.nds.model.cadastro.Transportador;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
-import br.com.abril.nds.service.RelatorioServicosEntregaService;
 import br.com.abril.nds.service.TransportadorService;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.export.FileExporter;
@@ -43,9 +42,6 @@ public class RelatorioServicosEntregaController {
 	
 	@Autowired
 	private TransportadorService transportadorService;
-	
-	@Autowired
-	private RelatorioServicosEntregaService relatorioServicosEntregaService;
 	
 	@Autowired
 	private DistribuidorService distribuidorService;
@@ -80,14 +76,14 @@ public class RelatorioServicosEntregaController {
 		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder, sortname));
 		this.session.setAttribute(this.FILTRO_PESQUISA, filtro);
 		
-		FlexiGridDTO<RelatorioServicosEntregaDTO> flexiDTO = this.relatorioServicosEntregaService.pesquisar(filtro);
+		FlexiGridDTO<CotaTransportadorDTO> flexiDTO = this.transportadorService.obterResumoTransportadorCota(filtro);
 		
 		if (flexiDTO == null || flexiDTO.getGrid() == null || flexiDTO.getGrid().isEmpty()) {
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "A busca não retornou resultados"));
 		}
 		
 		List<RelatorioServicosEntregaVO> listVO = new ArrayList<RelatorioServicosEntregaVO>();
-		for (RelatorioServicosEntregaDTO dto : flexiDTO.getGrid()) {
+		for (CotaTransportadorDTO dto : flexiDTO.getGrid()) {
 			listVO.add(new RelatorioServicosEntregaVO(dto));
 		}
 		
@@ -100,10 +96,10 @@ public class RelatorioServicosEntregaController {
 		
 		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder, sortname));
 		
-		List<RelatorioServicosEntregaDetalheDTO> listDTO = this.relatorioServicosEntregaService.pesquisarDetalhe(filtro);
+		List<MovimentoFinanceiroDTO> listDTO = this.transportadorService.obterDetalhesTrasportadorPorCota(filtro);
 		
 		List<RelatorioServicosEntregaDetalheVO> listVO = new ArrayList<RelatorioServicosEntregaDetalheVO>();
-		for (RelatorioServicosEntregaDetalheDTO dto : listDTO) {
+		for (MovimentoFinanceiroDTO dto : listDTO) {
 			listVO.add(new RelatorioServicosEntregaDetalheVO(dto));
 		}
 		
@@ -115,10 +111,10 @@ public class RelatorioServicosEntregaController {
 	public void exportar(FileType fileType) throws IOException {
 		
 		FiltroRelatorioServicosEntregaDTO filtro = (FiltroRelatorioServicosEntregaDTO) this.session.getAttribute(this.FILTRO_PESQUISA);
-		FlexiGridDTO<RelatorioServicosEntregaDTO> flexiDTO = this.relatorioServicosEntregaService.pesquisar(filtro);
+		FlexiGridDTO<CotaTransportadorDTO> flexiDTO = this.transportadorService.obterResumoTransportadorCota(filtro);
 		
 		List<RelatorioServicosEntregaVO> listVO = new ArrayList<RelatorioServicosEntregaVO>();
-		for (RelatorioServicosEntregaDTO dto : flexiDTO.getGrid()) {
+		for (CotaTransportadorDTO dto : flexiDTO.getGrid()) {
 			listVO.add(new RelatorioServicosEntregaVO(dto));
 		}
 		

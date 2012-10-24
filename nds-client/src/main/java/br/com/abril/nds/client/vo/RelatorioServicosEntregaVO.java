@@ -1,6 +1,6 @@
 package br.com.abril.nds.client.vo;
 
-import br.com.abril.nds.dto.RelatorioServicosEntregaDTO;
+import br.com.abril.nds.dto.CotaTransportadorDTO;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Export.Alignment;
@@ -10,6 +10,7 @@ import br.com.abril.nds.util.export.Exportable;
 public class RelatorioServicosEntregaVO {
 	
 	private String transportadorId;
+	private String cotaId;
 
 	@Export(label="Transportador", alignment=Alignment.LEFT, exhibitionOrder=1)
 	private String nomeTransportador;
@@ -34,14 +35,15 @@ public class RelatorioServicosEntregaVO {
 	{}
 	
 	
-	public RelatorioServicosEntregaVO(RelatorioServicosEntregaDTO dto)
+	public RelatorioServicosEntregaVO(CotaTransportadorDTO dto)
 	{
-		this.transportadorId = dto.getTransportadorId().toString();
-		this.nomeTransportador = dto.getNomeTransportador();
-		this.descricaoRoteiro = dto.getDescricaoRoteiro();
-		this.descricaoRota = dto.getDescricaoRota();
-		this.numeroCota = dto.getNumeroCota().toString();
-		this.nomeJornaleiro = dto.getNomeJornaleiro();
+		this.transportadorId = dto.getIdTransportador().toString();
+		this.cotaId = dto.getIdCota().toString();
+		this.nomeTransportador = dto.getTransportador();
+		this.descricaoRoteiro = dto.getRoteiro();
+		this.descricaoRota = dto.getRota();
+		this.numeroCota = dto.getIdCota().toString();
+		this.nomeJornaleiro = dto.getNomeCota();
 		this.valor = CurrencyUtil.formatarValor(dto.getValor());
 	}
 	
@@ -52,6 +54,12 @@ public class RelatorioServicosEntregaVO {
 	}
 	public void setTransportadorId(String transportadorId) {
 		this.transportadorId = transportadorId;
+	}
+	public String getCotaId() {
+		return cotaId;
+	}
+	public void setCotaId(String cotaId) {
+		this.cotaId = cotaId;
 	}
 	public String getNomeTransportador() {
 		return nomeTransportador;
