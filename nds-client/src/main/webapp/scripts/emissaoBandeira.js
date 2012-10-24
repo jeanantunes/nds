@@ -16,7 +16,7 @@ var emissaoBandeiraController = $.extend(true, {
 			preProcess: emissaoBandeiraController.executarPreProcessamento,
 			colModel : [ {
 				display : 'C&oacute;digo',
-				name : 'codigoProduto',
+				name : 'codProduto',
 				width : 60,
 				sortable : true,
 				align : 'left'
@@ -28,18 +28,18 @@ var emissaoBandeiraController = $.extend(true, {
 				align : 'left'
 			}, {
 				display : 'Edi&ccedil;&atilde;o',
-				name : 'edicao',
+				name : 'edProduto',
 				width : 100,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Pacote Padr&atilde;o',
-				name : 'pacote',
+				name : 'pctPadrao',
 				width : 140,
 				sortable : true,
 				align : 'right'
 			}],
-			sortname : "codigoProduto",
+			sortname : "codProduto",
 			sortorder : "asc",
 			usepager : true,
 			useRp : true,
@@ -67,8 +67,12 @@ var emissaoBandeiraController = $.extend(true, {
 	},
 	
 	executarPreProcessamento : function(resultado) {
-		var tipoMensagem = resultado.mensagens.tipoMensagem;
-        var listaMensagens = resultado.mensagens.listaMensagens;
+		var tipoMensagem = null; 
+		var listaMensagens = null;
+		if (resultado.mensagens){
+			tipoMensagem = resultado.mensagens.tipoMensagem;
+        	listaMensagens = resultado.mensagens.listaMensagens;
+		}	
         if (tipoMensagem && listaMensagens) {
               exibirMensagem(tipoMensagem, listaMensagens);
          } else { 

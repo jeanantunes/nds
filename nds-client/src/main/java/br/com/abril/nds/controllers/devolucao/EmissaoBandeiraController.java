@@ -61,7 +61,7 @@ public class EmissaoBandeiraController {
 	@Path("/pesquisar")
 	public void pesquisar(Integer semana, String sortname, String sortorder, int rp, int page) {
 		
-		PaginacaoVO paginacaoVO = new PaginacaoVO(page, rp, sortorder);
+		PaginacaoVO paginacaoVO = new PaginacaoVO(page, rp, sortorder, sortname);
 		
 		List<BandeirasDTO> listaBandeiraDTO = chamadaEncalheService.obterBandeirasDaSemana(semana,paginacaoVO); 
 		
