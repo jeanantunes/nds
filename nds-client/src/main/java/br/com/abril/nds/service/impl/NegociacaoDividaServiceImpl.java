@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.client.vo.NegociacaoDividaDetalheVO;
 import br.com.abril.nds.dto.ImpressaoNegociacaoDTO;
 import br.com.abril.nds.dto.ImpressaoNegociacaoParecelaDTO;
 import br.com.abril.nds.dto.NegociacaoDividaDTO;
@@ -607,5 +608,17 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService{
 		parameters.put("SUBREPORT_DIR", diretorioReports.toURI().getPath());
 		
 		return JasperRunManager.runReportToPdf(path, parameters, jrDataSource);
+	}
+
+	@Override
+	@Transactional
+	public List<NegociacaoDividaDetalheVO> obterDetalhesCobranca(Long idCobranca) {
+		
+		if (idCobranca == null){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Id da cobrança inválido.");
+		}
+		
+		return this.cobrancaRepository.obterDetalhesCobranca(idCobranca);
 	}
 }

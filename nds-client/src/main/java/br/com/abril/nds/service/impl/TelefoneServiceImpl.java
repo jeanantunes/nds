@@ -103,8 +103,6 @@ public class TelefoneServiceImpl implements TelefoneService {
 					throw new ValidacaoException(TipoMensagem.ERROR, "Telefone entregador é obrigatório.");
 				}
 				
-				// TODO: this.validarTelefone(telefoneEntregador.getTelefone(), telefoneEntregador.getTipoTelefone());
-				
 				if (isTelefonePrincipal && telefoneEntregador.isPrincipal()) {
 					
 					throw new ValidacaoException(TipoMensagem.WARNING, "Apenas um telefone principal é permitido.");
@@ -181,25 +179,4 @@ public class TelefoneServiceImpl implements TelefoneService {
 		return this.telefoneRepository.buscarPorId(longValue);
 	}
 	
-	@Override
-	public void validarTelefonePrincipal(List<TelefoneAssociacaoDTO> listaTelefones) {
-		boolean isTelefonePrincipal = false;
-		boolean hasTelefonePrincipal = false;
-		for (TelefoneAssociacaoDTO dto : listaTelefones){
-			
-			if (isTelefonePrincipal && dto.isPrincipal()){
-				
-				throw new ValidacaoException(TipoMensagem.WARNING, "Apenas um telefone principal é permitido.");
-			}
-			
-			if (dto.isPrincipal()){
-				isTelefonePrincipal = dto.isPrincipal();
-				hasTelefonePrincipal = dto.isPrincipal();
-			}
-		}
-		
-		if (!hasTelefonePrincipal)
-			throw new ValidacaoException(TipoMensagem.WARNING, "É necessario cadastrar pelo menos um telefone principal.");
-		
-	}
 }

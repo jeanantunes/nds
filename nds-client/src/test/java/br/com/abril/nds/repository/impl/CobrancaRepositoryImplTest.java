@@ -14,6 +14,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.vo.NegociacaoDividaDetalheVO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaDividasCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaDividasCotaDTO.OrdenacaoColunaDividas;
 import br.com.abril.nds.fixture.Fixture;
@@ -569,6 +570,14 @@ public class CobrancaRepositoryImplTest extends AbstractRepositoryImplTest {
 
 		Assert.assertNull(nossoNumero);
 
+	}
+	
+	@Test
+	public void testarObterDetalhesCobranca(){
+		
+		List<NegociacaoDividaDetalheVO> lista = this.cobrancaRepository.obterDetalhesCobranca(1L);
+		
+		Assert.assertNotNull(lista);
 	}
 
 }

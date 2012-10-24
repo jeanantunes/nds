@@ -54,6 +54,7 @@ import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.EntregadorService;
 import br.com.abril.nds.service.PessoaFisicaService;
 import br.com.abril.nds.service.PessoaJuridicaService;
+import br.com.abril.nds.service.TelefoneService;
 import br.com.abril.nds.util.CellModel;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.DateUtil;
@@ -104,6 +105,9 @@ public class EntregadorController {
 
 	@Autowired
 	private PessoaJuridicaService pessoaJuridicaService;
+	
+	@Autowired
+	private TelefoneService telefoneService;
 
 	@Autowired
 	private DistribuidorService distribuidorService;
@@ -1071,6 +1075,9 @@ public class EntregadorController {
 			TelefoneAssociacaoDTO telefoneAssociacaoDTO = map.get(key);
 
 			if (telefoneAssociacaoDTO.getTipoTelefone() != null){
+				
+				this.telefoneService.validarTelefone(
+					telefoneAssociacaoDTO.getTelefone(), telefoneAssociacaoDTO.getTipoTelefone());
 				
 				TelefoneEntregador telefoneEntregador = new TelefoneEntregador();
 				telefoneEntregador.setPrincipal(telefoneAssociacaoDTO.isPrincipal());

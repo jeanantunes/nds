@@ -99,19 +99,28 @@ public class FiltroParciaisDTO implements Serializable  {
 		return codigoProduto;
 	}
 	public void setCodigoProduto(String codigoProduto) {
-		if(codigoProduto.trim().isEmpty())
+		
+		if(codigoProduto == null || codigoProduto.trim().isEmpty()) {
+			
 			this.codigoProduto = null;
-		else
+			
+		} else {
+			
 			this.codigoProduto = codigoProduto;
+			
+		}
 	}
 	public String getNomeProduto() {
 		return nomeProduto;
 	}
 	public void setNomeProduto(String nomeProduto) {
-		if(nomeProduto.trim().isEmpty())
+		
+		if(nomeProduto == null || nomeProduto.trim().isEmpty()) {
 			this.nomeProduto = null;
-		else
+		} else {
 			this.nomeProduto = nomeProduto;
+		}
+			
 	}
 	public Long getEdicaoProduto() {
 		return edicaoProduto;
