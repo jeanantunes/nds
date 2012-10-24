@@ -68,7 +68,7 @@ public class LancamentoParcialRepositoryImpl extends AbstractRepositoryModel<Lan
 		hql.append(" 		juridica.razaoSocial as nomeFornecedor, ");
 		hql.append(" 		lancamentoParcial.status as statusParcial, ");
 		hql.append("        produtoEdicao.precoVenda as precoCapa, ");
-		hql.append("        produtoEdicao.origemInterface as geradoPorInterface ");
+		hql.append("        produtoEdicao.origem as origem ");
 		
 		hql.append(getSqlFromEWhereLancamentosParciais(filtro));
 		
