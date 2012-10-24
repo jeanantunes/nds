@@ -162,9 +162,12 @@ public class LancamentoServiceImpl implements LancamentoService {
 		historico.setTipoEdicao(TipoEdicao.ALTERACAO);
 		historicoLancamentoRepository.adicionar(historico);
 		
-		movimentoEstoqueService.gerarMovimentoEstoqueDeExpedicao(
+		/*movimentoEstoqueService.gerarMovimentoEstoqueDeExpedicao(
 				lancamento.getDataLancamentoPrevista(), 
 				lancamento.getProdutoEdicao().getId(),
+				idUsuario);*/
+		movimentoEstoqueService.gerarMovimentoEstoqueDeExpedicao(
+				lancamento,
 				idUsuario);
 		
 		

@@ -5,9 +5,11 @@ import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
 import org.hibernate.Query;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.ConsultaProdutoDTO;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
@@ -290,4 +292,14 @@ public class ProdutoRepositoryImpl extends AbstractRepositoryModel<Produto, Long
 
 	}
 
+	public List<Produto> buscarProdutosOrganizadosNome() {
+		
+		Criteria criteria = getSession().createCriteria(Produto.class, "produto");
+		
+		criteria.addOrder(Order.asc("produto.nome"));
+		
+		return criteria.list();
+	}
+	
+	
 }

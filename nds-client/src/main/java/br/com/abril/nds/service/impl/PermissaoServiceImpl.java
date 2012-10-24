@@ -28,8 +28,8 @@ public class PermissaoServiceImpl implements PermissaoService {
 		ResultadoPermissaoVO permissaoVO = null;
 		for (Permissao p : permissoes) {
 			
-			if ( ( filtro.getNome().isEmpty() || p.name().toLowerCase().contains(filtro.getNome().toLowerCase()) ) &&
-				   (filtro.getDescricao().isEmpty() || p.getDescricao().toLowerCase().contains(filtro.getDescricao().toLowerCase()) ) ) {
+			if ( ( filtro.getNome() == null || filtro.getNome().isEmpty() || p.name().toLowerCase().contains(filtro.getNome().toLowerCase()) ) &&
+				   (filtro.getDescricao() == null || filtro.getDescricao().isEmpty() || p.getDescricao().toLowerCase().contains(filtro.getDescricao().toLowerCase()) ) ) {
 					permissaoVO = new ResultadoPermissaoVO();
 					permissaoVO.setDescricao(p.getDescricao());
 					permissaoVO.setNome(p.name());

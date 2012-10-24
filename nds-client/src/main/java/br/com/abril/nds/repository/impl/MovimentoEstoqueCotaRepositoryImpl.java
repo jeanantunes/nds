@@ -1457,7 +1457,10 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		hql.append(" 		cota.numeroCota as codigoCota, ");
 		hql.append(" 		pessoa.nome as nomeCota, ");
 		hql.append(" 		count(distinct produtoEdicao.id) as totalProduto, ");
-		hql.append(" 		sum(movimentoCota.lancamento.repartePromocional) as materialPromocional, ");
+		//hql.append(" 		sum(movimentoCota.lancamento.repartePromocional) as materialPromocional, ");
+		
+		// Implementado pelo Eduardo Punk Rock - Retirado a soma do reparte promocional
+		hql.append(" 		movimentoCota.lancamento.repartePromocional as materialPromocional, ");
 		hql.append(" 		sum(movimentoCota.qtde) as totalReparte, ");
 		hql.append(" 		sum(movimentoCota.qtde * produtoEdicao.precoVenda) as totalBox ");
 			
@@ -1514,16 +1517,20 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		hql.append("    join cota.box box ");
 		
-		if(filtro.getUseSM() != null && filtro.getUseSM() == true) {
+		// Criado pelo Eduardo Punk Rock - Comentado para realizar a busca através da data de lançamento do distribuidor e não a data de movimento que foi gerada
+		/*if(filtro.getUseSM() != null && filtro.getUseSM() == true) {
 			hql.append("	join movimentoCota.estudoCota estudoCota ");
 			hql.append("	join estudoCota.estudo estudo ");
 			hql.append("	join estudo.lancamentos lancamento ");
-		}
+		}*/
+		hql.append("	join movimentoCota.lancamento lancamento ");
 		
 		hql.append(" where movimentoCota.tipoMovimento.grupoMovimentoEstoque='RECEBIMENTO_REPARTE' ");
 
 		if(filtro.getDataDate() != null) {
-			hql.append(" and movimentoCota.data=:data ");
+			// Criado pelo Eduardo Punk Rock - Comentado para realizar a busca através da data de lançamento do distribuidor e não a data de movimento que foi gerada
+			//hql.append(" and movimentoCota.data=:data ");
+			hql.append(" and lancamento.dataLancamentoDistribuidor=:data ");
 			param.put("data", filtro.getDataDate());
 		}
 		

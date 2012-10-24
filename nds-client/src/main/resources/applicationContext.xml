@@ -45,9 +45,9 @@
 				<prop key="hibernate.jdbc.batch_size">500</prop>	
 			</props>
 		</property>
-		<property name="entityInterceptor">
-    		<bean class="br.com.abril.nds.interceptor.EntityInterceptor"/>
-  		</property>
+<!-- 		<property name="entityInterceptor"> -->
+<!--     		<bean class="br.com.abril.nds.interceptor.EntityInterceptor"/> -->
+<!--   		</property> -->
   		
 	</bean>
 

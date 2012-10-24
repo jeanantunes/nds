@@ -543,14 +543,7 @@ public class FornecedorServiceImpl implements FornecedorService {
 	
 	private void salvarTelefonesFornecedor(List<TelefoneAssociacaoDTO> listaTelefoneFornecedor,
 										   Fornecedor fornecedor) {
-			
-		if (listaTelefoneFornecedor == null || listaTelefoneFornecedor.isEmpty()) {
-			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Lista de telefones é obrigatória.");
-		}
-		
-		this.telefoneService.validarTelefonePrincipal(listaTelefoneFornecedor);
-        
+		        
 		PessoaJuridica juridica = fornecedor.getJuridica();
 		
 		for (TelefoneAssociacaoDTO dto : listaTelefoneFornecedor) {
