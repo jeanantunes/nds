@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.EmissaoBandeiraVO;
 import br.com.abril.nds.dto.BandeirasDTO;
-import br.com.abril.nds.dto.EmissaoBandeiraDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Distribuidor;
@@ -24,6 +23,7 @@ import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.util.export.NDSFileHeader;
+import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
@@ -61,7 +61,9 @@ public class EmissaoBandeiraController {
 	@Path("/pesquisar")
 	public void pesquisar(Integer semana, String sortname, String sortorder, int rp, int page) {
 		
-		List<BandeirasDTO> listaBandeiraDTO = chamadaEncalheService.obterBandeirasDaSemana(semana); 
+		PaginacaoVO paginacaoVO = new PaginacaoVO(page, rp, sortorder);
+		
+		List<BandeirasDTO> listaBandeiraDTO = chamadaEncalheService.obterBandeirasDaSemana(semana,paginacaoVO); 
 		
 		List<EmissaoBandeiraVO> listaEmissaoBandeiraVO =  new ArrayList<EmissaoBandeiraVO>();
 		
@@ -81,14 +83,15 @@ public class EmissaoBandeiraController {
 	@Get
 	@Path("/imprimirArquivo")
 	public void imprimirArquivo(Integer semana,	String sortname, String sortorder, int rp, int page, FileType fileType) {
-	
-	List<BandeirasDTO> listaBandeiraDTO = chamadaEncalheService.obterBandeirasDaSemana(semana); 
 		
-		List<EmissaoBandeiraVO> listaEmissaoBandeiraVO =  new ArrayList<EmissaoBandeiraVO>();
+	PaginacaoVO paginacaoVO = new PaginacaoVO(page, rp, sortorder);
+	List<BandeirasDTO> listaBandeiraDTO = chamadaEncalheService.obterBandeirasDaSemana(semana, paginacaoVO); 
 		
-		for (BandeirasDTO dto :listaBandeiraDTO ){
+	List<EmissaoBandeiraVO> listaEmissaoBandeiraVO =  new ArrayList<EmissaoBandeiraVO>();
+		
+	for (BandeirasDTO dto :listaBandeiraDTO ){
 			listaEmissaoBandeiraVO.add(new EmissaoBandeiraVO (dto));
-		}
+	}
 		
 		
 		if (listaEmissaoBandeiraVO != null && !listaEmissaoBandeiraVO.isEmpty()) {
