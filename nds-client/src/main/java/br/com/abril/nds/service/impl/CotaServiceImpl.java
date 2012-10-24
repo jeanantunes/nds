@@ -493,13 +493,6 @@ public class CotaServiceImpl implements CotaService {
 
 	private void salvarTelefonesCota(Cota cota, List<TelefoneAssociacaoDTO> listaTelefonesCota) {
 		
-		if (listaTelefonesCota == null || listaTelefonesCota.isEmpty()) {
-			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Lista de telefones é obrigatória.");
-		}
-		
-		this.telefoneService.validarTelefonePrincipal(listaTelefonesCota);
-		
 		Pessoa pessoa = cota.getPessoa();
         
 		if (listaTelefonesCota != null){

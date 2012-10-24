@@ -1,8 +1,9 @@
+var semanaPesquisa;
 var emissaoBandeiraController = $.extend(true, {
 	
 	init : function() {
 		this.iniciarGrid();
-		$("#senama", this.workspace).numeric();
+		$("#semanaPesquisa", this.workspace).numeric();
 		$("#numeroPallets", this.workspace).numeric();
 				
 	},
@@ -51,17 +52,16 @@ var emissaoBandeiraController = $.extend(true, {
 	},
 	
 	pesquisar : function() {
-		
+		semanaPesquisa = $("#semanaPesquisa").val();
 		$(".bandeirasRcltoGrid", this.workspace).flexOptions({
 			url: contextPath + "/devolucao/emissaoBandeira/pesquisar",
-			params: {name:'semana', value:$("#semana", this.workspace).val()} 
+			params: [{name:'semana', value:semanaPesquisa}] 
 		   ,
 			newp: 1
 		});
 	
 		
 		$(".bandeirasRcltoGrid", this.workspace).flexReload();
-		$(".grids", this.workspace).show();
 				
 
 	},
@@ -79,11 +79,8 @@ var emissaoBandeiraController = $.extend(true, {
 	},
 	
 	imprimirArquivo : function(fileType) {
-
-		var semana = $("#semana", emissaoBandeiraController.workspace).val();
-		
 		window.location = contextPath + "/devolucao/emissaoBandeira/imprimirArquivo?"
-			+ "semana=" + semana
+			+ "semana=" + semanaPesquisa
 			+ "&sortname=" + $(".bandeirasRcltoGrid", emissaoBandeiraController.workspace).flexGetSortName()
 			+ "&sortorder=" + $(".bandeirasRcltoGrid", emissaoBandeiraController.workspace).getSortOrder()
 			+ "&rp=" + $(".bandeirasRcltoGrid", emissaoBandeiraController.workspace).flexGetRowsPerPage()
@@ -95,9 +92,6 @@ var emissaoBandeiraController = $.extend(true, {
 	
 	imprimirBandeira:function(){
 		
-		var semana = $.trim($("#senama", this.workspace).val());
-		var numeroPallets =$.trim( $("#numeroPallets").val());
-		
 		$( "#dialog-pallets", this.workspace).dialog({
 			resizable: false,
 			height:'auto',
@@ -106,7 +100,7 @@ var emissaoBandeiraController = $.extend(true, {
 			buttons: {
 				"Confirmar": function() {
 					$( this ).dialog( "close" );
-					window.location = contextPath + "/devolucao/emissaoBandeira/imprimirBandeira?semana=" + semana+ "&numeroPallets=" + $.trim( $("#numeroPallets").val());
+					window.location = contextPath + "/devolucao/emissaoBandeira/imprimirBandeira?semana=" + semanaPesquisa+ "&numeroPallets=" + $.trim( $("#numeroPallets").val());
 			
 
 					
@@ -140,8 +134,8 @@ var emissaoBandeiraController = $.extend(true, {
 					window.location = contextPath + "/devolucao/emissaoBandeira/imprimirBandeiraManual?"+
 					"semana=" + $.trim( $("#semanaBandeiraManual").val())
 					+ "&numeroPallets=" + $.trim( $("#numeroPalletsBandeiraManual").val())
-					+"&tipoOperacao="+$.trim( $("#tipoOperacaoBandeiraManual").val())
-					+"&codigoPracaProcon="+$.trim( $("#codigoPracaProconBandeiraManual").val())
+					+"&nome="+$.trim( $("#tipoOperacaoBandeiraManual").val())
+					+"&codigoPracaNoProdin="+$.trim( $("#codigoPracaProconBandeiraManual").val())
 					+"&praca="+$.trim( $("#pracaBandeiraManual").val())
 					+"&destino="+$.trim( $("#destinoBandeiraManual").val())
 					+"&canal="+$.trim( $("#canalBandeiraManual").val());

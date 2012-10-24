@@ -67,14 +67,14 @@
    	    <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
   <tr>
     <td width="52">Semana:</td>
-    <td width="778"><input type="text" id="senama" style="width:100px;" /></td>
+    <td width="778"><input type="text" id="semanaPesquisa" style="width:100px;" /></td>
     <td width="104"><span class="bt_pesquisar"><a href="javascript:;" onclick="emissaoBandeiraController.pesquisar();">Pesquisar</a></span></td>
     </tr>
   </table>
 
       </fieldset>
       <div class="linha_separa_fields">&nbsp;</div>
-      <div class="grids" style="display:noneA;">
+      <div class="grids" style="display:none;">
        <fieldset class="classFieldset">
        	  <legend> Bandeiras Pesquisadas</legend>
         

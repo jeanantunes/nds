@@ -1,9 +1,8 @@
 package br.com.abril.nds.client.vo;
 
 import java.io.Serializable;
-import java.util.Date;
 
-import br.com.abril.nds.dto.EmissaoBandeiraDTO;
+import br.com.abril.nds.dto.BandeirasDTO;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
@@ -48,11 +47,11 @@ public class EmissaoBandeiraVO implements Serializable {
 	{}
 	
 	
-	public EmissaoBandeiraVO(EmissaoBandeiraDTO dto) {
-		this.setCodigoProduto(dto.getCodigoProduto());
+	public EmissaoBandeiraVO(BandeirasDTO dto) {
+		this.setCodigoProduto(dto.getCodProduto());
 		this.setNomeProduto(dto.getNomeProduto());
-		this.setEdicao(dto.getEdicao().toString());
-		this.setPacote(dto.getPacotePadrao().toString());
+		this.setEdicao(dto.getEdProduto().toString());
+		this.setPacote(dto.getPctPadrao().toString());
 		this.setData(DateUtil.formatarDataPTBR(dto.getData()));
 		this.setDestino(dto.getDestino());
 		this.setPrioridade(dto.getPrioridade().toString());
