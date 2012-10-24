@@ -42,4 +42,12 @@ public interface ChamadaEncalheService {
 	 * @return
 	 */
 	List<FornecedoresBandeiraDTO> obterDadosFornecedoresParaImpressaoBandeira(Integer semana);
+
+	/**
+	 * Obter Count de "obterBandeirasDaSemana"
+	 * 
+	 * @param semana
+	 * @return
+	 */
+	Long countObterBandeirasDaSemana(Integer semana);
 }
