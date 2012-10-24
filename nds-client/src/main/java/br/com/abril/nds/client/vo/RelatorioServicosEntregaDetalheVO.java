@@ -1,6 +1,6 @@
 package br.com.abril.nds.client.vo;
 
-import br.com.abril.nds.dto.RelatorioServicosEntregaDetalheDTO;
+import br.com.abril.nds.dto.MovimentoFinanceiroDTO;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 
@@ -15,7 +15,7 @@ public class RelatorioServicosEntregaDetalheVO {
 	{}
 	
 	
-	public RelatorioServicosEntregaDetalheVO(RelatorioServicosEntregaDetalheDTO dto) {
+	public RelatorioServicosEntregaDetalheVO(MovimentoFinanceiroDTO dto) {
 		
 		this.descricao = dto.getDescricao();
 		this.data = DateUtil.formatarDataPTBR(dto.getData());

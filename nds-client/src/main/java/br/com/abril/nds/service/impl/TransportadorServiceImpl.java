@@ -1,7 +1,6 @@
 package br.com.abril.nds.service.impl;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -17,12 +16,14 @@ import br.com.abril.nds.dto.ConsultaTransportadorDTO;
 import br.com.abril.nds.dto.CotaTransportadorDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.EnderecoDTO;
+import br.com.abril.nds.dto.FlexiGridDTO;
 import br.com.abril.nds.dto.MovimentoFinanceiroDTO;
 import br.com.abril.nds.dto.RotaRoteiroDTO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.dto.TelefoneDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaTransportadorDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaTransportadorDTO.OrdenacaoColunaTransportador;
+import br.com.abril.nds.dto.filtro.FiltroRelatorioServicosEntregaDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.AssociacaoVeiculoMotoristaRota;
 import br.com.abril.nds.model.cadastro.Endereco;
@@ -995,17 +996,17 @@ public class TransportadorServiceImpl implements TransportadorService {
 
 	@Override
 	@Transactional
-	public List<CotaTransportadorDTO> obterResumoTransportadorCota(Date dataDe,
-			Date dataAte, Long idTransportador, PaginacaoVO paginacaoVO) {
+	public FlexiGridDTO<CotaTransportadorDTO> obterResumoTransportadorCota(FiltroRelatorioServicosEntregaDTO filtro) {
 		
-		return movimentoFinanceiroCotaRepository.obterResumoTransportadorCota(dataDe, dataAte, idTransportador, paginacaoVO);
+		FlexiGridDTO<CotaTransportadorDTO> flexiDTO = new FlexiGridDTO<CotaTransportadorDTO>();
+		flexiDTO.setGrid(movimentoFinanceiroCotaRepository.obterResumoTransportadorCota(filtro));
+		flexiDTO.setTotalGrid(movimentoFinanceiroCotaRepository.obterCountResumoTransportadorCota(filtro).intValue());
+		return flexiDTO;
 	}
 
 	@Override
 	@Transactional
-	public List<MovimentoFinanceiroDTO> obterDetalhesTrasportadorPorCota(
-			Date dataDe, Date dataAte, Long idTransportador, Long idCota) {
-		
-		return movimentoFinanceiroCotaRepository.obterDetalhesTrasportadorPorCota(dataDe, dataAte, idTransportador, idCota);
+	public List<MovimentoFinanceiroDTO> obterDetalhesTrasportadorPorCota(FiltroRelatorioServicosEntregaDTO filtro) {
+		return movimentoFinanceiroCotaRepository.obterDetalhesTrasportadorPorCota(filtro);
 	}
 }
