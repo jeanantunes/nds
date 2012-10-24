@@ -45,7 +45,7 @@ function PesquisaProduto(workspace) {
 		var nomeProduto = $(idProduto, pesquisaProduto.workspace).val();
 		
 		if (nomeProduto && nomeProduto.length > 2) {
-			$.postJSON(contextPath + "/produto/autoCompletarPorPorNomeProduto", {nomeProduto:nomeProduto},
+			$.postJSON(contextPath + "/produto/autoCompletarPorNomeProduto", {nomeProduto:nomeProduto},
 					   function(result) { pesquisaProduto.exibirAutoComplete(result, idProduto); },
 					   null, isFromModal);
 		}
