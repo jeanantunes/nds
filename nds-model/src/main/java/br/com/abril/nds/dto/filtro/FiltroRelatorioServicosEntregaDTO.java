@@ -9,7 +9,7 @@ public class FiltroRelatorioServicosEntregaDTO extends FiltroDTO {
 	private Date entregaDataInicio;
 	private Date entregaDataFim;
 	private Long idTransportador;
-	private Long transportadorDetalhe;
+	private Long idCota;
 	
 	public Date getEntregaDataInicio() {
 		return entregaDataInicio;
@@ -29,10 +29,10 @@ public class FiltroRelatorioServicosEntregaDTO extends FiltroDTO {
 	public void setIdTransportador(Long idTransportador) {
 		this.idTransportador = idTransportador;
 	}
-	public Long getTransportadorDetalhe() {
-		return transportadorDetalhe;
+	public Long getIdCota() {
+		return idCota;
 	}
-	public void setTransportadorDetalhe(Long transportadorDetalhe) {
-		this.transportadorDetalhe = transportadorDetalhe;
+	public void setIdCota(Long idCota) {
+		this.idCota = idCota;
 	}
 }

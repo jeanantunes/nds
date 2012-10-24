@@ -5,7 +5,7 @@
 <body>
 
 	<form id="relatorioServicosEntregaForm">
-	<input type="hidden" name="filtro.transportadorDetalhe" id="relatorioServicosEntrega_transportadorDetalhe"/>
+	<input type="hidden" name="filtro.idCota" id="relatorioServicosEntrega_idCota"/>
 	
 	<fieldset class="classFieldset">
    	    <legend>Pesquisar Transportador</legend>

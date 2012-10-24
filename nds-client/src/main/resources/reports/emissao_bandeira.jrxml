@@ -1,23 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="cobranca" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="40" bottomMargin="40">
 	<property name="ireport.zoom" value="1.0263162364614133"/>
-	<property name="ireport.x" value="3"/>
-	<property name="ireport.y" value="738"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="337"/>
 	<queryString language="SQL">
 		<![CDATA[]]>
 	</queryString>
 	<field name="semana" class="java.lang.Integer"/>
-	<field name="codigoPracaProcon" class="java.lang.String"/>
+	<field name="codigoPracaNoProdin" class="java.lang.String"/>
 	<field name="praca" class="java.lang.String"/>
-	<field name="canal" class="java.lang.String"/>
+	<field name="nome" class="java.lang.String"/>
 	<field name="destino" class="java.lang.String"/>
-	<field name="tipoOperacao" class="java.lang.String"/>
+	<field name="canal" class="java.lang.String"/>
+	<field name="volumes" class="java.lang.String"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
 	<detail>
 		<band height="515">
-			<printWhenExpression><![CDATA[$F{tipoOperacao}.toUpperCase().equals("DINAP")]]></printWhenExpression>
+			<printWhenExpression><![CDATA[!$F{nome}.toUpperCase().equals("FC")]]></printWhenExpression>
 			<elementGroup>
 				<image>
 					<reportElement x="11" y="5" width="172" height="102"/>
@@ -34,7 +35,7 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font size="50" isBold="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{tipoOperacao}.toUpperCase()]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{nome}.toUpperCase()]]></textFieldExpression>
 				</textField>
 				<rectangle>
 					<reportElement x="569" y="5" width="223" height="102"/>
@@ -52,7 +53,7 @@
 				<textField>
 					<reportElement x="672" y="10" width="112" height="92"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font size="52" isBold="true"/>
+						<font size="54" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{semana}]]></textFieldExpression>
 				</textField>
@@ -67,7 +68,7 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font size="12" isBold="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA["CÓDIGO DA PRAÇA NO PROCON"]]></textFieldExpression>
+					<textFieldExpression><![CDATA["CÓDIGO DA PRAÇA NO PRODIN"]]></textFieldExpression>
 				</textField>
 				<rectangle>
 					<reportElement x="470" y="113" width="322" height="113"/>
@@ -88,14 +89,14 @@
 				<textField pattern="">
 					<reportElement mode="Transparent" x="50" y="241" width="729" height="99" forecolor="#FFFFFF" backcolor="#FFFFFF"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font size="60" isBold="true" isStrikeThrough="false"/>
+						<font size="78" isBold="true" isStrikeThrough="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{destino}.toUpperCase()]]></textFieldExpression>
 				</textField>
 				<textField>
 					<reportElement x="50" y="356" width="405" height="107" backcolor="#FFFFFF"/>
 					<textElement verticalAlignment="Middle">
-						<font size="58" isBold="true" isStrikeThrough="false"/>
+						<font size="78" isBold="true" isStrikeThrough="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{canal}.toUpperCase()]]></textFieldExpression>
 				</textField>
@@ -112,9 +113,9 @@
 				<textField>
 					<reportElement mode="Transparent" x="474" y="380" width="318" height="82" backcolor="#FFFFFF"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font size="46" isBold="true"/>
+						<font size="52" isBold="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$V{PAGE_NUMBER} + " / " +$V{REPORT_COUNT}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{volumes}]]></textFieldExpression>
 				</textField>
 				<textField>
 					<reportElement mode="Transparent" x="470" y="135" width="322" height="88" backcolor="#FFFFFF"/>
@@ -142,12 +143,12 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font size="40" isBold="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{codigoPracaProcon}.toUpperCase()]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{codigoPracaNoProdin}.toUpperCase()]]></textFieldExpression>
 				</textField>
 			</elementGroup>
 		</band>
 		<band height="515">
-			<printWhenExpression><![CDATA[$F{tipoOperacao}.toUpperCase().equals("DINAP") == false]]></printWhenExpression>
+			<printWhenExpression><![CDATA[$F{nome}.toUpperCase().equals("FC")]]></printWhenExpression>
 			<image>
 				<reportElement x="10" y="10" width="172" height="102"/>
 				<imageExpression><![CDATA[Thread.currentThread().getContextClassLoader().getResource("/reports/logo.jpg").toURI().getPath()]]></imageExpression>
@@ -163,7 +164,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="50" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{tipoOperacao}.toUpperCase()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{nome}.toUpperCase()]]></textFieldExpression>
 			</textField>
 			<rectangle>
 				<reportElement x="568" y="10" width="223" height="102"/>
@@ -181,7 +182,7 @@
 			<textField>
 				<reportElement x="671" y="15" width="112" height="92"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="52" isBold="true"/>
+					<font size="54" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{semana}]]></textFieldExpression>
 			</textField>
@@ -196,7 +197,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="12" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["CÓDIGO DA PRAÇA NO PROCON"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["CÓDIGO DA PRAÇA NO PRODIN"]]></textFieldExpression>
 			</textField>
 			<rectangle>
 				<reportElement x="469" y="118" width="322" height="113"/>
@@ -217,16 +218,16 @@
 			<textField pattern="">
 				<reportElement mode="Transparent" x="49" y="246" width="729" height="99" forecolor="#FFFFFF" backcolor="#FFFFFF"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="60" isBold="true" isStrikeThrough="false"/>
+					<font size="78" isBold="true" isStrikeThrough="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{destino}.toUpperCase()]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="49" y="361" width="405" height="107" forecolor="#FFFFFF" backcolor="#FFFFFF"/>
 				<textElement verticalAlignment="Middle">
-					<font size="58" isBold="true" isStrikeThrough="false"/>
+					<font size="78" isBold="true" isStrikeThrough="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{canal}.toUpperCase()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{canal}]]></textFieldExpression>
 			</textField>
 			<rectangle>
 				<reportElement x="469" y="360" width="326" height="110"/>
@@ -241,9 +242,9 @@
 			<textField>
 				<reportElement mode="Transparent" x="473" y="385" width="318" height="82" backcolor="#FFFFFF"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="46" isBold="true"/>
+					<font size="54" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$V{PAGE_NUMBER} + " / " +$V{COLUMN_COUNT}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{volumes}.toUpperCase()]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement mode="Transparent" x="469" y="140" width="322" height="88" backcolor="#FFFFFF"/>
@@ -271,7 +272,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="40" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{codigoPracaProcon}.toUpperCase()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{codigoPracaNoProdin}.toUpperCase()]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

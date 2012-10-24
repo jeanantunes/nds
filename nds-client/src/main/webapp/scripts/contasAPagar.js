@@ -632,8 +632,8 @@ var contasAPagarController = $.extend(true, {
 			useRp : true,
 			rp : 15,
 			showTableToggleBtn : true,
-			sortname : "data",
-			sortorder : "asc",
+			sortname : "rctl",
+			sortorder : "desc",
 			width : 960,
 			height : 255
 		});

@@ -160,6 +160,23 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 	
 	@Override
 	@Transactional
+	public Long countObterBandeirasDaSemana(Integer semana) {
+		
+		Distribuidor distribuidor = distribuidorService.obter();
+		
+		Intervalo<Date> periodoRecolhimento = null;
+		
+		try {
+			periodoRecolhimento = recolhimentoService.getPeriodoRecolhimento(distribuidor, semana, new Date());
+		} catch (IllegalArgumentException e) {
+			throw new ValidacaoException(TipoMensagem.WARNING, e.getMessage());
+		}
+		
+		return chamadaEncalheRepository.countObterBandeirasNoIntervalo(periodoRecolhimento);
+	}
+	
+	@Override
+	@Transactional
 	public List<FornecedoresBandeiraDTO> obterDadosFornecedoresParaImpressaoBandeira(Integer semana) {
 		
 		Distribuidor distribuidor = distribuidorService.obter();

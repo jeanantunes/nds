@@ -1239,3 +1239,5 @@ var PDV =  $.extend(true, {
 $(function() {
 	PDV.init();				
 });
+
+//@ sourceURL=pdv.js

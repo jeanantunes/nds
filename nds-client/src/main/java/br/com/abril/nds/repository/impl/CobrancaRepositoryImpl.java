@@ -9,8 +9,10 @@ import org.hibernate.Query;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.client.vo.NegociacaoDividaDetalheVO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaDividasCotaDTO;
 import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.financeiro.Cobranca;
@@ -349,5 +351,22 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
 		query.setParameter("idMovimentoFinanceiro", idMovimentoFinanceiro);
 		
 		return (String) query.uniqueResult();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<NegociacaoDividaDetalheVO> obterDetalhesCobranca(Long idCobranca) {
+		
+		StringBuilder hql = new StringBuilder("select ");
+		hql.append(" m.valor, m.data, m.observacao  ")
+		   .append(" from Cobranca c ")
+		   .append(" join c.divida.consolidado.movimentos m ")
+		   .append(" where c.id = :idCobranca ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("idCobranca", idCobranca);
+		query.setResultTransformer(new AliasToBeanResultTransformer(NegociacaoDividaDetalheVO.class));
+		
+		return query.list();
 	}
 }

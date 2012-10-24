@@ -3,6 +3,7 @@ package br.com.abril.nds.service;
 import java.math.BigDecimal;
 import java.util.List;
 
+import br.com.abril.nds.client.vo.NegociacaoDividaDetalheVO;
 import br.com.abril.nds.dto.NegociacaoDividaDTO;
 import br.com.abril.nds.dto.NegociacaoDividaPaginacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaNegociacaoDivida;
@@ -27,4 +28,6 @@ public interface NegociacaoDividaService {
 	List<byte[]> gerarBoletosNegociacao(Long idNegociacao);
 
 	byte[] imprimirNegociacao(Long idNegociacao) throws Exception;
+	
+	List<NegociacaoDividaDetalheVO> obterDetalhesCobranca(Long idCobranca);
 }

@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.Date;
 
+import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.export.Export;
@@ -53,6 +54,8 @@ public class PeriodoParcialDTO implements Serializable {
 	private Long idLancamento;
 	
 	private boolean geradoPorInterface;
+	
+	private Origem origem;
 	
 	public String getDataLancamento() {
 		return dataLancamento;
@@ -206,5 +209,29 @@ public class PeriodoParcialDTO implements Serializable {
 	 */
 	public void setGeradoPorInterface(boolean geradoPorInterface) {
 		this.geradoPorInterface = geradoPorInterface;
-	}		
+	}
+	
+	
+	/**
+	 * @return the origem
+	 */
+	public Origem getOrigem() {
+		return this.origem;
+	}
+
+
+	/**
+	 * @param origem the origem to set
+	 */
+	public void setOrigem(Origem origem) {
+		
+		this.origem = origem;
+		
+		if(origem!=null && Origem.INTERFACE.equals(origem)) {
+			this.geradoPorInterface = true;
+		} else {
+			this.geradoPorInterface = false;
+		}
+		
+	}
 }
