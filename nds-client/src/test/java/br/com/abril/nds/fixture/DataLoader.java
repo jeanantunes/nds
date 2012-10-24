@@ -891,6 +891,7 @@ public class DataLoader {
 	private static InterfaceExecucao interfaceEMS0124;
 	private static InterfaceExecucao interfaceEMS0125;
 	private static InterfaceExecucao interfaceEMS0126;
+	private static InterfaceExecucao interfaceEMS0128;
 	private static InterfaceExecucao interfaceEMS0129;
 	private static InterfaceExecucao interfaceEMS0130;
 	private static InterfaceExecucao interfaceEMS0131;
@@ -11471,6 +11472,7 @@ public class DataLoader {
 		interfaceEMS0124 = Fixture.criarInterfaceExecucao(124L, "EMS0124");
 		interfaceEMS0125 = Fixture.criarInterfaceExecucao(125L, "EMS0125");
 		interfaceEMS0126 = Fixture.criarInterfaceExecucao(126L, "EMS0126");
+		interfaceEMS0128 = Fixture.criarInterfaceExecucao(128L, "EMS0128");
 		interfaceEMS0129 = Fixture.criarInterfaceExecucao(129L, "EMS0129");
 		interfaceEMS0130 = Fixture.criarInterfaceExecucao(130L, "EMS0130");
 		interfaceEMS0131 = Fixture.criarInterfaceExecucao(131L, "EMS0131");
