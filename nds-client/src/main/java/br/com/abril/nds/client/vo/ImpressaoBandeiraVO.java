@@ -2,40 +2,81 @@ package br.com.abril.nds.client.vo;
 
 import java.io.Serializable;
 
+import br.com.abril.nds.dto.FornecedoresBandeiraDTO;
+
 public class ImpressaoBandeiraVO implements Serializable  {
 
-	public String getTipoOperacao() {
-		return tipoOperacao;
-	}
-	public void setTipoOperacao(String tipoOperacao) {
-		this.tipoOperacao = tipoOperacao;
-	}
-	/**
-	 * 
-	 */
+	
+	
+	
 	private static final long serialVersionUID = -8669011482729203456L;
 	
 	
-	private String tipoOperacao;
+
+	private String 	nome;
 	private Integer semana;
-	private String codigoPracaProcon;
-	private String praca;
-	private String destino;
-	private String canal;
+	private String 	codigoPracaNoProdin;
+	private String 	praca;
+	private String 	destino;
+	private String 	canal;
+	private String  volumes;
 	
 	
 	
+	public ImpressaoBandeiraVO(FornecedoresBandeiraDTO fornecedoresBandeiraDTO, String volumes) {
+		super();
+		this.nome = fornecedoresBandeiraDTO.getNome();
+		this.semana =  fornecedoresBandeiraDTO.getSemana();
+		this.codigoPracaNoProdin =  fornecedoresBandeiraDTO.getCodigoPracaNoProdin();
+		this.praca = fornecedoresBandeiraDTO.getPraca();
+		this.destino = "ENCALHE";
+		if (fornecedoresBandeiraDTO.getNome() != null && fornecedoresBandeiraDTO.getNome().equalsIgnoreCase("FC")){
+			this.canal = "VAREJO";
+		} else {
+			this.canal = "BANCA";
+		}
+		this.volumes = volumes;
+			
+	}
+	
+
+	public ImpressaoBandeiraVO(String nome, Integer semana,
+			String codigoPracaNoProdin, String praca, String destino,
+			String canal, String volumes) {
+		super();
+		this.nome = nome;
+		this.semana = semana;
+		this.codigoPracaNoProdin = codigoPracaNoProdin;
+		this.praca = praca;
+		this.destino = destino;
+		this.canal = canal;
+		this.volumes = volumes;
+	}
+
+
+	
+	
+	public ImpressaoBandeiraVO(){
+		
+	}
+	
+	public String getNome() {
+		return nome;
+	}
+	public void setNome(String nome) {
+		this.nome = nome;
+	}
 	public Integer getSemana() {
 		return semana;
 	}
 	public void setSemana(Integer semana) {
 		this.semana = semana;
 	}
-	public String getCodigoPracaProcon() {
-		return codigoPracaProcon;
+	public String getCodigoPracaNoProdin() {
+		return codigoPracaNoProdin;
 	}
-	public void setCodigoPracaProcon(String codigoPracaProcon) {
-		this.codigoPracaProcon = codigoPracaProcon;
+	public void setCodigoPracaNoProdin(String codigoPracaNoProdin) {
+		this.codigoPracaNoProdin = codigoPracaNoProdin;
 	}
 	public String getPraca() {
 		return praca;
@@ -55,5 +96,19 @@ public class ImpressaoBandeiraVO implements Serializable  {
 	public void setCanal(String canal) {
 		this.canal = canal;
 	}
+
+
+
+	public String getVolumes() {
+		return volumes;
+	}
+
+
+
+	public void setVolumes(String volumes) {
+		this.volumes = volumes;
+	}
+
+	
 	
 }
