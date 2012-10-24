@@ -69,8 +69,10 @@ public class CotaAusenteServiceImpl implements CotaAusenteService{
 			
 			gerarCotaAusente(numCota, data, idUsuario, cota);
 					
+			/*List<MovimentoEstoqueCota> movimentosCota = 
+					movimentoEstoqueCotaRepository.obterMovimentoCotaPorTipoMovimento(data, cota.getId(), GrupoMovimentoEstoque.ENVIO_JORNALEIRO);*/
 			List<MovimentoEstoqueCota> movimentosCota = 
-					movimentoEstoqueCotaRepository.obterMovimentoCotaPorTipoMovimento(data, cota.getId(), GrupoMovimentoEstoque.ENVIO_JORNALEIRO);
+					movimentoEstoqueCotaRepository.obterMovimentoCotaPorTipoMovimento(data, cota.getId(), GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
 					
 			movimentoEstoqueService.enviarSuplementarCotaAusente(data, cota.getId(), movimentosCota);
 		}

@@ -1,11 +1,18 @@
+var semanaPesquisa;
 var emissaoBandeiraController = $.extend(true, {
 	
 	init : function() {
 		this.iniciarGrid();
-		$("#senama", this.workspace).numeric();
+		$("#semanaPesquisa", this.workspace).numeric();
 		$("#numeroPallets", this.workspace).numeric();
 				
 	},
+	
+	initBandeiraManual : function() {
+		$("#semanaBandeiraManual").numeric();
+				
+	},
+	
 	
 	iniciarGrid : function() {
 		
@@ -15,7 +22,7 @@ var emissaoBandeiraController = $.extend(true, {
 			preProcess: emissaoBandeiraController.executarPreProcessamento,
 			colModel : [ {
 				display : 'C&oacute;digo',
-				name : 'codigoProduto',
+				name : 'codProduto',
 				width : 60,
 				sortable : true,
 				align : 'left'
@@ -27,18 +34,18 @@ var emissaoBandeiraController = $.extend(true, {
 				align : 'left'
 			}, {
 				display : 'Edi&ccedil;&atilde;o',
-				name : 'edicao',
+				name : 'edProduto',
 				width : 100,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Pacote Padr&atilde;o',
-				name : 'pacote',
+				name : 'pctPadrao',
 				width : 140,
 				sortable : true,
 				align : 'right'
 			}],
-			sortname : "codigoProduto",
+			sortname : "codProduto",
 			sortorder : "asc",
 			usepager : true,
 			useRp : true,
@@ -51,24 +58,27 @@ var emissaoBandeiraController = $.extend(true, {
 	},
 	
 	pesquisar : function() {
-		
+		semanaPesquisa = $("#semanaPesquisa").val();
 		$(".bandeirasRcltoGrid", this.workspace).flexOptions({
 			url: contextPath + "/devolucao/emissaoBandeira/pesquisar",
-			params: {name:'semana', value:$("#semana", this.workspace).val()} 
+			params: [{name:'semana', value:semanaPesquisa}] 
 		   ,
 			newp: 1
 		});
 	
 		
 		$(".bandeirasRcltoGrid", this.workspace).flexReload();
-		$(".grids", this.workspace).show();
 				
 
 	},
 	
 	executarPreProcessamento : function(resultado) {
-		var tipoMensagem = resultado.mensagens.tipoMensagem;
-        var listaMensagens = resultado.mensagens.listaMensagens;
+		var tipoMensagem = null; 
+		var listaMensagens = null;
+		if (resultado.mensagens){
+			tipoMensagem = resultado.mensagens.tipoMensagem;
+        	listaMensagens = resultado.mensagens.listaMensagens;
+		}	
         if (tipoMensagem && listaMensagens) {
               exibirMensagem(tipoMensagem, listaMensagens);
          } else { 
@@ -79,11 +89,8 @@ var emissaoBandeiraController = $.extend(true, {
 	},
 	
 	imprimirArquivo : function(fileType) {
-
-		var semana = $("#semana", emissaoBandeiraController.workspace).val();
-		
 		window.location = contextPath + "/devolucao/emissaoBandeira/imprimirArquivo?"
-			+ "semana=" + semana
+			+ "semana=" + semanaPesquisa
 			+ "&sortname=" + $(".bandeirasRcltoGrid", emissaoBandeiraController.workspace).flexGetSortName()
 			+ "&sortorder=" + $(".bandeirasRcltoGrid", emissaoBandeiraController.workspace).getSortOrder()
 			+ "&rp=" + $(".bandeirasRcltoGrid", emissaoBandeiraController.workspace).flexGetRowsPerPage()
@@ -95,9 +102,6 @@ var emissaoBandeiraController = $.extend(true, {
 	
 	imprimirBandeira:function(){
 		
-		var semana = $.trim($("#senama", this.workspace).val());
-		var numeroPallets =$.trim( $("#numeroPallets").val());
-		
 		$( "#dialog-pallets", this.workspace).dialog({
 			resizable: false,
 			height:'auto',
@@ -106,7 +110,7 @@ var emissaoBandeiraController = $.extend(true, {
 			buttons: {
 				"Confirmar": function() {
 					$( this ).dialog( "close" );
-					window.location = contextPath + "/devolucao/emissaoBandeira/imprimirBandeira?semana=" + semana+ "&numeroPallets=" + $.trim( $("#numeroPallets").val());
+					window.location = contextPath + "/devolucao/emissaoBandeira/imprimirBandeira?semana=" + semanaPesquisa+ "&numeroPallets=" + $.trim( $("#numeroPallets").val());
 			
 
 					
@@ -121,8 +125,42 @@ var emissaoBandeiraController = $.extend(true, {
 		
 		return false;
 
-	}
+	},
+	
+	bandeiraManual : function() {
+		$('#workspace').tabs('addTab', "Bandeira Manual", contextPath + "/devolucao/emissaoBandeira/bandeiraManual");
+		
+	},
+	imprimirBandeiraManual:function(){
+	
+		
+		$( "#dialog-pallets-bandeira-manual", this.workspace).dialog({
+			resizable: false,
+			height:'auto',
+			width:'auto',
+			modal: true,
+			buttons: {
+				"Confirmar": function() {
+					$( this ).dialog( "close" );
+					window.location = contextPath + "/devolucao/emissaoBandeira/imprimirBandeiraManual?"+
+					"semana=" + $.trim( $("#semanaBandeiraManual").val())
+					+ "&numeroPallets=" + $.trim( $("#numeroPalletsBandeiraManual").val())
+					+"&nome="+$.trim( $("#tipoOperacaoBandeiraManual").val())
+					+"&codigoPracaNoProdin="+$.trim( $("#codigoPracaProconBandeiraManual").val())
+					+"&praca="+$.trim( $("#pracaBandeiraManual").val())
+					+"&destino="+$.trim( $("#destinoBandeiraManual").val())
+					+"&canal="+$.trim( $("#canalBandeiraManual").val());
 
+					
+				},
+				"Cancelar": function() {
+					$( this ).dialog( "close" );
+				}
+			}
+		});
+		return false;
+
+	},
 	
 }, BaseController);
 

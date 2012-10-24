@@ -67,14 +67,14 @@
    	    <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
   <tr>
     <td width="52">Semana:</td>
-    <td width="778"><input type="text" id="senama" style="width:100px;" /></td>
+    <td width="778"><input type="text" id="semanaPesquisa" style="width:100px;" /></td>
     <td width="104"><span class="bt_pesquisar"><a href="javascript:;" onclick="emissaoBandeiraController.pesquisar();">Pesquisar</a></span></td>
     </tr>
   </table>
 
       </fieldset>
       <div class="linha_separa_fields">&nbsp;</div>
-      <div class="grids" style="display:noneA;">
+      <div class="grids" style="display:none;">
        <fieldset class="classFieldset">
        	  <legend> Bandeiras Pesquisadas</legend>
         
@@ -84,7 +84,7 @@
 
 		<span class="bt_novos" title="Imprimir Relat&oacute;rio"><a href="javascript:;" onclick="emissaoBandeiraController.imprimirArquivo('PDF')" target="_blank"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir Relat&oacute;rio</a></span>
         
-        <span class="bt_novos" title="Bandeira Manual"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/bt_expedicao.png" hspace="5" border="0" />Bandeira Manual</a></span>
+        <span class="bt_novos" title="Bandeira Manual"><a href="javascript:;" onclick="emissaoBandeiraController.bandeiraManual()"  ><img src="${pageContext.request.contextPath}/images/bt_expedicao.png" hspace="5" border="0" />Bandeira Manual</a></span>
      
          
 

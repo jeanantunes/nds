@@ -798,7 +798,6 @@ public class HistoricoTitularidadeServiceImplTest extends AbstractRepositoryImpl
 		);
 
 		ProdutoEdicao produtoEdicao = Fixture.produtoEdicao(
-			"214", 
 			1333L, 
 			31, 
 			32, 
@@ -806,7 +805,6 @@ public class HistoricoTitularidadeServiceImplTest extends AbstractRepositoryImpl
 			new BigDecimal(20), 
 			new BigDecimal(20), 
 			"6873510", 
-			65465L, 
 			produto, 
 			new BigDecimal(64), 
 			true

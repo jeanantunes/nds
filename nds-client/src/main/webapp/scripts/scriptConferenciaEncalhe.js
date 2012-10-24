@@ -1181,7 +1181,7 @@ var ConferenciaEncalhe = $.extend(true, {
 		
 		if (codigoNomeProduto && codigoNomeProduto.length > 0){
 			$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/pesquisarProdutoPorCodigoNome', 
-					"codigoNomeProduto=" + codigoNomeProduto, 
+					{codigoNomeProduto:codigoNomeProduto}, 
 					function(result){
 						
 						if (result[0]){

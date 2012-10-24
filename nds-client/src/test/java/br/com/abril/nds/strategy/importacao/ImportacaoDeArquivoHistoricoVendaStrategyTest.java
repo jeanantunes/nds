@@ -70,9 +70,9 @@ public class ImportacaoDeArquivoHistoricoVendaStrategyTest extends AbstractRepos
 		produtoVeja.setEditor(abril);
 		save(produtoVeja);		
 				
-		produtoEdicaoVeja1 = Fixture.produtoEdicao("1", 1L, 10, 14,
-				new Long(1000), BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQ", 1L,
-				produtoVeja, null, false);
+		produtoEdicaoVeja1 = Fixture.produtoEdicao(1L, 10, 14, new Long(1000),
+				BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQ", produtoVeja, 
+				null, false);
 		
 		save(produtoEdicaoVeja1);	
 	}

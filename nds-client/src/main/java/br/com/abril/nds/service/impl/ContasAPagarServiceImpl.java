@@ -20,7 +20,6 @@ import br.com.abril.nds.dto.filtro.FiltroContasAPagarDTO;
 import br.com.abril.nds.repository.ContasAPagarRepository;
 import br.com.abril.nds.service.ContasAPagarService;
 import br.com.abril.nds.vo.PaginacaoVO;
-import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 @Service
 public class ContasAPagarServiceImpl implements ContasAPagarService {
@@ -46,18 +45,10 @@ public class ContasAPagarServiceImpl implements ContasAPagarService {
 		
 		filtro.setPaginacaoVO(paginacao);
 		
-        ContasAPagarGridPrincipalProdutoDTO retorno = new ContasAPagarGridPrincipalProdutoDTO();
-		
-        
-        
-        retorno.setValorLiquido(BigDecimal.ZERO);
-        retorno.setTotalDesconto(BigDecimal.ZERO);
-        retorno.setTotalPagto(BigDecimal.ZERO);
-        
-        
-        
+        ContasAPagarGridPrincipalProdutoDTO retorno = this.contasAPagarRepository.pesquisarTotaisPorProduto(filtro);
+
 		retorno.setGrid(this.contasAPagarRepository.pesquisarPorProduto(filtro));
-		retorno.setTotalGrid(this.contasAPagarRepository.pesquisarCountPorProduto(filtro));
+		retorno.setTotalGrid(this.contasAPagarRepository.pesquisarCountPorProduto(filtro).intValue());
 		
 		return retorno;
 	}

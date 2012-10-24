@@ -13,7 +13,7 @@ var produtoEdicaoController =$.extend(true,  {
 			if (codigoProduto && codigoProduto.length > 0) {
 
 				$.postJSON(contextPath + "/produto/pesquisarPorCodigoProduto",
-						"codigoProduto=" + codigoProduto,
+						{codigoProduto:codigoProduto},
 						function(result) { produtoEdicaoController.pesquisarPorCodigoSuccessCallBack(result, idProduto, successCallBack); },
 						function() { produtoEdicaoController.pesquisarPorCodigoErrorCallBack(idCodigo, errorCallBack); }, isFromModal);
 
@@ -38,7 +38,7 @@ var produtoEdicaoController =$.extend(true,  {
 			if (codigoProduto && codigoProduto.length > 0) {
 
 				$.postJSON(contextPath + "/produto/pesquisarPorCodigoProduto",
-						"codigoProduto=" + codigoProduto,
+						{codigoProduto:codigoProduto},
 						function(result) { produtoEdicaoController.pesquisarPorCodigoSuccessCallBack(result, idProduto, successCallBack, idCodigo, isFromModal); },
 						null, isFromModal);
 
@@ -78,7 +78,7 @@ var produtoEdicaoController =$.extend(true,  {
 			var nome = $(idProduto,this.workspace).val();
 
 			if (nome && nome.length > 2) {
-				$.postJSON(contextPath + "/produto/autoCompletarPorNome", {"nome" : nome},
+				$.postJSON(contextPath + "/produto/autoCompletarPorNomeProduto", {"nomeProduto" : nome},
 						function(result) { produtoEdicaoController.exibirAutoComplete(result, idProduto); },
 						null, isFromModal);
 			}
@@ -142,14 +142,14 @@ var produtoEdicaoController =$.extend(true,  {
 
 			produtoEdicaoController.pesquisaRealizada = true;
 
-			var nome = $(idProduto,this.workspace).val();
+			var nomeProduto = $(idProduto,this.workspace).val();
 
-			nome = $.trim(nome);
+			nomeProduto = $.trim(nomeProduto);
 
 			$(idCodigo,this.workspace).val("");
 
-			if (nome && nome.length > 0) {
-				$.postJSON(contextPath + "/produto/pesquisarPorNome", {"nome" : nome},
+			if (nomeProduto && nomeProduto.length > 0) {
+				$.postJSON(contextPath + "/produto/pesquisarPorNomeProduto", {"nomeProduto" : nomeProduto},
 						function(result) { produtoEdicaoController.pesquisarPorNomeSuccessCallBack(result, idCodigo, idProduto, successCallBack); },
 						function() { produtoEdicaoController.pesquisarPorNomeErrorCallBack(idCodigo, idProduto, errorCallBack); }, isFromModal);
 			} else {
@@ -387,7 +387,7 @@ var produtoEdicaoController =$.extend(true,  {
 		pesquisarEdicoes : function() {
 
 			var codigoProduto = $("#produtoEdicaoController-pCodigoProduto",this.workspace).val();
-			var nome = $("#produtoEdicaoController-pNome",this.workspace).val();
+			var nomeProduto = $("#produtoEdicaoController-pNome",this.workspace).val();
 			var dataLancamentoDe = $("#produtoEdicaoController-pDateLanctoDe",this.workspace).val();	
 			var precoDe = $("#produtoEdicaoController-pPrecoDe",this.workspace).val();
 			var precoAte = $("#produtoEdicaoController-pPrecoAte",this.workspace).val();
@@ -404,7 +404,7 @@ var produtoEdicaoController =$.extend(true,  {
 			$(".edicoesGrid",this.workspace).flexOptions({
 				url: contextPath + "/cadastro/edicao/pesquisarEdicoes.json",
 				params: [{name:'codigoProduto', value: codigoProduto },
-				         {name:'nome', value: nome },
+				         {name:'nomeProduto', value: nomeProduto },
 				         {name:'dataLancamentoDe', value: dataLancamentoDe },
 				         {name:'dataLancamentoAte', value: dataLancamentoAte },
 				         {name:'precoDe', value: precoDe },

@@ -243,7 +243,7 @@ var descontoProdutoController = $.extend(true,{
 				align : 'center'
 			}],
 			sortname : "codigoProduto",
-			sortorder : "asc",
+			sortorder : "desc",
 			usepager : true,
 			useRp : true,
 			rp : 15,

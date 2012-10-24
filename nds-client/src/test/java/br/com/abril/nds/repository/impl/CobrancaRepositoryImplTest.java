@@ -14,6 +14,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.vo.NegociacaoDividaDetalheVO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaDividasCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaDividasCotaDTO.OrdenacaoColunaDividas;
 import br.com.abril.nds.fixture.Fixture;
@@ -121,9 +122,9 @@ public class CobrancaRepositoryImplTest extends AbstractRepositoryImplTest {
 		produtoVeja.setEditor(abril);
 		save(produtoVeja);
 
-		ProdutoEdicao produtoEdicaoVeja1 = Fixture.produtoEdicao("1", 1L, 10,
+		ProdutoEdicao produtoEdicaoVeja1 = Fixture.produtoEdicao(1L, 10,
 				14, new Long(100), BigDecimal.TEN, new BigDecimal(20),
-				"ABCDEFGHIJKLMNOPQ", 1L, produtoVeja, null, false);
+				"ABCDEFGHIJKLMNOPQ", produtoVeja, null, false);
 		save(produtoEdicaoVeja1);
 
 		EstoqueProdutoCota estoqueProdutoCota = Fixture.estoqueProdutoCota(
@@ -569,6 +570,14 @@ public class CobrancaRepositoryImplTest extends AbstractRepositoryImplTest {
 
 		Assert.assertNull(nossoNumero);
 
+	}
+	
+	@Test
+	public void testarObterDetalhesCobranca(){
+		
+		List<NegociacaoDividaDetalheVO> lista = this.cobrancaRepository.obterDetalhesCobranca(1L);
+		
+		Assert.assertNotNull(lista);
 	}
 
 }

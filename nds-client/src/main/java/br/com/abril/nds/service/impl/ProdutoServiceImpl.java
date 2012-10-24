@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.ConsultaProdutoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.DescontoLogistica;
 import br.com.abril.nds.model.cadastro.Editor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
@@ -168,48 +169,63 @@ public class ProdutoServiceImpl implements ProdutoService {
 	public void salvarProduto(Produto produto, Long codigoEditor,
 			Long codigoFornecedor, Long codigoTipoDesconto,
 			Long codigoTipoProduto) {
-		
-		try {
-			
+
 			Editor editor =	this.editorRepository.buscarPorId(codigoEditor);
-			produto.setEditor(editor);
-			
 			Fornecedor fornecedor = this.fornecedorRepository.buscarPorId(codigoFornecedor);
-			produto.addFornecedor(fornecedor);
-			
 			TipoProduto tipoProduto = this.tipoProdutoRepository.buscarPorId(codigoTipoProduto);
-			produto.setTipoProduto(tipoProduto);
 			
-			//TODO: Valor não informado na interface 
-			// de cadastro de produto
-			produto.setPeso(0L);
-
-			produto = this.produtoRepository.merge(produto);
-			
-			if (codigoTipoDesconto != null && codigoTipoDesconto.intValue() > 0) {
-
-				DescontoLogistica descontoLogistica = this.descontoLogisticaRepository.obterPorTipoDesconto(codigoTipoDesconto.intValue());
-				if (descontoLogistica!=null){
-					
-					Set<Produto> produtos = new LinkedHashSet<Produto>();
-						
-				    produtos.add(produto);
-				    
-				    descontoLogistica.setProdutos(produtos);
-					
-				    descontoLogistica = this.descontoLogisticaRepository.merge(descontoLogistica);
+			if(produto.getId()!=null) {
 				
-				    produto.setDescontoLogistica(descontoLogistica);
+				Produto produtoExistente = produtoRepository.buscarPorId(produto.getId());
 				
-				    this.produtoRepository.merge(produto);
+				if(produtoExistente == null) {
+					throw new ValidacaoException(TipoMensagem.WARNING, "Produto não encontrado para edição.");
 				}
+				
+				
+				produtoExistente.setCodigo(produto.getCodigo());
+				produtoExistente.setSlogan(produto.getSlogan());
+				produtoExistente.setPeb(produto.getPeb());
+				produtoExistente.setFormaComercializacao(produto.getFormaComercializacao());
+				produtoExistente.setPeriodicidade(produto.getPeriodicidade());
+				produtoExistente.setGrupoEditorial(produto.getGrupoEditorial());
+				produtoExistente.setSubGrupoEditorial(produto.getSubGrupoEditorial());
+				produtoExistente.setTributacaoFiscal(produto.getTributacaoFiscal());
+				produtoExistente.setPacotePadrao(produto.getPacotePadrao());
+				produtoExistente.setSegmentacao(produto.getSegmentacao());
+				
+				produtoExistente.setEditor(editor);
+				produtoExistente.addFornecedor(fornecedor);
+				produtoExistente.setTipoProduto(tipoProduto);
+				produto.setDescontoLogistica(obterDescontoLogistica(codigoTipoDesconto));
+				
+				this.produtoRepository.alterar(produtoExistente);
+				
+			} else {
+				
+				produto.setEditor(editor);
+				produto.addFornecedor(fornecedor);
+				produto.setTipoProduto(tipoProduto);
+				produto.setDescontoLogistica(obterDescontoLogistica(codigoTipoDesconto));
+				
+				//TODO: Valor não informado na interface de cadastro de produto
+				produto.setPeso(0L);
+				
+				this.produtoRepository.adicionar(produto);
+				
 			}
-			
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		
 	}
 
+	private DescontoLogistica obterDescontoLogistica(Long codigoTipoDesconto) {
+		
+		if (codigoTipoDesconto != null && codigoTipoDesconto.intValue() > 0) {
+			return this.descontoLogisticaRepository.obterPorTipoDesconto(codigoTipoDesconto.intValue());
+		}
+		
+		return null;
+	}
+	
 	@Override
 	@Transactional(readOnly=true)
 	public Produto obterProdutoPorID(Long id) {
@@ -239,5 +255,11 @@ public class ProdutoServiceImpl implements ProdutoService {
 		
 		return produtoRepository.buscarTodos();
 	}
+
+	@Transactional(readOnly=true)
+	public List<Produto> obterProdutosOrganizadosNome() {
+		return produtoRepository.buscarProdutosOrganizadosNome();
+	}
+	
 	
 }

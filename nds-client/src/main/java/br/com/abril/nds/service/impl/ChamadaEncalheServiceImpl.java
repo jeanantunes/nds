@@ -28,6 +28,7 @@ import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.TipoMensagem;
+import br.com.abril.nds.vo.PaginacaoVO;
 
 /**
  * Classe de implementação referentes a serviços de chamada encalhe. 
@@ -142,7 +143,7 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 	
 	@Override
 	@Transactional
-	public List<BandeirasDTO> obterBandeirasDaSemana(Integer semana) {
+	public List<BandeirasDTO> obterBandeirasDaSemana(Integer semana, PaginacaoVO paginacaoVO) {
 		
 		Distribuidor distribuidor = distribuidorService.obter();
 		
@@ -154,7 +155,24 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 			throw new ValidacaoException(TipoMensagem.WARNING, e.getMessage());
 		}
 		
-		return chamadaEncalheRepository.obterBandeirasNoIntervalo(periodoRecolhimento);
+		return chamadaEncalheRepository.obterBandeirasNoIntervalo(periodoRecolhimento, paginacaoVO);
+	}
+	
+	@Override
+	@Transactional
+	public Long countObterBandeirasDaSemana(Integer semana) {
+		
+		Distribuidor distribuidor = distribuidorService.obter();
+		
+		Intervalo<Date> periodoRecolhimento = null;
+		
+		try {
+			periodoRecolhimento = recolhimentoService.getPeriodoRecolhimento(distribuidor, semana, new Date());
+		} catch (IllegalArgumentException e) {
+			throw new ValidacaoException(TipoMensagem.WARNING, e.getMessage());
+		}
+		
+		return chamadaEncalheRepository.countObterBandeirasNoIntervalo(periodoRecolhimento);
 	}
 	
 	@Override

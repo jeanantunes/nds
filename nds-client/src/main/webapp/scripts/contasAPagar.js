@@ -250,6 +250,10 @@ var contasAPagarController = $.extend(true, {
 	
 	montaTabelaTotaisDistribuidores : function(table, data) {
 		
+		while (table.rows.length > 0) {
+			table.deleteRow(-1);
+		}
+		
 		for(var i=0; i<data.length; i++) {
 		
 			var tr = table.insertRow(-1);
@@ -628,8 +632,8 @@ var contasAPagarController = $.extend(true, {
 			useRp : true,
 			rp : 15,
 			showTableToggleBtn : true,
-			sortname : "data",
-			sortorder : "asc",
+			sortname : "rctl",
+			sortorder : "desc",
 			width : 960,
 			height : 255
 		});

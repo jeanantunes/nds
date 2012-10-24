@@ -9,6 +9,7 @@ import junit.framework.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.dto.ContasAPagarGridPrincipalProdutoDTO;
 import br.com.abril.nds.dto.ContasApagarConsultaPorDistribuidorDTO;
 import br.com.abril.nds.dto.ContasApagarConsultaPorProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroContasAPagarDTO;
@@ -92,6 +93,8 @@ public class ContasAPagarRepositoryImplTest extends AbstractRepositoryImplTest {
 	public void testBuscarTotalPesquisarPorDistribuidor(){
 		
 		this.contasAPagarRepository.buscarTotalPesquisarPorDistribuidor(this.getFiltroPesquisaPorDistribuidor(), false);
+		
+		this.contasAPagarRepository.buscarTotalPesquisarPorDistribuidor(this.getFiltroPesquisaPorDistribuidor(), true);
 	}
 	
 	
@@ -105,7 +108,17 @@ public class ContasAPagarRepositoryImplTest extends AbstractRepositoryImplTest {
 	@Test
 	public void testPesquisarPorProdutoCount(){
 		
-		this.contasAPagarRepository.pesquisarCountPorProduto(this.getFiltroPesquisaPorProduto());
+		Long count = this.contasAPagarRepository.pesquisarCountPorProduto(this.getFiltroPesquisaPorProduto());
+	    
+		Assert.assertNotNull(count);
+	}
+	
+	@Test
+	public void testPesquisarTotaisPorProduto(){
+		
+		ContasAPagarGridPrincipalProdutoDTO contasAPagarGridPrincipalProdutoDTO = this.contasAPagarRepository.pesquisarTotaisPorProduto(this.getFiltroPesquisaPorProduto());
+	    
+		Assert.assertNotNull(contasAPagarGridPrincipalProdutoDTO);
 	}
 	
 	@Test

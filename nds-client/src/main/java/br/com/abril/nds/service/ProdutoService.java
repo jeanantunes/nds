@@ -93,4 +93,7 @@ public interface ProdutoService {
 	 * @return lista de produtos
 	 */
 	List<Produto> obterProdutos();
+	
+	List<Produto> obterProdutosOrganizadosNome();
+	
 }

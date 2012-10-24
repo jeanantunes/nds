@@ -23,4 +23,16 @@ public class ResumoSuplementarFecharDiaServiceImp implements
 		return this.resumoSuplementarFecharDiaRepository.obterValorEstoqueLogico(dataOperacao);
 	}
 
+	@Override
+	@Transactional
+	public BigDecimal obterValorTransferencia(Date dataOperacao) {		 
+		return this.resumoSuplementarFecharDiaRepository.obterValorTransferencia(dataOperacao);
+	}
+
+	@Override
+	@Transactional
+	public BigDecimal obterValorVenda(Date dataOperacao) {		 
+		return this.resumoSuplementarFecharDiaRepository.obterValorVenda(dataOperacao);
+	}
+
 }

@@ -95,7 +95,7 @@ var suspensaoCotaController = $.extend(true, {
 	getDetalhes : function(idCota, nome) {
 		suspensaoCotaController.nomeCota = nome;
 		$.postJSON(contextPath + "/suspensaoCota/getInadinplenciasDaCota", 
-				"idCota="+idCota+"&method='get'", 
+				{idCota:idCota,method:'get'}, 
 				suspensaoCotaController.popupDetalhes);	
 	}, 
 	
@@ -121,7 +121,7 @@ var suspensaoCotaController = $.extend(true, {
 	
 	selecionarTodos : function(element) {
 		$.postJSON(contextPath + "/suspensaoCota/selecionarTodos", 
-				"selecionado="+element.checked, 
+				{selecionado:element.checked}, 
 				checkAll(element,'selecao'));	
 		
 	},
@@ -227,7 +227,7 @@ var suspensaoCotaController = $.extend(true, {
 	adicionarSelecao : function(id, check) {
 		
 		$.postJSON(contextPath + "/suspensaoCota/selecionarItem", 
-				"idCota="+id +"&selecionado="+check.checked, 
+				{idCota:id,selecionado:check.checked}, 
 				suspensaoCotaController.retornoSemAcao);				
 	},
 	

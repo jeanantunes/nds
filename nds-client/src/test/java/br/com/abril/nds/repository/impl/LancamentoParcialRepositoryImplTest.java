@@ -53,9 +53,9 @@ public class LancamentoParcialRepositoryImplTest extends AbstractRepositoryImplT
 		produtoVeja.addFornecedor(fornecedorFC);
 		save(produtoVeja);
 		
-		produtoEdicaoVeja1 = Fixture.produtoEdicao("1", 1L, 10, 10,
-				new Long(100), BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQ", 1L,
-				produtoVeja, null, false);
+		produtoEdicaoVeja1 = Fixture.produtoEdicao(1L, 10, 10, new Long(100),
+				BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQ", produtoVeja, 
+				null, false);
 		
 		produtoEdicaoVeja1.setParcial(true);
 		save(produtoEdicaoVeja1);
