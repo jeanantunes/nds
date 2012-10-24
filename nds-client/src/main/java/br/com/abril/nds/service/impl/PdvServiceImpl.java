@@ -550,13 +550,6 @@ public class PdvServiceImpl implements PdvService {
     private void salvarTelefonesPdv(PDV pdv,
             List<TelefoneAssociacaoDTO> listaTelefones) {
 
-        if (listaTelefones == null || listaTelefones.isEmpty()){
-			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Lista de telefones é obrigatória.");
-		}
-		
-		this.telefoneService.validarTelefonePrincipal(listaTelefones);
-
 		Pessoa pessoa = pdv.getCota().getPessoa();
 		
         if (listaTelefones != null) {

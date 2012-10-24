@@ -404,8 +404,21 @@ public class TransportadorController {
 				(List<EnderecoAssociacaoDTO>) this.httpSession.getAttribute(
 						LISTA_ENDERECOS_SALVAR_SESSAO);
 		
+		List<EnderecoAssociacaoDTO> listaEnderecoAssociacaoExibir = 
+				(List<EnderecoAssociacaoDTO>) this.httpSession.getAttribute(
+						LISTA_ENDERECOS_EXIBICAO);
 		
-		if (listaEnderecoAssociacaoSalvar == null || listaEnderecoAssociacaoSalvar.isEmpty()) {
+		List<EnderecoAssociacaoDTO> listaEnderecoAssociacao = new ArrayList<EnderecoAssociacaoDTO>();
+		
+		if (listaEnderecoAssociacaoSalvar != null) {
+			listaEnderecoAssociacao.addAll(listaEnderecoAssociacaoSalvar);
+		}
+		
+		if (listaEnderecoAssociacaoExibir != null) {
+			listaEnderecoAssociacao.addAll(listaEnderecoAssociacaoExibir);
+		}
+		
+		if (listaEnderecoAssociacao == null || listaEnderecoAssociacao.isEmpty()) {
 			
 			listaMensagens.add("Pelo menos um endereço deve ser cadastrado para o entregador.");
 		
@@ -413,7 +426,7 @@ public class TransportadorController {
 			
 			boolean temPrincipal = false;
 			
-			for (EnderecoAssociacaoDTO enderecoAssociacao : listaEnderecoAssociacaoSalvar) {
+			for (EnderecoAssociacaoDTO enderecoAssociacao : listaEnderecoAssociacao) {
 				
 				if (enderecoAssociacao.isEnderecoPrincipal()) {
 					
@@ -428,14 +441,24 @@ public class TransportadorController {
 				listaMensagens.add("Deve haver ao menos um endereço principal para o entregador.");
 			}
 		}
-		
 	}
 	
 	private void validarTelefone(List<String> listaMensagens) {
 	
 		Map<Integer, TelefoneAssociacaoDTO> map = this.obterTelefonesSalvarSessao();
 		
-		if (map.keySet().isEmpty()) {
+		List<TelefoneAssociacaoDTO> listaTelefoneAssociacaoExibicao =
+			(List<TelefoneAssociacaoDTO>) this.httpSession.getAttribute(LISTA_TELEFONES_EXIBICAO);
+		
+		List<TelefoneAssociacaoDTO> listaTelefoneAssociacao = new ArrayList<TelefoneAssociacaoDTO>(); 
+		
+		listaTelefoneAssociacao.addAll(map.values());
+		
+		if (listaTelefoneAssociacaoExibicao != null) {
+			listaTelefoneAssociacao.addAll(listaTelefoneAssociacaoExibicao);
+		}
+		
+		if (listaTelefoneAssociacao.isEmpty()) {
 			
 			listaMensagens.add("Pelo menos um telefone deve ser cadastrado para o entregador.");
 		
@@ -443,11 +466,9 @@ public class TransportadorController {
 			
 			boolean temPrincipal = false;
 			
-			for (Integer key : map.keySet()){
+			for (TelefoneAssociacaoDTO telefoneAssociacao : listaTelefoneAssociacao){
 
-				TelefoneAssociacaoDTO telefoneAssociacaoDTO = map.get(key);
-				
-				if (telefoneAssociacaoDTO.isPrincipal()) {
+				if (telefoneAssociacao.isPrincipal()) {
 					
 					temPrincipal = true;
 					
@@ -460,8 +481,6 @@ public class TransportadorController {
 				listaMensagens.add("Deve haver ao menos um telefone principal para o entregador.");
 			}
 		}
-
-		
 	}
 	
 	/*

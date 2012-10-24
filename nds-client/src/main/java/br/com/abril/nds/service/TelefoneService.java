@@ -40,13 +40,6 @@ public interface TelefoneService {
 
 	Telefone buscarTelefonePorId(Long longValue);
 	
-	/**
-	 * Valida se a lista tem pelo menos um e somente um telefone principal
-	 * 
-	 * @param listaTelefones lista de telefones para serem validados
-	 */
-	void validarTelefonePrincipal(List<TelefoneAssociacaoDTO> listaTelefones);
-	
 	void validarTelefone(TelefoneDTO telefone, TipoTelefone tipoTelefone);
 	
 }
