@@ -1,15 +1,26 @@
 package br.com.abril.nds.service.impl;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import net.sf.jasperreports.engine.JRDataSource;
+import net.sf.jasperreports.engine.JasperRunManager;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.client.vo.NegociacaoDividaDetalheVO;
+import br.com.abril.nds.dto.ImpressaoNegociacaoDTO;
+import br.com.abril.nds.dto.ImpressaoNegociacaoParecelaDTO;
 import br.com.abril.nds.dto.NegociacaoDividaDTO;
 import br.com.abril.nds.dto.NegociacaoDividaPaginacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaNegociacaoDivida;
@@ -17,8 +28,10 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Banco;
+import br.com.abril.nds.model.cadastro.ConcentracaoCobrancaCota;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
+import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
 import br.com.abril.nds.model.financeiro.Boleto;
 import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.financeiro.CobrancaCheque;
@@ -45,6 +58,7 @@ import br.com.abril.nds.repository.MovimentoFinanceiroCotaRepository;
 import br.com.abril.nds.repository.NegociacaoDividaRepository;
 import br.com.abril.nds.repository.ParcelaNegociacaoRepository;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
+import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.service.DocumentoCobrancaService;
 import br.com.abril.nds.service.NegociacaoDividaService;
 import br.com.abril.nds.util.TipoMensagem;
@@ -85,6 +99,9 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService{
 	
 	@Autowired
 	private BancoRepository bancoRepository;
+	
+	@Autowired
+	private DescontoService descontoService;
 	
 	@Override
 	@Transactional(readOnly = true)
@@ -176,7 +193,7 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService{
 			TipoMovimentoFinanceiro tipoMovimentoFinanceiro = new TipoMovimentoFinanceiro();
 			tipoMovimentoFinanceiro.setGrupoMovimentoFinaceiro(GrupoMovimentoFinaceiro.POSTERGADO_NEGOCIACAO);
 			tipoMovimentoFinanceiro.setOperacaoFinaceira(OperacaoFinaceira.DEBITO);
-			tipoMovimentoFinanceiro.setDescricao("TESTE NEGOCIAÇÃO DIVIDA");
+			tipoMovimentoFinanceiro.setDescricao("NEGOCIAÇÃO DIVIDA");
 			this.tipoMovimentoFinanceiroRepository.adicionar(tipoMovimentoFinanceiro);
 			
 			BigDecimal totalNegociacao = BigDecimal.ZERO;
@@ -197,7 +214,6 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService{
 				totalNegociacao = totalNegociacao.add(parcelaNegociacao.getMovimentoFinanceiroCota().getValor());
 				
 				this.movimentoFinanceiroCotaRepository.adicionar(parcelaNegociacao.getMovimentoFinanceiroCota());
-				this.parcelaNegociacaoRepository.adicionar(parcelaNegociacao);
 			}
 			
 			//Caso essa seja uma negociação avulsa as parcelas não devem entrar nas próximas
@@ -284,6 +300,16 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService{
 		negociacao.setFormaCobranca(formaCobranca);
 		negociacao.setParcelas(parcelas);
 		negociacao.setValorDividaPagaComissao(valorDividaParaComissao);
+		
+		if (negociacao.getParcelas() != null){
+			
+			for (ParcelaNegociacao parcelaNegociacao : negociacao.getParcelas()){
+				
+				parcelaNegociacao.setNegociacao(negociacao);
+				
+				this.parcelaNegociacaoRepository.adicionar(parcelaNegociacao);
+			}
+		}
 		
 		this.negociacaoDividaRepository.adicionar(negociacao);
 		
@@ -430,5 +456,169 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService{
 		}
 		
 		return boletos;
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public byte[] imprimirNegociacao(Long idNegociacao) throws Exception {
+		
+		Negociacao negociacao = this.obterNegociacaoPorId(idNegociacao);
+		
+		if (negociacao == null){
+			
+			throw new ValidacaoException(
+					TipoMensagem.WARNING, "Negociação não encontrada.");
+		}
+		
+		Cota cota = negociacao.getCobrancasOriginarias().get(0).getCota();
+		
+		BigDecimal totalDividaSelecionada = BigDecimal.ZERO;
+		
+		for (Cobranca cobranca : negociacao.getCobrancasOriginarias()){
+			
+			totalDividaSelecionada = totalDividaSelecionada.add(cobranca.getValor());
+		}
+		
+		ImpressaoNegociacaoDTO impressaoNegociacaoDTO = new ImpressaoNegociacaoDTO();
+		//campo cota(numero)
+		impressaoNegociacaoDTO.setNumeroCota(cota.getNumeroCota());
+		//campo nome
+		impressaoNegociacaoDTO.setNomeCota(cota.getPessoa().getNome());
+		//campo divida selecionada
+		impressaoNegociacaoDTO.setTotalDividaSelecionada(totalDividaSelecionada);
+		
+		//campo Comissão da Cota para pagamento da dívida
+		impressaoNegociacaoDTO.setComissaoParaPagamento(negociacao.getComissaoParaSaldoDivida());
+		
+		if (negociacao.getParcelas() == null || negociacao.getParcelas().isEmpty()){
+		
+			BigDecimal comissaoAtual = this.descontoService.obterComissaoCota(cota.getNumeroCota());
+			
+			if (comissaoAtual == null){
+				
+				comissaoAtual = BigDecimal.ZERO;
+			}
+			
+			//campo Comissão da Cota
+			impressaoNegociacaoDTO.setComissaoAtualCota(comissaoAtual);
+			
+			//campo Comissão da Cota enquanto houver saldo de dívida
+			impressaoNegociacaoDTO.setComissaoCotaEnquantoHouverSaldo(
+					comissaoAtual.subtract(negociacao.getComissaoParaSaldoDivida()));
+		}
+		
+		//campo frequencia de pagamento
+		if (negociacao.getFormaCobranca() != null){
+			
+			String aux = "";
+			
+			TipoFormaCobranca tipoFormaCobranca = negociacao.getFormaCobranca().getTipoFormaCobranca();
+			
+			switch (tipoFormaCobranca){
+				case DIARIA:
+					
+				break;
+				case MENSAL:
+					aux = "Todo dia " + negociacao.getFormaCobranca().getDiasDoMes().get(0);
+				break;
+				case QUINZENAL:
+					aux = "Todo dia " + negociacao.getFormaCobranca().getDiasDoMes().get(0) +
+							" e " + negociacao.getFormaCobranca().getDiasDoMes().get(1);
+				break;
+				case SEMANAL:
+					for (ConcentracaoCobrancaCota concen : negociacao.getFormaCobranca().getConcentracaoCobrancaCota()){
+						
+						aux = aux + concen.getDiaSemana().getDescricaoDiaSemana();
+					}
+				break;
+			}
+			
+			impressaoNegociacaoDTO.setFrequenciaPagamento(
+					negociacao.getFormaCobranca().getTipoFormaCobranca().getDescricao() + 
+					(!negociacao.getFormaCobranca().getTipoFormaCobranca().equals(TipoFormaCobranca.DIARIA) ? ": " : " ") + aux);
+			
+			Banco banco = negociacao.getFormaCobranca().getBanco();
+			
+			impressaoNegociacaoDTO.setNumeroBanco(banco.getNumeroBanco());
+			impressaoNegociacaoDTO.setNomeBanco(banco.getNome());
+			impressaoNegociacaoDTO.setAgenciaBanco(banco.getAgencia());
+			impressaoNegociacaoDTO.setContaBanco(banco.getConta());
+		}
+		
+		//campo negociacao avulsa
+		impressaoNegociacaoDTO.setNegociacaoAvulsa(negociacao.isNegociacaoAvulsa());
+		//campo isenta encargos
+		impressaoNegociacaoDTO.setIsentaEncargos(negociacao.isIsentaEncargos());
+		
+		impressaoNegociacaoDTO.setParcelasCheques(new ArrayList<ImpressaoNegociacaoParecelaDTO>());
+		
+		BigDecimal totalParcelas = BigDecimal.ZERO;
+		for (ParcelaNegociacao parcela : negociacao.getParcelas()){
+			
+			ImpressaoNegociacaoParecelaDTO vo = new ImpressaoNegociacaoParecelaDTO();
+			
+			int nParcela = negociacao.getParcelas().indexOf(parcela) + 1;
+			
+			vo.setNumeroParcela(nParcela);
+			
+			if (negociacao.getAtivarCotaAposParcela() != null && 
+					negociacao.getAtivarCotaAposParcela() == nParcela){
+				
+				vo.setAtivarAoPagar(true);
+			}
+			
+			vo.setDataVencimento(parcela.getDataVencimento());
+			vo.setNumeroCheque(parcela.getNumeroCheque());
+			vo.setValor(parcela.getMovimentoFinanceiroCota().getValor());
+			
+			BigDecimal encargos = parcela.getEncargos() == null ? BigDecimal.ZERO : parcela.getEncargos();
+			
+			vo.setEncagos(encargos);
+			vo.setParcelaTotal(
+					parcela.getMovimentoFinanceiroCota().getValor().add(encargos));
+			
+			totalParcelas = totalParcelas.add(vo.getParcelaTotal());
+			
+			impressaoNegociacaoDTO.getParcelasCheques().add(vo);
+		}
+		
+		List<ImpressaoNegociacaoDTO> listaJasper = new ArrayList<ImpressaoNegociacaoDTO>();
+		listaJasper.add(impressaoNegociacaoDTO);
+		
+		JRDataSource jrDataSource = new JRBeanCollectionDataSource(listaJasper);
+		
+		URL diretorioReports = Thread.currentThread().getContextClassLoader().getResource("reports/");
+		
+		String path = diretorioReports.toURI().getPath();
+		
+		if (impressaoNegociacaoDTO.getParcelasCheques().isEmpty()){
+			
+			path += "/negociacao_divida_comissao.jasper";
+		} else if (impressaoNegociacaoDTO.getParcelasCheques().get(0).getNumeroCheque() == null){
+			
+			path += "/negociacao_divida_boleto.jasper";
+			
+		} else {
+			
+			path += "/negociacao_divida_cheque.jasper";
+		}
+		
+		Map<String, Object> parameters = new HashMap<String, Object>();
+		parameters.put("TOTAL_PARCELAS", totalParcelas.setScale(2, RoundingMode.HALF_EVEN).toString());
+		parameters.put("SUBREPORT_DIR", diretorioReports.toURI().getPath());
+		
+		return JasperRunManager.runReportToPdf(path, parameters, jrDataSource);
+	}
+
+	@Override
+	@Transactional
+	public List<NegociacaoDividaDetalheVO> obterDetalhesCobranca(Long idCobranca) {
+		
+		if (idCobranca == null){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Id da cobrança inválido.");
+		}
+		
+		return this.cobrancaRepository.obterDetalhesCobranca(idCobranca);
 	}
 }

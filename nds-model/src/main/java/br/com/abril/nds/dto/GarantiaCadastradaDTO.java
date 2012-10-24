@@ -3,6 +3,7 @@ package br.com.abril.nds.dto;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.List;
 
 import br.com.abril.nds.model.cadastro.TipoGarantia;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantia;
@@ -22,6 +23,8 @@ public class GarantiaCadastradaDTO implements Serializable {
 	private BigInteger quantidadeCotas;
 	
 	private BigDecimal valorTotal;
+	
+	private List<DetalheGarantiaCadastradaDTO> detalheGarantiaCadastrada;
 
 	/**
 	 * @return the tipoGarantia
@@ -88,4 +91,20 @@ public class GarantiaCadastradaDTO implements Serializable {
 	public void setValorTotal(BigDecimal valorTotal) {
 		this.valorTotal = valorTotal;
 	}
+
+	/**
+	 * @return the detalheGarantiaCadastrada
+	 */
+	public List<DetalheGarantiaCadastradaDTO> getDetalheGarantiaCadastrada() {
+		return detalheGarantiaCadastrada;
+	}
+
+	/**
+	 * @param detalheGarantiaCadastrada the detalheGarantiaCadastrada to set
+	 */
+	public void setDetalheGarantiaCadastrada(
+			List<DetalheGarantiaCadastradaDTO> detalheGarantiaCadastrada) {
+		this.detalheGarantiaCadastrada = detalheGarantiaCadastrada;
+	}
+	
 }

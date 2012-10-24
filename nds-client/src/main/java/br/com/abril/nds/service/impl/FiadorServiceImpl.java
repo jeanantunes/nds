@@ -452,39 +452,53 @@ public class FiadorServiceImpl implements FiadorService {
 		
 		Pessoa pessoa = fiador.getPessoa();
 		
-        this.enderecoService.cadastrarEnderecos(listaEnderecoAssociacao, pessoa);
-		
-		for (EnderecoAssociacaoDTO enderecoAssociacao : listaEnderecoAssociacao) {
+        for (EnderecoAssociacaoDTO enderecoAssociacao : listaEnderecoAssociacao) {
 
 			EnderecoFiador enderecoFiador = 
 					this.enderecoFiadorRepository.buscarEnderecoPorEnderecoFiador(enderecoAssociacao.getId(), fiador.getId());
 
 			EnderecoDTO dto = enderecoAssociacao.getEndereco();
 			
-            Endereco endereco = new Endereco(dto.getCodigoBairro(),
-                    dto.getBairro(), dto.getCep(), dto.getCodigoCidadeIBGE(),
-                    dto.getCidade(), dto.getComplemento(),
-                    dto.getTipoLogradouro(), dto.getLogradouro(),
-                    dto.getNumero(), dto.getUf(), dto.getCodigoUf(), pessoa);
-            endereco.setId(dto.getId());        
+			this.enderecoService.validarEndereco(dto, enderecoAssociacao.getTipoEndereco());
 			
-            if (enderecoFiador == null) {
-
+			Endereco endereco = null;
+			
+			if (enderecoFiador == null) {
+				
+				endereco = new Endereco();
+				
 				enderecoFiador = new EnderecoFiador();
 				enderecoFiador.setFiador(fiador);
 				
-				enderecoFiador.setEndereco(endereco);
-				enderecoFiador.setPrincipal(enderecoAssociacao.isEnderecoPrincipal());
-				enderecoFiador.setTipoEndereco(enderecoAssociacao.getTipoEndereco());
-				
-				this.enderecoFiadorRepository.adicionar(enderecoFiador);
 			} else {
 				
-				enderecoFiador.setEndereco(endereco);
-				enderecoFiador.setPrincipal(enderecoAssociacao.isEnderecoPrincipal());
-				enderecoFiador.setTipoEndereco(enderecoAssociacao.getTipoEndereco());
+				endereco = enderecoFiador.getEndereco();				
+			}
+			
+			endereco.setCodigoBairro(dto.getCodigoBairro());
+			endereco.setBairro(dto.getBairro());
+			endereco.setCep(dto.getCep());
+			endereco.setCodigoCidadeIBGE(dto.getCodigoCidadeIBGE());
+			endereco.setCidade(dto.getCidade());
+			endereco.setComplemento(dto.getComplemento());
+			endereco.setTipoLogradouro(dto.getTipoLogradouro());
+			endereco.setLogradouro(dto.getLogradouro());
+			endereco.setNumero(dto.getNumero());
+			endereco.setUf(dto.getUf());
+			endereco.setCodigoUf(dto.getCodigoUf());
+			endereco.setPessoa(pessoa);
+			
+			enderecoFiador.setEndereco(endereco);
+			enderecoFiador.setPrincipal(enderecoAssociacao.isEnderecoPrincipal());
+			enderecoFiador.setTipoEndereco(enderecoAssociacao.getTipoEndereco());
+			
+			if (enderecoFiador.getId() == null) {
 				
-				this.enderecoFiadorRepository.alterar(enderecoFiador);
+				this.enderecoFiadorRepository.adicionar(enderecoFiador);
+				
+			} else {
+				
+				this.enderecoFiadorRepository.alterar(enderecoFiador);	
 			}
 		}
 	}
@@ -528,38 +542,35 @@ public class FiadorServiceImpl implements FiadorService {
 
 	private void salvarTelefonesFiador(Fiador fiador, List<TelefoneAssociacaoDTO> listaTelefones) {
 		
-		if (listaTelefones != null && !listaTelefones.isEmpty()){
+		Pessoa pessoa = fiador.getPessoa();
+		
+        for (TelefoneAssociacaoDTO dto : listaTelefones){
 			
-			Pessoa pessoa = fiador.getPessoa();
+			TelefoneDTO telefoneDTO = dto.getTelefone();
 			
-            this.telefoneService.cadastrarTelefone(listaTelefones, pessoa);
+			this.telefoneService.validarTelefone(telefoneDTO, dto.getTipoTelefone());
 			
-			for (TelefoneAssociacaoDTO dto : listaTelefones){
+            TelefoneFiador telefoneFiador = this.telefoneFiadorRepository.obterTelefonePorTelefoneFiador(telefoneDTO.getId(), fiador.getId());
+			
+			if (telefoneFiador == null){
+				telefoneFiador = new TelefoneFiador();
 				
-				TelefoneDTO telefoneDTO = dto.getTelefone();
+				telefoneFiador.setFiador(fiador);
+				telefoneFiador.setPrincipal(dto.isPrincipal());
+				Telefone telefone = new Telefone(telefoneDTO.getId(), telefoneDTO.getNumero(), telefoneDTO.getRamal(), telefoneDTO.getDdd(), pessoa);
+				telefoneFiador.setTelefone(telefone);
+				telefoneFiador.setTipoTelefone(dto.getTipoTelefone());
 				
-                TelefoneFiador telefoneFiador = this.telefoneFiadorRepository.obterTelefonePorTelefoneFiador(telefoneDTO.getId(), fiador.getId());
+				this.telefoneFiadorRepository.adicionar(telefoneFiador);
+			} else {
+				Telefone telefone = telefoneFiador.getTelefone();
+				telefone.setDdd(telefoneDTO.getDdd());
+				telefone.setNumero(telefoneDTO.getNumero());
+				telefone.setRamal(telefone.getRamal());
+				telefoneFiador.setPrincipal(dto.isPrincipal());
+				telefoneFiador.setTipoTelefone(dto.getTipoTelefone());
 				
-				if (telefoneFiador == null){
-					telefoneFiador = new TelefoneFiador();
-					
-					telefoneFiador.setFiador(fiador);
-					telefoneFiador.setPrincipal(dto.isPrincipal());
-					Telefone telefone = new Telefone(telefoneDTO.getId(), telefoneDTO.getNumero(), telefoneDTO.getRamal(), telefoneDTO.getDdd(), pessoa);
-					telefoneFiador.setTelefone(telefone);
-					telefoneFiador.setTipoTelefone(dto.getTipoTelefone());
-					
-					this.telefoneFiadorRepository.adicionar(telefoneFiador);
-				} else {
-					Telefone telefone = telefoneFiador.getTelefone();
-					telefone.setDdd(telefoneDTO.getDdd());
-					telefone.setNumero(telefoneDTO.getNumero());
-					telefone.setRamal(telefone.getRamal());
-					telefoneFiador.setPrincipal(dto.isPrincipal());
-					telefoneFiador.setTipoTelefone(dto.getTipoTelefone());
-					
-					this.telefoneFiadorRepository.alterar(telefoneFiador);
-				}
+				this.telefoneFiadorRepository.alterar(telefoneFiador);
 			}
 		}
 	}

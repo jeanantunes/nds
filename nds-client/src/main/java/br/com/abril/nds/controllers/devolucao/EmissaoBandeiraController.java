@@ -1,42 +1,29 @@
 package br.com.abril.nds.controllers.devolucao;
 
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
-import net.sf.jasperreports.engine.JRDataSource;
-import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JasperRunManager;
-import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.EmissaoBandeiraVO;
-import br.com.abril.nds.client.vo.ImpressaoBandeiraVO;
-import br.com.abril.nds.dto.EmissaoBandeiraDTO;
-import br.com.abril.nds.dto.SlipVendaEncalheDTO;
-import br.com.abril.nds.dto.filtro.FiltroVendaEncalheDTO;
+import br.com.abril.nds.dto.BandeirasDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
-import br.com.abril.nds.model.TipoSlip;
 import br.com.abril.nds.model.cadastro.Distribuidor;
-import br.com.abril.nds.model.estoque.TipoVendaEncalhe;
-import br.com.abril.nds.model.estoque.VendaProduto;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
+import br.com.abril.nds.service.ChamadaEncalheService;
+import br.com.abril.nds.service.EmissaoBandeiraService;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.util.export.NDSFileHeader;
+import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
@@ -59,6 +46,11 @@ public class EmissaoBandeiraController {
 	@Autowired
 	private HttpServletResponse response;
 	
+	@Autowired
+	private EmissaoBandeiraService emissaoBandeiraService;
+	
+	@Autowired
+	private ChamadaEncalheService chamadaEncalheService;
 
 	@Path("/")
 	@Rules(Permissao.ROLE_RECOLHIMENTO_EMISSAO_BANDEIRA)
@@ -69,58 +61,38 @@ public class EmissaoBandeiraController {
 	@Path("/pesquisar")
 	public void pesquisar(Integer semana, String sortname, String sortorder, int rp, int page) {
 		
-		List<EmissaoBandeiraDTO> listaEmissaoBandeiraDTO = getListaEmissaoBandeira();
+		PaginacaoVO paginacaoVO = new PaginacaoVO(page, rp, sortorder, sortname);
+		
+		List<BandeirasDTO> listaBandeiraDTO = chamadaEncalheService.obterBandeirasDaSemana(semana,paginacaoVO); 
 		
 		List<EmissaoBandeiraVO> listaEmissaoBandeiraVO =  new ArrayList<EmissaoBandeiraVO>();
 		
-		for (EmissaoBandeiraDTO dto :listaEmissaoBandeiraDTO ){
+		for (BandeirasDTO dto :listaBandeiraDTO ){
 			listaEmissaoBandeiraVO.add(new EmissaoBandeiraVO (dto));
 		}
 		
-		if (!listaEmissaoBandeiraVO.isEmpty()) {
+		if (listaEmissaoBandeiraVO.isEmpty()) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
 		} else {
-			this.result.use(FlexiGridJson.class).from(listaEmissaoBandeiraVO).total(listaEmissaoBandeiraVO.size()).page(page).serialize();
+			
+			 
+			this.result.use(FlexiGridJson.class).from(listaEmissaoBandeiraVO).total(chamadaEncalheService.countObterBandeirasDaSemana(semana).intValue()).page(page).serialize();
 		}
 	}
 
-	private List<EmissaoBandeiraDTO> getListaEmissaoBandeira() {
-		List<EmissaoBandeiraDTO> listaEmissaoBandeiraDTO = new ArrayList<EmissaoBandeiraDTO>();
-		EmissaoBandeiraDTO emissaoBandeiraDTO = new EmissaoBandeiraDTO();
-		emissaoBandeiraDTO.setCodigoProduto("1");
-		emissaoBandeiraDTO.setNomeProduto("EPOCA");
-		emissaoBandeiraDTO.setEdicao(1000l);
-		emissaoBandeiraDTO.setPacotePadrao(32);
-		emissaoBandeiraDTO.setData(new Date());
-		emissaoBandeiraDTO.setDestino("SERVICE MAIL");
-		emissaoBandeiraDTO.setPrioridade(1);
-		listaEmissaoBandeiraDTO.add(emissaoBandeiraDTO);
-		
-		
-		emissaoBandeiraDTO = new EmissaoBandeiraDTO();
-		emissaoBandeiraDTO.setCodigoProduto("2");
-		emissaoBandeiraDTO.setNomeProduto("VEJA");
-		emissaoBandeiraDTO.setEdicao(1000l);
-		emissaoBandeiraDTO.setPacotePadrao(32);
-		emissaoBandeiraDTO.setData(new Date());
-		emissaoBandeiraDTO.setDestino("SERVICE MAIL");
-		emissaoBandeiraDTO.setPrioridade(1);
-		
-		listaEmissaoBandeiraDTO.add(emissaoBandeiraDTO);
-		return listaEmissaoBandeiraDTO;
-	}
+
 	
 	@Get
 	@Path("/imprimirArquivo")
 	public void imprimirArquivo(Integer semana,	String sortname, String sortorder, int rp, int page, FileType fileType) {
 	
-		List<EmissaoBandeiraDTO> listaEmissaoBandeiraDTO = getListaEmissaoBandeira();
+	List<BandeirasDTO> listaBandeiraDTO = chamadaEncalheService.obterBandeirasDaSemana(semana, null); 
 		
-		List<EmissaoBandeiraVO> listaEmissaoBandeiraVO =  new ArrayList<EmissaoBandeiraVO>();
+	List<EmissaoBandeiraVO> listaEmissaoBandeiraVO =  new ArrayList<EmissaoBandeiraVO>();
 		
-		for (EmissaoBandeiraDTO dto :listaEmissaoBandeiraDTO ){
+	for (BandeirasDTO dto :listaBandeiraDTO ){
 			listaEmissaoBandeiraVO.add(new EmissaoBandeiraVO (dto));
-		}
+	}
 		
 		
 		if (listaEmissaoBandeiraVO != null && !listaEmissaoBandeiraVO.isEmpty()) {
@@ -181,57 +153,30 @@ public class EmissaoBandeiraController {
 	@Get("/imprimirBandeira")
 	public Download imprimirBandeira(Integer semana, Integer numeroPallets  ) throws Exception{
 		
-		byte[] comprovate = this.gerarDocumentoIreport(semana,numeroPallets);
+		byte[] comprovate = emissaoBandeiraService.imprimirBandeira(semana, numeroPallets);
 		
 		return new ByteArrayDownload(comprovate,"application/pdf", "imprimirBandeira.pdf", true);
 	}
 	
-	
-
-	
-	/**
-	 * Gera um relatório à partir de um Objeto com atributos e listas definidas
-	 * 
-	 * @param list
-	 * @param pathJasper
-	 * @return Array de bytes do relatório gerado
-	 * @throws JRException
-	 * @throws URISyntaxException
-	 */
-	private byte[] gerarDocumentoIreport(Integer semana, Integer numeroPallets ) throws JRException, URISyntaxException {
-		Map<String, Object> parameters = new HashMap<String, Object>();
-	    JRBeanCollectionDataSource ds = new JRBeanCollectionDataSource( getListaImpressaoBandeiraVO(semana,numeroPallets)); 
-		URL url = Thread.currentThread().getContextClassLoader().getResource("/reports/emissao_bandeira.jasper");
-		String path = url.toURI().getPath();
-		return JasperRunManager.runReportToPdf(path, parameters,ds);
-	}
-
-	
-
-	private List<ImpressaoBandeiraVO> getListaImpressaoBandeiraVO(Integer semana, Integer numeroPallets ) {
-		List<ImpressaoBandeiraVO> listaImpressaoBandeiraVO = new ArrayList<ImpressaoBandeiraVO>();
+	@Path("/bandeiraManual")
+	public void bandeiraManual() {
 		
-		for(int i=1; i <= numeroPallets;i++){
-			ImpressaoBandeiraVO impressaoBandeiraVO = new ImpressaoBandeiraVO();
-			
-			if (i%2 == 0){
-				impressaoBandeiraVO.setTipoOperacao("FC");
-			} else {
-				impressaoBandeiraVO.setTipoOperacao("DINAP");
-			}
-			
-			impressaoBandeiraVO.setSemana(semana);
-			impressaoBandeiraVO.setCodigoPracaProcon("148018"+i);
-			impressaoBandeiraVO.setPraca("FORTALEZA");
-			impressaoBandeiraVO.setDestino("ENCALHE");
-			impressaoBandeiraVO.setCanal("BANCAS");
-			listaImpressaoBandeiraVO.add(impressaoBandeiraVO);
-		}
-		
-		
-		return listaImpressaoBandeiraVO;
 	}
 	
+	@Get("/imprimirBandeiraManual")
+	public Download imprimirBandeiraManual(Integer semana, Integer numeroPallets,String nome, String codigoPracaNoProdin, String praca, String destino, String canal ) throws Exception{
 		
+		byte[] comprovate = emissaoBandeiraService.imprimirBandeiraManual(semana, numeroPallets, nome, codigoPracaNoProdin, praca, destino, canal);
+		
+		return new ByteArrayDownload(comprovate,"application/pdf", "imprimirBandeiraManual.pdf", true);
+	}
+	
+	
+	
+	
+	
+	
+
+
 	
 }

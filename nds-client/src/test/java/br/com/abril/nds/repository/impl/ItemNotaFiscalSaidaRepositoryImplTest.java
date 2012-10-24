@@ -96,16 +96,16 @@ public class ItemNotaFiscalSaidaRepositoryImplTest extends AbstractRepositoryImp
 		
 		save(produtoCE, produtoCE_2, produtoCE_3);
 
-		produtoEdicaoCE = Fixture.produtoEdicao("1", 84L, 10, 7,
-				new Long(100), BigDecimal.TEN, new BigDecimal(15), "ABCDEFGHIJKLMNOPQ", 1L, produtoCE, null, false);
+		produtoEdicaoCE = Fixture.produtoEdicao(84L, 10, 7, new Long(100),
+				BigDecimal.TEN, new BigDecimal(15), "ABCDEFGHIJKLMNOPQ", produtoCE, null, false);
 
 		
-		produtoEdicaoCE_2 = Fixture.produtoEdicao("1", 85L, 10, 7,
-				new Long(100), BigDecimal.TEN, new BigDecimal(18), "ABCDEFGHIJKLMNOPZ", 2L, produtoCE_2, null, false);
+		produtoEdicaoCE_2 = Fixture.produtoEdicao(85L, 10, 7, new Long(100),
+				BigDecimal.TEN, new BigDecimal(18), "ABCDEFGHIJKLMNOPZ", produtoCE_2, null, false);
 
 		
-		produtoEdicaoCE_3 = Fixture.produtoEdicao("1", 86L, 10, 7,
-				new Long(100), BigDecimal.TEN, new BigDecimal(90), "ABCDEFGHIJKLMNOPT", 3L, produtoCE_3, null, false);
+		produtoEdicaoCE_3 = Fixture.produtoEdicao(86L, 10, 7, new Long(100),
+				BigDecimal.TEN, new BigDecimal(90), "ABCDEFGHIJKLMNOPT", produtoCE_3, null, false);
 
 		
 		save(produtoEdicaoCE, produtoEdicaoCE_2, produtoEdicaoCE_3);

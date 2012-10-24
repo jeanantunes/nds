@@ -8,6 +8,7 @@ import br.com.abril.nds.dto.CapaDTO;
 import br.com.abril.nds.dto.CotaEmissaoDTO;
 import br.com.abril.nds.dto.FornecedoresBandeiraDTO;
 import br.com.abril.nds.dto.filtro.FiltroEmissaoCE;
+import br.com.abril.nds.vo.PaginacaoVO;
 
 
 /**
@@ -32,7 +33,7 @@ public interface ChamadaEncalheService {
 	 * @param semana número da semana
 	 * @return
 	 */
-	List<BandeirasDTO> obterBandeirasDaSemana(Integer semana);
+	List<BandeirasDTO> obterBandeirasDaSemana(Integer semana, PaginacaoVO paginacao);
 	
 	/**
 	 * Obtém Dados dos Fornecedores para impressão de Bandeira
@@ -41,5 +42,12 @@ public interface ChamadaEncalheService {
 	 * @return
 	 */
 	List<FornecedoresBandeiraDTO> obterDadosFornecedoresParaImpressaoBandeira(Integer semana);
-	
+
+	/**
+	 * Obter Count de "obterBandeirasDaSemana"
+	 * 
+	 * @param semana
+	 * @return
+	 */
+	Long countObterBandeirasDaSemana(Integer semana);
 }

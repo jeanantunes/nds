@@ -550,15 +550,16 @@ public class PdvServiceImpl implements PdvService {
     private void salvarTelefonesPdv(PDV pdv,
             List<TelefoneAssociacaoDTO> listaTelefones) {
 
-        Pessoa pessoa = pdv.getCota().getPessoa();
-
-        this.telefoneService.cadastrarTelefone(listaTelefones, pessoa);
-
+		Pessoa pessoa = pdv.getCota().getPessoa();
+		
         if (listaTelefones != null) {
 
             for (TelefoneAssociacaoDTO dto : listaTelefones) {
 
                 TelefoneDTO telefoneDTO = dto.getTelefone();
+                
+                this.telefoneService.validarTelefone(telefoneDTO, dto.getTipoTelefone());
+                
                 TelefonePDV telefonePdv = this.telefonePdvRepository
                         .obterTelefonePorTelefonePdv(telefoneDTO.getId(),
                                 pdv.getId());
@@ -1121,13 +1122,14 @@ public class PdvServiceImpl implements PdvService {
 
         Pessoa pessoa = pdv.getCota().getPessoa();
 
-        this.enderecoService
-                .cadastrarEnderecos(listaEnderecoAssociacao, pessoa);
-
         if (listaEnderecoAssociacao != null) {
 
             for (EnderecoAssociacaoDTO enderecoAssociacao : listaEnderecoAssociacao) {
 
+            	EnderecoDTO dto = enderecoAssociacao.getEndereco();
+                
+    			this.enderecoService.validarEndereco(dto, enderecoAssociacao.getTipoEndereco());
+            	
                 EnderecoPDV enderecoPDV = this.enderecoPDVRepository
                         .buscarEnderecoPorEnderecoPDV(
                                 enderecoAssociacao.getId(), pdv.getId());
@@ -1135,7 +1137,7 @@ public class PdvServiceImpl implements PdvService {
                 if (enderecoPDV == null) {
                     enderecoPDV = new EnderecoPDV();
                 }
-                EnderecoDTO dto = enderecoAssociacao.getEndereco();
+                
                 Endereco endereco = new Endereco(dto.getCodigoBairro(),
                         dto.getBairro(), dto.getCep(),
                         dto.getCodigoCidadeIBGE(), dto.getCidade(),

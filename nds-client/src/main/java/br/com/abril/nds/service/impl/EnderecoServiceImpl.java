@@ -14,7 +14,6 @@ import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.EnderecoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Endereco;
-import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.TipoEndereco;
 import br.com.abril.nds.model.dne.Bairro;
 import br.com.abril.nds.model.dne.Localidade;
@@ -63,37 +62,9 @@ public class EnderecoServiceImpl implements EnderecoService {
 
 		return this.enderecoRepository.buscarPorId(idEndereco);
 	}
-	
-	@Override
-	@Transactional
-	public void cadastrarEnderecos(List<EnderecoAssociacaoDTO> listaEnderecos, Pessoa pessoa){
-		
-		if (listaEnderecos != null){
-		
-			for (EnderecoAssociacaoDTO enderecoAssociacaoDTO : listaEnderecos){
-				
-				EnderecoDTO dto = enderecoAssociacaoDTO.getEndereco();
-              
-				validarEndereco(dto, enderecoAssociacaoDTO.getTipoEndereco());
-				
-                Endereco endereco = new Endereco(dto.getCodigoBairro(),
-                        dto.getBairro(), dto.getCep(),
-                        dto.getCodigoCidadeIBGE(), dto.getCidade(),
-                        dto.getComplemento(), dto.getTipoLogradouro(),
-                        dto.getLogradouro(), dto.getNumero(), dto.getUf(),
-                        dto.getCodigoUf(), pessoa);
-				
-				if (dto.getId() == null){
-					this.enderecoRepository.adicionar(endereco);
-				} else {
-					endereco.setId(dto.getId());
-					this.enderecoRepository.alterar(endereco);
-				}
-			}
-		}
-	}
 
-	private void validarEndereco(EnderecoDTO endereco, TipoEndereco tipoEndereco) {
+	@Override
+	public void validarEndereco(EnderecoDTO endereco, TipoEndereco tipoEndereco) {
 		
 		List<String> listaMensagens = new ArrayList<String>();
 		

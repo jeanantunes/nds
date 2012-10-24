@@ -18,7 +18,7 @@ function PesquisaEntregador(workspace) {
 		if (nome && nome.length > 2) {
 			
 			$.postJSON(
-				contextPath + "/cadastro/entregador/autoCompletarPorNome", "nome=" + nome,
+				contextPath + "/cadastro/entregador/autoCompletarPorNome", {nome:nome},
 				function(result) { 
 					T.exibirAutoComplete(result, idCampoNomeEntregador); 
 				},
@@ -91,7 +91,7 @@ function PesquisaEntregador(workspace) {
 		if (nome && nome.length > 0) {
 			$.postJSON(
 				contextPath + "/cadastro/entregador/pesquisarPorNome", 
-				"nome=" + nome,
+				{nome:nome},
 				function(result) {
 					T.pesquisarPorNomeSuccessCallBack(result, idCampoIdEntregador, idCampoNomeEntregador, successCallBack);
 				},

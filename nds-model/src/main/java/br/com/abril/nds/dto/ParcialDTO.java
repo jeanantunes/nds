@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.planejamento.StatusLancamentoParcial;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.CurrencyUtil;
@@ -33,6 +34,8 @@ public class ParcialDTO implements Serializable{
 	private String nomeFornecedor;
 	@Export(label = "Status", alignment=Alignment.LEFT)
 	private String statusParcial;
+	
+	private Origem origem;
 	
 	private boolean geradoPorInterface;
 	
@@ -141,5 +144,31 @@ public class ParcialDTO implements Serializable{
 	public void setGeradoPorInterface(boolean geradoPorInterface) {
 		this.geradoPorInterface = geradoPorInterface;
 	}
+
+
+	/**
+	 * @return the origem
+	 */
+	public Origem getOrigem() {
+		return origem;
+	}
+
+
+	/**
+	 * @param origem the origem to set
+	 */
+	public void setOrigem(Origem origem) {
+		
+		this.origem = origem;
+		
+		if(origem!=null && Origem.INTERFACE.equals(origem)) {
+			this.geradoPorInterface = true;
+		} else {
+			this.geradoPorInterface = false;
+		}
+		
+	}
+	
+	
 	
 }

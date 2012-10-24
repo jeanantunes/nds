@@ -50,8 +50,8 @@ public class MovimentoRepositoryImplTest extends AbstractRepositoryImplTest  {
 		Produto produtoVeja = Fixture.produtoVeja(tipoProdutoRevista);
 		save(produtoVeja);
 		
-		ProdutoEdicao produtoEdicaoVeja = Fixture.produtoEdicao("1", 1L, 10, 14,
-				new Long(100), BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQ", 1L, produtoVeja, null, false);
+		ProdutoEdicao produtoEdicaoVeja = Fixture.produtoEdicao(1L, 10, 14, new Long(100),
+				BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQ", produtoVeja, null, false);
 		save(produtoEdicaoVeja);
 		
 		tipoMovimentoFaltaEm = Fixture.tipoMovimentoFaltaEm();
