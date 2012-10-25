@@ -8,18 +8,13 @@
 </fieldset>
 <br clear="all" />
 
-<form id="idFormPDVExcluir">
-	<div id="dialog-excluirPdv" title="Atenção" style="display:none">
-		<p>Confirmar exclusão PDV ?</p>
-	</div>
-</form>
+<div id="dialog-excluirPdv" title="Atenção" style="display:none">
+	<p>Confirmar exclusão PDV ?</p>
+</div>
 
-<form id="idFormPDVCancelar">
-	<div id="dialog-cancelar-cadastro-pdv" title="PDV" style="display: none;">
-			<p>Dados não salvos serão perdidos. Confirma o cancelamento?</p>
-	</div>
-</form>
-
+<div id="dialog-cancelar-cadastro-pdv" title="PDV" style="display: none;">
+	<p>Dados não salvos serão perdidos. Confirma o cancelamento?</p>
+</div>
 
 <div id="dialog-pdv" title="PDV Cota">
 		
@@ -55,11 +50,8 @@
 					 
 			  <br clear="all" />
 		</div>
-		
 </div>
 
-<form id="idFormPDVConfirmarPP">
-	<div id="dialog-confirmaPontoPrincipal" title="Ponto Principal" style="display: none;">
-		<p>Já existe um ponto principal, deseja substitui-lo por este?</p>
-	</div>
-</form>
+<div id="dialog-confirmaPontoPrincipal" title="Ponto Principal" style="display: none;">
+	<p>Já existe um ponto principal, deseja substitui-lo por este?</p>
+</div>
