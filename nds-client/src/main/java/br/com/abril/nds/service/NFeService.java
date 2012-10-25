@@ -14,6 +14,6 @@ public interface NFeService {
 	
 	public byte[] obterNEsPDF(List<NfeVO> listaNfeImpressaoNE);
 	
-	public byte[] obterNECAs(List<NfeVO> listaNfeImpressaoNECA);
+	public byte[] obterNECAsPDF(List<NfeVO> listaNfeImpressaoNECA);
 	
 }

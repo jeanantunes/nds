@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -35,7 +34,6 @@ import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.fiscal.nota.Identificacao;
-import br.com.abril.nds.model.fiscal.nota.Identificacao.TipoEmissao;
 import br.com.abril.nds.model.fiscal.nota.IdentificacaoDestinatario;
 import br.com.abril.nds.model.fiscal.nota.IdentificacaoEmitente;
 import br.com.abril.nds.model.fiscal.nota.InformacaoAdicional;
@@ -45,7 +43,6 @@ import br.com.abril.nds.model.fiscal.nota.InformacaoValoresTotais;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.ProdutoServico;
 import br.com.abril.nds.model.fiscal.nota.RetornoComunicacaoEletronica;
-import br.com.abril.nds.model.fiscal.nota.StatusProcessamentoInterno;
 import br.com.abril.nds.model.fiscal.nota.ValoresTotaisISSQN;
 import br.com.abril.nds.model.fiscal.nota.Veiculo;
 import br.com.abril.nds.repository.ItemNotaFiscalEntradaRepository;
@@ -107,7 +104,7 @@ public class NFeServiceImpl implements NFeService {
 
 		for(NfeVO notaFiscal :  listaNfeImpressaoNE) {
 
-			NfeImpressaoDTO nfeImpressao = obterDadosNFe(notaFiscal);
+			NfeImpressaoDTO nfeImpressao = obterDadosNE(notaFiscal);
 
 			if(nfeImpressao!=null) {
 				listaDanfeWrapper.add(new NfeImpressaoWrapper(nfeImpressao));
@@ -124,8 +121,35 @@ public class NFeServiceImpl implements NFeService {
 		}
 	}
 	
+	private NfeImpressaoDTO obterDadosNE(NfeVO notaFiscal2) {
+		NfeImpressaoDTO nfeImpressao = new NfeImpressaoDTO();
+
+		//TODO: concluir
+		NotaFiscal notaFiscal = notaFiscalRepository.buscarPorId(notaFiscal2.getIdNotaFiscal()); 
+
+		if(notaFiscal == null) {
+			return null;
+		}
+
+		carregarNfesDadosPrincipais(nfeImpressao, notaFiscal);
+
+		carregarDanfeDadosEmissor(nfeImpressao, notaFiscal);
+
+		carregarDanfeDadosDestinatario(nfeImpressao, notaFiscal);
+
+		carregarDanfeDadosTributarios(nfeImpressao, notaFiscal);
+
+		carregarDanfeDadosTransportadora(nfeImpressao, notaFiscal);
+
+		carregarDadosItensNfe(nfeImpressao, notaFiscal);
+
+		carregarDadosDuplicatas(nfeImpressao, notaFiscal);
+
+		return nfeImpressao;
+		
+	}
 	@Transactional
-	public byte[] obterNECAs(List<NfeVO> listaNfeImpressaoNECA) {
+	public byte[] obterNECAsPDF(List<NfeVO> listaNfeImpressaoNECA) {
 		List<NfeImpressaoWrapper> listaDanfeWrapper = new ArrayList<NfeImpressaoWrapper>();
 
 		for(NfeVO notaFiscal :  listaNfeImpressaoNECA) {
@@ -145,41 +169,6 @@ public class NFeServiceImpl implements NFeService {
 		} catch(Exception e) {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Falha na geração dos arquivos DANFE");
 		}
-	}
-
-	@Transactional
-	public void validarEmissaoDanfe(Long idNota, boolean indEmissaoDepec) {
-
-		NotaFiscal notaFiscal = notaFiscalRepository.buscarPorId(idNota);
-
-		if(notaFiscal == null) {
-
-			throw new ValidacaoException(TipoMensagem.WARNING, "Nota Fiscal não encontrada!");
-
-		}
-
-		if(indEmissaoDepec) {
-
-			if(	StatusProcessamentoInterno.GERADA.equals(notaFiscal.getStatusProcessamentoInterno()) ||
-					StatusProcessamentoInterno.ENVIADA.equals(notaFiscal.getStatusProcessamentoInterno()) ) {
-
-				notaFiscal.getIdentificacao().setTipoEmissao(TipoEmissao.CONTINGENCIA);
-				notaFiscalRepository.alterar(notaFiscal);
-
-				return;
-			}
-
-			throw new ValidacaoException(TipoMensagem.WARNING, "Nota Fiscal não possui status correto para geração Depec");
-
-		}
-
-
-
-	}
-
-	private String obterHoras(Date dataHoras) {
-		DateFormat df = SimpleDateFormat.getTimeInstance();
-		return df.format(dataHoras);
 	}
 
 	/**
@@ -213,7 +202,10 @@ public class NFeServiceImpl implements NFeService {
 
 		String naturezaOperacao = identificacao.getDescricaoNaturezaOperacao();
 		String formaPagamento 	= identificacao.getFormaPagamento().name();
-		String horaSaida 		= obterHoras(identificacao.getDataSaidaEntrada());
+		
+		String horaSaida = "";
+		if(identificacao.getDataSaidaEntrada() != null)
+			horaSaida = DateFormat.getTimeInstance().format(identificacao.getDataSaidaEntrada());
 
 		String ambiente 	= ""; //TODO obter campo
 		String protocolo 	= retornoComunicacaoEletronica.getProtocolo().toString();
@@ -229,7 +221,9 @@ public class NFeServiceImpl implements NFeService {
 			ISSQNValor 				= valoresTotaisISSQN.getValorISS();
 		}
 
-		String informacoesComplementares 	= informacaoAdicional.getInformacoesComplementares();
+		String informacoesComplementares = "";
+		if(informacaoAdicional != null)
+			informacoesComplementares = informacaoAdicional.getInformacoesComplementares();
 
 		String numeroFatura 				=  "";//TODO obter campo
 		BigDecimal valorFatura 				= BigDecimal.ZERO; //TODO obter campo

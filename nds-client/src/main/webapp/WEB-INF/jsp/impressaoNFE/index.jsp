@@ -19,8 +19,8 @@
 			<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 				<tr>
 					<c:if test="${tipoNotas == null}">
-					<td width="82">Tipo de Nota:</td>
-					<td width="209"></td>
+					<td width="82"></td>
+					<td width="209"><input type="hidden" id="tipoNFe" name="tipoNFe" value="-1" /></td>
 					</c:if>
 					<c:if test="${tipoNotas != null}">
 					<td width="82">Tipo de Nota:</td>

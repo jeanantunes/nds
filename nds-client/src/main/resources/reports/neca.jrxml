@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="neca" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="812" leftMargin="14" rightMargin="16" topMargin="14" bottomMargin="14" whenResourceMissingType="Empty" uuid="301fc4ef-67db-46b5-9bab-0705906440fc">
 	<property name="ireport.zoom" value="1.5394743546921223"/>
 	<property name="ireport.x" value="376"/>
-	<property name="ireport.y" value="48"/>
+	<property name="ireport.y" value="0"/>
 	<parameter name="Logo" class="java.lang.String" isForPrompting="false">
 		<parameterDescription><![CDATA[Local onde está  a imagem do logo da empresa.]]></parameterDescription>
 		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
@@ -290,7 +290,7 @@
 					<textElement textAlignment="Center" markup="styled">
 						<font size="7" isBold="true"/>
 					</textElement>
-					<text><![CDATA[NOTA DE ENVIO NECA]]></text>
+					<text><![CDATA[NOTA DE ENVIO]]></text>
 				</staticText>
 				<staticText>
 					<reportElement uuid="f10b8337-4970-4fb5-8e82-d1cc796d2a59" x="386" y="17" width="82" height="23"/>

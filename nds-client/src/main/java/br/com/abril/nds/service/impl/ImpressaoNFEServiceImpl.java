@@ -11,9 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import br.com.abril.nds.client.vo.NfeVO;
 import br.com.abril.nds.dto.CotasImpressaoNfeDTO;
-import br.com.abril.nds.dto.NfeDTO;
 import br.com.abril.nds.dto.ProdutoLancamentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroImpressaoNFEDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO;
@@ -26,7 +24,6 @@ import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.ImpressaoNFeRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
-import br.com.abril.nds.repository.NotaFiscalRepository;
 import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.service.ImpressaoNFEService;
 import br.com.abril.nds.service.MatrizLancamentoService;
@@ -41,9 +38,6 @@ public class ImpressaoNFEServiceImpl implements ImpressaoNFEService {
 
 	@Autowired
 	private DescontoService descontoService;
-	
-	@Autowired
-	private NotaFiscalRepository notaFiscalRepository;
 	
 	@Autowired
 	private DistribuidorRepository distribuidorRepository;
@@ -76,32 +70,20 @@ public class ImpressaoNFEServiceImpl implements ImpressaoNFEService {
 		return matrizLancamentoService.obterMatrizLancamento(filtroLancamento, false).getMatrizLancamento().get(data);
 	}
 
-	@Override
-	@Transactional
-	public List<NfeDTO> obterNFesParaImpressao(FiltroImpressaoNFEDTO filtro) {
-
-		List<CotasImpressaoNfeDTO> listaNFeDTO = impressaoNFeRepository.buscarCotasParaImpressaoNFe(filtro);
-		
-		List<NfeVO> listaNFeVO = new ArrayList<NfeVO>();
-		for(CotasImpressaoNfeDTO nfeDTO : listaNFeDTO) {
-			/*
-			List<NfeDTO> listaNotaFisal = impressaoNFeRepository.pesquisarNotaFiscal(filtro);
-			NfeVO nfe = new NfeVO();
-			nfe.setIdNotaFiscal(nfeDTO.getIdNotaFiscal());
-			listaNFeVO.add(nfe);*/
-		}
-		
-		return null;
-		
-	}
 	@Transactional
 	public List<CotasImpressaoNfeDTO> buscarCotasParaImpressaoNFe(FiltroImpressaoNFEDTO filtro) {
 
-		List<CotasImpressaoNfeDTO> cotas = impressaoNFeRepository.buscarCotasParaImpressaoNFe(filtro);
+		Distribuidor distribuidor = distribuidorRepository.obter();
+		
+		List<CotasImpressaoNfeDTO> cotas = null;
+		if(distribuidor.getObrigacaoFiscal() == null) {
+			
+		} else {
+			cotas = impressaoNFeRepository.buscarCotasParaImpressaoNFe(filtro);
+		}
+		
 		List<CotasImpressaoNfeDTO> cotasARemover = new ArrayList<CotasImpressaoNfeDTO>();
 
-		Distribuidor distribuidor = this.distribuidorRepository.obter();
-		
 		for (CotasImpressaoNfeDTO itemCota : cotas) {
 
 			List<MovimentoEstoqueCota> listaMovimentoEstoqueCota = obterItensNotaVenda(

@@ -330,17 +330,6 @@ $F{emissorCNPJ}.substring(8,12) + "-" + $F{emissorCNPJ}.substring(12,14) : $F{em
 					</textElement>
 					<textFieldExpression><![CDATA[$F{naturezaOperacao}]]></textFieldExpression>
 				</textField>
-				<textField isBlankWhenNull="true">
-					<reportElement uuid="a38653b7-dae1-4d15-8c45-24d7ba7207bc" style="dados" x="381" y="91" width="180" height="17"/>
-					<textElement>
-						<font size="7"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$F{chave}.length() == 44 ?
-($F{chave} != null? $F{chave}.substring(0,4) + " " + $F{chave}.substring(4,8) + " " + $F{chave}.substring(8,12) + " " +
-$F{chave}.substring(12,16) + " " + $F{chave}.substring(16,20) + " " + $F{chave}.substring(20,24) + " " +
-$F{chave}.substring(24,28) + " " + $F{chave}.substring(28,32) + " " + $F{chave}.substring(32,36) + " " +
-$F{chave}.substring(36,40) + " " + $F{chave}.substring(40,44) + " " : "" ) : $F{chave}]]></textFieldExpression>
-				</textField>
 				<textField>
 					<reportElement uuid="7ba80cdf-e70a-491d-ad10-d4c98f4de9e2" style="dados" positionType="Float" x="127" y="13" width="251" height="17"/>
 					<textElement verticalAlignment="Middle">
@@ -450,13 +439,6 @@ $F{chave}.substring(36,40) + " " + $F{chave}.substring(40,44) + " " : "" ) : $F{
 						<font size="7"/>
 					</textElement>
 					<text><![CDATA[Natureza da Operação]]></text>
-				</staticText>
-				<staticText>
-					<reportElement uuid="5f2c79c4-f31e-4c6a-94e6-7a23d613cc72" x="381" y="75" width="68" height="15">
-						<printWhenExpression><![CDATA[$F{chave} != null]]></printWhenExpression>
-					</reportElement>
-					<textElement/>
-					<text><![CDATA[Chave NF-e]]></text>
 				</staticText>
 				<rectangle>
 					<reportElement uuid="4e89d067-f42f-47c9-8e84-7b414ec61f51" style="borda" x="127" y="58" width="251" height="24"/>

@@ -235,19 +235,16 @@ public class ImpressaoNFEController {
 		
 		FiltroImpressaoNFEDTO filtroPesquisa = (FiltroImpressaoNFEDTO) session.getAttribute("filtroPesquisaNFe");
 		
-		if(filtro.getIdsCotas() != null)
+		if(filtro.getIdsCotas() != null) {
 			filtroPesquisa.setIdsCotas(filtro.getIdsCotas());
+		} else {
+			ValidacaoVO validacaoVO = new ValidacaoVO(TipoMensagem.ERROR, "Devem ser informadas as cotas impressão.");
+			throw new ValidacaoException(validacaoVO);
+		}
 		
 		List<CotasImpressaoNfeDTO> listaNFeDTO = impressaoNFEService.buscarCotasParaImpressaoNFe(filtroPesquisa);
 		
 		Distribuidor distribuidor = this.distribuidorService.obter();
-		
-		//TODO: Sérgio - Verificar se o distribuidor deve imprimir NFe ou nota de envio
-		if(distribuidor.getObrigacaoFiscal() != null) {
-			
-		} else {
-			
-		}
 		
 		List<NfeVO> listaNFeVO = new ArrayList<NfeVO>();
 		for(CotasImpressaoNfeDTO nfeDTO : listaNFeDTO) {
@@ -258,24 +255,25 @@ public class ImpressaoNFEController {
 		
 		byte[] arquivo = null; 
 		String nomeArquivo = "";
-				
-		switch(distribuidor.getTipoImpressaoNENECADANFE()) {
 		
-			case MODELO_1:
-				arquivo = nfeService.obterNEsPDF(listaNFeVO);
-				nomeArquivo = "NEs";
-				break;
-			case MODELO_2:
-				arquivo = nfeService.obterNECAs(listaNFeVO);
-				nomeArquivo = "NECAs";
-				break;
-			case DANFE:
-				arquivo = nfeService.obterDanfesPDF(listaNFeVO, false);
-				nomeArquivo = "danfes";
-				break;
-			default:
-				throw new ValidationException("O tipo de impressão configurado no Distribuidor não está disponível.");
+		if(distribuidor.getObrigacaoFiscal() != null) {
+			switch(distribuidor.getTipoImpressaoNENECADANFE()) {
+			
+				case MODELO_2:
+					arquivo = nfeService.obterNECAsPDF(listaNFeVO);
+					nomeArquivo = "NECAs";
+					break;
+				case DANFE:
+					arquivo = nfeService.obterDanfesPDF(listaNFeVO, false);
+					nomeArquivo = "danfes";
+					break;
+				default:
+					throw new ValidationException("O tipo de impressão configurado no Distribuidor não está disponível.");
+			}
 				
+		} else {
+			arquivo = nfeService.obterNEsPDF(listaNFeVO);
+			nomeArquivo = "NEs";
 		}
 		
 		try {
