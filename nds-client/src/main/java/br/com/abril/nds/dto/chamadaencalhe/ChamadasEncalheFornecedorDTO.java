@@ -31,6 +31,7 @@ public class ChamadasEncalheFornecedorDTO implements Serializable {
         this.fornecedor = fornecedor;
         this.distribuidor = distribuidor;
         this.identificacao = identificacao;
+        this.resumo = newResumo();
     }
 
     /**
@@ -87,5 +88,13 @@ public class ChamadasEncalheFornecedorDTO implements Serializable {
         return resumo;
     }
     
+    public ChamadaEncalheFornecedorDTO getDocumento(Long numeroDocumento) {
+        for (ChamadaEncalheFornecedorDTO documento : documentos) {
+            if (documento.getNumeroDocumento().equals(numeroDocumento)) {
+                return documento;
+            }
+        }
+        return null;
+    }
 
 }

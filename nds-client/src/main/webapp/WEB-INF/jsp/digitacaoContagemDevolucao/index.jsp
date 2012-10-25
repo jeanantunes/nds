@@ -1,6 +1,7 @@
 <head>
 
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.fileDownload.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/digitacaoContagemDevolucao.js"></script>
 
 <script  type="text/javascript">
@@ -139,7 +140,7 @@ $(function(){
 					</tr>
 						<td>
 							<span class="bt_novos" title="Imprimir CE Devolução">
-							<a href="javascript:alert('impressão CE Devolução ainda não implementada');">
+							<a href="#" onclick="digitacaoContagemDevolucaoController.gerarChamadaEncalheFornecedor();">
 							<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0">
 							CE Devolução
 							</a>

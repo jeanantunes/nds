@@ -2,25 +2,25 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="CE_Devolucao_Fornecedor_lote" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="842" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isSummaryNewPage="true">
 	<property name="ireport.zoom" value="3.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="66"/>
+	<property name="ireport.y" value="0"/>
 	<field name="documentos" class="java.util.List"/>
 	<field name="resumo" class="java.lang.Object"/>
 	<field name="fornecedor.razaoSocial" class="java.lang.String"/>
 	<field name="fornecedor.cnpj" class="java.lang.String"/>
 	<field name="fornecedor.inscricaoEstadual" class="java.lang.String"/>
 	<field name="fornecedor.logradouro" class="java.lang.String"/>
-	<field name="fornecedor.numero" class="java.lang.Integer"/>
+	<field name="fornecedor.numero" class="java.lang.String"/>
 	<field name="fornecedor.cidade" class="java.lang.String"/>
 	<field name="fornecedor.uf" class="java.lang.String"/>
 	<field name="distribuidor.razaoSocial" class="java.lang.String"/>
 	<field name="distribuidor.logradouro" class="java.lang.String"/>
-	<field name="distribuidor.numero" class="java.lang.Integer"/>
+	<field name="distribuidor.numero" class="java.lang.String"/>
 	<field name="distribuidor.cidade" class="java.lang.String"/>
 	<field name="distribuidor.uf" class="java.lang.String"/>
 	<field name="distribuidor.cep" class="java.lang.String"/>
 	<field name="distribuidor.cnpj" class="java.lang.String"/>
 	<field name="distribuidor.inscricaoEstadual" class="java.lang.String"/>
-	<field name="identificacao.tipoCE" class="java.lang.String"/>
+	<field name="identificacao.tipoCE" class="java.lang.Integer"/>
 	<field name="identificacao.dataVencimento" class="java.util.Date"/>
 	<field name="identificacao.codigo" class="java.lang.Long"/>
 	<field name="identificacao.numeroCE" class="java.lang.Long"/>
@@ -30,6 +30,9 @@
 	<field name="identificacao.dataLimiteChegada" class="java.util.Date"/>
 	<field name="identificacao.codigoNaturezaOperacao" class="java.lang.String"/>
 	<field name="identificacao.descricaoNaturezaOperacao" class="java.lang.String"/>
+	<group name="grupoCE" isStartNewPage="true">
+		<groupExpression><![CDATA[$F{identificacao.numeroCE}]]></groupExpression>
+	</group>
 	<detail>
 		<band height="12" splitType="Stretch">
 			<subreport isUsingCache="false">
@@ -40,9 +43,9 @@
 		</band>
 	</detail>
 	<summary>
-		<band height="104">
+		<band height="104" splitType="Stretch">
 			<subreport isUsingCache="false">
-				<reportElement x="0" y="2" width="802" height="16"/>
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="2" width="802" height="16"/>
 				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource(Arrays.asList($F{resumo}))]]></dataSourceExpression>
 				<subreportExpression class="java.lang.String"><![CDATA[Thread.currentThread().getContextClassLoader().getResource("/reports/resumo_CE_Devolucao_Fornecedor.jasper").toURI().getPath()]]></subreportExpression>
 			</subreport>

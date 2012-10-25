@@ -31,6 +31,8 @@ public class ItemChamadaEncalheFornecedorDTO implements Serializable {
     
     private Long notaEnvio;
     
+    private String codigoNotaEnvioMultipla;
+    
     private Integer item;
     
     private String tipoRecolhimento;
@@ -159,6 +161,20 @@ public class ItemChamadaEncalheFornecedorDTO implements Serializable {
      */
     public void setNotaEnvio(Long notaEnvio) {
         this.notaEnvio = notaEnvio;
+    }
+    
+    /**
+     * @return the codigoNotaEnvioMultipla
+     */
+    public String getCodigoNotaEnvioMultipla() {
+        return codigoNotaEnvioMultipla;
+    }
+
+    /**
+     * @param codigoNotaEnvioMultipla the codigoNotaEnvioMultipla to set
+     */
+    public void setCodigoNotaEnvioMultipla(String codigoNotaEnvioMultipla) {
+        this.codigoNotaEnvioMultipla = codigoNotaEnvioMultipla;
     }
 
     /**

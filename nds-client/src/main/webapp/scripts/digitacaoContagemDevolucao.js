@@ -248,6 +248,16 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 			);
 		},
 		
+		gerarChamadaEncalheFornecedor : function() {
+			 $.fileDownload(contextPath + "/devolucao/digitacao/contagem/gerarChamadaEncalheFornecedor", {
+	                httpMethod : "POST",
+	                data : [],
+	                failCallback : function() {
+	                    exibirMensagem("ERROR", ["Erro ao gerar CE Devolução!"]);
+	                }
+	         });
+		},
+		
 		/**
 	 		Monta o componente de confiramção da ação de Confirmar contagem de devolução
 		**/
