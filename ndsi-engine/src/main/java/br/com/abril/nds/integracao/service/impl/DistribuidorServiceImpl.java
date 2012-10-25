@@ -1,5 +1,6 @@
 package br.com.abril.nds.integracao.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,9 +8,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.DistribuidorDTO;
+import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Endereco;
+import br.com.abril.nds.model.cadastro.TipoGarantia;
+import br.com.abril.nds.model.cadastro.TipoStatusGarantia;
 import br.com.abril.nds.repository.DistribuidorRepository;
 
 @Service
@@ -63,4 +67,27 @@ public class DistribuidorServiceImpl implements DistribuidorService {
 		
 		return this.distribuidorRepository.obterNomeCNPJDistribuidor();
 	}
+
+	@Override
+	public List<ItemDTO<TipoGarantia, String>> getComboTiposGarantia() {
+		
+		List<ItemDTO<TipoGarantia,String>> comboTiposGarantia =  new ArrayList<ItemDTO<TipoGarantia,String>>();
+		for (TipoGarantia itemTipoGarantia: TipoGarantia.values()){
+			comboTiposGarantia.add(new ItemDTO<TipoGarantia,String>(itemTipoGarantia, itemTipoGarantia.getDescTipoGarantia()));
+		}
+		return comboTiposGarantia;
+		
+	}
+
+	@Override
+	public List<ItemDTO<TipoStatusGarantia, String>> getComboTiposStatusGarantia() {
+		
+		List<ItemDTO<TipoStatusGarantia,String>> comboTiposStatusGarantia =  new ArrayList<ItemDTO<TipoStatusGarantia,String>>();
+		for (TipoStatusGarantia itemTipoStatusGarantia: TipoStatusGarantia.values()){
+			comboTiposStatusGarantia.add(new ItemDTO<TipoStatusGarantia,String>(itemTipoStatusGarantia, itemTipoStatusGarantia.getDescTipoStatusGarantia()));
+		}
+		return comboTiposStatusGarantia;
+	}
+
+
 }
