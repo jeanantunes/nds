@@ -1,6 +1,19 @@
+Array.prototype.removeByValue = function(){
+    var what, a= arguments, L= a.length, ax;
+    while(L && this.length){
+        what= a[--L];
+        while((ax= this.indexOf(what))!= -1){
+            this.splice(ax, 1);
+        }
+    }
+    return this;
+}
+
 var impressaoNfeController = $.extend(true, {
 
 	filtroProdutos : [],
+	
+	filtroCotasImprimirNFe : [],
 
 	init : function() {
 		$( "#dataEmissao", impressaoNfeController.workspace ).datepicker({
@@ -181,7 +194,7 @@ var impressaoNfeController = $.extend(true, {
 			autoOpen: false,
 			buttons: {
 				"Fechar": function() {
-					$( this ).dialog( "destroy" );
+					$( this ).dialog( "close" );
 				},
 			},
 			div: $("#dialog-pesqProdutos", this.workspace).parents("div")
@@ -327,9 +340,24 @@ var impressaoNfeController = $.extend(true, {
 	 */
 	imprimir : function(fileType) {
 
-		var params = {"fileType":fileType};
-
-		$.fileDownload(this.path + 'exportar', {
+		if(impressaoNfeController.filtroCotasImprimirNFe.length < 1)
+			return false;
+		
+		params = [];
+		
+		params.push({
+				'name' : 'fileType',
+				'value' : fileType
+			});
+		
+		for(i=0; i < impressaoNfeController.filtroCotasImprimirNFe.length; i++) {
+			params.push({
+				'name' : 'filtro.idsCotas[]',
+				'value' : impressaoNfeController.filtroCotasImprimirNFe[i]
+			});
+		}
+		
+		$.fileDownload(contextPath +'/nfe/impressaoNFE/imprimirNFe', {
 			httpMethod : "POST",
 			data : params
 		});
@@ -351,6 +379,7 @@ var impressaoNfeController = $.extend(true, {
 				else
 					this.checked = false;
 
+				impressaoNfeController.adicionarAsNFesAImprimir(this.checked, parseInt(this.value));
 			}
 		});
 	},
@@ -464,68 +493,32 @@ var impressaoNfeController = $.extend(true, {
 		$(".produtosAdicionadosPesqGrid").flexReload();
 	},
 
-	adicionarAsNFesAImprimir : function() {
-
+	adicionarAsNFesAImprimir : function(checked, idCota) {
+		
+		arrayOrdenado = impressaoNfeController.filtroCotasImprimirNFe.sort();
+		
+		inserirIdCota = true;
+		
+		if(checked) {
+			if(impressaoNfeController.filtroCotasImprimirNFe.length > 1) {
+				for (var i = 0; i < arrayOrdenado.length; i++) {
+				    if (arrayOrdenado[i] == idCota) {
+				    	inserirIdCota = false;
+				    }
+				}
+				if(inserirIdCota)
+					impressaoNfeController.filtroCotasImprimirNFe.push(idCota)
+			} else {
+				if(impressaoNfeController.filtroCotasImprimirNFe[0] != idCota)
+					impressaoNfeController.filtroCotasImprimirNFe.push(idCota)
+			}
+			
+		} else {
+			impressaoNfeController.filtroCotasImprimirNFe.removeByValue(idCota)
+		}
+		
+		impressaoNfeController.filtroCotasImprimirNFe.sort();
 	},
 	
-	sortGrid : function(table, order) { 
-		console.log(order);
-		// Remove all characters in c from s. 
-		var stripChar = function(s, c) { 
-			var r = ""; 
-			for(var i = 0; i < s.length; i++) { 
-				r += c.indexOf(s.charAt(i))>=0 ? "" : s.charAt(i); 
-			} 
-			return r; 
-		} 
-
-		// Test for characters accepted in numeric values. 
-		var isNumeric = function(s) { 
-			var valid = "0123456789.,- "; 
-			var result = true; 
-			var c; 
-			for(var i = 0; i < s.length && result; i++) { 
-				c= s.charAt(i); 
-				if(valid.indexOf(c) <= -1) { 
-					result = false; 
-				} 
-			} 
-			return result; 
-		} 
-
-		// Sort table rows. 
-		var asc = order == "asc"; 
-		console.log($(table));
-		var rows = $(table).find("tbody > tr").get(); 
-		var column = $(table).parent(".bDiv").siblings(".hDiv").find("table tr th").index($("th.sorted", ".flexigrid:has(" + table + ")"));
-		rows.sort(function(a, b) { 
-			var keyA = $(asc? a : b).children("td").eq(column).text().toUpperCase(); 
-			var keyB = $(asc? b : a).children("td").eq(column).text().toUpperCase(); 
-			if((isNumeric(keyA)||keyA.length<1) && (isNumeric(keyB) || keyB.length<1)) { 
-				keyA = stripChar(keyA,", "); 
-				keyB = stripChar(keyB,", "); 
-				if(keyA.length < 1) keyA = 0; 
-				if(keyB.length < 1) keyB = 0; 
-				keyA = new Number(parseFloat(keyA)); 
-				keyB = new Number(parseFloat(keyB)); 
-			} 
-			return keyA>keyB ? 1 : keyA<keyB ? -1 : 0; 
-		}); 
-
-		// Rebuild the table body. 
-		$.each(rows, function(index, row) { 
-			$(table).children("tbody").append(row); 
-		}); 
-
-		// Fix styles 
-		$(table).find("tr").removeClass("erow");  // Clear the striping. 
-		$(table).find("tr:odd").addClass("erow"); // Add striping to odd numbered rows.
-		$(table).find("td.sorted").removeClass("sorted"); // Clear sorted class from table cells. 
-		$(table).find("tr").each( function(){ 
-			$(this).find("td:nth(" + column + ")").addClass("sorted");  //Add sorted class to sorted column cells. 
-		}); 
-	},
-
-
 }, BaseController);
 //@ sourceURL=impressaoNfe.js

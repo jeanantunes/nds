@@ -105,6 +105,7 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 			sql.append("and rota.id = :idRota ");
 		}
 		
+			
 		if(filtro.getIdCotaInicial() != null || filtro.getIdCotaFinal() != null) {
 			if(filtro.getIdCotaInicial() != null && filtro.getIdCotaFinal() == null) {
 				sql.append("and cota.id >= :idCotaInicial ");
@@ -113,6 +114,10 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 			} else {
 				sql.append("and cota.id <= :idCotaFinal ");
 			}
+		}
+		
+		if(filtro.getIdsCotas() != null && filtro.getIdsCotas().size() > 0) {	
+			sql.append("and cota.id in (:idsCotas) ");
 		}
 		
 		if(filtro.getIdBoxInicial() != null || filtro.getIdBoxFinal() != null) {
@@ -191,6 +196,10 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 			} else {
 				q.setParameter("idCotaFinal", filtro.getIdCotaFinal());
 			}
+		}
+		
+		if(filtro.getIdsCotas() != null && filtro.getIdsCotas().size() > 0) {
+			q.setParameterList("idsCotas", filtro.getIdsCotas());
 		}
 		
 		if(filtro.getIdBoxInicial() != null || filtro.getIdBoxFinal() != null) {

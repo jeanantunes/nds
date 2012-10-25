@@ -1,5 +1,7 @@
 <head>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.fileDownload.js"></script>
 <script type="text/javascript" src="scripts/impressaoNfe.js"></script>
+
 <script language="javascript" type="text/javascript">
 	$(function() {
 		impressaoNfeController.init();
@@ -121,7 +123,7 @@
 
 				<span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="images/ico_excel.png"
 						hspace="5" border="0" />Arquivo</a></span> <span class="bt_novos" title="Imprimir">
-				<a href="${pageContext.request.contextPath}/nfe/impressaoNFE/imprimirNFe?fileType=PDF">
+				<a href="javascript:;" onclick="impressaoNfeController.imprimir('PDF');">
 					<img src="images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />Imprimir Documento</a>
 					</span>
 				<span class="bt_sellAll" style="float: right;" id="btSel"><label for="sel">Selecionar Todos</label><input

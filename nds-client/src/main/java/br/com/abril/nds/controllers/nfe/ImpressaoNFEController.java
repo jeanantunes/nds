@@ -17,6 +17,7 @@ import java.util.TreeSet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.validation.ValidationException;
 
 import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.collections.comparators.NullComparator;
@@ -42,7 +43,7 @@ import br.com.abril.nds.model.fiscal.TipoUsuarioNotaFiscal;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.ImpressaoNFEService;
-import br.com.abril.nds.service.MonitorNFEService;
+import br.com.abril.nds.service.NFeService;
 import br.com.abril.nds.service.RotaService;
 import br.com.abril.nds.service.RoteiroService;
 import br.com.abril.nds.service.TipoNotaFiscalService;
@@ -82,7 +83,7 @@ public class ImpressaoNFEController {
 	private TipoNotaFiscalService tipoNotaFiscalService;
 
 	@Autowired
-	private MonitorNFEService monitorNFEService; 
+	private NFeService nfeService; 
 
 	@Autowired
 	ImpressaoNFEService impressaoNFEService;
@@ -167,6 +168,7 @@ public class ImpressaoNFEController {
 		TableModel<CellModelKeyValue<ProdutoLancamentoDTO>> tableModel = new TableModel<CellModelKeyValue<ProdutoLancamentoDTO>>();
 
 		Calendar c = Calendar.getInstance();
+		c.add(Calendar.DATE, 1);
 		c.set(Calendar.AM_PM, 0);
 		c.set(Calendar.HOUR, 0);
 		c.set(Calendar.MINUTE, 0);
@@ -228,12 +230,24 @@ public class ImpressaoNFEController {
 		
 	}
 	
-	@Get
-	public void imprimirNFe(String sortorder, String sortname) {
+	@Post
+	public void imprimirNFe(FiltroImpressaoNFEDTO filtro, String sortorder, String sortname) {
 		
-		FiltroImpressaoNFEDTO filtro = (FiltroImpressaoNFEDTO) session.getAttribute("filtroPesquisaNFe");
+		FiltroImpressaoNFEDTO filtroPesquisa = (FiltroImpressaoNFEDTO) session.getAttribute("filtroPesquisaNFe");
 		
-		List<CotasImpressaoNfeDTO> listaNFeDTO = impressaoNFEService.buscarCotasParaImpressaoNFe(filtro);
+		if(filtro.getIdsCotas() != null)
+			filtroPesquisa.setIdsCotas(filtro.getIdsCotas());
+		
+		List<CotasImpressaoNfeDTO> listaNFeDTO = impressaoNFEService.buscarCotasParaImpressaoNFe(filtroPesquisa);
+		
+		Distribuidor distribuidor = this.distribuidorService.obter();
+		
+		//TODO: Sérgio - Verificar se o distribuidor deve imprimir NFe ou nota de envio
+		if(distribuidor.getObrigacaoFiscal() != null) {
+			
+		} else {
+			
+		}
 		
 		List<NfeVO> listaNFeVO = new ArrayList<NfeVO>();
 		for(CotasImpressaoNfeDTO nfeDTO : listaNFeDTO) {
@@ -242,11 +256,31 @@ public class ImpressaoNFEController {
 			listaNFeVO.add(nfe);
 		}
 		
-		byte[] danfeBytes = monitorNFEService.obterDanfes(listaNFeVO, false);
+		byte[] arquivo = null; 
+		String nomeArquivo = "";
+				
+		switch(distribuidor.getTipoImpressaoNENECADANFE()) {
+		
+			case MODELO_1:
+				arquivo = nfeService.obterNEsPDF(listaNFeVO);
+				nomeArquivo = "NEs";
+				break;
+			case MODELO_2:
+				arquivo = nfeService.obterNECAs(listaNFeVO);
+				nomeArquivo = "NECAs";
+				break;
+			case DANFE:
+				arquivo = nfeService.obterDanfesPDF(listaNFeVO, false);
+				nomeArquivo = "danfes";
+				break;
+			default:
+				throw new ValidationException("O tipo de impressão configurado no Distribuidor não está disponível.");
+				
+		}
 		
 		try {
 			
-			escreverArquivoParaResponse(danfeBytes, "danfes");
+			escreverArquivoParaResponse(arquivo, nomeArquivo);
 			
 		} catch(IOException e) {
 			
