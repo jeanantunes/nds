@@ -7,6 +7,7 @@ package br.com.abril.nds.model.cadastro;
  * 
  */
 public enum TipoGarantia {
+	
     FIADOR("Fiador"), 
     CHEQUE_CAUCAO("Cheque Caução"), 
     IMOVEL("Imóvel"), 
