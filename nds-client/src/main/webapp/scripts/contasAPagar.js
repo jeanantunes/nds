@@ -2,16 +2,22 @@ var contasAPagarController = $.extend(true, {
 	
 	path : contextPath + '/financeiro/contasAPagar/',
 
-
 	init : function() {
-
-		$( "#contasAPagar_Filtro_De" ).datepicker({
+		
+		$("#contasAPagar_Filtro_De", this.workspace).mask("99/99/9999");
+		$("#contasAPagar_Filtro_Ate", this.workspace).mask("99/99/9999");
+		$("#contasAPagar_Filtro_Ce", this.workspace).numeric();
+		
+		$("#produto", this.workspace).autocomplete({source: ''});
+		$("#edicao", this.workspace).numeric();
+		
+		$("#contasAPagar_Filtro_De").datepicker({
 			showOn: "button",
 			buttonImage: contextPath + "/images/calendar.gif",
 			buttonImageOnly: true
 		});
 		
-		$( "#contasAPagar_Filtro_Ate" ).datepicker({
+		$("#contasAPagar_Filtro_Ate").datepicker({
 			showOn: "button",
 			buttonImage: contextPath + "/images/calendar.gif",
 			buttonImageOnly: true
@@ -66,6 +72,22 @@ var contasAPagarController = $.extend(true, {
 		$(".contasApagarCheck").each(function(index, element) {
 			element.checked = check.checked;
 		});
+	},
+	
+	
+	/*
+	 * *********************
+	 * Autocomplete
+	 * *********************
+	 * */
+	
+	pesquisarProdutoPorCodigo : function() {
+		pesquisaProdutoCAP.pesquisarPorCodigoProduto('#codigo', '#produto', '#edicao', false);	
+	},
+	
+	
+	pesquisarProdutoPorNome : function() {
+		pesquisaProdutoCAP.pesquisarPorNomeProduto('#codigo', '#produto', '#edicao', false);
 	},
 	
 	/*
