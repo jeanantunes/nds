@@ -97,14 +97,6 @@ public class ContasAPagarRepositoryImplTest extends AbstractRepositoryImplTest {
 		this.contasAPagarRepository.buscarTotalPesquisarPorDistribuidor(this.getFiltroPesquisaPorDistribuidor(), true);
 	}
 	
-	
-	
-	
-	
-	
-	
-	
-	
 	@Test
 	public void testPesquisarPorProdutoCount(){
 		
@@ -133,7 +125,4 @@ public class ContasAPagarRepositoryImplTest extends AbstractRepositoryImplTest {
 		
 		Assert.assertNotNull(lista);
 	}
-
-	
-	
 }
