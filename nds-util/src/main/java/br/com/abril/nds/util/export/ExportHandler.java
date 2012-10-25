@@ -70,7 +70,9 @@ public class ExportHandler {
 	private static <T> List<ExportColumn> obtainExportColumns(Class<T> clazz,
 														      List<ExportHeader> exportHeaders,
 														      T exportable) throws IllegalAccessException,
-														    					   InvocationTargetException {
+														    					   InvocationTargetException, 
+														    					   IllegalArgumentException, 
+														    					   NoSuchFieldException {
 		
 		List<ExportColumn> exportColumns = new ArrayList<ExportColumn>();
 		
@@ -82,7 +84,7 @@ public class ExportHandler {
 		for (Method method : clazz.getMethods()) {
 			
 			ExportColumn exportColumn = 
-				generateExportColumnFromMethod(method, exportHeaders, exportable);
+				generateExportColumnFromMethod(method, exportHeaders, exportable, clazz);
 			
 			if (exportColumn != null) {
 				
@@ -93,7 +95,7 @@ public class ExportHandler {
 		for (Field field : clazz.getDeclaredFields()) {
 			
 			ExportColumn exportColumn = 
-				generateExportColumnFromField(field, exportHeaders, exportable);
+				generateExportColumnFromField(field, exportHeaders, exportable, clazz);
 			
 			if (exportColumn != null) {
 				
@@ -138,7 +140,9 @@ public class ExportHandler {
 	private static <F> List<ExportFilter> obtainExportFilters(F filter) 
 															  throws IllegalArgumentException, 
 																	 IllegalAccessException, 
-																	 InvocationTargetException {
+																	 InvocationTargetException, 
+																	 NoSuchFieldException, 
+																	 SecurityException {
 
 		if (filter == null) {
 			
@@ -157,7 +161,9 @@ public class ExportHandler {
 																Class<?> clazz) 
 																throws IllegalArgumentException, 
 																	   IllegalAccessException, 
-																	   InvocationTargetException {
+																	   InvocationTargetException, 
+																	   NoSuchFieldException, 
+																	   SecurityException {
 		
 		List<ExportFilter> exportFilters = new ArrayList<ExportFilter>();
 		
@@ -174,7 +180,7 @@ public class ExportHandler {
 				
 				Object methodReturn = method.invoke(filter, new Object[]{});
 			
-				exportFilters.add(obtainExportFilter(methodReturn, exportAnnotation));
+				exportFilters.add(obtainExportFilter(methodReturn, exportAnnotation, filter, clazz));
 			}
 		}
 		
@@ -188,7 +194,7 @@ public class ExportHandler {
 				
 				Object fieldValue = field.get(filter);
 				
-				exportFilters.add(obtainExportFilter(fieldValue, exportAnnotation));
+				exportFilters.add(obtainExportFilter(fieldValue, exportAnnotation, filter, clazz));
 			}
 		}
 		
@@ -201,11 +207,17 @@ public class ExportHandler {
 				&& clazz.getSuperclass().isAnnotationPresent(Exportable.class);
 	}
 	
-	private static ExportFilter obtainExportFilter(Object value, Export exportAnnotation) {
+	private static <F> ExportFilter obtainExportFilter(Object value, 
+													   Export exportAnnotation,
+													   F filter,
+													   Class<?> clazz) throws NoSuchFieldException, 
+												   						  	  SecurityException, 
+												   						  	  IllegalArgumentException, 
+												   						  	  IllegalAccessException {
 		
 		ExportFilter exportFilter = new ExportFilter();
-		
-		exportFilter.setLabel(exportAnnotation.label());
+
+		exportFilter.setLabel(getLabelValue(exportAnnotation, filter, clazz));
 		
 		exportFilter.setValue(getExportValue(value));
 		
@@ -215,11 +227,38 @@ public class ExportHandler {
 	
 		return exportFilter;
 	}
+
+	private static <F> String getLabelValue(Export exportAnnotation,
+										    Object object, 
+										    Class<?> clazz) throws NoSuchFieldException, 
+										   						   IllegalAccessException {
+		
+		String label = exportAnnotation.label();
+		
+		String propertyToDynamicLabel = exportAnnotation.propertyToDynamicLabel();
+		
+		if (propertyToDynamicLabel != null
+				&& !propertyToDynamicLabel.trim().isEmpty()) {
+			
+			Field dynamicField = clazz.getDeclaredField(propertyToDynamicLabel);
+			
+			dynamicField.setAccessible(true);
+			
+			Object dynamicFieldValue = dynamicField.get(object);
+			
+			String dynamicFieldValueToExport = getExportValue(dynamicFieldValue);
+			
+			label = label.concat(dynamicFieldValueToExport);
+		}
+		
+		return label;
+	}
 	
 	private static <FT> List<ExportFooter> obtainExportFooters(FT footer)
 															   throws IllegalArgumentException, 
 																      IllegalAccessException,
-																      InvocationTargetException {
+																      InvocationTargetException, 
+																      NoSuchFieldException {
 
 		if (footer == null) {
 
@@ -237,7 +276,8 @@ public class ExportHandler {
 	private static <FT> List<ExportFooter> generateExportFooters(FT footer,
 																 Class<?> clazz)
 																 throws IllegalAccessException, 
-																  		InvocationTargetException {
+																  		InvocationTargetException, 
+																  		NoSuchFieldException {
 
 		List<ExportFooter> exportFooters = new ArrayList<ExportFooter>();
 		
@@ -254,7 +294,7 @@ public class ExportHandler {
 
 				Object exportObject = method.invoke(footer, new Object[] {});
 
-				processExportFooter(exportFooters, exportAnnotation, exportObject);
+				processExportFooter(exportFooters, exportAnnotation, exportObject, clazz, footer);
 			}
 		}
 
@@ -268,27 +308,30 @@ public class ExportHandler {
 
 				Object exportObject = field.get(footer);
 				
-				processExportFooter(exportFooters, exportAnnotation, exportObject);
+				processExportFooter(exportFooters, exportAnnotation, exportObject, clazz, footer);
 			}
 		}
 
 		return exportFooters;
 	}
 
-	private static void processExportFooter(List<ExportFooter> exportFooters, 
+	@SuppressWarnings("unchecked")
+	private static <FT> void processExportFooter(List<ExportFooter> exportFooters, 
 										    Export exportAnnotation,
-										    Object exportObject) {
-		
+										    Object exportObject,
+										    Class<?> clazz,
+										    FT footer) throws NoSuchFieldException, 
+										    				  IllegalAccessException {
+
 		if (exportObject instanceof Map) {
 			 
-			@SuppressWarnings("unchecked")
 			Map<String, Object> footerMap = (Map<String, Object>) exportObject;
 			
 			if (exportAnnotation.label() != null && !exportAnnotation.label().trim().isEmpty()) {
 				
 				exportFooters.add(
 					obtainExportFooter(
-						null, exportAnnotation.label(), 
+						null, getLabelValue(exportAnnotation, footer, clazz), 
 							exportAnnotation.alignment(), 
 								exportAnnotation.alignWithHeader(), false));
 			}
@@ -305,17 +348,17 @@ public class ExportHandler {
 
 			exportFooters.add(
 				obtainExportFooter(
-					exportObject, exportAnnotation.label(), 
+					exportObject, getLabelValue(exportAnnotation, footer, clazz), 
 						exportAnnotation.alignment(), 
 							exportAnnotation.alignWithHeader(), exportAnnotation.printVertical()));
 		}
 	}
 	
 	private static ExportFooter obtainExportFooter(Object value, 
-												     String label, 
-												     Alignment alignment, 
-												     String alignWithHeader,
-												     boolean verticalPrinting) {
+												   String label, 
+												   Alignment alignment, 
+												   String alignWithHeader,
+												   boolean verticalPrinting) {
 
 		ExportFooter exportFooter = new ExportFooter();
 		
@@ -334,16 +377,18 @@ public class ExportHandler {
 	
 	private static <T> ExportColumn generateExportColumnFromMethod(Method method, 
 																   List<ExportHeader> exportHeaders,
-																   T exportable) 
+																   T exportable,
+																   Class<?> clazz) 
 																   throws IllegalArgumentException, 
 																  		  IllegalAccessException, 
-																  		  InvocationTargetException {
+																  		  InvocationTargetException, 
+																  		  NoSuchFieldException {
 		
 		Export exportAnnotation = method.getAnnotation(Export.class);
 		
 		if (exportAnnotation != null) {
 			
-			processHeader(exportAnnotation, exportHeaders);
+			processHeader(exportAnnotation, exportHeaders, exportable, clazz);
 			
 			Object methodReturn = method.invoke(exportable, new Object[]{});
 
@@ -356,14 +401,16 @@ public class ExportHandler {
 	
 	private static <T> ExportColumn generateExportColumnFromField(Field field, 
 																  List<ExportHeader> exportHeaders,
-																  T exportable) throws IllegalArgumentException, 
-																 					   IllegalAccessException {
+																  T exportable,
+																  Class<?> clazz) throws IllegalArgumentException, 
+																 					   	 IllegalAccessException, 
+																 					   	 NoSuchFieldException {
 		
 		Export exportAnnotation = field.getAnnotation(Export.class);
 		
 		if (exportAnnotation != null) {
 			
-			processHeader(exportAnnotation, exportHeaders);
+			processHeader(exportAnnotation, exportHeaders, exportable, clazz);
 			
 			field.setAccessible(true);
 			
@@ -400,9 +447,12 @@ public class ExportHandler {
 	}
 	
 	private static void processHeader(Export exportAnnotation, 
-									  List<ExportHeader> exportHeaders) {
+									  List<ExportHeader> exportHeaders,
+									  Object object,
+									  Class<?> clazz) throws NoSuchFieldException, IllegalAccessException {
 		
-		ExportHeader exportHeader = new ExportHeader(exportAnnotation.label());
+		ExportHeader exportHeader = 
+			new ExportHeader(getLabelValue(exportAnnotation, object, clazz));
 		
 		if (!exportHeaders.contains(exportHeader)) {
 			
