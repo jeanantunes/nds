@@ -44,13 +44,13 @@ public class ImpressaoBandeiraVO implements Serializable  {
 			String codigoPracaNoProdin, String praca, String destino,
 			String canal, String volumes) {
 		super();
-		this.nome = nome;
-		this.semana = semana;
-		this.codigoPracaNoProdin = codigoPracaNoProdin;
-		this.praca = praca;
-		this.destino = destino;
-		this.canal = canal;
-		this.volumes = volumes;
+		this.nome = nome == null? "" : nome;
+		this.semana = semana == null? 0 : semana;
+		this.codigoPracaNoProdin = codigoPracaNoProdin == null? "" : codigoPracaNoProdin;
+		this.praca = praca == null? "" : praca;
+		this.destino = destino == null? "" : destino;
+		this.canal = canal == null? "" : canal;
+		this.volumes = volumes == null? "" : volumes;
 	}
 
 
