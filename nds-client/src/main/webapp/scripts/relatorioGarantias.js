@@ -70,10 +70,11 @@ var relatorioGarantiasController = $.extend(true, {
 
 	pesquisarPorGarantia : function(params){
 		
+		montaColunaDetalhesGarantia
 		
 		$(".relatorioGarantiaGrid").flexOptions({
 			url : this.path + 'pesquisarGarantia.json?' + params,
-			//preProcess : relatorioGarantiasController.validarSelecaoComboFiltro,
+			preProcess : relatorioGarantiasController.validarSelecaoComboFiltro,
 			newp : 1
 		});
 		
@@ -93,45 +94,48 @@ var relatorioGarantiasController = $.extend(true, {
 	
 	validarSelecaoComboFiltro : function(data){
 		
-		var tipoMensagem = data.mensagens.tipoMensagem;
-
-		var listaMensagens = data.mensagens.listaMensagens;
-		
-		if (tipoMensagem && listaMensagens) {
-		
-				exibirMensagem(tipoMensagem, listaMensagens);
-		
+		if (data.mensagens) {
+			exibirMensagem(data.mensagens.tipoMensagem, data.mensagens.listaMensagens);
 		} 
-		
-		else { 
-		
-	/*	$.each(data.rows, function(index, value) {
-			
-			var checkbox = '<input type="checkbox" value="'+ value.cell.produtoEdicaoID + '" name="checkProdutoContasAPagar" class="contasApagarCheck"  style="float:left;"/>';
-			value.cell.sel = checkbox;
-		});
-		  */
-		}
+	    
 		return data;
 	},
-
-	montaColunaDetalhesGarantia : function(data) {
-		
-		var garantiaSelecionada = $('#selectStatusGarantia option:selected').text();
-		
-		$.each(data.rows, function(index, value) {
+	
+	inserirTotalDetalheGrid : function(data){
 			
-			var link_detalhes = '<a title="Ver Detalhes" onclick="relatorioGarantiasController.popup_detalhe_Garantia(\'' + value.cell.tipoGarantia + '\', \'' + garantiaSelecionada + '\');" href="javascript:;"><img src="' + contextPath + '/images/ico_detalhes.png" alt="Detalhes" border="0" /></a>';
-		
-			value.cell.detalhe = link_detalhes;
-		});
-		 
-		return data; 
+			var total = '0,00';
+			$.each(data.rows, function(index, value) {
+				total = sumPrice(total,value.cell.vlrGarantia);
+			});
+			
+			$("#totalGarantia",this.workspace).html(total);	
+	    
+		return data;
 	},
 	
 
+	
+	montaColunaDetalhesGarantia : function(data) {
 		
-
+		if (data.mensagens) {
+			
+			exibirMensagem(data.mensagens.tipoMensagem, data.mensagens.listaMensagens);
+			
+		} else { 
+			
+			var garantiaSelecionada = $('#selectStatusGarantia option:selected').text();
+			
+			$.each(data.rows, function(index, value) {
+								
+				var link_detalhes = '<a title="Ver Detalhes" onclick="relatorioGarantiasController.popup_detalhe_Garantia(\'' + value.cell.tipoGarantia + '\', \'' + garantiaSelecionada + '\');" href="javascript:;"><img src="' + contextPath + '/images/ico_detalhes.png" alt="Detalhes" border="0" /></a>';
+				value.cell.detalhe = link_detalhes;
+			});
+	
+		}
+		
+		return data;
+	},
+	
 	
 	/*
 	 * *************************
@@ -149,7 +153,7 @@ var relatorioGarantiasController = $.extend(true, {
 		
 		$(".garantiaDetalheGrid").flexOptions({
 			url : this.path + 'pesquisarGarantia.json?'+ params,
-			//preProcess : relatorioGarantiasController.validarSelecaoComboFiltro,
+			preProcess : relatorioGarantiasController.inserirTotalDetalheGrid,
 			newp : 1
 		});
 		

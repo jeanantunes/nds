@@ -84,6 +84,14 @@ public class RelatorioGarantiasController {
 		
 		this.session.setAttribute(FILTRO_RELATORIO_GARANTIAS, filtro);
 		
+		if (filtro.getTipoGarantia().equalsIgnoreCase("Selecione...")) {
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "O tipo de garantia deve ser informado."));
+		}
+		else if(filtro.getStatusGarantia().equalsIgnoreCase("Selecionar...")){
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "O status de garantia deve ser informado."));
+			
+		}
+		
 		List<RelatorioGarantiasVO> garantiasVO = new ArrayList<RelatorioGarantiasVO>();
 		FlexiGridDTO<RelatorioGarantiasDTO> flexDTO = relatorioGarantiasService.gerarTodasGarantias(filtro, sortname, sortorder, rp, page);
 		
