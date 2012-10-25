@@ -137,6 +137,36 @@ public class CotaGarantiaRepositoryImpl extends AbstractRepositoryModel<CotaGara
 		return query.list();
 	}
 
+	
+	
+	
+	
+	private String obterHqlFaturamentoCota(){
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" COALESCE((select sum( mec.qtde  * ( produtoEdicao.precoVenda ) ) from MovimentoEstoqueCota mec" )
+		   .append("           join mec.produtoEdicao produtoEdicao " )
+		   .append("           join produtoEdicao.produto produto " ) 
+		   .append("           join mec.tipoMovimento tipoMovimento " )
+		   .append("           join tipoMovimento.grupoMovimentoEstoque grupoMovimento ")
+		   .append("           where mec.cota = garantia.cota ")
+		   .append("           and grupoMovimento in (:grupoMovimentoReparte))")
+		   .append(" ,0) - " )
+		   .append(" COALESCE((select sum( mec.qtde  * ( produtoEdicao.precoVenda ) ) from MovimentoEstoqueCota mec" )
+		   .append("           join mec.produtoEdicao produtoEdicao " )
+		   .append("           join produtoEdicao.produto produto " ) 
+		   .append("           join mec.tipoMovimento tipoMovimento " )
+		   .append("           join tipoMovimento.grupoMovimentoEstoque grupoMovimento ")
+		   .append("           where mec.cota = garantia.cota ")
+		   .append("           and grupoMovimento in (:grupoMovimentoEncalhe))")
+		   .append(" ,0) " );  
+		
+		return hql.toString();
+	}
+	
+	
+	
 	/**
 	 * {@inheritDoc}
 	 */
@@ -156,18 +186,11 @@ public class CotaGarantiaRepositoryImpl extends AbstractRepositoryModel<CotaGara
 		   
 		   
 		   //.append(" COALESCE((select sum(cons.total) from ConsolidadoFinanceiroCota cons where cons.cota = garantia.cota),0)  as faturamentoMes, ")    
+          
+		   .append("(")
+		   .append(  this.obterHqlFaturamentoCota())
+		   .append(") as faturamentoMes, ");    
 
-		   .append(" COALESCE((select sum( mec.qtde  * ( produtoEdicao.precoVenda ) ) from MovimentoEstoqueCota mec" )
-		   .append("           join mec.produtoEdicao produtoEdicao " )
-		   .append("           join produtoEdicao.produto produto " ) 
-		   .append("           join mec.tipoMovimento tipoMovimento " )
-		   .append("           join tipoMovimento.grupoMovimentoEstoque grupoMovimento ")
-		   .append("           where mec.cota = garantia.cota ")
-		   .append("           and grupoMovimento in (:gruposMovimento))")
-		   .append(" ,0)" )
-		   .append(" as faturamentoMes, ");      
-
-		
 		   switch(tipoGarantia){
 		       
 		       case FIADOR :
