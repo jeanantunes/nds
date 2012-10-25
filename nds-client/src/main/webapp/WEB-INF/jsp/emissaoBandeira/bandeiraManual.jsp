@@ -29,7 +29,7 @@
   <tr style="height:5px;">
     <td align="left"><table width="605" border="0" cellpadding="0" cellspacing="0" style="height:90px; color:#000;" >
       <tr>
-        <td width="605" align="center" bgcolor="#E6E6E6" style="border-left:1px solid #000;border-top:1px solid #000;border-right:1px solid #000;"><h3>CÓDIGO DA PRAÇA NO PROCON</h3></td>
+        <td width="605" align="center" bgcolor="#E6E6E6" style="border-left:1px solid #000;border-top:1px solid #000;border-right:1px solid #000;"><h3>CÓDIGO DA PRAÇA NO PRODIN</h3></td>
       </tr>
       <tr>
         <td align="center" style="border-left:1px solid #000;border-right:1px solid #000;border-bottom:1px solid #000;"><input id="codigoPracaProconBandeiraManual" type="text" style="width:400px; font-size:30px; height:40px; font-weight:bold;" /></td>

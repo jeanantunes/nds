@@ -999,15 +999,15 @@ public class RoteirizacaoController {
 	 */
     private List<PdvRoteirizacaoDTO> trataPdvsRepetidos(List<PdvRoteirizacaoDTO> pdvs, List<PdvRoteirizacaoDTO> pdvsAtual){
 		
-    	if(pdvsAtual!=null){
-	    	for(PdvRoteirizacaoDTO itemPdvDTOAtual:pdvsAtual){
-				for(PdvRoteirizacaoDTO itemPdvDTONovo:pdvs){
-					if (itemPdvDTOAtual.getId().equals(itemPdvDTONovo.getId())){
-						pdvs.remove(itemPdvDTONovo);
-					}
-				}
+		if (pdvsAtual != null && pdvs != null) {
+
+			for (PdvRoteirizacaoDTO itemPdvDTOAtual : pdvsAtual) {
+
+				pdvs.remove(itemPdvDTOAtual);
+
 			}
-    	}
+
+		}
     
     	return pdvs;
 	}

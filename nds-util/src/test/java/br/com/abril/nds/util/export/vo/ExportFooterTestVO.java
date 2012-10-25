@@ -9,7 +9,7 @@ import br.com.abril.nds.util.export.Exportable;
 @Exportable
 public class ExportFooterTestVO {
 	
-	@Export(label = "Total", alignment = Alignment.RIGHT, alignWithHeader = "Column5")
+	@Export(label = "Total ", alignment = Alignment.RIGHT, alignWithHeader = "Column5", propertyToDynamicLabel = "dynamicProperty")
 	private BigDecimal totalColumn5;
 	
 	@Export(label = "", alignment = Alignment.RIGHT, alignWithHeader = "Column6")
@@ -26,10 +26,12 @@ public class ExportFooterTestVO {
 	
 	@Export(label = "", alignment = Alignment.RIGHT, alignWithHeader = "Column10")
 	private BigDecimal totalColumn10;
+	
+	private BigDecimal dynamicProperty;
 
 	public ExportFooterTestVO(BigDecimal totalColumn5, BigDecimal totalColumn6,
 							  Long totalColumn7, Long totalColumn8, Integer totalColumn9,
-							  BigDecimal totalColumn10) {
+							  BigDecimal totalColumn10, BigDecimal dynamicProperty) {
 		
 		this.totalColumn5 = totalColumn5;
 		this.totalColumn6 = totalColumn6;
@@ -37,6 +39,7 @@ public class ExportFooterTestVO {
 		this.totalColumn8 = totalColumn8;
 		this.totalColumn9 = totalColumn9;
 		this.totalColumn10 = totalColumn10;
+		this.dynamicProperty = dynamicProperty;
 	}
 
 	public BigDecimal getTotalColumn5() {
@@ -85,6 +88,20 @@ public class ExportFooterTestVO {
 
 	public void setTotalColumn10(BigDecimal totalColumn10) {
 		this.totalColumn10 = totalColumn10;
+	}
+
+	/**
+	 * @return the dynamicProperty
+	 */
+	public BigDecimal getDynamicProperty() {
+		return dynamicProperty;
+	}
+
+	/**
+	 * @param dynamicProperty the dynamicProperty to set
+	 */
+	public void setDynamicProperty(BigDecimal dynamicProperty) {
+		this.dynamicProperty = dynamicProperty;
 	}
 
 }

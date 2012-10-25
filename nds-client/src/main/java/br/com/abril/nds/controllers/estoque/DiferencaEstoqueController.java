@@ -85,6 +85,8 @@ import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.interceptor.download.ByteArrayDownload;
+import br.com.caelum.vraptor.interceptor.download.Download;
 import br.com.caelum.vraptor.view.Results;
 
 /**
@@ -2868,6 +2870,27 @@ public class DiferencaEstoqueController {
 		detalheDiferencaCota.setTableModel(tableModel);
 
 		return detalheDiferencaCota;
+	}
+	
+	@Post
+	@Path("/validaDataRelatorioFaltasSobras")
+	public void validaDataRelatorioFaltasSobras(String dataMovimentoFormatada ) throws Exception{
+		if (dataMovimentoFormatada == null || dataMovimentoFormatada.equals("")){
+				throw new ValidacaoException(TipoMensagem.WARNING, "Informe uma data de movimento");
+		}		
+	
+		this.result.use(Results.json()).from("", "result").recursive().serialize();
+	}
+	
+	
+	@Get("/imprimirRelatorioFaltasSobras")
+	public Download imprimirRelatorioFaltasSobras(String dataMovimentoFormatada ) throws Exception{
+		
+		Date dataMovimento = DateUtil.parseDataPTBR(dataMovimentoFormatada);
+		
+		byte[] comprovate = diferencaEstoqueService.imprimirRelatorioFaltasSobras(dataMovimento);
+		
+		return new ByteArrayDownload(comprovate,"application/pdf", "relatorioFaltasSobras.pdf", true);
 	}
 }
  

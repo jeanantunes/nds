@@ -1,6 +1,7 @@
 package br.com.abril.nds.dto.filtro;
 
 import java.util.Date;
+import java.util.List;
 
 import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.vo.PaginacaoVO;
@@ -23,7 +24,7 @@ public abstract class FiltroCurvaABCDTO extends FiltroDTO {
 	
 	private String nomeProduto;
 	
-	private String edicaoProduto;
+	private List<Long> edicaoProduto;
 	
 	private String codigoEditor;
 	
@@ -99,11 +100,11 @@ public abstract class FiltroCurvaABCDTO extends FiltroDTO {
 		this.paginacao = paginacao;
 	}
 
-	public String getEdicaoProduto() {
+	public List<Long> getEdicaoProduto() {
 		return edicaoProduto;
 	}
 
-	public void setEdicaoProduto(String edicaoProduto) {
+	public void setEdicaoProduto(List<Long> edicaoProduto) {
 		this.edicaoProduto = edicaoProduto;
 	}
 

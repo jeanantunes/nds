@@ -670,9 +670,15 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 												   Integer numeroSemana,
 												   Date dataBalanceamento) {
 		
+		int codigoInicioSemana = 
+				distribuidor != null ? distribuidor.getInicioSemana().getCodigoDiaSemana()
+						: this.distribuidorRepository.buscarInicioSemana().getCodigoDiaSemana();
+		
 		Date dataInicioSemana = 
 			DateUtil.obterDataDaSemanaNoAno(
-				numeroSemana, distribuidor.getInicioSemana().getCodigoDiaSemana(), dataBalanceamento);
+				numeroSemana,
+				codigoInicioSemana, 
+				dataBalanceamento);
 		
 		Date dataFimSemana = DateUtil.adicionarDias(dataInicioSemana, 6);
 		
