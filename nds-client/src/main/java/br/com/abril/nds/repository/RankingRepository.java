@@ -30,4 +30,6 @@ public interface RankingRepository {
 	Long obterRankingProdutoCota(Long idCota,Long idProduto);
 	
 	Long obterRankingCotaDistribuidor(Long idCota);
+	
+	Long obterRankingEditor(Long codigoEditor);
 }

@@ -19,7 +19,6 @@ import br.com.abril.nds.client.util.AuditoriaUtil;
 import br.com.abril.nds.dto.auditoria.AuditoriaDTO;
 import br.com.abril.nds.integracao.couchdb.CouchDbProperties;
 import br.com.abril.nds.model.cadastro.Distribuidor;
-import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.util.TipoOperacaoSQL;
 
 public class EntityInterceptor extends EmptyInterceptor {
@@ -55,17 +54,14 @@ public class EntityInterceptor extends EmptyInterceptor {
 
 		this.validarAndamnetoFechamentoDiario();
 		
-//		this.removerMascaraCNPJ(entity);
+		Object user = SecurityContextHolder.getContext().getAuthentication().getPrincipal(); 
+
+		AuditoriaDTO auditoriaDTO = AuditoriaUtil.generateAuditoriaDTO(
+			entity, null, entity.getClass().getSimpleName(), Thread.currentThread(), user, TipoOperacaoSQL.INSERT
+		);
 		
-		if (null != SecurityContextHolder.getContext().getAuthentication()) {
-			Object user = SecurityContextHolder.getContext().getAuthentication().getPrincipal(); 
-	
-			AuditoriaDTO auditoriaDTO = AuditoriaUtil.generateAuditoriaDTO(
-				entity, null, entity.getClass().getSimpleName(), Thread.currentThread(), user, TipoOperacaoSQL.INSERT
-			);
-			
-			audit.add(auditoriaDTO);
-		}
+		audit.add(auditoriaDTO);
+
 		return false;
 	}
 	
@@ -91,21 +87,15 @@ public class EntityInterceptor extends EmptyInterceptor {
 
 		this.validarAndamnetoFechamentoDiario();
 		
-		if (null != SecurityContextHolder.getContext().getAuthentication()) {
-			Object user = SecurityContextHolder.getContext().getAuthentication().getPrincipal(); 
-			
-			getSession().beginTransaction();
-			
-			Object oldEntity = getSession().get(entity.getClass(), id);
-			
-			getSession().close();
-	
-			AuditoriaDTO auditoriaDTO = AuditoriaUtil.generateAuditoriaDTO(
-				entity, oldEntity, entity.getClass().getSimpleName(), Thread.currentThread(), user, TipoOperacaoSQL.UPDATE
-			);
-			
-			audit.add(auditoriaDTO);
-		}
+		Object user = SecurityContextHolder.getContext().getAuthentication().getPrincipal(); 
+		
+		Object oldEntity = this.getNewSession().get(entity.getClass(), id);
+		
+		AuditoriaDTO auditoriaDTO = AuditoriaUtil.generateAuditoriaDTO(
+			entity, oldEntity, entity.getClass().getSimpleName(), Thread.currentThread(), user, TipoOperacaoSQL.UPDATE
+		);
+		
+		audit.add(auditoriaDTO);
 
 		return false;
 	}
