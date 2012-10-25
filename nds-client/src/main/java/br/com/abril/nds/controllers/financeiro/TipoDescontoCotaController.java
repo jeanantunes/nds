@@ -144,9 +144,9 @@ public class TipoDescontoCotaController {
 	
 	@Post
 	@Path("/novoDescontoProduto")
-	public void novoDescontoProduto(DescontoProdutoDTO desconto, List<Integer> cotas) {		
+	public void novoDescontoProduto(DescontoProdutoDTO descontoDTO, List<Integer> cotas) {		
 
-		executarDescontoProduto(desconto, cotas);
+		executarDescontoProduto(descontoDTO, cotas);
 
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Inicio do procedimento de cadastros de Tipo Desconto foi inicializado"),"result").recursive().serialize();
 

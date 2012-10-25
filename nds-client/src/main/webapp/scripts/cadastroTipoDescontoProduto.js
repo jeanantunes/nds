@@ -90,14 +90,14 @@ var descontoProdutoController = $.extend(true,{
 		
 		var data = new Array();
 		
-		data.push({name:'desconto.indProdutoEdicao' , value: indProdutoEdicao});
-		data.push({name:'desconto.codigoProduto' , value: codigoProduto});
-		data.push({name:'desconto.edicaoProduto' , value: edicaoProduto});
-		data.push({name:'desconto.descontoProduto' , value: descontoProduto});
-		data.push({name:'desconto.quantidadeEdicoes' , value: quantidadeEdicoes});
-		data.push({name:'desconto.descontoPredominante' , value: descontoPredominante});
-		data.push({name:'desconto.hasCotaEspecifica' , value: hasCotaEspecifica});
-		data.push({name:'desconto.isTodasCotas' , value: isTodasCotas});
+		data.push({name:'descontoDTO.indProdutoEdicao' , value: indProdutoEdicao});
+		data.push({name:'descontoDTO.codigoProduto' , value: codigoProduto});
+		data.push({name:'descontoDTO.edicaoProduto' , value: edicaoProduto});
+		data.push({name:'descontoDTO.descontoProduto' , value: descontoProduto});
+		data.push({name:'descontoDTO.quantidadeEdicoes' , value: quantidadeEdicoes});
+		data.push({name:'descontoDTO.descontoPredominante' , value: descontoPredominante});
+		data.push({name:'descontoDTO.hasCotaEspecifica' , value: hasCotaEspecifica});
+		data.push({name:'descontoDTO.isTodasCotas' , value: isTodasCotas});
 		
 		$("input[id^=cotaInput]",this.workspace).each(function(index, value) {
 			if ($(this).val()) {
