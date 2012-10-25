@@ -1460,7 +1460,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		//hql.append(" 		sum(movimentoCota.lancamento.repartePromocional) as materialPromocional, ");
 		
 		// Implementado pelo Eduardo Punk Rock - Retirado a soma do reparte promocional
-		hql.append(" 		movimentoCota.lancamento.repartePromocional as materialPromocional, ");
+		hql.append(" 		lancamento.repartePromocional as materialPromocional, ");
 		hql.append(" 		sum(movimentoCota.qtde) as totalReparte, ");
 		hql.append(" 		sum(movimentoCota.qtde * produtoEdicao.precoVenda) as totalBox ");
 			
@@ -1499,7 +1499,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 	
 	private void gerarFromWhereDadosAbastecimento(FiltroMapaAbastecimentoDTO filtro, StringBuilder hql, HashMap<String, Object> param, HashMap<String, List<String>> paramList) {
 		
-		hql.append(" from MovimentoEstoqueCota movimentoCota, Roteirizacao roterizacao ");
+		hql.append(" from MovimentoEstoqueCota movimentoCota ");
 		hql.append("	join movimentoCota.cota cota ");
 		hql.append("	join movimentoCota.produtoEdicao produtoEdicao ");
 		hql.append("	join produtoEdicao.produto produto ");		
@@ -1731,7 +1731,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		hql.append(" 		produto.nome as nomeProduto, ");
 		hql.append(" 		produtoEdicao.numeroEdicao as numeroEdicao, ");		
 		hql.append(" 		sum(movimentoCota.qtde) as reparte, ");
-		hql.append(" 		produtoEdicao.precoCusto as precoCapa, ");
+		hql.append(" 		produtoEdicao.precoVenda as precoCapa, ");
 		hql.append(" 		sum(movimentoCota.qtde * produtoEdicao.precoVenda) as total ");
 		
 		filtro.setBox(idBox);
@@ -1811,7 +1811,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		hql.append(" 		produto.nome as nomeProduto, ");
 		hql.append(" 		produtoEdicao.numeroEdicao as numeroEdicao, ");		
 		hql.append(" 		sum(movimentoCota.qtde) as reparte, ");
-		hql.append(" 		produtoEdicao.precoCusto as precoCapa ");
+		hql.append(" 		produtoEdicao.precoVenda as precoCapa ");
 		
 								
 		gerarFromWhereDadosAbastecimento(filtro, hql, param, paramList);
@@ -1857,15 +1857,16 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		hql.append(" 		produto.codigo as codigoProduto, ");
 		hql.append(" 		produto.nome as nomeProduto, ");
 		hql.append(" 		produtoEdicao.numeroEdicao as numeroEdicao, ");
-		hql.append(" 		sum(movimentoCota.lancamento.repartePromocional) as materialPromocional, ");
+		hql.append(" 		lancamento.repartePromocional as materialPromocional, ");
 		hql.append(" 		sum(movimentoCota.qtde) as reparte, ");
 		hql.append(" 		sum(movimentoCota.qtde * produtoEdicao.precoVenda) as totalBox, ");
 		hql.append("        count(distinct produtoEdicao.id) as totalProduto, ");
-		hql.append(" 		produtoEdicao.precoCusto as precoCapa ");
+		hql.append(" 		produtoEdicao.precoVenda as precoCapa ");
 
 		gerarFromWhereDadosAbastecimento(filtro, hql, param, paramList);
 		
-		hql.append(" group by produtoEdicao.id, box.id, rota.id ");
+		//hql.append(" group by produtoEdicao.id, box.id, rota.id ");
+		hql.append(" group by box.id, rota.id ");
 		
 		if (filtro.getExcluirProdutoSemReparte()!=null && filtro.getExcluirProdutoSemReparte()) {
 
@@ -1947,10 +1948,10 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		hql.append(" 		produto.codigo as codigoProduto, ");
 		hql.append(" 		produto.nome as nomeProduto, ");
 		hql.append(" 		produtoEdicao.numeroEdicao as numeroEdicao, ");		
-		hql.append(" 		sum(movimentoCota.lancamento.repartePromocional) as materialPromocional, ");
+		hql.append(" 		lancamento.repartePromocional as materialPromocional, ");
 		hql.append(" 		sum(movimentoCota.qtde) as reparte, ");
 		hql.append(" 		sum(movimentoCota.qtde * produtoEdicao.precoVenda) as totalBox, ");
-		hql.append(" 		produtoEdicao.precoCusto as precoCapa ");
+		hql.append(" 		produtoEdicao.precoVenda as precoCapa ");
 		
 								
 		gerarFromWhereDadosAbastecimento(filtro, hql, param, paramList);
@@ -2134,10 +2135,10 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		hql.append(" 		produto.codigo as codigoProduto, ");
 		hql.append(" 		produto.nome as nomeProduto, ");
 		hql.append(" 		produtoEdicao.numeroEdicao as numeroEdicao, ");		
-		hql.append(" 		sum(movimentoCota.lancamento.repartePromocional) as materialPromocional, ");
+		hql.append(" 		lancamento.repartePromocional as materialPromocional, ");
 		hql.append(" 		sum(movimentoCota.qtde) as reparte, ");
 		hql.append(" 		sum(movimentoCota.qtde * produtoEdicao.precoVenda) as totalBox, ");
-		hql.append(" 		produtoEdicao.precoCusto as precoCapa ");
+		hql.append(" 		produtoEdicao.precoVenda as precoCapa ");
 
 		gerarFromWhereDadosAbastecimento(filtro, hql, param, paramList);
 		
@@ -2430,7 +2431,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		hql.append(" 		produtoEdicao.codigoDeBarras as codigoBarra, ");
 		hql.append(" 		produtoEdicao.pacotePadrao as pacotePadrao, ");		
 		hql.append(" 		sum(movimentoCota.qtde) as reparte, ");
-		hql.append(" 		produtoEdicao.precoCusto as precoCapa, ");
+		hql.append(" 		produtoEdicao.precoVenda as precoCapa, ");
 		hql.append(" 		cota.numeroCota as codigoCota, ");
 		hql.append(" 		pessoa.nome as nomeCota,");
 	
@@ -2524,7 +2525,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		hql.append(" 		produtoEdicao.numeroEdicao as numeroEdicao, ");		
 		hql.append(" 		sum(movimentoCota.qtde) as reparte, ");
 		hql.append(" 		sum(movimentoCota.qtde * produtoEdicao.precoVenda) as totalBox, ");
-		hql.append(" 		produtoEdicao.precoCusto as precoCapa ");
+		hql.append(" 		produtoEdicao.precoVenda as precoCapa ");
 
 		gerarFromWhereDadosAbastecimento(filtro, hql, param, paramList);
 		

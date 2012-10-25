@@ -127,8 +127,8 @@ public class ProdutoController {
 	}
 
 	@Post
-	public void autoCompletarPorNome(String nome) {
-		List<Produto> listaProduto = this.produtoService.obterProdutoLikeNome(nome);
+	public void autoCompletarPorNomeProduto(String nomeProduto) {
+		List<Produto> listaProduto = this.produtoService.obterProdutoLikeNome(nomeProduto);
 		
 		List<ItemAutoComplete> listaProdutos = new ArrayList<ItemAutoComplete>();
 		
@@ -194,12 +194,12 @@ public class ProdutoController {
 	}
 		
 	@Post
-	public void pesquisarPorNome(String nome) {
-		Produto produto = this.produtoService.obterProdutoPorNome(nome);
+	public void pesquisarPorNomeProduto(String nomeProduto) {
+		Produto produto = this.produtoService.obterProdutoPorNome(nomeProduto);
 		
 		if (produto == null) {
 		
-			throw new ValidacaoException(TipoMensagem.WARNING, "Produto \"" + nome + "\" não encontrado!");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Produto \"" + nomeProduto + "\" não encontrado!");
 		
 		}
 			

@@ -17,6 +17,7 @@ import br.com.abril.nds.dto.MovimentoFinanceiroDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroDebitoCreditoDTO;
 import br.com.abril.nds.dto.filtro.FiltroDebitoCreditoDTO.ColunaOrdenacao;
+import br.com.abril.nds.dto.filtro.FiltroRelatorioServicosEntregaDTO;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
@@ -627,8 +628,9 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 	
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<CotaTransportadorDTO> obterResumoTransportadorCota(Date dataDe, Date dataAte, Long idTransportador, PaginacaoVO paginacaoVO) {
+	public List<CotaTransportadorDTO> obterResumoTransportadorCota(FiltroRelatorioServicosEntregaDTO filtro) {
 
+		PaginacaoVO paginacaoVO = filtro.getPaginacao();
 		HashMap<String, Object> param = new HashMap<String, Object>();
 				
 		StringBuilder hql = new StringBuilder();
@@ -644,7 +646,7 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 		
 		addFromJoinObterDadosTransportador(hql);
 		
-		addWhereObterDadosTransportador(hql, dataDe, dataAte, idTransportador, param);
+		addWhereObterDadosTransportador(hql, filtro.getEntregaDataInicio(), filtro.getEntregaDataFim(), filtro.getIdTransportador(), param);
 		
 		hql.append(" group by transportador.id ");
 		
@@ -728,8 +730,7 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<MovimentoFinanceiroDTO> obterDetalhesTrasportadorPorCota(
-			Date dataDe, Date dataAte, Long idTransportador, Long idCota) {
+	public List<MovimentoFinanceiroDTO> obterDetalhesTrasportadorPorCota(FiltroRelatorioServicosEntregaDTO filtro) {
 		
 		HashMap<String, Object> param = new HashMap<String, Object>();
 		
@@ -741,7 +742,7 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 		
 		addFromJoinObterDadosTransportador(hql);
 		
-		addWhereobterDetalhesTrasportadorPorCota(hql, dataDe, dataAte, idTransportador, idCota, param);
+		addWhereobterDetalhesTrasportadorPorCota(hql, filtro.getEntregaDataInicio(), filtro.getEntregaDataFim(), filtro.getIdTransportador(), filtro.getIdCota(), param);
 				
 		hql.append(" order by movimento.dataCriacao asc ");
 		
@@ -782,5 +783,32 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 			params.put("idCota", idCota);
 		}		
 	}
-	
+
+	@Override
+	public Long obterCountResumoTransportadorCota(FiltroRelatorioServicosEntregaDTO filtro) {
+
+		HashMap<String, Object> param = new HashMap<String, Object>();
+		
+		StringBuilder hql = new StringBuilder();
+		hql.append("select count(transportador.id)");
+		addFromJoinObterDadosTransportador(hql);
+		addWhereObterDadosTransportador(hql, filtro.getEntregaDataInicio(), filtro.getEntregaDataFim(), filtro.getIdTransportador(), param);
+		hql.append(" group by transportador.id ");
+
+		Query query = getSession().createQuery(hql.toString());
+
+		for(String key : param.keySet()){
+			query.setParameter(key, param.get(key));
+		}
+		
+		Long count = (Long) query.uniqueResult();
+		
+		if (count == null) {
+			count = 0L;
+		}
+
+		return count;
+	}
+
+
 }

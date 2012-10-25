@@ -30,6 +30,7 @@ import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.seguranca.Permissao;
+import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.service.EnderecoService;
 import br.com.abril.nds.service.FiadorService;
 import br.com.abril.nds.service.PessoaService;
@@ -617,7 +618,7 @@ public class FiadorController {
 			this.carregarTelefonesEnderecosFiador(idFiador);
 		}
 		
-		result.use(Results.json()).from(dados, "result").serialize();
+		result.use(CustomJson.class).from(dados).serialize();
 	}
 	
 	private void carregarTelefonesEnderecosFiador(Long idFiador) {

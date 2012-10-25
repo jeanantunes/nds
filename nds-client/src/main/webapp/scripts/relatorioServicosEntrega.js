@@ -42,23 +42,31 @@ relatorioServicosEntregaController = $.extend(true, {
 		});
 		
 		$(".relatorioServicosEntrega_transportadoresGrid").flexReload();
-		$(".grids", this.workspace).show();
 	},
 	
 	
 	insereLinks : function(data) {
 		
-		$.each(data.rows, function(index, value) {
-			value.cell.valor = '<a href="javascript:;" onclick="relatorioServicosEntregaController.pesquisarDetalhe(' + value.cell.transportadorId + ');">' + value.cell.valor + '</a>';
-		});
+		var tipoMensagem = data.mensagens.tipoMensagem;
+        var listaMensagens = data.mensagens.listaMensagens;
+        if (tipoMensagem && listaMensagens) {
+              exibirMensagem(tipoMensagem, listaMensagens);
+        } else { 
+        	 
+        	$.each(data.rows, function(index, value) {
+     			value.cell.valor = '<a href="javascript:;" onclick="relatorioServicosEntregaController.pesquisarDetalhe(' + value.cell.cotaId + ');">' + value.cell.valor + '</a>';
+     		});
+        	 
+        	$(".grids", this.workspace).show();
+        }
 		
 		return data;
 	},
 	
 	
-	pesquisarDetalhe : function(transportadorId) {
+	pesquisarDetalhe : function(cotaId) {
 		
-		$("#relatorioServicosEntrega_transportadorDetalhe").val(transportadorId);
+		$("#relatorioServicosEntrega_idCota").val(cotaId);
 		var params = $("#relatorioServicosEntregaForm").serialize();
 		
 		$(".relatorioServicosEntrega_detalheGrid").flexOptions({

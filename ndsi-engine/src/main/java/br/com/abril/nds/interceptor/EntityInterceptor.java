@@ -55,14 +55,17 @@ public class EntityInterceptor extends EmptyInterceptor {
 
 		this.validarAndamnetoFechamentoDiario();
 		
-		Object user = SecurityContextHolder.getContext().getAuthentication().getPrincipal(); 
-
-		AuditoriaDTO auditoriaDTO = AuditoriaUtil.generateAuditoriaDTO(
-			entity, null, entity.getClass().getSimpleName(), Thread.currentThread(), user, TipoOperacaoSQL.INSERT
-		);
+//		this.removerMascaraCNPJ(entity);
 		
-		audit.add(auditoriaDTO);
-
+		if (null != SecurityContextHolder.getContext().getAuthentication()) {
+			Object user = SecurityContextHolder.getContext().getAuthentication().getPrincipal(); 
+	
+			AuditoriaDTO auditoriaDTO = AuditoriaUtil.generateAuditoriaDTO(
+				entity, null, entity.getClass().getSimpleName(), Thread.currentThread(), user, TipoOperacaoSQL.INSERT
+			);
+			
+			audit.add(auditoriaDTO);
+		}
 		return false;
 	}
 	
@@ -88,15 +91,21 @@ public class EntityInterceptor extends EmptyInterceptor {
 
 		this.validarAndamnetoFechamentoDiario();
 		
-		Object user = SecurityContextHolder.getContext().getAuthentication().getPrincipal(); 
-		
-		Object oldEntity = this.getNewSession().get(entity.getClass(), id);
-		
-		AuditoriaDTO auditoriaDTO = AuditoriaUtil.generateAuditoriaDTO(
-			entity, oldEntity, entity.getClass().getSimpleName(), Thread.currentThread(), user, TipoOperacaoSQL.UPDATE
-		);
-		
-		audit.add(auditoriaDTO);
+		if (null != SecurityContextHolder.getContext().getAuthentication()) {
+			Object user = SecurityContextHolder.getContext().getAuthentication().getPrincipal(); 
+			
+			getSession().beginTransaction();
+			
+			Object oldEntity = getSession().get(entity.getClass(), id);
+			
+			getSession().close();
+	
+			AuditoriaDTO auditoriaDTO = AuditoriaUtil.generateAuditoriaDTO(
+				entity, oldEntity, entity.getClass().getSimpleName(), Thread.currentThread(), user, TipoOperacaoSQL.UPDATE
+			);
+			
+			audit.add(auditoriaDTO);
+		}
 
 		return false;
 	}

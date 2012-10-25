@@ -14,7 +14,7 @@
     <td width="121" height="21" align="left" valign="middle"><img src="${pageContext.request.contextPath}/images/logo_sistema.png" width="110" height="70" alt="Treelog" /></td>
     <td width="486" align="center" valign="middle" style="border-top:1px solid #ccc;border-left:1px solid #ccc;border-right:1px solid #ccc;border-bottom:1px solid #ccc;;"><input id="tipoOperacaoBandeiraManual" type="text" style="width:480px; font-size:60px; height:60px; font-weight:bold;" /></td>
     <td width="82" align="right" valign="middle" style="border-top:1px solid #ccc;border-bottom:1px solid #ccc;"><h3>SEMANA</h3></td>
-    <td width="187" align="center" valign="middle"style="border-top:1px solid #ccc;border-right:1px solid #ccc;border-bottom:1px solid #ccc;"><input id="semanaBandeiraManual" type="text" style="width:180px; font-size:60px; height:60px; font-weight:bold;" /></td>
+    <td width="187" align="center" valign="middle"style="border-top:1px solid #ccc;border-right:1px solid #ccc;border-bottom:1px solid #ccc;"><input id="semanaBandeiraManual" type="text" maxlength="3"  style="width:180px; font-size:60px; height:60px; font-weight:bold;" /></td>
   </tr>
   <tr>
     <td colspan="2" align="center" valign="middle"></td>
@@ -100,5 +100,12 @@
 
 </fieldset>
 </div>
+
+	<script type="text/javascript">
+		$(function(){
+			emissaoBandeiraController.initBandeiraManual();
+		});
+		
+	</script>
 </body>
 
