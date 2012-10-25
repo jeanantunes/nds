@@ -1067,7 +1067,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 		}
 
 		if (filtro.getNomeProduto() != null && !filtro.getNomeProduto().isEmpty()) {
-			hql.append(" AND estoqueProdutoCota.produtoEdicao.produto.nome = :nomeProduto ");
+			hql.append(" AND upper(estoqueProdutoCota.produtoEdicao.produto.nome) like upper ( :nomeProduto ) ");
 		}
 		
 		if (filtro.getCodigoFornecedor() != null && !filtro.getCodigoFornecedor().isEmpty() && !filtro.getCodigoFornecedor().equals("0")) {
@@ -1087,7 +1087,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 		}
 
 		if (filtro.getNomeCota() != null && !filtro.getNomeCota().isEmpty()) {
-			hql.append("AND pessoa.nome = :nomeCota ");
+			hql.append("AND upper(pessoa.nome) like upper( :nomeCota) or upper(pessoa.razaoSocial) like upper(:nomeCota) ");
 		}
 
 		if (filtro.getMunicipio() != null && !filtro.getMunicipio().isEmpty() && !filtro.getMunicipio().equalsIgnoreCase("Todos")) {
@@ -1133,7 +1133,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 		}
 
 		if (filtro.getNomeCota() != null && !filtro.getNomeCota().isEmpty()) {
-			param.put("nomeCota", filtro.getNomeCota());
+			param.put("nomeCota", filtro.getNomeCota() +"%");
 		}
 		
 		if (filtro.getCodigoFornecedor() != null && !filtro.getCodigoFornecedor().isEmpty() && !filtro.getCodigoFornecedor().equals("0")) {
@@ -1145,7 +1145,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 		}
 
 		if (filtro.getNomeProduto() != null && !filtro.getNomeProduto().isEmpty()) {
-			param.put("nomeProduto", filtro.getNomeProduto());
+			param.put("nomeProduto", filtro.getNomeProduto()+"%");
 		}
 
 		if (filtro.getEdicaoProduto() != null && !filtro.getEdicaoProduto().isEmpty()) {
@@ -1176,21 +1176,19 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 		// Soma todos os valores de participacao
 		for (RegistroCurvaABCCotaDTO registro : lista) {
 			if (registro.getFaturamento()!=null) {
-				participacaoTotal.add(registro.getFaturamento());
+				participacaoTotal = participacaoTotal.add(registro.getFaturamento());
 			} 
-			vendaTotal.add(registro.getVendaExemplares());
+			vendaTotal = vendaTotal.add(registro.getVendaExemplares());
 		}
 
-		BigDecimal participacaoRegistro = new BigDecimal(0);
-		BigDecimal participacaoAcumulada = new BigDecimal(0);
-		BigDecimal porcentagemVendaRegistro = new BigDecimal(0);
+		BigDecimal participacaoRegistro =BigDecimal.ZERO;
+		BigDecimal participacaoAcumulada = BigDecimal.ZERO;
+		BigDecimal porcentagemVendaRegistro = BigDecimal.ZERO;
 		
-		RegistroCurvaABCCotaDTO registro = null;
-
+	
 		// Verifica o percentual dos valores em relação ao total de participacao
-		for (int i=0; i<lista.size(); i++) {
+		for (RegistroCurvaABCCotaDTO registro : lista) {
 
-			registro = (RegistroCurvaABCCotaDTO) lista.get(i);
 			if (registro.getFaturamento() != null) {
 				// Partipacao do registro em relacao a participacao total no periodo
 				if ( participacaoTotal.doubleValue() != 0 ) {
@@ -1199,19 +1197,17 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 			} else {
 				participacaoRegistro = BigDecimal.ZERO;
 			}
-				registro.setParticipacao(participacaoRegistro);
+			
+			registro.setParticipacao(participacaoRegistro);
 			
 			if (vendaTotal.doubleValue() != 0) {
 				porcentagemVendaRegistro = new BigDecimal(registro.getVendaExemplares().doubleValue()*100/vendaTotal.doubleValue());
 			}
+			
+			participacaoAcumulada = participacaoAcumulada.add(participacaoRegistro);
+			
 			registro.setPorcentagemVenda(porcentagemVendaRegistro);
-			
-			participacaoAcumulada.add(participacaoRegistro);
 			registro.setParticipacaoAcumulada(participacaoAcumulada);
-			
-			// Substitui o registro pelo registro atualizado (com participacao total)
-			lista.set(i, registro);
-
 		}
 
 		return lista;
