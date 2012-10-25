@@ -4,6 +4,7 @@
 package br.com.abril.nds.model.cadastro;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -42,7 +43,7 @@ public class Imovel implements Serializable {
 	private String numeroRegistro;
 	
 	@Column(name="VALOR", nullable=false)
-	private Double valor;
+	private BigDecimal valor;
 	
 	@Column(name="OBSERVACAO", nullable=false)
 	private String observacao;
@@ -115,7 +116,7 @@ public class Imovel implements Serializable {
 	/**
 	 * @return the valor
 	 */
-	public Double getValor() {
+	public BigDecimal getValor() {
 		return valor;
 	}
 
@@ -123,7 +124,7 @@ public class Imovel implements Serializable {
 	/**
 	 * @param valor the valor to set
 	 */
-	public void setValor(Double valor) {
+	public void setValor(BigDecimal valor) {
 		this.valor = valor;
 	}
 
