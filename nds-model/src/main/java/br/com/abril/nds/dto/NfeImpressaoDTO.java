@@ -80,6 +80,8 @@ public class NfeImpressaoDTO implements Serializable{
 	private String destinatarioCEP;
 
 	private String destinatarioTelefone;
+	
+	private String boxRota;
 
 	private BigDecimal valorBaseICMS;
 
@@ -441,6 +443,14 @@ public class NfeImpressaoDTO implements Serializable{
 
 	public void setDestinatarioTelefone(String destinatarioTelefone) {
 		this.destinatarioTelefone = destinatarioTelefone;
+	}
+
+	public String getBoxRota() {
+		return boxRota;
+	}
+
+	public void setBoxRota(String boxRota) {
+		this.boxRota = boxRota;
 	}
 
 	public BigDecimal getValorBaseICMS() {

@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.client.vo.NfeVO;
+import br.com.abril.nds.dto.DanfeWrapper;
 import br.com.abril.nds.dto.Duplicata;
 import br.com.abril.nds.dto.InfoNfeDTO;
 import br.com.abril.nds.dto.ItemImpressaoNfe;
@@ -50,6 +51,7 @@ import br.com.abril.nds.model.fiscal.nota.Veiculo;
 import br.com.abril.nds.repository.ItemNotaFiscalEntradaRepository;
 import br.com.abril.nds.repository.ItemNotaFiscalSaidaRepository;
 import br.com.abril.nds.repository.NotaFiscalRepository;
+import br.com.abril.nds.service.MonitorNFEService;
 import br.com.abril.nds.service.NFeService;
 import br.com.abril.nds.util.TipoMensagem;
 
@@ -58,6 +60,9 @@ public class NFeServiceImpl implements NFeService {
 
 	@Autowired
 	protected NotaFiscalRepository notaFiscalRepository;
+	
+	@Autowired
+	protected MonitorNFEService monitorNFEService;	
 
 	@Autowired
 	protected ItemNotaFiscalEntradaRepository itemNotaFiscalEntradaRepository;
@@ -92,25 +97,7 @@ public class NFeServiceImpl implements NFeService {
 	@Transactional
 	public byte[] obterDanfesPDF(List<NfeVO> listaNfeImpressao, boolean indEmissaoDepec) {
 
-		List<NfeImpressaoWrapper> listaNfeImpressaoWrapper = new ArrayList<NfeImpressaoWrapper>();
-
-		for(NfeVO notaFiscal :  listaNfeImpressao) {
-
-			NfeImpressaoDTO nfeImpressao = obterDadosNFe(notaFiscal);
-
-			if(nfeImpressao!=null) {
-				listaNfeImpressaoWrapper.add(new NfeImpressaoWrapper(nfeImpressao));
-			}
-
-		}
-
-		try {
-
-			return gerarDocumentoIreportDANFE(listaNfeImpressaoWrapper, indEmissaoDepec);
-
-		} catch(Exception e) {
-			throw new ValidacaoException(TipoMensagem.ERROR, "Falha na geração dos arquivos DANFE");
-		}
+		return monitorNFEService.obterDanfes(listaNfeImpressao, indEmissaoDepec);
 
 	}
 	
@@ -724,7 +711,7 @@ public class NFeServiceImpl implements NFeService {
 		return urlDanfe;
 	}
 
-	private byte[] gerarDocumentoIreportDANFE(List<NfeImpressaoWrapper> list, boolean indEmissaoDepec) throws JRException, URISyntaxException {
+	private byte[] gerarDocumentoIreportDANFE(List<DanfeWrapper> list, boolean indEmissaoDepec) throws JRException, URISyntaxException {
 
 		JRDataSource jrDataSource = new JRBeanCollectionDataSource(list);
 
@@ -762,7 +749,7 @@ public class NFeServiceImpl implements NFeService {
 
 		URL diretorioReports = obterDiretorioReports();
 
-		String path = diretorioReports.toURI().getPath() + "/ne.jasper";
+		String path = diretorioReports.toURI().getPath() + "/necaWrapper.jasper";
 
 		Map<String, Object> parameters = new HashMap<String, Object>();
 
