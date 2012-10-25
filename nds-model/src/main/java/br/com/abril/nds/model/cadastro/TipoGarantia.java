@@ -12,29 +12,26 @@ public enum TipoGarantia {
     CHEQUE_CAUCAO("Cheque Caução"), 
     IMOVEL("Imóvel"), 
     NOTA_PROMISSORIA("Nota Promissória"), 
-    CAUCAO_LIQUIDA("Caução Líquida"), 
+    CAUCAO_LIQUIDA("Caução Liquida"), 
     ANTECEDENCIA_VALIDADE("Antecedência Validade"), 
     OUTROS("Outros");
     
-    private String descricao;
-
-    /**
-	 * @return the descricao
-	 */
-	public String getDescricao() {
-		return descricao;
-	}
-
-	/**
-	 * @param descricao the descricao to set
-	 */
-	public void setDescricao(String descricao) {
+	private String descricao;
+	
+	private TipoGarantia(String descricao) {
 		this.descricao = descricao;
 	}
 	
-	TipoGarantia(String descricao){
-    
-		this.descricao = descricao;
-    }
-    
+	public String getDescTipoGarantia(){
+		return this.descricao;
+	}
+	
+	public String getDescricao(){
+		return this.descricao;
+	}
+	
+	@Override
+	public String toString() {
+		return this.descricao;
+	}
 }
