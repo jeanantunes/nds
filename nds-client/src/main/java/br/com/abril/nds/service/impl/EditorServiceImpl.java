@@ -13,6 +13,7 @@ import br.com.abril.nds.dto.filtro.FiltroCurvaABCEditorDTO;
 import br.com.abril.nds.dto.filtro.FiltroPesquisarHistoricoEditorDTO;
 import br.com.abril.nds.model.cadastro.Editor;
 import br.com.abril.nds.repository.EditorRepository;
+import br.com.abril.nds.repository.RankingRepository;
 import br.com.abril.nds.service.EditorService;
 
 @Service
@@ -20,6 +21,9 @@ public class EditorServiceImpl implements EditorService {
 
 	@Autowired
 	private EditorRepository editorRepository;
+	
+	@Autowired
+	private RankingRepository rankingRepository;
 	
 	@Override
 	@Transactional(readOnly=true)
@@ -36,7 +40,14 @@ public class EditorServiceImpl implements EditorService {
 	@Override
 	@Transactional
 	public List<RegistroCurvaABCEditorVO> obterCurvaABCEditor(FiltroCurvaABCEditorDTO filtroCurvaABCEditorDTO) {
-		return editorRepository.obterCurvaABCEditor(filtroCurvaABCEditorDTO);
+		
+		List<RegistroCurvaABCEditorVO> lista = editorRepository.obterCurvaABCEditor(filtroCurvaABCEditorDTO);
+		
+		for(RegistroCurvaABCEditorVO item : lista){
+			item.setRkEditor(rankingRepository.obterRankingEditor(item.getCodigoEditor()));
+		}
+		
+		return lista;
 	}
 
 	@Override
