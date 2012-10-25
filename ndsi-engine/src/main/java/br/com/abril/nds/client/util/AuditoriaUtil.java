@@ -1,7 +1,6 @@
 package br.com.abril.nds.client.util;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Date;
@@ -13,6 +12,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.ManyToAny;
 
@@ -22,10 +22,6 @@ import br.com.abril.nds.util.TipoOperacaoSQL;
 import br.com.caelum.vraptor.Path;
 
 public class AuditoriaUtil {
-
-	private static final String GETTER_PREFIX = "get";
-	
-	private static final String IS_PREFIX = "is";
 
 	private static final String EXCLUDED_FIELD = "serialVersionUID";
 	
@@ -42,8 +38,11 @@ public class AuditoriaUtil {
 		
 		AuditoriaDTO auditoria = new AuditoriaDTO();
 
-		auditoria.setDadosAntigos(AuditoriaUtil.entityToDTO(oldEntity));
-		auditoria.setDadosNovos(AuditoriaUtil.entityToDTO(newEntity));
+		Class<?> oldEntityClass = oldEntity != null ? oldEntity.getClass() : null;
+		Class<?> newEntityClass = newEntity != null ? newEntity.getClass() : null;
+		
+		auditoria.setDadosAntigos(AuditoriaUtil.entityToDTO(oldEntity, oldEntityClass));
+		auditoria.setDadosNovos(AuditoriaUtil.entityToDTO(newEntity, newEntityClass));
 		auditoria.setDataAuditoria(new Date());
 		auditoria.setEntidadeAuditada(entityType);
 		auditoria.setNdsStackTrace(AuditoriaUtil.getNDSStackTrace(currentThread));
@@ -54,52 +53,86 @@ public class AuditoriaUtil {
 		return auditoria;
 	}
 	
-	private static List<AtributoDTO> entityToDTO(Object entity) {
+	private static List<AtributoDTO> entityToDTO(Object entity, Class<?> clazz) {
 
 		if (entity == null) {
-			
+
 			return null;
 		}
-		
+
 		List<AtributoDTO> result = new ArrayList<AtributoDTO>();
 
-		List<String> embeddedFieldsName = getEmbeddedEntityFields(entity); 
+		if (clazz.getSuperclass() != null && clazz.getSuperclass() != Object.class) {
 
-		List<Method> methods = getValidMethods(entity);
+			result.addAll(entityToDTO(entity, clazz.getSuperclass()));
+		}
 
-		for (Method method : methods) {
+		List<Field> fields = getValidFields(clazz);
+
+		List<Field> embeddedFields = getEmbeddedEntityFields(clazz); 
+
+		result.addAll(getEntityDTO(fields, entity));
+
+		result.addAll(getEmbbededEntityDTO(embeddedFields, entity));
+
+		return result;
+	}
+	
+	private static List<AtributoDTO> getEmbbededEntityDTO(List<Field> fields, Object entity) {
+		
+		List<AtributoDTO> result = new ArrayList<AtributoDTO>();
+		
+		for (Field field : fields) {
+			
+			try {
+
+				field.setAccessible(true);
+				
+				if (field.get(entity) == null) {
+					
+					continue;
+				}
+
+				result.addAll(entityToDTO(field.get(entity), field.getType()));
+				
+			} catch (IllegalArgumentException e) {
+				continue;
+			} catch (IllegalAccessException e) {
+				continue;
+			}
+		}
+		
+		return result;
+	}
+
+	private static List<AtributoDTO> getEntityDTO(List<Field> fields, Object entity) {
+
+		List<AtributoDTO> result = new ArrayList<AtributoDTO>();
+
+		for (Field field : fields) {
 
 			try {
 
-				if (embeddedFieldsName.contains(
-						method.getName().replaceFirst(GETTER_PREFIX, ""))) {
-
-					result.addAll(entityToDTO(method.invoke(entity, new Object[0])));
-				}
+				field.setAccessible(true);
 
 				AtributoDTO atributo = new AtributoDTO();
 
-				String atributeName = method.getName().startsWith(GETTER_PREFIX) ?
-							method.getName().replaceFirst(GETTER_PREFIX, "") : 
-							method.getName().replaceFirst(IS_PREFIX, "");
-				
-				atributo.setNome(atributeName);
-				atributo.setValor(method.invoke(entity, new Object[0]));
+				atributo.setNome(field.getName());
+
+				atributo.setValor(field.get(entity));
 
 				result.add(atributo);
-
-			} catch (IllegalAccessException e) {
-				continue;
+				
 			} catch (IllegalArgumentException e) {
 				continue;
-			} catch (InvocationTargetException e) {
+			} catch (IllegalAccessException e) {
 				continue;
 			}
 		}
 
 		return result;
 	}
-
+	
 	private static String getURLFromController(Thread currentThread) {
 
 		String url = "";
@@ -148,59 +181,49 @@ public class AuditoriaUtil {
 		return ndsStacktrace;
 	}
 	
-	private static List<Method> getValidMethods(Object entity) {
+	private static List<Field> getValidFields(Class<?> clazz) {
 
-		List<Method> validMethods = new ArrayList<Method>();
-
-		Field[] allFields = entity.getClass().getDeclaredFields();
+		Field[] allFields = clazz.getDeclaredFields();
+		
+		List<Field> validFields = new ArrayList<Field>();
 
 		for (Field field : allFields) { 
 
 			if (!field.getName().equals(EXCLUDED_FIELD)
 					&& !field.isAnnotationPresent(ManyToAny.class)
 					&& !field.isAnnotationPresent(ManyToMany.class)
-					&& !field.isAnnotationPresent(ManyToOne.class)) {
-
-				for (Method method : entity.getClass().getMethods()) {
-
-					if (method.getName().endsWith(upperCaseFirstLetter(field.getName()))) {
-
-						validMethods.add(method);
-						
-						break;
-					}
-				}
+					&& !field.isAnnotationPresent(ManyToOne.class)
+					&& !field.isAnnotationPresent(Transient.class)
+					&& !field.isAnnotationPresent(Embedded.class)
+					&& !field.isAnnotationPresent(EmbeddedId.class)
+					&& !field.isAnnotationPresent(OneToOne.class)
+					&& !field.isAnnotationPresent(OneToMany.class)) {
+				
+				validFields.add(field);
 			}
 		}
 
-		return validMethods;
+		return validFields;
 	}
 	
-	private static List<String> getEmbeddedEntityFields(Object entity) {
+	private static List<Field> getEmbeddedEntityFields(Class<?> clazz) {
 		
-		List<String> fields = new ArrayList<String>();
+		List<Field> fields = new ArrayList<Field>();
 		
-		for (Field field : entity.getClass().getDeclaredFields()) {
+		for (Field field : clazz.getDeclaredFields()) {
 
 			if (!EXCLUDED_FIELD.equals(field.getName())
 					&& (field.isAnnotationPresent(Embedded.class)
 							|| field.isAnnotationPresent(EmbeddedId.class))
-							|| field.isAnnotationPresent(OneToOne.class)
-							|| field.isAnnotationPresent(OneToMany.class)) {
+//							|| field.isAnnotationPresent(OneToOne.class)
+//							|| field.isAnnotationPresent(ManyToOne.class)
+							) {
 
-				fields.add(upperCaseFirstLetter(field.getName()));
+				fields.add(field);
 			}
 		}
 		
 		return fields;
-	}
-
-	private static String upperCaseFirstLetter(String str) {
-
-		return str.replace(
-			String.valueOf(str.charAt(0)), 
-			String.valueOf(str.charAt(0)).toUpperCase()
-		);
 	}
 
 	private static String getPathValueFromClass(String fullyQualifiedClassName) {

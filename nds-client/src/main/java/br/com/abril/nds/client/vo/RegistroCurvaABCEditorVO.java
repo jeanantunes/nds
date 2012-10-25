@@ -19,12 +19,33 @@ public class RegistroCurvaABCEditorVO extends RegistroCurvaABCDTO implements
 	 * Serial Version UID
 	 */
 	private static final long serialVersionUID = 3849170873913801404L;
-
-	@Export(label = "Número", exhibitionOrder = 1)
+	
+	@Export(label="Ranking", exhibitionOrder = 1)
+	private Long rkEditor;
+	
+	@Export(label = "Número", exhibitionOrder = 2)
 	private Long codigoEditor;
 
-	@Export(label = "Cota", exhibitionOrder = 2)
+	@Export(label = "Cota", exhibitionOrder = 3)
 	private String nomeEditor;
+
+	@Export(label = "Reparte", exhibitionOrder = 4)
+	private String reparteFormatado;
+	
+	@Export(label = "Venda de Exemplares", exhibitionOrder = 5)
+	private String vendaExemplaresFormatado;
+	
+	@Export(label = "% Venda de Exemplares", exhibitionOrder = 6)
+	private String porcentagemVendaExemplaresFormatado;
+	
+	@Export(label = "Faturamento da Capa", exhibitionOrder = 7)
+	private String faturamentoCapaFormatado;
+	
+	@Export(label = "Mg Distrib R$", exhibitionOrder = 10)
+	private String valorMargemDistribuidorFormatado;
+	
+	@Export(label = "Mg Distrib %", exhibitionOrder = 11)
+	private String porcentagemMargemDistribuidorFormatado;
 
 	private BigInteger reparte;
 
@@ -34,17 +55,9 @@ public class RegistroCurvaABCEditorVO extends RegistroCurvaABCDTO implements
 
 	private BigDecimal faturamentoCapa;
 
-	@Export(label = "Reparte", exhibitionOrder = 3)
-	private String reparteFormatado;
-	
-	@Export(label = "Venda de Exemplares", exhibitionOrder = 5)
-	private String vendaExemplaresFormatado;
-	
-	@Export(label = "% Venda de Exemplares", exhibitionOrder = 5)
-	private String porcentagemVendaExemplaresFormatado;
-	
-	@Export(label = "Faturamento da Capa", exhibitionOrder = 6)
-	private String faturamentoCapaFormatado;
+	private BigDecimal valorMargemDistribuidor;
+		
+	private BigDecimal porcentagemMargemDistribuidor;
 	
 	private Date dataDe;
 	
@@ -80,6 +93,7 @@ public class RegistroCurvaABCEditorVO extends RegistroCurvaABCDTO implements
 
 	public void setVendaExemplares(BigInteger vendaExemplares) {
 		this.vendaExemplares = vendaExemplares;
+		vendaExemplaresFormatado = CurrencyUtil.formatarValorTruncado(vendaExemplares);
 	}
 
 	public BigDecimal getFaturamentoCapa() {
@@ -88,6 +102,7 @@ public class RegistroCurvaABCEditorVO extends RegistroCurvaABCDTO implements
 
 	public void setFaturamentoCapa(BigDecimal faturamentoCapa) {
 		this.faturamentoCapa = faturamentoCapa;
+		faturamentoCapaFormatado = CurrencyUtil.formatarValor(faturamentoCapa);
 	}
 
 	public BigDecimal getPorcentagemVendaExemplares() {
@@ -113,14 +128,15 @@ public class RegistroCurvaABCEditorVO extends RegistroCurvaABCDTO implements
 
 	public void setReparte(BigInteger reparte) {
 		this.reparte = reparte;
+		this.reparteFormatado = CurrencyUtil.formatarValorTruncado(reparte);
 	}
 
-	@Export(label = "Participação", exhibitionOrder = 7)
+	@Export(label = "Participação", exhibitionOrder = 8)
 	public String getParticipacaoString() {
 		return getParticipacaoFormatado();
 	}
 
-	@Export(label = "Participação Acumulada", exhibitionOrder = 8)
+	@Export(label = "Participação Acumulada", exhibitionOrder = 9)
 	public String getParticipacaoAcumuladaString() {
 		return getParticipacaoAcumuladaFormatado();
 	}
@@ -189,5 +205,48 @@ public class RegistroCurvaABCEditorVO extends RegistroCurvaABCDTO implements
 		faturamentoCapaFormatado = CurrencyUtil.formatarValor(faturamentoCapa);
 	}
 
+	public Long getRkEditor() {
+		return rkEditor;
+	}
+
+	public void setRkEditor(Long rkEditor) {
+		this.rkEditor = rkEditor;
+	}
+
+	public BigDecimal getValorMargemDistribuidor() {
+		return valorMargemDistribuidor;
+	}
+
+	public void setValorMargemDistribuidor(BigDecimal valorMargemDistribuidor) {
+		this.valorMargemDistribuidor = valorMargemDistribuidor;
+		this.valorMargemDistribuidorFormatado = CurrencyUtil.formatarValor(valorMargemDistribuidor);
+	}
+
+	public BigDecimal getPorcentagemMargemDistribuidor() {
+		return porcentagemMargemDistribuidor;
+	}
+
+	public void setPorcentagemMargemDistribuidor(BigDecimal porcentagemMargemDistribuidor) {
+		this.porcentagemMargemDistribuidor = porcentagemMargemDistribuidor;
+		this.porcentagemMargemDistribuidorFormatado = CurrencyUtil.formatarValor(porcentagemMargemDistribuidor);
+	}
 	
+	
+	public String getValorMargemDistribuidorFormatado(){
+		return this.valorMargemDistribuidorFormatado;
+	}
+	
+	public String getPorcentagemMargemDistribuidorFormatado() {
+		return porcentagemMargemDistribuidorFormatado;
+	}
+
+	public void setPorcentagemMargemDistribuidorFormatado(
+			String porcentagemMargemDistribuidorFormatado) {
+		this.porcentagemMargemDistribuidorFormatado = porcentagemMargemDistribuidorFormatado;
+	}
+	
+	public void setValorMargemDistribuidorFormatado(
+			String valorMargemDistribuidorFormatado) {
+		this.valorMargemDistribuidorFormatado = valorMargemDistribuidorFormatado;
+	}
 }
