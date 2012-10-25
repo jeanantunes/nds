@@ -46,6 +46,7 @@ import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.ChamadaEncalheRepository;
+import br.com.abril.nds.util.Intervalo;
 
 public class ChamadaEncalheRepositoryImplTest extends
 		AbstractRepositoryImplTest {
@@ -475,4 +476,5 @@ public class ChamadaEncalheRepositoryImplTest extends
 
 
 	}
+	
 }

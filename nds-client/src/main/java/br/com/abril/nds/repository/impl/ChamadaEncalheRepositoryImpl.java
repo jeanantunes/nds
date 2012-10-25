@@ -459,12 +459,12 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		
 		if (paginacaoVO != null)		
 			hql.append(getOrderByobterBandeirasNoIntervalo(paginacaoVO)); 
-				
+		
 		Query query = this.getSession().createQuery(hql.toString());
 		
 		query.setParameter("dataDe", intervalo.getDe());
 		query.setParameter("dataAte", intervalo.getAte());
-				
+		
 		if (paginacaoVO != null && paginacaoVO.getPosicaoInicial() != null) { 
 			
 			query.setFirstResult(paginacaoVO.getPosicaoInicial());
@@ -482,7 +482,7 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 	
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" select count(chamadaEncalhe.id) ")
+		hql.append(" select count(distinct chamadaEncalhe.id) ")
 			.append(" from ChamadaEncalhe chamadaEncalhe ")
 			.append(" join chamadaEncalhe.produtoEdicao produtoEdicao ")
 			.append(" join produtoEdicao.produto produto ")
@@ -490,9 +490,8 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 			.append(" join produto.fornecedores fornecedores ")
 			.append(" join fornecedores.juridica pessoaFornecedor ")
 			.append(" where chamadaEncalhe.dataRecolhimento >= :dataDe ")
-			.append(" and chamadaEncalhe.dataRecolhimento <= :dataAte ")
-			.append(" group by chamadaEncalhe.id ");
-		
+			.append(" and chamadaEncalhe.dataRecolhimento <= :dataAte ");
+				
 		Query query = this.getSession().createQuery(hql.toString());
 		
 		query.setParameter("dataDe", intervalo.getDe());
