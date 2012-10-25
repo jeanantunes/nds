@@ -13,6 +13,8 @@ import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.DescontoLogistica;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 import br.com.abril.nds.repository.impl.AbstractRepository;
+import br.com.abril.nds.service.DescontoLogisticaService;
+import br.com.abril.nds.service.DescontoService;
 
 /**
  * @author Jones.Costa
@@ -30,6 +32,9 @@ public class EMS0113MessageProcessor extends AbstractRepository implements Messa
 	@Autowired
 	private DistribuidorService distribuidorServiceImpl;
 	
+	@Autowired
+	private DescontoLogisticaService descontoLogisticaService;
+	
 	@Override
 	public void preProcess(AtomicReference<Object> tempVar) {
 		// TODO Auto-generated method stub
@@ -42,16 +47,26 @@ public class EMS0113MessageProcessor extends AbstractRepository implements Messa
 		
 		if(distribuidorServiceImpl.isDistribuidor(input.getCodigoDistribuidor())){
 			
-			DescontoLogistica descontoLogistica = new DescontoLogistica();
+			DescontoLogistica descontoLogistica = descontoLogisticaService.obterPorTipoDesconto(input.getTipoDesconto());
 			
-			descontoLogistica.setId(null);//auto increment
-			descontoLogistica.setTipoDesconto(input.getTipoDesconto());
-			descontoLogistica.setPercentualDesconto(input.getPercentDesconto());
-			descontoLogistica.setPercentualPrestacaoServico(input.getPercentPrestServico());
-			descontoLogistica.setDataInicioVigencia(input.getDataInicioDesconto());
-			
-			getSession().persist(descontoLogistica);
-			
+			if (null != descontoLogistica ) {
+								
+				descontoLogistica.setPercentualDesconto(input.getPercentDesconto());
+				descontoLogistica.setPercentualPrestacaoServico(input.getPercentPrestServico());
+				descontoLogistica.setDataInicioVigencia(input.getDataInicioDesconto());
+				
+				getSession().merge(descontoLogistica);
+			} else {
+				descontoLogistica = new DescontoLogistica();
+				
+				descontoLogistica.setId(null);//auto increment
+				descontoLogistica.setTipoDesconto(input.getTipoDesconto());
+				descontoLogistica.setPercentualDesconto(input.getPercentDesconto());
+				descontoLogistica.setPercentualPrestacaoServico(input.getPercentPrestServico());
+				descontoLogistica.setDataInicioVigencia(input.getDataInicioDesconto());
+				
+				getSession().persist(descontoLogistica);
+			}
 		}
 
 		else{
