@@ -1007,6 +1007,11 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 		for(String key : param.keySet()){
 			query.setParameter(key, param.get(key));
 		}
+		
+		if (filtro.getEdicaoProduto() != null && !filtro.getEdicaoProduto().isEmpty()) {
+			query.setParameterList("edicaoProduto", (filtro.getEdicaoProduto()));
+		}
+		
 		return (ResultadoCurvaABCCotaDTO) query.list().get(0);
 	}
 
@@ -1036,6 +1041,10 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 
 		for(String key : param.keySet()){
 			query.setParameter(key, param.get(key));
+		}
+		
+		if (filtro.getEdicaoProduto() != null && !filtro.getEdicaoProduto().isEmpty()) {
+			query.setParameterList("edicaoProduto", (filtro.getEdicaoProduto()));
 		}
 
 		return complementarCurvaABCCota((List<RegistroCurvaABCCotaDTO>) query.list());
@@ -1075,7 +1084,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 		}
 
 		if (filtro.getEdicaoProduto() != null && !filtro.getEdicaoProduto().isEmpty()) {
-			hql.append("AND estoqueProdutoCota.produtoEdicao.numeroEdicao = :edicaoProduto ");
+			hql.append("AND estoqueProdutoCota.produtoEdicao.numeroEdicao in( :edicaoProduto ) ");
 		}
 
 		if (filtro.getCodigoEditor() != null && !filtro.getCodigoEditor().isEmpty() && !filtro.getCodigoEditor().equals("0")) {
@@ -1146,10 +1155,6 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 
 		if (filtro.getNomeProduto() != null && !filtro.getNomeProduto().isEmpty()) {
 			param.put("nomeProduto", filtro.getNomeProduto()+"%");
-		}
-
-		if (filtro.getEdicaoProduto() != null && !filtro.getEdicaoProduto().isEmpty()) {
-			param.put("edicaoProduto", filtro.getEdicaoProduto());
 		}
 
 		if (filtro.getCodigoEditor() != null && !filtro.getCodigoEditor().isEmpty() && !filtro.getCodigoFornecedor().equals("0")) {
