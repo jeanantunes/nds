@@ -21,7 +21,7 @@ public class FiltroCurvaABCCotaDTO extends FiltroCurvaABCDTO implements Serializ
 
 	public FiltroCurvaABCCotaDTO(Date dataDe, Date dataAte,
 			String codigoFornecedor, String codigoProduto, String nomeProduto,
-			String edicaoProduto, String codigoEditor, Integer codigoCota,
+			List<Long> edicaoProduto, String codigoEditor, Integer codigoCota,
 			String nomeCota, String municipio) {
 		this.setDataDe(dataDe);
 		this.setDataAte(dataAte);
