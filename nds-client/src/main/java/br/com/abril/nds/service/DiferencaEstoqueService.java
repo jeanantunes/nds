@@ -105,4 +105,6 @@ public interface DiferencaEstoqueService {
 	
 	boolean existeDiferencaPorNota(Long idProdutoEdicao, Date dataNotaEnvio, Integer numeroCota);
 	
+	byte[] imprimirRelatorioFaltasSobras(Date dataMovimento) throws Exception;
+	
 }

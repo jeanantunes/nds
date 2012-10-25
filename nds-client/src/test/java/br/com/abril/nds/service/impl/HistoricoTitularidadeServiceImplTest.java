@@ -508,7 +508,7 @@ public class HistoricoTitularidadeServiceImplTest extends AbstractRepositoryImpl
 			Assert.assertEquals(historicoCheque.getEmissao(), cheque.getEmissao().getTime());
 			Assert.assertEquals(historicoCheque.getImagem(), cheque.getChequeImage().getImagem());
 			Assert.assertEquals(historicoCheque.getValidade(), cheque.getValidade().getTime());
-			Assert.assertEquals(historicoCheque.getValor(), new BigDecimal(cheque.getValor()));
+			Assert.assertEquals(historicoCheque.getValor(), cheque.getValor());
 		}
 	}
 	
@@ -541,7 +541,7 @@ public class HistoricoTitularidadeServiceImplTest extends AbstractRepositoryImpl
 			Assert.assertEquals(historicoImovel.getNumeroRegistro(), imovel.getNumeroRegistro());
 			Assert.assertEquals(historicoImovel.getObservacao(), imovel.getObservacao());
 			Assert.assertEquals(historicoImovel.getProprietario(), imovel.getProprietario());
-			Assert.assertEquals(historicoImovel.getValor(), new BigDecimal(imovel.getValor()));
+			Assert.assertEquals(historicoImovel.getValor(), imovel.getValor());
 		}
 	}
 	
@@ -554,7 +554,7 @@ public class HistoricoTitularidadeServiceImplTest extends AbstractRepositoryImpl
 			HistoricoTitularidadeCotaNotaPromissoria historicoNotaPromissoria = iterator.next();
 			
 			Assert.assertEquals(historicoNotaPromissoria.getValorExtenso(), notaPromissoria.getValorExtenso());
-			Assert.assertEquals(historicoNotaPromissoria.getValor(), new BigDecimal(notaPromissoria.getValor()));
+			Assert.assertEquals(historicoNotaPromissoria.getValor(), notaPromissoria.getValor());
 			Assert.assertEquals(historicoNotaPromissoria.getVencimento(), notaPromissoria.getVencimento().getTime());
 		}
 	}
@@ -1031,7 +1031,7 @@ public class HistoricoTitularidadeServiceImplTest extends AbstractRepositoryImpl
 		imovel.setNumeroRegistro("123");
 		imovel.setObservacao("observacao");
 		imovel.setProprietario("proprietario");
-		imovel.setValor(150000.0);
+		imovel.setValor(new BigDecimal(150000));
 
 		List<Imovel> imoveis = new ArrayList<Imovel>();
 		imoveis.add(imovel);
@@ -1062,7 +1062,7 @@ public class HistoricoTitularidadeServiceImplTest extends AbstractRepositoryImpl
 	    
 		CaucaoLiquida caucaoLiquida = new CaucaoLiquida();
 		caucaoLiquida.setAtualizacao(Calendar.getInstance());
-		caucaoLiquida.setValor(415.0);
+		caucaoLiquida.setValor(new BigDecimal(415));
 		List<CaucaoLiquida> caucoesLiquidas = new ArrayList<CaucaoLiquida>();
 		caucoesLiquidas.add(caucaoLiquida);
 		garantiaCaucaoLiquida.setData(new Date());
@@ -1088,7 +1088,7 @@ public class HistoricoTitularidadeServiceImplTest extends AbstractRepositoryImpl
 		cheque.setNumeroBanco("numeroBanco");
 		cheque.setNumeroCheque("numeroCheque");
 		cheque.setValidade(new Date() );
-		cheque.setValor(150.0);
+		cheque.setValor(new BigDecimal(150));
 
 		CotaGarantiaChequeCaucao garantiaChequeCaucao = new CotaGarantiaChequeCaucao();
 		garantiaChequeCaucao.setData(new Date());
@@ -1103,7 +1103,7 @@ public class HistoricoTitularidadeServiceImplTest extends AbstractRepositoryImpl
 	private CotaGarantiaNotaPromissoria getNotaPromissoria() {
 		
 		NotaPromissoria notaPromissoria = new NotaPromissoria();
-		notaPromissoria.setValor(1000.0);
+		notaPromissoria.setValor(new BigDecimal(1000));
 		notaPromissoria.setValorExtenso("Mil");
 		notaPromissoria.setVencimento(new Date());
 		

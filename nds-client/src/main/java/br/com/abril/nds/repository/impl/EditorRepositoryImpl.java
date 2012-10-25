@@ -63,6 +63,11 @@ public class EditorRepositoryImpl extends AbstractRepositoryModel<Editor, Long> 
 		for(String key : param.keySet()){
 			query.setParameter(key, param.get(key));
 		}
+		
+		if (filtro.getEdicaoProduto() != null && !filtro.getEdicaoProduto().isEmpty()) {
+			query.setParameterList("edicaoProduto", (filtro.getEdicaoProduto()));
+		}
+		
 		return (ResultadoCurvaABCEditor) query.list().get(0);
 	}
 
@@ -87,6 +92,10 @@ public class EditorRepositoryImpl extends AbstractRepositoryModel<Editor, Long> 
 		
 		for(String key : param.keySet()){
 			query.setParameter(key, param.get(key));
+		}
+		
+		if (filtro.getEdicaoProduto() != null && !filtro.getEdicaoProduto().isEmpty()) {
+			query.setParameterList("edicaoProduto", (filtro.getEdicaoProduto()));
 		}
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(RegistroCurvaABCEditorVO.class));
@@ -129,7 +138,7 @@ public class EditorRepositoryImpl extends AbstractRepositoryModel<Editor, Long> 
 		}
 
 		if (filtro.getEdicaoProduto() != null && !filtro.getEdicaoProduto().isEmpty()) {
-			hql.append("AND estoqueProdutoCota.produtoEdicao.numeroEdicao = :edicaoProduto ");
+			hql.append("AND estoqueProdutoCota.produtoEdicao.numeroEdicao in( :edicaoProduto ) ");
 		}
 		
 		if (filtro.getCodigoEditor() != null && !filtro.getCodigoEditor().isEmpty() && !filtro.getCodigoEditor().equals("0")) {
@@ -195,10 +204,6 @@ public class EditorRepositoryImpl extends AbstractRepositoryModel<Editor, Long> 
 
 		if (filtro.getNomeProduto() != null && !filtro.getNomeProduto().isEmpty()) {
 			param.put("nomeProduto", filtro.getNomeProduto() +"%");
-		}
-
-		if (filtro.getEdicaoProduto() != null && !filtro.getEdicaoProduto().isEmpty()) {
-			param.put("edicaoProduto", Long.parseLong(filtro.getEdicaoProduto()));
 		}
 
 		if (filtro.getCodigoEditor() != null && !filtro.getCodigoEditor().isEmpty() && !filtro.getCodigoFornecedor().equals("0")) {
@@ -428,7 +433,7 @@ public class EditorRepositoryImpl extends AbstractRepositoryModel<Editor, Long> 
 		}
 
 		if (filtro.getEdicaoProduto() != null && !filtro.getEdicaoProduto().isEmpty()) {
-			hql.append("AND produtoEdicao.NUMERO_EDICAO = :edicaoProduto ");
+			hql.append("AND produtoEdicao.NUMERO_EDICAO in( :edicaoProduto ) ");
 		}
 		
 		if (filtro.getCodigoEditor() != null && !filtro.getCodigoEditor().isEmpty() && !filtro.getCodigoEditor().equals("0")) {

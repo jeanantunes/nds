@@ -39,7 +39,7 @@ public class RelatorioDetalheGarantiaVO implements Serializable{
 	public RelatorioDetalheGarantiaVO() {
 		super();
 	}
-	
+
 	public RelatorioDetalheGarantiaVO(RelatorioDetalheGarantiaDTO dto) {
 		this.cota = dto.getCota().toString();
 		this.nome = dto.getNome();
