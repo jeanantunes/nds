@@ -636,7 +636,7 @@ var PDV =  $.extend(true, {
 						$( this ).dialog( "close" );
 					}
 				},
-				form: $("#dialog-excluirPdv", this.workspace).parents("form")
+				form: $("#workspaceCota", this.workspace)
 			});
 		},
 		
@@ -668,7 +668,7 @@ var PDV =  $.extend(true, {
 						$(this).dialog("close");
 					}
 				},
-				form: $("#dialog-cancelar-cadastro-pdv", this.workspace).parents("form")
+				form: $("#workspaceCota", this.workspace)
 			});
 		},
 	
@@ -744,8 +744,8 @@ var PDV =  $.extend(true, {
                                                         $("#dialog-confirmaPontoPrincipal", this.workspace).dialog("close");
                                                         PDV.fecharModalCadastroPDV = true;
                                                     }
-
-                                                }
+                                                },
+                                                form: $("#workspaceCota", this.workspace)
                                             });
                                         } else {
                                             $("#dialog-confirmaPontoPrincipal", this.workspace).dialog("close");
@@ -1119,7 +1119,7 @@ var PDV =  $.extend(true, {
 												}
 
 											},
-											form: $("#dialog-confirmaPontoPrincipal", this.workspace).parents("form")
+											form: $("#workspaceCota", this.workspace)
 										});
 									} else {
 										$("#dialog-confirmaPontoPrincipal", this.workspace).dialog("close");
