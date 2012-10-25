@@ -2,7 +2,6 @@ var relatorioVendasController = $.extend(true, {
 	init : function() {
 		
 		$("#numeroCota", relatorioVendasController.workspace).numeric();
-		$("#edicaoProduto", relatorioVendasController.workspace).numeric();
 		
 		$("#datepickerDe", relatorioVendasController.workspace).datepicker({
 			showOn : "button",
@@ -78,25 +77,25 @@ var relatorioVendasController = $.extend(true, {
 			}, {
 				display : 'Produto',
 				name : 'nomeProduto',
-				width : 110,
+				width : 160,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Edição',
 				name : 'edicaoProduto',
-				width : 80,
+				width : 60,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Reparte',
-				name : 'reparteFormatado',
-				width : 80,
+				name : 'reparte',
+				width : 50,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Venda Exs.',
-				name : 'vendaExemplaresFormatado',
-				width : 90,
+				name : 'vendaExemplares',
+				width : 50,
 				sortable : true,
 				align : 'center'
 			}, {
@@ -105,12 +104,30 @@ var relatorioVendasController = $.extend(true, {
 				width : 50,
 				sortable : true,
 				align : 'right'
+			}, {
+				display : 'Faturamento R$',
+				name : 'faturamentoFormatado',
+				width : 70,
+				sortable : true,
+				align : 'right'
+			}, {
+				display : 'Margem Cota R$',
+				name : 'margemCotaFormatado',
+				width : 85,
+				sortable : true,
+				align : 'right'
+			}, {
+				display : 'Margem Distr R$',
+				name : 'margemDistribuidorFormatado',
+				width : 85,
+				sortable : true,
+				align : 'right'
 			} ],
 			sortname : "codigoProduto",
 			sortorder : "asc",
 			usepager : false,
 			useRp : false,
-			width : 560,
+			width : 800,
 			height : 255
 		});
 
@@ -118,6 +135,12 @@ var relatorioVendasController = $.extend(true, {
 			preProcess: relatorioVendasController.executarPreProcessamentoEditor,
 			dataType : 'json',
 			colModel : [ {
+				display : 'Ranking',
+				name : 'rkEditor',
+				width : 50,
+				sortable : true,
+				align : 'left'
+			},{
 				display : 'Código',
 				name : 'codigoEditor',
 				width : 60,
@@ -126,46 +149,58 @@ var relatorioVendasController = $.extend(true, {
 			}, {
 				display : 'Editor',
 				name : 'nomeEditor',
-				width : 210,
+				width : 90,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Reparte',
 				name : 'reparteFormatado',
-				width : 80,
+				width : 70,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Venda Exs.',
 				name : 'vendaExemplaresFormatado',
-				width : 80,
+				width : 65,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : '% Venda Exs.',
 				name : 'porcentagemVendaExemplaresFormatado',
-				width : 90,
+				width : 70,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Faturamento Capa R$',
 				name : 'faturamentoCapaFormatado',
-				width : 120,
+				width : 110,
 				sortable : true,
 				align : 'right'
 			}, {
 				display : 'Part. %',
 				name : 'participacaoFormatado',
-				width : 72,
+				width : 40,
 				sortable : true,
 				align : 'right'
 			}, {
 				display : 'Part. Acum. %',
 				name : 'participacaoAcumuladaFormatado',
-				width : 90,
+				width : 80,
 				sortable : true,
 				align : 'right'
 			}, {
+				display : 'Mg Distrib R$',
+				name : 'valorMargemDistribuidorFormatado',
+				width : 65,
+				sortable : true,
+				align : 'right'
+			}, {
+				display : 'Mg Distrib %',
+				name : 'porcentagemMargemDistribuidorFormatado',
+				width : 65,
+				sortable : true,
+				align : 'right'
+			},{
 				display : 'Hist.',
 				name : 'hist',
 				width : 30,
@@ -189,7 +224,7 @@ var relatorioVendasController = $.extend(true, {
 				display : 'Ranking',
 				name : 'rkCota',
 				width : 50,
-				sortable : false,
+				sortable : true,
 				align : 'left'
 			},{
 				display : 'Cota',
@@ -257,13 +292,13 @@ var relatorioVendasController = $.extend(true, {
 				display : 'Rk.Prod.',
 				name : 'rkProduto',
 				width : 50,
-				sortable : false,
+				sortable : true,
 				align : 'left'
 			},{
 				display : 'Rk.Cota.',
 				name : 'rkCota',
 				width : 50,
-				sortable : false,
+				sortable : true,
 				align : 'left'
 			},  {
 				display : 'Cota',
@@ -331,7 +366,7 @@ var relatorioVendasController = $.extend(true, {
 				display : 'Ranking',
 				name : 'rkProduto',
 				width : 50,
-				sortable : false,
+				sortable : true,
 				align : 'left'
 			},{
 				display : 'Código',
@@ -593,7 +628,7 @@ var relatorioVendasController = $.extend(true, {
 	},
 	
 	abrirPopUpHistoricoEditor : function(dataDe, dataAte, codigoEditora) {
-		$(".popEditorGrid").flexOptions({
+		$(".popEditorGrid",relatorioVendasController.workspace).flexOptions({
 			url: contextPath + "/lancamento/relatorioVendas/pesquisarHistoricoEditor",
 			params: [
 		         {name:'dataDe', value: dataDe},
@@ -656,7 +691,7 @@ var relatorioVendasController = $.extend(true, {
 		$("#dialog-editor", relatorioVendasController.workspace).dialog({
 			resizable : false,
 			height : 450,
-			width : 600,
+			width : 850,
 			modal : true,
 			buttons : {
 				"Fechar" : function() {
@@ -664,7 +699,8 @@ var relatorioVendasController = $.extend(true, {
 
 				},
 
-			}
+			},
+			form: $("#dialog-editor", this.workspace).parents("form")
 		});
 	},
 	
@@ -704,7 +740,7 @@ var relatorioVendasController = $.extend(true, {
 					     	  	'<img title="Histórico" src="' + contextPath + '/images/ico_detalhes.png" hspace="5" border="0px" />' +
 					  		    '</a>';
 					  		    
-			row.cell[8] = linkHistorico;
+			row.cell.hist = linkHistorico;
 		});
 		
 		$(".grids", relatorioVendasController.workspace).show();

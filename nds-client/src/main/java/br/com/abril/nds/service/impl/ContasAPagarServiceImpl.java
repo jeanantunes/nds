@@ -1,6 +1,7 @@
 package br.com.abril.nds.service.impl;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,8 +18,12 @@ import br.com.abril.nds.dto.ContasAPagarParcialDTO;
 import br.com.abril.nds.dto.ContasAPagarTotalDistribDTO;
 import br.com.abril.nds.dto.FlexiGridDTO;
 import br.com.abril.nds.dto.filtro.FiltroContasAPagarDTO;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.repository.ContasAPagarRepository;
 import br.com.abril.nds.service.ContasAPagarService;
+import br.com.abril.nds.service.RecolhimentoService;
+import br.com.abril.nds.util.Intervalo;
+import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.vo.PaginacaoVO;
 
 @Service
@@ -26,6 +31,9 @@ public class ContasAPagarServiceImpl implements ContasAPagarService {
 	
 	@Autowired 
 	private ContasAPagarRepository contasAPagarRepository;
+	
+	@Autowired
+	private RecolhimentoService recolhimentoService;
 
 	@Transactional
 	@Override
@@ -64,7 +72,7 @@ public class ContasAPagarServiceImpl implements ContasAPagarService {
 	@Override
 	public ContasAPagarGridPrincipalFornecedorDTO pesquisarPorDistribuidor(FiltroContasAPagarDTO filtro) {
 		
-		//TODO validar filtro e range de datas x semana ce
+		this.validarFiltro(filtro);
 		
 		ContasAPagarGridPrincipalFornecedorDTO retorno = new ContasAPagarGridPrincipalFornecedorDTO();
 		
@@ -91,6 +99,44 @@ public class ContasAPagarServiceImpl implements ContasAPagarService {
 		retorno.setSaldo(totalBruto.subtract(totalDesconto));
 		
 		return retorno;
+	}
+
+	private void validarFiltro(FiltroContasAPagarDTO filtro) {
+		
+		if (filtro == null){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Filtro de pesquisa inválido.");
+		}
+		
+		if (filtro.getCe() == null && (filtro.getDataDe() == null || filtro.getDataAte() == null)){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Intervalo de datas inválido.");
+		}
+		
+		if (filtro.getDataDe() != null && filtro.getDataAte() != null){
+		
+			if (filtro.getDataDe().after(filtro.getDataAte())){
+				
+				throw new ValidacaoException(TipoMensagem.WARNING, "Intervalo de datas inválido.");
+			}
+		}
+		
+		if (filtro.getCe() != null){
+			
+			Intervalo<Date> intervaloCE = this.recolhimentoService.getPeriodoRecolhimento(null, filtro.getCe(), null);
+			
+			if (filtro.getDataDe() != null && filtro.getDataAte() != null){
+			
+				if (intervaloCE.getDe().after(filtro.getDataDe()) || intervaloCE.getAte().before(filtro.getDataAte())){
+					
+					throw new ValidacaoException(TipoMensagem.WARNING, "Intervalo informado fora da semana CE informada.");
+				}
+			} else {
+				
+				filtro.setDataDe(intervaloCE.getDe());
+				filtro.setDataAte(intervaloCE.getAte());
+			}
+		}
 	}
 
 	@Transactional
