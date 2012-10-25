@@ -40,10 +40,15 @@ public class FiltroPesquisarHistoricoEditorDTO implements Serializable {
 
 	public enum ColunaOrdenacaoPesquisarHistoricoEditorDTO {
 
-		CODIGO_PRODUTO("codigoProduto"), NOME_PRODUTO("nomeProduto"), EDICAO_PRODUTO(
-				"edicaoProduto"), REPARTE("reparte"), VENDA_EXEMPLARES(
-				"vendaExemplares"), PORCENTAGEM_VENDA_EXEMPLARES(
-				"porcentagemVenda");
+		CODIGO_PRODUTO("codigoProduto"), 
+		NOME_PRODUTO("nomeProduto"), 
+		EDICAO_PRODUTO("edicaoProduto"),
+		REPARTE("reparte"), 
+		VENDA_EXEMPLARES("vendaExemplares"),
+		PORCENTAGEM_VENDA_EXEMPLARES("porcentagemVendaFormatado"),
+		FATURAMENTO("faturamentoFormatado"),
+		MARGEM_COTA("margemCotaFormatado"),
+		MARGEM_DISTRIBUIDOR("margemDistribuidorFormatado");
 
 		private String nomeColuna;
 

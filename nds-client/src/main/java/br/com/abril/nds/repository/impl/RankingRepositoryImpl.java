@@ -3,6 +3,7 @@ package br.com.abril.nds.repository.impl;
 import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.repository.RankingRepository;
 
 @Repository
@@ -39,7 +40,7 @@ public class RankingRepositoryImpl extends AbstractRepository  implements Rankin
 		Query query  = getSession().createSQLQuery(sql.toString());
 		query.setParameter("idProduto", idProduto);
 		
-		Double  retorno = (Double) query.uniqueResult(); 
+		Number  retorno = (Number)  query.uniqueResult(); 
 		
 		return (retorno == null)?0L:retorno.longValue();
 	}
@@ -82,8 +83,8 @@ public class RankingRepositoryImpl extends AbstractRepository  implements Rankin
 		query.setParameter("idProduto", idProduto);
 		query.setParameter("idCota", idCota);
 		
-		Double  retorno = (Double) query.uniqueResult(); 
-		
+		Number  retorno = (Number)  query.uniqueResult(); 
+	
 		return (retorno == null)?0L:retorno.longValue();
 	}
 	
@@ -121,7 +122,7 @@ public class RankingRepositoryImpl extends AbstractRepository  implements Rankin
 		query.setParameter("idProduto", idProduto);
 		query.setParameter("idCota", idCota);
 		
-		Double  retorno = (Double) query.uniqueResult(); 
+		Number  retorno = (Number)  query.uniqueResult(); 
 		
 		return (retorno == null)?0L:retorno.longValue();
 		
@@ -163,8 +164,92 @@ public class RankingRepositoryImpl extends AbstractRepository  implements Rankin
 		Query query  = getSession().createSQLQuery(sql.toString());
 		query.setParameter("idCota", idCota);
 		
-		Double  retorno = (Double) query.uniqueResult(); 
+		Number  retorno = (Number)  query.uniqueResult(); 
 		
 		return (retorno == null)?0L:retorno.longValue();
+	}
+	
+	public Long obterRankingEditor(Long codigoEditor){
+		
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append("select selectRank.rankCota ")
+			
+			.append(" from ")
+			
+			.append(" (select  @rankEditor\\:=@rankEditor+1 as rankCota  ,subSelect.faturamentoCapa,subSelect.codigoEditor ")
+	 		
+			.append("	from (select @rankEditor\\:=0) as init, ")
+			
+	 		.append("	  	  (select ")
+			
+			.append("			  editor.CODIGO as codigoEditor,  ")
+			
+			.append("		     pessoaEditor.RAZAO_SOCIAL as nomeEditor,  ")
+			
+			.append("		     sum((estoqueProduto.QTDE_RECEBIDA-estoqueProduto.QTDE_DEVOLVIDA)*(produtoEdicao.PRECO_VENDA-(  ")
+			
+			.append("		    	 coalesce((select viewDesconto.DESCONTO  ")
+			
+			.append("		        from   VIEW_DESCONTO viewDesconto  ")
+			
+			.append("		        where  ")
+			
+			.append("		            viewDesconto.COTA_ID=estoqueProduto.COTA_ID  ")
+			
+			.append("		            and viewDesconto.PRODUTO_EDICAO_ID=estoqueProduto.PRODUTO_EDICAO_ID  ")
+			
+			.append("		            and viewDesconto.FORNECEDOR_ID=fornecedor.ID),  ")
+			
+			.append("		        0)*produtoEdicao.PRECO_VENDA/100))) as faturamentoCapa   ")
+				    
+			.append("	     from  ")
+			
+			.append("	        ESTOQUE_PRODUTO_COTA as estoqueProduto  ")
+			
+			.append("	     left outer join  MOVIMENTO_ESTOQUE_COTA as movimentos  on estoqueProduto.ID=movimentos.ESTOQUE_PROD_COTA_ID  ")
+			
+			.append("	     left outer join  PRODUTO_EDICAO as produtoEdicao on estoqueProduto.PRODUTO_EDICAO_ID=produtoEdicao.ID  ")
+			
+			.append("	     left outer join  PRODUTO as produto  on produtoEdicao.PRODUTO_ID=produto.ID ") 
+			
+			.append("	     left outer join  PRODUTO_FORNECEDOR as produtoFornecedor on produto.ID=produtoFornecedor.PRODUTO_ID  ")
+			
+			.append("	     left outer join  FORNECEDOR as fornecedor on produtoFornecedor.fornecedores_ID=fornecedor.ID  ")
+			
+			.append("	     left outer join  EDITOR as editor on produto.EDITOR_ID=editor.ID  ")
+			
+			.append("	     left outer join  PESSOA as pessoaEditor  on editor.JURIDICA_ID=pessoaEditor.ID  ")
+			
+			.append("	     cross join       PESSOA as pessoaJuridica  ")
+			
+			.append("	     cross join       TIPO_MOVIMENTO as tipoMovimento  ")
+			
+			.append("	  where  ")
+			
+			.append("   	 movimentos.TIPO_MOVIMENTO_ID=tipoMovimento.ID  ")	
+			
+			.append("        and tipoMovimento.GRUPO_MOVIMENTO_ESTOQUE= :grupoMovimentoEstoque  ")
+			
+			.append("        and editor.JURIDICA_ID=pessoaJuridica.ID   ")
+			    	
+			.append("	   group by  editor.CODIGO , pessoaJuridica.RAZAO_SOCIAL ")
+				        
+			.append("	   order by faturamentoCapa ")
+			   
+			.append("	   ) as subSelect	") 
+	   
+			.append("	)as selectRank ")
+	   
+			.append("where selectRank.codigoEditor = :codigoEditor ");
+		
+		Query query  = getSession().createSQLQuery(sql.toString());
+		query.setParameter("codigoEditor", codigoEditor);
+		query.setParameter("grupoMovimentoEstoque", GrupoMovimentoEstoque.RECEBIMENTO_REPARTE.toString());
+		
+		Number  retorno = (Number)  query.uniqueResult(); 
+		
+		return (retorno == null)?0L:retorno.longValue();
+		
 	}
 }
