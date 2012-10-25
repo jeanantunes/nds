@@ -86,6 +86,7 @@ public enum Permissao
 	ROLE_FINANCEIRO_HISTORICO_INADIMPLENCIA("Inadimplência",                          	  	   			   Permissao.ROLE_FINANCEIRO),
 	ROLE_FINANCEIRO_CONSIGNADO_COTA("Consulta Consignado",                                                 Permissao.ROLE_FINANCEIRO),
 	ROLE_FINANCEIRO_TIPO_DESCONTO_COTA("Tipo de Desconto Cota",								  		   	   Permissao.ROLE_FINANCEIRO),
+	ROLE_FINANCEIRO_RELATORIO_DE_GARANTIAS("Relatório de Garantias",									   Permissao.ROLE_FINANCEIRO),
 	ROLE_FINANCEIRO_PARAMETROS_COBRANCA("Parâmetros de Cobrança",                                	 	   Permissao.ROLE_FINANCEIRO), 
 	ROLE_FINANCEIRO_HELP("Help",           															 	   Permissao.ROLE_FINANCEIRO),
 	

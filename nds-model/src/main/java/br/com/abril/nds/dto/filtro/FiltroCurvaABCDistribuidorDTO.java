@@ -27,7 +27,7 @@ public class FiltroCurvaABCDistribuidorDTO extends FiltroCurvaABCDTO implements 
 	
 	public FiltroCurvaABCDistribuidorDTO(Date dataDe, Date dataAte,
 			String codigoFornecedor, String codigoProduto, String nomeProduto,
-			String edicaoProduto, String codigoEditor, Integer codigoCota,
+			List<Long> edicaoProduto, String codigoEditor, Integer codigoCota,
 			String nomeCota, String municipio) {
 		this.setDataDe(dataDe);
 		this.setDataAte(dataAte);

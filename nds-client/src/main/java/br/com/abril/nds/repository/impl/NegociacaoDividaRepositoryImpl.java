@@ -54,8 +54,11 @@ public class NegociacaoDividaRepositoryImpl extends AbstractRepositoryModel<Nego
 		}
 	
 		Query query = getSession().createQuery(hql.toString());
-		query.setFirstResult((filtro.getPaginacaoVO().getPaginaAtual() - 1) * filtro.getPaginacaoVO().getQtdResultadosPorPagina());
-		query.setMaxResults(filtro.getPaginacaoVO().getQtdResultadosPorPagina());
+		if (filtro.getPaginacaoVO() != null) {
+			query.setFirstResult((filtro.getPaginacaoVO().getPaginaAtual() - 1) * filtro.getPaginacaoVO().getQtdResultadosPorPagina());
+			query.setMaxResults(filtro.getPaginacaoVO().getQtdResultadosPorPagina());
+		}
+		
 		this.setParametrosObterCotaPorNumero(query, filtro);
 
 		query.setResultTransformer(new AliasToBeanResultTransformer(NegociacaoDividaDTO.class));

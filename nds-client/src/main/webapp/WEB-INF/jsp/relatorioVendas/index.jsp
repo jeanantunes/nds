@@ -6,6 +6,9 @@
 </style>
 <script language="javascript" type="text/javascript" src='scripts/jquery.numeric.js'></script>
 <script language="javascript" type="text/javascript" src='scripts/relatorioVendas.js'></script>
+<script language="javascript" type="text/javascript" src='scripts/jquery.justInput.js'></script>
+
+
 <script language="javascript" type="text/javascript">
 
 $(function(){
