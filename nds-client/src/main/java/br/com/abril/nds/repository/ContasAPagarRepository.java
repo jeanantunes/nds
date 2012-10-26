@@ -3,6 +3,9 @@ package br.com.abril.nds.repository;
 import java.math.BigDecimal;
 import java.util.List;
 
+import br.com.abril.nds.dto.ContasAPagarConsignadoDTO;
+import br.com.abril.nds.dto.ContasAPagarEncalheDTO;
+import br.com.abril.nds.dto.ContasAPagarFaltasSobrasDTO;
 import br.com.abril.nds.dto.ContasAPagarConsultaProdutoDTO;
 import br.com.abril.nds.dto.ContasAPagarGridPrincipalProdutoDTO;
 import br.com.abril.nds.dto.ContasApagarConsultaPorDistribuidorDTO;
@@ -38,6 +41,12 @@ public interface ContasAPagarRepository {
 	 * @return Long
 	 */
 	Long pesquisarCountPorProduto(FiltroContasAPagarDTO filtro);
+	
+	List<ContasAPagarConsignadoDTO> pesquisarDetalheConsignado(FiltroContasAPagarDTO filtro);
+
+	List<ContasAPagarEncalheDTO> pesquisarDetalheEncalhe(FiltroContasAPagarDTO filtro);
+
+	List<ContasAPagarFaltasSobrasDTO> pesquisarDetalheFaltasSobras(FiltroContasAPagarDTO filtro);
 
 	List<ContasAPagarConsultaProdutoDTO> obterProdutos(FiltroContasAPagarDTO filtro);
 	
