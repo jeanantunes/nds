@@ -1190,8 +1190,11 @@ var COTA_CNPJ = $.extend(true, {
 
     carregarDadosCNPJ: function(idCampo){
 
-        $.postJSON(contextPath + "/cadastro/cota/obterDadosCNPJ",
-            {numeroCnpj:+$(idCampo, this.workspace).val()} ,
+    	var cnpj = $(idCampo, this.workspace).val();
+    	
+    	var params = {"numeroCnpj":cnpj};
+    	
+        $.postJSON(contextPath + "/cadastro/cota/obterDadosCNPJ", params ,
             function(result){
 
                 if (result.email){$("#email", this.workspace).val(result.email);}

@@ -60,7 +60,7 @@ public class GeradorArquivoCobrancaBancoServiceImpl implements GeradorArquivoCob
 	@Transactional
 	public void prepararGerarArquivoCobrancaCnab() throws IOException {
 		
-		Long controleArquivoCobranca = processarGeracaoArquivoCobrancaCnab();
+		Long controleArquivoCobranca = this.processarGeracaoArquivoCobrancaCnab();
 		
 		if (controleArquivoCobranca != null) {
 			
@@ -120,16 +120,20 @@ public class GeradorArquivoCobrancaBancoServiceImpl implements GeradorArquivoCob
 			
 			List<DetalheSegmentoP> listaDetalheSegmentoP = entry.getValue();
 			
-			Long quantidadeRegistros = 0L;
+			Long numeroLote = 0L;
 			
 			for (DetalheSegmentoP detalheSegmentoP : listaDetalheSegmentoP) {
 				
-				conteudoLinhas.add(manager.export(detalheSegmentoP));
+				numeroLote++;
 				
-				quantidadeRegistros ++;
+				detalheSegmentoP.setLote(numeroLote);
+				
+				detalheSegmentoP.setNumeroRegistro(null); //TODO Sera o mesmo numero do lote
+				
+				conteudoLinhas.add(manager.export(detalheSegmentoP));
 			}
 		
-			trailer = this.getTrailer(banco, quantidadeRegistros);
+			trailer = this.getTrailer(banco, numeroLote);
 			
 			conteudoLinhas.add(manager.export(trailer));
 			
@@ -227,7 +231,7 @@ public class GeradorArquivoCobrancaBancoServiceImpl implements GeradorArquivoCob
 		return header;
 	}
 	
-	private Trailer getTrailer(Banco banco,Long quantidadeRegistros) {
+	private Trailer getTrailer(Banco banco, Long quantidadeRegistros) {
 		
 		Trailer trailer = new Trailer();
 		
@@ -272,11 +276,9 @@ public class GeradorArquivoCobrancaBancoServiceImpl implements GeradorArquivoCob
 		
 		List<Boleto> cobrancas = boletoRepository.obterBoletosGeradosNaDataOperacaoDistribuidor(distribuidor.getDataOperacao());
 		
-		Long numeroLote = 1L;
-		
 		for(Boleto cobranca : cobrancas){
 			
-			DetalheSegmentoP detalhe = obterDetalheSegmentoP(cobranca, numeroLote++);
+			DetalheSegmentoP detalhe = this.obterDetalheSegmentoP(cobranca);
 			
 			Banco banco = cobranca.getBanco();
 			
@@ -299,7 +301,7 @@ public class GeradorArquivoCobrancaBancoServiceImpl implements GeradorArquivoCob
 	 * 
 	 * @return DetalheSegmentoP
 	 */
-	private DetalheSegmentoP obterDetalheSegmentoP(Boleto cobranca,Long numeroLote) {
+	private DetalheSegmentoP obterDetalheSegmentoP(Boleto cobranca) {
 		
 		DetalheSegmentoP detalheSegmentoP = new DetalheSegmentoP();
 		
@@ -308,10 +310,7 @@ public class GeradorArquivoCobrancaBancoServiceImpl implements GeradorArquivoCob
 		//Controle
 		detalheSegmentoP.setCodigoBanco(Long.parseLong(banco.getNumeroBanco()));
 		
-		detalheSegmentoP.setLote(numeroLote);
-		
 		//Serviço
-		detalheSegmentoP.setNumeroRegistro(null); //TODO Sera o mesmo numero do lote
 		detalheSegmentoP.setSegmento(null);//TODO
 		detalheSegmentoP.setCodigoMovimento(null);//TODO;
 		
