@@ -182,7 +182,10 @@ public class ContasAPagarController {
 
 		this.session.setAttribute(FILTRO_DETALHE_CONSIGNADO, filtro);
 		
-		ContasAPagarTotalDistribDTO<ContasAPagarConsignadoDTO> dto = contasAPagarService.pesquisarDetalheConsignado(filtro, sortname, sortorder, rp, page);
+		PaginacaoVO paginacaoVO = new PaginacaoVO(page, rp, sortorder, sortname);
+		filtro.setPaginacaoVO(paginacaoVO);
+		
+		ContasAPagarTotalDistribDTO<ContasAPagarConsignadoDTO> dto = contasAPagarService.pesquisarDetalheConsignado(filtro);
 		
 		ContasAPagarTotalDistribVO<ContasAPagarConsignadoVO, ContasAPagarConsignadoDTO> vo = 
 				new ContasAPagarTotalDistribVO<ContasAPagarConsignadoVO, ContasAPagarConsignadoDTO>(dto);
@@ -200,7 +203,10 @@ public class ContasAPagarController {
 
 		this.session.setAttribute(FILTRO_DETALHE_ENCALHE, filtro);
 		
-		ContasAPagarTotalDistribDTO<ContasAPagarEncalheDTO> dto = contasAPagarService.pesquisarDetalheEncalhe(filtro, sortname, sortorder, rp, page);
+		PaginacaoVO paginacaoVO = new PaginacaoVO(page, rp, sortorder, sortname);
+		filtro.setPaginacaoVO(paginacaoVO);
+		
+		ContasAPagarTotalDistribDTO<ContasAPagarEncalheDTO> dto = contasAPagarService.pesquisarDetalheEncalhe(filtro);
 		
 		ContasAPagarTotalDistribVO<ContasAPagarEncalheVO, ContasAPagarEncalheDTO> vo = 
 				new ContasAPagarTotalDistribVO<ContasAPagarEncalheVO, ContasAPagarEncalheDTO>(dto);
@@ -217,8 +223,11 @@ public class ContasAPagarController {
 	public void pesquisarFaltasSobras(FiltroContasAPagarDTO filtro, String sortname, String sortorder, int rp, int page) {
 
 		this.session.setAttribute(FILTRO_DETALHE_FALTAS_SOBRAS, filtro);
+		
+		PaginacaoVO paginacaoVO = new PaginacaoVO(page, rp, sortorder, sortname);
+		filtro.setPaginacaoVO(paginacaoVO);
 
-		ContasAPagarTotalDistribDTO<ContasAPagarFaltasSobrasDTO> dto = contasAPagarService.pesquisarDetalheFaltasSobras(filtro, sortname, sortorder, rp, page);
+		ContasAPagarTotalDistribDTO<ContasAPagarFaltasSobrasDTO> dto = contasAPagarService.pesquisarDetalheFaltasSobras(filtro);
 		
 		ContasAPagarTotalDistribVO<ContasAPagarFaltasSobrasVO, ContasAPagarFaltasSobrasDTO> vo = 
 				new ContasAPagarTotalDistribVO<ContasAPagarFaltasSobrasVO, ContasAPagarFaltasSobrasDTO>(dto);
@@ -296,7 +305,7 @@ public class ContasAPagarController {
 		
 		FiltroContasAPagarDTO filtro = (FiltroContasAPagarDTO) session.getAttribute(FILTRO_DETALHE_CONSIGNADO);
 		
-		ContasAPagarTotalDistribDTO<ContasAPagarConsignadoDTO> dto = contasAPagarService.pesquisarDetalheConsignado(filtro, null, null, 0, 0);
+		ContasAPagarTotalDistribDTO<ContasAPagarConsignadoDTO> dto = contasAPagarService.pesquisarDetalheConsignado(filtro);
 		
 		List <ContasAPagarConsignadoVO> listVO = new ArrayList<ContasAPagarConsignadoVO>();
 		
@@ -317,7 +326,7 @@ public class ContasAPagarController {
 		
 		FiltroContasAPagarDTO filtro = (FiltroContasAPagarDTO) session.getAttribute(FILTRO_DETALHE_ENCALHE);
 		
-		ContasAPagarTotalDistribDTO<ContasAPagarEncalheDTO> dto = contasAPagarService.pesquisarDetalheEncalhe(filtro, null, null, 0, 0);
+		ContasAPagarTotalDistribDTO<ContasAPagarEncalheDTO> dto = contasAPagarService.pesquisarDetalheEncalhe(filtro);
 		
 		List <ContasAPagarEncalheVO> listVO = new ArrayList<ContasAPagarEncalheVO>();
 		
@@ -340,7 +349,7 @@ public class ContasAPagarController {
 		
 		FiltroContasAPagarDTO filtro = (FiltroContasAPagarDTO) session.getAttribute(FILTRO_CONTAS_A_PAGAR);
 		
-		ContasAPagarTotalDistribDTO<ContasAPagarFaltasSobrasDTO> dto = contasAPagarService.pesquisarDetalheFaltasSobras(filtro, null, null, 0, 0);
+		ContasAPagarTotalDistribDTO<ContasAPagarFaltasSobrasDTO> dto = contasAPagarService.pesquisarDetalheFaltasSobras(filtro);
 
 		List <ContasAPagarFaltasSobrasVO> listVO = new ArrayList<ContasAPagarFaltasSobrasVO>();
 		

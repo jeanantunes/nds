@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -30,6 +31,7 @@ import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 
 import br.com.abril.nds.model.Origem;
+import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.Lancamento;
@@ -157,6 +159,9 @@ public class ProdutoEdicao implements Serializable {
 	 */
 	@Embedded
 	private Dimensao dimensao;
+	
+	@OneToMany(mappedBy = "produtoEdicao")
+	private List<Diferenca> diferencas;
 	
 	public Long getId() {
 		return id;
@@ -505,6 +510,14 @@ public class ProdutoEdicao implements Serializable {
 	 */
 	public void setOrigem(Origem origem) {
 		this.origem = origem;
+	}
+
+	public List<Diferenca> getDiferencas() {
+		return diferencas;
+	}
+
+	public void setDiferencas(List<Diferenca> diferencas) {
+		this.diferencas = diferencas;
 	}
 	
 }

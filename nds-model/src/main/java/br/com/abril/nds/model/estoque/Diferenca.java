@@ -54,6 +54,7 @@ public class Diferenca implements Serializable {
 	private ItemRecebimentoFisico itemRecebimentoFisico;
 	
 	@ManyToOne(optional = false)
+	@JoinColumn(name = "PRODUTO_EDICAO")
 	private ProdutoEdicao produtoEdicao;
 	
 	@Enumerated(EnumType.STRING)
