@@ -40,7 +40,7 @@ public class ContasAPagarServiceImpl implements ContasAPagarService {
 	@Transactional
 	@Override
 	public List<ContasAPagarConsultaProdutoDTO> pesquisarProdutos(FiltroContasAPagarDTO filtro) {
-		return null;
+		return contasAPagarRepository.obterProdutos(filtro);
 	}
 
 	@Transactional
@@ -110,11 +110,6 @@ public class ContasAPagarServiceImpl implements ContasAPagarService {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Filtro de pesquisa inválido.");
 		}
 		
-		if (filtro.getCe() == null && (filtro.getDataDe() == null || filtro.getDataAte() == null)){
-			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Intervalo de datas inválido.");
-		}
-		
 		if (filtro.getDataDe() != null && filtro.getDataAte() != null){
 		
 			if (filtro.getDataDe().after(filtro.getDataAte())){
@@ -143,64 +138,109 @@ public class ContasAPagarServiceImpl implements ContasAPagarService {
 
 	@Transactional
 	@Override
-	public ContasAPagarTotalDistribDTO<ContasAPagarConsignadoDTO> pesquisarDetalheConsignado(FiltroContasAPagarDTO filtro, String sortname, String sortorder, int rp, int page) {
+	public ContasAPagarTotalDistribDTO<ContasAPagarConsignadoDTO> pesquisarDetalheConsignado(FiltroContasAPagarDTO filtro) {
 		
-		ContasAPagarTotalDistribDTO<ContasAPagarConsignadoDTO> to = new ContasAPagarTotalDistribDTO<ContasAPagarConsignadoDTO>();
+		List<ContasAPagarConsignadoDTO> lista = 
+				this.contasAPagarRepository.pesquisarDetalheConsignado(filtro);
 		
-		ContasAPagarConsignadoDTO dto = new ContasAPagarConsignadoDTO();
-		dto.setCodigo("1");
-		dto.setDiferenca(1);
-		dto.setEdicao(1);
-		dto.setFornecedor("FC");
-		dto.setMotivo("motivo");
-		dto.setNfe("nfe");
-		dto.setPrecoCapa(BigDecimal.TEN);
-		dto.setPrecoComDesconto(BigDecimal.TEN);
-		dto.setProduto("Veja");
-		dto.setReparteFinal(1);
-		dto.setReparteSugerido(1);
-		dto.setValor(BigDecimal.TEN);
-		dto.setValorComDesconto(BigDecimal.TEN);
+		ContasAPagarTotalDistribDTO<ContasAPagarConsignadoDTO> dto = 
+				new ContasAPagarTotalDistribDTO<ContasAPagarConsignadoDTO>();
 		
-		to.setGrid(new ArrayList<ContasAPagarConsignadoDTO>());
-		to.getGrid().add(dto);
-		to.getGrid().add(dto);
-		to.getGrid().add(dto);
-		to.getGrid().add(dto);
-		to.getGrid().add(dto);
-		to.getGrid().add(dto);
-		to.getGrid().add(dto);
-		to.getGrid().add(dto);
-		to.getGrid().add(dto);
-		to.getGrid().add(dto);
-		to.getGrid().add(dto);
+		dto.setGrid(lista);
 		
-		ContasAPagarDistribDTO dtoDistr1 = new ContasAPagarDistribDTO();
-		dtoDistr1.setNome("Distr1"); dtoDistr1.setTotal(BigDecimal.TEN);
-		ContasAPagarDistribDTO dtoDistr2 = new ContasAPagarDistribDTO();
-		dtoDistr2.setNome("Distr2"); dtoDistr2.setTotal(BigDecimal.TEN);
-		ContasAPagarDistribDTO dtoDistr3 = new ContasAPagarDistribDTO();
-		dtoDistr3.setNome("Distr3"); dtoDistr3.setTotal(BigDecimal.TEN);
+		List<ContasAPagarDistribDTO> contas = new ArrayList<ContasAPagarDistribDTO>();
+		ContasAPagarDistribDTO conta = new ContasAPagarDistribDTO();
+		String fornecedor = null;
 		
-		to.setTotalDistrib(new ArrayList<ContasAPagarDistribDTO>()); 
-		to.getTotalDistrib().add(dtoDistr1);
-		to.getTotalDistrib().add(dtoDistr2);
-		to.getTotalDistrib().add(dtoDistr3);
+		for (ContasAPagarConsignadoDTO consignado : lista){
+			
+			conta.setNome(consignado.getFornecedor());
+			conta.setTotal(conta.getTotal().add(consignado.getPrecoCapa()));
+			
+			if (!consignado.getFornecedor().equals(fornecedor)){
+				
+				contas.add(conta);
+				fornecedor = consignado.getFornecedor();
+				conta = new ContasAPagarDistribDTO();
+			}
+		}
 		
-		return to;
+		contas.add(conta);
+		
+		dto.setTotalDistrib(contas);
+		
+		return dto;
 	}
 
 	@Transactional
 	@Override
-	public ContasAPagarTotalDistribDTO<ContasAPagarEncalheDTO> pesquisarDetalheEncalhe(FiltroContasAPagarDTO filtro, String sortname, String sortorder, int rp, int page) {
-		// TODO Auto-generated method stub
-		return null;
+	public ContasAPagarTotalDistribDTO<ContasAPagarEncalheDTO> pesquisarDetalheEncalhe(FiltroContasAPagarDTO filtro) {
+		
+		List<ContasAPagarEncalheDTO> lista = 
+				this.contasAPagarRepository.pesquisarDetalheEncalhe(filtro);
+		
+		ContasAPagarTotalDistribDTO<ContasAPagarEncalheDTO> dto = 
+				new ContasAPagarTotalDistribDTO<ContasAPagarEncalheDTO>();
+		
+		dto.setGrid(lista);
+		
+		List<ContasAPagarDistribDTO> contas = new ArrayList<ContasAPagarDistribDTO>();
+		ContasAPagarDistribDTO conta = new ContasAPagarDistribDTO();
+		String fornecedor = null;
+		
+		for (ContasAPagarEncalheDTO encalhe : lista){
+			
+			conta.setNome(encalhe.getFornecedor());
+			conta.setTotal(conta.getTotal().add(encalhe.getPrecoCapa()));
+			
+			if (!encalhe.getFornecedor().equals(fornecedor)){
+				
+				contas.add(conta);
+				fornecedor = encalhe.getFornecedor();
+				conta = new ContasAPagarDistribDTO();
+			}
+		}
+		
+		contas.add(conta);
+		
+		dto.setTotalDistrib(contas);
+		
+		return dto;
 	}
 
 	@Transactional
 	@Override
-	public ContasAPagarTotalDistribDTO<ContasAPagarFaltasSobrasDTO> pesquisarDetalheFaltasSobras(FiltroContasAPagarDTO filtro, String sortname, String sortorder, int rp, int page) {
-		// TODO Auto-generated method stub
-		return null;
+	public ContasAPagarTotalDistribDTO<ContasAPagarFaltasSobrasDTO> pesquisarDetalheFaltasSobras(FiltroContasAPagarDTO filtro) {
+		
+		List<ContasAPagarFaltasSobrasDTO> lista = 
+				this.contasAPagarRepository.pesquisarDetalheFaltasSobras(filtro);
+		
+		ContasAPagarTotalDistribDTO<ContasAPagarFaltasSobrasDTO> dto = 
+				new ContasAPagarTotalDistribDTO<ContasAPagarFaltasSobrasDTO>();
+		
+		dto.setGrid(lista);
+		
+		List<ContasAPagarDistribDTO> contas = new ArrayList<ContasAPagarDistribDTO>();
+		ContasAPagarDistribDTO conta = new ContasAPagarDistribDTO();
+		String fornecedor = null;
+		
+		for (ContasAPagarFaltasSobrasDTO faltasSobras : lista){
+			
+			conta.setNome(faltasSobras.getFornecedor());
+			conta.setTotal(conta.getTotal().add(faltasSobras.getPrecoCapa()));
+			
+			if (!faltasSobras.getFornecedor().equals(fornecedor)){
+				
+				contas.add(conta);
+				fornecedor = faltasSobras.getFornecedor();
+				conta = new ContasAPagarDistribDTO();
+			}
+		}
+		
+		contas.add(conta);
+		
+		dto.setTotalDistrib(contas);
+		
+		return dto;
 	}
 }
