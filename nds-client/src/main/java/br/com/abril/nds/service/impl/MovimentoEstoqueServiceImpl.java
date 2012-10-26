@@ -112,7 +112,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 		
 		BigInteger total = BigInteger.ZERO;
 		
-		MovimentoEstoqueCota movimentoEstoqueCota;
+		MovimentoEstoqueCota movimentoEstoqueCota = null;
 		
 		for( EstudoCota estudoCota:listaEstudoCota ) {
 			

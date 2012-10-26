@@ -47,10 +47,8 @@ relatorioServicosEntregaController = $.extend(true, {
 	
 	insereLinks : function(data) {
 		
-		var tipoMensagem = data.mensagens.tipoMensagem;
-        var listaMensagens = data.mensagens.listaMensagens;
-        if (tipoMensagem && listaMensagens) {
-              exibirMensagem(tipoMensagem, listaMensagens);
+		if (data.mensagens) {
+              exibirMensagem(data.mensagens.tipoMensagem, data.mensagens.listaMensagens);
         } else { 
         	 
         	$.each(data.rows, function(index, value) {
