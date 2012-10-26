@@ -47,7 +47,7 @@ public class IdentificacaoDestinatario implements Serializable {
 	/**
 	 * IE
 	 */
-	@Column(name="IE_DESTINATARIO", nullable=true, length=14)
+	@Column(name="IE_DESTINATARIO", nullable=true, length=20)
 	private String inscricaoEstual;
 	
 	
