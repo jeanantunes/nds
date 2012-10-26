@@ -461,37 +461,37 @@ var contasAPagarController = $.extend(true, {
 				display : 'Código',
 				name : 'codigo',
 				width : 40,
-				sortable : true,
+				sortable : false,
 				align : 'left'
 			}, {
 				display : 'Produto',
 				name : 'produto',
 				width : 60,
-				sortable : true,
+				sortable : false,
 				align : 'left'
 			}, {
 				display : 'Edição',
 				name : 'edicao',
 				width : 40,
-				sortable : true,
+				sortable : false,
 				align : 'center'
 			}, {
 				display : 'Preço Capa R$',
 				name : 'precoCapa',
 				width : 80,
-				sortable : true,
+				sortable : false,
 				align : 'right',
 			}, {
 				display : 'Fornecedor',
 				name : 'fornecedor',
 				width : 100,
-				sortable : true,
+				sortable : false,
 				align : 'left',
 			}, {
 				display : 'Editor',
 				name : 'editor',
 				width : 100,
-				sortable : true,
+				sortable : false,
 				align : 'left'
 			}, {
 				display : '',
