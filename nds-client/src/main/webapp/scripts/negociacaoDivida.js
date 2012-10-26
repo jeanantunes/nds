@@ -14,7 +14,7 @@ var negociacaoDividaController = $.extend(true, {
 		$(".grids", this.workspace).hide();
 		
 		$.postJSON(contextPath + '/cadastro/cota/pesquisarPorNumero',
-				"numeroCota=" + numeroCota, 
+				{numeroCota:numeroCota}, 
 				function(result) {
 					$('#negociacaoDivida_statusCota').html(result.status);
 					$('#negociacaoDivida_nomeCota').html(result.nome);
@@ -176,11 +176,11 @@ var negociacaoDividaController = $.extend(true, {
               },
               {
             	  name: "diaInicio",
-            	  value: $("#quinzenal", negociacaoDividaController.workspace).val()
+            	  value: $("#diaInputQuinzenal1", negociacaoDividaController.workspace).val()
               },
               {
             	  name: "diaFim",
-            	  value: $("#mensal", negociacaoDividaController.workspace).val()
+            	  value: $("#diaInputQuinzenal2", negociacaoDividaController.workspace).val()
               },
               {
             	  name: "negociacaoAvulsa",
@@ -192,7 +192,7 @@ var negociacaoDividaController = $.extend(true, {
               },
               {
             	  name: "ativarAposPagar",
-            	  value: $("[name=radioAtivarApos]:checked", negociacaoDividaController.workspace).val()
+            	  value: $("[name=radioAtivarApos]:checked", negociacaoDividaController.workspace).val() ? $("[name=radioAtivarApos]:checked", negociacaoDividaController.workspace).val() : ""
               }
 		];
 		

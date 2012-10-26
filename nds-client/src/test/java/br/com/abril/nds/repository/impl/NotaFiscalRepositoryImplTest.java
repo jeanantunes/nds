@@ -15,8 +15,6 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.dto.NfeDTO;
-import br.com.abril.nds.dto.filtro.FiltroImpressaoNFEDTO;
-import br.com.abril.nds.dto.filtro.FiltroImpressaoNFEDTO.ColunaOrdenacaoImpressaoNFE;
 import br.com.abril.nds.dto.filtro.FiltroMonitorNfeDTO;
 import br.com.abril.nds.dto.filtro.FiltroMonitorNfeDTO.OrdenacaoColuna;
 import br.com.abril.nds.fixture.Fixture;
@@ -347,8 +345,8 @@ public class NotaFiscalRepositoryImplTest  extends AbstractRepositoryImplTest {
 
 		save(produtoCE);
 
-		produtoEdicaoCE = Fixture.produtoEdicao(codigoProdutoEdicao, numeroEdicao, pacotePadrao, peb,
-				peso, precoCusto, precoVenda, codigoDeBarras, null, produtoCE, expectativaVenda, parcial);
+		produtoEdicaoCE = Fixture.produtoEdicao(numeroEdicao, pacotePadrao, peb, peso,
+				precoCusto, precoVenda, codigoDeBarras, produtoCE, expectativaVenda, parcial);
 
 		save(produtoEdicaoCE);
 		
@@ -487,39 +485,6 @@ public class NotaFiscalRepositoryImplTest  extends AbstractRepositoryImplTest {
 		filtro.setPaginacao(paginacao);
 	
 		filtro.setOrdenacaoColuna(OrdenacaoColuna.EMISSAO);
-		
-		return filtro;
-		
-	}
-	
-	@Test
-	public void buscarNFeParaImpressao() {
-		
-		FiltroImpressaoNFEDTO filtro = obterFiltroImpressaoNfeDTOOrdenadoPorCota();
-		
-		List<NotaFiscal> listaNotaFiscal = notaFiscalRepository.buscarNFeParaImpressao(filtro);
-		
-		Assert.assertNotNull(listaNotaFiscal);
-		
-		int tamanhoEsperado = 1;
-		
-		Assert.assertEquals(tamanhoEsperado, listaNotaFiscal.size());
-		
-	}
-	
-	private FiltroImpressaoNFEDTO obterFiltroImpressaoNfeDTOOrdenadoPorCota() {
-		
-		FiltroImpressaoNFEDTO filtro = new FiltroImpressaoNFEDTO();
-		
-		PaginacaoVO paginacao = new PaginacaoVO();
-
-		paginacao.setOrdenacao(PaginacaoVO.Ordenacao.ASC);
-		paginacao.setPaginaAtual(1);
-		paginacao.setQtdResultadosPorPagina(5);
-
-		filtro.setPaginacao(paginacao);
-	
-		filtro.setOrdenacaoColuna(ColunaOrdenacaoImpressaoNFE.COTA);
 		
 		return filtro;
 		

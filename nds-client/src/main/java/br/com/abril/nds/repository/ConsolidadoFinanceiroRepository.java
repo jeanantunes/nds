@@ -10,6 +10,7 @@ import br.com.abril.nds.dto.FiltroConsolidadoConsignadoCotaDTO;
 import br.com.abril.nds.dto.ViewContaCorrenteCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsolidadoEncalheCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsolidadoVendaCotaDTO;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.financeiro.ConsolidadoFinanceiroCota;
 
 public interface ConsolidadoFinanceiroRepository extends Repository<ConsolidadoFinanceiroCota, Long> {
@@ -31,4 +32,6 @@ public interface ConsolidadoFinanceiroRepository extends Repository<ConsolidadoF
 	Date buscarDiaUltimaDividaGerada();
 
 	Long obterQuantidadeDividasGeradasData(Date data);
+
+	ConsolidadoFinanceiroCota buscarPorCotaEData(Cota cota, java.sql.Date data);
 }

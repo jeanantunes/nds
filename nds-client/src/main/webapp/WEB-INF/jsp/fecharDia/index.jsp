@@ -45,7 +45,7 @@
 	<form id="form-popup-validacao-recebimento-fisico">
 		<div id="dialog-recebe-fisico" title="Recebimento F�sico" style="display:none;">
 		<fieldset style="width:350px;">
-	    	<legend>Recebimento Físico</legend>
+	    	<legend>Recebimento F�sico</legend>
 	        <table class="recebeFisicoGrid"></table>
 	    </fieldset>
 	    <br clear="all" />
@@ -148,13 +148,13 @@
 	<form id="form-repartes">
 		<div id="dialog-repartes" title="Movimento" style="display:none;">
 			<fieldset style="width:850px;">
-		    	<legend>Lançamento</legend>
+		    	<legend>Lan�amento</legend>
 		        <table class="reparteDialogGrid"></table>
 		    </fieldset>
 		    <br clear="all" />
 		    <span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="../images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
 		
-		<span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="../images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
+			<span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="../images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
 		
 		</div>
 	</form>
@@ -313,31 +313,31 @@
       </tr>
       <tr>
         <td align="left" style="border-bottom:1px solid #ccc;">(+) Sobras</td>
-        <td align="right" style="border-bottom:1px solid #ccc;">83,90</td>
+        <td align="right" style="border-bottom:1px solid #ccc;"><div id="totalSobras"></div></td>
       </tr>
       <tr>
         <td align="left" style="border-bottom:1px solid #ccc;">(-) Faltas</td>
-        <td align="right" style="border-bottom:1px solid #ccc;">143,62</td>
+        <td align="right" style="border-bottom:1px solid #ccc;"><div id="totalFaltas"></div></td>
       </tr>
       <tr>
         <td align="left" style="border-bottom:1px solid #ccc;">(+) Transferência</td>
-        <td align="right" style="border-bottom:1px solid #ccc;">0,00</td>
+        <td align="right" style="border-bottom:1px solid #ccc;"><div id="totalTransferencia"></div></td>
       </tr>
       <tr>
         <td align="left" style="border-bottom:1px solid #ccc;">(=) A Distribuir</td>
-        <td align="right" style="border-bottom:1px solid #ccc;">135.311,38</td>
+        <td align="right" style="border-bottom:1px solid #ccc;"><div id="totalADistribuir"></div></td>
         </tr>
       <tr>
         <td align="left" style="border-bottom:1px solid #ccc;">Distribuido</td>
-        <td align="right" style="border-bottom:1px solid #ccc;">135.227,48</td>
+        <td align="right" style="border-bottom:1px solid #ccc;"><div id="totalDistribuido"></div></td>
         </tr>
       <tr>
         <td align="left" style="border-bottom:1px solid #ccc;">Sobra Dist.</td>
-        <td align="right" style="border-bottom:1px solid #ccc;">83,90</td>
+        <td align="right" style="border-bottom:1px solid #ccc;"><div id="totalSobraDistribuido"></div></td>
         </tr>
       <tr>
         <td align="left" style="border-bottom:1px solid #ccc;">Diferença</td>
-        <td align="right" style="border-bottom:1px solid #ccc;">0,00</td>
+        <td align="right" style="border-bottom:1px solid #ccc;"><div id="totalDiferenca"></div></td>
       </tr>
       <tr>
         <td align="left">&nbsp;</td>
@@ -352,26 +352,26 @@
       </tr>
       <tr>
         <td align="left" style="border-bottom:1px solid #ccc;">Lógico</td>
-        <td align="right" style="border-bottom:1px solid #ccc;">&nbsp;</td>
+        <td align="right" style="border-bottom:1px solid #ccc;"><div id="totalEncalheLogico"></div></td>
       </tr>
       <tr>
         <td width="130" align="left" style="border-bottom:1px solid #ccc;">Físico</td>
-        <td width="62" align="right" style="border-bottom:1px solid #ccc;">71.826,79</td>
+        <td width="62" align="right" style="border-bottom:1px solid #ccc;"><div id="totalEncalheFisico"></div></td>
       </tr>
       <tr>
         <td align="left" style="border-bottom:1px solid #ccc;">Juramentado</td>
-        <td align="right" style="border-bottom:1px solid #ccc;">71.789,79</td>
+        <td align="right" style="border-bottom:1px solid #ccc;"><div id="totalEncalheJuramentada"></div></td>
       </tr>
       <tr>
         <td align="left" style="border-bottom:1px solid #ccc;">Venda</td>
-        <td align="right" style="border-bottom:1px solid #ccc;"><a href="javascript:;" onclick="fecharDiaController.popup_vendasTot();">10.000,00</a></td>
+        <td align="right" style="border-bottom:1px solid #ccc;"><a href="javascript:;" onclick="fecharDiaController.popup_vendasTot();"><div id="vendaEncalhe"></div></a></td>
       </tr>
       <tr>
-        <td align="left" style="border-bottom:1px solid #ccc;">Sobras em</td>
+        <td align="left" style="border-bottom:1px solid #ccc;">Sobras</td>
         <td align="right" style="border-bottom:1px solid #ccc;">37,00</td>
       </tr>
       <tr>
-        <td align="left" style="border-bottom:1px solid #ccc;">Faltas em</td>
+        <td align="left" style="border-bottom:1px solid #ccc;">Faltas</td>
         <td align="right" style="border-bottom:1px solid #ccc;">37,00</td>
       </tr>
       <tr>
@@ -391,15 +391,15 @@
         </tr>
       <tr>
         <td width="109" align="left" style="border-bottom:1px solid #ccc;">Estoque Lógico</td>
-        <td width="103" align="right" style="border-bottom:1px solid #ccc;">505,47</td>
+        <td width="103" align="right" style="border-bottom:1px solid #ccc;"><div id="totalSuplementarEstoqueLogico"></div></td>
         </tr>
       <tr>
         <td align="left" style="border-bottom:1px solid #ccc;">Transferências</td>
-        <td align="right" style="border-bottom:1px solid #ccc;">542,35</td>
+        <td align="right" style="border-bottom:1px solid #ccc;"><div id="totalSuplementarTransferencia"></div></td>
         </tr>
       <tr>
         <td align="left" style="border-bottom:1px solid #ccc;">Vendas</td>
-        <td align="right" style="border-bottom:1px solid #ccc;"><a href="javascript:;" onclick="popup_vendasTot();">10.000,00</a></td>
+        <td align="right" style="border-bottom:1px solid #ccc;"><a href="javascript:;" onclick="popup_vendasTot();"><div id="totalSuplementarVenda"></div></a></td>
         </tr>
       <tr>
         <td align="left" style="border-bottom:1px solid #ccc;">Saldo</td>

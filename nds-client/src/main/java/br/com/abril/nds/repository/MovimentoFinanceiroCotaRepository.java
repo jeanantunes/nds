@@ -10,11 +10,11 @@ import br.com.abril.nds.dto.DebitoCreditoCotaDTO;
 import br.com.abril.nds.dto.MovimentoFinanceiroDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroDebitoCreditoDTO;
+import br.com.abril.nds.dto.filtro.FiltroRelatorioServicosEntregaDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
-import br.com.abril.nds.vo.PaginacaoVO;
 
 
 public interface MovimentoFinanceiroCotaRepository extends Repository<MovimentoFinanceiroCota, Long> {
@@ -122,7 +122,7 @@ public interface MovimentoFinanceiroCotaRepository extends Repository<MovimentoF
 	 * @param paginacaoVO 
 	 * @return
 	 */
-	List<CotaTransportadorDTO> obterResumoTransportadorCota(Date dataDe, Date dataAte, Long idTransportador, PaginacaoVO paginacaoVO); 
+	List<CotaTransportadorDTO> obterResumoTransportadorCota(FiltroRelatorioServicosEntregaDTO filtro); 
 	
 	/**
 	 * Obtém detalhes Financeiros do envio de Reparte das Cotas de determinado Transportador
@@ -133,5 +133,7 @@ public interface MovimentoFinanceiroCotaRepository extends Repository<MovimentoF
 	 * @param idCota - Identificador da cota
 	 * @return
 	 */
-	List<MovimentoFinanceiroDTO> obterDetalhesTrasportadorPorCota(Date dataDe, Date dataAte, Long idTransportador, Long idCota);
+	List<MovimentoFinanceiroDTO> obterDetalhesTrasportadorPorCota(FiltroRelatorioServicosEntregaDTO filtro);
+	
+	Long obterCountResumoTransportadorCota(FiltroRelatorioServicosEntregaDTO filtro);
 }

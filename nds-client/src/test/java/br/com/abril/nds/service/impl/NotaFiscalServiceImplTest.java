@@ -257,9 +257,9 @@ public class NotaFiscalServiceImplTest extends AbstractRepositoryImplTest {
 		produto.setEditor(abril);
 		save(produto);
 
-		produtoEdicaoVeja = Fixture.produtoEdicao("1", 1L, 10, 14,
-				new Long(100), BigDecimal.TEN, new BigDecimal(20),
-				"798765431", 1L, produto, null, false);
+		produtoEdicaoVeja = Fixture.produtoEdicao(1L, 10, 14, new Long(100),
+				BigDecimal.TEN, new BigDecimal(20), "798765431",
+				produto, null, false);
 		save(produtoEdicaoVeja);
 		// ////
 
@@ -270,9 +270,9 @@ public class NotaFiscalServiceImplTest extends AbstractRepositoryImplTest {
 		produtoComDesconto.setEditor(abril);
 		save(produtoComDesconto);
 
-		produtoEdicaoComDesconto = Fixture.produtoEdicao("1", 2L, 10, 14,
-				new Long(100), BigDecimal.TEN, new BigDecimal(20),
-				"798765431", 2L, produtoComDesconto, null, false);
+		produtoEdicaoComDesconto = Fixture.produtoEdicao(2L, 10, 14, new Long(100),
+				BigDecimal.TEN, new BigDecimal(20), "798765431",
+				produtoComDesconto, null, false);
 		save(produtoEdicaoComDesconto);
 		// ////
 
@@ -431,9 +431,9 @@ public class NotaFiscalServiceImplTest extends AbstractRepositoryImplTest {
 					PeriodicidadeProduto.ANUAL, tipo, 123, 123, new Long(100), TributacaoFiscal. TRIBUTADO);
 
 			ProdutoEdicao produtoEdicao = Fixture.produtoEdicao(
-					"codigoProdutoEdicao", 999L, 1111, 222, new Long(1000), new BigDecimal(99999),
-					new BigDecimal(99999), "codigoDeBarras", 4321L, produto,
-					new BigDecimal(99999), false);
+					999L, 1111, 222, new Long(1000), new BigDecimal(99999), new BigDecimal(99999),
+					"codigoDeBarras", produto, new BigDecimal(99999),
+					false);
 
 			ICMS icms = new ICMS();
 
@@ -504,7 +504,7 @@ public class NotaFiscalServiceImplTest extends AbstractRepositoryImplTest {
 	@Test
 	public void buscarNFeParaImpressao() {
 		FiltroImpressaoNFEDTO filtro = new FiltroImpressaoNFEDTO();
-		notaFiscalService.buscarNFeParaImpressao(filtro);
+		//notaFiscalService.buscarCotasParaImpressaoNFe(filtro);
 	}
 	
 }

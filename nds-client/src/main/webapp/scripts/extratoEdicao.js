@@ -43,7 +43,7 @@ var jsExtratoEdicao = $.extend(true, {
 	
 	pesquisarNomeFornecedor : function() {
 		
-		var data = "codigo=" + $("#codigo", jsExtratoEdicao.workspace).val();
+		var data = {codigo: $("#codigo", jsExtratoEdicao.workspace).val()};
 		
 		$.postJSON(contextPath + '/estoque/extratoEdicao/obterFornecedorDeProduto', data, 
 				function(result){
@@ -57,8 +57,8 @@ var jsExtratoEdicao = $.extend(true, {
 	
 	pesquisarPrecoCapa : function() {
 		
-		var data = "codigo=" + $("#codigo", jsExtratoEdicao.workspace).val() +
-		  		  "&edicao=" + $("#edicao", jsExtratoEdicao.workspace).val();
+		var data = {codigo:$("#codigo", jsExtratoEdicao.workspace).val(),
+		  		  edicao: $("#edicao", jsExtratoEdicao.workspace).val()};
 		
 		$.postJSON(contextPath + '/estoque/extratoEdicao/obterProdutoEdicao', data, function(result){
 			$("#precoCapa", jsExtratoEdicao.workspace).val(result);

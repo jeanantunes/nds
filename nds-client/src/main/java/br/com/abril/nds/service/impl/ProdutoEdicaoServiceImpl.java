@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.abril.nds.dto.FuroProdutoDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.Brinde;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Dimensao;
@@ -248,22 +249,22 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<ProdutoEdicaoDTO> pesquisarEdicoes(String codigoProduto, String nomeProduto,
+	public List<ProdutoEdicaoDTO> pesquisarEdicoes(String codigoProduto, String nome,
 			Intervalo<Date> dataLancamento, Intervalo<BigDecimal> preco , StatusLancamento statusLancamento,
 			String codigoDeBarras, boolean brinde,
 			String sortorder, String sortname, int page, int maxResults) {
 		
 		final int initialResult = ((page * maxResults) - maxResults);
-		return this.produtoEdicaoRepository.pesquisarEdicoes(codigoProduto, nomeProduto, dataLancamento, preco, statusLancamento, codigoDeBarras, brinde, sortorder, sortname, initialResult, maxResults);
+		return this.produtoEdicaoRepository.pesquisarEdicoes(codigoProduto, nome, dataLancamento, preco, statusLancamento, codigoDeBarras, brinde, sortorder, sortname, initialResult, maxResults);
 	}
 	
 	@Override
 	@Transactional(readOnly = true)
-	public Long countPesquisarEdicoes(String codigoProduto, String nomeProduto,
+	public Long countPesquisarEdicoes(String codigoProduto, String nome,
 			Intervalo<Date> dataLancamento, Intervalo<BigDecimal> preco , StatusLancamento statusLancamento,
 			String codigoDeBarras, boolean brinde) {
 		
-		return this.produtoEdicaoRepository.countPesquisarEdicoes(codigoProduto, nomeProduto, dataLancamento, preco, statusLancamento, codigoDeBarras, brinde);
+		return this.produtoEdicaoRepository.countPesquisarEdicoes(codigoProduto, nome, dataLancamento, preco, statusLancamento, codigoDeBarras, brinde);
 	}
 	
 	@Override
@@ -345,7 +346,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		if (indNovoProdutoEdicao) {
 			produtoEdicao = new ProdutoEdicao();
 			produtoEdicao.setProduto(produtoRepository.obterProdutoPorCodigo(codigoProduto));
-			produtoEdicao.setOrigemInterface(Boolean.FALSE);
+			produtoEdicao.setOrigem(Origem.MANUAL);
 		} else {
 			produtoEdicao = produtoEdicaoRepository.buscarPorId(dto.getId());
 		}		
@@ -392,8 +393,8 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		 */
 		if (produtoEdicaoRepository.isProdutoEdicaoJaPublicada(produtoEdicao.getId())) {
 			
-			// Campo: Código do ProdutoEdicao:
-			if (produtoEdicao.getCodigo()!=null && !produtoEdicao.getCodigo().equals(dto.getCodigoProduto())) {
+
+			if (produtoEdicao.getProduto().getCodigo()!=null && !produtoEdicao.getProduto().getCodigo().equals(dto.getCodigoProduto())) {
 				throw new ValidacaoException(TipoMensagem.ERROR, 
 						"Não é permitido alterar o código de uma Edição já publicada!");
 			}
@@ -487,13 +488,11 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		BigInteger repartePromocional = (dto.getRepartePromocional() == null) 
 				? BigInteger.ZERO : dto.getRepartePromocional();
 		
-		boolean origemManual = (produtoEdicao.getOrigemInterface() == null) ? true :  !produtoEdicao.getOrigemInterface().booleanValue();
 		
-		if (origemManual) {
+		if ((produtoEdicao.getOrigem().equals(br.com.abril.nds.model.Origem.MANUAL))) {
 			// Campos exclusivos para o Distribuidor::
 			
 			// Identificação:
-			produtoEdicao.setCodigo(dto.getCodigoProduto());	// View: Codigo da Edição;
 			produtoEdicao.setNomeComercial(dto.getNomeComercialProduto());
 			produtoEdicao.setNumeroEdicao(dto.getNumeroEdicao());
 			produtoEdicao.setPacotePadrao(dto.getPacotePadrao());
@@ -520,7 +519,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			dimEdicao.setEspessura(dto.getEspessura());
 			produtoEdicao.setDimensao(dimEdicao);
 			
-			produtoEdicao.getProduto().setDescricao(dto.getDescricaoProduto());
+			produtoEdicao.getProduto().setNomeComercial(dto.getNomeComercial());
 			
 			// Texto boletim informativo:
 			produtoEdicao.setBoletimInformativo(dto.getBoletimInformativo());
@@ -567,10 +566,8 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 	private void salvarLancamento(ProdutoEdicaoDTO dto, ProdutoEdicao produtoEdicao) {
 		
 		// Só pode alterar quando o ProdutoEdicao for criado pelo Distribuidor:
-		
-		boolean origemInterface = (produtoEdicao.getOrigemInterface() == null) ?  false : produtoEdicao.getOrigemInterface().booleanValue();
-		
-		if (origemInterface) {
+			
+		if ((produtoEdicao.getOrigem().equals(br.com.abril.nds.model.Origem.INTERFACE))) {
 			return;
 		}
 		
@@ -694,7 +691,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		dto.setPacotePadrao(produto.getPacotePadrao());
 		dto.setPeso(produto.getPeso());
 		dto.setDescricaoDesconto("");
-		dto.setDescricaoProduto(produto.getDescricao());
+		dto.setNomeComercial(produto.getNomeComercial());
 		dto.setDesconto(produto.getDescontoLogistica() == null 
 				? BigDecimal.ZERO : BigDecimal.valueOf(
 						produto.getDescontoLogistica().getPercentualDesconto()));
@@ -725,7 +722,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 
 			dto.setPeso(pe.getPeso());
 			dto.setBoletimInformativo(pe.getBoletimInformativo());
-			dto.setOrigemInterface(pe.getOrigemInterface());
+			dto.setOrigemInterface(pe.getOrigem().equals(br.com.abril.nds.model.Origem.INTERFACE));
 			dto.setNumeroLancamento(pe.getNumeroLancamento());
 			dto.setPeb(pe.getPeb());
 			dto.setEditor(pe.getProduto().getEditor().getPessoaJuridica().getNome());

@@ -129,8 +129,12 @@ public class VisaoEstoqueRepositoryImpl extends AbstractRepository implements Vi
 		
 		StringBuilder hql = new StringBuilder();
 		hql.append(" SELECT pe.id as produtoEdicaoId")
-		   .append("       ,pe.codigo as codigo")
-		   .append("       ,pe.nomeComercial as produto")
+		   .append("       ,pe.produto.codigo as codigo")
+		   
+		   .append("       , case when pe.nomeComercial is null or pe.nomeComercial = ''  ")
+		 
+		   .append("       then pe.produto.nome else pe.nomeComercial end as produto ")
+
 		   .append("       ,pe.numeroEdicao as edicao")
 		   .append("       ,pe.precoVenda as precoCapa")
 		   .append("       ,lan.dataLancamentoDistribuidor as lcto")

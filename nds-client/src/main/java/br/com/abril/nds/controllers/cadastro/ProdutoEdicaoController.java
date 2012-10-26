@@ -7,18 +7,13 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.PersistenceContext;
-
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.DetalheProdutoVO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.model.cadastro.Dimensao;
-import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
-import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Permissao;
@@ -28,7 +23,6 @@ import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.util.CurrencyUtil;
-import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.MathUtil;
 import br.com.abril.nds.util.TipoMensagem;
@@ -185,7 +179,7 @@ public class ProdutoEdicaoController {
 		dto.setPossuiBrinde(possuiBrinde);
 		dto.setNumeroLancamento(numeroLancamento);
 		dto.setDescricaoBrinde(descricaoBrinde);
-		dto.setDescricaoProduto(descricaoProduto);
+		dto.setNomeComercial(descricaoProduto);
 		
 		ValidacaoVO vo = null;
 		 
@@ -229,9 +223,7 @@ public class ProdutoEdicaoController {
 	private void validarProdutoEdicao(ProdutoEdicaoDTO dto, String codigoProduto) {
 		
 		List<String> listaMensagens = new ArrayList<String>();
-		
-		boolean origemManual = false;
-		
+						
 		ProdutoEdicao pe = null;
 		
 		if(codigoProduto == null) {
@@ -246,10 +238,9 @@ public class ProdutoEdicaoController {
 				throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Produto Edição inválido!"));
 			}
 			
-			origemManual = (pe.getOrigemInterface() == null) ? true : pe.getOrigemInterface().booleanValue();
 		}
 		
-		if (pe == null || origemManual) {
+		if (pe == null || (pe.getOrigem().equals(br.com.abril.nds.model.Origem.MANUAL))) {
 			
 			// Distribuidor:
 			if (dto.getCodigoProduto() == null || dto.getCodigoProduto().trim().length() <= 0) {
@@ -401,7 +392,7 @@ public class ProdutoEdicaoController {
 			
 			produtoLancamentoVO = new DetalheProdutoVO(produtoEdicao.getId(),
 													   produtoEdicao.getProduto().getNome(),
-													   produtoEdicao.getCodigo(),
+													   produtoEdicao.getProduto().getCodigo(),
 										               (precoVenda!=null?CurrencyUtil.formatarValor(precoVenda):""),
 										               (precoComDesconto!=null?CurrencyUtil.formatarValor(precoComDesconto):""),
 										               (produtoEdicao.getProduto()!=null?(produtoEdicao.getProduto().getFornecedor()!=null?produtoEdicao.getProduto().getFornecedor().getJuridica().getNome():""):""),

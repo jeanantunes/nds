@@ -13,6 +13,8 @@ import javax.persistence.DiscriminatorType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -27,6 +29,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 
+import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.Lancamento;
@@ -55,10 +58,6 @@ public class ProdutoEdicao implements Serializable {
 	@Column(name = "ID")
 	protected Long id;
 	
-	//@Column(name = "CODIGO", nullable = false, unique = true)
-	@Column(name = "CODIGO", nullable = true, length=8)
-	protected String codigo;
-
 	@Column(name  = "CODIGO_DE_BARRAS", nullable = true, length=18)
 	protected String codigoDeBarras;
 	
@@ -146,11 +145,9 @@ public class ProdutoEdicao implements Serializable {
 	@Temporal(TemporalType.DATE)
 	private Date dataDesativacao;
 	
-	/**
-	 * Flag que indica se o ProdutoEdicao foi criado atraves de interface de sistemas ou por cadastro
-	 */
-	@Column(name = "ORIGEM_INTERFACE", nullable = true)
-	private Boolean origemInterface;
+	@Enumerated(EnumType.STRING)
+	@Column(name = "ORIGEM", nullable = false)
+	private Origem origem;
 	
 	@Column(name = "NUMERO_LANCAMENTO", nullable = true)
 	private Integer numeroLancamento;
@@ -431,13 +428,6 @@ public class ProdutoEdicao implements Serializable {
 		this.nomeComercial = nomeComercial;
 	}
 
-	public Boolean getOrigemInterface() {
-		return origemInterface;
-	}
-
-	public void setOrigemInterface(Boolean origemInterface) {
-		this.origemInterface = origemInterface;
-	}
 
 	public DescontoLogistica getDescontoLogistica() {
 		return descontoLogistica;
@@ -459,20 +449,6 @@ public class ProdutoEdicao implements Serializable {
 	 */
 	public void setReparteDistribuido(BigInteger reparteDistribuido) {
 		this.reparteDistribuido = reparteDistribuido;
-	}
-
-	/**
-	 * @return the codigo
-	 */
-	public String getCodigo() {
-		return codigo;
-	}
-
-	/**
-	 * @param codigo the codigo to set
-	 */
-	public void setCodigo(String codigo) {
-		this.codigo = codigo;
 	}
 
 	/**
@@ -515,6 +491,20 @@ public class ProdutoEdicao implements Serializable {
 	 */
 	public void setNumeroLancamento(Integer numeroLancamento) {
 		this.numeroLancamento = numeroLancamento;
+	}
+
+	/**
+	 * @return the origem
+	 */
+	public Origem getOrigem() {
+		return origem;
+	}
+
+	/**
+	 * @param origem the origem to set
+	 */
+	public void setOrigem(Origem origem) {
+		this.origem = origem;
 	}
 	
 }

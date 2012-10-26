@@ -138,6 +138,9 @@ public class DateUtil {
 	}
 
 	public static Date parseData(String data, String formato) {
+
+		if(data == null)
+			return null;
 		
 		try {
 			

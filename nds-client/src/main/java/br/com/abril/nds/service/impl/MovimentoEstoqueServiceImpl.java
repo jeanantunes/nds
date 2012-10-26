@@ -95,7 +95,11 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 	
 	@Override
 	@Transactional
-	public void gerarMovimentoEstoqueDeExpedicao(Date dataLancamento, Long idProdutoEdicao, Long idUsuario) {
+	//public void gerarMovimentoEstoqueDeExpedicao(Date dataLancamento, Long idProdutoEdicao, Long idUsuario) {
+	public void gerarMovimentoEstoqueDeExpedicao(Lancamento lancamento, Long idUsuario) {
+
+		Date dataLancamento = lancamento.getDataLancamentoPrevista();
+		Long idProdutoEdicao = lancamento.getProdutoEdicao().getId();
 		
 		TipoMovimentoEstoque tipoMovimento = 
 			tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.ENVIO_JORNALEIRO);
@@ -108,7 +112,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 		
 		BigInteger total = BigInteger.ZERO;
 		
-		MovimentoEstoqueCota movimentoEstoqueCota;
+		MovimentoEstoqueCota movimentoEstoqueCota = null;
 		
 		for( EstudoCota estudoCota:listaEstudoCota ) {
 			
@@ -117,6 +121,9 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 					idUsuario, estudoCota.getQtdeEfetiva(),tipoMovimentoCota);
 			
 			movimentoEstoqueCota.setEstudoCota(estudoCota);
+			
+			// Implementando por Eduardo Punk Rock - Seta o lançamento que gerou os movimentos na movimentoEstoqueCota
+			movimentoEstoqueCota.setLancamento(lancamento);
 			
 			movimentoEstoqueCotaRepository.alterar(movimentoEstoqueCota);
 			

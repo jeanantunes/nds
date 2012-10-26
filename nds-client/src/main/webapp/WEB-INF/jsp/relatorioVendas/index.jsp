@@ -6,6 +6,9 @@
 </style>
 <script language="javascript" type="text/javascript" src='scripts/jquery.numeric.js'></script>
 <script language="javascript" type="text/javascript" src='scripts/relatorioVendas.js'></script>
+<script language="javascript" type="text/javascript" src='scripts/jquery.justInput.js'></script>
+
+
 <script language="javascript" type="text/javascript">
 
 $(function(){
@@ -15,16 +18,16 @@ $(function(){
 </script>
 </head>
 <body>
-
-	<div id="dialog-editor" title="Histórico de Produtos" style="display:none;">
-	<fieldset style="width:560px;">
-		<legend>Editor: <span name="nomeEditorPopUp" id="nomeEditorPopUp"></span></legend>
-	    <table class="popEditorGrid"></table>
-	        <span class="bt_novos" title="Gerar Arquivo"><a href="${pageContext.request.contextPath}/lancamento/relatorioVendas/exportar?fileType=XLS&tipoRelatorio=5"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
-			<span class="bt_novos" title="Imprimir"><a href="${pageContext.request.contextPath}/lancamento/relatorioVendas/exportar?fileType=PDF&tipoRelatorio=5"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
-	</fieldset>
-	</div>
-
+	<form id="form_dialog-editor">
+		<div id="dialog-editor" title="Histórico de Produtos" style="display:none;">
+		<fieldset style="width:810px;">
+			<legend>Editor: <span name="nomeEditorPopUp" id="nomeEditorPopUp"></span></legend>
+		    <table class="popEditorGrid"></table>
+		        <span class="bt_novos" title="Gerar Arquivo"><a href="${pageContext.request.contextPath}/lancamento/relatorioVendas/exportar?fileType=XLS&tipoRelatorio=5"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
+				<span class="bt_novos" title="Imprimir"><a href="${pageContext.request.contextPath}/lancamento/relatorioVendas/exportar?fileType=PDF&tipoRelatorio=5"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
+		</fieldset>
+		</div>
+	</form>
 	<div class="container">
 
 		<fieldset class="classFieldset">
@@ -56,7 +59,7 @@ $(function(){
 					<td>&nbsp;</td>
 					<td colspan="6">
 						<label>Cota:</label> <input type="text" style="width: 80px; float: left; margin: 5px;" name="numeroCotaListaCota" id="numeroCotaListaCota" /> 
-						<label>Nome:</label> <input type="text" style="width: 200px; float: left; margin: 5px;" name="nomeCotaListaCota" id="nomeCotaListaCota" />
+						<label>Nome:</label> <input type="text" style="width: 180px; float: left; margin: 5px;" name="nomeCotaListaCota" id="nomeCotaListaCota" />
 					</td>
 				</tr>
 				<tr class="linhaProduto">
@@ -158,7 +161,7 @@ $(function(){
 				<table class="abcEditorGrid"></table>
 				<table width="950" border="0" cellspacing="0" cellpadding="0">
 					<tr>
-						<td width="329">
+						<td width="200">
 							<span class="bt_novos" title="Gerar Arquivo">
 								<a href="${pageContext.request.contextPath}/lancamento/relatorioVendas/exportar?fileType=XLS&tipoRelatorio=2"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo</a>
 							</span>
@@ -167,7 +170,7 @@ $(function(){
 							</span>
 						</td>
 						<td width="80"><strong>Total:</strong></td>
-						<td width="215"><span id="qtdeTotalVendaExemplaresEditor"></span></td>
+						<td width="145"><span id="qtdeTotalVendaExemplaresEditor"></span></td>
 						<td width="326"><span id="totalFaturamentoCapaEditor"></span></td>
 					</tr>
 				</table>

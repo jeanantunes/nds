@@ -27,7 +27,46 @@ public class ContasApagarConsultaPorProdutoDTO implements Serializable{
 	private String fornecedor;
 	private Date dataLcto;
 	private Date dataFinal;
+
+	public ContasApagarConsultaPorProdutoDTO(){
+		
+	}
 	
+	/**
+	 * @param produtoEdicaoId
+	 * @param rctl
+	 * @param codigo
+	 * @param produto
+	 * @param edicao
+	 * @param tipo
+	 * @param reparte
+	 * @param suplementacao
+	 * @param encalhe
+	 * @param faltasSobras
+	 * @param debitosCreditos
+	 * @param venda
+	 * @param saldoAPagar
+	 */
+	public ContasApagarConsultaPorProdutoDTO(Long produtoEdicaoId, Date rctl, String codigo,
+			String produto, Long edicao, boolean tipo, BigInteger reparte, BigInteger suplementacao, 
+			BigInteger encalhe,BigInteger faltasSobras, BigInteger debitosCreditos, BigInteger venda, BigDecimal saldoAPagar) {
+		
+		super();
+		
+		this.produtoEdicaoId = produtoEdicaoId;
+		this.rctl = rctl;
+		this.codigo = codigo;
+		this.produto = produto;
+		this.edicao = edicao;
+		this.tipo = tipo;
+		this.reparte = reparte!=null?reparte:BigInteger.ZERO;
+		this.suplementacao = suplementacao!=null?suplementacao:BigInteger.ZERO;
+		this.encalhe = encalhe!=null?encalhe:BigInteger.ZERO;
+		this.faltasSobras = faltasSobras!=null?faltasSobras:BigInteger.ZERO;
+		this.debitosCreditos = debitosCreditos!=null?debitosCreditos:BigInteger.ZERO;
+		this.venda = venda;
+		this.saldoAPagar = saldoAPagar;
+	}
 	
 	public Long getProdutoEdicaoId() {
 		return produtoEdicaoId;

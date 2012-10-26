@@ -285,7 +285,7 @@ public class ChamadaEncalheAntecipadaController {
 			
 			quantidade = chamadaAntecipadaEncalheService.obterQntExemplaresCotasSujeitasAntecipacoEncalhe(filtro);
 			
-			result.use(CustomJson.class).from(quantidade.intValue(), "quantidade").serialize();
+			result.use(CustomJson.class).from(quantidade.intValue()).serialize();
 		}
 		else{
 			

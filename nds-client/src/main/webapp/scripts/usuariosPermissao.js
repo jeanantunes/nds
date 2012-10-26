@@ -18,7 +18,7 @@ var usuariosPermissaoController = $.extend(true, {
 			
 			$.getJSON(
 					this.path + "/editarUsuario",
-					"codigoUsuario=" + idUsuario, 
+					{codigoUsuario:idUsuario}, 
 					function(result) {
 						if (result) {
 							usuariosPermissaoController.bindData(result, $("#alterar_senha_form", usuariosPermissaoController.workspace));
@@ -101,7 +101,7 @@ var usuariosPermissaoController = $.extend(true, {
 			
 			$.getJSON(
 					this.path + "/editarUsuario",
-					"codigoUsuario=" + idGrupo, 
+					{codigoUsuario:idGrupo}, 
 					function(result) {
 						if (result) {
 							
@@ -151,30 +151,24 @@ var usuariosPermissaoController = $.extend(true, {
 				modal: true,
 				buttons: {
 					"Confirmar": function() {
-						var obj = $("#novo_usuario_form", usuariosPermissaoController.workspace).serialize();
+						var obj = $("#novo_usuario_form", usuariosPermissaoController.workspace).serializeObject();
 						
-						var permissoes = "";
-						$("#permissoesSelecionadasUsuario option", usuariosPermissaoController.workspace).each(function() {
-							if (permissoes!="") {
-								permissoes += ",";
-							}
-							permissoes += $(this).val();
+						var permissoes = new Array();
+						$("#permissoesSelecionadasUsuario option", usuariosPermissaoController.workspace).each(function() {							
+							permissoes.push($(this).val());
 					    });
+						obj = serializeArrayToPost('usuarioDTO.permissoesSelecionadas', permissoes, obj);
 
-						var grupos = "";
+						var grupos = new Array();
 						$("#gruposSelecionadosUsuario option", usuariosPermissaoController.workspace).each(function() {
-							if (grupos!="") {
-								grupos += ",";
-							}
-							grupos += $(this).val();
+							
+							grupos.push($(this).val());
 					    });
-
-						var ativa = "";
-						if ($('#usuarioAtivaTrue:checked').attr("checked") == "checked") {
-							ativa = "ativa";
-						}
 						
-						obj += "&usuarioDTO.contaAtiva=" + ativa + "&usuarioDTO.permissoesSelecionadas=" + permissoes + "&usuarioDTO.gruposSelecionados=" + grupos;
+						obj = serializeArrayToPost('usuarioDTO.gruposSelecionados', grupos, obj);
+						
+						obj['usuarioDTO.contaAtiva'] = ($('#usuarioAtivaTrue:checked').attr("checked") == "checked");
+						
 
 						$.postJSON(usuariosPermissaoController.path + '/salvarUsuario', obj, function(data) {
 							var tipoMensagem = data.tipoMensagem;
@@ -211,7 +205,7 @@ var usuariosPermissaoController = $.extend(true, {
 					"Confirmar": function() {
 						$.getJSON(
 								usuariosPermissaoController.path + "/excluirUsuario",
-								"codigoUsuario=" + codigoUsuario, 
+								{codigoUsuario:codigoUsuario}, 
 								function(result) {
 
 									var tipoMensagem = result.tipoMensagem;

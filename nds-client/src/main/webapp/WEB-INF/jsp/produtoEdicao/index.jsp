@@ -428,7 +428,7 @@ fieldset {
 					
 						<input type="text" name="pCodigoProduto" id="produtoEdicaoController-pCodigoProduto" maxlength="255" 
 								style="width:60px;" 
-								onchange="produtoEdicaoController.pesquisarPorCodigoProduto('#produtoEdicaoController-pCodigoProduto', '#produtoEdicaoController-pNomeProduto', false,
+								onchange="produtoEdicaoController.pesquisarPorCodigoProduto('#produtoEdicaoController-pCodigoProduto', '#produtoEdicaoController-pNome', false,
 										undefined,
 										undefined);" />
 					</td>
@@ -437,10 +437,10 @@ fieldset {
 					
 					<td width="170">
 					
-						<input type="text" name="pNomeProduto" id="produtoEdicaoController-pNomeProduto" maxlength="255" 
+						<input type="text" name="pNomeProduto" id="produtoEdicaoController-pNome" maxlength="255" 
 								style="width:150px;"
-								onkeyup="produtoEdicaoController.autoCompletarPorNomeProduto('#produtoEdicaoController-pNomeProduto', false);"
-								onblur="produtoEdicaoController.pesquisarPorNomeProduto('#produtoEdicaoController-pCodigoProduto', '#produtoEdicaoController-pNomeProduto', false,
+								onkeyup="produtoEdicaoController.autoCompletarPorNome('#produtoEdicaoController-pNome', false);"
+								onblur="produtoEdicaoController.pesquisarPorNome('#produtoEdicaoController-pCodigoProduto', '#produtoEdicaoController-pNome', false,
 									undefined,
 									undefined);" />
 					

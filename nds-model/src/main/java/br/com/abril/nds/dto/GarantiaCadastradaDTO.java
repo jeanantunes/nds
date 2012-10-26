@@ -88,4 +88,5 @@ public class GarantiaCadastradaDTO implements Serializable {
 	public void setValorTotal(BigDecimal valorTotal) {
 		this.valorTotal = valorTotal;
 	}
+	
 }

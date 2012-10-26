@@ -1,6 +1,8 @@
 package br.com.abril.nds.dto;
 
 import java.io.Serializable;
+import java.math.BigInteger;
+import java.util.Date;
 
 public class BandeirasDTO  implements Serializable{
 
@@ -10,6 +12,10 @@ public class BandeirasDTO  implements Serializable{
 	private String nomeProduto;
 	private Long edProduto;
 	private Integer pctPadrao;
+	private String destino;
+	private Integer prioridade;
+	private BigInteger qtde;
+	private Date data;
 	
 	public BandeirasDTO() {
 		
@@ -36,16 +42,51 @@ public class BandeirasDTO  implements Serializable{
 	public void setNomeProduto(String nomeProduto) {
 		this.nomeProduto = nomeProduto;
 	}
-	public Long getedProduto() {
-		return edProduto;
-	}
-	public void setedProduto(Long edProduto) {
-		this.edProduto = edProduto;
-	}
+	
 	public Integer getPctPadrao() {
 		return pctPadrao;
 	}
 	public void setPctPadrao(Integer pctPadrao) {
 		this.pctPadrao = pctPadrao;
+	}
+
+	public Integer getPrioridade() {
+		return prioridade;
+	}
+
+	public void setPrioridade(Integer prioridade) {
+		this.prioridade = prioridade;
+	}
+
+	public BigInteger getQtde() {
+		return qtde;
+	}
+
+	public void setQtde(BigInteger qtde) {
+		this.qtde = (qtde== null) ? BigInteger.ZERO : qtde;
+	}
+
+	public String getDestino() {
+		return destino;
+	}
+
+	public void setDestino(String destino) {
+		this.destino = destino;
+	}
+
+	public Long getEdProduto() {
+		return edProduto;
+	}
+
+	public void setEdProduto(Long edProduto) {
+		this.edProduto = edProduto;
+	}
+
+	public Date getData() {
+		return data;
+	}
+
+	public void setData(Date data) {
+		this.data = data;
 	}	
 }

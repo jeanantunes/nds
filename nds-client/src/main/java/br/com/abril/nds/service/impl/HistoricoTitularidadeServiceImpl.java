@@ -1135,7 +1135,7 @@ public class HistoricoTitularidadeServiceImpl implements HistoricoTitularidadeSe
 		
 		if (cheque.getValor() != null) {
 		
-			historicoTitularidadeCotaChequeCaucao.setValor(new BigDecimal(cheque.getValor()));
+			historicoTitularidadeCotaChequeCaucao.setValor(cheque.getValor());
 		}
 		historicoTitularidadeCotaChequeCaucao.setHistoricoTitularidadeCota(historicoTitularidadeCota);
 
@@ -1171,7 +1171,7 @@ public class HistoricoTitularidadeServiceImpl implements HistoricoTitularidadeSe
 			
 			if (imovel.getValor() != null) {
 			
-				historicoTitularidadeCotaImovel.setValor(new BigDecimal(imovel.getValor()));
+				historicoTitularidadeCotaImovel.setValor(imovel.getValor());
 			}
 
 			historicoTitularidadeCotaImovel.setHistoricoTitularidadeCota(historicoTitularidadeCota);
@@ -1202,7 +1202,7 @@ public class HistoricoTitularidadeServiceImpl implements HistoricoTitularidadeSe
 		
 		if (notaPromissoria.getValor() != null) {
 		
-			historicoTitularidadeCotaNotaPromissoria.setValor(new BigDecimal(notaPromissoria.getValor()));
+			historicoTitularidadeCotaNotaPromissoria.setValor(notaPromissoria.getValor());
 		}
 
 		if (notaPromissoria.getVencimento() != null) {

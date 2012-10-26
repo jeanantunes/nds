@@ -21,7 +21,7 @@ public class FiltroCurvaABCCotaDTO extends FiltroCurvaABCDTO implements Serializ
 
 	public FiltroCurvaABCCotaDTO(Date dataDe, Date dataAte,
 			String codigoFornecedor, String codigoProduto, String nomeProduto,
-			String edicaoProduto, String codigoEditor, Integer codigoCota,
+			List<Long> edicaoProduto, String codigoEditor, Integer codigoCota,
 			String nomeCota, String municipio) {
 		this.setDataDe(dataDe);
 		this.setDataAte(dataAte);
@@ -40,16 +40,17 @@ public class FiltroCurvaABCCotaDTO extends FiltroCurvaABCDTO implements Serializ
 	private ColunaOrdenacaoCurvaABCCota ordenacaoColuna;
 	
 	public enum ColunaOrdenacaoCurvaABCCota {
-
+		
+		RANKING("rkProduto"),
 		CODIGO_PRODUTO("codigoProduto"),
 		NOME_PRODUTO("nomeProduto"),
 		EDICAO_PRODUTO("edicaoProduto"),
-		REPARTE("reparte"),
-		VENDA_EXEMPLARES("vendaExemplares"),
-		FATURAMENTO("faturamentoCapa"),
-		PORCENTAGEM_VENDA("porcentagemVenda"),
-		PARTICIPACAO("participacao"),
-		PARTICIPACAO_ACUMULADA("participacaoAcumulada");
+		REPARTE("reparteFormatado"),
+		VENDA_EXEMPLARES("vendaExemplaresFormatado"),
+		FATURAMENTO("faturamentoFormatado"),
+		PORCENTAGEM_VENDA("porcentagemVendaFormatado"),
+		PARTICIPACAO("participacaoFormatado"),
+		PARTICIPACAO_ACUMULADA("participacaoAcumuladaFormatado");
 
 		private String nomeColuna;
 		

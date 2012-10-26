@@ -43,7 +43,7 @@ public class FecharDiaRepositoryImpl extends AbstractRepository implements Fecha
 
 		StringBuilder hql = new StringBuilder();
 
-		hql.append(" select notaFiscal from NotaFiscalEntradaFornecedor notaFiscal ");		
+		hql.append(" SELECT notaFiscal from NotaFiscalEntradaFornecedor notaFiscal ");		
 		hql.append("WHERE notaFiscal.statusNotaFiscal != :statusNF AND notaFiscal.dataEmissao = :dataOperacao ");
 		
 		Query query = super.getSession().createQuery(hql.toString());
@@ -101,7 +101,7 @@ public class FecharDiaRepositoryImpl extends AbstractRepository implements Fecha
 		StringBuilder jpql = new StringBuilder();
 		
 		jpql.append(" SELECT produto.codigo AS codigo,");
-		jpql.append(" produto.descricao AS nomeProduto,");
+		jpql.append(" produto.nome AS nomeProduto,");
 		jpql.append(" pe.numeroEdicao AS edicao ");
 		
 		jpql.append("FROM Lancamento AS lancamento ");
@@ -131,7 +131,7 @@ public class FecharDiaRepositoryImpl extends AbstractRepository implements Fecha
 		StringBuilder jpql = new StringBuilder();
 
 		jpql.append("SELECT produto.codigo AS codigo,");
-		jpql.append(" produto.descricao AS nomeProduto,");
+		jpql.append(" produto.nome AS nomeProduto,");
 		jpql.append(" pe.numeroEdicao AS edicao, ");
 		jpql.append(" diferenca.tipoDiferenca AS inconsistencia ");
 		

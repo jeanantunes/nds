@@ -1,7 +1,6 @@
 package br.com.abril.nds.service.impl;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -17,12 +16,14 @@ import br.com.abril.nds.dto.ConsultaTransportadorDTO;
 import br.com.abril.nds.dto.CotaTransportadorDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.EnderecoDTO;
+import br.com.abril.nds.dto.FlexiGridDTO;
 import br.com.abril.nds.dto.MovimentoFinanceiroDTO;
 import br.com.abril.nds.dto.RotaRoteiroDTO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.dto.TelefoneDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaTransportadorDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaTransportadorDTO.OrdenacaoColunaTransportador;
+import br.com.abril.nds.dto.filtro.FiltroRelatorioServicosEntregaDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.AssociacaoVeiculoMotoristaRota;
 import br.com.abril.nds.model.cadastro.Endereco;
@@ -382,41 +383,38 @@ public class TransportadorServiceImpl implements TransportadorService {
 	private void processarTelefones(Transportador transportador, List<TelefoneAssociacaoDTO> listaTelefoneAdicionar,
 			Set<Long> listaTelefoneRemover) {
 		
-		if (listaTelefoneAdicionar != null && !listaTelefoneAdicionar.isEmpty()){
+		PessoaJuridica pessoaJuridica = transportador.getPessoaJuridica();
+		
+		for (TelefoneAssociacaoDTO dto : listaTelefoneAdicionar) {
 			
-			PessoaJuridica pessoaJuridica = transportador.getPessoaJuridica();
-            this.telefoneService.cadastrarTelefone(listaTelefoneAdicionar, pessoaJuridica);
+			TelefoneDTO telefoneDTO = dto.getTelefone();
 			
-			for (TelefoneAssociacaoDTO dto : listaTelefoneAdicionar){
-				
-				TelefoneDTO telefoneDTO = dto.getTelefone();
-				
+			this.telefoneService.validarTelefone(telefoneDTO, dto.getTipoTelefone());
+		
+            TelefoneTransportador telefoneTransportador = 
+					this.telefoneTransportadorRepositoty.buscarTelefonePorTelefoneTransportador(
+							telefoneDTO.getId(), 
+							transportador.getId());
 			
-                TelefoneTransportador telefoneTransportador = 
-						this.telefoneTransportadorRepositoty.buscarTelefonePorTelefoneTransportador(
-								telefoneDTO.getId(), 
-								transportador.getId());
+			if (telefoneTransportador == null){
 				
-				if (telefoneTransportador == null){
-					
-					telefoneTransportador = new TelefoneTransportador();
-					telefoneTransportador.setPrincipal(dto.isPrincipal());
-					Telefone telefone = new Telefone(telefoneDTO.getId(), telefoneDTO.getNumero(), telefoneDTO.getRamal(), telefoneDTO.getDdd(), pessoaJuridica);
-					telefoneTransportador.setTelefone(telefone);
-					telefoneTransportador.setTipoTelefone(dto.getTipoTelefone());
-					telefoneTransportador.setTransportador(transportador);
-					
-					this.telefoneTransportadorRepositoty.adicionar(telefoneTransportador);
-				} else {
-					Telefone telefone = telefoneTransportador.getTelefone();
-					telefone.setDdd(telefoneDTO.getDdd());
-					telefone.setNumero(telefoneDTO.getNumero());
-					telefone.setRamal(telefoneDTO.getRamal());
-					telefoneTransportador.setPrincipal(dto.isPrincipal());
-					telefoneTransportador.setTipoTelefone(dto.getTipoTelefone());
-					
-					this.telefoneTransportadorRepositoty.alterar(telefoneTransportador);
-				}
+				telefoneTransportador = new TelefoneTransportador();
+				telefoneTransportador.setPrincipal(dto.isPrincipal());
+				Telefone telefone = new Telefone(telefoneDTO.getId(), telefoneDTO.getNumero(), telefoneDTO.getRamal(), telefoneDTO.getDdd(), pessoaJuridica);
+				telefoneTransportador.setTelefone(telefone);
+				telefoneTransportador.setTipoTelefone(dto.getTipoTelefone());
+				telefoneTransportador.setTransportador(transportador);
+				
+				this.telefoneTransportadorRepositoty.adicionar(telefoneTransportador);
+			} else {
+				Telefone telefone = telefoneTransportador.getTelefone();
+				telefone.setDdd(telefoneDTO.getDdd());
+				telefone.setNumero(telefoneDTO.getNumero());
+				telefone.setRamal(telefoneDTO.getRamal());
+				telefoneTransportador.setPrincipal(dto.isPrincipal());
+				telefoneTransportador.setTipoTelefone(dto.getTipoTelefone());
+				
+				this.telefoneTransportadorRepositoty.alterar(telefoneTransportador);
 			}
 		}
 		
@@ -435,8 +433,6 @@ public class TransportadorServiceImpl implements TransportadorService {
 			
 			PessoaJuridica pessoaJuridica = transportador.getPessoaJuridica();
 			
-            this.enderecoService.cadastrarEnderecos(listaEnderecosAdicionar, pessoaJuridica);
-			
 			for (EnderecoAssociacaoDTO dto : listaEnderecosAdicionar){
 				
 				EnderecoTransportador enderecoTransportador = 
@@ -445,33 +441,47 @@ public class TransportadorServiceImpl implements TransportadorService {
 								transportador.getId());
 				
 				EnderecoDTO enderecoDTO = dto.getEndereco();
-                Endereco endereco = new Endereco(enderecoDTO.getCodigoBairro(),
-                        enderecoDTO.getBairro(), enderecoDTO.getCep(),
-                        enderecoDTO.getCodigoCidadeIBGE(),
-                        enderecoDTO.getCidade(), enderecoDTO.getComplemento(),
-                        enderecoDTO.getTipoLogradouro(),
-                        enderecoDTO.getLogradouro(), enderecoDTO.getNumero(),
-                        enderecoDTO.getUf(), enderecoDTO.getCodigoUf(),
-                        pessoaJuridica);
-                endereco.setId(enderecoDTO.getId());
 				
+				this.enderecoService.validarEndereco(enderecoDTO, dto.getTipoEndereco());
 				
-                if (enderecoTransportador == null){
+				Endereco endereco = null;
+				
+				if (enderecoTransportador == null) {
+					
+					endereco = new Endereco();
 					
 					enderecoTransportador = new EnderecoTransportador();
-					enderecoTransportador.setEndereco(endereco);
-					enderecoTransportador.setPrincipal(dto.isEnderecoPrincipal());
-					enderecoTransportador.setTipoEndereco(dto.getTipoEndereco());
 					enderecoTransportador.setTransportador(transportador);
 					
-					this.enderecoTransportadorRepository.adicionar(enderecoTransportador);
 				} else {
 					
-					enderecoTransportador.setEndereco(endereco);
-					enderecoTransportador.setPrincipal(dto.isEnderecoPrincipal());
-					enderecoTransportador.setTipoEndereco(dto.getTipoEndereco());
+					endereco = enderecoTransportador.getEndereco();				
+				}
+				
+				endereco.setCodigoBairro(enderecoDTO.getCodigoBairro());
+				endereco.setBairro(enderecoDTO.getBairro());
+				endereco.setCep(enderecoDTO.getCep());
+				endereco.setCodigoCidadeIBGE(enderecoDTO.getCodigoCidadeIBGE());
+				endereco.setCidade(enderecoDTO.getCidade());
+				endereco.setComplemento(enderecoDTO.getComplemento());
+				endereco.setTipoLogradouro(enderecoDTO.getTipoLogradouro());
+				endereco.setLogradouro(enderecoDTO.getLogradouro());
+				endereco.setNumero(enderecoDTO.getNumero());
+				endereco.setUf(enderecoDTO.getUf());
+				endereco.setCodigoUf(enderecoDTO.getCodigoUf());
+				endereco.setPessoa(pessoaJuridica);
+				
+				enderecoTransportador.setEndereco(endereco);
+				enderecoTransportador.setPrincipal(dto.isEnderecoPrincipal());
+				enderecoTransportador.setTipoEndereco(dto.getTipoEndereco());
+				
+				if (enderecoTransportador.getId() == null) {
 					
-					this.enderecoTransportadorRepository.alterar(enderecoTransportador);
+					this.enderecoTransportadorRepository.adicionar(enderecoTransportador);
+					
+				} else {
+					
+					this.enderecoTransportadorRepository.alterar(enderecoTransportador);	
 				}
 			}
 		}
@@ -990,17 +1000,17 @@ public class TransportadorServiceImpl implements TransportadorService {
 
 	@Override
 	@Transactional
-	public List<CotaTransportadorDTO> obterResumoTransportadorCota(Date dataDe,
-			Date dataAte, Long idTransportador, PaginacaoVO paginacaoVO) {
+	public FlexiGridDTO<CotaTransportadorDTO> obterResumoTransportadorCota(FiltroRelatorioServicosEntregaDTO filtro) {
 		
-		return movimentoFinanceiroCotaRepository.obterResumoTransportadorCota(dataDe, dataAte, idTransportador, paginacaoVO);
+		FlexiGridDTO<CotaTransportadorDTO> flexiDTO = new FlexiGridDTO<CotaTransportadorDTO>();
+		flexiDTO.setGrid(movimentoFinanceiroCotaRepository.obterResumoTransportadorCota(filtro));
+		flexiDTO.setTotalGrid(movimentoFinanceiroCotaRepository.obterCountResumoTransportadorCota(filtro).intValue());
+		return flexiDTO;
 	}
 
 	@Override
 	@Transactional
-	public List<MovimentoFinanceiroDTO> obterDetalhesTrasportadorPorCota(
-			Date dataDe, Date dataAte, Long idTransportador, Long idCota) {
-		
-		return movimentoFinanceiroCotaRepository.obterDetalhesTrasportadorPorCota(dataDe, dataAte, idTransportador, idCota);
+	public List<MovimentoFinanceiroDTO> obterDetalhesTrasportadorPorCota(FiltroRelatorioServicosEntregaDTO filtro) {
+		return movimentoFinanceiroCotaRepository.obterDetalhesTrasportadorPorCota(filtro);
 	}
 }

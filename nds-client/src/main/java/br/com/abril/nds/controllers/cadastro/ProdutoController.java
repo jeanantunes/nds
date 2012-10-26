@@ -127,8 +127,8 @@ public class ProdutoController {
 	}
 
 	@Post
-	public void autoCompletarPorPorNomeProduto(String nomeProduto) {
-		List<Produto> listaProduto = this.produtoService.obterProdutoLikeNomeProduto(nomeProduto);
+	public void autoCompletarPorNomeProduto(String nomeProduto) {
+		List<Produto> listaProduto = this.produtoService.obterProdutoLikeNome(nomeProduto);
 		
 		List<ItemAutoComplete> listaProdutos = new ArrayList<ItemAutoComplete>();
 		
@@ -195,7 +195,7 @@ public class ProdutoController {
 		
 	@Post
 	public void pesquisarPorNomeProduto(String nomeProduto) {
-		Produto produto = this.produtoService.obterProdutoPorNomeProduto(nomeProduto);
+		Produto produto = this.produtoService.obterProdutoPorNome(nomeProduto);
 		
 		if (produto == null) {
 		
@@ -469,9 +469,21 @@ public class ProdutoController {
 		if (produto != null) {
 
 			if (produto.getCodigo() == null || produto.getCodigo().trim().isEmpty()) {
+				
 				listaMensagens.add("O preenchimento do campo [Código] é obrigatório!");
+				
 			} else {
+				
+				Produto produtoExistente = produtoService.obterProdutoPorCodigo(produto.getCodigo());
+				
+				if(produtoExistente != null && !produtoExistente.getId().equals(produto.getId())){
+					
+					listaMensagens.add(" O código [" + produto.getCodigo() + "] já esta sendo utilizado por outro produto ");
+				}
+				
 				produto.setCodigo(produto.getCodigo().trim());
+				
+				
 			}
 
 			if (produto.getNome() == null || produto.getNome().trim().isEmpty()) {

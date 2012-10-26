@@ -24,7 +24,7 @@
 <div id="dialog-pallets" title="Pallets">
 <fieldset>
 	<legend>Informe a quantidade de pallets</legend>
-    Número de Pallets: <input name="" type="text" style="width:40px; margin-left:10px; text-align:center;" />
+    N&uacute;mero de Pallets: <input id="numeroPallets" type="text" style="width:40px; margin-left:10px; text-align:center;" />
 
 </fieldset>
 </div>
@@ -67,24 +67,24 @@
    	    <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
   <tr>
     <td width="52">Semana:</td>
-    <td width="778"><input type="text" id="senama" style="width:100px;" /></td>
+    <td width="778"><input type="text" id="semanaPesquisa" style="width:100px;" /></td>
     <td width="104"><span class="bt_pesquisar"><a href="javascript:;" onclick="emissaoBandeiraController.pesquisar();">Pesquisar</a></span></td>
     </tr>
   </table>
 
       </fieldset>
       <div class="linha_separa_fields">&nbsp;</div>
-      <div class="grids" style="display:noneA;">
+      <div class="grids" style="display:none;">
        <fieldset class="classFieldset">
        	  <legend> Bandeiras Pesquisadas</legend>
         
 		  <table class="bandeirasRcltoGrid"></table>
-          <span class="bt_novos" title="Imprimir Bandeira"><a href="javascript:;" onclick="mostrar_pallets();" rel="bandeira"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir Bandeiras</a></span>
+          <span class="bt_novos" title="Imprimir Bandeira"><a href="javascript:;" onclick="emissaoBandeiraController.imprimirBandeira();" rel="bandeira"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir Bandeiras</a></span>
 <!--imprimir_bandeira.htm target="_blank"-->
 
-		<span class="bt_novos" title="Imprimir Relat&oacute;rio"><a href="javascript:;" onclick="emissaoBandeiraController.imprimirArquivo('PDF')" target="_blank"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir Relat&oacute;rio</a></span>
+		<span class="bt_novos" title="Imprimir Relat&oacute;rio"><a href="javascript:;" onclick="emissaoBandeiraController.imprimirArquivo('PDF')"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir Relat&oacute;rio</a></span>
         
-        <span class="bt_novos" title="Bandeira Manual"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/bt_expedicao.png" hspace="5" border="0" />Bandeira Manual</a></span>
+        <span class="bt_novos" title="Bandeira Manual"><a href="javascript:;" onclick="emissaoBandeiraController.bandeiraManual()"  ><img src="${pageContext.request.contextPath}/images/bt_expedicao.png" hspace="5" border="0" />Bandeira Manual</a></span>
      
          
 

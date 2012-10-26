@@ -106,7 +106,7 @@ public class BoxController {
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR,"Box está em uso e não pode ser editado."));
 		} else {
 			Box box = boxService.buscarPorId(id);
-			result.use(CustomJson.class).from(box, "box").serialize();
+			result.use(CustomJson.class).from(box).serialize();
 		}
 	
 	}

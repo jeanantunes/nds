@@ -122,7 +122,7 @@ var recebimentoFisicoController = $.extend(true, {
 			return;
 		}
 		
-		$.postJSON(this.path + 'buscaCnpj', "cnpj=" + cnpj, 
+		$.postJSON(this.path + 'buscaCnpj', {cnpj:cnpj}, 
 		function(result) { 
 			$("#fornecedor", this.workspace).val(result.cnpj);
 		});	
@@ -292,28 +292,27 @@ var recebimentoFisicoController = $.extend(true, {
 		var repartePrevisto 	= $("#repartePrevisto", this.workspace).val();
 		var tipoLancamento 		= $("#tipoLancamento", this.workspace).val();
 		
-		var dadosCadastro = 
-			
-			"itemRecebimento.lineId="				+ lineId			+ "&" +
-			"itemRecebimento.peso=" 				+ peso 				+ "&" +
-			"itemRecebimento.pacotePadrao=" 		+ pacotePadrao 		+ "&" +
-			"itemRecebimento.codigoProduto=" 		+ codigo			+ "&" +
-			"itemRecebimento.nomeProduto=" 			+ produto			+ "&" +
-			"itemRecebimento.precoCapa=" 			+ precoCapa			+ "&" +
-			"numeroEdicao=" 						+ edicao			+ "&" +
-			"dataLancamento=" 						+ dataLancamento 	+ "&" + 
-		   	"dataRecolhimento=" 					+ dataRecolhimento	+ "&" +
-		    "itemRecebimento.repartePrevisto=" 		+ repartePrevisto	+ "&" +
-		    "itemRecebimento.tipoLancamento=" 		+ tipoLancamento;
+		var dadosCadastro = {
+				"itemRecebimento.lineId":lineId,
+				"itemRecebimento.peso":peso,
+				"itemRecebimento.pacotePadrao":pacotePadrao,
+				"itemRecebimento.codigoProduto":codigo,
+				"itemRecebimento.nomeProduto":produto,
+				"itemRecebimento.precoCapa":precoCapa,
+				"numeroEdicao":edicao,
+				"dataLancamento":dataLancamento,
+				"dataRecolhimento":dataRecolhimento,
+				"itemRecebimento.repartePrevisto":repartePrevisto,
+				"itemRecebimento.tipoLancamento":tipoLancamento};
 		
-		var listaDeValores = "";
+	
 		
-		if (recebimentoFisicoController.indNotaFiscalInterface) {
+		if (recebimentoFisicoController.indNotaFiscalInterface) {			
+			dadosCadastro = serializeArrayToPost('itensRecebimento', recebimentoFisicoController.obterListaValores(), dadosCadastro);
 			
-			listaDeValores  = recebimentoFisicoController.obterListaValores();
 		}
 		
-		$.postJSON(recebimentoFisicoController.path + 'incluirItemNotaFiscal', (dadosCadastro +"&" + listaDeValores), 
+		$.postJSON(recebimentoFisicoController.path + 'incluirItemNotaFiscal', dadosCadastro, 
 
 		function(result) {
 			
@@ -351,28 +350,25 @@ var recebimentoFisicoController = $.extend(true, {
 		var repartePrevisto 	= $("#repartePrevisto", this.workspace).val();
 		var tipoLancamento 		= $("#tipoLancamento", this.workspace).val();
 		
-		var dadosCadastro = 
-			
-			"itemRecebimento.lineId=" 				+ lineId 			+ "&" +
-			"itemRecebimento.peso=" 				+ peso 				+ "&" +
-			"itemRecebimento.pacotePadrao=" 		+ pacotePadrao 		+ "&" +
-			"itemRecebimento.codigoProduto=" 		+ codigo			+ "&" +
-			"itemRecebimento.nomeProduto=" 			+ produto			+ "&" +
-			"itemRecebimento.precoCapa=" 			+ precoCapa			+ "&" +
-			"numeroEdicao=" 						+ edicao			+ "&" +
-			"dataLancamento=" 						+ dataLancamento 	+ "&" + 
-		   	"dataRecolhimento=" 					+ dataRecolhimento	+ "&" +
-		    "itemRecebimento.repartePrevisto=" 		+ repartePrevisto	+ "&" +
-		    "itemRecebimento.tipoLancamento=" 		+ tipoLancamento;
+		var dadosCadastro = {"itemRecebimento.lineId":lineId,
+				"itemRecebimento.peso":peso,
+				"itemRecebimento.pacotePadrao":pacotePadrao,
+				"itemRecebimento.codigoProduto":codigo,
+				"itemRecebimento.nomeProduto":produto,
+				"itemRecebimento.precoCapa":precoCapa,
+				"numeroEdicao":edicao,
+				"dataLancamento":dataLancamento,
+				"dataRecolhimento":dataRecolhimento,
+				"itemRecebimento.repartePrevisto":repartePrevisto,
+				"itemRecebimento.tipoLancamento":tipoLancamento};
 		
-		var listaDeValores = "";
+	
 		
 		if (recebimentoFisicoController.indNotaFiscalInterface) {
-			
-			listaDeValores  = recebimentoFisicoController.obterListaValores();
+			dadosCadastro = serializeArrayToPost('itensRecebimento', recebimentoFisicoController.obterListaValores(), dadosCadastro);
 		}
 		
-		$.postJSON(recebimentoFisicoController.path + 'incluirItemNotaFiscal', (dadosCadastro +"&" + listaDeValores), 
+		$.postJSON(recebimentoFisicoController.path + 'incluirItemNotaFiscal', dadosCadastro, 
 
 		function(result) {
 			
@@ -697,10 +693,10 @@ var recebimentoFisicoController = $.extend(true, {
      */
 	salvarDadosItensDaNotaFiscal : function() {
 		
-		var listaDeValores  = "";
+		var listaDeValores  = null;
 		
 		if(recebimentoFisicoController.indNotaFiscalInterface){
-			listaDeValores = recebimentoFisicoController.obterListaValores();
+			listaDeValores = serializeArrayToPost('itensRecebimento', recebimentoFisicoController.obterListaValores());
 		}
 		
 		$.postJSON(this.path + 'salvarDadosItensDaNotaFiscal', listaDeValores, 
@@ -719,10 +715,10 @@ var recebimentoFisicoController = $.extend(true, {
      */
 	confirmarRecebimentoFisico : function() {
 		
-		var listaDeValores  = "";
+		var listaDeValores  = null;
 		
 		if(recebimentoFisicoController.indNotaFiscalInterface){
-			listaDeValores = recebimentoFisicoController.obterListaValores();
+			listaDeValores = serializeArrayToPost('itensRecebimento', recebimentoFisicoController.obterListaValores(), dadosCadastro);
 		}
 		
 		$.postJSON(this.path + 'confirmarRecebimentoFisico', listaDeValores, 
@@ -742,7 +738,7 @@ var recebimentoFisicoController = $.extend(true, {
 		
 		var linhasDaGrid = $(".itemNotaGrid tr", this.workspace);
 		
-		var listaDeValores = "";
+		var listaDeValores = new Array();
 		
 		$.each(linhasDaGrid, function(index, value) {
 			
@@ -752,13 +748,7 @@ var recebimentoFisicoController = $.extend(true, {
 			
 			var lineId 		= $(value).find('input[name="lineId"]').val();
 			
-			var itemRecebimento_lineId 		= 'itensRecebimento['+index+'].lineId='+lineId+'&';
-			
-			var itemRecebimento_qtdPacote 	= 'itensRecebimento['+index+'].qtdPacote='+qtdPacote+'&';
-			
-			var itemRecebimento_qtdExemplar = 'itensRecebimento['+index+'].qtdExemplar='+qtdExemplar+'&';
-			
-			listaDeValores = (listaDeValores + itemRecebimento_lineId + itemRecebimento_qtdPacote + itemRecebimento_qtdExemplar);
+			listaDeValores.push({lineId:lineId,qtdPacote:qtdPacote,qtdExemplar:qtdExemplar});
 			
 		});
 		
@@ -834,11 +824,11 @@ var recebimentoFisicoController = $.extend(true, {
 		
 		if(confirm("Deseja realmente excluir o item selecionado?")){
 			
-			var dadosExclusao = "lineId=" + lineId;
+			var dadosExclusao = {lineId:lineId};
 			
-			var listaDeValores  = recebimentoFisicoController.obterListaValores();
+			dadosExclusao  = serializeArrayToPost('itensRecebimento', recebimentoFisicoController.obterListaValores(), dadosExclusao);
 			
-			$.postJSON(this.path + 'excluirItemNotaFiscal', (dadosExclusao + "&" + listaDeValores), 
+			$.postJSON(this.path + 'excluirItemNotaFiscal', dadosExclusao, 
 			
 			function(result) {
 				
@@ -1210,7 +1200,7 @@ var recebimentoFisicoController = $.extend(true, {
 			return;
 		}
 		
-		$.postJSON(recebimentoFisicoController.path + 'buscaCnpj', "cnpj=" + pCnpj, 
+		$.postJSON(recebimentoFisicoController.path + 'buscaCnpj', {cnpj: pCnpj}, 
 		function(result) { 
 			$("#novoFornecedor", this.workspace).val(result.cnpj);
 		});	
@@ -1227,7 +1217,7 @@ var recebimentoFisicoController = $.extend(true, {
 			$("#novoCnpj", this.workspace).disabled(true);
 			
 		}else{
-			$.postJSON(recebimentoFisicoController.path + 'obterCnpjFornecedor', "idFornecedor=" + idFornecedor, 
+			$.postJSON(recebimentoFisicoController.path + 'obterCnpjFornecedor', {idFornecedor:idFornecedor}, 
 			
 			function(result) {
 				
@@ -1252,7 +1242,7 @@ var recebimentoFisicoController = $.extend(true, {
 			return;
 		}
 		
-		$.postJSON(this.path + 'obterDadosEdicao', "codigo=" + codigo + "&edicao="+edicao, 
+		$.postJSON(this.path + 'obterDadosEdicao', {codigo:codigo,edicao:edicao}, 
 			function(result) { 
 				$("#precoDescontoItem"+index, this.workspace).val(result.precoDesconto);
 			    $("#precoDescontoItem"+index, this.workspace).priceFormat({
@@ -1316,36 +1306,15 @@ var recebimentoFisicoController = $.extend(true, {
 	
 	obterCabecalho : function() {
 
-		var dadosCabecalho = "";
-		
-		var fornecedor 	= $("#novoFornecedor"	, this.workspace).val();
-		var cnpj 		= $("#novoCnpj"			, this.workspace).val();
-		var numeroNota 	= $("#novoNumeroNota"	, this.workspace).val();
-        var serieNota 	= $("#novoSerieNota"	, this.workspace).val();
-        var checkNfe 	= $("#novoNfe"			, this.workspace).val();
-        var chaveAcesso = $("#novoChaveAcesso"	, this.workspace).val();
-        var dataEmissao = $("#novoDataEmissao"	, this.workspace).val();
-        var dataEntrada = $("#novoDataEntrada"	, this.workspace).val();
-        var valorTotal 	= $("#novoValorTotal"	, this.workspace).val();
-		
-		var cabecalho = 'nota.fornecedor=' + fornecedor + '&';
-
-		cabecalho += 'nota.cnpj=' + cnpj + '&';
-
-		cabecalho += 'nota.numero=' + numeroNota + '&';
-		
-		cabecalho += 'nota.serie=' + serieNota + '&';
-
-		cabecalho += 'nota.chaveAcesso=' + chaveAcesso + '&';
-
-		cabecalho += 'nota.dataEmissao=' + dataEmissao + '&';
-		
-		cabecalho += 'nota.dataEntrada=' + dataEntrada + '&';
-
-		cabecalho += 'nota.valorTotal=' + valorTotal + '&';
-
-		dadosCabecalho = (dadosCabecalho + cabecalho);
-
+		var dadosCabecalho = {
+				'nota.fornecedor':$("#novoFornecedor",this.workspace).val(),
+				'nota.cnpj':$("#novoCnpj",this.workspace).val(),
+				'nota.numero':$("#novoNumeroNota",this.workspace).val(),
+				'nota.serie':$("#novoSerieNota",this.workspace).val(),
+				'nota.chaveAcesso':$("#novoChaveAcesso",this.workspace).val(),
+				'nota.dataEmissao':$("#novoDataEmissao",this.workspace).val(),
+				'nota.dataEntrada':$("#novoDataEntrada",this.workspace).val(),
+				'nota.valorTotal':$("#novoValorTotal",this.workspace).val()};
 		return dadosCabecalho;
 	},
 
@@ -1490,7 +1459,7 @@ var recebimentoFisicoController = $.extend(true, {
 
 		var linhasDaGrid = $(".novoItemNotaGrid tr", this.workspace);
 
-		var listaItens = "";
+		var listaItens = new Array();
 
 		$.each(linhasDaGrid, function(index, value) {
 
@@ -1541,31 +1510,21 @@ var recebimentoFisicoController = $.extend(true, {
 				
 			    var dataRecolhimento = $("#novoDataEmissao", this.workspace).val();
 	
-				var lancamento = 'itens[' + index + '].codigoProduto=' + codigo + '&';
-
-				lancamento += 'itens[' + index + '].nomeProduto=' + produto + '&';
-	
-				lancamento += 'itens[' + index + '].edicao=' + edicao + '&';
+				var lancamento = {
+						codigoProduto:codigo,
+						nomeProduto:produto,
+						edicao:edicao,
+						precoDesconto:recebimentoFisicoController.preparaValor(precoDesconto),
+						repartePrevisto:qtdNota,
+						qtdFisico:qtdNota,
+						qtdPacote:qtdPacote,
+						qtdExemplar:qtdExemplar,
+						diferenca:diferenca,
+						valorTotal:recebimentoFisicoController.preparaValor(valor),
+						dataLancamento:dataLancamento,
+						dataRecolhimento:dataRecolhimento};
 				
-				lancamento += 'itens[' + index + '].precoDesconto=' + recebimentoFisicoController.preparaValor(precoDesconto) + '&';
-				
-				lancamento += 'itens[' + index + '].repartePrevisto=' + qtdNota + '&';
-	
-				lancamento += 'itens[' + index + '].qtdFisico=' + qtdNota + '&';
-				
-				lancamento += 'itens[' + index + '].qtdPacote=' + qtdPacote + '&';
-				
-				lancamento += 'itens[' + index + '].qtdExemplar=' + qtdExemplar + '&';
-				
-				lancamento += 'itens[' + index + '].diferenca=' + diferenca + '&';
-				
-				lancamento += 'itens[' + index + '].valorTotal=' + recebimentoFisicoController.preparaValor(valor) + '&';
-	
-				lancamento += 'itens[' + index + '].dataLancamento=' + dataLancamento + '&';
-				
-				lancamento += 'itens[' + index + '].dataRecolhimento=' + dataRecolhimento + '&';
-				
-				listaItens = (listaItens + lancamento);
+				listaItens.push(lancamento);
 			
 			}
 
@@ -1819,9 +1778,8 @@ var recebimentoFisicoController = $.extend(true, {
 	incluirNota : function() {
 
 		var url;
-		var formData;
-
-		formData = recebimentoFisicoController.obterCabecalho() + recebimentoFisicoController.obterListaItens();
+		var formData = recebimentoFisicoController.obterCabecalho();				
+		formData = serializeArrayToPost('itens', recebimentoFisicoController.obterListaItens(), formData);
 		url = this.path + 'incluirNota';
 
 		$.postJSON(
@@ -1845,7 +1803,7 @@ var recebimentoFisicoController = $.extend(true, {
 		
 	exibirDetalhesProdutoEdicao : function() {
 		
-		var data = "codigo=" + $("#codigo", this.workspace).val() + "&edicao=" + $("#edicao", this.workspace).val();
+		var data = {codigo:$("#codigo", this.workspace).val(),edicao:$("#edicao", this.workspace).val()};
 		
 		$.postJSON( recebimentoFisicoController.path + 'obterProdutoEdicao', data, function(result){
 			

@@ -177,7 +177,7 @@ public class LancamentoRepositoryImpl extends
 		} else if(sortOrder.equals(LancamentoNaoExpedidoDTO.SortColumn.EDICAO)) {
 			order =  "produtoEdicao.numeroEdicao";
 		} else if(sortOrder.equals(LancamentoNaoExpedidoDTO.SortColumn.CLASSIFICACAO_PRODUTO)) {
-			order = "produto.tipoProduto.descricao";
+			order = "produto.tipoproduto.nome";
 		} else if(sortOrder.equals(LancamentoNaoExpedidoDTO.SortColumn.PRECO_PRODUTO)) {
 			order =  "produtoEdicao.precoVenda";
 		} else if(sortOrder.equals(LancamentoNaoExpedidoDTO.SortColumn.QTDE_PACOTE_PADRAO)) {
@@ -248,7 +248,7 @@ public class LancamentoRepositoryImpl extends
 		
 		if (data != null) {
 			
-			hql.append(" AND lancamento.dataLancamentoPrevista = :data");
+			hql.append(" AND lancamento.dataLancamentoDistribuidor = :data");
 			
 			parametros.put("data", data);
 		}				
@@ -271,28 +271,29 @@ public class LancamentoRepositoryImpl extends
 		jpql = new StringBuilder();
 		jpql.append(" SELECT CASE WHEN COUNT(lancamento) > 0 THEN true ELSE false END ");	
 		jpql.append(" FROM Lancamento lancamento ");
-		jpql.append(" WHERE lancamento.dataLancamentoPrevista = :data ")
+		jpql.append(" WHERE lancamento.dataLancamentoDistribuidor = :data ")
 		    .append("   AND lancamento.status IN (:statusPlanejadoEConfirmado) ");
 		
-		for (int i = 0; i < 2; i++) {
+		// Implementado por Eduardo Punk Rock - A validação final será realizada utilizando apenas o estado BALANCEADO, que é o último estado liberado pela matriz de balanceamento
+		//for (int i = 0; i < 2; i++) {
 			
 			Query query = getSession().createQuery(jpql.toString());
 	
 			List<StatusLancamento> listaLancamentos = new ArrayList<StatusLancamento>();
 			
-			if(i == 0) {
+			/*if(i == 0) {
 				listaLancamentos.add(StatusLancamento.PLANEJADO);
 				listaLancamentos.add(StatusLancamento.CONFIRMADO);
-			} else {
+			} else {*/
 				listaLancamentos.add(StatusLancamento.BALANCEADO);
-			}
+			//}
 			
 			query.setParameterList("statusPlanejadoEConfirmado", listaLancamentos);
 			query.setParameter("data", data);
 			
 			existeLancamentoConfirmado = existeLancamentoConfirmado && ((Boolean) query.uniqueResult());
 			
-		}
+		//}
 		
 		return existeLancamentoConfirmado;
 		
@@ -1319,7 +1320,7 @@ public class LancamentoRepositoryImpl extends
 		
 		hql.append(" select ") 
 		   .append(" lancamento.produtoEdicao.produto.codigo as codigo, ")
-		   .append(" lancamento.produtoEdicao.produto.descricao as produto, ")
+		   .append(" lancamento.produtoEdicao.produto.nome as produto, ")
 		   .append(" lancamento.produtoEdicao.numeroEdicao as numeroEdicao, ")
 		   .append(" lancamento.reparte as reparte, ")
 		   .append(" lancamento.dataLancamentoPrevista as dataLancamento")

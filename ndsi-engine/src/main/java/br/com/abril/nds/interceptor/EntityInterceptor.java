@@ -1,40 +1,201 @@
 package br.com.abril.nds.interceptor;
 
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 import org.hibernate.EmptyInterceptor;
-import org.hibernate.type.Type;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
+import org.lightcouch.CouchDbClient;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 
-import br.com.abril.nds.model.cadastro.PessoaJuridica;
+import br.com.abril.nds.client.util.AuditoriaUtil;
+import br.com.abril.nds.dto.auditoria.AuditoriaDTO;
+import br.com.abril.nds.integracao.couchdb.CouchDbProperties;
+import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.util.TipoOperacaoSQL;
 
-/**
- * Classe de interceptação para eventos de entidades.
- * 
- * @author Discover Technology
- *
- */
 public class EntityInterceptor extends EmptyInterceptor {
+
+	private static final long serialVersionUID = -1965590377590000239L;
 	
-	/**
-	 * Serial Version UID
-	 */
-	private static final long serialVersionUID = -4809816440706721580L;
+	private static final String DB_NAME = "db_logs";
+
+	private Set<AuditoriaDTO> audit = new HashSet<AuditoriaDTO>();
+
+	@Autowired
+	private CouchDbProperties properties;
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.hibernate.EmptyInterceptor#onSave(java.lang.Object, java.io.Serializable, java.lang.Object[], java.lang.String[], org.hibernate.type.Type[])
-	 */
+	@Autowired
+	private ApplicationContext applicationContext;
+
+	private SessionFactory sessionFactory;
+	
+	private Session session;
+	
+	public EntityInterceptor() {
+		
+	}
+	
+	public EntityInterceptor(ApplicationContext applicationContext) {
+
+		this.applicationContext = applicationContext;
+	}
+	
 	@Override
 	public boolean onSave(Object entity, Serializable id, Object[] state,
-						  String[] propertyNames, Type[] types) {
+			String[] propertyNames, org.hibernate.type.Type[] types) {
+
+		this.validarAndamnetoFechamentoDiario();
 		
-		
-		if(entity instanceof PessoaJuridica){
-			PessoaJuridica pessoaJuridica = (PessoaJuridica) entity;
-			pessoaJuridica.removeMaskCnpj();
+		// Necessario pois a integracao ira usar os servicos
+		if (null != SecurityContextHolder.getContext().getAuthentication()) {
+			Object user = SecurityContextHolder.getContext().getAuthentication().getPrincipal(); 
+	
+			AuditoriaDTO auditoriaDTO = AuditoriaUtil.generateAuditoriaDTO(
+				entity, null, entity.getClass().getSimpleName(), Thread.currentThread(), user, TipoOperacaoSQL.INSERT
+			);
+			
+			audit.add(auditoriaDTO);
 		}
 
 		return false;
 	}
 	
+	@Override
+	public void onDelete(Object entity, Serializable id, Object[] state,
+			String[] propertyNames, org.hibernate.type.Type[] types) {
+
+		this.validarAndamnetoFechamentoDiario();
+		
+		// Necessario pois a integracao ira usar os servicos
+		if (null != SecurityContextHolder.getContext().getAuthentication()) {
+			Object user = SecurityContextHolder.getContext().getAuthentication().getPrincipal(); 
+	
+			AuditoriaDTO auditoriaDTO = AuditoriaUtil.generateAuditoriaDTO(
+				null, entity, entity.getClass().getSimpleName(), Thread.currentThread(), user, TipoOperacaoSQL.DELETE
+			);
+	
+			audit.add(auditoriaDTO);
+		}
+	}
+
+	@Override
+	public boolean onFlushDirty(Object entity, Serializable id,
+			Object[] currentState, Object[] previousState,
+			String[] propertyNames, org.hibernate.type.Type[] types) {
+
+		this.validarAndamnetoFechamentoDiario();
+		
+		// Necessario pois a integracao ira usar os servicos
+		if (null != SecurityContextHolder.getContext().getAuthentication()) {
+
+			Object user = SecurityContextHolder.getContext().getAuthentication().getPrincipal(); 
+		
+			Object oldEntity = this.getNewSession().get(entity.getClass(), id);
+			
+			AuditoriaDTO auditoriaDTO = AuditoriaUtil.generateAuditoriaDTO(
+				entity, oldEntity, entity.getClass().getSimpleName(), Thread.currentThread(), user, TipoOperacaoSQL.UPDATE
+			);
+			
+			audit.add(auditoriaDTO);
+		}
+		return false;
+	}
+	
+	@Override
+	public String onPrepareStatement(String sql) {
+		
+		if (sql != null && !sql.trim().isEmpty()) {
+			
+			if (sql.trim().toUpperCase().startsWith(TipoOperacaoSQL.DELETE.getOperacao()) 
+					|| sql.trim().toUpperCase().startsWith(TipoOperacaoSQL.UPDATE.getOperacao())) {
+				
+				this.validarAndamnetoFechamentoDiario();
+			}
+		}
+		
+		return super.onPrepareStatement(sql);
+	}
+
+	@Override
+	public void afterTransactionCompletion(Transaction tx) {
+
+		if (this.audit.isEmpty()) {
+
+			return;
+		}
+	
+		CouchDbClient client = new CouchDbClient(
+			DB_NAME,
+			true,
+			this.properties.getProtocol(), 
+			this.properties.getHost(), 
+			this.properties.getPort(), 
+			this.properties.getUsername(), 
+			this.properties.getPassword()
+		);
+
+		for (Iterator<AuditoriaDTO> auditedEntities = audit.iterator(); auditedEntities.hasNext();) {
+
+			AuditoriaDTO auditoria = auditedEntities.next();
+
+			client.save(auditoria);
+		}
+
+		 this.audit = new HashSet<AuditoriaDTO>();
+	}
+	
+	private SessionFactory getSessionFactory() {
+		
+		if (this.session == null) {
+
+			this.sessionFactory = this.applicationContext.getBean(SessionFactory.class);
+		}
+		
+		return this.sessionFactory;
+	}
+	
+	private Session getSession() {
+
+		if (this.session == null) {
+
+			SessionFactory sessionFactory = getSessionFactory();
+
+			this.session = sessionFactory.openSession();
+		}
+		
+		return this.session;
+	}
+
+	private Session getNewSession() {
+
+		Session session = getSessionFactory().openSession();
+
+		session.sessionWithOptions().interceptor(EmptyInterceptor.INSTANCE);
+
+		return session;
+	}
+
+
+	private void validarAndamnetoFechamentoDiario() {
+		
+		Query query = getSession().createQuery("from Distribuidor");
+		
+		query.setMaxResults(1);
+		
+		Distribuidor distribuidor = (Distribuidor) query.uniqueResult();
+		
+		if (distribuidor != null 
+				&& Boolean.TRUE.equals(distribuidor.getFechamentoDiarioEmAndamento())) {
+			
+			throw new RuntimeException("Fechamento diario em andamento! Por favor aguarde.");
+		}
+	}
 }

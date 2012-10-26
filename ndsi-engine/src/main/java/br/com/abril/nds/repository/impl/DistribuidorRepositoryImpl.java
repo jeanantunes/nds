@@ -10,6 +10,7 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.cadastro.DistribuicaoDistribuidor;
 import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
 import br.com.abril.nds.model.cadastro.Distribuidor;
@@ -30,7 +31,6 @@ public class DistribuidorRepositoryImpl extends
 	}
 
 	@Override
-	
 	public Distribuidor obter() {
 		String hql = "from Distribuidor";
 		Query query = getSession().createQuery(hql);
@@ -161,5 +161,12 @@ public class DistribuidorRepositoryImpl extends
 				this.getSession().
 				createQuery(
 						"select d.parametroEntregaBanca.complementoTermoAdesao from Distribuidor d").uniqueResult();
+	}
+
+	@Override
+	public DiaSemana buscarInicioSemana() {
+		
+		return (DiaSemana) 
+				this.getSession().createQuery("select inicioSemana from Distribuidor").uniqueResult();
 	}
 }
