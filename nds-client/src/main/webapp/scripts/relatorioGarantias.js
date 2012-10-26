@@ -1,6 +1,8 @@
 var relatorioGarantiasController = $.extend(true, {
 	
 	path : contextPath + '/financeiro/relatorioGarantias/',
+	
+	dataFaturamento: '',
 
 	init : function() {
 
@@ -78,6 +80,9 @@ var relatorioGarantiasController = $.extend(true, {
 		
 		$(".relatorioGarantiaGrid").flexReload();
 		
+		$("#garantiasEspecificas th[abbr='faturamento'] >div").html("Faturamento " + relatorioGarantiasController.dataFaturamento);
+		
+		alert(relatorioGarantiasController.dataFaturamento);
 		this.showGridGarantiaEspecifica();
 
 	
@@ -95,7 +100,13 @@ var relatorioGarantiasController = $.extend(true, {
 		if (data.mensagens) {
 			exibirMensagem(data.mensagens.tipoMensagem, data.mensagens.listaMensagens);
 		} 
-	    
+		else{
+			relatorioGarantiasController.dataFaturamento = data.rows[0].cell.baseCalculo;
+			alert(relatorioGarantiasController.dataFaturamento);
+		}
+		
+		
+		
 		return data;
 	},
 	
