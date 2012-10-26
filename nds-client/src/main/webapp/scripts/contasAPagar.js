@@ -90,6 +90,15 @@ var contasAPagarController = $.extend(true, {
 		pesquisaProdutoCAP.pesquisarPorNomeProduto('#codigo', '#produto', '#edicao', false);
 	},
 	
+	pesquisarProdutoPorCodigoConsignado : function() {
+		pesquisaProdutoCAP.pesquisarPorCodigoProduto('#codigoConsignado', '#produtoConsignado', '#edicaoConsignado', false);	
+	},
+	
+	
+	pesquisarProdutoPorNomeConsignado : function() {
+		pesquisaProdutoCAP.pesquisarPorNomeProduto('#codigoConsignado', '#produtoConsignado', '#edicaoConsignado', false);
+	},
+	
 	/*
 	 * *********************
 	 * Carregamento FlexGrid
@@ -357,18 +366,7 @@ var contasAPagarController = $.extend(true, {
 	popup_consignado : function(data) {
 		
 		$("#contasAPagar_dataDetalhe").val(data);
-		var params = $("#contasAPagarForm").serializeObject();
-		
-		$.postJSON(
-			contasAPagarController.path + 'pesquisarConsignado.json',
-			params,
-			function(result) {
-				contasAPagarController.montaTabelaTotaisDistribuidores($("#contasAPagar_table_popupConsignado").get(0), result.totalDistrib);
-				$(".contasAPagar-consignadoGrid").flexAddData({rows: toFlexiGridObject(result.grid), page : 1, total : 1});
-			},
-			null,
-			true
-		);
+		this.pesquisarConsignado();
 		
 		$("#contasAPagar_legend_popupConsignado").html(data);
 	
@@ -384,6 +382,28 @@ var contasAPagarController = $.extend(true, {
 				},
 			}
 		});
+	},
+	
+	
+	pesquisarConsignado : function () {
+	
+		var params = $("#contasAPagarForm").serializeArray();
+		
+		params.push({name: 'filtro.produtoConsignado', value: $("#produtoConsignado").val()});
+		params.push({name: 'filtro.edicaoConsignado',  value: $("#edicaoConsignado").val()});
+		
+		alert(params[params.length-1]);
+		
+		$.postJSON(
+			contasAPagarController.path + 'pesquisarConsignado.json',
+			params,
+			function(result) {
+				contasAPagarController.montaTabelaTotaisDistribuidores($("#contasAPagar_table_popupConsignado").get(0), result.totalDistrib);
+				$(".contasAPagar-consignadoGrid").flexAddData({rows: toFlexiGridObject(result.grid), page : 1, total : 1});
+			},
+			null,
+			true
+		);
 	},
 	
 
@@ -968,4 +988,3 @@ var contasAPagarController = $.extend(true, {
 	},
 	
 }, BaseController);
-
