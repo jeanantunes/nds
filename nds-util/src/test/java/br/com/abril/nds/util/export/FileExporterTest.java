@@ -37,7 +37,7 @@ public class FileExporterTest {
 		ndsFileHeader.setNomeUsuario("Antonio Carlos Pereira");
 		
 		ExportFilterTestVO exportFilterTestVO = 
-			new ExportFilterTestVO("1111111111111111", "2", "3", "4", "5", "6", "7");
+			new ExportFilterTestVO("1111111111111111", "2", "3", "4", "5", "6", "7", "(Mar/12)");
 		
 		List<ExportTestVO> listaExportTestVOs = new ArrayList<ExportTestVO>();
 		
@@ -45,13 +45,13 @@ public class FileExporterTest {
 			
 			listaExportTestVOs.add(
 				new ExportTestVO("" + i, "" + i, "" + i, "" + i, "" + i,
-					"" + i, "" + i, "" + i, "" + i, "" + i));
+					"" + i, "" + i, "" + i, "" + i, "" + i, "(Mar/12)"));
 		}
 
 		ExportFooterTestVO exportFooterTestVO = 
 			new ExportFooterTestVO(
 				new BigDecimal("999.99999"), new BigDecimal("999.99999"), 999L, 
-					999L, 999, new BigDecimal("999.99999"));
+					999L, 999, new BigDecimal("999.99999"), BigDecimal.TEN);
 		
 		FileExporter.to("teste", FileType.XLS).inOutputStream(
 			ndsFileHeader, exportFilterTestVO, exportFooterTestVO, 
@@ -71,7 +71,7 @@ public class FileExporterTest {
 		ndsFileHeader.setNomeUsuario("Antonio Carlos Pereira");
 		
 		ExportFilterTestVO exportFilterTestVO = 
-			new ExportFilterTestVO("1111111111111111", "2", "3", "4", "5", "6", "7");
+			new ExportFilterTestVO("1111111111111111", "2", "3", "4", "5", "6", "7", "(Mar/12)");
 		
 		List<ExportTestSmallVO> listaExportTestSmallVOs = new ArrayList<ExportTestSmallVO>();
 		
@@ -103,7 +103,7 @@ public class FileExporterTest {
 		ndsFileHeader.setNomeUsuario("Antonio Carlos Pereira");
 		
 		ExportFilterTestVO exportFilterTestVO = 
-			new ExportFilterTestVO("1111111111111111", "2", "3", "4", "5", "6", "7");
+			new ExportFilterTestVO("1111111111111111", "2", "3", "4", "5", "6", "7", "(Mar/12)");
 		
 		List<ExportTestSmallVO> listaExportTestSmallVOs = new ArrayList<ExportTestSmallVO>();
 		
@@ -191,7 +191,7 @@ public class FileExporterTest {
 		ndsFileHeader.setNomeUsuario("Antonio Carlos Pereira");
 		
 		ExportFilterTestVO exportFilterTestVO = 
-			new ExportFilterTestVO("1111111111111111", "2", "3", "4", "5", "6", "7");
+			new ExportFilterTestVO("1111111111111111", "2", "3", "4", "5", "6", "7", "(Mar/12)");
 		
 		List<ExportTestVO> listaExportTestVOs = new ArrayList<ExportTestVO>();
 		
@@ -199,13 +199,13 @@ public class FileExporterTest {
 			
 			listaExportTestVOs.add(
 				new ExportTestVO("" + i, "" + i, "" + i, "" + i, "" + i,
-					"" + i, "" + i, "" + i, "" + i, "" + i));
+					"" + i, "" + i, "" + i, "" + i, "" + i, "(Mar/12)"));
 		}
 		
 		ExportFooterTestVO exportFooterTestVO = 
 			new ExportFooterTestVO(
 				new BigDecimal("999.99999"), new BigDecimal("999.99999"), 999L, 
-					999L, 999, new BigDecimal("999.99999"));
+					999L, 999, new BigDecimal("999.99999"), BigDecimal.TEN);
 
 		exportParameters.setNdsFileHeader(ndsFileHeader);
 		exportParameters.setFilter(exportFilterTestVO);
@@ -229,7 +229,7 @@ public class FileExporterTest {
 		ndsFileHeader.setNomeUsuario("Antonio Carlos Pereira");
 		
 		ExportFilterTestVO exportFilterTestVO = 
-			new ExportFilterTestVO("1111111111111111", "2", "3", "4", "5", "6", "7");
+			new ExportFilterTestVO("1111111111111111", "2", "3", "4", "5", "6", "7", "(Mar/12)");
 		
 		List<ExportTestSmallVO> listaExportTestSmallVOs = new ArrayList<ExportTestSmallVO>();
 		
@@ -265,7 +265,7 @@ public class FileExporterTest {
 		ndsFileHeader.setNomeUsuario("Antonio Carlos Pereira");
 		
 		ExportFilterTestVO exportFilterTestVO = 
-			new ExportFilterTestVO("1111111111111111", "2", "3", "4", "5", "6", "7");
+			new ExportFilterTestVO("1111111111111111", "2", "3", "4", "5", "6", "7", "(Mar/12)");
 		
 		List<ExportTestSmallVO> listaExportTestSmallVOs = new ArrayList<ExportTestSmallVO>();
 		
@@ -304,7 +304,7 @@ public class FileExporterTest {
 		ndsFileHeader.setNomeUsuario("Antonio Carlos Pereira");
 		
 		ExportFilterTestVO exportFilterTestVO = 
-			new ExportFilterTestVO("1111111111111111", "2", "3", "4", "5", "6", "7");
+			new ExportFilterTestVO("1111111111111111", "2", "3", "4", "5", "6", "7", "(Mar/12)");
 		
 		List<ExportTestSmallVO> listaExportTestSmallVOs = new ArrayList<ExportTestSmallVO>();
 		

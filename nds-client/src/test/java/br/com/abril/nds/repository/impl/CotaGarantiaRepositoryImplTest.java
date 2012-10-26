@@ -12,6 +12,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.dto.DetalheGarantiaCadastradaDTO;
 import br.com.abril.nds.dto.GarantiaCadastradaDTO;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.cadastro.Box;
@@ -27,6 +28,7 @@ import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoCobrancaCotaGarantia;
+import br.com.abril.nds.model.cadastro.TipoGarantia;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaCaucaoLiquida;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaChequeCaucao;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaFiador;
@@ -139,22 +141,22 @@ public class CotaGarantiaRepositoryImplTest extends AbstractRepositoryImplTest {
 			switch (garantia.getTipoGarantia()) {
 			
 			case CAUCAO_LIQUIDA:
-				Assert.assertEquals(new BigDecimal(200), garantia.getValorTotal());
+				Assert.assertEquals(0, garantia.getValorTotal().compareTo(new BigDecimal(200)));
 				break;
 			case CHEQUE_CAUCAO:
-				Assert.assertEquals(new BigDecimal(25), garantia.getValorTotal());
+				Assert.assertEquals(0, garantia.getValorTotal().compareTo(new BigDecimal(25)));
 				break;
 			case FIADOR:
-				Assert.assertEquals(new BigDecimal(200), garantia.getValorTotal());
+				Assert.assertEquals(0, garantia.getValorTotal().compareTo(new BigDecimal(200)));
 				break;
 			case IMOVEL:
-				Assert.assertEquals(new BigDecimal(200), garantia.getValorTotal());
+				Assert.assertEquals(0, garantia.getValorTotal().compareTo(new BigDecimal(200)));
 				break;
 			case NOTA_PROMISSORIA:
-				Assert.assertEquals(new BigDecimal(50), garantia.getValorTotal());
+				Assert.assertEquals(0, garantia.getValorTotal().compareTo(new BigDecimal(50)));
 				break;
 			case OUTROS:
-				Assert.assertEquals(new BigDecimal(200), garantia.getValorTotal());
+				Assert.assertEquals(0, garantia.getValorTotal().compareTo(new BigDecimal(200)));
 				break;
 			default:
 				Assert.fail();
@@ -170,15 +172,13 @@ public class CotaGarantiaRepositoryImplTest extends AbstractRepositoryImplTest {
 
 		save(pagamentoCaucaoLiquida);
 		
-		Double valorCaucaoLiquida = 10D;
-		
 		List<CaucaoLiquida> caucoes1 = new ArrayList<CaucaoLiquida>();
 		
 		for (int i = 0; i < 10; i ++) {
 
 			CaucaoLiquida caucaoLiquida = new CaucaoLiquida();
 			caucaoLiquida.setAtualizacao(Calendar.getInstance());
-			caucaoLiquida.setValor(valorCaucaoLiquida);
+			caucaoLiquida.setValor(BigDecimal.TEN);
 			
 			save(caucaoLiquida);
 			
@@ -191,7 +191,7 @@ public class CotaGarantiaRepositoryImplTest extends AbstractRepositoryImplTest {
 
 			CaucaoLiquida caucaoLiquida = new CaucaoLiquida();
 			caucaoLiquida.setAtualizacao(Calendar.getInstance());
-			caucaoLiquida.setValor(valorCaucaoLiquida);
+			caucaoLiquida.setValor(BigDecimal.TEN);
 			
 			save(caucaoLiquida);
 			
@@ -204,7 +204,7 @@ public class CotaGarantiaRepositoryImplTest extends AbstractRepositoryImplTest {
 
 			CaucaoLiquida caucaoLiquida = new CaucaoLiquida();
 			caucaoLiquida.setAtualizacao(Calendar.getInstance());
-			caucaoLiquida.setValor(valorCaucaoLiquida);
+			caucaoLiquida.setValor(BigDecimal.TEN);
 			
 			save(caucaoLiquida);
 			
@@ -217,7 +217,7 @@ public class CotaGarantiaRepositoryImplTest extends AbstractRepositoryImplTest {
 
 			CaucaoLiquida caucaoLiquida = new CaucaoLiquida();
 			caucaoLiquida.setAtualizacao(Calendar.getInstance());
-			caucaoLiquida.setValor(valorCaucaoLiquida);
+			caucaoLiquida.setValor(BigDecimal.TEN);
 			
 			save(caucaoLiquida);
 			
@@ -255,7 +255,7 @@ public class CotaGarantiaRepositoryImplTest extends AbstractRepositoryImplTest {
 		cheque1.setNumeroBanco("555");
 		cheque1.setNumeroCheque("888");
 		cheque1.setValidade(new Date());
-		cheque1.setValor(10D);
+		cheque1.setValor(BigDecimal.TEN);
 		
 		Cheque cheque2 = new Cheque();
 		cheque2.setAgencia(234L);
@@ -268,7 +268,7 @@ public class CotaGarantiaRepositoryImplTest extends AbstractRepositoryImplTest {
 		cheque2.setNumeroBanco("555");
 		cheque2.setNumeroCheque("888");
 		cheque2.setValidade(new Date());
-		cheque2.setValor(15D);
+		cheque2.setValor(new BigDecimal(15));
 
 		CotaGarantiaChequeCaucao garantiaChequeCaucao1 = new CotaGarantiaChequeCaucao();
 		CotaGarantiaChequeCaucao garantiaChequeCaucao2 = new CotaGarantiaChequeCaucao();
@@ -295,7 +295,7 @@ public class CotaGarantiaRepositoryImplTest extends AbstractRepositoryImplTest {
 			imovel.setNumeroRegistro("123" + i);
 			imovel.setObservacao("observação");
 			imovel.setProprietario("proprietário");
-			imovel.setValor(10D);
+			imovel.setValor(BigDecimal.TEN);
 			
 			imoveis1.add(imovel);
 		}
@@ -309,7 +309,7 @@ public class CotaGarantiaRepositoryImplTest extends AbstractRepositoryImplTest {
 			imovel.setNumeroRegistro("123" + i);
 			imovel.setObservacao("observação");
 			imovel.setProprietario("proprietário");
-			imovel.setValor(10D);
+			imovel.setValor(BigDecimal.TEN);
 			
 			imoveis2.add(imovel);
 		}
@@ -387,13 +387,13 @@ public class CotaGarantiaRepositoryImplTest extends AbstractRepositoryImplTest {
 		
 		NotaPromissoria notaPromissoria1 = new NotaPromissoria();
 		
-		notaPromissoria1.setValor(20D);
+		notaPromissoria1.setValor(new BigDecimal(20));
 		notaPromissoria1.setValorExtenso("Vinte");
 		notaPromissoria1.setVencimento(new Date());
 		
 		NotaPromissoria notaPromissoria2 = new NotaPromissoria();
 		
-		notaPromissoria2.setValor(30D);
+		notaPromissoria2.setValor(new BigDecimal(30));
 		notaPromissoria2.setValorExtenso("Trinta");
 		notaPromissoria2.setVencimento(new Date());
 		
@@ -452,4 +452,40 @@ public class CotaGarantiaRepositoryImplTest extends AbstractRepositoryImplTest {
 		
 		save(garantiaOutros1, garantiaOutros2);
 	}
+	
+	
+	@Test
+	public void obterDetalheGarantiaCadastrada() {
+
+		List<DetalheGarantiaCadastradaDTO> detalhesGgarantia = this.cotaGarantiaRepository.obterDetalheGarantiaCadastrada(TipoGarantia.CAUCAO_LIQUIDA);
+		Assert.assertNotNull(detalhesGgarantia);
+		Assert.assertEquals(0, detalhesGgarantia.get(0).getValor().compareTo(new BigDecimal(10)));
+		Assert.assertEquals(0, detalhesGgarantia.get(1).getValor().compareTo(new BigDecimal(10)));
+		
+		detalhesGgarantia = this.cotaGarantiaRepository.obterDetalheGarantiaCadastrada(TipoGarantia.CHEQUE_CAUCAO);
+		Assert.assertNotNull(detalhesGgarantia);
+		Assert.assertEquals(0, detalhesGgarantia.get(0).getValor().compareTo(new BigDecimal(15)));
+		Assert.assertEquals(0, detalhesGgarantia.get(1).getValor().compareTo(new BigDecimal(10)));
+		
+		detalhesGgarantia = this.cotaGarantiaRepository.obterDetalheGarantiaCadastrada(TipoGarantia.FIADOR);
+		Assert.assertNotNull(detalhesGgarantia);
+		Assert.assertEquals(0, detalhesGgarantia.get(0).getValor().compareTo(new BigDecimal(10)));
+		Assert.assertEquals(0, detalhesGgarantia.get(1).getValor().compareTo(new BigDecimal(10)));
+		
+		detalhesGgarantia = this.cotaGarantiaRepository.obterDetalheGarantiaCadastrada(TipoGarantia.NOTA_PROMISSORIA);
+		Assert.assertNotNull(detalhesGgarantia);
+		Assert.assertEquals(0, detalhesGgarantia.get(0).getValor().compareTo(new BigDecimal(20)));
+		Assert.assertEquals(0, detalhesGgarantia.get(1).getValor().compareTo(new BigDecimal(30)));
+		
+		detalhesGgarantia = this.cotaGarantiaRepository.obterDetalheGarantiaCadastrada(TipoGarantia.IMOVEL);
+		Assert.assertNotNull(detalhesGgarantia);
+		Assert.assertEquals(0, detalhesGgarantia.get(0).getValor().compareTo(new BigDecimal(10)));
+		Assert.assertEquals(0, detalhesGgarantia.get(1).getValor().compareTo(new BigDecimal(10)));
+		
+        detalhesGgarantia = this.cotaGarantiaRepository.obterDetalheGarantiaCadastrada(TipoGarantia.OUTROS);
+		Assert.assertNotNull(detalhesGgarantia);
+		Assert.assertEquals(0, detalhesGgarantia.get(0).getValor().compareTo(new BigDecimal(10)));
+		Assert.assertEquals(0, detalhesGgarantia.get(1).getValor().compareTo(new BigDecimal(10)));
+	}
+
 }

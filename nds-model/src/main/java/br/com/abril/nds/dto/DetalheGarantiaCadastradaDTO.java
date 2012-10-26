@@ -22,7 +22,7 @@ public class DetalheGarantiaCadastradaDTO implements Serializable {
 	private static final long serialVersionUID = 3974338449916012348L;
 
 	@Export(label = "Cota", alignment=Alignment.LEFT)
-	private String numeroCota;
+	private Integer numeroCota;
 	
 	@Export(label = "Nome", alignment=Alignment.LEFT)
 	private String nomeCota;
@@ -45,14 +45,14 @@ public class DetalheGarantiaCadastradaDTO implements Serializable {
 	/**
 	 * @return the numeroCota
 	 */
-	public String getNumeroCota() {
+	public Integer getNumeroCota() {
 		return numeroCota;
 	}
 
 	/**
 	 * @param numeroCota the numeroCota to set
 	 */
-	public void setNumeroCota(String numeroCota) {
+	public void setNumeroCota(Integer numeroCota) {
 		this.numeroCota = numeroCota;
 	}
 
@@ -75,69 +75,6 @@ public class DetalheGarantiaCadastradaDTO implements Serializable {
 	 */
 	public TipoGarantia getTipoGarantia() {
 		return tipoGarantia;
-	}
-
-	/**
-	 * @param tipoGarantia the tipoGarantia to set
-	 */
-	public void setTipoGarantia(TipoGarantia tipoGarantia) {
-		this.tipoGarantia = tipoGarantia;
-	}
-
-	/**
-	 * @return the vencimento
-	 */
-	public Date getVencimento() {
-		return vencimento;
-	}
-
-	/**
-	 * @param vencimento the vencimento to set
-	 */
-	public void setVencimento(Date vencimento) {
-		this.vencimento = vencimento;
-	}
-
-	/**
-	 * @return the valor
-	 */
-	public BigDecimal getValor() {
-		return valor;
-	}
-
-	/**
-	 * @param valor the valor to set
-	 */
-	public void setValor(BigDecimal valor) {
-		this.valor = valor;
-	}
-
-	/**
-	 * @return the faturamentoMes
-	 */
-	public BigDecimal getFaturamentoMes() {
-		return faturamentoMes;
-	}
-
-	/**
-	 * @param faturamentoMes the faturamentoMes to set
-	 */
-	public void setFaturamentoMes(BigDecimal faturamentoMes) {
-		this.faturamentoMes = faturamentoMes;
-	}
-
-	/**
-	 * @return the percGarantiaFaturamento
-	 */
-	public BigDecimal getPercGarantiaFaturamento() {
-		return percGarantiaFaturamento;
-	}
-
-	/**
-	 * @param percGarantiaFaturamento the percGarantiaFaturamento to set
-	 */
-	public void setPercGarantiaFaturamento(BigDecimal percGarantiaFaturamento) {
-		this.percGarantiaFaturamento = percGarantiaFaturamento;
 	}
 
 	/**
@@ -169,5 +106,61 @@ public class DetalheGarantiaCadastradaDTO implements Serializable {
 		
 			this.tipoGarantia = TipoGarantia.OUTROS;
 		}
+	}
+
+	/**
+	 * @return the vencimento
+	 */
+	public Date getVencimento() {
+		return vencimento;
+	}
+
+	/**
+	 * @param vencimento the vencimento to set
+	 */
+	public void setVencimento(Date vencimento) {
+		this.vencimento = vencimento;
+	}
+
+	/**
+	 * @return the valor
+	 */
+	public BigDecimal getValor() {
+		return valor;
+	}
+	
+	/**
+	 * @param valor the valor to set
+	 */
+	public void setValor(BigDecimal valor) {
+		this.valor = valor;
+	}
+	
+	/**
+	 * @return the faturamentoMes
+	 */
+	public BigDecimal getFaturamentoMes() {
+		return faturamentoMes;
+	}
+
+	/**
+	 * @param faturamentoMes the faturamentoMes to set
+	 */
+	public void setFaturamentoMes(BigDecimal faturamentoMes) {
+		this.faturamentoMes = faturamentoMes;
+	}
+
+	/**
+	 * @return the percGarantiaFaturamento
+	 */
+	public BigDecimal getPercGarantiaFaturamento() {
+		return percGarantiaFaturamento;
+	}
+
+	/**
+	 * @param percGarantiaFaturamento the percGarantiaFaturamento to set
+	 */
+	public void setPercGarantiaFaturamento(BigDecimal percGarantiaFaturamento) {
+		this.percGarantiaFaturamento = percGarantiaFaturamento;
 	}
 }

@@ -3695,13 +3695,13 @@ public class DataLoader {
 //				"/opt/interface/contratos/"));	// linux;
 		save(session, Fixture.parametroSistema(TipoParametroSistema.PATH_INTERFACE_MDC_IMPORTACAO, 
 //				"C:\\interface_mdc\\"));		// windows;
-				"/opt/interface_mdc/"));		// linux;
+				"/mnt/mdc/NDS/"));		// linux;
 		save(session, Fixture.parametroSistema(TipoParametroSistema.PATH_INTERFACE_MDC_EXPORTACAO,
 //				"C:\\interface_mdc\\"));		// windows;
-				"/opt/interface_mdc/"));	// linux;
+				"/mnt/mdc/"));	// linux;
 		save(session, Fixture.parametroSistema(TipoParametroSistema.PATH_INTERFACE_MDC_BACKUP,
 //				"C:\\interface_mdc\\"));		// windows;
-				"/opt/interface_mdc/"));		// linux;
+				"/mnt/mdc/NDS_BACKUP/"));		// linux;
 		
 		
 		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0106_IN_FILEMASK, "(?i:DEAPR19.NEW)"));

@@ -405,7 +405,7 @@ public class RelatorioVendasController {
 	public void pesquisarCurvaABCDistribuidor(String dataDe, String dataAte,
 			String sortorder, String sortname, int page, int rp)
 			throws Exception {
-		pesquisarCurvaABCDistribuidor(dataDe, dataAte, 0L, "", "", "", 0L, null,
+		pesquisarCurvaABCDistribuidor(dataDe, dataAte, 0L, "", "", null, 0L, null,
 				"", "", sortorder, sortname, page, rp);
 	}
 
@@ -431,7 +431,7 @@ public class RelatorioVendasController {
 	@Path("/pesquisarCurvaABCDistribuidorAvancada")
 	public void pesquisarCurvaABCDistribuidor(String dataDe, String dataAte,
 			Long codigoFornecedor, String codigoProduto, String nomeProduto,
-			String edicaoProduto, Long codigoEditor, Integer codigoCota,
+			List<Long> edicaoProduto, Long codigoEditor, Integer codigoCota,
 			String nomeCota, String municipio, String sortorder,
 			String sortname, int page, int rp) throws Exception {
 
@@ -443,7 +443,7 @@ public class RelatorioVendasController {
 
 	private void consultarCurvaABCDistribuidorProduto(String dataDe, String dataAte,
 			Long codigoFornecedor, String codigoProduto, String nomeProduto,
-			String edicaoProduto, Long codigoEditor, Integer codigoCota,
+			List<Long> edicaoProduto, Long codigoEditor, Integer codigoCota,
 			String nomeCota, String municipio, String sortorder,
 			String sortname, int page, int rp,TipoConsultaCurvaABC tipoConsulta) throws ParseException, Exception {
 		
@@ -509,7 +509,7 @@ public class RelatorioVendasController {
 	public void pesquisarCurvaABCEditor(String dataDe, String dataAte, String sortorder,
 			String sortname, int page, int rp)
 			throws Exception {
-		pesquisarCurvaABCEditor(dataDe, dataAte, 0L, "", "", "", 0L, null,
+		pesquisarCurvaABCEditor(dataDe, dataAte, 0L, "", "", null, 0L, null,
 				"", "", sortorder, sortname, page, rp);
 	}
 
@@ -535,12 +535,12 @@ public class RelatorioVendasController {
 	@Path("/pesquisarCurvaABCEditorAvancada")
 	public void pesquisarCurvaABCEditor(String dataDe, String dataAte,
 			Long codigoFornecedor, String codigoProduto, String nomeProduto,
-			String edicaoProduto, Long codigoEditor, Integer codigoCota,
+			List<Long> edicaoProduto, Long codigoEditor, Integer codigoCota,
 			String nomeCota, String municipio, String sortorder,
 			String sortname, int page, int rp) throws Exception {
 
 		this.validarDadosEntradaPesquisa(dataDe, dataAte);
-
+		
 		SimpleDateFormat sdf = new SimpleDateFormat(Constantes.DATE_PATTERN_PT_BR);
 
 		FiltroCurvaABCEditorDTO filtroCurvaABCEditorDTO = carregarFiltroPesquisaEditor(sdf.parse(dataDe), sdf.parse(dataAte), codigoFornecedor,
@@ -601,7 +601,7 @@ public class RelatorioVendasController {
 	public void pesquisarCurvaABCProduto(String dataDe, String dataAte,
 			String codigoProduto, String nomeProduto, String sortorder,
 			String sortname, int page, int rp) throws Exception {
-		pesquisarCurvaABCProduto(dataDe, dataAte, 0L, codigoProduto, nomeProduto, "", 0L, null, "", "", sortorder, sortname, page, rp);
+		pesquisarCurvaABCProduto(dataDe, dataAte, 0L, codigoProduto, nomeProduto, null, 0L, null, "", "", sortorder, sortname, page, rp);
 	}
 	
 	/**
@@ -626,7 +626,7 @@ public class RelatorioVendasController {
 	@Path("/pesquisarCurvaABCProdutoAvancada")
 	public void pesquisarCurvaABCProduto(String dataDe, String dataAte,
 			Long codigoFornecedor, String codigoProduto, String nomeProduto,
-			String edicaoProduto, Long codigoEditor, Integer codigoCota,
+			List<Long> edicaoProduto, Long codigoEditor, Integer codigoCota,
 			String nomeCota, String municipio, String sortorder,
 			String sortname, int page, int rp) throws Exception {
 			validarDadosEntradaPesquisaProduto(dataDe, dataAte, codigoProduto, nomeProduto);
@@ -654,7 +654,7 @@ public class RelatorioVendasController {
 			Integer codigoCota, String nomeCota, String sortorder,
 			String sortname, int page, int rp)
 			throws Exception {
-		pesquisarCurvaABCCota(dataDe, dataAte, 0L, "", "", "", 0L, codigoCota, nomeCota, "", sortorder, sortname, page, rp);
+		pesquisarCurvaABCCota(dataDe, dataAte, 0L, "", "", null, 0L, codigoCota, nomeCota, "", sortorder, sortname, page, rp);
 	}
 
 	/**
@@ -679,7 +679,7 @@ public class RelatorioVendasController {
 	@Path("/pesquisarCurvaABCCotaAvancada")
 	public void pesquisarCurvaABCCota(String dataDe, String dataAte,
 			Long codigoFornecedor, String codigoProduto, String nomeProduto,
-			String edicaoProduto, Long codigoEditor, Integer codigoCota,
+			List<Long> edicaoProduto, Long codigoEditor, Integer codigoCota,
 			String nomeCota, String municipio, String sortorder,
 			String sortname, int page, int rp) throws Exception {
 		
@@ -747,7 +747,7 @@ public class RelatorioVendasController {
 	 * @return
 	 */
 	private FiltroCurvaABCEditorDTO carregarFiltroPesquisaEditor(Date dataDe, Date dataAte, Long codigoFornecedor, 
-			String codigoProduto, String nomeProduto, String edicaoProduto, Long codigoEditor,
+			String codigoProduto, String nomeProduto, List<Long> edicaoProduto, Long codigoEditor,
 			Integer codigoCota, String nomeCota, String municipio,
 			String sortorder, String sortname, int page, int rp) {
 
@@ -788,7 +788,7 @@ public class RelatorioVendasController {
 	 * @return
 	 */
 	private FiltroCurvaABCDistribuidorDTO carregarFiltroPesquisaDistribuidor(Date dataDe, Date dataAte, Long codigoFornecedor, 
-			String codigoProduto, String nomeProduto, String edicaoProduto, Long codigoEditor,
+			String codigoProduto, String nomeProduto, List<Long> edicaoProduto, Long codigoEditor,
 			Integer codigoCota, String nomeCota, String municipio,
 			String sortorder, String sortname, int page, int rp) {
 
@@ -828,7 +828,7 @@ public class RelatorioVendasController {
 	 * @return
 	 */
 	private FiltroCurvaABCCotaDTO carregarFiltroPesquisaCota(Date dataDe, Date dataAte, Long codigoFornecedor, 
-			String codigoProduto, String nomeProduto, String edicaoProduto, Long codigoEditor,
+			String codigoProduto, String nomeProduto, List<Long> edicaoProduto, Long codigoEditor,
 			Integer codigoCota, String nomeCota, String municipio,
 			String sortorder, String sortname, int page, int rp) {
 
