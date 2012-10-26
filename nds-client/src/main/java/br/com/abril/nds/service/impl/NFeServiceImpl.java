@@ -1,6 +1,7 @@
 package br.com.abril.nds.service.impl;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.text.DateFormat;
@@ -147,20 +148,12 @@ public class NFeServiceImpl implements NFeService {
 		
 		carregarNEDadosPrincipais(nfeImpressao, notaEnvio);
 		
-/*
-
-		carregarDanfeDadosEmissor(nfeImpressao, notaEnvio);
-
-		carregarDanfeDadosDestinatario(nfeImpressao, notaEnvio);
-
-		carregarDanfeDadosTributarios(nfeImpressao, notaEnvio);
-
-		carregarDanfeDadosTransportadora(nfeImpressao, notaEnvio);
-
-		carregarDadosItensNfe(nfeImpressao, notaEnvio);
-
-		carregarDadosDuplicatas(nfeImpressao, notaEnvio);*/
-
+		carregarNEDadosEmissor(nfeImpressao, notaEnvio);
+		
+		carregarNEDadosDestinatario(nfeImpressao, notaEnvio);
+		
+		carregarNEDadosItens(nfeImpressao, notaEnvio);
+		
 		return nfeImpressao;
 		
 	}
@@ -769,11 +762,11 @@ public class NFeServiceImpl implements NFeService {
 	 * Carrega os dados do emissor na DANFE
 	 * 
 	 * @param danfe
-	 * @param notaFiscal
+	 * @param notaEnvio
 	 */
-	private void carregarDanfeDadosEmissor(NfeImpressaoDTO nfeImpressao, NotaEnvio notaFiscal) {
+	private void carregarNEDadosEmissor(NfeImpressaoDTO nfeImpressao, NotaEnvio notaEnvio) {
 
-		Pessoa pessoaEmitente = notaFiscal.getEmitente().getPessoaEmitenteReferencia();
+		Pessoa pessoaEmitente = notaEnvio.getEmitente().getPessoaEmitenteReferencia();
 
 		boolean indPessoaJuridica = false;
 
@@ -783,14 +776,14 @@ public class NFeServiceImpl implements NFeService {
 
 		} 
 
-		String documento 	= notaFiscal.getEmitente().getDocumento();
-		Endereco endereco 	= notaFiscal.getEmitente().getEndereco();
-		Telefone telefone 	= notaFiscal.getEmitente().getTelefone();
+		String documento 	= notaEnvio.getEmitente().getDocumento();
+		Endereco endereco 	= notaEnvio.getEmitente().getEndereco();
+		Telefone telefone 	= notaEnvio.getEmitente().getTelefone();
 
-		String emissorNome 							 = notaFiscal.getEmitente().getNome();
+		String emissorNome 							 = notaEnvio.getEmitente().getNome();
 
-		String emissorFantasia 						 = notaFiscal.getEmitente().getNome();
-		String emissorInscricaoEstadual 			 = notaFiscal.getEmitente().getInscricaoEstual();
+		String emissorFantasia 						 = notaEnvio.getEmitente().getNome();
+		String emissorInscricaoEstadual 			 = notaEnvio.getEmitente().getInscricaoEstual();
 
 		String emissorCNPJ 							 = "";
 
@@ -839,6 +832,126 @@ public class NFeServiceImpl implements NFeService {
 		nfeImpressao.setEmissorUF(emissorUF);
 		nfeImpressao.setEmissorCEP(emissorCEP);
 		nfeImpressao.setEmissorTelefone(emissorTelefone);
+
+	}
+	
+	/**
+	 * Carrega os dados de destinatario na DANFE.
+	 * 
+	 * @param nfeImpressao
+	 * @param nfe
+	 * @param notaEnvio
+	 */
+	private void carregarNEDadosDestinatario(NfeImpressaoDTO nfeImpressao, NotaEnvio notaEnvio) {
+
+		String documento 			= notaEnvio.getDestinatario().getDocumento();
+		Pessoa pessoaDestinatario 	= notaEnvio.getDestinatario().getPessoaDestinatarioReferencia();
+
+		Endereco endereco = notaEnvio.getDestinatario().getEndereco();
+		Telefone telefone = notaEnvio.getDestinatario().getTelefone();
+
+		boolean indPessoaJuridica = false;
+
+		if(pessoaDestinatario instanceof PessoaJuridica) {
+			indPessoaJuridica = true;
+		} 
+
+		String destinatarioCNPJ 				= "";
+		String destinatarioNome 				= notaEnvio.getDestinatario().getNome();
+		String destinatarioInscricaoEstadual 	= notaEnvio.getDestinatario().getInscricaoEstual();
+
+		String destinatarioLogradouro 			= "";
+		String destinatarioNumero 				= "";
+		String destinatarioComplemento 			= "";
+		String destinatarioBairro 				= "";
+		String destinatarioMunicipio 			= "";
+		String destinatarioUF 					= "";
+		String destinatarioCEP 					= "";
+		String destinatarioTelefone 			= "";
+
+		if (indPessoaJuridica) {
+			destinatarioCNPJ = documento;
+		} 
+
+		if(endereco!=null) {
+
+			destinatarioLogradouro = endereco.getLogradouro();
+			destinatarioNumero	=	endereco.getNumero().toString();
+			destinatarioComplemento	=	endereco.getComplemento();
+			destinatarioBairro	=	endereco.getBairro();
+			destinatarioMunicipio	=	 endereco.getCidade();
+			destinatarioUF	=	endereco.getUf();
+			destinatarioCEP	=	endereco.getCep();
+
+		}
+
+		if(telefone != null) {
+
+			String ddd = (telefone.getDdd() == null) ? "()" : "("+telefone.getDdd()+")" ;
+			String phone = (telefone.getNumero() == null) ? "" : telefone.getNumero().toString();
+			destinatarioTelefone = ddd + phone;
+
+		}
+
+		destinatarioCEP = tratarCep(destinatarioCEP);
+
+		destinatarioTelefone = tratarTelefone(destinatarioTelefone);
+
+		nfeImpressao.setDestinatarioCNPJ(destinatarioCNPJ);
+		nfeImpressao.setDestinatarioNome(destinatarioNome);
+		nfeImpressao.setDestinatarioInscricaoEstadual(destinatarioInscricaoEstadual);
+		nfeImpressao.setDestinatarioLogradouro(destinatarioLogradouro);
+		nfeImpressao.setDestinatarioNumero(destinatarioNumero);
+		nfeImpressao.setDestinatarioComplemento(destinatarioComplemento);
+		nfeImpressao.setDestinatarioBairro(destinatarioBairro);
+		nfeImpressao.setDestinatarioMunicipio(destinatarioMunicipio);
+		nfeImpressao.setDestinatarioUF(destinatarioUF);
+		nfeImpressao.setDestinatarioCEP(destinatarioCEP);
+		nfeImpressao.setDestinatarioTelefone(destinatarioTelefone);
+
+	}
+	
+	private void carregarNEDadosItens(NfeImpressaoDTO nfeImpressao, NotaEnvio notaEnvio) {
+
+		List<ItemImpressaoNfe> listaItemImpressaoNfe = new ArrayList<ItemImpressaoNfe>();
+
+		List<ItemNotaEnvio> itensNotaEnvio =  notaEnvio.getListaItemNotaEnvio();
+
+		String codigoProduto 		= "";
+		String descricaoProduto 	= "";
+		Long produtoEdicao 			= null;
+		BigInteger reparteProduto 	= null;
+		BigDecimal quantidadeProduto 	= BigDecimal.ZERO;
+		BigDecimal valorUnitarioProduto = BigDecimal.ZERO;
+		BigDecimal valorTotalProduto 	= BigDecimal.ZERO;
+		BigDecimal valorDescontoProduto = BigDecimal.ZERO;
+
+		for(ItemNotaEnvio itemNotaEnvio : itensNotaEnvio) {
+
+			codigoProduto 		= itemNotaEnvio.getCodigoProduto().toString();
+			descricaoProduto 	= itemNotaEnvio.getProdutoEdicao().getProduto().getNome();
+			produtoEdicao		= itemNotaEnvio.getProdutoEdicao().getNumeroEdicao();
+
+			reparteProduto		= itemNotaEnvio.getReparte();
+
+			valorUnitarioProduto = itemNotaEnvio.getPrecoCapa();
+			valorDescontoProduto = itemNotaEnvio.getDesconto();
+
+			ItemImpressaoNfe item = new ItemImpressaoNfe();
+
+			item.setCodigoProduto(codigoProduto);
+			item.setDescricaoProduto(descricaoProduto);
+			item.setProdutoEdicao(produtoEdicao);
+			item.setQuantidadeProduto(quantidadeProduto);
+			item.setValorUnitarioProduto(valorUnitarioProduto);
+			item.setValorTotalProduto(valorTotalProduto);
+			item.setValorDescontoProduto(valorDescontoProduto.divide(new BigDecimal("100")));
+
+			listaItemImpressaoNfe.add(item);
+
+		}
+
+		nfeImpressao.setItensDanfe(listaItemImpressaoNfe);
 
 	}
 	
