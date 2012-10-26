@@ -78,6 +78,7 @@ public class ChamadaEncalheFornecedorDTOAssembler {
                     icefDTO.setQtdeVenda(icef.getQtdeVendaApurada());
                     icefDTO.setTipoRecolhimento(tipoRecolhimento);
                     icefDTO.setValorVenda(icef.getValorVendaApurado());
+                    icefDTO.setCodigoNotaEnvioMultipla(icef.getCodigoNotaEnvioMultipla());
                     cefDTO.addItem(icefDTO);
 
                     totalBrutoDocumento = totalBrutoDocumento.add(Util.nvl(icef.getValorVendaApurado(), BigDecimal.ZERO));
