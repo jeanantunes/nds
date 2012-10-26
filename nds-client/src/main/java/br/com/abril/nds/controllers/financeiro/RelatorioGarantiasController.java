@@ -1,6 +1,7 @@
 package br.com.abril.nds.controllers.financeiro;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -118,6 +119,9 @@ public class RelatorioGarantiasController {
 		
 		this.session.setAttribute(FILTRO_RELATORIO_GARANTIAS, filtro);
 		
+		SimpleDateFormat sdf = new SimpleDateFormat("MM/yy");
+		String data = sdf.format(distribuidorService.obter().getDataOperacao());
+		
 		if (filtro.getTipoGarantia().equalsIgnoreCase("Selecione...")) {
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "O tipo de garantia deve ser informado."));
 		}
@@ -128,9 +132,10 @@ public class RelatorioGarantiasController {
 		
 		List<RelatorioDetalheGarantiaVO> garantiasVO = new ArrayList<RelatorioDetalheGarantiaVO>();
 		FlexiGridDTO<RelatorioDetalheGarantiaDTO> flexDTO = relatorioGarantiasService.gerarPorTipoGarantia(filtro);
+		 
 		
 		for(RelatorioDetalheGarantiaDTO dto : flexDTO.getGrid()){
-			garantiasVO.add(new RelatorioDetalheGarantiaVO(dto));
+			garantiasVO.add(new RelatorioDetalheGarantiaVO(dto,data));
 		}
 		
 		result.use(FlexiGridJson.class).from(garantiasVO).total(garantiasVO.size()).serialize();
@@ -163,10 +168,14 @@ public class RelatorioGarantiasController {
 		FiltroRelatorioGarantiasDTO filtro = (FiltroRelatorioGarantiasDTO) this.session.getAttribute(FILTRO_RELATORIO_GARANTIAS);
 		
 		List<RelatorioDetalheGarantiaVO> garantiasVO = new ArrayList<RelatorioDetalheGarantiaVO>();
+		
+		SimpleDateFormat sdf = new SimpleDateFormat("MM/yy");
+		String data = sdf.format(distribuidorService.obter().getDataOperacao());
+		
 		FlexiGridDTO<RelatorioDetalheGarantiaDTO> flexDTO = relatorioGarantiasService.gerarPorTipoGarantia(filtro);
 		
 		for(RelatorioDetalheGarantiaDTO dto : flexDTO.getGrid()){
-			garantiasVO.add(new RelatorioDetalheGarantiaVO(dto));
+			garantiasVO.add(new RelatorioDetalheGarantiaVO(dto,data));
 		}
 		
 		FileExporter.to("relatorio-garantias", fileType).inHTTPResponse(this.getNDSFileHeader(new Date()), null, null,
