@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="CE_Devolucao_Fornecedor" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="BlankPage" columnWidth="814" leftMargin="14" rightMargin="14" topMargin="6" bottomMargin="6" isSummaryNewPage="true">
 	<property name="ireport.zoom" value="2.0"/>
-	<property name="ireport.x" value="841"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.x" value="439"/>
+	<property name="ireport.y" value="178"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA["C:\\workspace\\NDS\\nds-client\\src\\main\\resources\\reports\\"]]></defaultValueExpression>
 	</parameter>
+	<parameter name="resumo" class="java.lang.Object"/>
 	<field name="numeroDocumento" class="java.lang.Long"/>
-	<field name="identificacao.tipoCE" class="java.lang.String"/>
+	<field name="identificacao.tipoCE" class="java.lang.Integer"/>
 	<field name="identificacao.dataVencimento" class="java.util.Date"/>
 	<field name="identificacao.codigo" class="java.lang.Long"/>
 	<field name="identificacao.numeroCE" class="java.lang.Long"/>
@@ -28,12 +29,12 @@
 	<field name="fornecedor.cnpj" class="java.lang.String"/>
 	<field name="fornecedor.inscricaoEstadual" class="java.lang.String"/>
 	<field name="fornecedor.logradouro" class="java.lang.String"/>
-	<field name="fornecedor.numero" class="java.lang.Integer"/>
+	<field name="fornecedor.numero" class="java.lang.String"/>
 	<field name="fornecedor.cidade" class="java.lang.String"/>
 	<field name="fornecedor.uf" class="java.lang.String"/>
 	<field name="distribuidor.razaoSocial" class="java.lang.String"/>
 	<field name="distribuidor.logradouro" class="java.lang.String"/>
-	<field name="distribuidor.numero" class="java.lang.Integer"/>
+	<field name="distribuidor.numero" class="java.lang.String"/>
 	<field name="distribuidor.cidade" class="java.lang.String"/>
 	<field name="distribuidor.uf" class="java.lang.String"/>
 	<field name="distribuidor.cep" class="java.lang.String"/>
@@ -41,6 +42,9 @@
 	<field name="distribuidor.inscricaoEstadual" class="java.lang.String"/>
 	<field name="itens" class="java.util.Collection"/>
 	<field name="totalMargemDistribuidor" class="java.math.BigDecimal"/>
+	<group name="itens" isStartNewPage="true">
+		<groupExpression><![CDATA[$F{numeroDocumento}]]></groupExpression>
+	</group>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -88,8 +92,8 @@
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{numeroDocumento}]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement x="51" y="10" width="203" height="11"/>
+			<textField isBlankWhenNull="true">
+				<reportElement x="51" y="9" width="221" height="11"/>
 				<textElement>
 					<font fontName="Times New Roman" size="7"/>
 				</textElement>
@@ -194,7 +198,9 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{distribuidor.inscricaoEstadual}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="412" y="30" width="50" height="11"/>
+				<reportElement x="412" y="30" width="50" height="11">
+					<printWhenExpression><![CDATA[org.apache.commons.lang.StringUtils.isNotEmpty($F{identificacao.codigoNaturezaOperacao})]]></printWhenExpression>
+				</reportElement>
 				<textElement>
 					<font fontName="Times New Roman" size="7"/>
 				</textElement>
@@ -1164,7 +1170,7 @@
 						</textElement>
 						<text><![CDATA[#]]></text>
 					</staticText>
-					<textField pattern="#,##0.000 %" isBlankWhenNull="true">
+					<textField pattern="###0.000" isBlankWhenNull="true">
 						<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="420" y="13" width="35" height="11"/>
 						<box>
 							<pen lineWidth="0.25"/>
@@ -1207,6 +1213,13 @@
 					</textElement>
 					<textFieldExpression class="java.lang.String"><![CDATA[$F{totalMargemDistribuidor}]]></textFieldExpression>
 				</textField>
+				<staticText>
+					<reportElement x="455" y="13" width="8" height="11"/>
+					<textElement>
+						<font fontName="Times New Roman" size="7"/>
+					</textElement>
+					<text><![CDATA[%]]></text>
+				</staticText>
 			</frame>
 			<frame>
 				<reportElement x="10" y="66" width="796" height="30"/>
@@ -1448,4 +1461,13 @@
 			</staticText>
 		</band>
 	</pageFooter>
+	<summary>
+		<band height="21">
+			<subreport isUsingCache="false">
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="802" height="16"/>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource(Arrays.asList($P{resumo}))]]></dataSourceExpression>
+				<subreportExpression class="java.lang.String"><![CDATA[Thread.currentThread().getContextClassLoader().getResource("/reports/resumo_CE_Devolucao_Fornecedor.jasper").toURI().getPath()]]></subreportExpression>
+			</subreport>
+		</band>
+	</summary>
 </jasperReport>
