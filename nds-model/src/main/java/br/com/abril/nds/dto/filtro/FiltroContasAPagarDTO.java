@@ -17,6 +17,8 @@ public class FiltroContasAPagarDTO implements Serializable {
 	private Integer ce;
 	private String produto;
 	private Long edicao;
+	private String produtoConsignado;
+	private Long edicaoConsignado;
 	private	List <Long> produtoEdicaoIDs;
 	private List<Long> idsFornecedores;
 	private PaginacaoVO paginacaoVO;
@@ -82,5 +84,17 @@ public class FiltroContasAPagarDTO implements Serializable {
 	}
 	public void setDataDetalhe(Date dataDetalhe) {
 		this.dataDetalhe = dataDetalhe;
+	}
+	public String getProdutoConsignado() {
+		return produtoConsignado;
+	}
+	public void setProdutoConsignado(String produtoConsignado) {
+		this.produtoConsignado = produtoConsignado;
+	}
+	public Long getEdicaoConsignado() {
+		return edicaoConsignado;
+	}
+	public void setEdicaoConsignado(Long edicaoConsignado) {
+		this.edicaoConsignado = edicaoConsignado;
 	}
 }
