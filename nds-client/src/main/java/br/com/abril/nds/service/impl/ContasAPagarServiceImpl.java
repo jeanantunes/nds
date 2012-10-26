@@ -1,6 +1,7 @@
 package br.com.abril.nds.service.impl;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -10,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.ContasAPagarConsignadoDTO;
 import br.com.abril.nds.dto.ContasAPagarConsultaProdutoDTO;
+import br.com.abril.nds.dto.ContasAPagarDistribDTO;
 import br.com.abril.nds.dto.ContasAPagarEncalheDTO;
 import br.com.abril.nds.dto.ContasAPagarFaltasSobrasDTO;
 import br.com.abril.nds.dto.ContasAPagarGridPrincipalFornecedorDTO;
@@ -142,8 +144,50 @@ public class ContasAPagarServiceImpl implements ContasAPagarService {
 	@Transactional
 	@Override
 	public ContasAPagarTotalDistribDTO<ContasAPagarConsignadoDTO> pesquisarDetalheConsignado(FiltroContasAPagarDTO filtro, String sortname, String sortorder, int rp, int page) {
-		// TODO Auto-generated method stub
-		return null;
+		
+		ContasAPagarTotalDistribDTO<ContasAPagarConsignadoDTO> to = new ContasAPagarTotalDistribDTO<ContasAPagarConsignadoDTO>();
+		
+		ContasAPagarConsignadoDTO dto = new ContasAPagarConsignadoDTO();
+		dto.setCodigo("1");
+		dto.setDiferenca(1);
+		dto.setEdicao(1);
+		dto.setFornecedor("FC");
+		dto.setMotivo("motivo");
+		dto.setNfe("nfe");
+		dto.setPrecoCapa(BigDecimal.TEN);
+		dto.setPrecoComDesconto(BigDecimal.TEN);
+		dto.setProduto("Veja");
+		dto.setReparteFinal(1);
+		dto.setReparteSugerido(1);
+		dto.setValor(BigDecimal.TEN);
+		dto.setValorComDesconto(BigDecimal.TEN);
+		
+		to.setGrid(new ArrayList<ContasAPagarConsignadoDTO>());
+		to.getGrid().add(dto);
+		to.getGrid().add(dto);
+		to.getGrid().add(dto);
+		to.getGrid().add(dto);
+		to.getGrid().add(dto);
+		to.getGrid().add(dto);
+		to.getGrid().add(dto);
+		to.getGrid().add(dto);
+		to.getGrid().add(dto);
+		to.getGrid().add(dto);
+		to.getGrid().add(dto);
+		
+		ContasAPagarDistribDTO dtoDistr1 = new ContasAPagarDistribDTO();
+		dtoDistr1.setNome("Distr1"); dtoDistr1.setTotal(BigDecimal.TEN);
+		ContasAPagarDistribDTO dtoDistr2 = new ContasAPagarDistribDTO();
+		dtoDistr2.setNome("Distr2"); dtoDistr2.setTotal(BigDecimal.TEN);
+		ContasAPagarDistribDTO dtoDistr3 = new ContasAPagarDistribDTO();
+		dtoDistr3.setNome("Distr3"); dtoDistr3.setTotal(BigDecimal.TEN);
+		
+		to.setTotalDistrib(new ArrayList<ContasAPagarDistribDTO>()); 
+		to.getTotalDistrib().add(dtoDistr1);
+		to.getTotalDistrib().add(dtoDistr2);
+		to.getTotalDistrib().add(dtoDistr3);
+		
+		return to;
 	}
 
 	@Transactional
