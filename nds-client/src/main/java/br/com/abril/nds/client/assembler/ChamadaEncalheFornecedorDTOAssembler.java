@@ -97,7 +97,7 @@ public class ChamadaEncalheFornecedorDTOAssembler {
                 BigDecimal margemDistribuidor = Util.nvl(fornecedor.getMargemDistribuidor(), BigDecimal.ZERO);
                 cefDTO.setMargemDistribuidor(margemDistribuidor);
 
-                BigDecimal totalMargemDistribuidor = MathUtil.round((totalBrutoDocumento.multiply(margemDistribuidor)).divide(BigDecimal.valueOf(100)), 2);
+                BigDecimal totalMargemDistribuidor = MathUtil.round(MathUtil.calculatePercentageValue(totalBrutoDocumento, margemDistribuidor), 2);
                 cefDTO.setTotalMargemDistribuidor(totalMargemDistribuidor);
   
                 ResumoChamadaEncalheFornecedorDTO resumoDTO = chamadasDTO.getResumo();
@@ -136,7 +136,9 @@ public class ChamadaEncalheFornecedorDTOAssembler {
     }
  
     private static PessoaJuridicaChamadaEncalheFornecedorDTO criarPessoaJuridicaChamadaEncalheFornecedor(Long id, PessoaJuridica pj, Endereco endereco) {
-        String logradouro = endereco == null ? "" : String.format("%s %s", endereco.getTipoLogradouro(), endereco.getLogradouro());
+        String logradouro = endereco == null ? "" : String.format("%s %s",
+                Util.nvl(endereco.getTipoLogradouro(), ""),
+                Util.nvl(endereco.getLogradouro(), "")).trim();
         String numero = endereco == null ? "" : endereco.getNumero();
         String cidade = endereco == null ? "" : endereco.getCidade();
         String uf = endereco == null ? "" : endereco.getUf();
