@@ -2,10 +2,11 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="CE_Devolucao_Fornecedor" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="BlankPage" columnWidth="814" leftMargin="14" rightMargin="14" topMargin="6" bottomMargin="6" isSummaryNewPage="true">
 	<property name="ireport.zoom" value="2.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="317"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA["C:\\workspace\\NDS\\nds-client\\src\\main\\resources\\reports\\"]]></defaultValueExpression>
 	</parameter>
+	<parameter name="resumo" class="java.lang.Object"/>
 	<field name="numeroDocumento" class="java.lang.Long"/>
 	<field name="identificacao.tipoCE" class="java.lang.Integer"/>
 	<field name="identificacao.dataVencimento" class="java.util.Date"/>
@@ -1451,4 +1452,13 @@
 			</staticText>
 		</band>
 	</pageFooter>
+	<summary>
+		<band height="21">
+			<subreport isUsingCache="false">
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="802" height="16"/>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource(Arrays.asList($P{resumo}))]]></dataSourceExpression>
+				<subreportExpression class="java.lang.String"><![CDATA[Thread.currentThread().getContextClassLoader().getResource("/reports/resumo_CE_Devolucao_Fornecedor.jasper").toURI().getPath()]]></subreportExpression>
+			</subreport>
+		</band>
+	</summary>
 </jasperReport>
