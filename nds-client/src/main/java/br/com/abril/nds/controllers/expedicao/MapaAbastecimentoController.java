@@ -37,6 +37,7 @@ import br.com.abril.nds.service.EntregadorService;
 import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.MapaAbastecimentoService;
 import br.com.abril.nds.service.ProdutoService;
+import br.com.abril.nds.service.RotaService;
 import br.com.abril.nds.service.RoteirizacaoService;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.vo.PaginacaoVO;
@@ -72,7 +73,10 @@ public class MapaAbastecimentoController {
 	
 	@Autowired
 	private RoteirizacaoService roteirizacaoService;
-	
+
+	@Autowired
+	private RotaService rotaService;
+
 	@Autowired
 	private DistribuidorService distribuidorService;
 	
@@ -99,7 +103,7 @@ public class MapaAbastecimentoController {
 		result.include("data",data);
 		
 		result.include("listaBoxes",carregarBoxes(boxService.buscarTodos(TipoBox.LANCAMENTO)));
-		result.include("listaRotas",carregarRota(roteirizacaoService.buscarRotas()));
+		result.include("listaRotas",carregarRota(rotaService.obterRotas()));
 		
 		result.include("listaProdutos", this.carregarProdutos());
 		
@@ -297,7 +301,7 @@ public class MapaAbastecimentoController {
 		
 		if (filtroSession != null && !filtroSession.equals(filtroAtual)) {
 
-			filtroAtual.getPaginacao().setPaginaAtual(1);
+			filtroAtual.getPaginacao().setPaginaAtual(filtroAtual.getPaginacao().getPaginaAtual());
 		}
 		
 		session.setAttribute(FILTRO_SESSION_ATTRIBUTE, filtroAtual);

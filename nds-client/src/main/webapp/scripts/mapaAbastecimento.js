@@ -22,10 +22,10 @@ function MapaAbastecimento(pathTela, objName, workspace) {
 					   {codigoProduto:codigoProduto},
 					   function(result) {
 							
-							T.adicionarProduto(result.codigo, result.nomeComercial);
+							T.adicionarProduto(result.codigo, result.nome);
 				
 							T.mostrarProdutosSelecionados();
-							
+
 							$(idCodigo, _workspace).val("");
 					   },
 					   function() {
