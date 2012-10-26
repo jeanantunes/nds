@@ -1,9 +1,10 @@
 package br.com.abril.nds.repository;
 
+import java.util.Date;
 import java.util.List;
 
-import br.com.abril.nds.dto.DetalheGarantiaCadastradaDTO;
 import br.com.abril.nds.dto.GarantiaCadastradaDTO;
+import br.com.abril.nds.dto.RelatorioDetalheGarantiaDTO;
 import br.com.abril.nds.model.cadastro.Cheque;
 import br.com.abril.nds.model.cadastro.TipoGarantia;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantia;
@@ -63,8 +64,14 @@ public interface CotaGarantiaRepository extends Repository<CotaGarantia,Long>{
 	
 	/**
 	 * Obtem detalhe da garantia
-	 * @return List<DetalheGarantiaCadastradaDTO>
+	 * @return List<RelatorioDetalheGarantiaDTO>
 	 */
-	List<DetalheGarantiaCadastradaDTO> obterDetalheGarantiaCadastrada(TipoGarantia tipoGarantia);
+	List<RelatorioDetalheGarantiaDTO> obterDetalheGarantiaCadastrada(TipoGarantia tipoGarantia, Date data);
 	
+	/**
+	 * Obtem quantidade de detalhe da garantia
+	 * @return Long
+	 */
+	Long obterCountDetalheGarantiaCadastrada(TipoGarantia tipoGarantia, Date data);
+
 }
