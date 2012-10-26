@@ -40,7 +40,7 @@ public class ContasAPagarServiceImpl implements ContasAPagarService {
 	@Transactional
 	@Override
 	public List<ContasAPagarConsultaProdutoDTO> pesquisarProdutos(FiltroContasAPagarDTO filtro) {
-		return null;
+		return contasAPagarRepository.obterProdutos(filtro);
 	}
 
 	@Transactional

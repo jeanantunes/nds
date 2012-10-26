@@ -9,6 +9,7 @@ import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.ContasAPagarConsignadoDTO;
+import br.com.abril.nds.dto.ContasAPagarConsultaProdutoDTO;
 import br.com.abril.nds.dto.ContasAPagarEncalheDTO;
 import br.com.abril.nds.dto.ContasAPagarFaltasSobrasDTO;
 import br.com.abril.nds.dto.ContasAPagarGridPrincipalProdutoDTO;
@@ -941,5 +942,42 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
 		}
 		
 		return query.list();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ContasAPagarConsultaProdutoDTO> obterProdutos(FiltroContasAPagarDTO Filtro) {
+		StringBuilder sql = new StringBuilder();
+
+
+        sql.append(" SELECT  p.codigo as codigo, p.nome as produto, ");
+        sql.append("	 pe.numeroEdicao as edicao, pe.precoVenda as precoCapa, pe.id as produtoEdicaoID, ");
+        sql.append(" 	 fornec.nomeFantasia as fornecedor, edi.nomeFantasia as editor ");
+        sql.append(" FROM ProdutoEdicao pe ");
+        sql.append(" JOIN  pe.produto p");
+        sql.append(" JOIN  p.editor e");
+        sql.append(" JOIN  p.fornecedores f");
+        sql.append(" JOIN  f.juridica fornec");
+        sql.append(" JOIN  e.pessoaJuridica edi");
+        
+        if(	Filtro.getProduto()!=null || Filtro.getEdicao()!=null ){
+        	sql.append(" WHERE ");
+	        if(	Filtro.getProduto()!=null	)
+	        	sql.append("        p.codigo = :codigoProduto ");
+	        if(	Filtro.getEdicao()!=null	)
+	        	sql.append(" AND    pe.numeroEdicao = :numeroEdicao ");
+        }
+        sql.append(" order by  codigo");
+        Query query = getSession().createQuery(sql.toString());
+        if(Filtro.getProduto() != null){
+        	query.setParameter("codigoProduto", Filtro.getProduto());
+        }
+        
+        if(Filtro.getEdicao()!=null){
+        	query.setParameter("numeroEdicao", Filtro.getEdicao());            
+        }
+        query.setResultTransformer(new AliasToBeanResultTransformer(ContasAPagarConsultaProdutoDTO.class));
+        return query.list();
+
 	}
 }
