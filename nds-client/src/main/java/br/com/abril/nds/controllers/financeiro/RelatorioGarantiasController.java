@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -116,10 +117,11 @@ public class RelatorioGarantiasController {
 		
 		PaginacaoVO paginacaoVO = new PaginacaoVO(page, rp, sortorder, sortname);
 		filtro.setPaginacao(paginacaoVO);
+		filtro.setDataBaseCalculo(distribuidorService.obter().getDataOperacao());
 		
 		this.session.setAttribute(FILTRO_RELATORIO_GARANTIAS, filtro);
 		
-		SimpleDateFormat sdf = new SimpleDateFormat("MM/yy");
+		SimpleDateFormat sdf = new SimpleDateFormat("MMM/yy",new Locale("pt", "BR"));
 		String data = sdf.format(distribuidorService.obter().getDataOperacao());
 		
 		if (filtro.getTipoGarantia().equalsIgnoreCase("Selecione...")) {
@@ -169,7 +171,7 @@ public class RelatorioGarantiasController {
 		
 		List<RelatorioDetalheGarantiaVO> garantiasVO = new ArrayList<RelatorioDetalheGarantiaVO>();
 		
-		SimpleDateFormat sdf = new SimpleDateFormat("MM/yy");
+		SimpleDateFormat sdf = new SimpleDateFormat("MMM/yy",new Locale("pt", "BR"));
 		String data = sdf.format(distribuidorService.obter().getDataOperacao());
 		
 		FlexiGridDTO<RelatorioDetalheGarantiaDTO> flexDTO = relatorioGarantiasService.gerarPorTipoGarantia(filtro);

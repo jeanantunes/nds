@@ -2,7 +2,7 @@ package br.com.abril.nds.service.impl;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Calendar;
+import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,8 +31,9 @@ public class RelatorioGarantiasServiceImpl implements RelatorioGarantiasService 
 		RelatorioGarantiasDTO dto = new RelatorioGarantiasDTO();
 		
 		dto.setQtdCotas(99);
-		dto.setTipoGarantia("Imóvel");
+		dto.setTipoGarantia("Fiador");
 		dto.setVlrTotal(BigDecimal.TEN);
+		dto.setTipoGarantiaEnum(TipoGarantia.IMOVEL);
 		
 		to.setGrid(new ArrayList<RelatorioGarantiasDTO>());
 		to.getGrid().add(dto);
@@ -57,11 +58,43 @@ public class RelatorioGarantiasServiceImpl implements RelatorioGarantiasService 
 	@Override
 	public FlexiGridDTO<RelatorioDetalheGarantiaDTO> gerarPorTipoGarantia(FiltroRelatorioGarantiasDTO filtro) {
 		
+		//MOCK
+				FlexiGridDTO<RelatorioDetalheGarantiaDTO> to = new FlexiGridDTO<RelatorioDetalheGarantiaDTO>();
+				
+				RelatorioDetalheGarantiaDTO dto = new RelatorioDetalheGarantiaDTO();
+				
+				dto.setCota(999);
+				dto.setFaturamento(BigDecimal.TEN);
+				dto.setGarantia("Fiador");
+				dto.setGarantiaFaturamento(BigDecimal.TEN);
+				dto.setNome("José Maria ");
+				dto.setVencto(new Date());
+				dto.setVlrGarantia(BigDecimal.TEN);
+				
+				to.setGrid(new ArrayList<RelatorioDetalheGarantiaDTO>());
+				to.getGrid().add(dto);
+				to.getGrid().add(dto);
+				to.getGrid().add(dto);
+				to.getGrid().add(dto);
+				to.getGrid().add(dto);
+				to.getGrid().add(dto);
+				to.getGrid().add(dto);
+				to.getGrid().add(dto);
+				
+				
+				
+				
+				return to;
+		
+		
+		
+		/*
+		
 		FlexiGridDTO<RelatorioDetalheGarantiaDTO> to = new FlexiGridDTO<RelatorioDetalheGarantiaDTO>();
 		to.setGrid(this.cotaGarantiaRepository.obterDetalheGarantiaCadastrada(TipoGarantia.valueOf(filtro.getTipoGarantia()), Calendar.getInstance().getTime()));
 		to.setTotalGrid(this.cotaGarantiaRepository.obterCountDetalheGarantiaCadastrada(TipoGarantia.valueOf(filtro.getTipoGarantia()), Calendar.getInstance().getTime()).intValue());
 
-		return to;
+		return to;*/
 	}
 
 }

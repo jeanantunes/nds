@@ -1,12 +1,8 @@
 package br.com.abril.nds.client.vo;
 
 import java.io.Serializable;
-import java.text.SimpleDateFormat;
-
-import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.dto.RelatorioDetalheGarantiaDTO;
-import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.export.Export;
