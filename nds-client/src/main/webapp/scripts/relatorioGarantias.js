@@ -70,8 +70,6 @@ var relatorioGarantiasController = $.extend(true, {
 
 	pesquisarPorGarantia : function(params){
 		
-		montaColunaDetalhesGarantia
-		
 		$(".relatorioGarantiaGrid").flexOptions({
 			url : this.path + 'pesquisarGarantia.json?' + params,
 			preProcess : relatorioGarantiasController.validarSelecaoComboFiltro,
