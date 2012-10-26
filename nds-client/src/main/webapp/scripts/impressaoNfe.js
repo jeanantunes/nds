@@ -118,7 +118,7 @@ var impressaoNfeController = $.extend(true, {
 			}, {
 				display : 'Nome',
 				name : 'nomeCota',
-				width : 465,
+				width : 455,
 				sortable : true,
 				align : 'left'
 			}, {

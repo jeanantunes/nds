@@ -15,11 +15,14 @@ import br.com.abril.nds.dto.CotasImpressaoNfeDTO;
 import br.com.abril.nds.dto.ProdutoLancamentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroImpressaoNFEDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.envio.nota.NotaEnvio;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
+import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.ImpressaoNFeRepository;
@@ -77,7 +80,7 @@ public class ImpressaoNFEServiceImpl implements ImpressaoNFEService {
 		
 		List<CotasImpressaoNfeDTO> cotas = null;
 		if(distribuidor.getObrigacaoFiscal() == null) {
-			
+			cotas = impressaoNFeRepository.buscarCotasParaImpressaoNotaEnvio(filtro);
 		} else {
 			cotas = impressaoNFeRepository.buscarCotasParaImpressaoNFe(filtro);
 		}
@@ -165,7 +168,27 @@ public class ImpressaoNFEServiceImpl implements ImpressaoNFEService {
 
 	@Transactional
 	public Integer buscarNFeParaImpressaoTotalQtd(FiltroImpressaoNFEDTO filtro) {
-		return impressaoNFeRepository.buscarCotasParaImpressaoNFeQtd(filtro);
+		
+		Distribuidor distribuidor = distribuidorRepository.obter();
+		
+		if(distribuidor.getObrigacaoFiscal() == null) {
+			return impressaoNFeRepository.buscarCotasParaImpressaoNotaEnvioQtd(filtro);
+		} else {
+			return impressaoNFeRepository.buscarCotasParaImpressaoNFeQtd(filtro);
+		}
+		
+	}
+
+	@Transactional
+	public List<NotaFiscal> buscarNotasPorCotaParaImpressaoNFe(Cota cota, FiltroImpressaoNFEDTO filtro) {
+
+		return impressaoNFeRepository.buscarNotasPorCotaParaImpressaoNFe(cota, filtro);
+		
+	}
+
+	@Transactional
+	public List<NotaEnvio> buscarNotasEnvioPorCotaParaImpressaoNFe(Cota cota, FiltroImpressaoNFEDTO filtro) {
+		return impressaoNFeRepository.buscarNotasEnvioPorCotaParaImpressaoNFe(cota, filtro);
 	}
 
 

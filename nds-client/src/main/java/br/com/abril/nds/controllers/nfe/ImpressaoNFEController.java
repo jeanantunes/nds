@@ -32,14 +32,17 @@ import br.com.abril.nds.dto.ProdutoLancamentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroImpressaoNFEDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.model.envio.nota.NotaEnvio;
 import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
 import br.com.abril.nds.model.fiscal.TipoEmissaoNfe;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.fiscal.TipoUsuarioNotaFiscal;
+import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.ImpressaoNFEService;
@@ -238,33 +241,31 @@ public class ImpressaoNFEController {
 		if(filtro.getIdsCotas() != null) {
 			filtroPesquisa.setIdsCotas(filtro.getIdsCotas());
 		} else {
-			ValidacaoVO validacaoVO = new ValidacaoVO(TipoMensagem.ERROR, "Devem ser informadas as cotas impressão.");
+			ValidacaoVO validacaoVO = new ValidacaoVO(TipoMensagem.ERROR, "Devem ser informadas as cotas para impressão.");
 			throw new ValidacaoException(validacaoVO);
 		}
 		
-		List<CotasImpressaoNfeDTO> listaNFeDTO = impressaoNFEService.buscarCotasParaImpressaoNFe(filtroPesquisa);
+		List<CotasImpressaoNfeDTO> cotas = impressaoNFEService.buscarCotasParaImpressaoNFe(filtroPesquisa);
 		
 		Distribuidor distribuidor = this.distribuidorService.obter();
-		
-		List<NfeVO> listaNFeVO = new ArrayList<NfeVO>();
-		for(CotasImpressaoNfeDTO nfeDTO : listaNFeDTO) {
-			NfeVO nfe = new NfeVO();
-			nfe.setIdNotaFiscal(nfeDTO.getIdNotaFiscal());
-			listaNFeVO.add(nfe);
-		}
 		
 		byte[] arquivo = null; 
 		String nomeArquivo = "";
 		
 		if(distribuidor.getObrigacaoFiscal() != null) {
+			
+			List<NotaFiscal> listaNF = new ArrayList<NotaFiscal>();
+			for(CotasImpressaoNfeDTO cota : cotas) {
+				Cota c = new Cota();
+				c.setId(cota.getIdCota());
+				List<NotaFiscal> nfs = impressaoNFEService.buscarNotasPorCotaParaImpressaoNFe(c, filtroPesquisa);
+				listaNF.addAll(nfs);
+			}
+			
 			switch(distribuidor.getTipoImpressaoNENECADANFE()) {
 			
-				case MODELO_2:
-					arquivo = nfeService.obterNECAsPDF(listaNFeVO);
-					nomeArquivo = "NECAs";
-					break;
 				case DANFE:
-					arquivo = nfeService.obterDanfesPDF(listaNFeVO, false);
+					arquivo = nfeService.obterDanfesPDF(listaNF, false);
 					nomeArquivo = "danfes";
 					break;
 				default:
@@ -272,8 +273,26 @@ public class ImpressaoNFEController {
 			}
 				
 		} else {
-			arquivo = nfeService.obterNEsPDF(listaNFeVO);
-			nomeArquivo = "NEs";
+			List<NotaEnvio> listaNE = new ArrayList<NotaEnvio>();
+			for(CotasImpressaoNfeDTO cota : cotas) {
+				Cota c = new Cota();
+				c.setId(cota.getIdCota());
+				List<NotaEnvio> nfs = impressaoNFEService.buscarNotasEnvioPorCotaParaImpressaoNFe(c, filtroPesquisa);
+				listaNE.addAll(nfs);
+			}
+			
+			switch(distribuidor.getTipoImpressaoNENECADANFE()) {
+			case MODELO_1:
+				arquivo = nfeService.obterNEsPDF(listaNE, false);
+				nomeArquivo = "NEs";
+				break;
+			case MODELO_2:
+				arquivo = nfeService.obterNEsPDF(listaNE, true);
+				nomeArquivo = "NECAs";
+				break;
+			
+			}
+				
 		}
 		
 		try {
