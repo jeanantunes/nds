@@ -3,7 +3,6 @@ package br.com.abril.nds.service.impl;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,8 +24,7 @@ public class RelatorioGarantiasServiceImpl implements RelatorioGarantiasService 
 
 	@Transactional
 	@Override
-	public FlexiGridDTO<RelatorioGarantiasDTO> gerarTodasGarantias(
-			FiltroRelatorioGarantiasDTO filtro, String sortname, String sortorder, int rp, int page) {
+	public FlexiGridDTO<RelatorioGarantiasDTO> gerarTodasGarantias(FiltroRelatorioGarantiasDTO filtro) {
 		
 		FlexiGridDTO<RelatorioGarantiasDTO> to = new FlexiGridDTO<RelatorioGarantiasDTO>();
 		
@@ -57,24 +55,13 @@ public class RelatorioGarantiasServiceImpl implements RelatorioGarantiasService 
 
 	@Transactional
 	@Override
-	public FlexiGridDTO<RelatorioDetalheGarantiaDTO> gerarPorTipoGarantia(
-			FiltroRelatorioGarantiasDTO filtro, String sortname, String sortorder, int rp, int page) {
+	public FlexiGridDTO<RelatorioDetalheGarantiaDTO> gerarPorTipoGarantia(FiltroRelatorioGarantiasDTO filtro) {
 		
 		FlexiGridDTO<RelatorioDetalheGarantiaDTO> to = new FlexiGridDTO<RelatorioDetalheGarantiaDTO>();
-		
-		List<RelatorioDetalheGarantiaDTO> detalhe = this.cotaGarantiaRepository.obterDetalheGarantiaCadastrada(TipoGarantia.valueOf(filtro.getTipoGarantia()), Calendar.getInstance().getTime());
-		
-		for (RelatorioDetalheGarantiaDTO item : detalhe){
-			to.setGrid(new ArrayList<RelatorioDetalheGarantiaDTO>());
-			to.getGrid().add(item);
-		}
-		
+		to.setGrid(this.cotaGarantiaRepository.obterDetalheGarantiaCadastrada(TipoGarantia.valueOf(filtro.getTipoGarantia()), Calendar.getInstance().getTime()));
 		to.setTotalGrid(this.cotaGarantiaRepository.obterCountDetalheGarantiaCadastrada(TipoGarantia.valueOf(filtro.getTipoGarantia()), Calendar.getInstance().getTime()).intValue());
 
 		return to;
-		
-		// TODO Auto-generated method stub
-		//return null;
 	}
 
 }
