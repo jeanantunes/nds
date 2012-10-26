@@ -37,6 +37,7 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 		hql.append("endereco.cidade as cidade, ");
 		hql.append("endereco.uf as uf ");
 		
+		
 		//if (filtro.getProdutos() != null && filtro.getProdutos().size() == 1){
 		if (filtro.getProdutos() != null){
 		
@@ -45,6 +46,7 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 			hql.append(", itemNota.reparte as reparteTotal ");
 		}
 		
+		// Código comentado pelo Eduardo Punk Rock
 		/*if (filtro.getProdutos() != null && filtro.getProdutos().size() > 1){
 			
 			this.getHQLProdutos(hql, filtro);
