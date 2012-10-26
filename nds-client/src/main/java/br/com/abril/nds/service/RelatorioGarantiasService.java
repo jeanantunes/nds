@@ -8,7 +8,7 @@ import br.com.abril.nds.dto.filtro.FiltroRelatorioGarantiasDTO;
 public interface RelatorioGarantiasService {
 
 	
-	FlexiGridDTO<RelatorioGarantiasDTO> gerarTodasGarantias(FiltroRelatorioGarantiasDTO filtro, String sortname, String sortorder, int rp, int page);
+	FlexiGridDTO<RelatorioGarantiasDTO> gerarTodasGarantias(FiltroRelatorioGarantiasDTO filtro);
 	
-	FlexiGridDTO<RelatorioDetalheGarantiaDTO> gerarPorTipoGarantia(FiltroRelatorioGarantiasDTO filtro, String sortname, String sortorder, int rp, int page);
+	FlexiGridDTO<RelatorioDetalheGarantiaDTO> gerarPorTipoGarantia(FiltroRelatorioGarantiasDTO filtro);
 }

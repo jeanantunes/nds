@@ -31,6 +31,7 @@ import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.util.export.NDSFileHeader;
+import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Resource;
@@ -82,6 +83,9 @@ public class RelatorioGarantiasController {
 	@Path("/pesquisarTodasGarantias.json")
 	public void pesquisarTodasGarantias(FiltroRelatorioGarantiasDTO filtro, String sortname, String sortorder, int rp, int page){
 		
+		PaginacaoVO paginacaoVO = new PaginacaoVO(page, rp, sortorder, sortname);
+		filtro.setPaginacao(paginacaoVO);
+		
 		this.session.setAttribute(FILTRO_RELATORIO_GARANTIAS, filtro);
 		
 		if (filtro.getTipoGarantia().equalsIgnoreCase("Selecione...")) {
@@ -93,7 +97,7 @@ public class RelatorioGarantiasController {
 		}
 		
 		List<RelatorioGarantiasVO> garantiasVO = new ArrayList<RelatorioGarantiasVO>();
-		FlexiGridDTO<RelatorioGarantiasDTO> flexDTO = relatorioGarantiasService.gerarTodasGarantias(filtro, sortname, sortorder, rp, page);
+		FlexiGridDTO<RelatorioGarantiasDTO> flexDTO = relatorioGarantiasService.gerarTodasGarantias(filtro);
 		
 		for(RelatorioGarantiasDTO dto : flexDTO.getGrid()){
 			
@@ -109,6 +113,9 @@ public class RelatorioGarantiasController {
 	@Path("/pesquisarGarantia.json")
 	public void pesquisarGarantia(FiltroRelatorioGarantiasDTO filtro, String sortname, String sortorder, int rp, int page){
 		
+		PaginacaoVO paginacaoVO = new PaginacaoVO(page, rp, sortorder, sortname);
+		filtro.setPaginacao(paginacaoVO);
+		
 		this.session.setAttribute(FILTRO_RELATORIO_GARANTIAS, filtro);
 		
 		if (filtro.getTipoGarantia().equalsIgnoreCase("Selecione...")) {
@@ -120,7 +127,7 @@ public class RelatorioGarantiasController {
 		}
 		
 		List<RelatorioDetalheGarantiaVO> garantiasVO = new ArrayList<RelatorioDetalheGarantiaVO>();
-		FlexiGridDTO<RelatorioDetalheGarantiaDTO> flexDTO = relatorioGarantiasService.gerarPorTipoGarantia(filtro, sortname, sortorder, rp, page);
+		FlexiGridDTO<RelatorioDetalheGarantiaDTO> flexDTO = relatorioGarantiasService.gerarPorTipoGarantia(filtro);
 		
 		for(RelatorioDetalheGarantiaDTO dto : flexDTO.getGrid()){
 			garantiasVO.add(new RelatorioDetalheGarantiaVO(dto));
@@ -134,24 +141,19 @@ public class RelatorioGarantiasController {
 	@Path("/exportPesquisarTodasGarantias")
 	public void exportPesquisarTodasGarantias(FileType fileType) throws IOException{
 		
-		
 		FiltroRelatorioGarantiasDTO filtro = (FiltroRelatorioGarantiasDTO) this.session.getAttribute(FILTRO_RELATORIO_GARANTIAS);
 		
 		List<RelatorioGarantiasVO> garantiasVO = new ArrayList<RelatorioGarantiasVO>();
-		FlexiGridDTO<RelatorioGarantiasDTO> flexDTO = relatorioGarantiasService.gerarTodasGarantias(filtro, null, null, 0, 0);
+		FlexiGridDTO<RelatorioGarantiasDTO> flexDTO = relatorioGarantiasService.gerarTodasGarantias(filtro);
 		
 		for(RelatorioGarantiasDTO dto : flexDTO.getGrid()){
-			
 			garantiasVO.add(new RelatorioGarantiasVO(dto));
-			
 		}
 		
 		FileExporter.to("relatorio-garantias", fileType).inHTTPResponse(this.getNDSFileHeader(new Date()), null, null,
 				garantiasVO, RelatorioGarantiasVO.class, this.httpServletResponse);
 		
 		result.use(Results.nothing());
-		
-		
 	}
 	
 	
@@ -161,7 +163,7 @@ public class RelatorioGarantiasController {
 		FiltroRelatorioGarantiasDTO filtro = (FiltroRelatorioGarantiasDTO) this.session.getAttribute(FILTRO_RELATORIO_GARANTIAS);
 		
 		List<RelatorioDetalheGarantiaVO> garantiasVO = new ArrayList<RelatorioDetalheGarantiaVO>();
-		FlexiGridDTO<RelatorioDetalheGarantiaDTO> flexDTO = relatorioGarantiasService.gerarPorTipoGarantia(filtro, null, null, 0, 0);
+		FlexiGridDTO<RelatorioDetalheGarantiaDTO> flexDTO = relatorioGarantiasService.gerarPorTipoGarantia(filtro);
 		
 		for(RelatorioDetalheGarantiaDTO dto : flexDTO.getGrid()){
 			garantiasVO.add(new RelatorioDetalheGarantiaVO(dto));
