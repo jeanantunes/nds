@@ -50,6 +50,7 @@ import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.fiscal.NCM;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.CotaGarantiaRepository;
+import br.com.abril.nds.util.DateUtil;
 
 public class CotaGarantiaRepositoryImplTest extends AbstractRepositoryImplTest {
 
@@ -288,7 +289,7 @@ public class CotaGarantiaRepositoryImplTest extends AbstractRepositoryImplTest {
 		for (int i = 0; i < 10; i ++) {
 
 			CaucaoLiquida caucaoLiquida = new CaucaoLiquida();
-			caucaoLiquida.setAtualizacao(Calendar.getInstance());
+			caucaoLiquida.setAtualizacao(Calendar.getInstance().getTime());
 			caucaoLiquida.setValor(BigDecimal.TEN);
 			
 			save(caucaoLiquida);
@@ -301,7 +302,7 @@ public class CotaGarantiaRepositoryImplTest extends AbstractRepositoryImplTest {
 		for (int i = 0; i < 10; i ++) {
 
 			CaucaoLiquida caucaoLiquida = new CaucaoLiquida();
-			caucaoLiquida.setAtualizacao(Calendar.getInstance());
+			caucaoLiquida.setAtualizacao(Calendar.getInstance().getTime());
 			caucaoLiquida.setValor(BigDecimal.TEN);
 			
 			save(caucaoLiquida);
@@ -314,7 +315,7 @@ public class CotaGarantiaRepositoryImplTest extends AbstractRepositoryImplTest {
 		for (int i = 0; i < 10; i ++) {
 
 			CaucaoLiquida caucaoLiquida = new CaucaoLiquida();
-			caucaoLiquida.setAtualizacao(Calendar.getInstance());
+			caucaoLiquida.setAtualizacao(Calendar.getInstance().getTime());
 			caucaoLiquida.setValor(BigDecimal.TEN);
 			
 			save(caucaoLiquida);
@@ -327,7 +328,7 @@ public class CotaGarantiaRepositoryImplTest extends AbstractRepositoryImplTest {
 		for (int i = 0; i < 10; i ++) {
 
 			CaucaoLiquida caucaoLiquida = new CaucaoLiquida();
-			caucaoLiquida.setAtualizacao(Calendar.getInstance());
+			caucaoLiquida.setAtualizacao(DateUtil.adicionarDias(Calendar.getInstance().getTime(),i));
 			caucaoLiquida.setValor(BigDecimal.TEN);
 			
 			save(caucaoLiquida);
@@ -608,8 +609,7 @@ public class CotaGarantiaRepositoryImplTest extends AbstractRepositoryImplTest {
 
 		Integer count = this.cotaGarantiaRepository.obterCountDetalheGarantiaCadastrada(TipoGarantia.CAUCAO_LIQUIDA, new Date()).intValue();
 		Assert.assertNotNull(count);
-		Assert.assertEquals(10, count.intValue());
+		Assert.assertEquals(2, count.intValue());
 	}
-
 
 }

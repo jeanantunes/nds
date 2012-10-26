@@ -171,7 +171,7 @@ public class CotaGarantiaServiceImplTest extends AbstractRepositoryImplTest {
 			CaucaoLiquida caucaoLiquida = new CaucaoLiquida();
 			
 			caucaoLiquida.setValor(new BigDecimal(5000));
-			caucaoLiquida.setAtualizacao(Calendar.getInstance());
+			caucaoLiquida.setAtualizacao(Calendar.getInstance().getTime());
 			
 			listaCaucaoLiquida.add(caucaoLiquida);
 		}
