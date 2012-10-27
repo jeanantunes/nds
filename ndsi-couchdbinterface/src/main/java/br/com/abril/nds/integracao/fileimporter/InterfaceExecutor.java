@@ -113,6 +113,8 @@ public class InterfaceExecutor {
 				this.executarInterfaceImagem();
 			} else if (interfaceEnum.equals(InterfaceEnum.EMS0185)) {
 				this.executarInterfaceCorreios();
+			} else if (interfaceEnum.getTipoInterfaceEnum().equals(TipoInterfaceEnum.DB)) {
+				this.executarInterfaceDB(interfaceEnum, interfaceExecucao, logExecucao, codigoDistribuidor, nomeUsuario);
 			} else {
 				this.executarInterfaceArquivo(interfaceEnum, interfaceExecucao, logExecucao, codigoDistribuidor, nomeUsuario);
 			}
@@ -125,6 +127,12 @@ public class InterfaceExecutor {
 		}
 	}
 	
+	private void executarInterfaceDB(InterfaceEnum interfaceEnum,
+			InterfaceExecucao interfaceExecucao, LogExecucao logExecucao,
+			Long codigoDistribuidor, String nomeUsuario) {
+		
+	}
+
 	/**
 	 * Executa uma interface de carga de arquivo.
 	 */

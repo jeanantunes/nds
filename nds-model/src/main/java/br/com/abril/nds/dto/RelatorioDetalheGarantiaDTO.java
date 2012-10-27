@@ -15,6 +15,8 @@ public class RelatorioDetalheGarantiaDTO implements Serializable{
 	private BigDecimal vlrGarantia;
 	private BigDecimal faturamento;
 	private BigDecimal garantiaFaturamento;
+	
+	
 	public Integer getCota() {
 		return cota;
 	}
