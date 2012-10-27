@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 import com.ancientprogramming.fixedformat4j.annotation.Field;
+import com.ancientprogramming.fixedformat4j.annotation.FixedFormatDecimal;
 import com.ancientprogramming.fixedformat4j.annotation.FixedFormatPattern;
 import com.ancientprogramming.fixedformat4j.annotation.Record;
 
@@ -95,6 +96,7 @@ public class EMS0113Input extends IntegracaoDocument implements Serializable{
 	}
 	
 	@Field(offset = 37, length=7)
+	@FixedFormatDecimal(decimals = 2, useDecimalDelimiter = false)
 	public float getPercentDesconto() {
 		return percentDesconto;
 	}
@@ -103,6 +105,7 @@ public class EMS0113Input extends IntegracaoDocument implements Serializable{
 	}
 	
 	@Field(offset = 44, length=7)
+	@FixedFormatDecimal(decimals = 2, useDecimalDelimiter = false)
 	public float getPercentPrestServico() {
 		return percentPrestServico;
 	}
