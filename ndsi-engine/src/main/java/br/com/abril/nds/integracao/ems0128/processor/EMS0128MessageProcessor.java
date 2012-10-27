@@ -106,7 +106,9 @@ public class EMS0128MessageProcessor extends AbstractRepository implements Messa
 	public void posProcess(Object tempVar) {
 		// TODO Auto-generated method stub
 		if (!input.getItem().isEmpty()) {
-			CouchDbClient cdbc = this.getCouchDBClient(input.getCodigoDistribuidor());		
+			CouchDbClient cdbc = this.getCouchDBClient(input.getCodigoDistribuidor());
+			input.setTipoDocumento("EMS0128");
+			
 			cdbc.save(input);
 			cdbc.shutdown();
 			
