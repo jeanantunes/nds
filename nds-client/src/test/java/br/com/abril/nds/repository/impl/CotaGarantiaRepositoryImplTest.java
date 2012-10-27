@@ -571,32 +571,32 @@ public class CotaGarantiaRepositoryImplTest extends AbstractRepositoryImplTest {
 		
 		this.setupReparteEncalhe();
 
-		List<RelatorioDetalheGarantiaDTO> detalhesGgarantia = this.cotaGarantiaRepository.obterDetalheGarantiaCadastrada(TipoGarantia.CAUCAO_LIQUIDA, new Date());
+		List<RelatorioDetalheGarantiaDTO> detalhesGgarantia = this.cotaGarantiaRepository.obterDetalheGarantiaCadastrada(TipoGarantia.CAUCAO_LIQUIDA, new Date(),"vencto","asc");
 		Assert.assertNotNull(detalhesGgarantia);
 		Assert.assertEquals(0, detalhesGgarantia.get(0).getVlrGarantia().compareTo(new BigDecimal(10)));
 		Assert.assertEquals(0, detalhesGgarantia.get(1).getVlrGarantia().compareTo(new BigDecimal(10)));
 		
-		detalhesGgarantia = this.cotaGarantiaRepository.obterDetalheGarantiaCadastrada(TipoGarantia.CHEQUE_CAUCAO, new Date());
+		detalhesGgarantia = this.cotaGarantiaRepository.obterDetalheGarantiaCadastrada(TipoGarantia.CHEQUE_CAUCAO, new Date(),null,null);
 		Assert.assertNotNull(detalhesGgarantia);
 		Assert.assertEquals(0, detalhesGgarantia.get(0).getVlrGarantia().compareTo(new BigDecimal(15)));
 		Assert.assertEquals(0, detalhesGgarantia.get(1).getVlrGarantia().compareTo(new BigDecimal(10)));
 		
-		detalhesGgarantia = this.cotaGarantiaRepository.obterDetalheGarantiaCadastrada(TipoGarantia.FIADOR, new Date());
+		detalhesGgarantia = this.cotaGarantiaRepository.obterDetalheGarantiaCadastrada(TipoGarantia.FIADOR, new Date(),null,null);
 		Assert.assertNotNull(detalhesGgarantia);
 		Assert.assertEquals(0, detalhesGgarantia.get(0).getVlrGarantia().compareTo(new BigDecimal(10)));
 		Assert.assertEquals(0, detalhesGgarantia.get(1).getVlrGarantia().compareTo(new BigDecimal(10)));
 		
-		detalhesGgarantia = this.cotaGarantiaRepository.obterDetalheGarantiaCadastrada(TipoGarantia.NOTA_PROMISSORIA, new Date());
+		detalhesGgarantia = this.cotaGarantiaRepository.obterDetalheGarantiaCadastrada(TipoGarantia.NOTA_PROMISSORIA, new Date(),"vencto","asc");
 		Assert.assertNotNull(detalhesGgarantia);
-		Assert.assertEquals(0, detalhesGgarantia.get(0).getVlrGarantia().compareTo(new BigDecimal(20)));
-		Assert.assertEquals(0, detalhesGgarantia.get(1).getVlrGarantia().compareTo(new BigDecimal(30)));
+		Assert.assertEquals(0, detalhesGgarantia.get(0).getVlrGarantia().compareTo(new BigDecimal(30)));
+		Assert.assertEquals(0, detalhesGgarantia.get(1).getVlrGarantia().compareTo(new BigDecimal(20)));
 		
-		detalhesGgarantia = this.cotaGarantiaRepository.obterDetalheGarantiaCadastrada(TipoGarantia.IMOVEL, new Date());
+		detalhesGgarantia = this.cotaGarantiaRepository.obterDetalheGarantiaCadastrada(TipoGarantia.IMOVEL, new Date(),"vencto","asc");
 		Assert.assertNotNull(detalhesGgarantia);
 		Assert.assertEquals(0, detalhesGgarantia.get(0).getVlrGarantia().compareTo(new BigDecimal(10)));
 		Assert.assertEquals(0, detalhesGgarantia.get(1).getVlrGarantia().compareTo(new BigDecimal(10)));
 		
-        detalhesGgarantia = this.cotaGarantiaRepository.obterDetalheGarantiaCadastrada(TipoGarantia.OUTROS, new Date());
+        detalhesGgarantia = this.cotaGarantiaRepository.obterDetalheGarantiaCadastrada(TipoGarantia.OUTROS, new Date(),"vencto","asc");
 		Assert.assertNotNull(detalhesGgarantia);
 		Assert.assertEquals(0, detalhesGgarantia.get(0).getVlrGarantia().compareTo(new BigDecimal(10)));
 		Assert.assertEquals(0, detalhesGgarantia.get(1).getVlrGarantia().compareTo(new BigDecimal(10)));
