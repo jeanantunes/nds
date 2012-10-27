@@ -1,6 +1,7 @@
 package br.com.abril.nds.dto.filtro;
 
 import java.io.Serializable;
+import java.util.Date;
 
 public class FiltroRelatorioGarantiasDTO extends FiltroDTO implements Serializable{
 
@@ -8,6 +9,7 @@ public class FiltroRelatorioGarantiasDTO extends FiltroDTO implements Serializab
 
 	private String tipoGarantia;
 	private String statusGarantia;
+	private Date dataBaseCalculo;
 	
 	
 	public String getTipoGarantia() {
@@ -22,6 +24,14 @@ public class FiltroRelatorioGarantiasDTO extends FiltroDTO implements Serializab
 	public void setStatusGarantia(String statusGarantia) {
 		this.statusGarantia = statusGarantia;
 	}
+	public Date getDataBaseCalculo() {
+		return dataBaseCalculo;
+	}
+	public void setDataBaseCalculo(Date dataBaseCalculo) {
+		this.dataBaseCalculo = dataBaseCalculo;
+	}
+	
+	
 	
 	
 

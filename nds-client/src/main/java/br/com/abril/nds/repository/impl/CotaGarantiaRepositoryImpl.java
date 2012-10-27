@@ -244,7 +244,7 @@ public class CotaGarantiaRepositoryImpl extends AbstractRepositoryModel<CotaGara
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<RelatorioDetalheGarantiaDTO> obterDetalheGarantiaCadastrada(TipoGarantia tipoGarantia, Date data) {
+	public List<RelatorioDetalheGarantiaDTO> obterDetalheGarantiaCadastrada(TipoGarantia tipoGarantia, Date data, String sortColumn, String sortOrder) {
 
 		StringBuilder hql = new StringBuilder();
 
@@ -275,7 +275,12 @@ public class CotaGarantiaRepositoryImpl extends AbstractRepositoryModel<CotaGara
 	    hql.append(this.obterHqlTipoGarantia(tipoGarantia))
 
 	       .append(" group by cota ");
-		
+	
+		hql.append(" order by ")
+	       .append(sortColumn!=null && !sortColumn.equals("")?sortColumn:" vencto ")
+	       .append(" ")
+	       .append(sortOrder!=null && !sortOrder.equals("")?sortOrder:" desc ");
+
 		Query query = this.getSession().createQuery(hql.toString());
 		
 		query.setParameter("data", data);

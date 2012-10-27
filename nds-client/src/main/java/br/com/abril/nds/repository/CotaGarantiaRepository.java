@@ -1,6 +1,5 @@
 package br.com.abril.nds.repository;
 
-import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -67,7 +66,7 @@ public interface CotaGarantiaRepository extends Repository<CotaGarantia,Long>{
 	 * Obtem detalhe da garantia
 	 * @return List<RelatorioDetalheGarantiaDTO>
 	 */
-	List<RelatorioDetalheGarantiaDTO> obterDetalheGarantiaCadastrada(TipoGarantia tipoGarantia, Date data);
+	List<RelatorioDetalheGarantiaDTO> obterDetalheGarantiaCadastrada(TipoGarantia tipoGarantia, Date data, String sortColumn, String sortOrder);
 	
 	/**
 	 * Obtem quantidade de detalhe da garantia
