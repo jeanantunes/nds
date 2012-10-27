@@ -9,6 +9,7 @@
 	<legend> Pesquisar Contas a Pagar</legend>
 	<form id="contasAPagarForm">
 	<input type="hidden" name="filtro.dataDetalhe" id="contasAPagar_dataDetalhe"/>
+	
 		<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 			<tr>
 				<td width="20" align="right"><input  type="radio" name="radio" id="contasAPagarRadioDistribuidor" value="radio" onchange="contasAPagarController.pesqDistribuidor();" /></td>
@@ -181,13 +182,17 @@
 	<fieldset style="width:895px!important;">
 		<legend>Pesquisar Produtos</legend>
        	<table width="530" border="0" cellspacing="0" cellpadding="0">
-         		<tr>
-           		<td width="96">C&oacute;digo / Produto:</td>
-           		<td width="311"><input type="text" name="produtos2" id="produtos2" style="width:290px;" /></td>
-           		<td width="40">Edi&ccedil;&atilde;o:</td>
-           		<td width="83" align="right"><input type="text" name="textfield9" id="textfield9" style="width:60px;" /></td>
-         		</tr>
-       	</table>
+			<tr>
+				<td width="50">C&oacute;digo</td>
+				<td width="80"><input type="text" id="codigoConsignado" style="width:60px;" onchange="contasAPagarController.pesquisarProdutoPorCodigoConsignado();"/></td>
+				<td width="50">Produto</td>
+				<td width="180"><input type="text" id="produtoConsignado" style="width:150px;" onkeyup="pesquisaProdutoCAP.autoCompletarPorNomeProduto('#produtoConsignado', false);" onblur="contasAPagarController.pesquisarProdutoPorNomeConsignado();"/></td>
+				<td width="40">Edi&ccedil;&atilde;o</td>
+				<td width="60" align="right"><input type="text" id="edicaoConsignado" style="width:60px;"/></td>
+				<td width="70">&nbsp;</td>
+				<td width="20"><span class="bt_pesquisar filtroBusca"><a href="javascript:;" onclick="contasAPagarController.pesquisarConsignado()"></a></span></td>
+			</tr>
+   		</table>
     </fieldset>
     
 	<fieldset style="width:895px!important; margin-top:10px;">

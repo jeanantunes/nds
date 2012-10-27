@@ -255,11 +255,6 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 		Distribuidor distribuidor = distribuidorRepository.obter();
 		Cota cota = cotaRepository.buscarPorId(idCota);
 
-		NotaEnvio notaEnvio = criarNotaEnvio(idCota, idRota, chaveAcesso,
-				codigoNaturezaOperacao, descricaoNaturezaOperacao, dataEmissao,
-				distribuidor, cota);
-
-		notaEnvioRepository.adicionar(notaEnvio);
 		List<MovimentoEstoqueCota> listaMovimentoEstoqueCota = obterItensNotaVenda(
 				distribuidor, idCota, periodo, listaIdFornecedores);
 		
@@ -271,6 +266,12 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 					"Não é possível gerar Nota de Envio para a Cota "
 							+ cota.getNumeroCota());*/
 		}
+
+		NotaEnvio notaEnvio = criarNotaEnvio(idCota, idRota, chaveAcesso,
+				codigoNaturezaOperacao, descricaoNaturezaOperacao, dataEmissao,
+				distribuidor, cota);
+
+		notaEnvioRepository.adicionar(notaEnvio);
 		int sequencia = 0;
 		for (ItemNotaEnvio itemNotaEnvio : listaItemNotaEnvio) {
 			itemNotaEnvio.setItemNotaEnvioPK(new ItemNotaEnvioPK(notaEnvio,

@@ -1,6 +1,5 @@
 package br.com.abril.nds.repository.impl;
 
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -21,7 +20,7 @@ import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaFiador;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaImovel;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaNotaPromissoria;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaOutros;
-import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
+import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.repository.CotaGarantiaRepository;
 
 /**
@@ -140,34 +139,54 @@ public class CotaGarantiaRepositoryImpl extends AbstractRepositoryModel<CotaGara
 		return query.list();
 	}
 
+	
+	private String obterHqlDescontoProdutoCota(){
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append("   ( mec.produtoEdicao.precoVenda - ")
+		   .append("    ( mec.produtoEdicao.precoVenda * ")
+		   .append("     ( COALESCE((select desconto ")
+		   .append("                 from ViewDesconto ")
+		   .append("                 where cotaId = garantia.cota ")
+		   .append("                 and produtoEdicaoId = mec.produtoEdicao.id ")
+		   .append("                ),0) / 100 )    ")
+		   .append("   ))");
+
+		return hql.toString();
+	}
 	private String obterHqlFaturamentoCota(){
 		
 		StringBuilder hql = new StringBuilder();
-
-		hql.append(" COALESCE( ")
-		   .append("          ( select sum( mec.qtde * mec.produtoEdicao.precoVenda )  ")
+         
+		hql.append("(")
+		   .append(" COALESCE( ")
+		   .append("          ( select sum(mec.qtde * ("+this.obterHqlDescontoProdutoCota()+") )  ")
 		   .append("            from MovimentoEstoqueCota mec" )
 		   .append("            where mec.cota = garantia.cota ")
-		   .append("            and mec.tipoMovimento.grupoMovimentoEstoque in (:grupoMovimentoReparte)")
+		   .append("            and mec.tipoMovimento.operacaoEstoque = :movimentoEntrada")
 		   .append("            and mec.data = :data ")
 		   .append("          )")
 		   .append("       ,0)  -  "  )
 		   .append(" COALESCE( ")
-		  .append("           ( select sum( mec.qtde * mec.produtoEdicao.precoVenda )  ")
+		   .append("          ( select sum(mec.qtde * ("+this.obterHqlDescontoProdutoCota()+") )  ")
 		   .append("            from MovimentoEstoqueCota mec" )
 		   .append("            where mec.cota = garantia.cota ")
-		   .append("            and mec.tipoMovimento.grupoMovimentoEstoque in (:grupoMovimentoEncalhe)")
+		   .append("            and mec.tipoMovimento.operacaoEstoque = :movimentoSaida")
 		   .append("            and mec.data = :data ")
 		   .append("          )")
-		   .append("       ,0) " );
+		   .append("       ,0) " )
+		   .append(")");
 		
 		return hql.toString();
 	}
 	
 	private String obterHqlTipoGarantia(TipoGarantia tipoGarantia){
+		  
+		boolean caucaoLiquida = false;
 		
 		StringBuilder hql = new StringBuilder();
-		
+
 		switch(tipoGarantia){
 	       
 		   case FIADOR :
@@ -178,8 +197,10 @@ public class CotaGarantiaRepositoryImpl extends AbstractRepositoryModel<CotaGara
 	       
 	       case CAUCAO_LIQUIDA :
 
-	    	   hql.append(" from CotaGarantia garantia ")
+	    	   hql.append(" from CotaGarantia garantia ")  
 	    	      .append(" join garantia.caucaoLiquidas as garantiaTipo ");
+
+	    	   caucaoLiquida = true;
 		   break;
 	       
 	       case CHEQUE_CAUCAO :
@@ -207,6 +228,14 @@ public class CotaGarantiaRepositoryImpl extends AbstractRepositoryModel<CotaGara
 	       break;
 	    }
 		
+		hql.append(" join garantia.cota cota ")
+	       .append(" join cota.pessoa as pessoa ");
+		
+		if (caucaoLiquida){
+			
+			hql.append("  where garantiaTipo.atualizacao = ( select max(cl.atualizacao) from CaucaoLiquida cl where cl.id = garantiaTipo.id ) ");
+		}
+		
 		return hql.toString();
 	}
 
@@ -229,29 +258,29 @@ public class CotaGarantiaRepositoryImpl extends AbstractRepositoryModel<CotaGara
 		   .append(" garantia.data as vencto, ")     
 		   .append(" COALESCE(garantiaTipo.valor,0) as vlrGarantia, ")
 		   
-		   .append("(")
-		   .append(  this.obterHqlFaturamentoCota())
-		   .append(") as faturamento, ")  
+		   .append(" ROUND( ")
+		   .append("   (")
+		   .append(     this.obterHqlFaturamentoCota())
+		   .append("   ) ")  
+		   .append(" ,2) as faturamento, ")
 
-	       .append(" ( ")
-           .append("      ( COALESCE(garantiaTipo.valor,0) *  ")
-           .append("        (")
+	       .append(" ROUND( ")
+           .append("        COALESCE( ( garantiaTipo.valor *  ")
+           .append("          (100 / (")
 		   .append(            this.obterHqlFaturamentoCota())
-		   .append("        ) ")
-           .append("      ) / 100")
-           .append(" ) as garantiaFaturamento ");
+		   .append("          )) ")
+           .append("        ),0)")
+           .append(" ,2) as garantiaFaturamento ");
  
-	    hql.append(this.obterHqlTipoGarantia(tipoGarantia));
+	    hql.append(this.obterHqlTipoGarantia(tipoGarantia))
 
-	    hql.append(" join garantia.cota cota ")
-	       .append(" join cota.pessoa as pessoa ")
 	       .append(" group by cota ");
 		
 		Query query = this.getSession().createQuery(hql.toString());
 		
 		query.setParameter("data", data);
-		query.setParameterList("grupoMovimentoReparte", Arrays.asList(GrupoMovimentoEstoque.RECEBIMENTO_REPARTE));
-		query.setParameterList("grupoMovimentoEncalhe", Arrays.asList(GrupoMovimentoEstoque.ENVIO_ENCALHE));
+		query.setParameter("movimentoEntrada", OperacaoEstoque.ENTRADA);
+		query.setParameter("movimentoSaida", OperacaoEstoque.SAIDA);
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(RelatorioDetalheGarantiaDTO.class));
 
@@ -259,22 +288,17 @@ public class CotaGarantiaRepositoryImpl extends AbstractRepositoryModel<CotaGara
 	}
 
 	@Override
-	public Long obterCountDetalheGarantiaCadastrada(TipoGarantia tipoGarantia,
-			Date data) {
+	public Long obterCountDetalheGarantiaCadastrada(TipoGarantia tipoGarantia, Date data) {
+		
 		StringBuilder hql = new StringBuilder();
 
-		hql.append(" select count(*) ");
+		hql.append(" select count(distinct cota) ");
  
 		hql.append(this.obterHqlTipoGarantia(tipoGarantia));
-
-	    hql.append(" join garantia.cota cota ")
-	       .append(" join cota.pessoa as pessoa ")
-	       .append(" group by cota ");
 		
 		Query query = this.getSession().createQuery(hql.toString());
 		
 		return (Long) query.uniqueResult();
 	}
-	
 	
 }

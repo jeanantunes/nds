@@ -22,9 +22,9 @@ public class ItemResumoChamadaEncalheFornecedorDTO implements Serializable {
     
     private Date dataVencimento;
     
-    private BigDecimal valorDocumento;
+    private BigDecimal valorDocumento = BigDecimal.ZERO;
     
-    private BigDecimal valorMargem;
+    private BigDecimal valorMargem = BigDecimal.ZERO;
 
     /**
      * @return the linha

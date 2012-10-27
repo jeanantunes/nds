@@ -14,7 +14,7 @@ public class IdentificacaoChamadaEncalheFornecedorDTO implements Serializable {
     
     private static final long serialVersionUID = 1L;
     
-    private String tipoCE;
+    private Integer tipoCE;
     
     private Long codigo;
     
@@ -35,7 +35,7 @@ public class IdentificacaoChamadaEncalheFornecedorDTO implements Serializable {
     private Date dataLimiteChegada;
 
 
-    public IdentificacaoChamadaEncalheFornecedorDTO(String tipoCE, Long codigo,
+    public IdentificacaoChamadaEncalheFornecedorDTO(Integer tipoCE, Long codigo,
             Long numeroCE, Long controle, String codigoNaturezaOperacao,
             String descricaoNaturezaOperacao, Date dataVencimento,
             Date dataEmissao, Integer numeroSemana, Date dataLimiteChegada) {
@@ -60,14 +60,10 @@ public class IdentificacaoChamadaEncalheFornecedorDTO implements Serializable {
     }
 
 
-    /**
-     * @return the tipoCE
-     */
-    public String getTipoCE() {
+    public Integer getTipoCE() {
         return tipoCE;
     }
-
-
+    
     /**
      * @return the codigo
      */
