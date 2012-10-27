@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository.impl;
 
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,9 +15,11 @@ import br.com.abril.nds.dto.filtro.FiltroImpressaoNFEDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.envio.nota.NotaEnvio;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.repository.DistribuidorRepository;
+import br.com.abril.nds.repository.FornecedorRepository;
 import br.com.abril.nds.repository.ImpressaoNFeRepository;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.vo.PaginacaoVO;
@@ -26,6 +29,9 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 
 	@Autowired
 	private DistribuidorRepository distribuidorRepository;
+	
+	@Autowired
+	private FornecedorRepository fornecedorRepository;
 	
 	public ImpressaoNFeRepositoryImpl() {
 		super(NotaFiscal.class);
@@ -448,6 +454,58 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 			
 			return q;
 			
+		}
+
+		@Override
+		public List<Produto> buscarProdutosParaImpressaoNFe(FiltroImpressaoNFEDTO filtro) {
+
+			if(filtro == null) {
+				throw new ValidacaoException(TipoMensagem.ERROR, "O filtro não pode ser nulo ou estar vazio.");
+			}
+			
+			StringBuilder sql = new StringBuilder();
+			sql.append("select distinct p ");
+			sql.append("from Lancamento l join l.produtoEdicao pe join pe.produto p join p.fornecedores f ");
+			sql.append("where l.dataLancamentoDistribuidor between :dataMovimentoInicial and :dataMovimentoFinal ");
+			sql.append("and f.id in (:idsFornecedores) ");
+			
+			if(filtro.getCodigoProduto() != null) {
+				sql.append("and p.codigo like :codigoProduto ");
+			}
+			
+			if(filtro.getNomeProduto() != null) {
+				sql.append("and p.nome like :nomeProduto ");
+			}
+			
+			Query q = getSession().createQuery(sql.toString());
+			
+			Calendar dataMovimentoInicial = Calendar.getInstance();
+			dataMovimentoInicial.setTime(filtro.getDataMovimentoInicial());
+			dataMovimentoInicial.set(Calendar.HOUR_OF_DAY, 0);
+			dataMovimentoInicial.set(Calendar.MINUTE, 0);
+			dataMovimentoInicial.set(Calendar.SECOND, 0);
+			dataMovimentoInicial.set(Calendar.MILLISECOND, 0);
+			
+			Calendar dataMovimentoFinal = Calendar.getInstance();
+			dataMovimentoFinal.setTime(filtro.getDataMovimentoFinal());
+			dataMovimentoFinal.set(Calendar.HOUR_OF_DAY, 23);
+			dataMovimentoFinal.set(Calendar.MINUTE, 59);
+			dataMovimentoFinal.set(Calendar.SECOND, 59);
+			dataMovimentoFinal.set(Calendar.MILLISECOND, 999);
+			
+			q.setParameter("dataMovimentoInicial", new java.sql.Date(dataMovimentoInicial.getTime().getTime()));
+			q.setParameter("dataMovimentoFinal", new java.sql.Date(dataMovimentoFinal.getTime().getTime()));
+			q.setParameterList("idsFornecedores", filtro.getIdsFornecedores());
+			
+			if(filtro.getCodigoProduto() != null) {
+				q.setParameter("codigoProduto", filtro.getCodigoProduto() +"%");
+			}
+			
+			if(filtro.getNomeProduto() != null) {
+				q.setParameter("nomeProduto", filtro.getNomeProduto() +"%");
+			}
+
+			return q.list();
 		}
 
 }

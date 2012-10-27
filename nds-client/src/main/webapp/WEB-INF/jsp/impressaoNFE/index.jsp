@@ -34,8 +34,8 @@
 					</td>
 					</c:if>
 					<td width="97">Data Movimento:</td>
-					<td width="238"><input name="dataMovimentoInicial" type="text" id="dataMovimentoInicial" style="width: 76px;" maxlength="10" />
-						&nbsp;&nbsp;Até&nbsp; <input name="dataMovimentoFinal" type="text" id="dataMovimentoFinal" style="width: 76px;" maxlength="10" /></td>
+					<td width="238"><input name="dataMovimentoInicial" type="text" id="dataMovimentoInicial" value="${dataAtual}" style="width: 76px;" maxlength="10" />
+						&nbsp;&nbsp;Até&nbsp; <input name="dataMovimentoFinal" type="text" id="dataMovimentoFinal" value="${dataAtual}" style="width: 76px;" maxlength="10" /></td>
 					<td width="83">Data Emissão:</td>
 					<td width="210"><input name="dataEmissao" type="text" id="dataEmissao" style="width: 80px;"
 						value="${dataAtual}" maxlength="10" /></td>
@@ -93,7 +93,7 @@
 				</tr>
 				<tr>
 					<td>Produtos:</td>
-					<td><a href="#" id="selProdutos">Clique e Selecione os Produtos</a>
+					<td><a href="javascript:;" id="selProdutos">Clique e Selecione os Produtos</a>
 						<div id="menuProdutos" class="menu_produtos" style="display: none;">
 							<span class="bt_sellAll"> <input type="checkbox" name="selecionarTodosProd" id="selecionarTodosProd"
 								onclick="impressaoNfeController.checkTodosProdutos();" style="float: left;" /> <label for="sel">Selecionar

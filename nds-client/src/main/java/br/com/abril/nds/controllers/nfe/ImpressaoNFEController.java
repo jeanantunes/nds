@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -28,6 +27,7 @@ import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.NfeVO;
 import br.com.abril.nds.dto.CotasImpressaoNfeDTO;
 import br.com.abril.nds.dto.ItemDTO;
+import br.com.abril.nds.dto.ProdutoDTO;
 import br.com.abril.nds.dto.ProdutoLancamentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroImpressaoNFEDTO;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -164,37 +164,38 @@ public class ImpressaoNFEController {
 	}
 
 	@Post
-	public void pesquisarProdutosImpressaoNFE(String sortname, String sortorder, String codigoProduto, String nomeProduto, int page, int rp) {
+	public void pesquisarProdutosImpressaoNFE(FiltroImpressaoNFEDTO filtro, String sortname, String sortorder, String codigoProduto, String nomeProduto, int page, int rp) {
 
-		List<Fornecedor> fornecedores = this.fornecedorService.obterFornecedores(true, SituacaoCadastro.ATIVO);
+		if(!filtro.isFiltroValido()) {
+			ValidacaoVO validacaoVO = new ValidacaoVO(TipoMensagem.ERROR, "O filtro informado é inválido");
+			throw new ValidacaoException(validacaoVO);
+		}
+		if(filtro.validarDataMovimentoInicial() != null || filtro.validarDataMovimentoFinal() != null ) {
+			ValidacaoVO validacaoVO = new ValidacaoVO(TipoMensagem.ERROR, "As datas inicial e final do movimento devem ser informadas.");
+			throw new ValidacaoException(validacaoVO);
+		}
+		
+		
+		TableModel<CellModelKeyValue<ProdutoDTO>> tableModel = new TableModel<CellModelKeyValue<ProdutoDTO>>();
+		
+		List<ProdutoDTO> listaProdutos = impressaoNFEService.obterProdutosExpedicaoConfirmada(filtro); // c.getTime()
 
-		TableModel<CellModelKeyValue<ProdutoLancamentoDTO>> tableModel = new TableModel<CellModelKeyValue<ProdutoLancamentoDTO>>();
-
-		Calendar c = Calendar.getInstance();
-		c.add(Calendar.DATE, 1);
-		c.set(Calendar.AM_PM, 0);
-		c.set(Calendar.HOUR, 0);
-		c.set(Calendar.MINUTE, 0);
-		c.set(Calendar.SECOND, 0);
-		c.set(Calendar.MILLISECOND, 0);
-		List<ProdutoLancamentoDTO> listaProdutoLancamentoUnordered = impressaoNFEService.obterProdutosExpedicaoConfirmada(fornecedores, c.getTime()); // c.getTime()
-
-		if(listaProdutoLancamentoUnordered == null) {
+		if(listaProdutos == null) {
 			result.use(Results.nothing());
 			return;
 		}
 			
-		ordenarLista(sortname, sortorder, listaProdutoLancamentoUnordered);
+		//ordenarLista(sortname, sortorder, listaProdutoLancamentoUnordered);
 		
-		List<ProdutoLancamentoDTO> listaProdutoLancamentoRefinada = buscarProdutosNaLista(listaProdutoLancamentoUnordered, codigoProduto, nomeProduto);
+		//List<ProdutoLancamentoDTO> listaProdutoLancamentoRefinada = buscarProdutosNaLista(listaProdutoLancamentoUnordered, codigoProduto, nomeProduto);
 
-		List<ProdutoLancamentoDTO> listaProdutoLancamento = removerItensDuplicados(listaProdutoLancamentoRefinada);
+		//List<ProdutoLancamentoDTO> listaProdutoLancamento = removerItensDuplicados(listaProdutoLancamentoRefinada);
 		
-		ordenarLista(sortname, sortorder, listaProdutoLancamento);
+		//ordenarLista(sortname, sortorder, listaProdutoLancamento);
 
-		tableModel.setTotal(listaProdutoLancamento != null ? listaProdutoLancamento.size() : 0);
+		tableModel.setTotal(listaProdutos != null ? listaProdutos.size() : 0);
 
-		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaProdutoLancamento));
+		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaProdutos));
 
 		tableModel.setPage(page);
 

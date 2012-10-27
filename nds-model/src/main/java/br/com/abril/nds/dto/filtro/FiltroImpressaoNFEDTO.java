@@ -16,16 +16,20 @@ public class FiltroImpressaoNFEDTO implements Serializable {
 
 	private String tipoNFe;
 
+	private Long codigoProduto;
+
+	private String nomeProduto;
+
 	private Date dataEmissao;
 
 	private Date dataMovimentoInicial;
-	
+
 	private Date dataMovimentoFinal;
 
 	private Long idCotaInicial;
-	
+
 	private Long idCotaFinal;
-	
+
 	private Long idBoxInicial;
 
 	private Long idBoxFinal;
@@ -39,7 +43,7 @@ public class FiltroImpressaoNFEDTO implements Serializable {
 	private List<Long> idsFornecedores;
 
 	private List<Long> codigosProdutos;
-	
+
 	private List<Long> idsCotas;
 
 	private PaginacaoVO paginacao;
@@ -93,27 +97,19 @@ public class FiltroImpressaoNFEDTO implements Serializable {
 			erros.put("tipoNFe", "O Tipo de NF-e é inválido.");
 		}
 
-		if( this.getDataMovimentoInicial() != null 
-				&& !DateUtil.isValidDatePTBR(sdf.format(this.getDataMovimentoInicial())) ) {
-			erros.put("dataInicialMovimento", "A Data Inicial de Movimento é inválida.");
+		HashMap<String, String> erro = this.validarDataMovimentoInicial();
+		if(erro != null) {
+			erros.putAll(erro);
 		}
 
-		if( this.getDataMovimentoFinal() != null) {
-
-			if( !DateUtil.isValidDatePTBR(sdf.format(this.getDataMovimentoFinal())) ) {
-				erros.put("dataInicialMovimento", "A Data Final de Movimento é inválida.");
-			} 
-
-			if(erros.get("dataFinalMovimento") == null) {
-				if( DateUtil.isDataInicialMaiorDataFinal(this.getDataMovimentoInicial(), this.getDataMovimentoFinal()) ) {
-					erros.put("dataFinalMovimento", "A Data Final de Movimento é inválida por ser menor que a Data Inicial.");
-				}
-			}			
+		erro = this.validarDataMovimentoFinal();
+		if(erro != null) {
+			erros.putAll(erro);
 		}
 
-		if( this.getDataEmissao() == null ) {
+		/*if( this.getDataEmissao() == null ) {
 			erros.put("dataEmissao", "A Data de Emissão é obrigatória.");
-		} 
+		} */
 
 		if( this.getDataEmissao() != null && !DateUtil.isValidDatePTBR(sdf.format(this.getDataEmissao())) ) {
 			erros.put("dataEmissao", "A Data de Emissão é inválida.");
@@ -167,11 +163,60 @@ public class FiltroImpressaoNFEDTO implements Serializable {
 	}
 
 	/*
+	 * Validadores
+	 */
+
+	public HashMap<String,String> validarDataMovimentoInicial() {
+		HashMap<String,String> erros = new HashMap<String,String>();
+
+		if( this.getDataMovimentoInicial() != null 
+				&& !DateUtil.isValidDatePTBR(new SimpleDateFormat("dd/MM/yyyy", new Locale("PT_BR")).format(this.getDataMovimentoInicial())) ) {
+			erros.put("dataInicialMovimento", "A Data Inicial de Movimento é inválida.");
+		}
+
+		return !erros.isEmpty() ? erros : null; 
+	}
+
+	public HashMap<String,String> validarDataMovimentoFinal() {
+		HashMap<String,String> erros = new HashMap<String,String>();
+
+		if( this.getDataMovimentoFinal() != null
+				&& !DateUtil.isValidDatePTBR(new SimpleDateFormat("dd/MM/yyyy", new Locale("PT_BR")).format(this.getDataMovimentoFinal())) ) {
+
+			erros.put("dataInicialMovimento", "A Data Final de Movimento é inválida.");
+
+			if(erros.get("dataFinalMovimento") == null) {
+				if( DateUtil.isDataInicialMaiorDataFinal(this.getDataMovimentoInicial(), this.getDataMovimentoFinal()) ) {
+					erros.put("dataFinalMovimento", "A Data Final de Movimento é inválida por ser menor que a Data Inicial.");
+				}
+			}			
+		}
+
+		return !erros.isEmpty() ? erros : null; 
+	}
+
+	/*
 	 * Getters / Setters
 	 */
 
 	public String getTipoNFe() {
 		return tipoNFe;
+	}
+
+	public Long getCodigoProduto() {
+		return codigoProduto;
+	}
+
+	public void setCodigoProduto(Long codigoProduto) {
+		this.codigoProduto = codigoProduto;
+	}
+
+	public String getNomeProduto() {
+		return nomeProduto;
+	}
+
+	public void setNomeProduto(String nomeProduto) {
+		this.nomeProduto = nomeProduto;
 	}
 
 	public Date getDataMovimentoInicial() {

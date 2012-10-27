@@ -36,9 +36,13 @@ var impressaoNfeController = $.extend(true, {
 		$( "#dataMovimentoInicial", impressaoNfeController.workspace ).mask("99/99/9999");
 		$( "#dataMovimentoFinal", impressaoNfeController.workspace ).mask("99/99/9999");
 
+		params = [ 	{name:'filtro.dataMovimentoInicial', value:$('#dataMovimentoInicial', impressaoNfeController.workspace).val()},
+		           	{name:'filtro.dataMovimentoFinal', value:$('#dataMovimentoFinal', impressaoNfeController.workspace).val()},
+		         ]
 		$(".produtosPesqGrid", impressaoNfeController.workspace).flexigrid({
 			preProcess : impressaoNfeController.prepararJSONPesquisaProdutos,
 			url : contextPath + "/nfe/impressaoNFE/pesquisarProdutosImpressaoNFE",
+			params : params,
 			dataType : 'json',
 			colModel : [ {
 				display : 'Código',
@@ -172,6 +176,11 @@ var impressaoNfeController = $.extend(true, {
 		});
 
 		$("#selProdutos", impressaoNfeController.workspace).click(function() {
+			params = [ 	
+		           	{name:'filtro.dataMovimentoInicial', value:$('#dataMovimentoInicial', impressaoNfeController.workspace).val()},
+		           	{name:'filtro.dataMovimentoFinal', value:$('#dataMovimentoFinal', impressaoNfeController.workspace).val()}
+		           	]
+			$(".produtosPesqGrid").flexOptions({params : params}).flexReload();
 			$("#dialog-pesqProdutos", this.workspace).dialog( "open" );
 		})
 
@@ -425,8 +434,10 @@ var impressaoNfeController = $.extend(true, {
 	},
 	
 	filtrarProdutos : function(codigoProduto, nomeProduto) {
-		params = [ 	{name:'codigoProduto', value:$('#dialog-pesqProdutos-codigoProduto').val()},
-		           	{name:'nomeProduto', value:$('#dialog-pesqProdutos-nomeProduto').val()},
+		params = [ 	{name:'filtro.dataMovimentoInicial', value:$('#dataMovimentoInicial', impressaoNfeController.workspace).val()},
+		           	{name:'filtro.dataMovimentoFinal', value:$('#dataMovimentoFinal', impressaoNfeController.workspace).val()},
+		           	{name:'filtro.codigoProduto', value:$('#dialog-pesqProdutos-codigoProduto').val()},
+		           	{name:'filtro.nomeProduto', value:$('#dialog-pesqProdutos-nomeProduto').val()},
 		           	]
 		$(".produtosPesqGrid").flexOptions({params: params}).flexReload();
 	},
