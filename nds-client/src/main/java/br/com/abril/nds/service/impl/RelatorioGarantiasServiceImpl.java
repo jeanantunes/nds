@@ -1,7 +1,5 @@
 package br.com.abril.nds.service.impl;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Calendar;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,31 +24,8 @@ public class RelatorioGarantiasServiceImpl implements RelatorioGarantiasService 
 	@Override
 	public FlexiGridDTO<RelatorioGarantiasDTO> gerarTodasGarantias(FiltroRelatorioGarantiasDTO filtro) {
 		
-		FlexiGridDTO<RelatorioGarantiasDTO> to = new FlexiGridDTO<RelatorioGarantiasDTO>();
-		
-		RelatorioGarantiasDTO dto = new RelatorioGarantiasDTO();
-		
-		dto.setQtdCotas(99);
-		dto.setTipoGarantia("Imóvel");
-		dto.setVlrTotal(BigDecimal.TEN);
-		
-		to.setGrid(new ArrayList<RelatorioGarantiasDTO>());
-		to.getGrid().add(dto);
-		to.getGrid().add(dto);
-		to.getGrid().add(dto);
-		to.getGrid().add(dto);
-		to.getGrid().add(dto);
-		to.getGrid().add(dto);
-		to.getGrid().add(dto);
-		to.getGrid().add(dto);
-		to.getGrid().add(dto);
-		to.getGrid().add(dto);
-		
-		to.setTotalGrid(30);
-		
-		return to;
 		// TODO Auto-generated method stub
-		//return null;
+		return null;
 	}
 
 	@Transactional
