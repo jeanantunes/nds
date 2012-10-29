@@ -1,7 +1,6 @@
 package br.com.abril.nds.service.impl;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.text.DateFormat;
@@ -920,8 +919,6 @@ public class NFeServiceImpl implements NFeService {
 		String codigoProduto 		= "";
 		String descricaoProduto 	= "";
 		Long produtoEdicao 			= null;
-		BigInteger reparteProduto 	= null;
-		BigDecimal quantidadeProduto 	= BigDecimal.ZERO;
 		BigDecimal valorUnitarioProduto = BigDecimal.ZERO;
 		BigDecimal valorTotalProduto 	= BigDecimal.ZERO;
 		BigDecimal valorDescontoProduto = BigDecimal.ZERO;
@@ -932,8 +929,6 @@ public class NFeServiceImpl implements NFeService {
 			descricaoProduto 	= itemNotaEnvio.getProdutoEdicao().getProduto().getNome();
 			produtoEdicao		= itemNotaEnvio.getProdutoEdicao().getNumeroEdicao();
 
-			reparteProduto		= itemNotaEnvio.getReparte();
-
 			valorUnitarioProduto = itemNotaEnvio.getPrecoCapa();
 			valorDescontoProduto = itemNotaEnvio.getDesconto();
 
@@ -942,7 +937,7 @@ public class NFeServiceImpl implements NFeService {
 			item.setCodigoProduto(codigoProduto);
 			item.setDescricaoProduto(descricaoProduto);
 			item.setProdutoEdicao(produtoEdicao);
-			item.setQuantidadeProduto(quantidadeProduto);
+			item.setQuantidadeProduto(new BigDecimal(itemNotaEnvio.getReparte().toString()));
 			item.setValorUnitarioProduto(valorUnitarioProduto);
 			item.setValorTotalProduto(valorTotalProduto);
 			item.setValorDescontoProduto(valorDescontoProduto.divide(new BigDecimal("100")));

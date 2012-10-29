@@ -93,7 +93,7 @@ public class FiltroImpressaoNFEDTO implements Serializable {
 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", new Locale("PT_BR"));
 		HashMap<String,String> erros = new HashMap<String,String>();
 
-		if(	(this.getTipoNFe() == null || this.getTipoNFe() != null && this.getTipoNFe().isEmpty()) ) {
+		if(	(this.getTipoNFe() != null && this.getTipoNFe().isEmpty()) ) {
 			erros.put("tipoNFe", "O Tipo de NF-e é inválido.");
 		}
 
@@ -106,10 +106,6 @@ public class FiltroImpressaoNFEDTO implements Serializable {
 		if(erro != null) {
 			erros.putAll(erro);
 		}
-
-		/*if( this.getDataEmissao() == null ) {
-			erros.put("dataEmissao", "A Data de Emissão é obrigatória.");
-		} */
 
 		if( this.getDataEmissao() != null && !DateUtil.isValidDatePTBR(sdf.format(this.getDataEmissao())) ) {
 			erros.put("dataEmissao", "A Data de Emissão é inválida.");
@@ -151,6 +147,8 @@ public class FiltroImpressaoNFEDTO implements Serializable {
 
 		//TODO : Sérgio : Verificar se necessita validação
 		/*
+		if( this.getDataEmissao() == null ) {
+			erros.put("dataEmissao", "A Data de Emissão é obrigatória.");
 		if( this.getIdRoteiro() != null ) { }
 		if( this.getIdRota() != null ) { }
 		if( this.getIdTipoEmissao() != null ) { }

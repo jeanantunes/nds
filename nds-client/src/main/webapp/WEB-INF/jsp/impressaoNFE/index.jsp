@@ -34,8 +34,8 @@
 					</td>
 					</c:if>
 					<td width="97">Data Movimento:</td>
-					<td width="238"><input name="dataMovimentoInicial" type="text" id="dataMovimentoInicial" value="${dataAtual}" style="width: 76px;" maxlength="10" />
-						&nbsp;&nbsp;Até&nbsp; <input name="dataMovimentoFinal" type="text" id="dataMovimentoFinal" value="${dataAtual}" style="width: 76px;" maxlength="10" /></td>
+					<td width="238"><input name="dataMovimentoInicial" type="text" id="dataMovimentoInicial" style="width: 76px;" maxlength="10" />
+						&nbsp;&nbsp;Até&nbsp; <input name="dataMovimentoFinal" type="text" id="dataMovimentoFinal" style="width: 76px;" maxlength="10" /></td>
 					<td width="83">Data Emissão:</td>
 					<td width="210"><input name="dataEmissao" type="text" id="dataEmissao" style="width: 80px;"
 						value="${dataAtual}" maxlength="10" /></td>
@@ -133,6 +133,10 @@
 		</fieldset>
 		<div class="linha_separa_fields">&nbsp;</div>
 
+		<div id="msgBoxDataMovimentoInvalida" title="Data de Movimento inválida.">
+		    <p>É necessário informar uma Data de Movimento válida.</p>
+		</div>
+		
 		<div id="form-pesqProdutos">
 		<div id="dialog-pesqProdutos" title="Pesquisar Produtos" style="display: none;">
 			<fieldset style="width: 400px !important;">

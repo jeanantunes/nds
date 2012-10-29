@@ -247,7 +247,7 @@
 			<textField>
 				<reportElement uuid="77737569-015a-4f71-b647-b94cd742095a" x="465" y="10" width="100" height="16"/>
 				<textElement/>
-				<textFieldExpression><![CDATA[$V{SUM_PRECO_CAPA}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$V{SUM_PRECO_CAPA}.multiply($F{quantidadeProduto})]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement uuid="c03e2294-ba90-4550-a50f-fccf6352f410" x="256" y="50" width="207" height="16"/>
@@ -272,7 +272,7 @@
 			<textField>
 				<reportElement uuid="77737569-015a-4f71-b647-b94cd742095a" x="465" y="30" width="100" height="16"/>
 				<textElement/>
-				<textFieldExpression><![CDATA[$V{SUM_PRECO_DESCONTO}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$V{SUM_PRECO_DESCONTO}.multiply($F{quantidadeProduto})]]></textFieldExpression>
 			</textField>
 		</band>
 	</summary>

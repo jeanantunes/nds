@@ -148,11 +148,11 @@ public class ImpressaoNFEController {
 		List<CotasImpressaoNfeDTO> listaCotasImpressaoNFe = impressaoNFEService.buscarCotasParaImpressaoNFe(filtro);
 		
 		//TODO: Sérgio - Retirar - usado apenas para marcar a tela
-		for(CotasImpressaoNfeDTO nnnn : listaCotasImpressaoNFe) {
+		/*for(CotasImpressaoNfeDTO nnnn : listaCotasImpressaoNFe) {
 			if(nnnn.getIdCota().longValue() > 3)
 				nnnn.setNotaImpressa(true);
 		}
-		
+		*/
 		tableModel.setTotal(impressaoNFEService.buscarNFeParaImpressaoTotalQtd(filtro));
 
 		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaCotasImpressaoNFe));
@@ -184,14 +184,6 @@ public class ImpressaoNFEController {
 			result.use(Results.nothing());
 			return;
 		}
-			
-		//ordenarLista(sortname, sortorder, listaProdutoLancamentoUnordered);
-		
-		//List<ProdutoLancamentoDTO> listaProdutoLancamentoRefinada = buscarProdutosNaLista(listaProdutoLancamentoUnordered, codigoProduto, nomeProduto);
-
-		//List<ProdutoLancamentoDTO> listaProdutoLancamento = removerItensDuplicados(listaProdutoLancamentoRefinada);
-		
-		//ordenarLista(sortname, sortorder, listaProdutoLancamento);
 
 		tableModel.setTotal(listaProdutos != null ? listaProdutos.size() : 0);
 
@@ -237,6 +229,7 @@ public class ImpressaoNFEController {
 	@Post
 	public void imprimirNFe(FiltroImpressaoNFEDTO filtro, String sortorder, String sortname) {
 		
+		
 		FiltroImpressaoNFEDTO filtroPesquisa = (FiltroImpressaoNFEDTO) session.getAttribute("filtroPesquisaNFe");
 		
 		if(filtro.getIdsCotas() != null) {
@@ -246,8 +239,9 @@ public class ImpressaoNFEController {
 			throw new ValidacaoException(validacaoVO);
 		}
 		
+		filtroPesquisa.setPaginacao(null);
 		List<CotasImpressaoNfeDTO> cotas = impressaoNFEService.buscarCotasParaImpressaoNFe(filtroPesquisa);
-		
+			
 		Distribuidor distribuidor = this.distribuidorService.obter();
 		
 		byte[] arquivo = null; 

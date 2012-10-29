@@ -13,7 +13,7 @@ public class CotasImpressaoNfeDTO extends NfeDTO {
 		this.idCota = c.getId();
 		this.nomeCota = c.getPessoa().getNome();
 		this.vlrTotal = vlrTotal;
-		this.vlrTotalDesconto = vlrTotal.subtract(vlrTotalDesconto);
+		this.vlrTotalDesconto = vlrTotal.subtract(vlrTotal.multiply(vlrTotalDesconto.divide(new BigDecimal("100"))));
 		
 	}
 	

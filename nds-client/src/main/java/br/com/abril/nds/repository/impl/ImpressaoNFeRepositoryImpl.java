@@ -69,7 +69,7 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 		sql.append("select new br.com.abril.nds.dto.CotasImpressaoNfeDTO(cota, SUM(nei.precoCapa), SUM(nei.desconto)) ");
 		
 		//Complementa o HQL com as clausulas de filtro
-		Query q = montarFiltroConsultaNotaEnvioParaImpressao(filtro, sql, filtro.getPaginacao());
+		Query q = montarFiltroConsultaNotaEnvioParaImpressao(null, filtro, sql, filtro.getPaginacao());
 
 		return q.list();
 	}
@@ -80,7 +80,7 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 		sql.append("select count(*) ");
 		
 		//Complementa o HQL com as clausulas de filtro
-		Query q = montarFiltroConsultaNotaEnvioParaImpressao(filtro, sql, null);
+		Query q = montarFiltroConsultaNotaEnvioParaImpressao(null, filtro, sql, null);
 		
 		return q.list().size();
 	}
@@ -103,7 +103,7 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 		sql.append("select ne ");
 		
 		//Complementa o HQL com as clausulas de filtro
-		Query q = montarFiltroConsultaNotaEnvioParaImpressao(filtro, sql, filtro.getPaginacao());
+		Query q = montarFiltroConsultaNotaEnvioParaImpressao(cota, filtro, sql, filtro.getPaginacao());
 
 		return q.list();
 	}
@@ -283,7 +283,7 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 	}
 	
 	//Torna reaproveitavel a parte de filtro da query
-		private Query montarFiltroConsultaNotaEnvioParaImpressao(FiltroImpressaoNFEDTO filtro, StringBuilder sql, PaginacaoVO paginacao) {
+		private Query montarFiltroConsultaNotaEnvioParaImpressao(Cota cota, FiltroImpressaoNFEDTO filtro, StringBuilder sql, PaginacaoVO paginacao) {
 			
 			Distribuidor distribuidor = distribuidorRepository.obter();
 			
@@ -344,6 +344,10 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 				} else {
 					sql.append("and cota.id <= :idCotaFinal ");
 				}
+			}
+			
+			if(cota != null && cota.getId() != null) {
+				sql.append("and cota.id = :idCota ");
 			}
 			
 			if(filtro.getIdsCotas() != null && filtro.getIdsCotas().size() > 0) {	
@@ -432,6 +436,10 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 				}
 			}
 			
+			if(cota != null && cota.getId() != null) {
+				q.setParameter("idCota", cota.getId());
+			}
+			
 			if(filtro.getIdsCotas() != null && filtro.getIdsCotas().size() > 0) {
 				q.setParameterList("idsCotas", filtro.getIdsCotas());
 			}
@@ -467,7 +475,10 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 			sql.append("select distinct p ");
 			sql.append("from Lancamento l join l.produtoEdicao pe join pe.produto p join p.fornecedores f ");
 			sql.append("where l.dataLancamentoDistribuidor between :dataMovimentoInicial and :dataMovimentoFinal ");
-			sql.append("and f.id in (:idsFornecedores) ");
+			
+			if(filtro.getIdsFornecedores() != null) {
+				sql.append("and f.id in (:idsFornecedores) ");
+			}
 			
 			if(filtro.getCodigoProduto() != null) {
 				sql.append("and p.codigo like :codigoProduto ");
@@ -498,11 +509,11 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 			q.setParameterList("idsFornecedores", filtro.getIdsFornecedores());
 			
 			if(filtro.getCodigoProduto() != null) {
-				q.setParameter("codigoProduto", filtro.getCodigoProduto() +"%");
+				q.setParameter("codigoProduto", "%"+ filtro.getCodigoProduto() +"%");
 			}
 			
 			if(filtro.getNomeProduto() != null) {
-				q.setParameter("nomeProduto", filtro.getNomeProduto() +"%");
+				q.setParameter("nomeProduto", "%"+ filtro.getNomeProduto() +"%");
 			}
 
 			return q.list();

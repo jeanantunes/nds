@@ -1,3 +1,5 @@
+//TODO: Sérgio - Fazer uma extensao da funcao onChangePage do Flexigrid para limpar o array de cotas selecionadas na pagina anterior
+
 Array.prototype.removeByValue = function(){
     var what, a= arguments, L= a.length, ax;
     while(L && this.length){
@@ -14,6 +16,8 @@ var impressaoNfeController = $.extend(true, {
 	filtroProdutos : [],
 	
 	filtroCotasImprimirNFe : [],
+	
+	paginaAtualPesquisarGrid : 1,
 
 	init : function() {
 		$( "#dataEmissao", impressaoNfeController.workspace ).datepicker({
@@ -36,13 +40,9 @@ var impressaoNfeController = $.extend(true, {
 		$( "#dataMovimentoInicial", impressaoNfeController.workspace ).mask("99/99/9999");
 		$( "#dataMovimentoFinal", impressaoNfeController.workspace ).mask("99/99/9999");
 
-		params = [ 	{name:'filtro.dataMovimentoInicial', value:$('#dataMovimentoInicial', impressaoNfeController.workspace).val()},
-		           	{name:'filtro.dataMovimentoFinal', value:$('#dataMovimentoFinal', impressaoNfeController.workspace).val()},
-		         ]
 		$(".produtosPesqGrid", impressaoNfeController.workspace).flexigrid({
 			preProcess : impressaoNfeController.prepararJSONPesquisaProdutos,
 			url : contextPath + "/nfe/impressaoNFE/pesquisarProdutosImpressaoNFE",
-			params : params,
 			dataType : 'json',
 			colModel : [ {
 				display : 'Código',
@@ -164,9 +164,12 @@ var impressaoNfeController = $.extend(true, {
 			rp : 15,
 			showTableToggleBtn : true,
 			width : 960,
-			height : 180
+			height : 180,
+			/*onChangePage : function(ctype) {
+				impressaoNfeController.filtroCotasImprimirNFe = [];
+			},*/
 		});
-
+		
 		$("#selFornecedor", impressaoNfeController.workspace).click(function() {
 			$(".menu_fornecedor", impressaoNfeController.workspace).show().fadeIn("fast");
 		})
@@ -176,6 +179,12 @@ var impressaoNfeController = $.extend(true, {
 		});
 
 		$("#selProdutos", impressaoNfeController.workspace).click(function() {
+			if( $('#dataMovimentoInicial', impressaoNfeController.workspace).val() == ''
+					|| $('#dataMovimentoFinal', impressaoNfeController.workspace).val() == '') {
+				$( "#msgBoxDataMovimentoInvalida", this.workspace ).dialog( "open" );
+				return;
+			}
+			
 			params = [ 	
 		           	{name:'filtro.dataMovimentoInicial', value:$('#dataMovimentoInicial', impressaoNfeController.workspace).val()},
 		           	{name:'filtro.dataMovimentoFinal', value:$('#dataMovimentoFinal', impressaoNfeController.workspace).val()}
@@ -183,6 +192,11 @@ var impressaoNfeController = $.extend(true, {
 			$(".produtosPesqGrid").flexOptions({params : params}).flexReload();
 			$("#dialog-pesqProdutos", this.workspace).dialog( "open" );
 		})
+		
+		$( "#msgBoxDataMovimentoInvalida", this.workspace ).dialog({
+			autoOpen: false,
+			modal: true,
+		});
 
 		$(".menu_produtos", impressaoNfeController.workspace).mouseleave(function() {
 			$(".menu_produtos", impressaoNfeController.workspace).hide();
@@ -210,7 +224,7 @@ var impressaoNfeController = $.extend(true, {
 		});
 
 	},
-
+	
 	prepararJSONPesquisaProdutos : function(data) {
 
 		$.each(data.rows, function() {
@@ -505,6 +519,12 @@ var impressaoNfeController = $.extend(true, {
 	},
 
 	adicionarAsNFesAImprimir : function(checked, idCota) {
+		
+		//Verifica se ainda esta na mesma pagina, se nao, atualiza a pagina atual e limpa as cotas selecionadas na pagina anterior
+		if(impressaoNfeController.paginaAtualPesquisarGrid != $(".impressaoGrid").flexGetPageNumber()) {
+			impressaoNfeController.paginaAtualPesquisarGrid = $(".impressaoGrid").flexGetPageNumber();
+			impressaoNfeController.filtroCotasImprimirNFe = [];
+		}
 		
 		arrayOrdenado = impressaoNfeController.filtroCotasImprimirNFe.sort();
 		
