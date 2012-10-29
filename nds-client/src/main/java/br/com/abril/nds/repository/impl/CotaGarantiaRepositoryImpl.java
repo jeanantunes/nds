@@ -12,8 +12,8 @@ import org.springframework.stereotype.Repository;
 import br.com.abril.nds.dto.RelatorioDetalheGarantiaDTO;
 import br.com.abril.nds.dto.RelatorioGarantiasDTO;
 import br.com.abril.nds.model.cadastro.Cheque;
-import br.com.abril.nds.model.cadastro.StatusGarantia;
 import br.com.abril.nds.model.cadastro.TipoGarantia;
+import br.com.abril.nds.model.cadastro.TipoStatusGarantia;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantia;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaCaucaoLiquida;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaChequeCaucao;
@@ -104,7 +104,7 @@ public class CotaGarantiaRepositoryImpl extends AbstractRepositoryModel<CotaGara
 	 */
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<RelatorioGarantiasDTO> obterGarantiasCadastradas(StatusGarantia status, Date data) {
+	public List<RelatorioGarantiasDTO> obterGarantiasCadastradas(TipoStatusGarantia status, Date data) {
 
 		StringBuilder hql = new StringBuilder();
 
@@ -133,12 +133,12 @@ public class CotaGarantiaRepositoryImpl extends AbstractRepositoryModel<CotaGara
 		   .append(" left join garantia.outros as garantiaOutros ");
 		   
 	   if (status!=null && data!=null){
-		   if (status.equals(StatusGarantia.VENCIDA)){
+		   if (status.equals(TipoStatusGarantia.VENCIDA)){
 			   
 			   hql.append(" where garantia.data <= :data ");
 		   }
 		   
-           if (status.equals(StatusGarantia.A_VENCER)){
+           if (status.equals(TipoStatusGarantia.A_VENCER)){
 			   
         	   hql.append(" where garantia.data >= :data ");
 		   } 
@@ -161,7 +161,7 @@ public class CotaGarantiaRepositoryImpl extends AbstractRepositoryModel<CotaGara
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Long obterCountGarantiasCadastradas(StatusGarantia status, Date data) {
+	public Long obterCountGarantiasCadastradas(TipoStatusGarantia status, Date data) {
 
 		StringBuilder hql = new StringBuilder();
 
@@ -175,12 +175,12 @@ public class CotaGarantiaRepositoryImpl extends AbstractRepositoryModel<CotaGara
 		   .append(" left join garantia.outros as garantiaOutros ");
 		
 		if (status!=null && data!=null){
-		   if (status.equals(StatusGarantia.VENCIDA)){
+		   if (status.equals(TipoStatusGarantia.VENCIDA)){
 			   
 			   hql.append(" where garantia.data <= :data ");
 		   }
 		   
-           if (status.equals(StatusGarantia.A_VENCER)){
+           if (status.equals(TipoStatusGarantia.A_VENCER)){
 			   
         	   hql.append(" where garantia.data >= :data ");
 		   } 

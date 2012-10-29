@@ -32,11 +32,11 @@ import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
-import br.com.abril.nds.model.cadastro.StatusGarantia;
 import br.com.abril.nds.model.cadastro.TipoCobrancaCotaGarantia;
 import br.com.abril.nds.model.cadastro.TipoFornecedor;
 import br.com.abril.nds.model.cadastro.TipoGarantia;
 import br.com.abril.nds.model.cadastro.TipoProduto;
+import br.com.abril.nds.model.cadastro.TipoStatusGarantia;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaCaucaoLiquida;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaChequeCaucao;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaFiador;
@@ -242,7 +242,7 @@ public class CotaGarantiaRepositoryImplTest extends AbstractRepositoryImplTest {
 	@Test
 	public void obterGarantiasCadastradas() {
 
-		List<RelatorioGarantiasDTO> garantias = this.cotaGarantiaRepository.obterGarantiasCadastradas(StatusGarantia.VENCIDA,data);
+		List<RelatorioGarantiasDTO> garantias = this.cotaGarantiaRepository.obterGarantiasCadastradas(TipoStatusGarantia.VENCIDA,data);
 		
 		Assert.assertNotNull(garantias);
 		
@@ -283,7 +283,7 @@ public class CotaGarantiaRepositoryImplTest extends AbstractRepositoryImplTest {
 	@Test
 	public void obterCountGarantiasCadastradas() {
 
-		Long count = this.cotaGarantiaRepository.obterCountGarantiasCadastradas(StatusGarantia.VENCIDA, data);
+		Long count = this.cotaGarantiaRepository.obterCountGarantiasCadastradas(TipoStatusGarantia.VENCIDA, data);
 		
 		Assert.assertNotNull(count);
 	}

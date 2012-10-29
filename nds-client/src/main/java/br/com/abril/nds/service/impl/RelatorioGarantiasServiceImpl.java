@@ -9,8 +9,8 @@ import br.com.abril.nds.dto.RelatorioDetalheGarantiaDTO;
 import br.com.abril.nds.dto.RelatorioGarantiasDTO;
 import br.com.abril.nds.dto.filtro.FiltroRelatorioGarantiasDTO;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.model.cadastro.StatusGarantia;
 import br.com.abril.nds.model.cadastro.TipoGarantia;
+import br.com.abril.nds.model.cadastro.TipoStatusGarantia;
 import br.com.abril.nds.repository.CotaGarantiaRepository;
 import br.com.abril.nds.service.RelatorioGarantiasService;
 import br.com.abril.nds.util.TipoMensagem;
@@ -27,7 +27,7 @@ public class RelatorioGarantiasServiceImpl implements RelatorioGarantiasService 
 	public FlexiGridDTO<RelatorioGarantiasDTO> gerarTodasGarantias(FiltroRelatorioGarantiasDTO filtro) {
 		
 		//MOCK
-		StatusGarantia statusGarantia = StatusGarantia.VENCIDA/*filtro.getStatusGarantia()*/;//Alterar tipo no filtro para StatusGarantia
+		TipoStatusGarantia statusGarantia = TipoStatusGarantia.VENCIDA/*filtro.getStatusGarantia()*/;//Alterar tipo no filtro para StatusGarantia
 		//
 		
 		FlexiGridDTO<RelatorioGarantiasDTO> to = new FlexiGridDTO<RelatorioGarantiasDTO>();

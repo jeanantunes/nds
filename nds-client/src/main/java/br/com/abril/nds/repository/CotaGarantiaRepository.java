@@ -6,8 +6,8 @@ import java.util.List;
 import br.com.abril.nds.dto.RelatorioDetalheGarantiaDTO;
 import br.com.abril.nds.dto.RelatorioGarantiasDTO;
 import br.com.abril.nds.model.cadastro.Cheque;
-import br.com.abril.nds.model.cadastro.StatusGarantia;
 import br.com.abril.nds.model.cadastro.TipoGarantia;
+import br.com.abril.nds.model.cadastro.TipoStatusGarantia;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantia;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaFiador;
 
@@ -67,7 +67,7 @@ public interface CotaGarantiaRepository extends Repository<CotaGarantia,Long>{
 	 * @param data
 	 * @return List<RelatorioGarantiasDTO>
 	 */
-	List<RelatorioGarantiasDTO> obterGarantiasCadastradas(StatusGarantia status,Date data);
+	List<RelatorioGarantiasDTO> obterGarantiasCadastradas(TipoStatusGarantia status,Date data);
 	
 	/**
 	 * Obtém quantidade de garantias cadastradas
@@ -75,7 +75,7 @@ public interface CotaGarantiaRepository extends Repository<CotaGarantia,Long>{
 	 * @param data
 	 * @return List<RelatorioGarantiasDTO>
 	 */
-	Long obterCountGarantiasCadastradas(StatusGarantia status,Date data);
+	Long obterCountGarantiasCadastradas(TipoStatusGarantia status,Date data);
 	
 	/**
 	 * Obtem detalhe da garantia
