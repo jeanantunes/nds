@@ -87,6 +87,7 @@ public class RelatorioGarantiasController {
 		
 		PaginacaoVO paginacaoVO = new PaginacaoVO(page, rp, sortorder, sortname);
 		filtro.setPaginacao(paginacaoVO);
+		filtro.setDataBaseCalculo(distribuidorService.obter().getDataOperacao());
 		
 		this.session.setAttribute(FILTRO_RELATORIO_GARANTIAS, filtro);
 		
@@ -137,6 +138,7 @@ public class RelatorioGarantiasController {
 		 
 		
 		for(RelatorioDetalheGarantiaDTO dto : flexDTO.getGrid()){
+			
 			garantiasVO.add(new RelatorioDetalheGarantiaVO(dto,data));
 		}
 		

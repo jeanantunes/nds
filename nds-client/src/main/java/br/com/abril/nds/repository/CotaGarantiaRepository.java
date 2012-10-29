@@ -1,13 +1,11 @@
 package br.com.abril.nds.repository;
 
-import java.util.Date;
 import java.util.List;
 
 import br.com.abril.nds.dto.RelatorioDetalheGarantiaDTO;
 import br.com.abril.nds.dto.RelatorioGarantiasDTO;
+import br.com.abril.nds.dto.filtro.FiltroRelatorioGarantiasDTO;
 import br.com.abril.nds.model.cadastro.Cheque;
-import br.com.abril.nds.model.cadastro.TipoGarantia;
-import br.com.abril.nds.model.cadastro.TipoStatusGarantia;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantia;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaFiador;
 
@@ -63,30 +61,28 @@ public interface CotaGarantiaRepository extends Repository<CotaGarantia,Long>{
 
 	/**
 	 * Obtém garantias cadastradas
-	 * @param status
-	 * @param data
+	 * @param filtro
 	 * @return List<RelatorioGarantiasDTO>
 	 */
-	List<RelatorioGarantiasDTO> obterGarantiasCadastradas(TipoStatusGarantia status,Date data);
+	List<RelatorioGarantiasDTO> obterGarantiasCadastradas(FiltroRelatorioGarantiasDTO filtro);
 	
 	/**
 	 * Obtém quantidade de garantias cadastradas
-	 * @param status
-	 * @param data
+	 * @param filtro
 	 * @return List<RelatorioGarantiasDTO>
 	 */
-	Long obterCountGarantiasCadastradas(TipoStatusGarantia status,Date data);
+	Long obterCountGarantiasCadastradas(FiltroRelatorioGarantiasDTO filtro);
 	
 	/**
 	 * Obtem detalhe da garantia
 	 * @return List<RelatorioDetalheGarantiaDTO>
 	 */
-	List<RelatorioDetalheGarantiaDTO> obterDetalheGarantiaCadastrada(TipoGarantia tipoGarantia, Date data, String sortColumn, String sortOrder);
+	List<RelatorioDetalheGarantiaDTO> obterDetalheGarantiaCadastrada(FiltroRelatorioGarantiasDTO filtro);
 	
 	/**
 	 * Obtem quantidade de detalhe da garantia
 	 * @return Long
 	 */
-	Long obterCountDetalheGarantiaCadastrada(TipoGarantia tipoGarantia, Date data);
+	Long obterCountDetalheGarantiaCadastrada(FiltroRelatorioGarantiasDTO filtro);
 
 }
