@@ -3716,7 +3716,7 @@ public class DataLoader {
 		
 		save(session, Fixture.parametroSistema(TipoParametroSistema.OUTBOUND_FOLDER, "/opt/interface/"));
 		save(session, Fixture.parametroSistema(TipoParametroSistema.CODIGO_DISTRIBUIDOR_DINAP, "6248116"));
-		save(session, Fixture.parametroSistema(TipoParametroSistema.ID_PJ_IMPORTACAO_NRE, "1"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.CNPJ_PJ_IMPORTACAO_NRE, "61.438.248/0001-23"));
 	}
 
 	private static void criarMovimentosEstoque(Session session) {
