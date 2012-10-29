@@ -262,10 +262,9 @@ public class NotaFiscalEntradaServiceImpl implements NotaFiscalEntradaService {
 	@Override
 	@Transactional
 	public List<NotaFiscalEntrada> obterNotaFiscalPorNumeroSerieCnpj(FiltroConsultaNotaFiscalDTO filtroConsultaNotaFiscal){
-		if(filtroConsultaNotaFiscal.getNumeroNota() == null || filtroConsultaNotaFiscal.getSerie() == null || filtroConsultaNotaFiscal.getCnpj() == null){
-			throw new IllegalArgumentException("Todos os dados são obrigatórios");
-		}
+		
 		return notaFiscalRepository.obterNotaFiscalPorNumeroSerieCnpj(filtroConsultaNotaFiscal);
+	
 	}
 
 	
