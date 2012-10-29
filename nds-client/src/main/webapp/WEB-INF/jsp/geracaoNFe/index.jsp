@@ -119,7 +119,7 @@ $(function(){
 				    <td>&nbsp;</td>
 				    <td>&nbsp;</td>
 				    <td>
-				    	<span class="bt_pesquisar"><a href="javascript:;" id="btnPesquisar" onclick="mostrar();"><img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" /></a></span>
+				    	<span class="bt_pesquisar"><a href="javascript:;" id="btnPesquisar" onclick="mostrar();"></a></span>
 				    </td>
   				</tr>
   				<td colspan="3"></td>
