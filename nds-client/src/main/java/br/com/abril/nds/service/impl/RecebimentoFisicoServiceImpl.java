@@ -41,6 +41,7 @@ import br.com.abril.nds.repository.ItemRecebimentoFisicoRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.NotaFiscalEntradaRepository;
 import br.com.abril.nds.repository.PessoaJuridicaRepository;
+import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.RecebimentoFisicoRepository;
 import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
 import br.com.abril.nds.repository.TipoNotaFiscalRepository;
@@ -58,7 +59,10 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 	
 	@Autowired
 	private RecebimentoFisicoRepository recebimentoFisicoRepository;
-	
+
+	@Autowired
+	private ProdutoEdicaoRepository produtoEdicaoRepository;
+
 	@Autowired
 	private ItemRecebimentoFisicoRepository itemRecebimentoFisicoRepository;
 	
@@ -514,9 +518,11 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 			
 			lancamento.getRecebimentos().add(itemRecebimentoFisico);
 			
-			ProdutoEdicao produtoEdicao = new ProdutoEdicao();
-			produtoEdicao.setId(recebimentoFisicoDTO.getIdProdutoEdicao());
-			
+			/*ProdutoEdicao produtoEdicao = new ProdutoEdicao();
+			produtoEdicao.setId(recebimentoFisicoDTO.getIdProdutoEdicao());*/
+
+			ProdutoEdicao produtoEdicao = produtoEdicaoRepository.buscarPorId(recebimentoFisicoDTO.getIdProdutoEdicao());
+
 			lancamento.setProdutoEdicao(produtoEdicao);
 			
 			lancamentoRepository.adicionar(lancamento);
