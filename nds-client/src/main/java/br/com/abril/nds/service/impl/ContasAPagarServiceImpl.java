@@ -65,9 +65,15 @@ public class ContasAPagarServiceImpl implements ContasAPagarService {
 
 	@Transactional
 	@Override
-	public FlexiGridDTO<ContasAPagarParcialDTO> pesquisarParcial(FiltroContasAPagarDTO filtro, String sortname, String sortorder, int rp, int page) {
-		// TODO Auto-generated method stub
-		return null;
+	public FlexiGridDTO<ContasAPagarParcialDTO> pesquisarParcial(FiltroContasAPagarDTO filtro) {
+		
+		FlexiGridDTO<ContasAPagarParcialDTO> dto = new FlexiGridDTO<ContasAPagarParcialDTO>();
+		dto.setGrid(this.contasAPagarRepository.pesquisarParcial(filtro));
+		
+		Long count = this.contasAPagarRepository.countPesquisarParcial(filtro);
+		dto.setTotalGrid(count == null ? 0 : count.intValue());
+		
+		return dto;
 	}
 
 	@Transactional

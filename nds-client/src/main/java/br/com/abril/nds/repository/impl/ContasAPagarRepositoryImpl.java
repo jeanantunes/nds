@@ -13,6 +13,7 @@ import br.com.abril.nds.dto.ContasAPagarConsultaProdutoDTO;
 import br.com.abril.nds.dto.ContasAPagarEncalheDTO;
 import br.com.abril.nds.dto.ContasAPagarFaltasSobrasDTO;
 import br.com.abril.nds.dto.ContasAPagarGridPrincipalProdutoDTO;
+import br.com.abril.nds.dto.ContasAPagarParcialDTO;
 import br.com.abril.nds.dto.ContasApagarConsultaPorDistribuidorDTO;
 import br.com.abril.nds.dto.ContasApagarConsultaPorProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroContasAPagarDTO;
@@ -385,10 +386,7 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
 			hql.append(" join l.produtoEdicao.produto.fornecedores f ");
 		}
 		
-		if (filtro.getDataDe() == null){
-			
-			hql.append(" where ld4.dataProcessamento = l.dataRecolhimentoPrevista ");
-		} else {
+		if (filtro.getDataDe() != null){
 			
 			hql.append(" where l.dataCriacao between :inicio and :fim ");
 		}
@@ -979,5 +977,113 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
         query.setResultTransformer(new AliasToBeanResultTransformer(ContasAPagarConsultaProdutoDTO.class));
         return query.list();
 
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ContasAPagarParcialDTO> pesquisarParcial(FiltroContasAPagarDTO filtro){
+		
+		Query query = this.getSession().createQuery(this.obterQueryPesquisaParcial(filtro, false));
+		query.setParameter("data", filtro.getDataDetalhe());
+		
+		//movimentos de grupo de estoque suplementar de entrada
+		List<GrupoMovimentoEstoque> movimentosSuplementar = new ArrayList<GrupoMovimentoEstoque>();
+		movimentosSuplementar.add(GrupoMovimentoEstoque.SUPLEMENTAR_COTA_AUSENTE);
+		movimentosSuplementar.add(GrupoMovimentoEstoque.SUPLEMENTAR_ENVIO_ENCALHE_ANTERIOR_PROGRAMACAO);
+		movimentosSuplementar.add(GrupoMovimentoEstoque.ESTORNO_VENDA_ENCALHE_SUPLEMENTAR);
+		movimentosSuplementar.add(GrupoMovimentoEstoque.ENTRADA_SUPLEMENTAR_ENVIO_REPARTE);
+		movimentosSuplementar.add(GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_SUPLEMENTAR);
+		query.setParameterList("movimentosSuplementarEntrada", movimentosSuplementar);
+		
+		//movimentos de grupo de estoque suplementar de saida
+		movimentosSuplementar = new ArrayList<GrupoMovimentoEstoque>();
+		movimentosSuplementar.add(GrupoMovimentoEstoque.REPARTE_COTA_AUSENTE);
+		movimentosSuplementar.add(GrupoMovimentoEstoque.VENDA_ENCALHE_SUPLEMENTAR);
+		movimentosSuplementar.add(GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_SUPLEMENTAR);
+		query.setParameterList("movimentosSuplementarSaida", movimentosSuplementar);
+		
+		query.setParameter("statusLancamento", StatusLancamento.CONFIRMADO);
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(ContasAPagarParcialDTO.class));
+		
+		PaginacaoVO paginacaoVO = filtro.getPaginacaoVO();
+		
+		if (paginacaoVO != null){
+			
+			query.setMaxResults(paginacaoVO.getQtdResultadosPorPagina());
+			query.setFirstResult(paginacaoVO.getQtdResultadosPorPagina() * (paginacaoVO.getPaginaAtual() - 1));
+		}
+		
+		return query.list();
+	}
+	
+	@Override
+	public Long countPesquisarParcial(FiltroContasAPagarDTO filtro){
+		
+		Query query = this.getSession().createQuery(this.obterQueryPesquisaParcial(filtro, true));
+		query.setParameter("data", filtro.getDataDetalhe());
+		query.setParameter("statusLancamento", StatusLancamento.CONFIRMADO);
+		
+		return (Long) query.uniqueResult();
+	}
+	
+	private String obterQueryPesquisaParcial(FiltroContasAPagarDTO filtro, boolean count){
+		
+		StringBuilder hql = new StringBuilder("select ");
+		
+		if (count){
+			
+			hql.append("count (lp.id) ");
+		} else {
+			
+			hql.append(" 	lp.lancamentoInicial as lcto, ")
+			   .append(" 	lp.recolhimentoFinal as rclt, ")
+			   .append(" 	l.reparte, ")
+			   //suplementacao
+			   .append("	((select ")
+			   .append("		sum(m.qtde) ")
+			   .append(" 	 from MovimentoEstoque m ")
+			   .append(" 	 where m.data = :data ")
+		   	   .append(" 		   and m.tipoMovimento.grupoMovimentoEstoque in (:movimentosSuplementarEntrada)) - ")
+		   	   .append("	 (select ")
+		   	   .append(" 	 	sum(m2.qtde) ")
+		   	   .append(" 	 from MovimentoEstoque m2 ")
+		   	   .append(" 	 where m2.data = :data ")
+		       .append(" 		   and m2.tipoMovimento.grupoMovimentoEstoque in (:movimentosSuplementarSaida))) as suplementacao, ")
+		       //encalhe
+			   .append(" 	(select ")
+			   .append("		sum(conferencia.qtde) ")
+			   .append(" 	 from ConferenciaEncalhe conferencia ")
+		       .append(" 		  join conferencia.chamadaEncalheCota chamadaEncalheCota ")
+		       .append(" 		  join chamadaEncalheCota.chamadaEncalhe chamadaEncalhe ")
+		       .append(" 	 where chamadaEncalhe.dataRecolhimento = :data) as encalhe, ")
+			   //venda
+		       .append(" 	(l.reparte - ")
+			   .append(" 	(select ")
+			   .append("		sum(conferencia.qtde) ")
+			   .append(" 	 from ConferenciaEncalhe conferencia ")
+		       .append(" 		  join conferencia.chamadaEncalheCota chamadaEncalheCota ")
+		       .append(" 		  join chamadaEncalheCota.chamadaEncalhe chamadaEncalhe ")
+		       .append(" 	 where chamadaEncalhe.dataRecolhimento = :data)) as venda ");
+		}
+		
+		hql.append(" from ")
+		   .append("    LancamentoParcial lp ")
+		   .append("	join lp.periodos plp ")
+		   .append("	join plp.lancamento l ")
+		   .append(" where ")
+		   .append("	lp.recolhimentoFinal = :data ")
+		   .append("	and l.status = :statusLancamento ");
+		
+		if (filtro.getPaginacaoVO() != null && !count){
+			
+			hql.append(" order by ")
+			   .append(filtro.getPaginacaoVO().getSortColumn())
+			   .append(" ")
+			   .append(filtro.getPaginacaoVO().getSortOrder() != null ? filtro.getPaginacaoVO().getSortOrder() : "");
+		}
+		
+		
+		return hql.toString();
 	}
 }
