@@ -1438,7 +1438,7 @@ public class DiferencaEstoqueController {
 			}
 			
 			lancamentoDiferenca.setCodigoProduto(produto.getCodigo());
-			lancamentoDiferenca.setDescricaoProduto(produto.getNomeComercial());
+			lancamentoDiferenca.setDescricaoProduto(produto.getNome());
 			lancamentoDiferenca.setNumeroEdicao(produtoEdicao.getNumeroEdicao().toString());
 			lancamentoDiferenca.setTipoEstoque(diferenca.getTipoEstoque());
 			lancamentoDiferenca.setTipoDirecionamento(diferenca.getTipoDirecionamento());
@@ -1555,7 +1555,7 @@ public class DiferencaEstoqueController {
 			}
 			
 			lancamentoDiferenca.setCodigoProduto(produto.getCodigo());
-			lancamentoDiferenca.setDescricaoProduto(produto.getNomeComercial());
+			lancamentoDiferenca.setDescricaoProduto(produto.getNome());
 			lancamentoDiferenca.setNumeroEdicao(produtoEdicao.getNumeroEdicao().toString());
 			lancamentoDiferenca.setPrecoVenda(CurrencyUtil.formatarValor(produtoEdicao.getPrecoVenda()));
 			lancamentoDiferenca.setPacotePadrao(String.valueOf(produtoEdicao.getPacotePadrao()));
