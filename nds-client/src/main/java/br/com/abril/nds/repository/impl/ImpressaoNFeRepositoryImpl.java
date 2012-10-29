@@ -19,7 +19,6 @@ import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.envio.nota.NotaEnvio;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.repository.DistribuidorRepository;
-import br.com.abril.nds.repository.FornecedorRepository;
 import br.com.abril.nds.repository.ImpressaoNFeRepository;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.vo.PaginacaoVO;
@@ -30,9 +29,6 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 	@Autowired
 	private DistribuidorRepository distribuidorRepository;
 	
-	@Autowired
-	private FornecedorRepository fornecedorRepository;
-	
 	public ImpressaoNFeRepositoryImpl() {
 		super(NotaFiscal.class);
 	}
@@ -42,7 +38,7 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 	public List<CotasImpressaoNfeDTO> buscarCotasParaImpressaoNFe(FiltroImpressaoNFEDTO filtro) {
 
 		StringBuilder sql = new StringBuilder();
-		sql.append("select new br.com.abril.nds.dto.CotasImpressaoNfeDTO(cota, SUM(nf.informacaoValoresTotais.valorProdutos) as vlrTotal, SUM(nf.informacaoValoresTotais.valorDesconto) as vlrTotalDesconto) ");
+		sql.append("select new br.com.abril.nds.dto.CotasImpressaoNfeDTO(cota, SUM(ps.quantidade), SUM(nf.informacaoValoresTotais.valorProdutos), SUM(nf.informacaoValoresTotais.valorDesconto) ) ");
 		
 		//Complementa o HQL com as clausulas de filtro
 		Query q = montarFiltroConsultaNfeParaImpressao(filtro, sql, filtro.getPaginacao());
@@ -66,7 +62,7 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 	@Override
 	public List<CotasImpressaoNfeDTO> buscarCotasParaImpressaoNotaEnvio(FiltroImpressaoNFEDTO filtro) {
 		StringBuilder sql = new StringBuilder();
-		sql.append("select new br.com.abril.nds.dto.CotasImpressaoNfeDTO(cota, SUM(nei.precoCapa), SUM(nei.desconto)) ");
+		sql.append("select new br.com.abril.nds.dto.CotasImpressaoNfeDTO(cota, SUM(nei.reparte), SUM(nei.precoCapa * nei.reparte), SUM(nei.desconto)) ");
 		
 		//Complementa o HQL com as clausulas de filtro
 		Query q = montarFiltroConsultaNotaEnvioParaImpressao(null, filtro, sql, filtro.getPaginacao());
@@ -117,7 +113,7 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 			throw new ValidacaoException(TipoMensagem.ERROR, "O filtro não pode ser nulo ou estar vazio.");
 		}
 		
-		sql.append("from NotaFiscal nf, Cota cota ");
+		sql.append("from NotaFiscal nf, Cota cota join nf.produtosServicos ps ");
 		
 		if(filtro.getDataMovimentoInicial() != null || filtro.getDataMovimentoFinal() != null) {
 			sql.append(", MovimentoEstoqueCota movEstCota ");
@@ -134,7 +130,10 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 		
 		sql.append("WHERE 1 = 1 ");
 		sql.append("and nf.identificacaoDestinatario.pessoaDestinatarioReferencia.id = cota.pessoa.id ");
-		sql.append("and nf.identificacao.dataEmissao = :dataEmissao ");
+		
+		if(filtro.getDataEmissao() != null) {
+			sql.append("and nf.identificacao.dataEmissao = :dataEmissao ");
+		}
 		
 		if(distribuidor.getObrigacaoFiscal() != null) {
 			sql.append("and nf.informacaoEletronica.retornoComunicacaoEletronica.status = :statusNFe ");
@@ -154,9 +153,8 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 			}
 		}
 				
-		//TODO: Sérgio - Acertar o id do box de roteirizacao
 		if(filtro.getIdRoteiro() != null && filtro.getIdRoteiro() > -1) {
-			sql.append("and roteiro.roteirizacao.id = cota.box.id ");
+			sql.append("and roteiro.roteirizacao.box.id = cota.box.id ");
 			sql.append("and roteiro.id = :idRoteiro ");
 		}
 		
@@ -222,7 +220,9 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 		
 		Query q = getSession().createQuery(sql.toString());
 		
-		q.setParameter("dataEmissao", new java.sql.Date(filtro.getDataEmissao().getTime()));
+		if(filtro.getDataEmissao() != null) {
+			q.setParameter("dataEmissao", new java.sql.Date(filtro.getDataEmissao().getTime()));
+		}
 		
 		if(distribuidor.getObrigacaoFiscal() != null) {
 			q.setParameter("statusNFe", br.com.abril.nds.model.fiscal.nota.Status.AUTORIZADO );
