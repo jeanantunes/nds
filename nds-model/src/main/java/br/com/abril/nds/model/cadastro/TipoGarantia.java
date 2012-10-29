@@ -30,6 +30,15 @@ public enum TipoGarantia {
 		return this.descricao;
 	}
 	
+	public static TipoGarantia obterPorDescricao(String descricao){
+		for (TipoGarantia item : TipoGarantia.values()){
+			if (item.getDescricao().equals(descricao)){
+				return item;
+			}
+		}
+		return null;
+	}
+	
 	@Override
 	public String toString() {
 		return this.descricao;

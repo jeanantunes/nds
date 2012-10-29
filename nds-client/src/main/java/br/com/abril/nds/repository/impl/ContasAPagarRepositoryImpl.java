@@ -436,9 +436,13 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
 		if (filtro.getDataDe() != null){
 			
 			query.setParameter("inicio", filtro.getDataDe());
-			query.setParameter("fim", filtro.getDataAte());
-		}
-		
+        }
+        
+        if (filtro.getDataAte() != null){
+        	
+        	query.setParameter("fim", filtro.getDataAte());
+        }
+
 		if (!buscarDatas){
 			//movimentos de grupo de estoque suplementar de entrada
 			List<GrupoMovimentoEstoque> movimentosSuplementar = new ArrayList<GrupoMovimentoEstoque>();
@@ -523,11 +527,13 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
 		
 		StringBuilder hql = new StringBuilder();
 
+		String campoRctl = filtro.getDataDe() == null?" l.dataRecolhimentoPrevista as rctl, ":" l.dataCriacao as rctl, ";
+
 		hql.append("select new ")
 		   .append(ContasApagarConsultaPorProdutoDTO.class.getCanonicalName())
 		   .append("(")
 		   .append("       produtoEdicao.id as produtoEdicaoId, ")
-		   .append("       l.dataRecolhimentoDistribuidor as rctl, ")
+		   .append(        campoRctl)
 		   .append("       produto.codigo as codigo, ")
 		   .append("       produto.nome as produto, ")
 		   .append("       produtoEdicao.numeroEdicao as edicao, ")
@@ -585,10 +591,12 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
     private String queryPorProduto(FiltroContasAPagarDTO filtro){
 
 		StringBuilder hql = new StringBuilder();
+		
+		String parametroData = filtro.getDataDe() == null?" l.dataRecolhimentoPrevista ":" l.dataCriacao ";
 			
 		hql.append("       (COALESCE((select sum(m.qtde) ")
 		   .append("           		  from MovimentoEstoque m ")
-		   .append(" 		 		  where m.data = l.dataRecolhimentoDistribuidor ")
+		   .append(" 		 		  where m.data = ").append(parametroData)
 		   .append(" 		 		  and m.qtde is not null ")
 		   .append(" 		 		  and m.produtoEdicao.id = produtoEdicao.id ")
 		   .append(" 		 		  and m.produtoEdicao.precoVenda is not null ")
@@ -596,7 +604,7 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
 	       .append("        ,0) - ")			   
 		   .append("	    COALESCE((select sum(m2.qtde) ")
 		   .append(" 		          from MovimentoEstoque m2 ")
-		   .append(" 		          where m2.data = l.dataRecolhimentoDistribuidor ")
+		   .append(" 		 		  where m2.data = ").append(parametroData)
 		   .append(" 		 		  and m2.qtde is not null ")
 		   .append(" 		 		  and m2.produtoEdicao.id = produtoEdicao.id ")	    
 		   .append(" 		 		  and m2.produtoEdicao.precoVenda is not null")
@@ -607,14 +615,14 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
 		   .append("       COALESCE((select sum(movimento.qtde) from ConferenciaEncalhe conferencia ")
 		   .append("                 join conferencia.movimentoEstoqueCota movimento ")
 		   .append("        		 join conferencia.chamadaEncalheCota chamadaEncalheCota ")
-		   .append("        		 join chamadaEncalheCota.chamadaEncalhe chamadaEncalhe ")
-		   .append("        		 where chamadaEncalhe.dataRecolhimento = l.dataRecolhimentoDistribuidor ")
+		   .append("        		 join chamadaEncalheCota.chamadaEncalhe chamadaEncalhe ")	   
+		   .append(" 		 		 where chamadaEncalhe.dataRecolhimento = ").append(parametroData)	   
 		   .append(" 				 and movimento.produtoEdicao.id = produtoEdicao.id ")	    
 		   .append("       ),0) as encalhe, ")
 
 		   .append("	   (COALESCE((select sum(ld2.diferenca.qtde) ")
-		   .append("                  from LancamentoDiferenca ld2 ")
-		   .append(" 		          where ld2.dataProcessamento = l.dataRecolhimentoDistribuidor ")
+		   .append("                  from LancamentoDiferenca ld2 ")	   
+		   .append(" 		 		  where ld2.dataProcessamento = ").append(parametroData)
 		   .append(" 		          and ld2.diferenca.qtde is not null ")
 		   .append(" 		          and ld2.diferenca.produtoEdicao.precoVenda is not null")
 		   .append(" 		          and (ld2.diferenca.tipoDiferenca = :tipoDiferencaSobraEm or ld2.diferenca.tipoDiferenca = :tipoDiferencaSobraDe)")
@@ -622,8 +630,8 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
 		   .append(" 		          group by ld2.diferenca.tipoDiferenca) ")
 		   .append("        ,0) - ")		   
 		   .append("	    COALESCE((select sum(ld.diferenca.qtde) ")
-		   .append(" 		          from LancamentoDiferenca ld ")
-		   .append(" 		          where ld.dataProcessamento = l.dataRecolhimentoDistribuidor ")
+		   .append(" 		          from LancamentoDiferenca ld ")		   
+		   .append(" 		 		  where ld.dataProcessamento = ").append(parametroData)	   
 		   .append(" 		          and ld.diferenca.qtde is not null ")
 		   .append(" 		          and ld.diferenca.produtoEdicao.precoVenda is not null")
 		   .append(" 		          and (ld.diferenca.tipoDiferenca = :tipoDiferencaFaltaEm or ld.diferenca.tipoDiferenca = :tipoDiferencaFaltaDe)")
@@ -633,8 +641,8 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
 	       .append("       ) as faltasSobras, ")
 		
 		   .append("       (COALESCE((select sum(ld3.diferenca.qtde) ")
-		   .append("  		          from LancamentoDiferenca ld3 ")
-		   .append("                  where ld3.dataProcessamento = l.dataRecolhimentoDistribuidor ")
+		   .append("  		          from LancamentoDiferenca ld3 ")		   
+		   .append(" 		 		  where ld3.dataProcessamento = ").append(parametroData)		   
 		   .append("                  and ld3.diferenca.qtde is not null ")
 		   .append("                  and ld3.diferenca.produtoEdicao.precoVenda is not null ")	  
 		   .append("                  and ld3.diferenca.produtoEdicao.id = produtoEdicao.id ")	   
@@ -643,7 +651,7 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
 	       .append("        ,0) + ")		   
 		   .append("        COALESCE((select sum(ld4.diferenca.qtde) ")
 		   .append("                  from LancamentoDiferenca ld4 ")
-		   .append("                  where ld4.dataProcessamento = l.dataRecolhimentoDistribuidor ")
+		   .append(" 		 		  where ld4.dataProcessamento = ").append(parametroData)
 		   .append("                  and ld4.diferenca.qtde is not null ")
 		   .append("                  and ld4.diferenca.produtoEdicao.precoVenda is not null ")	    
 		   .append("                  and ld4.diferenca.produtoEdicao.id = produtoEdicao.id ")	
@@ -656,8 +664,8 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
 		   .append("         COALESCE((select sum(movimento.qtde) from ConferenciaEncalhe conferencia ")
 		   .append("                   join conferencia.movimentoEstoqueCota movimento ")
 		   .append("                   join conferencia.chamadaEncalheCota chamadaEncalheCota ")
-		   .append("        	       join chamadaEncalheCota.chamadaEncalhe chamadaEncalhe ")
-		   .append("        	       where chamadaEncalhe.dataRecolhimento = l.dataRecolhimentoDistribuidor ")
+		   .append("        	       join chamadaEncalheCota.chamadaEncalhe chamadaEncalhe ")		   		   
+		   .append(" 		 		   where chamadaEncalhe.dataRecolhimento = ").append(parametroData)		   		   
 		   .append(" 			       and movimento.produtoEdicao.id = produtoEdicao.id ")	    
 		   .append("         ),0)")
 		   .append("       ) as venda, ")		   
@@ -670,13 +678,13 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
 		   .append("                       join conferencia.movimentoEstoqueCota movimento ")
 		   .append("        		       join conferencia.chamadaEncalheCota chamadaEncalheCota ")
 		   .append("        		       join chamadaEncalheCota.chamadaEncalhe chamadaEncalhe ")
-		   .append("        		       where chamadaEncalhe.dataRecolhimento = l.dataRecolhimentoDistribuidor ")
+		   .append(" 		 		       where chamadaEncalhe.dataRecolhimento = ").append(parametroData)
 		   .append(" 				       and movimento.produtoEdicao.id = produtoEdicao.id ")	    
 		   .append("             ),0) - ")
 
 		   .append("	         (COALESCE((select sum(ld2.diferenca.qtde * (ld2.diferenca.produtoEdicao.precoVenda - COALESCE((ld2.diferenca.produtoEdicao.precoVenda / 100) * f.margemDistribuidor,0))) ")
-		   .append("                        from LancamentoDiferenca ld2 ")
-		   .append(" 		                where ld2.dataProcessamento = l.dataRecolhimentoDistribuidor ")
+		   .append("                        from LancamentoDiferenca ld2 ")		   
+		   .append(" 		 		        where ld2.dataProcessamento = ").append(parametroData)		   
 		   .append(" 		                and ld2.diferenca.qtde is not null ")
 		   .append(" 		                and ld2.diferenca.produtoEdicao.precoVenda is not null")
 		   .append(" 		                and (ld2.diferenca.tipoDiferenca = :tipoDiferencaSobraEm or ld2.diferenca.tipoDiferenca = :tipoDiferencaSobraDe)")
@@ -685,7 +693,7 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
 		   .append("              ,0) - ")		   
 		   .append("	          COALESCE((select sum(ld.diferenca.qtde * (ld.diferenca.produtoEdicao.precoVenda - COALESCE((ld.diferenca.produtoEdicao.precoVenda / 100) * f.margemDistribuidor,0))) ")
 		   .append(" 		                from LancamentoDiferenca ld ")
-		   .append(" 		                where ld.dataProcessamento = l.dataRecolhimentoDistribuidor ")
+		   .append(" 		 		        where ld.dataProcessamento = ").append(parametroData)	
 		   .append(" 		                and ld.diferenca.qtde is not null ")
 		   .append(" 		                and ld.diferenca.produtoEdicao.precoVenda is not null")
 		   .append(" 		                and (ld.diferenca.tipoDiferenca = :tipoDiferencaFaltaEm or ld.diferenca.tipoDiferenca = :tipoDiferencaFaltaDe)")
@@ -696,7 +704,7 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
 		
 		   .append("             (COALESCE((select sum(ld3.diferenca.qtde * (ld3.diferenca.produtoEdicao.precoVenda - COALESCE((ld3.diferenca.produtoEdicao.precoVenda / 100) * f.margemDistribuidor,0))) ")
 		   .append("  		                from LancamentoDiferenca ld3 ")
-		   .append("                        where ld3.dataProcessamento = l.dataRecolhimentoDistribuidor ")
+		   .append(" 		 		        where ld3.dataProcessamento = ").append(parametroData)
 		   .append("                        and ld3.diferenca.qtde is not null ")
 		   .append("                        and ld3.diferenca.produtoEdicao.precoVenda is not null ")	  
 		   .append("                        and ld3.diferenca.produtoEdicao.id = produtoEdicao.id ")	   
@@ -704,8 +712,8 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
 	       .append("                        group by ld3.diferenca.tipoDiferenca) ")
 	       .append("              ,0) + ")		   
 		   .append("              COALESCE((select sum(ld4.diferenca.qtde * (ld4.diferenca.produtoEdicao.precoVenda - COALESCE((ld4.diferenca.produtoEdicao.precoVenda / 100) * f.margemDistribuidor,0))) ")
-		   .append("                        from LancamentoDiferenca ld4 ")
-		   .append("                        where ld4.dataProcessamento = l.dataRecolhimentoDistribuidor ")
+		   .append("                        from LancamentoDiferenca ld4 ")		   
+		   .append(" 		 		        where ld4.dataProcessamento = ").append(parametroData)		   
 		   .append("                        and ld4.diferenca.qtde is not null ")
 		   .append("                        and ld4.diferenca.produtoEdicao.precoVenda is not null ")	    
 		   .append("                        and ld4.diferenca.produtoEdicao.id = produtoEdicao.id ")	
@@ -721,21 +729,30 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
     private String queryPorProdutoFrom(FiltroContasAPagarDTO filtro){    	
     	
     	StringBuilder hql = new StringBuilder();
+    	
+    	String j = " WHERE ";
 
     	hql.append(" from Lancamento l ")
 	       .append(" join l.produtoEdicao produtoEdicao ")
 	       .append(" join produtoEdicao.produto produto ")
-	       .append(" join produto.fornecedores f ")
+	       .append(" join produto.fornecedores f ");
 	   
-	       .append(" where l.dataLancamentoDistribuidor ")	
-	       .append(" between :inicio and :fim ")
-	       .append(" and l.reparte is not null ")
-	       .append(" and produtoEdicao.precoVenda is not null ")
-	      
+        if (filtro.getDataDe() != null){
+            hql.append(j+" l.dataCriacao >= :inicio ");
+            j = " AND ";
+        }
+        
+        if (filtro.getDataAte() != null){
+            hql.append(j+" l.dataCriacao <= :fim ");
+            j = " AND ";
+        }
+	       
+	    hql.append(j+" l.reparte is not null ")
+	       .append(" and produtoEdicao.precoVenda is not null ")	      
 	       .append(" and l.status = :statusLancamento ");
     	
     	if (filtro.getProdutoEdicaoIDs() != null && !filtro.getProdutoEdicaoIDs().isEmpty()){
-		   hql.append(" and produtoEdicao.id in (:idsProdutoEdicao) ");
+		    hql.append(" and produtoEdicao.id in (:idsProdutoEdicao) ");
     	}   
    
 		return hql.toString();
