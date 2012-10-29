@@ -308,21 +308,95 @@ public class NotaFiscalEntradaRepositoryImpl extends AbstractRepositoryModel<Not
 	public List<NotaFiscalEntrada> obterNotaFiscalPorNumeroSerieCnpj(FiltroConsultaNotaFiscalDTO filtroConsultaNotaFiscal){
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append("from NotaFiscalEntrada nf where nf.numero = :numero ");		
-		hql.append("and nf.serie = :serie ");
+		hql.append(" from NotaFiscalEntrada nf ");		
+		
+		boolean indAnd = false;
+		
+		boolean indWhere = false;
+		
+		if(filtroConsultaNotaFiscal.getNumeroNota()!=null) {
+			
+			if(!indWhere) {
+				hql.append(" where ");
+				indWhere = true;
+			}
+			
+			hql.append(" nf.numero = :numero");
+			
+			indAnd = true;
+			
+		}
+		
+		if(filtroConsultaNotaFiscal.getSerie()!=null){
+			
+			if(!indWhere) {
+				hql.append(" where ");
+				indWhere = true;
+			}
+			
+			if(indAnd) {
+				hql.append(" and ");
+			}
+			
+			hql.append(" nf.serie = :serie ");
+			
+			indAnd = true;
+			
+		}
+		
 		if(filtroConsultaNotaFiscal.getNomeFornecedor() != null && !filtroConsultaNotaFiscal.getNomeFornecedor().equals("-1")){
-			hql.append("and nf.fornecedor.juridica.cnpj = :cnpj ");	
+			
+			if(!indWhere) {
+				hql.append(" where ");
+				indWhere = true;
+			}
+			
+			if(indAnd) {
+				hql.append(" and ");
+			}
+			
+			hql.append(" nf.fornecedor.juridica.cnpj = :cnpj ");	
+			
+			indAnd = true;
+			
+			
 		}
 			
-		if(filtroConsultaNotaFiscal.getChave() == null){
-			hql.append("and nf.chaveAcesso is null ");	
-		}else{
-			hql.append("and nf.chaveAcesso = :chaveAcesso  ");	
+		if(filtroConsultaNotaFiscal.getChave() == null) {
+			
+			if(!indWhere) {
+				hql.append(" where ");
+				indWhere = true;
+			}
+			
+			if(indAnd) {
+				hql.append(" and ");
+			}
+			
+			hql.append(" nf.chaveAcesso is null ");
+			
+			indAnd = true;
+			
+		} else {
+			
+			if(!indWhere) {
+				hql.append(" where ");
+				indWhere = true;
+			}
+			
+			if(indAnd) {
+				hql.append(" and ");
+			}
+			
+			hql.append(" nf.chaveAcesso = :chaveAcesso  ");	
 		}
+		
 		Query query = super.getSession().createQuery(hql.toString());
 		
 		query.setParameter("numero", filtroConsultaNotaFiscal.getNumeroNota());
+		
 		query.setParameter("serie", filtroConsultaNotaFiscal.getSerie());
+		
 		if(filtroConsultaNotaFiscal.getNomeFornecedor() != null && !filtroConsultaNotaFiscal.getNomeFornecedor().equals("-1")){
 			query.setParameter("cnpj", filtroConsultaNotaFiscal.getCnpj());
 		}	

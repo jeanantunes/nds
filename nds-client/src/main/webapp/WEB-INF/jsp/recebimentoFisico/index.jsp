@@ -243,13 +243,19 @@
 
 							<td width="86">Fornecedor:</td>
 
-							<td width="254"><select id="fornecedor" name="fornecedor"
-								onblur="recebimentoFisicoController.exibirCnpjDoFornecedor()" style="width: 250px;">
+							<td width="254">
+							
+								<select id="fornecedor" name="fornecedor" onblur="recebimentoFisicoController.exibirCnpjDoFornecedor()" style="width: 250px;">
+									
 									<option value="-1">Todos</option>
+									
 									<c:forEach var="fornecedor" items="${listafornecedores}">
 										<option value="${fornecedor.juridica.cnpj}">${fornecedor.juridica.razaoSocial}</option>
 									</c:forEach>
-							</select></td>
+									
+								</select>
+								
+							</td>
 
 							<td width="43" align="right">CNPJ:</td>
 							<td width="136"><input id="cnpj"
@@ -272,7 +278,7 @@
 
 						</tr>
 						<tr>
-							<td colspan="4" height="26">
+							<td colspan="7" height="26">
 
 								<label for="eNF">É uma NF-e?</label>
 
@@ -283,8 +289,8 @@
 
 								Chave de Acesso: 
 
-								<input type="text" name="chaveAcesso" id="chaveAcesso"
-									style="width: 120px; margin-left: 10px;" />
+								<input type="text" name="chaveAcesso" id="chaveAcesso" maxlength="44" style="width: 310px; margin-left: 10px;" />
+								
 							</span>
 
 							</td>

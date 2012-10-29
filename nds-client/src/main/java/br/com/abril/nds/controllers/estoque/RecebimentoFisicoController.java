@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.util.NFEImportUtil;
 import br.com.abril.nds.client.vo.RecebimentoFisicoVO;
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.dto.CabecalhoNotaDTO;
@@ -44,6 +45,7 @@ import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.RecebimentoFisicoService;
 import br.com.abril.nds.service.TipoNotaFiscalService;
 import br.com.abril.nds.util.CellModelKeyValue;
+import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.MathUtil;
@@ -296,29 +298,54 @@ public class RecebimentoFisicoController {
 	/**
 	 * Valida os dados da nova Nota Fiscal.
 	 * 
-	 * @param cnpj
-	 * @param numeroNotaFiscal
-	 * @param serie
 	 */
-	private void validarDadosNotaFiscal(String cnpj, Long numeroNotaFiscal, String serie, String fornecedor) {
+	private void validarDadosNotaFiscal(FiltroConsultaNotaFiscalDTO filtro, String fornecedor, String indNFe) {
 		
 		List<String> msgs = new ArrayList<String>();
 		
+		if(filtro.getChave() == null || filtro.getChave().trim().isEmpty()) {
+			filtro.setChave(null);
+		}
+		
+		boolean indChaveAcessoInformada = false;
+		
+		if(indNFe.equals("S")) {
+			
+			if(filtro.getChave() == null || filtro.getChave().trim().isEmpty()) {
+				
+				msgs.add("Chave de Acesso é Obrigatória!");
+				
+			} else {
+				
+				if(filtro.getChave().length() != NFEImportUtil.QTD_DIGITOS_CHAVE_ACESSO_NFE) {
+					
+					msgs.add("Chave de Acesso deve possuir " + NFEImportUtil.QTD_DIGITOS_CHAVE_ACESSO_NFE +  " dígitos.");
+					
+				}
+				
+			}
+			
+		}
+		
 		if(!fornecedor.equals("-1")){
 			
-			if(cnpj == null || cnpj.isEmpty()) {
+			if(filtro.getCnpj() == null || filtro.getCnpj().isEmpty()) {
 			
 				msgs.add("O campo CNPJ é obrigatório");
 			
 			} 
 			
-		}	
+		} else {
+			
+			filtro.setCnpj(null);
+					
+		}
 		
-		if(numeroNotaFiscal == null) {
+		if(filtro.getNumeroNota() == null) {
 			msgs.add("O campo Nota Fiscal é obrigatório");
 		}
 
-		if(serie == null || serie.isEmpty()) {
+		if(filtro.getSerie() == null || filtro.getSerie().isEmpty()) {
 			msgs.add("O campo Série é obrigatório");
 		}
 
@@ -722,19 +749,13 @@ public class RecebimentoFisicoController {
 	 * @param chaveAcesso
 	 */
 	@Post
-	public void verificarNotaFiscalExistente(String cnpj, Long numeroNotaFiscal, String serie,String indNFe,String fornecedor, String chaveAcesso) {
-
-		if(indNFe.equals("S")){
-			if(chaveAcesso == null || chaveAcesso.trim().isEmpty()){
-				throw new ValidacaoException(TipoMensagem.WARNING,"Chave de Acesso é Obrigatória!");
-			}
-		}
-		
-		validarDadosNotaFiscal(cnpj, numeroNotaFiscal, serie, fornecedor);
-		
-		if(chaveAcesso == null || chaveAcesso.trim().isEmpty()) {
-			chaveAcesso = null;
-		}
+	public void verificarNotaFiscalExistente(
+			String cnpj, 
+			Long numeroNotaFiscal, 
+			String serie,
+			String indNFe,
+			String fornecedor, 
+			String chaveAcesso) {
 		
 		limparDadosDaSession();
 		
@@ -745,6 +766,8 @@ public class RecebimentoFisicoController {
 		filtro.setSerie(serie);
 		filtro.setChave(chaveAcesso);
 		filtro.setNomeFornecedor(fornecedor);
+		
+		validarDadosNotaFiscal(filtro, fornecedor, indNFe);		
 		
 		List<NotaFiscalEntrada> listaNotaFiscal = notaFiscalService.obterNotaFiscalPorNumeroSerieCnpj(filtro);
 		
