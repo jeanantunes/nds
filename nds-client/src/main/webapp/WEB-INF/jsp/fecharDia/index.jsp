@@ -43,7 +43,7 @@
 	</form>
 	
 	<form id="form-popup-validacao-recebimento-fisico">
-		<div id="dialog-recebe-fisico" title="Recebimento F�sico" style="display:none;">
+		<div id="dialog-recebe-fisico" title="Recebimento Físico" style="display:none;">
 		<fieldset style="width:350px;">
 	    	<legend>Recebimento Físico</legend>
 	        <table class="recebeFisicoGrid"></table>
