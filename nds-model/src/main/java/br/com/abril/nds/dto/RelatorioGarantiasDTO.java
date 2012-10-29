@@ -4,41 +4,88 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 
 import br.com.abril.nds.model.cadastro.TipoGarantia;
+import br.com.abril.nds.model.cadastro.garantia.CotaGarantia;
+import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaCaucaoLiquida;
+import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaChequeCaucao;
+import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaFiador;
+import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaImovel;
+import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaNotaPromissoria;
+import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaOutros;
 
 public class RelatorioGarantiasDTO implements Serializable{
 
 	private static final long serialVersionUID = -9219157726900444816L;
 	
-	private String tipoGarantia;
-	private Integer qtdCotas;
-	private BigDecimal vlrTotal;
-	private TipoGarantia tipoGarantiaEnum;
+    private TipoGarantia tipoGarantia;
 	
-	public String getTipoGarantia() {
+	private Long qtdCotas;
+	
+	private BigDecimal vlrTotal;
+	
+	/**
+	 * @return the tipoGarantia
+	 */
+	public TipoGarantia getTipoGarantia() {
 		return tipoGarantia;
 	}
-	public void setTipoGarantia(String tipoGarantia) {
-		this.tipoGarantia = tipoGarantia;
+
+	/**
+	 * @param tipoGarantia the tipoGarantia to set
+	 */
+	public void setTipoGarantia(Class<CotaGarantia> clazz) {
+
+		if (CotaGarantiaCaucaoLiquida.class.equals(clazz)) { 
+		
+			this.tipoGarantia = TipoGarantia.CAUCAO_LIQUIDA;
+		
+		} else if (CotaGarantiaChequeCaucao.class.equals(clazz)) { 
+		
+			this.tipoGarantia = TipoGarantia.CHEQUE_CAUCAO;
+		
+		} else if (CotaGarantiaFiador.class.equals(clazz)) { 
+		
+			this.tipoGarantia = TipoGarantia.FIADOR;
+		
+		} else if (CotaGarantiaImovel.class.equals(clazz)) { 
+		
+			this.tipoGarantia = TipoGarantia.IMOVEL;
+		
+		} else if (CotaGarantiaNotaPromissoria.class.equals(clazz)) { 
+		
+			this.tipoGarantia = TipoGarantia.NOTA_PROMISSORIA;
+		
+		} else if (CotaGarantiaOutros.class.equals(clazz)) { 
+		
+			this.tipoGarantia = TipoGarantia.OUTROS;
+		}
 	}
-	public Integer getQtdCotas() {
+
+	/**
+	 * @return the qtdCotas
+	 */
+	public Long getQtdCotas() {
 		return qtdCotas;
 	}
-	public void setQtdCotas(Integer qtdCotas) {
+
+	/**
+	 * @param qtdCotas the qtdCotas to set
+	 */
+	public void setQtdCotas(Long qtdCotas) {
 		this.qtdCotas = qtdCotas;
 	}
+
+	/**
+	 * @return the vlrTotal
+	 */
 	public BigDecimal getVlrTotal() {
 		return vlrTotal;
 	}
+
+	/**
+	 * @param vlrTotal the vlrTotal to set
+	 */
 	public void setVlrTotal(BigDecimal vlrTotal) {
 		this.vlrTotal = vlrTotal;
 	}
-	public TipoGarantia getTipoGarantiaEnum() {
-		return tipoGarantiaEnum;
-	}
-	public void setTipoGarantiaEnum(TipoGarantia tipoGarantiaEnum) {
-		this.tipoGarantiaEnum = tipoGarantiaEnum;
-	}
-	
-	
 
 }

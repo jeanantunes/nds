@@ -55,6 +55,10 @@ public abstract class Movimento extends Aprovacao {
 	@Temporal(TemporalType.DATE)
 	@Column(name = "DATA_INTEGRACAO", nullable = true)
 	private Date dataIntegracao;
+	
+	public Movimento() {
+        this.dataCriacao = new Date();
+    }
 
 	/**
 	 * @return the id
