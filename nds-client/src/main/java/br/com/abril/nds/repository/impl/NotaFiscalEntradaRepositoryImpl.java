@@ -393,9 +393,13 @@ public class NotaFiscalEntradaRepositoryImpl extends AbstractRepositoryModel<Not
 		
 		Query query = super.getSession().createQuery(hql.toString());
 		
-		query.setParameter("numero", filtroConsultaNotaFiscal.getNumeroNota());
+		if(filtroConsultaNotaFiscal.getNumeroNota()!=null) {
+			query.setParameter("numero", filtroConsultaNotaFiscal.getNumeroNota());
+		}
 		
-		query.setParameter("serie", filtroConsultaNotaFiscal.getSerie());
+		if(filtroConsultaNotaFiscal.getSerie()!=null) {
+			query.setParameter("serie", filtroConsultaNotaFiscal.getSerie());
+		}
 		
 		if(filtroConsultaNotaFiscal.getNomeFornecedor() != null && !filtroConsultaNotaFiscal.getNomeFornecedor().equals("-1")){
 			query.setParameter("cnpj", filtroConsultaNotaFiscal.getCnpj());

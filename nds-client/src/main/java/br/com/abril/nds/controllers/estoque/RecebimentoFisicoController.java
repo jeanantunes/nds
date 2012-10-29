@@ -58,6 +58,7 @@ import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.Validator;
+import br.com.caelum.vraptor.validator.Message;
 import br.com.caelum.vraptor.view.Results;
 
 @Resource
@@ -98,6 +99,9 @@ public class RecebimentoFisicoController {
 
 	@Autowired
 	private CFOPService cfopService;
+	
+	@Autowired
+	private Validator validator;
 	
 	public RecebimentoFisicoController(
 			Result result, 
@@ -295,6 +299,53 @@ public class RecebimentoFisicoController {
 		return false;		
 	}
 
+	private boolean validarChaveAcesso(FiltroConsultaNotaFiscalDTO filtro, String indNFe, List<String> msgs) {
+		
+		boolean indChaveAcessoInformada = false;
+		
+		String regraParaChaveAcesso = "^[0-9]{"+
+		NFEImportUtil.QTD_DIGITOS_CHAVE_ACESSO_NFE+","+
+		NFEImportUtil.QTD_DIGITOS_CHAVE_ACESSO_NFE+"}$";
+		
+		if(filtro.getChave() != null && filtro.getChave().trim().isEmpty()) {
+			filtro.setChave(null);
+		}
+		
+		if(indNFe.equals("S")) {
+			
+			indChaveAcessoInformada = true;
+			
+			if(filtro.getChave() == null || filtro.getChave().trim().isEmpty()) {
+				
+				msgs.add("Chave de Acesso é Obrigatória!");
+				
+			} else if(!filtro.getChave().matches(regraParaChaveAcesso)) {
+				
+				msgs.add("Chave de Acesso deve possuir " + NFEImportUtil.QTD_DIGITOS_CHAVE_ACESSO_NFE +  " dígitos.");
+				
+			}
+			
+		}
+		
+		return indChaveAcessoInformada;
+	}
+	
+	
+	private boolean verificaValidationError(String category) {
+	
+		if(!validator.hasErrors()) {
+			return false;
+		}
+		
+		for(Message msg : validator.getErrors()) {
+			if(msg.getCategory().contains(category)) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
 	/**
 	 * Valida os dados da nova Nota Fiscal.
 	 * 
@@ -303,50 +354,34 @@ public class RecebimentoFisicoController {
 		
 		List<String> msgs = new ArrayList<String>();
 		
-		if(filtro.getChave() == null || filtro.getChave().trim().isEmpty()) {
-			filtro.setChave(null);
-		}
+		boolean indChaveAcessoInformada = validarChaveAcesso(filtro, indNFe, msgs);
 		
-		boolean indChaveAcessoInformada = false;
+		boolean indTodosFornecedores = fornecedor.equals("-1");
 		
-		if(indNFe.equals("S")) {
+		if(!indChaveAcessoInformada) {
 			
-			if(filtro.getChave() == null || filtro.getChave().trim().isEmpty()) {
-				
-				msgs.add("Chave de Acesso é Obrigatória!");
-				
+			if(!indTodosFornecedores){
+				if(filtro.getCnpj() == null || filtro.getCnpj().trim().isEmpty()) {
+					msgs.add("O campo CNPJ do fornecedor é obrigatório");
+				} 
 			} else {
+				filtro.setCnpj(null);
+			}
 				
-				if(filtro.getChave().length() != NFEImportUtil.QTD_DIGITOS_CHAVE_ACESSO_NFE) {
-					
-					msgs.add("Chave de Acesso deve possuir " + NFEImportUtil.QTD_DIGITOS_CHAVE_ACESSO_NFE +  " dígitos.");
-					
+			if(filtro.getNumeroNota() == null) {
+				
+				if(verificaValidationError("numeroNotaFiscal")) {
+					msgs.add("Valor inválido para o campo Nota Fiscal");
+				} else {
+					msgs.add("O campo Nota Fiscal é obrigatório");
 				}
 				
 			}
-			
-		}
-		
-		if(!fornecedor.equals("-1")){
-			
-			if(filtro.getCnpj() == null || filtro.getCnpj().isEmpty()) {
-			
-				msgs.add("O campo CNPJ é obrigatório");
-			
-			} 
-			
-		} else {
-			
-			filtro.setCnpj(null);
-					
-		}
-		
-		if(filtro.getNumeroNota() == null) {
-			msgs.add("O campo Nota Fiscal é obrigatório");
-		}
 
-		if(filtro.getSerie() == null || filtro.getSerie().isEmpty()) {
-			msgs.add("O campo Série é obrigatório");
+			if(filtro.getSerie() == null || filtro.getSerie().isEmpty()) {
+				msgs.add("O campo Série é obrigatório");
+			}
+			
 		}
 
 		if(!msgs.isEmpty()) {

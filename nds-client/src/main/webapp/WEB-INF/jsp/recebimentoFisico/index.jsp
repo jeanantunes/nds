@@ -265,11 +265,11 @@
 
 							<td width="76">Nota Fiscal:</td>
 							<td width="123"><input type="text" id=notaFiscal
-								style="width: 100px;" />
+								style="width: 100px;" maxlength="9" />
 							</td>
 							<td width="33">Série:</td>
 							<td width="43"><input id="serie" type="text"
-								style="width: 30px;" />
+								style="width: 30px;" maxlength="3"/>
 							</td>
 							<td width="110"><span class="bt_novos">
 								<a href="javascript:;"
