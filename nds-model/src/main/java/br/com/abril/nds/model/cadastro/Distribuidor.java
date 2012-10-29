@@ -223,15 +223,15 @@ public class Distribuidor {
 	
 	@Enumerated(EnumType.STRING)
 	@Column(name = "TIPO_IMPRESSAO_CE", nullable = true)
-	private TipoImpressaoCE tipoImpressaoCE = TipoImpressaoCE.MODELO_1;	
+	private TipoImpressaoCE tipoImpressaoCE;	
 	
 	@Enumerated(EnumType.STRING)
 	@Column(name = "TIPO_IMPRESSAO_INTERFACE_LED", nullable = true)
-	private TipoImpressaoInterfaceLED tipoImpressaoInterfaceLED = TipoImpressaoInterfaceLED.MODELO_1; 	
+	private TipoImpressaoInterfaceLED tipoImpressaoInterfaceLED; 	
 	
 	@Enumerated(EnumType.STRING)
 	@Column(name = "TIPO_IMPRESSAO_NE_NECA_DANFE", nullable = true)
-	private TipoImpressaoNENECADANFE tipoImpressaoNENECADANFE = TipoImpressaoNENECADANFE.MODELO_1;	
+	private TipoImpressaoNENECADANFE tipoImpressaoNENECADANFE;	
 
 	@Column(name = "UTILIZA_PROCURACAO_ENTREGADORES", nullable = true)
 	private boolean utilizaProcuracaoEntregadores;	
