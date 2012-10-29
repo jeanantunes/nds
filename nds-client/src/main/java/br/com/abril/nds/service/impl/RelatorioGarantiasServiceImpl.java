@@ -1,7 +1,5 @@
 package br.com.abril.nds.service.impl;
 
-import java.util.Calendar;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,13 +31,12 @@ public class RelatorioGarantiasServiceImpl implements RelatorioGarantiasService 
 	public FlexiGridDTO<RelatorioDetalheGarantiaDTO> gerarPorTipoGarantia(FiltroRelatorioGarantiasDTO filtro) {
 				
 		//MOCK
-		String sortname="vencto"; 
-		String sortorder="desc";
+		TipoGarantia tipoGarantia = TipoGarantia.CAUCAO_LIQUIDA/*filtro.getTipoGarantia()*/;//Alterar tipo no filtro para TipoGarantia
 		//
 		
 		FlexiGridDTO<RelatorioDetalheGarantiaDTO> to = new FlexiGridDTO<RelatorioDetalheGarantiaDTO>();
-		to.setGrid(this.cotaGarantiaRepository.obterDetalheGarantiaCadastrada(TipoGarantia.valueOf(filtro.getTipoGarantia()), Calendar.getInstance().getTime(),sortname,sortorder));
-		to.setTotalGrid(this.cotaGarantiaRepository.obterCountDetalheGarantiaCadastrada(TipoGarantia.valueOf(filtro.getTipoGarantia()), Calendar.getInstance().getTime()).intValue());
+		to.setGrid(this.cotaGarantiaRepository.obterDetalheGarantiaCadastrada(tipoGarantia, filtro.getDataBaseCalculo() , filtro.getPaginacao().getSortColumn(), filtro.getPaginacao().getSortOrder()));
+		to.setTotalGrid(this.cotaGarantiaRepository.obterCountDetalheGarantiaCadastrada(tipoGarantia, filtro.getDataBaseCalculo()).intValue());
 
 		return to;
 	}
