@@ -141,7 +141,6 @@ public class CotaGarantiaRepositoryImpl extends AbstractRepositoryModel<CotaGara
 			   
 			   hql.append(" where garantia.data <= :data ");
 		   }
-		   
            if (status.equals(TipoStatusGarantia.A_VENCER)){
 			   
         	   hql.append(" where garantia.data >= :data ");
@@ -149,7 +148,14 @@ public class CotaGarantiaRepositoryImpl extends AbstractRepositoryModel<CotaGara
 	   }
 		   
 		hql.append(" group by garantia.class ");
-		
+
+		if (filtro.getPaginacao()!=null){
+			hql.append(" order by ")
+		       .append(filtro.getPaginacao().getSortColumn()!=null && !filtro.getPaginacao().getSortColumn().equals("")?filtro.getPaginacao().getSortColumn():" tipoGarantia ")
+		       .append(" ")
+		       .append(filtro.getPaginacao().getSortOrder()!=null && !filtro.getPaginacao().getSortOrder().equals("")?filtro.getPaginacao().getSortOrder():" desc ");
+	    }
+
 		Query query = this.getSession().createQuery(hql.toString());
 		
 		if (status!=null && data!=null){
@@ -311,7 +317,6 @@ public class CotaGarantiaRepositoryImpl extends AbstractRepositoryModel<CotaGara
 			   
 			   hql.append(j+" garantia.data <= :data ");
 		   }
-		   
            if (status.equals(TipoStatusGarantia.A_VENCER)){
 			   
         	   hql.append(j+" garantia.data >= :data ");
