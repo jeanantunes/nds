@@ -45,7 +45,7 @@
 	<form id="form-popup-validacao-recebimento-fisico">
 		<div id="dialog-recebe-fisico" title="Recebimento F�sico" style="display:none;">
 		<fieldset style="width:350px;">
-	    	<legend>Recebimento F�sico</legend>
+	    	<legend>Recebimento Físico</legend>
 	        <table class="recebeFisicoGrid"></table>
 	    </fieldset>
 	    <br clear="all" />
@@ -148,7 +148,7 @@
 	<form id="form-repartes">
 		<div id="dialog-repartes" title="Movimento" style="display:none;">
 			<fieldset style="width:850px;">
-		    	<legend>Lan�amento</legend>
+		    	<legend>Lançamento</legend>
 		        <table class="reparteDialogGrid"></table>
 		    </fieldset>
 		    <br clear="all" />
