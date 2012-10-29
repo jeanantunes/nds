@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.dto.RelatorioDetalheGarantiaDTO;
 import br.com.abril.nds.dto.RelatorioGarantiasDTO;
+import br.com.abril.nds.dto.filtro.FiltroRelatorioGarantiasDTO;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Box;
@@ -239,10 +240,20 @@ public class CotaGarantiaRepositoryImplTest extends AbstractRepositoryImplTest {
 	}
 
 	
+	private FiltroRelatorioGarantiasDTO getFiltroGarantias(){
+		
+		FiltroRelatorioGarantiasDTO filtro = new FiltroRelatorioGarantiasDTO();
+		filtro.setDataBaseCalculo(data);
+		filtro.setTipoGarantia(null);
+		filtro.setStatusGarantiaEnum(TipoStatusGarantia.VENCIDA);
+		
+		return filtro;
+	}
+	
 	@Test
 	public void obterGarantiasCadastradas() {
 
-		List<RelatorioGarantiasDTO> garantias = this.cotaGarantiaRepository.obterGarantiasCadastradas(TipoStatusGarantia.VENCIDA,data);
+		List<RelatorioGarantiasDTO> garantias = this.cotaGarantiaRepository.obterGarantiasCadastradas(this.getFiltroGarantias());
 		
 		Assert.assertNotNull(garantias);
 		
@@ -283,7 +294,7 @@ public class CotaGarantiaRepositoryImplTest extends AbstractRepositoryImplTest {
 	@Test
 	public void obterCountGarantiasCadastradas() {
 
-		Long count = this.cotaGarantiaRepository.obterCountGarantiasCadastradas(TipoStatusGarantia.VENCIDA, data);
+		Long count = this.cotaGarantiaRepository.obterCountGarantiasCadastradas(this.getFiltroGarantias());
 		
 		Assert.assertNotNull(count);
 	}
@@ -581,33 +592,46 @@ public class CotaGarantiaRepositoryImplTest extends AbstractRepositoryImplTest {
 	public void obterDetalheGarantiaCadastrada() {
 		
 		this.setupReparteEncalhe();
+		
+		FiltroRelatorioGarantiasDTO filtro = this.getFiltroGarantias();
+		filtro.setTipoGarantiaEnum(TipoGarantia.CAUCAO_LIQUIDA);
 
-		List<RelatorioDetalheGarantiaDTO> detalhesGgarantia = this.cotaGarantiaRepository.obterDetalheGarantiaCadastrada(TipoGarantia.CAUCAO_LIQUIDA, data,"vencto","asc");
+		List<RelatorioDetalheGarantiaDTO> detalhesGgarantia = this.cotaGarantiaRepository.obterDetalheGarantiaCadastrada(filtro);
 		Assert.assertNotNull(detalhesGgarantia);
 		Assert.assertEquals(0, detalhesGgarantia.get(0).getVlrGarantia().compareTo(new BigDecimal(10)));
 		Assert.assertEquals(0, detalhesGgarantia.get(1).getVlrGarantia().compareTo(new BigDecimal(10)));
 		
-		detalhesGgarantia = this.cotaGarantiaRepository.obterDetalheGarantiaCadastrada(TipoGarantia.CHEQUE_CAUCAO, data,null,null);
+		filtro.setTipoGarantiaEnum(TipoGarantia.CHEQUE_CAUCAO);
+
+		detalhesGgarantia = this.cotaGarantiaRepository.obterDetalheGarantiaCadastrada(filtro);
 		Assert.assertNotNull(detalhesGgarantia);
 		Assert.assertEquals(0, detalhesGgarantia.get(0).getVlrGarantia().compareTo(new BigDecimal(15)));
 		Assert.assertEquals(0, detalhesGgarantia.get(1).getVlrGarantia().compareTo(new BigDecimal(10)));
 		
-		detalhesGgarantia = this.cotaGarantiaRepository.obterDetalheGarantiaCadastrada(TipoGarantia.FIADOR, data,null,null);
+		filtro.setTipoGarantiaEnum(TipoGarantia.FIADOR);
+
+		detalhesGgarantia = this.cotaGarantiaRepository.obterDetalheGarantiaCadastrada(filtro);
+		Assert.assertNotNull(detalhesGgarantia);
+		Assert.assertEquals(0, detalhesGgarantia.get(0).getVlrGarantia().compareTo(new BigDecimal(10)));
+		Assert.assertEquals(0, detalhesGgarantia.get(1).getVlrGarantia().compareTo(new BigDecimal(10)));
+        
+		filtro.setTipoGarantiaEnum(TipoGarantia.NOTA_PROMISSORIA);
+
+		detalhesGgarantia = this.cotaGarantiaRepository.obterDetalheGarantiaCadastrada(filtro);
+		Assert.assertNotNull(detalhesGgarantia);
+		Assert.assertEquals(0, detalhesGgarantia.get(0).getVlrGarantia().compareTo(new BigDecimal(20)));
+		Assert.assertEquals(0, detalhesGgarantia.get(1).getVlrGarantia().compareTo(new BigDecimal(30)));
+		
+		filtro.setTipoGarantiaEnum(TipoGarantia.IMOVEL);
+
+		detalhesGgarantia = this.cotaGarantiaRepository.obterDetalheGarantiaCadastrada(filtro);
 		Assert.assertNotNull(detalhesGgarantia);
 		Assert.assertEquals(0, detalhesGgarantia.get(0).getVlrGarantia().compareTo(new BigDecimal(10)));
 		Assert.assertEquals(0, detalhesGgarantia.get(1).getVlrGarantia().compareTo(new BigDecimal(10)));
 		
-		detalhesGgarantia = this.cotaGarantiaRepository.obterDetalheGarantiaCadastrada(TipoGarantia.NOTA_PROMISSORIA, data,"vencto","asc");
-		Assert.assertNotNull(detalhesGgarantia);
-		Assert.assertEquals(0, detalhesGgarantia.get(0).getVlrGarantia().compareTo(new BigDecimal(30)));
-		Assert.assertEquals(0, detalhesGgarantia.get(1).getVlrGarantia().compareTo(new BigDecimal(20)));
-		
-		detalhesGgarantia = this.cotaGarantiaRepository.obterDetalheGarantiaCadastrada(TipoGarantia.IMOVEL, data,"vencto","asc");
-		Assert.assertNotNull(detalhesGgarantia);
-		Assert.assertEquals(0, detalhesGgarantia.get(0).getVlrGarantia().compareTo(new BigDecimal(10)));
-		Assert.assertEquals(0, detalhesGgarantia.get(1).getVlrGarantia().compareTo(new BigDecimal(10)));
-		
-        detalhesGgarantia = this.cotaGarantiaRepository.obterDetalheGarantiaCadastrada(TipoGarantia.OUTROS, data,"vencto","asc");
+		filtro.setTipoGarantiaEnum(TipoGarantia.OUTROS);
+
+        detalhesGgarantia = this.cotaGarantiaRepository.obterDetalheGarantiaCadastrada(filtro);
 		Assert.assertNotNull(detalhesGgarantia);
 		Assert.assertEquals(0, detalhesGgarantia.get(0).getVlrGarantia().compareTo(new BigDecimal(10)));
 		Assert.assertEquals(0, detalhesGgarantia.get(1).getVlrGarantia().compareTo(new BigDecimal(10)));
@@ -618,7 +642,10 @@ public class CotaGarantiaRepositoryImplTest extends AbstractRepositoryImplTest {
 		
 		this.setupReparteEncalhe();
 
-		Integer count = this.cotaGarantiaRepository.obterCountDetalheGarantiaCadastrada(TipoGarantia.CAUCAO_LIQUIDA, data).intValue();
+		FiltroRelatorioGarantiasDTO filtro = this.getFiltroGarantias();
+		filtro.setTipoGarantiaEnum(TipoGarantia.CAUCAO_LIQUIDA);
+		
+		Integer count = this.cotaGarantiaRepository.obterCountDetalheGarantiaCadastrada(filtro).intValue();
 		Assert.assertNotNull(count);
 		Assert.assertEquals(2, count.intValue());
 	}
