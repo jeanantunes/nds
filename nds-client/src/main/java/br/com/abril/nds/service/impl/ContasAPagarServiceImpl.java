@@ -1,6 +1,7 @@
 package br.com.abril.nds.service.impl;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -10,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.ContasAPagarConsignadoDTO;
 import br.com.abril.nds.dto.ContasAPagarConsultaProdutoDTO;
+import br.com.abril.nds.dto.ContasAPagarDistribDTO;
 import br.com.abril.nds.dto.ContasAPagarEncalheDTO;
 import br.com.abril.nds.dto.ContasAPagarFaltasSobrasDTO;
 import br.com.abril.nds.dto.ContasAPagarGridPrincipalFornecedorDTO;
@@ -38,7 +40,7 @@ public class ContasAPagarServiceImpl implements ContasAPagarService {
 	@Transactional
 	@Override
 	public List<ContasAPagarConsultaProdutoDTO> pesquisarProdutos(FiltroContasAPagarDTO filtro) {
-		return null;
+		return contasAPagarRepository.obterProdutos(filtro);
 	}
 
 	@Transactional
@@ -108,11 +110,6 @@ public class ContasAPagarServiceImpl implements ContasAPagarService {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Filtro de pesquisa inválido.");
 		}
 		
-		if (filtro.getCe() == null && (filtro.getDataDe() == null || filtro.getDataAte() == null)){
-			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Intervalo de datas inválido.");
-		}
-		
 		if (filtro.getDataDe() != null && filtro.getDataAte() != null){
 		
 			if (filtro.getDataDe().after(filtro.getDataAte())){
@@ -141,22 +138,109 @@ public class ContasAPagarServiceImpl implements ContasAPagarService {
 
 	@Transactional
 	@Override
-	public ContasAPagarTotalDistribDTO<ContasAPagarConsignadoDTO> pesquisarDetalheConsignado(FiltroContasAPagarDTO filtro, String sortname, String sortorder, int rp, int page) {
-		// TODO Auto-generated method stub
-		return null;
+	public ContasAPagarTotalDistribDTO<ContasAPagarConsignadoDTO> pesquisarDetalheConsignado(FiltroContasAPagarDTO filtro) {
+		
+		List<ContasAPagarConsignadoDTO> lista = 
+				this.contasAPagarRepository.pesquisarDetalheConsignado(filtro);
+		
+		ContasAPagarTotalDistribDTO<ContasAPagarConsignadoDTO> dto = 
+				new ContasAPagarTotalDistribDTO<ContasAPagarConsignadoDTO>();
+		
+		dto.setGrid(lista);
+		
+		List<ContasAPagarDistribDTO> contas = new ArrayList<ContasAPagarDistribDTO>();
+		ContasAPagarDistribDTO conta = new ContasAPagarDistribDTO();
+		String fornecedor = null;
+		
+		for (ContasAPagarConsignadoDTO consignado : lista){
+			
+			conta.setNome(consignado.getFornecedor());
+			conta.setTotal(conta.getTotal().add(consignado.getPrecoCapa()));
+			
+			if (!consignado.getFornecedor().equals(fornecedor)){
+				
+				contas.add(conta);
+				fornecedor = consignado.getFornecedor();
+				conta = new ContasAPagarDistribDTO();
+			}
+		}
+		
+		contas.add(conta);
+		
+		dto.setTotalDistrib(contas);
+		
+		return dto;
 	}
 
 	@Transactional
 	@Override
-	public ContasAPagarTotalDistribDTO<ContasAPagarEncalheDTO> pesquisarDetalheEncalhe(FiltroContasAPagarDTO filtro, String sortname, String sortorder, int rp, int page) {
-		// TODO Auto-generated method stub
-		return null;
+	public ContasAPagarTotalDistribDTO<ContasAPagarEncalheDTO> pesquisarDetalheEncalhe(FiltroContasAPagarDTO filtro) {
+		
+		List<ContasAPagarEncalheDTO> lista = 
+				this.contasAPagarRepository.pesquisarDetalheEncalhe(filtro);
+		
+		ContasAPagarTotalDistribDTO<ContasAPagarEncalheDTO> dto = 
+				new ContasAPagarTotalDistribDTO<ContasAPagarEncalheDTO>();
+		
+		dto.setGrid(lista);
+		
+		List<ContasAPagarDistribDTO> contas = new ArrayList<ContasAPagarDistribDTO>();
+		ContasAPagarDistribDTO conta = new ContasAPagarDistribDTO();
+		String fornecedor = null;
+		
+		for (ContasAPagarEncalheDTO encalhe : lista){
+			
+			conta.setNome(encalhe.getFornecedor());
+			conta.setTotal(conta.getTotal().add(encalhe.getPrecoCapa()));
+			
+			if (!encalhe.getFornecedor().equals(fornecedor)){
+				
+				contas.add(conta);
+				fornecedor = encalhe.getFornecedor();
+				conta = new ContasAPagarDistribDTO();
+			}
+		}
+		
+		contas.add(conta);
+		
+		dto.setTotalDistrib(contas);
+		
+		return dto;
 	}
 
 	@Transactional
 	@Override
-	public ContasAPagarTotalDistribDTO<ContasAPagarFaltasSobrasDTO> pesquisarDetalheFaltasSobras(FiltroContasAPagarDTO filtro, String sortname, String sortorder, int rp, int page) {
-		// TODO Auto-generated method stub
-		return null;
+	public ContasAPagarTotalDistribDTO<ContasAPagarFaltasSobrasDTO> pesquisarDetalheFaltasSobras(FiltroContasAPagarDTO filtro) {
+		
+		List<ContasAPagarFaltasSobrasDTO> lista = 
+				this.contasAPagarRepository.pesquisarDetalheFaltasSobras(filtro);
+		
+		ContasAPagarTotalDistribDTO<ContasAPagarFaltasSobrasDTO> dto = 
+				new ContasAPagarTotalDistribDTO<ContasAPagarFaltasSobrasDTO>();
+		
+		dto.setGrid(lista);
+		
+		List<ContasAPagarDistribDTO> contas = new ArrayList<ContasAPagarDistribDTO>();
+		ContasAPagarDistribDTO conta = new ContasAPagarDistribDTO();
+		String fornecedor = null;
+		
+		for (ContasAPagarFaltasSobrasDTO faltasSobras : lista){
+			
+			conta.setNome(faltasSobras.getFornecedor());
+			conta.setTotal(conta.getTotal().add(faltasSobras.getPrecoCapa()));
+			
+			if (!faltasSobras.getFornecedor().equals(fornecedor)){
+				
+				contas.add(conta);
+				fornecedor = faltasSobras.getFornecedor();
+				conta = new ContasAPagarDistribDTO();
+			}
+		}
+		
+		contas.add(conta);
+		
+		dto.setTotalDistrib(contas);
+		
+		return dto;
 	}
 }

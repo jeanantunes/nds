@@ -3919,7 +3919,7 @@ public class Fixture {
             BigDecimal totalCreditoInformado, BigDecimal totalMargemApurado,
             BigDecimal totalMargemInformado, BigDecimal totalVendaApurado,
             BigDecimal totalVendaInformada, String status,
-            String codigoPreenchimento, BigDecimal notaValoresDiversos) {
+            String codigoPreenchimento, BigDecimal notaValoresDiversos, Date dataVencimento) {
         
         ChamadaEncalheFornecedor ce = new ChamadaEncalheFornecedor();
         ce.setCodigoDistribuidor(codigoDistribuidor);
@@ -3940,21 +3940,21 @@ public class Fixture {
         ce.setTotalMargemInformado(totalMargemInformado);
         ce.setTotalVendaApurada(totalVendaApurado);
         ce.setTotalVendaInformada(totalVendaInformada);
+        ce.setDataVencimento(dataVencimento);
 
         return ce;
     }
 	
     public static ItemChamadaEncalheFornecedor newItemChamadaEncalheFornecedor(
-            ChamadaEncalheFornecedor chamada, ProdutoEdicao pe, Integer controle, Long numeroDocumento,
-            Integer numeroItem, Long qtdeEnviada, BigDecimal precoUnitario,
+            ChamadaEncalheFornecedor chamada, ProdutoEdicao pe,
+            Integer controle, Long numeroDocumento, Integer numeroItem,
+            Long qtdeEnviada, BigDecimal precoUnitario,
             FormaDevolucao formaDevolucao,
             RegimeRecolhimento regimeRecolhimento,
-            BigDecimal valorMargemApurado, 
-            Long numeroNota,
-            Long qtdeVendaInformada,
-            BigDecimal valorVendaInformado, 
-            BigDecimal valorVendaApurado, 
-            Long qtdeDevolucaoInformada, Date dataRecolhimento, String status, String tipoProduto) {
+            BigDecimal valorMargemApurado, Long numeroNota,
+            Long qtdeVendaApurada, BigDecimal valorVendaInformado,
+            BigDecimal valorVendaApurado, Long qtdeDevolucaoApurada,
+            Date dataRecolhimento, String status, String tipoProduto, String codigoNotaEnvioMultipla) {
 
         ItemChamadaEncalheFornecedor item = new ItemChamadaEncalheFornecedor();
         item.setChamadaEncalheFornecedor(chamada);
@@ -3969,13 +3969,14 @@ public class Fixture {
         item.setRegimeRecolhimento(regimeRecolhimento);
         item.setValorMargemApurado(valorMargemApurado);
         item.setNumeroNotaEnvio(numeroNota);
-        item.setQtdeVendaInformada(qtdeVendaInformada);
+        item.setQtdeVendaApurada(qtdeVendaApurada);
         item.setValorVendaInformado(valorVendaInformado);
         item.setValorVendaApurado(valorVendaApurado);
-        item.setQtdeDevolucaoInformada(qtdeDevolucaoInformada);
+        item.setQtdeDevolucaoApurada(qtdeDevolucaoApurada);
         item.setDataRecolhimento(dataRecolhimento);
         item.setStatus(status);
         item.setTipoProduto(tipoProduto);
+        item.setCodigoNotaEnvioMultipla(codigoNotaEnvioMultipla);
 
         return item;
     }

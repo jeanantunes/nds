@@ -21,7 +21,7 @@ public class ItemChamadaEncalheFornecedorDTO implements Serializable {
     
     private String descricao;
     
-    private Long codigo;
+    private String codigo;
     
     private Long edicao;
     
@@ -30,6 +30,8 @@ public class ItemChamadaEncalheFornecedorDTO implements Serializable {
     private Date dataRecolhimento;
     
     private Long notaEnvio;
+    
+    private String codigoNotaEnvioMultipla;
     
     private Integer item;
     
@@ -94,14 +96,14 @@ public class ItemChamadaEncalheFornecedorDTO implements Serializable {
     /**
      * @return the codigo
      */
-    public Long getCodigo() {
+    public String getCodigo() {
         return codigo;
     }
 
     /**
      * @param codigo the codigo to set
      */
-    public void setCodigo(Long codigo) {
+    public void setCodigo(String codigo) {
         this.codigo = codigo;
     }
 
@@ -159,6 +161,20 @@ public class ItemChamadaEncalheFornecedorDTO implements Serializable {
      */
     public void setNotaEnvio(Long notaEnvio) {
         this.notaEnvio = notaEnvio;
+    }
+    
+    /**
+     * @return the codigoNotaEnvioMultipla
+     */
+    public String getCodigoNotaEnvioMultipla() {
+        return codigoNotaEnvioMultipla;
+    }
+
+    /**
+     * @param codigoNotaEnvioMultipla the codigoNotaEnvioMultipla to set
+     */
+    public void setCodigoNotaEnvioMultipla(String codigoNotaEnvioMultipla) {
+        this.codigoNotaEnvioMultipla = codigoNotaEnvioMultipla;
     }
 
     /**

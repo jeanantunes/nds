@@ -222,6 +222,7 @@ import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
 import br.com.abril.nds.model.planejamento.fornecedor.ChamadaEncalheFornecedor;
 import br.com.abril.nds.model.planejamento.fornecedor.FormaDevolucao;
+import br.com.abril.nds.model.planejamento.fornecedor.ItemChamadaEncalheFornecedor;
 import br.com.abril.nds.model.planejamento.fornecedor.RegimeRecolhimento;
 import br.com.abril.nds.model.seguranca.GrupoPermissao;
 import br.com.abril.nds.model.seguranca.Permissao;
@@ -3692,13 +3693,13 @@ public class DataLoader {
 //				"/opt/interface/contratos/"));	// linux;
 		save(session, Fixture.parametroSistema(TipoParametroSistema.PATH_INTERFACE_MDC_IMPORTACAO, 
 //				"C:\\interface_mdc\\"));		// windows;
-				"/opt/interface_mdc/"));		// linux;
+				"/mnt/mdc/NDS/"));		// linux;
 		save(session, Fixture.parametroSistema(TipoParametroSistema.PATH_INTERFACE_MDC_EXPORTACAO,
 //				"C:\\interface_mdc\\"));		// windows;
-				"/opt/interface_mdc/"));	// linux;
+				"/mnt/mdc/"));	// linux;
 		save(session, Fixture.parametroSistema(TipoParametroSistema.PATH_INTERFACE_MDC_BACKUP,
 //				"C:\\interface_mdc\\"));		// windows;
-				"/opt/interface_mdc/"));		// linux;
+				"/mnt/mdc/NDS_BACKUP/"));		// linux;
 		
 		
 		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0106_IN_FILEMASK, "(?i:DEAPR19.NEW)"));
@@ -12010,7 +12011,7 @@ public class DataLoader {
                                 totalCreditoInformado, totalMargemApurado,
                                 totalMargemInformado, totalVendaApurado,
                                 totalVendaInformado, status,
-                                codigoPreenchimento, notaValoresDiversos);
+                                codigoPreenchimento, notaValoresDiversos, DateUtil.adicionarDias(new Date(), 7));
                 chamadas.put(numeroChamada, ce);
             }
             
@@ -12035,22 +12036,22 @@ public class DataLoader {
                 RegimeRecolhimento regimeRecolhimento = RegimeRecolhimento.getByCodigo(campos[9]);
                 BigDecimal precoUnitario = CurrencyUtil.converterValor(campos[10]);
                 BigDecimal valorVendaApurado = CurrencyUtil.converterValor(campos[14]);
-                Long qtdeDevolucaoInformada = StringUtils.isEmpty(campos[15]) ? null : Long.valueOf(campos[15]);
-                Long qtdeVendaInformada = StringUtils.isEmpty(campos[16]) ? null : Long.valueOf(campos[16]);
+                Long qtdeDevolucaoApurada = StringUtils.isEmpty(campos[12]) ? null : Long.valueOf(campos[12]);
+                Long qtdeVendaApurada = StringUtils.isEmpty(campos[13]) ? null : Long.valueOf(campos[13]);
                 BigDecimal valorVendaInformado = CurrencyUtil.converterValor(campos[17]);
                 Long numeroNota = StringUtils.isEmpty(campos[18]) ? null  : Long.valueOf(campos[18]);
+                String codigoNotaEnvioMultipla = campos[19];
                 String tipoProduto = campos[20];
                 String status = campos[22];
                 BigDecimal valorMargemApurado = CurrencyUtil.converterValor(campos[26]);
-                
                 
               ChamadaEncalheFornecedor ce = chamadas.get(numeroChamada);
               Fixture.newItemChamadaEncalheFornecedor(ce, 
                       criarProdutoEdicaoChamadaEncalheFornecedor(session, fornecedorDinap, precoUnitario, true), 
                       controle, numeroDocumento, item, qtdeEnviada, precoUnitario, formaDevolucao,
-                      regimeRecolhimento, valorMargemApurado, numeroNota, qtdeVendaInformada,
-                      valorVendaInformado, valorVendaApurado, qtdeDevolucaoInformada,
-                      DateUtil.adicionarDias(new Date(), -3), status, tipoProduto);
+                      regimeRecolhimento, valorMargemApurado, numeroNota, qtdeVendaApurada,
+                      valorVendaInformado, valorVendaApurado, qtdeDevolucaoApurada,
+                      DateUtil.adicionarDias(new Date(), -3), status, tipoProduto, codigoNotaEnvioMultipla);
             }
             
         } catch (Exception ex) {

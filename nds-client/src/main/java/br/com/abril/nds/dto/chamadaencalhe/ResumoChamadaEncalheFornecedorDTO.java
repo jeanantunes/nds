@@ -22,13 +22,13 @@ public class ResumoChamadaEncalheFornecedorDTO implements Serializable {
     
     private IdentificacaoChamadaEncalheFornecedorDTO identificacao;
     
-    private BigDecimal totalMargemDistribuidor;
+    private BigDecimal totalMargemDistribuidor = BigDecimal.ZERO;
     
-    private BigDecimal subTotalVendas;
+    private BigDecimal subTotalVendas = BigDecimal.ZERO;
     
-    private BigDecimal valorProjetosEspeciais;
+    private BigDecimal valorProjetosEspeciais = BigDecimal.ZERO;
     
-    private BigDecimal valorPagar;
+    private BigDecimal valorPagar = BigDecimal.ZERO;
     
     private List<ItemResumoChamadaEncalheFornecedorDTO> itens = new ArrayList<>();
  
@@ -127,6 +127,8 @@ public class ResumoChamadaEncalheFornecedorDTO implements Serializable {
         if (itens == null) {
             itens = new ArrayList<>();
         }
+        int linha = itens.size();
+        item.setLinha(++linha);
         itens.add(item);
     }
     

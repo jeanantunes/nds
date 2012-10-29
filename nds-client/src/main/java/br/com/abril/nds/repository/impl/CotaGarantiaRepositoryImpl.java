@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Criteria;
@@ -9,7 +10,9 @@ import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.GarantiaCadastradaDTO;
+import br.com.abril.nds.dto.RelatorioDetalheGarantiaDTO;
 import br.com.abril.nds.model.cadastro.Cheque;
+import br.com.abril.nds.model.cadastro.TipoGarantia;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantia;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaCaucaoLiquida;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaChequeCaucao;
@@ -17,6 +20,7 @@ import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaFiador;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaImovel;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaNotaPromissoria;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaOutros;
+import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.repository.CotaGarantiaRepository;
 
 /**
@@ -134,4 +138,172 @@ public class CotaGarantiaRepositoryImpl extends AbstractRepositoryModel<CotaGara
 		
 		return query.list();
 	}
+
+	
+	private String obterHqlDescontoProdutoCota(){
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append("   ( mec.produtoEdicao.precoVenda - ")
+		   .append("    ( mec.produtoEdicao.precoVenda * ")
+		   .append("     ( COALESCE((select desconto ")
+		   .append("                 from ViewDesconto ")
+		   .append("                 where cotaId = garantia.cota ")
+		   .append("                 and produtoEdicaoId = mec.produtoEdicao.id ")
+		   .append("                ),0) / 100 )    ")
+		   .append("   ))");
+
+		return hql.toString();
+	}
+	private String obterHqlFaturamentoCota(){
+		
+		StringBuilder hql = new StringBuilder();
+         
+		hql.append("(")
+		   .append(" COALESCE( ")
+		   .append("          ( select sum(mec.qtde * ("+this.obterHqlDescontoProdutoCota()+") )  ")
+		   .append("            from MovimentoEstoqueCota mec" )
+		   .append("            where mec.cota = garantia.cota ")
+		   .append("            and mec.tipoMovimento.operacaoEstoque = :movimentoEntrada")
+		   .append("            and mec.data = :data ")
+		   .append("          )")
+		   .append("       ,0)  -  "  )
+		   .append(" COALESCE( ")
+		   .append("          ( select sum(mec.qtde * ("+this.obterHqlDescontoProdutoCota()+") )  ")
+		   .append("            from MovimentoEstoqueCota mec" )
+		   .append("            where mec.cota = garantia.cota ")
+		   .append("            and mec.tipoMovimento.operacaoEstoque = :movimentoSaida")
+		   .append("            and mec.data = :data ")
+		   .append("          )")
+		   .append("       ,0) " )
+		   .append(")");
+		
+		return hql.toString();
+	}
+	
+	private String obterHqlTipoGarantia(TipoGarantia tipoGarantia){
+		  
+		boolean caucaoLiquida = false;
+		
+		StringBuilder hql = new StringBuilder();
+
+		switch(tipoGarantia){
+	       
+		   case FIADOR :
+
+		       hql.append(" from CotaGarantia garantia ")
+	    	      .append(" join garantia.fiador.garantias as garantiaTipo ");   
+	       break;	  
+	       
+	       case CAUCAO_LIQUIDA :
+
+	    	   hql.append(" from CotaGarantia garantia ")  
+	    	      .append(" join garantia.caucaoLiquidas as garantiaTipo ");
+
+	    	   caucaoLiquida = true;
+		   break;
+	       
+	       case CHEQUE_CAUCAO :
+
+	    	   hql.append(" from CotaGarantia garantia ")
+	    	      .append(" join garantia.cheque as garantiaTipo ");  
+		   break;
+	       
+	       case IMOVEL :
+
+	    	   hql.append(" from CotaGarantia garantia ")
+	    	      .append(" join garantia.imoveis as garantiaTipo ");  
+		   break;
+	       
+	       case NOTA_PROMISSORIA :
+
+	    	   hql.append(" from CotaGarantia garantia ")
+	    	      .append(" join garantia.notaPromissoria as garantiaTipo ");  
+		   break;
+		   
+	       case OUTROS :
+
+	    	   hql.append(" from CotaGarantia garantia ")
+	    	      .append(" join garantia.outros as garantiaTipo ");  
+	       break;
+	    }
+		
+		hql.append(" join garantia.cota cota ")
+	       .append(" join cota.pessoa as pessoa ");
+		
+		if (caucaoLiquida){
+			
+			hql.append("  where garantiaTipo.atualizacao = ( select max(cl.atualizacao) from CaucaoLiquida cl where cl.id = garantiaTipo.id ) ");
+		}
+		
+		return hql.toString();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<RelatorioDetalheGarantiaDTO> obterDetalheGarantiaCadastrada(TipoGarantia tipoGarantia, Date data, String sortColumn, String sortOrder) {
+
+		StringBuilder hql = new StringBuilder();
+
+		hql.append(" select ")
+		
+		   .append(" cota.numeroCota as cota, ")
+		   .append(" case when pessoa.nomeFantasia = null then pessoa.nome else pessoa.nomeFantasia end as nome, ")
+		   .append("'")
+		   .append(  tipoGarantia.getDescricao())
+		   .append("' as garantia, ")
+		   .append(" garantia.data as vencto, ")     
+		   .append(" COALESCE(garantiaTipo.valor,0) as vlrGarantia, ")
+		   
+		   .append(" ROUND( ")
+		   .append("   (")
+		   .append(     this.obterHqlFaturamentoCota())
+		   .append("   ) ")  
+		   .append(" ,2) as faturamento, ")
+
+	       .append(" ROUND( ")
+           .append("        COALESCE( ( garantiaTipo.valor *  ")
+           .append("          (100 / (")
+		   .append(            this.obterHqlFaturamentoCota())
+		   .append("          )) ")
+           .append("        ),0)")
+           .append(" ,2) as garantiaFaturamento ");
+ 
+	    hql.append(this.obterHqlTipoGarantia(tipoGarantia))
+
+	       .append(" group by cota ");
+	
+		hql.append(" order by ")
+	       .append(sortColumn!=null && !sortColumn.equals("")?sortColumn:" vencto ")
+	       .append(" ")
+	       .append(sortOrder!=null && !sortOrder.equals("")?sortOrder:" desc ");
+
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		query.setParameter("data", data);
+		query.setParameter("movimentoEntrada", OperacaoEstoque.ENTRADA);
+		query.setParameter("movimentoSaida", OperacaoEstoque.SAIDA);
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(RelatorioDetalheGarantiaDTO.class));
+
+		return query.list();
+	}
+
+	@Override
+	public Long obterCountDetalheGarantiaCadastrada(TipoGarantia tipoGarantia, Date data) {
+		
+		StringBuilder hql = new StringBuilder();
+
+		hql.append(" select count(distinct cota) ");
+ 
+		hql.append(this.obterHqlTipoGarantia(tipoGarantia));
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		return (Long) query.uniqueResult();
+	}
+	
 }

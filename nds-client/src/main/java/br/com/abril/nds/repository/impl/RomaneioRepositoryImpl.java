@@ -27,23 +27,30 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append("SELECT cota.numeroCota as numeroCota, ");
-		hql.append("pessoa.nome as nome, ");
-		hql.append("cota.id as idCota, ");
+		hql.append("SELECT notaEnvio.destinatario.numeroCota as numeroCota, ");
+		hql.append("notaEnvio.destinatario.nome as nome, ");
+		//hql.append("cota.id as idCota, ");
 		hql.append("rotaPDV.id as idRota, ");
-		hql.append("itemNota.itemNotaEnvioPK.notaEnvio.numero as numeroNotaEnvio ");
+		hql.append("notaEnvio.numero as numeroNotaEnvio, ");
+		hql.append("endereco.logradouro as logradouro, ");
+		hql.append("endereco.bairro as bairro, ");		
+		hql.append("endereco.cidade as cidade, ");
+		hql.append("endereco.uf as uf ");
 		
-		if (filtro.getProdutos() != null && filtro.getProdutos().size() == 1){
 		
-			hql.append(", (round(estudo.qtdeReparte / lancamento.produtoEdicao.pacotePadrao)) as pacote ");
-			hql.append(", lancDif.diferenca.qtde as quebra ");
-			hql.append(", estudo.qtdeReparte as reparteTotal ");
+		//if (filtro.getProdutos() != null && filtro.getProdutos().size() == 1){
+		if (filtro.getProdutos() != null){
+		
+			hql.append(", round(itemNota.reparte / lancamento.produtoEdicao.pacotePadrao) as pacote ");
+			//hql.append(", lancDif.diferenca.qtde as quebra ");
+			hql.append(", itemNota.reparte as reparteTotal ");
 		}
 		
-		if (filtro.getProdutos() != null && filtro.getProdutos().size() > 1){
+		// Código comentado pelo Eduardo Punk Rock
+		/*if (filtro.getProdutos() != null && filtro.getProdutos().size() > 1){
 			
 			this.getHQLProdutos(hql, filtro);
-		}
+		}*/
 		
 		hql.append(getSqlFromEWhereRomaneio(filtro));
 		
@@ -65,18 +72,17 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 			query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
 		}
 				
-		return  popularEndereco(query.list());
+		return  query.list();
+		//return  popularEndereco(query.list());
 	}
 	
 	private void getHQLProdutos(StringBuilder hql, FiltroRomaneioDTO filtro) {
 		
 		for (int index = 0 ; index < filtro.getProdutos().size() ; index++){
 			
-			hql.append(", coalesce((select estudo.qtdeReparte ")
-			   .append(" from estudo ")
-			   .append(" where estudo.id = estudoCota.estudo.id ")
-			   .append(" and estudoCota.cota.id = cota.id ")
-			   .append(" and lancamento.estudo.id = estudo.id ")
+			hql.append(", coalesce((select itemNota.reparte ")
+			   .append(" from itemNota ")
+			   .append(" where itemNota.produtoEdicao.id = lancamento.produtoEdicao.id ")
 			   .append(" and lancamento.produtoEdicao.id = :idProdutoEdicao").append(index)
 			   .append(" and lancamento.dataLancamentoDistribuidor = :data),0) as qtdProduto").append(index);
 		}
@@ -126,36 +132,34 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" from Cota cota, Lancamento lancamento, Estudo estudo, EstudoCota estudoCota ");
+		hql.append(" from Cota cota, Lancamento lancamento, NotaEnvio notaEnvio ");
 		
-		if (filtro.getProdutos() != null && filtro.getProdutos().size() == 1){
+		/*if (filtro.getProdutos() != null && filtro.getProdutos().size() == 1){
 			
 			hql.append(", LancamentoDiferenca lancDif ");
-		}
+		}*/
 		
-		hql.append(" JOIN cota.pessoa as pessoa ");
 		hql.append(" JOIN cota.box as box ");
 		hql.append(" JOIN cota.pdvs as pdv ");
 		hql.append(" JOIN pdv.rotas as rotaPDV ");
 		hql.append(" JOIN rotaPDV.rota as rota ");
 		hql.append(" JOIN rota.roteiro as roteiro ");
-		hql.append(" JOIN lancamento.movimentoEstoqueCotas as movimentoEstoque ");
-		hql.append(" JOIN movimentoEstoque.listaItemNotaEnvio as itemNota ");
+		hql.append(" JOIN notaEnvio.listaItemNotaEnvio as itemNota ");
+		hql.append(" JOIN notaEnvio.destinatario.endereco as endereco ");		
 		
-		if (filtro.getProdutos() != null && filtro.getProdutos().size() == 1){
+		/*if (filtro.getProdutos() != null && filtro.getProdutos().size() == 1){
 			
 			hql.append(" JOIN lancDif.movimentoEstoqueCota as movEstCotaLancDif ");
-		}
+		}*/
 		
-		hql.append(" where estudoCota.estudo.id = estudo.id ");
-		hql.append(" and estudoCota.cota.id = cota.id ");
-		hql.append(" and lancamento.estudo.id = estudo.id ");
+		hql.append(" where cota.numeroCota = notaEnvio.destinatario.numeroCota ");
+		hql.append(" and lancamento.produtoEdicao.id = itemNota.produtoEdicao.id ");
 		hql.append(" and cota.situacaoCadastro != :situacaoInativo ");
 		
-		if (filtro.getProdutos() != null && filtro.getProdutos().size() == 1){
+		/*if (filtro.getProdutos() != null && filtro.getProdutos().size() == 1){
 			
 			hql.append(" and movEstCotaLancDif.id = movimentoEstoque.id ");
-		}
+		}*/
 
 		if(filtro.getIdBox() != null) {
 			
@@ -169,7 +173,7 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 		
 		if(filtro.getIdRota() != null){
 			
-			hql.append( " and rotaPDV.id = :idRota ");
+			hql.append( " and rota.id = :idRota ");
 		}
 		
 		if(filtro.getData() != null){
@@ -184,6 +188,15 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 
 		return hql.toString();
 	}
+
+	private StringBuilder getOrderClause(StringBuilder hql) {
+		if (hql == null || hql.length() == 0) {
+			hql.append(" order by ");
+		} else {
+			hql.append(", ");
+		}
+		return hql;
+	}
 	
 	private String getOrderBy(FiltroRomaneioDTO filtro){
 		
@@ -193,32 +206,32 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" order by rotaPDV.id asc ");
+		//hql.append(" order by rotaPDV.id asc ");
 		
 		if(filtro.getIdRoteiro() == null && filtro.getIdRota() != null){
-			
-			hql.append(", rotaPDV.ordem ");
+			hql = getOrderClause(hql);
+			hql.append(" rotaPDV.ordem ");
 		}
 		
 		if(filtro.getIdRoteiro() != null && filtro.getIdRota() == null){
-			
-			hql.append(", roteiro.ordem ");
+			hql = getOrderClause(hql);
+			hql.append(" roteiro.ordem ");
 		}
 		
 		if(filtro.getIdRoteiro() != null && filtro.getIdRota() != null){
-			
-			hql.append(", roteiro.ordem asc, rotaPDV.ordem asc ");
+			hql = getOrderClause(hql);
+			hql.append(" roteiro.ordem asc, rotaPDV.ordem asc ");
 		}
 		
 		if ("numeroCota".equals(filtro.getPaginacao().getSortColumn())){
-			
-			hql.append(", cota.numeroCota ");
+			hql = getOrderClause(hql);
+			hql.append(" cota.numeroCota ");
 		} else if ("nome".equals(filtro.getPaginacao().getSortColumn())){
-			
-			hql.append(", pessoa.nome ");
+			hql = getOrderClause(hql);
+			hql.append(" notaEnvio.destinatario.nome ");
 		} else {
-			
-			hql.append(", itemNota.itemNotaEnvioPK.notaEnvio.numero ");
+			hql = getOrderClause(hql);
+			hql.append(" notaEnvio.numero ");
 		}
 		
 		if (filtro.getPaginacao().getOrdenacao() != null) {

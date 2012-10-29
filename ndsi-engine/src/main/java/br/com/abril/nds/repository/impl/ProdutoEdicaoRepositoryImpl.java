@@ -15,12 +15,10 @@ import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.FuroProdutoDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
-import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
-import br.com.abril.nds.model.cadastro.desconto.TipoDesconto;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.util.Intervalo;
@@ -574,7 +572,8 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		
 		StringBuilder hql = new StringBuilder("select distinct l.produtoEdicao ");
 		hql.append(" from Lancamento l ")
-		   .append(" where l.dataLancamentoDistribuidor = :data ");
+		   .append(" where l.dataLancamentoDistribuidor = :data ")
+		   .append(" and l.status= '" + StatusLancamento.EXPEDIDO.toString() + "'");
 		
 		Query query = this.getSession().createQuery(hql.toString());
 		query.setParameter("data", data);

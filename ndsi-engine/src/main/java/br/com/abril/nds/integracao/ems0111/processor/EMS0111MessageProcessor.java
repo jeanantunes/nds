@@ -66,16 +66,7 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 	public void processMessage(Message message) {
 
 		EMS0111Input input = (EMS0111Input) message.getBody();
-		if (input == null) {
-			this.ndsiLoggerFactory.getLogger().logError(
-					message, EventoExecucaoEnum.ERRO_INFRA, "NAO ENCONTROU o Arquivo");
-			return;
-		}
-		
-		if (input.getRepartePrevisto().equals(0L)) {
-			return;
-		}
-		
+				
 		// Validar Distribuidor:
 		final Number codDistribuidorSistema = (Number) message.getHeader().get(
 				MessageHeaderProperties.CODIGO_DISTRIBUIDOR.name());
@@ -124,6 +115,10 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 		}
 		
 		
+		if (input.getRepartePrevisto().equals(0L)) {
+			return;
+		}
+
 		final Date dataGeracaoArquivo = input.getDataGeracaoArquivo();
 		Lancamento lancamento = this.getLancamentoPrevistoMaisProximo(
 				produtoEdicao, dataGeracaoArquivo);

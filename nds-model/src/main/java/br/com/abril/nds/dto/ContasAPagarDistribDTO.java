@@ -10,6 +10,10 @@ public class ContasAPagarDistribDTO implements Serializable {
 	private String nome;
 	private BigDecimal total;
 	
+	public ContasAPagarDistribDTO(){
+		
+		this.total = BigDecimal.ZERO;
+	}
 	
 	public String getNome() {
 		return nome;

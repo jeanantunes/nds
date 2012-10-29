@@ -203,7 +203,7 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 		produto.setCodigoContexto(input.getContextoPublicacao());
 		produto.setNomeComercial(input.getNomePublicacao());
 		produto.setEditor(editor);
-		produto.setPeriodicidade(PeriodicidadeProduto.values()[input.getPeriodicidade()]);
+		produto.setPeriodicidade(PeriodicidadeProduto.getByOrdem(input.getPeriodicidade()));
 		produto.setSlogan(input.getSlogan());
 		produto.setPeb(input.getPeb());
 		produto.setPeso(input.getPeso());
@@ -293,14 +293,14 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
 					"Atualizacao do Editor para: " + editor.getPessoaJuridica().getNome());
 		}
-		if (produto.getPeriodicidade() != PeriodicidadeProduto.values()[input.getPeriodicidade()]) {
+		if (produto.getPeriodicidade() != PeriodicidadeProduto.getByOrdem(input.getPeriodicidade())) {
 
-			produto.setPeriodicidade(PeriodicidadeProduto.values()[input.getPeriodicidade()]);
+			produto.setPeriodicidade(PeriodicidadeProduto.getByOrdem(input.getPeriodicidade()));
 			this.ndsiLoggerFactory.getLogger().logInfo(
 					message,
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
 					"Atualizacao da Periodicidade para: "
-							+ PeriodicidadeProduto.values()[input.getPeriodicidade()]);
+							+ PeriodicidadeProduto.getByOrdem(input.getPeriodicidade()));
 		}
 		if (!produto.getSlogan().equals(input.getSlogan())) {
 

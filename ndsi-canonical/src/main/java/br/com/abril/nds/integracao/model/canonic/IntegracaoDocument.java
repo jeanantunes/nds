@@ -13,7 +13,7 @@ public class IntegracaoDocument {
 	private Date dataHoraExtracao;
 	private String nomeUsuarioExtracao;
 	private String erro;
-	
+	private Date horaDeCriacao = new Date();
 	
 	public String get_id() {
 		return _id;
@@ -68,5 +68,17 @@ public class IntegracaoDocument {
 	}
 	public void setErro(String erro) {
 		this.erro = erro;
+	}
+	/**
+	 * @return the horaDeCriacao
+	 */
+	public Date getHoraDeCriacao() {
+		return horaDeCriacao;
+	}
+	/**
+	 * @param horaDeCriacao the horaDeCriacao to set
+	 */
+	public void setHoraDeCriacao(Date horaDeCriacao) {
+		this.horaDeCriacao = horaDeCriacao;
 	}
 }

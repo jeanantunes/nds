@@ -1,5 +1,7 @@
 <head>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/contasAPagar.js"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaProduto.js"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
 </head>
 <body>
 
@@ -7,6 +9,7 @@
 	<legend> Pesquisar Contas a Pagar</legend>
 	<form id="contasAPagarForm">
 	<input type="hidden" name="filtro.dataDetalhe" id="contasAPagar_dataDetalhe"/>
+	
 		<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 			<tr>
 				<td width="20" align="right"><input  type="radio" name="radio" id="contasAPagarRadioDistribuidor" value="radio" onchange="contasAPagarController.pesqDistribuidor();" /></td>
@@ -45,7 +48,7 @@
 	            <td width="28">At&eacute;:</td>
 	            <td width="107"><input type="text" name="filtro.dataAte" id="contasAPagar_Filtro_Ate" style="width:80px;"/></td>
 	            <td width="67">Semana CE:</td>
-	            <td width="71"><input type="text" name="filtro.ce" id="textfield6" style="width:50px;"/></td>
+	            <td width="71"><input type="text" name="filtro.ce" id="contasAPagar_Filtro_Ce" style="width:50px;" maxlength="2"/></td>
 	           
 	            <td width="147">
 
@@ -101,34 +104,32 @@
       
      <!-- Popup de busca por produto -->
 		            
-		            <div id="dialog-pesq-produto-contasAPagar" title="Pesquisar Produtos" style="display:none;">
-						<fieldset style="width:550px!important;">
-						  <legend>Pesquisar Produtos</legend>
-						  <form id="contasAPagarPesquisaProdutoEdicaoForm">
-					        <table width="530" border="0" cellspacing="0" cellpadding="0">
-					          <tr>
-					          
-					            <td width="96">C&oacute;digo / Produto:</td>
-					            <!-- Implementar auto complete por codigo e nome para este campo -->
-					            <td width="311"><input type="text"  name="filtro.produto" style="width:290px;" onchange="contasAPagarController.pesquisarProdutoEdicao();"/></td>
-					           
-					            <td width="40">Edi&ccedil;&atilde;o:</td>
-					            <td width="83" align="right"><input type="text" name="filtro.edicao" id="textfield9" style="width:60px; onchange="contasAPagarController.pesquisarProdutoEdicao(); " /></td>
-					         
-					         
-					          </tr>
-					        </table>
+	<div id="dialog-pesq-produto-contasAPagar" title="Pesquisar Produtos" style="display:none;">
+		<fieldset style="width:550px!important;">
+			<legend>Pesquisar Produtos</legend>
+			<form id="contasAPagarPesquisaProdutoEdicaoForm">
+     		<table width="530" border="0" cellspacing="0" cellpadding="0">
+       			<tr>
+       				<td width="50">C&oacute;digo</td>
+         			<td width="80"><input type="text" id="codigo" name="filtro.produto" style="width:60px;" onchange="contasAPagarController.pesquisarProdutoPorCodigo();"/></td>
+         			<td width="50">Produto</td>
+         			<td width="180"><input type="text" id="produto" style="width:150px;" onkeyup="pesquisaProdutoCAP.autoCompletarPorNomeProduto('#produto', false);" onblur="contasAPagarController.pesquisarProdutoPorNome();"/></td>
+					<td width="40">Edi&ccedil;&atilde;o</td>
+					<td width="60" align="right"><input type="text" id="edicao" name="filtro.edicao" style="width:60px;"/></td>
+					<td width="70">&nbsp;</td>
+					<td width="20"><span class="bt_pesquisar filtroBusca"><a href="javascript:;" onclick="contasAPagarController.pesquisarProdutoEdicao()"></a></span></td>
+				</tr>
+       		</table>
+			</form>
+   		</fieldset>
+		
+		<br clear="all"/>
 
-					       </form>
-					    </fieldset>
-						<br clear="all"/>
-
-					  <fieldset style="width:550px!important; margin-top:10px;">
-					    <legend>Pesquisar Produtos</legend>
-					    <table class="contasAPagarListaProdutosGrid"></table>
-					  </fieldset>
-
-					</div> 
+ 		<fieldset style="width:550px!important; margin-top:10px;">
+    		<legend>Pesquisar Produtos</legend>
+    		<table class="contasAPagarListaProdutosGrid"></table>
+  		</fieldset>
+</div> 
       
 
 
@@ -181,13 +182,17 @@
 	<fieldset style="width:895px!important;">
 		<legend>Pesquisar Produtos</legend>
        	<table width="530" border="0" cellspacing="0" cellpadding="0">
-         		<tr>
-           		<td width="96">C&oacute;digo / Produto:</td>
-           		<td width="311"><input type="text" name="produtos2" id="produtos2" style="width:290px;" /></td>
-           		<td width="40">Edi&ccedil;&atilde;o:</td>
-           		<td width="83" align="right"><input type="text" name="textfield9" id="textfield9" style="width:60px;" /></td>
-         		</tr>
-       	</table>
+			<tr>
+				<td width="50">C&oacute;digo</td>
+				<td width="80"><input type="text" id="codigoConsignado" style="width:60px;" onchange="contasAPagarController.pesquisarProdutoPorCodigoConsignado();"/></td>
+				<td width="50">Produto</td>
+				<td width="180"><input type="text" id="produtoConsignado" style="width:150px;" onkeyup="pesquisaProdutoCAP.autoCompletarPorNomeProduto('#produtoConsignado', false);" onblur="contasAPagarController.pesquisarProdutoPorNomeConsignado();"/></td>
+				<td width="40">Edi&ccedil;&atilde;o</td>
+				<td width="60" align="right"><input type="text" id="edicaoConsignado" style="width:60px;"/></td>
+				<td width="70">&nbsp;</td>
+				<td width="20"><span class="bt_pesquisar filtroBusca"><a href="javascript:;" onclick="contasAPagarController.pesquisarConsignado()"></a></span></td>
+			</tr>
+   		</table>
     </fieldset>
     
 	<fieldset style="width:895px!important; margin-top:10px;">
@@ -244,16 +249,13 @@
 </div>
 
 
-
-
-
-
-
-
-
 <script type="text/javascript">
-		$(function(){
-			contasAPagarController.init();
-		});
+	
+	var pesquisaProdutoCAP = new PesquisaProduto();
+
+	$(function(){
+		contasAPagarController.init();
+	});
+	
 </script>
 </body>

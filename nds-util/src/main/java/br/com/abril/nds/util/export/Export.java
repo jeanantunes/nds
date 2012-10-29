@@ -19,6 +19,8 @@ public @interface Export {
 	
 	boolean printVertical() default false;
 	
+	String propertyToDynamicLabel() default "";
+	
 	public enum Alignment {
 		
 		LEFT(0),

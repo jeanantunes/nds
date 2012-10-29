@@ -1,9 +1,11 @@
 package br.com.abril.nds.integracao.model.canonic;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 
 import com.ancientprogramming.fixedformat4j.annotation.Field;
+import com.ancientprogramming.fixedformat4j.annotation.FixedFormatDecimal;
 import com.ancientprogramming.fixedformat4j.annotation.FixedFormatPattern;
 import com.ancientprogramming.fixedformat4j.annotation.Record;
 
@@ -26,8 +28,8 @@ public class EMS0113Input extends IntegracaoDocument implements Serializable{
 	private Integer contextoDistribuidor;
 	private Integer codigoFornecedor;
 	private Integer tipoDesconto;
-	private float percentDesconto;
-	private float percentPrestServico;
+	private BigDecimal percentDesconto;
+	private BigDecimal percentPrestServico;
 	private Date dataInicioDesconto;
 	
 	@Field(offset = 1, length=7)
@@ -95,18 +97,20 @@ public class EMS0113Input extends IntegracaoDocument implements Serializable{
 	}
 	
 	@Field(offset = 37, length=7)
-	public float getPercentDesconto() {
+	@FixedFormatDecimal(decimals = 4, useDecimalDelimiter = false)
+	public BigDecimal getPercentDesconto() {
 		return percentDesconto;
 	}
-	public void setPercentDesconto(float percentDesconto) {
+	public void setPercentDesconto(BigDecimal percentDesconto) {
 		this.percentDesconto = percentDesconto;
 	}
 	
 	@Field(offset = 44, length=7)
-	public float getPercentPrestServico() {
+	@FixedFormatDecimal(decimals = 4, useDecimalDelimiter = false)
+	public BigDecimal getPercentPrestServico() {
 		return percentPrestServico;
 	}
-	public void setPercentPrestServico(float percentPrestServico) {
+	public void setPercentPrestServico(BigDecimal percentPrestServico) {
 		this.percentPrestServico = percentPrestServico;
 	}
 	

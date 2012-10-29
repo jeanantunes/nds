@@ -127,7 +127,7 @@ public class CotaGarantiaController {
 		}	
 		
 		for(CaucaoLiquida caucaoLiquida: listaCaucaoLiquida){			
-		    caucaoLiquida.setAtualizacao(Calendar.getInstance());
+		    caucaoLiquida.setAtualizacao(Calendar.getInstance().getTime());
 			validaCaucaoLiquida(caucaoLiquida);
 		}
 		
@@ -373,7 +373,7 @@ public class CotaGarantiaController {
 		
 		List<String> listaMensagens = new ArrayList<String>();
 		
-		if (notaPromissoria.getValor() == null || notaPromissoria.getValor() <= 0) {
+		if (notaPromissoria.getValor() == null || notaPromissoria.getValor().doubleValue() <= 0) {
 			listaMensagens.add("O preenchimento do campo [Valor R$] é obrigatório");
 		}
 		

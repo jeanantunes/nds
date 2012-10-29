@@ -63,14 +63,15 @@ public class EMS0119MessageProcessor extends AbstractRepository implements
 			}
 			if (!produto
 					.getPeriodicidade()
-					.equals( PeriodicidadeProduto.values()[input.getPeriodicidade()])) {
+					.equals( PeriodicidadeProduto.getByOrdem(input.getPeriodicidade()) )) {
 				produto.setPeriodicidade(
-						PeriodicidadeProduto.values()[input.getPeriodicidade()]);
+						PeriodicidadeProduto.getByOrdem(input.getPeriodicidade())
+								);
 				ndsiLoggerFactory.getLogger().logInfo(
 						message,
 						EventoExecucaoEnum.INF_DADO_ALTERADO,
 						"Atualizacao da Periodicidade para: "
-								+ PeriodicidadeProduto.values()[input.getPeriodicidade()]);
+								+ PeriodicidadeProduto.getByOrdem(input.getPeriodicidade()) );
 			}
 			if (produto.getTipoProduto().getId() != input
 					.getTipoDePublicacao()) {

@@ -25,6 +25,13 @@ public enum PeriodicidadeProduto {
 		return ordem;
 	}
 
-	
+	public static PeriodicidadeProduto getByOrdem(Integer ordem) {
+		for (PeriodicidadeProduto pp : PeriodicidadeProduto.values()) {
+			if (pp.getOrdem().equals(ordem)) {
+				return pp;
+			}
+		}
+		return null;
+	}
 	
 }

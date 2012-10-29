@@ -23,7 +23,7 @@ public class PessoaJuridicaChamadaEncalheFornecedorDTO implements Serializable {
     
     private String logradouro;
     
-    private Integer numero;
+    private String numero;
     
     private String cidade;
     
@@ -33,7 +33,7 @@ public class PessoaJuridicaChamadaEncalheFornecedorDTO implements Serializable {
     
     public PessoaJuridicaChamadaEncalheFornecedorDTO(Long id,
             String razaoSocial, String cnpj, String inscricaoEstadual,
-            String logradouro, Integer numero, String cidade, String uf,
+            String logradouro, String numero, String cidade, String uf,
             String cep) {
         this.id = id;
         this.razaoSocial = razaoSocial;
@@ -84,7 +84,7 @@ public class PessoaJuridicaChamadaEncalheFornecedorDTO implements Serializable {
     /**
      * @return the numero
      */
-    public Integer getNumero() {
+    public String getNumero() {
         return numero;
     }
 
