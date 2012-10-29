@@ -47,18 +47,25 @@ var negociacaoDividaController = $.extend(true, {
 		
 	},
 	
-	pesquisarDetalhes : function() {
+	pesquisarDetalhes : function(idCobranca) {
 		
-		var params = $("#negociacaoDividaForm", this.workspace).serialize();
+		//var params = $("#negociacaoDividaForm", this.workspace).serialize();
 		
 		$(".negociacaoDetalheGrid", this.workspace).flexOptions({
-			url : this.path + 'pesquisarDetalhes.json?' + params, 
+			url : this.path + 'pesquisarDetalhes.json?' , 
+			params: [{name: 'idCobranca' , value: idCobranca}],
 			newp : 1
+			//preProcess: negociacaoDividaController.retornoPesquisaDetalhes
 		});
 			
 		$(".negociacaoDetalhesGrid").flexReload();
 		
 		
+	},
+	
+	retornoPesquisaDetalhes : function(result) {
+				
+		return result.rows;
 	},
 	
 	montaColunaDetalhesAcao : function(data) {
@@ -67,7 +74,7 @@ var negociacaoDividaController = $.extend(true, {
 		
 		$.each(data.rows, function(index, value) {
 			
-			var detalhes = '<a href="javascript:;" onclick="negociacaoDividaController.popup_detalhe();" title="Ver Detalhes"><img src="' + contextPath + '/images/ico_detalhes.png" alt="Detalhes" border="0" /></a>    ';
+			var detalhes = '<a href="javascript:;" onclick="negociacaoDividaController.popup_detalhe('+value.cell.idCobranca+');" title="Ver Detalhes"><img src="' + contextPath + '/images/ico_detalhes.png" alt="Detalhes" border="0" /></a>    ';
 			var acao = '<input name="checkDividasSelecionadas" value="'+ value.cell.idCobranca +'" type="checkbox" class="negociacaoCheck" onclick="negociacaoDividaController.verificarCheck()"></input> ';
 			value.cell.detalhes = detalhes;
 			value.cell.acao = acao;
@@ -102,8 +109,8 @@ var negociacaoDividaController = $.extend(true, {
 	},
 	
 	
-	popup_detalhe : function() {
-		negociacaoDividaController.pesquisarDetalhes();
+	popup_detalhe : function(idCobranca) {
+		negociacaoDividaController.pesquisarDetalhes(idCobranca);
 		$(".negociacaoDetalheGrid").flexReload();
 		$("#dialog-detalhe").dialog({
 			resizable: false,

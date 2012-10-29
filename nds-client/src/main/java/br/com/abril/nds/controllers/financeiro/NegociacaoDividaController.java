@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -20,6 +21,7 @@ import br.com.abril.nds.client.util.PDFUtil;
 import br.com.abril.nds.client.vo.CalculaParcelasVO;
 import br.com.abril.nds.client.vo.NegociacaoDividaDetalheVO;
 import br.com.abril.nds.client.vo.NegociacaoDividaVO;
+import br.com.abril.nds.dto.LancamentoNaoExpedidoDTO;
 import br.com.abril.nds.dto.NegociacaoDividaDTO;
 import br.com.abril.nds.dto.NegociacaoDividaPaginacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroCalculaParcelas;
@@ -37,14 +39,17 @@ import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
 import br.com.abril.nds.model.financeiro.ParcelaNegociacao;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.serialization.custom.DefaultFlexiGridJson;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.BancoService;
 import br.com.abril.nds.service.CobrancaService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.service.NegociacaoDividaService;
+import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
@@ -146,24 +151,46 @@ public class NegociacaoDividaController {
 	
 	
 	@Path("/pesquisarDetalhes.json")
-	public void pesquisarDetalhes(FiltroConsultaNegociacaoDivida filtro, String sortname, String sortorder, int rp, int page) {
-		// TODO
-		this.session.setAttribute(FILTRO_NEGOCIACAO_DIVIDA, filtro);
+	public void pesquisarDetalhes(Long idCobranca) {
 		
-		List<NegociacaoDividaDTO> list = negociacaoDividaService.obterDividasPorCota(filtro);
-		List<NegociacaoDividaDetalheVO> listDividas = new ArrayList<NegociacaoDividaDetalheVO>();
-		/*for (Cobranca c : list){
-			NegociacaoDividaDetalheVO ndd = new NegociacaoDividaDetalheVO();
-			ndd.setData(DateUtil.formatarDataPTBR(c.getDivida().getData()));
-			if(c.getStatusCobranca() == StatusCobranca.PAGO)
-				ndd.setTipo("Pagamento");
-			else
-				ndd.setTipo("Dívida");
-			ndd.setValor("-"+ CurrencyUtil.formatarValor(c.getDivida().getValor()));
-			ndd.setObservacao("TESTE");
-			listDividas.add(ndd);
-		}*/
-		result.use(FlexiGridJson.class).from(listDividas).total(listDividas.size()).page(page).serialize();
+		List<NegociacaoDividaDetalheVO> listDividas = negociacaoDividaService.obterDetalhesCobranca(idCobranca);//new ArrayList<NegociacaoDividaDetalheVO>();
+		
+		Double valorTotal = 0.0;
+		
+		for(NegociacaoDividaDetalheVO vo : listDividas) {
+			valorTotal += vo.getValorDouble();
+		}
+		
+		Object[] retorno = new Object[2];
+		retorno[0] = getTableDetalhes(listDividas);
+		retorno[1] = valorTotal;
+		
+		result.use(Results.json()).withoutRoot().from(retorno).recursive().serialize();	
+		
+	}
+	
+	private TableModel<CellModelKeyValue<NegociacaoDividaDetalheVO>> getTableDetalhes(List<NegociacaoDividaDetalheVO> negociacoes) {
+		
+		
+		TableModel<CellModelKeyValue<NegociacaoDividaDetalheVO>> grid = null;
+		
+		List<CellModelKeyValue<NegociacaoDividaDetalheVO>> listaCelula = new LinkedList<CellModelKeyValue<NegociacaoDividaDetalheVO>>();
+		
+		int i=0;
+				
+		for(NegociacaoDividaDetalheVO negociacao : negociacoes) {	
+						
+			listaCelula.add(new CellModelKeyValue<NegociacaoDividaDetalheVO>(i,negociacao));			
+			i++;
+		}
+							
+		grid = new TableModel<CellModelKeyValue<NegociacaoDividaDetalheVO>>();
+		
+		grid.setPage(1);
+		grid.setTotal(negociacoes.size());
+		grid.setRows(listaCelula);
+		
+		return grid;
 	}
 	
 	@Path("/calcularParcelas.json")
