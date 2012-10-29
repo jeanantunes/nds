@@ -53,10 +53,7 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 	
 	@Autowired
 	private ParametroSistemaService parametroSistemaService;
-
-	@Autowired
-	private FornecedorRepository fornecedorRepository;
-
+	
 	@Override
 	public void preProcess(AtomicReference<Object> tempVar) {
 		tempVar.set(new ArrayList<NotaFiscalEntradaFornecedor>());
@@ -90,12 +87,17 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 			notafiscalEntrada = new NotaFiscalEntradaFornecedor();
 			
 			notafiscalEntrada = populaNotaFiscalEntrada(notafiscalEntrada, input);						
-			notafiscalEntrada = populaItemNotaFiscalEntrada(notafiscalEntrada, input, message);			
-			notafiscalEntrada = calcularValores(notafiscalEntrada);
-			
+			notafiscalEntrada = populaItemNotaFiscalEntrada(notafiscalEntrada, input, message);		
 			if (null != notafiscalEntrada) {
+				notafiscalEntrada = calcularValores(notafiscalEntrada);				
 				this.getSession().persist(notafiscalEntrada);
-			} 
+			} else {
+				// Validar código do distribuidor:
+				this.ndsiLoggerFactory.getLogger().logWarning(message,
+						EventoExecucaoEnum.RELACIONAMENTO, 
+						String.format("Nota Fiscal Com Produtos nao encontrados no sistema:", notafiscalEntrada.getNumero()));
+				return;		
+			}
 			
 		}else{
 			// Validar código do distribuidor:
@@ -121,14 +123,9 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 		notafiscalEntrada.setValorLiquido(BigDecimal.ZERO);
 		notafiscalEntrada.setValorDesconto(BigDecimal.ZERO);
 		
-		List<Fornecedor> listafornecedores = fornecedorRepository.obterFornecedoresPorIdPessoa(Long.valueOf( parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.ID_PJ_IMPORTACAO_NRE).getValor()));
+		PessoaJuridica emitente = this.obterPessoaJuridica( parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.CNPJ_PJ_IMPORTACAO_NRE).getValor() );
 		
-		Fornecedor fornecedor = null;
-		if (listafornecedores != null && !listafornecedores.isEmpty()) {
-			fornecedor = listafornecedores.get(0);
-		}
-		
-		notafiscalEntrada.setFornecedor(fornecedor);		
+		notafiscalEntrada.setEmitente(emitente);		
 		notafiscalEntrada.setTipoNotaFiscal(obterTipoNotaFiscal(GrupoNotaFiscal.RECEBIMENTO_MERCADORIAS));		
 		notafiscalEntrada.setEmitida(true);	
 				
@@ -209,7 +206,7 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 	 * @return
 	 */
 	private BigDecimal calcularValorBruto(NotaFiscalEntradaFornecedor nfEntrada) {
-		
+						
 		BigDecimal valorBrutoTotal = nfEntrada.getValorBruto();
 
 		for(ItemNotaFiscalEntrada item : nfEntrada.getItens()) {
@@ -281,8 +278,7 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 	private NotaFiscalEntradaFornecedor obterNotaFiscal(Long numero, String serie) {
 		StringBuilder hql = new StringBuilder();
 
-		PessoaJuridica emitente = new PessoaJuridica();
-		emitente.setId(	Long.valueOf( parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.ID_PJ_IMPORTACAO_NRE).getValor() ) );
+		PessoaJuridica emitente = this.obterPessoaJuridica( parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.CNPJ_PJ_IMPORTACAO_NRE).getValor() );		
 		
 		hql.append("from NotaFiscalEntradaFornecedor nf ")
 			.append("where nf.numero = :numero ")

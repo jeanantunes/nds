@@ -47,6 +47,8 @@ public class ContasAPagarServiceImpl implements ContasAPagarService {
 	@Override
 	public ContasAPagarGridPrincipalProdutoDTO pesquisarPorProduto(FiltroContasAPagarDTO filtro, String sortname, String sortorder, int rp, int page) {
 		
+		this.validarFiltro(filtro);
+		
 		PaginacaoVO paginacao = new PaginacaoVO();
 		paginacao.setSortColumn(sortname);
 		paginacao.setSortOrder(sortorder);

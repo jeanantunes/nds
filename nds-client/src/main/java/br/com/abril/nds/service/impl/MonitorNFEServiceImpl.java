@@ -158,6 +158,8 @@ public class MonitorNFEServiceImpl implements MonitorNFEService {
 	 */
 	private void carregarDanfeDadosPrincipais(DanfeDTO danfe, NotaFiscal notaFiscal) {
 		
+		if(notaFiscal.getInformacaoEletronica() == null) return;
+		
 		Identificacao identificacao 				= notaFiscal.getIdentificacao();
 		InformacaoEletronica informacaoEletronica 	= notaFiscal.getInformacaoEletronica();
 		InformacaoValoresTotais informacaoValoresTotais = notaFiscal.getInformacaoValoresTotais();
