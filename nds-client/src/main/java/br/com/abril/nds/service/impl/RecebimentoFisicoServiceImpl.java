@@ -518,10 +518,8 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 			
 			lancamento.getRecebimentos().add(itemRecebimentoFisico);
 			
-			/*ProdutoEdicao produtoEdicao = new ProdutoEdicao();
-			produtoEdicao.setId(recebimentoFisicoDTO.getIdProdutoEdicao());*/
-
-			ProdutoEdicao produtoEdicao = produtoEdicaoRepository.buscarPorId(recebimentoFisicoDTO.getIdProdutoEdicao());
+			ProdutoEdicao produtoEdicao = new ProdutoEdicao();
+			produtoEdicao.setId(recebimentoFisicoDTO.getIdProdutoEdicao());
 
 			lancamento.setProdutoEdicao(produtoEdicao);
 			

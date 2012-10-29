@@ -42,7 +42,7 @@ public abstract class Movimento extends Aprovacao {
 
 	@Temporal(TemporalType.DATE)
 	@Column(name = "DATA_CRIACAO", nullable = false)
-	private Date dataCriacao = new Date();
+	private Date dataCriacao;
 	
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "TIPO_MOVIMENTO_ID")
