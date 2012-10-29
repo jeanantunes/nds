@@ -42,6 +42,8 @@ import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Algoritmo;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Box;
+import br.com.abril.nds.model.cadastro.CaucaoLiquida;
+import br.com.abril.nds.model.cadastro.Cheque;
 import br.com.abril.nds.model.cadastro.ContratoCota;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.DescontoLogistica;
@@ -57,15 +59,20 @@ import br.com.abril.nds.model.cadastro.EnderecoEntregador;
 import br.com.abril.nds.model.cadastro.EnderecoFornecedor;
 import br.com.abril.nds.model.cadastro.Entregador;
 import br.com.abril.nds.model.cadastro.EstadoCivil;
+import br.com.abril.nds.model.cadastro.Fiador;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.FormaEmissao;
 import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.Garantia;
+import br.com.abril.nds.model.cadastro.GarantiaCotaOutros;
 import br.com.abril.nds.model.cadastro.GrupoCota;
 import br.com.abril.nds.model.cadastro.GrupoFornecedor;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.HistoricoSituacaoCota;
+import br.com.abril.nds.model.cadastro.Imovel;
 import br.com.abril.nds.model.cadastro.MaterialPromocional;
 import br.com.abril.nds.model.cadastro.MotivoAlteracaoSituacao;
+import br.com.abril.nds.model.cadastro.NotaPromissoria;
 import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
 import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
 import br.com.abril.nds.model.cadastro.ParametroContratoCota;
@@ -95,6 +102,7 @@ import br.com.abril.nds.model.cadastro.TelefoneEntregador;
 import br.com.abril.nds.model.cadastro.TelefoneFornecedor;
 import br.com.abril.nds.model.cadastro.TipoAtividade;
 import br.com.abril.nds.model.cadastro.TipoBox;
+import br.com.abril.nds.model.cadastro.TipoCobrancaCotaGarantia;
 import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.cadastro.TipoEndereco;
 import br.com.abril.nds.model.cadastro.TipoEntrega;
@@ -112,6 +120,13 @@ import br.com.abril.nds.model.cadastro.desconto.DescontoDistribuidor;
 import br.com.abril.nds.model.cadastro.desconto.DescontoProduto;
 import br.com.abril.nds.model.cadastro.desconto.DescontoProdutoEdicao;
 import br.com.abril.nds.model.cadastro.desconto.TipoDesconto;
+import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaCaucaoLiquida;
+import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaChequeCaucao;
+import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaFiador;
+import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaImovel;
+import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaNotaPromissoria;
+import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaOutros;
+import br.com.abril.nds.model.cadastro.garantia.pagamento.PagamentoCaucaoLiquida;
 import br.com.abril.nds.model.cadastro.pdv.AreaInfluenciaPDV;
 import br.com.abril.nds.model.cadastro.pdv.EnderecoPDV;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
@@ -1127,7 +1142,8 @@ public class DataLoader {
 		gerarGrupos(session);
 		
 		criarCobrancasNegociacao(session);
-
+        
+		criarCotasGarantia(session);
 	}
 
 	
@@ -12086,5 +12102,323 @@ public class DataLoader {
         }
         return String.valueOf(geradorCodigoProduto.getAndIncrement());
     }
- 
+
+    private static void criarCotasGarantia(Session session){
+    	
+    	criarGarantiasCaucaoLiquida(session);
+    	criarGarantiasChequeCaucao(session);
+    	criarGarantiasImovel(session);
+    	criarGarantiasFiador(session);
+    	criarGarantiasNotaPromissoria(session);
+    	criarGarantiasOutros(session);
+    }
+    
+    private static void criarGarantiasCaucaoLiquida(Session session) {
+		
+		PagamentoCaucaoLiquida pagamentoCaucaoLiquida = new PagamentoCaucaoLiquida();
+		pagamentoCaucaoLiquida.setValor(BigDecimal.TEN);
+
+		session.save(pagamentoCaucaoLiquida);
+		
+		List<CaucaoLiquida> caucoes1 = new ArrayList<CaucaoLiquida>();
+		
+		for (int i = 0; i < 10; i ++) {
+
+			CaucaoLiquida caucaoLiquida = new CaucaoLiquida();
+			caucaoLiquida.setAtualizacao(Calendar.getInstance().getTime());
+			caucaoLiquida.setValor(BigDecimal.TEN);
+			
+			session.save(caucaoLiquida);
+			
+			caucoes1.add(caucaoLiquida);
+		}
+		
+		List<CaucaoLiquida> caucoes2 = new ArrayList<CaucaoLiquida>();
+		
+		for (int i = 0; i < 10; i ++) {
+
+			CaucaoLiquida caucaoLiquida = new CaucaoLiquida();
+			caucaoLiquida.setAtualizacao(Calendar.getInstance().getTime());
+			caucaoLiquida.setValor(BigDecimal.TEN);
+			
+			session.save(caucaoLiquida);
+			
+			caucoes2.add(caucaoLiquida);
+		}
+
+		List<CaucaoLiquida> caucoes3 = new ArrayList<CaucaoLiquida>();
+		
+		for (int i = 0; i < 10; i ++) {
+
+			CaucaoLiquida caucaoLiquida = new CaucaoLiquida();
+			caucaoLiquida.setAtualizacao(Calendar.getInstance().getTime());
+			caucaoLiquida.setValor(BigDecimal.TEN);
+			
+			session.save(caucaoLiquida);
+			
+			caucoes3.add(caucaoLiquida);
+		}
+
+		List<CaucaoLiquida> caucoes4 = new ArrayList<CaucaoLiquida>();
+		
+		Date data =Fixture.criarData(01, 10, 2010);
+		
+		for (int i = 0; i < 10; i ++) {
+
+			CaucaoLiquida caucaoLiquida = new CaucaoLiquida();
+			caucaoLiquida.setAtualizacao(DateUtil.adicionarDias(data,i));
+			caucaoLiquida.setValor(BigDecimal.TEN);
+			
+			session.save(caucaoLiquida);
+			
+			caucoes4.add(caucaoLiquida);
+		}
+		
+		CotaGarantiaCaucaoLiquida garantiaCaucaoLiquida1 = new CotaGarantiaCaucaoLiquida();
+		CotaGarantiaCaucaoLiquida garantiaCaucaoLiquida2 = new CotaGarantiaCaucaoLiquida();
+		
+		garantiaCaucaoLiquida1.setCaucaoLiquidas(caucoes1);
+		garantiaCaucaoLiquida1.setCota(cotaMurilo);
+		garantiaCaucaoLiquida1.setData(data);
+		garantiaCaucaoLiquida1.setFormaPagamento(pagamentoCaucaoLiquida);
+		garantiaCaucaoLiquida1.setTipoCobranca(TipoCobrancaCotaGarantia.BOLETO);
+		
+		garantiaCaucaoLiquida2.setCaucaoLiquidas(caucoes2);
+		garantiaCaucaoLiquida2.setCota(cotaMariana);
+		garantiaCaucaoLiquida2.setData(data);
+		garantiaCaucaoLiquida2.setFormaPagamento(pagamentoCaucaoLiquida);
+		garantiaCaucaoLiquida2.setTipoCobranca(TipoCobrancaCotaGarantia.BOLETO);
+		
+		session.save(garantiaCaucaoLiquida1);
+		session.save(garantiaCaucaoLiquida2);
+	}
+	
+	private static void criarGarantiasChequeCaucao(Session session) {
+		
+		Date data =Fixture.criarData(01, 10, 2010);
+		
+		Cheque cheque1 = new Cheque();
+		cheque1.setAgencia(123L);
+		cheque1.setConta(123L);
+		cheque1.setCorrentista("Fulano");
+		cheque1.setDvAgencia("1");
+		cheque1.setDvConta("1");
+		cheque1.setEmissao(data);
+		cheque1.setNomeBanco("Banco do Brasil");
+		cheque1.setNumeroBanco("555");
+		cheque1.setNumeroCheque("888");
+		cheque1.setValidade(data);
+		cheque1.setValor(BigDecimal.TEN);
+		
+		Cheque cheque2 = new Cheque();
+		cheque2.setAgencia(234L);
+		cheque2.setConta(234L);
+		cheque2.setCorrentista("Ciclano");
+		cheque2.setDvAgencia("1");
+		cheque2.setDvConta("1");
+		cheque2.setEmissao(data);
+		cheque2.setNomeBanco("Banco Itau");
+		cheque2.setNumeroBanco("555");
+		cheque2.setNumeroCheque("888");
+		cheque2.setValidade(data);
+		cheque2.setValor(new BigDecimal(15));
+
+		CotaGarantiaChequeCaucao garantiaChequeCaucao1 = new CotaGarantiaChequeCaucao();
+		CotaGarantiaChequeCaucao garantiaChequeCaucao2 = new CotaGarantiaChequeCaucao();
+
+		garantiaChequeCaucao1.setData(data);
+		garantiaChequeCaucao1.setCota(cotaManoel);
+		garantiaChequeCaucao1.setCheque(cheque1);
+		
+		garantiaChequeCaucao2.setData(data);
+		garantiaChequeCaucao2.setCota(cotaLuis);
+		garantiaChequeCaucao2.setCheque(cheque2);
+		
+		session.save(garantiaChequeCaucao1);
+		session.save(garantiaChequeCaucao2);
+	}
+	
+	private static void criarGarantiasImovel(Session session) {
+		
+		Date data =Fixture.criarData(01, 10, 2010);
+		
+		List<Imovel> imoveis1 = new ArrayList<Imovel>();
+		
+		for (int i = 0; i < 10; i++) {
+			
+			Imovel imovel = new Imovel();
+			imovel.setEndereco("Endereco");
+			imovel.setNumeroRegistro("123" + i);
+			imovel.setObservacao("observação");
+			imovel.setProprietario("proprietário");
+			imovel.setValor(BigDecimal.TEN);
+			
+			imoveis1.add(imovel);
+		}
+		
+		List<Imovel> imoveis2 = new ArrayList<Imovel>();
+		
+		for (int i = 0; i < 10; i++) {
+			
+			Imovel imovel = new Imovel();
+			imovel.setEndereco("Endereco");
+			imovel.setNumeroRegistro("123" + i);
+			imovel.setObservacao("observação");
+			imovel.setProprietario("proprietário");
+			imovel.setValor(BigDecimal.TEN);
+			
+			imoveis2.add(imovel);
+		}
+		
+		CotaGarantiaImovel garantiaImovel1 = new CotaGarantiaImovel();
+		CotaGarantiaImovel garantiaImovel2 = new CotaGarantiaImovel();
+		
+		garantiaImovel1.setCota(cotaOrlando);
+		garantiaImovel1.setData(data);
+		garantiaImovel1.setImoveis(imoveis1);
+		
+		garantiaImovel2.setCota(cotaMaria);
+		garantiaImovel2.setData(data);
+		garantiaImovel2.setImoveis(imoveis2);
+		
+		session.save(garantiaImovel1);
+		session.save(garantiaImovel2);
+	}
+	
+	private static void criarGarantiasFiador(Session session) {
+		
+		Date data =Fixture.criarData(01, 10, 2010);
+		
+		Fiador fiador1 = new Fiador();
+		Fiador fiador2 = new Fiador();
+		
+		fiador1.setInicioAtividade(data);
+		fiador1.setPessoa(joao);
+		
+		fiador2.setInicioAtividade(data);
+		fiador2.setPessoa(manoel);
+		
+		session.save(fiador1);
+		session.save(fiador2);
+		
+		List<Garantia> garantias1 = new ArrayList<Garantia>();
+		
+		for (int i = 0; i < 10; i++) {
+			
+			Garantia garantia = new Garantia();
+			garantia.setDescricao("garantia " + i);
+			garantia.setFiador(fiador1);
+			garantia.setValor(BigDecimal.TEN);
+			
+			session.save(garantia);
+			
+			garantias1.add(garantia);
+		}
+
+		List<Garantia> garantias2 = new ArrayList<Garantia>();
+		
+		for (int i = 0; i < 10; i++) {
+			
+			Garantia garantia = new Garantia();
+			garantia.setDescricao("garantia " + i);
+			garantia.setFiador(fiador2);
+			garantia.setValor(BigDecimal.TEN);
+			
+			session.save(garantia);
+			
+			garantias2.add(garantia);
+		}
+
+		CotaGarantiaFiador garantiaFiador1 = new CotaGarantiaFiador();
+		CotaGarantiaFiador garantiaFiador2 = new CotaGarantiaFiador();
+		
+		garantiaFiador1.setCota(cotaJoao);
+		garantiaFiador1.setData(data);
+		garantiaFiador1.setFiador(fiador1);
+		
+		garantiaFiador2.setCota(cotaJose);
+		garantiaFiador2.setData(data);
+		garantiaFiador2.setFiador(fiador2);
+		
+		session.save(garantiaFiador1);
+		session.save(garantiaFiador2);
+	}
+	
+	private static void criarGarantiasNotaPromissoria(Session session) {
+		
+		Date data =Fixture.criarData(01, 10, 2010);
+		
+		NotaPromissoria notaPromissoria1 = new NotaPromissoria();
+		
+		notaPromissoria1.setValor(new BigDecimal(20));
+		notaPromissoria1.setValorExtenso("Vinte");
+		notaPromissoria1.setVencimento(data);
+		
+		NotaPromissoria notaPromissoria2 = new NotaPromissoria();
+		
+		notaPromissoria2.setValor(new BigDecimal(30));
+		notaPromissoria2.setValorExtenso("Trinta");
+		notaPromissoria2.setVencimento(data);
+		
+		session.save(notaPromissoria1);
+		session.save(notaPromissoria2);
+		
+		CotaGarantiaNotaPromissoria garantiaNotaPromissoria1 = new CotaGarantiaNotaPromissoria();
+		CotaGarantiaNotaPromissoria garantiaNotaPromissoria2 = new CotaGarantiaNotaPromissoria();
+		
+		garantiaNotaPromissoria1.setCota(cotaJoana);
+		garantiaNotaPromissoria1.setData(data);
+		garantiaNotaPromissoria1.setNotaPromissoria(notaPromissoria1);
+		
+		garantiaNotaPromissoria2.setCota(cotaGuilherme);
+		garantiaNotaPromissoria2.setData(data);
+		garantiaNotaPromissoria2.setNotaPromissoria(notaPromissoria2);
+		
+		session.save(garantiaNotaPromissoria1);
+		session.save(garantiaNotaPromissoria2);
+	}
+
+	private static void criarGarantiasOutros(Session session) {
+		
+		Date data =Fixture.criarData(01, 10, 2010);
+	
+		List<GarantiaCotaOutros> outros1 = new ArrayList<GarantiaCotaOutros>();
+		
+		for (int i = 0; i < 10; i++) {
+			
+			GarantiaCotaOutros outro = new GarantiaCotaOutros();
+			outro.setDescricao("descrição");
+			outro.setValidade(data);
+			outro.setValor(BigDecimal.TEN);
+			
+			outros1.add(outro);
+		}
+		 
+		List<GarantiaCotaOutros> outros2 = new ArrayList<GarantiaCotaOutros>();
+		
+		for (int i = 0; i < 10; i++) {
+			
+			GarantiaCotaOutros outro = new GarantiaCotaOutros();
+			outro.setDescricao("descrição");
+			outro.setValidade(data);
+			outro.setValor(BigDecimal.TEN);
+			
+			outros2.add(outro);
+		}
+		
+		CotaGarantiaOutros garantiaOutros1 = new CotaGarantiaOutros();
+		CotaGarantiaOutros garantiaOutros2 = new CotaGarantiaOutros();
+		
+		garantiaOutros1.setCota(cotaAcme);
+		garantiaOutros1.setData(data);
+		garantiaOutros1.setOutros(outros1);
+		
+		garantiaOutros2.setCota(cotaManoelCunha);
+		garantiaOutros2.setData(data);
+		garantiaOutros2.setOutros(outros2);
+		
+		session.save(garantiaOutros1);
+		session.save(garantiaOutros2);
+	}
+  
 }

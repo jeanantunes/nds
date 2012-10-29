@@ -30,9 +30,5 @@ public class FiltroRelatorioGarantiasDTO extends FiltroDTO implements Serializab
 	public void setDataBaseCalculo(Date dataBaseCalculo) {
 		this.dataBaseCalculo = dataBaseCalculo;
 	}
-	
-	
-	
-	
 
 }
