@@ -13,8 +13,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import br.com.abril.nds.dto.GarantiaCadastradaDTO;
 import br.com.abril.nds.dto.RelatorioDetalheGarantiaDTO;
+import br.com.abril.nds.dto.RelatorioGarantiasDTO;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Box;
@@ -32,6 +32,7 @@ import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.model.cadastro.StatusGarantia;
 import br.com.abril.nds.model.cadastro.TipoCobrancaCotaGarantia;
 import br.com.abril.nds.model.cadastro.TipoFornecedor;
 import br.com.abril.nds.model.cadastro.TipoGarantia;
@@ -241,7 +242,7 @@ public class CotaGarantiaRepositoryImplTest extends AbstractRepositoryImplTest {
 	@Test
 	public void obterGarantiasCadastradas() {
 
-		List<GarantiaCadastradaDTO> garantias = this.cotaGarantiaRepository.obterGarantiasCadastradas();
+		List<RelatorioGarantiasDTO> garantias = this.cotaGarantiaRepository.obterGarantiasCadastradas(StatusGarantia.VENCIDA,data);
 		
 		Assert.assertNotNull(garantias);
 		
@@ -250,33 +251,41 @@ public class CotaGarantiaRepositoryImplTest extends AbstractRepositoryImplTest {
 		
 		Assert.assertEquals(expectedListSize, actualListSize);
 		
-		for (GarantiaCadastradaDTO garantia : garantias) {
+		for (RelatorioGarantiasDTO garantia : garantias) {
 			
 			switch (garantia.getTipoGarantia()) {
 			
 			case CAUCAO_LIQUIDA:
-				Assert.assertEquals(0, garantia.getValorTotal().compareTo(new BigDecimal(200)));
+				Assert.assertEquals(0, garantia.getVlrTotal().compareTo(new BigDecimal(200)));
 				break;
 			case CHEQUE_CAUCAO:
-				Assert.assertEquals(0, garantia.getValorTotal().compareTo(new BigDecimal(25)));
+				Assert.assertEquals(0, garantia.getVlrTotal().compareTo(new BigDecimal(25)));
 				break;
 			case FIADOR:
-				Assert.assertEquals(0, garantia.getValorTotal().compareTo(new BigDecimal(200)));
+				Assert.assertEquals(0, garantia.getVlrTotal().compareTo(new BigDecimal(200)));
 				break;
 			case IMOVEL:
-				Assert.assertEquals(0, garantia.getValorTotal().compareTo(new BigDecimal(200)));
+				Assert.assertEquals(0, garantia.getVlrTotal().compareTo(new BigDecimal(200)));
 				break;
 			case NOTA_PROMISSORIA:
-				Assert.assertEquals(0, garantia.getValorTotal().compareTo(new BigDecimal(50)));
+				Assert.assertEquals(0, garantia.getVlrTotal().compareTo(new BigDecimal(50)));
 				break;
 			case OUTROS:
-				Assert.assertEquals(0, garantia.getValorTotal().compareTo(new BigDecimal(200)));
+				Assert.assertEquals(0, garantia.getVlrTotal().compareTo(new BigDecimal(200)));
 				break;
 			default:
 				Assert.fail();
 				break;
 			}
 		}
+	}
+	
+	@Test
+	public void obterCountGarantiasCadastradas() {
+
+		Long count = this.cotaGarantiaRepository.obterCountGarantiasCadastradas(StatusGarantia.VENCIDA, data);
+		
+		Assert.assertNotNull(count);
 	}
 	
 	private void criarGarantiasCaucaoLiquida() {
