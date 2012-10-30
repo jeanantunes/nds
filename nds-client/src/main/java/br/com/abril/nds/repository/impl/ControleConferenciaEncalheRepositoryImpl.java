@@ -41,18 +41,6 @@ public class ControleConferenciaEncalheRepositoryImpl extends AbstractRepository
 		
 	}
 
-	@Override
-	public StatusOperacao obterStatusConferenciaDataOperacao() {
-		
-		StringBuilder hql = new StringBuilder("select cce.status ");
-		hql.append(" from ControleConferenciaEncalhe cce, Distribuidor d ")
-		   .append(" where cce.data = d.dataOperacao");
-		
-		Query query = this.getSession().createQuery(hql.toString());
-		query.setMaxResults(1);
-		
-		return (StatusOperacao) query.uniqueResult();
-	}
 
 
 
