@@ -104,16 +104,28 @@ var relatorioGarantiasController = $.extend(true, {
 	 * *************************
 	 * */
 	
-	inserirTotalDetalheGrid : function(data){
+	inserirTotalDetalheGrid : function(result){
 			
-			var total = '0,00';
-			$.each(data.rows, function(index, value) {
-				total = sumPrice(total,value.cell.vlrGarantia);
-			});
-			
-			$("#totalGarantia",this.workspace).html(total);	
-	    
-		return data;
+		var total = 0;
+		var garantia = 0;
+		  
+        $.each(result.rows, function(index, value) {
+      	  
+      	  garantia = removeMascaraPriceFormat(value.cell.vlrGarantia);
+      	  total += intValue(garantia);
+      	  
+        });
+
+        $("#valorTotalGarantiaslHidden", relatorioGarantiasController.workspace).val(total);
+        
+        $("#valorTotalGarantiaslHidden", relatorioGarantiasController.workspace).priceFormat({
+  	      allowNegative: true,
+  	      centsSeparator: ',',
+  	      thousandsSeparator: '.'
+        });  
+
+        $("#totalGarantia").html( $("#valorTotalGarantiaslHidden", relatorioGarantiasController.workspace).val()); 
+
 	},
 	
 
@@ -167,24 +179,10 @@ var relatorioGarantiasController = $.extend(true, {
                        }  else{
                               $(".garantiaDetalheGrid").flexAddData(result);
                               $("#dialog-detalhe-garantia th[abbr='faturamento'] >div").html("Faturamento " + result.rows[0].cell.baseCalculo);
+                               
+                              relatorioGarantiasController.inserirTotalDetalheGrid(result);
                               
-                              var total = removeMascaraPriceFormat($("#valorTotaGarantiaslHidden", this.workspace).val());
-                    		
-                              $.each(result.rows, function(index, value) {
-                            	  garantia = removeMascaraPriceFormat(value.cell.vlrGarantia);
-                            	  total += intValue(garantia);
-                            	  });
-
-                            	  total.priceFormat({
-                            	  allowNegative: true,
-                            	  centsSeparator: ',',
-                            	  thousandsSeparator: '.'
-                            	  });  
-
-                            	  $('#totalGarantia', this.workspace).html(total); 
-
-                              
-                            relatorioGarantiasController.showGridGarantiaEspecifica();
+                              relatorioGarantiasController.showGridGarantiaEspecifica();
                        }
                 },
                 null,
@@ -360,3 +358,4 @@ var relatorioGarantiasController = $.extend(true, {
 	
 }, BaseController);
 
+//@ sourceURL=relatorioGarantias.js
