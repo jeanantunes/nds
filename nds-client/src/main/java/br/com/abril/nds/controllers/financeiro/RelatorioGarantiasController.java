@@ -74,7 +74,16 @@ public class RelatorioGarantiasController {
 	@Rules(Permissao.ROLE_FINANCEIRO_RELATORIO_DE_GARANTIAS)
 	public void index() {
 		
-		listaTiposGarantia = distribuidorService.getComboTiposGarantia();
+		List<ItemDTO<TipoGarantia,String>> listaTiposGarantiaAux = distribuidorService.getComboTiposGarantia();
+		
+		for (ItemDTO<TipoGarantia,String> item : listaTiposGarantiaAux){
+			
+			if (!item.getKey().equals(TipoGarantia.ANTECEDENCIA_VALIDADE)){
+				
+				listaTiposGarantia.add(item);
+			}
+		}
+				
 		listaTiposStatusGarantia = distribuidorService.getComboTiposStatusGarantia();
 		
 		result.include("listaTiposGarantia" , listaTiposGarantia);
