@@ -146,24 +146,11 @@ public class NegociacaoDividaController {
 	
 	
 	@Path("/pesquisarDetalhes.json")
-	public void pesquisarDetalhes(FiltroConsultaNegociacaoDivida filtro, String sortname, String sortorder, int rp, int page) {
-		// TODO
-		this.session.setAttribute(FILTRO_NEGOCIACAO_DIVIDA, filtro);
+	public void pesquisarDetalhes(Long idCobranca) {
 		
-		List<NegociacaoDividaDTO> list = negociacaoDividaService.obterDividasPorCota(filtro);
-		List<NegociacaoDividaDetalheVO> listDividas = new ArrayList<NegociacaoDividaDetalheVO>();
-		/*for (Cobranca c : list){
-			NegociacaoDividaDetalheVO ndd = new NegociacaoDividaDetalheVO();
-			ndd.setData(DateUtil.formatarDataPTBR(c.getDivida().getData()));
-			if(c.getStatusCobranca() == StatusCobranca.PAGO)
-				ndd.setTipo("Pagamento");
-			else
-				ndd.setTipo("Dívida");
-			ndd.setValor("-"+ CurrencyUtil.formatarValor(c.getDivida().getValor()));
-			ndd.setObservacao("TESTE");
-			listDividas.add(ndd);
-		}*/
-		result.use(FlexiGridJson.class).from(listDividas).total(listDividas.size()).page(page).serialize();
+		List<NegociacaoDividaDetalheVO> listDividas = negociacaoDividaService.obterDetalhesCobranca(idCobranca);//new ArrayList<NegociacaoDividaDetalheVO>();
+		System.out.println(listDividas.size());
+		result.use(FlexiGridJson.class).from(listDividas).total(listDividas.size()).page(1).serialize();
 	}
 	
 	@Path("/calcularParcelas.json")
