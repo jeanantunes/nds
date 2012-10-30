@@ -65,7 +65,7 @@ import br.com.abril.nds.util.Intervalo;
 @Repository
 public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 		implements CotaRepository {
-    
+	
     private static final Logger LOG = LoggerFactory.getLogger(CotaRepositoryImpl.class);
 
 	@Value("#{queries.suspensaoCota}")
@@ -73,6 +73,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 
 	@Value("#{queries.countSuspensaoCota}")
 	protected String queryCountSuspensaoCota;
+	
 
 	/**
 	 * Construtor.
@@ -779,8 +780,17 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 
 		StringBuilder hql = new StringBuilder();
 
+		int colunaRazaoSocNomePessoa = 3;
+		int colunaNumeroCpfCnpj 	 = 4;
+		int colunaContato  = 5;
+		int colunaTelefone = 6;
+		
 		if (isCount) {
-			hql.append(" select count ( cota.numeroCota ) ");
+			
+			hql.append(" select count(distinct cota.numeroCota) ");
+			
+			
+			
 		} else {
 
 			hql.append(
@@ -887,6 +897,24 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 			hql.append(" ( upper(endereco.cidade) like upper(:municipio) )");
 		}
 
+		
+		if (!isCount) {
+
+			hql.append("group by ");
+			hql.append("cota.id, ");
+			hql.append("cota.numeroCota, ");
+			hql.append(colunaRazaoSocNomePessoa + ", ");
+			hql.append(colunaNumeroCpfCnpj 		+ ", ");
+			hql.append(colunaContato 			+ ", ");
+			hql.append(colunaTelefone 			+ ", ");
+			hql.append("pessoa.email, ");
+			hql.append("cota.situacaoCadastro, ");
+			hql.append("box.nome  ");
+			
+		} 
+		
+
+		
 		return hql.toString();
 	}
 
@@ -979,6 +1007,11 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 		for(String key : param.keySet()){
 			query.setParameter(key, param.get(key));
 		}
+		
+		if (filtro.getEdicaoProduto() != null && !filtro.getEdicaoProduto().isEmpty()) {
+			query.setParameterList("edicaoProduto", (filtro.getEdicaoProduto()));
+		}
+		
 		return (ResultadoCurvaABCCotaDTO) query.list().get(0);
 	}
 
@@ -996,7 +1029,8 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 		.append("   estoqueProdutoCota.produtoEdicao.numeroEdicao , ")
 		.append("   (sum(movimentos.qtde)) , ")
 		.append("   (sum(estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida)), ")
-		.append("   ( sum((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * (estoqueProdutoCota.produtoEdicao.precoVenda - ( "+this.obterSQLDesconto()+" ))) ) ) ");
+		.append("   ( sum((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * (estoqueProdutoCota.produtoEdicao.precoVenda - ( "+this.obterSQLDesconto()+" ))) ) , ")
+		.append("     estoqueProdutoCota.cota.id , estoqueProdutoCota.produtoEdicao.produto.id ) ");
 
 		hql.append(getWhereQueryObterCurvaABCCota(filtro));
 		hql.append(getGroupQueryObterCurvaABCCota(filtro));
@@ -1007,6 +1041,10 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 
 		for(String key : param.keySet()){
 			query.setParameter(key, param.get(key));
+		}
+		
+		if (filtro.getEdicaoProduto() != null && !filtro.getEdicaoProduto().isEmpty()) {
+			query.setParameterList("edicaoProduto", (filtro.getEdicaoProduto()));
 		}
 
 		return complementarCurvaABCCota((List<RegistroCurvaABCCotaDTO>) query.list());
@@ -1038,7 +1076,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 		}
 
 		if (filtro.getNomeProduto() != null && !filtro.getNomeProduto().isEmpty()) {
-			hql.append(" AND estoqueProdutoCota.produtoEdicao.produto.nome = :nomeProduto ");
+			hql.append(" AND upper(estoqueProdutoCota.produtoEdicao.produto.nome) like upper ( :nomeProduto ) ");
 		}
 		
 		if (filtro.getCodigoFornecedor() != null && !filtro.getCodigoFornecedor().isEmpty() && !filtro.getCodigoFornecedor().equals("0")) {
@@ -1046,19 +1084,19 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 		}
 
 		if (filtro.getEdicaoProduto() != null && !filtro.getEdicaoProduto().isEmpty()) {
-			hql.append("AND estoqueProdutoCota.produtoEdicao.numeroEdicao = :edicaoProduto ");
+			hql.append("AND estoqueProdutoCota.produtoEdicao.numeroEdicao in( :edicaoProduto ) ");
 		}
 
 		if (filtro.getCodigoEditor() != null && !filtro.getCodigoEditor().isEmpty() && !filtro.getCodigoEditor().equals("0")) {
 			hql.append("AND estoqueProdutoCota.produtoEdicao.produto.editor.codigo = :codigoEditor ");
 		}
 
-		if (filtro.getCodigoCota() != null && !filtro.getCodigoCota().isEmpty()) {
+		if (filtro.getCodigoCota() != null ) {
 			hql.append("AND estoqueProdutoCota.cota.numeroCota = :codigoCota ");
 		}
 
 		if (filtro.getNomeCota() != null && !filtro.getNomeCota().isEmpty()) {
-			hql.append("AND pessoa.nome = :nomeCota ");
+			hql.append("AND upper(pessoa.nome) like upper( :nomeCota) or upper(pessoa.razaoSocial) like upper(:nomeCota) ");
 		}
 
 		if (filtro.getMunicipio() != null && !filtro.getMunicipio().isEmpty() && !filtro.getMunicipio().equalsIgnoreCase("Todos")) {
@@ -1099,12 +1137,12 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 
 		param.put("grupoMovimentoEstoque", GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
 		
-		if (filtro.getCodigoCota() != null && !filtro.getCodigoCota().isEmpty()) {
-			param.put("codigoCota", Integer.parseInt(filtro.getCodigoCota().toString()));
+		if (filtro.getCodigoCota() != null) {
+			param.put("codigoCota", filtro.getCodigoCota());
 		}
 
 		if (filtro.getNomeCota() != null && !filtro.getNomeCota().isEmpty()) {
-			param.put("nomeCota", filtro.getNomeCota());
+			param.put("nomeCota", filtro.getNomeCota() +"%");
 		}
 		
 		if (filtro.getCodigoFornecedor() != null && !filtro.getCodigoFornecedor().isEmpty() && !filtro.getCodigoFornecedor().equals("0")) {
@@ -1116,11 +1154,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 		}
 
 		if (filtro.getNomeProduto() != null && !filtro.getNomeProduto().isEmpty()) {
-			param.put("nomeProduto", filtro.getNomeProduto());
-		}
-
-		if (filtro.getEdicaoProduto() != null && !filtro.getEdicaoProduto().isEmpty()) {
-			param.put("edicaoProduto", filtro.getEdicaoProduto());
+			param.put("nomeProduto", filtro.getNomeProduto()+"%");
 		}
 
 		if (filtro.getCodigoEditor() != null && !filtro.getCodigoEditor().isEmpty() && !filtro.getCodigoFornecedor().equals("0")) {
@@ -1147,21 +1181,19 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 		// Soma todos os valores de participacao
 		for (RegistroCurvaABCCotaDTO registro : lista) {
 			if (registro.getFaturamento()!=null) {
-				participacaoTotal.add(registro.getFaturamento());
+				participacaoTotal = participacaoTotal.add(registro.getFaturamento());
 			} 
-			vendaTotal.add(registro.getVendaExemplares());
+			vendaTotal = vendaTotal.add(registro.getVendaExemplares());
 		}
 
-		BigDecimal participacaoRegistro = new BigDecimal(0);
-		BigDecimal participacaoAcumulada = new BigDecimal(0);
-		BigDecimal porcentagemVendaRegistro = new BigDecimal(0);
+		BigDecimal participacaoRegistro =BigDecimal.ZERO;
+		BigDecimal participacaoAcumulada = BigDecimal.ZERO;
+		BigDecimal porcentagemVendaRegistro = BigDecimal.ZERO;
 		
-		RegistroCurvaABCCotaDTO registro = null;
-
+	
 		// Verifica o percentual dos valores em relação ao total de participacao
-		for (int i=0; i<lista.size(); i++) {
+		for (RegistroCurvaABCCotaDTO registro : lista) {
 
-			registro = (RegistroCurvaABCCotaDTO) lista.get(i);
 			if (registro.getFaturamento() != null) {
 				// Partipacao do registro em relacao a participacao total no periodo
 				if ( participacaoTotal.doubleValue() != 0 ) {
@@ -1170,19 +1202,17 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 			} else {
 				participacaoRegistro = BigDecimal.ZERO;
 			}
-				registro.setParticipacao(participacaoRegistro);
+			
+			registro.setParticipacao(participacaoRegistro);
 			
 			if (vendaTotal.doubleValue() != 0) {
 				porcentagemVendaRegistro = new BigDecimal(registro.getVendaExemplares().doubleValue()*100/vendaTotal.doubleValue());
 			}
-			registro.setPorcentagemVenda(porcentagemVendaRegistro);
 			
-			participacaoAcumulada.add(participacaoRegistro);
+			participacaoAcumulada = participacaoAcumulada.add(participacaoRegistro);
+			
+			registro.setPorcentagemVenda(porcentagemVendaRegistro);
 			registro.setParticipacaoAcumulada(participacaoAcumulada);
-
-			// Substitui o registro pelo registro atualizado (com participacao total)
-			lista.set(i, registro);
-
 		}
 
 		return lista;
@@ -1241,6 +1271,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 		
 		Criteria criteria = super.getSession().createCriteria(Cota.class);
 		criteria.createAlias("box", "box");
+		criteria.createAlias("pdvs", "pdvs");
 		criteria.setProjection(Projections.id());
 		if (intervaloCota != null && intervaloCota.getDe() != null) {
 			
@@ -1259,8 +1290,9 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 		if(situacao != null){
 			criteria.add(Restrictions.eq("situacaoCadastro", situacao));
 		}
-		if(idRoteiro != null || idRoteiro != null){
-			criteria.createAlias("pdvs.rotas", "rota");
+		if(idRoteiro != null || idRota != null){
+			criteria.createAlias("pdvs.rotas", "rotaPdv");
+		    criteria.createAlias("rotaPdv.rota", "rota");
 			criteria.createAlias("rota.roteiro", "roteiro");
 		}		
 		
@@ -1271,7 +1303,6 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 		
 		if (idRota != null){
 			
-			criteria.createAlias("roteiro.rotas", "rota");
 			criteria.add(Restrictions.eq("rota.id", idRota));
 		}
 		

@@ -146,7 +146,7 @@ public class DebitoCreditoCotaServiceImpl implements DebitoCreditoCotaService {
 	@Transactional(readOnly=true)
 	public int obterQuantidadeCotasPorBoxRoteiroRota(Long idBox,
 			Long idRoteiro, Long idRota) {
-		return this.boxRepository.obterQuantidadeCotasPorBoxRoteiroRota(idBox, idRoteiro, idRota);
+		return this.boxRepository.obterQuantidadeCotasPorBoxRoteiroRota(idBox, idRoteiro, idRota).intValue();
 	}
 
 

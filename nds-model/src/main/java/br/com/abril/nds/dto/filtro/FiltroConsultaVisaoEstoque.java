@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import br.com.abril.nds.dto.VisaoEstoqueTransferenciaDTO;
+import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 
 public class FiltroConsultaVisaoEstoque implements Serializable {
 
@@ -14,6 +15,9 @@ public class FiltroConsultaVisaoEstoque implements Serializable {
 	private Long idFornecedor;
 	private String tipoEstoque;
 	private String tipoEstoqueSelecionado;
+	
+	private GrupoMovimentoEstoque grupoMovimentoEntrada;
+	private GrupoMovimentoEstoque grupoMovimentoSaida;
 	
 	List<VisaoEstoqueTransferenciaDTO> listaTransferencia;
 
@@ -49,7 +53,30 @@ public class FiltroConsultaVisaoEstoque implements Serializable {
 		this.listaTransferencia = listaTransferencia;
 	}
 	
-	
+	/**
+	 * @return the grupoMovimentoEntrada
+	 */
+	public GrupoMovimentoEstoque getGrupoMovimentoEntrada() {
+		return grupoMovimentoEntrada;
+	}
+	/**
+	 * @param grupoMovimentoEntrada the grupoMovimentoEntrada to set
+	 */
+	public void setGrupoMovimentoEntrada(GrupoMovimentoEstoque grupoMovimentoEntrada) {
+		this.grupoMovimentoEntrada = grupoMovimentoEntrada;
+	}
+	/**
+	 * @return the grupoMovimentoSaida
+	 */
+	public GrupoMovimentoEstoque getGrupoMovimentoSaida() {
+		return grupoMovimentoSaida;
+	}
+	/**
+	 * @param grupoMovimentoSaida the grupoMovimentoSaida to set
+	 */
+	public void setGrupoMovimentoSaida(GrupoMovimentoEstoque grupoMovimentoSaida) {
+		this.grupoMovimentoSaida = grupoMovimentoSaida;
+	}
 	@Override
 	public int hashCode() {
 		final int prime = 31;

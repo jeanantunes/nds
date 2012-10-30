@@ -423,6 +423,10 @@ var transportadorController = $.extend(true, {
 			});			
 			$("#inputQuinzenalDiaInicio", transportadorController.workspace).numeric();
 			$("#inputCobrancaMensal", transportadorController.workspace).numeric();
+			
+			$.mask.definitions['#']='[\-\.0-9]';
+			
+			$("#inscEstadual", transportadorController.workspace).mask("?##################",{placeholder:" "});
 	},
 	
 	popup_novo_transportador : function() {
@@ -698,7 +702,7 @@ var transportadorController = $.extend(true, {
 	
 	editarVeiculo : function(idVeiculo){
 		
-		$.postJSON(contextPath + "/cadastro/transportador/editarVeiculo", "referencia=" + idVeiculo, 
+		$.postJSON(contextPath + "/cadastro/transportador/editarVeiculo", {referencia:idVeiculo}, 
 			function(result){
 				
 				var idVeiculo = result.id;
@@ -856,7 +860,7 @@ var transportadorController = $.extend(true, {
 	
 	editarMotorista : function(idMotorista){
 		
-		$.postJSON(contextPath + "/cadastro/transportador/editarMotorista", "referencia=" + idMotorista, 
+		$.postJSON(contextPath + "/cadastro/transportador/editarMotorista", {referencia:idMotorista}, 
 			function(result){
 				
 				var idMotorista = result.id;
@@ -922,7 +926,7 @@ var transportadorController = $.extend(true, {
 	},
 	
 	editarTransportadora : function(idTransp){
-		$.postJSON(contextPath + "/cadastro/transportador/editarTransportador", "referencia=" + idTransp, 
+		$.postJSON(contextPath + "/cadastro/transportador/editarTransportador", {referencia:idTransp}, 
 			function(result) {
 				
 				if (result){
@@ -1087,7 +1091,7 @@ var transportadorController = $.extend(true, {
 		
 		if (cnpj != "__.___.___/____-__" && cnpj != ""){
 			
-			$.postJSON(contextPath + "/cadastro/transportador/buscarPessoaCNPJ", "cnpj=" + cnpj, 
+			$.postJSON(contextPath + "/cadastro/transportador/buscarPessoaCNPJ", {cnpj:cnpj}, 
 				function(result) {
 					
 					if (result[0]){
@@ -1282,10 +1286,5 @@ var transportadorController = $.extend(true, {
 
 }, BaseController);
 
-$(function() {
-	transportadorController.init();
-	//ENDERECO_TRANSPORTADOR.init(transportadorController.workspace);
-	//TRANSPORTADOR.init(transportadorController.workspace);
-	
-	
-} );
+
+//@ sourceURL=transportador.js

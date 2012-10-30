@@ -110,7 +110,7 @@ public class RomaneioController {
 		List<ItemDTO<Long, String>> listaItens = new ArrayList<ItemDTO<Long,String>>();
 		for (ProdutoEdicao produto : produtos){
 			
-			listaItens.add(new ItemDTO<Long, String>(produto.getId(), produto.getNomeComercial()));
+			listaItens.add(new ItemDTO<Long, String>(produto.getId(), produto.getProduto().getNome() + " - " + produto.getNumeroEdicao()));
 		}
 		
 		return listaItens;
@@ -136,9 +136,9 @@ public class RomaneioController {
 		return tableModel;
 	}
 	
+
 	@Post
 	public void pesquisarQuantidadeCotasEntrega(){
-		
 		FiltroRomaneioDTO filtro = (FiltroRomaneioDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE_ROMANEIOS);
 		
 		this.result.use(Results.json()).from(this.romaneioService.buscarTotalDeCotas(filtro)).serialize();

@@ -56,6 +56,18 @@ var descontoProdutoController = $.extend(true,{
 	               },
 				   null,
 				   true);
+
+	    verificadorProgressoGravacaoDescontoGeral = setInterval(function () {
+			$.getJSON(contextPath +"/financeiro/tipoDescontoCota/verificaProgressoGravacaoDescontoProduto",
+					   null,				   
+					   function(result) {
+					   		if (!result.ativo) {
+					   			exibirMensagem(result.validacao.tipoMensagem, result.validacao.listaMensagens, "");
+					   			clearInterval(verificadorProgressoGravacaoDescontoGeral);
+					   		}
+				   	   });
+	    }, 20000);
+		
 	},
 
 	obterParametrosNovoDescontoProduto: function() {
@@ -71,21 +83,21 @@ var descontoProdutoController = $.extend(true,{
 			quantidadeEdicoes 	= $("#quantidadeEdicoes",this.workspace).val();
 		}
 		
-		var descontoProduto = $("#descontoProduto",this.workspace).val();
+		var descontoProduto = $("#descontoProduto",this.workspace).justPercent("floatValue");
 		var descontoPredominante = $("#descontoPredominante",this.workspace).attr("checked") ? true : false;
 		var hasCotaEspecifica = document.getElementById("radioCotasEspecificas",this.workspace).checked;
 		var isTodasCotas = document.getElementById("radioTodasCotas",this.workspace).checked;
 		
 		var data = new Array();
 		
-		data.push({name:'desconto.indProdutoEdicao' , value: indProdutoEdicao});
-		data.push({name:'desconto.codigoProduto' , value: codigoProduto});
-		data.push({name:'desconto.edicaoProduto' , value: edicaoProduto});
-		data.push({name:'desconto.descontoProduto' , value: descontoProduto});
-		data.push({name:'desconto.quantidadeEdicoes' , value: quantidadeEdicoes});
-		data.push({name:'desconto.descontoPredominante' , value: descontoPredominante});
-		data.push({name:'desconto.hasCotaEspecifica' , value: hasCotaEspecifica});
-		data.push({name:'desconto.isTodasCotas' , value: isTodasCotas});
+		data.push({name:'descontoDTO.indProdutoEdicao' , value: indProdutoEdicao});
+		data.push({name:'descontoDTO.codigoProduto' , value: codigoProduto});
+		data.push({name:'descontoDTO.edicaoProduto' , value: edicaoProduto});
+		data.push({name:'descontoDTO.descontoProduto' , value: descontoProduto});
+		data.push({name:'descontoDTO.quantidadeEdicoes' , value: quantidadeEdicoes});
+		data.push({name:'descontoDTO.descontoPredominante' , value: descontoPredominante});
+		data.push({name:'descontoDTO.hasCotaEspecifica' , value: hasCotaEspecifica});
+		data.push({name:'descontoDTO.isTodasCotas' , value: isTodasCotas});
 		
 		$("input[id^=cotaInput]",this.workspace).each(function(index, value) {
 			if ($(this).val()) {
@@ -182,7 +194,7 @@ var descontoProdutoController = $.extend(true,{
 		
 		descontoProdutoController.pesquisaCota = pesquisaCota;
 		
-		$("#descontoProduto",this.workspace).mask("99.99");
+		$("#descontoProduto",this.workspace).justPercent();
 		
 		$(".tiposDescProdutoGrid",this.workspace).flexigrid({
 			preProcess: tipoDescontoController.executarPreProcessamento,
@@ -231,7 +243,7 @@ var descontoProdutoController = $.extend(true,{
 				align : 'center'
 			}],
 			sortname : "codigoProduto",
-			sortorder : "asc",
+			sortorder : "desc",
 			usepager : true,
 			useRp : true,
 			rp : 15,
@@ -262,4 +274,4 @@ var descontoProdutoController = $.extend(true,{
 	},
 	
 }, BaseController);
-	
+//@ sourceURL=cadastroTipoDescontoProduto.js

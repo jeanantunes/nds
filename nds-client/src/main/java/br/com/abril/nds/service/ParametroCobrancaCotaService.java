@@ -1,6 +1,7 @@
 package br.com.abril.nds.service;
 
 import java.io.File;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -11,6 +12,7 @@ import br.com.abril.nds.dto.FornecedorDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.ParametroCobrancaCotaDTO;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
+import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 
 /**
@@ -225,4 +227,8 @@ public interface ParametroCobrancaCotaService {
      *         histórico de titularidade da cota
      */
 	FormaCobrancaDTO obterFormaPagamentoHistoricoTitularidade(Long idFormaPagto);
+	
+	void alterarParametro(ParametroCobrancaCota parametroCobrancaCota);
+	
+	List<BigDecimal> comboValoresMinimos();
 }

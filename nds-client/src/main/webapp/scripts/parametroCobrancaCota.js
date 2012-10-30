@@ -404,16 +404,16 @@ var parametroCobrancaCotaController = $.extend(true, {
 		var tipoCota = $("#tipoCota", this.workspace).val();
 		
 		$.postJSON(contextPath + "/cota/parametroCobrancaCota/postarParametroCobranca",
-				   "parametroCobranca.idParametroCobranca="+idParametroCobranca+ 
-				   "&parametroCobranca.idCota="+idCota+ 
-				   "&parametroCobranca.numCota="+numCota+    
-				   "&parametroCobranca.fatorVencimento="+fatorVencimento+    
-				   "&parametroCobranca.sugereSuspensao="+sugereSuspensao+    
-				   "&parametroCobranca.contrato="+contrato+          
-				   "&parametroCobranca.valorMinimo="+valorMinimo+    
-				   "&parametroCobranca.qtdDividasAberto="+qtdDividasAberto+   
-				   "&parametroCobranca.vrDividasAberto="+vrDividasAberto+
-				   "&parametroCobranca.tipoCota="+tipoCota,
+				{"parametroCobranca.idParametroCobranca":idParametroCobranca,
+			"parametroCobranca.idCota":idCota,
+			"parametroCobranca.numCota":numCota,   
+			"parametroCobranca.fatorVencimento":fatorVencimento,   
+			"parametroCobranca.sugereSuspensao":sugereSuspensao,   
+			"parametroCobranca.contrato":contrato,         
+			"parametroCobranca.valorMinimo":valorMinimo,   
+			"parametroCobranca.qtdDividasAberto":qtdDividasAberto,  
+			"parametroCobranca.vrDividasAberto":vrDividasAberto,
+			"parametroCobranca.tipoCota":tipoCota},
 				   function(){
 			           return true;
 				   },
@@ -676,9 +676,9 @@ var parametroCobrancaCotaController = $.extend(true, {
 	},
 
 	obterFornecedoresMarcados : function() {
-		var fornecedorMarcado = "";
-		$("input[name='checkGroupFornecedores']:checked", this.workspace).each(function(i) {
-			fornecedorMarcado += 'listaIdsFornecedores=' + $(this).val() + '&';
+		var fornecedorMarcado = new Array();
+		$("input[name='checkGroupFornecedores']:checked", this.workspace).each(function(i) {			
+			fornecedorMarcado.push($(this).val());
 		});
 		return fornecedorMarcado;
 	},
@@ -760,32 +760,34 @@ var parametroCobrancaCotaController = $.extend(true, {
 			$("#PDom", this.workspace).val(1);
 		}
 		var domingo  = $("#PDom", this.workspace).val();
-		 	
+		 var params =  {"formaCobranca.idCota":idCota,
+				 "formaCobranca.idParametroCobranca":idParametroCobranca,
+				 "formaCobranca.tipoCobranca":tipoCobranca, 
+				 "formaCobranca.idBanco":idBanco,           
+				 "formaCobranca.recebeEmail":recebeEmail,   
+				 "formaCobranca.numBanco":numBanco,       
+				 "formaCobranca.nomeBanco":nomeBanco,         
+				 "formaCobranca.agencia":agencia,           
+				 "formaCobranca.agenciaDigito":agenciaDigito,    
+				 "formaCobranca.conta":conta,             
+				 "formaCobranca.contaDigito":contaDigito,       
+				 "formaCobranca.domingo":domingo,   
+				 "formaCobranca.segunda":segunda,           
+				 "formaCobranca.terca":terca,           
+				 "formaCobranca.quarta":quarta,           
+				 "formaCobranca.quinta":quinta,           
+				 "formaCobranca.sexta":sexta,           
+				 "formaCobranca.sabado":sabado,
+				 "formaCobranca.diaDoMes":diaDoMes,
+				 "formaCobranca.primeiroDiaQuinzenal":primeiroDiaQuinzenal,
+				 "formaCobranca.segundoDiaQuinzenal":segundoDiaQuinzenal,
+				 "tipoFormaCobranca":tipoFormaCobranca};
+		 params = serializeArrayToPost('listaIdsFornecedores',parametroCobrancaCotaController.obterFornecedoresMarcados(), params );
+		 
+		 
 		if (novo) {
 			$.postJSON(contextPath + "/cota/parametroCobrancaCota/postarFormaCobranca",
-					   "formaCobranca.idCota="+idCota+ 
-					   "&formaCobranca.idParametroCobranca="+idParametroCobranca+ 
-					   "&formaCobranca.tipoCobranca="+tipoCobranca+  
-					   "&formaCobranca.idBanco="+idBanco+            
-					   "&formaCobranca.recebeEmail="+recebeEmail+    
-					   "&formaCobranca.numBanco="+numBanco+        
-					   "&formaCobranca.nomeBanco="+nomeBanco+          
-					   "&formaCobranca.agencia="+agencia+            
-					   "&formaCobranca.agenciaDigito="+agenciaDigito+     
-					   "&formaCobranca.conta="+conta+              
-					   "&formaCobranca.contaDigito="+contaDigito+        
-					   "&formaCobranca.domingo="+domingo+    
-					   "&formaCobranca.segunda="+segunda+            
-					   "&formaCobranca.terca="+terca+            
-					   "&formaCobranca.quarta="+quarta+            
-					   "&formaCobranca.quinta="+quinta+            
-					   "&formaCobranca.sexta="+sexta+            
-					   "&formaCobranca.sabado="+sabado+
-					   "&formaCobranca.diaDoMes="+diaDoMes+
-					   "&formaCobranca.primeiroDiaQuinzenal="+primeiroDiaQuinzenal+
-					   "&formaCobranca.segundoDiaQuinzenal="+segundoDiaQuinzenal+
-					   "&tipoFormaCobranca="+tipoFormaCobranca+
-					   "&"+parametroCobrancaCotaController.obterFornecedoresMarcados(),
+					  params,
 					   function(mensagens) {
 				           $("#dialog-unificacao", this.workspace).dialog("close");
 				           if (incluirSemFechar){
@@ -808,31 +810,8 @@ var parametroCobrancaCotaController = $.extend(true, {
 					   telaMensagem);
 		}
 		else{
-			$.postJSON(contextPath + "/cota/parametroCobrancaCota/postarFormaCobranca",
-					   "formaCobranca.idFormaCobranca="+idFormaCobranca+ 
-					   "&formaCobranca.idCota="+idCota+ 
-					   "&formaCobranca.idParametroCobranca="+idParametroCobranca+ 
-					   "&formaCobranca.tipoCobranca="+tipoCobranca+  
-					   "&formaCobranca.idBanco="+idBanco+            
-					   "&formaCobranca.recebeEmail="+recebeEmail+    
-					   "&formaCobranca.numBanco="+numBanco+        
-					   "&formaCobranca.nomeBanco="+nomeBanco+          
-					   "&formaCobranca.agencia="+agencia+            
-					   "&formaCobranca.agenciaDigito="+agenciaDigito+     
-					   "&formaCobranca.conta="+conta+              
-					   "&formaCobranca.contaDigito="+contaDigito+        
-					   "&formaCobranca.domingo="+domingo+    
-					   "&formaCobranca.segunda="+segunda+            
-					   "&formaCobranca.terca="+terca+            
-					   "&formaCobranca.quarta="+quarta+            
-					   "&formaCobranca.quinta="+quinta+            
-					   "&formaCobranca.sexta="+sexta+            
-					   "&formaCobranca.sabado="+sabado+
-					   "&formaCobranca.diaDoMes="+diaDoMes+
-					   "&formaCobranca.primeiroDiaQuinzenal="+primeiroDiaQuinzenal+
-					   "&formaCobranca.segundoDiaQuinzenal="+segundoDiaQuinzenal+
-					   "&tipoFormaCobranca="+tipoFormaCobranca+
-					   "&"+parametroCobrancaCotaController.obterFornecedoresMarcados(),
+			params["formaCobranca.idFormaCobranca"] = idFormaCobranca;
+			$.postJSON(contextPath + "/cota/parametroCobrancaCota/postarFormaCobranca",params,
 					   function(mensagens) {
 				           $("#dialog-unificacao", this.workspace).dialog("close");
 				           if (incluirSemFechar){

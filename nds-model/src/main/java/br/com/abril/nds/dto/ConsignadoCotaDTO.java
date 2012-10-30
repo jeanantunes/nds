@@ -2,6 +2,7 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 
 import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.util.export.Export;
@@ -28,13 +29,13 @@ public class ConsignadoCotaDTO implements Serializable{
 	private BigDecimal precoComDesconto;
 	
 	@Export(label="Reparte Sugerido")
-	private BigDecimal reparteSugerido;
+	private BigInteger reparteSugerido;
 	
 	@Export(label="Reparte Final")
-	private BigDecimal reparteFinal;
+	private BigInteger reparteFinal;
 	
 	@Export(label="Diferenca")
-	private BigDecimal diferenca;
+	private BigInteger diferenca;
 	
 	@Export(label="Motivo")
 	private TipoDiferenca motivo;
@@ -87,27 +88,27 @@ public class ConsignadoCotaDTO implements Serializable{
 		this.precoComDesconto = precoComDesconto;
 	}
 
-	public BigDecimal getReparteSugerido() {
+	public BigInteger getReparteSugerido() {
 		return reparteSugerido;
 	}
 
-	public void setReparteSugerido(BigDecimal reparteSugerido) {
+	public void setReparteSugerido(BigInteger reparteSugerido) {
 		this.reparteSugerido = reparteSugerido;
 	}
 
-	public BigDecimal getReparteFinal() {
+	public BigInteger getReparteFinal() {
 		return reparteFinal;
 	}
 
-	public void setReparteFinal(BigDecimal reparteFinal) {
+	public void setReparteFinal(BigInteger reparteFinal) {
 		this.reparteFinal = reparteFinal;
 	}
 
-	public BigDecimal getDiferenca() {
+	public BigInteger getDiferenca() {
 		return diferenca;
 	}
 
-	public void setDiferenca(BigDecimal diferenca) {
+	public void setDiferenca(BigInteger diferenca) {
 		this.diferenca = diferenca;
 	}
 

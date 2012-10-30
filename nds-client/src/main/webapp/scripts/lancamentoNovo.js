@@ -700,12 +700,8 @@ var lancamentoNovoController = $.extend(true, {
 
 	obterDadosProduto : function(idCodigoProduto, idEdicaoProduto) {
 
-		codigoProduto = $(idCodigoProduto).val();
 
-		edicaoProduto = $(idEdicaoProduto).val();
-
-		var data = "codigoProduto=" + codigoProduto
-				 + "&numeroEdicao=" + edicaoProduto;
+		var data = {codigoProduto:$(idCodigoProduto).val(),numeroEdicao:$(idEdicaoProduto).val()};
 		
 		$.postJSON(
 			contextPath + "/produto/obterProdutoEdicao", 
@@ -734,7 +730,7 @@ var lancamentoNovoController = $.extend(true, {
 			return;
 		}
 
-		var data = "idProdutoEdicao=" + produtoEdicao.id;
+		var data = {idProdutoEdicao:produtoEdicao.id};
 		
 		$.postJSON(
 			contextPath + "/produto/obterEstoque", 

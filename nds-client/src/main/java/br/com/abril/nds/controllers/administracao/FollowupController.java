@@ -15,11 +15,13 @@ import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.dto.ConsultaFollowupCadastroDTO;
 import br.com.abril.nds.dto.ConsultaFollowupCadastroParcialDTO;
 import br.com.abril.nds.dto.ConsultaFollowupChamadaoDTO;
+import br.com.abril.nds.dto.ConsultaFollowupNegociacaoDTO;
 import br.com.abril.nds.dto.ConsultaFollowupPendenciaNFeDTO;
 import br.com.abril.nds.dto.ConsultaFollowupStatusCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroFollowupCadastroDTO;
 import br.com.abril.nds.dto.filtro.FiltroFollowupCadastroParcialDTO;
 import br.com.abril.nds.dto.filtro.FiltroFollowupChamadaoDTO;
+import br.com.abril.nds.dto.filtro.FiltroFollowupNegociacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroFollowupPendenciaNFeDTO;
 import br.com.abril.nds.dto.filtro.FiltroFollowupStatusCotaDTO;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -34,12 +36,16 @@ import br.com.abril.nds.service.FollowupNegociacaoService;
 import br.com.abril.nds.service.FollowupPendenciaNFeService;
 import br.com.abril.nds.service.FollowupStatusCotaService;
 import br.com.abril.nds.util.CellModelKeyValue;
+import br.com.abril.nds.util.CurrencyUtil;
+import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
+import br.com.abril.nds.util.Util;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.util.export.NDSFileHeader;
 import br.com.abril.nds.vo.PaginacaoVO;
+import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
@@ -93,6 +99,8 @@ public class FollowupController {
 	private static final String FILTRO_FOLLOWUP_CADASTRO_SESSION_ATTRIBUTE = "filtroFollowupCadastro";
 	private static final String FILTRO_FOLLOWUP_CADASTRO_PARCIAL_SESSION_ATTRIBUTE = "filtroFollowupCadastroParcial";
 	private static final String FILTRO_FOLLOWUP_STATUS_COTA_SESSION_ATTRIBUTE = "filtroFollowupStatusCota";
+	private static final String FILTRO_FOLLOWUP_NEGOCIACAO_SESSION_ATTRIBUTE = "filtroFollowupNegociacao";
+	
 	//private static final String QTD_REGISTROS_FOLLOWUP_CONSIGNADOS_SESSION_ATTRIBUTE = "qtdRegistrosFollowupConsignados";
 
 	private BigDecimal valorConsignadoSuspensaoCotas;
@@ -143,18 +151,77 @@ public class FollowupController {
 	@Post
 	@Path("/pesquisaDadosNegociacao")
 	public void pesquisaDadosNegociacao( String sortorder, String sortname, int page, int rp ) {
-		/**
-		 * EMS 179 = SEM DEFINICAO em 2012-06-18.
-		 * 
-		FiltroFollowupNegociacaoDTO filtroNegociacao = 
-    		new FiltroFollowupNegociacaoDTO(Calendar.getInstance().getTime());
+				
+		FiltroFollowupNegociacaoDTO filtroNegociacao = new FiltroFollowupNegociacaoDTO(new Date());
 		
-		TableModel<CellModelKeyValue<ConsultaFollowupNegociacaoDTO>> tableModel = efetuarConsultaDadosNegociacao(filtroNegociacao);
-		 * 
-		 */
-		throw new ValidacaoException(TipoMensagem.WARNING, "EMS 179 = SEM DEFINICAO em 2012-06-18.");
+		filtroNegociacao.setPaginacao(new PaginacaoVO(page, rp, sortorder, sortname));
+		
+		filtroNegociacao.setOrdenacaoColuna(Util.getEnumByStringValue(FiltroFollowupNegociacaoDTO.OrdenacaoColuna.values(),sortname));
+		
+		tratarFiltroNegociacao(filtroNegociacao);
+		
+		TableModel<CellModelKeyValue<ConsultaFollowupNegociacaoDTO>>  negociacoes = efetuarConsultaDadosNegociacao(filtroNegociacao);
+		
+		result.use(Results.json()).withoutRoot().from(negociacoes).recursive().serialize();
+	}
+	
+	private void tratarFiltroNegociacao(FiltroFollowupNegociacaoDTO filtroNegociacao) {
+		
+		FiltroFollowupNegociacaoDTO filtroSession = (FiltroFollowupNegociacaoDTO) session.getAttribute(FILTRO_FOLLOWUP_NEGOCIACAO_SESSION_ATTRIBUTE);
+		
+		if (filtroSession != null && !filtroSession.equals(filtroNegociacao)) {
+			
+			filtroNegociacao.getPaginacao().setPaginaAtual(1);
+		}
+		session.setAttribute(FILTRO_FOLLOWUP_NEGOCIACAO_SESSION_ATTRIBUTE, filtroNegociacao);
 	}
 
+	private TableModel<CellModelKeyValue<ConsultaFollowupNegociacaoDTO>> efetuarConsultaDadosNegociacao(
+			FiltroFollowupNegociacaoDTO filtroNegociacao) {
+		
+		Long totalRegistros = this.followupnegociacaoService.obterQuantidadeNegociacaoFollowup(filtroNegociacao);
+		
+		if(totalRegistros == 0){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Negociação: Não foram encontrados resultados para Follow Up.");
+		}
+
+		List<ConsultaFollowupNegociacaoDTO> listacadastral = this.followupnegociacaoService.obterNegociacoes(filtroNegociacao);
+		
+		this.formatarCamposNegociacao(listacadastral);
+		
+		TableModel<CellModelKeyValue<ConsultaFollowupNegociacaoDTO>> tableModel = new TableModel<CellModelKeyValue<ConsultaFollowupNegociacaoDTO>>();
+		
+		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listacadastral));
+		
+		tableModel.setPage((filtroNegociacao.getPaginacao()== null)?1:filtroNegociacao.getPaginacao().getPaginaAtual());
+		
+		tableModel.setTotal(totalRegistros.intValue());
+		
+		return tableModel;
+	}
+	
+	private void formatarCamposNegociacao(List<ConsultaFollowupNegociacaoDTO> lista){
+		
+		if(lista == null || lista.isEmpty()){
+			return;
+		}
+		
+		for(ConsultaFollowupNegociacaoDTO dto : lista ){
+			dto.setDescricaoFormaPagamento( (dto.getTipoCobranca() == null)? "" : dto.getTipoCobranca().getDescricao());
+			dto.setDescricaoParcelamento(dto.getNumeroParcelaAtual() + " / " + dto.getQuantidadeParcelas());
+			dto.setValorParcelaFormatado(CurrencyUtil.formatarValor(dto.getValorParcela()));
+			dto.setDataVencimentoFormatada(DateUtil.formatarDataPTBR(dto.getDataVencimento()));
+		}
+	}
+	
+	public void cancelarNegociacao(Long idNegociacao) {
+		
+		followupnegociacaoService.cancelarBaixaNegociacao(idNegociacao);
+		
+		result.use(Results.json()).from(
+				new ValidacaoVO(TipoMensagem.SUCCESS, "Reversão de pagamento da negociação efetuada com sucesso!"),
+								"result").recursive().serialize();
+	}	
 	@Path("/pesquisaDadosStatusCota")
 	public void pesquisaDadosStatusCota( String sortorder, String sortname, int page, int rp ) {
 		FiltroFollowupStatusCotaDTO filtroStatusCota = new FiltroFollowupStatusCotaDTO();
@@ -366,6 +433,29 @@ public class FollowupController {
 		
 		if(tipoExportacao.equals("negociacao")){
 			
+			FiltroFollowupNegociacaoDTO filtroNegociacao = (FiltroFollowupNegociacaoDTO) session.getAttribute(FILTRO_FOLLOWUP_NEGOCIACAO_SESSION_ATTRIBUTE);
+			
+			if (filtroNegociacao != null) {
+				
+				if (filtroNegociacao.getPaginacao() != null) {
+					
+					filtroNegociacao.getPaginacao().setPaginaAtual(null);
+					filtroNegociacao.getPaginacao().setQtdResultadosPorPagina(null);
+					filtroNegociacao.setOrdenacaoColuna(null);
+				}
+			}
+			
+			List<ConsultaFollowupNegociacaoDTO> lista = this.followupnegociacaoService.obterNegociacoes(filtroNegociacao);
+			
+			this.formatarCamposNegociacao(lista);
+			
+			if(lista.isEmpty()) {
+				throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");
+			}
+			
+			FileExporter.to("FollowUp_dados_negociacao", fileType).inHTTPResponse(this.getNDSFileHeader(), filtroNegociacao, null, 
+					lista, ConsultaFollowupNegociacaoDTO.class, this.httpResponse);
+			
 		}else if(tipoExportacao.equals("chamadao")){
 			FiltroFollowupChamadaoDTO filtro = (FiltroFollowupChamadaoDTO) session.getAttribute(FILTRO_FOLLOWUP_CONSIGNADOS_SESSION_ATTRIBUTE);
 			List<ConsultaFollowupChamadaoDTO> listadechamadao = this.followupchamadaoService.obterConsignados(filtro);
@@ -434,7 +524,7 @@ public class FollowupController {
 			
 			FileExporter.to("FollowUp_dados_cadastrais", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, null, 
 					lista, ConsultaFollowupCadastroParcialDTO.class, this.httpResponse);
-		}
+		} 
 		
 		result.nothing();
 	}

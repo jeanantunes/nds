@@ -193,22 +193,22 @@ public class GeracaoNotaEnvioServiceImplTest extends AbstractRepositoryImplTest 
 		cromoReiLeao.addFornecedor(fornecedorDinap);
 		save(cromoReiLeao);
 
-		veja1 = Fixture.produtoEdicao("1", 1L, 10, 7,
-				new Long(100), BigDecimal.TEN, new BigDecimal(15), "ABCDEFGHIJKLMNOPQ", 1L, veja, null, false);
+		veja1 = Fixture.produtoEdicao(1L, 10, 7, new Long(100),
+				BigDecimal.TEN, new BigDecimal(15), "ABCDEFGHIJKLMNOPQ", veja, null, false);
 
 
-		quatroRoda2 = Fixture.produtoEdicao("1", 2L, 15, 30,
-				new Long(100), BigDecimal.TEN, BigDecimal.TEN, "ABCDEFGHIJKLMNOPA", 2L,
-				quatroRodas, null, false);
+		quatroRoda2 = Fixture.produtoEdicao(2L, 15, 30, new Long(100),
+				BigDecimal.TEN, BigDecimal.TEN, "ABCDEFGHIJKLMNOPA", quatroRodas,
+				null, false);
 
-		ProdutoEdicao infoExame3 = Fixture.produtoEdicao("1", 3L, 5, 30,
-				new Long(100), BigDecimal.TEN, new BigDecimal(12), "ABCDEFGHIJKLMNOPB", 3L, infoExame, null, false);
+		ProdutoEdicao infoExame3 = Fixture.produtoEdicao(3L, 5, 30, new Long(100),
+				BigDecimal.TEN, new BigDecimal(12), "ABCDEFGHIJKLMNOPB", infoExame, null, false);
 
-		ProdutoEdicao capricho1 = Fixture.produtoEdicao("1", 1L, 10, 15,
-				new Long(120), BigDecimal.TEN, BigDecimal.TEN, "ABCDEFGHIJKLMNOPC", 4L, capricho, null, false);
+		ProdutoEdicao capricho1 = Fixture.produtoEdicao(1L, 10, 15, new Long(120),
+				BigDecimal.TEN, BigDecimal.TEN, "ABCDEFGHIJKLMNOPC", capricho,  null, false);
 		
-		ProdutoEdicao cromoReiLeao1 = Fixture.produtoEdicao("1", 1L, 100, 60,
-				new Long(10), BigDecimal.ONE, new BigDecimal(1.5), "ABCDEFGHIJKLMNOP", 5L, cromoReiLeao, null, false);
+		ProdutoEdicao cromoReiLeao1 = Fixture.produtoEdicao(1L, 100, 60, new Long(10),
+				BigDecimal.ONE, new BigDecimal(1.5), "ABCDEFGHIJKLMNOP", cromoReiLeao, null, false);
 		
 		save(veja1, quatroRoda2, infoExame3, capricho1, cromoReiLeao1);
 		
@@ -222,7 +222,7 @@ public class GeracaoNotaEnvioServiceImplTest extends AbstractRepositoryImplTest 
 		save(tipoNotaFiscal);
 		
 		NotaFiscalEntradaFornecedor notaFiscal1Veja = Fixture
-				.notaFiscalEntradaFornecedor(cfop, fornecedorFC.getJuridica(), fornecedorFC, tipoNotaFiscal,
+				.notaFiscalEntradaFornecedor(cfop, fornecedorFC, tipoNotaFiscal,
 						usuario, BigDecimal.TEN, BigDecimal.ZERO, BigDecimal.TEN);
 		save(notaFiscal1Veja);
 
@@ -246,7 +246,7 @@ public class GeracaoNotaEnvioServiceImplTest extends AbstractRepositoryImplTest 
 		
 		
 		NotaFiscalEntradaFornecedor notaFiscal2Veja = Fixture
-				.notaFiscalEntradaFornecedor(cfop, fornecedorFC.getJuridica(), fornecedorFC, tipoNotaFiscal,
+				.notaFiscalEntradaFornecedor(cfop, fornecedorFC, tipoNotaFiscal,
 						usuario, BigDecimal.TEN, BigDecimal.ZERO, BigDecimal.TEN);
 		save(notaFiscal2Veja);
 
@@ -272,7 +272,7 @@ public class GeracaoNotaEnvioServiceImplTest extends AbstractRepositoryImplTest 
 		
 	
 		NotaFiscalEntradaFornecedor notaFiscal4Rodas= Fixture
-				.notaFiscalEntradaFornecedor(cfop, fornecedorFC.getJuridica(), fornecedorFC, tipoNotaFiscal,
+				.notaFiscalEntradaFornecedor(cfop, fornecedorFC, tipoNotaFiscal,
 						usuario, BigDecimal.TEN, BigDecimal.ZERO, BigDecimal.TEN);
 		save(notaFiscal4Rodas);
 
@@ -335,9 +335,9 @@ public class GeracaoNotaEnvioServiceImplTest extends AbstractRepositoryImplTest 
 		PDV pdvManoel = Fixture.criarPDVPrincipal("PDV MANOEL", cotaManoel);
 		save(pdvManoel);
 		
-		rota1 = Fixture.rota("ROTA01", "Rota 1", roteiro1);
+		rota1 = Fixture.rota("Rota 1", roteiro1);
 		rota1.setRoteiro(roteiro1);
-		rota1.addPDV(pdvManoel, 1);
+		rota1.addPDV(pdvManoel, 1, box1);
 		save(rota1);
 		
 		

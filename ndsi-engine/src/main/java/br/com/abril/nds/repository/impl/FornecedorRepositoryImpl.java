@@ -7,7 +7,6 @@ import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
 import org.hibernate.Query;
 import org.hibernate.criterion.MatchMode;
-import org.hibernate.criterion.Projection;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanResultTransformer;
@@ -16,8 +15,11 @@ import org.springframework.stereotype.Repository;
 import br.com.abril.nds.dto.FornecedorDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaFornecedorDTO;
+import br.com.abril.nds.model.cadastro.EnderecoCota;
+import br.com.abril.nds.model.cadastro.EnderecoFornecedor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoFornecedor;
+import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.repository.FornecedorRepository;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
@@ -332,6 +334,17 @@ public class FornecedorRepositoryImpl extends
 
 	@SuppressWarnings("unchecked")
 	@Override
+	public List<Fornecedor> obterFornecedoresPorIdPessoa(Long idPessoa) {
+
+		Criteria criteria = getSession().createCriteria(Fornecedor.class);
+		
+		criteria.add(Restrictions.eq("juridica.id", idPessoa));
+		
+		return criteria.list();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
 	public List<Fornecedor> obterFornecedorLikeNomeFantasia(String nomeFantasia) {
 		
 		try {
@@ -407,6 +420,18 @@ public class FornecedorRepositoryImpl extends
 		
 		criteria.setProjection(Projections.max("codigoInterface"));
 		return (Integer) criteria.uniqueResult();
+	}
+	
+	
+	@Override
+	public EnderecoFornecedor obterEnderecoPrincipal(long idFornecedor) {
+		Criteria criteria = getSession().createCriteria(EnderecoFornecedor.class);
+		criteria.add(Restrictions.eq("fornecedor.id", idFornecedor));
+
+		criteria.add(Restrictions.eq("principal", true));
+		criteria.setMaxResults(1);
+
+		return (EnderecoFornecedor) criteria.uniqueResult();
 	}
 	
 }

@@ -33,7 +33,6 @@ import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoFornecedor;
 import br.com.abril.nds.model.cadastro.TipoProduto;
-import br.com.abril.nds.model.cadastro.TipoRegistroCobranca;
 import br.com.abril.nds.model.estoque.ConferenciaEncalhe;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
@@ -161,9 +160,9 @@ public class ParciaisServiceImplTest extends AbstractRepositoryImplTest  {
 		Produto produtoVeja = Fixture.produtoVeja(tipoProdutoRevista);
 		save(produtoVeja);
 		
-		produtoEdicaoVeja1 = Fixture.produtoEdicao("1", 1L, 10, peb,
-				new Long(100), BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQ", 1L,
-				produtoVeja, null, false);
+		produtoEdicaoVeja1 = Fixture.produtoEdicao(1L, 10, peb, new Long(100),
+				BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQ", produtoVeja, 
+				null, false);
 		
 		produtoEdicaoVeja1.setParcial(true);
 		save(produtoEdicaoVeja1);
@@ -193,7 +192,7 @@ public class ParciaisServiceImplTest extends AbstractRepositoryImplTest  {
 		save(tipoNotaFiscal);
 		
 		NotaFiscalEntradaFornecedor notaFiscal1Veja = Fixture
-				.notaFiscalEntradaFornecedor(cfop, fornecedorFC.getJuridica(), fornecedorFC, tipoNotaFiscal,
+				.notaFiscalEntradaFornecedor(cfop, fornecedorFC, tipoNotaFiscal,
 						usuarioJoao, BigDecimal.TEN, BigDecimal.ZERO, BigDecimal.TEN);
 		save(notaFiscal1Veja);
 
@@ -216,7 +215,7 @@ public class ParciaisServiceImplTest extends AbstractRepositoryImplTest  {
 		
 		
 		NotaFiscalEntradaFornecedor notaFiscal2Veja = Fixture
-				.notaFiscalEntradaFornecedor(cfop, fornecedorFC.getJuridica(), fornecedorFC, tipoNotaFiscal,
+				.notaFiscalEntradaFornecedor(cfop, fornecedorFC, tipoNotaFiscal,
 						usuarioJoao, BigDecimal.TEN, BigDecimal.ZERO, BigDecimal.TEN);
 		save(notaFiscal2Veja);
 

@@ -10,8 +10,9 @@ import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.engine.data.Message;
 import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
 import br.com.abril.nds.integracao.model.canonic.EMS0119Input;
-import br.com.abril.nds.integracao.service.PeriodicidadeProdutoService;
+import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.Editor;
+import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoProduto;
@@ -25,8 +26,6 @@ public class EMS0119MessageProcessor extends AbstractRepository implements
 	@Autowired
 	private NdsiLoggerFactory ndsiLoggerFactory;
 
-	@Autowired
-	private PeriodicidadeProdutoService pps;
 
 	public EMS0119MessageProcessor() {
 
@@ -64,18 +63,15 @@ public class EMS0119MessageProcessor extends AbstractRepository implements
 			}
 			if (!produto
 					.getPeriodicidade()
-					.toString()
-					.equals(pps.getPeriodicidadeProdutoAsArchive(input
-							.getPeriodicidade()))) {
+					.equals( PeriodicidadeProduto.getByOrdem(input.getPeriodicidade()) )) {
 				produto.setPeriodicidade(
-						pps.getPeriodicidadeProdutoAsArchive(input
-								.getPeriodicidade()));
+						PeriodicidadeProduto.getByOrdem(input.getPeriodicidade())
+								);
 				ndsiLoggerFactory.getLogger().logInfo(
 						message,
 						EventoExecucaoEnum.INF_DADO_ALTERADO,
 						"Atualizacao da Periodicidade para: "
-								+ pps.getPeriodicidadeProdutoAsArchive(input
-										.getPeriodicidade()));
+								+ PeriodicidadeProduto.getByOrdem(input.getPeriodicidade()) );
 			}
 			if (produto.getTipoProduto().getId() != input
 					.getTipoDePublicacao()) {
@@ -128,8 +124,8 @@ public class EMS0119MessageProcessor extends AbstractRepository implements
 
 			}
 
-			if (produto.getDescricao() != input.getNomeComercial()) {
-				produto.setDescricao(input.getNomeComercial());
+			if (produto.getNomeComercial() != input.getNomeComercial()) {
+				produto.setNomeComercial(input.getNomeComercial());
 				ndsiLoggerFactory.getLogger().logInfo(
 						message,
 						EventoExecucaoEnum.INF_DADO_ALTERADO,
@@ -146,18 +142,22 @@ public class EMS0119MessageProcessor extends AbstractRepository implements
 								+ input.getPacotePadrao());
 
 			}
+			produto.setOrigem(Origem.INTERFACE);
+
 
 		} else {
 			
 			produto = new Produto();
 			produto.setCodigo(input.getCodigoDaPublicacao());
 			produto.setNome(input.getNomeDaPublicacao());
-			produto.setPeriodicidade(pps.getPeriodicidadeProdutoAsArchive(input.getPeriodicidade()));
+			produto.setPeriodicidade(PeriodicidadeProduto.values()[input.getPeriodicidade()]);
 			produto.setPacotePadrao(input.getPacotePadrao());
-			produto.setDescricao(input.getNomeComercial());
+			produto.setNomeComercial(input.getNomeComercial());
 			produto.setAtivo(input.getStatusDaPublicacao());			
 			//Default data
 			produto.setPeso(0l);
+			produto.setOrigem(Origem.INTERFACE);
+
 			
 			TipoProduto tp =  this.getTipoProduto(input.getTipoDePublicacao());
 									

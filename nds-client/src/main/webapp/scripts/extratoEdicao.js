@@ -43,7 +43,7 @@ var jsExtratoEdicao = $.extend(true, {
 	
 	pesquisarNomeFornecedor : function() {
 		
-		var data = "codigo=" + $("#codigo", jsExtratoEdicao.workspace).val();
+		var data = {codigo: $("#codigo", jsExtratoEdicao.workspace).val()};
 		
 		$.postJSON(contextPath + '/estoque/extratoEdicao/obterFornecedorDeProduto', data, 
 				function(result){
@@ -57,8 +57,8 @@ var jsExtratoEdicao = $.extend(true, {
 	
 	pesquisarPrecoCapa : function() {
 		
-		var data = "codigo=" + $("#codigo", jsExtratoEdicao.workspace).val() +
-		  		  "&edicao=" + $("#edicao", jsExtratoEdicao.workspace).val();
+		var data = {codigo:$("#codigo", jsExtratoEdicao.workspace).val(),
+		  		  edicao: $("#edicao", jsExtratoEdicao.workspace).val()};
 		
 		$.postJSON(contextPath + '/estoque/extratoEdicao/obterProdutoEdicao', data, function(result){
 			$("#precoCapa", jsExtratoEdicao.workspace).val(result);
@@ -220,7 +220,13 @@ var jsExtratoEdicao = $.extend(true, {
 
 							showTableToggleBtn : true,
 							width : 960,
-							height : 180
+							height : 180,
+							sortname : "dataInclusao",
+							sortorder : "asc",
+							usepager : true,
+							useRp : true,
+							rp : 15,
+							showTableToggleBtn : true
 						});
 
 	}

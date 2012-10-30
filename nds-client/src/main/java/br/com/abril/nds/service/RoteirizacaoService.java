@@ -19,6 +19,7 @@ import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.Roteirizacao;
 import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.TipoRoteiro;
+import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 public interface RoteirizacaoService {
@@ -165,6 +166,14 @@ public interface RoteirizacaoService {
      * @return List<Rota>
      */
 	public List<Rota> obterListaRotaPorRoteiro(Long idRoteiro, String descricaoRota);
+
+	/**
+	 * Obtém lista de Roteiros
+	 * 
+	 * @param numeroCota
+	 * @return
+	 */
+	public List<Roteiro> obterRoteirosPorCota(Integer numeroCota);
 	
 	/**
      * Obtém a roteirização pelo identificador
@@ -177,14 +186,14 @@ public interface RoteirizacaoService {
 	 * Obtém PDVS's disponiveis
 	 * @return List<PdvRoteirizacaoDTO>
 	 */
-	public List<PdvRoteirizacaoDTO> obterPdvsDisponiveis();
+	public List<PdvRoteirizacaoDTO> obterPdvsDisponiveis(Integer numCota, String municipio, String uf, String bairro, String cep);
 	
 	/**
 	 * Verifica se pdv esta disponivel (não vinculado a um box roteirizado)
 	 * @param idPdv
 	 * @return boolean - true:disponivel
 	 */
-	public boolean verificaDisponibilidadePdv(Long idPdv);
+	 public boolean verificaDisponibilidadePdv(Long idPdv, Long idBox);
 	
 	/**
 	 * Inclui Cota Pdv na Roteirização
@@ -209,6 +218,23 @@ public interface RoteirizacaoService {
      *         roteirização associada ao Box
      */
 	RoteirizacaoDTO obterRoteirizacaoPorBox(Long idBox);
+
+    /**
+     * Processa as informações de roteirização 
+     * armazenadas no DTO
+     * @param dto dto com as informações de Roteirização
+     * @return {@link Roteirizacao} roteirização confirmada
+     */
+	Roteirizacao confirmarRoteirizacao(RoteirizacaoDTO dto);
+	
+    /**
+     * Valida as informações da roteirização
+     * 
+     * @param dto
+     *            DTO com as informações da roteirização
+     * @return {@link ValidacaoVO} com a validação da roteirização
+     */
+	ValidacaoVO validarRoteirizacao(RoteirizacaoDTO dto);
 
 }
 	

@@ -25,7 +25,12 @@ public enum FormaComercializacao {
 	 * @return the value
 	 */
 	public String getValue() {
-		return value;
+		return this.value;
 	}
 	
+	
+	@Override
+	public String toString() {
+		return this.value;
+	}
 }

@@ -324,18 +324,20 @@ var geracaoNotaEnvioController = $.extend({
 			}
 			
 			var params = serializeArrayToPost("listaIdCotas", cotasSelecionadas);
-			
-			$.postJSON(this.path + 'gerarNotaEnvio', params, function(data) {
-				
-				if (!data) return;
-				
-				var tipoMensagem = data.tipoMensagem;
-				var listaMensagens = data.listaMensagens;
-		
-				if (tipoMensagem && listaMensagens) {
-					exibirMensagem(tipoMensagem, listaMensagens, "");
-				} 
-			});
+
+            var path = this.path + 'gerarNotaEnvio';
+
+            $.fileDownload(path, {
+                httpMethod : "POST",
+                data : params,
+                failCallback : function() {
+                    exibirMensagem("ERROR", ["Erro ao Imprimir NE/NECA!"]);
+                },
+                successCallback : function() {
+                    exibirMensagem("SUCCESS", ["Geração de NE realizada com sucesso!"]);
+                }
+            });
+
 		},
 		
 		/**
@@ -492,3 +494,4 @@ var geracaoNotaEnvioController = $.extend({
 		}],
 
 },BaseController);
+//@ sourceURL=geracaoNotaEnvio.js

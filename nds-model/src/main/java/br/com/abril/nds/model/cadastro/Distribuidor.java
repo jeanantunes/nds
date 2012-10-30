@@ -223,15 +223,15 @@ public class Distribuidor {
 	
 	@Enumerated(EnumType.STRING)
 	@Column(name = "TIPO_IMPRESSAO_CE", nullable = true)
-	private TipoImpressaoCE tipoImpressaoCE = TipoImpressaoCE.MODELO_1;	
+	private TipoImpressaoCE tipoImpressaoCE;	
 	
 	@Enumerated(EnumType.STRING)
 	@Column(name = "TIPO_IMPRESSAO_INTERFACE_LED", nullable = true)
-	private TipoImpressaoInterfaceLED tipoImpressaoInterfaceLED = TipoImpressaoInterfaceLED.MODELO_1; 	
+	private TipoImpressaoInterfaceLED tipoImpressaoInterfaceLED; 	
 	
 	@Enumerated(EnumType.STRING)
 	@Column(name = "TIPO_IMPRESSAO_NE_NECA_DANFE", nullable = true)
-	private TipoImpressaoNENECADANFE tipoImpressaoNENECADANFE = TipoImpressaoNENECADANFE.MODELO_1;	
+	private TipoImpressaoNENECADANFE tipoImpressaoNENECADANFE;	
 
 	@Column(name = "UTILIZA_PROCURACAO_ENTREGADORES", nullable = true)
 	private boolean utilizaProcuracaoEntregadores;	
@@ -278,6 +278,12 @@ public class Distribuidor {
 	
 	@OneToOne(mappedBy = "distribuidor", cascade={CascadeType.PERSIST, CascadeType.MERGE})
 	private EnderecoDistribuidor enderecoDistribuidor;
+	
+	@Column(name = "CONTROLE_ARQUIVO_COBRANCA", nullable = true)
+	private Long controleArquivoCobranca;
+	
+	@Column(name = "FECHAMENTO_DIARIO_EM_ANDAMENTO", nullable = true)
+	private Boolean fechamentoDiarioEmAndamento;
 	
 	public Long getId() {
 		return id;
@@ -552,22 +558,19 @@ public class Distribuidor {
 	public void setQntDiasReutilizacaoCodigoCota(Long qntDiasReutilizacaoCodigoCota) {
 		this.qntDiasReutilizacaoCodigoCota = qntDiasReutilizacaoCodigoCota;
 	}
-	
+
 	/**
-	 * Obtém utilizaSugestaoIncrementoCodigo
-	 *
-	 * @return boolean
+	 * @return the utilizaSugestaoIncrementoCodigo
 	 */
-	public boolean isUtilizaSugestaoIncrementoCodigo() {
+	public Boolean getUtilizaSugestaoIncrementoCodigo() {
 		return utilizaSugestaoIncrementoCodigo;
 	}
 
 	/**
-	 * Atribuí utilizaSugestaoIncrementoCodigo
-	 * @param utilizaSugestaoIncrementoCodigo 
+	 * @param utilizaSugestaoIncrementoCodigo the utilizaSugestaoIncrementoCodigo to set
 	 */
 	public void setUtilizaSugestaoIncrementoCodigo(
-			boolean utilizaSugestaoIncrementoCodigo) {
+			Boolean utilizaSugestaoIncrementoCodigo) {
 		this.utilizaSugestaoIncrementoCodigo = utilizaSugestaoIncrementoCodigo;
 	}
 
@@ -922,6 +925,46 @@ public class Distribuidor {
 	 */
 	public void setEnderecoDistribuidor(EnderecoDistribuidor enderecoDistribuidor) {
 		this.enderecoDistribuidor = enderecoDistribuidor;
+	}	
+	
+	/**
+	 * @return the controleArquivoCobranca
+	 */
+	public Long getControleArquivoCobranca() {
+		return controleArquivoCobranca;
+	}
+
+	/**
+	 * @param controleArquivoCobranca the controleArquivoCobranca to set
+	 */
+	public void setControleArquivoCobranca(Long controleArquivoCobranca) {
+		this.controleArquivoCobranca = controleArquivoCobranca;
+	}
+
+	/**
+	 * Conforme esclarecido pela àrea de negócios qualquer
+	 * valor de {@link ObrigacaoFiscal} atribuído ao Distribuidor
+	 * indica que este possui obrigação fiscal.
+	 * 
+	 * @return true se o Distribuidor possui obrigação
+	 * fiscal, false caso contrário
+	 */
+	public boolean possuiObrigacaoFiscal() {
+	    return obrigacaoFiscal != null;
+	}
+
+	/**
+	 * @return the fechamentoDiarioEmAndamento
+	 */
+	public Boolean getFechamentoDiarioEmAndamento() {
+		return fechamentoDiarioEmAndamento;
+	}
+
+	/**
+	 * @param fechamentoDiarioEmAndamento the fechamentoDiarioEmAndamento to set
+	 */
+	public void setFechamentoDiarioEmAndamento(Boolean fechamentoDiarioEmAndamento) {
+		this.fechamentoDiarioEmAndamento = fechamentoDiarioEmAndamento;
 	}
 
 }

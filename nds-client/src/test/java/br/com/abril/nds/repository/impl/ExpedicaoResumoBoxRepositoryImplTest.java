@@ -167,24 +167,24 @@ public class ExpedicaoResumoBoxRepositoryImplTest extends AbstractRepositoryImpl
 		produtoCapricho.setEditor(abril);
 		save(produtoCapricho);
 		
-		ProdutoEdicao produtoEdicaoVeja1 = Fixture.produtoEdicao("1", 1L, 10, 14,
-				new Long(100), BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQ", 1L,
-				produtoVeja, null, false);
+		ProdutoEdicao produtoEdicaoVeja1 = Fixture.produtoEdicao(1L, 10, 14, new Long(100),
+				BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQ", produtoVeja, 
+				null, false);
 		save(produtoEdicaoVeja1);
 		
-		ProdutoEdicao produtoEdicaoVeja2 = Fixture.produtoEdicao("1", 2L, 10, 14,
-				new Long(100), BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPA", 2L,
-				produtoVeja, null, false);
+		ProdutoEdicao produtoEdicaoVeja2 = Fixture.produtoEdicao(2L, 10, 14, new Long(100),
+				BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPA", produtoVeja,
+				null, false);
 		save(produtoEdicaoVeja2);
 		
-		ProdutoEdicao produtoEdicaoSuper1 = Fixture.produtoEdicao("1", 1L, 10, 14,
-				new Long(100), BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPB", 3L,
-				produtoSuper, null, false);
+		ProdutoEdicao produtoEdicaoSuper1 = Fixture.produtoEdicao(1L, 10, 14, new Long(100),
+				BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPB", produtoSuper, 
+				null, false);
 		save(produtoEdicaoSuper1);
 		
-		ProdutoEdicao produtoEdicaoCapricho1 = Fixture.produtoEdicao("1", 1L, 9, 14,
-				new Long(150), new BigDecimal(9), new BigDecimal(13.5), "ABCDEFGHIJKLMNOPC", 4L,
-				produtoCapricho, null, false);
+		ProdutoEdicao produtoEdicaoCapricho1 = Fixture.produtoEdicao(1L, 9, 14, new Long(150),
+				new BigDecimal(9), new BigDecimal(13.5), "ABCDEFGHIJKLMNOPC", produtoCapricho,
+				null, false);
 		save(produtoEdicaoCapricho1);
 		
 		CFOP cfop5102 = Fixture.cfop5102();
@@ -204,7 +204,7 @@ public class ExpedicaoResumoBoxRepositoryImplTest extends AbstractRepositoryImpl
 		save(tipoNotaFiscalRecebimento);
 		
 		NotaFiscalEntradaFornecedor notaFiscalFornecedor = Fixture
-				.notaFiscalEntradaFornecedor(cfop5102, fornecedorDinap.getJuridica(), fornecedorDinap, tipoNotaFiscalRecebimento,
+				.notaFiscalEntradaFornecedor(cfop5102, fornecedorDinap, tipoNotaFiscalRecebimento,
 						usuarioJoao, new BigDecimal(15), new BigDecimal(5), BigDecimal.TEN);
 		save(notaFiscalFornecedor);
 

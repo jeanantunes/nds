@@ -9,6 +9,8 @@
 
 <script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.form.js"></script>
 
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/parametroCobranca.js"></script>
+
 <script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaCota.js"></script>
 
 <script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/cotaGarantia.js"></script>
@@ -18,6 +20,7 @@
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/manterCota.js"></script>
 
 <script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/pdv.js"></script>
+
 
 
 <script language="javascript" type="text/javascript">

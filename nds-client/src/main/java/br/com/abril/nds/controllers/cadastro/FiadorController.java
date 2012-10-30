@@ -30,6 +30,7 @@ import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.seguranca.Permissao;
+import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.service.EnderecoService;
 import br.com.abril.nds.service.FiadorService;
 import br.com.abril.nds.service.PessoaService;
@@ -40,8 +41,8 @@ import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.PaginacaoVO;
-import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
+import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.stella.validation.CNPJValidator;
 import br.com.caelum.stella.validation.CPFValidator;
 import br.com.caelum.stella.validation.InvalidStateException;
@@ -165,6 +166,8 @@ public class FiadorController {
 				result[0] = new ValidacaoVO(TipoMensagem.WARNING, "Nenhum registro encontrado.");
 			} else {
 				ValidacaoVO vo = (ValidacaoVO) result[0];
+				if(vo.getListaMensagens() ==  null)
+					vo.setListaMensagens(new ArrayList<String>());
 				vo.getListaMensagens().add("Nenhum registro encontrado.");
 			}
 			
@@ -615,7 +618,7 @@ public class FiadorController {
 			this.carregarTelefonesEnderecosFiador(idFiador);
 		}
 		
-		result.use(Results.json()).from(dados, "result").serialize();
+		result.use(CustomJson.class).from(dados).serialize();
 	}
 	
 	private void carregarTelefonesEnderecosFiador(Long idFiador) {
@@ -736,6 +739,13 @@ public class FiadorController {
 			
 		}
 		
+		if(pessoa.getOrgaoEmissor() == null || pessoa.getOrgaoEmissor().isEmpty()) {
+			msgsValidacao.add("[Orgão Emissor] é obrigatório.");
+		}
+		
+		if(pessoa.getUfOrgaoEmissor() == null || pessoa.getUfOrgaoEmissor().isEmpty()) {
+			msgsValidacao.add("[UF do Orgão Emissor] é obrigatório.");
+		}
 		
 		
 		if (pessoa.getDataNascimento() == null){
@@ -787,6 +797,15 @@ public class FiadorController {
 				msgsValidacao.add("Quantidade de caracteres do campo [RG] do conjuge excede o maximo de " + PessoaUtil.RG_QUANTIDADE_DIGITOS + " dígitos");
 				
 			}
+			
+			if(pessoa.getOrgaoEmissor() == null || pessoa.getOrgaoEmissor().isEmpty()) {
+				msgsValidacao.add("Orgão Emissor do conjuge é obrigatório.");
+			}
+			
+			if(pessoa.getUfOrgaoEmissor() == null || pessoa.getUfOrgaoEmissor().isEmpty()) {
+				msgsValidacao.add("UF do Orgão Emissor do conjuge é obrigatório.");
+			}
+
 			
 			if (pessoa.getDataNascimento() == null){
 				msgsValidacao.add("Data Nascimento do conjuge é obrigatório.");

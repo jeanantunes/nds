@@ -26,20 +26,24 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.desconto.DescontoCota;
 import br.com.abril.nds.model.cadastro.desconto.DescontoDistribuidor;
 import br.com.abril.nds.model.cadastro.desconto.DescontoProduto;
 import br.com.abril.nds.model.cadastro.desconto.TipoDesconto;
+import br.com.abril.nds.model.financeiro.DescontoProximosLancamentos;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DescontoCotaRepository;
 import br.com.abril.nds.repository.DescontoDistribuidorRepository;
 import br.com.abril.nds.repository.DescontoProdutoEdicaoRepository;
 import br.com.abril.nds.repository.DescontoProdutoRepository;
+import br.com.abril.nds.repository.DescontoProximosLancamentosRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.FornecedorRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
+import br.com.abril.nds.repository.ProdutoRepository;
 import br.com.abril.nds.repository.UsuarioRepository;
 import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.util.TipoMensagem;
@@ -80,6 +84,12 @@ public class DescontoServiceImpl implements DescontoService {
 	@Autowired
 	private DescontoProdutoEdicaoRepository descontoProdutoEdicaoRepository;
 
+	@Autowired
+	private DescontoProximosLancamentosRepository descontoProximosLancamentosRepository;
+	
+	@Autowired
+	private ProdutoRepository produtoRepository;
+	
 	@Override
 	@Transactional(readOnly=true)
 	public List<TipoDescontoDTO> buscarTipoDesconto(FiltroTipoDescontoDTO filtro) {
@@ -151,7 +161,7 @@ public class DescontoServiceImpl implements DescontoService {
 	
 	@Override
 	@Transactional
-	public void incluirDescontoDistribuidor(BigDecimal valorDesconto, List<Long> fornecedores,Usuario usuario) {
+	public void incluirDescontoDistribuidor(BigDecimal valorDesconto, List<Long> fornecedores,Usuario usuario) throws ValidacaoException {
 		
 		if(fornecedores == null || fornecedores.isEmpty()){
 			throw new ValidacaoException(TipoMensagem.WARNING,"O campo Fornecedores selecionados deve ser preenchido!");
@@ -241,27 +251,19 @@ public class DescontoServiceImpl implements DescontoService {
 				produtosEdicao.add(produtoEdicao);
 
 			} else if (desconto.getQuantidadeEdicoes() != null) {
-
-				List<ProdutoEdicao> listaProdutoEdicao = 
-					this.produtoEdicaoRepository.obterProdutosEdicoesPorCodigoProdutoLimitado(
-						desconto.getCodigoProduto(), desconto.getQuantidadeEdicoes()
-					);
-
-				for (ProdutoEdicao produtoEdicao : listaProdutoEdicao) {
-
-					DescontoProduto descontoProduto = new DescontoProduto();
-
-					descontoProduto.setDesconto(desconto.getDescontoProduto());
-					descontoProduto.setDataAlteracao(new Date());
-					descontoProduto.setCotas(cotas);
-					descontoProduto.setDistribuidor(distribuidor);
-					descontoProduto.setProdutoEdicao(produtoEdicao);
-					descontoProduto.setUsuario(usuarioRepository.buscarPorId(usuario.getId()));
-
-					this.descontoProdutoRepository.adicionar(descontoProduto);
-				}
 				
-				produtosEdicao.addAll(listaProdutoEdicao);
+				Produto produto = produtoRepository.obterProdutoPorCodigo(desconto.getCodigoProduto());
+				
+				DescontoProximosLancamentos descontoProximosLancamentos = new DescontoProximosLancamentos();
+				
+				descontoProximosLancamentos.setDataInicioDesconto(new Date());
+				descontoProximosLancamentos.setProduto(produto);
+				descontoProximosLancamentos.setQuantidadeProximosLancamaentos(desconto.getQuantidadeEdicoes());
+				descontoProximosLancamentos.setValorDesconto(desconto.getDescontoProduto());
+				descontoProximosLancamentos.setCotas(cotas);
+				descontoProximosLancamentos.setUsuario(usuario);
+				descontoProximosLancamentos.setDistribuidor(distribuidor);
+				this.descontoProximosLancamentosRepository.adicionar(descontoProximosLancamentos);
 			}
 			
 		} else {
@@ -283,10 +285,7 @@ public class DescontoServiceImpl implements DescontoService {
 				}
 				
 				produtosEdicao.addAll(listaProdutoEdicao);
-
-			
 		}
-		
 		
 		processarDescontoProduto(produtosEdicao, cotas, desconto.getDescontoProduto(),
 								 desconto.isDescontoPredominante());
@@ -357,7 +356,22 @@ public class DescontoServiceImpl implements DescontoService {
 	@Transactional
 	public void processarDescontoDistribuidor(Set<Fornecedor> fornecedores, BigDecimal valorDesconto) {
 		
-		this.processarDesconto(TipoDesconto.GERAL, fornecedores, null, null, valorDesconto, null);
+		if (fornecedores == null) {
+			fornecedores = new HashSet<Fornecedor>(this.fornecedorRepository.obterFornecedores());
+		}
+		
+		Set<ProdutoEdicao> produtosEdicao = produtoEdicaoRepository.filtrarDescontoProdutoEdicaoPorDistribuidor(fornecedores);
+		
+		for (Fornecedor fornecedor : fornecedores) {
+			
+			for (Cota cota : fornecedor.getCotas()) {
+			
+				this.descontoComponent.persistirDesconto(TipoDesconto.GERAL, fornecedor, cota, produtosEdicao, valorDesconto, null);
+				
+			}
+		}
+		
+		//this.processarDesconto(TipoDesconto.GERAL, fornecedores, null, null, valorDesconto, null);
 	}
 	
 
@@ -373,18 +387,24 @@ public class DescontoServiceImpl implements DescontoService {
 	@Transactional
 	public void processarDescontoCota(Cota cota, BigDecimal valorDesconto) {
 		
-		this.processarDescontoCota(cota, null, valorDesconto);
+		this.processarDescontoCota(cota, cota.getFornecedores(), valorDesconto);
 	}
 	
 	@Override
 	@Transactional
 	public void processarDescontoCota(Cota cota, Set<Fornecedor> fornecedores, BigDecimal valorDesconto) {
-		
-		Set<Cota> cotas = new HashSet<Cota>();
+
+		Set<ProdutoEdicao> produtosEdicao = produtoEdicaoRepository.filtrarDescontoProdutoEdicaoPorCota(cota, fornecedores);
+
+		for (Fornecedor fornecedor : fornecedores) {
+			this.descontoComponent.persistirDesconto(TipoDesconto.ESPECIFICO, fornecedor, cota, produtosEdicao, valorDesconto, null);
+		}
+
+		/*Set<Cota> cotas = new HashSet<Cota>();
 		
 		cotas.add(cota);
 		
-		this.processarDesconto(TipoDesconto.ESPECIFICO, fornecedores, cotas , null, valorDesconto, null);
+		this.processarDesconto(TipoDesconto.ESPECIFICO, fornecedores, cotas , null, valorDesconto, null);*/
 	}
 	
 	@Override
@@ -404,8 +424,27 @@ public class DescontoServiceImpl implements DescontoService {
 										 Set<Cota> cotas, 
 										 BigDecimal valorDesconto,
 										 Boolean descontoPredominante) {
+
+		//Set<ProdutoEdicao> produtosEdicao = produtoEdicaoRepository.filtrarDescontoProdutoEdicaoPorCota(cota);
+
+		boolean obterCotas = (cotas == null);
 		
-		this.processarDesconto(TipoDesconto.PRODUTO, null, cotas, produtos, valorDesconto, descontoPredominante);
+		for (ProdutoEdicao produtoEdicao : produtos) {
+
+			for (Fornecedor fornecedor : produtoEdicao.getProduto().getFornecedores()) {
+
+				if (obterCotas) {
+					cotas = fornecedor.getCotas();
+				}
+				
+				for (Cota cota : cotas) {
+					this.descontoComponent.persistirDesconto(TipoDesconto.PRODUTO, fornecedor, cota, produtos, valorDesconto, null);
+				}
+				
+			}
+		}
+		
+		//this.processarDesconto(TipoDesconto.PRODUTO, null, cotas, produtos, valorDesconto, descontoPredominante);
 	}
 	
 	/*
@@ -776,4 +815,23 @@ public class DescontoServiceImpl implements DescontoService {
         }
         return Util.nvl(percentual, BigDecimal.ZERO);
     }
+	
+	@Override
+	@Transactional(readOnly = true)
+	public BigDecimal obterComissaoCota(Integer numeroCota){
+		
+		BigDecimal desc = BigDecimal.ZERO;
+		
+		FiltroTipoDescontoCotaDTO filtro = new FiltroTipoDescontoCotaDTO();
+		filtro.setNumeroCota(numeroCota);
+		
+		List<TipoDescontoCotaDTO> descontos = this.descontoCotaRepository.obterDescontoCota(filtro);
+		
+		for (TipoDescontoCotaDTO dto : descontos){
+			
+			desc = desc.add(dto.getDesconto());
+		}
+		
+		return desc.compareTo(BigDecimal.ZERO) > 0 ? desc.divide(new BigDecimal(descontos.size())) : BigDecimal.ZERO;
+	}
 }

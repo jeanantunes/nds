@@ -1,13 +1,17 @@
 package br.com.abril.nds.component.impl;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.orm.hibernate3.HibernateTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+
+import ch.qos.logback.core.read.ListAppender;
 
 import br.com.abril.nds.component.DescontoComponent;
 import br.com.abril.nds.model.cadastro.Cota;
@@ -28,6 +32,8 @@ public class DescontoComponentImpl implements DescontoComponent {
 	public void persistirDesconto(TipoDesconto tipoDesconto, Fornecedor fornecedor, Cota cota, Set<ProdutoEdicao> produtos, BigDecimal valorDesconto, Boolean descontoPredominante){
 		
 		DescontoProdutoEdicao descontoProdutoEdicao = null;
+		
+		List<DescontoProdutoEdicao> listaDescontosProdutoEdicao = new ArrayList<DescontoProdutoEdicao>();
 		
 		for(ProdutoEdicao produto : produtos){
 			
@@ -51,8 +57,12 @@ public class DescontoComponentImpl implements DescontoComponent {
 			descontoProdutoEdicao.setDesconto(valorDesconto);
 			descontoProdutoEdicao.setTipoDesconto(tipoDesconto);
 			
-			descontoProdutoEdicaoRepository.merge(descontoProdutoEdicao);
+			listaDescontosProdutoEdicao.add(descontoProdutoEdicao);
+			
 		}
+		
+		descontoProdutoEdicaoRepository.salvarListaDescontoProdutoEdicao(listaDescontosProdutoEdicao);
+		
 	}
 	
 	/*

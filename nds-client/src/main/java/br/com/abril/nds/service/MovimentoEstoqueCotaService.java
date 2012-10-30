@@ -17,7 +17,7 @@ public interface MovimentoEstoqueCotaService {
 	
 	List<MovimentoEstoqueCota> obterMovimentoCotaPorTipoMovimento(Date data, Integer numCota, GrupoMovimentoEstoque grupoMovimentoEstoque);
 
-	List<MovimentoEstoqueCotaDTO> obterMovimentoDTOCotaPorTipoMovimento(Date date,Integer numCota, GrupoMovimentoEstoque envioJornaleiro);
+	List<MovimentoEstoqueCotaDTO> obterMovimentoDTOCotaPorTipoMovimento(Date date,List<Integer> numCotas, GrupoMovimentoEstoque envioJornaleiro);
 	
 	List<MovimentoEstoqueCota> obterMovimentoEstoqueCotaPor(Distribuidor distribuidor, Long idCota, 
 			TipoNotaFiscal tipoNotaFiscal, List<GrupoMovimentoEstoque> listaGrupoMovimentoEstoques, 
@@ -47,4 +47,5 @@ public interface MovimentoEstoqueCotaService {
 	 * @param notaFiscal
 	 */
 	void envioConsignadoNotaCancelada(NotaFiscal notaFiscalCancelada);
+
 }

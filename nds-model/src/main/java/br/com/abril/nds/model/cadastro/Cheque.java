@@ -4,6 +4,7 @@
 package br.com.abril.nds.model.cadastro;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -57,7 +58,7 @@ public class Cheque implements Serializable {
 	private String dvConta;
 	
 	@Column(name="VALOR", nullable=false)
-	private Double valor;
+	private BigDecimal valor;
 	
 	@Column(name="NUMERO_CHEQUE", nullable=false)
 	private String numeroCheque;
@@ -186,14 +187,14 @@ public class Cheque implements Serializable {
 	/**
 	 * @return the valor
 	 */
-	public Double getValor() {
+	public BigDecimal getValor() {
 		return valor;
 	}
 
 	/**
 	 * @param valor the valor to set
 	 */
-	public void setValor(Double valor) {
+	public void setValor(BigDecimal valor) {
 		this.valor = valor;
 	}
 

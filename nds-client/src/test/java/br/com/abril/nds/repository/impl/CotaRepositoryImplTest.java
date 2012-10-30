@@ -122,9 +122,9 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 		produto.setEditor(abril);
 		save(produto);
 		
-		ProdutoEdicao produtoEdicaoVeja1 = Fixture.produtoEdicao("1", 1L, 10, 14,
-				new Long(100), BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQ", 1L,
-				produto, null, false);
+		ProdutoEdicao produtoEdicaoVeja1 = Fixture.produtoEdicao(1L, 10, 14, new Long(100),
+				BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQ", produto, 
+				null, false);
 		
 		save(produtoEdicaoVeja1);
 		
@@ -167,7 +167,7 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 		save(movimentoFinanceiroCota);
 		
 		
-		ConsolidadoFinanceiroCota consolidado1 = Fixture.consolidadoFinanceiroCota(null, cota, new Date(), new BigDecimal(10), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
+		ConsolidadoFinanceiroCota consolidado1 = Fixture.consolidadoFinanceiroCota(null, cota, new Date(), new BigDecimal(10), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
 		save(consolidado1);
 		Divida divida1 = Fixture.divida(consolidado1, cota, Fixture.criarData(1, 10, 2010), usuario, StatusDivida.EM_ABERTO, new BigDecimal(10),false);
 		save(divida1);
@@ -187,7 +187,7 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 				divida1,0);
 		save(boleto1);
 		
-		ConsolidadoFinanceiroCota consolidado2 = Fixture.consolidadoFinanceiroCota(null, cota, new Date(), new BigDecimal(10), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
+		ConsolidadoFinanceiroCota consolidado2 = Fixture.consolidadoFinanceiroCota(null, cota, new Date(), new BigDecimal(10), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
 		save(consolidado2);
 		Divida divida2 = Fixture.divida(consolidado2, cota, Fixture.criarData(2, 10, 2010), usuario, StatusDivida.EM_ABERTO, new BigDecimal(10),false);
 		save(divida2);
@@ -264,9 +264,9 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 		produtoVeja.setEditor(abril);
 		save(produtoVeja);
 		
-		ProdutoEdicao produtoEdicaoVeja1 = Fixture.produtoEdicao("1", 1L, 10, 14,
-				new Long(100), BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPA", 2L,
-				produtoVeja, null, false);
+		ProdutoEdicao produtoEdicaoVeja1 = Fixture.produtoEdicao(1L, 10, 14, new Long(100),
+				BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPA", produtoVeja, 
+				null, false);
 		save(produtoEdicaoVeja1);
 		
 		EstoqueProdutoCota estoqueProdutoCota = Fixture.estoqueProdutoCota(
@@ -381,6 +381,19 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 		Assert.assertNotNull(cotas);
 		
 		Assert.assertTrue(!cotas.isEmpty());
+	}
+	
+	@Test
+	public void obterQuantidadeCota(){
+
+		
+		FiltroCotaDTO filtro = new FiltroCotaDTO();
+		filtro.setNumeroCota(cota.getNumeroCota());
+		
+	    Long qtde = cotaRepository.obterQuantidadeCotasPesquisadas(filtro);
+		
+		Assert.assertNotNull(qtde);
+
 	}
 	
 	@Test

@@ -34,7 +34,7 @@ $(function(){
 			</span>
 
 			<span class="bt_arq"> 
-				<a href="" rel="tipsy" title="Reimpressão Slip">
+				<a href="javascript:;" onclick="ConsultaEncalhe.gerarSlip()" rel="tipsy" title="Reimpress&atilde;o Slip">
 					<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" /> 
 				</a>
 			</span>
@@ -137,7 +137,7 @@ $(function(){
 					<td width="80" align="center" bgcolor="#EFEFEF"	style="border: 1px solid #000;" id="valorVendaDia"></td>
 					<td width="130">&nbsp;&nbsp;
 						<strong>
-							<a href="javascript:;" onclick="ConferenciaEncalhe.popup_outros_valores();"> ( + )Outros valores </a>:
+							<a href="javascript:;" onclick="ConsultaEncalhe.popupOutrosValores();"> ( + )Outros valores </a>:
 						</strong>
 					</td>
 					<td width="68" id="totalOutrosValores"></td>
@@ -176,7 +176,18 @@ $(function(){
 				</div>
 			</form> 
 
+			<form id="form-outros-valores" name="form-outros-valores">
+				<div id="dialog-outros-valores" title="Outros Valores" style="display:none;">
+					<fieldset>
+				        <legend>Outros Valores</legend>
+				        <table id="outrosValoresGrid"></table>
+				    </fieldset>
+				</div>
+			</form>
 		</div>
+		<form name="form_impressao_slip" id="form_impressao_slip">
+			<iframe src="" id="download-iframe" style="display:none;"></iframe>
+		</form>
 
 	</fieldset>
 </body>

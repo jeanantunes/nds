@@ -438,12 +438,22 @@ public class ConferenciaEncalheRepositoryImpl extends
 //		
 //	}
 	
+
+	/**
+	 * Obtém o valorTotal de uma operação de conferência de encalhe. Para o calculo do valor
+	 * é levado em conta o preco com desconto de acordo com a regra de comissão que verifica 
+	 * desconto no níveis de produtoedicao, cota.
+	 * 
+	 * @param idControleConferenciaEncalhe
+	 * 
+	 * @return BigDecimal
+	 */
+	public BigDecimal obterValorTotalEncalheOperacaoConferenciaEncalhe(Long idControleConferenciaEncalhe) {
 	
-	public BigDecimal obterValorTotalEncalheOperacaoConferenciaEncalhe(Long idControleConferenciaEncalhe, Long idDistribuidor) {
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" select sum( conferencia.produtoEdicao.precoVenda - (conferencia.produtoEdicao.precoVenda * ("+ this.obterHQLDesconto("cota.id", "produtoEdicao.id", "fornecedor.id") +") / 100 ) ) ");
+		hql.append(" select sum( (conferencia.precoCapaInformado - (conferencia.precoCapaInformado * ("+ this.obterHQLDesconto("cota.id", "produtoEdicao.id", "fornecedor.id") +") / 100 )) * conferencia.qtdeInformada ) ");
 		
 		hql.append(" from ConferenciaEncalhe conferencia  ");
 		
@@ -457,14 +467,14 @@ public class ConferenciaEncalheRepositoryImpl extends
 		
 		hql.append("  join produto.fornecedores fornecedor ");
 		
-		hql.append(" where conferencia.controleConferenciaEncalheCota.id = :idControleConferenciaEncalhe  ");
+		hql.append(" WHERE conferencia.controleConferenciaEncalheCota.id = :idControleConferenciaEncalhe  ");
 		
 		Query query =  this.getSession().createQuery(hql.toString());
 		
 		query.setParameter("idControleConferenciaEncalhe", idControleConferenciaEncalhe);
 		
-		return (BigDecimal) query.uniqueResult();
 		
+		return (BigDecimal) query.uniqueResult();
 	}
 
 	

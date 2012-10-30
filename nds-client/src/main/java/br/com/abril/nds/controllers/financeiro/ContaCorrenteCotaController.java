@@ -1,12 +1,13 @@
 package br.com.abril.nds.controllers.financeiro;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -41,10 +42,14 @@ import br.com.abril.nds.model.financeiro.ConsolidadoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.ViewContaCorrenteCota;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.ConsolidadoFinanceiroService;
 import br.com.abril.nds.service.ContaCorrenteCotaService;
 import br.com.abril.nds.service.CotaService;
-import br.com.abril.nds.util.CellModel;
+import br.com.abril.nds.service.EmailService;
+import br.com.abril.nds.service.exception.AutenticacaoEmailException;
+import br.com.abril.nds.util.AnexoEmail;
+import br.com.abril.nds.util.AnexoEmail.TipoAnexo;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.MathUtil;
 import br.com.abril.nds.util.TableModel;
@@ -81,6 +86,9 @@ public class ContaCorrenteCotaController {
 
 	@Autowired
 	private ContaCorrenteCotaService contaCorrenteCotaService;
+	
+	@Autowired
+	private EmailService emailService;
 
 	@Autowired
 	private DistribuidorService distribuidorService;
@@ -123,23 +131,19 @@ public class ContaCorrenteCotaController {
 				page, rp);
 
 		tratarFiltro(filtroViewContaCorrenteCotaDTO);
-
-		List<ViewContaCorrenteCota> listaItensContaCorrenteCota = contaCorrenteCotaService
-				.obterListaConsolidadoPorCota(filtroViewContaCorrenteCotaDTO);
-
-		if (listaItensContaCorrenteCota == null
-				|| listaItensContaCorrenteCota.isEmpty()) {
-			throw new ValidacaoException(TipoMensagem.WARNING,
-					"Nenhum registro encontrado.");
+		
+		Long total = contaCorrenteCotaService.getQuantidadeViewContaCorrenteCota(filtroViewContaCorrenteCotaDTO);
+		if (total == 0) {			
+			throw new ValidacaoException(TipoMensagem.WARNING,"Nenhum registro encontrado.");
 		}
 
-		request.getSession().setAttribute(ITENS_CONTA_CORRENTE,
-				listaItensContaCorrenteCota);
+		List<ViewContaCorrenteCota> listaItensContaCorrenteCota = 
+				contaCorrenteCotaService.obterListaConsolidadoPorCota(filtroViewContaCorrenteCotaDTO);	
 
-		TableModel<CellModel> tableModel = obterTableModelParaListItensContaCorrenteCota(listaItensContaCorrenteCota);
+		request.getSession().setAttribute(ITENS_CONTA_CORRENTE,listaItensContaCorrenteCota);
+		
+		result.use(FlexiGridJson.class).from(listaItensContaCorrenteCota).page(page).total(total.intValue()).serialize();
 
-		result.use(Results.json()).withoutRoot().from(tableModel).recursive()
-				.serialize();
 	}
 
 	/**
@@ -407,8 +411,6 @@ public class ContaCorrenteCotaController {
 					.defaultValue(contaCorrenteCota.getEncalhe()));
 			contaCorrenteCotaVO.setEncargos(MathUtil
 					.defaultValue(contaCorrenteCota.getEncargos()));
-			contaCorrenteCotaVO.setNumerosAtrasados(MathUtil
-					.defaultValue(contaCorrenteCota.getNumeroAtrasados()));
 			contaCorrenteCotaVO.setPendente(MathUtil
 					.defaultValue(contaCorrenteCota.getPendente()));
 			contaCorrenteCotaVO.setTotal(MathUtil
@@ -476,9 +478,7 @@ public class ContaCorrenteCotaController {
 		paginacao.setPaginaAtual(page);
 
 		filtroViewContaCorrenteCotaDTO
-				.setColunaOrdenacao(Util.getEnumByStringValue(
-						FiltroViewContaCorrenteCotaDTO.ColunaOrdenacao.values(),
-						sortname));
+				.setColunaOrdenacao(sortname);
 	}
 
 	/**
@@ -502,67 +502,6 @@ public class ContaCorrenteCotaController {
 
 		session.setAttribute(FILTRO_SESSION_ATTRIBUTE,
 				filtroViewContaCorrenteCotaDTO);
-	}
-
-	/**
-	 * Obtem uma lista de Conta Corrente cota e prepara o Grid para receber os
-	 * valores
-	 * 
-	 * @param itensContaCorrenteCota
-	 * @return
-	 */
-	private TableModel<CellModel> obterTableModelParaListItensContaCorrenteCota(
-			List<ViewContaCorrenteCota> itensContaCorrenteCota) {
-
-		TableModel<CellModel> tableModel = new TableModel<CellModel>();
-
-		List<CellModel> listaModeloGenerico = new LinkedList<CellModel>();
-
-		// /int counter = 1;
-
-		Integer codCota = null;
-
-		for (ViewContaCorrenteCota dto : itensContaCorrenteCota) {
-
-			codCota = dto.getNumeroCota();
-			String data = dto.getDataConsolidado().toString();
-			String valorPostergado = (dto.getValorPostergado() == null) ? "0.0"
-					: dto.getValorPostergado().toString();
-			String NA = (dto.getNumeroAtrasados() == null) ? "0.0" : dto
-					.getNumeroAtrasados().toString();
-			String consignado = (dto.getConsignado() == null) ? "0.0" : dto
-					.getConsignado().toString();
-			String encalhe = (dto.getEncalhe() == null) ? "0.0" : dto
-					.getEncalhe().toString();
-			String vendaEncalhe = (dto.getVendaEncalhe() == null) ? "0.0" : dto
-					.getVendaEncalhe().toString();
-			String debCred = (dto.getDebitoCredito() == null) ? "0.0" : dto
-					.getDebitoCredito().toString();
-			String encargos = (dto.getEncargos() == null) ? "0.0" : dto
-					.getEncargos().toString();
-			String pendente = (dto.getPendente() == null) ? "0.0" : dto
-					.getPendente().toString();
-			String total = (dto.getTotal() == null) ? "0.0" : dto.getTotal()
-					.toString();
-
-			listaModeloGenerico.add(new CellModel(dto.getId().intValue(), data,
-					valorPostergado, NA, consignado, encalhe, vendaEncalhe,
-					debCred, encargos, pendente, total, dto.getId()));
-
-			// counter++;
-		}
-
-		Cota cota = cotaService.obterPorNumeroDaCota(codCota);
-
-		result.include("cotaNome",
-				cota.getNumeroCota() + " " + cota.getPessoa());
-
-		tableModel.setPage(1);
-		tableModel.setTotal(listaModeloGenerico.size());
-		tableModel.setRows(listaModeloGenerico);
-
-		return tableModel;
-
 	}
 	
 	private void validarDadosEntradaPesquisa(Integer numeroCota) {
@@ -686,7 +625,7 @@ public class ContaCorrenteCotaController {
 		String cota = filtro.getNumeroCota() + " - " + nomeCota;
 		filtro.setCota(cota);
 				
-		List<ConsignadoCotaDTO> listConsignadoCotaDTO =consolidadoFinanceiroService.obterMovimentoEstoqueCotaConsignado(filtro);
+		List<ConsignadoCotaDTO> listConsignadoCotaDTO = consolidadoFinanceiroService.obterMovimentoEstoqueCotaConsignado(filtro);
 		HashMap<String, BigDecimal> totais = new HashMap<String, BigDecimal>();
 		
 		for(ConsignadoCotaDTO consignadoDTO: listConsignadoCotaDTO){
@@ -706,4 +645,99 @@ public class ContaCorrenteCotaController {
 		result.use(Results.nothing());
 	}
 	
+	public void enviarEmail(String mensagem, String[] destinatarios) throws IOException {
+		
+		AnexoEmail anexoXLS = new AnexoEmail("conta-corrente-cota", this.gerarAnexo(FileType.XLS), TipoAnexo.XLS);
+		AnexoEmail anexoPDF = new AnexoEmail("conta-corrente-cota", this.gerarAnexo(FileType.PDF), TipoAnexo.PDF);
+		
+		List<AnexoEmail> anexos = new ArrayList<AnexoEmail>();
+		anexos.add(anexoXLS);
+		anexos.add(anexoPDF);
+		
+		if(destinatarios[1] != ""){
+			String destinatario = destinatarios[0].trim();
+			String[] copiaPara = destinatarios[1].split("[;]");
+			destinatarios  = new String[copiaPara.length+1];
+			destinatarios[0] = destinatario;
+			for (int i = 0; i < copiaPara.length; i++) {
+				destinatarios[i+1] = copiaPara[i].trim();
+			}
+		}else{
+			String destinatario = destinatarios[0].trim();
+			destinatarios  = new String[1];
+			destinatarios[0] = destinatario;
+		}
+		
+		String assunto = "Resumo Conta Corrente";
+		try {
+			emailService.enviar(assunto, mensagem, destinatarios, anexos);
+			throw new ValidacaoException(TipoMensagem.SUCCESS, "E-mail enviado com sucesso");
+		} catch (AutenticacaoEmailException e) {
+			throw new ValidacaoException(TipoMensagem.ERROR, "[E-mail inválido] Não foi possível enviar o e-mail. Utilize ';' para separar e-mails.");
+		}
+		
+	}
+	
+	public void pesquisarEmailCota(Integer numeroCota){
+		String email = cotaService.obterPorNumeroDaCota(numeroCota).getPessoa().getEmail();
+		
+		result.use(Results.json()).from(email, "result").recursive().serialize();
+	}
+	
+	private byte[] gerarAnexo(FileType tipo) throws IOException{
+	
+		ByteArrayOutputStream os =  new ByteArrayOutputStream();
+		
+		if(tipo.equals(FileType.XLS)){
+			exportarAnexo(FileType.XLS, os);
+		}else{
+			exportarAnexo(FileType.PDF, os);
+		}
+		
+		return os.toByteArray();
+	}
+	
+	public void exportarAnexo(FileType fileType, OutputStream output) throws IOException {
+
+		FiltroViewContaCorrenteCotaDTO filtro = this.obterFiltroExportacao();
+
+		List<ViewContaCorrenteCota> listaItensContaCorrenteCota = contaCorrenteCotaService
+				.obterListaConsolidadoPorCota(filtro);
+
+		List<ContaCorrenteCotaVO> listaItensContaCorrenteCotaVO = new ArrayList<ContaCorrenteCotaVO>();
+
+		for (ViewContaCorrenteCota contaCorrenteCota : listaItensContaCorrenteCota) {
+
+			ContaCorrenteCotaVO contaCorrenteCotaVO = new ContaCorrenteCotaVO();
+
+			contaCorrenteCotaVO.setConsignado(MathUtil
+					.defaultValue(contaCorrenteCota.getConsignado()));
+			contaCorrenteCotaVO.setDataConsolidado(contaCorrenteCota
+					.getDataConsolidado());
+			contaCorrenteCotaVO.setDebitoCredito(MathUtil
+					.defaultValue(contaCorrenteCota.getDebitoCredito()));
+			contaCorrenteCotaVO.setEncalhe(MathUtil
+					.defaultValue(contaCorrenteCota.getEncalhe()));
+			contaCorrenteCotaVO.setEncargos(MathUtil
+					.defaultValue(contaCorrenteCota.getEncargos()));
+			contaCorrenteCotaVO.setPendente(MathUtil
+					.defaultValue(contaCorrenteCota.getPendente()));
+			contaCorrenteCotaVO.setTotal(MathUtil
+					.defaultValue(contaCorrenteCota.getTotal()));
+			contaCorrenteCotaVO.setValorPostergado(MathUtil
+					.defaultValue(contaCorrenteCota.getValorPostergado()));
+			contaCorrenteCotaVO.setVendaEncalhe(MathUtil
+					.defaultValue(contaCorrenteCota.getVendaEncalhe()));
+
+			listaItensContaCorrenteCotaVO.add(contaCorrenteCotaVO);
+		}
+		
+
+		FileExporter.to("conta-corrente-cota", fileType).inOutputStream(
+				this.getNDSFileHeader(), filtro, null,
+				listaItensContaCorrenteCotaVO, ContaCorrenteCotaVO.class,
+				output);
+	}
+	
+		
 }

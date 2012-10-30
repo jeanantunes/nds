@@ -17,7 +17,7 @@
 		});
 		
 		var pesquisaCotaFaltasSobras = new PesquisaCota(diferencaEstoqueController.workspace);
-		var pesquisaProdutoConsultaFaltasSobras = new PesquisaProduto();
+		var pesquisaProdutoConsultaFaltasSobras = new PesquisaProduto(diferencaEstoqueController.workspace);
 		
 	</script>
 	

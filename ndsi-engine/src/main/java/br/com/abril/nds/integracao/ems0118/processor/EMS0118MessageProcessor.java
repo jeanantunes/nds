@@ -70,9 +70,7 @@ public class EMS0118MessageProcessor extends AbstractRepository implements
 
 			// Atualiza valor de custo
 			produtoEdicao.setPrecoCusto(new BigDecimal(precoCusto).setScale(2,
-					RoundingMode.HALF_DOWN));
-
-			System.out.println("breakpoint");
+					RoundingMode.HALF_DOWN));			
 
 		} else {
 			// NAO ENCONTROU Produto/Edicao, DEVE LOGAR

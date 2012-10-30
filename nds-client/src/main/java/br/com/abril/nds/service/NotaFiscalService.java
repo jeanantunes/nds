@@ -2,6 +2,7 @@ package br.com.abril.nds.service;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -12,8 +13,11 @@ import br.com.abril.nds.dto.QuantidadePrecoItemNotaDTO;
 import br.com.abril.nds.dto.RetornoNFEDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.Processo;
+import br.com.abril.nds.model.envio.nota.NotaEnvio;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
+import br.com.abril.nds.model.fiscal.nota.Condicao;
 import br.com.abril.nds.model.fiscal.nota.InformacaoAdicional;
 import br.com.abril.nds.model.fiscal.nota.InformacaoTransporte;
 import br.com.abril.nds.model.fiscal.nota.ItemNotaFiscal;
@@ -89,13 +93,6 @@ public interface NotaFiscalService {
 	 * @throws IOException caso ocarra erros durante a gravação do arquivo no diretório
 	 */
 	void exportarNotasFiscais(List<NotaFiscal> notasFiscaisParaExportacao) throws FileNotFoundException, IOException; 
-
-	public Long emitiNotaFiscal(long idTipoNotaFiscal, Date dataEmissao,
-			Long idCota, List<ItemNotaFiscal> listItemNotaFiscal,
-			InformacaoTransporte transporte,
-			InformacaoAdicional informacaoAdicional,
-			List<NotaFiscalReferenciada> listNotaFiscalReferenciada, 
-			Set<Processo> processos);	
 	
 	/**
 	 * Obtém itens para nota fiscal respeitando os parametros.
@@ -133,4 +130,26 @@ public interface NotaFiscalService {
 	 * @return lista de notas referenciadas.
 	 */
 	List<NotaFiscalReferenciada> obterNotasReferenciadas(List<ItemNotaFiscal> listaItensNotaFiscal); 
+
+	/**
+	 * Retorna um PDF com as Notas de Envio passadas como argumento
+	 * 
+	 * @param notasEnvio
+	 * @return
+	 */
+	byte[] imprimirNotasEnvio(List<NotaEnvio> notasEnvio);
+
+	public abstract Long emitiNotaFiscal(long idTipoNotaFiscal, Date dataEmissao,
+			Cota cota, List<ItemNotaFiscal> listItemNotaFiscal, InformacaoTransporte transporte, InformacaoAdicional informacaoAdicional, List<NotaFiscalReferenciada> listNotaFiscalReferenciada,
+			Set<Processo> processos, Condicao condicao);
+
+	public abstract Long emitiNotaFiscal(long idTipoNotaFiscal, Date dataEmissao,
+			Fornecedor fornecedor, List<ItemNotaFiscal> listItemNotaFiscal, InformacaoTransporte transporte, InformacaoAdicional informacaoAdicional, List<NotaFiscalReferenciada> listNotaFiscalReferenciada,
+			Set<Processo> processos, Condicao condicao);
+
+	public abstract void exportarNotasFiscais(Long... idNotaFiscals)
+			throws FileNotFoundException, IOException, IllegalArgumentException, IllegalAccessException, InvocationTargetException;
+
+
+		
 }

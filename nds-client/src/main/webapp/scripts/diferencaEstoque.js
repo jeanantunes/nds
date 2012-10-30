@@ -98,7 +98,7 @@ var diferencaEstoqueController = $.extend(true, {
 	},
 	
 	pesquisarFornecedores : function() {
-		var data = "codigoProduto=" + $("#codigo", diferencaEstoqueController.workspace).val();
+		var data = {codigoProduto: $("#codigo", diferencaEstoqueController.workspace).val()};
 		
 		$.postJSON(contextPath + "/estoque/diferenca/pesquisarFonecedores",
 				   data, diferencaEstoqueController.montarComboFornecedores);
@@ -373,10 +373,3 @@ var diferencaEstoqueController = $.extend(true, {
 
 }, BaseController);
 
-$(function() {
-	
-	diferencaEstoqueController.init();
-				
-});
-
-//@ sourceURL=dif.js

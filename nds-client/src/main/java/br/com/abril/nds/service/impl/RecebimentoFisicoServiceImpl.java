@@ -15,7 +15,6 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.TipoEdicao;
-import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.Diferenca;
@@ -23,8 +22,6 @@ import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.estoque.RecebimentoFisico;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
-import br.com.abril.nds.model.estoque.TipoDirecionamentoDiferenca;
-import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.fiscal.CFOP;
 import br.com.abril.nds.model.fiscal.ItemNotaFiscalEntrada;
@@ -399,7 +396,14 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 		
 		notaFiscal.setDataExpedicao(dataAtual);
 		
-		String cnpj = notaFiscal.getEmitente().getCnpj();
+		String cnpj = null;
+		if (notaFiscal instanceof NotaFiscalEntradaFornecedor
+				&& ((NotaFiscalEntradaFornecedor) notaFiscal).getFornecedor() != null
+				&& ((NotaFiscalEntradaFornecedor) notaFiscal).getFornecedor().getJuridica() != null
+				&& ((NotaFiscalEntradaFornecedor) notaFiscal).getFornecedor().getJuridica().getCnpj() != null
+				&& !((NotaFiscalEntradaFornecedor) notaFiscal).getFornecedor().getJuridica().getCnpj().isEmpty()) {
+			cnpj = ((NotaFiscalEntradaFornecedor)notaFiscal).getFornecedor().getJuridica().getCnpj();
+		}
 		
 		PessoaJuridica emitente = obterPessoaPorCNPJ(cnpj);
 				
@@ -407,13 +411,9 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 			throw new ValidacaoException(TipoMensagem.ERROR, "CNPJ não corresponde a Pessoa Jurídica cadastrada.");
 		}
 		
-		List<Fornecedor> fornecedor =	fornecedorService.obterFornecedores(cnpj);
-				
 		notaFiscal.setStatusNotaFiscal(StatusNotaFiscalEntrada.RECEBIDA);
 		
 		notaFiscal.setOrigem(Origem.MANUAL);
-		
-		notaFiscal.setEmitente(emitente);
 		
 		notaFiscal.setUsuario(usuarioLogado);
 		

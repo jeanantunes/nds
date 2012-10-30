@@ -19,9 +19,11 @@ import br.com.abril.nds.dto.FiltroConsolidadoConsignadoCotaDTO;
 import br.com.abril.nds.dto.ViewContaCorrenteCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsolidadoEncalheCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsolidadoVendaCotaDTO;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.financeiro.ConsolidadoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
+import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.repository.ConsolidadoFinanceiroRepository;
 import br.com.abril.nds.vo.PaginacaoVO;
 
@@ -157,7 +159,7 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 				orderByColumn = " numeroEdicao ";
 				break;
 			case PRECO_CAPA:
-				orderByColumn = " precoVenda ";
+				orderByColumn = " precoCapa ";
 				break;
 			case PRECO_COM_DESCONTO:
 				orderByColumn = " precoComDesconto ";
@@ -166,7 +168,7 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 				orderByColumn = " encalhe ";
 				break;
 			case FORNECEDOR:
-				orderByColumn = " fornecedor ";
+				orderByColumn = " nomeFornecedor ";
 				break;
 			case TOTAL:
 				orderByColumn = " total ";
@@ -373,7 +375,7 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 						orderByColumn = " numeroEdicao ";
 						break;
 					case PRECO_CAPA:
-						orderByColumn = " precoVenda ";
+						orderByColumn = " precoCapa ";
 						break;
 					case PRECO_COM_DESCONTO:
 						orderByColumn = " precoComDesconto ";
@@ -391,7 +393,7 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 						orderByColumn = " motivo ";
 						break;						
 					case FORNECEDOR:
-						orderByColumn = " fornecedor ";
+						orderByColumn = " nomeFornecedor ";
 						break;
 					case TOTAL:
 						orderByColumn = " total ";
@@ -479,5 +481,19 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		query.setParameter("data", data);
 		
 		return (Long) query.uniqueResult();
+	}
+
+	@Override
+	public ConsolidadoFinanceiroCota buscarPorCotaEData(Cota cota,
+			java.sql.Date data) {
+		
+		Criteria criteria = getSession().createCriteria(ConsolidadoFinanceiroCota.class);
+		
+		criteria.add(Restrictions.eq("cota", cota));
+		criteria.add(Restrictions.eq("dataConsolidado", data));
+		
+		criteria.setMaxResults(1);
+		
+		return (ConsolidadoFinanceiroCota) criteria.uniqueResult();
 	}
 }

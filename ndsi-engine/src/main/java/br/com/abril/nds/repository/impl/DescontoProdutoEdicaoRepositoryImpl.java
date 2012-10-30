@@ -30,6 +30,8 @@ import br.com.abril.nds.repository.DescontoProdutoEdicaoRepository;
 @Repository
 public class DescontoProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<DescontoProdutoEdicao, Long> implements DescontoProdutoEdicaoRepository {
  
+	private static final int QUINHENTOS = 500;
+	
 	/**
 	 * Construtor padrão.
 	 */
@@ -213,5 +215,24 @@ public class DescontoProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel
         
         return (BigDecimal) query.uniqueResult();
     }
+
+	@Override
+	public void salvarListaDescontoProdutoEdicao(List<DescontoProdutoEdicao> lista) {
+		
+		int i = 0;
+		
+		for (DescontoProdutoEdicao descontoProdutoEdicao : lista) {
+			this.merge(descontoProdutoEdicao);
+			i++;
+			if (i % QUINHENTOS == 0) {
+				getSession().flush();
+				getSession().clear();
+			}
+		}
+		
+		getSession().flush();
+		getSession().clear();
+		
+	}
 
 }

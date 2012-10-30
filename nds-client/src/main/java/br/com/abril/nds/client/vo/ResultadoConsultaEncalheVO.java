@@ -2,9 +2,11 @@ package br.com.abril.nds.client.vo;
 
 import java.io.Serializable;
 
+import br.com.abril.nds.dto.DebitoCreditoCotaDTO;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.export.Exportable;
+import br.com.abril.nds.vo.DebitoCreditoCotaVO;
 
 @Exportable
 public class ResultadoConsultaEncalheVO implements Serializable {
@@ -15,6 +17,8 @@ public class ResultadoConsultaEncalheVO implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	private TableModel<CellModelKeyValue<ConsultaEncalheVO>> tableModel;
+	
+	private TableModel<CellModelKeyValue<DebitoCreditoCotaVO>> tableModelDebitoCredito;  
 	
 	private String valorReparte;
 	
@@ -111,6 +115,21 @@ public class ResultadoConsultaEncalheVO implements Serializable {
 	 */
 	public void setValorReparte(String valorReparte) {
 		this.valorReparte = valorReparte;
+	}
+
+	/**
+	 * @return the tableModelDebitoCredito
+	 */
+	public TableModel<CellModelKeyValue<DebitoCreditoCotaVO>> getTableModelDebitoCredito() {
+		return tableModelDebitoCredito;
+	}
+
+	/**
+	 * @param tableModelDebitoCredito the tableModelDebitoCredito to set
+	 */
+	public void setTableModelDebitoCredito(
+			TableModel<CellModelKeyValue<DebitoCreditoCotaVO>> tableModelDebitoCredito) {
+		this.tableModelDebitoCredito = tableModelDebitoCredito;
 	}
 
 }

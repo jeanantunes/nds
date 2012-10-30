@@ -121,7 +121,7 @@ public class AssociacaoVeiculoMotoristaRotaRepositoryImpl extends
 		query.setParameter("idMotorista", idMotorista);
 		
 		if (idsIgnorar != null && !idsIgnorar.isEmpty()){
-			
+					
 			query.setParameterList("idsIgnorar", idsIgnorar);
 		}
 		

@@ -8,9 +8,11 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -24,6 +26,7 @@ import br.com.abril.nds.client.vo.EntregadorCotaProcuracaoVO;
 import br.com.abril.nds.client.vo.EntregadorPessoaFisicaVO;
 import br.com.abril.nds.client.vo.EntregadorPessoaJuridicaVO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
+import br.com.abril.nds.dto.EntregadorDTO;
 import br.com.abril.nds.dto.ProcuracaoCotaDTO;
 import br.com.abril.nds.dto.ProcuracaoImpressaoDTO;
 import br.com.abril.nds.dto.ProcuracaoImpressaoWrapper;
@@ -38,7 +41,7 @@ import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.Entregador;
-import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.ProcuracaoEntregador;
@@ -46,19 +49,23 @@ import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.TelefoneEntregador;
 import br.com.abril.nds.model.seguranca.Permissao;
-import br.com.abril.nds.serialization.custom.CustomMapJson;
+import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.EntregadorService;
 import br.com.abril.nds.service.PessoaFisicaService;
 import br.com.abril.nds.service.PessoaJuridicaService;
+import br.com.abril.nds.service.TelefoneService;
 import br.com.abril.nds.util.CellModel;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.ItemAutoComplete;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.ValidacaoVO;
+import br.com.caelum.stella.format.CNPJFormatter;
+import br.com.caelum.stella.format.CPFFormatter;
 import br.com.caelum.stella.validation.CNPJValidator;
 import br.com.caelum.stella.validation.CPFValidator;
 import br.com.caelum.stella.validation.InvalidStateException;
@@ -98,6 +105,9 @@ public class EntregadorController {
 
 	@Autowired
 	private PessoaJuridicaService pessoaJuridicaService;
+	
+	@Autowired
+	private TelefoneService telefoneService;
 
 	@Autowired
 	private DistribuidorService distribuidorService;
@@ -177,18 +187,20 @@ public class EntregadorController {
 												Long codigoEntregador,
 												boolean isComissionado,
 												String percentualComissao,
-												String cpfEntregador, 
+												String cpfEntregador,
+												String dataNascimento,
 												PessoaFisica pessoaFisica) {
 		
 		HashMap<String, String> cpf = new HashMap<String, String>();
 		cpf.put(CPF, cpfEntregador);
 		
-		validarParametrosEntradaCadastroEntregadorPF( idEntregador, 
-													  codigoEntregador, 
-												      isComissionado, 
-												      percentualComissao, 
-												      cpf,
-												      pessoaFisica.getRg());
+		validarParametrosEntradaCadastroEntregador(pessoaFisica,
+													dataNascimento,
+													idEntregador, 
+													codigoEntregador, 
+												    isComissionado, 
+												    percentualComissao, 
+												    cpf);
 
 		String mensagemSucesso = "Cadastro realizado com sucesso.";
 
@@ -269,15 +281,14 @@ public class EntregadorController {
 												  Long codigoEntregador,
 												  boolean isComissionado,
 												  String percentualComissao,
-												  
 												  String cnpjEntregador,
-												  
 												  PessoaJuridica pessoaJuridica) {
 		
 		HashMap<String, String> cnpj = new HashMap<String, String>();
 		cnpj.put(CNPJ, cnpjEntregador);
 		
-		validarParametrosEntradaCadastroEntregadorPJ(
+		validarParametrosEntradaCadastroEntregador(pessoaJuridica,
+												   null,
 												   idEntregador,
 												   codigoEntregador, 
 												   isComissionado, 
@@ -489,7 +500,12 @@ public class EntregadorController {
 		
 		Distribuidor distribuidor = distribuidorService.obter();
 		
-		boolean utilizaSugestaoIncrementoCodigo = distribuidor.isUtilizaSugestaoIncrementoCodigo();
+		boolean utilizaSugestaoIncrementoCodigo = false;
+		
+		if (distribuidor.getUtilizaSugestaoIncrementoCodigo() != null) {
+			
+			utilizaSugestaoIncrementoCodigo = distribuidor.getUtilizaSugestaoIncrementoCodigo();
+		}
 		
 		Long novoCodigoEntregador = null;
 		
@@ -497,7 +513,14 @@ public class EntregadorController {
 			novoCodigoEntregador = this.entregadorService.obterMinCodigoEntregadorDisponivel();
 		}
 		
-		this.result.use(CustomMapJson.class).put("data", DateUtil.formatarDataPTBR(new Date())).put("nextCodigo", novoCodigoEntregador).serialize();
+		Map<String, Object> mapa = new TreeMap();
+		mapa.put("data", DateUtil.formatarDataPTBR(new Date()));
+		
+		if (novoCodigoEntregador != null) {
+			mapa.put("nextCodigo", novoCodigoEntregador);
+		}
+		
+		this.result.use(CustomJson.class).from(mapa).serialize();
 		
 	}
 	
@@ -722,62 +745,23 @@ public class EntregadorController {
 		}
 	}
 	
-	private void validarParametrosEntradaCadastroEntregadorPF(
-			Long idEntregador,
-			Long codigoEntregador,
-			boolean isComissionado,
-			String percentualComissao,
-			HashMap<String, String> cpfCnpj,
-			String rg) {
-		
-		
-		List<String> listaMensagens = new ArrayList<String>();
-		ValidacaoVO validacao = new ValidacaoVO();
-		validacao.setTipoMensagem(TipoMensagem.WARNING);
-		validacao.setListaMensagens(listaMensagens);
-		
-		if (rg != null && rg.length() >  PessoaUtil.RG_QUANTIDADE_DIGITOS) {
-			
-			listaMensagens.add("Quantidade de caracteres do campo [RG] excede o maximo de " + PessoaUtil.RG_QUANTIDADE_DIGITOS + " dígitos");
-		}
-		
-		validarParametrosEntradaCadastroEntregador(validacao, idEntregador, codigoEntregador, isComissionado, percentualComissao, cpfCnpj);
-		
-	}
-	
-	private void validarParametrosEntradaCadastroEntregadorPJ(
-			Long idEntregador,
-			Long codigoEntregador,
-			boolean isComissionado,
-			String percentualComissao,
-			HashMap<String, String> cpfCnpj) {
-		
-		List<String> listaMensagens = new ArrayList<String>();
-		ValidacaoVO validacao = new ValidacaoVO();
-		validacao.setTipoMensagem(TipoMensagem.WARNING);
-		validacao.setListaMensagens(listaMensagens);
-		
-		validarParametrosEntradaCadastroEntregador(validacao, idEntregador, codigoEntregador, isComissionado, percentualComissao, cpfCnpj);
-		
-	}
-	
 	/*
 	 * 
 	 */
 	@SuppressWarnings("unchecked")
-	private void validarParametrosEntradaCadastroEntregador(ValidacaoVO validacao,
+	private void validarParametrosEntradaCadastroEntregador(Pessoa pessoa,
+														    String dataNascimento,
 															Long idEntregador,												
 															Long codigoEntregador,
 															boolean isComissionado,
 															String percentualComissao,
 															HashMap<String, String> cpfCnpj) {
 		
-		List<String> listaMensagens = validacao.getListaMensagens();
+		List<String> listaMensagens = new LinkedList<String>();
 						
 		if (codigoEntregador == null) {
 			
 			listaMensagens.add("O preenchimento do campo [Código do entregador] é obrigatório.");
-			
 			
 		} else {
 			
@@ -792,6 +776,42 @@ public class EntregadorController {
 		}
 		
 		if (cpfCnpj.containsKey(CPF)) {
+			
+			
+			
+			if( ((PessoaFisica)pessoa).getRg() == null || ((PessoaFisica)pessoa).getRg().trim().isEmpty()) {
+				
+				listaMensagens.add("O preenchimento do campo [RG] é obrigatório.");
+				
+			} else if (((PessoaFisica)pessoa).getRg() != null && ((PessoaFisica)pessoa).getRg().length() >  PessoaUtil.RG_QUANTIDADE_DIGITOS) {
+				
+				listaMensagens.add("Quantidade de caracteres do campo [RG] excede o maximo de " + PessoaUtil.RG_QUANTIDADE_DIGITOS + " dígitos");
+			}
+
+			if( ((PessoaFisica)pessoa).getOrgaoEmissor() == null || ((PessoaFisica)pessoa).getOrgaoEmissor().trim().isEmpty()) {
+				listaMensagens.add("O preenchimento do campo [Orgão Emissor] é obrigatório.");
+			}
+			
+			if( ((PessoaFisica)pessoa).getNome() == null || ((PessoaFisica)pessoa).getNome().isEmpty() ) {
+
+				listaMensagens.add("O preenchimento do campo [Nome] é obrigatório.");
+				
+			}
+			
+			if( ((PessoaFisica)pessoa).getSexo() == null ) {
+				
+				listaMensagens.add("O preenchimento do campo [Sexo] é obrigatório.");
+			}
+			
+			if(dataNascimento ==  null || dataNascimento.isEmpty()) {
+				
+				listaMensagens.add("O preenchimento do campo [Data Nascimento] é obrigatório.");
+				
+			} else if(!DateUtil.isValidDatePTBR(dataNascimento)){
+				
+				listaMensagens.add("Campo [Data Nascimento] inválido.");
+				
+			}
 			
 			String cpfEntregador = cpfCnpj.get(CPF);
 			
@@ -815,6 +835,20 @@ public class EntregadorController {
 			
 		} else if (cpfCnpj.containsKey(CNPJ)) {
 			
+			if( ((PessoaJuridica)pessoa).getInscricaoEstadual() == null || ((PessoaJuridica)pessoa).getInscricaoEstadual().isEmpty()) {
+				listaMensagens.add("O preenchimento do campo [Inscrição Estadual] é obrigatório.");
+			}
+			
+			if( ((PessoaJuridica)pessoa).getRazaoSocial() == null || ((PessoaJuridica)pessoa).getRazaoSocial().isEmpty() ) {
+				listaMensagens.add("O preenchimento do campo [Razão Social] é obrigatório.");
+			}
+
+			if( ((PessoaJuridica)pessoa).getNomeFantasia() == null || ((PessoaJuridica)pessoa).getNomeFantasia().isEmpty() ) {
+
+				listaMensagens.add("O preenchimento do campo [Nome Fantasia] é obrigatório.");
+				
+			}
+			
 			String cnpjEntregador = cpfCnpj.get(CNPJ);
 			
 			if (cnpjEntregador == null || cnpjEntregador.isEmpty()) {
@@ -834,6 +868,11 @@ public class EntregadorController {
 					listaMensagens.add("CNPJ inválido.");
 				}
 			}
+			
+			validarTelefone(listaMensagens);
+			
+			validarEndereco(listaMensagens);
+			
 		}
 		
 		if (isComissionado && percentualComissao == null) {
@@ -852,10 +891,49 @@ public class EntregadorController {
 			}
 		}
 			
+		
+		if (!listaMensagens.isEmpty()) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, listaMensagens);
+		}
+	}
+	
+	private void validarEndereco(List<String> listaMensagens) {
+		
 		List<EnderecoAssociacaoDTO> listaEnderecoAssociacaoSalvar = 
 				(List<EnderecoAssociacaoDTO>) this.session.getAttribute(
 						LISTA_ENDERECOS_SALVAR_SESSAO);
 		
+		
+		if (listaEnderecoAssociacaoSalvar == null || listaEnderecoAssociacaoSalvar.isEmpty()) {
+			
+			listaMensagens.add("Pelo menos um endereço deve ser cadastrado para o entregador.");
+		
+		} else {
+			
+			boolean temPrincipal = false;
+			
+			for (EnderecoAssociacaoDTO enderecoAssociacao : listaEnderecoAssociacaoSalvar) {
+				
+				if (enderecoAssociacao.isEnderecoPrincipal()) {
+					
+					temPrincipal = true;
+					
+					break;
+				}
+			}
+
+			if (!temPrincipal) {
+				
+				listaMensagens.add("Deve haver ao menos um endereço principal para o entregador.");
+			}
+		}
+
+		
+	}
+	
+	private void validarTelefone(List<String> listaMensagens) {
+	
 		Map<Integer, TelefoneAssociacaoDTO> map = this.obterTelefonesSalvarSessao();
 		
 		if (map.keySet().isEmpty()) {
@@ -883,37 +961,8 @@ public class EntregadorController {
 				listaMensagens.add("Deve haver ao menos um telefone principal para o entregador.");
 			}
 		}
-		
-		if (listaEnderecoAssociacaoSalvar == null || listaEnderecoAssociacaoSalvar.isEmpty()) {
-			
-			listaMensagens.add("Pelo menos um endereço deve ser cadastrado para o entregador.");
-		
-		} else {
-			
-			boolean temPrincipal = false;
-			
-			for (EnderecoAssociacaoDTO enderecoAssociacao : listaEnderecoAssociacaoSalvar) {
-				
-				if (enderecoAssociacao.isEnderecoPrincipal()) {
-					
-					temPrincipal = true;
-					
-					break;
-				}
-			}
 
-			if (!temPrincipal) {
-				
-				listaMensagens.add("Deve haver ao menos um endereço principal para o entregador.");
-			}
-		}
 		
-		if (!listaMensagens.isEmpty()) {
-			
-			validacao.setListaMensagens(listaMensagens);
-			
-			throw new ValidacaoException(validacao);
-		}
 	}
 	
 	/*
@@ -1027,6 +1076,9 @@ public class EntregadorController {
 
 			if (telefoneAssociacaoDTO.getTipoTelefone() != null){
 				
+				this.telefoneService.validarTelefone(
+					telefoneAssociacaoDTO.getTelefone(), telefoneAssociacaoDTO.getTipoTelefone());
+				
 				TelefoneEntregador telefoneEntregador = new TelefoneEntregador();
 				telefoneEntregador.setPrincipal(telefoneAssociacaoDTO.isPrincipal());
 				TelefoneDTO dto = telefoneAssociacaoDTO.getTelefone();
@@ -1081,75 +1133,27 @@ public class EntregadorController {
 
 		return telefonesSessao;
 	}
-
-	/*
-	 * Método que retorna uma pessoa Juridica com suas devidas validações.
-	 */
-	private PessoaJuridica validarPessoaJuridica(PessoaJuridica pessoaJuridica) {
-		
-		if (pessoaJuridica == null) {
-			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Pessoa Juridica não pode estar nula.");
-		}
-
-		if (pessoaJuridica.getCnpj() == null) {
-			
-			throw new ValidacaoException(TipoMensagem.WARNING, "O CNPJ da Pessoa Juridica não pode ser nulo.");
-		}
-		
-		PessoaJuridica pessoaJuridicaValidada = 
-				this.pessoaJuridicaService.buscarPorCnpj(pessoaJuridica.getCnpj());
-		
-		if (pessoaJuridicaValidada == null) {
-			
-			pessoaJuridicaValidada = this.pessoaJuridicaService.salvarPessoaJuridica(pessoaJuridica);
-		}
-
-		pessoaJuridicaValidada.setEmail(pessoaJuridica.getEmail());
-		pessoaJuridicaValidada.setInscricaoEstadual(pessoaJuridica.getInscricaoEstadual());
-		pessoaJuridicaValidada.setNomeFantasia(pessoaJuridica.getNomeFantasia());
-		pessoaJuridicaValidada.setRazaoSocial(pessoaJuridica.getRazaoSocial());
-
-		return this.pessoaJuridicaService.salvarPessoaJuridica(pessoaJuridicaValidada);
-	}
 	
-	/*
-	 * Método que retorna uma pessoa Juridica com suas devidas validações.
-	 */
-	private PessoaFisica validarPessoaFisica(PessoaFisica pessoaFisica) {
+	private String obterDocumentoFormatado(CNPJFormatter cnpjFormatter, CPFFormatter cpfFormatter, Pessoa pessoa) {
 		
-		if (pessoaFisica == null) {
-			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Pessoa Juridica não pode estar nula.");
+		String documento = null;
+		
+		if(pessoa instanceof PessoaJuridica) {
+			documento = ((PessoaJuridica) pessoa).getCnpj();
+			try {
+				return cnpjFormatter.format(documento);
+			} catch(Exception e) {
+				return "";
+			}
+		} else {
+			documento = ((PessoaFisica) pessoa).getCpf();
+			try {
+				return cpfFormatter.format(documento);
+			} catch(Exception e) {
+				return "";
+			}
 		}
 		
-		if (pessoaFisica.getCpf() == null) {
-			
-			throw new ValidacaoException(TipoMensagem.WARNING, "O CNPJ da Pessoa Física não pode ser nulo.");
-		}
-
-		PessoaFisica pessoaFisicaValidada = 
-				this.pessoaFisicaService.buscarPorCpf(pessoaFisica.getCpf());
-
-		if (pessoaFisicaValidada == null) {
-
-			pessoaFisicaValidada = this.pessoaFisicaService.salvarPessoaFisica(pessoaFisica);
-		}
-
-		pessoaFisicaValidada.setEmail(pessoaFisica.getEmail());
-		pessoaFisicaValidada.setApelido(pessoaFisica.getApelido());
-		pessoaFisicaValidada.setNome(pessoaFisica.getNome());
-		pessoaFisicaValidada.setDataNascimento(pessoaFisica.getDataNascimento());
-		pessoaFisicaValidada.setEstadoCivil(pessoaFisica.getEstadoCivil());
-		pessoaFisicaValidada.setNacionalidade(pessoaFisica.getNacionalidade());
-		pessoaFisicaValidada.setNatural(pessoaFisica.getNatural());
-		pessoaFisicaValidada.setOrgaoEmissor(pessoaFisica.getOrgaoEmissor());
-		pessoaFisicaValidada.setRg(pessoaFisica.getRg());
-		pessoaFisicaValidada.setSexo(pessoaFisica.getSexo());
-		pessoaFisicaValidada.setSocioPrincipal(pessoaFisica.isSocioPrincipal());
-		pessoaFisicaValidada.setUfOrgaoEmissor(pessoaFisica.getUfOrgaoEmissor());
-		
-		return this.pessoaFisicaService.salvarPessoaFisica(pessoaFisicaValidada);
 	}
 	
 	/*
@@ -1157,6 +1161,9 @@ public class EntregadorController {
 	 */
 	private TableModel<CellModel> obterTableModel(List<Entregador> listaEntregador) {
 
+		CNPJFormatter cnpjFormatter = new CNPJFormatter();
+		CPFFormatter cpfFormatter = new CPFFormatter();
+		
 		TableModel<CellModel> tableModel = new TableModel<CellModel>();
 
 		List<CellModel> listaCellModel = new ArrayList<CellModel>();
@@ -1167,10 +1174,9 @@ public class EntregadorController {
 					((PessoaJuridica) entregador.getPessoa()).getRazaoSocial() :
 						((PessoaFisica) entregador.getPessoa()).getNome();
 
-			String documento = entregador.getPessoa() instanceof PessoaJuridica ? 
-					((PessoaJuridica) entregador.getPessoa()).getCnpj() :
-						((PessoaFisica) entregador.getPessoa()).getCpf(); 
-
+			String documento = obterDocumentoFormatado(cnpjFormatter, cpfFormatter, entregador.getPessoa());
+					
+					
 			String apelido = entregador.getPessoa() instanceof PessoaJuridica ? 
 					((PessoaJuridica) entregador.getPessoa()).getNomeFantasia() :
 						((PessoaFisica) entregador.getPessoa()).getApelido();
@@ -1182,8 +1188,9 @@ public class EntregadorController {
 			for (TelefoneEntregador telefoneEntregador : entregador.getTelefones()) {
 
 				if (telefoneEntregador.isPrincipal()) {
-
-					telefone = telefoneEntregador.getTelefone().getNumero();
+					
+					telefone = obterTelefoneFormatado(telefoneEntregador.getTelefone());
+					
 				}
 			}
 
@@ -1204,6 +1211,28 @@ public class EntregadorController {
 		return tableModel;
 	}
 
+	private String obterTelefoneFormatado(Telefone telefonePrincipal) {
+		
+		StringBuffer telefoneFormatado = new StringBuffer();
+		
+		if(telefonePrincipal == null) {
+			return "";
+		}
+		
+		if(telefonePrincipal.getDdd()!=null) {
+			telefoneFormatado.append("(");
+			telefoneFormatado.append(telefonePrincipal.getDdd());
+			telefoneFormatado.append(") ");
+		}
+		
+		if(telefonePrincipal.getNumero()!=null) {
+			telefoneFormatado.append(telefonePrincipal.getNumero());
+		}
+		
+		return telefoneFormatado.toString();
+		
+	}
+	
 	/*
 	 * Método que realiza a formatação dos dados a serem apresentados na grid. 
 	 */
@@ -1237,4 +1266,56 @@ public class EntregadorController {
 		return valor;
 	}
 	
+	/**
+	 * Efetua consulta pelo nome da cota informado, utilizado para auto complete da tela
+	 * 
+	 * @param nomeCota - nome da cota
+	 */
+	@Post
+	public void autoCompletarPorNome(String nome) {
+		
+		nome = PessoaUtil.removerSufixoDeTipo(nome);
+		
+		List<Entregador> listaEntregador = this.entregadorService.obterEntregadoresPorNome(nome);
+		
+		List<ItemAutoComplete> listaEntregadorAutoComplete = new ArrayList<ItemAutoComplete>();
+		
+		if (listaEntregador != null && !listaEntregador.isEmpty()) {
+			
+			for (Entregador entregador : listaEntregador) {
+				
+				String nomeExibicao = PessoaUtil.obterNomeExibicaoPeloTipo(entregador.getPessoa());
+					
+				EntregadorDTO entregadorDTO = new EntregadorDTO(entregador.getId(), nomeExibicao);
+	
+				listaEntregadorAutoComplete.add(new ItemAutoComplete(nomeExibicao, null, entregadorDTO));
+			}
+		}
+		
+		this.result.use(Results.json()).from(listaEntregadorAutoComplete, "result").include("value", "chave").serialize();
+	}
+
+	/**
+	 * Efetua consulta pelo nome da cota informado
+	 * 
+	 * @param nomeCota - nome da cota
+	 */
+	@Post
+	public void pesquisarPorNome(String nome) {
+		
+		nome = PessoaUtil.removerSufixoDeTipo(nome);
+		
+		Entregador entregador = this.entregadorService.obterPorNome(nome);
+		
+		if (entregador == null) {
+		
+			throw new ValidacaoException(TipoMensagem.WARNING, "Entregador \"" + nome + "\" não encontrada!");
+		}
+		
+		String nomeExibicao = PessoaUtil.obterNomeExibicaoPeloTipo(entregador.getPessoa());
+				
+		EntregadorDTO entregadorDTO = new EntregadorDTO(entregador.getId(), nomeExibicao);
+			
+		this.result.use(Results.json()).from(entregadorDTO, "result").serialize();
+	}
 }

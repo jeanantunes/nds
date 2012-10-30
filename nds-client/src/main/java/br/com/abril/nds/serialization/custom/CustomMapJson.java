@@ -10,18 +10,24 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.codehaus.jackson.JsonParser;
-import org.codehaus.jackson.Version;
-import org.codehaus.jackson.map.DeserializationConfig;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.SerializationConfig;
-import org.codehaus.jackson.map.module.SimpleModule;
-
 import br.com.abril.nds.serialization.custom.CustomJson.PropertyExcludeModule;
 import br.com.caelum.vraptor.View;
 import br.com.caelum.vraptor.core.Localization;
 import br.com.caelum.vraptor.ioc.Component;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.Version;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.Module;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationConfig;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.introspect.BasicBeanDescription;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.databind.ser.BeanPropertyWriter;
+import com.fasterxml.jackson.databind.ser.BeanSerializerModifier;
+import com.fasterxml.jackson.databind.ser.std.SqlDateSerializer;
+import com.fasterxml.jackson.datatype.hibernate4.Hibernate4Module;
 import com.fasterxml.jackson.module.hibernate.HibernateModule;
 @Component
 public class CustomMapJson implements View {
@@ -39,7 +45,7 @@ public class CustomMapJson implements View {
 
 		this.response = response;
 		mapper = new ObjectMapper();
-		mapper.registerModule(new HibernateModule());
+		mapper.registerModule(new Hibernate4Module());
 		Locale locale = localization.getLocale();
 		if (locale == null) {
 			locale = Locale.getDefault();
@@ -53,18 +59,18 @@ public class CustomMapJson implements View {
 		
 		 SimpleModule testModule = new SimpleModule("DateSQL", new Version(1, 0, 0, null));
 		 
-		 testModule.addSerializer( new SqlDateSerializerBase(df));
+		 testModule.addSerializer( new SqlDateSerializer());
 		 mapper.registerModule(testModule);
 		
-		mapper.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-		mapper.configure(SerializationConfig.Feature.WRITE_DATES_AS_TIMESTAMPS, false);
-		mapper.configure(SerializationConfig.Feature.WRITE_DATE_KEYS_AS_TIMESTAMPS, false);
+		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+		mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+		mapper.configure(SerializationFeature.WRITE_DATE_KEYS_AS_TIMESTAMPS, false);
 		
-		mapper.configure(SerializationConfig.Feature.FAIL_ON_EMPTY_BEANS, false);
+		mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
 		mapper.configure(JsonParser.Feature.AUTO_CLOSE_SOURCE, false);
 
-		mapper.configure(SerializationConfig.Feature.INDENT_OUTPUT, false);
-		mapper.configure(SerializationConfig.Feature.WRITE_NULL_MAP_VALUES,
+		mapper.configure(SerializationFeature.INDENT_OUTPUT, false);
+		mapper.configure(SerializationFeature.WRITE_NULL_MAP_VALUES,
 				false);
 		
 		

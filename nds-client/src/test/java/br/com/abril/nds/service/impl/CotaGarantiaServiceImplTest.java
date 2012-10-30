@@ -68,7 +68,7 @@ public class CotaGarantiaServiceImplTest extends AbstractRepositoryImplTest {
 		
 		NotaPromissoria notaPromissoria = new NotaPromissoria();
 		
-		notaPromissoria.setValor(10000D);
+		notaPromissoria.setValor(new BigDecimal(10000));
 		notaPromissoria.setVencimento(new Date());
 		
 		notaPromissoria.setValorExtenso("Mil Conto");
@@ -93,7 +93,7 @@ public class CotaGarantiaServiceImplTest extends AbstractRepositoryImplTest {
 		cheque.setDvAgencia("3");
 		cheque.setConta(444444L);
 		cheque.setDvConta("0");
-		cheque.setValor(2500000D);
+		cheque.setValor(new BigDecimal(2500000));
 		cheque.setNumeroCheque("123456");
 		cheque.setEmissao(new Date() );
 		cheque.setValidade(new Date() );
@@ -118,7 +118,7 @@ public class CotaGarantiaServiceImplTest extends AbstractRepositoryImplTest {
 			imovel.setProprietario("Proprietario0"+i);
 			imovel.setEndereco("Endereço0"+i);
 			imovel.setNumeroRegistro(i+"001");
-			imovel.setValor((i+1)*1000D);
+			imovel.setValor(new BigDecimal((i+1)*1000));
 			imovel.setObservacao("Obs: "+i+"000");
 			
 			listaImoveis.add(imovel);
@@ -170,8 +170,8 @@ public class CotaGarantiaServiceImplTest extends AbstractRepositoryImplTest {
 		for (int i = 0 ; i <= 5; i++) {
 			CaucaoLiquida caucaoLiquida = new CaucaoLiquida();
 			
-			caucaoLiquida.setValor(5000D);
-			caucaoLiquida.setAtualizacao(Calendar.getInstance());
+			caucaoLiquida.setValor(new BigDecimal(5000));
+			caucaoLiquida.setAtualizacao(Calendar.getInstance().getTime());
 			
 			listaCaucaoLiquida.add(caucaoLiquida);
 		}

@@ -372,7 +372,4 @@ public class Lancamento implements Serializable {
 		this.alteradoInteface = alteradoInteface;
 	}
 
-	
-	
-
 }

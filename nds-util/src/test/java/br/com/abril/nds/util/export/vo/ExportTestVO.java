@@ -7,7 +7,7 @@ import br.com.abril.nds.util.export.Export.Alignment;
 @Exportable
 public class ExportTestVO {
 
-	@Export(label = "Column1", alignment = Alignment.CENTER, exhibitionOrder = 1)
+	@Export(label = "Column1 ", alignment = Alignment.CENTER, exhibitionOrder = 1, propertyToDynamicLabel = "dynamicProperty")
 	private String Column1;
 	
 	@Export(label = "Column2", alignment = Alignment.RIGHT, exhibitionOrder = 2)
@@ -36,21 +36,24 @@ public class ExportTestVO {
 	
 	@Export(label = "Column10", alignment = Alignment.CENTER)
 	private String Column10;
+	
+	private String dynamicProperty;
 
 	public ExportTestVO(String column1, String column2, String column3,
 						String column4, String column5, String column6, String column7,
-						String column8, String column9, String column10) {
+						String column8, String column9, String column10, String dynamicProperty) {
 		
-		Column1 = column1;
-		Column2 = column2;
-		Column3 = column3;
-		Column4 = column4;
-		Column5 = column5;
-		Column6 = column6;
-		Column7 = column7;
-		Column8 = column8;
-		Column9 = column9;
-		Column10 = column10;
+		this.Column1 = column1;
+		this.Column2 = column2;
+		this.Column3 = column3;
+		this.Column4 = column4;
+		this.Column5 = column5;
+		this.Column6 = column6;
+		this.Column7 = column7;
+		this.Column8 = column8;
+		this.Column9 = column9;
+		this.Column10 = column10;
+		this.dynamicProperty = dynamicProperty;
 	}
 
 	public String getColumn1() {
@@ -131,6 +134,20 @@ public class ExportTestVO {
 
 	public void setColumn10(String column10) {
 		Column10 = column10;
+	}
+
+	/**
+	 * @return the dynamicProperty
+	 */
+	public String getDynamicProperty() {
+		return dynamicProperty;
+	}
+
+	/**
+	 * @param dynamicProperty the dynamicProperty to set
+	 */
+	public void setDynamicProperty(String dynamicProperty) {
+		this.dynamicProperty = dynamicProperty;
 	}
 	
 }

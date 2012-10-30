@@ -48,7 +48,7 @@ public class VendaEncalheDTO implements Serializable {
 
 	private TipoVendaEncalhe tipoVendaEncalhe;
 
-	private Integer qntDisponivelProduto;
+	private BigInteger qntDisponivelProduto;
 	
 	private String codigoBarras;
 	
@@ -56,7 +56,7 @@ public class VendaEncalheDTO implements Serializable {
 	
 	private Date dataVencimentoDebito;
 	
-	private Integer codBox;
+	private String codBox;
 	
 	private Usuario usuario;
 	
@@ -91,14 +91,14 @@ public class VendaEncalheDTO implements Serializable {
 	/**
 	 * @return the codBox
 	 */
-	public Integer getCodBox() {
+	public String getCodBox() {
 		return codBox;
 	}
 
 	/**
 	 * @param codBox the codBox to set
 	 */
-	public void setCodBox(Integer codBox) {
+	public void setCodBox(String codBox) {
 		this.codBox = codBox;
 	}
 
@@ -301,14 +301,14 @@ public class VendaEncalheDTO implements Serializable {
 	/**
 	 * @return the qntDisponivelProduto
 	 */
-	public Integer getQntDisponivelProduto() {
+	public BigInteger getQntDisponivelProduto() {
 		return qntDisponivelProduto;
 	}
 
 	/**
 	 * @param qntDisponivelProduto the qntDisponivelProduto to set
 	 */
-	public void setQntDisponivelProduto(Integer qntDisponivelProduto) {
+	public void setQntDisponivelProduto(BigInteger qntDisponivelProduto) {
 		this.qntDisponivelProduto = qntDisponivelProduto;
 	}
 	

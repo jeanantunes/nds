@@ -1,6 +1,8 @@
 package br.com.abril.nds.model.cadastro;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -12,6 +14,10 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
+
 
 @Entity
 @Table(name = "ROTEIRIZACAO")
@@ -28,8 +34,9 @@ public class Roteirizacao {
 	@JoinColumn(name = "BOX_ID", unique = true)
 	private Box box;
 	
-	@OneToMany
+	@OneToMany(orphanRemoval = true)
 	@JoinColumn( name="ROTEIRIZACAO_ID")
+	@Cascade(value = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.SAVE_UPDATE})
 	private List<Roteiro> roteiros = new ArrayList<Roteiro>();
 	
 	public Long getId() {
@@ -73,20 +80,69 @@ public class Roteirizacao {
 	 * @param roteiro: Roteiro para inclusão
 	 */
 	public void addRoteiro(Roteiro roteiro) {
-		if (roteiros == null) {
+	    if (roteiro.getOrdem() <= 0) {
+            throw new IllegalArgumentException("Ordem [" + roteiro.getOrdem()  + "] para o Roteiro não é válida!");
+        }
+        Roteiro roteiroExistente = getRoteiroByOrdem(roteiro.getOrdem());
+        if (roteiroExistente != null) {
+            throw new IllegalArgumentException("Ordem [" + roteiro.getOrdem()  + "] para o Roteiro já utilizada!");
+        }
+	    
+	    if (roteiros == null) {
 			roteiros = new ArrayList<Roteiro>();
 		}
+		roteiro.setRoteirizacao(this);
 		roteiros.add(roteiro);
 	}
 	
-	/**
-	 * Adiciona novos Roteiros à Roteirizacao
-	 * @param listaRoteiro: List<Roteiro> para inclusão
-	 */
-	public void addAllRoteiro(List<Roteiro> listaRoteiro){
-		if (roteiros == null){
-			roteiros = new ArrayList<Roteiro>();
-		}
-		roteiros.addAll(listaRoteiro);
-	}
+    /**
+     * Recupera o roteiro pela ordem
+     * 
+     * @param ordem
+     *            ordem para recuperação do roteiro
+     * @return Roteiro que corresponde à ordem recebida ou null caso não exista
+     *         Roteiro para a ordem recebida
+     */
+	private Roteiro getRoteiroByOrdem(Integer ordem) {
+	    for (Roteiro roteiro : roteiros) {
+	        if (roteiro.getOrdem().equals(ordem)) {
+	            return roteiro;
+	        }
+	    }
+        return null;
+    }
+
+    /**
+     * Desassocia os roteiros da roteirização de acordo com os identificadores
+     * recebidos
+     * 
+     * @param idsRoteiros
+     *            identificadores dos roteiros para desassociação
+     */
+	public void desassociarRoteiros(Collection<Long> idsRoteiros) {
+        Iterator<Roteiro> iterator = roteiros.iterator();
+        while(iterator.hasNext()) {
+            Roteiro roteiro = iterator.next();
+            if (idsRoteiros.contains(roteiro.getId())) {
+                iterator.remove();
+            }
+        }
+    }
+
+    /**
+     * Recupera o roteiro pelo identificador
+     * 
+     * @param id
+     *            identificador do roteiro
+     * @return Roteiro com o identificador recebido ou null caso não exista
+     *         roteiro com o identificador
+     */
+	public Roteiro getRoteiro(Long id) {
+        for (Roteiro roteiro : roteiros) {
+            if (roteiro.getId().equals(id)) {
+                return roteiro;
+            }
+        }
+        return null;
+    }
 }

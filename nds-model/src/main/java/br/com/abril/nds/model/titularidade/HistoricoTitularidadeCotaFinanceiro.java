@@ -46,7 +46,7 @@ public class HistoricoTitularidadeCotaFinanceiro implements Serializable {
      * Fator de vencimento nas cobranças
      */
     @Column(name = "FATOR_VENCIMENTO")
-    private int fatorVencimento;
+    private Integer fatorVencimento;
     
     /**
      * Valor mínimo de cobrança
@@ -78,7 +78,7 @@ public class HistoricoTitularidadeCotaFinanceiro implements Serializable {
      * Flag indicando se a cota possui contrato
      */
     @Column(name = "POSSUI_CONTRATO")
-    private boolean possuiContrato;
+    private Boolean possuiContrato;
     
     /**
      * Data de início do contrato
@@ -98,7 +98,7 @@ public class HistoricoTitularidadeCotaFinanceiro implements Serializable {
      * Flag indicando se o contrato foi recebido
      */
     @Column(name = "CONTRATO_RECEBIDO")
-    private boolean contratoRecebido;
+    private Boolean contratoRecebido;
 
     /**
      * @return the id
@@ -117,14 +117,14 @@ public class HistoricoTitularidadeCotaFinanceiro implements Serializable {
     /**
      * @return the fatorVencimento
      */
-    public int getFatorVencimento() {
+    public Integer getFatorVencimento() {
         return fatorVencimento;
     }
 
     /**
      * @param fatorVencimento the fatorVencimento to set
      */
-    public void setFatorVencimento(int fatorVencimento) {
+    public void setFatorVencimento(Integer fatorVencimento) {
         this.fatorVencimento = fatorVencimento;
     }
 
@@ -188,14 +188,14 @@ public class HistoricoTitularidadeCotaFinanceiro implements Serializable {
     /**
      * @return the possuiContrato
      */
-    public boolean isPossuiContrato() {
+    public Boolean isPossuiContrato() {
         return possuiContrato;
     }
 
     /**
      * @param possuiContrato the possuiContrato to set
      */
-    public void setPossuiContrato(boolean possuiContrato) {
+    public void setPossuiContrato(Boolean possuiContrato) {
         this.possuiContrato = possuiContrato;
     }
 
@@ -230,14 +230,14 @@ public class HistoricoTitularidadeCotaFinanceiro implements Serializable {
     /**
      * @return the contratoRecebido
      */
-    public boolean isContratoRecebido() {
+    public Boolean isContratoRecebido() {
         return contratoRecebido;
     }
 
     /**
      * @param contratoRecebido the contratoRecebido to set
      */
-    public void setContratoRecebido(boolean contratoRecebido) {
+    public void setContratoRecebido(Boolean contratoRecebido) {
         this.contratoRecebido = contratoRecebido;
     }
 

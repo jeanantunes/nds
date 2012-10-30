@@ -9,10 +9,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.client.util.AuditoriaUtil;
 import br.com.abril.nds.dto.ConsultaLoteNotaFiscalDTO;
 import br.com.abril.nds.dto.CotaExemplaresDTO;
 import br.com.abril.nds.dto.QuantidadePrecoItemNotaDTO;
@@ -22,6 +25,7 @@ import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Processo;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
+import br.com.abril.nds.model.fiscal.nota.Condicao;
 import br.com.abril.nds.model.fiscal.nota.InformacaoTransporte;
 import br.com.abril.nds.model.fiscal.nota.ItemNotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
@@ -39,6 +43,7 @@ import br.com.abril.nds.util.TipoMensagem;
 @Service
 public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 	
+	private static final Logger LOGGER = LoggerFactory.getLogger(GeracaoNFeServiceImpl.class);
 	
 	@Autowired
 	private NotaFiscalService notaFiscalService;
@@ -112,7 +117,7 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 			Intervalo<Integer> intervalorCota,
 			Intervalo<Date> intervaloDateMovimento,
 			List<Long> listIdFornecedor, List<Long> listIdProduto,
-			Long idTipoNotaFiscal, Date dataEmissao, List<Long> idCotasSuspensas) throws FileNotFoundException, IOException {
+			Long idTipoNotaFiscal, Date dataEmissao, List<Long> idCotasSuspensas, Condicao condicao) throws FileNotFoundException, IOException {
 		
 		Set<Long> listaIdCota = this.cotaRepository.obterIdCotasEntre(intervalorCota,intervaloBox, null, null, null);
 		
@@ -153,8 +158,8 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 				Set<Processo> processos = new HashSet<Processo>();
 				processos.add(Processo.GERACAO_NF_E);
 				
-				Long idNotaFiscal = this.notaFiscalService.emitiNotaFiscal(idTipoNotaFiscal, dataEmissao, idCota, 
-						listItemNotaFiscal, transporte, null, listaNotasFiscaisReferenciadas, processos);
+				Long idNotaFiscal = this.notaFiscalService.emitiNotaFiscal(idTipoNotaFiscal, dataEmissao, cota, 
+						listItemNotaFiscal, transporte, null, listaNotasFiscaisReferenciadas, processos, condicao);
 				
 				NotaFiscal notaFiscal = this.notaFiscalRepository.buscarPorId(idNotaFiscal);
 				
@@ -162,6 +167,7 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 				
 				listaNotaFiscal.add(notaFiscal);
 			} catch (Exception exception) {
+				LOGGER.warn(exception.getLocalizedMessage(), exception);
 				continue;
 			}
 		}

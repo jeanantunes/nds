@@ -4,6 +4,7 @@ import java.util.List;
 
 import junit.framework.Assert;
 
+import org.hibernate.Criteria;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,17 +84,17 @@ public class BoxRepositoryImplTest extends AbstractRepositoryImplTest {
 		save(roteiro);
 		
 		
-		rota = Fixture.rota("005", "Rota 005",roteiro);
+		rota = Fixture.rota("Rota 005",roteiro);
 		rota.setRoteiro(roteiro);
-		rota.addPDV(pdv, 1);
+		rota.addPDV(pdv, 1, box);
 		save(rota);
 		
 		roteiro = Fixture.criarRoteiro("Interlagos",roteirizacao, TipoRoteiro.NORMAL);
 		save(roteiro);
 		
-		rota = Fixture.rota("004", "Rota 004", roteiro);
+		rota = Fixture.rota("Rota 004", roteiro);
 		rota.setRoteiro(roteiro);
-		rota.addPDV(pdv, 1);
+		rota.addPDV(pdv, 1, box);
 		save(rota);
 		
 		pdv = Fixture.criarPDVPrincipal("Pdv 1", cotaJ);
@@ -151,5 +152,110 @@ public class BoxRepositoryImplTest extends AbstractRepositoryImplTest {
 	    Assert.assertEquals(cotas.size(), 2);
 	    Assert.assertEquals(cotas.get(0).getNumeroCota(), new Integer(1));
 	}
+	
+	
+//	TESTES SEM USO DE MASSA ----------------------------------------------------------------------------------------
+	
+	
+	@Test
+	public void testarObterBoxUsuario() {
+		
+		List<Box> boxes;		
+		Long idUsuario = 1L;
+		
+		boxes = boxRepository.obterBoxUsuario(idUsuario, TipoBox.ENCALHE);
+		
+		Assert.assertNotNull(boxes);		
+		
+	}
+	
+	@Test
+	public void testarObterBoxProduto() {
+		
+		List<Box> boxes;		
+		String codigoProduto = "123";
+		
+		boxes = boxRepository.obterBoxPorProduto(codigoProduto);
+		
+		Assert.assertNotNull(boxes);
+	}
+	
+	@Test
+	public void testarHasCodigo() {
+		
+		Integer codigoBox = 1;
+		Long id = 2L;
+		
+		boolean hasCodigo =  boxRepository.hasCodigo(codigoBox, id);
+		
+		Assert.assertTrue(hasCodigo);
+		
+	}
+	
+	@Test
+	public void testarObterCodigoBoxPadraoUsuario() {
+		Integer codigoPadrao;
+		Long idUsuario = 1L;
+		
+		codigoPadrao = boxRepository.obterCodigoBoxPadraoUsuario(idUsuario);
+		
+//		Assert.assertNotNull(codigoPadrao);
+		
+	}
+	
+	@Test
+	public void testarHasRoteirosVinculados() {
+		
+		Long idBox = 1L;
+		
+		boolean hasRoteirosVinculados = boxRepository.hasRoteirosVinculados(idBox);
+		
+		Assert.assertFalse(hasRoteirosVinculados);
+		
+	}
+	
+	@Test
+	public void testarHasCotasVinculadas() {
+		
+		Long idBox = 1L;
+		
+		boolean hasCotasVinculadas = boxRepository.hasCotasVinculadas(idBox);
+		
+		Assert.assertFalse(hasCotasVinculadas);		
+		
+	}
+	
+	@Test
+	public void testarObterCostasPorBoxRoteiroRota() {
+		
+		List<Cota> cotas;
+		
+		Long idBox = 1L;
+		Long idRoteiro = 2L;
+		Long idRota = 3L;
+		
+		cotas = boxRepository.obterCotasPorBoxRoteiroRota(idBox, idRoteiro, idRota);
+		
+		Assert.assertNotNull(cotas);		
+		
+	}
+	
+	@Test
+	public void testarObterQuantidadeCotasPorBoxRoteiroRota() {
+		
+		Long quantidadeCotas;
+		
+		Long idBox = 1L;
+		Long idRoteiro = 2L;
+		Long idRota = 3L;
+		
+		quantidadeCotas = boxRepository.obterQuantidadeCotasPorBoxRoteiroRota(idBox, idRoteiro, idRota);
+		
+		Assert.assertNotNull(quantidadeCotas);
+		
+	}
+
+	
+	
 	
 }

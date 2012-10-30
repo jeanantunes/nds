@@ -9,11 +9,14 @@ import org.hibernate.Query;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.client.vo.NegociacaoDividaDetalheVO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaDividasCotaDTO;
 import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.financeiro.Cobranca;
+import br.com.abril.nds.model.financeiro.StatusBaixa;
 import br.com.abril.nds.repository.CobrancaRepository;
 
 @Repository
@@ -256,5 +259,114 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
 		}
 		
 		return (BigDecimal) query.uniqueResult();
+	}
+	
+	@Override
+	public BigDecimal obterValorCobrancaNaoPagoDaCota(Integer numeroCota){
+		
+		BigDecimal valorPagoBaixaCobranca = this.obterValorPagoBaixaCobrancaCota(numeroCota);
+		
+		BigDecimal valorCobrancaNaoPago = this.obterValorNaoPagoCobranca(numeroCota); 
+		
+		return valorCobrancaNaoPago!=null?valorCobrancaNaoPago.subtract(valorPagoBaixaCobranca!=null?valorPagoBaixaCobranca:BigDecimal.ZERO):BigDecimal.ZERO;
+	}
+	
+	/**
+	 * Retorna o valor das cobranças em aberto de uma determinada cota
+	 * 
+	 * @param dataVencimento - data de vencimento da cobrança
+	 * 
+	 * @param numeroCota - numero da cota
+	 * 
+	 * @return BigDecimal
+	 */
+	private BigDecimal obterValorNaoPagoCobranca(Integer numeroCota) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select sum(cobranca.valor) ")
+			.append(" from Cobranca cobranca inner join cobranca.cota cota ")
+			.append(" where cota.numeroCota		  =	 :numeroCota ")
+			.append(" and cobranca.statusCobranca =  :status ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("status", StatusCobranca.NAO_PAGO);
+		query.setParameter("numeroCota", numeroCota);
+		
+		return   (BigDecimal) query.uniqueResult();
+	}
+	
+	/**
+	 * Retorna o valor total pago das baixas de cobrança em aberto de uma determinda cota.
+	 * 
+	 * @param dataVencimento - data de vencimento da cobrança
+	 * 
+	 * @param numeroCota - numero da cota
+	 * 
+	 * @return BigDecimal
+	 */
+	private BigDecimal obterValorPagoBaixaCobrancaCota(Integer numeroCota) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select sum(baixa.valorPago) ")
+			.append(" from Cobranca cobranca ")
+			.append(" inner join cobranca.cota cota  ")
+			.append(" inner join cobranca.baixasCobranca baixa ")
+			.append(" where cota.numeroCota		   = :numeroCota ")
+			.append(" and cobranca.statusCobranca  = :status ")
+			.append(" and baixa.status 			   IN (:statusBaixa) ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("status", StatusCobranca.NAO_PAGO);
+		query.setParameter("numeroCota", numeroCota);
+		query.setParameterList("statusBaixa", 
+								new StatusBaixa[]{StatusBaixa.PAGAMENTO_PARCIAL,
+												  StatusBaixa.PAGO_BOLETO_NAO_ENCONTRADO,
+												  StatusBaixa.PAGO_DIVERGENCIA_DATA,
+												  StatusBaixa.PAGO_DIVERGENCIA_VALOR,
+												  StatusBaixa.PAGO});
+		
+		return (BigDecimal) query.uniqueResult();
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Cobranca> obterCobrancasEfetuadaNaDataOperacaoDistribuidor(Date dataOperacao) {
+		
+		Criteria criteria = this.getSession().createCriteria(Cobranca.class);
+		criteria.add(Restrictions.eq("dataEmissao", dataOperacao));
+	
+		return criteria.list();
+	}
+
+	@Override
+	public String obterNossoNumeroPorMovimentoFinanceiroCota(Long idMovimentoFinanceiro) {
+		
+		StringBuilder hql = new StringBuilder("select cob.nossoNumero from Cobranca cob ");
+		hql.append(" join cob.divida.consolidado.movimentos mov ")
+		   .append(" where mov.id = :idMovimentoFinanceiro");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("idMovimentoFinanceiro", idMovimentoFinanceiro);
+		
+		return (String) query.uniqueResult();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<NegociacaoDividaDetalheVO> obterDetalhesCobranca(Long idCobranca) {
+		
+		StringBuilder hql = new StringBuilder("select ");
+		hql.append(" m.valor, m.data, m.observacao  ")
+		   .append(" from Cobranca c ")
+		   .append(" join c.divida.consolidado.movimentos m ")
+		   .append(" where c.id = :idCobranca ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("idCobranca", idCobranca);
+		query.setResultTransformer(new AliasToBeanResultTransformer(NegociacaoDividaDetalheVO.class));
+		
+		return query.list();
 	}
 }
