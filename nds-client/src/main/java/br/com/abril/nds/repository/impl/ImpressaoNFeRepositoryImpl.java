@@ -132,9 +132,8 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 			sql.append("join roteiro.rotas rota ");
 		}
 		
-		sql.append("WHERE 1 = 1 ");
-		sql.append("and nf.identificacaoDestinatario.pessoaDestinatarioReferencia.id = cota.pessoa.id ");
-		sql.append("and nf.identificacao.dataEmissao = :dataEmissao ");
+		sql.append("WHERE nf.identificacaoDestinatario.pessoaDestinatarioReferencia.id = cota.pessoa.id ");
+		sql.append("  and nf.identificacao.dataEmissao = :dataEmissao ");
 		
 		if(distribuidor.getObrigacaoFiscal() != null) {
 			sql.append("and nf.informacaoEletronica.retornoComunicacaoEletronica.status = :statusNFe ");
