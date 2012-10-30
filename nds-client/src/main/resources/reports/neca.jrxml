@@ -1,0 +1,618 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="neca" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="812" leftMargin="14" rightMargin="16" topMargin="14" bottomMargin="14" whenResourceMissingType="Empty" uuid="301fc4ef-67db-46b5-9bab-0705906440fc">
+	<property name="ireport.zoom" value="1.5394743546921223"/>
+	<property name="ireport.x" value="376"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="Logo" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Local onde está  a imagem do logo da empresa.]]></parameterDescription>
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="FAT_NUMERO1" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="FAT_VENCIMENTO1" class="java.util.Date" isForPrompting="false"/>
+	<parameter name="FAT_VALOR1" class="java.lang.Double" isForPrompting="false"/>
+	<parameter name="FAT_NUMERO2" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="FAT_VENCIMENTO2" class="java.util.Date" isForPrompting="false"/>
+	<parameter name="FAT_VALOR2" class="java.lang.Double" isForPrompting="false"/>
+	<parameter name="FAT_NUMERO3" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="FAT_VENCIMENTO3" class="java.util.Date" isForPrompting="false"/>
+	<parameter name="FAT_VALOR3" class="java.lang.Double" isForPrompting="false"/>
+	<parameter name="FAT_NUMERO4" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="FAT_VENCIMENTO4" class="java.util.Date" isForPrompting="false"/>
+	<parameter name="FAT_VALOR4" class="java.lang.Double" isForPrompting="false"/>
+	<parameter name="FAT_NUMERO5" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="FAT_VENCIMENTO5" class="java.util.Date" isForPrompting="false"/>
+	<parameter name="FAT_VALOR5" class="java.lang.Double" isForPrompting="false"/>
+	<parameter name="FAT_NUMERO6" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="FAT_VENCIMENTO6" class="java.util.Date" isForPrompting="false"/>
+	<parameter name="FAT_VALOR6" class="java.lang.Double" isForPrompting="false"/>
+	<parameter name="FAT_NUMERO7" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="FAT_VENCIMENTO7" class="java.util.Date" isForPrompting="false"/>
+	<parameter name="FAT_VALOR7" class="java.lang.Double" isForPrompting="false"/>
+	<parameter name="FAT_NUMERO8" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="FAT_VENCIMENTO8" class="java.util.Date" isForPrompting="false"/>
+	<parameter name="FAT_VALOR8" class="java.lang.Double" isForPrompting="false"/>
+	<parameter name="FAT_NUMERO9" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="FAT_VENCIMENTO9" class="java.util.Date" isForPrompting="false"/>
+	<parameter name="FAT_VALOR9" class="java.lang.Double" isForPrompting="false"/>
+	<parameter name="FAT_NUMERO10" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="FAT_VENCIMENTO10" class="java.util.Date" isForPrompting="false"/>
+	<parameter name="FAT_VALOR10" class="java.lang.Double" isForPrompting="false"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String">
+		<defaultValueExpression><![CDATA["C:\\Users\\michel.jader\\Desktop\\relatorios\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="IND_EMISSAO_DEPEC" class="java.lang.Boolean"/>
+	<queryString language="xPath">
+		<![CDATA[]]>
+	</queryString>
+	<field name="naturezaOperacao" class="java.lang.String">
+		<fieldDescription><![CDATA[naturezaOperacao]]></fieldDescription>
+	</field>
+	<field name="destinatarioNome" class="java.lang.String">
+		<fieldDescription><![CDATA[destinatarioNome]]></fieldDescription>
+	</field>
+	<field name="transportadoraCNPJ" class="java.lang.String">
+		<fieldDescription><![CDATA[transportadoraCNPJ]]></fieldDescription>
+	</field>
+	<field name="transportadoraPesoLiquido" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[transportadoraPesoLiquido]]></fieldDescription>
+	</field>
+	<field name="emissorNome" class="java.lang.String">
+		<fieldDescription><![CDATA[emissorNome]]></fieldDescription>
+	</field>
+	<field name="destinatarioCNPJ" class="java.lang.String">
+		<fieldDescription><![CDATA[destinatarioCNPJ]]></fieldDescription>
+	</field>
+	<field name="valorFrete" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[valorFrete]]></fieldDescription>
+	</field>
+	<field name="valorLiquido" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[valorLiquido]]></fieldDescription>
+	</field>
+	<field name="valorBaseICMS" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[valorBaseICMS]]></fieldDescription>
+	</field>
+	<field name="transportadoraNome" class="java.lang.String">
+		<fieldDescription><![CDATA[transportadoraNome]]></fieldDescription>
+	</field>
+	<field name="chave" class="java.lang.String">
+		<fieldDescription><![CDATA[chave]]></fieldDescription>
+	</field>
+	<field name="emissorCEP" class="java.lang.String">
+		<fieldDescription><![CDATA[emissorCEP]]></fieldDescription>
+	</field>
+	<field name="emissorInscricaoMunicipal" class="java.lang.String">
+		<fieldDescription><![CDATA[emissorInscricaoMunicipal]]></fieldDescription>
+	</field>
+	<field name="protocolo" class="java.lang.String">
+		<fieldDescription><![CDATA[protocolo]]></fieldDescription>
+	</field>
+	<field name="transportadoraEspecie" class="java.lang.String">
+		<fieldDescription><![CDATA[transportadoraEspecie]]></fieldDescription>
+	</field>
+	<field name="tipoNF" class="java.lang.Integer">
+		<fieldDescription><![CDATA[tipoNF]]></fieldDescription>
+	</field>
+	<field name="emissorInscricaoEstadualSubstituto" class="java.lang.String">
+		<fieldDescription><![CDATA[emissorInscricaoEstadualSubstituto]]></fieldDescription>
+	</field>
+	<field name="transportadoraMunicipio" class="java.lang.String">
+		<fieldDescription><![CDATA[transportadoraMunicipio]]></fieldDescription>
+	</field>
+	<field name="frete" class="java.lang.Integer">
+		<fieldDescription><![CDATA[frete]]></fieldDescription>
+	</field>
+	<field name="ISSQNTotal" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[ISSQNTotal]]></fieldDescription>
+	</field>
+	<field name="transportadoraQuantidade" class="java.lang.String">
+		<fieldDescription><![CDATA[transportadoraQuantidade]]></fieldDescription>
+	</field>
+	<field name="destinatarioMunicipio" class="java.lang.String">
+		<fieldDescription><![CDATA[destinatarioMunicipio]]></fieldDescription>
+	</field>
+	<field name="valorFatura" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[valorFatura]]></fieldDescription>
+	</field>
+	<field name="emissorInscricaoEstadual" class="java.lang.String">
+		<fieldDescription><![CDATA[emissorInscricaoEstadual]]></fieldDescription>
+	</field>
+	<field name="serie" class="java.lang.String">
+		<fieldDescription><![CDATA[serie]]></fieldDescription>
+	</field>
+	<field name="informacoesComplementares" class="java.lang.String">
+		<fieldDescription><![CDATA[informacoesComplementares]]></fieldDescription>
+	</field>
+	<field name="emissorLogradouro" class="java.lang.String">
+		<fieldDescription><![CDATA[emissorLogradouro]]></fieldDescription>
+	</field>
+	<field name="destinatarioBairro" class="java.lang.String">
+		<fieldDescription><![CDATA[destinatarioBairro]]></fieldDescription>
+	</field>
+	<field name="valorOutro" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[valorOutro]]></fieldDescription>
+	</field>
+	<field name="destinatarioInscricaoEstadual" class="java.lang.String">
+		<fieldDescription><![CDATA[destinatarioInscricaoEstadual]]></fieldDescription>
+	</field>
+	<field name="versao" class="java.lang.String">
+		<fieldDescription><![CDATA[versao]]></fieldDescription>
+	</field>
+	<field name="faturas" class="java.util.List">
+		<fieldDescription><![CDATA[faturas]]></fieldDescription>
+	</field>
+	<field name="emissorMunicipio" class="java.lang.String">
+		<fieldDescription><![CDATA[emissorMunicipio]]></fieldDescription>
+	</field>
+	<field name="emissorUF" class="java.lang.String">
+		<fieldDescription><![CDATA[emissorUF]]></fieldDescription>
+	</field>
+	<field name="dataEmissao" class="java.util.Date">
+		<fieldDescription><![CDATA[dataEmissao]]></fieldDescription>
+	</field>
+	<field name="destinatarioNumero" class="java.lang.String">
+		<fieldDescription><![CDATA[destinatarioNumero]]></fieldDescription>
+	</field>
+	<field name="ISSQNValor" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[ISSQNValor]]></fieldDescription>
+	</field>
+	<field name="transportadoraPesoBruto" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[transportadoraPesoBruto]]></fieldDescription>
+	</field>
+	<field name="ambiente" class="java.lang.String">
+		<fieldDescription><![CDATA[ambiente]]></fieldDescription>
+	</field>
+	<field name="destinatarioUF" class="java.lang.String">
+		<fieldDescription><![CDATA[destinatarioUF]]></fieldDescription>
+	</field>
+	<field name="valorSeguro" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[valorSeguro]]></fieldDescription>
+	</field>
+	<field name="formaPagamento" class="java.lang.String">
+		<fieldDescription><![CDATA[formaPagamento]]></fieldDescription>
+	</field>
+	<field name="transportadoraPlacaVeiculo" class="java.lang.String">
+		<fieldDescription><![CDATA[transportadoraPlacaVeiculo]]></fieldDescription>
+	</field>
+	<field name="numeroNF" class="java.lang.Long">
+		<fieldDescription><![CDATA[numeroNF]]></fieldDescription>
+	</field>
+	<field name="valorBaseICMSSubstituto" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[valorBaseICMSSubstituto]]></fieldDescription>
+	</field>
+	<field name="horaSaida" class="java.lang.String">
+		<fieldDescription><![CDATA[horaSaida]]></fieldDescription>
+	</field>
+	<field name="valorICMSSubstituto" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[valorICMSSubstituto]]></fieldDescription>
+	</field>
+	<field name="valorICMS" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[valorICMS]]></fieldDescription>
+	</field>
+	<field name="destinatarioComplemento" class="java.lang.String">
+		<fieldDescription><![CDATA[destinatarioComplemento]]></fieldDescription>
+	</field>
+	<field name="emissorCNPJ" class="java.lang.String">
+		<fieldDescription><![CDATA[emissorCNPJ]]></fieldDescription>
+	</field>
+	<field name="transportadoraPlacaVeiculoUF" class="java.lang.String">
+		<fieldDescription><![CDATA[transportadoraPlacaVeiculoUF]]></fieldDescription>
+	</field>
+	<field name="transportadoraMarca" class="java.lang.String">
+		<fieldDescription><![CDATA[transportadoraMarca]]></fieldDescription>
+	</field>
+	<field name="destinatarioTelefone" class="java.lang.String">
+		<fieldDescription><![CDATA[destinatarioTelefone]]></fieldDescription>
+	</field>
+	<field name="valorDesconto" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[valorDesconto]]></fieldDescription>
+	</field>
+	<field name="dataSaida" class="java.util.Date">
+		<fieldDescription><![CDATA[dataSaida]]></fieldDescription>
+	</field>
+	<field name="itensDanfe" class="java.util.List">
+		<fieldDescription><![CDATA[itensDanfe]]></fieldDescription>
+	</field>
+	<field name="transportadoraNumeracao" class="java.lang.String">
+		<fieldDescription><![CDATA[transportadoraNumeracao]]></fieldDescription>
+	</field>
+	<field name="emissorNumero" class="java.lang.String">
+		<fieldDescription><![CDATA[emissorNumero]]></fieldDescription>
+	</field>
+	<field name="valorNF" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[valorNF]]></fieldDescription>
+	</field>
+	<field name="valorIPI" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[valorIPI]]></fieldDescription>
+	</field>
+	<field name="transportadoraInscricaoEstadual" class="java.lang.String">
+		<fieldDescription><![CDATA[transportadoraInscricaoEstadual]]></fieldDescription>
+	</field>
+	<field name="transportadoraUF" class="java.lang.String">
+		<fieldDescription><![CDATA[transportadoraUF]]></fieldDescription>
+	</field>
+	<field name="destinatarioLogradouro" class="java.lang.String">
+		<fieldDescription><![CDATA[destinatarioLogradouro]]></fieldDescription>
+	</field>
+	<field name="transportadoraANTT" class="java.lang.String">
+		<fieldDescription><![CDATA[transportadoraANTT]]></fieldDescription>
+	</field>
+	<field name="emissorBairro" class="java.lang.String">
+		<fieldDescription><![CDATA[emissorBairro]]></fieldDescription>
+	</field>
+	<field name="destinatarioCEP" class="java.lang.String">
+		<fieldDescription><![CDATA[destinatarioCEP]]></fieldDescription>
+	</field>
+	<field name="ISSQNBase" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[ISSQNBase]]></fieldDescription>
+	</field>
+	<field name="emissorFantasia" class="java.lang.String">
+		<fieldDescription><![CDATA[emissorFantasia]]></fieldDescription>
+	</field>
+	<field name="transportadoraEndereco" class="java.lang.String">
+		<fieldDescription><![CDATA[transportadoraEndereco]]></fieldDescription>
+	</field>
+	<field name="valorProdutos" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[valorProdutos]]></fieldDescription>
+	</field>
+	<field name="numeroFatura" class="java.lang.String">
+		<fieldDescription><![CDATA[numeroFatura]]></fieldDescription>
+	</field>
+	<field name="emissorTelefone" class="java.lang.String">
+		<fieldDescription><![CDATA[emissorTelefone]]></fieldDescription>
+	</field>
+	<background>
+		<band height="530" splitType="Stretch">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="d3dc4210-e53a-4478-bc6d-3fb4b5d1f8bc" stretchType="RelativeToBandHeight" mode="Opaque" x="2" y="15" width="810" height="515" forecolor="#CCCCCC"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="none">
+					<font size="50"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ambiente}.equals( "0" ) || $F{protocolo} == null ? "SEM VALOR FISCAL" : ""]]></textFieldExpression>
+			</textField>
+		</band>
+	</background>
+	<pageHeader>
+		<band height="175">
+			<frame>
+				<reportElement uuid="149d3b24-fca4-46db-9937-5a39942af19d" stretchType="RelativeToBandHeight" x="0" y="0" width="565" height="110"/>
+				<rectangle>
+					<reportElement uuid="4e89d067-f42f-47c9-8e84-7b414ec61f51" x="127" y="82" width="251" height="26"/>
+				</rectangle>
+				<rectangle>
+					<reportElement uuid="146a53bd-3791-47e4-bb75-25be0eec2f4b" x="378" y="44" width="186" height="64"/>
+				</rectangle>
+				<image scaleImage="FillFrame" hAlign="Center" vAlign="Middle" onErrorType="Blank" evaluationTime="Report">
+					<reportElement uuid="3e3b3112-9474-4fbb-9c93-ee36abec5c64" x="4" y="4" width="60" height="59"/>
+					<imageExpression><![CDATA[Thread.currentThread().getContextClassLoader().getResource("/reports/logo.jpg").toURI().getPath()]]></imageExpression>
+				</image>
+				<staticText>
+					<reportElement uuid="9043acf6-cdab-47b7-a8f1-0b4eb0d27c94" x="386" y="4" width="84" height="11"/>
+					<textElement textAlignment="Center" markup="styled">
+						<font size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[NOTA DE ENVIO]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="f10b8337-4970-4fb5-8e82-d1cc796d2a59" x="386" y="17" width="82" height="23"/>
+					<textElement textAlignment="Center" markup="styled">
+						<font size="6"/>
+					</textElement>
+					<text><![CDATA[Nota de Envio aprovada nos termos do Regime especial]]></text>
+				</staticText>
+				<textField pattern="">
+					<reportElement uuid="a302da95-6b0d-4122-b145-cca5055e5287" x="295" y="41" width="83" height="17"/>
+					<textElement textAlignment="Center"/>
+					<textFieldExpression><![CDATA[$F{emissorCNPJ}.length() == 14 ? $F{emissorCNPJ}.substring(0,2) + "." +
+$F{emissorCNPJ}.substring(2,5) + "." + $F{emissorCNPJ}.substring(5,8) + "/" +
+$F{emissorCNPJ}.substring(8,12) + "-" + $F{emissorCNPJ}.substring(12,14) : $F{emissorCNPJ}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement uuid="0ff6f3be-11c5-4771-a90d-eb09db1cddab" x="128" y="91" width="250" height="17"/>
+					<textElement>
+						<font isPdfEmbedded="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{naturezaOperacao}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement uuid="a38653b7-dae1-4d15-8c45-24d7ba7207bc" x="381" y="91" width="180" height="17"/>
+					<textElement>
+						<font size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{chave}.length() == 44 ?
+($F{chave} != null? $F{chave}.substring(0,4) + " " + $F{chave}.substring(4,8) + " " + $F{chave}.substring(8,12) + " " +
+$F{chave}.substring(12,16) + " " + $F{chave}.substring(16,20) + " " + $F{chave}.substring(20,24) + " " +
+$F{chave}.substring(24,28) + " " + $F{chave}.substring(28,32) + " " + $F{chave}.substring(32,36) + " " +
+$F{chave}.substring(36,40) + " " + $F{chave}.substring(40,44) + " " : "" ) : $F{chave}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement uuid="7ba80cdf-e70a-491d-ad10-d4c98f4de9e2" positionType="Float" x="127" y="13" width="251" height="17"/>
+					<textElement verticalAlignment="Middle">
+						<font isPdfEmbedded="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{emissorNome}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement uuid="97790264-95da-4f73-a365-e205233a13a3" positionType="Float" x="127" y="41" width="168" height="17"/>
+					<textElement>
+						<font isPdfEmbedded="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{emissorLogradouro} + ", " + $F{emissorNumero}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement uuid="e2ed494f-a819-4bfb-b387-6d670048b12e" positionType="Float" x="127" y="68" width="101" height="13"/>
+					<textElement>
+						<font isPdfEmbedded="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{emissorMunicipio}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement uuid="57f8fcce-f12f-442e-8400-08b5272257cc" positionType="Float" x="243" y="68" width="52" height="13"/>
+					<textElement textAlignment="Center">
+						<font isPdfEmbedded="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{emissorCEP}.substring(0,5) + "-" + $F{emissorCEP}.substring(5,8)]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement uuid="53a84b5e-d63b-46b1-85a9-bec35ee38c29" x="505" y="4" width="58" height="13"/>
+					<textElement textAlignment="Center">
+						<font isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{numeroNF}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement uuid="d885386c-9225-4592-af57-7059518f3e56" x="127" y="4" width="251" height="9"/>
+					<textElement>
+						<font size="7"/>
+					</textElement>
+					<text><![CDATA[Razão Social]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="d885386c-9225-4592-af57-7059518f3e56" x="128" y="31" width="167" height="9"/>
+					<textElement>
+						<font size="7"/>
+					</textElement>
+					<text><![CDATA[Endereço]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="d885386c-9225-4592-af57-7059518f3e56" x="295" y="31" width="83" height="9"/>
+					<textElement textAlignment="Center">
+						<font size="7"/>
+					</textElement>
+					<text><![CDATA[CNPJ]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="d885386c-9225-4592-af57-7059518f3e56" x="127" y="59" width="101" height="9"/>
+					<textElement>
+						<font size="7"/>
+					</textElement>
+					<text><![CDATA[Cidade]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="d885386c-9225-4592-af57-7059518f3e56" x="226" y="59" width="17" height="9"/>
+					<textElement textAlignment="Center">
+						<font size="7"/>
+					</textElement>
+					<text><![CDATA[UF]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="d885386c-9225-4592-af57-7059518f3e56" x="243" y="59" width="52" height="9"/>
+					<textElement textAlignment="Center">
+						<font size="7"/>
+					</textElement>
+					<text><![CDATA[CEP]]></text>
+				</staticText>
+				<textField>
+					<reportElement uuid="e2ed494f-a819-4bfb-b387-6d670048b12e" positionType="Float" x="228" y="68" width="15" height="13"/>
+					<textElement textAlignment="Center">
+						<font isPdfEmbedded="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{emissorUF}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement uuid="d885386c-9225-4592-af57-7059518f3e56" x="295" y="59" width="83" height="9"/>
+					<textElement textAlignment="Center">
+						<font size="7"/>
+					</textElement>
+					<text><![CDATA[Inscrição Estadual]]></text>
+				</staticText>
+				<textField pattern="">
+					<reportElement uuid="a302da95-6b0d-4122-b145-cca5055e5287" x="296" y="68" width="82" height="13"/>
+					<textElement textAlignment="Center"/>
+					<textFieldExpression><![CDATA[$F{emissorInscricaoEstadual}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement uuid="ffec7c59-27c4-4e00-8d7e-2e77fdd78611" x="489" y="17" width="65" height="23"/>
+					<textElement textAlignment="Center">
+						<font size="6"/>
+					</textElement>
+					<text><![CDATA[Via de Transporte Rodoviário]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="d885386c-9225-4592-af57-7059518f3e56" x="128" y="82" width="250" height="9"/>
+					<textElement>
+						<font size="7"/>
+					</textElement>
+					<text><![CDATA[Natureza da Operação]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="5f2c79c4-f31e-4c6a-94e6-7a23d613cc72" x="381" y="75" width="68" height="15">
+						<printWhenExpression><![CDATA[$F{chave} != null]]></printWhenExpression>
+					</reportElement>
+					<textElement/>
+					<text><![CDATA[Chave NF-e]]></text>
+				</staticText>
+				<rectangle>
+					<reportElement uuid="4e89d067-f42f-47c9-8e84-7b414ec61f51" x="127" y="58" width="251" height="24"/>
+				</rectangle>
+				<rectangle>
+					<reportElement uuid="4e89d067-f42f-47c9-8e84-7b414ec61f51" x="127" y="31" width="251" height="27"/>
+				</rectangle>
+				<rectangle>
+					<reportElement uuid="4e89d067-f42f-47c9-8e84-7b414ec61f51" x="127" y="4" width="251" height="27"/>
+				</rectangle>
+			</frame>
+			<frame>
+				<reportElement uuid="94a92b2e-ee66-4e38-a03d-8ff0e57b10db" stretchType="RelativeToBandHeight" x="0" y="112" width="565" height="61"/>
+				<rectangle>
+					<reportElement uuid="ff5f3b3f-4271-400d-a8d3-584347e3b79b" x="0" y="9" width="308" height="24"/>
+				</rectangle>
+				<rectangle>
+					<reportElement uuid="3283bf51-f9af-411e-8ac0-535e2d141834" x="308" y="9" width="172" height="24"/>
+				</rectangle>
+				<rectangle>
+					<reportElement uuid="c184775e-a2ba-4d28-ab95-6385a44dfed3" x="392" y="33" width="88" height="24"/>
+				</rectangle>
+				<rectangle>
+					<reportElement uuid="08bece4a-43c4-4fe3-ba2c-5f80cb19a717" x="0" y="33" width="191" height="24"/>
+				</rectangle>
+				<rectangle>
+					<reportElement uuid="b70d6047-c599-484c-a3ab-38d6e01f630d" x="480" y="9" width="85" height="24"/>
+				</rectangle>
+				<rectangle>
+					<reportElement uuid="bc0388dd-9e5f-478c-8eba-273cb559bb07" x="217" y="33" width="91" height="24"/>
+				</rectangle>
+				<rectangle>
+					<reportElement uuid="93066615-e205-4d58-ae1b-3a2fd94eb0b5" x="308" y="33" width="28" height="24"/>
+				</rectangle>
+				<rectangle>
+					<reportElement uuid="6a469be2-6a41-44cd-9d6b-15f7f584961f" x="191" y="33" width="26" height="24"/>
+				</rectangle>
+				<rectangle>
+					<reportElement uuid="9b84ceea-d1b7-42e2-9c77-76b396eb6fca" x="336" y="33" width="56" height="24"/>
+				</rectangle>
+				<textField>
+					<reportElement uuid="7c6369f7-23c8-4cf4-aeed-40f750a0a066" x="218" y="41" width="91" height="16"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{destinatarioMunicipio}]]></textFieldExpression>
+				</textField>
+				<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+					<reportElement uuid="9d4c3003-ef0d-4cd6-9777-34b3dedb05b7" x="481" y="16" width="75" height="16"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{dataEmissao}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement uuid="6890c836-5654-48f6-9ae0-692ba9fd39d6" x="2" y="40" width="189" height="16"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{destinatarioLogradouro}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement uuid="59d2be9f-ab03-460c-bdf9-8a05a35e4071" x="2" y="16" width="306" height="16"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{destinatarioNome}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#####-###">
+					<reportElement uuid="c96d8b6d-f87c-4089-856a-2d200ecfd79b" x="336" y="42" width="56" height="16"/>
+					<textElement textAlignment="Center"/>
+					<textFieldExpression><![CDATA[$F{destinatarioCEP}.substring( 0, 5 ) + "-" + $F{destinatarioCEP}.substring( 5, 8 )]]></textFieldExpression>
+				</textField>
+				<textField pattern="##.###.###/####-##">
+					<reportElement uuid="9aaf678d-5f5b-4a43-9b70-241898ad3132" x="392" y="43" width="88" height="13"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{destinatarioCNPJ}.length() == 14 ? $F{destinatarioCNPJ}.substring(0,2) + "." +
+$F{destinatarioCNPJ}.substring(2,5) + "." + $F{destinatarioCNPJ}.substring(5,8) + "/" +
+$F{destinatarioCNPJ}.substring(8,12) + "-" + $F{destinatarioCNPJ}.substring(12,14) : $F{destinatarioCNPJ}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement uuid="d885386c-9225-4592-af57-7059518f3e56" x="4" y="8" width="250" height="9"/>
+					<textElement>
+						<font size="7"/>
+					</textElement>
+					<text><![CDATA[Destinatário]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="74d43f32-bd37-4a9d-af9d-e54c36dcb64b" x="481" y="9" width="76" height="9"/>
+					<textElement>
+						<font size="7"/>
+					</textElement>
+					<text><![CDATA[Data Emissão]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="d9e8c8c1-7b14-4864-a89f-5600a31c4d75" x="309" y="9" width="171" height="9"/>
+					<textElement>
+						<font size="7"/>
+					</textElement>
+					<text><![CDATA[Box / Rota]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="19d85396-a426-42e5-a974-81a2ea2a9981" x="218" y="33" width="91" height="9"/>
+					<textElement>
+						<font size="7"/>
+					</textElement>
+					<text><![CDATA[Cidade]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="10d1c9a6-242c-48db-9e08-001cad705b5e" x="4" y="33" width="137" height="9"/>
+					<textElement>
+						<font size="7"/>
+					</textElement>
+					<text><![CDATA[Endereço]]></text>
+				</staticText>
+				<rectangle>
+					<reportElement uuid="93066615-e205-4d58-ae1b-3a2fd94eb0b5" x="480" y="33" width="85" height="24"/>
+				</rectangle>
+				<staticText>
+					<reportElement uuid="e4e76b8e-ec87-4ba7-8b5a-d2137e4f5741" x="308" y="33" width="28" height="9"/>
+					<textElement textAlignment="Center">
+						<font size="7"/>
+					</textElement>
+					<text><![CDATA[UF]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="edcf438b-e0ef-442d-a58e-cf48aff29098" x="336" y="33" width="56" height="9"/>
+					<textElement textAlignment="Center">
+						<font size="7"/>
+					</textElement>
+					<text><![CDATA[CEP]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="a4ab6e6e-9820-499f-a4ba-88a883c01542" x="392" y="33" width="88" height="9"/>
+					<textElement textAlignment="Center">
+						<font size="7"/>
+					</textElement>
+					<text><![CDATA[CNPJ]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="3db2dc25-e96c-4ce0-b52e-d253e3dfa4f4" x="489" y="33" width="75" height="9"/>
+					<textElement textAlignment="Center">
+						<font size="7"/>
+					</textElement>
+					<text><![CDATA[Inscrição Estadual]]></text>
+				</staticText>
+				<textField>
+					<reportElement uuid="d84380a9-b6fb-4db9-bcf4-02fdb7798704" x="192" y="41" width="26" height="16"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{destinatarioNumero}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement uuid="77771d14-b54d-4b84-b85b-d8f262b34b28" x="309" y="43" width="27" height="13"/>
+					<textElement textAlignment="Center"/>
+					<textFieldExpression><![CDATA[$F{destinatarioUF}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement uuid="bdfbf760-9256-482f-8292-484de1689df0" x="482" y="41" width="81" height="15"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{destinatarioInscricaoEstadual}]]></textFieldExpression>
+				</textField>
+			</frame>
+			<staticText>
+				<reportElement uuid="bf1085b4-4b05-4b2d-83fb-c875abb31208" x="480" y="4" width="16" height="16"/>
+				<textElement verticalAlignment="Top">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[N:]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="27">
+			<subreport>
+				<reportElement uuid="788511e3-a296-45fb-8bfe-af41cbae5aef" stretchType="RelativeToTallestObject" x="0" y="0" width="565" height="27"/>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{itensDanfe})]]></dataSourceExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "sub_relatorio_produtos_ne.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="75" splitType="Stretch"/>
+	</pageFooter>
+</jasperReport>

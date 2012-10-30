@@ -222,6 +222,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 		edicao.setDataDesativacao(input.getDataDesativacao());
 		edicao.setChamadaCapa(input.getChamadaCapa());
 		edicao.setOrigem(Origem.INTERFACE);
+		edicao.setNomeComercial(input.getNomeComercial());
 
 		this.getSession().persist(edicao);
 		
@@ -332,6 +333,13 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 					"Atualizacao do Codigo NBM para: " + input.getCodNBM());
 		}
 
+		if (!edicao.getNomeComercial().equals(input.getNomeComercial())) {
+
+			edicao.setNomeComercial(input.getNomeComercial());
+			this.ndsiLoggerFactory.getLogger().logInfo(message,
+					EventoExecucaoEnum.INF_DADO_ALTERADO,
+					"Atualizacao Nome Comercial para: " + input.getNomeComercial());
+		}
 		if (!edicao.getDimensao().getLargura().equals(input.getLargura())) {
 
 			edicao.getDimensao().setLargura(input.getLargura());

@@ -17,7 +17,7 @@ public class EmissaoBandeiraVO implements Serializable {
 	private static final long serialVersionUID = 2350932999027090788L;
 
 	
-	@Export(label="Data", alignment=Export.Alignment.RIGHT, exhibitionOrder=1)
+	@Export(label="Data", alignment=Export.Alignment.LEFT, exhibitionOrder=1)
 	private String data;
 	
 	@Export(label="Cód. Produto", alignment=Export.Alignment.LEFT, exhibitionOrder=2)
@@ -29,14 +29,14 @@ public class EmissaoBandeiraVO implements Serializable {
 	@Export(label="Produto", alignment=Export.Alignment.LEFT, exhibitionOrder=4)
 	private String nomeProduto;
 	
-	@Export(label="Destino", alignment=Export.Alignment.RIGHT, exhibitionOrder=5)
+	@Export(label="Destino", alignment=Export.Alignment.LEFT, exhibitionOrder=5)
 	private String destino;
 	
-	@Export(label="Prioridade", alignment=Export.Alignment.RIGHT, exhibitionOrder=6)
+	@Export(label="Prioridade", alignment=Export.Alignment.CENTER, exhibitionOrder=6)
 	private String prioridade;
 	
 	
-	@Export(label="Qtde. Solicitada", alignment=Export.Alignment.RIGHT, exhibitionOrder=7)
+	@Export(label="Qtde. Solicitada", alignment=Export.Alignment.CENTER, exhibitionOrder=7)
 	private String qtde;
 	
 	private String pctPadrao;

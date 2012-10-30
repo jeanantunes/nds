@@ -332,6 +332,9 @@ var geracaoNotaEnvioController = $.extend({
                 data : params,
                 failCallback : function() {
                     exibirMensagem("ERROR", ["Erro ao Imprimir NE/NECA!"]);
+                },
+                successCallback : function() {
+                    exibirMensagem("SUCCESS", ["Geração de NE realizada com sucesso!"]);
                 }
             });
 
@@ -491,3 +494,4 @@ var geracaoNotaEnvioController = $.extend({
 		}],
 
 },BaseController);
+//@ sourceURL=geracaoNotaEnvio.js

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="protocolo_CE_Devolucao_Fornecedor" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="BlankPage" columnWidth="814" leftMargin="14" rightMargin="14" topMargin="6" bottomMargin="6">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="protocolo_CE_Devolucao_Fornecedor" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="BlankPage" columnWidth="814" leftMargin="14" rightMargin="14" topMargin="6" bottomMargin="6" isTitleNewPage="true">
 	<property name="ireport.zoom" value="1.5"/>
-	<property name="ireport.x" value="443"/>
+	<property name="ireport.x" value="371"/>
 	<property name="ireport.y" value="0"/>
 	<property name="ireport.layers" value="##Mon Oct 15 15:28:00 BRT 2012\nlayer.1.name=Layer 1\nlayer.1.visible=true\nlayer.1.id=1\nlayer.0.name=Background\nlayer.0.visible=true\nlayer.0.id=0"/>
 	<style name="zebrado">
@@ -16,15 +16,15 @@
 	<parameter name="cnpjDistribuidor" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="inscricaoEstadualDistribuidor" class="java.lang.String"/>
 	<parameter name="logradouroDistribuidor" class="java.lang.String"/>
-	<parameter name="numeroDistribuidor" class="java.lang.Integer"/>
+	<parameter name="numeroDistribuidor" class="java.lang.String"/>
 	<parameter name="cidadeDistribuidor" class="java.lang.String"/>
 	<parameter name="ufDistribuidor" class="java.lang.String"/>
 	<parameter name="cepDistribuidor" class="java.lang.String"/>
 	<parameter name="logradouroFornecedor" class="java.lang.String"/>
-	<parameter name="numeroFornecedor" class="java.lang.Integer"/>
+	<parameter name="numeroFornecedor" class="java.lang.String"/>
 	<parameter name="cidadeFornecedor" class="java.lang.String"/>
 	<parameter name="ufFornecedor" class="java.lang.String"/>
-	<parameter name="tipoCE" class="java.lang.String"/>
+	<parameter name="tipoCE" class="java.lang.Integer"/>
 	<parameter name="codigo" class="java.lang.Long"/>
 	<parameter name="numeroCE" class="java.lang.Long"/>
 	<parameter name="dataEmissao" class="java.util.Date"/>
@@ -35,6 +35,15 @@
 	<parameter name="numeroVia" class="java.lang.String"/>
 	<parameter name="codigoNaturezaOperacao" class="java.lang.String"/>
 	<parameter name="descricaoNaturezaOperacao" class="java.lang.String"/>
+	<title>
+		<band>
+			<textField isBlankWhenNull="true">
+				<reportElement x="0" y="0" width="100" height="0"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[null]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
 	<pageHeader>
 		<band height="81" splitType="Stretch">
 			<textField>
@@ -171,7 +180,9 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$P{inscricaoEstadualDistribuidor}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="412" y="30" width="50" height="11"/>
+				<reportElement x="412" y="30" width="50" height="11">
+					<printWhenExpression><![CDATA[org.apache.commons.lang.StringUtils.isNotEmpty($P{codigoNaturezaOperacao})]]></printWhenExpression>
+				</reportElement>
 				<textElement>
 					<font fontName="Times New Roman" size="7"/>
 				</textElement>

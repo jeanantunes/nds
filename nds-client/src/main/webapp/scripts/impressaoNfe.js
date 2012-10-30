@@ -1,6 +1,23 @@
+//TODO: Sérgio - Fazer uma extensao da funcao onChangePage do Flexigrid para limpar o array de cotas selecionadas na pagina anterior
+
+Array.prototype.removeByValue = function(){
+    var what, a= arguments, L= a.length, ax;
+    while(L && this.length){
+        what= a[--L];
+        while((ax= this.indexOf(what))!= -1){
+            this.splice(ax, 1);
+        }
+    }
+    return this;
+}
+
 var impressaoNfeController = $.extend(true, {
 
 	filtroProdutos : [],
+	
+	filtroCotasImprimirNFe : [],
+	
+	paginaAtualPesquisarGrid : 1,
 
 	init : function() {
 		$( "#dataEmissao", impressaoNfeController.workspace ).datepicker({
@@ -105,7 +122,7 @@ var impressaoNfeController = $.extend(true, {
 			}, {
 				display : 'Nome',
 				name : 'nomeCota',
-				width : 465,
+				width : 455,
 				sortable : true,
 				align : 'left'
 			}, {
@@ -147,9 +164,12 @@ var impressaoNfeController = $.extend(true, {
 			rp : 15,
 			showTableToggleBtn : true,
 			width : 960,
-			height : 180
+			height : 180,
+			/*onChangePage : function(ctype) {
+				impressaoNfeController.filtroCotasImprimirNFe = [];
+			},*/
 		});
-
+		
 		$("#selFornecedor", impressaoNfeController.workspace).click(function() {
 			$(".menu_fornecedor", impressaoNfeController.workspace).show().fadeIn("fast");
 		})
@@ -159,8 +179,24 @@ var impressaoNfeController = $.extend(true, {
 		});
 
 		$("#selProdutos", impressaoNfeController.workspace).click(function() {
+			if( $('#dataMovimentoInicial', impressaoNfeController.workspace).val() == ''
+					|| $('#dataMovimentoFinal', impressaoNfeController.workspace).val() == '') {
+				$( "#msgBoxDataMovimentoInvalida", this.workspace ).dialog( "open" );
+				return;
+			}
+			
+			params = [ 	
+		           	{name:'filtro.dataMovimentoInicial', value:$('#dataMovimentoInicial', impressaoNfeController.workspace).val()},
+		           	{name:'filtro.dataMovimentoFinal', value:$('#dataMovimentoFinal', impressaoNfeController.workspace).val()}
+		           	]
+			$(".produtosPesqGrid").flexOptions({params : params}).flexReload();
 			$("#dialog-pesqProdutos", this.workspace).dialog( "open" );
 		})
+		
+		$( "#msgBoxDataMovimentoInvalida", this.workspace ).dialog({
+			autoOpen: false,
+			modal: true,
+		});
 
 		$(".menu_produtos", impressaoNfeController.workspace).mouseleave(function() {
 			$(".menu_produtos", impressaoNfeController.workspace).hide();
@@ -181,14 +217,14 @@ var impressaoNfeController = $.extend(true, {
 			autoOpen: false,
 			buttons: {
 				"Fechar": function() {
-					$( this ).dialog( "destroy" );
+					$( this ).dialog( "close" );
 				},
 			},
 			div: $("#dialog-pesqProdutos", this.workspace).parents("div")
 		});
 
 	},
-
+	
 	prepararJSONPesquisaProdutos : function(data) {
 
 		$.each(data.rows, function() {
@@ -327,9 +363,24 @@ var impressaoNfeController = $.extend(true, {
 	 */
 	imprimir : function(fileType) {
 
-		var params = {"fileType":fileType};
-
-		$.fileDownload(this.path + 'exportar', {
+		if(impressaoNfeController.filtroCotasImprimirNFe.length < 1)
+			return false;
+		
+		params = [];
+		
+		params.push({
+				'name' : 'fileType',
+				'value' : fileType
+			});
+		
+		for(i=0; i < impressaoNfeController.filtroCotasImprimirNFe.length; i++) {
+			params.push({
+				'name' : 'filtro.idsCotas[]',
+				'value' : impressaoNfeController.filtroCotasImprimirNFe[i]
+			});
+		}
+		
+		$.fileDownload(contextPath +'/nfe/impressaoNFE/imprimirNFe', {
 			httpMethod : "POST",
 			data : params
 		});
@@ -351,6 +402,7 @@ var impressaoNfeController = $.extend(true, {
 				else
 					this.checked = false;
 
+				impressaoNfeController.adicionarAsNFesAImprimir(this.checked, parseInt(this.value));
 			}
 		});
 	},
@@ -396,8 +448,10 @@ var impressaoNfeController = $.extend(true, {
 	},
 	
 	filtrarProdutos : function(codigoProduto, nomeProduto) {
-		params = [ 	{name:'codigoProduto', value:$('#dialog-pesqProdutos-codigoProduto').val()},
-		           	{name:'nomeProduto', value:$('#dialog-pesqProdutos-nomeProduto').val()},
+		params = [ 	{name:'filtro.dataMovimentoInicial', value:$('#dataMovimentoInicial', impressaoNfeController.workspace).val()},
+		           	{name:'filtro.dataMovimentoFinal', value:$('#dataMovimentoFinal', impressaoNfeController.workspace).val()},
+		           	{name:'filtro.codigoProduto', value:$('#dialog-pesqProdutos-codigoProduto').val()},
+		           	{name:'filtro.nomeProduto', value:$('#dialog-pesqProdutos-nomeProduto').val()},
 		           	]
 		$(".produtosPesqGrid").flexOptions({params: params}).flexReload();
 	},
@@ -464,68 +518,38 @@ var impressaoNfeController = $.extend(true, {
 		$(".produtosAdicionadosPesqGrid").flexReload();
 	},
 
-	adicionarAsNFesAImprimir : function() {
-
+	adicionarAsNFesAImprimir : function(checked, idCota) {
+		
+		//Verifica se ainda esta na mesma pagina, se nao, atualiza a pagina atual e limpa as cotas selecionadas na pagina anterior
+		if(impressaoNfeController.paginaAtualPesquisarGrid != $(".impressaoGrid").flexGetPageNumber()) {
+			impressaoNfeController.paginaAtualPesquisarGrid = $(".impressaoGrid").flexGetPageNumber();
+			impressaoNfeController.filtroCotasImprimirNFe = [];
+		}
+		
+		arrayOrdenado = impressaoNfeController.filtroCotasImprimirNFe.sort();
+		
+		inserirIdCota = true;
+		
+		if(checked) {
+			if(impressaoNfeController.filtroCotasImprimirNFe.length > 1) {
+				for (var i = 0; i < arrayOrdenado.length; i++) {
+				    if (arrayOrdenado[i] == idCota) {
+				    	inserirIdCota = false;
+				    }
+				}
+				if(inserirIdCota)
+					impressaoNfeController.filtroCotasImprimirNFe.push(idCota)
+			} else {
+				if(impressaoNfeController.filtroCotasImprimirNFe[0] != idCota)
+					impressaoNfeController.filtroCotasImprimirNFe.push(idCota)
+			}
+			
+		} else {
+			impressaoNfeController.filtroCotasImprimirNFe.removeByValue(idCota)
+		}
+		
+		impressaoNfeController.filtroCotasImprimirNFe.sort();
 	},
 	
-	sortGrid : function(table, order) { 
-		console.log(order);
-		// Remove all characters in c from s. 
-		var stripChar = function(s, c) { 
-			var r = ""; 
-			for(var i = 0; i < s.length; i++) { 
-				r += c.indexOf(s.charAt(i))>=0 ? "" : s.charAt(i); 
-			} 
-			return r; 
-		} 
-
-		// Test for characters accepted in numeric values. 
-		var isNumeric = function(s) { 
-			var valid = "0123456789.,- "; 
-			var result = true; 
-			var c; 
-			for(var i = 0; i < s.length && result; i++) { 
-				c= s.charAt(i); 
-				if(valid.indexOf(c) <= -1) { 
-					result = false; 
-				} 
-			} 
-			return result; 
-		} 
-
-		// Sort table rows. 
-		var asc = order == "asc"; 
-		console.log($(table));
-		var rows = $(table).find("tbody > tr").get(); 
-		var column = $(table).parent(".bDiv").siblings(".hDiv").find("table tr th").index($("th.sorted", ".flexigrid:has(" + table + ")"));
-		rows.sort(function(a, b) { 
-			var keyA = $(asc? a : b).children("td").eq(column).text().toUpperCase(); 
-			var keyB = $(asc? b : a).children("td").eq(column).text().toUpperCase(); 
-			if((isNumeric(keyA)||keyA.length<1) && (isNumeric(keyB) || keyB.length<1)) { 
-				keyA = stripChar(keyA,", "); 
-				keyB = stripChar(keyB,", "); 
-				if(keyA.length < 1) keyA = 0; 
-				if(keyB.length < 1) keyB = 0; 
-				keyA = new Number(parseFloat(keyA)); 
-				keyB = new Number(parseFloat(keyB)); 
-			} 
-			return keyA>keyB ? 1 : keyA<keyB ? -1 : 0; 
-		}); 
-
-		// Rebuild the table body. 
-		$.each(rows, function(index, row) { 
-			$(table).children("tbody").append(row); 
-		}); 
-
-		// Fix styles 
-		$(table).find("tr").removeClass("erow");  // Clear the striping. 
-		$(table).find("tr:odd").addClass("erow"); // Add striping to odd numbered rows.
-		$(table).find("td.sorted").removeClass("sorted"); // Clear sorted class from table cells. 
-		$(table).find("tr").each( function(){ 
-			$(this).find("td:nth(" + column + ")").addClass("sorted");  //Add sorted class to sorted column cells. 
-		}); 
-	},
-
-
 }, BaseController);
 //@ sourceURL=impressaoNfe.js

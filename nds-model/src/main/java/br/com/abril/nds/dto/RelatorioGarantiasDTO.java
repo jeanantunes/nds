@@ -2,8 +2,6 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.util.List;
 
 import br.com.abril.nds.model.cadastro.TipoGarantia;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantia;
@@ -14,18 +12,16 @@ import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaImovel;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaNotaPromissoria;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaOutros;
 
-public class GarantiaCadastradaDTO implements Serializable {
+public class RelatorioGarantiasDTO implements Serializable{
 
-	private static final long serialVersionUID = 3974338449916012348L;
-
-	private TipoGarantia tipoGarantia;
+	private static final long serialVersionUID = -9219157726900444816L;
 	
-	private BigInteger quantidadeCotas;
+    private TipoGarantia tipoGarantia;
 	
-	private BigDecimal valorTotal;
+	private Long qtdCotas;
 	
-	private List<DetalheGarantiaCadastradaDTO> detalheGarantiaCadastrada;
-
+	private BigDecimal vlrTotal;
+	
 	/**
 	 * @return the tipoGarantia
 	 */
@@ -65,46 +61,31 @@ public class GarantiaCadastradaDTO implements Serializable {
 	}
 
 	/**
-	 * @return the quantidadeCotas
+	 * @return the qtdCotas
 	 */
-	public BigInteger getQuantidadeCotas() {
-		return quantidadeCotas;
+	public Long getQtdCotas() {
+		return qtdCotas;
 	}
 
 	/**
-	 * @param quantidadeCotas the quantidadeCotas to set
+	 * @param qtdCotas the qtdCotas to set
 	 */
-	public void setQuantidadeCotas(Long quantidadeCotas) {
-		this.quantidadeCotas = quantidadeCotas == null ? BigInteger.ZERO : new BigInteger(quantidadeCotas.toString());
+	public void setQtdCotas(Long qtdCotas) {
+		this.qtdCotas = qtdCotas;
 	}
 
 	/**
-	 * @return the valorTotal
+	 * @return the vlrTotal
 	 */
-	public BigDecimal getValorTotal() {
-		return valorTotal;
+	public BigDecimal getVlrTotal() {
+		return vlrTotal;
 	}
 
 	/**
-	 * @param valorTotal the valorTotal to set
+	 * @param vlrTotal the vlrTotal to set
 	 */
-	public void setValorTotal(BigDecimal valorTotal) {
-		this.valorTotal = valorTotal;
+	public void setVlrTotal(BigDecimal vlrTotal) {
+		this.vlrTotal = vlrTotal;
 	}
 
-	/**
-	 * @return the detalheGarantiaCadastrada
-	 */
-	public List<DetalheGarantiaCadastradaDTO> getDetalheGarantiaCadastrada() {
-		return detalheGarantiaCadastrada;
-	}
-
-	/**
-	 * @param detalheGarantiaCadastrada the detalheGarantiaCadastrada to set
-	 */
-	public void setDetalheGarantiaCadastrada(
-			List<DetalheGarantiaCadastradaDTO> detalheGarantiaCadastrada) {
-		this.detalheGarantiaCadastrada = detalheGarantiaCadastrada;
-	}
-	
 }

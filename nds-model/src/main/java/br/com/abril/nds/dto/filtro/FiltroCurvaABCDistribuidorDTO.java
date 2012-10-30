@@ -27,7 +27,7 @@ public class FiltroCurvaABCDistribuidorDTO extends FiltroCurvaABCDTO implements 
 	
 	public FiltroCurvaABCDistribuidorDTO(Date dataDe, Date dataAte,
 			String codigoFornecedor, String codigoProduto, String nomeProduto,
-			String edicaoProduto, String codigoEditor, Integer codigoCota,
+			List<Long> edicaoProduto, String codigoEditor, Integer codigoCota,
 			String nomeCota, String municipio) {
 		this.setDataDe(dataDe);
 		this.setDataAte(dataAte);
@@ -46,15 +46,17 @@ public class FiltroCurvaABCDistribuidorDTO extends FiltroCurvaABCDTO implements 
 	private ColunaOrdenacaoCurvaABCDistribuidor ordenacaoColuna;
 	
 	public enum ColunaOrdenacaoCurvaABCDistribuidor {
-
+		
+		RANKING_COTA("rkCota"),
+		RANKING_PRODUTO("rkProduto"),
 		COTA("numeroCota"),
 		NOME("nomeCota"),
 		MUNICIPIO("municipio"),
 		QTDEPDV("quantidadePdvs"),
-		VENDA_EXEMPLARES("vendaExemplares"),
-		FATURAMENTO("faturamentoCapa"),
-		PARTICIPACAO("participacao"),
-		PARTICIPACAO_ACUMULADA("participacaoAcumulada");
+		VENDA_EXEMPLARES("vendaExemplaresFormatado"),
+		FATURAMENTO("faturamentoCapaFormatado"),
+		PARTICIPACAO("participacaoFormatado"),
+		PARTICIPACAO_ACUMULADA("participacaoAcumuladaFormatado");
 
 		private String nomeColuna;
 		

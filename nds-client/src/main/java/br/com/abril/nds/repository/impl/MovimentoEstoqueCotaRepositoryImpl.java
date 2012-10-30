@@ -1116,7 +1116,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 						orderByColumn = " movimento.produtoEdicao.produto.codigo ";
 						break;
 					case NOME_PRODUTO:
-						orderByColumn = " movimento.produtoEdicao.produto.codigo.nome ";
+						orderByColumn = " movimento.produtoEdicao.produto.nome ";
 						break;
 					case NUMERO_EDICAO:
 						orderByColumn = " movimento.produtoEdicao.numeroEdicao ";
@@ -2131,7 +2131,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		StringBuilder hql = new StringBuilder();
 
 		hql.append(" select cota.numeroCota as codigoCota, ");
-		hql.append(" 		pessoa.nome as nomeCota,");
+		hql.append(" 		(CASE WHEN pessoa.class = 'J' THEN pessoa.razaoSocial ELSE pessoa.nome END) as nomeCota,");
 		hql.append(" 		produto.codigo as codigoProduto, ");
 		hql.append(" 		produto.nome as nomeProduto, ");
 		hql.append(" 		produtoEdicao.numeroEdicao as numeroEdicao, ");		
@@ -2433,7 +2433,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		hql.append(" 		sum(movimentoCota.qtde) as reparte, ");
 		hql.append(" 		produtoEdicao.precoVenda as precoCapa, ");
 		hql.append(" 		cota.numeroCota as codigoCota, ");
-		hql.append(" 		pessoa.nome as nomeCota,");
+		hql.append(" 		(CASE WHEN pessoa.class = 'J' THEN pessoa.razaoSocial ELSE pessoa.nome END) as nomeCota,");
 	
 		hql.append(" 		entregador.id as qtdeExms ");
 		

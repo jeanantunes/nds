@@ -14,7 +14,9 @@ public enum InterfaceEnum {
 	EMS0112(112L, null, EMS0112Input.class),
 	EMS0134(134L, null, null),
 	EMS0185(185L, null, null),
-	EMS0135(135L, null, EMS0135InputItem.class, EMS0135Input.class, TipoInterfaceEnum.DETALHE_INLINE);
+	EMS0135(135L, null, EMS0135InputItem.class, EMS0135Input.class, TipoInterfaceEnum.DETALHE_INLINE), 
+	EMS0127(127L, null, EMS0127Input.class, TipoInterfaceEnum.DB), 
+	EMS0128(128L, null, EMS0128Input.class, TipoInterfaceEnum.DB);
 	
 	
 	private Long codigoInterface;
@@ -28,6 +30,11 @@ public enum InterfaceEnum {
 
 	private TipoInterfaceEnum tipoInterfaceEnum;
 	
+	private InterfaceEnum(Long codigoInterface, Integer tamanhoLinha, Class<? extends IntegracaoDocument> classeLinha, TipoInterfaceEnum tipoInterfaceEnum) {
+		this.codigoInterface = codigoInterface;
+		this.classeLinha = classeLinha;
+		this.setTipoInterfaceEnum(tipoInterfaceEnum); 		
+	}
 	
 	private InterfaceEnum(Long codigoInterface, Integer tamanhoLinha, Class<? extends IntegracaoDocument> classeLinha) {
 		this.codigoInterface = codigoInterface;

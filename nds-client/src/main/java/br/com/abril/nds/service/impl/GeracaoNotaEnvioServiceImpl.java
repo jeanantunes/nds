@@ -112,9 +112,10 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 			List<MovimentoEstoqueCota> listaMovimentoEstoqueCota = obterItensNotaVenda(
 					distribuidor, idCota, intervaloDateMovimento, listIdFornecedor);
 
-			this.sumarizarTotalItensNota(listaMovimentoEstoqueCota, cotaExemplares,cota);
-	
-			listaCotaExemplares.add(cotaExemplares);
+			if (listaMovimentoEstoqueCota!= null && !listaMovimentoEstoqueCota.isEmpty()) {
+				this.sumarizarTotalItensNota(listaMovimentoEstoqueCota, cotaExemplares,cota);
+				listaCotaExemplares.add(cotaExemplares);
+			}
 		}
 				
 		return listaCotaExemplares;
@@ -254,20 +255,23 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 		Distribuidor distribuidor = distribuidorRepository.obter();
 		Cota cota = cotaRepository.buscarPorId(idCota);
 
-		NotaEnvio notaEnvio = criarNotaEnvio(idCota, idRota, chaveAcesso,
-				codigoNaturezaOperacao, descricaoNaturezaOperacao, dataEmissao,
-				distribuidor, cota);
-
-		notaEnvioRepository.adicionar(notaEnvio);
 		List<MovimentoEstoqueCota> listaMovimentoEstoqueCota = obterItensNotaVenda(
 				distribuidor, idCota, periodo, listaIdFornecedores);
 		
 		 List<ItemNotaEnvio> listaItemNotaEnvio = gerarItensNotaEnvio(listaMovimentoEstoqueCota, idCota);
 		if (listaItemNotaEnvio.isEmpty()) {
-			throw new ValidacaoException(TipoMensagem.ERROR,
+			return null;
+			// Comentado devido a não possibilitar a gravação de cotas sem reparte 
+			/*throw new ValidacaoException(TipoMensagem.ERROR,
 					"Não é possível gerar Nota de Envio para a Cota "
-							+ cota.getNumeroCota());
+							+ cota.getNumeroCota());*/
 		}
+
+		NotaEnvio notaEnvio = criarNotaEnvio(idCota, idRota, chaveAcesso,
+				codigoNaturezaOperacao, descricaoNaturezaOperacao, dataEmissao,
+				distribuidor, cota);
+
+		notaEnvioRepository.adicionar(notaEnvio);
 		int sequencia = 0;
 		for (ItemNotaEnvio itemNotaEnvio : listaItemNotaEnvio) {
 			itemNotaEnvio.setItemNotaEnvioPK(new ItemNotaEnvioPK(notaEnvio,

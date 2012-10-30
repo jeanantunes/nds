@@ -43,6 +43,11 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		for(String key : param.keySet()){
 			query.setParameter(key, param.get(key));
 		}
+		
+		if (filtro.getEdicaoProduto() != null && !filtro.getEdicaoProduto().isEmpty()) {
+			query.setParameterList("edicaoProduto", (filtro.getEdicaoProduto()));
+		}
+		
 		return (ResultadoCurvaABCDistribuidor) query.uniqueResult();
 	}
 
@@ -66,7 +71,6 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		.append("  estoqueProdutoCota.produtoEdicao.produto.id ,")
 		.append("  estoqueProdutoCota.cota.id )");
 		
-
 		hql.append(getWhereQueryObterCurvaABCDistribuidor(filtro));
 		hql.append(getGroupQueryObterCurvaABCDistribuidor(filtro));
 
@@ -76,6 +80,10 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 
 		for(String key : param.keySet()){
 			query.setParameter(key, param.get(key));
+		}
+		
+		if (filtro.getEdicaoProduto() != null && !filtro.getEdicaoProduto().isEmpty()) {
+			query.setParameterList("edicaoProduto", (filtro.getEdicaoProduto()));
 		}
 
 		return complementarCurvaABCDistribuidor((List<RegistroCurvaABCDistribuidorVO>) query.list());
@@ -111,11 +119,11 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		}
 
 		if (filtro.getNomeProduto() != null && !filtro.getNomeProduto().isEmpty()) {
-			hql.append("AND estoqueProdutoCota.produtoEdicao.produto.nome = :nomeProduto ");
+			hql.append("AND upper(estoqueProdutoCota.produtoEdicao.produto.nome) like upper( :nomeProduto )");
 		}
 
 		if (filtro.getEdicaoProduto() != null && !filtro.getEdicaoProduto().isEmpty()) {
-			hql.append("AND estoqueProdutoCota.produtoEdicao.numeroEdicao = :edicaoProduto ");
+			hql.append("AND estoqueProdutoCota.produtoEdicao.numeroEdicao in( :edicaoProduto )");
 		}
 
 		if (filtro.getCodigoEditor() != null && !filtro.getCodigoEditor().isEmpty() && !filtro.getCodigoEditor().equals("0")) {
@@ -127,7 +135,7 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		}
 
 		if (filtro.getNomeCota() != null && !filtro.getNomeCota().isEmpty()) {
-			hql.append("AND pessoa.nome = :nomeCota ");
+			hql.append("AND  upper(pessoa.nome) like upper (:nomeCota ) or upper(pessoa.razaoSocial) like upper ( :nomeCota ) ");
 		}
 
 		if (filtro.getMunicipio() != null && !filtro.getMunicipio().isEmpty() && !filtro.getMunicipio().equalsIgnoreCase("Todos")) {
@@ -177,11 +185,7 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		}
 
 		if (filtro.getNomeProduto() != null && !filtro.getNomeProduto().isEmpty()) {
-			param.put("nomeProduto", filtro.getNomeProduto());
-		}
-
-		if (filtro.getEdicaoProduto() != null && !filtro.getEdicaoProduto().isEmpty()) {
-			param.put("edicaoProduto", filtro.getEdicaoProduto());
+			param.put("nomeProduto", filtro.getNomeProduto()+ "%");
 		}
 
 		if (filtro.getCodigoEditor() != null && !filtro.getCodigoEditor().isEmpty() && !filtro.getCodigoFornecedor().equals("0")) {
@@ -193,7 +197,7 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		}
 
 		if (filtro.getNomeCota() != null && !filtro.getNomeCota().isEmpty()) {
-			param.put("nomeCota", filtro.getNomeCota());
+			param.put("nomeCota", filtro.getNomeCota()+ "%");
 		}
 
 		if (filtro.getMunicipio() != null && !filtro.getMunicipio().isEmpty() && !filtro.getMunicipio().equalsIgnoreCase("Todos")) {
@@ -210,7 +214,7 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 	 */
 	private List<RegistroCurvaABCDistribuidorVO> complementarCurvaABCDistribuidor(List<RegistroCurvaABCDistribuidorVO> lista) {
 
-		BigDecimal participacaoTotal = new BigDecimal(0);
+		BigDecimal participacaoTotal = BigDecimal.ZERO;
 		
 		if (lista==null) {
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Nenhum registro foi encontrado"));
@@ -223,7 +227,7 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 			}
 		}
 
-		BigDecimal participacaoRegistro = new BigDecimal(0);
+		BigDecimal participacaoRegistro = BigDecimal.ZERO;
 		BigDecimal participacaoAcumulada = new BigDecimal(0);
 		
 		// Verifica o percentual dos valores em relação ao total de participacao
@@ -233,9 +237,10 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 			if ( participacaoTotal.doubleValue() != 0 ) {
 				participacaoRegistro = new BigDecimal((registro.getFaturamentoCapa().doubleValue()*100)/participacaoTotal.doubleValue());
 			}
+			
+			participacaoAcumulada = participacaoAcumulada.add(participacaoRegistro);
+			
 			registro.setParticipacao(participacaoRegistro);
-
-			participacaoAcumulada.add(participacaoRegistro);
 			registro.setParticipacaoAcumulada(participacaoAcumulada);
 		}
 

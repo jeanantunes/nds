@@ -68,6 +68,14 @@
 							</a>
 						</span>
 						
+							
+						<span class="bt_novos">
+							<a href="javascript:"  onclick="lancamentoController.imprimirRelatorioFaltasSobras();" rel="tipsy" title="Imprimir confer&ecirc;cia manual">
+								<img src="${pageContext.request.contextPath}/images/ico_impressora.gif"  border="0" />
+							</a>
+						</span>
+						
+						
 						<div id="btnsControleDiferenca">
 							<span class="bt_novos">
 								<a href="javascript:;" onclick="lancamentoController.popupConfirmar();"
