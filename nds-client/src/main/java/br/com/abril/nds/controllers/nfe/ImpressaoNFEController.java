@@ -4,23 +4,16 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.ValidationException;
 
-import org.apache.commons.beanutils.BeanComparator;
-import org.apache.commons.collections.comparators.NullComparator;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
@@ -28,7 +21,6 @@ import br.com.abril.nds.client.vo.NfeVO;
 import br.com.abril.nds.dto.CotasImpressaoNfeDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.ProdutoDTO;
-import br.com.abril.nds.dto.ProdutoLancamentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroImpressaoNFEDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
@@ -147,12 +139,6 @@ public class ImpressaoNFEController {
 
 		List<CotasImpressaoNfeDTO> listaCotasImpressaoNFe = impressaoNFEService.buscarCotasParaImpressaoNFe(filtro);
 		
-		//TODO: Sérgio - Retirar - usado apenas para marcar a tela
-		/*for(CotasImpressaoNfeDTO nnnn : listaCotasImpressaoNFe) {
-			if(nnnn.getIdCota().longValue() > 3)
-				nnnn.setNotaImpressa(true);
-		}
-		*/
 		tableModel.setTotal(impressaoNFEService.buscarNFeParaImpressaoTotalQtd(filtro));
 
 		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaCotasImpressaoNFe));
@@ -201,28 +187,21 @@ public class ImpressaoNFEController {
 	 * 
 	 * @throws IOException Exceção de E/S
 	 */
-	@Get
+	@Post
 	public void exportar(FileType fileType) throws IOException {
 
 		FiltroImpressaoNFEDTO filtro = (FiltroImpressaoNFEDTO) session.getAttribute("filtroPesquisaNFe");
 		
+		filtro.setPaginacao(null);
+		
 		List<CotasImpressaoNfeDTO> listaNFeDTO = impressaoNFEService.buscarCotasParaImpressaoNFe(filtro);
 		
-		List<NfeVO> listaNFeVO = new ArrayList<NfeVO>();
-		/*for(CotasImpressaoNfeDTO nfeDTO : listaNFeDTO) {
-			
-			List<NfeDTO> listaNotaFisal = notaFiscalService.pesquisarNotaFiscal(filtro);
-			NfeVO nfe = new NfeVO();
-			nfe.setIdNotaFiscal(nfeDTO.getIdNotaFiscal());
-			listaNFeVO.add(nfe);
-		}
-		*/
-		FileExporter.to("nfe", fileType).inHTTPResponse(
+		FileExporter.to("cotas", fileType).inHTTPResponse(
 				this.getNDSFileHeader(), 
-				filtro, 
 				null, 
-				listaNFeVO,
-				NfeVO.class, this.httpResponse);
+				null, 
+				listaNFeDTO,
+				CotasImpressaoNfeDTO.class, this.httpResponse);
 		
 	}
 	
@@ -356,74 +335,8 @@ public class ImpressaoNFEController {
 	/**
 	 * Metodos utilitarios
 	 * 
-	 * @param sortname
-	 * @param sortorder
-	 * @param listaProdutoLancamento
 	 */
-	@SuppressWarnings("unchecked")
-	private void ordenarLista(String sortname, String sortorder, List<ProdutoLancamentoDTO> listaProdutoLancamento) {
-		
-		if(listaProdutoLancamento == null)
-			return;
-		
-		if(sortname != null && !sortname.isEmpty())
-			Collections.sort(listaProdutoLancamento, new BeanComparator(sortname, new NullComparator()));
 
-		if(sortorder != null && !sortorder.isEmpty() && sortorder.equals("desc"))
-			Collections.reverse(listaProdutoLancamento);
-	}
-
-	private List<ProdutoLancamentoDTO> removerItensDuplicados(List<ProdutoLancamentoDTO> listaProdutoLancamentoUnordered) {
-		
-		if(listaProdutoLancamentoUnordered == null)
-			return listaProdutoLancamentoUnordered;
-		
-		Set<ProdutoLancamentoDTO> s = new TreeSet<ProdutoLancamentoDTO>(new Comparator<ProdutoLancamentoDTO>() {
-			@Override
-			public int compare(ProdutoLancamentoDTO o1, ProdutoLancamentoDTO o2) {
-				if(o1.getCodigoProduto().equalsIgnoreCase(o2.getCodigoProduto()))
-					return 0;
-				
-				return -1;
-			}
-		});
-
-		s.addAll(listaProdutoLancamentoUnordered);
-
-		List<ProdutoLancamentoDTO> listaProdutoLancamento = new ArrayList<ProdutoLancamentoDTO>(s);
-
-		return listaProdutoLancamento;
-	}
-
-	private List<ProdutoLancamentoDTO> buscarProdutosNaLista(List<ProdutoLancamentoDTO> listaProdutoLancamento, String codigoProduto, String nomeProduto) {
-
-		if( StringUtils.isEmpty(codigoProduto) && StringUtils.isEmpty(nomeProduto) ) {
-			return listaProdutoLancamento;
-		}
-		
-		StringUtils.isEmpty(nomeProduto);
-		
-		List<ProdutoLancamentoDTO> result = new ArrayList<ProdutoLancamentoDTO>();
-		
-		for( ProdutoLancamentoDTO pl : listaProdutoLancamento ) {
-			if( !StringUtils.isEmpty(codigoProduto) && !StringUtils.isEmpty(nomeProduto) ) {
-				if( StringUtils.startsWithIgnoreCase(pl.getCodigoProduto(), codigoProduto) 
-						&& StringUtils.startsWithIgnoreCase(pl.getNomeProduto(), nomeProduto) ) { 
-					result.add( pl );
-				}
-			} else if( !StringUtils.isEmpty(codigoProduto) && StringUtils.isEmpty(nomeProduto) ) { 
-				if( StringUtils.startsWithIgnoreCase(pl.getCodigoProduto(), codigoProduto) ) {
-					result.add( pl );
-				}
-			} else if( !StringUtils.isEmpty(nomeProduto) && StringUtils.isEmpty(codigoProduto) ) { 
-				if( StringUtils.startsWithIgnoreCase(pl.getNomeProduto(), nomeProduto) ) {
-					result.add( pl );
-				}
-			}
-		}
-		return result;
-	}
-	
 	private void escreverArquivoParaResponse(byte[] arquivo, String nomeArquivo) throws IOException {
 		
 		this.httpResponse.setContentType("application/pdf");

@@ -131,6 +131,10 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 		sql.append("WHERE 1 = 1 ");
 		sql.append("and nf.identificacaoDestinatario.pessoaDestinatarioReferencia.id = cota.pessoa.id ");
 		
+		if(filtro.getTipoNFe() != null && Long.parseLong(filtro.getTipoNFe()) > -1) {
+			sql.append("and nf.identificacao.tipoNotaFiscal.id = :tipoNotaFiscal ");
+		}
+		
 		if(filtro.getDataEmissao() != null) {
 			sql.append("and nf.identificacao.dataEmissao = :dataEmissao ");
 		}
@@ -222,6 +226,10 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 		
 		if(filtro.getDataEmissao() != null) {
 			q.setParameter("dataEmissao", new java.sql.Date(filtro.getDataEmissao().getTime()));
+		}
+		
+		if(filtro.getTipoNFe() != null && Long.parseLong(filtro.getTipoNFe()) > -1) {
+			q.setParameter("tipoNotaFiscal", Long.parseLong(filtro.getTipoNFe()) );
 		}
 		
 		if(distribuidor.getObrigacaoFiscal() != null) {
@@ -397,10 +405,6 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 			Query q = getSession().createQuery(sql.toString());
 			
 			q.setParameter("dataEmissao", new java.sql.Date(filtro.getDataEmissao().getTime()));
-			
-			if(filtro.getTipoNFe() != null && Long.parseLong(filtro.getTipoNFe()) > -1) {
-				q.setParameter("tipoNotaFiscal", Long.parseLong(filtro.getTipoNFe()) );
-			}
 			
 			if(distribuidor.getObrigacaoFiscal() != null) {
 				q.setParameter("statusNFe", br.com.abril.nds.model.fiscal.nota.Status.AUTORIZADO );
