@@ -9,10 +9,12 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
-import br.com.abril.nds.dto.GarantiaCadastradaDTO;
 import br.com.abril.nds.dto.RelatorioDetalheGarantiaDTO;
+import br.com.abril.nds.dto.RelatorioGarantiasDTO;
+import br.com.abril.nds.dto.filtro.FiltroRelatorioGarantiasDTO;
 import br.com.abril.nds.model.cadastro.Cheque;
 import br.com.abril.nds.model.cadastro.TipoGarantia;
+import br.com.abril.nds.model.cadastro.TipoStatusGarantia;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantia;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaCaucaoLiquida;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaChequeCaucao;
@@ -103,12 +105,12 @@ public class CotaGarantiaRepositoryImpl extends AbstractRepositoryModel<CotaGara
 	 */
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<GarantiaCadastradaDTO> obterGarantiasCadastradas() {
+	public List<RelatorioGarantiasDTO> obterGarantiasCadastradas(FiltroRelatorioGarantiasDTO filtro) {
 
 		StringBuilder hql = new StringBuilder();
 
 		hql.append(" select TYPE(garantia) as tipoGarantia, ")
-		   .append(" 		count(distinct garantia.cota.id) as quantidadeCotas, ")
+		   .append(" 		count(distinct garantia.cota.id) as qtdCotas, ")
 		   .append("  		sum( ")
 		   .append(" 			 case when garantia.class = " + CotaGarantiaFiador.class.getSimpleName())
 		   .append("			 	then garantiaFiador.valor ")
@@ -122,23 +124,89 @@ public class CotaGarantiaRepositoryImpl extends AbstractRepositoryModel<CotaGara
 		   .append("			 	then garantiaNotaPromissoria.valor ")
 		   .append(" 			 when garantia.class = " + CotaGarantiaOutros.class.getSimpleName())
 		   .append("			 	then garantiaOutros.valor ")
-		   .append(" 		end ) as valorTotal ")
+		   .append(" 		end ) as vlrTotal ")
 		   .append(" from CotaGarantia garantia ")
 		   .append(" left join garantia.caucaoLiquidas as garantiaCaucaoLiquida ")
 		   .append(" left join garantia.cheque as garantiaChequeCaucao ")
 		   .append(" left join garantia.fiador.garantias as garantiaFiador ")
 		   .append(" left join garantia.imoveis as garantiaImovel ")
 		   .append(" left join garantia.notaPromissoria as garantiaNotaPromissoria ")
-		   .append(" left join garantia.outros as garantiaOutros ")
-		   .append(" group by garantia.class ");
-		
+		   .append(" left join garantia.outros as garantiaOutros ");
+		   
+	   TipoStatusGarantia status = filtro.getStatusGarantiaEnum();	
+
+	   Date data = filtro.getDataBaseCalculo();
+	   if (status!=null && data!=null){
+		   if (status.equals(TipoStatusGarantia.VENCIDA)){
+			   
+			   hql.append(" where garantia.data <= :data ");
+		   }
+           if (status.equals(TipoStatusGarantia.A_VENCER)){
+			   
+        	   hql.append(" where garantia.data >= :data ");
+		   } 
+	   }
+		   
+		hql.append(" group by garantia.class ");
+
+		if (filtro.getPaginacao()!=null){
+			hql.append(" order by ")
+		       .append(filtro.getPaginacao().getSortColumn()!=null && !filtro.getPaginacao().getSortColumn().equals("")?filtro.getPaginacao().getSortColumn():" tipoGarantia ")
+		       .append(" ")
+		       .append(filtro.getPaginacao().getSortOrder()!=null && !filtro.getPaginacao().getSortOrder().equals("")?filtro.getPaginacao().getSortOrder():" desc ");
+	    }
+
 		Query query = this.getSession().createQuery(hql.toString());
 		
-		query.setResultTransformer(new AliasToBeanResultTransformer(GarantiaCadastradaDTO.class));
+		if (status!=null && data!=null){
+		    query.setParameter("data", data);
+		}
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(RelatorioGarantiasDTO.class));
 		
 		return query.list();
 	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Long obterCountGarantiasCadastradas(FiltroRelatorioGarantiasDTO filtro) {
 
+		StringBuilder hql = new StringBuilder();
+
+		hql.append(" select count(distinct garantia) ")
+		   .append(" from CotaGarantia garantia ")
+		   .append(" left join garantia.caucaoLiquidas as garantiaCaucaoLiquida ")
+		   .append(" left join garantia.cheque as garantiaChequeCaucao ")
+		   .append(" left join garantia.fiador.garantias as garantiaFiador ")
+		   .append(" left join garantia.imoveis as garantiaImovel ")
+		   .append(" left join garantia.notaPromissoria as garantiaNotaPromissoria ")
+		   .append(" left join garantia.outros as garantiaOutros ");
+		
+		TipoStatusGarantia status = filtro.getStatusGarantiaEnum();	
+	
+	    Date data = filtro.getDataBaseCalculo();
+		if (status!=null && data!=null){
+		   if (status.equals(TipoStatusGarantia.VENCIDA)){
+			   
+			   hql.append(" where garantia.data <= :data ");
+		   }
+		   
+           if (status.equals(TipoStatusGarantia.A_VENCER)){
+			   
+        	   hql.append(" where garantia.data >= :data ");
+		   } 
+	    }
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		if (status!=null && data!=null){
+		    query.setParameter("data", data);
+		}
+		
+		return (Long) query.uniqueResult();
+	}
 	
 	private String obterHqlDescontoProdutoCota(){
 		
@@ -181,12 +249,16 @@ public class CotaGarantiaRepositoryImpl extends AbstractRepositoryModel<CotaGara
 		return hql.toString();
 	}
 	
-	private String obterHqlTipoGarantia(TipoGarantia tipoGarantia){
+	private String obterHqlTipoGarantia(FiltroRelatorioGarantiasDTO filtro){
 		  
 		boolean caucaoLiquida = false;
 		
 		StringBuilder hql = new StringBuilder();
 
+		TipoGarantia tipoGarantia = filtro.getTipoGarantiaEnum();
+		TipoStatusGarantia status = filtro.getStatusGarantiaEnum();	
+		Date data = filtro.getDataBaseCalculo();
+		
 		switch(tipoGarantia){
 	       
 		   case FIADOR :
@@ -231,11 +303,26 @@ public class CotaGarantiaRepositoryImpl extends AbstractRepositoryModel<CotaGara
 		hql.append(" join garantia.cota cota ")
 	       .append(" join cota.pessoa as pessoa ");
 		
+		
+		String j = " WHERE ";
+		
 		if (caucaoLiquida){
 			
-			hql.append("  where garantiaTipo.atualizacao = ( select max(cl.atualizacao) from CaucaoLiquida cl where cl.id = garantiaTipo.id ) ");
+			hql.append(j+" garantiaTipo.atualizacao = ( select max(cl.atualizacao) from CaucaoLiquida cl where cl.id = garantiaTipo.id ) ");
+			j = "AND";
 		}
-		
+		   
+		if (status!=null && data!=null){
+		   if (status.equals(TipoStatusGarantia.VENCIDA)){
+			   
+			   hql.append(j+" garantia.data <= :data ");
+		   }
+           if (status.equals(TipoStatusGarantia.A_VENCER)){
+			   
+        	   hql.append(j+" garantia.data >= :data ");
+		   } 
+	    }
+
 		return hql.toString();
 	}
 
@@ -244,9 +331,12 @@ public class CotaGarantiaRepositoryImpl extends AbstractRepositoryModel<CotaGara
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<RelatorioDetalheGarantiaDTO> obterDetalheGarantiaCadastrada(TipoGarantia tipoGarantia, Date data, String sortColumn, String sortOrder) {
+	public List<RelatorioDetalheGarantiaDTO> obterDetalheGarantiaCadastrada(FiltroRelatorioGarantiasDTO filtro) {
 
 		StringBuilder hql = new StringBuilder();
+		
+		TipoGarantia tipoGarantia = filtro.getTipoGarantiaEnum();	
+		Date data = filtro.getDataBaseCalculo();
 
 		hql.append(" select ")
 		
@@ -272,15 +362,17 @@ public class CotaGarantiaRepositoryImpl extends AbstractRepositoryModel<CotaGara
            .append("        ),0)")
            .append(" ,2) as garantiaFaturamento ");
  
-	    hql.append(this.obterHqlTipoGarantia(tipoGarantia))
+	    hql.append(this.obterHqlTipoGarantia(filtro))
 
 	       .append(" group by cota ");
 	
-		hql.append(" order by ")
-	       .append(sortColumn!=null && !sortColumn.equals("")?sortColumn:" vencto ")
-	       .append(" ")
-	       .append(sortOrder!=null && !sortOrder.equals("")?sortOrder:" desc ");
-
+	    if (filtro.getPaginacao()!=null){
+			hql.append(" order by ")
+		       .append(filtro.getPaginacao().getSortColumn()!=null && !filtro.getPaginacao().getSortColumn().equals("")?filtro.getPaginacao().getSortColumn():" vencto ")
+		       .append(" ")
+		       .append(filtro.getPaginacao().getSortOrder()!=null && !filtro.getPaginacao().getSortOrder().equals("")?filtro.getPaginacao().getSortOrder():" desc ");
+	    }
+		
 		Query query = this.getSession().createQuery(hql.toString());
 		
 		query.setParameter("data", data);
@@ -292,16 +384,27 @@ public class CotaGarantiaRepositoryImpl extends AbstractRepositoryModel<CotaGara
 		return query.list();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
-	public Long obterCountDetalheGarantiaCadastrada(TipoGarantia tipoGarantia, Date data) {
+	public Long obterCountDetalheGarantiaCadastrada(FiltroRelatorioGarantiasDTO filtro) {
 		
 		StringBuilder hql = new StringBuilder();
+		
+		TipoStatusGarantia status = filtro.getStatusGarantiaEnum();
+		
+		Date data = filtro.getDataBaseCalculo();
 
 		hql.append(" select count(distinct cota) ");
  
-		hql.append(this.obterHqlTipoGarantia(tipoGarantia));
+		hql.append(this.obterHqlTipoGarantia(filtro));
 		
 		Query query = this.getSession().createQuery(hql.toString());
+		
+		if (status!=null && data!=null){
+		    query.setParameter("data", data);
+		}
 		
 		return (Long) query.uniqueResult();
 	}

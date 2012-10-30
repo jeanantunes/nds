@@ -46,6 +46,12 @@ public class NFEImportUtil {
 	 */
 	private final static String XSD_PROC_CANC_NFE = "xsdnfe/procCancNFe_v2.00.xsd";
 	
+	
+	/**
+	 * Constante da quantidade de dígitos da chave acesso.
+	 */
+	public final static int QTD_DIGITOS_CHAVE_ACESSO_NFE = 44;
+	
 	/**
 	 * Obtém os dados atualizados de Status do arquivo da NFe de Retorno.
 	 * 

@@ -7,6 +7,7 @@ package br.com.abril.nds.model.cadastro;
  * 
  */
 public enum TipoStatusGarantia {
+	
     VENCIDA("Vencida"), 
     A_VENCER("A Vencer");
     

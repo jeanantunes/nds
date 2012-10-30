@@ -2,28 +2,18 @@ package br.com.abril.nds.dto;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.Date;
 
 import br.com.abril.nds.model.cadastro.Cota;
-import br.com.abril.nds.model.fiscal.nota.Identificacao.TipoEmissao;
-import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 
 
 public class CotasImpressaoNfeDTO extends NfeDTO {
 
-	public CotasImpressaoNfeDTO() {
+	public CotasImpressaoNfeDTO(Cota c, BigDecimal vlrTotal, BigDecimal vlrTotalDesconto) {
 		super();
-	}
-	
-	public CotasImpressaoNfeDTO(Cota c, NotaFiscal nf, BigDecimal vlrTotal, BigDecimal vlrTotalDesconto) {
-		super();
-		this.idNotaFiscal = nf.getId();
-		this.dataEmissao = nf.getIdentificacao().getDataEmissao();
-		this.tipoEmissaoNF = nf.getIdentificacao().getTipoEmissao();
 		this.idCota = c.getId();
 		this.nomeCota = c.getPessoa().getNome();
 		this.vlrTotal = vlrTotal;
-		this.vlrTotalDesconto = vlrTotalDesconto;
+		this.vlrTotalDesconto = vlrTotal.subtract(vlrTotal.multiply(vlrTotalDesconto.divide(new BigDecimal("100"))));
 		
 	}
 	
@@ -32,14 +22,6 @@ public class CotasImpressaoNfeDTO extends NfeDTO {
 	 */
 	private static final long serialVersionUID = 5371527354389347503L;
 
-	private NotaFiscal nf;
-	
-	private Date dataEmissao;
-	
-	private TipoEmissao tipoEmissaoNF;
-	
-	private Long idNotaFiscal;
-	
 	private BigDecimal vlrTotal;
 	
 	private BigDecimal vlrTotalDesconto;
@@ -52,28 +34,12 @@ public class CotasImpressaoNfeDTO extends NfeDTO {
 	
 	private boolean notaImpressa;
 
-	public NotaFiscal getNf() {
-		return nf;
-	}
-
-	public Date getDataEmissao() {
-		return dataEmissao;
-	}
-
-	public TipoEmissao getTipoEmissaoNF() {
-		return tipoEmissaoNF;
-	}
-
 	public boolean isNotaImpressa() {
 		return notaImpressa;
 	}
 
 	public void setNotaImpressa(boolean notaImpressa) {
 		this.notaImpressa = notaImpressa;
-	}
-
-	public Long getIdNotaFiscal() {
-		return idNotaFiscal;
 	}
 
 	public void setVlrTotal(BigDecimal vlrTotal) {

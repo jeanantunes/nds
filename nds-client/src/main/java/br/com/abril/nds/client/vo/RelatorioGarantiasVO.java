@@ -36,11 +36,11 @@ public class RelatorioGarantiasVO implements Serializable{
 	
 	public RelatorioGarantiasVO(RelatorioGarantiasDTO dto) {
 		
-		this.tipoGarantia = dto.getTipoGarantia();
+		this.tipoGarantia = dto.getTipoGarantia().getDescricao();
 		this.qtdCotas = dto.getQtdCotas().toString();
 		this.vlrTotal = CurrencyUtil.formatarValor(dto.getVlrTotal());
-		tpGarantia.setKey(dto.getTipoGarantiaEnum());
-		this.tpGarantia.setKey(dto.getTipoGarantiaEnum());
+		tpGarantia.setKey(dto.getTipoGarantia());
+		this.tpGarantia.setKey(dto.getTipoGarantia());
 		
 	}
 	
