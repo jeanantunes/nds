@@ -17,7 +17,6 @@ import javax.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
-import br.com.abril.nds.client.vo.NfeVO;
 import br.com.abril.nds.dto.CotasImpressaoNfeDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.ProdutoDTO;
@@ -51,7 +50,6 @@ import br.com.abril.nds.util.export.NDSFileHeader;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 import br.com.abril.nds.vo.ValidacaoVO;
-import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
@@ -81,16 +79,16 @@ public class ImpressaoNFEController {
 	private NFeService nfeService; 
 
 	@Autowired
-	ImpressaoNFEService impressaoNFEService;
+	private ImpressaoNFEService impressaoNFEService;
 
 	@Autowired
-	DistribuidorService distribuidorService;
+	private DistribuidorService distribuidorService;
 
 	@Autowired
-	RoteiroService roteiroService;
+	private RoteiroService roteiroService;
 
 	@Autowired
-	RotaService rotaService;
+	private RotaService rotaService;
 
 	@Autowired
 	private Result result;
@@ -236,6 +234,13 @@ public class ImpressaoNFEController {
 				listaNF.addAll(nfs);
 			}
 			
+			// Atualiza a flag que informa se a nota ja foi impressa
+			for(NotaFiscal nf : listaNF) {
+				NotaFiscal nfOrig = nfeService.obterNotaFiscalPorId(nf);
+				nfOrig.setNotaImpressa(true);
+				nfeService.mergeNotaFiscal(nfOrig);
+			}
+			
 			switch(distribuidor.getTipoImpressaoNENECADANFE()) {
 			
 				case DANFE:
@@ -253,6 +258,13 @@ public class ImpressaoNFEController {
 				c.setId(cota.getIdCota());
 				List<NotaEnvio> nfs = impressaoNFEService.buscarNotasEnvioPorCotaParaImpressaoNFe(c, filtroPesquisa);
 				listaNE.addAll(nfs);
+			}
+			
+			// Atualiza a flag que informa se a nota ja foi impressa
+			for(NotaEnvio ne : listaNE) {
+				NotaEnvio neOrig = nfeService.obterNotaEnvioPorId(ne);
+				neOrig.setNotaImpressa(true);
+				nfeService.mergeNotaEnvio(neOrig);
 			}
 			
 			switch(distribuidor.getTipoImpressaoNENECADANFE()) {
