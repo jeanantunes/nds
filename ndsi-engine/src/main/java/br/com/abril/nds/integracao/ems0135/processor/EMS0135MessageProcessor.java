@@ -37,6 +37,7 @@ import br.com.abril.nds.model.fiscal.StatusNotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 import br.com.abril.nds.model.planejamento.Lancamento;
+import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.repository.FornecedorRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.impl.AbstractRepository;
@@ -175,11 +176,14 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 					item.setDataLancamento(cal.getTime());
 					
 					cal.add(Calendar.DAY_OF_MONTH, produtoEdicao.getPeb());
-					item.setDataRecolhimento(cal.getTime());					
+					item.setDataRecolhimento(cal.getTime());
+					
+					item.setTipoLancamento(TipoLancamento.LANCAMENTO);
 
 				} else {					
 					item.setDataLancamento(lancamento.getDataLancamentoPrevista());
 					item.setDataRecolhimento(lancamento.getDataRecolhimentoPrevista());
+					item.setTipoLancamento(lancamento.getTipoLancamento());
 				}
 				nfEntrada.getItens().add(item);
 			}
