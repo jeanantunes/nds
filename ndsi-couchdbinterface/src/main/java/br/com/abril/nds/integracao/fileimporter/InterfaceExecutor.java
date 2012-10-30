@@ -45,6 +45,8 @@ import com.ancientprogramming.fixedformat4j.format.impl.FixedFormatManagerImpl;
  */
 public class InterfaceExecutor {
 	
+	public static final String SPRING_FILE_LOCATION = "classpath:spring/applicationContext-ndsi-cli.xml"; 
+
 	private static ApplicationContext applicationContext;
 	
 	private static String NAO_HA_ARQUIVOS = "Não há arquivos a serem processados para este distribuidor";
@@ -62,7 +64,7 @@ public class InterfaceExecutor {
 	private boolean processadoComSucesso = true;
 	
 	static {
-		ClassPathXmlApplicationContext classPathXmlApplicationContext = new ClassPathXmlApplicationContext("applicationContext.xml");
+		ClassPathXmlApplicationContext classPathXmlApplicationContext = new ClassPathXmlApplicationContext("SPRING_FILE_LOCATION");
 		classPathXmlApplicationContext.registerShutdownHook();
 		applicationContext = classPathXmlApplicationContext;
 	}
