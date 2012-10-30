@@ -55,14 +55,14 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 		
 		// Validar Produto/Edicao
 		final String codigoProduto = input.getCodigoProduto();
-		final Long edicao = input.getEdicaoCapa();
+		final Long numeroEdicao = input.getEdicaoCapa();
 		ProdutoEdicao produtoEdicao = this.obterProdutoEdicao(codigoProduto,
-				edicao);
+				numeroEdicao);
 		if (produtoEdicao == null) {
 			this.ndsiLoggerFactory.getLogger().logError(message,
 					EventoExecucaoEnum.RELACIONAMENTO,
 					"Impossivel realizar Insert/update - Nenhum resultado encontrado para Produto: "
-							+ codigoProduto + " e Edicao: " + edicao
+							+ codigoProduto + " e Edicao: " + numeroEdicao
 							+ " na tabela produto_edicao");
 			return;
 		}
