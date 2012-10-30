@@ -167,7 +167,18 @@ var relatorioGarantiasController = $.extend(true, {
                        }  else{
                               $(".garantiaDetalheGrid").flexAddData(result);
                               $("#dialog-detalhe-garantia th[abbr='faturamento'] >div").html("Faturamento " + result.rows[0].cell.baseCalculo);
-                              relatorioGarantiasController.showGridGarantiaEspecifica();
+                              
+                      		var total = '0,00';
+                    		
+                    		$.each(result.rows, function(index, value) {
+                    			
+                    			total = sumPrice(value.cell.vlrGarantia, total);
+                    		});
+
+                    		$('#totalGarantia', this.workspace).html(total);
+
+                              
+                            relatorioGarantiasController.showGridGarantiaEspecifica();
                        }
                 },
                 null,
