@@ -1,5 +1,9 @@
 <head>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/relatorioGarantias.js"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.price_format.1.7.js"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script> 
+	
+	
 	<style type="text/css">
 		#dialog-detalhe-garantia fieldset{width:800px!important;}
 	</style>
@@ -91,6 +95,7 @@
 		<span class="bt_imprimir"><a href="${pageContext.request.contextPath}/financeiro/relatorioGarantias/exportPesquisarGarantia?fileType=PDF">Imprimir</a></span>
     
     <div style="float:right; margin-top:10px; margin-right:270px;"><strong>Total R$:&nbsp;</strong><span id="totalGarantia" ></span></div>
+    <input type="hidden" id=valorTotalGarantiaslHidden />
     </fieldset>
 </div>
 

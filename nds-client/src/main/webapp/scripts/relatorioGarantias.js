@@ -10,8 +10,8 @@ var relatorioGarantiasController = $.extend(true, {
 		this.initRelatorioTodasGarantiasDetalheGrid();
 		this.initRelatorioTodasGarantiasGrid();
 
+		
 	},
-	
 	
 	hideGrids : function(){
 		$('#garantiasEspecificas',this.workspace).hide();
@@ -168,14 +168,20 @@ var relatorioGarantiasController = $.extend(true, {
                               $(".garantiaDetalheGrid").flexAddData(result);
                               $("#dialog-detalhe-garantia th[abbr='faturamento'] >div").html("Faturamento " + result.rows[0].cell.baseCalculo);
                               
-                      		var total = '0,00';
+                              var total = removeMascaraPriceFormat($("#valorTotaGarantiaslHidden", this.workspace).val());
                     		
-                    		$.each(result.rows, function(index, value) {
-                    			
-                    			total = sumPrice(value.cell.vlrGarantia, total);
-                    		});
+                              $.each(result.rows, function(index, value) {
+                            	  garantia = removeMascaraPriceFormat(value.cell.vlrGarantia);
+                            	  total += intValue(garantia);
+                            	  });
 
-                    		$('#totalGarantia', this.workspace).html(total);
+                            	  total.priceFormat({
+                            	  allowNegative: true,
+                            	  centsSeparator: ',',
+                            	  thousandsSeparator: '.'
+                            	  });  
+
+                            	  $('#totalGarantia', this.workspace).html(total); 
 
                               
                             relatorioGarantiasController.showGridGarantiaEspecifica();
