@@ -10,11 +10,13 @@ import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.ValidacaoConfirmacaoDeExpedicaoFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoControleDeAprovacaoFecharDiaDTO;
+import br.com.abril.nds.dto.ValidacaoGeracaoCobrancaFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoLancamentoFaltaESobraFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoRecebimentoFisicoFecharDiaDTO;
 import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
+import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.fiscal.StatusNotaFiscalEntrada;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.repository.FecharDiaRepository;
@@ -171,6 +173,45 @@ public class FecharDiaRepositoryImpl extends AbstractRepository implements Fecha
 		query.setResultTransformer(new AliasToBeanResultTransformer(ValidacaoControleDeAprovacaoFecharDiaDTO.class));
 		
 		return query.list();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ValidacaoGeracaoCobrancaFecharDiaDTO> obterFormasDeCobranca() {
+		StringBuilder jpql = new StringBuilder();
+		
+		jpql.append(" SELECT fc.tipoFormaCobranca as tipoFormaCobranca, ");
+		jpql.append(" fc.id as formaCobrancaId ");
+		
+		jpql.append("FROM PoliticaCobranca pc ");
+		jpql.append("JOIN pc.formaCobranca as fc ");				
+				
+		Query query = getSession().createQuery(jpql.toString());
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(ValidacaoGeracaoCobrancaFecharDiaDTO.class));
+		
+		return query.list();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ValidacaoGeracaoCobrancaFecharDiaDTO> obterDiasDaConcentracao(FormaCobranca formaCobranca){
+			 
+			StringBuilder hql = new StringBuilder();
+			
+			hql.append("Select ccc.codigoDiaSemana as diaDoMes ");
+			
+			hql.append("FROM ConcentracaoCobrancaCota as ccc ");
+			hql.append("JOIN ccc.formaCobranca as fc ");
+			hql.append("WHERE fc.id = :idFormaCobranca");
+			
+			Query query = getSession().createQuery(hql.toString());
+			
+			query.setParameter("idFormaCobranca", formaCobranca.getId());
+			
+			query.setResultTransformer(new AliasToBeanResultTransformer(ValidacaoGeracaoCobrancaFecharDiaDTO.class));
+			
+			return query.list();		
 	}
 
 }

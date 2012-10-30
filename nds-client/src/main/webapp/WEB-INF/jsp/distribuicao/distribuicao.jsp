@@ -34,7 +34,7 @@
 			            <td>
 
 							<!-- Num Cota -->
-							<input id="${param.tela}numCota" disabled="disabled" type="text" style="width:100px" />
+							<input id="${param.tela}numCota" type="text" style="width:100px" />
 						</td>
 					</tr>
 			        <tr>
@@ -42,7 +42,7 @@
 			            <td width="308">
 
 							<!-- Box -->
-							<input id="${param.tela}box" disabled="disabled" type="text" style="width:100px" />
+							<input id="${param.tela}box" type="text" style="width:100px" />
 						</td>
 					</tr>
 			        <tr>

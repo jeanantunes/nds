@@ -74,7 +74,16 @@ public class RelatorioGarantiasController {
 	@Rules(Permissao.ROLE_FINANCEIRO_RELATORIO_DE_GARANTIAS)
 	public void index() {
 		
-		listaTiposGarantia = distribuidorService.getComboTiposGarantia();
+		List<ItemDTO<TipoGarantia,String>> listaTiposGarantiaAux = distribuidorService.getComboTiposGarantia();
+		
+		for (ItemDTO<TipoGarantia,String> item : listaTiposGarantiaAux){
+			
+			if (!item.getKey().equals(TipoGarantia.ANTECEDENCIA_VALIDADE)){
+				
+				listaTiposGarantia.add(item);
+			}
+		}
+				
 		listaTiposStatusGarantia = distribuidorService.getComboTiposStatusGarantia();
 		
 		result.include("listaTiposGarantia" , listaTiposGarantia);
@@ -101,6 +110,10 @@ public class RelatorioGarantiasController {
 		
 		List<RelatorioGarantiasVO> garantiasVO = new ArrayList<RelatorioGarantiasVO>();
 		FlexiGridDTO<RelatorioGarantiasDTO> flexDTO = relatorioGarantiasService.gerarTodasGarantias(filtro);
+		
+		if (flexDTO == null || flexDTO.getGrid().size() == 0) {
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "A busca não retornou resultados"));
+		}
 		
 		for(RelatorioGarantiasDTO dto : flexDTO.getGrid()){
 			
@@ -136,6 +149,9 @@ public class RelatorioGarantiasController {
 		List<RelatorioDetalheGarantiaVO> garantiasVO = new ArrayList<RelatorioDetalheGarantiaVO>();
 		FlexiGridDTO<RelatorioDetalheGarantiaDTO> flexDTO = relatorioGarantiasService.gerarPorTipoGarantia(filtro);
 		 
+		if (flexDTO == null || flexDTO.getGrid().size() == 0) {
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "A busca não retornou resultados"));
+		}
 		
 		for(RelatorioDetalheGarantiaDTO dto : flexDTO.getGrid()){
 			

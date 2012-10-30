@@ -287,7 +287,7 @@ public class NegociacaoDividaController {
 			TipoCobranca tipoCobranca, TipoFormaCobranca tipoFormaCobranca, List<DiaSemana> diasSemana,
 			Integer diaInicio, Integer diaFim, boolean negociacaoAvulsa, boolean isentaEncargos,
 			Integer ativarAposPagar, List<ParcelaNegociacao> parcelas, List<Long> idsCobrancas, Long idBanco,
-			BigDecimal valorDividaComissao){
+			BigDecimal valorDividaComissao,boolean recebeCobrancaPorEmail){
 		
 		Long idNegociacao = (Long) this.session.getAttribute(ID_ULTIMA_NEGOCIACAO);
 		
@@ -311,6 +311,7 @@ public class NegociacaoDividaController {
 			formaCobranca = new FormaCobranca();
 			formaCobranca.setTipoCobranca(tipoCobranca);
 			formaCobranca.setTipoFormaCobranca(tipoFormaCobranca);
+			formaCobranca.setRecebeCobrancaEmail(recebeCobrancaPorEmail);
 			
 			Set<ConcentracaoCobrancaCota> concentracaoCobrancaCota = new HashSet<ConcentracaoCobrancaCota>();
 			if (diasSemana != null){
