@@ -2,11 +2,13 @@ package br.com.abril.nds.service.impl;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.dto.VendaSuplementarDTO;
 import br.com.abril.nds.repository.ResumoSuplementarFecharDiaRepository;
 import br.com.abril.nds.service.ResumoSuplementarFecharDiaService;
 
@@ -33,6 +35,19 @@ public class ResumoSuplementarFecharDiaServiceImp implements
 	@Transactional
 	public BigDecimal obterValorVenda(Date dataOperacao) {		 
 		return this.resumoSuplementarFecharDiaRepository.obterValorVenda(dataOperacao);
+	}
+
+	@Override
+	@Transactional
+	public BigDecimal obterValorFisico(Date dataOperacao) {
+		return this.resumoSuplementarFecharDiaRepository.obterValorFisico(dataOperacao);
+	}
+
+	@Override
+	@Transactional
+	public List<VendaSuplementarDTO> obterVendasSuplementar(Date dataOperacao) {
+		return this.resumoSuplementarFecharDiaRepository.obterVendasSuplementar(dataOperacao);
+		
 	}
 
 }
