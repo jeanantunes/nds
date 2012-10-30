@@ -358,7 +358,7 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
 	public List<NegociacaoDividaDetalheVO> obterDetalhesCobranca(Long idCobranca) {
 		
 		StringBuilder hql = new StringBuilder("select ");
-		hql.append(" m.valor, m.data, m.observacao  ")
+		hql.append(" m.valor as valor, m.data as data, m.observacao as observacao")
 		   .append(" from Cobranca c ")
 		   .append(" join c.divida.consolidado.movimentos m ")
 		   .append(" where c.id = :idCobranca ");
