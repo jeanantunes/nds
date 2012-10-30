@@ -37,6 +37,8 @@ public class ItemImpressaoNfe{
 	private BigDecimal aliquotaIPIProduto;
 
 	private BigDecimal valorIPIProduto;
+	
+	private Integer sequencia;
 
 	public String getCodigoProduto() {
 		return codigoProduto;
@@ -173,4 +175,13 @@ public class ItemImpressaoNfe{
 	public void setValorIPIProduto(BigDecimal valorIPIProduto) {
 		this.valorIPIProduto = valorIPIProduto;
 	}
+
+	public Integer getSequencia() {
+		return sequencia;
+	}
+
+	public void setSequencia(Integer sequencia) {
+		this.sequencia = sequencia;
+	}
+	
 }

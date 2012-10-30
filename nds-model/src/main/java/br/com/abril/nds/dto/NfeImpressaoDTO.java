@@ -726,12 +726,12 @@ public class NfeImpressaoDTO implements Serializable{
 		this.valorLiquido = valorLiquido;
 	}
 
-	public List<ItemImpressaoNfe> getItensDanfe() {
+	public List<ItemImpressaoNfe> getItensImpressaoNfe() {
 		return itensImpressaoNfe;
 	}
 
-	public void setItensDanfe(List<ItemImpressaoNfe> itensDanfe) {
-		this.itensImpressaoNfe = itensDanfe;
+	public void setItensImpressaoNfe(List<ItemImpressaoNfe> itensImpressaoNfe) {
+		this.itensImpressaoNfe = itensImpressaoNfe;
 	}
 
 	public List<Duplicata> getFaturas() {
