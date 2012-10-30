@@ -302,38 +302,6 @@
 									</tr>
 								</table>
 							</div>
-							
-							
-							<div id="divChequeDeposito" style="display: none;">
-								<table width="270" border="0" cellspacing="2" cellpadding="2">
-									<tr>
-										<td colspan="2"><strong>Dados Banc&aacute;rios</strong></td>
-									</tr>
-									<tr>
-										<td width="93">Num. Banco:</td>
-										<td width="163"><input type="text" name="numBancoCheque"
-											id="numBancoCheque" style="width: 60px;" /></td>
-									</tr>
-									<tr>
-										<td>Nome:</td>
-										<td><input type="text" name="nomeBancoCheque"
-											id="nomeBancoCheque" style="width: 150px;" /></td>
-									</tr>
-									<tr>
-										<td>Ag&ecirc;ncia:</td>
-										<td><input type="text" name="agencaiBancoCheque1" id="agenciaBancoCheque1"
-											style="width: 60px;" /> - <input type="text"
-											name="agenciaBancoChequ2" id="agenciaBancoCheque2" style="width: 30px;" /></td>
-									</tr>
-									<tr>
-										<td>Conta:</td>
-										<td><input type="text" name="contaBancoCheque1"
-											id="contaBancoCheque1" style="width: 60px;" /> - <input
-											type="text" name="contaBancoCheque2" id="contaBancoCheque2"
-											style="width: 30px;" /></td>
-									</tr>
-								</table>
-							</div>
 
 						</td>
 					</tr>
