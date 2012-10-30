@@ -266,6 +266,11 @@ var negociacaoDividaController = $.extend(true, {
 			value: priceToFloat($('#totalSelecionado', negociacaoDividaController.wokspace).html())
 		});
 		
+		params.push({
+			name: 'recebeCobrancaPorEmail',
+			value: $('#checkReceberEmail', negociacaoDividaController.wokspace).is(":checked")
+		});
+		
 		$.postJSON(contextPath + '/financeiro/negociacaoDivida/confirmarNegociacao',
 			params, 
 			function(result) {
@@ -417,8 +422,7 @@ var negociacaoDividaController = $.extend(true, {
 		}else if (value == 'CHEQUE'){
 			$('#gridVenctos', negociacaoDividaController.workspace).hide();
 			$('#gridCheque', negociacaoDividaController.workspace).show();
-			$('#divChequeDeposito', negociacaoDividaController.workspace).show();
-			$('#divBanco', negociacaoDividaController.workspace).hide();
+			$('#divBanco', negociacaoDividaController.workspace).show();
 
 		}else {
 			$('#gridVenctos', negociacaoDividaController.workspace).hide();
