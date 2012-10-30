@@ -1,5 +1,8 @@
 package br.com.abril.nds.integracao.ems0136.processor;
 
+import org.hibernate.Criteria;
+import org.hibernate.FetchMode;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -9,6 +12,7 @@ import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
 import br.com.abril.nds.integracao.model.canonic.EMS0136Input;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 import br.com.abril.nds.repository.impl.AbstractRepository;
 
@@ -49,7 +53,49 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 			return;
 		}
 		
+		// Validar Produto/Edicao
+		final String codigoProduto = input.getCodigoProduto();
+		final Long edicao = input.getEdicaoCapa();
+		ProdutoEdicao produtoEdicao = this.obterProdutoEdicao(codigoProduto,
+				edicao);
+		if (produtoEdicao == null) {
+			this.ndsiLoggerFactory.getLogger().logError(message,
+					EventoExecucaoEnum.RELACIONAMENTO,
+					"Impossivel realizar Insert/update - Nenhum resultado encontrado para Produto: "
+							+ codigoProduto + " e Edicao: " + edicao
+							+ " na tabela produto_edicao");
+			return;
+		}
 		
+	}
+	
+	/**
+	 * Obtém o Produto Edição cadastrado previamente.
+	 * 
+	 * @param codigoProduto Código da Publicação.
+	 * @param numeroEdicao Número da Edição.
+	 * 
+	 * @return
+	 */
+	private ProdutoEdicao obterProdutoEdicao(String codigoProduto,
+			Long numeroEdicao) {
+
+		try {
+
+			Criteria criteria = this.getSession().createCriteria(
+					ProdutoEdicao.class, "produtoEdicao");
+
+			criteria.createAlias("produtoEdicao.produto", "produto");
+			criteria.setFetchMode("produto", FetchMode.JOIN);
+
+			criteria.add(Restrictions.eq("produto.codigo", codigoProduto));
+			criteria.add(Restrictions.eq("produtoEdicao.numeroEdicao", numeroEdicao));
+
+			return (ProdutoEdicao) criteria.uniqueResult();
+
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	@Override
