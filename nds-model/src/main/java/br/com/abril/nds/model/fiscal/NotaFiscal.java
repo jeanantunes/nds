@@ -198,7 +198,7 @@ public abstract class NotaFiscal implements Serializable {
 	@Column(name="STATUS_EMISSAO_NFE") 
 	private StatusEmissaoNfe statusEmissaoNfe;
 	
-	@ManyToOne(optional = false)
+	@ManyToOne(optional = true)
 	@JoinColumn(name = "PJ_ID")
 	protected PessoaJuridica emitente;
 	

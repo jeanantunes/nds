@@ -1,9 +1,7 @@
 package br.com.abril.nds.service.impl;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import br.com.abril.nds.dto.FlexiGridDTO;
 import br.com.abril.nds.dto.RelatorioDetalheGarantiaDTO;
 import br.com.abril.nds.dto.RelatorioGarantiasDTO;
@@ -25,14 +23,19 @@ public class RelatorioGarantiasServiceImpl implements RelatorioGarantiasService 
 	@Transactional
 	@Override
 	public FlexiGridDTO<RelatorioGarantiasDTO> gerarTodasGarantias(FiltroRelatorioGarantiasDTO filtro) {
+	
+		if (filtro.getStatusGarantia()!=null && !filtro.getStatusGarantia().equals("TODAS")){
+		    filtro.setStatusGarantiaEnum(TipoStatusGarantia.valueOf(filtro.getStatusGarantia()));
+		}
 		
-		//MOCK
-		TipoStatusGarantia statusGarantia = TipoStatusGarantia.VENCIDA/*filtro.getStatusGarantia()*/;//Alterar tipo no filtro para StatusGarantia
-		//
+		if (filtro.getTipoGarantia()!=null && !filtro.getTipoGarantia().equals("TODAS")){
+		    filtro.setTipoGarantiaEnum(TipoGarantia.valueOf(filtro.getTipoGarantia()));
+		}
 		
 		FlexiGridDTO<RelatorioGarantiasDTO> to = new FlexiGridDTO<RelatorioGarantiasDTO>();
-		to.setGrid(this.cotaGarantiaRepository.obterGarantiasCadastradas(statusGarantia, filtro.getDataBaseCalculo()));
-		to.setTotalGrid(this.cotaGarantiaRepository.obterCountGarantiasCadastradas(statusGarantia, filtro.getDataBaseCalculo()).intValue());
+		to.setGrid(this.cotaGarantiaRepository.obterGarantiasCadastradas(filtro));
+		
+		to.setTotalGrid(this.cotaGarantiaRepository.obterCountGarantiasCadastradas(filtro).intValue());
 
 		return to;
 	}
@@ -43,13 +46,18 @@ public class RelatorioGarantiasServiceImpl implements RelatorioGarantiasService 
 		
 		this.validaFiltroDetalhe(filtro);
 		
-		//MOCK
-		TipoGarantia tipoGarantia = TipoGarantia.CAUCAO_LIQUIDA/*filtro.getTipoGarantia()*/;//Alterar tipo no filtro para TipoGarantia
-		//
+		if (filtro.getStatusGarantia()!=null && !filtro.getStatusGarantia().equals("TODAS")){
+		    filtro.setStatusGarantiaEnum(TipoStatusGarantia.valueOf(filtro.getStatusGarantia()));
+		}
+		
+		if (filtro.getTipoGarantia()!=null && !filtro.getTipoGarantia().equals("TODAS")){
+		    filtro.setTipoGarantiaEnum(TipoGarantia.valueOf(filtro.getTipoGarantia()));
+		}
 		
 		FlexiGridDTO<RelatorioDetalheGarantiaDTO> to = new FlexiGridDTO<RelatorioDetalheGarantiaDTO>();
-		to.setGrid(this.cotaGarantiaRepository.obterDetalheGarantiaCadastrada(tipoGarantia, filtro.getDataBaseCalculo() , filtro.getPaginacao().getSortColumn(), filtro.getPaginacao().getSortOrder()));
-		to.setTotalGrid(this.cotaGarantiaRepository.obterCountDetalheGarantiaCadastrada(tipoGarantia, filtro.getDataBaseCalculo()).intValue());
+		to.setGrid(this.cotaGarantiaRepository.obterDetalheGarantiaCadastrada(filtro));
+		
+		to.setTotalGrid(this.cotaGarantiaRepository.obterCountDetalheGarantiaCadastrada(filtro).intValue());
 
 		return to;
 	}
