@@ -123,7 +123,7 @@ public class ChamadaAntecipadaEncalheRepositoryImplTest extends AbstractReposito
 
 		Rota rota = Fixture.rota("Rota 005", roteiro);
 		rota.setRoteiro(roteiro);
-		rota.addPDV(pdv, 1);
+		rota.addPDV(pdv, 1, box1);
 		save(rota);
 		
 		Cota cotaJose = Fixture.cota(1234, jose, SituacaoCadastro.ATIVO,box1);
@@ -137,7 +137,7 @@ public class ChamadaAntecipadaEncalheRepositoryImplTest extends AbstractReposito
 
 		rota = Fixture.rota("Rota 005", roteiro);
 		rota.setRoteiro(roteiro);
-		rota.addPDV(pdv, 1);
+		rota.addPDV(pdv, 1, box1);
 		
 		save(rota);
 		

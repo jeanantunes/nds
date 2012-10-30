@@ -133,7 +133,7 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 		save(roteiro);
 
 		Rota rota = Fixture.rota("Rota 005",roteiro);
-		rota.addPDV(pdv, 1);
+		rota.addPDV(pdv, 1, box1);
 		rota.setRoteiro(roteiro);
 		save(rota);
 		
