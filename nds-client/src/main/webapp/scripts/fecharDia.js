@@ -486,6 +486,7 @@ var fecharDiaController =  $.extend(true, {
 					fecharDiaController.iniciarResumoReparte();
 					fecharDiaController.iniciarResumoEncalhe();
 					fecharDiaController.iniciarResumoSuplementar();
+					fecharDiaController.iniciarResumoDividas();
 				}
 			},
 			form: $("#dialog-processos", fecharDiaController.workspace).parents("form")
@@ -694,6 +695,67 @@ var fecharDiaController =  $.extend(true, {
 					$("#totalSuplementarSaldo").html(result[3]);
 				}
 			);
+	},
+	
+	iniciarResumoDividas : function() {
+		$.postJSON(contextPath + "/administracao/fecharDia/obterSumarizacaoDividas",
+				   null,
+				   function(result) {
+				       fecharDiaController.processarResumoDividasReceber(result.sumarizacao.DIVIDAS_A_RECEBER);
+				       fecharDiaController.processarResumoDividasVencer(result.sumarizacao.DIVIDAS_A_VENCER);
+					});
+	},
+	
+	processarResumoDividasReceber : function(itens) {
+	    var tabela =  $('#tabela_dividas_receber', fecharDiaController.workspace);
+	    fecharDiaController.processarResumoDividas(itens, tabela);
+	},
+	
+	processarResumoDividasVencer : function(itens) {
+        var tabela =  $('#tabela_dividas_vencer', fecharDiaController.workspace);
+        fecharDiaController.processarResumoDividas(itens, tabela);
+    },
+	
+	processarResumoDividas : function(itens, tabela) {
+        $(tabela).html("");
+        $(tabela).append(fecharDiaController.gerarLinhaBrancoResumoDividas());
+        $(tabela).append(fecharDiaController.gerarCabecalhoResumoDividas());
+        $.each(itens, function(index, item) {
+            $(tabela).append(fecharDiaController.gerarLinhaResumoDividas(item));                       
+        });
+        $(tabela).append((fecharDiaController.gerarLinhaBrancoResumoDividas()));
+    },
+	
+	gerarLinhaResumoDividas : function(item) {
+		var linhaResumo = "<tr>";
+		linhaResumo += "<td width=\"120\" align=\"left\" style=\"border-bottom:1px solid #ccc;\">" + item.descricaoTipoCobranca + "</td>";
+		linhaResumo += "<td width=\"80\" align=\"right\" style=\"border-bottom:1px solid #ccc;\">" + item.totalFormatado +"</td>";
+		linhaResumo += "<td width=\"80\" align=\"right\" style=\"border-bottom:1px solid #ccc;\">" + item.valorPagoFormatado +"</td>";
+		linhaResumo += "<td width=\"80\" align=\"right\" style=\"border-bottom:1px solid #ccc;\">" + item.inadimplenciaFormatado +"</td>";
+		linhaResumo += "</tr>";
+		return linhaResumo;
+		
+	},
+	
+	gerarCabecalhoResumoDividas : function() {
+       var linhaCabecalho = "<tr class=\"header_table\">";  
+       linhaCabecalho += "<td align=\"left\">Forma de Pagamento</td>";
+       linhaCabecalho += "<td align=\"right\">Total R$</td>";
+       linhaCabecalho += "<td align=\"right\">Valor Pago</td>";
+       linhaCabecalho += "<td align=\"right\">Inadimplência</td>";
+       linhaCabecalho += "</tr>";
+       return linhaCabecalho; 
+    },
+	
+	gerarLinhaBrancoResumoDividas : function() {
+	   var linhaBranco = "<tr>";  
+	   linhaBranco += "<td align=\"left\">&nbsp;</td>";
+	   linhaBranco += "<td align=\"right\">&nbsp;</td>";
+	   linhaBranco += "<td align=\"right\">&nbsp;</td>";
+	   linhaBranco += "<td align=\"right\">&nbsp;</td>";
+	   linhaBranco += "</tr>";
+	   return linhaBranco; 
 	}
+	
 
 }, BaseController);
