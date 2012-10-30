@@ -499,6 +499,7 @@ var fecharDiaController =  $.extend(true, {
 		$.postJSON(contextPath + "/administracao/fecharDia/inicializarValidacoes", null,
 				function(result){
 					fecharDiaController.validacaoBaixaBancaria(result);
+					fecharDiaController.validacaoGeracaoCobranca(result);
 					fecharDiaController.validacaoRecebimentoFisico(result);
 					fecharDiaController.validacaoConfirmacaoDeExpedicao(result);
 					fecharDiaController.validacaoLancamentoFaltasESobras(result);
@@ -518,14 +519,26 @@ var fecharDiaController =  $.extend(true, {
 		$('#tabela-validacao').append(baixaBancaria + imagem);
 	},
 	
+	validacaoGeracaoCobranca : function(result){
+		var geracaoCobranca = "<tr class='class_linha_2'><td>Geração de Cobrança</td>";					
+		var iconeGeracaoCobranca = null;
+		if(result.geracaoDeCobranca){
+			iconeGeracaoCobranca = 'ico_check.gif';
+		}else{
+			iconeGeracaoCobranca = 'ico_bloquear.gif';
+		}
+		var imagem = "<td align='center'><img src='"+ contextPath +"/images/"+iconeGeracaoCobranca+"' alt='Processo Efetuado' width='16' height='16' /></td></tr>";
+		$('#tabela-validacao').append(geracaoCobranca + imagem);
+	},
+	
 	validacaoRecebimentoFisico : function(result){
 		var recebimentoFisico = null;				
 		var iconeRecebimentoFisico = null;		
 		if(result.recebimentoFisico){
-			recebimentoFisico = "<tr class='class_linha_2'><td>Recebimento Físico:</td>";
+			recebimentoFisico = "<tr class='class_linha_1'><td>Recebimento Físico:</td>";
 			iconeRecebimentoFisico = 'ico_check.gif';
 		}else{
-			recebimentoFisico = "<tr class='class_linha_2'><td><a href='javascript:;' onclick='fecharDiaController.popup_recebimentoFisico();'>Recebimento Físico</a>:</td>";
+			recebimentoFisico = "<tr class='class_linha_1'><td><a href='javascript:;' onclick='fecharDiaController.popup_recebimentoFisico();'>Recebimento Físico</a>:</td>";
 			iconeRecebimentoFisico = 'ico_bloquear.gif';
 		}		
 		var imagem = "<td align='center'><img src='"+ contextPath +"/images/"+iconeRecebimentoFisico+"' alt='Processo Efetuado' width='16' height='16' /></td></tr>";
@@ -559,10 +572,10 @@ var fecharDiaController =  $.extend(true, {
 		var confirmacaoDeExpedicao = null;				
 		var iconeConfirmacaoDeExpedicao = null;		
 		if(result.confirmacaoDeExpedicao){
-			confirmacaoDeExpedicao = "<tr class='class_linha_1'><td>Confirmação de Expedição:</td>";
+			confirmacaoDeExpedicao = "<tr class='class_linha_2'><td>Confirmação de Expedição:</td>";
 			iconeConfirmacaoDeExpedicao = 'ico_check.gif';
 		}else{
-			confirmacaoDeExpedicao = "<tr class='class_linha_1'><td><a href='javascript:;' onclick='fecharDiaController.popup_confirma_expedicao();'>Confirmação de Expedição</a>:</td>";
+			confirmacaoDeExpedicao = "<tr class='class_linha_2'><td><a href='javascript:;' onclick='fecharDiaController.popup_confirma_expedicao();'>Confirmação de Expedição</a>:</td>";
 			iconeConfirmacaoDeExpedicao = 'ico_bloquear.gif';
 		}		
 		var imagem = "<td align='center'><img src='"+ contextPath +"/images/"+iconeConfirmacaoDeExpedicao+"' alt='Com Diferença' width='16' height='16' /></td></tr>";
@@ -597,10 +610,10 @@ var fecharDiaController =  $.extend(true, {
 		var lancamentoFaltasESobras = null;				
 		var iconeLancamentoFaltasESobras = null;		
 		if(result.lancamentoFaltasESobras){
-			lancamentoFaltasESobras = "<tr class='class_linha_2'><td>Lançamento de Faltas e Sobras:</td>";
+			lancamentoFaltasESobras = "<tr class='class_linha_1'><td>Lançamento de Faltas e Sobras:</td>";
 			iconeLancamentoFaltasESobras = 'ico_check.gif';
 		}else{
-			lancamentoFaltasESobras = "<tr class='class_linha_2'><td><a href='javascript:;' onclick='fecharDiaController.popup_lctoFaltas();'>Lançamento de Faltas e Sobras</a>:</td>";
+			lancamentoFaltasESobras = "<tr class='class_linha_1'><td><a href='javascript:;' onclick='fecharDiaController.popup_lctoFaltas();'>Lançamento de Faltas e Sobras</a>:</td>";
 			iconeLancamentoFaltasESobras = 'ico_bloquear.gif';
 		}		
 		var imagem = "<td align='center'><img src='"+ contextPath +"/images/"+iconeLancamentoFaltasESobras+"' alt='Processo Efetuado' width='16' height='16' /></td></tr>";

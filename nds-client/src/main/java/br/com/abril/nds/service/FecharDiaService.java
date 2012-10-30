@@ -81,5 +81,14 @@ public interface FecharDiaService {
 	 * @return List<ValidacaoLancamentoFaltaESobraFecharDiaDTO>
 	 */
 	List<ValidacaoControleDeAprovacaoFecharDiaDTO> obterPendenciasDeAprovacao(Date dataOperacao, StatusAprovacao pendente);
+	
+
+	/**
+	 * Verifica se tem concentração de cobrança para a data de operação e verifica se a divida não foi gerada.
+	 * @param dataOperacaoDistribuidor 
+	 * 
+	 * @return Boolean
+	 */
+	Boolean existeGeracaoDeCobranca(Date dataOperacao);
 
 }
