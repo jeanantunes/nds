@@ -62,7 +62,7 @@ public class RotaRepositoryImplTest extends AbstractRepositoryImplTest  {
 		save(roteiro);
 
 		rota = Fixture.rota("Rota 005", roteiro);
-		rota.addPDV(pdvManoel, 1);
+		rota.addPDV(pdvManoel, 1, box1);
 		rota.setRoteiro(roteiro);
 		save(rota);
 		
@@ -73,7 +73,7 @@ public class RotaRepositoryImplTest extends AbstractRepositoryImplTest  {
 		save(roteiroTCD);
 		
 		rota10 = Fixture.rota("Rota 001", roteiroTCD);
-		rota10.addPDV(pdvManoel, 1);
+		rota10.addPDV(pdvManoel, 1, box1);
 		rota10.setRoteiro(roteiroTCD);
 		save(rota10);
 		
