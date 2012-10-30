@@ -399,11 +399,11 @@
         </tr>
       <tr>
         <td align="left" style="border-bottom:1px solid #ccc;">Vendas</td>
-        <td align="right" style="border-bottom:1px solid #ccc;"><a href="javascript:;" onclick="popup_vendasTot();"><div id="totalSuplementarVenda"></div></a></td>
+        <td align="right" style="border-bottom:1px solid #ccc;"><a href="javascript:;" onclick="fecharDiaController.popup_vendasTot();"><div id="totalSuplementarVenda"></div></a></td>
         </tr>
       <tr>
         <td align="left" style="border-bottom:1px solid #ccc;">Saldo</td>
-        <td align="right" style="border-bottom:1px solid #ccc;">83,90</td>
+        <td align="right" style="border-bottom:1px solid #ccc;"><div id="totalSuplementarSaldo"></div></td>
         </tr>
       <tr>
         <td align="left">&nbsp;</td>
@@ -421,130 +421,16 @@
               <td align="center" bgcolor="#F4F4F4"><strong><a href="javascript:;" onclick="fecharDiaController.popup_boletos_baixados();">DÍVIDAS A VENCER</a></strong></td>
             </tr>
             <tr>
-              <td valign="top"><table width="381" border="0" cellpadding="2" cellspacing="1" style="margin-left:10px; margin-right:10px;">
-                <tr>
-                  <td align="left">&nbsp;</td>
-                  <td align="right">&nbsp;</td>
-                  <td align="right">&nbsp;</td>
-                  <td align="right">&nbsp;</td>
-                </tr>
-                <tr class="header_table">
-                  <td align="left">Forma de Pagamento</td>
-                  <td align="right">Total R$</td>
-                  <td align="right">Valor Pago</td>
-                  <td align="right">Inadimplência</td>
-                </tr>
-                <tr>
-                  <td width="120" align="left" style="border-bottom:1px solid #ccc;">Boleto</td>
-                  <td width="80" align="right" style="border-bottom:1px solid #ccc;">&nbsp;</td>
-                  <td width="80" align="right" style="border-bottom:1px solid #ccc;">135.371,10</td>
-                  <td width="80" align="right" style="border-bottom:1px solid #ccc;">&nbsp;</td>
-                </tr>
-                <tr>
-                  <td align="left" style="border-bottom:1px solid #ccc;">Boleto em Branco</td>
-                  <td align="right" style="border-bottom:1px solid #ccc;">&nbsp;</td>
-                  <td align="right" style="border-bottom:1px solid #ccc;">83,90</td>
-                  <td align="right" style="border-bottom:1px solid #ccc;">&nbsp;</td>
-                </tr>
-                <tr>
-                  <td align="left" style="border-bottom:1px solid #ccc;">Cheque</td>
-                  <td align="right" style="border-bottom:1px solid #ccc;">&nbsp;</td>
-                  <td align="right" style="border-bottom:1px solid #ccc;">143,62</td>
-                  <td align="right" style="border-bottom:1px solid #ccc;">&nbsp;</td>
-                </tr>
-                <tr>
-                  <td align="left" style="border-bottom:1px solid #ccc;">Dinheiro</td>
-                  <td align="right" style="border-bottom:1px solid #ccc;">&nbsp;</td>
-                  <td align="right" style="border-bottom:1px solid #ccc;">0,00</td>
-                  <td align="right" style="border-bottom:1px solid #ccc;">&nbsp;</td>
-                </tr>
-                <tr>
-                  <td align="left" style="border-bottom:1px solid #ccc;">Depósito</td>
-                  <td align="right" style="border-bottom:1px solid #ccc;">&nbsp;</td>
-                  <td align="right" style="border-bottom:1px solid #ccc;">135.311,38</td>
-                  <td align="right" style="border-bottom:1px solid #ccc;">&nbsp;</td>
-                </tr>
-                <tr>
-                  <td align="left" style="border-bottom:1px solid #ccc;">Transferência</td>
-                  <td align="right" style="border-bottom:1px solid #ccc;">&nbsp;</td>
-                  <td align="right" style="border-bottom:1px solid #ccc;">135.227,48</td>
-                  <td align="right" style="border-bottom:1px solid #ccc;">&nbsp;</td>
-                </tr>
-                <tr>
-                  <td align="left" style="border-bottom:1px solid #ccc;">Outros</td>
-                  <td align="right" style="border-bottom:1px solid #ccc;">&nbsp;</td>
-                  <td align="right" style="border-bottom:1px solid #ccc;">83,90</td>
-                  <td align="right" style="border-bottom:1px solid #ccc;">&nbsp;</td>
-                </tr>
-                <tr>
-                  <td align="left">&nbsp;</td>
-                  <td align="right">&nbsp;</td>
-                  <td align="right">&nbsp;</td>
-                  <td align="right">&nbsp;</td>
-                </tr>
+              <td valign="top">
+              
+              <table  id="tabela_dividas_receber" width="381" border="0" cellpadding="2" cellspacing="1" style="margin-left:10px; margin-right:10px;">
+               
+
               </table></td>
               <td align="center" valign="top" style="width:10px; border-left:1px solid #ccc;">&nbsp;</td>
-              <td align="center" valign="top"><table width="381" border="0" cellpadding="2" cellspacing="1" style="margin-left:10px; margin-right:10px;">
-                <tr>
-                  <td align="left">&nbsp;</td>
-                  <td align="right">&nbsp;</td>
-                  <td align="right">&nbsp;</td>
-                  <td align="right">&nbsp;</td>
-                </tr>
-                <tr class="header_table">
-                  <td align="left">Forma de Pagamento</td>
-                  <td align="right">Total R$</td>
-                  <td align="right">Valor Pago</td>
-                  <td align="right">Inadimplência</td>
-                </tr>
-                <tr>
-                  <td width="120" align="left" style="border-bottom:1px solid #ccc;">Boleto</td>
-                  <td width="80" align="right" style="border-bottom:1px solid #ccc;">&nbsp;</td>
-                  <td width="80" align="right" style="border-bottom:1px solid #ccc;">135.371,10</td>
-                  <td width="80" align="right" style="border-bottom:1px solid #ccc;">&nbsp;</td>
-                </tr>
-                <tr>
-                  <td align="left" style="border-bottom:1px solid #ccc;">Boleto em Branco</td>
-                  <td align="right" style="border-bottom:1px solid #ccc;">&nbsp;</td>
-                  <td align="right" style="border-bottom:1px solid #ccc;">83,90</td>
-                  <td align="right" style="border-bottom:1px solid #ccc;">&nbsp;</td>
-                </tr>
-                <tr>
-                  <td align="left" style="border-bottom:1px solid #ccc;">Cheque</td>
-                  <td align="right" style="border-bottom:1px solid #ccc;">&nbsp;</td>
-                  <td align="right" style="border-bottom:1px solid #ccc;">143,62</td>
-                  <td align="right" style="border-bottom:1px solid #ccc;">&nbsp;</td>
-                </tr>
-                <tr>
-                  <td align="left" style="border-bottom:1px solid #ccc;">Dinheiro</td>
-                  <td align="right" style="border-bottom:1px solid #ccc;">&nbsp;</td>
-                  <td align="right" style="border-bottom:1px solid #ccc;">0,00</td>
-                  <td align="right" style="border-bottom:1px solid #ccc;">&nbsp;</td>
-                </tr>
-                <tr>
-                  <td align="left" style="border-bottom:1px solid #ccc;">Depósito</td>
-                  <td align="right" style="border-bottom:1px solid #ccc;">&nbsp;</td>
-                  <td align="right" style="border-bottom:1px solid #ccc;">135.311,38</td>
-                  <td align="right" style="border-bottom:1px solid #ccc;">&nbsp;</td>
-                </tr>
-                <tr>
-                  <td align="left" style="border-bottom:1px solid #ccc;">Transferência</td>
-                  <td align="right" style="border-bottom:1px solid #ccc;">&nbsp;</td>
-                  <td align="right" style="border-bottom:1px solid #ccc;">135.227,48</td>
-                  <td align="right" style="border-bottom:1px solid #ccc;">&nbsp;</td>
-                </tr>
-                <tr>
-                  <td align="left" style="border-bottom:1px solid #ccc;">Outros</td>
-                  <td align="right" style="border-bottom:1px solid #ccc;">&nbsp;</td>
-                  <td align="right" style="border-bottom:1px solid #ccc;">83,90</td>
-                  <td align="right" style="border-bottom:1px solid #ccc;">&nbsp;</td>
-                </tr>
-                <tr>
-                  <td align="left">&nbsp;</td>
-                  <td align="right">&nbsp;</td>
-                  <td align="right">&nbsp;</td>
-                  <td align="right">&nbsp;</td>
-                </tr>
+              <td align="center" valign="top">
+              <table id="tabela_dividas_vencer" width="381" border="0" cellpadding="2" cellspacing="1" style="margin-left:10px; margin-right:10px;">
+               
               </table></td>
             </tr>
         </table>
@@ -806,55 +692,7 @@ $(".popCotasGrid").flexigrid({
 			width : 330,
 			height : 200
 		});
-$(".vendasDialogGrid").flexigrid({
-			url : '../xml/vendasDialogGrid-xml.xml',
-			dataType : 'xml',
-			colModel : [ {
-				display : 'Código',
-				name : 'codigo',
-				width : 60,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Produto',
-				name : 'produto',
-				width : 250,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Edição',
-				name : 'edicao',
-				width : 130,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Qtde',
-				name : 'qtde',
-				width : 110,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Valor R$',
-				name : 'valor',
-				width : 100,
-				sortable : true,
-				align : 'right'
-			}, {
-				display : 'Dt. Rclto',
-				name : 'dtRecolto',
-				width : 90,
-				sortable : true,
-				align : 'center'
-			}],
-			sortname : "codigo",
-			sortorder : "asc",
-			usepager : true,
-			useRp : true,
-			rp : 15,
-			showTableToggleBtn : true,
-			width : 850,
-			height : 255
-		});
+
 
 	
 	

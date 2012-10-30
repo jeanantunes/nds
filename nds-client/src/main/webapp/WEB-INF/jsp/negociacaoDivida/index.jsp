@@ -1,7 +1,7 @@
 <head>
 <script type="text/javascript"
 	src="${pageContext.request.contextPath}/scripts/negociacaoDivida.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.price_format.1.7.js"></script>
+
 
 
 </head>
@@ -75,7 +75,7 @@
 			<fieldset>
 				<legend>Dados da D&iacute;vida</legend>
 				<table class="negociacaoDetalheGrid"></table>
-				<br /> <table> <tr><td> <strong>Saldo R$: </strong> </td> <td> <div id="id_saldo"></div></td></tr> </table> <br />
+				<br /> <strong>Saldo R$: </strong> <br />
 			</fieldset>
 		</div>
 	
@@ -112,11 +112,11 @@
 						<tr>
 							<td width="6%">Atual:</td>
 							<td width="12%"><input name="" type="text" id="comissaoAtualCota"
-								style="width: 80px;" readonly="readonly" /></td>
+								style="width: 80px;" /></td>
 							<td width="5%">%</td>
 							<td width="7%">Utilizar:</td>
 							<td width="13%"><input name="" type="text" id="comissaoUtilizar"
-								style="width: 80px;" onblur="negociacaoDividaController.utilizarAlterado()" /></td>
+								style="width: 80px;" /></td>
 							<td width="57%" colspan="3">% para pagamento da
 								d&iacute;vida</td>
 						</tr>
@@ -125,8 +125,8 @@
 						<tr>
 							<td colspan="6" nowrap="nowrap">Comiss&atilde;o da Cota
 								enquanto houver saldo de d&iacute;vida:</td>
-							<td width="85"><input id="comissaoComSaldo" type="text"
-								style="width: 80px;" readonly="readonly" /></td>
+							<td width="85"><input name="input2" type="text"
+								style="width: 80px;" /></td>
 							<td width="358">%</td>
 						</tr>
 					</table>
@@ -299,38 +299,6 @@
 										<td align="right"><input type="checkbox" name="checkbox"
 											id="checkReceberEmail" /></td>
 										<td>Receber por E-mail?</td>
-									</tr>
-								</table>
-							</div>
-							
-							
-							<div id="divChequeDeposito" style="display: none;">
-								<table width="270" border="0" cellspacing="2" cellpadding="2">
-									<tr>
-										<td colspan="2"><strong>Dados Banc&aacute;rios</strong></td>
-									</tr>
-									<tr>
-										<td width="93">Num. Banco:</td>
-										<td width="163"><input type="text" name="numBancoCheque"
-											id="numBancoCheque" style="width: 60px;" /></td>
-									</tr>
-									<tr>
-										<td>Nome:</td>
-										<td><input type="text" name="nomeBancoCheque"
-											id="nomeBancoCheque" style="width: 150px;" /></td>
-									</tr>
-									<tr>
-										<td>Ag&ecirc;ncia:</td>
-										<td><input type="text" name="agencaiBancoCheque1" id="agenciaBancoCheque1"
-											style="width: 60px;" /> - <input type="text"
-											name="agenciaBancoChequ2" id="agenciaBancoCheque2" style="width: 30px;" /></td>
-									</tr>
-									<tr>
-										<td>Conta:</td>
-										<td><input type="text" name="contaBancoCheque1"
-											id="contaBancoCheque1" style="width: 60px;" /> - <input
-											type="text" name="contaBancoCheque2" id="contaBancoCheque2"
-											style="width: 30px;" /></td>
 									</tr>
 								</table>
 							</div>

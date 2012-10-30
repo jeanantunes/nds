@@ -1,4 +1,4 @@
-package br.com.abril.nds.dto.filtro;
+package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 

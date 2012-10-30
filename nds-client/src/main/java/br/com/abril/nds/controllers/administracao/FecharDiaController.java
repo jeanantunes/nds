@@ -2,21 +2,29 @@ package br.com.abril.nds.controllers.administracao;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
+import br.com.abril.nds.dto.FecharDiaDTO;
 import br.com.abril.nds.dto.ReparteFecharDiaDTO;
+import br.com.abril.nds.dto.SumarizacaoDividasDTO;
+import br.com.abril.nds.dto.SumarizacaoDividasDTO.TipoSumarizacao;
 import br.com.abril.nds.dto.ValidacaoConfirmacaoDeExpedicaoFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoControleDeAprovacaoFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoLancamentoFaltaESobraFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoRecebimentoFisicoFecharDiaDTO;
-import br.com.abril.nds.dto.filtro.FecharDiaDTO;
+import br.com.abril.nds.dto.VendaSuplementarDTO;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.seguranca.Permissao;
+import br.com.abril.nds.serialization.custom.CustomMapJson;
 import br.com.abril.nds.service.FecharDiaService;
 import br.com.abril.nds.service.ResumoEncalheFecharDiaService;
 import br.com.abril.nds.service.ResumoReparteFecharDiaService;
@@ -67,6 +75,7 @@ public class FecharDiaController {
 	public void inicializarValidacoes(){		
 		FecharDiaDTO dto = new FecharDiaDTO();
 		dto.setBaixaBancaria(this.fecharDiaService.existeCobrancaParaFecharDia(distribuidor.getDataOperacao()));
+		dto.setGeracaoDeCobranca(this.fecharDiaService.existeGeracaoDeCobranca(distribuidor.getDataOperacao()));
 		dto.setRecebimentoFisico(this.fecharDiaService.existeNotaFiscalSemRecebimentoFisico(distribuidor.getDataOperacao()));
 		dto.setConfirmacaoDeExpedicao(this.fecharDiaService.existeConfirmacaoDeExpedicao(distribuidor.getDataOperacao()));
 		dto.setLancamentoFaltasESobras(this.fecharDiaService.existeLancamentoFaltasESobrasPendentes(distribuidor.getDataOperacao()));
@@ -234,6 +243,9 @@ public class FecharDiaController {
 		BigDecimal totalVenda = this.resumoSuplementarFecharDiaService.obterValorVenda(distribuidor.getDataOperacao());
 		listaDeSuplementares.add(totalVenda);
 		
+		BigDecimal totalFisico = this.resumoSuplementarFecharDiaService.obterValorFisico(distribuidor.getDataOperacao());
+		listaDeSuplementares.add(totalEstoqueLogico.subtract(totalFisico));
+		
 		result.use(Results.json()).from(listaDeSuplementares, "result").recursive().serialize();
 	}
 	
@@ -252,5 +264,38 @@ public class FecharDiaController {
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
 		
 	}
+	
+	@Post
+	@Path("/obterGridVendaSuplemntar")
+	public void obterGridVendaSuplemntar(){
+		
+		List<VendaSuplementarDTO> listaReparte = resumoSuplementarFecharDiaService.obterVendasSuplementar(distribuidor.getDataOperacao());
+		
+		TableModel<CellModelKeyValue<VendaSuplementarDTO>> tableModel = new TableModel<CellModelKeyValue<VendaSuplementarDTO>>();
+		
+		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaReparte));
+		
+		tableModel.setTotal(listaReparte.size());
+		
+		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+		
+	}
+	
+	@Post
+	public void obterSumarizacaoDividas() {
+        Date dataFechamento = getDataFechamento();
+        Map<TipoSumarizacao, List<SumarizacaoDividasDTO>> sumarizacao = new HashMap<>();
+        sumarizacao.put(TipoSumarizacao.DIVIDAS_A_RECEBER, new ArrayList<SumarizacaoDividasDTO>());
+        sumarizacao.put(TipoSumarizacao.DIVIDAS_A_VENCER, new ArrayList<SumarizacaoDividasDTO>());
+        for (TipoCobranca tc : TipoCobranca.values()) {
+            sumarizacao.get(TipoSumarizacao.DIVIDAS_A_RECEBER).add(new SumarizacaoDividasDTO(dataFechamento, TipoSumarizacao.DIVIDAS_A_RECEBER, tc, BigDecimal.valueOf(1500), BigDecimal.valueOf(1000), BigDecimal.valueOf(500)));
+            sumarizacao.get(TipoSumarizacao.DIVIDAS_A_VENCER).add(new SumarizacaoDividasDTO(dataFechamento, TipoSumarizacao.DIVIDAS_A_VENCER, tc, BigDecimal.valueOf(1500), BigDecimal.valueOf(1000), BigDecimal.valueOf(500)));
+        }
+        result.use(CustomMapJson.class).put("sumarizacao", sumarizacao).serialize();
+    }
+    
+    private Date getDataFechamento() {
+        return distribuidorService.obter().getDataOperacao();
+    }
 
 }

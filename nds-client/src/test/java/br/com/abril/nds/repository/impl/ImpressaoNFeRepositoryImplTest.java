@@ -18,14 +18,20 @@ import br.com.abril.nds.dto.CotasImpressaoNfeDTO;
 import br.com.abril.nds.dto.filtro.FiltroImpressaoNFEDTO;
 import br.com.abril.nds.dto.filtro.FiltroImpressaoNFEDTO.ColunaOrdenacaoImpressaoNFE;
 import br.com.abril.nds.fixture.Fixture;
+import br.com.abril.nds.model.cadastro.Box;
+import br.com.abril.nds.model.cadastro.ContratoCota;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.Pessoa;
+import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.Processo;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.Telefone;
+import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoEndereco;
 import br.com.abril.nds.model.cadastro.TipoFornecedor;
 import br.com.abril.nds.model.cadastro.TipoProduto;
@@ -57,6 +63,7 @@ import br.com.abril.nds.model.fiscal.nota.ValoresTotaisISSQN;
 import br.com.abril.nds.model.fiscal.nota.Veiculo;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.repository.ImpressaoNFeRepository;
+import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.vo.PaginacaoVO;
 
 
@@ -64,6 +71,7 @@ public class ImpressaoNFeRepositoryImplTest  extends AbstractRepositoryImplTest 
 	
     private Fornecedor fornecedorFC;
 	private Fornecedor fornecedorDinap;
+	private Cota cotaJose;
 	private TipoProduto tipoCromo;
 	private TipoFornecedor tipoFornecedorPublicacao;
 	
@@ -79,6 +87,14 @@ public class ImpressaoNFeRepositoryImplTest  extends AbstractRepositoryImplTest 
 		fornecedorFC = Fixture.fornecedorFC(tipoFornecedorPublicacao);
 		fornecedorDinap = Fixture.fornecedorDinap(tipoFornecedorPublicacao);
 		save(tipoFornecedorPublicacao, fornecedorFC, fornecedorDinap);
+
+		Box box1 = Fixture.criarBox(1, "BX-001", TipoBox.LANCAMENTO);
+		save(box1);
+		PessoaFisica jose = Fixture.pessoaFisica("12345678901",
+				"sys.discover@gmail.com", "Jose da Silva");
+		save(jose);
+		cotaJose = Fixture.cota(1234, jose, SituacaoCadastro.ATIVO,box1);
+		save(cotaJose);
 
 		NCM ncmRevistas = Fixture.ncm(49029000l,"REVISTAS","KG");
 		save(ncmRevistas);
@@ -129,7 +145,7 @@ public class ImpressaoNFeRepositoryImplTest  extends AbstractRepositoryImplTest 
 		String inscricaoSuframa 	= "";
 		String nome 		= "";
 		String nomeFantasia = "";
-		Pessoa pessoaDestinatarioReferencia = null;
+		Pessoa pessoaDestinatarioReferencia = jose;
 		Telefone telefone = null;
 		
 		IdentificacaoDestinatario identificacaoDestinatario = 
@@ -461,6 +477,7 @@ public class ImpressaoNFeRepositoryImplTest  extends AbstractRepositoryImplTest 
 	public void buscarNFeParaImpressao() {
 		
 		FiltroImpressaoNFEDTO filtro = obterFiltroImpressaoNfeDTOOrdenadoPorCota();
+		filtro.setDataEmissao(Fixture.criarData(01, Calendar.JANUARY, 2012));
 		
 		List<CotasImpressaoNfeDTO> listaNotaFiscal = impressaoNFeRepository.buscarCotasParaImpressaoNFe(filtro);
 		

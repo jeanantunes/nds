@@ -725,7 +725,7 @@ var recebimentoFisicoController = $.extend(true, {
 		var listaDeValores  = null;
 		
 		if(recebimentoFisicoController.indNotaFiscalInterface){
-			listaDeValores = serializeArrayToPost('itensRecebimento', recebimentoFisicoController.obterListaValores());
+			listaDeValores = serializeArrayToPost('itensRecebimento', recebimentoFisicoController.obterListaValores(), dadosCadastro);
 		}
 		
 		$.postJSON(this.path + 'confirmarRecebimentoFisico', listaDeValores, 
