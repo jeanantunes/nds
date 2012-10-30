@@ -98,7 +98,7 @@ var transportadorController = $.extend(true, {
 				rp : 15,
 				showTableToggleBtn : true,
 				width : 960,
-				height : 255,
+				height : 'auto',
 				disableSelect: true
 			});
 		
@@ -202,7 +202,7 @@ var transportadorController = $.extend(true, {
 						
 						value.cell.sel = '<input type="radio" name="radioVeiculo" value="'+ idVeiculo +'"/>';
 						
-						var acao = '<a href="javascript:;" onclick="transportadorController.editarVeiculo('+ idVeiculo +');"><img src="'+ contextPath +'/images/ico_editar.gif" border="0" hspace="2" />';
+						var acao = '<a href="javascript:;" onclick="transportadorController.editarVeiculo('+ idVeiculo +');"><img src="'+ contextPath +'/images/ico_editar.gif" border="0" hspace="2" style="margin-right:10px" />';
 						acao +='</a> <a href="javascript:;" onclick="transportadorController.excluirVeiculo('+ idVeiculo +');""><img src="'+ contextPath +'/images/ico_excluir.gif" hspace="2" border="0" /></a>';
 						
 						value.cell.acao = acao;
@@ -434,7 +434,7 @@ var transportadorController = $.extend(true, {
 		$("#dialog-novo", transportadorController.workspace).dialog({
 			resizable : false,
 			height : 590,
-			width : 900,
+			width : 960,
 			modal : true,
 			buttons : [
 				{
