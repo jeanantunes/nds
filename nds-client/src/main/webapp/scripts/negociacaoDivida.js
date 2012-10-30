@@ -7,6 +7,12 @@ var negociacaoDividaController = $.extend(true, {
 		negociacaoDividaController.initGridNegociacaoDetalhe();
 		$("#negociacaoPorComissao", negociacaoDividaController.workspace).check();
 		negociacaoDividaController.comissaoCota();
+		
+		$('#comissaoUtilizar', negociacaoDividaController.workspace).priceFormat({
+			allowNegative: false,
+			centsSeparator: ',',
+		    thousandsSeparator: '.'
+		});
 	},
 
 	pesquisarCota : function(numeroCota) {
@@ -54,8 +60,8 @@ var negociacaoDividaController = $.extend(true, {
 		$(".negociacaoDetalheGrid", this.workspace).flexOptions({
 			url : this.path + 'pesquisarDetalhes.json?' , 
 			params: [{name: 'idCobranca' , value: idCobranca}],
-			newp : 1
-			//preProcess: negociacaoDividaController.retornoPesquisaDetalhes
+			newp : 1,
+			preProcess: negociacaoDividaController.retornoPesquisaDetalhes
 		});
 			
 		$(".negociacaoDetalhesGrid").flexReload();
@@ -64,8 +70,29 @@ var negociacaoDividaController = $.extend(true, {
 	},
 	
 	retornoPesquisaDetalhes : function(result) {
-				
-		return result.rows;
+		
+		var saldo = 0.0;
+		
+		$.each(result.rows, function(index, row) {
+			saldo += row.cell.valorDouble;
+		});
+		
+		$('#id_saldo').text(floatToPrice(saldo));
+		
+		return result;
+	},
+	
+	utilizarAlterado : function() {
+		
+		var perc = priceToFloat( $('#comissaoUtilizar').val());
+		
+		
+		
+		var atual = priceToFloat( $('#comissaoAtualCota').val());
+		
+		var vlrFinal = atual - perc;
+		
+		$('#comissaoComSaldo').val( replaceAll(  vlrFinal.toFixed(2) , ".", ","));
 	},
 	
 	montaColunaDetalhesAcao : function(data) {
