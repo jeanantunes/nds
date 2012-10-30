@@ -337,7 +337,7 @@ public class GeracaoNotaEnvioServiceImplTest extends AbstractRepositoryImplTest 
 		
 		rota1 = Fixture.rota("Rota 1", roteiro1);
 		rota1.setRoteiro(roteiro1);
-		rota1.addPDV(pdvManoel, 1);
+		rota1.addPDV(pdvManoel, 1, box1);
 		save(rota1);
 		
 		
