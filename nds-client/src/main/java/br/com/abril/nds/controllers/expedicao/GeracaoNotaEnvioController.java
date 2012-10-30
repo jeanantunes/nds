@@ -3,6 +3,9 @@ package br.com.abril.nds.controllers.expedicao;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -30,6 +33,7 @@ import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.GeracaoNotaEnvioService;
 import br.com.abril.nds.service.MovimentoEstoqueCotaService;
+import br.com.abril.nds.service.NFeService;
 import br.com.abril.nds.service.NotaFiscalService;
 import br.com.abril.nds.service.RoteirizacaoService;
 import br.com.abril.nds.util.Constantes;
@@ -74,12 +78,18 @@ public class GeracaoNotaEnvioController {
 	
 	@Autowired
 	private NotaFiscalService notaFiscalService;
-	
+
+	@Autowired
+	private NFeService nfeService;
+
 	@Autowired
 	private HttpServletResponse httpServletResponse;
 	
 	@Autowired
 	private HttpSession session;
+
+	@Autowired
+	private HttpServletResponse httpResponse;
 
 	private static final String FILTRO_CONSULTA_NOTA_ENVIO = "filtroConsultaNotaEnvio";
 	
@@ -202,20 +212,35 @@ public class GeracaoNotaEnvioController {
 	}
 	
 	@Post
-	public Download gerarNotaEnvio(List<Long> listaIdCotas) {
+	public void gerarNotaEnvio(List<Long> listaIdCotas) {
 		
 		FiltroConsultaNotaEnvioDTO filtro = this.getFiltroNotaEnvioSessao();
 		
 		List<NotaEnvio> notasEnvio = this.geracaoNotaEnvioService.gerarNotasEnvio(filtro, listaIdCotas);
 
-		byte[] notasGeradas = notaFiscalService.imprimirNotasEnvio(notasEnvio); 
+		byte[] notasGeradas = nfeService.obterNEsPDF(notasEnvio, false); 
 	        
         if (notasGeradas != null) {
-            long size = notasGeradas.length;
-            InputStream inputStream = new ByteArrayInputStream(notasGeradas);
-            return new InputStreamDownload(inputStream, FileType.PDF.getContentType(), "notas-envio.pdf", true, size);
+        	
+        	DateFormat sdf = new SimpleDateFormat("yyyy-MM-ddhhmmss");
+        	
+        	this.httpResponse.setHeader("Content-Disposition", "attachment; filename=notas-envio" + sdf.format(new Date()) + ".pdf");
+
+        	OutputStream output;
+			try {
+				output = this.httpResponse.getOutputStream();
+
+	        	output.write(notasGeradas);
+
+	        	httpResponse.getOutputStream().close();
+
+	        	result.use(Results.nothing());
+
+			} catch (IOException e) {
+				throw new ValidacaoException(TipoMensagem.ERROR, e.getMessage());
+			}
+
         }
-        return null;
 	}
 	
 	/**

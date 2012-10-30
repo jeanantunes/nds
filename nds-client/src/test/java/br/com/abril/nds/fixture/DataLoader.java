@@ -1123,8 +1123,6 @@ public class DataLoader {
 
 		gerarCargaDadosConferenciaEncalhe(session);
 
-		gerarTiposNotas(session);
-
 		gerarLogExecucaoInterfaces(session);
 
 		gerarLogradouros(session);
@@ -1236,6 +1234,8 @@ public class DataLoader {
 	private static void carregarDadosClean(Session session) {
 		
 		gerarCfops(session);			
+		
+		gerarTiposNotas(session);
 		
 		criarParametrosSistema(session);
 		criarInterfaceExecucao(session);
