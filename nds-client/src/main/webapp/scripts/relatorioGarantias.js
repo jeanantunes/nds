@@ -182,7 +182,6 @@ var relatorioGarantiasController = $.extend(true, {
                                
                               relatorioGarantiasController.inserirTotalDetalheGrid(result);
                               
-                              relatorioGarantiasController.showGridGarantiaEspecifica();
                        }
                 },
                 null,
