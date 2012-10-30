@@ -27,6 +27,8 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.Cascade;
+
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.LicencaMunicipal;
 import br.com.abril.nds.model.cadastro.MaterialPromocional;
@@ -59,6 +61,9 @@ public class PDV implements Serializable {
 	
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "COTA_ID")
+	@Cascade(value = {org.hibernate.annotations.CascadeType.PERSIST,
+					  org.hibernate.annotations.CascadeType.MERGE,
+					  org.hibernate.annotations.CascadeType.SAVE_UPDATE})
 	private Cota cota;
 	
 	/**

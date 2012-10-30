@@ -70,8 +70,6 @@ var relatorioGarantiasController = $.extend(true, {
 		
 		$(".relatorioTodasGarantiasGrid").flexReload();
 		
-		
-		this.showGridTodasGarantias();
 	
 },
 
@@ -84,6 +82,7 @@ var relatorioGarantiasController = $.extend(true, {
                        
                        if (result.mensagens) {
                               exibirMensagem(result.mensagens.tipoMensagem, result.mensagens.listaMensagens);
+                              relatorioGarantiasController.hideGrids();
                        }  else{
                               $(".relatorioGarantiaGrid").flexAddData(result);
                               $("#garantiasEspecificas th[abbr='faturamento'] >div").html("Faturamento " + result.rows[0].cell.baseCalculo);
@@ -125,6 +124,8 @@ var relatorioGarantiasController = $.extend(true, {
 			
 			exibirMensagem(data.mensagens.tipoMensagem, data.mensagens.listaMensagens);
 			
+			relatorioGarantiasController.hideGrids();
+			
 		} else { 
 			
 			var garantiaSelecionada = $('#selectStatusGarantia option:selected').val();
@@ -134,6 +135,7 @@ var relatorioGarantiasController = $.extend(true, {
 				var link_detalhes = '<a title="Ver Detalhes" onclick="relatorioGarantiasController.popup_detalhe_Garantia(\'' + value.cell.tpGarantia.key + '\', \'' + garantiaSelecionada + '\');" href="javascript:;"><img src="' + contextPath + '/images/ico_detalhes.png" alt="Detalhes" border="0" /></a>';
 				value.cell.detalhe = link_detalhes;
 			});
+			relatorioGarantiasController.showGridTodasGarantias();
 	
 		}
 		
@@ -160,10 +162,23 @@ var relatorioGarantiasController = $.extend(true, {
                        
                        if (result.mensagens) {
                               exibirMensagem(result.mensagens.tipoMensagem, result.mensagens.listaMensagens);
+                              relatorioGarantiasController.hideGrids();
+                              
                        }  else{
                               $(".garantiaDetalheGrid").flexAddData(result);
                               $("#dialog-detalhe-garantia th[abbr='faturamento'] >div").html("Faturamento " + result.rows[0].cell.baseCalculo);
-                              relatorioGarantiasController.showGridGarantiaEspecifica();
+                              
+                      		var total = '0,00';
+                    		
+                    		$.each(result.rows, function(index, value) {
+                    			
+                    			total = sumPrice(value.cell.vlrGarantia, total);
+                    		});
+
+                    		$('#totalGarantia', this.workspace).html(total);
+
+                              
+                            relatorioGarantiasController.showGridGarantiaEspecifica();
                        }
                 },
                 null,
