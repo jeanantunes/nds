@@ -100,7 +100,7 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 						.append("produtoEd.numeroEdicao,")
 						.append("produtoEd.precoVenda,")
 						.append("("+ this.getHQLDesconto() +") as desconto,")
-						.append("estudo.qtdeReparte,")
+						.append("SUM (estudoCota.qtdeEfetiva),")
 						.append(" SUM (( case ")
 							.append(" when (diferenca.tipoDiferenca = 'FALTA_DE') then (-(diferenca.qtde * produtoEd.pacotePadrao))")
 							.append(" when (diferenca.tipoDiferenca = 'SOBRA_DE') then (diferenca.qtde * produtoEd.pacotePadrao)")
@@ -108,7 +108,7 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 							.append(" when (diferenca.tipoDiferenca = 'SOBRA_EM') then (diferenca.qtde)")
 							.append(" else 0")
 						.append(" end )) as qntDiferenca, ")
-						.append(" produtoEd.precoVenda*estudo.qtdeReparte, ")
+						.append(" produtoEd.precoVenda* SUM( estudoCota.qtdeEfetiva ), ")
 						.append(" juridica.razaoSocial ")
 						
 			.append(" ) ");
@@ -390,7 +390,9 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append("SELECT COUNT(produtoEdicao.id)")
+		// Estava mostrando a quantidade de jornaleiros
+		//hql.append("SELECT COUNT(produtoEdicao.id)")
+		hql.append("SELECT produtoEdicao.id ")
 			.append( "FROM" )
 			.append( " Box box")
 			.append(" JOIN box.cotas cota")
@@ -404,6 +406,8 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 			.append(" and lancamento.status =:status ")
 			.append(" and box.id=:idBox ")
 			.append(" and box.tipoBox =:tipoBox ");
+
+			hql.append(" GROUP BY produtoEdicao.id ");
 		
 		Query query = getSession().createQuery(hql.toString());
 		
@@ -412,8 +416,10 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 		query.setParameter("idBox",idBox);
 		query.setParameter("tipoBox", TipoBox.LANCAMENTO);
 		
+		return new Long(query.list().size());
 		
-		return (Long) query.uniqueResult();
+		// Estava mostrando a quantidade de jornaleiros
+		//return (Long) query.uniqueResult();
 	}
 
 	@Override
