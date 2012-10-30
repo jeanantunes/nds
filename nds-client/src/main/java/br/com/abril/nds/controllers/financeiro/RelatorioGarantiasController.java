@@ -102,6 +102,10 @@ public class RelatorioGarantiasController {
 		List<RelatorioGarantiasVO> garantiasVO = new ArrayList<RelatorioGarantiasVO>();
 		FlexiGridDTO<RelatorioGarantiasDTO> flexDTO = relatorioGarantiasService.gerarTodasGarantias(filtro);
 		
+		if (flexDTO == null || flexDTO.getGrid().size() == 0) {
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "A busca não retornou resultados"));
+		}
+		
 		for(RelatorioGarantiasDTO dto : flexDTO.getGrid()){
 			
 			garantiasVO.add(new RelatorioGarantiasVO(dto));
@@ -136,6 +140,9 @@ public class RelatorioGarantiasController {
 		List<RelatorioDetalheGarantiaVO> garantiasVO = new ArrayList<RelatorioDetalheGarantiaVO>();
 		FlexiGridDTO<RelatorioDetalheGarantiaDTO> flexDTO = relatorioGarantiasService.gerarPorTipoGarantia(filtro);
 		 
+		if (flexDTO == null || flexDTO.getGrid().size() == 0) {
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "A busca não retornou resultados"));
+		}
 		
 		for(RelatorioDetalheGarantiaDTO dto : flexDTO.getGrid()){
 			
