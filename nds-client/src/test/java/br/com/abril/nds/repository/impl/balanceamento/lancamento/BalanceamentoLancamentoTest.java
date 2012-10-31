@@ -326,7 +326,8 @@ public class BalanceamentoLancamentoTest extends AbstractRepositoryImplTest {
 			Fixture.criarPeriodoLancamentoParcial(lancamentoCapricho,
 												  lancamentoParcialCapricho,
 												  StatusLancamentoParcial.PROJETADO,
-												  TipoLancamentoParcial.FINAL);
+												  TipoLancamentoParcial.FINAL,
+												  1);
 
 		save(periodoLancamentoCapricho);
 		

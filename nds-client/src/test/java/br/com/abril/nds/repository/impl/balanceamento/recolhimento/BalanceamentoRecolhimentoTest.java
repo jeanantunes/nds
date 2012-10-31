@@ -322,7 +322,7 @@ public class BalanceamentoRecolhimentoTest extends AbstractRepositoryImplTest {
 		PeriodoLancamentoParcial parcialCapricho = Fixture.criarPeriodoLancamentoParcial(
 				lancamentoCapricho, 
 				lancamentoParcialCapricho, 
-				StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.FINAL);
+				StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.FINAL, 1);
 
 		Estudo estudoCapricho = Fixture.estudo(BigInteger.valueOf(180),
 				lancamentoCapricho.getDataLancamentoDistribuidor(), capricho1);
@@ -349,7 +349,7 @@ public class BalanceamentoRecolhimentoTest extends AbstractRepositoryImplTest {
 		PeriodoLancamentoParcial parcialQuatroRodas = Fixture.criarPeriodoLancamentoParcial(
 				lancamentoQuatroRodas, 
 				lancamentoParcialQuatroRodas, 
-				StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.FINAL);
+				StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.FINAL, 1);
 		
 		Estudo estudoQuatroRodas = Fixture.estudo(BigInteger.valueOf(180),
 				lancamentoQuatroRodas.getDataLancamentoDistribuidor(), quatroRoda2);
@@ -374,7 +374,7 @@ public class BalanceamentoRecolhimentoTest extends AbstractRepositoryImplTest {
 		PeriodoLancamentoParcial parcialVeja = Fixture.criarPeriodoLancamentoParcial(
 				lancamentoVeja, 
 				lancamentoParcialVeja, 
-				StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.FINAL);
+				StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.FINAL, 1);
 
 		Estudo estudoVeja = Fixture.estudo(BigInteger.valueOf(180),
 				lancamentoVeja.getDataLancamentoDistribuidor(), veja1);
@@ -401,7 +401,7 @@ public class BalanceamentoRecolhimentoTest extends AbstractRepositoryImplTest {
 		PeriodoLancamentoParcial parcialInfoExame = Fixture.criarPeriodoLancamentoParcial(
 				lancamentoInfoExame, 
 				lancamentoParcialInfoExame, 
-				StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.FINAL);
+				StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.FINAL, 1);
 		
 		Estudo estudoInfoExame = Fixture.estudo(BigInteger.valueOf(180),
 				lancamentoInfoExame.getDataLancamentoDistribuidor(), infoExame3);

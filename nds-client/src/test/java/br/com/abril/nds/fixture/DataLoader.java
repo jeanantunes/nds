@@ -1777,12 +1777,16 @@ public class DataLoader {
 		
 		save(session, lancamentoPeriodo, lancamentoPeriodo2);
 		
-		PeriodoLancamentoParcial periodo = Fixture.criarPeriodoLancamentoParcial(lancamentoPeriodo, lancamentoParcial2,
-				StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.PARCIAL);
+		PeriodoLancamentoParcial periodo = Fixture.criarPeriodoLancamentoParcial(
+				lancamentoPeriodo, lancamentoParcial2,
+				StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.PARCIAL,
+				1);
 		save(session, periodo);
 
-		PeriodoLancamentoParcial periodo2 = Fixture.criarPeriodoLancamentoParcial(lancamentoPeriodo2, lancamentoParcial2,
-				StatusLancamentoParcial.RECOLHIDO, TipoLancamentoParcial.PARCIAL);
+		PeriodoLancamentoParcial periodo2 = Fixture.criarPeriodoLancamentoParcial(
+				lancamentoPeriodo2, lancamentoParcial2,
+				StatusLancamentoParcial.RECOLHIDO, TipoLancamentoParcial.PARCIAL,
+				2);
 		save(session, periodo2);
 
 	}
@@ -9124,19 +9128,25 @@ public class DataLoader {
 			Fixture.criarPeriodoLancamentoParcial(
 					lancamentoGalileuEdicao102,
 					lancamentoParcialGalileuEdicao102,
-					StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.PARCIAL);
+					StatusLancamentoParcial.PROJETADO, 
+					TipoLancamentoParcial.PARCIAL,
+					1);
 
 		PeriodoLancamentoParcial periodoLancamentoParcialGuitarPlayerEdicao102 =
 			Fixture.criarPeriodoLancamentoParcial(
 					lancamentoGuitarPlayerEdicao102,
 					lancamentoParcialGuitarPlayerEdicao102,
-					StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.FINAL);
+					StatusLancamentoParcial.PROJETADO,
+					TipoLancamentoParcial.FINAL,
+					2);
 
 		PeriodoLancamentoParcial periodoLancamentoParcialRoadieCrewEdicao101 =
 			Fixture.criarPeriodoLancamentoParcial(
 					lancamentoRoadieCrewEdicao101,
 					lancamentoParcialRoadieCrewEdicao101,
-					StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.PARCIAL);
+					StatusLancamentoParcial.PROJETADO, 
+					TipoLancamentoParcial.PARCIAL,
+					1);
 
 		save(session, periodoLancamentoParcialGalileuEdicao102,
 					  periodoLancamentoParcialGuitarPlayerEdicao102,
@@ -10260,43 +10270,57 @@ public class DataLoader {
 				Fixture.criarPeriodoLancamentoParcial(
 						lancamentoJavaMagazineEdicao101,
 						lancamentoParcialJavaMagazineEdicao101,
-						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.PARCIAL);
+						StatusLancamentoParcial.PROJETADO, 
+						TipoLancamentoParcial.PARCIAL,
+						1);
 
 		PeriodoLancamentoParcial periodoLancamentoParcialGalileuEdicao101 =
 				Fixture.criarPeriodoLancamentoParcial(
 						lancamentoGalileuEdicao101,
 						lancamentoParcialGalileuEdicao101,
-						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.FINAL);
+						StatusLancamentoParcial.PROJETADO, 
+						TipoLancamentoParcial.FINAL,
+						1);
 
 		PeriodoLancamentoParcial periodoLancamentoParcialValhallaEdicao101 =
 				Fixture.criarPeriodoLancamentoParcial(
 						lancamentoValhallaEdicao101,
 						lancamentoParcialValhallaEdicao101,
-						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.PARCIAL);
+						StatusLancamentoParcial.PROJETADO, 
+						TipoLancamentoParcial.PARCIAL,
+						1);
 
 		PeriodoLancamentoParcial periodoLancamentoParcialJavaMagazineEdicao102 =
 				Fixture.criarPeriodoLancamentoParcial(
 						lancamentoJavaMagazineEdicao102,
 						lancamentoParcialJavaMagazineEdicao102,
-						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.PARCIAL);
+						StatusLancamentoParcial.PROJETADO, 
+						TipoLancamentoParcial.PARCIAL,
+						1);
 
 		PeriodoLancamentoParcial periodoLancamentoParcialRockBrigadeEdicao102 =
 				Fixture.criarPeriodoLancamentoParcial(
 						lancamentoRockBrigadeEdicao102,
 						lancamentoParcialRockBrigadeEdicao102,
-						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.PARCIAL);
+						StatusLancamentoParcial.PROJETADO, 
+						TipoLancamentoParcial.PARCIAL,
+						1);
 
 		PeriodoLancamentoParcial periodoLancamentoParcialValhallaEdicao102 =
 				Fixture.criarPeriodoLancamentoParcial(
 						lancamentoValhallaEdicao102,
 						lancamentoParcialValhallaEdicao102,
-						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.PARCIAL);
+						StatusLancamentoParcial.PROJETADO, 
+						TipoLancamentoParcial.PARCIAL,
+						1);
 
 		PeriodoLancamentoParcial periodoLancamentoParcialGestaoEscolarEdicao102 =
 				Fixture.criarPeriodoLancamentoParcial(
 						lancamentoGestaoEscolarEdicao102,
 						lancamentoParcialGestaoEscolarEdicao102,
-						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.PARCIAL);
+						StatusLancamentoParcial.PROJETADO, 
+						TipoLancamentoParcial.PARCIAL,
+						1);
 
 		save(session, periodoLancamentoParcialJavaMagazineEdicao101, periodoLancamentoParcialGalileuEdicao101,
 					  periodoLancamentoParcialValhallaEdicao101, periodoLancamentoParcialJavaMagazineEdicao102,

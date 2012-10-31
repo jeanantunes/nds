@@ -46,6 +46,12 @@ public class PeriodoLancamentoParcial {
 	@OneToOne(optional = false)
 	@JoinColumn(name = "LANCAMENTO_ID")
 	private Lancamento lancamento;
+	
+	/** Número do */
+	@Column(name = "NUMERO_PERIODO", nullable = false)
+	private Integer numeroPeriodo;
+	
+
 	/**
 	 * @return the id
 	 */
@@ -115,5 +121,12 @@ public class PeriodoLancamentoParcial {
 		this.lancamento = lancamento;
 	}
 	
+	public Integer getNumeroPeriodo() {
+		return numeroPeriodo;
+	}
+
+	public void setNumeroPeriodo(Integer numeroPeriodo) {
+		this.numeroPeriodo = numeroPeriodo;
+	}
 	
 }
