@@ -13,6 +13,14 @@
 		<property name="password" value="${database.password}" />
 	</bean>	
 	
+	<bean id="icd-datasource" class="org.apache.commons.dbcp.BasicDataSource"
+		destroy-method="close" >
+		<property name="driverClassName" value="${icd.driverClassName}" />
+		<property name="url" value="${icd.url}" />
+		<property name="username" value="${icd.username}" />
+		<property name="password" value="${icd.password}" />
+	</bean>	
+	
 	<bean id="couchDbProperties" class="br.com.abril.nds.integracao.couchdb.CouchDbProperties">
 		<property name="protocol" value="${couchdb.protocol}"/>
 		<property name="host" value="${couchdb.host}"/>
