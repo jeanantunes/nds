@@ -48,7 +48,6 @@ import br.com.abril.nds.model.cadastro.ContratoCota;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.DescontoLogistica;
 import br.com.abril.nds.model.cadastro.DescricaoTipoEntrega;
-import br.com.abril.nds.model.cadastro.DistribuicaoDistribuidor;
 import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Editor;
@@ -1029,7 +1028,6 @@ public class DataLoader {
 		criarUsuarios(session);
 		
 		criarDiasDistribuicaoFornecedores(session);
-		criarDiasDistribuicaoDistribuidor(session);
 		criarCotas(session);
 		criarPDVsCota(session);
 		criarDistribuicaoCota(session);
@@ -1122,8 +1120,6 @@ public class DataLoader {
 		criarDadosBalanceamentoRecolhimento(session);
 
 		gerarCargaDadosConferenciaEncalhe(session);
-
-		gerarTiposNotas(session);
 
 		gerarLogExecucaoInterfaces(session);
 
@@ -1236,6 +1232,8 @@ public class DataLoader {
 	private static void carregarDadosClean(Session session) {
 		
 		gerarCfops(session);			
+		
+		gerarTiposNotas(session);
 		
 		criarParametrosSistema(session);
 		criarInterfaceExecucao(session);
@@ -2928,32 +2926,32 @@ public class DataLoader {
         session.save(pdvOrlando);
 		
 		rota1 = Fixture.rota("Rota 001",roteiroPinheiros);
-		rota1.addPDV(pdvcotaJose2, 1);
-		rota1.addPDV(pdvcotaManoel2, 2);
+		rota1.addPDV(pdvcotaJose2, 1, boxA);
+		rota1.addPDV(pdvcotaManoel2, 2, boxA);
 		session.save(rota1);
 		
 		rota2 = Fixture.rota( "Rota 002",roteiroInterlagos);
-	    rota2.addPDV(pdvcotaJose2, 1);
-	    rota2.addPDV(pdvcotaManoel2, 2);
+	    rota2.addPDV(pdvcotaJose2, 1, boxB);
+	    rota2.addPDV(pdvcotaManoel2, 2, boxB);
 		session.save(rota2);
 		
 		rota10 = Fixture.rota("Rota 010",roteiroTCD);
-	    rota10.addPDV(pdvcotaJose2, 1);
-	    rota10.addPDV(pdvcotaManoel2, 2);
+	    rota10.addPDV(pdvcotaJose2, 1, boxC);
+	    rota10.addPDV(pdvcotaManoel2, 2, boxC);
 		session.save(rota10);
  
 		
 		Rota rotaRoteiroCentro1 = Fixture.rota("Rota 999", roteiroCentro);
-		rotaRoteiroCentro1.addPDV(pdvJoao, 1);
+		rotaRoteiroCentro1.addPDV(pdvJoao, 1, boxA);
 		session.save(rotaRoteiroCentro1);
 		
 		Rota rotaRoteiroCentro2 = Fixture.rota("Rota 990", roteiroCentro);
-        rotaRoteiroCentro2.addPDV(pdvMariana, 1);
+        rotaRoteiroCentro2.addPDV(pdvMariana, 1, boxA);
         session.save(rotaRoteiroCentro2);
         
         Rota rotaRoteiroBairro = Fixture.rota("Rota 998", roteiroBairro);
-        rotaRoteiroBairro.addPDV(pdvJoana, 1);
-        rotaRoteiroBairro.addPDV(pdvOrlando, 2);
+        rotaRoteiroBairro.addPDV(pdvJoana, 1, boxA);
+        rotaRoteiroBairro.addPDV(pdvOrlando, 2, boxA);
         session.save(rotaRoteiroBairro);
 	}
 
@@ -5565,37 +5563,6 @@ public class DataLoader {
 
 		save(session, dinapSextaRecolhimento, fcSextaRecolhimento,
 				  	  dinapQuartaRecolhimento, fcQuartaRecolhimento);
-	}
-
-	private static void criarDiasDistribuicaoDistribuidor(Session session) {
-
-		DistribuicaoDistribuidor recolhimentoDistribuidorTerca =
-			Fixture.distribuicaoDistribuidor(distribuidor, DiaSemana.TERCA_FEIRA,
-											 OperacaoDistribuidor.RECOLHIMENTO);
-
-		DistribuicaoDistribuidor recolhimentoDistribuidorQuinta =
-			Fixture.distribuicaoDistribuidor(distribuidor, DiaSemana.QUINTA_FEIRA,
-											 OperacaoDistribuidor.RECOLHIMENTO);
-
-		DistribuicaoDistribuidor distribuicaoDistribuidorTerca =
-			Fixture.distribuicaoDistribuidor(distribuidor, DiaSemana.TERCA_FEIRA,
-											 OperacaoDistribuidor.DISTRIBUICAO);
-
-		DistribuicaoDistribuidor distribuicaoDistribuidorSegunda =
-			Fixture.distribuicaoDistribuidor(distribuidor, DiaSemana.SEGUNDA_FEIRA,
-											 OperacaoDistribuidor.DISTRIBUICAO);
-
-		DistribuicaoDistribuidor distribuicaoDistribuidorQuinta =
-				Fixture.distribuicaoDistribuidor(distribuidor, DiaSemana.QUINTA_FEIRA,
-												 OperacaoDistribuidor.DISTRIBUICAO);
-
-		DistribuicaoDistribuidor distribuicaoDistribuidorSexta =
-				Fixture.distribuicaoDistribuidor(distribuidor, DiaSemana.SEXTA_FEIRA,
-												 OperacaoDistribuidor.DISTRIBUICAO);
-
-		save(session, recolhimentoDistribuidorTerca, recolhimentoDistribuidorQuinta,
-					  distribuicaoDistribuidorTerca, distribuicaoDistribuidorSegunda,
-					  distribuicaoDistribuidorQuinta, distribuicaoDistribuidorSexta);
 	}
 
 	private static void gerarCargaDiferencaEstoque(Session session,

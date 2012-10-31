@@ -1,5 +1,6 @@
 package br.com.abril.nds.service.impl;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -9,11 +10,15 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.ValidacaoConfirmacaoDeExpedicaoFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoControleDeAprovacaoFecharDiaDTO;
+import br.com.abril.nds.dto.ValidacaoGeracaoCobrancaFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoLancamentoFaltaESobraFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoRecebimentoFisicoFecharDiaDTO;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
+import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.repository.FecharDiaRepository;
+import br.com.abril.nds.repository.FormaCobrancaRepository;
 import br.com.abril.nds.service.FecharDiaService;
+import br.com.abril.nds.service.ImpressaoDividaService;
 import br.com.abril.nds.util.DateUtil;
 
 @Service
@@ -21,6 +26,12 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 	
 	@Autowired
 	private FecharDiaRepository fecharDiaRepository;
+	
+	@Autowired
+	private ImpressaoDividaService dividaService;
+	
+	@Autowired
+	private FormaCobrancaRepository formaCobrancaRepository;
 	
 	@Override
 	@Transactional
@@ -71,6 +82,43 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 	public List<ValidacaoControleDeAprovacaoFecharDiaDTO> obterPendenciasDeAprovacao(Date dataOperacao, StatusAprovacao pendente) {
 		 
 		return this.fecharDiaRepository.obterPendenciasDeAprovacao(dataOperacao,pendente);
+	}
+
+	@Override
+	@Transactional
+	public Boolean existeGeracaoDeCobranca(Date dataOperacao) {
+		
+		Calendar dataBase = Calendar.getInstance();
+		dataBase.setTime(dataOperacao);
+		int diaDaSemanaDaDataDeOperacao = dataBase.get(Calendar.DAY_OF_WEEK);
+		int diaDaMesDaDataDeOperacao = dataBase.get(Calendar.DAY_OF_MONTH);
+		
+		List<ValidacaoGeracaoCobrancaFecharDiaDTO> listaDePoliticaCobranca = this.fecharDiaRepository.obterFormasDeCobranca();
+		
+		for(ValidacaoGeracaoCobrancaFecharDiaDTO dto: listaDePoliticaCobranca){
+			FormaCobranca fc = this.formaCobrancaRepository.buscarPorId(dto.getFormaCobrancaId());
+			if(dto.getTipoFormaCobranca().equals("Diária")){	
+				return dividaService.validarDividaGerada(dataOperacao);				
+			}
+			if(dto.getTipoFormaCobranca().equals("Semanal")){
+				List<ValidacaoGeracaoCobrancaFecharDiaDTO> lista = this.fecharDiaRepository.obterDiasDaConcentracao(fc);
+				for(ValidacaoGeracaoCobrancaFecharDiaDTO con: lista){					
+					if(con.getDiaDoMes() == diaDaSemanaDaDataDeOperacao){
+						return dividaService.validarDividaGerada(dataOperacao);
+					}					
+				}
+				
+			}
+			if(fc.getTipoFormaCobranca().getDescricao().equals("Mensal") || fc.getTipoFormaCobranca().getDescricao().equals("Quinzenal") ){
+				for(Integer diaDeCobranca: fc.getDiasDoMes()){
+					if(diaDeCobranca ==  diaDaMesDaDataDeOperacao){
+						return dividaService.validarDividaGerada(dataOperacao);
+					}
+				}
+			}
+		}
+		 
+		return true;
 	}
 
 }

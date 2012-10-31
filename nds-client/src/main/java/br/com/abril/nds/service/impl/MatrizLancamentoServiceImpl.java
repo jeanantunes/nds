@@ -28,7 +28,6 @@ import br.com.abril.nds.dto.ProdutoLancamentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.TipoEdicao;
-import br.com.abril.nds.model.cadastro.DistribuicaoDistribuidor;
 import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
@@ -554,7 +553,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		
 		if (dadosBalanceamentoLancamento == null
 				|| dadosBalanceamentoLancamento.getCapacidadeDistribuicao() == null
-				|| dadosBalanceamentoLancamento.getDatasDistribuicaoFornecedorDistribuidor() == null
+				|| dadosBalanceamentoLancamento.getDatasDistribuicaoFornecedor() == null
 				|| dadosBalanceamentoLancamento.getDatasExpectativaReparte() == null
 				|| dadosBalanceamentoLancamento.getProdutosLancamento() == null
 				|| dadosBalanceamentoLancamento.getQtdDiasLimiteParaReprogLancamento() == null) {
@@ -619,7 +618,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 	private TreeSet<Date> obterDatasDistribuicao(DadosBalanceamentoLancamentoDTO dadosBalanceamentoLancamento) {
 		
 		TreeSet<Date> datasDistribuicao =
-			dadosBalanceamentoLancamento.getDatasDistribuicaoFornecedorDistribuidor();
+			dadosBalanceamentoLancamento.getDatasDistribuicaoFornecedor();
 		
 		if (dadosBalanceamentoLancamento.isConfiguracaoInicial()) {
 			
@@ -1170,21 +1169,14 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		
 		TreeSet<Date> datasDistribuicaoFornecedor = 
 			this.obterDatasDistribuicaoFornecedor(periodoDistribuicao, filtro.getIdsFornecedores());
-			
-		TreeSet<Date> datasDistribuicaoDistribuidor = 
-			this.obterDatasDistribuicaoDistribuidor(distribuidor, periodoDistribuicao);
-			
-		TreeSet<Date> datasDistribuicaoFornecedorDistribuidor =
-			this.obterDatasDistribuicaoFornecedoresDistribuidor(datasDistribuicaoDistribuidor,
-																datasDistribuicaoFornecedor);
 		
 		DadosBalanceamentoLancamentoDTO dadosBalanceamentoLancamento =
 			new DadosBalanceamentoLancamentoDTO();
 		
 		dadosBalanceamentoLancamento.setNumeroSemana(numeroSemana);
 		
-		dadosBalanceamentoLancamento.setDatasDistribuicaoFornecedorDistribuidor(
-			datasDistribuicaoFornecedorDistribuidor);
+		dadosBalanceamentoLancamento.setDatasDistribuicaoFornecedor(
+			datasDistribuicaoFornecedor);
 		
 		dadosBalanceamentoLancamento.setConfiguracaoInicial(configuracaoInicial);
 		
@@ -1264,59 +1256,6 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 			this.obterDatasDistribuicao(periodoDistribuicao, codigosDiaSemanaFornecedor);
 		
 		return datasDistribuicaoFornecedor;
-	}
-	
-	/**
-	 * Obtém as datas de distribuição do distribuidor.
-	 */
-	private TreeSet<Date> obterDatasDistribuicaoDistribuidor(Distribuidor distribuidor,
-														     Intervalo<Date> periodoDistribuicao) {
-		
-		List<DistribuicaoDistribuidor> listaDistribuicaoDistribuidor = 
-			this.distribuidorRepository.buscarDiasDistribuicaoDistribuidor(
-				distribuidor.getId(), OperacaoDistribuidor.DISTRIBUICAO);
-		
-		Set<Integer> codigosDiaSemanaDistribuidor = new TreeSet<Integer>();
-		
-		for (DistribuicaoDistribuidor distribuicaoDistribuidor : listaDistribuicaoDistribuidor) {
-			
-			codigosDiaSemanaDistribuidor.add(distribuicaoDistribuidor.getDiaSemana().getCodigoDiaSemana());
-		}
-		
-		TreeSet<Date> datasDistribuicaoDistribuidor = 
-			this.obterDatasDistribuicao(periodoDistribuicao, codigosDiaSemanaDistribuidor);
-		
-		return datasDistribuicaoDistribuidor;
-	}
-	
-	/**
-	 * Obtém as datas de distribuição que são comuns à data de distribuição do distribuidor.
-	 */
-	public TreeSet<Date> obterDatasDistribuicaoFornecedoresDistribuidor(
-														TreeSet<Date> datasDistribuicaoDistribuidor,
-														TreeSet<Date> datasDistribuicaoFornecedor) {
-
-		TreeSet<Date> datasDistribuicaoFornecedorDistribuidor = 
-			new TreeSet<Date>();
-		
-		for (Date dataDistribuicaoFornecedor : datasDistribuicaoFornecedor) {
-		
-			if (datasDistribuicaoDistribuidor.contains(dataDistribuicaoFornecedor)) {
-
-				if (calendarioService.isDiaUtil(dataDistribuicaoFornecedor)) {
-				
-					datasDistribuicaoFornecedorDistribuidor.add(dataDistribuicaoFornecedor);
-				}
-			}
-		}
-		
-		if (datasDistribuicaoFornecedorDistribuidor.isEmpty()) {
-			
-			throw new RuntimeException(
-				"O distribuidor não distribui nas datas de distribuição dos fornecedores!");
-		}
-		
-		return datasDistribuicaoFornecedorDistribuidor;
 	}
 	
 	/**

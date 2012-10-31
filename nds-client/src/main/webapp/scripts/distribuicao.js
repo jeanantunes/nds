@@ -169,6 +169,8 @@ function Distribuicao(tela) {
             D.$('qtdePDV', this.workspace).prop('disabled', true);
         }
 		
+		D.$('numCota').attr('disabled', true);
+		D.$('box').attr('disabled', true);
 	},
 	
 	/**

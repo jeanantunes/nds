@@ -10,8 +10,8 @@ var relatorioGarantiasController = $.extend(true, {
 		this.initRelatorioTodasGarantiasDetalheGrid();
 		this.initRelatorioTodasGarantiasGrid();
 
+		
 	},
-	
 	
 	hideGrids : function(){
 		$('#garantiasEspecificas',this.workspace).hide();
@@ -70,8 +70,6 @@ var relatorioGarantiasController = $.extend(true, {
 		
 		$(".relatorioTodasGarantiasGrid").flexReload();
 		
-		
-		this.showGridTodasGarantias();
 	
 },
 
@@ -84,6 +82,7 @@ var relatorioGarantiasController = $.extend(true, {
                        
                        if (result.mensagens) {
                               exibirMensagem(result.mensagens.tipoMensagem, result.mensagens.listaMensagens);
+                              relatorioGarantiasController.hideGrids();
                        }  else{
                               $(".relatorioGarantiaGrid").flexAddData(result);
                               $("#garantiasEspecificas th[abbr='faturamento'] >div").html("Faturamento " + result.rows[0].cell.baseCalculo);
@@ -105,16 +104,28 @@ var relatorioGarantiasController = $.extend(true, {
 	 * *************************
 	 * */
 	
-	inserirTotalDetalheGrid : function(data){
+	inserirTotalDetalheGrid : function(result){
 			
-			var total = '0,00';
-			$.each(data.rows, function(index, value) {
-				total = sumPrice(total,value.cell.vlrGarantia);
-			});
-			
-			$("#totalGarantia",this.workspace).html(total);	
-	    
-		return data;
+		var total = 0;
+		var garantia = 0;
+		  
+        $.each(result.rows, function(index, value) {
+      	  
+      	  garantia = removeMascaraPriceFormat(value.cell.vlrGarantia);
+      	  total += intValue(garantia);
+      	  
+        });
+
+        $("#valorTotalGarantiaslHidden", relatorioGarantiasController.workspace).val(total);
+        
+        $("#valorTotalGarantiaslHidden", relatorioGarantiasController.workspace).priceFormat({
+  	      allowNegative: true,
+  	      centsSeparator: ',',
+  	      thousandsSeparator: '.'
+        });  
+
+        $("#totalGarantia").html( $("#valorTotalGarantiaslHidden", relatorioGarantiasController.workspace).val()); 
+
 	},
 	
 
@@ -125,6 +136,8 @@ var relatorioGarantiasController = $.extend(true, {
 			
 			exibirMensagem(data.mensagens.tipoMensagem, data.mensagens.listaMensagens);
 			
+			relatorioGarantiasController.hideGrids();
+			
 		} else { 
 			
 			var garantiaSelecionada = $('#selectStatusGarantia option:selected').val();
@@ -134,6 +147,7 @@ var relatorioGarantiasController = $.extend(true, {
 				var link_detalhes = '<a title="Ver Detalhes" onclick="relatorioGarantiasController.popup_detalhe_Garantia(\'' + value.cell.tpGarantia.key + '\', \'' + garantiaSelecionada + '\');" href="javascript:;"><img src="' + contextPath + '/images/ico_detalhes.png" alt="Detalhes" border="0" /></a>';
 				value.cell.detalhe = link_detalhes;
 			});
+			relatorioGarantiasController.showGridTodasGarantias();
 	
 		}
 		
@@ -160,10 +174,14 @@ var relatorioGarantiasController = $.extend(true, {
                        
                        if (result.mensagens) {
                               exibirMensagem(result.mensagens.tipoMensagem, result.mensagens.listaMensagens);
+                              relatorioGarantiasController.hideGrids();
+                              
                        }  else{
                               $(".garantiaDetalheGrid").flexAddData(result);
                               $("#dialog-detalhe-garantia th[abbr='faturamento'] >div").html("Faturamento " + result.rows[0].cell.baseCalculo);
-                              relatorioGarantiasController.showGridGarantiaEspecifica();
+                               
+                              relatorioGarantiasController.inserirTotalDetalheGrid(result);
+                              
                        }
                 },
                 null,
@@ -339,3 +357,4 @@ var relatorioGarantiasController = $.extend(true, {
 	
 }, BaseController);
 
+//@ sourceURL=relatorioGarantias.js

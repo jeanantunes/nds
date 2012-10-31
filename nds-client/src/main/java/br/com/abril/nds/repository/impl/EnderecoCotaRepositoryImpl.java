@@ -34,6 +34,7 @@ public class EnderecoCotaRepositoryImpl extends AbstractRepositoryModel<Endereco
 
 		Query query = getSession().createQuery(hql.toString());
 
+		query.setParameter("idCota", idCota);
 		query.setParameterList("enderecos", listaEndereco);
 
 		query.executeUpdate();

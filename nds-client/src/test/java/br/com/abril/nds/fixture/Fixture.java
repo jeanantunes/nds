@@ -29,7 +29,6 @@ import br.com.abril.nds.model.cadastro.ContratoCota;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.DescontoLogistica;
 import br.com.abril.nds.model.cadastro.DescricaoTipoEntrega;
-import br.com.abril.nds.model.cadastro.DistribuicaoDistribuidor;
 import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Editor;
@@ -774,19 +773,6 @@ public class Fixture {
 		df.setOperacaoDistribuidor(operacaoDistribuidor);
 		
 		return df;
-	}
-	
-	public static DistribuicaoDistribuidor distribuicaoDistribuidor(
-											Distribuidor distribuidor, DiaSemana diaSemana,
-											OperacaoDistribuidor operacaoDistribuidor) {
-		
-		DistribuicaoDistribuidor distribuicaoDistribuidor = new DistribuicaoDistribuidor();
-		
-		distribuicaoDistribuidor.setDistribuidor(distribuidor);
-		distribuicaoDistribuidor.setDiaSemana(diaSemana);
-		distribuicaoDistribuidor.setOperacaoDistribuidor(operacaoDistribuidor);
-		
-		return distribuicaoDistribuidor;
 	}
 
 	public static Cota cota(Integer numeroCota, Pessoa pessoa,
@@ -2332,7 +2318,6 @@ public class Fixture {
 		mfc.setUsuario(usuario);
 		mfc.setValor(valor);
 		mfc.setLancamentoManual(lancamentoManual);
-		mfc.setObservacao(cota==null?"":"Movimento Financeiro da cota "+cota.getNumeroCota()+".");
 		return mfc;
 	}
 

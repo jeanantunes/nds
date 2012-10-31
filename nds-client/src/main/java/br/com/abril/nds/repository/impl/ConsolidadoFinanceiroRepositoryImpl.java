@@ -159,7 +159,7 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 				orderByColumn = " numeroEdicao ";
 				break;
 			case PRECO_CAPA:
-				orderByColumn = " precoVenda ";
+				orderByColumn = " precoCapa ";
 				break;
 			case PRECO_COM_DESCONTO:
 				orderByColumn = " precoComDesconto ";
@@ -168,7 +168,7 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 				orderByColumn = " encalhe ";
 				break;
 			case FORNECEDOR:
-				orderByColumn = " fornecedor ";
+				orderByColumn = " nomeFornecedor ";
 				break;
 			case TOTAL:
 				orderByColumn = " total ";
@@ -375,7 +375,7 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 						orderByColumn = " numeroEdicao ";
 						break;
 					case PRECO_CAPA:
-						orderByColumn = " precoVenda ";
+						orderByColumn = " precoCapa ";
 						break;
 					case PRECO_COM_DESCONTO:
 						orderByColumn = " precoComDesconto ";
@@ -393,7 +393,7 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 						orderByColumn = " motivo ";
 						break;						
 					case FORNECEDOR:
-						orderByColumn = " fornecedor ";
+						orderByColumn = " nomeFornecedor ";
 						break;
 					case TOTAL:
 						orderByColumn = " total ";

@@ -8,6 +8,7 @@ import br.com.abril.nds.dto.ContasAPagarEncalheDTO;
 import br.com.abril.nds.dto.ContasAPagarFaltasSobrasDTO;
 import br.com.abril.nds.dto.ContasAPagarConsultaProdutoDTO;
 import br.com.abril.nds.dto.ContasAPagarGridPrincipalProdutoDTO;
+import br.com.abril.nds.dto.ContasAPagarParcialDTO;
 import br.com.abril.nds.dto.ContasApagarConsultaPorDistribuidorDTO;
 import br.com.abril.nds.dto.ContasApagarConsultaPorProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroContasAPagarDTO;
@@ -49,6 +50,8 @@ public interface ContasAPagarRepository {
 	List<ContasAPagarFaltasSobrasDTO> pesquisarDetalheFaltasSobras(FiltroContasAPagarDTO filtro);
 
 	List<ContasAPagarConsultaProdutoDTO> obterProdutos(FiltroContasAPagarDTO filtro);
-	
-	
+
+	List<ContasAPagarParcialDTO> pesquisarParcial(FiltroContasAPagarDTO filtro);
+
+	Long countPesquisarParcial(FiltroContasAPagarDTO filtro);
 }

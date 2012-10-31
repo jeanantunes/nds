@@ -49,7 +49,7 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 					hql += "order by diferenca.produtoEdicao.produto.codigo ";
 					break;
 				case DESCRICAO_PRODUTO:
-					hql += "order by diferenca.produtoEdicao.produto.nome ";
+					hql += "order by diferenca.produtoEdicao.produto.nomeComercial ";
 					break;
 				case QUANTIDADE:
 					hql += "order by diferenca.qtde ";
@@ -244,7 +244,7 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 						 + " diferenca.produtoEdicao.numeroEdicao ";
 					break;
 				case DATA_LANCAMENTO:
-					hql += "order by diferenca.dataMovimento";
+					hql += "order by diferenca.dataMovimento ";
 					break;
 				case CODIGO_PRODUTO:
 					hql += "order by diferenca.produtoEdicao.produto.codigo ";
@@ -259,7 +259,7 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 					hql += "order by diferenca.produtoEdicao.precoVenda ";
 					break;
 				case PRECO_DESCONTO:
-					hql += "order by diferenca.produtoEdicao.precoVenda - (diferenca.produtoEdicao.precoVenda * desconto / 100) ";
+					hql += "order by diferenca.produtoEdicao.precoVenda - (diferenca.produtoEdicao.precoVenda * diferenca.produtoEdicao.produto.desconto / 100) ";
 					break;
 				case TIPO_DIFERENCA:
 					hql += "order by diferenca.tipoDiferenca ";
@@ -278,9 +278,9 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 					hql += " order by "
 						 + " case when (diferenca.tipoDiferenca = 'FALTA_DE' or "
 						 + " diferenca.tipoDiferenca = 'SOBRA_DE') then ("
-						 + " diferenca.qtde * (diferenca.produtoEdicao.precoVenda - (diferenca.produtoEdicao.precoVenda * desconto / 100))) "
+						 + " diferenca.qtde * (diferenca.produtoEdicao.precoVenda - (diferenca.produtoEdicao.precoVenda * diferenca.produtoEdicao.produto.desconto / 100))) "
 						 + " when (diferenca.tipoDiferenca = 'FALTA_EM' or diferenca.tipoDiferenca = 'SOBRA_EM') then ("
-						 + " diferenca.qtde * (diferenca.produtoEdicao.precoVenda - (diferenca.produtoEdicao.precoVenda * desconto / 100))) "
+						 + " diferenca.qtde * (diferenca.produtoEdicao.precoVenda - (diferenca.produtoEdicao.precoVenda * diferenca.produtoEdicao.produto.desconto / 100))) "
 						 + " else 0 end ";
 					break;
 				default:

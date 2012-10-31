@@ -220,13 +220,13 @@ public class BoxRepositoryImpl extends AbstractRepositoryModel<Box,Long> impleme
 		
 		hql.append(" roteiro.descricaoRoteiro as roteiro ");
 
-		hql.append(" from Roteiro roteiro  " );
-				
-		hql.append(" join roteiro.rotas rota " );
-
-		hql.append(" join roteiro.roteirizacao roteirizacao ");
+		hql.append(" from Roteirizacao roteirizacao ");
 		
 		hql.append(" join roteirizacao.box box ");
+		
+		hql.append(" join roteirizacao.roteiros roteiro ");
+		
+		hql.append(" join roteiro.rotas rota ");
 		
 		hql.append(" join box.cotas cota ");
 		
