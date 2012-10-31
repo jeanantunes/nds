@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -25,7 +26,7 @@ public class ChamadaEncalheFornecedorRepositoryImpl extends AbstractRepositoryMo
     public List<ChamadaEncalheFornecedor> obterChamadasEncalheFornecedor(Long idFornecedor, Integer numeroSemana, Intervalo<Date> periodo) {
         StringBuilder builder = new StringBuilder("select distinct(cef) from ChamadaEncalheFornecedor as cef ");
         builder.append("join cef.itens as item ");
-        Map<String, Object> parametros = new java.util.HashMap<>();
+        Map<String, Object> parametros = new HashMap<String, Object>();
         if (numeroSemana != null) {
             builder.append("where cef.numeroSemana = :numeroSemana ");
             parametros.put("numeroSemana", numeroSemana);

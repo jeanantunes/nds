@@ -21,7 +21,7 @@ public class ChamadasEncalheFornecedorDTO implements Serializable {
     
     private IdentificacaoChamadaEncalheFornecedorDTO identificacao;
     
-    private List<ChamadaEncalheFornecedorDTO> documentos = new ArrayList<>();
+    private List<ChamadaEncalheFornecedorDTO> documentos = new ArrayList<ChamadaEncalheFornecedorDTO>();
     
     private ResumoChamadaEncalheFornecedorDTO resumo;
 
@@ -71,7 +71,7 @@ public class ChamadasEncalheFornecedorDTO implements Serializable {
     
     public void addDocumento(ChamadaEncalheFornecedorDTO chamadaEncalhe) {
         if (documentos == null) {
-            documentos = new ArrayList<>();
+            documentos = new ArrayList<ChamadaEncalheFornecedorDTO>();
         }
         documentos.add(chamadaEncalhe);
     }

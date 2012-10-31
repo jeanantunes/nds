@@ -112,7 +112,7 @@ public class ContagemDevolucaoServiceImplTest {
     @Test
     public void gerarImpressaoChamadaEncalheFornecedor() {
         List<ChamadaEncalheFornecedor> chamadas = criarChamadasEncalheFornecedor();
-        final List<ChamadasEncalheFornecedorDTO> chamadasDTO = new ArrayList<>();
+        final List<ChamadasEncalheFornecedorDTO> chamadasDTO = new ArrayList<ChamadasEncalheFornecedorDTO>();
         Mockito.when(chamadaEncalheFornecedorRepository.obterChamadasEncalheFornecedor(fornecedorDinap.getId(), 41, null)).thenReturn(chamadas);
        
         Mockito.doAnswer(new Answer<Object>() {
@@ -430,7 +430,7 @@ public class ContagemDevolucaoServiceImplTest {
     }
 
     private List<ChamadaEncalheFornecedor> criarChamadasEncalheFornecedor() {
-        List<ChamadaEncalheFornecedor> chamadas = new ArrayList<>();
+        List<ChamadaEncalheFornecedor> chamadas = new ArrayList<ChamadaEncalheFornecedor>();
         
         ChamadaEncalheFornecedor cef1 = Fixture.newChamadaEncalheFornecedor(
                 2678001L,
