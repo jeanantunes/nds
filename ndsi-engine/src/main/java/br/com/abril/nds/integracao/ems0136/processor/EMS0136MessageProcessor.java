@@ -145,6 +145,21 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 	private LancamentoParcial salvarNovoLancamentoParcial(EMS0136Input input, 
 			ProdutoEdicao produtoEdicao) {
 		
+		/*
+		 * Se a "Data de Operação" > "Data de Recolhimento" então o status é
+		 * RECOLHIDO, senão, é PROJETADO
+		 */
+		Date dataOperacao = distribuidorService.obter().getDataOperacao();
+		StatusLancamentoParcial status = dataOperacao.after(
+			input.getDataRecolhimento())
+				? StatusLancamentoParcial.RECOLHIDO
+				: StatusLancamentoParcial.PROJETADO;		
+		
+		
+		
+		
+		////////////////////////////////////////////////////////////////////////
+		
 		// Novo Lançamento Parcial:
 		LancamentoParcial lancamentoParcial = new LancamentoParcial();
 		lancamentoParcial.setProdutoEdicao(produtoEdicao);
