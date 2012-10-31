@@ -155,6 +155,7 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 		hql.append(" where cota.numeroCota = notaEnvio.destinatario.numeroCota ");
 		hql.append(" and lancamento.produtoEdicao.id = itemNota.produtoEdicao.id ");
 		hql.append(" and cota.situacaoCadastro != :situacaoInativo ");
+		hql.append(" and pdv.caracteristicas.pontoPrincipal = :pontoPrincipal ");
 		
 		/*if (filtro.getProdutos() != null && filtro.getProdutos().size() == 1){
 			
@@ -245,6 +246,7 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 	private void setarParametrosRomaneio(FiltroRomaneioDTO filtro, Query query, boolean queryCount){
 		
 		query.setParameter("situacaoInativo", SituacaoCadastro.INATIVO);
+		query.setParameter("pontoPrincipal", true);
 		
 		if(filtro.getIdBox() != null) { 
 			
