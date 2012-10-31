@@ -140,9 +140,12 @@ public class ContasAPagarController {
 	public void pesquisarParcial(FiltroContasAPagarDTO filtro, String sortname, String sortorder, int rp, int page) {
 		
 		this.session.setAttribute(FILTRO_DETALHE_PARCIAL, filtro);
-
+		
+		PaginacaoVO paginacaoVO = new PaginacaoVO(page, rp, sortorder, sortname);
+		filtro.setPaginacaoVO(paginacaoVO);
+		
 		List<ContasAPagarParcialVO> listVO = new ArrayList<ContasAPagarParcialVO>();
-		FlexiGridDTO<ContasAPagarParcialDTO> flexiDTO = contasAPagarService.pesquisarParcial(filtro, sortname, sortorder, rp, page);
+		FlexiGridDTO<ContasAPagarParcialDTO> flexiDTO = contasAPagarService.pesquisarParcial(filtro);
 
 		for (ContasAPagarParcialDTO dto : flexiDTO.getGrid()) {
 			listVO.add(new ContasAPagarParcialVO(dto));
@@ -243,8 +246,8 @@ public class ContasAPagarController {
 	@Path("/exportPesquisarPorProduto")
 	public void exportPesquisarPorProduto(FileType fileType) throws IOException {
 		
-		
 		FiltroContasAPagarDTO filtro = (FiltroContasAPagarDTO) this.session.getAttribute(FILTRO_CONTAS_A_PAGAR);
+		filtro.setPaginacaoVO(null);
 		
 		ContasAPagarGridPrincipalProdutoDTO listContasAPagar =  contasAPagarService.pesquisarPorProduto(filtro, null, null, 0, 0);
 		List <ContasAPagarConsultaPorProdutoVO> listVO = new ArrayList<ContasAPagarConsultaPorProdutoVO>();
@@ -264,6 +267,7 @@ public class ContasAPagarController {
 	public void exportPesquisarPorDistribuidor(FileType fileType) throws IOException {
 		
 		FiltroContasAPagarDTO filtro = (FiltroContasAPagarDTO) this.session.getAttribute(FILTRO_CONTAS_A_PAGAR);
+		filtro.setPaginacaoVO(null);
 		
 		ContasAPagarGridPrincipalFornecedorDTO listContasAPagar = contasAPagarService.pesquisarPorDistribuidor(filtro);
 		List <ContasApagarConsultaPorDistribuidorVO> listVO = new ArrayList<ContasApagarConsultaPorDistribuidorVO>();
@@ -285,9 +289,10 @@ public class ContasAPagarController {
 	public void exportPesquisarParcial(FileType fileType) throws IOException {
 		
 		FiltroContasAPagarDTO filtro = (FiltroContasAPagarDTO) this.session.getAttribute(FILTRO_DETALHE_PARCIAL);
+		filtro.setPaginacaoVO(null);
 		
 		List <ContasAPagarParcialVO> listVO = new ArrayList<ContasAPagarParcialVO>(); 
-		FlexiGridDTO<ContasAPagarParcialDTO> listDTO = contasAPagarService.pesquisarParcial(filtro, null, null, 0, 0);
+		FlexiGridDTO<ContasAPagarParcialDTO> listDTO = contasAPagarService.pesquisarParcial(filtro);
 		
 		for(ContasAPagarParcialDTO dto : listDTO.getGrid()){
 			listVO.add(new ContasAPagarParcialVO(dto));
@@ -304,6 +309,7 @@ public class ContasAPagarController {
 	public void exportPesquisarDetalheConsignado(FileType fileType) throws IOException {
 		
 		FiltroContasAPagarDTO filtro = (FiltroContasAPagarDTO) session.getAttribute(FILTRO_DETALHE_CONSIGNADO);
+		filtro.setPaginacaoVO(null);
 		
 		ContasAPagarTotalDistribDTO<ContasAPagarConsignadoDTO> dto = contasAPagarService.pesquisarDetalheConsignado(filtro);
 		
@@ -325,6 +331,7 @@ public class ContasAPagarController {
 	public void exportPesquisarDetalheEncalhe(FileType fileType) throws IOException {
 		
 		FiltroContasAPagarDTO filtro = (FiltroContasAPagarDTO) session.getAttribute(FILTRO_DETALHE_ENCALHE);
+		filtro.setPaginacaoVO(null);
 		
 		ContasAPagarTotalDistribDTO<ContasAPagarEncalheDTO> dto = contasAPagarService.pesquisarDetalheEncalhe(filtro);
 		
@@ -348,6 +355,7 @@ public class ContasAPagarController {
 	public void exportPesquisarDetalheFaltasSobras(FileType fileType) throws IOException {
 		
 		FiltroContasAPagarDTO filtro = (FiltroContasAPagarDTO) session.getAttribute(FILTRO_CONTAS_A_PAGAR);
+		filtro.setPaginacaoVO(null);
 		
 		ContasAPagarTotalDistribDTO<ContasAPagarFaltasSobrasDTO> dto = contasAPagarService.pesquisarDetalheFaltasSobras(filtro);
 

@@ -1020,6 +1020,7 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
 		query.setParameterList("movimentosSuplementarSaida", movimentosSuplementar);
 		
 		query.setParameter("statusLancamento", StatusLancamento.CONFIRMADO);
+		query.setParameter("codigoProduto", filtro.getProduto());
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(ContasAPagarParcialDTO.class));
 		
@@ -1040,6 +1041,7 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
 		Query query = this.getSession().createQuery(this.obterQueryPesquisaParcial(filtro, true));
 		query.setParameter("data", filtro.getDataDetalhe());
 		query.setParameter("statusLancamento", StatusLancamento.CONFIRMADO);
+		query.setParameter("codigoProduto", filtro.getProduto());
 		
 		return (Long) query.uniqueResult();
 	}
@@ -1053,44 +1055,145 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
 			hql.append("count (lp.id) ");
 		} else {
 			
+			//tudo que está relacionado a parcias no sistema atualmente faz menção a um intervalo,
+			//porém, para a tela de contas a pagar não existe documentação que explique que intervalo seja esse.
+			//A query abaixo vai considerar TUDO que estiver lançado antes da data informada no filtro
+			
 			hql.append(" 	lp.lancamentoInicial as lcto, ")
 			   .append(" 	lp.recolhimentoFinal as rclt, ")
 			   .append(" 	l.reparte, ")
+			   .append("	l.id as idLancamento, ")
 			   //suplementacao
 			   .append("	((select ")
 			   .append("		sum(m.qtde) ")
 			   .append(" 	 from MovimentoEstoque m ")
+			   .append("		  join m.estoqueProduto esp ")
+			   .append("		  join esp.produtoEdicao ped ")
+			   .append("		  join ped.produto prod1 ")
 			   .append(" 	 where m.data = :data ")
-		   	   .append(" 		   and m.tipoMovimento.grupoMovimentoEstoque in (:movimentosSuplementarEntrada)) - ")
+		   	   .append(" 		   and m.tipoMovimento.grupoMovimentoEstoque in (:movimentosSuplementarEntrada) ")
+		   	   .append("		   and prod1.codigo = :codigoProduto) - ")
 		   	   .append("	 (select ")
 		   	   .append(" 	 	sum(m2.qtde) ")
 		   	   .append(" 	 from MovimentoEstoque m2 ")
+		   	   .append("		  join m2.estoqueProduto esp2 ")
+			   .append("		  join esp2.produtoEdicao ped2 ")
+			   .append("		  join ped2.produto prod2 ")
 		   	   .append(" 	 where m2.data = :data ")
-		       .append(" 		   and m2.tipoMovimento.grupoMovimentoEstoque in (:movimentosSuplementarSaida))) as suplementacao, ")
-		       //encalhe
+		       .append(" 		   and m2.tipoMovimento.grupoMovimentoEstoque in (:movimentosSuplementarSaida) ")
+		       .append("		   and prod2.codigo = :codigoProduto)) as suplementacao, ")
+//		       //encalhe
 			   .append(" 	(select ")
 			   .append("		sum(conferencia.qtde) ")
 			   .append(" 	 from ConferenciaEncalhe conferencia ")
 		       .append(" 		  join conferencia.chamadaEncalheCota chamadaEncalheCota ")
 		       .append(" 		  join chamadaEncalheCota.chamadaEncalhe chamadaEncalhe ")
-		       .append(" 	 where chamadaEncalhe.dataRecolhimento = :data) as encalhe, ")
+		       .append("          join conferencia.movimentoEstoqueCota movimento ")
+		       .append("          join movimento.produtoEdicao pe ")
+		       .append("		  join pe.produto pr ")
+		       .append(" 	 where chamadaEncalhe.dataRecolhimento = :data ")
+		       .append("		   and pr.codigo = :codigoProduto) as encalhe, ")
 			   //venda
 		       .append(" 	(l.reparte - ")
 			   .append(" 	(select ")
-			   .append("		sum(conferencia.qtde) ")
-			   .append(" 	 from ConferenciaEncalhe conferencia ")
-		       .append(" 		  join conferencia.chamadaEncalheCota chamadaEncalheCota ")
-		       .append(" 		  join chamadaEncalheCota.chamadaEncalhe chamadaEncalhe ")
-		       .append(" 	 where chamadaEncalhe.dataRecolhimento = :data)) as venda ");
+			   .append("		sum(conferencia2.qtde) ")
+			   .append(" 	 from ConferenciaEncalhe conferencia2 ")
+		       .append(" 		  join conferencia2.chamadaEncalheCota chamadaEncalheCota2 ")
+		       .append(" 		  join chamadaEncalheCota2.chamadaEncalhe chamadaEncalhe2 ")
+		       .append("          join conferencia2.movimentoEstoqueCota movimento2 ")
+		       .append("          join movimento2.produtoEdicao pe2 ")
+		       .append("		  join pe2.produto pr2 ")
+		       .append(" 	 where chamadaEncalhe2.dataRecolhimento = :data ")
+		       .append("		   and pr2.codigo = :codigoProduto)) as venda, ")
+		       //% venda
+		       
+		       //venda total
+		       .append(" 	((select sum(l2.reparte) ")
+		       .append("	  from ")
+		       .append("    	LancamentoParcial lp2 ")
+		       .append("		join lp2.periodos plp2 ")
+		       .append("		join plp2.lancamento l2 ")
+		       .append("	  where ")
+		       .append("		lp2.recolhimentoFinal = :data ")
+		       .append("		and l2.status = :statusLancamento) * ")
+			   //venda do produto
+		       .append(" 	(select ")
+			   .append("		sum(conferencia2.qtde) ")
+			   .append(" 	 from ConferenciaEncalhe conferencia2 ")
+		       .append(" 		  join conferencia2.chamadaEncalheCota chamadaEncalheCota2 ")
+		       .append(" 		  join chamadaEncalheCota2.chamadaEncalhe chamadaEncalhe2 ")
+		       .append("          join conferencia2.movimentoEstoqueCota movimento2 ")
+		       .append("          join movimento2.produtoEdicao pe2 ")
+		       .append("		  join pe2.produto pr2 ")
+		       .append(" 	 where chamadaEncalhe2.dataRecolhimento = :data ")
+		       .append("		   and pr2.codigo = :codigoProduto)) / 100 as pctVenda, ")
+		       .append("	(select ")
+		       .append("		sum(fech.quantidade) ")
+		       .append("	 from FechamentoEncalhe fech ")
+		       .append("	 where fech.fechamentoEncalhePK.produtoEdicao.produto.codigo = :codigoProduto ")
+		       .append("		   and fech.fechamentoEncalhePK.dataEncalhe = :data ")
+		       .append("	) as vendaCe, ")
+		       //reparte acumulado
+		       .append("	(select ")
+		       .append("		sum(movCota.qtde) ")
+		       .append("	from Lancamento lancamentoSupl")
+		       .append("		 left join lancamentoSupl.movimentoEstoqueCotas movCota ")
+		       .append("		 join lancamentoSupl.produtoEdicao.produto pe ")
+		       .append("	where pe.codigo = :codigoProduto ")
+		       .append("		  and lancamentoSupl.dataLancamentoDistribuidor <= :data) as reparteAcum, ")
+		       //venda acumulada
+		       .append("	((select ")
+		       .append("		sum(liMCota.qtde) ")
+		       .append("	from Lancamento lancamentoInicial ")
+		       .append("		 left join lancamentoInicial.movimentoEstoqueCotas liMCota ")
+		       .append("	where lancamentoInicial.dataLancamentoDistribuidor = :data ")
+		       .append("		  and lancamentoInicial.produtoEdicao.produto.codigo = :codigoProduto) - ")
+		       .append("	(select ")
+		       .append("		sum(movimento.qtde) ")
+		       .append("	from ConferenciaEncalhe conferencia")
+		       .append("		 join conferencia.movimentoEstoqueCota movimento ")
+		       .append("		 join conferencia.chamadaEncalheCota chamadaEncalheCota ")
+		       .append("		 join chamadaEncalheCota.chamadaEncalhe chamadaEncalhe ")
+		       .append("	where chamadaEncalhe.dataRecolhimento <= :data ")
+		       .append("		  and chamadaEncalhe.produtoEdicao.produto.codigo = :codigoProduto)) as vendaAcum, ")
+		       //% venda acumulada
+		       
+		       //venda total
+		       .append(" 	((select sum(l2.reparte) ")
+		       .append("	  from ")
+		       .append("    	LancamentoParcial lp2 ")
+		       .append("		join lp2.periodos plp2 ")
+		       .append("		join plp2.lancamento l2 ")
+		       .append("	  where ")
+		       .append("		lp2.recolhimentoFinal = :data ")
+		       .append("		and l2.status = :statusLancamento) * ")
+		       //venda acumulada do produto
+		       .append("	(select ")
+		       .append("		sum(liMCota.qtde) ")
+		       .append("	from Lancamento lancamentoInicial ")
+		       .append("		 left join lancamentoInicial.movimentoEstoqueCotas liMCota ")
+		       .append("	where lancamentoInicial.dataLancamentoDistribuidor = :data ")
+		       .append("		  and lancamentoInicial.produtoEdicao.produto.codigo = :codigoProduto) * ")
+		       .append("	(select ")
+		       .append("		sum(movimento.qtde) ")
+		       .append("	from ConferenciaEncalhe conferencia")
+		       .append("		 join conferencia.movimentoEstoqueCota movimento ")
+		       .append("		 join conferencia.chamadaEncalheCota chamadaEncalheCota ")
+		       .append("		 join chamadaEncalheCota.chamadaEncalhe chamadaEncalhe ")
+		       .append("	where chamadaEncalhe.dataRecolhimento <= :data ")
+		       .append("		  and chamadaEncalhe.produtoEdicao.produto.codigo = :codigoProduto) / 100) as pctVendaAcum ");
 		}
 		
 		hql.append(" from ")
 		   .append("    LancamentoParcial lp ")
+		   .append("    join lp.produtoEdicao pe ")
+		   .append("    join pe.produto prod ")
 		   .append("	join lp.periodos plp ")
 		   .append("	join plp.lancamento l ")
 		   .append(" where ")
 		   .append("	lp.recolhimentoFinal = :data ")
-		   .append("	and l.status = :statusLancamento ");
+		   .append("	and l.status = :statusLancamento ")
+		   .append("	and prod.codigo = :codigoProduto ");
 		
 		if (filtro.getPaginacaoVO() != null && !count){
 			
@@ -1099,7 +1202,6 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
 			   .append(" ")
 			   .append(filtro.getPaginacaoVO().getSortOrder() != null ? filtro.getPaginacaoVO().getSortOrder() : "");
 		}
-		
 		
 		return hql.toString();
 	}

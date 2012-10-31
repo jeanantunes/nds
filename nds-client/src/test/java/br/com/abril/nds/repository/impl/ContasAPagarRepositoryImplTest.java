@@ -14,6 +14,7 @@ import br.com.abril.nds.dto.ContasAPagarConsignadoDTO;
 import br.com.abril.nds.dto.ContasAPagarEncalheDTO;
 import br.com.abril.nds.dto.ContasAPagarFaltasSobrasDTO;
 import br.com.abril.nds.dto.ContasAPagarGridPrincipalProdutoDTO;
+import br.com.abril.nds.dto.ContasAPagarParcialDTO;
 import br.com.abril.nds.dto.ContasApagarConsultaPorDistribuidorDTO;
 import br.com.abril.nds.dto.ContasApagarConsultaPorProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroContasAPagarDTO;
@@ -167,5 +168,30 @@ public class ContasAPagarRepositoryImplTest extends AbstractRepositoryImplTest {
 				this.contasAPagarRepository.pesquisarDetalheFaltasSobras(filtro);
 		
 		Assert.assertNotNull(lista);
+	}
+	
+	@Test
+	public void testPesquisarParcial(){
+		
+		FiltroContasAPagarDTO filtro = this.getFiltroPesquisaPorDistribuidor();
+		filtro.setDataDetalhe(new Date());
+		filtro.setEdicao(null);
+		filtro.setProduto("544");
+		
+		List<ContasAPagarParcialDTO> lista = 
+				this.contasAPagarRepository.pesquisarParcial(filtro);
+		
+		Assert.assertNotNull(lista);
+	}
+	
+	@Test
+	public void testCountPesquisarParcial(){
+		
+		FiltroContasAPagarDTO filtro = this.getFiltroPesquisaPorDistribuidor();
+		filtro.setDataDetalhe(new Date());
+		filtro.setEdicao(null);
+		filtro.setProduto("544");
+		
+		this.contasAPagarRepository.countPesquisarParcial(filtro);
 	}
 }
