@@ -199,34 +199,34 @@ public class RoteirizacaoServiceImplTest extends AbstractRepositoryImplTest {
 		save(roteiro1, roteiro2, roteiro3);
 			
 		rota1Roteiro1 = Fixture.rota("Rota 1 - Roteiro 1", roteiro1);
-		rota1Roteiro1.addPDV(pdvManoel, 1);
-		rota1Roteiro1.addPDV(pdvJose, 2);
+		rota1Roteiro1.addPDV(pdvManoel, 1, box300);
+		rota1Roteiro1.addPDV(pdvJose, 2, box300);
 		save(rota1Roteiro1);
 		
 		rota2Roteiro1 = Fixture.rota("Rota 2", roteiro1);
-		rota2Roteiro1.addPDV(pdvMaria, 1);
-	    rota2Roteiro1.addPDV(pdvMariana, 2);
+		rota2Roteiro1.addPDV(pdvMaria, 1, box300);
+	    rota2Roteiro1.addPDV(pdvMariana, 2, box300);
 		save(rota2Roteiro1);
 		
 		rota3roteiro1 = Fixture.rota("Rota 3", roteiro1);
-  	    rota3roteiro1.addPDV(pdvOrlando, 1);
+  	    rota3roteiro1.addPDV(pdvOrlando, 1, box300);
 		save(rota3roteiro1);
 
 		rota1Roteiro2 = Fixture.rota("Rota 4", roteiro2);
-	    rota1Roteiro2.addPDV(pdvLuis, 1);
-	    rota1Roteiro2.addPDV(pdvJoao, 2);
+	    rota1Roteiro2.addPDV(pdvLuis, 1, box300);
+	    rota1Roteiro2.addPDV(pdvJoao, 2, box300);
 		save(rota1Roteiro2);
 		
 		rota2Roteiro2 = Fixture.rota("Rota 5", roteiro2);
-	    rota2Roteiro2.addPDV(pdvGuilherme, 1);
+	    rota2Roteiro2.addPDV(pdvGuilherme, 1, box300);
 		save(rota2Roteiro2);
 		
 		rota3Roteiro2 = Fixture.rota("Rota 6", roteiro2);
-	    rota3Roteiro2.addPDV(pdvMurilo, 1);
+	    rota3Roteiro2.addPDV(pdvMurilo, 1, box300);
 		save(rota3Roteiro2);
 
 		rota1Roteiro3 = Fixture.rota("Rota 7", roteiro3);
-	    rota1Roteiro3.addPDV(pdvJoana, 1);
+	    rota1Roteiro3.addPDV(pdvJoana, 1, box300);
 		save(rota1Roteiro3);
 				
 		save(roteirizacao);

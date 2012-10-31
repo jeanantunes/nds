@@ -119,8 +119,8 @@ public class VisaoEstoqueServiceImpl implements VisaoEstoqueService {
 			}
 		}
 		
-		BigDecimal precoCapa;
-		BigDecimal qtde;
+		BigDecimal precoCapa = BigDecimal.ZERO;
+		BigDecimal qtde = BigDecimal.ZERO;
 		
 		for (VisaoEstoqueDetalheDTO dto: list) {
 			

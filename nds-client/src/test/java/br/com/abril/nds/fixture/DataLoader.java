@@ -1123,8 +1123,6 @@ public class DataLoader {
 
 		gerarCargaDadosConferenciaEncalhe(session);
 
-		gerarTiposNotas(session);
-
 		gerarLogExecucaoInterfaces(session);
 
 		gerarLogradouros(session);
@@ -1236,6 +1234,8 @@ public class DataLoader {
 	private static void carregarDadosClean(Session session) {
 		
 		gerarCfops(session);			
+		
+		gerarTiposNotas(session);
 		
 		criarParametrosSistema(session);
 		criarInterfaceExecucao(session);
@@ -2928,32 +2928,32 @@ public class DataLoader {
         session.save(pdvOrlando);
 		
 		rota1 = Fixture.rota("Rota 001",roteiroPinheiros);
-		rota1.addPDV(pdvcotaJose2, 1);
-		rota1.addPDV(pdvcotaManoel2, 2);
+		rota1.addPDV(pdvcotaJose2, 1, boxA);
+		rota1.addPDV(pdvcotaManoel2, 2, boxA);
 		session.save(rota1);
 		
 		rota2 = Fixture.rota( "Rota 002",roteiroInterlagos);
-	    rota2.addPDV(pdvcotaJose2, 1);
-	    rota2.addPDV(pdvcotaManoel2, 2);
+	    rota2.addPDV(pdvcotaJose2, 1, boxB);
+	    rota2.addPDV(pdvcotaManoel2, 2, boxB);
 		session.save(rota2);
 		
 		rota10 = Fixture.rota("Rota 010",roteiroTCD);
-	    rota10.addPDV(pdvcotaJose2, 1);
-	    rota10.addPDV(pdvcotaManoel2, 2);
+	    rota10.addPDV(pdvcotaJose2, 1, boxC);
+	    rota10.addPDV(pdvcotaManoel2, 2, boxC);
 		session.save(rota10);
  
 		
 		Rota rotaRoteiroCentro1 = Fixture.rota("Rota 999", roteiroCentro);
-		rotaRoteiroCentro1.addPDV(pdvJoao, 1);
+		rotaRoteiroCentro1.addPDV(pdvJoao, 1, boxA);
 		session.save(rotaRoteiroCentro1);
 		
 		Rota rotaRoteiroCentro2 = Fixture.rota("Rota 990", roteiroCentro);
-        rotaRoteiroCentro2.addPDV(pdvMariana, 1);
+        rotaRoteiroCentro2.addPDV(pdvMariana, 1, boxA);
         session.save(rotaRoteiroCentro2);
         
         Rota rotaRoteiroBairro = Fixture.rota("Rota 998", roteiroBairro);
-        rotaRoteiroBairro.addPDV(pdvJoana, 1);
-        rotaRoteiroBairro.addPDV(pdvOrlando, 2);
+        rotaRoteiroBairro.addPDV(pdvJoana, 1, boxA);
+        rotaRoteiroBairro.addPDV(pdvOrlando, 2, boxA);
         session.save(rotaRoteiroBairro);
 	}
 

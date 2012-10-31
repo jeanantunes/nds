@@ -194,7 +194,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 			quantidade = quantidade.add(movimento.getQtde());
 			preco = preco.add(precoVenda.multiply(new BigDecimal(movimento.getQtde())));
 			precoComDesconto = precoComDesconto.add(
-					precoVenda.subtract(valorDesconto, new MathContext(3)));	
+					precoVenda.subtract(valorDesconto, new MathContext(3)).multiply(new BigDecimal(quantidade)));	
 			
 			if(!movimento.getListaItemNotaEnvio().isEmpty()){
 				cotaExemplares.setNotaImpressa(true);
@@ -329,7 +329,10 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 
 		IdentificacaoEmitente emitente = new IdentificacaoEmitente();
 
-		emitente.setDocumento(pessoaEmitente.getDocumento());
+		// Corrigido devo ao fato da tabela pessoa gravar os documentos com máscara, embora o campo documento da tabela nota_envio esperar apenas 14 caracteres
+		String documento = pessoaEmitente.getDocumento().replaceAll("[-+.^:,/]","");
+		
+		emitente.setDocumento(documento);
 		emitente.setNome(pessoaEmitente.getNome());
 		emitente.setPessoaEmitenteReferencia(pessoaEmitente);
 		emitente.setInscricaoEstual(pessoaEmitente.getInscricaoEstadual());
@@ -404,6 +407,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 			telefoneRepository.adicionar(telefone);
 			destinatario.setTelefone(telefone);
 		}
+		destinatario.setCodigoBox(cota.getBox().getCodigo());
 		destinatario.setBoxReferencia(cota.getBox());
 		destinatario.setCodigoBox(cota.getBox().getCodigo());
 		destinatario.setNomeBox(cota.getBox().getNome());
