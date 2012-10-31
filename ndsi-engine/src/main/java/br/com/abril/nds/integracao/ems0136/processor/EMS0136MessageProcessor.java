@@ -86,6 +86,40 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 			
 			boolean hasAlteracao = false;
 
+			// Update da Data Inicial de lançamento:
+			Date dtLancamento = input.getDataLancamento();
+			if (dtLancamento.before(lancamentoParcial.getLancamentoInicial())) {
+				lancamentoParcial.setLancamentoInicial(dtLancamento);
+				hasAlteracao = true;
+			}
+			
+			// Update da Data Final de recolhimento:
+			Date dtRecolhimento = input.getDataRecolhimento();
+			if (dtRecolhimento.after(lancamentoParcial.getRecolhimentoFinal())) {
+				lancamentoParcial.setRecolhimentoFinal(dtRecolhimento);
+				hasAlteracao = true;
+			}
+			
+			// Update do Período:
+			Integer numeroPeriodo = input.getNumeroPeriodo();
+			for (PeriodoLancamentoParcial periodo : lancamentoParcial.getPeriodos()) {
+				if (numeroPeriodo.equals(periodo.getNumeroPeriodo())) {
+					
+					periodo.setStatus(this.obterStatusLancamentoParcial(input));
+					periodo.setTipo(this.obterTipoLancamentoParcial(input));
+					
+					Lancamento lancamento = periodo.getLancamento();
+					lancamento.setDataLancamentoPrevista(input.getDataLancamento());
+					lancamento.setDataRecolhimentoPrevista(input.getDataRecolhimento());
+					
+					this.getSession().update(periodo);
+					this.getSession().update(lancamento);
+				}
+			}
+			
+			if (hasAlteracao) {
+				this.getSession().update(lancamentoParcial);
+			}		
 		}
 		
 	}
