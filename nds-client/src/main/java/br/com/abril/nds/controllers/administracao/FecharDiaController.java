@@ -1,5 +1,6 @@
 package br.com.abril.nds.controllers.administracao;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -7,24 +8,34 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import br.com.abril.nds.client.annotation.Rules;
+import br.com.abril.nds.client.vo.CotaVO;
+import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.FecharDiaDTO;
 import br.com.abril.nds.dto.ReparteFecharDiaDTO;
-import br.com.abril.nds.dto.SumarizacaoDividasDTO;
-import br.com.abril.nds.dto.SumarizacaoDividasDTO.TipoSumarizacao;
 import br.com.abril.nds.dto.ValidacaoConfirmacaoDeExpedicaoFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoControleDeAprovacaoFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoLancamentoFaltaESobraFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoRecebimentoFisicoFecharDiaDTO;
 import br.com.abril.nds.dto.VendaSuplementarDTO;
+import br.com.abril.nds.dto.fechamentodiario.DividaDTO;
+import br.com.abril.nds.dto.fechamentodiario.SumarizacaoDividasDTO;
+import br.com.abril.nds.dto.fechamentodiario.TipoDivida;
+import br.com.abril.nds.dto.filtro.FiltroCotaDTO;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.CustomMapJson;
+import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.FecharDiaService;
 import br.com.abril.nds.service.ResumoEncalheFecharDiaService;
 import br.com.abril.nds.service.ResumoReparteFecharDiaService;
@@ -33,6 +44,10 @@ import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TableModel;
+import br.com.abril.nds.util.export.FileExporter;
+import br.com.abril.nds.util.export.NDSFileHeader;
+import br.com.abril.nds.util.export.FileExporter.FileType;
+import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
@@ -60,6 +75,9 @@ public class FecharDiaController {
 	
 	@Autowired
 	private Result result;
+	
+	@Autowired
+	private HttpServletResponse httpResponse;
 	
 	private static Distribuidor distribuidor;
 	
@@ -284,18 +302,113 @@ public class FecharDiaController {
 	@Post
 	public void obterSumarizacaoDividas() {
         Date dataFechamento = getDataFechamento();
-        Map<TipoSumarizacao, List<SumarizacaoDividasDTO>> sumarizacao = new HashMap<>();
-        sumarizacao.put(TipoSumarizacao.DIVIDAS_A_RECEBER, new ArrayList<SumarizacaoDividasDTO>());
-        sumarizacao.put(TipoSumarizacao.DIVIDAS_A_VENCER, new ArrayList<SumarizacaoDividasDTO>());
+        Map<TipoDivida, List<SumarizacaoDividasDTO>> sumarizacao = new HashMap<>();
+        sumarizacao.put(TipoDivida.DIVIDA_A_RECEBER, new ArrayList<SumarizacaoDividasDTO>());
+        sumarizacao.put(TipoDivida.DIVIDA_A_VENCER, new ArrayList<SumarizacaoDividasDTO>());
         for (TipoCobranca tc : TipoCobranca.values()) {
-            sumarizacao.get(TipoSumarizacao.DIVIDAS_A_RECEBER).add(new SumarizacaoDividasDTO(dataFechamento, TipoSumarizacao.DIVIDAS_A_RECEBER, tc, BigDecimal.valueOf(1500), BigDecimal.valueOf(1000), BigDecimal.valueOf(500)));
-            sumarizacao.get(TipoSumarizacao.DIVIDAS_A_VENCER).add(new SumarizacaoDividasDTO(dataFechamento, TipoSumarizacao.DIVIDAS_A_VENCER, tc, BigDecimal.valueOf(1500), BigDecimal.valueOf(1000), BigDecimal.valueOf(500)));
+            sumarizacao.get(TipoDivida.DIVIDA_A_RECEBER).add(new SumarizacaoDividasDTO(dataFechamento, TipoDivida.DIVIDA_A_RECEBER, tc, BigDecimal.valueOf(1500), BigDecimal.valueOf(1000), BigDecimal.valueOf(500)));
+            sumarizacao.get(TipoDivida.DIVIDA_A_VENCER).add(new SumarizacaoDividasDTO(dataFechamento, TipoDivida.DIVIDA_A_VENCER, tc, BigDecimal.valueOf(1500), BigDecimal.valueOf(1000), BigDecimal.valueOf(500)));
         }
         result.use(CustomMapJson.class).put("sumarizacao", sumarizacao).serialize();
     }
+	
+	@Post
+	public void obterDividasReceber(Integer page, Integer rp) {
+        List<DividaDTO> dividas = new ArrayList<>(20);
+	    for (int i = 0; i < 20; i++) {
+	        dividas.add(new DividaDTO(123, "Antonio José da Silva",
+	                "Bradesco", "11234-00", "12343212321233329932",
+	                BigDecimal.valueOf(440.04),
+	                DateUtil.parseDataPTBR("10/05/2012"), TipoCobranca.BOLETO,
+	                TipoDivida.DIVIDA_A_RECEBER));
+	    }
+	    result.use(FlexiGridJson.class).from(dividas).page(page).total(dividas.size()).serialize();       
+	}
+	
+	@Get
+    public void exportarDividasReceber(FileType fileType) throws IOException {
+	    List<DividaDTO> dividas = new ArrayList<>(20);
+        for (int i = 0; i < 20; i++) {
+            dividas.add(new DividaDTO(123, "Antonio José da Silva",
+                    "Bradesco", "11234-00", "12343212321233329932",
+                    BigDecimal.valueOf(440.04),
+                    DateUtil.parseDataPTBR("10/05/2012"), TipoCobranca.BOLETO,
+                    TipoDivida.DIVIDA_A_RECEBER));
+        }
+        FileExporter.to("dividas-receber", fileType).inHTTPResponse(getNDSFileHeader(), null, null, 
+                dividas, DividaDTO.class, httpResponse);
+        
+        result.nothing();
+    }
+	
+	
+	@Post
+	public void obterDividasVencer(Integer page, Integer rp) {
+	    List<DividaDTO> dividas = new ArrayList<>(20);
+	    for (int i = 0; i < 20; i++) {
+            dividas.add(new DividaDTO(456, "Carlos Augusto Cirqueira",
+                    "Bradesco", "11234-00", "12343212321233329932",
+                    BigDecimal.valueOf(377.87),
+                    DateUtil.parseDataPTBR("10/05/2012"), TipoCobranca.BOLETO,
+                    TipoDivida.DIVIDA_A_VENCER));
+        }
+	    result.use(FlexiGridJson.class).from(dividas).page(page).total(dividas.size()).serialize();       
+	}
+	
+	@Get
+    public void exportarDividasVencer(FileType fileType) throws IOException {
+	    List<DividaDTO> dividas = new ArrayList<>(20);
+        for (int i = 0; i < 20; i++) {
+            dividas.add(new DividaDTO(456, "Carlos Augusto Cirqueira",
+                    "Bradesco", "11234-00", "12343212321233329932",
+                    BigDecimal.valueOf(377.87),
+                    DateUtil.parseDataPTBR("10/05/2012"), TipoCobranca.BOLETO,
+                    TipoDivida.DIVIDA_A_VENCER));
+        }
+        FileExporter.to("dividas-vencer", fileType).inHTTPResponse(getNDSFileHeader(), null, null, 
+                dividas, DividaDTO.class, httpResponse);
+        
+        result.nothing();
+    }
+	
     
     private Date getDataFechamento() {
         return distribuidorService.obter().getDataOperacao();
+    }
+    
+    private NDSFileHeader getNDSFileHeader() {
+      
+        NDSFileHeader ndsFileHeader = new NDSFileHeader();
+        Distribuidor distribuidor = distribuidorService.obter();
+        ndsFileHeader.setNomeDistribuidor(distribuidor.getJuridica().getRazaoSocial());
+        ndsFileHeader.setCnpjDistribuidor(distribuidor.getJuridica().getCnpj());
+        ndsFileHeader.setData(new Date());
+        ndsFileHeader.setNomeUsuario(getUsuarioLogado());
+        
+        return ndsFileHeader;
+    }
+    
+    /**
+     * Recupera username o usuário logado para utilização nas funcionalidades da tela de
+     * fechamnento diário
+     * 
+     * @return username do usuário logado
+     */
+    //TODO: Utilizando username do usuário logado, já que a implementação atual
+    //está utilizando a implementação User fornecida pelo Spring.
+    //Deve ser refatorado quando o mecanismo de autenticação fornecer as informações
+    //necessárias, por exeplo, nome do usuário ou o relacionamento com a entidade 
+    //br.com.abril.nds.model.seguranca.Usuario 
+    private String getUsuarioLogado() {
+        String usuario = null;
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null) {
+            Object principal = authentication.getPrincipal();
+            if (principal instanceof UserDetails) {
+                usuario = UserDetails.class.cast(principal).getUsername();
+            }
+        }
+        return usuario;
     }
 
 }
