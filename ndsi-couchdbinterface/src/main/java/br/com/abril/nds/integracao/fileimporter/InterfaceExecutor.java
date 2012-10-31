@@ -38,6 +38,7 @@ import br.com.abril.nds.integracao.repository.InterfaceExecucaoRepository;
 import br.com.abril.nds.integracao.repository.LogExecucaoArquivoRepository;
 import br.com.abril.nds.integracao.repository.LogExecucaoRepository;
 import br.com.abril.nds.integracao.repository.ParametroSistemaRepository;
+import br.com.abril.nds.integracao.service.IcdObjectService;
 
 import com.ancientprogramming.fixedformat4j.format.FixedFormatManager;
 import com.ancientprogramming.fixedformat4j.format.impl.FixedFormatManagerImpl;
@@ -55,6 +56,9 @@ public class InterfaceExecutor {
 	
 	//private static Logger LOGGER = LoggerFactory.getLogger(InterfaceExecutor.class);
 	
+	@Autowired
+	private IcdObjectService icdObjectService;
+
 	@Autowired
 	private LogExecucaoRepository logExecucaoRepository;
 	@Autowired
@@ -93,8 +97,6 @@ public class InterfaceExecutor {
 	@Transactional
 	public void executarInterface(String nomeUsuario, InterfaceEnum interfaceEnum, Long codigoDistribuidor) {
 		
-		this.buscaIcd();
-		
 		// Busca dados de configuracao
 		this.carregaCouchDbProperties();
 		InterfaceExecucao interfaceExecucao = interfaceExecucaoRepository.findById(interfaceEnum.getCodigoInterface());
@@ -128,8 +130,9 @@ public class InterfaceExecutor {
 	}
 	
 	@Transactional("transactionManagerIcd")
-	private void buscaIcd() {
-		// TODO Auto-generated method stub
+	private void executarRetornosIcd() {
+		icdObjectService.recuperaSolicitacoesAcertadas();
+		
 		
 	}
 
