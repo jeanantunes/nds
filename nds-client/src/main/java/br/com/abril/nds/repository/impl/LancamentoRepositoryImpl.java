@@ -522,9 +522,9 @@ public class LancamentoRepositoryImpl extends
 		
 		sql.append(" (select ");
 		sql.append(" case when tipoProduto.GRUPO_PRODUTO = :grupoCromo and periodoLancamentoParcial.TIPO <> :tipoParcial then ");
-		sql.append(" sum((((epc.QTDE_RECEBIDA - epc.QTDE_DEVOLVIDA) - ((epc.QTDE_RECEBIDA - epc.QTDE_DEVOLVIDA) * (coalesce(produtoEdicao.EXPECTATIVA_VENDA, 0) / 100))) / produtoEdicao.PACOTE_PADRAO) * (produtoEdicao.PRECO_VENDA - (" + this.getHQLDesconto() + ") )) ");
+		sql.append(" sum((((epc.QTDE_RECEBIDA - epc.QTDE_DEVOLVIDA) - ((epc.QTDE_RECEBIDA - epc.QTDE_DEVOLVIDA) * (coalesce(produtoEdicao.EXPECTATIVA_VENDA, 0) / 100))) / produtoEdicao.PACOTE_PADRAO) * (produtoEdicao.PRECO_VENDA - ( produtoEdicao.PRECO_VENDA * " + this.getHQLDesconto() + " / 100 ) )) ");
 		sql.append(" else ");
-		sql.append(" sum(((epc.QTDE_RECEBIDA - epc.QTDE_DEVOLVIDA) - ((epc.QTDE_RECEBIDA - epc.QTDE_DEVOLVIDA) * (coalesce(produtoEdicao.EXPECTATIVA_VENDA, 0) / 100))) * (produtoEdicao.PRECO_VENDA - (" + this.getHQLDesconto() + ") )) ");
+		sql.append(" sum(((epc.QTDE_RECEBIDA - epc.QTDE_DEVOLVIDA) - ((epc.QTDE_RECEBIDA - epc.QTDE_DEVOLVIDA) * (coalesce(produtoEdicao.EXPECTATIVA_VENDA, 0) / 100))) * (produtoEdicao.PRECO_VENDA - ( produtoEdicao.PRECO_VENDA * " + this.getHQLDesconto() + " / 100 ) )) ");
 		sql.append(" end ");
 		sql.append(" from COTA cota, ESTOQUE_PRODUTO_COTA epc ");
 		sql.append(" where epc.PRODUTO_EDICAO_ID = produtoEdicao.ID ");
