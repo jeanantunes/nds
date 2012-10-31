@@ -30,7 +30,7 @@ public class VisaoEstoqueConferenciaCegaVO implements Serializable {
 	@Export(label = "Rclto", alignment=Alignment.CENTER, exhibitionOrder = 6)
 	private String rclto;
 	
-	@Export(label = "Qtde", alignment=Alignment.CENTER, exhibitionOrder = 7)
+	
 	private String qtde;
 	
 	@Export(label = "Valor R$", alignment=Alignment.RIGHT, exhibitionOrder = 8)
