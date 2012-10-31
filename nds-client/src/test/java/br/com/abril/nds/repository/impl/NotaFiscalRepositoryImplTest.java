@@ -490,4 +490,11 @@ public class NotaFiscalRepositoryImplTest  extends AbstractRepositoryImplTest {
 		
 	}
 	
+	@Test
+	public void testeObterNumerosNFePorLancamento(){
+		
+		List<Long> lista = this.notaFiscalRepository.obterNumerosNFePorLancamento(1L);
+		
+		Assert.assertNotNull(lista);
+	}
 }

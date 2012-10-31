@@ -11,7 +11,6 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.model.DiaSemana;
-import br.com.abril.nds.model.cadastro.DistribuicaoDistribuidor;
 import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.EnderecoDistribuidor;
@@ -53,26 +52,6 @@ public class DistribuidorRepositoryImpl extends
 		Query query = getSession().createQuery(hql.toString());
 
 		query.setParameterList("idsFornecedores", idsForncedores);
-		query.setParameter("operacaoDistribuidor", operacaoDistribuidor);
-
-		return query.list();
-	}
-
-	@Override
-	@SuppressWarnings("unchecked")
-	public List<DistribuicaoDistribuidor> buscarDiasDistribuicaoDistribuidor(
-															Long idDistruibuidor,
-															OperacaoDistribuidor operacaoDistribuidor) {
-
-		StringBuilder hql = new StringBuilder();
-
-		hql.append("from DistribuicaoDistribuidor ");
-		hql.append("where distribuidor.id = :idDistribuidor ");
-		hql.append("and operacaoDistribuidor = :operacaoDistribuidor ");
-
-		Query query = getSession().createQuery(hql.toString());
-
-		query.setParameter("idDistribuidor", idDistruibuidor);
 		query.setParameter("operacaoDistribuidor", operacaoDistribuidor);
 
 		return query.list();
