@@ -14,21 +14,23 @@ public class FiltroCalculaParcelas extends FiltroConsultaNegociacaoDivida implem
 	
 	private List<Integer> semanalDias;
 	
-	private String quinzenalDia1; 
+	private Integer quinzenalDia1; 
 	
-	private String quinzenalDia2;
+	private Integer quinzenalDia2;
 	
-	private String mensalDia;
+	private Integer mensalDia;
 	
 	private TipoCobranca tipoPagamento;
 	
 	private Integer qntdParcelas;
 	
-	private String valorSelecionado;
+	private Double valorSelecionado;
 	
 	private List<String> listDividas;
 	
 	private Long idBanco;
+	
+	private Boolean isentaEncargos;
 
 	public PeriodicidadeCobranca getPeriodicidade() {
 		return periodicidade;
@@ -46,27 +48,27 @@ public class FiltroCalculaParcelas extends FiltroConsultaNegociacaoDivida implem
 		this.semanalDias = semanalDias;
 	}
 
-	public String getQuinzenalDia1() {
+	public Integer getQuinzenalDia1() {
 		return quinzenalDia1;
 	}
 
-	public void setQuinzenalDia1(String quinzenalDia1) {
+	public void setQuinzenalDia1(Integer quinzenalDia1) {
 		this.quinzenalDia1 = quinzenalDia1;
 	}
 
-	public String getQuinzenalDia2() {
+	public Integer getQuinzenalDia2() {
 		return quinzenalDia2;
 	}
 
-	public void setQuinzenalDia2(String quinzenalDia2) {
+	public void setQuinzenalDia2(Integer quinzenalDia2) {
 		this.quinzenalDia2 = quinzenalDia2;
 	}
 
-	public String getMensalDia() {
+	public Integer getMensalDia() {
 		return mensalDia;
 	}
 
-	public void setMensalDia(String mensalDia) {
+	public void setMensalDia(Integer mensalDia) {
 		this.mensalDia = mensalDia;
 	}
 
@@ -86,11 +88,11 @@ public class FiltroCalculaParcelas extends FiltroConsultaNegociacaoDivida implem
 		this.qntdParcelas = qntdParcelas;
 	}
 
-	public String getValorSelecionado() {
+	public Double getValorSelecionado() {
 		return valorSelecionado;
 	}
 
-	public void setValorSelecionado(String valorSelecionado) {
+	public void setValorSelecionado(Double valorSelecionado) {
 		this.valorSelecionado = valorSelecionado;
 	}
 
@@ -108,6 +110,14 @@ public class FiltroCalculaParcelas extends FiltroConsultaNegociacaoDivida implem
 
 	public void setIdBanco(Long idBanco) {
 		this.idBanco = idBanco;
+	}
+
+	public Boolean getIsentaEncargos() {
+		return isentaEncargos;
+	}
+
+	public void setIsentaEncargos(Boolean isentaEncargos) {
+		this.isentaEncargos = isentaEncargos;
 	}
 
 	
