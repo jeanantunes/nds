@@ -5,7 +5,6 @@ import java.util.Date;
 
 import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
-import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -84,7 +83,7 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 			this.gerarNovoLancamentoParcial(input, produtoEdicao);
 		} else {
 			
-			atualizarLancamentoParcial(input, lancamentoParcial);		
+			this.atualizarLancamentoParcial(input, lancamentoParcial);		
 		}
 		
 	}
