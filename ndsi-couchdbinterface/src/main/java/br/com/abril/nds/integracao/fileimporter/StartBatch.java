@@ -1,5 +1,8 @@
 package br.com.abril.nds.integracao.fileimporter;
 
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
 import br.com.abril.nds.integracao.model.canonic.InterfaceEnum;
 
 /**
@@ -14,6 +17,16 @@ import br.com.abril.nds.integracao.model.canonic.InterfaceEnum;
  */
 public class StartBatch {
 
+	public static final String SPRING_FILE_LOCATION = "classpath:spring/applicationContext-ndsi-cli.xml"; 
+
+	private static ApplicationContext applicationContext;
+
+	static {
+		ClassPathXmlApplicationContext classPathXmlApplicationContext = new ClassPathXmlApplicationContext(SPRING_FILE_LOCATION);
+		classPathXmlApplicationContext.registerShutdownHook();
+		applicationContext = classPathXmlApplicationContext;
+	}
+	
 	public static void main(String[] args) {
 		
 		String usuario = null;
@@ -49,7 +62,7 @@ public class StartBatch {
 			}
 		}
 		
-		InterfaceExecutor executor = new InterfaceExecutor();
+		InterfaceExecutor executor = applicationContext.getBean(InterfaceExecutor.class);
 		executor.executarInterface(usuario, interfaceEnum, codigoDistribuidor);
 	}
 }
