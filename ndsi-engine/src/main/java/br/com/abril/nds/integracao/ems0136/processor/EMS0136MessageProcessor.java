@@ -145,7 +145,8 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 	private void gerarNovoLancamentoParcial(EMS0136Input input, 
 			ProdutoEdicao produtoEdicao) {
 		
-		StatusLancamentoParcial status = obterStatusLancamentoParcial(input);	
+		StatusLancamentoParcial status = this.obterStatusLancamentoParcial(
+				input);	
 		
 		// Novo Lançamento Parcial:
 		LancamentoParcial lancamentoParcial = new LancamentoParcial();
@@ -170,9 +171,7 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 		lancamento.setSequenciaMatriz(Integer.valueOf(0));
 		
 		TipoLancamentoParcial tipoLancamentoParcial = 
-				"F".equalsIgnoreCase(input.getTipoRecolhimento()) 
-					? TipoLancamentoParcial.FINAL 
-					: TipoLancamentoParcial.PARCIAL;
+				this.obterTipoLancamentoParcial(input);
 		
 		// Novo Período Lançamento Parcial:
 		PeriodoLancamentoParcial pLancamentoParcial = new PeriodoLancamentoParcial();
@@ -210,6 +209,18 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 		return status;
 	}
 	
+	/**
+	 * Retorna o Tipo de Lançamento Parcial que esta definido no arquivo.
+	 * 
+	 * @param input
+	 * @return
+	 */
+	private TipoLancamentoParcial obterTipoLancamentoParcial(EMS0136Input input) {
+		
+		return "F".equalsIgnoreCase(input.getTipoRecolhimento()) 
+					? TipoLancamentoParcial.FINAL 
+					: TipoLancamentoParcial.PARCIAL;
+	}
 	
 	
 	
