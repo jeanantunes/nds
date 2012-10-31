@@ -1,8 +1,12 @@
 package br.com.abril.nds.controllers.administracao;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -14,10 +18,12 @@ import br.com.abril.nds.dto.ValidacaoControleDeAprovacaoFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoLancamentoFaltaESobraFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoRecebimentoFisicoFecharDiaDTO;
 import br.com.abril.nds.dto.VendaSuplementarDTO;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.seguranca.Permissao;
+import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.FecharDiaService;
 import br.com.abril.nds.service.ResumoEncalheFecharDiaService;
 import br.com.abril.nds.service.ResumoReparteFecharDiaService;
@@ -26,6 +32,11 @@ import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TableModel;
+import br.com.abril.nds.util.TipoMensagem;
+import br.com.abril.nds.util.export.FileExporter;
+import br.com.abril.nds.util.export.FileExporter.FileType;
+import br.com.abril.nds.util.export.NDSFileHeader;
+import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
@@ -54,6 +65,9 @@ public class FecharDiaController {
 	@Autowired
 	private Result result;
 	
+	@Autowired
+	private HttpServletResponse httpResponse;
+	
 	private static Distribuidor distribuidor;
 	
 	@Path("/")
@@ -72,7 +86,7 @@ public class FecharDiaController {
 		dto.setRecebimentoFisico(this.fecharDiaService.existeNotaFiscalSemRecebimentoFisico(distribuidor.getDataOperacao()));
 		dto.setConfirmacaoDeExpedicao(this.fecharDiaService.existeConfirmacaoDeExpedicao(distribuidor.getDataOperacao()));
 		dto.setLancamentoFaltasESobras(this.fecharDiaService.existeLancamentoFaltasESobrasPendentes(distribuidor.getDataOperacao()));
-		dto.setControleDeAprovacao(this.distribuidor.isUtilizaControleAprovacao());		
+		dto.setControleDeAprovacao(this.distribuidor.isUtilizaControleAprovacao());
 		
 		result.use(Results.json()).withoutRoot().from(dto).recursive().serialize();
 	}
@@ -165,12 +179,12 @@ public class FecharDiaController {
 		listaDeResultados.add(totalReparte);
 		
 		lista = this.resumoFecharDiaService.obterValorDiferenca(distribuidor.getDataOperacao(), true, "sobra");
-		BigDecimal totalSobras = lista.get(0).getSobras();
+		BigDecimal totalSobras = lista.get(0).getSobras() != null ? lista.get(0).getSobras() : BigDecimal.ZERO;
 		listaDeResultados.add(totalSobras);
 		
 		
 		lista = this.resumoFecharDiaService.obterValorDiferenca(distribuidor.getDataOperacao(), true, "falta");
-		BigDecimal totalFaltas = lista.get(0).getFaltas();
+		BigDecimal totalFaltas = lista.get(0).getFaltas() != null ? lista.get(0).getFaltas() : BigDecimal.ZERO;
 		listaDeResultados.add(totalFaltas);
 		
 		
@@ -186,7 +200,7 @@ public class FecharDiaController {
 		listaDeResultados.add(totalADistribuir);
 		
 		lista = this.resumoFecharDiaService.obterValorDistribuido(distribuidor.getDataOperacao(), true);
-		BigDecimal totalDistribuido = lista.get(0).getDistribuidos();
+		BigDecimal totalDistribuido = lista.get(0).getDistribuidos() != null ? lista.get(0).getDistribuidos() : BigDecimal.ZERO;
 		listaDeResultados.add(totalDistribuido);
 		
 		BigDecimal sobraDistribuido = totalADistribuir.subtract(totalDistribuido);
@@ -272,6 +286,78 @@ public class FecharDiaController {
 		
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
 		
+	}
+	
+	@Get
+	public void exportarVendaSuplemntar(FileType fileType){		
+		try {
+			
+			List<VendaSuplementarDTO> listaReparte = resumoSuplementarFecharDiaService.obterVendasSuplementar(distribuidor.getDataOperacao());
+			
+			if(listaReparte.isEmpty()) {
+				throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");
+			}
+			
+				FileExporter.to("recebimento_fisico", fileType).inHTTPResponse(this.getNDSFileHeader(), null, null, 
+						listaReparte, VendaSuplementarDTO.class, this.httpResponse);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		
+		
+		result.nothing();
+		
+	}
+	
+	@Get
+	public void exportarRecebimentoFisico(FileType fileType){
+		
+		
+		try {
+		List<ValidacaoRecebimentoFisicoFecharDiaDTO> listaRecebimentoFisicoNaoConfirmado = this.fecharDiaService.obterNotaFiscalComRecebimentoFisicoNaoConfirmado(distribuidor.getDataOperacao());
+		
+		if(listaRecebimentoFisicoNaoConfirmado.isEmpty()) {
+			throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");
+		}
+		
+			FileExporter.to("recebimento_fisico", fileType).inHTTPResponse(this.getNDSFileHeader(), null, null, 
+					listaRecebimentoFisicoNaoConfirmado, ValidacaoRecebimentoFisicoFecharDiaDTO.class, this.httpResponse);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		
+		
+		result.nothing();
+		
+	}
+	
+	private NDSFileHeader getNDSFileHeader() {
+		
+		NDSFileHeader ndsFileHeader = new NDSFileHeader();
+		
+		Distribuidor distribuidor = this.distribuidorService.obter();
+		
+		if (distribuidor != null) {
+			
+			ndsFileHeader.setNomeDistribuidor(distribuidor.getJuridica().getRazaoSocial());
+			ndsFileHeader.setCnpjDistribuidor(distribuidor.getJuridica().getCnpj());
+		}
+		
+		ndsFileHeader.setData(new Date());
+		
+		ndsFileHeader.setNomeUsuario(this.getUsuario().getNome());
+		
+		return ndsFileHeader;
+	}
+	
+
+	public Usuario getUsuario() {
+		Usuario usuario = new Usuario();
+		usuario.setId(1L);
+		usuario.setNome("Lazaro Jornaleiro");
+		return usuario;
 	}
 
 }
