@@ -6,8 +6,9 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "SOLICITACAO_FALTAS_SOBRAS")
-public class SolicitacaoFaltaSobra {
+@Table(name = "DETALHE_FALTAS_SOBRAS")
+public class DetalheFaltaSobra {
+
 	/**
 	 * 
 	 */
@@ -17,10 +18,9 @@ public class SolicitacaoFaltaSobra {
 	@Column(name = "ID")
 	private Long id;
 	
-	@Column(name = "COD_SITUACAO_SOLICITACAO", nullable = false)
+	@Column(name = "COD_SITUACAO_ACERTO", nullable = false)
 	private String codigoSolicitacao;
 
-	
 	public Long getId() {
 		return id;
 	}
@@ -36,5 +36,6 @@ public class SolicitacaoFaltaSobra {
 	public void setCodigoSolicitacao(String codigoSolicitacao) {
 		this.codigoSolicitacao = codigoSolicitacao;
 	}
+
 	
 }
