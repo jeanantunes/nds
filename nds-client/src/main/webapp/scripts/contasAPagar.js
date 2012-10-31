@@ -760,7 +760,7 @@ var contasAPagarController = $.extend(true, {
 				sortable : true,
 				align : 'left'
 			}],
-			sortname : "dtLancamento",
+			sortname : "lcto",
 			sortorder : "asc",
 			usepager : true,
 			useRp : true,

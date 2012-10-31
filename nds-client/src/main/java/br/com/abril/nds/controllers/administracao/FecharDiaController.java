@@ -284,7 +284,7 @@ public class FecharDiaController {
 	@Post
 	public void obterSumarizacaoDividas() {
         Date dataFechamento = getDataFechamento();
-        Map<TipoSumarizacao, List<SumarizacaoDividasDTO>> sumarizacao = new HashMap<>();
+        Map<TipoSumarizacao, List<SumarizacaoDividasDTO>> sumarizacao = new HashMap<TipoSumarizacao, List<SumarizacaoDividasDTO>>();
         sumarizacao.put(TipoSumarizacao.DIVIDAS_A_RECEBER, new ArrayList<SumarizacaoDividasDTO>());
         sumarizacao.put(TipoSumarizacao.DIVIDAS_A_VENCER, new ArrayList<SumarizacaoDividasDTO>());
         for (TipoCobranca tc : TipoCobranca.values()) {

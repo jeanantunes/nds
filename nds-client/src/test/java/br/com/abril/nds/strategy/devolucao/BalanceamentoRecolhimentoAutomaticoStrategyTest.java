@@ -137,7 +137,7 @@ public class BalanceamentoRecolhimentoAutomaticoStrategyTest {
 		datasRecolhimentoDistribuidor.add(DateUtil.parseDataPTBR("10/05/2012"));
 		datasRecolhimentoDistribuidor.add(DateUtil.parseDataPTBR("11/05/2012"));
 		
-		dadosRecolhimento.setDatasRecolhimentoDistribuidor(datasRecolhimentoDistribuidor);
+		dadosRecolhimento.setDatasRecolhimentoFornecedor(datasRecolhimentoDistribuidor);
 		
 		TreeSet<Date> datasRecolhimentoFornecedor = new TreeSet<Date>();
 		
@@ -236,16 +236,6 @@ public class BalanceamentoRecolhimentoAutomaticoStrategyTest {
 		RecolhimentoDTO dadosRecolhimento = new RecolhimentoDTO();
 		
 		dadosRecolhimento.setCapacidadeRecolhimentoDistribuidor(new BigDecimal("100"));
-		
-		TreeSet<Date> datasRecolhimentoDistribuidor = new TreeSet<Date>();
-		
-		datasRecolhimentoDistribuidor.add(DateUtil.parseDataPTBR("07/05/2012"));
-		datasRecolhimentoDistribuidor.add(DateUtil.parseDataPTBR("08/05/2012"));
-		datasRecolhimentoDistribuidor.add(DateUtil.parseDataPTBR("09/05/2012"));
-		datasRecolhimentoDistribuidor.add(DateUtil.parseDataPTBR("10/05/2012"));
-		datasRecolhimentoDistribuidor.add(DateUtil.parseDataPTBR("11/05/2012"));
-		
-		dadosRecolhimento.setDatasRecolhimentoDistribuidor(datasRecolhimentoDistribuidor);
 		
 		TreeSet<Date> datasRecolhimentoFornecedor = new TreeSet<Date>();
 		

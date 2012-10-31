@@ -40,7 +40,7 @@ public class BalanceamentoRecolhimentoEditorStrategy extends AbstractBalanceamen
 		Map<Long, TreeMap<Date, BigDecimal>> mapaExpectativaEncalheEditor =
 			this.obterMapaExpectativaEncalheEditor(mapaProdutosRecolhimentoEditor);
 		
-		TreeSet<Date> datasRecolhimento = dadosRecolhimento.getDatasRecolhimentoDistribuidor();
+		TreeSet<Date> datasRecolhimento = dadosRecolhimento.getDatasRecolhimentoFornecedor();
 		
 		this.alocarProdutosMatrizRecolhimento(
 			matrizRecolhimentoBalanceada, mapaExpectativaEncalheEditor, 

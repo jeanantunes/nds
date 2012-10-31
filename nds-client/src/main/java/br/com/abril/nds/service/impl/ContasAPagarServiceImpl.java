@@ -22,6 +22,7 @@ import br.com.abril.nds.dto.FlexiGridDTO;
 import br.com.abril.nds.dto.filtro.FiltroContasAPagarDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.repository.ContasAPagarRepository;
+import br.com.abril.nds.repository.NotaFiscalRepository;
 import br.com.abril.nds.service.ContasAPagarService;
 import br.com.abril.nds.service.RecolhimentoService;
 import br.com.abril.nds.util.Intervalo;
@@ -36,6 +37,9 @@ public class ContasAPagarServiceImpl implements ContasAPagarService {
 	
 	@Autowired
 	private RecolhimentoService recolhimentoService;
+	
+	@Autowired
+	private NotaFiscalRepository notaFiscalRepository;
 
 	@Transactional
 	@Override
@@ -67,9 +71,56 @@ public class ContasAPagarServiceImpl implements ContasAPagarService {
 
 	@Transactional
 	@Override
-	public FlexiGridDTO<ContasAPagarParcialDTO> pesquisarParcial(FiltroContasAPagarDTO filtro, String sortname, String sortorder, int rp, int page) {
-		// TODO Auto-generated method stub
-		return null;
+	public FlexiGridDTO<ContasAPagarParcialDTO> pesquisarParcial(FiltroContasAPagarDTO filtro) {
+		
+		this.validarFiltroPesquisaParcial(filtro);
+		
+		List<ContasAPagarParcialDTO> lista = this.contasAPagarRepository.pesquisarParcial(filtro);
+		
+		for (ContasAPagarParcialDTO dto : lista){
+			
+			List<Long> nfes = 
+					this.notaFiscalRepository.obterNumerosNFePorLancamento(dto.getIdLancamento());
+			
+			StringBuilder textoNfe = new StringBuilder();
+			for (Long nfe : nfes){
+				
+				if (textoNfe.length() != 0){
+					
+					textoNfe.append(" / ");
+				}
+				
+				textoNfe.append(nfe);
+			}
+			
+			dto.setNfe(textoNfe.toString());
+		}
+		
+		FlexiGridDTO<ContasAPagarParcialDTO> dto = new FlexiGridDTO<ContasAPagarParcialDTO>();
+		dto.setGrid(lista);
+		
+		Long count = this.contasAPagarRepository.countPesquisarParcial(filtro);
+		dto.setTotalGrid(count == null ? 0 : count.intValue());
+		
+		return dto;
+	}
+
+	private void validarFiltroPesquisaParcial(FiltroContasAPagarDTO filtro) {
+		
+		if (filtro == null){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Filtro de pesquisa inválido.");
+		}
+		
+		if (filtro.getDataDetalhe() == null){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Data inválida.");
+		}
+		
+		if (filtro.getProduto() == null || filtro.getProduto().isEmpty()){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Código produto inválido.");
+		}
 	}
 
 	@Transactional
