@@ -266,29 +266,8 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 		if (hasAlteracao) {
 			this.getSession().update(lancamentoParcial);
 		}
-	}	
-	
-	
-	
-	
-	
-	/**
-	 * Obtém  o Lançamento associado ao produto Edição.
-	 * 
-	 * @param produtoEdicao
-	 * @return
-	 */
-	private Lancamento obterLancamento(ProdutoEdicao produtoEdicao) {
-
-		Criteria criteria = getSession().createCriteria(Lancamento.class);
-		criteria.add(Restrictions.eq("produtoEdicao", produtoEdicao));
-		criteria.addOrder(Order.asc("dataLancamentoPrevista"));
-		
-		Lancamento lancamento = (Lancamento) criteria.list().get(0);
-		
-		return lancamento;
 	}
-		
+	
 	
 	@Override
 	public void posProcess() {
