@@ -34,7 +34,7 @@ public class BalanceamentoRecolhimentoValorStrategy extends AbstractBalanceament
 		BigDecimal valorTotalProdutosRecolhimento = 
 			this.obterValorTotalProdutosRecolhimento(produtosRecolhimento);
 		
-		TreeSet<Date> datasRecolhimento = dadosRecolhimento.getDatasRecolhimentoDistribuidor();
+		TreeSet<Date> datasRecolhimento = dadosRecolhimento.getDatasRecolhimentoFornecedor();
 		
 		Integer qtdeDiasRecolhimento = datasRecolhimento.size();
 		

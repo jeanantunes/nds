@@ -66,11 +66,11 @@ public class AbstractBalanceamentoRecolhimentoStrategyTest {
 		
 		RecolhimentoDTO dadosRecolhimento = new RecolhimentoDTO();
 		
-		TreeSet<Date> datasRecolhimentoDistribuidor = new TreeSet<Date>();
+		TreeSet<Date> datasRecolhimentoFornecedor = new TreeSet<Date>();
 		
-		datasRecolhimentoDistribuidor.add(new Date());
+		datasRecolhimentoFornecedor.add(new Date());
 		
-		dadosRecolhimento.setDatasRecolhimentoDistribuidor(datasRecolhimentoDistribuidor);
+		dadosRecolhimento.setDatasRecolhimentoFornecedor(datasRecolhimentoFornecedor);
 		
 		BalanceamentoRecolhimentoDTO balanceamentoRecolhimento = 
 			balanceamentoRecolhimentoStrategy.balancear(dadosRecolhimento);
