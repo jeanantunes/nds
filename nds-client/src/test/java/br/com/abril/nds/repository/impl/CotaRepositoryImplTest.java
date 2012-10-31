@@ -384,7 +384,7 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 	}
 	
 	@Test
-	public void obterQuantidadeCota(){
+	public void obterQuantidadeCotasPesquisadas(){
 
 		
 		FiltroCotaDTO filtro = new FiltroCotaDTO();
