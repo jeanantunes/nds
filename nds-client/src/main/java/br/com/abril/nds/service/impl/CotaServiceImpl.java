@@ -93,7 +93,6 @@ import br.com.abril.nds.repository.EntregadorRepository;
 import br.com.abril.nds.repository.EstoqueProdutoCotaRepository;
 import br.com.abril.nds.repository.HistoricoNumeroCotaRepository;
 import br.com.abril.nds.repository.HistoricoSituacaoCotaRepository;
-import br.com.abril.nds.repository.ParametroCobrancaCotaRepository;
 import br.com.abril.nds.repository.ParametroSistemaRepository;
 import br.com.abril.nds.repository.PdvRepository;
 import br.com.abril.nds.repository.PessoaFisicaRepository;
@@ -102,7 +101,6 @@ import br.com.abril.nds.repository.RankingRepository;
 import br.com.abril.nds.repository.ReferenciaCotaRepository;
 import br.com.abril.nds.repository.RotaRepository;
 import br.com.abril.nds.repository.TelefoneCotaRepository;
-import br.com.abril.nds.repository.TipoEntregaRepository;
 import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
 import br.com.abril.nds.repository.UsuarioRepository;
 import br.com.abril.nds.service.CotaService;
@@ -159,9 +157,6 @@ public class CotaServiceImpl implements CotaService {
 	
 	@Autowired
 	private DistribuidorService distribuidorService;
-	
-	@Autowired
-	private TipoEntregaRepository tipoEntregaRepository;
 	
 	@Autowired
 	private BaseReferenciaCotaRepository baseReferenciaCotaRepository;
@@ -2154,6 +2149,41 @@ public class CotaServiceImpl implements CotaService {
         }
         return new DistribuicaoDTO(); 
     }
+
+	@Override
+	@Transactional(readOnly = true)
+	public Long obterQuantidadeCotas(SituacaoCadastro situacaoCadastro) {
+
+		return this.cotaRepository.obterQuantidadeCotas(situacaoCadastro);
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public List<Cota> obterCotas(SituacaoCadastro situacaoCadastro) {
+
+		return this.cotaRepository.obterCotas(situacaoCadastro);
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public List<Cota> obterCotasComInicioAtividadeEm(Date dataInicioAtividade) {
+
+		return this.cotaRepository.obterCotasComInicioAtividadeEm(dataInicioAtividade);
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public List<Cota> obterCotasAusentesNaExpedicaoDoReparteEm(Date dataExpedicaoReparte) {
+
+		return this.cotaRepository.obterCotasAusentesNaExpedicaoDoReparteEm(dataExpedicaoReparte);
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public List<Cota> obterCotasAusentesNoRecolhimentoDeEncalheEm(Date dataRecolhimentoEncalhe) {
+
+		return this.cotaRepository.obterCotasAusentesNoRecolhimentoDeEncalheEm(dataRecolhimentoEncalhe);
+	}
 
 }
 

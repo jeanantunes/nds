@@ -23,7 +23,6 @@ import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.cadastro.Banco;
-import br.com.abril.nds.model.cadastro.DistribuicaoDistribuidor;
 import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
@@ -110,18 +109,11 @@ public class MatrizLancamentoServiceImplTest extends AbstractRepositoryImplTest 
 		List<DistribuicaoFornecedor> listaDistribuicaoFornecedor =
 			this.listaDistribuicaoFornecedor();
 		
-		List<DistribuicaoDistribuidor> listaDistribuicaoDistribuidor =
-			this.listaDistribuicaoDistribuidor();
-		
 		Mockito.when(distribuidorRepository.obter()).thenReturn(distribuidor);
 		
 		Mockito.when(
 			distribuidorRepository.buscarDiasDistribuicaoFornecedor(
 				filtro.getIdsFornecedores(), OperacaoDistribuidor.DISTRIBUICAO)).thenReturn(listaDistribuicaoFornecedor);
-		
-		Mockito.when(
-			distribuidorRepository.buscarDiasDistribuicaoDistribuidor(
-				distribuidor.getId(), OperacaoDistribuidor.DISTRIBUICAO)).thenReturn(listaDistribuicaoDistribuidor);
 		
 		List<ProdutoLancamentoDTO> produtosLancamentoMock = obterProdutosLancamentoMock();
 		
@@ -210,30 +202,6 @@ public class MatrizLancamentoServiceImplTest extends AbstractRepositoryImplTest 
 		listaDistribuicaoFornecedor.add(distribuicaoFornecedorFCSexta);
 		
 		return listaDistribuicaoFornecedor;
-	}
-	
-	private List<DistribuicaoDistribuidor> listaDistribuicaoDistribuidor() {
-		
-		List<DistribuicaoDistribuidor> listaDistribuicaoDistribuidor =
-			new ArrayList<DistribuicaoDistribuidor>();
-		
-		DistribuicaoDistribuidor distribuicaoDistribuidorTerca =
-			Fixture.distribuicaoDistribuidor(distribuidor, DiaSemana.TERCA_FEIRA,
-										   	 OperacaoDistribuidor.DISTRIBUICAO);
-
-		DistribuicaoDistribuidor distribuicaoDistribuidorQuinta =
-			Fixture.distribuicaoDistribuidor(distribuidor, DiaSemana.QUINTA_FEIRA,
-				   	 						 OperacaoDistribuidor.DISTRIBUICAO);
-		
-		DistribuicaoDistribuidor distribuicaoDistribuidorSexta =
-			Fixture.distribuicaoDistribuidor(distribuidor, DiaSemana.SEXTA_FEIRA,
-				   	 						 OperacaoDistribuidor.DISTRIBUICAO);
-		
-		listaDistribuicaoDistribuidor.add(distribuicaoDistribuidorTerca);
-		listaDistribuicaoDistribuidor.add(distribuicaoDistribuidorQuinta);
-		listaDistribuicaoDistribuidor.add(distribuicaoDistribuidorSexta);
-		
-		return listaDistribuicaoDistribuidor;
 	}
 	
 	private List<ProdutoLancamentoDTO> obterProdutosLancamentoMock() {

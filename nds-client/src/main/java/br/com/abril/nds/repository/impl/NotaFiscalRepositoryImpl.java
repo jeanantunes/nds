@@ -4,6 +4,7 @@ import java.math.BigInteger;
 import java.util.List;
 
 import org.hibernate.Criteria;
+import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanResultTransformer;
@@ -557,6 +558,25 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		}
 
 		return sqlQuery.list();
-	}	
-
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Long> obterNumerosNFePorLancamento(Long idLancamento){
+		
+		StringBuilder hql = new StringBuilder("select ");
+		hql.append(" nota.identificacao.numeroDocumentoFiscal ")
+		   .append(" from ")
+		   .append(" 	Lancamento l ")
+		   .append("	join l.movimentoEstoqueCotas movEst ")
+		   .append("	join movEst.listaProdutoServicos prodServ ")
+		   .append("	join prodServ.produtoServicoPK.notaFiscal nota ")
+		   .append(" where ")
+		   .append("	l.id = :idLancamento ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("idLancamento", idLancamento);
+		
+		return query.list();
+	}
 }

@@ -88,19 +88,12 @@ public class BalanceamentoRecolhimentoEditorStrategyTest {
 		
 		dadosRecolhimento.setCapacidadeRecolhimentoDistribuidor(new BigDecimal("100"));
 		
-		TreeSet<Date> datasRecolhimentoDistribuidor = new TreeSet<Date>();
-		
-		datasRecolhimentoDistribuidor.add(DateUtil.parseDataPTBR("07/05/2012"));
-		datasRecolhimentoDistribuidor.add(DateUtil.parseDataPTBR("08/05/2012"));
-		datasRecolhimentoDistribuidor.add(DateUtil.parseDataPTBR("10/05/2012"));
-		datasRecolhimentoDistribuidor.add(DateUtil.parseDataPTBR("11/05/2012"));
-		
-		dadosRecolhimento.setDatasRecolhimentoDistribuidor(datasRecolhimentoDistribuidor);
-		
 		TreeSet<Date> datasRecolhimentoFornecedor = new TreeSet<Date>();
 		
+		datasRecolhimentoFornecedor.add(DateUtil.parseDataPTBR("07/05/2012"));
 		datasRecolhimentoFornecedor.add(DateUtil.parseDataPTBR("08/05/2012"));
 		datasRecolhimentoFornecedor.add(DateUtil.parseDataPTBR("10/05/2012"));
+		datasRecolhimentoFornecedor.add(DateUtil.parseDataPTBR("11/05/2012"));
 		
 		dadosRecolhimento.setDatasRecolhimentoFornecedor(datasRecolhimentoFornecedor);
 		

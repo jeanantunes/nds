@@ -44,7 +44,7 @@ public class ChamadaEncalheFornecedorDTOAssembler {
     public static Collection<ChamadasEncalheFornecedorDTO> criarChamadasEncalheFornecedorDTO(Collection<ChamadaEncalheFornecedor> chamadas,
             Distribuidor distribuidor) {
         PessoaJuridicaChamadaEncalheFornecedorDTO distribuidorDTO = criarDistribuidor(distribuidor);
-        Map<Long, ChamadasEncalheFornecedorDTO> mapaChamadasDTO = new HashMap<>();
+        Map<Long, ChamadasEncalheFornecedorDTO> mapaChamadasDTO = new HashMap<Long, ChamadasEncalheFornecedorDTO>();
 
         for (ChamadaEncalheFornecedor cef : chamadas) {
             Fornecedor fornecedor = cef.getFornecedor();
@@ -243,13 +243,13 @@ public class ChamadaEncalheFornecedorDTOAssembler {
      * @return mapa com os itens separados por número de documento
      */
     private static Map<Long, List<ItemChamadaEncalheFornecedor>> separarPorNumeroDocumento(List<ItemChamadaEncalheFornecedor> itens) {
-        Map<Long, List<ItemChamadaEncalheFornecedor>> mapa = new TreeMap<>();
+        Map<Long, List<ItemChamadaEncalheFornecedor>> mapa = new TreeMap<Long, List<ItemChamadaEncalheFornecedor>>();
         for (ItemChamadaEncalheFornecedor item : itens) {
             Long key = item.getNumeroDocumento();
             if (mapa.containsKey(key)) {
                 mapa.get(key).add(item);
             } else {
-                List<ItemChamadaEncalheFornecedor> lista = new ArrayList<>();
+                List<ItemChamadaEncalheFornecedor> lista = new ArrayList<ItemChamadaEncalheFornecedor>();
                 lista.add(item);
                 mapa.put(key, lista);
             }

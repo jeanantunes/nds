@@ -231,7 +231,7 @@ public class ChamadaEncalheFornecedorDTO implements Serializable {
     
     public void addItem(ItemChamadaEncalheFornecedorDTO item) {
         if (itens == null) {
-            itens = new ArrayList<>();
+            itens = new ArrayList<ItemChamadaEncalheFornecedorDTO>();
         }
         itens.add(item);
     }
