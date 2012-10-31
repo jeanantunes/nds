@@ -47,7 +47,7 @@ public class PeriodoLancamentoParcial {
 	@JoinColumn(name = "LANCAMENTO_ID")
 	private Lancamento lancamento;
 	
-	/** Número do */
+	/** Número do Período do lançamento parcial. */
 	@Column(name = "NUMERO_PERIODO", nullable = false)
 	private Integer numeroPeriodo;
 	
