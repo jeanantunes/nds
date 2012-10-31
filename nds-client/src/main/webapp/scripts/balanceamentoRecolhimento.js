@@ -825,7 +825,7 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 				var idLancamento = idLinha.replace("row", "");
 				
 				var sequencia = balanceamentoRecolhimentoController.obterValorInputColuna(linha, 0, "sequencia");
-				var novaData = balanceamentoRecolhimentoController.obterValorInputColuna(linha, 16, "novaData");
+				var novaData = balanceamentoRecolhimentoController.obterValorInputColuna(linha, 17, "novaData");
 				
 				listaProdutoRecolhimento.push({idLancamento:idLancamento,sequencia:sequencia,novaData:novaData});
 			}
@@ -873,7 +873,7 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 			if (idLancamento == idRow) {
 				
 				var sequencia = balanceamentoRecolhimentoController.obterValorInputColuna(linha, 0, "sequencia");
-				var novaData = balanceamentoRecolhimentoController.obterValorInputColuna(linha, 16, "novaData");
+				var novaData = balanceamentoRecolhimentoController.obterValorInputColuna(linha, 17, "novaData");
 				
 				linhaSelecionada = {idLancamento:idLancamento,sequencia:sequencia,novaData:novaData};
 			}

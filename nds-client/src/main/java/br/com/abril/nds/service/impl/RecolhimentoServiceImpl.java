@@ -434,6 +434,8 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 
 				for (EstoqueProdutoCota estoqueProdutoCota : listaEstoqueProdutoCota) {
 
+					boolean indNovaChamadaEncalhe = false;
+					
 					ProdutoEdicao produtoEdicao = estoqueProdutoCota
 							.getProdutoEdicao();
 
@@ -442,11 +444,10 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 					ChamadaEncalhe chamadaEncalhe = this.obterChamadaEncalheLista(listaChamadaEncalhe,
 									dataRecolhimento, produtoEdicao.getId());
 
-					if (chamadaEncalhe == null) {
-
+					indNovaChamadaEncalhe = (chamadaEncalhe == null);
+					
+					if (indNovaChamadaEncalhe) {
 						chamadaEncalhe = this.criarChamadaEncalhe(dataRecolhimento, produtoEdicao);
-
-						listaChamadaEncalhe.add(chamadaEncalhe);
 					}
 					
 					Set<Lancamento> lancamentos = chamadaEncalhe.getLancamentos();
@@ -460,6 +461,10 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 					chamadaEncalhe.setLancamentos(lancamentos);
 					
 					chamadaEncalhe = this.chamadaEncalheRepository.merge(chamadaEncalhe);
+					
+					if (indNovaChamadaEncalhe) {
+						listaChamadaEncalhe.add(chamadaEncalhe);
+					}
 					
 					this.criarChamadaEncalheCota(estoqueProdutoCota, cota,
 							chamadaEncalhe);
