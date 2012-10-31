@@ -4,17 +4,20 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.util.export.Export;
+import br.com.abril.nds.util.export.Exportable;
+import br.com.abril.nds.util.export.Export.Alignment;
 
-
+@Exportable
 public class CotasImpressaoNfeDTO extends NfeDTO {
 
-	public CotasImpressaoNfeDTO(Cota c, BigDecimal vlrTotal, BigDecimal vlrTotalDesconto) {
+	public CotasImpressaoNfeDTO(Cota c, BigInteger totalExemplares, BigDecimal vlrTotal, BigDecimal vlrTotalDesconto) {
 		super();
 		this.idCota = c.getId();
 		this.nomeCota = c.getPessoa().getNome();
-		this.vlrTotal = vlrTotal;
-		this.vlrTotalDesconto = vlrTotal.subtract(vlrTotal.multiply(vlrTotalDesconto.divide(new BigDecimal("100"))));
-		
+		this.vlrTotal = vlrTotal.setScale(2, BigDecimal.ROUND_DOWN);;
+		this.vlrTotalDesconto = vlrTotal.subtract(vlrTotal.multiply(vlrTotalDesconto.divide(new BigDecimal("100")))).setScale(2, BigDecimal.ROUND_DOWN);;
+		this.totalExemplares = totalExemplares;
 	}
 	
 	/**
@@ -22,15 +25,20 @@ public class CotasImpressaoNfeDTO extends NfeDTO {
 	 */
 	private static final long serialVersionUID = 5371527354389347503L;
 
-	private BigDecimal vlrTotal;
-	
-	private BigDecimal vlrTotalDesconto;
-	
+	@Export(label="Id Cota", alignment=Alignment.LEFT)
 	private Long idCota;
 	
+	@Export(label="Cota", alignment=Alignment.LEFT)
 	private String nomeCota;
 	
+	@Export(label="Total de Exemplares", alignment=Alignment.LEFT)
 	private BigInteger totalExemplares;
+	
+	@Export(label="Valor total", alignment=Alignment.LEFT)
+	private BigDecimal vlrTotal;
+	
+	@Export(label="Valor total com Desc.", alignment=Alignment.LEFT)
+	private BigDecimal vlrTotalDesconto;
 	
 	private boolean notaImpressa;
 

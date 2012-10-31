@@ -233,6 +233,8 @@ public interface CotaRepository extends Repository<Cota, Long> {
             Intervalo<Integer> intervaloBox, SituacaoCadastro situacao, Long idRoteiro, Long idRota);
 
     Long obterQuantidadeCotas(SituacaoCadastro situacaoCadastro);
+    
+    List<Cota> obterCotas(SituacaoCadastro situacaoCadastro);
 
     /**
      * Obtém cotas relacionadas a um fornecedor.
@@ -308,4 +310,11 @@ public interface CotaRepository extends Repository<Cota, Long> {
     HistoricoTitularidadeCotaSocio obterSocioHistoricoTitularidade(Long idSocio);
 
 	void ativarCota(Integer numeroCota);
+	
+	List<Cota> obterCotasComInicioAtividadeEm(Date dataInicioAtividade);
+	
+	List<Cota> obterCotasAusentesNaExpedicaoDoReparteEm(Date dataExpedicaoReparte);
+	
+	List<Cota> obterCotasAusentesNoRecolhimentoDeEncalheEm(Date dataRecolhimentoEncalhe);
+	
 }

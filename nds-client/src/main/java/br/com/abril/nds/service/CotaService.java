@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -350,5 +351,15 @@ public interface CotaService {
      *         titularidade da cota
      */
 	DistribuicaoDTO obterDistribuicaoHistoricoTitularidade(Long idCota, Long idHistorico);
+	
+	Long obterQuantidadeCotas(SituacaoCadastro situacaoCadastro);
+    
+    List<Cota> obterCotas(SituacaoCadastro situacaoCadastro);
+	
+	List<Cota> obterCotasComInicioAtividadeEm(Date dataInicioAtividade);
+	
+	List<Cota> obterCotasAusentesNaExpedicaoDoReparteEm(Date dataExpedicaoReparte);
+	
+	List<Cota> obterCotasAusentesNoRecolhimentoDeEncalheEm(Date dataRecolhimentoEncalhe);
 	
 }

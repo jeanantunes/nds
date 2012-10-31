@@ -23,7 +23,6 @@ import br.com.abril.nds.factory.devolucao.BalanceamentoRecolhimentoFactory;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.cadastro.Cota;
-import br.com.abril.nds.model.cadastro.DistribuicaoDistribuidor;
 import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
@@ -435,6 +434,8 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 
 				for (EstoqueProdutoCota estoqueProdutoCota : listaEstoqueProdutoCota) {
 
+					boolean indNovaChamadaEncalhe = false;
+					
 					ProdutoEdicao produtoEdicao = estoqueProdutoCota
 							.getProdutoEdicao();
 
@@ -443,11 +444,10 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 					ChamadaEncalhe chamadaEncalhe = this.obterChamadaEncalheLista(listaChamadaEncalhe,
 									dataRecolhimento, produtoEdicao.getId());
 
-					if (chamadaEncalhe == null) {
-
+					indNovaChamadaEncalhe = (chamadaEncalhe == null);
+					
+					if (indNovaChamadaEncalhe) {
 						chamadaEncalhe = this.criarChamadaEncalhe(dataRecolhimento, produtoEdicao);
-
-						listaChamadaEncalhe.add(chamadaEncalhe);
 					}
 					
 					Set<Lancamento> lancamentos = chamadaEncalhe.getLancamentos();
@@ -461,6 +461,10 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 					chamadaEncalhe.setLancamentos(lancamentos);
 					
 					chamadaEncalhe = this.chamadaEncalheRepository.merge(chamadaEncalhe);
+					
+					if (indNovaChamadaEncalhe) {
+						listaChamadaEncalhe.add(chamadaEncalhe);
+					}
 					
 					this.criarChamadaEncalheCota(estoqueProdutoCota, cota,
 							chamadaEncalhe);
@@ -599,10 +603,6 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		TreeSet<Date> datasRecolhimentoFornecedor = 
 			this.obterDatasRecolhimentoFornecedor(periodoRecolhimento, listaIdsFornecedores);
 		
-		TreeSet<Date> datasRecolhimentoDistribuidor = 
-			this.obterDatasRecolhimentoDistribuidor(distribuidor, periodoRecolhimento);
-		
-		dadosRecolhimento.setDatasRecolhimentoDistribuidor(datasRecolhimentoDistribuidor);
 		dadosRecolhimento.setDatasRecolhimentoFornecedor(datasRecolhimentoFornecedor);
 
 		List<ProdutoRecolhimentoDTO> produtosRecolhimento = null;
@@ -714,29 +714,6 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 			this.obterDatasRecolhimento(periodoRecolhimento, diasSemanaFornecedor);
 		
 		return datasRecolhimentoFornecedor;
-	}
-	
-	/**
-	 * Obtém as datas de recolhimento do distribuídor.
-	 */
-	private TreeSet<Date> obterDatasRecolhimentoDistribuidor(Distribuidor distribuidor,
-															 Intervalo<Date> periodoRecolhimento) {
-		
-		List<DistribuicaoDistribuidor> listaDistribuicaoDistribuidor = 
-			this.distribuidorRepository.buscarDiasDistribuicaoDistribuidor(
-				distribuidor.getId(), OperacaoDistribuidor.RECOLHIMENTO);
-		
-		Set<Integer> diasSemanaDistribuidor = new TreeSet<Integer>();
-		
-		for (DistribuicaoDistribuidor distribuicaoDistribuidor : listaDistribuicaoDistribuidor) {
-			
-			diasSemanaDistribuidor.add(distribuicaoDistribuidor.getDiaSemana().getCodigoDiaSemana());
-		}
-		
-		TreeSet<Date> datasRecolhimentoDistribuidor = 
-			this.obterDatasRecolhimento(periodoRecolhimento, diasSemanaDistribuidor);
-		
-		return datasRecolhimentoDistribuidor;
 	}
 	
 	/**

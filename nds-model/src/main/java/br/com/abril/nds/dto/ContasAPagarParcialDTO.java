@@ -20,7 +20,7 @@ public class ContasAPagarParcialDTO implements Serializable {
 	private Integer vendaAcum;
 	private BigDecimal pctVendaAcum;
 	private String nfe;
-	
+	private Long idLancamento;
 	
 	public Date getLcto() {
 		return lcto;
@@ -93,5 +93,11 @@ public class ContasAPagarParcialDTO implements Serializable {
 	}
 	public void setNfe(String nfe) {
 		this.nfe = nfe;
+	}
+	public Long getIdLancamento() {
+		return idLancamento;
+	}
+	public void setIdLancamento(Long idLancamento) {
+		this.idLancamento = idLancamento;
 	}
 }

@@ -1,5 +1,3 @@
-//TODO: Sérgio - Fazer uma extensao da funcao onChangePage do Flexigrid para limpar o array de cotas selecionadas na pagina anterior
-
 Array.prototype.removeByValue = function(){
     var what, a= arguments, L= a.length, ax;
     while(L && this.length){
@@ -165,6 +163,7 @@ var impressaoNfeController = $.extend(true, {
 			showTableToggleBtn : true,
 			width : 960,
 			height : 180,
+			//TODO: Sérgio - Sobrescrever o changePage do Flexigrid
 			/*onChangePage : function(ctype) {
 				impressaoNfeController.filtroCotasImprimirNFe = [];
 			},*/
@@ -363,8 +362,9 @@ var impressaoNfeController = $.extend(true, {
 	 */
 	imprimir : function(fileType) {
 
-		if(impressaoNfeController.filtroCotasImprimirNFe.length < 1)
-			return false;
+		if(impressaoNfeController.filtroCotasImprimirNFe.length < 1 && fileType != 'XLS') {
+			return false;			
+		}
 		
 		params = [];
 		
@@ -380,10 +380,23 @@ var impressaoNfeController = $.extend(true, {
 			});
 		}
 		
-		$.fileDownload(contextPath +'/nfe/impressaoNFE/imprimirNFe', {
-			httpMethod : "POST",
-			data : params
-		});
+		if(fileType == 'XLS') {
+			
+			$.fileDownload(contextPath +'/nfe/impressaoNFE/exportar', {
+				httpMethod : "POST",
+				data : params
+			});
+			
+		} else {
+			
+			$.fileDownload(contextPath +'/nfe/impressaoNFE/imprimirNFe', {
+				httpMethod : "POST",
+				data : params
+			});
+			
+		}
+		
+		
 	},
 	
 	/**

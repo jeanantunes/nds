@@ -20,7 +20,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.client.vo.NfeVO;
-import br.com.abril.nds.dto.DanfeWrapper;
 import br.com.abril.nds.dto.Duplicata;
 import br.com.abril.nds.dto.InfoNfeDTO;
 import br.com.abril.nds.dto.ItemImpressaoNfe;
@@ -610,7 +609,6 @@ public class NFeServiceImpl implements NFeService {
 		String codigoProduto 		= "";
 		String descricaoProduto 	= "";
 		Long produtoEdicao 			= null;
-		Long reparteProduto 		= null;
 		String NCMProduto 			= "";
 		String CFOPProduto 			= "";
 		String unidadeProduto 		= "";
@@ -633,8 +631,6 @@ public class NFeServiceImpl implements NFeService {
 			codigoProduto 		= produtoServico.getCodigoProduto().toString();
 			descricaoProduto 	= produtoServico.getDescricaoProduto();
 			produtoEdicao		= produtoServico.getProdutoEdicao().getNumeroEdicao();
-			//TODO: Sérgio - Corrigir reparte
-			//reparteProduto		= produtoServico.getListaMovimentoEstoqueCota().get(0).getLancamento().getReparte();
 
 			NCMProduto 			= produtoServico.getNcm().toString();
 			CFOPProduto 		= produtoServico.getCfop().toString();                            
@@ -680,7 +676,7 @@ public class NFeServiceImpl implements NFeService {
 
 		}
 
-		nfeImpressao.setItensDanfe(listaItemImpressaoNfe);
+		nfeImpressao.setItensImpressaoNfe(listaItemImpressaoNfe);
 
 	}
 
@@ -691,22 +687,6 @@ public class NFeServiceImpl implements NFeService {
 		return urlDanfe;
 	}
 
-	private byte[] gerarDocumentoIreportDANFE(List<DanfeWrapper> list, boolean indEmissaoDepec) throws JRException, URISyntaxException {
-
-		JRDataSource jrDataSource = new JRBeanCollectionDataSource(list);
-
-		URL diretorioReports = obterDiretorioReports();
-
-		String path = diretorioReports.toURI().getPath() + "/danfeWrapper.jasper";
-
-		Map<String, Object> parameters = new HashMap<String, Object>();
-
-		parameters.put("SUBREPORT_DIR", diretorioReports.toURI().getPath());
-		parameters.put("IND_EMISSAO_DEPEC", indEmissaoDepec);
-
-		return  JasperRunManager.runReportToPdf(path, parameters, jrDataSource);
-	}
-	
 	private byte[] gerarDocumentoIreportNE(List<NfeImpressaoWrapper> list, boolean indEmissaoDepec) throws JRException, URISyntaxException {
 
 		JRDataSource jrDataSource = new JRBeanCollectionDataSource(list);
@@ -918,6 +898,7 @@ public class NFeServiceImpl implements NFeService {
 
 		String codigoProduto 		= "";
 		String descricaoProduto 	= "";
+		Integer sequencia			= 0;
 		Long produtoEdicao 			= null;
 		BigDecimal valorUnitarioProduto = BigDecimal.ZERO;
 		BigDecimal valorTotalProduto 	= BigDecimal.ZERO;
@@ -930,7 +911,8 @@ public class NFeServiceImpl implements NFeService {
 			produtoEdicao		= itemNotaEnvio.getProdutoEdicao().getNumeroEdicao();
 
 			valorUnitarioProduto = itemNotaEnvio.getPrecoCapa();
-			valorDescontoProduto = itemNotaEnvio.getDesconto();
+			valorDescontoProduto = itemNotaEnvio.getDesconto().divide(new BigDecimal("100"));
+			valorTotalProduto	 = itemNotaEnvio.getPrecoCapa().multiply(new BigDecimal(itemNotaEnvio.getReparte()));
 
 			ItemImpressaoNfe item = new ItemImpressaoNfe();
 
@@ -940,13 +922,14 @@ public class NFeServiceImpl implements NFeService {
 			item.setQuantidadeProduto(new BigDecimal(itemNotaEnvio.getReparte().toString()));
 			item.setValorUnitarioProduto(valorUnitarioProduto);
 			item.setValorTotalProduto(valorTotalProduto);
-			item.setValorDescontoProduto(valorDescontoProduto.divide(new BigDecimal("100")));
+			item.setValorDescontoProduto(valorTotalProduto.subtract(valorTotalProduto.multiply(valorDescontoProduto)));
+			item.setSequencia(itemNotaEnvio.getSequencia());
 
 			listaItemImpressaoNfe.add(item);
 
 		}
 
-		nfeImpressao.setItensDanfe(listaItemImpressaoNfe);
+		nfeImpressao.setItensImpressaoNfe(listaItemImpressaoNfe);
 
 	}
 	

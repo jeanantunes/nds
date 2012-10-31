@@ -108,7 +108,7 @@ public class ChamadaEncalheFornecedor implements Serializable {
 
     @OneToMany(mappedBy = "chamadaEncalheFornecedor")
     @Cascade(value = CascadeType.ALL)
-    private List<ItemChamadaEncalheFornecedor> itens = new ArrayList<>();
+    private List<ItemChamadaEncalheFornecedor> itens = new ArrayList<ItemChamadaEncalheFornecedor>();
 
     /**
      * @return the id

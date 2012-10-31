@@ -700,6 +700,7 @@ public class MatrizRecolhimentoController {
 		}
 	}
 	
+		
 	/**
 	 * Método que processa os balanceamentos para exibição no grid.
 	 * 
@@ -711,12 +712,16 @@ public class MatrizRecolhimentoController {
 	private void processarBalanceamento(List<ProdutoRecolhimentoDTO> listaProdutoRecolhimento,
 										boolean isSemanaRecolhimento, PaginacaoVO paginacao, String sortname) {
 		
+		
+		
 		List<ProdutoRecolhimentoVO> listaProdutoRecolhimentoVO =
 			new LinkedList<ProdutoRecolhimentoVO>();
 		
 		ProdutoRecolhimentoVO produtoRecolhimentoVO = null;
 		
 		BigDecimal precoDesconto = BigDecimal.ZERO;
+		BigDecimal precoVenda = BigDecimal.ZERO;
+		BigDecimal valorDesconto = BigDecimal.ZERO;
 		
 		for (ProdutoRecolhimentoDTO produtoRecolhimentoDTO : listaProdutoRecolhimento) {
 			
@@ -736,12 +741,12 @@ public class MatrizRecolhimentoController {
 			
 			produtoRecolhimentoVO.setPrecoVenda(produtoRecolhimentoDTO.getPrecoVenda());
 			
-			precoDesconto = produtoRecolhimentoDTO.getPrecoVenda();
+			precoVenda = produtoRecolhimentoDTO.getPrecoVenda() != null ? produtoRecolhimentoDTO.getPrecoVenda() : BigDecimal.ZERO;
 			
-			if (produtoRecolhimentoDTO.getDesconto() != null) {
-				
-				precoDesconto = precoDesconto.subtract(produtoRecolhimentoDTO.getDesconto());
-			}
+			valorDesconto = produtoRecolhimentoDTO.getDesconto() != null ? produtoRecolhimentoDTO.getDesconto() : BigDecimal.ZERO;
+			
+			precoDesconto = precoVenda.subtract(precoVenda.multiply(valorDesconto.divide(BigDecimal.valueOf(100D))));
+			
 			
 			produtoRecolhimentoVO.setPrecoDesconto(precoDesconto);
 

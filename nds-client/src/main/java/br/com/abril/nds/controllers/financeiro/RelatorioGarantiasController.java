@@ -74,6 +74,8 @@ public class RelatorioGarantiasController {
 	@Rules(Permissao.ROLE_FINANCEIRO_RELATORIO_DE_GARANTIAS)
 	public void index() {
 		
+		listaTiposGarantia.clear();
+		
 		List<ItemDTO<TipoGarantia,String>> listaTiposGarantiaAux = distribuidorService.getComboTiposGarantia();
 		
 		for (ItemDTO<TipoGarantia,String> item : listaTiposGarantiaAux){
@@ -83,6 +85,8 @@ public class RelatorioGarantiasController {
 				listaTiposGarantia.add(item);
 			}
 		}
+		
+		listaTiposStatusGarantia.clear();
 				
 		listaTiposStatusGarantia = distribuidorService.getComboTiposStatusGarantia();
 		

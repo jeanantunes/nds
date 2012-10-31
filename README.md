@@ -1,6 +1,9 @@
 NDS
 ===
 
+Repo de dados de teste: https://github.com/DGBti/NDS-Fixture
+============================================================
+
 build Status
 ------------
 

@@ -1,10 +1,6 @@
 package br.com.abril.nds.service.impl;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.math.MathContext;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,11 +14,8 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.Produto;
-import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.envio.nota.NotaEnvio;
-import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
-import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
@@ -31,8 +24,6 @@ import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.ImpressaoNFEService;
-import br.com.abril.nds.util.Intervalo;
-import br.com.abril.nds.util.MathUtil;
 
 /**
  * @author InfoA2
@@ -95,86 +86,8 @@ public class ImpressaoNFEServiceImpl implements ImpressaoNFEService {
 		} else {
 			cotas = impressaoNFeRepository.buscarCotasParaImpressaoNFe(filtro);
 		}
-		
-		List<CotasImpressaoNfeDTO> cotasARemover = new ArrayList<CotasImpressaoNfeDTO>();
-
-		for (CotasImpressaoNfeDTO itemCota : cotas) {
-
-			List<MovimentoEstoqueCota> listaMovimentoEstoqueCota = obterItensNotaVenda(
-					distribuidor, itemCota.getIdCota(), filtro.getDataMovimentoInicial(), filtro.getDataMovimentoFinal(), filtro.getIdsFornecedores(), filtro.getCodigosProdutos());
-
-			if(listaMovimentoEstoqueCota == null || listaMovimentoEstoqueCota.size() < 1)
-				cotasARemover.add(itemCota);
-			
-			this.sumarizarTotalItensNota(listaMovimentoEstoqueCota, itemCota);
-
-		}
-
-		cotas.removeAll(cotasARemover);
-		
+				
 		return cotas;
-	}
-
-	@Transactional
-	private List<MovimentoEstoqueCota> obterItensNotaVenda(Distribuidor distribuidor,
-			Long idCota, Date dataMovimentoInicial, Date dataMovimentoFinal, List<Long> listaIdFornecedores, List<Long> listaCodigosProdutos) {
-
-		List<GrupoMovimentoEstoque> listaGrupoMovimentoEstoques = new ArrayList<GrupoMovimentoEstoque>();
-
-		Intervalo<Date> dataMovimento = new Intervalo<Date>(dataMovimentoInicial, dataMovimentoFinal);
-		
-		//TODO: Sérgio - Complementar a lista com os movimentos de estoque possíveis
-		listaGrupoMovimentoEstoques.add(GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
-
-		List<MovimentoEstoqueCota> movEstCota = movimentoEstoqueCotaRepository
-				.obterMovimentoEstoqueCotaPor(distribuidor, idCota, listaGrupoMovimentoEstoques, dataMovimento, listaIdFornecedores);
-		
-		
-		if(listaCodigosProdutos != null && listaCodigosProdutos.size() > 0) {
-			List<MovimentoEstoqueCota> movEstCotaFiltrado = new ArrayList<MovimentoEstoqueCota>();
-			
-			for(MovimentoEstoqueCota mec : movEstCota) {
-				if(listaCodigosProdutos.contains(Long.parseLong(mec.getProdutoEdicao().getProduto().getCodigo()))) {
-					movEstCotaFiltrado.add(mec);
-				}				
-			}
-			
-			return movEstCotaFiltrado;
-		}
-		
-		return movEstCota;
-	}
-
-	@Transactional
-	private void sumarizarTotalItensNota(
-			List<MovimentoEstoqueCota> listaMovimentoEstoqueCota,
-			CotasImpressaoNfeDTO itemCota) {
-
-		BigInteger quantidade = BigInteger.ZERO;
-		BigDecimal preco = BigDecimal.ZERO;
-		BigDecimal precoComDesconto = BigDecimal.ZERO;
-		itemCota.setNotaImpressa(false);
-
-		for (MovimentoEstoqueCota movimento : listaMovimentoEstoqueCota) {
-			ProdutoEdicao produtoEdicao = movimento.getProdutoEdicao();
-			BigDecimal precoVenda = produtoEdicao.getPrecoVenda();
-			BigDecimal percentualDesconto = descontoService
-					.obterDescontoPorCotaProdutoEdicao(cotaRepository.buscarPorId(itemCota.getIdCota()), produtoEdicao);
-			BigDecimal valorDesconto = MathUtil.calculatePercentageValue(precoVenda, percentualDesconto);			
-			quantidade = quantidade.add(movimento.getQtde());
-			preco = preco.add(precoVenda.multiply(new BigDecimal(movimento.getQtde())));
-			precoComDesconto = precoComDesconto.add(precoVenda.subtract(valorDesconto, new MathContext(3)));	
-
-			if(!movimento.getListaItemNotaEnvio().isEmpty()){
-				itemCota.setNotaImpressa(true);
-			}
-
-		}
-
-		itemCota.setVlrTotal(preco);
-		itemCota.setVlrTotalDesconto(precoComDesconto);
-		itemCota.setTotalExemplares(quantidade);
-
 	}
 
 	@Transactional
