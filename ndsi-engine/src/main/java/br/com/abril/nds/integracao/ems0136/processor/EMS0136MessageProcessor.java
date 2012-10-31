@@ -81,12 +81,11 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 				produtoEdicao);
 		if (lancamentoParcial == null) {
 			
-			// new
 			this.gerarNovoLancamentoParcial(input, produtoEdicao);
-			
 		} else {
 			
-			// Update
+			boolean hasAlteracao = false;
+
 		}
 		
 	}
@@ -146,16 +145,7 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 	private void gerarNovoLancamentoParcial(EMS0136Input input, 
 			ProdutoEdicao produtoEdicao) {
 		
-		/*
-		 * Se a "Data de Operação" > "Data de Recolhimento" então o status é
-		 * RECOLHIDO, senão, é PROJETADO
-		 */
-		Date dataOperacao = distribuidorService.obter().getDataOperacao();
-		StatusLancamentoParcial status = dataOperacao.after(
-			input.getDataRecolhimento())
-				? StatusLancamentoParcial.RECOLHIDO
-				: StatusLancamentoParcial.PROJETADO;		
-		
+		StatusLancamentoParcial status = obterStatusLancamentoParcial(input);	
 		
 		// Novo Lançamento Parcial:
 		LancamentoParcial lancamentoParcial = new LancamentoParcial();
@@ -197,6 +187,32 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 		this.getSession().persist(lancamento);
 		this.getSession().persist(pLancamentoParcial);
 	}
+
+	/**
+	 * Obtém o "Status Lançamento Parcial" verificando se a "Data de Operação"
+	 * do sistema é maior que a "Data de Recolhimento" vinda do arquivo.<br>
+	 * Em caso positivo o status é "RECOLHIDO", senão é "PROJETADO".
+	 * 
+	 * @param input
+	 * @return
+	 */
+	private StatusLancamentoParcial obterStatusLancamentoParcial(
+			EMS0136Input input) {
+		/*
+		 * Se a "Data de Operação" > "Data de Recolhimento" então o status é
+		 * RECOLHIDO, senão, é PROJETADO
+		 */
+		Date dataOperacao = distribuidorService.obter().getDataOperacao();
+		StatusLancamentoParcial status = dataOperacao.after(
+			input.getDataRecolhimento())
+				? StatusLancamentoParcial.RECOLHIDO
+				: StatusLancamentoParcial.PROJETADO;
+		return status;
+	}
+	
+	
+	
+	
 	
 	
 	
