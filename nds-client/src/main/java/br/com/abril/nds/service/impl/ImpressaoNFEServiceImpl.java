@@ -7,10 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import br.com.abril.nds.dto.CotasImpressaoNfeDTO;
+import br.com.abril.nds.dto.NotasCotasImpressaoNfeDTO;
 import br.com.abril.nds.dto.ProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroImpressaoNFEDTO;
-import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.Produto;
@@ -76,11 +75,11 @@ public class ImpressaoNFEServiceImpl implements ImpressaoNFEService {
 	}
 
 	@Transactional
-	public List<CotasImpressaoNfeDTO> buscarCotasParaImpressaoNFe(FiltroImpressaoNFEDTO filtro) {
+	public List<NotasCotasImpressaoNfeDTO> buscarCotasParaImpressaoNFe(FiltroImpressaoNFEDTO filtro) {
 
 		Distribuidor distribuidor = distribuidorRepository.obter();
 		
-		List<CotasImpressaoNfeDTO> cotas = null;
+		List<NotasCotasImpressaoNfeDTO> cotas = null;
 		if(distribuidor.getObrigacaoFiscal() == null) {
 			cotas = impressaoNFeRepository.buscarCotasParaImpressaoNotaEnvio(filtro);
 		} else {
@@ -104,15 +103,15 @@ public class ImpressaoNFEServiceImpl implements ImpressaoNFEService {
 	}
 
 	@Transactional
-	public List<NotaFiscal> buscarNotasPorCotaParaImpressaoNFe(Cota cota, FiltroImpressaoNFEDTO filtro) {
+	public List<NotaFiscal> buscarNotasParaImpressaoNFe(FiltroImpressaoNFEDTO filtro) {
 
-		return impressaoNFeRepository.buscarNotasPorCotaParaImpressaoNFe(cota, filtro);
+		return impressaoNFeRepository.buscarNotasParaImpressaoNFe(filtro);
 		
 	}
 
 	@Transactional
-	public List<NotaEnvio> buscarNotasEnvioPorCotaParaImpressaoNFe(Cota cota, FiltroImpressaoNFEDTO filtro) {
-		return impressaoNFeRepository.buscarNotasEnvioPorCotaParaImpressaoNFe(cota, filtro);
+	public List<NotaEnvio> buscarNotasEnvioParaImpressaoNFe(FiltroImpressaoNFEDTO filtro) {
+		return impressaoNFeRepository.buscarNotasEnvioParaImpressaoNFe(filtro);
 	}
 
 

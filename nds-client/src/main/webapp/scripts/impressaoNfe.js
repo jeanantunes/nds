@@ -13,9 +13,11 @@ var impressaoNfeController = $.extend(true, {
 
 	filtroProdutos : [],
 	
-	filtroCotasImprimirNFe : [],
+	filtroNotasImprimirNFe : [],
 	
 	paginaAtualPesquisarGrid : 1,
+	
+	totalRegistros : 0,
 
 	init : function() {
 		$( "#dataEmissao", impressaoNfeController.workspace ).datepicker({
@@ -112,15 +114,21 @@ var impressaoNfeController = $.extend(true, {
 			preProcess : null,
 			dataType : 'json',
 			colModel : [ {
+				display : 'Nota',
+				name : 'numeroNota',
+				width : 80,
+				sortable : true,
+				align : 'left'
+			}, {
 				display : 'Cota',
 				name : 'idCota',
-				width : 50,
+				width : 70,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Nome',
 				name : 'nomeCota',
-				width : 455,
+				width : 340,
 				sortable : true,
 				align : 'left'
 			}, {
@@ -165,7 +173,7 @@ var impressaoNfeController = $.extend(true, {
 			height : 180,
 			//TODO: Sérgio - Sobrescrever o changePage do Flexigrid
 			/*onChangePage : function(ctype) {
-				impressaoNfeController.filtroCotasImprimirNFe = [];
+				impressaoNfeController.filtroNotasImprimirNFe = [];
 			},*/
 		});
 		
@@ -251,6 +259,8 @@ var impressaoNfeController = $.extend(true, {
 	 */
 	pesquisar : function() {
 
+		impressaoNfeController.filtroNotasImprimirNFe = [];
+		
 		params = [ 	{name:'filtro.tipoNFe', value:$('#tipoNFe', impressaoNfeController.workspace).val()},
 		           	{name:'filtro.dataMovimentoInicial', value:$('#dataMovimentoInicial', impressaoNfeController.workspace).val()},
 		           	{name:'filtro.dataMovimentoFinal', value:$('#dataMovimentoFinal', impressaoNfeController.workspace).val()},
@@ -292,7 +302,7 @@ var impressaoNfeController = $.extend(true, {
 		});
 
 		$(".impressaoGrid", impressaoNfeController.workspace).flexReload();
-
+		
 	},
 
 	/**
@@ -347,10 +357,20 @@ var impressaoNfeController = $.extend(true, {
 			else
 				this.cell.notaImpressa = '';
 
-			this.cell.sel = '<input type="checkbox" name="imprimirNFe" id="imprimirNFe_'+ this.cell.idCota +'" value="'+ this.cell.idCota + '" onclick="impressaoNfeController.adicionarAsNFesAImprimir(this.checked, '+ this.cell.idCota +')" />';
+			this.cell.sel = '<input type="checkbox" name="imprimirNFe" id="imprimirNFe_'+ this.cell.idCota +'" value="'+ this.cell.idCota + '" onclick="impressaoNfeController.adicionarAsNFesAImprimir(this.checked, '+ this.cell.numeroNota +')" />';
 		});
 
 		$(".grids", impressaoNfeController.workspace).show();
+		
+		//Adiciona opcao do combo. Numero de registros a exibir no mesmo grid (sem paginacao)
+		//50: maior valor padrao de quantidade de registros
+		if(resultado.total > $('div .pGroup select option:last-child').val()) {
+			
+			if($('div .pGroup select option:last-child').val() != resultado.total) {
+				$('div .pGroup select').append($("<option />").val(resultado.total).text(resultado.total));
+			}
+			
+		}
 
 		return resultado;
 	},
@@ -362,7 +382,7 @@ var impressaoNfeController = $.extend(true, {
 	 */
 	imprimir : function(fileType) {
 
-		if(impressaoNfeController.filtroCotasImprimirNFe.length < 1 && fileType != 'XLS') {
+		if(impressaoNfeController.filtroNotasImprimirNFe.length < 1 && fileType != 'XLS') {
 			return false;			
 		}
 		
@@ -373,10 +393,10 @@ var impressaoNfeController = $.extend(true, {
 				'value' : fileType
 			});
 		
-		for(i=0; i < impressaoNfeController.filtroCotasImprimirNFe.length; i++) {
+		for(i=0; i < impressaoNfeController.filtroNotasImprimirNFe.length; i++) {
 			params.push({
-				'name' : 'filtro.idsCotas[]',
-				'value' : impressaoNfeController.filtroCotasImprimirNFe[i]
+				'name' : 'filtro.numerosNotas[]',
+				'value' : impressaoNfeController.filtroNotasImprimirNFe[i]
 			});
 		}
 		
@@ -402,15 +422,15 @@ var impressaoNfeController = $.extend(true, {
 	/**
 	 * Marca todas as cotas do grid
 	 */
-	checkTodasAsCotas : function() {
+	checkTodasAsNotas : function() {
 
 		var inputs = $('.impressaoGrid :checkbox', impressaoNfeController.workspace);
 
 		var values = {};
 		inputs.each(function(index) {
-			if(this.id != "selTodasAsCotas") {
+			if(this.id != "selTodasAsNotas") {
 
-				if($("#selTodasAsCotas").is(':checked'))
+				if($("#selTodasAsNotas").is(':checked'))
 					this.checked = true;
 				else
 					this.checked = false;
@@ -531,37 +551,37 @@ var impressaoNfeController = $.extend(true, {
 		$(".produtosAdicionadosPesqGrid").flexReload();
 	},
 
-	adicionarAsNFesAImprimir : function(checked, idCota) {
+	adicionarAsNFesAImprimir : function(checked, numeroNota) {
 		
 		//Verifica se ainda esta na mesma pagina, se nao, atualiza a pagina atual e limpa as cotas selecionadas na pagina anterior
 		if(impressaoNfeController.paginaAtualPesquisarGrid != $(".impressaoGrid").flexGetPageNumber()) {
 			impressaoNfeController.paginaAtualPesquisarGrid = $(".impressaoGrid").flexGetPageNumber();
-			impressaoNfeController.filtroCotasImprimirNFe = [];
+			impressaoNfeController.filtroNotasImprimirNFe = [];
 		}
 		
-		arrayOrdenado = impressaoNfeController.filtroCotasImprimirNFe.sort();
+		arrayOrdenado = impressaoNfeController.filtroNotasImprimirNFe.sort();
 		
 		inserirIdCota = true;
 		
 		if(checked) {
-			if(impressaoNfeController.filtroCotasImprimirNFe.length > 1) {
+			if(impressaoNfeController.filtroNotasImprimirNFe.length > 1) {
 				for (var i = 0; i < arrayOrdenado.length; i++) {
-				    if (arrayOrdenado[i] == idCota) {
+				    if (arrayOrdenado[i] == numeroNota) {
 				    	inserirIdCota = false;
 				    }
 				}
 				if(inserirIdCota)
-					impressaoNfeController.filtroCotasImprimirNFe.push(idCota)
+					impressaoNfeController.filtroNotasImprimirNFe.push(numeroNota)
 			} else {
-				if(impressaoNfeController.filtroCotasImprimirNFe[0] != idCota)
-					impressaoNfeController.filtroCotasImprimirNFe.push(idCota)
+				if(impressaoNfeController.filtroNotasImprimirNFe[0] != numeroNota)
+					impressaoNfeController.filtroNotasImprimirNFe.push(numeroNota)
 			}
 			
 		} else {
-			impressaoNfeController.filtroCotasImprimirNFe.removeByValue(idCota)
+			impressaoNfeController.filtroNotasImprimirNFe.removeByValue(numeroNota)
 		}
 		
-		impressaoNfeController.filtroCotasImprimirNFe.sort();
+		impressaoNfeController.filtroNotasImprimirNFe.sort();
 	},
 	
 }, BaseController);
