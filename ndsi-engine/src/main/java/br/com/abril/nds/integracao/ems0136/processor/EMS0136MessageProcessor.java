@@ -82,7 +82,7 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 		if (lancamentoParcial == null) {
 			
 			// new
-			this.salvarNovoLancamentoParcial(input, produtoEdicao);
+			this.gerarNovoLancamentoParcial(input, produtoEdicao);
 			
 		} else {
 			
@@ -137,12 +137,13 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 	}
 	
 	/**
-	 * Salva um novo Lançamento Parcial.
+	 * Salva um novo Lançamento Parcial, gerando o Lançamento e Periodo 
+	 * Lançamento Parcial associados.
 	 * 
 	 * @param input
 	 * @param produtoEdicao
 	 */
-	private LancamentoParcial salvarNovoLancamentoParcial(EMS0136Input input, 
+	private void gerarNovoLancamentoParcial(EMS0136Input input, 
 			ProdutoEdicao produtoEdicao) {
 		
 		/*
@@ -156,63 +157,49 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 				: StatusLancamentoParcial.PROJETADO;		
 		
 		
-		
-		
-		////////////////////////////////////////////////////////////////////////
-		
 		// Novo Lançamento Parcial:
 		LancamentoParcial lancamentoParcial = new LancamentoParcial();
 		lancamentoParcial.setProdutoEdicao(produtoEdicao);
 		lancamentoParcial.setLancamentoInicial(input.getDataLancamento());
 		lancamentoParcial.setRecolhimentoFinal(input.getDataRecolhimento());
-		lancamentoParcial.setStatus(StatusLancamentoParcial.PROJETADO);
+		lancamentoParcial.setStatus(status);		
 		
+		// Novo Lançamento:
+		Date dtAgora = new Date();
+		Lancamento lancamento = new Lancamento();
+		lancamento.setDataCriacao(dtAgora);
+		lancamento.setDataLancamentoPrevista(input.getDataLancamento());
+		lancamento.setDataLancamentoDistribuidor(input.getDataLancamento());
+		lancamento.setDataRecolhimentoDistribuidor(input.getDataRecolhimento());
+		lancamento.setDataRecolhimentoPrevista(input.getDataRecolhimento());
+		lancamento.setProdutoEdicao(produtoEdicao);
+		lancamento.setTipoLancamento(TipoLancamento.PARCIAL);
+		lancamento.setDataStatus(dtAgora);
+		lancamento.setReparte(BigInteger.ZERO);
+		lancamento.setRepartePromocional(BigInteger.ZERO);
+		lancamento.setSequenciaMatriz(Integer.valueOf(0));
+		
+		TipoLancamentoParcial tipoLancamentoParcial = 
+				"F".equalsIgnoreCase(input.getTipoRecolhimento()) 
+					? TipoLancamentoParcial.FINAL 
+					: TipoLancamentoParcial.PARCIAL;
+		
+		// Novo Período Lançamento Parcial:
+		PeriodoLancamentoParcial pLancamentoParcial = new PeriodoLancamentoParcial();
+		pLancamentoParcial.setLancamentoParcial(lancamentoParcial);
+		pLancamentoParcial.setLancamento(lancamento);
+		pLancamentoParcial.setStatus(status);
+		pLancamentoParcial.setNumeroPeriodo(input.getNumeroPeriodo());
+		pLancamentoParcial.setTipo(tipoLancamentoParcial);
+		
+		// Persistir os novos objetos:
 		this.getSession().persist(lancamentoParcial);
-		
-		Lancamento lancamento = this.obterLancamento(produtoEdicao);
-		if (lancamento == null) {
-			
-			Date dtAgora = new Date();
-			lancamento = new Lancamento();
-			lancamento.setDataCriacao(dtAgora);
-			lancamento.setDataLancamentoPrevista(input.getDataLancamento());
-			lancamento.setDataLancamentoDistribuidor(input.getDataLancamento());
-			lancamento.setDataRecolhimentoDistribuidor(input.getDataRecolhimento());
-			lancamento.setDataRecolhimentoPrevista(input.getDataRecolhimento());
-			lancamento.setProdutoEdicao(produtoEdicao);
-			lancamento.setTipoLancamento(TipoLancamento.PARCIAL);
-			lancamento.setDataStatus(dtAgora);
-			lancamento.setReparte(BigInteger.ZERO);
-			lancamento.setRepartePromocional(BigInteger.ZERO);
-			lancamento.setSequenciaMatriz(Integer.valueOf(0));
-			
-			this.getSession().persist(lancamento);
-		}
-		
-		PeriodoLancamentoParcial pLancamentoParcial = 
-				lancamento.getPeriodoLancamentoParcial();
-		if (pLancamentoParcial == null || pLancamentoParcial.getId() == null) {
-			
-			pLancamentoParcial = new PeriodoLancamentoParcial();
-			pLancamentoParcial.setLancamentoParcial(lancamentoParcial);
-			pLancamentoParcial.setLancamento(lancamento);
-			pLancamentoParcial.setStatus(StatusLancamentoParcial.PROJETADO);
-			
-			TipoLancamentoParcial tipoLancamentoParcial = 
-					"F".equals(input.getTipoRecolhimento()) 
-						? TipoLancamentoParcial.FINAL 
-						: TipoLancamentoParcial.PARCIAL;
-			pLancamentoParcial.setTipo(tipoLancamentoParcial);
-			
-			this.getSession().persist(pLancamentoParcial);
-		} else {
-			
-			//TODO: Estudar cenário em que já existe PeriodoLancamentoParcial:
-			// update
-		}
-		
-		return lancamentoParcial;
+		this.getSession().persist(lancamento);
+		this.getSession().persist(pLancamentoParcial);
 	}
+	
+	
+	
 	
 	/**
 	 * Obtém  o Lançamento associado ao produto Edição.
