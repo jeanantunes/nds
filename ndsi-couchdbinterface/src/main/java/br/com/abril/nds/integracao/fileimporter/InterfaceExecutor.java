@@ -64,7 +64,7 @@ public class InterfaceExecutor {
 	private boolean processadoComSucesso = true;
 	
 	static {
-		ClassPathXmlApplicationContext classPathXmlApplicationContext = new ClassPathXmlApplicationContext("SPRING_FILE_LOCATION");
+		ClassPathXmlApplicationContext classPathXmlApplicationContext = new ClassPathXmlApplicationContext(SPRING_FILE_LOCATION);
 		classPathXmlApplicationContext.registerShutdownHook();
 		applicationContext = classPathXmlApplicationContext;
 	}

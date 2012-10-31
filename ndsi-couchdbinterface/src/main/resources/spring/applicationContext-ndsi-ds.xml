@@ -19,7 +19,6 @@
 		<property name="port" value="${couchdb.port}"/>
 		<property name="username" value="${couchdb.username}"/>
 		<property name="password" value="${couchdb.password}"/>
-		<property name="bachSize" value="${couchdb.bachSize}"/>
 	</bean>
 	
 </beans>
