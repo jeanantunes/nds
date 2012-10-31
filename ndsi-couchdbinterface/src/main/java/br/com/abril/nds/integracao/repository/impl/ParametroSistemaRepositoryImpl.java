@@ -5,7 +5,7 @@ import javax.persistence.PersistenceException;
 import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
 
-import br.com.abril.nds.integracao.persistence.model.ParametroSistema;
+import br.com.abril.nds.integracao.model.ParametroSistema;
 import br.com.abril.nds.integracao.repository.ParametroSistemaRepository;
 
 @Repository

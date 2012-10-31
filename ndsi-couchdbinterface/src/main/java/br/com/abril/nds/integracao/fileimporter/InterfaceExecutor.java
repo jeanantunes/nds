@@ -25,15 +25,15 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.integracao.model.InterfaceExecucao;
+import br.com.abril.nds.integracao.model.LogExecucao;
+import br.com.abril.nds.integracao.model.LogExecucaoArquivo;
 import br.com.abril.nds.integracao.model.canonic.IntegracaoDocument;
 import br.com.abril.nds.integracao.model.canonic.IntegracaoDocumentDetail;
 import br.com.abril.nds.integracao.model.canonic.IntegracaoDocumentMaster;
 import br.com.abril.nds.integracao.model.canonic.InterfaceEnum;
 import br.com.abril.nds.integracao.model.canonic.TipoInterfaceEnum;
-import br.com.abril.nds.integracao.persistence.model.InterfaceExecucao;
-import br.com.abril.nds.integracao.persistence.model.LogExecucao;
-import br.com.abril.nds.integracao.persistence.model.LogExecucaoArquivo;
-import br.com.abril.nds.integracao.persistence.model.enums.StatusExecucaoEnum;
+import br.com.abril.nds.integracao.model.enums.StatusExecucaoEnum;
 import br.com.abril.nds.integracao.repository.InterfaceExecucaoRepository;
 import br.com.abril.nds.integracao.repository.LogExecucaoArquivoRepository;
 import br.com.abril.nds.integracao.repository.LogExecucaoRepository;
@@ -93,6 +93,8 @@ public class InterfaceExecutor {
 	@Transactional
 	public void executarInterface(String nomeUsuario, InterfaceEnum interfaceEnum, Long codigoDistribuidor) {
 		
+		this.buscaIcd();
+		
 		// Busca dados de configuracao
 		this.carregaCouchDbProperties();
 		InterfaceExecucao interfaceExecucao = interfaceExecucaoRepository.findById(interfaceEnum.getCodigoInterface());
@@ -125,6 +127,12 @@ public class InterfaceExecutor {
 		}
 	}
 	
+	@Transactional("transactionManagerIcd")
+	private void buscaIcd() {
+		// TODO Auto-generated method stub
+		
+	}
+
 	private void executarInterfaceDB(InterfaceEnum interfaceEnum,
 			InterfaceExecucao interfaceExecucao, LogExecucao logExecucao,
 			Long codigoDistribuidor, String nomeUsuario) {

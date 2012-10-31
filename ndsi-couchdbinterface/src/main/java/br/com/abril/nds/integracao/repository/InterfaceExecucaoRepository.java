@@ -1,6 +1,6 @@
 package br.com.abril.nds.integracao.repository;
 
-import br.com.abril.nds.integracao.persistence.model.InterfaceExecucao;
+import br.com.abril.nds.integracao.model.InterfaceExecucao;
 
 public interface InterfaceExecucaoRepository extends Repository<InterfaceExecucao, Long> {
 

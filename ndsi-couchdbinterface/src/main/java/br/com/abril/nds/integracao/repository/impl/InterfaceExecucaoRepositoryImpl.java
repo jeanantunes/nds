@@ -4,7 +4,7 @@ import javax.persistence.PersistenceException;
 
 import org.springframework.stereotype.Repository;
 
-import br.com.abril.nds.integracao.persistence.model.InterfaceExecucao;
+import br.com.abril.nds.integracao.model.InterfaceExecucao;
 import br.com.abril.nds.integracao.repository.InterfaceExecucaoRepository;
 
 

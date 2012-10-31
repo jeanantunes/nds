@@ -15,10 +15,10 @@
 	
 	<bean id="icd-datasource" class="org.apache.commons.dbcp.BasicDataSource"
 		destroy-method="close" >
-		<property name="driverClassName" value="${icd.driverClassName}" />
-		<property name="url" value="${icd.url}" />
-		<property name="username" value="${icd.username}" />
-		<property name="password" value="${icd.password}" />
+		<property name="driverClassName" value="${icddb.driverClassName}" />
+		<property name="url" value="${icddb.url}" />
+		<property name="username" value="${icddb.username}" />
+		<property name="password" value="${icddb.password}" />
 	</bean>	
 	
 	<bean id="couchDbProperties" class="br.com.abril.nds.integracao.couchdb.CouchDbProperties">
