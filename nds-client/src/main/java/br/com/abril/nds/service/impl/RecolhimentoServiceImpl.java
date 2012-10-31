@@ -23,7 +23,6 @@ import br.com.abril.nds.factory.devolucao.BalanceamentoRecolhimentoFactory;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.cadastro.Cota;
-import br.com.abril.nds.model.cadastro.DistribuicaoDistribuidor;
 import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
@@ -599,10 +598,6 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		TreeSet<Date> datasRecolhimentoFornecedor = 
 			this.obterDatasRecolhimentoFornecedor(periodoRecolhimento, listaIdsFornecedores);
 		
-		TreeSet<Date> datasRecolhimentoDistribuidor = 
-			this.obterDatasRecolhimentoDistribuidor(distribuidor, periodoRecolhimento);
-		
-		dadosRecolhimento.setDatasRecolhimentoDistribuidor(datasRecolhimentoDistribuidor);
 		dadosRecolhimento.setDatasRecolhimentoFornecedor(datasRecolhimentoFornecedor);
 
 		List<ProdutoRecolhimentoDTO> produtosRecolhimento = null;
@@ -714,29 +709,6 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 			this.obterDatasRecolhimento(periodoRecolhimento, diasSemanaFornecedor);
 		
 		return datasRecolhimentoFornecedor;
-	}
-	
-	/**
-	 * Obtém as datas de recolhimento do distribuídor.
-	 */
-	private TreeSet<Date> obterDatasRecolhimentoDistribuidor(Distribuidor distribuidor,
-															 Intervalo<Date> periodoRecolhimento) {
-		
-		List<DistribuicaoDistribuidor> listaDistribuicaoDistribuidor = 
-			this.distribuidorRepository.buscarDiasDistribuicaoDistribuidor(
-				distribuidor.getId(), OperacaoDistribuidor.RECOLHIMENTO);
-		
-		Set<Integer> diasSemanaDistribuidor = new TreeSet<Integer>();
-		
-		for (DistribuicaoDistribuidor distribuicaoDistribuidor : listaDistribuicaoDistribuidor) {
-			
-			diasSemanaDistribuidor.add(distribuicaoDistribuidor.getDiaSemana().getCodigoDiaSemana());
-		}
-		
-		TreeSet<Date> datasRecolhimentoDistribuidor = 
-			this.obterDatasRecolhimento(periodoRecolhimento, diasSemanaDistribuidor);
-		
-		return datasRecolhimentoDistribuidor;
 	}
 	
 	/**
