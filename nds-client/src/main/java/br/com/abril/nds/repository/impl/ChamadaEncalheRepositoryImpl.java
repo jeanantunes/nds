@@ -100,15 +100,15 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 	 * previstas multiplicada pelo preco de venda do produto edição.
 	 * 
 	 * @param filtro
-	 * @param indTotalProdutos
+	 * @param indValorTotalProdutos
 	 * 
 	 * @return String
 	 */
-	private String getSubHqlTotalQtdeValorPrevistaDaEmissaoCE(FiltroEmissaoCE filtro, boolean indTotalProdutos) {
+	private String getSubHqlTotalQtdeValorPrevistaDaEmissaoCE(FiltroEmissaoCE filtro, boolean indValorTotalProdutos) {
 		
 		StringBuffer hql = new StringBuffer();
 		
-		if(indTotalProdutos) {
+		if(indValorTotalProdutos) {
 			
 			hql.append(" select sum( _chamEncCota.qtdePrevista * produtoEdicao.precoVenda ) ");
 			
@@ -361,16 +361,27 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" select chamEncCota.id as idChamEncCota, ");
-		hql.append(" 		cota.numeroCota as numCota, ");
-		hql.append(" 		chamadaEncalhe.dataRecolhimento as dataRecolhimento, ");
-		hql.append(" 		cota.id as idCota, ");
-		hql.append(" 		pessoa.nome as nomeCota, ");
-		hql.append("		sum(chamEncCota.qtdePrevista) as qtdeExemplares, ");	
-		hql.append("		sum(chamEncCota.qtdePrevista * produtoEdicao.precoVenda) as vlrTotalCe, ");
-		hql.append(" 		box.codigo as box, ");
-		hql.append(" 		cast (rota.id as string) as codigoRota, ");
-		hql.append(" 		rota.descricaoRota as nomeRota ");
+		hql.append(" select  						");
+		
+		hql.append("chamEncCota.id as idChamEncCota,	");
+		
+		hql.append("	cota.numeroCota as numCota, 							");
+		hql.append("	chamadaEncalhe.dataRecolhimento as dataRecolhimento, 	");
+		hql.append("	cota.id as idCota, 										");
+		hql.append("	pessoa.nome as nomeCota, 								");
+		
+		
+		hql.append(" (	");
+		hql.append(	getSubHqlTotalQtdeValorPrevistaDaEmissaoCE(filtro, false));
+		hql.append(" )	as qtdeExemplares, ");
+
+		hql.append(" (	");
+		hql.append(	getSubHqlTotalQtdeValorPrevistaDaEmissaoCE(filtro, true));
+		hql.append(" )	as vlrTotalCe, ");
+		
+		hql.append("	box.codigo as box, 						");
+		hql.append("	cast (rota.id as string) as codigoRota, ");
+		hql.append("	rota.descricaoRota as nomeRota 			");
 		
 		gerarFromWhere(filtro, hql, param);
 		
@@ -438,6 +449,37 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		return query.list();
 	}
 	
+	private String obterSubHqlQtdeReparte(FiltroEmissaoCE filtro) {
+		
+	StringBuffer hql = new StringBuffer();
+		
+		hql.append(" select sum(_chamEncCota.qtdePrevista) 				")		
+		.append(" from ChamadaEncalheCota _chamEncCota 					")
+		.append(" join _chamEncCota.chamadaEncalhe  _chamadaEncalhe 	")
+		.append(" join _chamEncCota.cota _cota 							");
+		
+		boolean contemWhere = false;
+
+		hql.append(((contemWhere)?"and":"where")+" _cota.id =:idCota ");
+		
+		contemWhere = true;
+		
+		if(filtro.getDtRecolhimentoDe() != null) {
+			
+			hql.append(((contemWhere)?" and ":" where ")+" _chamadaEncalhe.dataRecolhimento >=:dataDe ");
+			contemWhere = true;
+		}
+		
+		if(filtro.getDtRecolhimentoAte() != null) {
+			hql.append(((contemWhere)?" and ":" where ")+" _chamadaEncalhe.dataRecolhimento <=:dataAte ");
+			contemWhere = true;
+		}
+		
+		return hql.toString();		
+		
+		
+	}
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<ProdutoEmissaoDTO> obterProdutosEmissaoCE(
@@ -448,18 +490,22 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" select produtoEdicao.codigoDeBarras as codigoBarras, ");
-		hql.append(" 		lancamentos.sequenciaMatriz as sequencia, ");
-		hql.append(" 	    produto.codigo as codigoProduto, ");
-		hql.append(" 	    produto.nome as nomeProduto, ");
-		hql.append(" 	    produtoEdicao.id as idProdutoEdicao, ");
-		hql.append(" 	    produtoEdicao.numeroEdicao as edicao, ");
-		hql.append(" 	    ("+ this.obterSQLDesconto() +") as desconto, ");
-		hql.append(" 	    produtoEdicao.precoVenda as precoVenda, ");
-		hql.append(" 	    produtoEdicao.parcial as tipoRecolhimento, ");
+		hql.append(" select produtoEdicao.codigoDeBarras as codigoBarras, 	");
+		hql.append(" 		lancamentos.sequenciaMatriz as sequencia, 		");
+		hql.append(" 	    produto.codigo as codigoProduto, 				");
+		hql.append(" 	    produto.nome as nomeProduto, 					");
+		hql.append(" 	    produtoEdicao.id as idProdutoEdicao, 			");
+		hql.append(" 	    produtoEdicao.numeroEdicao as edicao, 			");
+		hql.append(" 	    ("+ this.obterSQLDesconto() +") as desconto, 	");
+		hql.append(" 	    produtoEdicao.precoVenda as precoVenda, 		");
+		hql.append(" 	    produtoEdicao.parcial as tipoRecolhimento, 		");
 		hql.append(" 	    lancamentos.dataLancamentoDistribuidor as dataLancamento, ");
 		hql.append(" 	    (produtoEdicao.precoVenda - (produtoEdicao.precoVenda * ("+ this.obterSQLDesconto() +") / 100)) as precoComDesconto, ");
-		hql.append(" 	    lancamentos.reparte as reparte, ");
+		
+		hql.append(" ( ");
+		hql.append(obterSubHqlQtdeReparte(filtro));
+		hql.append(" ) as reparte,	");
+		
 		hql.append(" 	    sum(movimentoCota.qtde) as quantidadeDevolvida, ");
 		hql.append("		lancamentos.sequenciaMatriz as sequencia ");
 		
