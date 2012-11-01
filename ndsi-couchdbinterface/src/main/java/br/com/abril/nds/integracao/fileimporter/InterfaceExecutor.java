@@ -74,6 +74,10 @@ public class InterfaceExecutor {
 	private Properties couchDbProperties;
 	
 	private boolean processadoComSucesso = true;
+
+	private String diretorio;
+
+	private String pastaInterna;
 	
 	
 	
@@ -130,10 +134,25 @@ public class InterfaceExecutor {
 	}
 	
 	@Transactional("transactionManagerIcd")
-	private void executarRetornosIcd() {
-		icdObjectService.recuperaSolicitacoesAcertadas();
+	public void executarRetornosIcd(Long codigoDistribuidor) {
+		List<String> distribuidores = recuperaDistribuidores(codigoDistribuidor);
+
 		
+		for (String distribuidor: distribuidores) {
+						
+			icdObjectService.recuperaSolicitacoesAcertadas(distribuidor);
+			icdObjectService.recuperaSolicitacoesSolicitadas(distribuidor);
+			icdObjectService.recuperaSolicitacoes(distribuidor);
+		}
 		
+	}
+
+	@Transactional
+	private List<String> recuperaDistribuidores(Long codigoDistribuidor) {
+		this.diretorio = parametroSistemaRepository.getParametro("INBOUND_DIR");
+		this.pastaInterna = parametroSistemaRepository.getParametro("INTERNAL_DIR");
+		List<String> distribuidores = this.getDistribuidores(this.diretorio, codigoDistribuidor);
+		return distribuidores;
 	}
 
 	private void executarInterfaceDB(InterfaceEnum interfaceEnum,
@@ -148,15 +167,12 @@ public class InterfaceExecutor {
 	@Transactional
 	private void executarInterfaceArquivo(InterfaceEnum interfaceEnum, InterfaceExecucao interfaceExecucao, LogExecucao logExecucao, Long codigoDistribuidor, String nomeUsuario) {
 		
-		// Recupera distribuidores
-		String diretorio = parametroSistemaRepository.getParametro("INBOUND_DIR");
-		String pastaInterna = parametroSistemaRepository.getParametro("INTERNAL_DIR");
-		List<String> distribuidores = this.getDistribuidores(diretorio, interfaceExecucao, codigoDistribuidor);
+		List<String> distribuidores = recuperaDistribuidores(codigoDistribuidor);
 		
 		// Processa arquivos do distribuidor
 		for (String distribuidor: distribuidores) {
 		
-			List<File> arquivos = this.recuperaArquivosProcessar(diretorio, pastaInterna, interfaceExecucao, distribuidor);
+			List<File> arquivos = this.recuperaArquivosProcessar(this.diretorio, this.pastaInterna, interfaceExecucao, distribuidor);
 			
 			if (arquivos == null || arquivos.isEmpty()) {
 				this.logarArquivo(logExecucao, distribuidor, null, StatusExecucaoEnum.FALHA, NAO_HA_ARQUIVOS);
@@ -327,7 +343,7 @@ public class InterfaceExecutor {
 	/**
 	 * Recupera distribuidores a serem processados.
 	 */
-	private List<String> getDistribuidores(String diretorio, InterfaceExecucao interfaceExecucao, Long codigoDistribuidor) {
+	private List<String> getDistribuidores(String diretorio, Long codigoDistribuidor) {
 		
 		List<String> distribuidores = new ArrayList<String>();
 		

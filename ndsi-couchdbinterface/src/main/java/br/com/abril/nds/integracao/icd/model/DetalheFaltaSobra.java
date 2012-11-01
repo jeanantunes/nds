@@ -19,7 +19,7 @@ public class DetalheFaltaSobra {
 	private Long id;
 	
 	@Column(name = "COD_SITUACAO_ACERTO", nullable = false)
-	private String codigoSolicitacao;
+	private String codigoAcerto;
 
 	public Long getId() {
 		return id;
@@ -29,13 +29,14 @@ public class DetalheFaltaSobra {
 		this.id = id;
 	}
 
-	public String getCodigoSolicitacao() {
-		return codigoSolicitacao;
+	public String getCodigoAcerto() {
+		return codigoAcerto;
 	}
 
-	public void setCodigoSolicitacao(String codigoSolicitacao) {
-		this.codigoSolicitacao = codigoSolicitacao;
+	public void setCodigoAcerto(String codigoAcerto) {
+		this.codigoAcerto = codigoAcerto;
 	}
+
 
 	
 }

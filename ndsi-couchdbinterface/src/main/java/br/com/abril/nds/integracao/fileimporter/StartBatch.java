@@ -33,7 +33,7 @@ public class StartBatch {
 		Long codigoInterface = null;
 		Long codigoDistribuidor = null;
 		
-		if (args == null || args.length < 2 || args.length > 3) {
+		if (args == null || args.length < 2 || args.length > 4) {
 			System.out.println("ERRO: numero de argumentos invalido");
 			return;
 		}
@@ -52,17 +52,22 @@ public class StartBatch {
 			System.out.println("ERRO: interface invalida");
 			return;
 		}
-		
-		if (args.length == 3) {
+
+		InterfaceExecutor executor = applicationContext.getBean(InterfaceExecutor.class);
+		if (args.length == 4) {
 			try {
-				codigoDistribuidor = Long.valueOf(args[2]);
+				codigoDistribuidor = Long.valueOf(args[3]);
 			} catch (NumberFormatException e)  {
 				System.out.println("ERRO: codigo de distribuidor invalido");
 				return;
 			}
 		}
+
+		if (args[2].toString().equals("-icdRetorno")) {
+			executor.executarRetornosIcd(codigoDistribuidor);
+		} else {
+			executor.executarInterface(usuario, interfaceEnum, codigoDistribuidor);
+		}
 		
-		InterfaceExecutor executor = applicationContext.getBean(InterfaceExecutor.class);
-		executor.executarInterface(usuario, interfaceEnum, codigoDistribuidor);
 	}
 }
