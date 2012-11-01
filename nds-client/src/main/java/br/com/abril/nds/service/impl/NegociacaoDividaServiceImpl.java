@@ -450,8 +450,6 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService{
 					String nossoNumero = this.cobrancaRepository.obterNossoNumeroPorMovimentoFinanceiroCota(
 							parcelaNegociacao.getMovimentoFinanceiroCota().getId());
 					
-					System.out.println(nossoNumero);
-					
 					boletos.add(this.documentoCobrancaService.gerarDocumentoCobranca(nossoNumero));
 				}
 			}

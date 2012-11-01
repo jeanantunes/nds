@@ -400,7 +400,7 @@ public class NegociacaoDividaController {
 		}
 		
 		List<byte[]> lista = this.negociacaoDividaService.gerarBoletosNegociacao(idNegociacao);
-		System.out.println(lista.size());
+		
 		byte[] arquivo = PDFUtil.mergePDFs(lista);
 		
 		this.httpServletResponse.setContentType("application/pdf");
