@@ -1,5 +1,7 @@
 package br.com.abril.nds.service.impl;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 
@@ -112,26 +114,44 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 			Double vlrEncalhe = 0.0;	
 			
 			for(ProdutoEmissaoDTO produtoDTO : dto.getProdutos()) {
+				
+				produtoDTO.setReparte( (produtoDTO.getReparte()==null) ? BigInteger.ZERO : BigInteger.valueOf(produtoDTO.getReparte()));
+				produtoDTO.setVlrDesconto( (produtoDTO.getVlrDesconto() == null) ? 0.0D :  produtoDTO.getVlrDesconto());
+				
+				
 				produtoDTO.setVendido(produtoDTO.getReparte() - produtoDTO.getQuantidadeDevolvida());
+				
 				produtoDTO.setVlrVendido(CurrencyUtil.formatarValor(produtoDTO.getVendido() * produtoDTO.getVlrPrecoComDesconto()));
+				
 				vlrReparte += produtoDTO.getPrecoVenda() * produtoDTO.getReparte();
-				vlrDesconto +=  produtoDTO.getVlrDesconto() * produtoDTO.getReparte();
+				
+				vlrDesconto +=  produtoDTO.getVlrDesconto() / 100 * produtoDTO.getReparte();
+				
 				vlrEncalhe += produtoDTO.getQuantidadeDevolvida() * (produtoDTO.getPrecoVenda() - produtoDTO.getVlrDesconto());
+				
 			}
 			
 			Double vlrReparteLiquido = vlrReparte - vlrDesconto;
+			
 			Double totalLiquido = vlrReparteLiquido - vlrEncalhe;
 			
 			dto.setVlrReparte(CurrencyUtil.formatarValor(vlrReparte));
+			
 			dto.setVlrComDesconto(CurrencyUtil.formatarValor(vlrDesconto));
+			
 			dto.setVlrReparteLiquido(CurrencyUtil.formatarValor(vlrReparteLiquido));
+			
 			dto.setVlrEncalhe(CurrencyUtil.formatarValor(vlrEncalhe));
+			
 			dto.setVlrTotalLiquido(CurrencyUtil.formatarValor(totalLiquido));			
 		}
 		
 		return lista;
 	}
 
+	private BigDecimal getZeroForNullValue(BigDecimal value) {
+		return (value == null) ? BigDecimal.ZERO : value;
+	}
 
 	@Override
 	@Transactional

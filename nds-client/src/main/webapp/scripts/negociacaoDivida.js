@@ -55,8 +55,6 @@ var negociacaoDividaController = $.extend(true, {
 	
 	pesquisarDetalhes : function(idCobranca) {
 		
-		//var params = $("#negociacaoDividaForm", this.workspace).serialize();
-		
 		$(".negociacaoDetalheGrid", this.workspace).flexOptions({
 			url : this.path + 'pesquisarDetalhes.json?' , 
 			params: [{name: 'idCobranca' , value: idCobranca}],
