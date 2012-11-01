@@ -50,7 +50,10 @@ import com.ancientprogramming.fixedformat4j.format.impl.FixedFormatManagerImpl;
 @Service
 public class InterfaceExecutor {
 	
-		
+	public static final String SPRING_FILE_LOCATION = "classpath:spring/applicationContext-ndsi-cli.xml"; 
+
+	private static ApplicationContext applicationContext;
+	
 	private static String NAO_HA_ARQUIVOS = "Não há arquivos a serem processados para este distribuidor";
 //	private static String TAMANHO_LINHA = "Tamanho da linha é diferente do tamanho definido";
 	
@@ -79,6 +82,11 @@ public class InterfaceExecutor {
 
 	private String pastaInterna;
 	
+	static {
+		ClassPathXmlApplicationContext classPathXmlApplicationContext = new ClassPathXmlApplicationContext(SPRING_FILE_LOCATION);
+		classPathXmlApplicationContext.registerShutdownHook();
+		applicationContext = classPathXmlApplicationContext;
+	}
 	
 	
 	/**
