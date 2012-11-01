@@ -178,7 +178,7 @@ public class NegociacaoDividaController {
 			
 			Double encargos = 0.0;
 			
-			if( !filtro.getTipoPagamento().equals(TipoCobranca.CHEQUE) )
+			if( !filtro.getTipoPagamento().equals(TipoCobranca.CHEQUE) || (filtro.getIsentaEncargos()!= null && filtro.getIsentaEncargos()) )
 				encargos = calcularEncargos(valorParcela, DateUtil.parseDataPTBR(parcela.getDataVencimento()),filtro.getNumeroCota(), banco);
 						
 			parcela.setEncargos(CurrencyUtil.formatarValor(encargos));
