@@ -93,6 +93,103 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		
 		return (ChamadaEncalhe) query.uniqueResult();
 	}
+
+	/**
+	 * SubHql que obtém a quantidade total prevista da chamada de encalhe ou  
+	 * o valor total da chamada de encalhe calculado pela somatória das qntidades 
+	 * previstas multiplicada pelo preco de venda do produto edição.
+	 * 
+	 * @param filtro
+	 * @param indTotalProdutos
+	 * 
+	 * @return String
+	 */
+	private String getSubHqlTotalQtdeValorPrevistaDaEmissaoCE(FiltroEmissaoCE filtro, boolean indTotalProdutos) {
+		
+		StringBuffer hql = new StringBuffer();
+		
+		if(indTotalProdutos) {
+			
+			hql.append(" select sum( _chamEncCota.qtdePrevista * produtoEdicao.precoVenda ) ");
+			
+		} else {
+			
+			hql.append(" select sum(_chamEncCota.qtdePrevista) 				");
+			
+		}
+		
+		hql.append(" from ChamadaEncalheCota _chamEncCota 				")
+		.append(" join _chamEncCota.chamadaEncalhe  _chamadaEncalhe 	")
+		.append(" join _chamEncCota.cota _cota 							")
+		.append(" join _cota.pessoa _pessoa 							")
+		.append(" join _chamadaEncalhe.produtoEdicao _produtoEdicao 	")
+		.append(" join _produtoEdicao.produto _produto 					")
+		.append(" join _produto.fornecedores _fornecedores 				")
+		.append(" JOIN _cota.box _box 									")
+		.append(" JOIN _cota.pdvs _pdv 									")
+		.append(" JOIN _pdv.rotas _rotaPdv 								")
+		.append(" JOIN _rotaPdv.rota _rota 								")
+		.append(" JOIN _rota.roteiro _roteiro 							");
+		
+		boolean contemWhere = false;
+		
+		if(filtro.getDtRecolhimentoDe() != null) {
+			
+			hql.append(((contemWhere)?" and ":" where ")+" _chamadaEncalhe.dataRecolhimento >=:dataDe ");
+			contemWhere = true;
+		}
+		
+		if(filtro.getDtRecolhimentoAte() != null) {
+			hql.append(((contemWhere)?" and ":" where ")+" _chamadaEncalhe.dataRecolhimento <=:dataAte ");
+			contemWhere = true;
+		}
+		
+		if(filtro.getNumCotaDe() != null) {
+
+			hql.append(((contemWhere)?"and":"where")+" _cota.numeroCota >=:cotaDe ");
+			contemWhere = true;
+		}
+		
+		if(filtro.getNumCotaAte() != null) {
+			
+			hql.append(((contemWhere)?"and":"where")+" _cota.numeroCota <=:cotaAte ");
+			contemWhere = true;
+		}
+		
+		if(filtro.getIdRoteiro() != null) {
+			
+			hql.append(((contemWhere)?"and":"where")+" _roteiro.id <=:idRoteiro ");
+			contemWhere = true;
+		}
+				
+		if(filtro.getIdRota() != null) {
+			
+			hql.append(((contemWhere)?"and":"where")+" _rota.id <=:idRota ");
+			contemWhere = true;
+		}
+		
+		if(filtro.getIdBoxDe() != null) {
+			
+			hql.append(((contemWhere)?"and":"where")+" _box.codigo >=:codBox ");
+			contemWhere = true;
+		}
+		
+		if(filtro.getIdBoxAte() != null) {
+			
+			hql.append(((contemWhere)?"and":"where")+" _box.codigo <=:codBox");
+			contemWhere = true;
+		}
+		
+		if(filtro.getFornecedores() != null && !filtro.getFornecedores().isEmpty()) {
+			
+			hql.append(((contemWhere)?"and":"where")+" _fornecedores.id in (:listaFornecedores) ");
+			contemWhere = true;
+		}
+
+		
+		return hql.toString();
+		
+	}
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
@@ -104,16 +201,25 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		StringBuilder hql = new StringBuilder();
 		
 		hql.append(" select cota.numeroCota as numCota, ");
-		hql.append(" 		cota.id as idCota, ");
-		hql.append(" 		pessoa.nome as nomeCota, ");
-		hql.append("		sum(chamEncCota.qtdePrevista) as qtdeExemplares, ");	
-		hql.append("		sum(chamEncCota.qtdePrevista * produtoEdicao.precoVenda) as vlrTotalCe ");
+		hql.append(" 		cota.id as idCota, 			");
+		hql.append(" 		pessoa.nome as nomeCota, 	");
 		
+		hql.append(" (	");
+		hql.append(	getSubHqlTotalQtdeValorPrevistaDaEmissaoCE(filtro, false));
+		hql.append(" )	as qtdeExemplares, ");
+
+		hql.append(" (	");
+		hql.append(	getSubHqlTotalQtdeValorPrevistaDaEmissaoCE(filtro, true));
+		hql.append(" )	as vlrTotalCe ");
 				
 		gerarFromWhere(filtro, hql, param);
 		
 
-		hql.append(" group by cota ");
+		hql.append(" group by   ")
+		
+		.append(" cota.numeroCota,	")
+		.append(" cota.id,  		")
+		.append(" pessoa.nome  		");
 		
 		gerarOrdenacao(filtro, hql);		
 				
@@ -137,10 +243,8 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 	
 	private void gerarFromWhere(FiltroEmissaoCE filtro, StringBuilder hql, HashMap<String, Object> param) {
 
-		hql.append(" from ChamadaEncalheCota chamEncCota, Roteirizacao roterizacao ")
+		hql.append(" from ChamadaEncalheCota chamEncCota ")
 		   .append(" join chamEncCota.chamadaEncalhe  chamadaEncalhe ")
-		   .append(" left join chamEncCota.conferenciasEncalhe confEnc ")
-		   .append(" left join confEnc.movimentoEstoqueCota  movimentoCota ")
 		   .append(" join chamEncCota.cota cota ")
 		   .append(" join cota.pessoa pessoa ")
 		   .append(" join chamadaEncalhe.produtoEdicao produtoEdicao ")
