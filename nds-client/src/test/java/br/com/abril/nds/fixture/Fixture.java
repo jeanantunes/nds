@@ -2329,6 +2329,7 @@ public class Fixture {
 		mfc.setUsuario(usuario);
 		mfc.setValor(valor);
 		mfc.setLancamentoManual(lancamentoManual);
+		mfc.setObservacao(cota==null?"":"Movimento Financeiro da cota "+cota.getNumeroCota()+".");
 		return mfc;
 	}
 
