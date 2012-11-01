@@ -383,7 +383,7 @@
 					    </td>
 					  </tr>
 					  
-					   <tr>
+					  <tr>
 					    <td><strong><span id="labelBanco">Banco:</span></strong></td>
 					    <td>
 					        <select name="idBanco" id="bancoDividas" style="width:150px;">

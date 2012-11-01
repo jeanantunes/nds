@@ -35,12 +35,14 @@ import br.com.abril.nds.model.cadastro.desconto.TipoDesconto;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
+import br.com.abril.nds.repository.BrindeRepository;
 import br.com.abril.nds.repository.DescontoProdutoEdicaoRepository;
 import br.com.abril.nds.repository.DistribuicaoFornecedorRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.ParametroSistemaRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.ProdutoRepository;
+import br.com.abril.nds.service.BrindeService;
 import br.com.abril.nds.service.CapaService;
 import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.service.LancamentoService;
@@ -80,6 +82,9 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 	
 	@Autowired
 	private CapaService capaService;
+	
+	@Autowired
+	private BrindeRepository brindeRepository;
 	
 	@Autowired
 	private DescontoService descontoService;
@@ -538,10 +543,16 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		// Outros:
 		produtoEdicao.setChamadaCapa(dto.getChamadaCapa());
 		produtoEdicao.setPossuiBrinde(dto.isPossuiBrinde());
-		if(produtoEdicao.getBrinde()==null){
-			produtoEdicao.setBrinde(new Brinde());
+		
+		produtoEdicao.setPossuiBrinde(false);
+		produtoEdicao.setBrinde(null);
+		if(dto.getIdBrinde()!=null){
+			Brinde brinde = brindeRepository.buscarPorId(dto.getIdBrinde());
+	        if (brinde!=null){ 
+	        	produtoEdicao.setPossuiBrinde(true);
+		        produtoEdicao.setBrinde(brinde);
+	        }
 		}
-		produtoEdicao.getBrinde().setDescricao(dto.getDescricaoBrinde());
 		
 		// Característica Física:
 		produtoEdicao.setPeso(dto.getPeso());
@@ -728,6 +739,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			dto.setEditor(pe.getProduto().getEditor().getPessoaJuridica().getNome());
 			if (pe.getBrinde() !=null) {
 				dto.setDescricaoBrinde(pe.getBrinde().getDescricao());
+				dto.setIdBrinde(pe.getBrinde().getId());
 			}
 			Dimensao dimEdicao = pe.getDimensao();
 			if (dimEdicao == null) {
