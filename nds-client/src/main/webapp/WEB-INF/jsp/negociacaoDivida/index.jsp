@@ -81,7 +81,7 @@
 		</div>
 	
 	<form id="formaPgtoForm">
-		<div id="dialog-formaPgto" title="Negociar D&iacute;vida" style="display:none;">
+		<div id="dialog-NegociacaoformaPgto" title="Negociar D&iacute;vida" style="display:none;">
 			
 	
 			<input type="hidden" name ="filtro.valorSelecionado" id="valorSelecionado"/>
