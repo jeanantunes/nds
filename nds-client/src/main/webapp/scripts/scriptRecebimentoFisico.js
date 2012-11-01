@@ -1392,7 +1392,7 @@ var recebimentoFisicoController = $.extend(true, {
 	         			 					     
 	         var produto =      '<input maxlength="200" value="'+valueProduto+'" type="text" name="itensRecebimento.produtoItem" id="produtoItem'+ index +'" style="width: 140px;" onkeyup="pesquisaProdutoRecebimentoFisico.autoCompletarPorNomeProduto(\'#produtoItem'+ index +'\', false);" onblur="pesquisaProdutoRecebimentoFisico.pesquisarPorNomeProduto(\'#codigoItem'+ index +'\', \'#produtoItem'+ index +'\', \'#edicaoItem'+ index +'\', true, null);"></input>';
 				             
-			 var edicao =       '<input class="number" maxlength="18" value="'+valueEdicao+'" type="text" name="itensRecebimento.edicaoItem" id="edicaoItem'+ index +'" style="width: 30px;" onkeyup="recebimentoFisicoController.obterDadosEdicao('+index+');"></input>';         
+			 var edicao =       '<input class="number" maxlength="18" value="'+valueEdicao+'" type="text" name="itensRecebimento.edicaoItem" id="edicaoItem'+ index +'" style="width: 30px;" onchange="recebimentoFisicoController.obterDadosEdicao('+index+');"></input>';         
 			
 			 var precoDesconto ='<input class="money" maxlength="17" value="'+valuePrecoDesconto+'" type="text" readonly="readonly" name="itensRecebimento.precoDescontoItem" id="precoDescontoItem'+ index +'" style="width: 80px; border: 0px; background-color: inherit;"></input>';
 			 
