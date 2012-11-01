@@ -20,6 +20,7 @@ import br.com.abril.nds.client.util.PDFUtil;
 import br.com.abril.nds.client.vo.CalculaParcelasVO;
 import br.com.abril.nds.client.vo.NegociacaoDividaDetalheVO;
 import br.com.abril.nds.client.vo.NegociacaoDividaVO;
+import br.com.abril.nds.dto.DiaSemanaDTO;
 import br.com.abril.nds.dto.NegociacaoDividaDTO;
 import br.com.abril.nds.dto.NegociacaoDividaPaginacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroCalculaParcelas;
@@ -32,6 +33,7 @@ import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.ConcentracaoCobrancaCota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
+import br.com.abril.nds.model.cadastro.PeriodicidadeCobranca;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
 import br.com.abril.nds.model.financeiro.ParcelaNegociacao;
@@ -146,125 +148,113 @@ public class NegociacaoDividaController {
 	
 	
 	@Path("/pesquisarDetalhes.json")
-	public void pesquisarDetalhes(FiltroConsultaNegociacaoDivida filtro, String sortname, String sortorder, int rp, int page) {
-		// TODO
-		this.session.setAttribute(FILTRO_NEGOCIACAO_DIVIDA, filtro);
+	public void pesquisarDetalhes(Long idCobranca) {
 		
-		List<NegociacaoDividaDTO> list = negociacaoDividaService.obterDividasPorCota(filtro);
-		List<NegociacaoDividaDetalheVO> listDividas = new ArrayList<NegociacaoDividaDetalheVO>();
-		/*for (Cobranca c : list){
-			NegociacaoDividaDetalheVO ndd = new NegociacaoDividaDetalheVO();
-			ndd.setData(DateUtil.formatarDataPTBR(c.getDivida().getData()));
-			if(c.getStatusCobranca() == StatusCobranca.PAGO)
-				ndd.setTipo("Pagamento");
-			else
-				ndd.setTipo("Dívida");
-			ndd.setValor("-"+ CurrencyUtil.formatarValor(c.getDivida().getValor()));
-			ndd.setObservacao("TESTE");
-			listDividas.add(ndd);
-		}*/
-		result.use(FlexiGridJson.class).from(listDividas).total(listDividas.size()).page(page).serialize();
+		List<NegociacaoDividaDetalheVO> listDividas = negociacaoDividaService.obterDetalhesCobranca(idCobranca);//new ArrayList<NegociacaoDividaDetalheVO>();
+		System.out.println(listDividas.size());
+		result.use(FlexiGridJson.class).from(listDividas).total(listDividas.size()).page(1).serialize();
 	}
 	
 	@Path("/calcularParcelas.json")
 	public void calcularParcelas(FiltroCalculaParcelas filtro) {
-		/*System.out.println("Mensal "+filtro.getMensalDia());
-		System.out.println("Periodicidade "+filtro.getPeriodicidade());
-		System.out.println("Q1 "+filtro.getQuinzenalDia1());
-		System.out.println("Q2 "+filtro.getQuinzenalDia2());
-		System.out.println("Valor "+filtro.getValorSelecionado());
-		System.out.println("Qntd parcelas "+filtro.getQntdParcelas());
-		System.out.println("TipoPagamento "+filtro.getTipoPagamento().toString());*/
-
-		List<CalculaParcelasVO> listParcelas = new ArrayList<CalculaParcelasVO>();
-		if(filtro.getTipoPagamento().equals(TipoCobranca.CHEQUE)){
-			//TODO
-		}else{
-			
-			
-			for (int i = 0; i < filtro.getQntdParcelas(); i++) {
-				CalculaParcelasVO parcela = new CalculaParcelasVO();
-				/* NUMERO DA PARCELA */
-				parcela.setNumParcela(Integer.toString(i+1));
-				
-				/* VALOR DA PARCELA */
-				Double valor = Double.valueOf((filtro.getValorSelecionado().replaceAll("[.]", "")).replaceAll("[,]", "."));
-				valor = valor/filtro.getQntdParcelas();
-				parcela.setParcela(CurrencyUtil.formatarValor(valor));
-				
-				/* DATA VENCIMENTO */
-				switch(filtro.getPeriodicidade()){
-					case DIARIO:
-						parcela.setDataVencimento(DateUtil.formatarDataPTBR(DateUtil.adicionarDias(new Date(), 1)));	
-					break;
-					
-					case SEMANAL:
-						if(!listParcelas.isEmpty())
-							for (int j = 0; j < filtro.getSemanalDias().size(); j++) {
-								filtro.getSemanalDias().get(j);
-							}
-					break;
-					
-					case QUINZENAL:
-						
-					break;
-					
-					case MENSAL:
-						Calendar data = Calendar.getInstance();
-						if(data.get(Calendar.DAY_OF_MONTH) > Integer.parseInt(filtro.getMensalDia())){	
-							data.add(Calendar.MONTH, 1);	
-						}
-						data.set(Calendar.DAY_OF_MONTH, Integer.parseInt(filtro.getMensalDia()));
-						parcela.setDataVencimento(DateUtil.formatarDataPTBR(data.getTime()));
-						
-				}
-				
-				
-				/*if(filtro.getPeriodicidade().equals(PeriodicidadeCobranca.DIARIO)){
-				
-					parcela.setDataVencimento(DateUtil.formatarDataPTBR(DateUtil.adicionarDias(new Date(), 1)));
-					
-				}else if(filtro.getPeriodicidade().equals(PeriodicidadeCobranca.SEMANAL)){
-					
-						//parcela.setDataVencimento();
-					
-				}else if(filtro.getPeriodicidade().equals(PeriodicidadeCobranca.QUINZENAL)){
-					
-					parcela.setDataVencimento(DateUtil.formatarDataPTBR(DateUtil.adicionarDias(new Date(), 1)));
-					
-				}else{
-					Calendar data = Calendar.getInstance();
-					if(data.get(Calendar.DAY_OF_MONTH) > Integer.parseInt(filtro.getMensalDia())){	
-						data.add(Calendar.MONTH, 1);	
-					}
-					data.set(Calendar.DAY_OF_MONTH, Integer.parseInt(filtro.getMensalDia()));
-					parcela.setDataVencimento(DateUtil.formatarDataPTBR(data.getTime()));
-				}*/
-				
-				/* ENCARGOS */
-				Banco banco = bancoService.obterBancoPorId(filtro.getIdBanco());
-				Double encargos = 0.0;
-				BigDecimal juros = cobrancaService.calcularJuros(banco, cotaService.obterPorNumeroDaCota(filtro.getNumeroCota()), 
-							distribuidorService.obter(), BigDecimal.valueOf(valor), DateUtil.parseDataPTBR(parcela.getDataVencimento()), new Date());
-				BigDecimal multas = cobrancaService.calcularMulta(banco, cotaService.obterPorNumeroDaCota(filtro.getNumeroCota()), 
-							distribuidorService.obter(), BigDecimal.valueOf(valor));
-				encargos = juros.add(multas).doubleValue();
-					
-				
-				parcela.setEncargos(CurrencyUtil.formatarValor(encargos));
-					
-				
-				/* PARCELA TOTAL */
-				valor = valor + encargos;
-				parcela.setParcTotal(CurrencyUtil.formatarValor(valor));
 		
+		List<CalculaParcelasVO> listParcelas = new ArrayList<CalculaParcelasVO>();
+		
+		Double valorParcela = filtro.getValorSelecionado() / filtro.getQntdParcelas();
+		
+		Date dataAnterior = new Date();
+			
+		for (int i = 0; i < filtro.getQntdParcelas(); i++) {
+			CalculaParcelasVO parcela = new CalculaParcelasVO();
+			
+			parcela.setNumParcela(Integer.toString(i+1));
+			parcela.setParcela(CurrencyUtil.formatarValor(valorParcela));
+			
+			dataAnterior = getDataParcela(dataAnterior, filtro.getPeriodicidade(), filtro.getSemanalDias(), filtro.getMensalDia());
+			
+			parcela.setDataVencimento(DateUtil.formatarDataPTBR(dataAnterior));
+						
+			Banco banco = bancoService.obterBancoPorId(filtro.getIdBanco());
+			
+			Double encargos = 0.0;
+			
+			if( !filtro.getTipoPagamento().equals(TipoCobranca.CHEQUE) || (filtro.getIsentaEncargos()!= null && filtro.getIsentaEncargos()) )
+				encargos = calcularEncargos(valorParcela, DateUtil.parseDataPTBR(parcela.getDataVencimento()),filtro.getNumeroCota(), banco);
+						
+			parcela.setEncargos(CurrencyUtil.formatarValor(encargos));
+							
+			valorParcela = valorParcela + encargos;
+			
+			parcela.setParcTotal(CurrencyUtil.formatarValor(valorParcela));
 				
-				listParcelas.add(parcela);	
-			}
-			
-			
+			listParcelas.add(parcela);	
 		}
+			
+		
 		this.result.use(Results.json()).from(listParcelas, "result").recursive().serialize();
+	}
+	
+	private Double calcularEncargos(Double valorParcela, Date dataVencimento, Integer numeroCota, Banco banco) {
+		
+		Double encargos = 0.0;
+		
+		BigDecimal juros = cobrancaService.calcularJuros(banco, cotaService.obterPorNumeroDaCota(numeroCota), 
+				distribuidorService.obter(), BigDecimal.valueOf(valorParcela), dataVencimento, new Date());
+		
+		BigDecimal multas = cobrancaService.calcularMulta(banco, cotaService.obterPorNumeroDaCota(numeroCota), 
+					distribuidorService.obter(), BigDecimal.valueOf(valorParcela));
+		
+		encargos = juros.add(multas).doubleValue();
+				
+		return encargos;
+	}
+
+
+	private Date getDataParcela(Date dataAnterior, PeriodicidadeCobranca periodicidade, List<DiaSemanaDTO>semanalDias, Integer diaMensal) {
+		
+		switch(periodicidade){
+			
+			case DIARIO:
+				return DateUtil.adicionarDias(dataAnterior, 1);	
+						
+			case SEMANAL:
+				
+				if(semanalDias == null || semanalDias.isEmpty())
+					throw new ValidacaoException(TipoMensagem.WARNING, "Dia(s) da semana não selecionado(s).");
+				
+				Calendar proximoDia = Calendar.getInstance();
+				
+				while(true) {
+					
+					proximoDia.setTime(DateUtil.adicionarDias(proximoDia.getTime(), 1));
+									
+					for(DiaSemanaDTO dia : semanalDias) {
+												
+						if(proximoDia.get(Calendar.DAY_OF_WEEK) == dia.getNumDia()) 
+							return proximoDia.getTime();												
+					}
+				}
+			
+			case QUINZENAL:
+				return DateUtil.adicionarDias(dataAnterior, 15);	
+			
+			case MENSAL:
+				
+				if(diaMensal==null)
+					throw new ValidacaoException(TipoMensagem.WARNING, "Dia mensal não selecionado.");
+				
+				Calendar data = Calendar.getInstance();
+				data.setTime(dataAnterior);
+				
+				if(data.get(Calendar.DAY_OF_MONTH) > diaMensal){	
+					data.add(Calendar.MONTH, 1);	
+				}
+				data.set(Calendar.DAY_OF_MONTH, diaMensal);
+				
+				return data.getTime();
+		}		
+		
+		return null;
 	}
 	
 	@Path("/exportar")

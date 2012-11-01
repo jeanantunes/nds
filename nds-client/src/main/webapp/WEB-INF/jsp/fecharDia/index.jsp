@@ -30,17 +30,51 @@
 		</div>
 	</form>
 
-	<form id="form-boletos-baixados">
-		<div id="dialog-boletos-baixados" title="Boletos Baixados" style="display:none;">
+	<form id="form-dividas-receber">
+		<div id="dialog-dividas-receber" title="Dívidas a Receber" style="display:none;">
 			<fieldset style="width:750px!important;">
-		    	<legend>Boletos Baixados - Vencimento: 10/05/2012</legend>
-		    	<table class="boletoBaixadoGrid"></table>
-		        <span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="../images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
-		        <span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="../images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />Imprimir</a></span>
-		        
+		    	<legend>Dívidas a Receber</legend>
+		    	
+                <table class="dividasReceberGrid"></table>
+		      
+                <span class="bt_novos" title="Gerar Arquivo">
+                  <a href="${pageContext.request.contextPath}/administracao/fecharDia/exportarDividasReceber?fileType=XLS" title="Arquivo">
+                    <img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
+                    Arquivo
+                  </a>
+                </span>
+		        <span class="bt_novos" title="Imprimir">
+                  <a href="${pageContext.request.contextPath}/administracao/fecharDia/exportarDividasReceber?fileType=PDF" title="Imprimir">
+                    <img src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />
+                    Imprimir
+                  </a>
+                 </span>
 		    </fieldset>
 		</div>
 	</form>
+  
+    <form id="form-dividas-vencer">
+      <div id="dialog-dividas-vencer" title="Dívidas a Vencer" style="display:none;">
+      <fieldset style="width:750px!important;">
+          <legend>Dívidas a Vencer</legend>
+          <table class="dividasVencerGrid"></table>
+            <span class="bt_novos" title="Gerar Arquivo">
+              <a href="${pageContext.request.contextPath}/administracao/fecharDia/exportarDividasVencer?fileType=XLS" title="Arquivo">
+                <img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
+                Arquivo
+              </a>
+            </span>
+            
+            <span class="bt_novos" title="Imprimir">
+              <a href="${pageContext.request.contextPath}/administracao/fecharDia/exportarDividasVencer?fileType=PDF" title="Imprimir">
+                <img src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />
+                Imprimir
+              </a>
+            </span>
+            
+        </fieldset>
+    </div>
+    </form>
 	
 	<form id="form-popup-validacao-recebimento-fisico">
 		<div id="dialog-recebe-fisico" title="Recebimento Físico" style="display:none;">
@@ -49,9 +83,19 @@
 	        <table class="recebeFisicoGrid"></table>
 	    </fieldset>
 	    <br clear="all" />
-	    <span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
-	
-		<span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
+	    <span class="bt_novos" title="Gerar Arquivo">
+	    	<a href="${pageContext.request.contextPath}/administracao/fecharDia/exportarRecebimentoFisico?fileType=XLS">
+	    		<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
+	    		Arquivo
+	    	</a>
+	    </span> 
+	    
+		<span class="bt_novos" title="Imprimir">
+			<a href="${pageContext.request.contextPath}/administracao/fecharDia/exportarRecebimentoFisico?fileType=PDF">
+				<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
+				Imprimir
+			</a>
+		</span>
 		
 		</div>
 	</form>
@@ -93,13 +137,20 @@
 		<div id="dialog-cota-grid" title="Cotas" style="display:none;">
 			<fieldset style="width:330px;">
 		    	<legend>Cotas</legend>
-		        <table class="popCotasGrid"></table>
-		    </fieldset>
-		    <br clear="all" />
-		    <span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="../images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
-		
-		<span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="../images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
-		
+			    
+				<table class="cotasGrid"></table>
+			      
+				<span class="bt_novos" title="Gerar Arquivo">
+				  	<a id="lnkExportacaoCotaXLS" href="#" title="Arquivo">
+						<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo
+					</a>
+				</span>
+				<span class="bt_novos" title="Imprimir">
+					<a id="lnkExportacaoCotaPDF" href="#" title="Imprimir">
+						<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />Imprimir
+				 	</a>
+				</span>
+			</fieldset>
 		</div>
 	</form>
 
@@ -110,9 +161,19 @@
 		        <table class="vendasDialogGrid"></table>
 		    </fieldset>
 		    <br clear="all" />
-		    <span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="../images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
+		    <span class="bt_novos" title="Gerar Arquivo">  
+			    <a href="${pageContext.request.contextPath}/administracao/fecharDia/exportarVendaSuplemntar?fileType=XLS">
+		    		<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
+		    		Arquivo
+		    	</a>
+	    	</span>
 		
-		<span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="../images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
+			<span class="bt_novos" title="Imprimir">		
+			 	<a href="${pageContext.request.contextPath}/administracao/fecharDia/exportarVendaSuplemntar?fileType=PDF">
+		    		<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
+		    		Imprimir
+			    </a>		
+			</span>
 		
 		</div>
 	</form>
@@ -242,19 +303,7 @@
 		        <tr class="header_table">
 		          <td width="205">Processo</td>
 		          <td width="48" align="center">Status</td>
-		        </tr>		        		        
-		        <tr class="class_linha_1">
-		          <td>Fechamento de Encalhe:</td>
-		          <td align="center"><img src="../images/ico_bloquear.gif" width="16" height="16" alt="Com Diferença" /></td>
-		        </tr>		       
-		        <tr class="class_linha_1">
-		          <td>Manutenção Status da Cota:</td>
-		          <td align="center"><img src="../images/ico_check.gif" alt="Processo Efetuado" width="16" height="16" /></td>
-		        </tr>
-		        <tr class="class_linha_2">
-		          <td>Ajuste de Comissão Jornaleiros:</td>
-		          <td align="center"><img src="../images/ico_check.gif" alt="Processo Efetuado" width="16" height="16" /></td>
-		        </tr>
+		        </tr>		        
 		      </table>
 		    </fieldset>
 		</div>
@@ -414,11 +463,11 @@
 </table>
           <span  style="margin-left:7px; margin-top:5px; margin-bottom:5px; float:left; clear:right;">&nbsp;</span><br clear="all"/>
 
-          <table width="950" border="0" align="center" cellpadding="0" cellspacing="0" style="border:1px solid #000;">
+          <table id="tabela_dividas_receber_vencer" width="950" border="0" align="center" cellpadding="0" cellspacing="0" style="border:1px solid #000;">
             <tr>
-              <td height="26" align="center" bgcolor="#F4F4F4"><strong><a href="javascript:;" onclick="fecharDiaController.popup_boletos_baixados();">DÍVIDAS A RECEBER</a></strong></td>
+              <td height="26" align="center" bgcolor="#F4F4F4"><strong><a href="javascript:;" onclick="fecharDiaController.popup_dividas_receber();">DÍVIDAS A RECEBER</a></strong></td>
               <td align="center" bgcolor="#F4F4F4" style="width:10px; border-left:1px solid #ccc;">&nbsp;</td>
-              <td align="center" bgcolor="#F4F4F4"><strong><a href="javascript:;" onclick="fecharDiaController.popup_boletos_baixados();">DÍVIDAS A VENCER</a></strong></td>
+              <td align="center" bgcolor="#F4F4F4"><strong><a href="javascript:;" onclick="fecharDiaController.popup_dividas_vencer();">DÍVIDAS A VENCER</a></strong></td>
             </tr>
             <tr>
               <td valign="top">
@@ -441,40 +490,10 @@
               <td width="950" height="26" align="center" bgcolor="#F4F4F4"><strong>COTAS</strong></td>
             </tr>
             <tr>
-              <td valign="top"><table width="910" border="0" cellpadding="2" cellspacing="1" style="margin-left:10px; margin-right:10px;">
-                <tr>
-                  <td align="left">&nbsp;</td>
-                  <td align="right">&nbsp;</td>
-                  <td align="right">&nbsp;</td>
-                  <td align="right">&nbsp;</td>
-                  <td align="right">&nbsp;</td>
-                  <td align="right">&nbsp;</td>
-                </tr>
-                <tr class="header_table">
-                  <td align="center">Total</td>
-                  <td align="center">Ativas</td>
-                  <td align="center">Ausentes - Reparte</td>
-                  <td align="center">Ausentes - Encalhe</td>
-                  <td align="center">Novos</td>
-                  <td align="center">Inativas</td>
-                </tr>
-                <tr>
-                  <td width="222" align="center" style="border-bottom:1px solid #ccc;">100</td>
-                  <td width="153" align="center" style="border-bottom:1px solid #ccc;">90</td>
-                  <td width="158" align="center" style="border-bottom:1px solid #ccc;"><a href="javascript:;" onclick="fecharDiaController.popup_cotasGrid();">05</a></td>
-                  <td width="183" align="center" style="border-bottom:1px solid #ccc;"><a href="javascript:;" onclick="fecharDiaController.popup_cotasGrid();">05</a></td>
-                  <td width="183" align="center" style="border-bottom:1px solid #ccc;"><a href="javascript:;" onclick="fecharDiaController.popup_cotasGrid();">05</a></td>
-                  <td width="188" align="center" style="border-bottom:1px solid #ccc;"><a href="javascript:;" onclick="fecharDiaController.popup_cotasGrid();">00</a></td>
-                </tr>
-                <tr>
-                  <td align="center">&nbsp;</td>
-                  <td align="center">&nbsp;</td>
-                  <td align="center">&nbsp;</td>
-                  <td align="center">&nbsp;</td>
-                  <td align="center">&nbsp;</td>
-                  <td align="center">&nbsp;</td>
-                </tr>
-              </table></td>
+              <td valign="top">
+	              <table id="tabela_cotas" width="910" border="0" cellpadding="2" cellspacing="1" style="margin-left:10px; margin-right:10px;">
+	              </table>
+              </td>
             </tr>
         </table>
 
@@ -612,67 +631,7 @@
     </div>
 </div> 
 <script language="javascript" type="text/javascript">
-$(".boletoBaixadoGrid").flexigrid({
-			url : '../xml/boletos_baixadosB-xml.xml',
-			dataType : 'xml',
-			colModel : [ {
-				display : 'Cota',
-				name : 'cota',
-				width : 40,
-				sortable : true,
-				align : 'left'
-			},{
-				display : 'Nome',
-				name : 'nome',
-				width : 100,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Banco',
-				name : 'banco',
-				width : 50,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Conta-Corrente',
-				name : 'cCorrente',
-				width : 80,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Nosso Número',
-				name : 'nossoNumero',
-				width : 120,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Valor R$',
-				name : 'vlr',
-				width : 70,
-				sortable : true,
-				align : 'right'
-			}, {
-				display : 'Dt. Vencto',
-				name : 'dtVencto',
-				width : 80,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Forma Pgto',
-				name : 'formaPgto',
-				width : 90,
-				sortable : true,
-				align : 'left'
-			}],
-			sortname : "cota",
-			sortorder : "asc",
-			usepager : true,
-			useRp : true,
-			rp : 15,
-			showTableToggleBtn : true,
-			width : 750,
-			height : 220
-		});
+
 $(".popCotasGrid").flexigrid({
 			url : '../xml/popCotasGrid-xml.xml',
 			dataType : 'xml',

@@ -1,4 +1,4 @@
-package br.com.abril.nds.dto;
+package br.com.abril.nds.dto.fechamentodiario;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -8,7 +8,7 @@ import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.util.CurrencyUtil;
 
 /**
- * DTO com informações de sumarização da divida
+ * DTO com informações de sumarização das dívidas para fechamento diário
  * 
  * @author francisco.garcia
  *
@@ -19,7 +19,7 @@ public class SumarizacaoDividasDTO implements Serializable {
     
     private Date data;
     
-    private TipoSumarizacao tipoSumarizacao; 
+    private TipoDivida tipoSumarizacao; 
     
     private TipoCobranca tipoCobranca;
     
@@ -30,7 +30,7 @@ public class SumarizacaoDividasDTO implements Serializable {
     private BigDecimal inadimplencia = BigDecimal.ZERO;
 
 
-    public SumarizacaoDividasDTO(Date data, TipoSumarizacao tipoSumarizacao, TipoCobranca tipoCobranca, BigDecimal total, BigDecimal valorPago,
+    public SumarizacaoDividasDTO(Date data, TipoDivida tipoSumarizacao, TipoCobranca tipoCobranca, BigDecimal total, BigDecimal valorPago,
             BigDecimal inadimplencia) {
         this.data = data;
         this.tipoSumarizacao = tipoSumarizacao;
@@ -58,7 +58,7 @@ public class SumarizacaoDividasDTO implements Serializable {
     /**
      * @return the tipoSumarizacao
      */
-    public TipoSumarizacao getTipoSumarizacao() {
+    public TipoDivida getTipoSumarizacao() {
         return tipoSumarizacao;
     }
 
@@ -66,7 +66,7 @@ public class SumarizacaoDividasDTO implements Serializable {
     /**
      * @param tipoSumarizacao the tipoSumarizacao to set
      */
-    public void setTipoSumarizacao(TipoSumarizacao tipoSumarizacao) {
+    public void setTipoSumarizacao(TipoDivida tipoSumarizacao) {
         this.tipoSumarizacao = tipoSumarizacao;
     }
 
@@ -160,19 +160,6 @@ public class SumarizacaoDividasDTO implements Serializable {
      */
     public String getInadimplenciaFormatado() {
         return CurrencyUtil.formatarValor(inadimplencia);
-    }
-
-
-    /**
-     * Enum com os tipos de sumarização 
-     *
-     */
-    public static enum TipoSumarizacao {
-            
-            DIVIDAS_A_RECEBER, 
-            
-            DIVIDAS_A_VENCER;
-        
     }
 
 }
