@@ -13,13 +13,17 @@ import br.com.abril.nds.dto.ValidacaoControleDeAprovacaoFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoGeracaoCobrancaFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoLancamentoFaltaESobraFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoRecebimentoFisicoFecharDiaDTO;
+import br.com.abril.nds.dto.fechamentodiario.SumarizacaoDividasDTO;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
+import br.com.abril.nds.model.financeiro.Divida;
 import br.com.abril.nds.repository.FecharDiaRepository;
 import br.com.abril.nds.repository.FormaCobrancaRepository;
+import br.com.abril.nds.service.DividaService;
 import br.com.abril.nds.service.FecharDiaService;
 import br.com.abril.nds.service.ImpressaoDividaService;
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.vo.PaginacaoVO;
 
 @Service
 public class FecharDiaServiceImpl implements FecharDiaService {
@@ -28,10 +32,13 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 	private FecharDiaRepository fecharDiaRepository;
 	
 	@Autowired
-	private ImpressaoDividaService dividaService;
+	private ImpressaoDividaService impressaoDividaService;
 	
 	@Autowired
 	private FormaCobrancaRepository formaCobrancaRepository;
+	
+	@Autowired
+	private DividaService dividaService;
 	
 	@Override
 	@Transactional
@@ -98,13 +105,13 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		for(ValidacaoGeracaoCobrancaFecharDiaDTO dto: listaDePoliticaCobranca){
 			FormaCobranca fc = this.formaCobrancaRepository.buscarPorId(dto.getFormaCobrancaId());
 			if(dto.getTipoFormaCobranca().equals("Diária")){	
-				return dividaService.validarDividaGerada(dataOperacao);				
+				return impressaoDividaService.validarDividaGerada(dataOperacao);				
 			}
 			if(dto.getTipoFormaCobranca().equals("Semanal")){
 				List<ValidacaoGeracaoCobrancaFecharDiaDTO> lista = this.fecharDiaRepository.obterDiasDaConcentracao(fc);
 				for(ValidacaoGeracaoCobrancaFecharDiaDTO con: lista){					
 					if(con.getDiaDoMes() == diaDaSemanaDaDataDeOperacao){
-						return dividaService.validarDividaGerada(dataOperacao);
+						return impressaoDividaService.validarDividaGerada(dataOperacao);
 					}					
 				}
 				
@@ -112,7 +119,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 			if(fc.getTipoFormaCobranca().getDescricao().equals("Mensal") || fc.getTipoFormaCobranca().getDescricao().equals("Quinzenal") ){
 				for(Integer diaDeCobranca: fc.getDiasDoMes()){
 					if(diaDeCobranca ==  diaDaMesDaDataDeOperacao){
-						return dividaService.validarDividaGerada(dataOperacao);
+						return impressaoDividaService.validarDividaGerada(dataOperacao);
 					}
 				}
 			}
@@ -120,5 +127,59 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		 
 		return true;
 	}
+
+    /**
+     * {@inheritDoc}
+     */
+	@Override
+	@Transactional(readOnly = true)
+    public List<SumarizacaoDividasDTO> sumarizacaoDividasReceberEm(Date data) {
+        return dividaService.sumarizacaoDividasReceberEm(data);
+    }
+
+	/**
+     * {@inheritDoc}
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public List<SumarizacaoDividasDTO> sumarizacaoDividasVencerApos(Date data) {
+        return dividaService.sumarizacaoDividasVencerApos(data);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public List<Divida> obterDividasReceberEm(Date data, PaginacaoVO paginacao) {
+        return obterDividasReceberEm(data, paginacao);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public List<Divida> obterDividasVencerApos(Date data, PaginacaoVO paginacao) {
+        return dividaService.obterDividasVencerApos(data, paginacao);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public int contarDividasReceberEm(Date data) {
+        return dividaService.contarDividasReceberEm(data);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public int contarDividasVencerApos(Date data) {
+        return dividaService.contarDividasVencerApos(data);
+    }
 
 }
