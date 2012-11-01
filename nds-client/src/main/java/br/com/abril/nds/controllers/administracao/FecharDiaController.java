@@ -11,9 +11,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.dto.FecharDiaDTO;
@@ -26,11 +23,13 @@ import br.com.abril.nds.dto.VendaSuplementarDTO;
 import br.com.abril.nds.dto.fechamentodiario.DividaDTO;
 import br.com.abril.nds.dto.fechamentodiario.SumarizacaoDividasDTO;
 import br.com.abril.nds.dto.fechamentodiario.TipoDivida;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.financeiro.Divida;
 import br.com.abril.nds.model.seguranca.Permissao;
+import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.serialization.custom.CustomMapJson;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.DividaService;
@@ -42,6 +41,7 @@ import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TableModel;
+import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.util.export.NDSFileHeader;
@@ -99,7 +99,7 @@ public class FecharDiaController {
 		dto.setRecebimentoFisico(this.fecharDiaService.existeNotaFiscalSemRecebimentoFisico(distribuidor.getDataOperacao()));
 		dto.setConfirmacaoDeExpedicao(this.fecharDiaService.existeConfirmacaoDeExpedicao(distribuidor.getDataOperacao()));
 		dto.setLancamentoFaltasESobras(this.fecharDiaService.existeLancamentoFaltasESobrasPendentes(distribuidor.getDataOperacao()));
-		dto.setControleDeAprovacao(this.distribuidor.isUtilizaControleAprovacao());		
+		dto.setControleDeAprovacao(this.distribuidor.isUtilizaControleAprovacao());
 		
 		result.use(Results.json()).withoutRoot().from(dto).recursive().serialize();
 	}
@@ -192,12 +192,12 @@ public class FecharDiaController {
 		listaDeResultados.add(totalReparte);
 		
 		lista = this.resumoFecharDiaService.obterValorDiferenca(distribuidor.getDataOperacao(), true, "sobra");
-		BigDecimal totalSobras = lista.get(0).getSobras();
+		BigDecimal totalSobras = lista.get(0).getSobras() != null ? lista.get(0).getSobras() : BigDecimal.ZERO;
 		listaDeResultados.add(totalSobras);
 		
 		
 		lista = this.resumoFecharDiaService.obterValorDiferenca(distribuidor.getDataOperacao(), true, "falta");
-		BigDecimal totalFaltas = lista.get(0).getFaltas();
+		BigDecimal totalFaltas = lista.get(0).getFaltas() != null ? lista.get(0).getFaltas() : BigDecimal.ZERO;
 		listaDeResultados.add(totalFaltas);
 		
 		
@@ -213,7 +213,7 @@ public class FecharDiaController {
 		listaDeResultados.add(totalADistribuir);
 		
 		lista = this.resumoFecharDiaService.obterValorDistribuido(distribuidor.getDataOperacao(), true);
-		BigDecimal totalDistribuido = lista.get(0).getDistribuidos();
+		BigDecimal totalDistribuido = lista.get(0).getDistribuidos() != null ? lista.get(0).getDistribuidos() : BigDecimal.ZERO;
 		listaDeResultados.add(totalDistribuido);
 		
 		BigDecimal sobraDistribuido = totalADistribuir.subtract(totalDistribuido);
@@ -301,6 +301,78 @@ public class FecharDiaController {
 		
 	}
 	
+	@Get
+	public void exportarVendaSuplemntar(FileType fileType){		
+		try {
+			
+			List<VendaSuplementarDTO> listaReparte = resumoSuplementarFecharDiaService.obterVendasSuplementar(distribuidor.getDataOperacao());
+			
+			if(listaReparte.isEmpty()) {
+				throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");
+			}
+			
+				FileExporter.to("recebimento_fisico", fileType).inHTTPResponse(this.getNDSFileHeader(), null, null, 
+						listaReparte, VendaSuplementarDTO.class, this.httpResponse);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		
+		
+		result.nothing();
+		
+	}
+	
+	@Get
+	public void exportarRecebimentoFisico(FileType fileType){
+		
+		
+		try {
+		List<ValidacaoRecebimentoFisicoFecharDiaDTO> listaRecebimentoFisicoNaoConfirmado = this.fecharDiaService.obterNotaFiscalComRecebimentoFisicoNaoConfirmado(distribuidor.getDataOperacao());
+		
+		if(listaRecebimentoFisicoNaoConfirmado.isEmpty()) {
+			throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");
+		}
+		
+			FileExporter.to("recebimento_fisico", fileType).inHTTPResponse(this.getNDSFileHeader(), null, null, 
+					listaRecebimentoFisicoNaoConfirmado, ValidacaoRecebimentoFisicoFecharDiaDTO.class, this.httpResponse);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		
+		
+		result.nothing();
+		
+	}
+	
+	private NDSFileHeader getNDSFileHeader() {
+		
+		NDSFileHeader ndsFileHeader = new NDSFileHeader();
+		
+		Distribuidor distribuidor = this.distribuidorService.obter();
+		
+		if (distribuidor != null) {
+			
+			ndsFileHeader.setNomeDistribuidor(distribuidor.getJuridica().getRazaoSocial());
+			ndsFileHeader.setCnpjDistribuidor(distribuidor.getJuridica().getCnpj());
+		}
+		
+		ndsFileHeader.setData(new Date());
+		
+		ndsFileHeader.setNomeUsuario(this.getUsuario().getNome());
+		
+		return ndsFileHeader;
+	}
+	
+
+	public Usuario getUsuario() {
+		Usuario usuario = new Usuario();
+		usuario.setId(1L);
+		usuario.setNome("Lazaro Jornaleiro");
+		return usuario;
+	}
+	
 	@Post
 	public void obterSumarizacaoDividas() {
         Date dataFechamento = getDataFechamento();
@@ -384,41 +456,6 @@ public class FecharDiaController {
     
     private Date getDataFechamento() {
         return distribuidorService.obter().getDataOperacao();
-    }
-    
-    private NDSFileHeader getNDSFileHeader() {
-      
-        NDSFileHeader ndsFileHeader = new NDSFileHeader();
-        Distribuidor distribuidor = distribuidorService.obter();
-        ndsFileHeader.setNomeDistribuidor(distribuidor.getJuridica().getRazaoSocial());
-        ndsFileHeader.setCnpjDistribuidor(distribuidor.getJuridica().getCnpj());
-        ndsFileHeader.setData(new Date());
-        ndsFileHeader.setNomeUsuario(getUsuarioLogado());
-        
-        return ndsFileHeader;
-    }
-    
-    /**
-     * Recupera username o usuário logado para utilização nas funcionalidades da tela de
-     * fechamnento diário
-     * 
-     * @return username do usuário logado
-     */
-    //TODO: Utilizando username do usuário logado, já que a implementação atual
-    //está utilizando a implementação User fornecida pelo Spring.
-    //Deve ser refatorado quando o mecanismo de autenticação fornecer as informações
-    //necessárias, por exeplo, nome do usuário ou o relacionamento com a entidade 
-    //br.com.abril.nds.model.seguranca.Usuario 
-    private String getUsuarioLogado() {
-        String usuario = null;
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null) {
-            Object principal = authentication.getPrincipal();
-            if (principal instanceof UserDetails) {
-                usuario = UserDetails.class.cast(principal).getUsername();
-            }
-        }
-        return usuario;
     }
 
 }

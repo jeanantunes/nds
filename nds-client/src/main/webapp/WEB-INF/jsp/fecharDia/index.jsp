@@ -83,9 +83,19 @@
 	        <table class="recebeFisicoGrid"></table>
 	    </fieldset>
 	    <br clear="all" />
-	    <span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
-	
-		<span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
+	    <span class="bt_novos" title="Gerar Arquivo">
+	    	<a href="${pageContext.request.contextPath}/administracao/fecharDia/exportarRecebimentoFisico?fileType=XLS">
+	    		<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
+	    		Arquivo
+	    	</a>
+	    </span> 
+	    
+		<span class="bt_novos" title="Imprimir">
+			<a href="${pageContext.request.contextPath}/administracao/fecharDia/exportarRecebimentoFisico?fileType=PDF">
+				<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
+				Imprimir
+			</a>
+		</span>
 		
 		</div>
 	</form>
@@ -144,9 +154,19 @@
 		        <table class="vendasDialogGrid"></table>
 		    </fieldset>
 		    <br clear="all" />
-		    <span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="../images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
+		    <span class="bt_novos" title="Gerar Arquivo">  
+			    <a href="${pageContext.request.contextPath}/administracao/fecharDia/exportarVendaSuplemntar?fileType=XLS">
+		    		<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
+		    		Arquivo
+		    	</a>
+	    	</span>
 		
-		<span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="../images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
+			<span class="bt_novos" title="Imprimir">		
+			 	<a href="${pageContext.request.contextPath}/administracao/fecharDia/exportarVendaSuplemntar?fileType=PDF">
+		    		<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
+		    		Imprimir
+			    </a>		
+			</span>
 		
 		</div>
 	</form>
@@ -276,19 +296,7 @@
 		        <tr class="header_table">
 		          <td width="205">Processo</td>
 		          <td width="48" align="center">Status</td>
-		        </tr>		        		        
-		        <tr class="class_linha_1">
-		          <td>Fechamento de Encalhe:</td>
-		          <td align="center"><img src="../images/ico_bloquear.gif" width="16" height="16" alt="Com Diferença" /></td>
-		        </tr>		       
-		        <tr class="class_linha_1">
-		          <td>Manutenção Status da Cota:</td>
-		          <td align="center"><img src="../images/ico_check.gif" alt="Processo Efetuado" width="16" height="16" /></td>
-		        </tr>
-		        <tr class="class_linha_2">
-		          <td>Ajuste de Comissão Jornaleiros:</td>
-		          <td align="center"><img src="../images/ico_check.gif" alt="Processo Efetuado" width="16" height="16" /></td>
-		        </tr>
+		        </tr>		        
 		      </table>
 		    </fieldset>
 		</div>
