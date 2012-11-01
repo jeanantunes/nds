@@ -20,6 +20,7 @@ import br.com.abril.nds.client.util.PDFUtil;
 import br.com.abril.nds.client.vo.CalculaParcelasVO;
 import br.com.abril.nds.client.vo.NegociacaoDividaDetalheVO;
 import br.com.abril.nds.client.vo.NegociacaoDividaVO;
+import br.com.abril.nds.dto.DiaSemanaDTO;
 import br.com.abril.nds.dto.NegociacaoDividaDTO;
 import br.com.abril.nds.dto.NegociacaoDividaPaginacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroCalculaParcelas;
@@ -147,37 +148,17 @@ public class NegociacaoDividaController {
 	
 	
 	@Path("/pesquisarDetalhes.json")
-	public void pesquisarDetalhes(FiltroConsultaNegociacaoDivida filtro, String sortname, String sortorder, int rp, int page) {
-		// TODO
-		this.session.setAttribute(FILTRO_NEGOCIACAO_DIVIDA, filtro);
+	public void pesquisarDetalhes(Long idCobranca) {
 		
-		List<NegociacaoDividaDTO> list = negociacaoDividaService.obterDividasPorCota(filtro);
-		List<NegociacaoDividaDetalheVO> listDividas = new ArrayList<NegociacaoDividaDetalheVO>();
-		/*for (Cobranca c : list){
-			NegociacaoDividaDetalheVO ndd = new NegociacaoDividaDetalheVO();
-			ndd.setData(DateUtil.formatarDataPTBR(c.getDivida().getData()));
-			if(c.getStatusCobranca() == StatusCobranca.PAGO)
-				ndd.setTipo("Pagamento");
-			else
-				ndd.setTipo("Dívida");
-			ndd.setValor("-"+ CurrencyUtil.formatarValor(c.getDivida().getValor()));
-			ndd.setObservacao("TESTE");
-			listDividas.add(ndd);
-		}*/
-		result.use(FlexiGridJson.class).from(listDividas).total(listDividas.size()).page(page).serialize();
+		List<NegociacaoDividaDetalheVO> listDividas = negociacaoDividaService.obterDetalhesCobranca(idCobranca);//new ArrayList<NegociacaoDividaDetalheVO>();
+		System.out.println(listDividas.size());
+		result.use(FlexiGridJson.class).from(listDividas).total(listDividas.size()).page(1).serialize();
 	}
 	
 	@Path("/calcularParcelas.json")
 	public void calcularParcelas(FiltroCalculaParcelas filtro) {
 		
 		List<CalculaParcelasVO> listParcelas = new ArrayList<CalculaParcelasVO>();
-		
-		System.out.println(filtro);
-		
-		System.out.println(filtro.getQntdParcelas());
-		
-		System.out.println(filtro.getValorSelecionado());
-		
 		
 		Double valorParcela = filtro.getValorSelecionado() / filtro.getQntdParcelas();
 		
@@ -195,7 +176,10 @@ public class NegociacaoDividaController {
 						
 			Banco banco = bancoService.obterBancoPorId(filtro.getIdBanco());
 			
-			Double encargos = calcularEncargos(valorParcela, DateUtil.parseDataPTBR(parcela.getDataVencimento()),filtro.getNumeroCota(), banco);
+			Double encargos = 0.0;
+			
+			if( !filtro.getTipoPagamento().equals(TipoCobranca.CHEQUE) )
+				encargos = calcularEncargos(valorParcela, DateUtil.parseDataPTBR(parcela.getDataVencimento()),filtro.getNumeroCota(), banco);
 						
 			parcela.setEncargos(CurrencyUtil.formatarValor(encargos));
 							
@@ -226,7 +210,7 @@ public class NegociacaoDividaController {
 	}
 
 
-	private Date getDataParcela(Date dataAnterior, PeriodicidadeCobranca periodicidade, List<Integer>semanalDias, Integer diaMensal) {
+	private Date getDataParcela(Date dataAnterior, PeriodicidadeCobranca periodicidade, List<DiaSemanaDTO>semanalDias, Integer diaMensal) {
 		
 		switch(periodicidade){
 			
@@ -242,11 +226,11 @@ public class NegociacaoDividaController {
 				
 				while(true) {
 					
-					proximoDia.setTime(DateUtil.adicionarDias(dataAnterior, 1));
+					proximoDia.setTime(DateUtil.adicionarDias(proximoDia.getTime(), 1));
 									
-					for(Integer intDia : semanalDias) {
+					for(DiaSemanaDTO dia : semanalDias) {
 												
-						if(proximoDia.get(Calendar.DAY_OF_WEEK) == intDia) 
+						if(proximoDia.get(Calendar.DAY_OF_WEEK) == dia.getNumDia()) 
 							return proximoDia.getTime();												
 					}
 				}

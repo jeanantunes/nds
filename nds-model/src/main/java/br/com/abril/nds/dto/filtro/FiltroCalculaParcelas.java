@@ -3,6 +3,7 @@ package br.com.abril.nds.dto.filtro;
 import java.io.Serializable;
 import java.util.List;
 
+import br.com.abril.nds.dto.DiaSemanaDTO;
 import br.com.abril.nds.model.cadastro.PeriodicidadeCobranca;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 
@@ -12,7 +13,7 @@ public class FiltroCalculaParcelas extends FiltroConsultaNegociacaoDivida implem
 	
 	private PeriodicidadeCobranca periodicidade;
 	
-	private List<Integer> semanalDias;
+	private List<DiaSemanaDTO> semanalDias;
 	
 	private Integer quinzenalDia1; 
 	
@@ -38,14 +39,6 @@ public class FiltroCalculaParcelas extends FiltroConsultaNegociacaoDivida implem
 
 	public void setPeriodicidade(PeriodicidadeCobranca periodicidade) {
 		this.periodicidade = periodicidade;
-	}
-
-	public List<Integer> getSemanalDias() {
-		return semanalDias;
-	}
-
-	public void setSemanalDias(List<Integer> semanalDias) {
-		this.semanalDias = semanalDias;
 	}
 
 	public Integer getQuinzenalDia1() {
@@ -118,6 +111,14 @@ public class FiltroCalculaParcelas extends FiltroConsultaNegociacaoDivida implem
 
 	public void setIsentaEncargos(Boolean isentaEncargos) {
 		this.isentaEncargos = isentaEncargos;
+	}
+
+	public List<DiaSemanaDTO> getSemanalDias() {
+		return semanalDias;
+	}
+
+	public void setSemanalDias(List<DiaSemanaDTO> semanalDias) {
+		this.semanalDias = semanalDias;
 	}
 
 	

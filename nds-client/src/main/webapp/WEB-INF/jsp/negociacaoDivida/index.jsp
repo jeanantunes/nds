@@ -317,9 +317,18 @@
 					</tr>
 				</table>
 
-				<br clear="all" /> <input name="" type="checkbox" id="isentaEncargos"
-					style="float: left;" /><span style="float: left; margin-top: 8px;">Isenta
-					Encargos</span>
+				<br clear="all" /> 
+				
+				<table id="encargos">
+					<tr>
+						<td>
+							<input name="" type="checkbox" id="isentaEncargos" style="float: left;" />
+						</td>
+						<td>
+							<span style="float: left; margin-top: 8px;">Isenta Encargos</span>
+						</td>
+					</tr>
+				</table>
 			</fieldset>
 			<span class="bt_novos" title="Imprimir">
 				<a href="${pageContext.request.contextPath}/financeiro/negociacaoDivida/imprimirNegociacao">

@@ -77,7 +77,7 @@ var negociacaoDividaController = $.extend(true, {
 			saldo += row.cell.valorDouble;
 		});
 		
-		$('#id_saldo').text(floatToPrice(saldo));
+		$('#id_saldo').text(floatToPrice(saldo.toFixed(2)));
 		
 		return result;
 	},
@@ -118,8 +118,6 @@ var negociacaoDividaController = $.extend(true, {
 	calcularParcelas : function(){
 		if($('#selectPagamento').val() != ""){
 			
-		//var params = $("#formaPgtoForm").serialize();
-			
 			$.postJSON(contextPath + '/financeiro/negociacaoDivida/calcularParcelas.json',
 					negociacaoDividaController.getParamsCalcularParcelas(),
 					function(result) {
@@ -140,13 +138,15 @@ var negociacaoDividaController = $.extend(true, {
 		
 		var params = [];
 		
+		
 		$.each($("[name=semanalDias]:checked", negociacaoDividaController.workspace), function (index, value){
 			params.push({
-				name: 'filtro.diasSemana['+index+']',
+				name: 'filtro.semanalDias['+index+'].numDia',
 				value: value.value
 			});
+			
 		});
-
+				
 		params.push({
 			name: 'filtro.tipoPagamento',
 			value: $("#selectPagamento", negociacaoDividaController.workspace).val()
@@ -384,8 +384,14 @@ var negociacaoDividaController = $.extend(true, {
 	
 	
 	geraLinhasCheque :function(result) {
+		
+		$('#encargos').hide();
+		
 		if($('#selectPagamento').val() != ""){
+			
 			var tabela = $('#tabelaCheque').get(0);
+			
+			var totalParcela = '0,00';
 			
 			while(tabela.rows.length > 1){
 				tabela.deleteRow(1);
@@ -406,20 +412,49 @@ var negociacaoDividaController = $.extend(true, {
 					tabela.rows[i].cells[j].style.textAlign = "center";
 				}
 				
-				coluna1.innerHTML = '<td><input value="'+row.dataVencimento+'" type="text" name="vencimentoCheque" id="vencimentoCheque'+i+'"style="width:100px;" /></td>';
-				coluna2.innerHTML = '<td><input value="'+row.parcela+'" type="text" name="valorCheque" id="valor'+i+'" style="width:100px; text-align:right;" /></td>';
-				coluna3.innerHTML = '<td><input value="'+i+'" type="text" name="numCheque" id="numCheque'+i+'"  style="width:100px;" /></td>';
+				coluna1.innerHTML = '<td><input value="'+row.dataVencimento+'" type="text" name="vencimentoCheque" id="vencimentoCheque'+i+'"style="width:100px;" readonly="readonly"/></td>';
+				coluna2.innerHTML = '<td><input value="'+row.parcela+'" type="text" name="valorCheque" id="valor'+i+'" style="width:100px; text-align:right;" onchange="negociacaoDividaController.recalcularTotalCheque()"/></td>';
+				coluna3.innerHTML = '<td><input value="'+i+'" type="text" name="numCheque" id="numCheque'+i+'"  style="width:100px;" readonly="readonly"/></td>';
 				coluna4.innerHTML = '<td align="center"><a onclick="negociacaoDividaController.excluirCheque('+i+')" href="javascript:;"><img src="'+contextPath+'/images/ico_excluir.gif" border="0" align="Excluir Linha" /></a></td>';
 			
+				totalParcela = sumPrice(result[i-1].parcela, totalParcela);
+				
 			});
+			
+			var linha = tabela.insertRow(tabela.rows.length);
+			
+			linha.insertCell(0);
+			var colunaParcela = linha.insertCell(1);
+			linha.insertCell(2);	
+			
+			linha.insertCell(3);
+			
+			colunaParcela.style.textAlign = "RIGHT";
+			colunaParcela.innerHTML = '<div id="totalCheque"> ' + 'R$ '+totalParcela + '</div>';
+			
 		}
+	},
+	
+	recalcularTotalCheque : function () {
+		
+		var total = '0,00';
+		
+		$('input[name$="valorCheque"]').each(function(){
+			total = sumPrice(total,this.value);
+		});
+		
+		$('#totalCheque').html('R$ ' + total);
 	},
 	
 	excluirCheque : function(i) {
 		$('#tabelaCheque').get(0).deleteRow(i);
+		negociacaoDividaController.recalcularTotalCheque();
 	},
 	
 	geraLinhasParcelas : function(result) {
+		
+		$('#encargos').show();
+		
 		if($('#selectPagamento').val() != ""){
 			var tabela = $('#tabelaParcelas').get(0);
 			var totalParcela = '0,00';
