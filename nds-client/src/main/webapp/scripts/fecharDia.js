@@ -401,7 +401,7 @@ var fecharDiaController =  $.extend(true, {
 	},
 	
 	popup_vendasTot : function() {
-		alert('entrou na função.');
+		
 		$(".vendasDialogGrid", fecharDiaController.workspace).flexOptions({
 			url: contextPath + "/administracao/fecharDia/obterGridVendaSuplemntar",
 			dataType : 'json',
@@ -503,8 +503,9 @@ var fecharDiaController =  $.extend(true, {
 					fecharDiaController.validacaoGeracaoCobranca(result);
 					fecharDiaController.validacaoRecebimentoFisico(result);
 					fecharDiaController.validacaoConfirmacaoDeExpedicao(result);
+					fecharDiaController.validacaoFechamentoDeEncalhe(result);
 					fecharDiaController.validacaoLancamentoFaltasESobras(result);
-					fecharDiaController.validacaoControleDeAplicao(result);
+					fecharDiaController.validacaoControleDeAprovacao(result);
 				});
 	},
 	
@@ -607,14 +608,22 @@ var fecharDiaController =  $.extend(true, {
 		});
 	},
 	
+	validacaoFechamentoDeEncalhe : function(result){
+		var fechamentoDeEncalhe = "<tr class='class_linha_1'>" + 
+        "<td>Fechamento de Encalhe:</td>" +
+        "<td align='center'><img src='"+ contextPath +"/images/ico_check.gif' width='16' height='16' alt='Com DiferenÃ§a' /></td>" +
+        "</tr>";
+		$('#tabela-validacao').append(fechamentoDeEncalhe);
+	},
+	
 	validacaoLancamentoFaltasESobras : function(result){
 		var lancamentoFaltasESobras = null;				
 		var iconeLancamentoFaltasESobras = null;		
 		if(result.lancamentoFaltasESobras){
-			lancamentoFaltasESobras = "<tr class='class_linha_1'><td>Lançamento de Faltas e Sobras:</td>";
+			lancamentoFaltasESobras = "<tr class='class_linha_2'><td>Lançamento de Faltas e Sobras:</td>";
 			iconeLancamentoFaltasESobras = 'ico_check.gif';
 		}else{
-			lancamentoFaltasESobras = "<tr class='class_linha_1'><td><a href='javascript:;' onclick='fecharDiaController.popup_lctoFaltas();'>Lançamento de Faltas e Sobras</a>:</td>";
+			lancamentoFaltasESobras = "<tr class='class_linha_2'><td><a href='javascript:;' onclick='fecharDiaController.popup_lctoFaltas();'>Lançamento de Faltas e Sobras</a>:</td>";
 			iconeLancamentoFaltasESobras = 'ico_bloquear.gif';
 		}		
 		var imagem = "<td align='center'><img src='"+ contextPath +"/images/"+iconeLancamentoFaltasESobras+"' alt='Processo Efetuado' width='16' height='16' /></td></tr>";
@@ -644,7 +653,7 @@ var fecharDiaController =  $.extend(true, {
 		});
 	},
 	
-	validacaoControleDeAplicao : function(result){
+	validacaoControleDeAprovacao : function(result){
 		if(result.controleDeAprovacao){
 			$.postJSON(contextPath + "/administracao/fecharDia/validacoesDoCotroleDeAprovacao", null,
 					function(result){
