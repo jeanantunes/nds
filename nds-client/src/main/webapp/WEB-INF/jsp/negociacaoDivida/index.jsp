@@ -322,7 +322,7 @@
 				<table id="encargos">
 					<tr>
 						<td>
-							<input name="" type="checkbox" id="isentaEncargos" style="float: left;" />
+							<input name="" type="checkbox" id="isentaEncargos" onclick="negociacaoDividaController.calcularParcelas();" style="float: left;" />
 						</td>
 						<td>
 							<span style="float: left; margin-top: 8px;">Isenta Encargos</span>
