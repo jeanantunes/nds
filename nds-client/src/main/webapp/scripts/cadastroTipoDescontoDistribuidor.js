@@ -57,17 +57,6 @@ var descontoDistribuidorController = $.extend(true,{
 		           },
 				   null,
 				   true,"idModalDescontoGeral");	
-
-		    verificadorProgressoGravacaoDescontoGeral = setInterval(function () {
-				$.getJSON(contextPath +"/financeiro/tipoDescontoCota/verificaProgressoGravacaoDescontoGeral",
-						   null,				   
-						   function(result) {
-						   		if (!result.ativo) {
-						   			exibirMensagem(result.validacao.tipoMensagem, result.validacao.listaMensagens, "");
-						   			clearInterval(verificadorProgressoGravacaoDescontoGeral);
-						   		}
-					   	   });
-		    }, 20000);
 			
 		}, 
 		

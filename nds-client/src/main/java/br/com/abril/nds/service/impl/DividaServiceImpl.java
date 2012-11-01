@@ -13,10 +13,10 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.abril.nds.dto.DividaComissaoDTO;
 import br.com.abril.nds.dto.MovimentoFinanceiroCotaDTO;
 import br.com.abril.nds.dto.StatusDividaDTO;
+import br.com.abril.nds.dto.fechamentodiario.SumarizacaoDividasDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaInadimplenteDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
-import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.financeiro.BaixaCobranca;
@@ -41,6 +41,7 @@ import br.com.abril.nds.service.CobrancaService;
 import br.com.abril.nds.service.DividaService;
 import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
 import br.com.abril.nds.util.TipoMensagem;
+import br.com.abril.nds.vo.PaginacaoVO;
 
 @Service
 public class DividaServiceImpl implements DividaService {
@@ -303,5 +304,65 @@ public class DividaServiceImpl implements DividaService {
 		
 		return resultado;
 	}
+
+    /**
+     * {@inheritDoc}
+     */
+	@Override
+    @Transactional(readOnly = true)
+    public List<SumarizacaoDividasDTO> sumarizacaoDividasReceberEm(Date data) {
+        //TODO: implementar
+        return new ArrayList<>();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+	@Override
+    @Transactional(readOnly = true)
+    public List<SumarizacaoDividasDTO> sumarizacaoDividasVencerApos(Date data) {
+        //TODO: implementar
+        return new ArrayList<>();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+	@Override
+    @Transactional(readOnly = true)
+    public List<Divida> obterDividasReceberEm(Date data, PaginacaoVO paginacao) {
+        //TODO: implementar
+	    return new ArrayList<>();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+	@Override
+    @Transactional(readOnly = true)
+    public List<Divida> obterDividasVencerApos(Date data, PaginacaoVO paginacao) {
+        //TODO: implementar
+	    return new ArrayList<>();
+    }
+
+	 /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public int contarDividasReceberEm(Date data) {
+        //TODO: implementar
+        return 0;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public int contarDividasVencerApos(Date data) {
+        //TODO: implementar
+        return 0;
+    }
 
 }

@@ -47,6 +47,7 @@ import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.OperacaoEstoque;
+import br.com.abril.nds.model.movimentacao.StatusOperacao;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCota;
@@ -1334,13 +1335,16 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 			new StringBuilder(" select chamadaEncalheCota.cota from ChamadaEncalheCota chamadaEncalheCota ");
 		
 		hql.append(" where chamadaEncalheCota.cota.id not in ( ");
-		hql.append(" select controleConferenciaEncalheCota.cota.id from ControleConferenciaEncalheCota ControleConferenciaEncalheCota ");
-		hql.append(" where controleConferenciaEncalheCota.dataOperacao = :dataRecolhimentoEncalhe) ");
+		hql.append(" select cota.id from ControleConferenciaEncalheCota controleConferenciaEncalheCota ");
+		hql.append(" join controleConferenciaEncalheCota.cota cota ");
+		hql.append(" where controleConferenciaEncalheCota.dataOperacao >= :dataRecolhimentoEncalhe ");
+		hql.append(" and controleConferenciaEncalheCota.status = :statusControleConferenciaEncalhe) ");
 		hql.append(" and chamadaEncalheCota.chamadaEncalhe.dataRecolhimento >= :dataRecolhimentoEncalhe ");
 
 		Query query = this.getSession().createQuery(hql.toString());
 
 		query.setParameter("dataRecolhimentoEncalhe", dataRecolhimentoEncalhe);
+		query.setParameter("statusControleConferenciaEncalhe", StatusOperacao.CONCLUIDO);
 
 		return query.list();
 	}
