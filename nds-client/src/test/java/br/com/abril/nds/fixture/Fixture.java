@@ -148,6 +148,7 @@ import br.com.abril.nds.model.financeiro.Divida;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.financeiro.HistoricoAcumuloDivida;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
+import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
 import br.com.abril.nds.model.financeiro.StatusBaixa;
 import br.com.abril.nds.model.financeiro.StatusDivida;
 import br.com.abril.nds.model.financeiro.StatusInadimplencia;
@@ -1226,6 +1227,15 @@ public class Fixture {
 		tipoMovimento.setGrupoMovimentoFinaceiro(GrupoMovimentoFinaceiro.DEBITO);
 		return tipoMovimento;
 	}	
+	
+	public static TipoMovimentoFinanceiro tipoMovimentoFinanceiroDebitoPostergadoNegociado() {
+		TipoMovimentoFinanceiro tipoMovimento = new TipoMovimentoFinanceiro();
+		tipoMovimento.setGrupoMovimentoFinaceiro(GrupoMovimentoFinaceiro.POSTERGADO_NEGOCIACAO);
+		tipoMovimento.setOperacaoFinaceira(OperacaoFinaceira.DEBITO);
+		tipoMovimento.setDescricao("NEGOCIAÇÃO DIVIDA");
+		return tipoMovimento;
+	}	
+
 	
 	public static TipoMovimentoFinanceiro tipoMovimentoFinanceiroDebitoPendente() {
 		TipoMovimentoFinanceiro tipoMovimento = new TipoMovimentoFinanceiro();
