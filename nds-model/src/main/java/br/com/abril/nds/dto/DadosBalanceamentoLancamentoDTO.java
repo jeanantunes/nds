@@ -28,7 +28,7 @@ public class DadosBalanceamentoLancamentoDTO implements Serializable {
 	
 	private BigDecimal capacidadeDistribuicao;
 	
-	private TreeSet<Date> datasDistribuicaoFornecedorDistribuidor;
+	private TreeSet<Date> datasDistribuicaoFornecedor;
 	
 	private Integer qtdDiasLimiteParaReprogLancamento;
 	
@@ -90,18 +90,18 @@ public class DadosBalanceamentoLancamentoDTO implements Serializable {
 	}
 
 	/**
-	 * @return the datasDistribuicaoFornecedorDistribuidor
+	 * @return the datasDistribuicaoFornecedor
 	 */
-	public TreeSet<Date> getDatasDistribuicaoFornecedorDistribuidor() {
-		return datasDistribuicaoFornecedorDistribuidor;
+	public TreeSet<Date> getDatasDistribuicaoFornecedor() {
+		return datasDistribuicaoFornecedor;
 	}
 
 	/**
-	 * @param datasDistribuicaoFornecedorDistribuidor the datasDistribuicaoFornecedorDistribuidor to set
+	 * @param datasDistribuicaoFornecedor the datasDistribuicaoFornecedor to set
 	 */
-	public void setDatasDistribuicaoFornecedorDistribuidor(
-			TreeSet<Date> datasDistribuicaoFornecedorDistribuidor) {
-		this.datasDistribuicaoFornecedorDistribuidor = datasDistribuicaoFornecedorDistribuidor;
+	public void setDatasDistribuicaoFornecedor(
+			TreeSet<Date> datasDistribuicaoFornecedor) {
+		this.datasDistribuicaoFornecedor = datasDistribuicaoFornecedor;
 	}
 
 	/**

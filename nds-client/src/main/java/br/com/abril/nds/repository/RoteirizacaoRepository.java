@@ -9,6 +9,7 @@ import br.com.abril.nds.dto.RoteiroRoteirizacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaRoteirizacaoDTO;
 import br.com.abril.nds.model.LogBairro;
 import br.com.abril.nds.model.LogLocalidade;
+import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Roteirizacao;
 import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.TipoRoteiro;
@@ -43,17 +44,14 @@ public interface RoteirizacaoRepository extends Repository<Roteirizacao, Long> {
 	
 	List<ConsultaRoteirizacaoDTO>  buscarRoteirizacaoPorNumeroCota(Integer numeroCota, TipoRoteiro tipoRoteiro, String  orderBy, Ordenacao ordenacao, int initialResult, int maxResults);
 	
-	void atualizaOrdenacao(Roteirizacao roteirizacao );
-	
-	void atualizaOrdenacaoAsc(Roteirizacao roteirizacao);
-	
-	void atualizaOrdenacaoDesc(Roteirizacao roteirizacao );	
-	
 	List<ConsultaRoteirizacaoDTO> buscarRoteirizacaoSumarizadoPorCota(FiltroConsultaRoteirizacaoDTO filtro);
 
 	Integer buscarQuantidadeRoteirizacao(FiltroConsultaRoteirizacaoDTO filtro);
 
 	Integer buscarQuantidadeRoteirizacaoSumarizadoPorCota(FiltroConsultaRoteirizacaoDTO filtro); 
+	
+	
+	//NOVA ROTEIRIZAÇÃO
 	
 	/**
 	 * Obtém lista com dados de cotas relativas a determinado box, rota e roteiro.
@@ -91,5 +89,20 @@ public interface RoteirizacaoRepository extends Repository<Roteirizacao, Long> {
 	 * @return
 	 */
 	List<RotaRoteirizacaoDTO> obterRotasPorNomeERoteiros(String nome, List<Long> idsRoteiros);
+	
+	/**
+	 * Obtém a roteirização por Box
+	 * @param idBox identificador do Box para recuperação da roteirização
+	 * @return Roteirizacao Roteirização associada ao Box ou null caso não
+	 * exista Roteirização associada ao box
+	 */
+	Roteirizacao obterRoteirizacaoPorBox(Long idBox);
+	
+	/**
+	 * Obtém o Box de um PDV
+	 * @param idPdv
+	 * @return
+	 */
+	Box obterBoxDoPDV(Long idPdv);
 }
 

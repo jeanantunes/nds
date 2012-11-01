@@ -2,6 +2,7 @@ package br.com.abril.nds.model.financeiro;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
@@ -15,10 +16,13 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+
+import br.com.abril.nds.model.cadastro.Banco;
 
 @Entity
 @Table(name = "BAIXA_COBRANCA")
@@ -32,7 +36,7 @@ public abstract class BaixaCobranca {
 	@Column(name = "ID")
 	private Long id;
 	
-	@Temporal(TemporalType.TIMESTAMP)
+	@Temporal(TemporalType.DATE)
 	@Column(name = "DATA_BAIXA", nullable = false)
 	private Date dataBaixa;
 	
@@ -46,7 +50,14 @@ public abstract class BaixaCobranca {
 	@Enumerated(EnumType.STRING)
 	@Column(name = "STATUS", nullable = true)
 	private StatusBaixa status;
+	
+	@ManyToOne(optional = true)
+	@JoinColumn(name = "BANCO_ID")
+	private Banco banco;
 
+	@OneToMany(mappedBy="baixaCobranca")
+	private List<MovimentoFinanceiroCota> movimentosFinanceiros;
+	
 	public Long getId() {
 		return id;
 	}
@@ -79,18 +90,33 @@ public abstract class BaixaCobranca {
 		this.cobranca = cobranca;
 	}
 	
-	/**
-	 * @return the status
-	 */
 	public StatusBaixa getStatus() {
 		return status;
 	}
-
-	/**
-	 * @param status the status to set
-	 */
+	
 	public void setStatus(StatusBaixa status) {
 		this.status = status;
 	}
 	
+	public Banco getBanco() {
+		return banco;
+	}
+	
+	public void setBanco(Banco banco) {
+		this.banco = banco;
+	}
+
+	/**
+	 * @return the movimentosFinanceiros
+	 */
+	public List<MovimentoFinanceiroCota> getMovimentosFinanceiros() {
+		return movimentosFinanceiros;
+	}
+
+	/**
+	 * @param movimentosFinanceiros the movimentosFinanceiros to set
+	 */
+	public void setMovimentosFinanceiros(List<MovimentoFinanceiroCota> movimentosFinanceiros) {
+		this.movimentosFinanceiros = movimentosFinanceiros;
+	}
 }

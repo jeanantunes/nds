@@ -9,6 +9,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 import javax.servlet.http.HttpSession;
 
@@ -22,13 +23,15 @@ import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaFornecedorDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaFornecedorDTO.ColunaOrdenacao;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.Origem;
+import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoFornecedor;
 import br.com.abril.nds.model.seguranca.Permissao;
-import br.com.abril.nds.serialization.custom.CustomMapJson;
+import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.PessoaJuridicaService;
 import br.com.abril.nds.service.TipoFornecedorService;
@@ -70,6 +73,9 @@ public class FornecedorController {
 	
 	@Autowired
 	private PessoaJuridicaService pessoaJuridicaService;
+	
+	@Autowired
+	private DistribuidorService distribuidorService;
 	
 	@Autowired
 	private TipoFornecedorService tipoFornecedorService;
@@ -230,7 +236,31 @@ public class FornecedorController {
 		this.session.removeAttribute(LISTA_ENDERECOS_REMOVER_SESSAO);
 		this.session.removeAttribute(LISTA_TELEFONES_SALVAR_SESSAO);
 		this.session.removeAttribute(LISTA_TELEFONES_REMOVER_SESSAO);
-		this.result.use(CustomMapJson.class).put("data", DateUtil.formatarDataPTBR(new Date())).put("nextCodigo", this.fornecedorService.obterMaxCodigoInterface() + 1).serialize();
+		
+		Distribuidor distribuidor = distribuidorService.obter();
+		
+		boolean utilizaSugestaoIncrementoCodigo = false;
+		
+		if (distribuidor.getUtilizaSugestaoIncrementoCodigo() != null) {
+			
+			utilizaSugestaoIncrementoCodigo = distribuidor.getUtilizaSugestaoIncrementoCodigo();
+		}
+		
+		Integer novoCodigoInterface = null;
+		
+		if(utilizaSugestaoIncrementoCodigo) {
+			novoCodigoInterface = this.fornecedorService.obterMinCodigoInterfaceDisponivel();
+		}
+		
+		Map<String, Object> mapa = new TreeMap<String, Object>(); 
+		
+		mapa.put("data", DateUtil.formatarDataPTBR(new Date()));
+		
+		if (novoCodigoInterface != null) {
+			mapa.put("nextCodigo", novoCodigoInterface);
+		}
+		
+		this.result.use(CustomJson.class).from(mapa).serialize();
 	}
 	
 	private void obterTiposFornecedor() {
@@ -244,9 +274,32 @@ public class FornecedorController {
 		
 		List<String> mensagens = new ArrayList<String>();
 		
+		Origem origemFornecedor = fornecedorDTO.getOrigem() == null ? Origem.MANUAL : fornecedorDTO.getOrigem(); 
+		
+		if(fornecedorDTO.getInscricaoEstadual() == null || fornecedorDTO.getInscricaoEstadual().isEmpty()) {
+			mensagens.add("O preenchimento do campo [Inscrição Estadual] é obrigatório.");
+		}
+		
 		if (fornecedorDTO.getCodigoInterface() == null) {
 			
 			mensagens.add("O preenchimento do campo [Codigo] é obrigatório.");
+		
+		} else {
+			
+			if(	Origem.MANUAL.equals(origemFornecedor) && 
+				fornecedorDTO.getCodigoInterface() > Constantes.MAX_CODIGO_INTERFACE_FORNCECEDOR_MANUAL) {
+				
+				mensagens.add(	" Valor do campo [Codigo] não deve exceder "+ Constantes.MAX_CODIGO_INTERFACE_FORNCECEDOR_MANUAL + 
+								" para fornecedor de origem MANUAL.");
+				
+			} else {
+				Fornecedor fornecedor = fornecedorService.obterFornecedorPorCodigoInterface(fornecedorDTO.getCodigoInterface());
+				if(fornecedor!=null && !fornecedor.getId().equals(fornecedorDTO.getIdFornecedor())) {
+					mensagens.add(" Valor do campo [Codigo] já esta sendo utilizado.");
+				}
+			}
+			
+			
 		}
 		
 		if (fornecedorDTO.getRazaoSocial() == null || fornecedorDTO.getRazaoSocial().isEmpty()) {
@@ -270,11 +323,6 @@ public class FornecedorController {
 				
 				mensagens.add("CNPJ inválido.");
 			}
-		}
-		
-		if (fornecedorDTO.getTipoFornecedor() == null) {
-			
-			mensagens.add("O preenchimento do campo [Tipo Fornecedor] é obrigatório.");
 		}
 		
 		if (!StringUtil.isEmpty(fornecedorDTO.getEmailNfe())) {
@@ -502,8 +550,15 @@ public class FornecedorController {
 			fornecedor.setInicioAtividade(new Date());
 		}
 		
-		TipoFornecedor tipoFornecedor = 
-				this.tipoFornecedorService.obterTipoFornecedorPorId(fornecedorDTO.getTipoFornecedor());
+		TipoFornecedor tipoFornecedor = null;
+		
+		if(fornecedorDTO.getTipoFornecedor()!=null) {
+
+			tipoFornecedor = this.tipoFornecedorService.obterTipoFornecedorPorId(fornecedorDTO.getTipoFornecedor());
+			
+		}
+		
+		 
 
 		fornecedor.setTipoFornecedor(tipoFornecedor);
 		
@@ -552,7 +607,11 @@ public class FornecedorController {
 		
 		fornecedorDTO.setResponsavel(fornecedor.getResponsavel());
 		
-		fornecedorDTO.setTipoFornecedor(fornecedor.getTipoFornecedor().getId());
+		if(fornecedor.getTipoFornecedor() != null) {
+
+			fornecedorDTO.setTipoFornecedor(fornecedor.getTipoFornecedor().getId());
+
+		}
 		
 		fornecedorDTO.setValidadeContrato(DateUtil.formatarDataPTBR(fornecedor.getValidadeContrato()));
 		

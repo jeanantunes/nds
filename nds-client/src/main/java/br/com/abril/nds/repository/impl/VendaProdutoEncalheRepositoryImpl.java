@@ -116,13 +116,15 @@ public class VendaProdutoEncalheRepositoryImpl extends AbstractRepositoryModel<V
 			.append(" produto.codigo as codigoProduto ,")
 			.append(" produtoEdicao.precoVenda - (produtoEdicao.precoVenda * " + this.obterSQLDesconto() + " / 100) as precoDesconto ,")
 			.append(" venda.valorTotalVenda as valoTotalProduto ,")
-			.append(" venda.qntProduto as qntProduto ");
+			.append(" venda.qntProduto as qntProduto, ")
+			.append(" usuario as usuario ");
 		}
 	
 		hql.append(" from VendaProduto venda ")
 		    .append(" join venda.produtoEdicao as produtoEdicao ")
 		    .append(" join produtoEdicao.produto as produto ")
 		    .append(" join produto.fornecedores as fornecedores ")
+		    .append(" join venda.usuario as usuario ")
 			.append(" where venda.cota.numeroCota=:numeroCota ")
 			.append(" and venda.dataVenda between :periodoInicial and :periodoFinal ");
 		
@@ -217,7 +219,7 @@ public class VendaProdutoEncalheRepositoryImpl extends AbstractRepositoryModel<V
 			.append(" venda.qntProduto as qntProduto ,")
 			.append(" venda.produtoEdicao.codigoDeBarras as codigoBarras ,")
 			.append(" venda.tipoComercializacaoVenda as formaVenda ,")
-			.append(" venda.cota.box.codigo as codBox ,")
+			.append(" venda.cota.box.codigo || '-' || venda.cota.box.nome as codBox ,")
 			.append(" venda.tipoVenda as tipoVendaEncalhe ,")
 			.append(" venda.dataVencimentoDebito as dataVencimentoDebito ")
 	        .append(" from VendaProduto venda ")

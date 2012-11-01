@@ -4,7 +4,9 @@
 package br.com.abril.nds.model.cadastro;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Calendar;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -36,11 +38,11 @@ public class CaucaoLiquida implements Serializable {
 	private Long id;
 	
 	@Column(name="VALOR")
-	private Double valor;
+	private BigDecimal valor;
 	
 	@Column(name="DATA_ATUALIZACAO")
 	@Temporal(TemporalType.TIMESTAMP)
-	private Calendar atualizacao;
+	private Date atualizacao;
 	
 	/**
 	 * @return the id
@@ -59,28 +61,28 @@ public class CaucaoLiquida implements Serializable {
 	/**
 	 * @return the valor
 	 */
-	public Double getValor() {
+	public BigDecimal getValor() {
 		return valor;
 	}
 
 	/**
 	 * @param valor the valor to set
 	 */
-	public void setValor(Double valor) {
+	public void setValor(BigDecimal valor) {
 		this.valor = valor;
 	}
 
 	/**
 	 * @return the atualizacao
 	 */
-	public Calendar getAtualizacao() {
+	public Date getAtualizacao() {
 		return atualizacao;
 	}
 
 	/**
 	 * @param atualizacao the atualizacao to set
 	 */
-	public void setAtualizacao(Calendar atualizacao) {
+	public void setAtualizacao(Date atualizacao) {
 		this.atualizacao = atualizacao;
 	}
 

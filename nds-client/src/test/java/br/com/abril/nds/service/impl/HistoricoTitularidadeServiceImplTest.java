@@ -21,7 +21,6 @@ import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.cadastro.AssociacaoEndereco;
 import br.com.abril.nds.model.cadastro.AssociacaoTelefone;
 import br.com.abril.nds.model.cadastro.Banco;
-import br.com.abril.nds.model.cadastro.BaseCalculo;
 import br.com.abril.nds.model.cadastro.BaseReferenciaCota;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.CaucaoLiquida;
@@ -42,7 +41,6 @@ import br.com.abril.nds.model.cadastro.LicencaMunicipal;
 import br.com.abril.nds.model.cadastro.NotaPromissoria;
 import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
 import br.com.abril.nds.model.cadastro.ParametroDistribuicaoCota;
-import br.com.abril.nds.model.cadastro.Periodicidade;
 import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.PoliticaSuspensao;
@@ -57,7 +55,6 @@ import br.com.abril.nds.model.cadastro.TelefoneFiador;
 import br.com.abril.nds.model.cadastro.TipoCobrancaCotaGarantia;
 import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.cadastro.TipoEndereco;
-import br.com.abril.nds.model.cadastro.TipoEntrega;
 import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
 import br.com.abril.nds.model.cadastro.TipoFornecedor;
 import br.com.abril.nds.model.cadastro.TipoGarantia;
@@ -399,7 +396,7 @@ public class HistoricoTitularidadeServiceImplTest extends AbstractRepositoryImpl
 		Assert.assertEquals(historicoDistribuicao.getInicioPeriodoCarencia(), distribuicao.getInicioPeriodoCarencia());
 		Assert.assertEquals(historicoDistribuicao.getPercentualFaturamentoEntrega(), distribuicao.getPercentualFaturamento());
 		Assert.assertEquals(historicoDistribuicao.getTaxaFixaEntrega(), distribuicao.getTaxaFixa());
-		Assert.assertEquals(historicoDistribuicao.getTipoEntrega(), distribuicao.getTipoEntrega().getDescricaoTipoEntrega());
+		Assert.assertEquals(historicoDistribuicao.getTipoEntrega(), distribuicao.getDescricaoTipoEntrega());
 	}
 	
 	private void assertSocios(Set<SocioCota> socios, Collection<HistoricoTitularidadeCotaSocio> historicoSocios) {
@@ -511,7 +508,7 @@ public class HistoricoTitularidadeServiceImplTest extends AbstractRepositoryImpl
 			Assert.assertEquals(historicoCheque.getEmissao(), cheque.getEmissao().getTime());
 			Assert.assertEquals(historicoCheque.getImagem(), cheque.getChequeImage().getImagem());
 			Assert.assertEquals(historicoCheque.getValidade(), cheque.getValidade().getTime());
-			Assert.assertEquals(historicoCheque.getValor(), new BigDecimal(cheque.getValor()));
+			Assert.assertEquals(historicoCheque.getValor(), cheque.getValor());
 		}
 	}
 	
@@ -544,7 +541,7 @@ public class HistoricoTitularidadeServiceImplTest extends AbstractRepositoryImpl
 			Assert.assertEquals(historicoImovel.getNumeroRegistro(), imovel.getNumeroRegistro());
 			Assert.assertEquals(historicoImovel.getObservacao(), imovel.getObservacao());
 			Assert.assertEquals(historicoImovel.getProprietario(), imovel.getProprietario());
-			Assert.assertEquals(historicoImovel.getValor(), new BigDecimal(imovel.getValor()));
+			Assert.assertEquals(historicoImovel.getValor(), imovel.getValor());
 		}
 	}
 	
@@ -557,7 +554,7 @@ public class HistoricoTitularidadeServiceImplTest extends AbstractRepositoryImpl
 			HistoricoTitularidadeCotaNotaPromissoria historicoNotaPromissoria = iterator.next();
 			
 			Assert.assertEquals(historicoNotaPromissoria.getValorExtenso(), notaPromissoria.getValorExtenso());
-			Assert.assertEquals(historicoNotaPromissoria.getValor(), new BigDecimal(notaPromissoria.getValor()));
+			Assert.assertEquals(historicoNotaPromissoria.getValor(), notaPromissoria.getValor());
 			Assert.assertEquals(historicoNotaPromissoria.getVencimento(), notaPromissoria.getVencimento().getTime());
 		}
 	}
@@ -801,7 +798,6 @@ public class HistoricoTitularidadeServiceImplTest extends AbstractRepositoryImpl
 		);
 
 		ProdutoEdicao produtoEdicao = Fixture.produtoEdicao(
-			"214", 
 			1333L, 
 			31, 
 			32, 
@@ -809,7 +805,6 @@ public class HistoricoTitularidadeServiceImplTest extends AbstractRepositoryImpl
 			new BigDecimal(20), 
 			new BigDecimal(20), 
 			"6873510", 
-			65465L, 
 			produto, 
 			new BigDecimal(64), 
 			true
@@ -859,19 +854,11 @@ public class HistoricoTitularidadeServiceImplTest extends AbstractRepositoryImpl
 	 * Cria dados referentes a aba "Distribuição" do cadastro de cota.
 	 */
 	private ParametroDistribuicaoCota getDistribuicao() {
-		
-		TipoEntrega tipoEntrega = Fixture.criarTipoEntrega(1L, DescricaoTipoEntrega.ENTREGADOR, Periodicidade.MENSAL);
-		
-		tipoEntrega.setPercentualFaturamento(400f);
-		tipoEntrega.setBaseCalculo(BaseCalculo.FATURAMENTO_BRUTO);
-		tipoEntrega.setTaxaFixa(new BigDecimal(10));
-
-		tipoEntrega = merge(tipoEntrega);
 
 		ParametroDistribuicaoCota distribuicao = Fixture.criarParametroDistribuidor(
 			13, 
 			"Assistente", 
-			tipoEntrega, 
+			DescricaoTipoEntrega.ENTREGADOR, 
 			"observacao", 
 			true, 
 			true, 
@@ -1028,7 +1015,7 @@ public class HistoricoTitularidadeServiceImplTest extends AbstractRepositoryImpl
 
 		CotaGarantiaFiador garantiaFiador = new CotaGarantiaFiador();
 		
-		garantiaFiador.setData(Calendar.getInstance());
+		garantiaFiador.setData(new Date());
 		garantiaFiador.setFiador(fiador);
 		
 		return garantiaFiador;
@@ -1044,13 +1031,13 @@ public class HistoricoTitularidadeServiceImplTest extends AbstractRepositoryImpl
 		imovel.setNumeroRegistro("123");
 		imovel.setObservacao("observacao");
 		imovel.setProprietario("proprietario");
-		imovel.setValor(150000.0);
+		imovel.setValor(new BigDecimal(150000));
 
 		List<Imovel> imoveis = new ArrayList<Imovel>();
 		imoveis.add(imovel);
 
 		CotaGarantiaImovel cotaGarantiaImovel = new CotaGarantiaImovel();
-		cotaGarantiaImovel.setData(Calendar.getInstance());
+		cotaGarantiaImovel.setData(new Date());
 		cotaGarantiaImovel.setImoveis(imoveis);
 		
 		return cotaGarantiaImovel;
@@ -1074,12 +1061,11 @@ public class HistoricoTitularidadeServiceImplTest extends AbstractRepositoryImpl
 	    garantiaCaucaoLiquida.setFormaPagamento(pagamento);
 	    
 		CaucaoLiquida caucaoLiquida = new CaucaoLiquida();
-		caucaoLiquida.setAtualizacao(Calendar.getInstance());
-		caucaoLiquida.setValor(415.0);
+		caucaoLiquida.setAtualizacao(Calendar.getInstance().getTime());
+		caucaoLiquida.setValor(new BigDecimal(415));
 		List<CaucaoLiquida> caucoesLiquidas = new ArrayList<CaucaoLiquida>();
 		caucoesLiquidas.add(caucaoLiquida);
-		
-		garantiaCaucaoLiquida.setData(Calendar.getInstance());
+		garantiaCaucaoLiquida.setData(new Date());
 		garantiaCaucaoLiquida.setCaucaoLiquidas(caucoesLiquidas);
 
 		return garantiaCaucaoLiquida;
@@ -1097,15 +1083,15 @@ public class HistoricoTitularidadeServiceImplTest extends AbstractRepositoryImpl
 		cheque.setCorrentista("correntista");
 		cheque.setDvAgencia("dvAgencia");
 		cheque.setDvConta("dvConta");
-		cheque.setEmissao(Calendar.getInstance());
+		cheque.setEmissao(new Date() );
 		cheque.setNomeBanco("nomeBanco");
 		cheque.setNumeroBanco("numeroBanco");
 		cheque.setNumeroCheque("numeroCheque");
-		cheque.setValidade(Calendar.getInstance());
-		cheque.setValor(150.0);
+		cheque.setValidade(new Date() );
+		cheque.setValor(new BigDecimal(150));
 
 		CotaGarantiaChequeCaucao garantiaChequeCaucao = new CotaGarantiaChequeCaucao();
-		garantiaChequeCaucao.setData(Calendar.getInstance());
+		garantiaChequeCaucao.setData(new Date());
 		garantiaChequeCaucao.setCheque(cheque);
 		
 		return garantiaChequeCaucao;
@@ -1117,12 +1103,12 @@ public class HistoricoTitularidadeServiceImplTest extends AbstractRepositoryImpl
 	private CotaGarantiaNotaPromissoria getNotaPromissoria() {
 		
 		NotaPromissoria notaPromissoria = new NotaPromissoria();
-		notaPromissoria.setValor(1000.0);
+		notaPromissoria.setValor(new BigDecimal(1000));
 		notaPromissoria.setValorExtenso("Mil");
-		notaPromissoria.setVencimento(Calendar.getInstance());
+		notaPromissoria.setVencimento(new Date());
 		
 		CotaGarantiaNotaPromissoria garantiaNotaPromissoria = new CotaGarantiaNotaPromissoria();
-		garantiaNotaPromissoria.setData(Calendar.getInstance());
+		garantiaNotaPromissoria.setData(new Date());
 		garantiaNotaPromissoria.setNotaPromissoria(notaPromissoria);
 
 		return garantiaNotaPromissoria;

@@ -95,7 +95,7 @@ public class FechamentoCEIntegracaoController {
 	}
 	
 	@Path("/")
-	@Rules(Permissao.ROLE_DEVOLUCAO_FECHAMENTO_INTEGRACAO)
+	@Rules(Permissao.ROLE_RECOLHIMENTO_FECHAMENTO_INTEGRACAO)
 	public void index(){
 		this.carregarComboFornecedores();
 		
@@ -172,7 +172,7 @@ public class FechamentoCEIntegracaoController {
 			double valorDaVenda =  dto.getVenda().doubleValue() * dto.getPrecoCapa().doubleValue();
 			totalBruto = totalBruto + valorDaVenda;
 			Cota cota = this.cotaService.obterPorId(dto.getIdCota());
-			ProdutoEdicao pe = this.produtoEdicaoService.obterProdutoEdicao(dto.getIdProdutoEdicao());
+			ProdutoEdicao pe = this.produtoEdicaoService.obterProdutoEdicao(dto.getIdProdutoEdicao(), false);
 			desconto.add(this.descontoService.obterDescontoPorCotaProdutoEdicao(cota, pe));
 			
 		}		
@@ -200,7 +200,7 @@ public class FechamentoCEIntegracaoController {
 		
 		for(int cont = 0; cont < listaEncalhePronta.length; cont++){
 			encalhePronto = Long.parseLong(listaEncalhePronta[cont]);			
-			pe = this.produtoEdicaoService.obterProdutoEdicao(Long.parseLong(listaIdProdutoEdicaoPronta[cont]));
+			pe = this.produtoEdicaoService.obterProdutoEdicao(Long.parseLong(listaIdProdutoEdicaoPronta[cont]), false);
 			
 			this.fechamentoCEIntegracaoService.fecharCE(encalhePronto, pe);
 		}

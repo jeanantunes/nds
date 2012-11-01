@@ -26,12 +26,14 @@ public class IdentificacaoDestinatario implements Serializable {
 	@JoinColumn(name = "PESSOA_DESTINATARIO_ID_REFERENCIA")
 	private Pessoa pessoaDestinatarioReferencia;
 	
+	@Column(name = "NUMERO_COTA", nullable = false)
+	private Integer numeroCota;
+	
 	
 	/**
 	 * CNPJ CPF
 	 */
-	@Column(name="DOCUMENTO_DESTINATARIO", nullable=false, length=14)
-	
+	@Column(name="DOCUMENTO_DESTINATARIO", nullable=false, length=14)	
 	private String documento;
 	
 	/**
@@ -45,7 +47,7 @@ public class IdentificacaoDestinatario implements Serializable {
 	/**
 	 * IE
 	 */
-	@Column(name="IE_DESTINATARIO", nullable=true, length=14)
+	@Column(name="IE_DESTINATARIO", nullable=true, length=20)
 	private String inscricaoEstual;
 	
 	
@@ -242,6 +244,20 @@ public class IdentificacaoDestinatario implements Serializable {
 	 */
 	public void setDescricaoRota(String descricaoRota) {
 		this.descricaoRota = descricaoRota;
+	}
+
+	/**
+	 * @return the numeroCota
+	 */
+	public Integer getNumeroCota() {
+		return numeroCota;
+	}
+
+	/**
+	 * @param numeroCota the numeroCota to set
+	 */
+	public void setNumeroCota(Integer numeroCota) {
+		this.numeroCota = numeroCota;
 	}
 	
 	

@@ -432,3 +432,4 @@ var consultaConsignadoCotaController = $.extend(true, {
 	}
 
 }, BaseController);
+//@ sourceURL=consultaConsignadoCota.js

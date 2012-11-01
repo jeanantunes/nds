@@ -310,6 +310,10 @@ public class EnderecoController {
 				
 				Long chave = localidade.getCodigoMunicipioIBGE();
 				
+				if(chave == null) {
+					continue;
+				}
+				
 				listaAutoComplete.add(new ItemAutoComplete(nomeExibicao, null, chave));
 			}
 		}
@@ -483,8 +487,8 @@ public class EnderecoController {
 				this.session.setAttribute(ATRIBUTO_SESSAO_LISTA_ENDERECOS_SALVAR, listaEnderecoAssociacao);
 			}
 		}
-
-		this.result.use(Results.json()).from(enderecoAssociacao, "result").recursive().exclude("endereco.pessoa").serialize();
+		
+		this.result.use(Results.json()).from(enderecoAssociacao, "result").recursive().serialize();
 	}
 
 	/**

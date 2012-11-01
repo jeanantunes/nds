@@ -82,7 +82,7 @@ public class ControleAprovacaoServiceImpl implements ControleAprovacaoService {
 		movimento.setStatus(StatusAprovacao.APROVADO);
 		movimento.setAprovador(usuario);
 		
-		this.movimentoRepository.alterar(movimento);
+		this.movimentoRepository.merge(movimento);
 		
 		if (movimento instanceof MovimentoEstoque) {
 			
@@ -100,10 +100,9 @@ public class ControleAprovacaoServiceImpl implements ControleAprovacaoService {
 				(TipoMovimentoEstoque) movimento.getTipoMovimento();
 				
 			MovimentoEstoqueCota movimentoEstoqueCota = (MovimentoEstoqueCota) movimento;
-			
+
 			this.movimentoEstoqueService.atualizarEstoqueProdutoCota(tipoMovimentoEstoque,
 																 	 movimentoEstoqueCota);
-			
 		}
 	}
 	

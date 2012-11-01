@@ -4,6 +4,7 @@
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaProduto.js"></script>
 <script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.multiselects-0.3.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.justPercent.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/cadastroTipoDesconto.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/cadastroTipoDescontoDistribuidor.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/cadastroTipoDescontoCota.js"></script>
@@ -58,7 +59,23 @@ $(function() {
 	</form>
 
 	<form action="/administracao/cadastroTipoNota" id="dialog_consulta_tipo_desconto_form">
- 
+	<div class="areaBts">
+		<div class="area">
+
+
+			<span class="bt_arq"><a href="javascript:;">
+	       			<a href="${pageContext.request.contextPath}/financeiro/tipoDescontoCota/exportar?fileType=XLS&tipoDesconto=ESPECIFICO" rel="tipsy" title="Gerar Arquivo">
+						<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
+					</a>
+	       		</span>
+	             <span class="bt_arq">
+	             	<a href="${pageContext.request.contextPath}/financeiro/tipoDescontoCota/exportar?fileType=PDF&tipoDesconto=ESPECIFICO" rel="tipsy">
+						<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />
+					</a>
+	             </span>
+		</div>
+	</div>
+	<div class="linha_separa_fields">&nbsp;</div>
       <fieldset class="fieldFiltro">
    	    <legend> Pesquisar Tipo de Desconto Cota</legend>
         <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
@@ -153,18 +170,7 @@ $(function() {
 				
 				<table class="tiposDescEspecificoGrid"></table>
 				
-				<span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;">
-	       			<a href="${pageContext.request.contextPath}/financeiro/tipoDescontoCota/exportar?fileType=XLS&tipoDesconto=ESPECIFICO">
-						<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
-						Arquivo
-					</a>
-	       		</span>
-	             <span class="bt_novos" title="Imprimir">
-	             	<a href="${pageContext.request.contextPath}/financeiro/tipoDescontoCota/exportar?fileType=PDF&tipoDesconto=ESPECIFICO">
-						<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />
-						Imprimir
-					</a>
-	             </span>
+				
 	        </div>
            <span class="bt_novos" title="Novo"><a href="javascript:;" onclick="descontoCotaController.popup_especifico();"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/>Novo</a></span>
    

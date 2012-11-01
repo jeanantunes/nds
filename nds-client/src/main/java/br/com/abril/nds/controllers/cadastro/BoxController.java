@@ -21,7 +21,7 @@ import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
-import br.com.abril.nds.serialization.custom.CustomMapJson;
+import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.BoxService;
 import br.com.abril.nds.service.exception.RelationshipRestrictionException;
@@ -31,8 +31,8 @@ import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.util.export.NDSFileHeader;
-import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
+import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
@@ -106,7 +106,7 @@ public class BoxController {
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR,"Box está em uso e não pode ser editado."));
 		} else {
 			Box box = boxService.buscarPorId(id);
-			result.use(CustomMapJson.class).put("box", box).serialize();
+			result.use(CustomJson.class).from(box).serialize();
 		}
 	
 	}

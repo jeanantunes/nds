@@ -22,6 +22,12 @@ public class StatusDividaDTO implements Serializable {
 	
 	private Long idCota;
 	
+	private Long idCobranca;
+	
+	private Long idNegociacao;
+	
+	private BigDecimal comissaoSaldoDivida;
+	
 	@Export(label = "Cota", alignment=Alignment.LEFT)
 	private Integer numCota;
 	
@@ -166,6 +172,32 @@ public class StatusDividaDTO implements Serializable {
 
 	public void setIdDivida(BigInteger idDivida) {
 		this.idDivida = idDivida.longValue();
+	}
+
+	public Long getIdCobranca() {
+		return idCobranca;
+	}
+
+	public void setIdCobranca(BigInteger idCobranca) {
+		this.idCobranca = idCobranca.longValue();
+	}
+
+	public Long getIdNegociacao() {
+		return idNegociacao;
+	}
+
+	public void setIdNegociacao(BigInteger idNegociacao) {
+		if(idNegociacao == null)
+			return;
+		this.idNegociacao = idNegociacao.longValue();
+	}
+
+	public BigDecimal getComissaoSaldoDivida() {
+		return comissaoSaldoDivida;
+	}
+
+	public void setComissaoSaldoDivida(BigDecimal comissaoSaldoDivida) {
+		this.comissaoSaldoDivida = comissaoSaldoDivida;
 	}
 
 }

@@ -7,6 +7,8 @@ import java.util.Set;
 
 import br.com.abril.nds.dto.FuroProdutoDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
+import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
@@ -245,5 +247,36 @@ public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long>
 	 * @return {@link Set} de {@link ProdutoEdicao}
 	 */
 	Set<ProdutoEdicao> obterProdutosEdicaoPorFornecedor(Long idFornecedor);
+
+	List<ProdutoEdicao> buscarProdutosLancadosData(Date data);
+
+	public String buscarNome(Long long1);
+	
+	/**
+	 * Obtém o último número da edição
+	 * @param codigoProduto
+	 * @return
+	 */
+	public Long obterUltimoNumeroEdicao(String codigoProduto);
+
+	/**
+	 * Retorna os produtoEdicao de distribuidores que não estão sendo utilizados no sistema (e consequentemente podem ser alterados)
+	 * @param fornecedores
+	 * @return
+	 */
+	public Set<ProdutoEdicao> filtrarDescontoProdutoEdicaoPorDistribuidor(Set<Fornecedor> fornecedores);
+
+	/**
+	 * Retorna os produtoEdicao de cotas que não estão sendo utilizados no sistema (e consequentemente podem ser alterados)
+	 * @param fornecedores
+	 * @return
+	 */
+	public Set<ProdutoEdicao> filtrarDescontoProdutoEdicaoPorCota(Cota cota, Set<Fornecedor> fornecedores);
+
+	/**
+	 * Retorna os produtoEdicao de produtos que não estão sendo utilizados no sistema (e consequentemente podem ser alterados)
+	 * @param fornecedores
+	 * @return
+	public Set<ProdutoEdicao> filtrarDescontoProdutoEdicaoPorProduto(Produto produto);*/
 	
 }

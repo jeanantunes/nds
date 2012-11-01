@@ -2,6 +2,7 @@ package br.com.abril.nds.controllers.cadastro;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.poi.util.IOUtils;
@@ -24,7 +25,6 @@ import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
 import br.com.abril.nds.model.cadastro.TipoGarantia;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantia;
 import br.com.abril.nds.serialization.custom.CustomJson;
-import br.com.abril.nds.serialization.custom.CustomMapJson;
 import br.com.abril.nds.serialization.custom.PlainJSONSerialization;
 import br.com.abril.nds.service.CotaGarantiaService;
 import br.com.abril.nds.util.StringUtil;
@@ -127,7 +127,7 @@ public class CotaGarantiaController {
 		}	
 		
 		for(CaucaoLiquida caucaoLiquida: listaCaucaoLiquida){			
-		    caucaoLiquida.setAtualizacao(Calendar.getInstance());
+		    caucaoLiquida.setAtualizacao(Calendar.getInstance().getTime());
 			validaCaucaoLiquida(caucaoLiquida);
 		}
 		
@@ -147,7 +147,7 @@ public class CotaGarantiaController {
 	        CotaGarantiaDTO<CotaGarantia> cotaGarantia = cotaGarantiaService.getByCota(idCota);
 	        
 	        if (cotaGarantia != null && cotaGarantia.getCotaGarantia() != null) {			
-	            result.use(CustomJson.class).from(cotaGarantia).exclude(EnderecoFiador.class, "fiador").serialize();		
+	            result.use(CustomJson.class).from(cotaGarantia).exclude(Fiador.class, "fiador").serialize();		
 	        }else{			
 	            result.use(CustomJson.class).from("OK").serialize();		
 	        }	
@@ -373,7 +373,7 @@ public class CotaGarantiaController {
 		
 		List<String> listaMensagens = new ArrayList<String>();
 		
-		if (notaPromissoria.getValor() == null || notaPromissoria.getValor() <= 0) {
+		if (notaPromissoria.getValor() == null || notaPromissoria.getValor().doubleValue() <= 0) {
 			listaMensagens.add("O preenchimento do campo [Valor R$] é obrigatório");
 		}
 		
@@ -385,7 +385,7 @@ public class CotaGarantiaController {
 		if (notaPromissoria.getVencimento() == null) {
 			listaMensagens
 					.add("O preenchimento do campo [Vencimento] é obrigatório");
-		}else if(notaPromissoria.getVencimento().compareTo(Calendar.getInstance()) <= 0  ) {
+		}else if(notaPromissoria.getVencimento().compareTo(new Date()) <= 0  ) {
 			listaMensagens
 			.add("O campo [Vencimento] deve ser uma data no futuro.");
 		}
@@ -527,8 +527,7 @@ public class CotaGarantiaController {
     public void getFiador(Long idFiador, String documento) {
         Fiador fiador = cotaGarantiaService.getFiador(idFiador, documento);
         if (fiador != null) {
-            result.use(CustomMapJson.class).put("fiador", fiador)
-                    .exclude(EnderecoFiador.class, "fiador").serialize();
+            result.use(CustomJson.class).from(fiador).exclude(EnderecoFiador.class, "enderecoFiador").serialize();
         } else {
             result.use(CustomJson.class).from("NotFound").serialize();
         }

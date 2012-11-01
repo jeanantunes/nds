@@ -10,10 +10,9 @@ import java.util.Date;
  * @author francisco.garcia
  *
  */
-public class TitularidadeCotaDTO implements Serializable, Comparable<TitularidadeCotaDTO>{
+public class TitularidadeCotaDTO implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    
     
     /**
      * Identificador da titularidade
@@ -50,8 +49,12 @@ public class TitularidadeCotaDTO implements Serializable, Comparable<Titularidad
 
         this.id = id;
         this.idCota = idCota;
-        this.inicio = inicio;
-        this.fim = fim;
+        if (inicio != null) {
+            this.inicio = new Date(inicio.getTime());
+        }
+        if (fim != null) {
+            this.fim = new Date(fim.getTime());
+        }
         this.nome = nome;
         this.documento = documento;
     }
@@ -105,9 +108,40 @@ public class TitularidadeCotaDTO implements Serializable, Comparable<Titularidad
         return documento;
     }
 
+    /* (non-Javadoc)
+     * @see java.lang.Object#hashCode()
+     */
     @Override
-    public int compareTo(TitularidadeCotaDTO o) {
-        return o.getFim().compareTo(this.getFim());
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
+        return result;
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        TitularidadeCotaDTO other = (TitularidadeCotaDTO) obj;
+        if (id == null) {
+            if (other.id != null) {
+                return false;
+            }
+        } else if (!id.equals(other.id)) {
+            return false;
+        }
+        return true;
     }
 
 }

@@ -22,7 +22,7 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.seguranca.GrupoPermissao;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
-import br.com.abril.nds.serialization.custom.CustomMapJson;
+import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.GrupoPermissaoService;
 import br.com.abril.nds.service.PermissaoService;
@@ -32,8 +32,8 @@ import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.PaginacaoVO;
-import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
+import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
@@ -530,7 +530,7 @@ public class GruposAcessoController {
 		dto.setGrupos(grupos);
 		
 		
-		result.use(CustomMapJson.class).put("usuarioDTO", dto).serialize();
+		result.use(CustomJson.class).from(dto).serialize();
 	}
 
 	

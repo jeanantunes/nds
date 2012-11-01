@@ -132,7 +132,10 @@
 							},
 							addTab : function(title, url, className) {
 								var self = this.element, o = this.options, add = true;
-								$("li", self).each(function() {
+								
+								var ulTabs = $("ul.ui-tabs-nav", self)[0];
+								
+								$("li", ulTabs).each(function() {
 									if ($("a", this).html() == title) {
 										var index = $("li", self).index(this);
 										self.tabs('select', index);
@@ -142,7 +145,7 @@
 								if (add) {									
 									tab = self.tabs('add', url, title);									
 									$span = $("<span>").addClass(className);
-									$('a:contains(' + title + ')', '#workspace').parent().prepend($span);
+									$('a:contains(' + title + ')', ulTabs).parent().prepend($span);
 									
 								}
 							},
@@ -158,6 +161,21 @@
 										});
 							}
 						});
+		$.fn.serializeObject = function(){
+		    var o = {};
+		    var a = this.serializeArray();
+		    $.each(a, function() {
+		        if (o[this.name] !== undefined) {
+		            if (!o[this.name].push) {
+		                o[this.name] = [o[this.name]];
+		            }
+		            o[this.name].push(this.value || '');
+		        } else {
+		            o[this.name] = this.value || '';
+		        }
+		    });
+		    return o;
+		};
 	})(jQuery);
 
 	$(function() {
@@ -191,6 +209,7 @@
 		});
 		$("#ajaxLoading").ajaxStop(function() {
 			$(this).fadeOut(200);
+			redimensionarWorkspace();
 		});
 		
 		redimensionarWorkspace();
@@ -277,17 +296,16 @@
 	});
 	
 	
+	
 </script>
 
 <script
 	src="scripts/informeEncalhe.js"
 	type="text/javascript"></script>
+	
+	
 
 <style>
-#workspace {
-	margin-top: 0px;
-}
-
 #ajaxLoading {
 	position: absolute;	z-index: 99999;
 	left: 0px; top: 0px; width: 100%; height: 100%; margin: 0;
@@ -307,65 +325,60 @@
 .ui-tabs .ui-tabs-panel {
     padding: 0px;
 }
-#btnVersao{font-size:10px; font-weight:bold;margin-left:5px;}
+#btnVersao{font-size:10px; font-weight:normal;margin-left:5px; text-decoration:none!important;}
 </style>
 </head>
 <body onresize="redimensionarWorkspace();">
 
 	<div class="corpo" id="divCorpo">
 		<div class="header">
+			<div class="bts_header">
+				<span class="bt_novos" style="display:none;">
+					<a id="linkHome" href='<c:url value="/inicial/"/>' rel="tipsy" title="Voltar para Home"><span class="classROLE_HOME">&nbsp;</span>&nbsp;</a>
+				</span>
+				<div class="logo">&nbsp;</div>
+				<a href="javascript:;" id="btnVersao">
+						<label title="versao">Versão: ${versao}</label>								
+					</a>
+				<div class="usuario">
+					
+											
+					<label title="Usuário Logado no Sistema">Usuário: ${nomeUsuario}</label>
+								
+					<label> <script type="text/javascript"
+							language="JavaScript">
+						diaSemana();
+					</script> </label>
+				
+					<label>
+						<a href="javascript:;" onclick="logout()" title="Sair do Sistema">Sair</a>
+					</label>
+	
+				</div>
+			</div>
 			<div class="sub-header">
 				<div id="menu_principal" style="float:left!important;">
 					<ul>
-						<li><div class="logo">&nbsp;</div></li>
-						<!-- <li><a href="index.htm"><span class="classROLE_HOME">&nbsp;</span>Home</a>
-						</li> -->
-							<c:forEach items="${menus}" var="menu">
-								<li><a href="javascript:;" class="trigger"><span
-									class="class${menu.key.permissao}">&nbsp;</span>${menu.key.permissao.descricao}</a>
-									<ul>
-										<c:forEach items="${menus[menu.key]}" var="submenu">
-											<li><a href="<c:url value='${submenu.key.url}' />">${submenu.key.permissao.descricao}</a>
-											</li>
-										</c:forEach>						
-									</ul>
-								</li>
-							</c:forEach>
+						<c:forEach items="${menus}" var="menu">
+							<li><a href="javascript:;" class="trigger"><span
+								class="class${menu.key.permissao}">&nbsp;</span>${menu.key.permissao.descricao}</a>
+								<ul>
+									<c:forEach items="${menus[menu.key]}" var="submenu">
+										<li><a href="<c:url value='${submenu.key.url}' />">${submenu.key.permissao.descricao}</a>
+										</li>
+									</c:forEach>						
+								</ul>
+							</li>
+						</c:forEach>
 						<li>
 							<a href="help.htm"><span class="classROLE_HELP">&nbsp;</span>Help</a>
 						</li>
 					</ul>
 					</div>
 					<br clear="all"/>
-					<div class="bts_header">
-						<span class="bt_novos" style="display:none;">
-							<a id="linkHome" href='<c:url value="/inicial/"/>' rel="tipsy" title="Voltar para Home"><span class="classROLE_HOME">&nbsp;</span>&nbsp;</a>
-						</span>
-						<a href="javascript:;" id="btnVersao">
-								<label title="versao">Versão: ${versao}</label>								
-							</a>
-						<div class="usuario">
-							
-													
-							<label title="Usuário Logado no Sistema">Usuário: ${nomeUsuario}</label>
-										
-							<label> <script type="text/javascript"
-									language="JavaScript">
-								diaSemana();
-							</script> </label>
-						
-							<label>
-								<a href="javascript:;" onclick="logout()" title="Sair do Sistema">Sair</a>
-							</label>
-			
-						</div>
-					</div>
-					<br class="clearit">
-
 			</div>
 		</div>
 		<jsp:include page="/WEB-INF/jsp/commons/loading.jsp" />
-		
 		<div id="changes" title="Changelog"><div style="padding: 10px">${changes}</div></div>
 		
 		<div id="workspace">

@@ -3,6 +3,7 @@ package br.com.abril.nds.model.estoque;
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -44,6 +45,10 @@ public class LancamentoDiferenca implements Serializable {
 	@OneToOne(optional = true)
 	@JoinColumn(name = "MOVIMENTO_ESTOQUE_ID")
 	private MovimentoEstoque movimentoEstoque;
+	
+	@OneToOne(optional = true)
+	@JoinColumn(name = "MOVIMENTO_ESTOQUE_COTA_ID")
+	private MovimentoEstoqueCota movimentoEstoqueCota;
 
 	public Long getId() {
 		return id;
@@ -83,5 +88,13 @@ public class LancamentoDiferenca implements Serializable {
 
 	public void setMovimentoEstoque(MovimentoEstoque movimentoEstoque) {
 		this.movimentoEstoque = movimentoEstoque;
+	}
+
+	public MovimentoEstoqueCota getMovimentoEstoqueCota() {
+		return movimentoEstoqueCota;
+	}
+
+	public void setMovimentoEstoqueCota(MovimentoEstoqueCota movimentoEstoqueCota) {
+		this.movimentoEstoqueCota = movimentoEstoqueCota;
 	}
 }

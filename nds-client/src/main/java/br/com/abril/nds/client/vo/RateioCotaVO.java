@@ -1,8 +1,8 @@
 package br.com.abril.nds.client.vo;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Date;
 
 /**
  * Value Object para rateio de cotas.
@@ -19,6 +19,8 @@ public class RateioCotaVO implements Serializable {
 	
 	private Long id;
 	
+	private Long idRateio;
+	
 	private Long idDiferenca;
 	
 	private Integer numeroCota;
@@ -31,6 +33,8 @@ public class RateioCotaVO implements Serializable {
 	
 	private BigInteger reparteAtualCota;
 	
+	private Date dataEnvioNota;
+	
 	/**
 	 * Construtor padrão.
 	 */
@@ -38,6 +42,44 @@ public class RateioCotaVO implements Serializable {
 		
 	}
 	
+	
+	
+	/**
+	 * @return the idRateio
+	 */
+	public Long getIdRateio() {
+		return idRateio;
+	}
+
+
+
+	/**
+	 * @return the dataEnvioNota
+	 */
+	public Date getDataEnvioNota() {
+		return dataEnvioNota;
+	}
+
+
+
+	/**
+	 * @param dataEnvioNota the dataEnvioNota to set
+	 */
+	public void setDataEnvioNota(Date dataEnvioNota) {
+		this.dataEnvioNota = dataEnvioNota;
+	}
+
+
+
+	/**
+	 * @param idRateio the idRateio to set
+	 */
+	public void setIdRateio(Long idRateio) {
+		this.idRateio = idRateio;
+	}
+
+
+
 	/**
 	 * @return the reparteAtualCota
 	 */
@@ -139,6 +181,7 @@ public class RateioCotaVO implements Serializable {
 	public void setQuantidade(BigInteger quantidade) {
 		this.quantidade = quantidade;
 	}
+
 
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()

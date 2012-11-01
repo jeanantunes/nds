@@ -146,7 +146,7 @@ fieldset label{ float: left; line-height: 23px; margin-left: 5px; margin-right: 
 .bt_confirmar_1 a:hover{color:#00649F; text-decoration:underline;}
 
 .bt_pesquisar{background:url(../images/ico_pesquisar.png) no-repeat center center; width:20px; line-height:20px; float:left;}
-.bt_pesquisar a{ color:#000; font-weight:bold; text-decoration:none; border:1px solid #fff; display:table-cell; width:20px; height:20px; }
+.bt_pesquisar a{ padding-left: 20px; color:#000; font-weight:bold; text-decoration:none; border:1px solid #fff; display:table-cell; width:20px; height:20px; }
 .bt_pesquisar a:hover{color:#00649F;  border:1px solid #06C; display:table-cell}
 
 
@@ -214,6 +214,7 @@ fieldset label{ float: left; line-height: 23px; margin-left: 5px; margin-right: 
 
 .class_linha_1{background:#f0f0f0; line-height:39px;}
 .class_linha_2{background:#f8f8f8; line-height:39px;	}
+.class_linha_3 {background: #CCC;line-height: 28px;}
 
 .linha_separa_fields{height:12px; width:100%;  float:left; overflow:hidden;}
 .linha_separa_fields_2{height:12px; width:700px;  float:left; overflow:hidden;}
@@ -304,9 +305,9 @@ select, input{font-size: 12px; }
   
 .bt_sellAll label{ vertical-align:super!important;}
 
-.menu_fornecedor{display:block; position:absolute; border:1px solid #ccc; background:#FFF; width:170px; z-index:10;}
-.menu_fornecedor input{float:left; }
-.menu_fornecedor label{ margin-left:5px; margin-top:-5px;}
+.menu_fornecedor, .menu_produtos{display:block; position:absolute; border:1px solid #ccc; background:#FFF; width:170px; z-index:10;}
+.menu_fornecedor input, .menu_produtos input{float:left; }
+.menu_fornecedor label, .menu_produtos label{ margin-left:5px; margin-top:-5px;}
 
 
 .bt_configura_inicial{ border:1px solid #CCC; background:url(../images/bg_item_menu.jpg) repeat-x; float:right; margin:5px 0px 5px 0px; font-weight:bold;}
@@ -373,13 +374,14 @@ fieldset legend{font-weight:bold; margin-left:5px; color:#5C9CCC; padding-left:5
     box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
     left: 0;
     line-height: 28px;
-    margin-top: 2px;
+    margin-top: 0px;
     padding-bottom: 1px;
     padding-left: 0;
     padding-right: 0;
     right: 0;
-    width: 100%;
+    width: 98.6%;
     position:absolute;
+    z-index:1;
 }
 .fieldFiltro{margin-top:27px; width:960px!important; margin-right:0px!important;}
 .fieldGrid{width:960px;}
@@ -564,25 +566,25 @@ fieldset legend{font-weight:bold; margin-left:5px; color:#5C9CCC; padding-left:5
     line-height: 18px;
 }
 
-
 .forncedoresSel, .editorSel, .produtosSel{
 	border:1px solid #ccc; 
 	padding:5px; 
-	display:table-cell;
+	display:block;
+	float:left;
 }
 
-.forncedoresSel label, .editorSel label{
+.forncedoresSel label, .editorSel label, .produtosSel label{
 	line-height:22px; 
 	float:left; 
 	margin-right:10px;
 }
 
-.forncedoresSel img, .editorSel img{
+.forncedoresSel img, .editorSel img, .produtosSel img{
 	margin-right:5px; 
 	padding-top:5px;
 }
 
-.forncedoresSel:hover, .editorSel:hover{
+.forncedoresSel:hover, .editorSel:hover, .produtosSel:hover{
 	border:1px solid #06C;
 }
 

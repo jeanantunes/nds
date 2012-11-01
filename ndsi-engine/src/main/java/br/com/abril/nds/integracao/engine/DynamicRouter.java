@@ -1,9 +1,11 @@
 package br.com.abril.nds.integracao.engine;
 
+import org.hibernate.engine.jdbc.internal.DDLFormatterImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import br.com.abril.nds.integracao.engine.data.CouchDBImportRouteTemplate;
+import br.com.abril.nds.integracao.engine.data.DBImportRouteTemplate;
 import br.com.abril.nds.integracao.engine.data.FixedLengthRouteTemplate;
 import br.com.abril.nds.integracao.engine.data.RouteTemplate;
 import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
@@ -19,6 +21,10 @@ public class DynamicRouter {
 
 	@Autowired
 	private FileOutputRouter fileOutputRouter;
+	
+	@Autowired
+	private DBImportDataRouter dBImportDataRouter;
+
 
 	@Autowired
 	private NdsiLoggerFactory ndsiLoggerFactory;
@@ -46,6 +52,9 @@ public class DynamicRouter {
 		}
 		else if (route instanceof FileOutputRoute) {
 			fileOutputRouter.routeData(route);
+		}
+		else if (route instanceof DBImportRouteTemplate) {
+			dBImportDataRouter.routeData(route);
 		}
 		
 		// END

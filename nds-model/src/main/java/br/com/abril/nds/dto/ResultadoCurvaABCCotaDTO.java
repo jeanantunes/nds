@@ -76,8 +76,8 @@ public class ResultadoCurvaABCCotaDTO implements Serializable {
 	}
 
 	private void formatarCampos() {
-		totalFaturamentoFormatado = CurrencyUtil.formatarValor(totalFaturamento); 
-		totalVendaExemplaresFormatado = CurrencyUtil.formatarValorTruncado(totalVendaExemplares);
+		totalFaturamentoFormatado = CurrencyUtil.formatarValor((totalFaturamento== null)?BigDecimal.ZERO: totalFaturamento); 
+		totalVendaExemplaresFormatado = CurrencyUtil.formatarValorTruncado((totalVendaExemplares == null)?BigDecimal.ZERO:totalVendaExemplares);
 	}
 	
 }

@@ -1,5 +1,6 @@
 package br.com.abril.nds.service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Set;
 
@@ -182,4 +183,21 @@ public interface ConferenciaEncalheService {
 			List<ConferenciaEncalheDTO> listaConferenciaEncalhe, 
 			Set<Long> listaIdConferenciaEncalheParaExclusao,
 			Usuario usuario) throws EncalheExcedeReparteException;
+	
+	/**
+	 * Gera arquivo de slip a partir do ControleConferenciaEncalheCota
+	 * 
+	 * @param idControleConferenciaEncalheCota
+	 * @param incluirNumeroSlip
+	 * @return
+	 */
+	public byte[] gerarSlip(Long idControleConferenciaEncalheCota, boolean incluirNumeroSlip);
+	
+	/**
+	 * Obtem valor total para geração de crédito na C.E.
+	 * @param idControleConferenciaEncalheCota
+	 * @return BigDecimal
+	 */
+	BigDecimal obterValorTotalConferenciaEncalhe(Long idControleConferenciaEncalheCota);
+		
 }

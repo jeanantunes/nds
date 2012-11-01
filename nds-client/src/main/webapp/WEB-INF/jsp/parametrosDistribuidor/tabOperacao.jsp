@@ -82,8 +82,11 @@
                 </c:forEach>
               </select>
             </fieldset>
-             <fieldset style="width:440px!important; margin-bottom:5px; margin-left:10px;">
+            
+            <fieldset style="width:440px!important; margin-bottom:5px; margin-left:10px;">
+            
             <legend>Reutilização de Código de Cota</legend>
+            
             <table width="390" border="0" cellspacing="1" cellpadding="0">
               <tr>
                 <td width="222" align="left">Reutilização de Código de Cota Inativa:</td>
@@ -91,7 +94,51 @@
                 <td width="124" align="left"> &nbsp;( meses )</td>
               </tr>
             </table>
-          </fieldset>
+          
+           </fieldset>
+
+            <fieldset style="width:440px!important; margin-bottom:5px; margin-left:10px;">
+            
+            <legend>Sugestão de Código</legend>
+            
+            <table width="390" border="0" cellspacing="1" cellpadding="0">
+              <tr>
+                
+                <td width="222" align="left">Utiliza sugestão de incremento de código:</td>
+                
+                <td width="40" align="center">
+                
+               
+               
+                <c:if test="${parametrosDistribuidor.utilizaSugestaoIncrementoCodigo}">
+                
+        			<input 
+                	name="parametrosDistribuidor.utilizaSugestaoIncrementoCodigo"
+                	checked="checked"
+                	type="checkbox" id="utilizaSugestaoIncrementoCodigo"/>
+        		
+        		</c:if>
+
+                <c:if test="${!parametrosDistribuidor.utilizaSugestaoIncrementoCodigo}">
+
+					<input 
+                	name="parametrosDistribuidor.utilizaSugestaoIncrementoCodigo"
+                	type="checkbox" id="utilizaSugestaoIncrementoCodigo"/>
+
+				</c:if>                
+                	
+                
+                </td>
+                
+                <td width="124" align="left"></td>
+                
+              </tr>
+            </table>
+          
+           </fieldset>
+
+          
+          
             </td>
             <td style="width:10px;">&nbsp;</td>
             <td valign="top"> 

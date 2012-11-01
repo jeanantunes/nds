@@ -9,7 +9,11 @@ import br.com.abril.nds.dto.MovimentoFinanceiroCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroDebitoCreditoDTO;
 import br.com.abril.nds.model.cadastro.BaseCalculo;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
+import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
+import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.strategy.importacao.input.HistoricoFinanceiroInput;
 
 public interface MovimentoFinanceiroCotaService {
 	
@@ -35,5 +39,14 @@ public interface MovimentoFinanceiroCotaService {
 	 * @return Map<Long,BigDecimal>: Faturamentos das cotas
 	 */
 	Map<Long,BigDecimal> obterFaturamentoCotasPeriodo(List<Cota> cotas, BaseCalculo baseCalculo, Date dataInicial, Date dataFinal);
+	
+	/**
+	 * Gera movimento financeiro para cota a vista (crédito)
+	 * @param controleConferenciaEncalheCota
+	 */
+	void gerarMovimentoFinanceiroCotaRecolhimento(ControleConferenciaEncalheCota controleConferenciaEncalheCota);
+
+	void processarRegistrohistoricoFinanceiro(
+			HistoricoFinanceiroInput vendaInput);
 
 }

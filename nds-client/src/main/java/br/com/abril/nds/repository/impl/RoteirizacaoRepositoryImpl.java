@@ -41,13 +41,15 @@ public class RoteirizacaoRepositoryImpl extends AbstractRepositoryModel<Roteiriz
 		
 		StringBuilder hql = new StringBuilder();
 		hql.append(" select roteirizacao from Roteirizacao roteirizacao " )
-			.append(" join roteirizacao.pdv pdv " )
+			.append(" join roteirizacao.roteiros roteiro " )
+			.append(" join roteiro.rotas rota ")
+			.append(" join rota.rotaPDVs rpdv " )
+			.append(" join rpdv.pdv pdv " )
 			.append(" join pdv.cota cota " )
-			.append(" join roteirizacao.rota rota " )
-			.append(" join rota.roteiro roteiro ")
+			
 			.append(" where pdv.caracteristicas.pontoPrincipal=:pontoPrincipal ")
 			.append(" and cota.numeroCota=:numeroCota ")
-			.append(" and roteiro.tipoRoteiro=:tipoRoteiro");
+			.append(" and roteiro.tipoRoteiro = :tipoRoteiro");
 		
 		Query query = getSession().createQuery(hql.toString());
 		query.setParameter("pontoPrincipal", Boolean.TRUE);
@@ -61,10 +63,16 @@ public class RoteirizacaoRepositoryImpl extends AbstractRepositoryModel<Roteiriz
 	
 	@SuppressWarnings("unchecked")
 	public List<Roteirizacao> buscarRoterizacaoPorRota(Long rotaId) {
-		Criteria criteria = getSession().createCriteria(Roteirizacao.class);
-		criteria.add(Restrictions.eq("rota.id", rotaId));
-		criteria.addOrder(Order.asc("ordem"));
-		return criteria.list();
+
+		StringBuilder hql = new StringBuilder();
+		hql.append(" select roteiro.roteirizacao from Roteiro roteiro " )
+			.append(" join roteiro.rotas rota " )
+			.append(" where rota.id=:idRota ");
+		
+		Query query = getSession().createQuery(hql.toString());
+		query.setParameter("idRota", rotaId);
+		
+		return query.list();
 	}
 	
 	@Override
@@ -179,7 +187,8 @@ public class RoteirizacaoRepositoryImpl extends AbstractRepositoryModel<Roteiriz
 		Criteria criteria  = getSession().createCriteria(Roteirizacao.class);
 		criteria.createAlias("rota", "rota") ;
 		criteria.createAlias("rota.roteiro", "roteiro") ;
-		criteria.createAlias("roteiro.box", "box") ;
+		criteria.createAlias("roteiro.roteirizacao", "roteirizacao") ;
+		criteria.createAlias("roteirizacao.box", "box") ;
 		criteria.createAlias("pdv", "pdv") ;
 		criteria.createAlias("pdv.cota", "cota") ;
 		criteria.createAlias("cota.pessoa", "pessoa") ;
@@ -206,94 +215,21 @@ public class RoteirizacaoRepositoryImpl extends AbstractRepositoryModel<Roteiriz
 	}
 	
 	@SuppressWarnings("unchecked")
-	public void atualizaOrdenacao(Roteirizacao roteirizacao ){
-		Criteria criteria =  getSession().createCriteria(Roteirizacao.class);
-		criteria.add(Restrictions.eq("rota", roteirizacao.getRota()));
-		criteria.add(Restrictions.ge("ordem", roteirizacao.getOrdem()));
-		criteria.add(Restrictions.ne("id", roteirizacao.getId()));
-		criteria.addOrder(Order.asc("ordem"));
-		List<Roteirizacao> lista = criteria.list();
-		Integer ordem = roteirizacao.getOrdem();
-		for(Roteirizacao entity : lista ){
-			ordem++;
-			entity.setOrdem(ordem);
-			alterar(entity);
-
-		}
-	}
-
-	public void atualizaOrdenacaoAsc(Roteirizacao roteirizacao ){
-		Roteirizacao roteirizacaoAnterior = buscaRoteiricaoComOrdemAnterior(roteirizacao);
-		Integer novaOrdem = roteirizacaoAnterior.getOrdem();
-		roteirizacao.setOrdem(novaOrdem);
-		alterar(roteirizacao);
-		atualizaOrdenacao(roteirizacao);
-		
-	}
-	
-	
-
-	public void atualizaOrdenacaoDesc(Roteirizacao roteirizacao ){
-		Roteirizacao roteirizacaoPosterior = buscaRoteiricaoComOrdemPosterior(roteirizacao);
-		Integer novaOrdem = roteirizacaoPosterior.getOrdem();
-		Integer antigaOrdem = roteirizacao.getOrdem();
-		roteirizacao.setOrdem(novaOrdem);
-		roteirizacaoPosterior.setOrdem(antigaOrdem);
-		alterar(roteirizacao);
-		alterar(roteirizacaoPosterior);
-		//	atualizaOrdenacao(roteirizacao);
-		
-	}
-	
-	
-	
-	@SuppressWarnings("unchecked")
-	public Roteirizacao buscaRoteiricaoComOrdemAnterior(Roteirizacao roteirizacao ){
-		Criteria criteria =  getSession().createCriteria(Roteirizacao.class);
-		criteria.add(Restrictions.eq("rota", roteirizacao.getRota()));
-		criteria.add(Restrictions.lt("ordem", roteirizacao.getOrdem()));
-		criteria.addOrder(Order.desc("ordem"));
-		criteria.setMaxResults(1);
-		List<Roteirizacao> lista = criteria.list();
-		if (lista == null || lista.isEmpty()){
-			return null;
-		} else {
-			return lista.get(0);
-		}
-		
-	}
-	
-	@SuppressWarnings("unchecked")
-	public Roteirizacao buscaRoteiricaoComOrdemPosterior(Roteirizacao roteirizacao ){
-		Criteria criteria =  getSession().createCriteria(Roteirizacao.class);
-		criteria.add(Restrictions.eq("rota", roteirizacao.getRota()));
-		criteria.add(Restrictions.gt("ordem", roteirizacao.getOrdem()));
-		criteria.addOrder(Order.asc("ordem"));
-		criteria.setMaxResults(1);
-		List<Roteirizacao> lista = criteria.list();
-		if (lista == null || lista.isEmpty()){
-			return null;
-		} else {
-			return lista.get(0);
-		}
-		
-	}
-	
-	@SuppressWarnings("unchecked")
 	@Override
 	public List<ConsultaRoteirizacaoDTO> buscarRoteirizacao(FiltroConsultaRoteirizacaoDTO filtro){
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" select box.codigo ||' - '|| box.nome as nomeBox ," )
-			.append(" rota.codigoRota || ' - ' || rota.descricaoRota as descricaoRota , ")
+		hql.append(" select case when box is null then 'Especial' else (box.codigo ||' - '|| box.nome) end as nomeBox ," )
+			.append(" rota.descricaoRota as descricaoRota , ")
 			.append(" roteiro.descricaoRoteiro as descricaoRoteiro , ")
 			.append(" box.id as idBox, 			")
 			.append(" rota.id as idRota, 		")
 			.append(" roteiro.id as idRoteiro, 	")
 			.append(" cota.id as idCota,		")			
 			.append(" case pessoa.class when 'F' then pessoa.nome when 'J' then pessoa.razaoSocial end as nome , ")
-			.append(" cota.numeroCota as numeroCota ");
+			.append(" cota.numeroCota as numeroCota, ")
+		    .append(" roteirizacao.id as idRoteirizacao ");
 			
 		hql.append( getHqlWhere(filtro));
 	
@@ -383,13 +319,14 @@ public class RoteirizacaoRepositoryImpl extends AbstractRepositoryModel<Roteiriz
 		StringBuilder hql = new StringBuilder();
 		
 		hql.append("from Roteirizacao roteirizacao ")
-			.append(" join roteirizacao.pdv pdv " )
-			.append(" join pdv.cota cota " )
-			.append(" Join cota.pessoa pessoa ")
-			.append(" join roteirizacao.rota rota " )
-			.append(" join rota.roteiro roteiro ")
-			.append(" join roteiro.box box ")
-			.append(" where roteiro.box.id = box.id "); 
+			.append(" left join roteirizacao.roteiros roteiro " )
+			.append(" left join roteirizacao.box box ")
+			.append(" join roteiro.rotas rota " )
+			.append(" Join rota.rotaPDVs rotaPdv ")
+			.append(" Join rotaPdv.pdv pdv ")
+			.append(" Join pdv.cota cota ")
+			.append(" join cota.pessoa pessoa ")
+			.append(" where 1 = 1 "); 
 			
 		if(filtro.getIdBox()!= null){
 			hql.append(" and box.id =:idBox ");
@@ -414,28 +351,30 @@ public class RoteirizacaoRepositoryImpl extends AbstractRepositoryModel<Roteiriz
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" select cota.numeroCota as numeroCota, ")
-		.append(" case pessoa.class when 'F' then pessoa.nome when 'J' then pessoa.razaoSocial end as nome ")
-		.append(" from Roteirizacao roteirizacao 	")
-		.append(" join roteirizacao.pdv pdv 		")
-		.append(" join pdv.cota cota 				")
-		.append(" Join cota.pessoa pessoa 			")
-		.append(" join roteirizacao.rota rota 		")
-		.append(" join rota.roteiro roteiro 		")
-		.append(" join roteiro.box box 				")
+		hql.append("select cota.numeroCota as numeroCota, ")
+		.append("case pessoa.class when 'F' then pessoa.nome when 'J' then pessoa.razaoSocial end as nome ")
+		.append("from Roteirizacao roteirizacao ")
 		
-		.append(" where roteiro.box.id = box.id 	"); 
+		.append("left join roteirizacao.box box ")
+		.append("join roteirizacao.roteiros roteiro ")
+		.append("join roteiro.rotas rota ")
+		.append("join rota.rotaPDVs rotaPdv ")
+		.append("join rotaPdv.pdv pdv ")
+		.append("join pdv.cota cota ")
+		.append("join cota.pessoa pessoa ")
+		
+		.append(" where 1 = 1 "); 
 			
 		if(idBox!= null){
-			hql.append(" and box.id =:idBox ");
+			hql.append(" and box.id = :idBox ");
 		}
 		
 		if(idRoteiro!= null){
-			hql.append(" and roteiro.id =:idRoteiro ");
+			hql.append(" and roteiro.id = :idRoteiro ");
 		}
 		
 		if(idRota!= null){
-			hql.append(" and rota.id =:idRota ");
+			hql.append(" and rota.id = :idRota ");
 		}
 
 		Query query = getSession().createQuery(hql.toString());
@@ -466,8 +405,8 @@ public class RoteirizacaoRepositoryImpl extends AbstractRepositoryModel<Roteiriz
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" select box.codigo ||' - '|| box.nome as nomeBox ," )
-			.append(" rota.codigoRota || ' - ' || rota.descricaoRota as descricaoRota , ")
+		hql.append(" select case when box is null then 'Especial' else (box.codigo ||' - '|| box.nome) end as nomeBox ," )
+			.append(" rota.descricaoRota as descricaoRota, ")
 			.append(" roteiro.descricaoRoteiro as descricaoRoteiro , ")
 			.append(" box.id as idBox, 			")
 			.append(" rota.id as idRota, 		")
@@ -476,7 +415,7 @@ public class RoteirizacaoRepositoryImpl extends AbstractRepositoryModel<Roteiriz
 			
 		hql.append( getHqlWhere(filtro));
 	
-		hql.append(" group by box.codigo, box.id, rota.codigoRota, rota.id, roteiro.descricaoRoteiro, roteiro.id ");
+		hql.append(" group by box.codigo, box.id, rota.descricaoRota, rota.id, roteiro.descricaoRoteiro, roteiro.id ");
 		
 		hql.append(getOrdenacaoConsulta(filtro));
 		
@@ -500,7 +439,7 @@ public class RoteirizacaoRepositoryImpl extends AbstractRepositoryModel<Roteiriz
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" select count(box.codigo) ");
+		hql.append(" select count(roteirizacao) ");
 			
 		hql.append( getHqlWhere(filtro));
 		
@@ -545,7 +484,8 @@ public class RoteirizacaoRepositoryImpl extends AbstractRepositoryModel<Roteiriz
 			List<Long> idsBoxes) {
 		
 		Criteria criteria  = getSession().createCriteria(Roteiro.class, "roteiro");
-		criteria.createAlias("roteiro.box","box");
+		criteria.createAlias("roteiro.roteirizacao","roteirizacao");
+		criteria.createAlias("roteirizacao.box","box");
 		criteria.add(Restrictions.ilike("roteiro.descricaoRoteiro", "%" + nome.toLowerCase() + "%"));
 		criteria.add(Restrictions.in("box.id", idsBoxes));
 		
@@ -583,6 +523,44 @@ public class RoteirizacaoRepositoryImpl extends AbstractRepositoryModel<Roteiriz
 		criteria.setResultTransformer(Transformers.aliasToBean(RotaRoteirizacaoDTO.class));
 		
 		return criteria.list();
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Roteirizacao obterRoteirizacaoPorBox(Long idBox) {
+		Criteria criteria  = getSession().createCriteria(Roteirizacao.class, "roteirizacao");
+		criteria.createAlias("roteirizacao.box","box");
+		criteria.add(Restrictions.eq("box.id", idBox));
+		return (Roteirizacao) criteria.uniqueResult();
+	}
+
+	/**
+	 * Obtém o Box de um PDV
+	 * @param idPdv
+	 * @return
+	 */
+	@Override
+	public Box obterBoxDoPDV(Long idPdv) {
+		
+        StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select b from Box b, Roteirizacao r ");
+		hql.append(" join r.roteiros roteiro ");
+		hql.append(" join roteiro.rotas rota ");
+		hql.append(" join rota.rotaPDVs rotaPdv ");
+		hql.append(" join rotaPdv.pdv pdv ");
+		hql.append(" where r.box = b ");
+		hql.append(" and   pdv.id = :idPdv ");
+		
+		Query query  = getSession().createQuery(hql.toString());
+
+		query.setParameter("idPdv", idPdv);
+		
+		query.setMaxResults(1);
+		
+		return (Box) query.uniqueResult();
 	}
 
 }

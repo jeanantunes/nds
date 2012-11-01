@@ -1,13 +1,23 @@
 package br.com.abril.nds.repository.impl;
 import java.util.Date;
+import java.util.List;
 
 import org.hibernate.Criteria;
+import org.hibernate.Query;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.client.vo.CobrancaVO;
+import br.com.abril.nds.dto.filtro.FiltroConsultaDividasCotaDTO;
+import br.com.abril.nds.model.StatusCobranca;
+import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.financeiro.BaixaAutomatica;
 import br.com.abril.nds.model.financeiro.BaixaCobranca;
+import br.com.abril.nds.model.financeiro.BaixaManual;
+import br.com.abril.nds.model.financeiro.StatusDivida;
 import br.com.abril.nds.repository.BaixaCobrancaRepository;
 
 
@@ -54,4 +64,97 @@ public class BaixaCobrancaRepositoryImpl extends AbstractRepositoryModel<BaixaCo
 		return (Date) criteria.uniqueResult();
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<CobrancaVO> buscarCobrancasBaixadas(FiltroConsultaDividasCotaDTO filtro) {
+		
+		Integer numCota = filtro.getNumeroCota();
+		String nossoNumero = filtro.getNossoNumero();
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" SELECT cast(cobranca.id as string) as codigo, ");
+		hql.append(" pessoa.nome as nome, ");
+		hql.append(" cast(cobranca.dataEmissao as string) as dataEmissao, ");
+		hql.append(" cast(cobranca.dataVencimento as string) as dataVencimento, ");
+		hql.append(" cast(cobranca.valor as string) as valor ");
+		hql.append(" FROM BaixaManual baixaManual ");
+		hql.append(" JOIN baixaManual.cobranca cobranca ");
+		hql.append(" JOIN cobranca.divida divida ");
+		hql.append(" JOIN divida.cota cota ");
+		hql.append(" JOIN cota.pessoa pessoa ");
+		hql.append(" WHERE baixaManual.statusAprovacao = :statusAprovacao ");
+		hql.append(" AND cobranca.statusCobranca = :statusCobranca ");
+		hql.append(" AND divida.status = :statusDivida ");
+		hql.append(" AND cota.numeroCota = :numCota ");
+		
+		if(nossoNumero !=  null && !nossoNumero.trim().isEmpty()){
+			hql.append(" AND cobranca.nossoNumero = :nossoNumero ");
+		}
+		
+		if (filtro.getPaginacao() != null) {
+			
+			String sortOrder = " " + filtro.getPaginacao().getSortOrder();
+			
+			hql.append(" order by ");
+			hql.append(filtro.getOrdenacaoColuna());
+			hql.append(filtro.getPaginacao().getSortOrder() == null ? " asc " : sortOrder);
+		}
+
+		Query query = getSession().createQuery(hql.toString());
+		
+		query.setParameter("numCota", numCota);
+		query.setParameter("statusCobranca", StatusCobranca.PAGO);
+		query.setParameter("statusDivida", StatusDivida.QUITADA);
+		query.setParameter("statusAprovacao", StatusAprovacao.PENDENTE);
+		
+		if(nossoNumero !=  null && !nossoNumero.trim().isEmpty()){
+			query.setParameter("nossoNumero", nossoNumero);
+		}
+
+		if (filtro.getPaginacao() != null) {
+			
+			if (filtro.getPaginacao().getPosicaoInicial() != null) {
+
+				query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
+			}
+
+			if (filtro.getPaginacao().getQtdResultadosPorPagina() != null) {
+
+				query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
+			}
+		}
+
+		query.setResultTransformer(new AliasToBeanResultTransformer(CobrancaVO.class));
+		
+		return query.list();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public BaixaCobranca obterUltimaBaixaCobranca(Long idCobranca) {
+
+		Criteria criteria = getSession().createCriteria(BaixaCobranca.class);
+		
+		criteria.add(Restrictions.eq("cobranca.id", idCobranca));
+		criteria.addOrder(Order.desc("dataBaixa"));
+		
+		criteria.setMaxResults(1);
+		
+		return (BaixaCobranca) criteria.uniqueResult();
+	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<BaixaManual> obterBaixasManual(List<Long> idsCobranca) {
+		
+		Criteria criteria = getSession().createCriteria(BaixaManual.class);
+		
+		criteria.add(Restrictions.in("cobranca.id", idsCobranca));
+		
+		return criteria.list();
+	}
+	
 }

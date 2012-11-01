@@ -5,7 +5,9 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import junit.framework.Assert;
 
@@ -15,6 +17,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.dto.RetornoNFEDTO;
+import br.com.abril.nds.dto.filtro.FiltroImpressaoNFEDTO;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Box;
@@ -31,6 +34,7 @@ import br.com.abril.nds.model.cadastro.ParametroContratoCota;
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
+import br.com.abril.nds.model.cadastro.Processo;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
@@ -48,6 +52,7 @@ import br.com.abril.nds.model.fiscal.CFOP;
 import br.com.abril.nds.model.fiscal.NCM;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
+import br.com.abril.nds.model.fiscal.nota.Condicao;
 import br.com.abril.nds.model.fiscal.nota.EncargoFinanceiroProduto;
 import br.com.abril.nds.model.fiscal.nota.ICMS;
 import br.com.abril.nds.model.fiscal.nota.Identificacao;
@@ -59,6 +64,7 @@ import br.com.abril.nds.model.fiscal.nota.InformacaoTransporte;
 import br.com.abril.nds.model.fiscal.nota.InformacaoValoresTotais;
 import br.com.abril.nds.model.fiscal.nota.ItemNotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
+import br.com.abril.nds.model.fiscal.nota.NotaFiscalReferenciada;
 import br.com.abril.nds.model.fiscal.nota.Origem;
 import br.com.abril.nds.model.fiscal.nota.ProdutoServico;
 import br.com.abril.nds.model.fiscal.nota.RetornoComunicacaoEletronica;
@@ -96,6 +102,8 @@ public class NotaFiscalServiceImplTest extends AbstractRepositoryImplTest {
 	private ProdutoEdicao produtoEdicaoComDesconto;
 
 	private TipoNotaFiscal tipoNotaFiscalDevolucao;
+
+	private Fornecedor dinap;
 
 	@Before
 	public void setup() {
@@ -234,7 +242,7 @@ public class NotaFiscalServiceImplTest extends AbstractRepositoryImplTest {
 				.tipoFornecedorPublicacao();
 		save(tipoFornecedorPublicacao);
 
-		Fornecedor dinap = Fixture.fornecedorDinap(tipoFornecedorPublicacao);
+		dinap = Fixture.fornecedorDinap(tipoFornecedorPublicacao);
 		save(dinap);
 
 		NCM ncmRevistas = Fixture.ncm(49029000l, "REVISTAS", "KG");
@@ -249,9 +257,9 @@ public class NotaFiscalServiceImplTest extends AbstractRepositoryImplTest {
 		produto.setEditor(abril);
 		save(produto);
 
-		produtoEdicaoVeja = Fixture.produtoEdicao("1", 1L, 10, 14,
-				new Long(100), BigDecimal.TEN, new BigDecimal(20),
-				"798765431", 1L, produto, null, false);
+		produtoEdicaoVeja = Fixture.produtoEdicao(1L, 10, 14, new Long(100),
+				BigDecimal.TEN, new BigDecimal(20), "798765431",
+				produto, null, false);
 		save(produtoEdicaoVeja);
 		// ////
 
@@ -262,9 +270,9 @@ public class NotaFiscalServiceImplTest extends AbstractRepositoryImplTest {
 		produtoComDesconto.setEditor(abril);
 		save(produtoComDesconto);
 
-		produtoEdicaoComDesconto = Fixture.produtoEdicao("1", 2L, 10, 14,
-				new Long(100), BigDecimal.TEN, new BigDecimal(20),
-				"798765431", 2L, produtoComDesconto, null, false);
+		produtoEdicaoComDesconto = Fixture.produtoEdicao(2L, 10, 14, new Long(100),
+				BigDecimal.TEN, new BigDecimal(20), "798765431",
+				produtoComDesconto, null, false);
 		save(produtoEdicaoComDesconto);
 		// ////
 
@@ -423,9 +431,9 @@ public class NotaFiscalServiceImplTest extends AbstractRepositoryImplTest {
 					PeriodicidadeProduto.ANUAL, tipo, 123, 123, new Long(100), TributacaoFiscal. TRIBUTADO);
 
 			ProdutoEdicao produtoEdicao = Fixture.produtoEdicao(
-					"codigoProdutoEdicao", 999L, 1111, 222, new Long(1000), new BigDecimal(99999),
-					new BigDecimal(99999), "codigoDeBarras", 4321L, produto,
-					new BigDecimal(99999), false);
+					999L, 1111, 222, new Long(1000), new BigDecimal(99999), new BigDecimal(99999),
+					"codigoDeBarras", produto, new BigDecimal(99999),
+					false);
 
 			ICMS icms = new ICMS();
 
@@ -464,6 +472,39 @@ public class NotaFiscalServiceImplTest extends AbstractRepositoryImplTest {
 				.informacaoTransporte("88416646000103", enderecoTransporte,
 						"IEstd", 132, "municipio", "nome", null, "SP", null);
 		InformacaoAdicional informacaoAdicional = new InformacaoAdicional();
-		notaFiscalService.emitiNotaFiscal(tipoNotaFiscalDevolucao.getId(), new Date(), cotaManoel.getId(), listItemNotaFiscal, informacaoTransporte, informacaoAdicional, null);
+
+		Set<Processo> processos = new HashSet<Processo>();
+		processos.add(Processo.GERACAO_NF_E);
+
+		notaFiscalService.emitiNotaFiscal(tipoNotaFiscalDevolucao.getId(), new Date(), cotaManoel, listItemNotaFiscal, informacaoTransporte, informacaoAdicional, null, processos, null);
 	}
+	
+	
+	@Test
+	public void emitiNotaFiscalFornecedor(){
+		List<ItemNotaFiscal> listItemNotaFiscal = new ArrayList<ItemNotaFiscal>();
+		
+		
+		listItemNotaFiscal.add(new ItemNotaFiscal(produtoEdicaoComDesconto.getId(), BigInteger.TEN, BigDecimal.TEN, "091"));
+		
+		Endereco enderecoTransporte = Fixture.criarEndereco(
+				TipoEndereco.COMERCIAL, "10500250", "Rua Nova", "1000",
+				"Bairro Novo", "Olimpia", "SP",1);
+		save(enderecoTransporte);
+		InformacaoTransporte informacaoTransporte = Fixture
+				.informacaoTransporte("88416646000103", enderecoTransporte,
+						"IEstd", 132, "municipio", "nome", null, "SP", null);
+		InformacaoAdicional informacaoAdicional = new InformacaoAdicional();
+
+		Set<Processo> processos = new HashSet<Processo>();
+		processos.add(Processo.GERACAO_NF_E);
+		notaFiscalService.emitiNotaFiscal(tipoNotaFiscalDevolucao.getId(), new Date(), dinap, listItemNotaFiscal, informacaoTransporte, informacaoAdicional, null, processos, Condicao.DEVOLUCAO_ENCALHE);
+	}
+	
+	@Test
+	public void buscarNFeParaImpressao() {
+		FiltroImpressaoNFEDTO filtro = new FiltroImpressaoNFEDTO();
+		//notaFiscalService.buscarCotasParaImpressaoNFe(filtro);
+	}
+	
 }

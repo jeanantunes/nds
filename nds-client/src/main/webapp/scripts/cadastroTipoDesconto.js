@@ -215,7 +215,7 @@ var tipoDescontoController = $.extend(true,  {
 	
 	excluirDesconto:function(idDesconto, tipoDesconto){		
 		$.postJSON(contextPath + "/financeiro/tipoDescontoCota/excluirDesconto",
-				"idDesconto="+idDesconto+"&tipoDesconto="+tipoDesconto, 
+				{idDesconto:idDesconto,tipoDesconto:tipoDesconto}, 
 				function(){
 					tipoDescontoController.pesquisar();
 				}

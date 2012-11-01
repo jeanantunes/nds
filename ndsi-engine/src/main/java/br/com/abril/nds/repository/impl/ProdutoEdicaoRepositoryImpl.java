@@ -15,6 +15,8 @@ import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.FuroProdutoDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
+import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
@@ -249,19 +251,19 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<ProdutoEdicaoDTO> pesquisarEdicoes(String codigoProduto, String nomeProduto,
+	public List<ProdutoEdicaoDTO> pesquisarEdicoes(String codigoProduto, String nome,
 			Intervalo<Date> dataLancamento, Intervalo<BigDecimal> preco , StatusLancamento statusLancamento,
 			String codigoDeBarras, boolean brinde,
 			String sortorder, String sortname, int initialResult, int maxResults) {
 		
 		StringBuilder hql = new StringBuilder();
-		hql.append(" SELECT pe.id as id, pr.codigo as codigoProduto, pe.nomeComercial as nomeProduto, ");
+		hql.append(" SELECT pe.id as id, pr.codigo as codigoProduto, pr.nomeComercial as nomeComercial, ");
 		hql.append("        pe.numeroEdicao as numeroEdicao, jr.razaoSocial as nomeFornecedor, ");
 		hql.append("        ln.tipoLancamento as statusLancamento, ln.status as statusSituacao, ");
 		hql.append("        pe.possuiBrinde as temBrinde ");
 		
 		// Corpo da consulta com os filtros:
-		Query query = this.queryBodyPesquisarEdicoes(hql, codigoProduto, nomeProduto, dataLancamento, preco, statusLancamento, codigoDeBarras, brinde, sortname, sortorder);
+		Query query = this.queryBodyPesquisarEdicoes(hql, codigoProduto, nome, dataLancamento, preco, statusLancamento, codigoDeBarras, brinde, sortname, sortorder);
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(ProdutoEdicaoDTO.class));
 		query.setFirstResult(initialResult);
@@ -312,7 +314,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 	 * 
 	 * @return
 	 */
-	private Query queryBodyPesquisarEdicoes(StringBuilder hql, String codigoProduto, String nomeProduto,
+	private Query queryBodyPesquisarEdicoes(StringBuilder hql, String codigoProduto, String nome,
 			Intervalo<Date> dataLancamento, Intervalo<BigDecimal> preco , StatusLancamento statusLancamento,
 			String codigoDeBarras, boolean brinde, String sortname, String sortorder) {
 		
@@ -321,6 +323,8 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		hql.append("        JOIN pr.fornecedores fr JOIN fr.juridica jr ");
 		hql.append("        JOIN pe.lancamentos ln ");
 		hql.append("  WHERE pe.ativo = :indAtivo ");
+		
+		hql.append(" AND ln.id = (select max(ln.id) from ln where ln.produtoEdicao.id = pe.id) ");
 		
 		// Filtros opcionais da pesquisa:
 		if (dataLancamento != null) {
@@ -336,8 +340,8 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		if (!StringUtil.isEmpty(codigoProduto)) {
 			hql.append("  AND UPPER(pr.codigo) LIKE UPPER(:codigoProduto) ");
 		}
-		if (!StringUtil.isEmpty(nomeProduto)) {
-			hql.append("  AND UPPER(pr.descricao) LIKE UPPER(:nomeProduto) ");
+		if (!StringUtil.isEmpty(nome)) {
+			hql.append("  AND UPPER(pr.nome) LIKE UPPER(:nome) ");
 		}
 		if (!StringUtil.isEmpty(codigoDeBarras)) {
 			hql.append("  AND pe.codigoDeBarras LIKE :codigoDeBarras ");
@@ -371,8 +375,8 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		if (!StringUtil.isEmpty(codigoProduto)) {
 			query.setString("codigoProduto", codigoProduto);
 		}
-		if (!StringUtil.isEmpty(nomeProduto))  {
-			query.setString("nomeProduto", nomeProduto);
+		if (!StringUtil.isEmpty(nome))  {
+			query.setString("nome", nome);
 		}
 		if (!StringUtil.isEmpty(codigoDeBarras)){
 			query.setString("codigoDeBarras", codigoDeBarras);
@@ -493,7 +497,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 				   + " join fetch produtoEdicao.produto " 
 				   + " where ((produtoEdicao.produto.id = :idProduto "
 				   + " and 	 produtoEdicao.numeroEdicao   = :numeroEdicao)"
-				   + " or 	 (produtoEdicao.nomeComercial  = :nome))";
+				   + " or 	 (produtoEdicao.nome  = :nome))";
 		
 		Query query = super.getSession().createQuery(hql);
 
@@ -560,6 +564,182 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		
 		return new HashSet<ProdutoEdicao>(query.list());
 	}
-	
+
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ProdutoEdicao> buscarProdutosLancadosData(Date data) {
+		
+		StringBuilder hql = new StringBuilder("select distinct l.produtoEdicao ");
+		hql.append(" from Lancamento l ")
+		   .append(" where l.dataLancamentoDistribuidor = :data ")
+		   .append(" and l.status= '" + StatusLancamento.EXPEDIDO.toString() + "'");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("data", data);
+		query.setMaxResults(6);
+		
+		return query.list();
+	}
+
+
+	@Override
+	public String buscarNome(Long idProdutoEdicao) {
+		
+		Query query = 
+			this.getSession().createQuery(
+				"select nome from ProdutoEdicao where id = :idProdutoEdicao");
+		
+		query.setParameter("idProdutoEdicao", idProdutoEdicao);
+		
+		return (String) query.uniqueResult();
+	}
+
+
+	@Override
+	public Long obterUltimoNumeroEdicao(String codigoProduto) {
+		
+		Criteria criteria =  getSession().createCriteria(ProdutoEdicao.class, "produtoEdicao");	
+		
+		criteria.createCriteria("produto", "produto", Criteria.LEFT_JOIN);
+
+		criteria.add(Restrictions.eq("produto.codigo", codigoProduto));
+
+		criteria.setProjection( Projections.projectionList().add(Projections.max("produtoEdicao.numeroEdicao"), "numeroEdicao"));
+		
+		return (Long) criteria.uniqueResult();
+	}
+
+	@Override
+	public Set<ProdutoEdicao> filtrarDescontoProdutoEdicaoPorDistribuidor(Set<Fornecedor> fornecedores) {
+
+		StringBuilder idsFornecedores = new StringBuilder();
+		for (Fornecedor fornecedor : fornecedores) {
+			if (!idsFornecedores.toString().isEmpty()) {
+				idsFornecedores.append(", ");
+			}
+			idsFornecedores.append(fornecedor.getId());
+		}
+		
+		String queryString = "SELECT "
+			+ 	"produtoEdicao "
+			+ "FROM "
+			+ 	"ProdutoEdicao produtoEdicao "
+			+ "WHERE "
+			+ 	"produtoEdicao.id NOT IN (SELECT "
+			+         "produtoEdicao.id "
+			+         "FROM "
+			+             "DescontoProdutoEdicao descontoProdutoEdicao "
+			+         "JOIN descontoProdutoEdicao.produtoEdicao produtoEdicao "
+			+         "JOIN produtoEdicao.produto produto "
+			+         "JOIN descontoProdutoEdicao.fornecedor fornecedor "
+			+         "WHERE "
+			+             "fornecedor.id IN (" + idsFornecedores + ") "
+			+                 "AND produto.id IN (SELECT produto.id FROM Produto produto JOIN produto.fornecedores fornecedor WHERE fornecedor.id IN (" + idsFornecedores + ") ) "
+			+                 "AND descontoProdutoEdicao.tipoDesconto = ('PRODUTO')) "
+			+ 	"AND produtoEdicao.id NOT IN (SELECT "
+			+             "produtoEdicao.id "
+			+         "FROM "
+			+             "DescontoProdutoEdicao descontoProdutoEdicao "
+			+         "JOIN descontoProdutoEdicao.produtoEdicao produtoEdicao "
+			+         "JOIN descontoProdutoEdicao.cota cota "
+			+         "JOIN descontoProdutoEdicao.fornecedor fornecedor "
+			+         "WHERE "
+			+             "fornecedor.id IN (" + idsFornecedores + ") "
+			+                 "AND cota.id IN (SELECT cota.id FROM Cota cota JOIN cota.fornecedores fornecedor WHERE fornecedor.id IN (" + idsFornecedores + ")) "
+			+                 "AND descontoProdutoEdicao.tipoDesconto = ('ESPECIFICO'))";
+	                        
+		//queryString += whereString;
+		
+		Query query = this.getSession().createQuery(queryString);
+		
+		return new HashSet<ProdutoEdicao>(query.list());
+	}
+
+	@Override
+	public Set<ProdutoEdicao> filtrarDescontoProdutoEdicaoPorCota(Cota cota, Set<Fornecedor> fornecedores) {
+
+		StringBuilder idsFornecedores = new StringBuilder();
+		for (Fornecedor fornecedor : fornecedores) {
+			if (!idsFornecedores.toString().isEmpty()) {
+				idsFornecedores.append(", ");
+			}
+			idsFornecedores.append(fornecedor.getId());
+		}		
+		
+		String queryString = "SELECT "
+			+ 	"produtoEdicao "
+			+ "FROM "
+			+ 	"ProdutoEdicao produtoEdicao "
+			+ "WHERE "
+			+ 	"produtoEdicao.id NOT IN (SELECT "
+			+         "produtoEdicao.id "
+			+         "FROM "
+			+             "DescontoProdutoEdicao descontoProdutoEdicao "
+			+         "JOIN descontoProdutoEdicao.produtoEdicao produtoEdicao "
+			+         "JOIN produtoEdicao.produto produto "
+			+         "JOIN descontoProdutoEdicao.cota cota "
+			+         "JOIN descontoProdutoEdicao.fornecedor fornecedor "
+			+         "WHERE "
+			+             "cota.id = " + cota.getId() + " "
+			+             "AND fornecedor.id IN (" + idsFornecedores + ") "
+			+                 "AND produto.id IN (SELECT produto.id FROM Produto produto JOIN produto.fornecedores fornecedor JOIN fornecedor.cotas cota WHERE cota.id = " + cota.getId() + " AND fornecedor.id IN (" + idsFornecedores + ")) "
+			+                 "AND descontoProdutoEdicao.tipoDesconto = ('PRODUTO')) "
+			+ 	"AND produtoEdicao.id NOT IN (SELECT "
+			+             "produtoEdicao.id "
+			+         "FROM "
+			+             "DescontoProdutoEdicao descontoProdutoEdicao "
+			+         "JOIN descontoProdutoEdicao.produtoEdicao produtoEdicao "
+			+         "JOIN descontoProdutoEdicao.cota cota "
+			+         "JOIN descontoProdutoEdicao.fornecedor fornecedor "
+			+         "WHERE "
+			+             "cota.id = " + cota.getId() + " "
+			+             "AND fornecedor.id IN (" + idsFornecedores + ") "
+			+                 "AND fornecedor.id IN (SELECT fornecedor.id FROM Fornecedor fornecedor JOIN fornecedor.cotas cota WHERE cota.id = " + cota.getId() + " AND fornecedor.id IN (" + idsFornecedores + ")) "
+			+                 "AND descontoProdutoEdicao.tipoDesconto = ('GERAL'))";
+	                        
+		//queryString += whereString;
+		
+		Query query = this.getSession().createQuery(queryString);
+		
+		return new HashSet<ProdutoEdicao>(query.list());
+	}
+
+	/*@Override
+	public Set<ProdutoEdicao> filtrarDescontoProdutoEdicaoPorProduto(Produto produto) {
+		String queryString = "SELECT "
+				+ 	"produtoEdicao "
+				+ "FROM "
+				+ 	"ProdutoEdicao produtoEdicao "
+				+ "WHERE "
+				+ 	"produtoEdicao.id NOT IN (SELECT "
+				+         "produtoEdicao.id "
+				+         "FROM "
+				+             "DescontoProdutoEdicao descontoProdutoEdicao "
+				+         "JOIN descontoProdutoEdicao.produtoEdicao produtoEdicao "
+				+         "JOIN produtoEdicao.produto produto "
+				+         "JOIN descontoProdutoEdicao.cota cota "
+				+         "WHERE "
+				+             "produto.id = " + produto.getId() + " "
+				+                 "AND cota.id IN (SELECT cota.id FROM Produto produto JOIN produto.fornecedores fornecedor JOIN fornecedor.cotas cota WHERE produto.id = " + produto.getId() + ") "
+				+                 "AND descontoProdutoEdicao.tipoDesconto = ('ESPECIFICO'))"
+				+ 	"AND produtoEdicao.id NOT IN (SELECT "
+				+             "produtoEdicao.id "
+				+         "FROM "
+				+             "DescontoProdutoEdicao descontoProdutoEdicao "
+				+         "JOIN descontoProdutoEdicao.produtoEdicao produtoEdicao "
+				+         "JOIN descontoProdutoEdicao.cota cota "
+				+         "JOIN descontoProdutoEdicao.fornecedor fornecedor "
+				+         "WHERE "
+				+             "produto.id = " + produto.getId() + " "
+				+                 "AND fornecedor.id IN (SELECT fornecedor.id FROM Produto produto JOIN produto.fornecedor fornecedor WHERE produto.id = " + produto.getId() + ") "
+				+                 "AND descontoProdutoEdicao.tipoDesconto = ('GERAL'))";
+
+			//queryString += whereString;
+			
+			Query query = this.getSession().createQuery(queryString);
+			
+			return new HashSet<ProdutoEdicao>(query.list());
+	}*/
+
 }
- 

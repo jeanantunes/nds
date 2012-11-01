@@ -21,13 +21,13 @@ public class RegistroCurvaABCCotaDTO extends RegistroCurvaABCDTO implements Seri
 	 */
 	private static final long serialVersionUID = -5830163841520335115L;
 
-	@Export(label = "Código", exhibitionOrder = 1)
+	@Export(label = "Código", exhibitionOrder = 2)
 	private String codigoProduto;
 
-	@Export(label = "Produto", exhibitionOrder = 2)
+	@Export(label = "Produto", exhibitionOrder = 3)
 	private String nomeProduto;
 
-	@Export(label = "Edição", exhibitionOrder = 3)
+	@Export(label = "Edição", exhibitionOrder = 4)
 	private Long edicaoProduto;
 
 	private BigInteger reparte;
@@ -38,31 +38,64 @@ public class RegistroCurvaABCCotaDTO extends RegistroCurvaABCDTO implements Seri
 
 	private BigDecimal faturamento;
 
-	@Export(label = "Reparte", exhibitionOrder = 4)
+	@Export(label = "Reparte", exhibitionOrder = 5)
 	private String reparteFormatado;
 	
-	@Export(label = "Venda de Exemplares", exhibitionOrder = 5)
+	@Export(label = "Venda de Exemplares", exhibitionOrder = 6)
 	private String vendaExemplaresFormatado;
 
-	@Export(label = "Venda %", exhibitionOrder = 6)
+	@Export(label = "Venda %", exhibitionOrder = 7)
 	private String porcentagemVendaFormatado;
 	
-	@Export(label = "Faturamento R$", exhibitionOrder = 7)
+	@Export(label = "Faturamento R$", exhibitionOrder = 8)
 	private String faturamentoFormatado;
+	
+	@Export(label = "Ranking", exhibitionOrder = 1)
+	private Long rkProduto;
+	
+	private Long idCota;
+	
+	private Long idProduto;
 	
 	public RegistroCurvaABCCotaDTO	() {
 	}
 
 	public RegistroCurvaABCCotaDTO(String numeroProduto, String codigoProduto,
 			Long numeroEdicao, BigInteger reparte,
-			BigInteger vendaExemplares, BigDecimal faturamento) {
+			BigInteger vendaExemplares, BigDecimal faturamento,Long idCota,Long idProduto) {
 		this.codigoProduto = numeroProduto;
 		this.nomeProduto = codigoProduto;
 		this.edicaoProduto = numeroEdicao;
 		this.reparte = reparte;
 		this.vendaExemplares = vendaExemplares;
 		this.faturamento = faturamento;
+		this.idCota = idCota;
+		this.idProduto = idProduto;
 		this.formatarCampos();
+	}
+	
+	public Long getIdProduto() {
+		return idProduto;
+	}
+
+	public void setIdProduto(Long idProduto) {
+		this.idProduto = idProduto;
+	}
+
+	public Long getIdCota() {
+		return idCota;
+	}
+
+	public void setIdCota(Long idCota) {
+		this.idCota = idCota;
+	}
+
+	public Long getRkProduto() {
+		return rkProduto;
+	}
+
+	public void setRkProduto(Long rkProduto) {
+		this.rkProduto = rkProduto;
 	}
 
 	public String getNomeProduto() {
@@ -122,12 +155,12 @@ public class RegistroCurvaABCCotaDTO extends RegistroCurvaABCDTO implements Seri
 		this.codigoProduto = codigoProduto;
 	}
 	
-	@Export(label = "Participação", exhibitionOrder = 7)
+	@Export(label = "Participação", exhibitionOrder = 9)
 	public String getParticipacaoString() {
 		return getParticipacaoFormatado();
 	}
 
-	@Export(label = "Participação Acumulada", exhibitionOrder = 8)
+	@Export(label = "Participação Acumulada", exhibitionOrder = 10)
 	public String getParticipacaoAcumuladaString() {
 		return getParticipacaoAcumuladaFormatado();
 	}
@@ -160,7 +193,7 @@ public class RegistroCurvaABCCotaDTO extends RegistroCurvaABCDTO implements Seri
 		reparteFormatado = CurrencyUtil.formatarValorTruncado(reparte);
 		vendaExemplaresFormatado = CurrencyUtil.formatarValorTruncado(vendaExemplares);
 		porcentagemVendaFormatado = CurrencyUtil.formatarValorTruncado(porcentagemVenda);
-		faturamentoFormatado = CurrencyUtil.formatarValor(faturamento);
+		faturamentoFormatado = CurrencyUtil.formatarValor( (faturamento==null)?BigInteger.ZERO:faturamento);
 	}
 	
 }

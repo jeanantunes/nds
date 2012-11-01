@@ -9,17 +9,19 @@ public class DigitacaoContagemDevolucaoVO implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	private String  idConferenciaEncParcial;
-	private String  codigoProduto;
-	private String  nomeProduto;
-	private String  numeroEdicao;
-	private String  precoVenda;
-	private String  qtdDevolucao;
-	private String  qtdNota;
-	private String  valorTotal;
+	private String idConferenciaEncParcial;
+	private String codigoProduto;
+	private String nomeProduto;
+	private String numeroEdicao;
+	private String precoVenda;
+	private String desconto;
+	private String qtdDevolucao;
+	private String qtdNota;
+	private String valorTotal;
+	private String valorTotalComDesconto;
 	private String diferenca;
 	private String dataRecolhimentoDistribuidor;
-	
+	private boolean isEdicaoFechada;
 	
 	/**
 	 * @return the idConferenciaEncParcial
@@ -141,8 +143,41 @@ public class DigitacaoContagemDevolucaoVO implements Serializable {
 	public void setValorTotal(String valorTotal) {
 		this.valorTotal = valorTotal;
 	}
-	
-	
-	
+	/**
+	 * @return the desconto
+	 */
+	public String getDesconto() {
+		return desconto;
+	}
+	/**
+	 * @param desconto the desconto to set
+	 */
+	public void setDesconto(String desconto) {
+		this.desconto = desconto;
+	}
+	/**
+	 * @return the valorTotalComDesconto
+	 */
+	public String getValorTotalComDesconto() {
+		return valorTotalComDesconto;
+	}
+	/**
+	 * @param valorTotalComDesconto the valorTotalComDesconto to set
+	 */
+	public void setValorTotalComDesconto(String valorTotalComDesconto) {
+		this.valorTotalComDesconto = valorTotalComDesconto;
+	}
+	/**
+	 * @return the isEdicaoFechada
+	 */
+	public boolean isEdicaoFechada() {
+		return isEdicaoFechada;
+	}
+	/**
+	 * @param isEdicaoFechada the isEdicaoFechada to set
+	 */
+	public void setEdicaoFechada(boolean isEdicaoFechada) {
+		this.isEdicaoFechada = isEdicaoFechada;
+	}
 	
 }

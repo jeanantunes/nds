@@ -21,6 +21,7 @@ import br.com.abril.nds.dto.filtro.FiltroMapaAbastecimentoDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
+import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.service.MapaAbastecimentoService;
 
 @Service
@@ -31,6 +32,9 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 	
 	@Autowired
 	private CotaRepository cotaRepository;
+	
+	@Autowired
+	private ProdutoEdicaoRepository produtoEdicaoRepository;
 	
 	@Override
 	@Transactional
@@ -124,7 +128,7 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 		
 		HashMap<Integer, HashMap<String, ProdutoMapaRotaDTO>>  boxes = new HashMap<Integer, HashMap<String, ProdutoMapaRotaDTO>> ();
 		
-		List<ProdutoAbastecimentoDTO> boxProdutoRota = movimentoEstoqueCotaRepository.obterMapaAbastecimentoPorBoxRota(filtro);
+		List<ProdutoAbastecimentoDTO> boxProdutoRota = this.obterMapaAbastecimentoPorBoxRota(filtro);
 		
 		for(ProdutoAbastecimentoDTO item : boxProdutoRota ) {
 			
@@ -306,5 +310,139 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 		
 		return pcMapaDTO;
 	}
+	
+	@Override
+	@Transactional
+	public HashMap<Long, MapaProdutoCotasDTO>  obterMapaDeImpressaoPorEntregador(
+			FiltroMapaAbastecimentoDTO filtro) {
+		
+		List<ProdutoAbastecimentoDTO> produtosBoxRota = movimentoEstoqueCotaRepository.obterMapaDeImpressaoPorEntregador(filtro);
+		
+		if(produtosBoxRota.size() == 0)
+			return null;
+		
+		HashMap<Long, MapaProdutoCotasDTO> mapas = new HashMap<Long, MapaProdutoCotasDTO>();
+		
+		MapaProdutoCotasDTO pcMapaDTO = null;
+		
+		for(ProdutoAbastecimentoDTO item : produtosBoxRota) {
+						
+			if(!mapas.containsKey(item.getIdProdutoEdicao())) {
+				
+				pcMapaDTO = new MapaProdutoCotasDTO(
+						item.getCodigoProduto(), 
+						item.getNomeProduto(), 
+						item.getNumeroEdicao().longValue(), 
+						item.getPrecoCapa(),  
+						new HashMap<Integer, Integer>());
+				
+				mapas.put(item.getIdProdutoEdicao(), pcMapaDTO);
+			}			
+			
+			if(!pcMapaDTO.getCotasQtdes().containsKey(item.getCodigoCota()))
+				pcMapaDTO.getCotasQtdes().put(item.getCodigoCota(), 0);
+						
+			Integer qtdeAtual = pcMapaDTO.getCotasQtdes().get(item.getCodigoCota());
+			pcMapaDTO.getCotasQtdes().put(item.getCodigoCota(), qtdeAtual + item.getReparte());
+			
+		}
+		
+		return mapas;
+	}
 
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional
+	public List<ProdutoAbastecimentoDTO> obterMapaAbastecimentoPorBoxRota(FiltroMapaAbastecimentoDTO filtro) {
+
+		return this.movimentoEstoqueCotaRepository.obterMapaAbastecimentoPorBoxRota(filtro);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional
+	public Long countObterMapaAbastecimentoPorBoxRota(FiltroMapaAbastecimentoDTO filtro) {
+
+		return this.movimentoEstoqueCotaRepository.countObterMapaAbastecimentoPorBoxRota(filtro);
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional
+	public List<ProdutoAbastecimentoDTO> obterMapaAbastecimentoPorCota(FiltroMapaAbastecimentoDTO filtro) {
+
+		return this.movimentoEstoqueCotaRepository.obterMapaAbastecimentoPorCota(filtro);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional
+	public Long countObterMapaAbastecimentoPorCota(FiltroMapaAbastecimentoDTO filtro) {
+
+		return this.movimentoEstoqueCotaRepository.countObterMapaAbastecimentoPorCota(filtro);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional
+	public List<ProdutoAbastecimentoDTO> obterMapaAbastecimentoPorProdutoEdicao(FiltroMapaAbastecimentoDTO filtro) {
+
+		return this.movimentoEstoqueCotaRepository.obterMapaAbastecimentoPorProdutoEdicao(filtro);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional
+	public Long countObterMapaAbastecimentoPorProdutoEdicao(FiltroMapaAbastecimentoDTO filtro) {
+
+		return this.movimentoEstoqueCotaRepository.countObterMapaAbastecimentoPorProdutoEdicao(filtro);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional
+	public List<ProdutoAbastecimentoDTO> obterMapaDeAbastecimentoPorProdutoQuebrandoPorCota(FiltroMapaAbastecimentoDTO filtro) {
+
+		return this.movimentoEstoqueCotaRepository.obterMapaDeImpressaoPorProdutoQuebrandoPorCota(filtro);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional
+	public Long countObterMapaDeAbastecimentoPorProdutoQuebrandoPorCota(FiltroMapaAbastecimentoDTO filtro) {
+
+		return this.movimentoEstoqueCotaRepository.countObterMapaDeImpressaoPorProdutoQuebrandoPorCota(filtro);
+	}
+
+	@Override
+	@Transactional
+	public List<ProdutoAbastecimentoDTO> obterMapaDeAbastecimentoPorEntregador(
+			FiltroMapaAbastecimentoDTO filtro) {
+		
+		return this.movimentoEstoqueCotaRepository.obterMapaDeAbastecimentoPorEntregador(filtro);
+	}
+
+	@Override
+	@Transactional
+	public Long countObterMapaDeAbastecimentoPorEntregador(
+			FiltroMapaAbastecimentoDTO filtro) {
+		return movimentoEstoqueCotaRepository.countObterMapaDeAbastecimentoPorEntregador(filtro);
+	}
 }

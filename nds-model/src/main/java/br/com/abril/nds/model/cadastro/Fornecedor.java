@@ -1,6 +1,7 @@
 package br.com.abril.nds.model.cadastro;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -12,6 +13,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
@@ -61,7 +64,8 @@ public class Fornecedor implements Serializable {
 
 	@Column(name="POSSUI_CONTRATO")
 	private boolean possuiContrato;
-
+	
+	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name="VALIDADE_CONTRATO")
 	private Date validadeContrato;
 
@@ -81,16 +85,35 @@ public class Fornecedor implements Serializable {
 	private Set<TelefoneFornecedor> telefones = new HashSet<TelefoneFornecedor>();
 
 	@Cascade(value = org.hibernate.annotations.CascadeType.SAVE_UPDATE)
-	@ManyToOne(optional = false)
+	@ManyToOne(optional = true)
 	@JoinColumn(name = "TIPO_FORNECEDOR_ID")
 	private TipoFornecedor tipoFornecedor;
-
+	
 	@Enumerated(EnumType.STRING)
 	@Column(name = "ORIGEM", nullable = false)
 	private Origem origem;
 
 	@Column(name = "EMAIL_NFE")
 	private String emailNfe;
+
+	/**
+	 * Fornecedores associados à Cota
+	 */
+	@ManyToMany
+	@JoinTable(name = "COTA_FORNECEDOR", joinColumns = {@JoinColumn(name = "FORNECEDOR_ID")}, 
+	inverseJoinColumns = {@JoinColumn(name = "COTA_ID")})
+	private Set<Cota> cotas = new HashSet<Cota>();
+	
+	@Column(name="MARGEM_DISTRIBUIDOR")
+	private BigDecimal margemDistribuidor;
+	
+	public BigDecimal getMargemDistribuidor() {
+		return margemDistribuidor;
+	}
+
+	public void setMargemDistribuidor(BigDecimal margemDistribuidor) {
+		this.margemDistribuidor = margemDistribuidor;
+	}
 
 	public Long getId() {
 		return id;
@@ -223,6 +246,24 @@ public class Fornecedor implements Serializable {
 	public void setEmailNfe(String emailNfe) {
 		this.emailNfe = emailNfe;
 	}
+
+	public Set<Cota> getCotas() {
+		return cotas;
+	}
+
+	public void setCotas(Set<Cota> cotas) {
+		this.cotas = cotas;
+	}
+	
+	public EnderecoFornecedor getEnderecoPrincipal() {
+	    for (EnderecoFornecedor endereco : enderecos) {
+	        if (endereco.isPrincipal()) {
+	            return endereco;
+	        }
+	    }
+	    return null;
+	}
+	
 
 	@Override
 	public int hashCode() {

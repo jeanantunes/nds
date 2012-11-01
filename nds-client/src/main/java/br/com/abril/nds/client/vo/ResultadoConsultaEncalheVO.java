@@ -1,12 +1,12 @@
 package br.com.abril.nds.client.vo;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 
+import br.com.abril.nds.dto.DebitoCreditoCotaDTO;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.TableModel;
-import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
+import br.com.abril.nds.vo.DebitoCreditoCotaVO;
 
 @Exportable
 public class ResultadoConsultaEncalheVO implements Serializable {
@@ -18,19 +18,17 @@ public class ResultadoConsultaEncalheVO implements Serializable {
 
 	private TableModel<CellModelKeyValue<ConsultaEncalheVO>> tableModel;
 	
-	@Export(label="Qtde de Tipos de Produto Recolhidos no Primeiro Dia")
-	private String qtdProdutoPrimeiroRecolhimento;
+	private TableModel<CellModelKeyValue<DebitoCreditoCotaVO>> tableModelDebitoCredito;  
 	
-	@Export(label="Qtde de Exemplares Recolhidos no Primeiro Dia")
-	private String qtdExemplarPrimeiroRecolhimento;
+	private String valorReparte;
 	
-	@Export(label="Qtde de Tipos de Produto Recolhidos no Após Primeiro Dia")
-	private String qtdProdutoDemaisRecolhimentos;
+	private String valorEncalhe;
 	
-	@Export(label="Qtde de Exemplares Recolhidos Após Primeiro Dia")
-	private String qtdExemplarDemaisRecolhimentos;
+	private String valorVendaDia;
 	
-
+	private String valorDebitoCredito;
+	
+	private String valorPagar;	
 	/**
 	 * Obtém tableModel
 	 *
@@ -50,76 +48,88 @@ public class ResultadoConsultaEncalheVO implements Serializable {
 	}
 
 	/**
-	 * Obtém qtdProdutoPrimeiroRecolhimento
-	 *
-	 * @return String
+	 * @return the valorEncalhe
 	 */
-	public String getQtdProdutoPrimeiroRecolhimento() {
-		return qtdProdutoPrimeiroRecolhimento;
+	public String getValorEncalhe() {
+		return valorEncalhe;
 	}
 
 	/**
-	 * Atribuí qtdProdutoPrimeiroRecolhimento
-	 * @param qtdProdutoPrimeiroRecolhimento 
+	 * @param valorEncalhe the valorEncalhe to set
 	 */
-	public void setQtdProdutoPrimeiroRecolhimento(
-			String qtdProdutoPrimeiroRecolhimento) {
-		this.qtdProdutoPrimeiroRecolhimento = qtdProdutoPrimeiroRecolhimento;
+	public void setValorEncalhe(String valorEncalhe) {
+		this.valorEncalhe = valorEncalhe;
 	}
 
 	/**
-	 * Obtém qtdExemplarPrimeiroRecolhimento
-	 *
-	 * @return String
+	 * @return the valorVendaDia
 	 */
-	public String getQtdExemplarPrimeiroRecolhimento() {
-		return qtdExemplarPrimeiroRecolhimento;
+	public String getValorVendaDia() {
+		return valorVendaDia;
 	}
 
 	/**
-	 * Atribuí qtdExemplarPrimeiroRecolhimento
-	 * @param qtdExemplarPrimeiroRecolhimento 
+	 * @param valorVendaDia the valorVendaDia to set
 	 */
-	public void setQtdExemplarPrimeiroRecolhimento(
-			String qtdExemplarPrimeiroRecolhimento) {
-		this.qtdExemplarPrimeiroRecolhimento = qtdExemplarPrimeiroRecolhimento;
+	public void setValorVendaDia(String valorVendaDia) {
+		this.valorVendaDia = valorVendaDia;
 	}
 
 	/**
-	 * Obtém qtdProdutoDemaisRecolhimentos
-	 *
-	 * @return String
+	 * @return the valorDebitoCredito
 	 */
-	public String getQtdProdutoDemaisRecolhimentos() {
-		return qtdProdutoDemaisRecolhimentos;
+	public String getValorDebitoCredito() {
+		return valorDebitoCredito;
 	}
 
 	/**
-	 * Atribuí qtdProdutoDemaisRecolhimentos
-	 * @param qtdProdutoDemaisRecolhimentos 
+	 * @param valorDebitoCredito the valorDebitoCredito to set
 	 */
-	public void setQtdProdutoDemaisRecolhimentos(
-			String qtdProdutoDemaisRecolhimentos) {
-		this.qtdProdutoDemaisRecolhimentos = qtdProdutoDemaisRecolhimentos;
+	public void setValorDebitoCredito(String valorDebitoCredito) {
+		this.valorDebitoCredito = valorDebitoCredito;
 	}
 
 	/**
-	 * Obtém qtdExemplarDemaisRecolhimentos
-	 *
-	 * @return String
+	 * @return the valorPagar
 	 */
-	public String getQtdExemplarDemaisRecolhimentos() {
-		return qtdExemplarDemaisRecolhimentos;
+	public String getValorPagar() {
+		return valorPagar;
 	}
 
 	/**
-	 * Atribuí qtdExemplarDemaisRecolhimentos
-	 * @param qtdExemplarDemaisRecolhimentos 
+	 * @param valorPagar the valorPagar to set
 	 */
-	public void setQtdExemplarDemaisRecolhimentos(
-			String qtdExemplarDemaisRecolhimentos) {
-		this.qtdExemplarDemaisRecolhimentos = qtdExemplarDemaisRecolhimentos;
+	public void setValorPagar(String valorPagar) {
+		this.valorPagar = valorPagar;
 	}
 
-	
+	/**
+	 * @return the valorReparte
+	 */
+	public String getValorReparte() {
+		return valorReparte;
+	}
+
+	/**
+	 * @param valorReparte the valorReparte to set
+	 */
+	public void setValorReparte(String valorReparte) {
+		this.valorReparte = valorReparte;
+	}
+
+	/**
+	 * @return the tableModelDebitoCredito
+	 */
+	public TableModel<CellModelKeyValue<DebitoCreditoCotaVO>> getTableModelDebitoCredito() {
+		return tableModelDebitoCredito;
+	}
+
+	/**
+	 * @param tableModelDebitoCredito the tableModelDebitoCredito to set
+	 */
+	public void setTableModelDebitoCredito(
+			TableModel<CellModelKeyValue<DebitoCreditoCotaVO>> tableModelDebitoCredito) {
+		this.tableModelDebitoCredito = tableModelDebitoCredito;
+	}
+
 }

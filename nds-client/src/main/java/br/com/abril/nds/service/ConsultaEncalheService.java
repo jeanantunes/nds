@@ -1,7 +1,9 @@
 package br.com.abril.nds.service;
 
 import br.com.abril.nds.dto.InfoConsultaEncalheDTO;
+import br.com.abril.nds.dto.InfoConsultaEncalheDetalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDTO;
+import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDetalheDTO;
 
 public interface ConsultaEncalheService {
 	
@@ -15,4 +17,13 @@ public interface ConsultaEncalheService {
 	 */
 	public InfoConsultaEncalheDTO pesquisarEncalhe(FiltroConsultaEncalheDTO filtro);
 	
+	public InfoConsultaEncalheDetalheDTO pesquisarEncalheDetalhe(FiltroConsultaEncalheDetalheDTO filtro);
+	
+	/**
+	 * Gera arquivo Documento Slip.
+	 * 
+	 * @param filtro
+	 * @return
+	 */
+	public byte[] gerarDocumentosConferenciaEncalhe(FiltroConsultaEncalheDTO filtro);
 }

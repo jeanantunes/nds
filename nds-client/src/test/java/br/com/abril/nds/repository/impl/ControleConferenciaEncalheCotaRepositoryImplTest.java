@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import junit.framework.Assert;
 
@@ -11,6 +12,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDTO;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
@@ -108,23 +110,23 @@ public class ControleConferenciaEncalheCotaRepositoryImplTest extends AbstractRe
 		cromoReiLeao.addFornecedor(fornecedorDinap);
 		save(cromoReiLeao);
 
-		veja1 = Fixture.produtoEdicao("1", 1L, 10, 7,
-				new Long(100), BigDecimal.TEN, new BigDecimal(15), "ABCDEFGHIJKLMNOPA", 1L, veja, null, false);
+		veja1 = Fixture.produtoEdicao(1L, 10, 7,
+				new Long(100), BigDecimal.TEN, new BigDecimal(15), "ABCDEFGHIJKLMNOPA", veja, null, false);
 
-		quatroRoda2 = Fixture.produtoEdicao("1", 2L, 15, 30,
-				new Long(100), BigDecimal.TEN, BigDecimal.TEN, "ABCDEFGHIJKLMNOPB", 2L,
+		quatroRoda2 = Fixture.produtoEdicao(2L, 15, 30,
+				new Long(100), BigDecimal.TEN, BigDecimal.TEN, "ABCDEFGHIJKLMNOPB", 
 				quatroRodas, null, false);
 
 
-		ProdutoEdicao infoExame3 = Fixture.produtoEdicao("1", 3L, 5, 30,
-				new Long(100), BigDecimal.TEN, new BigDecimal(12), "ABCDEFGHIJKLMNOPC", 3L, infoExame, null, false);
+		ProdutoEdicao infoExame3 = Fixture.produtoEdicao( 3L, 5, 30,
+				new Long(100), BigDecimal.TEN, new BigDecimal(12), "ABCDEFGHIJKLMNOPC", infoExame, null, false);
 
-		ProdutoEdicao capricho1 = Fixture.produtoEdicao("1", 1L, 10, 15,
-				new Long(120), BigDecimal.TEN, BigDecimal.TEN, "ABCDEFGHIJKLMNOPD", 4L, capricho, null, false);
+		ProdutoEdicao capricho1 = Fixture.produtoEdicao(1L, 10, 15,
+				new Long(120), BigDecimal.TEN, BigDecimal.TEN, "ABCDEFGHIJKLMNOPD", capricho, null, false);
 
 		
-		ProdutoEdicao cromoReiLeao1 = Fixture.produtoEdicao("1", 1L, 100, 60,
-				new Long(10), BigDecimal.ONE, new BigDecimal(1.5), "ABCDEFGHIJKLMNOPE", 5L, cromoReiLeao, null, false);
+		ProdutoEdicao cromoReiLeao1 = Fixture.produtoEdicao(1L, 100, 60,
+				new Long(10), BigDecimal.ONE, new BigDecimal(1.5), "ABCDEFGHIJKLMNOPE", cromoReiLeao, null, false);
 		
 		save(veja1, quatroRoda2, infoExame3, capricho1, cromoReiLeao1);
 		
@@ -138,7 +140,7 @@ public class ControleConferenciaEncalheCotaRepositoryImplTest extends AbstractRe
 		save(tipoNotaFiscal);
 		
 		NotaFiscalEntradaFornecedor notaFiscal1Veja = Fixture
-				.notaFiscalEntradaFornecedor(cfop, fornecedorFC.getJuridica(), fornecedorFC, tipoNotaFiscal,
+				.notaFiscalEntradaFornecedor(cfop, fornecedorFC, tipoNotaFiscal,
 						usuario, BigDecimal.TEN, BigDecimal.ZERO, BigDecimal.TEN);
 		save(notaFiscal1Veja);
 
@@ -162,7 +164,7 @@ public class ControleConferenciaEncalheCotaRepositoryImplTest extends AbstractRe
 		
 		
 		NotaFiscalEntradaFornecedor notaFiscal2Veja = Fixture
-				.notaFiscalEntradaFornecedor(cfop, fornecedorFC.getJuridica(), fornecedorFC, tipoNotaFiscal,
+				.notaFiscalEntradaFornecedor(cfop, fornecedorFC, tipoNotaFiscal,
 						usuario, BigDecimal.TEN, BigDecimal.ZERO, BigDecimal.TEN);
 		save(notaFiscal2Veja);
 
@@ -334,6 +336,51 @@ public class ControleConferenciaEncalheCotaRepositoryImplTest extends AbstractRe
 				dataOperacao);
 		
 		Assert.assertNotNull(controleConferenciaEncalheCota);
+		
+	}
+	
+//	TESTE SEM USO DE MASSA
+	
+	@Test
+	public void testarObterControleConfereciaEncalheCotaPorFilho() {
+		
+		List<ControleConferenciaEncalheCota> controleConferencia;
+		
+		FiltroConsultaEncalheDTO filtro = new FiltroConsultaEncalheDTO();
+		
+		controleConferencia = controleConferenciaEncalheCotaRepository.obterControleConferenciaEncalheCotaPorFiltro(filtro);		
+		
+		Assert.assertNotNull(controleConferencia);
+		
+	}
+	
+//	idCota
+	@Test
+	public void testarObterControleConfereciaEncalheCotaPorFilhoIdCota() {
+		
+		List<ControleConferenciaEncalheCota> controleConferencia;
+		
+		FiltroConsultaEncalheDTO filtro = new FiltroConsultaEncalheDTO();
+		filtro.setIdCota(1L);
+		
+		controleConferencia = controleConferenciaEncalheCotaRepository.obterControleConferenciaEncalheCotaPorFiltro(filtro);		
+		
+		Assert.assertNotNull(controleConferencia);
+		
+	}
+	
+//	idFornecedor
+	@Test
+	public void testarObterControleConfereciaEncalheCotaPorFilhoIdFornecedor() {
+		
+		List<ControleConferenciaEncalheCota> controleConferencia;
+		
+		FiltroConsultaEncalheDTO filtro = new FiltroConsultaEncalheDTO();
+		filtro.setIdFornecedor(1L);
+		
+		controleConferencia = controleConferenciaEncalheCotaRepository.obterControleConferenciaEncalheCotaPorFiltro(filtro);		
+		
+		Assert.assertNotNull(controleConferencia);
 		
 	}
 

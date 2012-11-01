@@ -112,15 +112,19 @@ public class ChamadaAntecipadaEncalheRepositoryImplTest extends AbstractReposito
 		PDV pdv = Fixture.criarPDVPrincipal("Manoel", cotaManoel);
 		save(pdv);
 		
-		Roteiro roteiro = Fixture.criarRoteiro("Pinheiros",box1,TipoRoteiro.NORMAL);
+		Roteirizacao roteirizacao1 = Fixture.criarRoteirizacao(box1);
+		save(roteirizacao1);
+		
+		Roteirizacao roteirizacao2 = Fixture.criarRoteirizacao(box2);
+		save(roteirizacao2);
+		
+		Roteiro roteiro = Fixture.criarRoteiro("Pinheiros",roteirizacao1,TipoRoteiro.NORMAL);
 		save(roteiro);
 
-		Rota rota = Fixture.rota("005", "Rota 005");
+		Rota rota = Fixture.rota("Rota 005", roteiro);
 		rota.setRoteiro(roteiro);
+		rota.addPDV(pdv, 1, box1);
 		save(rota);
-		
-		Roteirizacao roteirizacao = Fixture.criarRoteirizacao(pdv, rota,1);
-		save(roteirizacao);
 		
 		Cota cotaJose = Fixture.cota(1234, jose, SituacaoCadastro.ATIVO,box1);
 		save(cotaJose);
@@ -128,15 +132,14 @@ public class ChamadaAntecipadaEncalheRepositoryImplTest extends AbstractReposito
 		pdv = Fixture.criarPDVPrincipal("Jose", cotaJose);
 		save(pdv);
 		
-		roteiro = Fixture.criarRoteiro("Pinheiros",box1,TipoRoteiro.NORMAL);
+		roteiro = Fixture.criarRoteiro("Pinheiros",roteirizacao1,TipoRoteiro.NORMAL);
 		save(roteiro);
 
-		rota = Fixture.rota("005", "Rota 005");
+		rota = Fixture.rota("Rota 005", roteiro);
 		rota.setRoteiro(roteiro);
-		save(rota);
+		rota.addPDV(pdv, 1, box1);
 		
-		roteirizacao = Fixture.criarRoteirizacao(pdv, rota,1);
-		save(roteirizacao);
+		save(rota);
 		
 		Cota cotaMaria = Fixture.cota(12345, maria, SituacaoCadastro.ATIVO,box2);
 		save(cotaMaria);
@@ -160,14 +163,14 @@ public class ChamadaAntecipadaEncalheRepositoryImplTest extends AbstractReposito
 		produtoVeja.setEditor(editoraAbril);
 		save(produtoVeja);
 
-		ProdutoEdicao produtoEdicaoVeja1 = Fixture.produtoEdicao("1", 1L, 10, 14,
-				new Long(100), BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQ", 1L,
-				produtoVeja, null, false);
+		ProdutoEdicao produtoEdicaoVeja1 = Fixture.produtoEdicao(1L, 10, 14, new Long(100),
+				BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQ", produtoVeja,
+				null, false);
 		save(produtoEdicaoVeja1);
 		
-		ProdutoEdicao produtoEdicaoVeja2 = Fixture.produtoEdicao("1", 2L, 10, 14,
-				new Long(100), BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJOPA", 2L,
-				produtoVeja, null, false);
+		ProdutoEdicao produtoEdicaoVeja2 = Fixture.produtoEdicao(2L, 10, 14, new Long(100),
+				BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJOPA", produtoVeja,
+				null, false);
 		save(produtoEdicaoVeja2);
 		
 		CFOP cfop5102 = Fixture.cfop5102();
@@ -177,7 +180,7 @@ public class ChamadaAntecipadaEncalheRepositoryImplTest extends AbstractReposito
 		save(tipoNotaFiscalRecebimento);
 		
 		NotaFiscalEntradaFornecedor notaFiscalFornecedor = Fixture
-				.notaFiscalEntradaFornecedor(cfop5102, fornecedorDinap.getJuridica(), fornecedorDinap, tipoNotaFiscalRecebimento,
+				.notaFiscalEntradaFornecedor(cfop5102, fornecedorDinap, tipoNotaFiscalRecebimento,
 						usuarioJoao, new BigDecimal(15), new BigDecimal(5), BigDecimal.TEN);
 		save(notaFiscalFornecedor);
 

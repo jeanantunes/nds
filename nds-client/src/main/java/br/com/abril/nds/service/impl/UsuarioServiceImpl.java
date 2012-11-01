@@ -99,6 +99,14 @@ public class UsuarioServiceImpl implements UsuarioService {
 
 	@Override
 	@Transactional(readOnly=true)
+	public Usuario getUsuarioLogado() {
+		String loginUsuario = SecurityContextHolder.getContext().getAuthentication().getName();
+		return usuarioRepository.getUsuarioLogado(loginUsuario);
+	}
+
+	
+	@Override
+	@Transactional(readOnly=true)
 	public boolean existeUsuario(String login) {
 		if (usuarioRepository.getNomeUsuarioPorLogin(login) != null) {
 			return true;

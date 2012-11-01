@@ -6,8 +6,8 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
@@ -25,9 +25,9 @@ public class ParametroDistribuicaoCota implements Serializable {
 	@Column(name = "GERENTE_COMERCIAL", nullable = true)
 	private String gerenteComercial;
 	
-	@ManyToOne(optional = true)
-	@JoinColumn(name = "TIPO_ENTREGA_ID")
-	private TipoEntrega tipoEntrega;
+	@Enumerated(EnumType.STRING)
+	@Column(name = "DESCRICAO_TIPO_ENTREGA", nullable = true)
+	private DescricaoTipoEntrega descricaoTipoEntrega;
 	
 	@Column(name = "OBSERVACAO", nullable = true)
 	private String observacao;
@@ -39,7 +39,7 @@ public class ParametroDistribuicaoCota implements Serializable {
 	private Boolean solicitaNumAtras;
 	
 	@Column(name = "RECEBE_RECOLHE_PARCIAIS", nullable = true)
-	private Boolean recebeRecolheParcias;
+	private Boolean recebeRecolheParciais;
 	
 	@Column(name = "NOTA_ENVIO_IMPRESSO", nullable = true)
 	private Boolean notaEnvioImpresso;
@@ -109,20 +109,20 @@ public class ParametroDistribuicaoCota implements Serializable {
 	}
 	
 	public ParametroDistribuicaoCota(Integer qtdePDV,
-			String assistenteComercial, TipoEntrega tipoEntrega,
+			String assistenteComercial, DescricaoTipoEntrega descricaoTipoEntrega,
 			String observacao,
 			Boolean repartePorPontoVenda, Boolean solicitaNumAtras,
-			Boolean recebeRecolheParcias, Boolean notaEnvioImpresso,
+			Boolean recebeRecolheParciais, Boolean notaEnvioImpresso,
 			Boolean notaEnvioEmail, Boolean chamadaEncalheImpresso,
 			Boolean chamadaEncalheEmail, Boolean slipImpresso, Boolean slipEmail) {
 		super();
 		this.qtdePDV = qtdePDV;
 		this.assistenteComercial = assistenteComercial;
-		this.tipoEntrega = tipoEntrega;
+		this.descricaoTipoEntrega = descricaoTipoEntrega;
 		this.observacao = observacao;
 		this.repartePorPontoVenda = repartePorPontoVenda;
 		this.solicitaNumAtras = solicitaNumAtras;
-		this.recebeRecolheParcias = recebeRecolheParcias;
+		this.recebeRecolheParciais = recebeRecolheParciais;
 		this.notaEnvioImpresso = notaEnvioImpresso;
 		this.notaEnvioEmail = notaEnvioEmail;
 		this.chamadaEncalheImpresso = chamadaEncalheImpresso;
@@ -165,20 +165,6 @@ public class ParametroDistribuicaoCota implements Serializable {
 
 	public void setGerenteComercial(String gerenteComercial) {
 		this.gerenteComercial = gerenteComercial;
-	}
-
-	/**
-	 * @return the tipoEntrega
-	 */
-	public TipoEntrega getTipoEntrega() {
-		return tipoEntrega;
-	}
-
-	/**
-	 * @param tipoEntrega the tipoEntrega to set
-	 */
-	public void setTipoEntrega(TipoEntrega tipoEntrega) {
-		this.tipoEntrega = tipoEntrega;
 	}
 
 	/**
@@ -227,15 +213,15 @@ public class ParametroDistribuicaoCota implements Serializable {
 	/**
 	 * @return the recebeRecolheParcias
 	 */
-	public Boolean getRecebeRecolheParcias() {
-		return recebeRecolheParcias;
+	public Boolean getRecebeRecolheParciais() {
+		return recebeRecolheParciais;
 	}
 
 	/**
 	 * @param recebeRecolheParcias the recebeRecolheParcias to set
 	 */
-	public void setRecebeRecolheParcias(Boolean recebeRecolheParcias) {
-		this.recebeRecolheParcias = recebeRecolheParcias;
+	public void setRecebeRecolheParciais(Boolean recebeRecolheParciais) {
+		this.recebeRecolheParciais = recebeRecolheParciais;
 	}
 
 	/**
@@ -481,5 +467,23 @@ public class ParametroDistribuicaoCota implements Serializable {
 	public void setFimPeriodoCarencia(Date fimPeriodoCarencia) {
 		this.fimPeriodoCarencia = fimPeriodoCarencia;
 	}
+
+	/**
+	 * Obtém descricaoTipoEntrega
+	 *
+	 * @return DescricaoTipoEntrega
+	 */
+	public DescricaoTipoEntrega getDescricaoTipoEntrega() {
+		return descricaoTipoEntrega;
+	}
+
+	/**
+	 * Atribuí descricaoTipoEntrega
+	 * @param descricaoTipoEntrega 
+	 */
+	public void setDescricaoTipoEntrega(DescricaoTipoEntrega descricaoTipoEntrega) {
+		this.descricaoTipoEntrega = descricaoTipoEntrega;
+	}
+	
 	
 }

@@ -200,7 +200,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 			buttons : {
 				"Confirmar" : function() {
 					
-					$.postJSON(contextPath + "/devolucao/conferenciaEncalhe/salvarIdBoxSessao", "idBox=" + $("#boxLogado").val(), 
+					$.postJSON(contextPath + "/devolucao/conferenciaEncalhe/salvarIdBoxSessao", {idBox:$("#boxLogado").val()}, 
 						function(){
 							
 							$("#dialog-logado", ConferenciaEncalheCont.workspace).dialog("close");
@@ -497,7 +497,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 		
 		if (codigoNomeProduto && codigoNomeProduto.length > 0){
 			$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/pesquisarProdutoPorCodigoNome', 
-					"codigoNomeProduto=" + codigoNomeProduto, 
+					{codigoNomeProduto:codigoNomeProduto}, 
 				function(result){
 					
 					if (result[0]){

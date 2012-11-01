@@ -9,6 +9,8 @@
 
 <script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.form.js"></script>
 
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/parametroCobranca.js"></script>
+
 <script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaCota.js"></script>
 
 <script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/cotaGarantia.js"></script>
@@ -18,6 +20,7 @@
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/manterCota.js"></script>
 
 <script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/pdv.js"></script>
+
 
 
 <script language="javascript" type="text/javascript">
@@ -51,25 +54,25 @@
 	</div>
 	<div class="areaBts">
 		<div class="area">
-			<span class="bt_novos" title="Novo">
+			<span class="bt_novos">
 				<a href="javascript:;" onclick="MANTER_COTA.novoPopupCotaCPF();" rel="tipsy" title="Incluir Nova Cota Pessoa Física">
 					<img src="${pageContext.request.contextPath}/images/ico_jornaleiro.gif" hspace="5" border="0"/>
 				</a>
 			</span>
 			
-			<span class="bt_novos" title="Novo">
+			<span class="bt_novos">
 				<a href="javascript:;" onclick="MANTER_COTA.novoPopupCotaCNPJ();" rel="tipsy" title="Incluir Nova Cota Pessoa Jurídica">
 					<img src="${pageContext.request.contextPath}/images/ico_usuarios1.gif" hspace="5" border="0"/>
 				</a>
 			</span>
 			
-			<span class="bt_arq" title="Gerar Arquivo">
+			<span class="bt_arq">
 				<a href="${pageContext.request.contextPath}/cadastro/cota/exportar?fileType=XLS" rel="tipsy" title="Gerar Arquivo">
 					<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
 				</a>
 			</span>
 			
-			<span class="bt_arq" title="Imprimir">
+			<span class="bt_arq">
 				<a href="${pageContext.request.contextPath}/cadastro/cota/exportar?fileType=PDF" rel="tipsy" title="Imprimir">
 					<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
 				</a>
@@ -140,7 +143,7 @@
       
     <div class="linha_separa_fields">&nbsp;</div>
 	
-	<div class="grids" id="grids" style="display: block;">
+	<div class="grids" id="grids" style="display: none;">
 		<fieldset class="fieldGrid">
 			<legend>Cotas Cadastradas</legend>
 				<table class="pessoasGrid"></table>

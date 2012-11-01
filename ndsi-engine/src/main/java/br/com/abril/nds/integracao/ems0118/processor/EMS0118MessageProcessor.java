@@ -2,6 +2,7 @@ package br.com.abril.nds.integracao.ems0118.processor;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +29,7 @@ public class EMS0118MessageProcessor extends AbstractRepository implements
 	private NdsiLoggerFactory ndsiLoggerFactory;
 
 	@Override
-	public void preProcess() {
+	public void preProcess(AtomicReference<Object> tempVar) {
 		// TODO Auto-generated method stub
 	}
 
@@ -69,9 +70,7 @@ public class EMS0118MessageProcessor extends AbstractRepository implements
 
 			// Atualiza valor de custo
 			produtoEdicao.setPrecoCusto(new BigDecimal(precoCusto).setScale(2,
-					RoundingMode.HALF_DOWN));
-
-			System.out.println("breakpoint");
+					RoundingMode.HALF_DOWN));			
 
 		} else {
 			// NAO ENCONTROU Produto/Edicao, DEVE LOGAR
@@ -87,7 +86,7 @@ public class EMS0118MessageProcessor extends AbstractRepository implements
 	}
 
 	@Override
-	public void posProcess() {
+	public void posProcess(Object tempVar) {
 		// TODO Auto-generated method stub
 	}
 	

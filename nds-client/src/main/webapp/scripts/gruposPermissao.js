@@ -32,13 +32,13 @@ var gruposPermissaoController = $.extend(true, {
 		popup_grupo : function() {
 			$( "#dialog-novo-grupo", gruposPermissaoController.workspace).dialog({
 				resizable: false,
-				height:400,
-				width:650,
+				height:420,
+				width:680,
 				modal: true,
 				buttons: {
 					"Confirmar": function() {
 						
-						var obj = $("#novo_grupo_form", gruposPermissaoController.workspace).serialize();
+						var obj = $("#novo_grupo_form", gruposPermissaoController.workspace).serializeObject();
 						//var obj = $("#novo_grupo_form", gruposPermissaoController.workspace).serialize();
 						
 						var permissoes = "";
@@ -49,7 +49,7 @@ var gruposPermissaoController = $.extend(true, {
 							permissoes += $(this).val();
 					    });
 
-						obj += "&grupoPermissaoDTO.permissoesSelecionadas=" + permissoes;
+						obj['grupoPermissaoDTO.permissoesSelecionadas'] = permissoes;
 						
 						$.postJSON(gruposPermissaoController.path + '/salvarGrupoPermissao', obj, function(data) {
 							var tipoMensagem = data.tipoMensagem;
@@ -100,7 +100,7 @@ var gruposPermissaoController = $.extend(true, {
 					"Confirmar": function() {
 						$.getJSON(
 								gruposPermissaoController.path + "/excluirGrupoPermissao",
-								"codigoGrupo=" + codigoGrupo, 
+								{codigoGrupo:codigoGrupo}, 
 								function(result) {
 
 									var tipoMensagem = result.tipoMensagem;
@@ -141,7 +141,7 @@ var gruposPermissaoController = $.extend(true, {
 			
 			$.getJSON(
 					this.path + "/editarGrupoPermissao",
-					"codigoGrupo=" + idGrupo, 
+					{codigoGrupo:idGrupo}, 
 					function(result) {
 						if (result) {
 							
@@ -175,7 +175,7 @@ var gruposPermissaoController = $.extend(true, {
 					} else {
 						$.each(data.rows , function(index, value) {
 
-							var linkEditarGrupo = '<a href="javascript:;" onclick="gruposPermissaoController.popup_editar_grupo(\'' + value.cell.id + '\');" style="cursor:pointer">' +
+							var linkEditarGrupo = '<a href="javascript:;" onclick="gruposPermissaoController.popup_editar_grupo(\'' + value.cell.id + '\');" style="cursor:pointer; margin-right:10px;">' +
 				     	  	'<img title="Editar Grupo" src="' + contextPath + '/images/ico_detalhes.png" hspace="5" border="0px" />' +
 				  		    '</a>';
 
@@ -194,7 +194,7 @@ var gruposPermissaoController = $.extend(true, {
 				colModel : [ {
 					display : 'Nome',
 					name : 'nome',
-					width : 750,
+					width : 823,
 					sortable : true,
 					align : 'left'
 				}, {
@@ -202,7 +202,7 @@ var gruposPermissaoController = $.extend(true, {
 					name : 'acao',
 					width : 50,
 					sortable : false,
-					align : 'left'
+					align : 'center'
 				}],
 				sortname : "nome",
 				sortorder : "asc",
@@ -211,7 +211,7 @@ var gruposPermissaoController = $.extend(true, {
 				rp : 15,
 				showTableToggleBtn : true,
 				width : 900,
-				height : 255
+				height : 'auto'
 			});
 		}
 }, BaseController);

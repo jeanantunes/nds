@@ -81,7 +81,7 @@ public class ItemNotaFiscalRecebimentoFisicoRepTest extends AbstractRepositoryIm
 		
 
 		ProdutoEdicao produtoEdicao =
-				Fixture.produtoEdicao("1", 1L, 10, 14, new Long(100), BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQ", 1L, produto, null, false);		
+				Fixture.produtoEdicao(1L, 10, 14, new Long(100), BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQ", produto, null, false);		
 		save(produtoEdicao);
 
 		CFOP cfop = Fixture.cfop5102();
@@ -96,7 +96,7 @@ public class ItemNotaFiscalRecebimentoFisicoRepTest extends AbstractRepositoryIm
 		
 				
 		NotaFiscalEntradaFornecedor notaFiscal = new NotaFiscalEntradaFornecedor();	
-		notaFiscal = Fixture.notaFiscalEntradaFornecedor(cfop, dinap.getJuridica(), dinap, tipoNotaFiscal, usuario, new BigDecimal(12), new BigDecimal(33), new BigDecimal(11));
+		notaFiscal = Fixture.notaFiscalEntradaFornecedor(cfop, dinap, tipoNotaFiscal, usuario, new BigDecimal(12), new BigDecimal(33), new BigDecimal(11));
 		notaFiscal.setTipoNotaFiscal(tipoNotaFiscal);	
 		save(notaFiscal);
 		

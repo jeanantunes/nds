@@ -9,11 +9,14 @@ import junit.framework.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.dto.AnaliticoEncalheDTO;
 import br.com.abril.nds.dto.CotaAusenteEncalheDTO;
 import br.com.abril.nds.dto.FechamentoFisicoLogicoDTO;
 import br.com.abril.nds.dto.filtro.FiltroFechamentoEncalheDTO;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.estoque.FechamentoEncalhe;
 import br.com.abril.nds.repository.FechamentoEncalheRepository;
+import br.com.abril.nds.util.DateUtil;
 
 public class FechamentoEncalheRepositoryImplTest extends AbstractRepositoryImplTest {
 
@@ -24,7 +27,7 @@ public class FechamentoEncalheRepositoryImplTest extends AbstractRepositoryImplT
 	public void testarBuscarConferenciaEncalhe() {
 		
 		Calendar dataEncalhe = Calendar.getInstance();
-		dataEncalhe.set(2012, 1, 28);
+		dataEncalhe.set(2012, 9, 6);
 		
 		FiltroFechamentoEncalheDTO filtro = new FiltroFechamentoEncalheDTO();
 		filtro.setDataEncalhe(dataEncalhe.getTime());
@@ -115,6 +118,29 @@ public class FechamentoEncalheRepositoryImplTest extends AbstractRepositoryImplT
 			this.fechamentoEncalheRepository.obterChamdasEncalhePostergadas(1L, dataEncalhe.getTime());
 	
 		Assert.assertNotNull(data);
+	}
+	
+	
+	@Test
+	public void testarbuscarAnaliticoEncalhe() {
+		
+		FiltroFechamentoEncalheDTO filtro = new FiltroFechamentoEncalheDTO();
+		filtro.setDataEncalhe(DateUtil.parseDataPTBR("28/02/2012"));
+
+		List<AnaliticoEncalheDTO> list = fechamentoEncalheRepository.buscarAnaliticoEncalhe(filtro, "ASC", "numeroCota", 0, 15);
+		Assert.assertNotNull(list);
+
+	}
+	
+	@Test
+	public void testarBuscarCotaChamadaEncalhe() {
+		
+		Calendar dataEncalhe = Calendar.getInstance();
+		dataEncalhe.set(2012, 1, 28);
+		
+		List<Cota> resultado = this.fechamentoEncalheRepository.buscarCotaChamadaEncalhe(dataEncalhe.getTime());
+		
+		Assert.assertNotNull(resultado);
 	}
 
 }

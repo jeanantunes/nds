@@ -10,8 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.dto.DividaComissaoDTO;
 import br.com.abril.nds.dto.MovimentoFinanceiroCotaDTO;
 import br.com.abril.nds.dto.StatusDividaDTO;
+import br.com.abril.nds.dto.fechamentodiario.SumarizacaoDividasDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaInadimplenteDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
@@ -22,6 +24,7 @@ import br.com.abril.nds.model.financeiro.BaixaManual;
 import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.financeiro.Divida;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
+import br.com.abril.nds.model.financeiro.Negociacao;
 import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
 import br.com.abril.nds.model.financeiro.StatusBaixa;
 import br.com.abril.nds.model.financeiro.StatusDivida;
@@ -31,12 +34,14 @@ import br.com.abril.nds.repository.BaixaCobrancaRepository;
 import br.com.abril.nds.repository.CobrancaRepository;
 import br.com.abril.nds.repository.DividaRepository;
 import br.com.abril.nds.repository.MovimentoFinanceiroCotaRepository;
+import br.com.abril.nds.repository.NegociacaoDividaRepository;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
 import br.com.abril.nds.repository.UsuarioRepository;
 import br.com.abril.nds.service.CobrancaService;
 import br.com.abril.nds.service.DividaService;
 import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
 import br.com.abril.nds.util.TipoMensagem;
+import br.com.abril.nds.vo.PaginacaoVO;
 
 @Service
 public class DividaServiceImpl implements DividaService {
@@ -57,6 +62,9 @@ public class DividaServiceImpl implements DividaService {
 	
 	@Autowired
 	private UsuarioRepository usuarioRepository;
+	
+	@Autowired
+	private NegociacaoDividaRepository negociacaoRepository;
 		
 	@Autowired
 	private MovimentoFinanceiroCotaService movimentoFinanceiroCotaService;
@@ -147,24 +155,14 @@ public class DividaServiceImpl implements DividaService {
 				cobranca.setDataPagamento(dataAtual);
 				cobranca.setDataVencimento(dataPostergacao);
 	
-				if (cobranca.getBaixaCobranca() == null) {
-					
-					BaixaCobranca baixaCobranca = new BaixaManual();
-					
-					baixaCobranca.setStatus(StatusBaixa.NAO_PAGO_POSTERGADO);
-					baixaCobranca.setDataBaixa(dataAtual);
-					baixaCobranca.setValorPago(cobranca.getValor());
-					
-					baixaCobranca = this.baixaCobrancaRepository.merge(baixaCobranca);
-					
-					cobranca.setBaixaCobranca(baixaCobranca);
-					
-				} else {
+				BaixaCobranca baixaCobranca = new BaixaManual();
 				
-					cobranca.getBaixaCobranca().setStatus(StatusBaixa.NAO_PAGO_POSTERGADO);
-					cobranca.getBaixaCobranca().setDataBaixa(dataAtual);
-					cobranca.getBaixaCobranca().setValorPago(cobranca.getValor());
-				}
+				baixaCobranca.setStatus(StatusBaixa.NAO_PAGO_POSTERGADO);
+				baixaCobranca.setDataBaixa(dataAtual);
+				baixaCobranca.setValorPago(cobranca.getValor());
+				baixaCobranca.setCobranca(cobranca);
+				
+				baixaCobranca = this.baixaCobrancaRepository.merge(baixaCobranca);
 				
 				Cobranca cobrancaAtualizada = this.cobrancaRepository.merge(cobranca);
 				
@@ -172,7 +170,7 @@ public class DividaServiceImpl implements DividaService {
 				
 				movimentoFinanceiroCotaDTO.setAprovacaoAutomatica(false);
 				movimentoFinanceiroCotaDTO.setCota(cobrancaAtualizada.getCota());
-				movimentoFinanceiroCotaDTO.setBaixaCobranca(cobrancaAtualizada.getBaixaCobranca());
+				movimentoFinanceiroCotaDTO.setBaixaCobranca(baixaCobranca);
 				movimentoFinanceiroCotaDTO.setDataCriacao(dataAtual);
 				movimentoFinanceiroCotaDTO.setDataVencimento(dataPostergacao);
 				movimentoFinanceiroCotaDTO.setValor(cobrancaAtualizada.getValor());
@@ -276,5 +274,95 @@ public class DividaServiceImpl implements DividaService {
 	public BigDecimal obterTotalDividasAbertoCota(Long idCota) {
 		return this.dividaRepository.obterTotalDividasAbertoCota(idCota);
 	}
+
+	@Override
+	@Transactional(readOnly=true)
+	public DividaComissaoDTO obterDadosDividaComissao(Long idDivida) {
+		Divida divida = dividaRepository.buscarPorId(idDivida);
+		Cobranca cobranca = divida.getCobranca();
+
+		Negociacao negociacao = negociacaoRepository.obterNegociacaoPorCobranca(cobranca.getId());
+		
+		if(negociacao == null)
+			throw new ValidacaoException(TipoMensagem.WARNING, "Não há negociação associada a essa dívida");
+		
+		BigDecimal valorPago = negociacao.getValorDividaPagaComissao();
+		if(valorPago == null) {
+			valorPago = BigDecimal.ZERO;
+		}
+		BigDecimal valorOriginal = BigDecimal.ZERO;
+		for(Cobranca c : negociacao.getCobrancasOriginarias()) {
+			valorOriginal = valorOriginal.add(c.getValor());
+		}
+		
+		
+		DividaComissaoDTO resultado = new DividaComissaoDTO();
+		resultado.setPorcentagem(negociacao.getComissaoParaSaldoDivida());
+		resultado.setValorPago(valorPago);
+		resultado.setValorDivida(valorOriginal);
+		resultado.setValorResidual(valorOriginal.add(valorPago.multiply(new BigDecimal(-1))));
+		
+		return resultado;
+	}
+
+    /**
+     * {@inheritDoc}
+     */
+	@Override
+    @Transactional(readOnly = true)
+    public List<SumarizacaoDividasDTO> sumarizacaoDividasReceberEm(Date data) {
+        //TODO: implementar
+        return new ArrayList<>();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+	@Override
+    @Transactional(readOnly = true)
+    public List<SumarizacaoDividasDTO> sumarizacaoDividasVencerApos(Date data) {
+        //TODO: implementar
+        return new ArrayList<>();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+	@Override
+    @Transactional(readOnly = true)
+    public List<Divida> obterDividasReceberEm(Date data, PaginacaoVO paginacao) {
+        //TODO: implementar
+	    return new ArrayList<>();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+	@Override
+    @Transactional(readOnly = true)
+    public List<Divida> obterDividasVencerApos(Date data, PaginacaoVO paginacao) {
+        //TODO: implementar
+	    return new ArrayList<>();
+    }
+
+	 /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public int contarDividasReceberEm(Date data) {
+        //TODO: implementar
+        return 0;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public int contarDividasVencerApos(Date data) {
+        //TODO: implementar
+        return 0;
+    }
 
 }

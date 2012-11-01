@@ -10,6 +10,12 @@ public class ArquivoPagamentoBancoDTO {
 	private BigDecimal somaPagamentos;
 	
 	private String nomeArquivo;
+	
+	private String codigoBanco;
+	
+	private Long numeroAgencia;
+	
+	private Long numeroConta;
 
 	/**
 	 * @return the listaPagemento
@@ -51,6 +57,48 @@ public class ArquivoPagamentoBancoDTO {
 	 */
 	public void setNomeArquivo(String nomeArquivo) {
 		this.nomeArquivo = nomeArquivo;
+	}
+
+	/**
+	 * @return the codigoBanco
+	 */
+	public String getCodigoBanco() {
+		return codigoBanco;
+	}
+
+	/**
+	 * @param codigoBanco the codigoBanco to set
+	 */
+	public void setCodigoBanco(String codigoBanco) {
+		this.codigoBanco = codigoBanco;
+	}
+
+	/**
+	 * @return the numeroAgencia
+	 */
+	public Long getNumeroAgencia() {
+		return numeroAgencia;
+	}
+
+	/**
+	 * @param numeroAgencia the numeroAgencia to set
+	 */
+	public void setNumeroAgencia(Long numeroAgencia) {
+		this.numeroAgencia = numeroAgencia;
+	}
+
+	/**
+	 * @return the numeroConta
+	 */
+	public Long getNumeroConta() {
+		return numeroConta;
+	}
+
+	/**
+	 * @param numeroConta the numeroConta to set
+	 */
+	public void setNumeroConta(Long numeroConta) {
+		this.numeroConta = numeroConta;
 	}
 
 }

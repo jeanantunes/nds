@@ -1,6 +1,7 @@
 package br.com.abril.nds.integracao.ems0109.processor;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,14 +12,15 @@ import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.engine.data.Message;
 import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
 import br.com.abril.nds.integracao.model.canonic.EMS0109Input;
-import br.com.abril.nds.integracao.service.PeriodicidadeProdutoService;
+import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.DescontoLogistica;
 import br.com.abril.nds.model.cadastro.Editor;
+import br.com.abril.nds.model.cadastro.FormaComercializacao;
 import br.com.abril.nds.model.cadastro.Fornecedor;
-import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.TipoProduto;
+import br.com.abril.nds.model.cadastro.TributacaoFiscal;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 import br.com.abril.nds.repository.impl.AbstractRepository;
 
@@ -29,11 +31,8 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 	@Autowired
 	private NdsiLoggerFactory ndsiLoggerFactory;
 
-	@Autowired
-	private PeriodicidadeProdutoService periodicidadeProdutoService;
-
 	@Override
-	public void preProcess() {
+	public void preProcess(AtomicReference<Object> tempVar) {
 		// TODO Auto-generated method stub
 	}
 	
@@ -100,13 +99,7 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 
 		return (Produto) query.uniqueResult();
 
-	}
-
-	private PeriodicidadeProduto findPeriodicidadeProduto(Integer periodicidade) {
-
-		return this.periodicidadeProdutoService
-				.getPeriodicidadeProdutoAsArchive(periodicidade);
-	}
+	}	
 
 	private Editor findEditorByID(Message message) {
 		EMS0109Input input = (EMS0109Input) message.getBody();
@@ -200,8 +193,6 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 
 		Produto produto = new Produto();
 
-		PeriodicidadeProduto periodicidadeProduto = this
-				.findPeriodicidadeProduto(input.getPeb());
 		Fornecedor fornecedor = this
 				.findFornecedor(input.getCodigoFornecedor());
 		DescontoLogistica descontoLogistica = this
@@ -210,9 +201,9 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 		produto.setTipoProduto(tipoProduto);
 		produto.setNome(input.getNomePublicacao());
 		produto.setCodigoContexto(input.getContextoPublicacao());
-		produto.setDescricao(input.getNomePublicacao());
+		produto.setNomeComercial(input.getNomePublicacao());
 		produto.setEditor(editor);
-		produto.setPeriodicidade(periodicidadeProduto);
+		produto.setPeriodicidade(PeriodicidadeProduto.getByOrdem(input.getPeriodicidade()));
 		produto.setSlogan(input.getSlogan());
 		produto.setPeb(input.getPeb());
 		produto.setPeso(input.getPeso());
@@ -220,7 +211,18 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 		produto.setCodigo(input.getCodigoPublicacao());
 		produto.setAtivo(input.isStatus());
 		produto.setDataDesativacao(input.getDataDesativacao());
+		produto.setFormaComercializacao(
+				(input.getFormaComercializacao().equals("CON") 
+						? FormaComercializacao.CONSIGNADO 
+						: FormaComercializacao.CONTA_FIRME
+				) 
+		);
 
+		String codigoSituacaoTributaria = input.getCodigoSituacaoTributaria();
+		produto.setTributacaoFiscal(this.getTributacaoFiscal(codigoSituacaoTributaria));
+
+		produto.setOrigem(Origem.INTERFACE);
+		
 		if (fornecedor != null) {
 
 			produto.addFornecedor(fornecedor);
@@ -241,13 +243,13 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 
 		EMS0109Input input = (EMS0109Input) message.getBody();
 
-		PeriodicidadeProduto periodicidadeProduto = this
-				.findPeriodicidadeProduto(input.getPeb());
+		
 		Fornecedor fornecedor = this
 				.findFornecedor(input.getCodigoFornecedor());
 		DescontoLogistica descontoLogistica = this
 				.findDescontoLogisticaByTipoDesconto(Integer.parseInt( input.getTipoDesconto()) );
-
+		
+		produto.setOrigem(Origem.INTERFACE);
 		if (produto.getTipoProduto() != tipoProduto) {
 
 			produto.setTipoProduto(tipoProduto);
@@ -275,9 +277,9 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 					"Atualizacao do Contexto Publicacao para: "
 							+ input.getContextoPublicacao());
 		}
-		if (!produto.getDescricao().equals(input.getNomePublicacao())) {
+		if (!produto.getNomeComercial().equals(input.getNomePublicacao())) {
 
-			produto.setDescricao(input.getNomePublicacao());
+			produto.setNomeComercial(input.getNomePublicacao());
 			this.ndsiLoggerFactory.getLogger().logInfo(
 					message,
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
@@ -291,14 +293,14 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
 					"Atualizacao do Editor para: " + editor.getPessoaJuridica().getNome());
 		}
-		if (produto.getPeriodicidade() != periodicidadeProduto) {
+		if (produto.getPeriodicidade() != PeriodicidadeProduto.getByOrdem(input.getPeriodicidade())) {
 
-			produto.setPeriodicidade(periodicidadeProduto);
+			produto.setPeriodicidade(PeriodicidadeProduto.getByOrdem(input.getPeriodicidade()));
 			this.ndsiLoggerFactory.getLogger().logInfo(
 					message,
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
 					"Atualizacao da Periodicidade para: "
-							+ periodicidadeProduto);
+							+ PeriodicidadeProduto.getByOrdem(input.getPeriodicidade()));
 		}
 		if (!produto.getSlogan().equals(input.getSlogan())) {
 
@@ -400,10 +402,49 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 			}
 		}
 
+		TributacaoFiscal tributacaoFiscal = getTributacaoFiscal(input.getCodigoSituacaoTributaria());
+		if (produto.getTributacaoFiscal() != tributacaoFiscal) {
+			produto.setTributacaoFiscal(tributacaoFiscal);
+			this.ndsiLoggerFactory.getLogger().logInfo(message,
+					EventoExecucaoEnum.INF_DADO_ALTERADO,
+					"Atualizacao da Tributação Fiscal para: " + tributacaoFiscal);
+		}
+		
+		if (produto.getFormaComercializacao().equals(
+					(input.getFormaComercializacao().equals("CON") 
+							? FormaComercializacao.CONSIGNADO 
+							: FormaComercializacao.CONTA_FIRME
+					)
+				)) {
+				produto.setFormaComercializacao(
+						(input.getFormaComercializacao().equals("CON") 
+								? FormaComercializacao.CONSIGNADO 
+								: FormaComercializacao.CONTA_FIRME
+						) );
+				this.ndsiLoggerFactory.getLogger().logInfo(message,
+						EventoExecucaoEnum.INF_DADO_ALTERADO,
+						"Atualizacao da Forma de Comercializacao para: " + produto.getFormaComercializacao().getValue());
+
+		}		
+
 	}
 
+	/**
+	 * Retorna o enum TributacaoFiscal (codigoSituacaoTributaria) baseado na posição 220 retornada na EMS0109Input.java
+	 * @return
+	 */
+	private TributacaoFiscal getTributacaoFiscal(String codigoSituacaoTributaria) {
+		if ("A".equalsIgnoreCase(codigoSituacaoTributaria)) {
+			return TributacaoFiscal.TRIBUTADO;
+		} else if ("B".equalsIgnoreCase(codigoSituacaoTributaria)) {
+			return TributacaoFiscal.ISENTO;
+		} else {
+			return TributacaoFiscal.OUTROS;
+		}
+	}
+	
 	@Override
-	public void posProcess() {
+	public void posProcess(Object tempVar) {
 		// TODO Auto-generated method stub
 	}
 	

@@ -5,7 +5,7 @@ var lancamentoController = $.extend(true, {
 		lancamentoController.configurarFlexiGrid();
 
 		$(".grids", lancamentoController.workspace).hide();
-		$("#btnConfirmar", lancamentoController.workspace).hide();
+		$("#btnsControleDiferenca", lancamentoController.workspace).hide();
 		$("#labelTotalGeral", lancamentoController.workspace).hide();
 		$("#qtdeTotalDiferencas", lancamentoController.workspace).hide();
 		$("#valorTotalDiferencas", lancamentoController.workspace).hide();
@@ -23,25 +23,6 @@ var lancamentoController = $.extend(true, {
 		$("#selectTiposDiferenca", lancamentoController.workspace).val(null);
 	},
 	
-	verificarExistenciaEstudo : function(idDiferenca) {
-
-		var data = [
-				{
-					name: 'idDiferenca', value: idDiferenca
-				}
-			];
-		
-		$.postJSON(
-			contextPath + "/estoque/diferenca/lancamento/rateio/validarEstudo", 
-			data,
-			function(result) {
-				
-				lancamentoNovoController.popupNovasDiferencas(idDiferenca);
-			},
-			null
-		);
-	},
-
 	executarPreProcessamento : function(data) {
 		
 		if (data.mensagens) {
@@ -52,7 +33,7 @@ var lancamentoController = $.extend(true, {
 			);
 			
 			$(".grids", lancamentoController.workspace).hide();
-			$("#btnConfirmar", lancamentoController.workspace).hide();
+			$("#btnsControleDiferenca", lancamentoController.workspace).hide();
 			$("#labelTotalGeral", lancamentoController.workspace).hide();
 			$("#qtdeTotalDiferencas", lancamentoController.workspace).hide();
 			$("#valorTotalDiferencas", lancamentoController.workspace).hide();
@@ -89,7 +70,7 @@ var lancamentoController = $.extend(true, {
 		
 		$.each(resultado.tableModel.rows, function(index, row) {
 
-			var linkRateioDiferenca = '<a id="ratearDiferenca' + row.cell.id + '" href="javascript:;" onclick="lancamentoController.verificarExistenciaEstudo(' + row.cell.id + ');" style="cursor:pointer">' +
+			var linkRateioDiferenca = '<a id="ratearDiferenca' + row.cell.id + '" href="javascript:;" onclick="lancamentoNovoController.editarDiferenca(' + row.cell.id + ');" style="cursor:pointer">' +
 									     '<img src="' + contextPath + '/images/bt_cadastros.png" hspace="5" border="0px" />' +
 									  '</a>';
 			
@@ -114,10 +95,17 @@ var lancamentoController = $.extend(true, {
 		if ($(".grids", lancamentoController.workspace).css('display') == 'none') {	
 
 			$(".grids", lancamentoController.workspace).show();
-			$("#btnConfirmar", lancamentoController.workspace).show();
+			$("#btnsControleDiferenca", lancamentoController.workspace).show();
 			$("#labelTotalGeral", lancamentoController.workspace).show();
 			$("#qtdeTotalDiferencas", lancamentoController.workspace).show();
 			$("#valorTotalDiferencas", lancamentoController.workspace).show();
+		}
+		
+		if(resultado.tableModel.rows.length < 1){
+			$("#btnsControleDiferenca", lancamentoController.workspace).hide();
+		}
+		else{
+			$("#btnsControleDiferenca", lancamentoController.workspace).show();
 		}
 
 		return resultado.tableModel;
@@ -127,7 +115,7 @@ var lancamentoController = $.extend(true, {
 		
 		$.postJSON(
 			contextPath + "/estoque/diferenca/lancamento/limparSessao", 
-			'confirmado=' + confirmado,
+			{confirmado:confirmado},
 			function(result) {
 
 				if (!result.confirmado) {
@@ -252,6 +240,70 @@ var lancamentoController = $.extend(true, {
 		
 		$("#dialog-confirmar-lancamentos", lancamentoController.workspace).show();
 	},
+	
+	popupSalvarLancamentos : function(){
+		$("#dialog-salvar-lancamentos", lancamentoController.workspace).dialog({
+			resizable: false,
+			height:'auto',
+			width:300,
+			modal: true,
+			buttons: 
+			{
+				"Confirmar": function() {
+					
+					$.postJSON(
+						contextPath + "/estoque/diferenca/salvarLancamentos", 
+						null,
+						function(result) {
+
+							lancamentoController.inicializar();
+						}
+					);
+
+					$(this).dialog("close");
+				
+				}, "Cancelar": function() {
+					
+					$(this).dialog("close");
+				}
+			},
+			form: $("#dialog-salvar-lancamentos", this.workspace).parents("form")			
+		});
+		
+		$("#dialog-salvar-lancamentos", lancamentoController.workspace).show();
+	},
+	
+	popupCancelarLancamentos : function(){
+		$("#dialog-cancelar-lancamentos", lancamentoController.workspace).dialog({
+			resizable: false,
+			height:'auto',
+			width:300,
+			modal: true,
+			buttons: 
+			{
+				"Confirmar": function() {
+					
+					$.postJSON(
+						contextPath + "/estoque/diferenca/cancelarLancamentos", 
+						null,
+						function(result) {
+
+							lancamentoController.inicializar();
+						}
+					);
+
+					$(this).dialog("close");
+				
+				}, "Cancelar": function() {
+					
+					$(this).dialog("close");
+				}
+			},
+			form: $("#dialog-cancelar-lancamentos", this.workspace).parents("form")			
+		});
+		
+		$("#dialog-cancelar-lancamentos", lancamentoController.workspace).show();
+	},
 
 	configurarFlexiGrid : function() {
 
@@ -296,7 +348,7 @@ var lancamentoController = $.extend(true, {
 				align : 'center'
 			}, {
 				display : 'Tipo de Diferença',
-				name : 'tipoDiferenca',
+				name : 'descricaoTipoDiferenca',
 				width : 120,
 				sortable : true,
 				align : 'left'
@@ -323,6 +375,34 @@ var lancamentoController = $.extend(true, {
 			height : 180,
 			singleSelect: true
 		});
+	},
+	
+	
+	
+	
+	imprimirRelatorioFaltasSobras : function(){
+		
+		$.postJSON(
+				contextPath + "/estoque/diferenca/validaDataRelatorioFaltasSobras", 
+				[{name:'dataMovimentoFormatada', value: $("#datePickerDataMovimento", lancamentoController.workspace).val()}] ,
+				function(resultado) {
+					var tipoMensagem = null; 
+					var listaMensagens = null;
+					if (resultado.mensagens){
+						tipoMensagem = resultado.mensagens.tipoMensagem;
+			        	listaMensagens = resultado.mensagens.listaMensagens;
+					}	
+			        if (tipoMensagem && listaMensagens) {
+			              exibirMensagem(tipoMensagem, listaMensagens);
+			         }  else {
+			        	 window.location = contextPath + "/estoque/diferenca/imprimirRelatorioFaltasSobras?dataMovimentoFormatada=" + $("#datePickerDataMovimento", lancamentoController.workspace).val();
+			         }
+				}
+			);
+		
+		 
 	}
 	
 }, BaseController);
+
+//@ sourceURL=lancamento.js

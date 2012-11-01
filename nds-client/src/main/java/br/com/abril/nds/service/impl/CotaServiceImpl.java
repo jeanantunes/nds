@@ -6,6 +6,8 @@ import java.math.BigDecimal;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -95,10 +97,10 @@ import br.com.abril.nds.repository.ParametroSistemaRepository;
 import br.com.abril.nds.repository.PdvRepository;
 import br.com.abril.nds.repository.PessoaFisicaRepository;
 import br.com.abril.nds.repository.PessoaJuridicaRepository;
+import br.com.abril.nds.repository.RankingRepository;
 import br.com.abril.nds.repository.ReferenciaCotaRepository;
 import br.com.abril.nds.repository.RotaRepository;
 import br.com.abril.nds.repository.TelefoneCotaRepository;
-import br.com.abril.nds.repository.TipoEntregaRepository;
 import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
 import br.com.abril.nds.repository.UsuarioRepository;
 import br.com.abril.nds.service.CotaService;
@@ -157,9 +159,6 @@ public class CotaServiceImpl implements CotaService {
 	private DistribuidorService distribuidorService;
 	
 	@Autowired
-	private TipoEntregaRepository tipoEntregaRepository;
-	
-	@Autowired
 	private BaseReferenciaCotaRepository baseReferenciaCotaRepository;
 	
 	@Autowired
@@ -210,6 +209,9 @@ public class CotaServiceImpl implements CotaService {
 	@Autowired
 	private HistoricoTitularidadeService historicoTitularidadeService;
 	
+	@Autowired
+	private RankingRepository rankingRepository;
+	
 	@Transactional(readOnly = true)
 	@Override
 	public List<CotaDTO> obterCotas(FiltroCotaDTO filtro) {
@@ -226,7 +228,6 @@ public class CotaServiceImpl implements CotaService {
 	
 	@Transactional(readOnly = true)
 	public Cota obterPorNumeroDaCota(Integer numeroCota) {
-		
 		return this.cotaRepository.obterPorNumerDaCota(numeroCota);
 	}
 	
@@ -351,11 +352,13 @@ public class CotaServiceImpl implements CotaService {
 		validarEnderecoPrincipalPorCota(listaEnderecoAssociacao, cota);
 		
 		Pessoa pessoa = cota.getPessoa();
-        
-		enderecoService.cadastrarEnderecos(listaEnderecoAssociacao, pessoa);
 		
 		for (EnderecoAssociacaoDTO enderecoAssociacao : listaEnderecoAssociacao) {
 
+			EnderecoDTO enderecoDTO = enderecoAssociacao.getEndereco();
+			
+			this.enderecoService.validarEndereco(enderecoDTO, enderecoAssociacao.getTipoEndereco());
+			
 			EnderecoCota enderecoCota = this.enderecoCotaRepository.buscarPorId(enderecoAssociacao.getId());
 
 			if (enderecoCota == null) {
@@ -365,9 +368,7 @@ public class CotaServiceImpl implements CotaService {
 				enderecoCota.setCota(cota);
 			}
 
-			EnderecoDTO enderecoDTO = enderecoAssociacao.getEndereco();
-			
-            Endereco endereco = new Endereco(enderecoDTO.getCodigoBairro(),
+			Endereco endereco = new Endereco(enderecoDTO.getCodigoBairro(),
                     enderecoDTO.getBairro(), enderecoDTO.getCep(),
                     enderecoDTO.getCodigoCidadeIBGE(), enderecoDTO.getCidade(),
                     enderecoDTO.getComplemento(),
@@ -489,15 +490,15 @@ public class CotaServiceImpl implements CotaService {
 		
 		Pessoa pessoa = cota.getPessoa();
         
-		this.telefoneService.cadastrarTelefone(listaTelefonesCota, pessoa);
-		
 		if (listaTelefonesCota != null){
 			
-			for (TelefoneAssociacaoDTO dto : listaTelefonesCota){
-					
+			for (TelefoneAssociacaoDTO dto : listaTelefonesCota) {
+				
 				TelefoneCota telefoneCota = null;
 				
 				TelefoneDTO telefoneDTO = dto.getTelefone();
+				
+				this.telefoneService.validarTelefone(telefoneDTO, dto.getTipoTelefone());
 				
                 if(telefoneDTO!= null && telefoneDTO.getId()!= null){
 					telefoneCota = cotaRepository.obterTelefonePorTelefoneCota(telefoneDTO.getId(), cota.getId());
@@ -711,11 +712,13 @@ public class CotaServiceImpl implements CotaService {
 		
 		dto.setAssistComercial(parametro.getAssistenteComercial());
 		dto.setGerenteComercial(parametro.getGerenteComercial());
-		dto.setDescricaoTipoEntrega((parametro.getTipoEntrega()==null) ? null : parametro.getTipoEntrega().getDescricaoTipoEntrega());
+		
+		dto.setDescricaoTipoEntrega(parametro.getDescricaoTipoEntrega());
+		
 		dto.setObservacao(parametro.getObservacao());
 		dto.setRepPorPontoVenda(parametro.getRepartePorPontoVenda());
 		dto.setSolNumAtras(parametro.getSolicitaNumAtras());
-		dto.setRecebeRecolhe(parametro.getRecebeRecolheParcias());
+		dto.setRecebeRecolhe(parametro.getRecebeRecolheParciais());
 		dto.setNeImpresso(parametro.getNotaEnvioImpresso());
 		dto.setNeEmail(parametro.getNotaEnvioEmail());
 		dto.setCeImpresso(parametro.getChamadaEncalheImpresso());
@@ -751,7 +754,7 @@ public class CotaServiceImpl implements CotaService {
 		}
 		return listaFornecedores;
 	}
-
+	
 	@Override
 	@Transactional
 	public void salvarDistribuicaoCota(DistribuicaoDTO dto) throws FileNotFoundException, IOException {
@@ -770,18 +773,11 @@ public class CotaServiceImpl implements CotaService {
 		parametros.setQtdePDV(dto.getQtdePDV());
 		parametros.setAssistenteComercial(dto.getAssistComercial());
 		parametros.setGerenteComercial(dto.getGerenteComercial());
-		
-		if(dto.getDescricaoTipoEntrega() == null) {
-			parametros.setTipoEntrega(null);
-		} else {
-			parametros.setTipoEntrega(
-				tipoEntregaRepository.buscarPorDescricaoTipoEntrega(dto.getDescricaoTipoEntrega()));
-		}
-			
+		parametros.setDescricaoTipoEntrega(dto.getDescricaoTipoEntrega());
 		parametros.setObservacao(dto.getObservacao());
 		parametros.setRepartePorPontoVenda(dto.getRepPorPontoVenda());
 		parametros.setSolicitaNumAtras(dto.getSolNumAtras());
-		parametros.setRecebeRecolheParcias(dto.getRecebeRecolhe());
+		parametros.setRecebeRecolheParciais(dto.getRecebeRecolhe());
 		parametros.setNotaEnvioImpresso(dto.getNeImpresso());
 		parametros.setNotaEnvioEmail(dto.getNeEmail());
 		parametros.setChamadaEncalheImpresso(dto.getCeImpresso());
@@ -853,15 +849,40 @@ public class CotaServiceImpl implements CotaService {
 		this.atribuirDadosPessoaCota(cotaDTO, cota.getPessoa());
 		this.atribuirDadosBaseReferencia(cotaDTO, cota.getBaseReferenciaCota());
 		
-        for (HistoricoTitularidadeCota historico : cota.getTitularesCota()) {
+		processarTitularidadeCota(cota, cotaDTO);
+		
+		return cotaDTO;
+	}
+
+    /**
+     * Processa os registros de titularidade da cota para criação dos titulares
+     * no DTO
+     * 
+     * @param cota
+     *            cota com as informações de titularidade
+     * @param cotaDTO
+     *            DTO com as incormações da cota
+     */
+	private void processarTitularidadeCota(Cota cota, CotaDTO cotaDTO) {
+        List<HistoricoTitularidadeCota> titulares = new ArrayList<HistoricoTitularidadeCota>();
+		if (cota.getTitularesCota() != null) {
+		    titulares.addAll(cota.getTitularesCota());
+		}
+		Collections.sort(titulares, new Comparator<HistoricoTitularidadeCota>() {
+
+            @Override
+            public int compare(HistoricoTitularidadeCota o1, HistoricoTitularidadeCota o2) {
+                return o2.getFim().compareTo(o1.getFim());
+            }
+        });
+		
+        for (HistoricoTitularidadeCota historico : titulares) {
             cotaDTO.addProprietario(new TitularidadeCotaDTO(historico.getId(),
                     cota.getId(), historico.getInicio(), historico.getFim(),
                     historico.getPessoa().getNome(), historico.getPessoa()
                             .getDocumento()));
         }
-		
-		return cotaDTO;
-	}
+    }
 	
 	/**
 	 *  Atribui os dados da pessoa relacionada a cota ao objeto CotaDTO
@@ -1051,6 +1072,13 @@ public class CotaServiceImpl implements CotaService {
 		
 		ParametroSistema raiz = 
 				this.parametroSistemaRepository.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_ARQUIVOS_DISTRIBUICAO_COTA);					
+		
+		if(	raiz == null || raiz.getValor() == null || 
+			pathDocumento == null || pathDocumento.getValor() == null) {
+			
+			return;
+			
+		}
 		
 		String path = (raiz.getValor() + pathDocumento.getValor() + numCota).replace("\\", "/");
 		
@@ -1685,7 +1713,17 @@ public class CotaServiceImpl implements CotaService {
 	@Override
 	@Transactional(readOnly = true)
 	public List<RegistroCurvaABCCotaDTO> obterCurvaABCCota(FiltroCurvaABCCotaDTO filtroCurvaABCCotaDTO) {
-		return cotaRepository.obterCurvaABCCota(filtroCurvaABCCotaDTO);
+		
+		List<RegistroCurvaABCCotaDTO> lista = cotaRepository.obterCurvaABCCota(filtroCurvaABCCotaDTO);
+		
+		if(!lista.isEmpty()){
+			
+			for(RegistroCurvaABCCotaDTO dto : lista){
+				dto.setRkProduto(rankingRepository.obterRankingProdutoCota(dto.getIdCota(),dto.getIdProduto()));
+			}
+		}
+		
+		return lista;
 	}
 
 	/**
@@ -1744,7 +1782,7 @@ public class CotaServiceImpl implements CotaService {
 		Long idCotaNova = this.salvarCota(cotaDTO);
 
 		Cota cotaNova = this.cotaRepository.buscarPorId(idCotaNova);
-
+		cotaNova.setInicioTitularidade(new Date());
 		cotaNova.setPdvs(pdvs);
 		cotaNova.setFornecedores(fornecedores);
 		cotaNova.setDescontosProdutoEdicao(descontosProdutoEdicao);
@@ -1753,6 +1791,7 @@ public class CotaServiceImpl implements CotaService {
 		cotaNova.setTitularesCota(titularesCota);
 
 		this.cotaRepository.merge(cotaNova);
+		processarTitularidadeCota(cotaAntiga, cotaDTO);
 		
 		return cotaDTO;
 	}
@@ -1885,14 +1924,6 @@ public class CotaServiceImpl implements CotaService {
 			}
 		}
 		
-		if (cota.getParametroDistribuicao() != null &&
-				cota.getParametroDistribuicao().getTipoEntrega() != null &&
-				cota.getParametroDistribuicao().getTipoEntrega().getPeriodicidade() != null){
-		
-			dto.setPeriodicidade(
-				cota.getParametroDistribuicao().getTipoEntrega().getPeriodicidade().getDescricao());
-		}
-		
 		Map<String, Object> parameters = new HashMap<String, Object>();
 		parameters.put("SUBREPORT_DIR",
 				Thread.currentThread().getContextClassLoader().getResource("/reports/").getPath());
@@ -1927,15 +1958,6 @@ public class CotaServiceImpl implements CotaService {
 		this.obterPercentualFaturamentoTaxaFixa(cota.getId(), dto);
 		
 		return dto;
-	}
-	
-	@Transactional
-	@Override
-	public void cancelarChamadao(Integer numeroCota){
-		
-		//TODO apagar chamada de encalhe
-		
-		this.cotaRepository.ativarCota(numeroCota);
 	}
 	
 	private DistribuicaoDTO obterPercentualFaturamentoTaxaFixa(Long idCota, DistribuicaoDTO dto) {
@@ -2127,6 +2149,41 @@ public class CotaServiceImpl implements CotaService {
         }
         return new DistribuicaoDTO(); 
     }
+
+	@Override
+	@Transactional(readOnly = true)
+	public Long obterQuantidadeCotas(SituacaoCadastro situacaoCadastro) {
+
+		return this.cotaRepository.obterQuantidadeCotas(situacaoCadastro);
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public List<Cota> obterCotas(SituacaoCadastro situacaoCadastro) {
+
+		return this.cotaRepository.obterCotas(situacaoCadastro);
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public List<Cota> obterCotasComInicioAtividadeEm(Date dataInicioAtividade) {
+
+		return this.cotaRepository.obterCotasComInicioAtividadeEm(dataInicioAtividade);
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public List<Cota> obterCotasAusentesNaExpedicaoDoReparteEm(Date dataExpedicaoReparte) {
+
+		return this.cotaRepository.obterCotasAusentesNaExpedicaoDoReparteEm(dataExpedicaoReparte);
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public List<Cota> obterCotasAusentesNoRecolhimentoDeEncalheEm(Date dataRecolhimentoEncalhe) {
+
+		return this.cotaRepository.obterCotasAusentesNoRecolhimentoDeEncalheEm(dataRecolhimentoEncalhe);
+	}
 
 }
 

@@ -21,7 +21,7 @@ var PainelMonitorNFE = $.extend(true, {
 			rp : 15,
 			showTableToggleBtn : true,
 			width : 960,
-			height : 180
+			height : 'auto'
 		});
 		
 		$('#dataInicial', PainelMonitorNFE.workspace).datepicker({
@@ -176,18 +176,12 @@ var PainelMonitorNFE = $.extend(true, {
 		
 	},
 	
-	imprimirDanfes : function(indEmissaoDepec) {
+	imprimirDanfes : function(indEmissaoDepec) {		
 		
-		var nomeLista = 'listaLineIdsImpressaoDanfes';
-		
-		var selecionados = '';
+		var selecionados = new Array();
 		
 		var linhasDaGrid = $("#nfeGrid tr", PainelMonitorNFE.workspace);
-		
-		var contador = 0;
-		
-		var params = [];
-		
+				
 		$.each(linhasDaGrid, function(index, value) {
 			
 			var linha = $(value, PainelMonitorNFE.workspace);
@@ -198,22 +192,13 @@ var PainelMonitorNFE = $.extend(true, {
 			
 			var lineId = $(colunaSelecao, PainelMonitorNFE.workspace).find("div").find('input[name="lineId"]').val();
 			
-			if(inputSelecao.attr('checked')) {
-				
-				var indiceAtual = '['+contador+']=';
-				
-				if(selecionados == '') {
-					selecionados = ( nomeLista + indiceAtual + lineId )  ;
-				} else {
-					selecionados = ( selecionados + '&' + nomeLista + indiceAtual + lineId )  ;
-				}
-				
-				contador = (contador + 1);
+			if(inputSelecao.attr('checked')) {				
+				selecionados.push(lineId);
 			}
 			
 		});
-		
-		params = selecionados + '&' + 'indEmissaoDepec='+indEmissaoDepec;
+		var params = {indEmissaoDepec:indEmissaoDepec };
+		params = serializeArrayToPost('listaLineIdsImpressaoDanfes',selecionados, params );
 		
 		$.postJSON(contextPath + "/nfe/painelMonitorNFe/prepararDanfesImpressao", params, 
 			function(){
@@ -231,7 +216,7 @@ var PainelMonitorNFE = $.extend(true, {
 	
 	imprimirDanfeUnica : function(lineId) {
 		
-		var params = 'lineIdImpressaoDanfe='+lineId;
+		var params = {lineIdImpressaoDanfe:+lineId};
 		
 		$.postJSON(contextPath + "/nfe/painelMonitorNFe/prepararDanfeUnicaImpressao",
 			params,

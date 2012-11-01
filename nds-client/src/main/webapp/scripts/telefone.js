@@ -144,7 +144,7 @@ function Telefone(paramTela,message) {
         var retorno = '<a href="javascript:;" onclick="' + paramTela + '.editarTelefone('
 				+ idTelefone
 				+ ')" '
-				+ ' style="cursor:pointer;border:0px;margin:5px" title="'+ title +'">'
+				+ ' style="cursor:pointer;border:0px;margin:5px" rel="tipsy" title="'+ title +'">'
 				+ '<img src="/nds-client/images/ico_editar.gif" border="0px"/>'
 				+ '</a>';
 
@@ -152,7 +152,7 @@ function Telefone(paramTela,message) {
             retorno+='<a href="javascript:;" onclick="' + paramTela + '.removerTelefone('
                 + idTelefone
                 + ')" '
-                + ' style="cursor:pointer;border:0px;margin:5px" title="Excluir telefone">'
+                + ' style="cursor:pointer;border:0px;margin:5px" rel="tipsy" title="Excluir telefone">'
                 + '<img src="/nds-client/images/ico_excluir.gif" border="0px"/>'
                 + '</a>';
         }
@@ -161,12 +161,14 @@ function Telefone(paramTela,message) {
 
 	this.adicionarTelefone = function() {
 
-		var data = "tela=" + paramTela + "&referencia="
-				+ $("#"+paramTela+"referenciaHidden", Telefone.workspace).val() + "&tipoTelefone="
-				+ $("#"+paramTela+"tipoTelefone", Telefone.workspace).val() + "&ddd=" + $("#"+paramTela+"ddd", Telefone.workspace).val()
-				+ "&numero=" + $("#"+paramTela+"numeroTelefone", Telefone.workspace).val() + "&ramal="
-				+ $("#"+paramTela+"ramal", Telefone.workspace).val() + "&principal="
-				+ ("" + $("#"+paramTela+"telefonePrincipal", Telefone.workspace).attr("checked") == 'checked');
+		var data = {
+				tela:paramTela,
+				referencia:$("#"+paramTela+"referenciaHidden",Telefone.workspace).val(),
+				tipoTelefone:$("#"+paramTela+"tipoTelefone",Telefone.workspace).val(),
+				ddd:$("#"+paramTela+"ddd",Telefone.workspace).val(),
+				numero:$("#"+paramTela+"numeroTelefone",Telefone.workspace).val(),
+				ramal:$("#"+paramTela+"ramal",Telefone.workspace).val(),
+				principal:(""+$("#"+paramTela+"telefonePrincipal",Telefone.workspace).attr("checked")=='checked')};
 
 		var _this = this;
 		
@@ -192,7 +194,7 @@ function Telefone(paramTela,message) {
 	};
 
 	this.removerTelefone = function(referenciaTelefone) {
-		var data = "tela=" + paramTela + "&referencia=" + referenciaTelefone;
+		var data = {tela:paramTela,referencia:referenciaTelefone};
 
 		var _this = this;
 		
@@ -239,7 +241,7 @@ function Telefone(paramTela,message) {
 		
 		this.limparCamposTelefone();
 
-		var data = "tela=" + paramTela +"&referencia=" + referenciaTelefone;
+		var data = {tela:paramTela,referencia:referenciaTelefone};
 		
 		var _this = this;
 		
@@ -318,7 +320,7 @@ function Telefone(paramTela,message) {
 		var _this = this;
 
 		$.postJSON(contextPath + "/cadastro/telefone/pesquisarTelefones",
-					"tela=" + paramTela, 
+					{tela:paramTela}, 
 					function(result) {
 						$("#"+paramTela+"telefonesGrid").flexAddData({
 							page : result.page,

@@ -131,8 +131,8 @@ public class HistoricoTitularidadeServiceImpl implements HistoricoTitularidadeSe
 		
 		historicoTitularidadeCota.setDataInclusao(cota.getInicioAtividade());
 		
-		historicoTitularidadeCota.setInicio(cota.getInicioAtividade());
-		historicoTitularidadeCota.setEmail(	cota.getPessoa().getEmail());
+		historicoTitularidadeCota.setInicio(cota.getInicioTitularidade());
+		historicoTitularidadeCota.setEmail(cota.getPessoa().getEmail());
 		historicoTitularidadeCota.setSituacaoCadastro(cota.getSituacaoCadastro());
 		historicoTitularidadeCota.setNumeroCota(cota.getNumeroCota());
 		historicoTitularidadeCota.setFim(new Date());
@@ -207,6 +207,7 @@ public class HistoricoTitularidadeServiceImpl implements HistoricoTitularidadeSe
 		HistoricoTitularidadeCotaTelefone historicoTitularidadeCotaTelefone = 
 				new HistoricoTitularidadeCotaTelefone();
 		
+		historicoTitularidadeCotaTelefone.setDdd(telefone.getDdd());
 		historicoTitularidadeCotaTelefone.setNumero(telefone.getNumero());
 		historicoTitularidadeCotaTelefone.setRamal(telefone.getRamal());
 
@@ -757,7 +758,7 @@ public class HistoricoTitularidadeServiceImpl implements HistoricoTitularidadeSe
 		historicoTitularidadeCotaDistribuicao.setNotaEnvioImpresso(parametroDistribuicaoCota.getNotaEnvioImpresso());
 		historicoTitularidadeCotaDistribuicao.setObservacao(parametroDistribuicaoCota.getObservacao());
 		historicoTitularidadeCotaDistribuicao.setQtdePDV(parametroDistribuicaoCota.getQtdePDV());
-		historicoTitularidadeCotaDistribuicao.setRecebeRecolheParcias(parametroDistribuicaoCota.getRecebeRecolheParcias());
+		historicoTitularidadeCotaDistribuicao.setRecebeRecolheParcias(parametroDistribuicaoCota.getRecebeRecolheParciais());
 		historicoTitularidadeCotaDistribuicao.setEntregaReparteVenda(parametroDistribuicaoCota.getRepartePorPontoVenda());
 		historicoTitularidadeCotaDistribuicao.setSlipEmail(parametroDistribuicaoCota.getSlipEmail());
 		historicoTitularidadeCotaDistribuicao.setSlipImpresso(parametroDistribuicaoCota.getSlipImpresso());
@@ -776,10 +777,7 @@ public class HistoricoTitularidadeServiceImpl implements HistoricoTitularidadeSe
 		historicoTitularidadeCotaDistribuicao.setPercentualFaturamentoEntrega(parametroDistribuicaoCota.getPercentualFaturamento());
 		historicoTitularidadeCotaDistribuicao.setInicioPeriodoCarencia(parametroDistribuicaoCota.getInicioPeriodoCarencia());
 		historicoTitularidadeCotaDistribuicao.setFimPeriodoCarencia(parametroDistribuicaoCota.getFimPeriodoCarencia());
-
-		if (parametroDistribuicaoCota.getTipoEntrega() != null) {
-			historicoTitularidadeCotaDistribuicao.setTipoEntrega(parametroDistribuicaoCota.getTipoEntrega().getDescricaoTipoEntrega());
-		}
+		historicoTitularidadeCotaDistribuicao.setTipoEntrega(parametroDistribuicaoCota.getDescricaoTipoEntrega());
 
 		return historicoTitularidadeCotaDistribuicao;
 	}
@@ -1122,12 +1120,12 @@ public class HistoricoTitularidadeServiceImpl implements HistoricoTitularidadeSe
 
 		if (cheque.getEmissao() != null) {
 		
-			historicoTitularidadeCotaChequeCaucao.setEmissao(cheque.getEmissao().getTime());
+			historicoTitularidadeCotaChequeCaucao.setEmissao(cheque.getEmissao());
 		}
 
 		if (cheque.getValidade() != null) {
 		
-			historicoTitularidadeCotaChequeCaucao.setValidade(cheque.getValidade().getTime());
+			historicoTitularidadeCotaChequeCaucao.setValidade(cheque.getValidade());
 		}
 		
 		if (cheque.getChequeImage() != null) {
@@ -1137,7 +1135,7 @@ public class HistoricoTitularidadeServiceImpl implements HistoricoTitularidadeSe
 		
 		if (cheque.getValor() != null) {
 		
-			historicoTitularidadeCotaChequeCaucao.setValor(new BigDecimal(cheque.getValor()));
+			historicoTitularidadeCotaChequeCaucao.setValor(cheque.getValor());
 		}
 		historicoTitularidadeCotaChequeCaucao.setHistoricoTitularidadeCota(historicoTitularidadeCota);
 
@@ -1173,7 +1171,7 @@ public class HistoricoTitularidadeServiceImpl implements HistoricoTitularidadeSe
 			
 			if (imovel.getValor() != null) {
 			
-				historicoTitularidadeCotaImovel.setValor(new BigDecimal(imovel.getValor()));
+				historicoTitularidadeCotaImovel.setValor(imovel.getValor());
 			}
 
 			historicoTitularidadeCotaImovel.setHistoricoTitularidadeCota(historicoTitularidadeCota);
@@ -1204,12 +1202,12 @@ public class HistoricoTitularidadeServiceImpl implements HistoricoTitularidadeSe
 		
 		if (notaPromissoria.getValor() != null) {
 		
-			historicoTitularidadeCotaNotaPromissoria.setValor(new BigDecimal(notaPromissoria.getValor()));
+			historicoTitularidadeCotaNotaPromissoria.setValor(notaPromissoria.getValor());
 		}
 
 		if (notaPromissoria.getVencimento() != null) {
 		
-			historicoTitularidadeCotaNotaPromissoria.setVencimento(notaPromissoria.getVencimento().getTime());
+			historicoTitularidadeCotaNotaPromissoria.setVencimento(notaPromissoria.getVencimento());
 		}
 		historicoTitularidadeCotaNotaPromissoria.setHistoricoTitularidadeCota(historicoTitularidadeCota);
 

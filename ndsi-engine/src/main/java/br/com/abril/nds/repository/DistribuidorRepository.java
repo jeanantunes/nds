@@ -3,7 +3,7 @@ package br.com.abril.nds.repository;
 import java.util.Collection;
 import java.util.List;
 
-import br.com.abril.nds.model.cadastro.DistribuicaoDistribuidor;
+import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.EnderecoDistribuidor;
@@ -18,10 +18,6 @@ public interface DistribuidorRepository extends Repository<Distribuidor, Long> {
 	List<DistribuicaoFornecedor> buscarDiasDistribuicaoFornecedor(
 															Collection<Long> idsForncedores,
 													    	OperacaoDistribuidor operacaoDistribuidor);
-	
-	List<DistribuicaoDistribuidor> buscarDiasDistribuicaoDistribuidor(
-															Long idDistruibuidor,
-															OperacaoDistribuidor operacaoDistribuidor);
 	
 	/**
 	 * Recupera o endereço principal do distribuidor.
@@ -48,4 +44,6 @@ public interface DistribuidorRepository extends Repository<Distribuidor, Long> {
 	String obterRazaoSocialDistribuidor();
 
 	String obterInformacoesComplementaresTermoAdesao();
+
+	DiaSemana buscarInicioSemana();
 }

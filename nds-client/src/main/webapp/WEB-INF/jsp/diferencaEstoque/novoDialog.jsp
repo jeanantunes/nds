@@ -15,7 +15,7 @@
 			<tr>
 				<td width="122">Tipo de Diferença:</td>
     			<td width="239">
-					<select id="tipoDiferenca" style="width:200px;" onchange="lancamentoNovoController.tratarVisualizacaoOpcaoEstoque(this.value)">
+					<select id="tipoDiferenca" style="width:200px;" onchange="lancamentoNovoController.tratarVisualizacaoOpcaoEstoque(this.value);lancamentoNovoController.recalcularReparteAtual()">
 						<c:forEach var="tipoDiferenca" items="${listaTiposDiferenca}">
 							<option value="${tipoDiferenca.key}">${tipoDiferenca.value}</option>
 						</c:forEach>
@@ -37,17 +37,20 @@
     		<legend>Produto</legend>
     		<table class="lanctoFaltasSobras_2Grid" border="0" cellspacing="1" cellpadding="1" style="width:585px;">
 	    		<tr>
-					<td width="64" bgcolor="#F5F5F5">
+					<td width="55" bgcolor="#F5F5F5">
 						<strong>Código</strong>
 					</td>
-					<td width="180" bgcolor="#F5F5F5">
+					<td width="130" bgcolor="#F5F5F5">
 						<strong>Produto</strong>
 					</td>
 					<td width="96" align="center" bgcolor="#F5F5F5">
 						<strong>Edição</strong>
 					</td>
 					<td bgcolor="#F5F5F5" align="center">
-						<strong>Preço Capa R$</strong>
+						<strong>Preço Venda R$</strong>
+					</td>
+					<td bgcolor="#F5F5F5" align="center">
+						<strong>Pacote Padrão</strong>
 					</td>
 					<td bgcolor="#F5F5F5" align="center">
 						<strong>Reparte</strong>
@@ -58,11 +61,11 @@
 				</tr>
 				<tr>
 					<td>
-						<input type="text" id="codigoProdutoInput" style="width:60px;" maxlength="30" onchange="lancamentoNovoController.limparProduto()"
+						<input type="text" id="codigoProdutoInput" style="width:40px;" maxlength="30" onchange="lancamentoNovoController.limparProduto()"
 							onblur="pesquisaProdutoLancamentoFaltasSobras.pesquisarPorCodigoProduto(codigoProdutoInput, nomeProdutoInput, edicaoProdutoInput, true);"/>
 					</td>
 					<td>
-						<input type="text" id="nomeProdutoInput" style="width:180px;" maxlength="60" onchange="lancamentoNovoController.limparProduto()"
+						<input type="text" id="nomeProdutoInput" style="width:130px;" maxlength="60" onchange="lancamentoNovoController.limparProduto()"
 							onkeyup="pesquisaProdutoLancamentoFaltasSobras.autoCompletarPorNomeProduto(nomeProdutoInput, true);"
 							onblur="pesquisaProdutoLancamentoFaltasSobras.pesquisarPorNomeProduto(codigoProdutoInput, nomeProdutoInput, edicaoProdutoInput, true);"/>
 					</td>
@@ -70,6 +73,7 @@
 						<input type="text" id="edicaoProdutoInput" onblur="lancamentoNovoController.buscarPrecoProdutoEdicao();" style="width:50px;" maxlength="255" />
 					</td>
 					<td align="right" id="precoCapaProduto"></td>
+					<td align="center" id="pacotePadrao"></td>
 					<td align="center" id="reparteProduto"></td>
 					<td>
 						<input id="diferencaProdutoInput" style="width: 60px; text-align: center;" maxlength="255" />
@@ -122,6 +126,9 @@
 							<td>
 								<input type="text" name="cotaInput" id="cotaInput1" style="width:60px;" maxlength="255"
 									onblur="pesquisaCotaLancamentoFaltasSobras.pesquisarPorNumeroCota(cotaInput1, nomeInput1, true, lancamentoNovoController.buscarReparteAtualCota(1),lancamentoNovoController.erroPesquisaCota(1));"/>
+								
+								<input type="hidden" name="rateioIDInputHidden"  id="rateioIDInputHidden1"/>
+								
 							</td>
 							<td>
 								<input type="text" name="nomeInput" id="nomeInput1" style="width:180px;" maxlength="255"
@@ -151,21 +158,24 @@
 				<tr>
 					<td width="73">Nota de Envio:</td>
 					<td width="124">
-						<input name="dateNotaEnvio" type="text" style="width:80px;" id="dateNotaEnvio" />
+						<div id="divDataNotaEnvio">
+							<input name="dateNotaEnvio" type="text" style="width:80px;" class="viewNotaEnvio" id="dateNotaEnvio" />
+						</div>
+						<input type="hidden" name="rateioIDInputHiddenNota"  id="rateioIDInputHiddenNota"/>
 					</td>
 					<td width="27">Cota:</td>
 					<td width="118">
-						<input type="text" style="width:80px; float:left; margin-right:5px;" id="cotaInputNota" maxlength="255"
+						<input class="viewNotaEnvio" type="text" style="width:80px; float:left; margin-right:5px;" id="cotaInputNota" maxlength="255"
 							onblur="pesquisaCotaLancamentoFaltasSobras.pesquisarPorNumeroCota(cotaInputNota, nomeCotaNota, true);" />
 					</td>
 					<td width="32">Nome:</td>
 					<td width="167">
-						<input type="text" style="width:160px;" id="nomeCotaNota" maxlength="255"
+						<input class="viewNotaEnvio" type="text" style="width:160px;" id="nomeCotaNota" maxlength="255"
 							onkeyup="pesquisaCotaLancamentoFaltasSobras.autoCompletarPorNome(nomeCotaNota);" 
 							onblur="pesquisaCotaLancamentoFaltasSobras.pesquisarPorNomeCota(cotaInputNota, nomeCotaNota);" />
 					</td>
 					<td width="16">
-						<img src="${pageContext.request.contextPath}/images/ico_add.gif" width="16" height="16" alt="Incluir"
+						<img id="incluirNovosProduto" src="${pageContext.request.contextPath}/images/ico_add.gif" width="16" height="16" alt="Incluir"
 							onclick="lancamentoNovoController.pesquisarProdutosNota();"/>
 					</td>
           		</tr>
@@ -187,7 +197,7 @@
 
 	<br />
 	
-	<span class="bt_add">
+	<span id="viewIncluirNovaDiferenca" class="bt_add ">
 		<a href="javascript:;" onclick="lancamentoNovoController.incluirNovo();">Incluir Novo</a>
 	</span>
 	

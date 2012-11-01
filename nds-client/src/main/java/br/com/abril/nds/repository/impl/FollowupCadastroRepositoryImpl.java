@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.Query;
@@ -18,28 +19,37 @@ public class FollowupCadastroRepositoryImpl extends AbstractRepositoryModel<Cota
 		super(Cota.class);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public List<ConsultaFollowupCadastroDTO> obterConsignadosParaChamadao(FiltroFollowupCadastroDTO filtro) {
 		
+		List<ConsultaFollowupCadastroDTO> lista =  new ArrayList<ConsultaFollowupCadastroDTO>();
+		lista.addAll(getContratos(filtro));
+		lista.addAll(getChequeCaucao(filtro));
+		lista.addAll(getNotaPromissoria(filtro));
+		lista.addAll(getOutros(filtro));
+		lista.addAll(getCotaDistribuicao(filtro));
+		lista.addAll(getFornecedores(filtro));
+		 
+		return lista;
+	}
+	
+	@SuppressWarnings("unchecked")
+	private List<ConsultaFollowupCadastroDTO> getContratos(
+			FiltroFollowupCadastroDTO filtro) {
 		StringBuilder hql = new StringBuilder();
-		
 		hql.append("SELECT cota.numeroCota as numeroCota, ");
-		hql.append("pessoa.nome as nomeJornaleiro, ");
-		hql.append("cotaGarantia.class as tipo, ");
-		hql.append("cheque.valor as valor, ");
-		hql.append("cheque.validade as dataVencimento, ");
-		hql.append("pdv.contato as responsavel ");
-		
-		hql.append(" from CotaGarantia as cotaGarantia, ");
-		hql.append(" Distribuidor as distribuidor ");
-		hql.append(" LEFT JOIN cotaGarantia.cheque as cheque ");		
-		hql.append(" LEFT JOIN cotaGarantia.cota as cota ");
+		hql.append("       pessoa.nome as nomeJornaleiro, ");
+		hql.append("       pdv.contato as responsavel, ");
+		hql.append("       contrato.dataTermino as dataVencimento, ");
+		hql.append("       'Contrato' as tipo, ");
+		hql.append("       0.0 as valor ");
+		hql.append(" from Cota as cota, ");
+		hql.append("      Distribuidor as distribuidor ");
+		hql.append(" JOIN cota.contratoCota as contrato ");
 		hql.append(" LEFT JOIN cota.pessoa as pessoa ");
-		hql.append(" LEFT JOIN cota.pdvs as pdv ");
-		
-		hql.append(" WHERE datediff(cheque.validade, sysdate()) < distribuidor.prazoFollowUp ");
-		hql.append(" AND cotaGarantia.cheque <> 0");
+		hql.append(" LEFT JOIN cota.pdvs as pdv ");		
+		hql.append(" WHERE datediff(contrato.dataTermino, sysdate()) < distribuidor.prazoFollowUp ");
+	   
 		
 		Query query =  getSession().createQuery(hql.toString());		
 		
@@ -52,34 +62,33 @@ public class FollowupCadastroRepositoryImpl extends AbstractRepositoryModel<Cota
 		if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
 			query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
 		
-		List<ConsultaFollowupCadastroDTO> listaDeCheque = query.list();
-		
-		for(ConsultaFollowupCadastroDTO dto: listaDeCheque){
-			dto.setTipo("Cheque Caução");
-		}
-		
-		
-		hql = new StringBuilder();
+		return query.list();
+	}
+	
+	@SuppressWarnings("unchecked")
+	private List<ConsultaFollowupCadastroDTO> getNotaPromissoria(
+			FiltroFollowupCadastroDTO filtro) {
+		StringBuilder hql = new StringBuilder();
 		
 		hql.append("SELECT cota.numeroCota as numeroCota, ");
 		hql.append("pessoa.nome as nomeJornaleiro, ");
-		hql.append("cotaGarantia.class as tipo, ");
+		hql.append(" 'Nota Promissoria' as tipo, ");
 		hql.append("np.valor as valor, ");
 		hql.append("np.vencimento as dataVencimento, ");
 		hql.append("pdv.contato as responsavel ");
 		
 		hql.append(" from CotaGarantia as cotaGarantia, ");
 		hql.append(" Distribuidor as distribuidor ");
-		hql.append(" LEFT JOIN cotaGarantia.notaPromissoria as np ");		
+		hql.append(" JOIN cotaGarantia.notaPromissoria as np ");		
 		hql.append(" LEFT JOIN cotaGarantia.cota as cota ");
 		hql.append(" LEFT JOIN cota.pessoa as pessoa ");
 		hql.append(" LEFT JOIN cota.pdvs as pdv ");
 		
 		hql.append(" WHERE datediff(np.vencimento, sysdate()) < distribuidor.prazoFollowUp ");
-		hql.append(" AND cotaGarantia.notaPromissoria <> 0");
 		
 		
-		query =  getSession().createQuery(hql.toString());		
+		
+		Query query =  getSession().createQuery(hql.toString());		
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(
 				ConsultaFollowupCadastroDTO.class));
@@ -90,48 +99,142 @@ public class FollowupCadastroRepositoryImpl extends AbstractRepositoryModel<Cota
 		if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
 			query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
 		
-		List<ConsultaFollowupCadastroDTO> listaDeNota = query.list();
-		
-		for(ConsultaFollowupCadastroDTO dto: listaDeNota){
-			dto.setTipo("Nota Promissoria");
-		}
-		
-		listaDeCheque.addAll(listaDeNota);
-		 
-		return listaDeCheque;
+		return query.list();
 	}
-
-	private Object getSqlFromEWhereCadastro(FiltroFollowupCadastroDTO filtro) {
+	
+	@SuppressWarnings("unchecked")
+	private List<ConsultaFollowupCadastroDTO> getChequeCaucao(
+			FiltroFollowupCadastroDTO filtro) {
 		StringBuilder hql = new StringBuilder();
+		hql.append("SELECT cota.numeroCota as numeroCota, ");
+		hql.append("pessoa.nome as nomeJornaleiro, ");
+		hql.append(" 'Cheque Caução' as tipo, ");
+		hql.append("cheque.valor as valor, ");
+		hql.append("cheque.validade as dataVencimento, ");
+		hql.append("pdv.contato as responsavel ");
 		
 		hql.append(" from CotaGarantia as cotaGarantia, ");
 		hql.append(" Distribuidor as distribuidor ");
-		hql.append(" LEFT JOIN cotaGarantia.cheque as cheque ");
-		hql.append(" LEFT JOIN cotaGarantia.notaPromissoria as np ");
+		hql.append("  JOIN cotaGarantia.cheque as cheque ");		
 		hql.append(" LEFT JOIN cotaGarantia.cota as cota ");
 		hql.append(" LEFT JOIN cota.pessoa as pessoa ");
+		hql.append(" LEFT JOIN cota.pdvs as pdv ");
 		
-		hql.append(" WHERE datediff(cheque.validade , sysdate() ) < distribuidor.prazoFollowUp ");
-		hql.append(" OR datediff(np.vencimento , sysdate() ) < distribuidor.prazoFollowUp ");
+		hql.append(" WHERE datediff(cheque.validade, sysdate()) < distribuidor.prazoFollowUp ");
 		
-		return hql.toString();
+		Query query =  getSession().createQuery(hql.toString());		
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(
+				ConsultaFollowupCadastroDTO.class));
+		
+		if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
+			query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
+		
+		if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
+			query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
+		
+		return query.list();
 	}
-
-	private Object getOrderByCadastro(FiltroFollowupCadastroDTO filtro) {
+	
+	@SuppressWarnings("unchecked")
+	private List<ConsultaFollowupCadastroDTO> getOutros(
+			FiltroFollowupCadastroDTO filtro) {
+		StringBuilder	hql = new StringBuilder();
 		
-		if(filtro.getPaginacao() == null || filtro.getPaginacao().getSortColumn() == null){
-			return "";
-		}
+		hql.append("SELECT cota.numeroCota as numeroCota, ");
+		hql.append("pessoa.nome as nomeJornaleiro, ");
+		hql.append(" 'Outros' as tipo, ");
+		hql.append("outros.valor as valor, ");
+		hql.append("outros.validade as dataVencimento, ");
+		hql.append("pdv.contato as responsavel ");
+		
+		hql.append(" from CotaGarantia as cotaGarantia, ");
+		hql.append(" Distribuidor as distribuidor ");
+		hql.append("  JOIN cotaGarantia.outros as outros ");		
+		hql.append(" LEFT JOIN cotaGarantia.cota as cota ");
+		hql.append(" LEFT JOIN cota.pessoa as pessoa ");
+		hql.append(" LEFT JOIN cota.pdvs as pdv ");
+		
+		hql.append(" WHERE datediff(outros.validade, sysdate()) < distribuidor.prazoFollowUp ");
+		
+		
+		Query query =  getSession().createQuery(hql.toString());		
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(
+				ConsultaFollowupCadastroDTO.class));
+		
+		if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
+			query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
+		
+		if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
+			query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
+		
+		return query.list();
+	}
+	
+	@SuppressWarnings("unchecked")
+	private List<ConsultaFollowupCadastroDTO> getCotaDistribuicao(
+			FiltroFollowupCadastroDTO filtro) {
 		StringBuilder hql = new StringBuilder();
+		hql.append("SELECT cota.numeroCota as numeroCota ");
+		hql.append(" , pessoa.nome as nomeJornaleiro ");
+		hql.append(" , pdv.contato as responsavel");
+		hql.append(" , 'Cota Distribuicao' as tipo ");
+		hql.append(" , 0.0 as valor ");
+		hql.append(" from Cota as cota ");
+		hql.append(" LEFT JOIN cota.pessoa as pessoa ");
+		hql.append(" LEFT JOIN cota.pdvs as pdv ");		
+		hql.append(" WHERE  ( cota.parametroDistribuicao.utilizaTermoAdesao = true and cota.parametroDistribuicao.termoAdesaoRecebido= false )    ");
+		hql.append("  or  ( cota.parametroDistribuicao.utilizaProcuracao = true and cota.parametroDistribuicao.procuracaoRecebida = false )    ");
+		Query query =  getSession().createQuery(hql.toString());		
 		
-		hql.append(" order by cota.numeroCota ");
+		query.setResultTransformer(new AliasToBeanResultTransformer(
+				ConsultaFollowupCadastroDTO.class));
 		
-		if (filtro.getPaginacao().getOrdenacao() != null) {
-			hql.append( filtro.getPaginacao().getOrdenacao().toString());
-		}
+		if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
+			query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
 		
-		return hql.toString();
+		if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
+			query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
+		
+		return query.list();
 	}
-
+	
+	
+	@SuppressWarnings("unchecked")
+	private List<ConsultaFollowupCadastroDTO> getFornecedores(
+			FiltroFollowupCadastroDTO filtro) {
+		StringBuilder	hql = new StringBuilder();
+		
+		hql.append("SELECT cota.numeroCota as numeroCota, ");
+		hql.append("pessoa.nome as nomeJornaleiro, ");
+		hql.append(" 'Fornecedores' as tipo, ");
+		hql.append(" 0.0 as valor, ");
+		hql.append(" fornecedores.validadeContrato as dataVencimento, ");
+		hql.append(" pdv.contato as responsavel ");
+		
+		hql.append(" from Cota as cota, ");
+		hql.append(" Distribuidor as distribuidor ");
+		hql.append(" JOIN cota.fornecedores as fornecedores ");		
+		hql.append(" LEFT JOIN cota.pessoa as pessoa ");
+		hql.append(" LEFT JOIN cota.pdvs as pdv ");
+		
+		hql.append(" WHERE    fornecedores.possuiContrato = true   and   datediff( fornecedores.validadeContrato, sysdate()) < distribuidor.prazoFollowUp ");
+		
+		
+		Query query =  getSession().createQuery(hql.toString());		
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(
+				ConsultaFollowupCadastroDTO.class));
+		
+		if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
+			query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
+		
+		if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
+			query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
+		
+		return query.list();
+	}
+	
 
 }

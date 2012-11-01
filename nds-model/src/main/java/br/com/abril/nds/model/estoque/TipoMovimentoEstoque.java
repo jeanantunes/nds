@@ -14,13 +14,17 @@ public class TipoMovimentoEstoque extends TipoMovimento {
 	
 	@Column(name = "INCIDE_DIVIDA")
 	private boolean incideDivida;
+	
+	@Column(name = "INCIDE_JURAMENTADO")
+	private boolean incideJuramentado;
+	
 	@Column(name = "GRUPO_MOVIMENTO_ESTOQUE")
 	@Enumerated(EnumType.STRING)
 	private GrupoMovimentoEstoque grupoMovimentoEstoque;
+	
 	@Column(name = "OPERACAO_ESTOQUE")
 	@Enumerated(EnumType.STRING)
 	private OperacaoEstoque operacaoEstoque;
-
 
 	public TipoMovimentoEstoque() {
 		
@@ -59,6 +63,14 @@ public class TipoMovimentoEstoque extends TipoMovimento {
 
 	public void setOperacaoEstoque(OperacaoEstoque operacaoEstoque) {
 		this.operacaoEstoque = operacaoEstoque;
+	}
+
+	public boolean isIncideJuramentado() {
+		return incideJuramentado;
+	}
+
+	public void setIncideJuramentado(boolean incideJuramentado) {
+		this.incideJuramentado = incideJuramentado;
 	}
 
 }

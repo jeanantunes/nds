@@ -18,7 +18,7 @@ var usuariosPermissaoController = $.extend(true, {
 			
 			$.getJSON(
 					this.path + "/editarUsuario",
-					"codigoUsuario=" + idUsuario, 
+					{codigoUsuario:idUsuario}, 
 					function(result) {
 						if (result) {
 							usuariosPermissaoController.bindData(result, $("#alterar_senha_form", usuariosPermissaoController.workspace));
@@ -101,7 +101,7 @@ var usuariosPermissaoController = $.extend(true, {
 			
 			$.getJSON(
 					this.path + "/editarUsuario",
-					"codigoUsuario=" + idGrupo, 
+					{codigoUsuario:idGrupo}, 
 					function(result) {
 						if (result) {
 							
@@ -147,34 +147,28 @@ var usuariosPermissaoController = $.extend(true, {
 			$( "#dialog-novo-usuario" , usuariosPermissaoController.workspace).dialog({
 				resizable: false,
 				height:620,
-				width:750,
+				width:770,
 				modal: true,
 				buttons: {
 					"Confirmar": function() {
-						var obj = $("#novo_usuario_form", usuariosPermissaoController.workspace).serialize();
+						var obj = $("#novo_usuario_form", usuariosPermissaoController.workspace).serializeObject();
 						
-						var permissoes = "";
-						$("#permissoesSelecionadasUsuario option", usuariosPermissaoController.workspace).each(function() {
-							if (permissoes!="") {
-								permissoes += ",";
-							}
-							permissoes += $(this).val();
+						var permissoes = new Array();
+						$("#permissoesSelecionadasUsuario option", usuariosPermissaoController.workspace).each(function() {							
+							permissoes.push($(this).val());
 					    });
+						obj = serializeArrayToPost('usuarioDTO.permissoesSelecionadas', permissoes, obj);
 
-						var grupos = "";
+						var grupos = new Array();
 						$("#gruposSelecionadosUsuario option", usuariosPermissaoController.workspace).each(function() {
-							if (grupos!="") {
-								grupos += ",";
-							}
-							grupos += $(this).val();
+							
+							grupos.push($(this).val());
 					    });
-
-						var ativa = "";
-						if ($('#usuarioAtivaTrue:checked').attr("checked") == "checked") {
-							ativa = "ativa";
-						}
 						
-						obj += "&usuarioDTO.contaAtiva=" + ativa + "&usuarioDTO.permissoesSelecionadas=" + permissoes + "&usuarioDTO.gruposSelecionados=" + grupos;
+						obj = serializeArrayToPost('usuarioDTO.gruposSelecionados', grupos, obj);
+						
+						obj['usuarioDTO.contaAtiva'] = ($('#usuarioAtivaTrue:checked').attr("checked") == "checked");
+						
 
 						$.postJSON(usuariosPermissaoController.path + '/salvarUsuario', obj, function(data) {
 							var tipoMensagem = data.tipoMensagem;
@@ -211,7 +205,7 @@ var usuariosPermissaoController = $.extend(true, {
 					"Confirmar": function() {
 						$.getJSON(
 								usuariosPermissaoController.path + "/excluirUsuario",
-								"codigoUsuario=" + codigoUsuario, 
+								{codigoUsuario:codigoUsuario}, 
 								function(result) {
 
 									var tipoMensagem = result.tipoMensagem;
@@ -289,15 +283,15 @@ var usuariosPermissaoController = $.extend(true, {
 						$.each(data.rows , function(index, value) {
 
 							var linkEditarUsuario = '<a href="javascript:;" onclick="usuariosPermissaoController.popup_editar_usuario(\'' + value.cell.id + '\');" style="cursor:pointer">' +
-				     	  	'<img title="Editar Usuário" src="' + contextPath + '/images/ico_detalhes.png" hspace="5" border="0px" />' +
+				     	  	'<img title="Editar Usuário" src="' + contextPath + '/images/ico_editar.gif" border="0px" />' +
 				  		    '</a>';
 
-							var linkAlterarSenha = '<a href="javascript:;" onclick="usuariosPermissaoController.popup_alterar_senha(\'' + value.cell.id + '\');" style="cursor:pointer">' +
-				     	  	'<img title="Alterar Senha" src="' + contextPath + '/images/ico_editar.gif" hspace="5" border="0px" />' +
+							var linkAlterarSenha = '<a href="javascript:;" onclick="usuariosPermissaoController.popup_alterar_senha(\'' + value.cell.id + '\');" style="cursor:pointer; margin-left:10px; margin-right:10px;">' +
+				     	  	'<img title="Alterar Senha" src="' + contextPath + '/images/ico_bloqueado.gif"  border="0px" />' +
 				  		    '</a>';
 							
 							var linkExcluirUsuario = '<a href="javascript:;" onclick="usuariosPermissaoController.popup_excluir_usuario(\'' + value.cell.id + '\');" style="cursor:pointer">' +
-				     	  	'<img title="Excluir Usuário" src="' + contextPath + '/images/ico_excluir.gif" hspace="5" border="0px" />' +
+				     	  	'<img title="Excluir Usuário" src="' + contextPath + '/images/ico_excluir.gif" border="0px" />' +
 				  		    '</a>';
 
 							// lembreteSenha
@@ -365,13 +359,13 @@ var usuariosPermissaoController = $.extend(true, {
 				}, {
 					display : 'Nome',
 					name : 'nome',
-					width : 140,
+					width : 145,
 					sortable : true,
 					align : 'left'
 				}, {
 					display : 'E-mail',
 					name : 'email',
-					width : 140,
+					width : 168,
 					sortable : true,
 					align : 'left'
 				}, {
@@ -389,7 +383,7 @@ var usuariosPermissaoController = $.extend(true, {
 				}, {
 					display : 'Ação',
 					name : 'acao',
-					width : 60,
+					width : 70,
 					sortable : false,
 					align : 'center'
 				}],
@@ -400,7 +394,7 @@ var usuariosPermissaoController = $.extend(true, {
 				rp : 15,
 				showTableToggleBtn : true,
 				width : 900,
-				height : 255
+				height : 'auto'
 			});
 		}
 }, BaseController);
