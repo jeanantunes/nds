@@ -15,6 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.dto.FecharDiaDTO;
 import br.com.abril.nds.dto.ReparteFecharDiaDTO;
+import br.com.abril.nds.dto.ResumoFechamentoDiarioCotasDTO;
+import br.com.abril.nds.dto.ResumoFechamentoDiarioCotasDTO.TipoResumo;
 import br.com.abril.nds.dto.ValidacaoConfirmacaoDeExpedicaoFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoControleDeAprovacaoFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoLancamentoFaltaESobraFecharDiaDTO;
@@ -449,6 +451,23 @@ public class FecharDiaController {
         result.nothing();
     }
 	
+	@Post
+	public void obterResumoCotas() {
+		
+		ResumoFechamentoDiarioCotasDTO resumoFechamentoDiarioCotas = 
+			this.fecharDiaService.obterResumoCotas(this.getDataFechamento());
+		
+		Map<TipoResumo, Long> mapaResumo = new HashMap<TipoResumo, Long>();
+		
+		mapaResumo.put(TipoResumo.TOTAL, resumoFechamentoDiarioCotas.getQuantidadeTotal());
+		mapaResumo.put(TipoResumo.ATIVAS, resumoFechamentoDiarioCotas.getQuantidadeAtivas());
+		mapaResumo.put(TipoResumo.AUSENTES_REPARTE, resumoFechamentoDiarioCotas.getQuantidadeAusentesExpedicaoReparte());
+		mapaResumo.put(TipoResumo.AUSENTES_ENCALHE, resumoFechamentoDiarioCotas.getQuantidadeAusentesRecolhimentoEncalhe());
+		mapaResumo.put(TipoResumo.NOVAS, resumoFechamentoDiarioCotas.getQuantidadeNovas());
+		mapaResumo.put(TipoResumo.INATIVAS, resumoFechamentoDiarioCotas.getQuantidadeInativas());
+		
+		result.use(CustomMapJson.class).put("resumo", mapaResumo).serialize();
+	}
     
     private Date getDataFechamento() {
         return distribuidorService.obter().getDataOperacao();

@@ -3,6 +3,7 @@ package br.com.abril.nds.service;
 import java.util.Date;
 import java.util.List;
 
+import br.com.abril.nds.dto.ResumoFechamentoDiarioCotasDTO;
 import br.com.abril.nds.dto.ValidacaoConfirmacaoDeExpedicaoFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoControleDeAprovacaoFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoLancamentoFaltaESobraFecharDiaDTO;
@@ -126,5 +127,14 @@ public interface FecharDiaService {
      * @see DividaService#contarDividasVencerApos(Date)
      */
     int contarDividasVencerApos(Date data);
+    
+    /**
+	 * Obtém o resumo do fechamento diário de cotas.
+	 * 
+	 * @param dataFechamento - data do fechamento.
+	 * 
+	 * @return {@link ResumoFechamentoDiarioCotasDTO}
+	 */
+	ResumoFechamentoDiarioCotasDTO obterResumoCotas(Date dataFechamento);
 
 }

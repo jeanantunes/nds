@@ -1340,6 +1340,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 		hql.append(" where controleConferenciaEncalheCota.dataOperacao >= :dataRecolhimentoEncalhe ");
 		hql.append(" and controleConferenciaEncalheCota.status = :statusControleConferenciaEncalhe) ");
 		hql.append(" and chamadaEncalheCota.chamadaEncalhe.dataRecolhimento >= :dataRecolhimentoEncalhe ");
+		hql.append(" group by chamadaEncalheCota.cota.id ");
 
 		Query query = this.getSession().createQuery(hql.toString());
 
