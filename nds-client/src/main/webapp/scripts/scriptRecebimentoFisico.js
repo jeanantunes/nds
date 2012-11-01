@@ -44,11 +44,8 @@ var recebimentoFisicoController = $.extend(true, {
 		$("#novoDataEntrada", this.workspace).mask("99/99/9999");
 		
 		$("#notaFiscal", this.workspace).numeric();
-		$("#serie", this.workspace).numeric();
-
-		$("#chaveAcesso", this.workspace).numeric();
-
 		
+		$("#chaveAcesso", this.workspace).numeric();
 		
 		$("#valorBruto", this.workspace).maskMoney({
 			 thousands:'.', 
@@ -75,7 +72,6 @@ var recebimentoFisicoController = $.extend(true, {
 		});
 			
 		$("#novoNumeroNota", this.workspace).numeric();
-		$("#novoSerieNota", this.workspace).numeric();
 		
 		$("#codigo", this.workspace).numeric();
 		$("#edicao", this.workspace).numeric();
@@ -725,7 +721,7 @@ var recebimentoFisicoController = $.extend(true, {
 		var listaDeValores  = null;
 		
 		if(recebimentoFisicoController.indNotaFiscalInterface){
-			listaDeValores = serializeArrayToPost('itensRecebimento', recebimentoFisicoController.obterListaValores(), dadosCadastro);
+			listaDeValores = serializeArrayToPost('itensRecebimento', recebimentoFisicoController.obterListaValores());
 		}
 		
 		$.postJSON(this.path + 'confirmarRecebimentoFisico', listaDeValores, 
