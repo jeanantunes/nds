@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import br.com.abril.nds.dto.ReparteFecharDiaDTO;
+import br.com.abril.nds.dto.ResumoReparteFecharDiaDTO;
 
 
 public interface ResumoReparteFecharDiaService {
@@ -17,5 +18,7 @@ public interface ResumoReparteFecharDiaService {
 	List<ReparteFecharDiaDTO> obterValorDistribuido(Date dataOperacao, boolean soma);
 
 	List<ReparteFecharDiaDTO> obterResumoReparte(Date dataOperacao);
-
+	
+	ResumoReparteFecharDiaDTO obterResumoGeralReparte(Date dataOperacao);
+	
 }
