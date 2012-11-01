@@ -15,4 +15,12 @@ public interface NFeService {
 	
 	public byte[] obterNEsPDF(List<NotaEnvio> listaNfeImpressaoNE, boolean isNECA);
 	
+	public NotaFiscal obterNotaFiscalPorId(NotaFiscal notaFiscal);
+	
+	public NotaEnvio obterNotaEnvioPorId(NotaEnvio notaEnvio);
+	
+	public NotaFiscal mergeNotaFiscal(NotaFiscal notaFiscal);
+	
+	public NotaEnvio mergeNotaEnvio(NotaEnvio notaEnvio);
+	
 }

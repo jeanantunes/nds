@@ -17,14 +17,12 @@ import javax.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
-import br.com.abril.nds.client.vo.NfeVO;
-import br.com.abril.nds.dto.CotasImpressaoNfeDTO;
 import br.com.abril.nds.dto.ItemDTO;
+import br.com.abril.nds.dto.NotasCotasImpressaoNfeDTO;
 import br.com.abril.nds.dto.ProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroImpressaoNFEDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
-import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.Rota;
@@ -51,7 +49,6 @@ import br.com.abril.nds.util.export.NDSFileHeader;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 import br.com.abril.nds.vo.ValidacaoVO;
-import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
@@ -67,10 +64,10 @@ public class ImpressaoNFEController {
 
 	@Autowired
 	private HttpServletRequest httpRequest;
-	
+
 	@Autowired
 	private HttpServletResponse httpResponse;
-	
+
 	@Autowired
 	private FornecedorService fornecedorService;
 
@@ -81,16 +78,16 @@ public class ImpressaoNFEController {
 	private NFeService nfeService; 
 
 	@Autowired
-	ImpressaoNFEService impressaoNFEService;
+	private ImpressaoNFEService impressaoNFEService;
 
 	@Autowired
-	DistribuidorService distribuidorService;
+	private DistribuidorService distribuidorService;
 
 	@Autowired
-	RoteiroService roteiroService;
+	private RoteiroService roteiroService;
 
 	@Autowired
-	RotaService rotaService;
+	private RotaService rotaService;
 
 	@Autowired
 	private Result result;
@@ -100,7 +97,7 @@ public class ImpressaoNFEController {
 	public void index() {
 
 		List<Fornecedor> fornecedores = this.fornecedorService.obterFornecedores(true, SituacaoCadastro.ATIVO);
-		
+
 		GrupoNotaFiscal[] gnf = {GrupoNotaFiscal.NF_REMESSA_CONSIGNACAO, GrupoNotaFiscal.NF_VENDA};
 		this.result.include("tipoNotas", tipoNotaFiscalService.carregarComboTiposNotasFiscais(TipoOperacao.SAIDA, TipoUsuarioNotaFiscal.COTA, TipoUsuarioNotaFiscal.DISTRIBUIDOR, gnf));
 		this.result.include("fornecedores", fornecedores);
@@ -129,16 +126,16 @@ public class ImpressaoNFEController {
 				ValidacaoVO validacaoVO = new ValidacaoVO(TipoMensagem.ERROR, listaMensagemValidacao);
 				throw new ValidacaoException(validacaoVO);
 			}
-			
+
 			result.use(Results.nothing());
 		}
-		
+
 		session.setAttribute("filtroPesquisaNFe", filtro);
 
-		TableModel<CellModelKeyValue<CotasImpressaoNfeDTO>> tableModel = new TableModel<CellModelKeyValue<CotasImpressaoNfeDTO>>();
+		TableModel<CellModelKeyValue<NotasCotasImpressaoNfeDTO>> tableModel = new TableModel<CellModelKeyValue<NotasCotasImpressaoNfeDTO>>();
 
-		List<CotasImpressaoNfeDTO> listaCotasImpressaoNFe = impressaoNFEService.buscarCotasParaImpressaoNFe(filtro);
-		
+		List<NotasCotasImpressaoNfeDTO> listaCotasImpressaoNFe = impressaoNFEService.buscarCotasParaImpressaoNFe(filtro);
+
 		tableModel.setTotal(impressaoNFEService.buscarNFeParaImpressaoTotalQtd(filtro));
 
 		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaCotasImpressaoNFe));
@@ -146,7 +143,7 @@ public class ImpressaoNFEController {
 		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
 
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
-		
+
 	}
 
 	@Post
@@ -160,10 +157,10 @@ public class ImpressaoNFEController {
 			ValidacaoVO validacaoVO = new ValidacaoVO(TipoMensagem.ERROR, "As datas inicial e final do movimento devem ser informadas.");
 			throw new ValidacaoException(validacaoVO);
 		}
-		
-		
+
+
 		TableModel<CellModelKeyValue<ProdutoDTO>> tableModel = new TableModel<CellModelKeyValue<ProdutoDTO>>();
-		
+
 		List<ProdutoDTO> listaProdutos = impressaoNFEService.obterProdutosExpedicaoConfirmada(filtro); // c.getTime()
 
 		if(listaProdutos == null) {
@@ -191,94 +188,99 @@ public class ImpressaoNFEController {
 	public void exportar(FileType fileType) throws IOException {
 
 		FiltroImpressaoNFEDTO filtro = (FiltroImpressaoNFEDTO) session.getAttribute("filtroPesquisaNFe");
-		
+
 		filtro.setPaginacao(null);
-		
-		List<CotasImpressaoNfeDTO> listaNFeDTO = impressaoNFEService.buscarCotasParaImpressaoNFe(filtro);
-		
+
+		List<NotasCotasImpressaoNfeDTO> listaNFeDTO = impressaoNFEService.buscarCotasParaImpressaoNFe(filtro);
+
 		FileExporter.to("cotas", fileType).inHTTPResponse(
 				this.getNDSFileHeader(), 
 				null, 
 				null, 
 				listaNFeDTO,
-				CotasImpressaoNfeDTO.class, this.httpResponse);
-		
+				NotasCotasImpressaoNfeDTO.class, this.httpResponse);
+
 	}
-	
+
 	@Post
 	public void imprimirNFe(FiltroImpressaoNFEDTO filtro, String sortorder, String sortname) {
-		
-		
+
+
 		FiltroImpressaoNFEDTO filtroPesquisa = (FiltroImpressaoNFEDTO) session.getAttribute("filtroPesquisaNFe");
-		
-		if(filtro.getIdsCotas() != null) {
-			filtroPesquisa.setIdsCotas(filtro.getIdsCotas());
+
+		if(filtro.getNumerosNotas() != null) {
+			filtroPesquisa.setNumerosNotas(filtro.getNumerosNotas());
 		} else {
 			ValidacaoVO validacaoVO = new ValidacaoVO(TipoMensagem.ERROR, "Devem ser informadas as cotas para impressão.");
 			throw new ValidacaoException(validacaoVO);
 		}
-		
+
 		filtroPesquisa.setPaginacao(null);
-		List<CotasImpressaoNfeDTO> cotas = impressaoNFEService.buscarCotasParaImpressaoNFe(filtroPesquisa);
-			
+		//List<NotasCotasImpressaoNfeDTO> cotas = impressaoNFEService.buscarCotasParaImpressaoNFe(filtroPesquisa);
+
 		Distribuidor distribuidor = this.distribuidorService.obter();
-		
+
 		byte[] arquivo = null; 
 		String nomeArquivo = "";
-		
+
 		if(distribuidor.getObrigacaoFiscal() != null) {
-			
-			List<NotaFiscal> listaNF = new ArrayList<NotaFiscal>();
-			for(CotasImpressaoNfeDTO cota : cotas) {
-				Cota c = new Cota();
-				c.setId(cota.getIdCota());
-				List<NotaFiscal> nfs = impressaoNFEService.buscarNotasPorCotaParaImpressaoNFe(c, filtroPesquisa);
-				listaNF.addAll(nfs);
-			}
-			
+
+			List<NotaFiscal> nfs = impressaoNFEService.buscarNotasParaImpressaoNFe(filtroPesquisa);
+
 			switch(distribuidor.getTipoImpressaoNENECADANFE()) {
-			
+
 				case DANFE:
-					arquivo = nfeService.obterDanfesPDF(listaNF, false);
+					arquivo = nfeService.obterDanfesPDF(nfs, false);
 					nomeArquivo = "danfes";
 					break;
 				default:
 					throw new ValidationException("O tipo de impressão configurado no Distribuidor não está disponível.");
+					
 			}
-				
+
+			// Atualiza a flag que informa se a nota ja foi impressa
+			for(NotaFiscal nf : nfs) {
+				NotaFiscal nfOrig = nfeService.obterNotaFiscalPorId(nf);
+				nfOrig.setNotaImpressa(true);
+				nfeService.mergeNotaFiscal(nfOrig);
+			}
+
 		} else {
-			List<NotaEnvio> listaNE = new ArrayList<NotaEnvio>();
-			for(CotasImpressaoNfeDTO cota : cotas) {
-				Cota c = new Cota();
-				c.setId(cota.getIdCota());
-				List<NotaEnvio> nfs = impressaoNFEService.buscarNotasEnvioPorCotaParaImpressaoNFe(c, filtroPesquisa);
-				listaNE.addAll(nfs);
-			}
-			
+
+			List<NotaEnvio> nes = impressaoNFEService.buscarNotasEnvioParaImpressaoNFe(filtroPesquisa);
+
 			switch(distribuidor.getTipoImpressaoNENECADANFE()) {
-			case MODELO_1:
-				arquivo = nfeService.obterNEsPDF(listaNE, false);
-				nomeArquivo = "NEs";
-				break;
-			case MODELO_2:
-				arquivo = nfeService.obterNEsPDF(listaNE, true);
-				nomeArquivo = "NECAs";
-				break;
-			
+
+				case MODELO_1:
+					arquivo = nfeService.obterNEsPDF(nes, false);
+					nomeArquivo = "NEs";
+					break;
+				case MODELO_2:
+					arquivo = nfeService.obterNEsPDF(nes, true);
+					nomeArquivo = "NECAs";
+					break;
+
 			}
-				
+
+			// Atualiza a flag que informa se a nota ja foi impressa
+			for(NotaEnvio ne : nes) {
+				NotaEnvio neOrig = nfeService.obterNotaEnvioPorId(ne);
+				neOrig.setNotaImpressa(true);
+				nfeService.mergeNotaEnvio(neOrig);
+			}
+
 		}
-		
+
 		try {
-			
+
 			escreverArquivoParaResponse(arquivo, nomeArquivo);
-			
+
 		} catch(IOException e) {
-			
+
 			throw new ValidacaoException(TipoMensagem.ERROR, "Falha na geração do arquivo.");
-			
+
 		}
-		
+
 	}
 
 	/**
@@ -307,50 +309,50 @@ public class ImpressaoNFEController {
 
 		result.use(Results.json()).withoutRoot().from(listaItensRotas).recursive().serialize();
 	}
-	
+
 	/*
 	 * Obtém os dados do cabeçalho de exportação.
 	 * 
 	 * @return NDSFileHeader
 	 */
 	private NDSFileHeader getNDSFileHeader() {
-		
+
 		NDSFileHeader ndsFileHeader = new NDSFileHeader();
-		
+
 		Distribuidor distribuidor = this.distribuidorService.obter();
-		
+
 		if (distribuidor != null) {
-			
+
 			ndsFileHeader.setNomeDistribuidor(distribuidor.getJuridica().getRazaoSocial());
 			ndsFileHeader.setCnpjDistribuidor(distribuidor.getJuridica().getCnpj());
 		}
-		
+
 		ndsFileHeader.setData(new Date());
-		
+
 		ndsFileHeader.setNomeUsuario(httpRequest.getRemoteUser());
-		
+
 		return ndsFileHeader;
 	}
-	
+
 	/**
 	 * Metodos utilitarios
 	 * 
 	 */
 
 	private void escreverArquivoParaResponse(byte[] arquivo, String nomeArquivo) throws IOException {
-		
+
 		this.httpResponse.setContentType("application/pdf");
-		
+
 		this.httpResponse.setHeader("Content-Disposition", "attachment; filename="+nomeArquivo +".pdf");
 
 		OutputStream output = this.httpResponse.getOutputStream();
-		
+
 		output.write(arquivo);
 
 		httpResponse.getOutputStream().close();
-		
+
 		result.use(Results.nothing());
-		
+
 	}
 
 }

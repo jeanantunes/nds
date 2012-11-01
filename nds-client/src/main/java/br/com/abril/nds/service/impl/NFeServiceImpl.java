@@ -134,6 +134,26 @@ public class NFeServiceImpl implements NFeService {
 		}
 	}
 	
+	@Transactional(readOnly=true)
+	public NotaFiscal obterNotaFiscalPorId(NotaFiscal notaFiscal) {
+		return notaFiscalRepository.buscarPorId(notaFiscal.getId());
+	}
+	
+	@Transactional(readOnly=true)
+	public NotaEnvio obterNotaEnvioPorId(NotaEnvio notaEnvio) {
+		return notaEnvioRepository.buscarPorId(notaEnvio.getNumero());
+	}
+	
+	@Transactional
+	public NotaFiscal mergeNotaFiscal(NotaFiscal notaFiscal) {
+		return notaFiscalRepository.merge(notaFiscal);
+	}
+	
+	@Transactional
+	public NotaEnvio mergeNotaEnvio(NotaEnvio notaEnvio) {
+		return notaEnvioRepository.merge(notaEnvio);
+	}
+	
 	private NfeImpressaoDTO obterDadosNENECA(NotaEnvio ne) {
 		NfeImpressaoDTO nfeImpressao = new NfeImpressaoDTO();
 
@@ -825,7 +845,11 @@ public class NFeServiceImpl implements NFeService {
 
 		String documento 			= notaEnvio.getDestinatario().getDocumento();
 		Pessoa pessoaDestinatario 	= notaEnvio.getDestinatario().getPessoaDestinatarioReferencia();
-
+		Integer codigoBox			= notaEnvio.getDestinatario().getCodigoBox();
+		String nomeBox				= notaEnvio.getDestinatario().getNomeBox();
+		String codigoRota			= notaEnvio.getDestinatario().getCodigoRota();
+		String descricaoRota 		= notaEnvio.getDestinatario().getDescricaoRota();
+		
 		Endereco endereco = notaEnvio.getDestinatario().getEndereco();
 		Telefone telefone = notaEnvio.getDestinatario().getTelefone();
 
@@ -852,15 +876,15 @@ public class NFeServiceImpl implements NFeService {
 			destinatarioCNPJ = documento;
 		} 
 
-		if(endereco!=null) {
+		if(endereco != null) {
 
-			destinatarioLogradouro = endereco.getLogradouro();
-			destinatarioNumero	=	endereco.getNumero().toString();
-			destinatarioComplemento	=	endereco.getComplemento();
-			destinatarioBairro	=	endereco.getBairro();
-			destinatarioMunicipio	=	 endereco.getCidade();
-			destinatarioUF	=	endereco.getUf();
-			destinatarioCEP	=	endereco.getCep();
+			destinatarioLogradouro 	= endereco.getLogradouro();
+			destinatarioNumero		= endereco.getNumero().toString();
+			destinatarioComplemento	= endereco.getComplemento();
+			destinatarioBairro		= endereco.getBairro();
+			destinatarioMunicipio	= endereco.getCidade();
+			destinatarioUF			= endereco.getUf();
+			destinatarioCEP			= endereco.getCep();
 
 		}
 
@@ -887,7 +911,11 @@ public class NFeServiceImpl implements NFeService {
 		nfeImpressao.setDestinatarioUF(destinatarioUF);
 		nfeImpressao.setDestinatarioCEP(destinatarioCEP);
 		nfeImpressao.setDestinatarioTelefone(destinatarioTelefone);
-
+		nfeImpressao.setDestinatarioCodigoBox(codigoBox);
+		nfeImpressao.setDestinatarioNomeBox(nomeBox);
+		nfeImpressao.setDestinatarioCodigoRota(codigoRota);
+		nfeImpressao.setDestinatarioDescricaoRota(descricaoRota);
+		
 	}
 	
 	private void carregarNEDadosItens(NfeImpressaoDTO nfeImpressao, NotaEnvio notaEnvio) {

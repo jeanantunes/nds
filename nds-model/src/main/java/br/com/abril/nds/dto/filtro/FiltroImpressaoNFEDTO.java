@@ -45,6 +45,8 @@ public class FiltroImpressaoNFEDTO implements Serializable {
 	private List<Long> codigosProdutos;
 
 	private List<Long> idsCotas;
+	
+	private List<Long> numerosNotas;
 
 	private PaginacaoVO paginacao;
 
@@ -323,6 +325,14 @@ public class FiltroImpressaoNFEDTO implements Serializable {
 
 	public void setIdsCotas(List<Long> idsCotas) {
 		this.idsCotas = idsCotas;
+	}
+
+	public List<Long> getNumerosNotas() {
+		return numerosNotas;
+	}
+
+	public void setNumerosNotas(List<Long> numerosNotas) {
+		this.numerosNotas = numerosNotas;
 	}
 
 	public PaginacaoVO getPaginacao() {

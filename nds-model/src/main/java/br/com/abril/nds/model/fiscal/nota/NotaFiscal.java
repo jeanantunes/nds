@@ -112,9 +112,12 @@ public class NotaFiscal implements Serializable {
 	@Enumerated(EnumType.STRING)
 	private Set<Processo> processos;
 	
-	@Column(name = "CONDICAO", nullable=true)
+	@Column(name = "CONDICAO", nullable = true)
 	@Enumerated(EnumType.STRING)
 	private Condicao condicao;
+	
+	@Column(name = "NOTA_IMPRESSA", nullable = false)
+	private boolean notaImpressa;
 	
 	/**
 	 * Construtor padrão.
@@ -294,6 +297,20 @@ public class NotaFiscal implements Serializable {
 	 */
 	public void setCondicao(Condicao condicao) {
 		this.condicao = condicao;
+	}
+
+	/**
+	 * @return
+	 */
+	public boolean isNotaImpressa() {
+		return notaImpressa;
+	}
+
+	/**
+	 * @param notaImpressa
+	 */
+	public void setNotaImpressa(boolean notaImpressa) {
+		this.notaImpressa = notaImpressa;
 	}
 	
 }
