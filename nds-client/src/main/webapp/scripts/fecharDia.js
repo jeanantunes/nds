@@ -222,8 +222,9 @@ var fecharDiaController =  $.extend(true, {
 			height : 255
 		});
 		
-		$(".dividasReceberGrid").flexigrid({
+		$(".dividasReceberGrid", fecharDiaController.workspace).flexigrid({
             url: contextPath + '/administracao/fecharDia/obterDividasReceber',
+            autoload: false,
             dataType : 'json',
             colModel : [ {
                 display : 'Cota',
@@ -284,8 +285,9 @@ var fecharDiaController =  $.extend(true, {
             height : 220
         });
         
-        $(".dividasVencerGrid").flexigrid({
+        $(".dividasVencerGrid", fecharDiaController.workspace).flexigrid({
             url: contextPath + '/administracao/fecharDia/obterDividasVencer',
+            autoload: false,
             dataType : 'json',
             colModel : [ {
                 display : 'Cota',
@@ -849,12 +851,17 @@ var fecharDiaController =  $.extend(true, {
 		$.postJSON(contextPath + "/administracao/fecharDia/obterSumarizacaoDividas",
 				   null,
 				   function(result) {
-				       if (result.mensagens) {
-                            exibirMensagemDialog(result.mensagens.tipoMensagem, result.mensagens.listaMensagens);
-                        } else {
-				            fecharDiaController.processarResumoDividasReceber(result.sumarizacao.DIVIDA_A_RECEBER);
-				            fecharDiaController.processarResumoDividasVencer(result.sumarizacao.DIVIDA_A_VENCER);
-                        }
+				       if (result) {
+				            if (result.mensagens) {
+                                exibirMensagemDialog(result.mensagens.tipoMensagem, result.mensagens.listaMensagens);
+                            } else {
+				                $('#tabela_dividas_receber_vencer', fecharDiaController.workspace).show();
+				                fecharDiaController.processarResumoDividasReceber(result.sumarizacao.DIVIDA_A_RECEBER);
+				                fecharDiaController.processarResumoDividasVencer(result.sumarizacao.DIVIDA_A_VENCER);
+                            }
+				       } else {
+				           $('#tabela_dividas_receber_vencer', fecharDiaController.workspace).hide();
+				       }
 					});
 	},
 	

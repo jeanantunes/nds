@@ -4,9 +4,14 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import br.com.abril.nds.model.cadastro.Banco;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
+import br.com.abril.nds.model.financeiro.Cobranca;
+import br.com.abril.nds.model.financeiro.Divida;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.Util;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
 
@@ -20,6 +25,8 @@ import br.com.abril.nds.util.export.Exportable;
 public class DividaDTO implements Serializable {
 
     private static final long serialVersionUID = 1L;
+    
+    private Long idDivida;
     
     @Export(label = "Cota", exhibitionOrder = 0)
     private Integer numeroCota;
@@ -51,13 +58,12 @@ public class DividaDTO implements Serializable {
     @Export(label = "Forma Pagto", exhibitionOrder = 7)
     private String descricaoFormaPagamento;
     
-    private TipoDivida tipoDivida;
+
     
-    public DividaDTO(Integer numeroCota, String nomeCota, String nomeBanco,
+    public DividaDTO(Long idDivida, Integer numeroCota, String nomeCota, String nomeBanco,
             String contaCorrente, String nossoNumero, BigDecimal valor,
-            Date dataVencimento, TipoCobranca formaPagamento,
-            TipoDivida tipoDivida) {
-        
+            Date dataVencimento, TipoCobranca formaPagamento) {
+        this.idDivida = idDivida;
         this.numeroCota = numeroCota;
         this.nomeCota = nomeCota;
         this.nomeBanco = nomeBanco;
@@ -69,7 +75,20 @@ public class DividaDTO implements Serializable {
         this.dataVencimentoFormatada = DateUtil.formatarDataPTBR(dataVencimento);
         this.formaPagamento = formaPagamento;
         this.descricaoFormaPagamento = formaPagamento.getDescricao();
-        this.tipoDivida = tipoDivida;
+    }
+
+    /**
+     * @return the idDivida
+     */
+    public Long getIdDivida() {
+        return idDivida;
+    }
+
+    /**
+     * @param idDivida the idDivida to set
+     */
+    public void setIdDivida(Long idDivida) {
+        this.idDivida = idDivida;
     }
 
     /**
@@ -186,20 +205,6 @@ public class DividaDTO implements Serializable {
         this.formaPagamento = formaPagamento;
         this.descricaoFormaPagamento = formaPagamento.getDescricao();
     }
-    
-    /**
-     * @return the tipoDivida
-     */
-    public TipoDivida getTipoDivida() {
-        return tipoDivida;
-    }
-
-    /**
-     * @param tipoDivida the tipoDivida to set
-     */
-    public void setTipoDivida(TipoDivida tipoDivida) {
-        this.tipoDivida = tipoDivida;
-    }
 
     /**
      * @return the valorFormatado
@@ -220,6 +225,32 @@ public class DividaDTO implements Serializable {
      */
     public String getDescricaoFormaPagamento() {
         return descricaoFormaPagamento;
+    }
+    
+    /**
+     * Method Factory para criação do {@link DividaDTO} à partir da entidade
+     * Divida
+     * 
+     * @param divida
+     *            divida para criação do DTO
+     * @return {@link DividaDTO} criado à partir da da divida
+     */
+    public static DividaDTO fromDivida(Divida divida) {
+        Cota cota = divida.getCota();
+        String nomeCota = cota.getPessoa().getNome();
+        Cobranca cobranca = divida.getCobranca();
+        String nomeBanco = "";
+        String contaCorrente = "";
+        Banco banco = cobranca.getBanco();
+        if (banco != null) {
+            nomeBanco = banco.getNome();
+            contaCorrente = String.format("%s-%s", banco.getConta(), Util.nvl(banco.getDvConta(), ""));
+        }
+        DividaDTO dto = new DividaDTO(divida.getId(), cota.getNumeroCota(),
+                nomeCota, nomeBanco, contaCorrente, cobranca.getNossoNumero(),
+                divida.getValor(), cobranca.getDataVencimento(),
+                cobranca.getTipoCobranca());
+        return dto;
     }
     
 

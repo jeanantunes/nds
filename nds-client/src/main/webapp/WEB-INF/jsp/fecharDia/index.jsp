@@ -448,7 +448,7 @@
 </table>
           <span  style="margin-left:7px; margin-top:5px; margin-bottom:5px; float:left; clear:right;">&nbsp;</span><br clear="all"/>
 
-          <table width="950" border="0" align="center" cellpadding="0" cellspacing="0" style="border:1px solid #000;">
+          <table id="tabela_dividas_receber_vencer" width="950" border="0" align="center" cellpadding="0" cellspacing="0" style="border:1px solid #000;">
             <tr>
               <td height="26" align="center" bgcolor="#F4F4F4"><strong><a href="javascript:;" onclick="fecharDiaController.popup_dividas_receber();">DÍVIDAS A RECEBER</a></strong></td>
               <td align="center" bgcolor="#F4F4F4" style="width:10px; border-left:1px solid #ccc;">&nbsp;</td>

@@ -29,10 +29,11 @@ import br.com.abril.nds.dto.fechamentodiario.TipoDivida;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Distribuidor;
-import br.com.abril.nds.model.cadastro.TipoCobranca;
+import br.com.abril.nds.model.financeiro.Divida;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.CustomMapJson;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
+import br.com.abril.nds.service.DividaService;
 import br.com.abril.nds.service.FecharDiaService;
 import br.com.abril.nds.service.ResumoEncalheFecharDiaService;
 import br.com.abril.nds.service.ResumoReparteFecharDiaService;
@@ -44,6 +45,7 @@ import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.util.export.NDSFileHeader;
+import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
@@ -69,6 +71,9 @@ public class FecharDiaController {
 	
 	@Autowired
 	private DistribuidorService distribuidorService;
+	
+	@Autowired
+	private DividaService dividaService;
 	
 	@Autowired
 	private Result result;
@@ -299,41 +304,46 @@ public class FecharDiaController {
 	@Post
 	public void obterSumarizacaoDividas() {
         Date dataFechamento = getDataFechamento();
+        
         Map<TipoDivida, List<SumarizacaoDividasDTO>> sumarizacao = new HashMap<>();
-        sumarizacao.put(TipoDivida.DIVIDA_A_RECEBER, new ArrayList<SumarizacaoDividasDTO>());
-        sumarizacao.put(TipoDivida.DIVIDA_A_VENCER, new ArrayList<SumarizacaoDividasDTO>());
-        for (TipoCobranca tc : TipoCobranca.values()) {
-            sumarizacao.get(TipoDivida.DIVIDA_A_RECEBER).add(new SumarizacaoDividasDTO(dataFechamento, TipoDivida.DIVIDA_A_RECEBER, tc, BigDecimal.valueOf(1500), BigDecimal.valueOf(1000), BigDecimal.valueOf(500)));
-            sumarizacao.get(TipoDivida.DIVIDA_A_VENCER).add(new SumarizacaoDividasDTO(dataFechamento, TipoDivida.DIVIDA_A_VENCER, tc, BigDecimal.valueOf(1500), BigDecimal.valueOf(1000), BigDecimal.valueOf(500)));
-        }
+        
+        List<SumarizacaoDividasDTO> aReceber = dividaService.sumarizacaoDividasReceberEm(dataFechamento);
+        List<SumarizacaoDividasDTO> aVencer = dividaService.sumarizacaoDividasVencerApos(dataFechamento);
+        
+        sumarizacao.put(TipoDivida.DIVIDA_A_RECEBER, aReceber);
+        sumarizacao.put(TipoDivida.DIVIDA_A_VENCER, aVencer);
+        
         result.use(CustomMapJson.class).put("sumarizacao", sumarizacao).serialize();
     }
 	
 	@Post
 	public void obterDividasReceber(Integer page, Integer rp) {
-        List<DividaDTO> dividas = new ArrayList<>(20);
-	    for (int i = 0; i < 20; i++) {
-	        dividas.add(new DividaDTO(123, "Antonio José da Silva",
-	                "Bradesco", "11234-00", "12343212321233329932",
-	                BigDecimal.valueOf(440.04),
-	                DateUtil.parseDataPTBR("10/05/2012"), TipoCobranca.BOLETO,
-	                TipoDivida.DIVIDA_A_RECEBER));
+	    Date dataFechamento = getDataFechamento();
+	    PaginacaoVO paginacao = new PaginacaoVO(page, rp, null);
+	    
+	    List<Divida> dividas = dividaService.obterDividasReceberEm(dataFechamento, paginacao);
+	    int totalDividas = dividaService.contarDividasReceberEm(dataFechamento);
+	    
+	    List<DividaDTO> dividasDTO = new ArrayList<>();
+	    for (Divida divida : dividas) {
+	        dividasDTO.add(DividaDTO.fromDivida(divida));
 	    }
-	    result.use(FlexiGridJson.class).from(dividas).page(page).total(dividas.size()).serialize();       
+	    result.use(FlexiGridJson.class).from(dividasDTO).page(page).total(totalDividas).serialize();       
 	}
 	
 	@Get
     public void exportarDividasReceber(FileType fileType) throws IOException {
-	    List<DividaDTO> dividas = new ArrayList<>(20);
-        for (int i = 0; i < 20; i++) {
-            dividas.add(new DividaDTO(123, "Antonio José da Silva",
-                    "Bradesco", "11234-00", "12343212321233329932",
-                    BigDecimal.valueOf(440.04),
-                    DateUtil.parseDataPTBR("10/05/2012"), TipoCobranca.BOLETO,
-                    TipoDivida.DIVIDA_A_RECEBER));
+	    Date dataFechamento = getDataFechamento();
+        
+        List<Divida> dividas = dividaService.obterDividasReceberEm(dataFechamento, null);
+        List<DividaDTO> dividasDTO = new ArrayList<>(dividas.size());
+
+        for (Divida divida : dividas) {
+            dividasDTO.add(DividaDTO.fromDivida(divida));
         }
+        
         FileExporter.to("dividas-receber", fileType).inHTTPResponse(getNDSFileHeader(), null, null, 
-                dividas, DividaDTO.class, httpResponse);
+                dividasDTO, DividaDTO.class, httpResponse);
         
         result.nothing();
     }
@@ -341,29 +351,32 @@ public class FecharDiaController {
 	
 	@Post
 	public void obterDividasVencer(Integer page, Integer rp) {
-	    List<DividaDTO> dividas = new ArrayList<>(20);
-	    for (int i = 0; i < 20; i++) {
-            dividas.add(new DividaDTO(456, "Carlos Augusto Cirqueira",
-                    "Bradesco", "11234-00", "12343212321233329932",
-                    BigDecimal.valueOf(377.87),
-                    DateUtil.parseDataPTBR("10/05/2012"), TipoCobranca.BOLETO,
-                    TipoDivida.DIVIDA_A_VENCER));
+	    Date dataFechamento = getDataFechamento();
+        PaginacaoVO paginacao = new PaginacaoVO(page, rp, null);
+        
+        List<Divida> dividas = dividaService.obterDividasVencerApos(dataFechamento, paginacao);
+        int totalDividas = dividaService.contarDividasVencerApos(dataFechamento);
+        
+        List<DividaDTO> dividasDTO = new ArrayList<>();
+        for (Divida divida : dividas) {
+            dividasDTO.add(DividaDTO.fromDivida(divida));
         }
-	    result.use(FlexiGridJson.class).from(dividas).page(page).total(dividas.size()).serialize();       
+        result.use(FlexiGridJson.class).from(dividasDTO).page(page).total(totalDividas).serialize();            
 	}
 	
 	@Get
     public void exportarDividasVencer(FileType fileType) throws IOException {
-	    List<DividaDTO> dividas = new ArrayList<>(20);
-        for (int i = 0; i < 20; i++) {
-            dividas.add(new DividaDTO(456, "Carlos Augusto Cirqueira",
-                    "Bradesco", "11234-00", "12343212321233329932",
-                    BigDecimal.valueOf(377.87),
-                    DateUtil.parseDataPTBR("10/05/2012"), TipoCobranca.BOLETO,
-                    TipoDivida.DIVIDA_A_VENCER));
+	    Date dataFechamento = getDataFechamento();
+        
+        List<Divida> dividas = dividaService.obterDividasVencerApos(dataFechamento, null);
+        List<DividaDTO> dividasDTO = new ArrayList<>(dividas.size());
+
+        for (Divida divida : dividas) {
+            dividasDTO.add(DividaDTO.fromDivida(divida));
         }
+        
         FileExporter.to("dividas-vencer", fileType).inHTTPResponse(getNDSFileHeader(), null, null, 
-                dividas, DividaDTO.class, httpResponse);
+                dividasDTO, DividaDTO.class, httpResponse);
         
         result.nothing();
     }
