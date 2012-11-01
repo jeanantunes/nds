@@ -4,11 +4,13 @@ import javax.persistence.PersistenceException;
 
 import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.integracao.model.ParametroSistema;
 import br.com.abril.nds.integracao.repository.ParametroSistemaRepository;
 
 @Repository
+@Transactional("transactionManager")
 public class ParametroSistemaRepositoryImpl extends AbstractRepositoryModel<ParametroSistema, Long>
 		implements ParametroSistemaRepository {
 

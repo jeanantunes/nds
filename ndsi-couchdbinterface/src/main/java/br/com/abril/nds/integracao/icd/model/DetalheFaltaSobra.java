@@ -8,6 +8,7 @@ import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -19,6 +20,10 @@ public class DetalheFaltaSobra {
 	
 	@Column(name = "COD_SITUACAO_ACERTO", nullable = false)
 	private Integer codigoAcerto;
+
+	@ManyToOne
+	private MotivoSituacaoFaltaSobra motivoSituacao;
+	
 
 	/**
 	 * @return the icdPK
@@ -46,6 +51,20 @@ public class DetalheFaltaSobra {
 	 */
 	public void setCodigoAcerto(Integer codigoAcerto) {
 		this.codigoAcerto = codigoAcerto;
+	}
+
+	/**
+	 * @return the motivoSituacao
+	 */
+	public MotivoSituacaoFaltaSobra getMotivoSituacao() {
+		return motivoSituacao;
+	}
+
+	/**
+	 * @param motivoSituacao the motivoSituacao to set
+	 */
+	public void setMotivoSituacao(MotivoSituacaoFaltaSobra motivoSituacao) {
+		this.motivoSituacao = motivoSituacao;
 	}
 
 	

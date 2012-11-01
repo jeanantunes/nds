@@ -1,11 +1,13 @@
 package br.com.abril.nds.integracao.repository.impl;
 
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.integracao.model.LogExecucao;
 import br.com.abril.nds.integracao.repository.LogExecucaoRepository;
 
 @Repository
+@Transactional("transactionManager")
 public class LogExecucaoRepositoryImpl extends AbstractRepositoryModel<LogExecucao, Long>
 		implements LogExecucaoRepository {
 	

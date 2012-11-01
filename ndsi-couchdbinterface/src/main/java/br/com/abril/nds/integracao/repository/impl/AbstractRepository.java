@@ -5,6 +5,9 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.lightcouch.CouchDbClient;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.orm.hibernate3.HibernateTemplate;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import br.com.abril.nds.integracao.couchdb.CouchDbProperties;
 
@@ -12,7 +15,10 @@ public class AbstractRepository {
 
 	@Autowired
 	private SessionFactory sessionFactory;
-	
+		
+	@Autowired
+	private SessionFactory sessionFactoryIcd;
+		
 	@Autowired
 	private CouchDbProperties couchDbProperties;
 
@@ -20,8 +26,12 @@ public class AbstractRepository {
 		
 	}
 
-	protected Session getSession() {
+	protected Session getSession() {		
 		return sessionFactory.getCurrentSession();
+	}
+	
+	protected Session getSessionIcd() {		
+		return sessionFactoryIcd.getCurrentSession();
 	}
 	
 	/**

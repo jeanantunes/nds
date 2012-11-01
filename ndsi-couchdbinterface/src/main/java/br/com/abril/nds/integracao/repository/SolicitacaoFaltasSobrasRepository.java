@@ -9,10 +9,10 @@ import br.com.abril.nds.integracao.model.ParametroSistema;
 
 public interface SolicitacaoFaltasSobrasRepository  extends Repository<SolicitacaoFaltaSobra, Long> {
 
-	public Set<Integer> recuperaSolicitacoesSolicitadas();
+	public Set<Integer> recuperaSolicitacoesSolicitadas(Integer codigoDistribuidor);
 	
-	public Set<Integer> recuperaSolicitacoesAcertadas();
+	public Set<Integer> recuperaSolicitacoesAcertadas(Integer codigoDistribuidor);
 
-	public List<SolicitacaoDTO> recuperaSolicitacoes();
+	public List<SolicitacaoDTO> recuperaSolicitacoes(Integer codigoDistribuidor);
 
 }

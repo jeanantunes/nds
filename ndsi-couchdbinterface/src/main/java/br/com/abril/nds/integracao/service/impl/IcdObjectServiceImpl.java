@@ -3,16 +3,12 @@ package br.com.abril.nds.integracao.service.impl;
 import java.util.List;
 import java.util.Set;
 
-import javax.persistence.PersistenceException;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.integracao.dto.SolicitacaoDTO;
-import br.com.abril.nds.integracao.icd.model.IcdObject;
-import br.com.abril.nds.integracao.model.InterfaceExecucao;
-import br.com.abril.nds.integracao.repository.InterfaceExecucaoRepository;
 import br.com.abril.nds.integracao.repository.SolicitacaoFaltasSobrasRepository;
 import br.com.abril.nds.integracao.service.IcdObjectService;
 
@@ -29,21 +25,21 @@ public class IcdObjectServiceImpl implements IcdObjectService {
 	}
 	
 	@Override
-	public Set<Integer> recuperaSolicitacoesSolicitadas(String distribuidor) {
+	public Set<Integer> recuperaSolicitacoesSolicitadas(Integer distribuidor) {
 
-		return solicitacaoFaltasSobrasRepository.recuperaSolicitacoesSolicitadas() ;
+		return solicitacaoFaltasSobrasRepository.recuperaSolicitacoesSolicitadas(distribuidor) ;
 	
 	}
 
 	@Override
-	public Set<Integer> recuperaSolicitacoesAcertadas(String distribuidor) {
+	public Set<Integer> recuperaSolicitacoesAcertadas(Integer distribuidor) {
 	
-		return solicitacaoFaltasSobrasRepository.recuperaSolicitacoesAcertadas();
+		return solicitacaoFaltasSobrasRepository.recuperaSolicitacoesAcertadas(distribuidor);
 
 	}
 
 	@Override
-	public List<SolicitacaoDTO> recuperaSolicitacoes(String distribuidor) {
-		return solicitacaoFaltasSobrasRepository.recuperaSolicitacoes();
+	public List<SolicitacaoDTO> recuperaSolicitacoes(Integer distribuidor) {
+		return solicitacaoFaltasSobrasRepository.recuperaSolicitacoes(distribuidor);
 	}
 }

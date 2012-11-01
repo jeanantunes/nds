@@ -9,7 +9,9 @@ import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.integracao.dto.SolicitacaoDTO;
 import br.com.abril.nds.integracao.icd.model.DetalheFaltaSobra;
@@ -19,6 +21,7 @@ import br.com.abril.nds.integracao.repository.ParametroSistemaRepository;
 import br.com.abril.nds.integracao.repository.SolicitacaoFaltasSobrasRepository;
 
 @Repository
+@Transactional("transactionManagerIcd")
 public class SolicitacaoFaltasSobrasRepositoryImpl extends AbstractRepositoryModel<SolicitacaoFaltaSobra, Long>
 		implements SolicitacaoFaltasSobrasRepository {
 
@@ -27,7 +30,7 @@ public class SolicitacaoFaltasSobrasRepositoryImpl extends AbstractRepositoryMod
 		// TODO Auto-generated constructor stub
 	}
 
-	public Set<Integer> recuperaSolicitacoesSolicitadas() {
+	public Set<Integer> recuperaSolicitacoesSolicitadas(Integer codigoDistribuidor) {
          Criteria crit = getSession().createCriteria(SolicitacaoFaltaSobra.class);
          crit.setProjection(
         		 Projections.projectionList()
@@ -39,7 +42,7 @@ public class SolicitacaoFaltasSobrasRepositoryImpl extends AbstractRepositoryMod
 	
 	}
 
-	public Set<Integer> recuperaSolicitacoesAcertadas() {
+	public Set<Integer> recuperaSolicitacoesAcertadas(Integer codigoDistribuidor) {
         Criteria crit = getSession().createCriteria(DetalheFaltaSobra.class);
         crit.setProjection(
        		 Projections.projectionList()
@@ -52,7 +55,19 @@ public class SolicitacaoFaltasSobrasRepositoryImpl extends AbstractRepositoryMod
 	}
 
 	@Override
-	public List<SolicitacaoDTO> recuperaSolicitacoes() {
+	public List<SolicitacaoDTO> recuperaSolicitacoes(Integer codigoDistribuidor) {
+		
+		Criteria crit = getSessionIcd().createCriteria(SolicitacaoFaltaSobra.class);
+		  
+		crit.setProjection(
+	       		 Projections.projectionList()
+	                .add(Projections.property("count"))
+	                )
+	                .add(Restrictions.eq("codigoDistribuidor", codigoDistribuidor ));
+        
+		return (List<SolicitacaoDTO>) crit.list();
+	
+		
 		/*
 		select s.cod_distribuidor, s.dat_solicitacao,
 	       s.dat_solicitacao, s.hra_solicitacao, d.cod_situacao_acerto,
@@ -68,7 +83,7 @@ public class SolicitacaoFaltasSobrasRepositoryImpl extends AbstractRepositoryMod
 	--and   COD_SITUACAO_ACERTO = 'DESPREZADO'
 	order by s.cod_distribuidor, s.dat_solicitacao
 	*/
-		return null;
+		
 	}	
 	
 }

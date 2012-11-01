@@ -1,13 +1,17 @@
 package br.com.abril.nds.integracao.icd.model;
 
 import java.sql.Time;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -23,6 +27,9 @@ public class SolicitacaoFaltaSobra {
 	@Column(name = "COD_SITUACAO_SOLICITACAO")
 	private Integer codigoSituacao;
 
+	@OneToMany
+	private List<DetalheFaltaSobra> itens = new ArrayList<DetalheFaltaSobra>();
+	
 	/**
 	 * @return the icdPK
 	 */
@@ -63,6 +70,20 @@ public class SolicitacaoFaltaSobra {
 	 */
 	public void setCodigoSituacao(Integer codigoSituacao) {
 		this.codigoSituacao = codigoSituacao;
+	}
+
+	/**
+	 * @return the itens
+	 */
+	public List<DetalheFaltaSobra> getItens() {
+		return itens;
+	}
+
+	/**
+	 * @param itens the itens to set
+	 */
+	public void setItens(List<DetalheFaltaSobra> itens) {
+		this.itens = itens;
 	}
 
 	

@@ -3,12 +3,15 @@ package br.com.abril.nds.integracao.repository.impl;
 import javax.persistence.PersistenceException;
 
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.integracao.model.InterfaceExecucao;
 import br.com.abril.nds.integracao.repository.InterfaceExecucaoRepository;
 
 
 @Repository
+@Transactional("transactionManager")
 public class InterfaceExecucaoRepositoryImpl extends AbstractRepositoryModel<InterfaceExecucao, Long>
 		implements InterfaceExecucaoRepository {
 

@@ -20,6 +20,7 @@ import org.apache.commons.lang.StringUtils;
 import org.lightcouch.CouchDbClient;
 import org.lightcouch.NoDocumentException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.stereotype.Service;
@@ -106,7 +107,6 @@ public class InterfaceExecutor {
 	 * @param interfaceEnum interface a ser executada
 	 * @param codigoDistribuidor código do distribuidor
 	 */
-	@Transactional
 	public void executarInterface(String nomeUsuario, InterfaceEnum interfaceEnum, Long codigoDistribuidor) {
 		
 		// Busca dados de configuracao
@@ -141,22 +141,19 @@ public class InterfaceExecutor {
 		}
 	}
 	
-	@Transactional("transactionManagerIcd")
-	public void executarRetornosIcd(Long codigoDistribuidor) {
-		List<String> distribuidores = recuperaDistribuidores(codigoDistribuidor);
-
+	public void executarRetornosIcd(List<String> distribuidores) {		 
 		
 		for (String distribuidor: distribuidores) {
 						
-			icdObjectService.recuperaSolicitacoesAcertadas(distribuidor);
-			icdObjectService.recuperaSolicitacoesSolicitadas(distribuidor);
-			icdObjectService.recuperaSolicitacoes(distribuidor);
+//			icdObjectService.recuperaSolicitacoesAcertadas(Integer.valueOf(distribuidor));
+//			icdObjectService.recuperaSolicitacoesSolicitadas(Integer.valueOf(distribuidor));
+			icdObjectService.recuperaSolicitacoes(Integer.valueOf(distribuidor));
 		}
 		
 	}
 
-	@Transactional
-	private List<String> recuperaDistribuidores(Long codigoDistribuidor) {
+	
+	public List<String> recuperaDistribuidores(Long codigoDistribuidor) {
 		this.diretorio = parametroSistemaRepository.getParametro("INBOUND_DIR");
 		this.pastaInterna = parametroSistemaRepository.getParametro("INTERNAL_DIR");
 		List<String> distribuidores = this.getDistribuidores(this.diretorio, codigoDistribuidor);
@@ -172,7 +169,7 @@ public class InterfaceExecutor {
 	/**
 	 * Executa uma interface de carga de arquivo.
 	 */
-	@Transactional
+	
 	private void executarInterfaceArquivo(InterfaceEnum interfaceEnum, InterfaceExecucao interfaceExecucao, LogExecucao logExecucao, Long codigoDistribuidor, String nomeUsuario) {
 		
 		List<String> distribuidores = recuperaDistribuidores(codigoDistribuidor);
@@ -213,7 +210,7 @@ public class InterfaceExecutor {
 	/**
 	 * Executa a interface de carga de imagens EMS0134.
 	 */
-	@Transactional
+	
 	private void executarInterfaceImagem() {
 		
 		String diretorio = parametroSistemaRepository.getParametro("IMAGE_DIR");
@@ -275,7 +272,7 @@ public class InterfaceExecutor {
 	 * contendo comandos sql, e compacta esse arquivo em .tar.gz. Em seguida, sobe esse arquivo <br>
 	 * para o CouchDB como anexo a um documento.
 	 */
-	@Transactional
+	
 	private void executarInterfaceCorreios() {
 		
 		String diretorio = parametroSistemaRepository.getParametro("CORREIOS_DIR");
@@ -500,7 +497,7 @@ public class InterfaceExecutor {
 	/**
 	 * Loga o início da execução de uma interface de integração.
 	 */
-	@Transactional
+	
 	private LogExecucao logarInicio(Date dataInicio, InterfaceExecucao interfaceExecucao, String nomeLoginUsuario) {
 		
 		LogExecucao logExecucao = new LogExecucao();
@@ -516,7 +513,7 @@ public class InterfaceExecutor {
 	/**
 	 * Loga o processamento de um arquivo
 	 */
-	@Transactional
+	
 	private void logarArquivo(LogExecucao logExecucao, String distribuidor, String caminhoArquivo, StatusExecucaoEnum status, String mensagem) {
 		
 		if (status.equals(StatusExecucaoEnum.FALHA)) {
@@ -536,7 +533,7 @@ public class InterfaceExecutor {
 	/**
 	 * Loga o final da execução da interface de integração.
 	 */
-	@Transactional
+	
 	private void logarFim(LogExecucao logExecucao) {
 		
 		if (this.processadoComSucesso) {

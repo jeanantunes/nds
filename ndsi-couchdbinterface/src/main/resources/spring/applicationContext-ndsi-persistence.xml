@@ -18,7 +18,7 @@
 	
 	<bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
 		<property name="dataSource" ref="ndsi-datasource" />
-		<property name="packagesToScan" value="br.com.abril.nds.model" />
+		<property name="packagesToScan" value="br.com.abril.nds.integracao.model" />
 		<property name="hibernateProperties">
 			<props>			
 				<prop key="hibernate.dialect">org.hibernate.dialect.MySQL5InnoDBDialect</prop>
@@ -34,12 +34,6 @@
 			</props>
 		</property>
 	</bean>
-
-	<bean id="transactionManager"
-		class="org.springframework.orm.hibernate4.HibernateTransactionManager">
-		<property name="sessionFactory" ref="sessionFactory" />
-	</bean>
-
 	
 	<bean id="sessionFactoryIcd" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
 		<property name="dataSource" ref="icd-datasource" />
@@ -58,6 +52,12 @@
 				<prop key="hibernate.c3p0.idle_test_period">3000</prop>				
 			</props>
 		</property>
+	</bean>
+	
+	
+	<bean id="transactionManager"
+		class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>
 	
 	<bean id="transactionManagerIcd"

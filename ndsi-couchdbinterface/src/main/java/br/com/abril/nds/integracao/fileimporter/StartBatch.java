@@ -1,5 +1,7 @@
 package br.com.abril.nds.integracao.fileimporter;
 
+import java.util.List;
+
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -64,7 +66,10 @@ public class StartBatch {
 		}
 
 		if (args[2].toString().equals("-icdRetorno")) {
-			executor.executarRetornosIcd(codigoDistribuidor);
+			
+			List<String> distribuidores = executor.recuperaDistribuidores(codigoDistribuidor);
+			
+			executor.executarRetornosIcd(distribuidores);
 		} else {
 			executor.executarInterface(usuario, interfaceEnum, codigoDistribuidor);
 		}
