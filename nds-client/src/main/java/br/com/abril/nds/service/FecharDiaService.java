@@ -7,7 +7,10 @@ import br.com.abril.nds.dto.ValidacaoConfirmacaoDeExpedicaoFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoControleDeAprovacaoFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoLancamentoFaltaESobraFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoRecebimentoFisicoFecharDiaDTO;
+import br.com.abril.nds.dto.fechamentodiario.SumarizacaoDividasDTO;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
+import br.com.abril.nds.model.financeiro.Divida;
+import br.com.abril.nds.vo.PaginacaoVO;
 
 public interface FecharDiaService {
 	
@@ -90,5 +93,38 @@ public interface FecharDiaService {
 	 * @return Boolean
 	 */
 	Boolean existeGeracaoDeCobranca(Date dataOperacao);
+	
+	/**
+	 * @see DividaService#sumarizacaoDividasReceberEm(Date)
+	 */
+    List<SumarizacaoDividasDTO> sumarizacaoDividasReceberEm(Date data);
+    
+    /**
+     * @see DividaService#sumarizacaoDividasVencerApos(Date)
+     */
+    List<SumarizacaoDividasDTO> sumarizacaoDividasVencerApos(Date data);
+    
+    
+    /**
+     * @see DividaService#obterDividasReceberEm(Date, PaginacaoVO)
+     */
+    List<Divida> obterDividasReceberEm(Date data, PaginacaoVO paginacao);
+    
+    /**
+     * @see DividaService#obterDividasVencerApos(Date, PaginacaoVO)
+     */
+    List<Divida> obterDividasVencerApos(Date data, PaginacaoVO paginacao);
+
+
+    /**
+     * @see DividaService#contarDividasReceberEm(Date)
+     */
+    int contarDividasReceberEm(Date data);
+    
+    
+    /**
+     * @see DividaService#contarDividasVencerApos(Date)
+     */
+    int contarDividasVencerApos(Date data);
 
 }
