@@ -216,6 +216,8 @@ var negociacaoDividaController = $.extend(true, {
 	
 	popup_formaPgto : function() {
 		
+		$('span[name$="botoes"]').hide();
+		
 		$.postJSON(contextPath + '/financeiro/negociacaoDivida/buscarComissaoCota',
 			null, 
 			function(result) {
@@ -375,11 +377,18 @@ var negociacaoDividaController = $.extend(true, {
 	                
 	            	exibirMensagemDialog(result.tipoMensagem, result.listaMensagens);
 	            }
-			}							
+	            
+	            if(result.tipoMensagem=='SUCCESS') {
+	            	$('span[name$="botoes"]').show();
+	            } else {
+	            	$('span[name$="botoes"]').hide();
+	            }
+			},
+			negociacaoDividaController.callBackConfirmacao
+		
 		);
 	},
-	
-	
+		
 	geraLinhasCheque :function(result) {
 		
 		$('#encargos').hide();
