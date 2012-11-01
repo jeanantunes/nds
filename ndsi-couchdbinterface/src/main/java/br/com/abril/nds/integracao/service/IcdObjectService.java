@@ -7,10 +7,10 @@ import br.com.abril.nds.integracao.dto.SolicitacaoDTO;
 
 public interface IcdObjectService {
 
-	public Set<Integer> recuperaSolicitacoesSolicitadas(Integer distribuidor);
+	public Set<Integer> recuperaSolicitacoesSolicitadas(Long distribuidor);
 	
-	public Set<Integer> recuperaSolicitacoesAcertadas(Integer distribuidor);
+	public Set<Integer> recuperaSolicitacoesAcertadas(Long distribuidor);
 
-	public List<SolicitacaoDTO> recuperaSolicitacoes(Integer distribuidor);
+	public List<SolicitacaoDTO> recuperaSolicitacoes(Long distribuidor);
 	
 }

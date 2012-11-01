@@ -1,13 +1,16 @@
 package br.com.abril.nds.integracao.icd.model;
 
+import java.io.Serializable;
 import java.sql.Time;
 import java.util.Date;
 
+import javax.persistence.AssociationOverride;
+import javax.persistence.AssociationOverrides;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.IdClass;
+import javax.persistence.JoinColumn;
 import javax.persistence.Table;
 
 @Entity
@@ -15,17 +18,8 @@ import javax.persistence.Table;
 public class MotivoSituacaoFaltaSobra {
 
 	@EmbeddedId
-	private IcdPK icdPK;	
+	private IcdPK icdPK;
 	
-	@Column(name = "NUM_SEQUENCIA_MOTIVO")
-	private Integer numeroMotivo;
-	
-	@Column(name = "DSC_MOTIVO_SITUACAO")
-	private String descricaoMotivo;
-	
-	@Column(name = "COD_ORIGEM_MOTIVO")
-	private Integer codigoMotivo;
-
 	/**
 	 * @return the icdPK
 	 */
@@ -40,18 +34,29 @@ public class MotivoSituacaoFaltaSobra {
 		this.icdPK = icdPK;
 	}
 
+	@Column(name = "NUM_SEQUENCIA_MOTIVO")
+	private Integer numeroSequencia;
+	
+	@Column(name = "DSC_MOTIVO_SITUACAO")
+	private String descricaoMotivo;
+	
+	@Column(name = "COD_ORIGEM_MOTIVO")
+	private String codigoMotivo;
+
+	
+
 	/**
-	 * @return the numeroMotivo
+	 * @return the numeroSequencia
 	 */
-	public Integer getNumeroMotivo() {
-		return numeroMotivo;
+	public Integer getNumeroSequencia() {
+		return numeroSequencia;
 	}
 
 	/**
-	 * @param numeroMotivo the numeroMotivo to set
+	 * @param numeroSequencia the numeroSequencia to set
 	 */
-	public void setNumeroMotivo(Integer numeroMotivo) {
-		this.numeroMotivo = numeroMotivo;
+	public void setNumeroSequencia(Integer numeroSequencia) {
+		this.numeroSequencia = numeroSequencia;
 	}
 
 	/**
@@ -71,16 +76,16 @@ public class MotivoSituacaoFaltaSobra {
 	/**
 	 * @return the codigoMotivo
 	 */
-	public Integer getCodigoMotivo() {
+	public String getCodigoMotivo() {
 		return codigoMotivo;
 	}
 
 	/**
 	 * @param codigoMotivo the codigoMotivo to set
 	 */
-	public void setCodigoMotivo(Integer codigoMotivo) {
+	public void setCodigoMotivo(String codigoMotivo) {
 		this.codigoMotivo = codigoMotivo;
 	}
-
-
+	
+	
 }

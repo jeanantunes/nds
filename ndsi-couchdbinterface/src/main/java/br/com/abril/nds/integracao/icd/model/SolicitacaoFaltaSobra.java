@@ -10,6 +10,9 @@ import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -27,7 +30,7 @@ public class SolicitacaoFaltaSobra {
 	@Column(name = "COD_SITUACAO_SOLICITACAO")
 	private Integer codigoSituacao;
 
-	@OneToMany
+	@OneToMany(mappedBy = "icdPK")
 	private List<DetalheFaltaSobra> itens = new ArrayList<DetalheFaltaSobra>();
 	
 	/**

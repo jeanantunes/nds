@@ -1,5 +1,6 @@
 package br.com.abril.nds.integracao.fileimporter;
 
+import java.io.Console;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -26,6 +27,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.integracao.dto.SolicitacaoDTO;
 import br.com.abril.nds.integracao.model.InterfaceExecucao;
 import br.com.abril.nds.integracao.model.LogExecucao;
 import br.com.abril.nds.integracao.model.LogExecucaoArquivo;
@@ -147,7 +149,12 @@ public class InterfaceExecutor {
 						
 //			icdObjectService.recuperaSolicitacoesAcertadas(Integer.valueOf(distribuidor));
 //			icdObjectService.recuperaSolicitacoesSolicitadas(Integer.valueOf(distribuidor));
-			icdObjectService.recuperaSolicitacoes(Integer.valueOf(distribuidor));
+
+			System.out.println("["+distribuidor+"]=================================================");
+			for (SolicitacaoDTO s: icdObjectService.recuperaSolicitacoes(Long.valueOf(distribuidor))) {
+				System.out.println(s);
+			}
+			System.out.println("==================================================================");
 		}
 		
 	}

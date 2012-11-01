@@ -3,21 +3,20 @@ package br.com.abril.nds.integracao.repository.impl;
 import java.util.List;
 import java.util.Set;
 
-import javax.persistence.PersistenceException;
-
 import org.hibernate.Criteria;
+import org.hibernate.FetchMode;
 import org.hibernate.Query;
-import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.sql.JoinType;
+import org.hibernate.transform.ResultTransformer;
+import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.integracao.dto.SolicitacaoDTO;
 import br.com.abril.nds.integracao.icd.model.DetalheFaltaSobra;
 import br.com.abril.nds.integracao.icd.model.SolicitacaoFaltaSobra;
-import br.com.abril.nds.integracao.model.ParametroSistema;
-import br.com.abril.nds.integracao.repository.ParametroSistemaRepository;
 import br.com.abril.nds.integracao.repository.SolicitacaoFaltasSobrasRepository;
 
 @Repository
@@ -30,7 +29,7 @@ public class SolicitacaoFaltasSobrasRepositoryImpl extends AbstractRepositoryMod
 		// TODO Auto-generated constructor stub
 	}
 
-	public Set<Integer> recuperaSolicitacoesSolicitadas(Integer codigoDistribuidor) {
+	public Set<Integer> recuperaSolicitacoesSolicitadas(Long codigoDistribuidor) {
          Criteria crit = getSession().createCriteria(SolicitacaoFaltaSobra.class);
          crit.setProjection(
         		 Projections.projectionList()
@@ -42,7 +41,7 @@ public class SolicitacaoFaltasSobrasRepositoryImpl extends AbstractRepositoryMod
 	
 	}
 
-	public Set<Integer> recuperaSolicitacoesAcertadas(Integer codigoDistribuidor) {
+	public Set<Integer> recuperaSolicitacoesAcertadas(Long codigoDistribuidor) {
         Criteria crit = getSession().createCriteria(DetalheFaltaSobra.class);
         crit.setProjection(
        		 Projections.projectionList()
@@ -54,35 +53,26 @@ public class SolicitacaoFaltasSobrasRepositoryImpl extends AbstractRepositoryMod
 	
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public List<SolicitacaoDTO> recuperaSolicitacoes(Integer codigoDistribuidor) {
-		
-		Criteria crit = getSessionIcd().createCriteria(SolicitacaoFaltaSobra.class);
-		  
-		crit.setProjection(
-	       		 Projections.projectionList()
-	                .add(Projections.property("count"))
-	                )
-	                .add(Restrictions.eq("codigoDistribuidor", codigoDistribuidor ));
-        
-		return (List<SolicitacaoDTO>) crit.list();
-	
-		
-		/*
-		select s.cod_distribuidor, s.dat_solicitacao,
-	       s.dat_solicitacao, s.hra_solicitacao, d.cod_situacao_acerto,
-	       m.NUM_SEQUENCIA_MOTIVO, m.dsc_motivo_situacao, m.cod_origem_motivo   
-	from solicitacao_faltas_sobras s, detalhe_faltas_sobras d,  motivo_situacao_faltas_sobras m
-	where s.cod_distribuidor = d.cod_distribuidor
-	and   s.dat_solicitacao = d.dat_solicitacao
-	and   s.hra_solicitacao = d.hra_solicitacao
-	and   s.cod_distribuidor = m.cod_distribuidor
-	and   s.dat_solicitacao = m.dat_solicitacao
-	and   s.hra_solicitacao = m.hra_solicitacao
-	and   s.cod_distribuidor = 6248116
-	--and   COD_SITUACAO_ACERTO = 'DESPREZADO'
-	order by s.cod_distribuidor, s.dat_solicitacao
-	*/
+	public List<SolicitacaoDTO> recuperaSolicitacoes(Long codigoDistribuidor) {
+
+		return getSessionIcd()
+			.createCriteria(SolicitacaoFaltaSobra.class, "s")
+			.createAlias("s.itens", "d")			
+			.createAlias("d.motivoSituacaoFaltaSobra","m")			
+	        .setProjection(
+	       		 Projections.projectionList()	       		 	
+						.add(Projections.property("s.icdPK.codigoDistribuidor"), "codigoDistribuidor")
+						.add(Projections.property("s.icdPK.dataSolicitacao"), "solicitacao")
+						.add(Projections.property("d.codigoAcerto"), "codigoAcerto")
+						.add(Projections.property("m.numeroSequencia"), "numeroSequencia")
+						.add(Projections.property("m.descricaoMotivo"), "descricaoMotivo")
+						.add(Projections.property("m.codigoMotivo"), "codigoMotivo")
+						)
+	        .setResultTransformer(Transformers.aliasToBean(SolicitacaoDTO.class))	      
+	        .add(Restrictions.eq("s.icdPK.codigoDistribuidor", codigoDistribuidor ))
+	        .list();       
 		
 	}	
 	

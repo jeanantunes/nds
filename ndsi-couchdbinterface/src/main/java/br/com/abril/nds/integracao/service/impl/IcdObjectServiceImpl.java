@@ -25,21 +25,21 @@ public class IcdObjectServiceImpl implements IcdObjectService {
 	}
 	
 	@Override
-	public Set<Integer> recuperaSolicitacoesSolicitadas(Integer distribuidor) {
+	public Set<Integer> recuperaSolicitacoesSolicitadas(Long distribuidor) {
 
 		return solicitacaoFaltasSobrasRepository.recuperaSolicitacoesSolicitadas(distribuidor) ;
 	
 	}
 
 	@Override
-	public Set<Integer> recuperaSolicitacoesAcertadas(Integer distribuidor) {
+	public Set<Integer> recuperaSolicitacoesAcertadas(Long distribuidor) {
 	
 		return solicitacaoFaltasSobrasRepository.recuperaSolicitacoesAcertadas(distribuidor);
 
 	}
 
 	@Override
-	public List<SolicitacaoDTO> recuperaSolicitacoes(Integer distribuidor) {
+	public List<SolicitacaoDTO> recuperaSolicitacoes(Long distribuidor) {
 		return solicitacaoFaltasSobrasRepository.recuperaSolicitacoes(distribuidor);
 	}
 }

@@ -20,7 +20,7 @@ public class IcdPK implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Column(name = "COD_DISTRIBUIDOR")
-	private Integer codigoDistribuidor;
+	private Long codigoDistribuidor;
 
 	@Column(name = "DAT_SOLICITACAO")
 	private Date dataSolicitacao;
@@ -31,14 +31,14 @@ public class IcdPK implements Serializable {
 	/**
 	 * @return the codigoDistribuidor
 	 */
-	public Integer getCodigoDistribuidor() {
+	public Long getCodigoDistribuidor() {
 		return codigoDistribuidor;
 	}
 
 	/**
 	 * @param codigoDistribuidor the codigoDistribuidor to set
 	 */
-	public void setCodigoDistribuidor(Integer codigoDistribuidor) {
+	public void setCodigoDistribuidor(Long codigoDistribuidor) {
 		this.codigoDistribuidor = codigoDistribuidor;
 	}
 

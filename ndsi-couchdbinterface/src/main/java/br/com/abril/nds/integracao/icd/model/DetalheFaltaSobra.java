@@ -6,10 +6,14 @@ import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.IdClass;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
+
+import org.hibernate.FetchMode;
 
 @Entity
 @Table(name = "DETALHE_FALTAS_SOBRAS")
@@ -19,11 +23,16 @@ public class DetalheFaltaSobra {
 	private IcdPK icdPK;	
 	
 	@Column(name = "COD_SITUACAO_ACERTO", nullable = false)
-	private Integer codigoAcerto;
-
-	@ManyToOne
-	private MotivoSituacaoFaltaSobra motivoSituacao;
+	private String codigoAcerto;
 	
+	
+	@ManyToOne(fetch=FetchType.LAZY)	
+	@JoinColumns(value = { 
+			@JoinColumn (name = "COD_DISTRIBUIDOR", referencedColumnName = "COD_DISTRIBUIDOR", insertable=false, updatable=false)
+			, @JoinColumn (name = "DAT_SOLICITACAO", referencedColumnName = "DAT_SOLICITACAO", insertable=false, updatable=false)
+			, @JoinColumn (name = "HRA_SOLICITACAO", referencedColumnName = "HRA_SOLICITACAO", insertable=false, updatable=false)
+	})
+	private MotivoSituacaoFaltaSobra motivoSituacaoFaltaSobra;
 
 	/**
 	 * @return the icdPK
@@ -42,32 +51,32 @@ public class DetalheFaltaSobra {
 	/**
 	 * @return the codigoAcerto
 	 */
-	public Integer getCodigoAcerto() {
+	public String getCodigoAcerto() {
 		return codigoAcerto;
 	}
 
 	/**
 	 * @param codigoAcerto the codigoAcerto to set
 	 */
-	public void setCodigoAcerto(Integer codigoAcerto) {
+	public void setCodigoAcerto(String codigoAcerto) {
 		this.codigoAcerto = codigoAcerto;
 	}
 
 	/**
-	 * @return the motivoSituacao
+	 * @return the motivoSituacaoFaltaSobra
 	 */
-	public MotivoSituacaoFaltaSobra getMotivoSituacao() {
-		return motivoSituacao;
+	public MotivoSituacaoFaltaSobra getMotivoSituacaoFaltaSobra() {
+		return motivoSituacaoFaltaSobra;
 	}
 
 	/**
-	 * @param motivoSituacao the motivoSituacao to set
+	 * @param motivoSituacaoFaltaSobra the motivoSituacaoFaltaSobra to set
 	 */
-	public void setMotivoSituacao(MotivoSituacaoFaltaSobra motivoSituacao) {
-		this.motivoSituacao = motivoSituacao;
+	public void setMotivoSituacaoFaltaSobra(
+			MotivoSituacaoFaltaSobra motivoSituacaoFaltaSobra) {
+		this.motivoSituacaoFaltaSobra = motivoSituacaoFaltaSobra;
 	}
 
 	
-
 	
 }
