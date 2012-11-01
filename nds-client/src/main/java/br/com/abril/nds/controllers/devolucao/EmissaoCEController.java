@@ -218,8 +218,11 @@ public class EmissaoCEController {
 			filtro.setPersonalizada(false);
 		
 		if(filtro.getPersonalizada()) {
+			
 			List<CapaDTO> capas =  chamadaEncalheService.obterIdsCapasChamadaEncalhe(filtro.getDtRecolhimentoDe(), filtro.getDtRecolhimentoAte());
+			
 			result.include("capas", capas);
+			
 		}
 		
 		result.include("cotasEmissao", cotasEmissao);

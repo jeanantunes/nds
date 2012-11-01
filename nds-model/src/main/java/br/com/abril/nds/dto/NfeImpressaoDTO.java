@@ -81,8 +81,14 @@ public class NfeImpressaoDTO implements Serializable{
 
 	private String destinatarioTelefone;
 	
-	private String boxRota;
-
+	private Integer destinatarioCodigoBox;
+	
+	private String destinatarioNomeBox;
+	
+	private String destinatarioCodigoRota;
+	
+	private String destinatarioDescricaoRota;
+	
 	private BigDecimal valorBaseICMS;
 
 	private BigDecimal valorICMS;
@@ -445,12 +451,36 @@ public class NfeImpressaoDTO implements Serializable{
 		this.destinatarioTelefone = destinatarioTelefone;
 	}
 
-	public String getBoxRota() {
-		return boxRota;
+	public Integer getDestinatarioCodigoBox() {
+		return destinatarioCodigoBox;
 	}
 
-	public void setBoxRota(String boxRota) {
-		this.boxRota = boxRota;
+	public void setDestinatarioCodigoBox(Integer destinatarioCodigoBox) {
+		this.destinatarioCodigoBox = destinatarioCodigoBox;
+	}
+
+	public String getDestinatarioNomeBox() {
+		return destinatarioNomeBox;
+	}
+
+	public void setDestinatarioNomeBox(String destinatarioNomeBox) {
+		this.destinatarioNomeBox = destinatarioNomeBox;
+	}
+
+	public String getDestinatarioCodigoRota() {
+		return destinatarioCodigoRota;
+	}
+
+	public void setDestinatarioCodigoRota(String destinatarioCodigoRota) {
+		this.destinatarioCodigoRota = destinatarioCodigoRota;
+	}
+
+	public String getDestinatarioDescricaoRota() {
+		return destinatarioDescricaoRota;
+	}
+
+	public void setDestinatarioDescricaoRota(String destinatarioDescricaoRota) {
+		this.destinatarioDescricaoRota = destinatarioDescricaoRota;
 	}
 
 	public BigDecimal getValorBaseICMS() {

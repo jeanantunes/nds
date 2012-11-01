@@ -9,10 +9,12 @@ import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.util.export.Export.Alignment;
 
 @Exportable
-public class CotasImpressaoNfeDTO extends NfeDTO {
+public class NotasCotasImpressaoNfeDTO extends NfeDTO {
 
-	public CotasImpressaoNfeDTO(Cota c, BigInteger totalExemplares, BigDecimal vlrTotal, BigDecimal vlrTotalDesconto) {
+	public NotasCotasImpressaoNfeDTO(Long numeroNota, boolean notaImpressa, Cota c, BigInteger totalExemplares, BigDecimal vlrTotal, BigDecimal vlrTotalDesconto) {
 		super();
+		this.numeroNota = numeroNota;
+		this.notaImpressa = notaImpressa;
 		this.idCota = c.getId();
 		this.nomeCota = c.getPessoa().getNome();
 		this.vlrTotal = vlrTotal.setScale(2, BigDecimal.ROUND_DOWN);;
@@ -25,6 +27,9 @@ public class CotasImpressaoNfeDTO extends NfeDTO {
 	 */
 	private static final long serialVersionUID = 5371527354389347503L;
 
+	@Export(label="Núm. Nota", alignment=Alignment.LEFT)
+	private Long numeroNota;
+	
 	@Export(label="Id Cota", alignment=Alignment.LEFT)
 	private Long idCota;
 	
@@ -42,28 +47,8 @@ public class CotasImpressaoNfeDTO extends NfeDTO {
 	
 	private boolean notaImpressa;
 
-	public boolean isNotaImpressa() {
-		return notaImpressa;
-	}
-
-	public void setNotaImpressa(boolean notaImpressa) {
-		this.notaImpressa = notaImpressa;
-	}
-
-	public void setVlrTotal(BigDecimal vlrTotal) {
-		this.vlrTotal = vlrTotal;
-	}
-
-	public BigDecimal getVlrTotal() {
-		return vlrTotal;
-	}
-	
-	public void setVlrTotalDesconto(BigDecimal vlrTotalDesconto) {
-		this.vlrTotalDesconto = vlrTotalDesconto;
-	}
-
-	public BigDecimal getVlrTotalDesconto() {
-		return vlrTotalDesconto;
+	public Long getNumeroNota() {
+		return numeroNota;
 	}
 
 	public Long getIdCota() {
@@ -78,8 +63,16 @@ public class CotasImpressaoNfeDTO extends NfeDTO {
 		return totalExemplares;
 	}
 
-	public void setTotalExemplares(BigInteger totalExemplares) {
-		this.totalExemplares = totalExemplares;
+	public BigDecimal getVlrTotal() {
+		return vlrTotal;
+	}
+
+	public BigDecimal getVlrTotalDesconto() {
+		return vlrTotalDesconto;
+	}
+
+	public boolean isNotaImpressa() {
+		return notaImpressa;
 	}
 
 }

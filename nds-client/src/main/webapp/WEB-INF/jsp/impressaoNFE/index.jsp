@@ -126,7 +126,7 @@
 					<img src="images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />Imprimir Documento</a>
 					</span>
 				<span class="bt_sellAll" style="float: right;" id="btSel"><label for="sel">Selecionar Todos</label><input
-					type="checkbox" id="selTodasAsCotas" name="Todos" onclick="impressaoNfeController.checkTodasAsCotas();" style="float: left; margin-right: 30px;" /></span>
+					type="checkbox" id="selTodasAsNotas" name="Todos" onclick="impressaoNfeController.checkTodasAsNotas();" style="float: left; margin-right: 30px;" /></span>
 			</div>
 
 		</fieldset>

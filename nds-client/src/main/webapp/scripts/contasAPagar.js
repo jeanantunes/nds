@@ -392,8 +392,6 @@ var contasAPagarController = $.extend(true, {
 		params.push({name: 'filtro.produtoConsignado', value: $("#produtoConsignado").val()});
 		params.push({name: 'filtro.edicaoConsignado',  value: $("#edicaoConsignado").val()});
 		
-		alert(params[params.length-1]);
-		
 		$.postJSON(
 			contasAPagarController.path + 'pesquisarConsignado.json',
 			params,
