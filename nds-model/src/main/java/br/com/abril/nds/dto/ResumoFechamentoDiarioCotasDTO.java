@@ -61,7 +61,24 @@ public class ResumoFechamentoDiarioCotasDTO implements Serializable {
      */
     public static enum TipoResumo {
             
-    	TOTAL, ATIVAS, AUSENTES_REPARTE, AUSENTES_ENCALHE, NOVAS, INATIVAS;
+    	TOTAL("total"), 
+    	ATIVAS("ativas"), 
+    	AUSENTES_REPARTE("ausentes-reparte"), 
+    	AUSENTES_ENCALHE("ausentes-encalhe"), 
+    	NOVAS("novas"), 
+    	INATIVAS("inativas");
+    	
+    	private String descricao;
+    	
+    	private TipoResumo(String descricao) {
+    		
+    		this.descricao = descricao;
+    	}
+    	
+    	public String getDescricao() {
+    		
+			return descricao;
+		}
     }
 
 	/**

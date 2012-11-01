@@ -1,6 +1,6 @@
 var fecharDiaController =  $.extend(true, {
 	
-	init : function(){
+	init : function() {
 		
 		$(".recebeFisicoGrid", fecharDiaController.workspace).flexigrid({
 			preProcess: fecharDiaController.executarPreProcessamentoRecebimentoFisicoNaoConfirmado,
@@ -348,6 +348,31 @@ var fecharDiaController =  $.extend(true, {
             height : 220
         });
 		
+        $(".cotasGrid", fecharDiaController.workspace).flexigrid({
+            url: contextPath + '/administracao/fecharDia/obterDetalhesResumoCota',
+            autoload: false,
+            dataType : 'json',
+            colModel : [{
+                display : 'Cota',
+                name : 'numeroCota',
+                width : 50,
+                sortable : false,
+                align : 'left'
+            },{
+                display : 'Nome',
+                name : 'nome',
+                width : 250,
+                sortable : false,
+                align : 'left'
+            }],
+            sortname : "numeroCota",
+            sortorder : "asc",
+            usepager : false,
+            useRp : false,
+            showTableToggleBtn : true,
+            width : 330,
+            height : 220
+        });
 	},
 	
 	executarPreProcessamentoRecebimentoFisicoNaoConfirmado : function(resultado){
@@ -552,16 +577,41 @@ var fecharDiaController =  $.extend(true, {
 		      
 	},
 	
-	popup_cotasGrid : function(){
+	exportacaoDetalhesCota : function(fileType, tipoResumo) {
+		
+		window.location = contextPath + "/administracao/fecharDia/exportarCotas?fileType=" + fileType + "&tipoResumo=" + tipoResumo; 
+	},
 	
-		$( "#dialog-cota-grid", fecharDiaController.workspace ).dialog({
+	popup_cotasGrid : function(tipoResumo) {
+		
+		var _this = this;
+		
+		$("#lnkExportacaoCotaXLS").click(function(event) {
+			_this.exportacaoDetalhesCota("XLS", tipoResumo);
+		});
+		
+		$("#lnkExportacaoCotaPDF").click(function(event) {
+			_this.exportacaoDetalhesCota("PDF", tipoResumo);
+		});
+		
+		$("#dialog-cota-grid", fecharDiaController.workspace).dialog({
 			resizable: false,
-			height:390,
-			width:380,
+			height: 410,
+			width: 380,
 			modal: true,
+			open: function(event, ui) {
+				$(".cotasGrid", fecharDiaController.workspace).flexOptions({
+					url: contextPath + '/administracao/fecharDia/obterDetalhesResumoCota',
+					params: [
+				       {name: 'tipoResumo', value: tipoResumo}
+					]
+				});
+				
+			    $(".cotasGrid", fecharDiaController.workspace).flexReload();
+			},
 			buttons: {
 				"Fechar": function() {
-					$( this ).dialog( "close" );
+					$(this).dialog( "close" );
 				},
 			},
 			form: $("#dialog-cota-grid", fecharDiaController.workspace).parents("form")
@@ -957,10 +1007,10 @@ var fecharDiaController =  $.extend(true, {
 		
 		linhaResumo += "<td width=\"222\" align=\"center\" style=\"border-bottom:1px solid #ccc;\">" + resumo.TOTAL + "</td>";
 		linhaResumo += "<td width=\"153\" align=\"center\" style=\"border-bottom:1px solid #ccc;\">" + resumo.ATIVAS +"</td>";
-		linhaResumo += "<td width=\"158\" align=\"center\" style=\"border-bottom:1px solid #ccc;\"><a href=\"javascript:;\" onclick=\"fecharDiaController.popup_cotasGrid();\">" + resumo.AUSENTES_REPARTE +"</a></td>";
-		linhaResumo += "<td width=\"183\" align=\"center\" style=\"border-bottom:1px solid #ccc;\"><a href=\"javascript:;\" onclick=\"fecharDiaController.popup_cotasGrid();\">" + resumo.AUSENTES_ENCALHE +"</a></td>";
-		linhaResumo += "<td width=\"183\" align=\"center\" style=\"border-bottom:1px solid #ccc;\"><a href=\"javascript:;\" onclick=\"fecharDiaController.popup_cotasGrid();\">" + resumo.NOVAS +"</a></td>";
-		linhaResumo += "<td width=\"188\" align=\"center\" style=\"border-bottom:1px solid #ccc;\"><a href=\"javascript:;\" onclick=\"fecharDiaController.popup_cotasGrid();\">" + resumo.INATIVAS +"</a></td>";
+		linhaResumo += "<td width=\"158\" align=\"center\" style=\"border-bottom:1px solid #ccc;\"><a href=\"javascript:;\" onclick=\"fecharDiaController.popup_cotasGrid(\'AUSENTES_REPARTE\');\">" + resumo.AUSENTES_REPARTE +"</a></td>";
+		linhaResumo += "<td width=\"183\" align=\"center\" style=\"border-bottom:1px solid #ccc;\"><a href=\"javascript:;\" onclick=\"fecharDiaController.popup_cotasGrid(\'AUSENTES_ENCALHE\');\">" + resumo.AUSENTES_ENCALHE +"</a></td>";
+		linhaResumo += "<td width=\"183\" align=\"center\" style=\"border-bottom:1px solid #ccc;\"><a href=\"javascript:;\" onclick=\"fecharDiaController.popup_cotasGrid(\'NOVAS\');\">" + resumo.NOVAS +"</a></td>";
+		linhaResumo += "<td width=\"188\" align=\"center\" style=\"border-bottom:1px solid #ccc;\"><a href=\"javascript:;\" onclick=\"fecharDiaController.popup_cotasGrid(\'INATIVAS\');\">" + resumo.INATIVAS +"</a></td>";
 		linhaResumo += "</tr>";
 		
 		return linhaResumo;
