@@ -253,6 +253,7 @@ public class NegociacaoDividaController {
 			
 			case QUINZENAL:
 				return DateUtil.adicionarDias(dataAnterior, 15);	
+				//TODO
 			
 			case MENSAL:
 				

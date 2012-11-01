@@ -1,6 +1,7 @@
 <head>
 <script type="text/javascript"
 	src="${pageContext.request.contextPath}/scripts/negociacaoDivida.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.price_format.1.7.js"></script>
 
 
 
@@ -75,7 +76,7 @@
 			<fieldset>
 				<legend>Dados da D&iacute;vida</legend>
 				<table class="negociacaoDetalheGrid"></table>
-				<br /> <strong>Saldo R$: </strong> <br />
+				<br /> <table> <tr><td> <strong>Saldo R$: </strong> </td> <td> <div id="id_saldo"></div></td></tr> </table> <br />
 			</fieldset>
 		</div>
 	
@@ -112,11 +113,11 @@
 						<tr>
 							<td width="6%">Atual:</td>
 							<td width="12%"><input name="" type="text" id="comissaoAtualCota"
-								style="width: 80px;" /></td>
+								style="width: 80px;" readonly="readonly" /></td>
 							<td width="5%">%</td>
 							<td width="7%">Utilizar:</td>
 							<td width="13%"><input name="" type="text" id="comissaoUtilizar"
-								style="width: 80px;" /></td>
+								style="width: 80px;" onblur="negociacaoDividaController.utilizarAlterado()" /></td>
 							<td width="57%" colspan="3">% para pagamento da
 								d&iacute;vida</td>
 						</tr>
@@ -125,8 +126,8 @@
 						<tr>
 							<td colspan="6" nowrap="nowrap">Comiss&atilde;o da Cota
 								enquanto houver saldo de d&iacute;vida:</td>
-							<td width="85"><input name="input2" type="text"
-								style="width: 80px;" /></td>
+							<td width="85"><input id="comissaoComSaldo" type="text"
+								style="width: 80px;" readonly="readonly" /></td>
 							<td width="358">%</td>
 						</tr>
 					</table>
