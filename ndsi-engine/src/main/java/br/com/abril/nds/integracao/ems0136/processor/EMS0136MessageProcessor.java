@@ -153,36 +153,15 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 		lancamentoParcial.setRecolhimentoFinal(input.getDataRecolhimento());
 		lancamentoParcial.setStatus(status);		
 		
-		// Novo Lançamento:
-		Date dtAgora = new Date();
-		Lancamento lancamento = new Lancamento();
-		lancamento.setDataCriacao(dtAgora);
-		lancamento.setDataLancamentoPrevista(input.getDataLancamento());
-		lancamento.setDataLancamentoDistribuidor(input.getDataLancamento());
-		lancamento.setDataRecolhimentoDistribuidor(input.getDataRecolhimento());
-		lancamento.setDataRecolhimentoPrevista(input.getDataRecolhimento());
-		lancamento.setProdutoEdicao(produtoEdicao);
-		lancamento.setTipoLancamento(TipoLancamento.PARCIAL);
-		lancamento.setDataStatus(dtAgora);
-		lancamento.setReparte(BigInteger.ZERO);
-		lancamento.setRepartePromocional(BigInteger.ZERO);
-		lancamento.setSequenciaMatriz(Integer.valueOf(0));
-		
-		TipoLancamentoParcial tipoLancamentoParcial = 
-				this.obterTipoLancamentoParcial(input);
-		
-		// Novo Período Lançamento Parcial:
-		PeriodoLancamentoParcial pLancamentoParcial = new PeriodoLancamentoParcial();
-		pLancamentoParcial.setLancamentoParcial(lancamentoParcial);
-		pLancamentoParcial.setLancamento(lancamento);
-		pLancamentoParcial.setStatus(status);
-		pLancamentoParcial.setNumeroPeriodo(input.getNumeroPeriodo());
-		pLancamentoParcial.setTipo(tipoLancamentoParcial);
-		
-		// Persistir os novos objetos:
+		// Persistir:
 		this.getSession().persist(lancamentoParcial);
-		this.getSession().persist(lancamento);
-		this.getSession().persist(pLancamentoParcial);
+		
+		// Novo Lançamento:
+		Lancamento lancamento = this.gerarNovoLancamento(input, produtoEdicao);
+		
+		// Novo Período Lançamento Parcial;
+		this.gerarNovoPeriodoLancamentoParcial(input, lancamentoParcial, 
+				lancamento);
 	}
 
 	/**
@@ -207,6 +186,60 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 		return status;
 	}
 	
+	/**
+	 * Gera um novo Lançamento.
+	 * 
+	 * @param input
+	 * @param produtoEdicao
+	 * 
+	 * @return
+	 */
+	private Lancamento gerarNovoLancamento(EMS0136Input input,
+			ProdutoEdicao produtoEdicao) {
+		
+		Date dtAgora = new Date();
+		Lancamento lancamento = new Lancamento();
+		lancamento.setDataCriacao(dtAgora);
+		lancamento.setDataLancamentoPrevista(input.getDataLancamento());
+		lancamento.setDataLancamentoDistribuidor(input.getDataLancamento());
+		lancamento.setDataRecolhimentoDistribuidor(input.getDataRecolhimento());
+		lancamento.setDataRecolhimentoPrevista(input.getDataRecolhimento());
+		lancamento.setProdutoEdicao(produtoEdicao);
+		lancamento.setTipoLancamento(TipoLancamento.PARCIAL);
+		lancamento.setDataStatus(dtAgora);
+		lancamento.setReparte(BigInteger.ZERO);
+		lancamento.setRepartePromocional(BigInteger.ZERO);
+		lancamento.setSequenciaMatriz(Integer.valueOf(0));
+		
+		this.getSession().persist(lancamento);
+		
+		return lancamento;
+	}
+
+	/**
+	 * Gerar novo Período Lançamento Parcial.
+	 * 
+	 * @param input
+	 * @param lancamentoParcial
+	 * @param lancamento
+	 * @return
+	 */
+	private PeriodoLancamentoParcial gerarNovoPeriodoLancamentoParcial(
+			EMS0136Input input, LancamentoParcial lancamentoParcial, 
+			Lancamento lancamento) {
+		
+		PeriodoLancamentoParcial pLancamentoParcial = new PeriodoLancamentoParcial();
+		pLancamentoParcial.setLancamentoParcial(lancamentoParcial);
+		pLancamentoParcial.setLancamento(lancamento);
+		pLancamentoParcial.setStatus(this.obterStatusLancamentoParcial(input));
+		pLancamentoParcial.setNumeroPeriodo(input.getNumeroPeriodo());
+		pLancamentoParcial.setTipo(this.obterTipoLancamentoParcial(input));
+		
+		this.getSession().persist(pLancamentoParcial);
+		
+		return pLancamentoParcial;
+	}
+
 	/**
 	 * Retorna o Tipo de Lançamento Parcial que esta definido no arquivo.
 	 * 
@@ -245,6 +278,10 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 			hasAlteracao = true;
 		}
 		
+		if (hasAlteracao) {
+			this.getSession().update(lancamentoParcial);
+		}
+		
 		// Update do Período:
 		Integer numeroPeriodo = input.getNumeroPeriodo();
 		for (PeriodoLancamentoParcial periodo : lancamentoParcial.getPeriodos()) {
@@ -259,12 +296,20 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 				
 				this.getSession().update(periodo);
 				this.getSession().update(lancamento);
+				
+				return;
 			}
 		}
 		
-		if (hasAlteracao) {
-			this.getSession().update(lancamentoParcial);
-		}
+		
+		/*
+		 * Cenário em que não existe "Período Lançamento Parcial" com o mesmo
+		 * "Número de Período":
+		 */
+		Lancamento lancamento = this.gerarNovoLancamento(input, 
+				lancamentoParcial.getProdutoEdicao());
+		this.gerarNovoPeriodoLancamentoParcial(input, lancamentoParcial, 
+				lancamento);		
 	}
 	
 	
