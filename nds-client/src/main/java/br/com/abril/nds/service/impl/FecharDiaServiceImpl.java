@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.dto.ResumoFechamentoDiarioCotasDTO;
 import br.com.abril.nds.dto.ValidacaoConfirmacaoDeExpedicaoFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoControleDeAprovacaoFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoGeracaoCobrancaFecharDiaDTO;
@@ -15,8 +16,11 @@ import br.com.abril.nds.dto.ValidacaoLancamentoFaltaESobraFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoRecebimentoFisicoFecharDiaDTO;
 import br.com.abril.nds.dto.fechamentodiario.SumarizacaoDividasDTO;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
+import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.financeiro.Divida;
+import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.FecharDiaRepository;
 import br.com.abril.nds.repository.FormaCobrancaRepository;
 import br.com.abril.nds.service.DividaService;
@@ -39,6 +43,9 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 	
 	@Autowired
 	private DividaService dividaService;
+
+	@Autowired
+	private CotaRepository cotaRepository;
 	
 	@Override
 	@Transactional
@@ -126,6 +133,32 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		}
 		 
 		return true;
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional(readOnly = true)
+	public ResumoFechamentoDiarioCotasDTO obterResumoCotas(Date dataFechamento) {
+
+		Long quantidadeTotal = this.cotaRepository.obterQuantidadeCotas(null);
+		
+		Long quantidadeAtivas = this.cotaRepository.obterQuantidadeCotas(SituacaoCadastro.ATIVO);
+		
+		List<Cota> ausentesExpedicaoReparte = 
+			this.cotaRepository.obterCotasAusentesNaExpedicaoDoReparteEm(dataFechamento);
+		
+		List<Cota> ausentesRecolhimentoEncalhe = 
+			this.cotaRepository.obterCotasAusentesNoRecolhimentoDeEncalheEm(dataFechamento);
+		
+		List<Cota> novas = this.cotaRepository.obterCotasComInicioAtividadeEm(dataFechamento);
+		
+		List<Cota> inativas = this.cotaRepository.obterCotas(SituacaoCadastro.INATIVO);
+		
+		return new ResumoFechamentoDiarioCotasDTO(
+			quantidadeTotal, quantidadeAtivas, ausentesExpedicaoReparte, 
+				ausentesRecolhimentoEncalhe, novas, inativas);
 	}
 
     /**
