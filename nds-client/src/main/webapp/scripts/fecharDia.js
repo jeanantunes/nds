@@ -222,6 +222,132 @@ var fecharDiaController =  $.extend(true, {
 			height : 255
 		});
 		
+		$(".dividasReceberGrid", fecharDiaController.workspace).flexigrid({
+            url: contextPath + '/administracao/fecharDia/obterDividasReceber',
+            autoload: false,
+            dataType : 'json',
+            colModel : [ {
+                display : 'Cota',
+                name : 'numeroCota',
+                width : 40,
+                sortable : false,
+                align : 'left'
+            },{
+                display : 'Nome',
+                name : 'nomeCota',
+                width : 100,
+                sortable : false,
+                align : 'left'
+            }, {
+                display : 'Banco',
+                name : 'nomeBanco',
+                width : 50,
+                sortable : false,
+                align : 'left'
+            }, {
+                display : 'Conta-Corrente',
+                name : 'contaCorrente',
+                width : 80,
+                sortable : false,
+                align : 'left'
+            }, {
+                display : 'Nosso Número',
+                name : 'nossoNumero',
+                width : 120,
+                sortable : false,
+                align : 'left'
+            }, {
+                display : 'Valor R$',
+                name : 'valorFormatado',
+                width : 70,
+                sortable : false,
+                align : 'right'
+            }, {
+                display : 'Dt. Vencto',
+                name : 'dataVencimentoFormatada',
+                width : 80,
+                sortable : false,
+                align : 'center'
+            }, {
+                display : 'Forma Pgto',
+                name : 'descricaoFormaPagamento',
+                width : 90,
+                sortable : false,
+                align : 'left'
+            }],
+            sortname : "numeroCota",
+            sortorder : "asc",
+            usepager : true,
+            useRp : true,
+            rp : 15,
+            showTableToggleBtn : true,
+            width : 750,
+            height : 220
+        });
+        
+        $(".dividasVencerGrid", fecharDiaController.workspace).flexigrid({
+            url: contextPath + '/administracao/fecharDia/obterDividasVencer',
+            autoload: false,
+            dataType : 'json',
+            colModel : [ {
+                display : 'Cota',
+                name : 'numeroCota',
+                width : 40,
+                sortable : false,
+                align : 'left'
+            },{
+                display : 'Nome',
+                name : 'nomeCota',
+                width : 100,
+                sortable : false,
+                align : 'left'
+            }, {
+                display : 'Banco',
+                name : 'nomeBanco',
+                width : 50,
+                sortable : false,
+                align : 'left'
+            }, {
+                display : 'Conta-Corrente',
+                name : 'contaCorrente',
+                width : 80,
+                sortable : false,
+                align : 'left'
+            }, {
+                display : 'Nosso Número',
+                name : 'nossoNumero',
+                width : 120,
+                sortable : false,
+                align : 'left'
+            }, {
+                display : 'Valor R$',
+                name : 'valorFormatado',
+                width : 70,
+                sortable : false,
+                align : 'right'
+            }, {
+                display : 'Dt. Vencto',
+                name : 'dataVencimentoFormatada',
+                width : 80,
+                sortable : false,
+                align : 'center'
+            }, {
+                display : 'Forma Pgto',
+                name : 'descricaoFormaPagamento',
+                width : 90,
+                sortable : false,
+                align : 'left'
+            }],
+            sortname : "numeroCota",
+            sortorder : "asc",
+            usepager : true,
+            useRp : true,
+            rp : 15,
+            showTableToggleBtn : true,
+            width : 750,
+            height : 220
+        });
+		
 	},
 	
 	executarPreProcessamentoRecebimentoFisicoNaoConfirmado : function(resultado){
@@ -442,23 +568,47 @@ var fecharDiaController =  $.extend(true, {
 		});
 	},
 	
-	popup_boletos_baixados : function(){
+	popup_dividas_receber : function() {
 	
-		$( "#dialog-boletos-baixados", fecharDiaController.workspace ).dialog({
+		$("#dialog-dividas-receber", fecharDiaController.workspace).dialog({
 			resizable: false,
 			height:430,
 			width:800,
 			modal: true,
+			open: function(event, ui) {
+			    $(".dividasReceberGrid", fecharDiaController.workspace).flexReload();
+			},
 			buttons: {
 				"Fechar": function() {
 					$( this ).dialog( "close" );
 				},
 				
 			},
-			form: $("#dialog-boletos-baixados", fecharDiaController.workspace).parents("form")
+			form: $("#dialog-dividas-receber", fecharDiaController.workspace).parents("form")
 		});	
 		      
 	},
+	
+	popup_dividas_vencer : function() {
+    
+        $("#dialog-dividas-vencer", fecharDiaController.workspace).dialog({
+            resizable: false,
+            height:430,
+            width:800,
+            modal: true,
+            open: function(event, ui) {
+                $(".dividasVencerGrid", fecharDiaController.workspace).flexReload();
+            },
+            buttons: {
+                "Fechar": function() {
+                    $( this ).dialog( "close" );
+                },
+                
+            },
+            form: $("#dialog-dividas-vencer", fecharDiaController.workspace).parents("form")
+        }); 
+              
+    },
 	
 	//callback function to bring a hidden box back
 	callback : function(){
@@ -710,8 +860,17 @@ var fecharDiaController =  $.extend(true, {
 		$.postJSON(contextPath + "/administracao/fecharDia/obterSumarizacaoDividas",
 				   null,
 				   function(result) {
-				       fecharDiaController.processarResumoDividasReceber(result.sumarizacao.DIVIDAS_A_RECEBER);
-				       fecharDiaController.processarResumoDividasVencer(result.sumarizacao.DIVIDAS_A_VENCER);
+				       if (result) {
+				            if (result.mensagens) {
+                                exibirMensagemDialog(result.mensagens.tipoMensagem, result.mensagens.listaMensagens);
+                            } else {
+				                $('#tabela_dividas_receber_vencer', fecharDiaController.workspace).show();
+				                fecharDiaController.processarResumoDividasReceber(result.sumarizacao.DIVIDA_A_RECEBER);
+				                fecharDiaController.processarResumoDividasVencer(result.sumarizacao.DIVIDA_A_VENCER);
+                            }
+				       } else {
+				           $('#tabela_dividas_receber_vencer', fecharDiaController.workspace).hide();
+				       }
 					});
 	},
 	
