@@ -198,7 +198,6 @@ var negociacaoDividaController = $.extend(true, {
         });
 				
 		return params;
-		//TODO
 	},
 	
 	popup_detalhe : function(idCobranca) {
