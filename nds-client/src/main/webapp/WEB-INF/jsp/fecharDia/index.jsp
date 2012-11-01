@@ -137,13 +137,20 @@
 		<div id="dialog-cota-grid" title="Cotas" style="display:none;">
 			<fieldset style="width:330px;">
 		    	<legend>Cotas</legend>
-		        <table class="popCotasGrid"></table>
-		    </fieldset>
-		    <br clear="all" />
-		    <span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="../images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
-		
-		<span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="../images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
-		
+			    
+				<table class="cotasGrid"></table>
+			      
+				<span class="bt_novos" title="Gerar Arquivo">
+				  	<a id="lnkExportacaoCotaXLS" href="#" title="Arquivo">
+						<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo
+					</a>
+				</span>
+				<span class="bt_novos" title="Imprimir">
+					<a id="lnkExportacaoCotaPDF" href="#" title="Imprimir">
+						<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />Imprimir
+				 	</a>
+				</span>
+			</fieldset>
 		</div>
 	</form>
 
