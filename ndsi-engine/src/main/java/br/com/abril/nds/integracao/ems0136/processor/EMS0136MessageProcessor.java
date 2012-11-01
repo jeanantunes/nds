@@ -81,7 +81,16 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 				produtoEdicao);
 		if (lancamentoParcial == null) {
 			
-			this.gerarNovoLancamentoParcial(input, produtoEdicao);
+			// Novo Lançamento Parcial:
+			lancamentoParcial = this.gerarNovoLancamentoParcial(input, 
+					produtoEdicao);
+			
+			// Novo Lançamento:
+			Lancamento lancamento = this.gerarNovoLancamento(input, produtoEdicao);
+			
+			// Novo Período Lançamento Parcial;
+			this.gerarNovoPeriodoLancamentoParcial(input, lancamentoParcial, 
+					lancamento);
 		} else {
 			
 			this.atualizarLancamentoParcial(input, lancamentoParcial);		
@@ -135,13 +144,12 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 	}
 	
 	/**
-	 * Salva um novo Lançamento Parcial, gerando o Lançamento e Periodo 
-	 * Lançamento Parcial associados.
+	 * Gera um novo Lançamento Parcial.
 	 * 
 	 * @param input
 	 * @param produtoEdicao
 	 */
-	private void gerarNovoLancamentoParcial(EMS0136Input input, 
+	private LancamentoParcial gerarNovoLancamentoParcial(EMS0136Input input, 
 			ProdutoEdicao produtoEdicao) {
 		
 		StatusLancamentoParcial status = this.obterStatusLancamentoParcial(
@@ -157,12 +165,7 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 		// Persistir:
 		this.getSession().persist(lancamentoParcial);
 		
-		// Novo Lançamento:
-		Lancamento lancamento = this.gerarNovoLancamento(input, produtoEdicao);
-		
-		// Novo Período Lançamento Parcial;
-		this.gerarNovoPeriodoLancamentoParcial(input, lancamentoParcial, 
-				lancamento);
+		return lancamentoParcial;
 	}
 
 	/**
