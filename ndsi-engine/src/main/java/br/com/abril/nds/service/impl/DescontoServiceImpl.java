@@ -7,13 +7,17 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.Future;
 
 import org.apache.commons.lang.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.component.DescontoComponent;
+import br.com.abril.nds.component.singleton.ProcessoCadastroDescontoSingleton;
 import br.com.abril.nds.dto.CotaDescontoProdutoDTO;
 import br.com.abril.nds.dto.DescontoProdutoDTO;
 import br.com.abril.nds.dto.TipoDescontoCotaDTO;
@@ -200,9 +204,11 @@ public class DescontoServiceImpl implements DescontoService {
 			throw new ValidacaoException(TipoMensagem.WARNING,"O campo Desconto deve ser preenchido!");
 		}
 		
+		Cota cota = cotaRepository.obterPorNumerDaCota(numeroCota);
+				
 		DescontoCota descontoCota = new DescontoCota();
 		descontoCota.setDesconto(valorDesconto);
-		descontoCota.setCota(cotaRepository.obterPorNumerDaCota(numeroCota));
+		descontoCota.setCota(cota);
 		descontoCota.setUsuario(usuarioRepository.buscarPorId(usuario.getId()));
 		descontoCota.setDataAlteracao(new Date());
 		descontoCota.setFornecedores(new HashSet<Fornecedor>());
@@ -834,4 +840,60 @@ public class DescontoServiceImpl implements DescontoService {
 		
 		return desc.compareTo(BigDecimal.ZERO) > 0 ? desc.divide(new BigDecimal(descontos.size())) : BigDecimal.ZERO;
 	}
+	
+	@Override
+	@Async
+	@Transactional
+	public Future<String> executarDescontoEspecifico(final Integer numeroCota, final BigDecimal desconto, final List<Long> fornecedores, Usuario usuario) {
+		
+		ProcessoCadastroDescontoSingleton.iniciarProcesso(TipoDesconto.ESPECIFICO);
+		
+		try {
+			
+			incluirDescontoCota(desconto, fornecedores, numeroCota, usuario);
+		
+		} finally {
+			ProcessoCadastroDescontoSingleton.encerrarProcesso(TipoDesconto.ESPECIFICO);
+		}
+		
+		return new AsyncResult<String>("Desconto cadastrado com sucesso !");
+	}
+	
+	@Override
+	@Async
+	@Transactional
+	public Future<String> executarDescontoProduto(DescontoProdutoDTO desconto, List<Integer> cotas, Usuario usuario) {
+		
+		ProcessoCadastroDescontoSingleton.iniciarProcesso(TipoDesconto.PRODUTO);
+		
+		try {
+			
+			desconto.setCotas(cotas);
+			incluirDescontoProduto(desconto, usuario);
+		
+		} finally {
+			ProcessoCadastroDescontoSingleton.encerrarProcesso(TipoDesconto.PRODUTO);
+		}
+		
+		return new AsyncResult<String>("Desconto cadastrado com sucesso !");
+	}	
+	
+	@Override
+	@Async
+	@Transactional
+	public Future<String> executarDescontoGeral(BigDecimal desconto, List<Long> fornecedores, Usuario usuario) {
+		
+		ProcessoCadastroDescontoSingleton.iniciarProcesso(TipoDesconto.GERAL);
+		
+		try {
+			
+			incluirDescontoDistribuidor(desconto, fornecedores, usuario);
+		
+		} finally {
+			ProcessoCadastroDescontoSingleton.encerrarProcesso(TipoDesconto.GERAL);
+		}
+
+		return new AsyncResult<String>("Desconto cadastrado com sucesso !");
+	}
+	
 }
