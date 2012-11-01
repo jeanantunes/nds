@@ -1,40 +1,69 @@
 package br.com.abril.nds.integracao.icd.model;
 
+import java.sql.Time;
+import java.util.Date;
+
 import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.IdClass;
 import javax.persistence.Table;
 
 @Entity
 @Table(name = "SOLICITACAO_FALTAS_SOBRAS")
 public class SolicitacaoFaltaSobra {
+	
+	@EmbeddedId
+	private IcdPK icdPK;	
+
+	@Column(name = "COD_FORMA_SOLICITACAO")
+	private Integer codigoForma;
+
+	@Column(name = "COD_SITUACAO_SOLICITACAO")
+	private Integer codigoSituacao;
+
 	/**
-	 * 
+	 * @return the icdPK
 	 */
-	private static final long serialVersionUID = 1L;
-
-	@Id
-	@Column(name = "ID")
-	private Long id;
-	
-	@Column(name = "COD_SITUACAO_SOLICITACAO", nullable = false)
-	private String codigoSolicitacao;
-
-	
-	public Long getId() {
-		return id;
+	public IcdPK getIcdPK() {
+		return icdPK;
 	}
 
-	public void setId(Long id) {
-		this.id = id;
+	/**
+	 * @param icdPK the icdPK to set
+	 */
+	public void setIcdPK(IcdPK icdPK) {
+		this.icdPK = icdPK;
 	}
 
-	public String getCodigoSolicitacao() {
-		return codigoSolicitacao;
+	/**
+	 * @return the codigoForma
+	 */
+	public Integer getCodigoForma() {
+		return codigoForma;
 	}
 
-	public void setCodigoSolicitacao(String codigoSolicitacao) {
-		this.codigoSolicitacao = codigoSolicitacao;
+	/**
+	 * @param codigoForma the codigoForma to set
+	 */
+	public void setCodigoForma(Integer codigoForma) {
+		this.codigoForma = codigoForma;
 	}
+
+	/**
+	 * @return the codigoSituacao
+	 */
+	public Integer getCodigoSituacao() {
+		return codigoSituacao;
+	}
+
+	/**
+	 * @param codigoSituacao the codigoSituacao to set
+	 */
+	public void setCodigoSituacao(Integer codigoSituacao) {
+		this.codigoSituacao = codigoSituacao;
+	}
+
 	
 }

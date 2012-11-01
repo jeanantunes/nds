@@ -1,42 +1,54 @@
 package br.com.abril.nds.integracao.icd.model;
 
+import java.sql.Time;
+import java.util.Date;
+
 import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.IdClass;
 import javax.persistence.Table;
 
 @Entity
 @Table(name = "DETALHE_FALTAS_SOBRAS")
 public class DetalheFaltaSobra {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-
-	@Id
-	@Column(name = "ID")
-	private Long id;
+	@EmbeddedId
+	private IcdPK icdPK;	
 	
 	@Column(name = "COD_SITUACAO_ACERTO", nullable = false)
-	private String codigoAcerto;
+	private Integer codigoAcerto;
 
-	public Long getId() {
-		return id;
+	/**
+	 * @return the icdPK
+	 */
+	public IcdPK getIcdPK() {
+		return icdPK;
 	}
 
-	public void setId(Long id) {
-		this.id = id;
+	/**
+	 * @param icdPK the icdPK to set
+	 */
+	public void setIcdPK(IcdPK icdPK) {
+		this.icdPK = icdPK;
 	}
 
-	public String getCodigoAcerto() {
+	/**
+	 * @return the codigoAcerto
+	 */
+	public Integer getCodigoAcerto() {
 		return codigoAcerto;
 	}
 
-	public void setCodigoAcerto(String codigoAcerto) {
+	/**
+	 * @param codigoAcerto the codigoAcerto to set
+	 */
+	public void setCodigoAcerto(Integer codigoAcerto) {
 		this.codigoAcerto = codigoAcerto;
 	}
 
+	
 
 	
 }
