@@ -42,6 +42,7 @@ import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Algoritmo;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Box;
+import br.com.abril.nds.model.cadastro.Brinde;
 import br.com.abril.nds.model.cadastro.CaucaoLiquida;
 import br.com.abril.nds.model.cadastro.Cheque;
 import br.com.abril.nds.model.cadastro.ContratoCota;
@@ -416,7 +417,17 @@ public class DataLoader {
 	private static NCM ncmLivroilustrado;
 	private static NCM ncmFigurinha;
 	private static NCM ncmBebidas;
-
+	
+	private static Brinde brinde1;
+	private static Brinde brinde2;
+	private static Brinde brinde6;
+	private static Brinde brinde7;
+	private static Brinde brinde9;
+	private static Brinde brinde16;
+	private static Brinde brinde17;
+	private static Brinde brinde26;
+	private static Brinde brinde27;
+	private static Brinde brinde28;
 	
 	private static TipoProduto tipoProdutoRefrigerante;
 	private static TipoProduto tipoProdutoRevista;
@@ -1033,6 +1044,7 @@ public class DataLoader {
 		criarPDVsCota(session);
 		criarDistribuicaoCota(session);
 		criarEditores(session);		
+		criarBrindes(session);
 		criarProdutos(session);
 		criarProdutosEdicao(session);
 		criarNotasFiscais(session);
@@ -12391,4 +12403,19 @@ public class DataLoader {
 		session.save(garantiaOutros2);
 	}
   
+	public static void criarBrindes(Session session){
+
+		brinde1 = Fixture.brinde(1,"CD-ROM",true);
+		brinde2 = Fixture.brinde(2,"CD-MÚSICA",true);
+		brinde6 = Fixture.brinde(6,"COSMÉTICOS",true);
+		brinde7 = Fixture.brinde(7,"ADESIVOS",true);
+		brinde9 = Fixture.brinde(9,"MATERIAL DE ATIVIDADE INFANTIL",true);
+		brinde16 = Fixture.brinde(16,"BRINDE EDITORIAL",true);
+		brinde17 = Fixture.brinde(17,"CUPOM/VALE DESCONTO",true);
+		brinde26 = Fixture.brinde(26,"VÍDEO",true);
+		brinde27 = Fixture.brinde(27,"DVD",true);
+		brinde28 = Fixture.brinde(28,"OUTROS",true);
+		
+		save(session, brinde1,brinde2,brinde6,brinde7,brinde9,brinde16,brinde17,brinde26,brinde27,brinde28);
+	}
 }

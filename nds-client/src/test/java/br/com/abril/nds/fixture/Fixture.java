@@ -24,6 +24,7 @@ import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Algoritmo;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Box;
+import br.com.abril.nds.model.cadastro.Brinde;
 import br.com.abril.nds.model.cadastro.ClassificacaoEspectativaFaturamento;
 import br.com.abril.nds.model.cadastro.ContratoCota;
 import br.com.abril.nds.model.cadastro.Cota;
@@ -3975,5 +3976,16 @@ public class Fixture {
 
         return item;
     }
+    
+    public static Brinde brinde(Integer codigo, String descricao, boolean permiteVendaSeparada){
+		
+		Brinde b = new Brinde();
+		
+		b.setCodigo(codigo);
+		b.setDescricao(descricao);
+		b.setPermiteVendaSeparada(permiteVendaSeparada);
+		
+		return b;
+	}
 
 }
