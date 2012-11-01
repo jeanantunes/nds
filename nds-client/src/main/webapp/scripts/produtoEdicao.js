@@ -554,7 +554,7 @@ var produtoEdicaoController =$.extend(true,  {
 								$('#produtoEdicaoController-dataRecolhimentoReal').val(result.dataRecolhimentoReal == undefined ? '' : result.dataRecolhimentoReal.$);
 								$("#produtoEdicaoController-ped").val(result.ped).attr("readonly", false);		
 								$("#produtoEdicaoController-descricaoProduto").val(result.descricaoProduto).attr("readonly", false);
-								$("#produtoEdicaoController-descricaoBrinde").val(result.descricaoBrinde).attr("readonly", false);
+								$("#produtoEdicaoController-descricaoBrinde").val(result.idBrinde).attr("readonly", false);
 
 								if (result.origemInterface) {
 									$("#produtoEdicaoController-precoVenda").attr("readonly", true);	

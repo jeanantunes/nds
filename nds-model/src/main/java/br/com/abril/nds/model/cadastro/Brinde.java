@@ -1,9 +1,16 @@
 package br.com.abril.nds.model.cadastro;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.Column;
-import javax.persistence.Embeddable;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
 
 /**
  * Classe que possui informações sobre brinde.
@@ -11,7 +18,9 @@ import javax.persistence.Embeddable;
  * @author Discover Technology
  *
  */
-@Embeddable
+@Entity
+@Table(name="BRINDE")
+@SequenceGenerator(name="BRINDE_SEQ",allocationSize=1,initialValue=1)
 public class Brinde implements Serializable {
 
 	/**
@@ -19,17 +28,56 @@ public class Brinde implements Serializable {
 	 */
 	private static final long serialVersionUID = -822721180874393822L;
 
+	@Id
+	@GeneratedValue(generator="BRINDE_SEQ")
+	@Column(name="ID")
+	private Long id;
+	
+	@Column(name = "CODIGO", nullable = true)
+	private Integer codigo;
+	
 	@Column(name = "DESCRICAO_BRINDE", nullable = true)
 	private String descricao;
 	
 	@Column(name = "VENDE_BRINDE_SEPARADO", nullable = true)
 	private Boolean permiteVendaSeparada;
 	
+	@OneToMany(mappedBy = "brinde")
+	protected List<ProdutoEdicao> listaProdutoEdicao = new ArrayList<ProdutoEdicao>();
+	
 	/**
 	 * Construtor.
 	 */
 	public Brinde() {
 		
+	}
+
+	/**
+	 * @return the id
+	 */
+	public Long getId() {
+		return id;
+	}
+
+	/**
+	 * @param id the id to set
+	 */
+	public void setId(Long id) {
+		this.id = id;
+	}
+	
+	/**
+	 * @return the codigo
+	 */
+	public Integer getCodigo() {
+		return codigo;
+	}
+
+	/**
+	 * @param codigo the codigo to set
+	 */
+	public void setCodigo(Integer codigo) {
+		this.codigo = codigo;
 	}
 
 	/**

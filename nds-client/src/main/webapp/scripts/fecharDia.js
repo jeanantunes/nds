@@ -637,6 +637,7 @@ var fecharDiaController =  $.extend(true, {
 					fecharDiaController.iniciarResumoEncalhe();
 					fecharDiaController.iniciarResumoSuplementar();
 					fecharDiaController.iniciarResumoDividas();
+					fecharDiaController.iniciarResumoCotas();
 				}
 			},
 			form: $("#dialog-processos", fecharDiaController.workspace).parents("form")
@@ -874,6 +875,16 @@ var fecharDiaController =  $.extend(true, {
 					});
 	},
 	
+	iniciarResumoCotas : function() {
+		$.postJSON(
+			contextPath + "/administracao/fecharDia/obterResumoCotas",
+			null,
+			function(result) {
+				fecharDiaController.processarResumoCotas(result.resumo);
+			}
+		);
+	},
+	
 	processarResumoDividasReceber : function(itens) {
 	    var tabela =  $('#tabela_dividas_receber', fecharDiaController.workspace);
 	    fecharDiaController.processarResumoDividas(itens, tabela);
@@ -892,6 +903,21 @@ var fecharDiaController =  $.extend(true, {
             $(tabela).append(fecharDiaController.gerarLinhaResumoDividas(item));                       
         });
         $(tabela).append((fecharDiaController.gerarLinhaBrancoResumoDividas()));
+    },
+    
+    processarResumoCotas : function(resumo) {
+    	
+    	var tabela =  $('#tabela_cotas', fecharDiaController.workspace);
+    	
+        $(tabela).html("");
+        
+        $(tabela).append(fecharDiaController.gerarLinhaBrancoResumoCotas());
+        
+        $(tabela).append(fecharDiaController.gerarCabecalhoResumoCotas());
+        
+        $(tabela).append(fecharDiaController.gerarLinhaResumoCotas(resumo));                       
+
+        $(tabela).append((fecharDiaController.gerarLinhaBrancoResumoCotas()));
     },
 	
 	gerarLinhaResumoDividas : function(item) {
@@ -923,7 +949,51 @@ var fecharDiaController =  $.extend(true, {
 	   linhaBranco += "<td align=\"right\">&nbsp;</td>";
 	   linhaBranco += "</tr>";
 	   return linhaBranco; 
-	}
+	},
+    
+	gerarLinhaResumoCotas : function(resumo) {
+		
+		var linhaResumo = "<tr>";
+		
+		linhaResumo += "<td width=\"222\" align=\"center\" style=\"border-bottom:1px solid #ccc;\">" + resumo.TOTAL + "</td>";
+		linhaResumo += "<td width=\"153\" align=\"center\" style=\"border-bottom:1px solid #ccc;\">" + resumo.ATIVAS +"</td>";
+		linhaResumo += "<td width=\"158\" align=\"center\" style=\"border-bottom:1px solid #ccc;\"><a href=\"javascript:;\" onclick=\"fecharDiaController.popup_cotasGrid();\">" + resumo.AUSENTES_REPARTE +"</a></td>";
+		linhaResumo += "<td width=\"183\" align=\"center\" style=\"border-bottom:1px solid #ccc;\"><a href=\"javascript:;\" onclick=\"fecharDiaController.popup_cotasGrid();\">" + resumo.AUSENTES_ENCALHE +"</a></td>";
+		linhaResumo += "<td width=\"183\" align=\"center\" style=\"border-bottom:1px solid #ccc;\"><a href=\"javascript:;\" onclick=\"fecharDiaController.popup_cotasGrid();\">" + resumo.NOVAS +"</a></td>";
+		linhaResumo += "<td width=\"188\" align=\"center\" style=\"border-bottom:1px solid #ccc;\"><a href=\"javascript:;\" onclick=\"fecharDiaController.popup_cotasGrid();\">" + resumo.INATIVAS +"</a></td>";
+		linhaResumo += "</tr>";
+		
+		return linhaResumo;
+	},
 	
+	gerarCabecalhoResumoCotas : function() {
+		
+       var linhaCabecalho = "<tr class=\"header_table\">";  
+       
+       linhaCabecalho += "<td align=\"center\">Total</td>";
+       linhaCabecalho += "<td align=\"center\">Ativas</td>";
+       linhaCabecalho += "<td align=\"center\">Ausentes - Reparte</td>";
+       linhaCabecalho += "<td align=\"center\">Ausentes - Encalhe</td>";
+       linhaCabecalho += "<td align=\"center\">Novas</td>";
+       linhaCabecalho += "<td align=\"center\">Inativas</td>";
+       linhaCabecalho += "</tr>";
+       
+       return linhaCabecalho; 
+    },
+	
+	gerarLinhaBrancoResumoCotas : function() {
+	   
+	   var linhaBranco = "<tr>";
+	   
+	   linhaBranco += "<td align=\"left\">&nbsp;</td>";
+	   linhaBranco += "<td align=\"right\">&nbsp;</td>";
+	   linhaBranco += "<td align=\"right\">&nbsp;</td>";
+	   linhaBranco += "<td align=\"right\">&nbsp;</td>";
+	   linhaBranco += "<td align=\"right\">&nbsp;</td>";
+	   linhaBranco += "<td align=\"right\">&nbsp;</td>";
+	   linhaBranco += "</tr>";
+	   
+	   return linhaBranco; 
+	}
 
 }, BaseController);

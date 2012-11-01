@@ -483,40 +483,10 @@
               <td width="950" height="26" align="center" bgcolor="#F4F4F4"><strong>COTAS</strong></td>
             </tr>
             <tr>
-              <td valign="top"><table width="910" border="0" cellpadding="2" cellspacing="1" style="margin-left:10px; margin-right:10px;">
-                <tr>
-                  <td align="left">&nbsp;</td>
-                  <td align="right">&nbsp;</td>
-                  <td align="right">&nbsp;</td>
-                  <td align="right">&nbsp;</td>
-                  <td align="right">&nbsp;</td>
-                  <td align="right">&nbsp;</td>
-                </tr>
-                <tr class="header_table">
-                  <td align="center">Total</td>
-                  <td align="center">Ativas</td>
-                  <td align="center">Ausentes - Reparte</td>
-                  <td align="center">Ausentes - Encalhe</td>
-                  <td align="center">Novos</td>
-                  <td align="center">Inativas</td>
-                </tr>
-                <tr>
-                  <td width="222" align="center" style="border-bottom:1px solid #ccc;">100</td>
-                  <td width="153" align="center" style="border-bottom:1px solid #ccc;">90</td>
-                  <td width="158" align="center" style="border-bottom:1px solid #ccc;"><a href="javascript:;" onclick="fecharDiaController.popup_cotasGrid();">05</a></td>
-                  <td width="183" align="center" style="border-bottom:1px solid #ccc;"><a href="javascript:;" onclick="fecharDiaController.popup_cotasGrid();">05</a></td>
-                  <td width="183" align="center" style="border-bottom:1px solid #ccc;"><a href="javascript:;" onclick="fecharDiaController.popup_cotasGrid();">05</a></td>
-                  <td width="188" align="center" style="border-bottom:1px solid #ccc;"><a href="javascript:;" onclick="fecharDiaController.popup_cotasGrid();">00</a></td>
-                </tr>
-                <tr>
-                  <td align="center">&nbsp;</td>
-                  <td align="center">&nbsp;</td>
-                  <td align="center">&nbsp;</td>
-                  <td align="center">&nbsp;</td>
-                  <td align="center">&nbsp;</td>
-                  <td align="center">&nbsp;</td>
-                </tr>
-              </table></td>
+              <td valign="top">
+	              <table id="tabela_cotas" width="910" border="0" cellpadding="2" cellspacing="1" style="margin-left:10px; margin-right:10px;">
+	              </table>
+              </td>
             </tr>
         </table>
 

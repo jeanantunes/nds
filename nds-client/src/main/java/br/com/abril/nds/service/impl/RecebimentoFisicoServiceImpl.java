@@ -658,6 +658,7 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 		itemNota.setDataRecolhimento(recebimentoDTO.getDataRecolhimento());
 		itemNota.setTipoLancamento(recebimentoDTO.getTipoLancamento());
 		itemNota.setQtde(recebimentoDTO.getRepartePrevisto());
+		itemNota.setPreco(recebimentoDTO.getPrecoDesconto());
 		itemNota.setProdutoEdicao(produtoEdicao);
 		itemNota.setUsuario(usuarioLogado);
 		itemNota.setNotaFiscal(notaFiscal);

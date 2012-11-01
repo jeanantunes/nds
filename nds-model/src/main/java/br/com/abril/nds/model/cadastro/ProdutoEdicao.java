@@ -112,8 +112,9 @@ public class ProdutoEdicao implements Serializable {
 	@Column(name = "POSSUI_BRINDE", nullable = true)
 	protected boolean possuiBrinde;
 	
-	@Embedded
-	protected Brinde brinde;
+	@ManyToOne
+	@JoinColumn(name = "BRINDE_ID")
+	private Brinde brinde;
 	
 	@ManyToOne(fetch=FetchType.LAZY, optional=true)
 	@JoinColumn(name="DESCONTO_LOGISTICA_ID", nullable=true)

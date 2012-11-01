@@ -15,6 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.dto.FecharDiaDTO;
 import br.com.abril.nds.dto.ReparteFecharDiaDTO;
+import br.com.abril.nds.dto.ResumoFechamentoDiarioCotasDTO;
+import br.com.abril.nds.dto.ResumoFechamentoDiarioCotasDTO.TipoResumo;
 import br.com.abril.nds.dto.ValidacaoConfirmacaoDeExpedicaoFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoControleDeAprovacaoFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoLancamentoFaltaESobraFecharDiaDTO;
@@ -32,7 +34,6 @@ import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.serialization.custom.CustomMapJson;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
-import br.com.abril.nds.service.DividaService;
 import br.com.abril.nds.service.FecharDiaService;
 import br.com.abril.nds.service.ResumoEncalheFecharDiaService;
 import br.com.abril.nds.service.ResumoReparteFecharDiaService;
@@ -71,9 +72,6 @@ public class FecharDiaController {
 	
 	@Autowired
 	private DistribuidorService distribuidorService;
-	
-	@Autowired
-	private DividaService dividaService;
 	
 	@Autowired
 	private Result result;
@@ -379,8 +377,8 @@ public class FecharDiaController {
         
         Map<TipoDivida, List<SumarizacaoDividasDTO>> sumarizacao = new HashMap<>();
         
-        List<SumarizacaoDividasDTO> aReceber = dividaService.sumarizacaoDividasReceberEm(dataFechamento);
-        List<SumarizacaoDividasDTO> aVencer = dividaService.sumarizacaoDividasVencerApos(dataFechamento);
+        List<SumarizacaoDividasDTO> aReceber = fecharDiaService.sumarizacaoDividasReceberEm(dataFechamento);
+        List<SumarizacaoDividasDTO> aVencer = fecharDiaService.sumarizacaoDividasVencerApos(dataFechamento);
         
         sumarizacao.put(TipoDivida.DIVIDA_A_RECEBER, aReceber);
         sumarizacao.put(TipoDivida.DIVIDA_A_VENCER, aVencer);
@@ -393,8 +391,8 @@ public class FecharDiaController {
 	    Date dataFechamento = getDataFechamento();
 	    PaginacaoVO paginacao = new PaginacaoVO(page, rp, null);
 	    
-	    List<Divida> dividas = dividaService.obterDividasReceberEm(dataFechamento, paginacao);
-	    int totalDividas = dividaService.contarDividasReceberEm(dataFechamento);
+	    List<Divida> dividas = fecharDiaService.obterDividasReceberEm(dataFechamento, paginacao);
+	    int totalDividas = fecharDiaService.contarDividasReceberEm(dataFechamento);
 	    
 	    List<DividaDTO> dividasDTO = new ArrayList<>();
 	    for (Divida divida : dividas) {
@@ -407,7 +405,7 @@ public class FecharDiaController {
     public void exportarDividasReceber(FileType fileType) throws IOException {
 	    Date dataFechamento = getDataFechamento();
         
-        List<Divida> dividas = dividaService.obterDividasReceberEm(dataFechamento, null);
+        List<Divida> dividas = fecharDiaService.obterDividasReceberEm(dataFechamento, null);
         List<DividaDTO> dividasDTO = new ArrayList<>(dividas.size());
 
         for (Divida divida : dividas) {
@@ -426,8 +424,8 @@ public class FecharDiaController {
 	    Date dataFechamento = getDataFechamento();
         PaginacaoVO paginacao = new PaginacaoVO(page, rp, null);
         
-        List<Divida> dividas = dividaService.obterDividasVencerApos(dataFechamento, paginacao);
-        int totalDividas = dividaService.contarDividasVencerApos(dataFechamento);
+        List<Divida> dividas = fecharDiaService.obterDividasVencerApos(dataFechamento, paginacao);
+        int totalDividas = fecharDiaService.contarDividasVencerApos(dataFechamento);
         
         List<DividaDTO> dividasDTO = new ArrayList<>();
         for (Divida divida : dividas) {
@@ -440,7 +438,7 @@ public class FecharDiaController {
     public void exportarDividasVencer(FileType fileType) throws IOException {
 	    Date dataFechamento = getDataFechamento();
         
-        List<Divida> dividas = dividaService.obterDividasVencerApos(dataFechamento, null);
+        List<Divida> dividas = fecharDiaService.obterDividasVencerApos(dataFechamento, null);
         List<DividaDTO> dividasDTO = new ArrayList<>(dividas.size());
 
         for (Divida divida : dividas) {
@@ -453,6 +451,23 @@ public class FecharDiaController {
         result.nothing();
     }
 	
+	@Post
+	public void obterResumoCotas() {
+		
+		ResumoFechamentoDiarioCotasDTO resumoFechamentoDiarioCotas = 
+			this.fecharDiaService.obterResumoCotas(this.getDataFechamento());
+		
+		Map<TipoResumo, Long> mapaResumo = new HashMap<TipoResumo, Long>();
+		
+		mapaResumo.put(TipoResumo.TOTAL, resumoFechamentoDiarioCotas.getQuantidadeTotal());
+		mapaResumo.put(TipoResumo.ATIVAS, resumoFechamentoDiarioCotas.getQuantidadeAtivas());
+		mapaResumo.put(TipoResumo.AUSENTES_REPARTE, resumoFechamentoDiarioCotas.getQuantidadeAusentesExpedicaoReparte());
+		mapaResumo.put(TipoResumo.AUSENTES_ENCALHE, resumoFechamentoDiarioCotas.getQuantidadeAusentesRecolhimentoEncalhe());
+		mapaResumo.put(TipoResumo.NOVAS, resumoFechamentoDiarioCotas.getQuantidadeNovas());
+		mapaResumo.put(TipoResumo.INATIVAS, resumoFechamentoDiarioCotas.getQuantidadeInativas());
+		
+		result.use(CustomMapJson.class).put("resumo", mapaResumo).serialize();
+	}
     
     private Date getDataFechamento() {
         return distribuidorService.obter().getDataOperacao();
