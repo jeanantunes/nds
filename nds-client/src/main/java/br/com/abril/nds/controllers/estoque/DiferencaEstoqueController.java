@@ -14,6 +14,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -54,7 +55,7 @@ import br.com.abril.nds.model.estoque.TipoDirecionamentoDiferenca;
 import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
-import br.com.abril.nds.serialization.custom.CustomMapJson;
+import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DiferencaEstoqueService;
@@ -84,6 +85,8 @@ import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.interceptor.download.ByteArrayDownload;
+import br.com.caelum.vraptor.interceptor.download.Download;
 import br.com.caelum.vraptor.view.Results;
 
 /**
@@ -909,10 +912,13 @@ public class DiferencaEstoqueController {
 		
 		if (TipoDiferenca.FALTA_DE.equals(tipoDiferenca)
 				|| TipoDiferenca.SOBRA_DE.equals(tipoDiferenca)) {
-			
+
 			valorTotalDiferenca =
+					produtoEdicao.getPrecoVenda().multiply( new BigDecimal( diferenca ) );
+			
+			/*valorTotalDiferenca =
 				produtoEdicao.getPrecoVenda().multiply(new BigDecimal(produtoEdicao.getPacotePadrao()))
-					.multiply( new BigDecimal( diferenca ) );
+					.multiply( new BigDecimal( diferenca ) );*/
 			
 		} else if (TipoDiferenca.FALTA_EM.equals(tipoDiferenca)
 						|| TipoDiferenca.SOBRA_EM.equals(tipoDiferenca)) {
@@ -1432,7 +1438,7 @@ public class DiferencaEstoqueController {
 			}
 			
 			lancamentoDiferenca.setCodigoProduto(produto.getCodigo());
-			lancamentoDiferenca.setDescricaoProduto(produto.getDescricao());
+			lancamentoDiferenca.setDescricaoProduto(produto.getNome());
 			lancamentoDiferenca.setNumeroEdicao(produtoEdicao.getNumeroEdicao().toString());
 			lancamentoDiferenca.setTipoEstoque(diferenca.getTipoEstoque());
 			lancamentoDiferenca.setTipoDirecionamento(diferenca.getTipoDirecionamento());
@@ -1549,7 +1555,7 @@ public class DiferencaEstoqueController {
 			}
 			
 			lancamentoDiferenca.setCodigoProduto(produto.getCodigo());
-			lancamentoDiferenca.setDescricaoProduto(produto.getDescricao());
+			lancamentoDiferenca.setDescricaoProduto(produto.getNome());
 			lancamentoDiferenca.setNumeroEdicao(produtoEdicao.getNumeroEdicao().toString());
 			lancamentoDiferenca.setPrecoVenda(CurrencyUtil.formatarValor(produtoEdicao.getPrecoVenda()));
 			lancamentoDiferenca.setPacotePadrao(String.valueOf(produtoEdicao.getPacotePadrao()));
@@ -2165,8 +2171,9 @@ public class DiferencaEstoqueController {
 				|| TipoDiferenca.FALTA_EM.equals(tipoDiferenca)) {
 		
 			if(TipoDiferenca.FALTA_DE.equals(tipoDiferenca)){
-				
-				if(qtdeEstoqueAtual.compareTo(quantidade.multiply(valorPacotePadrao)) < 0){
+
+				if(qtdeEstoqueAtual.compareTo(quantidade) < 0){
+				//if(qtdeEstoqueAtual.compareTo(quantidade.multiply(valorPacotePadrao)) < 0){
 					
 					return (!isRateioCota)?
 								"Quantidade de Diferença para o tipo de diferença '" + tipoDiferenca.getDescricao() 
@@ -2357,16 +2364,29 @@ public class DiferencaEstoqueController {
 					diferencaVO.setQtdeEstoque(this.obterQuantidadeReparteNota(pe, rateiosDiferenca));
 				}
 				
-				result.use(CustomMapJson.class).put("diferenca", diferencaVO).put("idProdutoEdicao", pe.getId()).put("rateios",rateiosDiferenca).serialize();
+				Map<String, Object> mapa = new TreeMap<String, Object>();
+				mapa.put("diferenca", diferencaVO);
+				mapa.put("idProdutoEdicao", pe.getId());
+				mapa.put("rateios",rateiosDiferenca);
+				
+				result.use(CustomJson.class).from(mapa).serialize();
 			}
 			else{
-				
-				result.use(CustomMapJson.class).put("diferenca", diferencaVO).put("idProdutoEdicao", pe.getId()).serialize();
+
+				Map<String, Object> mapa = new TreeMap<String, Object>();
+				mapa.put("diferenca", diferencaVO);
+				mapa.put("idProdutoEdicao", pe.getId());
+
+				result.use(CustomJson.class).from(mapa).serialize();
 			}
 		}
 		else{
 			
-			result.use(CustomMapJson.class).put("diferenca", diferencaVO).put("idProdutoEdicao", pe.getId()).serialize();
+			Map<String, Object> mapa = new TreeMap<String, Object>();
+			mapa.put("diferenca", diferencaVO);
+			mapa.put("idProdutoEdicao", pe.getId());
+
+			result.use(CustomJson.class).from(mapa).serialize();
 		}
 	}
 
@@ -2463,8 +2483,10 @@ public class DiferencaEstoqueController {
 		
 		} else if (diferencaVO.getTipoDiferenca().equals(TipoDiferenca.FALTA_DE)) {
 			
+			/*quantidadeAtualEstoque =
+				quantidadeAtualEstoque.add(diferencaVO.getQuantidade().multiply(pacotePadrao));*/
 			quantidadeAtualEstoque =
-				quantidadeAtualEstoque.add(diferencaVO.getQuantidade().multiply(pacotePadrao));
+					quantidadeAtualEstoque.add(diferencaVO.getQuantidade());
 		
 		} else if (diferencaVO.getTipoDiferenca().equals(TipoDiferenca.SOBRA_EM)) {
 			
@@ -2472,8 +2494,10 @@ public class DiferencaEstoqueController {
 		
 		} else if (diferencaVO.getTipoDiferenca().equals(TipoDiferenca.SOBRA_DE)) {
 			
+			/*quantidadeAtualEstoque =
+				quantidadeAtualEstoque.subtract(diferencaVO.getQuantidade().multiply(pacotePadrao));*/
 			quantidadeAtualEstoque =
-				quantidadeAtualEstoque.subtract(diferencaVO.getQuantidade().multiply(pacotePadrao));
+					quantidadeAtualEstoque.subtract(diferencaVO.getQuantidade());
 		}
 		
 		return quantidadeAtualEstoque;
@@ -2489,7 +2513,7 @@ public class DiferencaEstoqueController {
 				
 		Long qtde = movimentoEstoqueCotaService.obterQuantidadeReparteProdutoCota(idProdutoEdicao, numeroCota);
 				
-		ProdutoEdicao pe = produtoEdicaoService.obterProdutoEdicao(idProdutoEdicao);
+		ProdutoEdicao pe = produtoEdicaoService.obterProdutoEdicao(idProdutoEdicao, false);
 		
 		Object[] dados = new Object[2];
 		dados[0] = qtde;
@@ -2640,7 +2664,9 @@ public class DiferencaEstoqueController {
 		} else if (diferenca.getTipoDiferenca().equals(TipoDiferenca.FALTA_DE)) {
 			
 			quantidadeEstoque =
-				quantidadeEstoque.subtract(diferenca.getQuantidade().multiply(pacotePadrao));
+					quantidadeEstoque.subtract(diferenca.getQuantidade());
+			/*quantidadeEstoque =
+				quantidadeEstoque.subtract(diferenca.getQuantidade().multiply(pacotePadrao));*/
 		
 		} else if (diferenca.getTipoDiferenca().equals(TipoDiferenca.SOBRA_EM)) {
 			
@@ -2648,8 +2674,10 @@ public class DiferencaEstoqueController {
 		
 		} else if (diferenca.getTipoDiferenca().equals(TipoDiferenca.SOBRA_DE)) {
 			
+			/*quantidadeEstoque =
+				quantidadeEstoque.add(diferenca.getQuantidade().multiply(pacotePadrao));*/
 			quantidadeEstoque =
-				quantidadeEstoque.add(diferenca.getQuantidade().multiply(pacotePadrao));
+					quantidadeEstoque.add(diferenca.getQuantidade());
 		}
 		
 		return quantidadeEstoque;
@@ -2812,7 +2840,7 @@ public class DiferencaEstoqueController {
 		);
 		
 		this.httpSession.setAttribute(FILTRO_DETALHE_DIFERENCA_COTA, filtro);
-
+ 
 		return filtro;
 	}
 
@@ -2842,6 +2870,27 @@ public class DiferencaEstoqueController {
 		detalheDiferencaCota.setTableModel(tableModel);
 
 		return detalheDiferencaCota;
+	}
+	
+	@Post
+	@Path("/validaDataRelatorioFaltasSobras")
+	public void validaDataRelatorioFaltasSobras(String dataMovimentoFormatada ) throws Exception{
+		if (dataMovimentoFormatada == null || dataMovimentoFormatada.equals("")){
+				throw new ValidacaoException(TipoMensagem.WARNING, "Informe uma data de movimento");
+		}		
+	
+		this.result.use(Results.json()).from("", "result").recursive().serialize();
+	}
+	
+	
+	@Get("/imprimirRelatorioFaltasSobras")
+	public Download imprimirRelatorioFaltasSobras(String dataMovimentoFormatada ) throws Exception{
+		
+		Date dataMovimento = DateUtil.parseDataPTBR(dataMovimentoFormatada);
+		
+		byte[] comprovate = diferencaEstoqueService.imprimirRelatorioFaltasSobras(dataMovimento);
+		
+		return new ByteArrayDownload(comprovate,"application/pdf", "relatorioFaltasSobras.pdf", true);
 	}
 }
  

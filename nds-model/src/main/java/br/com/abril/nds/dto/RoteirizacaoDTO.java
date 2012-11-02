@@ -64,17 +64,12 @@ public class RoteirizacaoDTO implements Serializable{
      */
     private Set<Long> roteirosExclusao = new HashSet<Long>();
     
-    /**
-     * Cotas destinadas a copia para determinada rota.
-     */
-    private List<RotaRoteirizacaoDTO> rotaCotasCopia;
-    
     private Map<Long, Set<RoteiroRoteirizacaoDTO>> roteirosTransferidos = new HashMap<Long, Set<RoteiroRoteirizacaoDTO>>();
     
-    private RoteirizacaoDTO(TipoEdicaoRoteirizacao tipoEdicao, List<BoxRoteirizacaoDTO> boxDisponiveis) {
+    private RoteirizacaoDTO(TipoEdicaoRoteirizacao tipoEdicao, List<BoxRoteirizacaoDTO> boxDisponiveis, boolean addBoxEspecial) {
         this.tipoEdicao = tipoEdicao;
         this.boxDisponiveis = new ArrayList<BoxRoteirizacaoDTO>();
-        if (TipoEdicaoRoteirizacao.NOVO == tipoEdicao || boxDisponiveis.isEmpty()) {
+        if (TipoEdicaoRoteirizacao.NOVO == tipoEdicao || boxDisponiveis.isEmpty() || addBoxEspecial) {
             this.boxDisponiveis.add(BoxRoteirizacaoDTO.ESPECIAL);
         }
         this.boxDisponiveis.addAll(boxDisponiveis);
@@ -146,21 +141,7 @@ public class RoteirizacaoDTO implements Serializable{
     public void setTipoEdicao(TipoEdicaoRoteirizacao tipoEdicao) {
         this.tipoEdicao = tipoEdicao;
     }
-    
-	/**
-	 * @return the rotaCotasCopia
-	 */
-	public List<RotaRoteirizacaoDTO> getRotaCotasCopia() {
-		return rotaCotasCopia;
-	}
 
-	/**
-	 * @param rotaCotasCopia the rotaCotasCopia to set
-	 */
-	public void setRotaCotasCopia(List<RotaRoteirizacaoDTO> rotaCotasCopia) {
-		this.rotaCotasCopia = rotaCotasCopia;
-	}
-	
 	public List<RoteiroRoteirizacaoDTO> getTodosRoteiros() {
         return todosRoteiros;
     }
@@ -221,7 +202,7 @@ public class RoteirizacaoDTO implements Serializable{
      * @return {@link RoteirizacaoDTO} para a criação de uma nova roteirização
      */
 	public static RoteirizacaoDTO novaRoteirizacao(List<BoxRoteirizacaoDTO> boxDisponiveis) {
-	    return new RoteirizacaoDTO(TipoEdicaoRoteirizacao.NOVO, boxDisponiveis);
+	    return new RoteirizacaoDTO(TipoEdicaoRoteirizacao.NOVO, boxDisponiveis, true);
 	}
 	
     /**
@@ -230,10 +211,12 @@ public class RoteirizacaoDTO implements Serializable{
      * @param roteirizacao
      *            roteirização existente para criação do DTO
      * @param dtos lista de boxes disponíveis
+     * @param addBoxEspecial flag indicando se o box especial deve ser adicionado
+     * à lista de box disponíveis da roteirização
      * @return DTO com as informações da roteirização existente
      */
-	public static RoteirizacaoDTO toDTO(Roteirizacao roteirizacao, List<Box> disponiveis) {
-	    RoteirizacaoDTO dto = new RoteirizacaoDTO(TipoEdicaoRoteirizacao.ALTERACAO, BoxRoteirizacaoDTO.toDTOs(disponiveis));
+	public static RoteirizacaoDTO toDTO(Roteirizacao roteirizacao, List<Box> disponiveis, boolean addBoxEspecial) {
+	    RoteirizacaoDTO dto = new RoteirizacaoDTO(TipoEdicaoRoteirizacao.ALTERACAO, BoxRoteirizacaoDTO.toDTOs(disponiveis), addBoxEspecial);
 	    dto.setId(roteirizacao.getId());
 
         Box box = roteirizacao.getBox();
@@ -336,6 +319,8 @@ public class RoteirizacaoDTO implements Serializable{
 	        }
 	    }
 	    this.roteiros.clear();
+	    this.todosRoteiros.clear();
+	    this.roteirosExclusao.clear();
 	}
 	
     /**
@@ -395,20 +380,6 @@ public class RoteirizacaoDTO implements Serializable{
         return null;
     }
     
-	/**
-     * Tipo da edição tela
-     * 
-     */
-    public static enum TipoEdicaoRoteirizacao {
-        /**
-         * Nova Roteirização
-         */
-        NOVO,
-        /**
-         * Alteração Roteirzação existente
-         */
-        ALTERACAO;
-    }
 
 
 	public void removerRoteiro(Long roteiroId) {
@@ -447,4 +418,47 @@ public class RoteirizacaoDTO implements Serializable{
 			Map<Long, Set<RoteiroRoteirizacaoDTO>> roteirosTransferidos) {
 		this.roteirosTransferidos = roteirosTransferidos;
 	}
+	
+	/**
+     * Recupera a maior ordem dos roteiros da roteirização
+     * @return valor da maior ordem da lista de roteiro
+     * ou 0 caso a lista esteja vazia
+     */
+    public int getMaiorOrdemRoteiro() {
+        int max = 0;
+        for (RoteiroRoteirizacaoDTO roteiro : todosRoteiros) {
+            if (roteiro.getOrdem() > max) {
+                max = roteiro.getOrdem();
+            }
+        }
+        return max;
+    }
+    
+    /**
+     * Adiciona o roteiro aos roteiros da roteirização
+     * de acordo com a maior ordem existente
+     * @param roteiro roteiro para inclusão
+     */
+    public void addRoteiroAposMaiorOrdem(RoteiroRoteirizacaoDTO roteiro) {
+       int maiorOrdem = getMaiorOrdemRoteiro();
+       maiorOrdem++;
+       roteiro.setOrdem(maiorOrdem);
+       addRoteiro(roteiro);
+    }
+
+    /**
+     * Tipo da edição tela
+     * 
+     */
+    public static enum TipoEdicaoRoteirizacao {
+        /**
+         * Nova Roteirização
+         */
+        NOVO,
+        /**
+         * Alteração Roteirzação existente
+         */
+        ALTERACAO;
+    }
+
 }

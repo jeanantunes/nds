@@ -12,6 +12,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -20,7 +21,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.util.PessoaUtil;
-import br.com.abril.nds.client.vo.CotaVO;
 import br.com.abril.nds.client.vo.EntregadorCotaProcuracaoPaginacaoVO;
 import br.com.abril.nds.client.vo.EntregadorCotaProcuracaoVO;
 import br.com.abril.nds.client.vo.EntregadorPessoaFisicaVO;
@@ -49,11 +49,12 @@ import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.TelefoneEntregador;
 import br.com.abril.nds.model.seguranca.Permissao;
-import br.com.abril.nds.serialization.custom.CustomMapJson;
+import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.EntregadorService;
 import br.com.abril.nds.service.PessoaFisicaService;
 import br.com.abril.nds.service.PessoaJuridicaService;
+import br.com.abril.nds.service.TelefoneService;
 import br.com.abril.nds.util.CellModel;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.DateUtil;
@@ -104,6 +105,9 @@ public class EntregadorController {
 
 	@Autowired
 	private PessoaJuridicaService pessoaJuridicaService;
+	
+	@Autowired
+	private TelefoneService telefoneService;
 
 	@Autowired
 	private DistribuidorService distribuidorService;
@@ -496,7 +500,12 @@ public class EntregadorController {
 		
 		Distribuidor distribuidor = distribuidorService.obter();
 		
-		boolean utilizaSugestaoIncrementoCodigo = distribuidor.isUtilizaSugestaoIncrementoCodigo();
+		boolean utilizaSugestaoIncrementoCodigo = false;
+		
+		if (distribuidor.getUtilizaSugestaoIncrementoCodigo() != null) {
+			
+			utilizaSugestaoIncrementoCodigo = distribuidor.getUtilizaSugestaoIncrementoCodigo();
+		}
 		
 		Long novoCodigoEntregador = null;
 		
@@ -504,7 +513,14 @@ public class EntregadorController {
 			novoCodigoEntregador = this.entregadorService.obterMinCodigoEntregadorDisponivel();
 		}
 		
-		this.result.use(CustomMapJson.class).put("data", DateUtil.formatarDataPTBR(new Date())).put("nextCodigo", novoCodigoEntregador).serialize();
+		Map<String, Object> mapa = new TreeMap();
+		mapa.put("data", DateUtil.formatarDataPTBR(new Date()));
+		
+		if (novoCodigoEntregador != null) {
+			mapa.put("nextCodigo", novoCodigoEntregador);
+		}
+		
+		this.result.use(CustomJson.class).from(mapa).serialize();
 		
 	}
 	
@@ -1059,6 +1075,9 @@ public class EntregadorController {
 			TelefoneAssociacaoDTO telefoneAssociacaoDTO = map.get(key);
 
 			if (telefoneAssociacaoDTO.getTipoTelefone() != null){
+				
+				this.telefoneService.validarTelefone(
+					telefoneAssociacaoDTO.getTelefone(), telefoneAssociacaoDTO.getTipoTelefone());
 				
 				TelefoneEntregador telefoneEntregador = new TelefoneEntregador();
 				telefoneEntregador.setPrincipal(telefoneAssociacaoDTO.isPrincipal());

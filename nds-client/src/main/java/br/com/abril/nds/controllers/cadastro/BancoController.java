@@ -104,9 +104,9 @@ public class BancoController {
 							   int rp){
 		
 		//CONFIGURAR PAGINA DE PESQUISA
-		FiltroConsultaBancosDTO filtroAtual = new FiltroConsultaBancosDTO(nome.trim(),
-														                  numero.trim(),
-														                  cedente.trim(),
+		FiltroConsultaBancosDTO filtroAtual = new FiltroConsultaBancosDTO(nome != null ? nome.trim() : null,
+														                  numero != null ? numero.trim() : null,
+														                  cedente != null ? cedente.trim() : null,
 														                  ativo);
 		PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortorder);
 		filtroAtual.setPaginacao(paginacao);

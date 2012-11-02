@@ -98,7 +98,7 @@ public class BancoRepositoryImpl extends AbstractRepositoryModel<Banco,Long> imp
 					hql.append(" order by b.apelido ");
 					break;
 				case CARTEIRA_BANCO:
-					hql.append(" order by b.carteira.tipoRegistroCobranca ");
+					hql.append(" order by b.carteira ");
 					break;
 				case ATIVO_BANCO:
 					hql.append(" order by b.ativo ");
@@ -149,15 +149,21 @@ public class BancoRepositoryImpl extends AbstractRepositoryModel<Banco,Long> imp
 	@Override
 	public Banco obterBanco(String numeroBanco, Long numeroAgencia, Long numeroConta) {
 		
-		Criteria criteria = super.getSession().createCriteria(Banco.class);
+		StringBuilder hql = new StringBuilder();
 		
-		criteria.add(Restrictions.eq("numeroBanco", numeroBanco));
-		criteria.add(Restrictions.eq("agencia", numeroAgencia));
-		criteria.add(Restrictions.eq("conta", numeroConta));
+		hql.append(" select banco ");
+		hql.append(" from Banco banco ");		
+		hql.append(" where banco.numeroBanco = :numeroBanco ");
+		hql.append(" and banco.agencia = :numeroAgencia ");
+		hql.append(" and concat(conta, dvConta) = :numeroConta ");
 		
-		criteria.setMaxResults(1);
+        Query query = super.getSession().createQuery(hql.toString());
+        
+        query.setParameter("numeroBanco", numeroBanco);
+        query.setParameter("numeroAgencia", numeroAgencia);
+        query.setParameter("numeroConta", numeroConta.toString());
 		
-		return (Banco) criteria.uniqueResult();
+    	return (Banco) query.uniqueResult();
 	}
 
 	@Override

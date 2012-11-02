@@ -1,5 +1,6 @@
 package br.com.abril.nds.service.impl;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -23,6 +24,7 @@ import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
+import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.financeiro.Boleto;
 import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.financeiro.CobrancaCheque;
@@ -50,11 +52,13 @@ import br.com.abril.nds.repository.FechamentoEncalheRepository;
 import br.com.abril.nds.repository.HistoricoAcumuloDividaRepository;
 import br.com.abril.nds.repository.MovimentoFinanceiroCotaRepository;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
+import br.com.abril.nds.repository.UsuarioRepository;
 import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.CobrancaService;
 import br.com.abril.nds.service.DocumentoCobrancaService;
 import br.com.abril.nds.service.EmailService;
 import br.com.abril.nds.service.FornecedorService;
+import br.com.abril.nds.service.GeradorArquivoCobrancaBancoService;
 import br.com.abril.nds.service.GerarCobrancaService;
 import br.com.abril.nds.service.ParametroCobrancaCotaService;
 import br.com.abril.nds.service.PoliticaCobrancaService;
@@ -121,16 +125,50 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 	
 	@Autowired
 	private FornecedorService fornecedorService;
+	
+	@Autowired
+	private UsuarioRepository usuarioRepository;
+	
+	@Autowired
+	private GeradorArquivoCobrancaBancoService geradorArquivoCobrancaBancoService;
+	
+	/**
+	 * Obtém a situação da cota
+	 * @param idCota
+	 * @return SituacaoCadastro
+	 */
+	private SituacaoCadastro obterSitiacaoCadastroCota(Long idCota){
+		Cota cota  = this.cotaRepository.buscarPorId(idCota);
+		return cota.getSituacaoCadastro();
+	}
+	
+	
+	/**
+	 * Obtém o tipo da cota
+	 * @param cota
+	 * @return TipoCota
+	 */
+	private TipoCota obterTipoCota(Cota cota){
+		return cota.getParametroCobranca().getTipoCota();
+	}
 
 	
 	@Override
 	@Transactional(noRollbackFor = GerarCobrancaValidacaoException.class)
 	public void gerarCobranca(Long idCota, Long idUsuario, Set<String> setNossoNumero)
-		throws GerarCobrancaValidacaoException{
+		throws GerarCobrancaValidacaoException, IOException{
 		
+		this.processarCobranca(idCota, idUsuario, setNossoNumero);
+		
+		this.geradorArquivoCobrancaBancoService.prepararGerarArquivoCobrancaCnab();
+	}
+
+
+	private void processarCobranca(Long idCota, Long idUsuario,
+			Set<String> setNossoNumero) throws GerarCobrancaValidacaoException {
 		Distribuidor distribuidor = this.distribuidorRepository.obter();
 		
-		if (this.consolidadoFinanceiroRepository.obterQuantidadeDividasGeradasData((distribuidor.getDataOperacao())) >= 0){
+		if (this.consolidadoFinanceiroRepository.obterQuantidadeDividasGeradasData((distribuidor.getDataOperacao())) > 0){
 			
 			throw new GerarCobrancaValidacaoException(
 					new ValidacaoException(TipoMensagem.WARNING, "Já foram geradas dívidas para esta data de operação."));
@@ -142,9 +180,19 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			throw new GerarCobrancaValidacaoException(
 					new ValidacaoException(TipoMensagem.WARNING, "O fechamento de encalhe deve ser concluído antes de gerar dívidas."));
 		}
+	
+		this.gerarCobrancaCota(idCota, idUsuario, setNossoNumero);
+	}	
+		
+	@Override
+	@Transactional(noRollbackFor = GerarCobrancaValidacaoException.class)
+	public void gerarCobrancaCota(Long idCota, Long idUsuario, Set<String> setNossoNumero) throws GerarCobrancaValidacaoException {
+		
+		Distribuidor distribuidor = this.distribuidorRepository.obter();
 		
 		//Caso esteja gerando cobrança para uma única cota
 		if (idCota != null){
+			
 			boolean existeCobranca = 
 					this.consolidadoFinanceiroRepository.verificarConsodidadoCotaPorDataOperacao(idCota);
 			
@@ -264,6 +312,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 				}
 			}
 			
+
 			if (TipoCobranca.BOLETO.equals(tipoCobranca)){
 				this.verificarCotaTemBanco(ultimaCota, msgs);
 			}
@@ -278,6 +327,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 				
 				setNossoNumero.add(nossoNumero);
 			}
+ 
 		}
 		
 		if (!msgs.isEmpty()){
@@ -450,14 +500,16 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		consolidadoFinanceiroCota.setCota(cota);
 		consolidadoFinanceiroCota.setDataConsolidado(distribuidor.getDataOperacao());
 		consolidadoFinanceiroCota.setMovimentos(movimentos);
+		consolidadoFinanceiroCota.setPendente(this.obterValorPendenteCobrancaConsolidado(cota.getNumeroCota()));
 		
 		BigDecimal vlMovFinanTotal = BigDecimal.ZERO;
 		BigDecimal vlMovFinanDebitoCredito = BigDecimal.ZERO;
 		BigDecimal vlMovFinanEncalhe = BigDecimal.ZERO;
 		BigDecimal vlMovFinanEncargos = BigDecimal.ZERO;
 		BigDecimal vlMovFinanVendaEncalhe = BigDecimal.ZERO;
-		
+
 		for (MovimentoFinanceiroCota movimentoFinanceiroCota : movimentos){
+
 			switch (((TipoMovimentoFinanceiro) movimentoFinanceiroCota.getTipoMovimento()).getGrupoMovimentoFinaceiro()){
 				case CREDITO:
 					vlMovFinanTotal = vlMovFinanTotal.add(movimentoFinanceiroCota.getValor());
@@ -542,14 +594,14 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 				break;
 			}
 		}
+		
 		consolidadoFinanceiroCota.setTotal(vlMovFinanTotal);
 		consolidadoFinanceiroCota.setDebitoCredito(vlMovFinanDebitoCredito);
 		consolidadoFinanceiroCota.setEncalhe(vlMovFinanEncalhe);
 		consolidadoFinanceiroCota.setEncargos(vlMovFinanEncargos);
 		consolidadoFinanceiroCota.setVendaEncalhe(vlMovFinanVendaEncalhe);
 		
-		Usuario usuario = new Usuario();
-		usuario.setId(idUsuario);
+		Usuario usuario = this.usuarioRepository.buscarPorId(idUsuario);
 		
 		FormaCobranca formaCobrancaPrincipal = this.financeiroService.obterFormaCobrancaPrincipalCota(cota.getId());
 		
@@ -568,21 +620,41 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		int fatorVencimento = cota.getParametroCobranca() != null ? cota.getParametroCobranca().getFatorVencimento() : 0;
 		
 		switch(formaCobrancaPrincipal.getTipoFormaCobranca()){
+
+			case DIARIA:
+				dataVencimento = 
+				this.calendarioService.adicionarDiasUteis(consolidadoFinanceiroCota.getDataConsolidado(), 
+														  fatorVencimento, 
+														  null, 
+														  null); 
+				
+			break;
+			
+			case QUINZENAL:
+				dataVencimento = 
+				this.calendarioService.adicionarDiasUteis(consolidadoFinanceiroCota.getDataConsolidado(), 
+														  fatorVencimento,
+														  null, 
+														  formaCobrancaPrincipal.getDiasDoMes()); 
+
+			break;
+			
 			case MENSAL:
 				dataVencimento = 
-				this.calendarioService.adicionarDiasUteis(
-						consolidadoFinanceiroCota.getDataConsolidado(), fatorVencimento,
-						null, formaCobrancaPrincipal.getDiasDoMes().get(0));
+				this.calendarioService.adicionarDiasUteis(consolidadoFinanceiroCota.getDataConsolidado(), 
+														  fatorVencimento,
+														  null, 
+														  formaCobrancaPrincipal.getDiasDoMes());
 			break;
 			
 			case SEMANAL:
-				diasSemanaConcentracaoPagamento = 
-						this.cotaRepository.obterDiasConcentracaoPagamentoCota(cota.getId());
+				diasSemanaConcentracaoPagamento = this.cotaRepository.obterDiasConcentracaoPagamentoCota(cota.getId());
 				
 				dataVencimento = 
-						this.calendarioService.adicionarDiasUteis(
-								consolidadoFinanceiroCota.getDataConsolidado(), fatorVencimento,
-								diasSemanaConcentracaoPagamento, null);
+				this.calendarioService.adicionarDiasUteis(consolidadoFinanceiroCota.getDataConsolidado(), 
+														  fatorVencimento,
+														  diasSemanaConcentracaoPagamento, 
+														  null);
 			break;
 		}
 		
@@ -605,13 +677,15 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		if (vlMovFinanTotal.compareTo(BigDecimal.ZERO) < 0){
 			
 			vlMovFinanTotal = vlMovFinanTotal.negate();
-			
+
+			boolean cotaSuspensa = SituacaoCadastro.SUSPENSO.equals(this.obterSitiacaoCadastroCota(cota.getId()));
+
 			BigDecimal valorMinino = this.obterValorMinino(cota, valorMininoDistribuidor);
 			
-			//caso não tenha alcaçado valor minino de cobrança ou não seja um dia de concentração de cobrança
-			if (vlMovFinanTotal.compareTo(valorMinino) < 0 || 
-					(diasSemanaConcentracaoPagamento != null && 
-					!diasSemanaConcentracaoPagamento.contains(Calendar.getInstance().get(Calendar.DAY_OF_MONTH)))){
+			//caso a cota não esteja suspensa e não tenha alcançado o valor minino de cobrança ou não seja um dia de concentração de cobrança
+			if ( (!cotaSuspensa)&&(vlMovFinanTotal.compareTo(valorMinino) < 0) || 
+					((diasSemanaConcentracaoPagamento != null) && 
+					!diasSemanaConcentracaoPagamento.contains(Calendar.getInstance().get(Calendar.DAY_OF_MONTH))) ){
 				
 				//gerar postergado
 				consolidadoFinanceiroCota.setValorPostergado(vlMovFinanTotal);
@@ -648,8 +722,10 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 				tipoMovimentoFinanceiro.setDescricao("Geração de dívida - " + descPostergado);
 				
 				movimentoFinanceiroCota.setTipoMovimento(tipoMovimentoFinanceiro);
-			} else {
-				
+			} 
+			//Cota suspensa ou valor minimo atingido e dentro do dia de concentração de cobrança
+			else {
+
 				novaDivida = new Divida();
 				novaDivida.setValor(vlMovFinanTotal);
 				novaDivida.setData(consolidadoFinanceiroCota.getDataConsolidado());
@@ -845,5 +921,18 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 				this.consolidadoFinanceiroRepository.remover(consolidado);
 			}
 		}
+	}
+	
+	/**
+	 * 
+	 * Retorna o valor de cobrança em aberto que a cota não pagou até a presente data de geração do novo consolidado em questão.
+	 * 
+	 * @param numeroCota - número da cota
+	 * 
+	 * @return BigDecimal - valor pendente de cobrança do sonsolidado
+	 */
+	private BigDecimal obterValorPendenteCobrancaConsolidado(Integer numeroCota){
+		
+		return cobrancaRepository.obterValorCobrancaNaoPagoDaCota(numeroCota);
 	}
 }

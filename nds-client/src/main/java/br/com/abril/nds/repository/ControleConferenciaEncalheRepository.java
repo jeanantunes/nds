@@ -9,6 +9,5 @@ public interface ControleConferenciaEncalheRepository extends Repository<Control
 
 	public ControleConferenciaEncalhe obterControleConferenciaEncalhe(Date dataOperacao);
 
-	public StatusOperacao obterStatusConferenciaDataOperacao();
 	
 }

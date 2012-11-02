@@ -14,38 +14,35 @@ import br.com.abril.nds.model.estoque.MovimentoEstoque;
  */
 public interface EdicoesFechadasRepository extends Repository<MovimentoEstoque, Long> {
 
-	/**
-	 * Retorna a lista de edições fechadas em um período de datas
-	 * @param dataDe
-	 * @param dateAte
-	 * @return
-	 */
-	public List<RegistroEdicoesFechadasVO> obterResultadoEdicoesFechadas(Date dataDe, Date dateAte);
+
 
 	/**
 	 * Retorna a lista de edições fechadas filtrada pelo código do fornecedor em um período de datas
 	 * @param dataDe
 	 * @param dateAte
-	 * @param codigoFornecedor
+	 * @param idFornecedor
+	 * @param sortorder 
+	 * @param sortname 
+	 * @param firstResult 
+	 * @param maxResults 
 	 * @return
 	 */
-	public List<RegistroEdicoesFechadasVO> obterResultadoEdicoesFechadas(Date dataDe, Date dateAte, String codigoFornecedor);
+	public List<RegistroEdicoesFechadasVO> obterResultadoEdicoesFechadas(Date dataDe, Date dateAte, Long idFornecedor, String sortorder, String sortname, Integer firstResult, Integer maxResults);
 
-	/**
-	 * Retorna o resultado total do saldo de edições fechadas em um período de datas
-	 * @param dataDe
-	 * @param dateAte
-	 * @return
-	 */
-	public BigDecimal obterResultadoTotalEdicoesFechadas(Date dataDe, Date dateAte);
+	
 
 	/**
 	 * Retorna o resultado total do saldo de edições fechadas filtrada pelo código do fornecedor em um período de datas
 	 * @param dataDe
 	 * @param dateAte
-	 * @param codigoFornecedor
+	 * @param idFornecedor
 	 * @return
 	 */
-	public BigDecimal obterResultadoTotalEdicoesFechadas(Date dataDe, Date dateAte, String codigoFornecedor);
+	public BigDecimal obterResultadoTotalEdicoesFechadas(Date dataDe, Date dateAte, Long idFornecedor);
+
+
+
+	public abstract Long quantidadeResultadoEdicoesFechadas(Date dataDe,
+			Date dataAte, Long idFornecedor);
 
 }

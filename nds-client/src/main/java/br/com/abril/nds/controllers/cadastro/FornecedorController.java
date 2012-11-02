@@ -9,6 +9,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 import javax.servlet.http.HttpSession;
 
@@ -30,7 +31,7 @@ import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoFornecedor;
 import br.com.abril.nds.model.seguranca.Permissao;
-import br.com.abril.nds.serialization.custom.CustomMapJson;
+import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.PessoaJuridicaService;
 import br.com.abril.nds.service.TipoFornecedorService;
@@ -238,7 +239,12 @@ public class FornecedorController {
 		
 		Distribuidor distribuidor = distribuidorService.obter();
 		
-		boolean utilizaSugestaoIncrementoCodigo = distribuidor.isUtilizaSugestaoIncrementoCodigo();
+		boolean utilizaSugestaoIncrementoCodigo = false;
+		
+		if (distribuidor.getUtilizaSugestaoIncrementoCodigo() != null) {
+			
+			utilizaSugestaoIncrementoCodigo = distribuidor.getUtilizaSugestaoIncrementoCodigo();
+		}
 		
 		Integer novoCodigoInterface = null;
 		
@@ -246,7 +252,15 @@ public class FornecedorController {
 			novoCodigoInterface = this.fornecedorService.obterMinCodigoInterfaceDisponivel();
 		}
 		
-		this.result.use(CustomMapJson.class).put("data", DateUtil.formatarDataPTBR(new Date())).put("nextCodigo", novoCodigoInterface).serialize();
+		Map<String, Object> mapa = new TreeMap<String, Object>(); 
+		
+		mapa.put("data", DateUtil.formatarDataPTBR(new Date()));
+		
+		if (novoCodigoInterface != null) {
+			mapa.put("nextCodigo", novoCodigoInterface);
+		}
+		
+		this.result.use(CustomJson.class).from(mapa).serialize();
 	}
 	
 	private void obterTiposFornecedor() {
@@ -261,6 +275,10 @@ public class FornecedorController {
 		List<String> mensagens = new ArrayList<String>();
 		
 		Origem origemFornecedor = fornecedorDTO.getOrigem() == null ? Origem.MANUAL : fornecedorDTO.getOrigem(); 
+		
+		if(fornecedorDTO.getInscricaoEstadual() == null || fornecedorDTO.getInscricaoEstadual().isEmpty()) {
+			mensagens.add("O preenchimento do campo [Inscrição Estadual] é obrigatório.");
+		}
 		
 		if (fornecedorDTO.getCodigoInterface() == null) {
 			
@@ -305,11 +323,6 @@ public class FornecedorController {
 				
 				mensagens.add("CNPJ inválido.");
 			}
-		}
-		
-		if (fornecedorDTO.getTipoFornecedor() == null) {
-			
-			mensagens.add("O preenchimento do campo [Tipo Fornecedor] é obrigatório.");
 		}
 		
 		if (!StringUtil.isEmpty(fornecedorDTO.getEmailNfe())) {
@@ -537,8 +550,15 @@ public class FornecedorController {
 			fornecedor.setInicioAtividade(new Date());
 		}
 		
-		TipoFornecedor tipoFornecedor = 
-				this.tipoFornecedorService.obterTipoFornecedorPorId(fornecedorDTO.getTipoFornecedor());
+		TipoFornecedor tipoFornecedor = null;
+		
+		if(fornecedorDTO.getTipoFornecedor()!=null) {
+
+			tipoFornecedor = this.tipoFornecedorService.obterTipoFornecedorPorId(fornecedorDTO.getTipoFornecedor());
+			
+		}
+		
+		 
 
 		fornecedor.setTipoFornecedor(tipoFornecedor);
 		
@@ -587,7 +607,11 @@ public class FornecedorController {
 		
 		fornecedorDTO.setResponsavel(fornecedor.getResponsavel());
 		
-		fornecedorDTO.setTipoFornecedor(fornecedor.getTipoFornecedor().getId());
+		if(fornecedor.getTipoFornecedor() != null) {
+
+			fornecedorDTO.setTipoFornecedor(fornecedor.getTipoFornecedor().getId());
+
+		}
 		
 		fornecedorDTO.setValidadeContrato(DateUtil.formatarDataPTBR(fornecedor.getValidadeContrato()));
 		

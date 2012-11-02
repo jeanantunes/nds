@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.util.NFEImportUtil;
 import br.com.abril.nds.client.vo.RecebimentoFisicoVO;
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.dto.CabecalhoNotaDTO;
@@ -44,6 +45,7 @@ import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.RecebimentoFisicoService;
 import br.com.abril.nds.service.TipoNotaFiscalService;
 import br.com.abril.nds.util.CellModelKeyValue;
+import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.MathUtil;
@@ -56,6 +58,7 @@ import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.Validator;
+import br.com.caelum.vraptor.validator.Message;
 import br.com.caelum.vraptor.view.Results;
 
 @Resource
@@ -96,6 +99,9 @@ public class RecebimentoFisicoController {
 
 	@Autowired
 	private CFOPService cfopService;
+	
+	@Autowired
+	private Validator validator;
 	
 	public RecebimentoFisicoController(
 			Result result, 
@@ -293,33 +299,89 @@ public class RecebimentoFisicoController {
 		return false;		
 	}
 
+	private boolean validarChaveAcesso(FiltroConsultaNotaFiscalDTO filtro, String indNFe, List<String> msgs) {
+		
+		boolean indChaveAcessoInformada = false;
+		
+		String regraParaChaveAcesso = "^[0-9]{"+
+		NFEImportUtil.QTD_DIGITOS_CHAVE_ACESSO_NFE+","+
+		NFEImportUtil.QTD_DIGITOS_CHAVE_ACESSO_NFE+"}$";
+		
+		if(filtro.getChave() != null && filtro.getChave().trim().isEmpty()) {
+			filtro.setChave(null);
+		}
+		
+		if(indNFe.equals("S")) {
+			
+			indChaveAcessoInformada = true;
+			
+			if(filtro.getChave() == null || filtro.getChave().trim().isEmpty()) {
+				
+				msgs.add("Chave de Acesso é Obrigatória!");
+				
+			} else if(!filtro.getChave().matches(regraParaChaveAcesso)) {
+				
+				msgs.add("Chave de Acesso deve possuir " + NFEImportUtil.QTD_DIGITOS_CHAVE_ACESSO_NFE +  " dígitos.");
+				
+			}
+			
+		}
+		
+		return indChaveAcessoInformada;
+	}
+	
+	
+	private boolean verificaValidationError(String category) {
+	
+		if(!validator.hasErrors()) {
+			return false;
+		}
+		
+		for(Message msg : validator.getErrors()) {
+			if(msg.getCategory().contains(category)) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
 	/**
 	 * Valida os dados da nova Nota Fiscal.
 	 * 
-	 * @param cnpj
-	 * @param numeroNotaFiscal
-	 * @param serie
 	 */
-	private void validarDadosNotaFiscal(String cnpj, Long numeroNotaFiscal, String serie, String fornecedor) {
+	private void validarDadosNotaFiscal(FiltroConsultaNotaFiscalDTO filtro, String fornecedor, String indNFe) {
 		
 		List<String> msgs = new ArrayList<String>();
 		
-		if(!fornecedor.equals("-1")){
-			
-			if(cnpj == null || cnpj.isEmpty()) {
-			
-				msgs.add("O campo CNPJ é obrigatório");
-			
-			} 
-			
-		}	
+		boolean indChaveAcessoInformada = validarChaveAcesso(filtro, indNFe, msgs);
 		
-		if(numeroNotaFiscal == null) {
-			msgs.add("O campo Nota Fiscal é obrigatório");
-		}
+		boolean indTodosFornecedores = fornecedor.equals("-1");
+		
+		if(!indChaveAcessoInformada) {
+			
+			if(!indTodosFornecedores){
+				if(filtro.getCnpj() == null || filtro.getCnpj().trim().isEmpty()) {
+					msgs.add("O campo CNPJ do fornecedor é obrigatório");
+				} 
+			} else {
+				filtro.setCnpj(null);
+			}
+				
+			if(filtro.getNumeroNota() == null) {
+				
+				if(verificaValidationError("numeroNotaFiscal")) {
+					msgs.add("Valor inválido para o campo Nota Fiscal");
+				} else {
+					msgs.add("O campo Nota Fiscal é obrigatório");
+				}
+				
+			}
 
-		if(serie == null || serie.isEmpty()) {
-			msgs.add("O campo Série é obrigatório");
+			if(filtro.getSerie() == null || filtro.getSerie().isEmpty()) {
+				msgs.add("O campo Série é obrigatório");
+			}
+			
 		}
 
 		if(!msgs.isEmpty()) {
@@ -722,19 +784,13 @@ public class RecebimentoFisicoController {
 	 * @param chaveAcesso
 	 */
 	@Post
-	public void verificarNotaFiscalExistente(String cnpj, Long numeroNotaFiscal, String serie,String indNFe,String fornecedor, String chaveAcesso) {
-
-		if(indNFe.equals("S")){
-			if(chaveAcesso == null || chaveAcesso.trim().isEmpty()){
-				throw new ValidacaoException(TipoMensagem.WARNING,"Chave de Acesso é Obrigatória!");
-			}
-		}
-		
-		validarDadosNotaFiscal(cnpj, numeroNotaFiscal, serie, fornecedor);
-		
-		if(chaveAcesso == null || chaveAcesso.trim().isEmpty()) {
-			chaveAcesso = null;
-		}
+	public void verificarNotaFiscalExistente(
+			String cnpj, 
+			Long numeroNotaFiscal, 
+			String serie,
+			String indNFe,
+			String fornecedor, 
+			String chaveAcesso) {
 		
 		limparDadosDaSession();
 		
@@ -745,6 +801,8 @@ public class RecebimentoFisicoController {
 		filtro.setSerie(serie);
 		filtro.setChave(chaveAcesso);
 		filtro.setNomeFornecedor(fornecedor);
+		
+		validarDadosNotaFiscal(filtro, fornecedor, indNFe);		
 		
 		List<NotaFiscalEntrada> listaNotaFiscal = notaFiscalService.obterNotaFiscalPorNumeroSerieCnpj(filtro);
 		
@@ -1013,68 +1071,6 @@ public class RecebimentoFisicoController {
 		
 	}
 
-	/**
-	 * Valida os dados de uma nota fiscal.
-	 * 
-	 * @param notaFiscalFornecedor
-	 * @param dataEmissao
-	 * @param dataEntrada
-	 * @param valorLiquido
-	 * @param valorBruto
-	 * @param valoDesconto
-	 * 
-	 * @throws ValidacaoException
-	 */
-	private void validarNovaNotaFiscal(
-			NotaFiscalEntradaFornecedor notaFiscalFornecedor, String dataEmissao,
-			String dataEntrada, String valorLiquido, String valorBruto,
-			String valorDesconto, String fornecedor) throws ValidacaoException {
-
-		List<String> msgs = new ArrayList<String>();
-
-		if(notaFiscalFornecedor == null) {
-			
-			msgs.add("Os campos da Nota Fiscal devem ser informados");
-			
-		} else {
-			if(!fornecedor.equals("-1")){
-				if (	notaFiscalFornecedor.getEmitente() == null || 
-						notaFiscalFornecedor.getEmitente().getCnpj() == null || 
-						notaFiscalFornecedor.getEmitente().getCnpj().isEmpty()) {
-					
-					msgs.add("O campo Emitente dever ser informado");
-					
-				}
-			}	
-
-			if ( notaFiscalFornecedor.getNumero() == null ) {
-				
-				msgs.add("O campo Nota Fiscal dever ser informado");
-				
-			}
-
-			if (	notaFiscalFornecedor.getSerie() == null || 
-					notaFiscalFornecedor.getSerie().isEmpty()) {
-				msgs.add("O campo Série dever ser informado");
-			}
-
-			validarCampoMonetario("Valor Bruto", valorBruto, msgs);
-			
-			validarCampoMonetario("Valor Líquido", valorLiquido, msgs);
-
-			validarCampoMonetario("Valor Desconto", valorDesconto, msgs);
-
-			validarCampoData("Data Emissão", dataEmissao, msgs);
-
-			validarCampoData("Data Entrada", dataEntrada, msgs);			
-		}
-
-		if(!msgs.isEmpty()) {
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, msgs));
-		}
-		
-	}
-	
 	private void validarNovoItemRecebimentoFisico(RecebimentoFisicoDTO itemRecebimento,
 			String numeroEdicao,
 			String dataLancamento, 
@@ -1168,60 +1164,6 @@ public class RecebimentoFisicoController {
 		
 	}
 	
-	/**
-	 * Inclui os dados de uma nova nota fiscal em session.
-	 * 
-	 * @param notaFiscalFornecedor
-	 * @param dataEmissao
-	 * @param dataEntrada
-	 * @param valorLiquido
-	 * @param valorBruto
-	 * @param valorDesconto
-	 */
-	@Post
-	public void incluirNovaNotaFiscal(NotaFiscalEntradaFornecedor notaFiscalFornecedor, 
-			String dataEmissao,
-			String dataEntrada,
-			String valorLiquido,
-			String valorBruto,
-			String valorDesconto,
-			String fornecedor)  {
-		
-		validarNovaNotaFiscal(
-				notaFiscalFornecedor, 
-				dataEmissao,
-				dataEntrada,
-				valorLiquido,
-				valorBruto,
-				valorDesconto,
-				fornecedor);
-	
-		if(notaFiscalFornecedor.getChaveAcesso() == null || notaFiscalFornecedor.getChaveAcesso().trim().isEmpty()) {
-			notaFiscalFornecedor.setChaveAcesso(null);
-		}
-		
-		try {
-			notaFiscalFornecedor.setDataEmissao(sdf.parse(dataEmissao));
-			notaFiscalFornecedor.setDataExpedicao(sdf.parse(dataEntrada));
-		} catch(ParseException e) {
-			notaFiscalFornecedor.setDataEmissao(null);
-			notaFiscalFornecedor.setDataExpedicao(null);
-		}
-		
-		notaFiscalFornecedor.setValorLiquido(getBigDecimalFromValor(valorLiquido));
-		notaFiscalFornecedor.setValorBruto(getBigDecimalFromValor(valorBruto));
-		notaFiscalFornecedor.setValorDesconto(getBigDecimalFromValor(valorDesconto));
-		
-		setNotaFiscalToSession(notaFiscalFornecedor);
-		
-		List<String> msgs = new ArrayList<String>();
-		msgs.add("Nova nota fiscal cadastrada com sucesso.");
-		ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.SUCCESS, msgs);
-		result.use(Results.json()).from(validacao, "result").include("listaMensagens").serialize();	
-	
-	}
-	
-		
 	/**
 	 * confirmaçao de recebimento fisico
 	 * @param notaFiscal
@@ -1485,7 +1427,7 @@ public class RecebimentoFisicoController {
 		notaFiscal.setChaveAcesso(nota.getChaveAcesso());
 		
 		
-		notaFiscal.setEmitente(fornecedor.getJuridica());
+		notaFiscal.setFornecedor(fornecedor);
 		notaFiscal.setTipoNotaFiscal(tipoNotaService.obterPorId(3l));//RECEBIMENTO DE ENCALHE
 		notaFiscal.setValorBruto(CurrencyUtil.converterValor(nota.getValorTotal()));
         notaFiscal.setValorDesconto(notaFiscal.getValorBruto().subtract(notaFiscal.getValorLiquido()));

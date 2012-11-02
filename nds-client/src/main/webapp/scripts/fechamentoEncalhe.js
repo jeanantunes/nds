@@ -50,7 +50,7 @@ var fechamentoEncalheController = $.extend(true, {
 				sortable : true,
 				align : 'left'
 			}, {
-				display : 'A&ccedil;ao?',
+				display : 'A&ccedil;ao',
 				name : 'acao',
 				width : 110,
 				sortable : true,
@@ -78,22 +78,28 @@ var fechamentoEncalheController = $.extend(true, {
 			colModel : [ {
 				display : 'C&oacute;digo',
 				name : 'codigo',
-				width : 60,
+				width : 50,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Produto',
 				name : 'produto',
-				width : 220,
+				width : 190,
 				sortable : true,
 				align : 'left'
-			}, {
+			},{
 				display : 'Edi&ccedil;&atilde;o',
 				name : 'edicao',
-				width : 80,
+				width : 40,
 				sortable : true,
 				align : 'left'
 			}, {
+				display : 'Tipo',
+				name : 'tipo',
+				width : 23,
+				sortable : false,
+				align : 'left'
+			},{
 				display : 'Pre&ccedil;o Capa R$',
 				name : 'precoCapaFormatado',
 				width : 80,
@@ -114,7 +120,7 @@ var fechamentoEncalheController = $.extend(true, {
 			}, {
 				display : 'F&iacute;sico',
 				name : 'fisico',
-				width : 80,
+				width : 70,
 				sortable : false,
 				align : 'center'
 			}, {
@@ -123,7 +129,13 @@ var fechamentoEncalheController = $.extend(true, {
 				width : 50,
 				sortable : false,
 				align : 'right'
-			}, {
+			},{
+			display : 'Estoque',
+			name : 'estoque',
+			width : 60,
+			sortable : false,
+			align : 'right'
+			},{
 				display : 'Replicar Qtde.',
 				name : 'replicar',
 				width : 80,
@@ -180,17 +192,24 @@ var fechamentoEncalheController = $.extend(true, {
 	
 	preprocessamentoGridFechamento : function(resultado) {
 		
+		if (typeof resultado.mensagens == "object") {
+            exibirMensagemDialog(resultado.mensagens.tipoMensagem, resultado.mensagens.listaMensagens, "");
+            return;
+        } 
+		
 		$.each(resultado.rows, function(index, row) {
 			
-			if (row.cell.diferenca == "0") {
-				row.cell.diferenca = "";
-			}
 			
 			var valorFisico = row.cell.fisico == null ? '' : row.cell.fisico;
+			if ( ( row.cell.diferenca == "0" && valorFisico == '' ) ||  valorFisico == '' ) {
+					row.cell.diferenca = "";
+			}
+			
 			var fechado = row.cell.fechado == false ? '' : 'disabled="disabled"';
 			row.cell.fisico = '<input type="text" style="width: 60px" id = "'+row.cell.produtoEdicao+'"  name="fisico" value="' + valorFisico + '" onchange="fechamentoEncalheController.onChangeFisico(this, ' + index + ')" ' + fechado + '/>';
 			
 			row.cell.replicar = '<span title="Replicar"><a href="javascript:;" onclick="fechamentoEncalheController.replicar(' + index + ')"><img src="' + contextPath + '/images/ico_atualizar.gif" border="0" /></a></span>';
+			
 			
 			if (fechado != '') {
 				$('#divBotoesPrincipais', fechamentoEncalheController.workspace).hide();
@@ -204,16 +223,16 @@ var fechamentoEncalheController = $.extend(true, {
 	
 		var tabela = $('.fechamentoGrid', fechamentoEncalheController.workspace).get(0);
 		for (i=0; i<tabela.rows.length; i++) {
-			replicar(i);
+			fechamentoEncalheController.replicar(i);
 		}
 	},
 	
 	replicar : function(index) {
 		
 		var tabela = $('.fechamentoGrid', fechamentoEncalheController.workspace).get(0);
-		var valor = tabela.rows[index].cells[4].firstChild.innerHTML;
-		var campo = tabela.rows[index].cells[6].firstChild.firstChild;
-		var diferenca = tabela.rows[index].cells[7].firstChild;
+		var valor = tabela.rows[index].cells[5].firstChild.innerHTML;
+		var campo = tabela.rows[index].cells[7].firstChild.firstChild;
+		var diferenca = tabela.rows[index].cells[8].firstChild;
 
 		campo.value = valor;
 		diferenca.innerHTML = "0";
@@ -222,8 +241,8 @@ var fechamentoEncalheController = $.extend(true, {
 	onChangeFisico : function(campo, index) {
 		
 		var tabela = $('.fechamentoGrid', fechamentoEncalheController.workspace).get(0);
-		var devolucao = parseInt(tabela.rows[index].cells[4].firstChild.innerHTML);
-		var diferenca = tabela.rows[index].cells[7].firstChild;
+		var devolucao = parseInt(tabela.rows[index].cells[5].firstChild.innerHTML);
+		var diferenca = tabela.rows[index].cells[8].firstChild;
 		
 		if (campo.value == "") {
 			diferenca.innerHTML = "";
@@ -418,10 +437,10 @@ var fechamentoEncalheController = $.extend(true, {
 			modal: true,
 			buttons: {
 				"Postergar": function() {
-					postergarCotas();
+					fechamentoEncalheController.postergarCotas();
 				},
 				"Cobrar": function() {
-					cobrarCotas();
+					fechamentoEncalheController.cobrarCotas();
 				},
 				"Cancelar": function() {
 					$(this).dialog( "close" );
@@ -468,26 +487,33 @@ var fechamentoEncalheController = $.extend(true, {
 	},
 	
 	postergarCotas : function() {
-
-		var cotasSelecionadas = obterCotasMarcadas();
+		var dataEncalhe = $("#datepickerDe", fechamentoEncalheController.workspace).val();
+		$.postJSON(contextPath + "/devolucao/fechamentoEncalhe/dataSugestaoPostergarCota",
+				{ 'dataEncalhe' : dataEncalhe},
+				function (result) {
+					$("#dtPostergada", fechamentoEncalheController.workspace).val(result.resultado);
+				}
+		);
+		
+		
+		var cotasSelecionadas = fechamentoEncalheController.obterCotasMarcadas();
 
 		if (cotasSelecionadas.length > 0) {
 			
 			$("#dialog-postergar", fechamentoEncalheController.workspace).dialog({
 				resizable: false,
 				height:'auto',
-				width:250,
+				width:300,
 				modal: true,
 				buttons: {
 					"Confirmar": function() {
-						
 						var dataPostergacao = $("#dtPostergada", fechamentoEncalheController.workspace).val();
 						var dataEncalhe = $("#datepickerDe", fechamentoEncalheController.workspace).val();
 						
 						$.postJSON(contextPath + "/devolucao/fechamentoEncalhe/postergarCotas",
 									{ 'dataPostergacao' : dataPostergacao, 
 									  'dataEncalhe' : dataEncalhe, 
-									  'idsCotas' : obterCotasMarcadas() },
+									  'idsCotas' : cotasSelecionadas },
 									function (result) {
 	
 										$("#dialog-postergar", fechamentoEncalheController.workspace).dialog("close");
@@ -557,7 +583,7 @@ var fechamentoEncalheController = $.extend(true, {
 		var dataOperacao = $("#datepickerDe", fechamentoEncalheController.workspace).val();
 		
 		$.postJSON(contextPath + "/devolucao/fechamentoEncalhe/cobrarCotas",
-					{ 'dataOperacao' : dataOperacao, 'idsCotas' : obterCotasMarcadas() },
+					{ 'dataOperacao' : dataOperacao, 'idsCotas' : fechamentoEncalheController.obterCotasMarcadas() },
 					function (result) {
 						
 						var tipoMensagem = result.tipoMensagem;
@@ -715,6 +741,10 @@ var fechamentoEncalheController = $.extend(true, {
 			   	false
 			);
 			
-	}
-
+	},
+	
+	analiticoEncalhe : function() {
+		$('#workspace').tabs('addTab', "Anal&iacute;tico Encalhe", "/nds-client/devolucao/fechamentoEncalhe/analitico");
+	},
+	
 }, BaseController);

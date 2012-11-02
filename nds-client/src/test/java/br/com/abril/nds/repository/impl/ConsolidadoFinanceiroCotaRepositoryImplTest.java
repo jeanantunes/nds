@@ -116,23 +116,20 @@ public class ConsolidadoFinanceiroCotaRepositoryImplTest extends AbstractReposit
 		produto.addFornecedor(fornecedor);
 		save(produto);
 		
-		ProdutoEdicao produtoEdicao = Fixture.produtoEdicao("1", 234L,12 , 1, new Long(900), new BigDecimal(8), 
-				new BigDecimal(10), "ABCDEFGHIJKLMNOPQ", 1L, produto, null, false);
+		ProdutoEdicao produtoEdicao = Fixture.produtoEdicao(234L, 12,1 , new Long(900), new BigDecimal(8), new BigDecimal(10), 
+				"ABCDEFGHIJKLMNOPQ", produto, null, false);
 		save(produtoEdicao);
 				
 		TipoFornecedor tipoFornecedorPublicacao = Fixture.tipoFornecedorPublicacao();
 		save(tipoFornecedorPublicacao);
 				
-		PessoaJuridica pj = Fixture.juridicaDinap();		
-		save(pj);
-		
 		CFOP cfop = Fixture.cfop5102();		
 		save(cfop);
 				
 		TipoNotaFiscal tipoNotaFiscal = Fixture.tipoNotaFiscalRecebimento();
 		save(tipoNotaFiscal);
 					
-		NotaFiscalEntradaFornecedor notaFiscal = Fixture.notaFiscalEntradaFornecedor(cfop, pj, fornecedor, tipoNotaFiscal, usuario, new BigDecimal(145),  new BigDecimal(10),  new BigDecimal(10));
+		NotaFiscalEntradaFornecedor notaFiscal = Fixture.notaFiscalEntradaFornecedor(cfop, fornecedor, tipoNotaFiscal, usuario, new BigDecimal(145),  new BigDecimal(10),  new BigDecimal(10));
 		save(notaFiscal);
 		
 		RecebimentoFisico recebimentoFisico = Fixture.recebimentoFisico(notaFiscal, usuario, new Date(), new Date(), StatusConfirmacao.PENDENTE);
@@ -247,23 +244,20 @@ public class ConsolidadoFinanceiroCotaRepositoryImplTest extends AbstractReposit
 		produto.addFornecedor(fornecedor);
 		save(produto);
 		
-		ProdutoEdicao produtoEdicao = Fixture.produtoEdicao("1", 234L,12 , 1, new Long(900), new BigDecimal(8), 
-				new BigDecimal(10), "ABCDEFGHIJKLMNOPA", 2L, produto, null, false);
+		ProdutoEdicao produtoEdicao = Fixture.produtoEdicao(234L, 12,1 , new Long(900), new BigDecimal(8), new BigDecimal(10), 
+				"ABCDEFGHIJKLMNOPA", produto, null, false);
 		save(produtoEdicao);
 				
 		TipoFornecedor tipoFornecedorPublicacao = Fixture.tipoFornecedorPublicacao();
 		save(tipoFornecedorPublicacao);
 				
-		PessoaJuridica pj = Fixture.juridicaDinap();		
-		save(pj);
-		
 		CFOP cfop = Fixture.cfop5102();		
 		save(cfop);
 				
 		TipoNotaFiscal tipoNotaFiscal = Fixture.tipoNotaFiscalRecebimento();
 		save(tipoNotaFiscal);
 					
-		NotaFiscalEntradaFornecedor notaFiscal = Fixture.notaFiscalEntradaFornecedor(cfop, pj, fornecedor, tipoNotaFiscal, usuario, new BigDecimal(145),  new BigDecimal(10),  new BigDecimal(10));
+		NotaFiscalEntradaFornecedor notaFiscal = Fixture.notaFiscalEntradaFornecedor(cfop, fornecedor, tipoNotaFiscal, usuario, new BigDecimal(145),  new BigDecimal(10),  new BigDecimal(10));
 		save(notaFiscal);
 		
 		RecebimentoFisico recebimentoFisico = Fixture.recebimentoFisico(notaFiscal, usuario, new Date(), new Date(), StatusConfirmacao.PENDENTE);

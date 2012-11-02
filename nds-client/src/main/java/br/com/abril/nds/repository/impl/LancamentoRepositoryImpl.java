@@ -15,7 +15,6 @@ import java.util.TreeMap;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Projection;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanResultTransformer;
@@ -178,7 +177,7 @@ public class LancamentoRepositoryImpl extends
 		} else if(sortOrder.equals(LancamentoNaoExpedidoDTO.SortColumn.EDICAO)) {
 			order =  "produtoEdicao.numeroEdicao";
 		} else if(sortOrder.equals(LancamentoNaoExpedidoDTO.SortColumn.CLASSIFICACAO_PRODUTO)) {
-			order = "produto.tipoProduto.descricao";
+			order = "produto.tipoproduto.nome";
 		} else if(sortOrder.equals(LancamentoNaoExpedidoDTO.SortColumn.PRECO_PRODUTO)) {
 			order =  "produtoEdicao.precoVenda";
 		} else if(sortOrder.equals(LancamentoNaoExpedidoDTO.SortColumn.QTDE_PACOTE_PADRAO)) {
@@ -249,7 +248,7 @@ public class LancamentoRepositoryImpl extends
 		
 		if (data != null) {
 			
-			hql.append(" AND lancamento.dataLancamentoPrevista = :data");
+			hql.append(" AND lancamento.dataLancamentoDistribuidor = :data");
 			
 			parametros.put("data", data);
 		}				
@@ -272,28 +271,29 @@ public class LancamentoRepositoryImpl extends
 		jpql = new StringBuilder();
 		jpql.append(" SELECT CASE WHEN COUNT(lancamento) > 0 THEN true ELSE false END ");	
 		jpql.append(" FROM Lancamento lancamento ");
-		jpql.append(" WHERE lancamento.dataLancamentoPrevista = :data ")
+		jpql.append(" WHERE lancamento.dataLancamentoDistribuidor = :data ")
 		    .append("   AND lancamento.status IN (:statusPlanejadoEConfirmado) ");
 		
-		for (int i = 0; i < 2; i++) {
+		// Implementado por Eduardo Punk Rock - A validação final será realizada utilizando apenas o estado BALANCEADO, que é o último estado liberado pela matriz de balanceamento
+		//for (int i = 0; i < 2; i++) {
 			
 			Query query = getSession().createQuery(jpql.toString());
 	
 			List<StatusLancamento> listaLancamentos = new ArrayList<StatusLancamento>();
 			
-			if(i == 0) {
+			/*if(i == 0) {
 				listaLancamentos.add(StatusLancamento.PLANEJADO);
 				listaLancamentos.add(StatusLancamento.CONFIRMADO);
-			} else {
+			} else {*/
 				listaLancamentos.add(StatusLancamento.BALANCEADO);
-			}
+			//}
 			
 			query.setParameterList("statusPlanejadoEConfirmado", listaLancamentos);
 			query.setParameter("data", data);
 			
 			existeLancamentoConfirmado = existeLancamentoConfirmado && ((Boolean) query.uniqueResult());
 			
-		}
+		//}
 		
 		return existeLancamentoConfirmado;
 		
@@ -522,9 +522,9 @@ public class LancamentoRepositoryImpl extends
 		
 		sql.append(" (select ");
 		sql.append(" case when tipoProduto.GRUPO_PRODUTO = :grupoCromo and periodoLancamentoParcial.TIPO <> :tipoParcial then ");
-		sql.append(" sum((((epc.QTDE_RECEBIDA - epc.QTDE_DEVOLVIDA) - ((epc.QTDE_RECEBIDA - epc.QTDE_DEVOLVIDA) * (coalesce(produtoEdicao.EXPECTATIVA_VENDA, 0) / 100))) / produtoEdicao.PACOTE_PADRAO) * (produtoEdicao.PRECO_VENDA - (" + this.getHQLDesconto() + ") )) ");
+		sql.append(" sum((((epc.QTDE_RECEBIDA - epc.QTDE_DEVOLVIDA) - ((epc.QTDE_RECEBIDA - epc.QTDE_DEVOLVIDA) * (coalesce(produtoEdicao.EXPECTATIVA_VENDA, 0) / 100))) / produtoEdicao.PACOTE_PADRAO) * (produtoEdicao.PRECO_VENDA - ( produtoEdicao.PRECO_VENDA * " + this.getHQLDesconto() + " / 100 ) )) ");
 		sql.append(" else ");
-		sql.append(" sum(((epc.QTDE_RECEBIDA - epc.QTDE_DEVOLVIDA) - ((epc.QTDE_RECEBIDA - epc.QTDE_DEVOLVIDA) * (coalesce(produtoEdicao.EXPECTATIVA_VENDA, 0) / 100))) * (produtoEdicao.PRECO_VENDA - (" + this.getHQLDesconto() + ") )) ");
+		sql.append(" sum(((epc.QTDE_RECEBIDA - epc.QTDE_DEVOLVIDA) - ((epc.QTDE_RECEBIDA - epc.QTDE_DEVOLVIDA) * (coalesce(produtoEdicao.EXPECTATIVA_VENDA, 0) / 100))) * (produtoEdicao.PRECO_VENDA - ( produtoEdicao.PRECO_VENDA * " + this.getHQLDesconto() + " / 100 ) )) ");
 		sql.append(" end ");
 		sql.append(" from COTA cota, ESTOQUE_PRODUTO_COTA epc ");
 		sql.append(" where epc.PRODUTO_EDICAO_ID = produtoEdicao.ID ");
@@ -1093,7 +1093,7 @@ public class LancamentoRepositoryImpl extends
 		sql.append(" on lancamentoParcial.ID = periodoLancamentoParcial.LANCAMENTO_PARCIAL_ID ");
 		
 		sql.append(" where ");
-		sql.append(" tipoProduto.GRUPO_PRODUTO in ( :tiposProduto ) ");
+		sql.append("  UPPER(tipoProduto.GRUPO_PRODUTO) in ( :tiposProduto ) ");
 		
 		sql.append(" and ( ");
 		sql.append(" 	select fornecedor.ID from PRODUTO_FORNECEDOR produtoFornecedor, FORNECEDOR fornecedor ");
@@ -1105,9 +1105,9 @@ public class LancamentoRepositoryImpl extends
 		
 		sql.append(" and ( ");
 		sql.append("	(lancamento.DATA_LCTO_PREVISTA between :periodoInicial and :periodoFinal ");
-		sql.append("		and lancamento.STATUS in ( :statusLancamentoNoPeriodo )) ");
+		sql.append("		and  UPPER(lancamento.STATUS) in ( :statusLancamentoNoPeriodo )) ");
 		sql.append(" 	or (lancamento.DATA_LCTO_PREVISTA < :periodoInicial ");
-		sql.append("		and lancamento.STATUS in ( :statusLancamentoDataMenorInicial )) "); 
+		sql.append("		and UPPER(lancamento.STATUS) in ( :statusLancamentoDataMenorInicial )) "); 
 		sql.append(" ) ");
 		
 		return sql.toString();
@@ -1150,20 +1150,21 @@ public class LancamentoRepositoryImpl extends
 								   Intervalo<Date> periodoDistribuicao,
 								   List<Long> fornecedores) {
 		
-		String[] arrayStatusLancamentoNoPeriodo = {StatusLancamento.PLANEJADO.toString(),
-												   StatusLancamento.CONFIRMADO.toString(),
-												   StatusLancamento.BALANCEADO.toString(),
-												   StatusLancamento.ESTUDO_FECHADO.toString(),
+		String[] arrayStatusLancamentoNoPeriodo = {StatusLancamento.PLANEJADO.name(),
+												   StatusLancamento.CONFIRMADO.name(),
+												   StatusLancamento.BALANCEADO.name(),
+												   StatusLancamento.ESTUDO_FECHADO.name(),
 												   StatusLancamento.FURO.toString()};
 		
-		String[] arrayStatusLancamentoDataMenorInicial = {StatusLancamento.PLANEJADO.toString(),
-				  										  StatusLancamento.CONFIRMADO.toString()};
+		String[] arrayStatusLancamentoDataMenorInicial = {StatusLancamento.PLANEJADO.name(),
+				  										  StatusLancamento.CONFIRMADO.name()};
 		
-		String[] arrayTipoProduto = {GrupoProduto.REVISTA.toString(),
-									 GrupoProduto.CROMO.toString(),
-									 GrupoProduto.CARTELA.toString(),
-									 GrupoProduto.LIVRO.toString(),
-									 GrupoProduto.COLECIONAVEL.toString()};
+		String[] arrayTipoProduto = {GrupoProduto.OUTROS.name(),
+									 GrupoProduto.REVISTA.name(),
+									 GrupoProduto.CROMO.name(),
+									 GrupoProduto.CARTELA.name(),
+									 GrupoProduto.LIVRO.name(),
+									 GrupoProduto.COLECIONAVEL.name()};
 		
 		List<String> statusLancamentoNoPeriodo = Arrays.asList(arrayStatusLancamentoNoPeriodo);
 		
@@ -1319,7 +1320,7 @@ public class LancamentoRepositoryImpl extends
 		
 		hql.append(" select ") 
 		   .append(" lancamento.produtoEdicao.produto.codigo as codigo, ")
-		   .append(" lancamento.produtoEdicao.produto.descricao as produto, ")
+		   .append(" lancamento.produtoEdicao.produto.nome as produto, ")
 		   .append(" lancamento.produtoEdicao.numeroEdicao as numeroEdicao, ")
 		   .append(" lancamento.reparte as reparte, ")
 		   .append(" lancamento.dataLancamentoPrevista as dataLancamento")

@@ -10,6 +10,7 @@ import br.com.abril.nds.dto.ConsultaEncalheDTO;
 import br.com.abril.nds.dto.ConsultaEncalheDetalheDTO;
 import br.com.abril.nds.dto.ConsultaEncalheRodapeDTO;
 import br.com.abril.nds.dto.ContagemDevolucaoDTO;
+import br.com.abril.nds.dto.MovimentoEstoqueCotaDTO;
 import br.com.abril.nds.dto.ProdutoAbastecimentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDetalheDTO;
@@ -147,6 +148,26 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 	 * @return BigInteger
 	 */
 	public BigInteger obterQtdeMovimentoEstoqueCotaParaProdutoEdicaoNoPeriodo(
+			Long idCota,
+			Long idProdutoEdicao,
+			Date dataInicial, 
+			Date dataFinal,
+			OperacaoEstoque operacaoEstoque);
+	
+	/**
+	 * 
+	 * Obtém a o valor total referente ao movimento para determinados produtoEdicao e cota de
+	 * acordo com o range de data informado.
+	 * 
+	 * @param idCota
+	 * @param idProdutoEdicao
+	 * @param dataInicial
+	 * @param dataFinal
+	 * @param operacaoEstoque
+	 * 
+	 * @return BigInteger
+	 */
+	public BigDecimal obterValorTotalMovimentoEstoqueCotaParaProdutoEdicaoNoPeriodo(
 			Long idCota,
 			Long idProdutoEdicao,
 			Date dataInicial, 
@@ -326,4 +347,48 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 	 * @return
 	 */
 	public List<ProdutoAbastecimentoDTO> obterMapaDeImpressaoPorEntregador(FiltroMapaAbastecimentoDTO filtro);
+	
+	/**
+	 * Obtém o Movimento de Estoque das cotas pelo Tipo de Movimento.
+	 * 
+	 * @param data
+	 * @param idCota
+	 * @param grupoMovimentoEstoque
+	 * 
+	 * @return List - MovimentoEstoqueCota
+	 */
+	public List<MovimentoEstoqueCotaDTO> obterMovimentoCotasPorTipoMovimento(Date data, List<Integer> numCotas, GrupoMovimentoEstoque grupoMovimentoEstoque);
+	
+	/**
+	 * Obtém movimentos de estoque da cota que ainda não geraram movimento financeiro
+	 * Considera movimentos de estoque provenientes dos fluxos de Expedição e Conferência de Encalhe
+	 * @param idCota
+	 * @return List<MovimentoEstoqueCota>
+	 */
+	public List<MovimentoEstoqueCota> obterMovimentosPendentesGerarFinanceiro(Long idCota);
+	
+	/**
+	 * Obtém movimentos de estoque da cota que forão estornados
+	 * Considera movimentos de estoque provenientes dos fluxos de Venda de Encalhe e Suplementar
+	 * @param idCota
+	 * @return List<MovimentoEstoqueCota>
+	 */
+	public List<MovimentoEstoqueCota> obterMovimentosEstornados(Long idCota);
+	
+	/**
+	 * Obtém o Valor Total dos movimentos de estoque da cota que ainda não geraram movimento financeiro
+	 * Considera movimentos de estoque provenientes dos fluxos de Expedição e Conferência de Encalhe
+	 * @param idCota
+	 * @return List<MovimentoEstoqueCota>
+	 */
+	public BigDecimal obterValorTotalMovimentosPendentesGerarFinanceiro(Long idCota);
+	
+	/**
+	 * Obtém o Valor Total dos movimentos de estoque da cota que forão estornados
+	 * Considera movimentos de estoque provenientes dos fluxos de Venda de Encalhe e Suplementar
+	 * @param idCota
+	 * @return List<MovimentoEstoqueCota>
+	 */
+	public BigDecimal obterValorTotalMovimentosEstornados(Long idCota);
+	
 }

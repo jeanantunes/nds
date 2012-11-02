@@ -2,8 +2,11 @@ package br.com.abril.nds.dto;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Date;
 
+import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.util.CurrencyUtil;
+import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.util.export.Export.Alignment;
@@ -21,6 +24,11 @@ public class FechamentoFisicoLogicoDTO {
 	private Long edicao;
 	
 	private Long produtoEdicao;
+	
+	private String tipo;
+	
+	private Date dataRecolhimento;
+	
 	private BigDecimal precoCapa;
 	private BigInteger exemplaresDevolucao;
 	private BigDecimal total;
@@ -43,6 +51,8 @@ public class FechamentoFisicoLogicoDTO {
 	private String replicar = "";
 	
 	private Boolean fechado;
+	
+	private String estoque;
 	
 	
 	public String getReplicar() {
@@ -97,8 +107,13 @@ public class FechamentoFisicoLogicoDTO {
 		return exemplaresDevolucao;
 	}
 	public void setExemplaresDevolucao(BigInteger exemplaresDevolucao) {
-		this.exemplaresDevolucao = exemplaresDevolucao;
+		if (exemplaresDevolucao == null) {
+			this.exemplaresDevolucao = BigInteger.ZERO;
+		} else {
+			this.exemplaresDevolucao = exemplaresDevolucao;
+		}
 		this.exemplaresDevolucaoFormatado = CurrencyUtil.formatarValorTruncado(this.exemplaresDevolucao).replaceAll("\\D", "");
+		
 	}
 	public BigDecimal getTotal() {
 		return total;
@@ -125,4 +140,42 @@ public class FechamentoFisicoLogicoDTO {
 	public void setFechado(Boolean fechado) {
 		this.fechado = fechado;
 	}
+
+	
+	public Date getDataRecolhimento() {
+		return dataRecolhimento;
+	}
+
+	public void setDataRecolhimento(Date dataRecolhimento) {
+		
+		  Date dataAtual = DateUtil.removerTimestamp(new Date());
+		  if ("P".equals(this.getTipo())){
+			  estoque= TipoEstoque.LANCAMENTO.getDescricao();
+		  }else if ( dataAtual.compareTo(DateUtil.removerTimestamp(dataRecolhimento)) > 0 ){
+			  estoque= TipoEstoque.SUPLEMENTAR.getDescricao();
+		  } else {
+			  estoque= "Encalhe";
+		  }
+		
+		this.dataRecolhimento = dataRecolhimento;
+	}
+
+	
+	
+	public void setTipo(String tipo) {
+		this.tipo = tipo;
+	}
+	
+	
+	public String getTipo() {
+		return tipo;
+	}
+
+
+
+	public String getEstoque() {
+		return estoque;
+	}
+
+	
 }

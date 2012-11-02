@@ -1,7 +1,6 @@
 package br.com.abril.nds.client.vo;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 
@@ -17,6 +16,7 @@ import br.com.abril.nds.util.export.Exportable;
 public class RegistroEdicoesFechadasVO implements Serializable {
 
 	private static final long serialVersionUID = -2136529530131643372L;
+	private Long idProdutoEdicao;
 
 	@Export(label = "Código", exhibitionOrder = 1)
 	private String codigoProduto;
@@ -40,6 +40,9 @@ public class RegistroEdicoesFechadasVO implements Serializable {
 
 	@Export(label = "Saldo", exhibitionOrder = 8)
 	private BigInteger saldo;
+	
+	public RegistroEdicoesFechadasVO() {
+	}
 
 	public RegistroEdicoesFechadasVO(String codigoProduto, String nomeProduto,
 			Long edicaoProduto, String nomeFornecedor, Date dataLancamento,
@@ -122,5 +125,53 @@ public class RegistroEdicoesFechadasVO implements Serializable {
 	public String getParcialString() {
 		return (this.parcial ? "S" : "N"); 
 	}
+
+	/**
+	 * @return the idProdutoEdicao
+	 */
+	public Long getIdProdutoEdicao() {
+		return idProdutoEdicao;
+	}
+
+	/**
+	 * @param idProdutoEdicao the idProdutoEdicao to set
+	 */
+	public void setIdProdutoEdicao(Long idProdutoEdicao) {
+		this.idProdutoEdicao = idProdutoEdicao;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((idProdutoEdicao == null) ? 0 : idProdutoEdicao.hashCode());
+		return result;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		RegistroEdicoesFechadasVO other = (RegistroEdicoesFechadasVO) obj;
+		if (idProdutoEdicao == null) {
+			if (other.idProdutoEdicao != null)
+				return false;
+		} else if (!idProdutoEdicao.equals(other.idProdutoEdicao))
+			return false;
+		return true;
+	}
+	
+	
 	
 }

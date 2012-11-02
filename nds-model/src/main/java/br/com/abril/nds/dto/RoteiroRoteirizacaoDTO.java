@@ -218,4 +218,19 @@ public class RoteiroRoteirizacaoDTO implements Serializable {
 		
 		this.rotasExclusao.add(idRota);
 	}
+	
+	/**
+     * Recupera a maior ordem das rotas do roteiro
+     * @return valor da maior ordem da lista de rotas
+     * ou 0 caso a lista esteja vazia
+     */
+    public int getMaiorOrdemRota() {
+        int max = 0;
+        for (RotaRoteirizacaoDTO rota : todasRotas) {
+            if (rota.getOrdem() > max) {
+                max = rota.getOrdem();
+            }
+        }
+        return max;
+    }
 }

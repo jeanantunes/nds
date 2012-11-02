@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -22,6 +23,7 @@ import br.com.abril.nds.dto.ProdutoValorDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaDTO;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.StatusCobranca;
+import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Box;
@@ -32,6 +34,7 @@ import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.FormaEmissao;
+import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
@@ -41,9 +44,12 @@ import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoEndereco;
+import br.com.abril.nds.model.cadastro.TipoFornecedor;
 import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
+import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
+import br.com.abril.nds.model.estoque.RecebimentoFisico;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.financeiro.Boleto;
 import br.com.abril.nds.model.financeiro.ConsolidadoFinanceiroCota;
@@ -53,9 +59,20 @@ import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.StatusDivida;
 import br.com.abril.nds.model.financeiro.StatusInadimplencia;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
+import br.com.abril.nds.model.fiscal.CFOP;
+import br.com.abril.nds.model.fiscal.ItemNotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.NCM;
+import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
+import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
+import br.com.abril.nds.model.movimentacao.CotaAusente;
+import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
+import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.EstudoCota;
+import br.com.abril.nds.model.planejamento.Lancamento;
+import br.com.abril.nds.model.planejamento.StatusLancamento;
+import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
+import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.util.Intervalo;
@@ -66,8 +83,10 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 	private CotaRepository cotaRepository;
 		
 	private static final Integer NUMERO_COTA = 1;
+	private static final Integer NUMERO_COTA_INATIVA = 2;
 	
 	private Cota cota;
+	private Cota cotaInativa;
 	private Boleto boleto1;
 	private HistoricoAcumuloDivida histInadimplencia1;
 	
@@ -77,6 +96,8 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 	private PessoaJuridica pessoaJuridica;
 	
 	private Editor abril;
+	
+	private Box box;
 	
 	@Before
 	public void setup() {
@@ -91,18 +112,24 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 		PessoaFisica pessoaFisica = Fixture.pessoaFisica("100.955.356-39", "joao@gmail.com", "João da Silva");
 		save(pessoaFisica);
 		
-		Box box = Fixture.boxReparte300();
+		box = Fixture.boxReparte300();
 		save(box);
 		
 		cota = Fixture.cota(NUMERO_COTA, pessoaFisica, SituacaoCadastro.ATIVO, box);
 		cota.setSugereSuspensao(true);
-		save(cota);
+		
+		cotaInativa = Fixture.cota(NUMERO_COTA_INATIVA, pessoaFisica, SituacaoCadastro.INATIVO, box);
+		
+		save(cota, cotaInativa);
 		
 		criarEnderecoCota(cota);
 		
 		usuario = Fixture.usuarioJoao();
 		save(usuario);
-			
+		
+		CotaAusente cotaAusente = Fixture.cotaAusente(new Date(), true, cota);
+		
+		save(cotaAusente);
 	}
 	
 	public void setupHistoricoInadimplencia() {
@@ -122,9 +149,9 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 		produto.setEditor(abril);
 		save(produto);
 		
-		ProdutoEdicao produtoEdicaoVeja1 = Fixture.produtoEdicao("1", 1L, 10, 14,
-				new Long(100), BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQ", 1L,
-				produto, null, false);
+		ProdutoEdicao produtoEdicaoVeja1 = Fixture.produtoEdicao(1L, 10, 14, new Long(100),
+				BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQ", produto, 
+				null, false);
 		
 		save(produtoEdicaoVeja1);
 		
@@ -264,9 +291,9 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 		produtoVeja.setEditor(abril);
 		save(produtoVeja);
 		
-		ProdutoEdicao produtoEdicaoVeja1 = Fixture.produtoEdicao("1", 1L, 10, 14,
-				new Long(100), BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPA", 2L,
-				produtoVeja, null, false);
+		ProdutoEdicao produtoEdicaoVeja1 = Fixture.produtoEdicao(1L, 10, 14, new Long(100),
+				BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPA", produtoVeja, 
+				null, false);
 		save(produtoEdicaoVeja1);
 		
 		EstoqueProdutoCota estoqueProdutoCota = Fixture.estoqueProdutoCota(
@@ -384,7 +411,7 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 	}
 	
 	@Test
-	public void obterQuantidadeCota(){
+	public void obterQuantidadeCotasPesquisadas(){
 
 		
 		FiltroCotaDTO filtro = new FiltroCotaDTO();
@@ -431,4 +458,195 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 		cotaRepository.obterIdCotasEntre(null, null,
 				null, null, null);
 	}
+	
+	@Test
+	public void obterQuantidadeCotasAtivas() {
+		
+		final Long quantidadeEsperada = 1L;
+		
+		final Long quantidadeObtida = this.cotaRepository.obterQuantidadeCotas(SituacaoCadastro.ATIVO);
+		
+		Assert.assertEquals(quantidadeEsperada, quantidadeObtida);
+	}
+	
+	@Test
+	public void obterQuantidadeCotasInativas() {
+		
+		final Long quantidadeEsperada = 1L;
+		
+		final Long quantidadeObtida = this.cotaRepository.obterQuantidadeCotas(SituacaoCadastro.INATIVO);
+		
+		Assert.assertEquals(quantidadeEsperada, quantidadeObtida);
+	}
+	
+	@Test
+	public void obterQuantidadeTotalCotas() {
+		
+		final Long quantidadeEsperada = 2L;
+		
+		final Long quantidadeObtida = this.cotaRepository.obterQuantidadeCotas(null);
+		
+		Assert.assertEquals(quantidadeEsperada, quantidadeObtida);
+	}
+	
+	@Test
+	public void obterCotasInativas() {
+		
+		final int quantidadeEsperada = 1;
+		
+		final List<Cota> cotasInativasObtidas = this.cotaRepository.obterCotas(SituacaoCadastro.INATIVO);
+		
+		Assert.assertNotNull(cotasInativasObtidas);
+		
+		Assert.assertEquals(quantidadeEsperada, cotasInativasObtidas.size());
+		
+		final Integer numeroCota = cotasInativasObtidas.get(0).getNumeroCota();
+		
+		Assert.assertEquals(NUMERO_COTA_INATIVA, numeroCota);
+	}
+	
+	@Test
+	public void obterNovasCotas() {
+		
+		final int quantidadeEsperada = 2;
+		
+		final List<Cota> novasCotas = this.cotaRepository.obterCotasComInicioAtividadeEm(new Date());
+		
+		Assert.assertNotNull(novasCotas);
+		
+		Assert.assertEquals(quantidadeEsperada, novasCotas.size());
+	}
+	
+	@Test
+	public void obterCotasAusentesNaExpedicaoDoReparte() {
+		
+		final int quantidadeEsperada = 1;
+		
+		final List<Cota> cotasAusentesExpedicaoReparte = 
+			this.cotaRepository.obterCotasAusentesNaExpedicaoDoReparteEm(new Date());
+		
+		Assert.assertNotNull(cotasAusentesExpedicaoReparte);
+		
+		Assert.assertEquals(quantidadeEsperada, cotasAusentesExpedicaoReparte.size());
+	}
+	
+	@Test
+	public void obterCotasAusentesNoRecolhimentoDeEncalhe() {
+		
+		this.carregarDadosControleConferenciaEncalhe();
+		
+		final int quantidadeEsperada = 1;
+		
+		final Date dataRecolhimentoEncalhe = Fixture.criarData(28, Calendar.FEBRUARY, 2012);
+		
+		final List<Cota> cotasAusentesRecolhimentoEncalhe = 
+			this.cotaRepository.obterCotasAusentesNoRecolhimentoDeEncalheEm(dataRecolhimentoEncalhe);
+		
+		Assert.assertNotNull(cotasAusentesRecolhimentoEncalhe);
+		
+		Assert.assertEquals(quantidadeEsperada, cotasAusentesRecolhimentoEncalhe.size());
+	}
+	
+	private void carregarDadosControleConferenciaEncalhe() {
+		
+		TipoFornecedor tipoFornecedorPublicacao = Fixture.tipoFornecedorPublicacao();
+		
+		Fornecedor fornecedorDinap = Fixture.fornecedorDinap(tipoFornecedorPublicacao);
+		
+		save(fornecedorDinap);
+
+		NCM ncmRevistas = Fixture.ncm(49029000l,"REVISTAS","KG");
+		
+		save(ncmRevistas);
+		
+		TipoProduto tipoRevista = Fixture.tipoRevista(ncmRevistas);
+		
+		save(tipoRevista);
+		
+		Produto veja = Fixture.produtoVeja(tipoRevista);
+		
+		veja.addFornecedor(fornecedorDinap);
+		
+		save(veja);
+
+		ProdutoEdicao veja1 = Fixture.produtoEdicao(1L, 10, 7,
+			new Long(100), BigDecimal.TEN, new BigDecimal(15), "ABCDEFGHIJKLMNOPA", veja, null, false);
+		
+		save(veja1);
+		
+		CFOP cfop = Fixture.cfop5102();
+		
+		save(cfop);
+		
+		TipoNotaFiscal tipoNotaFiscal = Fixture.tipoNotaFiscalRecebimento();
+		
+		save(tipoNotaFiscal);
+		
+		NotaFiscalEntradaFornecedor notaFiscal1Veja = 
+			Fixture.notaFiscalEntradaFornecedor(
+				cfop, fornecedorDinap, tipoNotaFiscal, usuario, 
+					BigDecimal.TEN, BigDecimal.ZERO, BigDecimal.TEN);
+		
+		save(notaFiscal1Veja);
+
+		ItemNotaFiscalEntrada itemNotaFiscal1Veja = 
+			Fixture.itemNotaFiscal(
+				veja1, usuario, notaFiscal1Veja, Fixture.criarData(22, Calendar.FEBRUARY,2012),
+					Fixture.criarData(22, Calendar.FEBRUARY,2012), TipoLancamento.LANCAMENTO, 
+						BigInteger.valueOf(50));
+		
+		save(itemNotaFiscal1Veja);
+		
+		Date dataRecebimento = Fixture.criarData(22, Calendar.FEBRUARY, 2012);
+		
+		RecebimentoFisico recebimentoFisico1Veja = 
+			Fixture.recebimentoFisico(
+				notaFiscal1Veja, usuario, dataRecebimento, dataRecebimento, StatusConfirmacao.CONFIRMADO);
+		
+		save(recebimentoFisico1Veja);
+			
+		ItemRecebimentoFisico itemRecebimentoFisico1Veja = 
+			Fixture.itemRecebimentoFisico(
+				itemNotaFiscal1Veja, recebimentoFisico1Veja, BigInteger.valueOf(50));
+		
+		save(itemRecebimentoFisico1Veja);
+		
+		Lancamento lancamentoVeja = 
+			Fixture.lancamento(
+				TipoLancamento.SUPLEMENTAR, veja1, Fixture.criarData(22, Calendar.FEBRUARY, 2012),
+					Fixture.criarData(28, Calendar.FEBRUARY, 2012), new Date(), new Date(),
+						BigInteger.valueOf(100),
+							StatusLancamento.BALANCEADO_RECOLHIMENTO, itemRecebimentoFisico1Veja, 1);
+		
+		lancamentoVeja.getRecebimentos().add(itemRecebimentoFisico1Veja);
+		
+		Estudo estudo = Fixture.estudo(BigInteger.valueOf(100),
+			Fixture.criarData(22, Calendar.FEBRUARY, 2012), veja1);
+
+		save(lancamentoVeja, estudo);
+		
+		EstoqueProdutoCota estoqueProdutoCota = Fixture.estoqueProdutoCota(
+			veja1, cota, BigInteger.TEN, BigInteger.ZERO);
+		
+		save(estoqueProdutoCota);
+		
+		TipoMovimentoEstoque tipoMovimentoEnvioEncalhe = Fixture.tipoMovimentoEnvioEncalhe();
+		
+		save(tipoMovimentoEnvioEncalhe);
+		
+		ChamadaEncalhe chamadaEncalhe = 
+			Fixture.chamadaEncalhe(Fixture.criarData(28, Calendar.FEBRUARY, 2012), 
+				veja1, TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO);
+		
+		save(chamadaEncalhe);
+		
+		/**
+		 * CHAMADA ENCALHE COTA
+		 */
+		ChamadaEncalheCota chamadaEncalheCota = 
+			Fixture.chamadaEncalheCota(chamadaEncalhe, false, cota, BigInteger.TEN);
+		
+		save(chamadaEncalheCota);
+	}
+	
 }

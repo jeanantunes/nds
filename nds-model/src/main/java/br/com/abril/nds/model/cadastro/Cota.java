@@ -35,6 +35,7 @@ import br.com.abril.nds.model.cadastro.garantia.CotaGarantia;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
+import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
 import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCota;
 
@@ -68,6 +69,9 @@ public class Cota implements Serializable {
 	
 	@OneToMany(mappedBy = "cota", cascade={CascadeType.REMOVE})
 	private List<PDV> pdvs = new ArrayList<PDV>();
+
+	@OneToMany(mappedBy = "cota")
+	private List<ChamadaEncalheCota> chamadaEncalheCotas = new ArrayList<ChamadaEncalheCota>();
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "SITUACAO_CADASTRO", nullable = false)
@@ -149,7 +153,7 @@ public class Cota implements Serializable {
 	private Set<HistoricoNumeroCota> historicoNumeroCota;
 	
 	@OneToMany(mappedBy="cota", cascade={CascadeType.REMOVE})
-	private Set<DescontoProdutoEdicao> descontosProdutoEdicao;
+	private Set<DescontoProdutoEdicao> descontosProdutoEdicao = new HashSet<DescontoProdutoEdicao>();
 
 	@ManyToMany(mappedBy="cotas", targetEntity=GrupoCota.class)
 	private Set<GrupoCota> grupos;
@@ -158,7 +162,7 @@ public class Cota implements Serializable {
 	 * Histórico de titulares da cota
 	 */
 	@OneToMany(mappedBy = "cota", cascade = {CascadeType.ALL})
-	private Set<HistoricoTitularidadeCota> titularesCota;
+	private Set<HistoricoTitularidadeCota> titularesCota =new HashSet<HistoricoTitularidadeCota>();
 	
 	/**
 	 * Referente a garantias da cota.

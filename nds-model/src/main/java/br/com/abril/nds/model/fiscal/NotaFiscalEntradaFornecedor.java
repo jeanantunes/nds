@@ -12,5 +12,24 @@ public class NotaFiscalEntradaFornecedor extends NotaFiscalEntrada {
 
 	private static final long serialVersionUID = 6425778418326004669L;
 
+	@ManyToOne
+	@JoinColumn(name = "FORNECEDOR_ID", nullable = true)
+	private Fornecedor fornecedor;
+
+	/**
+	 * @return the fornecedor
+	 */
+	public Fornecedor getFornecedor() {
+		return fornecedor;
+	}
+
+	/**
+	 * @param fornecedor the fornecedor to set
+	 */
+	public void setFornecedor(Fornecedor fornecedor) {
+		this.fornecedor = fornecedor;
+	}
+	
+
 
 }

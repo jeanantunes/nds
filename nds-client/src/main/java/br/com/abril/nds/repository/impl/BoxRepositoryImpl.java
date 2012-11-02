@@ -13,7 +13,7 @@ import org.springframework.stereotype.Repository;
 import br.com.abril.nds.dto.CotaRotaRoteiroDTO;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
-import br.com.abril.nds.model.cadastro.Roteiro;
+import br.com.abril.nds.model.cadastro.Roteirizacao;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.repository.BoxRepository;
 import br.com.abril.nds.util.StringUtil;
@@ -216,17 +216,17 @@ public class BoxRepositoryImpl extends AbstractRepositoryModel<Box,Long> impleme
 				
 		hql.append("       when 'J' then pessoa.razaoSocial end  as nomeCota,");
 		
-		hql.append(" rota.codigoRota ||' - '|| rota.descricaoRota as rota,");
+		hql.append(" rota.descricaoRota as rota,");
 		
 		hql.append(" roteiro.descricaoRoteiro as roteiro ");
 
-		hql.append(" from Roteiro roteiro  " );
-				
-		hql.append(" join roteiro.rotas rota " );
-
-		hql.append(" join roteiro.roteirizacao roteirizacao ");
+		hql.append(" from Roteirizacao roteirizacao ");
 		
 		hql.append(" join roteirizacao.box box ");
+		
+		hql.append(" join roteirizacao.roteiros roteiro ");
+		
+		hql.append(" join roteiro.rotas rota ");
 		
 		hql.append(" join box.cotas cota ");
 		
@@ -265,7 +265,7 @@ public class BoxRepositoryImpl extends AbstractRepositoryModel<Box,Long> impleme
 	 */
 	@Override
 	public boolean hasRoteirosVinculados(long idBox){
-		Criteria criteria = getSession().createCriteria(Roteiro.class);
+		Criteria criteria = getSession().createCriteria(Roteirizacao.class);
 		
 		criteria.createCriteria("box").add(Restrictions.idEq(idBox));
 		
@@ -306,28 +306,32 @@ public class BoxRepositoryImpl extends AbstractRepositoryModel<Box,Long> impleme
         
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" select distinct cota from Cota cota");
-		
-		if(idRoteiro!=null && idRoteiro>0){
-		    hql.append(", Roteiro roteiro, Roteirizacao roteirizacao ");
-		    if (idRota!=null && idRota>0){
-				hql.append(", Rota rota ");
-			}
-		}  
-		
-		hql.append(" where cota.box.id = :idBox");
+		hql.append(" select distinct cota from Box b  ");
 		
 		if(idRoteiro!=null && idRoteiro>0){
 			
-			hql.append(" and roteiro.roteirizacao = roteirizacao ");
-		    hql.append(" and roteirizacao.box = cota.box ");
+		    hql.append(", Roteirizacao roteirizacao ");
+		    hql.append(" join roteirizacao.roteiros roteiro ");
+		    hql.append(" join roteirizacao.box box ");
+		    
+		    if (idRota!=null && idRota>0){
+		    	
+				hql.append("join roteiro.rotas rota ");
+			}
+		}  
+		
+		hql.append(" join b.cotas cota ");
+		
+		hql.append(" where b.id = :idBox");
+		
+		if(idRoteiro!=null && idRoteiro>0){
+			
+			hql.append(" and box.id = b.id ");
 		    hql.append(" and roteiro.id = :idRoteiro ");
 		    
 		    if (idRota!=null && idRota>0){
-		 
-		    	hql.append(" and rota.roteiro = roteiro ");
-		    	hql.append(" and rota.id = :idRota ");
 		    	
+				hql.append(" and rota.id = :idRota ");
 			}
 		}
 		
@@ -336,8 +340,11 @@ public class BoxRepositoryImpl extends AbstractRepositoryModel<Box,Long> impleme
 		query.setParameter("idBox", idBox);
 		
 		if (idRoteiro!=null && idRoteiro>0){
+			
 			query.setParameter("idRoteiro", idRoteiro);
+			
 			if(idRota!=null && idRota>0){
+				
 			    query.setParameter("idRota", idRota);
 			}
 		}
@@ -353,25 +360,36 @@ public class BoxRepositoryImpl extends AbstractRepositoryModel<Box,Long> impleme
 	 * @return Número de Cotas encontradas
 	 */
 	@Override
-	public int obterQuantidadeCotasPorBoxRoteiroRota(Long idBox, Long idRoteiro, Long idRota) {
+	public Long obterQuantidadeCotasPorBoxRoteiroRota(Long idBox, Long idRoteiro, Long idRota) {
         
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" select distinct c from Cota c");
+		hql.append(" select count(cota) from Box b  ");
 		
 		if(idRoteiro!=null && idRoteiro>0){
-		    hql.append(", Roteiro rr");
+			
+		    hql.append(", Roteirizacao roteirizacao ");
+		    hql.append(" join roteirizacao.roteiros roteiro ");
+		    hql.append(" join roteirizacao.box box ");
+		    
 		    if (idRota!=null && idRota>0){
-				hql.append(", Roteirizacao r");
+		    	
+				hql.append("join roteiro.rotas rota ");
 			}
 		}  
 		
-		hql.append(" where c.box.id = :idBox");
+		hql.append(" join b.cotas cota ");
+		
+		hql.append(" where b.id = :idBox");
 		
 		if(idRoteiro!=null && idRoteiro>0){
-		    hql.append(" and rr.box = c.box and rr.id = :idRoteiro ");
+			
+			hql.append(" and box.id = b.id ");
+		    hql.append(" and roteiro.id = :idRoteiro ");
+		    
 		    if (idRota!=null && idRota>0){
-				hql.append(" and r.rota.roteiro = rr and r.rota.id = :idRota and r.pdv.cota = c");
+		    	
+				hql.append(" and rota.id = :idRota ");
 			}
 		}
 		
@@ -380,13 +398,16 @@ public class BoxRepositoryImpl extends AbstractRepositoryModel<Box,Long> impleme
 		query.setParameter("idBox", idBox);
 		
 		if (idRoteiro!=null && idRoteiro>0){
+			
 			query.setParameter("idRoteiro", idRoteiro);
+			
 			if(idRota!=null && idRota>0){
+				
 			    query.setParameter("idRota", idRota);
 			}
 		}
 		
-		return query.list().size();
+		return (Long) query.uniqueResult();
 	}
 
 

@@ -73,7 +73,6 @@ import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.TelefoneCota;
 import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.cadastro.TipoEndereco;
-import br.com.abril.nds.model.cadastro.TipoEntrega;
 import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.model.cadastro.desconto.DescontoProdutoEdicao;
 import br.com.abril.nds.model.cadastro.pdv.CaracteristicasPDV;
@@ -98,10 +97,10 @@ import br.com.abril.nds.repository.ParametroSistemaRepository;
 import br.com.abril.nds.repository.PdvRepository;
 import br.com.abril.nds.repository.PessoaFisicaRepository;
 import br.com.abril.nds.repository.PessoaJuridicaRepository;
+import br.com.abril.nds.repository.RankingRepository;
 import br.com.abril.nds.repository.ReferenciaCotaRepository;
 import br.com.abril.nds.repository.RotaRepository;
 import br.com.abril.nds.repository.TelefoneCotaRepository;
-import br.com.abril.nds.repository.TipoEntregaRepository;
 import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
 import br.com.abril.nds.repository.UsuarioRepository;
 import br.com.abril.nds.service.CotaService;
@@ -160,9 +159,6 @@ public class CotaServiceImpl implements CotaService {
 	private DistribuidorService distribuidorService;
 	
 	@Autowired
-	private TipoEntregaRepository tipoEntregaRepository;
-	
-	@Autowired
 	private BaseReferenciaCotaRepository baseReferenciaCotaRepository;
 	
 	@Autowired
@@ -213,6 +209,9 @@ public class CotaServiceImpl implements CotaService {
 	@Autowired
 	private HistoricoTitularidadeService historicoTitularidadeService;
 	
+	@Autowired
+	private RankingRepository rankingRepository;
+	
 	@Transactional(readOnly = true)
 	@Override
 	public List<CotaDTO> obterCotas(FiltroCotaDTO filtro) {
@@ -229,7 +228,6 @@ public class CotaServiceImpl implements CotaService {
 	
 	@Transactional(readOnly = true)
 	public Cota obterPorNumeroDaCota(Integer numeroCota) {
-		
 		return this.cotaRepository.obterPorNumerDaCota(numeroCota);
 	}
 	
@@ -354,11 +352,13 @@ public class CotaServiceImpl implements CotaService {
 		validarEnderecoPrincipalPorCota(listaEnderecoAssociacao, cota);
 		
 		Pessoa pessoa = cota.getPessoa();
-        
-		enderecoService.cadastrarEnderecos(listaEnderecoAssociacao, pessoa);
 		
 		for (EnderecoAssociacaoDTO enderecoAssociacao : listaEnderecoAssociacao) {
 
+			EnderecoDTO enderecoDTO = enderecoAssociacao.getEndereco();
+			
+			this.enderecoService.validarEndereco(enderecoDTO, enderecoAssociacao.getTipoEndereco());
+			
 			EnderecoCota enderecoCota = this.enderecoCotaRepository.buscarPorId(enderecoAssociacao.getId());
 
 			if (enderecoCota == null) {
@@ -368,9 +368,7 @@ public class CotaServiceImpl implements CotaService {
 				enderecoCota.setCota(cota);
 			}
 
-			EnderecoDTO enderecoDTO = enderecoAssociacao.getEndereco();
-			
-            Endereco endereco = new Endereco(enderecoDTO.getCodigoBairro(),
+			Endereco endereco = new Endereco(enderecoDTO.getCodigoBairro(),
                     enderecoDTO.getBairro(), enderecoDTO.getCep(),
                     enderecoDTO.getCodigoCidadeIBGE(), enderecoDTO.getCidade(),
                     enderecoDTO.getComplemento(),
@@ -492,15 +490,15 @@ public class CotaServiceImpl implements CotaService {
 		
 		Pessoa pessoa = cota.getPessoa();
         
-		this.telefoneService.cadastrarTelefone(listaTelefonesCota, pessoa);
-		
 		if (listaTelefonesCota != null){
 			
-			for (TelefoneAssociacaoDTO dto : listaTelefonesCota){
-					
+			for (TelefoneAssociacaoDTO dto : listaTelefonesCota) {
+				
 				TelefoneCota telefoneCota = null;
 				
 				TelefoneDTO telefoneDTO = dto.getTelefone();
+				
+				this.telefoneService.validarTelefone(telefoneDTO, dto.getTipoTelefone());
 				
                 if(telefoneDTO!= null && telefoneDTO.getId()!= null){
 					telefoneCota = cotaRepository.obterTelefonePorTelefoneCota(telefoneDTO.getId(), cota.getId());
@@ -720,7 +718,7 @@ public class CotaServiceImpl implements CotaService {
 		dto.setObservacao(parametro.getObservacao());
 		dto.setRepPorPontoVenda(parametro.getRepartePorPontoVenda());
 		dto.setSolNumAtras(parametro.getSolicitaNumAtras());
-		dto.setRecebeRecolhe(parametro.getRecebeRecolheParcias());
+		dto.setRecebeRecolhe(parametro.getRecebeRecolheParciais());
 		dto.setNeImpresso(parametro.getNotaEnvioImpresso());
 		dto.setNeEmail(parametro.getNotaEnvioEmail());
 		dto.setCeImpresso(parametro.getChamadaEncalheImpresso());
@@ -779,7 +777,7 @@ public class CotaServiceImpl implements CotaService {
 		parametros.setObservacao(dto.getObservacao());
 		parametros.setRepartePorPontoVenda(dto.getRepPorPontoVenda());
 		parametros.setSolicitaNumAtras(dto.getSolNumAtras());
-		parametros.setRecebeRecolheParcias(dto.getRecebeRecolhe());
+		parametros.setRecebeRecolheParciais(dto.getRecebeRecolhe());
 		parametros.setNotaEnvioImpresso(dto.getNeImpresso());
 		parametros.setNotaEnvioEmail(dto.getNeEmail());
 		parametros.setChamadaEncalheImpresso(dto.getCeImpresso());
@@ -1715,7 +1713,17 @@ public class CotaServiceImpl implements CotaService {
 	@Override
 	@Transactional(readOnly = true)
 	public List<RegistroCurvaABCCotaDTO> obterCurvaABCCota(FiltroCurvaABCCotaDTO filtroCurvaABCCotaDTO) {
-		return cotaRepository.obterCurvaABCCota(filtroCurvaABCCotaDTO);
+		
+		List<RegistroCurvaABCCotaDTO> lista = cotaRepository.obterCurvaABCCota(filtroCurvaABCCotaDTO);
+		
+		if(!lista.isEmpty()){
+			
+			for(RegistroCurvaABCCotaDTO dto : lista){
+				dto.setRkProduto(rankingRepository.obterRankingProdutoCota(dto.getIdCota(),dto.getIdProduto()));
+			}
+		}
+		
+		return lista;
 	}
 
 	/**
@@ -2141,6 +2149,41 @@ public class CotaServiceImpl implements CotaService {
         }
         return new DistribuicaoDTO(); 
     }
+
+	@Override
+	@Transactional(readOnly = true)
+	public Long obterQuantidadeCotas(SituacaoCadastro situacaoCadastro) {
+
+		return this.cotaRepository.obterQuantidadeCotas(situacaoCadastro);
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public List<Cota> obterCotas(SituacaoCadastro situacaoCadastro) {
+
+		return this.cotaRepository.obterCotas(situacaoCadastro);
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public List<Cota> obterCotasComInicioAtividadeEm(Date dataInicioAtividade) {
+
+		return this.cotaRepository.obterCotasComInicioAtividadeEm(dataInicioAtividade);
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public List<Cota> obterCotasAusentesNaExpedicaoDoReparteEm(Date dataExpedicaoReparte) {
+
+		return this.cotaRepository.obterCotasAusentesNaExpedicaoDoReparteEm(dataExpedicaoReparte);
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public List<Cota> obterCotasAusentesNoRecolhimentoDeEncalheEm(Date dataRecolhimentoEncalhe) {
+
+		return this.cotaRepository.obterCotasAusentesNoRecolhimentoDeEncalheEm(dataRecolhimentoEncalhe);
+	}
 
 }
 

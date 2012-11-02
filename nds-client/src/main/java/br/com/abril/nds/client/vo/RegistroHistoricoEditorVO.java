@@ -6,6 +6,7 @@ import java.math.BigInteger;
 
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.export.Export;
+import br.com.abril.nds.util.export.Export.Alignment;
 import br.com.abril.nds.util.export.Exportable;
 
 /**
@@ -32,11 +33,23 @@ public class RegistroHistoricoEditorVO implements Serializable {
 	@Export(label = "EdicaoProduto", exhibitionOrder = 3)
 	private Long edicaoProduto;
 
-	private BigDecimal reparte;
+	private BigInteger reparte;
 
 	private BigInteger vendaExemplares;
 
 	private BigDecimal porcentagemVenda;
+	
+	private BigDecimal valorMargemCota;
+	
+	private BigDecimal valorMargemDistribuidor;
+	
+	private BigDecimal faturamento;
+	
+	private String margemDistribuidorFormatado;
+	
+	private String margemCotaFormatado;
+	
+	private String faturamentoFormatado;
 
 	@Export(label = "Reparte", exhibitionOrder = 4)
 	private String reparteFormatado;
@@ -44,11 +57,28 @@ public class RegistroHistoricoEditorVO implements Serializable {
 	@Export(label = "Venda Exs.", exhibitionOrder = 5)
 	private String vendaExemplaresFormatado;
 	
-	@Export(label = "% Venda", exhibitionOrder = 6)
+	@Export(label = "% Venda", exhibitionOrder = 6,alignment=Alignment.RIGHT)
 	private String porcentagemVendaFormatado;
-		
+	
+	@Export(label = "Faturamento R$", exhibitionOrder = 8,alignment=Alignment.RIGHT)
+	public String getFaturamentoFormatado(){
+		return this.faturamentoFormatado;
+	}
+	
+	@Export(label = "Margem Cota R$", exhibitionOrder = 7,alignment=Alignment.RIGHT)
+	public String getMargemCotaFormatado(){
+		return this.margemCotaFormatado;
+	}
+	
+	@Export(label = "Margem Distrib R$", exhibitionOrder = 9, alignment=Alignment.RIGHT)
+	public String getMargemDistribuidorFormatado(){
+		return this.margemDistribuidorFormatado;
+	}
+	
+	public RegistroHistoricoEditorVO() {}
+	
 	public RegistroHistoricoEditorVO(String nomeEditor, String codigoProduto, String nomeProduto,
-			Long edicaoProduto, BigDecimal reparte, BigInteger vendaExemplares) {
+			Long edicaoProduto, BigInteger reparte, BigInteger vendaExemplares) {
 		this.nomeEditor=nomeEditor;
 		this.codigoProduto=codigoProduto;
 		this.nomeProduto=nomeProduto;
@@ -107,11 +137,11 @@ public class RegistroHistoricoEditorVO implements Serializable {
 		this.codigoProduto = codigoProduto;
 	}
 
-	public BigDecimal getReparte() {
+	public BigInteger getReparte() {
 		return reparte;
 	}
 
-	public void setReparte(BigDecimal reparte) {
+	public void setReparte(BigInteger reparte) {
 		this.reparte = reparte;
 	}
 
@@ -140,9 +170,34 @@ public class RegistroHistoricoEditorVO implements Serializable {
 	}
 
 	private void formatarCampos() {
-		this.reparteFormatado = CurrencyUtil.formatarValorTruncado(reparte);
 		this.vendaExemplaresFormatado = CurrencyUtil.formatarValorTruncado(vendaExemplares);
 		this.porcentagemVendaFormatado = CurrencyUtil.formatarValor(porcentagemVenda);
 	}
 
+	public BigDecimal getValorMargemCota() {
+		return valorMargemCota;
+	}
+
+	public void setValorMargemCota(BigDecimal valorMargemCota) {
+		this.valorMargemCota = valorMargemCota;
+		this.margemCotaFormatado = CurrencyUtil.formatarValor(valorMargemCota);
+	}
+
+	public BigDecimal getValorMargemDistribuidor() {
+		return valorMargemDistribuidor;
+	}
+
+	public void setValorMargemDistribuidor(BigDecimal valorMargemDistribuidor) {
+		this.valorMargemDistribuidor = valorMargemDistribuidor;
+		this.margemDistribuidorFormatado = CurrencyUtil.formatarValor(valorMargemDistribuidor);
+	}
+
+	public BigDecimal getFaturamento() {
+		return faturamento;
+	}
+
+	public void setFaturamento(BigDecimal faturamento) {
+		this.faturamento = faturamento;
+		this.faturamentoFormatado = CurrencyUtil.formatarValor(faturamento);
+	}
 }

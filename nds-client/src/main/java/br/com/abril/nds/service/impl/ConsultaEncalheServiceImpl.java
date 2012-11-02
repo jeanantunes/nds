@@ -151,7 +151,10 @@ public class ConsultaEncalheServiceImpl implements ConsultaEncalheService {
 				if(retorno == null) {
 					retorno = arquivo;
 				} else {
-					retorno = PDFUtil.mergePDFs(retorno, arquivo);
+					List<byte[]> arquivos = new ArrayList<byte[]>();
+					arquivos.add(retorno);
+					arquivos.add(arquivo);
+					retorno = PDFUtil.mergePDFs(arquivos);
 				}
 			}
 		}

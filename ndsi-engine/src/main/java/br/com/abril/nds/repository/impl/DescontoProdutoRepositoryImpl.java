@@ -162,16 +162,16 @@ public class DescontoProdutoRepositoryImpl extends AbstractRepositoryModel<Desco
 
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" select produtoEdicao.codigo as codigoProduto, ");
-		hql.append(" produtoEdicao.nomeComercial as nomeProduto, ");
+		hql.append(" select produtoEdicao.produto.codigo as codigoProduto, ");
+		hql.append(" produtoEdicao.produto.nome as nomeProduto, ");
 		hql.append(" produtoEdicao.numeroEdicao as numeroEdicao, ");
 		hql.append(" descontoProduto.desconto as desconto, ");
 		hql.append(" descontoProduto.dataAlteracao as dataAlteracao, ");
 		hql.append(" usuario.nome as nomeUsuario ");
 		hql.append(" from DescontoProduto as descontoProduto ");
-		hql.append(" join descontoProduto.produtoEdicao as produtoEdicao ");
 		hql.append(" join descontoProduto.cotas as cota ");
 		hql.append(" join descontoProduto.usuario as usuario ");
+		hql.append(" join descontoProduto.produtoEdicao as produtoEdicao ");
 		
 		if (idCota!=null){
 		    hql.append(" where cota.id = :idCota ");

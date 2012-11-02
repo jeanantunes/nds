@@ -1,5 +1,6 @@
 package br.com.abril.nds.service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Set;
 
@@ -191,4 +192,12 @@ public interface ConferenciaEncalheService {
 	 * @return
 	 */
 	public byte[] gerarSlip(Long idControleConferenciaEncalheCota, boolean incluirNumeroSlip);
+	
+	/**
+	 * Obtem valor total para geração de crédito na C.E.
+	 * @param idControleConferenciaEncalheCota
+	 * @return BigDecimal
+	 */
+	BigDecimal obterValorTotalConferenciaEncalhe(Long idControleConferenciaEncalheCota);
+		
 }

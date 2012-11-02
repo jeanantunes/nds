@@ -15,8 +15,6 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.dto.NfeDTO;
-import br.com.abril.nds.dto.filtro.FiltroImpressaoNFEDTO;
-import br.com.abril.nds.dto.filtro.FiltroImpressaoNFEDTO.ColunaOrdenacaoImpressaoNFE;
 import br.com.abril.nds.dto.filtro.FiltroMonitorNfeDTO;
 import br.com.abril.nds.dto.filtro.FiltroMonitorNfeDTO.OrdenacaoColuna;
 import br.com.abril.nds.fixture.Fixture;
@@ -32,7 +30,6 @@ import br.com.abril.nds.model.cadastro.TipoEndereco;
 import br.com.abril.nds.model.cadastro.TipoFornecedor;
 import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.nds.model.cadastro.TributacaoFiscal;
-import br.com.abril.nds.model.envio.nota.NotaEnvio;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.fiscal.NCM;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
@@ -348,8 +345,8 @@ public class NotaFiscalRepositoryImplTest  extends AbstractRepositoryImplTest {
 
 		save(produtoCE);
 
-		produtoEdicaoCE = Fixture.produtoEdicao(codigoProdutoEdicao, numeroEdicao, pacotePadrao, peb,
-				peso, precoCusto, precoVenda, codigoDeBarras, null, produtoCE, expectativaVenda, parcial);
+		produtoEdicaoCE = Fixture.produtoEdicao(numeroEdicao, pacotePadrao, peb, peso,
+				precoCusto, precoVenda, codigoDeBarras, produtoCE, expectativaVenda, parcial);
 
 		save(produtoEdicaoCE);
 		
@@ -494,36 +491,10 @@ public class NotaFiscalRepositoryImplTest  extends AbstractRepositoryImplTest {
 	}
 	
 	@Test
-	public void buscarNFeParaImpressao() {
+	public void testeObterNumerosNFePorLancamento(){
 		
-		FiltroImpressaoNFEDTO filtro = obterFiltroImpressaoNfeDTOOrdenadoPorCota();
+		List<Long> lista = this.notaFiscalRepository.obterNumerosNFePorLancamento(1L);
 		
-		List<NotaFiscal> listaNotaFiscal = notaFiscalRepository.buscarNFeParaImpressao(filtro);
-		
-		Assert.assertNotNull(listaNotaFiscal);
-		
-		int tamanhoEsperado = 1;
-		
-		Assert.assertEquals(tamanhoEsperado, listaNotaFiscal.size());
-		
+		Assert.assertNotNull(lista);
 	}
-	
-	private FiltroImpressaoNFEDTO obterFiltroImpressaoNfeDTOOrdenadoPorCota() {
-		
-		FiltroImpressaoNFEDTO filtro = new FiltroImpressaoNFEDTO();
-		
-		PaginacaoVO paginacao = new PaginacaoVO();
-
-		paginacao.setOrdenacao(PaginacaoVO.Ordenacao.ASC);
-		paginacao.setPaginaAtual(1);
-		paginacao.setQtdResultadosPorPagina(5);
-
-		filtro.setPaginacao(paginacao);
-	
-		filtro.setOrdenacaoColuna(ColunaOrdenacaoImpressaoNFE.COTA);
-		
-		return filtro;
-		
-	}
-	
 }

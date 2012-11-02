@@ -78,10 +78,18 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 	private ChamadaEncalhe chamadaEncalhe;
 	private ChamadaEncalhe chamadaEncalhe1;
 	private ChamadaEncalhe chamadaEncalhe2;
+	
+	private Editor abril;
+    private NCM ncmRevistas;
+    private TipoProduto tipoRevista;
+
+    private Produto veja;
+
+    private Produto quatroRodas;
 
 	@Before
 	public void setUp() {
-		Editor abril = Fixture.editoraAbril();
+		abril = Fixture.editoraAbril();
 		save(abril);
 		
 		tipoFornecedorPublicacao = Fixture.tipoFornecedorPublicacao();
@@ -89,20 +97,20 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 		fornecedorDinap = Fixture.fornecedorDinap(tipoFornecedorPublicacao);
 		save(fornecedorFC, fornecedorDinap);
 
-		NCM ncmRevistas = Fixture.ncm(49029000l,"REVISTAS","KG");
+		ncmRevistas = Fixture.ncm(49029000l,"REVISTAS","KG");
 		save(ncmRevistas);
 		NCM ncmCromo = Fixture.ncm(48205000l,"CROMO","KG");
 		save(ncmCromo);
 		
-		TipoProduto tipoRevista = Fixture.tipoRevista(ncmRevistas);
+		tipoRevista = Fixture.tipoRevista(ncmRevistas);
 		tipoCromo = Fixture.tipoCromo(ncmCromo);
 		save(tipoRevista, tipoCromo);
 		
-		Produto veja = Fixture.produtoVeja(tipoRevista);
+		veja = Fixture.produtoVeja(tipoRevista);
 		veja.setEditor(abril);
 		veja.addFornecedor(fornecedorDinap);
 
-		Produto quatroRodas = Fixture.produtoQuatroRodas(tipoRevista);
+		quatroRodas = Fixture.produtoQuatroRodas(tipoRevista);
 		quatroRodas.setEditor(abril);
 		quatroRodas.addFornecedor(fornecedorDinap);
 
@@ -120,21 +128,21 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 		cromoReiLeao.addFornecedor(fornecedorDinap);
 		save(cromoReiLeao);
 
-		veja1 = Fixture.produtoEdicao("1", 1L, 10, 7,
-				new Long(100), BigDecimal.TEN, new BigDecimal(15), "ABCDEFGHIJKLMNOPQ", 1L, veja, null, false);
+		veja1 = Fixture.produtoEdicao(1L, 10, 7, new Long(100),
+				BigDecimal.TEN, new BigDecimal(15), "ABCDEFGHIJKLMNOPQ", veja, null, false);
 
-		ProdutoEdicao quatroRoda2 = Fixture.produtoEdicao("1", 2L, 15, 30,
-				new Long(100), BigDecimal.TEN, BigDecimal.TEN, "ABCDEFGHIJKLMNOPA", 2L,
-				quatroRodas, null, false);
+		ProdutoEdicao quatroRoda2 = Fixture.produtoEdicao(2L, 15, 30, new Long(100),
+				BigDecimal.TEN, BigDecimal.TEN, "ABCDEFGHIJKLMNOPA", quatroRodas, 
+				null, false);
 
-		ProdutoEdicao infoExame3 = Fixture.produtoEdicao("1", 3L, 5, 30,
-				new Long(100), BigDecimal.TEN, new BigDecimal(12), "ABCDEFGHIJKLMNOPC", 3L, infoExame, null, false);
+		ProdutoEdicao infoExame3 = Fixture.produtoEdicao(3L, 5, 30, new Long(100),
+				BigDecimal.TEN, new BigDecimal(12), "ABCDEFGHIJKLMNOPC", infoExame, null, false);
 
-		ProdutoEdicao capricho1 = Fixture.produtoEdicao("1", 1L, 10, 15,
-				new Long(120), BigDecimal.TEN, BigDecimal.TEN, "ABCDEFGHIJKLMNOPD", 4L, capricho, null, false);
+		ProdutoEdicao capricho1 = Fixture.produtoEdicao(1L, 10, 15, new Long(120),
+				BigDecimal.TEN, BigDecimal.TEN, "ABCDEFGHIJKLMNOPD", capricho, null, false);
 		
-		ProdutoEdicao cromoReiLeao1 = Fixture.produtoEdicao("1", 1L, 100, 60,
-				new Long(10), BigDecimal.ONE, new BigDecimal(1.5), "ABCDEFGHIJKLMNOPE", 5L, cromoReiLeao, null, false);
+		ProdutoEdicao cromoReiLeao1 = Fixture.produtoEdicao(1L, 100, 60, new Long(10),
+				BigDecimal.ONE, new BigDecimal(1.5), "ABCDEFGHIJKLMNOPE", cromoReiLeao, null, false);
 		
 		save(veja1, quatroRoda2, infoExame3, capricho1, cromoReiLeao1);
 		
@@ -148,7 +156,7 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 		save(tipoNotaFiscal);
 		
 		NotaFiscalEntradaFornecedor notaFiscal1Veja = Fixture
-				.notaFiscalEntradaFornecedor(cfop, fornecedorFC.getJuridica(), fornecedorFC, tipoNotaFiscal,
+				.notaFiscalEntradaFornecedor(cfop, fornecedorFC, tipoNotaFiscal,
 						usuario, BigDecimal.TEN, BigDecimal.ZERO, BigDecimal.TEN);
 		save(notaFiscal1Veja);
 
@@ -172,7 +180,7 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 		
 		
 		NotaFiscalEntradaFornecedor notaFiscal2Veja = Fixture
-				.notaFiscalEntradaFornecedor(cfop, fornecedorFC.getJuridica(), fornecedorFC, tipoNotaFiscal,
+				.notaFiscalEntradaFornecedor(cfop, fornecedorFC, tipoNotaFiscal,
 						usuario, BigDecimal.TEN, BigDecimal.ZERO, BigDecimal.TEN);
 		save(notaFiscal2Veja);
 
@@ -198,7 +206,7 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 		
 		
 		NotaFiscalEntradaFornecedor notaFiscal4Rodas= Fixture
-				.notaFiscalEntradaFornecedor(cfop, fornecedorFC.getJuridica(), fornecedorFC, tipoNotaFiscal,
+				.notaFiscalEntradaFornecedor(cfop, fornecedorFC, tipoNotaFiscal,
 						usuario, BigDecimal.TEN, BigDecimal.ZERO, BigDecimal.TEN);
 		save(notaFiscal4Rodas);
 
@@ -474,4 +482,5 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 
 		Assert.assertEquals(proximoLancamentoObtido.getId(), proximoLancamentoVeja.getId());
 	}
+   
 }

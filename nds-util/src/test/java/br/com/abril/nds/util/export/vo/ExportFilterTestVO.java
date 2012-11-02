@@ -6,7 +6,7 @@ import br.com.abril.nds.util.export.Exportable;
 @Exportable
 public class ExportFilterTestVO {
 
-	@Export(label = "Filter One")
+	@Export(label = "Filter One ", propertyToDynamicLabel = "dynamicProperty")
 	private String filterOne;
 	
 	@Export(label = "Filter Two")
@@ -26,6 +26,8 @@ public class ExportFilterTestVO {
 	
 	@Export(label = "Filter Seven", exhibitionOrder = 2)
 	private String filterSeven;
+	
+	private String dynamicProperty;
 
 	public ExportFilterTestVO() {
 		
@@ -33,7 +35,7 @@ public class ExportFilterTestVO {
 	
 	public ExportFilterTestVO(String filterOne, String filterTwo,
 							  String filterThree, String filterFour, String filterFive,
-							  String filterSix, String filterSeven) {
+							  String filterSix, String filterSeven, String dynamicProperty) {
 		
 		this.filterOne = filterOne;
 		this.filterTwo = filterTwo;
@@ -42,6 +44,7 @@ public class ExportFilterTestVO {
 		this.filterFive = filterFive;
 		this.filterSix = filterSix;
 		this.filterSeven = filterSeven;
+		this.dynamicProperty = dynamicProperty;
 	}
 
 	/**
@@ -140,6 +143,20 @@ public class ExportFilterTestVO {
 	 */
 	public void setFilterSeven(String filterSeven) {
 		this.filterSeven = filterSeven;
+	}
+
+	/**
+	 * @return the dynamicProperty
+	 */
+	public String getDynamicProperty() {
+		return dynamicProperty;
+	}
+
+	/**
+	 * @param dynamicProperty the dynamicProperty to set
+	 */
+	public void setDynamicProperty(String dynamicProperty) {
+		this.dynamicProperty = dynamicProperty;
 	}
 	
 }

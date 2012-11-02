@@ -34,16 +34,19 @@
 		<jsp:include page="../messagesDialog.jsp">
 			<jsp:param value="dialogMensagemPostergarCotas" name="messageDialog"/>
 		</jsp:include> 
+
 		
-		<fieldset style="width:200px!important;">
+		<fieldset style="width:270px!important;">
 	    	<legend>Postergar Encalhe</legend>
 			<table border="0" cellspacing="2" cellpadding="0">
 	          <tr>
-	            <td width="70">Nova Data:</td>
-	            <td width="103"><input name="dtPostergada" type="text" id="dtPostergada" style="width:80px;" onchange="fechamentoEncalheController.carregarDataPostergacao();" /></td>
+	            <td width="60">Nova Data:</td>
+	            <td width="120"><input name="dtPostergada" type="text" id="dtPostergada" style="width:80px;" onchange="fechamentoEncalheController.carregarDataPostergacao();" /></td>
 	          </tr>
 	        </table>
 	    </fieldset>
+	    
+	    
 	</div>
 	</form>
 	
@@ -60,13 +63,13 @@
 				<table class="cotasGrid" id="tabelaGridCotas" ></table>
 			</form>
 			<span class="bt_novos" title="Gerar Arquivo" >
-				<a href="javascript:gerarArquivoCotasAusentes('XLS');">
+				<a href="javascript:;" onclick="fechamentoEncalheController.gerarArquivoCotasAusentes('XLS');">
 					<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
 					Arquivo
 				</a>
 			</span>
 			<span class="bt_novos" title="Imprimir">
-				<a href="javascript:gerarArquivoCotasAusentes('PDF');">
+				<a href="javascript:;" onclick="fechamentoEncalheController.gerarArquivoCotasAusentes('PDF');">
 					<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
 					Imprimir 
 				</a>
@@ -84,6 +87,7 @@
 	            <span class="bt_novos"><a href="javascript:;" onclick="fechamentoEncalheController.salvar()" rel="tipsy" title="Salvar"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0" /> </a></span>
 				<span class="bt_novos"><a href="javascript:;" onclick="fechamentoEncalheController.popup_encerrarEncalhe();" rel="tipsy" title="Cotas Ausentes"><img src="${pageContext.request.contextPath}/images/ico_usuarios1.gif" hspace="5" border="0" /></a></span>
 				<span class="bt_novos"><a href="javascript:;" onclick="fechamentoEncalheController.salvarNoEncerrementoOperacao();" rel="tipsy" title="Encerrar Opera&ccedil;&atilde;o Encalhe"><img src="${pageContext.request.contextPath}/images/ico_check.gif" hspace="5" border="0" /></a></span>
+				<span class="bt_novos"><a href="javascript:;" onclick="fechamentoEncalheController.analiticoEncalhe();" rel="tipsy" title="Anal&iacute;tico Encalhe"><img src="${pageContext.request.contextPath}/images/bt_lancamento.png" hspace="5" border="0" /></a></span>
 				<span class="bt_novos"><a href="javascript:;" id="sel" onclick="fechamentoEncalheController.replicarTodos();" rel="tipsy" title="Replicar Todos"><img src="${pageContext.request.contextPath}/images/ico_atualizar.gif" border="0" /></a><label for="sel"></label></span>
 			</div>
 			

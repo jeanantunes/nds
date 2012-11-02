@@ -254,4 +254,5 @@ public interface CotaGarantiaService {
      * @return imagem do cheque caução do histórico de titularidade da cota
      */
 	byte[] getImagemChequeCaucaoHistoricoTitularidade(Long idCota, Long idHistorico);
+
 }

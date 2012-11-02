@@ -33,7 +33,7 @@ var MANTER_COTA = $.extend(true, {
 
         this.initCotaGridPrincipal();
     },
-
+    
     initCotaGridPrincipal: function() {
 
         $(".pessoasGrid", this.workspace).flexigrid({
@@ -282,7 +282,7 @@ var MANTER_COTA = $.extend(true, {
         MANTER_COTA.fecharModalCadastroCota = false;
 
         $.postJSON(contextPath + "/cadastro/cota/editar",
-            "idCota="+idCota,
+            {idCota:idCota},
             function(result){
 
                 if(result){
@@ -304,7 +304,7 @@ var MANTER_COTA = $.extend(true, {
     excluir:function(idCota){
 
         $.postJSON(contextPath + "/cadastro/cota/excluir",
-            "idCota="+idCota,
+        		{idCota:idCota},
             function(){
                 MANTER_COTA.pesquisar();
             }
@@ -334,7 +334,7 @@ var MANTER_COTA = $.extend(true, {
 
         $.postJSON(
             contextPath + "/cadastro/cota/salvarEnderecos",
-            "idCota="+ MANTER_COTA.idCota,
+            {idCota:MANTER_COTA.idCota},
             null,
             null,
             true
@@ -346,7 +346,7 @@ var MANTER_COTA = $.extend(true, {
 
         $.postJSON(
             contextPath + "/cadastro/cota/salvarTelefones",
-            "idCota="+ MANTER_COTA.idCota,
+            {idCota:MANTER_COTA.idCota},
             MANTER_COTA.carregarTelefones,
             null,
             true
@@ -470,6 +470,9 @@ var MANTER_COTA = $.extend(true, {
                 form: $("#workspaceCota", this.workspace)
             });
         }
+        
+        MANTER_COTA.verificarAlteracoesCadastroCota();
+        
     },
 
     recarregarCadastroCota : function() {
@@ -478,7 +481,24 @@ var MANTER_COTA = $.extend(true, {
     },
 
     cancelarCadastro:function(acaoPosCancelar){
+    	
+    	if(!MANTER_COTA._indCadastroCotaAlterado){
+    		
+            MANTER_COTA.fecharModalCadastroCota = true;
 
+            $("#dialog-close", this.workspace).dialog("close");
+            
+            $("#dialog-cancelar-cadastro-cota", this.workspace).dialog("close");
+            
+            $("#dialog-cota", this.workspace).dialog("close");
+           
+            if (acaoPosCancelar) {
+                acaoPosCancelar();
+            }
+
+            return;
+    	}
+    	
         $("#dialog-cancelar-cadastro-cota", this.workspace).dialog({
             resizable: false,
             height:150,
@@ -512,7 +532,7 @@ var MANTER_COTA = $.extend(true, {
 
             $.postJSON(
                 contextPath + "/cadastro/cota/validarNumeroCotaHistoricoBase",
-                "&numeroCota="+ $(idCampoNumeroCota, this.workspace).val(),
+                {numeroCota:$(idCampoNumeroCota, this.workspace).val()},
                 null,
                 function(){
                     $(idCampoNumeroCota, this.workspace).focus();
@@ -543,7 +563,7 @@ var MANTER_COTA = $.extend(true, {
         if (nomeLogra && nomeLogra.length > 2) {
 
             $.postJSON(
-                contextPath + "/cadastro/endereco/pesquisarLogradouros", "nomeLogradouro=" + nomeLogra,
+                contextPath + "/cadastro/endereco/pesquisarLogradouros", {nomeLogradouro:nomeLogra},
                 function(result) {
                     MANTER_COTA.exibirAutoComplete(result, idCampoPesquisa);
                 }
@@ -562,7 +582,7 @@ var MANTER_COTA = $.extend(true, {
         if (nomeBairro && nomeBairro.length > 2) {
 
             $.postJSON(
-                contextPath + "/cadastro/endereco/pesquisarBairros", "nomeBairro=" + nomeBairro,
+                contextPath + "/cadastro/endereco/pesquisarBairros", {nomeBairro:nomeBairro},
                 function(result) {
                     MANTER_COTA.exibirAutoComplete(result, idCampoPesquisa);
                 }
@@ -570,6 +590,57 @@ var MANTER_COTA = $.extend(true, {
         }
     },
 
+    /**
+     * Flag que indica alterações no cadastro da cota.
+     */
+    _indCadastroCotaAlterado : false,
+    
+    /**
+     * Detecta que se houveram quaisquer alterações no cadastro de cota.
+     */
+    verificarAlteracoesCadastroCota : function() {
+    	
+    	MANTER_COTA._indCadastroCotaAlterado = false;
+    	
+    	var inputs_aba_dados_cadastrais = 'div[id=tabCota-1] :input';
+    	var inputs_aba_enderecos 		= 'div[id=tabCota-2] :input';
+    	var inputs_aba_telefones 		= 'div[id=tabCota-3] :input';
+    	var inputs_aba_pdv 				= 'div[id=tabCota-4] :input';
+    	var inputs_aba_garantia 		= 'div[id=tabCota-5] :input';
+    	var inputs_aba_fornecedores 	= 'div[id=tabCota-6] :input';
+    	var inputs_aba_desconto 		= 'div[id=tabCota-7] :input';
+    	var inputs_aba_financeiro 		= 'div[id=tabCota-8] :input';
+    	var inputs_aba_distribuicao 	= 'div[id=tabCota-9] :input';
+    	var inputs_aba_socios 			= 'div[id=tabCota-10] :input';
+    	
+    	var inputAbas = new Array();
+    	
+    	inputAbas.push(inputs_aba_dados_cadastrais);
+    	inputAbas.push(inputs_aba_enderecos);
+    	inputAbas.push(inputs_aba_telefones);
+    	inputAbas.push(inputs_aba_pdv);
+    	inputAbas.push(inputs_aba_garantia);
+    	inputAbas.push(inputs_aba_fornecedores);
+    	inputAbas.push(inputs_aba_desconto);
+    	inputAbas.push(inputs_aba_financeiro);
+    	inputAbas.push(inputs_aba_distribuicao);
+    	inputAbas.push(inputs_aba_socios);
+    	
+    	$.each(inputAbas, function(index, value){
+    		
+        	$(value).change(function() {
+        		
+        		MANTER_COTA._indCadastroCotaAlterado = true;
+
+        	});
+    		
+    		
+    	});
+    	
+    	
+    },
+    
+    
     pesquisarMunicipios: function(idCampoPesquisa) {
 
         var nomeMunicipio = $(idCampoPesquisa, this.workspace).val();
@@ -581,7 +652,7 @@ var MANTER_COTA = $.extend(true, {
         if (nomeMunicipio && nomeMunicipio.length > 2) {
 
             $.postJSON(
-                contextPath + "/cadastro/endereco/pesquisarLocalidades", "nomeLocalidade=" + nomeMunicipio,
+                contextPath + "/cadastro/endereco/pesquisarLocalidades", {nomeLocalidade:nomeMunicipio},
                 function(result) {
                     MANTER_COTA.exibirAutoComplete(result, idCampoPesquisa);
                 }
@@ -880,16 +951,19 @@ var COTA_FORNECEDOR = $.extend(true, {
 
     salvarFornecedores: function(){
 
-        var fornecedores ="";
+        var fornecedores = new Array();
 
         $("#selectFornecedorSelecionado_option_cnpj option", this.workspace).each(function (index) {
-            fornecedores = fornecedores + "fornecedores["+index+"]="+ $(this, this.workspace).val() +"&";
+            fornecedores.push($(this, this.workspace).val());
         });
+        
+        var param = {idCota:MANTER_COTA.idCota};
+        
+        param = serializeArrayToPost('fornecedores', fornecedores, param)
 
         $.postJSON(
             contextPath + "/cadastro/cota/salvarFornecedores",
-            fornecedores +
-                "idCota="+ MANTER_COTA.idCota,
+            param,
             null,
             function(mensagens){
 
@@ -1116,8 +1190,11 @@ var COTA_CNPJ = $.extend(true, {
 
     carregarDadosCNPJ: function(idCampo){
 
-        $.postJSON(contextPath + "/cadastro/cota/obterDadosCNPJ",
-            "numeroCnpj="+$(idCampo, this.workspace).val() ,
+    	var cnpj = $(idCampo, this.workspace).val();
+    	
+    	var params = {"numeroCnpj":cnpj};
+    	
+        $.postJSON(contextPath + "/cadastro/cota/obterDadosCNPJ", params ,
             function(result){
 
                 if (result.email){$("#email", this.workspace).val(result.email);}
@@ -1295,7 +1372,7 @@ var COTA_CPF = $.extend(true, {
     carregarDadosCPF: function(idCampo){
 
         $.postJSON(contextPath + "/cadastro/cota/obterDadosCPF",
-            "numeroCPF="+$(idCampo, this.workspace).val() ,
+            {numeroCPF:$(idCampo, this.workspace).val()} ,
             function(result){
 
                 if(result.email)$("#emailCPF", this.workspace).val(result.email);
@@ -1522,7 +1599,7 @@ var SOCIO_COTA = $.extend(true, {
     salvarSocios:function(){
 
         $.postJSON(contextPath + "/cadastro/cota/confirmarSocioCota",
-            "idCota=" + MANTER_COTA.idCota,
+            {idCota:MANTER_COTA.idCota},
             function(mensagens) {
 
                 if (mensagens) {

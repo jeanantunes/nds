@@ -159,7 +159,7 @@ public class EmissaoCEController {
 		
 		for(Rota rota : rotas){
 			
-			listaRotas.add(new ItemDTO<Long, String>(rota.getId(),rota.getCodigoRota()));
+			listaRotas.add(new ItemDTO<Long, String>(rota.getId(),rota.getDescricaoRota()));
 		}
 		
 		return listaRotas;
@@ -218,8 +218,11 @@ public class EmissaoCEController {
 			filtro.setPersonalizada(false);
 		
 		if(filtro.getPersonalizada()) {
+			
 			List<CapaDTO> capas =  chamadaEncalheService.obterIdsCapasChamadaEncalhe(filtro.getDtRecolhimentoDe(), filtro.getDtRecolhimentoAte());
+			
 			result.include("capas", capas);
+			
 		}
 		
 		result.include("cotasEmissao", cotasEmissao);

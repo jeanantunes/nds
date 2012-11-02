@@ -169,6 +169,8 @@ function Distribuicao(tela) {
             D.$('qtdePDV', this.workspace).prop('disabled', true);
         }
 		
+		D.$('numCota').attr('disabled', true);
+		D.$('box').attr('disabled', true);
 	},
 	
 	/**
@@ -218,7 +220,7 @@ function Distribuicao(tela) {
 	this.downloadTermoAdesao = function() {
 		
 		$.postJSON(contextPath + "/cadastro/cota/validarValoresParaDownload",
-				"taxa="+D.get("taxaFixaEntregaBanca")+"&percentual="+D.get("percentualFaturamentoEntregaBanca"),
+				{taxa:D.get("taxaFixaEntregaBanca"),percentual:D.get("percentualFaturamentoEntregaBanca")},
 				function() {
 					document.location.assign(contextPath + "/cadastro/cota/downloadTermoAdesao?termoAdesaoRecebido="+D.get("termoAdesaoRecebido")+"&numeroCota="+D.get("numCota")+"&taxa="+D.get("taxaFixaEntregaBanca")+"&percentual="+D.get("percentualFaturamentoEntregaBanca"));
 				},
@@ -398,7 +400,7 @@ function Distribuicao(tela) {
 	this.carregarValoresCamposEntregaBanca = function() {
 		
 		$.postJSON(contextPath + "/cadastro/cota/carregarValoresEntregaBanca",
-			"numCota=" + D.get("numCota"),
+			{numCota:D.get("numCota")},
 			function (result) {
 			
 				D.set('percentualFaturamentoEntregaBanca',	result.percentualFaturamento);
@@ -477,7 +479,7 @@ function Distribuicao(tela) {
 			$("#nomeArquivoTermoAdesao").html("");
 			
 			$.postJSON(contextPath + "/cadastro/cota/excluirTermoAdesao",
-					"numCota=" + D.get("numCota") ,
+					{numCota:D.get("numCota")} ,
 					null,
 					null,
 					true);
@@ -491,7 +493,7 @@ function Distribuicao(tela) {
 			$("#nomeArquivoProcuracao").html("");
 			
 			$.postJSON(contextPath + "/cadastro/cota/excluirProcuracao",
-					"numCota=" + D.get("numCota") ,
+					{numCota:D.get("numCota")},
 					null,
 					null,
 					true);

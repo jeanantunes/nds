@@ -7,7 +7,9 @@ import java.util.TreeMap;
 
 import br.com.abril.nds.dto.BalanceamentoRecolhimentoDTO;
 import br.com.abril.nds.dto.ProdutoRecolhimentoDTO;
+import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.TipoBalanceamentoRecolhimento;
 
 /**
@@ -66,5 +68,8 @@ public interface RecolhimentoService {
 	 * @param idLancamento - identificador do lançamento
 	 */
 	void excluiBalanceamento(Long idLancamento);
+
+	Intervalo<Date> getPeriodoRecolhimento(Distribuidor distribuidor,
+			Integer numeroSemana, Date dataBalanceamento);
 	
 }

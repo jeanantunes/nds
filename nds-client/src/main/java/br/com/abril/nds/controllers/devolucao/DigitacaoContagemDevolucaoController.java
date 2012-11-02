@@ -1,6 +1,8 @@
 package br.com.abril.nds.controllers.devolucao;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -14,7 +16,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.DigitacaoContagemDevolucaoVO;
+import br.com.abril.nds.client.vo.ProdutoEdicaoFechadaVO;
+import br.com.abril.nds.client.vo.RegistroEdicoesFechadasVO;
 import br.com.abril.nds.client.vo.ResultadoDigitacaoContagemDevolucaoVO;
+import br.com.abril.nds.dto.ContagemDevolucaoConferenciaCegaDTO;
 import br.com.abril.nds.dto.ContagemDevolucaoDTO;
 import br.com.abril.nds.dto.InfoContagemDevolucaoDTO;
 import br.com.abril.nds.dto.ItemDTO;
@@ -26,12 +31,16 @@ import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.ContagemDevolucaoService;
+import br.com.abril.nds.service.EdicoesFechadasService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.Intervalo;
+import br.com.abril.nds.util.StringUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
@@ -39,13 +48,14 @@ import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.util.export.NDSFileHeader;
 import br.com.abril.nds.vo.PaginacaoVO;
-import br.com.abril.nds.vo.PeriodoVO;
 import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.interceptor.download.Download;
+import br.com.caelum.vraptor.interceptor.download.InputStreamDownload;
 import br.com.caelum.vraptor.view.Results;
 
 /**
@@ -73,12 +83,16 @@ public class DigitacaoContagemDevolucaoController  {
 	private ContagemDevolucaoService contagemDevolucaoService;
 	
 	@Autowired
+	private EdicoesFechadasService edicoesFechadasService;
+	
+	@Autowired
 	private HttpServletResponse httpResponse;
 	
 	private static final String FILTRO_SESSION_ATTRIBUTE = "filtroPesquisaDigitacaoContagemDevolucao";
 	
 	private static final String USUARIO_PERFIL_OPERADOR = "userProfileOperador";
 
+	private static final String LISTA_EDICOES_FECHADAS = "listaEdicoesFechadas";
 	
 	@Autowired
 	private DistribuidorService distribuidorService;
@@ -116,21 +130,59 @@ public class DigitacaoContagemDevolucaoController  {
 	
 	@Post
 	@Path("/pesquisar")
-	public void pesquisar(String dataDe, String dataAte, Long idFornecedor, Integer semanaConferenciaEncalhe, String sortorder, String sortname, int page, int rp){
+	public void pesquisar(String dataDe, String dataAte, Long idFornecedor, Integer semanaConferenciaEncalhe, Long idDestinatario, String sortorder, String sortname, int page, int rp){
 		
-		if(idFornecedor == null || idFornecedor < 0) {
-			idFornecedor = null;
+		Intervalo<Date> periodo = null;
+						
+		if ( realizarPesquisaPorSemanaCE(dataDe, dataAte, semanaConferenciaEncalhe) ) {
+			periodo = obterPeriodoSemanaConferenciaEncalhe(semanaConferenciaEncalhe);
+		
+		} else {
+			periodo =  obterPeriodoValidado(dataDe, dataAte);
 		}
-		
-		PeriodoVO periodo =  obterPeriodoValidado(dataDe, dataAte);
-		
-		FiltroDigitacaoContagemDevolucaoDTO filtro = new FiltroDigitacaoContagemDevolucaoDTO(periodo,idFornecedor, semanaConferenciaEncalhe);
+
+		FiltroDigitacaoContagemDevolucaoDTO filtro = 
+				new FiltroDigitacaoContagemDevolucaoDTO(periodo,idFornecedor, semanaConferenciaEncalhe);
 		
 		configurarPaginacaoPesquisa(filtro, sortorder, sortname, page, rp);
 		
 		tratarFiltro(filtro);
 		
 		efetuarPesquisa(filtro);
+	}
+	
+	
+	private boolean realizarPesquisaPorSemanaCE(String dataDe, String dataAte,
+			Integer semanaConferenciaEncalhe) {
+		
+		if (semanaConferenciaEncalhe != null) {
+			
+			if (!StringUtil.isEmpty(dataDe) || !StringUtil.isEmpty(dataAte)) {
+				throw new ValidacaoException(new  ValidacaoVO(TipoMensagem.ERROR, 
+						"A pesquisa não pode ser realizada pelo perído e pela Conferencia de Encalhe ao mesmo tempo"));
+			}
+			
+			return true;
+		}
+		
+		return false;
+	}
+
+
+	private Intervalo<Date> obterPeriodoSemanaConferenciaEncalhe(Integer semanaConferenciaEncalhe) {
+		
+		Intervalo<Date> periodo = null;	
+		
+		Distribuidor distribuidor = this.distribuidorService.obter();
+		
+		Date dataInicioSemana = DateUtil.obterDataDaSemanaNoAno(semanaConferenciaEncalhe, 
+				distribuidor.getInicioSemana().getCodigoDiaSemana(), null);
+		
+		Date dataFimSemana = DateUtil.adicionarDias(dataInicioSemana, 6);
+		
+		periodo = new Intervalo<Date>(dataInicioSemana, dataFimSemana);
+		
+		return periodo;
 	}
 	
 	/*
@@ -196,6 +248,29 @@ public class DigitacaoContagemDevolucaoController  {
 		
 	}
 	
+	/**
+	 * Exporta os dados da pesquisa.
+	 * 
+	 * @param fileType - tipo de arquivo
+	 * 
+	 * @throws IOException Exceção de E/S
+	 */
+	@Get
+	public void exportarCoferenciaCega(FileType fileType) throws IOException {
+
+		FiltroDigitacaoContagemDevolucaoDTO filtro = obterFiltroExportacao();
+
+		List<ContagemDevolucaoConferenciaCegaDTO> listConferenciaCega = contagemDevolucaoService
+				.obterInfoContagemDevolucaoCega(filtro, isPerfilUsuarioEncarregado());
+
+		FileExporter.to("digitacao-contagem-devolucao", fileType).inHTTPResponse(
+				this.getNDSFileHeader(), filtro, null, listConferenciaCega,
+				ContagemDevolucaoConferenciaCegaDTO.class, this.httpResponse);
+		
+		result.nothing();
+		
+	}
+	
 	/*
 	 * Obtém os dados do cabeçalho de exportação.
 	 * 
@@ -247,7 +322,13 @@ public class DigitacaoContagemDevolucaoController  {
 		
 		List<ContagemDevolucaoDTO> listaResultados = infoContagem.getListaContagemDevolucao();
 		
-		if (listaResultados == null || listaResultados.isEmpty()){
+		if (listaResultados == null) {
+			listaResultados = new ArrayList<ContagemDevolucaoDTO>();
+		}
+		
+		listaResultados.addAll(0, this.obterListaEdicoesFechadas());
+		
+		 if (listaResultados.isEmpty()){
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
 		}
 		
@@ -276,6 +357,39 @@ public class DigitacaoContagemDevolucaoController  {
 	}
 	
 	
+	@SuppressWarnings("unchecked")
+	private List<ContagemDevolucaoDTO> obterListaEdicoesFechadas() {
+		
+		List<ContagemDevolucaoDTO> listaContagem = (List<ContagemDevolucaoDTO>) this.session.getAttribute(LISTA_EDICOES_FECHADAS);
+		
+		if (listaContagem == null) {
+			listaContagem = new ArrayList<ContagemDevolucaoDTO>();
+		}
+		
+		return listaContagem;
+	}
+
+	@Post
+	public void adicionarEdicoesFechadas(boolean checkAll, List<ProdutoEdicaoFechadaVO> listaEdicoesFechadas ) {
+		
+		FiltroDigitacaoContagemDevolucaoDTO filtro = 
+				(FiltroDigitacaoContagemDevolucaoDTO) this.session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
+		
+		if (filtro == null) {
+			throw new ValidacaoException(TipoMensagem.ERROR, "Essa operação só pode ser realizada após a pesquisa");
+		}
+		
+		List<ContagemDevolucaoDTO> listaContagemEdicoesFechadasDTO = this.obterListaEdicoesFechadas();
+		
+		listaContagemEdicoesFechadasDTO.addAll(
+				this.contagemDevolucaoService.obterContagemDevolucaoEdicaoFechada(checkAll, listaEdicoesFechadas, filtro));
+		
+		this.session.setAttribute(LISTA_EDICOES_FECHADAS, listaContagemEdicoesFechadasDTO);
+		
+		this.result.use(Results.nothing());
+	}
+	
+	
 	@Post
 	@Path("/salvar")
 	public void salvar(List<DigitacaoContagemDevolucaoVO> listaDigitacaoContagemDevolucao) {
@@ -295,7 +409,7 @@ public class DigitacaoContagemDevolucaoController  {
 	
 	@Post
 	@Path("/confirmar")
-	public void confirmar(List<DigitacaoContagemDevolucaoVO> listaDigitacaoContagemDevolucao) {
+	public void confirmar(List<DigitacaoContagemDevolucaoVO> listaDigitacaoContagemDevolucao) throws IOException {
 		
 		if (listaDigitacaoContagemDevolucao == null 
 				|| listaDigitacaoContagemDevolucao.isEmpty()) {
@@ -306,6 +420,25 @@ public class DigitacaoContagemDevolucaoController  {
 		List<ContagemDevolucaoDTO> listaContagemDevolucaoDTO = getListaContagemDevolucaoDTO(listaDigitacaoContagemDevolucao);
 		
 		contagemDevolucaoService.confirmarContagemDevolucao(listaContagemDevolucaoDTO, getUsuario());
+		
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
+										Constantes.PARAM_MSGS).recursive().serialize();
+		
+	}
+	
+	@Post
+	@Path("/geraNota")
+	public void geraNota(List<DigitacaoContagemDevolucaoVO> listaDigitacaoContagemDevolucao) throws IOException {
+		
+		if (listaDigitacaoContagemDevolucao == null 
+				|| listaDigitacaoContagemDevolucao.isEmpty()) {
+			
+			throw new ValidacaoException(TipoMensagem.ERROR, "Preencha os dados para contagem de devolução!");
+		}
+		
+		List<ContagemDevolucaoDTO> listaContagemDevolucaoDTO = getListaContagemDevolucaoDTO(listaDigitacaoContagemDevolucao);
+		
+		contagemDevolucaoService.gerarNotasFiscaisPorFornecedor(listaContagemDevolucaoDTO);
 		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
 										Constantes.PARAM_MSGS).recursive().serialize();
@@ -344,7 +477,11 @@ public class DigitacaoContagemDevolucaoController  {
 			
 			digitacaoContagemDevolucaoVO.setValorTotal( dto.getValorTotal()==null? "" : (CurrencyUtil.formatarValor(dto.getValorTotal())) );
 			
+			digitacaoContagemDevolucaoVO.setValorTotalComDesconto((CurrencyUtil.formatarValor(dto.getTotalComDesconto())));
+			
 			digitacaoContagemDevolucaoVO.setDataRecolhimentoDistribuidor(DateUtil.formatarDataPTBR((dto.getDataMovimento())));
+			
+			digitacaoContagemDevolucaoVO.setEdicaoFechada(dto.isEdicaoFechada());
 			
 			listaResultadosVO.add(digitacaoContagemDevolucaoVO);
 		}
@@ -370,7 +507,7 @@ public class DigitacaoContagemDevolucaoController  {
 			contagemDevolucaoDTO.setNumeroEdicao(Long.parseLong(vo.getNumeroEdicao()));
 			contagemDevolucaoDTO.setQtdNota(new BigInteger(vo.getQtdNota()));
 			contagemDevolucaoDTO.setDataMovimento( ( vo.getDataRecolhimentoDistribuidor() == null ) ? null : DateUtil.parseData(vo.getDataRecolhimentoDistribuidor(),"dd/MM/yyyy"));
-			
+			contagemDevolucaoDTO.setDiferenca(StringUtil.isEmpty(vo.getDiferenca()) ? null : new BigInteger(vo.getDiferenca()));
 			listaResultadosDto.add(contagemDevolucaoDTO);
 		}
 		
@@ -423,9 +560,9 @@ public class DigitacaoContagemDevolucaoController  {
 	 * Valida o periodo da consulta e retorna um objeto com os valores. 
 	 * @param dataInicial
 	 * @param dataFinal
-	 * @return PeriodoVO
+	 * @return Intervalo<Date>
 	 */
-	private PeriodoVO obterPeriodoValidado(String dataInicial, String dataFinal) {
+	private Intervalo<Date> obterPeriodoValidado(String dataInicial, String dataFinal) {
 				
 		tratarErroDatas(validarPreenchimentoObrigatorio(dataInicial, dataFinal));
 
@@ -433,8 +570,8 @@ public class DigitacaoContagemDevolucaoController  {
 		
 		validarPeriodo(dataInicial, dataFinal);		
 		
-		PeriodoVO periodo = new PeriodoVO(DateUtil.parseData(dataInicial, "dd/MM/yyyy"), 
-										  DateUtil.parseData(dataFinal, "dd/MM/yyyy"));
+		Intervalo<Date> periodo = new Intervalo<Date>(DateUtil.parseData(dataInicial, "dd/MM/yyyy"), 
+										  			  DateUtil.parseData(dataFinal, "dd/MM/yyyy"));
 
 		return periodo; 
 	}
@@ -515,4 +652,45 @@ public class DigitacaoContagemDevolucaoController  {
 		
 		return mensagens;
 	}
+	
+	
+	public void pesquisaEdicoesFechadas(String sortorder, String sortname,int page, int rp){
+		
+		
+		FiltroDigitacaoContagemDevolucaoDTO filtro = 
+				(FiltroDigitacaoContagemDevolucaoDTO) this.session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
+		
+		configurarPaginacaoPesquisa(filtro, sortorder, sortname, page, rp);
+		
+		Long quantidade = edicoesFechadasService.quantidadeResultadoEdicoesFechadas(filtro.getDataInicial(), filtro.getDataFinal(), filtro.getIdFornecedor());
+		if(quantidade == 0){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
+		}
+		
+		
+		List<RegistroEdicoesFechadasVO> edicoesFechadasVOs = edicoesFechadasService.obterResultadoEdicoesFechadas(filtro.getDataInicial(), filtro.getDataFinal(), filtro.getIdFornecedor(), sortorder, sortname, page*rp - rp, rp);
+		
+		
+		result.use(FlexiGridJson.class).from(edicoesFechadasVOs).total(quantidade.intValue()).page(page).serialize();
+	}
+	
+	@Post
+    public Download gerarChamadaEncalheFornecedor() {
+        
+        FiltroDigitacaoContagemDevolucaoDTO filtro = (FiltroDigitacaoContagemDevolucaoDTO) session
+                .getAttribute(FILTRO_SESSION_ATTRIBUTE);
+
+        byte[] chamadasEncalhe = contagemDevolucaoService
+                .gerarImpressaoChamadaEncalheFornecedor(
+                        filtro.getIdFornecedor(), filtro.getSemanaCE(),
+                        filtro.getPeriodo()); 
+            
+        if (chamadasEncalhe != null) {
+            long size = chamadasEncalhe.length;
+            InputStream inputStream = new ByteArrayInputStream(chamadasEncalhe);
+            return new InputStreamDownload(inputStream, FileType.PDF.getContentType(), "chamadas-encalhe.pdf", true, size);
+        }
+        return null;
+    }
+
 }

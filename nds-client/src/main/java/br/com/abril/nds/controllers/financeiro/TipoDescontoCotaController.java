@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.Future;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -13,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.util.PaginacaoUtil;
+import br.com.abril.nds.component.singleton.ProcessoCadastroDescontoSingleton;
 import br.com.abril.nds.dto.CotaDescontoProdutoDTO;
 import br.com.abril.nds.dto.DescontoProdutoDTO;
 import br.com.abril.nds.dto.ItemDTO;
@@ -42,8 +44,8 @@ import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.util.export.NDSFileHeader;
 import br.com.abril.nds.vo.PaginacaoVO;
-import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
+import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
@@ -89,30 +91,27 @@ public class TipoDescontoCotaController {
 	@Post
 	@Path("/novoDescontoGeral")
 	public void novoDescontoGeral(BigDecimal desconto, List<Long> fornecedores){
-		
-		descontoService.incluirDescontoDistribuidor(desconto, fornecedores, getUsuario());
-			
-		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Desconto cadastrado com sucesso"),"result").recursive().serialize();
-	}
 
-	@Post
-	@Path("/novoDescontoEspecifico")
+		Future<String> future = descontoService.executarDescontoGeral(desconto, fornecedores, getUsuario());
+		
+		this.resultProcessoCadastroDesconto(future);
+	}
+		
+	@Post("/novoDescontoEspecifico")
 	public void novoDescontoEspecifico(Integer numeroCota, BigDecimal desconto, List<Long> fornecedores) {
 		
-		descontoService.incluirDescontoCota(desconto, fornecedores, numeroCota, getUsuario());
-		
-		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Desconto cadastrado com sucesso"),"result").recursive().serialize();
+		Future<String> future = descontoService.executarDescontoEspecifico(numeroCota, desconto, fornecedores, getUsuario());
+
+		this.resultProcessoCadastroDesconto(future);
 	}
-	
+
 	@Post
 	@Path("/novoDescontoProduto")
-	public void novoDescontoProduto(DescontoProdutoDTO desconto, List<Integer> cotas) {		
+	public void novoDescontoProduto(DescontoProdutoDTO descontoDTO, List<Integer> cotas) {		
 
-		desconto.setCotas(cotas);
+		Future<String> future = descontoService.executarDescontoProduto(descontoDTO, cotas, getUsuario());
 		
-		this.descontoService.incluirDescontoProduto(desconto, getUsuario());
-
-		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Desconto cadastrado com sucesso"),"result").recursive().serialize();
+		this.resultProcessoCadastroDesconto(future);
 	}
 	
 	@Path("/pesquisarDescontoGeral")
@@ -448,4 +447,54 @@ public class TipoDescontoCotaController {
 		
 		result.use(FlexiGridJson.class).from(lista).total(fornecedores.size()).page(1).serialize();
 	}
+
+	private void resultProcessoCadastroDesconto(Future<String> future) {
+		
+		String resultado = null;		
+			
+		try {
+			
+			if (future.isDone()) {
+				resultado = future.get();
+				result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS,  resultado),"result").recursive().serialize();
+			} else {
+				result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Inicio do procedimento de cadastros de Tipo Desconto foi inicializado"),"result").recursive().serialize();
+
+			}
+
+		} catch (Exception e) {
+			
+			List<String> mensagens = new ArrayList<String>();
+			
+			if (e instanceof ValidacaoException) {
+			
+				mensagens = ((ValidacaoException) e).getValidacao().getListaMensagens();
+			
+			} else {
+				mensagens.add(e.getMessage());
+			}
+			
+			throw new ValidacaoException(TipoMensagem.ERROR, mensagens);
+		}
+		
+	}
+	
+	@Get
+	@Path("/verificaProgressoGravacaoDescontoGeral")
+	public void verificaProgressoGravacaoDescontoGeral() {
+		result.use(Results.json()).from(ProcessoCadastroDescontoSingleton.getInstance(),"result").recursive().serialize();
+	}
+
+	@Get
+	@Path("/verificaProgressoGravacaoDescontoEspecifico")
+	public void verificaProgressoGravacaoDescontoEspecifico() {
+		result.use(Results.json()).from(ProcessoCadastroDescontoSingleton.getInstance(), "result").recursive().serialize();
+	}
+
+	@Get
+	@Path("/verificaProgressoGravacaoDescontoProduto")
+	public void verificaProgressoGravacaoDescontoProduto() {
+		result.use(Results.json()).from(ProcessoCadastroDescontoSingleton.getInstance(),"result").recursive().serialize();
+	}
+
 }

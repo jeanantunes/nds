@@ -112,20 +112,20 @@ public class RoteirizacaoRepositoryImplTest extends AbstractRepositoryImplTest {
 		save(roteiro3);
 		
 		
-		rota = Fixture.rota("0", "ROTA00", roteiro);
-		rota.addPDV(pdvManoel, 1);
+		rota = Fixture.rota("ROTA00", roteiro);
+		rota.addPDV(pdvManoel, 1, box);
 		save(rota);
 		
-		rota1 = Fixture.rota("1", "ROTA01", roteiro);
-		rota1.addPDV(pdvManoel, 1);
+		rota1 = Fixture.rota("ROTA01", roteiro);
+		rota1.addPDV(pdvManoel, 1, box);
 		save(rota1);
 		
-		rota2 = Fixture.rota("2", "ROTA02", roteiro);
-		rota2.addPDV(pdvManoel, 1);
+		rota2 = Fixture.rota("ROTA02", roteiro);
+		rota2.addPDV(pdvManoel, 1, box);
 		save(rota2);
 		
-		rota3 = Fixture.rota("3", "ROTA03", roteiro1);
-		rota3.addPDV(pdvManoel, 1);
+		rota3 = Fixture.rota("ROTA03", roteiro1);
+		rota3.addPDV(pdvManoel, 1, box);
 		rota3.setRoteiro(roteiro1);
 		save(rota3);
 
@@ -175,16 +175,16 @@ public class RoteirizacaoRepositoryImplTest extends AbstractRepositoryImplTest {
 	    Assert.assertEquals(4, resultado.size());
 	    
 	    ConsultaRoteirizacaoDTO resultado1 = resultado.get(0);
-	    Assert.assertEquals(String.format("%s - %s", rota.getCodigoRota(), rota.getDescricaoRota()), resultado1.getDescricaoRota());
+	    Assert.assertEquals(rota.getDescricaoRota(), resultado1.getDescricaoRota());
 	    
 	    ConsultaRoteirizacaoDTO resultado2 = resultado.get(1);
-	    Assert.assertEquals(String.format("%s - %s", rota1.getCodigoRota(), rota1.getDescricaoRota()), resultado2.getDescricaoRota());
+	    Assert.assertEquals(rota1.getDescricaoRota(), resultado2.getDescricaoRota());
 	    
 	    ConsultaRoteirizacaoDTO resultado3 = resultado.get(2);
-	    Assert.assertEquals(String.format("%s - %s", rota2.getCodigoRota(), rota2.getDescricaoRota()), resultado3.getDescricaoRota());
+	    Assert.assertEquals(rota2.getDescricaoRota(), resultado3.getDescricaoRota());
 	    
 	    ConsultaRoteirizacaoDTO resultado4 = resultado.get(3);
-	    Assert.assertEquals(String.format("%s - %s", rota3.getCodigoRota(), rota3.getDescricaoRota()), resultado4.getDescricaoRota());
+	    Assert.assertEquals(rota3.getDescricaoRota(), resultado4.getDescricaoRota());
 	}
 	
 	@Test

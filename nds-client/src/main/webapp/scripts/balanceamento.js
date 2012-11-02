@@ -55,13 +55,36 @@ function Balanceamento(pathTela, descInstancia) {
 	 * @param result
 	 */
 	this.popularDetalheProduto = function(result){
+		
 		$("#produtoEdicaoController-detalheNome").html(result.nomeProduto);
 		$("#produtoEdicaoController-detalhePreco").html(result.precoCapa);
 		$("#produtoEdicaoController-detalheCCapa").html(result.chamadaCapa);
 		$("#produtoEdicaoController-detalhePrecoDesc").html(result.precoComDesconto);
 		$("#produtoEdicaoController-detalheFornecedor").html(result.fornecedor);
 		$("#produtoEdicaoController-detalheBrinde").html(result.possuiBrinde);
-		$("#produtoEdicaoController-detalheEditor").html(result.codigoEditor+"-"+result.nomeEditor);
+		
+		var codigoEditor = ((typeof result.codigoEditor == 'undefined') || result.codigoEditor == null) ? "" : result.codigoEditor;
+		
+		var nomeEditor = ((typeof result.nomeEditor == 'undefined') || result.nomeEditor == null) ? "" : result.nomeEditor;
+		
+		var codigo_nome = "";
+		
+		if(	codigoEditor != "" && nomeEditor != ""	) {
+			codigo_nome = codigoEditor + "-" + nomeEditor;
+		} else {
+			
+			if(codigoEditor!="") {
+				codigo_nome = codigoEditor;
+			}
+			
+			if(nomeEditor!="") {
+				codigo_nome = codigoEditor;
+			}
+			
+		}
+			
+		$("#produtoEdicaoController-detalheEditor").html(codigo_nome);
+		
 		$("#produtoEdicaoController-detalhePacote").html(result.pacotePadrao);
 
 		T.carregarImagemCapa(result.idProdutoEdicao,'129','170','Capa',"produtoEdicaoController-td_imagem_capa");
@@ -142,7 +165,7 @@ function Balanceamento(pathTela, descInstancia) {
 	 */
 	this.obterDatasMarcadasConfirmacao = function(){
 
-		var datasConfirmadas='';
+		var datasConfirmadas=new Array();
 		var table = document.getElementById("tableConfirmaBalanceamento");
 		
 		for(var i = 0; i < table.rows.length; i++){   
@@ -150,8 +173,7 @@ function Balanceamento(pathTela, descInstancia) {
 			if(document.getElementById("checkConfirmar_"+i)!=null){
 				
 				if (document.getElementById("checkConfirmar_"+i).checked){
-				    table.rows[i].cells[0].textContent; 
-				    datasConfirmadas+='datasConfirmadas='+ table.rows[i].cells[0].textContent + '&';
+					datasConfirmadas. push(table.rows[i].cells[0].textContent);
 			    }
 				
 		    }
@@ -199,3 +221,4 @@ function Balanceamento(pathTela, descInstancia) {
 	};
 	
 }
+//@ sourceURL=balanceamento.js

@@ -115,7 +115,7 @@ var lancamentoController = $.extend(true, {
 		
 		$.postJSON(
 			contextPath + "/estoque/diferenca/lancamento/limparSessao", 
-			'confirmado=' + confirmado,
+			{confirmado:confirmado},
 			function(result) {
 
 				if (!result.confirmado) {
@@ -375,6 +375,32 @@ var lancamentoController = $.extend(true, {
 			height : 180,
 			singleSelect: true
 		});
+	},
+	
+	
+	
+	
+	imprimirRelatorioFaltasSobras : function(){
+		
+		$.postJSON(
+				contextPath + "/estoque/diferenca/validaDataRelatorioFaltasSobras", 
+				[{name:'dataMovimentoFormatada', value: $("#datePickerDataMovimento", lancamentoController.workspace).val()}] ,
+				function(resultado) {
+					var tipoMensagem = null; 
+					var listaMensagens = null;
+					if (resultado.mensagens){
+						tipoMensagem = resultado.mensagens.tipoMensagem;
+			        	listaMensagens = resultado.mensagens.listaMensagens;
+					}	
+			        if (tipoMensagem && listaMensagens) {
+			              exibirMensagem(tipoMensagem, listaMensagens);
+			         }  else {
+			        	 window.location = contextPath + "/estoque/diferenca/imprimirRelatorioFaltasSobras?dataMovimentoFormatada=" + $("#datePickerDataMovimento", lancamentoController.workspace).val();
+			         }
+				}
+			);
+		
+		 
 	}
 	
 }, BaseController);

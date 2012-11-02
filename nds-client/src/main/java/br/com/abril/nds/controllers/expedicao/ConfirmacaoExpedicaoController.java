@@ -47,13 +47,14 @@ public class ConfirmacaoExpedicaoController {
 		protected static final String FALHA = "ERROR";
 		protected static final Long COMBO_VAZIO = -1L;
 		
-		protected static final String MSG_PESQUISA_SEM_RESULTADO = "Não há resultados para a apesquisa realizada.";
+		protected static final String MSG_PESQUISA_SEM_RESULTADO = "Não há resultados para a pesquisa realizada.";
 		protected static final String DATA_INVALIDA = "A data informada é inválida";
 		protected static final String CONFIRMACAO_EXPEDICAO_SUCESSO = "Expedições confirmadas com sucesso!";
 		protected static final String NENHUM_REGISTRO_SELECIONADO="Nenhum registro foi selecionado!";
 		protected static final String ERRO_CONFIRMAR_EXPEDICOES="Erro não esperado ao confirmar expedições.";
 		protected static final String ERRO_PESQUISAR_LANCAMENTOS_NAO_EXPEDIDOS = "Erro não esperado ao pesquisar lançamentos não expedidos.";
-		protected static final String MSG_EXISTE_MATRIZ_BALANCEAMENTO_CONFIRMADO = "Há matriz de lançamento confirmada.";
+		protected static final String MSG_NAO_EXISTE_MATRIZ_BALANCEAMENTO_CONFIRMADO = "Não há produtos a serem expedidos na data informada.";
+		//protected static final String MSG_EXISTE_MATRIZ_BALANCEAMENTO_CONFIRMADO = "Há matriz de lançamento confirmada.";
 		
 		private static final Logger LOG = LoggerFactory
 				.getLogger(ConfirmacaoExpedicaoController.class);
@@ -322,7 +323,7 @@ public class ConfirmacaoExpedicaoController {
 			retorno[1] = mensagens;
 			retorno[2] = status;
 			
-			result.use(Results.json()).withoutRoot().from(retorno).serialize();						
+			result.use(Results.json()).withoutRoot().from(retorno).recursive().serialize();						
 		}	
 			
 		/**
@@ -395,8 +396,8 @@ public class ConfirmacaoExpedicaoController {
 		 * @param dataLancamento
 		 */
 		private void validarExistenciaMatriz(Date dataLancamento) {
-			if(lancamentoService.existeMatrizBalanceamentoConfirmado(dataLancamento)){
-				throw new ValidacaoException("/pesquisarExpedicoes",new ValidacaoVO(TipoMensagem.WARNING,MSG_EXISTE_MATRIZ_BALANCEAMENTO_CONFIRMADO));
+			if(!lancamentoService.existeMatrizBalanceamentoConfirmado(dataLancamento)){
+				throw new ValidacaoException("/pesquisarExpedicoes",new ValidacaoVO(TipoMensagem.WARNING,MSG_NAO_EXISTE_MATRIZ_BALANCEAMENTO_CONFIRMADO));
 			}
 		}
 	}

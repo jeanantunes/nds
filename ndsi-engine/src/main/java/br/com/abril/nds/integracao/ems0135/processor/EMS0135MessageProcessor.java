@@ -32,12 +32,14 @@ import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.model.fiscal.CFOP;
 import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
 import br.com.abril.nds.model.fiscal.ItemNotaFiscalEntrada;
-import br.com.abril.nds.model.fiscal.NotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
 import br.com.abril.nds.model.fiscal.StatusNotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 import br.com.abril.nds.model.planejamento.Lancamento;
+import br.com.abril.nds.model.planejamento.TipoLancamento;
+import br.com.abril.nds.repository.FornecedorRepository;
+import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.impl.AbstractRepository;
 
 @Component
@@ -54,6 +56,8 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 	@Autowired
 	private ParametroSistemaService parametroSistemaService;
 	
+	@Autowired
+	private ProdutoEdicaoRepository produtoEdicaoRepository;
 	
 	@Override
 	public void preProcess(AtomicReference<Object> tempVar) {
@@ -88,12 +92,17 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 			notafiscalEntrada = new NotaFiscalEntradaFornecedor();
 			
 			notafiscalEntrada = populaNotaFiscalEntrada(notafiscalEntrada, input);						
-			notafiscalEntrada = populaItemNotaFiscalEntrada(notafiscalEntrada, input, message);			
-			notafiscalEntrada = calcularValores(notafiscalEntrada);
-			
+			notafiscalEntrada = populaItemNotaFiscalEntrada(notafiscalEntrada, input, message);		
 			if (null != notafiscalEntrada) {
+				notafiscalEntrada = calcularValores(notafiscalEntrada);				
 				this.getSession().persist(notafiscalEntrada);
-			} 
+			} else {
+				// Validar código do distribuidor:
+				this.ndsiLoggerFactory.getLogger().logWarning(message,
+						EventoExecucaoEnum.RELACIONAMENTO, 
+						String.format("Nota Fiscal Com Produtos nao encontrados no sistema:", input.getNotaFiscal()));
+				return;		
+			}
 			
 		}else{
 			// Validar código do distribuidor:
@@ -119,9 +128,7 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 		notafiscalEntrada.setValorLiquido(BigDecimal.ZERO);
 		notafiscalEntrada.setValorDesconto(BigDecimal.ZERO);
 		
-		PessoaJuridica emitente = new PessoaJuridica();
-		emitente.setId(	Long.valueOf( parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.ID_PJ_IMPORTACAO_NRE).getValor() ) );
-
+		PessoaJuridica emitente = this.obterPessoaJuridica( parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.CNPJ_PJ_IMPORTACAO_NRE).getValor() );
 		
 		notafiscalEntrada.setEmitente(emitente);		
 		notafiscalEntrada.setTipoNotaFiscal(obterTipoNotaFiscal(GrupoNotaFiscal.RECEBIMENTO_MERCADORIAS));		
@@ -162,8 +169,22 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 				item.setDesconto( BigDecimal.valueOf( imputItem.getDesconto() ));
 				
 				Lancamento lancamento = obterLancamentoProdutoEdicao(produtoEdicao.getId());
-				item.setDataLancamento(lancamento.getDataLancamentoPrevista());
-				item.setDataRecolhimento(lancamento.getDataRecolhimentoPrevista());
+				if (null == lancamento) {
+					Calendar cal = Calendar.getInstance();
+					
+					cal.add(Calendar.DAY_OF_MONTH, 2);					
+					item.setDataLancamento(cal.getTime());
+					
+					cal.add(Calendar.DAY_OF_MONTH, produtoEdicao.getPeb());
+					item.setDataRecolhimento(cal.getTime());
+					
+					item.setTipoLancamento(TipoLancamento.LANCAMENTO);
+
+				} else {					
+					item.setDataLancamento(lancamento.getDataLancamentoPrevista());
+					item.setDataRecolhimento(lancamento.getDataRecolhimentoPrevista());
+					item.setTipoLancamento(lancamento.getTipoLancamento());
+				}
 				nfEntrada.getItens().add(item);
 			}
 		}
@@ -204,7 +225,7 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 	 * @return
 	 */
 	private BigDecimal calcularValorBruto(NotaFiscalEntradaFornecedor nfEntrada) {
-		
+						
 		BigDecimal valorBrutoTotal = nfEntrada.getValorBruto();
 
 		for(ItemNotaFiscalEntrada item : nfEntrada.getItens()) {
@@ -276,8 +297,7 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 	private NotaFiscalEntradaFornecedor obterNotaFiscal(Long numero, String serie) {
 		StringBuilder hql = new StringBuilder();
 
-		PessoaJuridica emitente = new PessoaJuridica();
-		emitente.setId(	Long.valueOf( parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.ID_PJ_IMPORTACAO_NRE).getValor() ) );
+		PessoaJuridica emitente = this.obterPessoaJuridica( parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.CNPJ_PJ_IMPORTACAO_NRE).getValor() );		
 		
 		hql.append("from NotaFiscalEntradaFornecedor nf ")
 			.append("where nf.numero = :numero ")

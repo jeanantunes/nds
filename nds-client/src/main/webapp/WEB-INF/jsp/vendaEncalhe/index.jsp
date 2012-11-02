@@ -20,40 +20,37 @@ $(function(){
 <body>
 	<form id="form-excluirVenda">
 	<div id="dialog-excluirVenda" title="Atenção" style="display:none">
-		<p>Confirma a Exclusão desta Venda de Encalhe?</p>
+		<p>Confirma a Exclusão desta Venda de Encalhe / Suplementar?</p>
 	</div>
 	</form>
 
 <div class="areaBts">
 	<div class="area">
-		<span class="bt_novos">
-   			<a onclick="VENDA_PRODUTO.novaVenda('SUPLEMENTAR');" href="javascript:;" rel="tipsy" title="Venda Suplementar">
-   				<img hspace="5" border="0" src="${pageContext.request.contextPath}/images/ico_redistribuicao_complementar.gif">
-   			</a>
-   		</span>
-              		
+		      		
    		<span class="bt_novos">
-   			<a onclick="VENDA_PRODUTO.novaVenda('ENCALHE');" href="javascript:;" rel="tipsy" title="Venda Encalhe">
+   			<a onclick="VENDA_PRODUTO.novaVenda();" href="javascript:;" rel="tipsy" title="Venda Encalhe / Suplementar">
    				<img hspace="5" border="0" src="${pageContext.request.contextPath}/images/ico_copia_distrib.gif">
    			</a>
    		</span>
               
-         	<div style="display: none" id="infosRodape" class="infosRodape" >
+         	<span style="display: none" id="infosRodape" class="infosRodape" >
          
-           <div id="divImprimirSuplementar" style="display: none">		            
-           <span id="btSuplementar" class="bt_novos">
-           		<a  href="javascript:;" onclick="VENDA_PRODUTO.imprimirSlipVenda()" rel="tipsy" title="Imprimir Slip de Suplementar">
-           			<img hspace="5" border="0" src="${pageContext.request.contextPath}/images/ico_impressora.gif">
-           		</a>
-           </span>
-          </div>
+			   <span id="divImprimirSuplementar" style="display: none">		            
+				   <span id="btSuplementar" class="bt_novos">
+						<a  href="javascript:;" onclick="VENDA_PRODUTO.imprimirSlipVenda()" rel="tipsy" title="Imprimir Slip de Suplementar">
+							<img hspace="5" border="0" src="${pageContext.request.contextPath}/images/ico_impressora.gif">
+						</a>
+				   </span>
+				</span>
+			</span>
           
-          <div id="divImprimirEncalhe" style="display: none">
-           <span style="" id="btEncalhe" class="bt_novos">
-           		<a  href="javascript:;" onclick="VENDA_PRODUTO.imprimirSlipVenda()" rel="tipsy" title="Imprimir Slip de Encalhe">
-           			<img hspace="5" border="0" src="${pageContext.request.contextPath}/images/ico_impressora.gif">
-           		</a>
-           </span>
+          <span id="divImprimirEncalhe" style="display: none">
+			   <span style="" id="btEncalhe" class="bt_novos">
+					<a  href="javascript:;" onclick="VENDA_PRODUTO.imprimirSlipVenda()" rel="tipsy" title="Imprimir Slip de Encalhe">
+						<img hspace="5" border="0" src="${pageContext.request.contextPath}/images/ico_impressora.gif">
+					</a>
+			   </span>
+		   </span>
        </div>
        <span class="bt_arq">
           		<a href="javascript:;" onclick="VENDA_PRODUTO.exportar('XLS')" rel="tipsy" title="Gerar Arquivo">
@@ -124,7 +121,7 @@ $(function(){
 				    <td>&nbsp;</td>
 				    <td>&nbsp;</td>
 				    <td>
-				    	<span class="bt_pesquisar"><a onclick="VENDA_PRODUTO.pesquisarVendas();" href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" /></a></span>
+				    	<span class="bt_pesquisar"><a onclick="VENDA_PRODUTO.pesquisarVendas();" href="javascript:;"></a></span>
 				    </td>
 			  </tr>
         	</tbody>
@@ -144,7 +141,7 @@ $(function(){
 	        
 	       	<table width="100%" cellspacing="2" cellpadding="2" border="0">
 	             <tbody><tr>
-	               <td width="56%">
+	               <td width="35%">
 	               		&nbsp;
 	             </td>
 	               <td width="6%">&nbsp;</td>

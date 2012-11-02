@@ -135,7 +135,7 @@ public class RomaneioServiceImpl implements RomaneioService {
 				
 				ProdutoEdicao produtoEdicao = this.produtoEdicaoRepository.buscarPorId(idProdutoEdicao);
 				
-				dto.setCodigoProduto(produtoEdicao.getCodigo());
+				dto.setCodigoProduto(produtoEdicao.getProduto().getCodigo());
 				dto.setNomeProduto(produtoEdicao.getNomeComercial());
 				dto.setEdicao(produtoEdicao.getNumeroEdicao());
 				dto.setPacotePadrao(new Long(produtoEdicao.getPacotePadrao()));
@@ -145,32 +145,32 @@ public class RomaneioServiceImpl implements RomaneioService {
 				
 				if (filtro.getProdutos().size() > 0){
 					
-					dto.setNomeProduto0(this.produtoEdicaoRepository.buscarNomeComercial(filtro.getProdutos().get(0)));
+					dto.setNomeProduto0(this.produtoEdicaoRepository.buscarNome(filtro.getProdutos().get(0)));
 				}
 				
 				if (filtro.getProdutos().size() > 1){
 					
-					dto.setNomeProduto1(this.produtoEdicaoRepository.buscarNomeComercial(filtro.getProdutos().get(1)));
+					dto.setNomeProduto1(this.produtoEdicaoRepository.buscarNome(filtro.getProdutos().get(1)));
 				}
 
 				if (filtro.getProdutos().size() > 2){
 					
-					dto.setNomeProduto2(this.produtoEdicaoRepository.buscarNomeComercial(filtro.getProdutos().get(2)));
+					dto.setNomeProduto2(this.produtoEdicaoRepository.buscarNome(filtro.getProdutos().get(2)));
 				}
 				
 				if (filtro.getProdutos().size() > 3){
 					
-					dto.setNomeProduto3(this.produtoEdicaoRepository.buscarNomeComercial(filtro.getProdutos().get(3)));
+					dto.setNomeProduto3(this.produtoEdicaoRepository.buscarNome(filtro.getProdutos().get(3)));
 				}
 				
 				if (filtro.getProdutos().size() > 4){
 					
-					dto.setNomeProduto4(this.produtoEdicaoRepository.buscarNomeComercial(filtro.getProdutos().get(4)));
+					dto.setNomeProduto4(this.produtoEdicaoRepository.buscarNome(filtro.getProdutos().get(4)));
 				}
 				
 				if (filtro.getProdutos().size() > 5){
 					
-					dto.setNomeProduto5(this.produtoEdicaoRepository.buscarNomeComercial(filtro.getProdutos().get(5)));
+					dto.setNomeProduto5(this.produtoEdicaoRepository.buscarNome(filtro.getProdutos().get(5)));
 				}
 				
 				path = diretorioReports.toURI().getPath() + "/romaneio_modelo03.jasper";

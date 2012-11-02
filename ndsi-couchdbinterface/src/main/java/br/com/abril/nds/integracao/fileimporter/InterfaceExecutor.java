@@ -113,6 +113,8 @@ public class InterfaceExecutor {
 				this.executarInterfaceImagem();
 			} else if (interfaceEnum.equals(InterfaceEnum.EMS0185)) {
 				this.executarInterfaceCorreios();
+			} else if (interfaceEnum.getTipoInterfaceEnum().equals(TipoInterfaceEnum.DB)) {
+				this.executarInterfaceDB(interfaceEnum, interfaceExecucao, logExecucao, codigoDistribuidor, nomeUsuario);
 			} else {
 				this.executarInterfaceArquivo(interfaceEnum, interfaceExecucao, logExecucao, codigoDistribuidor, nomeUsuario);
 			}
@@ -125,6 +127,12 @@ public class InterfaceExecutor {
 		}
 	}
 	
+	private void executarInterfaceDB(InterfaceEnum interfaceEnum,
+			InterfaceExecucao interfaceExecucao, LogExecucao logExecucao,
+			Long codigoDistribuidor, String nomeUsuario) {
+		
+	}
+
 	/**
 	 * Executa uma interface de carga de arquivo.
 	 */
@@ -222,7 +230,6 @@ public class InterfaceExecutor {
 				e.printStackTrace();
 			}
 			
-			//imagem.delete();
 		}
 		
 		couchDbClient.shutdown();
@@ -412,7 +419,9 @@ public class InterfaceExecutor {
 		
 		File dir = new File(diretorio + codigoDistribuidor + File.separator + pastaInterna + File.separator);
 		File[] files = dir.listFiles((FilenameFilter) new RegexFileFilter(interfaceExecucao.getMascaraArquivo(), IOCase.INSENSITIVE));
+				
 		if (null != files) {
+			Arrays.sort(files, 0, files.length);
 			listaArquivos.addAll(Arrays.asList(files));
 		}
 		
@@ -461,6 +470,8 @@ public class InterfaceExecutor {
 		logExecucao.setDataInicio(dataInicio);
 		logExecucao.setInterfaceExecucao(interfaceExecucao);
 		logExecucao.setNomeLoginUsuario(nomeLoginUsuario);
+		logExecucao.setDataFim(dataInicio);
+		logExecucao.setStatus(StatusExecucaoEnum.SUCESSO);
 		
 		return logExecucaoDAO.inserir(logExecucao);
 	}

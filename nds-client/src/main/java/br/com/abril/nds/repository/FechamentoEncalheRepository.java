@@ -3,9 +3,11 @@ package br.com.abril.nds.repository;
 import java.util.Date;
 import java.util.List;
 
+import br.com.abril.nds.dto.AnaliticoEncalheDTO;
 import br.com.abril.nds.dto.CotaAusenteEncalheDTO;
 import br.com.abril.nds.dto.FechamentoFisicoLogicoDTO;
 import br.com.abril.nds.dto.filtro.FiltroFechamentoEncalheDTO;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.estoque.ControleFechamentoEncalhe;
 import br.com.abril.nds.model.estoque.FechamentoEncalhe;
 import br.com.abril.nds.model.estoque.pk.FechamentoEncalhePK;
@@ -39,4 +41,9 @@ public interface FechamentoEncalheRepository extends Repository<FechamentoEncalh
 
 	Date buscarUltimoFechamentoEncalheDia(Date dataFechamentoEncalhe);
 	
+	List<AnaliticoEncalheDTO> buscarAnaliticoEncalhe(FiltroFechamentoEncalheDTO filtro, String sortorder, String sortname, Integer page, Integer rp);
+	
+	Integer buscarTotalAnaliticoEncalhe(FiltroFechamentoEncalheDTO filtro);
+	
+	List<Cota> buscarCotaChamadaEncalhe(Date dataEncalhe);
 }

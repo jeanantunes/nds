@@ -53,7 +53,7 @@ public class ProdutoRepositoryImplTest extends AbstractRepositoryImplTest {
 	@Test
 	public void obterProdutoPorNomeProduto() {
 		Produto produto = 
-			produtoRepository.obterProdutoPorNomeProduto("Veja");
+			produtoRepository.obterProdutoPorNome("Veja");
 		
 		Assert.assertTrue(produto != null);
 	}
@@ -61,7 +61,7 @@ public class ProdutoRepositoryImplTest extends AbstractRepositoryImplTest {
 	@Test
 	public void obterProdutoLikeNomeProduto() {
 		List<Produto> listaProduto = 
-			produtoRepository.obterProdutoLikeNomeProduto("Vej");
+			produtoRepository.obterProdutoLikeNome("Vej");
 		
 		Assert.assertTrue(!listaProduto.isEmpty());
 	}
@@ -71,7 +71,7 @@ public class ProdutoRepositoryImplTest extends AbstractRepositoryImplTest {
 		
 		List<ConsultaProdutoDTO> listaProdutos = 
 			this.produtoRepository.pesquisarProdutos(
-				"1", "", "", "", 1L, "asc", "codigo", 1, 15);
+				"1", "", "teste", "editor", 1L, "asc", "codigo", 1, 15);
 		
 		Assert.assertNotNull(listaProdutos);
 	}

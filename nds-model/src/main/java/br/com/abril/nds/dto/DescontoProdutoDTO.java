@@ -16,19 +16,19 @@ public class DescontoProdutoDTO implements Serializable {
 	
 	private Integer quantidadeEdicoes; 
 	
-	private boolean hasCotaEspecifica;
+	private Boolean hasCotaEspecifica;
 	
-	private boolean isTodasCotas;
+	private Boolean isTodasCotas;
 	
 	private BigDecimal descontoProduto;
 	
 	private List<Integer> cotas;
 	
-	private boolean descontoPredominante;
+	private Boolean descontoPredominante;
 
 	private Usuario usuario;
 	
-	private boolean indProdutoEdicao;
+	private Boolean indProdutoEdicao;
 	
 	/**
 	 * @return the codigoProduto
@@ -75,28 +75,28 @@ public class DescontoProdutoDTO implements Serializable {
 	/**
 	 * @return the hasCotaEspecifica
 	 */
-	public boolean isHasCotaEspecifica() {
+	public Boolean isHasCotaEspecifica() {
 		return hasCotaEspecifica;
 	}
 
 	/**
 	 * @param hasCotaEspecifica the hasCotaEspecifica to set
 	 */
-	public void setHasCotaEspecifica(boolean hasCotaEspecifica) {
+	public void setHasCotaEspecifica(Boolean hasCotaEspecifica) {
 		this.hasCotaEspecifica = hasCotaEspecifica;
 	}
 
 	/**
 	 * @return the isTodasCotas
 	 */
-	public boolean isTodasCotas() {
+	public Boolean isTodasCotas() {
 		return isTodasCotas;
 	}
 
 	/**
 	 * @param isTodasCotas the isTodasCotas to set
 	 */
-	public void setIsTodasCotas(boolean isTodasCotas) {
+	public void setIsTodasCotas(Boolean isTodasCotas) {
 		this.isTodasCotas = isTodasCotas;
 	}
 
@@ -131,14 +131,14 @@ public class DescontoProdutoDTO implements Serializable {
 	/**
 	 * @return the descontoPredominante
 	 */
-	public boolean isDescontoPredominante() {
+	public Boolean isDescontoPredominante() {
 		return descontoPredominante;
 	}
 
 	/**
 	 * @param descontoPredominante the descontoPredominante to set
 	 */
-	public void setDescontoPredominante(boolean descontoPredominante) {
+	public void setDescontoPredominante(Boolean descontoPredominante) {
 		this.descontoPredominante = descontoPredominante;
 	}
 
@@ -159,9 +159,9 @@ public class DescontoProdutoDTO implements Serializable {
 	/**
 	 * Obtém indProdutoEdicao
 	 *
-	 * @return boolean
+	 * @return Boolean
 	 */
-	public boolean isIndProdutoEdicao() {
+	public Boolean isIndProdutoEdicao() {
 		return indProdutoEdicao;
 	}
 
@@ -169,7 +169,7 @@ public class DescontoProdutoDTO implements Serializable {
 	 * Atribuí indProdutoEdicao
 	 * @param indProdutoEdicao 
 	 */
-	public void setIndProdutoEdicao(boolean indProdutoEdicao) {
+	public void setIndProdutoEdicao(Boolean indProdutoEdicao) {
 		this.indProdutoEdicao = indProdutoEdicao;
 	}
 	

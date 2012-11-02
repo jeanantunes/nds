@@ -19,13 +19,13 @@ function MapaAbastecimento(pathTela, objName, workspace) {
 		if (codigoProduto && codigoProduto.length > 0) {
 			
 			$.postJSON(contextPath + "/produto/pesquisarPorCodigoProduto",
-					   "codigoProduto=" + codigoProduto,
+					   {codigoProduto:codigoProduto},
 					   function(result) {
 							
-							T.adicionarProduto(result.codigo, result.descricao);
+							T.adicionarProduto(result.codigo, result.nome);
 				
 							T.mostrarProdutosSelecionados();
-							
+
 							$(idCodigo, _workspace).val("");
 					   },
 					   function() {
@@ -156,6 +156,7 @@ function MapaAbastecimento(pathTela, objName, workspace) {
 		$("#gridProduto", _workspace).hide();
 		$("#gridProdutoEspecifico", _workspace).hide();
 		$("#gridProdutoCota", _workspace).hide();
+		$("#gridEntregador", _workspace).hide();
 
 		switch (tipoConsulta) {
 
@@ -303,12 +304,15 @@ function MapaAbastecimento(pathTela, objName, workspace) {
 
 		var produto = T.produtosSelecionados[0];
 		
-		var codigoProduto = produto.id;
-		var nomeProduto = produto.nome;
+		if(produto) {
+			var codigoProduto = produto.id;
+			var nomeProduto = produto.nome;
+			$("#codigoProdutoHeader").html(codigoProduto);
+			$("#nomeProdutoHeader").html(nomeProduto);
+		}
+		
 		var edicaoProduto = T.get('edicao');
 
-		$("#codigoProdutoHeader").html(codigoProduto);
-		$("#nomeProdutoHeader").html(nomeProduto);
 		$("#edicaoProdutoHeader").html(edicaoProduto);
 		
 		return result;
@@ -406,7 +410,7 @@ function MapaAbastecimento(pathTela, objName, workspace) {
 	},
 	
 	this.mudarTipoPesquisa = function(tipo) {
-		
+				
 		switch (tipo) {
 			
 		case 'BOX':
@@ -431,6 +435,12 @@ function MapaAbastecimento(pathTela, objName, workspace) {
 			T.displayEntregador(false);
 			T.bloquearLinkProdutos();
 			T.limparProdutosSelecionados();
+			break;
+		case 'PRODUTO_X_COTA' :
+			T.bloquearCampos('box','rota','roteiro');
+			T.desbloquearCampos('codigoCota','nomeCota','quebraPorCota', 'codigoProduto','nomeProduto','edicao');
+			T.desbloquearLinkProdutos();
+			T.displayEntregador(false);
 			break;
 		case 'PRODUTO':
 			T.bloquearCampos('box','rota','roteiro', 'codigoCota','nomeCota','quebraPorCota');

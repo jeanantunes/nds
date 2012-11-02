@@ -7,28 +7,24 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.PersistenceContext;
-
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.DetalheProdutoVO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.model.cadastro.Dimensao;
-import br.com.abril.nds.model.cadastro.Produto;
+import br.com.abril.nds.model.cadastro.Brinde;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
-import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.serialization.custom.PlainJSONSerialization;
+import br.com.abril.nds.service.BrindeService;
 import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.util.CurrencyUtil;
-import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.MathUtil;
 import br.com.abril.nds.util.TipoMensagem;
@@ -50,6 +46,9 @@ public class ProdutoEdicaoController {
 	private Result result;
 	
 	@Autowired
+	private BrindeService brindeService;
+	
+	@Autowired
 	private ProdutoEdicaoService peService;
 	
 	@Autowired
@@ -65,7 +64,12 @@ public class ProdutoEdicaoController {
 	@Get
 	@Path("/")
 	@Rules(Permissao.ROLE_CADASTRO_EDICAO)
-	public void index() { }
+	public void index() {
+		
+		List<Brinde> brindes = brindeService.obterBrindes();
+
+		result.include("brindes", brindes);
+	}
 
 	
 	
@@ -155,7 +159,7 @@ public class ProdutoEdicaoController {
 			BigDecimal desconto, Long peso, 
 			BigDecimal largura, BigDecimal comprimento, BigDecimal espessura,
 			String chamadaCapa, boolean parcial, boolean possuiBrinde,
-			String boletimInformativo, Integer numeroLancamento, String descricaoBrinde, String descricaoProduto) {
+			String boletimInformativo, Integer numeroLancamento, Long descricaoBrinde, String descricaoProduto) {
 		
 		// DTO para transportar os dados:
 		ProdutoEdicaoDTO dto = new ProdutoEdicaoDTO();
@@ -184,8 +188,8 @@ public class ProdutoEdicaoController {
 		dto.setParcial(parcial);
 		dto.setPossuiBrinde(possuiBrinde);
 		dto.setNumeroLancamento(numeroLancamento);
-		dto.setDescricaoBrinde(descricaoBrinde);
-		dto.setDescricaoProduto(descricaoProduto);
+		dto.setIdBrinde(descricaoBrinde);
+		dto.setNomeComercial(descricaoProduto);
 		
 		ValidacaoVO vo = null;
 		 
@@ -229,9 +233,7 @@ public class ProdutoEdicaoController {
 	private void validarProdutoEdicao(ProdutoEdicaoDTO dto, String codigoProduto) {
 		
 		List<String> listaMensagens = new ArrayList<String>();
-		
-		boolean origemManual = false;
-		
+						
 		ProdutoEdicao pe = null;
 		
 		if(codigoProduto == null) {
@@ -240,16 +242,15 @@ public class ProdutoEdicaoController {
 		
 		if(dto.getId()!=null) {
 
-			pe = peService.obterProdutoEdicao(dto.getId());
+			pe = peService.obterProdutoEdicao(dto.getId(), false);
 			
 			if(pe == null) {
 				throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Produto Edição inválido!"));
 			}
 			
-			origemManual = (pe.getOrigemInterface() == null) ? true : pe.getOrigemInterface().booleanValue();
 		}
 		
-		if (pe == null || origemManual) {
+		if (pe == null || (pe.getOrigem().equals(br.com.abril.nds.model.Origem.MANUAL))) {
 			
 			// Distribuidor:
 			if (dto.getCodigoProduto() == null || dto.getCodigoProduto().trim().length() <= 0) {
@@ -374,7 +375,7 @@ public class ProdutoEdicaoController {
 		
 		DetalheProdutoVO produtoLancamentoVO = null;
 		
-		ProdutoEdicao produtoEdicao = produtoEdicaoService.obterProdutoEdicao(idProdutoEdicao);
+		ProdutoEdicao produtoEdicao = produtoEdicaoService.obterProdutoEdicao(idProdutoEdicao, true);
 		
 		if (produtoEdicao!=null){
 		    
@@ -384,14 +385,29 @@ public class ProdutoEdicaoController {
 			
 			BigDecimal precoComDesconto = precoVenda.subtract(valorDesconto);
 
+			String razaoSocial = "";
+			
+			if(	produtoEdicao!=null && 
+				produtoEdicao.getProduto()!=null &&
+				produtoEdicao.getProduto().getEditor() != null &&
+				produtoEdicao.getProduto().getEditor().getPessoaJuridica() != null ) {
+				
+				razaoSocial = produtoEdicao.getProduto().getEditor().getPessoaJuridica().getNome();
+				
+				razaoSocial = (razaoSocial == null) ? "" : razaoSocial;
+				
+			}
+			
+			
+			
 			produtoLancamentoVO = new DetalheProdutoVO(produtoEdicao.getId(),
 													   produtoEdicao.getProduto().getNome(),
-													   produtoEdicao.getCodigo(),
+													   produtoEdicao.getProduto().getCodigo(),
 										               (precoVenda!=null?CurrencyUtil.formatarValor(precoVenda):""),
 										               (precoComDesconto!=null?CurrencyUtil.formatarValor(precoComDesconto):""),
 										               (produtoEdicao.getProduto()!=null?(produtoEdicao.getProduto().getFornecedor()!=null?produtoEdicao.getProduto().getFornecedor().getJuridica().getNome():""):""),
 										               (produtoEdicao.getProduto()!=null?(produtoEdicao.getProduto().getEditor()!=null?produtoEdicao.getProduto().getEditor().getCodigo().toString():""):""),
-										               (produtoEdicao.getProduto()!=null?(produtoEdicao.getProduto().getEditor()!=null?produtoEdicao.getProduto().getEditor().getPessoaJuridica().getNome():""):""),
+										               razaoSocial,
 										               produtoEdicao.getChamadaCapa(),
 										               (produtoEdicao.isPossuiBrinde()?"Sim":"Não"),
 										               Integer.toString(produtoEdicao.getPacotePadrao())

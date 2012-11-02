@@ -132,8 +132,8 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 		Roteiro roteiro = Fixture.criarRoteiro("Pinheiros",roteirizacao,TipoRoteiro.NORMAL);
 		save(roteiro);
 
-		Rota rota = Fixture.rota("005", "Rota 005",roteiro);
-		rota.addPDV(pdv, 1);
+		Rota rota = Fixture.rota("Rota 005",roteiro);
+		rota.addPDV(pdv, 1, box1);
 		rota.setRoteiro(roteiro);
 		save(rota);
 		
@@ -155,9 +155,9 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 		produtoVeja.setEditor(abril);
 		save(produtoVeja);		
 				
-		ProdutoEdicao produtoEdicaoVeja1 = Fixture.produtoEdicao("1", 1L, 10, 14,
-				new Long(100), BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQ", 1L,
-				produtoVeja, null, false);
+		ProdutoEdicao produtoEdicaoVeja1 = Fixture.produtoEdicao(1L, 10, 14, new Long(100),
+				BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQ", produtoVeja, 
+				null, false);
 		save(produtoEdicaoVeja1);
 		
 		EstoqueProdutoCota estoqueProdutoCota = Fixture.estoqueProdutoCota(
@@ -199,10 +199,10 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 		divida1.setAcumulada(false);
 		save(divida1);
 		
-	    Boleto boleto = Fixture.boleto("5", "5", "5",
-                					   new Date(), 
-                					   new Date(), 
-                					   new Date(), 
+	    Boleto boleto = Fixture.boleto("5557884985445", "5", "5",
+	    		                       Fixture.criarData(2, 2, 2010), 
+	    		                       Fixture.criarData(2, 5, 2010), 
+                					   null, 
                 					   BigDecimal.ZERO, 
                 					   new BigDecimal(100.00), 
                 					   "1", 
@@ -338,4 +338,5 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 		
 		Assert.assertNotNull(this.dividaRepository.obterDividaPorIdConsolidado(consolidado.getId()));
 	}
+	
 }

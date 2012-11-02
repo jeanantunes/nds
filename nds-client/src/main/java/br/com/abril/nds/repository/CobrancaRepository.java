@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
+import br.com.abril.nds.client.vo.NegociacaoDividaDetalheVO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaDividasCotaDTO;
 import br.com.abril.nds.model.financeiro.Cobranca;
 
@@ -68,4 +69,28 @@ public interface CobrancaRepository extends Repository<Cobranca, Long>{
 	List<Cobranca> obterCobrancasPorIDS(List<Long> listaCobrancas);
 
 	BigDecimal obterValorCobrancasQuitadasPorData(Date data);
+	
+	/**
+	 * Retorna o valor de cobrança não pago pela cota.
+	 * 
+	 * @param numeroCota - número da cota
+	 * 
+	 * 
+	 * @return BigDecimal
+	 */
+	BigDecimal obterValorCobrancaNaoPagoDaCota(Integer numeroCota);
+	
+	
+	/**
+	 * Retorna as cobranças efetuadas na data de operação do distribuidor.
+	 * 
+	 * @param dataOperacao - data operação do distribuidor
+	 * 
+	 * @return List<Cobranca>
+	 */
+	List<Cobranca> obterCobrancasEfetuadaNaDataOperacaoDistribuidor(Date dataOperacao);
+
+	String obterNossoNumeroPorMovimentoFinanceiroCota(Long idMovimentoFinanceiro);
+
+	List<NegociacaoDividaDetalheVO> obterDetalhesCobranca(Long idCobranca);
 }

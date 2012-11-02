@@ -1,19 +1,28 @@
 package br.com.abril.nds.service.impl;
 
 import java.math.BigInteger;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import net.sf.jasperreports.engine.JasperRunManager;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.client.vo.ImpressaoBandeiraVO;
 import br.com.abril.nds.client.vo.RateioCotaVO;
+import br.com.abril.nds.client.vo.relatorioLancamentoFaltasSobrasVO;
 import br.com.abril.nds.dto.DetalheDiferencaCotaDTO;
+import br.com.abril.nds.dto.FornecedoresBandeiraDTO;
 import br.com.abril.nds.dto.RateioDiferencaCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaDiferencaEstoqueDTO;
 import br.com.abril.nds.dto.filtro.FiltroDetalheDiferencaCotaDTO;
@@ -556,7 +565,9 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 		
 		rateioDiferencaRepository.removerRateioDiferencaPorDiferenca(idDiferenca);
 		
-		diferencaEstoqueRepository.removerPorId(idDiferenca);
+		Diferenca diferenca = this.diferencaEstoqueRepository.buscarPorId(idDiferenca);
+		
+		this.diferencaEstoqueRepository.remover(diferenca);
 	}
 	
 	@Override
@@ -576,6 +587,27 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 		
 		return this.diferencaEstoqueRepository.existeDiferencaPorNota(
 						idProdutoEdicao, dataNotaEnvio, numeroCota);
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public byte[] imprimirRelatorioFaltasSobras(Date dataMovimento) throws Exception {
+		FiltroLancamentoDiferencaEstoqueDTO filtro = new FiltroLancamentoDiferencaEstoqueDTO();
+		filtro.setDataMovimento(dataMovimento);
+	
+ 	List<Diferenca> listaLancamentoDiferencas =this.obterDiferencasLancamento(filtro);
+ 	List<relatorioLancamentoFaltasSobrasVO> listaRelatorio =  new ArrayList<relatorioLancamentoFaltasSobrasVO>();
+	Map<String, Object> parameters = new HashMap<String, Object>();
+
+	for (Diferenca diferenca : listaLancamentoDiferencas){
+		listaRelatorio.add(new relatorioLancamentoFaltasSobrasVO(diferenca));
+	}
+	
+	parameters.put("DISTRIBUIDOR",distribuidorService.obter().getJuridica().getNome());
+	JRBeanCollectionDataSource ds = new JRBeanCollectionDataSource(listaRelatorio); 
+	URL url = Thread.currentThread().getContextClassLoader().getResource("/reports/faltas_sobras.jasper");
+	String path = url.toURI().getPath();
+	return JasperRunManager.runReportToPdf(path, parameters,ds);
 	}
 	
 }

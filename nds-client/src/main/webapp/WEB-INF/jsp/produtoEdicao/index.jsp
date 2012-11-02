@@ -299,11 +299,20 @@ fieldset {
 								<tr>
 									<td height="24">Brinde:</td>
 									<td><input type="checkbox" name="possuiBrinde" id="produtoEdicaoController-possuiBrinde" /></td>
-								</tr>
-								<tr class="descBrinde" style="display:none;">
-						       	    <td height="24">Descri&ccedil;&atilde;o Brinde:</td>
-						       	    <td><input type="text" name="descricaoBrinde" id="produtoEdicaoController-descricaoBrinde" style="width:190px;" /></td>
-						     	</tr>
+								</tr>			     	
+						     	
+						     	<tr class="descBrinde" style="display:none;">
+								    <td height="24">Descri&ccedil;&atilde;o Brinde:</td>
+								    <td>
+								        <select name="descricaoBrinde" id="produtoEdicaoController-descricaoBrinde" style="width:190px;">
+					                        <option value="">Selecione</option>
+					                        <c:forEach items="${brindes}" var="brinde">
+												<option value="${brinde.id}" >${brinde.descricao}</option>
+											</c:forEach>
+					                    </select> 
+								    </td>
+							    </tr>						     							     	
+						 	
 							</tbody>
 						</table>
 					</fieldset>
@@ -428,7 +437,7 @@ fieldset {
 					
 						<input type="text" name="pCodigoProduto" id="produtoEdicaoController-pCodigoProduto" maxlength="255" 
 								style="width:60px;" 
-								onchange="produtoEdicaoController.pesquisarPorCodigoProduto('#produtoEdicaoController-pCodigoProduto', '#produtoEdicaoController-pNomeProduto', false,
+								onchange="produtoEdicaoController.pesquisarPorCodigoProduto('#produtoEdicaoController-pCodigoProduto', '#produtoEdicaoController-pNome', false,
 										undefined,
 										undefined);" />
 					</td>
@@ -437,10 +446,10 @@ fieldset {
 					
 					<td width="170">
 					
-						<input type="text" name="pNomeProduto" id="produtoEdicaoController-pNomeProduto" maxlength="255" 
+						<input type="text" name="pNomeProduto" id="produtoEdicaoController-pNome" maxlength="255" 
 								style="width:150px;"
-								onkeyup="produtoEdicaoController.autoCompletarPorNomeProduto('#produtoEdicaoController-pNomeProduto', false);"
-								onblur="produtoEdicaoController.pesquisarPorNomeProduto('#produtoEdicaoController-pCodigoProduto', '#produtoEdicaoController-pNomeProduto', false,
+								onkeyup="produtoEdicaoController.autoCompletarPorNome('#produtoEdicaoController-pNome', false);"
+								onblur="produtoEdicaoController.pesquisarPorNome('#produtoEdicaoController-pCodigoProduto', '#produtoEdicaoController-pNome', false,
 									undefined,
 									undefined);" />
 					

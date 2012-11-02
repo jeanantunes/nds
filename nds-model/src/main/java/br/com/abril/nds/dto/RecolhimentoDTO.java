@@ -25,8 +25,6 @@ public class RecolhimentoDTO implements Serializable {
 	
 	private TreeSet<Date> datasRecolhimentoFornecedor;
 	
-	private TreeSet<Date> datasRecolhimentoDistribuidor;
-	
 	private boolean semanaRecolhimento;
 	
 	private boolean configuracaoInicial;
@@ -96,21 +94,6 @@ public class RecolhimentoDTO implements Serializable {
 	public void setDatasRecolhimentoFornecedor(
 			TreeSet<Date> datasRecolhimentoFornecedor) {
 		this.datasRecolhimentoFornecedor = datasRecolhimentoFornecedor;
-	}
-
-	/**
-	 * @return the datasRecolhimentoDistribuidor
-	 */
-	public TreeSet<Date> getDatasRecolhimentoDistribuidor() {
-		return datasRecolhimentoDistribuidor;
-	}
-
-	/**
-	 * @param datasRecolhimentoDistribuidor the datasRecolhimentoDistribuidor to set
-	 */
-	public void setDatasRecolhimentoDistribuidor(
-			TreeSet<Date> datasRecolhimentoDistribuidor) {
-		this.datasRecolhimentoDistribuidor = datasRecolhimentoDistribuidor;
 	}
 
 	/**

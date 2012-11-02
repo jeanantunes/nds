@@ -30,6 +30,8 @@ import br.com.abril.nds.model.movimentacao.TipoMovimento;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.EstoqueProdutoRespository;
+import br.com.abril.nds.repository.LancamentoParcialRepository;
+import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueRepository;
 import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
@@ -65,6 +67,12 @@ public class MovimentoEstoqueCotaServiceImpl implements MovimentoEstoqueCotaServ
 	@Autowired
 	private MovimentoEstoqueRepository movimentoEstoqueRepository;
 	
+	@Autowired
+	private LancamentoParcialRepository lancamentoParcialRepository;
+	
+	@Autowired
+	private LancamentoRepository lancamentoRepository;
+	
 	@Transactional
 	public List<MovimentoEstoqueCota> obterMovimentoCotaPorTipoMovimento(Date data, Long idCota, GrupoMovimentoEstoque grupoMovimentoEstoque){
 		return movimentoEstoqueCotaRepository.obterMovimentoCotaPorTipoMovimento(data, idCota, grupoMovimentoEstoque);
@@ -82,28 +90,9 @@ public class MovimentoEstoqueCotaServiceImpl implements MovimentoEstoqueCotaServ
 
 	@Override
 	@Transactional
-	public List<MovimentoEstoqueCotaDTO> obterMovimentoDTOCotaPorTipoMovimento(Date data, Integer numCota, GrupoMovimentoEstoque grupoMovimentoEstoque) {
+	public List<MovimentoEstoqueCotaDTO> obterMovimentoDTOCotaPorTipoMovimento(Date data, List<Integer> numCotas, GrupoMovimentoEstoque grupoMovimentoEstoque) {
 	
-		List<MovimentoEstoqueCota> movimentos = this.obterMovimentoCotaPorTipoMovimento(data, numCota, grupoMovimentoEstoque);
-		
-		
-		List<MovimentoEstoqueCotaDTO> movimentosDTO = new ArrayList<MovimentoEstoqueCotaDTO>();
-		
-		Cota cota = cotaRepository.obterPorNumerDaCota(numCota);
-		
-		for(MovimentoEstoqueCota movimento : movimentos) {
-			
-			movimentosDTO.add(new MovimentoEstoqueCotaDTO(
-					cota.getId(), 
-					movimento.getProdutoEdicao().getId(), 
-					movimento.getProdutoEdicao().getProduto().getCodigo(), 
-					movimento.getProdutoEdicao().getNumeroEdicao(), 
-					movimento.getProdutoEdicao().getProduto().getNome(), 
-					movimento.getQtde().intValue(), 
-					null));
-		}
-		
-		return movimentosDTO;
+		return movimentoEstoqueCotaRepository.obterMovimentoCotasPorTipoMovimento(data, numCotas, grupoMovimentoEstoque);
 	}
 
 	/* (non-Javadoc)
@@ -368,7 +357,7 @@ public class MovimentoEstoqueCotaServiceImpl implements MovimentoEstoqueCotaServ
 		movimentoEstoque.setUsuario(usuario);
 
 		if (movimentoEstoque.getTipoMovimento().isAprovacaoAutomatica()) {
-
+			
 			this.controleAprovacaoService.realizarAprovacaoMovimento(movimentoEstoque, usuario);
 		}
 
@@ -405,4 +394,6 @@ public class MovimentoEstoqueCotaServiceImpl implements MovimentoEstoqueCotaServ
 		}
 		
 	}
+	
+	
 }

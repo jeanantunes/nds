@@ -6,10 +6,14 @@ import java.util.Set;
 import br.com.abril.nds.client.vo.CotaAtendidaTransportadorVO;
 import br.com.abril.nds.dto.AssociacaoVeiculoMotoristaRotaDTO;
 import br.com.abril.nds.dto.ConsultaTransportadorDTO;
+import br.com.abril.nds.dto.CotaTransportadorDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
+import br.com.abril.nds.dto.FlexiGridDTO;
+import br.com.abril.nds.dto.MovimentoFinanceiroDTO;
 import br.com.abril.nds.dto.RotaRoteiroDTO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaTransportadorDTO;
+import br.com.abril.nds.dto.filtro.FiltroRelatorioServicosEntregaDTO;
 import br.com.abril.nds.model.cadastro.AssociacaoVeiculoMotoristaRota;
 import br.com.abril.nds.model.cadastro.Motorista;
 import br.com.abril.nds.model.cadastro.Transportador;
@@ -80,4 +84,27 @@ public interface TransportadorService {
 
 	List<CotaAtendidaTransportadorVO> buscarCotasAtendidadas(
 			Long idTransportador, String sortorder, String sortname);
+	
+	/**
+	 * Obtém dados de Envio de Reparte de determinada cota para determinado transportador
+	 * 
+	 * @param dataDe - Data de início da pesquisa
+	 * @param dataAte - Data de fim da pesquisa
+	 * @param idTransportador - Identificador do Transportador
+	 * @param paginacaoVO - VO com dados de paginação e ordenação
+	 * @return
+	 */
+	FlexiGridDTO<CotaTransportadorDTO> obterResumoTransportadorCota(FiltroRelatorioServicosEntregaDTO filtro);
+	
+	/**
+	 * Obtém detalhes Financeiros do envio de Reparte das Cotas de determinado Transportador
+	 * 
+	  * @param dataDe - Data de início da pesquisa
+	 * @param dataAte - Data de fim da pesquisa
+	 * @param idTransportador - Identificador do Transportador
+	 * @param idCota - Identificador da cota
+	 * @return
+	 */
+	List<MovimentoFinanceiroDTO> obterDetalhesTrasportadorPorCota(FiltroRelatorioServicosEntregaDTO filtro);
+	
 }

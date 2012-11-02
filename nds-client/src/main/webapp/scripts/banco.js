@@ -250,38 +250,24 @@ var bancoController = $.extend(true, {
 		},
 		
 	    novoBanco : function() {
+			var param ={
+					 numero     : $("#newNumero", this.workspace).val(),
+					 nome       : $("#newNome", this.workspace).val(),
+					 codigoCedente    : $("#newCodigoCedente", this.workspace).val(),
+					 agencia    : $("#newAgencia", this.workspace).val(),
+					 conta      : $("#newConta", this.workspace).val(),
+					 digito     : $("#newDigito", this.workspace).val(),
+					 apelido    : $("#newApelido", this.workspace).val(),
+					 carteira   : $("#newCarteira", this.workspace).val(),
+					 juros      : $("#newJuros", this.workspace).val(),
+					 ativo      : $("#newAtivo", this.workspace).is(':checked'),
+					 multa      : $("#newMulta", this.workspace).val(),
+					 vrMulta    : $("#newVrMulta", this.workspace).val(),
+					 instrucoes : $("#newInstrucoes", this.workspace).val()
 			
-	    	var numero     = $("#newNumero", this.workspace).val();
-			var nome       = $("#newNome", this.workspace).val();
-			var cedente    = $("#newCodigoCedente", this.workspace).val();
-			var agencia    = $("#newAgencia", this.workspace).val();
-			var conta      = $("#newConta", this.workspace).val();
-			var digito     = $("#newDigito", this.workspace).val();
-			var apelido    = $("#newApelido", this.workspace).val();
-			var carteira   = $("#newCarteira", this.workspace).val();
-			var juros      = $("#newJuros", this.workspace).val();
-			debugger;
-			
-			var ativo      = $("#newAtivo", this.workspace).is(':checked');
-			
-			var multa      = $("#newMulta", this.workspace).val();
-			var vrMulta    = $("#newVrMulta", this.workspace).val();
-			var instrucoes = $("#newInstrucoes", this.workspace).val();
+			};
 
-			$.postJSON(contextPath + "/banco/novoBanco",
-					   "numero="+numero+
-					   "&nome="+ nome +
-					   "&codigoCedente="+ cedente+
-					   "&agencia="+ agencia +
-					   "&conta="+ conta+
-					   "&digito="+ digito+
-					   "&apelido="+ apelido+
-					   "&carteira="+ carteira+
-					   "&juros="+ juros+
-					   "&ativo="+ ativo+
-					   "&multa="+ multa+
-					   "&vrMulta="+ vrMulta+
-					   "&instrucoes="+ instrucoes,
+			$.postJSON(contextPath + "/banco/novoBanco",param,
 					   function(result) {
 						   bancoController.fecharDialogs();
 						   var tipoMensagem = result.tipoMensagem;
@@ -297,38 +283,22 @@ var bancoController = $.extend(true, {
 		
 		alterarBanco : function() {
 			
-			var idBanco    = $("#idBanco", this.workspace).val();
-	    	var numero     = $("#alterNumero", this.workspace).val();
-			var nome       = $("#alterNome", this.workspace).val();
-			var cedente    = $("#alterCodigoCedente", this.workspace).val();
-			var agencia    = $("#alterAgencia", this.workspace).val();
-			var conta      = $("#alterConta", this.workspace).val();
-			var digito     = $("#alterDigito", this.workspace).val();
-			var apelido    = $("#alterApelido", this.workspace).val();
-			var carteira   = $("#alterCarteira", this.workspace).val();
-			var juros      = $("#alterJuros", this.workspace).val();
-			
-			var ativo      = $("#alterAtivo", this.workspace).is(':checked');
-			
-			var multa      = $("#alterMulta", this.workspace).val();
-			var vrMulta    = $("#alterVrMulta", this.workspace).val();
-			var instrucoes = $("#alterInstrucoes", this.workspace).val();
+			var param = {idBanco    : $("#idBanco", this.workspace).val(),
+			    	 numero     : $("#alterNumero", this.workspace).val(),
+					 nome       : $("#alterNome", this.workspace).val(),
+					 codigoCedente    : $("#alterCodigoCedente", this.workspace).val(),
+					 agencia    : $("#alterAgencia", this.workspace).val(),
+					 conta      : $("#alterConta", this.workspace).val(),
+					 digito     : $("#alterDigito", this.workspace).val(),
+					 apelido    : $("#alterApelido", this.workspace).val(),
+					 carteira   : $("#alterCarteira", this.workspace).val(),
+					 juros      : $("#alterJuros", this.workspace).val(),					
+					 ativo      : $("#alterAtivo", this.workspace).is(':checked'),					
+					 multa      : $("#alterMulta", this.workspace).val(),
+					 vrMulta    : $("#alterVrMulta", this.workspace).val(),
+					 instrucoes : $("#alterInstrucoes", this.workspace).val()};
 
-			$.postJSON(contextPath + "/banco/alteraBanco",
-					   "idBanco="+idBanco+
-					   "&numero="+numero+
-					   "&nome="+ nome +
-					   "&codigoCedente="+ cedente+
-					   "&agencia="+ agencia +
-					   "&conta="+ conta+
-					   "&digito="+ digito+
-					   "&apelido="+ apelido+
-					   "&carteira="+ carteira+
-					   "&juros="+ juros+
-					   "&ativo="+ ativo+
-					   "&multa="+ multa+
-					   "&vrMulta="+ vrMulta+
-					   "&instrucoes="+ instrucoes,
+			$.postJSON(contextPath + "/banco/alteraBanco", param,
 					   function(result) {
 						   bancoController.fecharDialogs();
 					       var tipoMensagem = result.tipoMensagem;

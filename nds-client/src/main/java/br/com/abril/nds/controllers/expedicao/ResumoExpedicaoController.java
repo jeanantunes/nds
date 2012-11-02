@@ -8,6 +8,8 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -30,7 +32,7 @@ import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
-import br.com.abril.nds.serialization.custom.CustomMapJson;
+import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.service.ExpedicaoService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.CurrencyUtil;
@@ -123,7 +125,11 @@ public class ResumoExpedicaoController {
 		
 		String soma = this.sumarizarTotalProdutoBox(list);
 		
-		result.use(CustomMapJson.class).put("resultado", tableModel).put("somaTotal", soma).serialize();
+		Map<String, Object> mapa = new TreeMap<String, Object>();
+		mapa.put("resultado", tableModel);
+		mapa.put("somaTotal", soma);
+		
+		result.use(CustomJson.class).from(mapa).serialize();
 		
 	}
 	

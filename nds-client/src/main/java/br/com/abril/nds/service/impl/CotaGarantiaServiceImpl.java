@@ -930,5 +930,5 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
         HistoricoTitularidadeCotaCaucaoLiquida caucao = historico.getGarantiaCaucaoLiquida();
         return caucao == null ? null : HistoricoTitularidadeCotaDTOAssembler.toFormaCobrancaCaucaoLiquidaDTO(caucao);
     }
-	
+
 }
