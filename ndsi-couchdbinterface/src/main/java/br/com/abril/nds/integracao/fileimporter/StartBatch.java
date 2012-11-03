@@ -13,7 +13,8 @@ import br.com.abril.nds.integracao.model.canonic.InterfaceEnum;
  * <br>
  * 1) Nome do usuário     (obrigatório)<br>
  * 2) Código da interface (obrigatório)<br>
- * 3) Código do distribuidor (opcional) - se passado, carregará apenas os arquivos deste distribuidor<br>
+ * 3) Processa o retorno do ICD (-icdRetorno)
+ * 4) Código do distribuidor (opcional) - se passado, carregará apenas os arquivos deste distribuidor<br>
  * <br>
  * Ex: java -jar ndsi-couchdbinterface.jar usuario 111 <br> 
  */
