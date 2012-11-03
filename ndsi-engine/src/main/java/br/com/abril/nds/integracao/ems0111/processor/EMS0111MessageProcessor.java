@@ -5,6 +5,7 @@ import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
@@ -57,7 +58,7 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 	private DistribuidorService distribuidorService;
 	
 	@Override
-	public void preProcess() {
+	public void preProcess(AtomicReference<Object> tempVar) {
 		// TODO Auto-generated method stub
 	}
 
@@ -65,12 +66,7 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 	public void processMessage(Message message) {
 
 		EMS0111Input input = (EMS0111Input) message.getBody();
-		if (input == null) {
-			this.ndsiLoggerFactory.getLogger().logError(
-					message, EventoExecucaoEnum.ERRO_INFRA, "NAO ENCONTROU o Arquivo");
-			return;
-		}
-		
+				
 		// Validar Distribuidor:
 		final Number codDistribuidorSistema = (Number) message.getHeader().get(
 				MessageHeaderProperties.CODIGO_DISTRIBUIDOR.name());
@@ -114,10 +110,15 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 							+ ", de: " + precoPrevistoAtual
 							+ " para: " + precoPrevistoCorrente);
 			produtoEdicao.setPrecoPrevisto(precoPrevistoCorrente);
+			produtoEdicao.setPrecoVenda(precoPrevistoCorrente);
 			this.getSession().merge(produtoEdicao);
 		}
 		
 		
+		if (input.getRepartePrevisto().equals(0L)) {
+			return;
+		}
+
 		final Date dataGeracaoArquivo = input.getDataGeracaoArquivo();
 		Lancamento lancamento = this.getLancamentoPrevistoMaisProximo(
 				produtoEdicao, dataGeracaoArquivo);
@@ -355,7 +356,7 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 	}
 	
 	@Override
-	public void posProcess() {
+	public void posProcess(Object tempVar) {
 		// TODO Auto-generated method stub
 	}
 	

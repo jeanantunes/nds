@@ -1,9 +1,15 @@
 package br.com.abril.nds.integracao.engine;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
+import java.nio.file.CopyOption;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.Date;
 import java.util.Scanner;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
@@ -92,15 +98,16 @@ public class FixedLenghtContentBasedDataRouter extends FileContentBasedRouter {
 		try {
 			
 			final MessageProcessor messageProcessor = fileRouteTemplate.getMessageProcessor();
-			
+			AtomicReference<Object> tempVar = null;
 			// Processamento a ser executado ANTES do processamento principal:
-			messageProcessor.preProcess();
-			
-			
+			messageProcessor.preProcess(tempVar);
+					
 			File processingFile = new File(normalizeFileName(file.getParent()), file.getName() + ".processing");
-			
+
 			// RENOMEIA O ARQUIVO PARA PROCESSANDO
-			file.renameTo(processingFile);
+			Files.copy(file.toPath(), processingFile.toPath(), StandardCopyOption.REPLACE_EXISTING );
+			Files.delete(file.toPath());
+			
 			FileReader in = new FileReader(processingFile);
 			
 			int lineNumber = 0;
@@ -131,7 +138,7 @@ public class FixedLenghtContentBasedDataRouter extends FileContentBasedRouter {
 					message.getHeader().put(MessageHeaderProperties.FILE_CREATION_DATE.getValue(), new Date(file.lastModified()));
 					message.getHeader().put(MessageHeaderProperties.LINE_NUMBER.getValue(), lineNumber);
 					message.getHeader().put(MessageHeaderProperties.USER_NAME.getValue(), fileRouteTemplate.getUserName());
-					
+					message.setTempVar(tempVar);
 					message.setBody(bean);
 
 					if (messageProcessor != null) {
@@ -187,10 +194,22 @@ public class FixedLenghtContentBasedDataRouter extends FileContentBasedRouter {
 			FileUtils.moveFile(processingFile, archiveFile);
 			
 			// Processamento a ser executado APÓS o processamento principal:
-			messageProcessor.posProcess();
-		}
-		catch (Exception e) {
+			messageProcessor.posProcess(tempVar);
+			
+		} catch (SecurityException e) {			
+			throw new RuntimeException("Não Conseguiu renomear o Arquivo", e);
+		} catch (FileNotFoundException e) {
 			throw new RuntimeException(e);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+		
+	}
+
+
+	private synchronized void renameFile(File file, File processingFile) {
+		if (!file.renameTo(processingFile)) {
+			throw new RuntimeException("Não Conseguiu renomear o Arquivo");
 		}
 	}
 	

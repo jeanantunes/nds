@@ -1,21 +1,27 @@
 package br.com.abril.nds.repository.impl;
 
+import java.math.BigInteger;
 import java.util.List;
 
 import org.hibernate.Criteria;
 import org.hibernate.Query;
+import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.transform.AliasToBeanResultTransformer;
+import org.hibernate.transform.AliasToBeanConstructorResultTransformer;
 import org.hibernate.transform.ResultTransformer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.client.vo.EntregadorCotaProcuracaoPaginacaoVO;
 import br.com.abril.nds.client.vo.EntregadorCotaProcuracaoVO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroEntregadorDTO;
+import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.Entregador;
 import br.com.abril.nds.model.cadastro.ProcuracaoEntregador;
+import br.com.abril.nds.model.cadastro.TipoEndereco;
 import br.com.abril.nds.repository.EntregadorRepository;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
@@ -29,6 +35,8 @@ import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 @Repository
 public class EntregadorRepositoryImpl extends AbstractRepositoryModel<Entregador, Long> 
 									  implements EntregadorRepository {
+    
+    private static final Logger LOG = LoggerFactory.getLogger(EntregadorRepositoryImpl.class);
 
 	/**
 	 * Construtor.
@@ -239,7 +247,17 @@ public class EntregadorRepositoryImpl extends AbstractRepositoryModel<Entregador
 
 		Query query = getSession().createQuery(hql.toString());
 
-		ResultTransformer resultTransformer = new AliasToBeanResultTransformer(EnderecoAssociacaoDTO.class);
+		ResultTransformer resultTransformer = null; 
+        
+        try {
+            resultTransformer = new AliasToBeanConstructorResultTransformer(
+                    EnderecoAssociacaoDTO.class.getConstructor(Long.class, Endereco.class, boolean.class, TipoEndereco.class));
+        } catch (Exception e) {
+            String message = "Erro criando result transformer para classe: "
+                    + EnderecoAssociacaoDTO.class.getName();
+            LOG.error(message, e);
+            throw new RuntimeException(message, e);
+        }
 		
 		query.setResultTransformer(resultTransformer);
 		
@@ -293,9 +311,9 @@ public class EntregadorRepositoryImpl extends AbstractRepositoryModel<Entregador
 		
 		StringBuilder hql = new StringBuilder();
 		hql.append("select new ").append(EntregadorCotaProcuracaoVO.class.getCanonicalName()).append("(")
-		   .append(" cota.numeroCota, cota.pessoa.nome, cota.parametroDistribuicao.procuracaoAssinada ")
+		   .append(" cota.numeroCota, cota.pessoa.nome, cota.parametroDistribuicao.procuracaoRecebida ")
 		   .append(") ")
-		   .append(" from Entregador e join e.rota.roteiro.box.cotas cota ")
+		   .append(" from Entregador e join e.rota.roteiro.roteirizacao.box.cotas cota ")
 		   .append(" where e.id = :idEntregador ");
 		
 		retorno.setTotalRegistros(obterQtdRegistrosCotaAtendidaPaginacao(hql.toString(), idEntregador).intValue());
@@ -368,18 +386,92 @@ public class EntregadorRepositoryImpl extends AbstractRepositoryModel<Entregador
 	@Override
 	public boolean verificarEntregador(Long idCota){
 		
-		StringBuilder hql = new StringBuilder("select e.id from Cota c, Entregador e, Roteirizacao r ");
-		   hql.append(" join c.pdvs pdv ")
-		   .append(" where c.id = :idCota ")
-		   .append(" and pdv.caracteristicas.pontoPrincipal = :principal ")
-		   .append(" and r.pdv.id = pdv.id ")
-		   .append(" and e.rota.id = r.rota.id ");
+		StringBuilder hql = new StringBuilder(" select entregador.id from Entregador entregador ");
+		   
+		hql.append(" join entregador.rota as rota 	")
+		   .append(" join rota.rotaPDVs rotaPdv 	")
+		   .append(" join rotaPdv.pdv as pdv 		")
+		   .append(" join pdv.cota as cota 			")
+		   
+		   .append(" where	")
+		   
+		   .append(" cota.id = :idCota ")
+		   .append(" and pdv.caracteristicas.pontoPrincipal = :principal ");
 		
 		Query query = this.getSession().createQuery(hql.toString());
+		
 		query.setParameter("idCota", idCota);
 		query.setParameter("principal", true);
+		
 		query.setMaxResults(1);
 		
 		return ((Long)query.uniqueResult()) != null;
+	}
+	
+	@Override
+	public Entregador obterEntregadorPorCodigo(Long codigo) {
+		
+		StringBuilder hql = new StringBuilder(" select e from Entregador e where e.codigo = :codigo ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		query.setParameter("codigo", codigo);
+		
+		return (Entregador) query.uniqueResult();
+	}
+	
+	
+	@Override
+	public Long obterMinCodigoEntregadorDisponivel() {
+
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append("	select min(codigo) from (                                          ");
+		hql.append("			select min(CODIGO + 1) as codigo from ENTREGADOR           ");
+		hql.append("			where (CODIGO + 1) not in (select CODIGO from ENTREGADOR)  ");
+		hql.append("			UNION                                                      ");
+		hql.append("			SELECT 1 AS codigo from dual WHERE  1 not in               ");
+		hql.append("			( select CODIGO from ENTREGADOR where CODIGO = 1 )         ");
+		hql.append("	) as TBL_CODIGO	                                                   ");
+		
+		Query query = super.getSession().createSQLQuery(hql.toString());
+		
+		BigInteger codInterface = (BigInteger) query.uniqueResult();
+		
+		return codInterface.longValue();
+		
+	}
+	
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Entregador> obterEntregadoresPorNome(String nome) {
+		
+
+		Criteria criteria = super.getSession().createCriteria(Entregador.class);
+
+		criteria.createAlias("pessoa", "pessoa");
+
+		criteria.add(Restrictions.or(Restrictions.ilike("pessoa.nome", nome,
+				MatchMode.ANYWHERE), Restrictions.ilike("pessoa.razaoSocial",
+				nome, MatchMode.ANYWHERE)));
+
+		return criteria.list();
+	}
+	
+	@Override
+	public Entregador obterPorNome(String nome) {
+
+		Criteria criteria = super.getSession().createCriteria(Entregador.class);
+
+		criteria.createAlias("pessoa", "pessoa");
+
+		criteria.add(Restrictions.or(Restrictions.like("pessoa.nome", nome, MatchMode.ANYWHERE),
+				Restrictions.like("pessoa.razaoSocial", nome, MatchMode.ANYWHERE)));
+
+		if(criteria.list().size() == 0) 
+			return null;
+		
+		return (Entregador) criteria.uniqueResult();
 	}
 }

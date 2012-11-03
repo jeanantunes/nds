@@ -43,7 +43,7 @@ var tipoDescontoController = $.extend(true, {
 				rp : 15,
 				showTableToggleBtn : true,
 				width : 960,
-				height : 255
+				height : 'auto'
 			});
 			
 			$(".tiposDescEspecificoGrid", tipoDescontoController.workspace).flexigrid({
@@ -92,7 +92,7 @@ var tipoDescontoController = $.extend(true, {
 				rp : 15,
 				showTableToggleBtn : true,
 				width : 960,
-				height : 255
+				height : 'auto'
 			});
 			
 			$(".tiposDescProdutoGrid", tipoDescontoController.workspace).flexigrid({
@@ -148,7 +148,7 @@ var tipoDescontoController = $.extend(true, {
 				rp : 15,
 				showTableToggleBtn : true,
 				width : 960,
-				height : 255
+				height : 'auto'
 			});
 
 			$("#produto", tipoDescontoController.workspace).autocomplete({source: ""});		
@@ -160,7 +160,7 @@ var tipoDescontoController = $.extend(true, {
 	
 	buscarNomeProduto : function(){
 		if ($("#codigo", tipoDescontoController.workspace).val().length > 0){
-			var data = "codigoProduto=" + $("#codigo", tipoDescontoController.workspace).val();
+			var data = {codigoProduto:$("#codigo", tipoDescontoController.workspace).val()};
 			$.postJSON(contextPath + "/lancamento/furoProduto/buscarNomeProduto", data,
 				function(result){
 					if (result){
@@ -179,7 +179,7 @@ var tipoDescontoController = $.extend(true, {
 		var produto = $("#produto", tipoDescontoController.workspace).val();
 		
 		if (produto && produto.length > 0){
-			$.postJSON(contextPath + "/lancamento/furoProduto/pesquisarPorNomeProduto", "nomeProduto=" + produto, exibirAutoComplete);
+			$.postJSON(contextPath + "/lancamento/furoProduto/pesquisarPorNomeProduto", {nomeProduto:produto}, exibirAutoComplete);
 		}
 	},
 	
@@ -235,9 +235,9 @@ var tipoDescontoController = $.extend(true, {
 		var usuario = $("#textfield24", tipoDescontoController.workspace).val();		
 		
 		$.postJSON(contextPath + "/administracao/tipoDescontoCota/novoDescontoGeral",
-				   "desconto="+descontoGeral+
-				   "&dataAlteracao="+ dataAlteracao +
-				   "&usuario="+ usuario,
+				   {desconto:descontoGeral,
+				   dataAlteracao:dataAlteracao,
+				   usuario:usuario},
 				   function(result) {
 					   tipoDescontoController.fecharDialogs();
 					   var tipoMensagem = result.tipoMensagem;
@@ -260,14 +260,14 @@ var tipoDescontoController = $.extend(true, {
 		var nomeEspecifico = $("#nomeEspecifico", tipoDescontoController.workspace).val();
 		var descontoEspecifico = $("#descontoEspecifico", tipoDescontoController.workspace).val();
 		var dataAlteracaoEspecifico = $("#dataAlteracaoEspecifico", tipoDescontoController.workspace).val();
-		var usuarioEspecifico = $("#usuarioEspecifico", tipoDescontoController.workspace).val()
+		var usuarioEspecifico = $("#usuarioEspecifico", tipoDescontoController.workspace).val();
 		
 		$.postJSON(contextPath + "/administracao/tipoDescontoCota/novoDescontoEspecifico",
-				   "cotaEspecifica="+cotaEspecifica+
-				   "&nomeEspecifico="+ nomeEspecifico +
-				   "&descontoEspecifico="+ descontoEspecifico +
-				   "&dataAlteracaoEspecifico="+ dataAlteracaoEspecifico +
-				   "&usuarioEspecifico="+ usuarioEspecifico,
+				{cotaEspecifica:cotaEspecifica,
+			nomeEspecifico:nomeEspecifico,
+			descontoEspecifico:descontoEspecifico,
+			dataAlteracaoEspecifico:dataAlteracaoEspecifico,
+			usuarioEspecifico:usuarioEspecifico},
 				   function(result) {
 					   tipoDescontoController.fecharDialogs();
 					   var tipoMensagem = result.tipoMensagem;

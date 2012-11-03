@@ -8,10 +8,13 @@ import org.hibernate.FetchMode;
 import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanResultTransformer;
+import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.dto.BandeirasDTO;
 import br.com.abril.nds.dto.CapaDTO;
 import br.com.abril.nds.dto.CotaEmissaoDTO;
+import br.com.abril.nds.dto.FornecedoresBandeiraDTO;
 import br.com.abril.nds.dto.ProdutoEmissaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroEmissaoCE;
 import br.com.abril.nds.dto.filtro.FiltroEmissaoCE.ColunaOrdenacao;
@@ -20,6 +23,8 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.repository.ChamadaEncalheRepository;
+import br.com.abril.nds.util.Intervalo;
+import br.com.abril.nds.vo.PaginacaoVO;
 
 @Repository
 public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<ChamadaEncalhe,Long> implements ChamadaEncalheRepository{
@@ -88,6 +93,103 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		
 		return (ChamadaEncalhe) query.uniqueResult();
 	}
+
+	/**
+	 * SubHql que obtém a quantidade total prevista da chamada de encalhe ou  
+	 * o valor total da chamada de encalhe calculado pela somatória das qntidades 
+	 * previstas multiplicada pelo preco de venda do produto edição.
+	 * 
+	 * @param filtro
+	 * @param indValorTotalProdutos
+	 * 
+	 * @return String
+	 */
+	private String getSubHqlTotalQtdeValorPrevistaDaEmissaoCE(FiltroEmissaoCE filtro, boolean indValorTotalProdutos) {
+		
+		StringBuffer hql = new StringBuffer();
+		
+		if(indValorTotalProdutos) {
+			
+			hql.append(" select sum( _chamEncCota.qtdePrevista * produtoEdicao.precoVenda ) ");
+			
+		} else {
+			
+			hql.append(" select sum(_chamEncCota.qtdePrevista) 				");
+			
+		}
+		
+		hql.append(" from ChamadaEncalheCota _chamEncCota 				")
+		.append(" join _chamEncCota.chamadaEncalhe  _chamadaEncalhe 	")
+		.append(" join _chamEncCota.cota _cota 							")
+		.append(" join _cota.pessoa _pessoa 							")
+		.append(" join _chamadaEncalhe.produtoEdicao _produtoEdicao 	")
+		.append(" join _produtoEdicao.produto _produto 					")
+		.append(" join _produto.fornecedores _fornecedores 				")
+		.append(" JOIN _cota.box _box 									")
+		.append(" JOIN _cota.pdvs _pdv 									")
+		.append(" JOIN _pdv.rotas _rotaPdv 								")
+		.append(" JOIN _rotaPdv.rota _rota 								")
+		.append(" JOIN _rota.roteiro _roteiro 							");
+		
+		boolean contemWhere = false;
+		
+		if(filtro.getDtRecolhimentoDe() != null) {
+			
+			hql.append(((contemWhere)?" and ":" where ")+" _chamadaEncalhe.dataRecolhimento >=:dataDe ");
+			contemWhere = true;
+		}
+		
+		if(filtro.getDtRecolhimentoAte() != null) {
+			hql.append(((contemWhere)?" and ":" where ")+" _chamadaEncalhe.dataRecolhimento <=:dataAte ");
+			contemWhere = true;
+		}
+		
+		if(filtro.getNumCotaDe() != null) {
+
+			hql.append(((contemWhere)?"and":"where")+" _cota.numeroCota >=:cotaDe ");
+			contemWhere = true;
+		}
+		
+		if(filtro.getNumCotaAte() != null) {
+			
+			hql.append(((contemWhere)?"and":"where")+" _cota.numeroCota <=:cotaAte ");
+			contemWhere = true;
+		}
+		
+		if(filtro.getIdRoteiro() != null) {
+			
+			hql.append(((contemWhere)?"and":"where")+" _roteiro.id <=:idRoteiro ");
+			contemWhere = true;
+		}
+				
+		if(filtro.getIdRota() != null) {
+			
+			hql.append(((contemWhere)?"and":"where")+" _rota.id <=:idRota ");
+			contemWhere = true;
+		}
+		
+		if(filtro.getIdBoxDe() != null) {
+			
+			hql.append(((contemWhere)?"and":"where")+" _box.codigo >=:codBox ");
+			contemWhere = true;
+		}
+		
+		if(filtro.getIdBoxAte() != null) {
+			
+			hql.append(((contemWhere)?"and":"where")+" _box.codigo <=:codBox");
+			contemWhere = true;
+		}
+		
+		if(filtro.getFornecedores() != null && !filtro.getFornecedores().isEmpty()) {
+			
+			hql.append(((contemWhere)?"and":"where")+" _fornecedores.id in (:listaFornecedores) ");
+			contemWhere = true;
+		}
+
+		
+		return hql.toString();
+		
+	}
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
@@ -99,16 +201,25 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		StringBuilder hql = new StringBuilder();
 		
 		hql.append(" select cota.numeroCota as numCota, ");
-		hql.append(" 		cota.id as idCota, ");
-		hql.append(" 		pessoa.nome as nomeCota, ");
-		hql.append("		sum(chamEncCota.qtdePrevista) as qtdeExemplares, ");	
-		hql.append("		sum(chamEncCota.qtdePrevista * produtoEdicao.precoVenda) as vlrTotalCe ");
+		hql.append(" 		cota.id as idCota, 			");
+		hql.append(" 		pessoa.nome as nomeCota, 	");
 		
+		hql.append(" (	");
+		hql.append(	getSubHqlTotalQtdeValorPrevistaDaEmissaoCE(filtro, false));
+		hql.append(" )	as qtdeExemplares, ");
+
+		hql.append(" (	");
+		hql.append(	getSubHqlTotalQtdeValorPrevistaDaEmissaoCE(filtro, true));
+		hql.append(" )	as vlrTotalCe ");
 				
 		gerarFromWhere(filtro, hql, param);
 		
 
-		hql.append(" group by cota ");
+		hql.append(" group by   ")
+		
+		.append(" cota.numeroCota,	")
+		.append(" cota.id,  		")
+		.append(" pessoa.nome  		");
 		
 		gerarOrdenacao(filtro, hql);		
 				
@@ -132,76 +243,82 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 	
 	private void gerarFromWhere(FiltroEmissaoCE filtro, StringBuilder hql, HashMap<String, Object> param) {
 
-		hql.append(" from ChamadaEncalheCota chamEncCota, Roteirizacao roterizacao ")
+		hql.append(" from ChamadaEncalheCota chamEncCota ")
 		   .append(" join chamEncCota.chamadaEncalhe  chamadaEncalhe ")
-		   .append(" left join chamEncCota.conferenciasEncalhe confEnc ")
-		   .append(" left join confEnc.movimentoEstoqueCota  movimentoCota ")
 		   .append(" join chamEncCota.cota cota ")
 		   .append(" join cota.pessoa pessoa ")
 		   .append(" join chamadaEncalhe.produtoEdicao produtoEdicao ")
 		   .append(" join produtoEdicao.produto produto ")
 		   .append(" join produto.fornecedores fornecedores ")
+		   .append(" JOIN cota.box box ")
+		   .append(" JOIN cota.pdvs pdv ")
+		   .append(" JOIN pdv.rotas rotaPdv ")
+		   .append(" JOIN rotaPdv.rota rota ")
+		   .append(" JOIN rota.roteiro roteiro ");
 		   
-		   .append(" join roterizacao.rota rota ")
-		   .append(" join roterizacao.pdv pdv ")
-		   .append(" join pdv.cota cotaPdv ")
-		   .append(" join rota.roteiro roteiro ")
-		   .append(" join roteiro.box box ")
-		   .append(" where cotaPdv.id=cota.id ");
-		
+		boolean contemWhere = false;
 		
 		
 		if(filtro.getDtRecolhimentoDe() != null) {
 			
-			hql.append(" and chamadaEncalhe.dataRecolhimento >=:dataDe ");
+			hql.append(((contemWhere)?" and ":" where ")+" chamadaEncalhe.dataRecolhimento >=:dataDe ");
 			param.put("dataDe", filtro.getDtRecolhimentoDe());
+			contemWhere = true;
 		}
 		
 		if(filtro.getDtRecolhimentoAte() != null) {
-			hql.append(" and chamadaEncalhe.dataRecolhimento <=:dataAte ");
+			hql.append(((contemWhere)?" and ":" where ")+" chamadaEncalhe.dataRecolhimento <=:dataAte ");
 			param.put("dataAte", filtro.getDtRecolhimentoAte());
+			contemWhere = true;
 		}
 		
 		if(filtro.getNumCotaDe() != null) {
 
-			hql.append(" and cota.numeroCota >=:cotaDe ");
+			hql.append(((contemWhere)?"and":"where")+" cota.numeroCota >=:cotaDe ");
 			param.put("cotaDe", filtro.getNumCotaDe());
+			contemWhere = true;
 		}
 		
 		if(filtro.getNumCotaAte() != null) {
 			
-			hql.append(" and cota.numeroCota <=:cotaAte ");
+			hql.append(((contemWhere)?"and":"where")+" cota.numeroCota <=:cotaAte ");
 			param.put("cotaAte", filtro.getNumCotaAte());
+			contemWhere = true;
 		}
 		
 		if(filtro.getIdRoteiro() != null) {
 			
-			hql.append(" and roteiro.id <=:idRoteiro ");
+			hql.append(((contemWhere)?"and":"where")+" roteiro.id <=:idRoteiro ");
 			param.put("idRoteiro", filtro.getIdRoteiro());
+			contemWhere = true;
 		}
 				
 		if(filtro.getIdRota() != null) {
 			
-			hql.append(" and rota.id <=:idRota ");
+			hql.append(((contemWhere)?"and":"where")+" rota.id <=:idRota ");
 			param.put("idRota", filtro.getIdRota());
+			contemWhere = true;
 		}
 		
 		if(filtro.getIdBoxDe() != null) {
 			
-			hql.append(" and box.codigo >=:codBox ");
+			hql.append(((contemWhere)?"and":"where")+" box.codigo >=:codBox ");
 			param.put("codBox", filtro.getIdBoxDe());
+			contemWhere = true;
 		}
 		
 		if(filtro.getIdBoxAte() != null) {
 			
-			hql.append(" and box.codigo <=:codBox");
+			hql.append(((contemWhere)?"and":"where")+" box.codigo <=:codBox");
 			param.put("codBox", filtro.getIdBoxAte());
+			contemWhere = true;
 		}
 		
 		if(filtro.getFornecedores() != null && !filtro.getFornecedores().isEmpty()) {
 			
-			hql.append(" and fornecedores.id in (:listaFornecedores) ");
+			hql.append(((contemWhere)?"and":"where")+" fornecedores.id in (:listaFornecedores) ");
 			param.put("listaFornecedores", filtro.getFornecedores());
+			contemWhere = true;
 		}
 		
 
@@ -244,16 +361,27 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" select chamEncCota.id as idChamEncCota, ");
-		hql.append(" 		cota.numeroCota as numCota, ");
-		hql.append(" 		chamadaEncalhe.dataRecolhimento as dataRecolhimento, ");
-		hql.append(" 		cota.id as idCota, ");
-		hql.append(" 		pessoa.nome as nomeCota, ");
-		hql.append("		sum(chamEncCota.qtdePrevista) as qtdeExemplares, ");	
-		hql.append("		sum(chamEncCota.qtdePrevista * produtoEdicao.precoVenda) as vlrTotalCe, ");
-		hql.append(" 		box.codigo as box, ");
-		hql.append(" 		rota.codigoRota as codigoRota, ");
-		hql.append(" 		rota.descricaoRota as nomeRota ");
+		hql.append(" select  						");
+		
+		hql.append("chamEncCota.id as idChamEncCota,	");
+		
+		hql.append("	cota.numeroCota as numCota, 							");
+		hql.append("	chamadaEncalhe.dataRecolhimento as dataRecolhimento, 	");
+		hql.append("	cota.id as idCota, 										");
+		hql.append("	pessoa.nome as nomeCota, 								");
+		
+		
+		hql.append(" (	");
+		hql.append(	getSubHqlTotalQtdeValorPrevistaDaEmissaoCE(filtro, false));
+		hql.append(" )	as qtdeExemplares, ");
+
+		hql.append(" (	");
+		hql.append(	getSubHqlTotalQtdeValorPrevistaDaEmissaoCE(filtro, true));
+		hql.append(" )	as vlrTotalCe, ");
+		
+		hql.append("	box.codigo as box, 						");
+		hql.append("	cast (rota.id as string) as codigoRota, ");
+		hql.append("	rota.descricaoRota as nomeRota 			");
 		
 		gerarFromWhere(filtro, hql, param);
 		
@@ -321,6 +449,37 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		return query.list();
 	}
 	
+	private String obterSubHqlQtdeReparte(FiltroEmissaoCE filtro) {
+		
+	StringBuffer hql = new StringBuffer();
+		
+		hql.append(" select sum(_chamEncCota.qtdePrevista) 				")		
+		.append(" from ChamadaEncalheCota _chamEncCota 					")
+		.append(" join _chamEncCota.chamadaEncalhe  _chamadaEncalhe 	")
+		.append(" join _chamEncCota.cota _cota 							");
+		
+		boolean contemWhere = false;
+
+		hql.append(((contemWhere)?"and":"where")+" _cota.id =:idCota ");
+		
+		contemWhere = true;
+		
+		if(filtro.getDtRecolhimentoDe() != null) {
+			
+			hql.append(((contemWhere)?" and ":" where ")+" _chamadaEncalhe.dataRecolhimento >=:dataDe ");
+			contemWhere = true;
+		}
+		
+		if(filtro.getDtRecolhimentoAte() != null) {
+			hql.append(((contemWhere)?" and ":" where ")+" _chamadaEncalhe.dataRecolhimento <=:dataAte ");
+			contemWhere = true;
+		}
+		
+		return hql.toString();		
+		
+		
+	}
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<ProdutoEmissaoDTO> obterProdutosEmissaoCE(
@@ -331,18 +490,22 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" select produtoEdicao.codigoDeBarras as codigoBarras, ");
-		hql.append(" 		lancamentos.sequenciaMatriz as sequencia, ");
-		hql.append(" 	    produto.codigo as codigoProduto, ");
-		hql.append(" 	    produto.nome as nomeProduto, ");
-		hql.append(" 	    produtoEdicao.id as idProdutoEdicao, ");
-		hql.append(" 	    produtoEdicao.numeroEdicao as edicao, ");
-		hql.append(" 	    ("+ this.obterSQLDesconto() +") as desconto, ");
-		hql.append(" 	    produtoEdicao.precoVenda as precoVenda, ");
-		hql.append(" 	    produtoEdicao.parcial as tipoRecolhimento, ");
+		hql.append(" select produtoEdicao.codigoDeBarras as codigoBarras, 	");
+		hql.append(" 		lancamentos.sequenciaMatriz as sequencia, 		");
+		hql.append(" 	    produto.codigo as codigoProduto, 				");
+		hql.append(" 	    produto.nome as nomeProduto, 					");
+		hql.append(" 	    produtoEdicao.id as idProdutoEdicao, 			");
+		hql.append(" 	    produtoEdicao.numeroEdicao as edicao, 			");
+		hql.append(" 	    ("+ this.obterSQLDesconto() +") as desconto, 	");
+		hql.append(" 	    produtoEdicao.precoVenda as precoVenda, 		");
+		hql.append(" 	    produtoEdicao.parcial as tipoRecolhimento, 		");
 		hql.append(" 	    lancamentos.dataLancamentoDistribuidor as dataLancamento, ");
 		hql.append(" 	    (produtoEdicao.precoVenda - (produtoEdicao.precoVenda * ("+ this.obterSQLDesconto() +") / 100)) as precoComDesconto, ");
-		hql.append(" 	    lancamentos.reparte as reparte, ");
+		
+		hql.append(" ( ");
+		hql.append(obterSubHqlQtdeReparte(filtro));
+		hql.append(" ) as reparte,	");
+		
 		hql.append(" 	    sum(movimentoCota.qtde) as quantidadeDevolvida, ");
 		hql.append("		lancamentos.sequenciaMatriz as sequencia ");
 		
@@ -401,5 +564,142 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		   .append(" and view.fornecedorId = fornecedores.id),0) ");
 		
 		return hql.toString();
+	}
+
+	@Override
+	public Date obterProximaDataEncalhe(Date base) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("select o.dataRecolhimento from ChamadaEncalhe o where o.dataRecolhimento > :dataBase order by o.dataRecolhimento");
+		
+		Query query = getSession().createQuery(sb.toString());
+		query.setParameter("dataBase", base);
+		
+		@SuppressWarnings("rawtypes")
+		List result = query.list();
+		
+		if(result.size() == 0)
+			return null;
+		
+		return (Date) result.get(0);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<BandeirasDTO> obterBandeirasNoIntervalo(
+			Intervalo<Date> intervalo, PaginacaoVO paginacaoVO) {
+	
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select produto.codigo as codProduto, ")
+			.append(" produto.nome as nomeProduto, ")
+			.append(" produtoEdicao.numeroEdicao as edProduto, ")
+			.append(" produtoEdicao.pacotePadrao as pctPadrao, ")
+			.append(" sum(chamadaEncalheCotas.qtdePrevista) as qtde, ")
+			.append(" pessoaFornecedor.razaoSocial as destino, ")
+			.append(" chamadaEncalhe.dataRecolhimento as data ")
+			.append(" from ChamadaEncalhe chamadaEncalhe ")
+			.append(" join chamadaEncalhe.produtoEdicao produtoEdicao ")
+			.append(" join produtoEdicao.produto produto ")
+			.append(" left join chamadaEncalhe.chamadaEncalheCotas chamadaEncalheCotas ")
+			.append(" join produto.fornecedores fornecedores ")
+			.append(" join fornecedores.juridica pessoaFornecedor ")
+			.append(" where chamadaEncalhe.dataRecolhimento >= :dataDe ")
+			.append(" and chamadaEncalhe.dataRecolhimento <= :dataAte ")
+			.append(" group by chamadaEncalhe.id ");
+		
+		if (paginacaoVO != null)		
+			hql.append(getOrderByobterBandeirasNoIntervalo(paginacaoVO)); 
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		query.setParameter("dataDe", intervalo.getDe());
+		query.setParameter("dataAte", intervalo.getAte());
+		
+		if (paginacaoVO != null && paginacaoVO.getPosicaoInicial() != null) { 
+			
+			query.setFirstResult(paginacaoVO.getPosicaoInicial());
+			
+			query.setMaxResults(paginacaoVO.getQtdResultadosPorPagina());
+		}
+		
+		query.setResultTransformer(Transformers.aliasToBean(BandeirasDTO.class));
+		
+		return query.list();
+	}
+	
+	@Override
+	public Long countObterBandeirasNoIntervalo(Intervalo<Date> intervalo) {
+	
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select count(distinct chamadaEncalhe.id) ")
+			.append(" from ChamadaEncalhe chamadaEncalhe ")
+			.append(" join chamadaEncalhe.produtoEdicao produtoEdicao ")
+			.append(" join produtoEdicao.produto produto ")
+			.append(" left join chamadaEncalhe.chamadaEncalheCotas chamadaEncalheCotas ")
+			.append(" join produto.fornecedores fornecedores ")
+			.append(" join fornecedores.juridica pessoaFornecedor ")
+			.append(" where chamadaEncalhe.dataRecolhimento >= :dataDe ")
+			.append(" and chamadaEncalhe.dataRecolhimento <= :dataAte ");
+				
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		query.setParameter("dataDe", intervalo.getDe());
+		query.setParameter("dataAte", intervalo.getAte());
+				
+		return (Long) query.uniqueResult();
+	}
+	
+	private String getOrderByobterBandeirasNoIntervalo(PaginacaoVO paginacaoVO) {
+
+
+		String coluna = paginacaoVO.getSortColumn();
+		
+		if(coluna == null || coluna.isEmpty())
+			return "";
+		
+		String orderBy = " order by ";
+						
+		if ("codProduto".equals(coluna))
+			orderBy += " produto.codigo ";
+		else if("nomeProduto".equals(coluna))
+			orderBy += " produto.descricao ";
+		else if("edProduto".equals(coluna))
+			orderBy += " produtoEdicao.numeroEdicao ";
+		else if("pctPadrao".equals(coluna))
+			orderBy += " produtoEdicao.pacotePadrao ";
+		
+		orderBy += paginacaoVO.getSortOrder();
+		
+		return orderBy;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<FornecedoresBandeiraDTO> obterDadosFornecedoresParaImpressaoBandeira(
+			Intervalo<Date> intervalo) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select pessoaFornecedor.razaoSocial as nome, ")
+			.append(" fornecedores.codigoInterface as codigoInterface ")
+			
+			.append(" from ChamadaEncalhe chamadaEncalhe ")
+			.append(" join chamadaEncalhe.produtoEdicao produtoEdicao ")
+			.append(" join produtoEdicao.produto produto ")
+			.append(" join produto.fornecedores fornecedores ")
+			.append(" join fornecedores.juridica pessoaFornecedor ")
+			.append(" where chamadaEncalhe.dataRecolhimento >= :dataDe ")
+			.append(" and chamadaEncalhe.dataRecolhimento <= :dataAte ")
+			.append(" group by fornecedores.id ");
+					
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		query.setParameter("dataDe", intervalo.getDe());
+		query.setParameter("dataAte", intervalo.getAte());
+		
+		query.setResultTransformer(Transformers.aliasToBean(FornecedoresBandeiraDTO.class));
+		
+		return query.list();
 	}
 }

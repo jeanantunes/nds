@@ -127,8 +127,8 @@ public class ProdutoController {
 	}
 
 	@Post
-	public void autoCompletarPorPorNomeProduto(String nomeProduto) {
-		List<Produto> listaProduto = this.produtoService.obterProdutoLikeNomeProduto(nomeProduto);
+	public void autoCompletarPorNomeProduto(String nomeProduto) {
+		List<Produto> listaProduto = this.produtoService.obterProdutoLikeNome(nomeProduto);
 		
 		List<ItemAutoComplete> listaProdutos = new ArrayList<ItemAutoComplete>();
 		
@@ -195,7 +195,7 @@ public class ProdutoController {
 		
 	@Post
 	public void pesquisarPorNomeProduto(String nomeProduto) {
-		Produto produto = this.produtoService.obterProdutoPorNomeProduto(nomeProduto);
+		Produto produto = this.produtoService.obterProdutoPorNome(nomeProduto);
 		
 		if (produto == null) {
 		
@@ -469,9 +469,21 @@ public class ProdutoController {
 		if (produto != null) {
 
 			if (produto.getCodigo() == null || produto.getCodigo().trim().isEmpty()) {
+				
 				listaMensagens.add("O preenchimento do campo [Código] é obrigatório!");
+				
 			} else {
+				
+				Produto produtoExistente = produtoService.obterProdutoPorCodigo(produto.getCodigo());
+				
+				if(produtoExistente != null && !produtoExistente.getId().equals(produto.getId())){
+					
+					listaMensagens.add(" O código [" + produto.getCodigo() + "] já esta sendo utilizado por outro produto ");
+				}
+				
 				produto.setCodigo(produto.getCodigo().trim());
+				
+				
 			}
 
 			if (produto.getNome() == null || produto.getNome().trim().isEmpty()) {
@@ -599,8 +611,14 @@ public class ProdutoController {
 		List<BaseComboVO> listaBaseComboVO = new ArrayList<BaseComboVO>();
 		
 		listaBaseComboVO.add(getDefaultBaseComboVO());
+
+		List<DescontoLogistica> listaDescontos = descontoLogisticaService.obterTodos();
+
+		for (DescontoLogistica descontoLogistica : listaDescontos) {
+			listaBaseComboVO.add(new BaseComboVO(descontoLogistica.getId(), descontoLogistica.getDescricao()));                       
+		}
 		
-		listaBaseComboVO.add(new BaseComboVO(1l,"NORMAL"));                       
+		/*listaBaseComboVO.add(new BaseComboVO(1l,"NORMAL"));                       
 		listaBaseComboVO.add(new BaseComboVO(2l,"PRODUTOS TRIBUTADOS"));          
 		listaBaseComboVO.add(new BaseComboVO(3l,"VIDEO PRINT DE 1/1/96 A 1/1/97"));
 		listaBaseComboVO.add(new BaseComboVO(4l,"CROMOS - NORMAL EXC. JUIZ E BH"));
@@ -609,7 +627,7 @@ public class ProdutoController {
 		listaBaseComboVO.add(new BaseComboVO(7l,"ESPECIAL GLOBO"));
 		listaBaseComboVO.add(new BaseComboVO(8l,"MAGALI FOME ZERO"));
 		listaBaseComboVO.add(new BaseComboVO(9l,"IMPORTADAS MAG"));
-		listaBaseComboVO.add(new BaseComboVO(11l,"IMPORTADAS MAGEXPRESS"));
+		listaBaseComboVO.add(new BaseComboVO(11l,"IMPORTADAS MAGEXPRESS"));*/
 
 		return listaBaseComboVO;
 	}

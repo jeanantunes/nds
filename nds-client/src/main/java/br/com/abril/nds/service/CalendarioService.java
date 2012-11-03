@@ -66,7 +66,7 @@ public interface CalendarioService {
 	 * 
 	 * @return nova data calculada
  	 */
-	Date adicionarDiasUteis(Date data, int numDias, List<Integer> diasSemanaConcentracaoCobranca, Integer diaMesConcentracaoCobranca);
+	Date adicionarDiasUteis(Date data, int numDias, List<Integer> diasSemanaConcentracaoCobranca, List<Integer> diaMesConcentracaoCobranca);
 
 	/**
 	 * Cadastro novo feriado.

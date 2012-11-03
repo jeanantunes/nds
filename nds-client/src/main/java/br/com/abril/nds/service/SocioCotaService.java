@@ -3,6 +3,7 @@ package br.com.abril.nds.service;
 import java.util.List;
 
 import br.com.abril.nds.model.cadastro.SocioCota;
+import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaSocio;
 
 public interface SocioCotaService {
 
@@ -41,5 +42,24 @@ public interface SocioCotaService {
 	 * @param idCota
 	 */
 	void salvarSocioCota(SocioCota socioCota, Long idCota );
+
+    /**
+     * Recupera os sócios do histórico de titularidade da cota
+     * 
+     * @param identificador da cota 
+     * @param idHistorico
+     *            identificador do histórico de titularidade
+     * @return lista de sócios do histórico de titularidade da cota
+     */
+	List<HistoricoTitularidadeCotaSocio> obterSociosHistoricoTitularidadeCota(Long idCota, Long idHistorico);
+
+    /**
+     * Recupera o sócio do histórico de titularidade da cota
+     * 
+     * @param idSocioCota
+     *            identificador do sócio do histórico de titularidade da cota
+     * @return sócio do histórico de titularidade da cota
+     */
+	HistoricoTitularidadeCotaSocio obterSocioHistoricoTitularidadeCota(Long idSocioCota);
 
 }

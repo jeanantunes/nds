@@ -4,6 +4,7 @@ import java.util.List;
 
 import junit.framework.Assert;
 
+import org.hibernate.Criteria;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,44 +60,45 @@ public class BoxRepositoryImplTest extends AbstractRepositoryImplTest {
 				"joao@gmail.com", "João da Silva");
 		save(pessoaFisica);
 
-		Cota cota = Fixture
+		Cota cotaF = Fixture
 				.cota(1, pessoaFisica, SituacaoCadastro.ATIVO, box);
-		cota.setSugereSuspensao(true);
-		save(cota);
+		cotaF.setSugereSuspensao(true);
+		save(cotaF);
 		
-		roteiro = Fixture.criarRoteiro("Pinheiros", box,TipoRoteiro.NORMAL);
-		save(roteiro);
-		
-		rota = Fixture.rota("005", "Rota 005");
-		rota.setRoteiro(roteiro);
-		save(rota);
-		
-		PDV pdv = Fixture.criarPDVPrincipal("Pdv 1", cota);
+		PDV pdv = Fixture.criarPDVPrincipal("Pdv 1", cotaF);
 		save(pdv);
 		
-		roteirizacao = Fixture.criarRoteirizacao(pdv, rota, 1);
-		save(roteirizacao);
-		
-		cota = Fixture
+		Cota cotaJ = Fixture
 				.cota(2, pessoaJuridica, SituacaoCadastro.ATIVO, box);
-		cota.setSugereSuspensao(true);
+		cotaJ.setSugereSuspensao(true);
 		
-		save(cota);
+		save(cotaJ);
 		
-		roteiro = Fixture.criarRoteiro("Interlagos",box,TipoRoteiro.NORMAL);
-		save(roteiro);
+		Box boxLancamento = Fixture.criarBox(9999, "Box 9999", TipoBox.LANCAMENTO);
+		save(boxLancamento);
 		
-		rota = Fixture.rota("004", "Rota 004");
-		rota.setRoteiro(roteiro);
-		save(rota);
-		
-		pdv = Fixture.criarPDVPrincipal("Pdv 1", cota);
-		save(pdv);
-		
-		roteirizacao = Fixture.criarRoteirizacao(pdv, rota, 1);
+		roteirizacao = Fixture.criarRoteirizacao(boxLancamento);
 		save(roteirizacao);
 		
-
+		roteiro = Fixture.criarRoteiro("Pinheiros",roteirizacao,TipoRoteiro.NORMAL);
+		save(roteiro);
+		
+		
+		rota = Fixture.rota("Rota 005",roteiro);
+		rota.setRoteiro(roteiro);
+		rota.addPDV(pdv, 1, box);
+		save(rota);
+		
+		roteiro = Fixture.criarRoteiro("Interlagos",roteirizacao, TipoRoteiro.NORMAL);
+		save(roteiro);
+		
+		rota = Fixture.rota("Rota 004", roteiro);
+		rota.setRoteiro(roteiro);
+		rota.addPDV(pdv, 1, box);
+		save(rota);
+		
+		pdv = Fixture.criarPDVPrincipal("Pdv 1", cotaJ);
+		save(pdv);
 	}
 
 	@Test
@@ -123,7 +125,7 @@ public class BoxRepositoryImplTest extends AbstractRepositoryImplTest {
 	public void testQuantidade() {
 		long quantidade = boxRepository.quantidade(null, TipoBox.LANCAMENTO);
 
-		Assert.assertEquals(quantidade, 100l);
+		Assert.assertEquals(101, quantidade);
 
 	}
 
@@ -131,7 +133,7 @@ public class BoxRepositoryImplTest extends AbstractRepositoryImplTest {
 	public void testObtemCotaRotaRoteiro() {
 		List<CotaRotaRoteiroDTO> list = boxRepository.obtemCotaRotaRoteiro(box.getId());
 		
-		Assert.assertEquals(list.size(), 2);
+		Assert.assertEquals(list.size(), 4);
 	}
 
 	@Test
@@ -147,8 +149,113 @@ public class BoxRepositoryImplTest extends AbstractRepositoryImplTest {
 	@Test
 	public void testObterCotasPorBoxRoteiroRota() {
 	    List<Cota> cotas = boxRepository.obterCotasPorBoxRoteiroRota(box.getId(), roteiro.getId(), rota.getId());
-	    Assert.assertEquals(cotas.size(), 1);
-	    Assert.assertEquals(cotas.get(0).getNumeroCota(), new Integer(2));
+	    Assert.assertEquals(cotas.size(), 2);
+	    Assert.assertEquals(cotas.get(0).getNumeroCota(), new Integer(1));
 	}
+	
+	
+//	TESTES SEM USO DE MASSA ----------------------------------------------------------------------------------------
+	
+	
+	@Test
+	public void testarObterBoxUsuario() {
+		
+		List<Box> boxes;		
+		Long idUsuario = 1L;
+		
+		boxes = boxRepository.obterBoxUsuario(idUsuario, TipoBox.ENCALHE);
+		
+		Assert.assertNotNull(boxes);		
+		
+	}
+	
+	@Test
+	public void testarObterBoxProduto() {
+		
+		List<Box> boxes;		
+		String codigoProduto = "123";
+		
+		boxes = boxRepository.obterBoxPorProduto(codigoProduto);
+		
+		Assert.assertNotNull(boxes);
+	}
+	
+	@Test
+	public void testarHasCodigo() {
+		
+		Integer codigoBox = 1;
+		Long id = 2L;
+		
+		boolean hasCodigo =  boxRepository.hasCodigo(codigoBox, id);
+		
+		Assert.assertTrue(hasCodigo);
+		
+	}
+	
+	@Test
+	public void testarObterCodigoBoxPadraoUsuario() {
+		Integer codigoPadrao;
+		Long idUsuario = 1L;
+		
+		codigoPadrao = boxRepository.obterCodigoBoxPadraoUsuario(idUsuario);
+		
+//		Assert.assertNotNull(codigoPadrao);
+		
+	}
+	
+	@Test
+	public void testarHasRoteirosVinculados() {
+		
+		Long idBox = 1L;
+		
+		boolean hasRoteirosVinculados = boxRepository.hasRoteirosVinculados(idBox);
+		
+		Assert.assertFalse(hasRoteirosVinculados);
+		
+	}
+	
+	@Test
+	public void testarHasCotasVinculadas() {
+		
+		Long idBox = 1L;
+		
+		boolean hasCotasVinculadas = boxRepository.hasCotasVinculadas(idBox);
+		
+		Assert.assertFalse(hasCotasVinculadas);		
+		
+	}
+	
+	@Test
+	public void testarObterCostasPorBoxRoteiroRota() {
+		
+		List<Cota> cotas;
+		
+		Long idBox = 1L;
+		Long idRoteiro = 2L;
+		Long idRota = 3L;
+		
+		cotas = boxRepository.obterCotasPorBoxRoteiroRota(idBox, idRoteiro, idRota);
+		
+		Assert.assertNotNull(cotas);		
+		
+	}
+	
+	@Test
+	public void testarObterQuantidadeCotasPorBoxRoteiroRota() {
+		
+		Long quantidadeCotas;
+		
+		Long idBox = 1L;
+		Long idRoteiro = 2L;
+		Long idRota = 3L;
+		
+		quantidadeCotas = boxRepository.obterQuantidadeCotasPorBoxRoteiroRota(idBox, idRoteiro, idRota);
+		
+		Assert.assertNotNull(quantidadeCotas);
+		
+	}
+
+	
+	
 	
 }

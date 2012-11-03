@@ -15,6 +15,7 @@ import br.com.abril.nds.model.cadastro.GarantiaCotaOutros;
 import br.com.abril.nds.model.cadastro.Imovel;
 import br.com.abril.nds.model.cadastro.NotaPromissoria;
 import br.com.abril.nds.model.cadastro.TipoGarantia;
+import br.com.abril.nds.model.cadastro.garantia.CotaGarantia;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaCaucaoLiquida;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaChequeCaucao;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaFiador;
@@ -37,7 +38,7 @@ public interface CotaGarantiaService {
 	 *            Id da cota.
 	 * @return
 	 */
-	public abstract CotaGarantiaDTO getByCota(Long idCota);
+	public abstract CotaGarantiaDTO<CotaGarantia> getByCota(Long idCota);
 
 	/**
 	 * Salva no repositorio de dados a garantia de nota promissoria.
@@ -216,4 +217,42 @@ public interface CotaGarantiaService {
 	 * @return Data Transfer Object com os dados da forma de cobranca
 	 */
 	FormaCobrancaCaucaoLiquidaDTO obterDadosCaucaoLiquida(Long idCota);
+
+	/**
+     * Recupera as informações de garantia da histórico de titularidade da cota
+     * 
+     * @param idCota
+     *            identificador da cota
+     * @param idHistorico
+     *            identificador do histórico
+     * @return DTO com as informações da garantia do histórico de titularidade
+     *         da cota
+     */
+	CotaGarantiaDTO<?> obterGarantiaHistoricoTitularidadeCota(Long idCota, Long idHistorico);
+	
+    /**
+     * Recupera as informações da caução líquida do histórico de titularidade da
+     * cota
+     * 
+     * @param idCota
+     *            identificador da cota
+     * @param idHistorico
+     *            identificador do histórico
+     * @return DTO com as informações da caução líquida do histórico de
+     *         titularidade da cota
+     */
+    FormaCobrancaCaucaoLiquidaDTO obterCaucaoLiquidaHistoricoTitularidadeCota(Long idCota, Long idHistorico);
+
+    /**
+     * Retorna a imagem da garantia cheque caução do histórico de titularidade
+     * da cota
+     * 
+     * @param idCota
+     *            identificador da cota
+     * @param idHistorico
+     *            identificador do histórico de titularidade
+     * @return imagem do cheque caução do histórico de titularidade da cota
+     */
+	byte[] getImagemChequeCaucaoHistoricoTitularidade(Long idCota, Long idHistorico);
+
 }

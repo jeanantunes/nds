@@ -1,5 +1,6 @@
 package br.com.abril.nds.integracao.model.canonic;
 
+
 public enum InterfaceEnum {
 
 	EMS0109(109L, null, EMS0109Input.class),
@@ -13,7 +14,9 @@ public enum InterfaceEnum {
 	EMS0112(112L, null, EMS0112Input.class),
 	EMS0134(134L, null, null),
 	EMS0185(185L, null, null),
-	EMS0135(135L, null, EMS0135Input.class);
+	EMS0135(135L, null, EMS0135InputItem.class, EMS0135Input.class, TipoInterfaceEnum.DETALHE_INLINE), 
+	EMS0127(127L, null, EMS0127Input.class, TipoInterfaceEnum.DB), 
+	EMS0128(128L, null, EMS0128Input.class, TipoInterfaceEnum.DB);
 	
 	
 	private Long codigoInterface;
@@ -21,18 +24,39 @@ public enum InterfaceEnum {
 	private Class<? extends IntegracaoDocument> classeLinha;
 	private Class<? extends IntegracaoDocument> classeHeader;
 	private Class<? extends IntegracaoDocument> classeTrailer;
+
+	private Class<? extends IntegracaoDocumentDetail> classeDetail;
+	private Class<? extends IntegracaoDocumentMaster<? extends IntegracaoDocumentDetail>> classeMaster;
+
+	private TipoInterfaceEnum tipoInterfaceEnum;
 	
+	private InterfaceEnum(Long codigoInterface, Integer tamanhoLinha, Class<? extends IntegracaoDocument> classeLinha, TipoInterfaceEnum tipoInterfaceEnum) {
+		this.codigoInterface = codigoInterface;
+		this.classeLinha = classeLinha;
+		this.setTipoInterfaceEnum(tipoInterfaceEnum); 		
+	}
 	
 	private InterfaceEnum(Long codigoInterface, Integer tamanhoLinha, Class<? extends IntegracaoDocument> classeLinha) {
 		this.codigoInterface = codigoInterface;
 		this.classeLinha = classeLinha;
+		this.setTipoInterfaceEnum(TipoInterfaceEnum.SIMPLES); 
 	}
+
+	private InterfaceEnum(Long codigoInterface, Integer tamanhoLinha, Class<? extends IntegracaoDocumentDetail> classeDetail, Class<? extends IntegracaoDocumentMaster<? extends IntegracaoDocumentDetail>> classeMaster , TipoInterfaceEnum tipoInterfaceEnum ) {
+		this.codigoInterface = codigoInterface;
+		this.classeDetail = classeDetail;
+		this.classeMaster = classeMaster;
+		this.setTipoInterfaceEnum(tipoInterfaceEnum); 
+	}
+
 	
 	private InterfaceEnum(Long codigoInterface, Integer tamanhoLinha, Class<? extends IntegracaoDocument> classeLinha, Class<? extends IntegracaoDocument> classeHeader, Class<? extends IntegracaoDocument> classeTrailer) {
 		this.codigoInterface = codigoInterface;
 		this.classeLinha = classeLinha;
 		this.classeHeader = classeHeader;
 		this.classeTrailer = classeTrailer;
+		this.setTipoInterfaceEnum(TipoInterfaceEnum.HEADER_LINHA_TRAILER); 
+
 	}
 	
 	public static InterfaceEnum getByCodigo(Long codigoInterface) {
@@ -54,6 +78,14 @@ public enum InterfaceEnum {
 		return classeLinha;
 	}
 
+	public Class<?> getClasseDetail() {
+		return classeDetail;
+	}
+	
+	public Class<?> getClasseMaster() {
+		return classeMaster;
+	}
+	
 	public Class<?> getClasseHeader() {
 		return classeHeader;
 	}
@@ -64,5 +96,13 @@ public enum InterfaceEnum {
 	
 	public Integer getTamanhoLinha() {
 		return this.tamanhoLinha;
+	}
+
+	public TipoInterfaceEnum getTipoInterfaceEnum() {
+		return tipoInterfaceEnum;
+	}
+
+	public void setTipoInterfaceEnum(TipoInterfaceEnum tipoInterfaceEnum) {
+		this.tipoInterfaceEnum = tipoInterfaceEnum;
 	}
 }

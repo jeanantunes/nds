@@ -55,28 +55,28 @@ public class RotaRepositoryImplTest extends AbstractRepositoryImplTest  {
 		box1 = Fixture.criarBox(1, "BX-001", TipoBox.LANCAMENTO);
 		save(box1);
 		
-		roteiro = Fixture.criarRoteiro("Pinheiros",box1,TipoRoteiro.NORMAL);
+		Roteirizacao roteirizacao = Fixture.criarRoteirizacao(box1);
+		save(roteirizacao);
+		
+		roteiro = Fixture.criarRoteiro("Pinheiros",roteirizacao,TipoRoteiro.NORMAL);
 		save(roteiro);
 
-		rota = Fixture.rota("005", "Rota 005");
+		rota = Fixture.rota("Rota 005", roteiro);
+		rota.addPDV(pdvManoel, 1, box1);
 		rota.setRoteiro(roteiro);
 		save(rota);
 		
-		Roteirizacao roteirizacao = Fixture.criarRoteirizacao(pdvManoel, rota,1);
-		save(roteirizacao);
-		
-		roteiro = Fixture.criarRoteiro("Interlagos", box1,TipoRoteiro.NORMAL);
+		roteiro = Fixture.criarRoteiro("Interlagos",roteirizacao,TipoRoteiro.NORMAL);
 		save(roteiro);
 		
-		roteiroTCD = Fixture.criarRoteiro("TCD",box1,TipoRoteiro.NORMAL);
+		roteiroTCD = Fixture.criarRoteiro("TCD", roteirizacao, TipoRoteiro.NORMAL);
 		save(roteiroTCD);
 		
-		rota10 = Fixture.rota("001", "Rota 001");
+		rota10 = Fixture.rota("Rota 001", roteiroTCD);
+		rota10.addPDV(pdvManoel, 1, box1);
 		rota10.setRoteiro(roteiroTCD);
 		save(rota10);
 		
-		Roteirizacao roteirizacao2 = Fixture.criarRoteirizacao(pdvManoel, rota10,2);
-		save(roteirizacao2);
 	}
 	
 	@Test
@@ -91,11 +91,12 @@ public class RotaRepositoryImplTest extends AbstractRepositoryImplTest  {
 
 	@Test
 	public void obterCotasPorBoxRotaRoteiro() {
-		
 		List<ConsultaRoteirizacaoDTO> rotas = roteirizacaoRepository.obterCotasParaBoxRotaRoteiro(box1.getId(), rota10.getId(), roteiroTCD.getId());
-		
-		Assert.assertTrue(rotas!=null);
-		
+
+		Assert.assertEquals(1, rotas.size());
+		ConsultaRoteirizacaoDTO dto = rotas.get(0);
+		Assert.assertEquals(cotaManoel.getNumeroCota(), dto.getNumeroCota());
+		Assert.assertEquals(cotaManoel.getPessoa().getNome(), dto.getNome());
 	}
 
 	

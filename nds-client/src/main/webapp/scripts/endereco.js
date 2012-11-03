@@ -1,6 +1,9 @@
 function Endereco(paramTela, paramMessage) {
 
 	this.workspace = "";
+	
+	//Flag indicando se tela irá operar em modo readonly
+	this.readonly = false;
 
 	var _this = this;
     
@@ -32,6 +35,17 @@ function Endereco(paramTela, paramMessage) {
 
 	this.init = function(workspace) {
 		this.workspace = workspace;
+	},
+	
+	//Define a tela como operação de edição/readonly
+	this.definirReadonly = function(readonly) {
+		this.readonly = readonly;
+        var idBotaoIncluir = '#'+ paramTela +'btnIncluirNovoEndereco';
+        if (this.readonly) {
+			$(idBotaoIncluir).hide();
+		} else {
+			$(idBotaoIncluir).show();
+		}
 	},
 	
 	this.confirmarExclusaoEndereco = function (idEndereco) {
@@ -93,14 +107,20 @@ function Endereco(paramTela, paramMessage) {
 
 	this.getAction = function (idEndereco) {
 
-		return '<a href="javascript:;" onclick="'+paramTela+'.editarEndereco(' + idEndereco + ')" ' +
-				' style="cursor:pointer;border:0px;margin:5px" title="Editar endereço">' +
+        var title = this.readonly ? 'Visualizar Endereco' : 'Editar Endereço';
+
+		var retorno = '<a href="javascript:;" onclick="'+paramTela+'.editarEndereco(' + idEndereco + ')" ' +
+				' style="cursor:pointer;border:0px;margin:5px" title="'+ title +'">' +
 				'<img src="'+contextPath+'/images/ico_editar.gif" border="0px"/>' +
-				'</a>' +
-				'<a href="javascript:;" onclick="'+paramTela+'.confirmarExclusaoEndereco(' + idEndereco + ')" ' +
-				' style="cursor:pointer;border:0px;margin:5px" title="Excluir endereço">' +
-				'<img src="'+contextPath+'/images/ico_excluir.gif" border="0px"/>' +
 				'</a>';
+
+		if (!this.readonly) {
+			retorno += '<a href="javascript:;" class="acaoExclusao" onclick="'+paramTela+'.confirmarExclusaoEndereco(' + idEndereco + ')" ' +
+			' style="cursor:pointer;border:0px;margin:5px" title="Excluir endereço">' +
+			'<img src="'+contextPath+'/images/ico_excluir.gif" border="0px"/>' +
+			'</a>';
+		}
+		return retorno;
 	},
 
 	this.popularGridEnderecos = function() {
@@ -111,7 +131,7 @@ function Endereco(paramTela, paramMessage) {
 		
 		$.postJSON(
 			contextPath+'/cadastro/endereco/pesquisarEnderecos',
-			"tela=" + paramTela,
+			{tela:paramTela},
 			function(result) {
 				$("."+paramTela+"enderecosGrid", Endereco.workspace).flexAddData({
 					page: result.page, total: result.total, rows: result.rows
@@ -161,11 +181,11 @@ function Endereco(paramTela, paramMessage) {
 	this.editarEndereco = function(idEndereco) {
 		
 		$("#"+paramTela+"linkIncluirNovoEndereco", Endereco.workspace).html("");
-		$("#"+paramTela+"linkIncluirNovoEndereco", Endereco.workspace).html("<img src='"+contextPath+"/images/ico_salvar.gif' hspace='5' border='0' /> Salvar");
+		$("#"+paramTela+"linkIncluirNovoEndereco", Endereco.workspace).html("<img src='"+contextPath+"/images/ico_salvar.gif' hspace='5' border='0' /> ");
 		$("#"+paramTela+"btnIncluirNovoEndereco", Endereco.workspace).removeClass("bt_add");
 		$("#"+paramTela+"btnIncluirNovoEndereco", Endereco.workspace).addClass("bt_novos");
 		
-		var data = "tela=" + paramTela +"&idEnderecoAssociacao=" + idEndereco;
+		var data = {tela:paramTela,idEnderecoAssociacao:idEndereco};
 		
 		$.postJSON(
 				contextPath+'/cadastro/endereco/editarEndereco',
@@ -196,7 +216,7 @@ function Endereco(paramTela, paramMessage) {
 		
 		var _this = this;
 		
-		var data = "tela=" + paramTela +"&idEnderecoAssociacao=" + idEndereco;
+		var data = {tela:paramTela,idEnderecoAssociacao:idEndereco};
 		
 		$.postJSON(
 			contextPath+'/cadastro/endereco/removerEndereco',
@@ -224,7 +244,7 @@ function Endereco(paramTela, paramMessage) {
 			buttons : {
 				"Fechar" : function() {
 					$(this).dialog("close");
-				},
+				}
 			}
 		});
 		
@@ -296,6 +316,11 @@ function Endereco(paramTela, paramMessage) {
 	
 		var cep = $("#"+paramTela+"cep").val();
 
+		$("#"+paramTela+"numero", Endereco.workspace).val("");
+		
+		$("#"+paramTela+"complemento", Endereco.workspace).val("");
+
+		
 		$.postJSON(
 			contextPath+'/cadastro/endereco/obterEnderecoPorCep',
 			{ "cep": cep },			 
@@ -563,7 +588,8 @@ function Endereco(paramTela, paramMessage) {
 			height : 150,
 			sortorder: "asc",
 			sortname: "endereco.logradouro",
-			singleSelect: true
+			singleSelect: true, 
+			onSuccess: this.gridPopuladoCallback
 		});
 	};
 	

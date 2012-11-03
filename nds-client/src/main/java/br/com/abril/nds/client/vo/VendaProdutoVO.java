@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
+import br.com.abril.nds.model.cadastro.FormaComercializacao;
 import br.com.abril.nds.model.estoque.TipoVendaEncalhe;
 
 public class VendaProdutoVO implements Serializable{
@@ -35,7 +36,7 @@ public class VendaProdutoVO implements Serializable{
 	
 	private String formaVenda;
 	
-	private Integer codBox;
+	private String codBox;
 	
 	private String dataVencimentoDebito;
 	
@@ -48,6 +49,41 @@ public class VendaProdutoVO implements Serializable{
 	private TipoVendaEncalhe tipoVenda;
 	
 	private BigDecimal valorTotal;
+	
+	private String descTipoVenda;
+	
+	private FormaComercializacao formaComercializacao;
+	
+	
+	
+
+	/**
+	 * @return the formaComercializacao
+	 */
+	public FormaComercializacao getFormaComercializacao() {
+		return formaComercializacao;
+	}
+
+	/**
+	 * @param formaComercializacao the formaComercializacao to set
+	 */
+	public void setFormaComercializacao(FormaComercializacao formaComercializacao) {
+		this.formaComercializacao = formaComercializacao;
+	}
+
+	/**
+	 * @return the descTipoVenda
+	 */
+	public String getDescTipoVenda() {
+		return descTipoVenda;
+	}
+
+	/**
+	 * @param descTipoVenda the descTipoVenda to set
+	 */
+	public void setDescTipoVenda(String descTipoVenda) {
+		this.descTipoVenda = descTipoVenda;
+	}
 
 	/**
 	 * @return the valorTotal
@@ -94,14 +130,14 @@ public class VendaProdutoVO implements Serializable{
 	/**
 	 * @return the codBox
 	 */
-	public Integer getCodBox() {
+	public String getCodBox() {
 		return codBox;
 	}
 
 	/**
 	 * @param codBox the codBox to set
 	 */
-	public void setCodBox(Integer codBox) {
+	public void setCodBox(String codBox) {
 		this.codBox = codBox;
 	}
 

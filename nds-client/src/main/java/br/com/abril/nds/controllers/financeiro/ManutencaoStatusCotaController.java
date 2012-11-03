@@ -39,6 +39,7 @@ import br.com.abril.nds.model.cadastro.HistoricoSituacaoCota;
 import br.com.abril.nds.model.cadastro.MotivoAlteracaoSituacao;
 import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.model.cadastro.garantia.CotaGarantia;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.CotaGarantiaService;
@@ -495,7 +496,7 @@ public class ManutencaoStatusCotaController {
 			    
 			    Distribuidor distribuidor = this.distribuidorService.obter();
 				if (distribuidor.isUtilizaGarantiaPdv()){
-					CotaGarantiaDTO cotaGarantiaDTO = this.cotaGarantiaService.getByCota(cota.getId());
+					CotaGarantiaDTO<CotaGarantia> cotaGarantiaDTO = this.cotaGarantiaService.getByCota(cota.getId());
 					if (cotaGarantiaDTO.getCotaGarantia()==null){
 						throw new ValidacaoException(TipoMensagem.WARNING, "Para alterar o status da cota para [Ativo] é necessário que a mesma possua [Garantia] cadatrada!");
 					}

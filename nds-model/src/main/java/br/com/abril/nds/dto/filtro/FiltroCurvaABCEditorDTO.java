@@ -17,11 +17,14 @@ public class  FiltroCurvaABCEditorDTO extends FiltroCurvaABCDTO implements Seria
 	/**
 	 * 
 	 */
+	
+	public FiltroCurvaABCEditorDTO() {}
+	
 	private static final long serialVersionUID = 5221185820098445595L;
 
 	public FiltroCurvaABCEditorDTO(Date dataDe, Date dataAte,
 			String codigoFornecedor, String codigoProduto, String nomeProduto,
-			String edicaoProduto, String codigoEditor, String codigoCota,
+			List<Long> edicaoProduto, String codigoEditor, Integer codigoCota,
 			String nomeCota, String municipio) {
 		this.setDataDe(dataDe);
 		this.setDataAte(dataAte);
@@ -40,15 +43,18 @@ public class  FiltroCurvaABCEditorDTO extends FiltroCurvaABCDTO implements Seria
 	private ColunaOrdenacaoCurvaABCEditor ordenacaoColuna;
 	
 	public enum ColunaOrdenacaoCurvaABCEditor {
-
+		
+		RANKING("rkEditor"),
 		CODIGO_EDITOR("codigoEditor"),
 		NOME_EDITOR("nomeEditor"),
-		REPARTE("reparte"),
-		VENDA_EXEMPLARES("vendaExemplares"),
-		PORCENTAGEM_VENDA_EXEMPLARES("porcentagemVendaExemplares"),
-		FATURAMENTO_CAPA("faturamentoCapa"),
-		PARTICIPACAO("participacao"),
-		PARTICIPACAO_ACUMULADA("participacaoAcumulada");
+		REPARTE("reparteFormatado"),
+		VENDA_EXEMPLARES("vendaExemplaresFormatado"),
+		PORCENTAGEM_VENDA_EXEMPLARES("porcentagemVendaExemplaresFormatado"),
+		FATURAMENTO_CAPA("faturamentoCapaFormatado"),
+		PARTICIPACAO("participacaoFormatado"),
+		PARTICIPACAO_ACUMULADA("participacaoAcumuladaFormatado"),
+		VALOR_MARGEM_DISTRIBUIDOR("valorMargemDistribuidorFormatado"),
+		PORCENTAGEM_MARGEM_DISTRIBUIDOR("porcentagemMargemDistribuidorFormatado");
 
 		private String nomeColuna;
 		

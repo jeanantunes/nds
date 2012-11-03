@@ -27,6 +27,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.apache.commons.lang.Validate;
 import org.hibernate.annotations.Cascade;
 
 import br.com.abril.nds.model.cadastro.desconto.DescontoProdutoEdicao;
@@ -34,6 +35,7 @@ import br.com.abril.nds.model.cadastro.garantia.CotaGarantia;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
+import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
 import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCota;
 
@@ -67,6 +69,9 @@ public class Cota implements Serializable {
 	
 	@OneToMany(mappedBy = "cota", cascade={CascadeType.REMOVE})
 	private List<PDV> pdvs = new ArrayList<PDV>();
+
+	@OneToMany(mappedBy = "cota")
+	private List<ChamadaEncalheCota> chamadaEncalheCotas = new ArrayList<ChamadaEncalheCota>();
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "SITUACAO_CADASTRO", nullable = false)
@@ -117,6 +122,13 @@ public class Cota implements Serializable {
 	private Date inicioAtividade;
 	
 	/**
+	 * Data de início do titular da cota
+	 */
+	@Temporal(TemporalType.DATE)
+    @Column(name = "INICIO_TITULARIDADE", nullable = false)
+	private Date inicioTitularidade;
+	
+	/**
 	 * Fornecedores associados à Cota
 	 */
 	@ManyToMany
@@ -141,7 +153,7 @@ public class Cota implements Serializable {
 	private Set<HistoricoNumeroCota> historicoNumeroCota;
 	
 	@OneToMany(mappedBy="cota", cascade={CascadeType.REMOVE})
-	private Set<DescontoProdutoEdicao> descontosProdutoEdicao;
+	private Set<DescontoProdutoEdicao> descontosProdutoEdicao = new HashSet<DescontoProdutoEdicao>();
 
 	@ManyToMany(mappedBy="cotas", targetEntity=GrupoCota.class)
 	private Set<GrupoCota> grupos;
@@ -150,13 +162,18 @@ public class Cota implements Serializable {
 	 * Histórico de titulares da cota
 	 */
 	@OneToMany(mappedBy = "cota", cascade = {CascadeType.ALL})
-	private Set<HistoricoTitularidadeCota> titularesCota;
+	private Set<HistoricoTitularidadeCota> titularesCota =new HashSet<HistoricoTitularidadeCota>();
 	
 	/**
 	 * Referente a garantias da cota.
 	 */
 	@OneToOne(mappedBy="cota", fetch=FetchType.LAZY)
 	private CotaGarantia cotaGarantia;
+	
+	public Cota() {
+        this.inicioAtividade = new Date();
+        this.inicioTitularidade = new Date();
+    }
 	
 	public Set<HistoricoNumeroCota> getHistoricoNumeroCota() {
 		return historicoNumeroCota;
@@ -313,7 +330,15 @@ public class Cota implements Serializable {
 		this.inicioAtividade = inicioAtividade;
 	}
 	
-	public Set<Fornecedor> getFornecedores() {
+    public Date getInicioTitularidade() {
+        return inicioTitularidade;
+    }
+
+    public void setInicioTitularidade(Date inicioTitularidade) {
+        this.inicioTitularidade = inicioTitularidade;
+    }
+
+    public Set<Fornecedor> getFornecedores() {
 		return fornecedores;
 	}
 	
@@ -465,6 +490,31 @@ public class Cota implements Serializable {
     public void setTitularesCota(Set<HistoricoTitularidadeCota> titularesCota) {
         this.titularesCota = titularesCota;
     }
+    
+    /**
+     * Adiciona um novo histórico de titularidade da cota
+     * 
+     * @param titularCota
+     *            histórico de titularidade da cota para adição
+     * @throws IllegalArgumentException
+     *             caso o histórico de titularidade da cota seja nulo
+     */
+    public void addTitularCota(HistoricoTitularidadeCota titularCota) {
+        Validate.notNull(titularCota, "Titular da Cota não deve ser nulo!");
+        if (titularesCota == null) {
+            titularesCota = new HashSet<HistoricoTitularidadeCota>();
+        }
+        titularesCota.add(titularCota);
+    }
+    
+    /**
+     * Verifica se o titular da cota é uma pessoa física
+     * 
+     * @return true se o titular é pessoa física, false caso contrário
+     */
+    public boolean isTitularPessoaFisica() {
+        return pessoa instanceof PessoaFisica;
+    }
 
 	/**
 	 * @return the cotaGarantia
@@ -478,5 +528,14 @@ public class Cota implements Serializable {
 	 */
 	public void setCotaGarantia(CotaGarantia cotaGarantia) {
 		this.cotaGarantia = cotaGarantia;
+	}
+	
+	public EnderecoCota getEnderecoPrincipal(){
+		for(EnderecoCota item:this.getEnderecos()){
+			if(item.isPrincipal()){
+				return item;
+			}
+		}
+		return null;
 	}
 }

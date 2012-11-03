@@ -31,5 +31,6 @@ public interface ConferenciaEncalheParcialRepository extends Repository<Conferen
 			Long numeroEdicao,
 			Date dataMovimento);
 	
+	public ConferenciaEncalheParcial obterConferenciaEncalheParcialPor(Long idProduto, Date dataMovimento);
 	
 }

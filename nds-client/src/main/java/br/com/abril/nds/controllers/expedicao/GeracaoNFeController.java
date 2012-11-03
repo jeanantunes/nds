@@ -21,7 +21,8 @@ import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
-import br.com.abril.nds.serialization.custom.CustomMapJson;
+import br.com.abril.nds.serialization.custom.CustomJson;
+
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.FornecedorService;
@@ -68,7 +69,7 @@ public class GeracaoNFeController {
 	private RoteirizacaoService roteirizacaoService;
 	
 	@Path("/")
-	@Rules(Permissao.ROLE_EXPEDICAO_GERACAO_NFE)
+	@Rules(Permissao.ROLE_NFE_GERACAO_NFE)
 	public void index() {
 		
 		result.include("fornecedores", fornecedorService
@@ -156,7 +157,7 @@ public class GeracaoNFeController {
 		if (cotasSuspensas != null && !cotasSuspensas.isEmpty())
 			hasCotasSuspensas = true;
 		
-		result.use(CustomMapJson.class).put("cotasSuspensas", hasCotasSuspensas).serialize();
+		result.use(CustomJson.class).from(hasCotasSuspensas).serialize();
 	}
 	
 	@Post("/gerar.json")
@@ -173,13 +174,13 @@ public class GeracaoNFeController {
 		
 		try {
 			this.geracaoNFeService.gerarNotaFiscal(intervaloBox, intervalorCota, intervaloDateMovimento, 
-					listIdFornecedor, null, tipoNotaFiscal, dataEmissao, idCotasSuspensas);
+					listIdFornecedor, null, tipoNotaFiscal, dataEmissao, idCotasSuspensas, null);
 			
 		} catch (IOException ioe){
 			throw new ValidacaoException(TipoMensagem.WARNING, ioe.getMessage());
 		} 
 		
-		result.use(CustomMapJson.class).put("result", true).serialize();
+		result.use(CustomJson.class).from(true).serialize();
 	}
 	
 	@Post("/transferirSuplementar.json")
@@ -187,7 +188,7 @@ public class GeracaoNFeController {
 		
 		//TODO
 		
-		result.use(CustomMapJson.class).put("result", true).serialize();
+		result.use(CustomJson.class).from(true).serialize();
 	}
 	
 	public List<ItemDTO<Long, String>> carregarTipoNotaFiscal() {
@@ -209,7 +210,7 @@ public class GeracaoNFeController {
 		
 		Intervalo<Date> intervaloDateMovimento = new Intervalo<Date>(intervaloDateMovimentoDe, intervaloDateMovimentoAte);
 		
-		List<CotaExemplaresDTO> cotaExemplaresDTOs=	
+		List<CotaExemplaresDTO> cotaExemplaresDTOs =	
 				geracaoNFeService.busca(intervaloBox, intervalorCota, intervaloDateMovimento, listIdFornecedor, 
 						tipoNotaFiscal, null, null, sortname, sortorder, null, null, null);
 		

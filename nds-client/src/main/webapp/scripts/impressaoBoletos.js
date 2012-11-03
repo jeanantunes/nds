@@ -209,7 +209,7 @@ var impressaoBoletosController = $.extend(true, {
 	},
 	pesquisarCotaSuccessCallBack:function(){
 		
-		var data = "numeroCota=" + $("#numCota", impressaoBoletosController.workspace).val();
+		var data = {numeroCota: $("#numCota", impressaoBoletosController.workspace).val()};
 		
 		$.postJSON(impressaoBoletosController.workspace + "/financeiro/impressaoBoletos/pesquisarInfoCota",
 				   data, function(result){
@@ -231,7 +231,7 @@ var impressaoBoletosController = $.extend(true, {
 	},
 	validarPesquisa:function(){
 		
-		var data = 'dataMovimento='+$("#dataMovimento", impressaoBoletosController.workspace).val();
+		var data = {dataMovimento:$("#dataMovimento", impressaoBoletosController.workspace).val()};
 		
 		$.postJSON(contextPath + "/financeiro/impressaoBoletos/validarPesquisaDivida",
 				data, function(result){

@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
 import java.util.List;
+import java.util.Set;
 
 import org.hibernate.Query;
 import org.hibernate.transform.AliasToBeanResultTransformer;
@@ -22,27 +23,25 @@ public class RateioDiferencaRepositoryImpl extends AbstractRepositoryModel<Ratei
 	public RateioDiferencaRepositoryImpl() {
 		super(RateioDiferenca.class);
 	}
-	
-	public RateioDiferenca obterRateioDiferencaPorDiferenca(Long idDiferenca){
-		StringBuilder hql = new StringBuilder("select new ");
-		hql.append(RateioDiferenca.class.getCanonicalName())
-		   .append(" (rateioDiferenca, rateioDiferenca.cota, rateioDiferenca.estudoCota) ")
-		   .append(" from RateioDiferenca rateioDiferenca, Diferenca diferenca ")
-		   .append(" where rateioDiferenca.diferenca.id = diferenca.id ")
-		   .append(" and diferenca.id = :idDiferenca ");
 		
-		Query query = this.getSession().createQuery(hql.toString());
-		query.setParameter("idDiferenca", idDiferenca);
-		query.setMaxResults(1);
-		
-		return ((RateioDiferenca)query.uniqueResult());
-	}
-	
 	public void removerRateioDiferencaPorDiferenca(Long idDiferenca){
 		StringBuilder hql = new StringBuilder();
 		hql.append("delete from RateioDiferenca r where r.diferenca.id = :idDiferenca");
 		
 		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("idDiferenca", idDiferenca);
+		
+		query.executeUpdate();
+	}
+	
+	public void removerRateiosNaoAssociadosDiferenca( Long idDiferenca, List<Long> idRateios){
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append("delete from RateioDiferenca r where r.id not in (:idRateios) and r.diferenca.id = :idDiferenca ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameterList("idRateios", idRateios);
 		query.setParameter("idDiferenca", idDiferenca);
 		
 		query.executeUpdate();

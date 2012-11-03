@@ -14,11 +14,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
+import br.com.abril.nds.dto.EnderecoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.couchdb.CouchDbProperties;
 import br.com.abril.nds.model.Capa;
 import br.com.abril.nds.model.cadastro.Endereco;
-import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.TipoEndereco;
 import br.com.abril.nds.model.dne.Bairro;
 import br.com.abril.nds.model.dne.Localidade;
@@ -84,31 +84,9 @@ public class EnderecoServiceImpl implements EnderecoService {
 
 		return this.enderecoRepository.buscarPorId(idEndereco);
 	}
-	
-	@Override
-	@Transactional
-	public void cadastrarEnderecos(List<EnderecoAssociacaoDTO> listaEnderecos, Pessoa pessoa){
-		
-		if (listaEnderecos != null){
-		
-			for (EnderecoAssociacaoDTO enderecoAssociacaoDTO : listaEnderecos){
-				
-				this.validarEndereco(enderecoAssociacaoDTO.getEndereco(), enderecoAssociacaoDTO.getTipoEndereco());
-				
-				enderecoAssociacaoDTO.getEndereco().setPessoa(pessoa);
-				
-				if (enderecoAssociacaoDTO.getEndereco().getId() == null){
-					
-					this.enderecoRepository.adicionar(enderecoAssociacaoDTO.getEndereco());
-				} else {
-					
-					this.enderecoRepository.alterar(enderecoAssociacaoDTO.getEndereco());
-				}
-			}
-		}
-	}
 
-	private void validarEndereco(Endereco endereco, TipoEndereco tipoEndereco) {
+	@Override
+	public void validarEndereco(EnderecoDTO endereco, TipoEndereco tipoEndereco) {
 		
 		List<String> listaMensagens = new ArrayList<String>();
 		
@@ -286,6 +264,13 @@ public class EnderecoServiceImpl implements EnderecoService {
 	public List<Bairro> pesquisarBairros(String nomeBairro) {
 		
 		return this.bairroRepository.pesquisarBairros(nomeBairro);
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public List<Bairro> pesquisarTodosBairros() {
+		
+		return this.bairroRepository.buscarTodos();
 	}
 	
 	@Override

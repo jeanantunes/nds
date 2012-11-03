@@ -5,15 +5,12 @@ import java.util.List;
 import java.util.Set;
 
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
-import br.com.abril.nds.model.cadastro.Pessoa;
+import br.com.abril.nds.dto.TelefoneDTO;
 import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.TelefoneEntregador;
+import br.com.abril.nds.model.cadastro.TipoTelefone;
 
 public interface TelefoneService {
-	
-	void cadastrarTelefone(List<TelefoneAssociacaoDTO> listaTelefones, Pessoa pessoa);
-	
-	void cadastrarTelefone(TelefoneAssociacaoDTO associacaoTelefone);
 	
 	void removerTelefones(Collection<Long> listaTelefones);
 	
@@ -42,4 +39,7 @@ public interface TelefoneService {
 	List<TelefoneAssociacaoDTO> buscarTelefonesPorIdPessoa(Long idPessoa, Set<Long> idsIgnorar);
 
 	Telefone buscarTelefonePorId(Long longValue);
+	
+	void validarTelefone(TelefoneDTO telefone, TipoTelefone tipoTelefone);
+	
 }

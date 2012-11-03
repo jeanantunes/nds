@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -156,8 +157,10 @@ public class CalendarioServiceImpl implements CalendarioService {
 	@Override
 	public Date adicionarDiasUteis(Date data, int numDias,
 			List<Integer> diasSemanaConcentracaoCobranca,
-			Integer diaMesConcentracaoCobranca) {
-
+			List<Integer> diasMesConcentracaoCobranca) {
+		
+		
+        //DIARIO
 		if (diasSemanaConcentracaoCobranca == null
 				|| diasSemanaConcentracaoCobranca.isEmpty()
 				&& (diasSemanaConcentracaoCobranca == null)) {
@@ -165,6 +168,7 @@ public class CalendarioServiceImpl implements CalendarioService {
 			return this.adicionarDiasUteis(data, numDias);
 		}
 
+		//SEMANAL
 		if (diasSemanaConcentracaoCobranca != null
 				&& !diasSemanaConcentracaoCobranca.isEmpty()) {
 
@@ -187,20 +191,47 @@ public class CalendarioServiceImpl implements CalendarioService {
 			}
 
 			return dataBase.getTime();
-		} else if (diaMesConcentracaoCobranca != null) {
-
-			if (Calendar.getInstance().getLeastMaximum(Calendar.DAY_OF_MONTH) > diaMesConcentracaoCobranca) {
-
-				diaMesConcentracaoCobranca = Calendar.getInstance()
-						.getLeastMaximum(Calendar.DAY_OF_MONTH);
-			}
-
+		}
+		else if (diasMesConcentracaoCobranca != null) {
+			
 			Calendar dataVencimento = Calendar.getInstance();
+			
+			int diaMesConcentracaoCobranca;
+			
+			//MENSAL
+			if (diasMesConcentracaoCobranca.size()<2){
+			
+				diaMesConcentracaoCobranca = diasMesConcentracaoCobranca.get(0);
+	
+				if (Calendar.getInstance().getLeastMaximum(Calendar.DAY_OF_MONTH) > diaMesConcentracaoCobranca) {
+	
+					diaMesConcentracaoCobranca = Calendar.getInstance().getLeastMaximum(Calendar.DAY_OF_MONTH);
+				}
 
-			while (dataVencimento.get(Calendar.DAY_OF_MONTH) < diaMesConcentracaoCobranca) {
+				while (dataVencimento.get(Calendar.DAY_OF_MONTH) < diaMesConcentracaoCobranca) {
+	
+					dataVencimento.setTime(this.adicionarDiasUteis(dataVencimento.getTime(), 1));
+				}
+			}
+			//QUINZENAL
+			else{
+				
+				diaMesConcentracaoCobranca = diasMesConcentracaoCobranca.get(0);
+				
+				if (Calendar.getInstance().getLeastMaximum(Calendar.DAY_OF_MONTH) > diaMesConcentracaoCobranca) {
+					
+					diaMesConcentracaoCobranca = diasMesConcentracaoCobranca.get(1);
+					
+					if (Calendar.getInstance().getLeastMaximum(Calendar.DAY_OF_MONTH) > diaMesConcentracaoCobranca) {
+						
+						diaMesConcentracaoCobranca = Calendar.getInstance().getLeastMaximum(Calendar.DAY_OF_MONTH);
+					}
+				}
 
-				dataVencimento.setTime(this.adicionarDiasUteis(
-						dataVencimento.getTime(), 1));
+				while (dataVencimento.get(Calendar.DAY_OF_MONTH) < diaMesConcentracaoCobranca) {
+	
+					dataVencimento.setTime(this.adicionarDiasUteis(dataVencimento.getTime(), 1));
+				}
 			}
 
 			return dataVencimento.getTime();
@@ -634,6 +665,8 @@ public class CalendarioServiceImpl implements CalendarioService {
 					feriado.setDataFeriado(obterDataComAnoPesquisa(
 							feriado.getDataFeriado(), ano));
 				}
+				// Ordena pela data do feriado
+				Collections.sort(listaCalendarioFeriado);
 			}
 
 		}

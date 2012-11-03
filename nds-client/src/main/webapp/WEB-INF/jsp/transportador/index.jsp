@@ -1,6 +1,7 @@
 <head>
 	<script type="text/javascript" src='<c:url value="/"/>/scripts/jquery.numeric.js'></script>
 	<script type="text/javascript" src="scripts/transportador.js"></script>
+
 	<style>
 		.diasFunc label,.finceiro label {
 			vertical-align: super;
@@ -140,8 +141,7 @@
 				<li><a href="#tabs-4" onclick="transportadorController.carregarGrids();">Veículos / Motoristas</a></li>
 			</ul>
 			<div id="tabs-1">
-			<br clear="all" />
-				<fieldset>
+				<fieldset style="width:880px; margin:5px;">
 					<legend>Dados Cadastrais</legend>
 					<table width="850" cellpadding="2" cellspacing="2" style="text-align: left;">
 						<tr>
@@ -160,7 +160,7 @@
 							<td>CNPJ:</td>
 							<td><input type="text" style="width: 150px" id="cnpj" onblur="transportadorController.buscarPessoaCNPJ(this.value);" /></td>
 							<td>Insc. Estadual:</td>
-							<td><input type="text" style="width: 150px" id="inscEstadual" maxlength="255" /></td>
+							<td><input type="text" style="width: 150px" id="inscEstadual" /></td>
 						</tr>
 					</table>
 					<table width="850" cellpadding="3" cellspacing="2">
@@ -253,19 +253,21 @@
 							<td width="268"><input type="text" id="inputCobrancaMensal" style="width:60px;"/></td>
       					</tr>
     				</table> 
+    				</fieldset>
+    				<div class="linha_separa_fields">&nbsp;</div>   				
     				
-					<fieldset>
+					<fieldset style="width:880px; margin:5px;">
 						<legend>Cotas Atendidas</legend>
 						<table id="gridCotasAtendidas"></table>
-						<span class="bt_novos" title="Gerar Arquivo">
-							<a href="javascript:;" onclick="transportadorController.exportarArquivo('XLS');" target="_blank">
-								<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo
+						<span class="bt_novos">
+							<a href="javascript:;" onclick="transportadorController.exportarArquivo('XLS');" target="_blank" rel="tipsy" title="Gerar Arquivo">
+								<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
 							</a>
 						</span>
 						
-						<span class="bt_novos" title="Imprimir">
-							<a href="javascript:;" onclick="transportadorController.exportarArquivo('PDF');" target="_blank">
-								<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />Imprimir
+						<span class="bt_novos">
+							<a href="javascript:;" onclick="transportadorController.exportarArquivo('PDF');" target="_blank" rel="tipsy" title="Imprimir">
+								<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />
 							</a>
 						</span>
 					</fieldset>
@@ -274,30 +276,22 @@
 				<br clear="all" />
 			</div>
 			<div id="tabs-2">
-			<br clear="all" />
-				<fieldset>
-					<legend>Endereço</legend>
 					<jsp:include page="../endereco/index.jsp">
 						<jsp:param value="ENDERECO_TRANSPORTADOR" name="telaEndereco"/>
 						<jsp:param value="idModalCadastroTransportador" name="message"/>
 					</jsp:include>
-				</fieldset>
-				<br clear="all" />
+
 			</div>
 			<div id="tabs-3">
-			<br clear="all" />
-				<fieldset>
-					<legend>Telefone</legend>
 					<jsp:include page="../telefone/index.jsp">
 						<jsp:param value="TRANSPORTADOR" name="tela"/>
 						<jsp:param value="idModalCadastroTransportador" name="message"/>
 					</jsp:include>
-				</fieldset>
-				<br clear="all" />
 			</div>
 
 			<div id="tabs-4">
-			<br clear="all" />
+				<fieldset  style="width:880px; margin:5px;">
+					<legend>Veículos / Motoristas</legend>
 					<table border="0" cellpadding="2" cellspacing="2" align="center" width="700">
 						<tr class="especialidades">
 							<td valign="top">
@@ -321,16 +315,16 @@
 						</tr>
 						<tr class="especialidades">
 							<td valign="top">
-								<span class="bt_novos" title="Novo">
+								<span class="bt_novos">
 									<a href="javascript:;" onclick="transportadorController.popup_incluir_veiculo();" rel="tipsy" title="Incluir Novo Veículo">
-										<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0" />
+										<img src="${pageContext.request.contextPath}/images/ico_veiculo.gif" hspace="5" border="0" />
 									</a>
 								</span>
 							</td>
 							<td valign="top">
-								<span class="bt_novos" title="Novo">
+								<span class="bt_novos">
 									<a href="javascript:;" onclick="transportadorController.popup_incluir_motorista();" rel="tipsy" title="Incluir Novo Motorista">
-										<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0" />
+										<img src="${pageContext.request.contextPath}/images/ico_jornaleiro.gif" hspace="5" border="0" />
 									</a>
 								</span>
 							</td>
@@ -349,6 +343,7 @@
 					<table class="associacaoGrid"></table>
 				</fieldset>
 				<br clear="all" />
+				</fieldset>
 			</div>
 		</div>
 	</div>
@@ -356,7 +351,7 @@
 	
 	<div class="areaBts">
 		<div class="area">
-			<span class="bt_novos" title="Novo">
+			<span class="bt_novos">
 				<a href="javascript:;" onclick="transportadorController.limparCamposCadastroTransportador();transportadorController.popup_novo_transportador();" rel="tipsy" title="Incluir Novo Transportador">
 					<img src="${pageContext.request.contextPath}/images/ico_salvar.gif"	hspace="5" border="0" />
 			</a>
@@ -388,5 +383,21 @@
 			<table class="transportadoraGrid"></table>
 		</div>
 	</fieldset>
+	
+	<script>
+	
+	$(function() {
+		
+		transportadorController.init();
+		
+		ENDERECO_TRANSPORTADOR.init(transportadorController.workspace);
+		
+		TRANSPORTADOR.init(transportadorController.workspace);
+		
+		
+	});
+	
+	</script>
+	
 			
 </body>

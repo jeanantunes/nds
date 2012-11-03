@@ -3,20 +3,26 @@ package br.com.abril.nds.dto;
 import java.math.BigDecimal;
 import java.util.List;
 
+import br.com.abril.nds.vo.DebitoCreditoCotaVO;
+
 public class InfoConsultaEncalheDTO {
 
 	private List<ConsultaEncalheDTO> listaConsultaEncalhe;
 	
+	private List<DebitoCreditoCotaVO> listaDebitoCreditoCota;
+	
 	private Integer qtdeConsultaEncalhe;
 	
-	private Integer qtdProdutoPrimeiroRecolhimento;
+	private BigDecimal valorReparte;
 	
-	private BigDecimal qtdExemplarPrimeiroRecolhimento;
-
-	private Integer qtdProdutoDemaisRecolhimentos;
+	private BigDecimal valorEncalhe;
 	
-	private BigDecimal qtdExemplarDemaisRecolhimentos;
-
+	private BigDecimal valorVendaDia;
+	
+	private BigDecimal valorDebitoCredito;
+	
+	private BigDecimal valorPagar;
+	
 	/**
 	 * Obtém listaConsultaEncalhe
 	 *
@@ -53,78 +59,88 @@ public class InfoConsultaEncalheDTO {
 	}
 
 	/**
-	 * Obtém qtdProdutoPrimeiroRecolhimento
-	 *
-	 * @return Integer
+	 * @return the valorReparte
 	 */
-	public Integer getQtdProdutoPrimeiroRecolhimento() {
-		return qtdProdutoPrimeiroRecolhimento;
+	public BigDecimal getValorReparte() {
+		return valorReparte;
 	}
 
 	/**
-	 * Atribuí qtdProdutoPrimeiroRecolhimento
-	 * @param qtdProdutoPrimeiroRecolhimento 
+	 * @param valorReparte the valorReparte to set
 	 */
-	public void setQtdProdutoPrimeiroRecolhimento(
-			Integer qtdProdutoPrimeiroRecolhimento) {
-		this.qtdProdutoPrimeiroRecolhimento = qtdProdutoPrimeiroRecolhimento;
+	public void setValorReparte(BigDecimal valorReparte) {
+		this.valorReparte = valorReparte;
 	}
 
 	/**
-	 * Obtém qtdExemplarPrimeiroRecolhimento
-	 *
-	 * @return BigDecimal
+	 * @return the valorEncalhe
 	 */
-	public BigDecimal getQtdExemplarPrimeiroRecolhimento() {
-		return qtdExemplarPrimeiroRecolhimento;
+	public BigDecimal getValorEncalhe() {
+		return valorEncalhe;
 	}
 
 	/**
-	 * Atribuí qtdExemplarPrimeiroRecolhimento
-	 * @param qtdExemplarPrimeiroRecolhimento 
+	 * @param valorEncalhe the valorEncalhe to set
 	 */
-	public void setQtdExemplarPrimeiroRecolhimento(
-			BigDecimal qtdExemplarPrimeiroRecolhimento) {
-		this.qtdExemplarPrimeiroRecolhimento = qtdExemplarPrimeiroRecolhimento;
+	public void setValorEncalhe(BigDecimal valorEncalhe) {
+		this.valorEncalhe = valorEncalhe;
 	}
 
 	/**
-	 * Obtém qtdProdutoDemaisRecolhimentos
-	 *
-	 * @return Integer
+	 * @return the valorVendaDia
 	 */
-	public Integer getQtdProdutoDemaisRecolhimentos() {
-		return qtdProdutoDemaisRecolhimentos;
+	public BigDecimal getValorVendaDia() {
+		return valorVendaDia;
 	}
 
 	/**
-	 * Atribuí qtdProdutoDemaisRecolhimentos
-	 * @param qtdProdutoDemaisRecolhimentos 
+	 * @param valorVendaDia the valorVendaDia to set
 	 */
-	public void setQtdProdutoDemaisRecolhimentos(
-			Integer qtdProdutoDemaisRecolhimentos) {
-		this.qtdProdutoDemaisRecolhimentos = qtdProdutoDemaisRecolhimentos;
+	public void setValorVendaDia(BigDecimal valorVendaDia) {
+		this.valorVendaDia = valorVendaDia;
 	}
 
 	/**
-	 * Obtém qtdExemplarDemaisRecolhimentos
-	 *
-	 * @return BigDecimal
+	 * @return the valorDebitoCredito
 	 */
-	public BigDecimal getQtdExemplarDemaisRecolhimentos() {
-		return qtdExemplarDemaisRecolhimentos;
+	public BigDecimal getValorDebitoCredito() {
+		return valorDebitoCredito;
 	}
 
 	/**
-	 * Atribuí qtdExemplarDemaisRecolhimentos
-	 * @param qtdExemplarDemaisRecolhimentos 
+	 * @param valorDebitoCredito the valorDebitoCredito to set
 	 */
-	public void setQtdExemplarDemaisRecolhimentos(
-			BigDecimal qtdExemplarDemaisRecolhimentos) {
-		this.qtdExemplarDemaisRecolhimentos = qtdExemplarDemaisRecolhimentos;
+	public void setValorDebitoCredito(BigDecimal valorDebitoCredito) {
+		this.valorDebitoCredito = valorDebitoCredito;
 	}
 
-	
+	/**
+	 * @return the valorPagar
+	 */
+	public BigDecimal getValorPagar() {
+		return valorPagar;
+	}
 
-	
+	/**
+	 * @param valorPagar the valorPagar to set
+	 */
+	public void setValorPagar(BigDecimal valorPagar) {
+		this.valorPagar = valorPagar;
+	}
+
+	/**
+	 * @return the listaDebitoCreditoCota
+	 */
+	public List<DebitoCreditoCotaVO> getListaDebitoCreditoCota() {
+		return listaDebitoCreditoCota;
+	}
+
+	/**
+	 * @param listaDebitoCreditoCota the listaDebitoCreditoCota to set
+	 */
+	public void setListaDebitoCreditoCota(
+			List<DebitoCreditoCotaVO> listaDebitoCreditoCota) {
+		this.listaDebitoCreditoCota = listaDebitoCreditoCota;
+	}
+
 }

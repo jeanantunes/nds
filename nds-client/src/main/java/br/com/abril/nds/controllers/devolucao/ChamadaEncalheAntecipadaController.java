@@ -8,6 +8,8 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -32,10 +34,10 @@ import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoFornecedor;
 import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.Roteiro;
-import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.cadastro.pdv.TipoPontoPDV;
+import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
-import br.com.abril.nds.serialization.custom.CustomMapJson;
+import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.service.BoxService;
 import br.com.abril.nds.service.ChamadaAntecipadaEncalheService;
 import br.com.abril.nds.service.FornecedorService;
@@ -130,13 +132,7 @@ public class ChamadaEncalheAntecipadaController {
 	
 	private void carregarMunicipios(){
 		
-		List<Endereco> enderecoPdvPrincipal = pdvService.buscarMunicipiosPdvPrincipal();
-		
-		List<ItemDTO<Integer, String>> municipios = new ArrayList<ItemDTO<Integer,String>>();
-		
-		for (Endereco tp : enderecoPdvPrincipal) {
-			municipios.add(new ItemDTO<Integer, String>(tp.getCodigoCidadeIBGE(),tp.getCidade()));
-		}
+		List<ItemDTO<Integer, String>> municipios = pdvService.buscarMunicipiosPdvPrincipal();
 		
 		result.include("listaMunicipios",municipios);
 	}
@@ -289,15 +285,18 @@ public class ChamadaEncalheAntecipadaController {
 			
 			quantidade = chamadaAntecipadaEncalheService.obterQntExemplaresCotasSujeitasAntecipacoEncalhe(filtro);
 			
-			result.use(CustomMapJson.class).put("quantidade", quantidade.intValue()).serialize();
+			result.use(CustomJson.class).from(quantidade.intValue()).serialize();
 		}
 		else{
 			
 			ChamadaAntecipadaEncalheDTO chamada = chamadaAntecipadaEncalheService.obterChamadaEncalheAntecipada(filtro);
 			quantidade = chamada.getQntExemplares();	
 			
-			result.use(CustomMapJson.class).put("quantidade", quantidade.intValue())
-										   .put("idChamadaEncalhe", chamada.getCodigoChamadaEncalhe()).serialize();
+			Map<String, Object> mapa = new TreeMap<String, Object>();
+			mapa.put("quantidade", quantidade.intValue());
+			mapa.put("idChamadaEncalhe", chamada.getCodigoChamadaEncalhe());
+			
+			result.use(CustomJson.class).from(mapa).serialize();
 		}
 	}
 	
@@ -974,7 +973,7 @@ public class ChamadaEncalheAntecipadaController {
 		if(filtro.getRota()!= null){
 			Rota rota = roteirizacaoService.buscarRotaPorId(filtro.getRota());
 			if(rota!= null){
-				filtro.setDescRota(rota.getCodigoRota());
+				filtro.setDescRota(rota.getDescricaoRota());
 			}
 		}
 		
@@ -1080,7 +1079,19 @@ public class ChamadaEncalheAntecipadaController {
 			rotas = roteirizacaoService.buscarRotas();
 		}
 		
-		result.use(CustomMapJson.class).put("rotas", getRotas(rotas)).put("roteiros", getRoteiros(roteirosBox)).serialize();
+		Map<String, Object> mapa = new TreeMap<String, Object>();
+		
+		List<ItemDTO<Long, String>> listaRotas = getRotas(rotas);
+		if (listaRotas != null) {
+			mapa.put("rotas", listaRotas);
+		}
+
+		List<ItemDTO<Long, String>> listaRoteiros = getRoteiros(roteirosBox);
+		if (listaRoteiros != null) {
+			mapa.put("roteiros", listaRoteiros);
+		}
+		
+		result.use(CustomJson.class).from(mapa).serialize();
 	}
 	
 	/**
@@ -1104,7 +1115,7 @@ public class ChamadaEncalheAntecipadaController {
 		
 		for(Rota rota : rotas){
 			
-			listaRotas.add(new ItemDTO<Long, String>(rota.getId(),rota.getCodigoRota()+" - "+ rota.getDescricaoRota()));
+			listaRotas.add(new ItemDTO<Long, String>(rota.getId(), rota.getDescricaoRota()));
 		}
 		
 		return listaRotas;

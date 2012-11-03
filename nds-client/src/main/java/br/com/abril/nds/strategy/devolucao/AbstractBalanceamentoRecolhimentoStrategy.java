@@ -415,7 +415,6 @@ public abstract class AbstractBalanceamentoRecolhimentoStrategy implements Balan
 		
 		return !(dadosRecolhimento == null
 					|| dadosRecolhimento.getCapacidadeRecolhimentoDistribuidor() == null
-					|| dadosRecolhimento.getDatasRecolhimentoDistribuidor() == null
 					|| dadosRecolhimento.getDatasRecolhimentoFornecedor() == null
 					|| dadosRecolhimento.getMapaExpectativaEncalheTotalDiaria() == null
 					|| dadosRecolhimento.getMapaExpectativaEncalheTotalDiaria().isEmpty()

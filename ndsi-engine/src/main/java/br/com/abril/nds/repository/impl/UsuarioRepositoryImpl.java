@@ -26,17 +26,15 @@ public class UsuarioRepositoryImpl extends AbstractRepositoryModel<Usuario, Long
 	
 
 	//TODO Definição de Usuario de Importação
-	@Transactional
 	public Usuario getUsuarioImportacao() {
-				
-		Usuario usuario = new Usuario();
-		usuario.setLogin("usuarioImportacao");
-		usuario.setNome("Usuário de Importação");
-		usuario.setSenha("usuarioImportacao");
-		usuario.setEmail("usuarioImportacao");
-		usuario.setContaAtiva(true);
-		
-		return merge(usuario);
+		return getUsuarioByLogin("importacao");		
+	}
+
+
+	private Usuario getUsuarioByLogin(String login) {
+		Criteria criteria =  getSession().createCriteria(Usuario.class);		
+		criteria.add(Restrictions.eq("login", login));
+		return (Usuario) criteria.uniqueResult();
 	}
 
 
@@ -113,6 +111,16 @@ public class UsuarioRepositoryImpl extends AbstractRepositoryModel<Usuario, Long
 		criteria.setProjection(Projections.groupProperty("nome"));
 		criteria.add(Restrictions.eq("login", login));
 		return (String) criteria.uniqueResult();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Usuario getUsuarioLogado(String login) {
+		Criteria criteria =  getSession().createCriteria(Usuario.class);
+		criteria.add(Restrictions.eq("login", login));
+		return (Usuario) criteria.uniqueResult();
 	}
 
 

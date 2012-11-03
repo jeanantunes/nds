@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.client.vo.EntregadorCotaProcuracaoPaginacaoVO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
+import br.com.abril.nds.dto.EnderecoDTO;
 import br.com.abril.nds.dto.ProcuracaoImpressaoWrapper;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroEntregadorDTO;
@@ -24,6 +25,7 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoEntregador;
 import br.com.abril.nds.model.cadastro.Entregador;
+import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.ProcuracaoEntregador;
 import br.com.abril.nds.model.cadastro.TelefoneEntregador;
 import br.com.abril.nds.repository.EnderecoEntregadorRepository;
@@ -223,9 +225,12 @@ public class EntregadorServiceImpl implements EntregadorService {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Cota não encontrada.");
 		}
 		
+		Pessoa pessoa = entregador.getPessoa();
+
 		for (TelefoneEntregador telefoneEntregador : listaTelefonesAdicionar){
 			
 			telefoneEntregador.setEntregador(entregador);
+			telefoneEntregador.getTelefone().setPessoa(pessoa);
 		}
 		
 		this.telefoneService.salvarTelefonesEntregador(listaTelefonesAdicionar);
@@ -278,7 +283,16 @@ public class EntregadorServiceImpl implements EntregadorService {
 				enderecoEntregador.setEntregador(entregador);
 			}
 
-			enderecoEntregador.setEndereco(enderecoAssociacao.getEndereco());
+            EnderecoDTO dto = enderecoAssociacao.getEndereco();
+            Endereco endereco = new Endereco(dto.getCodigoBairro(),
+                    dto.getBairro(), dto.getCep(), dto.getCodigoCidadeIBGE(),
+                    dto.getCidade(), dto.getComplemento(),
+                    dto.getTipoLogradouro(), dto.getLogradouro(),
+                    dto.getNumero(), dto.getUf(), dto.getCodigoUf(),
+                    entregador.getPessoa());
+            endereco.setId(dto.getId());
+
+            enderecoEntregador.setEndereco(endereco);
 
 			enderecoEntregador.setPrincipal(enderecoAssociacao.isEnderecoPrincipal());
 
@@ -294,7 +308,7 @@ public class EntregadorServiceImpl implements EntregadorService {
 	private void removerEnderecosEntregador(Entregador entregador, 
 			   								List<EnderecoAssociacaoDTO> listaEnderecoAssociacao) {
 
-		List<Endereco> listaEndereco = new ArrayList<Endereco>();
+		List<EnderecoDTO> listaEndereco = new ArrayList<EnderecoDTO>();
 		
 		List<Long> idsEndereco = new ArrayList<Long>();
 
@@ -380,4 +394,36 @@ public class EntregadorServiceImpl implements EntregadorService {
 		
 		return this.entregadorRepository.verificarEntregador(idCota);
 	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public Entregador obterEntregadorPorCodigo(Long codigo) {
+		
+		return this.entregadorRepository.obterEntregadorPorCodigo(codigo);
+		
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public Long obterMinCodigoEntregadorDisponivel() {
+		
+		return entregadorRepository.obterMinCodigoEntregadorDisponivel();
+		
+	}
+	
+	
+
+	@Override
+	@Transactional
+	public List<Entregador> obterEntregadoresPorNome(String nome) {
+		return entregadorRepository.obterEntregadoresPorNome(nome);
+	}
+
+	@Override
+	@Transactional
+	public Entregador obterPorNome(String nome) {
+		return entregadorRepository.obterPorNome(nome);
+	}
+	
+	
 }

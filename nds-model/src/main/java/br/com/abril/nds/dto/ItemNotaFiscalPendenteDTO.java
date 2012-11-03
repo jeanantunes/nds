@@ -2,13 +2,14 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Date;
 
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.export.Export;
-import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.util.export.Export.Alignment;
+import br.com.abril.nds.util.export.Exportable;
 
 @Exportable
 public class ItemNotaFiscalPendenteDTO implements Serializable {
@@ -24,10 +25,10 @@ public class ItemNotaFiscalPendenteDTO implements Serializable {
 	private Long numeroEdicao;
 	
 	@Export(label = "Qtde. Info", alignment=Alignment.CENTER, exhibitionOrder = 5)
-	private BigDecimal qtdInformada;
+	private BigInteger qtdInformada;
 	
 	@Export(label = "Qtde. Recebida", alignment=Alignment.CENTER, exhibitionOrder = 6)
-	private BigDecimal qtdRecebida;
+	private BigInteger qtdRecebida;
 	
 	
 	private BigDecimal precoCapa; 
@@ -48,8 +49,8 @@ public class ItemNotaFiscalPendenteDTO implements Serializable {
 	public ItemNotaFiscalPendenteDTO() {}
 	
 	public ItemNotaFiscalPendenteDTO(String codigoProduto, String nomeProduto,
-			Long numeroEdicao, BigDecimal qtdInformada,
-			BigDecimal qtdRecebida, BigDecimal precoCapa,
+			Long numeroEdicao, BigInteger qtdInformada,
+			BigInteger qtdRecebida, BigDecimal precoCapa,
 			BigDecimal precoDesconto, BigDecimal totalDoItem, Date dataConferenciaEncalhe, Date dataChamadaEncalhe) {
 		super();
 		this.codigoProduto = codigoProduto;
@@ -57,11 +58,11 @@ public class ItemNotaFiscalPendenteDTO implements Serializable {
 		this.numeroEdicao = numeroEdicao;
 		this.qtdInformada = qtdInformada;
 		this.qtdRecebida = qtdRecebida;
-		this.precoCapa = precoCapa;
-		this.precoDesconto = precoDesconto;
-		this.totalDoItem = totalDoItem;
-		this.dataConferenciaEncalhe = dataConferenciaEncalhe;
-		this.dataChamadaEncalhe = dataChamadaEncalhe;
+		this.setPrecoCapa(precoCapa);
+		this.setPrecoDesconto(precoDesconto);
+		this.setTotalDoItem(totalDoItem);
+		this.setDataConferenciaEncalhe(dataConferenciaEncalhe);
+		this.setDataChamadaEncalhe(dataChamadaEncalhe);
 	}
 
 
@@ -92,8 +93,6 @@ public class ItemNotaFiscalPendenteDTO implements Serializable {
 	
 	@Export(label = "Dia", alignment=Alignment.CENTER, exhibitionOrder = 4)
 	public String getDia() {
-		Long qtdDiferencaDias = DateUtil.obterDiferencaDias(getDataConferenciaEncalhe(), getDataChamadaEncalhe());
-		dia = qtdDiferencaDias.toString() + "°";
 		return dia;
 	}
 	
@@ -101,19 +100,19 @@ public class ItemNotaFiscalPendenteDTO implements Serializable {
 		this.dia = dia;
 	}
 
-	public BigDecimal getQtdInformada() {
+	public BigInteger getQtdInformada() {
 		return qtdInformada;
 	}
 
-	public void setQtdInformada(BigDecimal qtdInformada) {
+	public void setQtdInformada(BigInteger qtdInformada) {
 		this.qtdInformada = qtdInformada;
 	}
 
-	public BigDecimal getQtdRecebida() {
+	public BigInteger getQtdRecebida() {
 		return qtdRecebida;
 	}
 
-	public void setQtdRecebida(BigDecimal qtdRecebida) {
+	public void setQtdRecebida(BigInteger qtdRecebida) {
 		this.qtdRecebida = qtdRecebida;
 	}
 
@@ -172,6 +171,8 @@ public class ItemNotaFiscalPendenteDTO implements Serializable {
 	}
 
 	public void setDataConferenciaEncalhe(Date dataConferenciaEncalhe) {
+		Long qtdDiferencaDias = DateUtil.obterDiferencaDias(getDataConferenciaEncalhe(), getDataChamadaEncalhe());
+		this.dia = qtdDiferencaDias.toString() + "° dia";
 		this.dataConferenciaEncalhe = dataConferenciaEncalhe;
 	}
 
@@ -180,6 +181,8 @@ public class ItemNotaFiscalPendenteDTO implements Serializable {
 	}
 
 	public void setDataChamadaEncalhe(Date dataChamadaEncalhe) {
+		Long qtdDiferencaDias = DateUtil.obterDiferencaDias(getDataConferenciaEncalhe(), getDataChamadaEncalhe());
+		this.dia = qtdDiferencaDias.toString() + "° dia";
 		this.dataChamadaEncalhe = dataChamadaEncalhe;
 	}
 

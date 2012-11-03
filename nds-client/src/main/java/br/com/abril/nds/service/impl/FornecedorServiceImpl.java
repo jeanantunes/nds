@@ -12,9 +12,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
+import br.com.abril.nds.dto.EnderecoDTO;
 import br.com.abril.nds.dto.FornecedorDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
+import br.com.abril.nds.dto.TelefoneDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaFornecedorDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
@@ -23,6 +25,7 @@ import br.com.abril.nds.model.cadastro.EnderecoFornecedor;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoFornecedor;
+import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.TelefoneFornecedor;
@@ -338,9 +341,9 @@ public class FornecedorServiceImpl implements FornecedorService {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Filtro obrigatório para a pesquisa.");
 		}
 
-		if (filtroConsultaFornecedor.getCnpj() == null && filtroConsultaFornecedor.getCnpj().isEmpty() 
-				&& filtroConsultaFornecedor.getRazaoSocial() == null && filtroConsultaFornecedor.getRazaoSocial().isEmpty()
-				&& filtroConsultaFornecedor.getNomeFantasia() == null && filtroConsultaFornecedor.getNomeFantasia().isEmpty()) {
+		if ((filtroConsultaFornecedor.getCnpj() == null || filtroConsultaFornecedor.getCnpj().isEmpty()) 
+				&& (filtroConsultaFornecedor.getRazaoSocial() == null || filtroConsultaFornecedor.getRazaoSocial().isEmpty())
+				&& (filtroConsultaFornecedor.getNomeFantasia() == null || filtroConsultaFornecedor.getNomeFantasia().isEmpty())) {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Digite ao menos um filtro para realizar a pesquisa.");
 		}
@@ -460,7 +463,17 @@ public class FornecedorServiceImpl implements FornecedorService {
 				enderecoFornecedor.setFornecedor(fornecedor);
 			}
 
-			enderecoFornecedor.setEndereco(enderecoAssociacao.getEndereco());
+			EnderecoDTO dto = enderecoAssociacao.getEndereco();
+			
+            Endereco endereco = new Endereco(dto.getCodigoBairro(),
+                    dto.getBairro(), dto.getCep(), dto.getCodigoCidadeIBGE(),
+                    dto.getCidade(), dto.getComplemento(),
+                    dto.getTipoLogradouro(), dto.getLogradouro(),
+                    dto.getNumero(), dto.getUf(), dto.getCodigoUf(),
+                    fornecedor.getJuridica());
+            endereco.setId(dto.getId());
+			
+            enderecoFornecedor.setEndereco(endereco);
 
 			enderecoFornecedor.setPrincipal(enderecoAssociacao.isEnderecoPrincipal());
 
@@ -476,7 +489,7 @@ public class FornecedorServiceImpl implements FornecedorService {
 	private void removerEnderecosFornecedor(Fornecedor fornecedor, 
 			   								List<EnderecoAssociacaoDTO> listaEnderecoAssociacao) {
 
-		List<Endereco> listaEndereco = new ArrayList<Endereco>();
+		List<EnderecoDTO> listaEndereco = new ArrayList<EnderecoDTO>();
 		
 		List<Long> idsEndereco = new ArrayList<Long>();
 
@@ -530,35 +543,40 @@ public class FornecedorServiceImpl implements FornecedorService {
 	
 	private void salvarTelefonesFornecedor(List<TelefoneAssociacaoDTO> listaTelefoneFornecedor,
 										   Fornecedor fornecedor) {
+		        
+		PessoaJuridica juridica = fornecedor.getJuridica();
 		
-		if (listaTelefoneFornecedor != null && !listaTelefoneFornecedor.isEmpty()){
+		for (TelefoneAssociacaoDTO dto : listaTelefoneFornecedor) {
 			
-			this.telefoneService.cadastrarTelefone(listaTelefoneFornecedor, fornecedor.getJuridica());
+			TelefoneDTO telefoneDTO = dto.getTelefone();
 			
-			for (TelefoneAssociacaoDTO dto : listaTelefoneFornecedor){
+			this.telefoneService.validarTelefone(telefoneDTO, dto.getTipoTelefone());
+			
+            TelefoneFornecedor telefoneFornecedor =
+				this.telefoneFornecedorRepository.obterTelefoneFornecedor(
+					telefoneDTO.getId(), fornecedor.getId());
+			
+			if (telefoneFornecedor == null){
 				
-				TelefoneFornecedor telefoneFornecedor =
-					this.telefoneFornecedorRepository.obterTelefoneFornecedor(
-						dto.getTelefone().getId(), fornecedor.getId());
+				telefoneFornecedor = new TelefoneFornecedor();
 				
-				if (telefoneFornecedor == null){
-					
-					telefoneFornecedor = new TelefoneFornecedor();
-					
-					telefoneFornecedor.setFornecedor(fornecedor);
-					telefoneFornecedor.setPrincipal(dto.isPrincipal());
-					telefoneFornecedor.setTelefone(dto.getTelefone());
-					telefoneFornecedor.setTipoTelefone(dto.getTipoTelefone());
-					
-					this.telefoneFornecedorRepository.adicionar(telefoneFornecedor);
-					
-				} else {
-					
-					telefoneFornecedor.setPrincipal(dto.isPrincipal());
-					telefoneFornecedor.setTipoTelefone(dto.getTipoTelefone());
-					
-					this.telefoneFornecedorRepository.alterar(telefoneFornecedor);
-				}
+				telefoneFornecedor.setFornecedor(fornecedor);
+				telefoneFornecedor.setPrincipal(dto.isPrincipal());
+				Telefone telefone = new Telefone(telefoneDTO.getId(), telefoneDTO.getNumero(), telefoneDTO.getRamal(), telefoneDTO.getDdd(), juridica);
+				telefoneFornecedor.setTelefone(telefone);
+				telefoneFornecedor.setTipoTelefone(dto.getTipoTelefone());
+				
+				this.telefoneFornecedorRepository.adicionar(telefoneFornecedor);
+				
+			} else {
+				Telefone telefone = telefoneFornecedor.getTelefone();
+				telefone.setDdd(telefoneDTO.getDdd());
+				telefone.setNumero(telefoneDTO.getNumero());
+				telefone.setRamal(telefoneDTO.getRamal());
+				telefoneFornecedor.setPrincipal(dto.isPrincipal());
+				telefoneFornecedor.setTipoTelefone(dto.getTipoTelefone());
+				
+				this.telefoneFornecedorRepository.alterar(telefoneFornecedor);
 			}
 		}
 	}
@@ -636,6 +654,23 @@ public class FornecedorServiceImpl implements FornecedorService {
 	public Integer obterMaxCodigoInterface() {
 		return fornecedorRepository.obterMaxCodigoInterface();
 	}
+	
+	@Override
+	@Transactional(readOnly=true)
+	public Integer obterMinCodigoInterfaceDisponivel() {
+		
+		return fornecedorRepository.obterMinCodigoInterfaceDisponivel();
+		
+	}
+	
+	@Override
+	@Transactional(readOnly=true)
+	public Fornecedor obterFornecedorPorCodigoInterface(Integer codigoInterface) {
+		
+		return fornecedorRepository.obterFornecedorPorCodigo(codigoInterface);
+		
+	}
+	
 	
 	
 }

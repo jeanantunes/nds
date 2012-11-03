@@ -9,7 +9,8 @@ import br.com.abril.nds.model.dne.Bairro;
 import br.com.abril.nds.repository.BairroRepository;
 
 @Repository
-public class BairroRepositoryImpl extends AbstractRepositoryModel<Bairro, Long> implements BairroRepository{
+public class BairroRepositoryImpl extends AbstractRepositoryModel<Bairro, Long>
+		implements BairroRepository {
 
 	public BairroRepositoryImpl() {
 		super(Bairro.class);
@@ -18,11 +19,12 @@ public class BairroRepositoryImpl extends AbstractRepositoryModel<Bairro, Long> 
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Bairro> pesquisarBairros(String nomeBairro) {
-		
-		Query query = 
-				this.getSession().createQuery("select l from Bairro l where l.nome like :nome ");
+
+		Query query = this.getSession().createQuery(
+				"select l from Bairro l where l.nome like :nome ");
 		query.setParameter("nome", "%" + nomeBairro + "%");
-		
+
 		return query.list();
 	}
+
 }

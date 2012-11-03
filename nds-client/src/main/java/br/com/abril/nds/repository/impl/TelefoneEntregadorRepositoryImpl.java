@@ -4,12 +4,16 @@ import java.util.Collection;
 import java.util.List;
 
 import org.hibernate.Query;
-import org.hibernate.transform.AliasToBeanResultTransformer;
+import org.hibernate.transform.AliasToBeanConstructorResultTransformer;
 import org.hibernate.transform.ResultTransformer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
+import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.TelefoneEntregador;
+import br.com.abril.nds.model.cadastro.TipoTelefone;
 import br.com.abril.nds.repository.TelefoneEntregadorRepository;
 
 /**
@@ -23,6 +27,8 @@ import br.com.abril.nds.repository.TelefoneEntregadorRepository;
 public class TelefoneEntregadorRepositoryImpl extends
 		AbstractRepositoryModel<TelefoneEntregador, Long> implements
 		TelefoneEntregadorRepository {
+    
+    private static final Logger LOG = LoggerFactory.getLogger(TelefoneEntregadorRepositoryImpl.class);
 
 	/**
 	 * Construtor.
@@ -83,9 +89,20 @@ public class TelefoneEntregadorRepositoryImpl extends
 
 		Query query = getSession().createQuery(hql.toString());
 
-		ResultTransformer resultTransformer = new AliasToBeanResultTransformer(TelefoneAssociacaoDTO.class);
-		
-		query.setResultTransformer(resultTransformer);
+        ResultTransformer resultTransformer = null;
+
+        try {
+            resultTransformer = new AliasToBeanConstructorResultTransformer(
+                    TelefoneAssociacaoDTO.class.getConstructor(Integer.class,
+                            Telefone.class, boolean.class, TipoTelefone.class));
+        } catch (Exception e) {
+            String message = "Erro criando result transformer para classe: "
+                    + TelefoneAssociacaoDTO.class.getName();
+            LOG.error(message, e);
+            throw new RuntimeException(message, e);
+        }
+        
+        query.setResultTransformer(resultTransformer);
 		
 		query.setParameter("idEntregador", idEntregador);
 		

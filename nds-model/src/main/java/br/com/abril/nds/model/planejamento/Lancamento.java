@@ -109,7 +109,7 @@ public class Lancamento implements Serializable {
 	private Integer sequenciaMatriz;
 	
 	@NotFound(action = NotFoundAction.IGNORE)
-	@ManyToOne(cascade = {CascadeType.REMOVE, CascadeType.MERGE})
+	@ManyToOne(cascade = {CascadeType.ALL})
 	@JoinColumns({
 		@JoinColumn(name = "PRODUTO_EDICAO_ID", referencedColumnName = "PRODUTO_EDICAO_ID", insertable = false, updatable = false),
 		@JoinColumn(name = "DATA_LCTO_PREVISTA", referencedColumnName = "DATA_LANCAMENTO", insertable = false, updatable = false) })
@@ -371,8 +371,5 @@ public class Lancamento implements Serializable {
 	public void setAlteradoInteface(boolean alteradoInteface) {
 		this.alteradoInteface = alteradoInteface;
 	}
-
-	
-	
 
 }

@@ -2,6 +2,7 @@ package br.com.abril.nds.model.estoque;
 
 import java.util.List;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
@@ -11,6 +12,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.envio.nota.ItemNotaEnvio;
 import br.com.abril.nds.model.fiscal.nota.ProdutoServico;
 import br.com.abril.nds.model.movimentacao.AbstractMovimentoEstoque;
 import br.com.abril.nds.model.planejamento.EstudoCota;
@@ -27,6 +29,10 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque {
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "ESTOQUE_PROD_COTA_ID")
 	private EstoqueProdutoCota estoqueProdutoCota;
+	
+	@ManyToOne(optional = true)
+	@JoinColumn(name = "ESTOQUE_PROD_COTA_JURAMENTADO_ID")
+	private EstoqueProdutoCotaJuramentado estoqueProdutoCotaJuramentado;
 	
 	/**
 	 * Estudo cota que originou o movimento, 
@@ -45,7 +51,28 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque {
 	@ManyToOne(optional = true)
 	@JoinColumn(name = "LANCAMENTO_ID")
 	private Lancamento lancamento;
-	
+
+	@ManyToMany(mappedBy="listaMovimentoEstoqueCota")
+	private List<ItemNotaEnvio> listaItemNotaEnvio;
+
+	@Column(name = "STATUS_ESTOQUE_FINANCEIRO")
+	private StatusEstoqueFinanceiro statusEstoqueFinanceiro;
+
+	/**
+	 * @return the statusEstoqueFinanceiro
+	 */
+	public StatusEstoqueFinanceiro getStatusEstoqueFinanceiro() {
+		return statusEstoqueFinanceiro;
+	}
+
+	/**
+	 * @param statusEstoqueFinanceiro the statusEstoqueFinanceiro to set
+	 */
+	public void setStatusEstoqueFinanceiro(
+			StatusEstoqueFinanceiro statusEstoqueFinanceiro) {
+		this.statusEstoqueFinanceiro = statusEstoqueFinanceiro;
+	}
+
 	public Cota getCota() {
 		return cota;
 	}
@@ -117,6 +144,29 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque {
 	 */
 	public void setLancamento(Lancamento lancamento) {
 		this.lancamento = lancamento;
+	}
+
+	/**
+	 * @return the listaItemNotaEnvio
+	 */
+	public List<ItemNotaEnvio> getListaItemNotaEnvio() {
+		return listaItemNotaEnvio;
+	}
+
+	/**
+	 * @param listaItemNotaEnvio the listaItemNotaEnvio to set
+	 */
+	public void setListaItemNotaEnvio(List<ItemNotaEnvio> listaItemNotaEnvio) {
+		this.listaItemNotaEnvio = listaItemNotaEnvio;
+	}
+
+	public EstoqueProdutoCotaJuramentado getEstoqueProdutoCotaJuramentado() {
+		return estoqueProdutoCotaJuramentado;
+	}
+
+	public void setEstoqueProdutoCotaJuramentado(
+			EstoqueProdutoCotaJuramentado estoqueProdutoCotaJuramentado) {
+		this.estoqueProdutoCotaJuramentado = estoqueProdutoCotaJuramentado;
 	}
 
 }

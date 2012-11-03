@@ -4,7 +4,10 @@ import java.util.List;
 
 import br.com.abril.nds.dto.VisaoEstoqueDTO;
 import br.com.abril.nds.dto.VisaoEstoqueDetalheDTO;
+import br.com.abril.nds.dto.VisaoEstoqueTransferenciaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaVisaoEstoque;
+import br.com.abril.nds.model.estoque.TipoEstoque;
+import br.com.abril.nds.model.seguranca.Usuario;
 
 public interface VisaoEstoqueService {
 	
@@ -12,7 +15,8 @@ public interface VisaoEstoqueService {
 	
 	List<? extends VisaoEstoqueDetalheDTO> obterVisaoEstoqueDetalhe(FiltroConsultaVisaoEstoque filtro);
 	
-	List<VisaoEstoqueDetalheDTO> obterVisaoEstoqueTransferencia(FiltroConsultaVisaoEstoque filtro);
+	void transferirEstoque(FiltroConsultaVisaoEstoque filtro, Usuario usuario);
 	
-	List<VisaoEstoqueDetalheDTO> obterVisaoEstoqueInventario(FiltroConsultaVisaoEstoque filtro);
+	void atualizarInventarioEstoque(List<VisaoEstoqueTransferenciaDTO> invetarioAtualizar, TipoEstoque tipoEstoque, Usuario usuario);
+	
 }

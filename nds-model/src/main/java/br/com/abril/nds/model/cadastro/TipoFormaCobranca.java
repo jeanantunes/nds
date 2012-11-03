@@ -27,7 +27,10 @@ public enum TipoFormaCobranca {
 		}
 		
 		
-		
+		@Override
+		public String toString() {
+			return this.descricao;
+		}
 		
 		
 }

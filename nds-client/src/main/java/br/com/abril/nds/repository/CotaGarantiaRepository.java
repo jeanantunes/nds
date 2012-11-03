@@ -1,5 +1,10 @@
 package br.com.abril.nds.repository;
 
+import java.util.List;
+
+import br.com.abril.nds.dto.RelatorioDetalheGarantiaDTO;
+import br.com.abril.nds.dto.RelatorioGarantiasDTO;
+import br.com.abril.nds.dto.filtro.FiltroRelatorioGarantiasDTO;
 import br.com.abril.nds.model.cadastro.Cheque;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantia;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaFiador;
@@ -53,4 +58,31 @@ public interface CotaGarantiaRepository extends Repository<CotaGarantia,Long>{
 	public abstract Cheque getCheque(long idCheque);
 
 	CotaGarantiaFiador obterCotaGarantiaFiadorPorIdFiador(Long idFiador);
+
+	/**
+	 * Obtém garantias cadastradas
+	 * @param filtro
+	 * @return List<RelatorioGarantiasDTO>
+	 */
+	List<RelatorioGarantiasDTO> obterGarantiasCadastradas(FiltroRelatorioGarantiasDTO filtro);
+	
+	/**
+	 * Obtém quantidade de garantias cadastradas
+	 * @param filtro
+	 * @return List<RelatorioGarantiasDTO>
+	 */
+	Long obterCountGarantiasCadastradas(FiltroRelatorioGarantiasDTO filtro);
+	
+	/**
+	 * Obtem detalhe da garantia
+	 * @return List<RelatorioDetalheGarantiaDTO>
+	 */
+	List<RelatorioDetalheGarantiaDTO> obterDetalheGarantiaCadastrada(FiltroRelatorioGarantiasDTO filtro);
+	
+	/**
+	 * Obtem quantidade de detalhe da garantia
+	 * @return Long
+	 */
+	Long obterCountDetalheGarantiaCadastrada(FiltroRelatorioGarantiasDTO filtro);
+
 }

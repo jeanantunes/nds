@@ -51,8 +51,20 @@ public class Telefone implements Serializable {
 	@ManyToOne
 	@JoinColumn(name = "PESSOA_ID")
 	private Pessoa pessoa;
+	
+	public Telefone() {
+    }
 
-	public Long getId() {
+	public Telefone(Long id, String numero, String ramal, String ddd,
+            Pessoa pessoa) {
+        this.id = id;
+        this.numero = numero;
+        this.ramal = ramal;
+        this.ddd = ddd;
+        this.pessoa = pessoa;
+    }
+
+    public Long getId() {
 		return id;
 	}
 
@@ -104,4 +116,44 @@ public class Telefone implements Serializable {
 		
 		return ddd + " - " + numero;
 	}
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
+        return result;
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        Telefone other = (Telefone) obj;
+        if (id == null) {
+            if (other.id != null) {
+                return false;
+            }
+        } else if (!id.equals(other.id)) {
+            return false;
+        }
+        return true;
+    }
+	
+	
+	
+	
 }

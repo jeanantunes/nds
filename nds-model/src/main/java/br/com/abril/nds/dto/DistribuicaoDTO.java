@@ -2,6 +2,7 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 import br.com.abril.nds.model.cadastro.DescricaoTipoEntrega;
@@ -489,6 +490,19 @@ public class DistribuicaoDTO implements Serializable  {
 	 */
 	public void setNomeProcuracao(String nomeProcuracao) {
 		this.nomeProcuracao = nomeProcuracao;
+	}
+	
+    /**
+     * Adiciona um novo tipo de entrega
+     * 
+     * @param tipoEntrega
+     *            tipo de entrega para inclusão
+     */
+	public void addTipoEntrega(DescricaoTipoEntrega tipoEntrega) {
+	    if (tiposEntrega == null) {
+	        tiposEntrega = new ArrayList<ItemDTO<DescricaoTipoEntrega,String>>();
+	    }
+	    tiposEntrega.add(new ItemDTO<DescricaoTipoEntrega, String>(tipoEntrega, tipoEntrega.getValue()));
 	}
 	
 }

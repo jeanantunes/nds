@@ -1,6 +1,5 @@
 package br.com.abril.nds.repository.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.Criteria;
@@ -13,8 +12,8 @@ import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.RotaRoteiroDTO;
 import br.com.abril.nds.model.cadastro.Rota;
-import br.com.abril.nds.model.cadastro.Roteirizacao;
 import br.com.abril.nds.repository.RotaRepository;
+import br.com.abril.nds.util.StringUtil;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 @Repository
@@ -94,35 +93,20 @@ public class RotaRepositoryImpl extends AbstractRepositoryModel<Rota, Long>
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<Rota> buscarRotaPorNome(Long roteiroId, String rotaNome , MatchMode matchMode) {
+	public List<Rota> buscarRotaPorNome(Long roteiroId, String rotaNome, MatchMode matchMode) {
 		Criteria criteria = getSession().createCriteria(Rota.class);
 		criteria.add(Restrictions.eq("roteiro.id", roteiroId));
-		criteria.add(Restrictions.ilike("descricaoRota", rotaNome ,matchMode));
+		if (!StringUtil.isEmpty(rotaNome)) {
+		    criteria.add(Restrictions.ilike("descricaoRota", rotaNome, matchMode));
+		}
 		return criteria.list();
 	}
-
-	@Override
-	public List<Roteirizacao> buscarRoterizacaoPorRotaRoteiro(Long rotaId,
-			Long roteiroId) {
-		List<Roteirizacao> roteirizacao =  new ArrayList<Roteirizacao>();
-		Criteria criteria = getSession().createCriteria(Rota.class);
-		criteria.add(Restrictions.eq("roteiro.id", roteiroId));
-		criteria.add(Restrictions.eq("id", rotaId));
-		Rota rota = (Rota)criteria.uniqueResult();
-		if ( rota != null ){
-			roteirizacao = rota.getRoteirizacao();
-		}
-		
-		return roteirizacao;
-
-			
-	}	
 	
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Rota> buscarRotaDeBox(Long idBox) {
 		
-		String hql  = "select rota from Rota rota join rota.roteiro roteiro join roteiro.box box where box.id=:idBox group by rota ";
+		String hql  = "select rota from Rota rota join rota.roteiro roteiro join roteiro.roteirizacao.box box where box.id=:idBox group by rota ";
 		
 		Query query = getSession().createQuery(hql);
 		query.setParameter("idBox", idBox);
@@ -146,10 +130,9 @@ public class RotaRepositoryImpl extends AbstractRepositoryModel<Rota, Long>
 	public List<Rota> obterRotasPorCota(Integer numeroCota){
 		
 		Criteria criteria =  getSession().createCriteria(Rota.class, "rota");
-		criteria.createAlias("rota.roteirizacao","roteirizacao");
-		criteria.createAlias("roteirizacao.pdv","pdv");
+		criteria.createAlias("rota.rotaPDVs","rotaPdv");
+		criteria.createAlias("rotaPdv.pdv","pdv");
 		criteria.createAlias("pdv.cota","cota");
-		
 		criteria.add(Restrictions.eq("cota.numeroCota", numeroCota));
 		criteria.addOrder(Order.asc("rota.descricaoRota"));
 		
@@ -166,10 +149,15 @@ public class RotaRepositoryImpl extends AbstractRepositoryModel<Rota, Long>
 	@Override
 	public Rota obterRotaPorPDV(Long idPDV, Long idCota) {
 		
-		StringBuilder hql = new StringBuilder("select rot.rota from Roteirizacao rot ");
-		hql.append(" where rot.pdv.id = :idPDV ")
-		   .append(" and rot.pdv.caracteristicas.pontoPrincipal = :principal ")
-		   .append(" and rot.pdv.cota.id = :idCota ");
+		StringBuilder hql = new StringBuilder(" select rot from Rota rot ");
+		
+		hql.append(" join rot.rotaPDVs rotaPdv ")
+		
+		   .append(" where rotaPdv.pdv.id = :idPDV ")
+		   
+		   .append(" and rotaPdv.pdv.caracteristicas.pontoPrincipal = :principal ")
+		   
+		   .append(" and rotaPdv.pdv.cota.id = :idCota ");
 		
 		Query query = this.getSession().createQuery(hql.toString());
 		query.setParameter("idPDV", idPDV);
@@ -179,4 +167,5 @@ public class RotaRepositoryImpl extends AbstractRepositoryModel<Rota, Long>
 		
 		return (Rota) query.uniqueResult();
 	}
+	
 }

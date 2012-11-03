@@ -1,8 +1,14 @@
 package br.com.abril.nds.service;
 
 import java.util.List;
+import java.util.Set;
+
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
+import br.com.abril.nds.dto.GeradorFluxoDTO;
+import br.com.abril.nds.dto.ItemDTO;
+import br.com.abril.nds.dto.MaterialPromocionalDTO;
 import br.com.abril.nds.dto.PdvDTO;
 import br.com.abril.nds.dto.PeriodoFuncionamentoDTO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
@@ -11,6 +17,7 @@ import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.MaterialPromocional;
 import br.com.abril.nds.model.cadastro.TipoLicencaMunicipal;
 import br.com.abril.nds.model.cadastro.pdv.AreaInfluenciaPDV;
+import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoEstabelecimentoAssociacaoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoGeradorFluxoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoPeriodoFuncionamentoPDV;
@@ -75,17 +82,102 @@ public interface PdvService {
 	 * @param listaTipos
 	 * @throws Exception
 	 */
-	void validarPeriodos(List<PeriodoFuncionamentoDTO> periodos) ;
+	void validarPeriodos(List<PeriodoFuncionamentoDTO> periodos);
 
 	List<TelefoneAssociacaoDTO> buscarTelefonesPdv(Long idPdv, Long idCota);
 	
 	boolean existePDVPrincipal(Long idCota, Long idPdv);
 	
-	List<Endereco> buscarMunicipiosPdvPrincipal();
+	List<ItemDTO<Integer, String>> buscarMunicipiosPdvPrincipal();
 	
 	Endereco buscarMunicipioPdvPrincipal(Integer codigoCidadeIBGE);
 	
 	List<TipoPontoPDV> obterTiposPontoPDVPrincipal();
 	
 	TipoPontoPDV obterTipoPontoPDVPrincipal(Long codigoPontoPDV);
+	
+    /**
+     * Obtém a lista de PDV's associados ao histórico de titularidade da cota
+     * 
+     * @param filtro
+     *            filtro com os parâmetros para consulta dos PDV's
+     * @return {@link List<PdvDTO>} com os PDV's associados ao histórico de
+     *         titularidade da cota
+     */
+    List<PdvDTO> obterPdvsHistoricoTitularidade(FiltroPdvDTO filtro);
+    
+    /**
+     * Obtém o PDV associado ao histórico de titularidade da cota
+     * @param idPdv
+     *            identificador do PDV associado ao histórico de titularidade da
+     *            cota
+     * @return {@link PdvDTO} com as informações do PDV associado ao histórico
+     *         de titularidade da cota
+     */
+    PdvDTO obterPdvHistoricoTitularidade(Long idPdv);
+    
+    /**
+     * Obtém os endereços do histórico de titularidade do PDV
+     * 
+     * @param idPdv
+     *            identificador do PDV associado ao histórico de titularidade
+     * @return Lista de {@link EnderecoAssociacaoDTO} com as informações dos
+     *         endereços associados ao histórico de titularidade do PDV
+     */
+    List<EnderecoAssociacaoDTO> obterEnderecosHistoricoTitularidadePDV(Long idPdv);
+    
+    
+    /**
+     * Obtém os telefones do histórico de titularidade do PDV
+     * 
+     * @param idPdv
+     *            identificador do PDV associado ao histórico de titularidade
+     * @return Lista de {@link TelefoneAssociacaoDTO} com as informações dos
+     *         telefones associados ao histórico de titularidade do PDV
+     */
+    List<TelefoneAssociacaoDTO> obterTelefonesHistoricoTitularidadePDV(Long idPdv);
+    
+    /**
+     * Obtém os geradores de fluxo do PDV do histórico de titularidade da cota
+     * 
+     * @param idPdv
+     *            identificador do PDV do histórico de titularidade
+     * @param codigos
+     *            códigos dos geradores de fluxo
+     * 
+     * @return lista de {@link GeradorFluxoDTO} com as informações de geradores
+     *         de fluxo associados ao PDV do histórico de titularidade da cota
+     */
+    List<GeradorFluxoDTO> obterGeradoresFluxoHistoricoTitularidadePDV(Long idPdv, Set<Long> codigos);
+
+    /**
+     * Obtém os materiais promocionais do PDV do histórico de titularidade da cota
+     * 
+     * @param idPdv
+     *            identificador do PDV do histórico de titularidade
+     * @param codigos
+     *            códigos dos materiais promocionais
+     * 
+     * @return lista de {@link MaterialPromocionalDTO} com as informações de materiais
+     *         promocionais associados ao PDV do histórico de titularidade da cota
+     */
+    List<MaterialPromocionalDTO> obterMateriaisPromocionaisHistoricoTitularidadePDV(Long idPdv, Set<Long> codigos);
+
+    /**
+     * Obtém a imagem do PDV do histórico de titularidade da cota
+     * 
+     * @param idPdv
+     *            identificador do PDV do histórico de titularidade
+     * @return imagem do PDV do histórico de titularidade da cota
+     */
+    byte[] obterImagemHistoricoTitularidadePDV(Long idPdv);
+    
+    /**
+     * Obtem PDV por id
+     * @param idPdv
+     * @return PDV
+     */
+    public PDV obterPDVporId(Long idPdv);
+    
 }
+

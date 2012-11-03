@@ -1,15 +1,23 @@
 package br.com.abril.nds.model.cadastro;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-import br.com.abril.nds.model.cadastro.pdv.PDV;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
+
 
 @Entity
 @Table(name = "ROTEIRIZACAO")
@@ -22,18 +30,15 @@ public class Roteirizacao {
 	@Column(name = "ID")
 	private Long id;
 	
-	@ManyToOne
-	@JoinColumn(name = "PDV_ID")
-	private PDV pdv;
-
-	@ManyToOne
-	@JoinColumn(name = "ROTA_ID")
-	private Rota rota;
+	@OneToOne
+	@JoinColumn(name = "BOX_ID", unique = true)
+	private Box box;
 	
-	@Column(name="ORDEM", nullable = false)
-	private Integer ordem;
+	@OneToMany(orphanRemoval = true)
+	@JoinColumn( name="ROTEIRIZACAO_ID")
+	@Cascade(value = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.SAVE_UPDATE})
+	private List<Roteiro> roteiros = new ArrayList<Roteiro>();
 	
-
 	public Long getId() {
 		return id;
 	}
@@ -41,34 +46,103 @@ public class Roteirizacao {
 	public void setId(Long id) {
 		this.id = id;
 	}
+
+	/**
+	 * @return the box
+	 */
+	public Box getBox() {
+		return box;
+	}
+
+	/**
+	 * @param box the box to set
+	 */
+	public void setBox(Box box) {
+		this.box = box;
+	}
+
+	/**
+	 * @return the roteiros
+	 */
+	public List<Roteiro> getRoteiros() {
+		return roteiros;
+	}
+
+	/**
+	 * @param roteiros the roteiros to set
+	 */
+	public void setRoteiros(List<Roteiro> roteiros) {
+		this.roteiros = roteiros;
+	}
+
+	/**
+	 * Adiciona um novo roteiro à roteirização
+	 * @param roteiro: Roteiro para inclusão
+	 */
+	public void addRoteiro(Roteiro roteiro) {
+	    if (roteiro.getOrdem() <= 0) {
+            throw new IllegalArgumentException("Ordem [" + roteiro.getOrdem()  + "] para o Roteiro não é válida!");
+        }
+        Roteiro roteiroExistente = getRoteiroByOrdem(roteiro.getOrdem());
+        if (roteiroExistente != null) {
+            throw new IllegalArgumentException("Ordem [" + roteiro.getOrdem()  + "] para o Roteiro já utilizada!");
+        }
+	    
+	    if (roteiros == null) {
+			roteiros = new ArrayList<Roteiro>();
+		}
+		roteiro.setRoteirizacao(this);
+		roteiros.add(roteiro);
+	}
 	
-	/**
-	 * @return the pdv
-	 */
-	public PDV getPdv() {
-		return pdv;
-	}
+    /**
+     * Recupera o roteiro pela ordem
+     * 
+     * @param ordem
+     *            ordem para recuperação do roteiro
+     * @return Roteiro que corresponde à ordem recebida ou null caso não exista
+     *         Roteiro para a ordem recebida
+     */
+	private Roteiro getRoteiroByOrdem(Integer ordem) {
+	    for (Roteiro roteiro : roteiros) {
+	        if (roteiro.getOrdem().equals(ordem)) {
+	            return roteiro;
+	        }
+	    }
+        return null;
+    }
 
-	/**
-	 * @param pdv the pdv to set
-	 */
-	public void setPdv(PDV pdv) {
-		this.pdv = pdv;
-	}
+    /**
+     * Desassocia os roteiros da roteirização de acordo com os identificadores
+     * recebidos
+     * 
+     * @param idsRoteiros
+     *            identificadores dos roteiros para desassociação
+     */
+	public void desassociarRoteiros(Collection<Long> idsRoteiros) {
+        Iterator<Roteiro> iterator = roteiros.iterator();
+        while(iterator.hasNext()) {
+            Roteiro roteiro = iterator.next();
+            if (idsRoteiros.contains(roteiro.getId())) {
+                iterator.remove();
+            }
+        }
+    }
 
-	public Rota getRota() {
-		return rota;
-	}
-
-	public void setRota(Rota rota) {
-		this.rota = rota;
-	}
-
-	public Integer getOrdem() {
-		return ordem;
-	}
-
-	public void setOrdem(Integer ordem) {
-		this.ordem = ordem;
-	}
+    /**
+     * Recupera o roteiro pelo identificador
+     * 
+     * @param id
+     *            identificador do roteiro
+     * @return Roteiro com o identificador recebido ou null caso não exista
+     *         roteiro com o identificador
+     */
+	public Roteiro getRoteiro(Long id) {
+        for (Roteiro roteiro : roteiros) {
+            if (roteiro.getId().equals(id)) {
+                return roteiro;
+            }
+        }
+        return null;
+    }
 }

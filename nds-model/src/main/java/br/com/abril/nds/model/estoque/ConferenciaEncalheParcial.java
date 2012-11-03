@@ -1,6 +1,5 @@
 package br.com.abril.nds.model.estoque;
 
-import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 
@@ -18,7 +17,7 @@ import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.seguranca.Usuario;
 /**
- * Entidade que abstrai informações "inputadas" na funcionalidade 
+ * Entidade que abstrai informações digitadas na funcionalidade 
  * digitação contagem devolução.
  * 
  * @author Discover Technology
@@ -32,13 +31,25 @@ public class ConferenciaEncalheParcial {
 	@GeneratedValue(generator = "CONFERENCIA_ENC_PARCIAL_SEQ")
 	private Long id;
 	
+	/**
+	 * Data em que ocorreu a conferencia de encalhe (Funcionalidade Conferencia Encalhe Cota) 
+	 * do produto no distribuidor. 
+	 */
 	@Temporal(value=TemporalType.DATE)
 	@Column(name = "DATA_MOVIMENTO", nullable = false)
 	private Date dataMovimento;
 	
+	/**
+	 * Data na qual foi criado este registro de ConferenciaEncalheParcial
+	 * (Na funcionalidade Digitacao Contagem Devolução).
+	 */
 	@Column(name = "DATA_CONF_ENC_PARCIAL", nullable = false)
 	private Date dataConfEncalheParcial;
 	
+	/**
+	 * Data na qual ocorreu a confirmação deste registro.
+	 * (Na funcionalidade Digitacao Contagem Devolução).
+	 */
 	@Column(name = "DATA_APROVACAO")
 	private Date dataAprovacao;
 	
@@ -59,7 +70,7 @@ public class ConferenciaEncalheParcial {
 	
 	@ManyToOne(optional = true)
 	private ProdutoEdicao produtoEdicao;
-
+	
 	public Long getId() {
 		return id;
 	}

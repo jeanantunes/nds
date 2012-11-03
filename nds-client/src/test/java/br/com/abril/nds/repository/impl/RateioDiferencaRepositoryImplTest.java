@@ -4,10 +4,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 
-import junit.framework.Assert;
-
 import org.junit.Before;
-import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.fixture.Fixture;
@@ -32,6 +29,7 @@ import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.RateioDiferenca;
 import br.com.abril.nds.model.estoque.RecebimentoFisico;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
+import br.com.abril.nds.model.estoque.TipoDirecionamentoDiferenca;
 import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.fiscal.CFOP;
@@ -73,7 +71,7 @@ public class RateioDiferencaRepositoryImplTest extends AbstractRepositoryImplTes
 		produto.setEditor(abril);
 		save(produto);
 				
-		ProdutoEdicao produtoEdicao = Fixture.produtoEdicao("1", 1L, 1, 1, new Long(100), BigDecimal.TEN, BigDecimal.TEN, "ABCDEFGHIJKLMNOPQ", 1L, produto, null, false);
+		ProdutoEdicao produtoEdicao = Fixture.produtoEdicao(1L, 1, 1, new Long(100), BigDecimal.TEN, BigDecimal.TEN, "ABCDEFGHIJKLMNOPQ", produto, null, false);
 		save(produtoEdicao);
 		
 		PessoaJuridica pessoaJuridica = Fixture.pessoaJuridica("razaoSocial", "cnpj", "ie", "email", "99.999-9");
@@ -92,7 +90,7 @@ public class RateioDiferencaRepositoryImplTest extends AbstractRepositoryImplTes
 		save(cfop);
 		
 		NotaFiscalEntrada notaFiscal = 
-				Fixture.notaFiscalEntradaFornecedor(cfop, pessoaJuridica, fornecedor, tipoNotaFiscal, 
+				Fixture.notaFiscalEntradaFornecedor(cfop, fornecedor, tipoNotaFiscal, 
 						usuario, BigDecimal.TEN, BigDecimal.ZERO, BigDecimal.TEN);
 		save(notaFiscal);
 				
@@ -110,7 +108,7 @@ public class RateioDiferencaRepositoryImplTest extends AbstractRepositoryImplTes
 		save(itemNotaFiscal);
 		
 		NotaFiscalEntradaFornecedor notaFiscalFornecedor = 
-				Fixture.notaFiscalEntradaFornecedor(cfop, pessoaJuridica, fornecedor, tipoNotaFiscal, 
+				Fixture.notaFiscalEntradaFornecedor(cfop, fornecedor, tipoNotaFiscal, 
 						usuario, BigDecimal.TEN, BigDecimal.ZERO, BigDecimal.TEN);
 		save(notaFiscalFornecedor);
 		
@@ -135,7 +133,7 @@ public class RateioDiferencaRepositoryImplTest extends AbstractRepositoryImplTes
 		save(movimentoEstoque);
 		
 		diferenca = 
-				Fixture.diferenca(BigInteger.TEN, usuario, produtoEdicao, TipoDiferenca.FALTA_DE, StatusConfirmacao.CONFIRMADO, itemRecebimentoFisico, movimentoEstoque, true, TipoEstoque.LANCAMENTO);
+				Fixture.diferenca(BigInteger.TEN, usuario, produtoEdicao, TipoDiferenca.FALTA_DE, StatusConfirmacao.CONFIRMADO, itemRecebimentoFisico,true, TipoEstoque.LANCAMENTO,TipoDirecionamentoDiferenca.ESTOQUE,new Date());
 		
 		save(diferenca);
 		
@@ -153,11 +151,4 @@ public class RateioDiferencaRepositoryImplTest extends AbstractRepositoryImplTes
 		save(rateioDiferenca);
 	}
 	
-	
-	@Test
-	public void obterRateioDiferencaPorDiferencaTest(){
-		RateioDiferenca rateioDiferenca = this.rateioDiferencaRepositoryImpl.obterRateioDiferencaPorDiferenca(diferenca.getId());
-		
-		Assert.assertNotNull(rateioDiferenca);
-	}
 }

@@ -44,7 +44,7 @@ var produtoController = $.extend(true, {
 	},
 
 	getCodigoProdutoPesquisa: function () {
-		return  "codigoProduto=" + $("#codigoProduto", this.workspace).val();
+		return  {codigoProduto:$("#codigoProduto", this.workspace).val()};
 	},
 	
 	pesquisarFornecedor:function(data){
@@ -61,7 +61,7 @@ var produtoController = $.extend(true, {
 		var nomeFornecedor = $(idFornecedor, this.workspace).val();
 		
 		if (nomeFornecedor && nomeFornecedor.length > 2) {
-			$.postJSON(contextPath + "/produto/autoCompletarPorNomeFornecedor", "nomeFornecedor=" + nomeFornecedor,
+			$.postJSON(contextPath + "/produto/autoCompletarPorNomeFornecedor", {nomeFornecedor:nomeFornecedor},
 					   function(result) { produtoController.pesquisaProduto.exibirAutoComplete(result, idFornecedor); },
 					   null, isFromModal);
 		}
@@ -82,7 +82,7 @@ var produtoController = $.extend(true, {
 		}
 		
 		$.postJSON(contextPath + "/produto/carregarPercentualDesconto",
-					"codigoTipoDesconto=" + codigoTipoDesconto, 
+					{codigoTipoDesconto:codigoTipoDesconto}, 
 					function(result) {
 
 						if (result == 0) {
@@ -241,7 +241,7 @@ var produtoController = $.extend(true, {
 	carregarProdutoEditado : function(id) {
 
 		$.postJSON(contextPath + "/produto/carregarProdutoParaEdicao", 
-				   	"id=" + id,
+				   	{id:id},
 				   	function(result) {
 			   
 						$("#idProduto", produtoController.workspace).val(result.id);
@@ -265,9 +265,9 @@ var produtoController = $.extend(true, {
 						$("#segmentacaoTemaPrincipal", produtoController.workspace).val(result.temaPrincipal);
 						$("#segmentacaoTemaSecundario", produtoController.workspace).val(result.temaSecundario);
 
-						if (result.formaComercializacao == 'Conta Firme') {
+						if (result.formaComercializacao == 'CONTA_FIRME') {
 							$("#formaComercializacaoContaFirme", this.workspace).attr('checked', true);
-						} else if (result.formaComercializacao == 'Consignado') {
+						} else if (result.formaComercializacao == 'CONSIGNADO') {
 							$("#formaComercializacaoConsignado", this.workspace).attr('checked', true);
 						}
 						
@@ -297,7 +297,7 @@ var produtoController = $.extend(true, {
 				"Confirmar" : function() {
 					
 					$.postJSON(contextPath + "/produto/removerProduto", 
-							   "id=" + id,
+							   {id:id},
 							   function(result) {
 							   		
 							   		$("#dialog-excluir", this.workspace).dialog("close");
@@ -477,3 +477,5 @@ var produtoController = $.extend(true, {
 	},
 
 }, BaseController);
+
+//@ sourceURL=produto.js

@@ -6,7 +6,7 @@ var descontoCotaController = $.extend(true,{
 		$("#selectFornecedor_option_especifico",this.workspace).clear();
 		
 		$("#numCotaEspecifico",this.workspace).val("");
-		$("#descontoEspecifico",this.workspace).val("");
+		$("#descontoEspecifico",this.workspace).justPercent("floatValue");
 		$("#descricaoCotaEspecifico",this.workspace).val("");
 		
 		$( "#dialog-especifico",this.workspace ).dialog({
@@ -33,19 +33,18 @@ var descontoCotaController = $.extend(true,{
 	novoDescontoEspecifico:function() {
 		
 		var cotaEspecifica = $("#numCotaEspecifico",this.workspace).val();
-		var descontoEspecifico = $("#descontoEspecifico",this.workspace).val();
+		var descontoEspecifico = $("#descontoEspecifico",this.workspace).justPercent("floatValue");
 		
-		var fornecedores ="";
+		var fornecedores = new Array();
 		
 		$("#selectFornecedorSelecionado_option_especifico option",this.workspace).each(function (index) {
-			 fornecedores = fornecedores + "fornecedores["+index+"]="+ $(this).val() +"&";
+			 fornecedores.push($(this).val());
 		});
 		
-		$.postJSON(contextPath+"/financeiro/tipoDescontoCota/novoDescontoEspecifico",
-				"numeroCota=" + cotaEspecifica	+				
-				"&desconto=" + descontoEspecifico + "&" +
-				fornecedores
-				,				   
+		var param = {numeroCota:cotaEspecifica,desconto:descontoEspecifico};		
+		param = serializeArrayToPost('fornecedores', fornecedores, param);
+		
+		$.postJSON(contextPath+"/financeiro/tipoDescontoCota/novoDescontoEspecifico",param,				   
 				function(result) {
 			           
 						 if (result.tipoMensagem && result.tipoMensagem !="SUCCESS" && result.listaMensagens) {			      
@@ -105,7 +104,7 @@ var descontoCotaController = $.extend(true,{
 		
 		$("select[name='selectFornecedor_especifico']",this.workspace).multiSelect("select[name='selectFornecedorSelecionado_especifico']", {trigger: "#linkFornecedorEnviarTodos_especifico"});
 		
-		$("#descontoEspecifico",this.workspace).mask("99.99");
+		$("#descontoEspecifico",this.workspace).justPercent();
 		
 		$(".tiposDescEspecificoGrid",this.workspace).flexigrid({
 			preProcess: tipoDescontoController.executarPreProcessamento,
@@ -160,7 +159,7 @@ var descontoCotaController = $.extend(true,{
 			rp : 15,
 			showTableToggleBtn : true,
 			width : 960,
-			height : 255
+			height : 'auto'
 		});		
 	}
 }, BaseController);

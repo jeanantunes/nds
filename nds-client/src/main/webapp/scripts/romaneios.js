@@ -2,49 +2,32 @@ var romaneiosController = $.extend(true, {
 	
 	init : function () {
 		$(".romaneiosGrid", romaneiosController.workspace).flexigrid({
-			preProcess: executarPreProcessamento,
+			preProcess: romaneiosController.executarPreProcessamento,
+			onSuccess: romaneiosController.carregarQuantidadeCotas,
 			dataType : 'json',
 			colModel : [ {
+				display : 'Nº. NE',
+				name : 'numeroNotaEnvio',
+				width : 80,
+				sortable : true,
+				align : 'left'
+			},{
 				display : 'Cota',
 				name : 'numeroCota',
-				width : 60,
+				width : 50,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Nome',
 				name : 'nome',
-				width : 180,
+				width : 310,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Endereço',
 				name : 'logradouro',
-				width : 260,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Bairro',
-				name : 'bairro',
-				width : 135,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Cidade',
-				name : 'cidade',
-				width : 90,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'UF',
-				name : 'uf',
-				width : 30,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Telefone',
-				name : 'numeroTelefone',
-				width : 100,
-				sortable : true,
+				width : 450,
+				sortable : false,
 				align : 'left'
 			}],
 			sortname : "cota",
@@ -55,8 +38,17 @@ var romaneiosController = $.extend(true, {
 			showTableToggleBtn : true,
 			width : 960,
 			height : 150
-		});		
-
+		});
+		
+		$( "#dataLancamento", romaneiosController.workspace ).datepicker({
+			showOn: "button",
+			buttonImage: contextPath +"/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
+			buttonImageOnly: true
+		});
+		
+		$("#selectProdutos", romaneiosController.workspace).multiselect({
+			selectedList : 6
+		});
 	},
 	
 	mostrar : function(){
@@ -71,20 +63,31 @@ var romaneiosController = $.extend(true, {
 			$(".dadosFiltro", romaneiosController.workspace).show();		
 	},
 
-	pesquisar : function(){	
-		$(".romaneiosGrid").flexOptions({
+	pesquisar : function(){
+		
+		var params = [];
+		
+		params.push({name: 'filtro.data',      value: $("#dataLancamento", romaneiosController.workspace).val()});
+		params.push({name: 'filtro.idBox',     value:$('#idBox', romaneiosController.workspace).val()});
+		params.push({name: 'filtro.idRoteiro', value:$('#idRoteiro', romaneiosController.workspace).val()});
+		params.push({name: 'filtro.idRota',    value:$('#idRota', romaneiosController.workspace).val()});
+		params.push({name: 'filtro.nomeRota',  value: $('#idRota option:selected', romaneiosController.workspace).text()});
+		
+		var produtos = $("#selectProdutos", romaneiosController.workspace).val();
+		
+		if (produtos){
+			$.each(produtos, function(index, value){
+				params.push({name: 'filtro.produtos['+index+']', value: value});
+			});
+		}
+		
+		$(".romaneiosGrid", romaneiosController.workspace).flexOptions({
 			url: contextPath + "/romaneio/pesquisarRomaneio",
 			dataType : 'json',
-			params: [
-						{name:'filtro.idBox', value:$('#idBox', romaneiosController.workspace).val()},
-						{name:'filtro.idRoteiro', value:$('#idRoteiro', romaneiosController.workspace).val()},
-						{name:'filtro.idRota', value:$('#idRota', romaneiosController.workspace).val()},
-						{name:'filtro.nomeRota',	value: $('#idRota option:selected', romaneiosController.workspace).text()}
-						]
+			params: params
 		});
 		
 		$(".romaneiosGrid", romaneiosController.workspace).flexReload();
-
 	},
 
 	executarPreProcessamento : function(resultado) {
@@ -101,9 +104,79 @@ var romaneiosController = $.extend(true, {
 			return resultado;
 		}
 		
+		$.each(resultado.rows, function(index, value){
+			
+			if (!value.cell.numeroNotaEnvio){
+				
+				value.cell.numeroNotaEnvio = '';
+			}
+		});
+		
 		$(".grids", romaneiosController.workspace).show();
 		
 		return resultado;
+	},
+	
+	carregarQuantidadeCotas : function(){
+		
+		$.postJSON(contextPath + "/romaneio/pesquisarQuantidadeCotasEntrega",
+			null,
+			function(result) {
+				
+				if (result.mensagens) {
+	
+					exibirMensagem(
+						result.mensagens.tipoMensagem, 
+						result.mensagens.listaMensagens
+					);
+				}
+				
+				$("#totalCotas", romaneiosController.workspace).text(result ? result.int : "");
+			}
+		);
+	},
+	
+	pesquisarProdutos : function(){
+		
+		var data = $("#dataLancamento", romaneiosController.workspace).val();
+		
+		if (data){
+		
+			$.postJSON(contextPath + "/romaneio/carregarProdutosDataLancamento",
+				{data:data},
+				function(result) {
+					
+					if (result.mensagens) {
+		
+						exibirMensagem(
+							result.mensagens.tipoMensagem, 
+							result.mensagens.listaMensagens
+						);
+						
+						$(".grids", romaneiosController.workspace).hide();
+					}
+					
+					var itens = '';
+					
+					if (result){
+						$.each(result, function(index, result) {
+							itens += '<option value="'+ result.key.$ +'">'+ (result.value ? result.value.$ : '' ) +'</option>';
+						});
+					}
+					
+					$("#selectProdutos", romaneiosController.workspace).multiselect("destroy");
+					$("#selectProdutos", romaneiosController.workspace).html("");
+					$("#selectProdutos", romaneiosController.workspace).append(itens).multiselect();
+				}
+			);
+		} else {
+			
+			$("#selectProdutos", romaneiosController.workspace).multiselect("destroy");
+			$("#selectProdutos", romaneiosController.workspace).html("");
+			$("#selectProdutos", romaneiosController.workspace).multiselect();
+		}
 	}
 		
 }, BaseController);
+
+//@ sourceURL=romaneios.js

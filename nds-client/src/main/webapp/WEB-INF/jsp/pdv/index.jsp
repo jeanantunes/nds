@@ -1,26 +1,20 @@
 
 <script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/pdv.js"></script>
-	
-<label><strong>PDVs Cadastrados</strong></label>
-<br />
-<table class="PDVsGrid"></table>
-<br />
-<span class="bt_novo"><a href="javascript:;" onclick="PDV.poupNovoPDV();">Novo</a></span>
-
+<fieldset style="width:880px!important; margin:5px;">
+ 	<legend>PDVs Cadastrados</legend>	
+	<table class="PDVsGrid"></table>
+	<br />
+	<span class="bt_novos" id="PDVbtnNovo"><a href="javascript:;" onclick="PDV.poupNovoPDV();" rel="tipsy" title="Incluir Novo PDV"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" border="0" /></a></span>
+</fieldset>
 <br clear="all" />
 
-<form id="idFormPDVExcluir">
-	<div id="dialog-excluirPdv" title="Atenção" style="display:none">
-		<p>Confirmar exclusão PDV ?</p>
-	</div>
-</form>
+<div id="dialog-excluirPdv" title="Atenção" style="display:none">
+	<p>Confirmar exclusão PDV ?</p>
+</div>
 
-<form id="idFormPDVCancelar">
-	<div id="dialog-cancelar-cadastro-pdv" title="PDV" style="display: none;">
-			<p>Dados não salvos serão perdidos. Confirma o cancelamento?</p>
-	</div>
-</form>
-
+<div id="dialog-cancelar-cadastro-pdv" title="PDV" style="display: none;">
+	<p>Dados não salvos serão perdidos. Confirma o cancelamento?</p>
+</div>
 
 <div id="dialog-pdv" title="PDV Cota">
 		
@@ -56,11 +50,8 @@
 					 
 			  <br clear="all" />
 		</div>
-		
 </div>
 
-<form id="idFormPDVConfirmarPP">
-	<div id="dialog-confirmaPontoPrincipal" title="Ponto Principal" style="display: none;">
-		<p>Já existe um ponto principal, deseja substitui-lo por este?</p>
-	</div>
-</form>
+<div id="dialog-confirmaPontoPrincipal" title="Ponto Principal" style="display: none;">
+	<p>Já existe um ponto principal, deseja substitui-lo por este?</p>
+</div>

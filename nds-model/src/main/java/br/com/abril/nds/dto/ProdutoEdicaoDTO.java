@@ -29,9 +29,10 @@ public class ProdutoEdicaoDTO implements Serializable {
 	private String codigoProduto;
 	private String nomeProduto;
 	
-	private String descricaoProduto;
+	private String nomeComercial;
 	private boolean possuiBrinde;
 	private String descricaoBrinde;
+	private Long idBrinde;
 	
 	private BigDecimal expectativaVenda;
 	private boolean permiteValeDesconto;
@@ -543,16 +544,28 @@ public class ProdutoEdicaoDTO implements Serializable {
 		this.descricaoBrinde = descricaoBrinde;
 	}
 	/**
-	 * @return the descricaoProduto
+	 * @return the idBrinde
 	 */
-	public String getDescricaoProduto() {
-		return descricaoProduto;
+	public Long getIdBrinde() {
+		return idBrinde;
 	}
 	/**
-	 * @param descricaoProduto the descricaoProduto to set
+	 * @param idBrinde the idBrinde to set
 	 */
-	public void setDescricaoProduto(String descricaoProduto) {
-		this.descricaoProduto = descricaoProduto;
+	public void setIdBrinde(Long idBrinde) {
+		this.idBrinde = idBrinde;
+	}
+	/**
+	 * @return the descricaoProduto
+	 */
+	public String getNomeComercial() {
+		return nomeComercial;
+	}
+	/**
+	 * @param nomeComercial the descricaoProduto to set
+	 */
+	public void setNomeComercial(String nomeComercial) {
+		this.nomeComercial = nomeComercial;
 	}
 	
 }

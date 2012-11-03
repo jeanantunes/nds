@@ -228,7 +228,6 @@ var OperacaoDiferenciadaController = $.extend(true, {
 		
 		dados.push({ name : 'selecionado', value: elementoCheck.checked });
 		
-		debugger;
 		
 		$.postJSON(contextPath + '/administracao/parametrosDistribuidor/selecionarTodosMunicipios', dados);
 		
@@ -310,7 +309,6 @@ var OperacaoDiferenciadaController = $.extend(true, {
 			modal: true,
 			buttons: {
 				"Confirmar": function() {
-					debugger;
 					var data = [];
 					
 					data.push({name: "nome", value: $("#nomeDiferenca", this.workspace ).val()});
@@ -347,7 +345,7 @@ var OperacaoDiferenciadaController = $.extend(true, {
 		
 		$( "#dialog-novo-grupo", this.workspace ).dialog({
 			resizable: false,
-			height:450,
+			height:470,
 			width:750,
 			modal: true,
 			buttons: {

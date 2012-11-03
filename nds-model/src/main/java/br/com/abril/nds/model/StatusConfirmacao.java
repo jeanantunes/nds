@@ -7,5 +7,6 @@ package br.com.abril.nds.model;
  */
 public enum StatusConfirmacao {
 	PENDENTE,
-	CONFIRMADO
+	CONFIRMADO,
+	CANCELADO
 }

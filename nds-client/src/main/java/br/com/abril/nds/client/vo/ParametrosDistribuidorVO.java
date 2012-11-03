@@ -73,6 +73,8 @@ public class ParametrosDistribuidorVO {
 
     // Frame Reutilização de Código de Cota
     private Long reutilizacaoCodigoCotaInativa;
+
+    private boolean utilizaSugestaoIncrementoCodigo;
     
     // Frame Emissão de Documentos
     private boolean slipImpressao;
@@ -1118,4 +1120,22 @@ public class ParametrosDistribuidorVO {
                 || utilizaAntecedenciaValidade || utilizaOutros;
     }
 
+	/**
+	 * Obtém utilizaSugestaoIncrementoCodigo
+	 *
+	 * @return boolean
+	 */
+	public boolean isUtilizaSugestaoIncrementoCodigo() {
+		return utilizaSugestaoIncrementoCodigo;
+	}
+
+	/**
+	 * Atribuí utilizaSugestaoIncrementoCodigo
+	 * @param utilizaSugestaoIncrementoCodigo 
+	 */
+	public void setUtilizaSugestaoIncrementoCodigo(
+			boolean utilizaSugestaoIncrementoCodigo) {
+		this.utilizaSugestaoIncrementoCodigo = utilizaSugestaoIncrementoCodigo;
+	}
+    
 }

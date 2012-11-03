@@ -1,7 +1,10 @@
 package br.com.abril.nds.fixture;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -9,14 +12,21 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicLong;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import br.com.abril.nds.integracao.model.canonic.InterfaceEnum;
@@ -32,11 +42,13 @@ import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Algoritmo;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Box;
+import br.com.abril.nds.model.cadastro.Brinde;
+import br.com.abril.nds.model.cadastro.CaucaoLiquida;
+import br.com.abril.nds.model.cadastro.Cheque;
 import br.com.abril.nds.model.cadastro.ContratoCota;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.DescontoLogistica;
 import br.com.abril.nds.model.cadastro.DescricaoTipoEntrega;
-import br.com.abril.nds.model.cadastro.DistribuicaoDistribuidor;
 import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Editor;
@@ -46,16 +58,21 @@ import br.com.abril.nds.model.cadastro.EnderecoDistribuidor;
 import br.com.abril.nds.model.cadastro.EnderecoEntregador;
 import br.com.abril.nds.model.cadastro.EnderecoFornecedor;
 import br.com.abril.nds.model.cadastro.Entregador;
-import br.com.abril.nds.model.cadastro.Feriado;
+import br.com.abril.nds.model.cadastro.EstadoCivil;
+import br.com.abril.nds.model.cadastro.Fiador;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.FormaEmissao;
 import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.Garantia;
+import br.com.abril.nds.model.cadastro.GarantiaCotaOutros;
 import br.com.abril.nds.model.cadastro.GrupoCota;
 import br.com.abril.nds.model.cadastro.GrupoFornecedor;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.HistoricoSituacaoCota;
+import br.com.abril.nds.model.cadastro.Imovel;
 import br.com.abril.nds.model.cadastro.MaterialPromocional;
 import br.com.abril.nds.model.cadastro.MotivoAlteracaoSituacao;
+import br.com.abril.nds.model.cadastro.NotaPromissoria;
 import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
 import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
 import br.com.abril.nds.model.cadastro.ParametroContratoCota;
@@ -85,6 +102,7 @@ import br.com.abril.nds.model.cadastro.TelefoneEntregador;
 import br.com.abril.nds.model.cadastro.TelefoneFornecedor;
 import br.com.abril.nds.model.cadastro.TipoAtividade;
 import br.com.abril.nds.model.cadastro.TipoBox;
+import br.com.abril.nds.model.cadastro.TipoCobrancaCotaGarantia;
 import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.cadastro.TipoEndereco;
 import br.com.abril.nds.model.cadastro.TipoEntrega;
@@ -102,6 +120,13 @@ import br.com.abril.nds.model.cadastro.desconto.DescontoDistribuidor;
 import br.com.abril.nds.model.cadastro.desconto.DescontoProduto;
 import br.com.abril.nds.model.cadastro.desconto.DescontoProdutoEdicao;
 import br.com.abril.nds.model.cadastro.desconto.TipoDesconto;
+import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaCaucaoLiquida;
+import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaChequeCaucao;
+import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaFiador;
+import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaImovel;
+import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaNotaPromissoria;
+import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaOutros;
+import br.com.abril.nds.model.cadastro.garantia.pagamento.PagamentoCaucaoLiquida;
 import br.com.abril.nds.model.cadastro.pdv.AreaInfluenciaPDV;
 import br.com.abril.nds.model.cadastro.pdv.EnderecoPDV;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
@@ -118,6 +143,7 @@ import br.com.abril.nds.model.estoque.ConferenciaEncalhe;
 import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
+import br.com.abril.nds.model.estoque.EstoqueProdutoCotaJuramentado;
 import br.com.abril.nds.model.estoque.Expedicao;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
@@ -127,9 +153,12 @@ import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.RateioDiferenca;
 import br.com.abril.nds.model.estoque.RecebimentoFisico;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
+import br.com.abril.nds.model.estoque.TipoDirecionamentoDiferenca;
 import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
+import br.com.abril.nds.model.financeiro.BaixaManual;
 import br.com.abril.nds.model.financeiro.Boleto;
+import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.financeiro.CobrancaCheque;
 import br.com.abril.nds.model.financeiro.CobrancaDeposito;
 import br.com.abril.nds.model.financeiro.CobrancaDinheiro;
@@ -140,6 +169,9 @@ import br.com.abril.nds.model.financeiro.Divida;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.financeiro.HistoricoAcumuloDivida;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
+import br.com.abril.nds.model.financeiro.Negociacao;
+import br.com.abril.nds.model.financeiro.ParcelaNegociacao;
+import br.com.abril.nds.model.financeiro.StatusBaixa;
 import br.com.abril.nds.model.financeiro.StatusDivida;
 import br.com.abril.nds.model.financeiro.StatusInadimplencia;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
@@ -203,17 +235,27 @@ import br.com.abril.nds.model.planejamento.StatusLancamentoParcial;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
+import br.com.abril.nds.model.planejamento.fornecedor.ChamadaEncalheFornecedor;
+import br.com.abril.nds.model.planejamento.fornecedor.FormaDevolucao;
+import br.com.abril.nds.model.planejamento.fornecedor.RegimeRecolhimento;
 import br.com.abril.nds.model.seguranca.GrupoPermissao;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.EntityUtil;
 import br.com.abril.nds.util.Util;
 
 public class DataLoader {
+    
+    private static final Logger LOG = LoggerFactory.getLogger(DataLoader.class);
+    
+    private static ThreadLocal<AtomicLong> GERADOR_CODIGO_PRODUTO_HOLDER = new ThreadLocal<AtomicLong>();
 
 	private static final String PARAM_SKIP_DATA = "skipData";
 	private static final String PARAM_CLEAN_DATA = "cleanData";
+	
+	private static PessoaJuridica juridicaTreelog;
 	private static PessoaJuridica juridicaAcme;
 	private static PessoaJuridica juridicaDinap;
 	private static PessoaJuridica juridicaFc;
@@ -229,6 +271,11 @@ public class DataLoader {
 	private static PessoaFisica orlando;
 	private static PessoaFisica joao;
 	private static PessoaFisica luis;
+	
+	private static Rota rota1;
+	private static Rota rota2;
+	private static Rota rota3;
+	private static Rota rota10;
 
 	private static TipoMovimentoEstoque tipoMovimentoFaltaEm;
 	private static TipoMovimentoEstoque tipoMovimentoFaltaDe;
@@ -250,6 +297,9 @@ public class DataLoader {
 	private static TipoMovimentoEstoque tipoMovimentoEstornoCotaAusente;
 	private static TipoMovimentoEstoque tipoMovimentoSuplementarCotaAusente;
 
+	private static TipoMovimentoEstoque tipoMovimentoEstornoCotaEnvioReparte;
+	private static TipoMovimentoEstoque tipoMovimentoEntradaSuplementarEnvioReparte;
+	
 	private static TipoMovimentoEstoque tipoMovimentoReparteCotaAusente;
 	private static TipoMovimentoEstoque tipoMovimentoRestautacaoReparteCotaAusente;
 
@@ -262,9 +312,14 @@ public class DataLoader {
 
 	private static TipoMovimentoEstoque tipoMovimentoEnvioJornaleiro;
 
+	private static TipoMovimentoEstoque tipoMovimentoCancelamentoNFDevolucaoConsignado;
+	private static TipoMovimentoEstoque tipoMovimentoCancelamentoNFEnvioConsignado;
+	
 	private static TipoMovimentoFinanceiro tipoMovimentoFinanceiroCredito;
 	private static TipoMovimentoFinanceiro tipoMovimentoFinanceiroDebito;
 	private static TipoMovimentoFinanceiro tipoMovimentoFinanceiroDebitoNA;
+	private static TipoMovimentoFinanceiro tipoMovimentoFinanceiroDebitoPendente;	
+	private static TipoMovimentoFinanceiro tipoMovimentoFinanceiroDebitoPostergado;		
 	private static TipoMovimentoFinanceiro tipoMovimentoFinanceiroDebitoFaturamento;
 	private static TipoMovimentoFinanceiro tipoMovimentoFinanceiroRecebimentoReparte;
 
@@ -272,6 +327,15 @@ public class DataLoader {
 	private static TipoMovimentoFinanceiro tipoMovimentoFinanceiroMulta;
 	private static TipoMovimentoFinanceiro tipoMovimentoFinanceiroEnvioEncalhe;
 
+	private static TipoMovimentoEstoque tipoMovimentoTransferenciaEntradaLancamento;
+	private static TipoMovimentoEstoque tipoMovimentoTransferenciaSaidaLancamento;
+	private static TipoMovimentoEstoque tipoMovimentoTransferenciaEntradaSuplementar;
+	private static TipoMovimentoEstoque tipoMovimentoTransferenciaSaidaSuplementar;
+	private static TipoMovimentoEstoque tipoMovimentoTransferenciaEntradaRecolhimento;
+	private static TipoMovimentoEstoque tipoMovimentoTransferenciaSaidaRecolhimento;
+	private static TipoMovimentoEstoque tipoMovimentoTransferenciaEntradaProdutosDanificados;
+	private static TipoMovimentoEstoque tipoMovimentoTransferenciaSaidaProdutosDanificados;
+	
 	private static MovimentoEstoqueCota movimentoEstoqueCota1;
 	private static MovimentoEstoqueCota movimentoEstoqueCota2;
 	private static MovimentoEstoqueCota movimentoEstoqueCota3;
@@ -352,7 +416,17 @@ public class DataLoader {
 	private static NCM ncmLivroilustrado;
 	private static NCM ncmFigurinha;
 	private static NCM ncmBebidas;
-
+	
+	private static Brinde brinde1;
+	private static Brinde brinde2;
+	private static Brinde brinde6;
+	private static Brinde brinde7;
+	private static Brinde brinde9;
+	private static Brinde brinde16;
+	private static Brinde brinde17;
+	private static Brinde brinde26;
+	private static Brinde brinde27;
+	private static Brinde brinde28;
 	
 	private static TipoProduto tipoProdutoRefrigerante;
 	private static TipoProduto tipoProdutoRevista;
@@ -472,6 +546,10 @@ public class DataLoader {
 	private static EstoqueProduto estoqueProdutoVeja2EncalheAnt;
 	private static EstoqueProduto estoqueProdutoSuper1EncalheAnt;
 	private static EstoqueProduto estoqueProdutoSuper2EncalheAnt;
+	
+	private static EstoqueProdutoCotaJuramentado estoqueProdutoCotaJuramentadoVeja;
+	private static EstoqueProdutoCotaJuramentado estoqueProdutoCotaJuramentadoCapricho;
+	private static EstoqueProdutoCotaJuramentado estoqueProdutoCotaJuramentadoInfoExame;
 
 	private static TipoFornecedor tipoFornecedorPublicacao;
 	private static TipoFornecedor tipoFornecedorOutros;
@@ -852,6 +930,7 @@ public class DataLoader {
 	private static InterfaceExecucao interfaceEMS0124;
 	private static InterfaceExecucao interfaceEMS0125;
 	private static InterfaceExecucao interfaceEMS0126;
+	private static InterfaceExecucao interfaceEMS0128;
 	private static InterfaceExecucao interfaceEMS0129;
 	private static InterfaceExecucao interfaceEMS0130;
 	private static InterfaceExecucao interfaceEMS0131;
@@ -888,6 +967,16 @@ public class DataLoader {
 	private static ProdutoEdicao produtoEdicaoSuper2;
 	private static ProdutoEdicao produtoEdicaoCapricho2;
 
+	private static Object tipoMovimentoCompraEncalhe;
+
+	private static Object tipoMovimentoEstornoCompraEncalhe;
+
+	private static ConsolidadoFinanceiroCota consolidadoDividaCobrancaOriginariaNegociacao;
+
+	private static Divida dividaCobrancaOriginariaNegociacao;
+
+	private static CobrancaDinheiro cobrancaOriginariaNegociacao;
+
 	public static void main(String[] args) {
 		ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext(
 				"classpath:/applicationContext-dataLoader.xml");
@@ -896,10 +985,11 @@ public class DataLoader {
 		Transaction tx = null;
 		boolean commit = false;
 
+		LOG.info("==== INICIANDO EXECUÇÃO DATALOADER ====");
 		List<String> parans =  Arrays.asList(args);
 		if(!parans.contains(PARAM_SKIP_DATA)){
 			try {
-				sf = ctx.getBean(SessionFactory.class);
+			    sf = ctx.getBean(SessionFactory.class);
 				session = sf.openSession();
 				tx = session.beginTransaction();				
 				
@@ -926,6 +1016,7 @@ public class DataLoader {
 				}
 			}
 		}
+		LOG.info("==== EXECUÇÃO DATALOADER CONCLUÍDA ====");
 	}
 
 	private static void gerarCotasAusentes(Session session) {
@@ -938,22 +1029,27 @@ public class DataLoader {
 	}
 
 	private static void carregarDados(Session session) {
-		carregarDadosClean(session);
+	    carregarDadosClean(session);
 
+		criarPessoas(session);
+		criarFornecedores(session);
+
+		
 		//criarBanco(session);
 		criarUsuarios(session);
 		
 		criarDiasDistribuicaoFornecedores(session);
-		criarDiasDistribuicaoDistribuidor(session);
 		criarCotas(session);
 		criarPDVsCota(session);
 		criarDistribuicaoCota(session);
 		criarEditores(session);		
+		criarBrindes(session);
 		criarProdutos(session);
 		criarProdutosEdicao(session);
 		criarNotasFiscais(session);
 		criarRecebimentosFisicos(session);
 		criarEstoquesProdutos(session);
+		criarEstoquesProdutosCotaJuramentados(session);
 		criarEstoqueProdutoCota(session);
 		criarMovimentosEstoque(session);
 		criarLancamentos(session);
@@ -992,20 +1088,20 @@ public class DataLoader {
 		criarMassaNotaFiscalEntradaFornecedorParaRecebimentoFisico(session);
 
 		gerarCargaDiferencaEstoque(
-			session, 50, produtoEdicaoVeja1, tipoMovimentoFaltaEm,
-				usuarioJoao, estoqueProdutoVeja1, TipoDiferenca.FALTA_EM);
+			session, 2, produtoEdicaoVeja1, tipoMovimentoFaltaEm,
+				usuarioJoao, estoqueProdutoVeja1, TipoDiferenca.FALTA_EM, TipoDirecionamentoDiferenca.COTA);
 
 		gerarCargaDiferencaEstoque(
-			session, 50, produtoEdicaoVeja2, tipoMovimentoFaltaDe,
-				usuarioJoao, estoqueProdutoVeja1, TipoDiferenca.FALTA_DE);
+			session, 2, produtoEdicaoVeja2, tipoMovimentoFaltaDe,
+				usuarioJoao, estoqueProdutoVeja1, TipoDiferenca.FALTA_DE,TipoDirecionamentoDiferenca.ESTOQUE);
 
 		gerarCargaDiferencaEstoque(
-			session, 50, produtoEdicaoVeja3, tipoMovimentoSobraDe,
-				usuarioJoao, estoqueProdutoVeja1, TipoDiferenca.SOBRA_DE);
+			session, 2, produtoEdicaoVeja3, tipoMovimentoSobraDe,
+				usuarioJoao, estoqueProdutoVeja1, TipoDiferenca.SOBRA_DE,TipoDirecionamentoDiferenca.ESTOQUE);
 
 		gerarCargaDiferencaEstoque(
-			session, 50, produtoEdicaoVeja4, tipoMovimentoSobraEm,
-				usuarioJoao, estoqueProdutoVeja1, TipoDiferenca.SOBRA_EM);
+			session, 2, produtoEdicaoVeja4, tipoMovimentoSobraEm,
+				usuarioJoao, estoqueProdutoVeja1, TipoDiferenca.SOBRA_EM,TipoDirecionamentoDiferenca.ESTOQUE);
 
 		gerarCargaHistoricoSituacaoCota(session, 100);
 
@@ -1037,8 +1133,6 @@ public class DataLoader {
 
 		gerarCargaDadosConferenciaEncalhe(session);
 
-		gerarTiposNotas(session);
-
 		gerarLogExecucaoInterfaces(session);
 
 		gerarLogradouros(session);
@@ -1055,7 +1149,9 @@ public class DataLoader {
 		
 		gerarGrupos(session);
 		
-		criarDescontoLogistica(session);
+		criarCobrancasNegociacao(session);
+        
+		criarCotasGarantia(session);
 	}
 
 	
@@ -1149,14 +1245,16 @@ public class DataLoader {
 		
 		gerarCfops(session);			
 		
+		gerarTiposNotas(session);
+		
 		criarParametrosSistema(session);
 		criarInterfaceExecucao(session);
 		criarEventoExecucao(session);
 		criarAlgoritmos(session);
 				
-		criarPessoas(session);
+		criarPessoasClean(session);
 		criarTiposFornecedores(session);
-		criarFornecedores(session);
+		criarFornecedoresClean(session);
 		
 		tabelaNCM(session);
 		criarTiposProduto(session);
@@ -1164,8 +1262,8 @@ public class DataLoader {
 		criarBanco(session);		
 		
 		//Remover Depois
-		criarBox(session);criarDistribuidor
-		(session);
+		criarBox(session);
+		criarDistribuidor(session);
 		
 		criarEnderecoDistribuidor(session);
 		criarTelefoneDistribuidor(session);
@@ -1177,10 +1275,12 @@ public class DataLoader {
 		criarFeriado(session);		
 		
 		criarUsuarioAdministrador(session); 
+		criarUsuarioImportacao(session); 
 		
 		criarTiposMovimento(session);
 		gerarTiposPontoPDV(session);
 		
+		criarDescontoLogistica(session);
 	}
 
 	private static void criarUsuarioAdministrador(Session session) {
@@ -1206,6 +1306,30 @@ public class DataLoader {
 		session.save(admin);
 
 	}
+	private static void criarUsuarioImportacao(Session session) {
+
+		GrupoPermissao grupoAdmin = new GrupoPermissao();
+		grupoAdmin.setNome("IMPORTACAO");
+		grupoAdmin.setPermissoes( new HashSet<Permissao>(Arrays.asList(Permissao.values())) );
+		
+		session.save(grupoAdmin);
+
+		Usuario importacao = new Usuario();
+		importacao.setLogin("importacao");
+		importacao.setSenha("81dc9bdb52d04dc20036dbd8313ed055"); // Senha: 1234
+		importacao.setNome("Importacao");
+		importacao.setContaAtiva(true);
+		importacao.setEmail("adminteste@abril.com.br");
+		
+		Set<GrupoPermissao> gruposPermissoes = new HashSet<GrupoPermissao>();
+		gruposPermissoes.add(grupoAdmin);
+		
+		importacao.setGruposPermissoes(gruposPermissoes);
+		
+		session.save(importacao);
+
+	}
+	
 	
 	private static void criarControleNumeracaoSlip(Session session) {
 
@@ -1672,16 +1796,16 @@ public class DataLoader {
 		save(session,guiaQuatroRodas,cromoBrasileirao,guiaViagem);
 
 		ProdutoEdicao guiaQuatroRodasEd1 = Fixture.produtoEdicao("COD_EE", 1L, 5, 30,
-				new Long(50), new BigDecimal(100), new BigDecimal(100), "5546", 0L, guiaQuatroRodas, null, false, "Guia Quatro Rodas");
+				new Long(50), new BigDecimal(100), new BigDecimal(100), "5546", guiaQuatroRodas, null, false, "Guia Quatro Rodas");
 		guiaQuatroRodasEd1.setParcial(true);
 
 		ProdutoEdicao cromoBrasileiraoEd1 = Fixture.produtoEdicao("COD_FF", 1L, 5, 30,
-				new Long(50), new BigDecimal(100), new BigDecimal(100), "3333", 0L, cromoBrasileirao, null, false,"Cromo Brasileirão");
+				new Long(50), new BigDecimal(100), new BigDecimal(100), "3333", cromoBrasileirao, null, false,"Cromo Brasileirão");
 		cromoBrasileiraoEd1.setParcial(true);
-		cromoBrasileiraoEd1.setOrigemInterface(false);
+		cromoBrasileiraoEd1.setOrigem(br.com.abril.nds.model.Origem.MANUAL);
 		
 		ProdutoEdicao guiaViagemEd1 = Fixture.produtoEdicao("COD_GG", 1L, 5, 30,
-				new Long(50), new BigDecimal(100), new BigDecimal(100), "2231", 0L, guiaViagem, null, false,"Guia Viagem");
+				new Long(50), new BigDecimal(100), new BigDecimal(100), "2231", guiaViagem, null, false,"Guia Viagem");
 		guiaViagemEd1.setParcial(true);
 
 		save(session,guiaQuatroRodasEd1,cromoBrasileiraoEd1,guiaViagemEd1);
@@ -1926,7 +2050,7 @@ public class DataLoader {
 		TipoFornecedor tipoFornecedorPublicacao = Fixture.tipoFornecedorPublicacao();
 		save(session,tipoFornecedorPublicacao);
 
-		NotaFiscalEntradaFornecedor notaFiscal = Fixture.notaFiscalEntradaFornecedor(cfop5102, juridicaFc, fornecedorFc, tipoNotaFiscalRecebimento, usuario, new BigDecimal(145),  new BigDecimal(10),  new BigDecimal(10));
+		NotaFiscalEntradaFornecedor notaFiscal = Fixture.notaFiscalEntradaFornecedor(cfop5102, fornecedorFc, tipoNotaFiscalRecebimento, usuario, new BigDecimal(145),  new BigDecimal(10),  new BigDecimal(10));
 		save(session,notaFiscal);
 
 		RecebimentoFisico recebimentoFisico = Fixture.recebimentoFisico(notaFiscal, usuario, new Date(), new Date(), StatusConfirmacao.PENDENTE);
@@ -1974,7 +2098,7 @@ public class DataLoader {
 		MovimentoEstoque movimentoEstoque = Fixture.movimentoEstoque(itemRecebimentoFisico, produtoEdicaoBravo1, tipoMovimentoEstoque, usuario, estoqueProduto, dataAtual, BigInteger.valueOf(12), StatusAprovacao.APROVADO , "MOTIVO B");
 		save(session,movimentoEstoque);
 
-		Diferenca diferenca = Fixture.diferenca(BigInteger.valueOf(32), usuario, produtoEdicaoBravo1, TipoDiferenca.FALTA_DE, StatusConfirmacao.CONFIRMADO, itemRecebimentoFisico, movimentoEstoque, true, TipoEstoque.LANCAMENTO);
+		Diferenca diferenca = Fixture.diferenca(BigInteger.valueOf(32), usuario, produtoEdicaoBravo1, TipoDiferenca.FALTA_DE, StatusConfirmacao.CONFIRMADO, itemRecebimentoFisico, true, TipoEstoque.LANCAMENTO,TipoDirecionamentoDiferenca.ESTOQUE, new Date());
 		LancamentoDiferenca lancamentoDiferenca = new LancamentoDiferenca();
 		
 		lancamentoDiferenca.setMovimentoEstoque(movimentoEstoque);
@@ -2015,7 +2139,7 @@ public class DataLoader {
 		List<MovimentoFinanceiroCota> listaMovimentoFinanceiroCota = new ArrayList<MovimentoFinanceiroCota>();
  		listaMovimentoFinanceiroCota.add(movimentoFinanceiroCota);
 
-		ConsolidadoFinanceiroCota consolidadoFinanceiroCota = Fixture.consolidadoFinanceiroCota(listaMovimentoFinanceiroCota, cotaManoel, dataAtual, new BigDecimal(230), new BigDecimal(230), new BigDecimal(180), new BigDecimal(180), new BigDecimal(180), new BigDecimal(45), new BigDecimal(170), new BigDecimal(25));
+		ConsolidadoFinanceiroCota consolidadoFinanceiroCota = Fixture.consolidadoFinanceiroCota(listaMovimentoFinanceiroCota, cotaManoel, dataAtual, new BigDecimal(230), new BigDecimal(230), new BigDecimal(180), new BigDecimal(180), new BigDecimal(180), new BigDecimal(45), new BigDecimal(25));
 		save(session,consolidadoFinanceiroCota);
 
 
@@ -2046,13 +2170,13 @@ public class DataLoader {
 		save(session, produtoBravo);
 
 		ProdutoEdicao produtoEdicao = Fixture.produtoEdicao("COD_HH", 234L,12 , 1, new Long(9), new BigDecimal(8),
-				new BigDecimal(10), "ABCDEFGHIJKLMNOPQRSTU", 1L, produtoBravo, null, false, "Produto Bravo");
+				new BigDecimal(10), "ABCDEFGHIJKLMNOPQRSTU", produtoBravo, null, false, "Produto Bravo");
 		save(session, produtoEdicao);
 
 		TipoFornecedor tipoFornecedorPublicacao = Fixture.tipoFornecedorPublicacao();
 		save(session, tipoFornecedorPublicacao);
 
-		NotaFiscalEntradaFornecedor notaFiscal = Fixture.notaFiscalEntradaFornecedor(cfop5102, juridicaDinap, fornecedorAcme, tipoNotaFiscalRecebimento, usuario, new BigDecimal(145),  new BigDecimal(10),  new BigDecimal(10));
+		NotaFiscalEntradaFornecedor notaFiscal = Fixture.notaFiscalEntradaFornecedor(cfop5102, fornecedorAcme, tipoNotaFiscalRecebimento, usuario, new BigDecimal(145),  new BigDecimal(10),  new BigDecimal(10));
 		save(session, notaFiscal);
 
 		RecebimentoFisico recebimentoFisico = Fixture.recebimentoFisico(notaFiscal, usuario, new Date(), new Date(), StatusConfirmacao.PENDENTE);
@@ -2127,7 +2251,7 @@ public class DataLoader {
 		listaMovimentoFinanceiroCota.add(movimentoFinanceiroCota);
 		listaMovimentoFinanceiroCota.add(movimentoFinanceiroCompraEncalhe);
 
-		ConsolidadoFinanceiroCota consolidadoFinanceiroCota = Fixture.consolidadoFinanceiroCota(listaMovimentoFinanceiroCota, cotaManoel, dataAtual, new BigDecimal(230), new BigDecimal(230), new BigDecimal(180), new BigDecimal(180), new BigDecimal(180), new BigDecimal(45), new BigDecimal(170), new BigDecimal(25));
+		ConsolidadoFinanceiroCota consolidadoFinanceiroCota = Fixture.consolidadoFinanceiroCota(listaMovimentoFinanceiroCota, cotaManoel, dataAtual, new BigDecimal(230), new BigDecimal(230), new BigDecimal(180), new BigDecimal(180), new BigDecimal(180), new BigDecimal(45), new BigDecimal(25));
 		save(session, consolidadoFinanceiroCota);
 	}
 
@@ -2172,7 +2296,7 @@ public class DataLoader {
 	
 
 	private static void criarControleBaixaBancaria(Session session) {
-		baixaBancaria = Fixture.controleBaixaBancaria(new Date(), StatusControle.CONCLUIDO_SUCESSO, usuarioJoao);
+		baixaBancaria = Fixture.controleBaixaBancaria(new Date(), StatusControle.CONCLUIDO_SUCESSO, usuarioJoao, bancoHSBC);
 		save(session, baixaBancaria);
 
 	}
@@ -2398,13 +2522,234 @@ public class DataLoader {
                  BigDecimal.ZERO, new BigDecimal(210),
 				"TIPO_BAIXA", "ACAO", StatusCobranca.PAGO,
 				cotaMariana, bancoHSBC, dividaAcumuladaMariana1,1);
-
+		
+		
+		
 		save(session, cobrancaGuilherme1, cobrancaGuilherme2, cobrancaGuilherme3,
 				cobrancaMurilo1, cobrancaMurilo2, cobrancaMurilo3,
 				cobrancaMariana1, cobrancaMariana2,
 				cobrancaOrlando,
 				cobrancaAcumuloGuilherme1,cobrancaAcumuloGuilherme2,cobrancaAcumuloMariana1,cobrancaAcumuloMurilo1);
 
+	}
+	
+	private static void criarCobrancasNegociacao(Session session){
+		
+	
+		consolidadoDividaCobrancaOriginariaNegociacao =
+				Fixture.consolidadoFinanceiroCota(null, cotaJose,
+												  Fixture.criarData(1, 1, 2010), 
+												  new BigDecimal(200), 
+												  new BigDecimal(230), 
+												  new BigDecimal(180), 
+												  new BigDecimal(180), 
+												  new BigDecimal(180), 
+												  new BigDecimal(45), 
+												  new BigDecimal(25));
+		dividaCobrancaOriginariaNegociacao = 
+				Fixture.divida(consolidadoDividaCobrancaOriginariaNegociacao, 
+								cotaJose, Fixture.criarData(1, 1, 2010),
+							    usuarioJoao, StatusDivida.NEGOCIADA, new BigDecimal(200),false);
+		
+		cobrancaOriginariaNegociacao = 
+				Fixture.criarCobrancaDinheiro("7234567890823",
+		                					   new Date(),  
+		                					   Fixture.criarData(1, 1, 2010),
+		                					   new Date(), 
+		                					   BigDecimal.ZERO, 
+		                					   new BigDecimal(200),
+		                					   "TIPO_BAIXA", "ACAO", StatusCobranca.PAGO,
+		                					   cotaJose, bancoHSBC,dividaCobrancaOriginariaNegociacao,1);
+		
+		save(session,consolidadoDividaCobrancaOriginariaNegociacao,dividaCobrancaOriginariaNegociacao,cobrancaOriginariaNegociacao);
+		
+		MovimentoFinanceiroCota movimentoFinanceiroPrimeiraParcela = 
+				Fixture.movimentoFinanceiroCota(cotaJose, tipoMovimentoFinanceiroRecebimentoReparte, usuarioJoao,
+				obterValorMovimentosEstoque(Arrays.asList(movimentoEstoqueCota1)), null,StatusAprovacao.APROVADO, new Date(), true);
+
+		MovimentoFinanceiroCota movimentoFinanceiroSegundaParcela = 
+				Fixture.movimentoFinanceiroCota(cotaJose, tipoMovimentoFinanceiroRecebimentoReparte, usuarioJoao,
+				obterValorMovimentosEstoque(Arrays.asList(movimentoEstoqueCota1)), null,StatusAprovacao.APROVADO, new Date(), true);
+
+		MovimentoFinanceiroCota movimentoFinanceiroTerceiraParcela = 
+				Fixture.movimentoFinanceiroCota(cotaJose, tipoMovimentoFinanceiroRecebimentoReparte, usuarioJoao,
+				obterValorMovimentosEstoque(Arrays.asList(movimentoEstoqueCota1)), null,StatusAprovacao.APROVADO, new Date(), true);
+
+		MovimentoFinanceiroCota movimentoFinanceiroQuartaParcela = 
+				Fixture.movimentoFinanceiroCota(cotaJose, tipoMovimentoFinanceiroRecebimentoReparte, usuarioJoao,
+				obterValorMovimentosEstoque(Arrays.asList(movimentoEstoqueCota1)), null,StatusAprovacao.APROVADO, new Date(), true);
+		
+		save(session,movimentoFinanceiroPrimeiraParcela,movimentoFinanceiroSegundaParcela,movimentoFinanceiroTerceiraParcela,movimentoFinanceiroQuartaParcela);
+		
+		///Primeira Parcela
+		
+		ConsolidadoFinanceiroCota consolidadoDividaCobrancaPrimeiraParcela =
+				Fixture.consolidadoFinanceiroCota(null, cotaJose,
+												  Fixture.criarData(1, 1, 2010), 
+												  new BigDecimal(200), 
+												  new BigDecimal(230), 
+												  new BigDecimal(180), 
+												  new BigDecimal(180), 
+												  new BigDecimal(180), 
+												  new BigDecimal(45), 
+												  new BigDecimal(25));
+		
+		consolidadoDividaCobrancaPrimeiraParcela.setMovimentos(Arrays.asList(movimentoFinanceiroPrimeiraParcela));
+		
+		Divida dividaCobrancaPrimeiraParcela= 
+				Fixture.divida(consolidadoDividaCobrancaPrimeiraParcela, 
+								cotaJose, Fixture.criarData(1, 1, 2010),
+							    usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200),false);
+		
+		Cobranca cobrancaPrimeiraParcela= 
+				Fixture.criarCobrancaDinheiro("8234567858823",
+		                					   new Date(),  
+		                					   Fixture.criarData(1, 1, 2010),
+		                					   new Date(), 
+		                					   BigDecimal.ZERO, 
+		                					   new BigDecimal(200),
+		                					   "TIPO_BAIXA", "ACAO", StatusCobranca.PAGO,
+		                					   cotaJose, bancoHSBC,dividaCobrancaPrimeiraParcela,1);
+		
+		BaixaManual baixaManualparcela1 =
+				Fixture.baixaManual(cobrancaPrimeiraParcela, new Date(), StatusBaixa.PAGAMENTO_PARCIAL, BigDecimal.TEN, null, StatusAprovacao.APROVADO);
+					
+			
+		
+		save(session,consolidadoDividaCobrancaPrimeiraParcela,dividaCobrancaPrimeiraParcela,cobrancaPrimeiraParcela,baixaManualparcela1);
+		
+		//Segunda parcela
+		ConsolidadoFinanceiroCota consolidadoDividaCobrancaSegundaParcela =
+				Fixture.consolidadoFinanceiroCota(null, cotaJose,
+												  Fixture.criarData(1, 1, 2010), 
+												  new BigDecimal(200), 
+												  new BigDecimal(230), 
+												  new BigDecimal(180), 
+												  new BigDecimal(180), 
+												  new BigDecimal(180), 
+												  new BigDecimal(45), 
+												  new BigDecimal(25));
+		consolidadoDividaCobrancaSegundaParcela.setMovimentos(Arrays.asList(movimentoFinanceiroSegundaParcela));
+		
+		Divida dividaCobrancaSegundaParcela= 
+				Fixture.divida(consolidadoDividaCobrancaSegundaParcela, 
+								cotaJose, Fixture.criarData(1, 1, 2010),
+							    usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200),false);
+		
+		Cobranca cobrancaSegundaParcela= 
+				Fixture.criarCobrancaDinheiro("1294567858823",
+		                					   new Date(),  
+		                					   Fixture.criarData(1, 1, 2010),
+		                					   new Date(), 
+		                					   BigDecimal.ZERO, 
+		                					   new BigDecimal(200),
+		                					   "TIPO_BAIXA", "ACAO", StatusCobranca.PAGO,
+		                					   cotaJose, bancoHSBC,dividaCobrancaSegundaParcela,1);
+		
+		BaixaManual baixaManualparcela2 =
+				Fixture.baixaManual(cobrancaSegundaParcela, new Date(), StatusBaixa.PAGAMENTO_PARCIAL, BigDecimal.TEN, null, StatusAprovacao.PENDENTE);
+		
+		
+		save(session,consolidadoDividaCobrancaSegundaParcela,dividaCobrancaSegundaParcela,cobrancaSegundaParcela,baixaManualparcela2);
+		
+		//Terceira parcela
+		ConsolidadoFinanceiroCota consolidadoDividaCobrancaTerceiraParcela =
+				Fixture.consolidadoFinanceiroCota(null, cotaJose,
+												  Fixture.criarData(1, 1, 2010), 
+												  new BigDecimal(200), 
+												  new BigDecimal(230), 
+												  new BigDecimal(180), 
+												  new BigDecimal(180), 
+												  new BigDecimal(180), 
+												  new BigDecimal(45), 
+												  new BigDecimal(25));
+		
+		consolidadoDividaCobrancaTerceiraParcela.setMovimentos(Arrays.asList(movimentoFinanceiroTerceiraParcela));
+		
+		Divida dividaCobrancaTerceiraParcela= 
+				Fixture.divida(consolidadoDividaCobrancaTerceiraParcela, 
+								cotaJose, Fixture.criarData(1, 1, 2010),
+							    usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200),false);
+		
+		Cobranca cobrancaTerceiraParcela= 
+				Fixture.criarCobrancaDinheiro("1934567858823",
+		                					   new Date(),  
+		                					   Fixture.criarData(1, 1, 2010),
+		                					   new Date(), 
+		                					   BigDecimal.ZERO, 
+		                					   new BigDecimal(200),
+		                					   "TIPO_BAIXA", "ACAO", StatusCobranca.NAO_PAGO,
+		                					   cotaJose, bancoHSBC,dividaCobrancaTerceiraParcela,1);
+		
+		BaixaManual baixaManualparcela3 =
+				Fixture.baixaManual(cobrancaTerceiraParcela, new Date(), StatusBaixa.PAGAMENTO_PARCIAL, BigDecimal.TEN, null, StatusAprovacao.PENDENTE);
+		
+		save(session,consolidadoDividaCobrancaTerceiraParcela,dividaCobrancaTerceiraParcela,cobrancaTerceiraParcela,baixaManualparcela3);
+		
+		//Quarta parcela
+		ConsolidadoFinanceiroCota consolidadoDividaCobrancaQuartaParcela =
+				Fixture.consolidadoFinanceiroCota(null, cotaJose,
+												  Fixture.criarData(1, 1, 2010), 
+												  new BigDecimal(200), 
+												  new BigDecimal(230), 
+												  new BigDecimal(180), 
+												  new BigDecimal(180), 
+												  new BigDecimal(180), 
+												  new BigDecimal(45), 
+												  new BigDecimal(25));
+		
+		consolidadoDividaCobrancaQuartaParcela.setMovimentos(Arrays.asList(movimentoFinanceiroQuartaParcela));
+		
+		Divida dividaCobrancaQuartaParcela= 
+				Fixture.divida(consolidadoDividaCobrancaQuartaParcela, 
+								cotaJose, Fixture.criarData(1, 1, 2010),
+							    usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200),false);
+		
+		Cobranca cobrancaQuartaParcela= 
+				Fixture.criarCobrancaDinheiro("9234567858823",
+		                					   new Date(),  
+		                					   Fixture.criarData(1, 1, 2010),
+		                					   new Date(), 
+		                					   BigDecimal.ZERO, 
+		                					   new BigDecimal(200),
+		                					   "TIPO_BAIXA", "ACAO", StatusCobranca.NAO_PAGO,
+		                					   cotaJose, bancoHSBC,dividaCobrancaQuartaParcela,1);
+		
+		BaixaManual baixaManualparcela4 =
+				Fixture.baixaManual(cobrancaQuartaParcela, new Date(), StatusBaixa.PAGAMENTO_PARCIAL, BigDecimal.TEN, null, StatusAprovacao.PENDENTE);
+	
+		
+		save(session,consolidadoDividaCobrancaQuartaParcela,dividaCobrancaQuartaParcela,cobrancaQuartaParcela,baixaManualparcela4);
+		
+		List<Cobranca> cobrancas = new ArrayList<Cobranca>();
+		cobrancas.add(cobrancaOriginariaNegociacao);
+		
+		//Gerar Negociacao 
+		Negociacao negociacao = new Negociacao();
+		negociacao.setCobrancasOriginarias(cobrancas);
+		
+		//Gerar parcelas Negociacao
+		ParcelaNegociacao primeiraParcela = new ParcelaNegociacao();
+		primeiraParcela.setDataVencimento(Fixture.criarData(1, 1, 2010));
+		primeiraParcela.setNegociacao(negociacao);
+		primeiraParcela.setMovimentoFinanceiroCota(movimentoFinanceiroPrimeiraParcela);
+		
+		ParcelaNegociacao segundaParcela = new ParcelaNegociacao();
+		segundaParcela.setDataVencimento(Fixture.criarData(10, 1, 2010));
+		segundaParcela.setNegociacao(negociacao);
+		segundaParcela.setMovimentoFinanceiroCota(movimentoFinanceiroSegundaParcela);
+		
+		ParcelaNegociacao terceiraParcela = new ParcelaNegociacao();
+		terceiraParcela.setDataVencimento(Fixture.criarData(20, 1, 2010));
+		terceiraParcela.setNegociacao(negociacao);
+		terceiraParcela.setMovimentoFinanceiroCota(movimentoFinanceiroTerceiraParcela);
+		
+		ParcelaNegociacao quartaParcela = new ParcelaNegociacao();
+		quartaParcela .setDataVencimento(Fixture.criarData(30, 1, 2010));
+		quartaParcela .setNegociacao(negociacao);
+		quartaParcela .setMovimentoFinanceiroCota(movimentoFinanceiroQuartaParcela);
+		
+		save(session,negociacao,primeiraParcela,segundaParcela,terceiraParcela,quartaParcela);
 	}
 
 
@@ -2533,48 +2878,93 @@ public class DataLoader {
 
 	private static void criarRotaRoteiroCota(Session session) {
 
-		Roteiro roteiro = Fixture.criarRoteiro("Pinheiros",box1,TipoRoteiro.NORMAL);
-		session.save(roteiro);
-
-		Rota rota = Fixture.rota("005", "Rota 005");
-		rota.setRoteiro(roteiro);
-		session.save(rota);
-
-		Roteirizacao roteirizacao = Fixture.criarRoteirizacao(pdvManoel, rota,1);
-		session.save(roteirizacao);
+		Box boxA = Fixture.criarBox(1000, "BX-A", TipoBox.LANCAMENTO);
+		session.save(boxA);
+		
+		Box boxB = Fixture.criarBox(2000, "BX-B", TipoBox.LANCAMENTO);
+		session.save(boxB);
+		
+		Box boxC = Fixture.criarBox(3000, "BX-C", TipoBox.LANCAMENTO);
+	    session.save(boxC);
+		
+		
+		Roteirizacao roteirizacao1 = Fixture.criarRoteirizacao(boxA);
+		session.save(roteirizacao1);
 	
-		roteirizacao = Fixture.criarRoteirizacao(pdvGuilherme, rota,1);
-		session.save(roteirizacao);
+		Roteirizacao roteirizacao2 = Fixture.criarRoteirizacao(boxB);
+		session.save(roteirizacao2);
 		
-		roteiro = Fixture.criarRoteiro("Interlagos", box1,TipoRoteiro.NORMAL);
-		session.save(roteiro);
+		Roteirizacao roteirizacao3 = Fixture.criarRoteirizacao(boxC);
+		session.save(roteirizacao3);;
 
-		rota = Fixture.rota("004", "Rota 004");
-		rota.setRoteiro(roteiro);
-		session.save(rota);
-
-		roteirizacao = Fixture.criarRoteirizacao(pdvJose, rota,1);
-		session.save(roteirizacao);
 		
-		roteirizacao = Fixture.criarRoteirizacao(pdvManoel, rota,1);
-		session.save(roteirizacao);
+		Roteiro roteiroPinheiros = Fixture.criarRoteiro("Pinheiros",roteirizacao1,TipoRoteiro.NORMAL);
+		session.save(roteiroPinheiros);
+		
+		Roteiro roteiroCentro = Fixture.criarRoteiro("Centro", roteirizacao1, TipoRoteiro.NORMAL);
+	    session.save(roteiroCentro);
+	    
+	    Roteiro roteiroBairro = Fixture.criarRoteiro("Bairro", roteirizacao1, TipoRoteiro.NORMAL);
+        session.save(roteiroBairro);
 
-		rota = Fixture.rota("006", "Rota 006");
-		rota.setRoteiro(roteiro);
-		session.save(rota);
-
-		Roteiro roteiroTCD = Fixture.criarRoteiro("TCD",box2,TipoRoteiro.NORMAL);
+		Roteiro roteiroInterlagos = Fixture.criarRoteiro("Interlagos",roteirizacao2,TipoRoteiro.NORMAL);
+		session.save(roteiroInterlagos);
+		
+		Roteiro roteiroTCD = Fixture.criarRoteiro("TCD",roteirizacao3,TipoRoteiro.NORMAL);
 		session.save(roteiroTCD);
 
-		Rota rota10 = Fixture.rota("001", "Rota 001");
-		rota10.setRoteiro(roteiroTCD);
+		
+		SegmentacaoPDV segmentacaoPDV = Fixture.criarSegmentacaoPdv(null, TipoCaracteristicaSegmentacaoPDV.ALTERNATIVO, tipoPontoPDVRevistaria, null);
+		SegmentacaoPDV segmentacaoPDV2 = Fixture.criarSegmentacaoPdv(null, TipoCaracteristicaSegmentacaoPDV.CONVENCIONAL, tipoPontoPDVBanca, null);
+		
+		PDV pdvcotaJose2 = Fixture.criarPDVPrincipal("PDV cotaJose 2", cotaJose);
+		pdvcotaJose2.setSegmentacao(segmentacaoPDV);
+		session.save(pdvcotaJose2);
+
+		PDV pdvcotaManoel2 = Fixture.criarPDVPrincipal("PDV cotaManoel 2", cotaManoel);
+		pdvcotaManoel2.setSegmentacao(segmentacaoPDV2);
+		session.save(pdvcotaManoel2);
+		
+		PDV pdvJoao = Fixture.criarPDVPrincipal("PDV João", cotaJoao);
+		pdvJoao.setSegmentacao(segmentacaoPDV2);
+        session.save(pdvJoao);
+        
+        PDV pdvJoana = Fixture.criarPDVPrincipal("PDV Joana", cotaJoana);
+        pdvJoana.setSegmentacao(segmentacaoPDV2);
+        session.save(pdvJoana);
+        
+        PDV pdvOrlando = Fixture.criarPDVPrincipal("PDV Orlando", cotaOrlando);
+        pdvOrlando.setSegmentacao(segmentacaoPDV2);
+        session.save(pdvOrlando);
+		
+		rota1 = Fixture.rota("Rota 001",roteiroPinheiros);
+		rota1.addPDV(pdvcotaJose2, 1, boxA);
+		rota1.addPDV(pdvcotaManoel2, 2, boxA);
+		session.save(rota1);
+		
+		rota2 = Fixture.rota( "Rota 002",roteiroInterlagos);
+	    rota2.addPDV(pdvcotaJose2, 1, boxB);
+	    rota2.addPDV(pdvcotaManoel2, 2, boxB);
+		session.save(rota2);
+		
+		rota10 = Fixture.rota("Rota 010",roteiroTCD);
+	    rota10.addPDV(pdvcotaJose2, 1, boxC);
+	    rota10.addPDV(pdvcotaManoel2, 2, boxC);
 		session.save(rota10);
-
-
-		roteirizacao = Fixture.criarRoteirizacao(pdvGuilherme, rota10,1);
-		session.save(roteirizacao);
-
-
+ 
+		
+		Rota rotaRoteiroCentro1 = Fixture.rota("Rota 999", roteiroCentro);
+		rotaRoteiroCentro1.addPDV(pdvJoao, 1, boxA);
+		session.save(rotaRoteiroCentro1);
+		
+		Rota rotaRoteiroCentro2 = Fixture.rota("Rota 990", roteiroCentro);
+        rotaRoteiroCentro2.addPDV(pdvMariana, 1, boxA);
+        session.save(rotaRoteiroCentro2);
+        
+        Rota rotaRoteiroBairro = Fixture.rota("Rota 998", roteiroBairro);
+        rotaRoteiroBairro.addPDV(pdvJoana, 1, boxA);
+        rotaRoteiroBairro.addPDV(pdvOrlando, 2, boxA);
+        session.save(rotaRoteiroBairro);
 	}
 
 
@@ -2673,7 +3063,7 @@ public class DataLoader {
 		ConsolidadoFinanceiroCota consolidado1 = Fixture
 				.consolidadoFinanceiroCota(
 						movimentosF, cotaManoel,
-						Fixture.criarData(1, 6, 2012), getTotalConsignado(movimentosF), getTotalVendaEncalhe(movimentosF), getTotalEncalhe(movimentosF), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
+						Fixture.criarData(1, 6, 2012), getTotalConsignado(movimentosF), getTotalVendaEncalhe(movimentosF), getTotalEncalhe(movimentosF), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
 
 
 		movimentosF = Arrays.asList(movimentoFinanceiroCota2, movimentoFinanceiroCota14, movimentoFinanceiroCota20,movimentoFinanceiroCota23,
@@ -2682,56 +3072,56 @@ public class DataLoader {
 		ConsolidadoFinanceiroCota consolidado2 = Fixture
 				.consolidadoFinanceiroCota(
 						movimentosF, cotaManoel,
-						Fixture.criarData(2, 6, 2012), getTotalConsignado(movimentosF), getTotalVendaEncalhe(movimentosF), getTotalEncalhe(movimentosF), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
+						Fixture.criarData(2, 6, 2012), getTotalConsignado(movimentosF), getTotalVendaEncalhe(movimentosF), getTotalEncalhe(movimentosF), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
 
 		movimentosF = Arrays.asList(movimentoFinanceiroCota3);
 
 		ConsolidadoFinanceiroCota consolidado3 = Fixture
 				.consolidadoFinanceiroCota(
 						movimentosF, cotaManoel,
-						Fixture.criarData(3, 6, 2012), getTotalConsignado(movimentosF), getTotalVendaEncalhe(movimentosF), getTotalEncalhe(movimentosF), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
+						Fixture.criarData(3, 6, 2012), getTotalConsignado(movimentosF), getTotalVendaEncalhe(movimentosF), getTotalEncalhe(movimentosF), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
 
 		movimentosF = Arrays.asList(movimentoFinanceiroCota4);
 
 		ConsolidadoFinanceiroCota consolidado4 = Fixture
 				.consolidadoFinanceiroCota(
 						movimentosF, cotaManoel,
-						Fixture.criarData(4, 6, 2012), getTotalConsignado(movimentosF), getTotalVendaEncalhe(movimentosF), getTotalEncalhe(movimentosF), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
+						Fixture.criarData(4, 6, 2012), getTotalConsignado(movimentosF), getTotalVendaEncalhe(movimentosF), getTotalEncalhe(movimentosF), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
 
 		movimentosF = Arrays.asList(movimentoFinanceiroCota5);
 
 		ConsolidadoFinanceiroCota consolidado5 = Fixture
 				.consolidadoFinanceiroCota(
 						movimentosF, cotaManoel,
-						Fixture.criarData(5, 6, 2012), getTotalConsignado(movimentosF), getTotalVendaEncalhe(movimentosF), getTotalEncalhe(movimentosF), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
+						Fixture.criarData(5, 6, 2012), getTotalConsignado(movimentosF), getTotalVendaEncalhe(movimentosF), getTotalEncalhe(movimentosF), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
 
 		movimentosF = Arrays.asList(movimentoFinanceiroCota6);
 
 		ConsolidadoFinanceiroCota consolidado6 = Fixture
 				.consolidadoFinanceiroCota(
 						movimentosF, cotaManoel,
-						Fixture.criarData(6, 6, 2012), getTotalConsignado(movimentosF), getTotalVendaEncalhe(movimentosF), getTotalEncalhe(movimentosF), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
+						Fixture.criarData(6, 6, 2012), getTotalConsignado(movimentosF), getTotalVendaEncalhe(movimentosF), getTotalEncalhe(movimentosF), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
 
 		movimentosF = Arrays.asList(movimentoFinanceiroCota7);
 
 		ConsolidadoFinanceiroCota consolidado7 = Fixture
 				.consolidadoFinanceiroCota(
 						movimentosF, cotaManoel,
-						Fixture.criarData(7, 6, 2012), getTotalConsignado(movimentosF), getTotalVendaEncalhe(movimentosF), getTotalEncalhe(movimentosF), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
+						Fixture.criarData(7, 6, 2012), getTotalConsignado(movimentosF), getTotalVendaEncalhe(movimentosF), getTotalEncalhe(movimentosF), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
 
 		movimentosF = Arrays.asList(movimentoFinanceiroCota8);
 
 		ConsolidadoFinanceiroCota consolidado8 = Fixture
 				.consolidadoFinanceiroCota(
 						movimentosF, cotaManoel,
-						Fixture.criarData(8, 6, 2012), getTotalConsignado(movimentosF), getTotalVendaEncalhe(movimentosF), getTotalEncalhe(movimentosF), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
+						Fixture.criarData(8, 6, 2012), getTotalConsignado(movimentosF), getTotalVendaEncalhe(movimentosF), getTotalEncalhe(movimentosF), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
 
 		movimentosF = Arrays.asList(movimentoFinanceiroCota9);
 
 		ConsolidadoFinanceiroCota consolidado9 = Fixture
 				.consolidadoFinanceiroCota(
 						movimentosF, cotaManoel,
-						Fixture.criarData(9, 6, 2012), getTotalConsignado(movimentosF), getTotalVendaEncalhe(movimentosF), getTotalEncalhe(movimentosF), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
+						Fixture.criarData(9, 6, 2012), getTotalConsignado(movimentosF), getTotalVendaEncalhe(movimentosF), getTotalEncalhe(movimentosF), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
 
 
 		movimentosF = Arrays.asList(movimentoFinanceiroCota10);
@@ -2739,7 +3129,7 @@ public class DataLoader {
 		ConsolidadoFinanceiroCota consolidado15 = Fixture
 				.consolidadoFinanceiroCota(
 						movimentosF, cotaManoelCunha,
-						Fixture.criarData(10, 6, 2012), getTotalConsignado(movimentosF), getTotalVendaEncalhe(movimentosF), getTotalEncalhe(movimentosF), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
+						Fixture.criarData(10, 6, 2012), getTotalConsignado(movimentosF), getTotalVendaEncalhe(movimentosF), getTotalEncalhe(movimentosF), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
 
 
 		movimentosF = Arrays.asList(movimentoFinanceiroCota11);
@@ -2747,7 +3137,7 @@ public class DataLoader {
 		ConsolidadoFinanceiroCota consolidado16 = Fixture
 				.consolidadoFinanceiroCota(
 						movimentosF, cotaManoelCunha,
-						Fixture.criarData(11, 6, 2012), getTotalConsignado(movimentosF), getTotalVendaEncalhe(movimentosF), getTotalEncalhe(movimentosF), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
+						Fixture.criarData(11, 6, 2012), getTotalConsignado(movimentosF), getTotalVendaEncalhe(movimentosF), getTotalEncalhe(movimentosF), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
 
 
 		movimentosF = Arrays.asList(movimentoFinanceiroCota12);
@@ -2755,7 +3145,7 @@ public class DataLoader {
 		ConsolidadoFinanceiroCota consolidado17 = Fixture
 				.consolidadoFinanceiroCota(
 						movimentosF, cotaManoelCunha,
-						Fixture.criarData(12, 6, 2012), getTotalConsignado(movimentosF), getTotalVendaEncalhe(movimentosF), getTotalEncalhe(movimentosF), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
+						Fixture.criarData(12, 6, 2012), getTotalConsignado(movimentosF), getTotalVendaEncalhe(movimentosF), getTotalEncalhe(movimentosF), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
 
 
 
@@ -2763,89 +3153,89 @@ public class DataLoader {
 		ConsolidadoFinanceiroCota consolidado10 = Fixture
 				.consolidadoFinanceiroCota(
 						null, cotaMaria,
-						Fixture.criarData(13, 1, 2010), new BigDecimal(200), new BigDecimal(230), new BigDecimal(180), new BigDecimal(180), new BigDecimal(180), new BigDecimal(45), new BigDecimal(170), new BigDecimal(25));
+						Fixture.criarData(13, 1, 2010), new BigDecimal(200), new BigDecimal(230), new BigDecimal(180), new BigDecimal(180), new BigDecimal(180), new BigDecimal(45), new BigDecimal(25));
 
 
 		ConsolidadoFinanceiroCota consolidado11 = Fixture
 				.consolidadoFinanceiroCota(
 						null, cotaLuis,
-						Fixture.criarData(14, 1, 2010), new BigDecimal(200), new BigDecimal(230), new BigDecimal(180), new BigDecimal(180), new BigDecimal(180), new BigDecimal(45), new BigDecimal(170), new BigDecimal(25));
+						Fixture.criarData(14, 1, 2010), new BigDecimal(200), new BigDecimal(230), new BigDecimal(180), new BigDecimal(180), new BigDecimal(180), new BigDecimal(45), new BigDecimal(25));
 
 
 		ConsolidadoFinanceiroCota consolidado12 = Fixture
 				.consolidadoFinanceiroCota(
 						null, cotaJoao,
-						Fixture.criarData(15, 1, 2010), new BigDecimal(200), new BigDecimal(230), new BigDecimal(180), new BigDecimal(180), new BigDecimal(180), new BigDecimal(45), new BigDecimal(170), new BigDecimal(25));
+						Fixture.criarData(15, 1, 2010), new BigDecimal(200), new BigDecimal(230), new BigDecimal(180), new BigDecimal(180), new BigDecimal(180), new BigDecimal(45), new BigDecimal(25));
 
 
 		ConsolidadoFinanceiroCota consolidado13 = Fixture
 				.consolidadoFinanceiroCota(
 						null, cotaJose,
-						Fixture.criarData(16, 1, 2010), new BigDecimal(200), new BigDecimal(230), new BigDecimal(180), new BigDecimal(180), new BigDecimal(180), new BigDecimal(45), new BigDecimal(170), new BigDecimal(25));
+						Fixture.criarData(16, 1, 2010), new BigDecimal(200), new BigDecimal(230), new BigDecimal(180), new BigDecimal(180), new BigDecimal(180), new BigDecimal(45), new BigDecimal(25));
 
 
 		ConsolidadoFinanceiroCota consolidado14 = Fixture
 				.consolidadoFinanceiroCota(
 						null, cotaJose,
-						Fixture.criarData(17, 1, 2010), new BigDecimal(200), new BigDecimal(230), new BigDecimal(180), new BigDecimal(180), new BigDecimal(180), new BigDecimal(45), new BigDecimal(170), new BigDecimal(25));
+						Fixture.criarData(17, 1, 2010), new BigDecimal(200), new BigDecimal(230), new BigDecimal(180), new BigDecimal(180), new BigDecimal(180), new BigDecimal(45), new BigDecimal(25));
 
 
 		ConsolidadoFinanceiroCota consolidadoGuilherme1 = Fixture
 				.consolidadoFinanceiroCota(null, cotaGuilherme,
-						Fixture.criarData(1, 1, 2010), new BigDecimal(200), new BigDecimal(230), new BigDecimal(180), new BigDecimal(180), new BigDecimal(180), new BigDecimal(45), new BigDecimal(170), new BigDecimal(25));
+						Fixture.criarData(1, 1, 2010), new BigDecimal(200), new BigDecimal(230), new BigDecimal(180), new BigDecimal(180), new BigDecimal(180), new BigDecimal(45), new BigDecimal(25));
 
 		ConsolidadoFinanceiroCota consolidadoGuilherme2 = Fixture
 				.consolidadoFinanceiroCota(null, cotaGuilherme,
-						Fixture.criarData(2, 1, 2010), new BigDecimal(200), new BigDecimal(230), new BigDecimal(180), new BigDecimal(180), new BigDecimal(180), new BigDecimal(45), new BigDecimal(170), new BigDecimal(25));
+						Fixture.criarData(2, 1, 2010), new BigDecimal(200), new BigDecimal(230), new BigDecimal(180), new BigDecimal(180), new BigDecimal(180), new BigDecimal(45), new BigDecimal(25));
 
 		ConsolidadoFinanceiroCota consolidadoGuilherme3 = Fixture
 				.consolidadoFinanceiroCota(null, cotaGuilherme,
-						Fixture.criarData(3, 1, 2010), new BigDecimal(200), new BigDecimal(230), new BigDecimal(180), new BigDecimal(180), new BigDecimal(180), new BigDecimal(45), new BigDecimal(170), new BigDecimal(25));
+						Fixture.criarData(3, 1, 2010), new BigDecimal(200), new BigDecimal(230), new BigDecimal(180), new BigDecimal(180), new BigDecimal(180), new BigDecimal(45), new BigDecimal(25));
 
 		ConsolidadoFinanceiroCota consolidadoMurilo1 = Fixture
 				.consolidadoFinanceiroCota(null, cotaMurilo,
-						Fixture.criarData(4, 1, 2010), new BigDecimal(200), new BigDecimal(230), new BigDecimal(180), new BigDecimal(180), new BigDecimal(180), new BigDecimal(45), new BigDecimal(170), new BigDecimal(25));
+						Fixture.criarData(4, 1, 2010), new BigDecimal(200), new BigDecimal(230), new BigDecimal(180), new BigDecimal(180), new BigDecimal(180), new BigDecimal(45), new BigDecimal(25));
 
 		ConsolidadoFinanceiroCota consolidadoMurilo2 = Fixture
 				.consolidadoFinanceiroCota(null, cotaMurilo,
-						Fixture.criarData(5, 1, 2010), new BigDecimal(200), new BigDecimal(230), new BigDecimal(180), new BigDecimal(180), new BigDecimal(180), new BigDecimal(45), new BigDecimal(170), new BigDecimal(25));
+						Fixture.criarData(5, 1, 2010), new BigDecimal(200), new BigDecimal(230), new BigDecimal(180), new BigDecimal(180), new BigDecimal(180), new BigDecimal(45), new BigDecimal(25));
 
 		ConsolidadoFinanceiroCota consolidadoMurilo3 = Fixture
 				.consolidadoFinanceiroCota(null, cotaMurilo,
-						Fixture.criarData(6, 1, 2010), new BigDecimal(200), new BigDecimal(230), new BigDecimal(180), new BigDecimal(180), new BigDecimal(180), new BigDecimal(45), new BigDecimal(170), new BigDecimal(25));
+						Fixture.criarData(6, 1, 2010), new BigDecimal(200), new BigDecimal(230), new BigDecimal(180), new BigDecimal(180), new BigDecimal(180), new BigDecimal(45), new BigDecimal(25));
 
 		ConsolidadoFinanceiroCota consolidadoMariana1 = Fixture
 				.consolidadoFinanceiroCota(null, cotaMariana,
-						Fixture.criarData(7, 1, 2010), new BigDecimal(200), new BigDecimal(230), new BigDecimal(180), new BigDecimal(180), new BigDecimal(180), new BigDecimal(45), new BigDecimal(170), new BigDecimal(25));
+						Fixture.criarData(7, 1, 2010), new BigDecimal(200), new BigDecimal(230), new BigDecimal(180), new BigDecimal(180), new BigDecimal(180), new BigDecimal(45), new BigDecimal(25));
 
 		ConsolidadoFinanceiroCota consolidadoMariana2 = Fixture
 				.consolidadoFinanceiroCota(null, cotaMariana,
-						Fixture.criarData(8, 1, 2010), new BigDecimal(200), new BigDecimal(230), new BigDecimal(180), new BigDecimal(180), new BigDecimal(180), new BigDecimal(45), new BigDecimal(170), new BigDecimal(25));
+						Fixture.criarData(8, 1, 2010), new BigDecimal(200), new BigDecimal(230), new BigDecimal(180), new BigDecimal(180), new BigDecimal(180), new BigDecimal(45), new BigDecimal(25));
 
 		ConsolidadoFinanceiroCota consolidadoOrlando1 = Fixture
 				.consolidadoFinanceiroCota(null, cotaOrlando ,
-						Fixture.criarData(9, 1, 2010), new BigDecimal(200), new BigDecimal(230), new BigDecimal(180), new BigDecimal(180), new BigDecimal(180), new BigDecimal(45), new BigDecimal(170), new BigDecimal(25));
+						Fixture.criarData(9, 1, 2010), new BigDecimal(200), new BigDecimal(230), new BigDecimal(180), new BigDecimal(180), new BigDecimal(180), new BigDecimal(45), new BigDecimal(25));
 
 		ConsolidadoFinanceiroCota consolidadoOrlando2 = Fixture
 				.consolidadoFinanceiroCota(null, cotaOrlando ,
-						Fixture.criarData(10, 1, 2010), new BigDecimal(200), new BigDecimal(230), new BigDecimal(180), new BigDecimal(180), new BigDecimal(180), new BigDecimal(45), new BigDecimal(170), new BigDecimal(25));
+						Fixture.criarData(10, 1, 2010), new BigDecimal(200), new BigDecimal(230), new BigDecimal(180), new BigDecimal(180), new BigDecimal(180), new BigDecimal(45), new BigDecimal(25));
 
 
 		ConsolidadoFinanceiroCota consolidadoAcumuloGuilherme1 = Fixture
 				.consolidadoFinanceiroCota(null, cotaGuilherme,
-						Fixture.criarData(1, 2, 2010), new BigDecimal(210), new BigDecimal(230), new BigDecimal(180), new BigDecimal(180), new BigDecimal(180), new BigDecimal(45), new BigDecimal(170), new BigDecimal(25));
+						Fixture.criarData(1, 2, 2010), new BigDecimal(210), new BigDecimal(230), new BigDecimal(180), new BigDecimal(180), new BigDecimal(180), new BigDecimal(45), new BigDecimal(25));
 
 		ConsolidadoFinanceiroCota consolidadoAcumuloGuilherme2 = Fixture
 				.consolidadoFinanceiroCota(null, cotaGuilherme,
-						Fixture.criarData(2, 2, 2010), new BigDecimal(210), new BigDecimal(230), new BigDecimal(180), new BigDecimal(180), new BigDecimal(180), new BigDecimal(45), new BigDecimal(170), new BigDecimal(25));
+						Fixture.criarData(2, 2, 2010), new BigDecimal(210), new BigDecimal(230), new BigDecimal(180), new BigDecimal(180), new BigDecimal(180), new BigDecimal(45), new BigDecimal(25));
 
 		ConsolidadoFinanceiroCota consolidadoAcumuloMurilo1 = Fixture
 				.consolidadoFinanceiroCota(null, cotaMurilo,
-						Fixture.criarData(4, 2, 2010), new BigDecimal(210), new BigDecimal(230), new BigDecimal(180), new BigDecimal(180), new BigDecimal(180), new BigDecimal(45), new BigDecimal(170), new BigDecimal(25));
+						Fixture.criarData(4, 2, 2010), new BigDecimal(210), new BigDecimal(230), new BigDecimal(180), new BigDecimal(180), new BigDecimal(180), new BigDecimal(45), new BigDecimal(25));
 
 		ConsolidadoFinanceiroCota consolidadoAcumuloMariana1 = Fixture
 				.consolidadoFinanceiroCota(null, cotaMariana,
-						Fixture.criarData(7, 2, 2010), new BigDecimal(210), new BigDecimal(230), new BigDecimal(180), new BigDecimal(180), new BigDecimal(180), new BigDecimal(45), new BigDecimal(170), new BigDecimal(25));
+						Fixture.criarData(7, 2, 2010), new BigDecimal(210), new BigDecimal(230), new BigDecimal(180), new BigDecimal(180), new BigDecimal(180), new BigDecimal(45), new BigDecimal(25));
 
 		save(session,consolidado1, consolidado2, consolidado3,
 					 consolidado4, consolidado5, consolidado6,
@@ -2964,10 +3354,10 @@ public class DataLoader {
 				      dividaOrlando,
 				      dividaAcumuladaGuilherme1, dividaAcumuladaGuilherme2,dividaAcumuladaMariana1,dividaAcumuladaMurilo1);
 
-		dividaAcumuladaGuilherme1.getAcumulado().add(dividaGuilherme1);
-		dividaAcumuladaGuilherme2.getAcumulado().add(dividaGuilherme2);
-		dividaAcumuladaMariana1.getAcumulado().add(dividaMariana1);
-		dividaAcumuladaMurilo1.getAcumulado().add(dividaMurilo1);
+		dividaAcumuladaGuilherme1.setDividaRaiz(dividaGuilherme1);
+		dividaAcumuladaGuilherme2.setDividaRaiz(dividaGuilherme2);
+		dividaAcumuladaMariana1.setDividaRaiz(dividaMariana1);
+		dividaAcumuladaMurilo1.setDividaRaiz(dividaMurilo1);
 
 		save(session, dividaAcumuladaGuilherme1,dividaAcumuladaGuilherme2,dividaAcumuladaMariana1,dividaAcumuladaMurilo1);
 	}
@@ -3309,6 +3699,10 @@ public class DataLoader {
 				"\\procuracao\\"));	// windows;
 //				"/procuracao/"));		// linux;
 		
+		save(session, Fixture.parametroSistema(TipoParametroSistema.PATH_GERACAO_ARQUIVO_COBRANCA,
+				"C:\\nds-client\\arquivo_cobranca\\")); // windows;
+//				"???"));					// linux;
+		
 		save(session, Fixture.parametroSistema(TipoParametroSistema.NUMERO_DIAS_PERMITIDO_LANCAMENTO_FALTA_DE, "7"));
 		save(session, Fixture.parametroSistema(TipoParametroSistema.NUMERO_DIAS_PERMITIDO_LANCAMENTO_FALTA_EM, "7"));
 		save(session, Fixture.parametroSistema(TipoParametroSistema.NUMERO_DIAS_PERMITIDO_LANCAMENTO_SOBRA_EM, "7"));
@@ -3323,14 +3717,14 @@ public class DataLoader {
 				"C:\\contratos\\"));			// windows;
 //				"/opt/interface/contratos/"));	// linux;
 		save(session, Fixture.parametroSistema(TipoParametroSistema.PATH_INTERFACE_MDC_IMPORTACAO, 
-				"C:\\interface_mdc\\"));		// windows;
-//				"/opt/interface_mdc/"));		// linux;
+//				"C:\\interface_mdc\\"));		// windows;
+				"/mnt/mdc/NDS/"));		// linux;
 		save(session, Fixture.parametroSistema(TipoParametroSistema.PATH_INTERFACE_MDC_EXPORTACAO,
-				"C:\\interface_mdc\\"));		// windows;
-//				"/opt/interface_mdc/"));	// linux;
+//				"C:\\interface_mdc\\"));		// windows;
+				"/mnt/mdc/"));	// linux;
 		save(session, Fixture.parametroSistema(TipoParametroSistema.PATH_INTERFACE_MDC_BACKUP,
-				"C:\\interface_mdc\\"));		// windows;
-//				"/opt/interface_mdc/"));		// linux;
+//				"C:\\interface_mdc\\"));		// windows;
+				"/mnt/mdc/NDS_BACKUP/"));		// linux;
 		
 		
 		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0106_IN_FILEMASK, "(?i:DEAPR19.NEW)"));
@@ -3348,6 +3742,7 @@ public class DataLoader {
 		
 		save(session, Fixture.parametroSistema(TipoParametroSistema.OUTBOUND_FOLDER, "/opt/interface/"));
 		save(session, Fixture.parametroSistema(TipoParametroSistema.CODIGO_DISTRIBUIDOR_DINAP, "6248116"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.CNPJ_PJ_IMPORTACAO_NRE, "61.438.248/0001-23"));
 	}
 
 	private static void criarMovimentosEstoque(Session session) {
@@ -3478,6 +3873,16 @@ public class DataLoader {
 			 estoqueProdutoInfoExame1,estoqueProdutoVeja1EncalheAnt,estoqueProdutoVeja2EncalheAnt,
 			 estoqueProdutoSuper1EncalheAnt,estoqueProdutoSuper2EncalheAnt);
 	}
+	
+	private static void criarEstoquesProdutosCotaJuramentados(Session session) {
+		estoqueProdutoCotaJuramentadoVeja = Fixture.estoqueProdutoCotaJuramentado(new Date(), produtoEdicaoVeja1, cotaMaria, BigInteger.TEN);
+		
+		estoqueProdutoCotaJuramentadoCapricho = Fixture.estoqueProdutoCotaJuramentado(new Date(), produtoEdicaoCapricho1, cotaMaria, BigInteger.TEN);
+		
+		estoqueProdutoCotaJuramentadoInfoExame = Fixture.estoqueProdutoCotaJuramentado(new Date(), produtoEdicaoInfoExame1, cotaJoao, BigInteger.TEN);
+		
+		save(session, estoqueProdutoCotaJuramentadoVeja, estoqueProdutoCotaJuramentadoCapricho, estoqueProdutoCotaJuramentadoInfoExame);
+	}
 
 	private static void criarRecebimentosFisicos(Session session) {
 		recebimentoFisico = Fixture.recebimentoFisico(
@@ -3546,12 +3951,12 @@ public class DataLoader {
 	private static void criarNotasFiscais(Session session) {
 
 		notaFiscal10 = Fixture
-				.notaFiscalEntradaFornecedor(cfop5102, fornecedorDinap.getJuridica(), fornecedorDinap, tipoNotaFiscalRecebimento,
+				.notaFiscalEntradaFornecedor(cfop5102, fornecedorDinap, tipoNotaFiscalRecebimento,
 						usuarioJoao, new BigDecimal(50), new BigDecimal(10), BigDecimal.TEN);
 		session.save(notaFiscal10);
 
 		notaFiscalFornecedor = Fixture
-				.notaFiscalEntradaFornecedor(cfop5102, fornecedorDinap.getJuridica(), fornecedorDinap, tipoNotaFiscalRecebimento,
+				.notaFiscalEntradaFornecedor(cfop5102, fornecedorDinap, tipoNotaFiscalRecebimento,
 						usuarioJoao, new BigDecimal(15), new BigDecimal(5), BigDecimal.TEN);
 		session.save(notaFiscalFornecedor);
 
@@ -4199,147 +4604,147 @@ public class DataLoader {
 	private static void criarProdutosEdicao(Session session) {
 		produtoEdicaoVeja1 = Fixture.produtoEdicao("COD_1", 1L, 10, 14,
 				new Long(100), BigDecimal.TEN, new BigDecimal(20),
-				"111", 2L, produtoVeja, null, false, "Veja 1");
+				"111", produtoVeja, null, false, "Veja 1");
 		session.save(produtoEdicaoVeja1);
 
 		produtoEdicaoVeja2 = Fixture.produtoEdicao("COD_2", 2L, 10, 14,
 				new Long(100), BigDecimal.TEN, new BigDecimal(20),
-				"112", 3L, produtoVeja, null, false, "Veja 2");
+				"112", produtoVeja, null, false, "Veja 2");
 		session.save(produtoEdicaoVeja2);
 
 		produtoEdicaoVeja3 = Fixture.produtoEdicao("COD_3", 3L, 10, 14,
 				new Long(100), BigDecimal.TEN, new BigDecimal(20),
-				"113", 4L, produtoVeja, null, false, "Veja 3");
+				"113", produtoVeja, null, false, "Veja 3");
 		session.save(produtoEdicaoVeja3);
 
 		produtoEdicaoVeja4 = Fixture.produtoEdicao("COD_4", 4L, 10, 14,
 				new Long(100), BigDecimal.TEN, new BigDecimal(20),
-				"114", 5L, produtoVeja, null, false, "Veja 4");
+				"114", produtoVeja, null, false, "Veja 4");
 		session.save(produtoEdicaoVeja4);
 
 		produtoEdicaoVeja5 = Fixture.produtoEdicao("COD_C5", 54321L, 10, 14,
 				new Long(100), BigDecimal.TEN, new BigDecimal(20),
-				"114", 6L, produtoVeja, null, false, "Veja 5");
+				"114", produtoVeja, null, false, "Veja 5");
 		session.save(produtoEdicaoVeja5);
 		
 		produtoEdicaoSuper1 = Fixture.produtoEdicao("COD_5", 1L, 10, 14,
 				new Long(100), BigDecimal.TEN, new BigDecimal(20),
-				"115", 6L, produtoSuper, null, false, "Super Int. 1");
+				"115", produtoSuper, null, false, "Super Int. 1");
 		session.save(produtoEdicaoSuper1);
 		
 		produtoEdicaoSuper2 = Fixture.produtoEdicao("COD_C6", 24321L, 10, 14,
 				new Long(100), BigDecimal.TEN, new BigDecimal(20),
-				"115", 6L, produtoSuper, null, false, "Super Int. 2");
+				"115", produtoSuper, null, false, "Super Int. 2");
 		session.save(produtoEdicaoSuper2);
 
 		produtoEdicaoCapricho1 = Fixture.produtoEdicao("COD_6", 1L, 9, 14,
 				new Long(150), new BigDecimal(9), new BigDecimal(13.5),
-				"116", 7L, produtoCapricho, null, false, "Capricho 1");
+				"116", produtoCapricho, null, false, "Capricho 1");
 		session.save(produtoEdicaoCapricho1);
 		
 		produtoEdicaoCapricho2 = Fixture.produtoEdicao("COD_C7", 25432L, 9, 14,
 				new Long(150), new BigDecimal(9), new BigDecimal(13.5),
-				"116", 7L, produtoCapricho, null, false, "Capricho 2");
+				"116", produtoCapricho, null, false, "Capricho 2");
 		session.save(produtoEdicaoCapricho2);
 
 		produtoEdicaoInfoExame1 = Fixture.produtoEdicao("COD_7", 1L, 12, 30,
 				new Long(250), new BigDecimal(11), new BigDecimal(14.5),
-				"117", 8L, produtoInfoExame, null, false, "Info Exame 1");
+				"117", produtoInfoExame, null, false, "Info Exame 1");
 		session.save(produtoEdicaoInfoExame1);
 
 		produtoEdicaoQuatroRodas1 = Fixture.produtoEdicao("COD_8", 1L, 7, 30,
 				new Long(300), new BigDecimal(12.5), new BigDecimal(16.5),
-				"118", 9L, produtoQuatroRodas, null, false, "Quatro Rodas 1");
+				"118", produtoQuatroRodas, null, false, "Quatro Rodas 1");
 		session.save(produtoEdicaoQuatroRodas1);
 
 		produtoEdicaoBoaForma1 = Fixture.produtoEdicao("COD_9", 1L, 10, 30,
 				new Long(100), new BigDecimal(12), new BigDecimal(15),
-				"119", 10L, produtoBoaForma, null, false, "Boa Forma 1");
+				"119", produtoBoaForma, null, false, "Boa Forma 1");
 		session.save(produtoEdicaoBoaForma1);
 
 		produtoEdicaoBravo1 = Fixture.produtoEdicao("COD_10", 1L, 10, 30,
 				new Long(120), new BigDecimal(17), new BigDecimal(20),
-				"119", 11L, produtoBravo, null, false, "Bravo 1");
+				"119", produtoBravo, null, false, "Bravo 1");
 		session.save(produtoEdicaoBravo1);
 
 		produtoEdicaoCaras1 = Fixture.produtoEdicao("COD_11", 1L, 15, 30,
 				new Long(200), new BigDecimal(20), new BigDecimal(25),
-				"120", 12L, produtoCaras, null, false, "Caras 1");
+				"120", produtoCaras, null, false, "Caras 1");
 		session.save(produtoEdicaoCaras1);
 
 		produtoEdicaoCasaClaudia1 = Fixture.produtoEdicao("COD_12", 1L, 10, 30,
 				new Long(200), new BigDecimal(20), new BigDecimal(25),
-				"121", 13L, produtoCasaClaudia, null, false, "Casa Claudia 1");
+				"121", produtoCasaClaudia, null, false, "Casa Claudia 1");
 		session.save(produtoEdicaoCasaClaudia1);
 
 		produtoEdicaoClaudia1 = Fixture.produtoEdicao("COD_13", 1L, 10, 30,
 				new Long(100), new BigDecimal(10), new BigDecimal(11),
-				"122", 14L, produtoClaudia, null, false,"Claudia 1");
+				"122", produtoClaudia, null, false,"Claudia 1");
 		session.save(produtoEdicaoClaudia1);
 
 		produtoEdicaoContigo1 = Fixture.produtoEdicao("COD_14", 1L, 10, 30,
 				new Long(100), new BigDecimal(12), new BigDecimal(15),
-				"123", 15L, produtoContigo, null, false,"Contigo 1");
+				"123", produtoContigo, null, false,"Contigo 1");
 		session.save(produtoEdicaoContigo1);
 
 		produtoEdicaoManequim1 = Fixture.produtoEdicao("COD_15", 1L, 10, 30,
 				new Long(100), new BigDecimal(15), new BigDecimal(20),
-				"124", 16L, produtoManequim, null, false, "Manequim 1");
+				"124", produtoManequim, null, false, "Manequim 1");
 		session.save(produtoEdicaoManequim1);
 
 		produtoEdicaoNatGeo1 = Fixture.produtoEdicao("COD_16", 1L, 10, 30,
 				new Long(100), new BigDecimal(20), new BigDecimal(23),
-				"125", 17L, produtoNatGeo, null, false, "Nat Geo 1");
+				"125", produtoNatGeo, null, false, "Nat Geo 1");
 		session.save(produtoEdicaoNatGeo1);
 
 		produtoEdicaoPlacar1 = Fixture.produtoEdicao("COD_17", 1L, 10, 30,
 				new Long(200), new BigDecimal(9), new BigDecimal(12),
-				"126", 18L, produtoPlacar, null, false, "Placar 1");
+				"126", produtoPlacar, null, false, "Placar 1");
 		session.save(produtoEdicaoPlacar1);
 
 		cocaColaLight = Fixture.produtoEdicao("COD_18", 1L, 10, 30,
 				new Long(200), new BigDecimal(9), new BigDecimal(12),
-				"127", 19L, cocaCola, null, false, "Coca Cola Light");
+				"127", cocaCola, null, false, "Coca Cola Light");
 		session.save(cocaColaLight);
 
 		produtoEdicaoVeja1EncalheAnt = Fixture.produtoEdicao("COD_19", 5L, 10, 14,
 				new Long(100), BigDecimal.TEN, new BigDecimal(20),
-				"128", 20L, produtoVeja, null, false, "Veja Encalhe 1");
+				"128", produtoVeja, null, false, "Veja Encalhe 1");
 		session.save(produtoEdicaoVeja1EncalheAnt);
 
 		produtoEdicaoVeja2EncalheAnt = Fixture.produtoEdicao("COD_20", 6L, 10, 14,
 				new Long(100), BigDecimal.TEN, new BigDecimal(20),
-				"129", 21L, produtoVeja, null, false, "Veja Encalhe 2");
+				"129", produtoVeja, null, false, "Veja Encalhe 2");
 		session.save(produtoEdicaoVeja2EncalheAnt);
 
 		produtoEdicaoSuper1EncalheAnt = Fixture.produtoEdicao("COD_21", 2L, 10, 14,
 				new Long(100), BigDecimal.TEN, new BigDecimal(20),
-				"130", 22L, produtoSuper, null, false, "Super Int. Encalhe Ant");
+				"130", produtoSuper, null, false, "Super Int. Encalhe Ant");
 		session.save(produtoEdicaoSuper1EncalheAnt);
 
 		produtoEdicaoSuper2EncalheAnt = Fixture.produtoEdicao("COD_22", 3L, 10, 14,
 				new Long(100), BigDecimal.TEN, new BigDecimal(20),
-				"131", 23L, produtoSuper, null, false,"Super Int. Encalhe 2");
+				"131",  produtoSuper, null, false,"Super Int. Encalhe 2");
 		session.save(produtoEdicaoSuper2EncalheAnt);
 
 		produtoVeja10 = Fixture.produtoEdicao("COD_100", 10L, 50, 14,
 				new Long(100), BigDecimal.TEN, new BigDecimal(20),
-				"132", 23L, produtoVeja, null, false, "Veja 10");
+				"132", produtoVeja, null, false, "Veja 10");
 		session.save(produtoVeja10);
 
 		produtoSuperInteressante10 = Fixture.produtoEdicao("COD_101", 10L, 50, 14,
 				new Long(100), BigDecimal.TEN, new BigDecimal(25),
-				"133", 23L, produtoSuper, null, false, "Super Int. 10");
+				"133", produtoSuper, null, false, "Super Int. 10");
 		session.save(produtoSuperInteressante10);
 
 		produtoCaras10 = Fixture.produtoEdicao("COD_102", 10L, 30, 14,
 				new Long(100), BigDecimal.TEN, new BigDecimal(18),
-				"134", 23L, produtoCaras, null, false, "Caras 10");
+				"134", produtoCaras, null, false, "Caras 10");
 		session.save(produtoCaras10);
 
 		produtoPlacar10 = Fixture.produtoEdicao("COD_103", 10L, 15, 14,
 				new Long(100), BigDecimal.TEN, new BigDecimal(12),
-				"135", 23L, produtoPlacar, null, false, "Placar 10");
+				"135", produtoPlacar, null, false, "Placar 10");
 		session.save(produtoPlacar10);
 
 	}
@@ -4465,6 +4870,7 @@ public class DataLoader {
 		tipoProdutoRevistaDigital= Fixture.tipoProduto("Revista Digital",GrupoProduto.REVISTA, ncmRevista, "", Long.valueOf(19));		
 		tipoProdutoDvd= Fixture.tipoProduto("DVD",GrupoProduto.OUTROS, ncmCd, "", Long.valueOf(24));
 		tipoProdutoLivroIlustrado= Fixture.tipoProduto("Livro Ilustrado",GrupoProduto.ALBUM, ncmLivroilustrado, "", Long.valueOf(36));
+		tipoProdutoRefrigerante = Fixture.tipoProduto("Refrigerante", GrupoProduto.OUTROS, ncmBebidas, "", Long.valueOf(40));
 		
 		save(session, tipoProdutoRevista, tipoProdutoFasciculo, tipoProdutoLivro, tipoProdutoCromo, tipoProdutoCard, tipoProdutoAlbun, 
 				tipoProdutoGuia, tipoProdutoQuadrinho, tipoProdutoAtividade, tipoProdutoPassatempo, tipoProdutoVideo, tipoProdutoCdrom,
@@ -4648,6 +5054,8 @@ public class DataLoader {
 
 
 		cotaManoel = Fixture.cota(123, manoel, SituacaoCadastro.ATIVO,box1);
+		cotaManoel.setInicioAtividade(DateUtil.adicionarDias(cotaManoel.getInicioAtividade(), -360));
+		
 		parametroCotaNotaFiscalEletronicaManoel = Fixture.parametrosCotaNotaFiscalEletronica(false, "manoel@email.com");
 		cotaManoel.setParametrosCotaNotaFiscalEletronica(parametroCotaNotaFiscalEletronicaManoel);
 		
@@ -4816,18 +5224,18 @@ public class DataLoader {
 		formaTransferenciBancaria.setParametroCobrancaCota(parametroCobrancaConta4);
 		formaTransferenciBancaria.setPrincipal(true);
 		save(session, formaTransferenciBancaria);
-
-
+		
+		Fixture.historicoTitularidade(cotaManoel);
 	}
 
 	private static void criarDistribuicaoCota(Session session) {
 
 		ParametroDistribuicaoCota parametroGuilherme = 	Fixture.criarParametroDistribuidor(
-				100, "Joao da Silva", tipoEntregador, "Muito importante isso aeh!",
+				100, "Joao da Silva", DescricaoTipoEntrega.ENTREGADOR, "Muito importante isso aeh!",
 				true, true, true, true, true, true, true, true, true);
 
 		ParametroDistribuicaoCota parametroJoao = 	Fixture.criarParametroDistribuidor(
-				120, "Maria da Silva", tipoEntregaEmBanca, "Muito importante isso aeh também!",
+				120, "Maria da Silva", DescricaoTipoEntrega.ENTREGA_EM_BANCA, "Muito importante isso aeh também!",
 				false, false, false, false, false, false, false, false, false);
 
 		cotaJoao.setParametroDistribuicao(parametroJoao);
@@ -4836,13 +5244,8 @@ public class DataLoader {
 		save(session, cotaJoao, cotaGuilherme);
 	}
 
-	private static void criarFornecedores(Session session) {
+	private static void criarFornecedoresClean(Session session) {
 
-		fornecedorAcme = Fixture.fornecedorAcme(tipoFornecedorOutros);
-		fornecedorAcme.setCodigoInterface(123);
-		fornecedorAcme.setResponsavel("João");
-		fornecedorAcme.setOrigem(Origem.INTERFACE);
-		fornecedorAcme.setEmailNfe("joao@email.com");
 		fornecedorDinap = Fixture.fornecedorDinap(tipoFornecedorPublicacao);
 		fornecedorDinap.setCodigoInterface(9999999);
 		fornecedorDinap.setResponsavel("Maria");
@@ -4855,7 +5258,7 @@ public class DataLoader {
 		fornecedorFc.setOrigem(Origem.MANUAL);
 		fornecedorFc.setEmailNfe("acme@acme.com");
 
-		save(session, fornecedorAcme, fornecedorDinap, fornecedorFc);
+		save(session, fornecedorDinap, fornecedorFc);
 
 		Endereco enderecoPrincipal = Fixture.criarEndereco(
 				TipoEndereco.COMERCIAL, "13730-500", "Rua Marechal", "50", "Centro", "Mococa", "SP",3530508);
@@ -4863,11 +5266,6 @@ public class DataLoader {
 		Endereco endereco = Fixture.criarEndereco(
 				TipoEndereco.RESIDENCIAL, "92130-330", "Avenida Brasil", "50", "Centro", "Mococa", "SP",3530508);
 
-		EnderecoFornecedor enderecoFornecedorAcme = new EnderecoFornecedor();
-		enderecoFornecedorAcme.setFornecedor(fornecedorAcme);
-		enderecoFornecedorAcme.setPrincipal(true);
-		enderecoFornecedorAcme.setEndereco(enderecoPrincipal);
-		enderecoFornecedorAcme.setTipoEndereco(TipoEndereco.COMERCIAL);
 
 		EnderecoFornecedor enderecoFornecedorDinap = new EnderecoFornecedor();
 		enderecoFornecedorDinap.setFornecedor(fornecedorDinap);
@@ -4881,35 +5279,9 @@ public class DataLoader {
 		enderecoFornecedorFc.setEndereco(enderecoPrincipal);
 		enderecoFornecedorFc.setTipoEndereco(TipoEndereco.COMERCIAL);
 
-		save(session, enderecoPrincipal, endereco, enderecoFornecedorAcme, enderecoFornecedorDinap, enderecoFornecedorFc);
-
-		enderecoFornecedorAcme = new EnderecoFornecedor();
-		enderecoFornecedorAcme.setFornecedor(fornecedorAcme);
-		enderecoFornecedorAcme.setPrincipal(false);
-		enderecoFornecedorAcme.setEndereco(endereco);
-		enderecoFornecedorAcme.setTipoEndereco(TipoEndereco.RESIDENCIAL);
-
-		enderecoFornecedorDinap = new EnderecoFornecedor();
-		enderecoFornecedorDinap.setFornecedor(fornecedorDinap);
-		enderecoFornecedorDinap.setPrincipal(false);
-		enderecoFornecedorDinap.setEndereco(endereco);
-		enderecoFornecedorDinap.setTipoEndereco(TipoEndereco.RESIDENCIAL);
-
-		enderecoFornecedorFc = new EnderecoFornecedor();
-		enderecoFornecedorFc.setFornecedor(fornecedorFc);
-		enderecoFornecedorFc.setPrincipal(false);
-		enderecoFornecedorFc.setEndereco(endereco);
-		enderecoFornecedorFc.setTipoEndereco(TipoEndereco.RESIDENCIAL);
-
-		save(session, enderecoPrincipal, endereco, enderecoFornecedorAcme, enderecoFornecedorDinap, enderecoFornecedorFc);
-
-		Telefone telefonePrincipalAcme = Fixture.telefone("19", "3216549", null);
-		TelefoneFornecedor telefoneFornecedorAcme = new TelefoneFornecedor();
-		telefoneFornecedorAcme.setPrincipal(true);
-		telefoneFornecedorAcme.setFornecedor(fornecedorAcme);
-		telefoneFornecedorAcme.setTelefone(telefonePrincipalAcme);
-		telefoneFornecedorAcme.setTipoTelefone(TipoTelefone.CELULAR);
-
+		save(session, enderecoPrincipal, endereco, enderecoFornecedorDinap, enderecoFornecedorFc);
+		
+		
 		Telefone telefonePrincipalDinap = Fixture.telefone("11", "18250104", null);
 		TelefoneFornecedor telefoneFornecedorDinap = new TelefoneFornecedor();
 		telefoneFornecedorDinap.setPrincipal(true);
@@ -4924,8 +5296,55 @@ public class DataLoader {
 		telefoneFornecedorFc.setTelefone(telefonePrincipalFc);
 		telefoneFornecedorFc.setTipoTelefone(TipoTelefone.CELULAR);
 
-		save(session, telefonePrincipalAcme, telefonePrincipalDinap, telefonePrincipalFc,
-					  telefoneFornecedorAcme, telefoneFornecedorDinap, telefoneFornecedorFc);
+		save(session, telefonePrincipalDinap, telefonePrincipalFc,
+					  telefoneFornecedorDinap, telefoneFornecedorFc);
+
+	}
+	
+	private static void criarFornecedores(Session session) {
+
+		fornecedorAcme = Fixture.fornecedorAcme(tipoFornecedorOutros);
+		fornecedorAcme.setCodigoInterface(123);
+		fornecedorAcme.setResponsavel("João");
+		fornecedorAcme.setOrigem(Origem.INTERFACE);
+		fornecedorAcme.setEmailNfe("joao@email.com");
+		
+
+		save(session, fornecedorAcme);
+
+		Endereco enderecoPrincipal = Fixture.criarEndereco(
+				TipoEndereco.COMERCIAL, "13730-500", "Rua Marechal", "50", "Centro", "Mococa", "SP",3530508);
+
+		Endereco endereco = Fixture.criarEndereco(
+				TipoEndereco.RESIDENCIAL, "92130-330", "Avenida Brasil", "50", "Centro", "Mococa", "SP",3530508);
+
+		EnderecoFornecedor enderecoFornecedorAcme = new EnderecoFornecedor();
+		enderecoFornecedorAcme.setFornecedor(fornecedorAcme);
+		enderecoFornecedorAcme.setPrincipal(true);
+		enderecoFornecedorAcme.setEndereco(enderecoPrincipal);
+		enderecoFornecedorAcme.setTipoEndereco(TipoEndereco.COMERCIAL);
+
+
+		save(session, enderecoPrincipal, endereco, enderecoFornecedorAcme);
+
+		enderecoFornecedorAcme = new EnderecoFornecedor();
+		enderecoFornecedorAcme.setFornecedor(fornecedorAcme);
+		enderecoFornecedorAcme.setPrincipal(false);
+		enderecoFornecedorAcme.setEndereco(endereco);
+		enderecoFornecedorAcme.setTipoEndereco(TipoEndereco.RESIDENCIAL);
+
+
+		save(session, enderecoPrincipal, endereco, enderecoFornecedorAcme);
+
+		Telefone telefonePrincipalAcme = Fixture.telefone("19", "3216549", null);
+		TelefoneFornecedor telefoneFornecedorAcme = new TelefoneFornecedor();
+		telefoneFornecedorAcme.setPrincipal(true);
+		telefoneFornecedorAcme.setFornecedor(fornecedorAcme);
+		telefoneFornecedorAcme.setTelefone(telefonePrincipalAcme);
+		telefoneFornecedorAcme.setTipoTelefone(TipoTelefone.CELULAR);
+
+
+		save(session, telefonePrincipalAcme, telefoneFornecedorAcme);
 
 		telefonePrincipalAcme = Fixture.telefone("19", "75110240", null);
 		telefoneFornecedorAcme = new TelefoneFornecedor();
@@ -4934,22 +5353,8 @@ public class DataLoader {
 		telefoneFornecedorAcme.setTelefone(telefonePrincipalAcme);
 		telefoneFornecedorAcme.setTipoTelefone(TipoTelefone.RESIDENCIAL);
 
-		telefonePrincipalDinap = Fixture.telefone("11", "5407842", null);
-		telefoneFornecedorDinap = new TelefoneFornecedor();
-		telefoneFornecedorDinap.setPrincipal(false);
-		telefoneFornecedorDinap.setFornecedor(fornecedorDinap);
-		telefoneFornecedorDinap.setTelefone(telefonePrincipalDinap);
-		telefoneFornecedorDinap.setTipoTelefone(TipoTelefone.RESIDENCIAL);
 
-		telefonePrincipalFc = Fixture.telefone("19", "3210054", null);
-		telefoneFornecedorFc = new TelefoneFornecedor();
-		telefoneFornecedorFc.setPrincipal(false);
-		telefoneFornecedorFc.setFornecedor(fornecedorFc);
-		telefoneFornecedorFc.setTelefone(telefonePrincipalFc);
-		telefoneFornecedorFc.setTipoTelefone(TipoTelefone.RESIDENCIAL);
-
-		save(session, telefonePrincipalAcme, telefonePrincipalDinap, telefonePrincipalFc,
-					  telefoneFornecedorAcme, telefoneFornecedorDinap, telefoneFornecedorFc);
+		save(session, telefonePrincipalAcme, telefoneFornecedorAcme);
 
 		Fornecedor fornecedor = Fixture.fornecedor(juridicaValida, SituacaoCadastro.ATIVO, false, tipoFornecedorOutros,123456);
 		fornecedor.setEmailNfe("email@email.com");
@@ -4967,8 +5372,29 @@ public class DataLoader {
 
 		save(session, tipoNotaFiscalRecebimento, tipoNotaFiscalDevolucao);
 
+		TipoNotaFiscal tipoNotaFiscalTerceiroMercantil = Fixture.tipoNotaFiscalRecebimento();
+		tipoNotaFiscalTerceiroMercantil.setGrupoNotaFiscal(GrupoNotaFiscal.NF_TERCEIRO);
+		tipoNotaFiscalTerceiroMercantil.setContribuinte(true);
+		tipoNotaFiscalTerceiroMercantil.setTipoAtividade(TipoAtividade.MERCANTIL);
+		
+		TipoNotaFiscal tipoNotaFiscalTerceiroMercantilComplementar = Fixture.tipoNotaFiscalRecebimento();
+		tipoNotaFiscalTerceiroMercantilComplementar.setGrupoNotaFiscal(GrupoNotaFiscal.NF_TERCEIRO_COMPLEMENTAR);
+		tipoNotaFiscalTerceiroMercantilComplementar.setContribuinte(true);
+		tipoNotaFiscalTerceiroMercantilComplementar.setTipoAtividade(TipoAtividade.MERCANTIL);
+		
 
-		session.save(tipoNotaFiscalRecebimento);
+		TipoNotaFiscal tipoNotaFiscalTerceiroPrestadorServicos = Fixture.tipoNotaFiscalRecebimento();
+		tipoNotaFiscalTerceiroPrestadorServicos.setGrupoNotaFiscal(GrupoNotaFiscal.NF_TERCEIRO);
+		tipoNotaFiscalTerceiroPrestadorServicos.setContribuinte(true);
+		tipoNotaFiscalTerceiroPrestadorServicos.setTipoAtividade(TipoAtividade.PRESTADOR_SERVICO);
+		
+		TipoNotaFiscal tipoNotaFiscalTerceiroPrestadorServicosComplementar = Fixture.tipoNotaFiscalRecebimento();
+		tipoNotaFiscalTerceiroPrestadorServicosComplementar.setGrupoNotaFiscal(GrupoNotaFiscal.NF_TERCEIRO_COMPLEMENTAR);
+		tipoNotaFiscalTerceiroPrestadorServicosComplementar.setContribuinte(true);
+		tipoNotaFiscalTerceiroPrestadorServicosComplementar.setTipoAtividade(TipoAtividade.PRESTADOR_SERVICO);
+		
+		save(session, tipoNotaFiscalTerceiroMercantil, tipoNotaFiscalTerceiroMercantilComplementar,
+					  tipoNotaFiscalTerceiroPrestadorServicos, tipoNotaFiscalTerceiroPrestadorServicosComplementar);
 	}
 
 	private static void criarCFOP(Session session) {
@@ -5009,6 +5435,7 @@ public class DataLoader {
 	}
 
 	private static void criarTiposMovimento(Session session) {
+		
 		tipoMovimentoFaltaEm = Fixture.tipoMovimentoFaltaEm();
 		tipoMovimentoFaltaDe = Fixture.tipoMovimentoFaltaDe();
 		tipoMovimentoSobraEm = Fixture.tipoMovimentoSobraEm();
@@ -5018,7 +5445,9 @@ public class DataLoader {
 
 		tipoMovimentoNivelamentoEntrada = Fixture.tipoMovimentoNivelamentoEntrada();
 		tipoMovimentoNivelamentoSaida = Fixture.tipoMovimentoNivelamentoSaida();
-
+		
+		tipoMovimentoCompraEncalhe = Fixture.tipoMovimentoCompraEncalhe();
+		tipoMovimentoEstornoCompraEncalhe = Fixture.tipoMovimentoEstornoCompraEncalhe();
 
 		tipoMovimentoVendaEncalhe = Fixture.tipoMovimentoVendaEncalhe();
 		tipoMovimentoEstornoVendaEncalhe = Fixture.tipoMovimentoEstornoVendaEncalhe();
@@ -5032,10 +5461,14 @@ public class DataLoader {
 		tipoMovimentoFinanceiroCompraEncalhe = Fixture.tipoMovimentoFinanceiroCompraEncalhe();
 
 		save(session, tipoMovimentoVendaEncalhe,tipoMovimentoFinanceiroCompraEncalhe,tipoMovimentoEstornoVendaEncalhe,tipoMovimentoVendaEncalheSuplementar,
-					  tipoMovimentoEstornoVendaEncalheSuplementar,tipoMovimentoEstoqueCompraSuplementar,tipoMovimentoEstoqueEstornoCompraSuplementar, tipoMovimentoEncalheAntecipado);
+					  tipoMovimentoEstornoVendaEncalheSuplementar,tipoMovimentoEstoqueCompraSuplementar,tipoMovimentoEstoqueEstornoCompraSuplementar, 
+					  tipoMovimentoEncalheAntecipado,tipoMovimentoCompraEncalhe,tipoMovimentoEstornoCompraEncalhe);
 
 
 		tipoMovimentoSuplementarCotaAusente = Fixture.tipoMovimentoSuplementarCotaAusente();
+		
+		tipoMovimentoEstornoCotaEnvioReparte = Fixture.tipoMovimentoEstornoCotaEstornoEnvioReparte();
+		tipoMovimentoEntradaSuplementarEnvioReparte = Fixture.tipoMovimentoEntradaSuplementarEnvioReparte();
 
 		tipoMovimentoEnvioEncalhe = Fixture.tipoMovimentoEnvioEncalhe();
 
@@ -5060,6 +5493,8 @@ public class DataLoader {
 		tipoMovimentoFinanceiroJuros = Fixture.tipoMovimentoFinanceiroJuros();
 		tipoMovimentoFinanceiroMulta = Fixture.tipoMovimentoFinanceiroMulta();
 		tipoMovimentoFinanceiroEnvioEncalhe = Fixture.tipoMovimentoFinanceiroEnvioEncalhe();
+		tipoMovimentoFinanceiroDebitoPendente = Fixture.tipoMovimentoFinanceiroDebitoPendente();
+		tipoMovimentoFinanceiroDebitoPostergado = Fixture.tipoMovimentoFinanceiroDebitoPostergado();
 
 		tipoMovimentoEnvioJornaleiro = Fixture.tipoMovimentoEnvioJornaleiro();
 
@@ -5070,6 +5505,18 @@ public class DataLoader {
 		tipoMovimentoFinanceiroDebito.setAprovacaoAutomatica(false);
 		tipoMovimentoFinanceiroDebitoNA.setAprovacaoAutomatica(false);
 
+		tipoMovimentoCancelamentoNFDevolucaoConsignado = Fixture.tipoMovimentoCancelamentoNFDevolucaoConsignado();
+		tipoMovimentoCancelamentoNFEnvioConsignado = Fixture.tipoMovimentoCancelamentoNFEnvioConsignado();
+		
+		tipoMovimentoTransferenciaEntradaLancamento = Fixture.tipoMovimentoTransferenciaEntradaLancamento();
+		tipoMovimentoTransferenciaSaidaLancamento = Fixture.tipoMovimentoTransferenciaSaidaLancamento();
+		tipoMovimentoTransferenciaEntradaSuplementar = Fixture.tipoMovimentoTransferenciaEntradaSuplementar();
+		tipoMovimentoTransferenciaSaidaSuplementar = Fixture.tipoMovimentoTransferenciaSaidaSuplementar();
+		tipoMovimentoTransferenciaEntradaRecolhimento = Fixture.tipoMovimentoTransferenciaEntradaRecolhimento();
+		tipoMovimentoTransferenciaSaidaRecolhimento = Fixture.tipoMovimentoTransferenciaSaidaRecolhimento();
+		tipoMovimentoTransferenciaEntradaProdutosDanificados = Fixture.tipoMovimentoTransferenciaEntradaProdutosDanificados();
+		tipoMovimentoTransferenciaSaidaProdutosDanificados = Fixture.tipoMovimentoTransferenciaSaidaProdutosDanificados();
+		
 		save(session, tipoMovimentoFaltaEm, tipoMovimentoFaltaDe, tipoMovimentoSuplementarCotaAusente,
 				tipoMovimentoSobraEm, tipoMovimentoSobraDe,
 				tipoMovimentoRecFisico, tipoMovimentoRecReparte,
@@ -5078,7 +5525,12 @@ public class DataLoader {
 				tipoMovimentoFinanceiroJuros, tipoMovimentoFinanceiroMulta,
 				tipoMovimentoFinanceiroEnvioEncalhe, tipoMovimentoSuplementarCotaAusente,
 				tipoMovimentoRecebimentoEncalhe, tipoMovimentoRecebimentoEncalheJuramentado,
-				tipoMovimentoSuplementarEnvioEncalheAnteriroProgramacao);
+				tipoMovimentoSuplementarEnvioEncalheAnteriroProgramacao, 
+				tipoMovimentoCancelamentoNFDevolucaoConsignado, tipoMovimentoCancelamentoNFEnvioConsignado, 
+				tipoMovimentoTransferenciaEntradaLancamento, tipoMovimentoTransferenciaSaidaLancamento, 
+				tipoMovimentoTransferenciaEntradaSuplementar, tipoMovimentoTransferenciaSaidaSuplementar,
+				tipoMovimentoTransferenciaEntradaRecolhimento, tipoMovimentoTransferenciaSaidaRecolhimento,
+				tipoMovimentoTransferenciaEntradaProdutosDanificados, tipoMovimentoTransferenciaSaidaProdutosDanificados);
 
 	}
 
@@ -5125,44 +5577,14 @@ public class DataLoader {
 				  	  dinapQuartaRecolhimento, fcQuartaRecolhimento);
 	}
 
-	private static void criarDiasDistribuicaoDistribuidor(Session session) {
-
-		DistribuicaoDistribuidor recolhimentoDistribuidorTerca =
-			Fixture.distribuicaoDistribuidor(distribuidor, DiaSemana.TERCA_FEIRA,
-											 OperacaoDistribuidor.RECOLHIMENTO);
-
-		DistribuicaoDistribuidor recolhimentoDistribuidorQuinta =
-			Fixture.distribuicaoDistribuidor(distribuidor, DiaSemana.QUINTA_FEIRA,
-											 OperacaoDistribuidor.RECOLHIMENTO);
-
-		DistribuicaoDistribuidor distribuicaoDistribuidorTerca =
-			Fixture.distribuicaoDistribuidor(distribuidor, DiaSemana.TERCA_FEIRA,
-											 OperacaoDistribuidor.DISTRIBUICAO);
-
-		DistribuicaoDistribuidor distribuicaoDistribuidorSegunda =
-			Fixture.distribuicaoDistribuidor(distribuidor, DiaSemana.SEGUNDA_FEIRA,
-											 OperacaoDistribuidor.DISTRIBUICAO);
-
-		DistribuicaoDistribuidor distribuicaoDistribuidorQuinta =
-				Fixture.distribuicaoDistribuidor(distribuidor, DiaSemana.QUINTA_FEIRA,
-												 OperacaoDistribuidor.DISTRIBUICAO);
-
-		DistribuicaoDistribuidor distribuicaoDistribuidorSexta =
-				Fixture.distribuicaoDistribuidor(distribuidor, DiaSemana.SEXTA_FEIRA,
-												 OperacaoDistribuidor.DISTRIBUICAO);
-
-		save(session, recolhimentoDistribuidorTerca, recolhimentoDistribuidorQuinta,
-					  distribuicaoDistribuidorTerca, distribuicaoDistribuidorSegunda,
-					  distribuicaoDistribuidorQuinta, distribuicaoDistribuidorSexta);
-	}
-
 	private static void gerarCargaDiferencaEstoque(Session session,
 												   int quantidadeRegistros,
 												   ProdutoEdicao produtoEdicao,
 												   TipoMovimentoEstoque tipoMovimento,
 												   Usuario usuario,
 												   EstoqueProduto estoqueProduto,
-												   TipoDiferenca tipoDiferenca) {
+												   TipoDiferenca tipoDiferenca,
+												   TipoDirecionamentoDiferenca tipoDirecionamento) {
 
 		for (int i = 1; i <= quantidadeRegistros; i++) {
 
@@ -5175,13 +5597,14 @@ public class DataLoader {
 			Diferenca diferenca =
 				Fixture.diferenca(
 					BigInteger.valueOf(i), usuario, produtoEdicao, tipoDiferenca,
-						StatusConfirmacao.PENDENTE, null, movimentoEstoqueDiferenca, true, TipoEstoque.LANCAMENTO);
-			LancamentoDiferenca lancamentoDiferenca = new LancamentoDiferenca();
+						StatusConfirmacao.PENDENTE, null,true, TipoEstoque.LANCAMENTO,tipoDirecionamento, new Date());
 			
-			lancamentoDiferenca.setMovimentoEstoque(movimentoEstoqueDiferenca);
-
-			diferenca.setLancamentoDiferenca(lancamentoDiferenca);
-			save(session, lancamentoDiferenca, diferenca);
+			save(session, diferenca);
+			
+			if (!TipoDirecionamentoDiferenca.ESTOQUE.equals(tipoDirecionamento)) {
+				RateioDiferenca rateio = Fixture.criarRateioDiferenca(cotaManoel, new Date(), BigInteger.valueOf(i), estudoCotaManoel, diferenca);
+				session.save(rateio);
+			}
 		}
 
 		for (int i = 1; i <= quantidadeRegistros; i++) {
@@ -5195,14 +5618,22 @@ public class DataLoader {
 			Diferenca diferenca =
 				Fixture.diferenca(
 					BigInteger.valueOf(i), usuario, produtoEdicao, tipoDiferenca,
-						StatusConfirmacao.CONFIRMADO, null, movimentoEstoqueDiferenca, true, TipoEstoque.LANCAMENTO);
+						StatusConfirmacao.CONFIRMADO, null, true, TipoEstoque.LANCAMENTO,tipoDirecionamento,new Date());
 
 			session.save(diferenca);
 			
-			if (i < 5) {
+			if (!TipoDirecionamentoDiferenca.ESTOQUE.equals(tipoDirecionamento)) {
 				RateioDiferenca rateio = Fixture.criarRateioDiferenca(cotaManoel, new Date(), BigInteger.valueOf(i), estudoCotaManoel, diferenca);
 				session.save(rateio);
 			}
+			
+			LancamentoDiferenca lancamentoDiferenca = new LancamentoDiferenca();
+			lancamentoDiferenca.setStatus(StatusAprovacao.APROVADO);
+			lancamentoDiferenca.setMovimentoEstoque(movimentoEstoqueDiferenca);
+
+			diferenca.setLancamentoDiferenca(lancamentoDiferenca);
+			
+			session.save(lancamentoDiferenca);
 		}
 	}
 
@@ -5274,7 +5705,7 @@ public class DataLoader {
 			session.save(produto);
 
 			ProdutoEdicao produtoEdicao = Fixture.produtoEdicao("COD_II", i.longValue(), 50, 40,
-					new Long(3000), new BigDecimal(20), new BigDecimal(10), "ZZZ", 24L, produto, null, false, "");
+					new Long(3000), new BigDecimal(20), new BigDecimal(10), "ZZZ", produto, null, false, "");
 			session.save(produtoEdicao);
 
 
@@ -5287,7 +5718,7 @@ public class DataLoader {
 			for(int x= 1; x< 3 ;x++){
 
 				NotaFiscalEntradaFornecedor notaFiscalFornecedor = Fixture
-						.notaFiscalEntradaFornecedor(cfop, juridica, fornecedor, tipoNotaFiscalDevolucao,
+						.notaFiscalEntradaFornecedor(cfop, fornecedor, tipoNotaFiscalDevolucao,
 								usuario, new BigDecimal(1),new BigDecimal(1),new BigDecimal(1));
 				session.save(notaFiscalFornecedor);
 
@@ -5317,7 +5748,11 @@ public class DataLoader {
 				if(indDiferenca > 5){
 
 
-					Diferenca diferenca = Fixture.diferenca(BigInteger.valueOf(10), usuario, produtoEdicao, TipoDiferenca.SOBRA_DE, StatusConfirmacao.CONFIRMADO, itemFisico, movimentoEstoque, true, TipoEstoque.LANCAMENTO);
+					Diferenca diferenca = Fixture.diferenca(BigInteger.valueOf(10), 
+							usuario, produtoEdicao, TipoDiferenca.SOBRA_DE, 
+							StatusConfirmacao.CONFIRMADO, itemFisico, true, 
+							TipoEstoque.LANCAMENTO,TipoDirecionamentoDiferenca.ESTOQUE,new Date());
+					
 					LancamentoDiferenca lancamentoDiferenca = new LancamentoDiferenca();
 					
 					lancamentoDiferenca.setMovimentoEstoque(movimentoEstoque);
@@ -5423,7 +5858,8 @@ public class DataLoader {
 
 		Diferenca diferenca =
 			Fixture.diferenca(BigInteger.valueOf(1), usuarioJoao, produtoEdicaoVeja1, TipoDiferenca.FALTA_EM,
-							  StatusConfirmacao.CONFIRMADO, null, movimentoEstoqueDiferenca, true, TipoEstoque.LANCAMENTO);
+							  StatusConfirmacao.CONFIRMADO, null, true, TipoEstoque.LANCAMENTO, TipoDirecionamentoDiferenca.COTA, new Date());
+		
 		LancamentoDiferenca lancamentoDiferenca = new LancamentoDiferenca();
 		
 		lancamentoDiferenca.setMovimentoEstoque(movimentoEstoqueDiferenca);
@@ -5433,7 +5869,7 @@ public class DataLoader {
 
 		Diferenca diferenca2 =
 			Fixture.diferenca(BigInteger.valueOf(2), usuarioJoao, produtoEdicaoVeja2, TipoDiferenca.FALTA_DE,
-							  StatusConfirmacao.CONFIRMADO, itemRecebimentoFisico, movimentoEstoqueDiferenca2, true,TipoEstoque.LANCAMENTO);
+							  StatusConfirmacao.CONFIRMADO, itemRecebimentoFisico, true,TipoEstoque.LANCAMENTO,TipoDirecionamentoDiferenca.ESTOQUE, new Date());
 		
 		LancamentoDiferenca lancamentoDiferenca2 = new LancamentoDiferenca();
 		
@@ -5444,7 +5880,7 @@ public class DataLoader {
 
 		Diferenca diferenca3 =
 			Fixture.diferenca(BigInteger.valueOf(3), usuarioJoao, produtoEdicaoVeja3, TipoDiferenca.SOBRA_EM,
-							  StatusConfirmacao.CONFIRMADO, null, movimentoEstoqueDiferenca3, true, TipoEstoque.LANCAMENTO);
+							  StatusConfirmacao.CONFIRMADO, null, true, TipoEstoque.LANCAMENTO,TipoDirecionamentoDiferenca.COTA, new Date());
 		
 		LancamentoDiferenca lancamentoDiferenca3 = new LancamentoDiferenca();
 		
@@ -5455,7 +5891,7 @@ public class DataLoader {
 
 		Diferenca diferenca4 =
 			Fixture.diferenca(BigInteger.valueOf(4), usuarioJoao, produtoEdicaoVeja4, TipoDiferenca.SOBRA_DE,
-					          StatusConfirmacao.CONFIRMADO, itemRecebimentoFisico, movimentoEstoqueDiferenca4, true, TipoEstoque.LANCAMENTO);
+					          StatusConfirmacao.CONFIRMADO, itemRecebimentoFisico,true, TipoEstoque.LANCAMENTO,TipoDirecionamentoDiferenca.ESTOQUE, new Date());
 		
 		LancamentoDiferenca lancamentoDiferenca4 = new LancamentoDiferenca();
 		
@@ -5469,19 +5905,19 @@ public class DataLoader {
 
 		gerarCargaDiferencaEstoque(
 			session, 50, produtoEdicaoVeja1, tipoMovimentoFaltaEm,
-				usuarioJoao, estoqueProdutoVeja1, TipoDiferenca.FALTA_EM);
+				usuarioJoao, estoqueProdutoVeja1, TipoDiferenca.FALTA_EM,TipoDirecionamentoDiferenca.COTA);
 
 		gerarCargaDiferencaEstoque(
 			session, 50, produtoEdicaoVeja2, tipoMovimentoFaltaDe,
-				usuarioJoao, estoqueProdutoVeja1, TipoDiferenca.FALTA_DE);
+				usuarioJoao, estoqueProdutoVeja1, TipoDiferenca.FALTA_DE,TipoDirecionamentoDiferenca.ESTOQUE);
 
 		gerarCargaDiferencaEstoque(
 			session, 50, produtoEdicaoVeja3, tipoMovimentoSobraDe,
-				usuarioJoao, estoqueProdutoVeja1, TipoDiferenca.SOBRA_DE);
+				usuarioJoao, estoqueProdutoVeja1, TipoDiferenca.SOBRA_DE,TipoDirecionamentoDiferenca.ESTOQUE);
 
 		gerarCargaDiferencaEstoque(
 			session, 50, produtoEdicaoVeja4, tipoMovimentoSobraEm,
-				usuarioJoao, estoqueProdutoVeja1, TipoDiferenca.SOBRA_EM);
+				usuarioJoao, estoqueProdutoVeja1, TipoDiferenca.SOBRA_EM,TipoDirecionamentoDiferenca.ESTOQUE);
 
 		RateioDiferenca rateioDiferencaCotaManoel = Fixture.rateioDiferenca(BigInteger.valueOf(10), cotaManoel, diferenca3, estudoCotaSuper1Manoel, new Date());
 		session.save(rateioDiferencaCotaManoel);
@@ -5514,18 +5950,27 @@ public class DataLoader {
 	}
 
 
-	private static void criarPessoas(Session session){
-		juridicaAcme = Fixture.pessoaJuridica("Acme",
-				"10000000000100", "000000000004", "sys.discover@gmail.com", "99.999-9");
+	private static void criarPessoasClean(Session session) {
+		juridicaTreelog = Fixture.pessoaJuridica("Treelog",
+				"61.438.248/0001-23", "000000000000", "sys.discover@gmail.com", "99.999-9");
 		juridicaDinap = Fixture.pessoaJuridica("Dinap",
 				"11111111000111", "111111111111", "sys.discover@gmail.com", "99.999-9");
 		juridicaFc = Fixture.pessoaJuridica("FC",
-				"22222222000122", "222222222222", "sys.discover@gmail.com", "99.999-9");
+				"28.322.873/0001-30", "222222222222", "sys.discover@gmail.com", "99.999-9");
+		
+		save(session, juridicaTreelog, juridicaDinap, juridicaFc);
+		
+	}
+	
+	private static void criarPessoas(Session session){
+				 
 		juridicaValida = Fixture.pessoaJuridica("Juridica Valida",
 				"93081738000101", "333333333333", "sys.discover@gmail.com", "99.999-9");
+		juridicaAcme = Fixture.pessoaJuridica("Acme",
+				"10000000000100", "000000000004", "sys.discover@gmail.com", "99.999-9");
 
 		manoel = Fixture.pessoaFisica("10732815665",
-				"sys.discover@gmail.com", "Manoel da Silva");
+				"sys.discover@gmail.com", "Manoel da Silva", "12654879-9", "SSP", "SP", DateUtil.parseDataPTBR("13/09/1979"), EstadoCivil.SOLTEIRO);
 
 		manoelCunha = Fixture.pessoaFisica("45300458970",
 				"sys.discover@gmail.com", "Manoel da Cunha");
@@ -5552,7 +5997,7 @@ public class DataLoader {
 
 	    PessoaFisica joana  = Fixture.pessoaFisica("12345678905", "sys.discover@gmail.com", "Joana");
 
-		save(session, juridicaAcme, juridicaDinap, juridicaFc, juridicaValida,manoel,manoelCunha,jose,maria,
+		save(session, juridicaAcme, juridicaValida,manoel,manoelCunha,jose,maria,
 				guilherme,murilo,mariana,orlando,luis,joao, joana);
 
 	}
@@ -5709,14 +6154,39 @@ public class DataLoader {
 	}
 
 	private static void criarFeriado(Session session) {
+
+//Fixos
+		save(session, Fixture.feriado(
+				DateUtil.parseDataPTBR("01/01/2012"), 
+				TipoFeriado.FEDERAL, 
+				null, 
+				null, 
+				"Confraternização Universal",
+				false,
+				false,
+				true));
+
+		save(session, Fixture.feriado(
+				DateUtil.parseDataPTBR("21/04/2012"), 
+				TipoFeriado.FEDERAL, 
+				null, 
+				null, 
+				"Tiradentes",
+				false,
+				false,
+				true));		
 		
-		UnidadeFederacao saoPaulo = Fixture.criarUnidadeFederacao("GO");
-		save(session, saoPaulo);
+		save(session, Fixture.feriado(
+				DateUtil.parseDataPTBR("01/05/2012"), 
+				TipoFeriado.FEDERAL, 
+				null, 
+				null, 
+				"Dia Mundial do Trabalho",
+				false,
+				false,
+				true));	
 		
-		Localidade localidadeMococa  = Fixture.criarLocalidade(112L, "Mococa", 10L, saoPaulo);
-		save(session, localidadeMococa);
-		
-		Feriado feriadoIndependencia = Fixture.feriado(
+		save(session, Fixture.feriado(
 				DateUtil.parseDataPTBR("07/09/2012"), 
 				TipoFeriado.FEDERAL, 
 				null, 
@@ -5724,21 +6194,69 @@ public class DataLoader {
 				"Independência do Brasil",
 				false,
 				false,
-				true);
-		save(session, feriadoIndependencia);
+				true));		
+		
+		save(session, Fixture.feriado(
+				DateUtil.parseDataPTBR("12/10/2012"), 
+				TipoFeriado.FEDERAL, 
+				null, 
+				null, 
+				"Nossa Senhora Aparecida",
+				false,
+				false,
+				true));				
+		
+		save(session, Fixture.feriado(
+				DateUtil.parseDataPTBR("02/11/2012"), 
+				TipoFeriado.FEDERAL, 
+				null, 
+				null, 
+				"Finados",
+				false,
+				false,
+				true));				
 
-		Feriado feriadoProclamacao =
-				Fixture.feriado(
-						DateUtil.parseDataPTBR("15/11/2012"), 
-						TipoFeriado.FEDERAL, 
-						null, 
-						null ,
-						"Proclamação da República",
-						false,
-						false,
-						false);
-
-		save(session, feriadoProclamacao);
+		save(session, Fixture.feriado(
+				DateUtil.parseDataPTBR("15/11/2012"), 
+				TipoFeriado.FEDERAL, 
+				null, 
+				null, 
+				"Proclamação da República",
+				false,
+				false,
+				true));	
+		
+		save(session, Fixture.feriado(
+				DateUtil.parseDataPTBR("25/12/2012"), 
+				TipoFeriado.FEDERAL, 
+				null, 
+				null, 
+				"Natal",
+				false,
+				false,
+				true));	
+		
+//Moveis		
+		
+		save(session, Fixture.feriado(
+				DateUtil.parseDataPTBR("06/04/2012"), 
+				TipoFeriado.FEDERAL, 
+				null, 
+				null, 
+				"Paixão de Cristo",
+				false,
+				false,
+				false));
+		
+		save(session, Fixture.feriado(
+				DateUtil.parseDataPTBR("07/06/2012"), 
+				TipoFeriado.FEDERAL, 
+				null, 
+				null, 
+				"Corpus Christi",
+				false,
+				false,
+				false));
 		
 	}
 	
@@ -5894,12 +6412,12 @@ public class DataLoader {
 			produto.addFornecedor(fornecedor);
 			save(session,produto);
 
-			ProdutoEdicao produtoEdicao = Fixture.produtoEdicao("COD_JJ", i.longValue(), 50, 40,
-					new Long(3000), new BigDecimal(20), new BigDecimal(10), "ZZ2", 25L, produto, null, false);
+			ProdutoEdicao produtoEdicao = Fixture.produtoEdicao(i.longValue(), 50, 40, new Long(3000),
+					new BigDecimal(20), new BigDecimal(10), "ZZ2", produto, null, false);
 			save(session,produtoEdicao);
 
 			NotaFiscalEntradaFornecedor notaFiscalFornecedor = Fixture
-					.notaFiscalEntradaFornecedor(cfop, juridica, fornecedor, tipoNotaFiscalRecebimento,
+					.notaFiscalEntradaFornecedor(cfop, fornecedor, tipoNotaFiscalRecebimento,
 							usuario, new BigDecimal(1),new BigDecimal(1),new BigDecimal(1));
 			save(session,notaFiscalFornecedor);
 
@@ -5961,11 +6479,11 @@ public class DataLoader {
 
 	private static void criarBanco(Session session) {
 
-		bancoHSBC = Fixture.banco(10L, true, 1, "1010",
-							  123456L, "1", "1", "Instrucoes HSBC.", "HSBC","BANCO HSBC S/A", "399", BigDecimal.ONE, BigDecimal.ZERO);
+		bancoHSBC = Fixture.banco(454L, true, 1, "1010",
+							  164L, "1", "6", "Instrucoes HSBC.", "HSBC","BANCO HSBC S/A", "399", BigDecimal.ONE, BigDecimal.ZERO);
 
 		bancoITAU = Fixture.banco(10L, true, 1, "1010",
-				  12345L, "1", "1", "Instrucoes ITAU.", "ITAU", "BANCO ITAU S/A", "184", BigDecimal.TEN, BigDecimal.ONE);
+				  12345L, "1", "1", "Instrucoes ITAU.", "ITAU", "BANCO ITAU S/A", "341", BigDecimal.TEN, BigDecimal.ONE);
 
 		bancoDOBRASIL = Fixture.banco(10L, true, 1, "1010",
 				  123456L, "1", "1", "Instrucoes DOBRASIL.", "BB", "BANCO DO BRASIL", "001", BigDecimal.ZERO, BigDecimal.ONE);
@@ -6091,15 +6609,15 @@ public class DataLoader {
 
 		save(session, produto91, produto92, produto93);
 
-		produtoEdicao91 = Fixture.produtoEdicao("COD_KK", 91L, 10, 7,
-				new Long(100), BigDecimal.TEN, new BigDecimal(15), "ZZ3", 26L, produto91, null, false);
+		produtoEdicao91 = Fixture.produtoEdicao(91L, 10, 7, new Long(100),
+				BigDecimal.TEN, new BigDecimal(15), "ZZ3", produto91, null, false);
 
 
-		produtoEdicao92 = Fixture.produtoEdicao("COD_LL", 92L, 10, 7,
-				new Long(100), BigDecimal.TEN, new BigDecimal(18), "ZZ4", 27L, produto92, null, false);
+		produtoEdicao92 = Fixture.produtoEdicao(92L, 10, 7, new Long(100),
+				BigDecimal.TEN, new BigDecimal(18), "ZZ4", produto92, null, false);
 
-		produtoEdicao93 = Fixture.produtoEdicao("COD_MM", 93L, 10, 7,
-				new Long(100), BigDecimal.TEN, new BigDecimal(90), "ZZ5", 28L, produto93, null, false);
+		produtoEdicao93 = Fixture.produtoEdicao(93L, 10, 7, new Long(100),
+				BigDecimal.TEN, new BigDecimal(90), "ZZ5", produto93, null, false);
 
 
 		save(session, produtoEdicao91, produtoEdicao92, produtoEdicao93);
@@ -6166,7 +6684,6 @@ public class DataLoader {
 
 			notaFiscalEntradaFornecedorNFE = Fixture.notaFiscalEntradaFornecedorNFE(
 					cfop5102,
-					fornecedorDinap.getJuridica(),
 					11011110L+contador,
 					"11111000"+contador,
 					"11101011101"+contador,
@@ -6262,7 +6779,6 @@ public class DataLoader {
 			notaFiscalEntradaCotaNFE =
 					Fixture.notaFiscalEntradaCotaNFE(
 							cfop5102,
-							fornecedorDinap.getJuridica(),
 							222220000202L+contador,
 							"220202022220"+contador,
 							"2000022"+contador,
@@ -6352,7 +6868,6 @@ public class DataLoader {
 
 			notaFiscalSaidaFornecedorNFE = Fixture.notaFiscalSaidaFornecedorNFE(
 					cfop5102,
-					fornecedorDinap.getJuridica(),
 					33300003003L+contador,
 					"30300333330"+contador,
 					"0003303"+contador,
@@ -6667,7 +7182,7 @@ public class DataLoader {
 		save(session, produtoCE);
 
 		produtoEdicaoCE = Fixture.produtoEdicao(codigoProdutoEdicao, numeroEdicao, pacotePadrao, peb,
-				peso, precoCusto, precoVenda, codigoDeBarras, null, produtoCE, expectativaVenda, parcial, descProduto + numeroEdicao);
+				peso, precoCusto, precoVenda, codigoDeBarras, produtoCE, expectativaVenda, parcial, descProduto + numeroEdicao);
 		save(session, produtoEdicaoCE);
 
 		/**
@@ -6679,7 +7194,6 @@ public class DataLoader {
 						serie,
 						chaveAcesso,
 						cfop5102,
-						fornecedorFc.getJuridica(),
 						fornecedorFc,
 						tipoNotaFiscalRecebimento,
 						usuarioJoao,
@@ -6808,22 +7322,21 @@ public class DataLoader {
 		save(session, produtoCE, produtoCE_2, produtoCE_3);
 
 		produtoEdicaoCE = Fixture.produtoEdicao("COD_NN", 84L, 10, 7,
-				new Long(100), BigDecimal.TEN, new BigDecimal(15), "EZ7", 29L, produtoCE, null, false, "Produto CE 1");
+				new Long(100), BigDecimal.TEN, new BigDecimal(15), "EZ7", produtoCE, null, false, "Produto CE 1");
 
 
 		produtoEdicaoCE_2 = Fixture.produtoEdicao("COD_OO", 85L, 10, 7,
-				new Long(100), BigDecimal.TEN, new BigDecimal(18), "EZ8", 30L, produtoCE_2, null, false, "Produto CE 2");
+				new Long(100), BigDecimal.TEN, new BigDecimal(18), "EZ8", produtoCE_2, null, false, "Produto CE 2");
 
 
 		produtoEdicaoCE_3 = Fixture.produtoEdicao("COD_PP", 86L, 10, 7,
-				new Long(100), BigDecimal.TEN, new BigDecimal(90), "EZ8", 31L, produtoCE_3, null, false, "Produto CE 3");
+				new Long(100), BigDecimal.TEN, new BigDecimal(90), "EZ8", produtoCE_3, null, false, "Produto CE 3");
 
 		save(session, produtoEdicaoCE, produtoEdicaoCE_2, produtoEdicaoCE_3);
 
 		NotaFiscalEntradaFornecedor notaFiscalProdutoCE =
 				Fixture.notaFiscalEntradaFornecedor(
 						cfop5102,
-						fornecedorFc.getJuridica(),
 						fornecedorFc,
 						tipoNotaFiscalRecebimento,
 						usuarioJoao,
@@ -7768,7 +8281,6 @@ public class DataLoader {
 				serie,
 				chaveAcesso,
 				cfop5102,
-				fornecedorDinap.getJuridica(),
 				fornecedorDinap,
 				tipoNotaFiscalRecebimento,
 				usuarioJoao,
@@ -7788,7 +8300,6 @@ public class DataLoader {
 				serie,
 				chaveAcesso,
 				cfop5102,
-				fornecedorDinap.getJuridica(),
 				fornecedorDinap,
 				tipoNotaFiscalRecebimento,
 				usuarioJoao,
@@ -7830,7 +8341,6 @@ public class DataLoader {
 				serie,
 				chaveAcesso,
 				cfop5102,
-				fornecedorDinap.getJuridica(),
 				fornecedorDinap,
 				tipoNotaFiscalRecebimento,
 				usuarioJoao,
@@ -7880,7 +8390,6 @@ public class DataLoader {
 
 			notaFiscalFornecedor = Fixture.notaFiscalEntradaFornecedor(
 					cfop5102,
-					fornecedorDinap.getJuridica(),
 					fornecedorDinap,
 					tipoNotaFiscal,
 					usuarioJoao,
@@ -7923,12 +8432,13 @@ public class DataLoader {
 		Entregador entregador = Fixture.criarEntregador(
 				234L, true, new Date(),
 				BigDecimal.TEN, juridicaAcme, false, null);
-
+		entregador.setRota(rota2);
 		save(session, juridicaAcme, entregador);
 
 		entregador = Fixture.criarEntregador(
 				123L, false, new Date(),
 				null, juridicaFc, false, null);
+		entregador.setRota(rota10);
 		save(session, juridicaFc, entregador);
 
 		Endereco endereco = Fixture.criarEndereco(TipoEndereco.COBRANCA, "13131313", "Rua Marechal deodoro", "50", "Centro", "Mococa", "SP",3530508);
@@ -7946,6 +8456,7 @@ public class DataLoader {
 		entregador = Fixture.criarEntregador(
 				345L, false, new Date(),
 				null, jose, false, null);
+		entregador.setRota(rota3);
 		save(session, jose, entregador);
 
 		endereco = Fixture.criarEndereco(TipoEndereco.COBRANCA, "8766650", "Avenida Brasil", "10", "Centro", "Ribeirão Preto", "SP",3543402);
@@ -7965,7 +8476,9 @@ public class DataLoader {
 		entregador = Fixture.criarEntregador(
 				456L, false, new Date(),
 				null, maria, false, null);
-
+		
+		entregador.setRota(rota1);
+		
 		endereco = Fixture.criarEndereco(TipoEndereco.COBRANCA, "8766650", "Itaquera", "10", "Centro", "São Paulo", "SP",3550308);
 
 		enderecoEntregador = Fixture.enderecoEntregador(entregador, endereco, true, TipoEndereco.RESIDENCIAL);
@@ -8120,253 +8633,253 @@ public class DataLoader {
 		javaMagazineEdicao101 =
 				Fixture.produtoEdicao("COD_001", 101L, 10, 14,
 						new Long(100), BigDecimal.TEN, new BigDecimal(20),
-									  "001", 1L, javaMagazine, BigDecimal.TEN, true, "javaMagazineEdicao101");
+									  "001", javaMagazine, BigDecimal.TEN, true, "javaMagazineEdicao101");
 
 		javaMagazineEdicao102 =
-				Fixture.produtoEdicao("COD_002", 102L, 13, 14,
-						new Long(100), BigDecimal.TEN, new BigDecimal(17),
-									  "002", 2L, javaMagazine, BigDecimal.TEN, true);
+				Fixture.produtoEdicao(102L, 13, 14, new Long(100),
+						BigDecimal.TEN, new BigDecimal(17), "002",
+									  javaMagazine, BigDecimal.TEN, true);
 
 		mundoJavaEdicao101 =
-				Fixture.produtoEdicao("COD_003", 101L, 5, 14,
-						new Long(200), BigDecimal.TEN, new BigDecimal(10.5),
-									  "003", 3L, mundoJava, BigDecimal.TEN, false);
+				Fixture.produtoEdicao(101L, 5, 14, new Long(200),
+						BigDecimal.TEN, new BigDecimal(10.5), "003",
+									  mundoJava, BigDecimal.TEN, false);
 
 		mundoJavaEdicao102 =
-				Fixture.produtoEdicao("COD_004", 102L, 15, 14,
-						new Long(200), BigDecimal.TEN, new BigDecimal(2.9),
-									  "004", 4L, mundoJava, BigDecimal.TEN, false);
+				Fixture.produtoEdicao(102L, 15, 14, new Long(200),
+						BigDecimal.TEN, new BigDecimal(2.9), "004",
+									  mundoJava, BigDecimal.TEN, false);
 
 		sqlMagazineEdicao101 =
-				Fixture.produtoEdicao("COD_005", 101L, 10, 14,
-						new Long(200), BigDecimal.TEN, new BigDecimal(23),
-									  "005", 5L, sqlMagazine, BigDecimal.TEN, false);
+				Fixture.produtoEdicao(101L, 10, 14, new Long(200),
+						BigDecimal.TEN, new BigDecimal(23), "005",
+									  sqlMagazine, BigDecimal.TEN, false);
 
 		sqlMagazineEdicao102 =
-				Fixture.produtoEdicao("COD_006", 102L, 8, 14,
-						new Long(200), BigDecimal.TEN, new BigDecimal(10),
-									  "006", 6L, sqlMagazine, BigDecimal.TEN, false);
+				Fixture.produtoEdicao(102L, 8, 14, new Long(200),
+						BigDecimal.TEN, new BigDecimal(10), "006",
+									  sqlMagazine, BigDecimal.TEN, false);
 
 		galileuEdicao101 =
-				Fixture.produtoEdicao("COD_007", 101L, 3, 14,
-						new Long(200), BigDecimal.TEN, new BigDecimal(12),
-									  "007", 7L, galileu, BigDecimal.TEN, true);
+				Fixture.produtoEdicao(101L, 3, 14, new Long(200),
+						BigDecimal.TEN, new BigDecimal(12), "007",
+									  galileu, BigDecimal.TEN, true);
 
 		galileuEdicao102 =
-				Fixture.produtoEdicao("COD_008", 102L, 9, 14,
-						new Long(200), BigDecimal.TEN, new BigDecimal(32.1),
-									  "008", 8L, galileu, BigDecimal.TEN, true);
+				Fixture.produtoEdicao(102L, 9, 14, new Long(200),
+						BigDecimal.TEN, new BigDecimal(32.1), "008",
+									  galileu, BigDecimal.TEN, true);
 
 		duasRodasEdicao101 =
-				Fixture.produtoEdicao("COD_009", 101L, 8, 14,
-						new Long(200), BigDecimal.TEN, new BigDecimal(11),
-									  "009", 9L, duasRodas, BigDecimal.TEN, false);
+				Fixture.produtoEdicao(101L, 8, 14, new Long(200),
+						BigDecimal.TEN, new BigDecimal(11), "009",
+									  duasRodas, BigDecimal.TEN, false);
 
 		duasRodasEdicao102 =
-				Fixture.produtoEdicao("COD_010", 102L, 6, 14,
-						new Long(200), BigDecimal.TEN, new BigDecimal(16),
-									  "010", 10L, duasRodas, BigDecimal.TEN, false);
+				Fixture.produtoEdicao(102L, 6, 14, new Long(200),
+						BigDecimal.TEN, new BigDecimal(16), "010",
+									  duasRodas, BigDecimal.TEN, false);
 
 		guitarPlayerEdicao101 =
-				Fixture.produtoEdicao("COD_011", 101L, 2, 14,
-						new Long(200), BigDecimal.TEN, new BigDecimal(16),
-									  "011", 11L, guitarPlayer, BigDecimal.TEN, false);
+				Fixture.produtoEdicao(101L, 2, 14, new Long(200),
+						BigDecimal.TEN, new BigDecimal(16), "011",
+									  guitarPlayer, BigDecimal.TEN, false);
 
 		guitarPlayerEdicao102 =
-				Fixture.produtoEdicao("COD_012", 102L, 6, 14,
-						new Long(200), BigDecimal.TEN, new BigDecimal(15),
-									  "012", 12L, guitarPlayer, BigDecimal.TEN, true);
+				Fixture.produtoEdicao(102L, 6, 14, new Long(200),
+						BigDecimal.TEN, new BigDecimal(15), "012",
+									  guitarPlayer, BigDecimal.TEN, true);
 
 		roadieCrewEdicao101 =
-				Fixture.produtoEdicao("COD_013", 101L, 3, 14,
-						new Long(200), BigDecimal.TEN, new BigDecimal(20),
-									  "013", 13L, roadieCrew, BigDecimal.TEN, true);
+				Fixture.produtoEdicao(101L, 3, 14, new Long(200),
+						BigDecimal.TEN, new BigDecimal(20), "013",
+									  roadieCrew, BigDecimal.TEN, true);
 
 		roadieCrewEdicao102 =
-				Fixture.produtoEdicao("COD_014", 102L, 9, 14,
-						new Long(200), BigDecimal.TEN, new BigDecimal(28),
-									  "014", 14L, roadieCrew, BigDecimal.TEN, false);
+				Fixture.produtoEdicao(102L, 9, 14, new Long(200),
+						BigDecimal.TEN, new BigDecimal(28), "014",
+									  roadieCrew, BigDecimal.TEN, false);
 
 		rockBrigadeEdicao101 =
-				Fixture.produtoEdicao("COD_015", 101L, 5, 14,
-						new Long(200), BigDecimal.TEN, new BigDecimal(19),
-									  "015", 15L, rockBrigade, BigDecimal.TEN, false);
+				Fixture.produtoEdicao(101L, 5, 14, new Long(200),
+						BigDecimal.TEN, new BigDecimal(19), "015",
+									  rockBrigade, BigDecimal.TEN, false);
 
 		rockBrigadeEdicao102 =
-				Fixture.produtoEdicao("COD_016", 102L, 15, 14,
-						new Long(200), BigDecimal.TEN, new BigDecimal(21.9),
-									  "016", 16L, rockBrigade, BigDecimal.TEN, true);
+				Fixture.produtoEdicao(102L, 15, 14, new Long(200),
+						BigDecimal.TEN, new BigDecimal(21.9), "016",
+									  rockBrigade, BigDecimal.TEN, true);
 
 		valhallaEdicao101 =
-				Fixture.produtoEdicao("COD_017", 101L, 10, 14,
-						new Long(200), BigDecimal.TEN, new BigDecimal(29.9),
-									  "017", 17L, valhalla, BigDecimal.TEN, true);
+				Fixture.produtoEdicao(101L, 10, 14, new Long(200),
+						BigDecimal.TEN, new BigDecimal(29.9), "017",
+									  valhalla, BigDecimal.TEN, true);
 
 		valhallaEdicao102 =
-				Fixture.produtoEdicao("COD_018", 102L, 7, 14,
-						new Long(200), BigDecimal.TEN, new BigDecimal(19.9),
-									  "018", 18L, valhalla, BigDecimal.TEN, true);
+				Fixture.produtoEdicao(102L, 7, 14, new Long(200),
+						BigDecimal.TEN, new BigDecimal(19.9), "018",
+									  valhalla, BigDecimal.TEN, true);
 
 		rollingStoneEdicao101 =
-				Fixture.produtoEdicao("COD_019", 101L, 12, 14,
-						new Long(200), BigDecimal.TEN, new BigDecimal(14),
-									  "019", 19L, rollingStone, BigDecimal.TEN, false);
+				Fixture.produtoEdicao(101L, 12, 14, new Long(200),
+						BigDecimal.TEN, new BigDecimal(14), "019",
+									  rollingStone, BigDecimal.TEN, false);
 
 		rollingStoneEdicao102 =
-				Fixture.produtoEdicao("COD_020", 102L, 11, 14,
-						new Long(200), BigDecimal.TEN, new BigDecimal(13.5),
-									  "020", 20L, rollingStone, BigDecimal.TEN, false);
+				Fixture.produtoEdicao(102L, 11, 14, new Long(200),
+						BigDecimal.TEN, new BigDecimal(13.5), "020",
+									  rollingStone, BigDecimal.TEN, false);
 
 		bonsFluidosEdicao101 =
-				Fixture.produtoEdicao("COD_021", 101L, 8, 14,
-						new Long(100), BigDecimal.TEN, new BigDecimal(10),
-									  "021", 1L, bonsFluidos, BigDecimal.TEN, false);
+				Fixture.produtoEdicao(101L, 8, 14, new Long(100),
+						BigDecimal.TEN, new BigDecimal(10), "021",
+									  bonsFluidos, BigDecimal.TEN, false);
 
 		bonsFluidosEdicao102 =
-				Fixture.produtoEdicao("COD_022", 102L, 7, 14,
-						new Long(100), BigDecimal.TEN, new BigDecimal(20),
-									  "022", 2L, bonsFluidos, BigDecimal.TEN, false);
+				Fixture.produtoEdicao(102L, 7, 14, new Long(100),
+						BigDecimal.TEN, new BigDecimal(20), "022",
+									  bonsFluidos, BigDecimal.TEN, false);
 
 		bravoEdicao101 =
-				Fixture.produtoEdicao("COD_023", 101L, 6, 14,
-						new Long(100), BigDecimal.TEN, new BigDecimal(20),
-									  "023", 3L, bravo, BigDecimal.TEN, false);
+				Fixture.produtoEdicao(101L, 6, 14, new Long(100),
+						BigDecimal.TEN, new BigDecimal(20), "023",
+									  bravo, BigDecimal.TEN, false);
 
 		bravoEdicao102 =
-				Fixture.produtoEdicao("COD_024", 102L, 7, 14,
-						new Long(100), BigDecimal.TEN, new BigDecimal(20),
-									  "024", 4L, bravo, BigDecimal.TEN, false);
+				Fixture.produtoEdicao(102L, 7, 14, new Long(100),
+						BigDecimal.TEN, new BigDecimal(20), "024",
+									  bravo, BigDecimal.TEN, false);
 
 		casaClaudiaEdicao101 =
-				Fixture.produtoEdicao("COD_025", 101L, 4, 14,
-						new Long(200), BigDecimal.TEN, new BigDecimal(15),
-									  "025", 5L, casaClaudia, BigDecimal.TEN, false);
+				Fixture.produtoEdicao(101L, 4, 14, new Long(200),
+						BigDecimal.TEN, new BigDecimal(15), "025",
+									  casaClaudia, BigDecimal.TEN, false);
 
 		casaClaudiaEdicao102 =
-				Fixture.produtoEdicao("COD_026", 102L, 10, 14,
-						new Long(200), BigDecimal.TEN, new BigDecimal(18.9),
-									  "026", 6L, casaClaudia, BigDecimal.TEN, false);
+				Fixture.produtoEdicao(102L, 10, 14, new Long(200),
+						BigDecimal.TEN, new BigDecimal(18.9), "026",
+									  casaClaudia, BigDecimal.TEN, false);
 
 		jequitiEdicao101 =
-				Fixture.produtoEdicao("COD_027", 101L, 11, 14,
-						new Long(200), BigDecimal.TEN, new BigDecimal(19.9),
-									  "027", 7L, jequiti, BigDecimal.TEN, false);
+				Fixture.produtoEdicao(101L, 11, 14, new Long(200),
+						BigDecimal.TEN, new BigDecimal(19.9), "027",
+									  jequiti, BigDecimal.TEN, false);
 
 		jequitiEdicao102 =
-				Fixture.produtoEdicao("COD_028", 102L, 2, 14,
-						new Long(200), BigDecimal.TEN, new BigDecimal(12.5),
-									  "028", 8L, jequiti, BigDecimal.TEN, false);
+				Fixture.produtoEdicao(102L, 2, 14, new Long(200),
+						BigDecimal.TEN, new BigDecimal(12.5), "028",
+									  jequiti, BigDecimal.TEN, false);
 
 		mundoEstranhoEdicao101 =
-				Fixture.produtoEdicao("COD_029", 101L, 1, 14,
-						new Long(200), BigDecimal.TEN, new BigDecimal(17.5),
-									  "029", 9L, mundoEstranho, BigDecimal.TEN, false);
+				Fixture.produtoEdicao(101L, 1, 14, new Long(200),
+						BigDecimal.TEN, new BigDecimal(17.5), "029",
+									  mundoEstranho, BigDecimal.TEN, false);
 
 		mundoEstranhoEdicao102 =
-				Fixture.produtoEdicao("COD_030", 102L, 1, 14,
-						new Long(200), BigDecimal.TEN, new BigDecimal(13),
-									  "030", 10L, mundoEstranho, BigDecimal.TEN, false);
+				Fixture.produtoEdicao(102L, 1, 14, new Long(200),
+						BigDecimal.TEN, new BigDecimal(13), "030",
+									  mundoEstranho, BigDecimal.TEN, false);
 
 		novaEscolaEdicao101 =
-				Fixture.produtoEdicao("COD_031", 101L, 1, 14,
-						new Long(200), BigDecimal.TEN, new BigDecimal(16),
-									  "031", 11L, novaEscola, BigDecimal.TEN, false);
+				Fixture.produtoEdicao(101L, 1, 14, new Long(200),
+						BigDecimal.TEN, new BigDecimal(16), "031",
+									  novaEscola, BigDecimal.TEN, false);
 
 		novaEscolaEdicao102 =
-				Fixture.produtoEdicao("COD_032", 102L, 1, 14,
-						new Long(200), BigDecimal.TEN, new BigDecimal(30),
-									  "032", 12L, novaEscola, BigDecimal.TEN, false);
+				Fixture.produtoEdicao(102L, 1, 14, new Long(200),
+						BigDecimal.TEN, new BigDecimal(30), "032",
+									  novaEscola, BigDecimal.TEN, false);
 
 		minhaCasaEdicao101 =
-				Fixture.produtoEdicao("COD_033", 101L, 5, 14,
-						new Long(200), BigDecimal.TEN, new BigDecimal(31.5),
-									  "033", 13L, minhaCasa, BigDecimal.TEN, false);
+				Fixture.produtoEdicao(101L, 5, 14, new Long(200),
+						BigDecimal.TEN, new BigDecimal(31.5), "033",
+									  minhaCasa, BigDecimal.TEN, false);
 
 		minhaCasaEdicao102 =
-				Fixture.produtoEdicao("COD_034", 102L, 15, 14,
-						new Long(200), BigDecimal.TEN, new BigDecimal(16),
-									  "034", 14L, minhaCasa, BigDecimal.TEN, false);
+				Fixture.produtoEdicao(102L, 15, 14, new Long(200),
+						BigDecimal.TEN, new BigDecimal(16), "034",
+									  minhaCasa, BigDecimal.TEN, false);
 
 		recreioEdicao101 =
-				Fixture.produtoEdicao("COD_035", 101L, 10, 14,
-						new Long(200), BigDecimal.TEN, new BigDecimal(18.9),
-									  "035", 15L, recreio, BigDecimal.TEN, false);
+				Fixture.produtoEdicao(101L, 10, 14, new Long(200),
+						BigDecimal.TEN, new BigDecimal(18.9), "035",
+									  recreio, BigDecimal.TEN, false);
 
 		recreioEdicao102 =
-				Fixture.produtoEdicao("COD_036", 102L, 10, 14,
-						new Long(200), BigDecimal.TEN, new BigDecimal(22),
-									  "036", 16L, recreio, BigDecimal.TEN, false);
+				Fixture.produtoEdicao(102L, 10, 14, new Long(200),
+						BigDecimal.TEN, new BigDecimal(22), "036",
+									  recreio, BigDecimal.TEN, false);
 
 		womenHealthEdicao101 =
-				Fixture.produtoEdicao("COD_037", 101L, 7, 14,
-						new Long(200), BigDecimal.TEN, new BigDecimal(29),
-									  "037", 17L, womenHealth, BigDecimal.TEN, false);
+				Fixture.produtoEdicao(101L, 7, 14, new Long(200),
+						BigDecimal.TEN, new BigDecimal(29), "037",
+									  womenHealth, BigDecimal.TEN, false);
 
 		womenHealthEdicao102 =
-				Fixture.produtoEdicao("COD_038", 102L, 9, 14,
-						new Long(200), BigDecimal.TEN, new BigDecimal(10.5),
-									  "038", 18L, womenHealth, BigDecimal.TEN, false);
+				Fixture.produtoEdicao(102L, 9, 14, new Long(200),
+						BigDecimal.TEN, new BigDecimal(10.5), "038",
+									  womenHealth, BigDecimal.TEN, false);
 
 		viagemTurismoEdicao101 =
-				Fixture.produtoEdicao("COD_039", 101L, 7, 14,
-						new Long(200), BigDecimal.TEN, new BigDecimal(20.05),
-									  "039", 19L, viagemTurismo, BigDecimal.TEN, false);
+				Fixture.produtoEdicao(101L, 7, 14, new Long(200),
+						BigDecimal.TEN, new BigDecimal(20.05), "039",
+									  viagemTurismo, BigDecimal.TEN, false);
 
 		viagemTurismoEdicao102 =
-				Fixture.produtoEdicao("COD_040", 102L, 6, 14,
-						new Long(200), BigDecimal.TEN, new BigDecimal(14.5),
-									  "040", 20L, viagemTurismo, BigDecimal.TEN, false);
+				Fixture.produtoEdicao(102L, 6, 14, new Long(200),
+						BigDecimal.TEN, new BigDecimal(14.5), "040",
+									  viagemTurismo, BigDecimal.TEN, false);
 
 
 		vipEdicao101 =
-				Fixture.produtoEdicao("COD_041", 101L, 8, 14,
-						new Long(200), BigDecimal.TEN, new BigDecimal(12),
-									  "041", 11L, vip, BigDecimal.TEN, false);
+				Fixture.produtoEdicao(101L, 8, 14, new Long(200),
+						BigDecimal.TEN, new BigDecimal(12), "041",
+									  vip, BigDecimal.TEN, false);
 
 		vipEdicao102 =
-				Fixture.produtoEdicao("COD_042", 102L, 15, 14,
-						new Long(200), BigDecimal.TEN, new BigDecimal(17),
-									  "042", 12L, vip, BigDecimal.TEN, false);
+				Fixture.produtoEdicao(102L, 15, 14, new Long(200),
+						BigDecimal.TEN, new BigDecimal(17), "042",
+									  vip, BigDecimal.TEN, false);
 
 		gestaoEscolarEdicao101 =
-				Fixture.produtoEdicao("COD_043", 101L, 14, 14,
-						new Long(200), BigDecimal.TEN, new BigDecimal(9.9),
-									  "043", 13L, gestaoEscolar, BigDecimal.TEN, false);
+				Fixture.produtoEdicao(101L, 14, 14, new Long(200),
+						BigDecimal.TEN, new BigDecimal(9.9), "043",
+									  gestaoEscolar, BigDecimal.TEN, false);
 
 		gestaoEscolarEdicao102 =
-				Fixture.produtoEdicao("COD_044", 102L, 4, 14,
-						new Long(200), BigDecimal.TEN, new BigDecimal(9.9),
-									  "044", 14L, gestaoEscolar, BigDecimal.TEN, true);
+				Fixture.produtoEdicao(102L, 4, 14, new Long(200),
+						BigDecimal.TEN, new BigDecimal(9.9), "044",
+									  gestaoEscolar, BigDecimal.TEN, true);
 
 		lolaEdicao101 =
-				Fixture.produtoEdicao("COD_045", 101L, 5, 14,
-						new Long(200), BigDecimal.TEN, new BigDecimal(8.5),
-									  "045", 15L, lola, BigDecimal.TEN, false);
+				Fixture.produtoEdicao(101L, 5, 14, new Long(200),
+						BigDecimal.TEN, new BigDecimal(8.5), "045",
+									  lola,  BigDecimal.TEN, false);
 
 		lolaEdicao102 =
-				Fixture.produtoEdicao("COD_046", 102L, 9, 14,
-						new Long(200), BigDecimal.TEN, new BigDecimal(6.9),
-									  "046", 16L, lola, BigDecimal.TEN, false);
+				Fixture.produtoEdicao(102L, 9, 14, new Long(200),
+						BigDecimal.TEN, new BigDecimal(6.9), "046",
+									  lola, BigDecimal.TEN, false);
 
 		heavyMetalEdicao101 =
-				Fixture.produtoEdicao("COD_047", 101L, 1, 14,
-						new Long(200), BigDecimal.TEN, new BigDecimal(50),
-									  "047", 17L, heavyMetal, BigDecimal.TEN, false);
+				Fixture.produtoEdicao(101L, 1, 14, new Long(200),
+						BigDecimal.TEN, new BigDecimal(50), "047",
+									  heavyMetal, BigDecimal.TEN, false);
 
 		heavyMetalEdicao102 =
-				Fixture.produtoEdicao("COD_048", 102L, 1, 14,
-						new Long(200), BigDecimal.TEN, new BigDecimal(50),
-									  "048", 18L, heavyMetal, BigDecimal.TEN, false);
+				Fixture.produtoEdicao(102L, 1, 14, new Long(200),
+						BigDecimal.TEN, new BigDecimal(50), "048",
+									  heavyMetal, BigDecimal.TEN, false);
 
 		metalUndergroundEdicao101 =
-				Fixture.produtoEdicao("COD_049", 101L, 1, 14,
-						new Long(200), BigDecimal.TEN, new BigDecimal(16),
-									  "049", 19L, metalUnderground, BigDecimal.TEN, false);
+				Fixture.produtoEdicao(101L, 1, 14, new Long(200),
+						BigDecimal.TEN, new BigDecimal(16), "049",
+									  metalUnderground, BigDecimal.TEN, false);
 
 		metalUndergroundEdicao102 =
-				Fixture.produtoEdicao("COD_050", 102L, 1, 14,
-						new Long(200), BigDecimal.TEN, new BigDecimal(16),
-									  "050", 20L, metalUnderground, BigDecimal.TEN, false);
+				Fixture.produtoEdicao(102L, 1, 14, new Long(200),
+						BigDecimal.TEN, new BigDecimal(16), "050",
+									  metalUnderground, BigDecimal.TEN, false);
 
 		save(session, javaMagazineEdicao101, javaMagazineEdicao102, mundoJavaEdicao101, mundoJavaEdicao102, sqlMagazineEdicao101, sqlMagazineEdicao102,
 					  galileuEdicao101, galileuEdicao102, duasRodasEdicao101, duasRodasEdicao102, guitarPlayerEdicao101, guitarPlayerEdicao102,
@@ -8394,7 +8907,7 @@ public class DataLoader {
 		Date dataRecolhimento = DateUtil.adicionarDias(dataLancamento, 15);
 
 		NotaFiscalEntradaFornecedor notaFiscal =
-			Fixture.notaFiscalEntradaFornecedor(cfop5102, fornecedorFc.getJuridica(), fornecedorFc,
+			Fixture.notaFiscalEntradaFornecedor(cfop5102, fornecedorFc,
 												tipoNotaFiscalRecebimento, usuarioJoao, BigDecimal.TEN,
 												BigDecimal.ZERO, BigDecimal.TEN);
 
@@ -10969,6 +11482,7 @@ public class DataLoader {
 		interfaceEMS0124 = Fixture.criarInterfaceExecucao(124L, "EMS0124");
 		interfaceEMS0125 = Fixture.criarInterfaceExecucao(125L, "EMS0125");
 		interfaceEMS0126 = Fixture.criarInterfaceExecucao(126L, "EMS0126");
+		interfaceEMS0128 = Fixture.criarInterfaceExecucao(128L, "EMS0128");
 		interfaceEMS0129 = Fixture.criarInterfaceExecucao(129L, "EMS0129");
 		interfaceEMS0130 = Fixture.criarInterfaceExecucao(130L, "EMS0130");
 		interfaceEMS0131 = Fixture.criarInterfaceExecucao(131L, "EMS0131");
@@ -11309,7 +11823,7 @@ public class DataLoader {
 			produtoCE.addFornecedor(fornecedorDinap);
 			session.save(produtoCE);
 			produtoEdicaoCE = Fixture.produtoEdicao(codigoProdutoEdicao, numeroEdicao, pacotePadrao, peb,
-					peso, precoCusto, precoVenda, codigoDeBarras, null, produtoCE, expectativaVenda, parcial,descProduto);
+					peso, precoCusto, precoVenda, codigoDeBarras, produtoCE, expectativaVenda, parcial,descProduto);
 			session.save(produtoEdicaoCE);
 			
 
@@ -11443,12 +11957,462 @@ public class DataLoader {
 	}
 	
 	private static void criarDescontoLogistica(Session session){
+				
+		DescontoLogistica dl1 = Fixture.descontoLogistica(new Date(2007,01,01), 27f, 0f, new Integer(1), "NORMAL");
+		DescontoLogistica dl2 = Fixture.descontoLogistica(new Date(2007,01,01), 20f, 0f, new Integer(2), "PRODUTOS TRIBUTADOS");
+		DescontoLogistica dl3 = Fixture.descontoLogistica(new Date(2007,01,01), 10f, 0f, new Integer(3), "VIDEO PRINT DE 1/1/96 A 1/1/197");
+		DescontoLogistica dl4 = Fixture.descontoLogistica(new Date(2007,01,01), 10f, 0f, new Integer(4), "CROMOS - NORMAL EXC. JUIZ E BH");
+		DescontoLogistica dl5 = Fixture.descontoLogistica(new Date(2007,01,01), 25f, 0f, new Integer(5), "IMPORTADAS - ELETROLIBER");
+		DescontoLogistica dl6 = Fixture.descontoLogistica(new Date(2007,01,01), 18f, 0f, new Integer(6), "PROMOÇÕES");
+		DescontoLogistica dl7 = Fixture.descontoLogistica(new Date(2007,01,01), 23f, 0f, new Integer(7), "ESPECIAL GLOBO");
+		DescontoLogistica dl8 = Fixture.descontoLogistica(new Date(2007,01,01), 5f, 0f, new Integer(8), "FOME ZERO");
+		DescontoLogistica dl9 = Fixture.descontoLogistica(new Date(2007,01,01), 25f, 0f, new Integer(9), "IMPORTADAS MAG");
+		DescontoLogistica dl10 = Fixture.descontoLogistica(new Date(2007,01,01), 25f, 0f, new Integer(11), "IMPORTADAS MAGEXPRESS");
 		
-        Set<Produto> produtos = new LinkedHashSet<Produto>();
+	    save(session,dl1,dl2,dl3,dl4,dl5,dl6,dl7,dl8,dl9,dl10);
+	}
+	
+    private static void criarDadosChamadaEncalheFornecedor(Session session) {
+        Map<Long, ChamadaEncalheFornecedor> chamadas = new HashMap<Long, ChamadaEncalheFornecedor>();
+        
+        try {
+            URL urlChamadaEncalhe = Thread.currentThread().getContextClassLoader().getResource("chamada_encalhe/chamada_encalhe.csv");
+            File fileChamadaEncalhe = new File(urlChamadaEncalhe.toURI());
+            List<String> linhasChamadaEncalhe = IOUtils.readLines(new FileInputStream(fileChamadaEncalhe));
+            
+            for (String linha : linhasChamadaEncalhe) {
+                String[] campos = linha.split(";");
+                Long codigoDistribuidor = Long.valueOf(campos[1]);
+                Long numeroChamada = Long.valueOf(campos[2]);
+                Integer tipoChamada = Integer.valueOf(campos[3]);
+                Integer numeroSemana = Integer.valueOf(campos[7]);
+                Long controle = StringUtils.isEmpty(campos[8]) ? null : Long.valueOf(campos[8]);
+                String status = campos[10];
+                BigDecimal totalVendaApurado = CurrencyUtil.converterValor(campos[11]);
+                BigDecimal totalCreditoApurado = CurrencyUtil.converterValor(campos[12]);
+                String codigoPreenchimento = campos[13];
+                BigDecimal totalVendaInformado = CurrencyUtil.converterValor(campos[14]);
+                BigDecimal totalCreditoInformado = CurrencyUtil.converterValor(campos[15]);
+                BigDecimal totalMargemInformado = CurrencyUtil.converterValor(campos[16]);
+                BigDecimal totalMargemApurado = CurrencyUtil.converterValor(campos[17]);
+                BigDecimal notaValoresDiversos = CurrencyUtil.converterValor(campos[18]);
+                
+                ChamadaEncalheFornecedor ce = Fixture
+                        .newChamadaEncalheFornecedor(codigoDistribuidor, fornecedorDinap,
+                                numeroChamada, controle, tipoChamada, 2012, numeroSemana,
+                                DateUtil.adicionarDias(new Date(), 14),
+                                new Date(), totalCreditoApurado,
+                                totalCreditoInformado, totalMargemApurado,
+                                totalMargemInformado, totalVendaApurado,
+                                totalVendaInformado, status,
+                                codigoPreenchimento, notaValoresDiversos, DateUtil.adicionarDias(new Date(), 7));
+                chamadas.put(numeroChamada, ce);
+            }
+            
+        } catch (Exception ex) {
+            throw new RuntimeException("Erro processando arquivo: chamada_encalhe/chamada_encalhe.csv", ex);
+        }
+        
+        try {
+            URL urlItemChamadaEncalhe = Thread.currentThread().getContextClassLoader().getResource("chamada_encalhe/item_chamada_encalhe.csv");
+            File fileItemChamadaEncalhe = new File(urlItemChamadaEncalhe.toURI());
+            List<String> linhasItemChamadaEncalhe = IOUtils.readLines(new FileInputStream(fileItemChamadaEncalhe));
+            
+            for (String linha : linhasItemChamadaEncalhe) {
+                String[] campos = linha.split(";");
+                Long numeroDocumento = Long.valueOf(campos[1]);
+                Long numeroChamada = Long.valueOf(campos[2]);
+                Integer item = Integer.valueOf(campos[3]);
+                Long qtdeEnviada = Long.valueOf(campos[6]);
+                Integer codigoFormaDevolucao = StringUtils.isEmpty(campos[7]) ? null : Integer.valueOf(campos[7]);
+                FormaDevolucao formaDevolucao = codigoFormaDevolucao == null ? null : FormaDevolucao.getByCodigo(codigoFormaDevolucao);
+                Integer controle = Integer.valueOf(campos[8]);
+                RegimeRecolhimento regimeRecolhimento = RegimeRecolhimento.getByCodigo(campos[9]);
+                BigDecimal precoUnitario = CurrencyUtil.converterValor(campos[10]);
+                BigDecimal valorVendaApurado = CurrencyUtil.converterValor(campos[14]);
+                Long qtdeDevolucaoApurada = StringUtils.isEmpty(campos[12]) ? null : Long.valueOf(campos[12]);
+                Long qtdeVendaApurada = StringUtils.isEmpty(campos[13]) ? null : Long.valueOf(campos[13]);
+                BigDecimal valorVendaInformado = CurrencyUtil.converterValor(campos[17]);
+                Long numeroNota = StringUtils.isEmpty(campos[18]) ? null  : Long.valueOf(campos[18]);
+                String codigoNotaEnvioMultipla = campos[19];
+                String tipoProduto = campos[20];
+                String status = campos[22];
+                BigDecimal valorMargemApurado = CurrencyUtil.converterValor(campos[26]);
+                
+              ChamadaEncalheFornecedor ce = chamadas.get(numeroChamada);
+              Fixture.newItemChamadaEncalheFornecedor(ce, 
+                      criarProdutoEdicaoChamadaEncalheFornecedor(session, fornecedorDinap, precoUnitario, true), 
+                      controle, numeroDocumento, item, qtdeEnviada, precoUnitario, formaDevolucao,
+                      regimeRecolhimento, valorMargemApurado, numeroNota, qtdeVendaApurada,
+                      valorVendaInformado, valorVendaApurado, qtdeDevolucaoApurada,
+                      DateUtil.adicionarDias(new Date(), -3), status, tipoProduto, codigoNotaEnvioMultipla);
+            }
+            
+        } catch (Exception ex) {
+            throw new RuntimeException("Erro processando arquivo: chamada_encalhe/item_chamada_encalhe.csv", ex);
+        }
+        for (ChamadaEncalheFornecedor ce : chamadas.values()) {
+            save(session, ce);
+        }
+    }
+    
+    private static ProdutoEdicao criarProdutoEdicaoChamadaEncalheFornecedor(
+            Session session, Fornecedor fornecedor, BigDecimal precoVenda,
+            boolean parcial) {
+       
+        String codigoProduto = getCodigoProduto();
+        Produto produto = Fixture.produto(codigoProduto,  "Descrição do Produto " + codigoProduto, "Nome do Produto " + codigoProduto,
+                PeriodicidadeProduto.SEMANAL, tipoProdutoRevista, 14, 20, 100L,
+                TributacaoFiscal.ISENTO);
+        produto.addFornecedor(fornecedor);
+        save(session, produto);
+        
+        ProdutoEdicao produtoEdicao = Fixture.produtoEdicao(1L, 20, 14,
+                100L, null, precoVenda, "1" + codigoProduto, produto, null, parcial);
+        save(session, produtoEdicao);
+        return produtoEdicao;
+    }
+
+    private static String getCodigoProduto() {
+        AtomicLong geradorCodigoProduto = GERADOR_CODIGO_PRODUTO_HOLDER.get();
+        if (geradorCodigoProduto == null) {
+            geradorCodigoProduto = new AtomicLong(1000000);
+            GERADOR_CODIGO_PRODUTO_HOLDER.set(geradorCodigoProduto);
+        }
+        return String.valueOf(geradorCodigoProduto.getAndIncrement());
+    }
+
+    private static void criarCotasGarantia(Session session){
+    	
+    	criarGarantiasCaucaoLiquida(session);
+    	criarGarantiasChequeCaucao(session);
+    	criarGarantiasImovel(session);
+    	criarGarantiasFiador(session);
+    	criarGarantiasNotaPromissoria(session);
+    	criarGarantiasOutros(session);
+    }
+    
+    private static void criarGarantiasCaucaoLiquida(Session session) {
 		
-        produtos.add(produtoVeja);
+		PagamentoCaucaoLiquida pagamentoCaucaoLiquida = new PagamentoCaucaoLiquida();
+		pagamentoCaucaoLiquida.setValor(BigDecimal.TEN);
+
+		session.save(pagamentoCaucaoLiquida);
 		
-		DescontoLogistica dl = Fixture.descontoLogistica(new Date(), 25f, 25f, new Integer(1),produtos);
-	    save(session,dl);
+		List<CaucaoLiquida> caucoes1 = new ArrayList<CaucaoLiquida>();
+		
+		for (int i = 0; i < 10; i ++) {
+
+			CaucaoLiquida caucaoLiquida = new CaucaoLiquida();
+			caucaoLiquida.setAtualizacao(Calendar.getInstance().getTime());
+			caucaoLiquida.setValor(BigDecimal.TEN);
+			
+			session.save(caucaoLiquida);
+			
+			caucoes1.add(caucaoLiquida);
+		}
+		
+		List<CaucaoLiquida> caucoes2 = new ArrayList<CaucaoLiquida>();
+		
+		for (int i = 0; i < 10; i ++) {
+
+			CaucaoLiquida caucaoLiquida = new CaucaoLiquida();
+			caucaoLiquida.setAtualizacao(Calendar.getInstance().getTime());
+			caucaoLiquida.setValor(BigDecimal.TEN);
+			
+			session.save(caucaoLiquida);
+			
+			caucoes2.add(caucaoLiquida);
+		}
+
+		List<CaucaoLiquida> caucoes3 = new ArrayList<CaucaoLiquida>();
+		
+		for (int i = 0; i < 10; i ++) {
+
+			CaucaoLiquida caucaoLiquida = new CaucaoLiquida();
+			caucaoLiquida.setAtualizacao(Calendar.getInstance().getTime());
+			caucaoLiquida.setValor(BigDecimal.TEN);
+			
+			session.save(caucaoLiquida);
+			
+			caucoes3.add(caucaoLiquida);
+		}
+
+		List<CaucaoLiquida> caucoes4 = new ArrayList<CaucaoLiquida>();
+		
+		Date data =Fixture.criarData(01, 10, 2010);
+		
+		for (int i = 0; i < 10; i ++) {
+
+			CaucaoLiquida caucaoLiquida = new CaucaoLiquida();
+			caucaoLiquida.setAtualizacao(DateUtil.adicionarDias(data,i));
+			caucaoLiquida.setValor(BigDecimal.TEN);
+			
+			session.save(caucaoLiquida);
+			
+			caucoes4.add(caucaoLiquida);
+		}
+		
+		CotaGarantiaCaucaoLiquida garantiaCaucaoLiquida1 = new CotaGarantiaCaucaoLiquida();
+		CotaGarantiaCaucaoLiquida garantiaCaucaoLiquida2 = new CotaGarantiaCaucaoLiquida();
+		
+		garantiaCaucaoLiquida1.setCaucaoLiquidas(caucoes1);
+		garantiaCaucaoLiquida1.setCota(cotaMurilo);
+		garantiaCaucaoLiquida1.setData(data);
+		garantiaCaucaoLiquida1.setFormaPagamento(pagamentoCaucaoLiquida);
+		garantiaCaucaoLiquida1.setTipoCobranca(TipoCobrancaCotaGarantia.BOLETO);
+		
+		garantiaCaucaoLiquida2.setCaucaoLiquidas(caucoes2);
+		garantiaCaucaoLiquida2.setCota(cotaMariana);
+		garantiaCaucaoLiquida2.setData(data);
+		garantiaCaucaoLiquida2.setFormaPagamento(pagamentoCaucaoLiquida);
+		garantiaCaucaoLiquida2.setTipoCobranca(TipoCobrancaCotaGarantia.BOLETO);
+		
+		session.save(garantiaCaucaoLiquida1);
+		session.save(garantiaCaucaoLiquida2);
+	}
+	
+	private static void criarGarantiasChequeCaucao(Session session) {
+		
+		Date data =Fixture.criarData(01, 10, 2010);
+		
+		Cheque cheque1 = new Cheque();
+		cheque1.setAgencia(123L);
+		cheque1.setConta(123L);
+		cheque1.setCorrentista("Fulano");
+		cheque1.setDvAgencia("1");
+		cheque1.setDvConta("1");
+		cheque1.setEmissao(data);
+		cheque1.setNomeBanco("Banco do Brasil");
+		cheque1.setNumeroBanco("555");
+		cheque1.setNumeroCheque("888");
+		cheque1.setValidade(data);
+		cheque1.setValor(BigDecimal.TEN);
+		
+		Cheque cheque2 = new Cheque();
+		cheque2.setAgencia(234L);
+		cheque2.setConta(234L);
+		cheque2.setCorrentista("Ciclano");
+		cheque2.setDvAgencia("1");
+		cheque2.setDvConta("1");
+		cheque2.setEmissao(data);
+		cheque2.setNomeBanco("Banco Itau");
+		cheque2.setNumeroBanco("555");
+		cheque2.setNumeroCheque("888");
+		cheque2.setValidade(data);
+		cheque2.setValor(new BigDecimal(15));
+
+		CotaGarantiaChequeCaucao garantiaChequeCaucao1 = new CotaGarantiaChequeCaucao();
+		CotaGarantiaChequeCaucao garantiaChequeCaucao2 = new CotaGarantiaChequeCaucao();
+
+		garantiaChequeCaucao1.setData(data);
+		garantiaChequeCaucao1.setCota(cotaManoel);
+		garantiaChequeCaucao1.setCheque(cheque1);
+		
+		garantiaChequeCaucao2.setData(data);
+		garantiaChequeCaucao2.setCota(cotaLuis);
+		garantiaChequeCaucao2.setCheque(cheque2);
+		
+		session.save(garantiaChequeCaucao1);
+		session.save(garantiaChequeCaucao2);
+	}
+	
+	private static void criarGarantiasImovel(Session session) {
+		
+		Date data =Fixture.criarData(01, 10, 2010);
+		
+		List<Imovel> imoveis1 = new ArrayList<Imovel>();
+		
+		for (int i = 0; i < 10; i++) {
+			
+			Imovel imovel = new Imovel();
+			imovel.setEndereco("Endereco");
+			imovel.setNumeroRegistro("123" + i);
+			imovel.setObservacao("observação");
+			imovel.setProprietario("proprietário");
+			imovel.setValor(BigDecimal.TEN);
+			
+			imoveis1.add(imovel);
+		}
+		
+		List<Imovel> imoveis2 = new ArrayList<Imovel>();
+		
+		for (int i = 0; i < 10; i++) {
+			
+			Imovel imovel = new Imovel();
+			imovel.setEndereco("Endereco");
+			imovel.setNumeroRegistro("123" + i);
+			imovel.setObservacao("observação");
+			imovel.setProprietario("proprietário");
+			imovel.setValor(BigDecimal.TEN);
+			
+			imoveis2.add(imovel);
+		}
+		
+		CotaGarantiaImovel garantiaImovel1 = new CotaGarantiaImovel();
+		CotaGarantiaImovel garantiaImovel2 = new CotaGarantiaImovel();
+		
+		garantiaImovel1.setCota(cotaOrlando);
+		garantiaImovel1.setData(data);
+		garantiaImovel1.setImoveis(imoveis1);
+		
+		garantiaImovel2.setCota(cotaMaria);
+		garantiaImovel2.setData(data);
+		garantiaImovel2.setImoveis(imoveis2);
+		
+		session.save(garantiaImovel1);
+		session.save(garantiaImovel2);
+	}
+	
+	private static void criarGarantiasFiador(Session session) {
+		
+		Date data =Fixture.criarData(01, 10, 2010);
+		
+		Fiador fiador1 = new Fiador();
+		Fiador fiador2 = new Fiador();
+		
+		fiador1.setInicioAtividade(data);
+		fiador1.setPessoa(joao);
+		
+		fiador2.setInicioAtividade(data);
+		fiador2.setPessoa(manoel);
+		
+		session.save(fiador1);
+		session.save(fiador2);
+		
+		List<Garantia> garantias1 = new ArrayList<Garantia>();
+		
+		for (int i = 0; i < 10; i++) {
+			
+			Garantia garantia = new Garantia();
+			garantia.setDescricao("garantia " + i);
+			garantia.setFiador(fiador1);
+			garantia.setValor(BigDecimal.TEN);
+			
+			session.save(garantia);
+			
+			garantias1.add(garantia);
+		}
+
+		List<Garantia> garantias2 = new ArrayList<Garantia>();
+		
+		for (int i = 0; i < 10; i++) {
+			
+			Garantia garantia = new Garantia();
+			garantia.setDescricao("garantia " + i);
+			garantia.setFiador(fiador2);
+			garantia.setValor(BigDecimal.TEN);
+			
+			session.save(garantia);
+			
+			garantias2.add(garantia);
+		}
+
+		CotaGarantiaFiador garantiaFiador1 = new CotaGarantiaFiador();
+		CotaGarantiaFiador garantiaFiador2 = new CotaGarantiaFiador();
+		
+		garantiaFiador1.setCota(cotaJoao);
+		garantiaFiador1.setData(data);
+		garantiaFiador1.setFiador(fiador1);
+		
+		garantiaFiador2.setCota(cotaJose);
+		garantiaFiador2.setData(data);
+		garantiaFiador2.setFiador(fiador2);
+		
+		session.save(garantiaFiador1);
+		session.save(garantiaFiador2);
+	}
+	
+	private static void criarGarantiasNotaPromissoria(Session session) {
+		
+		Date data =Fixture.criarData(01, 10, 2010);
+		
+		NotaPromissoria notaPromissoria1 = new NotaPromissoria();
+		
+		notaPromissoria1.setValor(new BigDecimal(20));
+		notaPromissoria1.setValorExtenso("Vinte");
+		notaPromissoria1.setVencimento(data);
+		
+		NotaPromissoria notaPromissoria2 = new NotaPromissoria();
+		
+		notaPromissoria2.setValor(new BigDecimal(30));
+		notaPromissoria2.setValorExtenso("Trinta");
+		notaPromissoria2.setVencimento(data);
+		
+		session.save(notaPromissoria1);
+		session.save(notaPromissoria2);
+		
+		CotaGarantiaNotaPromissoria garantiaNotaPromissoria1 = new CotaGarantiaNotaPromissoria();
+		CotaGarantiaNotaPromissoria garantiaNotaPromissoria2 = new CotaGarantiaNotaPromissoria();
+		
+		garantiaNotaPromissoria1.setCota(cotaJoana);
+		garantiaNotaPromissoria1.setData(data);
+		garantiaNotaPromissoria1.setNotaPromissoria(notaPromissoria1);
+		
+		garantiaNotaPromissoria2.setCota(cotaGuilherme);
+		garantiaNotaPromissoria2.setData(data);
+		garantiaNotaPromissoria2.setNotaPromissoria(notaPromissoria2);
+		
+		session.save(garantiaNotaPromissoria1);
+		session.save(garantiaNotaPromissoria2);
+	}
+
+	private static void criarGarantiasOutros(Session session) {
+		
+		Date data =Fixture.criarData(01, 10, 2010);
+	
+		List<GarantiaCotaOutros> outros1 = new ArrayList<GarantiaCotaOutros>();
+		
+		for (int i = 0; i < 10; i++) {
+			
+			GarantiaCotaOutros outro = new GarantiaCotaOutros();
+			outro.setDescricao("descrição");
+			outro.setValidade(data);
+			outro.setValor(BigDecimal.TEN);
+			
+			outros1.add(outro);
+		}
+		 
+		List<GarantiaCotaOutros> outros2 = new ArrayList<GarantiaCotaOutros>();
+		
+		for (int i = 0; i < 10; i++) {
+			
+			GarantiaCotaOutros outro = new GarantiaCotaOutros();
+			outro.setDescricao("descrição");
+			outro.setValidade(data);
+			outro.setValor(BigDecimal.TEN);
+			
+			outros2.add(outro);
+		}
+		
+		CotaGarantiaOutros garantiaOutros1 = new CotaGarantiaOutros();
+		CotaGarantiaOutros garantiaOutros2 = new CotaGarantiaOutros();
+		
+		garantiaOutros1.setCota(cotaAcme);
+		garantiaOutros1.setData(data);
+		garantiaOutros1.setOutros(outros1);
+		
+		garantiaOutros2.setCota(cotaManoelCunha);
+		garantiaOutros2.setData(data);
+		garantiaOutros2.setOutros(outros2);
+		
+		session.save(garantiaOutros1);
+		session.save(garantiaOutros2);
+	}
+  
+	public static void criarBrindes(Session session){
+
+		brinde1 = Fixture.brinde(1,"CD-ROM",true);
+		brinde2 = Fixture.brinde(2,"CD-MÚSICA",true);
+		brinde6 = Fixture.brinde(6,"COSMÉTICOS",true);
+		brinde7 = Fixture.brinde(7,"ADESIVOS",true);
+		brinde9 = Fixture.brinde(9,"MATERIAL DE ATIVIDADE INFANTIL",true);
+		brinde16 = Fixture.brinde(16,"BRINDE EDITORIAL",true);
+		brinde17 = Fixture.brinde(17,"CUPOM/VALE DESCONTO",true);
+		brinde26 = Fixture.brinde(26,"VÍDEO",true);
+		brinde27 = Fixture.brinde(27,"DVD",true);
+		brinde28 = Fixture.brinde(28,"OUTROS",true);
+		
+		save(session, brinde1,brinde2,brinde6,brinde7,brinde9,brinde16,brinde17,brinde26,brinde27,brinde28);
 	}
 }

@@ -1,15 +1,18 @@
 package br.com.abril.nds.service;
 
 import java.io.File;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
 import br.com.abril.nds.client.vo.ContratoVO;
 import br.com.abril.nds.dto.ContratoTransporteDTO;
 import br.com.abril.nds.dto.FormaCobrancaDTO;
+import br.com.abril.nds.dto.FornecedorDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.ParametroCobrancaCotaDTO;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
+import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 
 /**
@@ -174,4 +177,58 @@ public interface ParametroCobrancaCotaService {
 	 * @return ContratoVO quando o anexo for encontrato ou null quando o arquivo não existir
 	 */
 	public ContratoVO obterArquivoContratoRecebido(Long idCota, File tempDir);
+	
+	
+    /**
+     * Recupera as informações de parametrização de cobrança do histórico de
+     * titularidade da cota
+     * 
+     * @param idCota
+     *            identificador da Cota
+     * @param idHistorico
+     *            identificador do histórico de titularidade
+     * @return {@link ParametroCobrancaCotaDTO} com as informações de parâmetros
+     *         de cobrança associados ao histórico de titularidade da cota
+     */
+	ParametroCobrancaCotaDTO obterParametrosCobrancaHistoricoTitularidadeCota(Long idCota, Long idHistorico);
+
+    /**
+     * Obtém as formas de cobrança do histórico de titularidade da cota
+     * 
+     * @param idCota
+     *            identificador da Cota
+     * @param idHistorico
+     *            identificador do histórico de titularidade
+     * @return Lista de {@link FormaCobrancaDTO} com as informações de forma de
+     *         cobrança do histórico de titularidade da cota
+     */
+	List<FormaCobrancaDTO> obterFormasCobrancaHistoricoTitularidadeCota(Long idCota, Long idHistorico);
+
+    /**
+     * Obtém os fornecedores associados à forma de pagamento do histórico de
+     * titularidade da cota
+     * 
+     * @param idFormaPagto
+     *            identificador da forma de pagamento associado ao histórico de
+     *            titularidade da cota
+     * @return fornecedores associados à forma de pagamento no histórico de
+     *         titularidade da cota
+     */
+	List<FornecedorDTO> obterFornecedoresFormaPagamentoHistoricoTitularidade(Long idFormaPagto);
+
+    /**
+     * Obtém as informações de forma de pagamento associadas ao histórico de
+     * titularidade da cota
+     * 
+     * @param idFormaPagto
+     *            identificador da forma de pagto associado ao histórico de
+     *            titularidade da cota
+     * @return dto com as informações de forma de pagamento associados ao
+     *         histórico de titularidade da cota
+     */
+	FormaCobrancaDTO obterFormaPagamentoHistoricoTitularidade(Long idFormaPagto);
+	
+	void alterarParametro(ParametroCobrancaCota parametroCobrancaCota);
+	
+	List<BigDecimal> comboValoresMinimos();
 }

@@ -24,6 +24,9 @@ public class DescontoLogistica {
 	@Column(name = "ID")
 	private Long id;
 	
+	@Column(name = "DESCRICAO")
+	private String descricao;
+	
 	@Column(name = "TIPO_DESCONTO", nullable = false)
 	private Integer tipoDesconto;
 	
@@ -126,6 +129,14 @@ public class DescontoLogistica {
 		this.produtos = produtos;
 	}
 
+	public String getDescricao() {
+		return descricao;
+	}
+
+	public void setDescricao(String descricao) {
+		this.descricao = descricao;
+	}	
+	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
@@ -156,4 +167,5 @@ public class DescontoLogistica {
 			return false;
 		return true;
 	}
+
 }

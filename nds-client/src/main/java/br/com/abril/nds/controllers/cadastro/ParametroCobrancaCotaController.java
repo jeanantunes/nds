@@ -2,7 +2,6 @@ package br.com.abril.nds.controllers.cadastro;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -11,6 +10,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletResponse;
@@ -23,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import br.com.abril.nds.client.vo.ContratoVO;
 import br.com.abril.nds.client.vo.ParametrosDistribuidorVO;
 import br.com.abril.nds.dto.FormaCobrancaDTO;
+import br.com.abril.nds.dto.FornecedorDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.ParametroCobrancaCotaDTO;
 import br.com.abril.nds.dto.ParametroCobrancaDTO;
@@ -36,7 +38,7 @@ import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
 import br.com.abril.nds.model.cadastro.TipoParametroSistema;
-import br.com.abril.nds.serialization.custom.CustomMapJson;
+import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.serialization.custom.PlainJSONSerialization;
 import br.com.abril.nds.service.BancoService;
 import br.com.abril.nds.service.CotaService;
@@ -45,13 +47,11 @@ import br.com.abril.nds.service.FileService;
 import br.com.abril.nds.service.ParametroCobrancaCotaService;
 import br.com.abril.nds.service.ParametrosDistribuidorService;
 import br.com.abril.nds.service.PoliticaCobrancaService;
-import br.com.abril.nds.util.ArquivoImportFileFilter;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.FileImportUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
-import br.com.abril.nds.util.Util;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Get;
@@ -105,12 +105,8 @@ public class ParametroCobrancaCotaController {
     
     private HttpServletResponse httpResponse;
 	
-	private static List<ItemDTO<Integer,String>> listaBancos =  new ArrayList<ItemDTO<Integer,String>>();
-
     private static List<ItemDTO<TipoCobranca,String>> listaTiposCobranca =  new ArrayList<ItemDTO<TipoCobranca,String>>();
      
-    private static List<ItemDTO<Long,String>> listaFornecedores =  new ArrayList<ItemDTO<Long,String>>();
-    
     private static List<ItemDTO<TipoCota,String>> listaTiposCota =  new ArrayList<ItemDTO<TipoCota,String>>();
     
     public static final FileType[] extensoesAceitas = {FileType.DOC, FileType.DOCX, FileType.BMP, 
@@ -153,10 +149,9 @@ public class ParametroCobrancaCotaController {
 	 * Método de Pré-carregamento de itens da pagina com informações default.
 	 */
 	public void preCarregamento(){
-		listaBancos = this.bancoService.getComboBancos();
 		listaTiposCobranca = this.parametroCobrancaCotaService.getComboTiposCobranca();
 		listaTiposCota = this.cotaService.getComboTiposCota();
-		result.include("listaBancos",listaBancos);
+		result.include("listaBancos", bancoService.getComboBancos());
 		result.include("listaTiposCobranca",listaTiposCobranca);
 		result.include("listaTiposCota",listaTiposCota);
 	}
@@ -168,10 +163,28 @@ public class ParametroCobrancaCotaController {
 	 */
 	@Post
 	@Path("/fornecedoresCota")
-	public void fornecedoresCota(Long idCota){
-		listaFornecedores = this.parametroCobrancaCotaService.getComboFornecedoresCota(idCota);
+	public void fornecedoresCota(Long idCota, ModoTela modoTela, Long idFormaPagto){
+	    List<ItemDTO<Long,String>> listaFornecedores;
+	    if (ModoTela.CADASTRO_COTA == modoTela) {
+	        listaFornecedores = this.parametroCobrancaCotaService.getComboFornecedoresCota(idCota);
+	    } else {
+            List<FornecedorDTO> fornecedores = parametroCobrancaCotaService
+                    .obterFornecedoresFormaPagamentoHistoricoTitularidade(idFormaPagto);
+            listaFornecedores = new ArrayList<ItemDTO<Long, String>>(
+                    fornecedores.size());
+            for (FornecedorDTO fornecedorDTO : fornecedores) {
+                listaFornecedores.add(new ItemDTO<Long, String>(fornecedorDTO
+                        .getIdFornecedor(), fornecedorDTO.getRazaoSocial()));
+            }
+	    }
 		result.use(Results.json()).from(listaFornecedores, "result").recursive().serialize();
 	}
+	
+    @Post
+    @Path("/carregarBancos")
+    public void carregarBancos(){
+        result.use(Results.json()).from(bancoService.getComboBancos(), "result").recursive().serialize();
+    }
 
 	
 	/**
@@ -181,7 +194,7 @@ public class ParametroCobrancaCotaController {
 	 */
 	@Post
 	@Path("/obterParametroCobranca")
-	public void obterParametroCobranca(Long idCota){
+	public void obterParametroCobranca(Long idCota, ModoTela modoTela, Long idHistorico){
 		
 		validar();
 		
@@ -189,24 +202,26 @@ public class ParametroCobrancaCotaController {
 			throw new ValidacaoException(TipoMensagem.WARNING, "O código da cota informado náo é válido.");
 		} 
 
-		ParametroCobrancaCotaDTO parametroCobranca = this.parametroCobrancaCotaService.obterDadosParametroCobrancaPorCota(idCota);
-		
-		
-		if (parametroCobranca==null){
-			
-		    parametroCobranca = new ParametroCobrancaCotaDTO();
-		    parametroCobranca.setIdCota(idCota);
-		    parametroCobranca.setContrato(false);
-		    parametroCobranca.setFatorVencimento(0);
-		    parametroCobranca.setQtdDividasAberto(0);
-		    parametroCobranca.setSugereSuspensao(false);
-		    parametroCobranca.setValorMinimo(BigDecimal.ZERO);
-		    parametroCobranca.setVrDividasAberto(BigDecimal.ZERO);
+		ParametroCobrancaCotaDTO parametroCobranca;
+		if (ModoTela.CADASTRO_COTA == modoTela) {
+		    parametroCobranca = this.parametroCobrancaCotaService.obterDadosParametroCobrancaPorCota(idCota);
 		    
-            this.parametroCobrancaCotaService.postarParametroCobranca(parametroCobranca);
+		    if (parametroCobranca==null){
+		        parametroCobranca = new ParametroCobrancaCotaDTO();
+		        parametroCobranca.setIdCota(idCota);
+		        parametroCobranca.setContrato(false);
+		        parametroCobranca.setFatorVencimento(0);
+		        parametroCobranca.setQtdDividasAberto(0);
+		        parametroCobranca.setSugereSuspensao(false);
+		        parametroCobranca.setValorMinimo(BigDecimal.ZERO);
+		        parametroCobranca.setVrDividasAberto(BigDecimal.ZERO);
+		        
+		        this.parametroCobrancaCotaService.postarParametroCobranca(parametroCobranca);
+		    }
+		    parametroCobranca = this.parametroCobrancaCotaService.obterDadosParametroCobrancaPorCota(idCota);
+		} else {
+		    parametroCobranca = parametroCobrancaCotaService.obterParametrosCobrancaHistoricoTitularidadeCota(idCota, idHistorico);
 		}
-		parametroCobranca = this.parametroCobrancaCotaService.obterDadosParametroCobrancaPorCota(idCota);
-		
 		
 		result.use(Results.json()).from(parametroCobranca,"result").recursive().serialize();
 	}
@@ -217,24 +232,32 @@ public class ParametroCobrancaCotaController {
 	 * @throws Mensagens de Validação.
 	 * @param idFormaCobranca
 	 */
-	@Post
-	@Path("/obterFormaCobranca")
-	public void obterFormaCobranca(Long idFormaCobranca){
-		
-		validar();
-		
-		if (idFormaCobranca==null) {
-			throw new ValidacaoException(TipoMensagem.WARNING, "O código da forma de cobrança informado náo é válido.");
-		} 
+    @Post
+    @Path("/obterFormaCobranca")
+    public void obterFormaCobranca(Long idFormaCobranca, ModoTela modoTela) {
+        FormaCobrancaDTO formaCobranca = null;
+        validar();
+        if (idFormaCobranca == null) {
+            throw new ValidacaoException(TipoMensagem.WARNING,
+                    "O código da forma de cobrança informado náo é válido.");
+        }
 
-		FormaCobrancaDTO formaCobranca = this.parametroCobrancaCotaService.obterDadosFormaCobranca(idFormaCobranca);
-		
-		if (formaCobranca==null) {
-			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhuma forma de cobrança encontrada para o código de forma de cobrança.");
-		} 
-		
-		result.use(Results.json()).from(formaCobranca,"result").recursive().serialize();
-	}
+        if (ModoTela.CADASTRO_COTA == modoTela) {
+            formaCobranca = this.parametroCobrancaCotaService
+                    .obterDadosFormaCobranca(idFormaCobranca);
+        } else {
+            formaCobranca = parametroCobrancaCotaService
+                    .obterFormaPagamentoHistoricoTitularidade(idFormaCobranca);
+        }
+
+        if (formaCobranca == null) {
+            throw new ValidacaoException(TipoMensagem.WARNING,
+                    "Nenhuma forma de cobrança encontrada para o código de forma de cobrança.");
+        }
+
+        result.use(Results.json()).from(formaCobranca, "result").recursive()
+                .serialize();
+    }
 
 	
 	/**
@@ -243,21 +266,29 @@ public class ParametroCobrancaCotaController {
      */
     @Post
 	@Path("/obterFormasCobranca")
-	public void obterFormasCobranca(Long idCota){
-		
-		//VALIDACOES
-		validar();	
-		
-		//BUSCA FORMAS DE COBRANCA DA COTA
-		List<FormaCobrancaDTO> listaFormasCobranca = this.parametroCobrancaCotaService.obterDadosFormasCobrancaPorCota(idCota);
-		int qtdRegistros = this.parametroCobrancaCotaService.obterQuantidadeFormasCobrancaCota(idCota);
+	public void obterFormasCobranca(Long idCota, ModoTela modoTela, Long idHistorico){
+        List<FormaCobrancaDTO> listaFormasCobranca = null;
+        int qtdeRegistros;
+        
+        if (ModoTela.CADASTRO_COTA == modoTela) {
+            //VALIDACOES
+            validar();	
+            
+            //BUSCA FORMAS DE COBRANCA DA COTA
+            listaFormasCobranca = this.parametroCobrancaCotaService.obterDadosFormasCobrancaPorCota(idCota);
+            qtdeRegistros = this.parametroCobrancaCotaService.obterQuantidadeFormasCobrancaCota(idCota);
+            
+        } else {
+            listaFormasCobranca = parametroCobrancaCotaService.obterFormasCobrancaHistoricoTitularidadeCota(idCota, idHistorico);
+            qtdeRegistros = listaFormasCobranca.size();
+        }
 				
 		TableModel<CellModelKeyValue<FormaCobrancaDTO>> tableModel =
 				new TableModel<CellModelKeyValue<FormaCobrancaDTO>>();
 			
 		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaFormasCobranca));
 		tableModel.setPage(1);
-		tableModel.setTotal(qtdRegistros);
+		tableModel.setTotal(qtdeRegistros);
 
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
     }
@@ -436,7 +467,17 @@ public class ParametroCobrancaCotaController {
 				this.result.include("fileName", fileName);
 			}
 			
-			result.use(CustomMapJson.class).put("fileName", fileName).put("isRecebido",  contrato.isRecebido()).serialize();
+			Map<String, Object> mapa = new TreeMap<String, Object>();
+			
+			if (fileName != null) {
+				mapa.put("fileName", fileName);
+			}
+			
+			if (contrato != null) {
+				mapa.put("isRecebido",  contrato.isRecebido());
+			}
+			
+			result.use(CustomJson.class).from(mapa).serialize();
 		} else {
 			this.result.nothing();
 		}

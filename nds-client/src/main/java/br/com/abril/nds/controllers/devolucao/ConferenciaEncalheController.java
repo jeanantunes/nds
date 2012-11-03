@@ -1,9 +1,6 @@
 package br.com.abril.nds.controllers.devolucao;
 
-import java.io.ByteArrayInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -35,15 +32,13 @@ import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoContabilizacaoCE;
-import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaCota;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
-import br.com.abril.nds.serialization.custom.CustomMapJson;
+import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.service.ConferenciaEncalheService;
-import br.com.abril.nds.service.ParametrosDistribuidorService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.exception.ChamadaEncalheCotaInexistenteException;
 import br.com.abril.nds.service.exception.ConferenciaEncalheExistenteException;
@@ -122,7 +117,7 @@ public class ConferenciaEncalheController {
 				
 			}
 			
-			this.result.use(CustomMapJson.class).put("boxes", mapBox).serialize();
+			this.result.use(CustomJson.class).from(mapBox).serialize();
 
 			
 		} else {
@@ -270,7 +265,7 @@ public class ConferenciaEncalheController {
 		
 		this.calcularTotais(dados);
 		
-		result.use(CustomMapJson.class).put("result", dados).serialize();
+		result.use(CustomJson.class).from(dados).serialize();
 	}
 	
 	/**
@@ -500,7 +495,7 @@ public class ConferenciaEncalheController {
 		
 		this.calcularTotais(dados);
 		
-		this.result.use(CustomMapJson.class).put("result", dados == null ? "" : dados).serialize();
+		this.result.use(CustomJson.class).from(dados == null ? "" : dados).serialize();
 	}
 
 	@Post
@@ -540,7 +535,7 @@ public class ConferenciaEncalheController {
 		
 		this.calcularTotais(dados);
 		
-		this.result.use(CustomMapJson.class).put("result", dados == null ? "" : dados).serialize();
+		this.result.use(CustomJson.class).from(dados == null ? "" : dados).serialize();
 		
 	}
 
@@ -581,8 +576,10 @@ public class ConferenciaEncalheController {
 			
 		}
 		
-		controleConfEncalheCota.setNotaFiscalEntradaCota(notaFiscal);
-		
+		List<NotaFiscalEntradaCota> notaFiscalEntradaCotas = new ArrayList<NotaFiscalEntradaCota>();
+		notaFiscalEntradaCotas.add(notaFiscal);
+		controleConfEncalheCota.setNotaFiscalEntradaCota(notaFiscalEntradaCotas);
+				
 		Box boxEncalhe = new Box();
 		boxEncalhe.setId((Long) this.session.getAttribute(ID_BOX_LOGADO));
 		
@@ -675,10 +672,12 @@ public class ConferenciaEncalheController {
 				dadosDocumentacaoConfEncalheCota.getNossoNumero()!= null && 
 				!dadosDocumentacaoConfEncalheCota.getNossoNumero().isEmpty()) {
 			
-			byte[] slip =  conferenciaEncalheService.gerarDocumentosConferenciaEncalhe(dadosDocumentacaoConfEncalheCota, TipoDocumentoConferenciaEncalhe.SLIP);
-			byte[] boletoOuRecibo = conferenciaEncalheService.gerarDocumentosConferenciaEncalhe(dadosDocumentacaoConfEncalheCota, TipoDocumentoConferenciaEncalhe.BOLETO_OU_RECIBO);
+			List<byte[]> arquivos = new ArrayList<byte[]>();
+			
+			arquivos.add(conferenciaEncalheService.gerarDocumentosConferenciaEncalhe(dadosDocumentacaoConfEncalheCota, TipoDocumentoConferenciaEncalhe.SLIP));
+			arquivos.add(conferenciaEncalheService.gerarDocumentosConferenciaEncalhe(dadosDocumentacaoConfEncalheCota, TipoDocumentoConferenciaEncalhe.BOLETO_OU_RECIBO));
 						
-			retorno = PDFUtil.mergePDFs(slip, boletoOuRecibo);
+			retorno = PDFUtil.mergePDFs(arquivos);
 			
 			escreverArquivoParaResponse(retorno, "slipBoleto");
 		} else {
@@ -739,7 +738,9 @@ public class ConferenciaEncalheController {
 				
 			}
 			
-			controleConfEncalheCota.setNotaFiscalEntradaCota(notaFiscal);
+			List<NotaFiscalEntradaCota> notaFiscalEntradaCotas = new ArrayList<NotaFiscalEntradaCota>();
+			notaFiscalEntradaCotas.add(notaFiscal);
+			controleConfEncalheCota.setNotaFiscalEntradaCota(notaFiscalEntradaCotas);
 			
 			Box boxEncalhe = new Box();
 			boxEncalhe.setId((Long) this.session.getAttribute(ID_BOX_LOGADO));
@@ -809,7 +810,7 @@ public class ConferenciaEncalheController {
 			}
 
 			
-			this.result.use(CustomMapJson.class).put("result", dados).serialize();			
+			this.result.use(CustomJson.class).from(dados).serialize();			
 			
 		} else {
 			
@@ -975,7 +976,7 @@ public class ConferenciaEncalheController {
 		
 		if(dadosNotaFiscal!=null) {
 
-			this.result.use(CustomMapJson.class).put("result", dadosNotaFiscal).serialize();
+			this.result.use(CustomJson.class).from(dadosNotaFiscal).serialize();
 			
 		} else {
 
@@ -1032,7 +1033,7 @@ public class ConferenciaEncalheController {
 			
 			resultadoValidacao.put("mensagemConfirmacao", "Valor CE jornaleiro informado inválido, Deseja continuar?");
 			
-			this.result.use(CustomMapJson.class).put("result", resultadoValidacao).serialize();
+			this.result.use(CustomJson.class).from(resultadoValidacao).serialize();
 
 		} else {
 
@@ -1073,13 +1074,13 @@ public class ConferenciaEncalheController {
 			
 			resultadoValidacao.put("mensagemConfirmacao", "Qtde total do encalhe difere da quantidade CE jornaleiro informado, Deseja continuar?");
 			
-			this.result.use(CustomMapJson.class).put("result", resultadoValidacao).serialize();
+			this.result.use(CustomJson.class).from(resultadoValidacao).serialize();
 			
 		} else {
 
 			resultadoValidacao.put("valorCEInformadoValido", true);
 			
-			this.result.use(CustomMapJson.class).put("result", resultadoValidacao).serialize();
+			this.result.use(CustomJson.class).from(resultadoValidacao).serialize();
 
 		}
 		
@@ -1108,13 +1109,13 @@ public class ConferenciaEncalheController {
 			
 			resultadoValidacao.put("mensagemConfirmacao", "Valor total do encalhe difere do valor CE jornaleiro informado, Deseja continuar?");
 			
-			this.result.use(CustomMapJson.class).put("result", resultadoValidacao).serialize();
+			this.result.use(CustomJson.class).from(resultadoValidacao).serialize();
 			
 		} else {
 
 			resultadoValidacao.put("valorCEInformadoValido", true);
 			
-			this.result.use(CustomMapJson.class).put("result", resultadoValidacao).serialize();
+			this.result.use(CustomJson.class).from(resultadoValidacao).serialize();
 
 		}
 		
@@ -1139,7 +1140,7 @@ public class ConferenciaEncalheController {
 				dados.put("desconto", p.getDesconto());
 			}
 			
-			this.result.use(CustomMapJson.class).put("result", dados).serialize();
+			this.result.use(CustomJson.class).from(dados).serialize();
 			
 		} catch (ChamadaEncalheCotaInexistenteException e) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Não existe chamada de encalhe deste produto para essa cota.");
@@ -1322,7 +1323,7 @@ public class ConferenciaEncalheController {
 		
 		boolean quantidadeInformadaEmExemplares = false; 
 		
-		ProdutoEdicao produtoEdicao = this.produtoEdicaoService.obterProdutoEdicao(idProdutoEdicao);
+		ProdutoEdicao produtoEdicao = this.produtoEdicaoService.obterProdutoEdicao(idProdutoEdicao, false);
 		
 		GrupoProduto grupoProduto = produtoEdicao.getProduto().getTipoProduto().getGrupoProduto();
 		

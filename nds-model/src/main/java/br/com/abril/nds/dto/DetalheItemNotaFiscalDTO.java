@@ -28,6 +28,12 @@ public class DetalheItemNotaFiscalDTO implements Serializable {
 	
 	private BigDecimal valorTotal;
 	
+	private Long idProdutoEdicao;
+	
+	protected Integer pacotePadrao;
+	
+	private BigDecimal desconto;
+	
 	public DetalheItemNotaFiscalDTO() { }
 
 	/**
@@ -155,4 +161,41 @@ public class DetalheItemNotaFiscalDTO implements Serializable {
 	public void setValorTotal(BigDecimal valorTotal) {
 		this.valorTotal = valorTotal;
 	}
+
+	/**
+	 * @return the idProdutoEdicao
+	 */
+	public Long getIdProdutoEdicao() {
+		return idProdutoEdicao;
+	}
+
+	/**
+	 * @param idProdutoEdicao the idProdutoEdicao to set
+	 */
+	public void setIdProdutoEdicao(Long idProdutoEdicao) {
+		this.idProdutoEdicao = idProdutoEdicao;
+	}
+
+	/**
+	 * @return the pacotePadrao
+	 */
+	public Integer getPacotePadrao() {
+		return pacotePadrao;
+	}
+
+	/**
+	 * @param pacotePadrao the pacotePadrao to set
+	 */
+	public void setPacotePadrao(Integer pacotePadrao) {
+		this.pacotePadrao = pacotePadrao;
+	}
+
+	public BigDecimal getDesconto() {
+		return desconto;
+	}
+
+	public void setDesconto(BigDecimal desconto) {
+		this.desconto = desconto;
+	}
+	
 }

@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.util.PaginacaoUtil;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
+import br.com.abril.nds.dto.TelefoneDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.TipoTelefone;
@@ -23,8 +24,8 @@ import br.com.abril.nds.util.CellModel;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
-import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
+import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
@@ -172,11 +173,11 @@ public class TelefoneController {
 		Map<Integer, TelefoneAssociacaoDTO> telefonesSessao = this.obterTelefonesSalvarSessao();
 		
 		TelefoneAssociacaoDTO telefoneAssociacaoDTO = null;
-		Telefone telefone = null;
+		TelefoneDTO telefone = null;
 		
 		if (referencia == null){
 			telefoneAssociacaoDTO = new TelefoneAssociacaoDTO();
-			telefone = new Telefone();
+			telefone = new TelefoneDTO();
 			
 			int referenciaTelefone = (int) (new Date()).getTime();
 			
@@ -190,7 +191,7 @@ public class TelefoneController {
 		
 		if (telefoneAssociacaoDTO == null){
 			
-			Telefone tel = this.telefoneService.buscarTelefonePorId(referencia.longValue());
+			TelefoneDTO tel = TelefoneDTO.fromTelefone(this.telefoneService.buscarTelefonePorId(referencia.longValue()));
 			
 			telefoneAssociacaoDTO = new TelefoneAssociacaoDTO();
 			telefoneAssociacaoDTO.setReferencia(referencia);
@@ -287,7 +288,7 @@ public class TelefoneController {
 			}
 		}
 		
-		this.result.use(Results.json()).from(telefoneAssociacaoDTO == null ? "" : telefoneAssociacaoDTO, "result").recursive().exclude("telefone.pessoa").serialize();
+		this.result.use(Results.json()).from(telefoneAssociacaoDTO == null ? "" : telefoneAssociacaoDTO, "result").recursive().serialize();
 	}
 
 	@SuppressWarnings("unchecked")

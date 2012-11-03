@@ -38,7 +38,9 @@ public class FiltroConsultaDividasCotaDTO implements Serializable {
 	@Export(label = "Acumula Divida")
 	private String descricaoAcumulaDivida;
 
+	private String nossoNumero;
 	
+	private boolean somenteBaixadas;
 	
 	private PaginacaoVO paginacao;
 	
@@ -114,6 +116,20 @@ public class FiltroConsultaDividasCotaDTO implements Serializable {
 		this.numeroCota = numeroCota;
 	}
 	
+	/**
+	 * @return the somenteBaixadas
+	 */
+	public boolean isSomenteBaixadas() {
+		return somenteBaixadas;
+	}
+
+	/**
+	 * @param somenteBaixadas the somenteBaixadas to set
+	 */
+	public void setSomenteBaixadas(boolean somenteBaixadas) {
+		this.somenteBaixadas = somenteBaixadas;
+	}
+
 	public PaginacaoVO getPaginacao() {
 		return paginacao;
 	}
@@ -182,6 +198,20 @@ public class FiltroConsultaDividasCotaDTO implements Serializable {
 	 */
 	public void setDescricaoAcumulaDivida(boolean acumulaDivida) {
 		this.descricaoAcumulaDivida = (acumulaDivida?"Sim":"Não");
+	}
+
+	/**
+	 * @return the nossoNumero
+	 */
+	public String getNossoNumero() {
+		return nossoNumero;
+	}
+
+	/**
+	 * @param nossoNumero the nossoNumero to set
+	 */
+	public void setNossoNumero(String nossoNumero) {
+		this.nossoNumero = nossoNumero;
 	}
 
 	@Override

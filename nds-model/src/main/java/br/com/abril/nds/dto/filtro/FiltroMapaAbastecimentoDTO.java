@@ -2,6 +2,7 @@ package br.com.abril.nds.dto.filtro;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.vo.PaginacaoVO;
@@ -14,14 +15,18 @@ public class FiltroMapaAbastecimentoDTO  implements Serializable {
 	private Date dataDate;
 	private TipoConsulta tipoConsulta;
 	private Long box;
-	private Long Rota;
-	private String codigoProduto;
+	private Long rota;
+	private Long roteiro;
+	private List<String> codigosProduto;
 	private String nomeProduto;
 	private Integer codigoCota;
 	private Long edicaoProduto; 
 	private String nomeCota;
 	private Boolean quebraPorCota;
 	private Boolean useSM;
+	private Long idEntregador;
+	private Boolean excluirProdutoSemReparte;
+	
 			
 	private PaginacaoVO paginacao;
 	
@@ -32,14 +37,28 @@ public class FiltroMapaAbastecimentoDTO  implements Serializable {
 		BOX,
 		ROTA,
 		COTA,
-		PRODUTO;		
+		PRODUTO,
+		PRODUTO_ESPECIFICO,
+		PRODUTO_X_COTA,
+		ENTREGADOR;		
 	}
 	
 	public enum ColunaOrdenacao {
 		BOX("box"),
 		TOTAL_PRODUTO("totalProduto"),
 		TOTAL_REPARTE("totalReparte"),
-		TOTAL_BOX("totalBox");	
+		TOTAL_BOX("totalBox"),
+		CODIGO_ROTA("codigoRota"),
+		NOME_COTA("nomeCota"),
+		REPARTE("reparte"),
+		CODIGO_BOX("codigoBox"),
+		PRECO_CAPA("precoCapa"),
+		CODIGO_PRODUTO("codigoProduto"),
+		NOME_PRODTO("nomeProduto"),
+		NUMERO_EDICAO("numeroEdicao"),
+		TOTAL("total"),
+		MATERIAL_PROMOCIONAL("materialPromocional"),
+		CODIGO_COTA("codigoCota");	
 		
 		private String nomeColuna;
 		
@@ -61,13 +80,48 @@ public class FiltroMapaAbastecimentoDTO  implements Serializable {
 		}
 	}
 	
+	public enum ColunaOrdenacaoEntregador {
+		
+		CODIGO_PRODUTO("codigoProduto"),
+		NOME_PRODTO("nomeProduto"),
+		EDICAO_PRODUTO("numeroEdicao"),
+		NUMERO_EDICAO("numeroEdicao"),
+		CODIGO_BARRA("codigoBarra"),
+		PACOTE_PADRAO("pacotePadrao"),
+		REPARTE("reparte"),
+		PRECO_CAPA("precoCapa"),
+		CODIGO_COTA("codigoCota"),
+		NOME_COTA("nomeCota"),
+		QTDE_EXEMPLARES("qtdeExms");
+		
+		private String nomeColuna;
+		
+		private ColunaOrdenacaoEntregador(String nomeColuna) {
+			this.nomeColuna = nomeColuna;
+		}
+		
+		@Override
+		public String toString() {
+			return this.nomeColuna;
+		}
+		
+		public static ColunaOrdenacaoEntregador getPorDescricao(String descricao) {
+			for(ColunaOrdenacaoEntregador coluna: ColunaOrdenacaoEntregador.values()) {
+				if(coluna.toString().equals(descricao))
+					return coluna;
+			}
+			return null;
+		}
+	}
+	
 	public enum ColunaOrdenacaoDetalhes {
 		CODIGO_PRODUTO("codigoProduto"),
 		NOME_PRODTO("nomeProduto"),
 		NUMERO_EDICAO("numeroEdicao"),
 		REPARTE("reparte"),
 		PRECO_CAPA("precoCapa"),
-		TOTAL("total");	
+		TOTAL("total"),
+		CODIGO_BOX("codigoBox");	
 		
 		private String nomeColuna;
 		
@@ -136,28 +190,28 @@ public class FiltroMapaAbastecimentoDTO  implements Serializable {
 	 * @return the rota
 	 */
 	public Long getRota() {
-		return Rota;
+		return rota;
 	}
 
 	/**
 	 * @param rota the rota to set
 	 */
 	public void setRota(Long rota) {
-		Rota = rota;
+		this.rota = rota;
 	}
 
 	/**
-	 * @return the codigoProduto
+	 * @return the codigosProduto
 	 */
-	public String getCodigoProduto() {
-		return codigoProduto;
+	public List<String> getCodigosProduto() {
+		return codigosProduto;
 	}
 
 	/**
-	 * @param codigoProduto the codigoProduto to set
+	 * @param codigosProduto the codigosProduto to set
 	 */
-	public void setCodigoProduto(String codigoProduto) {
-		this.codigoProduto = codigoProduto;
+	public void setCodigosProduto(List<String> codigosProduto) {
+		this.codigosProduto = codigosProduto;
 	}
 
 	/**
@@ -262,6 +316,48 @@ public class FiltroMapaAbastecimentoDTO  implements Serializable {
 
 	public void setUseSM(Boolean useSM) {
 		this.useSM = useSM;
+	}
+
+	/**
+	 * @return the excluirProdutoSemReparte
+	 */
+	public Boolean getExcluirProdutoSemReparte() {
+		return excluirProdutoSemReparte;
+	}
+
+	/**
+	 * @param excluirProdutoSemReparte the excluirProdutoSemReparte to set
+	 */
+	public void setExcluirProdutoSemReparte(Boolean excluirProdutoSemReparte) {
+		this.excluirProdutoSemReparte = excluirProdutoSemReparte;
+	}
+
+	/**
+	 * @return the roteiro
+	 */
+	public Long getRoteiro() {
+		return roteiro;
+	}
+
+	/**
+	 * @param roteiro the roteiro to set
+	 */
+	public void setRoteiro(Long roteiro) {
+		this.roteiro = roteiro;
+	}
+
+	/**
+	 * @return the idEntregador
+	 */
+	public Long getIdEntregador() {
+		return idEntregador;
+	}
+
+	/**
+	 * @param idEntregador the idEntregador to set
+	 */
+	public void setIdEntregador(Long idEntregador) {
+		this.idEntregador = idEntregador;
 	}
 	
 	

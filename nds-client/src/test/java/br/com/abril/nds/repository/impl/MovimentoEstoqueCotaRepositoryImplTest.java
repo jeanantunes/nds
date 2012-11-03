@@ -3,6 +3,7 @@ package br.com.abril.nds.repository.impl;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
@@ -15,9 +16,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.dto.AbastecimentoDTO;
 import br.com.abril.nds.dto.ConsultaEncalheDTO;
+import br.com.abril.nds.dto.ConsultaEncalheDetalheDTO;
+import br.com.abril.nds.dto.ConsultaEncalheRodapeDTO;
 import br.com.abril.nds.dto.ContagemDevolucaoDTO;
 import br.com.abril.nds.dto.ProdutoAbastecimentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDTO;
+import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDetalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroDigitacaoContagemDevolucaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroDigitacaoContagemDevolucaoDTO.OrdenacaoColuna;
 import br.com.abril.nds.dto.filtro.FiltroMapaAbastecimentoDTO;
@@ -47,7 +51,10 @@ import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.RecebimentoFisico;
+import br.com.abril.nds.model.estoque.StatusEstoqueFinanceiro;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
+import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
+import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.fiscal.CFOP;
 import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
 import br.com.abril.nds.model.fiscal.ItemNotaFiscalEntrada;
@@ -71,7 +78,6 @@ import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.vo.PaginacaoVO;
-import br.com.abril.nds.vo.PeriodoVO;
 
 
 public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryImplTest {
@@ -88,6 +94,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 	private TipoProduto tipoCromo;
 	private TipoFornecedor tipoFornecedorPublicacao;
 	private Cota cotaManoel;
+	private Cota cotaValdomiro;
 	
 	private Box box1;
 	private Box box2;
@@ -107,6 +114,28 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 	private Usuario usuario;
 	private Date dataRecebimento;
 	
+
+	private PessoaFisica valdomiro;
+	private Box box;
+	private EstoqueProdutoCota estoqueProdutoCota;
+
+	private TipoMovimentoEstoque tipoMovimetnoEstoque1;
+	private TipoMovimentoEstoque tipoMovimetnoEstoque2;
+	private TipoMovimentoEstoque tipoMovimetnoEstoque3;
+	private TipoMovimentoEstoque tipoMovimetnoEstoque4;
+	private TipoMovimentoEstoque tipoMovimetnoEstoque5;
+
+	private MovimentoEstoqueCota movimentoEstoque1;
+	private MovimentoEstoqueCota movimentoEstoque2;
+	private MovimentoEstoqueCota movimentoEstoque3;
+	private MovimentoEstoqueCota movimentoEstoque4;
+	private MovimentoEstoqueCota movimentoEstoque5;
+	private MovimentoEstoqueCota movimentoEstoque6;
+	private MovimentoEstoqueCota movimentoEstoque7;
+	
+	private TipoMovimentoFinanceiro tipoMovimetnoFinanceiro;
+	private MovimentoFinanceiroCota movimentoFinanceiro;
+
 	
 	@Before
 	public void setUpGeral() {
@@ -142,22 +171,22 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		cromoReiLeao.addFornecedor(fornecedorDinap);
 		save(cromoReiLeao);
 
-		veja1 = Fixture.produtoEdicao("1", 1L, 10, 7,
-				new Long(100), BigDecimal.TEN, new BigDecimal(15), "ABCDEFGHIJKLMNOPQ", 1L, veja, null, false);
+		veja1 = Fixture.produtoEdicao(1L, 10, 7, new Long(100),
+				BigDecimal.TEN, new BigDecimal(15), "ABCDEFGHIJKLMNOPQ", veja, null, false);
 
 
-		quatroRoda2 = Fixture.produtoEdicao("1", 2L, 15, 30,
-				new Long(100), BigDecimal.TEN, BigDecimal.TEN, "ABCDEFGHIJKLMNOPA", 2L,
-				quatroRodas, null, false);
+		quatroRoda2 = Fixture.produtoEdicao(2L, 15, 30, new Long(100),
+				BigDecimal.TEN, BigDecimal.TEN, "ABCDEFGHIJKLMNOPA", quatroRodas,
+				null, false);
 
-		ProdutoEdicao infoExame3 = Fixture.produtoEdicao("1", 3L, 5, 30,
-				new Long(100), BigDecimal.TEN, new BigDecimal(12), "ABCDEFGHIJKLMNOPB", 3L, infoExame, null, false);
+		ProdutoEdicao infoExame3 = Fixture.produtoEdicao(3L, 5, 30, new Long(100),
+				BigDecimal.TEN, new BigDecimal(12), "ABCDEFGHIJKLMNOPB", infoExame, null, false);
 
-		ProdutoEdicao capricho1 = Fixture.produtoEdicao("1", 1L, 10, 15,
-				new Long(120), BigDecimal.TEN, BigDecimal.TEN, "ABCDEFGHIJKLMNOPC", 4L, capricho, null, false);
+		ProdutoEdicao capricho1 = Fixture.produtoEdicao(1L, 10, 15, new Long(120),
+				BigDecimal.TEN, BigDecimal.TEN, "ABCDEFGHIJKLMNOPC", capricho, null, false);
 		
-		ProdutoEdicao cromoReiLeao1 = Fixture.produtoEdicao("1", 1L, 100, 60,
-				new Long(10), BigDecimal.ONE, new BigDecimal(1.5), "ABCDEFGHIJKLMNOP", 5L, cromoReiLeao, null, false);
+		ProdutoEdicao cromoReiLeao1 = Fixture.produtoEdicao(1L, 100, 60, new Long(10),
+				BigDecimal.ONE, new BigDecimal(1.5), "ABCDEFGHIJKLMNOP", cromoReiLeao, null, false);
 		
 		save(veja1, quatroRoda2, infoExame3, capricho1, cromoReiLeao1);
 		
@@ -171,7 +200,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		save(tipoNotaFiscal);
 		
 		NotaFiscalEntradaFornecedor notaFiscal1Veja = Fixture
-				.notaFiscalEntradaFornecedor(cfop, fornecedorFC.getJuridica(), fornecedorFC, tipoNotaFiscal,
+				.notaFiscalEntradaFornecedor(cfop, fornecedorFC, tipoNotaFiscal,
 						usuario, BigDecimal.TEN, BigDecimal.ZERO, BigDecimal.TEN);
 		save(notaFiscal1Veja);
 
@@ -195,7 +224,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		
 		
 		NotaFiscalEntradaFornecedor notaFiscal2Veja = Fixture
-				.notaFiscalEntradaFornecedor(cfop, fornecedorFC.getJuridica(), fornecedorFC, tipoNotaFiscal,
+				.notaFiscalEntradaFornecedor(cfop, fornecedorFC, tipoNotaFiscal,
 						usuario, BigDecimal.TEN, BigDecimal.ZERO, BigDecimal.TEN);
 		save(notaFiscal2Veja);
 
@@ -225,7 +254,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 	public void setUpForContagemDevolucao() {
 		
 		NotaFiscalEntradaFornecedor notaFiscal4Rodas= Fixture
-				.notaFiscalEntradaFornecedor(cfop, fornecedorFC.getJuridica(), fornecedorFC, tipoNotaFiscal,
+				.notaFiscalEntradaFornecedor(cfop, fornecedorFC, tipoNotaFiscal,
 						usuario, BigDecimal.TEN, BigDecimal.ZERO, BigDecimal.TEN);
 		save(notaFiscal4Rodas);
 
@@ -448,18 +477,32 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		box2 = Fixture.criarBox(2, "BX-002", TipoBox.LANCAMENTO);
 		save(box2);
 		
-		Roteiro roteiro1 = Fixture.criarRoteiro("", box1, TipoRoteiro.NORMAL);
-		Roteiro roteiro2 = Fixture.criarRoteiro("", box2, TipoRoteiro.NORMAL);
+		cotaManoel = Fixture.cota(123, manoel, SituacaoCadastro.ATIVO, box1);
+		save(cotaManoel);
+		
+		PDV pdv = Fixture.criarPDVPrincipal("Meu PDV", cotaManoel);
+		save(pdv);
+		
+		Roteirizacao roteirizacao = Fixture.criarRoteirizacao(box1);
+		save(roteirizacao);
+		
+		PDV pdv2 = Fixture.criarPDVPrincipal("Meu PDV", cotaManoel);
+		save(pdv2);
+		
+		Roteirizacao roteirizacao2 = Fixture.criarRoteirizacao(box2);
+		save(roteirizacao2);
+		
+		Roteiro roteiro1 = Fixture.criarRoteiro("",roteirizacao, TipoRoteiro.NORMAL);
+		Roteiro roteiro2 = Fixture.criarRoteiro("",roteirizacao2, TipoRoteiro.NORMAL);
 		save(roteiro1,roteiro2);
 		
-		rota1 = Fixture.rota("ROTA01", "Rota 1");
-		rota2 = Fixture.rota("ROTA01", "Rota 1");
+		rota1 = Fixture.rota("Rota 1", roteiro1);
+		rota1.addPDV(pdv, 1, box1);
+		rota2 = Fixture.rota("Rota 1", roteiro2);
+		rota2.addPDV(pdv2, 1, box2);
 		rota1.setRoteiro(roteiro1);
 		rota2.setRoteiro(roteiro2);
 		save(rota1,rota2);
-		
-		cotaManoel = Fixture.cota(123, manoel, SituacaoCadastro.ATIVO, box1);
-		save(cotaManoel);
 		
 		Cota cotaPedro = Fixture.cota(124, pedro, SituacaoCadastro.ATIVO, box2);
 		save(cotaPedro);
@@ -503,17 +546,6 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 				estoqueProdutoCota, BigInteger.valueOf(100), cotaPedro, StatusAprovacao.APROVADO, "");
 		save(mec3);
 			
-		PDV pdv = Fixture.criarPDVPrincipal("Meu PDV", cotaManoel );
-		save(pdv);
-		
-		Roteirizacao roteirizacao = Fixture.criarRoteirizacao(pdv, rota1, 0);
-		save(roteirizacao);
-		
-		PDV pdv2 = Fixture.criarPDVPrincipal("Meu PDV", cotaManoel );
-		save(pdv2);
-		
-		Roteirizacao roteirizacao2 = Fixture.criarRoteirizacao(pdv2, rota2, 0);
-		save(roteirizacao2);
 	}
 	
 	
@@ -748,7 +780,8 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		setUpForConsultaEncalhe();
 		
 		FiltroConsultaEncalheDTO filtro = obterFiltroConsultaEncalhe();
-		filtro.setDataRecolhimento(Fixture.criarData(1, Calendar.MARCH, 2012));
+		filtro.setDataRecolhimentoInicial(Fixture.criarData(1, Calendar.MARCH, 2012));
+		filtro.setDataRecolhimentoFinal(Fixture.criarData(1, Calendar.MARCH, 2012));
 		
 		Integer qtde = movimentoEstoqueCotaRepository.obterQtdProdutoEdicaoEncalhe(filtro, true);
 		
@@ -764,7 +797,8 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		
 		FiltroConsultaEncalheDTO filtro = obterFiltroConsultaEncalhe();
 		
-		filtro.setDataRecolhimento(Fixture.criarData(2, Calendar.MARCH, 2012));
+		filtro.setDataRecolhimentoInicial(Fixture.criarData(2, Calendar.MARCH, 2012));
+		filtro.setDataRecolhimentoFinal(Fixture.criarData(2, Calendar.MARCH, 2012));
 		
 		BigDecimal qtde = movimentoEstoqueCotaRepository.obterQtdItemProdutoEdicaoEncalhe(filtro, true);
 		
@@ -789,34 +823,73 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		setUpForConsultaEncalhe();
 		
 		FiltroConsultaEncalheDTO filtro = obterFiltroConsultaEncalhe();
-		try {
+		filtro.setDataRecolhimentoInicial(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
+		filtro.setDataRecolhimentoFinal(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
+
 		List<ConsultaEncalheDTO> listaConsultaEncalhe = movimentoEstoqueCotaRepository.obterListaConsultaEncalhe(filtro);
 		
 		Assert.assertNotNull(listaConsultaEncalhe);
 		
 		
 		ConsultaEncalheDTO cEncalhe_1 = listaConsultaEncalhe.get(0);
-		Assert.assertEquals((8*15), cEncalhe_1.getTotal().intValue());
+		Assert.assertEquals((8*15), cEncalhe_1.getValor().intValue());
 		
-		} catch(Exception e) {
-			e.printStackTrace();
-		}
+
 //		ConsultaEncalheDTO cEncalhe_2 = listaConsultaEncalhe.get(1);
-//		Assert.assertEquals((50*15), cEncalhe_2.getTotal().intValue());
+//		Assert.assertEquals((50*15), cEncalhe_2.getValor().intValue());
 //		
 //		ConsultaEncalheDTO cEncalhe_3 = listaConsultaEncalhe.get(2);
-//		Assert.assertEquals((45*15), cEncalhe_3.getTotal().intValue());
+//		Assert.assertEquals((45*15), cEncalhe_3.getValor().intValue());
 		
 		
 	}
 
-	
-	
+	@Test
+	public void testObterListaConsultaEncalheDetalhe() {
+		
+		setUpForConsultaEncalhe();
+		
+		FiltroConsultaEncalheDetalheDTO filtro = new FiltroConsultaEncalheDetalheDTO();
+		filtro.setDataMovimento(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
+		filtro.setDataRecolhimento(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
+		filtro.setIdProdutoEdicao(veja1.getId());
+
+		List<ConsultaEncalheDetalheDTO> listaConsultaEncalheDetalhe = movimentoEstoqueCotaRepository.obterListaConsultaEncalheDetalhe(filtro);
+		
+		Assert.assertNotNull(listaConsultaEncalheDetalhe);
+		
+		int tamanhoEsperado = 1;
+		
+		Assert.assertEquals(tamanhoEsperado, listaConsultaEncalheDetalhe.size());
+		
+	}
+
+	@Test
+	public void testObterQtdeConsultaEncalheDetalhe() {
+		
+		setUpForConsultaEncalhe();
+		
+		FiltroConsultaEncalheDetalheDTO filtro = new FiltroConsultaEncalheDetalheDTO();
+		filtro.setDataMovimento(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
+		filtro.setDataRecolhimento(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
+		filtro.setIdProdutoEdicao(veja1.getId());
+
+		Integer qtdeConsultaEncalheDetalhe = movimentoEstoqueCotaRepository.obterQtdeConsultaEncalheDetalhe(filtro);
+		
+		Assert.assertNotNull(qtdeConsultaEncalheDetalhe);
+		
+		Integer tamanhoEsperado = 1;
+		
+		Assert.assertEquals(tamanhoEsperado, qtdeConsultaEncalheDetalhe);
+		
+	}
+
 	private FiltroConsultaEncalheDTO obterFiltroConsultaEncalhe() {
 		
 		FiltroConsultaEncalheDTO filtro = new FiltroConsultaEncalheDTO();
 		
-		filtro.setDataRecolhimento(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
+		filtro.setDataRecolhimentoInicial(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
+		filtro.setDataRecolhimentoFinal(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
 		filtro.setIdCota(cotaManoel.getId());
 		filtro.setIdFornecedor(fornecedorDinap.getId());
 		filtro.setOrdenacaoColuna(FiltroConsultaEncalheDTO.OrdenacaoColuna.RECOLHIMENTO);
@@ -907,9 +980,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		Date dataFinal = Fixture.criarData(1, Calendar.MARCH, 2012);
 		
 	
-		PeriodoVO periodo = new PeriodoVO();
-		periodo.setDataInicial(dataInicial);
-		periodo.setDataFinal(dataFinal);
+		Intervalo<Date> periodo = new Intervalo<Date>(dataInicial, dataFinal);
 		filtro.setPeriodo(periodo);
 		
 		filtro.setOrdenacaoColuna(OrdenacaoColuna.CODIGO_PRODUTO);
@@ -960,7 +1031,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		
 		List<AbastecimentoDTO> listaMovimento = movimentoEstoqueCotaRepository.obterDadosAbastecimento(filtro);
 
-		Assert.assertTrue(listaMovimento.size() == 2);
+		Assert.assertTrue(listaMovimento.size() == 1);
 	}	
 	
 	@Test
@@ -968,12 +1039,16 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		
 		setUpForMapaAbastecimento();
 		
+		List<String> codigosProduto = new ArrayList<String>();
+		
+		codigosProduto.add(veja1.getProduto().getCodigo());
+		
 		FiltroMapaAbastecimentoDTO filtro = new FiltroMapaAbastecimentoDTO();
 		filtro.setDataDate(new Date());
 		filtro.setPaginacao(new PaginacaoVO(1, 10, "asc", "box"));
 		filtro.setBox(box1.getId());
 		filtro.setRota(rota1.getId());
-		filtro.setCodigoProduto(veja1.getCodigo());
+		filtro.setCodigosProduto(codigosProduto);
 		filtro.setCodigoCota(cotaManoel.getNumeroCota());
 		
 		List<AbastecimentoDTO> listaMovimento = movimentoEstoqueCotaRepository.obterDadosAbastecimento(filtro);
@@ -986,12 +1061,16 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		
 		setUpForMapaAbastecimento();
 		
+		List<String> codigosProduto = new ArrayList<String>();
+		
+		codigosProduto.add(veja1.getProduto().getCodigo());
+		
 		FiltroMapaAbastecimentoDTO filtro = new FiltroMapaAbastecimentoDTO();
 		filtro.setDataDate(new Date());
 		filtro.setPaginacao(new PaginacaoVO(1, 10, "asc", "box"));
 		filtro.setBox(box1.getId());
 		filtro.setRota(rota1.getId());
-		filtro.setCodigoProduto(veja1.getCodigo());
+		filtro.setCodigosProduto(codigosProduto);
 		filtro.setCodigoCota(cotaManoel.getNumeroCota());
 		
 		Long count = movimentoEstoqueCotaRepository.countObterDadosAbastecimento(filtro);
@@ -1100,5 +1179,139 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		
 		Assert.assertTrue(qtde.equals(50L));
 	}
+	
+	@Test
+	public void obterValorTotalReparte() {
+		
+		setUpForConsultaEncalhe();
+		
+		FiltroConsultaEncalheDTO filtro = obterFiltroConsultaEncalhe();
+		filtro.setDataRecolhimentoInicial(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
+		filtro.setDataRecolhimentoFinal(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
+
+		ConsultaEncalheRodapeDTO valoresTotais = movimentoEstoqueCotaRepository.obterValoresTotais(filtro);
+		
+		Assert.assertNotNull(valoresTotais);
+		
+	}
+	
+	public void setupFinanceiroReparteEncalhe(){
+		
+		valdomiro = Fixture.pessoaFisica("123.456.789-00",
+				"valdomiro@mail.com", "Valdomiro");
+		save(valdomiro);
+		
+		box = Fixture.criarBox(100, "BX-500", TipoBox.LANCAMENTO);
+		save(box);
+		
+		cotaValdomiro = Fixture.cota(5637, valdomiro, SituacaoCadastro.ATIVO, box);
+		save(cotaValdomiro);
+
+		
+		estoqueProdutoCota = Fixture.estoqueProdutoCota(veja1, cotaValdomiro, BigInteger.TEN, BigInteger.ZERO);
+		save(estoqueProdutoCota);
+	
+		
+		tipoMovimetnoEstoque1 = Fixture.tipoMovimentoEnvioEncalhe();
+		tipoMovimetnoEstoque1.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.ENVIO_JORNALEIRO);
+		save(tipoMovimetnoEstoque1);
+	
+		tipoMovimetnoEstoque2 = Fixture.tipoMovimentoEnvioEncalhe();
+		tipoMovimetnoEstoque2.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.ESTORNO_COMPRA_ENCALHE);
+		save(tipoMovimetnoEstoque2);
+		
+		tipoMovimetnoEstoque3 = Fixture.tipoMovimentoEnvioEncalhe();
+		tipoMovimetnoEstoque3.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.ESTORNO_COMPRA_SUPLEMENTAR);
+		save(tipoMovimetnoEstoque3);
+		
+		tipoMovimetnoEstoque4 = Fixture.tipoMovimentoEnvioEncalhe();
+		tipoMovimetnoEstoque4.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.COMPRA_SUPLEMENTAR);
+		save(tipoMovimetnoEstoque4);
+		
+		tipoMovimetnoEstoque5 = Fixture.tipoMovimentoEnvioEncalhe();
+		tipoMovimetnoEstoque5.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.COMPRA_ENCALHE);
+		save(tipoMovimetnoEstoque5);
+		
+
+		movimentoEstoque1 = Fixture.movimentoEstoqueCota(veja1, tipoMovimetnoEstoque1, usuario, estoqueProdutoCota, BigInteger.TEN, cotaValdomiro, StatusAprovacao.APROVADO, "");
+		save(movimentoEstoque1);
+		
+		movimentoEstoque2 = Fixture.movimentoEstoqueCota(veja1, tipoMovimetnoEstoque1, usuario, estoqueProdutoCota, BigInteger.TEN, cotaValdomiro, StatusAprovacao.APROVADO, "");
+		save(movimentoEstoque2);
+		
+		movimentoEstoque3 = Fixture.movimentoEstoqueCota(veja1, tipoMovimetnoEstoque1, usuario, estoqueProdutoCota, BigInteger.TEN, cotaValdomiro, StatusAprovacao.APROVADO, "");
+		save(movimentoEstoque3);
+		
+		movimentoEstoque4 = Fixture.movimentoEstoqueCota(veja1, tipoMovimetnoEstoque2, usuario, estoqueProdutoCota, BigInteger.TEN, cotaValdomiro, StatusAprovacao.APROVADO, "");
+		save(movimentoEstoque4);
+		
+		movimentoEstoque5 = Fixture.movimentoEstoqueCota(veja1, tipoMovimetnoEstoque3, usuario, estoqueProdutoCota, BigInteger.TEN, cotaValdomiro, StatusAprovacao.APROVADO, "");
+		save(movimentoEstoque5);
+		
+		movimentoEstoque6 = Fixture.movimentoEstoqueCota(veja1, tipoMovimetnoEstoque4, usuario, estoqueProdutoCota, BigInteger.TEN, cotaValdomiro, StatusAprovacao.APROVADO, "");
+		save(movimentoEstoque6);
+		
+		movimentoEstoque7 = Fixture.movimentoEstoqueCota(veja1, tipoMovimetnoEstoque5, usuario, estoqueProdutoCota, BigInteger.TEN, cotaValdomiro, StatusAprovacao.APROVADO, "");
+		save(movimentoEstoque7);
+		
+		
+		tipoMovimetnoFinanceiro = Fixture.tipoMovimentoFinanceiroEnvioEncalhe();
+		save(tipoMovimetnoFinanceiro);
+		
+		movimentoFinanceiro = Fixture.movimentoFinanceiroCota(cotaValdomiro, tipoMovimetnoFinanceiro, usuario, new BigDecimal(150), Arrays.asList(movimentoEstoque1), StatusAprovacao.APROVADO, new Date(), false);
+		save(movimentoFinanceiro);
+
+		movimentoEstoque1.setStatusEstoqueFinanceiro(StatusEstoqueFinanceiro.FINANCEIRO_PROCESSADO);
+		save(movimentoEstoque1);
+	}
+	
+	@Test
+	public void testObterMovimentosPendentesGerarFinanceiro(){
+		
+		this.setupFinanceiroReparteEncalhe();
+		
+		List<MovimentoEstoqueCota> movimentos = this.movimentoEstoqueCotaRepository.obterMovimentosPendentesGerarFinanceiro(cotaValdomiro.getId());
+		
+        Assert.assertNotNull(movimentos);
+		
+		Assert.assertEquals(4, movimentos.size());
+	}
+	
+	@Test
+	public void testObterMovimentosEstornados(){
+		
+		this.setupFinanceiroReparteEncalhe();
+		
+		List<MovimentoEstoqueCota> movimentos = this.movimentoEstoqueCotaRepository.obterMovimentosEstornados(cotaValdomiro.getId());
+		
+        Assert.assertNotNull(movimentos);
+		
+        Assert.assertEquals(2, movimentos.size());
+	}
+	
+	@Test
+	public void testObterValorTotalMovimentosPendentesGerarFinanceiro(){
+		
+		this.setupFinanceiroReparteEncalhe();
+
+		BigDecimal total = this.movimentoEstoqueCotaRepository.obterValorTotalMovimentosPendentesGerarFinanceiro(cotaValdomiro.getId());
+		
+		Assert.assertNotNull(total);
+		
+		Assert.assertEquals(0,total.compareTo(new BigDecimal(600)));
+	}
+	
+	@Test
+	public void testObterValorTotalMovimentosEstornados(){
+		
+		this.setupFinanceiroReparteEncalhe();
+		
+		BigDecimal total = this.movimentoEstoqueCotaRepository.obterValorTotalMovimentosEstornados(cotaValdomiro.getId());
+				
+        Assert.assertNotNull(total);
+		
+        Assert.assertEquals(0,total.compareTo(new BigDecimal(300)));
+	}
+	
 
 }

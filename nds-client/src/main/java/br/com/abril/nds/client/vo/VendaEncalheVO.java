@@ -2,6 +2,8 @@ package br.com.abril.nds.client.vo;
 
 import java.io.Serializable;
 
+import br.com.abril.nds.model.cadastro.FormaComercializacao;
+import br.com.abril.nds.model.estoque.TipoVendaEncalhe;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.util.export.Export.Alignment;
@@ -46,6 +48,9 @@ public class VendaEncalheVO implements Serializable {
 	@Export(label = "Tipo Venda", alignment = Alignment.CENTER)
 	private String tipoVendaEncalhe;
 
+	@Export(label = "Usuário", alignment = Alignment.LEFT)
+	private String nomeUsuario;
+	
 	private String formaVenda;
 	
 	private String qntDisponivelProduto;
@@ -54,6 +59,38 @@ public class VendaEncalheVO implements Serializable {
 	
 	private Boolean edicaoExclusaoItem;
 	
+	private TipoVendaEncalhe tipoVenda;
+	
+	private FormaComercializacao formaComercializacao;
+	
+	/**
+	 * @return the tipoVenda
+	 */
+	public TipoVendaEncalhe getTipoVenda() {
+		return tipoVenda;
+	}
+
+	/**
+	 * @param tipoVenda the tipoVenda to set
+	 */
+	public void setTipoVenda(TipoVendaEncalhe tipoVenda) {
+		this.tipoVenda = tipoVenda;
+	}
+
+	/**
+	 * @return the formaComercializacao
+	 */
+	public FormaComercializacao getFormaComercializacao() {
+		return formaComercializacao;
+	}
+
+	/**
+	 * @param formaComercializacao the formaComercializacao to set
+	 */
+	public void setFormaComercializacao(FormaComercializacao formaComercializacao) {
+		this.formaComercializacao = formaComercializacao;
+	}
+
 	/**
 	 * @return the edicaoExclusaoItem
 	 */
@@ -262,6 +299,20 @@ public class VendaEncalheVO implements Serializable {
 	 */
 	public void setTipoVendaEncalhe(String tipoVendaEncalhe) {
 		this.tipoVendaEncalhe = tipoVendaEncalhe;
+	}
+
+	/**
+	 * @return the nomeUsuario
+	 */
+	public String getNomeUsuario() {
+		return nomeUsuario;
+	}
+
+	/**
+	 * @param nomeUsuario the nomeUsuario to set
+	 */
+	public void setNomeUsuario(String nomeUsuario) {
+		this.nomeUsuario = nomeUsuario;
 	}
 	
 	

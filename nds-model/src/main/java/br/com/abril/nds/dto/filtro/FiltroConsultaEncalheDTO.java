@@ -9,8 +9,11 @@ import br.com.abril.nds.vo.PaginacaoVO;
 @Exportable
 public class FiltroConsultaEncalheDTO {
 	
-	@Export(label="Data")
-	private Date dataRecolhimento;
+	@Export(label="Período")
+	private Date dataRecolhimentoInicial;
+
+	@Export(label="Até")
+	private Date dataRecolhimentoFinal;
 	
 	private Long idFornecedor;
 	
@@ -25,7 +28,7 @@ public class FiltroConsultaEncalheDTO {
 	private PaginacaoVO paginacao;
 	
 	private OrdenacaoColuna ordenacaoColuna;
-	
+
 	/**
 	 * Enum para ordenação das colunas do filtro.
 	 * 
@@ -42,7 +45,8 @@ public class FiltroConsultaEncalheDTO {
 		REPARTE("reparte"),
 		ENCALHE("encalhe"),
 		FORNECEDOR("fornecedor"),
-		TOTAL("total"),
+		VALOR("total"),
+		VALOR_COM_DESCONTO("valorComDesconto"),
 		RECOLHIMENTO("recolhimento");
 		
 		private String nomeColuna;
@@ -57,22 +61,31 @@ public class FiltroConsultaEncalheDTO {
 		}
 		
 	}	
-	/**
-	 * Obtém dataRecolhimento
-	 *
-	 * @return Date
-	 */
-	public Date getDataRecolhimento() {
-		return dataRecolhimento;
-	}
 
 	/**
-	 * Atribuí dataRecolhimento
-	 * @param dataRecolhimento 
+	 * Enum para ordenação das colunas do filtro.
+	 * 
+	 * @author Discover Technology
+	 *
 	 */
-	public void setDataRecolhimento(Date dataRecolhimento) {
-		this.dataRecolhimento = dataRecolhimento;
-	}
+	public enum OrdenacaoColunaDetalhe {
+		
+		NUMERO_COTA("numeroCota"),
+		NOME_COTA("nomeCota"),
+		OBSERVACAO("observacao");
+		
+		private String nomeColuna;
+		
+		private OrdenacaoColunaDetalhe(String nomeColuna) {
+			this.nomeColuna = nomeColuna;
+		}
+		
+		@Override
+		public String toString() {
+			return this.nomeColuna;
+		}
+		
+	}	
 
 	/**
 	 * Obtém idFornecedor
@@ -178,7 +191,35 @@ public class FiltroConsultaEncalheDTO {
 		this.idCota = idCota;
 	}
 
-	/* (non-Javadoc)
+	/**
+	 * @return the dataRecolhimentoInicial
+	 */
+	public Date getDataRecolhimentoInicial() {
+		return dataRecolhimentoInicial;
+	}
+
+	/**
+	 * @param dataRecolhimentoInicial the dataRecolhimentoInicial to set
+	 */
+	public void setDataRecolhimentoInicial(Date dataRecolhimentoInicial) {
+		this.dataRecolhimentoInicial = dataRecolhimentoInicial;
+	}
+
+	/**
+	 * @return the dataRecolhimentoFinal
+	 */
+	public Date getDataRecolhimentoFinal() {
+		return dataRecolhimentoFinal;
+	}
+
+	/**
+	 * @param dataRecolhimentoFinal the dataRecolhimentoFinal to set
+	 */
+	public void setDataRecolhimentoFinal(Date dataRecolhimentoFinal) {
+		this.dataRecolhimentoFinal = dataRecolhimentoFinal;
+	}
+
+	/**
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
@@ -187,10 +228,19 @@ public class FiltroConsultaEncalheDTO {
 		int result = 1;
 		result = prime
 				* result
-				+ ((dataRecolhimento == null) ? 0 : dataRecolhimento.hashCode());
+				+ ((dataRecolhimentoFinal == null) ? 0 : dataRecolhimentoFinal
+						.hashCode());
+		result = prime
+				* result
+				+ ((dataRecolhimentoInicial == null) ? 0
+						: dataRecolhimentoInicial.hashCode());
 		result = prime * result + ((idCota == null) ? 0 : idCota.hashCode());
 		result = prime * result
 				+ ((idFornecedor == null) ? 0 : idFornecedor.hashCode());
+		result = prime * result
+				+ ((nomeCota == null) ? 0 : nomeCota.hashCode());
+		result = prime * result
+				+ ((nomeFornecedor == null) ? 0 : nomeFornecedor.hashCode());
 		result = prime * result
 				+ ((ordenacaoColuna == null) ? 0 : ordenacaoColuna.hashCode());
 		result = prime * result
@@ -198,55 +248,56 @@ public class FiltroConsultaEncalheDTO {
 		return result;
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj) {
+		if (this == obj)
 			return true;
-		}
-		if (obj == null) {
+		if (obj == null)
 			return false;
-		}
-		if (!(obj instanceof FiltroConsultaEncalheDTO)) {
+		if (getClass() != obj.getClass())
 			return false;
-		}
 		FiltroConsultaEncalheDTO other = (FiltroConsultaEncalheDTO) obj;
-		if (dataRecolhimento == null) {
-			if (other.dataRecolhimento != null) {
+		if (dataRecolhimentoFinal == null) {
+			if (other.dataRecolhimentoFinal != null)
 				return false;
-			}
-		} else if (!dataRecolhimento.equals(other.dataRecolhimento)) {
+		} else if (!dataRecolhimentoFinal.equals(other.dataRecolhimentoFinal))
 			return false;
-		}
+		if (dataRecolhimentoInicial == null) {
+			if (other.dataRecolhimentoInicial != null)
+				return false;
+		} else if (!dataRecolhimentoInicial
+				.equals(other.dataRecolhimentoInicial))
+			return false;
 		if (idCota == null) {
-			if (other.idCota != null) {
+			if (other.idCota != null)
 				return false;
-			}
-		} else if (!idCota.equals(other.idCota)) {
+		} else if (!idCota.equals(other.idCota))
 			return false;
-		}
 		if (idFornecedor == null) {
-			if (other.idFornecedor != null) {
+			if (other.idFornecedor != null)
 				return false;
-			}
-		} else if (!idFornecedor.equals(other.idFornecedor)) {
+		} else if (!idFornecedor.equals(other.idFornecedor))
 			return false;
-		}
-		if (ordenacaoColuna != other.ordenacaoColuna) {
+		if (nomeCota == null) {
+			if (other.nomeCota != null)
+				return false;
+		} else if (!nomeCota.equals(other.nomeCota))
 			return false;
-		}
+		if (nomeFornecedor == null) {
+			if (other.nomeFornecedor != null)
+				return false;
+		} else if (!nomeFornecedor.equals(other.nomeFornecedor))
+			return false;
+		if (ordenacaoColuna != other.ordenacaoColuna)
+			return false;
 		if (paginacao == null) {
-			if (other.paginacao != null) {
+			if (other.paginacao != null)
 				return false;
-			}
-		} else if (!paginacao.equals(other.paginacao)) {
+		} else if (!paginacao.equals(other.paginacao))
 			return false;
-		}
 		return true;
 	}
-
-	
-	
 }

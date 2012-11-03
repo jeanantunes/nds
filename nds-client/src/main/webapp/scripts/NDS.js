@@ -171,6 +171,10 @@ function adicionarMascaraCEP(cep) {
 	return cep;
 }
 
+
+function serializeParamsToFlexiGridPost(params){
+	return $.map(params,function(value,key){ return {name:key,value:value};});
+}
 function serializeObjectToPost(objectName, object, obj) {
 	obj = (obj)?obj:new Object();
 	for ( var propriedade in object) {
@@ -213,12 +217,11 @@ function serializeArrayToPost(listaName, lista, obj) {
  * @returns {Array} 
  */
 function toFlexiGridObject(list){
-	
-	var rows = new Array();
-	for (var index in list) {		
-		rows.push({"id" : rows.length,	"cell" : list[index]});		
+    var rows = new Array();
+    for (i = 0; i < list.length; i++ ) {
+        rows.push({"id" : rows.length,	"cell" : list[i]});
 	}
-	return rows;
+    return rows;
 }
 
 
@@ -706,8 +709,8 @@ function limparCache() {
 function redimensionarWorkspace() {
 	// Faz as abas do workspace ficarem por cima de tudo S2
 	$('#workspace div.ui-tabs-panel:not(.ui-tabs-hide)').css("overflow-y", "auto");	
-	$('#workspace div.ui-tabs-panel:not(.ui-tabs-hide)').innerHeight($("#divCorpo").innerHeight()-$(".header").innerHeight());
-
+	$('#workspace div.ui-tabs-panel:not(.ui-tabs-hide)').innerHeight($("body").innerHeight()-$(".header").innerHeight()-$(".ui-tabs-nav").innerHeight()-12);
+	
 	/*if ($('.areaBts').length != 0) {
 		$('.areaBts').addClass('navbar-fixed-top');
 	}*/

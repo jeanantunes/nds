@@ -13,43 +13,46 @@ body{font-family:arial;  font-size:medium; background:#FFFFFF;height:100%;}
    float: left;
    width: 100%;
    background-color:#F8F8F8;
-  
+   margin-bottom: 7px;  
+}
+
+#workspace .ui-tabs-nav li a {
+    padding: 0.5em!important;
 }
 
 
-
-
-#workspace{  width:100%;  height:100%; overflow-x:hidden; overflow-y:hidden; display:block;}
+#workspace{  width:100%;  overflow-x:hidden; height:100%; overflow:hidden; display:block;}
 .breadCrumb{ line-height:23px; padding:5px 18px; background:#CCC;}
 
 .classROLE_HOME{ background:url(../images/bt_home.gif) no-repeat 2px 3px; width:21px; height:18px; float:left; margin-top:-4px; margin-right:3px;} 
 
 .classROLE_CADASTRO{ background:url(../images/bt_cadastros.png) no-repeat left center; width:16px; height:18px; float:left;  margin-top:-4px; margin-right:3px;}
-
 .classROLE_FINANCEIRO{ background:url(../images/bt_financeiro.png) no-repeat left center; width:16px; height:18px; float:left;  margin-top:-4px; margin-right:3px;}
-
 .classROLE_ESTOQUE{background:url(../images/bt_estoque.png) no-repeat left center; width:16px; height:18px; float:left;  margin-top:-4px; margin-right:3px;}
-
 .classROLE_LANCAMENTO{background:url(../images/bt_lancamento.png) no-repeat left center; width:16px; height:18px; float:left;  margin-top:-4px; margin-right:3px;}
-
 .classROLE_EXPEDICAO{background:url(../images/bt_expedicao.png) no-repeat left center; width:16px; height:18px; float:left;  margin-top:-4px; margin-right:3px;}
-
 .classROLE_RECOLHIMENTO{background:url(../images/bt_recolhimento.png) no-repeat left center; width:16px; height:18px; float:left;  margin-top:-4px; margin-right:3px;}
-
 .classROLE_DEVOLUCAO{background:url(../images/bt_devolucao.png) no-repeat left center; width:16px; height:18px; float:left;  margin-top:-4px; margin-right:3px;}
-
 .classROLE_INDICADORES{background:url(../images/bt_indicadores.png) no-repeat left center; width:16px; height:18px; float:left;  margin-top:-4px; margin-right:3px;}
-
 .classROLE_NFE{background:url(../images/bt_nfe.png) no-repeat left center; width:16px; height:18px; float:left;  margin-top:-4px; margin-right:3px;}
-
 .classROLE_USUARIOS{background:url(../images/bt_usuarios.png) no-repeat left center; width:16px; height:18px; float:left; margin-top:3px;}
-
 .classROLE_LINKS{background:url(../images/bt_links.png) no-repeat left center; width:16px; height:18px; float:left; margin-top:3px;}
-
 .classROLE_HELP{background:url(../images/bt_help.png) no-repeat 2px 4px; width:21px; height:21px; float:left;  margin-top:-4px; margin-right:3px;}
-
 .classROLE_ADMINISTRACAO{background:url(../images/bt_administracao.png) no-repeat left center; width:16px; height:18px; float:left; margin-top:-4px;}
 
+#workspace .classROLE_CADASTRO{ margin-top:4px; margin-left:5px;  margin-right:0px;}
+#workspace .classROLE_FINANCEIRO{ margin-top:4px; margin-right:0px; margin-left:5px;}
+#workspace .classROLE_ESTOQUE{ margin-top:4px; margin-right:0px; margin-left:5px;}
+#workspace .classROLE_LANCAMENTO{margin-top:4px; margin-right:0px; margin-left:5px;}
+#workspace .classROLE_EXPEDICAO{margin-top:4px; margin-right:0px; margin-left:5px;}
+#workspace .classROLE_RECOLHIMENTO{margin-top:4px; margin-right:0px; margin-left:5px;}
+#workspace .classROLE_DEVOLUCAO{margin-top:4px; margin-right:0px; margin-left:5px;}
+#workspace .classROLE_INDICADORES{margin-top:4px; margin-right:0px; margin-left:5px;}
+#workspace .classROLE_NFE{margin-top:4px; margin-right:0px; margin-left:5px;}
+#workspace .classROLE_USUARIOS{margin-top:4px; margin-right:0px; margin-left:5px;}
+#workspace .classROLE_LINKS{margin-top:4px; margin-right:0px; margin-left:5px;}
+#workspace .classROLE_HELP{margin-top:4px; margin-right:0px; margin-left:5px;}
+#workspace .classROLE_ADMINISTRACAO{margin-top:4px; margin-right:0px; margin-left:5px;}
 
 
 

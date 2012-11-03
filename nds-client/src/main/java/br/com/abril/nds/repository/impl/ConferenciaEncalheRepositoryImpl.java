@@ -11,9 +11,13 @@ import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.type.StandardBasicTypes;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.dto.ComposicaoCobrancaSlipDTO;
 import br.com.abril.nds.dto.ConferenciaEncalheDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoSlipDTO;
+import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.estoque.ConferenciaEncalhe;
+import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
+import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
 import br.com.abril.nds.repository.ConferenciaEncalheRepository;
 
 @Repository
@@ -36,6 +40,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 		
 		hql.append(" select ");
 		
+		hql.append(" conferencia.chamadaEncalheCota.chamadaEncalhe.id as idChamadaEncalhe, ");
 		hql.append(" conferencia.movimentoEstoqueCota.produtoEdicao.produto.nome as nomeProduto,	");
 		hql.append(" conferencia.movimentoEstoqueCota.produtoEdicao.numeroEdicao as numeroEdicao,	");
 		hql.append(" conferencia.movimentoEstoqueCota.produtoEdicao.id as idProdutoEdicao,			");
@@ -47,12 +52,15 @@ public class ConferenciaEncalheRepositoryImpl extends
 		
 		hql.append(" ((conferencia.movimentoEstoqueCota.produtoEdicao.precoVenda -  			");
 		hql.append(" ( conferencia.movimentoEstoqueCota.produtoEdicao.precoVenda * ("+ this.obterHQLDesconto("conferencia.movimentoEstoqueCota.cota.id", "conferencia.movimentoEstoqueCota.produtoEdicao.id", "fornecedor.id") +") / 100 ))  ");
-		hql.append(" * conferencia.movimentoEstoqueCota.qtde) as valorTotal ");
+		hql.append(" * conferencia.movimentoEstoqueCota.qtde) as valorTotal, ");
+		hql.append(" conferencia.controleConferenciaEncalheCota.dataOperacao as dataOperacao,");
+		hql.append(" conferencia.chamadaEncalheCota.chamadaEncalhe.dataRecolhimento as dataRecolhimento");
+		
 		
 		hql.append(" from ConferenciaEncalhe conferencia	");
 		
 		hql.append(" join conferencia.movimentoEstoqueCota.produtoEdicao.produto.fornecedores fornecedor ");
-		
+
 		hql.append(" where	");
 		
 		hql.append(" conferencia.controleConferenciaEncalheCota.id = :idControleConferenciaEncalheCota ");
@@ -65,6 +73,111 @@ public class ConferenciaEncalheRepositoryImpl extends
 	
 	}
 	
+	/**
+	 * Obtém a chamada de encalhe 'fechada' relacionada à um movimento financeiro
+	 * @param idMovimentoDevolucao
+	 * @return ChamadaEncalheCota
+	 */
+	@Override
+	public ChamadaEncalheCota obterChamadaEncalheDevolucao(Long idMovimentoDevolucao){
+		
+		StringBuilder hql = new StringBuilder("");
+		
+		hql.append(" select cec ");
+
+		hql.append(" from ConferenciaEncalhe ce, MovimentoFinanceiroCota mfc ");
+		
+		hql.append(" join ce.movimentoEstoqueCota mec ");
+		
+		hql.append(" join mfc.movimentos mov ");
+		
+		hql.append(" join ce.chamadaEncalheCota cec ");
+		
+		hql.append(" where mec.id = mov.id ");
+		
+		hql.append(" and cec.fechado = true ");
+		
+		hql.append(" and mfc.id = :idMov ");
+		
+		hql.append(" order by cec.id ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+
+		query.setParameter("idMov", idMovimentoDevolucao);
+		
+		query.setMaxResults(1);
+		
+		return (ChamadaEncalheCota) query.uniqueResult();
+	}
+	
+	/**
+     * Obtém composição de cobrança da cota na data de operação para a exibição no Slip
+     * @param numeroCota
+     * @param dataOperacao
+     * @param tiposMovimentoFinanceiroIgnorados
+     * @return List<ComposicaoCobrancaSlipDTO>
+     */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ComposicaoCobrancaSlipDTO> obterComposicaoCobrancaSlip(Integer numeroCota, Date dataOperacao, List<TipoMovimentoFinanceiro> tiposMovimentoFinanceiroIgnorados){
+		
+		StringBuilder hql = new StringBuilder(" select ");
+
+		hql.append(" mfc.id as idMovimentoFinanceiro, ");
+		
+		hql.append(" tipoMovimento.descricao as descricao, ");
+		
+		hql.append(" (case when tipoMovimento.operacaoFinaceira = 'CREDITO' then 'C' else 'D' end) as operacaoFinanceira, ");
+		
+		hql.append(" coalesce(mfc.valor,0) as valor ");
+		
+		hql.append(" from MovimentoFinanceiroCota mfc ");
+		
+		hql.append(" join mfc.tipoMovimento tipoMovimento ");
+        
+		hql.append(" where ");
+		
+		hql.append(" mfc.data = :dataOperacao ");
+		
+		hql.append(" and mfc.status = :statusAprovado ");
+		
+		hql.append(" and mfc.cota.numeroCota = :numeroCota ");
+		
+		if(tiposMovimentoFinanceiroIgnorados!=null && !tiposMovimentoFinanceiroIgnorados.isEmpty()) {
+			hql.append(" and mfc.tipoMovimento not in (:tiposMovimentoFinanceiroIgnorados) ");
+		}
+		
+		hql.append(" and mfc.id not in ");
+		
+		hql.append(" (   ");
+		
+		hql.append("     select distinct(movimentos.id) ");
+
+		hql.append("     from ConsolidadoFinanceiroCota c join c.movimentos movimentos ");
+		
+		hql.append("     where ");
+		
+		hql.append("     c.cota.numeroCota = :numeroCota  ");
+		
+		hql.append(" ) ");
+		
+		hql.append(" order by mfc.data ");
+		
+		Query query = this.getSession().createQuery(hql.toString()).setResultTransformer(new AliasToBeanResultTransformer(ComposicaoCobrancaSlipDTO.class));
+		
+		query.setParameter("statusAprovado", StatusAprovacao.APROVADO);
+		
+		query.setParameter("numeroCota", numeroCota);
+		
+		query.setParameter("dataOperacao", dataOperacao);
+		
+		if(tiposMovimentoFinanceiroIgnorados!=null && !tiposMovimentoFinanceiroIgnorados.isEmpty()) {
+			query.setParameterList("tiposMovimentoFinanceiroIgnorados", tiposMovimentoFinanceiroIgnorados);
+		}
+		
+		return query.list();
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * @see br.com.abril.nds.repository.ConferenciaEncalheRepository#obterListaConferenciaEncalheDTOContingencia(java.lang.Long, java.lang.Integer, java.util.Date, java.util.Date, boolean, boolean, java.util.Set)
@@ -325,12 +438,22 @@ public class ConferenciaEncalheRepositoryImpl extends
 //		
 //	}
 	
+
+	/**
+	 * Obtém o valorTotal de uma operação de conferência de encalhe. Para o calculo do valor
+	 * é levado em conta o preco com desconto de acordo com a regra de comissão que verifica 
+	 * desconto no níveis de produtoedicao, cota.
+	 * 
+	 * @param idControleConferenciaEncalhe
+	 * 
+	 * @return BigDecimal
+	 */
+	public BigDecimal obterValorTotalEncalheOperacaoConferenciaEncalhe(Long idControleConferenciaEncalhe) {
 	
-	public BigDecimal obterValorTotalEncalheOperacaoConferenciaEncalhe(Long idControleConferenciaEncalhe, Long idDistribuidor) {
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" select sum( conferencia.produtoEdicao.precoVenda - (conferencia.produtoEdicao.precoVenda * ("+ this.obterHQLDesconto("cota.id", "produtoEdicao.id", "fornecedor.id") +") / 100 ) ) ");
+		hql.append(" select sum( (conferencia.precoCapaInformado - (conferencia.precoCapaInformado * ("+ this.obterHQLDesconto("cota.id", "produtoEdicao.id", "fornecedor.id") +") / 100 )) * conferencia.qtdeInformada ) ");
 		
 		hql.append(" from ConferenciaEncalhe conferencia  ");
 		
@@ -344,14 +467,14 @@ public class ConferenciaEncalheRepositoryImpl extends
 		
 		hql.append("  join produto.fornecedores fornecedor ");
 		
-		hql.append(" where conferencia.controleConferenciaEncalheCota.id = :idControleConferenciaEncalhe  ");
+		hql.append(" WHERE conferencia.controleConferenciaEncalheCota.id = :idControleConferenciaEncalhe  ");
 		
 		Query query =  this.getSession().createQuery(hql.toString());
 		
 		query.setParameter("idControleConferenciaEncalhe", idControleConferenciaEncalhe);
 		
-		return (BigDecimal) query.uniqueResult();
 		
+		return (BigDecimal) query.uniqueResult();
 	}
 
 	

@@ -23,24 +23,26 @@
 				   
 	</div>
 
-	<table width="900" cellpadding="2" cellspacing="2" style="text-align:left;">
+	<fieldset style="width:880px!important; margin:5px!important;">
+<legend>Distribuição</legend>
+<table width="890" cellpadding="2" cellspacing="2" style="text-align:left;">
     	<tr>
-    		<td width="442" valign="top">
-    			<table>
+    		<td width="418" valign="top">
+   			  <table>
 			    	<tr>
 			        	<td>Cota:</td>
 			            <td>
 
 							<!-- Num Cota -->
-							<input id="${param.tela}numCota" disabled="disabled" type="text" style="width:100px" />
+							<input id="${param.tela}numCota" type="text" style="width:100px" />
 						</td>
 					</tr>
 			        <tr>
-			        	<td width="120">Box:</td>
-			            <td width="320">
+			        	<td width="99">Box:</td>
+			            <td width="308">
 
 							<!-- Box -->
-							<input id="${param.tela}box" disabled="disabled" type="text" style="width:100px" />
+							<input id="${param.tela}box" type="text" style="width:100px" />
 						</td>
 					</tr>
 			        <tr>
@@ -51,16 +53,16 @@
 						</td>
 			        </tr>
 			        <tr>
-			        	<td width="116">Assist. Comercial:</td>
-			            <td width="171">
+			        	<td width="99">Assist. Comercial:</td>
+			            <td width="308">
 
 							<!-- Assist. Comercial -->
 							<input id="${param.tela}assistComercial" type="text" style="width:150px" />
 						</td>
 			        </tr>
 			        <tr>
-			        	<td width="116">Gerente Comercial:</td>
-			            <td width="171">
+			        	<td width="99">Gerente Comercial:</td>
+			            <td width="308">
 
 							<!-- Gerente Comercial -->
 							<input id="${param.tela}gerenteComercial" type="text" style="width:150px" />
@@ -75,30 +77,32 @@
 			        </tr>
     			</table>
     			<!-- Entrega de Reparte de Venda -->
-        		<input type="checkbox" id="${param.tela}entregaReparteVenda" />
-        		<label for="${param.tela}entregaReparteVenda">Entrega de Reparte de Venda</label>
+        		<input type="checkbox" id="${param.tela}entregaReparteVenda" style="margin-top:9px;" />
+        		<label for="${param.tela}entregaReparteVenda" style="width:190px;float:left;">Entrega de Reparte de Venda</label>
 
          		<br clear="all" />
 
         		<!-- Solicitação Num. Atrasados -->
-				<input id="${param.tela}solNumAtras" name="solNumAtrs" type="checkbox" value=""/>
-				<label for="${param.tela}solNumAtrs">Solicitação Num. Atrasados - Internet</label>
+				<input id="${param.tela}solNumAtras" name="solNumAtrs" type="checkbox" value="" style="margin-top:9px;"/>
+				<label for="${param.tela}solNumAtrs" style="width: 190px;">Solicitação Num. Atrasados - Internet</label>
 
          		<br clear="all" />
 
 				<!-- Recebe / Recolhe produtos parciais -->
-				<input id="${param.tela}recebeRecolhe"  name="recebeRecolhe" type="checkbox" value="" />
-				<label for="recebeRecolhe">Recebe / Recolhe produtos parciais</label>
+				<input id="${param.tela}recebeRecolhe"  name="recebeRecolhe" type="checkbox" value="" style="margin-top:9px;" />
+				<label for="recebeRecolhe" style="width: 190px;">Recebe / Recolhe produtos parciais</label>
     		</td>
-    		<td width="12" style="width:10px;">
+    		<td width="10" style="width:10px;">
 
 
     		</td>
-    		<td width="334" valign="top">
-    			<table>
+    		<td width="440" valign="top">
+    		<fieldset style="width:390px;">
+				<legend>Tipo de Entrega</legend>
+    			<table width="326">
 	    			<tr>
-			            <td>Tipo de Entrega:</td>
-			            <td>
+			            <td width="86">Tipo de Entrega:</td>
+			            <td width="228">
 							
 							<input type="hidden" id="${param.tela}tipoEntregaHidden" />
 							
@@ -176,18 +180,18 @@
 								</table>
 							</div>
 						</div>
-					</div>
+				  </div>
 					<table width="399" border="0" cellspacing="1" cellpadding="1">
 						<tr>
-							<td width="130">Percentual Faturamento:</td>
-							<td width="265">
+							<td width="124">Percentual Faturamento:</td>
+							<td width="268">
 								<input id="${param.tela}percentualFaturamentoEntregador" name="percentualFaturamento"
 									   type="text" style="width: 70px; text-align: right;" />
 							</td>
 						</tr>
 						<tr>
-							<td width="130">Período Carência:</td>
-							<td width="265">
+							<td width="124">Período Carência:</td>
+							<td width="268">
 								<table width="100%" border="0" cellspacing="0" cellpadding="0">
 									<tr>
 										<td width="43%">
@@ -203,9 +207,10 @@
 								</table></td>
 						</tr>
 					</table>
-				</div>
+			  </div>
 				
 				<jsp:include page="entregaEmBanca.jsp"/>
+				</fieldset>
 
 				<br />
 
@@ -273,9 +278,7 @@
       					</tr>
     				</table>
 				</fieldset>
-    		</td>
+   		  </td>
     	</tr>
 	</table>
-<br />
-<br />
-<br />
+</fieldset>

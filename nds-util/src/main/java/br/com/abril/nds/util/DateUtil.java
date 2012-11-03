@@ -11,6 +11,8 @@ import java.util.TreeSet;
 import org.apache.commons.lang.time.DateUtils;
 
 public class DateUtil {
+    
+    public static final String PADRAO_HORA_MINUTO = "HH:mm";
 
 	public static boolean isValidDate(String valor, String pattern) {
 
@@ -52,6 +54,18 @@ public class DateUtil {
 		}
 		
 		return new SimpleDateFormat(formato).format(data);
+	}
+	
+    /**
+     * Formata a data com a informação de hora e minutos
+     * 
+     * @param data
+     *            data para formatação
+     * @return informação de horas e minutos da data no padrão
+     *         {@link DateUtil#PADRAO_HORA_MINUTO}
+     */
+	public static String formatarHoraMinuto(Date data) {
+	    return formatarData(data, PADRAO_HORA_MINUTO);
 	}
 	
 	public static String formatarDataPTBR(Date data) {
@@ -124,6 +138,9 @@ public class DateUtil {
 	}
 
 	public static Date parseData(String data, String formato) {
+
+		if(data == null)
+			return null;
 		
 		try {
 			

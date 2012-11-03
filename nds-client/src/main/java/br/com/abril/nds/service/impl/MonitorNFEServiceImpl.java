@@ -146,7 +146,7 @@ public class MonitorNFEServiceImpl implements MonitorNFEService {
 	
 	private String obterHoras(Date dataHoras) {
 		DateFormat df = SimpleDateFormat.getTimeInstance();
-		return df.format(dataHoras);
+		return dataHoras != null ? df.format(dataHoras) : null;
 	}
 	
 	/**
@@ -157,6 +157,8 @@ public class MonitorNFEServiceImpl implements MonitorNFEService {
 	 * @param notaFiscal
 	 */
 	private void carregarDanfeDadosPrincipais(DanfeDTO danfe, NotaFiscal notaFiscal) {
+		
+		if(notaFiscal.getInformacaoEletronica() == null) return;
 		
 		Identificacao identificacao 				= notaFiscal.getIdentificacao();
 		InformacaoEletronica informacaoEletronica 	= notaFiscal.getInformacaoEletronica();
@@ -194,7 +196,9 @@ public class MonitorNFEServiceImpl implements MonitorNFEService {
 			ISSQNValor 				= valoresTotaisISSQN.getValorISS();
 		}
 		
-		String informacoesComplementares 	= informacaoAdicional.getInformacoesComplementares();
+		String informacoesComplementares = "";
+		if(informacaoAdicional != null)
+			informacoesComplementares 	= informacaoAdicional.getInformacoesComplementares();
 		
 		String numeroFatura 				=  "";//TODO obter campo
 		BigDecimal valorFatura 				= BigDecimal.ZERO; //TODO obter campo
@@ -619,7 +623,7 @@ public class MonitorNFEServiceImpl implements MonitorNFEService {
 			NCMProduto 			= produtoServico.getNcm().toString();
 			CFOPProduto 		= produtoServico.getCfop().toString();                            
 			
-			unidadeProduto = 	(unidade == null || unidade.isEmpty()) ? 0L : new Long(unidade);
+			unidadeProduto = 	null; //(unidade == null || unidade.isEmpty()) ? 0L : new Long(unidade);
 			
 			quantidadeProduto 	= null; //TODO: produtoServico.getQuantidade();              
 			valorUnitarioProduto = produtoServico.getValorUnitario();
@@ -665,7 +669,7 @@ public class MonitorNFEServiceImpl implements MonitorNFEService {
 	
 	protected URL obterDiretorioReports() {
 		
-		URL urlDanfe = Thread.currentThread().getContextClassLoader().getResource("/reports/");
+		URL urlDanfe = Thread.currentThread().getContextClassLoader().getResource("reports");
 		
 		return urlDanfe;
 	}

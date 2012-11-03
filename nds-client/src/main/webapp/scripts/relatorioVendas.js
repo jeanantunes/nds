@@ -1,6 +1,8 @@
 var relatorioVendasController = $.extend(true, {
 	init : function() {
-
+		
+		$("#numeroCota", relatorioVendasController.workspace).numeric();
+		
 		$("#datepickerDe", relatorioVendasController.workspace).datepicker({
 			showOn : "button",
 			buttonImage: contextPath + "/images/calendar.gif",
@@ -20,48 +22,8 @@ var relatorioVendasController = $.extend(true, {
 		});
 		
 		$("#datepickerAte", relatorioVendasController.workspace).mask("99/99/9999");
-
-		var availableTags = [ "4455", "4566", "4567", "5678", "1223", "1234" ];
-		function split(val) {
-			return val.split(/,\s*/);
-		}
-		function extractLast(term) {
-			return split(term).pop();
-		}
-
-		$("#edicoesCamp", relatorioVendasController.workspace)
-		// don't navigate away from the field on tab when selecting an item
-		.bind(
-				"keydown",
-				function(event) {
-					if (event.keyCode === $.ui.keyCode.TAB
-							&& $(this).data("autocomplete").menu.active) {
-						event.preventDefault();
-					}
-				}).autocomplete(
-				{
-					minLength : 0,
-					source : function(request, response) {
-						// delegate back to autocomplete, but extract the last term
-						response($.ui.autocomplete.filter(availableTags,
-								extractLast(request.term)));
-					},
-					focus : function() {
-						// prevent value inserted on focus
-						return false;
-					},
-					select : function(event, ui) {
-						var terms = split(this.value);
-						// remove the current input
-						terms.pop();
-						// add the selected item
-						terms.push(ui.item.value);
-						// add placeholder to get the comma-and-space at the end
-						terms.push("");
-						this.value = terms.join(", ");
-						return false;
-					}
-				});		
+		
+		$("#edicaoProduto", relatorioVendasController.workspace).justInput(/[0-9;]/);
 		
 		$(".popEditorGrid", relatorioVendasController.workspace).flexigrid({
 			preProcess: relatorioVendasController.executarPreProcessamentoPopUp,
@@ -75,25 +37,25 @@ var relatorioVendasController = $.extend(true, {
 			}, {
 				display : 'Produto',
 				name : 'nomeProduto',
-				width : 110,
+				width : 160,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Edição',
 				name : 'edicaoProduto',
-				width : 80,
+				width : 60,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Reparte',
-				name : 'reparteFormatado',
-				width : 80,
+				name : 'reparte',
+				width : 50,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Venda Exs.',
-				name : 'vendaExemplaresFormatado',
-				width : 90,
+				name : 'vendaExemplares',
+				width : 50,
 				sortable : true,
 				align : 'center'
 			}, {
@@ -102,12 +64,30 @@ var relatorioVendasController = $.extend(true, {
 				width : 50,
 				sortable : true,
 				align : 'right'
+			}, {
+				display : 'Faturamento R$',
+				name : 'faturamentoFormatado',
+				width : 70,
+				sortable : true,
+				align : 'right'
+			}, {
+				display : 'Margem Cota R$',
+				name : 'margemCotaFormatado',
+				width : 85,
+				sortable : true,
+				align : 'right'
+			}, {
+				display : 'Margem Distr R$',
+				name : 'margemDistribuidorFormatado',
+				width : 85,
+				sortable : true,
+				align : 'right'
 			} ],
 			sortname : "codigoProduto",
 			sortorder : "asc",
 			usepager : false,
 			useRp : false,
-			width : 560,
+			width : 800,
 			height : 255
 		});
 
@@ -115,6 +95,12 @@ var relatorioVendasController = $.extend(true, {
 			preProcess: relatorioVendasController.executarPreProcessamentoEditor,
 			dataType : 'json',
 			colModel : [ {
+				display : 'Ranking',
+				name : 'rkEditor',
+				width : 50,
+				sortable : true,
+				align : 'left'
+			},{
 				display : 'Código',
 				name : 'codigoEditor',
 				width : 60,
@@ -123,46 +109,58 @@ var relatorioVendasController = $.extend(true, {
 			}, {
 				display : 'Editor',
 				name : 'nomeEditor',
-				width : 210,
+				width : 90,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Reparte',
 				name : 'reparteFormatado',
-				width : 80,
+				width : 70,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Venda Exs.',
 				name : 'vendaExemplaresFormatado',
-				width : 80,
+				width : 65,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : '% Venda Exs.',
 				name : 'porcentagemVendaExemplaresFormatado',
-				width : 90,
+				width : 70,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Faturamento Capa R$',
 				name : 'faturamentoCapaFormatado',
-				width : 120,
+				width : 110,
 				sortable : true,
 				align : 'right'
 			}, {
 				display : 'Part. %',
 				name : 'participacaoFormatado',
-				width : 72,
+				width : 40,
 				sortable : true,
 				align : 'right'
 			}, {
 				display : 'Part. Acum. %',
 				name : 'participacaoAcumuladaFormatado',
-				width : 90,
+				width : 80,
 				sortable : true,
 				align : 'right'
 			}, {
+				display : 'Mg Distrib R$',
+				name : 'valorMargemDistribuidorFormatado',
+				width : 65,
+				sortable : true,
+				align : 'right'
+			}, {
+				display : 'Mg Distrib %',
+				name : 'porcentagemMargemDistribuidorFormatado',
+				width : 65,
+				sortable : true,
+				align : 'right'
+			},{
 				display : 'Hist.',
 				name : 'hist',
 				width : 30,
@@ -182,7 +180,13 @@ var relatorioVendasController = $.extend(true, {
 		$(".abcDistribuidorGrid", relatorioVendasController.workspace).flexigrid({
 			preProcess: relatorioVendasController.executarPreProcessamentoDistribuidor,
 			dataType : 'json',
-			colModel : [ {
+			colModel : [{ 
+				display : 'Ranking',
+				name : 'rkCota',
+				width : 50,
+				sortable : true,
+				align : 'left'
+			},{
 				display : 'Cota',
 				name : 'numeroCota',
 				width : 60,
@@ -191,7 +195,7 @@ var relatorioVendasController = $.extend(true, {
 			}, {
 				display : 'Nome',
 				name : 'nomeCota',
-				width : 210,
+				width : 150,
 				sortable : true,
 				align : 'left'
 			}, {
@@ -244,7 +248,19 @@ var relatorioVendasController = $.extend(true, {
 		$(".abcProdutoGrid", relatorioVendasController.workspace).flexigrid({
 			preProcess: relatorioVendasController.executarPreProcessamentoProduto,
 			dataType : 'json',
-			colModel : [ {
+			colModel : [{ 
+				display : 'Rk.Prod.',
+				name : 'rkProduto',
+				width : 50,
+				sortable : true,
+				align : 'left'
+			},{
+				display : 'Rk.Cota.',
+				name : 'rkCota',
+				width : 50,
+				sortable : true,
+				align : 'left'
+			},  {
 				display : 'Cota',
 				name : 'numeroCota',
 				width : 60,
@@ -253,7 +269,7 @@ var relatorioVendasController = $.extend(true, {
 			}, {
 				display : 'Nome',
 				name : 'nomeCota',
-				width : 210,
+				width : 145,
 				sortable : true,
 				align : 'left'
 			}, {
@@ -277,19 +293,19 @@ var relatorioVendasController = $.extend(true, {
 			}, {
 				display : 'Faturamento Capa R$',
 				name : 'faturamentoCapaFormatado',
-				width : 120,
+				width : 90,
 				sortable : true,
 				align : 'right'
 			}, {
 				display : 'Part. %',
 				name : 'participacaoFormatado',
-				width : 52,
+				width : 40,
 				sortable : true,
 				align : 'right'
 			}, {
 				display : 'Part. Acum. %',
 				name : 'participacaoAcumuladaFormatado',
-				width : 90,
+				width : 70,
 				sortable : true,
 				align : 'right'
 			} ],
@@ -306,7 +322,13 @@ var relatorioVendasController = $.extend(true, {
 		$(".abcCotaGrid",relatorioVendasController.workspace).flexigrid({
 			preProcess: relatorioVendasController.executarPreProcessamentoCota,
 			dataType : 'json',
-			colModel : [ {
+			colModel : [ { 
+				display : 'Ranking',
+				name : 'rkProduto',
+				width : 50,
+				sortable : true,
+				align : 'left'
+			},{
 				display : 'Código',
 				name : 'codigoProduto',
 				width : 60,
@@ -315,7 +337,7 @@ var relatorioVendasController = $.extend(true, {
 			}, {
 				display : 'Produto',
 				name : 'nomeProduto',
-				width : 220,
+				width : 170,
 				sortable : true,
 				align : 'left'
 			}, {
@@ -372,6 +394,38 @@ var relatorioVendasController = $.extend(true, {
 		});
 		
 		
+	},
+	
+	validarPesquisaEdicaoAvancada:function(){
+		
+		var retorno = true;
+		
+		if($("#edicaoProduto").val().trim().length < 1){
+			return retorno;
+		}
+		
+		var dados  = $("#edicaoProduto").val().split(";");
+		
+		$.each(dados, function(index, value) { 
+			if((value.trim().length < 1) || !isNumeric(value)){
+				retorno = false;
+				return; 
+			}
+		});
+		return retorno;
+	},
+	
+	atribuirNumerosEdicaoPesquisaAvancada:function(params){
+		
+		var dados  = $("#edicaoProduto").val().split(";");
+	
+		$.each(dados, function(index, valor) { 
+			if(valor.trim().length > 0){
+				params.push({name:"edicaoProduto",value:valor});
+			}
+		});
+		
+		return params;
 	},
 	
 	pesquisar : function() {
@@ -446,35 +500,44 @@ var relatorioVendasController = $.extend(true, {
 	},
 	
 	pesquisarAvancada : function() {
-
+		
+		if (!relatorioVendasController.validarPesquisaEdicaoAvancada()){
+			
+			exibirMensagem("ERROR", 
+						  ['Formato do campo Edição inválido! O campo Edição aceita números separados por ";". Exemplo: 99;00;11']);
+			return;
+		}
+		
 		var dataDe = $("#datepickerDe", relatorioVendasController.workspace).val();
 		var dataAte = $("#datepickerAte", relatorioVendasController.workspace).val();
 
 		var selectFornecedor = $("select#selectFornecedor", relatorioVendasController.workspace).val();
 		var codigoProduto    = $("#codigoProduto", relatorioVendasController.workspace).val();
 		var nomeProduto      = $("#nomeProduto", relatorioVendasController.workspace).val();
-		var edicao           = $("#edicaoProduto", relatorioVendasController.workspace).val();
 		var selectEditor     = $("select#selectEditor", relatorioVendasController.workspace).val();
-		var numerocota       = $("#numerocota", relatorioVendasController.workspace).val();
+		var numerocota       = $("#numeroCota", relatorioVendasController.workspace).val();
 		var nomeCota         = $("#nomeCota", relatorioVendasController.workspace).val();
 		var selectMunicipio  = $("select#selectMunicipio", relatorioVendasController.workspace).val();
+
+		var params = [
+		         {name:'dataDe', value: dataDe},
+		         {name:'dataAte', value: dataAte},
+		         {name:'codigoFornecedor', value: selectFornecedor},
+		         {name:'codigoProduto', value: codigoProduto},
+		         {name:'nomeProduto', value: nomeProduto},
+		         {name:'codigoEditor', value: selectEditor},
+		         {name:'codigoCota', value: numerocota},
+		         {name:'nomeCota', value: nomeCota},
+		         {name:'municipio', value: selectMunicipio}
+		    ];
+		
+		params = (relatorioVendasController.atribuirNumerosEdicaoPesquisaAvancada(params));
 		
 		if ($('#filtro_distrib', relatorioVendasController.workspace).attr("checked") == "checked") {
 			
 			$(".abcDistribuidorGrid", relatorioVendasController.workspace).flexOptions({
 				url: contextPath + "/lancamento/relatorioVendas/pesquisarCurvaABCDistribuidorAvancada",
-				params: [
-			         {name:'dataDe', value: dataDe},
-			         {name:'dataAte', value: dataAte},
-			         {name:'codigoFornecedor', value: selectFornecedor},
-			         {name:'codigoProduto', value: codigoProduto},
-			         {name:'nomeProduto', value: nomeProduto},
-			         {name:'edicaoProduto', value: edicao},
-			         {name:'codigoEditor', value: selectEditor},
-			         {name:'codigoCota', value: numerocota},
-			         {name:'nomeCota', value: nomeCota},
-			         {name:'municipio', value: selectMunicipio}
-			    ],
+				params:params,
 			    newp: 1,
 			});
 			
@@ -485,18 +548,7 @@ var relatorioVendasController = $.extend(true, {
 			
 			$(".abcEditorGrid", relatorioVendasController.workspace).flexOptions({
 				url: contextPath + "/lancamento/relatorioVendas/pesquisarCurvaABCEditorAvancada",
-				params: [
-			         {name:'dataDe', value: dataDe},
-			         {name:'dataAte', value: dataAte},
-			         {name:'codigoFornecedor', value: selectFornecedor},
-			         {name:'codigoProduto', value: codigoProduto},
-			         {name:'nomeProduto', value: nomeProduto},
-			         {name:'edicaoProduto', value: edicao},
-			         {name:'codigoEditor', value: selectEditor},
-			         {name:'codigoCota', value: numerocota},
-			         {name:'nomeCota', value: nomeCota},
-			         {name:'municipio', value: selectMunicipio}
-			    ],
+				params: params,
 			    newp: 1,
 			});
 			
@@ -514,18 +566,7 @@ var relatorioVendasController = $.extend(true, {
 			
 			$(".abcProdutoGrid", relatorioVendasController.workspace).flexOptions({
 				url: contextPath + "/lancamento/relatorioVendas/pesquisarCurvaABCProdutoAvancada",
-				params: [
-			         {name:'dataDe', value: dataDe},
-			         {name:'dataAte', value: dataAte},
-			         {name:'codigoFornecedor', value: selectFornecedor},
-			         {name:'codigoProduto', value: codigoProduto},
-			         {name:'nomeProduto', value: nomeProduto},
-			         {name:'edicaoProduto', value: edicao},
-			         {name:'codigoEditor', value: selectEditor},
-			         {name:'codigoCota', value: numerocota},
-			         {name:'nomeCota', value: nomeCota},
-			         {name:'municipio', value: selectMunicipio}
-			    ],
+				params:params,
 			    newp: 1,
 			});
 			
@@ -543,18 +584,7 @@ var relatorioVendasController = $.extend(true, {
 			
 			$(".abcCotaGrid", relatorioVendasController.workspace).flexOptions({
 				url: contextPath + "/lancamento/relatorioVendas/pesquisarCurvaABCCotaAvancada",
-				params: [
-			         {name:'dataDe', value: dataDe},
-			         {name:'dataAte', value: dataAte},
-			         {name:'codigoFornecedor', value: selectFornecedor},
-			         {name:'codigoProduto', value: codigoProduto},
-			         {name:'nomeProduto', value: nomeProduto},
-			         {name:'edicaoProduto', value: edicao},
-			         {name:'codigoEditor', value: selectEditor},
-			         {name:'codigoCota', value: numerocota},
-			         {name:'nomeCota', value: nomeCota},
-			         {name:'municipio', value: selectMunicipio}
-			    ],
+				params: params,
 			    newp: 1,
 			});
 			
@@ -566,7 +596,7 @@ var relatorioVendasController = $.extend(true, {
 	},
 	
 	abrirPopUpHistoricoEditor : function(dataDe, dataAte, codigoEditora) {
-		$(".popEditorGrid").flexOptions({
+		$(".popEditorGrid",relatorioVendasController.workspace).flexOptions({
 			url: contextPath + "/lancamento/relatorioVendas/pesquisarHistoricoEditor",
 			params: [
 		         {name:'dataDe', value: dataDe},
@@ -629,7 +659,7 @@ var relatorioVendasController = $.extend(true, {
 		$("#dialog-editor", relatorioVendasController.workspace).dialog({
 			resizable : false,
 			height : 450,
-			width : 600,
+			width : 850,
 			modal : true,
 			buttons : {
 				"Fechar" : function() {
@@ -637,7 +667,8 @@ var relatorioVendasController = $.extend(true, {
 
 				},
 
-			}
+			},
+			form: $("#dialog-editor", this.workspace).parents("form")
 		});
 	},
 	
@@ -677,7 +708,7 @@ var relatorioVendasController = $.extend(true, {
 					     	  	'<img title="Histórico" src="' + contextPath + '/images/ico_detalhes.png" hspace="5" border="0px" />' +
 					  		    '</a>';
 					  		    
-			row.cell[8] = linkHistorico;
+			row.cell.hist = linkHistorico;
 		});
 		
 		$(".grids", relatorioVendasController.workspace).show();
@@ -735,3 +766,5 @@ var relatorioVendasController = $.extend(true, {
 	}
 	
 }, BaseController);
+
+//@ sourceURL=relatorioVendas.js

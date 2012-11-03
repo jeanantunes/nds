@@ -1,11 +1,13 @@
 package br.com.abril.nds.repository.impl;
 
-import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 
+import org.hibernate.Criteria;
+import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Repository;
 
@@ -335,6 +337,25 @@ public class ConferenciaEncalheParcialRepositoryImpl extends AbstractRepositoryM
 		}
 		
 		return query.list();
+		
+	}
+
+
+	@Override
+	public ConferenciaEncalheParcial obterConferenciaEncalheParcialPor(
+		
+		Long idProdutoEdicao, Date dataMovimento) {
+		
+		Criteria criteria = this.getSession().createCriteria(ConferenciaEncalheParcial.class);
+			
+		criteria.add(Restrictions.eq("produtoEdicao.id", idProdutoEdicao));
+		criteria.add(Restrictions.eq("dataMovimento", dataMovimento));
+				
+		try {
+			return (ConferenciaEncalheParcial) criteria.uniqueResult();
+		} catch (HibernateException e) {
+			return null;
+		}
 		
 	}
 	

@@ -158,7 +158,7 @@ var followUpSistemaController = $.extend(true, {
 
 		$(".atualizacaoCadastralGrid", followUpSistemaController.workspace).flexigrid($.extend({},{
 			url : contextPath + '/followup/pesquisaDadosCadastrais',
-	        preProcess:  followUpSistemaController.exPreProcFollowupStatusCota, 
+	        preProcess:  followUpSistemaController.exPreProcFollowupCadastro, 
 			dataType : 'json',
 			colModel : [ {
 				display : 'Cota',
@@ -208,46 +208,54 @@ var followUpSistemaController = $.extend(true, {
 		}));
 
 		$(".negociacaoGrid", followUpSistemaController.workspace).flexigrid({
+			url : contextPath + '/followup/pesquisaDadosNegociacao',
 	        preProcess:  followUpSistemaController.exPreProcFollowupNegociacao, 
 			dataType : 'json',
+			newp: 1,
 			colModel : [ {
 				display : 'Cota',
-				name : 'cota',
-				width : 100,
+				name : 'numeroCota',
+				width : 65,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Nome',
-				name : 'nome',
-				width : 240,
+				name : 'nomeJornaleiro',
+				width : 210,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Negociação',
-				name : 'negociacao',
+				name : 'valorParcelaFormatado',
 				width : 120,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Parcela',
-				name : 'parcela',
+				name : 'descricaoParcelamento',
 				width : 100,
-				sortable : true,
+				sortable : false,
 				align : 'left'
 			}, {
 				display : 'Forma de Pagamento',
-				name : 'formaPagto',
+				name : 'descricaoFormaPagamento',
 				width : 140,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Data Vencto',
-				name : 'dtVencto',
+				name : 'dataVencimentoFormatada',
 				width : 85,
 				sortable : true,
 				align : 'center'
+			},{
+				display : 'Ação',
+				name : 'acao',
+				width : 50,
+				sortable : false,
+				align : 'center'
 			}],
-			sortname : "cota",
+			sortname : "nomeJornaleiro",
 			sortorder : "asc",
 			usepager : true,
 			useRp : true,
@@ -257,11 +265,64 @@ var followUpSistemaController = $.extend(true, {
 			height : 255
 		});
 		
+		$(".atualizacaoCadastralParcialGrid", followUpSistemaController.workspace).flexigrid($.extend({},{
+			url : contextPath + '/followup/pesquisaDadosCadastroParcial',
+	        preProcess:  followUpSistemaController.exPreProcFollowupCadastroParcial, 
+			dataType : 'json',
+			colModel : [ {
+				display : 'Codigo',
+				name : 'codigoProduto',
+				width : 60,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Nome',
+				name : 'nomeProduto',
+				width : 290,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Edi&ccedil;&atilde;o',
+				name : 'numeroEdicao',
+				width : 150,
+				sortable : true,
+				align : 'left'
+			}],
+			sortname : "codigoProduto",
+			sortorder : "asc",
+			usepager : true,
+			useRp : true,
+			rp : 15,
+			showTableToggleBtn : true,
+			width : 880,
+			height : 255
+		}));
+		
 	},
 		
 	exPreProcFollowupNegociacao : function (resultado) {
-		//alert("exefollowPreProcessamentoNegociacao");
+	
+		$.each(resultado.rows, function(index, negociacao) {
+			negociacao.cell.acao = "<a href=\"javascript:;\" onclick=\"followUpSistemaController.cancelarNegociacao("+negociacao.cell.idNegociacao+");\"> "+
+			 "<img src=\"" + contextPath + "/images/ico_negociar.png\" title=\"Reverter Pagamento Negociação\" hspace=\"5\" border=\"0\" /></a>";
+		});
+		
 		return resultado;
+	},
+	
+	cancelarNegociacao : function(idNegociacao) {
+		
+		var parametro = {'idNegociacao' : idNegociacao};
+		
+		$.postJSON(contextPath + "/followup/cancelarNegociacao", 
+					parametro, 
+					function(result){
+							exibirMensagem(
+									result.tipoMensagem, 
+									result.listaMensagens
+							);
+					});
+		
 	},
 	
 	exPreProcFollowupChamadao : function(resultado) {
@@ -297,12 +358,25 @@ var followUpSistemaController = $.extend(true, {
 	},
 	
 	exPreProcFollowupCadastro : function(resultado) {
-		//alert("exefollowPreProcessamentoCadastro");
+	$.each(resultado.rows, function(index, row) {		
+			
+		if ( row.cell.dataVencimento == undefined ){
+				row.cell.dataVencimento='';
+		}
+			
+		});
 		return resultado;
 	},
 	
 	exPreProcFollowupPendenciasnfe : function(resultado) {        		
    		return resultado;
+	},
+	exPreProcFollowupCadastroParcial : function (resultado) {
+		//alert("exefollowPreProcessamentoNegociacao");
+		return resultado;
 	}
 	
 }, BaseController);
+
+
+

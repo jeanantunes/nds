@@ -19,21 +19,26 @@
                 <li><a href="#tabAlteracao">Alteração de Status Cota</a></li>
                 <li><a href="#tabAtualizacao">Atualização Cadastral</a></li>
                 <li><a href="#tabPendencia">Pend&ecirc;ncias NF-e Encalhe</a></li>
+                <li><a href="#tabCadastroParcial">Cadastro Parcial</a></li>
+                
+                
             </ul>
-            <div id="tabNegocia">
+            <div id="tabNegocia" style="height:auto">
                <fieldset style="width:880px!important;">
                	  <legend>Negociação</legend>
                     <table class="negociacaoGrid"></table>
-                    <span class="bt_novos" title="Gerar Arquivo">
-                        <a href="javascript:;">
-                             <img src="images/ico_excel.png" hspace="5" border="0" />Arquivo
-                        </a>
-                    </span>
-                    <span class="bt_novos" title="Imprimir">
-                        <a href="javascript:;">
-                             <img src="images/ico_impressora.gif" hspace="5" border="0" />Imprimir
-                        </a>
-                    </span>
+                     <span class="bt_novos" title="Gerar Arquivo">                      
+						<a href="${pageContext.request.contextPath}/followup/exportar?fileType=XLS&tipoExportacao=negociacao">
+         					<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
+         				Arquivo
+						</a>
+                  </span>
+                  <span class="bt_novos" title="Imprimir">                      
+                      <a href="${pageContext.request.contextPath}/followup/exportar?fileType=PDF&tipoExportacao=negociacao">
+         					<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
+         				Imprimir
+						</a>
+                  </span>              
                </fieldset>
             </div>
             <div id="tabChamadao">
@@ -102,6 +107,25 @@
                   </span>
                   <span class="bt_novos" title="Imprimir">                      
                       <a href="${pageContext.request.contextPath}/followup/exportar?fileType=PDF&tipoExportacao=pendenciaNFE">
+         					<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
+         				Imprimir
+						</a>
+                  </span>    
+               </fieldset>
+            </div>
+            
+             <div id="tabCadastroParcial">
+               <fieldset style="width:880px!important;">
+               	<legend>Cadastro Parcial</legend>
+                <table class="atualizacaoCadastralParcialGrid"></table>
+                  <span class="bt_novos" title="Gerar Arquivo">                      
+						<a href="${pageContext.request.contextPath}/followup/exportar?fileType=XLS&tipoExportacao=cadastroParcial">
+         					<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
+         				Arquivo
+						</a>
+                  </span>
+                  <span class="bt_novos" title="Imprimir">                      
+                      <a href="${pageContext.request.contextPath}/followup/exportar?fileType=PDF&tipoExportacao=cadastroParcial">
          					<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
          				Imprimir
 						</a>

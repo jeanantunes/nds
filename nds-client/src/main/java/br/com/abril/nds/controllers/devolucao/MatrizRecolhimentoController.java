@@ -700,6 +700,7 @@ public class MatrizRecolhimentoController {
 		}
 	}
 	
+		
 	/**
 	 * Método que processa os balanceamentos para exibição no grid.
 	 * 
@@ -711,12 +712,16 @@ public class MatrizRecolhimentoController {
 	private void processarBalanceamento(List<ProdutoRecolhimentoDTO> listaProdutoRecolhimento,
 										boolean isSemanaRecolhimento, PaginacaoVO paginacao, String sortname) {
 		
+		
+		
 		List<ProdutoRecolhimentoVO> listaProdutoRecolhimentoVO =
 			new LinkedList<ProdutoRecolhimentoVO>();
 		
 		ProdutoRecolhimentoVO produtoRecolhimentoVO = null;
 		
 		BigDecimal precoDesconto = BigDecimal.ZERO;
+		BigDecimal precoVenda = BigDecimal.ZERO;
+		BigDecimal valorDesconto = BigDecimal.ZERO;
 		
 		for (ProdutoRecolhimentoDTO produtoRecolhimentoDTO : listaProdutoRecolhimento) {
 			
@@ -736,12 +741,12 @@ public class MatrizRecolhimentoController {
 			
 			produtoRecolhimentoVO.setPrecoVenda(produtoRecolhimentoDTO.getPrecoVenda());
 			
-			precoDesconto = produtoRecolhimentoDTO.getPrecoVenda();
+			precoVenda = produtoRecolhimentoDTO.getPrecoVenda() != null ? produtoRecolhimentoDTO.getPrecoVenda() : BigDecimal.ZERO;
 			
-			if (produtoRecolhimentoDTO.getDesconto() != null) {
-				
-				precoDesconto = precoDesconto.subtract(produtoRecolhimentoDTO.getDesconto());
-			}
+			valorDesconto = produtoRecolhimentoDTO.getDesconto() != null ? produtoRecolhimentoDTO.getDesconto() : BigDecimal.ZERO;
+			
+			precoDesconto = precoVenda.subtract(precoVenda.multiply(valorDesconto.divide(BigDecimal.valueOf(100D))));
+			
 			
 			produtoRecolhimentoVO.setPrecoDesconto(precoDesconto);
 
@@ -769,6 +774,9 @@ public class MatrizRecolhimentoController {
 			produtoRecolhimentoVO.setEncalheAtendida(
 				MathUtil.round(produtoRecolhimentoDTO.getExpectativaEncalheAtendida(), 2));
 				
+			produtoRecolhimentoVO.setEncalheAlternativo(
+				MathUtil.round(produtoRecolhimentoDTO.getExpectativaEncalheAlternativo(), 2));
+			
 			produtoRecolhimentoVO.setEncalhe(
 				MathUtil.round(produtoRecolhimentoDTO.getExpectativaEncalhe(), 2));
 			
@@ -887,6 +895,9 @@ public class MatrizRecolhimentoController {
 		
 		produtoRecolhimentoFormatado.setEncalheAtendida(
 			(produtoRecolhimento.getEncalheAtendida() != null) ? produtoRecolhimento.getEncalheAtendida().toString() : null);
+		
+		produtoRecolhimentoFormatado.setEncalheAlternativo(
+			(produtoRecolhimento.getEncalheAlternativo() != null) ? produtoRecolhimento.getEncalheAlternativo().toString() : null);
 			
 		produtoRecolhimentoFormatado.setEncalhe(
 			(produtoRecolhimento.getEncalhe() != null) ? produtoRecolhimento.getEncalhe().toString() : null);
@@ -1300,7 +1311,17 @@ public class MatrizRecolhimentoController {
 			confirmacoesVO.add(
 				new ConfirmacaoVO(DateUtil.formatarDataPTBR(item.getKey()), item.getValue()));
 		}
+		
 		return confirmacoesVO;
+	}
+	
+	@Post
+	public void excluirBalanceamento(Long idLancamento) {
+
+		this.recolhimentoService.excluiBalanceamento(idLancamento);
+		
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS,
+			"Balanceamento excluído com sucesso!"), "result").recursive().serialize();
 	}
 	
 }

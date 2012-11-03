@@ -1,6 +1,28 @@
 function Distribuicao(tela) {
 	
 	var D = this;
+
+    var modoTela = null;
+
+    var idHistorico = "";
+
+
+    /**
+     * Define o modo da tela de distribuição conforme os
+     * valores ModoTela.CADASTRO_COTA ou ModoTela.HISTORICO_TITULARIDADE
+     *
+     */
+    this.definirModoTela = function(modoTela, idHistorico) {
+        D.modoTela = modoTela;
+        D.idHistorico = idHistorico;
+    },
+
+    /**
+     * Verifica se a tela esta em modo de cadastro de cota
+     */
+    this.isModoTelaCadastroCota = function() {
+        return ModoTela.CADASTRO_COTA == D.modoTela;
+    },
 	
 	/**
 	 * Envia dados da tela para serem salvos no controller
@@ -137,12 +159,18 @@ function Distribuicao(tela) {
 		
 		D.carregarConteudoTipoEntrega(tipoEntrega, false, false);
 		
-		if(dto.qtdeAutomatica) {
-			D.$('qtdePDV').attr('disabled','disabled');
-		} else {
-			D.$('qtdePDV').removeAttr('disabled');
-		}			
+		if(D.isModoTelaCadastroCota()){
+             if (dto.qtdeAutomatica) {
+		    	D.$('qtdePDV').attr('disabled', true);
+		    } else {
+			    D.$('qtdePDV').removeAttr('disabled');
+	    	}
+        } else {
+            D.$('qtdePDV', this.workspace).prop('disabled', true);
+        }
 		
+		D.$('numCota').attr('disabled', true);
+		D.$('box').attr('disabled', true);
 	},
 	
 	/**
@@ -158,9 +186,12 @@ function Distribuicao(tela) {
 	 * @param idCota - Código da cota
 	 */
 	this.carregarDadosDistribuicaoCota = function(idCota) {
-		
+        var param = [{name: 'idCota', value: idCota},
+                     {name: 'modoTela', value:D.modoTela.value},
+                     {name: 'idHistorico', value:D.idHistorico}];
+
 		$.postJSON(contextPath + "/cadastro/cota/carregarDistribuicaoCota",
-				"idCota=" + idCota ,
+				param,
 				function(result) {
 					D.setDados(result);
 				},
@@ -189,7 +220,7 @@ function Distribuicao(tela) {
 	this.downloadTermoAdesao = function() {
 		
 		$.postJSON(contextPath + "/cadastro/cota/validarValoresParaDownload",
-				"taxa="+D.get("taxaFixaEntregaBanca")+"&percentual="+D.get("percentualFaturamentoEntregaBanca"),
+				{taxa:D.get("taxaFixaEntregaBanca"),percentual:D.get("percentualFaturamentoEntregaBanca")},
 				function() {
 					document.location.assign(contextPath + "/cadastro/cota/downloadTermoAdesao?termoAdesaoRecebido="+D.get("termoAdesaoRecebido")+"&numeroCota="+D.get("numCota")+"&taxa="+D.get("taxaFixaEntregaBanca")+"&percentual="+D.get("percentualFaturamentoEntregaBanca"));
 				},
@@ -369,7 +400,7 @@ function Distribuicao(tela) {
 	this.carregarValoresCamposEntregaBanca = function() {
 		
 		$.postJSON(contextPath + "/cadastro/cota/carregarValoresEntregaBanca",
-			"numCota=" + D.get("numCota"),
+			{numCota:D.get("numCota")},
 			function (result) {
 			
 				D.set('percentualFaturamentoEntregaBanca',	result.percentualFaturamento);
@@ -415,8 +446,10 @@ function Distribuicao(tela) {
 		
 		var exibirDiv = D.get(campoUtilizaArquivo);
 		
-		D.mostrarEsconderDiv(divUtilizaArquivo, exibirDiv);
-		
+		if (D.isModoTelaCadastroCota()) {
+            D.mostrarEsconderDiv(divUtilizaArquivo, exibirDiv);
+        }
+
 		if (!exibirDiv) {
 			
 			D.set(campoArquivoRecebido,	false);
@@ -446,7 +479,7 @@ function Distribuicao(tela) {
 			$("#nomeArquivoTermoAdesao").html("");
 			
 			$.postJSON(contextPath + "/cadastro/cota/excluirTermoAdesao",
-					"numCota=" + D.get("numCota") ,
+					{numCota:D.get("numCota")} ,
 					null,
 					null,
 					true);
@@ -460,7 +493,7 @@ function Distribuicao(tela) {
 			$("#nomeArquivoProcuracao").html("");
 			
 			$.postJSON(contextPath + "/cadastro/cota/excluirProcuracao",
-					"numCota=" + D.get("numCota") ,
+					{numCota:D.get("numCota")},
 					null,
 					null,
 					true);
@@ -504,7 +537,7 @@ function Distribuicao(tela) {
 		$("input[name='percentualFaturamento']").mask("99.99");
 		
 		var options = {
-			success: D.tratarRetornoUpload,
+			success: D.tratarRetornoUpload
 	    };
 		
 		$('#formUploadTermoAdesao').ajaxForm(options);

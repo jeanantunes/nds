@@ -111,7 +111,7 @@ GeracaoNFeController.prototype.gerar = function() {
 		if (tipoMensagem && listaMensagens) {
 			exibirMensagemDialog(tipoMensagem, listaMensagens, "");
 		}
-		
+		exibirMensagem("SUCCESS", ["Operação realizada com sucesso!"]);
 		_this.gridReaload(_this.$gridNFe,'busca.json');
 		
 	});
@@ -273,7 +273,7 @@ GeracaoNFeController.prototype.gridReaload = function(grid, uri) {
 			&& ($("#inputIntervaloCotaAte", this.workspace).val().length > 0) 
 			&& (($("#datepickerIntervaloMovimentoDe", this.workspace).val().length == 0) 
 					||  ($("#datepickerIntervaloMovimentoAte", this.workspace).val().length == 0))) {
-		exibirMensagem("WARNING", ["Quando haver intervalo de [Cota], deve haver também intervalo de [Data de Movimento]"], "");
+		exibirMensagem("WARNING", ["Quando houver intervalo de [Cota], deve haver também intervalo de [Data de Movimento]"], "");
 		return;
 	}
 	
@@ -358,7 +358,7 @@ GeracaoNFeController.prototype.initGrid = function() {
 				rp : 15,
 				showTableToggleBtn : true,
 				width : 960,
-				height : 180
+				height : 'auto'
 			});
 	this.$gridCotasSuspensas = $("#gridCotasSuspensas", this.workspace).flexigrid(
 			{
