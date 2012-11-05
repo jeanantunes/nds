@@ -689,6 +689,7 @@ var fecharDiaController =  $.extend(true, {
 					fecharDiaController.iniciarResumoSuplementar();
 					fecharDiaController.iniciarResumoDividas();
 					fecharDiaController.iniciarResumoCotas();
+					fecharDiaController.iniciarResumoConsignado();
 				}
 			},
 			form: $("#dialog-processos", fecharDiaController.workspace).parents("form")
@@ -946,6 +947,16 @@ var fecharDiaController =  $.extend(true, {
 		);
 	},
 	
+	iniciarResumoConsignado : function() {
+		$.postJSON(
+			contextPath + "/administracao/fecharDia/obterResumoConsignado",
+			null,
+			function(result) {
+				fecharDiaController.processarResumoConsignado(result.resumo);
+			}
+		);
+	},
+	
 	processarResumoDividasReceber : function(itens) {
 	    var tabela =  $('#tabela_dividas_receber', fecharDiaController.workspace);
 	    fecharDiaController.processarResumoDividas(itens, tabela);
@@ -979,6 +990,21 @@ var fecharDiaController =  $.extend(true, {
         $(tabela).append(fecharDiaController.gerarLinhaResumoCotas(resumo));                       
 
         $(tabela).append((fecharDiaController.gerarLinhaBrancoResumoCotas()));
+    },
+    
+    processarResumoConsignado : function(resumo) {
+    	
+    	var tabela =  $('#tabela_consignado', fecharDiaController.workspace);
+    	
+        $(tabela).html("");
+        
+        $(tabela).append(fecharDiaController.gerarLinhaBrancoResumoConsignado());
+        
+        $(tabela).append(fecharDiaController.gerarCabecalhoResumoConsignado());
+        
+        $(tabela).append(fecharDiaController.gerarLinhaResumoConsignado(resumo));                       
+
+        $(tabela).append((fecharDiaController.gerarLinhaBrancoResumoConsignado()));
     },
 	
 	gerarLinhaResumoDividas : function(item) {
@@ -1052,6 +1078,62 @@ var fecharDiaController =  $.extend(true, {
 	   linhaBranco += "<td align=\"right\">&nbsp;</td>";
 	   linhaBranco += "<td align=\"right\">&nbsp;</td>";
 	   linhaBranco += "<td align=\"right\">&nbsp;</td>";
+	   
+	   linhaBranco += "</tr>";
+	   
+	   return linhaBranco; 
+	},
+	
+	gerarLinhaResumoConsignado : function(resumo) {
+		
+		var linhaResumo = "<tr>";
+		
+		linhaResumo += "<td width=\"164\" style=\"border-bottom:1px solid #ccc;\">Consignado</td>";
+		linhaResumo += "<td width=\"180\" align=\"right\" style=\"border-bottom:1px solid #ccc;\">" + resumo.resumoConsignado.saldoAnterior + "</td>";
+		linhaResumo += "<td width=\"180\" align=\"right\" style=\"border-bottom:1px solid #ccc;\">" + resumo.resumoConsignado.valorEntradas + "</td>";
+		linhaResumo += "<td width=\"180\" align=\"right\" style=\"border-bottom:1px solid #ccc;\">" + resumo.resumoConsignado.valorSaidas + "</td>";
+		linhaResumo += "<td width=\"180\" align=\"right\" style=\"border-bottom:1px solid #ccc;\">" + resumo.resumoConsignado.saldoAtual + "</td>";
+		
+		linhaResumo += "</tr>";
+		
+		linhaResumo += "<tr>";
+		
+		linhaResumo += "<td style=\"border-bottom:1px solid #ccc;\">A Vista</td>";
+		linhaResumo += "<td align=\"right\" style=\"border-bottom:1px solid #ccc;\">" + resumo.resumoAVista.saldoAnterior + "</td>";
+		linhaResumo += "<td align=\"right\" style=\"border-bottom:1px solid #ccc;\">" + resumo.resumoAVista.valorEntradas + "</td>";
+		linhaResumo += "<td align=\"right\" style=\"border-bottom:1px solid #ccc;\">" + resumo.resumoAVista.valorSaidas + "</td>";
+		linhaResumo += "<td align=\"right\" style=\"border-bottom:1px solid #ccc;\">" + resumo.resumoAVista.saldoAtual + "</td>";
+		
+		linhaResumo += "</tr>";
+		
+		return linhaResumo;
+	},
+	
+	gerarCabecalhoResumoConsignado : function() {
+		
+       var linhaCabecalho = "<tr class=\"header_table\">";  
+       
+       linhaCabecalho += "<td>&nbsp;</td>";
+       linhaCabecalho += "<td align=\"right\">Saldo Anterior  R$</td>";
+       linhaCabecalho += "<td align=\"right\">Entradas  R$</td>";
+       linhaCabecalho += "<td align=\"right\">Saídas  R$</td>";
+       linhaCabecalho += "<td align=\"right\">Saldo Atual  R$</td>";
+       
+       linhaCabecalho += "</tr>";
+       
+       return linhaCabecalho; 
+    },
+	
+	gerarLinhaBrancoResumoConsignado : function() {
+	   
+	   var linhaBranco = "<tr>";
+	   
+	   linhaBranco += "<td align=\"left\">&nbsp;</td>";
+	   linhaBranco += "<td align=\"right\">&nbsp;</td>";
+	   linhaBranco += "<td align=\"right\">&nbsp;</td>";
+	   linhaBranco += "<td align=\"right\">&nbsp;</td>";
+	   linhaBranco += "<td align=\"right\">&nbsp;</td>";
+	   
 	   linhaBranco += "</tr>";
 	   
 	   return linhaBranco; 
