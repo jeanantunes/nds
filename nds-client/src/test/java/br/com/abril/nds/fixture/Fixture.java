@@ -4214,5 +4214,30 @@ public class Fixture {
 	   
 	   return historico;
    }
+
+public static CFOP cfop5102() {
+	// TODO Auto-generated method stub
+	return null;
+}
+
+public static TipoNotaFiscal tipoNotaFiscalRecebimento() {
+	// TODO Auto-generated method stub
+	return null;
+}
+
+public static CFOP cfop1209() {
+	// TODO Auto-generated method stub
+	return null;
+}
+
+public static CFOP cfop1210() {
+	// TODO Auto-generated method stub
+	return null;
+}
+
+public static TipoNotaFiscal tipoNotaFiscalDevolucao() {
+	// TODO Auto-generated method stub
+	return null;
+}
    
 }
