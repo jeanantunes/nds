@@ -319,7 +319,8 @@ public class DataLoader {
 	private static TipoMovimentoFinanceiro tipoMovimentoFinanceiroDebito;
 	private static TipoMovimentoFinanceiro tipoMovimentoFinanceiroDebitoNA;
 	private static TipoMovimentoFinanceiro tipoMovimentoFinanceiroDebitoPendente;	
-	private static TipoMovimentoFinanceiro tipoMovimentoFinanceiroDebitoPostergado;		
+	private static TipoMovimentoFinanceiro tipoMovimentoFinanceiroDebitoPostergado;
+	private static TipoMovimentoFinanceiro tipoMovimentoFinanceiroDebitoPostergadoNegociado;
 	private static TipoMovimentoFinanceiro tipoMovimentoFinanceiroDebitoFaturamento;
 	private static TipoMovimentoFinanceiro tipoMovimentoFinanceiroRecebimentoReparte;
 
@@ -5806,11 +5807,13 @@ public class DataLoader {
 		tipoMovimentoFinanceiroEnvioEncalhe = Fixture.tipoMovimentoFinanceiroEnvioEncalhe();
 		tipoMovimentoFinanceiroDebitoPendente = Fixture.tipoMovimentoFinanceiroDebitoPendente();
 		tipoMovimentoFinanceiroDebitoPostergado = Fixture.tipoMovimentoFinanceiroDebitoPostergado();
+		tipoMovimentoFinanceiroDebitoPostergadoNegociado = Fixture.tipoMovimentoFinanceiroDebitoPostergadoNegociado();
+		
 
 		tipoMovimentoEnvioJornaleiro = Fixture.tipoMovimentoEnvioJornaleiro();
 
 		save(session, tipoMovimentoEnvioJornaleiro,
-				tipoMovimentoEstornoCotaAusente);
+				tipoMovimentoEstornoCotaAusente,tipoMovimentoFinanceiroDebitoPostergadoNegociado);
 
 		tipoMovimentoFinanceiroCredito.setAprovacaoAutomatica(false);
 		tipoMovimentoFinanceiroDebito.setAprovacaoAutomatica(false);

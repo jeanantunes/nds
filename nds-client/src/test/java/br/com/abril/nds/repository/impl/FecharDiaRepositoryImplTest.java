@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository.impl;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -8,14 +9,15 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.sun.mail.imap.protocol.Status;
-
 import br.com.abril.nds.dto.ValidacaoConfirmacaoDeExpedicaoFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoControleDeAprovacaoFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoLancamentoFaltaESobraFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoRecebimentoFisicoFecharDiaDTO;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
+import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
+import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
+import br.com.abril.nds.model.movimentacao.Movimento;
 
 
 public class FecharDiaRepositoryImplTest extends AbstractRepositoryImplTest {
@@ -110,6 +112,23 @@ public class FecharDiaRepositoryImplTest extends AbstractRepositoryImplTest {
 		
 		Assert.assertNotNull(validacaoControleDeAprovacaoFecharDiaDTOs);
 	}
-	
+
+	@Test
+	public void obterMovimentosPorStatusData() {
+
+		List<GrupoMovimentoEstoque> gruposMovimentoEstoque = new ArrayList<GrupoMovimentoEstoque>();
+		List<GrupoMovimentoFinaceiro> gruposMovimentoFinanceiro = new ArrayList<GrupoMovimentoFinaceiro>();
+		
+		gruposMovimentoEstoque.add(GrupoMovimentoEstoque.SOBRA_DE);
+		gruposMovimentoFinanceiro.add(GrupoMovimentoFinaceiro.DEBITO);
+
+		List<Movimento> movimentos =  this.fecharDiaRepositoryImpl.obterMovimentosPorStatusData(
+												gruposMovimentoEstoque, 
+												gruposMovimentoFinanceiro, 
+												new Date(), 
+												StatusAprovacao.PENDENTE);
+		
+		Assert.assertNotNull(movimentos);
+	}
 
 }

@@ -43,7 +43,6 @@ import br.com.abril.nds.model.financeiro.Divida;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.Negociacao;
-import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
 import br.com.abril.nds.model.financeiro.ParcelaNegociacao;
 import br.com.abril.nds.model.financeiro.StatusDivida;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
@@ -159,7 +158,10 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService{
 		}
 		
 		List<Cobranca> cobrancasOriginarias = new ArrayList<Cobranca>();
-		
+
+		TipoMovimentoFinanceiro tipoMovimentoFinanceiro = 
+				this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(GrupoMovimentoFinaceiro.POSTERGADO_NEGOCIACAO);
+
 		//Cobrança da onde se originou a negociação
 		for (Long idCobranca : idsCobrancasOriginarias){
 			
@@ -188,13 +190,6 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService{
 		
 		//caso a negociacão seja feita em parcelas
 		if (parcelas != null){
-			
-			//Cria um tipo de movimento para a negociação
-			TipoMovimentoFinanceiro tipoMovimentoFinanceiro = new TipoMovimentoFinanceiro();
-			tipoMovimentoFinanceiro.setGrupoMovimentoFinaceiro(GrupoMovimentoFinaceiro.POSTERGADO_NEGOCIACAO);
-			tipoMovimentoFinanceiro.setOperacaoFinaceira(OperacaoFinaceira.DEBITO);
-			tipoMovimentoFinanceiro.setDescricao("NEGOCIAÇÃO DIVIDA");
-			this.tipoMovimentoFinanceiroRepository.adicionar(tipoMovimentoFinanceiro);
 			
 			BigDecimal totalNegociacao = BigDecimal.ZERO;
 			//Popula o movimento financeiro de cada parcela

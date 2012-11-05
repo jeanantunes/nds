@@ -137,4 +137,9 @@ public interface FecharDiaService {
 	 */
 	ResumoFechamentoDiarioCotasDTO obterResumoCotas(Date dataFechamento);
 
+	/**
+	 * 
+	 */
+	void processarControleDeAprovacao();
+	
 }
