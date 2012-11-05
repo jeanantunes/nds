@@ -1,5 +1,6 @@
 package br.com.abril.nds.service.impl;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -17,12 +18,20 @@ import br.com.abril.nds.dto.ValidacaoRecebimentoFisicoFecharDiaDTO;
 import br.com.abril.nds.dto.fechamentodiario.SumarizacaoDividasDTO;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
+import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.financeiro.Divida;
+import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
+import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
+import br.com.abril.nds.model.movimentacao.Movimento;
 import br.com.abril.nds.repository.CotaRepository;
+import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.FecharDiaRepository;
 import br.com.abril.nds.repository.FormaCobrancaRepository;
+import br.com.abril.nds.repository.MovimentoRepository;
 import br.com.abril.nds.service.DividaService;
 import br.com.abril.nds.service.FecharDiaService;
 import br.com.abril.nds.service.ImpressaoDividaService;
@@ -46,6 +55,12 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 
 	@Autowired
 	private CotaRepository cotaRepository;
+
+	@Autowired
+	private DistribuidorRepository distribuidorRepository;
+	
+	@Autowired
+	private MovimentoRepository movimentoRepository;
 	
 	@Override
 	@Transactional
@@ -215,4 +230,37 @@ public class FecharDiaServiceImpl implements FecharDiaService {
         return dividaService.contarDividasVencerApos(data);
     }
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional
+	public void processarControleDeAprovacao() {
+
+		Distribuidor distribuidor = this.distribuidorRepository.obter();
+
+		List<GrupoMovimentoFinaceiro> gruposMovimentoFinanceiro = obterGruposMovimentoFinaceiro();
+
+		List<Movimento> movimentosPendentes = this.fecharDiaRepository.obterMovimentosPorStatusData(
+				null, gruposMovimentoFinanceiro, distribuidor.getDataOperacao(), StatusAprovacao.PENDENTE);
+
+		for (Movimento movimento : movimentosPendentes) {
+
+			movimento.setData(new Date());
+			
+			this.movimentoRepository.merge(movimento);
+		}
+	}
+	
+	private List<GrupoMovimentoFinaceiro> obterGruposMovimentoFinaceiro() {
+		
+		List<GrupoMovimentoFinaceiro> grupos = new ArrayList<GrupoMovimentoFinaceiro>();
+		
+		grupos.add(GrupoMovimentoFinaceiro.CREDITO);
+		grupos.add(GrupoMovimentoFinaceiro.DEBITO);
+		grupos.add(GrupoMovimentoFinaceiro.POSTERGADO);
+		grupos.add(GrupoMovimentoFinaceiro.POSTERGADO_NEGOCIACAO);
+		
+		return grupos;
+	}
 }
