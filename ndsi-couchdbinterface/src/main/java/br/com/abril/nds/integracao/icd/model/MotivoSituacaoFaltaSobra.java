@@ -7,6 +7,7 @@ import java.util.Date;
 import javax.persistence.AssociationOverride;
 import javax.persistence.AssociationOverrides;
 import javax.persistence.Column;
+import javax.persistence.Embeddable;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -17,24 +18,86 @@ import javax.persistence.Table;
 @Table(name = "MOTIVO_SITUACAO_FALTAS_SOBRAS")
 public class MotivoSituacaoFaltaSobra {
 
-	@EmbeddedId
-	private IcdPK icdPK;
+	@Embeddable
+	public class MfsPK implements Serializable {
+
+		private static final long serialVersionUID = 1L;
+
+		@Column(name = "COD_DISTRIBUIDOR")
+		private Long codigoDistribuidor;
+
+		@Column(name = "DAT_SOLICITACAO")
+		private Date dataSolicitacao;
+
+		@Column(name = "HRA_SOLICITACAO")
+		private Time horaSolicitacao;
+		
+		@Column(name = "NUM_SEQUENCIA_DETALHE")
+		private Integer numeroSequencia;
+
+		/**
+		 * @return the codigoDistribuidor
+		 */
+		public Long getCodigoDistribuidor() {
+			return codigoDistribuidor;
+		}
+
+		/**
+		 * @param codigoDistribuidor the codigoDistribuidor to set
+		 */
+		public void setCodigoDistribuidor(Long codigoDistribuidor) {
+			this.codigoDistribuidor = codigoDistribuidor;
+		}
+
+		/**
+		 * @return the dataSolicitacao
+		 */
+		public Date getDataSolicitacao() {
+			return dataSolicitacao;
+		}
+
+		/**
+		 * @param dataSolicitacao the dataSolicitacao to set
+		 */
+		public void setDataSolicitacao(Date dataSolicitacao) {
+			this.dataSolicitacao = dataSolicitacao;
+		}
+
+		/**
+		 * @return the horaSolicitacao
+		 */
+		public Time getHoraSolicitacao() {
+			return horaSolicitacao;
+		}
+
+		/**
+		 * @param horaSolicitacao the horaSolicitacao to set
+		 */
+		public void setHoraSolicitacao(Time horaSolicitacao) {
+			this.horaSolicitacao = horaSolicitacao;
+		}
+
+		/**
+		 * @return the numeroSequencia
+		 */
+		public Integer getNumeroSequencia() {
+			return numeroSequencia;
+		}
+
+		/**
+		 * @param numeroSequencia the numeroSequencia to set
+		 */
+		public void setNumeroSequencia(Integer numeroSequencia) {
+			this.numeroSequencia = numeroSequencia;
+		}
+				
+		
+	}
 	
-	/**
-	 * @return the icdPK
-	 */
-	public IcdPK getIcdPK() {
-		return icdPK;
-	}
+	@EmbeddedId
+	private MfsPK mfsPK;
 
-	/**
-	 * @param icdPK the icdPK to set
-	 */
-	public void setIcdPK(IcdPK icdPK) {
-		this.icdPK = icdPK;
-	}
-
-	@Column(name = "NUM_SEQUENCIA_MOTIVO")
+	@Column(name = "NUM_SEQUENCIA_MOTIVO", nullable = false)
 	private Integer numeroSequencia;
 	
 	@Column(name = "DSC_MOTIVO_SITUACAO")
@@ -43,7 +106,19 @@ public class MotivoSituacaoFaltaSobra {
 	@Column(name = "COD_ORIGEM_MOTIVO")
 	private String codigoMotivo;
 
-	
+	/**
+	 * @return the mfsPK
+	 */
+	public MfsPK getMfsPK() {
+		return mfsPK;
+	}
+
+	/**
+	 * @param mfsPK the mfsPK to set
+	 */
+	public void setMfsPK(MfsPK mfsPK) {
+		this.mfsPK = mfsPK;
+	}
 
 	/**
 	 * @return the numeroSequencia
@@ -86,6 +161,5 @@ public class MotivoSituacaoFaltaSobra {
 	public void setCodigoMotivo(String codigoMotivo) {
 		this.codigoMotivo = codigoMotivo;
 	}
-	
 	
 }

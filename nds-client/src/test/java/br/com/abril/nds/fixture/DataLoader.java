@@ -11829,6 +11829,7 @@ public class DataLoader {
 		save(session, Fixture.criarInterfaceExecucao(124L, "EMS0124"));
 		save(session, Fixture.criarInterfaceExecucao(InterfaceEnum.EMS0125.getCodigoInterface(), "EMS0125"));
 		save(session, Fixture.criarInterfaceExecucao(InterfaceEnum.EMS0126.getCodigoInterface(), "EMS0126"));
+		save(session, Fixture.criarInterfaceExecucao(InterfaceEnum.EMS0128.getCodigoInterface(), "EMS0128"));
 		save(session, Fixture.criarInterfaceExecucao(129L, "EMS0129"));
 		save(session, Fixture.criarInterfaceExecucao(130L, "EMS0130"));
 		save(session, Fixture.criarInterfaceExecucao(131L, "EMS0131"));

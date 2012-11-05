@@ -14,12 +14,16 @@ import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 import java.util.Scanner;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.commons.io.IOCase;
 import org.apache.commons.io.filefilter.RegexFileFilter;
 import org.apache.commons.lang.StringUtils;
 import org.lightcouch.CouchDbClient;
 import org.lightcouch.NoDocumentException;
+import org.lightcouch.View;
+import org.lightcouch.ViewResult;
+import org.lightcouch.ViewResult.Rows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
@@ -27,10 +31,12 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.integracao.couchdb.CouchDbProperties;
 import br.com.abril.nds.integracao.dto.SolicitacaoDTO;
 import br.com.abril.nds.integracao.model.InterfaceExecucao;
 import br.com.abril.nds.integracao.model.LogExecucao;
 import br.com.abril.nds.integracao.model.LogExecucaoArquivo;
+import br.com.abril.nds.integracao.model.canonic.EMS0128Input;
 import br.com.abril.nds.integracao.model.canonic.IntegracaoDocument;
 import br.com.abril.nds.integracao.model.canonic.IntegracaoDocumentDetail;
 import br.com.abril.nds.integracao.model.canonic.IntegracaoDocumentMaster;
@@ -77,7 +83,8 @@ public class InterfaceExecutor {
 	@Autowired
 	private FixedFormatManager ffm;
 	
-	private Properties couchDbProperties;
+	@Autowired
+	private CouchDbProperties couchDbProperties;
 	
 	private boolean processadoComSucesso = true;
 
@@ -112,7 +119,6 @@ public class InterfaceExecutor {
 	public void executarInterface(String nomeUsuario, InterfaceEnum interfaceEnum, Long codigoDistribuidor) {
 		
 		// Busca dados de configuracao
-		this.carregaCouchDbProperties();
 		InterfaceExecucao interfaceExecucao = interfaceExecucaoRepository.findById(interfaceEnum.getCodigoInterface());
 		
 		if (interfaceExecucao == null) {
@@ -145,16 +151,43 @@ public class InterfaceExecutor {
 	
 	public void executarRetornosIcd(List<String> distribuidores) {		 
 		
-		for (String distribuidor: distribuidores) {
-						
-//			icdObjectService.recuperaSolicitacoesAcertadas(Integer.valueOf(distribuidor));
-//			icdObjectService.recuperaSolicitacoesSolicitadas(Integer.valueOf(distribuidor));
 
-			System.out.println("["+distribuidor+"]=================================================");
-			for (SolicitacaoDTO s: icdObjectService.recuperaSolicitacoes(Long.valueOf(distribuidor))) {
-				System.out.println(s);
-			}
-			System.out.println("==================================================================");
+		for (String distribuidor: distribuidores) {
+			CouchDbClient couchDbClient = this.getCouchDbClientInstance("db_" + StringUtils.leftPad(distribuidor, 8, "0"));
+									
+			View view = couchDbClient.view("importacao/porTipoDocumento");
+			
+			//verifyViewUpdate();
+			
+			view.key("EMS0128");
+			view.includeDocs(true);
+			try {
+				ViewResult<String, Void, ?> result = view.queryView(String.class, Void.class, EMS0128Input.class);
+	
+					
+				for (@SuppressWarnings("rawtypes") Rows row: result.getRows()) {
+					
+					EMS0128Input doc = (EMS0128Input) row.getDoc(); 	
+					
+					
+					
+					icdObjectService.insereSolicitacao(doc);
+					
+					
+		//			icdObjectService.recuperaSolicitacoesAcertadas(Integer.valueOf(distribuidor));
+		//			icdObjectService.recuperaSolicitacoesSolicitadas(Integer.valueOf(distribuidor));
+					System.out.println("["+distribuidor+"]=================================================");		
+					System.out.println(doc);
+					
+					for (SolicitacaoDTO s: icdObjectService.recuperaSolicitacoes(Long.valueOf(distribuidor))) {
+						System.out.println(s);
+					}
+					System.out.println("==================================================================");
+					
+				}
+			} catch (NoDocumentException ex ) {
+				
+			}			
 		}
 		
 	}
@@ -469,20 +502,6 @@ public class InterfaceExecutor {
 	}
 	
 	/**
-	 * Carrega os dados do arquivo couchdb.properties
-	 */
-	private void carregaCouchDbProperties() {
-		
-		try {
-			couchDbProperties = new Properties();
-			InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("couchdb.properties");
-			couchDbProperties.load(inputStream);
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-	}
-	
-	/**
 	 * Retorna o client para o CouchDB na database correspondente ao distribuidor.
 	 * 
 	 * @param codigoDistribuidor codigo do distribuidor
@@ -493,12 +512,13 @@ public class InterfaceExecutor {
 		return new CouchDbClient(
 				databaseName,
 				true,
-				this.couchDbProperties.getProperty("couchdb.protocol"),
-				this.couchDbProperties.getProperty("couchdb.host"),
-				Integer.valueOf(this.couchDbProperties.getProperty("couchdb.port")),
-				this.couchDbProperties.getProperty("couchdb.username"),
-				this.couchDbProperties.getProperty("couchdb.password")
-		);
+				couchDbProperties.getProtocol(),
+				couchDbProperties.getHost(),
+				couchDbProperties.getPort(),
+				couchDbProperties.getUsername(),
+				couchDbProperties.getPassword()
+		);		
+		
 	}
 	
 	/**
