@@ -1,7 +1,6 @@
 package br.com.abril.nds.controllers.administracao;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -13,10 +12,14 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
+import br.com.abril.nds.client.vo.DetalheCotaFechamentoDiarioVO;
 import br.com.abril.nds.dto.FecharDiaDTO;
 import br.com.abril.nds.dto.ReparteFecharDiaDTO;
+import br.com.abril.nds.dto.ResumoEncalheFecharDiaDTO;
 import br.com.abril.nds.dto.ResumoFechamentoDiarioCotasDTO;
 import br.com.abril.nds.dto.ResumoFechamentoDiarioCotasDTO.TipoResumo;
+import br.com.abril.nds.dto.ResumoReparteFecharDiaDTO;
+import br.com.abril.nds.dto.ResumoSuplementarFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoConfirmacaoDeExpedicaoFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoControleDeAprovacaoFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoLancamentoFaltaESobraFecharDiaDTO;
@@ -28,12 +31,15 @@ import br.com.abril.nds.dto.fechamentodiario.TipoDivida;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.financeiro.Divida;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.serialization.custom.CustomMapJson;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
+import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.FecharDiaService;
 import br.com.abril.nds.service.ResumoEncalheFecharDiaService;
 import br.com.abril.nds.service.ResumoReparteFecharDiaService;
@@ -72,6 +78,9 @@ public class FecharDiaController {
 	
 	@Autowired
 	private DistribuidorService distribuidorService;
+	
+	@Autowired
+	private CotaService cotaService;
 	
 	@Autowired
 	private Result result;
@@ -133,6 +142,7 @@ public class FecharDiaController {
 		
 	}
 	
+	//Grid que é acionado nas validações
 	@Post
 	@Path("/obterLancamentoFaltaESobra")
 	public void obterLancamentoFaltaESobra(){
@@ -182,66 +192,18 @@ public class FecharDiaController {
 	@Path("obterResumoQuadroReparte")
 	public void obterResumoQuadroReparte(){
 		
-		List<BigDecimal> listaDeResultados = new ArrayList<BigDecimal>();
-
-		List<ReparteFecharDiaDTO> lista = this.resumoFecharDiaService.obterValorReparte(distribuidor.getDataOperacao(), true);
+		ResumoReparteFecharDiaDTO dto = this.resumoFecharDiaService.obterResumoGeralReparte(distribuidor.getDataOperacao());
 		
-		BigDecimal totalReparte = lista.get(0).getValorTotalReparte();
-		listaDeResultados.add(totalReparte);
-		
-		lista = this.resumoFecharDiaService.obterValorDiferenca(distribuidor.getDataOperacao(), true, "sobra");
-		BigDecimal totalSobras = lista.get(0).getSobras() != null ? lista.get(0).getSobras() : BigDecimal.ZERO;
-		listaDeResultados.add(totalSobras);
-		
-		
-		lista = this.resumoFecharDiaService.obterValorDiferenca(distribuidor.getDataOperacao(), true, "falta");
-		BigDecimal totalFaltas = lista.get(0).getFaltas() != null ? lista.get(0).getFaltas() : BigDecimal.ZERO;
-		listaDeResultados.add(totalFaltas);
-		
-		
-		lista = this.resumoFecharDiaService.obterValorTransferencia(distribuidor.getDataOperacao(), true);
-		BigDecimal totalTranferencia = BigDecimal.ZERO;
-		if(lista.get(0).getTransferencias() != null){
-			totalTranferencia = lista.get(0).getTransferencias();			
-		}
-		listaDeResultados.add(totalTranferencia);
-		
-		
-		BigDecimal totalADistribuir = (totalReparte.add(totalSobras)).subtract(totalFaltas);
-		listaDeResultados.add(totalADistribuir);
-		
-		lista = this.resumoFecharDiaService.obterValorDistribuido(distribuidor.getDataOperacao(), true);
-		BigDecimal totalDistribuido = lista.get(0).getDistribuidos() != null ? lista.get(0).getDistribuidos() : BigDecimal.ZERO;
-		listaDeResultados.add(totalDistribuido);
-		
-		BigDecimal sobraDistribuido = totalADistribuir.subtract(totalDistribuido);
-		listaDeResultados.add(sobraDistribuido);
-		BigDecimal diferenca = totalDistribuido.subtract(sobraDistribuido);
-		listaDeResultados.add(diferenca);
-		
-		result.use(Results.json()).from(listaDeResultados, "result").serialize();
+		result.use(Results.json()).from(dto, "result").recursive().serialize();
 	}
 	
 	@Post
 	@Path("obterResumoQuadroEncalhe")
 	public void obterResumoQuadroEncalhe(){
 		
-		List<BigDecimal> listaDeEncalhes = new ArrayList<BigDecimal>();
+		ResumoEncalheFecharDiaDTO dto = this.resumoEncalheFecharDiaService.obterResumoGeralEncalhe(distribuidor.getDataOperacao());
 		
-		BigDecimal totalLogico = this.resumoEncalheFecharDiaService.obterValorEncalheLogico(distribuidor.getDataOperacao());
-		listaDeEncalhes.add(totalLogico);
-		
-		BigDecimal totalFisico = this.resumoEncalheFecharDiaService.obterValorEncalheFisico(distribuidor.getDataOperacao(), false);
-		listaDeEncalhes.add(totalFisico);
-		
-		BigDecimal totalJuramentado = this.resumoEncalheFecharDiaService.obterValorEncalheFisico(distribuidor.getDataOperacao(), true);;
-		listaDeEncalhes.add(totalJuramentado);
-		
-		List<ReparteFecharDiaDTO> lista = this.resumoFecharDiaService.obterValorReparte(distribuidor.getDataOperacao(), true);
-		BigDecimal venda = lista.get(0).getValorTotalReparte().subtract(totalFisico) ;
-		listaDeEncalhes.add(venda);
-		
-		result.use(Results.json()).from(listaDeEncalhes, "result").recursive().serialize();
+		result.use(Results.json()).from(dto, "result").recursive().serialize();
 		
 	}
 	
@@ -250,21 +212,9 @@ public class FecharDiaController {
 	@Path("obterResumoQuadroSuplementar")
 	public void obterResumoQuadroSuplementar(){
 		
-		List<BigDecimal> listaDeSuplementares = new ArrayList<BigDecimal>();
+		ResumoSuplementarFecharDiaDTO dto = this.resumoSuplementarFecharDiaService.obterResumoGeralEncalhe(distribuidor.getDataOperacao());
 		
-		BigDecimal totalEstoqueLogico = this.resumoSuplementarFecharDiaService.obterValorEstoqueLogico(distribuidor.getDataOperacao());
-		listaDeSuplementares.add(totalEstoqueLogico);
-		
-		BigDecimal totalTransferencia = this.resumoSuplementarFecharDiaService.obterValorTransferencia(distribuidor.getDataOperacao());
-		listaDeSuplementares.add(totalTransferencia);
-		
-		BigDecimal totalVenda = this.resumoSuplementarFecharDiaService.obterValorVenda(distribuidor.getDataOperacao());
-		listaDeSuplementares.add(totalVenda);
-		
-		BigDecimal totalFisico = this.resumoSuplementarFecharDiaService.obterValorFisico(distribuidor.getDataOperacao());
-		listaDeSuplementares.add(totalEstoqueLogico.subtract(totalFisico));
-		
-		result.use(Results.json()).from(listaDeSuplementares, "result").recursive().serialize();
+		result.use(Results.json()).from(dto, "result").recursive().serialize();
 	}
 	
 	@Post
@@ -284,8 +234,8 @@ public class FecharDiaController {
 	}
 	
 	@Post
-	@Path("/obterGridVendaSuplemntar")
-	public void obterGridVendaSuplemntar(){
+	@Path("/obterGridVendaSuplementar")
+	public void obterGridVendaSuplementar(){
 		
 		List<VendaSuplementarDTO> listaReparte = resumoSuplementarFecharDiaService.obterVendasSuplementar(distribuidor.getDataOperacao());
 		
@@ -467,6 +417,77 @@ public class FecharDiaController {
 		mapaResumo.put(TipoResumo.INATIVAS, resumoFechamentoDiarioCotas.getQuantidadeInativas());
 		
 		result.use(CustomMapJson.class).put("resumo", mapaResumo).serialize();
+	}
+	
+	@Post
+	public void obterDetalhesResumoCota(TipoResumo tipoResumo) {
+		
+		List<DetalheCotaFechamentoDiarioVO> listaDetalhesCotaFechamentoDiarioVO = 
+			this.obterDetalheCotaFechamentoDiario(tipoResumo);
+		
+		result.use(FlexiGridJson.class).from(listaDetalhesCotaFechamentoDiarioVO).page(1).total(listaDetalhesCotaFechamentoDiarioVO.size()).serialize();
+	}
+
+	private List<DetalheCotaFechamentoDiarioVO> obterDetalheCotaFechamentoDiario(TipoResumo tipoResumo) {
+		
+		Date dataFechamento = this.getDataFechamento();
+		
+		List<Cota> listaCotas = null;
+		
+		switch (tipoResumo) {
+		
+			case AUSENTES_REPARTE:
+				
+				listaCotas =
+					this.cotaService.obterCotasAusentesNaExpedicaoDoReparteEm(dataFechamento);
+				
+				break;
+				
+			case AUSENTES_ENCALHE:
+				
+				listaCotas = this.cotaService.obterCotasAusentesNoRecolhimentoDeEncalheEm(dataFechamento);
+				
+				break;
+				
+			case NOVAS:
+				
+				listaCotas = this.cotaService.obterCotasComInicioAtividadeEm(dataFechamento);
+				
+				break;
+				
+			case INATIVAS:
+				
+				listaCotas = this.cotaService.obterCotas(SituacaoCadastro.INATIVO);
+				
+				break;
+		}
+		
+		List<DetalheCotaFechamentoDiarioVO> listaDetalhesCotaFechamentoDiarioVO =
+			new ArrayList<DetalheCotaFechamentoDiarioVO>();
+		
+		for (Cota cota : listaCotas) {
+			
+			listaDetalhesCotaFechamentoDiarioVO.add(
+				new DetalheCotaFechamentoDiarioVO(cota.getNumeroCota(), cota.getPessoa().getNome()));
+		}
+		
+		return listaDetalhesCotaFechamentoDiarioVO;
+	}
+	
+	@Get
+	public void exportarCotas(FileType fileType, TipoResumo tipoResumo) throws IOException {
+		
+		if (fileType != null && tipoResumo != null) {
+		
+			List<DetalheCotaFechamentoDiarioVO> listaDetalhesCotaFechamentoDiarioVO = 
+				this.obterDetalheCotaFechamentoDiario(tipoResumo);
+			
+			FileExporter.to("resumo-cotas-" + tipoResumo.getDescricao(), fileType).inHTTPResponse(
+				getNDSFileHeader(), null, null, listaDetalhesCotaFechamentoDiarioVO, 
+					DetalheCotaFechamentoDiarioVO.class, httpResponse);
+		}
+		
+        result.nothing();
 	}
     
     private Date getDataFechamento() {

@@ -2,7 +2,9 @@ package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -39,6 +41,7 @@ import br.com.abril.nds.model.cadastro.Roteirizacao;
 import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoBox;
+import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.nds.model.cadastro.TipoRoteiro;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
@@ -58,6 +61,7 @@ import br.com.abril.nds.model.fiscal.NCM;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.DividaRepository;
 import br.com.abril.nds.vo.PaginacaoVO;
+import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 	
@@ -258,6 +262,17 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 		Assert.assertTrue(!lista.isEmpty());
 	}
 	
+	
+	@Test
+	public void consultaQuantidadeDividasGeradasPorData(){
+		
+		Long quantidade = dividaRepository.obterQunatidadeDividaGeradas(new Date());
+		
+		Assert.assertNotNull(quantidade);
+		
+		Assert.assertTrue(quantidade > 0);
+	}
+	
 	@Test
 	public void consultaQuantidadeDividasGeradas(){
 		
@@ -270,17 +285,233 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 		
 		Assert.assertTrue(quantidade > 0);
 	}
+	
+	@Test
+	public void consultaQuantidadeDividasGeradasNumCota(){
+		
+		FiltroDividaGeradaDTO filtro = new FiltroDividaGeradaDTO();
+		filtro.setDataMovimento(new Date());
+		filtro.setNumeroCota(1);
+		
+		Long quantidade = dividaRepository.obterQuantidadeRegistroDividasGeradas(filtro);
+		
+		}
+	
+	@Test
+	public void consultaQuantidadeDividasGeradasIdBox(){
+		
+		FiltroDividaGeradaDTO filtro = new FiltroDividaGeradaDTO();
+		filtro.setDataMovimento(new Date());
+		filtro.setIdBox(1L);
+		
+		Long quantidade = dividaRepository.obterQuantidadeRegistroDividasGeradas(filtro);
+		
+		}
+	
+	@Test
+	public void consultaQuantidadeDividasGeradasIdRota(){
+		
+		FiltroDividaGeradaDTO filtro = new FiltroDividaGeradaDTO();
+		filtro.setDataMovimento(new Date());
+		filtro.setIdRota(1L);
+		
+		Long quantidade = dividaRepository.obterQuantidadeRegistroDividasGeradas(filtro);
+		
+		}
+	
 
 	@Test
-	public void consultaQuantidadeDividasGeradasPorData(){
+	public void consultaQuantidadeDividasGeradasIdRoteiro(){
 		
-		Long quantidade = dividaRepository.obterQunatidadeDividaGeradas(new Date());
+		FiltroDividaGeradaDTO filtro = new FiltroDividaGeradaDTO();
+		filtro.setDataMovimento(new Date());
+		filtro.setIdRoteiro(1L);
 		
-		Assert.assertNotNull(quantidade);
+		Long quantidade = dividaRepository.obterQuantidadeRegistroDividasGeradas(filtro);
 		
-		Assert.assertTrue(quantidade > 0);
+		}
+	
+	@Test
+	public void obterDividasGeradasSemBoleto(){
+		
+		FiltroDividaGeradaDTO filtro = new FiltroDividaGeradaDTO();
+		filtro.setDataMovimento(new Date());
+		
+		List<GeraDividaDTO> listaGeraDividaDTOs = dividaRepository.obterDividasGeradasSemBoleto(filtro);
+		
+		Assert.assertNotNull(listaGeraDividaDTOs);
 	}
-
+	
+	@Test
+	public void obterDividasGeradasSemBoletoOrdenacaoBox(){
+		
+		FiltroDividaGeradaDTO filtro = new FiltroDividaGeradaDTO();
+		filtro.setDataMovimento(new Date());
+		filtro.setListaColunaOrdenacao(new ArrayList<FiltroDividaGeradaDTO.ColunaOrdenacao>());
+		filtro.getListaColunaOrdenacao().add(FiltroDividaGeradaDTO.ColunaOrdenacao.BOX);
+		filtro.setPaginacao(new PaginacaoVO());
+		filtro.getPaginacao().setOrdenacao(Ordenacao.ASC);
+		
+		
+		List<GeraDividaDTO> listaGeraDividaDTOs = dividaRepository.obterDividasGeradasSemBoleto(filtro);
+		
+		Assert.assertNotNull(listaGeraDividaDTOs);
+}
+	@Test
+	public void obterDividasGeradasSemBoletoOrdenacaoDataEmissao(){
+		
+		FiltroDividaGeradaDTO filtro = new FiltroDividaGeradaDTO();
+		filtro.setDataMovimento(new Date());
+		filtro.setListaColunaOrdenacao(new ArrayList<FiltroDividaGeradaDTO.ColunaOrdenacao>());
+		filtro.getListaColunaOrdenacao().add(FiltroDividaGeradaDTO.ColunaOrdenacao.DATA_EMISSAO);
+		filtro.setPaginacao(new PaginacaoVO());
+		filtro.getPaginacao().setOrdenacao(Ordenacao.ASC);
+		
+		
+		List<GeraDividaDTO> listaGeraDividaDTOs = dividaRepository.obterDividasGeradasSemBoleto(filtro);
+		
+		Assert.assertNotNull(listaGeraDividaDTOs);
+}
+	
+	@Test
+	public void obterDividasGeradasSemBoletoOrdenacaoData(){
+		
+		FiltroDividaGeradaDTO filtro = new FiltroDividaGeradaDTO();
+		filtro.setDataMovimento(new Date());
+		filtro.setListaColunaOrdenacao(new ArrayList<FiltroDividaGeradaDTO.ColunaOrdenacao>());
+		filtro.getListaColunaOrdenacao().add(FiltroDividaGeradaDTO.ColunaOrdenacao.DATA_VENCIMENTO);
+		filtro.setPaginacao(new PaginacaoVO());
+		filtro.getPaginacao().setOrdenacao(Ordenacao.ASC);
+		
+		
+		List<GeraDividaDTO> listaGeraDividaDTOs = dividaRepository.obterDividasGeradasSemBoleto(filtro);
+		
+		Assert.assertNotNull(listaGeraDividaDTOs);
+}
+	@Test
+	public void obterDividasGeradasSemBoletoOrdenacaoNomeCota(){
+		
+		FiltroDividaGeradaDTO filtro = new FiltroDividaGeradaDTO();
+		filtro.setDataMovimento(new Date());
+		filtro.setListaColunaOrdenacao(new ArrayList<FiltroDividaGeradaDTO.ColunaOrdenacao>());
+		filtro.getListaColunaOrdenacao().add(FiltroDividaGeradaDTO.ColunaOrdenacao.NOME_COTA);
+		filtro.setPaginacao(new PaginacaoVO());
+		filtro.getPaginacao().setOrdenacao(Ordenacao.ASC);
+		
+		
+		List<GeraDividaDTO> listaGeraDividaDTOs = dividaRepository.obterDividasGeradasSemBoleto(filtro);
+		
+		Assert.assertNotNull(listaGeraDividaDTOs);
+}
+	
+	@Test
+	public void obterDividasGeradasSemBoletoOrdenacaoNumeroCota(){
+		
+		FiltroDividaGeradaDTO filtro = new FiltroDividaGeradaDTO();
+		filtro.setDataMovimento(new Date());
+		filtro.setListaColunaOrdenacao(new ArrayList<FiltroDividaGeradaDTO.ColunaOrdenacao>());
+		filtro.getListaColunaOrdenacao().add(FiltroDividaGeradaDTO.ColunaOrdenacao.NUMERO_COTA);
+		filtro.setPaginacao(new PaginacaoVO());
+		filtro.getPaginacao().setOrdenacao(Ordenacao.ASC);
+		
+		
+		List<GeraDividaDTO> listaGeraDividaDTOs = dividaRepository.obterDividasGeradasSemBoleto(filtro);
+		
+		Assert.assertNotNull(listaGeraDividaDTOs);
+}	
+	
+	@Test
+	public void obterDividasGeradasSemBoletoOrdenacaoRota(){
+		
+		FiltroDividaGeradaDTO filtro = new FiltroDividaGeradaDTO();
+		filtro.setDataMovimento(new Date());
+		filtro.setListaColunaOrdenacao(new ArrayList<FiltroDividaGeradaDTO.ColunaOrdenacao>());
+		filtro.getListaColunaOrdenacao().add(FiltroDividaGeradaDTO.ColunaOrdenacao.ROTA);
+		filtro.setPaginacao(new PaginacaoVO());
+		filtro.getPaginacao().setOrdenacao(Ordenacao.ASC);
+		
+		
+		List<GeraDividaDTO> listaGeraDividaDTOs = dividaRepository.obterDividasGeradasSemBoleto(filtro);
+		
+		Assert.assertNotNull(listaGeraDividaDTOs);
+}	
+	
+	@Test
+	public void obterDividasGeradasSemBoletoOrdenacaoRoteiro(){
+		
+		FiltroDividaGeradaDTO filtro = new FiltroDividaGeradaDTO();
+		filtro.setDataMovimento(new Date());
+		filtro.setListaColunaOrdenacao(new ArrayList<FiltroDividaGeradaDTO.ColunaOrdenacao>());
+		filtro.getListaColunaOrdenacao().add(FiltroDividaGeradaDTO.ColunaOrdenacao.ROTEIRO);
+		filtro.setPaginacao(new PaginacaoVO());
+		filtro.getPaginacao().setOrdenacao(Ordenacao.ASC);
+		
+		
+		List<GeraDividaDTO> listaGeraDividaDTOs = dividaRepository.obterDividasGeradasSemBoleto(filtro);
+		
+		Assert.assertNotNull(listaGeraDividaDTOs);
+}	
+	
+	@Test
+	public void obterDividasGeradasSemBoletoOrdenacaoTipoCobranca(){
+		
+		FiltroDividaGeradaDTO filtro = new FiltroDividaGeradaDTO();
+		filtro.setDataMovimento(new Date());
+		filtro.setListaColunaOrdenacao(new ArrayList<FiltroDividaGeradaDTO.ColunaOrdenacao>());
+		filtro.getListaColunaOrdenacao().add(FiltroDividaGeradaDTO.ColunaOrdenacao.TIPO_COBRANCA);
+		filtro.setPaginacao(new PaginacaoVO());
+		filtro.getPaginacao().setOrdenacao(Ordenacao.ASC);
+		
+		
+		List<GeraDividaDTO> listaGeraDividaDTOs = dividaRepository.obterDividasGeradasSemBoleto(filtro);
+		
+		Assert.assertNotNull(listaGeraDividaDTOs);
+}	
+	@Test
+	public void obterDividasGeradasSemBoletoOrdenacaoValor(){
+		
+		FiltroDividaGeradaDTO filtro = new FiltroDividaGeradaDTO();
+		filtro.setDataMovimento(new Date());
+		filtro.setListaColunaOrdenacao(new ArrayList<FiltroDividaGeradaDTO.ColunaOrdenacao>());
+		filtro.getListaColunaOrdenacao().add(FiltroDividaGeradaDTO.ColunaOrdenacao.VALOR);
+		filtro.setPaginacao(new PaginacaoVO());
+		filtro.getPaginacao().setOrdenacao(Ordenacao.ASC);
+		
+		
+		List<GeraDividaDTO> listaGeraDividaDTOs = dividaRepository.obterDividasGeradasSemBoleto(filtro);
+		
+		Assert.assertNotNull(listaGeraDividaDTOs);
+}	
+	@Test
+	public void obterDividasGeradasSemBoletoOrdenacaoVia(){
+		
+		FiltroDividaGeradaDTO filtro = new FiltroDividaGeradaDTO();
+		filtro.setDataMovimento(new Date());
+		filtro.setListaColunaOrdenacao(new ArrayList<FiltroDividaGeradaDTO.ColunaOrdenacao>());
+		filtro.getListaColunaOrdenacao().add(FiltroDividaGeradaDTO.ColunaOrdenacao.VIA);
+		filtro.setPaginacao(new PaginacaoVO());
+		filtro.getPaginacao().setOrdenacao(Ordenacao.ASC);
+		
+		
+		List<GeraDividaDTO> listaGeraDividaDTOs = dividaRepository.obterDividasGeradasSemBoleto(filtro);
+		
+		Assert.assertNotNull(listaGeraDividaDTOs);
+}	
+	
+	
+	@Test
+	public void consultaQuantidadeDividasGeradasTipoCobranca(){
+		
+		FiltroDividaGeradaDTO filtro = new FiltroDividaGeradaDTO();
+		filtro.setTipoCobranca(TipoCobranca.BOLETO);
+		
+		Long quantidade = dividaRepository.obterQuantidadeRegistroDividasGeradas(filtro);
+		
+		}
+	
+	
+	
+	
 	@Test
 	public void obterInadimplencias(){
 		
@@ -310,11 +541,253 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 	}
 	
 	@Test
-	public void obterTotalInadimplencias() {
+	public void obterInadimplenciasSituacaoNegociada(){
 		
-		List<StatusDividaDTO> lista = dividaRepository.obterInadimplenciasCota(new FiltroCotaInadimplenteDTO());
+		FiltroCotaInadimplenteDTO filtro = new FiltroCotaInadimplenteDTO();
+		filtro.setColunaOrdenacao(FiltroCotaInadimplenteDTO.ColunaOrdenacao.NOME);
+		filtro.setNomeCota("Manoel da Silva");
+		filtro.setNumCota(123);
+		filtro.setPeriodoDe("02/03/2009");
+		filtro.setPeriodoAte("02/03/2012");
+		filtro.setSituacaoEmAberto(true);
+		filtro.setSituacaoPaga(false);
+		filtro.setSituacaoNegociada(true);
+		filtro.setStatusCota("Ativo");
+		filtro.setPaginacao(new PaginacaoVO(1, 5, "ASC",ColunaOrdenacao.NOME.toString()));
 		
-		Assert.assertTrue(lista.size()==1L);					
+		List<StatusDividaDTO> lista = dividaRepository.obterInadimplenciasCota(filtro);
+		
+		Assert.assertNotNull(lista);
+	}
+	
+	@Test
+	public void obterInadimplenciasColunaOrdenacaoNulo(){
+		
+		FiltroCotaInadimplenteDTO filtro = new FiltroCotaInadimplenteDTO();
+		filtro.setColunaOrdenacao(null);
+		filtro.setNomeCota("Manoel da Silva");
+		filtro.setNumCota(123);
+		filtro.setPeriodoDe("02/03/2009");
+		filtro.setPeriodoAte("02/03/2012");
+		filtro.setSituacaoEmAberto(true);
+		filtro.setSituacaoPaga(false);
+		filtro.setSituacaoNegociada(true);
+		filtro.setStatusCota("Ativo");
+		filtro.setPaginacao(new PaginacaoVO(1, 5, "ASC",ColunaOrdenacao.NOME.toString()));
+		
+		List<StatusDividaDTO> lista = dividaRepository.obterInadimplenciasCota(filtro);
+		
+		Assert.assertNotNull(lista);
+	}
+	
+	@Test
+	public void obterInadimplenciasPaginacaoNulo(){
+		
+		FiltroCotaInadimplenteDTO filtro = new FiltroCotaInadimplenteDTO();
+		filtro.setColunaOrdenacao(FiltroCotaInadimplenteDTO.ColunaOrdenacao.NOME);
+		filtro.setNomeCota("Manoel da Silva");
+		filtro.setNumCota(123);
+		filtro.setPeriodoDe("02/03/2009");
+		filtro.setPeriodoAte("02/03/2012");
+		filtro.setSituacaoEmAberto(true);
+		filtro.setSituacaoPaga(false);
+		filtro.setSituacaoNegociada(true);
+		filtro.setStatusCota("Ativo");
+		filtro.setPaginacao(null);
+		
+		List<StatusDividaDTO> lista = dividaRepository.obterInadimplenciasCota(filtro);
+		
+		Assert.assertNotNull(lista);
+	}
+	
+	@Test
+	public void obterInadimplenciasOrderByNumCota(){
+		
+		FiltroCotaInadimplenteDTO filtro = new FiltroCotaInadimplenteDTO();
+		filtro.setColunaOrdenacao(FiltroCotaInadimplenteDTO.ColunaOrdenacao.NUM_COTA);
+		filtro.setNomeCota("Manoel da Silva");
+		filtro.setNumCota(123);
+		filtro.setPeriodoDe("02/03/2009");
+		filtro.setPeriodoAte("02/03/2012");
+		filtro.setSituacaoEmAberto(true);
+		filtro.setSituacaoPaga(true);
+		filtro.setSituacaoNegociada(false);
+		filtro.setStatusCota("Ativo");
+		filtro.setPaginacao(new PaginacaoVO(1, 5, "ASC",ColunaOrdenacao.NOME.toString()));
+		
+		
+		List<StatusDividaDTO> lista = dividaRepository.obterInadimplenciasCota(filtro);
+		
+		Assert.assertNotNull(lista);
+	}
+	
+	@Test
+	public void obterInadimplenciasOrderByStatus(){
+		
+		FiltroCotaInadimplenteDTO filtro = new FiltroCotaInadimplenteDTO();
+		filtro.setColunaOrdenacao(FiltroCotaInadimplenteDTO.ColunaOrdenacao.STATUS);
+		filtro.setNomeCota("Manoel da Silva");
+		filtro.setNumCota(123);
+		filtro.setPeriodoDe("02/03/2009");
+		filtro.setPeriodoAte("02/03/2012");
+		filtro.setSituacaoEmAberto(true);
+		filtro.setSituacaoPaga(true);
+		filtro.setSituacaoNegociada(false);
+		filtro.setStatusCota("Ativo");
+		filtro.setPaginacao(new PaginacaoVO(1, 5, "ASC",ColunaOrdenacao.NOME.toString()));
+		
+		
+		List<StatusDividaDTO> lista = dividaRepository.obterInadimplenciasCota(filtro);
+		
+		Assert.assertNotNull(lista);
+	}
+	
+	@Test
+	public void obterInadimplenciasOrderByConsignado(){
+		
+		FiltroCotaInadimplenteDTO filtro = new FiltroCotaInadimplenteDTO();
+		filtro.setColunaOrdenacao(FiltroCotaInadimplenteDTO.ColunaOrdenacao.CONSIGNADO);
+		filtro.setNomeCota("Manoel da Silva");
+		filtro.setNumCota(123);
+		filtro.setPeriodoDe("02/03/2009");
+		filtro.setPeriodoAte("02/03/2012");
+		filtro.setSituacaoEmAberto(true);
+		filtro.setSituacaoPaga(true);
+		filtro.setSituacaoNegociada(false);
+		filtro.setStatusCota("Ativo");
+		filtro.setPaginacao(new PaginacaoVO(1, 5, "ASC",ColunaOrdenacao.NOME.toString()));
+		
+		
+		List<StatusDividaDTO> lista = dividaRepository.obterInadimplenciasCota(filtro);
+		
+		Assert.assertNotNull(lista);
+	}
+	
+	@Test
+	public void obterInadimplenciasOrderByDataVencimento(){
+		
+		FiltroCotaInadimplenteDTO filtro = new FiltroCotaInadimplenteDTO();
+		filtro.setColunaOrdenacao(FiltroCotaInadimplenteDTO.ColunaOrdenacao.DATA_VENCIMENTO);
+		filtro.setNomeCota("Manoel da Silva");
+		filtro.setNumCota(123);
+		filtro.setPeriodoDe("02/03/2009");
+		filtro.setPeriodoAte("02/03/2012");
+		filtro.setSituacaoEmAberto(true);
+		filtro.setSituacaoPaga(true);
+		filtro.setSituacaoNegociada(false);
+		filtro.setStatusCota("Ativo");
+		filtro.setPaginacao(new PaginacaoVO(1, 5, "ASC",ColunaOrdenacao.NOME.toString()));
+		
+		
+		List<StatusDividaDTO> lista = dividaRepository.obterInadimplenciasCota(filtro);
+		
+		Assert.assertNotNull(lista);
+	}
+	
+	
+	
+	@Test
+	public void obterInadimplenciasOrderByDataPagamento(){
+		
+		FiltroCotaInadimplenteDTO filtro = new FiltroCotaInadimplenteDTO();
+		filtro.setColunaOrdenacao(FiltroCotaInadimplenteDTO.ColunaOrdenacao.DATA_PAGAMENTO);
+		filtro.setNomeCota("Manoel da Silva");
+		filtro.setNumCota(123);
+		filtro.setPeriodoDe("02/03/2009");
+		filtro.setPeriodoAte("02/03/2012");
+		filtro.setSituacaoEmAberto(true);
+		filtro.setSituacaoPaga(true);
+		filtro.setSituacaoNegociada(false);
+		filtro.setStatusCota("Ativo");
+		filtro.setPaginacao(new PaginacaoVO(1, 5, "ASC",ColunaOrdenacao.NOME.toString()));
+		
+		
+		List<StatusDividaDTO> lista = dividaRepository.obterInadimplenciasCota(filtro);
+		
+		Assert.assertNotNull(lista);
+	}
+	
+	@Test
+	public void obterInadimplenciasOrderByDataSituacao(){
+		
+		FiltroCotaInadimplenteDTO filtro = new FiltroCotaInadimplenteDTO();
+		filtro.setColunaOrdenacao(FiltroCotaInadimplenteDTO.ColunaOrdenacao.SITUACAO);
+		filtro.setNomeCota("Manoel da Silva");
+		filtro.setNumCota(123);
+		filtro.setPeriodoDe("02/03/2009");
+		filtro.setPeriodoAte("02/03/2012");
+		filtro.setSituacaoEmAberto(true);
+		filtro.setSituacaoPaga(true);
+		filtro.setSituacaoNegociada(false);
+		filtro.setStatusCota("Ativo");
+		filtro.setPaginacao(new PaginacaoVO(1, 5, "ASC",ColunaOrdenacao.NOME.toString()));
+		
+		
+		List<StatusDividaDTO> lista = dividaRepository.obterInadimplenciasCota(filtro);
+		
+		Assert.assertNotNull(lista);
+	}
+	
+	@Test
+	public void obterInadimplenciasOrderByDividaAcumulada(){
+		
+		FiltroCotaInadimplenteDTO filtro = new FiltroCotaInadimplenteDTO();
+		filtro.setColunaOrdenacao(FiltroCotaInadimplenteDTO.ColunaOrdenacao.DIVIDA_ACUMULADA);
+		filtro.setNomeCota("Manoel da Silva");
+		filtro.setNumCota(123);
+		filtro.setPeriodoDe("02/03/2009");
+		filtro.setPeriodoAte("02/03/2012");
+		filtro.setSituacaoEmAberto(true);
+		filtro.setSituacaoPaga(true);
+		filtro.setSituacaoNegociada(false);
+		filtro.setStatusCota("Ativo");
+		filtro.setPaginacao(new PaginacaoVO(1, 5, "ASC",ColunaOrdenacao.NOME.toString()));
+		
+		
+		List<StatusDividaDTO> lista = dividaRepository.obterInadimplenciasCota(filtro);
+		
+		Assert.assertNotNull(lista);
+	}
+	
+	@Test
+	public void obterInadimplenciasOrderByDiasAtraso(){
+		
+		FiltroCotaInadimplenteDTO filtro = new FiltroCotaInadimplenteDTO();
+		filtro.setColunaOrdenacao(FiltroCotaInadimplenteDTO.ColunaOrdenacao.ATRASO);
+		filtro.setNomeCota("Manoel da Silva");
+		filtro.setNumCota(123);
+		filtro.setPeriodoDe("02/03/2009");
+		filtro.setPeriodoAte("02/03/2012");
+		filtro.setSituacaoEmAberto(true);
+		filtro.setSituacaoPaga(true);
+		filtro.setSituacaoNegociada(false);
+		filtro.setStatusCota("Ativo");
+		filtro.setPaginacao(new PaginacaoVO(1, 5, "ASC",ColunaOrdenacao.NOME.toString()));
+		
+		
+		List<StatusDividaDTO> lista = dividaRepository.obterInadimplenciasCota(filtro);
+		
+		Assert.assertNotNull(lista);
+	}
+	
+	@Test
+	public void obterTotalInadimplenciasCota() {
+		
+		FiltroCotaInadimplenteDTO filtro = new FiltroCotaInadimplenteDTO();
+		filtro.setColunaOrdenacao(FiltroCotaInadimplenteDTO.ColunaOrdenacao.ATRASO);
+		filtro.setNomeCota("Manoel da Silva");
+		filtro.setNumCota(123);
+		filtro.setPeriodoDe("02/03/2009");
+		filtro.setPeriodoAte("02/03/2012");
+		filtro.setSituacaoEmAberto(true);
+		filtro.setSituacaoPaga(true);
+		filtro.setSituacaoNegociada(false);
+		filtro.setStatusCota("Ativo");
+		filtro.setPaginacao(new PaginacaoVO(1, 5, "ASC",ColunaOrdenacao.NOME.toString()));
+		
+		
+		dividaRepository.obterTotalInadimplenciasCota(filtro);
+		
 	}
 	
 	@Test
@@ -326,6 +799,26 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 	}
 	
 	@Test
+	public void obterTotalCotasInadimplenciasFiltro() {
+		
+		FiltroCotaInadimplenteDTO filtro = new FiltroCotaInadimplenteDTO();
+		filtro.setColunaOrdenacao(FiltroCotaInadimplenteDTO.ColunaOrdenacao.ATRASO);
+		filtro.setNomeCota("Manoel da Silva");
+		filtro.setNumCota(123);
+		filtro.setPeriodoDe("02/03/2009");
+		filtro.setPeriodoAte("02/03/2012");
+		filtro.setSituacaoEmAberto(true);
+		filtro.setSituacaoPaga(true);
+		filtro.setSituacaoNegociada(false);
+		filtro.setStatusCota("Ativo");
+		filtro.setPaginacao(new PaginacaoVO(1, 5, "ASC",ColunaOrdenacao.NOME.toString()));
+		
+		
+		dividaRepository.obterTotalCotasInadimplencias(filtro);
+		
+	}
+	
+	@Test
 	public void obterSomaDividas() {
 		
 		Double valor = dividaRepository.obterSomaDividas(new FiltroCotaInadimplenteDTO());
@@ -334,9 +827,89 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 	}
 	
 	@Test
+	public void obterSomaDividasFiltro() {
+		
+		FiltroCotaInadimplenteDTO filtro = new FiltroCotaInadimplenteDTO();
+		filtro.setColunaOrdenacao(FiltroCotaInadimplenteDTO.ColunaOrdenacao.ATRASO);
+		filtro.setNomeCota("Manoel da Silva");
+		filtro.setNumCota(123);
+		filtro.setPeriodoDe("02/03/2009");
+		filtro.setPeriodoAte("02/03/2012");
+		filtro.setSituacaoEmAberto(true);
+		filtro.setSituacaoPaga(true);
+		filtro.setSituacaoNegociada(false);
+		filtro.setStatusCota("Ativo");
+		filtro.setPaginacao(new PaginacaoVO(1, 5, "ASC",ColunaOrdenacao.NOME.toString()));
+		
+		
+		dividaRepository.obterSomaDividas(filtro);
+		
+	}
+	
+	@Test
 	public void obterDividaPorIdConsolidado(){
 		
 		Assert.assertNotNull(this.dividaRepository.obterDividaPorIdConsolidado(consolidado.getId()));
 	}
 	
+	@Test
+	public void obterTotalDividasAbertoCota() {
+		Long idCota = 1L;
+		
+		dividaRepository.obterTotalDividasAbertoCota(idCota);
+		
+	}
+	
+	@Test
+	public void obterDividaParaAcumuloPorCotaIdCota() {
+		Long idCota = 1L;
+		
+		Divida divida =  dividaRepository.obterDividaParaAcumuloPorCota(idCota, null);
+		
+	}
+	
+	@Test
+	public void obterDividaParaAcumuloPorCotaData() {
+		Date diaDivida = Fixture.criarData(24, Calendar.OCTOBER, 2012);
+		
+		Divida divida =  dividaRepository.obterDividaParaAcumuloPorCota(null, diaDivida);
+		
+	}
+	
+	@Test
+	public void obterValorDividasDataOperacaoDividaVencendo() {
+		
+		Boolean dividaVencendo = true;
+		
+		dividaRepository.obterValorDividasDataOperacao(dividaVencendo, false);
+		
+	}
+	
+	@Test
+	public void obterValorDividasDataOperacaoDividaAcululada() {
+		
+		Boolean dividaAcumulada = true;
+		
+		dividaRepository.obterValorDividasDataOperacao(false, dividaAcumulada);
+		
+	}
+		
+	@Test
+	public void obterValoresDividasGeradasDataOperacaoPostergadaTrue() {
+		
+		Boolean postergada = true;
+		
+		dividaRepository.obterValoresDividasGeradasDataOperacao(postergada);
+		
+	}
+	
+	@Test
+	public void obterValoresDividasGeradasDataOperacaoPostergadaFalse() {
+		
+		Boolean postergada = false;
+		
+		dividaRepository.obterValoresDividasGeradasDataOperacao(postergada);
+		
+	}
+
 }

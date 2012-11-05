@@ -93,7 +93,6 @@ public class EditorRepositoryImplTest extends AbstractRepositoryImplTest {
 	}
 	
 	@Test
-	@Ignore
 	public void testarObterHistoricoEditor() { // MÉTODO COM PROBLEMAS -----------------------
 		
 		List<RegistroHistoricoEditorVO> historicoEditor;

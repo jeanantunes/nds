@@ -13,12 +13,14 @@ import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.DetalheProdutoVO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.cadastro.Brinde;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.serialization.custom.PlainJSONSerialization;
+import br.com.abril.nds.service.BrindeService;
 import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.ProdutoService;
@@ -44,6 +46,9 @@ public class ProdutoEdicaoController {
 	private Result result;
 	
 	@Autowired
+	private BrindeService brindeService;
+	
+	@Autowired
 	private ProdutoEdicaoService peService;
 	
 	@Autowired
@@ -59,7 +64,12 @@ public class ProdutoEdicaoController {
 	@Get
 	@Path("/")
 	@Rules(Permissao.ROLE_CADASTRO_EDICAO)
-	public void index() { }
+	public void index() {
+		
+		List<Brinde> brindes = brindeService.obterBrindes();
+
+		result.include("brindes", brindes);
+	}
 
 	
 	
@@ -149,7 +159,7 @@ public class ProdutoEdicaoController {
 			BigDecimal desconto, Long peso, 
 			BigDecimal largura, BigDecimal comprimento, BigDecimal espessura,
 			String chamadaCapa, boolean parcial, boolean possuiBrinde,
-			String boletimInformativo, Integer numeroLancamento, String descricaoBrinde, String descricaoProduto) {
+			String boletimInformativo, Integer numeroLancamento, Long descricaoBrinde, String descricaoProduto) {
 		
 		// DTO para transportar os dados:
 		ProdutoEdicaoDTO dto = new ProdutoEdicaoDTO();
@@ -178,7 +188,7 @@ public class ProdutoEdicaoController {
 		dto.setParcial(parcial);
 		dto.setPossuiBrinde(possuiBrinde);
 		dto.setNumeroLancamento(numeroLancamento);
-		dto.setDescricaoBrinde(descricaoBrinde);
+		dto.setIdBrinde(descricaoBrinde);
 		dto.setNomeComercial(descricaoProduto);
 		
 		ValidacaoVO vo = null;

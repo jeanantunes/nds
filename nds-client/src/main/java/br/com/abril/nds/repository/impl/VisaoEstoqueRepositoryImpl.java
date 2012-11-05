@@ -96,18 +96,18 @@ public class VisaoEstoqueRepositoryImpl extends AbstractRepository implements Vi
 		   .append("        COALESCE(SUM(pe.precoVenda * ep.qtde), 0) as valor  ")
 		   .append("   FROM EstoqueProdutoCotaJuramentado as ep ")
 		   .append("   JOIN ep.produtoEdicao as pe ");
-		if(filtro.getIdFornecedor() != -1) {
+		if(filtro.getIdFornecedor() != null && !filtro.getIdFornecedor().equals(-1L)) {
 			hql.append("   JOIN pe.produto.fornecedores f ");
 		}
 		hql.append("  WHERE ep.data = :data ");
-		if(filtro.getIdFornecedor() != -1) {
+		if(filtro.getIdFornecedor() != null && !filtro.getIdFornecedor().equals(-1L)) {
 			hql.append("    AND f.id = :idFornecedor ");
 		}
 		
 		Query query = this.getSession().createQuery(hql.toString());
 		
 		query.setDate("data", filtro.getDataMovimentacao());
-		if(filtro.getIdFornecedor() != -1) {
+		if(filtro.getIdFornecedor() != null && !filtro.getIdFornecedor().equals(-1L)) {
 			query.setParameter("idFornecedor", filtro.getIdFornecedor());
 		}
 		
@@ -217,7 +217,7 @@ public class VisaoEstoqueRepositoryImpl extends AbstractRepository implements Vi
 		hql.append(" SELECT co.numeroCota as cota")
 		   .append("       ,pess.nome as nome")
 		   .append("       ,pe.id as produtoEdicaoId")
-		   .append("       ,pe.codigo as codigo")
+		   .append("       ,pr.codigo as codigo")
 		   .append("       ,pe.nomeComercial as produto")
 		   .append("       ,pe.numeroEdicao as edicao")
 		   .append("       ,pe.precoVenda as precoCapa")
@@ -228,6 +228,7 @@ public class VisaoEstoqueRepositoryImpl extends AbstractRepository implements Vi
 		   .append("   JOIN ep.cota as co ")
 		   .append("   JOIN co.pessoa as pess ")
 		   .append("   JOIN ep.produtoEdicao as pe ")
+		   .append("   JOIN pe.produto as pr ")
 		   .append("   JOIN pe.lancamentos as lan ");
 		if(filtro.getIdFornecedor() != -1) {
 			hql.append("   JOIN pe.produto.fornecedores f ");

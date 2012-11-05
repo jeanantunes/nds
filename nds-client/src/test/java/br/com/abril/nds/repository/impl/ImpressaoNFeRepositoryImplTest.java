@@ -14,18 +14,21 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import br.com.abril.nds.dto.CotasImpressaoNfeDTO;
+import br.com.abril.nds.dto.NotasCotasImpressaoNfeDTO;
 import br.com.abril.nds.dto.filtro.FiltroImpressaoNFEDTO;
 import br.com.abril.nds.dto.filtro.FiltroImpressaoNFEDTO.ColunaOrdenacaoImpressaoNFE;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.ContratoCota;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
+import br.com.abril.nds.model.cadastro.PessoaJuridica;
+import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.Processo;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
@@ -82,6 +85,13 @@ public class ImpressaoNFeRepositoryImplTest  extends AbstractRepositoryImplTest 
 	
 	@Before
 	public void setUp() {
+
+		PessoaJuridica juridicaDistrib = Fixture.pessoaJuridica("Distribuidor Acme",
+				"56003315000147", "110042490114", "distrib_acme@mail.com", "99.999-9");
+		save(juridicaDistrib);
+		
+		Distribuidor distribuidor = Fixture.distribuidor(1, juridicaDistrib, new Date(), new HashSet<PoliticaCobranca>());
+		save(distribuidor);
 
 		tipoFornecedorPublicacao = Fixture.tipoFornecedorPublicacao();
 		fornecedorFC = Fixture.fornecedorFC(tipoFornecedorPublicacao);
@@ -479,7 +489,7 @@ public class ImpressaoNFeRepositoryImplTest  extends AbstractRepositoryImplTest 
 		FiltroImpressaoNFEDTO filtro = obterFiltroImpressaoNfeDTOOrdenadoPorCota();
 		filtro.setDataEmissao(Fixture.criarData(01, Calendar.JANUARY, 2012));
 		
-		List<CotasImpressaoNfeDTO> listaNotaFiscal = impressaoNFeRepository.buscarCotasParaImpressaoNFe(filtro);
+		List<NotasCotasImpressaoNfeDTO> listaNotaFiscal = impressaoNFeRepository.buscarCotasParaImpressaoNFe(filtro);
 		
 		Assert.assertNotNull(listaNotaFiscal);
 		

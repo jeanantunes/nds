@@ -10,10 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import br.com.abril.nds.dto.CotasImpressaoNfeDTO;
+import br.com.abril.nds.dto.NotasCotasImpressaoNfeDTO;
 import br.com.abril.nds.dto.filtro.FiltroImpressaoNFEDTO;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.envio.nota.NotaEnvio;
@@ -35,10 +34,10 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 
 	@SuppressWarnings("unchecked")
 	@Transactional(readOnly=true)
-	public List<CotasImpressaoNfeDTO> buscarCotasParaImpressaoNFe(FiltroImpressaoNFEDTO filtro) {
+	public List<NotasCotasImpressaoNfeDTO> buscarCotasParaImpressaoNFe(FiltroImpressaoNFEDTO filtro) {
 
 		StringBuilder sql = new StringBuilder();
-		sql.append("select new br.com.abril.nds.dto.CotasImpressaoNfeDTO(cota, SUM(ps.quantidade), SUM(nf.informacaoValoresTotais.valorProdutos), SUM(nf.informacaoValoresTotais.valorDesconto) ) ");
+		sql.append("select new br.com.abril.nds.dto.NotasCotasImpressaoNfeDTO(nf.identificacao.numeroDocumentoFiscal, nf.notaImpressa, cota, SUM(ps.quantidade), SUM(nf.informacaoValoresTotais.valorProdutos), SUM(nf.informacaoValoresTotais.valorDesconto) ) ");
 		
 		//Complementa o HQL com as clausulas de filtro
 		Query q = montarFiltroConsultaNfeParaImpressao(filtro, sql, filtro.getPaginacao());
@@ -60,12 +59,12 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 	}
 	
 	@Override
-	public List<CotasImpressaoNfeDTO> buscarCotasParaImpressaoNotaEnvio(FiltroImpressaoNFEDTO filtro) {
+	public List<NotasCotasImpressaoNfeDTO> buscarCotasParaImpressaoNotaEnvio(FiltroImpressaoNFEDTO filtro) {
 		StringBuilder sql = new StringBuilder();
-		sql.append("select new br.com.abril.nds.dto.CotasImpressaoNfeDTO(cota, SUM(nei.reparte), SUM(nei.precoCapa * nei.reparte), SUM(nei.desconto)) ");
+		sql.append("select new br.com.abril.nds.dto.NotasCotasImpressaoNfeDTO(ne.numero, ne.notaImpressa, cota, SUM(nei.reparte), SUM(nei.precoCapa * nei.reparte), SUM(nei.desconto)) ");
 		
 		//Complementa o HQL com as clausulas de filtro
-		Query q = montarFiltroConsultaNotaEnvioParaImpressao(null, filtro, sql, filtro.getPaginacao());
+		Query q = montarFiltroConsultaNotaEnvioParaImpressao(filtro, sql, filtro.getPaginacao());
 
 		return q.list();
 	}
@@ -76,13 +75,13 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 		sql.append("select count(*) ");
 		
 		//Complementa o HQL com as clausulas de filtro
-		Query q = montarFiltroConsultaNotaEnvioParaImpressao(null, filtro, sql, null);
+		Query q = montarFiltroConsultaNotaEnvioParaImpressao(filtro, sql, null);
 		
 		return q.list().size();
 	}
 	
 	@Override
-	public List<NotaFiscal> buscarNotasPorCotaParaImpressaoNFe(Cota cota, FiltroImpressaoNFEDTO filtro) {
+	public List<NotaFiscal> buscarNotasParaImpressaoNFe(FiltroImpressaoNFEDTO filtro) {
 		
 		StringBuilder sql = new StringBuilder();
 		sql.append("select nf ");
@@ -94,12 +93,12 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 	}
 	
 	@Override
-	public List<NotaEnvio> buscarNotasEnvioPorCotaParaImpressaoNFe(Cota cota, FiltroImpressaoNFEDTO filtro) {
+	public List<NotaEnvio> buscarNotasEnvioParaImpressaoNFe(FiltroImpressaoNFEDTO filtro) {
 		StringBuilder sql = new StringBuilder();
 		sql.append("select ne ");
 		
 		//Complementa o HQL com as clausulas de filtro
-		Query q = montarFiltroConsultaNotaEnvioParaImpressao(cota, filtro, sql, filtro.getPaginacao());
+		Query q = montarFiltroConsultaNotaEnvioParaImpressao(filtro, sql, filtro.getPaginacao());
 
 		return q.list();
 	}
@@ -182,6 +181,10 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 			sql.append("and cota.id in (:idsCotas) ");
 		}
 		
+		if(filtro.getNumerosNotas() != null && filtro.getNumerosNotas().size() > 0) {	
+			sql.append("and nf.identificacao.numeroDocumentoFiscal in (:numerosNotas) ");
+		}
+		
 		if(filtro.getIdBoxInicial() != null || filtro.getIdBoxFinal() != null) {
 			if(filtro.getIdBoxInicial() != null && filtro.getIdBoxFinal() == null) {
 				sql.append("and cota.box.id >= :idBoxInicial ");
@@ -192,12 +195,13 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 			}
 		}
 				
-		sql.append("group by cota ");
+		sql.append("group by nf, cota ");
 		
 		//Monta a ordenacao
 		if (paginacao != null) {
 
 			Map<String, String> columnToSort = new HashMap<String, String>();
+			columnToSort.put("numeroNota", "nf.identificacao.numeroDocumentoFiscal");
 			columnToSort.put("idCota", "cota.id");
 			columnToSort.put("nomeCota", "cota.pessoa.nome");
 			columnToSort.put("vlrTotal", "vlrTotal");
@@ -270,6 +274,10 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 			q.setParameterList("idsCotas", filtro.getIdsCotas());
 		}
 		
+		if(filtro.getNumerosNotas() != null && filtro.getNumerosNotas().size() > 0) {	
+			q.setParameterList("numerosNotas", filtro.getNumerosNotas());
+		}
+		
 		if(filtro.getIdBoxInicial() != null || filtro.getIdBoxFinal() != null) {
 			if(filtro.getIdBoxInicial() != null && filtro.getIdBoxFinal() == null) {
 				q.setParameter("idBoxInicial", filtro.getIdBoxInicial());
@@ -291,7 +299,7 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 	}
 	
 	//Torna reaproveitavel a parte de filtro da query
-		private Query montarFiltroConsultaNotaEnvioParaImpressao(Cota cota, FiltroImpressaoNFEDTO filtro, StringBuilder sql, PaginacaoVO paginacao) {
+		private Query montarFiltroConsultaNotaEnvioParaImpressao(FiltroImpressaoNFEDTO filtro, StringBuilder sql, PaginacaoVO paginacao) {
 			
 			Distribuidor distribuidor = distribuidorRepository.obter();
 			
@@ -354,12 +362,12 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 				}
 			}
 			
-			if(cota != null && cota.getId() != null) {
-				sql.append("and cota.id = :idCota ");
-			}
-			
 			if(filtro.getIdsCotas() != null && filtro.getIdsCotas().size() > 0) {	
 				sql.append("and cota.id in (:idsCotas) ");
+			}
+			
+			if(filtro.getNumerosNotas() != null && filtro.getNumerosNotas().size() > 0) {	
+				sql.append("and ne.numero in (:numerosNotas) ");
 			}
 			
 			if(filtro.getIdBoxInicial() != null || filtro.getIdBoxFinal() != null) {
@@ -378,6 +386,7 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 			if (paginacao != null) {
 
 				Map<String, String> columnToSort = new HashMap<String, String>();
+				columnToSort.put("numeroNota", "ne.numero");
 				columnToSort.put("idCota", "cota.id");
 				columnToSort.put("nomeCota", "cota.pessoa.nome");
 				columnToSort.put("vlrTotal", "vlrTotal");
@@ -440,12 +449,12 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 				}
 			}
 			
-			if(cota != null && cota.getId() != null) {
-				q.setParameter("idCota", cota.getId());
-			}
-			
 			if(filtro.getIdsCotas() != null && filtro.getIdsCotas().size() > 0) {
 				q.setParameterList("idsCotas", filtro.getIdsCotas());
+			}
+			
+			if(filtro.getNumerosNotas() != null && filtro.getNumerosNotas().size() > 0) {	
+				q.setParameterList("numerosNotas", filtro.getNumerosNotas());
 			}
 			
 			if(filtro.getIdBoxInicial() != null || filtro.getIdBoxFinal() != null) {

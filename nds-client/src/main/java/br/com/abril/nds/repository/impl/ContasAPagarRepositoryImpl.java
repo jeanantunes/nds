@@ -388,11 +388,14 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
 		
 		if (filtro.getDataDe() != null){
 			
-			hql.append(" where l.dataCriacao between :inicio and :fim ");
+			hql.append(" where l.dataCriacao between :inicio and :fim ")
+			   .append(" and l.reparte is not null ");
+		} else {
+			
+			hql.append(" where l.reparte is not null ");
 		}
 		
-		hql.append(" and l.reparte is not null ")
-		   .append(" and l.produtoEdicao.precoVenda is not null ")
+		hql.append(" and l.produtoEdicao.precoVenda is not null ")
 		   .append(" and l.status = :statusLancamento ");
 		
 		if (filtro.getIdsFornecedores() != null && !filtro.getIdsFornecedores().isEmpty()){
@@ -417,7 +420,8 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
 		
 			PaginacaoVO paginacaoVO = filtro.getPaginacaoVO();
 			
-			if (paginacaoVO != null && !"data".equals(paginacaoVO.getSortColumn())){
+			if (paginacaoVO != null && !"data".equals(paginacaoVO.getSortColumn()) &&
+					paginacaoVO.getSortColumn() != null){
 				
 				hql.append(", ")
 				   .append(paginacaoVO.getSortColumn())
@@ -805,7 +809,8 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
 		
 		if (paginacaoVO != null && paginacaoVO.getSortColumn() != null){
 			
-			hql.append(paginacaoVO.getSortColumn())
+			hql.append(", ")
+			   .append(paginacaoVO.getSortColumn())
 			   .append(" ")
 			   .append(paginacaoVO.getSortOrder() == null ? "" : paginacaoVO.getSortOrder());
 		}
@@ -871,7 +876,8 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
 		
 		if (paginacaoVO != null && paginacaoVO.getSortColumn() != null){
 			
-			hql.append(paginacaoVO.getSortColumn())
+			hql.append(", ")
+			   .append(paginacaoVO.getSortColumn())
 			   .append(" ")
 			   .append(paginacaoVO.getSortOrder() == null ? "" : paginacaoVO.getSortOrder());
 		}
@@ -938,7 +944,8 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
 		
 		if (paginacaoVO != null && paginacaoVO.getSortColumn() != null){
 			
-			hql.append(paginacaoVO.getSortColumn())
+			hql.append(", ")
+			   .append(paginacaoVO.getSortColumn())
 			   .append(" ")
 			   .append(paginacaoVO.getSortOrder() == null ? "" : paginacaoVO.getSortOrder());
 		}

@@ -81,7 +81,7 @@
 		</div>
 	
 	<form id="formaPgtoForm">
-		<div id="dialog-formaPgto" title="Negociar D&iacute;vida" style="display:none;">
+		<div id="dialog-NegociacaoformaPgto" title="Negociar D&iacute;vida" style="display:none;">
 			
 	
 			<input type="hidden" name ="filtro.valorSelecionado" id="valorSelecionado"/>
@@ -165,7 +165,7 @@
 					</tr> -->
 					<tr>
 						<td width="3%"><input type="radio" name="filtro.periodicidade" id="radioDiario"
-							value="DIARIO" checked="yes"
+							value="DIARIA" checked="yes"
 							onclick="negociacaoDividaController.mostraDiario();" /></td>
 							
 						<td width="5%">Di&aacute;rio</td>
@@ -322,7 +322,7 @@
 				<table id="encargos">
 					<tr>
 						<td>
-							<input name="" type="checkbox" id="isentaEncargos" style="float: left;" />
+							<input name="" type="checkbox" id="isentaEncargos" onclick="negociacaoDividaController.calcularParcelas();" style="float: left;" />
 						</td>
 						<td>
 							<span style="float: left; margin-top: 8px;">Isenta Encargos</span>
@@ -330,13 +330,13 @@
 					</tr>
 				</table>
 			</fieldset>
-			<span class="bt_novos" title="Imprimir">
+			<span class="bt_novos" title="Imprimir" name="botoes">
 				<a href="${pageContext.request.contextPath}/financeiro/negociacaoDivida/imprimirNegociacao">
 					<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
 						Imprimir Negocia&ccedil;&atilde;o
 				</a>
 			</span>
-			<span class="bt_novos" title="Imprimir Boletos">
+			<span class="bt_novos" title="Imprimir Boletos" name="botoes">
 				<a href="${pageContext.request.contextPath}/financeiro/negociacaoDivida/imprimirBoletos">
 					<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
 						Imprimir Boletos

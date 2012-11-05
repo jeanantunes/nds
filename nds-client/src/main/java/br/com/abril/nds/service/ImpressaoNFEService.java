@@ -4,7 +4,6 @@ import java.util.List;
 
 import br.com.abril.nds.dto.ProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroImpressaoNFEDTO;
-import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.envio.nota.NotaEnvio;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 
@@ -22,7 +21,7 @@ public interface ImpressaoNFEService {
 	 * @param filtro
 	 * @return
 	 */
-	List<br.com.abril.nds.dto.CotasImpressaoNfeDTO> buscarCotasParaImpressaoNFe(FiltroImpressaoNFEDTO filtro);
+	List<br.com.abril.nds.dto.NotasCotasImpressaoNfeDTO> buscarCotasParaImpressaoNFe(FiltroImpressaoNFEDTO filtro);
 	
 	/**
 	 * Obtem o total de NFe baseado no filtro informado
@@ -34,20 +33,16 @@ public interface ImpressaoNFEService {
 	
 	/**
 	 * Obtem uma lista de NF baseada no filtro informado
-	 * @param cota TODO
 	 * @param filtro
-	 * 
 	 * @return
 	 */
-	List<NotaFiscal> buscarNotasPorCotaParaImpressaoNFe(Cota cota, FiltroImpressaoNFEDTO filtro);
+	List<NotaFiscal> buscarNotasParaImpressaoNFe(FiltroImpressaoNFEDTO filtro);
 	
 	/**
 	 * Obtem uma lista de NE baseada no filtro informado
-	 * @param cota TODO
 	 * @param filtro
-	 * 
 	 * @return
 	 */
-	List<NotaEnvio> buscarNotasEnvioPorCotaParaImpressaoNFe(Cota cota, FiltroImpressaoNFEDTO filtro);
+	List<NotaEnvio> buscarNotasEnvioParaImpressaoNFe(FiltroImpressaoNFEDTO filtro);
 	
 }

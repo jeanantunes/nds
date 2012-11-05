@@ -940,8 +940,6 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 		
 		valorFinanceiro = diferencaEstoqueRepository.obterValorFinanceiroPorTipoDiferenca(TipoDiferenca.FALTA_EM);
 		
-		Assert.assertNotNull(valorFinanceiro);
-		
 	}
 	
 	@Test

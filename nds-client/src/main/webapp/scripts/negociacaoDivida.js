@@ -55,8 +55,6 @@ var negociacaoDividaController = $.extend(true, {
 	
 	pesquisarDetalhes : function(idCobranca) {
 		
-		//var params = $("#negociacaoDividaForm", this.workspace).serialize();
-		
 		$(".negociacaoDetalheGrid", this.workspace).flexOptions({
 			url : this.path + 'pesquisarDetalhes.json?' , 
 			params: [{name: 'idCobranca' , value: idCobranca}],
@@ -218,17 +216,20 @@ var negociacaoDividaController = $.extend(true, {
 	
 	popup_formaPgto : function() {
 		
+		$('span[name$="botoes"]').hide();
+		
 		$.postJSON(contextPath + '/financeiro/negociacaoDivida/buscarComissaoCota',
 			null, 
 			function(result) {
-						
-				$("#comissaoAtualCota").val(floatToPrice(result));
+			
+				$("#comissaoAtualCota",negociacaoDividaController.workspace).val(floatToPrice(result));
 				
-				$('#formaPgto_numEnomeCota').html('<strong>Cota:</strong> ' + $('#negociacaoDivida_numCota').val() +' - <strong>Nome: </strong>'+ $('#negociacaoDivida_nomeCota').html());
-				$('#dividaSelecionada').html($('#totalSelecionado').html());
-				$('#valorSelecionado').val(priceToFloat($('#totalSelecionado').html()));
-				$('#numeroCota').val($('#negociacaoDivida_numCota').val());
-				$("#dialog-formaPgto", this.workspace).dialog({
+				$('#formaPgto_numEnomeCota',negociacaoDividaController.workspace).html('<strong>Cota:</strong> ' + $('#negociacaoDivida_numCota',negociacaoDividaController.workspace).val() +' - <strong>Nome: </strong>'+ $('#negociacaoDivida_nomeCota').html());
+				$('#dividaSelecionada',negociacaoDividaController.workspace).html($('#totalSelecionado',negociacaoDividaController.workspace).html());
+				$('#valorSelecionado',negociacaoDividaController.workspace).val(priceToFloat($('#totalSelecionado',negociacaoDividaController.workspace).html()));
+				$('#numeroCota',negociacaoDividaController.workspace).val($('#negociacaoDivida_numCota',negociacaoDividaController.workspace).val());
+				
+				$("#dialog-NegociacaoformaPgto").dialog({
 					resizable: false,
 					height:550,
 					width:760,
@@ -239,13 +240,14 @@ var negociacaoDividaController = $.extend(true, {
 							negociacaoDividaController.confirmarNegociacao();
 						},
 						"Cancelar": function() {
-							 $("#dialog-formaPgto", this.workspace).dialog("close");
+							 $("#dialog-NegociacaoformaPgto", negociacaoDividaController.workspace).dialog("close");
 						}
 					},
-					 form: $("#dialog-formaPgto", this.workspace).parents("form")
+					 form: $("#formaPgtoForm", negociacaoDividaController.workspace)
 	
 				});
-			}							
+			} ,
+			null
 		);
 	},
 	
@@ -377,11 +379,17 @@ var negociacaoDividaController = $.extend(true, {
 	                
 	            	exibirMensagemDialog(result.tipoMensagem, result.listaMensagens);
 	            }
-			}							
+	            
+	            if(result.tipoMensagem=='SUCCESS') {
+	            	$('span[name$="botoes"]').show();
+	            } else {
+	            	$('span[name$="botoes"]').hide();
+	            }
+			}
+		
 		);
 	},
-	
-	
+		
 	geraLinhasCheque :function(result) {
 		
 		$('#encargos').hide();
