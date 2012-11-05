@@ -247,7 +247,7 @@ public class FecharDiaRepositoryImpl extends AbstractRepository implements Fecha
 		
 			restricaoGrupos += restricaoGrupos.isEmpty() ? " " : " OR ";
 			
-			restricaoGrupos += " movimento.tipoMovimento.grupoMovimentoFinanceiro IN :gruposMovimentoFinanceiro "; 
+			restricaoGrupos += " movimento.tipoMovimento.grupoMovimentoFinaceiro IN :gruposMovimentoFinanceiro "; 
 		}
 
 		if (!restricaoGrupos.isEmpty()) {
@@ -264,12 +264,12 @@ public class FecharDiaRepositoryImpl extends AbstractRepository implements Fecha
 		
 		if (gruposMovimentoEstoque != null) {
 		
-			query.setParameter("gruposMovimentoEstoque", gruposMovimentoEstoque);
+			query.setParameterList("gruposMovimentoEstoque", gruposMovimentoEstoque);
 		}
 		
 		if (gruposMovimentoFinanceiro != null) {
 		
-			query.setParameter("gruposMovimentoFinanceiro", gruposMovimentoFinanceiro);
+			query.setParameterList("gruposMovimentoFinanceiro", gruposMovimentoFinanceiro);
 		}
 
 		return query.list();

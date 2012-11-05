@@ -21,11 +21,8 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
-import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
-import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.financeiro.Divida;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
-import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.movimentacao.Movimento;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
@@ -246,12 +243,12 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 
 		for (Movimento movimento : movimentosPendentes) {
 
-			movimento.setData(new Date());
-			
+			movimento.setData(DateUtil.adicionarDias(movimento.getData(), 1));
+
 			this.movimentoRepository.merge(movimento);
 		}
 	}
-	
+
 	private List<GrupoMovimentoFinaceiro> obterGruposMovimentoFinaceiro() {
 		
 		List<GrupoMovimentoFinaceiro> grupos = new ArrayList<GrupoMovimentoFinaceiro>();
