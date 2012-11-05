@@ -385,8 +385,6 @@ public class DataLoader {
 	private static MovimentoFinanceiroCota movimentoFinanceiroCota30;
 
 	private static CFOP cfop5102;
-	private static TipoNotaFiscal tipoNotaFiscalRecebimento;
-	private static TipoNotaFiscal tipoNotaFiscalDevolucao;
 	private static Usuario usuarioJoao;
 	private static Fornecedor fornecedorAcme;
 	private static Fornecedor fornecedorDinap;
@@ -1242,7 +1240,6 @@ public class DataLoader {
 		criarEnderecoDistribuidor(session);
 		criarTelefoneDistribuidor(session);
 		
-		criarCFOP(session);		
 		criarParametroEmissaoNotaFiscal(session);
 		criarTiposNotaFiscal(session);
 		
@@ -1400,6 +1397,21 @@ public class DataLoader {
 		cfop6115.setCodigo("6115");
 		cfop6115.setDescricao("Venda de mercadoria adquirida ou recebida de terceiros, recebida anteriormente em consignação mercantil");
 		save(session, cfop6115);
+		
+		cfop5102 = new CFOP();
+		cfop5102.setCodigo("5102");
+		cfop5102.setDescricao("Venda de mercadoria adquirida ou recebida de terceiros");
+		save(session, cfop5102);
+
+		cfop1209 = new CFOP();
+		cfop1209.setCodigo("1209");
+		cfop1209.setDescricao("Devolução de mercadoria adquirida ou recebida de terceiros, remetida em transferência dentro do estado");
+		save(session, cfop1209);
+
+		cfop1210 = new CFOP();
+		cfop1210.setCodigo("1210");
+		cfop1210.setDescricao("Devolução de mercadoria adquirida ou recebida de terceiros, remetida em transferência fora do estado");		
+		save(session, cfop1210);
 
 	}
 
@@ -5341,9 +5353,56 @@ public class DataLoader {
 	}
 
 	private static void criarTiposNotaFiscal(Session session) {
-		tipoNotaFiscalRecebimento = Fixture.tipoNotaFiscalRecebimento();
-		tipoNotaFiscalDevolucao = Fixture.tipoNotaFiscalDevolucao();
-
+		/*
+		TipoNotaFiscal tipoNotaFiscal = new TipoNotaFiscal();
+		
+		tipoNotaFiscal.setDescricao("RECEBIMENTO");
+		tipoNotaFiscal.setGrupoNotaFiscal(GrupoNotaFiscal.RECEBIMENTO_MERCADORIAS);
+		tipoNotaFiscal.setNopDescricao("NF-e de Devolução de Remessa para Distruibuição");
+		tipoNotaFiscal.setEmitente(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
+		tipoNotaFiscal.setDestinatario(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
+		tipoNotaFiscal.setContribuinte(false);
+		tipoNotaFiscal.setNopCodigo(0L);
+		tipoNotaFiscal.setTipoOperacao(TipoOperacao.ENTRADA);		
+		tipoNotaFiscal.setTipoAtividade(TipoAtividade.MERCANTIL);
+		tipoNotaFiscal.setSerieNotaFiscal(2);
+		
+		CFOP cfopEstado = new CFOP();		
+		tipoNotaFiscal.setCfopEstado(cfopEstado);
+		
+		CFOP cfopOutrosEstados;
+		tipoNotaFiscal.setCfopOutrosEstados(cfopOutrosEstados);
+		*/
+		
+		
+		boolean contribuinte
+		, String descricao
+		, TipoUsuarioNotaFiscal destinatario
+		, TipoUsuarioNotaFiscal emitente
+		, GrupoNotaFiscal grupoNotaFiscal
+		, Long nopCodigo
+		, String nopDescricao
+		, Integer serieNotaFiscal
+		, TipoAtividade tipoAtividade
+		, TipoOperacao tipoOperacao
+		, CFOP cfopEstado
+		, CFOP cfopOutrosEstados
+		
+		TipoNotaFiscal tipoNotaFiscalRecebimento = Fixture.tipoNotaFiscal(
+				true
+				, "NF-e de Remessa em Consignação (NECE / DANFE) - Cota Contribuinte"				
+				, "COTA"
+				, "DISTRIBUIDOR"
+				, "NF_REMESSA_CONSIGNACAO"
+				, 0
+				, "NF-e de Remessa em Consignação (NECE / DANFE)"
+				, 1
+				, "MERCANTIL"
+				, "SAIDA"
+				, 1	
+				, 2);
+		
+		
 		save(session, tipoNotaFiscalRecebimento, tipoNotaFiscalDevolucao);
 
 		TipoNotaFiscal tipoNotaFiscalTerceiroMercantil = Fixture.tipoNotaFiscalRecebimento();
@@ -5369,21 +5428,8 @@ public class DataLoader {
 		
 		save(session, tipoNotaFiscalTerceiroMercantil, tipoNotaFiscalTerceiroMercantilComplementar,
 					  tipoNotaFiscalTerceiroPrestadorServicos, tipoNotaFiscalTerceiroPrestadorServicosComplementar);
+		 
 	}
-
-	private static void criarCFOP(Session session) {
-
-		cfop1209 = Fixture.cfop1209();
-		session.save(cfop1209);
-
-		cfop1210 = Fixture.cfop1210();
-		session.save(cfop1210);
-
-		cfop5102 = Fixture.cfop5102();
-		session.save(cfop5102);
-	}
-
-
 
 	private static void criarParametroEmissaoNotaFiscal(Session session) {
 
@@ -5676,9 +5722,6 @@ public class DataLoader {
 		TipoProduto tipoRevista = Fixture.tipoRevista(ncmRevista);
 		session.save(tipoRevista);
 
-		CFOP cfop = Fixture.cfop5102();
-		session.save(cfop);
-
 		Usuario usuario = Fixture.usuarioJoao();
 		session.save(usuario);
 
@@ -5723,7 +5766,7 @@ public class DataLoader {
 			for(int x= 1; x< 3 ;x++){
 
 				NotaFiscalEntradaFornecedor notaFiscalFornecedor = Fixture
-						.notaFiscalEntradaFornecedor(cfop, fornecedor, tipoNotaFiscalDevolucao,
+						.notaFiscalEntradaFornecedor(cfop5102, fornecedor, tipoNotaFiscalDevolucao,
 								usuario, new BigDecimal(1),new BigDecimal(1),new BigDecimal(1));
 				session.save(notaFiscalFornecedor);
 
@@ -5820,7 +5863,8 @@ public class DataLoader {
 		criarTiposProduto(session);
 //		criarProdutos(session);
 //		criarProdutosEdicao(session);
-		criarCFOP(session);
+//		criarCFOP(session);
+		gerarCfops(session);
 		criarParametroEmissaoNotaFiscal(session);
 		criarTiposMovimento(session);
 		criarTiposNotaFiscal(session);
@@ -6395,9 +6439,6 @@ public class DataLoader {
 		TipoProduto tipoRevista = Fixture.tipoRevista(ncmRevista);
 		save(session,tipoRevista);
 
-		CFOP cfop = Fixture.cfop5102();
-		save(session,cfop);
-
 		Usuario usuario = Fixture.usuarioJoao();
 		save(session,usuario);
 
@@ -6422,7 +6463,7 @@ public class DataLoader {
 			save(session,produtoEdicao);
 
 			NotaFiscalEntradaFornecedor notaFiscalFornecedor = Fixture
-					.notaFiscalEntradaFornecedor(cfop, fornecedor, tipoNotaFiscalRecebimento,
+					.notaFiscalEntradaFornecedor(cfop5102, fornecedor, tipoNotaFiscalRecebimento,
 							usuario, new BigDecimal(1),new BigDecimal(1),new BigDecimal(1));
 			save(session,notaFiscalFornecedor);
 
