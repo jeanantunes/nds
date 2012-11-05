@@ -33,7 +33,6 @@ import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.ConcentracaoCobrancaCota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
-import br.com.abril.nds.model.cadastro.PeriodicidadeCobranca;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
 import br.com.abril.nds.model.financeiro.ParcelaNegociacao;
@@ -210,11 +209,11 @@ public class NegociacaoDividaController {
 	}
 
 
-	private Date getDataParcela(Date dataAnterior, PeriodicidadeCobranca periodicidade, List<DiaSemanaDTO>semanalDias, Integer diaMensal) {
+	private Date getDataParcela(Date dataAnterior, TipoFormaCobranca periodicidade, List<DiaSemanaDTO>semanalDias, Integer diaMensal) {
 		
 		switch(periodicidade){
 			
-			case DIARIO:
+			case DIARIA:
 				return DateUtil.adicionarDias(dataAnterior, 1);	
 						
 			case SEMANAL:
@@ -297,7 +296,7 @@ public class NegociacaoDividaController {
 			
 			parcelas = null;
 		} else {
-			
+			System.out.println("NAO COMISSAO");
 			formaCobranca = new FormaCobranca();
 			formaCobranca.setTipoCobranca(tipoCobranca);
 			formaCobranca.setTipoFormaCobranca(tipoFormaCobranca);
