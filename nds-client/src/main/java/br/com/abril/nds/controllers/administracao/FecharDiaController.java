@@ -1,6 +1,7 @@
 package br.com.abril.nds.controllers.administracao;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -17,6 +18,7 @@ import br.com.abril.nds.client.vo.DetalheCotaFechamentoDiarioVO;
 import br.com.abril.nds.dto.FecharDiaDTO;
 import br.com.abril.nds.dto.ReparteFecharDiaDTO;
 import br.com.abril.nds.dto.ResumoEncalheFecharDiaDTO;
+import br.com.abril.nds.dto.ResumoFechamentoDiarioConsignadoDTO;
 import br.com.abril.nds.dto.ResumoFechamentoDiarioCotasDTO;
 import br.com.abril.nds.dto.ResumoFechamentoDiarioCotasDTO.TipoResumo;
 import br.com.abril.nds.dto.ResumoReparteFecharDiaDTO;
@@ -38,6 +40,7 @@ import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.financeiro.Divida;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.serialization.custom.CustomMapJson;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.CotaService;
@@ -509,6 +512,37 @@ public class FecharDiaController {
 		}
 		
         result.nothing();
+	}
+	
+	@Post
+	public void obterResumoConsignado() {
+		
+		//TODO: MOCK
+		
+		ResumoFechamentoDiarioConsignadoDTO resumoFechamentoDiarioConsignado = 
+			new ResumoFechamentoDiarioConsignadoDTO();
+		
+		ResumoFechamentoDiarioConsignadoDTO.ResumoConsignado resumoConsignado = 
+			resumoFechamentoDiarioConsignado.new ResumoConsignado();
+		
+		resumoConsignado.setSaldoAnterior(BigDecimal.TEN);
+		resumoConsignado.setSaldoAtual(BigDecimal.TEN);
+		resumoConsignado.setValorEntradas(BigDecimal.TEN);
+		resumoConsignado.setValorSaidas(BigDecimal.TEN);
+		
+		resumoFechamentoDiarioConsignado.setResumoConsignado(resumoConsignado);
+		
+		ResumoFechamentoDiarioConsignadoDTO.ResumoAVista resumoAVista = 
+			resumoFechamentoDiarioConsignado.new ResumoAVista();
+		
+		resumoAVista.setSaldoAnterior(BigDecimal.TEN);
+		resumoAVista.setSaldoAtual(BigDecimal.TEN);
+		resumoAVista.setValorEntradas(BigDecimal.TEN);
+		resumoAVista.setValorSaidas(BigDecimal.TEN);
+		
+		resumoFechamentoDiarioConsignado.setResumoAVista(resumoAVista);
+		
+		result.use(CustomMapJson.class).put("resumo", resumoFechamentoDiarioConsignado).serialize();
 	}
     
     private Date getDataFechamento() {
