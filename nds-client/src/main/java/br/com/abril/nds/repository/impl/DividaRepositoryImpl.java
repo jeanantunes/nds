@@ -5,6 +5,7 @@ import java.math.BigInteger;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.hibernate.Criteria;
 import org.hibernate.Query;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.GeraDividaDTO;
 import br.com.abril.nds.dto.StatusDividaDTO;
+import br.com.abril.nds.dto.fechamentodiario.SumarizacaoDividasDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaInadimplenteDTO;
 import br.com.abril.nds.dto.filtro.FiltroDividaGeradaDTO;
 import br.com.abril.nds.dto.filtro.FiltroDividaGeradaDTO.ColunaOrdenacao;
@@ -24,6 +26,7 @@ import br.com.abril.nds.model.cadastro.TipoRoteiro;
 import br.com.abril.nds.model.financeiro.Divida;
 import br.com.abril.nds.model.financeiro.StatusDivida;
 import br.com.abril.nds.repository.DividaRepository;
+import br.com.abril.nds.vo.PaginacaoVO;
 
 @Repository
 public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> implements
@@ -633,4 +636,58 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 		
 		return (BigDecimal) query.uniqueResult();
 	}
+
+    /**
+     * {@inheritDoc}
+     */
+	@Override
+    public Map<TipoCobranca, SumarizacaoDividasDTO> sumarizacaoDividasReceberEm(Date data) {
+        //TODO: implementar
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+	@Override
+    public Map<TipoCobranca, SumarizacaoDividasDTO> sumarizacaoDividasVencerApos(Date data) {
+        //TODO: implementar
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+	@Override
+    public List<Divida> obterDividasReceberEm(Date data, PaginacaoVO paginacao) {
+        //TODO: implementar
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+	@Override
+    public List<Divida> obterDividasVencerApos(Date data, PaginacaoVO paginacao) {
+        //TODO: implementar
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+	@Override
+    public int contarDividasReceberEm(Date data) {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+	@Override
+    public int contarDividasVencerApos(Date data) {
+        // TODO Auto-generated method stub
+        return 0;
+    }
 }
