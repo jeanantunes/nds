@@ -445,7 +445,7 @@ public class FecharDiaController {
 			
 			this.fecharDiaService.processarControleDeAprovacao();
 			
-			this.session.setAttribute(ATRIBUTO_SESSAO_VALIDACAO_PENDENCIAS, false);
+			this.session.setAttribute(ATRIBUTO_SESSAO_VALIDACAO_PENDENCIAS, true);
 		}
 	}
 
