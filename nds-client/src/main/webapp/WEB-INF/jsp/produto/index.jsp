@@ -95,7 +95,7 @@
 				<tr>
 					<td><strong>Tipo de Desconto:</strong></td>
 					<td>
-						<select name="comboTipoDesconto" id="comboTipoDesconto" style="width:200px;" onchange="produtoController.carregarPercentualDesconto();" >
+						<select name="comboTipoDesconto" readonly="readonly" disabled="disabled" id="comboTipoDesconto" style="width:200px;" onchange="produtoController.carregarPercentualDesconto();" >
 						</select>
 					</td>
 					<td><strong>% Desconto:</strong></td>
