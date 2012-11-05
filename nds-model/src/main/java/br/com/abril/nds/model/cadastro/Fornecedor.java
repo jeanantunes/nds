@@ -95,6 +95,9 @@ public class Fornecedor implements Serializable {
 
 	@Column(name = "EMAIL_NFE")
 	private String emailNfe;
+	
+	@Column(name = "DESCONTO", precision=5, scale=2)
+	private BigDecimal desconto;
 
 	/**
 	 * Fornecedores associados à Cota
@@ -255,6 +258,14 @@ public class Fornecedor implements Serializable {
 		this.cotas = cotas;
 	}
 	
+	public BigDecimal getDesconto() {
+		return desconto;
+	}
+
+	public void setDesconto(BigDecimal desconto) {
+		this.desconto = desconto;
+	}
+
 	public EnderecoFornecedor getEnderecoPrincipal() {
 	    for (EnderecoFornecedor endereco : enderecos) {
 	        if (endereco.isPrincipal()) {

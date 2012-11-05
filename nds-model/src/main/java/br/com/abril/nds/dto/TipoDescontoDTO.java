@@ -23,7 +23,7 @@ public class TipoDescontoDTO implements Serializable {
 	private String fornecedor;
 	
 	@Export(label="Data Alteração", exhibitionOrder = 4, alignment=Alignment.CENTER)
-	private Date dataAlteracao;
+	private Date dataAlteracao = new Date();
 	
 	@Export(label="Usuário", exhibitionOrder = 5,alignment=Alignment.LEFT)
 	private String usuario;

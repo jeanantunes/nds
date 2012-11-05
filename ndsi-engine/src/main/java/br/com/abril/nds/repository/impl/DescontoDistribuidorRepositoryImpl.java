@@ -1,10 +1,10 @@
 package br.com.abril.nds.repository.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Query;
-import org.hibernate.transform.AliasToBeanResultTransformer;
-import org.hibernate.transform.ResultTransformer;
+import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.TipoDescontoDTO;
@@ -32,7 +32,41 @@ public class DescontoDistribuidorRepositoryImpl extends AbstractRepositoryModel<
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" select desconto.id as sequencial, ")
+		hql.append("select 0L as sequencial ");
+		hql.append(", 1L as idTipoDesconto ");
+		hql.append(", 'Anonimo' as usuario ");
+		hql.append(", f.desconto as desconto ");
+		hql.append(", f.juridica.razaoSocial as fornecedor ");
+		hql.append(", 'Geral' as descTipoDesconto ");
+		hql.append("from Fornecedor f ");
+		
+		if(filtro.getIdFornecedores()!=null && !filtro.getIdFornecedores().isEmpty()) {
+			hql.append(" where f.id in (:idFornecedores) ");
+		}
+		
+		hql.append(getOrdenacao(filtro));
+		
+		Query query  = getSession().createQuery(hql.toString());
+		
+		//ResultTransformer resultTransformer = new AliasToBeanResultTransformer(TipoDescontoDTO.class);
+
+		query.setResultTransformer(Transformers.aliasToBean(TipoDescontoDTO.class));
+		
+		if(filtro.getIdFornecedores()!=null && !filtro.getIdFornecedores().isEmpty()) {
+			query.setParameterList("idFornecedores", filtro.getIdFornecedores());
+		}
+		
+		if(filtro.getPaginacao()!= null && filtro.getPaginacao().getPosicaoInicial() != null) 
+			query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
+		
+		if(filtro.getPaginacao()!= null && filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
+			query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
+		
+		return query.list();
+		
+		//hql.append(" group by desconto.id ");
+		
+		/*hql.append(" select desconto.id as sequencial, ")
 			.append(" desconto.id as idTipoDesconto ,")
 			.append(" desconto.usuario.nome as usuario ,")
 			.append(" desconto.desconto as desconto ,")
@@ -55,27 +89,10 @@ public class DescontoDistribuidorRepositoryImpl extends AbstractRepositoryModel<
 			hql.append(" where fornecedor.id in (:idFornecedores) ");
 		}
 		
-		hql.append(" group by desconto.id ");
+		hql.append(" group by desconto.id ");*/
 		
-		hql.append(getOrdenacao(filtro));
+		//hql.append(getOrdenacao(filtro));
 		
-		Query query  = getSession().createQuery(hql.toString());
-
-		ResultTransformer resultTransformer = new AliasToBeanResultTransformer(TipoDescontoDTO.class);
-
-		query.setResultTransformer(resultTransformer);
-		
-		if(filtro.getIdFornecedores()!=null && !filtro.getIdFornecedores().isEmpty()) {
-			query.setParameterList("idFornecedores", filtro.getIdFornecedores());
-		}
-		
-		if(filtro.getPaginacao()!= null && filtro.getPaginacao().getPosicaoInicial() != null) 
-			query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
-		
-		if(filtro.getPaginacao()!= null && filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
-			query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
-		
-		return query.list();
 	}
 	
 	@Override
@@ -83,11 +100,11 @@ public class DescontoDistribuidorRepositoryImpl extends AbstractRepositoryModel<
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" select count(desconto.id) from DescontoDistribuidor desconto ");
+		hql.append(" select count(f) from Fornecedor f ");
 		
 		Query query  = getSession().createQuery(hql.toString());
 		
-		return ((Long)  query.uniqueResult()).intValue();
+		return ((Long) query.uniqueResult()).intValue();
 	}
 	
 	private String getOrdenacao(FiltroTipoDescontoDTO filtro){

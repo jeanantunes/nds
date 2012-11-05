@@ -141,7 +141,6 @@ public class Produto implements Serializable {
 	@Column(name="SUB_GRUPO_EDITORIAL", length=25, nullable = true)
 	private String subGrupoEditorial;
 	
-	
 	protected String fase;
 	
 	protected Long numeroLancamento;
@@ -149,6 +148,7 @@ public class Produto implements Serializable {
 	@Embedded
 	private SegmentacaoProduto segmentacao;
 	
+	@Column(name = "DESCONTO", precision=5, scale=2)
 	private BigDecimal desconto;
 	
 	public Long getId() {

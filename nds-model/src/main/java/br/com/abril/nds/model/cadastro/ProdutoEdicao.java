@@ -168,6 +168,9 @@ public class ProdutoEdicao implements Serializable {
 	@OneToMany(mappedBy = "produtoEdicao")
 	protected Set<HistoricoFechamentoDiarioLancamentoReparte> historicoMovimentoRepartes;
 	
+	@Column(name = "DESCONTO", precision=5, scale=2)
+	private BigDecimal desconto;
+	
 	public Long getId() {
 		return id;
 	}
@@ -533,7 +536,13 @@ public class ProdutoEdicao implements Serializable {
 			Set<HistoricoFechamentoDiarioLancamentoReparte> historicoMovimentoRepartes) {
 		this.historicoMovimentoRepartes = historicoMovimentoRepartes;
 	}
-	
-	
+
+	public BigDecimal getDesconto() {
+		return desconto;
+	}
+
+	public void setDesconto(BigDecimal desconto) {
+		this.desconto = desconto;
+	}
 	
 }

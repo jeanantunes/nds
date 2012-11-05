@@ -35,7 +35,28 @@ public class DescontoCotaRepositoryImpl extends AbstractRepositoryModel<Desconto
 	private StringBuilder queryDescontoCota(){
 		
         StringBuilder hql = new StringBuilder();
-		
+        
+        hql.append(" select 1L as idTipoDesconto ");
+		hql.append(", c.numeroCota as numeroCota ");
+		hql.append(", dpe.desconto as desconto ");
+		hql.append(", case when pessoa.nomeFantasia = null then pessoa.nome else pessoa.nomeFantasia end as nomeCota ");
+		hql.append(", juridica.nomeFantasia as fornecedor ");
+	    hql.append(", 'Específico' as descTipoDesconto ");
+        hql.append("from DescontoProdutoEdicaoExcessao dpe ");
+        hql.append("join dpe.cota c ");
+        hql.append("join c.pessoa as pessoa ");
+        hql.append("join dpe.fornecedor as fornecedor ");
+        hql.append("join fornecedor.juridica as juridica ");
+        
+        /*hql.append(", (case ");
+		hql.append("     when (select count(fornecedor.id) from DescontoProdutoEdicaoExcessao excessoes ");
+		hql.append("     where excessoes.cota.id = c.id ) > 1 ");
+		hql.append("     then 'Diversos' ");
+		hql.append("     when (select count(fornecedor.id) from DescontoProdutoEdicaoExcessao excessoes ");
+		hql.append("     where excessoes.cota.id = c.id ) = 1 then fornecedor.juridica.razaoSocial ");
+	    hql.append("     else '' end) as fornecedor ");*/
+        
+		/*
 		hql.append(" select dc.id as idTipoDesconto, ");
 		hql.append(" cota.numeroCota as numeroCota, ");
 		hql.append(" case when pessoa.nomeFantasia = null then pessoa.nome else pessoa.nomeFantasia end as nomeCota, ");
@@ -58,7 +79,7 @@ public class DescontoCotaRepositoryImpl extends AbstractRepositoryModel<Desconto
 		hql.append(" join cota.pessoa pessoa ");
 		hql.append(" join dc.usuario usuario ");
 		hql.append(" left join dc.fornecedores fornecedor ");
-        
+        */
         return hql;
 	}
 	
@@ -131,11 +152,11 @@ public class DescontoCotaRepositoryImpl extends AbstractRepositoryModel<Desconto
 		if(filtro.getNumeroCota() != null) {
 			
 			hql.append(param.isEmpty()?" where ":" and ");
-			hql.append(" cota.numeroCota = :numeroCota ");
+			hql.append(" c.numeroCota = :numeroCota ");
 			param.put("numeroCota", filtro.getNumeroCota());
 		}
 		
-		hql.append(" group by dc.id ");
+		//hql.append(" group by c.id, fornecedor.id, dpe.desconto ");
  
 		hql = ordenacaoDescontoCota(filtro,hql);
 		
@@ -168,22 +189,25 @@ public class DescontoCotaRepositoryImpl extends AbstractRepositoryModel<Desconto
  
         StringBuilder hql = new StringBuilder();
 		
-		hql.append(" select dc.id,cota.numeroCota ");
+        hql.append(" select c ");
+        hql.append("from Cota c join c.fornecedores fornecedor");
+        
+		/*hql.append(" select dc.id,cota.numeroCota ");
 		hql.append(" from DescontoCota dc "); 
 		hql.append(" join dc.cota cota ");	
 		hql.append(" join cota.pessoa pessoa ");
 		hql.append(" join dc.usuario usuario ");
-		hql.append(" left join dc.fornecedores fornecedor ");
+		hql.append(" left join dc.fornecedores fornecedor ");*/
 
         HashMap<String, Object> param = new HashMap<String, Object>();
 		if(filtro.getNumeroCota() != null) {
 			
 			hql.append(param.isEmpty()?" where ":" and ");
-			hql.append(" cota.numeroCota = :numeroCota ");
+			hql.append(" c.numeroCota = :numeroCota ");
 			param.put("numeroCota", filtro.getNumeroCota());
 		}
 		
-		hql.append(" group by dc.id ");
+		hql.append(" group by c.id ");
 		
 		Query query =  getSession().createQuery(hql.toString());
 		
