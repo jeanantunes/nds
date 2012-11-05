@@ -1,7 +1,6 @@
 package br.com.abril.nds.controllers.cadastro;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -11,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.BancoVO;
@@ -31,7 +31,6 @@ import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
-import br.com.caelum.vraptor.validator.Message;
 import br.com.caelum.vraptor.view.Results;
 
 /**
@@ -54,7 +53,7 @@ public class BancoController {
     
     private static final String FILTRO_PESQUISA_SESSION_ATTRIBUTE = "filtroPesquisaConsultaBancos";
     
-    
+    private static final String APELIDO_ANTIGO_SESSION_ATTRIBUTE = "apelidoAntigo";
     
     /**
 	 * Construtor da classe
@@ -201,6 +200,10 @@ public class BancoController {
 						  BigDecimal vrMulta,
 						  String instrucoes){
 		
+		if (bancoService.obterBancoPorApelido(apelido) != null) {
+			throw new ValidacaoException(TipoMensagem.ERROR, "Já existe um banco com este apelido.");
+		}
+		
 		validarCadastroBanco(
 				true, 
 				numero,
@@ -233,7 +236,11 @@ public class BancoController {
         banco.setVrMulta(vrMulta);
         banco.setInstrucoes(instrucoes);
 	
-        this.bancoService.incluirBanco(banco);
+		try {
+	        this.bancoService.incluirBanco(banco);
+		} catch(DataIntegrityViolationException e) {
+			throw new ValidacaoException(TipoMensagem.ERROR, "Já existe outro registro com este Número de Banco, Agência, Dígito da Agência, Conta e Dígito da Conta.");
+		}
         
         result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Banco "+nome+" cadastrado com sucesso."),"result").recursive().serialize();
 	}
@@ -252,6 +259,7 @@ public class BancoController {
 		if (bancoVO==null){
 			throw new ValidacaoException(TipoMensagem.WARNING, "Banco "+idBanco+" não encontrado.");
 		}
+		this.httpSession.setAttribute(APELIDO_ANTIGO_SESSION_ATTRIBUTE, bancoVO.getApelido());
 		result.use(Results.json()).from(bancoVO,"result").recursive().serialize();
 	}
 	
@@ -293,7 +301,10 @@ public class BancoController {
 						  	BigDecimal vrMulta,
 						  	String instrucoes){
 		
-			
+		if (!this.httpSession.getAttribute(APELIDO_ANTIGO_SESSION_ATTRIBUTE).equals(apelido) && bancoService.obterBancoPorApelido(apelido) != null) {
+			throw new ValidacaoException(TipoMensagem.ERROR, "Já existe um banco com este apelido.");
+		}
+		
 		validarCadastroBanco(
 				false, 
 				numero, 
@@ -332,7 +343,11 @@ public class BancoController {
 		banco.setVrMulta(vrMulta);
 		banco.setInstrucoes(instrucoes);
 
-		this.bancoService.alterarBanco(banco);
+		try {
+			this.bancoService.alterarBanco(banco);
+		} catch(DataIntegrityViolationException e) {
+			throw new ValidacaoException(TipoMensagem.ERROR, "Já existe outro registro com este Número de Banco, Agência, Dígito da Agência, Conta e Dígito da Conta.");
+		}
 		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Banco "+nome+" alterado com sucesso."),"result").recursive().serialize();
     }
@@ -371,7 +386,7 @@ public class BancoController {
 		
 		List<String> errorMsgs = new LinkedList<String>();
 		
-		if (indNovoRegistro){
+		/*if (indNovoRegistro){
 			
 			Banco banco = this.bancoService.obterbancoPorNumero(numero);
 			
@@ -385,7 +400,7 @@ public class BancoController {
 				throw new ValidacaoException(TipoMensagem.WARNING, "Banco "+nome+" já cadastrado.");
 			}
 			
-		}
+		}*/
 		
 		if ((numero==null)||("".equals(numero))){
 			errorMsgs.add("Preencha o número do banco.");

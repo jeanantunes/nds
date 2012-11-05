@@ -9,9 +9,11 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 @Entity
-@Table(name = "BANCO")
+@Table(name = "BANCO",
+	uniqueConstraints = { @UniqueConstraint(columnNames = {"NUMERO_BANCO", "AGENCIA", "DV_AGENCIA", "CONTA", "DV_CONTA" }) } )
 @SequenceGenerator(name="BANCO_SEQ", initialValue = 1, allocationSize = 1)
 public class Banco implements Serializable {
 	

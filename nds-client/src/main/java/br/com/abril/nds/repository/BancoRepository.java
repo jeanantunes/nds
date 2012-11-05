@@ -52,7 +52,15 @@ public interface BancoRepository extends Repository<Banco,Long>{
      * @return {@link br.com.abril.nds.model.cadastro.Banco} 
      */
 	Banco obterbancoPorNome(String nome);
+
 	
+    /**
+     * Obtém Banco por nome
+     * @param nome
+     * @return {@link br.com.abril.nds.model.cadastro.Banco} 
+     */
+	Banco obterbancoPorApelido(String apelido);
+
 	/**
 	 * Desativa o Banco
 	 * @param idBanco

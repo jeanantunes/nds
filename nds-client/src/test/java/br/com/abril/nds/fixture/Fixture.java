@@ -168,6 +168,7 @@ import br.com.abril.nds.model.financeiro.Divida;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.financeiro.HistoricoAcumuloDivida;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
+import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
 import br.com.abril.nds.model.financeiro.StatusBaixa;
 import br.com.abril.nds.model.financeiro.StatusDivida;
 import br.com.abril.nds.model.financeiro.StatusInadimplencia;
@@ -849,27 +850,7 @@ public class Fixture {
 		return usuario;
 	}
 
-	public static CFOP cfop5102() {
-		CFOP cfop = new CFOP();
-		cfop.setCodigo("5102");
-		cfop.setDescricao("Venda de mercadoria adquirida ou recebida de terceiros");
-		return cfop;
-	}
-
-	public static CFOP cfop1209() {
-		CFOP cfop = new CFOP();
-		cfop.setCodigo("1209");
-		cfop.setDescricao("Devolução de mercadoria adquirida ou recebida de terceiros, remetida em transferência dentro do estado");
-		return cfop;
-	}
-
-	public static CFOP cfop1210() {
-		CFOP cfop = new CFOP();
-		cfop.setCodigo("1210");
-		cfop.setDescricao("Devolução de mercadoria adquirida ou recebida de terceiros, remetida em transferência fora do estado");
-		return cfop;
-	}
-
+	
 	
 	public static TipoMovimentoEstoque tipoMovimentoFaltaEm() {
 		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
@@ -1247,6 +1228,15 @@ public class Fixture {
 		return tipoMovimento;
 	}	
 	
+	public static TipoMovimentoFinanceiro tipoMovimentoFinanceiroDebitoPostergadoNegociado() {
+		TipoMovimentoFinanceiro tipoMovimento = new TipoMovimentoFinanceiro();
+		tipoMovimento.setGrupoMovimentoFinaceiro(GrupoMovimentoFinaceiro.POSTERGADO_NEGOCIACAO);
+		tipoMovimento.setOperacaoFinaceira(OperacaoFinaceira.DEBITO);
+		tipoMovimento.setDescricao("NEGOCIAÇÃO DIVIDA");
+		return tipoMovimento;
+	}	
+
+	
 	public static TipoMovimentoFinanceiro tipoMovimentoFinanceiroDebitoPendente() {
 		TipoMovimentoFinanceiro tipoMovimento = new TipoMovimentoFinanceiro();
 		tipoMovimento.setAprovacaoAutomatica(true);
@@ -1405,21 +1395,35 @@ public class Fixture {
 		
 	}
 
-	
-	public static TipoNotaFiscal tipoNotaFiscalRecebimento() {
+	public static TipoNotaFiscal tipoNotaFiscal(
+			boolean contribuinte
+			, String descricao
+			, TipoUsuarioNotaFiscal destinatario
+			, TipoUsuarioNotaFiscal emitente
+			, GrupoNotaFiscal grupoNotaFiscal
+			, Long nopCodigo
+			, String nopDescricao
+			, Integer serieNotaFiscal
+			, TipoAtividade tipoAtividade
+			, TipoOperacao tipoOperacao
+			, CFOP cfopEstado
+			, CFOP cfopOutrosEstados) {
 		
 		TipoNotaFiscal tipoNotaFiscal = new TipoNotaFiscal();
 		
-		tipoNotaFiscal.setDescricao("RECEBIMENTO");
-		tipoNotaFiscal.setGrupoNotaFiscal(GrupoNotaFiscal.RECEBIMENTO_MERCADORIAS);
-		tipoNotaFiscal.setNopDescricao("NF-e de Devolução de Remessa para Distruibuição");
-		tipoNotaFiscal.setEmitente(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
-		tipoNotaFiscal.setDestinatario(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
-		tipoNotaFiscal.setContribuinte(false);
-		tipoNotaFiscal.setNopCodigo(0L);
-		tipoNotaFiscal.setTipoOperacao(TipoOperacao.ENTRADA);		
-		tipoNotaFiscal.setTipoAtividade(TipoAtividade.MERCANTIL);
-		tipoNotaFiscal.setSerieNotaFiscal(2);
+		tipoNotaFiscal.setContribuinte(contribuinte);
+		tipoNotaFiscal.setDescricao(descricao);
+		tipoNotaFiscal.setDestinatario(destinatario);
+		tipoNotaFiscal.setEmitente(emitente);
+		tipoNotaFiscal.setGrupoNotaFiscal(grupoNotaFiscal);
+		tipoNotaFiscal.setNopCodigo(nopCodigo);
+		tipoNotaFiscal.setNopDescricao(nopDescricao);
+		tipoNotaFiscal.setSerieNotaFiscal(serieNotaFiscal);
+		tipoNotaFiscal.setTipoAtividade(tipoAtividade);
+		tipoNotaFiscal.setTipoOperacao(tipoOperacao);	
+		tipoNotaFiscal.setCfopEstado(cfopEstado);
+		tipoNotaFiscal.setCfopOutrosEstados(cfopOutrosEstados);
+		
 		return tipoNotaFiscal;
 	}
 
@@ -1451,24 +1455,6 @@ public class Fixture {
 		
 		return controleNumeracaoNotaFiscal;
 		
-	}
-
-	public static TipoNotaFiscal tipoNotaFiscalDevolucao() {
-		
-		TipoNotaFiscal tipoNotaFiscal = new TipoNotaFiscal();
-		
-		tipoNotaFiscal.setDescricao("DEVOLUCAO");
-		tipoNotaFiscal.setGrupoNotaFiscal(GrupoNotaFiscal.DEVOLUCAO_MERCADORIA_FORNECEDOR);
-		tipoNotaFiscal.setNopDescricao("NF-e de Remessa em Consignação (NECE / DANFE)");
-		tipoNotaFiscal.setEmitente(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
-		tipoNotaFiscal.setDestinatario(TipoUsuarioNotaFiscal.COTA);
-		tipoNotaFiscal.setContribuinte(true);
-		tipoNotaFiscal.setNopCodigo(0L);
-		tipoNotaFiscal.setTipoOperacao(TipoOperacao.SAIDA);
-		tipoNotaFiscal.setTipoAtividade(TipoAtividade.MERCANTIL);
-		tipoNotaFiscal.setSerieNotaFiscal(3);
-		tipoNotaFiscal.setProcesso(new HashSet<Processo>());
-		return tipoNotaFiscal;
 	}
 
 	public static TipoNotaFiscal tipoNotaFiscalRecebimentoMercadoriasEncalhe() {
@@ -3081,7 +3067,8 @@ public class Fixture {
 	public static PeriodoLancamentoParcial criarPeriodoLancamentoParcial(Lancamento lancamento, 
 																		 LancamentoParcial lancamentoParcial,
 																		 StatusLancamentoParcial status,
-																		 TipoLancamentoParcial tipo) {
+																		 TipoLancamentoParcial tipo,
+																		 Integer numeroPeriodo) {
 		
 		PeriodoLancamentoParcial parcial = new PeriodoLancamentoParcial();
 		
@@ -3092,6 +3079,8 @@ public class Fixture {
 		parcial.setStatus(status);
 		
 		parcial.setTipo(tipo);
+		
+		parcial.setNumeroPeriodo(numeroPeriodo);
 		
 		return parcial;
 	}
@@ -4225,5 +4214,30 @@ public class Fixture {
 	   
 	   return historico;
    }
+
+public static CFOP cfop5102() {
+	// TODO Auto-generated method stub
+	return null;
+}
+
+public static TipoNotaFiscal tipoNotaFiscalRecebimento() {
+	// TODO Auto-generated method stub
+	return null;
+}
+
+public static CFOP cfop1209() {
+	// TODO Auto-generated method stub
+	return null;
+}
+
+public static CFOP cfop1210() {
+	// TODO Auto-generated method stub
+	return null;
+}
+
+public static TipoNotaFiscal tipoNotaFiscalDevolucao() {
+	// TODO Auto-generated method stub
+	return null;
+}
    
 }
