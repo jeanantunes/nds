@@ -67,6 +67,10 @@ public class ChamadaEncalheFornecedor implements Serializable {
 
     @Column(name = "NUMERO_SEMANA", nullable = false)
     private Integer numeroSemana;
+    
+    @Temporal(TemporalType.DATE)
+    @Column(name = "DATA_VENCIMENTO", nullable = false)
+    private Date dataVencimento;
 
     @Column(name = "CONTROLE")
     private Long controle;
@@ -104,7 +108,7 @@ public class ChamadaEncalheFornecedor implements Serializable {
 
     @OneToMany(mappedBy = "chamadaEncalheFornecedor")
     @Cascade(value = CascadeType.ALL)
-    private List<ItemChamadaEncalheFornecedor> itens = new ArrayList<>();
+    private List<ItemChamadaEncalheFornecedor> itens = new ArrayList<ItemChamadaEncalheFornecedor>();
 
     /**
      * @return the id
@@ -230,6 +234,20 @@ public class ChamadaEncalheFornecedor implements Serializable {
      */
     public void setNumeroSemana(Integer numeroSemana) {
         this.numeroSemana = numeroSemana;
+    }
+    
+    /**
+     * @return the dataVencimento
+     */
+    public Date getDataVencimento() {
+        return dataVencimento;
+    }
+
+    /**
+     * @param dataVencimento the dataVencimento to set
+     */
+    public void setDataVencimento(Date dataVencimento) {
+        this.dataVencimento = dataVencimento;
     }
 
     /**

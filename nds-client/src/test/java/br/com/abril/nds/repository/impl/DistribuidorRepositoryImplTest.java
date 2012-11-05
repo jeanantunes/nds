@@ -17,7 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.cadastro.Banco;
-import br.com.abril.nds.model.cadastro.DistribuicaoDistribuidor;
 import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
@@ -46,9 +45,6 @@ public class DistribuidorRepositoryImplTest extends AbstractRepositoryImplTest {
 	private DistribuicaoFornecedor fcSegunda;
 	private DistribuicaoFornecedor fcSexta;
 	private TipoFornecedor tipoFornecedorPublicacao;
-	
-	private DistribuicaoDistribuidor distribuicaoDistribuidorSegunda;
-	private DistribuicaoDistribuidor distribuicaoDistribuidorTerca;
 	
 	@Before
 	public void setUp() {
@@ -112,22 +108,9 @@ public class DistribuidorRepositoryImplTest extends AbstractRepositoryImplTest {
 				OperacaoDistribuidor.RECOLHIMENTO, distribuidor);
 		save(fcSegunda, fcSexta);
 		
-		distribuicaoDistribuidorSegunda =
-			Fixture.distribuicaoDistribuidor(distribuidor, DiaSemana.SEGUNDA_FEIRA,
-											 OperacaoDistribuidor.RECOLHIMENTO);
-		
-		distribuicaoDistribuidorTerca =
-				Fixture.distribuicaoDistribuidor(distribuidor, DiaSemana.TERCA_FEIRA,
-												 OperacaoDistribuidor.RECOLHIMENTO);
-		
-		save(distribuicaoDistribuidorSegunda, distribuicaoDistribuidorTerca);		
-		
 		for(TipoGarantia tipo:TipoGarantia.values()){
 			save(Fixture.criarTipoGarantiaAceita(distribuidor, tipo));
 		}
-		
-		
-		
 	}
 	
 	@Test
@@ -149,20 +132,7 @@ public class DistribuidorRepositoryImplTest extends AbstractRepositoryImplTest {
 		Assert.assertTrue(resultado.contains(dinapQuarta));
 		Assert.assertTrue(resultado.contains(fcSegunda));
 		
-	}
-	
-	@Test
-	public void buscarDiasDistribuicaoDistribuidor() {
-		
-		List<DistribuicaoDistribuidor> resultado =
-			distribuidorRepository.buscarDiasDistribuicaoDistribuidor(
-				distribuidor.getId(), OperacaoDistribuidor.RECOLHIMENTO);
-		
-		Assert.assertEquals(2, resultado.size());
-		Assert.assertTrue(resultado.contains(distribuicaoDistribuidorSegunda));
-		Assert.assertTrue(resultado.contains(distribuicaoDistribuidorTerca));
-	}
-	
+	}	
 	
 	@Test
 	public void obtemTiposGarantiasAceitas(){

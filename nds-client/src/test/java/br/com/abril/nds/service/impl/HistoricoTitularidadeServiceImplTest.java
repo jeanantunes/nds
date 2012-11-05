@@ -1061,7 +1061,7 @@ public class HistoricoTitularidadeServiceImplTest extends AbstractRepositoryImpl
 	    garantiaCaucaoLiquida.setFormaPagamento(pagamento);
 	    
 		CaucaoLiquida caucaoLiquida = new CaucaoLiquida();
-		caucaoLiquida.setAtualizacao(Calendar.getInstance());
+		caucaoLiquida.setAtualizacao(Calendar.getInstance().getTime());
 		caucaoLiquida.setValor(new BigDecimal(415));
 		List<CaucaoLiquida> caucoesLiquidas = new ArrayList<CaucaoLiquida>();
 		caucoesLiquidas.add(caucaoLiquida);

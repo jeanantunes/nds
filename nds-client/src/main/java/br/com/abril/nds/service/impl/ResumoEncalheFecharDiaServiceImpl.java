@@ -2,13 +2,17 @@ package br.com.abril.nds.service.impl;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.dto.ReparteFecharDiaDTO;
+import br.com.abril.nds.dto.ResumoEncalheFecharDiaDTO;
 import br.com.abril.nds.repository.ResumoEncalheFecharDiaRepository;
 import br.com.abril.nds.service.ResumoEncalheFecharDiaService;
+import br.com.abril.nds.service.ResumoReparteFecharDiaService;
 
 
 @Service
@@ -16,6 +20,9 @@ public class ResumoEncalheFecharDiaServiceImpl implements ResumoEncalheFecharDia
 	
 	@Autowired
 	private ResumoEncalheFecharDiaRepository resumoEncalheFecharDiaRepository;
+	
+	@Autowired
+	private ResumoReparteFecharDiaService resumoFecharDiaService;
 
 	@Override
 	@Transactional
@@ -27,6 +34,28 @@ public class ResumoEncalheFecharDiaServiceImpl implements ResumoEncalheFecharDia
 	@Transactional
 	public BigDecimal obterValorEncalheLogico(Date dataOperacao) {		 
 		return this.resumoEncalheFecharDiaRepository.obterValorEncalheLogico(dataOperacao);
+	}
+
+	@Override
+	@Transactional
+	public ResumoEncalheFecharDiaDTO obterResumoGeralEncalhe(Date dataOperacao) {
+
+		ResumoEncalheFecharDiaDTO dto = new ResumoEncalheFecharDiaDTO();
+		
+		BigDecimal totalLogico = this.obterValorEncalheLogico(dataOperacao);
+		dto.setTotalLogico(totalLogico);
+		
+		BigDecimal totalFisico = this.obterValorEncalheFisico(dataOperacao, false);
+		dto.setTotalFisico(totalFisico);		
+		
+		BigDecimal totalJuramentado = this.obterValorEncalheFisico(dataOperacao, true);
+		dto.setTotalJuramentado(totalJuramentado);
+		
+		List<ReparteFecharDiaDTO> lista = this.resumoFecharDiaService.obterValorReparte(dataOperacao, true);
+		BigDecimal venda = lista.get(0).getValorTotalReparte().subtract(totalFisico);
+		dto.setVenda(venda);		
+		 
+		return dto;
 	}
 
 }

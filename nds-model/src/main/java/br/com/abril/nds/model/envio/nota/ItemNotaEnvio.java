@@ -70,10 +70,6 @@ public class ItemNotaEnvio implements Serializable {
 	})
 	private List<MovimentoEstoqueCota> listaMovimentoEstoqueCota;
 
-
-	
-
-
 	/**
 	 * @return the produtoEdicao
 	 */
@@ -202,7 +198,6 @@ public class ItemNotaEnvio implements Serializable {
 		this.listaMovimentoEstoqueCota = listaMovimentoEstoqueCota;
 	}
 
-
 	/**
 	 * @return the itemNotaEnvioPK
 	 */
@@ -210,12 +205,15 @@ public class ItemNotaEnvio implements Serializable {
 		return itemNotaEnvioPK;
 	}
 
-
 	/**
 	 * @param itemNotaEnvioPK the itemNotaEnvioPK to set
 	 */
 	public void setItemNotaEnvioPK(ItemNotaEnvioPK itemNotaEnvioPK) {
 		this.itemNotaEnvioPK = itemNotaEnvioPK;
+	}
+
+	public Integer getSequencia() {
+		return this.itemNotaEnvioPK.getSequencia();
 	}
 
 }

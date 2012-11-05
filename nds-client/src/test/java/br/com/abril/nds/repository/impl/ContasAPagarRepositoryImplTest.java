@@ -2,6 +2,7 @@ package br.com.abril.nds.repository.impl;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import junit.framework.Assert;
@@ -9,7 +10,11 @@ import junit.framework.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.dto.ContasAPagarConsignadoDTO;
+import br.com.abril.nds.dto.ContasAPagarEncalheDTO;
+import br.com.abril.nds.dto.ContasAPagarFaltasSobrasDTO;
 import br.com.abril.nds.dto.ContasAPagarGridPrincipalProdutoDTO;
+import br.com.abril.nds.dto.ContasAPagarParcialDTO;
 import br.com.abril.nds.dto.ContasApagarConsultaPorDistribuidorDTO;
 import br.com.abril.nds.dto.ContasApagarConsultaPorProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroContasAPagarDTO;
@@ -59,10 +64,10 @@ public class ContasAPagarRepositoryImplTest extends AbstractRepositoryImplTest {
 		
 		FiltroContasAPagarDTO filtro = new FiltroContasAPagarDTO();
 		filtro.setCe(1);
-		filtro.setDataDe(cal.getTime());
+		//filtro.setDataDe(cal.getTime());
 		cal.clear();
 		cal.set(2099, 1, 1);
-		filtro.setDataAte(cal.getTime());
+		//filtro.setDataAte(cal.getTime());
 		filtro.setEdicao(1L);
 		filtro.setProdutoEdicaoIDs(produtoEdicaoIDs);
 		
@@ -124,5 +129,69 @@ public class ContasAPagarRepositoryImplTest extends AbstractRepositoryImplTest {
 		List<ContasApagarConsultaPorProdutoDTO> lista = this.contasAPagarRepository.pesquisarPorProduto(filtroContasAPagarDTO);
 		
 		Assert.assertNotNull(lista);
+	}
+	
+	@Test
+	public void testPesquisarDetalheConsignado(){
+		
+		FiltroContasAPagarDTO filtro = this.getFiltroPesquisaPorDistribuidor();
+		filtro.setDataDetalhe(new Date());
+		filtro.setEdicao(null);
+		
+		List<ContasAPagarConsignadoDTO> lista = 
+				this.contasAPagarRepository.pesquisarDetalheConsignado(filtro);
+		
+		Assert.assertNotNull(lista);
+	}
+	
+	@Test
+	public void testPesquisarDetalheEncalhe(){
+		
+		FiltroContasAPagarDTO filtro = this.getFiltroPesquisaPorDistribuidor();
+		filtro.setDataDetalhe(new Date());
+		filtro.setEdicao(null);
+		
+		List<ContasAPagarEncalheDTO> lista = 
+				this.contasAPagarRepository.pesquisarDetalheEncalhe(filtro);
+		
+		Assert.assertNotNull(lista);
+	}
+	
+	@Test
+	public void testPesquisarDetalheFaltasSobras(){
+		
+		FiltroContasAPagarDTO filtro = this.getFiltroPesquisaPorDistribuidor();
+		filtro.setDataDetalhe(new Date());
+		filtro.setEdicao(null);
+		
+		List<ContasAPagarFaltasSobrasDTO> lista = 
+				this.contasAPagarRepository.pesquisarDetalheFaltasSobras(filtro);
+		
+		Assert.assertNotNull(lista);
+	}
+	
+	@Test
+	public void testPesquisarParcial(){
+		
+		FiltroContasAPagarDTO filtro = this.getFiltroPesquisaPorDistribuidor();
+		filtro.setDataDetalhe(new Date());
+		filtro.setEdicao(null);
+		filtro.setProduto("544");
+		
+		List<ContasAPagarParcialDTO> lista = 
+				this.contasAPagarRepository.pesquisarParcial(filtro);
+		
+		Assert.assertNotNull(lista);
+	}
+	
+	@Test
+	public void testCountPesquisarParcial(){
+		
+		FiltroContasAPagarDTO filtro = this.getFiltroPesquisaPorDistribuidor();
+		filtro.setDataDetalhe(new Date());
+		filtro.setEdicao(null);
+		filtro.setProduto("544");
+		
+		this.contasAPagarRepository.countPesquisarParcial(filtro);
 	}
 }

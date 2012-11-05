@@ -10,12 +10,17 @@ import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.ValidacaoConfirmacaoDeExpedicaoFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoControleDeAprovacaoFecharDiaDTO;
+import br.com.abril.nds.dto.ValidacaoGeracaoCobrancaFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoLancamentoFaltaESobraFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoRecebimentoFisicoFecharDiaDTO;
 import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
+import br.com.abril.nds.model.cadastro.FormaCobranca;
+import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
+import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.fiscal.StatusNotaFiscalEntrada;
+import br.com.abril.nds.model.movimentacao.Movimento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.repository.FecharDiaRepository;
 
@@ -44,7 +49,8 @@ public class FecharDiaRepositoryImpl extends AbstractRepository implements Fecha
 		StringBuilder hql = new StringBuilder();
 
 		hql.append(" SELECT notaFiscal from NotaFiscalEntradaFornecedor notaFiscal ");		
-		hql.append("WHERE notaFiscal.statusNotaFiscal != :statusNF AND notaFiscal.dataEmissao = :dataOperacao ");
+		hql.append("WHERE notaFiscal.statusNotaFiscal != :statusNF  ");
+		hql.append("AND notaFiscal.dataEmissao = :dataOperacao  ");
 		
 		Query query = super.getSession().createQuery(hql.toString());
 		
@@ -60,7 +66,8 @@ public class FecharDiaRepositoryImpl extends AbstractRepository implements Fecha
 		StringBuilder hql = new StringBuilder();
 
 		hql.append(" select numero as numeroNotaFiscal from NotaFiscalEntradaFornecedor notaFiscal ");		
-		hql.append("WHERE notaFiscal.statusNotaFiscal != :statusNF AND notaFiscal.dataEmissao = :dataOperacao ");
+		hql.append("WHERE notaFiscal.statusNotaFiscal != :statusNF ");
+		hql.append("AND notaFiscal.dataEmissao = :dataOperacao ");
 		
 		Query query = super.getSession().createQuery(hql.toString());
 		
@@ -101,7 +108,7 @@ public class FecharDiaRepositoryImpl extends AbstractRepository implements Fecha
 		StringBuilder jpql = new StringBuilder();
 		
 		jpql.append(" SELECT produto.codigo AS codigo,");
-		jpql.append(" produto.nome AS nomeProduto,");
+		jpql.append(" produto.nomeComercial AS nomeProduto,");
 		jpql.append(" pe.numeroEdicao AS edicao ");
 		
 		jpql.append("FROM Lancamento AS lancamento ");
@@ -131,7 +138,7 @@ public class FecharDiaRepositoryImpl extends AbstractRepository implements Fecha
 		StringBuilder jpql = new StringBuilder();
 
 		jpql.append("SELECT produto.codigo AS codigo,");
-		jpql.append(" produto.nome AS nomeProduto,");
+		jpql.append(" produto.nomeComercial AS nomeProduto,");
 		jpql.append(" pe.numeroEdicao AS edicao, ");
 		jpql.append(" diferenca.tipoDiferenca AS inconsistencia ");
 		
@@ -173,4 +180,98 @@ public class FecharDiaRepositoryImpl extends AbstractRepository implements Fecha
 		return query.list();
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ValidacaoGeracaoCobrancaFecharDiaDTO> obterFormasDeCobranca() {
+		StringBuilder jpql = new StringBuilder();
+		
+		jpql.append(" SELECT fc.tipoFormaCobranca as tipoFormaCobranca, ");
+		jpql.append(" fc.id as formaCobrancaId ");
+		
+		jpql.append("FROM PoliticaCobranca pc ");
+		jpql.append("JOIN pc.formaCobranca as fc ");				
+				
+		Query query = getSession().createQuery(jpql.toString());
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(ValidacaoGeracaoCobrancaFecharDiaDTO.class));
+		
+		return query.list();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ValidacaoGeracaoCobrancaFecharDiaDTO> obterDiasDaConcentracao(FormaCobranca formaCobranca){
+			 
+			StringBuilder hql = new StringBuilder();
+			
+			hql.append("Select ccc.codigoDiaSemana as diaDoMes ");
+			
+			hql.append("FROM ConcentracaoCobrancaCota as ccc ");
+			hql.append("JOIN ccc.formaCobranca as fc ");
+			hql.append("WHERE fc.id = :idFormaCobranca");
+			
+			Query query = getSession().createQuery(hql.toString());
+			
+			query.setParameter("idFormaCobranca", formaCobranca.getId());
+			
+			query.setResultTransformer(new AliasToBeanResultTransformer(ValidacaoGeracaoCobrancaFecharDiaDTO.class));
+			
+			return query.list();		
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<Movimento> obterMovimentosPorStatusData(List<GrupoMovimentoEstoque> gruposMovimentoEstoque,
+														List<GrupoMovimentoFinaceiro> gruposMovimentoFinanceiro,
+														Date dataMovimento, StatusAprovacao statusAprovacao) {
+
+		StringBuilder hql = new StringBuilder();
+
+		hql.append(" SELECT movimento.tipoMovimento.descricao as descricaoTipoMovimento ");
+
+		hql.append(" FROM Movimento movimento ");
+		hql.append(" WHERE movimento.data = :dataMovimento ");
+		hql.append("  AND  movimento.status = :statusAprovacao ");
+		
+		String restricaoGrupos = "";		
+
+		if (gruposMovimentoEstoque != null) {
+		
+			restricaoGrupos = " movimento.tipoMovimento.grupoMovimentoEstoque IN :gruposMovimentoEstoque ";
+		}
+		
+		if (gruposMovimentoFinanceiro != null) {
+		
+			restricaoGrupos += restricaoGrupos.isEmpty() ? " " : " OR ";
+			
+			restricaoGrupos += " movimento.tipoMovimento.grupoMovimentoFinaceiro IN :gruposMovimentoFinanceiro "; 
+		}
+
+		if (!restricaoGrupos.isEmpty()) {
+
+			hql.append(" AND ( ");
+			hql.append(restricaoGrupos);
+			hql.append(" ) ");
+		}
+		
+		Query query = getSession().createQuery(hql.toString());
+
+		query.setParameter("dataMovimento", dataMovimento);
+		query.setParameter("statusAprovacao", statusAprovacao);
+		
+		if (gruposMovimentoEstoque != null) {
+		
+			query.setParameterList("gruposMovimentoEstoque", gruposMovimentoEstoque);
+		}
+		
+		if (gruposMovimentoFinanceiro != null) {
+		
+			query.setParameterList("gruposMovimentoFinanceiro", gruposMovimentoFinanceiro);
+		}
+
+		return query.list();
+	}
 }

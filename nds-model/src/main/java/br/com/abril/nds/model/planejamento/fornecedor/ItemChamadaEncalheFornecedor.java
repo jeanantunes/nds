@@ -91,6 +91,9 @@ public class ItemChamadaEncalheFornecedor implements Serializable {
 
     @Column(name = "NUMERO_NOTA_ENVIO", nullable = false)
     private Long numeroNotaEnvio;
+    
+    @Column(name = "CODIGO_NOTA_ENVIO_MULTIPLA")
+    private String codigoNotaEnvioMultipla;
 
     @Column(name = "TIPO_PRODUTO", nullable = false)
     private String tipoProduto;
@@ -358,6 +361,20 @@ public class ItemChamadaEncalheFornecedor implements Serializable {
      */
     public void setNumeroNotaEnvio(Long numeroNotaEnvio) {
         this.numeroNotaEnvio = numeroNotaEnvio;
+    }
+
+    /**
+     * @return the codigoNotaEnvioMultipla
+     */
+    public String getCodigoNotaEnvioMultipla() {
+        return codigoNotaEnvioMultipla;
+    }
+
+    /**
+     * @param codigoNotaEnvioMultipla the codigoNotaEnvioMultipla to set
+     */
+    public void setCodigoNotaEnvioMultipla(String codigoNotaEnvioMultipla) {
+        this.codigoNotaEnvioMultipla = codigoNotaEnvioMultipla;
     }
 
     /**

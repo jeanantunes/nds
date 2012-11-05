@@ -47,6 +47,7 @@ import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.OperacaoEstoque;
+import br.com.abril.nds.model.movimentacao.StatusOperacao;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCota;
@@ -1240,24 +1241,113 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 	}
 	
 	@Override
-	public Long obterQuantidadeCotas(SituacaoCadastro situacaoCadastro){
+	public Long obterQuantidadeCotas(SituacaoCadastro situacaoCadastro) {
 		
-		StringBuilder hql = new StringBuilder("select count (cota.id) ");
+		StringBuilder hql = new StringBuilder(" select count (cota.id) ");
+		
 		hql.append(" from Cota cota ");
 		
-		if (situacaoCadastro != null){
+		if (situacaoCadastro != null) {
 			
 			hql.append(" where cota.situacaoCadastro = :situacao ");
 		}
 		
 		Query query = this.getSession().createQuery(hql.toString());
 		
-		if (situacaoCadastro != null){
+		if (situacaoCadastro != null) {
 			
 			query.setParameter("situacao", situacaoCadastro);
 		}
 		
 		return (Long) query.uniqueResult();
+	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<Cota> obterCotas(SituacaoCadastro situacaoCadastro) {
+		
+		StringBuilder hql = new StringBuilder(" from Cota cota ");
+
+		if (situacaoCadastro != null) {
+			
+			hql.append(" where cota.situacaoCadastro = :situacao ");
+		}
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		if (situacaoCadastro != null) {
+			
+			query.setParameter("situacao", situacaoCadastro);
+		}
+		
+		return query.list();
+	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<Cota> obterCotasComInicioAtividadeEm(Date dataInicioAtividade) {
+		
+		StringBuilder hql = new StringBuilder(" from Cota cota ");
+
+		if (dataInicioAtividade != null) {
+			
+			hql.append(" where cota.inicioAtividade = :dataInicioAtividade ");
+		}
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		if (dataInicioAtividade != null) {
+			
+			query.setParameter("dataInicioAtividade", dataInicioAtividade);
+		}
+		
+		return query.list();
+	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<Cota> obterCotasAusentesNaExpedicaoDoReparteEm(Date dataExpedicaoReparte) {
+		
+		StringBuilder hql = new StringBuilder(" select cotaAusente.cota from CotaAusente cotaAusente ");
+		
+		hql.append(" where ativo = true");
+		
+		if (dataExpedicaoReparte != null) {
+			
+			hql.append(" and cotaAusente.data = :dataExpedicaoReparte ");
+		}
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		if (dataExpedicaoReparte != null) {
+			
+			query.setParameter("dataExpedicaoReparte", dataExpedicaoReparte);
+		}
+		
+		return query.list();
+	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<Cota> obterCotasAusentesNoRecolhimentoDeEncalheEm(Date dataRecolhimentoEncalhe) {
+		
+		StringBuilder hql = 
+			new StringBuilder(" select chamadaEncalheCota.cota from ChamadaEncalheCota chamadaEncalheCota ");
+		
+		hql.append(" where chamadaEncalheCota.cota.id not in ( ");
+		hql.append(" select cota.id from ControleConferenciaEncalheCota controleConferenciaEncalheCota ");
+		hql.append(" join controleConferenciaEncalheCota.cota cota ");
+		hql.append(" where controleConferenciaEncalheCota.dataOperacao >= :dataRecolhimentoEncalhe ");
+		hql.append(" and controleConferenciaEncalheCota.status = :statusControleConferenciaEncalhe) ");
+		hql.append(" and chamadaEncalheCota.chamadaEncalhe.dataRecolhimento >= :dataRecolhimentoEncalhe ");
+		hql.append(" group by chamadaEncalheCota.cota.id ");
+
+		Query query = this.getSession().createQuery(hql.toString());
+
+		query.setParameter("dataRecolhimentoEncalhe", dataRecolhimentoEncalhe);
+		query.setParameter("statusControleConferenciaEncalhe", StatusOperacao.CONCLUIDO);
+
+		return query.list();
 	}
 
 	/* (non-Javadoc)

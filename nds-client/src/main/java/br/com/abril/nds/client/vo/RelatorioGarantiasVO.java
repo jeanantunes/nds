@@ -2,7 +2,9 @@ package br.com.abril.nds.client.vo;
 
 import java.io.Serializable;
 
+import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.RelatorioGarantiasDTO;
+import br.com.abril.nds.model.cadastro.TipoGarantia;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Export.Alignment;
@@ -23,9 +25,9 @@ public class RelatorioGarantiasVO implements Serializable{
 	@Export(label="Valor Total R$",alignment=Alignment.RIGHT, exhibitionOrder = 3)
 	private String vlrTotal;
 	
-	@Export(label="Detalhe",alignment=Alignment.CENTER, exhibitionOrder = 4)
 	private String detalhe;
 	
+	private ItemDTO<TipoGarantia,String> tpGarantia = new ItemDTO<TipoGarantia,String>();
 	
 	public RelatorioGarantiasVO() {
 		super();
@@ -33,9 +35,12 @@ public class RelatorioGarantiasVO implements Serializable{
 	}
 	
 	public RelatorioGarantiasVO(RelatorioGarantiasDTO dto) {
-		this.tipoGarantia = dto.getTipoGarantia();
+		
+		this.tipoGarantia = dto.getTipoGarantia().getDescricao();
 		this.qtdCotas = dto.getQtdCotas().toString();
 		this.vlrTotal = CurrencyUtil.formatarValor(dto.getVlrTotal());
+		tpGarantia.setKey(dto.getTipoGarantia());
+		this.tpGarantia.setKey(dto.getTipoGarantia());
 		
 	}
 	
@@ -64,6 +69,16 @@ public class RelatorioGarantiasVO implements Serializable{
 	public void setDetalhe(String detalhe) {
 		this.detalhe = detalhe;
 	}
+
+	public ItemDTO<TipoGarantia, String> getTpGarantia() {
+		return tpGarantia;
+	}
+
+	public void setTpGarantia(ItemDTO<TipoGarantia, String> tpGarantia) {
+		this.tpGarantia = tpGarantia;
+	}
+
+
 	
 	
 

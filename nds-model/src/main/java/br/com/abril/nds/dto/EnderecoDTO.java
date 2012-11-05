@@ -297,7 +297,7 @@ public class EnderecoDTO implements Serializable {
     public static EnderecoDTO fromEndereco(Endereco endereco) {
         EnderecoDTO dto = new EnderecoDTO();
         dto.setId(endereco.getId());
-        dto.setTipoLogradouro(endereco.getLogradouro());
+        dto.setTipoLogradouro(endereco.getTipoLogradouro());
         dto.setLogradouro(endereco.getLogradouro());
         dto.setNumero(endereco.getNumero());
         dto.setComplemento(endereco.getComplemento());

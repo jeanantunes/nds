@@ -112,9 +112,10 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 			List<MovimentoEstoqueCota> listaMovimentoEstoqueCota = obterItensNotaVenda(
 					distribuidor, idCota, intervaloDateMovimento, listIdFornecedor);
 
-			this.sumarizarTotalItensNota(listaMovimentoEstoqueCota, cotaExemplares,cota);
-	
-			listaCotaExemplares.add(cotaExemplares);
+			if (listaMovimentoEstoqueCota!= null && !listaMovimentoEstoqueCota.isEmpty()) {
+				this.sumarizarTotalItensNota(listaMovimentoEstoqueCota, cotaExemplares,cota);
+				listaCotaExemplares.add(cotaExemplares);
+			}
 		}
 				
 		return listaCotaExemplares;
@@ -193,7 +194,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 			quantidade = quantidade.add(movimento.getQtde());
 			preco = preco.add(precoVenda.multiply(new BigDecimal(movimento.getQtde())));
 			precoComDesconto = precoComDesconto.add(
-					precoVenda.subtract(valorDesconto, new MathContext(3)));	
+					precoVenda.subtract(valorDesconto, new MathContext(3)).multiply(new BigDecimal(quantidade)));	
 			
 			if(!movimento.getListaItemNotaEnvio().isEmpty()){
 				cotaExemplares.setNotaImpressa(true);
@@ -254,20 +255,23 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 		Distribuidor distribuidor = distribuidorRepository.obter();
 		Cota cota = cotaRepository.buscarPorId(idCota);
 
-		NotaEnvio notaEnvio = criarNotaEnvio(idCota, idRota, chaveAcesso,
-				codigoNaturezaOperacao, descricaoNaturezaOperacao, dataEmissao,
-				distribuidor, cota);
-
-		notaEnvioRepository.adicionar(notaEnvio);
 		List<MovimentoEstoqueCota> listaMovimentoEstoqueCota = obterItensNotaVenda(
 				distribuidor, idCota, periodo, listaIdFornecedores);
 		
 		 List<ItemNotaEnvio> listaItemNotaEnvio = gerarItensNotaEnvio(listaMovimentoEstoqueCota, idCota);
 		if (listaItemNotaEnvio.isEmpty()) {
-			throw new ValidacaoException(TipoMensagem.ERROR,
+			return null;
+			// Comentado devido a não possibilitar a gravação de cotas sem reparte 
+			/*throw new ValidacaoException(TipoMensagem.ERROR,
 					"Não é possível gerar Nota de Envio para a Cota "
-							+ cota.getNumeroCota());
+							+ cota.getNumeroCota());*/
 		}
+
+		NotaEnvio notaEnvio = criarNotaEnvio(idCota, idRota, chaveAcesso,
+				codigoNaturezaOperacao, descricaoNaturezaOperacao, dataEmissao,
+				distribuidor, cota);
+
+		notaEnvioRepository.adicionar(notaEnvio);
 		int sequencia = 0;
 		for (ItemNotaEnvio itemNotaEnvio : listaItemNotaEnvio) {
 			itemNotaEnvio.setItemNotaEnvioPK(new ItemNotaEnvioPK(notaEnvio,
@@ -325,7 +329,10 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 
 		IdentificacaoEmitente emitente = new IdentificacaoEmitente();
 
-		emitente.setDocumento(pessoaEmitente.getDocumento());
+		// Corrigido devo ao fato da tabela pessoa gravar os documentos com máscara, embora o campo documento da tabela nota_envio esperar apenas 14 caracteres
+		String documento = pessoaEmitente.getDocumento().replaceAll("[-+.^:,/]","");
+		
+		emitente.setDocumento(documento);
 		emitente.setNome(pessoaEmitente.getNome());
 		emitente.setPessoaEmitenteReferencia(pessoaEmitente);
 		emitente.setInscricaoEstual(pessoaEmitente.getInscricaoEstadual());
@@ -400,6 +407,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 			telefoneRepository.adicionar(telefone);
 			destinatario.setTelefone(telefone);
 		}
+		destinatario.setCodigoBox(cota.getBox().getCodigo());
 		destinatario.setBoxReferencia(cota.getBox());
 		destinatario.setCodigoBox(cota.getBox().getCodigo());
 		destinatario.setNomeBox(cota.getBox().getNome());

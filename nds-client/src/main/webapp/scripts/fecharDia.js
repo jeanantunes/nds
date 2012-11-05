@@ -1,6 +1,6 @@
 var fecharDiaController =  $.extend(true, {
 	
-	init : function(){
+	init : function() {
 		
 		$(".recebeFisicoGrid", fecharDiaController.workspace).flexigrid({
 			preProcess: fecharDiaController.executarPreProcessamentoRecebimentoFisicoNaoConfirmado,
@@ -172,6 +172,207 @@ var fecharDiaController =  $.extend(true, {
 			height : 255
 		});
 		
+		$(".vendasDialogGrid").flexigrid({
+			preProcess: fecharDiaController.executarPreProcessamentoVendaSuplementar,
+			dataType : 'json',
+			colModel : [ {
+				display : 'Código',
+				name : 'codigo',
+				width : 60,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Produto',
+				name : 'nomeProduto',
+				width : 250,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Edição',
+				name : 'numeroEdicao',
+				width : 130,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Qtde',
+				name : 'qtde',
+				width : 110,
+				sortable : true,
+				align : 'center'
+			}, {
+				display : 'Valor R$',
+				name : 'valor',
+				width : 100,
+				sortable : true,
+				align : 'right'
+			}, {
+				display : 'Dt. Rclto',
+				name : 'dataRecolhimento',
+				width : 90,
+				sortable : true,
+				align : 'center'
+			}],
+			sortname : "codigo",
+			sortorder : "asc",
+			usepager : true,
+			useRp : true,
+			rp : 15,
+			showTableToggleBtn : true,
+			width : 850,
+			height : 255
+		});
+		
+		$(".dividasReceberGrid", fecharDiaController.workspace).flexigrid({
+            url: contextPath + '/administracao/fecharDia/obterDividasReceber',
+            autoload: false,
+            dataType : 'json',
+            colModel : [ {
+                display : 'Cota',
+                name : 'numeroCota',
+                width : 40,
+                sortable : false,
+                align : 'left'
+            },{
+                display : 'Nome',
+                name : 'nomeCota',
+                width : 100,
+                sortable : false,
+                align : 'left'
+            }, {
+                display : 'Banco',
+                name : 'nomeBanco',
+                width : 50,
+                sortable : false,
+                align : 'left'
+            }, {
+                display : 'Conta-Corrente',
+                name : 'contaCorrente',
+                width : 80,
+                sortable : false,
+                align : 'left'
+            }, {
+                display : 'Nosso Número',
+                name : 'nossoNumero',
+                width : 120,
+                sortable : false,
+                align : 'left'
+            }, {
+                display : 'Valor R$',
+                name : 'valorFormatado',
+                width : 70,
+                sortable : false,
+                align : 'right'
+            }, {
+                display : 'Dt. Vencto',
+                name : 'dataVencimentoFormatada',
+                width : 80,
+                sortable : false,
+                align : 'center'
+            }, {
+                display : 'Forma Pgto',
+                name : 'descricaoFormaPagamento',
+                width : 90,
+                sortable : false,
+                align : 'left'
+            }],
+            sortname : "numeroCota",
+            sortorder : "asc",
+            usepager : true,
+            useRp : true,
+            rp : 15,
+            showTableToggleBtn : true,
+            width : 750,
+            height : 220
+        });
+        
+        $(".dividasVencerGrid", fecharDiaController.workspace).flexigrid({
+            url: contextPath + '/administracao/fecharDia/obterDividasVencer',
+            autoload: false,
+            dataType : 'json',
+            colModel : [ {
+                display : 'Cota',
+                name : 'numeroCota',
+                width : 40,
+                sortable : false,
+                align : 'left'
+            },{
+                display : 'Nome',
+                name : 'nomeCota',
+                width : 100,
+                sortable : false,
+                align : 'left'
+            }, {
+                display : 'Banco',
+                name : 'nomeBanco',
+                width : 50,
+                sortable : false,
+                align : 'left'
+            }, {
+                display : 'Conta-Corrente',
+                name : 'contaCorrente',
+                width : 80,
+                sortable : false,
+                align : 'left'
+            }, {
+                display : 'Nosso Número',
+                name : 'nossoNumero',
+                width : 120,
+                sortable : false,
+                align : 'left'
+            }, {
+                display : 'Valor R$',
+                name : 'valorFormatado',
+                width : 70,
+                sortable : false,
+                align : 'right'
+            }, {
+                display : 'Dt. Vencto',
+                name : 'dataVencimentoFormatada',
+                width : 80,
+                sortable : false,
+                align : 'center'
+            }, {
+                display : 'Forma Pgto',
+                name : 'descricaoFormaPagamento',
+                width : 90,
+                sortable : false,
+                align : 'left'
+            }],
+            sortname : "numeroCota",
+            sortorder : "asc",
+            usepager : true,
+            useRp : true,
+            rp : 15,
+            showTableToggleBtn : true,
+            width : 750,
+            height : 220
+        });
+		
+        $(".cotasGrid", fecharDiaController.workspace).flexigrid({
+            url: contextPath + '/administracao/fecharDia/obterDetalhesResumoCota',
+            autoload: false,
+            dataType : 'json',
+            colModel : [{
+                display : 'Cota',
+                name : 'numeroCota',
+                width : 50,
+                sortable : false,
+                align : 'left'
+            },{
+                display : 'Nome',
+                name : 'nome',
+                width : 250,
+                sortable : false,
+                align : 'left'
+            }],
+            sortname : "numeroCota",
+            sortorder : "asc",
+            usepager : false,
+            useRp : false,
+            showTableToggleBtn : true,
+            width : 330,
+            height : 220
+        });
 	},
 	
 	executarPreProcessamentoRecebimentoFisicoNaoConfirmado : function(resultado){
@@ -244,6 +445,24 @@ var fecharDiaController =  $.extend(true, {
 		}
 		
 		$("#dialog-repartes", fecharDiaController.workspace).show();
+		
+		return resultado;
+	},
+	
+	executarPreProcessamentoVendaSuplementar : function(resultado){
+		if (resultado.mensagens) {
+
+			exibirMensagem(
+				resultado.mensagens.tipoMensagem, 
+				resultado.mensagens.listaMensagens
+			);
+			
+			$(".dialog-venda-total", fecharDiaController.workspace).hide();
+
+			return resultado;
+		}
+		
+		$("#dialog-venda-total", fecharDiaController.workspace).show();
 		
 		return resultado;
 	},
@@ -332,7 +551,15 @@ var fecharDiaController =  $.extend(true, {
 		      
 	},
 	
-	popup_vendasTot : function() {		
+	popup_vendasTot : function() {
+		
+		$(".vendasDialogGrid", fecharDiaController.workspace).flexOptions({
+			url: contextPath + "/administracao/fecharDia/obterGridVendaSuplementar",
+			dataType : 'json',
+			params: []
+		});
+		
+		$(".vendasDialogGrid", fecharDiaController.workspace).flexReload();
 		
 		$( "#dialog-venda-total",  fecharDiaController.workspace ).dialog({
 			resizable: false,
@@ -350,39 +577,88 @@ var fecharDiaController =  $.extend(true, {
 		      
 	},
 	
-	popup_cotasGrid : function(){
+	exportacaoDetalhesCota : function(fileType, tipoResumo) {
+		
+		window.location = contextPath + "/administracao/fecharDia/exportarCotas?fileType=" + fileType + "&tipoResumo=" + tipoResumo; 
+	},
 	
-		$( "#dialog-cota-grid", fecharDiaController.workspace ).dialog({
+	popup_cotasGrid : function(tipoResumo) {
+		
+		var _this = this;
+		
+		$("#lnkExportacaoCotaXLS").click(function(event) {
+			_this.exportacaoDetalhesCota("XLS", tipoResumo);
+		});
+		
+		$("#lnkExportacaoCotaPDF").click(function(event) {
+			_this.exportacaoDetalhesCota("PDF", tipoResumo);
+		});
+		
+		$("#dialog-cota-grid", fecharDiaController.workspace).dialog({
 			resizable: false,
-			height:390,
-			width:380,
+			height: 410,
+			width: 380,
 			modal: true,
+			open: function(event, ui) {
+				$(".cotasGrid", fecharDiaController.workspace).flexOptions({
+					url: contextPath + '/administracao/fecharDia/obterDetalhesResumoCota',
+					params: [
+				       {name: 'tipoResumo', value: tipoResumo}
+					]
+				});
+				
+			    $(".cotasGrid", fecharDiaController.workspace).flexReload();
+			},
 			buttons: {
 				"Fechar": function() {
-					$( this ).dialog( "close" );
+					$(this).dialog( "close" );
 				},
 			},
 			form: $("#dialog-cota-grid", fecharDiaController.workspace).parents("form")
 		});
 	},
 	
-	popup_boletos_baixados : function(){
+	popup_dividas_receber : function() {
 	
-		$( "#dialog-boletos-baixados", fecharDiaController.workspace ).dialog({
+		$("#dialog-dividas-receber", fecharDiaController.workspace).dialog({
 			resizable: false,
 			height:430,
 			width:800,
 			modal: true,
+			open: function(event, ui) {
+			    $(".dividasReceberGrid", fecharDiaController.workspace).flexReload();
+			},
 			buttons: {
 				"Fechar": function() {
 					$( this ).dialog( "close" );
 				},
 				
 			},
-			form: $("#dialog-boletos-baixados", fecharDiaController.workspace).parents("form")
+			form: $("#dialog-dividas-receber", fecharDiaController.workspace).parents("form")
 		});	
 		      
 	},
+	
+	popup_dividas_vencer : function() {
+    
+        $("#dialog-dividas-vencer", fecharDiaController.workspace).dialog({
+            resizable: false,
+            height:430,
+            width:800,
+            modal: true,
+            open: function(event, ui) {
+                $(".dividasVencerGrid", fecharDiaController.workspace).flexReload();
+            },
+            buttons: {
+                "Fechar": function() {
+                    $( this ).dialog( "close" );
+                },
+                
+            },
+            form: $("#dialog-dividas-vencer", fecharDiaController.workspace).parents("form")
+        }); 
+              
+    },
 	
 	//callback function to bring a hidden box back
 	callback : function(){
@@ -407,9 +683,12 @@ var fecharDiaController =  $.extend(true, {
 				"Fechar": function() {
 					$( this ).dialog( "close" );
 					$(".grids").show();
+					fecharDiaController.limparTabela();
 					fecharDiaController.iniciarResumoReparte();
 					fecharDiaController.iniciarResumoEncalhe();
 					fecharDiaController.iniciarResumoSuplementar();
+					fecharDiaController.iniciarResumoDividas();
+					fecharDiaController.iniciarResumoCotas();
 				}
 			},
 			form: $("#dialog-processos", fecharDiaController.workspace).parents("form")
@@ -419,19 +698,31 @@ var fecharDiaController =  $.extend(true, {
 		      
 	},
 	
+	limparTabela : function(){
+		$('#baixaBancaria').remove();
+		$('#geracaoDeCobranca').remove();
+		$('#recebimentoFisico').remove();
+		$('#confirmacaoDeExpedicao').remove();
+		$('#fechamentoDeEncalhe').remove();
+		$('#lancamentoDeFaltasESobras').remove();
+		
+	},
+	
 	iniciarValidacoes : function(){
 		$.postJSON(contextPath + "/administracao/fecharDia/inicializarValidacoes", null,
-				function(result){
+				function(result){					
 					fecharDiaController.validacaoBaixaBancaria(result);
+					fecharDiaController.validacaoGeracaoCobranca(result);
 					fecharDiaController.validacaoRecebimentoFisico(result);
 					fecharDiaController.validacaoConfirmacaoDeExpedicao(result);
+					fecharDiaController.validacaoFechamentoDeEncalhe(result);
 					fecharDiaController.validacaoLancamentoFaltasESobras(result);
-					fecharDiaController.validacaoControleDeAplicao(result);
+					fecharDiaController.validacaoControleDeAprovacao(result);
 				});
 	},
 	
 	validacaoBaixaBancaria : function(result){
-		var baixaBancaria = "<tr class='class_linha_1'><td>Baixa Bancária</td>";					
+		var baixaBancaria = "<tr class='class_linha_1' id='baixaBancaria'><td>Baixa Bancária</td>";					
 		var iconeBaixaBancaria = null;
 		if(result.baixaBancaria){
 			iconeBaixaBancaria = 'ico_bloquear.gif';
@@ -442,14 +733,26 @@ var fecharDiaController =  $.extend(true, {
 		$('#tabela-validacao').append(baixaBancaria + imagem);
 	},
 	
+	validacaoGeracaoCobranca : function(result){
+		var geracaoCobranca = "<tr class='class_linha_2' id='geracaoDeCobranca'><td>Geração de Cobrança</td>";					
+		var iconeGeracaoCobranca = null;
+		if(result.geracaoDeCobranca){
+			iconeGeracaoCobranca = 'ico_check.gif';
+		}else{
+			iconeGeracaoCobranca = 'ico_bloquear.gif';
+		}
+		var imagem = "<td align='center'><img src='"+ contextPath +"/images/"+iconeGeracaoCobranca+"' alt='Processo Efetuado' width='16' height='16' /></td></tr>";
+		$('#tabela-validacao').append(geracaoCobranca + imagem);
+	},
+	
 	validacaoRecebimentoFisico : function(result){
 		var recebimentoFisico = null;				
 		var iconeRecebimentoFisico = null;		
 		if(result.recebimentoFisico){
-			recebimentoFisico = "<tr class='class_linha_2'><td>Recebimento Físico:</td>";
+			recebimentoFisico = "<tr class='class_linha_1' id='recebimentoFisico'><td>Recebimento Físico:</td>";
 			iconeRecebimentoFisico = 'ico_check.gif';
 		}else{
-			recebimentoFisico = "<tr class='class_linha_2'><td><a href='javascript:;' onclick='fecharDiaController.popup_recebimentoFisico();'>Recebimento Físico</a>:</td>";
+			recebimentoFisico = "<tr class='class_linha_1' id='recebimentoFisico'><td><a href='javascript:;' onclick='fecharDiaController.popup_recebimentoFisico();'>Recebimento Físico</a>:</td>";
 			iconeRecebimentoFisico = 'ico_bloquear.gif';
 		}		
 		var imagem = "<td align='center'><img src='"+ contextPath +"/images/"+iconeRecebimentoFisico+"' alt='Processo Efetuado' width='16' height='16' /></td></tr>";
@@ -483,10 +786,10 @@ var fecharDiaController =  $.extend(true, {
 		var confirmacaoDeExpedicao = null;				
 		var iconeConfirmacaoDeExpedicao = null;		
 		if(result.confirmacaoDeExpedicao){
-			confirmacaoDeExpedicao = "<tr class='class_linha_1'><td>Confirmação de Expedição:</td>";
+			confirmacaoDeExpedicao = "<tr class='class_linha_2' id='confirmacaoDeExpedicao'><td>Confirmação de Expedição:</td>";
 			iconeConfirmacaoDeExpedicao = 'ico_check.gif';
 		}else{
-			confirmacaoDeExpedicao = "<tr class='class_linha_1'><td><a href='javascript:;' onclick='fecharDiaController.popup_confirma_expedicao();'>Confirmação de Expedição</a>:</td>";
+			confirmacaoDeExpedicao = "<tr class='class_linha_2' id='confirmacaoDeExpedicao'><td><a href='javascript:;' onclick='fecharDiaController.popup_confirma_expedicao();'>Confirmação de Expedição</a>:</td>";
 			iconeConfirmacaoDeExpedicao = 'ico_bloquear.gif';
 		}		
 		var imagem = "<td align='center'><img src='"+ contextPath +"/images/"+iconeConfirmacaoDeExpedicao+"' alt='Com Diferença' width='16' height='16' /></td></tr>";
@@ -517,14 +820,22 @@ var fecharDiaController =  $.extend(true, {
 		});
 	},
 	
+	validacaoFechamentoDeEncalhe : function(result){
+		var fechamentoDeEncalhe = "<tr class='class_linha_1' id='fechamentoDeEncalhe'>" + 
+        "<td>Fechamento de Encalhe:</td>" +
+        "<td align='center'><img src='"+ contextPath +"/images/ico_check.gif' width='16' height='16' alt='Com DiferenÃ§a' /></td>" +
+        "</tr>";
+		$('#tabela-validacao').append(fechamentoDeEncalhe);
+	},
+	
 	validacaoLancamentoFaltasESobras : function(result){
 		var lancamentoFaltasESobras = null;				
 		var iconeLancamentoFaltasESobras = null;		
 		if(result.lancamentoFaltasESobras){
-			lancamentoFaltasESobras = "<tr class='class_linha_2'><td>Lançamento de Faltas e Sobras:</td>";
+			lancamentoFaltasESobras = "<tr class='class_linha_2' id='lancamentoDeFaltasESobras'><td>Lançamento de Faltas e Sobras:</td>";
 			iconeLancamentoFaltasESobras = 'ico_check.gif';
 		}else{
-			lancamentoFaltasESobras = "<tr class='class_linha_2'><td><a href='javascript:;' onclick='fecharDiaController.popup_lctoFaltas();'>Lançamento de Faltas e Sobras</a>:</td>";
+			lancamentoFaltasESobras = "<tr class='class_linha_2' id='lancamentoDeFaltasESobras'><td><a href='javascript:;' onclick='fecharDiaController.popup_lctoFaltas();'>Lançamento de Faltas e Sobras</a>:</td>";
 			iconeLancamentoFaltasESobras = 'ico_bloquear.gif';
 		}		
 		var imagem = "<td align='center'><img src='"+ contextPath +"/images/"+iconeLancamentoFaltasESobras+"' alt='Processo Efetuado' width='16' height='16' /></td></tr>";
@@ -554,7 +865,7 @@ var fecharDiaController =  $.extend(true, {
 		});
 	},
 	
-	validacaoControleDeAplicao : function(result){
+	validacaoControleDeAprovacao : function(result){
 		if(result.controleDeAprovacao){
 			$.postJSON(contextPath + "/administracao/fecharDia/validacoesDoCotroleDeAprovacao", null,
 					function(result){
@@ -573,14 +884,14 @@ var fecharDiaController =  $.extend(true, {
 		
 		$.postJSON(contextPath + "/administracao/fecharDia/obterResumoQuadroReparte", null,
 				function(result){					
-					$("#totalReparte").html(result[0]);
-					$("#totalSobras").html(result[1]);
-					$("#totalFaltas").html(result[2]);
-					$("#totalTransferencia").html(result[3]);
-					$("#totalADistribuir").html(result[4]);
-					$("#totalDistribuido").html(result[5]);
-					$("#totalSobraDistribuido").html(result[6]);
-					$("#totalDiferenca").html(result[7]);
+					$("#totalReparte").html(result.totalReparte);
+					$("#totalSobras").html(result.totalSobras);
+					$("#totalFaltas").html(result.totalFaltas);
+					$("#totalTransferencia").html(result.totalTranferencia);
+					$("#totalADistribuir").html(result.totalADistribuir);
+					$("#totalDistribuido").html(result.totalDistribuido);
+					$("#totalSobraDistribuido").html(result.sobraDistribuido);
+					$("#totalDiferenca").html(result.diferenca);
 				}
 			);
 	},
@@ -588,10 +899,10 @@ var fecharDiaController =  $.extend(true, {
 	iniciarResumoEncalhe : function(){
 		$.postJSON(contextPath + "/administracao/fecharDia/obterResumoQuadroEncalhe", null,
 				function(result){
-					$("#totalEncalheLogico").html(result[0]);
-					$("#totalEncalheFisico").html(result[1]);
-					$("#totalEncalheJuramentada").html(result[2]);
-					$("#vendaEncalhe").html(result[3]);
+					$("#totalEncalheLogico").html(result.totalLogico);
+					$("#totalEncalheFisico").html(result.totalFisico);
+					$("#totalEncalheJuramentada").html(result.totalJuramentado);
+					$("#vendaEncalhe").html(result.venda);
 				}
 			);
 	},
@@ -599,11 +910,151 @@ var fecharDiaController =  $.extend(true, {
 	iniciarResumoSuplementar : function(){
 		$.postJSON(contextPath + "/administracao/fecharDia/obterResumoQuadroSuplementar", null,
 				function(result){
-					$("#totalSuplementarEstoqueLogico").html(result[0]);
-					$("#totalSuplementarTransferencia").html(result[1]);
-					$("#totalSuplementarVenda").html(result[2]);
+					$("#totalSuplementarEstoqueLogico").html(result.totalEstoqueLogico);
+					$("#totalSuplementarTransferencia").html(result.totalTransferencia);
+					$("#totalSuplementarVenda").html(result.totalVenda);
+					$("#totalSuplementarSaldo").html(result.saldo);
 				}
 			);
+	},
+	
+	iniciarResumoDividas : function() {
+		$.postJSON(contextPath + "/administracao/fecharDia/obterSumarizacaoDividas",
+				   null,
+				   function(result) {
+				       if (result) {
+				            if (result.mensagens) {
+                                exibirMensagemDialog(result.mensagens.tipoMensagem, result.mensagens.listaMensagens);
+                            } else {
+				                $('#tabela_dividas_receber_vencer', fecharDiaController.workspace).show();
+				                fecharDiaController.processarResumoDividasReceber(result.sumarizacao.DIVIDA_A_RECEBER);
+				                fecharDiaController.processarResumoDividasVencer(result.sumarizacao.DIVIDA_A_VENCER);
+                            }
+				       } else {
+				           $('#tabela_dividas_receber_vencer', fecharDiaController.workspace).hide();
+				       }
+					});
+	},
+	
+	iniciarResumoCotas : function() {
+		$.postJSON(
+			contextPath + "/administracao/fecharDia/obterResumoCotas",
+			null,
+			function(result) {
+				fecharDiaController.processarResumoCotas(result.resumo);
+			}
+		);
+	},
+	
+	processarResumoDividasReceber : function(itens) {
+	    var tabela =  $('#tabela_dividas_receber', fecharDiaController.workspace);
+	    fecharDiaController.processarResumoDividas(itens, tabela);
+	},
+	
+	processarResumoDividasVencer : function(itens) {
+        var tabela =  $('#tabela_dividas_vencer', fecharDiaController.workspace);
+        fecharDiaController.processarResumoDividas(itens, tabela);
+    },
+	
+	processarResumoDividas : function(itens, tabela) {
+        $(tabela).html("");
+        $(tabela).append(fecharDiaController.gerarLinhaBrancoResumoDividas());
+        $(tabela).append(fecharDiaController.gerarCabecalhoResumoDividas());
+        $.each(itens, function(index, item) {
+            $(tabela).append(fecharDiaController.gerarLinhaResumoDividas(item));                       
+        });
+        $(tabela).append((fecharDiaController.gerarLinhaBrancoResumoDividas()));
+    },
+    
+    processarResumoCotas : function(resumo) {
+    	
+    	var tabela =  $('#tabela_cotas', fecharDiaController.workspace);
+    	
+        $(tabela).html("");
+        
+        $(tabela).append(fecharDiaController.gerarLinhaBrancoResumoCotas());
+        
+        $(tabela).append(fecharDiaController.gerarCabecalhoResumoCotas());
+        
+        $(tabela).append(fecharDiaController.gerarLinhaResumoCotas(resumo));                       
+
+        $(tabela).append((fecharDiaController.gerarLinhaBrancoResumoCotas()));
+    },
+	
+	gerarLinhaResumoDividas : function(item) {
+		var linhaResumo = "<tr>";
+		linhaResumo += "<td width=\"120\" align=\"left\" style=\"border-bottom:1px solid #ccc;\">" + item.descricaoTipoCobranca + "</td>";
+		linhaResumo += "<td width=\"80\" align=\"right\" style=\"border-bottom:1px solid #ccc;\">" + item.totalFormatado +"</td>";
+		linhaResumo += "<td width=\"80\" align=\"right\" style=\"border-bottom:1px solid #ccc;\">" + item.valorPagoFormatado +"</td>";
+		linhaResumo += "<td width=\"80\" align=\"right\" style=\"border-bottom:1px solid #ccc;\">" + item.inadimplenciaFormatado +"</td>";
+		linhaResumo += "</tr>";
+		return linhaResumo;
+		
+	},
+	
+	gerarCabecalhoResumoDividas : function() {
+       var linhaCabecalho = "<tr class=\"header_table\">";  
+       linhaCabecalho += "<td align=\"left\">Forma de Pagamento</td>";
+       linhaCabecalho += "<td align=\"right\">Total R$</td>";
+       linhaCabecalho += "<td align=\"right\">Valor Pago</td>";
+       linhaCabecalho += "<td align=\"right\">Inadimplência</td>";
+       linhaCabecalho += "</tr>";
+       return linhaCabecalho; 
+    },
+	
+	gerarLinhaBrancoResumoDividas : function() {
+	   var linhaBranco = "<tr>";  
+	   linhaBranco += "<td align=\"left\">&nbsp;</td>";
+	   linhaBranco += "<td align=\"right\">&nbsp;</td>";
+	   linhaBranco += "<td align=\"right\">&nbsp;</td>";
+	   linhaBranco += "<td align=\"right\">&nbsp;</td>";
+	   linhaBranco += "</tr>";
+	   return linhaBranco; 
+	},
+    
+	gerarLinhaResumoCotas : function(resumo) {
+		
+		var linhaResumo = "<tr>";
+		
+		linhaResumo += "<td width=\"222\" align=\"center\" style=\"border-bottom:1px solid #ccc;\">" + resumo.TOTAL + "</td>";
+		linhaResumo += "<td width=\"153\" align=\"center\" style=\"border-bottom:1px solid #ccc;\">" + resumo.ATIVAS +"</td>";
+		linhaResumo += "<td width=\"158\" align=\"center\" style=\"border-bottom:1px solid #ccc;\"><a href=\"javascript:;\" onclick=\"fecharDiaController.popup_cotasGrid(\'AUSENTES_REPARTE\');\">" + resumo.AUSENTES_REPARTE +"</a></td>";
+		linhaResumo += "<td width=\"183\" align=\"center\" style=\"border-bottom:1px solid #ccc;\"><a href=\"javascript:;\" onclick=\"fecharDiaController.popup_cotasGrid(\'AUSENTES_ENCALHE\');\">" + resumo.AUSENTES_ENCALHE +"</a></td>";
+		linhaResumo += "<td width=\"183\" align=\"center\" style=\"border-bottom:1px solid #ccc;\"><a href=\"javascript:;\" onclick=\"fecharDiaController.popup_cotasGrid(\'NOVAS\');\">" + resumo.NOVAS +"</a></td>";
+		linhaResumo += "<td width=\"188\" align=\"center\" style=\"border-bottom:1px solid #ccc;\"><a href=\"javascript:;\" onclick=\"fecharDiaController.popup_cotasGrid(\'INATIVAS\');\">" + resumo.INATIVAS +"</a></td>";
+		linhaResumo += "</tr>";
+		
+		return linhaResumo;
+	},
+	
+	gerarCabecalhoResumoCotas : function() {
+		
+       var linhaCabecalho = "<tr class=\"header_table\">";  
+       
+       linhaCabecalho += "<td align=\"center\">Total</td>";
+       linhaCabecalho += "<td align=\"center\">Ativas</td>";
+       linhaCabecalho += "<td align=\"center\">Ausentes - Reparte</td>";
+       linhaCabecalho += "<td align=\"center\">Ausentes - Encalhe</td>";
+       linhaCabecalho += "<td align=\"center\">Novas</td>";
+       linhaCabecalho += "<td align=\"center\">Inativas</td>";
+       linhaCabecalho += "</tr>";
+       
+       return linhaCabecalho; 
+    },
+	
+	gerarLinhaBrancoResumoCotas : function() {
+	   
+	   var linhaBranco = "<tr>";
+	   
+	   linhaBranco += "<td align=\"left\">&nbsp;</td>";
+	   linhaBranco += "<td align=\"right\">&nbsp;</td>";
+	   linhaBranco += "<td align=\"right\">&nbsp;</td>";
+	   linhaBranco += "<td align=\"right\">&nbsp;</td>";
+	   linhaBranco += "<td align=\"right\">&nbsp;</td>";
+	   linhaBranco += "<td align=\"right\">&nbsp;</td>";
+	   linhaBranco += "</tr>";
+	   
+	   return linhaBranco; 
 	}
 
 }, BaseController);

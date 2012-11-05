@@ -1,6 +1,7 @@
 <head>
 <script type="text/javascript"
 	src="${pageContext.request.contextPath}/scripts/negociacaoDivida.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.price_format.1.7.js"></script>
 
 
 
@@ -75,12 +76,12 @@
 			<fieldset>
 				<legend>Dados da D&iacute;vida</legend>
 				<table class="negociacaoDetalheGrid"></table>
-				<br /> <strong>Saldo R$: </strong> <br />
+				<br /> <table> <tr><td> <strong>Saldo R$: </strong> </td> <td> <div id="id_saldo"></div></td></tr> </table> <br />
 			</fieldset>
 		</div>
 	
 	<form id="formaPgtoForm">
-		<div id="dialog-formaPgto" title="Negociar D&iacute;vida" style="display:none;">
+		<div id="dialog-NegociacaoformaPgto" title="Negociar D&iacute;vida" style="display:none;">
 			
 	
 			<input type="hidden" name ="filtro.valorSelecionado" id="valorSelecionado"/>
@@ -112,11 +113,11 @@
 						<tr>
 							<td width="6%">Atual:</td>
 							<td width="12%"><input name="" type="text" id="comissaoAtualCota"
-								style="width: 80px;" /></td>
+								style="width: 80px;" readonly="readonly" /></td>
 							<td width="5%">%</td>
 							<td width="7%">Utilizar:</td>
 							<td width="13%"><input name="" type="text" id="comissaoUtilizar"
-								style="width: 80px;" /></td>
+								style="width: 80px;" onblur="negociacaoDividaController.utilizarAlterado()" /></td>
 							<td width="57%" colspan="3">% para pagamento da
 								d&iacute;vida</td>
 						</tr>
@@ -125,8 +126,8 @@
 						<tr>
 							<td colspan="6" nowrap="nowrap">Comiss&atilde;o da Cota
 								enquanto houver saldo de d&iacute;vida:</td>
-							<td width="85"><input name="input2" type="text"
-								style="width: 80px;" /></td>
+							<td width="85"><input id="comissaoComSaldo" type="text"
+								style="width: 80px;" readonly="readonly" /></td>
 							<td width="358">%</td>
 						</tr>
 					</table>
@@ -164,7 +165,7 @@
 					</tr> -->
 					<tr>
 						<td width="3%"><input type="radio" name="filtro.periodicidade" id="radioDiario"
-							value="DIARIO" checked="yes"
+							value="DIARIA" checked="yes"
 							onclick="negociacaoDividaController.mostraDiario();" /></td>
 							
 						<td width="5%">Di&aacute;rio</td>
@@ -193,13 +194,22 @@
 				
 				
 				<table width="100%" border="0" cellspacing="1" cellpadding="1"
-					class="quinzenalMensal">
+					class="quinzenal">
 					<tr>
 						<td width="68">Todo dia:</td>
 						<td width="66"><input type="text" name="filtro.quinzenalDia1" style="width: 60px;" id="diaInputQuinzenal1" /></td>
 						<td id="textoDiaInputQuinzenal" width="21">&nbsp; e:</td>
 						<td width="522"><input type="text" name="filtro.quinzenalDia2"
 							id="diaInputQuinzenal2" style="width: 60px;" /></td>
+					</tr>
+				</table>
+				
+				<table width="130px" border="0" cellspacing="1" cellpadding="1"
+					class="mensal">
+					<tr>
+						<td width="68">Todo dia:</td>
+						<td width="66"><input type="text" name="filtro.quinzenalDia1" style="width: 60px;" id="mensalDia" /></td>
+						
 					</tr>
 				</table>
 				
@@ -302,54 +312,31 @@
 									</tr>
 								</table>
 							</div>
-							
-							
-							<div id="divChequeDeposito" style="display: none;">
-								<table width="270" border="0" cellspacing="2" cellpadding="2">
-									<tr>
-										<td colspan="2"><strong>Dados Banc&aacute;rios</strong></td>
-									</tr>
-									<tr>
-										<td width="93">Num. Banco:</td>
-										<td width="163"><input type="text" name="numBancoCheque"
-											id="numBancoCheque" style="width: 60px;" /></td>
-									</tr>
-									<tr>
-										<td>Nome:</td>
-										<td><input type="text" name="nomeBancoCheque"
-											id="nomeBancoCheque" style="width: 150px;" /></td>
-									</tr>
-									<tr>
-										<td>Ag&ecirc;ncia:</td>
-										<td><input type="text" name="agencaiBancoCheque1" id="agenciaBancoCheque1"
-											style="width: 60px;" /> - <input type="text"
-											name="agenciaBancoChequ2" id="agenciaBancoCheque2" style="width: 30px;" /></td>
-									</tr>
-									<tr>
-										<td>Conta:</td>
-										<td><input type="text" name="contaBancoCheque1"
-											id="contaBancoCheque1" style="width: 60px;" /> - <input
-											type="text" name="contaBancoCheque2" id="contaBancoCheque2"
-											style="width: 30px;" /></td>
-									</tr>
-								</table>
-							</div>
 
 						</td>
 					</tr>
 				</table>
 
-				<br clear="all" /> <input name="" type="checkbox" id="isentaEncargos"
-					style="float: left;" /><span style="float: left; margin-top: 8px;">Isenta
-					Encargos</span>
+				<br clear="all" /> 
+				
+				<table id="encargos">
+					<tr>
+						<td>
+							<input name="" type="checkbox" id="isentaEncargos" onclick="negociacaoDividaController.calcularParcelas();" style="float: left;" />
+						</td>
+						<td>
+							<span style="float: left; margin-top: 8px;">Isenta Encargos</span>
+						</td>
+					</tr>
+				</table>
 			</fieldset>
-			<span class="bt_novos" title="Imprimir">
+			<span class="bt_novos" title="Imprimir" name="botoes">
 				<a href="${pageContext.request.contextPath}/financeiro/negociacaoDivida/imprimirNegociacao">
 					<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
 						Imprimir Negocia&ccedil;&atilde;o
 				</a>
 			</span>
-			<span class="bt_novos" title="Imprimir Boletos">
+			<span class="bt_novos" title="Imprimir Boletos" name="botoes">
 				<a href="${pageContext.request.contextPath}/financeiro/negociacaoDivida/imprimirBoletos">
 					<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
 						Imprimir Boletos

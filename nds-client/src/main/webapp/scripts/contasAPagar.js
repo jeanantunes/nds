@@ -2,16 +2,22 @@ var contasAPagarController = $.extend(true, {
 	
 	path : contextPath + '/financeiro/contasAPagar/',
 
-
 	init : function() {
-
-		$( "#contasAPagar_Filtro_De" ).datepicker({
+		
+		$("#contasAPagar_Filtro_De", this.workspace).mask("99/99/9999");
+		$("#contasAPagar_Filtro_Ate", this.workspace).mask("99/99/9999");
+		$("#contasAPagar_Filtro_Ce", this.workspace).numeric();
+		
+		$("#produto", this.workspace).autocomplete({source: ''});
+		$("#edicao", this.workspace).numeric();
+		
+		$("#contasAPagar_Filtro_De").datepicker({
 			showOn: "button",
 			buttonImage: contextPath + "/images/calendar.gif",
 			buttonImageOnly: true
 		});
 		
-		$( "#contasAPagar_Filtro_Ate" ).datepicker({
+		$("#contasAPagar_Filtro_Ate").datepicker({
 			showOn: "button",
 			buttonImage: contextPath + "/images/calendar.gif",
 			buttonImageOnly: true
@@ -66,6 +72,31 @@ var contasAPagarController = $.extend(true, {
 		$(".contasApagarCheck").each(function(index, element) {
 			element.checked = check.checked;
 		});
+	},
+	
+	
+	/*
+	 * *********************
+	 * Autocomplete
+	 * *********************
+	 * */
+	
+	pesquisarProdutoPorCodigo : function() {
+		pesquisaProdutoCAP.pesquisarPorCodigoProduto('#codigo', '#produto', '#edicao', false);	
+	},
+	
+	
+	pesquisarProdutoPorNome : function() {
+		pesquisaProdutoCAP.pesquisarPorNomeProduto('#codigo', '#produto', '#edicao', false);
+	},
+	
+	pesquisarProdutoPorCodigoConsignado : function() {
+		pesquisaProdutoCAP.pesquisarPorCodigoProduto('#codigoConsignado', '#produtoConsignado', '#edicaoConsignado', false);	
+	},
+	
+	
+	pesquisarProdutoPorNomeConsignado : function() {
+		pesquisaProdutoCAP.pesquisarPorNomeProduto('#codigoConsignado', '#produtoConsignado', '#edicaoConsignado', false);
 	},
 	
 	/*
@@ -335,18 +366,7 @@ var contasAPagarController = $.extend(true, {
 	popup_consignado : function(data) {
 		
 		$("#contasAPagar_dataDetalhe").val(data);
-		var params = $("#contasAPagarForm").serializeObject();
-		
-		$.postJSON(
-			contasAPagarController.path + 'pesquisarConsignado.json',
-			params,
-			function(result) {
-				contasAPagarController.montaTabelaTotaisDistribuidores($("#contasAPagar_table_popupConsignado").get(0), result.totalDistrib);
-				$(".contasAPagar-consignadoGrid").flexAddData({rows: toFlexiGridObject(result.grid), page : 1, total : 1});
-			},
-			null,
-			true
-		);
+		this.pesquisarConsignado();
 		
 		$("#contasAPagar_legend_popupConsignado").html(data);
 	
@@ -362,6 +382,26 @@ var contasAPagarController = $.extend(true, {
 				},
 			}
 		});
+	},
+	
+	
+	pesquisarConsignado : function () {
+	
+		var params = $("#contasAPagarForm").serializeArray();
+		
+		params.push({name: 'filtro.produtoConsignado', value: $("#produtoConsignado").val()});
+		params.push({name: 'filtro.edicaoConsignado',  value: $("#edicaoConsignado").val()});
+		
+		$.postJSON(
+			contasAPagarController.path + 'pesquisarConsignado.json',
+			params,
+			function(result) {
+				contasAPagarController.montaTabelaTotaisDistribuidores($("#contasAPagar_table_popupConsignado").get(0), result.totalDistrib);
+				$(".contasAPagar-consignadoGrid").flexAddData({rows: toFlexiGridObject(result.grid), page : 1, total : 1});
+			},
+			null,
+			true
+		);
 	},
 	
 
@@ -439,37 +479,37 @@ var contasAPagarController = $.extend(true, {
 				display : 'Código',
 				name : 'codigo',
 				width : 40,
-				sortable : true,
+				sortable : false,
 				align : 'left'
 			}, {
 				display : 'Produto',
 				name : 'produto',
 				width : 60,
-				sortable : true,
+				sortable : false,
 				align : 'left'
 			}, {
 				display : 'Edição',
 				name : 'edicao',
 				width : 40,
-				sortable : true,
+				sortable : false,
 				align : 'center'
 			}, {
 				display : 'Preço Capa R$',
 				name : 'precoCapa',
 				width : 80,
-				sortable : true,
+				sortable : false,
 				align : 'right',
 			}, {
 				display : 'Fornecedor',
 				name : 'fornecedor',
 				width : 100,
-				sortable : true,
+				sortable : false,
 				align : 'left',
 			}, {
 				display : 'Editor',
 				name : 'editor',
 				width : 100,
-				sortable : true,
+				sortable : false,
 				align : 'left'
 			}, {
 				display : '',
@@ -718,7 +758,7 @@ var contasAPagarController = $.extend(true, {
 				sortable : true,
 				align : 'left'
 			}],
-			sortname : "dtLancamento",
+			sortname : "lcto",
 			sortorder : "asc",
 			usepager : true,
 			useRp : true,
@@ -946,4 +986,3 @@ var contasAPagarController = $.extend(true, {
 	},
 	
 }, BaseController);
-

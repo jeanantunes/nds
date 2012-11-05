@@ -24,8 +24,8 @@ implements DescontoProximosLancamentosRepository{
 		
 		StringBuilder jpql = new StringBuilder();
 			jpql.append(" SELECT dpl FROM DescontoProximosLancamentos dpl ")
-				.append(" WHERE dpl.produto.id = :idProduto ")
-				.append(" dpl.quantidadeProximosLancamaentos > 0 ")
+				.append(" WHERE dpl.produto.id = :idProduto and ")
+				.append(" dpl.quantidadeProximosLancamaentos > 0 and ")
 				.append(" dpl.dataInicioDesconto > :dataLancamento ");
 
 		Query query = this.getSession().createQuery(jpql.toString());	

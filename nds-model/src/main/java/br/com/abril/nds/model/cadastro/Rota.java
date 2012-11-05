@@ -8,6 +8,7 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -120,9 +121,12 @@ public class Rota implements Serializable {
      *            pdv para inclusão
      * @param ordem
      *            ordem do PDV na Rota
+     * @param box 
+     * 			  box da roteirização
+     * 
      * @return {@link RotaPDV} que representa a associação
      */
-    public RotaPDV addPDV(PDV pdv, Integer ordem) {
+    public RotaPDV addPDV(PDV pdv, Integer ordem, Box box) {
         if (ordem <= 0) {
             throw new IllegalArgumentException("Ordem [" + ordem
                     + "] para o PDV não é válida!");
@@ -137,6 +141,12 @@ public class Rota implements Serializable {
         }
         RotaPDV rotaPDV = new RotaPDV(this, pdv, ordem);
         rotaPDVs.add(rotaPDV);
+        
+        if (pdv.getCaracteristicas().isPontoPrincipal()) {
+        	
+        	pdv.getCota().setBox(box);
+        }
+        
         return rotaPDV;
     }
 
@@ -193,7 +203,15 @@ public class Rota implements Serializable {
         while (iterator.hasNext()) {
             RotaPDV rotaPDV = iterator.next();
             if (pdvsExclusao.contains(rotaPDV.getPdv().getId())) {
-                iterator.remove();
+                
+            	PDV pdv = rotaPDV.getPdv();
+            	
+            	if (pdv.getCaracteristicas().isPontoPrincipal()) {
+            	
+            		pdv.getCota().setBox(null);
+            	}
+            	
+            	iterator.remove();
             }
         }
     }

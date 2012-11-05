@@ -103,8 +103,7 @@ public class EntradaNFETerceirosRepositoryImpl extends AbstractRepositoryModel<N
 			}
 		}
 
-		if (filtro.getCota() != null && filtro.getCota().getPessoa() != null
-				&& filtro.getCota().getPessoa().getId() != null) {
+		if (filtro.getCota() != null) {
 			hql.append( " and cota.id = :idCota ");
 		}
 		
@@ -152,9 +151,8 @@ public class EntradaNFETerceirosRepositoryImpl extends AbstractRepositoryModel<N
 			query.setParameter("complementar", GrupoNotaFiscal.NF_TERCEIRO_COMPLEMENTAR);
 		}
 
-		if (filtro.getCota() != null && filtro.getCota().getPessoa() != null
-				&& filtro.getCota().getPessoa().getId() != null) {
-			query.setParameter("idCota", filtro.getCota().getPessoa().getId());
+		if (filtro.getCota() != null) {
+			query.setParameter("idCota", filtro.getCota().getId());
 		}
 
 		if (filtro.getFornecedor() != null
@@ -288,7 +286,7 @@ public class EntradaNFETerceirosRepositoryImpl extends AbstractRepositoryModel<N
 		}
 
 		if(filtro.getCota() != null) {			
-			hql.append( " and cota.id = :idCota ");
+			hql.append( " and cota.id = :idCota ");			
 		}
 		
 		if(filtro.getDataInicial() != null && filtro.getDataFinal() != null){

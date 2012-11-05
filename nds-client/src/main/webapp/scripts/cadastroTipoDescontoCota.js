@@ -64,11 +64,12 @@ var descontoCotaController = $.extend(true,{
 			$.getJSON(contextPath +"/financeiro/tipoDescontoCota/verificaProgressoGravacaoDescontoEspecifico",
 					   null,				   
 					   function(result) {
+							
 					   		if (!result.ativo) {
-					   			exibirMensagem(result.validacao.tipoMensagem, result.validacao.listaMensagens, "");
+					   			exibirMensagem(result.tipoMensagem, result.listaMensagens);
 					   			clearInterval(verificadorProgressoGravacaoDescontoGeral);
-					   		}
-				   	   });
+					   }
+			});
 	    }, 20000);
 		
 		$(".tiposDescEspecificoGrid",this.workspace).flexReload();

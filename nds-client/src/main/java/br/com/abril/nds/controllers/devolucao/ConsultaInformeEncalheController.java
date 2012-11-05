@@ -190,14 +190,14 @@ public class ConsultaInformeEncalheController {
 			if (tipoImpressao.getColunas().contains("codigoProduto")){
 				
 				colunas.add(new ColunaRelatorioInformeEncalhe("Código", 
-						this.calcularTamanhoColunaRelatorio(qtdColunas, 10), 
+						this.calcularTamanhoColunaRelatorio(qtdColunas, 5), 
 						"codigoProduto"));
 			}
 			
 			if (tipoImpressao.getColunas().contains("nomeProduto")){
 				
 				colunas.add(new ColunaRelatorioInformeEncalhe("Produto", 
-						this.calcularTamanhoColunaRelatorio(qtdColunas, 5), 
+						this.calcularTamanhoColunaRelatorio(qtdColunas, 10), 
 						"nomeProduto"));
 			}
 			

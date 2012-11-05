@@ -299,11 +299,20 @@ fieldset {
 								<tr>
 									<td height="24">Brinde:</td>
 									<td><input type="checkbox" name="possuiBrinde" id="produtoEdicaoController-possuiBrinde" /></td>
-								</tr>
-								<tr class="descBrinde" style="display:none;">
-						       	    <td height="24">Descri&ccedil;&atilde;o Brinde:</td>
-						       	    <td><input type="text" name="descricaoBrinde" id="produtoEdicaoController-descricaoBrinde" style="width:190px;" /></td>
-						     	</tr>
+								</tr>			     	
+						     	
+						     	<tr class="descBrinde" style="display:none;">
+								    <td height="24">Descri&ccedil;&atilde;o Brinde:</td>
+								    <td>
+								        <select name="descricaoBrinde" id="produtoEdicaoController-descricaoBrinde" style="width:190px;">
+					                        <option value="">Selecione</option>
+					                        <c:forEach items="${brindes}" var="brinde">
+												<option value="${brinde.id}" >${brinde.descricao}</option>
+											</c:forEach>
+					                    </select> 
+								    </td>
+							    </tr>						     							     	
+						 	
 							</tbody>
 						</table>
 					</fieldset>

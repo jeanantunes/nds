@@ -5,18 +5,16 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.Future;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
 
 import br.com.abril.nds.client.annotation.Rules;
-import br.com.abril.nds.client.singleton.VerificadorProgressoGravacaoDescontoEspecificoSingleton;
-import br.com.abril.nds.client.singleton.VerificadorProgressoGravacaoDescontoGeralSingleton;
-import br.com.abril.nds.client.singleton.VerificadorProgressoGravacaoDescontoProdutoSingleton;
 import br.com.abril.nds.client.util.PaginacaoUtil;
+import br.com.abril.nds.component.singleton.ProcessoCadastroDescontoSingleton;
 import br.com.abril.nds.dto.CotaDescontoProdutoDTO;
 import br.com.abril.nds.dto.DescontoProdutoDTO;
 import br.com.abril.nds.dto.ItemDTO;
@@ -46,8 +44,8 @@ import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.util.export.NDSFileHeader;
 import br.com.abril.nds.vo.PaginacaoVO;
-import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
+import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
@@ -80,11 +78,17 @@ public class TipoDescontoCotaController {
 	@Autowired
 	private HttpServletResponse httpServletResponse;
 
-	private String FILTRO_PESQUISA_TIPO_DESCONTO_PRODUTO_SESSION_ATTRIBUTE= "filtroPesquisaPorProduto";
+	private static final String FILTRO_PESQUISA_TIPO_DESCONTO_PRODUTO_SESSION_ATTRIBUTE= "filtroPesquisaPorProduto";
 
-	private String FILTRO_PESQUISA_TIPO_DESCONTO_SESSION_ATTRIBUTE = "filtroPesquisaPorGeral";
+	private static final String FILTRO_PESQUISA_TIPO_DESCONTO_SESSION_ATTRIBUTE = "filtroPesquisaPorGeral";
 	
 	private static final String FILTRO_PESQUISA_TIPO_DESCONTO_COTA_SESSION_ATTRIBUTE = "filtroPesquisaPorCota";
+	
+	private static final String FUTURE_RESULT_PROCESSO_DESCONTO_PRODUTO = "futureDescontoProduto";
+	
+	private static final String FUTURE_RESULT_PROCESSO_DESCONTO_ESPECIFICO = "futureDescontoEspecifico";
+	
+	private static final String FUTURE_RESULT_PROCESSO_DESCONTO_GERAL = "futureDescontoGeral";
 	
 	@Path("/")
 	@Rules(Permissao.ROLE_FINANCEIRO_TIPO_DESCONTO_COTA)
@@ -94,83 +98,27 @@ public class TipoDescontoCotaController {
 	@Path("/novoDescontoGeral")
 	public void novoDescontoGeral(BigDecimal desconto, List<Long> fornecedores){
 
-		this.executarDescontoGeral(desconto, fornecedores);
-		
-		//result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Desconto cadastrado com sucesso"),"result").recursive().serialize();
+		Future<String> future = descontoService.executarDescontoGeral(desconto, fornecedores, getUsuario());
+		this.session.setAttribute(FUTURE_RESULT_PROCESSO_DESCONTO_GERAL, future);
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Inicio do procedimento de cadastros de Tipo Desconto foi inicializado"),"result").recursive().serialize();
 	}
-
-	@Async
-	private void executarDescontoGeral(BigDecimal desconto, List<Long> fornecedores) {
-		VerificadorProgressoGravacaoDescontoGeralSingleton.getInstance().setAtivo(true);
-		try {
-			descontoService.incluirDescontoDistribuidor(desconto, fornecedores, getUsuario());
-		} catch(ValidacaoException e) {
-			VerificadorProgressoGravacaoDescontoGeralSingleton.getInstance().setAtivo(false);
-			VerificadorProgressoGravacaoDescontoGeralSingleton.getInstance().setValidacao(new ValidacaoVO(TipoMensagem.WARNING, e.getMessage()));
-		}
-
-		VerificadorProgressoGravacaoDescontoGeralSingleton.getInstance().setValidacao(new ValidacaoVO(TipoMensagem.SUCCESS, "Desconto cadastrado com sucesso"));
-		VerificadorProgressoGravacaoDescontoGeralSingleton.getInstance().setAtivo(false);
-	}
-	
-	@Post
-	@Path("/novoDescontoEspecifico")
+		
+	@Post("/novoDescontoEspecifico")
 	public void novoDescontoEspecifico(Integer numeroCota, BigDecimal desconto, List<Long> fornecedores) {
-
-		executarDescontoEspecifico(numeroCota, desconto, fornecedores);
 		
-		//result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Desconto cadastrado com sucesso"),"result").recursive().serialize();
+		Future<String> future = descontoService.executarDescontoEspecifico(numeroCota, desconto, fornecedores, getUsuario());
+		this.session.setAttribute(FUTURE_RESULT_PROCESSO_DESCONTO_ESPECIFICO, future);
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Inicio do procedimento de cadastros de Tipo Desconto foi inicializado"),"result").recursive().serialize();
-		
 	}
-	
-	@Async	
-	private void executarDescontoEspecifico(final Integer numeroCota, final BigDecimal desconto, final List<Long> fornecedores) {
-		
-		VerificadorProgressoGravacaoDescontoEspecificoSingleton.getInstance().setAtivo(true);
-		
-		try {
-			descontoService.incluirDescontoCota(desconto, fornecedores, numeroCota, getUsuario());
-		} catch(ValidacaoException e) {
-			VerificadorProgressoGravacaoDescontoEspecificoSingleton.getInstance().setAtivo(false);
-			VerificadorProgressoGravacaoDescontoEspecificoSingleton.getInstance().setValidacao(new ValidacaoVO(TipoMensagem.WARNING, e.getMessage()));
-		}
-		
-		VerificadorProgressoGravacaoDescontoEspecificoSingleton.getInstance().setValidacao(new ValidacaoVO(TipoMensagem.SUCCESS, "Desconto cadastrado com sucesso"));
-		VerificadorProgressoGravacaoDescontoEspecificoSingleton.getInstance().setAtivo(false);		
-		
-	}
-	
+
 	@Post
 	@Path("/novoDescontoProduto")
-	public void novoDescontoProduto(DescontoProdutoDTO desconto, List<Integer> cotas) {		
+	public void novoDescontoProduto(DescontoProdutoDTO descontoDTO, List<Integer> cotas) {		
 
-		executarDescontoProduto(desconto, cotas);
-
+		Future<String> future = descontoService.executarDescontoProduto(descontoDTO, cotas, getUsuario());
+		this.session.setAttribute(FUTURE_RESULT_PROCESSO_DESCONTO_PRODUTO, future);
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Inicio do procedimento de cadastros de Tipo Desconto foi inicializado"),"result").recursive().serialize();
-
-		//this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Desconto cadastrado com sucesso"),"result").recursive().serialize();
 	}
-	
-	@Async	
-	private void executarDescontoProduto(DescontoProdutoDTO desconto, List<Integer> cotas) {
-		
-		VerificadorProgressoGravacaoDescontoProdutoSingleton.getInstance().setAtivo(true);
-		
-		try {
-			desconto.setCotas(cotas);
-			descontoService.incluirDescontoProduto(desconto, getUsuario());
-		} catch(ValidacaoException e) {
-			VerificadorProgressoGravacaoDescontoProdutoSingleton.getInstance().setAtivo(false);
-			VerificadorProgressoGravacaoDescontoProdutoSingleton.getInstance().setValidacao(new ValidacaoVO(TipoMensagem.WARNING, e.getMessage()));
-		}
-		
-		VerificadorProgressoGravacaoDescontoProdutoSingleton.getInstance().setValidacao(new ValidacaoVO(TipoMensagem.SUCCESS, "Desconto cadastrado com sucesso"));
-		VerificadorProgressoGravacaoDescontoProdutoSingleton.getInstance().setAtivo(false);
-
-		
-	}	
 	
 	@Path("/pesquisarDescontoGeral")
 	public void pesquisarDescontoGeral(String sortorder, String sortname, int page, int rp) throws Exception {
@@ -506,22 +454,73 @@ public class TipoDescontoCotaController {
 		result.use(FlexiGridJson.class).from(lista).total(fornecedores.size()).page(1).serialize();
 	}
 
+	private void resultProcessoCadastroDesconto(Future<String> future) {
+		
+		String resultado = null;		
+			
+		try {
+			
+			if (future.isDone()) {
+				resultado = future.get();
+				result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS,  resultado),"result").recursive().serialize();
+			} 
+		} catch (Exception e) {
+			
+			List<String> mensagens = new ArrayList<String>();
+			
+			if (e instanceof ValidacaoException) {
+			
+				mensagens = ((ValidacaoException) e).getValidacao().getListaMensagens();
+			
+			} else {
+				mensagens.add(e.getMessage());
+			}
+			
+			throw new ValidacaoException(TipoMensagem.ERROR, mensagens);
+		}
+		
+	}
+	
+	@SuppressWarnings("unchecked")
 	@Get
 	@Path("/verificaProgressoGravacaoDescontoGeral")
 	public void verificaProgressoGravacaoDescontoGeral() {
-		result.use(Results.json()).from(VerificadorProgressoGravacaoDescontoGeralSingleton.getInstance(),"result").recursive().serialize();
+		
+		Future<String> future = (Future<String>) this.session.getAttribute(FUTURE_RESULT_PROCESSO_DESCONTO_GERAL);
+	
+		if (future != null) {
+			this.resultProcessoCadastroDesconto(future);
+		} else {
+			result.use(Results.nothing());
+		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Get
 	@Path("/verificaProgressoGravacaoDescontoEspecifico")
 	public void verificaProgressoGravacaoDescontoEspecifico() {
-		result.use(Results.json()).from(VerificadorProgressoGravacaoDescontoEspecificoSingleton.getInstance(), "result").recursive().serialize();
+		
+		Future<String> future = (Future<String>) this.session.getAttribute(FUTURE_RESULT_PROCESSO_DESCONTO_ESPECIFICO);
+		
+		if (future != null) {
+			this.resultProcessoCadastroDesconto(future);
+		} else {
+			result.use(Results.nothing());
+		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Get
 	@Path("/verificaProgressoGravacaoDescontoProduto")
 	public void verificaProgressoGravacaoDescontoProduto() {
-		result.use(Results.json()).from(VerificadorProgressoGravacaoDescontoProdutoSingleton.getInstance(),"result").recursive().serialize();
+		
+		Future<String> future = (Future<String>) this.session.getAttribute(FUTURE_RESULT_PROCESSO_DESCONTO_PRODUTO);
+		
+		if (future != null) {
+			this.resultProcessoCadastroDesconto(future);
+		} else {
+			result.use(Results.nothing());
+		}
 	}
 
 }

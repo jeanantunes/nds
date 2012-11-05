@@ -790,7 +790,7 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
             }
         }
         PDV pdv = pdvRepository.buscarPorId(pdvDTO.getId());
-        rota.addPDV(pdv, pdvDTO.getOrdem());
+        rota.addPDV(pdv, pdvDTO.getOrdem(), box);
     }
     
     /**

@@ -63,7 +63,7 @@ var descontoDistribuidorController = $.extend(true,{
 						   null,				   
 						   function(result) {
 						   		if (!result.ativo) {
-						   			exibirMensagem(result.validacao.tipoMensagem, result.validacao.listaMensagens, "");
+						   			exibirMensagem(result.tipoMensagem, result.listaMensagens);
 						   			clearInterval(verificadorProgressoGravacaoDescontoGeral);
 						   		}
 					   	   });

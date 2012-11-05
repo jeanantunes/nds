@@ -127,7 +127,7 @@ public class CotaGarantiaController {
 		}	
 		
 		for(CaucaoLiquida caucaoLiquida: listaCaucaoLiquida){			
-		    caucaoLiquida.setAtualizacao(Calendar.getInstance());
+		    caucaoLiquida.setAtualizacao(Calendar.getInstance().getTime());
 			validaCaucaoLiquida(caucaoLiquida);
 		}
 		

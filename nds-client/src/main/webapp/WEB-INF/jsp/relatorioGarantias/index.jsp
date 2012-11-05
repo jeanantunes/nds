@@ -1,5 +1,9 @@
 <head>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/relatorioGarantias.js"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.price_format.1.7.js"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script> 
+	
+	
 	<style type="text/css">
 		#dialog-detalhe-garantia fieldset{width:800px!important;}
 	</style>
@@ -19,9 +23,9 @@
 	            <tr>
 	              <td width="98">Tipo de Garantia:</td>
 	                <td width="203">
-	                	<select name="filtro.tipoGarantia" id="selectTipoGarantia" style="width:180px;">
+	                	<select name="filtro.tipoGarantia" id="selectTipoGarantia" onchange="relatorioGarantiasController.hideGrids()" style="width:180px;">
 		                	<option>Selecione...</option>
-		                	<option value="">Todas</option>
+		                	<option value="TODAS">Todas</option>
 		                	<c:forEach varStatus="counter" var="tipoGarantia"
 	                                        items="${listaTiposGarantia}">
 	                                        <option value="${tipoGarantia.key}">${tipoGarantia.value}</option>
@@ -32,7 +36,7 @@
 	                <td width="478">
 	                	<select name="filtro.statusGarantia" id="selectStatusGarantia" style="width:180px;">
 			                <option selected="selected">Selecionar...</option>
-			                <option value="">Todas</option>
+			                <option value="TODAS">Todas</option>
 		                	<c:forEach varStatus="counter" var="tipoStatusGarantia"
 	                                        items="${listaTiposStatusGarantia}">
 	                                        <option value="${tipoStatusGarantia.key}">${tipoStatusGarantia.value}</option>
@@ -43,7 +47,10 @@
 	            </tr>
 	        </table>
       </fieldset>
-</form>      
+</form>     
+ 
+      <input type="hidden" id=valorTotalGarantiaslHidden />
+ 
       <div class="linha_separa_fields">&nbsp;</div>
       
       <!-- RESULTADO DA BUSCA-->
@@ -90,7 +97,15 @@
         <span class="bt_arquivo"><a href="${pageContext.request.contextPath}/financeiro/relatorioGarantias/exportPesquisarGarantia?fileType=XLS">Arquivo</a></span>
 		<span class="bt_imprimir"><a href="${pageContext.request.contextPath}/financeiro/relatorioGarantias/exportPesquisarGarantia?fileType=PDF">Imprimir</a></span>
     
-    <div style="float:right; margin-top:10px; margin-right:270px;"><strong>Total R$:&nbsp;</strong> 999.999.999,00</div>
+    <div style="float:right; margin-top:10px; margin-right:270px;">
+        <table>
+            <tr>
+	        <td><strong>Total R$:&nbsp;</strong></td>
+	        <td id="totalGarantia" ></td>
+	        </tr>
+        </table>
+    </div>
+    
     </fieldset>
 </div>
 
@@ -101,4 +116,5 @@
 			relatorioGarantiasController.init();
 		});
 </script>
+
 </body>

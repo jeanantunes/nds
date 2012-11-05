@@ -1,5 +1,7 @@
 <head>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.fileDownload.js"></script>
 <script type="text/javascript" src="scripts/impressaoNfe.js"></script>
+
 <script language="javascript" type="text/javascript">
 	$(function() {
 		impressaoNfeController.init();
@@ -16,11 +18,11 @@
 			<legend> Pesquisar NF-e</legend>
 			<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 				<tr>
-					<c:if test="${tipoNotas == null}">
-					<td width="82">Tipo de Nota:</td>
-					<td width="209"></td>
-					</c:if>
-					<c:if test="${tipoNotas != null}">
+					<%-- <c:if test="${tipoNotas == null}">
+					<td width="82"></td>
+					<td width="209"><input type="hidden" id="tipoNFe" name="tipoNFe" value="-1" /></td>
+					</c:if> --%>
+					
 					<td width="82">Tipo de Nota:</td>
 					<td width="209">
 					<select name="tipoNFe" id="tipoNFe" style="width: 200px; font-size: 11px !important">
@@ -30,7 +32,6 @@
 							</c:forEach>
 					</select>
 					</td>
-					</c:if>
 					<td width="97">Data Movimento:</td>
 					<td width="238"><input name="dataMovimentoInicial" type="text" id="dataMovimentoInicial" style="width: 76px;" maxlength="10" />
 						&nbsp;&nbsp;Até&nbsp; <input name="dataMovimentoFinal" type="text" id="dataMovimentoFinal" style="width: 76px;" maxlength="10" /></td>
@@ -91,7 +92,7 @@
 				</tr>
 				<tr>
 					<td>Produtos:</td>
-					<td><a href="#" id="selProdutos">Clique e Selecione os Produtos</a>
+					<td><a href="javascript:;" id="selProdutos">Clique e Selecione os Produtos</a>
 						<div id="menuProdutos" class="menu_produtos" style="display: none;">
 							<span class="bt_sellAll"> <input type="checkbox" name="selecionarTodosProd" id="selecionarTodosProd"
 								onclick="impressaoNfeController.checkTodosProdutos();" style="float: left;" /> <label for="sel">Selecionar
@@ -119,18 +120,22 @@
 			<div class="grids" style="display: none;">
 				<table class="impressaoGrid"></table>
 
-				<span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="images/ico_excel.png"
+				<span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;" onclick="impressaoNfeController.imprimir('XLS');"><img src="images/ico_excel.png"
 						hspace="5" border="0" />Arquivo</a></span> <span class="bt_novos" title="Imprimir">
-				<a href="${pageContext.request.contextPath}/nfe/impressaoNFE/imprimirNFe?fileType=PDF">
+				<a href="javascript:;" onclick="impressaoNfeController.imprimir('PDF');">
 					<img src="images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />Imprimir Documento</a>
 					</span>
 				<span class="bt_sellAll" style="float: right;" id="btSel"><label for="sel">Selecionar Todos</label><input
-					type="checkbox" id="selTodasAsCotas" name="Todos" onclick="impressaoNfeController.checkTodasAsCotas();" style="float: left; margin-right: 30px;" /></span>
+					type="checkbox" id="selTodasAsNotas" name="Todos" onclick="impressaoNfeController.checkTodasAsNotas();" style="float: left; margin-right: 30px;" /></span>
 			</div>
 
 		</fieldset>
 		<div class="linha_separa_fields">&nbsp;</div>
 
+		<div id="msgBoxDataMovimentoInvalida" title="Data de Movimento inválida.">
+		    <p>É necessário informar uma Data de Movimento válida.</p>
+		</div>
+		
 		<div id="form-pesqProdutos">
 		<div id="dialog-pesqProdutos" title="Pesquisar Produtos" style="display: none;">
 			<fieldset style="width: 400px !important;">

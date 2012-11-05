@@ -4,6 +4,8 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -16,6 +18,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import br.com.abril.nds.model.aprovacao.Aprovacao;
+import br.com.abril.nds.model.integracao.StatusIntegracao;
 import br.com.abril.nds.model.seguranca.Usuario;
 
 
@@ -45,48 +48,115 @@ public abstract class Movimento extends Aprovacao {
 	@JoinColumn(name = "TIPO_MOVIMENTO_ID")
 	private TipoMovimento tipoMovimento;
 	
-	public Movimento() {
-		this.dataCriacao = new Date();
-	}
+	@Enumerated(EnumType.STRING)
+	@Column(name = "STATUS_INTEGRACAO")
+	private StatusIntegracao statusIntegracao = StatusIntegracao.NAO_INTEGRADO;
 	
+	@Temporal(TemporalType.DATE)
+	@Column(name = "DATA_INTEGRACAO", nullable = true)
+	private Date dataIntegracao;
+	
+	public Movimento() {
+        this.dataCriacao = new Date();
+    }
+
+	/**
+	 * @return the id
+	 */
 	public Long getId() {
 		return id;
 	}
-	
+
+	/**
+	 * @param id the id to set
+	 */
 	public void setId(Long id) {
 		this.id = id;
 	}
-	
+
+	/**
+	 * @return the usuario
+	 */
 	public Usuario getUsuario() {
 		return usuario;
 	}
-	
+
+	/**
+	 * @param usuario the usuario to set
+	 */
 	public void setUsuario(Usuario usuario) {
 		this.usuario = usuario;
 	}
-	
+
+	/**
+	 * @return the data
+	 */
 	public Date getData() {
 		return data;
 	}
-	
+
+	/**
+	 * @param data the data to set
+	 */
 	public void setData(Date data) {
 		this.data = data;
 	}
-	
+
+	/**
+	 * @return the dataCriacao
+	 */
 	public Date getDataCriacao() {
 		return dataCriacao;
 	}
-	
+
+	/**
+	 * @param dataCriacao the dataCriacao to set
+	 */
 	public void setDataCriacao(Date dataCriacao) {
 		this.dataCriacao = dataCriacao;
 	}
 
+	/**
+	 * @return the tipoMovimento
+	 */
 	public TipoMovimento getTipoMovimento() {
 		return tipoMovimento;
 	}
 
+	/**
+	 * @param tipoMovimento the tipoMovimento to set
+	 */
 	public void setTipoMovimento(TipoMovimento tipoMovimento) {
 		this.tipoMovimento = tipoMovimento;
 	}
+
+	/**
+	 * @return the statusIntegracao
+	 */
+	public StatusIntegracao getStatusIntegracao() {
+		return statusIntegracao;
+	}
+
+	/**
+	 * @param statusIntegracao the statusIntegracao to set
+	 */
+	public void setStatusIntegracao(StatusIntegracao statusIntegracao) {
+		this.statusIntegracao = statusIntegracao;
+	}
+
+	/**
+	 * @return the dataIntegracao
+	 */
+	public Date getDataIntegracao() {
+		return dataIntegracao;
+	}
+
+	/**
+	 * @param dataIntegracao the dataIntegracao to set
+	 */
+	public void setDataIntegracao(Date dataIntegracao) {
+		this.dataIntegracao = dataIntegracao;
+	}
+		
 
 }

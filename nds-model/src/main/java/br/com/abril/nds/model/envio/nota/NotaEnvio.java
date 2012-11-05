@@ -47,6 +47,9 @@ public class NotaEnvio implements Serializable {
 	@Temporal(TemporalType.DATE)
 	private Date dataEmissao;
 
+	@Column(name = "NOTA_IMPRESSA", nullable = false)
+	private boolean notaImpressa;
+	
 	@Embedded
 	private IdentificacaoEmitente emitente;
 	
@@ -168,9 +171,18 @@ public class NotaEnvio implements Serializable {
 		this.dataEmissao = dataEmissao;
 	}
 
+	/**
+	 * @return
+	 */
+	public boolean isNotaImpressa() {
+		return notaImpressa;
+	}
 
-	
-	
-	
+	/**
+	 * @param notaImpressa
+	 */
+	public void setNotaImpressa(boolean notaImpressa) {
+		this.notaImpressa = notaImpressa;
+	}
 
 }

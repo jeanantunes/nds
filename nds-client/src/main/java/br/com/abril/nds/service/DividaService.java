@@ -6,8 +6,10 @@ import java.util.List;
 
 import br.com.abril.nds.dto.DividaComissaoDTO;
 import br.com.abril.nds.dto.StatusDividaDTO;
+import br.com.abril.nds.dto.fechamentodiario.SumarizacaoDividasDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaInadimplenteDTO;
 import br.com.abril.nds.model.financeiro.Divida;
+import br.com.abril.nds.vo.PaginacaoVO;
 
 public interface DividaService {
 
@@ -90,4 +92,71 @@ public interface DividaService {
 
 
 	DividaComissaoDTO obterDadosDividaComissao(Long idDivida);
+	
+    /**
+     * Sumariza as dívidas a receber em uma determinada data
+     * 
+     * @param data
+     *            data para sumarização das dívidas
+     * @return Lista com as sumarizações das dívidas a receber em uma
+     *         determinada data
+     */
+	List<SumarizacaoDividasDTO> sumarizacaoDividasReceberEm(Date data);
+	
+    /**
+     * Sumariza as dívidas a vencer após um determinada data
+     * 
+     * @param data
+     *            data para sumarização das dívidas
+     * @return Lista com as sumarizações das dívidas a receber em uma
+     *         determinada data
+     */
+	List<SumarizacaoDividasDTO> sumarizacaoDividasVencerApos(Date data);
+	
+	
+    /**
+     * Recupera as dívidas a receber em uma determinada data
+     * 
+     * @param data
+     *            data para recuperação das dívidas
+     * @param paginacao
+     *            VO com informções de paginação, permite {@code null}, 
+     *            neste caso retorna todas as dívidas
+     * @return lista de dividas a receber em uma determinada data
+     */
+	List<Divida> obterDividasReceberEm(Date data, PaginacaoVO paginacao);
+	
+	/**
+     * Recupera as dívidas a vencer após uma determinada data
+     * 
+     * @param data
+     *            data para recuperação das dívidas
+     * @param paginacao
+     *            VO com informções de paginação, permite {@code null}, 
+     *            neste caso retorna todas as dívidas
+     * @return lista de dividas a vencer após uma determinada data
+     */
+	List<Divida> obterDividasVencerApos(Date data, PaginacaoVO paginacao);
+
+
+    /**
+     * Conta a quantidade de dívidas a receber em uma determinada data
+     * 
+     * @param data
+     *            data para contagem das dívidas
+     * @return quantidade de dividas a receber em uma determinada data
+     */
+	int contarDividasReceberEm(Date data);
+	
+	
+    /**
+     * Conta a quantidade de dívidas a vencer apos uma determinada data
+     * 
+     * @param data
+     *            data para contagem das dívidas
+     * @return quantidade de dívidas a vencer após determinada data
+     */
+    int contarDividasVencerApos(Date data);
+	
+	
 }

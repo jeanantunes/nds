@@ -1,6 +1,7 @@
 package br.com.abril.nds.dto;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 
 public class ItemDanfe{
 	
@@ -14,7 +15,7 @@ public class ItemDanfe{
 
 	private Long unidadeProduto;
 
-	private BigDecimal quantidadeProduto;
+	private BigInteger quantidadeProduto;
 
 	private BigDecimal valorUnitarioProduto;
 
@@ -74,11 +75,11 @@ public class ItemDanfe{
 		this.unidadeProduto = unidadeProduto;
 	}
 	
-	public BigDecimal getQuantidadeProduto() {
+	public BigInteger getQuantidadeProduto() {
 		return quantidadeProduto;
 	}
 
-	public void setQuantidadeProduto(BigDecimal quantidadeProduto) {
+	public void setQuantidadeProduto(BigInteger quantidadeProduto) {
 		this.quantidadeProduto = quantidadeProduto;
 	}
 

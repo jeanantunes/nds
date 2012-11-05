@@ -2,6 +2,7 @@ package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -12,6 +13,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.dto.filtro.FiltroConsultaDiferencaEstoqueDTO;
+import br.com.abril.nds.dto.filtro.FiltroConsultaDiferencaEstoqueDTO.OrdenacaoColunaConsulta;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDiferencaEstoqueDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDiferencaEstoqueDTO.OrdenacaoColunaLancamento;
 import br.com.abril.nds.fixture.Fixture;
@@ -171,20 +173,21 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 			
 			save(movimentoEstoque);
 			
+			LancamentoDiferenca lancamento = new LancamentoDiferenca();
+			lancamento.setMovimentoEstoque(movimentoEstoque);
+			lancamento.setDataProcessamento(new Date());
+			
+			save(lancamento);
+
 			Diferenca diferenca = 
 				Fixture.diferenca(quantidadeDiferenca, usuario, produtoEdicao,
 								  tipoDiferenca, statusConfirmado, null,true, TipoEstoque.LANCAMENTO,TipoDirecionamentoDiferenca.COTA, datalancamentoDiferenca);
 			
 			diferenca.setItemRecebimentoFisico(itemRecebimentoFisico);
+			diferenca.setLancamentoDiferenca(lancamento);
 			
 			save(diferenca);
 			
-			LancamentoDiferenca lancamento = new LancamentoDiferenca();
-			lancamento.setMovimentoEstoque(movimentoEstoque);
-			lancamento.setDiferenca(diferenca);
-			lancamento.setDataProcessamento(new Date());
-			
-			save(lancamento);
 		}
 		
 		for (int i = 0; i < this.qtdeMovimentosConsulta; i++) {
@@ -197,20 +200,21 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 			
 			save(movimentoEstoque);
 			
+			LancamentoDiferenca lancamento = new LancamentoDiferenca();
+			lancamento.setMovimentoEstoque(movimentoEstoque);
+			lancamento.setDataProcessamento(new Date());
+			
+			save(lancamento);
+
 			Diferenca diferenca = 
 				Fixture.diferenca(quantidadeDiferenca, usuario, produtoEdicao,
 								  tipoDiferenca, statusPendente, null, true, TipoEstoque.LANCAMENTO,TipoDirecionamentoDiferenca.COTA, datalancamentoDiferenca);
 			
 			diferenca.setItemRecebimentoFisico(itemRecebimentoFisico);
+			diferenca.setLancamentoDiferenca(lancamento);
 			
 			save(diferenca);
 			
-			LancamentoDiferenca lancamento = new LancamentoDiferenca();
-			lancamento.setMovimentoEstoque(movimentoEstoque);
-			lancamento.setDiferenca(diferenca);
-			lancamento.setDataProcessamento(new Date());
-			
-			save(lancamento);
 		}
 		
 		datalancamentoDiferencaRateio = DateUtil.adicionarDias(datalancamentoDiferenca, 1);
@@ -379,5 +383,600 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 				
 		Assert.assertTrue(existeDiferencaPorNota);
 	}
+	
+//	TESTES SEM USO DE MASSA
+	
+	@Test
+	public void testarObterDiferencasLancamento() {
+		
+		List<Diferenca> diferencasLancamento;
+		
+		FiltroLancamentoDiferencaEstoqueDTO filtro = new FiltroLancamentoDiferencaEstoqueDTO();
+		
+		diferencasLancamento = diferencaEstoqueRepository.obterDiferencasLancamento(filtro);
+		
+		Assert.assertNotNull(diferencasLancamento);
+		
+	}
+	
+//	OrdenacaoColuna CODIGO_PRODUTO
+	@Test
+	public void testarObterDiferencasLancamentoOrdenacaoColunaCODIGOPRODUTO() {
+		
+		PaginacaoVO paginacao = new PaginacaoVO(1,1,"asc");
+		
+		List<Diferenca> diferencasLancamento;
+		
+		FiltroLancamentoDiferencaEstoqueDTO filtro = new FiltroLancamentoDiferencaEstoqueDTO();
+		filtro.setPaginacao(paginacao);
+		filtro.setOrdenacaoColuna(OrdenacaoColunaLancamento.CODIGO_PRODUTO);
+		
+		diferencasLancamento = diferencaEstoqueRepository.obterDiferencasLancamento(filtro);
+		
+		Assert.assertNotNull(diferencasLancamento);
+		
+	}
+	
+//	OrdenacaoColuna DESCRICAO_PRODUTO
+	@Test
+	public void testarObterDiferencasLancamentoOrdenacaoColunaDESCRICAOPRODUTO() {
+		
+		PaginacaoVO paginacao = new PaginacaoVO(1,1,"asc");
+		
+		List<Diferenca> diferencasLancamento;
+		
+		FiltroLancamentoDiferencaEstoqueDTO filtro = new FiltroLancamentoDiferencaEstoqueDTO();
+		filtro.setPaginacao(paginacao);
+		filtro.setOrdenacaoColuna(OrdenacaoColunaLancamento.DESCRICAO_PRODUTO);
+		
+		diferencasLancamento = diferencaEstoqueRepository.obterDiferencasLancamento(filtro);
+		
+		Assert.assertNotNull(diferencasLancamento);
+		
+	}	
+	
+//	OrdenacaoColuna QUANTIDADE
+	@Test
+	public void testarObterDiferencasLancamentoOrdenacaoColunaQUANTIDADE() {
+		
+		PaginacaoVO paginacao = new PaginacaoVO(1,1,"asc");
+		
+		List<Diferenca> diferencasLancamento;
+		
+		FiltroLancamentoDiferencaEstoqueDTO filtro = new FiltroLancamentoDiferencaEstoqueDTO();
+		filtro.setPaginacao(paginacao);
+		filtro.setOrdenacaoColuna(OrdenacaoColunaLancamento.QUANTIDADE);
+		
+		diferencasLancamento = diferencaEstoqueRepository.obterDiferencasLancamento(filtro);
+		
+		Assert.assertNotNull(diferencasLancamento);
+		
+	}
+	
+//	OrdenacaoColuna NUMERO_EDICAO
+	@Test
+	public void testarObterDiferencasLancamentoOrdenacaoColunaNUMEROEDICAO() {
+		
+		PaginacaoVO paginacao = new PaginacaoVO(1,1,"asc");
+		
+		List<Diferenca> diferencasLancamento;
+		
+		FiltroLancamentoDiferencaEstoqueDTO filtro = new FiltroLancamentoDiferencaEstoqueDTO();
+		filtro.setPaginacao(paginacao);
+		filtro.setOrdenacaoColuna(OrdenacaoColunaLancamento.NUMERO_EDICAO);
+		
+		diferencasLancamento = diferencaEstoqueRepository.obterDiferencasLancamento(filtro);
+		
+		Assert.assertNotNull(diferencasLancamento);
+		
+	}
+	
+//	OrdenacaoColuna PACOTE_PADRAO
+	@Test
+	public void testarObterDiferencasLancamentoOrdenacaoColunaPACOTEPADRAO() {
+		
+		PaginacaoVO paginacao = new PaginacaoVO(1,1,"asc");
+		
+		List<Diferenca> diferencasLancamento;
+		
+		FiltroLancamentoDiferencaEstoqueDTO filtro = new FiltroLancamentoDiferencaEstoqueDTO();
+		filtro.setPaginacao(paginacao);
+		filtro.setOrdenacaoColuna(OrdenacaoColunaLancamento.PACOTE_PADRAO);
+		
+		diferencasLancamento = diferencaEstoqueRepository.obterDiferencasLancamento(filtro);
+		
+		Assert.assertNotNull(diferencasLancamento);
+		
+	}
+	
+//	OrdenacaoColuna PRECO_VENDA
+	@Test
+	public void testarObterDiferencasLancamentoOrdenacaoColunaPRECOVENDA() {
+		
+		PaginacaoVO paginacao = new PaginacaoVO(1,1,"asc");
+		
+		List<Diferenca> diferencasLancamento;
+		
+		FiltroLancamentoDiferencaEstoqueDTO filtro = new FiltroLancamentoDiferencaEstoqueDTO();
+		filtro.setPaginacao(paginacao);
+		filtro.setOrdenacaoColuna(OrdenacaoColunaLancamento.PRECO_VENDA);
+		
+		diferencasLancamento = diferencaEstoqueRepository.obterDiferencasLancamento(filtro);
+		
+		Assert.assertNotNull(diferencasLancamento);
+		
+	}
+	
+//	OrdenacaoColuna PRECO_DESCONTO
+	@Test
+	public void testarObterDiferencasLancamentoOrdenacaoColunaPRECODESCONTO() {
+		
+		PaginacaoVO paginacao = new PaginacaoVO(1,1,"asc");
+		
+		List<Diferenca> diferencasLancamento;
+		
+		FiltroLancamentoDiferencaEstoqueDTO filtro = new FiltroLancamentoDiferencaEstoqueDTO();
+		filtro.setPaginacao(paginacao);
+		filtro.setOrdenacaoColuna(OrdenacaoColunaLancamento.PRECO_DESCONTO);
+		
+		diferencasLancamento = diferencaEstoqueRepository.obterDiferencasLancamento(filtro);
+		
+		Assert.assertNotNull(diferencasLancamento);
+		
+	}
+	
+//	OrdenacaoColuna TIPO_DIFERENCA
+	@Test
+	public void testarObterDiferencasLancamentoOrdenacaoColunaTIPODIFERENCA() {
+		
+		PaginacaoVO paginacao = new PaginacaoVO(1,1,"asc");
+		
+		List<Diferenca> diferencasLancamento;
+		
+		FiltroLancamentoDiferencaEstoqueDTO filtro = new FiltroLancamentoDiferencaEstoqueDTO();
+		filtro.setPaginacao(paginacao);
+		filtro.setOrdenacaoColuna(OrdenacaoColunaLancamento.TIPO_DIFERENCA);
+		
+		diferencasLancamento = diferencaEstoqueRepository.obterDiferencasLancamento(filtro);
+		
+		Assert.assertNotNull(diferencasLancamento);
+		
+	}
+	
+//	OrdenacaoColuna VALOR_TOTAL_DIFERENCA
+	@Test
+	public void testarObterDiferencasLancamentoOrdenacaoColunaVALORTOTALDIFERENCA() {
+		
+		PaginacaoVO paginacao = new PaginacaoVO(1,1,"asc");
+		
+		List<Diferenca> diferencasLancamento;
+		
+		FiltroLancamentoDiferencaEstoqueDTO filtro = new FiltroLancamentoDiferencaEstoqueDTO();
+		filtro.setPaginacao(paginacao);
+		filtro.setOrdenacaoColuna(OrdenacaoColunaLancamento.VALOR_TOTAL_DIFERENCA);
+		
+		diferencasLancamento = diferencaEstoqueRepository.obterDiferencasLancamento(filtro);
+		
+		Assert.assertNotNull(diferencasLancamento);
+		
+	}
+	
+//	DataMovimento
+	@Test
+	public void testarObterDiferencasLancamentoDataMovimento() {
+		
+		List<Diferenca> diferencasLancamento;
+		
+		FiltroLancamentoDiferencaEstoqueDTO filtro = new FiltroLancamentoDiferencaEstoqueDTO();
+		Calendar dataMovimento = Calendar.getInstance();
+		filtro.setDataMovimento(dataMovimento.getTime());
+		
+		diferencasLancamento = diferencaEstoqueRepository.obterDiferencasLancamento(filtro);
+		
+		Assert.assertNotNull(diferencasLancamento);
+		
+	}
+	
+//	TipoDiferenca
+	@Test
+	public void testarObterDiferencasLancamentoTipoDiferenca() {
+		
+		List<Diferenca> diferencasLancamento;
+		
+		FiltroLancamentoDiferencaEstoqueDTO filtro = new FiltroLancamentoDiferencaEstoqueDTO();
+		filtro.setTipoDiferenca(TipoDiferenca.FALTA_EM);
+		
+		diferencasLancamento = diferencaEstoqueRepository.obterDiferencasLancamento(filtro);
+		
+		Assert.assertNotNull(diferencasLancamento);
+		
+	}
+	
+	@Test
+	public void testarObterTotalDiferencasLancamento() {
+		
+		Long totalDiferencas;
+		
+		FiltroLancamentoDiferencaEstoqueDTO filtro = new FiltroLancamentoDiferencaEstoqueDTO();
+		
+		totalDiferencas = diferencaEstoqueRepository.obterTotalDiferencasLancamento(filtro);
+		
+		Assert.assertNotNull(totalDiferencas);
+		
+	}
+	
+//	DataMovimento
+	@Test
+	public void testarObterTotalDiferencasLancamentoDataMovimento() {
+		
+		Long totalDiferencas;
+		
+		FiltroLancamentoDiferencaEstoqueDTO filtro = new FiltroLancamentoDiferencaEstoqueDTO();
+		Calendar dataMovimento = Calendar.getInstance();
+		filtro.setDataMovimento(dataMovimento.getTime());
+		
+		totalDiferencas = diferencaEstoqueRepository.obterTotalDiferencasLancamento(filtro);
+		
+		Assert.assertNotNull(totalDiferencas);
+		
+	}
+	
+//	TipoDiferenca
+	@Test
+	public void testarObterTotalDiferencasLancamentoTipoDiferenca() {
+		
+		Long totalDiferencas;
+		
+		FiltroLancamentoDiferencaEstoqueDTO filtro = new FiltroLancamentoDiferencaEstoqueDTO();
+		filtro.setTipoDiferenca(TipoDiferenca.FALTA_EM);
+		
+		totalDiferencas = diferencaEstoqueRepository.obterTotalDiferencasLancamento(filtro);
+		
+		Assert.assertNotNull(totalDiferencas);
+		
+	}	
+	
+	@Test
+	public void testarObterDiferencas() {
+		
+		List<Diferenca> diferencas;
+		
+		FiltroConsultaDiferencaEstoqueDTO filtro = new FiltroConsultaDiferencaEstoqueDTO();
+		
+		Calendar d = Calendar.getInstance();
+		Date dataLimiteLancamentoPesquisa = d.getTime();
+		
+		diferencas = diferencaEstoqueRepository.obterDiferencas(filtro, dataLimiteLancamentoPesquisa);
+		
+		Assert.assertNotNull(diferencas);
+		
+	}
+	
+//	 OrdenacaoColuna DATA_LANCAMENTO_NUMERO_EDICAO
+	@Test
+	public void testarObterDiferencasOrdenacaoColunaDATALANCAMENTONUMEROEDICAO() {
+		
+		PaginacaoVO paginacao = new PaginacaoVO(1,1,"asc");
+		
+		List<Diferenca> diferencas;
+		
+		FiltroConsultaDiferencaEstoqueDTO filtro = new FiltroConsultaDiferencaEstoqueDTO();
+		filtro.setPaginacao(paginacao);
+		filtro.setOrdenacaoColuna(OrdenacaoColunaConsulta.DATA_LANCAMENTO_NUMERO_EDICAO);
+		
+		Calendar d = Calendar.getInstance();
+		Date dataLimiteLancamentoPesquisa = d.getTime();
+		
+		diferencas = diferencaEstoqueRepository.obterDiferencas(filtro, dataLimiteLancamentoPesquisa);
+		
+		Assert.assertNotNull(diferencas);
+		
+	}
+	
+//	 OrdenacaoColuna DATA_LANCAMENTO
+	@Test
+	public void testarObterDiferencasOrdenacaoColunaDATALANCAMENTO() {
+		
+		PaginacaoVO paginacao = new PaginacaoVO(1,1,"asc");
+		
+		List<Diferenca> diferencas;
+		
+		FiltroConsultaDiferencaEstoqueDTO filtro = new FiltroConsultaDiferencaEstoqueDTO();
+		filtro.setPaginacao(paginacao);
+		filtro.setOrdenacaoColuna(OrdenacaoColunaConsulta.DATA_LANCAMENTO);
+		
+		Calendar d = Calendar.getInstance();
+		Date dataLimiteLancamentoPesquisa = d.getTime();
+		
+		diferencas = diferencaEstoqueRepository.obterDiferencas(filtro, dataLimiteLancamentoPesquisa);
+		
+		Assert.assertNotNull(diferencas);
+		
+	}
+	
+//	 OrdenacaoColuna CODIGO_PRODUTO
+	@Test
+	public void testarObterDiferencasOrdenacaoColunaCODIGOPRODUTO() {
+		
+		PaginacaoVO paginacao = new PaginacaoVO(1,1,"asc");
+		
+		List<Diferenca> diferencas;
+		
+		FiltroConsultaDiferencaEstoqueDTO filtro = new FiltroConsultaDiferencaEstoqueDTO();
+		filtro.setPaginacao(paginacao);
+		filtro.setOrdenacaoColuna(OrdenacaoColunaConsulta.CODIGO_PRODUTO);
+		
+		Calendar d = Calendar.getInstance();
+		Date dataLimiteLancamentoPesquisa = d.getTime();
+		
+		diferencas = diferencaEstoqueRepository.obterDiferencas(filtro, dataLimiteLancamentoPesquisa);
+		
+		Assert.assertNotNull(diferencas);
+		
+	}
+	
+//	 OrdenacaoColuna DESCRICAO_PRODUTO
+	@Test
+	public void testarObterDiferencasOrdenacaoColunaDESCRICAOPRODUTO() {
+		
+		PaginacaoVO paginacao = new PaginacaoVO(1,1,"asc");
+		
+		List<Diferenca> diferencas;
+		
+		FiltroConsultaDiferencaEstoqueDTO filtro = new FiltroConsultaDiferencaEstoqueDTO();
+		filtro.setPaginacao(paginacao);
+		filtro.setOrdenacaoColuna(OrdenacaoColunaConsulta.DESCRICAO_PRODUTO);
+		
+		Calendar d = Calendar.getInstance();
+		Date dataLimiteLancamentoPesquisa = d.getTime();
+		
+		diferencas = diferencaEstoqueRepository.obterDiferencas(filtro, dataLimiteLancamentoPesquisa);
+		
+		Assert.assertNotNull(diferencas);
+		
+	}
+	
+//	 OrdenacaoColuna NUMERO_EDICAO
+	@Test
+	public void testarObterDiferencasOrdenacaoColunaNUMEROEDICAO() {
+		
+		PaginacaoVO paginacao = new PaginacaoVO(1,1,"asc");
+		
+		List<Diferenca> diferencas;
+		
+		FiltroConsultaDiferencaEstoqueDTO filtro = new FiltroConsultaDiferencaEstoqueDTO();
+		filtro.setPaginacao(paginacao);
+		filtro.setOrdenacaoColuna(OrdenacaoColunaConsulta.NUMERO_EDICAO);
+		
+		Calendar d = Calendar.getInstance();
+		Date dataLimiteLancamentoPesquisa = d.getTime();
+		
+		diferencas = diferencaEstoqueRepository.obterDiferencas(filtro, dataLimiteLancamentoPesquisa);
+		
+		Assert.assertNotNull(diferencas);
+		
+	}
+	
+//	 OrdenacaoColuna PRECO_VENDA
+	@Test
+	public void testarObterDiferencasOrdenacaoColunaPRECOVENDA() {
+		
+		PaginacaoVO paginacao = new PaginacaoVO(1,1,"asc");
+		
+		List<Diferenca> diferencas;
+		
+		FiltroConsultaDiferencaEstoqueDTO filtro = new FiltroConsultaDiferencaEstoqueDTO();
+		filtro.setPaginacao(paginacao);
+		filtro.setOrdenacaoColuna(OrdenacaoColunaConsulta.PRECO_VENDA);
+		
+		Calendar d = Calendar.getInstance();
+		Date dataLimiteLancamentoPesquisa = d.getTime();
+		
+		diferencas = diferencaEstoqueRepository.obterDiferencas(filtro, dataLimiteLancamentoPesquisa);
+		
+		Assert.assertNotNull(diferencas);
+		
+	}
+	
+//	 OrdenacaoColuna PRECO_DESCONTO
+	@Test
+	public void testarObterDiferencasOrdenacaoColunaPRECODESCONTO() {
+		
+		PaginacaoVO paginacao = new PaginacaoVO(1,1,"asc");
+		
+		List<Diferenca> diferencas;
+		
+		FiltroConsultaDiferencaEstoqueDTO filtro = new FiltroConsultaDiferencaEstoqueDTO();
+		filtro.setPaginacao(paginacao);
+		filtro.setOrdenacaoColuna(OrdenacaoColunaConsulta.PRECO_DESCONTO);
+		
+		Calendar d = Calendar.getInstance();
+		Date dataLimiteLancamentoPesquisa = d.getTime();
+		
+		diferencas = diferencaEstoqueRepository.obterDiferencas(filtro, dataLimiteLancamentoPesquisa);
+		
+		Assert.assertNotNull(diferencas);
+		
+	}
+	
+//	 OrdenacaoColuna TIPO_DIFERENCA
+	@Test
+	public void testarObterDiferencasOrdenacaoColunaTIPODIFERENCA() {
+		
+		PaginacaoVO paginacao = new PaginacaoVO(1,1,"asc");
+		
+		List<Diferenca> diferencas;
+		
+		FiltroConsultaDiferencaEstoqueDTO filtro = new FiltroConsultaDiferencaEstoqueDTO();
+		filtro.setPaginacao(paginacao);
+		filtro.setOrdenacaoColuna(OrdenacaoColunaConsulta.TIPO_DIFERENCA);
+		
+		Calendar d = Calendar.getInstance();
+		Date dataLimiteLancamentoPesquisa = d.getTime();
+		
+		diferencas = diferencaEstoqueRepository.obterDiferencas(filtro, dataLimiteLancamentoPesquisa);
+		
+		Assert.assertNotNull(diferencas);
+		
+	}
+	
+//	 OrdenacaoColuna NUMERO_NOTA_FISCAO
+	@Test
+	public void testarObterDiferencasOrdenacaoColunaNUMERONOTAFISCAL() {
+		
+		PaginacaoVO paginacao = new PaginacaoVO(1,1,"asc");
+		
+		List<Diferenca> diferencas;
+		
+		FiltroConsultaDiferencaEstoqueDTO filtro = new FiltroConsultaDiferencaEstoqueDTO();
+		filtro.setPaginacao(paginacao);
+		filtro.setOrdenacaoColuna(OrdenacaoColunaConsulta.NUMERO_NOTA_FISCAL);
+		
+		Calendar d = Calendar.getInstance();
+		Date dataLimiteLancamentoPesquisa = d.getTime();
+		
+		diferencas = diferencaEstoqueRepository.obterDiferencas(filtro, dataLimiteLancamentoPesquisa);
+		
+		Assert.assertNotNull(diferencas);
+		
+	}
+	
+//	 OrdenacaoColuna QUANTIDADE
+	@Test
+	public void testarObterDiferencasOrdenacaoColunaQUANTIDADE() {
+		
+		PaginacaoVO paginacao = new PaginacaoVO(1,1,"asc");
+		
+		List<Diferenca> diferencas;
+		
+		FiltroConsultaDiferencaEstoqueDTO filtro = new FiltroConsultaDiferencaEstoqueDTO();
+		filtro.setPaginacao(paginacao);
+		filtro.setOrdenacaoColuna(OrdenacaoColunaConsulta.QUANTIDADE);
+		
+		Calendar d = Calendar.getInstance();
+		Date dataLimiteLancamentoPesquisa = d.getTime();
+		
+		diferencas = diferencaEstoqueRepository.obterDiferencas(filtro, dataLimiteLancamentoPesquisa);
+		
+		Assert.assertNotNull(diferencas);
+		
+	}
+	
+//	 OrdenacaoColuna STATUS_APROVACAO
+	@Test
+	public void testarObterDiferencasOrdenacaoColunaSTATUSAPROVACAO() {
+		
+		PaginacaoVO paginacao = new PaginacaoVO(1,1,"asc");
+		
+		List<Diferenca> diferencas;
+		
+		FiltroConsultaDiferencaEstoqueDTO filtro = new FiltroConsultaDiferencaEstoqueDTO();
+		filtro.setPaginacao(paginacao);
+		filtro.setOrdenacaoColuna(OrdenacaoColunaConsulta.STATUS_APROVACAO);
+		
+		Calendar d = Calendar.getInstance();
+		Date dataLimiteLancamentoPesquisa = d.getTime();
+		
+		diferencas = diferencaEstoqueRepository.obterDiferencas(filtro, dataLimiteLancamentoPesquisa);
+		
+		Assert.assertNotNull(diferencas);
+		
+	}
+	
+//	 OrdenacaoColuna VALOR_TOTAL_DIFERENCA
+	@Test
+	public void testarObterDiferencasOrdenacaoColunaVALORTOTALDIFERENCA() {
+		
+		PaginacaoVO paginacao = new PaginacaoVO(1,1,"asc");
+		
+		List<Diferenca> diferencas;
+		
+		FiltroConsultaDiferencaEstoqueDTO filtro = new FiltroConsultaDiferencaEstoqueDTO();
+		filtro.setPaginacao(paginacao);
+		filtro.setOrdenacaoColuna(OrdenacaoColunaConsulta.VALOR_TOTAL_DIFERENCA);
+		
+		Calendar d = Calendar.getInstance();
+		Date dataLimiteLancamentoPesquisa = d.getTime();
+		
+		diferencas = diferencaEstoqueRepository.obterDiferencas(filtro, dataLimiteLancamentoPesquisa);
+		
+		Assert.assertNotNull(diferencas);
+		
+	}
+	
+	@Test
+	public void testarObterTotalDiferencas() {
+		
+		Long totalDiferencas;
+		
+		FiltroConsultaDiferencaEstoqueDTO filtro = new FiltroConsultaDiferencaEstoqueDTO();
+		
+		Calendar d = Calendar.getInstance();
+		Date dataLimiteLancamentoPesquisa = d.getTime();
+		
+		totalDiferencas = diferencaEstoqueRepository.obterTotalDiferencas(filtro, dataLimiteLancamentoPesquisa);
+		
+		Assert.assertNotNull(totalDiferencas);
+		
+	}
+	
+	@Test
+	public void testarBuscarStatusDiferencaLancadaAutomaticamente() {
+		
+		boolean statusDiferencaLancada;
+		
+		Long idDiferenca = 1L;
+		
+		statusDiferencaLancada = diferencaEstoqueRepository.buscarStatusDiferencaLancadaAutomaticamente(idDiferenca);
+		
+		Assert.assertFalse(statusDiferencaLancada);
+		
+	}
+	
+	@Test
+	public void testarObterValorFinanceiroPorTipoDiferenca() {
+		
+		BigDecimal valorFinanceiro;
+		
+		valorFinanceiro = diferencaEstoqueRepository.obterValorFinanceiroPorTipoDiferenca(TipoDiferenca.FALTA_EM);
+		
+	}
+	
+	@Test
+	public void testarObterQuantidadeTotalDiferencas() {
+		
+		BigInteger quantidadeTotal;
+		
+		String codigoProduto = "123";
+		Long numeroEdicao = 1L;
+		
+		Calendar d = Calendar.getInstance();
+		Date dataMovimento = d.getTime();
+		
+		quantidadeTotal = diferencaEstoqueRepository.obterQuantidadeTotalDiferencas(codigoProduto, numeroEdicao, TipoEstoque.DANIFICADO, dataMovimento);
+		
+//		Assert.assertNull(quantidadeTotal);
+		
+	}
+	
+	@Test
+	public void testarExisteDiferencaPorNota() {
+		
+		boolean diferencaPorNota;
+		
+		Long idProdutoEdicao = 1L;
+		
+		Calendar d = Calendar.getInstance();
+		Date dataNotaEnvio = d.getTime();
+		
+		Integer numeroCota = 1;
+		
+		diferencaPorNota = diferencaEstoqueRepository.existeDiferencaPorNota(idProdutoEdicao, dataNotaEnvio, numeroCota);
+		
+		Assert.assertFalse(diferencaPorNota);
+		
+	}
+	
+	
 	
 }

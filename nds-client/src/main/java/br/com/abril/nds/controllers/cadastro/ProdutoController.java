@@ -414,15 +414,9 @@ public class ProdutoController {
 			produto, codigoEditor, codigoFornecedor, 
 			codigoTipoDesconto, codigoTipoProduto);
 		
-		try {
-			
-			this.produtoService.salvarProduto(
-				produto, codigoEditor, codigoFornecedor, 
-				codigoTipoDesconto, codigoTipoProduto);
-			
-		} catch (Exception e) {
-			throw new ValidacaoException(TipoMensagem.ERROR, "Erro ao tentar salvar o Produto!");
-		}
+		this.produtoService.salvarProduto(
+			produto, codigoEditor, codigoFornecedor, 
+			codigoTipoDesconto, codigoTipoProduto);
 		
 		this.result.use(Results.json()).from(
 			new ValidacaoVO(TipoMensagem.SUCCESS, "Produto salvo com sucesso!"), "result").recursive().serialize();

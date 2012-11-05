@@ -62,7 +62,7 @@ var descontoProdutoController = $.extend(true,{
 					   null,				   
 					   function(result) {
 					   		if (!result.ativo) {
-					   			exibirMensagem(result.validacao.tipoMensagem, result.validacao.listaMensagens, "");
+					   			exibirMensagem(result.tipoMensagem, result.listaMensagens);
 					   			clearInterval(verificadorProgressoGravacaoDescontoGeral);
 					   		}
 				   	   });
@@ -72,33 +72,30 @@ var descontoProdutoController = $.extend(true,{
 
 	obterParametrosNovoDescontoProduto: function() {
 		
+		var data = new Array();
+		
 		var indProdutoEdicao = $("#mostrarEdicao", this.workspace).attr("checked") == 'checked';
 		var codigoProduto = $("#pCodigoProduto",this.workspace).val();
-
-		var edicaoProduto = null;
-		var quantidadeEdicoes = null;
-		
-		if(indProdutoEdicao) {
-			edicaoProduto 		= $("#edicaoProduto",this.workspace).val();
-			quantidadeEdicoes 	= $("#quantidadeEdicoes",this.workspace).val();
-		}
-		
 		var descontoProduto = $("#descontoProduto",this.workspace).justPercent("floatValue");
 		var descontoPredominante = $("#descontoPredominante",this.workspace).attr("checked") ? true : false;
 		var hasCotaEspecifica = document.getElementById("radioCotasEspecificas",this.workspace).checked;
 		var isTodasCotas = document.getElementById("radioTodasCotas",this.workspace).checked;
 		
-		var data = new Array();
+		data.push({name:'descontoDTO.indProdutoEdicao' , value: indProdutoEdicao});
+		data.push({name:'descontoDTO.codigoProduto' , value: codigoProduto});
+		data.push({name:'descontoDTO.descontoProduto' , value: descontoProduto});
+		data.push({name:'descontoDTO.descontoPredominante' , value: descontoPredominante});
+		data.push({name:'descontoDTO.hasCotaEspecifica' , value: hasCotaEspecifica});
+		data.push({name:'descontoDTO.isTodasCotas' , value: isTodasCotas});
 		
-		data.push({name:'desconto.indProdutoEdicao' , value: indProdutoEdicao});
-		data.push({name:'desconto.codigoProduto' , value: codigoProduto});
-		data.push({name:'desconto.edicaoProduto' , value: edicaoProduto});
-		data.push({name:'desconto.descontoProduto' , value: descontoProduto});
-		data.push({name:'desconto.quantidadeEdicoes' , value: quantidadeEdicoes});
-		data.push({name:'desconto.descontoPredominante' , value: descontoPredominante});
-		data.push({name:'desconto.hasCotaEspecifica' , value: hasCotaEspecifica});
-		data.push({name:'desconto.isTodasCotas' , value: isTodasCotas});
-		
+		if(indProdutoEdicao) {
+			var edicaoProduto 		= $("#edicaoProduto",this.workspace).val();
+			var quantidadeEdicoes 	= $("#quantidadeEdicoes",this.workspace).val();
+			
+			data.push({name:'descontoDTO.edicaoProduto' , value: edicaoProduto});
+			data.push({name:'descontoDTO.quantidadeEdicoes' , value: quantidadeEdicoes});
+		}
+			
 		$("input[id^=cotaInput]",this.workspace).each(function(index, value) {
 			if ($(this).val()) {
 				data.push({name:'cotas' , value: $(this).val()});

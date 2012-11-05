@@ -4,7 +4,10 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -12,17 +15,24 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import net.sf.jasperreports.engine.JRDataSource;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperRunManager;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.client.assembler.ChamadaEncalheFornecedorDTOAssembler;
 import br.com.abril.nds.client.vo.ProdutoEdicaoFechadaVO;
 import br.com.abril.nds.client.vo.RegistroEdicoesFechadasVO;
 import br.com.abril.nds.dto.ContagemDevolucaoConferenciaCegaDTO;
 import br.com.abril.nds.dto.ContagemDevolucaoDTO;
 import br.com.abril.nds.dto.InfoContagemDevolucaoDTO;
+import br.com.abril.nds.dto.chamadaencalhe.ChamadasEncalheFornecedorDTO;
 import br.com.abril.nds.dto.filtro.FiltroDigitacaoContagemDevolucaoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
@@ -53,7 +63,9 @@ import br.com.abril.nds.model.fiscal.nota.ItemNotaFiscal;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalhe;
 import br.com.abril.nds.model.movimentacao.ControleContagemDevolucao;
 import br.com.abril.nds.model.movimentacao.StatusOperacao;
+import br.com.abril.nds.model.planejamento.fornecedor.ChamadaEncalheFornecedor;
 import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.repository.ChamadaEncalheFornecedorRepository;
 import br.com.abril.nds.repository.ConferenciaEncalheParcialRepository;
 import br.com.abril.nds.repository.ControleConferenciaEncalheRepository;
 import br.com.abril.nds.repository.ControleContagemDevolucaoRepository;
@@ -71,6 +83,7 @@ import br.com.abril.nds.service.DiferencaEstoqueService;
 import br.com.abril.nds.service.EdicoesFechadasService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.NotaFiscalService;
+import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.vo.ValidacaoVO;
 
@@ -127,6 +140,9 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 
 	@Autowired
 	private EdicoesFechadasService edicoesFechadasService;
+	
+	@Autowired
+	private ChamadaEncalheFornecedorRepository chamadaEncalheFornecedorRepository;
 	
     private static final Logger LOG = LoggerFactory.getLogger(ContagemDevolucaoServiceImpl.class);
 	
@@ -980,4 +996,41 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 		return listaContagemEdicaoFechada;
 	}
 	
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Transactional
+    public byte[] gerarImpressaoChamadaEncalheFornecedor(Long idFornecedor,
+            Integer numeroSemana, Intervalo<Date> periodo) {
+        List<ChamadaEncalheFornecedor> chamadasEncalheFornecedor = chamadaEncalheFornecedorRepository
+                .obterChamadasEncalheFornecedor(idFornecedor, numeroSemana,
+                        periodo);
+
+        Distribuidor distribuidor = distribuidorService.obter();
+        Collection<ChamadasEncalheFornecedorDTO> chamadasEncalheDTO = ChamadaEncalheFornecedorDTOAssembler
+                .criarChamadasEncalheFornecedorDTO(chamadasEncalheFornecedor,
+                        distribuidor);
+        return gerarPDFChamadaEncalheFornecedor(chamadasEncalheDTO);
+    }
+
+    /**
+     * Gera o PDF com as chamadas de encalhe recebidas
+     * 
+     * @param chamadas
+     *            chamadas de encalhe para geração do PDF
+     * @return PDF gerado com as chamadas de encalhe
+     */
+    protected byte[] gerarPDFChamadaEncalheFornecedor(Collection<ChamadasEncalheFornecedorDTO> chamadas) {
+        URL url = Thread.currentThread().getContextClassLoader().getResource("/reports/CE_Devolucao_Fornecedor_lote.jasper");
+        try {
+            JRDataSource dataSource = new JRBeanCollectionDataSource(chamadas);
+            String path = url.toURI().getPath();
+            return JasperRunManager.runReportToPdf(path, new HashMap<String, Object>(), dataSource);
+        } catch (URISyntaxException | JRException ex) {
+            LOG.error("Erro gerando PDF Chamada de Encalhe Fornecedor!", ex);
+            throw new RuntimeException("Erro gerando PDF Chamada de Encalhe Fornecedor!", ex);
+        }
+    }
+    
 }

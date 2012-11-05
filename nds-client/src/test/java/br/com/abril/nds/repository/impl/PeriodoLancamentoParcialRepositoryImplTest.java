@@ -101,10 +101,12 @@ public class PeriodoLancamentoParcialRepositoryImplTest extends AbstractReposito
 		save(estudo);
 		
 		periodo = Fixture.criarPeriodoLancamentoParcial(lancamento, lancamentoParcial, 
-				StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.PARCIAL);
+				StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.PARCIAL,
+				1);
 		
 		periodo2 = Fixture.criarPeriodoLancamentoParcial(lancamento2, lancamentoParcial, 
-				StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.PARCIAL);
+				StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.PARCIAL,
+				2);
 		
 		save(periodo, periodo2);
 	}

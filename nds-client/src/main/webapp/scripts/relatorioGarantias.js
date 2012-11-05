@@ -1,6 +1,8 @@
 var relatorioGarantiasController = $.extend(true, {
 	
 	path : contextPath + '/financeiro/relatorioGarantias/',
+	
+	dataFaturamento: '',
 
 	init : function() {
 
@@ -8,8 +10,13 @@ var relatorioGarantiasController = $.extend(true, {
 		this.initRelatorioTodasGarantiasDetalheGrid();
 		this.initRelatorioTodasGarantiasGrid();
 
+		
 	},
 	
+	hideGrids : function(){
+		$('#garantiasEspecificas',this.workspace).hide();
+		$('#todasGarantias',this.workspace).hide();
+	},
 	
 	showGridTodasGarantias : function(){
 		
@@ -63,23 +70,29 @@ var relatorioGarantiasController = $.extend(true, {
 		
 		$(".relatorioTodasGarantiasGrid").flexReload();
 		
-		
-		this.showGridTodasGarantias();
 	
 },
 
 	pesquisarPorGarantia : function(params){
 		
-		
-		$(".relatorioGarantiaGrid").flexOptions({
-			url : this.path + 'pesquisarGarantia.json?' + params,
-			//preProcess : relatorioGarantiasController.validarSelecaoComboFiltro,
-			newp : 1
-		});
-		
-		$(".relatorioGarantiaGrid").flexReload();
-		
-		this.showGridGarantiaEspecifica();
+        $.postJSON(
+                this.path + 'pesquisarGarantia.json?' + params,
+                null,
+                function(result) {
+                       
+                       if (result.mensagens) {
+                              exibirMensagem(result.mensagens.tipoMensagem, result.mensagens.listaMensagens);
+                              relatorioGarantiasController.hideGrids();
+                       }  else{
+                              $(".relatorioGarantiaGrid").flexAddData(result);
+                              $("#garantiasEspecificas th[abbr='faturamento'] >div").html("Faturamento " + result.rows[0].cell.baseCalculo);
+                              relatorioGarantiasController.showGridGarantiaEspecifica();
+                       }
+                },
+                null,
+                true
+         );
+
 
 	
 },
@@ -91,47 +104,56 @@ var relatorioGarantiasController = $.extend(true, {
 	 * *************************
 	 * */
 	
-	validarSelecaoComboFiltro : function(data){
-		
-		var tipoMensagem = data.mensagens.tipoMensagem;
-
-		var listaMensagens = data.mensagens.listaMensagens;
-		
-		if (tipoMensagem && listaMensagens) {
-		
-				exibirMensagem(tipoMensagem, listaMensagens);
-		
-		} 
-		
-		else { 
-		
-	/*	$.each(data.rows, function(index, value) {
+	inserirTotalDetalheGrid : function(result){
 			
-			var checkbox = '<input type="checkbox" value="'+ value.cell.produtoEdicaoID + '" name="checkProdutoContasAPagar" class="contasApagarCheck"  style="float:left;"/>';
-			value.cell.sel = checkbox;
-		});
-		  */
-		}
-		return data;
-	},
+		var total = 0;
+		var garantia = 0;
+		  
+        $.each(result.rows, function(index, value) {
+      	  
+      	  garantia = removeMascaraPriceFormat(value.cell.vlrGarantia);
+      	  total += intValue(garantia);
+      	  
+        });
 
-	montaColunaDetalhesGarantia : function(data) {
-		
-		var garantiaSelecionada = $('#selectStatusGarantia option:selected').text();
-		
-		$.each(data.rows, function(index, value) {
-			
-			var link_detalhes = '<a title="Ver Detalhes" onclick="relatorioGarantiasController.popup_detalhe_Garantia(\'' + value.cell.tipoGarantia + '\', \'' + garantiaSelecionada + '\');" href="javascript:;"><img src="' + contextPath + '/images/ico_detalhes.png" alt="Detalhes" border="0" /></a>';
-		
-			value.cell.detalhe = link_detalhes;
-		});
-		 
-		return data; 
+        $("#valorTotalGarantiaslHidden", relatorioGarantiasController.workspace).val(total);
+        
+        $("#valorTotalGarantiaslHidden", relatorioGarantiasController.workspace).priceFormat({
+  	      allowNegative: true,
+  	      centsSeparator: ',',
+  	      thousandsSeparator: '.'
+        });  
+
+        $("#totalGarantia").html( $("#valorTotalGarantiaslHidden", relatorioGarantiasController.workspace).val()); 
+
 	},
 	
 
+	
+	montaColunaDetalhesGarantia : function(data) {
 		
-
+		if (data.mensagens) {
+			
+			exibirMensagem(data.mensagens.tipoMensagem, data.mensagens.listaMensagens);
+			
+			relatorioGarantiasController.hideGrids();
+			
+		} else { 
+			
+			var garantiaSelecionada = $('#selectStatusGarantia option:selected').val();
+			
+			$.each(data.rows, function(index, value) {
+								
+				var link_detalhes = '<a title="Ver Detalhes" onclick="relatorioGarantiasController.popup_detalhe_Garantia(\'' + value.cell.tpGarantia.key + '\', \'' + garantiaSelecionada + '\');" href="javascript:;"><img src="' + contextPath + '/images/ico_detalhes.png" alt="Detalhes" border="0" /></a>';
+				value.cell.detalhe = link_detalhes;
+			});
+			relatorioGarantiasController.showGridTodasGarantias();
+	
+		}
+		
+		return data;
+	},
+	
 	
 	/*
 	 * *************************
@@ -145,16 +167,27 @@ var relatorioGarantiasController = $.extend(true, {
 		
 		var params = 'filtro.tipoGarantia='+tipoGarantia+'&filtro.statusGarantia='+tipoStatus;
 		
-		//alert(params);
+		$.postJSON(
+                this.path + 'pesquisarGarantia.json?' + params,
+                null,
+                function(result) {
+                       
+                       if (result.mensagens) {
+                              exibirMensagem(result.mensagens.tipoMensagem, result.mensagens.listaMensagens);
+                              relatorioGarantiasController.hideGrids();
+                              
+                       }  else{
+                              $(".garantiaDetalheGrid").flexAddData(result);
+                              $("#dialog-detalhe-garantia th[abbr='faturamento'] >div").html("Faturamento " + result.rows[0].cell.baseCalculo);
+                               
+                              relatorioGarantiasController.inserirTotalDetalheGrid(result);
+                              
+                       }
+                },
+                null,
+                true
+         );
 		
-		$(".garantiaDetalheGrid").flexOptions({
-			url : this.path + 'pesquisarGarantia.json?'+ params,
-			//preProcess : relatorioGarantiasController.validarSelecaoComboFiltro,
-			newp : 1
-		});
-		
-		$(".garantiaDetalheGrid").flexReload();
-			
 	
 		$( "#dialog-detalhe-garantia" ).dialog({
 			resizable: false,
@@ -324,3 +357,4 @@ var relatorioGarantiasController = $.extend(true, {
 	
 }, BaseController);
 
+//@ sourceURL=relatorioGarantias.js

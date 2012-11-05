@@ -53,7 +53,7 @@ public class EnderecoPDVRepositoryImpl extends AbstractRepositoryModel<EnderecoP
 	@Override
 	public List<Endereco> buscarEnderecosPessoaPorPDV(Long idPDV) {
 		
-		StringBuilder hql = new StringBuilder("select c.pessoa.enderecos ");
+		StringBuilder hql = new StringBuilder("select c.cota.pessoa.enderecos ");
 		hql.append(" from PDV c ")
 		   .append(" where c.id = :idPDV");
 		

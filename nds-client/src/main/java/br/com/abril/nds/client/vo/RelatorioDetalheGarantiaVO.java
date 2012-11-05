@@ -9,11 +9,14 @@ import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Export.Alignment;
 import br.com.abril.nds.util.export.Exportable;
 
+
+
 @Exportable
 public class RelatorioDetalheGarantiaVO implements Serializable{
-
+		
+	
+	
 	private static final long serialVersionUID = 7317808904298274920L;
-
 	@Export(label="Cota", alignment = Alignment.LEFT, exhibitionOrder = 1)
 	private String cota;
 	
@@ -29,18 +32,20 @@ public class RelatorioDetalheGarantiaVO implements Serializable{
 	@Export(label="Valor Garantia R$", alignment = Alignment.RIGHT, exhibitionOrder = 5)
 	private String vlrGarantia;
 	
-	@Export(label="Faturamento ", alignment = Alignment.RIGHT, exhibitionOrder = 6)
+	@Export(label="Faturamento ", alignment = Alignment.RIGHT, exhibitionOrder = 6, propertyToDynamicLabel ="baseCalculo" )
 	private String faturamento;
 	
 	@Export(label="% Garantia s/ Fat.", alignment = Alignment.RIGHT, exhibitionOrder = 7)
 	private String garantiaFaturamento;
 	
+	private String baseCalculo;
 	
 	public RelatorioDetalheGarantiaVO() {
 		super();
 	}
 	
-	public RelatorioDetalheGarantiaVO(RelatorioDetalheGarantiaDTO dto) {
+	
+	public RelatorioDetalheGarantiaVO(RelatorioDetalheGarantiaDTO dto, String dataBaseCalculo) {
 		this.cota = dto.getCota().toString();
 		this.nome = dto.getNome();
 		this.garantia = dto.getGarantia();
@@ -49,6 +54,8 @@ public class RelatorioDetalheGarantiaVO implements Serializable{
 		this.faturamento = CurrencyUtil.formatarValor(dto.getFaturamento());
 		this.garantiaFaturamento = CurrencyUtil.formatarValor(dto.getGarantiaFaturamento());
 		this.vlrGarantia = CurrencyUtil.formatarValor(dto.getVlrGarantia());
+		this.baseCalculo = dataBaseCalculo;
+		
 	}
 	
 	public String getCota() {
@@ -94,7 +101,16 @@ public class RelatorioDetalheGarantiaVO implements Serializable{
 		this.garantiaFaturamento = garantiaFaturamento;
 	}
 	
+	public String getBaseCalculo() {
+		return baseCalculo;
+	}
+
+	public void setBaseCalculo(String baseCalculo) {
+		this.baseCalculo = baseCalculo;
+	}
+
 	
+
 	
 	
 }

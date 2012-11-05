@@ -1,9 +1,11 @@
 package br.com.abril.nds.controllers.financeiro;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -31,6 +33,7 @@ import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.util.export.NDSFileHeader;
+import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Resource;
@@ -71,7 +74,20 @@ public class RelatorioGarantiasController {
 	@Rules(Permissao.ROLE_FINANCEIRO_RELATORIO_DE_GARANTIAS)
 	public void index() {
 		
-		listaTiposGarantia = distribuidorService.getComboTiposGarantia();
+		listaTiposGarantia.clear();
+		
+		List<ItemDTO<TipoGarantia,String>> listaTiposGarantiaAux = distribuidorService.getComboTiposGarantia();
+		
+		for (ItemDTO<TipoGarantia,String> item : listaTiposGarantiaAux){
+			
+			if (!item.getKey().equals(TipoGarantia.ANTECEDENCIA_VALIDADE)){
+				
+				listaTiposGarantia.add(item);
+			}
+		}
+		
+		listaTiposStatusGarantia.clear();
+				
 		listaTiposStatusGarantia = distribuidorService.getComboTiposStatusGarantia();
 		
 		result.include("listaTiposGarantia" , listaTiposGarantia);
@@ -82,10 +98,26 @@ public class RelatorioGarantiasController {
 	@Path("/pesquisarTodasGarantias.json")
 	public void pesquisarTodasGarantias(FiltroRelatorioGarantiasDTO filtro, String sortname, String sortorder, int rp, int page){
 		
+		PaginacaoVO paginacaoVO = new PaginacaoVO(page, rp, sortorder, sortname);
+		filtro.setPaginacao(paginacaoVO);
+		filtro.setDataBaseCalculo(distribuidorService.obter().getDataOperacao());
+		
 		this.session.setAttribute(FILTRO_RELATORIO_GARANTIAS, filtro);
 		
+		if (filtro.getTipoGarantia().equalsIgnoreCase("Selecione...")) {
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "O tipo de garantia deve ser informado."));
+		}
+		else if(filtro.getStatusGarantia().equalsIgnoreCase("Selecionar...")){
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "O status de garantia deve ser informado."));
+			
+		}
+		
 		List<RelatorioGarantiasVO> garantiasVO = new ArrayList<RelatorioGarantiasVO>();
-		FlexiGridDTO<RelatorioGarantiasDTO> flexDTO = relatorioGarantiasService.gerarTodasGarantias(filtro, sortname, sortorder, rp, page);
+		FlexiGridDTO<RelatorioGarantiasDTO> flexDTO = relatorioGarantiasService.gerarTodasGarantias(filtro);
+		
+		if (flexDTO == null || flexDTO.getGrid().size() == 0) {
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "A busca não retornou resultados"));
+		}
 		
 		for(RelatorioGarantiasDTO dto : flexDTO.getGrid()){
 			
@@ -101,7 +133,14 @@ public class RelatorioGarantiasController {
 	@Path("/pesquisarGarantia.json")
 	public void pesquisarGarantia(FiltroRelatorioGarantiasDTO filtro, String sortname, String sortorder, int rp, int page){
 		
+		PaginacaoVO paginacaoVO = new PaginacaoVO(page, rp, sortorder, sortname);
+		filtro.setPaginacao(paginacaoVO);
+		filtro.setDataBaseCalculo(distribuidorService.obter().getDataOperacao());
+		
 		this.session.setAttribute(FILTRO_RELATORIO_GARANTIAS, filtro);
+		
+		SimpleDateFormat sdf = new SimpleDateFormat("MMM/yy",new Locale("pt", "BR"));
+		String data = sdf.format(distribuidorService.obter().getDataOperacao());
 		
 		if (filtro.getTipoGarantia().equalsIgnoreCase("Selecione...")) {
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "O tipo de garantia deve ser informado."));
@@ -112,10 +151,15 @@ public class RelatorioGarantiasController {
 		}
 		
 		List<RelatorioDetalheGarantiaVO> garantiasVO = new ArrayList<RelatorioDetalheGarantiaVO>();
-		FlexiGridDTO<RelatorioDetalheGarantiaDTO> flexDTO = relatorioGarantiasService.gerarPorTipoGarantia(filtro, sortname, sortorder, rp, page);
+		FlexiGridDTO<RelatorioDetalheGarantiaDTO> flexDTO = relatorioGarantiasService.gerarPorTipoGarantia(filtro);
+		 
+		if (flexDTO == null || flexDTO.getGrid().size() == 0) {
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "A busca não retornou resultados"));
+		}
 		
 		for(RelatorioDetalheGarantiaDTO dto : flexDTO.getGrid()){
-			garantiasVO.add(new RelatorioDetalheGarantiaVO(dto));
+			
+			garantiasVO.add(new RelatorioDetalheGarantiaVO(dto,data));
 		}
 		
 		result.use(FlexiGridJson.class).from(garantiasVO).total(garantiasVO.size()).serialize();
@@ -126,24 +170,19 @@ public class RelatorioGarantiasController {
 	@Path("/exportPesquisarTodasGarantias")
 	public void exportPesquisarTodasGarantias(FileType fileType) throws IOException{
 		
-		
 		FiltroRelatorioGarantiasDTO filtro = (FiltroRelatorioGarantiasDTO) this.session.getAttribute(FILTRO_RELATORIO_GARANTIAS);
 		
 		List<RelatorioGarantiasVO> garantiasVO = new ArrayList<RelatorioGarantiasVO>();
-		FlexiGridDTO<RelatorioGarantiasDTO> flexDTO = relatorioGarantiasService.gerarTodasGarantias(filtro, null, null, 0, 0);
+		FlexiGridDTO<RelatorioGarantiasDTO> flexDTO = relatorioGarantiasService.gerarTodasGarantias(filtro);
 		
 		for(RelatorioGarantiasDTO dto : flexDTO.getGrid()){
-			
 			garantiasVO.add(new RelatorioGarantiasVO(dto));
-			
 		}
 		
 		FileExporter.to("relatorio-garantias", fileType).inHTTPResponse(this.getNDSFileHeader(new Date()), null, null,
 				garantiasVO, RelatorioGarantiasVO.class, this.httpServletResponse);
 		
 		result.use(Results.nothing());
-		
-		
 	}
 	
 	
@@ -153,10 +192,14 @@ public class RelatorioGarantiasController {
 		FiltroRelatorioGarantiasDTO filtro = (FiltroRelatorioGarantiasDTO) this.session.getAttribute(FILTRO_RELATORIO_GARANTIAS);
 		
 		List<RelatorioDetalheGarantiaVO> garantiasVO = new ArrayList<RelatorioDetalheGarantiaVO>();
-		FlexiGridDTO<RelatorioDetalheGarantiaDTO> flexDTO = relatorioGarantiasService.gerarPorTipoGarantia(filtro, null, null, 0, 0);
+		
+		SimpleDateFormat sdf = new SimpleDateFormat("MMM/yy",new Locale("pt", "BR"));
+		String data = sdf.format(distribuidorService.obter().getDataOperacao());
+		
+		FlexiGridDTO<RelatorioDetalheGarantiaDTO> flexDTO = relatorioGarantiasService.gerarPorTipoGarantia(filtro);
 		
 		for(RelatorioDetalheGarantiaDTO dto : flexDTO.getGrid()){
-			garantiasVO.add(new RelatorioDetalheGarantiaVO(dto));
+			garantiasVO.add(new RelatorioDetalheGarantiaVO(dto,data));
 		}
 		
 		FileExporter.to("relatorio-garantias", fileType).inHTTPResponse(this.getNDSFileHeader(new Date()), null, null,

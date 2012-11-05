@@ -110,6 +110,7 @@ public class ConferenciaEncalheParcialRepositoryImpl extends AbstractRepositoryM
 			nfParcialGerada  != null 	||
 			statusAprovacao  != null 	||
 			dataMovimento    != null 	||
+			idProdutoEdicao  != null 	||
 			(codigoProduto   != null && numeroEdicao != null) ) {
 			
 			hql.append(" where ");

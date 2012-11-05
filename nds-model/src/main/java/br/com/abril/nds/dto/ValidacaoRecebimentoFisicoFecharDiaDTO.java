@@ -15,7 +15,7 @@ public class ValidacaoRecebimentoFisicoFecharDiaDTO implements Serializable {
 	private Long numeroNotaFiscal;
 	
 	@Export(label = "Inconsistência" , alignment = Alignment.LEFT, exhibitionOrder = 2)
-	private String inconsistencia;
+	private String inconsistencia  = "Gravado, não Confirmado";
 
 	public Long getNumeroNotaFiscal() {
 		return numeroNotaFiscal;

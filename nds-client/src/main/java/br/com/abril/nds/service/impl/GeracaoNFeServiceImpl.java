@@ -9,10 +9,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.client.util.AuditoriaUtil;
 import br.com.abril.nds.dto.ConsultaLoteNotaFiscalDTO;
 import br.com.abril.nds.dto.CotaExemplaresDTO;
 import br.com.abril.nds.dto.QuantidadePrecoItemNotaDTO;
@@ -40,6 +43,7 @@ import br.com.abril.nds.util.TipoMensagem;
 @Service
 public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 	
+	private static final Logger LOGGER = LoggerFactory.getLogger(GeracaoNFeServiceImpl.class);
 	
 	@Autowired
 	private NotaFiscalService notaFiscalService;
@@ -163,6 +167,7 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 				
 				listaNotaFiscal.add(notaFiscal);
 			} catch (Exception exception) {
+				LOGGER.warn(exception.getLocalizedMessage(), exception);
 				continue;
 			}
 		}
