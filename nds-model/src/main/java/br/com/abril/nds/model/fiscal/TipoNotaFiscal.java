@@ -48,11 +48,11 @@ public class TipoNotaFiscal implements Serializable {
 	@Column(name = "TIPO_OPERACAO", nullable = false)
 	private TipoOperacao tipoOperacao;
 	
-	@ManyToOne(optional = true)
+	@ManyToOne(optional = false)
 	@JoinColumn(name = "CFOP_ESTADO")
 	private CFOP cfopEstado;
 	
-	@ManyToOne(optional = true)
+	@ManyToOne(optional = false)
 	@JoinColumn(name = "CFOP_OUTROS_ESTADOS")
 	private CFOP cfopOutrosEstados;
 	
