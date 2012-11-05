@@ -554,7 +554,7 @@ var fecharDiaController =  $.extend(true, {
 	popup_vendasTot : function() {
 		
 		$(".vendasDialogGrid", fecharDiaController.workspace).flexOptions({
-			url: contextPath + "/administracao/fecharDia/obterGridVendaSuplemntar",
+			url: contextPath + "/administracao/fecharDia/obterGridVendaSuplementar",
 			dataType : 'json',
 			params: []
 		});
@@ -683,6 +683,7 @@ var fecharDiaController =  $.extend(true, {
 				"Fechar": function() {
 					$( this ).dialog( "close" );
 					$(".grids").show();
+					fecharDiaController.limparTabela();
 					fecharDiaController.iniciarResumoReparte();
 					fecharDiaController.iniciarResumoEncalhe();
 					fecharDiaController.iniciarResumoSuplementar();
@@ -697,9 +698,19 @@ var fecharDiaController =  $.extend(true, {
 		      
 	},
 	
+	limparTabela : function(){
+		$('#baixaBancaria').remove();
+		$('#geracaoDeCobranca').remove();
+		$('#recebimentoFisico').remove();
+		$('#confirmacaoDeExpedicao').remove();
+		$('#fechamentoDeEncalhe').remove();
+		$('#lancamentoDeFaltasESobras').remove();
+		
+	},
+	
 	iniciarValidacoes : function(){
 		$.postJSON(contextPath + "/administracao/fecharDia/inicializarValidacoes", null,
-				function(result){
+				function(result){					
 					fecharDiaController.validacaoBaixaBancaria(result);
 					fecharDiaController.validacaoGeracaoCobranca(result);
 					fecharDiaController.validacaoRecebimentoFisico(result);
@@ -711,7 +722,7 @@ var fecharDiaController =  $.extend(true, {
 	},
 	
 	validacaoBaixaBancaria : function(result){
-		var baixaBancaria = "<tr class='class_linha_1'><td>Baixa Bancária</td>";					
+		var baixaBancaria = "<tr class='class_linha_1' id='baixaBancaria'><td>Baixa Bancária</td>";					
 		var iconeBaixaBancaria = null;
 		if(result.baixaBancaria){
 			iconeBaixaBancaria = 'ico_bloquear.gif';
@@ -723,7 +734,7 @@ var fecharDiaController =  $.extend(true, {
 	},
 	
 	validacaoGeracaoCobranca : function(result){
-		var geracaoCobranca = "<tr class='class_linha_2'><td>Geração de Cobrança</td>";					
+		var geracaoCobranca = "<tr class='class_linha_2' id='geracaoDeCobranca'><td>Geração de Cobrança</td>";					
 		var iconeGeracaoCobranca = null;
 		if(result.geracaoDeCobranca){
 			iconeGeracaoCobranca = 'ico_check.gif';
@@ -738,10 +749,10 @@ var fecharDiaController =  $.extend(true, {
 		var recebimentoFisico = null;				
 		var iconeRecebimentoFisico = null;		
 		if(result.recebimentoFisico){
-			recebimentoFisico = "<tr class='class_linha_1'><td>Recebimento Físico:</td>";
+			recebimentoFisico = "<tr class='class_linha_1' id='recebimentoFisico'><td>Recebimento Físico:</td>";
 			iconeRecebimentoFisico = 'ico_check.gif';
 		}else{
-			recebimentoFisico = "<tr class='class_linha_1'><td><a href='javascript:;' onclick='fecharDiaController.popup_recebimentoFisico();'>Recebimento Físico</a>:</td>";
+			recebimentoFisico = "<tr class='class_linha_1' id='recebimentoFisico'><td><a href='javascript:;' onclick='fecharDiaController.popup_recebimentoFisico();'>Recebimento Físico</a>:</td>";
 			iconeRecebimentoFisico = 'ico_bloquear.gif';
 		}		
 		var imagem = "<td align='center'><img src='"+ contextPath +"/images/"+iconeRecebimentoFisico+"' alt='Processo Efetuado' width='16' height='16' /></td></tr>";
@@ -775,10 +786,10 @@ var fecharDiaController =  $.extend(true, {
 		var confirmacaoDeExpedicao = null;				
 		var iconeConfirmacaoDeExpedicao = null;		
 		if(result.confirmacaoDeExpedicao){
-			confirmacaoDeExpedicao = "<tr class='class_linha_2'><td>Confirmação de Expedição:</td>";
+			confirmacaoDeExpedicao = "<tr class='class_linha_2' id='confirmacaoDeExpedicao'><td>Confirmação de Expedição:</td>";
 			iconeConfirmacaoDeExpedicao = 'ico_check.gif';
 		}else{
-			confirmacaoDeExpedicao = "<tr class='class_linha_2'><td><a href='javascript:;' onclick='fecharDiaController.popup_confirma_expedicao();'>Confirmação de Expedição</a>:</td>";
+			confirmacaoDeExpedicao = "<tr class='class_linha_2' id='confirmacaoDeExpedicao'><td><a href='javascript:;' onclick='fecharDiaController.popup_confirma_expedicao();'>Confirmação de Expedição</a>:</td>";
 			iconeConfirmacaoDeExpedicao = 'ico_bloquear.gif';
 		}		
 		var imagem = "<td align='center'><img src='"+ contextPath +"/images/"+iconeConfirmacaoDeExpedicao+"' alt='Com Diferença' width='16' height='16' /></td></tr>";
@@ -810,7 +821,7 @@ var fecharDiaController =  $.extend(true, {
 	},
 	
 	validacaoFechamentoDeEncalhe : function(result){
-		var fechamentoDeEncalhe = "<tr class='class_linha_1'>" + 
+		var fechamentoDeEncalhe = "<tr class='class_linha_1' id='fechamentoDeEncalhe'>" + 
         "<td>Fechamento de Encalhe:</td>" +
         "<td align='center'><img src='"+ contextPath +"/images/ico_check.gif' width='16' height='16' alt='Com DiferenÃ§a' /></td>" +
         "</tr>";
@@ -821,10 +832,10 @@ var fecharDiaController =  $.extend(true, {
 		var lancamentoFaltasESobras = null;				
 		var iconeLancamentoFaltasESobras = null;		
 		if(result.lancamentoFaltasESobras){
-			lancamentoFaltasESobras = "<tr class='class_linha_2'><td>Lançamento de Faltas e Sobras:</td>";
+			lancamentoFaltasESobras = "<tr class='class_linha_2' id='lancamentoDeFaltasESobras'><td>Lançamento de Faltas e Sobras:</td>";
 			iconeLancamentoFaltasESobras = 'ico_check.gif';
 		}else{
-			lancamentoFaltasESobras = "<tr class='class_linha_2'><td><a href='javascript:;' onclick='fecharDiaController.popup_lctoFaltas();'>Lançamento de Faltas e Sobras</a>:</td>";
+			lancamentoFaltasESobras = "<tr class='class_linha_2' id='lancamentoDeFaltasESobras'><td><a href='javascript:;' onclick='fecharDiaController.popup_lctoFaltas();'>Lançamento de Faltas e Sobras</a>:</td>";
 			iconeLancamentoFaltasESobras = 'ico_bloquear.gif';
 		}		
 		var imagem = "<td align='center'><img src='"+ contextPath +"/images/"+iconeLancamentoFaltasESobras+"' alt='Processo Efetuado' width='16' height='16' /></td></tr>";
@@ -873,14 +884,14 @@ var fecharDiaController =  $.extend(true, {
 		
 		$.postJSON(contextPath + "/administracao/fecharDia/obterResumoQuadroReparte", null,
 				function(result){					
-					$("#totalReparte").html(result[0]);
-					$("#totalSobras").html(result[1]);
-					$("#totalFaltas").html(result[2]);
-					$("#totalTransferencia").html(result[3]);
-					$("#totalADistribuir").html(result[4]);
-					$("#totalDistribuido").html(result[5]);
-					$("#totalSobraDistribuido").html(result[6]);
-					$("#totalDiferenca").html(result[7]);
+					$("#totalReparte").html(result.totalReparte);
+					$("#totalSobras").html(result.totalSobras);
+					$("#totalFaltas").html(result.totalFaltas);
+					$("#totalTransferencia").html(result.totalTranferencia);
+					$("#totalADistribuir").html(result.totalADistribuir);
+					$("#totalDistribuido").html(result.totalDistribuido);
+					$("#totalSobraDistribuido").html(result.sobraDistribuido);
+					$("#totalDiferenca").html(result.diferenca);
 				}
 			);
 	},
@@ -888,10 +899,10 @@ var fecharDiaController =  $.extend(true, {
 	iniciarResumoEncalhe : function(){
 		$.postJSON(contextPath + "/administracao/fecharDia/obterResumoQuadroEncalhe", null,
 				function(result){
-					$("#totalEncalheLogico").html(result[0]);
-					$("#totalEncalheFisico").html(result[1]);
-					$("#totalEncalheJuramentada").html(result[2]);
-					$("#vendaEncalhe").html(result[3]);
+					$("#totalEncalheLogico").html(result.totalLogico);
+					$("#totalEncalheFisico").html(result.totalFisico);
+					$("#totalEncalheJuramentada").html(result.totalJuramentado);
+					$("#vendaEncalhe").html(result.venda);
 				}
 			);
 	},
@@ -899,10 +910,10 @@ var fecharDiaController =  $.extend(true, {
 	iniciarResumoSuplementar : function(){
 		$.postJSON(contextPath + "/administracao/fecharDia/obterResumoQuadroSuplementar", null,
 				function(result){
-					$("#totalSuplementarEstoqueLogico").html(result[0]);
-					$("#totalSuplementarTransferencia").html(result[1]);
-					$("#totalSuplementarVenda").html(result[2]);
-					$("#totalSuplementarSaldo").html(result[3]);
+					$("#totalSuplementarEstoqueLogico").html(result.totalEstoqueLogico);
+					$("#totalSuplementarTransferencia").html(result.totalTransferencia);
+					$("#totalSuplementarVenda").html(result.totalVenda);
+					$("#totalSuplementarSaldo").html(result.saldo);
 				}
 			);
 	},
