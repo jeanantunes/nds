@@ -3,6 +3,7 @@ package br.com.abril.nds.service;
 import java.util.Date;
 import java.util.List;
 
+import br.com.abril.nds.dto.ResumoFechamentoDiarioConsignadoDTO;
 import br.com.abril.nds.dto.ResumoFechamentoDiarioCotasDTO;
 import br.com.abril.nds.dto.ValidacaoConfirmacaoDeExpedicaoFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoControleDeAprovacaoFecharDiaDTO;
@@ -136,6 +137,15 @@ public interface FecharDiaService {
 	 * @return {@link ResumoFechamentoDiarioCotasDTO}
 	 */
 	ResumoFechamentoDiarioCotasDTO obterResumoCotas(Date dataFechamento);
+	
+	/**
+	 * Obtém o resumo do fechamento diário do consignado.
+	 * 
+	 * @param dataFechamento - data do fechamento
+	 * 
+	 * @return {@link ResumoFechamentoDiarioConsignadoDTO}
+	 */
+	ResumoFechamentoDiarioConsignadoDTO obterResumoConsignado(Date dataFechamento);
 
 	/**
 	 * 
