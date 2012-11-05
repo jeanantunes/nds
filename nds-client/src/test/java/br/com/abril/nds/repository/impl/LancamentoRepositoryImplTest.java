@@ -347,7 +347,8 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 		PeriodoLancamentoParcial parcial = Fixture.criarPeriodoLancamentoParcial(
 				lancamentoCapricho, 
 				lancamentoParcial,  
-				StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.FINAL);
+				StatusLancamentoParcial.PROJETADO,
+				TipoLancamentoParcial.FINAL, 1);
 
 		EstudoCota estudoCota = Fixture.estudoCota(BigInteger.TEN, BigInteger.ONE, estudo, cota);
 
@@ -367,7 +368,9 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 		PeriodoLancamentoParcial parcial2 = Fixture.criarPeriodoLancamentoParcial(
 				lancamentoInfoExame, 
 				lancamentoParcial2, 
-				StatusLancamentoParcial.RECOLHIDO, TipoLancamentoParcial.PARCIAL);
+				StatusLancamentoParcial.RECOLHIDO, 
+				TipoLancamentoParcial.PARCIAL,
+				1);
 		
 		Estudo estudo2 = Fixture.estudo(BigInteger.valueOf(180),
 				Fixture.criarData(12, Calendar.MARCH, 2012), infoExame3);

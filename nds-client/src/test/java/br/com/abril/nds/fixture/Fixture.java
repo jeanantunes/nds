@@ -3081,7 +3081,8 @@ public class Fixture {
 	public static PeriodoLancamentoParcial criarPeriodoLancamentoParcial(Lancamento lancamento, 
 																		 LancamentoParcial lancamentoParcial,
 																		 StatusLancamentoParcial status,
-																		 TipoLancamentoParcial tipo) {
+																		 TipoLancamentoParcial tipo,
+																		 Integer numeroPeriodo) {
 		
 		PeriodoLancamentoParcial parcial = new PeriodoLancamentoParcial();
 		
@@ -3092,6 +3093,8 @@ public class Fixture {
 		parcial.setStatus(status);
 		
 		parcial.setTipo(tipo);
+		
+		parcial.setNumeroPeriodo(numeroPeriodo);
 		
 		return parcial;
 	}
