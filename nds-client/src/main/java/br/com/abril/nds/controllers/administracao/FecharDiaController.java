@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -88,7 +89,12 @@ public class FecharDiaController {
 	@Autowired
 	private HttpServletResponse httpResponse;
 	
+	@Autowired
+	private HttpSession session;
+	
 	private static Distribuidor distribuidor;
+
+	private static final String ATRIBUTO_SESSAO_VALIDACAO_PENDENCIAS = "atributoSessaoValidacao";
 	
 	@Path("/")
 	@Rules(Permissao.ROLE_ADMINISTRACAO_FECHAR_DIA)
@@ -184,7 +190,9 @@ public class FecharDiaController {
 			}
 		}
 		
-		result.use(Results.json()).from(pendencia).recursive().serialize();
+		this.session.setAttribute(ATRIBUTO_SESSAO_VALIDACAO_PENDENCIAS, pendencia);
+		
+		this.result.use(Results.json()).from(pendencia).recursive().serialize();
 		
 	}
 	
@@ -426,6 +434,19 @@ public class FecharDiaController {
 			this.obterDetalheCotaFechamentoDiario(tipoResumo);
 		
 		result.use(FlexiGridJson.class).from(listaDetalhesCotaFechamentoDiarioVO).page(1).total(listaDetalhesCotaFechamentoDiarioVO.size()).serialize();
+	}
+	
+	@Post
+	public void processarControleDeAprovacao() {
+		
+		Boolean hasValidacao = (Boolean) this.session.getAttribute(ATRIBUTO_SESSAO_VALIDACAO_PENDENCIAS);
+		
+		if (hasValidacao != null && !hasValidacao) {
+			
+			this.fecharDiaService.processarControleDeAprovacao();
+			
+			this.session.setAttribute(ATRIBUTO_SESSAO_VALIDACAO_PENDENCIAS, false);
+		}
 	}
 
 	private List<DetalheCotaFechamentoDiarioVO> obterDetalheCotaFechamentoDiario(TipoResumo tipoResumo) {
