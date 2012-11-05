@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.ConsultaProdutoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.DescontoLogistica;
 import br.com.abril.nds.model.cadastro.Editor;
@@ -182,7 +183,6 @@ public class ProdutoServiceImpl implements ProdutoService {
 					throw new ValidacaoException(TipoMensagem.WARNING, "Produto não encontrado para edição.");
 				}
 				
-				
 				produtoExistente.setCodigo(produto.getCodigo());
 				produtoExistente.setSlogan(produto.getSlogan());
 				produtoExistente.setPeb(produto.getPeb());
@@ -207,14 +207,13 @@ public class ProdutoServiceImpl implements ProdutoService {
 				produto.addFornecedor(fornecedor);
 				produto.setTipoProduto(tipoProduto);
 				produto.setDescontoLogistica(obterDescontoLogistica(codigoTipoDesconto));
+				produto.setOrigem(Origem.MANUAL);
 				
 				//TODO: Valor não informado na interface de cadastro de produto
 				produto.setPeso(0L);
 				
 				this.produtoRepository.adicionar(produto);
-				
 			}
-		
 	}
 
 	private DescontoLogistica obterDescontoLogistica(Long codigoTipoDesconto) {
