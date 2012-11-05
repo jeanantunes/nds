@@ -47,6 +47,8 @@ import br.com.abril.nds.vo.EnderecoVO;
 
 import com.ancientprogramming.fixedformat4j.format.FixedFormatManager;
 import com.ancientprogramming.fixedformat4j.format.impl.FixedFormatManagerImpl;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.healthmarketscience.jackcess.Cursor;
 import com.healthmarketscience.jackcess.Database;
 import com.healthmarketscience.jackcess.Table;
@@ -256,6 +258,7 @@ public class InterfaceExecutor {
 		
 		String diretorio = parametroSistemaDAO.getParametro("CORREIOS_DIR");
 		CouchDbClient couchDbClient = this.getCouchDbClientInstance("correios");
+		Gson gs = new GsonBuilder().create();
 		
 		try {
 			
@@ -281,7 +284,7 @@ public class InterfaceExecutor {
 					l.set_id( "localidade/" + (row.get("LOC_NU") != null ? row.get("LOC_NU").toString() : "" ));
 					doc.setLocalidade(l);
 					try {
-						couchDbClient.save(doc);
+						couchDbClient.batch(doc);
 					} catch (CouchDbException ce) {
 						
 					}
@@ -314,10 +317,10 @@ public class InterfaceExecutor {
 				
 				Bairro bf = new Bairro();
 				bf.set_id("bairro/" + (row.get("BAI_NU_FIM") != null ? row.get("BAI_NU_FIM").toString() : "" ));
-				doc.setBairroInicial(bf);
+				doc.setBairroFinal(bf);
 				
 				try {
-					couchDbClient.save(doc);
+					couchDbClient.batch(doc);
 				} catch (CouchDbException ce) {
 					
 				}
@@ -339,7 +342,7 @@ public class InterfaceExecutor {
 				u.set_id("uf/" + (row.get("UFE_SG") != null ? row.get("UFE_SG").toString() : "" ));
 				doc.setUnidadeFederacao(u);
 				try {
-					couchDbClient.save(doc);
+					couchDbClient.batch(doc);
 				} catch (CouchDbException ce) {
 					
 				}
@@ -356,7 +359,7 @@ public class InterfaceExecutor {
 				doc.setFaixaCepInicial((row.get("UFE_CEP_INI") != null ? row.get("UFE_CEP_INI").toString() : "" ));
 				doc.setFaixaCepFinal((row.get("UFE_CEP_FIM") != null ? row.get("UFE_CEP_FIM").toString() : "" ));
 				try {
-					couchDbClient.save(doc);
+					couchDbClient.batch(doc);
 				} catch (CouchDbException ce) {
 					
 				}
