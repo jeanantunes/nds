@@ -140,9 +140,9 @@ public class ResumoSuplementarFecharDiaRepositoryImpl extends AbstractRepository
 		Query query = super.getSession().createQuery(hql.toString());		
 		
 		BigInteger total =  (BigInteger) query.uniqueResult();
-		BigDecimal x = new BigDecimal(total);
+		BigDecimal totalFormatado = new BigDecimal(total);
 		
-		return x != null ? x : BigDecimal.ZERO ;
+		return totalFormatado != null ? totalFormatado : BigDecimal.ZERO ;
 	}
 
 	@SuppressWarnings("unchecked")

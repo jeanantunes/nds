@@ -6,12 +6,13 @@ import java.util.List;
 import br.com.abril.nds.dto.DiaSemanaDTO;
 import br.com.abril.nds.model.cadastro.PeriodicidadeCobranca;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
+import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
 
 public class FiltroCalculaParcelas extends FiltroConsultaNegociacaoDivida implements Serializable{
 
 	private static final long serialVersionUID = -1866576603729081522L;
 	
-	private PeriodicidadeCobranca periodicidade;
+	private TipoFormaCobranca periodicidade;
 	
 	private List<DiaSemanaDTO> semanalDias;
 	
@@ -33,11 +34,11 @@ public class FiltroCalculaParcelas extends FiltroConsultaNegociacaoDivida implem
 	
 	private Boolean isentaEncargos;
 
-	public PeriodicidadeCobranca getPeriodicidade() {
+	public TipoFormaCobranca getPeriodicidade() {
 		return periodicidade;
 	}
 
-	public void setPeriodicidade(PeriodicidadeCobranca periodicidade) {
+	public void setPeriodicidade(TipoFormaCobranca periodicidade) {
 		this.periodicidade = periodicidade;
 	}
 

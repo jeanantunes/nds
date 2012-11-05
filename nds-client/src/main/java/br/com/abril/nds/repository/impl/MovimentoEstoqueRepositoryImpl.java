@@ -1,7 +1,5 @@
 package br.com.abril.nds.repository.impl;
 
-import java.math.BigDecimal;
-import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Query;
@@ -13,7 +11,6 @@ import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.repository.MovimentoEstoqueRepository;
-import br.com.abril.nds.vo.PaginacaoVO;
 
 @Repository
 public class MovimentoEstoqueRepositoryImpl extends AbstractRepositoryModel<MovimentoEstoque, Long> 
