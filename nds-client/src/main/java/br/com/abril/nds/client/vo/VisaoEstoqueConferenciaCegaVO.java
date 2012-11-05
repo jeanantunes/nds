@@ -24,19 +24,17 @@ public class VisaoEstoqueConferenciaCegaVO implements Serializable {
 	@Export(label = "Preço Capa R$", alignment=Alignment.RIGHT, exhibitionOrder = 4)
 	private String precoCapa;
 	
-	@Export(label = "Lcto", alignment=Alignment.CENTER, exhibitionOrder = 5)
+	@Export(label = "Lançamento", alignment=Alignment.CENTER, exhibitionOrder = 5)
 	private String lcto;
 	
-	@Export(label = "Rclto", alignment=Alignment.CENTER, exhibitionOrder = 6)
-	private String rclto;
+	@Export(label = "Recolimento", alignment=Alignment.CENTER, exhibitionOrder = 6)
+	private String rclto;	
 	
+	private String qtde;	
 	
-	private String qtde;
-	
-	@Export(label = "Valor R$", alignment=Alignment.RIGHT, exhibitionOrder = 8)
 	private String valor;
 	
-	@Export(label = "Estoque", alignment=Alignment.CENTER, exhibitionOrder = 9)
+	@Export(label = "Estoque", alignment=Alignment.CENTER, exhibitionOrder = 7)
 	private String estoque;
 
 	
