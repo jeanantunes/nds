@@ -1,5 +1,6 @@
 package br.com.abril.nds.service.impl;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.dto.ResumoFechamentoDiarioConsignadoDTO;
 import br.com.abril.nds.dto.ResumoFechamentoDiarioCotasDTO;
 import br.com.abril.nds.dto.ValidacaoConfirmacaoDeExpedicaoFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoControleDeAprovacaoFecharDiaDTO;
@@ -171,6 +173,39 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		return new ResumoFechamentoDiarioCotasDTO(
 			quantidadeTotal, quantidadeAtivas, ausentesExpedicaoReparte, 
 				ausentesRecolhimentoEncalhe, novas, inativas);
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional(readOnly = true)
+	public ResumoFechamentoDiarioConsignadoDTO obterResumoConsignado(Date dataFechamento) {
+		
+		ResumoFechamentoDiarioConsignadoDTO resumoFechamentoDiarioConsignado = 
+			new ResumoFechamentoDiarioConsignadoDTO();
+		
+		ResumoFechamentoDiarioConsignadoDTO.ResumoConsignado resumoConsignado = 
+			resumoFechamentoDiarioConsignado.new ResumoConsignado();
+		
+		resumoConsignado.setSaldoAnterior(BigDecimal.TEN);
+		resumoConsignado.setSaldoAtual(BigDecimal.TEN);
+		resumoConsignado.setValorEntradas(BigDecimal.TEN);
+		resumoConsignado.setValorSaidas(BigDecimal.TEN);
+		
+		resumoFechamentoDiarioConsignado.setResumoConsignado(resumoConsignado);
+		
+		ResumoFechamentoDiarioConsignadoDTO.ResumoAVista resumoAVista = 
+			resumoFechamentoDiarioConsignado.new ResumoAVista();
+		
+		resumoAVista.setSaldoAnterior(BigDecimal.TEN);
+		resumoAVista.setSaldoAtual(BigDecimal.TEN);
+		resumoAVista.setValorEntradas(BigDecimal.TEN);
+		resumoAVista.setValorSaidas(BigDecimal.TEN);
+		
+		resumoFechamentoDiarioConsignado.setResumoAVista(resumoAVista);
+		
+		return resumoFechamentoDiarioConsignado;
 	}
 
     /**

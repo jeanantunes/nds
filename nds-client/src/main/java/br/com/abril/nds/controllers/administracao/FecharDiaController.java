@@ -517,30 +517,8 @@ public class FecharDiaController {
 	@Post
 	public void obterResumoConsignado() {
 		
-		//TODO: MOCK
-		
 		ResumoFechamentoDiarioConsignadoDTO resumoFechamentoDiarioConsignado = 
-			new ResumoFechamentoDiarioConsignadoDTO();
-		
-		ResumoFechamentoDiarioConsignadoDTO.ResumoConsignado resumoConsignado = 
-			resumoFechamentoDiarioConsignado.new ResumoConsignado();
-		
-		resumoConsignado.setSaldoAnterior(BigDecimal.TEN);
-		resumoConsignado.setSaldoAtual(BigDecimal.TEN);
-		resumoConsignado.setValorEntradas(BigDecimal.TEN);
-		resumoConsignado.setValorSaidas(BigDecimal.TEN);
-		
-		resumoFechamentoDiarioConsignado.setResumoConsignado(resumoConsignado);
-		
-		ResumoFechamentoDiarioConsignadoDTO.ResumoAVista resumoAVista = 
-			resumoFechamentoDiarioConsignado.new ResumoAVista();
-		
-		resumoAVista.setSaldoAnterior(BigDecimal.TEN);
-		resumoAVista.setSaldoAtual(BigDecimal.TEN);
-		resumoAVista.setValorEntradas(BigDecimal.TEN);
-		resumoAVista.setValorSaidas(BigDecimal.TEN);
-		
-		resumoFechamentoDiarioConsignado.setResumoAVista(resumoAVista);
+			this.fecharDiaService.obterResumoConsignado(getDataFechamento());
 		
 		result.use(CustomMapJson.class).put("resumo", resumoFechamentoDiarioConsignado).serialize();
 	}

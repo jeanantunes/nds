@@ -401,8 +401,8 @@ public class DataLoader {
 	private static MovimentoFinanceiroCota movimentoFinanceiroCota30;
 
 	private static CFOP cfop5102;
-	private static TipoNotaFiscal tipoNotaFiscalRecebimento;
-	private static TipoNotaFiscal tipoNotaFiscalDevolucao;
+	private static TipoNotaFiscal tipoNotaFiscalRecebimento; //Precisa Remover
+	private static TipoNotaFiscal tipoNotaFiscalDevolucao;//Precisa Remover
 	private static Usuario usuarioJoao;
 	private static Fornecedor fornecedorAcme;
 	private static Fornecedor fornecedorDinap;
@@ -1275,7 +1275,6 @@ public class DataLoader {
 		criarEnderecoDistribuidor(session);
 		criarTelefoneDistribuidor(session);
 		
-		criarCFOP(session);		
 		criarParametroEmissaoNotaFiscal(session);
 		criarTiposNotaFiscal(session);
 		
@@ -1433,7 +1432,7 @@ public class DataLoader {
 		cfop6115.setCodigo("6115");
 		cfop6115.setDescricao("Venda de mercadoria adquirida ou recebida de terceiros, recebida anteriormente em consignação mercantil");
 		save(session, cfop6115);
-		
+ 
 		cfop5918 = new CFOP();
 		cfop5918.setCodigo("5918");
 		cfop5918.setDescricao("Devolução de Mercadoria Recebida em Consignação");
@@ -1454,10 +1453,20 @@ public class DataLoader {
 		cfop6919.setDescricao("Devolução Simbólica de Mercadoria Vendida recebida anteriormente em Consignação");
 		save(session, cfop6919);
 		
-		
-		
-		
-		
+		cfop5102 = new CFOP();
+		cfop5102.setCodigo("5102");
+		cfop5102.setDescricao("Venda de mercadoria adquirida ou recebida de terceiros");
+		save(session, cfop5102);
+
+		cfop1209 = new CFOP();
+		cfop1209.setCodigo("1209");
+		cfop1209.setDescricao("Devolução de mercadoria adquirida ou recebida de terceiros, remetida em transferência dentro do estado");
+		save(session, cfop1209);
+
+		cfop1210 = new CFOP();
+		cfop1210.setCodigo("1210");
+		cfop1210.setDescricao("Devolução de mercadoria adquirida ou recebida de terceiros, remetida em transferência fora do estado");		
+		save(session, cfop1210);
 
 	}
 
@@ -5664,64 +5673,38 @@ public class DataLoader {
 	}
 
 	private static void criarTiposNotaFiscal(Session session) {
-		tipoNotaFiscalRecebimento = Fixture.tipoNotaFiscalRecebimento();
-		
-		
-		tipoNotaFiscalRecebimento.setCfopEstado(cfop1209);
-		tipoNotaFiscalRecebimento.setCfopOutrosEstados(cfop1210);
-		
-		
-		tipoNotaFiscalDevolucao = Fixture.tipoNotaFiscalDevolucao();
-		tipoNotaFiscalDevolucao.setCfopEstado(cfop1209);
-		tipoNotaFiscalDevolucao.setCfopOutrosEstados(cfop1210);
-		
-		save(session, tipoNotaFiscalRecebimento, tipoNotaFiscalDevolucao);
 
-		TipoNotaFiscal tipoNotaFiscalTerceiroMercantil = Fixture.tipoNotaFiscalRecebimento();
-		tipoNotaFiscalTerceiroMercantil.setGrupoNotaFiscal(GrupoNotaFiscal.NF_TERCEIRO);
-		tipoNotaFiscalTerceiroMercantil.setContribuinte(true);
-		tipoNotaFiscalTerceiroMercantil.setTipoAtividade(TipoAtividade.MERCANTIL);
-		tipoNotaFiscalTerceiroMercantil.setCfopEstado(cfop1209);
-		tipoNotaFiscalTerceiroMercantil.setCfopOutrosEstados(cfop1210);
-		
-		TipoNotaFiscal tipoNotaFiscalTerceiroMercantilComplementar = Fixture.tipoNotaFiscalRecebimento();
-		tipoNotaFiscalTerceiroMercantilComplementar.setGrupoNotaFiscal(GrupoNotaFiscal.NF_TERCEIRO_COMPLEMENTAR);
-		tipoNotaFiscalTerceiroMercantilComplementar.setContribuinte(true);
-		tipoNotaFiscalTerceiroMercantilComplementar.setTipoAtividade(TipoAtividade.MERCANTIL);
-		tipoNotaFiscalTerceiroMercantilComplementar.setCfopEstado(cfop1209);
-		tipoNotaFiscalTerceiroMercantilComplementar.setCfopOutrosEstados(cfop1210);
+		save(session, Fixture.tipoNotaFiscal(
+				true
+				, "NF-e de Remessa em Consignação (NECE / DANFE) - Cota Contribuinte"				
+				, TipoUsuarioNotaFiscal.COTA
+				, TipoUsuarioNotaFiscal.DISTRIBUIDOR
+				, GrupoNotaFiscal.NF_REMESSA_CONSIGNACAO
+				, 0L
+				, "NF-e de Remessa em Consignação (NECE / DANFE)"
+				, 1
+				, TipoAtividade.MERCANTIL
+				, TipoOperacao.SAIDA
+				, cfop5917	
+				, cfop6917) 
+			);
 
-		TipoNotaFiscal tipoNotaFiscalTerceiroPrestadorServicos = Fixture.tipoNotaFiscalRecebimento();
-		tipoNotaFiscalTerceiroPrestadorServicos.setGrupoNotaFiscal(GrupoNotaFiscal.NF_TERCEIRO);
-		tipoNotaFiscalTerceiroPrestadorServicos.setContribuinte(true);
-		tipoNotaFiscalTerceiroPrestadorServicos.setTipoAtividade(TipoAtividade.PRESTADOR_SERVICO);
-		tipoNotaFiscalTerceiroPrestadorServicos.setCfopEstado(cfop1209);
-		tipoNotaFiscalTerceiroPrestadorServicos.setCfopOutrosEstados(cfop1210);
+		save(session, Fixture.tipoNotaFiscal(true,	"NF-e de Remessa em Devolução de Remessa em Consignação - Cota Contribuinte"		,TipoUsuarioNotaFiscal.DISTRIBUIDOR,	TipoUsuarioNotaFiscal.DISTRIBUIDOR,	GrupoNotaFiscal.NF_DEVOLUCAO_REMESSA_CONSIGNACAO,		0L,	"NF-e de Remessa em Devolução de Remessa em Consignação",	2,	TipoAtividade.MERCANTIL		,TipoOperacao.ENTRADA	,cfop1918	,cfop2918));
+		save(session, Fixture.tipoNotaFiscal(true,	"NF-e de Devolução Simbólica de Mercadorias Vendidas - Cota Contribuinte"		,TipoUsuarioNotaFiscal.DISTRIBUIDOR,	TipoUsuarioNotaFiscal.DISTRIBUIDOR,	GrupoNotaFiscal.NF_DEVOLUCAO_SIMBOLICA,				0L,	"NF-e de Devolução Simbólica de Mercadorias Vendidas",		3,	TipoAtividade.MERCANTIL		,TipoOperacao.ENTRADA	,cfop1919	,cfop2919));
+		save(session, Fixture.tipoNotaFiscal(true,	"NF-e Venda - Cota Contribuinte"							,TipoUsuarioNotaFiscal.COTA,		TipoUsuarioNotaFiscal.DISTRIBUIDOR,	GrupoNotaFiscal.NF_VENDA,					0L,	"NF-e Venda",							4,	TipoAtividade.MERCANTIL		,TipoOperacao.SAIDA	,cfop5114	,cfop6114));
+		save(session, Fixture.tipoNotaFiscal(false,	"NF-e de Remessa em Consignação (NECE / DANFE) - Cota NÃO Contribuinte"			,TipoUsuarioNotaFiscal.COTA,		TipoUsuarioNotaFiscal.DISTRIBUIDOR,	GrupoNotaFiscal.NF_REMESSA_CONSIGNACAO,				0L,	"NF-e de Remessa em Consignação (NECE / DANFE)",		5,	TipoAtividade.MERCANTIL		,TipoOperacao.SAIDA	,cfop5917	,cfop6917));
+		save(session, Fixture.tipoNotaFiscal(false,	"NF-e de Remessa em Devolução de Remessa em Consignação - Cota NÃO Contribuinte"	,TipoUsuarioNotaFiscal.DISTRIBUIDOR,	TipoUsuarioNotaFiscal.DISTRIBUIDOR,	GrupoNotaFiscal.NF_DEVOLUCAO_REMESSA_CONSIGNACAO,		0L,	"NF-e de Remessa em Devolução de Remessa em Consignação",	6,	TipoAtividade.MERCANTIL		,TipoOperacao.ENTRADA	,cfop1918	,cfop2918));
+		save(session, Fixture.tipoNotaFiscal(false,	"NF-e de Devolução Simbólica de Mercadorias Vendidas - Cota NÃO Contribuinte"		,TipoUsuarioNotaFiscal.DISTRIBUIDOR,	TipoUsuarioNotaFiscal.DISTRIBUIDOR,	GrupoNotaFiscal.NF_DEVOLUCAO_SIMBOLICA,				0L,	"NF-e de Devolução Simbólica de Mercadorias Vendidas",		7,	TipoAtividade.MERCANTIL		,TipoOperacao.ENTRADA	,cfop1919	,cfop2919));
+		save(session, Fixture.tipoNotaFiscal(false,	"NF-e Venda - Cota NÃO Contribuinte"							,TipoUsuarioNotaFiscal.COTA,		TipoUsuarioNotaFiscal.DISTRIBUIDOR,	GrupoNotaFiscal.NF_VENDA,					0L,	"NF-e Venda",							8,	TipoAtividade.MERCANTIL		,TipoOperacao.SAIDA	,cfop5114	,cfop6114));
+		save(session, Fixture.tipoNotaFiscal(true,	"NF-e de Remessa para Distribuição (NECA / DANFE) - Cota Contribuinte"			,TipoUsuarioNotaFiscal.COTA,		TipoUsuarioNotaFiscal.DISTRIBUIDOR,	GrupoNotaFiscal.DEVOLUCAO_MERCADORIA_FORNECEDOR,		0L,	"NF-e de Remessa para Distribuição (NECA / DANFE)",		9,	TipoAtividade.PRESTADOR_SERVICO	,TipoOperacao.SAIDA	,cfop5949	,cfop6949));
+		save(session, Fixture.tipoNotaFiscal(true,	"NF-e de Devolução de Remessa para Distribuição - Cota Contribuinte"			,TipoUsuarioNotaFiscal.DISTRIBUIDOR,	TipoUsuarioNotaFiscal.COTA,		GrupoNotaFiscal.DEVOLUCAO_MERCADORIA_FORNECEDOR,		0L,	"NF-e de Devolução de Remessa para Distribuição",		10,	TipoAtividade.PRESTADOR_SERVICO	,TipoOperacao.SAIDA	,cfop5949	,cfop6949));
+		save(session, Fixture.tipoNotaFiscal(true,	"NF-e Venda - Cota Contribuinte"							,TipoUsuarioNotaFiscal.COTA,		TipoUsuarioNotaFiscal.TREELOG,		GrupoNotaFiscal.DEVOLUCAO_MERCADORIA_FORNECEDOR,		0L,	"NF-e Venda",							11,	TipoAtividade.PRESTADOR_SERVICO	,TipoOperacao.SAIDA	,cfop5115	,cfop6115));
+		save(session, Fixture.tipoNotaFiscal(false,	"NF-e de Remessa para Distribuição (NECA / DANFE) - Cota NÃO Contribuinte"		,TipoUsuarioNotaFiscal.COTA,		TipoUsuarioNotaFiscal.DISTRIBUIDOR,	GrupoNotaFiscal.DEVOLUCAO_MERCADORIA_FORNECEDOR,		0L,	"NF-e de Remessa para Distribuição (NECA / DANFE)",		12,	TipoAtividade.PRESTADOR_SERVICO	,TipoOperacao.SAIDA	,cfop5949	,cfop6949));
+		save(session, Fixture.tipoNotaFiscal(false,	"NF-e de Devolução de Remessa para Distruibuição - Cota NÃO Contribuinte"		,TipoUsuarioNotaFiscal.DISTRIBUIDOR,	TipoUsuarioNotaFiscal.DISTRIBUIDOR,	GrupoNotaFiscal.DEVOLUCAO_MERCADORIA_FORNECEDOR,		0L,	"NF-e de Devolução de Remessa para Distruibuição",		13,	TipoAtividade.PRESTADOR_SERVICO	,TipoOperacao.SAIDA	,cfop1949	,cfop2949));
+		save(session, Fixture.tipoNotaFiscal(false,	"NF-e Venda - Cota NÃO Contribuinte"							,TipoUsuarioNotaFiscal.COTA,		TipoUsuarioNotaFiscal.TREELOG,		GrupoNotaFiscal.DEVOLUCAO_MERCADORIA_FORNECEDOR,		0L,	"NF-e Venda",							14,	TipoAtividade.PRESTADOR_SERVICO	,TipoOperacao.SAIDA	,cfop5115	,cfop6115));
 		
-		TipoNotaFiscal tipoNotaFiscalTerceiroPrestadorServicosComplementar = Fixture.tipoNotaFiscalRecebimento();
-		tipoNotaFiscalTerceiroPrestadorServicosComplementar.setGrupoNotaFiscal(GrupoNotaFiscal.NF_TERCEIRO_COMPLEMENTAR);
-		tipoNotaFiscalTerceiroPrestadorServicosComplementar.setContribuinte(true);
-		tipoNotaFiscalTerceiroPrestadorServicosComplementar.setTipoAtividade(TipoAtividade.PRESTADOR_SERVICO);
-		tipoNotaFiscalTerceiroPrestadorServicosComplementar.setCfopEstado(cfop1209);
-		tipoNotaFiscalTerceiroPrestadorServicosComplementar.setCfopOutrosEstados(cfop1210);
-		
-		save(session, tipoNotaFiscalTerceiroMercantil, tipoNotaFiscalTerceiroMercantilComplementar,
-					  tipoNotaFiscalTerceiroPrestadorServicos, tipoNotaFiscalTerceiroPrestadorServicosComplementar);
+		 
 	}
-
-	private static void criarCFOP(Session session) {
-
-		cfop1209 = Fixture.cfop1209();
-		session.save(cfop1209);
-
-		cfop1210 = Fixture.cfop1210();
-		session.save(cfop1210);
-
-		cfop5102 = Fixture.cfop5102();
-		session.save(cfop5102);
-	}
-
-
 
 	private static void criarParametroEmissaoNotaFiscal(Session session) {
 
@@ -5985,9 +5968,6 @@ public class DataLoader {
 		TipoProduto tipoRevista = Fixture.tipoRevista(ncmRevista);
 		session.save(tipoRevista);
 
-		CFOP cfop = Fixture.cfop5102();
-		session.save(cfop);
-
 		Usuario usuario = Fixture.usuarioJoao();
 		session.save(usuario);
 
@@ -6032,7 +6012,7 @@ public class DataLoader {
 			for(int x= 1; x< 3 ;x++){
 
 				NotaFiscalEntradaFornecedor notaFiscalFornecedor = Fixture
-						.notaFiscalEntradaFornecedor(cfop, fornecedor, tipoNotaFiscalDevolucao,
+						.notaFiscalEntradaFornecedor(cfop5102, fornecedor, tipoNotaFiscalDevolucao,
 								usuario, new BigDecimal(1),new BigDecimal(1),new BigDecimal(1));
 				session.save(notaFiscalFornecedor);
 
@@ -6129,7 +6109,8 @@ public class DataLoader {
 		criarTiposProduto(session);
 //		criarProdutos(session);
 //		criarProdutosEdicao(session);
-		criarCFOP(session);
+//		criarCFOP(session);
+		gerarCfops(session);
 		criarParametroEmissaoNotaFiscal(session);
 		criarTiposMovimento(session);
 		criarTiposNotaFiscal(session);
@@ -6704,9 +6685,6 @@ public class DataLoader {
 		TipoProduto tipoRevista = Fixture.tipoRevista(ncmRevista);
 		save(session,tipoRevista);
 
-		CFOP cfop = Fixture.cfop5102();
-		save(session,cfop);
-
 		Usuario usuario = Fixture.usuarioJoao();
 		save(session,usuario);
 
@@ -6731,7 +6709,7 @@ public class DataLoader {
 			save(session,produtoEdicao);
 
 			NotaFiscalEntradaFornecedor notaFiscalFornecedor = Fixture
-					.notaFiscalEntradaFornecedor(cfop, fornecedor, tipoNotaFiscalRecebimento,
+					.notaFiscalEntradaFornecedor(cfop5102, fornecedor, tipoNotaFiscalRecebimento,
 							usuario, new BigDecimal(1),new BigDecimal(1),new BigDecimal(1));
 			save(session,notaFiscalFornecedor);
 

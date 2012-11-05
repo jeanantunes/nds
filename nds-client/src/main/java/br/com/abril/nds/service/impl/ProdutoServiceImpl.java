@@ -183,6 +183,16 @@ public class ProdutoServiceImpl implements ProdutoService {
 					throw new ValidacaoException(TipoMensagem.WARNING, "Produto não encontrado para edição.");
 				}
 				
+				if (Origem.INTERFACE.equals(produtoExistente.getOrigem())) {
+					
+					if(!produtoExistente.getCodigo().equals(produto.getCodigo())) {
+						
+						throw new ValidacaoException(
+							TipoMensagem.WARNING,
+							"O campo [Código] não pode ser alterado para produtos com origem da interface.");
+					}
+				}
+				
 				produtoExistente.setCodigo(produto.getCodigo());
 				produtoExistente.setSlogan(produto.getSlogan());
 				produtoExistente.setPeb(produto.getPeb());
