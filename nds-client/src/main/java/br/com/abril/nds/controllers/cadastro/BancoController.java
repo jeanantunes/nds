@@ -53,6 +53,7 @@ public class BancoController {
     
     private static final String FILTRO_PESQUISA_SESSION_ATTRIBUTE = "filtroPesquisaConsultaBancos";
     
+    private static final String APELIDO_ANTIGO_SESSION_ATTRIBUTE = "apelidoAntigo";
     
     /**
 	 * Construtor da classe
@@ -199,6 +200,10 @@ public class BancoController {
 						  BigDecimal vrMulta,
 						  String instrucoes){
 		
+		if (bancoService.obterBancoPorApelido(apelido) != null) {
+			throw new ValidacaoException(TipoMensagem.ERROR, "Já existe um banco com este apelido.");
+		}
+		
 		validarCadastroBanco(
 				true, 
 				numero,
@@ -254,6 +259,7 @@ public class BancoController {
 		if (bancoVO==null){
 			throw new ValidacaoException(TipoMensagem.WARNING, "Banco "+idBanco+" não encontrado.");
 		}
+		this.httpSession.setAttribute(APELIDO_ANTIGO_SESSION_ATTRIBUTE, bancoVO.getApelido());
 		result.use(Results.json()).from(bancoVO,"result").recursive().serialize();
 	}
 	
@@ -294,6 +300,10 @@ public class BancoController {
 						  	BigDecimal multa,
 						  	BigDecimal vrMulta,
 						  	String instrucoes){
+		
+		if (!this.httpSession.getAttribute(APELIDO_ANTIGO_SESSION_ATTRIBUTE).equals(apelido) && bancoService.obterBancoPorApelido(apelido) != null) {
+			throw new ValidacaoException(TipoMensagem.ERROR, "Já existe um banco com este apelido.");
+		}
 		
 		validarCadastroBanco(
 				false, 
