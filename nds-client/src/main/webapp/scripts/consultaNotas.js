@@ -57,7 +57,7 @@ init : function() {
 			display : 'Valor R$',
 			name : 'valor',
 			width : 80,
-			sortable : true,
+			sortable : false,
 			align : 'right'
 		}, {
 			display : 'Nota Recebida',
