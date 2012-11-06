@@ -17,20 +17,20 @@ import javax.persistence.Table;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 
 @Entity
-@Table(name="HISTORICO_FECHAMENTO_DIARIO_RESUMO_CONSOLIDADO_DIVIDA")
-@SequenceGenerator(name="HISTORICO_FECHAMENTO_DIARIO_RESUMO_CONSOLIDADO_DIVIDA_SEQ", initialValue = 1, allocationSize = 1)
-public class HistoricoFechamentoDiarioResumoConsolidadoDivida implements Serializable {
+@Table(name="FECHAMENTO_DIARIO_RESUMO_CONSOLIDADO_DIVIDA")
+@SequenceGenerator(name="FECHAMENTO_DIARIO_RESUMO_CONSOLIDADO_DIVIDA_SEQ", initialValue = 1, allocationSize = 1)
+public class FechamentoDiarioResumoConsolidadoDivida implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 
 	@Id
-    @GeneratedValue(generator = "HISTORICO_FECHAMENTO_DIARIO_RESUMO_CONSOLIDADO_DIVIDA_SEQ")
+    @GeneratedValue(generator = "FECHAMENTO_DIARIO_RESUMO_CONSOLIDADO_DIVIDA_SEQ")
     @Column(name = "ID")
     private Long id;
 	
 	@ManyToOne(optional = false)
-	@JoinColumn(name = "HISTORICO_FECHAMENTO_DIARIO_CONSOLIDADO_DIVIDA_ID")
-	private HistoricoFechamentoDiarioConsolidadoDivida historicoConsolidadoDivida;
+	@JoinColumn(name = "FECHAMENTO_DIARIO_CONSOLIDADO_DIVIDA_ID")
+	private FechamentoDiarioConsolidadoDivida fechamentoDiarioConsolidadoDivida;
 	
 	@Column(name="FORMA_PAGAMENTO")
 	@Enumerated(EnumType.STRING)
@@ -85,13 +85,13 @@ public class HistoricoFechamentoDiarioResumoConsolidadoDivida implements Seriali
 		this.valorInadimplencia = valorInadimplencia;
 	}
 
-	public HistoricoFechamentoDiarioConsolidadoDivida getHistoricoConsolidadoDivida() {
-		return historicoConsolidadoDivida;
+	public FechamentoDiarioConsolidadoDivida getFechamentoDiarioConsolidadoDivida() {
+		return fechamentoDiarioConsolidadoDivida;
 	}
 
-	public void setHistoricoConsolidadoDivida(
-			HistoricoFechamentoDiarioConsolidadoDivida historicoConsolidadoDivida) {
-		this.historicoConsolidadoDivida = historicoConsolidadoDivida;
+	public void setFechamentoDiarioConsolidadoDivida(
+			FechamentoDiarioConsolidadoDivida fechamentoDiarioConsolidadoDivida) {
+		this.fechamentoDiarioConsolidadoDivida = fechamentoDiarioConsolidadoDivida;
 	}
 	
 	

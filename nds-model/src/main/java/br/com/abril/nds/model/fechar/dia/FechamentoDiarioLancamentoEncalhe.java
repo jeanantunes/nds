@@ -1,7 +1,6 @@
 package br.com.abril.nds.model.fechar.dia;
 
 import java.io.Serializable;
-import java.math.BigInteger;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -15,33 +14,33 @@ import javax.persistence.Table;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 
 @Entity
-@Table(name = "HISTORICO_FECHAMENTO_DIARIO_LANCAMENTO_ENCALHE")
-@SequenceGenerator(name = "HISTORICO_FECHAMENTO_DIARIO_LANCAMENTO_ENCALHE_SEQ", initialValue = 1, allocationSize = 1)
-public class HistoricoFechamentoDiarioLancamentoEncalhe implements Serializable {
+@Table(name = "FECHAMENTO_DIARIO_LANCAMENTO_ENCALHE")
+@SequenceGenerator(name = "FECHAMENTO_DIARIO_LANCAMENTO_ENCALHE_SEQ", initialValue = 1, allocationSize = 1)
+public class FechamentoDiarioLancamentoEncalhe implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 
 	@Id
-    @GeneratedValue(generator = "HISTORICO_FECHAMENTO_DIARIO_LANCAMENTO_ENCALHE_SEQ")
+    @GeneratedValue(generator = "FECHAMENTO_DIARIO_LANCAMENTO_ENCALHE_SEQ")
     @Column(name = "ID")
     private Long id;
 	
 	@ManyToOne(optional = false)
-	@JoinColumn(name = "HISTORICO_FECHAMENTO_DIARIO_CONSOLIDADO_ENCALHE_ID")
-	private HistoricoFechamentoDiarioConsolidadoEncalhe historicoConsolidadoEncalhe;
+	@JoinColumn(name = "FECHAMENTO_DIARIO_CONSOLIDADO_ENCALHE_ID")
+	private FechamentoDiarioConsolidadoEncalhe fechamentoDiarioConsolidadoEncalhe;
 	
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "ID_PRODUTO_EDICAO")
 	private ProdutoEdicao produtoEdicao;
 	
 	@Column(name="QUANTIDADE")
-	private BigInteger quantidade;
+	private Integer quantidade;
 	
 	@Column(name="QNT_VENDA_ENCALHE")
-	private BigInteger quantidadeVendaEncalhe;
+	private Integer quantidadeVendaEncalhe;
 	
 	@Column(name="QNT_DIFERENCA")
-	private BigInteger quantidadeDiferenca;
+	private Integer quantidadeDiferenca;
 	
 	public Long getId() {
 		return id;
@@ -59,37 +58,37 @@ public class HistoricoFechamentoDiarioLancamentoEncalhe implements Serializable 
 		this.produtoEdicao = produtoEdicao;
 	}
 
-	public BigInteger getQuantidade() {
+	public Integer getQuantidade() {
 		return quantidade;
 	}
 
-	public void setQuantidade(BigInteger quantidade) {
+	public void setQuantidade(Integer quantidade) {
 		this.quantidade = quantidade;
 	}
 
-	public BigInteger getQuantidadeVendaEncalhe() {
+	public Integer getQuantidadeVendaEncalhe() {
 		return quantidadeVendaEncalhe;
 	}
 
-	public void setQuantidadeVendaEncalhe(BigInteger quantidadeVendaEncalhe) {
+	public void setQuantidadeVendaEncalhe(Integer quantidadeVendaEncalhe) {
 		this.quantidadeVendaEncalhe = quantidadeVendaEncalhe;
 	}
 
-	public BigInteger getQuantidadeDiferenca() {
+	public Integer getQuantidadeDiferenca() {
 		return quantidadeDiferenca;
 	}
 
-	public void setQuantidadeDiferenca(BigInteger quantidadeDiferenca) {
+	public void setQuantidadeDiferenca(Integer quantidadeDiferenca) {
 		this.quantidadeDiferenca = quantidadeDiferenca;
 	}
 
-	public HistoricoFechamentoDiarioConsolidadoEncalhe getHistoricoConsolidadoEncalhe() {
-		return historicoConsolidadoEncalhe;
+	public FechamentoDiarioConsolidadoEncalhe getFechamentoDiarioConsolidadoEncalhe() {
+		return fechamentoDiarioConsolidadoEncalhe;
 	}
 
-	public void setHistoricoConsolidadoEncalhe(
-			HistoricoFechamentoDiarioConsolidadoEncalhe historicoConsolidadoEncalhe) {
-		this.historicoConsolidadoEncalhe = historicoConsolidadoEncalhe;
+	public void setFechamentoDiarioConsolidadoEncalhe(
+			FechamentoDiarioConsolidadoEncalhe fechamentoDiarioConsolidadoEncalhe) {
+		this.fechamentoDiarioConsolidadoEncalhe = fechamentoDiarioConsolidadoEncalhe;
 	}
 	
 	

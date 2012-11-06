@@ -33,7 +33,7 @@ import javax.persistence.UniqueConstraint;
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
-import br.com.abril.nds.model.fechar.dia.HistoricoFechamentoDiarioLancamentoReparte;
+import br.com.abril.nds.model.fechar.dia.FechamentoDiarioLancamentoReparte;
 import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.Lancamento;
 
@@ -166,7 +166,7 @@ public class ProdutoEdicao implements Serializable {
 	private List<Diferenca> diferencas;
 	
 	@OneToMany(mappedBy = "produtoEdicao")
-	protected Set<HistoricoFechamentoDiarioLancamentoReparte> historicoMovimentoRepartes;
+	protected Set<FechamentoDiarioLancamentoReparte> historicoMovimentoRepartes;
 	
 	public Long getId() {
 		return id;
@@ -525,12 +525,12 @@ public class ProdutoEdicao implements Serializable {
 		this.diferencas = diferencas;
 	}
 
-	public Set<HistoricoFechamentoDiarioLancamentoReparte> getHistoricoMovimentoRepartes() {
+	public Set<FechamentoDiarioLancamentoReparte> getHistoricoMovimentoRepartes() {
 		return historicoMovimentoRepartes;
 	}
 
 	public void setHistoricoMovimentoRepartes(
-			Set<HistoricoFechamentoDiarioLancamentoReparte> historicoMovimentoRepartes) {
+			Set<FechamentoDiarioLancamentoReparte> historicoMovimentoRepartes) {
 		this.historicoMovimentoRepartes = historicoMovimentoRepartes;
 	}
 	

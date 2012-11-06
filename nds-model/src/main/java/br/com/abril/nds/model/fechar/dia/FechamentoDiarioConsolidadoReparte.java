@@ -15,14 +15,14 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "HISTORICO_FECHAMENTO_DIARIO_CONSOLIDADO_REPARTE")
-@SequenceGenerator(name = "HISTORICO_FECHAMENTO_DIARIO_CONSOLIDADO_REPARTE_SEQ", initialValue = 1, allocationSize = 1)
-public class HistoricoFechamentoDiarioConsolidadoReparte implements Serializable{
+@Table(name = "FECHAMENTO_DIARIO_CONSOLIDADO_REPARTE")
+@SequenceGenerator(name = "FECHAMENTO_DIARIO_CONSOLIDADO_REPARTE_SEQ", initialValue = 1, allocationSize = 1)
+public class FechamentoDiarioConsolidadoReparte implements Serializable{
 
 	private static final long serialVersionUID = 1L;
 
 	@Id
-    @GeneratedValue(generator = "HISTORICO_FECHAMENTO_DIARIO_CONSOLIDADO_REPARTE_SEQ")
+    @GeneratedValue(generator = "FECHAMENTO_DIARIO_CONSOLIDADO_REPARTE_SEQ")
     @Column(name = "ID")
     private Long id;
 
@@ -51,8 +51,8 @@ public class HistoricoFechamentoDiarioConsolidadoReparte implements Serializable
 	@JoinColumn(name = "FECHAMENTO_DIARIO_ID")
 	private FechamentoDiario fechamentoDiario;
 	
-	@OneToMany(mappedBy = "historicoConsolidadoReparte")
-	private List<HistoricoFechamentoDiarioLancamentoReparte> historicoLancamentosReparte;
+	@OneToMany(mappedBy = "fechamentoDiarioConsolidadoReparte")
+	private List<FechamentoDiarioLancamentoReparte> lancamentosReparte;
 	
 	public Long getId() {
 		return id;
@@ -119,13 +119,13 @@ public class HistoricoFechamentoDiarioConsolidadoReparte implements Serializable
 		this.valorDiferenca = valorDiferenca;
 	}
 
-	public List<HistoricoFechamentoDiarioLancamentoReparte> getHistoricoLancamentosReparte() {
-		return historicoLancamentosReparte;
+	public List<FechamentoDiarioLancamentoReparte> getLancamentosReparte() {
+		return lancamentosReparte;
 	}
 
-	public void setHistoricoLancamentosReparte(
-			List<HistoricoFechamentoDiarioLancamentoReparte> historicoLancamentosReparte) {
-		this.historicoLancamentosReparte = historicoLancamentosReparte;
+	public void setLancamentosReparte(
+			List<FechamentoDiarioLancamentoReparte> lancamentosReparte) {
+		this.lancamentosReparte = lancamentosReparte;
 	}
 
 	public FechamentoDiario getFechamentoDiario() {
