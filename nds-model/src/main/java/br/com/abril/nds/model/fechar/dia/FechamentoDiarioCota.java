@@ -14,20 +14,20 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "HISTORICO_FECHAMENTO_DIARIO_COTA")
-@SequenceGenerator(name = "HISTORICO_FECHAMENTO_DIARIO_COTA_SEQ", initialValue = 1, allocationSize = 1)
-public class HistoricoFechamentoDiarioCota implements Serializable {
+@Table(name = "FECHAMENTO_DIARIO_COTA")
+@SequenceGenerator(name = "FECHAMENTO_DIARIO_COTA_SEQ", initialValue = 1, allocationSize = 1)
+public class FechamentoDiarioCota implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 
 	@Id
-    @GeneratedValue(generator = "HISTORICO_FECHAMENTO_DIARIO_COTA_SEQ")
+    @GeneratedValue(generator = "FECHAMENTO_DIARIO_COTA_SEQ")
     @Column(name = "ID")
     private Long id;
 	
 	@ManyToOne(optional = false)
-	@JoinColumn(name = "HISTORICO_FECHAMENTO_DIARIO_CONSOLIDADO_COTA_ID")
-	private HistoricoFechamentoDiarioConsolidadoCota historicoConsolidadoCota;
+	@JoinColumn(name = "FECHAMENTO_DIARIO_CONSOLIDADO_COTA_ID")
+	private FechamentoDiarioConsolidadoCota fechamentoDiarioConsolidadoCota;
 	
 	@Column(name="NOME_COTA")
 	private String nomeCota;
@@ -51,13 +51,13 @@ public class HistoricoFechamentoDiarioCota implements Serializable {
 		this.id = id;
 	}
 
-	public HistoricoFechamentoDiarioConsolidadoCota getHistoricoConsolidadoCota() {
-		return historicoConsolidadoCota;
+	public FechamentoDiarioConsolidadoCota getFechamentoDiarioConsolidadoCota() {
+		return fechamentoDiarioConsolidadoCota;
 	}
 
-	public void setHistoricoConsolidadoCota(
-			HistoricoFechamentoDiarioConsolidadoCota historicoConsolidadoCota) {
-		this.historicoConsolidadoCota = historicoConsolidadoCota;
+	public void setFechamentoDiarioConsolidadoCota(
+			FechamentoDiarioConsolidadoCota fechamentoDiarioConsolidadoCota) {
+		this.fechamentoDiarioConsolidadoCota = fechamentoDiarioConsolidadoCota;
 	}
 
 	public String getNomeCota() {

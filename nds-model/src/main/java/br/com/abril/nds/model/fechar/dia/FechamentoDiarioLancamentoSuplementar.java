@@ -15,20 +15,20 @@ import javax.persistence.Table;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 
 @Entity
-@Table(name = "HISTORICO_FECHAMENTO_DIARIO_LANCAMENTO_SUPLEMENTAR")
-@SequenceGenerator(name = "HISTORICO_FECHAMENTO_DIARIO_LANCAMENTO_SUPLEMENTAR_SEQ", initialValue = 1, allocationSize = 1)
-public class HistoricoFechamentoDiarioLancamentoSuplementar implements Serializable {
+@Table(name = "FECHAMENTO_DIARIO_LANCAMENTO_SUPLEMENTAR")
+@SequenceGenerator(name = "FECHAMENTO_DIARIO_LANCAMENTO_SUPLEMENTAR_SEQ", initialValue = 1, allocationSize = 1)
+public class FechamentoDiarioLancamentoSuplementar implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 
 	@Id
-    @GeneratedValue(generator = "HISTORICO_FECHAMENTO_DIARIO_LANCAMENTO_SUPLEMENTAR_SEQ")
+    @GeneratedValue(generator = "FECHAMENTO_DIARIO_LANCAMENTO_SUPLEMENTAR_SEQ")
     @Column(name = "ID")
     private Long id;
 	
 	@ManyToOne(optional = false)
-	@JoinColumn(name = "HISTORICO_FECHAMENTO_DIARIO_CONSOLIDADO_SUPLEMENTAR_ID")
-	private HistoricoFechamentoDiarioConsolidadoSuplementar historicoConsolidadoSuplementar;
+	@JoinColumn(name = "FECHAMENTO_DIARIO_CONSOLIDADO_SUPLEMENTAR_ID")
+	private FechamentoDiarioConsolidadoSuplementar fechamentoDiarioConsolidadoSuplementar;
 	
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "ID_PRODUTO_EDICAO")
@@ -51,13 +51,13 @@ public class HistoricoFechamentoDiarioLancamentoSuplementar implements Serializa
 		this.id = id;
 	}
 
-	public HistoricoFechamentoDiarioConsolidadoSuplementar getHistoricoConsolidadoSuplementar() {
-		return historicoConsolidadoSuplementar;
+	public FechamentoDiarioConsolidadoSuplementar getFechamentoDiarioConsolidadoSuplementar() {
+		return fechamentoDiarioConsolidadoSuplementar;
 	}
 
-	public void setHistoricoConsolidadoSuplementar(
-			HistoricoFechamentoDiarioConsolidadoSuplementar historicoConsolidadoSuplementar) {
-		this.historicoConsolidadoSuplementar = historicoConsolidadoSuplementar;
+	public void setFechamentoDiarioConsolidadoSuplementar(
+			FechamentoDiarioConsolidadoSuplementar fechamentoDiarioConsolidadoSuplementar) {
+		this.fechamentoDiarioConsolidadoSuplementar = fechamentoDiarioConsolidadoSuplementar;
 	}
 
 	public ProdutoEdicao getProdutoEdicao() {

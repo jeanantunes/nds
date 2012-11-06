@@ -15,14 +15,14 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "HISTORICO_FECHAMENTO_DIARIO_CONSOLIDADO_SUPLEMENTAR")
-@SequenceGenerator(name = "HISTORICO_FECHAMENTO_DIARIO_CONSOLIDADO_SUPLEMENTAR_SEQ", initialValue = 1, allocationSize = 1)
-public class HistoricoFechamentoDiarioConsolidadoSuplementar implements Serializable{
+@Table(name = "FECHAMENTO_DIARIO_CONSOLIDADO_SUPLEMENTAR")
+@SequenceGenerator(name = "FECHAMENTO_DIARIO_CONSOLIDADO_SUPLEMENTAR_SEQ", initialValue = 1, allocationSize = 1)
+public class FechamentoDiarioConsolidadoSuplementar implements Serializable{
 
 	private static final long serialVersionUID = 1L;
 
 	@Id
-    @GeneratedValue(generator = "HISTORICO_FECHAMENTO_DIARIO_CONSOLIDADO_SUPLEMENTAR_SEQ")
+    @GeneratedValue(generator = "FECHAMENTO_DIARIO_CONSOLIDADO_SUPLEMENTAR_SEQ")
     @Column(name = "ID")
     private Long id;
 
@@ -42,11 +42,11 @@ public class HistoricoFechamentoDiarioConsolidadoSuplementar implements Serializ
 	@JoinColumn(name = "FECHAMENTO_DIARIO_ID")
 	private FechamentoDiario fechamentoDiario;
 	
-	@OneToMany(mappedBy = "historicoConsolidadoSuplementar")
-	private List<HistoricoFechamentoDiarioLancamentoSuplementar> historicoLancamentosSuplementar;
+	@OneToMany(mappedBy = "fechamentoDiarioConsolidadoSuplementar")
+	private List<FechamentoDiarioLancamentoSuplementar> lancamentosSuplementar;
 	
-	@OneToMany(mappedBy = "historicoConsolidadoSuplementar")
-	private List<HistoricoFechamentoDiarioMovimentoVendaSuplementar> historicoMovimentoVendaSuplemetares;
+	@OneToMany(mappedBy = "fechamentoDiarioConsolidadoSuplementar")
+	private List<FechamentoDiarioMovimentoVendaSuplementar> movimentoVendaSuplemetares;
 	
 	public Long getId() {
 		return id;
@@ -96,22 +96,22 @@ public class HistoricoFechamentoDiarioConsolidadoSuplementar implements Serializ
 		this.fechamentoDiario = fechamentoDiario;
 	}
 
-	public List<HistoricoFechamentoDiarioLancamentoSuplementar> getHistoricoLancamentosSuplementar() {
-		return historicoLancamentosSuplementar;
+	public List<FechamentoDiarioLancamentoSuplementar> getLancamentosSuplementar() {
+		return lancamentosSuplementar;
 	}
 
-	public void setHistoricoLancamentosSuplementar(
-			List<HistoricoFechamentoDiarioLancamentoSuplementar> historicoLancamentosSuplementar) {
-		this.historicoLancamentosSuplementar = historicoLancamentosSuplementar;
+	public void setLancamentosSuplementar(
+			List<FechamentoDiarioLancamentoSuplementar> lancamentosSuplementar) {
+		this.lancamentosSuplementar = lancamentosSuplementar;
 	}
 
-	public List<HistoricoFechamentoDiarioMovimentoVendaSuplementar> getHistoricoMovimentoVendaSuplemetares() {
-		return historicoMovimentoVendaSuplemetares;
+	public List<FechamentoDiarioMovimentoVendaSuplementar> getmovimentoVendaSuplemetares() {
+		return movimentoVendaSuplemetares;
 	}
 
-	public void setHistoricoMovimentoVendaSuplemetares(
-			List<HistoricoFechamentoDiarioMovimentoVendaSuplementar> historicoMovimentoVendaSuplemetares) {
-		this.historicoMovimentoVendaSuplemetares = historicoMovimentoVendaSuplemetares;
+	public void setMovimentoVendaSuplemetares(
+			List<FechamentoDiarioMovimentoVendaSuplementar> movimentoVendaSuplemetares) {
+		this.movimentoVendaSuplemetares = movimentoVendaSuplemetares;
 	}
 
 	

@@ -20,20 +20,20 @@ import javax.persistence.TemporalType;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 
 @Entity
-@Table(name="HISTORICO_FECHAMENTO_DIARIO_DIVIDA")
-@SequenceGenerator(name="HISTORICO_FECHAMENTO_DIARIO_DIVIDA_SEQ", initialValue = 1, allocationSize = 1)
-public class HistoricoFechamentoDiarioDivida implements Serializable {
+@Table(name="FECHAMENTO_DIARIO_DIVIDA")
+@SequenceGenerator(name="FECHAMENTO_DIARIO_DIVIDA_SEQ", initialValue = 1, allocationSize = 1)
+public class FechamentoDiarioDivida implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 
 	@Id
-    @GeneratedValue(generator = "HISTORICO_FECHAMENTO_DIARIO_DIVIDA_SEQ")
+    @GeneratedValue(generator = "FECHAMENTO_DIARIO_DIVIDA_SEQ")
     @Column(name = "ID")
     private Long id;
 	
 	@ManyToOne(optional = false)
-	@JoinColumn(name = "HISTORICO_FECHAMENTO_DIARIO_CONSOLIDADO_DIVIDA_ID")
-	private HistoricoFechamentoDiarioConsolidadoDivida historicoConsolidadoDivida;
+	@JoinColumn(name = "FECHAMENTO_DIARIO_CONSOLIDADO_DIVIDA_ID")
+	private FechamentoDiarioConsolidadoDivida fechamentoDiarioConsolidadoDivida;
 	
 	@Column(name="NUMERO_COTA")
 	private Long numeroCota;
@@ -72,13 +72,13 @@ public class HistoricoFechamentoDiarioDivida implements Serializable {
 		this.id = id;
 	}
 
-	public HistoricoFechamentoDiarioConsolidadoDivida getHistoricoConsolidadoDivida() {
-		return historicoConsolidadoDivida;
+	public FechamentoDiarioConsolidadoDivida getFechamentoDiarioConsolidadoDivida() {
+		return fechamentoDiarioConsolidadoDivida;
 	}
 
-	public void setHistoricoConsolidadoDivida(
-			HistoricoFechamentoDiarioConsolidadoDivida historicoConsolidadoDivida) {
-		this.historicoConsolidadoDivida = historicoConsolidadoDivida;
+	public void setFechamentoDiarioConsolidadoDivida(
+			FechamentoDiarioConsolidadoDivida fechamentoDiarioConsolidadoDivida) {
+		this.fechamentoDiarioConsolidadoDivida = fechamentoDiarioConsolidadoDivida;
 	}
 
 	public Long getNumeroCota() {
