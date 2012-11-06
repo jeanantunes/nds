@@ -197,5 +197,12 @@ public class BancoRepositoryImpl extends AbstractRepositoryModel<Banco,Long> imp
         query.setParameter("status", StatusCobranca.NAO_PAGO);
 		return (query.list().size() > 0);
 	}
+
+	@Override
+	public Banco obterbancoPorApelido(String apelido) {
+		Criteria criteria = getSession().createCriteria(Banco.class);
+		criteria.add(Restrictions.eq("apelido", apelido));
+		return (Banco) criteria.uniqueResult();
+	}
 	
 }

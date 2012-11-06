@@ -48,7 +48,7 @@ import br.com.abril.nds.repository.ConferenciaEncalheParcialRepository;
 public class ConferenciaEncalheParcialRepositoryImplTest extends AbstractRepositoryImplTest {
 	
 	@Autowired
-	private ConferenciaEncalheParcialRepository conferenciaEncalheParcialRepositoryImpl;
+	private ConferenciaEncalheParcialRepository conferenciaEncalheParcialRepository;
 	
 	private Lancamento lancamentoVeja;
 	
@@ -312,7 +312,7 @@ public class ConferenciaEncalheParcialRepositoryImplTest extends AbstractReposit
 	@Test
 	public void testObterQtdTotalEncalheParcial() {
 		
-		BigInteger qtd = conferenciaEncalheParcialRepositoryImpl.obterQtdTotalEncalheParcial(StatusAprovacao.PENDENTE, Fixture.criarData(28, Calendar.FEBRUARY, 2012), "1" ,1L);
+		BigInteger qtd = conferenciaEncalheParcialRepository.obterQtdTotalEncalheParcial(StatusAprovacao.PENDENTE, Fixture.criarData(28, Calendar.FEBRUARY, 2012), "1" ,1L);
 		
 		Assert.assertTrue(qtd.intValue() == 30);
 	}
@@ -320,61 +320,133 @@ public class ConferenciaEncalheParcialRepositoryImplTest extends AbstractReposit
 	@Test
 	public void testObterListaContagemDevolucao() {
 		
-		List<ContagemDevolucaoDTO> result = conferenciaEncalheParcialRepositoryImpl.obterListaContagemDevolucao(false, false, StatusAprovacao.PENDENTE, null, null, null, null);
+		List<ContagemDevolucaoDTO> result = conferenciaEncalheParcialRepository.obterListaContagemDevolucao(false, false, StatusAprovacao.PENDENTE, null, null, null, null);
 		
 		Assert.assertEquals(1, result.size());
 	}
 	
 	@Test
-	public void testObterListaConferenciaEncalhe() {
+	public void testObterListaContagemDevolucaoProdutoEdicaoDtMovimentacao() {
 		
-		boolean 			diferencaApurada 	= false;
-		boolean 			nfParcialGerada  	= false;
-		StatusAprovacao 	statusAprovacao 	= StatusAprovacao.PENDENTE;
-		Date 				dataMovimento 		= Fixture.criarData(28, Calendar.FEBRUARY, 2012);
-		Long 				idProdutoEdicao 	= null;
-		String 				codigoProduto 		= "1";
-		Long 				numeroEdicao 		= 1L;
+		Long idProdutoEdicao = 1L;
+		Date dtMovimentacao = Fixture.criarData(22, Calendar.OCTOBER, 2012);
 		
-		List<ConferenciaEncalheParcial> result = null;
+		List<ContagemDevolucaoDTO> result = conferenciaEncalheParcialRepository.obterListaContagemDevolucao(false, false, StatusAprovacao.PENDENTE, idProdutoEdicao, null, null, dtMovimentacao);
 		
-		result = conferenciaEncalheParcialRepositoryImpl.obterListaConferenciaEncalhe(
-				diferencaApurada, 
-				nfParcialGerada, 
-				statusAprovacao, 
-				dataMovimento, 
-				idProdutoEdicao,
-				codigoProduto,
-				numeroEdicao);
-		
-		Assert.assertEquals(3, result.size());
-		
-		diferencaApurada 	= false;                      
-		nfParcialGerada  	= false;                      
-		statusAprovacao 	= StatusAprovacao.APROVADO;   
-		dataMovimento 		= null;                 
-		idProdutoEdicao 	= null;                         
-		codigoProduto 		= null;                         
-		numeroEdicao 		= null;                         
-
-		result = conferenciaEncalheParcialRepositoryImpl.obterListaConferenciaEncalhe(
-				diferencaApurada, 
-				nfParcialGerada, 
-				statusAprovacao, 
-				dataMovimento, 
-				idProdutoEdicao,
-				codigoProduto,
-				numeroEdicao);
-		
-		Assert.assertEquals(0, result.size());
-		
-		diferencaApurada 	= false;                      
-		nfParcialGerada  	= false;                      
-		statusAprovacao 	= StatusAprovacao.APROVADO;   
-		dataMovimento 		= Fixture.criarData(28, Calendar.FEBRUARY, 2012);       
-		idProdutoEdicao 	= null;                         
-		codigoProduto 		= "1";                         
-		numeroEdicao 		= 1L;                         
+		Assert.assertEquals(1, result.size());
 	}
+	
+	@Test
+	public void testObterListaContagemDevolucaoCodProdutoNumEdicaoDtMovimentacao() {
+		
+		String codProduto = "1a";
+		Long  numEdicao = 1L;
+		Date dtMovimentacao = Fixture.criarData(22, Calendar.OCTOBER, 2012);
+		
+		List<ContagemDevolucaoDTO> result = conferenciaEncalheParcialRepository.obterListaContagemDevolucao(false, false, StatusAprovacao.PENDENTE, null, codProduto, numEdicao, dtMovimentacao);
+		
+		Assert.assertEquals(1, result.size());
+	}
+	
+	@Test
+	public void testObterListaContagemDevolucaoNulo() {
+		
+				
+		List<ContagemDevolucaoDTO> result = conferenciaEncalheParcialRepository.obterListaContagemDevolucao(null, null, StatusAprovacao.PENDENTE, null, null, null, null);
+		
+		Assert.assertEquals(1, result.size());
+	}
+	
+	@Test
+	public void testObterListaConferenciaEncalheDiferencaApurada(){
+		
+		Boolean diferencaApurada = false;
+		
+		List<ConferenciaEncalheParcial> listaConferenciaEncalheParcial = conferenciaEncalheParcialRepository.obterListaConferenciaEncalhe(diferencaApurada, null, null , null, null, null, null);
+		
+		Assert.assertNotNull(listaConferenciaEncalheParcial);
+		
+	}
+	
+	@Test
+	public void testObterListaConferenciaEncalheNfParcialGerada(){
+		
+		Boolean nfParcialGerada = false;
+		
+		List<ConferenciaEncalheParcial> listaConferenciaEncalheParcial = conferenciaEncalheParcialRepository.obterListaConferenciaEncalhe(null, nfParcialGerada, null , null, null, null, null);
+		
+		Assert.assertNotNull(listaConferenciaEncalheParcial);
+		
+	}
+	
+	@Test
+	public void testObterListaConferenciaEncalhestatusAprovacao(){
+		
+		StatusAprovacao status = StatusAprovacao.APROVADO;
+		
+		List<ConferenciaEncalheParcial> listaConferenciaEncalheParcial = conferenciaEncalheParcialRepository.obterListaConferenciaEncalhe(null, null, status , null, null, null, null);
+		
+		Assert.assertNotNull(listaConferenciaEncalheParcial);
+		
+	}
+	
+	@Test
+	public void testObterListaConferenciaEncalheDataMovimento(){
+		
+		Date dataMovimento = Fixture.criarData(22, Calendar.OCTOBER, 2012);
+		
+		List<ConferenciaEncalheParcial> listaConferenciaEncalheParcial = conferenciaEncalheParcialRepository.obterListaConferenciaEncalhe(null, null, null , dataMovimento, null, null, null);
+		
+		Assert.assertNotNull(listaConferenciaEncalheParcial);
+		
+	}
+	
+	@Test
+	public void testObterListaConferenciaEncalheIdProdutoEdicao(){
+		
+		Long idProdutoEdicao = 1L;
+		
+		List<ConferenciaEncalheParcial> listaConferenciaEncalheParcial = conferenciaEncalheParcialRepository.obterListaConferenciaEncalhe(null, null, null , null, idProdutoEdicao, null, null);
+		
+		Assert.assertNotNull(listaConferenciaEncalheParcial);
+		
+	}
+	
+	@Test
+	public void testObterListaConferenciaEncalheCodProdutoNumeroEdicao(){
+		
+		String codProduto = "1a";
+		Long numEdicao = 1L;
+		
+		List<ConferenciaEncalheParcial> listaConferenciaEncalheParcial = conferenciaEncalheParcialRepository.obterListaConferenciaEncalhe(null, null, null , null, null, codProduto, numEdicao);
+		
+		Assert.assertNotNull(listaConferenciaEncalheParcial);
+		
+	}
+	
+	@Test
+	public void testObterListaConferenciaEncalheNulo(){
+		
+				
+		List<ConferenciaEncalheParcial> listaConferenciaEncalheParcial = conferenciaEncalheParcialRepository.obterListaConferenciaEncalhe(null, null, null , null, null, null, null);
+		
+		Assert.assertNotNull(listaConferenciaEncalheParcial);
+		
+	}
+	
+	@Test
+	public void obterConferenciaEncalheParcialPorIdProdutoEdicao(){
+		Long idProdutoEdicao = 1L;
+		
+		ConferenciaEncalheParcial conferenciaEncalheParcial = conferenciaEncalheParcialRepository.obterConferenciaEncalheParcialPor(idProdutoEdicao, null); 
+	}
+	
+	@Test
+	public void obterConferenciaEncalheParcialPorDataMovimento(){
+		Date dataMovimento = Fixture.criarData(23, Calendar.OCTOBER, 2012);
+		
+		ConferenciaEncalheParcial conferenciaEncalheParcial = conferenciaEncalheParcialRepository.obterConferenciaEncalheParcialPor(null, dataMovimento); 
+	}
+	
 
 }

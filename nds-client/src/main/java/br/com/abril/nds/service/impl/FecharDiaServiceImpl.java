@@ -1,5 +1,7 @@
 package br.com.abril.nds.service.impl;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -8,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.dto.ResumoFechamentoDiarioConsignadoDTO;
 import br.com.abril.nds.dto.ResumoFechamentoDiarioCotasDTO;
 import br.com.abril.nds.dto.ValidacaoConfirmacaoDeExpedicaoFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoControleDeAprovacaoFecharDiaDTO;
@@ -17,12 +20,17 @@ import br.com.abril.nds.dto.ValidacaoRecebimentoFisicoFecharDiaDTO;
 import br.com.abril.nds.dto.fechamentodiario.SumarizacaoDividasDTO;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.financeiro.Divida;
+import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
+import br.com.abril.nds.model.movimentacao.Movimento;
 import br.com.abril.nds.repository.CotaRepository;
+import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.FecharDiaRepository;
 import br.com.abril.nds.repository.FormaCobrancaRepository;
+import br.com.abril.nds.repository.MovimentoRepository;
 import br.com.abril.nds.service.DividaService;
 import br.com.abril.nds.service.FecharDiaService;
 import br.com.abril.nds.service.ImpressaoDividaService;
@@ -46,6 +54,12 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 
 	@Autowired
 	private CotaRepository cotaRepository;
+
+	@Autowired
+	private DistribuidorRepository distribuidorRepository;
+	
+	@Autowired
+	private MovimentoRepository movimentoRepository;
 	
 	@Override
 	@Transactional
@@ -160,6 +174,39 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 			quantidadeTotal, quantidadeAtivas, ausentesExpedicaoReparte, 
 				ausentesRecolhimentoEncalhe, novas, inativas);
 	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional(readOnly = true)
+	public ResumoFechamentoDiarioConsignadoDTO obterResumoConsignado(Date dataFechamento) {
+		
+		ResumoFechamentoDiarioConsignadoDTO resumoFechamentoDiarioConsignado = 
+			new ResumoFechamentoDiarioConsignadoDTO();
+		
+		ResumoFechamentoDiarioConsignadoDTO.ResumoConsignado resumoConsignado = 
+			resumoFechamentoDiarioConsignado.new ResumoConsignado();
+		
+		resumoConsignado.setSaldoAnterior(BigDecimal.TEN);
+		resumoConsignado.setSaldoAtual(BigDecimal.TEN);
+		resumoConsignado.setValorEntradas(BigDecimal.TEN);
+		resumoConsignado.setValorSaidas(BigDecimal.TEN);
+		
+		resumoFechamentoDiarioConsignado.setResumoConsignado(resumoConsignado);
+		
+		ResumoFechamentoDiarioConsignadoDTO.ResumoAVista resumoAVista = 
+			resumoFechamentoDiarioConsignado.new ResumoAVista();
+		
+		resumoAVista.setSaldoAnterior(BigDecimal.TEN);
+		resumoAVista.setSaldoAtual(BigDecimal.TEN);
+		resumoAVista.setValorEntradas(BigDecimal.TEN);
+		resumoAVista.setValorSaidas(BigDecimal.TEN);
+		
+		resumoFechamentoDiarioConsignado.setResumoAVista(resumoAVista);
+		
+		return resumoFechamentoDiarioConsignado;
+	}
 
     /**
      * {@inheritDoc}
@@ -215,4 +262,37 @@ public class FecharDiaServiceImpl implements FecharDiaService {
         return dividaService.contarDividasVencerApos(data);
     }
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional
+	public void processarControleDeAprovacao() {
+
+		Distribuidor distribuidor = this.distribuidorRepository.obter();
+
+		List<GrupoMovimentoFinaceiro> gruposMovimentoFinanceiro = obterGruposMovimentoFinaceiro();
+
+		List<Movimento> movimentosPendentes = this.fecharDiaRepository.obterMovimentosPorStatusData(
+				null, gruposMovimentoFinanceiro, distribuidor.getDataOperacao(), StatusAprovacao.PENDENTE);
+
+		for (Movimento movimento : movimentosPendentes) {
+
+			movimento.setData(DateUtil.adicionarDias(movimento.getData(), 1));
+
+			this.movimentoRepository.merge(movimento);
+		}
+	}
+
+	private List<GrupoMovimentoFinaceiro> obterGruposMovimentoFinaceiro() {
+		
+		List<GrupoMovimentoFinaceiro> grupos = new ArrayList<GrupoMovimentoFinaceiro>();
+		
+		grupos.add(GrupoMovimentoFinaceiro.CREDITO);
+		grupos.add(GrupoMovimentoFinaceiro.DEBITO);
+		grupos.add(GrupoMovimentoFinaceiro.POSTERGADO);
+		grupos.add(GrupoMovimentoFinaceiro.POSTERGADO_NEGOCIACAO);
+		
+		return grupos;
+	}
 }

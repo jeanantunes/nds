@@ -12,6 +12,7 @@ import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.Transformers;
+import org.hibernate.type.StandardBasicTypes;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
@@ -29,6 +30,7 @@ import br.com.abril.nds.model.financeiro.Divida;
 import br.com.abril.nds.model.financeiro.StatusDivida;
 import br.com.abril.nds.repository.DividaRepository;
 import br.com.abril.nds.vo.PaginacaoVO;
+
 
 @Repository
 public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> implements
@@ -354,10 +356,10 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 		}
 		
 		Query query = getSession().createSQLQuery(sql.toString())
-				.addScalar("idDivida")
-				.addScalar("idCota")
-				.addScalar("idCobranca")
-				.addScalar("idNegociacao")
+				.addScalar("idDivida", StandardBasicTypes.LONG)
+				.addScalar("idCota", StandardBasicTypes.LONG)
+				.addScalar("idCobranca", StandardBasicTypes.LONG)
+				.addScalar("idNegociacao", StandardBasicTypes.LONG)
 				.addScalar("comissaoSaldoDivida")
 				.addScalar("numCota")
 				.addScalar("nome")
@@ -367,7 +369,7 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 				.addScalar("dataPagamento")
 				.addScalar("situacao")
 				.addScalar("dividaAcumulada")
-				.addScalar("diasAtraso");
+				.addScalar("diasAtraso", StandardBasicTypes.LONG);
 		
 		for(String key : params.keySet()){
 			query.setParameter(key, params.get(key));
@@ -467,7 +469,7 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 			return "";
 		}
 		
-		String sortColumn = filtro.getColunaOrdenacao().name();
+		String sortColumn = filtro.getColunaOrdenacao().toString();
 		String sortOrder = filtro.getPaginacao().getSortOrder();
 		
 		

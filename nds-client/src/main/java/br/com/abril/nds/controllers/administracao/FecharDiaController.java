@@ -1,6 +1,7 @@
 package br.com.abril.nds.controllers.administracao;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -8,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -16,6 +18,7 @@ import br.com.abril.nds.client.vo.DetalheCotaFechamentoDiarioVO;
 import br.com.abril.nds.dto.FecharDiaDTO;
 import br.com.abril.nds.dto.ReparteFecharDiaDTO;
 import br.com.abril.nds.dto.ResumoEncalheFecharDiaDTO;
+import br.com.abril.nds.dto.ResumoFechamentoDiarioConsignadoDTO;
 import br.com.abril.nds.dto.ResumoFechamentoDiarioCotasDTO;
 import br.com.abril.nds.dto.ResumoFechamentoDiarioCotasDTO.TipoResumo;
 import br.com.abril.nds.dto.ResumoReparteFecharDiaDTO;
@@ -37,6 +40,7 @@ import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.financeiro.Divida;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.serialization.custom.CustomMapJson;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.CotaService;
@@ -88,7 +92,12 @@ public class FecharDiaController {
 	@Autowired
 	private HttpServletResponse httpResponse;
 	
+	@Autowired
+	private HttpSession session;
+	
 	private static Distribuidor distribuidor;
+
+	private static final String ATRIBUTO_SESSAO_VALIDACAO_PENDENCIAS = "atributoSessaoValidacao";
 	
 	@Path("/")
 	@Rules(Permissao.ROLE_ADMINISTRACAO_FECHAR_DIA)
@@ -184,7 +193,9 @@ public class FecharDiaController {
 			}
 		}
 		
-		result.use(Results.json()).from(pendencia).recursive().serialize();
+		this.session.setAttribute(ATRIBUTO_SESSAO_VALIDACAO_PENDENCIAS, pendencia);
+		
+		this.result.use(Results.json()).from(pendencia).recursive().serialize();
 		
 	}
 	
@@ -427,6 +438,19 @@ public class FecharDiaController {
 		
 		result.use(FlexiGridJson.class).from(listaDetalhesCotaFechamentoDiarioVO).page(1).total(listaDetalhesCotaFechamentoDiarioVO.size()).serialize();
 	}
+	
+	@Post
+	public void processarControleDeAprovacao() {
+		
+		Boolean hasValidacao = (Boolean) this.session.getAttribute(ATRIBUTO_SESSAO_VALIDACAO_PENDENCIAS);
+		
+		if (hasValidacao != null && !hasValidacao) {
+			
+			this.fecharDiaService.processarControleDeAprovacao();
+			
+			this.session.setAttribute(ATRIBUTO_SESSAO_VALIDACAO_PENDENCIAS, true);
+		}
+	}
 
 	private List<DetalheCotaFechamentoDiarioVO> obterDetalheCotaFechamentoDiario(TipoResumo tipoResumo) {
 		
@@ -488,6 +512,15 @@ public class FecharDiaController {
 		}
 		
         result.nothing();
+	}
+	
+	@Post
+	public void obterResumoConsignado() {
+		
+		ResumoFechamentoDiarioConsignadoDTO resumoFechamentoDiarioConsignado = 
+			this.fecharDiaService.obterResumoConsignado(getDataFechamento());
+		
+		result.use(CustomMapJson.class).put("resumo", resumoFechamentoDiarioConsignado).serialize();
 	}
     
     private Date getDataFechamento() {
