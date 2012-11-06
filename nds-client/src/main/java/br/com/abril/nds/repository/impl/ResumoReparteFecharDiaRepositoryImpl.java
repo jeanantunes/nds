@@ -186,15 +186,40 @@ public class ResumoReparteFecharDiaRepositoryImpl  extends AbstractRepository im
 		hql.append(" SELECT p.codigo as codigo,  ");
 		hql.append(" p.nome as nomeProduto, ");
 		hql.append(" pe.numeroEdicao as numeroEdicao, ");
-		hql.append(" pe.precoVenda as precoVenda ");
+		hql.append(" pe.precoVenda as precoVenda, ");
 		
-//		hql.append(" ( SELECT COUNT(ld.id) from LancamentoDiferenca ld ");
-//		hql.append(" JOIN ld.diferenca as dif ");
-//		hql.append(" JOIN dif.produtoEdicao as pe ");
-//		hql.append(" WHERE dif.dataMovimento = :dataOperacaoDistribuidor ");
-//		hql.append(" AND ld.status = :status ");
-//		hql.append(" AND dif.tipoDiferenca IN (:listaTipoDiferenca) ) as sobras ");
+		hql.append(" ( SELECT COUNT(ld.id) from LancamentoDiferenca ld ");
+		hql.append(" JOIN ld.diferenca as dif ");
+		hql.append(" JOIN dif.produtoEdicao as pe ");
+		hql.append(" WHERE dif.dataMovimento = :dataOperacaoDistribuidor ");
+		hql.append(" AND ld.status = :status ");
+		hql.append(" AND dif.tipoDiferenca IN (:listaSobras) ) as qtdSobras, ");
 		
+		hql.append(" ( SELECT COUNT(ld.id) from LancamentoDiferenca ld ");
+		hql.append(" JOIN ld.diferenca as dif ");
+		hql.append(" JOIN dif.produtoEdicao as pe ");
+		hql.append(" WHERE dif.dataMovimento = :dataOperacaoDistribuidor ");
+		hql.append(" AND ld.status = :status ");
+		hql.append(" AND dif.tipoDiferenca IN (:listaFaltas) ) as qtdFaltas, ");
+		
+		hql.append(" (SELECT COUNT(l.id) from Lancamento l ");		
+		hql.append(" WHERE l.dataLancamentoPrevista = :dataOperacaoDistribuidor ");
+		hql.append(" AND l.status IN ( :listaStatus ) ) as qtdReparte, ");
+		
+		hql.append(" (SELECT COUNT(me.id) ");		
+		hql.append(" from MovimentoEstoque me ");
+		hql.append(" JOIN me.tipoMovimento as tm ");
+		hql.append(" JOIN me.produtoEdicao as pe ");
+		hql.append(" JOIN pe.produto as p ");
+		hql.append(" WHERE me.dataCriacao = :dataOperacaoDistribuidor ");
+		hql.append(" AND tm.grupoMovimentoEstoque IN (:listaGrupoMovimentoEstoque) ) as qtdTransferido,");
+		
+		hql.append(" (SELECT COUNT(me.id) ");
+		hql.append(" from MovimentoEstoque me ");
+		hql.append(" JOIN me.tipoMovimento as tm ");		
+		hql.append(" WHERE me.dataCriacao = :dataOperacaoDistribuidor ");
+		hql.append(" AND tm.grupoMovimentoEstoque = :grupoMovimento ");
+		hql.append(" AND me.status = :status) as qtdDistribuido  ");
 		
 		hql.append(" from Lancamento l ");
 		hql.append(" JOIN l.produtoEdicao as pe ");
@@ -210,10 +235,24 @@ public class ResumoReparteFecharDiaRepositoryImpl  extends AbstractRepository im
 		listaStatus.add(StatusLancamento.BALANCEADO);
 		listaStatus.add(StatusLancamento.ESTUDO_FECHADO);
 		
-		List<TipoDiferenca> listaTipoDiferenca = new ArrayList<TipoDiferenca>();
+		List<TipoDiferenca> listaDeSobras = new ArrayList<TipoDiferenca>();
 		
-		listaTipoDiferenca.add(TipoDiferenca.SOBRA_DE);
-		listaTipoDiferenca.add(TipoDiferenca.SOBRA_EM);	
+		listaDeSobras.add(TipoDiferenca.SOBRA_DE);
+		listaDeSobras.add(TipoDiferenca.SOBRA_EM);
+		
+		List<TipoDiferenca> listaDeFaltas = new ArrayList<TipoDiferenca>();
+		
+		listaDeFaltas.add(TipoDiferenca.FALTA_DE);
+		listaDeFaltas.add(TipoDiferenca.FALTA_EM);
+		
+		List<GrupoMovimentoEstoque> listaGrupoMovimentoEstoque = new ArrayList<GrupoMovimentoEstoque>();
+		
+		listaGrupoMovimentoEstoque.add(GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_LANCAMENTO);
+		listaGrupoMovimentoEstoque.add(GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_PRODUTOS_DANIFICADOS);
+		listaGrupoMovimentoEstoque.add(GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_RECOLHIMENTO);
+		listaGrupoMovimentoEstoque.add(GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_SUPLEMENTAR);
+		
+
 		
 		query.setParameter("dataOperacaoDistribuidor", dataOperacaoDistribuidor);
 		
@@ -221,7 +260,13 @@ public class ResumoReparteFecharDiaRepositoryImpl  extends AbstractRepository im
 		
 		query.setParameter("status", StatusAprovacao.APROVADO);
 		
-		query.setParameterList("listaTipoDiferenca", listaTipoDiferenca);
+		query.setParameterList("listaSobras", listaDeSobras);
+
+		query.setParameterList("listaFaltas", listaDeFaltas);
+		
+		query.setParameterList("listaGrupoMovimentoEstoque", listaGrupoMovimentoEstoque);
+		
+		query.setParameter("grupoMovimento", GrupoMovimentoEstoque.ENVIO_JORNALEIRO);
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(ReparteFecharDiaDTO.class));
 		
