@@ -199,9 +199,21 @@
 		        <table class="recolhimentoDialogGrid"></table>
 		    </fieldset>
 		    <br clear="all" />
-		    <span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="../images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
+		    <span class="bt_novos" title="Gerar Arquivo">
+			    <a href="${pageContext.request.contextPath}/administracao/fecharDia/exportarVendaSuplemntar?fileType=XLS">
+			    	<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
+			    	Arquivo
+			    </a>
+		    </span>
 		
-		<span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="../images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
+			<span class="bt_novos" title="Imprimir">
+			
+			<a href="${pageContext.request.contextPath}/administracao/fecharDia/exportarVendaSuplemntar?fileType=PDF">
+		    	<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
+		    	Imprimir
+			</a>
+			
+			</span>
 	</form>
 
 </div>
@@ -213,9 +225,21 @@
 		        <table class="reparteDialogGrid"></table>
 		    </fieldset>
 		    <br clear="all" />
-		    <span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="../images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
+		    <span class="bt_novos" title="Gerar Arquivo">
+		    	<a href="${pageContext.request.contextPath}/administracao/fecharDia/exportarResumoReparte?fileType=XLS">
+		    		<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
+		    		Arquivo
+		    	</a>		    
+		    </span>
 		
-			<span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="../images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
+			<span class="bt_novos" title="Imprimir">
+			
+			<a href="${pageContext.request.contextPath}/administracao/fecharDia/exportarResumoReparte?fileType=PDF">
+		    	<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
+		    	Arquivo
+		    </a>
+			
+			</span>
 		
 		</div>
 	</form>
@@ -346,7 +370,7 @@
   <tr>
     <td height="26" align="center" bgcolor="#F4F4F4"><strong><a href="javascript:;" onclick="fecharDiaController.popup_repartes();">REPARTE</a></strong></td>
     <td align="center" bgcolor="#F4F4F4" style="width:10px; border-left:1px solid #ccc;">&nbsp;</td>
-    <td align="center" bgcolor="#F4F4F4"><strong><a href="javascript:;" onclick="fecharDiaController.popup_recolhimento();">ENCALHE</a></strong></td>
+    <td align="center" bgcolor="#F4F4F4"><strong><a href="javascript:;" onclick="fecharDiaController.popup_encalhe();">ENCALHE</a></strong></td>
     <td align="center" bgcolor="#F4F4F4" style="width:10px; border-left:1px solid #ccc;">&nbsp;</td>
     <td align="center" bgcolor="#F4F4F4"><strong><a href="javascript:;" onclick="fecharDiaController.popup_suplementar();">SUPLEMENTAR</a></strong></td>
     </tr>
@@ -523,27 +547,27 @@
                 </tr>
                 <tr>
                   <td width="129" style="border-bottom:1px solid #ccc;">Produto</td>
-                  <td width="150" align="center" style="border-bottom:1px solid #ccc;">90</td>
-                  <td width="150" align="center" style="border-bottom:1px solid #ccc;">05</td>
-                  <td width="150" align="center" style="border-bottom:1px solid #ccc;">05</td>
-                  <td width="150" align="center" style="border-bottom:1px solid #ccc;">05</td>
-                  <td width="150" align="center" style="border-bottom:1px solid #ccc;">00</td>
+                  <td width="150" align="center" style="border-bottom:1px solid #ccc;" id="produtolancamento"></td>
+                  <td width="150" align="center" style="border-bottom:1px solid #ccc;" id="produtoJuramentado"></td>
+                  <td width="150" align="center" style="border-bottom:1px solid #ccc;" id="produtoSuplenetar"></td>
+                  <td width="150" align="center" style="border-bottom:1px solid #ccc;" id="produtoRecolhimento"></td>
+                  <td width="150" align="center" style="border-bottom:1px solid #ccc;" id="produtoDanificados"></td>
                 </tr>
                 <tr>
                   <td style="border-bottom:1px solid #ccc;">Exemplar</td>
-                  <td align="center" style="border-bottom:1px solid #ccc;">90</td>
-                  <td align="center" style="border-bottom:1px solid #ccc;">05</td>
-                  <td align="center" style="border-bottom:1px solid #ccc;">05</td>
-                  <td align="center" style="border-bottom:1px solid #ccc;">05</td>
-                  <td align="center" style="border-bottom:1px solid #ccc;">00</td>
+                  <td align="center" style="border-bottom:1px solid #ccc;" id="exemplarlancamento"></td>
+                  <td align="center" style="border-bottom:1px solid #ccc;" id="exemplarJuramentado"></td>
+                  <td align="center" style="border-bottom:1px solid #ccc;" id="exemplarSuplenetar"></td>
+                  <td align="center" style="border-bottom:1px solid #ccc;" id="exemplarRecolhimento"></td>
+                  <td align="center" style="border-bottom:1px solid #ccc;" id="exemplarDanificados"></td>
                 </tr>
                 <tr>
                   <td style="border-bottom:1px solid #ccc;">Valor R$</td>
-                  <td align="center" style="border-bottom:1px solid #ccc;">90</td>
-                  <td align="center" style="border-bottom:1px solid #ccc;">05</td>
-                  <td align="center" style="border-bottom:1px solid #ccc;">05</td>
-                  <td align="center" style="border-bottom:1px solid #ccc;">05</td>
-                  <td align="center" style="border-bottom:1px solid #ccc;">00</td>
+                  <td align="center" style="border-bottom:1px solid #ccc;" id="valorlancamento"></td>
+                  <td align="center" style="border-bottom:1px solid #ccc;" id="valorJuramentado"></td>
+                  <td align="center" style="border-bottom:1px solid #ccc;" id="valorSuplenetar"></td>
+                  <td align="center" style="border-bottom:1px solid #ccc;" id="valorRecolhimento"></td>
+                  <td align="center" style="border-bottom:1px solid #ccc;" id="valorDanificados"></td>
                 </tr>
                 <tr>
                   <td>&nbsp;</td>
@@ -565,43 +589,10 @@
               <td width="950" height="26" align="center" bgcolor="#F4F4F4"><strong>CONSIGNADO</strong></td>
             </tr>
             <tr>
-              <td valign="top"><table width="910" border="0" cellpadding="2" cellspacing="1" style="margin-left:10px; margin-right:10px;">
-                <tr>
-                  <td align="left">&nbsp;</td>
-                  <td align="right">&nbsp;</td>
-                  <td align="right">&nbsp;</td>
-                  <td align="right">&nbsp;</td>
-                  <td align="right">&nbsp;</td>
-                </tr>
-                <tr class="header_table">
-                  <td>&nbsp;</td>
-                  <td align="right">Saldo Anterior  R$</td>
-                  <td align="right">Entradas  R$</td>
-                  <td align="right">Saídas  R$</td>
-                  <td align="right">Saldo Atual  R$</td>
-                </tr>
-                <tr>
-                  <td width="164" style="border-bottom:1px solid #ccc;">Consignado</td>
-                  <td width="180" align="right" style="border-bottom:1px solid #ccc;">2.386.172,32</td>
-                  <td width="180" align="right" style="border-bottom:1px solid #ccc;">120.661,32</td>
-                  <td width="180" align="right" style="border-bottom:1px solid #ccc;">84.249,48</td>
-                  <td width="180" align="right" style="border-bottom:1px solid #ccc;">2.872.584,16</td>
-                </tr>
-                <tr>
-                  <td style="border-bottom:1px solid #ccc;">A Vista</td>
-                  <td align="right" style="border-bottom:1px solid #ccc;">474.641,28</td>
-                  <td align="right" style="border-bottom:1px solid #ccc;">15.187,80</td>
-                  <td align="right" style="border-bottom:1px solid #ccc;">8.649,53</td>
-                  <td align="right" style="border-bottom:1px solid #ccc;">481.179,55</td>
-                </tr>
-                <tr>
-                  <td>&nbsp;</td>
-                  <td align="center">&nbsp;</td>
-                  <td align="center">&nbsp;</td>
-                  <td align="center">&nbsp;</td>
-                  <td align="center">&nbsp;</td>
-                </tr>
-              </table></td>
+              <td valign="top">
+	              <table id="tabela_consignado" width="910" border="0" cellpadding="2" cellspacing="1" style="margin-left:10px; margin-right:10px;">
+	              </table>
+              </td>
             </tr>
         </table>
 <br />
@@ -711,147 +702,6 @@ $(".popCotasGrid").flexigrid({
 			height : 255
 		});
 		
-	$(".recolhimentoDialogGrid").flexigrid({
-			url : '../xml/recolhimentoDialogGrid-xml.xml',
-			dataType : 'xml',
-			colModel : [ {
-				display : 'Código',
-				name : 'codigo',
-				width : 80,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Produto',
-				name : 'produto',
-				width : 200,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Edição',
-				name : 'edicao',
-				width : 100,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Preço Capa R$',
-				name : 'precoCapa',
-				width : 100,
-				sortable : true,
-				align : 'right'
-			}, {
-				display : 'Qtde',
-				name : 'qtde',
-				width : 90,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Venda Encalhe',
-				name : 'vendaEncalhe',
-				width : 100,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Diferença',
-				name : 'dif',
-				width : 70,
-				sortable : true,
-				align : 'center'
-			}],
-			sortname : "codigo",
-			sortorder : "asc",
-			usepager : true,
-			useRp : true,
-			rp : 15,
-			showTableToggleBtn : true,
-			width : 850,
-			height : 255
-		});
-	$(".reparteDialogGrid").flexigrid({
-			url : '../xml/reparteDialogGrid-xml.xml',
-			dataType : 'xml',
-			colModel : [ {
-				display : 'Código',
-				name : 'codigo',
-				width : 60,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Produto',
-				name : 'produto',
-				width : 110,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Edição',
-				name : 'edicao',
-				width : 60,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Preço Capa R$',
-				name : 'precoCapa',
-				width : 60,
-				sortable : true,
-				align : 'right'
-			}, {
-				display : 'Reparte',
-				name : 'reparte',
-				width : 50,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Sobra em',
-				name : 'sobraEm',
-				width : 50,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Falta em',
-				name : 'faltaEm',
-				width : 50,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Transf.',
-				name : 'transf',
-				width : 50,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'A Distr',
-				name : 'aDistr',
-				width : 50,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Distribuido',
-				name : 'distribuido',
-				width : 50,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Sobra Distr',
-				name : 'sobraDistri',
-				width : 55,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Dif.',
-				name : 'dif',
-				width : 40,
-				sortable : true,
-				align : 'center'
-			}],
-			sortname : "codigo",
-			sortorder : "asc",
-			usepager : true,
-			useRp : true,
-			rp : 15,
-			showTableToggleBtn : true,
-			width : 850,
-			height : 255
-		});
-	
 	$(".estoque-recoltoGrid").flexigrid({
 			url : '../xml/estoque_recolto-xml.xml',
 			dataType : 'xml',

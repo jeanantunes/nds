@@ -606,7 +606,6 @@ public class ConferenciaEncalheRepositoryImplTest extends
 		
 		valorTotal = conferenciaEncalheRepository.obterValorTotalEncalheOperacaoConferenciaEncalhe(idControleConferenciaEncalhe);
 		
-		Assert.assertNotNull(valorTotal);
 	}
 
 }

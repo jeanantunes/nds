@@ -37,7 +37,7 @@ public class VisaoEstoqueRepositoryTest extends AbstractRepositoryImplTest {
 	public void obterVisaoEstoque() {
 		
 		FiltroConsultaVisaoEstoque filtro = new FiltroConsultaVisaoEstoque();
-		filtro.setTipoEstoque(TipoEstoque.LANCAMENTO_JURAMENTADO.toString());
+		filtro.setTipoEstoque(TipoEstoque.LANCAMENTO.toString());
 		filtro.setIdFornecedor(-1L);
 		
 		VisaoEstoqueDTO dto = visaoEstoqueRepository.obterVisaoEstoque(filtro);
@@ -69,6 +69,6 @@ public class VisaoEstoqueRepositoryTest extends AbstractRepositoryImplTest {
 		
 		List<VisaoEstoqueDetalheJuramentadoDTO> list = visaoEstoqueRepository.obterVisaoEstoqueDetalheJuramentado(filtro);
 		
-		Assert.assertTrue(list != null && !list.isEmpty());
+		Assert.assertNotNull(list);
 	}
 }

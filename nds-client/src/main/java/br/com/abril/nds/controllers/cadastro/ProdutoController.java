@@ -414,15 +414,9 @@ public class ProdutoController {
 			produto, codigoEditor, codigoFornecedor, 
 			codigoTipoDesconto, codigoTipoProduto);
 		
-		try {
-			
-			this.produtoService.salvarProduto(
-				produto, codigoEditor, codigoFornecedor, 
-				codigoTipoDesconto, codigoTipoProduto);
-			
-		} catch (Exception e) {
-			throw new ValidacaoException(TipoMensagem.ERROR, "Erro ao tentar salvar o Produto!");
-		}
+		this.produtoService.salvarProduto(
+			produto, codigoEditor, codigoFornecedor, 
+			codigoTipoDesconto, codigoTipoProduto);
 		
 		this.result.use(Results.json()).from(
 			new ValidacaoVO(TipoMensagem.SUCCESS, "Produto salvo com sucesso!"), "result").recursive().serialize();
@@ -508,9 +502,9 @@ public class ProdutoController {
 				produto.setPacotePadrao(produto.getPacotePadrao());
 			}
 			
-			if (codigoTipoDesconto == null || codigoTipoDesconto.intValue() == 0) {
+			/*if (codigoTipoDesconto == null || codigoTipoDesconto.intValue() == 0) {
 				listaMensagens.add("O preenchimento do campo [Tipo de Desconto] é obrigatório!");
-			}
+			}*/
 			
 			if (codigoTipoProduto == null || codigoTipoProduto.intValue() == 0) {
 				listaMensagens.add("O preenchimento do campo [Tipo de Produto] é obrigatório!");

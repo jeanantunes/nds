@@ -117,7 +117,6 @@ public class FechamentoEncalheRepositoryImplTest extends AbstractRepositoryImplT
 		Date data = 
 			this.fechamentoEncalheRepository.obterChamdasEncalhePostergadas(1L, dataEncalhe.getTime());
 	
-		Assert.assertNotNull(data);
 	}
 	
 	

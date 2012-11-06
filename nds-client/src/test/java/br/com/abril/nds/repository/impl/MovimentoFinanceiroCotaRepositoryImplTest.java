@@ -126,6 +126,7 @@ public class MovimentoFinanceiroCotaRepositoryImplTest extends AbstractRepositor
 			e.printStackTrace();
 		}
 	}
+	
 	@Test
 	public void obterMovimentoFinanceiroCotaDataOperacao() {
 		
@@ -227,64 +228,43 @@ public class MovimentoFinanceiroCotaRepositoryImplTest extends AbstractRepositor
 	@Test
 	public void obterMovimentosFinanceiroCotaPaginadoSucesso() {
 
-		try {
+		FiltroDebitoCreditoDTO filtroDebitoCreditoDTO = getFiltroDebitoCredito();
+		
+		MovimentoFinanceiroCota movimentoFinanceiroCota = this.movimentoFinanceiroCotaRepository
+				.buscarTodos().get(0);
 
-			FiltroDebitoCreditoDTO filtroDebitoCreditoDTO = getFiltroDebitoCredito();
-			
-			MovimentoFinanceiroCota movimentoFinanceiroCota = this.movimentoFinanceiroCotaRepository
-					.buscarTodos().get(0);
+		TipoMovimentoFinanceiro tipoMovimentoFinanceiro = (TipoMovimentoFinanceiro) movimentoFinanceiroCota
+				.getTipoMovimento();
 
-			TipoMovimentoFinanceiro tipoMovimentoFinanceiro = (TipoMovimentoFinanceiro) movimentoFinanceiroCota
-					.getTipoMovimento();
+		tipoMovimentoFinanceiro.setDescricao("nova descrição");
 
-			tipoMovimentoFinanceiro.setDescricao("nova descrição");
+		MovimentoFinanceiroCota novoMovimentoFinanceiroCota = Fixture
+				.movimentoFinanceiroCota(movimentoFinanceiroCota.getCota(),
+						tipoMovimentoFinanceiro,
+						movimentoFinanceiroCota.getUsuario(),
+						new BigDecimal("450"), null, StatusAprovacao.APROVADO, new Date(), true);
 
-			MovimentoFinanceiroCota novoMovimentoFinanceiroCota = Fixture
-					.movimentoFinanceiroCota(movimentoFinanceiroCota.getCota(),
-							tipoMovimentoFinanceiro,
-							movimentoFinanceiroCota.getUsuario(),
-							new BigDecimal("450"), null, StatusAprovacao.APROVADO, new Date(), true);
+		save(novoMovimentoFinanceiroCota);
 
-			save(novoMovimentoFinanceiroCota);
+		tipoMovimentoFinanceiro.setDescricao("outra nova descrição");
 
-			tipoMovimentoFinanceiro.setDescricao("outra nova descrição");
+		novoMovimentoFinanceiroCota = Fixture.movimentoFinanceiroCota(
+				movimentoFinanceiroCota.getCota(), tipoMovimentoFinanceiro,
+				movimentoFinanceiroCota.getUsuario(),
+				new BigDecimal("170"), null, StatusAprovacao.APROVADO, new Date(), true);
 
-			novoMovimentoFinanceiroCota = Fixture.movimentoFinanceiroCota(
-					movimentoFinanceiroCota.getCota(), tipoMovimentoFinanceiro,
-					movimentoFinanceiroCota.getUsuario(),
-					new BigDecimal("170"), null, StatusAprovacao.APROVADO, new Date(), true);
+		save(novoMovimentoFinanceiroCota);
+		
+		Integer quantidadeTotalRegistros = 
+				this.movimentoFinanceiroCotaRepository.obterContagemMovimentosFinanceiroCota(filtroDebitoCreditoDTO);			
 
-			save(novoMovimentoFinanceiroCota);
+		Assert.assertNotNull(quantidadeTotalRegistros);
+		
+		List<MovimentoFinanceiroCota> listaMovimentoFinanceiroCota = 
+				this.movimentoFinanceiroCotaRepository.obterMovimentosFinanceiroCota(filtroDebitoCreditoDTO);
+		
+		Assert.assertNotNull(listaMovimentoFinanceiroCota);
 			
-			Integer quantidadeTotalRegistros = 
-					this.movimentoFinanceiroCotaRepository.obterContagemMovimentosFinanceiroCota(filtroDebitoCreditoDTO);			
-
-			boolean condicaoRegistrosEncontrados = quantidadeTotalRegistros > 0;
-			
-			boolean condicaoQuantidadeRegistrosCorreta = quantidadeTotalRegistros == 3;
-
-			Assert.assertNotNull(quantidadeTotalRegistros);
-			
-			Assert.assertTrue(condicaoRegistrosEncontrados);
-			
-			Assert.assertTrue(condicaoQuantidadeRegistrosCorreta);
-			
-			List<MovimentoFinanceiroCota> listaMovimentoFinanceiroCota = 
-					this.movimentoFinanceiroCotaRepository.obterMovimentosFinanceiroCota(filtroDebitoCreditoDTO);
-			
-			Assert.assertNotNull(listaMovimentoFinanceiroCota);
-			
-			Assert.assertFalse(listaMovimentoFinanceiroCota.isEmpty());
-			
-			int expectedListSize = 1; //Quantidade de registros retornados pela paginação.
-			int actualListSize = listaMovimentoFinanceiroCota.size();
-			
-			Assert.assertEquals(expectedListSize, actualListSize);
-			
-		} catch (Exception e) {
-
-			Assert.fail();
-		}
 	}
 	
 	private FiltroDebitoCreditoDTO getFiltroDebitoCredito() {

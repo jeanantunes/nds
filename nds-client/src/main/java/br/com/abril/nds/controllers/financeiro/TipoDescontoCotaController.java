@@ -78,11 +78,17 @@ public class TipoDescontoCotaController {
 	@Autowired
 	private HttpServletResponse httpServletResponse;
 
-	private String FILTRO_PESQUISA_TIPO_DESCONTO_PRODUTO_SESSION_ATTRIBUTE= "filtroPesquisaPorProduto";
+	private static final String FILTRO_PESQUISA_TIPO_DESCONTO_PRODUTO_SESSION_ATTRIBUTE= "filtroPesquisaPorProduto";
 
-	private String FILTRO_PESQUISA_TIPO_DESCONTO_SESSION_ATTRIBUTE = "filtroPesquisaPorGeral";
+	private static final String FILTRO_PESQUISA_TIPO_DESCONTO_SESSION_ATTRIBUTE = "filtroPesquisaPorGeral";
 	
 	private static final String FILTRO_PESQUISA_TIPO_DESCONTO_COTA_SESSION_ATTRIBUTE = "filtroPesquisaPorCota";
+	
+	private static final String FUTURE_RESULT_PROCESSO_DESCONTO_PRODUTO = "futureDescontoProduto";
+	
+	private static final String FUTURE_RESULT_PROCESSO_DESCONTO_ESPECIFICO = "futureDescontoEspecifico";
+	
+	private static final String FUTURE_RESULT_PROCESSO_DESCONTO_GERAL = "futureDescontoGeral";
 	
 	@Path("/")
 	@Rules(Permissao.ROLE_FINANCEIRO_TIPO_DESCONTO_COTA)
@@ -93,16 +99,16 @@ public class TipoDescontoCotaController {
 	public void novoDescontoGeral(BigDecimal desconto, List<Long> fornecedores){
 
 		Future<String> future = descontoService.executarDescontoGeral(desconto, fornecedores, getUsuario());
-		
-		this.resultProcessoCadastroDesconto(future);
+		this.session.setAttribute(FUTURE_RESULT_PROCESSO_DESCONTO_GERAL, future);
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Inicio do procedimento de cadastros de Tipo Desconto foi inicializado"),"result").recursive().serialize();
 	}
 		
 	@Post("/novoDescontoEspecifico")
 	public void novoDescontoEspecifico(Integer numeroCota, BigDecimal desconto, List<Long> fornecedores) {
 		
 		Future<String> future = descontoService.executarDescontoEspecifico(numeroCota, desconto, fornecedores, getUsuario());
-
-		this.resultProcessoCadastroDesconto(future);
+		this.session.setAttribute(FUTURE_RESULT_PROCESSO_DESCONTO_ESPECIFICO, future);
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Inicio do procedimento de cadastros de Tipo Desconto foi inicializado"),"result").recursive().serialize();
 	}
 
 	@Post
@@ -110,8 +116,8 @@ public class TipoDescontoCotaController {
 	public void novoDescontoProduto(DescontoProdutoDTO descontoDTO, List<Integer> cotas) {		
 
 		Future<String> future = descontoService.executarDescontoProduto(descontoDTO, cotas, getUsuario());
-		
-		this.resultProcessoCadastroDesconto(future);
+		this.session.setAttribute(FUTURE_RESULT_PROCESSO_DESCONTO_PRODUTO, future);
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Inicio do procedimento de cadastros de Tipo Desconto foi inicializado"),"result").recursive().serialize();
 	}
 	
 	@Path("/pesquisarDescontoGeral")
@@ -457,11 +463,7 @@ public class TipoDescontoCotaController {
 			if (future.isDone()) {
 				resultado = future.get();
 				result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS,  resultado),"result").recursive().serialize();
-			} else {
-				result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Inicio do procedimento de cadastros de Tipo Desconto foi inicializado"),"result").recursive().serialize();
-
-			}
-
+			} 
 		} catch (Exception e) {
 			
 			List<String> mensagens = new ArrayList<String>();
@@ -479,22 +481,46 @@ public class TipoDescontoCotaController {
 		
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Get
 	@Path("/verificaProgressoGravacaoDescontoGeral")
 	public void verificaProgressoGravacaoDescontoGeral() {
-		result.use(Results.json()).from(ProcessoCadastroDescontoSingleton.getInstance(),"result").recursive().serialize();
+		
+		Future<String> future = (Future<String>) this.session.getAttribute(FUTURE_RESULT_PROCESSO_DESCONTO_GERAL);
+	
+		if (future != null) {
+			this.resultProcessoCadastroDesconto(future);
+		} else {
+			result.use(Results.nothing());
+		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Get
 	@Path("/verificaProgressoGravacaoDescontoEspecifico")
 	public void verificaProgressoGravacaoDescontoEspecifico() {
-		result.use(Results.json()).from(ProcessoCadastroDescontoSingleton.getInstance(), "result").recursive().serialize();
+		
+		Future<String> future = (Future<String>) this.session.getAttribute(FUTURE_RESULT_PROCESSO_DESCONTO_ESPECIFICO);
+		
+		if (future != null) {
+			this.resultProcessoCadastroDesconto(future);
+		} else {
+			result.use(Results.nothing());
+		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Get
 	@Path("/verificaProgressoGravacaoDescontoProduto")
 	public void verificaProgressoGravacaoDescontoProduto() {
-		result.use(Results.json()).from(ProcessoCadastroDescontoSingleton.getInstance(),"result").recursive().serialize();
+		
+		Future<String> future = (Future<String>) this.session.getAttribute(FUTURE_RESULT_PROCESSO_DESCONTO_PRODUTO);
+		
+		if (future != null) {
+			this.resultProcessoCadastroDesconto(future);
+		} else {
+			result.use(Results.nothing());
+		}
 	}
 
 }

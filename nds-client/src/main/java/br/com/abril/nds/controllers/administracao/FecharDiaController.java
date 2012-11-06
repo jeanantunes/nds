@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -16,14 +17,20 @@ import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.DetalheCotaFechamentoDiarioVO;
 import br.com.abril.nds.dto.FecharDiaDTO;
 import br.com.abril.nds.dto.ReparteFecharDiaDTO;
+import br.com.abril.nds.dto.ResumoEncalheFecharDiaDTO;
+import br.com.abril.nds.dto.ResumoFechamentoDiarioConsignadoDTO;
 import br.com.abril.nds.dto.ResumoFechamentoDiarioCotasDTO;
 import br.com.abril.nds.dto.ResumoFechamentoDiarioCotasDTO.TipoResumo;
+import br.com.abril.nds.dto.EncalheFecharDiaDTO;
+import br.com.abril.nds.dto.ResumoReparteFecharDiaDTO;
+import br.com.abril.nds.dto.ResumoSuplementarFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoConfirmacaoDeExpedicaoFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoControleDeAprovacaoFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoLancamentoFaltaESobraFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoRecebimentoFisicoFecharDiaDTO;
 import br.com.abril.nds.dto.VendaSuplementarDTO;
 import br.com.abril.nds.dto.fechamentodiario.DividaDTO;
+import br.com.abril.nds.dto.fechamentodiario.ResumoEstoqueDTO;
 import br.com.abril.nds.dto.fechamentodiario.SumarizacaoDividasDTO;
 import br.com.abril.nds.dto.fechamentodiario.TipoDivida;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -35,6 +42,7 @@ import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.financeiro.Divida;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.serialization.custom.CustomMapJson;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.CotaService;
@@ -86,7 +94,12 @@ public class FecharDiaController {
 	@Autowired
 	private HttpServletResponse httpResponse;
 	
+	@Autowired
+	private HttpSession session;
+	
 	private static Distribuidor distribuidor;
+
+	private static final String ATRIBUTO_SESSAO_VALIDACAO_PENDENCIAS = "atributoSessaoValidacao";
 	
 	@Path("/")
 	@Rules(Permissao.ROLE_ADMINISTRACAO_FECHAR_DIA)
@@ -140,6 +153,7 @@ public class FecharDiaController {
 		
 	}
 	
+	//Grid que é acionado nas validações
 	@Post
 	@Path("/obterLancamentoFaltaESobra")
 	public void obterLancamentoFaltaESobra(){
@@ -181,7 +195,9 @@ public class FecharDiaController {
 			}
 		}
 		
-		result.use(Results.json()).from(pendencia).recursive().serialize();
+		this.session.setAttribute(ATRIBUTO_SESSAO_VALIDACAO_PENDENCIAS, pendencia);
+		
+		this.result.use(Results.json()).from(pendencia).recursive().serialize();
 		
 	}
 	
@@ -189,66 +205,18 @@ public class FecharDiaController {
 	@Path("obterResumoQuadroReparte")
 	public void obterResumoQuadroReparte(){
 		
-		List<BigDecimal> listaDeResultados = new ArrayList<BigDecimal>();
-
-		List<ReparteFecharDiaDTO> lista = this.resumoFecharDiaService.obterValorReparte(distribuidor.getDataOperacao(), true);
+		ResumoReparteFecharDiaDTO dto = this.resumoFecharDiaService.obterResumoGeralReparte(distribuidor.getDataOperacao());
 		
-		BigDecimal totalReparte = lista.get(0).getValorTotalReparte();
-		listaDeResultados.add(totalReparte);
-		
-		lista = this.resumoFecharDiaService.obterValorDiferenca(distribuidor.getDataOperacao(), true, "sobra");
-		BigDecimal totalSobras = lista.get(0).getSobras() != null ? lista.get(0).getSobras() : BigDecimal.ZERO;
-		listaDeResultados.add(totalSobras);
-		
-		
-		lista = this.resumoFecharDiaService.obterValorDiferenca(distribuidor.getDataOperacao(), true, "falta");
-		BigDecimal totalFaltas = lista.get(0).getFaltas() != null ? lista.get(0).getFaltas() : BigDecimal.ZERO;
-		listaDeResultados.add(totalFaltas);
-		
-		
-		lista = this.resumoFecharDiaService.obterValorTransferencia(distribuidor.getDataOperacao(), true);
-		BigDecimal totalTranferencia = BigDecimal.ZERO;
-		if(lista.get(0).getTransferencias() != null){
-			totalTranferencia = lista.get(0).getTransferencias();			
-		}
-		listaDeResultados.add(totalTranferencia);
-		
-		
-		BigDecimal totalADistribuir = (totalReparte.add(totalSobras)).subtract(totalFaltas);
-		listaDeResultados.add(totalADistribuir);
-		
-		lista = this.resumoFecharDiaService.obterValorDistribuido(distribuidor.getDataOperacao(), true);
-		BigDecimal totalDistribuido = lista.get(0).getDistribuidos() != null ? lista.get(0).getDistribuidos() : BigDecimal.ZERO;
-		listaDeResultados.add(totalDistribuido);
-		
-		BigDecimal sobraDistribuido = totalADistribuir.subtract(totalDistribuido);
-		listaDeResultados.add(sobraDistribuido);
-		BigDecimal diferenca = totalDistribuido.subtract(sobraDistribuido);
-		listaDeResultados.add(diferenca);
-		
-		result.use(Results.json()).from(listaDeResultados, "result").serialize();
+		result.use(Results.json()).from(dto, "result").recursive().serialize();
 	}
 	
 	@Post
 	@Path("obterResumoQuadroEncalhe")
 	public void obterResumoQuadroEncalhe(){
 		
-		List<BigDecimal> listaDeEncalhes = new ArrayList<BigDecimal>();
+		ResumoEncalheFecharDiaDTO dto = this.resumoEncalheFecharDiaService.obterResumoGeralEncalhe(distribuidor.getDataOperacao());
 		
-		BigDecimal totalLogico = this.resumoEncalheFecharDiaService.obterValorEncalheLogico(distribuidor.getDataOperacao());
-		listaDeEncalhes.add(totalLogico);
-		
-		BigDecimal totalFisico = this.resumoEncalheFecharDiaService.obterValorEncalheFisico(distribuidor.getDataOperacao(), false);
-		listaDeEncalhes.add(totalFisico);
-		
-		BigDecimal totalJuramentado = this.resumoEncalheFecharDiaService.obterValorEncalheFisico(distribuidor.getDataOperacao(), true);;
-		listaDeEncalhes.add(totalJuramentado);
-		
-		List<ReparteFecharDiaDTO> lista = this.resumoFecharDiaService.obterValorReparte(distribuidor.getDataOperacao(), true);
-		BigDecimal venda = lista.get(0).getValorTotalReparte().subtract(totalFisico) ;
-		listaDeEncalhes.add(venda);
-		
-		result.use(Results.json()).from(listaDeEncalhes, "result").recursive().serialize();
+		result.use(Results.json()).from(dto, "result").recursive().serialize();
 		
 	}
 	
@@ -257,21 +225,9 @@ public class FecharDiaController {
 	@Path("obterResumoQuadroSuplementar")
 	public void obterResumoQuadroSuplementar(){
 		
-		List<BigDecimal> listaDeSuplementares = new ArrayList<BigDecimal>();
+		ResumoSuplementarFecharDiaDTO dto = this.resumoSuplementarFecharDiaService.obterResumoGeralEncalhe(distribuidor.getDataOperacao());
 		
-		BigDecimal totalEstoqueLogico = this.resumoSuplementarFecharDiaService.obterValorEstoqueLogico(distribuidor.getDataOperacao());
-		listaDeSuplementares.add(totalEstoqueLogico);
-		
-		BigDecimal totalTransferencia = this.resumoSuplementarFecharDiaService.obterValorTransferencia(distribuidor.getDataOperacao());
-		listaDeSuplementares.add(totalTransferencia);
-		
-		BigDecimal totalVenda = this.resumoSuplementarFecharDiaService.obterValorVenda(distribuidor.getDataOperacao());
-		listaDeSuplementares.add(totalVenda);
-		
-		BigDecimal totalFisico = this.resumoSuplementarFecharDiaService.obterValorFisico(distribuidor.getDataOperacao());
-		listaDeSuplementares.add(totalEstoqueLogico.subtract(totalFisico));
-		
-		result.use(Results.json()).from(listaDeSuplementares, "result").recursive().serialize();
+		result.use(Results.json()).from(dto, "result").recursive().serialize();
 	}
 	
 	@Post
@@ -291,8 +247,24 @@ public class FecharDiaController {
 	}
 	
 	@Post
-	@Path("/obterGridVendaSuplemntar")
-	public void obterGridVendaSuplemntar(){
+	@Path("/obterGridEncalhe")
+	public void obterGridEncalhe(){
+		
+		List<EncalheFecharDiaDTO> listaEncalhe = this.resumoEncalheFecharDiaService.obterDadosGridEncalhe(distribuidor.getDataOperacao());
+		
+		TableModel<CellModelKeyValue<EncalheFecharDiaDTO>> tableModel = new TableModel<CellModelKeyValue<EncalheFecharDiaDTO>>();
+		
+		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaEncalhe));
+		
+		tableModel.setTotal(listaEncalhe.size());
+		
+		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+		
+	}
+	
+	@Post
+	@Path("/obterGridVendaSuplementar")
+	public void obterGridVendaSuplementar(){
 		
 		List<VendaSuplementarDTO> listaReparte = resumoSuplementarFecharDiaService.obterVendasSuplementar(distribuidor.getDataOperacao());
 		
@@ -303,6 +275,29 @@ public class FecharDiaController {
 		tableModel.setTotal(listaReparte.size());
 		
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+		
+	}
+	
+	@Get
+	public void exportarResumoReparte(FileType fileType){
+		
+		
+		try {
+		List<ReparteFecharDiaDTO> listaReparte = this.resumoFecharDiaService.obterResumoReparte(distribuidor.getDataOperacao());
+		
+		if(listaReparte.isEmpty()) {
+			throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");
+		}
+		
+			FileExporter.to("resumo_reparte", fileType).inHTTPResponse(this.getNDSFileHeader(), null, null, 
+					listaReparte, ReparteFecharDiaDTO.class, this.httpResponse);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		
+		
+		result.nothing();
 		
 	}
 	
@@ -350,6 +345,8 @@ public class FecharDiaController {
 		result.nothing();
 		
 	}
+	
+	
 	
 	private NDSFileHeader getNDSFileHeader() {
 		
@@ -484,6 +481,19 @@ public class FecharDiaController {
 		
 		result.use(FlexiGridJson.class).from(listaDetalhesCotaFechamentoDiarioVO).page(1).total(listaDetalhesCotaFechamentoDiarioVO.size()).serialize();
 	}
+	
+	@Post
+	public void processarControleDeAprovacao() {
+		
+		Boolean hasValidacao = (Boolean) this.session.getAttribute(ATRIBUTO_SESSAO_VALIDACAO_PENDENCIAS);
+		
+		if (hasValidacao != null && !hasValidacao) {
+			
+			this.fecharDiaService.processarControleDeAprovacao();
+			
+			this.session.setAttribute(ATRIBUTO_SESSAO_VALIDACAO_PENDENCIAS, true);
+		}
+	}
 
 	private List<DetalheCotaFechamentoDiarioVO> obterDetalheCotaFechamentoDiario(TipoResumo tipoResumo) {
 		
@@ -546,7 +556,25 @@ public class FecharDiaController {
 		
         result.nothing();
 	}
-    
+	
+	@Post
+	public void obterResumoConsignado() {
+		
+		ResumoFechamentoDiarioConsignadoDTO resumoFechamentoDiarioConsignado = 
+			this.fecharDiaService.obterResumoConsignado(getDataFechamento());
+		
+		result.use(CustomMapJson.class).put("resumo", resumoFechamentoDiarioConsignado).serialize();
+	}
+	
+	@Post
+	public void obterResumoEstoque() {
+		
+		ResumoEstoqueDTO resumoFechamentoDiarioEstoque = 
+			this.fecharDiaService.obterResumoEstoque(getDataFechamento());
+		
+		result.use(CustomMapJson.class).put("resumo", resumoFechamentoDiarioEstoque).serialize();
+	}
+	
     private Date getDataFechamento() {
         return distribuidorService.obter().getDataOperacao();
     }
