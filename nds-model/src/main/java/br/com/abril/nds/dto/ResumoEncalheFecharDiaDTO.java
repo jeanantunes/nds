@@ -17,6 +17,12 @@ public class ResumoEncalheFecharDiaDTO implements Serializable {
 	private BigDecimal totalJuramentado;
 	
 	private BigDecimal venda;
+	
+	private BigDecimal totalSobras;
+	
+	private BigDecimal totalFaltas;
+	
+	private BigDecimal saldo;
 
 	public BigDecimal getTotalLogico() {
 		return totalLogico;
@@ -49,8 +55,29 @@ public class ResumoEncalheFecharDiaDTO implements Serializable {
 	public void setVenda(BigDecimal venda) {
 		this.venda = venda;
 	}
-	
-	
 
+	public BigDecimal getTotalSobras() {
+		return totalSobras;
+	}
 
+	public void setTotalSobras(BigDecimal totalSobras) {
+		this.totalSobras = totalSobras;
+	}
+
+	public BigDecimal getTotalFaltas() {
+		return totalFaltas;
+	}
+
+	public void setTotalFaltas(BigDecimal totalFaltas) {
+		this.totalFaltas = totalFaltas;
+	}
+
+	public BigDecimal getSaldo() {
+		return saldo;
+	}
+
+	public void setSaldo(BigDecimal saldo) {
+		this.saldo = saldo;
+	}
+	
 }
