@@ -2,10 +2,14 @@ package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.junit.Assert;
@@ -15,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.dto.GeraDividaDTO;
 import br.com.abril.nds.dto.StatusDividaDTO;
+import br.com.abril.nds.dto.fechamentodiario.SumarizacaoDividasDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaInadimplenteDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaInadimplenteDTO.ColunaOrdenacao;
 import br.com.abril.nds.dto.filtro.FiltroDividaGeradaDTO;
@@ -39,6 +44,8 @@ import br.com.abril.nds.model.cadastro.Roteirizacao;
 import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoBox;
+import br.com.abril.nds.model.cadastro.TipoCobranca;
+import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.nds.model.cadastro.TipoRoteiro;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
@@ -57,6 +64,7 @@ import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.fiscal.NCM;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.DividaRepository;
+import br.com.abril.nds.util.TipoBaixaCobranca;
 import br.com.abril.nds.vo.PaginacaoVO;
 
 public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
@@ -65,52 +73,76 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 	private DividaRepository dividaRepository;
 	
 	ConsolidadoFinanceiroCota consolidado;
+
+    private FormaCobranca formaBoleto;
+
+    private FormaCobranca formaDinheiro;
+
+    private FormaCobranca formaDeposito;
+
+    private Distribuidor distribuidor;
+
+    private Cota cotaManoel;
+
+    private Box box1;
+
+    private Cota cotaJose;
+
+    private Cota cotaMaria;
+
+    private TipoMovimentoFinanceiro tipoMovimentoFinanceitoDebito;
+
+    private Usuario usuarioJoao;
+
+    private Banco bancoHSBC;
 	
 	@Before
 	public void setUp() {
 		Editor abril = Fixture.editoraAbril();
 		save(abril);
 		
-		Banco bancoHSBC = Fixture.banco(10L, true, 30, "1010",
+		bancoHSBC = Fixture.banco(10L, true, 30, "1010",
 				  123456L, "1", "1", "Instrucoes.", "HSBC","BANCO HSBC", "399", BigDecimal.ZERO, BigDecimal.ZERO);
-		
 		save(bancoHSBC);
-		
-		PessoaFisica manoel = Fixture.pessoaFisica("319.435.088-95",
-				"sys.discover@gmail.com", "Manoel da Silva");
-		save(manoel);
 		
 		PessoaJuridica juridicaDistrib = Fixture.pessoaJuridica("Distribuidor Acme",
 				"56.003.315/0001-47", "333333333333", "distrib_acme@mail.com", "99.999-9");
-		
 		save(juridicaDistrib);
-		
-		FormaCobranca formaBoleto = Fixture.formaCobrancaBoleto(true, new BigDecimal(200), true, bancoHSBC,
-				  												BigDecimal.ONE, BigDecimal.ONE,null);
-		save(formaBoleto);
-		
-		Distribuidor distribuidor = null; 
-		
-		PoliticaCobranca politicaCobranca =
-				Fixture.criarPoliticaCobranca(distribuidor, formaBoleto, true, true, true, 1,"Assunto","Mansagem",true,FormaEmissao.INDIVIDUAL_BOX);
-		
-		Set<PoliticaCobranca> politicasCobranca = new HashSet<PoliticaCobranca>();
-		politicasCobranca.add(politicaCobranca);
-		
-		distribuidor = Fixture.distribuidor(1, juridicaDistrib, new Date(), politicasCobranca);
-		
+
+		distribuidor = Fixture.distribuidor(1, juridicaDistrib, new Date(), null);
 		save(distribuidor);
 		
-		politicaCobranca.setDistribuidor(distribuidor);
-		save(politicaCobranca);
+		formaBoleto = Fixture.formaCobrancaBoleto(true, new BigDecimal(200), true, bancoHSBC,
+				  												BigDecimal.ONE, BigDecimal.ONE,null);
+
+		formaDinheiro = Fixture.formaCobrancaDinheiro(true, BigDecimal.ZERO, true, null, BigDecimal.ONE, BigDecimal.TEN, null);
 		
-		Usuario usuarioJoao = Fixture.usuarioJoao();
+		formaDeposito = Fixture.formaCobrancaDeposito(true, BigDecimal.ZERO, true, bancoHSBC, BigDecimal.ONE, BigDecimal.TEN, null);
+		
+		save(formaBoleto, formaDinheiro, formaDeposito);
+
+		PoliticaCobranca politicaCobrancaBoleto =
+				Fixture.criarPoliticaCobranca(distribuidor, formaBoleto, true, true, true, 1,"Assunto","Mensagem",true,FormaEmissao.INDIVIDUAL_BOX);
+		
+		save(politicaCobrancaBoleto);
+		
+		Set<PoliticaCobranca> politicasCobranca = new HashSet<PoliticaCobranca>();
+		politicasCobranca.add(politicaCobrancaBoleto);
+		politicaCobrancaBoleto.setDistribuidor(distribuidor);
+		
+		distribuidor.setPoliticasCobranca(politicasCobranca);
+		
+		usuarioJoao = Fixture.usuarioJoao();
 		save(usuarioJoao);
 		
-		Box box1 = Fixture.criarBox(1, "BX-001", TipoBox.LANCAMENTO);
+		box1 = Fixture.criarBox(1, "BX-001", TipoBox.LANCAMENTO);
 		save(box1);
 		
-		Cota cotaManoel = Fixture.cota(123, manoel, SituacaoCadastro.ATIVO,box1);
+		PessoaFisica manoel = Fixture.pessoaFisica("319.435.088-95",
+		        "sys.discover@gmail.com", "Manoel da Silva");
+		save(manoel);
+
+		cotaManoel = Fixture.cota(123, manoel, SituacaoCadastro.ATIVO,box1);
 		save(cotaManoel);
 		
 		PDV pdv = Fixture.criarPDVPrincipal("Manoel", cotaManoel);
@@ -136,6 +168,9 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 		rota.addPDV(pdv, 1, box1);
 		rota.setRoteiro(roteiro);
 		save(rota);
+		
+		tipoMovimentoFinanceitoDebito = Fixture.tipoMovimentoFinanceiroDebito();
+		save(tipoMovimentoFinanceitoDebito);
 		
 		TipoMovimentoFinanceiro tipoMovimentoFinenceiroRecebimentoReparte =
 			Fixture.tipoMovimentoFinanceiroRecebimentoReparte();
@@ -201,7 +236,7 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 		
 	    Boleto boleto = Fixture.boleto("5557884985445", "5", "5",
 	    		                       Fixture.criarData(2, 2, 2010), 
-	    		                       Fixture.criarData(2, 5, 2010), 
+	    		                       Fixture.criarData(2, Calendar.MAY, 2010), 
                 					   null, 
                 					   BigDecimal.ZERO, 
                 					   new BigDecimal(100.00), 
@@ -232,7 +267,7 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 		
 		
 		cobrancaAcumuloGuilherme2 = Fixture.criarCobrancaDinheiro("3234567890124", 
-				new Date(),Fixture.criarData(1, 1, 2010),  Fixture.criarData(2, 2, 2010),
+				new Date(), Fixture.criarData(2, Calendar.MAY, 2010), null,
                 BigDecimal.ZERO, new BigDecimal(210),
 				"TIPO_BAIXA", "ACAO", StatusCobranca.PAGO,
 				cotaManoel, bancoHSBC, dividaAcumuladaGuilherme2,1);
@@ -339,4 +374,110 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 		Assert.assertNotNull(this.dividaRepository.obterDividaPorIdConsolidado(consolidado.getId()));
 	}
 	
+	
+	@Test
+	public void testSumarizacaoDividasReceberEm() {
+	    criarDadosSumarizacaoDividas();
+	    
+	    Map<TipoCobranca, SumarizacaoDividasDTO> sumarizacao = dividaRepository.sumarizacaoDividasReceberEm(Fixture.criarData(8, Calendar.NOVEMBER, 2012));
+	    Assert.assertNotNull(sumarizacao);
+	    Assert.assertEquals(3, sumarizacao.size());
+	}
+
+    private void criarDadosSumarizacaoDividas() {
+        PoliticaCobranca politicaCobrancaDinheiro = Fixture
+	                .criarPoliticaCobranca(distribuidor, formaDinheiro, true, false,
+	                        true, 3, "Assunto", "Mensagem", true,
+	                        FormaEmissao.INDIVIDUAL_BOX);
+	     distribuidor.getPoliticasCobranca().add(politicaCobrancaDinheiro);
+	     save(politicaCobrancaDinheiro);
+	        
+	     PoliticaCobranca politicaCobrancaDeposito = Fixture
+	                .criarPoliticaCobranca(distribuidor, formaDeposito, true, false,
+	                        true, 3, "Assunto", "Mensagem", true,
+	                        FormaEmissao.INDIVIDUAL_BOX);
+	     distribuidor.getPoliticasCobranca().add(politicaCobrancaDeposito);
+	     save(politicaCobrancaDeposito);
+	     
+	     PessoaFisica jose = Fixture.pessoaFisica("12345678901",
+	                "sys.discover@gmail.com", "Jose da Silva");
+	     cotaJose = Fixture.cota(456, jose, SituacaoCadastro.ATIVO, box1);
+	     save(jose, cotaJose);
+
+	     ParametroCobrancaCota  parametroCobrancaJose = Fixture.parametroCobrancaCota(Collections.singleton(formaDinheiro),
+	                3, null, cotaJose, 1, false, BigDecimal.valueOf(100), TipoCota.CONSIGNADO);
+	     cotaJose.setParametroCobranca(parametroCobrancaJose);
+	     save(parametroCobrancaJose);	     
+	     
+	     PessoaFisica maria = Fixture.pessoaFisica("12345678902",
+	                "sys.discover@gmail.com", "Maria da Silva");
+	     cotaMaria = Fixture.cota(789, maria, SituacaoCadastro.ATIVO, box1);
+	     save(maria, cotaMaria);
+	     
+	     ParametroCobrancaCota  parametroCobrancaMaria = Fixture.parametroCobrancaCota(Collections.singleton(formaDeposito),
+                 3, null, cotaMaria, 1, false, BigDecimal.valueOf(100), TipoCota.CONSIGNADO);
+	     cotaMaria.setParametroCobranca(parametroCobrancaMaria);
+	     save(parametroCobrancaMaria);   
+	     
+	     MovimentoFinanceiroCota mfcManoel = Fixture.movimentoFinanceiroCota(cotaManoel,
+	                tipoMovimentoFinanceitoDebito, usuarioJoao,
+	                BigDecimal.valueOf(452), null, StatusAprovacao.APROVADO,
+	                Fixture.criarData(5, Calendar.NOVEMBER, 2012), true);
+	     save(mfcManoel);
+        
+	     ConsolidadoFinanceiroCota consolidadoManoel = Fixture
+                .consolidadoFinanceiroCota(Arrays.asList(mfcManoel), cotaManoel, Fixture.criarData(5, Calendar.NOVEMBER, 2012),
+                        BigDecimal.ZERO, BigDecimal.ZERO,
+                        BigDecimal.ZERO, BigDecimal.valueOf(452),
+                        BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO);
+        save(consolidadoManoel);
+	        
+        Divida dividaManoel = Fixture.divida(consolidadoManoel, cotaManoel,
+                Fixture.criarData(5, Calendar.NOVEMBER, 2012), usuarioJoao,
+                StatusDivida.EM_ABERTO, BigDecimal.valueOf(452), false);
+        save(dividaManoel);   
+	    
+        Boleto boletoManoel = Fixture
+                .boleto("5557884985446", "7", "55578849854467",
+                        Fixture.criarData(5, Calendar.NOVEMBER, 2012),
+                        Fixture.criarData(8, Calendar.NOVEMBER, 2012), null,
+                        BigDecimal.ZERO, BigDecimal.valueOf(452), "1", "1",
+                        StatusCobranca.NAO_PAGO, cotaManoel, bancoHSBC,
+                        dividaManoel, 0);
+        save(boletoManoel);
+        
+        MovimentoFinanceiroCota mfcJose = Fixture.movimentoFinanceiroCota(cotaJose,
+                tipoMovimentoFinanceitoDebito, usuarioJoao,
+                BigDecimal.valueOf(500), null, StatusAprovacao.APROVADO,
+                Fixture.criarData(5, Calendar.NOVEMBER, 2012), true);
+        save(mfcJose);
+        
+        ConsolidadoFinanceiroCota consolidadoJose = Fixture
+                .consolidadoFinanceiroCota(Arrays.asList(mfcJose), cotaJose, Fixture.criarData(5, Calendar.NOVEMBER, 2012),
+                        BigDecimal.ZERO, BigDecimal.ZERO,
+                        BigDecimal.ZERO, BigDecimal.valueOf(500),
+                        BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO);
+        save(consolidadoJose);
+        
+        Divida dividaJose = Fixture.divida(consolidadoJose, cotaJose,
+                Fixture.criarData(5, Calendar.NOVEMBER, 2012), usuarioJoao,
+                StatusDivida.EM_ABERTO, BigDecimal.valueOf(500), false);
+        save(dividaJose); 
+
+        CobrancaDinheiro cobrancaJose = Fixture.cobrancaDinheiro(
+                "5557884985447", Fixture.criarData(5, Calendar.NOVEMBER, 2012),
+                Fixture.criarData(8, Calendar.NOVEMBER, 2012), null,
+                BigDecimal.ZERO, BigDecimal.valueOf(500),
+                TipoBaixaCobranca.MANUAL.name(), null, StatusCobranca.NAO_PAGO,
+                cotaJose, null, dividaJose, 0);
+        save(cobrancaJose);
+        
+        MovimentoFinanceiroCota mfcMaria = Fixture.movimentoFinanceiroCota(cotaMaria,
+                tipoMovimentoFinanceitoDebito, usuarioJoao,
+                BigDecimal.valueOf(750), null, StatusAprovacao.APROVADO,
+                Fixture.criarData(5, Calendar.NOVEMBER, 2012), true);
+        
+        save(mfcMaria);
+	     
+    }
 }
