@@ -33,10 +33,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.integracao.couchdb.CouchDbProperties;
 import br.com.abril.nds.integracao.dto.SolicitacaoDTO;
+import br.com.abril.nds.integracao.icd.model.DetalheFaltaSobra;
+import br.com.abril.nds.integracao.icd.model.SolicitacaoFaltaSobra;
 import br.com.abril.nds.integracao.model.InterfaceExecucao;
 import br.com.abril.nds.integracao.model.LogExecucao;
 import br.com.abril.nds.integracao.model.LogExecucaoArquivo;
 import br.com.abril.nds.integracao.model.canonic.EMS0128Input;
+import br.com.abril.nds.integracao.model.canonic.EMS0128InputItem;
 import br.com.abril.nds.integracao.model.canonic.IntegracaoDocument;
 import br.com.abril.nds.integracao.model.canonic.IntegracaoDocumentDetail;
 import br.com.abril.nds.integracao.model.canonic.IntegracaoDocumentMaster;
@@ -173,8 +176,26 @@ public class InterfaceExecutor {
 							icdObjectService.insereSolicitacao(doc);
 							doc.setSituacaoSolicitacao("AGUARDANDO_GFS");
 							couchDbClient.save(doc);
-						} else {
-							List<SolicitacaoDTO> solicitacoes = icdObjectService.recuperaSolicitacoes(Long.valueOf(distribuidor), doc);							
+						} else if (
+								doc.getSituacaoSolicitacao().equals("AGUARDANDO_GFS") 
+								|| doc.getSituacaoSolicitacao().equals("EM PROCESSAMENTO")) {
+							
+							SolicitacaoFaltaSobra solicitacao = icdObjectService.recuperaSolicitacao(Long.valueOf(distribuidor), doc);
+							doc.setSituacaoSolicitacao(solicitacao.getCodigoSituacao());
+							
+							for (DetalheFaltaSobra item : solicitacao.getItens())
+							{
+								for ( EMS0128InputItem eitem : doc.getItems()) {
+									if (item.getDfsPK().getNumeroSequencia().equals(eitem.getNumSequenciaDetalhe())) {
+										eitem.setSituacaoAcerto(item.getCodigoAcerto());
+										eitem.setNumeroDocumentoAcerto(item.getNumeroDocumentoAcerto());
+										eitem.setDataEmicaoDocumentoAcerto(item.getDataEmissaoDocumentoAcerto());
+										eitem.setDescricaoMotivo(item.getMotivoSituacaoFaltaSobra().getDescricaoMotivo());
+										eitem.setCodigoOrigemMotivo(item.getMotivoSituacaoFaltaSobra().getCodigoMotivo());
+									}
+								}
+							}							
+							couchDbClient.save(doc);
 						}
 						
 					}

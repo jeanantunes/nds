@@ -3,6 +3,7 @@ package br.com.abril.nds.integracao.model.canonic;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Date;
 
 import com.ancientprogramming.fixedformat4j.annotation.Field;
 import com.ancientprogramming.fixedformat4j.annotation.FixedFormatBoolean;
@@ -25,6 +26,10 @@ public class EMS0128InputItem extends IntegracaoDocumentDetail implements Serial
 	private BigDecimal precoCapa;
 	private Float percentualDesconto;
 	private String situacaoAcerto;
+	private Long numeroDocumentoAcerto;
+	private Date dataEmicaoDocumentoAcerto;
+	private String descricaoMotivo;
+	private String codigoOrigemMotivo;
 	/**
 	 * @return the numSequenciaDetalhe
 	 */
@@ -121,6 +126,55 @@ public class EMS0128InputItem extends IntegracaoDocumentDetail implements Serial
 	public void setSituacaoAcerto(String situacaoAcerto) {
 		this.situacaoAcerto = situacaoAcerto;
 	}
-
+	/**
+	 * @return the numeroDocumentoAcerto
+	 */
+	public Long getNumeroDocumentoAcerto() {
+		return numeroDocumentoAcerto;
+	}
+	/**
+	 * @param numeroDocumentoAcerto the numeroDocumentoAcerto to set
+	 */
+	public void setNumeroDocumentoAcerto(Long numeroDocumentoAcerto) {
+		this.numeroDocumentoAcerto = numeroDocumentoAcerto;
+	}
+	/**
+	 * @return the dataEmicaoDocumentoAcerto
+	 */
+	public Date getDataEmicaoDocumentoAcerto() {
+		return dataEmicaoDocumentoAcerto;
+	}
+	/**
+	 * @param dataEmicaoDocumentoAcerto the dataEmicaoDocumentoAcerto to set
+	 */
+	public void setDataEmicaoDocumentoAcerto(Date dataEmicaoDocumentoAcerto) {
+		this.dataEmicaoDocumentoAcerto = dataEmicaoDocumentoAcerto;
+	}
+	/**
+	 * @return the descricaoMotivo
+	 */
+	public String getDescricaoMotivo() {
+		return descricaoMotivo;
+	}
+	/**
+	 * @param descricaoMotivo the descricaoMotivo to set
+	 */
+	public void setDescricaoMotivo(String descricaoMotivo) {
+		this.descricaoMotivo = descricaoMotivo;
+	}
+	/**
+	 * @return the codigoOrigemMotivo
+	 */
+	public String getCodigoOrigemMotivo() {
+		return codigoOrigemMotivo;
+	}
+	/**
+	 * @param codigoOrigemMotivo the codigoOrigemMotivo to set
+	 */
+	public void setCodigoOrigemMotivo(String codigoOrigemMotivo) {
+		this.codigoOrigemMotivo = codigoOrigemMotivo;
+	}
+	
+	
 		
 }

@@ -15,7 +15,7 @@ public interface SolicitacaoFaltasSobrasRepository  extends Repository<Solicitac
 	
 	public Set<Integer> recuperaSolicitacoesAcertadas(Long codigoDistribuidor);
 
-	public List<SolicitacaoDTO> recuperaSolicitacoes(Long codigoDistribuidor, Date dataSolicitacao, String horaSolicitacao);
+	public SolicitacaoFaltaSobra recuperaSolicitacao(Long codigoDistribuidor, Date dataSolicitacao, String horaSolicitacao);
 
 	void save(SolicitacaoFaltaSobra sfs);
 

@@ -57,35 +57,36 @@ public class SolicitacaoFaltasSobrasRepositoryImpl extends AbstractRepositoryMod
 	
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public List<SolicitacaoDTO> recuperaSolicitacoes(Long codigoDistribuidor, Date dataSolicitacao, String horaSolicitacao) {
+	public SolicitacaoFaltaSobra recuperaSolicitacao(Long codigoDistribuidor, Date dataSolicitacao, String horaSolicitacao) {
 
-		return getSessionIcd()
+		return (SolicitacaoFaltaSobra) getSessionIcd()
 			.createCriteria(SolicitacaoFaltaSobra.class, "s")
 			.createAlias("s.itens", "d")			
-			.createAlias("d.motivoSituacaoFaltaSobra","m")			
+			.createAlias("d.motivoSituacaoFaltaSobra","m", JoinType.LEFT_OUTER_JOIN)
+			/*
 	        .setProjection(
 	       		 Projections.projectionList()	       		 	
 						.add(Projections.property("s.sfsPK.codigoDistribuidor"), "codigoDistribuidor")
 						.add(Projections.property("s.sfsPK.dataSolicitacao"), "solicitacao")
 						.add(Projections.property("d.codigoAcerto"), "codigoAcerto")
+						.add(Projections.property("d.codigoSituacao"), "codigoSituacao")
 						.add(Projections.property("m.numeroSequencia"), "numeroSequencia")
 						.add(Projections.property("m.descricaoMotivo"), "descricaoMotivo")
 						.add(Projections.property("m.codigoMotivo"), "codigoMotivo")
 						)
 	        .setResultTransformer(Transformers.aliasToBean(SolicitacaoDTO.class))
+	        */
 	        .add(
 	        	Restrictions.and(
 	        		Restrictions.eq("s.sfsPK.codigoDistribuidor", codigoDistribuidor )	
 	        		, Restrictions.eq("s.sfsPK.dataSolicitacao", dataSolicitacao )
 	        		, Restrictions.eq("s.sfsPK.horaSolicitacao", horaSolicitacao )
 	        	).add(Restrictions.in("s.codigoSituacao", 
-	        			new String[] {"EM PROCESSO", "LIBERADO", "REJEITADO", "DESPREZADO"} 
+	        			new String[] {"EM PROCESSAMENTO", "PROCESSADO"} 
 	        	))	        	
 	        )
-	        .list();       
-		
+	        .uniqueResult();       		
 	}	
 	
 	@Override

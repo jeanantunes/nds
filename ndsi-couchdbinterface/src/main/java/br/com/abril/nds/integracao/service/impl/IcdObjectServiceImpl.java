@@ -47,8 +47,8 @@ public class IcdObjectServiceImpl implements IcdObjectService {
 	}
 
 	@Override
-	public List<SolicitacaoDTO> recuperaSolicitacoes(Long distribuidor, EMS0128Input doc) {
-		return solicitacaoFaltasSobrasRepository.recuperaSolicitacoes(distribuidor, doc.getDataSolicitacao(), DateFormatUtils.format(doc.getHoraDeCriacao(), "hh:mm:ss") );
+	public SolicitacaoFaltaSobra recuperaSolicitacao(Long distribuidor, EMS0128Input doc) {
+		return solicitacaoFaltasSobrasRepository.recuperaSolicitacao(distribuidor, doc.getDataSolicitacao(), DateFormatUtils.format(doc.getHoraDeCriacao(), "hh:mm:ss") );
 	}
 
 	@Override

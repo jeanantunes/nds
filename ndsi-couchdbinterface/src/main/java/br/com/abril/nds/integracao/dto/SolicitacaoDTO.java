@@ -13,6 +13,7 @@ public class SolicitacaoDTO {
 	private Integer numeroSequencia;
 	private String descricaoMotivo;
 	private String codigoMotivo;
+	private String codigoSituacao;
 	
 	/**
 	 * @return the codigoDistribuidor
@@ -91,5 +92,17 @@ public class SolicitacaoDTO {
 		return String.format("codigoDistribuidor=%s, solicitacao=%s, codigoAcerto=%s, numeroSequencia=%s, descricaoMotivo=%s, codigoMotivo=%s",
 				codigoDistribuidor.toString(), solicitacao.toString(), codigoAcerto, numeroSequencia.toString(), descricaoMotivo, codigoMotivo
 				);
+	}
+	/**
+	 * @return the codigoSituacao
+	 */
+	public String getCodigoSituacao() {
+		return codigoSituacao;
+	}
+	/**
+	 * @param codigoSituacao the codigoSituacao to set
+	 */
+	public void setCodigoSituacao(String codigoSituacao) {
+		this.codigoSituacao = codigoSituacao;
 	}
 }
