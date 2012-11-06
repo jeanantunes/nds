@@ -29,12 +29,16 @@ public class SumarizacaoDividasDTO implements Serializable {
     
     private BigDecimal inadimplencia = BigDecimal.ZERO;
 
-
-    public SumarizacaoDividasDTO(Date data, TipoDivida tipoSumarizacao, TipoCobranca tipoCobranca, BigDecimal total, BigDecimal valorPago,
-            BigDecimal inadimplencia) {
+    
+    public SumarizacaoDividasDTO(Date data, TipoDivida tipoSumarizacao, TipoCobranca tipoCobranca) {
         this.data = data;
         this.tipoSumarizacao = tipoSumarizacao;
         this.tipoCobranca = tipoCobranca;
+    }
+
+    public SumarizacaoDividasDTO(Date data, TipoDivida tipoSumarizacao, TipoCobranca tipoCobranca, BigDecimal total, BigDecimal valorPago,
+            BigDecimal inadimplencia) {
+        this(data, tipoSumarizacao, tipoCobranca);
         this.total = total;
         this.valorPago = valorPago;
         this.inadimplencia = inadimplencia;
@@ -160,6 +164,52 @@ public class SumarizacaoDividasDTO implements Serializable {
      */
     public String getInadimplenciaFormatado() {
         return CurrencyUtil.formatarValor(inadimplencia);
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((data == null) ? 0 : data.hashCode());
+        result = prime * result
+                + ((tipoCobranca == null) ? 0 : tipoCobranca.hashCode());
+        result = prime * result
+                + ((tipoSumarizacao == null) ? 0 : tipoSumarizacao.hashCode());
+        return result;
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        SumarizacaoDividasDTO other = (SumarizacaoDividasDTO) obj;
+        if (data == null) {
+            if (other.data != null) {
+                return false;
+            }
+        } else if (!data.equals(other.data)) {
+            return false;
+        }
+        if (tipoCobranca != other.tipoCobranca) {
+            return false;
+        }
+        if (tipoSumarizacao != other.tipoSumarizacao) {
+            return false;
+        }
+        return true;
     }
 
 }

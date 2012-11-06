@@ -15,14 +15,14 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "HISTORICO_FECHAMENTO_DIARIO_CONSOLIDADO_ENCALHE")
-@SequenceGenerator(name = "HISTORICO_FECHAMENTO_DIARIO_CONSOLIDADO_ENCALHE_SEQ", initialValue = 1, allocationSize = 1)
-public class HistoricoFechamentoDiarioConsolidadoEncalhe implements Serializable{
+@Table(name = "FECHAMENTO_DIARIO_CONSOLIDADO_ENCALHE")
+@SequenceGenerator(name = "FECHAMENTO_DIARIO_CONSOLIDADO_ENCALHE_SEQ", initialValue = 1, allocationSize = 1)
+public class FechamentoDiarioConsolidadoEncalhe implements Serializable{
 
 	private static final long serialVersionUID = 1L;
 
 	@Id
-    @GeneratedValue(generator = "HISTORICO_FECHAMENTO_DIARIO_CONSOLIDADO_ENCALHE_SEQ")
+    @GeneratedValue(generator = "FECHAMENTO_DIARIO_CONSOLIDADO_ENCALHE_SEQ")
     @Column(name = "ID")
     private Long id;
 	
@@ -51,11 +51,11 @@ public class HistoricoFechamentoDiarioConsolidadoEncalhe implements Serializable
 	@JoinColumn(name = "FECHAMENTO_DIARIO_ID")
 	private FechamentoDiario fechamentoDiario;
 	
-	@OneToMany(mappedBy = "historicoConsolidadoEncalhe")
-	private List<HistoricoFechamentoDiarioLancamentoEncalhe> historicoLancamentosReparte;
+	@OneToMany(mappedBy = "fechamentoDiarioConsolidadoEncalhe")
+	private List<FechamentoDiarioLancamentoEncalhe> lancamentosReparte;
 	
-	@OneToMany(mappedBy = "historicoConsolidadoEncalhe")
-	private List<HistoricoFechamentoDiarioMovimentoVendaEncalhe> historicoMovimentoVendaEncalhes;
+	@OneToMany(mappedBy = "fechamentoDiarioConsolidadoEncalhe")
+	private List<FechamentoDiarioMovimentoVendaEncalhe> movimentoVendaEncalhes;
 	
 	public Long getId() {
 		return id;
@@ -121,13 +121,13 @@ public class HistoricoFechamentoDiarioConsolidadoEncalhe implements Serializable
 		this.fechamentoDiario = fechamentoDiario;
 	}
 
-	public List<HistoricoFechamentoDiarioLancamentoEncalhe> getHistoricoLancamentosReparte() {
-		return historicoLancamentosReparte;
+	public List<FechamentoDiarioLancamentoEncalhe> getLancamentosReparte() {
+		return lancamentosReparte;
 	}
 
-	public void setHistoricoLancamentosReparte(
-			List<HistoricoFechamentoDiarioLancamentoEncalhe> historicoLancamentosReparte) {
-		this.historicoLancamentosReparte = historicoLancamentosReparte;
+	public void setLancamentosReparte(
+			List<FechamentoDiarioLancamentoEncalhe> lancamentosReparte) {
+		this.lancamentosReparte = lancamentosReparte;
 	}
 
 	public BigDecimal getSaldo() {
@@ -138,13 +138,13 @@ public class HistoricoFechamentoDiarioConsolidadoEncalhe implements Serializable
 		this.saldo = saldo;
 	}
 
-	public List<HistoricoFechamentoDiarioMovimentoVendaEncalhe> getHistoricoMovimentoVendaEncalhes() {
-		return historicoMovimentoVendaEncalhes;
+	public List<FechamentoDiarioMovimentoVendaEncalhe> getMovimentoVendaEncalhes() {
+		return movimentoVendaEncalhes;
 	}
 
-	public void setHistoricoMovimentoVendaEncalhes(
-			List<HistoricoFechamentoDiarioMovimentoVendaEncalhe> historicoMovimentoVendaEncalhes) {
-		this.historicoMovimentoVendaEncalhes = historicoMovimentoVendaEncalhes;
+	public void setMovimentoVendaEncalhes(
+			List<FechamentoDiarioMovimentoVendaEncalhe> movimentoVendaEncalhes) {
+		this.movimentoVendaEncalhes = movimentoVendaEncalhes;
 	}
 	
 	

@@ -557,27 +557,27 @@
                 </tr>
                 <tr>
                   <td width="129" style="border-bottom:1px solid #ccc;">Produto</td>
-                  <td width="150" align="center" style="border-bottom:1px solid #ccc;">90</td>
-                  <td width="150" align="center" style="border-bottom:1px solid #ccc;">05</td>
-                  <td width="150" align="center" style="border-bottom:1px solid #ccc;">05</td>
-                  <td width="150" align="center" style="border-bottom:1px solid #ccc;">05</td>
-                  <td width="150" align="center" style="border-bottom:1px solid #ccc;">00</td>
+                  <td width="150" align="center" style="border-bottom:1px solid #ccc;" id="produtolancamento"></td>
+                  <td width="150" align="center" style="border-bottom:1px solid #ccc;" id="produtoJuramentado"></td>
+                  <td width="150" align="center" style="border-bottom:1px solid #ccc;" id="produtoSuplenetar"></td>
+                  <td width="150" align="center" style="border-bottom:1px solid #ccc;" id="produtoRecolhimento"></td>
+                  <td width="150" align="center" style="border-bottom:1px solid #ccc;" id="produtoDanificados"></td>
                 </tr>
                 <tr>
                   <td style="border-bottom:1px solid #ccc;">Exemplar</td>
-                  <td align="center" style="border-bottom:1px solid #ccc;">90</td>
-                  <td align="center" style="border-bottom:1px solid #ccc;">05</td>
-                  <td align="center" style="border-bottom:1px solid #ccc;">05</td>
-                  <td align="center" style="border-bottom:1px solid #ccc;">05</td>
-                  <td align="center" style="border-bottom:1px solid #ccc;">00</td>
+                  <td align="center" style="border-bottom:1px solid #ccc;" id="exemplarlancamento"></td>
+                  <td align="center" style="border-bottom:1px solid #ccc;" id="exemplarJuramentado"></td>
+                  <td align="center" style="border-bottom:1px solid #ccc;" id="exemplarSuplenetar"></td>
+                  <td align="center" style="border-bottom:1px solid #ccc;" id="exemplarRecolhimento"></td>
+                  <td align="center" style="border-bottom:1px solid #ccc;" id="exemplarDanificados"></td>
                 </tr>
                 <tr>
                   <td style="border-bottom:1px solid #ccc;">Valor R$</td>
-                  <td align="center" style="border-bottom:1px solid #ccc;">90</td>
-                  <td align="center" style="border-bottom:1px solid #ccc;">05</td>
-                  <td align="center" style="border-bottom:1px solid #ccc;">05</td>
-                  <td align="center" style="border-bottom:1px solid #ccc;">05</td>
-                  <td align="center" style="border-bottom:1px solid #ccc;">00</td>
+                  <td align="center" style="border-bottom:1px solid #ccc;" id="valorlancamento"></td>
+                  <td align="center" style="border-bottom:1px solid #ccc;" id="valorJuramentado"></td>
+                  <td align="center" style="border-bottom:1px solid #ccc;" id="valorSuplenetar"></td>
+                  <td align="center" style="border-bottom:1px solid #ccc;" id="valorRecolhimento"></td>
+                  <td align="center" style="border-bottom:1px solid #ccc;" id="valorDanificados"></td>
                 </tr>
                 <tr>
                   <td>&nbsp;</td>
