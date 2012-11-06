@@ -16,14 +16,14 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "HISTORICO_FECHAMENTO_DIARIO_CONSOLIDADO_DIVIDA")
-@SequenceGenerator(name = "HISTORICO_FECHAMENTO_DIARIO_CONSOLIDADO_DIVIDA_SEQ", initialValue = 1, allocationSize = 1)
-public class HistoricoFechamentoDiarioConsolidadoDivida implements Serializable{
+@Table(name = "FECHAMENTO_DIARIO_CONSOLIDADO_DIVIDA")
+@SequenceGenerator(name = "FECHAMENTO_DIARIO_CONSOLIDADO_DIVIDA_SEQ", initialValue = 1, allocationSize = 1)
+public class FechamentoDiarioConsolidadoDivida implements Serializable{
 
 	private static final long serialVersionUID = 1L;
 
 	@Id
-    @GeneratedValue(generator = "HISTORICO_FECHAMENTO_DIARIO_CONSOLIDADO_DIVIDA_SEQ")
+    @GeneratedValue(generator = "FECHAMENTO_DIARIO_CONSOLIDADO_DIVIDA_SEQ")
     @Column(name = "ID")
     private Long id;
 	
@@ -35,11 +35,11 @@ public class HistoricoFechamentoDiarioConsolidadoDivida implements Serializable{
 	@Enumerated(EnumType.STRING)
 	private TipoDividaFechamentoDia tipoDivida;
 	
-	@OneToMany(mappedBy = "historicoConsolidadoDivida")
-	private List<HistoricoFechamentoDiarioDivida> historicoDividas;
+	@OneToMany(mappedBy = "fechamentoDiarioConsolidadoDivida")
+	private List<FechamentoDiarioDivida> historicoDividas;
 	
-	@OneToMany(mappedBy = "historicoConsolidadoDivida")
-	private List<HistoricoFechamentoDiarioResumoConsolidadoDivida> historicoResumoConsolidadoDividas;
+	@OneToMany(mappedBy = "fechamentoDiarioConsolidadoDivida")
+	private List<FechamentoDiarioResumoConsolidadoDivida> resumoConsolidadoDividas;
 	
 	public Long getId() {
 		return id;
@@ -61,22 +61,22 @@ public class HistoricoFechamentoDiarioConsolidadoDivida implements Serializable{
 		this.fechamentoDiario = fechamentoDiario;
 	}
 
-	public List<HistoricoFechamentoDiarioDivida> getHistoricoDividas() {
+	public List<FechamentoDiarioDivida> getHistoricoDividas() {
 		return historicoDividas;
 	}
 
 	public void setHistoricoDividas(
-			List<HistoricoFechamentoDiarioDivida> historicoDividas) {
+			List<FechamentoDiarioDivida> historicoDividas) {
 		this.historicoDividas = historicoDividas;
 	}
 
-	public List<HistoricoFechamentoDiarioResumoConsolidadoDivida> getHistoricoResumoConsolidadoDividas() {
-		return historicoResumoConsolidadoDividas;
+	public List<FechamentoDiarioResumoConsolidadoDivida> getResumoConsolidadoDividas() {
+		return resumoConsolidadoDividas;
 	}
 
-	public void setHistoricoResumoConsolidadoDividas(
-			List<HistoricoFechamentoDiarioResumoConsolidadoDivida> historicoResumoConsolidadoDividas) {
-		this.historicoResumoConsolidadoDividas = historicoResumoConsolidadoDividas;
+	public void setResumoConsolidadoDividas(
+			List<FechamentoDiarioResumoConsolidadoDivida> resumoConsolidadoDividas) {
+		this.resumoConsolidadoDividas = resumoConsolidadoDividas;
 	}
 
 	public TipoDividaFechamentoDia getTipoDivida() {
