@@ -539,7 +539,8 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		
 		// Características do lançamento:
 		produtoEdicao.setCodigoDeBarras(dto.getCodigoDeBarras());
-		
+		produtoEdicao.setCodigoDeBarraCorporativo(dto.getCodigoDeBarrasCorporativo());
+
 		// Outros:
 		produtoEdicao.setChamadaCapa(dto.getChamadaCapa());
 		produtoEdicao.setPossuiBrinde(dto.isPossuiBrinde());
