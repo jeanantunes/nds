@@ -21,6 +21,7 @@ import br.com.abril.nds.dto.ResumoEncalheFecharDiaDTO;
 import br.com.abril.nds.dto.ResumoFechamentoDiarioConsignadoDTO;
 import br.com.abril.nds.dto.ResumoFechamentoDiarioCotasDTO;
 import br.com.abril.nds.dto.ResumoFechamentoDiarioCotasDTO.TipoResumo;
+import br.com.abril.nds.dto.EncalheFecharDiaDTO;
 import br.com.abril.nds.dto.ResumoReparteFecharDiaDTO;
 import br.com.abril.nds.dto.ResumoSuplementarFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoConfirmacaoDeExpedicaoFecharDiaDTO;
@@ -29,6 +30,7 @@ import br.com.abril.nds.dto.ValidacaoLancamentoFaltaESobraFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoRecebimentoFisicoFecharDiaDTO;
 import br.com.abril.nds.dto.VendaSuplementarDTO;
 import br.com.abril.nds.dto.fechamentodiario.DividaDTO;
+import br.com.abril.nds.dto.fechamentodiario.ResumoEstoqueDTO;
 import br.com.abril.nds.dto.fechamentodiario.SumarizacaoDividasDTO;
 import br.com.abril.nds.dto.fechamentodiario.TipoDivida;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -245,6 +247,22 @@ public class FecharDiaController {
 	}
 	
 	@Post
+	@Path("/obterGridEncalhe")
+	public void obterGridEncalhe(){
+		
+		List<EncalheFecharDiaDTO> listaEncalhe = this.resumoEncalheFecharDiaService.obterDadosGridEncalhe(distribuidor.getDataOperacao());
+		
+		TableModel<CellModelKeyValue<EncalheFecharDiaDTO>> tableModel = new TableModel<CellModelKeyValue<EncalheFecharDiaDTO>>();
+		
+		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaEncalhe));
+		
+		tableModel.setTotal(listaEncalhe.size());
+		
+		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+		
+	}
+	
+	@Post
 	@Path("/obterGridVendaSuplementar")
 	public void obterGridVendaSuplementar(){
 		
@@ -257,6 +275,29 @@ public class FecharDiaController {
 		tableModel.setTotal(listaReparte.size());
 		
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+		
+	}
+	
+	@Get
+	public void exportarResumoReparte(FileType fileType){
+		
+		
+		try {
+		List<ReparteFecharDiaDTO> listaReparte = this.resumoFecharDiaService.obterResumoReparte(distribuidor.getDataOperacao());
+		
+		if(listaReparte.isEmpty()) {
+			throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");
+		}
+		
+			FileExporter.to("resumo_reparte", fileType).inHTTPResponse(this.getNDSFileHeader(), null, null, 
+					listaReparte, ReparteFecharDiaDTO.class, this.httpResponse);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		
+		
+		result.nothing();
 		
 	}
 	
@@ -304,6 +345,8 @@ public class FecharDiaController {
 		result.nothing();
 		
 	}
+	
+	
 	
 	private NDSFileHeader getNDSFileHeader() {
 		
@@ -522,7 +565,16 @@ public class FecharDiaController {
 		
 		result.use(CustomMapJson.class).put("resumo", resumoFechamentoDiarioConsignado).serialize();
 	}
-    
+	
+	@Post
+	public void obterResumoEstoque() {
+		
+		ResumoEstoqueDTO resumoFechamentoDiarioEstoque = 
+			this.fecharDiaService.obterResumoEstoque(getDataFechamento());
+		
+		result.use(CustomMapJson.class).put("resumo", resumoFechamentoDiarioEstoque).serialize();
+	}
+	
     private Date getDataFechamento() {
         return distribuidorService.obter().getDataOperacao();
     }

@@ -21,14 +21,14 @@ import javax.persistence.TemporalType;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 
 @Entity
-@SequenceGenerator(name="HISTORICO_FECHAMENTO_DIARIO_MOVIMENTO_VENDAS_SEQ", initialValue = 1, allocationSize = 1)
+@SequenceGenerator(name="FECHAMENTO_DIARIO_MOVIMENTO_VENDAS_SEQ", initialValue = 1, allocationSize = 1)
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
-public class HistoricoFechamentoDiarioMovimentoVenda implements Serializable {
+public class FechamentoDiarioMovimentoVenda implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 
 	@Id
-    @GeneratedValue(generator = "HISTORICO_FECHAMENTO_DIARIO_MOVIMENTO_VENDAS_SEQ",strategy = GenerationType.TABLE)
+    @GeneratedValue(generator = "FECHAMENTO_DIARIO_MOVIMENTO_VENDAS_SEQ",strategy = GenerationType.TABLE)
     @Column(name = "ID")
     private Long id;	
 

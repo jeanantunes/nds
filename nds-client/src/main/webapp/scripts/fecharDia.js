@@ -109,31 +109,31 @@ var fecharDiaController =  $.extend(true, {
 				align : 'left'
 			}, {
 				display : 'Preço Capa R$',
-				name : 'precoCapa',
+				name : 'precoVenda',
 				width : 60,
 				sortable : true,
 				align : 'right'
 			}, {
 				display : 'Reparte',
-				name : 'reparte',
+				name : 'qtdReparte',
 				width : 50,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Sobra em',
-				name : 'sobras',
+				name : 'qtdSobras',
 				width : 50,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Falta em',
-				name : 'faltaEm',
+				name : 'qtdFaltas',
 				width : 50,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Transf.',
-				name : 'transf',
+				name : 'qtdTransferido',
 				width : 50,
 				sortable : true,
 				align : 'center'
@@ -145,7 +145,7 @@ var fecharDiaController =  $.extend(true, {
 				align : 'center'
 			}, {
 				display : 'Distribuido',
-				name : 'distribuido',
+				name : 'qtdDistribuido',
 				width : 50,
 				sortable : true,
 				align : 'center'
@@ -373,6 +373,62 @@ var fecharDiaController =  $.extend(true, {
             width : 330,
             height : 220
         });
+        
+        $(".recolhimentoDialogGrid").flexigrid({
+        	preProcess: fecharDiaController.executarPreProcessamentoEncalhe,
+			dataType : 'json',
+			colModel : [ {
+				display : 'Código',
+				name : 'codigo',
+				width : 80,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Produto',
+				name : 'nomeProduto',
+				width : 200,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Edição',
+				name : 'numeroEdicao',
+				width : 100,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Preço Capa R$',
+				name : 'precoVenda',
+				width : 100,
+				sortable : true,
+				align : 'right'
+			}, {
+				display : 'Qtde',
+				name : 'qtde',
+				width : 90,
+				sortable : true,
+				align : 'center'
+			}, {
+				display : 'Venda Encalhe',
+				name : 'venda',
+				width : 100,
+				sortable : true,
+				align : 'center'
+			}, {
+				display : 'Diferença',
+				name : 'diferenca',
+				width : 70,
+				sortable : true,
+				align : 'center'
+			}],
+			sortname : "codigo",
+			sortorder : "asc",
+			usepager : true,
+			useRp : true,
+			rp : 15,
+			showTableToggleBtn : true,
+			width : 850,
+			height : 255
+		});
 	},
 	
 	executarPreProcessamentoRecebimentoFisicoNaoConfirmado : function(resultado){
@@ -467,6 +523,26 @@ var fecharDiaController =  $.extend(true, {
 		return resultado;
 	},
 	
+	executarPreProcessamentoEncalhe : function(resultado){
+		
+		if (resultado.mensagens) {
+
+			exibirMensagem(
+				resultado.mensagens.tipoMensagem, 
+				resultado.mensagens.listaMensagens
+			);
+			
+			$(".dialog-recolhimentos", fecharDiaController.workspace).hide();
+
+			return resultado;
+		}
+		
+		$("#dialog-recolhimentos", fecharDiaController.workspace).show();
+		
+		return resultado;
+		
+	},
+	
 	popup : function() {	
 		
 		$( "#dialog-novo", fecharDiaController.workspace ).dialog({
@@ -515,7 +591,15 @@ var fecharDiaController =  $.extend(true, {
 		      
 	},
 	
-	popup_recolhimento : function(){
+	popup_encalhe : function(){
+		
+		$(".recolhimentoDialogGrid", fecharDiaController.workspace).flexOptions({
+			url: contextPath + "/administracao/fecharDia/obterGridEncalhe",
+			dataType : 'json',
+			params: []
+		});
+		
+		$(".recolhimentoDialogGrid", fecharDiaController.workspace).flexReload();
 		
 		$( "#dialog-recolhimentos", fecharDiaController.workspace ).dialog({
 			resizable: false,
@@ -689,6 +773,7 @@ var fecharDiaController =  $.extend(true, {
 					fecharDiaController.iniciarResumoSuplementar();
 					fecharDiaController.iniciarResumoDividas();
 					fecharDiaController.iniciarResumoCotas();
+					fecharDiaController.iniciarResumoEstoque();
 					fecharDiaController.iniciarResumoConsignado();
 				}
 			},
@@ -957,6 +1042,16 @@ var fecharDiaController =  $.extend(true, {
 		);
 	},
 	
+	iniciarResumoEstoque : function() {
+		$.postJSON(
+			contextPath + "/administracao/fecharDia/obterResumoEstoque",
+			null,
+			function(result) {
+				fecharDiaController.processarResumoEstoque(result.resumo);
+			}
+		);
+	},
+
 	processarResumoDividasReceber : function(itens) {
 	    var tabela =  $('#tabela_dividas_receber', fecharDiaController.workspace);
 	    fecharDiaController.processarResumoDividas(itens, tabela);
@@ -1006,7 +1101,28 @@ var fecharDiaController =  $.extend(true, {
 
         $(tabela).append((fecharDiaController.gerarLinhaBrancoResumoConsignado()));
     },
-	
+    
+    processarResumoEstoque : function(resumo) {
+    	
+    	$("#produtolancamento",fecharDiaController.workspace).html(resumo.resumoEstoqueProduto.quantidadeLancamento);
+    	$("#produtoJuramentado",fecharDiaController.workspace).html(resumo.resumoEstoqueProduto.quantidadeJuramentado);
+    	$("#produtoSuplenetar",fecharDiaController.workspace).html(resumo.resumoEstoqueProduto.quantidadeSuplementar);
+    	$("#produtoRecolhimento",fecharDiaController.workspace).html(resumo.resumoEstoqueProduto.quantidadeRecolhimento);
+    	$("#produtoDanificados",fecharDiaController.workspace).html(resumo.resumoEstoqueProduto.quantidadeDanificados);
+    	
+    	$("#exemplarlancamento",fecharDiaController.workspace).html(resumo.resumoEstoqueExemplar.quantidadeLancamento);
+    	$("#exemplarJuramentado",fecharDiaController.workspace).html(resumo.resumoEstoqueExemplar.quantidadeJuramentado);
+    	$("#exemplarSuplenetar",fecharDiaController.workspacer).html(resumo.resumoEstoqueExemplar.quantidadeSuplementar);
+    	$("#exemplarRecolhimento",fecharDiaController.workspace).html(resumo.resumoEstoqueExemplar.quantidadeRecolhimento);
+    	$("#exemplarDanificados",fecharDiaController.workspace).html(resumo.resumoEstoqueExemplar.quantidadeDanificados);
+    	
+    	$("#valorlancamento",fecharDiaController.workspace).html(resumo.valorResumoEstoque.valorLancamentoFormatado);
+    	$("#valorJuramentado",fecharDiaController.workspace).html(resumo.valorResumoEstoque.valorJuramentadoFormatado);
+    	$("#valorSuplenetar",fecharDiaController.workspace).html(resumo.valorResumoEstoque.valorSuplementarFormatado);
+    	$("#valorRecolhimento",fecharDiaController.workspace).html(resumo.valorResumoEstoque.valorRecolhimentoFormatado);
+    	$("#valorDanificados",fecharDiaController.workspace).html(resumo.valorResumoEstoque.valorDanificadosFormatado);
+    },
+    
 	gerarLinhaResumoDividas : function(item) {
 		var linhaResumo = "<tr>";
 		linhaResumo += "<td width=\"120\" align=\"left\" style=\"border-bottom:1px solid #ccc;\">" + item.descricaoTipoCobranca + "</td>";

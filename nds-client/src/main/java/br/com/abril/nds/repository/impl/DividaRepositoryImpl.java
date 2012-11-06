@@ -2,21 +2,26 @@ package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.Transformers;
-import org.hibernate.type.LongType;
 import org.hibernate.type.StandardBasicTypes;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.GeraDividaDTO;
 import br.com.abril.nds.dto.StatusDividaDTO;
+import br.com.abril.nds.dto.fechamentodiario.SumarizacaoDividasDTO;
+import br.com.abril.nds.dto.fechamentodiario.TipoDivida;
 import br.com.abril.nds.dto.filtro.FiltroCotaInadimplenteDTO;
 import br.com.abril.nds.dto.filtro.FiltroDividaGeradaDTO;
 import br.com.abril.nds.dto.filtro.FiltroDividaGeradaDTO.ColunaOrdenacao;
@@ -26,7 +31,8 @@ import br.com.abril.nds.model.cadastro.TipoRoteiro;
 import br.com.abril.nds.model.financeiro.Divida;
 import br.com.abril.nds.model.financeiro.StatusDivida;
 import br.com.abril.nds.repository.DividaRepository;
-import br.com.caelum.vraptor.scan.StandaloneClasspathResolver;
+import br.com.abril.nds.vo.PaginacaoVO;
+
 
 @Repository
 public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> implements
@@ -636,4 +642,105 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 		
 		return (BigDecimal) query.uniqueResult();
 	}
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Map<TipoCobranca, SumarizacaoDividasDTO> sumarizacaoDividasReceberEm(Date data) {
+	    Objects.requireNonNull(data, "Data para sumarização das dívidas a receber EM não pode ser nula!");
+	    return sumarizarDividas(data, TipoDivida.DIVIDA_A_RECEBER);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+	@Override
+    public Map<TipoCobranca, SumarizacaoDividasDTO> sumarizacaoDividasVencerApos(Date data) {
+	    Objects.requireNonNull(data, "Data para sumarização das dívidas à vencer APÓS não pode ser nula!");
+        return sumarizarDividas(data, TipoDivida.DIVIDA_A_VENCER);
+    }
+
+    /**
+     * Sumariza as dívidas de acordo com o tipo de dívida, para dívidas à
+     * receber são consideradas as dívidas com vencimento na data base, no
+     * caso de dívidas à vencer são consideradas as dívidas com vencimento após
+     * a data base
+     * 
+     * @param data
+     *            data base para sumarização das dívidas
+     * @param tipoDivida
+     *            tipo da dívida para sumarização
+     * @return Mapa com as dívidas sumarizadas pelo tipo de cobrança
+     */
+	@SuppressWarnings("unchecked")
+	private Map<TipoCobranca, SumarizacaoDividasDTO> sumarizarDividas(Date data, TipoDivida tipoDivida) {
+	    
+	    StringBuilder hql = new StringBuilder("select new map(cobranca.tipoCobranca as tipoCobranca, ");
+	    hql.append("sum(divida.valor) as total, ");
+	    hql.append("sum(case when cobranca.statusCobranca = :statusCobrancaPago then divida.valor else 0 end) as pago, ");
+	    hql.append("sum(case when cobranca.statusCobranca = :statusCobrancaNaoPago then divida.valor else 0 end) as inadimplencia) ");
+	    hql.append("from Cobranca cobranca ");
+	    hql.append("where cobranca.dataVencimento ");
+	    hql.append(TipoDivida.DIVIDA_A_RECEBER.equals(tipoDivida) ? " = " : " > ");
+	    hql.append(" :data ");
+	    hql.append("group by cobranca.tipoCobranca");
+	    
+	    Query query = getSession().createQuery(hql.toString());
+	    query.setParameter("data", data);
+	    query.setParameter("statusCobrancaPago", StatusCobranca.PAGO);
+	    query.setParameter("statusCobrancaNaoPago", StatusCobranca.NAO_PAGO);
+	    
+	    List<Map<String, Object>> maps = query.list();
+	    Map<TipoCobranca, SumarizacaoDividasDTO> sumarizacoes = new EnumMap<>(TipoCobranca.class);
+	    
+	    for (Map<String, Object> map : maps) {
+	        
+	        TipoCobranca tipoCobranca = (TipoCobranca) map.get("tipoCobranca");
+	        BigDecimal total = (BigDecimal) map.get("total");
+	        BigDecimal pago = (BigDecimal) map.get("pago");
+	        BigDecimal inadimplencia = (BigDecimal) map.get("inadimplencia");
+	        
+	        SumarizacaoDividasDTO sumarizacao = new SumarizacaoDividasDTO(data, tipoDivida, tipoCobranca, total, pago, inadimplencia);
+	        sumarizacoes.put(tipoCobranca, sumarizacao);
+	    }
+	    
+	    return sumarizacoes;
+	}
+    
+	/**
+     * {@inheritDoc}
+     */
+	@Override
+    public List<Divida> obterDividasReceberEm(Date data, PaginacaoVO paginacao) {
+        //TODO: implementar
+        return new ArrayList<>();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+	@Override
+    public List<Divida> obterDividasVencerApos(Date data, PaginacaoVO paginacao) {
+        //TODO: implementar
+        return new ArrayList<>();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+	@Override
+    public int contarDividasReceberEm(Date data) {
+	    //TODO: implementar
+        return 0;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+	@Override
+    public int contarDividasVencerApos(Date data) {
+	    //TODO: implementar
+        return 0;
+    }
 }

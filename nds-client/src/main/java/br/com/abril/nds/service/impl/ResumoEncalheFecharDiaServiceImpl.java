@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.dto.EncalheFecharDiaDTO;
 import br.com.abril.nds.dto.ReparteFecharDiaDTO;
 import br.com.abril.nds.dto.ResumoEncalheFecharDiaDTO;
 import br.com.abril.nds.repository.ResumoEncalheFecharDiaRepository;
@@ -56,6 +57,12 @@ public class ResumoEncalheFecharDiaServiceImpl implements ResumoEncalheFecharDia
 		dto.setVenda(venda);		
 		 
 		return dto;
+	}
+
+	@Override
+	@Transactional
+	public List<EncalheFecharDiaDTO> obterDadosGridEncalhe(Date dataOperacao) {
+		return this.resumoEncalheFecharDiaRepository.obterDadosGridEncalhe(dataOperacao);
 	}
 
 }
