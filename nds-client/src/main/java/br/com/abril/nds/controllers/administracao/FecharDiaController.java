@@ -1,7 +1,6 @@
 package br.com.abril.nds.controllers.administracao;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -15,15 +14,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.DetalheCotaFechamentoDiarioVO;
+import br.com.abril.nds.dto.EncalheFecharDiaDTO;
 import br.com.abril.nds.dto.FecharDiaDTO;
 import br.com.abril.nds.dto.ReparteFecharDiaDTO;
 import br.com.abril.nds.dto.ResumoEncalheFecharDiaDTO;
 import br.com.abril.nds.dto.ResumoFechamentoDiarioConsignadoDTO;
 import br.com.abril.nds.dto.ResumoFechamentoDiarioCotasDTO;
 import br.com.abril.nds.dto.ResumoFechamentoDiarioCotasDTO.TipoResumo;
-import br.com.abril.nds.dto.EncalheFecharDiaDTO;
 import br.com.abril.nds.dto.ResumoReparteFecharDiaDTO;
 import br.com.abril.nds.dto.ResumoSuplementarFecharDiaDTO;
+import br.com.abril.nds.dto.SuplementarFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoConfirmacaoDeExpedicaoFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoControleDeAprovacaoFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoLancamentoFaltaESobraFecharDiaDTO;
@@ -41,7 +41,6 @@ import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.financeiro.Divida;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
-import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.serialization.custom.CustomMapJson;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.CotaService;
@@ -262,6 +261,22 @@ public class FecharDiaController {
 	}
 	
 	@Post
+	@Path("/obterGridSuplementar")
+	public void obterGridSuplementar(){
+		
+		List<SuplementarFecharDiaDTO> listaSuplementar = this.resumoSuplementarFecharDiaService.obterDadosGridSuplementar();
+		
+		TableModel<CellModelKeyValue<SuplementarFecharDiaDTO>> tableModel = new TableModel<CellModelKeyValue<SuplementarFecharDiaDTO>>();
+		
+		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaSuplementar));
+		
+		tableModel.setTotal(listaSuplementar.size());
+		
+		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+		
+	}
+	
+	@Post
 	@Path("/obterGridVendaSuplementar")
 	public void obterGridVendaSuplementar(){
 		
@@ -301,6 +316,54 @@ public class FecharDiaController {
 	}
 	
 	@Get
+	public void exportarResumoEncalhe(FileType fileType){
+		
+		
+		try {
+		
+		List<EncalheFecharDiaDTO> listaEncalhe = this.resumoEncalheFecharDiaService.obterDadosGridEncalhe(distribuidor.getDataOperacao());
+		
+		if(listaEncalhe.isEmpty()) {
+			throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");
+		}
+		
+			FileExporter.to("resumo_reparte", fileType).inHTTPResponse(this.getNDSFileHeader(), null, null, 
+					listaEncalhe, EncalheFecharDiaDTO.class, this.httpResponse);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		
+		
+		result.nothing();
+		
+	}
+	
+	@Get
+	public void exportarResumoSuplementar(FileType fileType){
+		
+		
+		try {
+		
+		List<SuplementarFecharDiaDTO> listaSuplementar = this.resumoSuplementarFecharDiaService.obterDadosGridSuplementar();
+		
+		if(listaSuplementar.isEmpty()) {
+			throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");
+		}
+		
+			FileExporter.to("resumo_reparte", fileType).inHTTPResponse(this.getNDSFileHeader(), null, null, 
+					listaSuplementar, SuplementarFecharDiaDTO.class, this.httpResponse);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		
+		
+		result.nothing();
+		
+	}
+	
+	@Get
 	public void exportarVendaSuplemntar(FileType fileType){		
 		try {
 			
@@ -321,6 +384,8 @@ public class FecharDiaController {
 		result.nothing();
 		
 	}
+	
+	
 	
 	@Get
 	public void exportarRecebimentoFisico(FileType fileType){
