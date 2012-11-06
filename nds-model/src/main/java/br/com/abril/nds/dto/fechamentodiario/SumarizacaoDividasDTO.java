@@ -30,10 +30,6 @@ public class SumarizacaoDividasDTO implements Serializable {
     private BigDecimal inadimplencia = BigDecimal.ZERO;
 
     
-    public SumarizacaoDividasDTO() {
-        // TODO Auto-generated constructor stub
-    }
-    
     public SumarizacaoDividasDTO(Date data, TipoDivida tipoSumarizacao, TipoCobranca tipoCobranca) {
         this.data = data;
         this.tipoSumarizacao = tipoSumarizacao;

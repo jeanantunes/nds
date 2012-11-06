@@ -3,6 +3,7 @@ package br.com.abril.nds.repository.impl;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -644,17 +645,43 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
     /**
      * {@inheritDoc}
      */
-	@SuppressWarnings("unchecked")
     @Override
     public Map<TipoCobranca, SumarizacaoDividasDTO> sumarizacaoDividasReceberEm(Date data) {
 	    Objects.requireNonNull(data, "Data para sumarização das dívidas a receber EM não pode ser nula!");
-	    
+	    return sumarizarDividas(data, TipoDivida.DIVIDA_A_RECEBER);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+	@Override
+    public Map<TipoCobranca, SumarizacaoDividasDTO> sumarizacaoDividasVencerApos(Date data) {
+	    Objects.requireNonNull(data, "Data para sumarização das dívidas à vencer APÓS não pode ser nula!");
+        return sumarizarDividas(data, TipoDivida.DIVIDA_A_VENCER);
+    }
+
+    /**
+     * Sumariza as dívidas de acordo com o tipo de dívida, para dívidas à
+     * receber são consideradas as dívidas com vencimento na data recebida, no
+     * caso de dívidas à vencer são consideradas as dívidas com vencimento após
+     * a data recebida
+     * 
+     * @param data
+     *            data base para sumarização das dívidas
+     * @param tipoDivida
+     *            tipo da dívida para sumarização
+     * @return Mapa com as dívidas sumarizadas pelo tipo de cobrança
+     */
+	@SuppressWarnings("unchecked")
+	private Map<TipoCobranca, SumarizacaoDividasDTO> sumarizarDividas(Date data, TipoDivida tipoDivida) {
 	    StringBuilder hql = new StringBuilder("select new map(cobranca.tipoCobranca as tipoCobranca, ");
 	    hql.append("sum(divida.valor) as total, ");
 	    hql.append("sum(case when cobranca.statusCobranca = :statusCobrancaPago then divida.valor else 0 end) as pago, ");
 	    hql.append("sum(case when cobranca.statusCobranca = :statusCobrancaNaoPago then divida.valor else 0 end) as inadimplencia) ");
 	    hql.append("from Cobranca cobranca ");
-	    hql.append("where cobranca.dataVencimento = :data ");
+	    hql.append("where cobranca.dataVencimento ");
+	    hql.append(TipoDivida.DIVIDA_A_RECEBER.equals(tipoDivida) ? " = " : " > ");
+	    hql.append(" :data ");
 	    hql.append("group by cobranca.tipoCobranca");
 	    
 	    Query query = getSession().createQuery(hql.toString());
@@ -663,30 +690,21 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 	    query.setParameter("statusCobrancaNaoPago", StatusCobranca.NAO_PAGO);
 	    
 	    List<Map<String, Object>> maps = query.list();
-	    Map<TipoCobranca, SumarizacaoDividasDTO> sumarizacoes = new HashMap<>(maps.size());
+	    Map<TipoCobranca, SumarizacaoDividasDTO> sumarizacoes = new EnumMap<>(TipoCobranca.class);
 	    for (Map<String, Object> map : maps) {
 	        TipoCobranca tipoCobranca = (TipoCobranca) map.get("tipoCobranca");
 	        BigDecimal total = (BigDecimal) map.get("total");
 	        BigDecimal pago = (BigDecimal) map.get("pago");
 	        BigDecimal inadimplencia = (BigDecimal) map.get("inadimplencia");
-            SumarizacaoDividasDTO sumarizacao = new SumarizacaoDividasDTO(data,
-                    TipoDivida.DIVIDA_A_RECEBER, tipoCobranca, total, pago,
-                    inadimplencia);
-            sumarizacoes.put(tipoCobranca, sumarizacao);
+	        SumarizacaoDividasDTO sumarizacao = new SumarizacaoDividasDTO(data,
+	                tipoDivida, tipoCobranca, total, pago,
+	                inadimplencia);
+	        sumarizacoes.put(tipoCobranca, sumarizacao);
 	    }
-        return sumarizacoes;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-	@Override
-    public Map<TipoCobranca, SumarizacaoDividasDTO> sumarizacaoDividasVencerApos(Date data) {
-        //TODO: implementar
-        return null;
-    }
-
-    /**
+	    return sumarizacoes;
+	}
+    
+	/**
      * {@inheritDoc}
      */
 	@Override
@@ -709,7 +727,7 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
      */
 	@Override
     public int contarDividasReceberEm(Date data) {
-        // TODO Auto-generated method stub
+	    //TODO: implementar
         return 0;
     }
 
@@ -718,7 +736,7 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
      */
 	@Override
     public int contarDividasVencerApos(Date data) {
-        // TODO Auto-generated method stub
+	    //TODO: implementar
         return 0;
     }
 }

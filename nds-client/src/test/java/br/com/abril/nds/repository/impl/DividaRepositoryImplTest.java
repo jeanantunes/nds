@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import br.com.abril.nds.dto.GeraDividaDTO;
 import br.com.abril.nds.dto.StatusDividaDTO;
 import br.com.abril.nds.dto.fechamentodiario.SumarizacaoDividasDTO;
+import br.com.abril.nds.dto.fechamentodiario.TipoDivida;
 import br.com.abril.nds.dto.filtro.FiltroCotaInadimplenteDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaInadimplenteDTO.ColunaOrdenacao;
 import br.com.abril.nds.dto.filtro.FiltroDividaGeradaDTO;
@@ -52,12 +53,16 @@ import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
+import br.com.abril.nds.model.financeiro.BaixaAutomatica;
+import br.com.abril.nds.model.financeiro.BaixaManual;
 import br.com.abril.nds.model.financeiro.Boleto;
+import br.com.abril.nds.model.financeiro.CobrancaDeposito;
 import br.com.abril.nds.model.financeiro.CobrancaDinheiro;
 import br.com.abril.nds.model.financeiro.ConsolidadoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.Divida;
 import br.com.abril.nds.model.financeiro.HistoricoAcumuloDivida;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
+import br.com.abril.nds.model.financeiro.StatusBaixa;
 import br.com.abril.nds.model.financeiro.StatusDivida;
 import br.com.abril.nds.model.financeiro.StatusInadimplencia;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
@@ -96,6 +101,12 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
     private Usuario usuarioJoao;
 
     private Banco bancoHSBC;
+
+    private Cota cotaOrlando;
+
+    private Cota cotaLuis;
+
+    private Cota cotaMariana;
 	
 	@Before
 	public void setUp() {
@@ -884,113 +895,108 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 		Assert.assertNotNull(this.dividaRepository.obterDividaPorIdConsolidado(consolidado.getId()));
 	}
 	
-
 	
-	@Test
-	public void testSumarizacaoDividasReceberEm() {
-	    criarDadosSumarizacaoDividas();
-	    
-	    Map<TipoCobranca, SumarizacaoDividasDTO> sumarizacao = dividaRepository.sumarizacaoDividasReceberEm(Fixture.criarData(8, Calendar.NOVEMBER, 2012));
-	    Assert.assertNotNull(sumarizacao);
-	    Assert.assertEquals(3, sumarizacao.size());
-	}
+    @Test
+    public void testSumarizacaoDividasReceberEm() {
+        Date verificacao = Fixture.criarData(6, Calendar.NOVEMBER, 2012);
+        Date vencimento = Fixture.criarData(6, Calendar.NOVEMBER, 2012);
+        criarDadosSumarizacaoDividas(vencimento);
 
-    private void criarDadosSumarizacaoDividas() {
-        PoliticaCobranca politicaCobrancaDinheiro = Fixture
-	                .criarPoliticaCobranca(distribuidor, formaDinheiro, true, false,
-	                        true, 3, "Assunto", "Mensagem", true,
-	                        FormaEmissao.INDIVIDUAL_BOX);
-	     distribuidor.getPoliticasCobranca().add(politicaCobrancaDinheiro);
-	     save(politicaCobrancaDinheiro);
-	        
-	     PoliticaCobranca politicaCobrancaDeposito = Fixture
-	                .criarPoliticaCobranca(distribuidor, formaDeposito, true, false,
-	                        true, 3, "Assunto", "Mensagem", true,
-	                        FormaEmissao.INDIVIDUAL_BOX);
-	     distribuidor.getPoliticasCobranca().add(politicaCobrancaDeposito);
-	     save(politicaCobrancaDeposito);
-	     
-	     PessoaFisica jose = Fixture.pessoaFisica("12345678901",
-	                "sys.discover@gmail.com", "Jose da Silva");
-	     cotaJose = Fixture.cota(456, jose, SituacaoCadastro.ATIVO, box1);
-	     save(jose, cotaJose);
+        Map<TipoCobranca, SumarizacaoDividasDTO> sumarizacao = dividaRepository.sumarizacaoDividasReceberEm(verificacao);
 
-	     ParametroCobrancaCota  parametroCobrancaJose = Fixture.parametroCobrancaCota(Collections.singleton(formaDinheiro),
-	                3, null, cotaJose, 1, false, BigDecimal.valueOf(100), TipoCota.CONSIGNADO);
-	     cotaJose.setParametroCobranca(parametroCobrancaJose);
-	     save(parametroCobrancaJose);	     
-	     
-	     PessoaFisica maria = Fixture.pessoaFisica("12345678902",
-	                "sys.discover@gmail.com", "Maria da Silva");
-	     cotaMaria = Fixture.cota(789, maria, SituacaoCadastro.ATIVO, box1);
-	     save(maria, cotaMaria);
-	     
-	     ParametroCobrancaCota  parametroCobrancaMaria = Fixture.parametroCobrancaCota(Collections.singleton(formaDeposito),
-                 3, null, cotaMaria, 1, false, BigDecimal.valueOf(100), TipoCota.CONSIGNADO);
-	     cotaMaria.setParametroCobranca(parametroCobrancaMaria);
-	     save(parametroCobrancaMaria);   
-	     
-	     MovimentoFinanceiroCota mfcManoel = Fixture.movimentoFinanceiroCota(cotaManoel,
-	                tipoMovimentoFinanceitoDebito, usuarioJoao,
-	                BigDecimal.valueOf(452), null, StatusAprovacao.APROVADO,
-	                Fixture.criarData(5, Calendar.NOVEMBER, 2012), true);
-	     save(mfcManoel);
+        Assert.assertNotNull(sumarizacao);
+        Assert.assertEquals(3, sumarizacao.size());
         
-	     ConsolidadoFinanceiroCota consolidadoManoel = Fixture
-                .consolidadoFinanceiroCota(Arrays.asList(mfcManoel), cotaManoel, Fixture.criarData(5, Calendar.NOVEMBER, 2012),
-                        BigDecimal.ZERO, BigDecimal.ZERO,
-                        BigDecimal.ZERO, BigDecimal.valueOf(452),
-                        BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO);
-        save(consolidadoManoel);
-	        
-        Divida dividaManoel = Fixture.divida(consolidadoManoel, cotaManoel,
-                Fixture.criarData(5, Calendar.NOVEMBER, 2012), usuarioJoao,
-                StatusDivida.EM_ABERTO, BigDecimal.valueOf(452), false);
-        save(dividaManoel);   
-	    
-        Boleto boletoManoel = Fixture
-                .boleto("5557884985446", "7", "55578849854467",
-                        Fixture.criarData(5, Calendar.NOVEMBER, 2012),
-                        Fixture.criarData(8, Calendar.NOVEMBER, 2012), null,
-                        BigDecimal.ZERO, BigDecimal.valueOf(452), "1", "1",
-                        StatusCobranca.NAO_PAGO, cotaManoel, bancoHSBC,
-                        dividaManoel, 0);
-        save(boletoManoel);
+        SumarizacaoDividasDTO sumarizacaoBoleto = sumarizacao.get(TipoCobranca.BOLETO);
+        Assert.assertNotNull(sumarizacaoBoleto);
+        Assert.assertEquals(TipoCobranca.BOLETO, sumarizacaoBoleto.getTipoCobranca());
+        Assert.assertEquals(vencimento, sumarizacaoBoleto.getData());
+        Assert.assertEquals(TipoDivida.DIVIDA_A_RECEBER, sumarizacaoBoleto.getTipoSumarizacao());
+        Assert.assertEquals(BigDecimal.valueOf(1375.5).setScale(2), sumarizacaoBoleto.getTotal());
+        Assert.assertEquals(BigDecimal.valueOf(923.5).setScale(2), sumarizacaoBoleto.getValorPago());
+        Assert.assertEquals(BigDecimal.valueOf(452).setScale(2), sumarizacaoBoleto.getInadimplencia());
         
-        MovimentoFinanceiroCota mfcJose = Fixture.movimentoFinanceiroCota(cotaJose,
-                tipoMovimentoFinanceitoDebito, usuarioJoao,
-                BigDecimal.valueOf(500), null, StatusAprovacao.APROVADO,
-                Fixture.criarData(5, Calendar.NOVEMBER, 2012), true);
-        save(mfcJose);
+        SumarizacaoDividasDTO sumarizacaoDeposito = sumarizacao.get(TipoCobranca.DEPOSITO);
+        Assert.assertNotNull(sumarizacaoDeposito);
+        Assert.assertEquals(TipoCobranca.DEPOSITO, sumarizacaoDeposito.getTipoCobranca());
+        Assert.assertEquals(vencimento, sumarizacaoDeposito.getData());
+        Assert.assertEquals(TipoDivida.DIVIDA_A_RECEBER, sumarizacaoDeposito.getTipoSumarizacao());
+        Assert.assertEquals(BigDecimal.valueOf(1371.56).setScale(2), sumarizacaoDeposito.getTotal());
+        Assert.assertEquals(BigDecimal.valueOf(621.56).setScale(2), sumarizacaoDeposito.getValorPago());
+        Assert.assertEquals(BigDecimal.valueOf(750).setScale(2), sumarizacaoDeposito.getInadimplencia());
         
-        ConsolidadoFinanceiroCota consolidadoJose = Fixture
-                .consolidadoFinanceiroCota(Arrays.asList(mfcJose), cotaJose, Fixture.criarData(5, Calendar.NOVEMBER, 2012),
-                        BigDecimal.ZERO, BigDecimal.ZERO,
-                        BigDecimal.ZERO, BigDecimal.valueOf(500),
-                        BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO);
-        save(consolidadoJose);
-        
-        Divida dividaJose = Fixture.divida(consolidadoJose, cotaJose,
-                Fixture.criarData(5, Calendar.NOVEMBER, 2012), usuarioJoao,
-                StatusDivida.EM_ABERTO, BigDecimal.valueOf(500), false);
-        save(dividaJose); 
-
-        CobrancaDinheiro cobrancaJose = Fixture.cobrancaDinheiro(
-                "5557884985447", Fixture.criarData(5, Calendar.NOVEMBER, 2012),
-                Fixture.criarData(8, Calendar.NOVEMBER, 2012), null,
-                BigDecimal.ZERO, BigDecimal.valueOf(500),
-                TipoBaixaCobranca.MANUAL.name(), null, StatusCobranca.NAO_PAGO,
-                cotaJose, null, dividaJose, 0);
-        save(cobrancaJose);
-        
-        MovimentoFinanceiroCota mfcMaria = Fixture.movimentoFinanceiroCota(cotaMaria,
-                tipoMovimentoFinanceitoDebito, usuarioJoao,
-                BigDecimal.valueOf(750), null, StatusAprovacao.APROVADO,
-                Fixture.criarData(5, Calendar.NOVEMBER, 2012), true);
-        
-        save(mfcMaria);
-	     
+        SumarizacaoDividasDTO sumarizacaoDinheiro = sumarizacao.get(TipoCobranca.DINHEIRO);
+        Assert.assertNotNull(sumarizacaoDinheiro);
+        Assert.assertEquals(TipoCobranca.DINHEIRO, sumarizacaoDinheiro.getTipoCobranca());
+        Assert.assertEquals(vencimento, sumarizacaoDinheiro.getData());
+        Assert.assertEquals(TipoDivida.DIVIDA_A_RECEBER, sumarizacaoDinheiro.getTipoSumarizacao());
+        Assert.assertEquals(BigDecimal.valueOf(989.32).setScale(2), sumarizacaoDinheiro.getTotal());
+        Assert.assertEquals(BigDecimal.valueOf(489.32).setScale(2), sumarizacaoDinheiro.getValorPago());
+        Assert.assertEquals(BigDecimal.valueOf(500).setScale(2), sumarizacaoDinheiro.getInadimplencia());
     }
+    
+    @Test
+    public void testSumarizacaoDividasReceberEmSemDividas() {
+        Date verificacao = Fixture.criarData(6, Calendar.NOVEMBER, 2012);
+        Date vencimento = Fixture.criarData(5, Calendar.NOVEMBER, 2012);
+        criarDadosSumarizacaoDividas(vencimento);
+
+        Map<TipoCobranca, SumarizacaoDividasDTO> sumarizacao = dividaRepository.sumarizacaoDividasReceberEm(verificacao);
+
+        Assert.assertNotNull(sumarizacao);
+        Assert.assertTrue(sumarizacao.isEmpty());
+    }
+    
+    @Test
+    public void testSumarizacaoDividasVencerApos() {
+        Date verificacao = Fixture.criarData(6, Calendar.NOVEMBER, 2012);
+        Date vencimento = Fixture.criarData(8, Calendar.NOVEMBER, 2012);
+        criarDadosSumarizacaoDividas(vencimento);
+        
+        Map<TipoCobranca, SumarizacaoDividasDTO> sumarizacao = dividaRepository.sumarizacaoDividasVencerApos(verificacao);
+        Assert.assertNotNull(sumarizacao);
+        Assert.assertEquals(3, sumarizacao.size());
+        
+        SumarizacaoDividasDTO sumarizacaoBoleto = sumarizacao.get(TipoCobranca.BOLETO);
+        Assert.assertNotNull(sumarizacaoBoleto);
+        Assert.assertEquals(TipoCobranca.BOLETO, sumarizacaoBoleto.getTipoCobranca());
+        Assert.assertEquals(verificacao, sumarizacaoBoleto.getData());
+        Assert.assertEquals(TipoDivida.DIVIDA_A_VENCER, sumarizacaoBoleto.getTipoSumarizacao());
+        Assert.assertEquals(BigDecimal.valueOf(1375.5).setScale(2), sumarizacaoBoleto.getTotal());
+        Assert.assertEquals(BigDecimal.valueOf(923.5).setScale(2), sumarizacaoBoleto.getValorPago());
+        Assert.assertEquals(BigDecimal.valueOf(452).setScale(2), sumarizacaoBoleto.getInadimplencia());
+        
+        SumarizacaoDividasDTO sumarizacaoDeposito = sumarizacao.get(TipoCobranca.DEPOSITO);
+        Assert.assertNotNull(sumarizacaoDeposito);
+        Assert.assertEquals(TipoCobranca.DEPOSITO, sumarizacaoDeposito.getTipoCobranca());
+        Assert.assertEquals(verificacao, sumarizacaoDeposito.getData());
+        Assert.assertEquals(TipoDivida.DIVIDA_A_VENCER, sumarizacaoDeposito.getTipoSumarizacao());
+        Assert.assertEquals(BigDecimal.valueOf(1371.56).setScale(2), sumarizacaoDeposito.getTotal());
+        Assert.assertEquals(BigDecimal.valueOf(621.56).setScale(2), sumarizacaoDeposito.getValorPago());
+        Assert.assertEquals(BigDecimal.valueOf(750).setScale(2), sumarizacaoDeposito.getInadimplencia());
+        
+        SumarizacaoDividasDTO sumarizacaoDinheiro = sumarizacao.get(TipoCobranca.DINHEIRO);
+        Assert.assertNotNull(sumarizacaoDinheiro);
+        Assert.assertEquals(TipoCobranca.DINHEIRO, sumarizacaoDinheiro.getTipoCobranca());
+        Assert.assertEquals(verificacao, sumarizacaoDinheiro.getData());
+        Assert.assertEquals(TipoDivida.DIVIDA_A_VENCER, sumarizacaoDinheiro.getTipoSumarizacao());
+        Assert.assertEquals(BigDecimal.valueOf(989.32).setScale(2), sumarizacaoDinheiro.getTotal());
+        Assert.assertEquals(BigDecimal.valueOf(489.32).setScale(2), sumarizacaoDinheiro.getValorPago());
+        Assert.assertEquals(BigDecimal.valueOf(500).setScale(2), sumarizacaoDinheiro.getInadimplencia());
+    }
+    
+    @Test
+    public void testSumarizacaoDividasVencerAposSemDividas() {
+        Date verificacao = Fixture.criarData(6, Calendar.NOVEMBER, 2012);
+        Date vencimento = Fixture.criarData(6, Calendar.NOVEMBER, 2012);
+        criarDadosSumarizacaoDividas(vencimento);
+        
+        Map<TipoCobranca, SumarizacaoDividasDTO> sumarizacao = dividaRepository.sumarizacaoDividasVencerApos(verificacao);
+        Assert.assertNotNull(sumarizacao);
+        Assert.assertTrue(sumarizacao.isEmpty());
+    }
+
+
 
 	@Test
 	public void obterTotalDividasAbertoCota() {
@@ -1052,5 +1058,184 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 		
 	}
 
+    /**
+     * Gera os dados para testes de sumarização de dívidas à receber e dívidas à
+     * vencer e consulta de dívidas que compõe a sumarização
+     * 
+     * @param vencimento
+     *            data de vencimento das dívidas a serem geradas
+     */
+    private void criarDadosSumarizacaoDividas(Date vencimento) {
+        PoliticaCobranca politicaCobrancaDinheiro = Fixture.criarPoliticaCobranca(distribuidor, formaDinheiro, true,
+                        false, true, 3, "Assunto", "Mensagem", true, FormaEmissao.INDIVIDUAL_BOX);
+        distribuidor.getPoliticasCobranca().add(politicaCobrancaDinheiro);
+        save(politicaCobrancaDinheiro);
+
+        PoliticaCobranca politicaCobrancaDeposito = Fixture.criarPoliticaCobranca(distribuidor, formaDeposito, true,
+                        false, true, 3, "Assunto", "Mensagem", true, FormaEmissao.INDIVIDUAL_BOX);
+        distribuidor.getPoliticasCobranca().add(politicaCobrancaDeposito);
+        save(politicaCobrancaDeposito);
+
+        PessoaFisica jose = Fixture.pessoaFisica("12345678901", "sys.discover@gmail.com", "Jose da Silva");
+        cotaJose = Fixture.cota(456, jose, SituacaoCadastro.ATIVO, box1);
+        save(jose, cotaJose);
+
+        ParametroCobrancaCota parametroCobrancaJose = Fixture.parametroCobrancaCota(Collections.singleton(formaDinheiro), 3,
+                        null, cotaJose, 1, false, BigDecimal.valueOf(100), TipoCota.CONSIGNADO);
+        cotaJose.setParametroCobranca(parametroCobrancaJose);
+        save(parametroCobrancaJose);
+
+        PessoaFisica maria = Fixture.pessoaFisica("12345678902", "sys.discover@gmail.com", "Maria da Silva");
+        cotaMaria = Fixture.cota(789, maria, SituacaoCadastro.ATIVO, box1);
+        save(maria, cotaMaria);
+
+        ParametroCobrancaCota parametroCobrancaMaria = Fixture.parametroCobrancaCota(Collections.singleton(formaDeposito), 3,
+                        null, cotaMaria, 1, false, BigDecimal.valueOf(100), TipoCota.CONSIGNADO);
+        cotaMaria.setParametroCobranca(parametroCobrancaMaria);
+        save(parametroCobrancaMaria);
+
+        PessoaFisica orlando = Fixture.pessoaFisica("99933355544", "sys.discover@gmail.com", "Orlando da Silva");
+        cotaOrlando = Fixture.cota(1011, orlando, SituacaoCadastro.ATIVO, box1);
+        save(orlando, cotaOrlando);
+
+        ParametroCobrancaCota parametroCobrancaOrlando = Fixture.parametroCobrancaCota(Collections.singleton(formaBoleto), 3,
+                        null, cotaOrlando, 1, false, BigDecimal.valueOf(100), TipoCota.CONSIGNADO);
+        cotaOrlando.setParametroCobranca(parametroCobrancaOrlando);
+        save(parametroCobrancaOrlando);
+
+        PessoaFisica luis = Fixture.pessoaFisica("12345678903", "sys.discover@gmail.com", "Luis Silva");
+        cotaLuis = Fixture.cota(1213, luis, SituacaoCadastro.ATIVO, box1);
+        save(luis, cotaLuis);
+
+        ParametroCobrancaCota parametroCobrancaLuis = Fixture.parametroCobrancaCota(Collections.singleton(formaDinheiro), 3,
+                        null, cotaLuis, 1, false, BigDecimal.valueOf(100), TipoCota.CONSIGNADO);
+        cotaLuis.setParametroCobranca(parametroCobrancaLuis);
+        save(parametroCobrancaLuis);
+
+        PessoaFisica mariana = Fixture.pessoaFisica("99933355533", "sys.discover@gmail.com", "Mariana da Silva");
+        cotaMariana = Fixture.cota(1415, mariana, SituacaoCadastro.ATIVO, box1);
+        save(mariana, cotaMariana);
+
+        ParametroCobrancaCota parametroCobrancaMariana = Fixture.parametroCobrancaCota(Collections.singleton(formaDeposito), 3,
+                        null, cotaMariana, 1, false, BigDecimal.valueOf(100), TipoCota.CONSIGNADO);
+        cotaMariana.setParametroCobranca(parametroCobrancaMariana);
+        save(parametroCobrancaMariana);
+
+        MovimentoFinanceiroCota mfcManoel = Fixture.movimentoFinanceiroCota(cotaManoel, tipoMovimentoFinanceitoDebito, usuarioJoao,
+                BigDecimal.valueOf(452), null, StatusAprovacao.APROVADO, Fixture.criarData(5, Calendar.NOVEMBER, 2012), true);
+        save(mfcManoel);
+
+        ConsolidadoFinanceiroCota consolidadoManoel = Fixture.consolidadoFinanceiroCota(Arrays.asList(mfcManoel),
+                        cotaManoel, Fixture.criarData(5, Calendar.NOVEMBER, 2012), BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,
+                        BigDecimal.valueOf(452), BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO);
+        save(consolidadoManoel);
+
+        Divida dividaManoel = Fixture.divida(consolidadoManoel, cotaManoel, Fixture.criarData(5, Calendar.NOVEMBER, 2012), usuarioJoao,
+                StatusDivida.EM_ABERTO, BigDecimal.valueOf(452), false);
+        save(dividaManoel);
+
+        Boleto boletoManoel = Fixture.boleto("5557884985446", "7", "55578849854467", Fixture.criarData(5, Calendar.NOVEMBER, 2012),
+                        vencimento, null, BigDecimal.ZERO, BigDecimal.valueOf(452), "1", "1", StatusCobranca.NAO_PAGO, cotaManoel, bancoHSBC,
+                        dividaManoel, 0);
+        save(boletoManoel);
+
+        MovimentoFinanceiroCota mfcJose = Fixture.movimentoFinanceiroCota(cotaJose, tipoMovimentoFinanceitoDebito, usuarioJoao,
+                BigDecimal.valueOf(500), null, StatusAprovacao.APROVADO, Fixture.criarData(5, Calendar.NOVEMBER, 2012), true);
+        save(mfcJose);
+
+        ConsolidadoFinanceiroCota consolidadoJose = Fixture.consolidadoFinanceiroCota(Arrays.asList(mfcJose), cotaJose,
+                        Fixture.criarData(5, Calendar.NOVEMBER, 2012), BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,
+                        BigDecimal.valueOf(500), BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO);
+        save(consolidadoJose);
+
+        Divida dividaJose = Fixture.divida(consolidadoJose, cotaJose, Fixture.criarData(5, Calendar.NOVEMBER, 2012), usuarioJoao,
+                StatusDivida.EM_ABERTO, BigDecimal.valueOf(500), false);
+        save(dividaJose);
+
+        CobrancaDinheiro cobrancaJose = Fixture.cobrancaDinheiro("5557884985447", Fixture.criarData(5, Calendar.NOVEMBER, 2012),
+                vencimento, null, BigDecimal.ZERO, BigDecimal.valueOf(500), TipoBaixaCobranca.MANUAL.name(), null, StatusCobranca.NAO_PAGO,
+                cotaJose, null, dividaJose, 0);
+        save(cobrancaJose);
+
+        MovimentoFinanceiroCota mfcMaria = Fixture.movimentoFinanceiroCota(cotaMaria, tipoMovimentoFinanceitoDebito, usuarioJoao,
+                BigDecimal.valueOf(750), null, StatusAprovacao.APROVADO, Fixture.criarData(5, Calendar.NOVEMBER, 2012), true);
+        save(mfcMaria);
+
+        ConsolidadoFinanceiroCota consolidadoMaria = Fixture.consolidadoFinanceiroCota(Arrays.asList(mfcMaria), cotaMaria,
+                        Fixture.criarData(5, Calendar.NOVEMBER, 2012), BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,
+                        BigDecimal.valueOf(750), BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO);
+        save(consolidadoMaria);
+
+        Divida dividaMaria = Fixture.divida(consolidadoMaria, cotaMaria, Fixture.criarData(5, Calendar.NOVEMBER, 2012), usuarioJoao,
+                StatusDivida.EM_ABERTO, BigDecimal.valueOf(750), false);
+        save(dividaMaria);
+
+        CobrancaDeposito cobrancaMaria = Fixture.cobrancaDeposito("5557884985448", Fixture.criarData(5, Calendar.NOVEMBER, 2012),
+                vencimento, null, BigDecimal.ZERO, BigDecimal.valueOf(750), TipoBaixaCobranca.MANUAL.name(), null, StatusCobranca.NAO_PAGO,
+                cotaMaria, bancoHSBC, dividaMaria, 0);
+        save(cobrancaMaria);
+
+        MovimentoFinanceiroCota mfcOrlando = Fixture.movimentoFinanceiroCota(cotaOrlando, tipoMovimentoFinanceitoDebito, usuarioJoao,
+                BigDecimal.valueOf(923.5), null, StatusAprovacao.APROVADO, Fixture.criarData(5, Calendar.NOVEMBER, 2012), true);
+        save(mfcOrlando);
+
+        ConsolidadoFinanceiroCota consolidadoOrlando = Fixture.consolidadoFinanceiroCota(Arrays.asList(mfcOrlando), cotaOrlando,
+                        Fixture.criarData(5, Calendar.NOVEMBER, 2012), BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,
+                        BigDecimal.valueOf(923.5), BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO);
+        save(consolidadoOrlando);
+
+        Divida dividaOrlando = Fixture.divida(consolidadoOrlando, cotaOrlando, Fixture.criarData(5, Calendar.NOVEMBER, 2012), usuarioJoao,
+                StatusDivida.QUITADA, BigDecimal.valueOf(923.5), false);
+        save(dividaOrlando);
+
+        Boleto boletoOrlando = Fixture.boleto("5557884985452", "8", "55578849854528", Fixture.criarData(5, Calendar.NOVEMBER, 2012), vencimento,
+                vencimento, BigDecimal.ZERO, BigDecimal.valueOf(923.5), "1", "1", StatusCobranca.PAGO, cotaOrlando, bancoHSBC, dividaOrlando, 0);
+        save(boletoOrlando);
+        
+        BaixaAutomatica baixaOrlando = Fixture.baixaAutomatica(boletoOrlando, vencimento, "arquivo.txt", "55578849854528", 100, StatusBaixa.PAGO, BigDecimal.valueOf(923.5), bancoHSBC);
+        boletoOrlando.getBaixasCobranca().add(baixaOrlando);
+        save(baixaOrlando);
+
+        MovimentoFinanceiroCota mfcMariana = Fixture.movimentoFinanceiroCota(cotaMariana, tipoMovimentoFinanceitoDebito, usuarioJoao, 
+                BigDecimal.valueOf(621.56), null, StatusAprovacao.APROVADO, Fixture.criarData(5, Calendar.NOVEMBER, 2012), true);
+        save(mfcMariana);
+
+        ConsolidadoFinanceiroCota consolidadoMariana = Fixture.consolidadoFinanceiroCota(Arrays.asList(mfcMariana), cotaMariana,
+                        Fixture.criarData(5, Calendar.NOVEMBER, 2012), BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,
+                        BigDecimal.valueOf(621.56), BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO);
+        save(consolidadoMariana);
+
+        Divida dividaMariana = Fixture.divida(consolidadoMariana, cotaMariana, Fixture.criarData(5, Calendar.NOVEMBER, 2012), usuarioJoao, 
+                StatusDivida.QUITADA, BigDecimal.valueOf(621.56), false);
+        save(dividaMariana);
+
+        CobrancaDeposito cobrancaMariana = Fixture.cobrancaDeposito("5557884985472", Fixture.criarData(5, Calendar.NOVEMBER, 2012), vencimento, 
+                vencimento, BigDecimal.ZERO, BigDecimal.valueOf(621.56), TipoBaixaCobranca.MANUAL.name(),null, StatusCobranca.PAGO, cotaMariana, bancoHSBC,
+                dividaMariana, 0);
+        save(cobrancaMariana);
+
+        BaixaManual baixaMariana = Fixture.baixaManual(cobrancaMariana, vencimento, StatusBaixa.PAGO, BigDecimal.valueOf(621.56), null, StatusAprovacao.APROVADO);
+        cobrancaMariana.getBaixasCobranca().add(baixaMariana);
+        save(baixaMariana);
+
+        MovimentoFinanceiroCota mfcLuis = Fixture.movimentoFinanceiroCota(cotaLuis, tipoMovimentoFinanceitoDebito, usuarioJoao, BigDecimal.valueOf(489.32), null, StatusAprovacao.APROVADO,
+                Fixture.criarData(5, Calendar.NOVEMBER, 2012), true);
+        save(mfcLuis);
+
+        ConsolidadoFinanceiroCota consolidadoLuis = Fixture.consolidadoFinanceiroCota(Arrays.asList(mfcLuis), cotaLuis, Fixture.criarData(5, Calendar.NOVEMBER, 2012),
+                        BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.valueOf(489.32), BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO);
+        save(consolidadoLuis);
+
+        Divida dividaLuis = Fixture.divida(consolidadoLuis, cotaLuis, Fixture.criarData(5, Calendar.NOVEMBER, 2012), usuarioJoao,StatusDivida.QUITADA, BigDecimal.valueOf(489.32), false);
+        save(dividaLuis);
+
+        CobrancaDinheiro cobrancaLuis = Fixture.cobrancaDinheiro("5557884985439", Fixture.criarData(5, Calendar.NOVEMBER, 2012), vencimento, vencimento, BigDecimal.ZERO,
+                BigDecimal.valueOf(489.32), TipoBaixaCobranca.MANUAL.name(), null, StatusCobranca.PAGO, cotaLuis, null, dividaLuis, 0);
+        save(cobrancaLuis);
+
+        BaixaManual baixaLuis = Fixture.baixaManual(cobrancaLuis, vencimento, StatusBaixa.PAGO, BigDecimal.valueOf(489.32), null, StatusAprovacao.APROVADO);
+        cobrancaLuis.getBaixasCobranca().add(baixaLuis);
+        save(baixaLuis);
+    }
 
 }
