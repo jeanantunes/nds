@@ -1,6 +1,7 @@
 package br.com.abril.nds.integracao.fileimporter;
 
 import java.util.List;
+import java.util.Locale;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -32,6 +33,7 @@ public class StartBatch {
 	
 	public static void main(String[] args) {
 		
+		Locale.setDefault(new Locale("en", "US")); 
 		String usuario = null;
 		Long codigoInterface = null;
 		Long codigoDistribuidor = null;

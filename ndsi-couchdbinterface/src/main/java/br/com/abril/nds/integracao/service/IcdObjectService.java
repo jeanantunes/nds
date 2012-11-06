@@ -12,7 +12,7 @@ public interface IcdObjectService {
 	
 	public Set<Integer> recuperaSolicitacoesAcertadas(Long distribuidor);
 
-	public List<SolicitacaoDTO> recuperaSolicitacoes(Long distribuidor);
+	public List<SolicitacaoDTO> recuperaSolicitacoes(Long distribuidor, EMS0128Input doc);
 
 	public void insereSolicitacao(EMS0128Input doc);
 	

@@ -153,41 +153,37 @@ public class InterfaceExecutor {
 		
 
 		for (String distribuidor: distribuidores) {
-			CouchDbClient couchDbClient = this.getCouchDbClientInstance("db_" + StringUtils.leftPad(distribuidor, 8, "0"));
-									
-			View view = couchDbClient.view("importacao/porTipoDocumento");
 			
-			//verifyViewUpdate();
 			
-			view.key("EMS0128");
-			view.includeDocs(true);
-			try {
-				ViewResult<String, Void, ?> result = view.queryView(String.class, Void.class, EMS0128Input.class);
-	
-					
-				for (@SuppressWarnings("rawtypes") Rows row: result.getRows()) {
-					
-					EMS0128Input doc = (EMS0128Input) row.getDoc(); 	
-					
-					
-					
-					icdObjectService.insereSolicitacao(doc);
-					
-					
-		//			icdObjectService.recuperaSolicitacoesAcertadas(Integer.valueOf(distribuidor));
-		//			icdObjectService.recuperaSolicitacoesSolicitadas(Integer.valueOf(distribuidor));
-					System.out.println("["+distribuidor+"]=================================================");		
-					System.out.println(doc);
-					
-					for (SolicitacaoDTO s: icdObjectService.recuperaSolicitacoes(Long.valueOf(distribuidor))) {
-						System.out.println(s);
+			if (new File(diretorio + distribuidor + File.separator + pastaInterna + File.separator).exists()) {
+
+				CouchDbClient couchDbClient = this.getCouchDbClientInstance("db_" + StringUtils.leftPad(distribuidor, 8, "0"));
+										
+				View view = couchDbClient.view("importacao/porTipoDocumento");
+								
+				view.key("EMS0128");
+				view.includeDocs(true);
+				try {
+					ViewResult<String, Void, ?> result = view.queryView(String.class, Void.class, EMS0128Input.class);
+					for (@SuppressWarnings("rawtypes") Rows row: result.getRows()) {						
+						
+						EMS0128Input doc = (EMS0128Input) row.getDoc();
+						
+						if (doc.getSituacaoSolicitacao().equals("SOLICITADO")) {
+							icdObjectService.insereSolicitacao(doc);
+							doc.setSituacaoSolicitacao("AGUARDANDO_GFS");
+							couchDbClient.save(doc);
+						} else {
+							List<SolicitacaoDTO> solicitacoes = icdObjectService.recuperaSolicitacoes(Long.valueOf(distribuidor), doc);							
+						}
+						
 					}
-					System.out.println("==================================================================");
 					
-				}
-			} catch (NoDocumentException ex ) {
-				
-			}			
+
+				} catch (NoDocumentException ex ) {
+						
+				}			
+			}
 		}
 		
 	}

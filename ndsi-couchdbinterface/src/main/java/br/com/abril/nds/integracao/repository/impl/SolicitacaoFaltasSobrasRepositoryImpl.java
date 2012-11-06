@@ -1,7 +1,10 @@
 package br.com.abril.nds.integracao.repository.impl;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
+
+import javax.persistence.Column;
 
 import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
@@ -17,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.abril.nds.integracao.dto.SolicitacaoDTO;
 import br.com.abril.nds.integracao.icd.model.DetalheFaltaSobra;
 import br.com.abril.nds.integracao.icd.model.SolicitacaoFaltaSobra;
+import br.com.abril.nds.integracao.model.canonic.EMS0128Input;
 import br.com.abril.nds.integracao.repository.SolicitacaoFaltasSobrasRepository;
 
 @Repository
@@ -55,7 +59,7 @@ public class SolicitacaoFaltasSobrasRepositoryImpl extends AbstractRepositoryMod
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<SolicitacaoDTO> recuperaSolicitacoes(Long codigoDistribuidor) {
+	public List<SolicitacaoDTO> recuperaSolicitacoes(Long codigoDistribuidor, Date dataSolicitacao, String horaSolicitacao) {
 
 		return getSessionIcd()
 			.createCriteria(SolicitacaoFaltaSobra.class, "s")
@@ -63,17 +67,30 @@ public class SolicitacaoFaltasSobrasRepositoryImpl extends AbstractRepositoryMod
 			.createAlias("d.motivoSituacaoFaltaSobra","m")			
 	        .setProjection(
 	       		 Projections.projectionList()	       		 	
-						.add(Projections.property("s.icdPK.codigoDistribuidor"), "codigoDistribuidor")
-						.add(Projections.property("s.icdPK.dataSolicitacao"), "solicitacao")
+						.add(Projections.property("s.sfsPK.codigoDistribuidor"), "codigoDistribuidor")
+						.add(Projections.property("s.sfsPK.dataSolicitacao"), "solicitacao")
 						.add(Projections.property("d.codigoAcerto"), "codigoAcerto")
 						.add(Projections.property("m.numeroSequencia"), "numeroSequencia")
 						.add(Projections.property("m.descricaoMotivo"), "descricaoMotivo")
 						.add(Projections.property("m.codigoMotivo"), "codigoMotivo")
 						)
-	        .setResultTransformer(Transformers.aliasToBean(SolicitacaoDTO.class))	      
-	        .add(Restrictions.eq("s.icdPK.codigoDistribuidor", codigoDistribuidor ))
+	        .setResultTransformer(Transformers.aliasToBean(SolicitacaoDTO.class))
+	        .add(
+	        	Restrictions.and(
+	        		Restrictions.eq("s.sfsPK.codigoDistribuidor", codigoDistribuidor )	
+	        		, Restrictions.eq("s.sfsPK.dataSolicitacao", dataSolicitacao )
+	        		, Restrictions.eq("s.sfsPK.horaSolicitacao", horaSolicitacao )
+	        	).add(Restrictions.in("s.codigoSituacao", 
+	        			new String[] {"EM PROCESSO", "LIBERADO", "REJEITADO", "DESPREZADO"} 
+	        	))	        	
+	        )
 	        .list();       
 		
 	}	
+	
+	@Override
+	public void save(SolicitacaoFaltaSobra sfs) {
+		this.getSessionIcd().persist(sfs);		
+	}
 	
 }

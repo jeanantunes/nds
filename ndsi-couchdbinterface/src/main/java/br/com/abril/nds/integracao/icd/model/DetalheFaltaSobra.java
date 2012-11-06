@@ -35,7 +35,7 @@ public class DetalheFaltaSobra {
 		private Date dataSolicitacao;
 
 		@Column(name = "HRA_SOLICITACAO")
-		private Time horaSolicitacao;
+		private String horaSolicitacao;
 		
 		@Column(name = "NUM_SEQUENCIA_DETALHE")
 		private Integer numeroSequencia;
@@ -71,14 +71,14 @@ public class DetalheFaltaSobra {
 		/**
 		 * @return the horaSolicitacao
 		 */
-		public Time getHoraSolicitacao() {
+		public String getHoraSolicitacao() {
 			return horaSolicitacao;
 		}
 
 		/**
 		 * @param horaSolicitacao the horaSolicitacao to set
 		 */
-		public void setHoraSolicitacao(Time horaSolicitacao) {
+		public void setHoraSolicitacao(String horaSolicitacao) {
 			this.horaSolicitacao = horaSolicitacao;
 		}
 
@@ -106,7 +106,33 @@ public class DetalheFaltaSobra {
 	
 	@Column(name = "COD_TIPO_ACERTO", nullable = true)
 	private Integer codigoTipoAcerto;
+		
+	@Column(name = "COD_PUBLICACAO_ADABAS", nullable = true)    
+	private Long codigoPublicacaoAdabas;
 	
+	@Column(name = "NUM_EDICAO", nullable = true)
+	private Long numeroEdicao;
+	
+	@Column(name = "QTD_SOLICITADA", nullable = true)
+	private Long qtdSolicitada;
+	
+	@Column(name = "NUM_DOCUMENTO_ORIGEM", nullable = true)
+	private Long numeroDocumentoOrigem;
+		
+	@Column(name = "VLR_UNITARIO", nullable = true)
+	private Double valorUnitario;
+	
+	@Column(name = "PCT_DESCONTO", nullable = true)
+	private Double pctDesconto;
+	
+	@Column(name = "NUM_DOCUMENTO_ACERTO", nullable = true)
+	private Long numeroDocumentoAcerto;
+	
+	@Column(name = "DAT_EMISSAO_DOCUMENTO_ACERTO", nullable = true)
+	private Date dataEmissaoDocumentoAcerto;
+	
+	@Column(name = "COD_USUARIO_ACERTO", nullable = true)
+	private String codigoUsuarioAcerto;	
 	
 	@ManyToOne(fetch=FetchType.LAZY)	
 	@JoinColumns(value = { 
@@ -118,12 +144,14 @@ public class DetalheFaltaSobra {
 	private MotivoSituacaoFaltaSobra motivoSituacaoFaltaSobra;
 
 
+
 	/**
 	 * @return the dfsPK
 	 */
 	public DfsPK getDfsPK() {
 		return dfsPK;
 	}
+
 
 
 	/**
@@ -134,6 +162,7 @@ public class DetalheFaltaSobra {
 	}
 
 
+
 	/**
 	 * @return the codigoAcerto
 	 */
@@ -142,11 +171,191 @@ public class DetalheFaltaSobra {
 	}
 
 
+
 	/**
 	 * @param codigoAcerto the codigoAcerto to set
 	 */
 	public void setCodigoAcerto(String codigoAcerto) {
 		this.codigoAcerto = codigoAcerto;
+	}
+
+
+
+	/**
+	 * @return the codigoTipoAcerto
+	 */
+	public Integer getCodigoTipoAcerto() {
+		return codigoTipoAcerto;
+	}
+
+
+
+	/**
+	 * @param codigoTipoAcerto the codigoTipoAcerto to set
+	 */
+	public void setCodigoTipoAcerto(Integer codigoTipoAcerto) {
+		this.codigoTipoAcerto = codigoTipoAcerto;
+	}
+
+
+
+	/**
+	 * @return the codigoPublicacaoAdabas
+	 */
+	public Long getCodigoPublicacaoAdabas() {
+		return codigoPublicacaoAdabas;
+	}
+
+
+
+	/**
+	 * @param codigoPublicacaoAdabas the codigoPublicacaoAdabas to set
+	 */
+	public void setCodigoPublicacaoAdabas(Long codigoPublicacaoAdabas) {
+		this.codigoPublicacaoAdabas = codigoPublicacaoAdabas;
+	}
+
+
+
+	/**
+	 * @return the numeroEdicao
+	 */
+	public Long getNumeroEdicao() {
+		return numeroEdicao;
+	}
+
+
+
+	/**
+	 * @param numeroEdicao the numeroEdicao to set
+	 */
+	public void setNumeroEdicao(Long numeroEdicao) {
+		this.numeroEdicao = numeroEdicao;
+	}
+
+
+
+	/**
+	 * @return the qtdSolicitada
+	 */
+	public Long getQtdSolicitada() {
+		return qtdSolicitada;
+	}
+
+
+
+	/**
+	 * @param qtdSolicitada the qtdSolicitada to set
+	 */
+	public void setQtdSolicitada(Long qtdSolicitada) {
+		this.qtdSolicitada = qtdSolicitada;
+	}
+
+
+
+	/**
+	 * @return the numeroDocumentoOrigem
+	 */
+	public Long getNumeroDocumentoOrigem() {
+		return numeroDocumentoOrigem;
+	}
+
+
+
+	/**
+	 * @param numeroDocumentoOrigem the numeroDocumentoOrigem to set
+	 */
+	public void setNumeroDocumentoOrigem(Long numeroDocumentoOrigem) {
+		this.numeroDocumentoOrigem = numeroDocumentoOrigem;
+	}
+
+
+
+	/**
+	 * @return the valorUnitario
+	 */
+	public Double getValorUnitario() {
+		return valorUnitario;
+	}
+
+
+
+	/**
+	 * @param valorUnitario the valorUnitario to set
+	 */
+	public void setValorUnitario(Double valorUnitario) {
+		this.valorUnitario = valorUnitario;
+	}
+
+
+
+	/**
+	 * @return the pctDesconto
+	 */
+	public Double getPctDesconto() {
+		return pctDesconto;
+	}
+
+
+
+	/**
+	 * @param pctDesconto the pctDesconto to set
+	 */
+	public void setPctDesconto(Double pctDesconto) {
+		this.pctDesconto = pctDesconto;
+	}
+
+
+
+	/**
+	 * @return the numeroDocumentoAcerto
+	 */
+	public Long getNumeroDocumentoAcerto() {
+		return numeroDocumentoAcerto;
+	}
+
+
+
+	/**
+	 * @param numeroDocumentoAcerto the numeroDocumentoAcerto to set
+	 */
+	public void setNumeroDocumentoAcerto(Long numeroDocumentoAcerto) {
+		this.numeroDocumentoAcerto = numeroDocumentoAcerto;
+	}
+
+
+
+	/**
+	 * @return the dataEmissaoDocumentoAcerto
+	 */
+	public Date getDataEmissaoDocumentoAcerto() {
+		return dataEmissaoDocumentoAcerto;
+	}
+
+
+
+	/**
+	 * @param dataEmissaoDocumentoAcerto the dataEmissaoDocumentoAcerto to set
+	 */
+	public void setDataEmissaoDocumentoAcerto(Date dataEmissaoDocumentoAcerto) {
+		this.dataEmissaoDocumentoAcerto = dataEmissaoDocumentoAcerto;
+	}
+
+
+
+	/**
+	 * @return the codigoUsuarioAcerto
+	 */
+	public String getCodigoUsuarioAcerto() {
+		return codigoUsuarioAcerto;
+	}
+
+
+	/**
+	 * @param codigoUsuarioAcerto the codigoUsuarioAcerto to set
+	 */
+	public void setCodigoUsuarioAcerto(String codigoUsuarioAcerto) {
+		this.codigoUsuarioAcerto = codigoUsuarioAcerto;
 	}
 
 
@@ -158,6 +367,7 @@ public class DetalheFaltaSobra {
 	}
 
 
+
 	/**
 	 * @param motivoSituacaoFaltaSobra the motivoSituacaoFaltaSobra to set
 	 */
@@ -166,20 +376,4 @@ public class DetalheFaltaSobra {
 		this.motivoSituacaoFaltaSobra = motivoSituacaoFaltaSobra;
 	}
 
-
-	/**
-	 * @return the codigoTipoAcerto
-	 */
-	public Integer getCodigoTipoAcerto() {
-		return codigoTipoAcerto;
-	}
-
-
-	/**
-	 * @param codigoTipoAcerto the codigoTipoAcerto to set
-	 */
-	public void setCodigoTipoAcerto(Integer codigoTipoAcerto) {
-		this.codigoTipoAcerto = codigoTipoAcerto;
-	}
-	
 }

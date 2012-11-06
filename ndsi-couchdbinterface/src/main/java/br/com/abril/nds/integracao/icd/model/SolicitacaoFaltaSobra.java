@@ -39,7 +39,7 @@ public class SolicitacaoFaltaSobra {
 		private Date dataSolicitacao;
 
 		@Column(name = "HRA_SOLICITACAO")
-		private Time horaSolicitacao;
+		private String horaSolicitacao;
 
 		/**
 		 * @return the codigoDistribuidor
@@ -72,14 +72,14 @@ public class SolicitacaoFaltaSobra {
 		/**
 		 * @return the horaSolicitacao
 		 */
-		public Time getHoraSolicitacao() {
+		public String getHoraSolicitacao() {
 			return horaSolicitacao;
 		}
 
 		/**
 		 * @param horaSolicitacao the horaSolicitacao to set
 		 */
-		public void setHoraSolicitacao(Time horaSolicitacao) {
+		public void setHoraSolicitacao(String horaSolicitacao) {
 			this.horaSolicitacao = horaSolicitacao;
 		}
 	}
@@ -93,9 +93,16 @@ public class SolicitacaoFaltaSobra {
 
 	@Column(name = "COD_SITUACAO_SOLICITACAO", nullable=false)
 	private String codigoSituacao;
+	
 
-	@OneToMany(mappedBy = "icdPK", cascade = CascadeType.ALL)
+	@OneToMany(cascade = CascadeType.ALL)
+	@JoinColumns(value = { 
+			@JoinColumn (name = "COD_DISTRIBUIDOR", referencedColumnName = "COD_DISTRIBUIDOR", insertable=false, updatable=false)
+			, @JoinColumn (name = "DAT_SOLICITACAO", referencedColumnName = "DAT_SOLICITACAO", insertable=false, updatable=false)
+			, @JoinColumn (name = "HRA_SOLICITACAO", referencedColumnName = "HRA_SOLICITACAO", insertable=false, updatable=false)
+	})
 	private List<DetalheFaltaSobra> itens = new ArrayList<DetalheFaltaSobra>();
+
 
 	/**
 	 * @return the sfsPK
@@ -104,12 +111,14 @@ public class SolicitacaoFaltaSobra {
 		return sfsPK;
 	}
 
+
 	/**
 	 * @param sfsPK the sfsPK to set
 	 */
 	public void setSfsPK(SfsPK sfsPK) {
 		this.sfsPK = sfsPK;
 	}
+
 
 	/**
 	 * @return the codigoForma
@@ -118,12 +127,14 @@ public class SolicitacaoFaltaSobra {
 		return codigoForma;
 	}
 
+
 	/**
 	 * @param codigoForma the codigoForma to set
 	 */
 	public void setCodigoForma(String codigoForma) {
 		this.codigoForma = codigoForma;
 	}
+
 
 	/**
 	 * @return the codigoSituacao
@@ -132,12 +143,14 @@ public class SolicitacaoFaltaSobra {
 		return codigoSituacao;
 	}
 
+
 	/**
 	 * @param codigoSituacao the codigoSituacao to set
 	 */
 	public void setCodigoSituacao(String codigoSituacao) {
 		this.codigoSituacao = codigoSituacao;
 	}
+
 
 	/**
 	 * @return the itens
@@ -146,12 +159,13 @@ public class SolicitacaoFaltaSobra {
 		return itens;
 	}
 
+
 	/**
 	 * @param itens the itens to set
 	 */
 	public void setItens(List<DetalheFaltaSobra> itens) {
 		this.itens = itens;
 	}
-	
+
 	
 }

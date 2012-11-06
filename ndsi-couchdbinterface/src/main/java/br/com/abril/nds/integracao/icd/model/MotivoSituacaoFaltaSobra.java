@@ -30,7 +30,7 @@ public class MotivoSituacaoFaltaSobra {
 		private Date dataSolicitacao;
 
 		@Column(name = "HRA_SOLICITACAO")
-		private Time horaSolicitacao;
+		private String horaSolicitacao;
 		
 		@Column(name = "NUM_SEQUENCIA_DETALHE")
 		private Integer numeroSequencia;
@@ -66,14 +66,14 @@ public class MotivoSituacaoFaltaSobra {
 		/**
 		 * @return the horaSolicitacao
 		 */
-		public Time getHoraSolicitacao() {
+		public String getHoraSolicitacao() {
 			return horaSolicitacao;
 		}
 
 		/**
 		 * @param horaSolicitacao the horaSolicitacao to set
 		 */
-		public void setHoraSolicitacao(Time horaSolicitacao) {
+		public void setHoraSolicitacao(String horaSolicitacao) {
 			this.horaSolicitacao = horaSolicitacao;
 		}
 
@@ -105,7 +105,7 @@ public class MotivoSituacaoFaltaSobra {
 	
 	@Column(name = "COD_ORIGEM_MOTIVO")
 	private String codigoMotivo;
-
+	
 	/**
 	 * @return the mfsPK
 	 */
@@ -161,5 +161,5 @@ public class MotivoSituacaoFaltaSobra {
 	public void setCodigoMotivo(String codigoMotivo) {
 		this.codigoMotivo = codigoMotivo;
 	}
-	
+		
 }
