@@ -182,4 +182,10 @@ public class BancoServiceImpl implements BancoService {
 		return comboBancos;
 	}
 
+	@Override
+	@Transactional(readOnly=true)
+	public Banco obterBancoPorApelido(String apelido) {
+		return bancoRepository.obterbancoPorApelido(apelido);
+	}
+
 }

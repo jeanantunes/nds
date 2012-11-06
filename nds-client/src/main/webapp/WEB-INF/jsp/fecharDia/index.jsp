@@ -589,43 +589,10 @@
               <td width="950" height="26" align="center" bgcolor="#F4F4F4"><strong>CONSIGNADO</strong></td>
             </tr>
             <tr>
-              <td valign="top"><table width="910" border="0" cellpadding="2" cellspacing="1" style="margin-left:10px; margin-right:10px;">
-                <tr>
-                  <td align="left">&nbsp;</td>
-                  <td align="right">&nbsp;</td>
-                  <td align="right">&nbsp;</td>
-                  <td align="right">&nbsp;</td>
-                  <td align="right">&nbsp;</td>
-                </tr>
-                <tr class="header_table">
-                  <td>&nbsp;</td>
-                  <td align="right">Saldo Anterior  R$</td>
-                  <td align="right">Entradas  R$</td>
-                  <td align="right">Saídas  R$</td>
-                  <td align="right">Saldo Atual  R$</td>
-                </tr>
-                <tr>
-                  <td width="164" style="border-bottom:1px solid #ccc;">Consignado</td>
-                  <td width="180" align="right" style="border-bottom:1px solid #ccc;">2.386.172,32</td>
-                  <td width="180" align="right" style="border-bottom:1px solid #ccc;">120.661,32</td>
-                  <td width="180" align="right" style="border-bottom:1px solid #ccc;">84.249,48</td>
-                  <td width="180" align="right" style="border-bottom:1px solid #ccc;">2.872.584,16</td>
-                </tr>
-                <tr>
-                  <td style="border-bottom:1px solid #ccc;">A Vista</td>
-                  <td align="right" style="border-bottom:1px solid #ccc;">474.641,28</td>
-                  <td align="right" style="border-bottom:1px solid #ccc;">15.187,80</td>
-                  <td align="right" style="border-bottom:1px solid #ccc;">8.649,53</td>
-                  <td align="right" style="border-bottom:1px solid #ccc;">481.179,55</td>
-                </tr>
-                <tr>
-                  <td>&nbsp;</td>
-                  <td align="center">&nbsp;</td>
-                  <td align="center">&nbsp;</td>
-                  <td align="center">&nbsp;</td>
-                  <td align="center">&nbsp;</td>
-                </tr>
-              </table></td>
+              <td valign="top">
+	              <table id="tabela_consignado" width="910" border="0" cellpadding="2" cellspacing="1" style="margin-left:10px; margin-right:10px;">
+	              </table>
+              </td>
             </tr>
         </table>
 <br />

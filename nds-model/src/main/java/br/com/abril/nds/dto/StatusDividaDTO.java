@@ -82,8 +82,8 @@ public class StatusDividaDTO implements Serializable {
 		return idCota;
 	}
 
-	public void setIdCota(BigInteger idCota) {
-		this.idCota = idCota.longValue();
+	public void setIdCota(Long idCota) {
+		this.idCota = idCota;
 	}
 	
 	public Integer getNumCota() {
@@ -162,34 +162,34 @@ public class StatusDividaDTO implements Serializable {
 		return diasAtraso;
 	}
 
-	public void setDiasAtraso(BigInteger diasAtraso) {
-		this.diasAtraso = diasAtraso.longValue();
+	public void setDiasAtraso(Long diasAtraso) {
+		this.diasAtraso = diasAtraso;
 	}
 
 	public Long getIdDivida() {
 		return idDivida;
 	}
 
-	public void setIdDivida(BigInteger idDivida) {
-		this.idDivida = idDivida.longValue();
+	public void setIdDivida(Long idDivida) {
+		this.idDivida = idDivida;
 	}
 
 	public Long getIdCobranca() {
 		return idCobranca;
 	}
 
-	public void setIdCobranca(BigInteger idCobranca) {
-		this.idCobranca = idCobranca.longValue();
+	public void setIdCobranca(Long idCobranca) {
+		this.idCobranca = idCobranca;
 	}
 
 	public Long getIdNegociacao() {
 		return idNegociacao;
 	}
 
-	public void setIdNegociacao(BigInteger idNegociacao) {
+	public void setIdNegociacao(Long idNegociacao) {
 		if(idNegociacao == null)
 			return;
-		this.idNegociacao = idNegociacao.longValue();
+		this.idNegociacao = idNegociacao;
 	}
 
 	public BigDecimal getComissaoSaldoDivida() {

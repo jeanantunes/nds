@@ -207,9 +207,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		hql.append(" LEFT JOIN cota.parametroCobranca parametroCobranca ");
 		hql.append(" LEFT JOIN produto.fornecedores as fornecedor ");
 		hql.append(" LEFT JOIN fornecedor.juridica as pessoa ");		
-		if(filtro.getIdCota() == null || filtro.getIdFornecedor() != null){
-			hql.append(" LEFT JOIN cota.pessoa as pessoaCota ");
-		}
+		hql.append(" LEFT JOIN cota.pessoa as pessoaCota ");
 
 		hql.append(" WHERE tipoMovimento.grupoMovimentoEstoque IN (:tipoMovimento) " );
 		hql.append("   AND parametroCobranca.tipoCota = :tipoCota  " );
