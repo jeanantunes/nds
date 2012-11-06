@@ -372,15 +372,16 @@ public class DividaServiceImpl implements DividaService {
 
     /**
      * Cria um mapa de sumarização de dívidas com os tipos de cobranças
-     * parametrizadas pelo distribuidor x sumarização calculada sobre as  dívidas
+     * parametrizadas pelo distribuidor x sumarização calculada sobre as dívidas
+     * existentes
      * 
      * @param data
-     *            data da sumarização
+     *            data base para sumarização
      * @param tipoDivida
-     *            tipo da sumarização das dívidas, dividas à receber ou dívidas
-     *            à vencer
-     * @param sumarizacao mapa com as sumarizações calculadas sobre dívidas
-     * @return mapa com os tipos de cobranças e sumarizacao de dividas 
+     *            tipo da sumarização das dívidas, dividas à receber na data base ou dívidas
+     *            à vencer após a data base
+     * @param sumarizacao mapa com as sumarizações calculadas sobre dívidas existentes
+     * @return mapa com os tipos de cobranças e sumarização de dívidas existentes 
      *         
      */
     private Map<TipoCobranca, SumarizacaoDividasDTO> criarMapaTiposCobrancaDistribuidor(Date data, TipoDivida tipoDivida,

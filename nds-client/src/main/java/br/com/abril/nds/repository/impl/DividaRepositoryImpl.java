@@ -2,6 +2,7 @@ package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -662,9 +663,9 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 
     /**
      * Sumariza as dívidas de acordo com o tipo de dívida, para dívidas à
-     * receber são consideradas as dívidas com vencimento na data recebida, no
+     * receber são consideradas as dívidas com vencimento na data base, no
      * caso de dívidas à vencer são consideradas as dívidas com vencimento após
-     * a data recebida
+     * a data base
      * 
      * @param data
      *            data base para sumarização das dívidas
@@ -674,6 +675,7 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
      */
 	@SuppressWarnings("unchecked")
 	private Map<TipoCobranca, SumarizacaoDividasDTO> sumarizarDividas(Date data, TipoDivida tipoDivida) {
+	    
 	    StringBuilder hql = new StringBuilder("select new map(cobranca.tipoCobranca as tipoCobranca, ");
 	    hql.append("sum(divida.valor) as total, ");
 	    hql.append("sum(case when cobranca.statusCobranca = :statusCobrancaPago then divida.valor else 0 end) as pago, ");
@@ -691,16 +693,18 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 	    
 	    List<Map<String, Object>> maps = query.list();
 	    Map<TipoCobranca, SumarizacaoDividasDTO> sumarizacoes = new EnumMap<>(TipoCobranca.class);
+	    
 	    for (Map<String, Object> map : maps) {
+	        
 	        TipoCobranca tipoCobranca = (TipoCobranca) map.get("tipoCobranca");
 	        BigDecimal total = (BigDecimal) map.get("total");
 	        BigDecimal pago = (BigDecimal) map.get("pago");
 	        BigDecimal inadimplencia = (BigDecimal) map.get("inadimplencia");
-	        SumarizacaoDividasDTO sumarizacao = new SumarizacaoDividasDTO(data,
-	                tipoDivida, tipoCobranca, total, pago,
-	                inadimplencia);
+	        
+	        SumarizacaoDividasDTO sumarizacao = new SumarizacaoDividasDTO(data, tipoDivida, tipoCobranca, total, pago, inadimplencia);
 	        sumarizacoes.put(tipoCobranca, sumarizacao);
 	    }
+	    
 	    return sumarizacoes;
 	}
     
@@ -710,7 +714,7 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 	@Override
     public List<Divida> obterDividasReceberEm(Date data, PaginacaoVO paginacao) {
         //TODO: implementar
-        return null;
+        return new ArrayList<>();
     }
 
     /**
@@ -719,7 +723,7 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 	@Override
     public List<Divida> obterDividasVencerApos(Date data, PaginacaoVO paginacao) {
         //TODO: implementar
-        return null;
+        return new ArrayList<>();
     }
 
     /**
