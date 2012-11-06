@@ -3,19 +3,25 @@ package br.com.abril.nds.dto;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
+import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
+import br.com.abril.nds.util.export.Export.Alignment;
 
 @Exportable
 public class ReparteFecharDiaDTO implements Serializable {
 
 	private static final long serialVersionUID = 2126291233836764519L;
 	
+	@Export(label = "Código", alignment=Alignment.LEFT, exhibitionOrder = 1)
 	private String codigo;
 	
+	@Export(label = "Produto", alignment=Alignment.LEFT, exhibitionOrder = 2)
 	private String nomeProduto;
 	
+	@Export(label = "Edição", alignment=Alignment.LEFT, exhibitionOrder = 3)
 	private Long numeroEdicao;
 	
+	@Export(label = "Preço Capa", alignment=Alignment.LEFT, exhibitionOrder = 4)
 	private BigDecimal precoVenda;
 	
 	private BigDecimal sobras;
@@ -28,20 +34,28 @@ public class ReparteFecharDiaDTO implements Serializable {
 	
 	private BigDecimal valorTotalReparte;
 	
-	private Integer qtdReparte;
+	@Export(label = "Reparte", alignment=Alignment.CENTER, exhibitionOrder = 5)
+	private Long qtdReparte;
 	
-	private Integer qtdSobras;
+	@Export(label = "Sobras", alignment=Alignment.CENTER, exhibitionOrder = 6)
+	private Long qtdSobras;
 	
-	private Integer qtdFaltas;
+	@Export(label = "Faltas", alignment=Alignment.CENTER, exhibitionOrder = 7)
+	private Long qtdFaltas;
 	
-	private Integer qtdTransferido;
+	@Export(label = "Transf.", alignment=Alignment.CENTER, exhibitionOrder = 8)
+	private Long qtdTransferido;
 	
+	@Export(label = "A Distr.", alignment=Alignment.CENTER, exhibitionOrder = 9)
 	private Integer qtdADistribuir;
 	
-	private Integer qtdDistribuido;
+	@Export(label = "Distribuido", alignment=Alignment.CENTER, exhibitionOrder = 10)
+	private Long qtdDistribuido;
 	
+	@Export(label = "Sobra Distr.", alignment=Alignment.LEFT, exhibitionOrder = 11)
 	private Integer qtdSobraDiferenca;
 	
+	@Export(label = "Diferença", alignment=Alignment.CENTER, exhibitionOrder = 12)
 	private Integer qtdDiferenca;
 	
 	public String getCodigo() {
@@ -116,35 +130,35 @@ public class ReparteFecharDiaDTO implements Serializable {
 		this.distribuidos = distribuidos;
 	}
 
-	public Integer getQtdReparte() {
+	public Long getQtdReparte() {
 		return qtdReparte;
 	}
 
-	public void setQtdReparte(Integer qtdReparte) {
+	public void setQtdReparte(Long qtdReparte) {
 		this.qtdReparte = qtdReparte;
 	}
 
-	public Integer getQtdSobras() {
+	public Long getQtdSobras() {
 		return qtdSobras;
 	}
 
-	public void setQtdSobras(Integer qtdSobras) {
+	public void setQtdSobras(Long qtdSobras) {
 		this.qtdSobras = qtdSobras;
 	}
 
-	public Integer getQtdFaltas() {
+	public Long getQtdFaltas() {
 		return qtdFaltas;
 	}
 
-	public void setQtdFaltas(Integer qtdFaltas) {
+	public void setQtdFaltas(Long qtdFaltas) {
 		this.qtdFaltas = qtdFaltas;
 	}
 
-	public Integer getQtdTransferido() {
+	public Long getQtdTransferido() {
 		return qtdTransferido;
 	}
 
-	public void setQtdTransferido(Integer qtdTransferido) {
+	public void setQtdTransferido(Long qtdTransferido) {
 		this.qtdTransferido = qtdTransferido;
 	}
 
@@ -156,11 +170,11 @@ public class ReparteFecharDiaDTO implements Serializable {
 		this.qtdADistribuir = qtdADistribuir;
 	}
 
-	public Integer getQtdDistribuido() {
+	public Long getQtdDistribuido() {
 		return qtdDistribuido;
 	}
 
-	public void setQtdDistribuido(Integer qtdDistribuido) {
+	public void setQtdDistribuido(Long qtdDistribuido) {
 		this.qtdDistribuido = qtdDistribuido;
 	}
 
