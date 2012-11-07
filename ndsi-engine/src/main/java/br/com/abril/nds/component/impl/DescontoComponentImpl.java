@@ -7,11 +7,8 @@ import java.util.List;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.orm.hibernate3.HibernateTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-
-import ch.qos.logback.core.read.ListAppender;
 
 import br.com.abril.nds.component.DescontoComponent;
 import br.com.abril.nds.model.cadastro.Cota;

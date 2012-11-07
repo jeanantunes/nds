@@ -21,19 +21,19 @@ import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 
 @Entity
-@Table(name = "DESCONTO_PRODUTO_EDICAO_EXCESSOES", 
-	   uniqueConstraints= {@UniqueConstraint(columnNames = {"FORNECEDOR_ID", "PRODUTO_EDICAO_ID", "COTA_ID"})})
-@SequenceGenerator(name="DESCONTO_PRODUTO_EDICAO_EXC_SEQ", initialValue = 1, allocationSize = 1)
-public class DescontoProdutoEdicaoExcessao implements Serializable {
+@Table(name = "DESCONTO_COTA_PRODUTO_EXCESSOES",
+	   uniqueConstraints= {@UniqueConstraint(columnNames = {"FORNECEDOR_ID", "COTA_ID", "PRODUTO_ID", "PRODUTO_EDICAO_ID"})})
+@SequenceGenerator(name="DESCONTO_COTA_PRODUTO_EXC_SEQ", initialValue = 1, allocationSize = 1)
+public class DescontoCotaProdutoExcessao implements Serializable {
 
 	private static final long serialVersionUID = -6962370571993126767L;
 
 	@Id
-	@GeneratedValue(generator = "DESCONTO_PRODUTO_EDICAO_EXC_SEQ")
+	@GeneratedValue(generator = "DESCONTO_COTA_PRODUTO_EXC_SEQ")
 	@Column(name = "ID")
 	private Long id;
 	
-	@Column(name = "DESCONTO", nullable = false)
+	@Column(name = "DESCONTO", nullable=false, precision=5, scale=2)
 	private BigDecimal desconto;
 	
 	@ManyToOne(optional = false)

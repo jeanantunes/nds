@@ -284,7 +284,7 @@ public class Distribuidor {
 	
 	@Column(name = "FECHAMENTO_DIARIO_EM_ANDAMENTO", nullable = true)
 	private Boolean fechamentoDiarioEmAndamento;
-	
+		
 	public Long getId() {
 		return id;
 	}
@@ -966,5 +966,5 @@ public class Distribuidor {
 	public void setFechamentoDiarioEmAndamento(Boolean fechamentoDiarioEmAndamento) {
 		this.fechamentoDiarioEmAndamento = fechamentoDiarioEmAndamento;
 	}
-
+	
 }

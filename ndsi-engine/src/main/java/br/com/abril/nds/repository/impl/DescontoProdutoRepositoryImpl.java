@@ -1,15 +1,15 @@
 package br.com.abril.nds.repository.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.Criteria;
 import org.hibernate.Query;
-import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projection;
 import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanResultTransformer;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.CotaDescontoProdutoDTO;
@@ -19,6 +19,7 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.desconto.DescontoProduto;
 import br.com.abril.nds.repository.DescontoProdutoRepository;
+import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 /**
@@ -30,6 +31,9 @@ import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 @Repository
 public class DescontoProdutoRepositoryImpl extends AbstractRepositoryModel<DescontoProduto,Long> implements DescontoProdutoRepository {
 
+	@Autowired
+	private ProdutoEdicaoRepository produtoEdicaoRepository;
+	
 	public DescontoProdutoRepositoryImpl() {
 		super(DescontoProduto.class);
 	}
@@ -38,9 +42,29 @@ public class DescontoProdutoRepositoryImpl extends AbstractRepositoryModel<Desco
 	 * {@inheritDoc}
 	 */
 	@Override
-	@SuppressWarnings("unchecked")
 	public List<TipoDescontoProdutoDTO> buscarTipoDescontoProduto(FiltroTipoDescontoProdutoDTO filtro) {
 		
+		List<TipoDescontoProdutoDTO> descontosProduto = new ArrayList<TipoDescontoProdutoDTO>();
+		
+		//List<ProdutoEdicao> produtosEdicao 
+		descontosProduto = produtoEdicaoRepository.obterProdutosEdicoesPorCodigoProdutoComDesconto(filtro.getCodigoProduto());
+		
+		/*for(ProdutoEdicao pe : produtosEdicao) {
+			TipoDescontoProdutoDTO tdp = new TipoDescontoProdutoDTO();
+			tdp.setCodigoProduto(filtro.getCodigoProduto());
+			tdp.setDataAlteracao(new Date());
+			tdp.setDesconto(pe.getDesconto());
+			tdp.setIdTipoDesconto(3L);
+			tdp.setNomeProduto(pe.getProduto().getNome());
+			tdp.setNomeUsuario("Anonimo");
+			tdp.setNumeroEdicao(pe.getNumeroEdicao());
+			
+			descontosProduto.add(tdp);
+		}*/
+		
+		return descontosProduto;
+		
+		/*
 		Criteria criteria = this.getSession().createCriteria(DescontoProduto.class);
 		
 		criteria.createAlias("usuario", "usuario");
@@ -85,7 +109,7 @@ public class DescontoProdutoRepositoryImpl extends AbstractRepositoryModel<Desco
 
 		criteria.setResultTransformer(new AliasToBeanResultTransformer(TipoDescontoProdutoDTO.class));
 
-		return criteria.list();
+		return criteria.list();*/
 	}
 
 	/*

@@ -33,9 +33,11 @@ import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.desconto.DescontoCota;
+import br.com.abril.nds.model.cadastro.desconto.DescontoCotaProdutoExcessao;
 import br.com.abril.nds.model.cadastro.desconto.DescontoDistribuidor;
 import br.com.abril.nds.model.cadastro.desconto.DescontoProduto;
-import br.com.abril.nds.model.cadastro.desconto.DescontoProdutoEdicaoExcessao;
+import br.com.abril.nds.model.cadastro.desconto.HistoricoDescontoCotaProdutoExcessao;
+import br.com.abril.nds.model.cadastro.desconto.HistoricoDescontoFornecedor;
 import br.com.abril.nds.model.cadastro.desconto.TipoDesconto;
 import br.com.abril.nds.model.financeiro.DescontoProximosLancamentos;
 import br.com.abril.nds.model.seguranca.Usuario;
@@ -48,6 +50,8 @@ import br.com.abril.nds.repository.DescontoProdutoRepository;
 import br.com.abril.nds.repository.DescontoProximosLancamentosRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.FornecedorRepository;
+import br.com.abril.nds.repository.HistoricoDescontoCotaProdutoRepository;
+import br.com.abril.nds.repository.HistoricoDescontoFornecedorRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.ProdutoRepository;
 import br.com.abril.nds.repository.UsuarioRepository;
@@ -62,7 +66,13 @@ public class DescontoServiceImpl implements DescontoService {
 
 	@Autowired
 	private DescontoDistribuidorRepository descontoDistribuidorRepository;
-
+	
+	@Autowired
+	private HistoricoDescontoFornecedorRepository historicoDescontoFornecedorRepository;
+	
+	@Autowired
+	private HistoricoDescontoCotaProdutoRepository historicoDescontoCotaProdutoRepository;
+	
 	@Autowired
 	private DescontoCotaRepository descontoCotaRepository;
 
@@ -170,7 +180,7 @@ public class DescontoServiceImpl implements DescontoService {
 
 	@Override
 	@Transactional
-	public void incluirDescontoDistribuidor(BigDecimal valorDesconto, List<Long> fornecedores,Usuario usuario) throws ValidacaoException {
+	public void incluirDescontoDistribuidor(BigDecimal valorDesconto, List<Long> fornecedores, Usuario usuario) throws ValidacaoException {
 
 		if(fornecedores == null || fornecedores.isEmpty()){
 			throw new ValidacaoException(TipoMensagem.WARNING,"O campo Fornecedores selecionados deve ser preenchido!");
@@ -180,18 +190,32 @@ public class DescontoServiceImpl implements DescontoService {
 			throw new ValidacaoException(TipoMensagem.WARNING,"O campo Desconto deve ser preenchido!");
 		}
 
-		for(Long idFornecedor : fornecedores) {
-			Fornecedor f = fornecedorRepository.buscarPorId(idFornecedor);
-			f.setDesconto(valorDesconto);
-			fornecedorRepository.merge(f);
-		}
+		if(fornecedores != null && !fornecedores.isEmpty()) {
+			for(Long idFornecedor : fornecedores) {
+				Fornecedor fornecedor = fornecedorRepository.buscarPorId(idFornecedor);
+				fornecedor.setDesconto(valorDesconto);
+				fornecedorRepository.merge(fornecedor);
+				
+				/*
+				 * Atualiza o historico do desconto para o fornecedor
+				 */
+				HistoricoDescontoFornecedor desconto = new HistoricoDescontoFornecedor();
+				desconto.setDesconto(valorDesconto);
+				desconto.setUsuario(usuarioRepository.buscarPorId(usuario.getId()));
+				desconto.setDataAlteracao(new Date());
+				desconto.setFornecedor(fornecedor);
+				desconto.setDistribuidor(distribuidorRepository.obter());
 
-		/*DescontoDistribuidor desconto = new DescontoDistribuidor();
+				historicoDescontoFornecedorRepository.adicionar(desconto);
+				
+			}
+		}
+		
+		/*
+		HistoricoDescontoDistribuidor desconto = new HistoricoDescontoDistribuidor();
 		desconto.setDesconto(valorDesconto);
 		desconto.setUsuario(usuarioRepository.buscarPorId(usuario.getId()));
 		desconto.setDataAlteracao(new Date());
-		desconto.setFornecedores(new HashSet<Fornecedor>());
-		desconto.getFornecedores().addAll(fornecedorRepository.obterFornecedoresPorId(fornecedores));
 		desconto.setDistribuidor(distribuidorRepository.obter());
 
 		descontoDistribuidorRepository.adicionar(desconto);
@@ -201,7 +225,7 @@ public class DescontoServiceImpl implements DescontoService {
 
 	@Override
 	@Transactional
-	public void incluirDescontoCota(BigDecimal valorDesconto, List<Long> fornecedores,Integer numeroCota,Usuario usuario) {
+	public void incluirDescontoCota(BigDecimal valorDesconto, List<Long> fornecedores, Integer numeroCota, Usuario usuario) {
 
 		if(numeroCota == null ){
 			throw new ValidacaoException(TipoMensagem.WARNING,"O campo Cota deve ser preenchido!");
@@ -217,25 +241,33 @@ public class DescontoServiceImpl implements DescontoService {
 
 		Cota cota = cotaRepository.obterPorNumerDaCota(numeroCota);
 
-		List<Fornecedor> fs = fornecedorRepository.obterFornecedoresPorId(fornecedores);
-		for(Fornecedor f : fs) {
+		List<Fornecedor> fornecs = fornecedorRepository.obterFornecedoresPorId(fornecedores);
+		for(Fornecedor fornecedor : fornecs) {
 			/*
 			 * Se existir o desconto, a mesma é atualizada, senão, cria-se uma nova entrada na tabela
 			 */
-			DescontoProdutoEdicaoExcessao dpe = descontoProdutoEdicaoExcessaoRepository.buscarDescontoProdutoEdicaoExcessao(
-					TipoDesconto.ESPECIFICO, f, cota, null);
+			DescontoCotaProdutoExcessao dpe = descontoProdutoEdicaoExcessaoRepository.buscarDescontoProdutoEdicaoExcessao(
+					TipoDesconto.ESPECIFICO, fornecedor, cota, null);
 			if(dpe != null) {
 				dpe.setDesconto(valorDesconto);
-				continue;
 			} else {
-				dpe = new DescontoProdutoEdicaoExcessao();
+				dpe = new DescontoCotaProdutoExcessao();
 				dpe.setCota(cota);
 				dpe.setDesconto(valorDesconto);
-				dpe.setFornecedor(f);
+				dpe.setFornecedor(fornecedor);
 			}
 
 			dpe.setTipoDesconto(TipoDesconto.ESPECIFICO);
-			descontoProdutoEdicaoExcessaoRepository.merge(dpe);				
+			descontoProdutoEdicaoExcessaoRepository.merge(dpe);	
+			
+			HistoricoDescontoCotaProdutoExcessao hdcp = new HistoricoDescontoCotaProdutoExcessao();
+			hdcp.setDataAlteracao(new Date());
+			hdcp.setDesconto(valorDesconto);
+			hdcp.setDistribuidor(distribuidorRepository.obter());
+			hdcp.setFornecedor(fornecedor);
+			hdcp.setUsuario(usuario);
+			
+			historicoDescontoCotaProdutoRepository.merge(hdcp);
 		}
 
 
@@ -252,10 +284,7 @@ public class DescontoServiceImpl implements DescontoService {
 
 		Distribuidor distribuidor = this.distribuidorRepository.obter();
 
-		Set<Cota> cotas = obterCotas(desconto.getCotas(), desconto.isTodasCotas());
-
-		Set<ProdutoEdicao>produtosEdicao = new HashSet<ProdutoEdicao>();
-
+		//TODO: Sérgio - tratar cotas selecionadas
 		if(desconto.isIndProdutoEdicao()) {
 
 			if (desconto.getEdicaoProduto() != null) {
@@ -264,7 +293,11 @@ public class DescontoServiceImpl implements DescontoService {
 						desconto.getCodigoProduto(), desconto.getEdicaoProduto()
 						);
 
-				DescontoProduto descontoProduto = new DescontoProduto();
+				produtoEdicao.setDesconto(desconto.getDescontoProduto());
+				
+				produtoEdicaoRepository.merge(produtoEdicao);
+				
+				/*DescontoProduto descontoProduto = new DescontoProduto();
 
 				descontoProduto.setDesconto(desconto.getDescontoProduto());
 				descontoProduto.setDataAlteracao(new Date());
@@ -275,10 +308,12 @@ public class DescontoServiceImpl implements DescontoService {
 
 				this.descontoProdutoRepository.adicionar(descontoProduto);
 
-				produtosEdicao.add(produtoEdicao);
+				produtosEdicao.add(produtoEdicao);*/
 
 			} else if (desconto.getQuantidadeEdicoes() != null) {
 
+				Set<Cota> cotas = obterCotas(desconto.getCotas(), desconto.isTodasCotas());
+				
 				Produto produto = produtoRepository.obterProdutoPorCodigo(desconto.getCodigoProduto());
 
 				DescontoProximosLancamentos descontoProximosLancamentos = new DescontoProximosLancamentos();
@@ -294,7 +329,22 @@ public class DescontoServiceImpl implements DescontoService {
 			}
 
 		} else {
+			
+			Produto produto = produtoRepository.obterProdutoPorCodigo(desconto.getCodigoProduto());
+			
+			/*Desconto desc = new Desconto();
+			desc.setDataAlteracao(new Date());
+			desc.setValor(desconto.getDescontoProduto());
+			desc.setTipoDesconto(TipoDesconto.PRODUTO);
+			desc.setUsado(false);
+			desc.setUsuario(usuario);*/
+			produto.setDesconto(desconto.getDescontoProduto());
+			
+			produtoRepository.merge(produto);
 
+			/*
+			Set<ProdutoEdicao>produtosEdicao = new HashSet<ProdutoEdicao>();
+			
 			List<ProdutoEdicao> listaProdutoEdicao = this.produtoEdicaoRepository.obterProdutosEdicaoPorCodigoProduto(desconto.getCodigoProduto());
 
 			for (ProdutoEdicao produtoEdicao : listaProdutoEdicao) {
@@ -311,11 +361,11 @@ public class DescontoServiceImpl implements DescontoService {
 				this.descontoProdutoRepository.adicionar(descontoProduto);
 			}
 
-			produtosEdicao.addAll(listaProdutoEdicao);
+			produtosEdicao.addAll(listaProdutoEdicao);*/
 		}
-
+/*
 		processarDescontoProduto(produtosEdicao, cotas, desconto.getDescontoProduto(),
-				desconto.isDescontoPredominante());
+				desconto.isDescontoPredominante());*/
 	}
 
 	@Override

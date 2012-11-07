@@ -15,6 +15,7 @@ import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.FuroProdutoDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
+import br.com.abril.nds.dto.TipoDescontoProdutoDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.Produto;
@@ -534,7 +535,6 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<ProdutoEdicao> obterProdutosEdicoesPorCodigoProdutoLimitado(String codigoProduto, Integer limite) {
-		// TODO Auto-generated method stub
 
 		Criteria criteria = getSession().createCriteria(ProdutoEdicao.class);
 		
@@ -545,6 +545,49 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		criteria.setMaxResults(limite);
 		
 		return criteria.list();
+	}
+	
+	@Override
+	public List<TipoDescontoProdutoDTO> obterProdutosEdicoesPorCodigoProdutoComDesconto(
+			String codigoProduto) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+//		hql.append(" select new ").append(ConsultaAlteracaoCotaDTO.class.getCanonicalName());
+//		hql.append(" (cota.id, cota.numeroCota, pessoa.nome,  parametroCobranca.fatorVencimento, parametroCobranca.valorMininoCobranca, parametroDistribuicao.descricaoTipoEntrega, box.nome) ");
+//		hql.append(" from Cota cota ");
+		
+		hql .append("select new ")
+			.append(TipoDescontoProdutoDTO.class.getCanonicalName())
+			.append("(p.codigo, p.nome, pe.numeroEdicao, case when pe.desconto is null or pe.desconto = 0 then p.desconto else pe.desconto end, p.nome) ")
+		//.append("\n")
+		.append("from ProdutoEdicao pe join pe.produto p ")
+		//.append("\n")
+		.append("where p.codigo = :codigoProduto");
+		
+//		hql .append("select new br.com.abril.nds.dto.TipoDescontoProdutoDTO(p.codigo, p.nome, pe.numeroEdicao, null, null) ")
+//			.append("\n")
+//			.append("from ProdutoEdicao pe join pe.produto p ")
+//			.append("\n")
+//			.append("where p.codigo = :codigoProduto");
+		
+		Query q = getSession().createQuery(hql.toString());
+		
+		q.setParameter("codigoProduto", codigoProduto);
+		
+		return (List<TipoDescontoProdutoDTO>) q.list();
+		
+		/*Criteria criteria = getSession().createCriteria(ProdutoEdicao.class);
+		
+		criteria.createAlias("produto", "produto");
+		
+		criteria.add(Restrictions.eq("produto.codigo", codigoProduto));
+		
+		criteria.add(Restrictions.isNotNull("desconto"));
+		
+		criteria.add(Restrictions.not(Restrictions.eq("desconto", BigDecimal.ZERO)));
+		
+		return criteria.list();*/
 	}
 	
 	/**

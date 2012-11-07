@@ -14,7 +14,7 @@ import org.springframework.stereotype.Repository;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
-import br.com.abril.nds.model.cadastro.desconto.DescontoProdutoEdicaoExcessao;
+import br.com.abril.nds.model.cadastro.desconto.DescontoCotaProdutoExcessao;
 import br.com.abril.nds.model.cadastro.desconto.TipoDesconto;
 import br.com.abril.nds.repository.DescontoProdutoEdicaoExcessaoRepository;
 
@@ -26,7 +26,7 @@ import br.com.abril.nds.repository.DescontoProdutoEdicaoExcessaoRepository;
  */
 
 @Repository
-public class DescontoProdutoEdicaoExcessaoRepositoryImpl extends AbstractRepositoryModel<DescontoProdutoEdicaoExcessao, Long> implements DescontoProdutoEdicaoExcessaoRepository {
+public class DescontoProdutoEdicaoExcessaoRepositoryImpl extends AbstractRepositoryModel<DescontoCotaProdutoExcessao, Long> implements DescontoProdutoEdicaoExcessaoRepository {
  
 	private static final int QUINHENTOS = 500;
 	
@@ -35,19 +35,19 @@ public class DescontoProdutoEdicaoExcessaoRepositoryImpl extends AbstractReposit
 	 */
 	public DescontoProdutoEdicaoExcessaoRepositoryImpl() {
 		
-		super(DescontoProdutoEdicaoExcessao.class);
+		super(DescontoCotaProdutoExcessao.class);
 	}
 	
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public DescontoProdutoEdicaoExcessao buscarDescontoProdutoEdicaoExcessao(TipoDesconto tipoDesconto,
+	public DescontoCotaProdutoExcessao buscarDescontoProdutoEdicaoExcessao(TipoDesconto tipoDesconto,
 															 Fornecedor fornecedor, 
 															 Cota cota,
 															 ProdutoEdicao produto) {
 		
-		Criteria criteria = getSession().createCriteria(DescontoProdutoEdicaoExcessao.class);
+		Criteria criteria = getSession().createCriteria(DescontoCotaProdutoExcessao.class);
 
 		if (fornecedor != null) {
 		
@@ -72,14 +72,14 @@ public class DescontoProdutoEdicaoExcessaoRepositoryImpl extends AbstractReposit
 		
 		criteria.setMaxResults(1);
 		
-		return (DescontoProdutoEdicaoExcessao) criteria.uniqueResult();
+		return (DescontoCotaProdutoExcessao) criteria.uniqueResult();
 	}
 	
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Set<DescontoProdutoEdicaoExcessao> obterDescontosProdutoEdicao(Fornecedor fornecedor) {
+	public Set<DescontoCotaProdutoExcessao> obterDescontosProdutoEdicao(Fornecedor fornecedor) {
 
 		return obterDescontoProdutoEdicaoExcessaoCotaFornecedor(fornecedor, null, null,null);
 	}
@@ -88,7 +88,7 @@ public class DescontoProdutoEdicaoExcessaoRepositoryImpl extends AbstractReposit
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Set<DescontoProdutoEdicaoExcessao> obterDescontosProdutoEdicao(Cota cota) {
+	public Set<DescontoCotaProdutoExcessao> obterDescontosProdutoEdicao(Cota cota) {
 		
 		return obterDescontoProdutoEdicaoExcessaoCotaFornecedor(null, cota, null,null);
 	}
@@ -97,7 +97,7 @@ public class DescontoProdutoEdicaoExcessaoRepositoryImpl extends AbstractReposit
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Set<DescontoProdutoEdicaoExcessao> obterDescontosProdutoEdicao(Fornecedor fornecedor, Cota cota) {
+	public Set<DescontoCotaProdutoExcessao> obterDescontosProdutoEdicao(Fornecedor fornecedor, Cota cota) {
 		
 		return obterDescontoProdutoEdicaoExcessaoCotaFornecedor(fornecedor, cota, null,null);
 	}
@@ -106,7 +106,7 @@ public class DescontoProdutoEdicaoExcessaoRepositoryImpl extends AbstractReposit
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Set<DescontoProdutoEdicaoExcessao> obterDescontosProdutoEdicao(ProdutoEdicao produtoEdicao) {
+	public Set<DescontoCotaProdutoExcessao> obterDescontosProdutoEdicao(ProdutoEdicao produtoEdicao) {
 		
 		return obterDescontoProdutoEdicaoExcessaoCotaFornecedor(null, null, produtoEdicao,null);
 	}
@@ -115,7 +115,7 @@ public class DescontoProdutoEdicaoExcessaoRepositoryImpl extends AbstractReposit
 	 * {@inheritDoc}
 	 */
 	@Override
-	public List<DescontoProdutoEdicaoExcessao> obterDescontoProdutoEdicaoExcessaoSemTipoDesconto(TipoDesconto tipoDesconto, Fornecedor fornecedor) {
+	public List<DescontoCotaProdutoExcessao> obterDescontoProdutoEdicaoExcessaoSemTipoDesconto(TipoDesconto tipoDesconto, Fornecedor fornecedor) {
 		
 		return obterDescontoSemTipoDesconto(tipoDesconto, fornecedor, null);
 	}
@@ -124,7 +124,7 @@ public class DescontoProdutoEdicaoExcessaoRepositoryImpl extends AbstractReposit
 	 * {@inheritDoc}
 	 */
 	@Override
-	public List<DescontoProdutoEdicaoExcessao> obterDescontoProdutoEdicaoExcessaoSemTipoDesconto(TipoDesconto tipoDesconto, Fornecedor fornecedor, Cota cota) {
+	public List<DescontoCotaProdutoExcessao> obterDescontoProdutoEdicaoExcessaoSemTipoDesconto(TipoDesconto tipoDesconto, Fornecedor fornecedor, Cota cota) {
 		
 		return obterDescontoSemTipoDesconto(tipoDesconto, fornecedor, cota);
 	}
@@ -133,7 +133,7 @@ public class DescontoProdutoEdicaoExcessaoRepositoryImpl extends AbstractReposit
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Set<DescontoProdutoEdicaoExcessao> obterDescontoProdutoEdicaoExcessao(TipoDesconto tipoDesconto, Fornecedor fornecedor, Cota cota) {
+	public Set<DescontoCotaProdutoExcessao> obterDescontoProdutoEdicaoExcessao(TipoDesconto tipoDesconto, Fornecedor fornecedor, Cota cota) {
 		
 		return obterDescontoProdutoEdicaoExcessaoCotaFornecedor(fornecedor, cota, null,tipoDesconto);
 	}
@@ -142,15 +142,15 @@ public class DescontoProdutoEdicaoExcessaoRepositoryImpl extends AbstractReposit
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Set<DescontoProdutoEdicaoExcessao> obterDescontoProdutoEdicaoExcessao(TipoDesconto tipoDesconto, Fornecedor fornecedor, Cota cota,ProdutoEdicao produtoEdicao) {
+	public Set<DescontoCotaProdutoExcessao> obterDescontoProdutoEdicaoExcessao(TipoDesconto tipoDesconto, Fornecedor fornecedor, Cota cota,ProdutoEdicao produtoEdicao) {
 		
 		return obterDescontoProdutoEdicaoExcessaoCotaFornecedor(fornecedor, cota, produtoEdicao,tipoDesconto);
 	}
 	
 	@SuppressWarnings("unchecked")
-	private Set<DescontoProdutoEdicaoExcessao> obterDescontoProdutoEdicaoExcessaoCotaFornecedor(Fornecedor fornecedor, Cota cota, ProdutoEdicao produtoEdicao,TipoDesconto tipoDesconto){
+	private Set<DescontoCotaProdutoExcessao> obterDescontoProdutoEdicaoExcessaoCotaFornecedor(Fornecedor fornecedor, Cota cota, ProdutoEdicao produtoEdicao,TipoDesconto tipoDesconto){
 		
-		Criteria criteria = getSession().createCriteria(DescontoProdutoEdicaoExcessao.class);
+		Criteria criteria = getSession().createCriteria(DescontoCotaProdutoExcessao.class);
 		
 		if (fornecedor != null) {
 			
@@ -174,13 +174,13 @@ public class DescontoProdutoEdicaoExcessaoRepositoryImpl extends AbstractReposit
 		
 		criteria.setFetchMode("cota", FetchMode.JOIN);
 		
-		return new HashSet<DescontoProdutoEdicaoExcessao>(criteria.list());
+		return new HashSet<DescontoCotaProdutoExcessao>(criteria.list());
 	}
 	
 	@SuppressWarnings("unchecked")
-	private List<DescontoProdutoEdicaoExcessao> obterDescontoSemTipoDesconto(TipoDesconto tipoDesconto, Fornecedor fornecedor, Cota cota){
+	private List<DescontoCotaProdutoExcessao> obterDescontoSemTipoDesconto(TipoDesconto tipoDesconto, Fornecedor fornecedor, Cota cota){
 		
-		Criteria criteria = getSession().createCriteria(DescontoProdutoEdicaoExcessao.class);
+		Criteria criteria = getSession().createCriteria(DescontoCotaProdutoExcessao.class);
 		
 		criteria.add(Restrictions.eq("fornecedor", fornecedor));
 
@@ -215,11 +215,11 @@ public class DescontoProdutoEdicaoExcessaoRepositoryImpl extends AbstractReposit
     }
 
 	@Override
-	public void salvarListaDescontoProdutoEdicaoExcessao(List<DescontoProdutoEdicaoExcessao> lista) {
+	public void salvarListaDescontoProdutoEdicaoExcessao(List<DescontoCotaProdutoExcessao> lista) {
 		
 		int i = 0;
 		
-		for (DescontoProdutoEdicaoExcessao DescontoProdutoEdicaoExcessao : lista) {
+		for (DescontoCotaProdutoExcessao DescontoProdutoEdicaoExcessao : lista) {
 			this.merge(DescontoProdutoEdicaoExcessao);
 			i++;
 			if (i % QUINHENTOS == 0) {

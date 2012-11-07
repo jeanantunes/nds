@@ -7,7 +7,7 @@ import java.util.Set;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
-import br.com.abril.nds.model.cadastro.desconto.DescontoProdutoEdicaoExcessao;
+import br.com.abril.nds.model.cadastro.desconto.DescontoCotaProdutoExcessao;
 import br.com.abril.nds.model.cadastro.desconto.TipoDesconto;
 
 /**
@@ -16,7 +16,7 @@ import br.com.abril.nds.model.cadastro.desconto.TipoDesconto;
  * 
  * @author Discover Technology
  */
-public interface DescontoProdutoEdicaoExcessaoRepository extends Repository<DescontoProdutoEdicaoExcessao, Long>{
+public interface DescontoProdutoEdicaoExcessaoRepository extends Repository<DescontoCotaProdutoExcessao, Long>{
 
 	/**
 	 * Obtém descontos de produto edição diferentes do tipo de desconto informado.
@@ -25,9 +25,9 @@ public interface DescontoProdutoEdicaoExcessaoRepository extends Repository<Desc
 	 * 
 	 * @param fornecedor - fornecedor
 	 * 
-	 * @return {@link List} {@link DescontoProdutoEdicaoExcessao}
+	 * @return {@link List} {@link DescontoCotaProdutoExcessao}
 	 */
-	List<DescontoProdutoEdicaoExcessao> obterDescontoProdutoEdicaoExcessaoSemTipoDesconto(TipoDesconto tipoDesconto, Fornecedor fornecedor);
+	List<DescontoCotaProdutoExcessao> obterDescontoProdutoEdicaoExcessaoSemTipoDesconto(TipoDesconto tipoDesconto, Fornecedor fornecedor);
 	
 	/**
 	 * Obtém descontos de produto edição diferentes do tipo de desconto informado.
@@ -39,9 +39,9 @@ public interface DescontoProdutoEdicaoExcessaoRepository extends Repository<Desc
 	 * 
 	 * @param cota - cota
 	 * 
-	 * @return {@link List} {@link DescontoProdutoEdicaoExcessao}
+	 * @return {@link List} {@link DescontoCotaProdutoExcessao}
 	 */
-	List<DescontoProdutoEdicaoExcessao> obterDescontoProdutoEdicaoExcessaoSemTipoDesconto(TipoDesconto tipoDesconto, Fornecedor fornecedor, Cota cota);
+	List<DescontoCotaProdutoExcessao> obterDescontoProdutoEdicaoExcessaoSemTipoDesconto(TipoDesconto tipoDesconto, Fornecedor fornecedor, Cota cota);
 	
 	/**
 	 * Obtém o desconto de um produto edição.
@@ -50,18 +50,18 @@ public interface DescontoProdutoEdicaoExcessaoRepository extends Repository<Desc
 	 * @param cota - cota
 	 * @param produto - produto
 	 * 
-	 * @return {@link DescontoProdutoEdicaoExcessao}
+	 * @return {@link DescontoCotaProdutoExcessao}
 	 */
-	DescontoProdutoEdicaoExcessao buscarDescontoProdutoEdicaoExcessao(TipoDesconto tipoDesconto, Fornecedor fornecedor, Cota cota, ProdutoEdicao produto);
+	DescontoCotaProdutoExcessao buscarDescontoProdutoEdicaoExcessao(TipoDesconto tipoDesconto, Fornecedor fornecedor, Cota cota, ProdutoEdicao produto);
 
 	/**
 	 * Obtém descontos de produtos edição de um fornecedor.
 	 * 
 	 * @param fornecedor - fornecedor
 	 * 
-	 * @return {@link Set} de {@link DescontoProdutoEdicaoExcessao}
+	 * @return {@link Set} de {@link DescontoCotaProdutoExcessao}
 	 */
-	Set<DescontoProdutoEdicaoExcessao> obterDescontosProdutoEdicao(Fornecedor fornecedor);
+	Set<DescontoCotaProdutoExcessao> obterDescontosProdutoEdicao(Fornecedor fornecedor);
 	
 	/**
 	 * Obtém descontos de produtos edição de um fornecedor e uma cota.
@@ -69,27 +69,27 @@ public interface DescontoProdutoEdicaoExcessaoRepository extends Repository<Desc
 	 * @param fornecedor - fornecedor
 	 * @param cota - cota
 	 * 
-	 * @return {@link Set} de {@link DescontoProdutoEdicaoExcessao}
+	 * @return {@link Set} de {@link DescontoCotaProdutoExcessao}
 	 */
-	Set<DescontoProdutoEdicaoExcessao> obterDescontosProdutoEdicao(Fornecedor fornecedor, Cota cota);
+	Set<DescontoCotaProdutoExcessao> obterDescontosProdutoEdicao(Fornecedor fornecedor, Cota cota);
 	
 	/**
 	 * Obtém descontos de produtos edição de uma cota.
 	 * 
 	 * @param cota - cota
 	 * 
-	 * @return {@link Set} de {@link DescontoProdutoEdicaoExcessao}
+	 * @return {@link Set} de {@link DescontoCotaProdutoExcessao}
 	 */
-	Set<DescontoProdutoEdicaoExcessao> obterDescontosProdutoEdicao(Cota cota);
+	Set<DescontoCotaProdutoExcessao> obterDescontosProdutoEdicao(Cota cota);
 	
 	/**
 	 * Obtém descontos do produto edição.
 	 * 
 	 * @param produtoEdicao - produto edição
 	 * 
-	 * @return {@link Set} de {@link DescontoProdutoEdicaoExcessao}
+	 * @return {@link Set} de {@link DescontoCotaProdutoExcessao}
 	 */
-	Set<DescontoProdutoEdicaoExcessao> obterDescontosProdutoEdicao(ProdutoEdicao produtoEdicao);
+	Set<DescontoCotaProdutoExcessao> obterDescontosProdutoEdicao(ProdutoEdicao produtoEdicao);
 	
 	/**
 	 * 
@@ -101,9 +101,9 @@ public interface DescontoProdutoEdicaoExcessaoRepository extends Repository<Desc
 	 * 
 	 * @param cota - cota
 	 * 
-	 * @return {@link Set} {@link DescontoProdutoEdicaoExcessao}
+	 * @return {@link Set} {@link DescontoCotaProdutoExcessao}
 	 */
-	Set<DescontoProdutoEdicaoExcessao> obterDescontoProdutoEdicaoExcessao(TipoDesconto tipoDesconto, Fornecedor fornecedor, Cota cota);
+	Set<DescontoCotaProdutoExcessao> obterDescontoProdutoEdicaoExcessao(TipoDesconto tipoDesconto, Fornecedor fornecedor, Cota cota);
 	
 	/**
 	 * 
@@ -117,9 +117,9 @@ public interface DescontoProdutoEdicaoExcessaoRepository extends Repository<Desc
 	 * 
 	 * @param produtoEdicao - produto edição
 	 * 
-	 * @return {@link Set} {@link DescontoProdutoEdicaoExcessao}
+	 * @return {@link Set} {@link DescontoCotaProdutoExcessao}
 	 */
-	Set<DescontoProdutoEdicaoExcessao> obterDescontoProdutoEdicaoExcessao(TipoDesconto tipoDesconto, Fornecedor fornecedor, Cota cota,ProdutoEdicao produtoEdicao);
+	Set<DescontoCotaProdutoExcessao> obterDescontoProdutoEdicaoExcessao(TipoDesconto tipoDesconto, Fornecedor fornecedor, Cota cota,ProdutoEdicao produtoEdicao);
 	
 	/**
      * Recupera o percentual de desconto a ser aplicado para o produto edição de acordo com a
@@ -137,6 +137,6 @@ public interface DescontoProdutoEdicaoExcessaoRepository extends Repository<Desc
 	 * Salva uma lista de descontosProdutoEdicao
 	 * @param lista
 	 */
-	public void salvarListaDescontoProdutoEdicaoExcessao(List<DescontoProdutoEdicaoExcessao> lista);
+	public void salvarListaDescontoProdutoEdicaoExcessao(List<DescontoCotaProdutoExcessao> lista);
 	
 }

@@ -42,7 +42,7 @@ public class DescontoCotaRepositoryImpl extends AbstractRepositoryModel<Desconto
 		hql.append(", case when pessoa.nomeFantasia = null then pessoa.nome else pessoa.nomeFantasia end as nomeCota ");
 		hql.append(", juridica.nomeFantasia as fornecedor ");
 	    hql.append(", 'Específico' as descTipoDesconto ");
-        hql.append("from DescontoProdutoEdicaoExcessao dpe ");
+        hql.append("from DescontoCotaProdutoExcessao dpe ");
         hql.append("join dpe.cota c ");
         hql.append("join c.pessoa as pessoa ");
         hql.append("join dpe.fornecedor as fornecedor ");

@@ -7,6 +7,7 @@ import java.util.Set;
 
 import br.com.abril.nds.dto.FuroProdutoDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
+import br.com.abril.nds.dto.TipoDescontoProdutoDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.Produto;
@@ -93,7 +94,13 @@ public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long>
 	 */
 	List<ProdutoEdicao> obterProdutosEdicaoPorCodigoProduto(String codigoProduto);
 
-	
+	/**
+	 * Obtém edições com desconto do produto
+	 * 
+	 * @param codigoProduto - código do produto
+	 * @return Lista de edições do produto
+	 */
+	List<TipoDescontoProdutoDTO> obterProdutosEdicoesPorCodigoProdutoComDesconto(String codigoProduto);
 	
 	ProdutoEdicao obterProdutoEdicaoPorCodigoBarra(String codigoBarra);
 
