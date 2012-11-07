@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.abril.nds.dto.EncalheFecharDiaDTO;
 import br.com.abril.nds.dto.ReparteFecharDiaDTO;
 import br.com.abril.nds.dto.ResumoEncalheFecharDiaDTO;
+import br.com.abril.nds.dto.VendaFechamentoDiaDTO;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.repository.ResumoEncalheFecharDiaRepository;
 import br.com.abril.nds.service.ResumoEncalheFecharDiaService;
@@ -85,6 +86,14 @@ public class ResumoEncalheFecharDiaServiceImpl implements ResumoEncalheFecharDia
 	@Transactional
 	public List<EncalheFecharDiaDTO> obterDadosGridEncalhe(Date dataOperacao) {
 		return this.resumoEncalheFecharDiaRepository.obterDadosGridEncalhe(dataOperacao);
+	}
+	
+	@Override
+	@Transactional
+	public List<VendaFechamentoDiaDTO> obterDadosVendaEncalhe(Date dataOperacao){
+		
+		//TODO implementar metodo com os dados de venda de encalhe no fechamento do dia
+		return null;
 	}
 
 }
