@@ -3,6 +3,8 @@ package br.com.abril.nds.dto.fechamentodiario;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
+import br.com.abril.nds.util.CurrencyUtil;
+
 public class ResumoEstoqueDTO implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -17,7 +19,7 @@ public class ResumoEstoqueDTO implements Serializable {
 	
 	public class ResumoEstoqueExemplar extends ResumoEstoque{}
 	
-	public abstract class ResumoEstoque{
+	private abstract class ResumoEstoque{
 		
 		protected Integer quantidadeLancamento;
 		
@@ -81,7 +83,27 @@ public class ResumoEstoqueDTO implements Serializable {
 		protected BigDecimal valorRecolhimento;
 		
 		protected BigDecimal valorDanificados;
-
+		
+		public String getValorLancamentoFormatado(){
+			return CurrencyUtil.formatarValor(valorLancamento);
+		}
+		
+		public String getValorJuramentadoFormatado(){
+			return CurrencyUtil.formatarValor(valorJuramentado);
+		}
+		
+		public String getValorSuplementarFormatado(){
+			return CurrencyUtil.formatarValor(valorSuplementar);
+		}
+		
+		public String getValorRecolhimentoFormatado(){
+			return CurrencyUtil.formatarValor(valorRecolhimento);
+		}
+		
+		public String getValorDanificadosFormatado(){
+			return CurrencyUtil.formatarValor(valorDanificados);
+		}
+		
 		public BigDecimal getValorLancamento() {
 			return valorLancamento;
 		}

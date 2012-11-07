@@ -773,6 +773,7 @@ var fecharDiaController =  $.extend(true, {
 					fecharDiaController.iniciarResumoSuplementar();
 					fecharDiaController.iniciarResumoDividas();
 					fecharDiaController.iniciarResumoCotas();
+					fecharDiaController.iniciarResumoEstoque();
 					fecharDiaController.iniciarResumoConsignado();
 				}
 			},
@@ -1041,6 +1042,16 @@ var fecharDiaController =  $.extend(true, {
 		);
 	},
 	
+	iniciarResumoEstoque : function() {
+		$.postJSON(
+			contextPath + "/administracao/fecharDia/obterResumoEstoque",
+			null,
+			function(result) {
+				fecharDiaController.processarResumoEstoque(result.resumo);
+			}
+		);
+	},
+
 	processarResumoDividasReceber : function(itens) {
 	    var tabela =  $('#tabela_dividas_receber', fecharDiaController.workspace);
 	    fecharDiaController.processarResumoDividas(itens, tabela);
@@ -1090,7 +1101,28 @@ var fecharDiaController =  $.extend(true, {
 
         $(tabela).append((fecharDiaController.gerarLinhaBrancoResumoConsignado()));
     },
-	
+    
+    processarResumoEstoque : function(resumo) {
+    	
+    	$("#produtolancamento",fecharDiaController.workspace).html(resumo.resumoEstoqueProduto.quantidadeLancamento);
+    	$("#produtoJuramentado",fecharDiaController.workspace).html(resumo.resumoEstoqueProduto.quantidadeJuramentado);
+    	$("#produtoSuplenetar",fecharDiaController.workspace).html(resumo.resumoEstoqueProduto.quantidadeSuplementar);
+    	$("#produtoRecolhimento",fecharDiaController.workspace).html(resumo.resumoEstoqueProduto.quantidadeRecolhimento);
+    	$("#produtoDanificados",fecharDiaController.workspace).html(resumo.resumoEstoqueProduto.quantidadeDanificados);
+    	
+    	$("#exemplarlancamento",fecharDiaController.workspace).html(resumo.resumoEstoqueExemplar.quantidadeLancamento);
+    	$("#exemplarJuramentado",fecharDiaController.workspace).html(resumo.resumoEstoqueExemplar.quantidadeJuramentado);
+    	$("#exemplarSuplenetar",fecharDiaController.workspacer).html(resumo.resumoEstoqueExemplar.quantidadeSuplementar);
+    	$("#exemplarRecolhimento",fecharDiaController.workspace).html(resumo.resumoEstoqueExemplar.quantidadeRecolhimento);
+    	$("#exemplarDanificados",fecharDiaController.workspace).html(resumo.resumoEstoqueExemplar.quantidadeDanificados);
+    	
+    	$("#valorlancamento",fecharDiaController.workspace).html(resumo.valorResumoEstoque.valorLancamentoFormatado);
+    	$("#valorJuramentado",fecharDiaController.workspace).html(resumo.valorResumoEstoque.valorJuramentadoFormatado);
+    	$("#valorSuplenetar",fecharDiaController.workspace).html(resumo.valorResumoEstoque.valorSuplementarFormatado);
+    	$("#valorRecolhimento",fecharDiaController.workspace).html(resumo.valorResumoEstoque.valorRecolhimentoFormatado);
+    	$("#valorDanificados",fecharDiaController.workspace).html(resumo.valorResumoEstoque.valorDanificadosFormatado);
+    },
+    
 	gerarLinhaResumoDividas : function(item) {
 		var linhaResumo = "<tr>";
 		linhaResumo += "<td width=\"120\" align=\"left\" style=\"border-bottom:1px solid #ccc;\">" + item.descricaoTipoCobranca + "</td>";

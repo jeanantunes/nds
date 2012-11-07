@@ -29,6 +29,7 @@ import br.com.abril.nds.dto.ValidacaoLancamentoFaltaESobraFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoRecebimentoFisicoFecharDiaDTO;
 import br.com.abril.nds.dto.VendaSuplementarDTO;
 import br.com.abril.nds.dto.fechamentodiario.DividaDTO;
+import br.com.abril.nds.dto.fechamentodiario.ResumoEstoqueDTO;
 import br.com.abril.nds.dto.fechamentodiario.SumarizacaoDividasDTO;
 import br.com.abril.nds.dto.fechamentodiario.TipoDivida;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -562,7 +563,16 @@ public class FecharDiaController {
 		
 		result.use(CustomMapJson.class).put("resumo", resumoFechamentoDiarioConsignado).serialize();
 	}
-    
+	
+	@Post
+	public void obterResumoEstoque() {
+		
+		ResumoEstoqueDTO resumoFechamentoDiarioEstoque = 
+			this.fecharDiaService.obterResumoEstoque(getDataFechamento());
+		
+		result.use(CustomMapJson.class).put("resumo", resumoFechamentoDiarioEstoque).serialize();
+	}
+	
     private Date getDataFechamento() {
         return distribuidorService.obter().getDataOperacao();
     }
