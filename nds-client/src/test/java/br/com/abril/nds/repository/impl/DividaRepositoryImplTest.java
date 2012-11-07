@@ -1046,6 +1046,55 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
     }
     
     @Test
+    public void testObterDividasVencerApos() {
+        Date verificacao = Fixture.criarData(6, Calendar.NOVEMBER, 2012);
+        Date vencimento = Fixture.criarData(7, Calendar.NOVEMBER, 2012);
+        criarDadosSumarizacaoDividas(vencimento);
+        
+        List<Divida> dividas = dividaRepository.obterDividasVencerApos(verificacao, null);
+        Assert.assertNotNull(dividas);
+        Assert.assertEquals(6, dividas.size());
+        Assert.assertTrue(dividas.contains(dividaManoel));
+        Assert.assertTrue(dividas.contains(dividaJose));
+        Assert.assertTrue(dividas.contains(dividaMaria));
+        Assert.assertTrue(dividas.contains(dividaOrlando));
+        Assert.assertTrue(dividas.contains(dividaMariana));
+        Assert.assertTrue(dividas.contains(dividaLuis));
+    }
+    
+    @Test
+    public void testObterDividasVencerAposSemDividas() {
+        Date verificacao = Fixture.criarData(6, Calendar.NOVEMBER, 2012);
+        Date vencimento = Fixture.criarData(6, Calendar.NOVEMBER, 2012);
+        criarDadosSumarizacaoDividas(vencimento);
+        
+        List<Divida> dividas = dividaRepository.obterDividasVencerApos(verificacao, null);
+        Assert.assertNotNull(dividas);
+        Assert.assertTrue(dividas.isEmpty());
+    }
+    
+    @Test
+    public void testObterDividasVencerAposPaginado() {
+        Date verificacao = Fixture.criarData(6, Calendar.NOVEMBER, 2012);
+        Date vencimento = Fixture.criarData(7, Calendar.NOVEMBER, 2012);
+        criarDadosSumarizacaoDividas(vencimento);
+        
+        List<Divida> dividas = dividaRepository.obterDividasVencerApos(verificacao, new PaginacaoVO(1, 3, null));
+        Assert.assertNotNull(dividas);
+        Assert.assertEquals(3, dividas.size());
+        Assert.assertTrue(dividas.contains(dividaManoel));
+        Assert.assertTrue(dividas.contains(dividaJose));
+        Assert.assertTrue(dividas.contains(dividaMaria));
+        
+        dividas = dividaRepository.obterDividasVencerApos(verificacao, new PaginacaoVO(2, 3, null));
+        Assert.assertNotNull(dividas);
+        Assert.assertEquals(3, dividas.size());
+        Assert.assertTrue(dividas.contains(dividaOrlando));
+        Assert.assertTrue(dividas.contains(dividaMariana));
+        Assert.assertTrue(dividas.contains(dividaLuis));
+    }
+    
+    @Test
     public void testContarDividasReceber() {
         Date verificacao = Fixture.criarData(6, Calendar.NOVEMBER, 2012);
         Date vencimento = Fixture.criarData(6, Calendar.NOVEMBER, 2012);
@@ -1064,6 +1113,27 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
         long  total = dividaRepository.contarDividasReceberEm(verificacao);
         Assert.assertEquals(total, 0);
     }
+    
+    @Test
+    public void testContarDividasVencer() {
+        Date verificacao = Fixture.criarData(6, Calendar.NOVEMBER, 2012);
+        Date vencimento = Fixture.criarData(7, Calendar.NOVEMBER, 2012);
+        criarDadosSumarizacaoDividas(vencimento);
+        
+        long  total = dividaRepository.contarDividasVencerApos(verificacao);
+        Assert.assertEquals(total, 6);
+    }
+    
+    @Test
+    public void testContarDividasVencerSemDividas() {
+        Date verificacao = Fixture.criarData(6, Calendar.NOVEMBER, 2012);
+        Date vencimento = Fixture.criarData(6, Calendar.NOVEMBER, 2012);
+        criarDadosSumarizacaoDividas(vencimento);
+        
+        long  total = dividaRepository.contarDividasVencerApos(verificacao);
+        Assert.assertEquals(total, 0);
+    }
+
 
 	@Test
 	public void obterTotalDividasAbertoCota() {

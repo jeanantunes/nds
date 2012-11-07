@@ -2,7 +2,6 @@ package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -726,7 +725,7 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 	@SuppressWarnings("unchecked")
     @Override
     public List<Divida> obterDividasReceberEm(Date data, PaginacaoVO paginacao) {
-	    Query query = queryDividasReceberVencer(data, paginacao, false);
+	    Query query = queryDividas(data, TipoDivida.DIVIDA_A_RECEBER, paginacao, false);
 	    return query.list();
     }
 
@@ -734,10 +733,11 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
     /**
      * {@inheritDoc}
      */
-	@Override
+	@SuppressWarnings("unchecked")
+    @Override
     public List<Divida> obterDividasVencerApos(Date data, PaginacaoVO paginacao) {
-        //TODO: implementar
-        return new ArrayList<>();
+	    Query query = queryDividas(data, TipoDivida.DIVIDA_A_VENCER, paginacao, false);
+        return query.list();
     }
 
     /**
@@ -745,7 +745,7 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
      */
 	@Override
     public long contarDividasReceberEm(Date data) {
-	    Query query = queryDividasReceberVencer(data, null, true);
+	    Query query = queryDividas(data, TipoDivida.DIVIDA_A_RECEBER, null, true);
         return (long) query.uniqueResult();
     }
 
@@ -754,8 +754,8 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
      */
 	@Override
     public long contarDividasVencerApos(Date data) {
-	    //TODO: implementar
-        return 0;
+	    Query query = queryDividas(data, TipoDivida.DIVIDA_A_VENCER, null, true);
+        return (long) query.uniqueResult();
     }
 
 	/**
@@ -763,6 +763,8 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 	 * 
 	 * @param data
 	 *            data base para consulta ou contagem de dívidas
+	 * @param tipoDivida  tipo da dívida para recuperação, dívidas a receber ou dívidas a 
+	 * vencer
 	 * @param paginacao
 	 *            no caso de consulta de dívidas, contém os parâmetros de
 	 *            paginação de dívidas, pode ser {@code null}
@@ -771,12 +773,16 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 	 *            de dívidas
 	 * @return query criada com os parâmetros recebidos
 	 */
-	private Query queryDividasReceberVencer(Date data, PaginacaoVO paginacao, boolean count) {
+	private Query queryDividas(Date data, TipoDivida tipoDivida, PaginacaoVO paginacao, boolean count) {
+	    boolean isDividaReceber = TipoDivida.DIVIDA_A_RECEBER.equals(tipoDivida);
+	    
 	    StringBuilder hql = new StringBuilder("select ");
 	    hql.append(count ? "count(divida) " : "divida ");
 	    hql.append("from Divida divida ");
 	    hql.append("left join divida.cobranca cobranca ");
-	    hql.append("where cobranca.dataVencimento = :data ");
+	    hql.append("where cobranca.dataVencimento ");
+	    hql.append(isDividaReceber ? " = " : " > ");
+	    hql.append(" :data ");
 	    if (!count) {
 	        hql.append("order by divida.cota.numeroCota ");
 	    }
