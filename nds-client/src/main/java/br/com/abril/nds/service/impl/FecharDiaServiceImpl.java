@@ -85,6 +85,7 @@ import br.com.abril.nds.repository.FecharDiaRepository;
 import br.com.abril.nds.repository.FormaCobrancaRepository;
 import br.com.abril.nds.repository.MovimentoRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
+import br.com.abril.nds.repository.UsuarioRepository;
 import br.com.abril.nds.service.DividaService;
 import br.com.abril.nds.service.FecharDiaService;
 import br.com.abril.nds.service.ImpressaoDividaService;
@@ -182,6 +183,9 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 	
 	@Autowired
 	private FechamentoDiarioConsolidadoEncalheRepository fechamentoDiarioConsolidadoEncalheRepository;
+	
+	@Autowired
+	private UsuarioRepository usuarioRepository;
 	
 	@Override
 	@Transactional
@@ -386,7 +390,17 @@ public class FecharDiaServiceImpl implements FecharDiaService {
     
     @Override
     @Transactional
+    /**
+     * {@inheritDoc}
+     */
     public void salvarResumoFechamentoDiario(Usuario usuario, Date dataFechamento) throws FechamentoDiarioException{
+    	
+    	validarDadosFechamentoDiario(dataFechamento, "Data de fechamento inválida!");
+    	validarDadosFechamentoDiario(usuario, "Usúario informado inválido!");
+    	
+    	usuario = usuarioRepository.buscarPorId(usuario.getId());
+    	
+    	validarDadosFechamentoDiario(usuario, "Usúario não identificado para operação de fechamento do dia!");
     	
     	FechamentoDiario fechamento = new FechamentoDiario();
     	
@@ -395,7 +409,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
     	
     	fechamento = fechamentoDiarioRepository.merge(fechamento);
     	
-    	validarDadosFechamentoDiario(fechamento, "Erro na gravação do Resumo de Fechamento do Dia!");
+    	validarDadosFechamentoDiario(fechamento,null);
     	
     	incluirResumoReparte(fechamento); 
     	
@@ -526,6 +540,8 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		
 		consolidadoCota = fechamentoDiarioConsolidadoCotaRepository.merge(consolidadoCota);
 		
+		validarDadosFechamentoDiario(consolidadoCota,null);
+		
 		incluirCotasFechamentoDiario(resumoCotas.getAusentesExpedicaoReparte(),TipoSituacaoCota.AUSENTE_REPARTE,consolidadoCota);
 		
 		incluirCotasFechamentoDiario(resumoCotas.getAusentesRecolhimentoEncalhe(),TipoSituacaoCota.AUSENTE_ENCALHE,consolidadoCota);
@@ -562,8 +578,6 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		
 		List<Divida> dividas = dividaService.obterDividasVencerApos(fechamento.getDataFechamento(), null);
 		
-		validarDadosFechamentoDiario(dividas, "Erro na obtenção dos dados de Detalhemento do Resumo de Dividas A Vencer!");
-		
 		incluirDividas(fechamento, resumoDividas, dividas,TipoDividaFechamentoDia.A_VENCER);
 	}
 
@@ -575,13 +589,11 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		
 		List<Divida> dividas = dividaService.obterDividasReceberEm(fechamento.getDataFechamento(), null);
 		
-		validarDadosFechamentoDiario(dividas, "Erro na obtenção dos dados de Detalhemento do Resumo de Dividas A Receber!");
-		
 		incluirDividas(fechamento, resumoDividas, dividas,TipoDividaFechamentoDia.A_RECEBER);
 	}
 
 	private void incluirDividas(FechamentoDiario fechamento,
-			List<SumarizacaoDividasDTO> resumoDividas, List<Divida> dividas,TipoDividaFechamentoDia tipoDividaFechamentoDia) {
+			List<SumarizacaoDividasDTO> resumoDividas, List<Divida> dividas,TipoDividaFechamentoDia tipoDividaFechamentoDia) throws FechamentoDiarioException {
 		
 		FechamentoDiarioConsolidadoDivida resumoConsolidadoDivida = new FechamentoDiarioConsolidadoDivida();
 		
@@ -590,36 +602,44 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		
 		resumoConsolidadoDivida = fechamentoDiarioConsolidadoDividaRepository.merge(resumoConsolidadoDivida);
 		
-		for(SumarizacaoDividasDTO item : resumoDividas ){
+		validarDadosFechamentoDiario(resumoConsolidadoDivida,null);
+		
+		if(resumoDividas!= null && !resumoDividas.isEmpty()){
 			
-			FechamentoDiarioResumoConsolidadoDivida resumo = new FechamentoDiarioResumoConsolidadoDivida();
-			
-			resumo.setTipoCobranca(item.getTipoCobranca());
-			resumo.setValorInadimplencia(item.getInadimplencia());
-			resumo.setValorPago(item.getValorPago());
-			resumo.setValorTotal(item.getTotal());
-			resumo.setFechamentoDiarioConsolidadoDivida(resumoConsolidadoDivida);
-			
-			fechamentoDiarioResumoConsolidadoDividaRepository.adicionar(resumo);
+			for(SumarizacaoDividasDTO item : resumoDividas ){
+				
+				FechamentoDiarioResumoConsolidadoDivida resumo = new FechamentoDiarioResumoConsolidadoDivida();
+				
+				resumo.setTipoCobranca(item.getTipoCobranca());
+				resumo.setValorInadimplencia(item.getInadimplencia());
+				resumo.setValorPago(item.getValorPago());
+				resumo.setValorTotal(item.getTotal());
+				resumo.setFechamentoDiarioConsolidadoDivida(resumoConsolidadoDivida);
+				
+				fechamentoDiarioResumoConsolidadoDividaRepository.adicionar(resumo);
+			}
 		}
 		
-		for(Divida item : dividas ){
+		if(dividas!= null && !dividas.isEmpty()){
 			
-			FechamentoDiarioDivida dividaFechamentoDiario = new FechamentoDiarioDivida();
-			
-			DividaDTO dividaDTO = DividaDTO.fromDivida(item);
-			
-			dividaFechamentoDiario.setBanco(dividaDTO.getNomeBanco());
-			dividaFechamentoDiario.setDataVencimento(dividaDTO.getDataVencimento());
-			dividaFechamentoDiario.setTipoCobranca(dividaDTO.getFormaPagamento());
-			dividaFechamentoDiario.setIdntificadorDivida(dividaDTO.getIdDivida());
-			dividaFechamentoDiario.setNomeCota(dividaDTO.getNomeCota());
-			dividaFechamentoDiario.setNossoNumero(dividaDTO.getNossoNumero());
-			dividaFechamentoDiario.setNumeroConta(dividaDTO.getNumeroCota());
-			dividaFechamentoDiario.setValor(dividaDTO.getValor());
-			dividaFechamentoDiario.setFechamentoDiarioConsolidadoDivida(resumoConsolidadoDivida);
-			
-			fechamentoDiarioDividaRepository.adicionar(dividaFechamentoDiario);
+			for(Divida item : dividas ){
+				
+				FechamentoDiarioDivida dividaFechamentoDiario = new FechamentoDiarioDivida();
+				
+				DividaDTO dividaDTO = DividaDTO.fromDivida(item);
+				
+				dividaFechamentoDiario.setBanco(dividaDTO.getNomeBanco());
+				dividaFechamentoDiario.setDataVencimento(dividaDTO.getDataVencimento());
+				dividaFechamentoDiario.setTipoCobranca(dividaDTO.getFormaPagamento());
+				dividaFechamentoDiario.setIdntificadorDivida(dividaDTO.getIdDivida());
+				dividaFechamentoDiario.setNomeCota(dividaDTO.getNomeCota());
+				dividaFechamentoDiario.setNossoNumero(dividaDTO.getNossoNumero());
+				dividaFechamentoDiario.setNumeroConta(dividaDTO.getNumeroCota());
+				dividaFechamentoDiario.setValor(dividaDTO.getValor());
+				dividaFechamentoDiario.setFechamentoDiarioConsolidadoDivida(resumoConsolidadoDivida);
+				
+				fechamentoDiarioDividaRepository.adicionar(dividaFechamentoDiario);
+			}
 		}
 	}
 
@@ -639,6 +659,8 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		
 		consolidadoSuplementar = fechamentoDiarioConsolidadoSuplementarRepository.merge(consolidadoSuplementar);
 		
+		validarDadosFechamentoDiario(consolidadoSuplementar,null);
+		
 		incluirLancamentosSuplementar(consolidadoSuplementar);
 	
 		incluirVendaSuplementar(fechamento,consolidadoSuplementar);
@@ -649,21 +671,22 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		
 		List<SuplementarFecharDiaDTO> listaSuplementar = this.resumoSuplementarFecharDiaService.obterDadosGridSuplementar();
 		
-		validarDadosFechamentoDiario(listaSuplementar, "Erro na obtenção dos dados de detalhe do Resumo de Suplementar!");
-		
-		for(SuplementarFecharDiaDTO item : listaSuplementar){
+		if(listaSuplementar!= null && !listaSuplementar.isEmpty()){
 			
-			FechamentoDiarioLancamentoSuplementar lancamentoSuplementar = new FechamentoDiarioLancamentoSuplementar();
-			
-			ProdutoEdicao produtoEdicao = produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(item.getCodigo(), item.getNumeroEdicao());
-			
-			lancamentoSuplementar.setProdutoEdicao(produtoEdicao);
-			lancamentoSuplementar.setFechamentoDiarioConsolidadoSuplementar(consolidadoSuplementar);
-			lancamentoSuplementar.setQuantidadeContabilizada(item.getQuantidadeContabil());
-			lancamentoSuplementar.setQuantidadeDiferenca(item.getDiferenca());
-			lancamentoSuplementar.setQuantidadeFisico(item.getQuantidadeFisico());
-			
-			fechamentoDiarioLancamentoSuplementarRepository.adicionar(lancamentoSuplementar);
+			for(SuplementarFecharDiaDTO item : listaSuplementar){
+				
+				FechamentoDiarioLancamentoSuplementar lancamentoSuplementar = new FechamentoDiarioLancamentoSuplementar();
+				
+				ProdutoEdicao produtoEdicao = produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(item.getCodigo(), item.getNumeroEdicao());
+				
+				lancamentoSuplementar.setProdutoEdicao(produtoEdicao);
+				lancamentoSuplementar.setFechamentoDiarioConsolidadoSuplementar(consolidadoSuplementar);
+				lancamentoSuplementar.setQuantidadeContabilizada(item.getQuantidadeContabil());
+				lancamentoSuplementar.setQuantidadeDiferenca(item.getDiferenca());
+				lancamentoSuplementar.setQuantidadeFisico(item.getQuantidadeFisico());
+				
+				fechamentoDiarioLancamentoSuplementarRepository.adicionar(lancamentoSuplementar);
+			}
 		}
 	}
 
@@ -709,6 +732,8 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		
 		consolidadoEncalhe = fechamentoDiarioConsolidadoEncalheRepository.merge(consolidadoEncalhe);
 		
+		validarDadosFechamentoDiario(consolidadoEncalhe,null);
+		
 		incluirLancamentosEncalhe(fechamento, consolidadoEncalhe);
 		
 		incluirVendaEncalhe(fechamento, consolidadoEncalhe);
@@ -720,21 +745,22 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		
 		List<EncalheFecharDiaDTO> listaEncalhe = this.resumoEncalheFecharDiaService.obterDadosGridEncalhe(fechamento.getDataFechamento());
 		
-		validarDadosFechamentoDiario(listaEncalhe, "Erro na obtenção dos dados de detalhamento do Resumo de Encalhe!");
-		
-		for(EncalheFecharDiaDTO item : listaEncalhe){
+		if(listaEncalhe!= null && !listaEncalhe.isEmpty()){
 			
-			FechamentoDiarioLancamentoEncalhe lancamentoEncalhe = new FechamentoDiarioLancamentoEncalhe();
-			
-			ProdutoEdicao produtoEdicao = produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(item.getCodigo(), item.getNumeroEdicao());
-			
-			lancamentoEncalhe.setProdutoEdicao(produtoEdicao);
-			lancamentoEncalhe.setQuantidadeDiferenca(item.getDiferenca());
-			lancamentoEncalhe.setQuantidadeVendaEncalhe(Util.nvl(item.getQtde(),0).intValue());
-			lancamentoEncalhe.setQuantidade(Util.nvl(item.getQtde(),0).intValue());
-			lancamentoEncalhe.setFechamentoDiarioConsolidadoEncalhe(consolidadoEncalhe);
-			
-			fechamentoDiarioLancamentoEncalheRepository.adicionar(lancamentoEncalhe);
+			for(EncalheFecharDiaDTO item : listaEncalhe){
+				
+				FechamentoDiarioLancamentoEncalhe lancamentoEncalhe = new FechamentoDiarioLancamentoEncalhe();
+				
+				ProdutoEdicao produtoEdicao = produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(item.getCodigo(), item.getNumeroEdicao());
+				
+				lancamentoEncalhe.setProdutoEdicao(produtoEdicao);
+				lancamentoEncalhe.setQuantidadeDiferenca(item.getDiferenca());
+				lancamentoEncalhe.setQuantidadeVendaEncalhe(Util.nvl(item.getQtde(),0).intValue());
+				lancamentoEncalhe.setQuantidade(Util.nvl(item.getQtde(),0).intValue());
+				lancamentoEncalhe.setFechamentoDiarioConsolidadoEncalhe(consolidadoEncalhe);
+				
+				fechamentoDiarioLancamentoEncalheRepository.adicionar(lancamentoEncalhe);
+			}
 		}
 	}
 
@@ -780,6 +806,8 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 	    
 	    consolidadoReparte = fechamentoConsolidadoReparteRepository.merge(consolidadoReparte);
 	    
+	    validarDadosFechamentoDiario(consolidadoReparte,null);
+	    
 	    incluirLancamentosReparte(fechamento, consolidadoReparte);
 	}
 
@@ -788,26 +816,27 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		
 		List<ReparteFecharDiaDTO> listaReparte = resumoReparteFecharDiaService.obterResumoReparte(fechamento.getDataFechamento());
 		
-	    validarDadosFechamentoDiario(listaReparte,"Erro na obtenção dos dados de detalhe do Resumo de Reparte!");
-	    
-	    for(ReparteFecharDiaDTO item : listaReparte){
+	    if(listaReparte!= null && !listaReparte.isEmpty()){
 	    	
-	    	FechamentoDiarioLancamentoReparte movimentoReparte = new FechamentoDiarioLancamentoReparte();
-	    	
-	    	ProdutoEdicao produtoEdicao = produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(item.getCodigo(), item.getNumeroEdicao());
-	    	
-	    	movimentoReparte.setProdutoEdicao(produtoEdicao);
-	    	movimentoReparte.setQuantidadeADistribuir(item.getQtdADistribuir());
-	    	movimentoReparte.setQuantidadeDiferenca(item.getQtdDiferenca());
-	    	movimentoReparte.setQuantidadeDistribuido(Util.nvl(item.getQtdDistribuido(),0).intValue());
-	    	movimentoReparte.setQuantidadeFaltaEM(Util.nvl(item.getQtdFaltas(),0).intValue());
-	    	movimentoReparte.setQuantidadeReparte(Util.nvl(item.getQtdReparte(),0).intValue());
-	    	movimentoReparte.setQuantidadeSobraDistribuido(item.getQtdSobraDiferenca());
-	    	movimentoReparte.setQuantidadeSobraEM(Util.nvl(item.getQtdSobras(),0).intValue());
-	    	movimentoReparte.setQuantidadeTranferencia(Util.nvl(item.getQtdTransferido(),0).intValue());
-	    	movimentoReparte.setFechamentoDiarioConsolidadoReparte(consolidadoReparte);
-	    	
-	    	fechamentoLancamentoReparteRepository.adicionar(movimentoReparte);
+		    for(ReparteFecharDiaDTO item : listaReparte){
+		    	
+		    	FechamentoDiarioLancamentoReparte movimentoReparte = new FechamentoDiarioLancamentoReparte();
+		    	
+		    	ProdutoEdicao produtoEdicao = produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(item.getCodigo(), item.getNumeroEdicao());
+		    	
+		    	movimentoReparte.setProdutoEdicao(produtoEdicao);
+		    	movimentoReparte.setQuantidadeADistribuir(item.getQtdADistribuir());
+		    	movimentoReparte.setQuantidadeDiferenca(item.getQtdDiferenca());
+		    	movimentoReparte.setQuantidadeDistribuido(Util.nvl(item.getQtdDistribuido(),0).intValue());
+		    	movimentoReparte.setQuantidadeFaltaEM(Util.nvl(item.getQtdFaltas(),0).intValue());
+		    	movimentoReparte.setQuantidadeReparte(Util.nvl(item.getQtdReparte(),0).intValue());
+		    	movimentoReparte.setQuantidadeSobraDistribuido(item.getQtdSobraDiferenca());
+		    	movimentoReparte.setQuantidadeSobraEM(Util.nvl(item.getQtdSobras(),0).intValue());
+		    	movimentoReparte.setQuantidadeTranferencia(Util.nvl(item.getQtdTransferido(),0).intValue());
+		    	movimentoReparte.setFechamentoDiarioConsolidadoReparte(consolidadoReparte);
+		    	
+		    	fechamentoLancamentoReparteRepository.adicionar(movimentoReparte);
+		    }
 	    }
 	}
 
@@ -886,6 +915,10 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 	}
 	
 	private void validarDadosFechamentoDiario(Object objeto, String mensagem) throws FechamentoDiarioException{
+		
+		if(mensagem == null){
+			mensagem =  "Erro na gravação do Resumo de Fechamento do Dia!";
+		}
 		
 		if(objeto == null){
 			throw new FechamentoDiarioException(mensagem);
