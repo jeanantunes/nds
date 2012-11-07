@@ -30,6 +30,7 @@ public abstract class Aprovacao {
 	
 	@Column(name = "APROVADO_AUTOMATICAMENTE", nullable = true)
 	private boolean aprovadoAutomaticamente;
+	
 	@Column(name = "MOTIVO", nullable = true)
 	private String motivo;
 	

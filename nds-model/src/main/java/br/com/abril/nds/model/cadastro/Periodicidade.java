@@ -2,15 +2,15 @@ package br.com.abril.nds.model.cadastro;
 
 public enum Periodicidade {
 
-	DIARIO(1,"D", "diario"),
-	SEMANAL(2,"S", "semanal"),
-	QUINZENAL(3,"QN", "quinzenal"),
-	MENSAL(4,"M", "mensal"),
-	BIMESTRAL(5,"B", "bimestral"),
-	TRIMESTRAL(6,"T", "trimestral"),
-	QUADRIMESTRAL(7,"QD", "quadrimestral"),
-	ANUAL(8,"A", "anual"),
-	ESPORADICO(9,"E", "esporadico");
+	DIARIO(1,"D", "Diário"),
+	SEMANAL(2,"S", "Semanal"),
+	QUINZENAL(3,"QN", "Quinzenal"),
+	MENSAL(4,"M", "Mensal"),
+	BIMESTRAL(5,"B", "Bimestral"),
+	TRIMESTRAL(6,"T", "Trimestral"),
+	QUADRIMESTRAL(7,"QD", "Quadrimestral"),
+	ANUAL(8,"A", "Anual"),
+	ESPORADICO(9,"E", "Esporádico");
 
 	private Integer codigo;
 	

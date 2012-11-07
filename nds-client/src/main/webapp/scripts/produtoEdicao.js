@@ -269,7 +269,7 @@ var produtoEdicaoController =$.extend(true,  {
 				preProcess: produtoEdicaoController.executarPreProcessamento,
 				colModel : [ {
 					display : 'Produto',
-					name : 'nomeProduto',
+					name : 'nomeComercial',
 					width : 115,
 					sortable : true,
 					align : 'left'
@@ -463,7 +463,11 @@ var produtoEdicaoController =$.extend(true,  {
 					txt = ": " + cProduto + " - " + nProduto;
 				}
 				$("#produtoEdicaoController-labelNomeProduto",this.workspace).html(txt);
-				$("#produtoEdicaoController-codigoProduto",this.workspace).val(cProduto);
+				
+				if (cProduto != "") {
+				    
+				    $("#produtoEdicaoController-codigoProduto",this.workspace).val(cProduto);
+                }
 	
 				return resultado;
 			}
@@ -540,7 +544,7 @@ var produtoEdicaoController =$.extend(true,  {
 								$("#produtoEdicaoController-idProdutoEdicao").val(result.id);
 								$("#produtoEdicaoController-codigoProdutoEdicao").val(result.codigoProduto);
 								$("#produtoEdicaoController-nomePublicacao").val(result.nomeProduto);
-								$("#produtoEdicaoController-nomeComercialProduto").val(result.nomeComercial);
+								$("#produtoEdicaoController-nomeComercialProduto").val(result.nomeComercialProduto);
 								$("#produtoEdicaoController-nomeFornecedor").val(result.nomeFornecedor);
 								$("#produtoEdicaoController-situacao").val(result.situacao);
 								$("#produtoEdicaoController-numeroEdicao").val(result.numeroEdicao);
@@ -568,41 +572,46 @@ var produtoEdicaoController =$.extend(true,  {
 								$('#produtoEdicaoController-parcial').val(result.parcial + "");
 								$('#produtoEdicaoController-possuiBrinde').attr('checked', result.possuiBrinde).change();
 								$('#produtoEdicaoController-boletimInformativo').val(result.boletimInformativo);
-
-								$('#produtoEdicaoController-dataRecolhimentoPrevisto').val(result.dataRecolhimentoPrevisto == undefined ? '' : result.dataRecolhimentoPrevisto.$).attr("readonly", false);
 								$('#produtoEdicaoController-semanaRecolhimento').val(result.semanaRecolhimento);
-								$('#produtoEdicaoController-dataRecolhimentoReal').val(result.dataRecolhimentoReal == undefined ? '' : result.dataRecolhimentoReal.$);
-								$("#produtoEdicaoController-ped").val(result.ped).attr("readonly", false);		
-								$("#produtoEdicaoController-descricaoProduto").val(result.descricaoProduto).attr("readonly", false);
-								$("#produtoEdicaoController-descricaoBrinde").val(result.idBrinde).attr("readonly", false);
+								$('#produtoEdicaoController-dataRecolhimentoReal').val(result.dataRecolhimentoReal == undefined ? '' : result.dataRecolhimentoReal.$);								
+								$('#produtoEdicaoController-dataRecolhimentoPrevisto').val(result.dataRecolhimentoPrevisto == undefined ? '' : result.dataRecolhimentoPrevisto.$);
+								$("#produtoEdicaoController-ped").val(result.ped);		
+								$("#produtoEdicaoController-descricaoProduto").val(result.descricaoProduto);
+								$("#produtoEdicaoController-descricaoBrinde").val(result.idBrinde);
 
-								if (result.origemInterface) {
-									$("#produtoEdicaoController-precoVenda").attr("readonly", true);	
-								} else {
-									$("#produtoEdicaoController-tabSegmentacao").hide();	
-									$("#produtoEdicaoController-codigoProdutoEdicao").attr("readonly", false);
-									$("#produtoEdicaoController-nomeComercialProduto").attr("readonly", false);
-									$("#produtoEdicaoController-numeroEdicao").attr("readonly", (result.numeroEdicao == 1));
-									$("#produtoEdicaoController-pacotePadrao").attr("readonly", false);
-									$("#produtoEdicaoController-tipoLancamento").attr("disabled", false);
-									$("#produtoEdicaoController-precoPrevisto").attr("readonly", false);
-									$("#produtoEdicaoController-dataLancamentoPrevisto").attr("readonly", false);
-									$("#produtoEdicaoController-repartePrevisto").attr("readonly", false);
-									$("#produtoEdicaoController-repartePromocional").attr("readonly", false);
-									$("#produtoEdicaoController-codigoDeBarrasCorporativo").attr("readonly", false);
-									$('#produtoEdicaoController-parcial').attr("disabled", false);
-									$("#produtoEdicaoController-desconto").attr("readonly", false);
-									$("#produtoEdicaoController-largura").attr("readonly", false);
-									$("#produtoEdicaoController-comprimento").attr("readonly", false);
-									$("#produtoEdicaoController-espessura").attr("readonly", false);
-									$('#produtoEdicaoController-boletimInformativo').attr("readonly", false);
+								var naoEditavel = result.origemInterface;
+
+								if (!naoEditavel){
+								    $("#produtoEdicaoController-tabSegmentacao").hide();
 								}
+								
+								$('#produtoEdicaoController-dataRecolhimentoPrevisto').attr("readonly", naoEditavel);
+								$("#produtoEdicaoController-ped").attr("readonly", naoEditavel);		
+								$("#produtoEdicaoController-descricaoProduto").attr("readonly", naoEditavel);
+								$("#produtoEdicaoController-codigoProdutoEdicao").attr("readonly", naoEditavel);
+								$("#produtoEdicaoController-nomeComercialProduto").attr("readonly", naoEditavel);
+								$("#produtoEdicaoController-numeroEdicao").attr("readonly", (result.numeroEdicao == 1));
+								$("#produtoEdicaoController-pacotePadrao").attr("readonly", naoEditavel);
+								$("#produtoEdicaoController-tipoLancamento").attr("disabled", naoEditavel);
+								$("#produtoEdicaoController-precoPrevisto").attr("readonly", naoEditavel);
+								$("#produtoEdicaoController-dataLancamentoPrevisto").attr("readonly", naoEditavel);
+								$("#produtoEdicaoController-repartePrevisto").attr("readonly", naoEditavel);
+								$("#produtoEdicaoController-repartePromocional").attr("readonly", naoEditavel);
+								$("#produtoEdicaoController-codigoDeBarrasCorporativo").attr("readonly", naoEditavel);
+								$('#produtoEdicaoController-parcial').attr("disabled", naoEditavel);
+								$("#produtoEdicaoController-desconto").attr("readonly", naoEditavel);
+								$("#produtoEdicaoController-largura").attr("readonly", naoEditavel);
+								$("#produtoEdicaoController-comprimento").attr("readonly", naoEditavel);
+								$("#produtoEdicaoController-espessura").attr("readonly", naoEditavel);
+								$('#produtoEdicaoController-boletimInformativo').attr("readonly", naoEditavel);
 
+								$("#produtoEdicaoController-precoVenda").attr("readonly", false);	
 								$("#produtoEdicaoController-numeroLancamento").attr("readonly", false); 
 								$("#produtoEdicaoController-imagemCapa").attr("disabled", false);
 								$("#produtoEdicaoController-codigoDeBarras").attr("readonly", false);				
 								$("#produtoEdicaoController-chamadaCapa").attr("readonly", false);
 								$('#produtoEdicaoController-possuiBrinde').attr("disabled", false);
+								$("#produtoEdicaoController-descricaoBrinde").attr("readonly", false);
 								$("#produtoEdicaoController-peso").attr("readonly", false);
 							}
 						},
@@ -624,10 +633,8 @@ var produtoEdicaoController =$.extend(true,  {
 		},
 		popup:			function (id, codigo, nome) {
 
-			if ($("#produtoEdicaoController-pCodigoProduto",this.workspace).val() != $("#produtoEdicaoController-codigoProduto",this.workspace).val()){
-				$("#produtoEdicaoController-codigoProduto",this.workspace).val($("#produtoEdicaoController-pCodigoProduto",this.workspace).val());
-			}
-
+			$("#produtoEdicaoController-codigoProduto",this.workspace).val($("#produtoEdicaoController-pCodigoProduto",this.workspace).val());
+			
 			// if ($(".edicoesGrid > tbody").data() == null ||
 			// $(".edicoesGrid > tbody").data() == undefined) {
 			if ($("#produtoEdicaoController-codigoProduto",this.workspace).val() == "" && (codigo == "")) {

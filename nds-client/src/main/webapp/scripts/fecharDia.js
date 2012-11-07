@@ -1292,20 +1292,20 @@ var fecharDiaController =  $.extend(true, {
 		var linhaResumo = "<tr>";
 		
 		linhaResumo += "<td width=\"164\" style=\"border-bottom:1px solid #ccc;\">Consignado</td>";
-		linhaResumo += "<td width=\"180\" align=\"right\" style=\"border-bottom:1px solid #ccc;\">" + resumo.resumoConsignado.saldoAnterior + "</td>";
-		linhaResumo += "<td width=\"180\" align=\"right\" style=\"border-bottom:1px solid #ccc;\">" + resumo.resumoConsignado.valorEntradas + "</td>";
-		linhaResumo += "<td width=\"180\" align=\"right\" style=\"border-bottom:1px solid #ccc;\">" + resumo.resumoConsignado.valorSaidas + "</td>";
-		linhaResumo += "<td width=\"180\" align=\"right\" style=\"border-bottom:1px solid #ccc;\">" + resumo.resumoConsignado.saldoAtual + "</td>";
+		linhaResumo += "<td width=\"180\" align=\"right\" style=\"border-bottom:1px solid #ccc;\">" + resumo.resumoConsignado.saldoAnteriorFormatado + "</td>";
+		linhaResumo += "<td width=\"180\" align=\"right\" style=\"border-bottom:1px solid #ccc;\">" + resumo.resumoConsignado.valorEntradasFormatado + "</td>";
+		linhaResumo += "<td width=\"180\" align=\"right\" style=\"border-bottom:1px solid #ccc;\">" + resumo.resumoConsignado.valorSaidasFormatado + "</td>";
+		linhaResumo += "<td width=\"180\" align=\"right\" style=\"border-bottom:1px solid #ccc;\">" + resumo.resumoConsignado.saldoAtualFormatado + "</td>";
 		
 		linhaResumo += "</tr>";
 		
 		linhaResumo += "<tr>";
 		
 		linhaResumo += "<td style=\"border-bottom:1px solid #ccc;\">A Vista</td>";
-		linhaResumo += "<td align=\"right\" style=\"border-bottom:1px solid #ccc;\">" + resumo.resumoAVista.saldoAnterior + "</td>";
-		linhaResumo += "<td align=\"right\" style=\"border-bottom:1px solid #ccc;\">" + resumo.resumoAVista.valorEntradas + "</td>";
-		linhaResumo += "<td align=\"right\" style=\"border-bottom:1px solid #ccc;\">" + resumo.resumoAVista.valorSaidas + "</td>";
-		linhaResumo += "<td align=\"right\" style=\"border-bottom:1px solid #ccc;\">" + resumo.resumoAVista.saldoAtual + "</td>";
+		linhaResumo += "<td align=\"right\" style=\"border-bottom:1px solid #ccc;\">" + resumo.resumoAVista.saldoAnteriorFormatado + "</td>";
+		linhaResumo += "<td align=\"right\" style=\"border-bottom:1px solid #ccc;\">" + resumo.resumoAVista.valorEntradasFormatado + "</td>";
+		linhaResumo += "<td align=\"right\" style=\"border-bottom:1px solid #ccc;\">" + resumo.resumoAVista.valorSaidasFormatado + "</td>";
+		linhaResumo += "<td align=\"right\" style=\"border-bottom:1px solid #ccc;\">" + resumo.resumoAVista.saldoAtualFormatado + "</td>";
 		
 		linhaResumo += "</tr>";
 		
