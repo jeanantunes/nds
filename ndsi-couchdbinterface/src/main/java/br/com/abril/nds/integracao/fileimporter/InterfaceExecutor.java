@@ -175,7 +175,6 @@ public class InterfaceExecutor {
 						if (doc.getSituacaoSolicitacao().equals("SOLICITADO")) {
 							icdObjectService.insereSolicitacao(doc);
 							doc.setSituacaoSolicitacao("AGUARDANDO_GFS");
-							couchDbClient.save(doc);
 						} else if (
 								doc.getSituacaoSolicitacao().equals("AGUARDANDO_GFS") 
 								|| doc.getSituacaoSolicitacao().equals("EM PROCESSAMENTO")) {
@@ -195,8 +194,8 @@ public class InterfaceExecutor {
 									}
 								}
 							}							
-							couchDbClient.save(doc);
 						}
+						couchDbClient.update(doc);
 						
 					}
 					
