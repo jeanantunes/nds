@@ -62,6 +62,7 @@ public class EMS0128MessageProcessor extends AbstractRepository implements Messa
 			
 	}
 
+	
 	private void atualizaStatus(String distribuidor) {
 		
 		CouchDbClient couchDbClient = this.getCouchDBClient(distribuidor);
@@ -82,13 +83,14 @@ public class EMS0128MessageProcessor extends AbstractRepository implements Messa
 						
 						MovimentoEstoque movimento = this.recuperaMovimento(eitem.getIdMovimento());
 											
-						movimento.setStatusIntegracao(StatusIntegracao.valueOf(eitem.getSituacaoAcerto()));
+						movimento.setStatusIntegracao(StatusIntegracao.valueOf(eitem.getSituacaoAcerto().replace(" ", "_")));
 						movimento.setMotivo(eitem.getDescricaoMotivo());					
 						movimento.setNumeroDocumentoAcerto(eitem.getNumeroDocumentoAcerto());
 						movimento.setDataEmicaoDocumentoAcerto(eitem.getDataEmicaoDocumentoAcerto());
 						movimento.setCodigoOrigemMotivo(eitem.getCodigoOrigemMotivo());
 					
 						getSession().merge(movimento);
+						getSession().flush();
 						
 					}						
 					

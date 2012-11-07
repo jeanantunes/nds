@@ -1,89 +1,24 @@
 package br.com.abril.nds.integracao.icd.model;
 
-import java.io.Serializable;
-import java.sql.Time;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.Embeddable;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.IdClass;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinColumns;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import br.com.abril.nds.integracao.icd.model.pks.SfsPK;
 
 
 @Entity
 @Table(name = "SOLICITACAO_FALTAS_SOBRAS")
 public class SolicitacaoFaltaSobra {
-	
-	@Embeddable
-	public class SfsPK implements Serializable {
-		/**
-		 * 
-		 */
-		private static final long serialVersionUID = 1L;
-
-		@Column(name = "COD_DISTRIBUIDOR")
-		private Long codigoDistribuidor;
-
-		@Column(name = "DAT_SOLICITACAO")
-		private Date dataSolicitacao;
-
-		@Column(name = "HRA_SOLICITACAO")
-		private String horaSolicitacao;
-
-		/**
-		 * @return the codigoDistribuidor
-		 */
-		public Long getCodigoDistribuidor() {
-			return codigoDistribuidor;
-		}
-
-		/**
-		 * @param codigoDistribuidor the codigoDistribuidor to set
-		 */
-		public void setCodigoDistribuidor(Long codigoDistribuidor) {
-			this.codigoDistribuidor = codigoDistribuidor;
-		}
-
-		/**
-		 * @return the dataSolicitacao
-		 */
-		public Date getDataSolicitacao() {
-			return dataSolicitacao;
-		}
-
-		/**
-		 * @param dataSolicitacao the dataSolicitacao to set
-		 */
-		public void setDataSolicitacao(Date dataSolicitacao) {
-			this.dataSolicitacao = dataSolicitacao;
-		}
-
-		/**
-		 * @return the horaSolicitacao
-		 */
-		public String getHoraSolicitacao() {
-			return horaSolicitacao;
-		}
-
-		/**
-		 * @param horaSolicitacao the horaSolicitacao to set
-		 */
-		public void setHoraSolicitacao(String horaSolicitacao) {
-			this.horaSolicitacao = horaSolicitacao;
-		}
-	}
-
 	
 	@EmbeddedId
 	private SfsPK sfsPK;	
@@ -95,7 +30,7 @@ public class SolicitacaoFaltaSobra {
 	private String codigoSituacao;
 	
 
-	@OneToMany(cascade = CascadeType.ALL)
+	@OneToMany(cascade = CascadeType.ALL, fetch=FetchType.EAGER)
 	@JoinColumns(value = { 
 			@JoinColumn (name = "COD_DISTRIBUIDOR", referencedColumnName = "COD_DISTRIBUIDOR", insertable=false, updatable=false)
 			, @JoinColumn (name = "DAT_SOLICITACAO", referencedColumnName = "DAT_SOLICITACAO", insertable=false, updatable=false)
