@@ -90,7 +90,7 @@
 					<td><strong>PEB:</strong></td>
 					<td><input type="text" name="peb" id="peb" style="width:80px;" maxlength="9" /></td>
 					<td><strong>Pacote Padr&atilde;o:</strong></td>
-					<td><input type="text" name="pacotePadrao" id="pacotePadrao" style="width:80px;" maxlength="9" /></td>
+					<td><input type="text" name="pacotePadrao" id="pacotePadrao" style="width:80px;" maxlength="4" /></td>
 				</tr>
 				<tr>
 					<td><strong>Tipo de Desconto:</strong></td>
