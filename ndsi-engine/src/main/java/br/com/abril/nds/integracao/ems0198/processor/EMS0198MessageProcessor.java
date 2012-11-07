@@ -90,8 +90,54 @@ public class EMS0198MessageProcessor extends AbstractRepository implements Messa
 		
 		print.flush();
 		print.close();
-			
+		
 	}
+	
+	private List<PDV> findListPDV(Message message) {
+
+		StringBuilder sql = new StringBuilder();
+
+		sql.append(" select pdv from PDV pdv ");
+		sql.append(" join fetch pdv.cota co ");
+		sql.append(" join fetch co.pessoa p ");
+		sql.append(" left join fetch co.movimentoEstoqueCotas mov ");
+		sql.append(" left join fetch mov.produtoEdicao pe ");
+		sql.append(" left join fetch pe.chamadaEncalhes ce");
+		sql.append(" left join fetch pe.produto pd ");
+		sql.append(" left join mov.tipoMovimento tme ");
+		sql.append(" left join pe.lancamentos lan ");
+
+		sql.append(" where pdv.caracteristicas.pontoPrincipal = true ");
+		sql.append(" and lan.dataLancamentoDistribuidor = :dataLancDistrib ");
+		sql.append(" and tme.grupoMovimentoEstoque = :tipoMovimento ");
+		sql.append(" order by co.numeroCota");
+
+		Query query = this.getSession().createQuery(sql.toString());
+		query.setParameter("dataLancDistrib", this.dataLctoDistrib);
+		query.setParameter("tipoMovimento",
+				GrupoMovimentoEstoque.ENVIO_JORNALEIRO);
+
+		@SuppressWarnings("unchecked")
+		List<PDV> pdvs = (List<PDV>) query.list();
+
+		if (pdvs.isEmpty()) {
+
+			message.getHeader().put(
+					MessageHeaderProperties.FILE_NAME.getValue(), "");
+			message.getHeader().put(
+					MessageHeaderProperties.LINE_NUMBER.getValue(), 0);
+
+			this.ndsiLoggerFactory.getLogger().logWarning(message,
+					EventoExecucaoEnum.GERACAO_DE_ARQUIVO,
+					"Nenhum registro encontrado!");
+
+			throw new RuntimeException("Nenhum registro encontrado!");
+		} else {
+
+			return pdvs;
+		}
+	}
+	
 	
 	private PrintWriter geraArquivo(Message message, Date data, String nome, int numeroCota) {
 		
@@ -116,51 +162,6 @@ public class EMS0198MessageProcessor extends AbstractRepository implements Messa
 						
 	}
 	
-	
-	private List<PDV> findListPDV(Message message) {
-		
-			
-		StringBuilder sql = new StringBuilder();
-
-		sql.append(" select pdv from PDV pdv ");
-		sql.append(" join fetch pdv.cota co ");
-		sql.append(" join fetch co.pessoa p ");
-		sql.append(" left join fetch co.movimentoEstoqueCotas mov ");
-		sql.append(" left join fetch mov.produtoEdicao pe ");
-		sql.append(" left join fetch pe.chamadaEncalhes ce");
-		sql.append(" left join fetch pe.produto pd ");
-		sql.append(" left join mov.tipoMovimento tme ");
-		sql.append(" left join pe.lancamentos lan ");
-		
-		sql.append(" where pdv.caracteristicas.pontoPrincipal = true ");
-		sql.append(" and lan.dataLancamentoDistribuidor = :dataLancDistrib ");
-		sql.append(" and tme.grupoMovimentoEstoque = :tipoMovimento ");
-		sql.append(" order by co.numeroCota");
-
-		Query query = this.getSession().createQuery(sql.toString());
-		query.setParameter("dataLancDistrib", this.dataLctoDistrib);
-		query.setParameter("tipoMovimento", GrupoMovimentoEstoque.ENVIO_JORNALEIRO);
-
-		@SuppressWarnings("unchecked")
-		List<PDV> pdvs = (List<PDV>) query.list();
-
-		if (pdvs.isEmpty()) {
-
-			message.getHeader().put(MessageHeaderProperties.FILE_NAME.getValue(), "");
-			message.getHeader().put(MessageHeaderProperties.LINE_NUMBER.getValue(), 0);
-
-			
-			this.ndsiLoggerFactory.getLogger().logWarning(message,
-					EventoExecucaoEnum.GERACAO_DE_ARQUIVO, "Nenhum registro encontrado!");
-
-			throw new RuntimeException("Nenhum registro encontrado!");
-
-		} else {
-
-			return pdvs;
-			
-		}
-	}
 	
 	private void criaHeader(PrintWriter print, Integer numeroCota, String nome, Date data) {
 
