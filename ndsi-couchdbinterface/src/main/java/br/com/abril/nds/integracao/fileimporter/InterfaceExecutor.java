@@ -34,6 +34,7 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.abril.nds.integracao.couchdb.CouchDbProperties;
 import br.com.abril.nds.integracao.dto.SolicitacaoDTO;
 import br.com.abril.nds.integracao.icd.model.DetalheFaltaSobra;
+import br.com.abril.nds.integracao.icd.model.MotivoSituacaoFaltaSobra;
 import br.com.abril.nds.integracao.icd.model.SolicitacaoFaltaSobra;
 import br.com.abril.nds.integracao.model.InterfaceExecucao;
 import br.com.abril.nds.integracao.model.LogExecucao;
@@ -151,7 +152,7 @@ public class InterfaceExecutor {
 			this.logarFim(logExecucao);
 		}
 	}
-	
+	@Transactional
 	public void executarRetornosIcd(List<String> distribuidores) {		 
 		
 
@@ -180,17 +181,25 @@ public class InterfaceExecutor {
 								|| doc.getSituacaoSolicitacao().equals("EM PROCESSAMENTO")) {
 							
 							SolicitacaoFaltaSobra solicitacao = icdObjectService.recuperaSolicitacao(Long.valueOf(distribuidor), doc);
+							
 							doc.setSituacaoSolicitacao(solicitacao.getCodigoSituacao());
 							
-							for (DetalheFaltaSobra item : solicitacao.getItens())
+							List<DetalheFaltaSobra> listaDetalhes = solicitacao.getItens();
+							
+							for (DetalheFaltaSobra item : listaDetalhes)
 							{
 								for ( EMS0128InputItem eitem : doc.getItems()) {
 									if (item.getDfsPK().getNumeroSequencia().equals(eitem.getNumSequenciaDetalhe())) {
 										eitem.setSituacaoAcerto(item.getCodigoAcerto());
 										eitem.setNumeroDocumentoAcerto(item.getNumeroDocumentoAcerto());
 										eitem.setDataEmicaoDocumentoAcerto(item.getDataEmissaoDocumentoAcerto());
-										eitem.setDescricaoMotivo(item.getMotivoSituacaoFaltaSobra().getDescricaoMotivo());
-										eitem.setCodigoOrigemMotivo(item.getMotivoSituacaoFaltaSobra().getCodigoMotivo());
+										
+										MotivoSituacaoFaltaSobra motivo = icdObjectService.recuperaMotivoPorDetalhe(item.getDfsPK());
+										
+										if (null!=motivo) {
+											eitem.setDescricaoMotivo(motivo.getDescricaoMotivo());
+											eitem.setCodigoOrigemMotivo(motivo.getCodigoMotivo());
+										}
 									}
 								}
 							}							

@@ -62,6 +62,7 @@ public class EMS0128MessageProcessor extends AbstractRepository implements Messa
 			
 	}
 
+	
 	private void atualizaStatus(String distribuidor) {
 		
 		CouchDbClient couchDbClient = this.getCouchDBClient(distribuidor);
@@ -89,6 +90,7 @@ public class EMS0128MessageProcessor extends AbstractRepository implements Messa
 						movimento.setCodigoOrigemMotivo(eitem.getCodigoOrigemMotivo());
 					
 						getSession().merge(movimento);
+						getSession().flush();
 						
 					}						
 					
