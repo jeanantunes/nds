@@ -5,6 +5,8 @@ var produtoController = $.extend(true, {
 	
 	inicializar : function (pesquisaProduto) {
 		
+		produtoController.aplicarMascaras();
+		
 		produtoController.pesquisaProduto = pesquisaProduto;
 		
 		this.iniciarGrid();
@@ -14,7 +16,12 @@ var produtoController = $.extend(true, {
 
 	aplicarMascaras : function () {
 		$("#peb", this.workspace).numeric();
-		$("#pacotePadrao", this.workspace).numeric();
+		$("#pacotePadrao", this.workspace).numeric(
+		    {
+		    	decimal : false,
+		    	negative : false
+		    }
+		);
 	},
 
 	buscarValueRadio:function(radioName) {
