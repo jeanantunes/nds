@@ -4,7 +4,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
-import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
 import org.lightcouch.CouchDbClient;
 import org.lightcouch.NoDocumentException;
@@ -14,30 +13,16 @@ import org.lightcouch.ViewResult.Rows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import br.com.abril.nds.integracao.engine.MessageHeaderProperties;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.engine.data.Message;
 import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
-import br.com.abril.nds.integracao.icd.model.DetalheFaltaSobra;
-import br.com.abril.nds.integracao.icd.model.SolicitacaoFaltaSobra;
-import br.com.abril.nds.integracao.model.canonic.EMS0112Input;
 import br.com.abril.nds.integracao.model.canonic.EMS0128Input;
 import br.com.abril.nds.integracao.model.canonic.EMS0128InputItem;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
-import br.com.abril.nds.model.cadastro.Distribuidor;
-import br.com.abril.nds.model.cadastro.Editor;
-import br.com.abril.nds.model.cadastro.Endereco;
-import br.com.abril.nds.model.cadastro.EnderecoEditor;
-import br.com.abril.nds.model.cadastro.PessoaJuridica;
-import br.com.abril.nds.model.cadastro.Telefone;
-import br.com.abril.nds.model.cadastro.TelefoneEditor;
-import br.com.abril.nds.model.cadastro.TipoEndereco;
-import br.com.abril.nds.model.cadastro.TipoTelefone;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
-import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 import br.com.abril.nds.model.integracao.StatusIntegracao;
 import br.com.abril.nds.repository.impl.AbstractRepository;
 
@@ -91,23 +76,25 @@ public class EMS0128MessageProcessor extends AbstractRepository implements Messa
 				
 				EMS0128Input doc = (EMS0128Input) row.getDoc();
 				
+				if (doc.getSituacaoSolicitacao().equals("SOLICITADO")) {
 				
-				for ( EMS0128InputItem eitem : doc.getItems()) {
+					for ( EMS0128InputItem eitem : doc.getItems()) {
+						
+						MovimentoEstoque movimento = this.recuperaMovimento(eitem.getIdMovimento());
+											
+						movimento.setStatusIntegracao(StatusIntegracao.valueOf(eitem.getSituacaoAcerto()));
+						movimento.setMotivo(eitem.getDescricaoMotivo());					
+						movimento.setNumeroDocumentoAcerto(eitem.getNumeroDocumentoAcerto());
+						movimento.setDataEmicaoDocumentoAcerto(eitem.getDataEmicaoDocumentoAcerto());
+						movimento.setCodigoOrigemMotivo(eitem.getCodigoOrigemMotivo());
 					
-					MovimentoEstoque movimento = this.recuperaMovimento(eitem.getIdMovimento());
-										
-					movimento.setStatusIntegracao(StatusIntegracao.valueOf(eitem.getSituacaoAcerto()));
-					movimento.setMotivo(eitem.getDescricaoMotivo());					
-					movimento.setNumeroDocumentoAcerto(eitem.getNumeroDocumentoAcerto());
-					movimento.setDataEmicaoDocumentoAcerto(eitem.getDataEmicaoDocumentoAcerto());
-					movimento.setCodigoOrigemMotivo(eitem.getCodigoOrigemMotivo());
-				
-					getSession().merge(movimento);
+						getSession().merge(movimento);
+						
+					}						
 					
-				}						
-				
-				if (doc.getSituacaoSolicitacao().equals("PROCESSADO")) {
-					couchDbClient.remove(doc);
+					if (doc.getSituacaoSolicitacao().equals("PROCESSADO")) {
+						couchDbClient.remove(doc);
+					}
 				}
 			}
 		} catch (NoDocumentException ex) {
