@@ -23,6 +23,7 @@ import br.com.abril.nds.dto.ResumoFechamentoDiarioCotasDTO;
 import br.com.abril.nds.dto.ResumoFechamentoDiarioCotasDTO.TipoResumo;
 import br.com.abril.nds.dto.ResumoReparteFecharDiaDTO;
 import br.com.abril.nds.dto.ResumoSuplementarFecharDiaDTO;
+import br.com.abril.nds.dto.SuplementarFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoConfirmacaoDeExpedicaoFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoControleDeAprovacaoFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoLancamentoFaltaESobraFecharDiaDTO;
@@ -261,6 +262,22 @@ public class FecharDiaController {
 	}
 	
 	@Post
+	@Path("/obterGridSuplementar")
+	public void obterGridSuplementar(){
+		
+		List<SuplementarFecharDiaDTO> listaSuplementar = this.resumoSuplementarFecharDiaService.obterDadosGridSuplementar();
+		
+		TableModel<CellModelKeyValue<SuplementarFecharDiaDTO>> tableModel = new TableModel<CellModelKeyValue<SuplementarFecharDiaDTO>>();
+		
+		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaSuplementar));
+		
+		tableModel.setTotal(listaSuplementar.size());
+		
+		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+		
+	}
+	
+	@Post
 	@Path("/obterGridVendaSuplementar")
 	public void obterGridVendaSuplementar(){
 		
@@ -300,6 +317,54 @@ public class FecharDiaController {
 	}
 	
 	@Get
+	public void exportarResumoEncalhe(FileType fileType){
+		
+		
+		try {
+		
+		List<EncalheFecharDiaDTO> listaEncalhe = this.resumoEncalheFecharDiaService.obterDadosGridEncalhe(distribuidor.getDataOperacao());
+		
+		if(listaEncalhe.isEmpty()) {
+			throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");
+		}
+		
+			FileExporter.to("resumo_reparte", fileType).inHTTPResponse(this.getNDSFileHeader(), null, null, 
+					listaEncalhe, EncalheFecharDiaDTO.class, this.httpResponse);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		
+		
+		result.nothing();
+		
+	}
+	
+	@Get
+	public void exportarResumoSuplementar(FileType fileType){
+		
+		
+		try {
+		
+		List<SuplementarFecharDiaDTO> listaSuplementar = this.resumoSuplementarFecharDiaService.obterDadosGridSuplementar();
+		
+		if(listaSuplementar.isEmpty()) {
+			throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");
+		}
+		
+			FileExporter.to("resumo_reparte", fileType).inHTTPResponse(this.getNDSFileHeader(), null, null, 
+					listaSuplementar, SuplementarFecharDiaDTO.class, this.httpResponse);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		
+		
+		result.nothing();
+		
+	}
+	
+	@Get
 	public void exportarVendaSuplemntar(FileType fileType){		
 		try {
 			
@@ -320,6 +385,8 @@ public class FecharDiaController {
 		result.nothing();
 		
 	}
+	
+	
 	
 	@Get
 	public void exportarRecebimentoFisico(FileType fileType){

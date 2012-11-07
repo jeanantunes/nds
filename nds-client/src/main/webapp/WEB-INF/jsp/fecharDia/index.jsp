@@ -185,9 +185,19 @@
 		        <table class="suplementarDialogGrid"></table>
 		    </fieldset>
 		    <br clear="all" />
-		    <span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="../images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
+		     <span class="bt_novos" title="Gerar Arquivo">  
+			    <a href="${pageContext.request.contextPath}/administracao/fecharDia/exportarResumoSuplementar?fileType=XLS">
+		    		<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
+		    		Arquivo
+		    	</a>
+	    	</span>
 		
-		<span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="../images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
+			<span class="bt_novos" title="Imprimir">		
+			 	<a href="${pageContext.request.contextPath}/administracao/fecharDia/exportarResumoSuplementar?fileType=PDF">
+		    		<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
+		    		Imprimir
+			    </a>		
+			</span>
 		
 		</div>
 	</form>
@@ -200,7 +210,7 @@
 		    </fieldset>
 		    <br clear="all" />
 		    <span class="bt_novos" title="Gerar Arquivo">
-			    <a href="${pageContext.request.contextPath}/administracao/fecharDia/exportarVendaSuplemntar?fileType=XLS">
+			    <a href="${pageContext.request.contextPath}/administracao/fecharDia/exportarResumoEncalhe?fileType=XLS">
 			    	<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
 			    	Arquivo
 			    </a>
@@ -208,7 +218,7 @@
 		
 			<span class="bt_novos" title="Imprimir">
 			
-			<a href="${pageContext.request.contextPath}/administracao/fecharDia/exportarVendaSuplemntar?fileType=PDF">
+			<a href="${pageContext.request.contextPath}/administracao/fecharDia/exportarResumoEncalhe?fileType=PDF">
 		    	<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
 		    	Imprimir
 			</a>
@@ -441,15 +451,15 @@
       </tr>
       <tr>
         <td align="left" style="border-bottom:1px solid #ccc;">Sobras</td>
-        <td align="right" style="border-bottom:1px solid #ccc;">37,00</td>
+        <td align="right" style="border-bottom:1px solid #ccc;"><div id="totalSobraEncalhe"></div></td>
       </tr>
       <tr>
         <td align="left" style="border-bottom:1px solid #ccc;">Faltas</td>
-        <td align="right" style="border-bottom:1px solid #ccc;">37,00</td>
+        <td align="right" style="border-bottom:1px solid #ccc;"><div id="totalFaltaEncalhe"></div></td>
       </tr>
       <tr>
         <td align="left" style="border-bottom:1px solid #ccc;">Saldo</td>
-        <td align="right" style="border-bottom:1px solid #ccc;">482,84</td>
+        <td align="right" style="border-bottom:1px solid #ccc;"><div id="saldoEncalhe"></div></td>
       </tr>
       <tr>
         <td align="left">&nbsp;</td>
@@ -643,65 +653,6 @@ $(".popCotasGrid").flexigrid({
 			height : 200
 		});
 
-
-	
-	
-	$(".suplementarDialogGrid").flexigrid({
-			url : '../xml/suplementarDialogGrid-xml.xml',
-			dataType : 'xml',
-			colModel : [ {
-				display : 'Código',
-				name : 'codigo',
-				width : 60,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Produto',
-				name : 'produto',
-				width : 250,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Edição',
-				name : 'edicao',
-				width : 120,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Preço Capa R$',
-				name : 'precoCapa',
-				width : 100,
-				sortable : true,
-				align : 'right'
-			}, {
-				display : 'Qtde Contabil',
-				name : 'qtdeContabil',
-				width : 90,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Qtde Fisico',
-				name : 'qtdeFisico',
-				width : 80,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Dif.',
-				name : 'dif',
-				width : 40,
-				sortable : true,
-				align : 'center'
-			}],
-			sortname : "codigo",
-			sortorder : "asc",
-			usepager : true,
-			useRp : true,
-			rp : 15,
-			showTableToggleBtn : true,
-			width : 850,
-			height : 255
-		});
-		
 	$(".estoque-recoltoGrid").flexigrid({
 			url : '../xml/estoque_recolto-xml.xml',
 			dataType : 'xml',
