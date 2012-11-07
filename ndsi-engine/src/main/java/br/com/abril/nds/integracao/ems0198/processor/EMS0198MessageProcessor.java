@@ -49,8 +49,6 @@ public class EMS0198MessageProcessor extends AbstractRepository implements Messa
 
 	private Date dataLctoDistrib;
 
-	private String nomeArquivo;
-
 	private static SimpleDateFormat sdf = new SimpleDateFormat("ddMMyyyy");
 
 	@Override
@@ -63,7 +61,6 @@ public class EMS0198MessageProcessor extends AbstractRepository implements Messa
 
 		int qtdeRegistros = 0;
 		
-		this.nomeArquivo = String.format("%1$04d%2$s", numeroCota, sdf.format(dataLctoDistrib));
 		PrintWriter print =  geraArquivo(message, this.dataLctoDistrib, pdvs.get(0).getNome(), numeroCota);
 							
 		for (PDV pdv: pdvs) {
@@ -81,7 +78,7 @@ public class EMS0198MessageProcessor extends AbstractRepository implements Messa
 				
 				numeroCota = pdv.getCota().getNumeroCota();
 				
-				print = geraArquivo(message, this.dataLctoDistrib, pdvs.get(0).getNome(), numeroCota);
+				print = geraArquivo(message, this.dataLctoDistrib, pdv.getNome(), numeroCota);
 				
 				qtdeRegistros = 0;
 				
@@ -99,7 +96,8 @@ public class EMS0198MessageProcessor extends AbstractRepository implements Messa
 	private PrintWriter geraArquivo(Message message, Date data, String nome, int numeroCota) {
 		
 		try {
-			 														
+			
+			String nomeArquivo = String.format("%1$04d%2$s", numeroCota, sdf.format(dataLctoDistrib));
 
 			PrintWriter print = new PrintWriter(new FileWriter(message.getHeader().get(
 					MessageHeaderProperties.OUTBOUND_FOLDER.getValue()) + "/" + nomeArquivo + ".enc"));
