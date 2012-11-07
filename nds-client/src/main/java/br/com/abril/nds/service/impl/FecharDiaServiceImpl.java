@@ -386,7 +386,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
     @Override
     @Transactional(readOnly = true)
     public List<Divida> obterDividasReceberEm(Date data, PaginacaoVO paginacao) {
-        return obterDividasReceberEm(data, paginacao);
+        return dividaService.obterDividasReceberEm(data, paginacao);
     }
 
     /**
@@ -403,7 +403,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
      */
     @Override
     @Transactional(readOnly = true)
-    public int contarDividasReceberEm(Date data) {
+    public long contarDividasReceberEm(Date data) {
         return dividaService.contarDividasReceberEm(data);
     }
 
@@ -412,7 +412,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
      */
     @Override
     @Transactional(readOnly = true)
-    public int contarDividasVencerApos(Date data) {
+    public long contarDividasVencerApos(Date data) {
         return dividaService.contarDividasVencerApos(data);
     }
     
