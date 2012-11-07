@@ -38,6 +38,7 @@ import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.model.fechar.dia.FechamentoDiario;
 import br.com.abril.nds.model.fechar.dia.FechamentoDiarioConsolidadoCota;
@@ -60,6 +61,7 @@ import br.com.abril.nds.model.fechar.dia.FechamentoDiarioResumoConsolidadoDivida
 import br.com.abril.nds.model.fechar.dia.FechamentoDiarioResumoEstoque;
 import br.com.abril.nds.model.financeiro.Divida;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
+import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
 import br.com.abril.nds.model.movimentacao.Movimento;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.CotaRepository;
@@ -83,6 +85,7 @@ import br.com.abril.nds.repository.FechamentoDiarioResumoConsolidadoDividaReposi
 import br.com.abril.nds.repository.FechamentoDiarioResumoEstoqueRepository;
 import br.com.abril.nds.repository.FecharDiaRepository;
 import br.com.abril.nds.repository.FormaCobrancaRepository;
+import br.com.abril.nds.repository.MovimentoFinanceiroCotaRepository;
 import br.com.abril.nds.repository.MovimentoRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.UsuarioRepository;
@@ -120,6 +123,9 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 	
 	@Autowired
 	private MovimentoRepository movimentoRepository;
+	
+	@Autowired
+	private MovimentoFinanceiroCotaRepository movimentoFinanceiroCotaRepository;
 	
 	@Autowired
 	private ResumoReparteFecharDiaService resumoReparteFecharDiaService;
@@ -313,21 +319,43 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		
 		ResumoFechamentoDiarioConsignadoDTO.ResumoConsignado resumoConsignado = 
 			resumoFechamentoDiarioConsignado.new ResumoConsignado();
+
+		resumoConsignado.setSaldoAnterior(
+			this.movimentoFinanceiroCotaRepository.obterSaldoDistribuidor(
+				DateUtil.subtrairDias(dataFechamento, 1), TipoCota.CONSIGNADO, null));
 		
-		resumoConsignado.setSaldoAnterior(BigDecimal.TEN);
-		resumoConsignado.setSaldoAtual(BigDecimal.TEN);
-		resumoConsignado.setValorEntradas(BigDecimal.TEN);
-		resumoConsignado.setValorSaidas(BigDecimal.TEN);
+		resumoConsignado.setSaldoAtual(
+			this.movimentoFinanceiroCotaRepository.obterSaldoDistribuidor(
+				dataFechamento, TipoCota.CONSIGNADO, null));
+
+		resumoConsignado.setValorEntradas(
+			this.movimentoFinanceiroCotaRepository.obterSaldoDistribuidor(
+				dataFechamento, TipoCota.CONSIGNADO, OperacaoFinaceira.DEBITO));
+		
+		resumoConsignado.setValorSaidas(
+			this.movimentoFinanceiroCotaRepository.obterSaldoDistribuidor(
+				dataFechamento, TipoCota.CONSIGNADO, OperacaoFinaceira.CREDITO));
 		
 		resumoFechamentoDiarioConsignado.setResumoConsignado(resumoConsignado);
 		
 		ResumoFechamentoDiarioConsignadoDTO.ResumoAVista resumoAVista = 
 			resumoFechamentoDiarioConsignado.new ResumoAVista();
 		
-		resumoAVista.setSaldoAnterior(BigDecimal.TEN);
-		resumoAVista.setSaldoAtual(BigDecimal.TEN);
-		resumoAVista.setValorEntradas(BigDecimal.TEN);
-		resumoAVista.setValorSaidas(BigDecimal.TEN);
+		resumoAVista.setSaldoAnterior(
+			this.movimentoFinanceiroCotaRepository.obterSaldoDistribuidor(
+				DateUtil.subtrairDias(dataFechamento, 1), TipoCota.A_VISTA, null));
+		
+		resumoAVista.setSaldoAtual(
+			this.movimentoFinanceiroCotaRepository.obterSaldoDistribuidor(
+				dataFechamento, TipoCota.A_VISTA, null));
+
+		resumoAVista.setValorEntradas(
+			this.movimentoFinanceiroCotaRepository.obterSaldoDistribuidor(
+				dataFechamento, TipoCota.A_VISTA, OperacaoFinaceira.DEBITO));
+		
+		resumoAVista.setValorSaidas(
+			this.movimentoFinanceiroCotaRepository.obterSaldoDistribuidor(
+				dataFechamento, TipoCota.A_VISTA, OperacaoFinaceira.CREDITO));
 		
 		resumoFechamentoDiarioConsignado.setResumoAVista(resumoAVista);
 		

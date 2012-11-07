@@ -21,6 +21,7 @@ import br.com.abril.nds.dto.filtro.FiltroRelatorioServicosEntregaDTO;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
@@ -809,6 +810,71 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 
 		return count;
 	}
+	
+	@Override
+	public BigDecimal obterSaldoDistribuidor(Date data, 
+									 	     TipoCota tipoCota, 
+									 	     OperacaoFinaceira operacaoFinaceira) {
+		
+		StringBuilder hql = new StringBuilder(" select ");
 
+		if (OperacaoFinaceira.CREDITO.equals(operacaoFinaceira)) {
+		    
+			hql.append(" sum(mfc.valor - mfc.baixaCobranca.valorJuros - mfc.baixaCobranca.valorMulta + mfc.baixaCobranca.valorDesconto) ");
+			
+	    } else if (OperacaoFinaceira.DEBITO.equals(operacaoFinaceira)) {
+	    	
+			hql.append(" sum(mfc.valor + mfc.baixaCobranca.valorJuros + mfc.baixaCobranca.valorMulta - mfc.baixaCobranca.valorDesconto) ");
+			
+		} else {
+			
+			hql.append(" case when mfc.tipoMovimento.operacaoFinaceira = 'CREDITO' ");
+			hql.append(" then sum(mfc.valor - mfc.baixaCobranca.valorJuros - mfc.baixaCobranca.valorMulta + mfc.baixaCobranca.valorDesconto) ");
+			hql.append(" else sum(mfc.valor + mfc.baixaCobranca.valorJuros + mfc.baixaCobranca.valorMulta - mfc.baixaCobranca.valorDesconto) ");
+			hql.append(" end ");
+		}
+		
+		hql.append(" from MovimentoFinanceiroCota mfc ");
+
+		hql.append(" where mfc.status = :statusAprovacao ");
+		
+		if (operacaoFinaceira != null) {
+			
+			hql.append(" and mfc.tipoMovimento.operacaoFinaceira = :operacaoFinanceira ");
+		}
+		
+		if (tipoCota != null) {
+			
+			hql.append(" and mfc.cota.parametroCobranca.tipoCota = :tipoCota ");
+		}
+		
+		if (data != null) {
+		
+			hql.append(" and mfc.data = :data ");
+		}
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		query.setParameter("statusAprovacao", StatusAprovacao.APROVADO);
+
+		if (operacaoFinaceira != null) {
+			
+			query.setParameter("operacaoFinanceira", operacaoFinaceira);
+		}
+		
+		if (tipoCota != null) {
+			
+			query.setParameter("tipoCota", tipoCota);
+		}
+		
+		if (data != null) {
+			
+			query.setParameter("data", data);
+		}
+		
+		Object result = query.uniqueResult();
+
+		return (result == null) ? BigDecimal.ZERO : (BigDecimal) result;
+	}
 
 }
