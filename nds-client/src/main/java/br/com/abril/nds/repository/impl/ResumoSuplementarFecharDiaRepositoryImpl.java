@@ -11,7 +11,8 @@ import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.client.vo.VendaSuplementarVO;
-import br.com.abril.nds.dto.VendaSuplementarDTO;
+import br.com.abril.nds.dto.SuplementarFecharDiaDTO;
+import br.com.abril.nds.dto.VendaFechamentoDiaDTO;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.repository.ResumoSuplementarFecharDiaRepository;
 
@@ -147,7 +148,7 @@ public class ResumoSuplementarFecharDiaRepositoryImpl extends AbstractRepository
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<VendaSuplementarDTO> obterVendasSuplementar(Date dataOperacao) {
+	public List<VendaFechamentoDiaDTO> obterVendasSuplementar(Date dataOperacao) {
 		StringBuilder hql = new StringBuilder();
 		
 		hql.append("SELECT ");				
@@ -175,7 +176,7 @@ public class ResumoSuplementarFecharDiaRepositoryImpl extends AbstractRepository
 				VendaSuplementarVO.class));
 		
 		List<VendaSuplementarVO> teste = query.list();
-		List<VendaSuplementarDTO> listaFinal = new ArrayList<VendaSuplementarDTO>();
+		List<VendaFechamentoDiaDTO> listaFinal = new ArrayList<VendaFechamentoDiaDTO>();
 		
 		for(VendaSuplementarVO vo: teste){
 			if(vo.getIdVendaSuplementar() != null){				
@@ -186,13 +187,13 @@ public class ResumoSuplementarFecharDiaRepositoryImpl extends AbstractRepository
 		
 	}
 
-	private VendaSuplementarDTO obterVenda(VendaSuplementarVO vo) {
+	private VendaFechamentoDiaDTO obterVenda(VendaSuplementarVO vo) {
 		
 		StringBuilder hql = new StringBuilder();
 		
 		
 		hql.append(" SELECT p.codigo as codigo,  ");
-			hql.append(" p.nomeComercial as nomeProduto, ");
+			hql.append(" p.nome as nomeProduto, ");
 			hql.append(" pe.numeroEdicao as numeroEdicao, ");
 			hql.append(" me.qtde as qtde, ");
 			hql.append(" (me.qtde * pe.precoVenda) as valor, ");
@@ -209,10 +210,34 @@ public class ResumoSuplementarFecharDiaRepositoryImpl extends AbstractRepository
 		query.setParameter("idMovimentacao", vo.getIdVendaSuplementar());		
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(
-				VendaSuplementarDTO.class));
+				VendaFechamentoDiaDTO.class));
 		
-		return (VendaSuplementarDTO) query.uniqueResult();
+		return (VendaFechamentoDiaDTO) query.uniqueResult();
 		
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<SuplementarFecharDiaDTO> obterDadosGridSuplementar() {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" SELECT p.codigo as codigo,  ");
+		hql.append(" p.nome as nomeProduto, ");
+		hql.append(" pe.numeroEdicao as numeroEdicao, ");
+		hql.append(" pe.precoVenda as precoVenda ");								
+		hql.append(" FROM EstoqueProduto as ep ");				 
+		hql.append(" JOIN ep.produtoEdicao as pe ");
+		hql.append(" JOIN pe.produto as p ");
+		hql.append(" WHERE ep.qtdeSuplementar is not null");				
+
+		Query query = super.getSession().createQuery(hql.toString());	
+		
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(
+				SuplementarFecharDiaDTO.class));
+		
+		return query.list();
 	}
 
 }

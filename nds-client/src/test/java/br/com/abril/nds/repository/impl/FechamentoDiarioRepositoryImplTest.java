@@ -19,24 +19,24 @@ import br.com.abril.nds.model.cadastro.TipoFornecedor;
 import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.model.fechar.dia.FechamentoDiario;
-import br.com.abril.nds.model.fechar.dia.HistoricoFechamentoDiarioConsolidadoCota;
-import br.com.abril.nds.model.fechar.dia.HistoricoFechamentoDiarioConsolidadoDivida;
-import br.com.abril.nds.model.fechar.dia.HistoricoFechamentoDiarioConsolidadoDivida.TipoDividaFechamentoDia;
-import br.com.abril.nds.model.fechar.dia.HistoricoFechamentoDiarioConsolidadoEncalhe;
-import br.com.abril.nds.model.fechar.dia.HistoricoFechamentoDiarioConsolidadoReparte;
-import br.com.abril.nds.model.fechar.dia.HistoricoFechamentoDiarioConsolidadoSuplementar;
-import br.com.abril.nds.model.fechar.dia.HistoricoFechamentoDiarioCota;
-import br.com.abril.nds.model.fechar.dia.HistoricoFechamentoDiarioCota.TipoSituacaoCota;
-import br.com.abril.nds.model.fechar.dia.HistoricoFechamentoDiarioDivida;
-import br.com.abril.nds.model.fechar.dia.HistoricoFechamentoDiarioLancamentoEncalhe;
-import br.com.abril.nds.model.fechar.dia.HistoricoFechamentoDiarioLancamentoReparte;
-import br.com.abril.nds.model.fechar.dia.HistoricoFechamentoDiarioLancamentoSuplementar;
-import br.com.abril.nds.model.fechar.dia.HistoricoFechamentoDiarioMovimentoVendaEncalhe;
-import br.com.abril.nds.model.fechar.dia.HistoricoFechamentoDiarioMovimentoVendaSuplementar;
-import br.com.abril.nds.model.fechar.dia.HistoricoFechamentoDiarioResumoConsignado;
-import br.com.abril.nds.model.fechar.dia.HistoricoFechamentoDiarioResumoConsignado.TipoValor;
-import br.com.abril.nds.model.fechar.dia.HistoricoFechamentoDiarioResumoConsolidadoDivida;
-import br.com.abril.nds.model.fechar.dia.HistoricoFechamentoDiarioResumoEstoque;
+import br.com.abril.nds.model.fechar.dia.FechamentoDiarioConsolidadoCota;
+import br.com.abril.nds.model.fechar.dia.FechamentoDiarioConsolidadoDivida;
+import br.com.abril.nds.model.fechar.dia.FechamentoDiarioConsolidadoDivida.TipoDividaFechamentoDia;
+import br.com.abril.nds.model.fechar.dia.FechamentoDiarioConsolidadoEncalhe;
+import br.com.abril.nds.model.fechar.dia.FechamentoDiarioConsolidadoReparte;
+import br.com.abril.nds.model.fechar.dia.FechamentoDiarioConsolidadoSuplementar;
+import br.com.abril.nds.model.fechar.dia.FechamentoDiarioCota;
+import br.com.abril.nds.model.fechar.dia.FechamentoDiarioCota.TipoSituacaoCota;
+import br.com.abril.nds.model.fechar.dia.FechamentoDiarioDivida;
+import br.com.abril.nds.model.fechar.dia.FechamentoDiarioLancamentoEncalhe;
+import br.com.abril.nds.model.fechar.dia.FechamentoDiarioLancamentoReparte;
+import br.com.abril.nds.model.fechar.dia.FechamentoDiarioLancamentoSuplementar;
+import br.com.abril.nds.model.fechar.dia.FechamentoDiarioMovimentoVendaEncalhe;
+import br.com.abril.nds.model.fechar.dia.FechamentoDiarioMovimentoVendaSuplementar;
+import br.com.abril.nds.model.fechar.dia.FechamentoDiarioResumoAvista;
+import br.com.abril.nds.model.fechar.dia.FechamentoDiarioResumoConsignado;
+import br.com.abril.nds.model.fechar.dia.FechamentoDiarioResumoConsolidadoDivida;
+import br.com.abril.nds.model.fechar.dia.FechamentoDiarioResumoEstoque;
 import br.com.abril.nds.model.fiscal.NCM;
 import br.com.abril.nds.repository.FechamentoDiarioRepository;
 import br.com.abril.nds.util.DateUtil;
@@ -84,15 +84,15 @@ public class FechamentoDiarioRepositoryImplTest extends AbstractRepositoryImplTe
 		
 		Assert.assertNotNull(fechamentoDiario);
 		
-		HistoricoFechamentoDiarioConsolidadoReparte consolidadoReparte 
+		FechamentoDiarioConsolidadoReparte consolidadoReparte 
 				= Fixture.historicoFechamentoDiarioConsolidadoReparte(fechamentoDiario, BigDecimal.TEN, BigDecimal.TEN, BigDecimal.TEN, BigDecimal.TEN, BigDecimal.TEN, BigDecimal.TEN, BigDecimal.TEN);
 		
 		consolidadoReparte = merge(consolidadoReparte);
 		
 		Assert.assertNotNull(consolidadoReparte);
 		
-		HistoricoFechamentoDiarioLancamentoReparte historicoMovimentoReparte 
-				= Fixture.historicoFechamentoDiarioLancamentoReparte(produtoEdicaoVeja, consolidadoReparte, BigInteger.TEN, BigInteger.TEN, BigInteger.TEN, BigInteger.TEN, BigInteger.TEN, BigInteger.TEN, BigInteger.TEN, BigInteger.TEN);
+		FechamentoDiarioLancamentoReparte historicoMovimentoReparte 
+				= Fixture.historicoFechamentoDiarioLancamentoReparte(produtoEdicaoVeja, consolidadoReparte, 10, 10, 10, 10, 10, 10, 10, 10);
 		
 		historicoMovimentoReparte = merge(historicoMovimentoReparte);
 		
@@ -102,8 +102,8 @@ public class FechamentoDiarioRepositoryImplTest extends AbstractRepositoryImplTe
 		
 		Assert.assertNotNull(fechamentoDiario);
 		Assert.assertNotNull(fechamentoDiario.getConsolidadoReparte());
-		Assert.assertNotNull(fechamentoDiario.getConsolidadoReparte().getHistoricoLancamentosReparte());
-		Assert.assertTrue(!fechamentoDiario.getConsolidadoReparte().getHistoricoLancamentosReparte().isEmpty());
+		Assert.assertNotNull(fechamentoDiario.getConsolidadoReparte().getLancamentosReparte());
+		Assert.assertTrue(!fechamentoDiario.getConsolidadoReparte().getLancamentosReparte().isEmpty());
 	}
 	
 	@Test
@@ -114,34 +114,34 @@ public class FechamentoDiarioRepositoryImplTest extends AbstractRepositoryImplTe
 		fechamentoDiario = merge(fechamentoDiario);
 		Assert.assertNotNull(fechamentoDiario);
 		
-		HistoricoFechamentoDiarioConsolidadoEncalhe consolidadoEncalhe 
+		FechamentoDiarioConsolidadoEncalhe consolidadoEncalhe 
 				= Fixture.historicoFechamentoDiarioConsolidadoEncalhe(fechamentoDiario, BigDecimal.TEN, BigDecimal.TEN, BigDecimal.TEN, 
 															  BigDecimal.TEN, BigDecimal.TEN, BigDecimal.TEN, BigDecimal.TEN);
 		
 		consolidadoEncalhe = merge(consolidadoEncalhe);
 		Assert.assertNotNull(consolidadoEncalhe);
 		
-		HistoricoFechamentoDiarioLancamentoEncalhe historicoMovimentoEncalhe 
-				= Fixture.historicoFechamentoDiarioLancamentoEncalhe(produtoEdicaoVeja, BigInteger.ONE, BigInteger.ONE);
+		FechamentoDiarioLancamentoEncalhe historicoMovimentoEncalhe 
+				= Fixture.historicoFechamentoDiarioLancamentoEncalhe(produtoEdicaoVeja, 10, 23);
 		
-		historicoMovimentoEncalhe.setHistoricoConsolidadoEncalhe(consolidadoEncalhe);
+		historicoMovimentoEncalhe.setFechamentoDiarioConsolidadoEncalhe(consolidadoEncalhe);
 		historicoMovimentoEncalhe = merge(historicoMovimentoEncalhe);
 		Assert.assertNotNull(historicoMovimentoEncalhe);
 		
-		HistoricoFechamentoDiarioMovimentoVendaEncalhe encalhe 
+		FechamentoDiarioMovimentoVendaEncalhe encalhe 
 				= Fixture.historicoFechamentoDiarioMovimentoVendaEncalhe(produtoEdicaoVeja, BigInteger.ZERO, BigDecimal.TEN, new Date());
 		
-		encalhe.setHistoricoConsolidadoEncalhe(consolidadoEncalhe);
+		encalhe.setFechamentoDiarioConsolidadoEncalhe(consolidadoEncalhe);
 		encalhe = merge(encalhe);
 		Assert.assertNotNull(encalhe);
 		
 		fechamentoDiario = diarioRepository.buscarPorId(fechamentoDiario.getId());
 		
 		Assert.assertNotNull(fechamentoDiario.getConsolidadoEncalhe());
-		Assert.assertNotNull(fechamentoDiario.getConsolidadoEncalhe().getHistoricoLancamentosReparte());
-		Assert.assertTrue(!fechamentoDiario.getConsolidadoEncalhe().getHistoricoLancamentosReparte().isEmpty());
-		Assert.assertNotNull(fechamentoDiario.getConsolidadoEncalhe().getHistoricoMovimentoVendaEncalhes());
-		Assert.assertTrue(!fechamentoDiario.getConsolidadoEncalhe().getHistoricoMovimentoVendaEncalhes().isEmpty());
+		Assert.assertNotNull(fechamentoDiario.getConsolidadoEncalhe().getLancamentosReparte());
+		Assert.assertTrue(!fechamentoDiario.getConsolidadoEncalhe().getLancamentosReparte().isEmpty());
+		Assert.assertNotNull(fechamentoDiario.getConsolidadoEncalhe().getMovimentoVendaEncalhes());
+		Assert.assertTrue(!fechamentoDiario.getConsolidadoEncalhe().getMovimentoVendaEncalhes().isEmpty());
 		
 	}
 	
@@ -153,22 +153,22 @@ public class FechamentoDiarioRepositoryImplTest extends AbstractRepositoryImplTe
 		fechamentoDiario = merge(fechamentoDiario);
 		Assert.assertNotNull(fechamentoDiario);
 		
-		HistoricoFechamentoDiarioConsolidadoSuplementar consolidadoSuplementar 
+		FechamentoDiarioConsolidadoSuplementar consolidadoSuplementar 
 				= Fixture.historicoFechamentoDiarioConsolidadoSuplementar(fechamentoDiario, BigDecimal.TEN, BigDecimal.TEN, BigDecimal.TEN, BigDecimal.TEN);
 		
 		consolidadoSuplementar = merge(consolidadoSuplementar);
 		Assert.assertNotNull(consolidadoSuplementar);
 		
-		HistoricoFechamentoDiarioLancamentoSuplementar historicoMovimentoSuplementar 
-				= Fixture.historicoFechamentoDiarioLancamentoSuplementar(produtoEdicaoVeja, BigInteger.TEN, BigInteger.TEN, BigInteger.TEN);
-		historicoMovimentoSuplementar.setHistoricoConsolidadoSuplementar(consolidadoSuplementar);
+		FechamentoDiarioLancamentoSuplementar historicoMovimentoSuplementar 
+				= Fixture.historicoFechamentoDiarioLancamentoSuplementar(produtoEdicaoVeja, 10, 20, 30);
+		historicoMovimentoSuplementar.setFechamentoDiarioConsolidadoSuplementar(consolidadoSuplementar);
 		
 		historicoMovimentoSuplementar = merge(historicoMovimentoSuplementar);
 		Assert.assertNotNull(historicoMovimentoSuplementar);
 		
-		HistoricoFechamentoDiarioMovimentoVendaSuplementar suplementar 
+		FechamentoDiarioMovimentoVendaSuplementar suplementar 
 				= Fixture.historicoFechamentoDiarioMovimentoVendaSuplementar(produtoEdicaoVeja, BigInteger.TEN, BigDecimal.TEN, new Date());
-		suplementar.setHistoricoConsolidadoSuplementar(consolidadoSuplementar);
+		suplementar.setFechamentoDiarioConsolidadoSuplementar(consolidadoSuplementar);
 		
 		suplementar = merge(suplementar);
 		Assert.assertNotNull(suplementar);
@@ -176,10 +176,10 @@ public class FechamentoDiarioRepositoryImplTest extends AbstractRepositoryImplTe
 		fechamentoDiario = diarioRepository.buscarPorId(fechamentoDiario.getId());
 		
 		Assert.assertNotNull(fechamentoDiario.getConsolidadoSuplementar());
-		Assert.assertNotNull(fechamentoDiario.getConsolidadoSuplementar().getHistoricoLancamentosSuplementar());
-		Assert.assertTrue(!fechamentoDiario.getConsolidadoSuplementar().getHistoricoLancamentosSuplementar().isEmpty());
-		Assert.assertNotNull(fechamentoDiario.getConsolidadoSuplementar().getHistoricoMovimentoVendaSuplemetares());
-		Assert.assertTrue(!fechamentoDiario.getConsolidadoSuplementar().getHistoricoMovimentoVendaSuplemetares().isEmpty());
+		Assert.assertNotNull(fechamentoDiario.getConsolidadoSuplementar().getLancamentosSuplementar());
+		Assert.assertTrue(!fechamentoDiario.getConsolidadoSuplementar().getLancamentosSuplementar().isEmpty());
+		Assert.assertNotNull(fechamentoDiario.getConsolidadoSuplementar().getmovimentoVendaSuplemetares());
+		Assert.assertTrue(!fechamentoDiario.getConsolidadoSuplementar().getmovimentoVendaSuplemetares().isEmpty());
 		
 	}
 	
@@ -198,7 +198,7 @@ public class FechamentoDiarioRepositoryImplTest extends AbstractRepositoryImplTe
 		Assert.assertNotNull(fechamentoDiario.getConsolidadoDividas());
 		Assert.assertTrue(!fechamentoDiario.getConsolidadoDividas().isEmpty());
 		
-		for(HistoricoFechamentoDiarioConsolidadoDivida historico : fechamentoDiario.getConsolidadoDividas()){
+		for(FechamentoDiarioConsolidadoDivida historico : fechamentoDiario.getConsolidadoDividas()){
 			Assert.assertEquals(TipoDividaFechamentoDia.A_RECEBER, historico.getTipoDivida());
 		}
 	}
@@ -219,7 +219,7 @@ public class FechamentoDiarioRepositoryImplTest extends AbstractRepositoryImplTe
 		Assert.assertNotNull(fechamentoDiario.getConsolidadoDividas());
 		Assert.assertTrue(!fechamentoDiario.getConsolidadoDividas().isEmpty());
 		
-		for(HistoricoFechamentoDiarioConsolidadoDivida historico : fechamentoDiario.getConsolidadoDividas()){
+		for(FechamentoDiarioConsolidadoDivida historico : fechamentoDiario.getConsolidadoDividas()){
 			Assert.assertEquals(TipoDividaFechamentoDia.A_VENCER, historico.getTipoDivida());
 		}
 	}
@@ -250,32 +250,32 @@ public class FechamentoDiarioRepositoryImplTest extends AbstractRepositoryImplTe
 		fechamentoDiario = merge(fechamentoDiario);
 		Assert.assertNotNull(fechamentoDiario);
 		
-		HistoricoFechamentoDiarioConsolidadoCota consolidadoCota 
-				= Fixture.historicoFechamentoDiarioConsolidadoCota(fechamentoDiario, BigInteger.ZERO, BigInteger.ZERO, BigInteger.ZERO, BigInteger.ZERO, BigInteger.ZERO);
+		FechamentoDiarioConsolidadoCota consolidadoCota 
+				= Fixture.historicoFechamentoDiarioConsolidadoCota(fechamentoDiario, 10, 20, 30, 40, 50);
 		
 		consolidadoCota = merge(consolidadoCota);
 		Assert.assertNotNull(consolidadoCota);
 		
-		HistoricoFechamentoDiarioCota movimentoCotaAusenteEncalhe = Fixture.historicoFechamentoDiarioCota("José", 123, TipoSituacaoCota.AUSENTE_ENCALHE);
-		movimentoCotaAusenteEncalhe.setHistoricoConsolidadoCota(consolidadoCota);
+		FechamentoDiarioCota movimentoCotaAusenteEncalhe = Fixture.historicoFechamentoDiarioCota("José", 123, TipoSituacaoCota.AUSENTE_ENCALHE);
+		movimentoCotaAusenteEncalhe.setFechamentoDiarioConsolidadoCota(consolidadoCota);
 		
 		movimentoCotaAusenteEncalhe = merge(movimentoCotaAusenteEncalhe);
 		Assert.assertNotNull(movimentoCotaAusenteEncalhe);
 		
-		HistoricoFechamentoDiarioCota movimentoCotaAusenteReparte = Fixture.historicoFechamentoDiarioCota("José Mane", 1234, TipoSituacaoCota.AUSENTE_REPARTE);
-		movimentoCotaAusenteReparte.setHistoricoConsolidadoCota(consolidadoCota);
+		FechamentoDiarioCota movimentoCotaAusenteReparte = Fixture.historicoFechamentoDiarioCota("José Mane", 1234, TipoSituacaoCota.AUSENTE_REPARTE);
+		movimentoCotaAusenteReparte.setFechamentoDiarioConsolidadoCota(consolidadoCota);
 		
 		movimentoCotaAusenteReparte = merge(movimentoCotaAusenteReparte);
 		Assert.assertNotNull(movimentoCotaAusenteReparte);
 		
-		HistoricoFechamentoDiarioCota movimentoCotaInativas = Fixture.historicoFechamentoDiarioCota("Maria", 12345, TipoSituacaoCota.INATIVAS);
-		movimentoCotaInativas.setHistoricoConsolidadoCota(consolidadoCota);
+		FechamentoDiarioCota movimentoCotaInativas = Fixture.historicoFechamentoDiarioCota("Maria", 12345, TipoSituacaoCota.INATIVAS);
+		movimentoCotaInativas.setFechamentoDiarioConsolidadoCota(consolidadoCota);
 		
 		movimentoCotaInativas = merge(movimentoCotaInativas);
 		Assert.assertNotNull(movimentoCotaInativas);
 		
-		HistoricoFechamentoDiarioCota movimentoCotaNovas = Fixture.historicoFechamentoDiarioCota("Tião", 345, TipoSituacaoCota.NOVAS);
-		movimentoCotaNovas.setHistoricoConsolidadoCota(consolidadoCota);
+		FechamentoDiarioCota movimentoCotaNovas = Fixture.historicoFechamentoDiarioCota("Tião", 345, TipoSituacaoCota.NOVAS);
+		movimentoCotaNovas.setFechamentoDiarioConsolidadoCota(consolidadoCota);
 		
 		movimentoCotaNovas = merge(movimentoCotaNovas);
 		Assert.assertNotNull(movimentoCotaNovas);
@@ -309,27 +309,20 @@ public class FechamentoDiarioRepositoryImplTest extends AbstractRepositoryImplTe
 		fechamentoDiario = merge(fechamentoDiario);
 		Assert.assertNotNull(fechamentoDiario);
 		
-		incluirResumoConsignado(TipoValor.ENTRADA,fechamentoDiario);
+		FechamentoDiarioResumoConsignado consignado = Fixture.getValorConsignado(fechamentoDiario, BigDecimal.TEN, BigDecimal.TEN, BigDecimal.TEN, BigDecimal.TEN);
 		
-		incluirResumoConsignado(TipoValor.SAIDA,fechamentoDiario);
+		consignado = merge(consignado);
+		Assert.assertNotNull(consignado);
 		
-		incluirResumoConsignado(TipoValor.SALDO_ANTERIOR,fechamentoDiario);
+    	FechamentoDiarioResumoAvista  valorAvista = Fixture.getValorAvista(fechamentoDiario, BigDecimal.TEN, BigDecimal.TEN, BigDecimal.TEN, BigDecimal.TEN);
 		
-		incluirResumoConsignado(TipoValor.SALDO_ATUAL,fechamentoDiario);
-	}
-
-	private void incluirResumoConsignado(TipoValor tipoValor,FechamentoDiario fechamentoDiario) {
-		
-		HistoricoFechamentoDiarioResumoConsignado resumo = Fixture.historicoFechamentoDiarioResumoConsignado(tipoValor, BigDecimal.TEN, BigDecimal.TEN);
-		resumo.setFechamentoDiario(fechamentoDiario);
-	
-		resumo = merge(resumo);
-		Assert.assertNotNull(resumo);
+    	valorAvista = merge(valorAvista);
+		Assert.assertNotNull(valorAvista);
 	}
 
 	private void incluirResumoEstoque(TipoEstoque tipoEstoque,FechamentoDiario fechamentoDiario) {
 		
-		HistoricoFechamentoDiarioResumoEstoque resumoLancamento = Fixture.historicoFechamentoDiarioResumoEstoque(BigInteger.TEN, BigInteger.TEN, BigDecimal.TEN, tipoEstoque);
+		FechamentoDiarioResumoEstoque resumoLancamento = Fixture.historicoFechamentoDiarioResumoEstoque(10, 20, BigDecimal.TEN, tipoEstoque);
 		resumoLancamento.setFechamentoDiario(fechamentoDiario);
 		
 		resumoLancamento = merge(resumoLancamento);
@@ -339,22 +332,22 @@ public class FechamentoDiarioRepositoryImplTest extends AbstractRepositoryImplTe
 
 	private void inserirDividas(FechamentoDiario fechamentoDiario, TipoDividaFechamentoDia tipoDividaFechamentoDia) {
 		
-		HistoricoFechamentoDiarioConsolidadoDivida fechamentoDiarioConsolidadoDivida 
+		FechamentoDiarioConsolidadoDivida fechamentoDiarioConsolidadoDivida 
 				= Fixture.historicoFechamentoDiarioConsolidadoDivida(fechamentoDiario, tipoDividaFechamentoDia);
 		
 		fechamentoDiarioConsolidadoDivida = merge(fechamentoDiarioConsolidadoDivida);
 		Assert.assertNotNull(fechamentoDiarioConsolidadoDivida);
 		
-		HistoricoFechamentoDiarioDivida historicoFechamentoDiarioMovimentoDivida 
+		FechamentoDiarioDivida historicoFechamentoDiarioMovimentoDivida 
 				= Fixture.historicoFechamentoDiarioDivida("Banco Brasil", new Date(), TipoCobranca.BOLETO, "Jose", 10L, "781023456", 123, BigDecimal.ZERO);
-		historicoFechamentoDiarioMovimentoDivida.setHistoricoConsolidadoDivida(fechamentoDiarioConsolidadoDivida); 
+		historicoFechamentoDiarioMovimentoDivida.setFechamentoDiarioConsolidadoDivida(fechamentoDiarioConsolidadoDivida); 
 		
 		historicoFechamentoDiarioMovimentoDivida = merge(historicoFechamentoDiarioMovimentoDivida);
 		Assert.assertNotNull(historicoFechamentoDiarioMovimentoDivida);
 		
-		HistoricoFechamentoDiarioResumoConsolidadoDivida movimentoConsolidadoDivida
+		FechamentoDiarioResumoConsolidadoDivida movimentoConsolidadoDivida
 				= Fixture.historicoFechamentoDiarioResumoConsolidadoDivida(TipoCobranca.BOLETO, BigDecimal.TEN, BigDecimal.TEN, BigDecimal.TEN);
-		movimentoConsolidadoDivida.setHistoricoConsolidadoDivida(fechamentoDiarioConsolidadoDivida);
+		movimentoConsolidadoDivida.setFechamentoDiarioConsolidadoDivida(fechamentoDiarioConsolidadoDivida);
 		
 		movimentoConsolidadoDivida = merge(movimentoConsolidadoDivida);
 		Assert.assertNotNull(movimentoConsolidadoDivida);

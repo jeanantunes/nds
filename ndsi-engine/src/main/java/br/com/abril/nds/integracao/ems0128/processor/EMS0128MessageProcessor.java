@@ -6,31 +6,23 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import org.hibernate.Query;
 import org.lightcouch.CouchDbClient;
+import org.lightcouch.NoDocumentException;
+import org.lightcouch.View;
+import org.lightcouch.ViewResult;
+import org.lightcouch.ViewResult.Rows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import br.com.abril.nds.integracao.engine.MessageHeaderProperties;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.engine.data.Message;
 import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
-import br.com.abril.nds.integracao.model.canonic.EMS0112Input;
 import br.com.abril.nds.integracao.model.canonic.EMS0128Input;
 import br.com.abril.nds.integracao.model.canonic.EMS0128InputItem;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
-import br.com.abril.nds.model.cadastro.Distribuidor;
-import br.com.abril.nds.model.cadastro.Editor;
-import br.com.abril.nds.model.cadastro.Endereco;
-import br.com.abril.nds.model.cadastro.EnderecoEditor;
-import br.com.abril.nds.model.cadastro.PessoaJuridica;
-import br.com.abril.nds.model.cadastro.Telefone;
-import br.com.abril.nds.model.cadastro.TelefoneEditor;
-import br.com.abril.nds.model.cadastro.TipoEndereco;
-import br.com.abril.nds.model.cadastro.TipoTelefone;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
-import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 import br.com.abril.nds.model.integracao.StatusIntegracao;
 import br.com.abril.nds.repository.impl.AbstractRepository;
 
@@ -54,18 +46,70 @@ public class EMS0128MessageProcessor extends AbstractRepository implements Messa
 	@Override
 	public void preProcess(AtomicReference<Object> tempVar) {
 		
-		Query query = queryMovimentoEstoque();
-		
-		tempVar.set( query.list() );		
-		
 		input = new EMS0128Input();
 		
 		input.setCodigoDistribuidor(distribuidorService.obter().getCodigoDistribuidorDinap());
 		input.setDataSolicitacao(new Date());
 		input.setFormaSolicitacao("CARGA-NDISTRIB");
 		input.setSituacaoSolicitacao("SOLICITADO");
+
+		atualizaStatus(input.getCodigoDistribuidor());
+		
+		Query query = queryMovimentoEstoque();
+		
+		tempVar.set( query.list() );		
+		
 			
 	}
+
+	private void atualizaStatus(String distribuidor) {
+		
+		CouchDbClient couchDbClient = this.getCouchDBClient(distribuidor);
+		
+		View view = couchDbClient.view("importacao/porTipoDocumento");
+						
+		view.key("EMS0128");
+		view.includeDocs(true);
+		try {
+			ViewResult<String, Void, ?> result = view.queryView(String.class, Void.class, EMS0128Input.class);
+			for (@SuppressWarnings("rawtypes") Rows row: result.getRows()) {						
+				
+				EMS0128Input doc = (EMS0128Input) row.getDoc();
+				
+				if (!doc.getSituacaoSolicitacao().equals("SOLICITADO")) {
+				
+					for ( EMS0128InputItem eitem : doc.getItems()) {
+						
+						MovimentoEstoque movimento = this.recuperaMovimento(eitem.getIdMovimento());
+											
+						movimento.setStatusIntegracao(StatusIntegracao.valueOf(eitem.getSituacaoAcerto()));
+						movimento.setMotivo(eitem.getDescricaoMotivo());					
+						movimento.setNumeroDocumentoAcerto(eitem.getNumeroDocumentoAcerto());
+						movimento.setDataEmicaoDocumentoAcerto(eitem.getDataEmicaoDocumentoAcerto());
+						movimento.setCodigoOrigemMotivo(eitem.getCodigoOrigemMotivo());
+					
+						getSession().merge(movimento);
+						
+					}						
+					
+					if (doc.getSituacaoSolicitacao().equals("PROCESSADO")) {
+						couchDbClient.remove(doc);
+					}
+				}
+			}
+		} catch (NoDocumentException ex) {
+			
+		}
+
+
+	}
+
+	private MovimentoEstoque recuperaMovimento(Long id) {
+		
+		return (MovimentoEstoque) getSession().get(MovimentoEstoque.class, id);		
+		
+	}
+
 
 	@Override
 	public void processMessage(Message message) {
@@ -76,6 +120,7 @@ public class EMS0128MessageProcessor extends AbstractRepository implements Messa
 		
 		
 		item.setNumSequenciaDetalhe(itens++);
+		item.setIdMovimento(me.getId());
 		
 		GrupoMovimentoEstoque gme = ((TipoMovimentoEstoque)(me).getTipoMovimento()).getGrupoMovimentoEstoque();
 		
@@ -146,6 +191,6 @@ public class EMS0128MessageProcessor extends AbstractRepository implements Messa
 		query.setParameter("statusIntegracao", StatusIntegracao.NAO_INTEGRADO);
 		query.setParameter("status", StatusAprovacao.APROVADO);
 		return query;
-	}
+	}	
 
 }

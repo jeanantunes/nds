@@ -5674,7 +5674,7 @@ public class DataLoader {
 
 	private static void criarTiposNotaFiscal(Session session) {
 
-		save(session, Fixture.tipoNotaFiscal(
+		tipoNotaFiscalDevolucao = Fixture.tipoNotaFiscal(
 				true
 				, "NF-e de Remessa em Consignação (NECE / DANFE) - Cota Contribuinte"				
 				, TipoUsuarioNotaFiscal.COTA
@@ -5686,10 +5686,18 @@ public class DataLoader {
 				, TipoAtividade.MERCANTIL
 				, TipoOperacao.SAIDA
 				, cfop5917	
-				, cfop6917) 
-			);
+				, cfop6917); 
+		save(session, tipoNotaFiscalDevolucao);
 
-		save(session, Fixture.tipoNotaFiscal(true,	"NF-e de Remessa em Devolução de Remessa em Consignação - Cota Contribuinte"		,TipoUsuarioNotaFiscal.DISTRIBUIDOR,	TipoUsuarioNotaFiscal.DISTRIBUIDOR,	GrupoNotaFiscal.NF_DEVOLUCAO_REMESSA_CONSIGNACAO,		0L,	"NF-e de Remessa em Devolução de Remessa em Consignação",	2,	TipoAtividade.MERCANTIL		,TipoOperacao.ENTRADA	,cfop1918	,cfop2918));
+		tipoNotaFiscalRecebimento = Fixture.tipoNotaFiscal(true,	
+				"NF-e de Remessa em Devolução de Remessa em Consignação - Cota Contribuinte"		,
+				TipoUsuarioNotaFiscal.DISTRIBUIDOR,	TipoUsuarioNotaFiscal.DISTRIBUIDOR,	
+				GrupoNotaFiscal.NF_DEVOLUCAO_REMESSA_CONSIGNACAO,		
+				0L,	"NF-e de Remessa em Devolução de Remessa em Consignação",	
+				2,	TipoAtividade.MERCANTIL		,TipoOperacao.ENTRADA	,cfop1918	,cfop2918);
+		
+		
+		save(session, tipoNotaFiscalRecebimento);
 		save(session, Fixture.tipoNotaFiscal(true,	"NF-e de Devolução Simbólica de Mercadorias Vendidas - Cota Contribuinte"		,TipoUsuarioNotaFiscal.DISTRIBUIDOR,	TipoUsuarioNotaFiscal.DISTRIBUIDOR,	GrupoNotaFiscal.NF_DEVOLUCAO_SIMBOLICA,				0L,	"NF-e de Devolução Simbólica de Mercadorias Vendidas",		3,	TipoAtividade.MERCANTIL		,TipoOperacao.ENTRADA	,cfop1919	,cfop2919));
 		save(session, Fixture.tipoNotaFiscal(true,	"NF-e Venda - Cota Contribuinte"							,TipoUsuarioNotaFiscal.COTA,		TipoUsuarioNotaFiscal.DISTRIBUIDOR,	GrupoNotaFiscal.NF_VENDA,					0L,	"NF-e Venda",							4,	TipoAtividade.MERCANTIL		,TipoOperacao.SAIDA	,cfop5114	,cfop6114));
 		save(session, Fixture.tipoNotaFiscal(false,	"NF-e de Remessa em Consignação (NECE / DANFE) - Cota NÃO Contribuinte"			,TipoUsuarioNotaFiscal.COTA,		TipoUsuarioNotaFiscal.DISTRIBUIDOR,	GrupoNotaFiscal.NF_REMESSA_CONSIGNACAO,				0L,	"NF-e de Remessa em Consignação (NECE / DANFE)",		5,	TipoAtividade.MERCANTIL		,TipoOperacao.SAIDA	,cfop5917	,cfop6917));
@@ -11829,6 +11837,7 @@ public class DataLoader {
 		save(session, Fixture.criarInterfaceExecucao(124L, "EMS0124"));
 		save(session, Fixture.criarInterfaceExecucao(InterfaceEnum.EMS0125.getCodigoInterface(), "EMS0125"));
 		save(session, Fixture.criarInterfaceExecucao(InterfaceEnum.EMS0126.getCodigoInterface(), "EMS0126"));
+		save(session, Fixture.criarInterfaceExecucao(InterfaceEnum.EMS0128.getCodigoInterface(), "EMS0128"));
 		save(session, Fixture.criarInterfaceExecucao(129L, "EMS0129"));
 		save(session, Fixture.criarInterfaceExecucao(130L, "EMS0130"));
 		save(session, Fixture.criarInterfaceExecucao(131L, "EMS0131"));

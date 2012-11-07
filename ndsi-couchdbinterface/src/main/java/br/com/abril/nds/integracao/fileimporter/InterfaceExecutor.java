@@ -1,5 +1,6 @@
 package br.com.abril.nds.integracao.fileimporter;
 
+import java.io.Console;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -13,28 +14,43 @@ import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 import java.util.Scanner;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.commons.io.IOCase;
 import org.apache.commons.io.filefilter.RegexFileFilter;
 import org.apache.commons.lang.StringUtils;
 import org.lightcouch.CouchDbClient;
 import org.lightcouch.NoDocumentException;
+import org.lightcouch.View;
+import org.lightcouch.ViewResult;
+import org.lightcouch.ViewResult.Rows;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.integracao.couchdb.CouchDbProperties;
+import br.com.abril.nds.integracao.dto.SolicitacaoDTO;
+import br.com.abril.nds.integracao.icd.model.DetalheFaltaSobra;
+import br.com.abril.nds.integracao.icd.model.SolicitacaoFaltaSobra;
+import br.com.abril.nds.integracao.model.InterfaceExecucao;
+import br.com.abril.nds.integracao.model.LogExecucao;
+import br.com.abril.nds.integracao.model.LogExecucaoArquivo;
+import br.com.abril.nds.integracao.model.canonic.EMS0128Input;
+import br.com.abril.nds.integracao.model.canonic.EMS0128InputItem;
 import br.com.abril.nds.integracao.model.canonic.IntegracaoDocument;
 import br.com.abril.nds.integracao.model.canonic.IntegracaoDocumentDetail;
 import br.com.abril.nds.integracao.model.canonic.IntegracaoDocumentMaster;
 import br.com.abril.nds.integracao.model.canonic.InterfaceEnum;
 import br.com.abril.nds.integracao.model.canonic.TipoInterfaceEnum;
-import br.com.abril.nds.integracao.persistence.dao.InterfaceExecucaoHibernateDAO;
-import br.com.abril.nds.integracao.persistence.dao.LogExecucaoArquivoHibernateDAO;
-import br.com.abril.nds.integracao.persistence.dao.LogExecucaoHibernateDAO;
-import br.com.abril.nds.integracao.persistence.dao.ParametroSistemaHibernateDAO;
-import br.com.abril.nds.integracao.persistence.model.InterfaceExecucao;
-import br.com.abril.nds.integracao.persistence.model.LogExecucao;
-import br.com.abril.nds.integracao.persistence.model.LogExecucaoArquivo;
-import br.com.abril.nds.integracao.persistence.model.enums.StatusExecucaoEnum;
+import br.com.abril.nds.integracao.model.enums.StatusExecucaoEnum;
+import br.com.abril.nds.integracao.repository.InterfaceExecucaoRepository;
+import br.com.abril.nds.integracao.repository.LogExecucaoArquivoRepository;
+import br.com.abril.nds.integracao.repository.LogExecucaoRepository;
+import br.com.abril.nds.integracao.repository.ParametroSistemaRepository;
+import br.com.abril.nds.integracao.service.IcdObjectService;
 
 import com.ancientprogramming.fixedformat4j.format.FixedFormatManager;
 import com.ancientprogramming.fixedformat4j.format.impl.FixedFormatManagerImpl;
@@ -43,8 +59,11 @@ import com.ancientprogramming.fixedformat4j.format.impl.FixedFormatManagerImpl;
  * Realiza a execução das interfaces de integração. <br>
  * Lê as linhas dos arquivos de entrada, transforma em documentos e grava no CouchDB. 
  */
+@Service
 public class InterfaceExecutor {
 	
+	public static final String SPRING_FILE_LOCATION = "classpath:spring/applicationContext-ndsi-cli.xml"; 
+
 	private static ApplicationContext applicationContext;
 	
 	private static String NAO_HA_ARQUIVOS = "Não há arquivos a serem processados para este distribuidor";
@@ -52,29 +71,36 @@ public class InterfaceExecutor {
 	
 	//private static Logger LOGGER = LoggerFactory.getLogger(InterfaceExecutor.class);
 	
-	private LogExecucaoHibernateDAO logExecucaoDAO;
-	private LogExecucaoArquivoHibernateDAO logExecucaoArquivoAO;
-	private ParametroSistemaHibernateDAO parametroSistemaDAO;
-	private InterfaceExecucaoHibernateDAO interfaceExecucaoDAO;
+	@Autowired
+	private IcdObjectService icdObjectService;
+
+	@Autowired
+	private LogExecucaoRepository logExecucaoRepository;
+	@Autowired
+	private LogExecucaoArquivoRepository logExecucaoArquivoRepository;
+	@Autowired
+	private ParametroSistemaRepository parametroSistemaRepository;	
+	@Autowired
+	private InterfaceExecucaoRepository interfaceExecucaoRepository;
+	
+	@Autowired
 	private FixedFormatManager ffm;
-	private Properties couchDbProperties;
+	
+	@Autowired
+	private CouchDbProperties couchDbProperties;
 	
 	private boolean processadoComSucesso = true;
+
+	private String diretorio;
+
+	private String pastaInterna;
 	
 	static {
-		ClassPathXmlApplicationContext classPathXmlApplicationContext = new ClassPathXmlApplicationContext("applicationContext.xml");
+		ClassPathXmlApplicationContext classPathXmlApplicationContext = new ClassPathXmlApplicationContext(SPRING_FILE_LOCATION);
 		classPathXmlApplicationContext.registerShutdownHook();
 		applicationContext = classPathXmlApplicationContext;
 	}
 	
-	public InterfaceExecutor() {
-		
-		this.logExecucaoDAO = (LogExecucaoHibernateDAO) applicationContext.getBean("logExecucaoDAO");
-		this.logExecucaoArquivoAO = (LogExecucaoArquivoHibernateDAO) applicationContext.getBean("logExecucaoArquivoDAO");
-		this.parametroSistemaDAO = (ParametroSistemaHibernateDAO) applicationContext.getBean("parametroSistemaDAO");
-		this.interfaceExecucaoDAO = (InterfaceExecucaoHibernateDAO) applicationContext.getBean("interfaceExecucaoDAO");
-		this.ffm = (FixedFormatManagerImpl) applicationContext.getBean("ffm");
-	}
 	
 	/**
 	 * Executa a interface selecionada para todos os distribuidores.
@@ -96,8 +122,7 @@ public class InterfaceExecutor {
 	public void executarInterface(String nomeUsuario, InterfaceEnum interfaceEnum, Long codigoDistribuidor) {
 		
 		// Busca dados de configuracao
-		this.carregaCouchDbProperties();
-		InterfaceExecucao interfaceExecucao = interfaceExecucaoDAO.findById(interfaceEnum.getCodigoInterface());
+		InterfaceExecucao interfaceExecucao = interfaceExecucaoRepository.findById(interfaceEnum.getCodigoInterface());
 		
 		if (interfaceExecucao == null) {
 			throw new RuntimeException("Interface " + interfaceEnum.getCodigoInterface() + " nao cadastrada");
@@ -127,6 +152,70 @@ public class InterfaceExecutor {
 		}
 	}
 	
+	public void executarRetornosIcd(List<String> distribuidores) {		 
+		
+
+		for (String distribuidor: distribuidores) {
+			
+			
+			if (new File(diretorio + distribuidor + File.separator + pastaInterna + File.separator).exists()) {
+
+				CouchDbClient couchDbClient = this.getCouchDbClientInstance("db_" + StringUtils.leftPad(distribuidor, 8, "0"));
+										
+				View view = couchDbClient.view("importacao/porTipoDocumento");
+								
+				view.key("EMS0128");
+				view.includeDocs(true);
+				try {
+					ViewResult<String, Void, ?> result = view.queryView(String.class, Void.class, EMS0128Input.class);
+					for (@SuppressWarnings("rawtypes") Rows row: result.getRows()) {						
+						
+						EMS0128Input doc = (EMS0128Input) row.getDoc();
+						
+						if (doc.getSituacaoSolicitacao().equals("SOLICITADO")) {
+							icdObjectService.insereSolicitacao(doc);
+							doc.setSituacaoSolicitacao("AGUARDANDO_GFS");
+						} else if (
+								doc.getSituacaoSolicitacao().equals("AGUARDANDO_GFS") 
+								|| doc.getSituacaoSolicitacao().equals("EM PROCESSAMENTO")) {
+							
+							SolicitacaoFaltaSobra solicitacao = icdObjectService.recuperaSolicitacao(Long.valueOf(distribuidor), doc);
+							doc.setSituacaoSolicitacao(solicitacao.getCodigoSituacao());
+							
+							for (DetalheFaltaSobra item : solicitacao.getItens())
+							{
+								for ( EMS0128InputItem eitem : doc.getItems()) {
+									if (item.getDfsPK().getNumeroSequencia().equals(eitem.getNumSequenciaDetalhe())) {
+										eitem.setSituacaoAcerto(item.getCodigoAcerto());
+										eitem.setNumeroDocumentoAcerto(item.getNumeroDocumentoAcerto());
+										eitem.setDataEmicaoDocumentoAcerto(item.getDataEmissaoDocumentoAcerto());
+										eitem.setDescricaoMotivo(item.getMotivoSituacaoFaltaSobra().getDescricaoMotivo());
+										eitem.setCodigoOrigemMotivo(item.getMotivoSituacaoFaltaSobra().getCodigoMotivo());
+									}
+								}
+							}							
+						}
+						couchDbClient.update(doc);
+						
+					}
+					
+
+				} catch (NoDocumentException ex ) {
+						
+				}			
+			}
+		}
+		
+	}
+
+	
+	public List<String> recuperaDistribuidores(Long codigoDistribuidor) {
+		this.diretorio = parametroSistemaRepository.getParametro("INBOUND_DIR");
+		this.pastaInterna = parametroSistemaRepository.getParametro("INTERNAL_DIR");
+		List<String> distribuidores = this.getDistribuidores(this.diretorio, codigoDistribuidor);
+		return distribuidores;
+	}
+
 	private void executarInterfaceDB(InterfaceEnum interfaceEnum,
 			InterfaceExecucao interfaceExecucao, LogExecucao logExecucao,
 			Long codigoDistribuidor, String nomeUsuario) {
@@ -136,17 +225,15 @@ public class InterfaceExecutor {
 	/**
 	 * Executa uma interface de carga de arquivo.
 	 */
+	
 	private void executarInterfaceArquivo(InterfaceEnum interfaceEnum, InterfaceExecucao interfaceExecucao, LogExecucao logExecucao, Long codigoDistribuidor, String nomeUsuario) {
 		
-		// Recupera distribuidores
-		String diretorio = parametroSistemaDAO.getParametro("INBOUND_DIR");
-		String pastaInterna = parametroSistemaDAO.getParametro("INTERNAL_DIR");
-		List<String> distribuidores = this.getDistribuidores(diretorio, interfaceExecucao, codigoDistribuidor);
+		List<String> distribuidores = recuperaDistribuidores(codigoDistribuidor);
 		
 		// Processa arquivos do distribuidor
 		for (String distribuidor: distribuidores) {
 		
-			List<File> arquivos = this.recuperaArquivosProcessar(diretorio, pastaInterna, interfaceExecucao, distribuidor);
+			List<File> arquivos = this.recuperaArquivosProcessar(this.diretorio, this.pastaInterna, interfaceExecucao, distribuidor);
 			
 			if (arquivos == null || arquivos.isEmpty()) {
 				this.logarArquivo(logExecucao, distribuidor, null, StatusExecucaoEnum.FALHA, NAO_HA_ARQUIVOS);
@@ -179,9 +266,10 @@ public class InterfaceExecutor {
 	/**
 	 * Executa a interface de carga de imagens EMS0134.
 	 */
+	
 	private void executarInterfaceImagem() {
 		
-		String diretorio = parametroSistemaDAO.getParametro("IMAGE_DIR");
+		String diretorio = parametroSistemaRepository.getParametro("IMAGE_DIR");
 		CouchDbClient couchDbClient = this.getCouchDbClientInstance("capas");
 				
 		File[] imagens = new File(diretorio).listFiles(new FilenameFilter() {
@@ -240,9 +328,10 @@ public class InterfaceExecutor {
 	 * contendo comandos sql, e compacta esse arquivo em .tar.gz. Em seguida, sobe esse arquivo <br>
 	 * para o CouchDB como anexo a um documento.
 	 */
+	
 	private void executarInterfaceCorreios() {
 		
-		String diretorio = parametroSistemaDAO.getParametro("CORREIOS_DIR");
+		String diretorio = parametroSistemaRepository.getParametro("CORREIOS_DIR");
 		CouchDbClient couchDbClient = this.getCouchDbClientInstance("db_integracao");
 		
 		try {
@@ -315,7 +404,7 @@ public class InterfaceExecutor {
 	/**
 	 * Recupera distribuidores a serem processados.
 	 */
-	private List<String> getDistribuidores(String diretorio, InterfaceExecucao interfaceExecucao, Long codigoDistribuidor) {
+	private List<String> getDistribuidores(String diretorio, Long codigoDistribuidor) {
 		
 		List<String> distribuidores = new ArrayList<String>();
 		
@@ -429,20 +518,6 @@ public class InterfaceExecutor {
 	}
 	
 	/**
-	 * Carrega os dados do arquivo couchdb.properties
-	 */
-	private void carregaCouchDbProperties() {
-		
-		try {
-			couchDbProperties = new Properties();
-			InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("couchdb.properties");
-			couchDbProperties.load(inputStream);
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-	}
-	
-	/**
 	 * Retorna o client para o CouchDB na database correspondente ao distribuidor.
 	 * 
 	 * @param codigoDistribuidor codigo do distribuidor
@@ -453,17 +528,19 @@ public class InterfaceExecutor {
 		return new CouchDbClient(
 				databaseName,
 				true,
-				this.couchDbProperties.getProperty("couchdb.protocol"),
-				this.couchDbProperties.getProperty("couchdb.host"),
-				Integer.valueOf(this.couchDbProperties.getProperty("couchdb.port")),
-				this.couchDbProperties.getProperty("couchdb.username"),
-				this.couchDbProperties.getProperty("couchdb.password")
-		);
+				couchDbProperties.getProtocol(),
+				couchDbProperties.getHost(),
+				couchDbProperties.getPort(),
+				couchDbProperties.getUsername(),
+				couchDbProperties.getPassword()
+		);		
+		
 	}
 	
 	/**
 	 * Loga o início da execução de uma interface de integração.
 	 */
+	
 	private LogExecucao logarInicio(Date dataInicio, InterfaceExecucao interfaceExecucao, String nomeLoginUsuario) {
 		
 		LogExecucao logExecucao = new LogExecucao();
@@ -473,12 +550,13 @@ public class InterfaceExecutor {
 		logExecucao.setDataFim(dataInicio);
 		logExecucao.setStatus(StatusExecucaoEnum.SUCESSO);
 		
-		return logExecucaoDAO.inserir(logExecucao);
+		return logExecucaoRepository.inserir(logExecucao);
 	}
 	
 	/**
 	 * Loga o processamento de um arquivo
 	 */
+	
 	private void logarArquivo(LogExecucao logExecucao, String distribuidor, String caminhoArquivo, StatusExecucaoEnum status, String mensagem) {
 		
 		if (status.equals(StatusExecucaoEnum.FALHA)) {
@@ -492,12 +570,13 @@ public class InterfaceExecutor {
 		logExecucaoArquivo.setStatus(status);
 		logExecucaoArquivo.setMensagem(StringUtils.abbreviate(mensagem, 500));
 		
-		this.logExecucaoArquivoAO.inserir(logExecucaoArquivo);
+		this.logExecucaoArquivoRepository.inserir(logExecucaoArquivo);
 	}
 	
 	/**
 	 * Loga o final da execução da interface de integração.
 	 */
+	
 	private void logarFim(LogExecucao logExecucao) {
 		
 		if (this.processadoComSucesso) {
@@ -507,6 +586,6 @@ public class InterfaceExecutor {
 		}
 		logExecucao.setDataFim(new Date());
 		
-		logExecucaoDAO.atualizar(logExecucao);
+		logExecucaoRepository.atualizar(logExecucao);
 	}
 }

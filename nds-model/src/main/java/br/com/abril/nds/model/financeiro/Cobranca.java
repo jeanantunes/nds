@@ -1,6 +1,7 @@
 package br.com.abril.nds.model.financeiro;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -90,7 +91,7 @@ public abstract class Cobranca {
 	protected Divida divida;
 	
 	@OneToMany(mappedBy = "cobranca")
-	protected List<BaixaCobranca> baixasCobranca;
+	protected List<BaixaCobranca> baixasCobranca = new ArrayList<>();
 	
 	@Column(name="VIAS")
 	protected Integer vias;
