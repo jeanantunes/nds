@@ -11,11 +11,11 @@ import com.ancientprogramming.fixedformat4j.format.impl.StringFormatter;
 
 import br.com.abril.nds.integracao.dto.SolicitacaoDTO;
 import br.com.abril.nds.integracao.icd.model.DetalheFaltaSobra;
-import br.com.abril.nds.integracao.icd.model.DetalheFaltaSobra.DfsPK;
 import br.com.abril.nds.integracao.icd.model.MotivoSituacaoFaltaSobra;
-import br.com.abril.nds.integracao.icd.model.MotivoSituacaoFaltaSobra.MfsPK;
 import br.com.abril.nds.integracao.icd.model.SolicitacaoFaltaSobra;
-import br.com.abril.nds.integracao.icd.model.SolicitacaoFaltaSobra.SfsPK;
+import br.com.abril.nds.integracao.icd.model.pks.DfsPK;
+import br.com.abril.nds.integracao.icd.model.pks.MfsPK;
+import br.com.abril.nds.integracao.icd.model.pks.SfsPK;
 import br.com.abril.nds.integracao.model.canonic.EMS0128Input;
 import br.com.abril.nds.integracao.model.canonic.EMS0128InputItem;
 import br.com.abril.nds.integracao.repository.SolicitacaoFaltasSobrasRepository;
@@ -55,7 +55,7 @@ public class IcdObjectServiceImpl implements IcdObjectService {
 	public void insereSolicitacao(EMS0128Input doc) {
 		SolicitacaoFaltaSobra sfs = new SolicitacaoFaltaSobra();
 
-		SfsPK sfsPK = sfs.new SfsPK();		
+		SfsPK sfsPK = new SfsPK();		
 		sfsPK.setCodigoDistribuidor( Long.valueOf( doc.getCodigoDistribuidor() ) );
 		sfsPK.setDataSolicitacao(doc.getDataSolicitacao());
 		sfsPK.setHoraSolicitacao(DateFormatUtils.format(doc.getHoraDeCriacao(), "hh:mm:ss") );
@@ -70,7 +70,7 @@ public class IcdObjectServiceImpl implements IcdObjectService {
 			DetalheFaltaSobra dfs = new DetalheFaltaSobra();
 			
 			//pk
-			DfsPK dfsPK = dfs.new DfsPK();
+			DfsPK dfsPK = new DfsPK();
 			dfsPK.setCodigoDistribuidor( Long.valueOf( doc.getCodigoDistribuidor() ) );
 			dfsPK.setDataSolicitacao(doc.getDataSolicitacao());
 			dfsPK.setHoraSolicitacao(DateFormatUtils.format(doc.getHoraDeCriacao(), "hh:mm:ss") );
@@ -92,7 +92,7 @@ public class IcdObjectServiceImpl implements IcdObjectService {
 			
 			MotivoSituacaoFaltaSobra mfs = new MotivoSituacaoFaltaSobra();
 			
-			MfsPK mfsPK = mfs.new MfsPK();
+			MfsPK mfsPK = new MfsPK();
 			mfsPK.setCodigoDistribuidor( Long.valueOf( doc.getCodigoDistribuidor() ) );
 			mfsPK.setDataSolicitacao(doc.getDataSolicitacao());
 			mfsPK.setHoraSolicitacao(DateFormatUtils.format(doc.getHoraDeCriacao(), "hh:mm:ss")  );
@@ -106,6 +106,12 @@ public class IcdObjectServiceImpl implements IcdObjectService {
 		
 		solicitacaoFaltasSobrasRepository.save(sfs);
 		
+	}
+
+	@Override
+	public MotivoSituacaoFaltaSobra recuperaMotivoPorDetalhe(
+			DfsPK pkItem) {
+		return solicitacaoFaltasSobrasRepository.recuperaMotivoPorDetalhe(pkItem);
 	}
 	
 

@@ -4,7 +4,10 @@ import java.util.List;
 import java.util.Set;
 
 import br.com.abril.nds.integracao.dto.SolicitacaoDTO;
+import br.com.abril.nds.integracao.icd.model.DetalheFaltaSobra;
+import br.com.abril.nds.integracao.icd.model.MotivoSituacaoFaltaSobra;
 import br.com.abril.nds.integracao.icd.model.SolicitacaoFaltaSobra;
+import br.com.abril.nds.integracao.icd.model.pks.DfsPK;
 import br.com.abril.nds.integracao.model.canonic.EMS0128Input;
 
 public interface IcdObjectService {
@@ -16,5 +19,8 @@ public interface IcdObjectService {
 	public SolicitacaoFaltaSobra recuperaSolicitacao(Long distribuidor, EMS0128Input doc);
 
 	public void insereSolicitacao(EMS0128Input doc);
+
+	public MotivoSituacaoFaltaSobra recuperaMotivoPorDetalhe(
+			DfsPK dfsPK);
 	
 }

@@ -1,5 +1,6 @@
 package br.com.abril.nds.integracao.repository.impl;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -19,7 +20,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.integracao.dto.SolicitacaoDTO;
 import br.com.abril.nds.integracao.icd.model.DetalheFaltaSobra;
+import br.com.abril.nds.integracao.icd.model.MotivoSituacaoFaltaSobra;
 import br.com.abril.nds.integracao.icd.model.SolicitacaoFaltaSobra;
+import br.com.abril.nds.integracao.icd.model.pks.DfsPK;
+import br.com.abril.nds.integracao.icd.model.pks.MfsPK;
 import br.com.abril.nds.integracao.model.canonic.EMS0128Input;
 import br.com.abril.nds.integracao.repository.SolicitacaoFaltasSobrasRepository;
 
@@ -92,6 +96,18 @@ public class SolicitacaoFaltasSobrasRepositoryImpl extends AbstractRepositoryMod
 	@Override
 	public void save(SolicitacaoFaltaSobra sfs) {
 		this.getSessionIcd().persist(sfs);		
+	}
+
+	@Override
+	public MotivoSituacaoFaltaSobra recuperaMotivoPorDetalhe(
+			DfsPK pkItem) {
+		
+		MfsPK id = new MfsPK();
+		id.setCodigoDistribuidor(pkItem.getCodigoDistribuidor());
+		id.setDataSolicitacao(pkItem.getDataSolicitacao());
+		id.setHoraSolicitacao(pkItem.getHoraSolicitacao());
+		id.setNumeroSequencia(pkItem.getNumeroSequencia());
+		return (MotivoSituacaoFaltaSobra) getSessionIcd().get(MotivoSituacaoFaltaSobra.class, id);		
 	}
 	
 }
