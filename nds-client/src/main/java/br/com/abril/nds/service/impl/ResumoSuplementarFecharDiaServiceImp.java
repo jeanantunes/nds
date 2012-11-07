@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.ResumoSuplementarFecharDiaDTO;
+import br.com.abril.nds.dto.SuplementarFecharDiaDTO;
 import br.com.abril.nds.dto.VendaSuplementarDTO;
 import br.com.abril.nds.repository.ResumoSuplementarFecharDiaRepository;
 import br.com.abril.nds.service.ResumoSuplementarFecharDiaService;
@@ -73,6 +74,12 @@ public class ResumoSuplementarFecharDiaServiceImp implements
 		dto.setSaldo(totalEstoqueLogico.subtract(totalFisico));
 		
 		return dto;
+	}
+
+	@Override
+	@Transactional
+	public List<SuplementarFecharDiaDTO> obterDadosGridSuplementar() {
+		return this.resumoSuplementarFecharDiaRepository.obterDadosGridSuplementar();
 	}
 
 }

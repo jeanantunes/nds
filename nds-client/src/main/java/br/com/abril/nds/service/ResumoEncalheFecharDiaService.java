@@ -18,5 +18,9 @@ public interface ResumoEncalheFecharDiaService {
 	ResumoEncalheFecharDiaDTO obterResumoGeralEncalhe(Date dataOperacao);
 	
 	List<EncalheFecharDiaDTO> obterDadosGridEncalhe(Date dataOperacao);
+	
+	BigDecimal obterValorFaltas(Date dataOperacao);
+
+	BigDecimal obterValorSobras(Date dataOperacao);
 
 }

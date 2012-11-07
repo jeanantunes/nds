@@ -134,7 +134,6 @@ import br.com.abril.nds.model.estoque.TipoDirecionamentoDiferenca;
 import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.fechar.dia.FechamentoDiario;
-import br.com.abril.nds.model.fechar.dia.FechamentoDiarioConsignado;
 import br.com.abril.nds.model.fechar.dia.FechamentoDiarioConsolidadoCota;
 import br.com.abril.nds.model.fechar.dia.FechamentoDiarioConsolidadoDivida;
 import br.com.abril.nds.model.fechar.dia.FechamentoDiarioConsolidadoDivida.TipoDividaFechamentoDia;

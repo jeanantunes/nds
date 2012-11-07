@@ -423,21 +423,29 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		}
 		
 		/* Regra: Não deve existir duas Edições com o mesmo código de barra. */
-		List<ProdutoEdicao> lstPeCodBarra = 
+		// Nota: Conforme conversado com o Cesar e Paulo Bacherini em 05/11/2012, dois produtos diferentes podem sim ter o mesmo código de barras
+		/*List<ProdutoEdicao> lstPeCodBarra = 
 				this.produtoEdicaoRepository.obterProdutoEdicaoPorCodigoDeBarra(
 						dto.getCodigoDeBarras(), produtoEdicao.getId());
 		if (lstPeCodBarra != null && !lstPeCodBarra.isEmpty()) {
+		    // Nota: Caso exista, mas não se trate do MESMO produto edição
+			for (ProdutoEdicao produtoEdicaoPorCodigoBarra : lstPeCodBarra) {
 			
-			ProdutoEdicao peCodBarra = lstPeCodBarra.get(0);
-			StringBuilder msg = new StringBuilder();
-			msg.append("O Produto '");
-			msg.append(peCodBarra.getProduto().getNome());
-			msg.append("' - Edição º");
-			msg.append(peCodBarra.getNumeroEdicao());
-			msg.append(" já esta cadastrado com este código de barra!");
-			
-			throw new ValidacaoException(TipoMensagem.ERROR, msg.toString());
-		}		
+				if (produtoEdicaoPorCodigoBarra.getId() != produtoEdicao.getId()) {
+				
+					ProdutoEdicao peCodBarra = lstPeCodBarra.get(0);
+					StringBuilder msg = new StringBuilder();
+					msg.append("O Produto '");
+					msg.append(peCodBarra.getProduto().getNome());
+					msg.append("' - Edição º");
+					msg.append(peCodBarra.getNumeroEdicao());
+					msg.append(" já esta cadastrado com este código de barra!");
+					
+					throw new ValidacaoException(TipoMensagem.ERROR, msg.toString());
+				
+				}
+			}
+		}*/
 	}
 	
 	/**
