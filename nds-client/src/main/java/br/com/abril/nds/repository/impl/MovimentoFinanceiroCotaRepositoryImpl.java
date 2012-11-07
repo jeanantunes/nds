@@ -816,23 +816,7 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 									 	     TipoCota tipoCota, 
 									 	     OperacaoFinaceira operacaoFinaceira) {
 		
-		StringBuilder hql = new StringBuilder(" select ");
-
-		if (OperacaoFinaceira.CREDITO.equals(operacaoFinaceira)) {
-		    
-			hql.append(" sum(mfc.valor - mfc.baixaCobranca.valorJuros - mfc.baixaCobranca.valorMulta + mfc.baixaCobranca.valorDesconto) ");
-			
-	    } else if (OperacaoFinaceira.DEBITO.equals(operacaoFinaceira)) {
-	    	
-			hql.append(" sum(mfc.valor + mfc.baixaCobranca.valorJuros + mfc.baixaCobranca.valorMulta - mfc.baixaCobranca.valorDesconto) ");
-			
-		} else {
-			
-			hql.append(" case when mfc.tipoMovimento.operacaoFinaceira = 'CREDITO' ");
-			hql.append(" then sum(mfc.valor - mfc.baixaCobranca.valorJuros - mfc.baixaCobranca.valorMulta + mfc.baixaCobranca.valorDesconto) ");
-			hql.append(" else sum(mfc.valor + mfc.baixaCobranca.valorJuros + mfc.baixaCobranca.valorMulta - mfc.baixaCobranca.valorDesconto) ");
-			hql.append(" end ");
-		}
+		StringBuilder hql = new StringBuilder(" select sum(mfc.valor) ");
 		
 		hql.append(" from MovimentoFinanceiroCota mfc ");
 
