@@ -3,6 +3,8 @@ package br.com.abril.nds.dto;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
+import br.com.abril.nds.util.CurrencyUtil;
+
 public class ResumoFechamentoDiarioConsignadoDTO implements Serializable {
 
 	private ResumoConsignado resumoConsignado;
@@ -78,6 +80,26 @@ public class ResumoFechamentoDiarioConsignadoDTO implements Serializable {
 		 */
 		public void setSaldoAtual(BigDecimal saldoAtual) {
 			this.saldoAtual = saldoAtual;
+		}
+		
+		public String getSaldoAnteriorFormatado() {
+			
+			return CurrencyUtil.formatarValor(this.saldoAnterior);
+		}
+		
+		public String getSaldoAtualFormatado() {
+			
+			return CurrencyUtil.formatarValor(this.saldoAtual);
+		}
+
+		public String getValorEntradasFormatado() {
+			
+			return CurrencyUtil.formatarValor(this.valorEntradas);
+		}
+		
+		public String getValorSaidasFormatado() {
+			
+			return CurrencyUtil.formatarValor(this.valorSaidas);
 		}
 		
 	}
