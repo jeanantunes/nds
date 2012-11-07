@@ -394,13 +394,13 @@ public class FecharDiaController {
 	    PaginacaoVO paginacao = new PaginacaoVO(page, rp, null);
 	    
 	    List<Divida> dividas = fecharDiaService.obterDividasReceberEm(dataFechamento, paginacao);
-	    int totalDividas = fecharDiaService.contarDividasReceberEm(dataFechamento);
+	    Long totalDividas = fecharDiaService.contarDividasReceberEm(dataFechamento);
 	    
 	    List<DividaDTO> dividasDTO = new ArrayList<>();
 	    for (Divida divida : dividas) {
 	        dividasDTO.add(DividaDTO.fromDivida(divida));
 	    }
-	    result.use(FlexiGridJson.class).from(dividasDTO).page(page).total(totalDividas).serialize();       
+	    result.use(FlexiGridJson.class).from(dividasDTO).page(page).total(totalDividas.intValue()).serialize();       
 	}
 	
 	@Get
@@ -427,13 +427,13 @@ public class FecharDiaController {
         PaginacaoVO paginacao = new PaginacaoVO(page, rp, null);
         
         List<Divida> dividas = fecharDiaService.obterDividasVencerApos(dataFechamento, paginacao);
-        int totalDividas = fecharDiaService.contarDividasVencerApos(dataFechamento);
+        Long totalDividas = fecharDiaService.contarDividasVencerApos(dataFechamento);
         
         List<DividaDTO> dividasDTO = new ArrayList<>();
         for (Divida divida : dividas) {
             dividasDTO.add(DividaDTO.fromDivida(divida));
         }
-        result.use(FlexiGridJson.class).from(dividasDTO).page(page).total(totalDividas).serialize();            
+        result.use(FlexiGridJson.class).from(dividasDTO).page(page).total(totalDividas.intValue()).serialize();            
 	}
 	
 	@Get

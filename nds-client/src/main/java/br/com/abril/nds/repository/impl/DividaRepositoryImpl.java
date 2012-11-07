@@ -8,6 +8,7 @@ import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 
 import org.hibernate.Criteria;
@@ -675,21 +676,32 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
      */
 	@SuppressWarnings("unchecked")
 	private Map<TipoCobranca, SumarizacaoDividasDTO> sumarizarDividas(Date data, TipoDivida tipoDivida) {
+	    boolean isDividaReceber = TipoDivida.DIVIDA_A_RECEBER.equals(tipoDivida);
+	    
+	    Map<String, Object> parametros = new HashMap<>();
+	    parametros.put("data", data);
+	    parametros.put("statusCobrancaPago", StatusCobranca.PAGO);
 	    
 	    StringBuilder hql = new StringBuilder("select new map(cobranca.tipoCobranca as tipoCobranca, ");
 	    hql.append("sum(divida.valor) as total, ");
 	    hql.append("sum(case when cobranca.statusCobranca = :statusCobrancaPago then divida.valor else 0 end) as pago, ");
-	    hql.append("sum(case when cobranca.statusCobranca = :statusCobrancaNaoPago then divida.valor else 0 end) as inadimplencia) ");
+	    if (isDividaReceber) {
+	        hql.append("sum(case when cobranca.statusCobranca = :statusCobrancaNaoPago then divida.valor else 0 end) as inadimplencia) ");
+	        parametros.put("statusCobrancaNaoPago", StatusCobranca.NAO_PAGO);
+	    } else {
+	        //Dívidas à vencer, sem possibilidade de verificação de inadimplência 
+	        hql.append("cast(0 as big_decimal) as inadimplencia) ");
+	    }
 	    hql.append("from Cobranca cobranca ");
 	    hql.append("where cobranca.dataVencimento ");
-	    hql.append(TipoDivida.DIVIDA_A_RECEBER.equals(tipoDivida) ? " = " : " > ");
+        hql.append(isDividaReceber ? " = " : " > ");
 	    hql.append(" :data ");
 	    hql.append("group by cobranca.tipoCobranca");
 	    
 	    Query query = getSession().createQuery(hql.toString());
-	    query.setParameter("data", data);
-	    query.setParameter("statusCobrancaPago", StatusCobranca.PAGO);
-	    query.setParameter("statusCobrancaNaoPago", StatusCobranca.NAO_PAGO);
+	    for (Entry<String, Object> entry : parametros.entrySet()) {
+	        query.setParameter(entry.getKey(), entry.getValue());
+	    }
 	    
 	    List<Map<String, Object>> maps = query.list();
 	    Map<TipoCobranca, SumarizacaoDividasDTO> sumarizacoes = new EnumMap<>(TipoCobranca.class);
@@ -714,20 +726,10 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 	@SuppressWarnings("unchecked")
     @Override
     public List<Divida> obterDividasReceberEm(Date data, PaginacaoVO paginacao) {
-	    StringBuilder hql = new StringBuilder("select divida from Divida divida ");
-	    hql.append("left join divida.cobranca cobranca ");
-	    hql.append("where cobranca.dataVencimento = :data ");
-	    hql.append("order by divida.cota.numeroCota ");
-	    Query query = getSession().createQuery(hql.toString());
-	    query.setParameter("data", data);
-	    
-	    if (paginacao != null) {
-	        query.setFirstResult(paginacao.getPosicaoInicial());
-	        query.setMaxResults(paginacao.getQtdResultadosPorPagina());
-	    }
-	    
+	    Query query = queryDividasReceberVencer(data, paginacao, false);
 	    return query.list();
     }
+
 
     /**
      * {@inheritDoc}
@@ -742,17 +744,50 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
      * {@inheritDoc}
      */
 	@Override
-    public int contarDividasReceberEm(Date data) {
-	    //TODO: implementar
-        return 0;
+    public long contarDividasReceberEm(Date data) {
+	    Query query = queryDividasReceberVencer(data, null, true);
+        return (long) query.uniqueResult();
     }
 
     /**
      * {@inheritDoc}
      */
 	@Override
-    public int contarDividasVencerApos(Date data) {
+    public long contarDividasVencerApos(Date data) {
 	    //TODO: implementar
         return 0;
     }
+
+	/**
+	 * Cria a query para consulta / contagem de dívidas à receber / à vencer
+	 * 
+	 * @param data
+	 *            data base para consulta ou contagem de dívidas
+	 * @param paginacao
+	 *            no caso de consulta de dívidas, contém os parâmetros de
+	 *            paginação de dívidas, pode ser {@code null}
+	 * @param count
+	 *            flag indicando se a query é consulta das dívidas ou contagem
+	 *            de dívidas
+	 * @return query criada com os parâmetros recebidos
+	 */
+	private Query queryDividasReceberVencer(Date data, PaginacaoVO paginacao, boolean count) {
+	    StringBuilder hql = new StringBuilder("select ");
+	    hql.append(count ? "count(divida) " : "divida ");
+	    hql.append("from Divida divida ");
+	    hql.append("left join divida.cobranca cobranca ");
+	    hql.append("where cobranca.dataVencimento = :data ");
+	    if (!count) {
+	        hql.append("order by divida.cota.numeroCota ");
+	    }
+	    Query query = getSession().createQuery(hql.toString());
+	    query.setParameter("data", data);
+	    
+	    if (!count && paginacao != null) {
+	        query.setFirstResult(paginacao.getPosicaoInicial());
+	        query.setMaxResults(paginacao.getQtdResultadosPorPagina());
+	    }
+	    return query;
+	}
+	
 }

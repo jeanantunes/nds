@@ -964,7 +964,7 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
         Assert.assertEquals(TipoDivida.DIVIDA_A_VENCER, sumarizacaoBoleto.getTipoSumarizacao());
         Assert.assertEquals(BigDecimal.valueOf(1375.5).setScale(2), sumarizacaoBoleto.getTotal());
         Assert.assertEquals(BigDecimal.valueOf(923.5).setScale(2), sumarizacaoBoleto.getValorPago());
-        Assert.assertEquals(BigDecimal.valueOf(452).setScale(2), sumarizacaoBoleto.getInadimplencia());
+        Assert.assertEquals(BigDecimal.valueOf(0).setScale(2), sumarizacaoBoleto.getInadimplencia());
         
         SumarizacaoDividasDTO sumarizacaoDeposito = sumarizacao.get(TipoCobranca.DEPOSITO);
         Assert.assertNotNull(sumarizacaoDeposito);
@@ -973,7 +973,7 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
         Assert.assertEquals(TipoDivida.DIVIDA_A_VENCER, sumarizacaoDeposito.getTipoSumarizacao());
         Assert.assertEquals(BigDecimal.valueOf(1371.56).setScale(2), sumarizacaoDeposito.getTotal());
         Assert.assertEquals(BigDecimal.valueOf(621.56).setScale(2), sumarizacaoDeposito.getValorPago());
-        Assert.assertEquals(BigDecimal.valueOf(750).setScale(2), sumarizacaoDeposito.getInadimplencia());
+        Assert.assertEquals(BigDecimal.valueOf(0).setScale(2), sumarizacaoDeposito.getInadimplencia());
         
         SumarizacaoDividasDTO sumarizacaoDinheiro = sumarizacao.get(TipoCobranca.DINHEIRO);
         Assert.assertNotNull(sumarizacaoDinheiro);
@@ -982,7 +982,7 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
         Assert.assertEquals(TipoDivida.DIVIDA_A_VENCER, sumarizacaoDinheiro.getTipoSumarizacao());
         Assert.assertEquals(BigDecimal.valueOf(989.32).setScale(2), sumarizacaoDinheiro.getTotal());
         Assert.assertEquals(BigDecimal.valueOf(489.32).setScale(2), sumarizacaoDinheiro.getValorPago());
-        Assert.assertEquals(BigDecimal.valueOf(500).setScale(2), sumarizacaoDinheiro.getInadimplencia());
+        Assert.assertEquals(BigDecimal.valueOf(0).setScale(2), sumarizacaoDinheiro.getInadimplencia());
     }
     
     @Test
@@ -1043,6 +1043,26 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
         Assert.assertTrue(dividas.contains(dividaOrlando));
         Assert.assertTrue(dividas.contains(dividaMariana));
         Assert.assertTrue(dividas.contains(dividaLuis));
+    }
+    
+    @Test
+    public void testContarDividasReceber() {
+        Date verificacao = Fixture.criarData(6, Calendar.NOVEMBER, 2012);
+        Date vencimento = Fixture.criarData(6, Calendar.NOVEMBER, 2012);
+        criarDadosSumarizacaoDividas(vencimento);
+        
+        long  total = dividaRepository.contarDividasReceberEm(verificacao);
+        Assert.assertEquals(total, 6);
+    }
+    
+    @Test
+    public void testContarDividasReceberSemDividas() {
+        Date verificacao = Fixture.criarData(7, Calendar.NOVEMBER, 2012);
+        Date vencimento = Fixture.criarData(6, Calendar.NOVEMBER, 2012);
+        criarDadosSumarizacaoDividas(vencimento);
+        
+        long  total = dividaRepository.contarDividasReceberEm(verificacao);
+        Assert.assertEquals(total, 0);
     }
 
 	@Test

@@ -357,7 +357,7 @@ public class DividaServiceImpl implements DividaService {
      */
     @Override
     @Transactional(readOnly = true)
-    public int contarDividasReceberEm(Date data) {
+    public long contarDividasReceberEm(Date data) {
         return dividaRepository.contarDividasReceberEm(data);
     }
 
@@ -366,7 +366,7 @@ public class DividaServiceImpl implements DividaService {
      */
     @Override
     @Transactional(readOnly = true)
-    public int contarDividasVencerApos(Date data) {
+    public long contarDividasVencerApos(Date data) {
         return dividaRepository.contarDividasVencerApos(data);
     }
 
