@@ -559,7 +559,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		
 		hql .append("select new ")
 			.append(TipoDescontoProdutoDTO.class.getCanonicalName())
-			.append("(p.codigo, p.nome, pe.numeroEdicao, case when pe.desconto is null or pe.desconto = 0 then p.desconto else pe.desconto end, p.nome) ")
+			.append("(p.codigo, p.nome, pe.numeroEdicao, case when pe.desconto is null or pe.desconto = 0 then p.desconto else pe.desconto end, new java.util.Date()) ")
 		//.append("\n")
 		.append("from ProdutoEdicao pe join pe.produto p ")
 		//.append("\n")
