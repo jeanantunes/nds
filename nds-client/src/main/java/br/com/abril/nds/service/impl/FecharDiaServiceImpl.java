@@ -346,7 +346,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
     @Override
     @Transactional(readOnly = true)
     public List<Divida> obterDividasReceberEm(Date data, PaginacaoVO paginacao) {
-        return obterDividasReceberEm(data, paginacao);
+        return dividaService.obterDividasReceberEm(data, paginacao);
     }
 
     /**

@@ -80,21 +80,13 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 	
 	ConsolidadoFinanceiroCota consolidado;
 
-    private FormaCobranca formaBoleto;
+	private Distribuidor distribuidor;
 
+	private FormaCobranca formaBoleto;
     private FormaCobranca formaDinheiro;
-
     private FormaCobranca formaDeposito;
 
-    private Distribuidor distribuidor;
-
-    private Cota cotaManoel;
-
     private Box box1;
-
-    private Cota cotaJose;
-
-    private Cota cotaMaria;
 
     private TipoMovimentoFinanceiro tipoMovimentoFinanceitoDebito;
 
@@ -102,11 +94,19 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 
     private Banco bancoHSBC;
 
+    private Cota cotaManoel;
+    private Cota cotaJose;
+    private Cota cotaMaria;
     private Cota cotaOrlando;
-
     private Cota cotaLuis;
-
     private Cota cotaMariana;
+
+    private Divida dividaManoel;
+    private Divida dividaJose;
+    private Divida dividaMaria;
+    private Divida dividaOrlando;
+    private Divida dividaMariana;
+    private Divida dividaLuis;
 	
 	@Before
 	public void setUp() {
@@ -995,8 +995,55 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
         Assert.assertNotNull(sumarizacao);
         Assert.assertTrue(sumarizacao.isEmpty());
     }
-
-
+    
+    @Test
+    public void testObterDividasReceberEm() {
+        Date verificacao = Fixture.criarData(6, Calendar.NOVEMBER, 2012);
+        Date vencimento = Fixture.criarData(6, Calendar.NOVEMBER, 2012);
+        criarDadosSumarizacaoDividas(vencimento);
+        
+        List<Divida> dividas = dividaRepository.obterDividasReceberEm(verificacao, null);
+        Assert.assertNotNull(dividas);
+        Assert.assertEquals(6, dividas.size());
+        Assert.assertTrue(dividas.contains(dividaManoel));
+        Assert.assertTrue(dividas.contains(dividaJose));
+        Assert.assertTrue(dividas.contains(dividaMaria));
+        Assert.assertTrue(dividas.contains(dividaOrlando));
+        Assert.assertTrue(dividas.contains(dividaMariana));
+        Assert.assertTrue(dividas.contains(dividaLuis));
+    }
+    
+    @Test
+    public void testObterDividasReceberEmSemDividas() {
+        Date verificacao = Fixture.criarData(6, Calendar.NOVEMBER, 2012);
+        Date vencimento = Fixture.criarData(5, Calendar.NOVEMBER, 2012);
+        criarDadosSumarizacaoDividas(vencimento);
+        
+        List<Divida> dividas = dividaRepository.obterDividasReceberEm(verificacao, null);
+        Assert.assertNotNull(dividas);
+        Assert.assertTrue(dividas.isEmpty());
+    }
+    
+    @Test
+    public void testObterDividasReceberEmPaginado() {
+        Date verificacao = Fixture.criarData(6, Calendar.NOVEMBER, 2012);
+        Date vencimento = Fixture.criarData(6, Calendar.NOVEMBER, 2012);
+        criarDadosSumarizacaoDividas(vencimento);
+        
+        List<Divida> dividas = dividaRepository.obterDividasReceberEm(verificacao, new PaginacaoVO(1, 3, null));
+        Assert.assertNotNull(dividas);
+        Assert.assertEquals(3, dividas.size());
+        Assert.assertTrue(dividas.contains(dividaManoel));
+        Assert.assertTrue(dividas.contains(dividaJose));
+        Assert.assertTrue(dividas.contains(dividaMaria));
+        
+        dividas = dividaRepository.obterDividasReceberEm(verificacao, new PaginacaoVO(2, 3, null));
+        Assert.assertNotNull(dividas);
+        Assert.assertEquals(3, dividas.size());
+        Assert.assertTrue(dividas.contains(dividaOrlando));
+        Assert.assertTrue(dividas.contains(dividaMariana));
+        Assert.assertTrue(dividas.contains(dividaLuis));
+    }
 
 	@Test
 	public void obterTotalDividasAbertoCota() {
@@ -1130,7 +1177,7 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
                         BigDecimal.valueOf(452), BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO);
         save(consolidadoManoel);
 
-        Divida dividaManoel = Fixture.divida(consolidadoManoel, cotaManoel, Fixture.criarData(5, Calendar.NOVEMBER, 2012), usuarioJoao,
+        dividaManoel = Fixture.divida(consolidadoManoel, cotaManoel, Fixture.criarData(5, Calendar.NOVEMBER, 2012), usuarioJoao,
                 StatusDivida.EM_ABERTO, BigDecimal.valueOf(452), false);
         save(dividaManoel);
 
@@ -1148,7 +1195,7 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
                         BigDecimal.valueOf(500), BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO);
         save(consolidadoJose);
 
-        Divida dividaJose = Fixture.divida(consolidadoJose, cotaJose, Fixture.criarData(5, Calendar.NOVEMBER, 2012), usuarioJoao,
+        dividaJose = Fixture.divida(consolidadoJose, cotaJose, Fixture.criarData(5, Calendar.NOVEMBER, 2012), usuarioJoao,
                 StatusDivida.EM_ABERTO, BigDecimal.valueOf(500), false);
         save(dividaJose);
 
@@ -1166,7 +1213,7 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
                         BigDecimal.valueOf(750), BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO);
         save(consolidadoMaria);
 
-        Divida dividaMaria = Fixture.divida(consolidadoMaria, cotaMaria, Fixture.criarData(5, Calendar.NOVEMBER, 2012), usuarioJoao,
+        dividaMaria = Fixture.divida(consolidadoMaria, cotaMaria, Fixture.criarData(5, Calendar.NOVEMBER, 2012), usuarioJoao,
                 StatusDivida.EM_ABERTO, BigDecimal.valueOf(750), false);
         save(dividaMaria);
 
@@ -1184,7 +1231,7 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
                         BigDecimal.valueOf(923.5), BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO);
         save(consolidadoOrlando);
 
-        Divida dividaOrlando = Fixture.divida(consolidadoOrlando, cotaOrlando, Fixture.criarData(5, Calendar.NOVEMBER, 2012), usuarioJoao,
+        dividaOrlando = Fixture.divida(consolidadoOrlando, cotaOrlando, Fixture.criarData(5, Calendar.NOVEMBER, 2012), usuarioJoao,
                 StatusDivida.QUITADA, BigDecimal.valueOf(923.5), false);
         save(dividaOrlando);
 
@@ -1205,7 +1252,7 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
                         BigDecimal.valueOf(621.56), BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO);
         save(consolidadoMariana);
 
-        Divida dividaMariana = Fixture.divida(consolidadoMariana, cotaMariana, Fixture.criarData(5, Calendar.NOVEMBER, 2012), usuarioJoao, 
+        dividaMariana = Fixture.divida(consolidadoMariana, cotaMariana, Fixture.criarData(5, Calendar.NOVEMBER, 2012), usuarioJoao, 
                 StatusDivida.QUITADA, BigDecimal.valueOf(621.56), false);
         save(dividaMariana);
 
@@ -1226,7 +1273,7 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
                         BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.valueOf(489.32), BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO);
         save(consolidadoLuis);
 
-        Divida dividaLuis = Fixture.divida(consolidadoLuis, cotaLuis, Fixture.criarData(5, Calendar.NOVEMBER, 2012), usuarioJoao,StatusDivida.QUITADA, BigDecimal.valueOf(489.32), false);
+        dividaLuis = Fixture.divida(consolidadoLuis, cotaLuis, Fixture.criarData(5, Calendar.NOVEMBER, 2012), usuarioJoao,StatusDivida.QUITADA, BigDecimal.valueOf(489.32), false);
         save(dividaLuis);
 
         CobrancaDinheiro cobrancaLuis = Fixture.cobrancaDinheiro("5557884985439", Fixture.criarData(5, Calendar.NOVEMBER, 2012), vencimento, vencimento, BigDecimal.ZERO,

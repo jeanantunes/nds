@@ -711,10 +711,22 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 	/**
      * {@inheritDoc}
      */
-	@Override
+	@SuppressWarnings("unchecked")
+    @Override
     public List<Divida> obterDividasReceberEm(Date data, PaginacaoVO paginacao) {
-        //TODO: implementar
-        return new ArrayList<>();
+	    StringBuilder hql = new StringBuilder("select divida from Divida divida ");
+	    hql.append("left join divida.cobranca cobranca ");
+	    hql.append("where cobranca.dataVencimento = :data ");
+	    hql.append("order by divida.cota.numeroCota ");
+	    Query query = getSession().createQuery(hql.toString());
+	    query.setParameter("data", data);
+	    
+	    if (paginacao != null) {
+	        query.setFirstResult(paginacao.getPosicaoInicial());
+	        query.setMaxResults(paginacao.getQtdResultadosPorPagina());
+	    }
+	    
+	    return query.list();
     }
 
     /**
