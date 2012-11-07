@@ -323,10 +323,6 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		resumoConsignado.setSaldoAnterior(
 			this.movimentoFinanceiroCotaRepository.obterSaldoDistribuidor(
 				DateUtil.subtrairDias(dataFechamento, 1), TipoCota.CONSIGNADO, null));
-		
-		resumoConsignado.setSaldoAtual(
-			this.movimentoFinanceiroCotaRepository.obterSaldoDistribuidor(
-				dataFechamento, TipoCota.CONSIGNADO, null));
 
 		resumoConsignado.setValorEntradas(
 			this.movimentoFinanceiroCotaRepository.obterSaldoDistribuidor(
@@ -336,6 +332,10 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 			this.movimentoFinanceiroCotaRepository.obterSaldoDistribuidor(
 				dataFechamento, TipoCota.CONSIGNADO, OperacaoFinaceira.CREDITO));
 		
+		resumoConsignado.setSaldoAtual(
+			resumoConsignado.getSaldoAnterior().add(
+				resumoConsignado.getValorEntradas()).subtract(resumoConsignado.getValorSaidas()));
+		
 		resumoFechamentoDiarioConsignado.setResumoConsignado(resumoConsignado);
 		
 		ResumoFechamentoDiarioConsignadoDTO.ResumoAVista resumoAVista = 
@@ -344,10 +344,6 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		resumoAVista.setSaldoAnterior(
 			this.movimentoFinanceiroCotaRepository.obterSaldoDistribuidor(
 				DateUtil.subtrairDias(dataFechamento, 1), TipoCota.A_VISTA, null));
-		
-		resumoAVista.setSaldoAtual(
-			this.movimentoFinanceiroCotaRepository.obterSaldoDistribuidor(
-				dataFechamento, TipoCota.A_VISTA, null));
 
 		resumoAVista.setValorEntradas(
 			this.movimentoFinanceiroCotaRepository.obterSaldoDistribuidor(
@@ -356,6 +352,10 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		resumoAVista.setValorSaidas(
 			this.movimentoFinanceiroCotaRepository.obterSaldoDistribuidor(
 				dataFechamento, TipoCota.A_VISTA, OperacaoFinaceira.CREDITO));
+		
+		resumoAVista.setSaldoAtual(
+			resumoAVista.getSaldoAnterior().add(
+				resumoAVista.getValorEntradas()).subtract(resumoAVista.getValorSaidas()));
 		
 		resumoFechamentoDiarioConsignado.setResumoAVista(resumoAVista);
 		
