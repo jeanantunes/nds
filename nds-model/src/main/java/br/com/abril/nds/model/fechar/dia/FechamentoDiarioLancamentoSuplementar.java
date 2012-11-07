@@ -1,7 +1,6 @@
 package br.com.abril.nds.model.fechar.dia;
 
 import java.io.Serializable;
-import java.math.BigInteger;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -18,30 +17,30 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 @Table(name = "FECHAMENTO_DIARIO_LANCAMENTO_SUPLEMENTAR")
 @SequenceGenerator(name = "FECHAMENTO_DIARIO_LANCAMENTO_SUPLEMENTAR_SEQ", initialValue = 1, allocationSize = 1)
 public class FechamentoDiarioLancamentoSuplementar implements Serializable {
-	
+
 	private static final long serialVersionUID = 1L;
 
 	@Id
-    @GeneratedValue(generator = "FECHAMENTO_DIARIO_LANCAMENTO_SUPLEMENTAR_SEQ")
-    @Column(name = "ID")
-    private Long id;
-	
+	@GeneratedValue(generator = "FECHAMENTO_DIARIO_LANCAMENTO_SUPLEMENTAR_SEQ")
+	@Column(name = "ID")
+	private Long id;
+
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "FECHAMENTO_DIARIO_CONSOLIDADO_SUPLEMENTAR_ID")
 	private FechamentoDiarioConsolidadoSuplementar fechamentoDiarioConsolidadoSuplementar;
-	
+
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "ID_PRODUTO_EDICAO")
 	private ProdutoEdicao produtoEdicao;
-	
-	@Column(name="QNT_CONTABILIZADA")
-	private BigInteger quantidadeContabilizada;
-	
-	@Column(name="QNT_FISICO")
-	private BigInteger quantidadeFisico;
-	
-	@Column(name="QNT_DIFERENCA")
-	private BigInteger quantidadeDiferenca;
+
+	@Column(name = "QNT_CONTABILIZADA")
+	private Integer quantidadeContabilizada;
+
+	@Column(name = "QNT_FISICO")
+	private Integer quantidadeFisico;
+
+	@Column(name = "QNT_DIFERENCA")
+	private Integer quantidadeDiferenca;
 
 	public Long getId() {
 		return id;
@@ -68,28 +67,28 @@ public class FechamentoDiarioLancamentoSuplementar implements Serializable {
 		this.produtoEdicao = produtoEdicao;
 	}
 
-	public BigInteger getQuantidadeContabilizada() {
+	public Integer getQuantidadeContabilizada() {
 		return quantidadeContabilizada;
 	}
 
-	public void setQuantidadeContabilizada(BigInteger quantidadeContabilizada) {
+	public void setQuantidadeContabilizada(Integer quantidadeContabilizada) {
 		this.quantidadeContabilizada = quantidadeContabilizada;
 	}
 
-	public BigInteger getQuantidadeFisico() {
+	public Integer getQuantidadeFisico() {
 		return quantidadeFisico;
 	}
 
-	public void setQuantidadeFisico(BigInteger quantidadeFisico) {
+	public void setQuantidadeFisico(Integer quantidadeFisico) {
 		this.quantidadeFisico = quantidadeFisico;
 	}
 
-	public BigInteger getQuantidadeDiferenca() {
+	public Integer getQuantidadeDiferenca() {
 		return quantidadeDiferenca;
 	}
 
-	public void setQuantidadeDiferenca(BigInteger quantidadeDiferenca) {
+	public void setQuantidadeDiferenca(Integer quantidadeDiferenca) {
 		this.quantidadeDiferenca = quantidadeDiferenca;
 	}
-	
+
 }

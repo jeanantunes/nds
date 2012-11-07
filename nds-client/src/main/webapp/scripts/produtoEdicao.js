@@ -335,7 +335,7 @@ var produtoEdicaoController =$.extend(true,  {
 					display : 'A&ccedil;&atilde;o',
 					name : 'acao',
 					width : 60,
-					sortable : true,
+					sortable : false,
 					align : 'center'
 				}],
 				sortname : "codigoProduto",
@@ -459,7 +459,11 @@ var produtoEdicaoController =$.extend(true,  {
 					txt = ": " + cProduto + " - " + nProduto;
 				}
 				$("#produtoEdicaoController-labelNomeProduto",this.workspace).html(txt);
-				$("#produtoEdicaoController-codigoProduto",this.workspace).val(cProduto);
+				
+				if (cProduto != "") {
+				    
+				    $("#produtoEdicaoController-codigoProduto",this.workspace).val(cProduto);
+                }
 	
 				return resultado;
 			}
@@ -557,8 +561,7 @@ var produtoEdicaoController =$.extend(true,  {
 								$("#produtoEdicaoController-descricaoBrinde").val(result.idBrinde).attr("readonly", false);
 
 								if (result.origemInterface) {
-									$("#produtoEdicaoController-precoVenda").attr("readonly", true);	
-								} else {
+								
 									$("#produtoEdicaoController-tabSegmentacao").hide();	
 									$("#produtoEdicaoController-codigoProdutoEdicao").attr("readonly", false);
 									$("#produtoEdicaoController-nomeComercialProduto").attr("readonly", false);
@@ -604,10 +607,8 @@ var produtoEdicaoController =$.extend(true,  {
 		},
 		popup:			function (id) {
 
-			if ($("#produtoEdicaoController-pCodigoProduto",this.workspace).val() != $("#produtoEdicaoController-codigoProduto",this.workspace).val()){
-				$("#produtoEdicaoController-codigoProduto",this.workspace).val($("#produtoEdicaoController-pCodigoProduto",this.workspace).val());
-			}
-
+			$("#produtoEdicaoController-codigoProduto",this.workspace).val($("#produtoEdicaoController-pCodigoProduto",this.workspace).val());
+			
 			// if ($(".edicoesGrid > tbody").data() == null ||
 			// $(".edicoesGrid > tbody").data() == undefined) {
 			if ($("#produtoEdicaoController-codigoProduto",this.workspace).val() == "") {

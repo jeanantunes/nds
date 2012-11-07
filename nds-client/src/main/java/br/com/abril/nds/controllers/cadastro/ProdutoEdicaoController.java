@@ -21,9 +21,7 @@ import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.serialization.custom.PlainJSONSerialization;
 import br.com.abril.nds.service.BrindeService;
-import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
-import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.MathUtil;
@@ -47,15 +45,6 @@ public class ProdutoEdicaoController {
 	
 	@Autowired
 	private BrindeService brindeService;
-	
-	@Autowired
-	private ProdutoEdicaoService peService;
-	
-	@Autowired
-	private ProdutoService pService;
-	
-	@Autowired
-	private LancamentoService lService;
 	
 	@Autowired
 	private ProdutoEdicaoService produtoEdicaoService;
@@ -112,9 +101,9 @@ public class ProdutoEdicaoController {
 		}		
 	
 		// Pesquisar:
-		Long qtd = peService.countPesquisarEdicoes(codigoProduto, nomeProduto, intervaloLancamento, intervaloPreco, statusLancamento, codigoDeBarras, brinde);
+		Long qtd = produtoEdicaoService.countPesquisarEdicoes(codigoProduto, nomeProduto, intervaloLancamento, intervaloPreco, statusLancamento, codigoDeBarras, brinde);
 		if(qtd > 0){			
-			List<ProdutoEdicaoDTO> lst = peService.pesquisarEdicoes(codigoProduto, nomeProduto, intervaloLancamento, intervaloPreco, statusLancamento, codigoDeBarras, brinde, sortorder, sortname, page, rp);
+			List<ProdutoEdicaoDTO> lst = produtoEdicaoService.pesquisarEdicoes(codigoProduto, nomeProduto, intervaloLancamento, intervaloPreco, statusLancamento, codigoDeBarras, brinde, sortorder, sortname, page, rp);
 			
 			this.result.use(FlexiGridJson.class).from(lst).total(qtd.intValue()).page(page).serialize();
 		}else{
@@ -131,7 +120,7 @@ public class ProdutoEdicaoController {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Por favor, escolha um produto para adicionar a Edição!");
 		}
 		
-		ProdutoEdicaoDTO dto = peService.obterProdutoEdicaoDTO(codigoProduto, idProdutoEdicao);
+		ProdutoEdicaoDTO dto = produtoEdicaoService.obterProdutoEdicaoDTO(codigoProduto, idProdutoEdicao);
 		
 		this.result.use(Results.json()).from(dto, "result").serialize();
 	}
@@ -140,7 +129,7 @@ public class ProdutoEdicaoController {
 	@Path("/ultimasEdicoes.json")
 	public void ultimasEdicoes(String codigoProduto) {
 			
-		List<ProdutoEdicaoDTO> lst = peService.pesquisarUltimasEdicoes(codigoProduto, 5);
+		List<ProdutoEdicaoDTO> lst = produtoEdicaoService.pesquisarUltimasEdicoes(codigoProduto, 5);
 
 		this.result.use(FlexiGridJson.class).from(lst).total(lst.size()).page(1).serialize();
 	}
@@ -207,7 +196,7 @@ public class ProdutoEdicaoController {
 				imgInputStream = imagemCapa.getFile();
 			}
 			
-			peService.salvarProdutoEdicao(dto, codigoProduto, contentType, imgInputStream);
+			produtoEdicaoService.salvarProdutoEdicao(dto, codigoProduto, contentType, imgInputStream);
 			
 			vo = new ValidacaoVO(TipoMensagem.SUCCESS, "Edição salva com sucesso!");
 			
@@ -242,7 +231,7 @@ public class ProdutoEdicaoController {
 		
 		if(dto.getId()!=null) {
 
-			pe = peService.obterProdutoEdicao(dto.getId(), false);
+			pe = produtoEdicaoService.obterProdutoEdicao(dto.getId(), false);
 			
 			if(pe == null) {
 				throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Produto Edição inválido!"));
@@ -302,7 +291,7 @@ public class ProdutoEdicaoController {
 		
 		if (dto.getNumeroEdicao() != null && dto.getNumeroEdicao() != 0L) {
 			
-			ProdutoEdicao produtoEdicao = peService.obterProdutoEdicaoPorCodProdutoNumEdicao(codigoProduto, dto.getNumeroEdicao().toString());
+			ProdutoEdicao produtoEdicao = produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(codigoProduto, dto.getNumeroEdicao().toString());
 		
 			if (produtoEdicao != null && !produtoEdicao.getId().equals(dto.getId())) {
 				listaMensagens.add("O 'Número de Edição' deve ser unico para esse Produto!");
@@ -332,7 +321,7 @@ public class ProdutoEdicaoController {
 		ValidacaoVO vo = null;
 		try {
 
-			this.peService.excluirProdutoEdicao(idProdutoEdicao);
+			this.produtoEdicaoService.excluirProdutoEdicao(idProdutoEdicao);
 			vo = new ValidacaoVO(TipoMensagem.SUCCESS, "Edição excluída com sucesso!");
 		} catch (ValidacaoException e) {
 			
