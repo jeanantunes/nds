@@ -30,6 +30,8 @@ public class EMS0128InputItem extends IntegracaoDocumentDetail implements Serial
 	private Date dataEmicaoDocumentoAcerto;
 	private String descricaoMotivo;
 	private String codigoOrigemMotivo;
+	private Long idMovimento;
+	
 	/**
 	 * @return the numSequenciaDetalhe
 	 */
@@ -174,7 +176,17 @@ public class EMS0128InputItem extends IntegracaoDocumentDetail implements Serial
 	public void setCodigoOrigemMotivo(String codigoOrigemMotivo) {
 		this.codigoOrigemMotivo = codigoOrigemMotivo;
 	}
-	
-	
-		
+	/**
+	 * @return the idMovimento
+	 */
+	public Long getIdMovimento() {
+		return idMovimento;
+	}
+	/**
+	 * @param idMovimento the idMovimento to set
+	 */
+	public void setIdMovimento(Long idMovimento) {
+		this.idMovimento = idMovimento;
+	}
+			
 }

@@ -94,18 +94,9 @@ public class EMS0128MessageProcessor extends AbstractRepository implements Messa
 				
 				for ( EMS0128InputItem eitem : doc.getItems()) {
 					
-					MovimentoEstoque movimento = this.recuperaMovimento(Long.valueOf(distribuidor), eitem);
+					MovimentoEstoque movimento = this.recuperaMovimento(eitem.getIdMovimento());
 										
-					if (eitem.getSituacaoAcerto().equals("DESPRESADO")) {
-						movimento.setStatusIntegracao(StatusIntegracao.DESPRESADO);
-					} else 	if (eitem.getSituacaoAcerto().equals("EM_PROCESSO")) {
-						movimento.setStatusIntegracao(StatusIntegracao.EM_PROCESSO);
-					} else 	if (eitem.getSituacaoAcerto().equals("LIBERADO")) {
-						movimento.setStatusIntegracao(StatusIntegracao.LIBERADO);
-					} else 	if (eitem.getSituacaoAcerto().equals("REJEITADO")) {
-						movimento.setStatusIntegracao(StatusIntegracao.REJEITADO);
-					}
-							
+					movimento.setStatusIntegracao(StatusIntegracao.valueOf(eitem.getSituacaoAcerto()));
 					movimento.setMotivo(eitem.getDescricaoMotivo());					
 					movimento.setNumeroDocumentoAcerto(eitem.getNumeroDocumentoAcerto());
 					movimento.setDataEmicaoDocumentoAcerto(eitem.getDataEmicaoDocumentoAcerto());
@@ -126,24 +117,10 @@ public class EMS0128MessageProcessor extends AbstractRepository implements Messa
 
 	}
 
-	// TODO: COrrigir esta query
-	private MovimentoEstoque recuperaMovimento(Long valueOf, EMS0128InputItem eitem) {
-		StringBuilder sql = new StringBuilder();
-		sql.append("SELECT me ");
-		sql.append("FROM MovimentoEstoque me ");
-		sql.append("JOIN FETCH me.tipoMovimento tm ");
-		sql.append("JOIN FETCH me.produtoEdicao pe ");
-		sql.append("JOIN FETCH pe.produto pr ");
-		sql.append("WHERE ");
-		sql.append("	pe.numeroEdicao = :numeroEdicao ");
-		sql.append("	and pr.codigo = :codigo ");
+	private MovimentoEstoque recuperaMovimento(Long id) {
 		
-		Query query = getSession().createQuery(sql.toString());		
+		return (MovimentoEstoque) getSession().get(MovimentoEstoque.class, id);		
 		
-		query.setParameter("numeroEdicao", eitem.getNumeroEdicao());
-		query.setParameter("codigo", eitem.getCodigoProduto());
-		
-		return (MovimentoEstoque) query.uniqueResult();
 	}
 
 
@@ -156,6 +133,7 @@ public class EMS0128MessageProcessor extends AbstractRepository implements Messa
 		
 		
 		item.setNumSequenciaDetalhe(itens++);
+		item.setIdMovimento(me.getId());
 		
 		GrupoMovimentoEstoque gme = ((TipoMovimentoEstoque)(me).getTipoMovimento()).getGrupoMovimentoEstoque();
 		
