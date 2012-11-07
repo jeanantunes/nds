@@ -335,7 +335,7 @@ var produtoEdicaoController =$.extend(true,  {
 					display : 'A&ccedil;&atilde;o',
 					name : 'acao',
 					width : 60,
-					sortable : true,
+					sortable : false,
 					align : 'center'
 				}],
 				sortname : "codigoProduto",
