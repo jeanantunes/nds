@@ -160,7 +160,7 @@ public class FechamentoDiarioRepositoryImplTest extends AbstractRepositoryImplTe
 		Assert.assertNotNull(consolidadoSuplementar);
 		
 		FechamentoDiarioLancamentoSuplementar historicoMovimentoSuplementar 
-				= Fixture.historicoFechamentoDiarioLancamentoSuplementar(produtoEdicaoVeja, BigInteger.TEN, BigInteger.TEN, BigInteger.TEN);
+				= Fixture.historicoFechamentoDiarioLancamentoSuplementar(produtoEdicaoVeja, 10, 20, 30);
 		historicoMovimentoSuplementar.setFechamentoDiarioConsolidadoSuplementar(consolidadoSuplementar);
 		
 		historicoMovimentoSuplementar = merge(historicoMovimentoSuplementar);
