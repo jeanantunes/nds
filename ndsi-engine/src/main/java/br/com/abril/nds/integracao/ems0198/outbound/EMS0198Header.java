@@ -22,7 +22,16 @@ public class EMS0198Header  implements Serializable {
 	private String data;
 
 	
-	@Field(offset = 1, length = 1000)
+	/**
+	 * 
+	 * FIXME: O tamanho esta "erroneamente" fixado em 100 posições porque este
+	 * a API FixedFormat4J gera apenas arquivos do tipo posicional (e 
+	 * este arquivo é do tipo que utiliza delimitadores).
+	 * O tamanho de 100 posições deve ser suficiente para este tipo de linha.
+	 * 
+	 * @return
+	 */
+	@Field(offset = 1, length = 100)
 	public String getTipoRegistro() {
 		
 		registro = "1|" + this.codigoCota + "|" + 
