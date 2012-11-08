@@ -899,7 +899,11 @@ public class EntregadorController {
 			
 			try {
 				
-				new BigDecimal(getValorSemMascara(percentualComissao));
+				BigDecimal percentualComissaoValue = new BigDecimal(getValorSemMascara(percentualComissao));
+				
+				if (new Double(getValorSemMascara(percentualComissao)) > 100) {
+					listaMensagens.add("O valor máximo de percentual de comissão não pode ultrapassar 100%.");
+				}
 				
 			} catch (NumberFormatException e) {
 				
@@ -1276,7 +1280,7 @@ public class EntregadorController {
 
 	private String getValorSemMascara(String valor) {
 
-		valor = valor.replaceAll("\\.", "");
+		//valor = valor.replaceAll("\\.", "");
 		valor = valor.replaceAll(",", "\\.");
 
 		return valor;

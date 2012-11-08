@@ -32,9 +32,6 @@
          <td width="59"><input type="text" id="orgaoEmissor" style="width:50px" /></td>
          <td width="31">UF:</td>
          <td width="135"><select id="ufOrgaoEmissor" style="width:50px">
-           <option selected="selected"> </option>
-           <option>RJ</option>
-           <option>SP</option>
          </select></td>
        </tr>
        <tr>
