@@ -386,7 +386,8 @@ public class MovimentoFinanceiroCotaServiceImpl implements
     /**
 	 * Gera Financeiro para Movimentos de Estoque da Cota.
 	 * @param cota
-	 * @param movimentosEstoqueCota
+	 * @param movimentosEstoqueCota - movimentos
+	 * @param movimentosEstoqueCota - movimentos de estorno
 	 * @param dataOperacao
 	 * @param usuario
 	 */

@@ -1,4 +1,4 @@
-package br.com.abril.nds.integracao.persistence.model;
+package br.com.abril.nds.integracao.model;
 
 import java.io.Serializable;
 

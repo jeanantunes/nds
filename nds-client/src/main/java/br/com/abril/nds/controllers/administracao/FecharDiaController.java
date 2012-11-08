@@ -98,7 +98,7 @@ public class FecharDiaController {
 	
 	private static Distribuidor distribuidor;
 
-	private static final String ATRIBUTO_SESSAO_VALIDACAO_PENDENCIAS = "atributoSessaoValidacao";
+	private static final String ATRIBUTO_SESSAO_POSSUI_PENDENCIAS_VALIDACAO = "atributoSessaoValidacao";
 	
 	@Path("/")
 	@Rules(Permissao.ROLE_ADMINISTRACAO_FECHAR_DIA)
@@ -194,7 +194,7 @@ public class FecharDiaController {
 			}
 		}
 		
-		this.session.setAttribute(ATRIBUTO_SESSAO_VALIDACAO_PENDENCIAS, pendencia);
+		this.session.setAttribute(ATRIBUTO_SESSAO_POSSUI_PENDENCIAS_VALIDACAO, pendencia);
 		
 		this.result.use(Results.json()).from(pendencia).recursive().serialize();
 		
@@ -461,13 +461,13 @@ public class FecharDiaController {
 	    PaginacaoVO paginacao = new PaginacaoVO(page, rp, null);
 	    
 	    List<Divida> dividas = fecharDiaService.obterDividasReceberEm(dataFechamento, paginacao);
-	    int totalDividas = fecharDiaService.contarDividasReceberEm(dataFechamento);
+	    Long totalDividas = fecharDiaService.contarDividasReceberEm(dataFechamento);
 	    
 	    List<DividaDTO> dividasDTO = new ArrayList<>();
 	    for (Divida divida : dividas) {
 	        dividasDTO.add(DividaDTO.fromDivida(divida));
 	    }
-	    result.use(FlexiGridJson.class).from(dividasDTO).page(page).total(totalDividas).serialize();       
+	    result.use(FlexiGridJson.class).from(dividasDTO).page(page).total(totalDividas.intValue()).serialize();       
 	}
 	
 	@Get
@@ -494,13 +494,13 @@ public class FecharDiaController {
         PaginacaoVO paginacao = new PaginacaoVO(page, rp, null);
         
         List<Divida> dividas = fecharDiaService.obterDividasVencerApos(dataFechamento, paginacao);
-        int totalDividas = fecharDiaService.contarDividasVencerApos(dataFechamento);
+        Long totalDividas = fecharDiaService.contarDividasVencerApos(dataFechamento);
         
         List<DividaDTO> dividasDTO = new ArrayList<>();
         for (Divida divida : dividas) {
             dividasDTO.add(DividaDTO.fromDivida(divida));
         }
-        result.use(FlexiGridJson.class).from(dividasDTO).page(page).total(totalDividas).serialize();            
+        result.use(FlexiGridJson.class).from(dividasDTO).page(page).total(totalDividas.intValue()).serialize();            
 	}
 	
 	@Get
@@ -548,15 +548,16 @@ public class FecharDiaController {
 	}
 	
 	@Post
-	public void processarControleDeAprovacao() {
+	public void confirmar() {
 		
-		Boolean hasValidacao = (Boolean) this.session.getAttribute(ATRIBUTO_SESSAO_VALIDACAO_PENDENCIAS);
+		Boolean hasPendenciaValidacao = 
+			(Boolean) this.session.getAttribute(ATRIBUTO_SESSAO_POSSUI_PENDENCIAS_VALIDACAO);
 		
-		if (hasValidacao != null && !hasValidacao) {
+		if (hasPendenciaValidacao != null && !hasPendenciaValidacao) {
 			
 			this.fecharDiaService.processarControleDeAprovacao();
 			
-			this.session.setAttribute(ATRIBUTO_SESSAO_VALIDACAO_PENDENCIAS, true);
+			this.session.removeAttribute(ATRIBUTO_SESSAO_POSSUI_PENDENCIAS_VALIDACAO);
 		}
 	}
 
