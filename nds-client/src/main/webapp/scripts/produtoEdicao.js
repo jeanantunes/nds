@@ -539,7 +539,7 @@ var produtoEdicaoController =$.extend(true,  {
 					{ codigoProduto : codigoProduto, 
 						idProdutoEdicao : id},
 						function(result) {
-							$("#produtoEdicaoController-tabSegmentacao",this.workspace).show();	
+							
 							if (result) {
 								$("#produtoEdicaoController-idProdutoEdicao").val(result.id);
 								$("#produtoEdicaoController-codigoProdutoEdicao").val(result.codigoProduto);
@@ -581,9 +581,7 @@ var produtoEdicaoController =$.extend(true,  {
 
 								var naoEditavel = result.origemInterface;
 
-								if (!naoEditavel){
-								    $("#produtoEdicaoController-tabSegmentacao").hide();
-								}
+							    $("#produtoEdicaoController-tabSegmentacao").toggle(naoEditavel);
 								
 								$('#produtoEdicaoController-dataRecolhimentoPrevisto').attr("readonly", naoEditavel);
 								$("#produtoEdicaoController-ped").attr("readonly", naoEditavel);		
