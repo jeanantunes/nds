@@ -82,7 +82,7 @@ var bancoController = $.extend(true, {
 			$("#newCodigoCedente", this.workspace).numeric();	
 			$("#newAgencia", this.workspace).numeric();	
 			$("#newConta", this.workspace).numeric();	
-			$("#newDigito", this.workspace).numeric();
+			//$("#newDigito", this.workspace).numeric();
 			$("#newCarteira", this.workspace).numeric();
 			$("#newJuros", this.workspace).numeric();	
 			$("#newMulta", this.workspace).numeric();
@@ -92,7 +92,7 @@ var bancoController = $.extend(true, {
 			$("#alterCodigoCedente", this.workspace).numeric();	
 			$("#alterAgencia", this.workspace).numeric();	
 			$("#alterConta", this.workspace).numeric();	
-			$("#alterDigito", this.workspace).numeric();	
+			//$("#alterDigito", this.workspace).numeric();	
 			$("#alterJuros", this.workspace).numeric();	
 			$("#alterMulta", this.workspace).numeric();
 			$("#alterVrMulta", this.workspace).numeric();
