@@ -725,6 +725,7 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 	@SuppressWarnings("unchecked")
     @Override
     public List<Divida> obterDividasReceberEm(Date data, PaginacaoVO paginacao) {
+	    Objects.requireNonNull(data, "Data para consulta das dívidas à receber EM não pode ser nula!");
 	    Query query = queryDividas(data, TipoDivida.DIVIDA_A_RECEBER, paginacao, false);
 	    return query.list();
     }
@@ -736,6 +737,7 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 	@SuppressWarnings("unchecked")
     @Override
     public List<Divida> obterDividasVencerApos(Date data, PaginacaoVO paginacao) {
+	    Objects.requireNonNull(data, "Data para consulta das dívidas à vencer APÓS não pode ser nula!");
 	    Query query = queryDividas(data, TipoDivida.DIVIDA_A_VENCER, paginacao, false);
         return query.list();
     }
@@ -745,6 +747,7 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
      */
 	@Override
     public long contarDividasReceberEm(Date data) {
+	    Objects.requireNonNull(data, "Data para contagem das dívidas à receber EM não pode ser nula!");
 	    Query query = queryDividas(data, TipoDivida.DIVIDA_A_RECEBER, null, true);
         return (long) query.uniqueResult();
     }
@@ -754,6 +757,7 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
      */
 	@Override
     public long contarDividasVencerApos(Date data) {
+	    Objects.requireNonNull(data, "Data para contagem das dívidas à vencer APÓS não pode ser nula!");
 	    Query query = queryDividas(data, TipoDivida.DIVIDA_A_VENCER, null, true);
         return (long) query.uniqueResult();
     }
