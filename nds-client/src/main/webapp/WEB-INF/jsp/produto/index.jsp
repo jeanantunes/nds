@@ -302,7 +302,6 @@
 			<tr>
 				<td width="43">C&oacute;digo:</td>
 				<td width="123" >
-					
 			    	<input type="text" name="codigoProduto" id="codigoProduto"
 						   style="width: 80px; float: left; margin-right: 5px;" maxlength="255"
 						   onchange="pesquisaProdutoCadastroProduto.pesquisarPorCodigoProduto('#codigoProduto', '#produto', '#edicao', false,
@@ -312,9 +311,11 @@
 				
 				<td width="55">Produto:</td>
 				<td width="237">
-					<input type="text" name="produto" id="produto" style="width: 222px;" maxlength="255"
+					<!-- <input type="text" name="produto" id="produto" style="width: 222px;" maxlength="255"
 					       onkeyup="pesquisaProdutoCadastroProduto.autoCompletarPorNomeProduto('#produto', false);"
-					       onblur="pesquisaProdutoCadastroProduto.pesquisarPorNomeProduto('#codigoProduto', '#produto', '#edicao', false, undefined, undefined);"/>
+					       onblur="pesquisaProdutoCadastroProduto.pesquisarPorNomeProduto('#codigoProduto', '#produto', '#edicao', false, undefined, undefined);"/>  -->
+					<input type="text" name="produto" id="produto" style="width: 222px;" maxlength="255"
+					       onkeyup="pesquisaProdutoCadastroProduto.autoCompletarPorNomeProduto('#produto', false);"/>
 				</td>
 				<td width="99">Fornecedor:</td>
 				<td width="251">

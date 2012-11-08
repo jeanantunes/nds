@@ -117,6 +117,7 @@ var entregadorController = $.extend(true, {
 
 			$("#dadosCadastraisPF", this.workspace).show();
 			$("#dadosCadastraisPJ", this.workspace).hide();
+			
 
 		} else {
 
@@ -283,7 +284,8 @@ var entregadorController = $.extend(true, {
 					$("#razaoSocial", this.workspace).val(result.pessoaJuridica.razaoSocial);
 					$("#nomeFantasia", this.workspace).val(result.pessoaJuridica.nomeFantasia);
 					$("#cnpj", this.workspace).val(result.pessoaJuridica.cnpj).mask("99.999.999/9999-99");
-					$("#inscricaoEstadual", this.workspace).val(result.pessoaJuridica.inscricaoEstadual).mask("999.999.999.999");
+					//$("#inscricaoEstadual", this.workspace).val(result.pessoaJuridica.inscricaoEstadual).mask("999.999.999.999");
+					$("#inscricaoEstadual", this.workspace).val(result.pessoaJuridica.inscricaoEstadual);
 					$("#emailPJ", this.workspace).val(result.pessoaJuridica.email);
 					$("#percentualComissaoPJ", this.workspace).val(result.entregador.percentualComissao);
 
@@ -362,8 +364,10 @@ var entregadorController = $.extend(true, {
 								result.mensagens.tipoMensagem, 
 								result.mensagens.listaMensagens, ""
 							);
+							
 						}
 					);
+					$( this, this.workspace ).dialog( "close" );
 				},
 				"Cancelar": function() {
 					$( this, this.workspace ).dialog( "close" );
@@ -790,7 +794,7 @@ var entregadorController = $.extend(true, {
 					$("#razaoSocial", this.workspace).val(result.razaoSocial);
 					$("#nomeFantasia", this.workspace).val(result.nomeFantasia);
 					$("#cnpj", this.workspace).val(result.cnpj).mask("99.999.999/9999-99");
-					$("#inscricaoEstadual", this.workspace).val(result.inscricaoEstadual).mask("999.999.999.999");
+					//$("#inscricaoEstadual", this.workspace).val(result.inscricaoEstadual).mask("999.999.999.999");
 					$("#emailPJ", this.workspace).val(result.email);	
 
 				} else {
