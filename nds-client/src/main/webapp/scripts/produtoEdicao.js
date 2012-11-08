@@ -266,7 +266,7 @@ var produtoEdicaoController =$.extend(true,  {
 
 		$(".prodsPesqGrid",this.workspace).flexigrid({
 				dataType : 'json',
-				preProcess: produtoEdicaoController.executarPreProcessamento,
+				preProcess: produtoEdicaoController.executarPreProcessamentoPesquisados,
 				colModel : [ {
 					display : 'Produto',
 					name : 'nomeComercial',
@@ -384,6 +384,7 @@ var produtoEdicaoController =$.extend(true,  {
 			});
 			
 		},
+		
 		pesquisarEdicoes : function(codigoProduto, nomeProduto) {
 
 			if (codigoProduto == "" || codigoProduto == undefined) {
@@ -421,6 +422,7 @@ var produtoEdicaoController =$.extend(true,  {
 
 			$(".edicoesGrid",this.workspace).flexReload();
 		},
+		
 		executarPreProcessamento : 	function (resultado) {
 
 			// Exibe mensagem de erro/alerta, se houver:
@@ -472,9 +474,45 @@ var produtoEdicaoController =$.extend(true,  {
 				return resultado;
 			}
 		},
+
+		executarPreProcessamentoPesquisados : 	function (resultado) {
+
+			$.each(resultado.rows, function(index, row) {
+				
+				if(row.cell.numeroEdicao){
+					
+					row.cell.numeroEdicao = '<a href="javascript:;" onclick="produtoEdicaoController.editarEdicao(' + row.cell.id + ');" style="cursor:pointer; margin-right:10px;">' +
+					                        '<label style = "height:30px; width:40px;" >'  +
+											 row.cell.numeroEdicao +
+											'</label>'  + 
+											'</a>';
+				}else{
+					
+					row.cell.numeroEdicao = '';
+				}
+
+				if(row.cell.nomeComercial){
+					
+					row.cell.nomeComercial = '<a href="javascript:;" onclick="produtoEdicaoController.editarEdicao(' + row.cell.id + ');" style="cursor:pointer; margin-right:10px;">' +
+					 						 '<label style = "height:30px; width:115px;" >'  +						  
+											  row.cell.nomeComercial +
+											 '</label>'  + 
+											 '</a>';
+				}else{
+					
+					row.cell.nomeComercial = '';
+				}
+			});
+
+			$(".grids").show();
+
+			return resultado;
+		},
+		
 		novaEdicao : function () {
 			produtoEdicaoController.popup("", "", "");
 		},
+
 		editarEdicao:			function (id, codigo, nome) {
 			if (id == undefined) {
 				id = "";
@@ -527,6 +565,7 @@ var produtoEdicaoController =$.extend(true,  {
 
 			$(".prodsPesqGrid",this.workspace).flexReload();	
 		},
+		
 		carregarDialog : 			function (id, codigoProduto) {
 
 			if (codigoProduto == "") {
@@ -539,7 +578,7 @@ var produtoEdicaoController =$.extend(true,  {
 					{ codigoProduto : codigoProduto, 
 						idProdutoEdicao : id},
 						function(result) {
-							$("#produtoEdicaoController-tabSegmentacao",this.workspace).show();	
+							
 							if (result) {
 								$("#produtoEdicaoController-idProdutoEdicao").val(result.id);
 								$("#produtoEdicaoController-codigoProdutoEdicao").val(result.codigoProduto);
@@ -581,9 +620,7 @@ var produtoEdicaoController =$.extend(true,  {
 
 								var naoEditavel = result.origemInterface;
 
-								if (!naoEditavel){
-								    $("#produtoEdicaoController-tabSegmentacao").hide();
-								}
+							    $("#produtoEdicaoController-tabSegmentacao").toggle(naoEditavel);
 								
 								$('#produtoEdicaoController-dataRecolhimentoPrevisto').attr("readonly", naoEditavel);
 								$("#produtoEdicaoController-ped").attr("readonly", naoEditavel);		
@@ -631,6 +668,7 @@ var produtoEdicaoController =$.extend(true,  {
 			);
 
 		},
+		
 		popup:			function (id, codigo, nome) {
 
 			$("#produtoEdicaoController-codigoProduto",this.workspace).val($("#produtoEdicaoController-pCodigoProduto",this.workspace).val());
@@ -649,8 +687,6 @@ var produtoEdicaoController =$.extend(true,  {
 			if (nome == undefined) {
 				nome = "";
 			}
-			
-			produtoEdicaoController.pesquisarEdicoes(codigo, nome);
 
 			$( "#produtoEdicaoController-dialog-novo" ).dialog({
 				resizable: false,
@@ -674,6 +710,7 @@ var produtoEdicaoController =$.extend(true,  {
 			produtoEdicaoController.prepararTela(id, codigo);
 			produtoEdicaoController.carregarDialog(id, codigo);
 		},
+		
 		salvarProdutoEdicao : function(closePopUp) {
 
 			$("#produtoEdicaoController-formUpload").ajaxSubmit({
@@ -705,6 +742,7 @@ var produtoEdicaoController =$.extend(true,  {
 				data: { codigoProduto : $("#produtoEdicaoController-codigoProduto",this.workspace).val() }
 			});
 		},
+		
 		carregarImagemCapa:			function (idProdutoEdicao) {
 
 			var imgPath = (idProdutoEdicao == null || idProdutoEdicao == undefined)
@@ -721,6 +759,7 @@ var produtoEdicaoController =$.extend(true,  {
 			});
 
 		},
+		
 		form_clear:function (formName) {
 
 			$('#produtoEdicaoController-' + formName).find(':input').each(
@@ -744,6 +783,7 @@ var produtoEdicaoController =$.extend(true,  {
 					}
 			);
 		},
+		
 		popup_alterar:			function () {
 			// $( "#produtoEdicaoController-dialog:ui-dialog" ).dialog( "destroy" );
 
@@ -766,6 +806,7 @@ var produtoEdicaoController =$.extend(true,  {
 				form: $("#produtoEdicaoController-dialog-novo", this.workspace).parents("form")
 			});	      
 		},
+		
 		removerEdicao:function (id) {
 
 			$( "#produtoEdicaoController-dialog-excluir").dialog({
@@ -818,6 +859,7 @@ var produtoEdicaoController =$.extend(true,  {
 				form: $("#produtoEdicaoController-dialog-excluir", this.workspace).parents("form")
 			});
 		},
+		
 		popup_excluir_capa:			function () {
 			// $( "#produtoEdicaoController-dialog:ui-dialog" ).dialog( "destroy" );
 
@@ -868,17 +910,18 @@ var produtoEdicaoController =$.extend(true,  {
 				}
 			});
 		},
+		
 		mostrar_prod:function (){
 			$( "#produtoEdicaoController-pesqProdutos" ,this.workspace).fadeIn('slow');
 
 		},
+		
 		fecha_prod:function (){
 			$( "#pesqProdutos",this.workspace ).fadeOut('slow');
 
-		}
-		,mostraLinhaProd:
-
-			function (){
+		},
+		
+		mostraLinhaProd:function (){
 
 			$( ".prodLinhas",this.workspace ).show('slow');
 		}
