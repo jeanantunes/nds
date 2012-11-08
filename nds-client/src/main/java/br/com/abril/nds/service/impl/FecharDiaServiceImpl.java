@@ -32,6 +32,7 @@ import br.com.abril.nds.dto.fechamentodiario.ResumoEstoqueDTO.ResumoEstoqueExemp
 import br.com.abril.nds.dto.fechamentodiario.ResumoEstoqueDTO.ResumoEstoqueProduto;
 import br.com.abril.nds.dto.fechamentodiario.ResumoEstoqueDTO.ValorResumoEstoque;
 import br.com.abril.nds.dto.fechamentodiario.SumarizacaoDividasDTO;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
@@ -97,6 +98,7 @@ import br.com.abril.nds.service.ResumoReparteFecharDiaService;
 import br.com.abril.nds.service.ResumoSuplementarFecharDiaService;
 import br.com.abril.nds.service.exception.FechamentoDiarioException;
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.PaginacaoVO;
 
@@ -416,12 +418,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
         return dividaService.contarDividasVencerApos(data);
     }
     
-    @Override
-    @Transactional
-    /**
-     * {@inheritDoc}
-     */
-    public void salvarResumoFechamentoDiario(Usuario usuario, Date dataFechamento) throws FechamentoDiarioException{
+    private void salvarResumoFechamentoDiario(Usuario usuario, Date dataFechamento) throws FechamentoDiarioException{
     	
     	validarDadosFechamentoDiario(dataFechamento, "Data de fechamento inválida!");
     	validarDadosFechamentoDiario(usuario, "Usúario informado inválido!");
@@ -868,12 +865,8 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 	    }
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	@Transactional
-	public void processarControleDeAprovacao() {
+	
+	private void processarControleDeAprovacao() {
 
 		Distribuidor distribuidor = this.distribuidorRepository.obter();
 
@@ -904,42 +897,8 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 	
 	@Override
 	@Transactional(readOnly=true)
-	public ResumoEstoqueDTO obterResumoEstoque(Date dataOperacao){
-		
-		//TODO implementar o quadro de resumo de Estoque
-		
-		ResumoEstoqueDTO resumoDTO = new ResumoEstoqueDTO();
-		
-		ResumoEstoqueDTO.ResumoEstoqueExemplar exemplar = resumoDTO.new ResumoEstoqueExemplar();
-		
-		exemplar.setQuantidadeDanificados(10);
-		exemplar.setQuantidadeJuramentado(15);
-		exemplar.setQuantidadeLancamento(20);
-		exemplar.setQuantidadeRecolhimento(25);
-		exemplar.setQuantidadeSuplementar(30);
-		
-		ResumoEstoqueDTO.ResumoEstoqueProduto produto = resumoDTO.new ResumoEstoqueProduto();
-		
-		produto.setQuantidadeDanificados(40);
-		produto.setQuantidadeJuramentado(50);
-		produto.setQuantidadeLancamento(60);
-		produto.setQuantidadeRecolhimento(70);
-		produto.setQuantidadeSuplementar(80);
-		
-		
-		ResumoEstoqueDTO.ValorResumoEstoque venda = resumoDTO.new ValorResumoEstoque();
-		
-		venda.setValorDanificados(BigDecimal.TEN);
-		venda.setValorJuramentado(BigDecimal.TEN);
-		venda.setValorLancamento(BigDecimal.TEN);
-		venda.setValorRecolhimento(BigDecimal.TEN);
-		venda.setValorSuplementar(BigDecimal.TEN);
-		
-		resumoDTO.setResumEstoqueExemplar(exemplar);
-		resumoDTO.setResumoEstoqueProduto(produto);
-		resumoDTO.setValorResumoEstoque(venda);
-		
-		return resumoDTO;
+	public ResumoEstoqueDTO obterResumoEstoque(Date dataOperacao){		
+		return  this.fecharDiaRepository.obterResumoEstoque(dataOperacao);
 	}
 	
 	private void validarDadosFechamentoDiario(Object objeto, String mensagem) throws FechamentoDiarioException{
@@ -950,6 +909,22 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		
 		if(objeto == null){
 			throw new FechamentoDiarioException(mensagem);
+		}
+	}
+	
+	@Transactional
+	@Override
+	public void processarFechamentoDoDia(Usuario usuario, Date dataFechamento){
+		
+		processarControleDeAprovacao();
+		
+		try {
+		
+			salvarResumoFechamentoDiario(usuario, dataFechamento);
+		
+		} catch (FechamentoDiarioException e) {
+			
+			throw new ValidacaoException(TipoMensagem.ERROR, e.getMessage());
 		}
 	}
 }

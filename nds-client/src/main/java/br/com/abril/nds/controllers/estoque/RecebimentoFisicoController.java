@@ -1183,7 +1183,7 @@ public class RecebimentoFisicoController {
 		List<String> msgs = new ArrayList<String>();
 		msgs.add("Itens Confirmados com Sucesso.");
 		ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.SUCCESS, msgs);
-		result.use(Results.json()).from(validacao, "result").include("listaMensagens").serialize();	
+		result.use(Results.json()).from(validacao, Constantes.PARAM_MSGS).recursive().serialize();	
 		
 		
 	}

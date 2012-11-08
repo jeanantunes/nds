@@ -348,11 +348,6 @@
     <br />
    
     <div class="container">
-    
-     <div id="effect" style="padding: 0 .7em;" class="ui-state-highlight ui-corner-all"> 
-				<p><span style="float: left; margin-right: .3em;" class="ui-icon ui-icon-info"></span>
-				<b>Confirmação de Valores < evento > com < status >.</b></p>
-	</div>
     	
       <fieldset class="classFieldset">
    	    <legend> Fechar o Dia</legend>
@@ -366,7 +361,12 @@
               		<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/bt_devolucao.png">Iniciar Fechamento do Dia</a>
               	</span>
               </td>
-              <td width="529"><span class="bt_confirmar_novo grids" style="display:none;" title="Confirmar"><a onclick="fecharDiaController.popup();" href="javascript:;"><img width="16" border="0" hspace="5" height="16" alt="Confirmar" src="../images/ico_check.gif">Confirmar</a></span></td>
+              <td width="529">
+              		<span class="bt_confirmar_novo grids" style="display:none;" title="Confirmar">
+              			<a onclick="fecharDiaController.popup();" href="javascript:;">
+              			<img width="16" border="0" hspace="5" height="16" alt="Confirmar" src="${pageContext.request.contextPath}/images/ico_check.gif">Confirmar</a>
+              	</span>
+             </td>
             </tr>
           </table>
 
@@ -614,10 +614,8 @@
           <a href="relatorio_geral_financeiro_fisico_1.htm" target="_blank">rel_1</a> |  <a href="relatorio_geral_financeiro_fisico_2.htm" target="_blank">rel_2</a> |  <a href="relatorio_geral_financeiro_fisico_3.htm" target="_blank">rel_3</a><br />
           <br clear="all" />
         <br />
-	<span class="bt_confirmar_novo" title="Confirmar"><a onclick="fecharDiaController.popup();" href="javascript:;"><img width="16" border="0" hspace="5" height="16" alt="Confirmar" src="../images/ico_check.gif">Confirmar</a></span>
-          
-          
-          <br clear="all" />
+	
+        <br clear="all" />
           
 	
         

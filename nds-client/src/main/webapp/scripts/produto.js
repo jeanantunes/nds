@@ -243,6 +243,8 @@ var produtoController = $.extend(true, {
 				produtoController.carregarProdutoEditado(id);		
 			}
 		);
+		
+		$("#codigoProdutoCadastro", this.workspace).disable();
 	},
 	
 	carregarProdutoEditado : function(id) {
@@ -360,6 +362,8 @@ var produtoController = $.extend(true, {
 		});
 
 		this.carregarNovoProduto(this.limparModalCadastro);
+		
+		$("#codigoProdutoCadastro", this.workspace).enable();
 	},
 
 	carregarNovoProduto : function(callback) {
