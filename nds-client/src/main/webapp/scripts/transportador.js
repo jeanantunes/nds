@@ -461,9 +461,11 @@ var transportadorController = $.extend(true, {
 						if ($("#modalidadeCobranca", transportadorController.workspace).val() == "TAXA_FIXA"){
 							
 							valorCobranca = transportadorController.preparaValor($("#valorTaxaFixa", transportadorController.workspace).val());
+							alert("TAXA_FIXA: " + valorCobranca);
 						} else {
 							
 							valorCobranca = transportadorController.preparaValor($("#valorPercentualFaturamento", transportadorController.workspace).val());
+							alert("Percentual: " + valorCobranca);
 						}
 						
 						var data = [{name:"transportador.pessoaJuridica.razaoSocial", value:$("#razaoSocial", transportadorController.workspace).val()},
@@ -476,8 +478,8 @@ var transportadorController = $.extend(true, {
 									{name:"transportador.parametroCobrancaTransportador.periodicidadeCobranca", 
 										value:$("[name=radioPeriodicidade]:checked", transportadorController.workspace).val()},
 									{name:"transportador.parametroCobrancaTransportador.diaCobranca", value: diaCobranca},
-									{name:"transportador.parametroCobrancaTransportador.modelidadeCobranca", 
-										value: $("#modelidadeCobranca", transportadorController.workspace).val()},
+									{name:"transportador.parametroCobrancaTransportador.modalidadeCobranca", 
+										value: $("#modalidadeCobranca", transportadorController.workspace).val()},
 									{name: "transportador.parametroCobrancaTransportador.valor", value: valorCobranca},
 									{name: "transportador.parametroCobrancaTransportador.porEntrega", 
 										value: $("#checkPorEntrega").is(':checked')}
@@ -938,7 +940,7 @@ var transportadorController = $.extend(true, {
 					$("#cnpj", transportadorController.workspace).val(result[4]);
 					$("#inscEstadual", transportadorController.workspace).val(result[5]);
 					
-					$("#modelidadeCobranca", transportadorController.workspace).val(result[6]);
+					$("#modalidadeCobranca", transportadorController.workspace).val(result[6]);
 					$("#valorTaxaFixa", transportadorController.workspace).val(transportadorController.preparaValor(result[7]));
 					 
 					if (result[8] == "true"){
