@@ -4089,7 +4089,7 @@ public class Fixture {
    }
    
    public static FechamentoDiarioLancamentoSuplementar historicoFechamentoDiarioLancamentoSuplementar(ProdutoEdicao produtoEdicaoVeja,
-		   BigInteger quantidadeDiferenca, BigInteger quantidadeContabilizada, BigInteger quantidadeFisico ){
+		   Integer quantidadeDiferenca, Integer quantidadeContabilizada, Integer quantidadeFisico ){
 	   
 	   FechamentoDiarioLancamentoSuplementar historicoMovimentoSuplementar = new FechamentoDiarioLancamentoSuplementar();
 	   

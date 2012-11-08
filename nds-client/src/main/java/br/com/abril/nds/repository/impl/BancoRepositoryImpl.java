@@ -30,7 +30,7 @@ public class BancoRepositoryImpl extends AbstractRepositoryModel<Banco,Long> imp
 		hql.append(" where b.ativo = :ativo ");
 		
 		if ((filtro.getNome()!=null)&&(!"".equals(filtro.getNome()))){
-		    hql.append(" and b.nome = :nome ");
+		    hql.append(" and b.nome like :nome ");
 		}
 		if ((filtro.getNumero()!=null)&&(!"".equals(filtro.getNumero()))){
 		    hql.append(" and b.numeroBanco = :numero ");
@@ -44,7 +44,7 @@ public class BancoRepositoryImpl extends AbstractRepositoryModel<Banco,Long> imp
 		query.setParameter("ativo", filtro.getAtivo());
 		
 		if ((filtro.getNome()!=null)&&(!"".equals(filtro.getNome().trim()))){
-			query.setParameter("nome", filtro.getNome());
+			query.setParameter("nome", "%" + filtro.getNome() + "%");
 		}
 		if ((filtro.getNumero()!=null)&&(!"".equals(filtro.getNumero().trim()))){
 			query.setParameter("numero", filtro.getNumero());
@@ -65,7 +65,7 @@ public class BancoRepositoryImpl extends AbstractRepositoryModel<Banco,Long> imp
 		hql.append(" where b.ativo = :ativo ");
 		
 		if ((filtro.getNome()!=null)&&(!"".equals(filtro.getNome()))){
-		    hql.append(" and b.nome = :nome ");
+		    hql.append(" and b.nome like :nome ");
 		}
 		if ((filtro.getNumero()!=null)&&(!"".equals(filtro.getNumero()))){
 		    hql.append(" and b.numeroBanco = :numero ");
@@ -116,7 +116,7 @@ public class BancoRepositoryImpl extends AbstractRepositoryModel<Banco,Long> imp
         query.setParameter("ativo", filtro.getAtivo());
         
         if ((filtro.getNome()!=null)&&(!"".equals(filtro.getNome().trim()))){
-			query.setParameter("nome", filtro.getNome());
+			query.setParameter("nome", "%" + filtro.getNome() + "%");
 		}
 		if ((filtro.getNumero()!=null)&&(!"".equals(filtro.getNumero().trim()))){
 			query.setParameter("numero", filtro.getNumero());

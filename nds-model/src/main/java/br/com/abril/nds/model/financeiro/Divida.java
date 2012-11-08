@@ -1,5 +1,6 @@
 package br.com.abril.nds.model.financeiro;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashSet;
@@ -26,9 +27,11 @@ import br.com.abril.nds.model.seguranca.Usuario;
 @Entity
 @Table(name = "DIVIDA")
 @SequenceGenerator(name="DIVIDA_SEQ", initialValue = 1, allocationSize = 1)
-public class Divida {
+public class Divida implements Serializable {
 	
-	@Id
+    private static final long serialVersionUID = 1L;
+
+    @Id
 	@GeneratedValue(generator = "DIVIDA_SEQ")
 	@Column(name = "ID")
 	private Long id;
@@ -164,4 +167,43 @@ public class Divida {
 	public void setDividaRaiz(Divida dividaRaiz) {
 		this.dividaRaiz = dividaRaiz;
 	}
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result
+                + ((consolidado == null) ? 0 : consolidado.hashCode());
+        return result;
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        Divida other = (Divida) obj;
+        if (consolidado == null) {
+            if (other.consolidado != null) {
+                return false;
+            }
+        } else if (!consolidado.equals(other.consolidado)) {
+            return false;
+        }
+        return true;
+    }
+	
+	
 }

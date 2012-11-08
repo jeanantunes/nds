@@ -12,6 +12,7 @@ import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.EncalheFecharDiaDTO;
+import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.repository.ResumoEncalheFecharDiaRepository;
 
@@ -126,14 +127,17 @@ public class ResumoEncalheFecharDiaRepositoryImpl extends AbstractRepository imp
 		hqlLogico.append(" COUNT(*) as qtde ");		
 		hqlLogico.append(" from ChamadaEncalheCota AS cec ");		
 		hqlLogico.append(" JOIN cec.chamadaEncalhe AS ce ");		
-		hqlLogico.append(" JOIN ce.produtoEdicao as pe ");		
+		hqlLogico.append(" JOIN ce.produtoEdicao as pe ");
+		hqlLogico.append(" JOIN pe.produto as p ");
 		hqlLogico.append(" WHERE ce.dataRecolhimento = :dataOperacaoDistribuidor ");
 		hqlLogico.append(" AND ce.tipoChamadaEncalhe = :tipoChamadaEncalhe ");
 		
-		Query queryLogico = super.getSession().createQuery(hql.toString());
+		Query queryLogico = super.getSession().createQuery(hqlLogico.toString());
 		
 		queryLogico.setParameter("dataOperacaoDistribuidor", dataOperacaoDistribuidor);		
-		queryLogico.setParameter("tipoChamadaEncalhe", TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO);		
+		queryLogico.setParameter("tipoChamadaEncalhe", TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO);	
+		
+		queryLogico.setResultTransformer(new AliasToBeanResultTransformer(EncalheFecharDiaDTO.class));
 		
 		List<EncalheFecharDiaDTO> listaDeEncalheLogico = queryLogico.list();
 		
@@ -156,6 +160,33 @@ public class ResumoEncalheFecharDiaRepositoryImpl extends AbstractRepository imp
 		List<EncalheFecharDiaDTO> goma = new ArrayList<EncalheFecharDiaDTO>(listaFinal);
 		
 		return goma;
+	}
+
+	@Override
+	public BigDecimal obterValorFaltasOuSobras(Date dataOperacao, StatusAprovacao status) {
+
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" SELECT (me.qtde * pe.precoVenda) ");			
+		hql.append(" FROM LancamentoDiferenca AS ld ");		
+		hql.append(" JOIN ld.movimentoEstoque as me ");	
+		hql.append(" JOIN me.produtoEdicao as pe ");	
+		hql.append(" WHERE me.data = :dataOperacaoDistribuidor ");
+		hql.append(" AND ld.status = :status ");			
+		
+		Query query = super.getSession().createQuery(hql.toString());
+		
+		query.setParameter("dataOperacaoDistribuidor", dataOperacao);
+		
+		if(status.equals(StatusAprovacao.PERDA)){
+			query.setParameter("status", StatusAprovacao.PERDA);			
+		}else{
+			query.setParameter("status", StatusAprovacao.GANHO);
+		}
+		
+		BigDecimal total =  (BigDecimal) query.uniqueResult();
+		
+		return total != null ? total : BigDecimal.ZERO ;
 	}
 
 }

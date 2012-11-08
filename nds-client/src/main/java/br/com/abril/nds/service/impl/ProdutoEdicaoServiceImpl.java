@@ -42,7 +42,6 @@ import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.ParametroSistemaRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.ProdutoRepository;
-import br.com.abril.nds.service.BrindeService;
 import br.com.abril.nds.service.CapaService;
 import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.service.LancamentoService;
@@ -492,7 +491,6 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		// 01) Validações:
 		this.validarProdutoEdicao(dto, produtoEdicao);
 		
-		
 		// 02) Campos a serem persistidos e/ou alterados:
 		
 		BigInteger repartePrevisto = (dto.getRepartePrevisto() == null) 
@@ -501,29 +499,25 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		BigInteger repartePromocional = (dto.getRepartePromocional() == null) 
 				? BigInteger.ZERO : dto.getRepartePromocional();
 		
-		
 		if ((produtoEdicao.getOrigem().equals(br.com.abril.nds.model.Origem.MANUAL))) {
 			// Campos exclusivos para o Distribuidor::
 			
 			// Identificação:
-			produtoEdicao.setNomeComercial(dto.getNomeComercialProduto());
 			produtoEdicao.setNumeroEdicao(dto.getNumeroEdicao());
 			produtoEdicao.setPacotePadrao(dto.getPacotePadrao());
-			
-			// Preço de capa:
+			produtoEdicao.setNomeComercial(dto.getNomeComercialProduto());
 			produtoEdicao.setPrecoPrevisto(dto.getPrecoPrevisto());
-			
+				
 			// Reparte:
 			produtoEdicao.setReparteDistribuido(repartePrevisto.add(repartePromocional));
-			
+				
 			// Características do lançamento:
 			// TODO: !!!colocar o select da categoria aqui!!!
 			produtoEdicao.setCodigoDeBarraCorporativo(dto.getCodigoDeBarrasCorporativo());
-			
+				
 			// Outros:
-			produtoEdicao.setChamadaCapa(dto.getChamadaCapa());
 			produtoEdicao.setParcial(dto.isParcial());	// Regime de Recolhimento;
-			
+				
 			// Característica Física:
 			produtoEdicao.setPeso(dto.getPeso());
 			Dimensao dimEdicao = new Dimensao();
@@ -531,30 +525,20 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			dimEdicao.setComprimento(dto.getComprimento());
 			dimEdicao.setEspessura(dto.getEspessura());
 			produtoEdicao.setDimensao(dimEdicao);
-			
-			produtoEdicao.getProduto().setNomeComercial(dto.getNomeComercial());
-			
+				
 			// Texto boletim informativo:
 			produtoEdicao.setBoletimInformativo(dto.getBoletimInformativo());
-		} else {
-			// Campos exclusivos para a Interface:
-			
-			// Preço de capa:
-			produtoEdicao.setPrecoVenda(dto.getPrecoVenda());	// View: Preço real;
 		}
 		
-		// Campos comuns para o Distribuidor e Interface:
-		
-		// Características do lançamento:
+		//Campos editáveis, independente da Origem
+		produtoEdicao.setPrecoVenda(dto.getPrecoVenda()); // View: Preço Capa - Real;
 		produtoEdicao.setCodigoDeBarras(dto.getCodigoDeBarras());
-		produtoEdicao.setCodigoDeBarraCorporativo(dto.getCodigoDeBarrasCorporativo());
-
-		// Outros:
 		produtoEdicao.setChamadaCapa(dto.getChamadaCapa());
-		produtoEdicao.setPossuiBrinde(dto.isPossuiBrinde());
-		
+		produtoEdicao.setPeso(dto.getPeso());
+		produtoEdicao.setNumeroLancamento(dto.getNumeroLancamento());
 		produtoEdicao.setPossuiBrinde(false);
 		produtoEdicao.setBrinde(null);
+		
 		if(dto.getIdBrinde()!=null){
 			Brinde brinde = brindeRepository.buscarPorId(dto.getIdBrinde());
 	        if (brinde!=null){ 
@@ -562,11 +546,6 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		        produtoEdicao.setBrinde(brinde);
 	        }
 		}
-		
-		// Característica Física:
-		produtoEdicao.setPeso(dto.getPeso());
-		
-		produtoEdicao.setNumeroLancamento(dto.getNumeroLancamento());
 		
 		if (produtoEdicao.getId() == null) {			
 			// Salvar:

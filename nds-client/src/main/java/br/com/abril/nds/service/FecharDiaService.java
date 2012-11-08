@@ -124,13 +124,13 @@ public interface FecharDiaService {
     /**
      * @see DividaService#contarDividasReceberEm(Date)
      */
-    int contarDividasReceberEm(Date data);
+    long contarDividasReceberEm(Date data);
     
     
     /**
      * @see DividaService#contarDividasVencerApos(Date)
      */
-    int contarDividasVencerApos(Date data);
+    long contarDividasVencerApos(Date data);
     
     /**
 	 * Obtém o resumo do fechamento diário de cotas.
