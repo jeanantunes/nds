@@ -628,10 +628,9 @@ var fecharDiaController =  $.extend(true, {
 			modal: true,
 			buttons: {
 				"Confirmar": function() {
-					$( this ).dialog( "close" );
-					$("#effect").show("highlight", {}, 1000, callback);
-					$(".grids").show();
 					
+					fecharDiaController.confirmarFechamento();
+					$( this ).dialog( "close" );
 				},
 				"Cancelar": function() {
 					$( this ).dialog( "close" );
@@ -639,6 +638,14 @@ var fecharDiaController =  $.extend(true, {
 			},
 			form: $("#dialog-novo", fecharDiaController.workspace).parents("form")
 		});
+	},
+	
+	confirmarFechamento:function(){
+		
+		$.postJSON(
+				contextPath + "/administracao/fecharDia/confirmar",
+				null
+			);
 	},
 	
 	popup_repartes : function() {
