@@ -32,6 +32,7 @@ import br.com.abril.nds.dto.fechamentodiario.ResumoEstoqueDTO.ResumoEstoqueExemp
 import br.com.abril.nds.dto.fechamentodiario.ResumoEstoqueDTO.ResumoEstoqueProduto;
 import br.com.abril.nds.dto.fechamentodiario.ResumoEstoqueDTO.ValorResumoEstoque;
 import br.com.abril.nds.dto.fechamentodiario.SumarizacaoDividasDTO;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
@@ -97,6 +98,7 @@ import br.com.abril.nds.service.ResumoReparteFecharDiaService;
 import br.com.abril.nds.service.ResumoSuplementarFecharDiaService;
 import br.com.abril.nds.service.exception.FechamentoDiarioException;
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.PaginacaoVO;
 
@@ -416,12 +418,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
         return dividaService.contarDividasVencerApos(data);
     }
     
-    @Override
-    @Transactional
-    /**
-     * {@inheritDoc}
-     */
-    public void salvarResumoFechamentoDiario(Usuario usuario, Date dataFechamento) throws FechamentoDiarioException{
+    private void salvarResumoFechamentoDiario(Usuario usuario, Date dataFechamento) throws FechamentoDiarioException{
     	
     	validarDadosFechamentoDiario(dataFechamento, "Data de fechamento inválida!");
     	validarDadosFechamentoDiario(usuario, "Usúario informado inválido!");
@@ -868,12 +865,8 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 	    }
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	@Transactional
-	public void processarControleDeAprovacao() {
+	
+	private void processarControleDeAprovacao() {
 
 		Distribuidor distribuidor = this.distribuidorRepository.obter();
 
@@ -950,6 +943,22 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		
 		if(objeto == null){
 			throw new FechamentoDiarioException(mensagem);
+		}
+	}
+	
+	@Transactional
+	@Override
+	public void processarFechamentoDoDia(Usuario usuario, Date dataFechamento){
+		
+		processarControleDeAprovacao();
+		
+		try {
+		
+			salvarResumoFechamentoDiario(usuario, dataFechamento);
+		
+		} catch (FechamentoDiarioException e) {
+			
+			throw new ValidacaoException(TipoMensagem.ERROR, e.getMessage());
 		}
 	}
 }
