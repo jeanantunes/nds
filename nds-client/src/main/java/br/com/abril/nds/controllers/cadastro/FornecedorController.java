@@ -159,7 +159,7 @@ public class FornecedorController {
 			
 			this.fornecedorService.merge(fornecedor);
 
-			mensagemSucesso = "Edição realizada com sucesso.";
+			mensagemSucesso = "Operação realizada com sucesso.";
 		
 		} else {
 			
