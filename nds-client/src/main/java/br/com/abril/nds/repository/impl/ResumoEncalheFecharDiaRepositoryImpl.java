@@ -79,7 +79,7 @@ public class ResumoEncalheFecharDiaRepositoryImpl extends AbstractRepository imp
 		hql.append(" p.nome as nomeProduto, ");
 		hql.append(" pe.numeroEdicao as numeroEdicao, ");
 		hql.append(" pe.precoVenda as precoVenda, ");
-		hql.append(" COUNT(*) as qtde ");
+		hql.append(" COALESCE(COUNT(*),0) as qtde ");
 		hql.append(" from ConferenciaEncalhe AS ce ");		
 		hql.append(" JOIN ce.produtoEdicao as pe ");
 		hql.append(" JOIN pe.produto as p ");
@@ -101,7 +101,7 @@ public class ResumoEncalheFecharDiaRepositoryImpl extends AbstractRepository imp
 		hqlJuramentado.append(" p.nome as nomeProduto, ");
 		hqlJuramentado.append(" pe.numeroEdicao as numeroEdicao, ");
 		hqlJuramentado.append(" pe.precoVenda as precoVenda, ");
-		hqlJuramentado.append(" COUNT(*) as qtde ");
+		hqlJuramentado.append(" COALESCE(COUNT(*),0) as qtde ");
 		hqlJuramentado.append(" from ConferenciaEncalhe AS ce ");		
 		hqlJuramentado.append(" JOIN ce.produtoEdicao as pe ");
 		hqlJuramentado.append(" JOIN pe.produto as p ");

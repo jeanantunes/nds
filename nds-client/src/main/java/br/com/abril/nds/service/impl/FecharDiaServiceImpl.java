@@ -897,42 +897,8 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 	
 	@Override
 	@Transactional(readOnly=true)
-	public ResumoEstoqueDTO obterResumoEstoque(Date dataOperacao){
-		
-		//TODO implementar o quadro de resumo de Estoque
-		
-		ResumoEstoqueDTO resumoDTO = new ResumoEstoqueDTO();
-		
-		ResumoEstoqueDTO.ResumoEstoqueExemplar exemplar = resumoDTO.new ResumoEstoqueExemplar();
-		
-		exemplar.setQuantidadeDanificados(10);
-		exemplar.setQuantidadeJuramentado(15);
-		exemplar.setQuantidadeLancamento(20);
-		exemplar.setQuantidadeRecolhimento(25);
-		exemplar.setQuantidadeSuplementar(30);
-		
-		ResumoEstoqueDTO.ResumoEstoqueProduto produto = resumoDTO.new ResumoEstoqueProduto();
-		
-		produto.setQuantidadeDanificados(40);
-		produto.setQuantidadeJuramentado(50);
-		produto.setQuantidadeLancamento(60);
-		produto.setQuantidadeRecolhimento(70);
-		produto.setQuantidadeSuplementar(80);
-		
-		
-		ResumoEstoqueDTO.ValorResumoEstoque venda = resumoDTO.new ValorResumoEstoque();
-		
-		venda.setValorDanificados(BigDecimal.TEN);
-		venda.setValorJuramentado(BigDecimal.TEN);
-		venda.setValorLancamento(BigDecimal.TEN);
-		venda.setValorRecolhimento(BigDecimal.TEN);
-		venda.setValorSuplementar(BigDecimal.TEN);
-		
-		resumoDTO.setResumEstoqueExemplar(exemplar);
-		resumoDTO.setResumoEstoqueProduto(produto);
-		resumoDTO.setValorResumoEstoque(venda);
-		
-		return resumoDTO;
+	public ResumoEstoqueDTO obterResumoEstoque(Date dataOperacao){		
+		return  this.fecharDiaRepository.obterResumoEstoque(dataOperacao);
 	}
 	
 	private void validarDadosFechamentoDiario(Object objeto, String mensagem) throws FechamentoDiarioException{
