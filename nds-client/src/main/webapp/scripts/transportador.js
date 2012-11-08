@@ -348,7 +348,6 @@ var transportadorController = $.extend(true, {
 				sortorder : "asc"
 			});
 			$(".boxRotaGrid", transportadorController.workspace).flexOptions({url: contextPath + "/cadastro/transportador/carregarRotas"});
-			
 			$("#gridCotasAtendidas", transportadorController.workspace).flexigrid({
 				dataType : 'json',
 				preProcess: function(data){
@@ -427,6 +426,7 @@ var transportadorController = $.extend(true, {
 			$.mask.definitions['#']='[\-\.0-9]';
 			
 			$("#inscEstadual", transportadorController.workspace).mask("?##################",{placeholder:" "});
+			
 	},
 	
 	popup_novo_transportador : function() {
@@ -1061,6 +1061,8 @@ var transportadorController = $.extend(true, {
 						page: result[2].page, total: result[2].total, rows: result[2].rows
 					});
 				}
+
+				$(".boxRotaGrid", transportadorController.workspace).flexReload();
 				
 				if (result[3] != ""){
 					
@@ -1070,6 +1072,7 @@ var transportadorController = $.extend(true, {
 				}
 			}
 		);
+		
 	},
 	
 	carregarCotasAtendidas : function(){
