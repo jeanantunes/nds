@@ -1,5 +1,6 @@
 package br.com.abril.nds.model.financeiro;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -28,9 +29,11 @@ import br.com.abril.nds.model.cadastro.Cota;
 @Entity
 @Table(name = "CONSOLIDADO_FINANCEIRO_COTA")
 @SequenceGenerator(name="CONSOLIDADO_SEQ", initialValue = 1, allocationSize = 1)
-public class ConsolidadoFinanceiroCota {
+public class ConsolidadoFinanceiroCota implements Serializable {
 	
-	@Id
+    private static final long serialVersionUID = 1L;
+
+    @Id
 	@GeneratedValue(generator = "CONSOLIDADO_SEQ")
 	@Column(name = "ID")
 	private Long id;
@@ -167,5 +170,52 @@ public class ConsolidadoFinanceiroCota {
 	public void setMovimentos(List<MovimentoFinanceiroCota> movimentos) {
 		this.movimentos = movimentos;
 	}
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((cota == null) ? 0 : cota.hashCode());
+        result = prime * result
+                + ((dataConsolidado == null) ? 0 : dataConsolidado.hashCode());
+        return result;
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        ConsolidadoFinanceiroCota other = (ConsolidadoFinanceiroCota) obj;
+        if (cota == null) {
+            if (other.cota != null) {
+                return false;
+            }
+        } else if (!cota.equals(other.cota)) {
+            return false;
+        }
+        if (dataConsolidado == null) {
+            if (other.dataConsolidado != null) {
+                return false;
+            }
+        } else if (!dataConsolidado.equals(other.dataConsolidado)) {
+            return false;
+        }
+        return true;
+    }
+	
+	
 	
 }
