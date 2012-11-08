@@ -12,7 +12,7 @@ import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.util.export.Export.Alignment;
 
 @Exportable
-public class VendaSuplementarDTO implements Serializable {
+public class VendaFechamentoDiaDTO implements Serializable {
 
 	private static final long serialVersionUID = 2126291233836764519L;
 	

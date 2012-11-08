@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.ResumoSuplementarFecharDiaDTO;
 import br.com.abril.nds.dto.SuplementarFecharDiaDTO;
-import br.com.abril.nds.dto.VendaSuplementarDTO;
+import br.com.abril.nds.dto.VendaFechamentoDiaDTO;
 import br.com.abril.nds.repository.ResumoSuplementarFecharDiaRepository;
 import br.com.abril.nds.service.ResumoSuplementarFecharDiaService;
 
@@ -48,7 +48,7 @@ public class ResumoSuplementarFecharDiaServiceImp implements
 
 	@Override
 	@Transactional
-	public List<VendaSuplementarDTO> obterVendasSuplementar(Date dataOperacao) {
+	public List<VendaFechamentoDiaDTO> obterVendasSuplementar(Date dataOperacao) {
 		return this.resumoSuplementarFecharDiaRepository.obterVendasSuplementar(dataOperacao);
 		
 	}

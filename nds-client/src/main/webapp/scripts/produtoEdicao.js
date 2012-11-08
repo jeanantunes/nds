@@ -459,7 +459,11 @@ var produtoEdicaoController =$.extend(true,  {
 					txt = ": " + cProduto + " - " + nProduto;
 				}
 				$("#produtoEdicaoController-labelNomeProduto",this.workspace).html(txt);
-				$("#produtoEdicaoController-codigoProduto",this.workspace).val(cProduto);
+				
+				if (cProduto != "") {
+				    
+				    $("#produtoEdicaoController-codigoProduto",this.workspace).val(cProduto);
+                }
 	
 				return resultado;
 			}
@@ -605,10 +609,8 @@ var produtoEdicaoController =$.extend(true,  {
 		},
 		popup:			function (id) {
 
-			if ($("#produtoEdicaoController-pCodigoProduto",this.workspace).val() != $("#produtoEdicaoController-codigoProduto",this.workspace).val()){
-				$("#produtoEdicaoController-codigoProduto",this.workspace).val($("#produtoEdicaoController-pCodigoProduto",this.workspace).val());
-			}
-
+			$("#produtoEdicaoController-codigoProduto",this.workspace).val($("#produtoEdicaoController-pCodigoProduto",this.workspace).val());
+			
 			// if ($(".edicoesGrid > tbody").data() == null ||
 			// $(".edicoesGrid > tbody").data() == undefined) {
 			if ($("#produtoEdicaoController-codigoProduto",this.workspace).val() == "") {
