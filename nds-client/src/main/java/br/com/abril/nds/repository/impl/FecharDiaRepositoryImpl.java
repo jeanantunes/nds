@@ -409,6 +409,8 @@ public class FecharDiaRepositoryImpl extends AbstractRepository implements Fecha
 		
 		venda.setValorDanificados(vo.getVenda());
 		
+		//FIM DO DANIFICADO
+		
 		resumoDTO.setResumEstoqueExemplar(exemplar);
 		resumoDTO.setResumoEstoqueProduto(produto);
 		resumoDTO.setValorResumoEstoque(venda);
