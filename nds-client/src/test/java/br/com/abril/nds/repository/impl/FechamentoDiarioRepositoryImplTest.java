@@ -38,6 +38,7 @@ import br.com.abril.nds.model.fechar.dia.FechamentoDiarioResumoConsignado;
 import br.com.abril.nds.model.fechar.dia.FechamentoDiarioResumoConsolidadoDivida;
 import br.com.abril.nds.model.fechar.dia.FechamentoDiarioResumoEstoque;
 import br.com.abril.nds.model.fiscal.NCM;
+import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.FechamentoDiarioRepository;
 import br.com.abril.nds.util.DateUtil;
 
@@ -47,6 +48,8 @@ public class FechamentoDiarioRepositoryImplTest extends AbstractRepositoryImplTe
 	private FechamentoDiarioRepository diarioRepository;
 	
 	private ProdutoEdicao produtoEdicaoVeja;
+
+	private Usuario usuario;
 	
 	@Before
 	public void setUp(){
@@ -73,12 +76,15 @@ public class FechamentoDiarioRepositoryImplTest extends AbstractRepositoryImplTe
 
 		produtoEdicaoVeja = Fixture.produtoEdicao(1L, 10, 14, new Long(100), BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQ", produto, null, false);
 		save(produtoEdicaoVeja);
+		
+		usuario = Fixture.usuarioJoao();
+		save(usuario);
 	}
 	
 	@Test
 	public void testeInclusaoReparte(){
 		
-		FechamentoDiario fechamentoDiario = Fixture.fechamentoDiario(new Date(), null);
+		FechamentoDiario fechamentoDiario = Fixture.fechamentoDiario(new Date(), usuario);
 		
 		fechamentoDiario = merge(fechamentoDiario);
 		
@@ -109,7 +115,7 @@ public class FechamentoDiarioRepositoryImplTest extends AbstractRepositoryImplTe
 	@Test
 	public void testeInclusaoEncalhe(){
 		
-		FechamentoDiario fechamentoDiario = Fixture.fechamentoDiario(DateUtil.adicionarDias(new Date(), 1), null);
+		FechamentoDiario fechamentoDiario = Fixture.fechamentoDiario(DateUtil.adicionarDias(new Date(), 1), usuario);
 		
 		fechamentoDiario = merge(fechamentoDiario);
 		Assert.assertNotNull(fechamentoDiario);
@@ -148,7 +154,7 @@ public class FechamentoDiarioRepositoryImplTest extends AbstractRepositoryImplTe
 	@Test
 	public void testeInclusaoSuplementar(){
 		
-		FechamentoDiario fechamentoDiario = Fixture.fechamentoDiario(DateUtil.adicionarDias(new Date(), 2), null);
+		FechamentoDiario fechamentoDiario = Fixture.fechamentoDiario(DateUtil.adicionarDias(new Date(), 2), usuario);
 		
 		fechamentoDiario = merge(fechamentoDiario);
 		Assert.assertNotNull(fechamentoDiario);
@@ -186,7 +192,7 @@ public class FechamentoDiarioRepositoryImplTest extends AbstractRepositoryImplTe
 	@Test
 	public void testeInclusaoDividaAReceber(){
 		
-		FechamentoDiario fechamentoDiario = Fixture.fechamentoDiario(DateUtil.adicionarDias(new Date(), 3), null);
+		FechamentoDiario fechamentoDiario = Fixture.fechamentoDiario(DateUtil.adicionarDias(new Date(), 3), usuario);
 		
 		fechamentoDiario = merge(fechamentoDiario);
 		Assert.assertNotNull(fechamentoDiario);
@@ -207,7 +213,7 @@ public class FechamentoDiarioRepositoryImplTest extends AbstractRepositoryImplTe
 	@Test
 	public void testeInclusaoDividaAVencer(){
 		
-		FechamentoDiario fechamentoDiario = Fixture.fechamentoDiario(DateUtil.adicionarDias(new Date(), 3), null);
+		FechamentoDiario fechamentoDiario = Fixture.fechamentoDiario(DateUtil.adicionarDias(new Date(), 3), usuario);
 		
 		fechamentoDiario = merge(fechamentoDiario);
 		Assert.assertNotNull(fechamentoDiario);
@@ -227,7 +233,7 @@ public class FechamentoDiarioRepositoryImplTest extends AbstractRepositoryImplTe
 	@Test
 	public void testeInclusaoDividas(){
 		
-		FechamentoDiario fechamentoDiario = Fixture.fechamentoDiario(DateUtil.adicionarDias(new Date(), 3), null);
+		FechamentoDiario fechamentoDiario = Fixture.fechamentoDiario(DateUtil.adicionarDias(new Date(), 3), usuario);
 		
 		fechamentoDiario = merge(fechamentoDiario);
 		Assert.assertNotNull(fechamentoDiario);
@@ -245,7 +251,7 @@ public class FechamentoDiarioRepositoryImplTest extends AbstractRepositoryImplTe
 	@Test
 	public void testeInclusaoCotas(){
 		
-		FechamentoDiario fechamentoDiario = Fixture.fechamentoDiario(DateUtil.adicionarDias(new Date(), 3), null);
+		FechamentoDiario fechamentoDiario = Fixture.fechamentoDiario(DateUtil.adicionarDias(new Date(), 3), usuario);
 		
 		fechamentoDiario = merge(fechamentoDiario);
 		Assert.assertNotNull(fechamentoDiario);
@@ -284,7 +290,7 @@ public class FechamentoDiarioRepositoryImplTest extends AbstractRepositoryImplTe
 	@Test
 	public void testeInclusaoEstoque(){
 		
-		FechamentoDiario fechamentoDiario = Fixture.fechamentoDiario(DateUtil.adicionarDias(new Date(), 3), null);
+		FechamentoDiario fechamentoDiario = Fixture.fechamentoDiario(DateUtil.adicionarDias(new Date(), 3), usuario);
 		
 		fechamentoDiario = merge(fechamentoDiario);
 		Assert.assertNotNull(fechamentoDiario);
@@ -304,7 +310,7 @@ public class FechamentoDiarioRepositoryImplTest extends AbstractRepositoryImplTe
 	@Test
 	public void testeIncluirConsignado(){
 		
-		FechamentoDiario fechamentoDiario = Fixture.fechamentoDiario(DateUtil.adicionarDias(new Date(), 3), null);
+		FechamentoDiario fechamentoDiario = Fixture.fechamentoDiario(DateUtil.adicionarDias(new Date(), 3), usuario);
 		
 		fechamentoDiario = merge(fechamentoDiario);
 		Assert.assertNotNull(fechamentoDiario);
