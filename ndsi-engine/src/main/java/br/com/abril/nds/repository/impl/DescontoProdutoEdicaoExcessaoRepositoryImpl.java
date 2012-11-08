@@ -13,6 +13,7 @@ import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.desconto.DescontoCotaProdutoExcessao;
 import br.com.abril.nds.model.cadastro.desconto.TipoDesconto;
@@ -45,7 +46,7 @@ public class DescontoProdutoEdicaoExcessaoRepositoryImpl extends AbstractReposit
 	public DescontoCotaProdutoExcessao buscarDescontoProdutoEdicaoExcessao(TipoDesconto tipoDesconto,
 															 Fornecedor fornecedor, 
 															 Cota cota,
-															 ProdutoEdicao produto) {
+															 Produto produto, ProdutoEdicao produtoEdicao) {
 		
 		Criteria criteria = getSession().createCriteria(DescontoCotaProdutoExcessao.class);
 
@@ -60,9 +61,9 @@ public class DescontoProdutoEdicaoExcessaoRepositoryImpl extends AbstractReposit
 			criteria.add(Restrictions.eq("cota", cota));
 		}
 
-		if (produto != null) {
+		if (produtoEdicao != null) {
 		
-			criteria.add(Restrictions.eq("produtoEdicao", produto));
+			criteria.add(Restrictions.eq("produtoEdicao", produtoEdicao));
 		}
 		
 		if (tipoDesconto != null) {

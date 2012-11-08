@@ -1,9 +1,9 @@
 package br.com.abril.nds.repository.impl;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.criterion.Projection;
 import org.hibernate.criterion.ProjectionList;
@@ -33,7 +33,7 @@ public class DescontoProdutoRepositoryImpl extends AbstractRepositoryModel<Desco
 
 	@Autowired
 	private ProdutoEdicaoRepository produtoEdicaoRepository;
-	
+
 	public DescontoProdutoRepositoryImpl() {
 		super(DescontoProduto.class);
 	}
@@ -43,13 +43,66 @@ public class DescontoProdutoRepositoryImpl extends AbstractRepositoryModel<Desco
 	 */
 	@Override
 	public List<TipoDescontoProdutoDTO> buscarTipoDescontoProduto(FiltroTipoDescontoProdutoDTO filtro) {
-		
+
+
+		StringBuilder hql = new StringBuilder();
+
+		//		case when pe.desconto is null or pe.desconto = 0 then (case when p.desconto is null then 0 else p.desconto end) else pe.desconto end		
+		hql .append("select new ")
+			.append(TipoDescontoProdutoDTO.class.getCanonicalName())
+			.append("(p.codigo, p.nome, pe.numeroEdicao, coalesce(pe.desconto, p.desconto, 0), p.dataDesativacao) ")
+			.append("\n")
+			.append("from ProdutoEdicao pe join pe.produto p ")
+			.append("\n")
+			.append("where p.codigo = :codigoProduto ")
+			.append("\n");
+
+		//Monta a ordenacao
+		if (filtro.getPaginacao() != null) {
+
+			Map<String, String> columnToSort = new HashMap<String, String>();
+			columnToSort.put("codigoProduto", "p.codigo");
+			columnToSort.put("nomeProduto", "p.nome");
+			columnToSort.put("numeroEdicao", "pe.numeroEdicao");
+			columnToSort.put("desconto", "coalesce(pe.desconto, p.desconto, 0)");
+			columnToSort.put("dataAlteracao", "p.dataDesativacao");
+			columnToSort.put("nomeUsuario", "p.dataDesativacao");
+
+			//Verifica a entrada para evitar expressoes SQL
+			if (filtro.getPaginacao().getSortColumn() == null 
+					|| filtro.getPaginacao().getSortColumn() != null 
+					&& !filtro.getPaginacao().getSortColumn().matches("[a-zA-Z0-9\\._]*")) {
+				filtro.getPaginacao().setSortColumn("numeroEdicao");
+			}
+
+			hql.append("order by "+ columnToSort.get(filtro.getPaginacao().getSortColumn())+ " ");
+
+			String orderByColumn = "";
+
+			hql.append(orderByColumn);
+
+			if (filtro.getPaginacao().getOrdenacao() != null) {
+				hql.append(filtro.getPaginacao().getOrdenacao().toString());
+			}
+
+		}
+
+		Query q = getSession().createQuery(hql.toString());
+
+		q.setParameter("codigoProduto", filtro.getCodigoProduto());
+
+		if (filtro.getPaginacao() != null && filtro.getPaginacao().getQtdResultadosPorPagina() != null) {
+			q.setFirstResult( filtro.getPaginacao().getQtdResultadosPorPagina() * ( (filtro.getPaginacao().getPaginaAtual() - 1 )))
+			.setMaxResults( filtro.getPaginacao().getQtdResultadosPorPagina() );
+		}
+
+		return (List<TipoDescontoProdutoDTO>) q.list();
+		/*
 		List<TipoDescontoProdutoDTO> descontosProduto = new ArrayList<TipoDescontoProdutoDTO>();
-		
-		//List<ProdutoEdicao> produtosEdicao 
+
 		descontosProduto = produtoEdicaoRepository.obterProdutosEdicoesPorCodigoProdutoComDesconto(filtro.getCodigoProduto());
-		
-		/*for(ProdutoEdicao pe : produtosEdicao) {
+
+		for(ProdutoEdicao pe : produtosEdicao) {
 			TipoDescontoProdutoDTO tdp = new TipoDescontoProdutoDTO();
 			tdp.setCodigoProduto(filtro.getCodigoProduto());
 			tdp.setDataAlteracao(new Date());
@@ -58,15 +111,15 @@ public class DescontoProdutoRepositoryImpl extends AbstractRepositoryModel<Desco
 			tdp.setNomeProduto(pe.getProduto().getNome());
 			tdp.setNomeUsuario("Anonimo");
 			tdp.setNumeroEdicao(pe.getNumeroEdicao());
-			
+
 			descontosProduto.add(tdp);
-		}*/
-		
-		return descontosProduto;
-		
+		}
+
+		return descontosProduto;*/
+
 		/*
 		Criteria criteria = this.getSession().createCriteria(DescontoProduto.class);
-		
+
 		criteria.createAlias("usuario", "usuario");
 		criteria.createAlias("produtoEdicao", "produtoEdicao");
 		criteria.createAlias("produtoEdicao.produto", "produto");
@@ -79,18 +132,18 @@ public class DescontoProdutoRepositoryImpl extends AbstractRepositoryModel<Desco
 		}
 
 		if (filtro != null && filtro.getPaginacao() != null) {
-			
+
 			if(filtro.getPaginacao().getPosicaoInicial()!= null){
 
 				criteria.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
 			}
-			
+
 			if(filtro.getPaginacao().getQtdResultadosPorPagina()!= null){				
 
 				criteria.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
 
 			}
-			
+
 			if (filtro.getOrdenacaoColuna() != null && filtro.getPaginacao().getOrdenacao() != null) {
 
 				switch(filtro.getPaginacao().getOrdenacao()) {
@@ -139,11 +192,8 @@ public class DescontoProdutoRepositoryImpl extends AbstractRepositoryModel<Desco
 	@Override
 	public Integer buscarQuantidadeTipoDescontoProduto(FiltroTipoDescontoProdutoDTO filtro) {
 
-		Criteria criteria = this.getSession().createCriteria(DescontoProduto.class);
+		return produtoEdicaoRepository.obterProdutosEdicoesPorCodigoProdutoComDesconto(filtro.getCodigoProduto()).size();
 
-		criteria.setProjection(Projections.rowCount());
-
-		return ((Long) criteria.uniqueResult()).intValue();
 	}
 
 	/**
@@ -154,7 +204,7 @@ public class DescontoProdutoRepositoryImpl extends AbstractRepositoryModel<Desco
 	public List<CotaDescontoProdutoDTO> obterCotasDoTipoDescontoProduto(Long idDescontoProduto, Ordenacao ordenacao) {
 
 		StringBuilder hql = new StringBuilder();
-		
+
 		hql.append(" select cota.numeroCota as numeroCota, ");
 		hql.append(" case when cota.pessoa.nome is not null then ");
 		hql.append(" cota.pessoa.nome ");
@@ -169,14 +219,14 @@ public class DescontoProdutoRepositoryImpl extends AbstractRepositoryModel<Desco
 		hql.append(ordenacao.getOrdenacao() == null ? "" : ordenacao.getOrdenacao());
 
 		Query query = getSession().createQuery(hql.toString());
-		
+
 		query.setParameter("idDescontoProduto", idDescontoProduto);
-		
+
 		query.setResultTransformer(new AliasToBeanResultTransformer(CotaDescontoProdutoDTO.class));
-		
+
 		return query.list();
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -185,7 +235,7 @@ public class DescontoProdutoRepositoryImpl extends AbstractRepositoryModel<Desco
 	public List<TipoDescontoProdutoDTO> obterTiposDescontoProdutoPorCota(Long idCota, String sortorder, String sortname) {
 
 		StringBuilder hql = new StringBuilder();
-		
+
 		hql.append(" select produtoEdicao.produto.codigo as codigoProduto, ");
 		hql.append(" produtoEdicao.produto.nome as nomeProduto, ");
 		hql.append(" produtoEdicao.numeroEdicao as numeroEdicao, ");
@@ -196,13 +246,13 @@ public class DescontoProdutoRepositoryImpl extends AbstractRepositoryModel<Desco
 		hql.append(" join descontoProduto.cotas as cota ");
 		hql.append(" join descontoProduto.usuario as usuario ");
 		hql.append(" join descontoProduto.produtoEdicao as produtoEdicao ");
-		
+
 		if (idCota!=null){
-		    hql.append(" where cota.id = :idCota ");
+			hql.append(" where cota.id = :idCota ");
 		}
-		
+
 		if (sortname != null && !sortname.isEmpty()) { 
-		
+
 			hql.append(" order by ");
 			hql.append(sortname);
 			hql.append(" ");
@@ -210,59 +260,59 @@ public class DescontoProdutoRepositoryImpl extends AbstractRepositoryModel<Desco
 		}
 
 		Query query = getSession().createQuery(hql.toString());
-		
+
 		if (idCota!=null){
-		    query.setParameter("idCota", idCota);
+			query.setParameter("idCota", idCota);
 		}
-		
+
 		query.setResultTransformer(new AliasToBeanResultTransformer(TipoDescontoProdutoDTO.class));
-		
+
 		return query.list();
 	}
-	
+
 	@Override
 	public DescontoProduto buscarUltimoDescontoValido(Cota cota,ProdutoEdicao produtoEdicao) {
-		
+
 		return obterDescontoValido(null, cota, produtoEdicao);
 	}
-	
+
 	@Override
 	public DescontoProduto buscarUltimoDescontoValido(Long idDesconto,Cota cota, ProdutoEdicao produtoEdicao) {
-		
+
 		return obterDescontoValido(idDesconto, cota, produtoEdicao);
 	}
-	
+
 	private DescontoProduto obterDescontoValido(Long idDesconto, Cota cota, ProdutoEdicao produtoEdicao) {
-		
+
 		StringBuilder hql = new StringBuilder();
-		
+
 		hql.append(" select desconto from DescontoProduto desconto JOIN desconto.produtoEdicao produtoEdicao JOIN desconto.cotas cota  ")
-			.append("where desconto.dataAlteracao = ")
-			.append(" ( select max(descontoSub.dataAlteracao) from DescontoProduto descontoSub  ")
-				.append(" JOIN descontoSub.produtoEdicao produtoEdicaoSub JOIN descontoSub.cotas cotaSub ")
-				.append(" where produtoEdicaoSub.id =:idProdutoEdicao ")
-				.append(" and cotaSub.id =:idCota ");
-				if(idDesconto!= null){
-					hql.append(" and descontoSub.id not in (:idUltimoDesconto) ");
-				}
-				
-		hql.append(" ) ")
-			.append(" AND produtoEdicao.id =:idProdutoEdicao ")
-			.append(" AND cota.id =:idCota ");
-	
-		Query query = getSession().createQuery(hql.toString());
-		
-		query.setParameter("idProdutoEdicao",produtoEdicao.getId());
-		
+		.append("where desconto.dataAlteracao = ")
+		.append(" ( select max(descontoSub.dataAlteracao) from DescontoProduto descontoSub  ")
+		.append(" JOIN descontoSub.produtoEdicao produtoEdicaoSub JOIN descontoSub.cotas cotaSub ")
+		.append(" where produtoEdicaoSub.id =:idProdutoEdicao ")
+		.append(" and cotaSub.id =:idCota ");
 		if(idDesconto!= null){
-			
+			hql.append(" and descontoSub.id not in (:idUltimoDesconto) ");
+		}
+
+		hql.append(" ) ")
+		.append(" AND produtoEdicao.id =:idProdutoEdicao ")
+		.append(" AND cota.id =:idCota ");
+
+		Query query = getSession().createQuery(hql.toString());
+
+		query.setParameter("idProdutoEdicao",produtoEdicao.getId());
+
+		if(idDesconto!= null){
+
 			query.setParameter("idUltimoDesconto", idDesconto);
 		}
-		
+
 		query.setParameter("idCota", cota.getId());
-		
+
 		query.setMaxResults(1);
-		
+
 		return (DescontoProduto)  query.uniqueResult();
 	}
 }

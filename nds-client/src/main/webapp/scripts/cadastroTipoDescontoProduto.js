@@ -63,6 +63,10 @@ var descontoProdutoController = $.extend(true,{
 					   function(result) {
 					   		if (!result.ativo) {
 					   			exibirMensagem(result.tipoMensagem, result.listaMensagens);
+					   			//clearInterval(verificadorProgressoGravacaoDescontoGeral);
+					   		}
+					   		
+					   		if(result.tipoMensagem == 'SUCCESS') {
 					   			clearInterval(verificadorProgressoGravacaoDescontoGeral);
 					   		}
 				   	   });

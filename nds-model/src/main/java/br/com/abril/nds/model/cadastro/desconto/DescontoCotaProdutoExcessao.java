@@ -16,6 +16,7 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
@@ -35,6 +36,14 @@ public class DescontoCotaProdutoExcessao implements Serializable {
 	
 	@Column(name = "DESCONTO", nullable=false, precision=5, scale=2)
 	private BigDecimal desconto;
+
+	@ManyToOne(optional = true)
+	@JoinColumn(name = "DISTRIBUIDOR_ID", referencedColumnName="ID")
+	private Distribuidor distribuidor;
+	
+	@ManyToOne(optional = true)
+	@JoinColumn(name = "FORNECEDOR_ID")
+	private Fornecedor fornecedor;
 	
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "COTA_ID")
@@ -48,52 +57,49 @@ public class DescontoCotaProdutoExcessao implements Serializable {
 	@JoinColumn(name = "PRODUTO_EDICAO_ID")
 	private ProdutoEdicao produtoEdicao;
 	
-	@ManyToOne(optional = true)
-	@JoinColumn(name = "FORNECEDOR_ID")
-	private Fornecedor fornecedor;
-	
 	@Enumerated(EnumType.STRING)
 	@Column(name = "TIPO_DESCONTO", nullable = false)
 	private TipoDesconto tipoDesconto;
+	
+	@Column(name = "DESCONTO_PREDOMINANTE", nullable = false)
+	private boolean descontoPredominante;
 
-	/**
-	 * @return the id
-	 */
 	public Long getId() {
 		return id;
 	}
 
-	/**
-	 * @param id the id to set
-	 */
 	public void setId(Long id) {
 		this.id = id;
 	}
 
-	/**
-	 * @return the desconto
-	 */
 	public BigDecimal getDesconto() {
 		return desconto;
 	}
 
-	/**
-	 * @param desconto the desconto to set
-	 */
 	public void setDesconto(BigDecimal desconto) {
 		this.desconto = desconto;
 	}
 
-	/**
-	 * @return the cota
-	 */
+	public Distribuidor getDistribuidor() {
+		return distribuidor;
+	}
+
+	public void setDistribuidor(Distribuidor distribuidor) {
+		this.distribuidor = distribuidor;
+	}
+
+	public Fornecedor getFornecedor() {
+		return fornecedor;
+	}
+
+	public void setFornecedor(Fornecedor fornecedor) {
+		this.fornecedor = fornecedor;
+	}
+
 	public Cota getCota() {
 		return cota;
 	}
 
-	/**
-	 * @param cota the cota to set
-	 */
 	public void setCota(Cota cota) {
 		this.cota = cota;
 	}
@@ -106,48 +112,28 @@ public class DescontoCotaProdutoExcessao implements Serializable {
 		this.produto = produto;
 	}
 
-	/**
-	 * @return the produtoEdicao
-	 */
 	public ProdutoEdicao getProdutoEdicao() {
 		return produtoEdicao;
 	}
 
-	/**
-	 * @param produtoEdicao the produtoEdicao to set
-	 */
 	public void setProdutoEdicao(ProdutoEdicao produtoEdicao) {
 		this.produtoEdicao = produtoEdicao;
 	}
 
-	/**
-	 * @return the fornecedor
-	 */
-	public Fornecedor getFornecedor() {
-		return fornecedor;
-	}
-
-	/**
-	 * @param fornecedor the fornecedor to set
-	 */
-	public void setFornecedor(Fornecedor fornecedor) {
-		this.fornecedor = fornecedor;
-	}
-
-	/**
-	 * @return the tipoDesconto
-	 */
 	public TipoDesconto getTipoDesconto() {
 		return tipoDesconto;
 	}
 
-	/**
-	 * @param tipoDesconto the tipoDesconto to set
-	 */
 	public void setTipoDesconto(TipoDesconto tipoDesconto) {
 		this.tipoDesconto = tipoDesconto;
 	}
-	
-	
-	
+
+	public boolean isDescontoPredominante() {
+		return descontoPredominante;
+	}
+
+	public void setDescontoPredominante(boolean descontoPredominante) {
+		this.descontoPredominante = descontoPredominante;
+	}
+
 }

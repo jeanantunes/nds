@@ -6,6 +6,7 @@ import java.util.Set;
 
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.desconto.DescontoCotaProdutoExcessao;
 import br.com.abril.nds.model.cadastro.desconto.TipoDesconto;
@@ -45,14 +46,14 @@ public interface DescontoProdutoEdicaoExcessaoRepository extends Repository<Desc
 	
 	/**
 	 * Obtém o desconto de um produto edição.
-	 * 
 	 * @param fornecedor - fornecedor
 	 * @param cota - cota
-	 * @param produto - produto
+	 * @param produto TODO
+	 * @param produtoEdicao - produto
 	 * 
 	 * @return {@link DescontoCotaProdutoExcessao}
 	 */
-	DescontoCotaProdutoExcessao buscarDescontoProdutoEdicaoExcessao(TipoDesconto tipoDesconto, Fornecedor fornecedor, Cota cota, ProdutoEdicao produto);
+	DescontoCotaProdutoExcessao buscarDescontoProdutoEdicaoExcessao(TipoDesconto tipoDesconto, Fornecedor fornecedor, Cota cota, Produto produto, ProdutoEdicao produtoEdicao);
 
 	/**
 	 * Obtém descontos de produtos edição de um fornecedor.

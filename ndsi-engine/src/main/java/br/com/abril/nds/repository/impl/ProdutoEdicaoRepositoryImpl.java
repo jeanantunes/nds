@@ -553,23 +553,12 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		
 		StringBuilder hql = new StringBuilder();
 		
-//		hql.append(" select new ").append(ConsultaAlteracaoCotaDTO.class.getCanonicalName());
-//		hql.append(" (cota.id, cota.numeroCota, pessoa.nome,  parametroCobranca.fatorVencimento, parametroCobranca.valorMininoCobranca, parametroDistribuicao.descricaoTipoEntrega, box.nome) ");
-//		hql.append(" from Cota cota ");
-		
+//		case when pe.desconto is null or pe.desconto = 0 then (case when p.desconto is null then 0 else p.desconto end) else pe.desconto end		
 		hql .append("select new ")
 			.append(TipoDescontoProdutoDTO.class.getCanonicalName())
-			.append("(p.codigo, p.nome, pe.numeroEdicao, case when pe.desconto is null or pe.desconto = 0 then p.desconto else pe.desconto end, new java.util.Date()) ")
-		//.append("\n")
+			.append("(p.codigo, p.nome, pe.numeroEdicao, coalesce(pe.desconto, p.desconto, 0), p.dataDesativacao) ")
 		.append("from ProdutoEdicao pe join pe.produto p ")
-		//.append("\n")
 		.append("where p.codigo = :codigoProduto");
-		
-//		hql .append("select new br.com.abril.nds.dto.TipoDescontoProdutoDTO(p.codigo, p.nome, pe.numeroEdicao, null, null) ")
-//			.append("\n")
-//			.append("from ProdutoEdicao pe join pe.produto p ")
-//			.append("\n")
-//			.append("where p.codigo = :codigoProduto");
 		
 		Query q = getSession().createQuery(hql.toString());
 		

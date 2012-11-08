@@ -239,6 +239,8 @@ public class DescontoServiceImpl implements DescontoService {
 			throw new ValidacaoException(TipoMensagem.WARNING,"O campo Desconto deve ser preenchido!");
 		}
 
+		Distribuidor distribuidor = distribuidorRepository.obter(); 
+		
 		Cota cota = cotaRepository.obterPorNumerDaCota(numeroCota);
 
 		List<Fornecedor> fornecs = fornecedorRepository.obterFornecedoresPorId(fornecedores);
@@ -247,7 +249,7 @@ public class DescontoServiceImpl implements DescontoService {
 			 * Se existir o desconto, a mesma é atualizada, senão, cria-se uma nova entrada na tabela
 			 */
 			DescontoCotaProdutoExcessao dpe = descontoProdutoEdicaoExcessaoRepository.buscarDescontoProdutoEdicaoExcessao(
-					TipoDesconto.ESPECIFICO, fornecedor, cota, null);
+					TipoDesconto.ESPECIFICO, fornecedor, cota, null, null);
 			if(dpe != null) {
 				dpe.setDesconto(valorDesconto);
 			} else {
@@ -255,6 +257,8 @@ public class DescontoServiceImpl implements DescontoService {
 				dpe.setCota(cota);
 				dpe.setDesconto(valorDesconto);
 				dpe.setFornecedor(fornecedor);
+				dpe.setDistribuidor(distribuidor);
+				dpe.setDescontoPredominante(false);
 			}
 
 			dpe.setTipoDesconto(TipoDesconto.ESPECIFICO);
@@ -263,7 +267,7 @@ public class DescontoServiceImpl implements DescontoService {
 			HistoricoDescontoCotaProdutoExcessao hdcp = new HistoricoDescontoCotaProdutoExcessao();
 			hdcp.setDataAlteracao(new Date());
 			hdcp.setDesconto(valorDesconto);
-			hdcp.setDistribuidor(distribuidorRepository.obter());
+			hdcp.setDistribuidor(distribuidor);
 			hdcp.setFornecedor(fornecedor);
 			hdcp.setUsuario(usuario);
 			
@@ -280,41 +284,125 @@ public class DescontoServiceImpl implements DescontoService {
 	@Transactional
 	public void incluirDescontoProduto(DescontoProdutoDTO desconto, Usuario usuario) {
 
+		Produto produto;
+		ProdutoEdicao produtoEdicao;
+		
 		validarEntradaDeDadosInclusaoDescontoPorProduto(desconto);
-
+		
 		Distribuidor distribuidor = this.distribuidorRepository.obter();
 
-		//TODO: Sérgio - tratar cotas selecionadas
-		if(desconto.isIndProdutoEdicao()) {
-
-			if (desconto.getEdicaoProduto() != null) {
-
-				ProdutoEdicao produtoEdicao = this.produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(
-						desconto.getCodigoProduto(), desconto.getEdicaoProduto()
-						);
-
-				produtoEdicao.setDesconto(desconto.getDescontoProduto());
+		/**
+		 * 		Produto | ProdutoEdicao | QuantidadeEdicoes | Cota Especifica
+		 *  1 |		X	|				|					|
+		 *  2 |		X	|				|					|		X
+		 *  3 |		X	|		X		|					|
+		 *  4 |		X	|		X		|					|		X
+		 *  5 |		X	|				|			X		|
+		 *  6 |		X	|				|			X		|		X
+		 * 
+		 */
+		switch(obterCombinacaoDesconto(desconto, usuario)) {
+		
+			case 1:
 				
-				produtoEdicaoRepository.merge(produtoEdicao);
+				produto = produtoRepository.obterProdutoPorCodigo(desconto.getCodigoProduto());
 				
-				/*DescontoProduto descontoProduto = new DescontoProduto();
+				if(produto != null) {
+					produto.setDesconto(desconto.getDescontoProduto());
+					produtoRepository.merge(produto);
+				}
+				
+				break;
+				
+			case 2:
+				
+				produto = produtoRepository.obterProdutoPorCodigo(desconto.getCodigoProduto());
+				
+				/*
+				 * Se existir o desconto, a mesma é atualizada, senão, cria-se uma nova entrada na tabela
+				 */
+				for(Integer cotaId : desconto.getCotas()) {
+					
+					Cota cota = cotaRepository.buscarPorId(cotaId.longValue());
+					
+					DescontoCotaProdutoExcessao dpe = descontoProdutoEdicaoExcessaoRepository.buscarDescontoProdutoEdicaoExcessao(
+							TipoDesconto.PRODUTO, null, cota, produto, null);
+					if(dpe != null) {
+						dpe.setDesconto(desconto.getDescontoProduto());
+						dpe.setDescontoPredominante(desconto.isDescontoPredominante());
+					} else {
+						dpe = new DescontoCotaProdutoExcessao();
+						dpe.setDistribuidor(distribuidor);
+						dpe.setFornecedor(null);
+						dpe.setCota(cota);
+						dpe.setProduto(produto);
+						dpe.setDesconto(desconto.getDescontoProduto());
+						dpe.setDescontoPredominante(desconto.isDescontoPredominante());
+					}
 
-				descontoProduto.setDesconto(desconto.getDescontoProduto());
-				descontoProduto.setDataAlteracao(new Date());
-				descontoProduto.setCotas(cotas);
-				descontoProduto.setDistribuidor(distribuidor);
-				descontoProduto.setProdutoEdicao(produtoEdicao);
-				descontoProduto.setUsuario(usuarioRepository.buscarPorId(usuario.getId()));
+					dpe.setTipoDesconto(TipoDesconto.PRODUTO);
+					descontoProdutoEdicaoExcessaoRepository.merge(dpe);	
+					
+					HistoricoDescontoCotaProdutoExcessao hdcp = new HistoricoDescontoCotaProdutoExcessao();
+					hdcp.setDataAlteracao(new Date());
+					hdcp.setDesconto(desconto.getDescontoProduto());
+					hdcp.setDistribuidor(distribuidor);
+					hdcp.setFornecedor(null);
+					hdcp.setUsuario(usuario);
+					
+					historicoDescontoCotaProdutoRepository.merge(hdcp);
+				}
+				
+				break;
+				
+			case 3:
+				
+				produtoEdicao = produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(desconto.getCodigoProduto(), desconto.getEdicaoProduto());
+				
+				if(produtoEdicao != null) {
+					produtoEdicao.setDesconto(desconto.getDescontoProduto());
+					produtoEdicaoRepository.merge(produtoEdicao);
+				}
+				
+				break;
+				
+			case 4:
+				
+				produtoEdicao = produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(desconto.getCodigoProduto(), desconto.getEdicaoProduto());
+				
+				/*
+				 * Se existir o desconto, a mesma é atualizada, senão, cria-se uma nova entrada na tabela
+				 */
+				for(Integer cotaId : desconto.getCotas()) {
+					
+					Cota cota = cotaRepository.buscarPorId(cotaId.longValue());
+					
+					DescontoCotaProdutoExcessao dpe = descontoProdutoEdicaoExcessaoRepository.buscarDescontoProdutoEdicaoExcessao(
+							TipoDesconto.PRODUTO, null, cota, produtoEdicao.getProduto(), produtoEdicao);
+					if(dpe != null) {
+						dpe.setDesconto(desconto.getDescontoProduto());
+					} else {
+						dpe = new DescontoCotaProdutoExcessao();
+						dpe.setFornecedor(null);
+						dpe.setCota(cota);
+						dpe.setProduto(produtoEdicao.getProduto());
+						dpe.setProdutoEdicao(produtoEdicao);
+						dpe.setDesconto(desconto.getDescontoProduto());
+						dpe.setDescontoPredominante(desconto.isDescontoPredominante());
+					}
 
-				this.descontoProdutoRepository.adicionar(descontoProduto);
-
-				produtosEdicao.add(produtoEdicao);*/
-
-			} else if (desconto.getQuantidadeEdicoes() != null) {
-
+					dpe.setTipoDesconto(TipoDesconto.PRODUTO);
+					descontoProdutoEdicaoExcessaoRepository.merge(dpe);						
+				}
+				
+				break;
+				
+			case 5:
+			case 6:
+				
 				Set<Cota> cotas = obterCotas(desconto.getCotas(), desconto.isTodasCotas());
 				
-				Produto produto = produtoRepository.obterProdutoPorCodigo(desconto.getCodigoProduto());
+				produto = produtoRepository.obterProdutoPorCodigo(desconto.getCodigoProduto());
 
 				DescontoProximosLancamentos descontoProximosLancamentos = new DescontoProximosLancamentos();
 
@@ -326,46 +414,63 @@ public class DescontoServiceImpl implements DescontoService {
 				descontoProximosLancamentos.setUsuario(usuario);
 				descontoProximosLancamentos.setDistribuidor(distribuidor);
 				this.descontoProximosLancamentosRepository.adicionar(descontoProximosLancamentos);
-			}
-
-		} else {
-			
-			Produto produto = produtoRepository.obterProdutoPorCodigo(desconto.getCodigoProduto());
-			
-			/*Desconto desc = new Desconto();
-			desc.setDataAlteracao(new Date());
-			desc.setValor(desconto.getDescontoProduto());
-			desc.setTipoDesconto(TipoDesconto.PRODUTO);
-			desc.setUsado(false);
-			desc.setUsuario(usuario);*/
-			produto.setDesconto(desconto.getDescontoProduto());
-			
-			produtoRepository.merge(produto);
-
-			/*
-			Set<ProdutoEdicao>produtosEdicao = new HashSet<ProdutoEdicao>();
-			
-			List<ProdutoEdicao> listaProdutoEdicao = this.produtoEdicaoRepository.obterProdutosEdicaoPorCodigoProduto(desconto.getCodigoProduto());
-
-			for (ProdutoEdicao produtoEdicao : listaProdutoEdicao) {
-
-				DescontoProduto descontoProduto = new DescontoProduto();
-
-				descontoProduto.setDesconto(desconto.getDescontoProduto());
-				descontoProduto.setDataAlteracao(new Date());
-				descontoProduto.setCotas(cotas);
-				descontoProduto.setDistribuidor(distribuidor);
-				descontoProduto.setProdutoEdicao(produtoEdicao);
-				descontoProduto.setUsuario(usuarioRepository.buscarPorId(usuario.getId()));
-
-				this.descontoProdutoRepository.adicionar(descontoProduto);
-			}
-
-			produtosEdicao.addAll(listaProdutoEdicao);*/
+				
+				break;
+				
 		}
-/*
-		processarDescontoProduto(produtosEdicao, cotas, desconto.getDescontoProduto(),
-				desconto.isDescontoPredominante());*/
+		
+	}
+
+	private int obterCombinacaoDesconto(DescontoProdutoDTO desconto, Usuario usuario) {
+		
+		/**
+		 * 		Produto | ProdutoEdicao | QuantidadeEdicoes | Cota Especifica
+		 *  1 |		X	|				|					|
+		 *  2 |		X	|				|					|		X
+		 *  3 |		X	|		X		|					|
+		 *  4 |		X	|		X		|					|		X
+		 *  5 |		X	|				|			X		|
+		 *  6 |		X	|				|			X		|		X
+		 * 
+		 */
+		
+		if(!desconto.isIndProdutoEdicao() 
+				&& !(desconto.getQuantidadeEdicoes() != null && desconto.getQuantidadeEdicoes() > 0) 
+				&& desconto.isTodasCotas() ) {
+			return 1;
+		}
+		
+		if(!desconto.isIndProdutoEdicao() 
+				&& !(desconto.getQuantidadeEdicoes() != null && desconto.getQuantidadeEdicoes() > 0) 
+				&& desconto.isHasCotaEspecifica() ) {
+			return 2;
+		}
+		
+		if(desconto.isIndProdutoEdicao() 
+				&& !(desconto.getQuantidadeEdicoes() != null && desconto.getQuantidadeEdicoes() > 0) 
+				&& desconto.isTodasCotas() ) {
+			return 3;
+		}
+		
+		if(desconto.isIndProdutoEdicao() 
+				&& !(desconto.getQuantidadeEdicoes() != null && desconto.getQuantidadeEdicoes() > 0) 
+				&& desconto.isHasCotaEspecifica() ) {
+			return 4;
+		}
+		
+		if(!desconto.isIndProdutoEdicao() 
+				&& (desconto.getQuantidadeEdicoes() != null && desconto.getQuantidadeEdicoes() > 0) 
+				&& desconto.isTodasCotas() ) {
+			return 5;
+		}
+		
+		if(!desconto.isIndProdutoEdicao() 
+				&& (desconto.getQuantidadeEdicoes() != null && desconto.getQuantidadeEdicoes() > 0) 
+				&& desconto.isHasCotaEspecifica() ) {
+			return 6;
+		}
+		
+		return 0;
 	}
 
 	@Override
