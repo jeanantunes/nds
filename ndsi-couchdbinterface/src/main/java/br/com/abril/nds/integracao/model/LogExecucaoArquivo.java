@@ -1,4 +1,4 @@
-package br.com.abril.nds.integracao.persistence.model;
+package br.com.abril.nds.integracao.model;
 
 import java.io.Serializable;
 
@@ -16,7 +16,7 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 
-import br.com.abril.nds.integracao.persistence.model.enums.StatusExecucaoEnum;
+import br.com.abril.nds.integracao.model.enums.StatusExecucaoEnum;
 
 @Entity
 @Table(name = "LOG_EXECUCAO_ARQUIVO")
@@ -39,7 +39,7 @@ public class LogExecucaoArquivo implements Serializable {
 	
 	@Type(type = "br.com.abril.nds.integracao.persistence.GenericEnumUserType", 
 		parameters = {
-			@Parameter( name="enumClass", value="br.com.abril.nds.integracao.persistence.model.enums.StatusExecucaoEnum" )
+			@Parameter( name="enumClass", value="br.com.abril.nds.integracao.model.enums.StatusExecucaoEnum" )
 		})
 	@Enumerated(EnumType.STRING)
 	@Column(name = "STATUS", length = 1)

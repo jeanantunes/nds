@@ -146,7 +146,7 @@ public interface DividaService {
      *            data para contagem das dívidas
      * @return quantidade de dividas a receber em uma determinada data
      */
-	int contarDividasReceberEm(Date data);
+	long contarDividasReceberEm(Date data);
 	
 	
     /**
@@ -156,7 +156,7 @@ public interface DividaService {
      *            data para contagem das dívidas
      * @return quantidade de dívidas a vencer após determinada data
      */
-    int contarDividasVencerApos(Date data);
+    long contarDividasVencerApos(Date data);
 	
 	
 }

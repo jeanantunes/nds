@@ -14,7 +14,6 @@ import br.com.abril.nds.dto.fechamentodiario.SumarizacaoDividasDTO;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.financeiro.Divida;
 import br.com.abril.nds.model.seguranca.Usuario;
-import br.com.abril.nds.service.exception.FechamentoDiarioException;
 import br.com.abril.nds.vo.PaginacaoVO;
 
 public interface FecharDiaService {
@@ -124,13 +123,13 @@ public interface FecharDiaService {
     /**
      * @see DividaService#contarDividasReceberEm(Date)
      */
-    int contarDividasReceberEm(Date data);
+    long contarDividasReceberEm(Date data);
     
     
     /**
      * @see DividaService#contarDividasVencerApos(Date)
      */
-    int contarDividasVencerApos(Date data);
+    long contarDividasVencerApos(Date data);
     
     /**
 	 * Obtém o resumo do fechamento diário de cotas.
@@ -151,22 +150,6 @@ public interface FecharDiaService {
 	ResumoFechamentoDiarioConsignadoDTO obterResumoConsignado(Date dataFechamento);
 	
 	/**
-	 * Salva o resumo do fechamento do dia.
-	 * 
-	 * @param usuario - usúario que efetiva operação
-	 * 
-	 * @param dataFechamento - data de fechamento do dia
-	 * 
-	 * @throws FechamentoDiarioException - Para erros de inconsistência de dados referente ao fechamento do dia
-	 */
-	void salvarResumoFechamentoDiario(Usuario usuario, Date dataFechamento) throws FechamentoDiarioException;
-
-	/**
-	 * 
-	 */
-	void processarControleDeAprovacao();
-	
-	/**
 	 * Retorna o resumo de estoque de produtos e exemplares do dia em operação.
 	 * 
 	 * @param dataOperacao - data de operação do sistema
@@ -174,4 +157,13 @@ public interface FecharDiaService {
 	 * @return ResumoEstoqueDTO
 	 */
 	ResumoEstoqueDTO obterResumoEstoque(Date dataOperacao);
+	
+	/**
+	 * Efetua processamento de fechamento do dia, efetua controle de aprovação e salva resumo do fechamento.
+	 * 
+	 * @param usuario - usuario
+	 * 
+	 * @param dataFechamento - data de fechamento
+	 */
+	void processarFechamentoDoDia(Usuario usuario, Date dataFechamento);
 }

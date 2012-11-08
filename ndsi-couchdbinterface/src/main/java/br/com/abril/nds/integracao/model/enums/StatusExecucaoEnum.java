@@ -1,4 +1,4 @@
-package br.com.abril.nds.integracao.persistence.model.enums;
+package br.com.abril.nds.integracao.model.enums;
 
 public enum StatusExecucaoEnum {
 
