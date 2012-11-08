@@ -9,6 +9,10 @@ import java.util.Set;
 import javax.annotation.PostConstruct;
 
 import org.lightcouch.CouchDbClient;
+import org.lightcouch.NoDocumentException;
+import org.lightcouch.View;
+import org.lightcouch.ViewResult;
+import org.lightcouch.ViewResult.Rows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +21,7 @@ import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.EnderecoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.couchdb.CouchDbProperties;
+import br.com.abril.nds.integracao.model.canonic.EMS0128Input;
 import br.com.abril.nds.model.Capa;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.TipoEndereco;
@@ -224,12 +229,26 @@ public class EnderecoServiceImpl implements EnderecoService {
 	@Override
 	@Transactional
 	public EnderecoVO obterEnderecoPorCep(String cep) {
-
 		if (cep == null || cep.trim().isEmpty()) {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "O CEP é obrigatório para a pesquisa.");
 		}
-		return couchDbClient.find(EnderecoVO.class,cep);
+		EnderecoVO doc = null;
+		View view = couchDbClient.view("importacao/porTipoDocumento");
+		
+		view.key("EMS0128");
+		view.includeDocs(true);
+		try {
+			ViewResult<String, Void, ?> result = view.queryView(String.class, Void.class, EMS0128Input.class);
+			for (@SuppressWarnings("rawtypes") Rows row: result.getRows()) {
+				doc = (EnderecoVO) row.getDoc();
+				break;
+			}		
+		}catch (NoDocumentException ex) {
+		
+		}
+		
+		return doc;
 	}
 
 	/**

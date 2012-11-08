@@ -156,7 +156,7 @@ public class InterfaceExecutor {
 		}
 	}
 	@Transactional
-	public void executarRetornosIcd(List<String> distribuidores) {		 
+	public void executarInterfaceDB(List<String> distribuidores) {		 
 		
 
 		for (String distribuidor: distribuidores) {
@@ -226,12 +226,6 @@ public class InterfaceExecutor {
 		this.pastaInterna = parametroSistemaRepository.getParametro("INTERNAL_DIR");
 		List<String> distribuidores = this.getDistribuidores(this.diretorio, codigoDistribuidor);
 		return distribuidores;
-	}
-
-	private void executarInterfaceDB(InterfaceEnum interfaceEnum,
-			InterfaceExecucao interfaceExecucao, LogExecucao logExecucao,
-			Long codigoDistribuidor, String nomeUsuario) {
-		
 	}
 
 	/**

@@ -9,12 +9,13 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import br.com.abril.nds.client.endereco.vo.EnderecoVO;
+
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.dne.Bairro;
 import br.com.abril.nds.model.dne.Localidade;
 import br.com.abril.nds.model.dne.Logradouro;
 import br.com.abril.nds.repository.EnderecoRepository;
+import br.com.abril.nds.vo.EnderecoVO;
 
 public class EnderecoRepositoryImplTest extends AbstractRepositoryImplTest {
 	
