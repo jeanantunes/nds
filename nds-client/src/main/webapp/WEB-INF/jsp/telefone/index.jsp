@@ -60,8 +60,8 @@
 
 				<td>
 
-					<div id="${param.tela}wrapperBtnAdicionarTelefoneHabilitado" style="display: none">
-						<span class="bt_novos">
+					<div id="${param.tela}wrapperBtnAdicionarTelefoneHabilitado" >
+						<span class="bt_add">
 							<a href="javascript:;" onclick="${param.tela}.adicionarTelefone();" id="${param.tela}botaoAddEditar" rel="tipsy" title="Incluir Novo Telefone"><img src="${pageContext.request.contextPath}/images/ico_add.gif" hspace="5" border="0"/></a>
 						</span>
 					</div>
