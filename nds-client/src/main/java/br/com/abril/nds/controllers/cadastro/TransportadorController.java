@@ -29,6 +29,7 @@ import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.cadastro.AssociacaoVeiculoMotoristaRota;
 import br.com.abril.nds.model.cadastro.Motorista;
 import br.com.abril.nds.model.cadastro.ParametroCobrancaTransportador;
+import br.com.abril.nds.model.cadastro.ParametroCobrancaTransportador.ModalidadeCobranca;
 import br.com.abril.nds.model.cadastro.PeriodicidadeCobranca;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.Transportador;
@@ -364,12 +365,26 @@ public class TransportadorController {
 				msgs.add("CNPJ inválido.");
 			}			
 			
-			
 		}
 		
 		if (pessoaJuridica.getInscricaoEstadual() == null || pessoaJuridica.getInscricaoEstadual().trim().isEmpty()){
 			
 			msgs.add("Insc. Estadual é obrigatório.");
+		}
+		
+		//
+		if (transportador.getParametroCobrancaTransportador().getModalidadeCobranca() == null) {
+			
+			msgs.add("Modalidade de Cobrança é obrigatório.");
+		} else {
+			
+			boolean isPercentual = ModalidadeCobranca.PERCENTUAL.equals(
+					transportador.getParametroCobrancaTransportador().getModalidadeCobranca());
+			boolean isMaiorCem = 100D 
+					< transportador.getParametroCobrancaTransportador().getValor().doubleValue();
+			if (isPercentual && isMaiorCem) {
+				msgs.add("O percentual não deve ser maior que 100%.");
+			}
 		}
 		
 		if (transportador.getParametroCobrancaTransportador() != null){
@@ -523,7 +538,7 @@ public class TransportadorController {
 				
 				ParametroCobrancaTransportador param = transportador.getParametroCobrancaTransportador();
 				
-				dados.add(param.getModelidadeCobranca() != null ? param.getModelidadeCobranca().toString() : "");
+				dados.add(param.getModalidadeCobranca() != null ? param.getModalidadeCobranca().toString() : "");
 				dados.add(param.getValor() != null ? String.format("%.2f", param.getValor()) : "0,00");
 				dados.add(String.valueOf(param.isPorEntrega()));
 				dados.add(param.getPeriodicidadeCobranca().toString());
