@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -952,7 +953,7 @@ public class CotaController {
 	 */
 	@Post
 	@Path("/pesquisarCotas")
-	public void pesquisarCotas(Integer numCota,String nomeCota,String numeroCpfCnpj, String sortorder, 
+	public void pesquisarCotas(BigInteger numCota,String nomeCota,String numeroCpfCnpj, String sortorder, 
 							   String logradouro, String bairro, String municipio,
 			 				   String sortname, int page, int rp){
 		
@@ -962,7 +963,9 @@ public class CotaController {
 		
 		nomeCota = PessoaUtil.removerSufixoDeTipo(nomeCota);
 		
-		FiltroCotaDTO filtro = new FiltroCotaDTO( numCota,nomeCota,numeroCpfCnpj, logradouro, bairro, municipio );
+		Integer numeroCota = (numCota!= null)?numCota.intValue():null;
+		
+		FiltroCotaDTO filtro = new FiltroCotaDTO(numeroCota ,nomeCota,numeroCpfCnpj, logradouro, bairro, municipio );
 		
 		configurarPaginacaoPesquisa(filtro, sortorder, sortname, page, rp);
 		
