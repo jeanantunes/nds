@@ -268,7 +268,7 @@ var entregadorController = $.extend(true, {
 					$("#nomeEntregador", this.workspace).val(result.pessoaFisica.nome);
 					$("#apelido", this.workspace).val(result.pessoaFisica.apelido);
 					$("#cpf", this.workspace).val(result.pessoaFisica.cpf).mask("999.999.999-99");
-					$("#rg", this.workspace).val(result.pessoaFisica.rg).mask("99.999.999-9");
+					$("#rg", this.workspace).val(result.pessoaFisica.rg);
 					$("#dataNascimento", this.workspace).val(result.dataNascimentoEntregadorFormatada).mask("99/99/9999");
 					$("#orgaoEmissor", this.workspace).val(result.pessoaFisica.orgaoEmissor);
 					entregadorController.preencherComboUF(result.pessoaFisica.ufOrgaoEmissor);
@@ -748,8 +748,8 @@ var entregadorController = $.extend(true, {
 					$("#nomeEntregador", this.workspace).val(result.nome);
 					$("#apelido", this.workspace).val(result.apelido);
 					$("#cpf", this.workspace).val(result.cpf).mask("999.999.999-99");
-					$("#rg", this.workspace).val(result.rg).mask("99.999.999-9");
-					$("#dataNascimento", this.workspace).val(result.dataNascimento).mask("99/99/9999");
+					$("#rg", this.workspace).val(result.rg);
+					$("#dataNascimento", this.workspace).val(result.dataNascimento.$).mask("99/99/9999");
 					$("#orgaoEmissor", this.workspace).val(result.orgaoEmissor);
 					$("#ufOrgaoEmissor", this.workspace).val(result.ufOrgaoEmissor);
 					$("#estadoCivil", this.workspace).val(result.estadoCivil);
