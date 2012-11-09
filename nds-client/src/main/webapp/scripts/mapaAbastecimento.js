@@ -40,6 +40,20 @@ function MapaAbastecimento(pathTela, objName, workspace) {
 		
 		$("#selectProdutos", _workspace).val("");
 		
+		$.postJSON(contextPath + "/mapaAbastecimento/getProdutos",
+				   {dataLancamento: T.get("dataLancamento")},
+				   function(result) {
+					
+					   var options = "";
+					   
+					   $.each(result, function(index, row) {
+						   options += "<option value='" + row.key.$ + "_" + row.value.$ + "'>" + row.value.$ + "</option>";
+					   });
+					   
+					   $("#selectProdutos", _workspace).html(options);
+				   }
+		);
+		
 		$("#dialog-pesq-produtos").dialog({
 			resizable: false,
 			height:300,
