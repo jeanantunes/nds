@@ -226,7 +226,9 @@ var recebimentoFisicoController = $.extend(true, {
 			recebimentoFisicoController.ocultarBtns();
 			
 			recebimentoFisicoController.popup_adicionar();
-		
+			
+			$("#novoNumeroNota").val($("#notaFiscal").val());
+			$("#novoSerieNota").val($("#serie").val());		
 		}
 		
 	},
