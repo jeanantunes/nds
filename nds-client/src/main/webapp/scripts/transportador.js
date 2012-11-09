@@ -461,11 +461,9 @@ var transportadorController = $.extend(true, {
 						if ($("#modalidadeCobranca", transportadorController.workspace).val() == "TAXA_FIXA"){
 							
 							valorCobranca = transportadorController.preparaValor($("#valorTaxaFixa", transportadorController.workspace).val());
-							alert("TAXA_FIXA: " + valorCobranca);
 						} else {
 							
 							valorCobranca = transportadorController.preparaValor($("#valorPercentualFaturamento", transportadorController.workspace).val());
-							alert("Percentual: " + valorCobranca);
 						}
 						
 						var data = [{name:"transportador.pessoaJuridica.razaoSocial", value:$("#razaoSocial", transportadorController.workspace).val()},
@@ -941,8 +939,19 @@ var transportadorController = $.extend(true, {
 					$("#inscEstadual", transportadorController.workspace).val(result[5]);
 					
 					$("#modalidadeCobranca", transportadorController.workspace).val(result[6]);
-					$("#valorTaxaFixa", transportadorController.workspace).val(transportadorController.preparaValor(result[7]));
-					 
+					if (result[6] == 'TAXA_FIXA') {
+						$(".transpTaxaFixa", this.workspace).show();
+						$(".transpPercentual", this.workspace).hide();
+						$("#valorTaxaFixa", 
+								transportadorController.workspace).val(transportadorController.preparaValor(result[7]));
+					}
+					if (result[6] == 'PERCENTUAL') {
+						$(".transpTaxaFixa", this.workspace).hide();
+						$(".transpPercentual", this.workspace).show();
+						$("#valorPercentualFaturamento", 
+								transportadorController.workspace).val(transportadorController.preparaValor(result[7]));
+					}
+					
 					if (result[8] == "true"){
 						
 						$("#checkPorEntrega", transportadorController.workspace).check();

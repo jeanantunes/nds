@@ -365,7 +365,6 @@ public class TransportadorController {
 				msgs.add("CNPJ inválido.");
 			}			
 			
-			
 		}
 		
 		if (pessoaJuridica.getInscricaoEstadual() == null || pessoaJuridica.getInscricaoEstadual().trim().isEmpty()){
