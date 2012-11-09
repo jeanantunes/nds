@@ -11,6 +11,7 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
+import br.com.abril.nds.client.vo.BoxVO;
 import br.com.abril.nds.dto.BoxDTO;
 import br.com.abril.nds.dto.CotaRotaRoteiroDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaBox;
@@ -102,13 +103,16 @@ public class BoxController {
 	@Post
 	@Path("/buscaPorId.json")
 	public void buscaPorId(long id) {
-		if (boxService.hasAssociacao(id)) {
+		/*if (boxService.hasAssociacao(id)) {
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR,"Box está em uso e não pode ser editado."));
 		} else {
 			Box box = boxService.buscarPorId(id);
 			result.use(CustomJson.class).from(box).serialize();
-		}
-	
+		}*/
+
+		BoxVO box = new BoxVO(boxService.buscarPorId(id), boxService.hasAssociacao(id));
+		result.use(CustomJson.class).from(box).serialize();
+
 	}
 
 	@Post

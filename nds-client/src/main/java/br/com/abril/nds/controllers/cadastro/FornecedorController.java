@@ -159,7 +159,7 @@ public class FornecedorController {
 			
 			this.fornecedorService.merge(fornecedor);
 
-			mensagemSucesso = "Edição realizada com sucesso.";
+			mensagemSucesso = "Operação realizada com sucesso.";
 		
 		} else {
 			
@@ -325,6 +325,16 @@ public class FornecedorController {
 			}
 		}
 		
+		if (fornecedorDTO.getIdFornecedor() != null) {
+			Fornecedor fornecedorCadastrado = fornecedorService.obterFornecedorPorId(fornecedorDTO.getIdFornecedor());
+			if (fornecedorCadastrado != null) {
+				String cnpjAlterado = fornecedorDTO.getCnpj().replaceAll("[/.-]", "");
+				if (!fornecedorCadastrado.getJuridica().getCnpj().equals( cnpjAlterado )) {
+					mensagens.add("Não é possível alterar o CNPJ do fornecedor cadastrado!");
+				}
+			}
+		}
+		
 		if (!StringUtil.isEmpty(fornecedorDTO.getEmailNfe())) {
 			if (!Util.validarEmail(fornecedorDTO.getEmailNfe())) {
 				mensagens.add("O preenchimento do campo [E-mail NFe] está inválido!");
@@ -358,7 +368,11 @@ public class FornecedorController {
 			}
 		}
 
-		String cnpj = fornecedorDTO.getCnpj().replaceAll("\\.", "").replaceAll("-", "").replaceAll("/", "");
+		String cnpj = "";
+		
+		if (fornecedorDTO.getCnpj() != null && !fornecedorDTO.getCnpj().isEmpty()) {
+			cnpj = fornecedorDTO.getCnpj().replaceAll("\\.", "").replaceAll("-", "").replaceAll("/", "");
+		}
 		
 		PessoaJuridica juridica = 
 				this.pessoaJuridicaService.buscarPorCnpj(cnpj);
@@ -383,7 +397,7 @@ public class FornecedorController {
 		
 		if (map.keySet().isEmpty()) {
 			
-			mensagens.add("Pelo menos um telefone deve ser cadastrado para o entregador.");
+			mensagens.add("Pelo menos um telefone deve ser cadastrado para o fornecedor.");
 		
 		} else {
 			
@@ -403,13 +417,13 @@ public class FornecedorController {
 			
 			if (!temPrincipal) {
 				
-				mensagens.add("Deve haver ao menos um telefone principal para o entregador.");
+				mensagens.add("Deve haver ao menos um telefone principal para o fornecedor.");
 			}
 		}
 		
 		if (listaEnderecoAssociacaoSalvar == null || listaEnderecoAssociacaoSalvar.isEmpty()) {
 			
-			mensagens.add("Pelo menos um endereço deve ser cadastrado para o entregador.");
+			mensagens.add("Pelo menos um endereço deve ser cadastrado para o fornecedor.");
 		
 		} else {
 			
@@ -427,7 +441,7 @@ public class FornecedorController {
 
 			if (!temPrincipal) {
 				
-				mensagens.add("Deve haver ao menos um endereço principal para o entregador.");
+				mensagens.add("Deve haver ao menos um endereço principal para o fornecedor.");
 			}
 		}
 
@@ -658,4 +672,23 @@ public class FornecedorController {
 
 		return filtroFornecedor;
 	}
+	
+	@Post
+	public void cancelarCadastro(){
+		
+		this.limparDadosSessao();
+		
+		result.use(Results.json()).from("", "result").serialize();
+	}
+
+	private void limparDadosSessao() {
+		
+		this.session.removeAttribute(LISTA_TELEFONES_EXIBICAO);
+		this.session.removeAttribute(LISTA_TELEFONES_REMOVER_SESSAO);
+		this.session.removeAttribute(LISTA_TELEFONES_SALVAR_SESSAO);
+		this.session.removeAttribute(LISTA_ENDERECOS_EXIBICAO);
+		this.session.removeAttribute(LISTA_ENDERECOS_REMOVER_SESSAO);
+		this.session.removeAttribute(LISTA_ENDERECOS_SALVAR_SESSAO);
+	}
+	
 }

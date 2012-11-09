@@ -1,4 +1,5 @@
 var fornecedorController = $.extend(true,{
+		fecharModalCadastroFornecedor : false,
 		init:function(){
 			$('#fornecedorController-filtroConsultaFornecedorRazaoSocial,#fornecedorController-filtroConsultaFornecedorCnpj,#fornecedorController-filtroConsultaFornecedorNomeFantasia', fornecedorController.workspace).bind('keypress', function(e) {
 				if(e.keyCode == 13) {
@@ -134,6 +135,36 @@ var fornecedorController = $.extend(true,{
 			
 		},
 		
+		cancelarCadastro : function() {
+			$("#dialog-cancelar-cadastro-fornecedor", fornecedorController.workspace).dialog({
+				resizable: false,
+				height:150,
+				width:600,
+				modal: true,
+				buttons: {
+					"Confirmar": function() {
+						
+						$.postJSON(contextPath + "/cadastro/fornecedor/cancelarCadastro", null, 
+							function(result){
+								
+								fecharModalCadastroFornecedor = true;
+								
+								$( "#fornecedorController-dialogNovoFornecedor", fornecedorController.workspace ).dialog( "close" );								
+								$("#dialog-cancelar-cadastro-fornecedor", fornecedorController.workspace).dialog("close");
+							}
+						);
+					},
+					"Cancelar": function() {
+						
+						$(this).dialog("close");
+						
+						fecharModalCadastroFornecedor = false;
+					}
+				},
+				form: $("#dialog-cancelar-cadastro-fornecedor", this.workspace).parents("form")
+			});
+		},
+		
 		novoFornecedor:	function (isEdicao, indBloqueiaCamposEdicaoFornecedor) {
 				
 				if (!isEdicao) {
@@ -145,6 +176,7 @@ var fornecedorController = $.extend(true,{
 						null,
 						function(result) {
 							$("#fornecedorController-inicioAtividade", fornecedorController.workspace).html(result.data);
+							$("#fornecedorController-codigoInterface").mask("9999");
 							$("#fornecedorController-codigoInterface", fornecedorController.workspace).val(result.nextCodigo);
 							
 							fornecedorController.showPopupFornecedor();
@@ -163,6 +195,7 @@ var fornecedorController = $.extend(true,{
 
 			showPopupFornecedor: function (indEdicaoBloqueada) {
 				
+				fecharModalCadastroFornecedor = false;
 				
 				var dialog_novo_fornecedor = {
 						resizable: false,
@@ -170,7 +203,19 @@ var fornecedorController = $.extend(true,{
 						width:840,
 						modal: true,
 						form: $("#fornecedorController-dialogNovoFornecedor", this.workspace).parents("form"),
-						buttons : {}
+						buttons : {},
+						beforeClose: function(event, ui) {
+							
+							if (!fecharModalCadastroFornecedor){
+								
+								fornecedorController.cancelarCadastro();
+								
+								return fecharModalCadastroFornecedor;
+							}
+							
+							return fecharModalCadastroFornecedor;
+						},
+						
 				};
 				
 				if(indEdicaoBloqueada) {
@@ -188,6 +233,7 @@ var fornecedorController = $.extend(true,{
 					dialog_novo_fornecedor.buttons = {
 							
 							"Confirmar": function() {
+								fecharModalCadastroFornecedor = true;
 								fornecedorController.cadastrarFornecedor();
 							},
 							"Cancelar": function() {
@@ -345,6 +391,7 @@ var fornecedorController = $.extend(true,{
 						
 						$("#fornecedorController-inicioAtividade", fornecedorController.workspace).html(result.inicioAtividade);
 						$("#fornecedorController-idFornecedor", fornecedorController.workspace).val(result.idFornecedor);
+						$("#fornecedorController-codigoInterface").mask("9999");
 						$("#fornecedorController-codigoInterface", fornecedorController.workspace).val(result.codigoInterface);
 						$("#fornecedorController-razaoSocial", fornecedorController.workspace).val(result.razaoSocial);
 						$("#fornecedorController-nomeFantasia", fornecedorController.workspace).val(result.nomeFantasia);

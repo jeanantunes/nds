@@ -48,7 +48,7 @@
 			<table width="800" border="0" cellspacing="1" cellpadding="1">
 				<tr>
 					<td width="135"><strong>C&oacute;digo:</strong></td>
-					<td width="260"><input type="text" name="codigoProdutoCadastro" id="codigoProdutoCadastro" style="width:80px;" maxlength="30" disabled="disabled" /></td>
+					<td width="260"><input type="text" name="codigoProdutoCadastro" id="codigoProdutoCadastro" style="width:80px;" maxlength="30" /></td>
 					<td width="142"><strong>Produto:</strong></td>
 					<td width="250"><input type="text" name="nomeProduto" id="nomeProduto" style="width:250px;" maxlength="60" /></td>
 				</tr>
@@ -302,7 +302,6 @@
 			<tr>
 				<td width="43">C&oacute;digo:</td>
 				<td width="123" >
-					
 			    	<input type="text" name="codigoProduto" id="codigoProduto"
 						   style="width: 80px; float: left; margin-right: 5px;" maxlength="255"
 						   onchange="pesquisaProdutoCadastroProduto.pesquisarPorCodigoProduto('#codigoProduto', '#produto', '#edicao', false,
@@ -312,9 +311,11 @@
 				
 				<td width="55">Produto:</td>
 				<td width="237">
-					<input type="text" name="produto" id="produto" style="width: 222px;" maxlength="255"
+					<!-- <input type="text" name="produto" id="produto" style="width: 222px;" maxlength="255"
 					       onkeyup="pesquisaProdutoCadastroProduto.autoCompletarPorNomeProduto('#produto', false);"
-					       onblur="pesquisaProdutoCadastroProduto.pesquisarPorNomeProduto('#codigoProduto', '#produto', '#edicao', false, undefined, undefined);"/>
+					       onblur="pesquisaProdutoCadastroProduto.pesquisarPorNomeProduto('#codigoProduto', '#produto', '#edicao', false, undefined, undefined);"/>  -->
+					<input type="text" name="produto" id="produto" style="width: 222px;" maxlength="255"
+					       onkeyup="pesquisaProdutoCadastroProduto.autoCompletarPorNomeProduto('#produto', false);"/>
 				</td>
 				<td width="99">Fornecedor:</td>
 				<td width="251">

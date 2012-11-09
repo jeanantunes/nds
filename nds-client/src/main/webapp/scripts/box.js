@@ -154,10 +154,18 @@ var boxController = $.extend(true, {
 			if( typeof data.mensagens == "object") {
 				exibirMensagem(data.mensagens.tipoMensagem, data.mensagens.listaMensagens);
 			} else {
-				$("#boxId").val(data.id);
-				$("#boxCodigo").val(data.codigo);
-				$("#boxNome").val(data.nome);
-				$("#boxTipoBox").val(data.tipoBox);
+				$("#boxId").val(data.box.id);
+				$("#boxCodigo").val(data.box.codigo);
+				$("#boxNome").val(data.box.nome);
+				$("#boxTipoBox").val(data.box.tipoBox);
+
+				if (data.emUso) {
+					$("#boxCodigo").attr("readOnly", "readOnly");
+					$("#boxTipoBox").attr('disabled', true);
+				} else {
+					$("#boxCodigo").removeAttr("readOnly");
+					$("#boxTipoBox").attr('disabled', false);
+				}
 				boxController.showPopupEditar('Editar Box');
 			}
 		});
@@ -168,6 +176,8 @@ var boxController = $.extend(true, {
 		this.box.tipoBox = $("#boxTipoBox").val();
 	},	
 	salvar : function(dialog) {
+
+		$("#boxTipoBox").attr('disabled', false);
 		var obj = $("#novo_box_form", this.workspace).serialize();
 		
 		$.postJSON(this.path + 'salvar.json', obj, function(data) {
@@ -224,6 +234,9 @@ var boxController = $.extend(true, {
 		
 		this.clearForm($("#novo_box_form", this.workspace));
 
+		$("#boxCodigo").removeAttr("readOnly");
+		$("#boxTipoBox").attr('disabled', false);		
+		
 		this.bindData(data, $("#novo_box_form", this.workspace));
 		this.showPopupEditar('Incluir Novo Box');
 	},	
