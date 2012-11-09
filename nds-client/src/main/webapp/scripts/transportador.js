@@ -476,8 +476,8 @@ var transportadorController = $.extend(true, {
 									{name:"transportador.parametroCobrancaTransportador.periodicidadeCobranca", 
 										value:$("[name=radioPeriodicidade]:checked", transportadorController.workspace).val()},
 									{name:"transportador.parametroCobrancaTransportador.diaCobranca", value: diaCobranca},
-									{name:"transportador.parametroCobrancaTransportador.modelidadeCobranca", 
-										value: $("#modelidadeCobranca", transportadorController.workspace).val()},
+									{name:"transportador.parametroCobrancaTransportador.modalidadeCobranca", 
+										value: $("#modalidadeCobranca", transportadorController.workspace).val()},
 									{name: "transportador.parametroCobrancaTransportador.valor", value: valorCobranca},
 									{name: "transportador.parametroCobrancaTransportador.porEntrega", 
 										value: $("#checkPorEntrega").is(':checked')}
@@ -938,9 +938,20 @@ var transportadorController = $.extend(true, {
 					$("#cnpj", transportadorController.workspace).val(result[4]);
 					$("#inscEstadual", transportadorController.workspace).val(result[5]);
 					
-					$("#modelidadeCobranca", transportadorController.workspace).val(result[6]);
-					$("#valorTaxaFixa", transportadorController.workspace).val(transportadorController.preparaValor(result[7]));
-					 
+					$("#modalidadeCobranca", transportadorController.workspace).val(result[6]);
+					if (result[6] == 'TAXA_FIXA') {
+						$(".transpTaxaFixa", this.workspace).show();
+						$(".transpPercentual", this.workspace).hide();
+						$("#valorTaxaFixa", 
+								transportadorController.workspace).val(transportadorController.preparaValor(result[7]));
+					}
+					if (result[6] == 'PERCENTUAL') {
+						$(".transpTaxaFixa", this.workspace).hide();
+						$(".transpPercentual", this.workspace).show();
+						$("#valorPercentualFaturamento", 
+								transportadorController.workspace).val(transportadorController.preparaValor(result[7]));
+					}
+					
 					if (result[8] == "true"){
 						
 						$("#checkPorEntrega", transportadorController.workspace).check();

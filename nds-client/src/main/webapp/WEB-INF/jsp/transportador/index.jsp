@@ -167,7 +167,7 @@
 						<tr>
 							<td width="117">Cobrança</td>
 							<td>
-								<select style="width: 100px;" id="modelidadeCobranca">
+								<select style="width: 100px;" id="modalidadeCobranca">
 									<option onclick="transportadorController.mostrarOpcaoTaxaFixa();" value="TAXA_FIXA">Taxa Fixa</option>
 									<option onclick="transportadorController.mostrarOpcaoPercentual()" value="PERCENTUAL">Percentual</option>
 								</select>
