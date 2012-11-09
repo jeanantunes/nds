@@ -15,6 +15,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.Produto;
@@ -44,6 +45,10 @@ public class HistoricoDescontoCotaProdutoExcessao implements Serializable {
 	@JoinColumn(name = "USUARIO_ID")
 	private Usuario usuario;
 	
+	@ManyToOne(optional = false)
+	@JoinColumn(name = "COTA_ID")
+	private Cota cota;
+	
 	@ManyToOne(optional = true)
 	@JoinColumn(name = "PRODUTO_ID")
 	private Produto produto;
@@ -52,7 +57,7 @@ public class HistoricoDescontoCotaProdutoExcessao implements Serializable {
 	@JoinColumn(name = "PRODUTO_EDICAO_ID")
 	private ProdutoEdicao produtoEdicao;
 	
-	@ManyToOne(optional = false)
+	@ManyToOne(optional = true)
 	@JoinColumn(name = "FORNECEDOR_ID")
 	private Fornecedor fornecedor;
 	
@@ -115,6 +120,14 @@ public class HistoricoDescontoCotaProdutoExcessao implements Serializable {
 	 */
 	public void setUsuario(Usuario usuario) {
 		this.usuario = usuario;
+	}
+
+	public Cota getCota() {
+		return cota;
+	}
+
+	public void setCota(Cota cota) {
+		this.cota = cota;
 	}
 
 	public Produto getProduto() {

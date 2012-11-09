@@ -17,21 +17,23 @@ import javax.persistence.TemporalType;
 
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.Produto;
+import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.seguranca.Usuario;
 
 @Entity
-@Table(name = "HISTORICO_DESCONTO_FORNECEDOR")
-@SequenceGenerator(name="HISTORICO_DESCONTO_FORNECEDOR_SEQ", initialValue = 1, allocationSize = 1)
-public class HistoricoDescontoFornecedor implements Serializable {
+@Table(name = "HISTORICO_DESCONTO_PRODUTO_EDICAO")
+@SequenceGenerator(name="HISTORICO_DESCONTO_PRODUTO_EDICAO_SEQ", initialValue = 1, allocationSize = 1)
+public class HistoricoDescontoProdutoEdicao implements Serializable {
 
-	private static final long serialVersionUID = 3028451605686762672L;
+	private static final long serialVersionUID = -7746843614617906694L;
 
 	@Id
-	@GeneratedValue(generator = "HISTORICO_DESCONTO_FORNECEDOR_SEQ")
+	@GeneratedValue(generator = "HISTORICO_DESCONTO_PRODUTO_EDICAO_SEQ")
 	@Column(name = "ID")
 	private Long id;
 	
-	@Column(name = "DESCONTO", precision=5, scale=2)
+	@Column(name = "DESCONTO")
 	private BigDecimal desconto;
 	
 	@Temporal(TemporalType.TIMESTAMP)
@@ -43,13 +45,20 @@ public class HistoricoDescontoFornecedor implements Serializable {
 	private Usuario usuario;
 	
 	@ManyToOne(optional = false)
+	@JoinColumn(name = "DISTRIBUIDOR_ID")
+	private Distribuidor distribuidor;
+	
+	@ManyToOne(optional = false)
 	@JoinColumn(name = "FORNECEDOR_ID")
 	private Fornecedor fornecedor;
 	
 	@ManyToOne(optional = false)
-	@JoinColumn(name = "DISTRIBUIDOR_ID")
-	private Distribuidor distribuidor;
-	
+	@JoinColumn(name = "PRODUTO_ID")
+	private Produto produto;
+
+	@ManyToOne(optional = false)
+	@JoinColumn(name = "PRODUTO_EDICAO_ID")
+	private ProdutoEdicao produtoEdicao;
 
 	/**
 	 * @return the id
@@ -129,4 +138,26 @@ public class HistoricoDescontoFornecedor implements Serializable {
 		this.fornecedor = fornecedor;
 	}
 
+	/**
+	 * @return the produtoEdicao
+	 */
+	public Produto getProduto() {
+		return produto;
+	}
+
+	/**
+	 * @param produtoEdicao the produtoEdicao to set
+	 */
+	public void setProduto(Produto produto) {
+		this.produto = produto;
+	}
+
+	public ProdutoEdicao getProdutoEdicao() {
+		return produtoEdicao;
+	}
+
+	public void setProdutoEdicao(ProdutoEdicao produtoEdicao) {
+		this.produtoEdicao = produtoEdicao;
+	}
+	
 }

@@ -3,24 +3,20 @@ package br.com.abril.nds.model.cadastro.desconto;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.seguranca.Usuario;
 
@@ -52,28 +48,12 @@ public class HistoricoDescontoProduto implements Serializable {
 	private Distribuidor distribuidor;
 	
 	@ManyToOne(optional = false)
+	@JoinColumn(name = "FORNECEDOR_ID")
+	private Fornecedor fornecedor;
+	
+	@ManyToOne(optional = false)
 	@JoinColumn(name = "PRODUTO_ID")
 	private Produto produto;
-	
-	@ManyToMany
-	@JoinTable(name = "DESCONTO_PRODUTO_COTA", joinColumns = {@JoinColumn(name = "DESCONTO_PRODUTO_ID")}, 
-	inverseJoinColumns = {@JoinColumn(name = "COTA_ID")})
-	private Set<Cota> cotas = new HashSet<Cota>();
-	
-
-	/**
-	 * @return the cotas
-	 */
-	public Set<Cota> getCotas() {
-		return cotas;
-	}
-
-	/**
-	 * @param cotas the cotas to set
-	 */
-	public void setCotas(Set<Cota> cotas) {
-		this.cotas = cotas;
-	}
 
 	/**
 	 * @return the id
@@ -143,6 +123,14 @@ public class HistoricoDescontoProduto implements Serializable {
 	 */
 	public void setDistribuidor(Distribuidor distribuidor) {
 		this.distribuidor = distribuidor;
+	}
+
+	public Fornecedor getFornecedor() {
+		return fornecedor;
+	}
+
+	public void setFornecedor(Fornecedor fornecedor) {
+		this.fornecedor = fornecedor;
 	}
 
 	/**

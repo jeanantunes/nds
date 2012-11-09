@@ -44,10 +44,8 @@ public class DescontoProdutoRepositoryImpl extends AbstractRepositoryModel<Desco
 	@Override
 	public List<TipoDescontoProdutoDTO> buscarTipoDescontoProduto(FiltroTipoDescontoProdutoDTO filtro) {
 
-
 		StringBuilder hql = new StringBuilder();
-
-		//		case when pe.desconto is null or pe.desconto = 0 then (case when p.desconto is null then 0 else p.desconto end) else pe.desconto end		
+		
 		hql .append("select new ")
 			.append(TipoDescontoProdutoDTO.class.getCanonicalName())
 			.append("(p.codigo, p.nome, pe.numeroEdicao, coalesce(pe.desconto, p.desconto, 0), p.dataDesativacao) ")

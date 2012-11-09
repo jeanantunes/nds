@@ -26,6 +26,7 @@ import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 
 import br.com.abril.nds.model.Origem;
+import br.com.abril.nds.model.cadastro.desconto.HistoricoDescontoFornecedor;
 
 /**
  * @author francisco.garcia
@@ -96,8 +97,9 @@ public class Fornecedor implements Serializable {
 	@Column(name = "EMAIL_NFE")
 	private String emailNfe;
 	
-	@Column(name = "DESCONTO", precision=5, scale=2)
-	private BigDecimal desconto;
+	@Cascade(value = org.hibernate.annotations.CascadeType.SAVE_UPDATE)
+	@JoinColumn(name = "DESCONTO_ID", unique=true, nullable=true)
+	private HistoricoDescontoFornecedor desconto;
 
 	/**
 	 * Fornecedores associados à Cota
@@ -258,11 +260,11 @@ public class Fornecedor implements Serializable {
 		this.cotas = cotas;
 	}
 	
-	public BigDecimal getDesconto() {
+	public HistoricoDescontoFornecedor getDesconto() {
 		return desconto;
 	}
 
-	public void setDesconto(BigDecimal desconto) {
+	public void setDesconto(HistoricoDescontoFornecedor desconto) {
 		this.desconto = desconto;
 	}
 

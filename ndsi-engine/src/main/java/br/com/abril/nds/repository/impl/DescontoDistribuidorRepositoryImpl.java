@@ -34,13 +34,14 @@ public class DescontoDistribuidorRepositoryImpl extends AbstractRepositoryModel<
 		hql.append("select 0L as sequencial ");
 		hql.append(", 1L as idTipoDesconto ");
 		hql.append(", 'Anonimo' as usuario ");
-		hql.append(", f.desconto as desconto ");
+		hql.append(", f.desconto.desconto as desconto ");
 		hql.append(", f.juridica.razaoSocial as fornecedor ");
 		hql.append(", 'Geral' as descTipoDesconto ");
 		hql.append("from Fornecedor f ");
+		hql.append("where f.desconto is not null  ");
 		
 		if(filtro.getIdFornecedores()!=null && !filtro.getIdFornecedores().isEmpty()) {
-			hql.append(" where f.id in (:idFornecedores) ");
+			hql.append(" and f.id in (:idFornecedores) ");
 		}
 		
 		hql.append(getOrdenacao(filtro));
