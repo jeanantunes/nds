@@ -89,10 +89,10 @@ public class ParametroDistribuicaoCota implements Serializable {
 	@Column(name = "PROCURACAO_RECEBIDA")
     private Boolean procuracaoRecebida;
 	
-    @Column(name = "TAXA_FIXA", precision = 16, scale = 4)
+    @Column(name = "TAXA_FIXA", precision = 16, scale = 2)
     private BigDecimal taxaFixa;
     
-    @Column(name = "PERCENTUAL_FATURAMENTO", precision = 16, scale = 4)
+    @Column(name = "PERCENTUAL_FATURAMENTO", precision = 16, scale = 2)
     private BigDecimal percentualFaturamento;
 
     @Column(name = "INICIO_PERIODO_CARENCIA")
