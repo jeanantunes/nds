@@ -191,7 +191,11 @@
 			<artifactId>spring-security-taglibs</artifactId>
 			<version>${org.springframework.version}</version>
 		</dependency>
-
+		<dependency>
+			<groupId>org.ektorp</groupId>
+			<artifactId>org.ektorp.spring</artifactId>
+		</dependency>
+            
 	</dependencies>
 
 	<build>

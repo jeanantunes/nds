@@ -93,7 +93,7 @@ public class CadastroCalendarioController {
 			String dtFeriado, 
 			String descTipoFeriado, 
 			String descricao,
-			Long idLocalidade) {
+			String idLocalidade) {
 		
 		List<String> msgErro = new ArrayList<String>();
 		
@@ -114,7 +114,7 @@ public class CadastroCalendarioController {
 		}
 		
 		if(tipoFeriado != null && TipoFeriado.MUNICIPAL.equals(tipoFeriado)) {
-			if(idLocalidade == null || idLocalidade < 0) {
+			if(idLocalidade == null) {
 				msgErro.add("Nenhum município associado ao feriado Municipal.");
 			}
 		}
@@ -128,7 +128,7 @@ public class CadastroCalendarioController {
 	public void excluirCadastroFeriado(
 			String dtFeriado, 
 			String descTipoFeriado, 
-			Long idLocalidade,
+			String idLocalidade,
 			boolean indRepeteAnualmente) {
 		
 		validarCadastroFeriado(dtFeriado, descTipoFeriado, "-", idLocalidade);
@@ -151,7 +151,7 @@ public class CadastroCalendarioController {
 			String dtFeriado, 
 			String descTipoFeriado, 
 			String descricao,
-			Long idLocalidade,
+			String idLocalidade,
 			boolean indOpera, 
 			boolean indEfetuaCobranca,
 			boolean indRepeteAnualmente			

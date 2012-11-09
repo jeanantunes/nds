@@ -2233,8 +2233,8 @@ public class Fixture {
 		feriado.setData(data);
 		feriado.setDescricao(descricao);
 		feriado.setTipoFeriado(tipoFeriado);
-		feriado.setUnidadeFederacao(unidadeFederacao);
-		feriado.setLocalidade(localidade);
+		feriado.setUnidadeFederacao("SP");
+		feriado.setLocalidade("São Paulo");
 		
 		feriado.setIndEfetuaCobranca(indEfetuaCobranca);
 		feriado.setIndOpera(indOpera);

@@ -68,11 +68,11 @@ public class StartBatch {
 			}
 		}
 
-		if (args[2].toString().equals("-icdRetorno")) {
+		if (args.length == 3 && args[2].toString().equals("-icdRetorno")) {
 			
 			List<String> distribuidores = executor.recuperaDistribuidores(codigoDistribuidor);
 			
-			executor.executarInterfaceDB(distribuidores);
+			executor.executarRetornosIcd(distribuidores);
 		} else {
 			executor.executarInterface(usuario, interfaceEnum, codigoDistribuidor);
 		}

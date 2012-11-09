@@ -16,7 +16,7 @@ public class EnderecoVO extends IntegracaoDocument implements Serializable {
 	
 	private Long codigoCidadeIBGE;
 	
-	private Long idLocalidade;
+	private String idLocalidade;
 	
 	private String localidade;
 	
@@ -24,7 +24,7 @@ public class EnderecoVO extends IntegracaoDocument implements Serializable {
 	
 	private String tipoLogradouro;
 	
-	private Long codigoBairro;
+	private String codigoBairro;
 	
 	private String bairro;
 	
@@ -80,14 +80,14 @@ public class EnderecoVO extends IntegracaoDocument implements Serializable {
 	/**
 	 * @return the idLocalidade
 	 */
-	public Long getIdLocalidade() {
+	public String getIdLocalidade() {
 		return idLocalidade;
 	}
 
 	/**
 	 * @param idLocalidade the idLocalidade to set
 	 */
-	public void setIdLocalidade(Long idLocalidade) {
+	public void setIdLocalidade(String idLocalidade) {
 		this.idLocalidade = idLocalidade;
 	}
 
@@ -136,14 +136,14 @@ public class EnderecoVO extends IntegracaoDocument implements Serializable {
 	/**
 	 * @return the codigoBairro
 	 */
-	public Long getCodigoBairro() {
+	public String getCodigoBairro() {
 		return codigoBairro;
 	}
 
 	/**
 	 * @param codigoBairro the codigoBairro to set
 	 */
-	public void setCodigoBairro(Long codigoBairro) {
+	public void setCodigoBairro(String codigoBairro) {
 		this.codigoBairro = codigoBairro;
 	}
 

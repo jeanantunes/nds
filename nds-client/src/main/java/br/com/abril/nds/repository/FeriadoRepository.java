@@ -25,7 +25,7 @@ public interface FeriadoRepository extends Repository<Feriado, Long> {
 	 * 
 	 * @return  {@link List<Feriado>}
 	 */
-	public List<Feriado> obterFeriados(Date data, TipoFeriado tipoFeriado, String uf, Long idLocalidade);
+	public List<Feriado> obterFeriados(Date data, TipoFeriado tipoFeriado, String uf, String idLocalidade);
 
 	
 	/**

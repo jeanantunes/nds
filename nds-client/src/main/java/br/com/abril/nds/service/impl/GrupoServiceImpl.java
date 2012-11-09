@@ -138,12 +138,12 @@ public class GrupoServiceImpl implements GrupoService {
 
 	@Override
 	@Transactional
-	public void salvarGrupoMunicipios(Long idGrupo, List<Long> idMunicipios,
+	public void salvarGrupoMunicipios(Long idGrupo, List<String> idMunicipios,
 			String nome, List<DiaSemana> diasSemana) {
 		
 		HashSet<Localidade> municipios = new HashSet<Localidade>();
 		
-		for(Long id : idMunicipios) {
+		for(String id : idMunicipios) {
 			municipios.add(localidadeRepository.buscarPorId(id));
 		}
 		

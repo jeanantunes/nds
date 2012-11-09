@@ -150,7 +150,11 @@
 		<dependency>
 			<groupId>org.lightcouch</groupId>
 			<artifactId>lightcouch</artifactId> 
-			</dependency>
+		</dependency>
+		<dependency>
+			<groupId>org.ektorp</groupId>
+			<artifactId>org.ektorp.spring</artifactId>
+		</dependency>			
 		<dependency>
 			<groupId>br.com.abril</groupId>
 			<artifactId>ndsi-canonical</artifactId>

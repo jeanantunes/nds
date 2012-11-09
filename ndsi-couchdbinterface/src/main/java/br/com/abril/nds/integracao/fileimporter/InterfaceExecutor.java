@@ -6,6 +6,8 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -16,6 +18,12 @@ import java.util.Scanner;
 import org.apache.commons.io.IOCase;
 import org.apache.commons.io.filefilter.RegexFileFilter;
 import org.apache.commons.lang.StringUtils;
+import org.ektorp.CouchDbConnector;
+import org.ektorp.CouchDbInstance;
+import org.ektorp.UpdateConflictException;
+import org.ektorp.http.HttpClient;
+import org.ektorp.http.StdHttpClient;
+import org.ektorp.impl.StdCouchDbInstance;
 import org.lightcouch.CouchDbClient;
 import org.lightcouch.CouchDbException;
 import org.lightcouch.NoDocumentException;
@@ -54,8 +62,6 @@ import br.com.abril.nds.model.dne.Logradouro;
 import br.com.abril.nds.model.dne.UnidadeFederacao;
 
 import com.ancientprogramming.fixedformat4j.format.FixedFormatManager;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.healthmarketscience.jackcess.Database;
 import com.healthmarketscience.jackcess.Table;
 
@@ -92,7 +98,7 @@ public class InterfaceExecutor {
 	
 	@Autowired
 	private CouchDbProperties couchDbProperties;
-	
+		
 	private boolean processadoComSucesso = true;
 
 	private String diretorio;
@@ -103,6 +109,23 @@ public class InterfaceExecutor {
 		ClassPathXmlApplicationContext classPathXmlApplicationContext = new ClassPathXmlApplicationContext(SPRING_FILE_LOCATION);
 		classPathXmlApplicationContext.registerShutdownHook();
 		applicationContext = classPathXmlApplicationContext;
+	}
+
+	
+	public CouchDbConnector initCouchDbClient(String dataBaseName) throws MalformedURLException {
+		HttpClient authenticatedHttpClient = new StdHttpClient.Builder()
+                .url(
+                		new URL(
+                		couchDbProperties.getProtocol(), 
+                		couchDbProperties.getHost(), 
+                		couchDbProperties.getPort(), 
+                		"")
+                	)
+                .username(couchDbProperties.getUsername())
+                .password(couchDbProperties.getPassword())
+                .build();
+		CouchDbInstance dbInstance = new StdCouchDbInstance(authenticatedHttpClient);
+		return dbInstance.createConnector(dataBaseName, true);				
 	}
 	
 	
@@ -156,7 +179,7 @@ public class InterfaceExecutor {
 		}
 	}
 	@Transactional
-	public void executarInterfaceDB(List<String> distribuidores) {		 
+	public void executarRetornosIcd(List<String> distribuidores) {		 
 		
 
 		for (String distribuidor: distribuidores) {
@@ -226,6 +249,12 @@ public class InterfaceExecutor {
 		this.pastaInterna = parametroSistemaRepository.getParametro("INTERNAL_DIR");
 		List<String> distribuidores = this.getDistribuidores(this.diretorio, codigoDistribuidor);
 		return distribuidores;
+	}
+
+	private void executarInterfaceDB(InterfaceEnum interfaceEnum,
+			InterfaceExecucao interfaceExecucao, LogExecucao logExecucao,
+			Long codigoDistribuidor, String nomeUsuario) {
+		
 	}
 
 	/**
@@ -338,7 +367,12 @@ public class InterfaceExecutor {
 	private void executarInterfaceCorreios() {
 		
 		String diretorio = parametroSistemaRepository.getParametro("CORREIOS_DIR");
-		CouchDbClient couchDbClient = this.getCouchDbClientInstance("correios");		
+		CouchDbConnector couchDbClient = null;
+		try {
+			couchDbClient = initCouchDbClient("correios");
+		} catch (MalformedURLException e1) {
+			return;
+		}
 		
 		try {
 			
@@ -348,8 +382,7 @@ public class InterfaceExecutor {
 			Table tblLogradouro = db.getTable("LOG_LOGRADOURO");
 			Table tblLocalidade = db.getTable("LOG_LOCALIDADE");
 			Table tblUf = db.getTable("LOG_FAIXA_UF");
-			
-			
+			/*
 			for(Map<String, Object> row : tblBairro) {
 					
 				if(row != null && !row.isEmpty()) {
@@ -364,9 +397,12 @@ public class InterfaceExecutor {
 					l.set_id( "localidade/" + (row.get("LOC_NU") != null ? row.get("LOC_NU").toString() : "" ));
 					doc.setLocalidade(l);
 					try {
-						couchDbClient.batch(doc);
-					} catch (CouchDbException ce) {
-						
+						couchDbClient.create(doc);
+					} catch (UpdateConflictException ex) {
+						try {
+							couchDbClient.update(doc);
+						} catch (UpdateConflictException exx) {
+						}
 					}
 					
 				}
@@ -398,15 +434,18 @@ public class InterfaceExecutor {
 				Bairro bf = new Bairro();
 				bf.set_id("bairro/" + (row.get("BAI_NU_FIM") != null ? row.get("BAI_NU_FIM").toString() : "" ));
 				doc.setBairroFinal(bf);
-				
+
 				try {
-					couchDbClient.batch(doc);
-				} catch (CouchDbException ce) {
-					
+					couchDbClient.create(doc);
+				} catch (UpdateConflictException ex) {
+					try {
+						couchDbClient.update(doc);
+					} catch (UpdateConflictException exx) {
+					}
 				}
 			}
 			
-			
+			*/
 			for(Map<String, Object> row : tblLocalidade) {
 				 
 				Localidade doc = new Localidade();
@@ -421,14 +460,17 @@ public class InterfaceExecutor {
 				UnidadeFederacao u = new UnidadeFederacao();
 				u.set_id("uf/" + (row.get("UFE_SG") != null ? row.get("UFE_SG").toString() : "" ));
 				doc.setUnidadeFederacao(u);
+
 				try {
-					couchDbClient.batch(doc);
-				} catch (CouchDbException ce) {
-					
+					couchDbClient.create(doc);
+				} catch (UpdateConflictException ex) {
+					try {
+						couchDbClient.update(doc);
+					} catch (UpdateConflictException exx) {
+					}
 				}
 			}
-
-			
+/*
 			for(Map<String, Object> row : tblUf) {
 								
 				
@@ -438,13 +480,17 @@ public class InterfaceExecutor {
 				doc.set_id("uf/" + (row.get("UFE_SG") != null ? row.get("UFE_SG").toString() : "" ));
 				doc.setFaixaCepInicial((row.get("UFE_CEP_INI") != null ? row.get("UFE_CEP_INI").toString() : "" ));
 				doc.setFaixaCepFinal((row.get("UFE_CEP_FIM") != null ? row.get("UFE_CEP_FIM").toString() : "" ));
+
 				try {
-					couchDbClient.batch(doc);
-				} catch (CouchDbException ce) {
-					
+					couchDbClient.create(doc);
+				} catch (UpdateConflictException ex) {
+					try {
+						couchDbClient.update(doc);
+					} catch (UpdateConflictException exx) {
+					}
 				}
 			}
-						
+				*/		
 
 		} catch (Throwable e) {
 			throw new RuntimeException(e);
