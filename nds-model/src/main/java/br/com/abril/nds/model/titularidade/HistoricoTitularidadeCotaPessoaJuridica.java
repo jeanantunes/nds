@@ -37,7 +37,7 @@ public class HistoricoTitularidadeCotaPessoaJuridica implements HistoricoTitular
     /**
      * Inscrição estadual da PJ 
      */
-    @Column(name = "INSC_ESTADUAL", length=18)
+    @Column(name = "INSC_ESTADUAL", length=20)
     private String inscricaoEstadual;
     
     /**
