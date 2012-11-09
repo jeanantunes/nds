@@ -105,11 +105,15 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 			List<PessoaFisica> pessoas = (List<PessoaFisica>) query.list();
 			PessoaFisica pessoaFis = null;
 
+			String cpf = input.getCpfCNPJ();
+
 			if (pessoas.isEmpty()) {
 
 				pessoaFis = new PessoaFisica();
 				pessoaFis.setNome(input.getNomeJornaleiro());
-				pessoaFis.setCpf(input.getCpfCNPJ());
+				
+				// Corrigido para retirar os 3 "0"s antes do número do CPF (Realizado por Cesar Pop Punk)
+				pessoaFis.setCpf(cpf.substring(3, cpf.length()));
 				getSession().persist(pessoaFis);
 
 				pessoa = pessoaFis;
@@ -124,7 +128,8 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 					}
 				}
 
-				pessoaFis.setCpf(input.getCpfCNPJ());
+				// Corrigido para retirar os 3 "0"s antes do número do CPF (Realizado por Cesar Pop Punk)
+				pessoaFis.setCpf(cpf.substring(3, cpf.length()));
 				pessoaFis.setNome(input.getNomeJornaleiro());
 				pessoa = pessoaFis;
 			}
