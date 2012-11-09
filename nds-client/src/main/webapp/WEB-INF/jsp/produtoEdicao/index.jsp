@@ -71,7 +71,7 @@ fieldset {
 						<table class="prodsPesqGrid"></table>
 					</fieldset>
 					
-					<span class="bt_novos"><a href="javascript:;" onclick="produtoEdicaoController.salvarProdutoEdicao(false);"><img src="${pageContext.request.contextPath}/images/ico_add.gif" border="0" /></a></span>
+					<span class="bt_novos"><a href="javascript:;" onclick="produtoEdicaoController.salvarProdutoEdicao(false);" ><img src="${pageContext.request.contextPath}/images/ico_add.gif" border="0" /><b> Incluir Novo</b></a></span>
 				</div>
 				
 				<div class="ldForm">
@@ -218,7 +218,7 @@ fieldset {
 						<table class="prodsPesqGrid"></table>
 					</fieldset>
 					
-					<span class="bt_novos"><a href="javascript:;" onclick="produtoEdicaoController.salvarProdutoEdicao();" rel="tipsy" title="Incluir Novo Produto"><img src="${pageContext.request.contextPath}/images/ico_add.gif" border="0" /></a></span>
+					<span class="bt_novos"><a href="javascript:;" onclick="produtoEdicaoController.salvarProdutoEdicao(false);" rel="tipsy" title="Incluir Novo Produto" ><img src="${pageContext.request.contextPath}/images/ico_add.gif" border="0" /><b> Incluir Novo</b></a></span>
 				</div>
 				
 				<div class="ldForm">
@@ -338,7 +338,7 @@ fieldset {
 						<table class="prodsPesqGrid"></table>
 					</fieldset>
 					
-					<span class="bt_novos"><a href="javascript:;" onclick="produtoEdicaoController.salvarProdutoEdicao();" rel="tipsy" title="Incluir Novo Produto"><img src="${pageContext.request.contextPath}/images/ico_add.gif" border="0" /></a></span>
+					<span class="bt_novos"><a href="javascript:;" onclick="produtoEdicaoController.salvarProdutoEdicao(false);" rel="tipsy" title="Incluir Novo Produto" ><img src="${pageContext.request.contextPath}/images/ico_add.gif" border="0" /><b> Incluir Novo</b></a></span>
 				</div>
 				
 				<div class="ldForm">
