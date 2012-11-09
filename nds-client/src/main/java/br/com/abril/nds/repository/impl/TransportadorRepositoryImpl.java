@@ -42,7 +42,7 @@ public class TransportadorRepositoryImpl extends
 		
 		if (filtro.getCnpj() != null && !filtro.getCnpj().isEmpty()){
 			
-			hql.append(" and (tr.pessoaJuridica.cnpj = :cnpj) ");
+			hql.append(" and (tr.pessoaJuridica.cnpj like :cnpj) ");
 		}
 		
 		consultaTransportadorDTO.setQuantidadeRegistros(this.obterQuantidadeRegistros(hql.toString(), filtro));
@@ -111,7 +111,7 @@ public class TransportadorRepositoryImpl extends
 		
 		if (filtro.getCnpj() != null && !filtro.getCnpj().isEmpty()){
 			
-			query.setParameter("cnpj", filtro.getCnpj());
+			query.setParameter("cnpj", "%" + filtro.getCnpj().replaceAll("[.-/]", "") + "%");
 		}
 	}
 	
@@ -137,7 +137,7 @@ public class TransportadorRepositoryImpl extends
 		hql.append(CotaAtendidaTransportadorVO.class.getCanonicalName())
 		   .append("(cota.numeroCota, cota.pessoa.nome, cota.box.nome || '-' || cota.box.codigo, ")
 		   .append(" assoc.rota.roteiro.descricaoRoteiro, assoc.rota.descricaoRota, ")
-		   .append(" coalesce(cota.parametroDistribuicao.taxaFixa, cota.parametroDistribuicao.percentualFaturamento || '%'))")
+		   .append(" coalesce(cota.parametroDistribuicao.taxaFixa, cota.parametroDistribuicao.percentualFaturamento))")
 		   .append(" from AssociacaoVeiculoMotoristaRota assoc ")
 		   .append(" join assoc.rota rota ")
 		   .append(" join rota.rotaPDVs rotaPDV ")
