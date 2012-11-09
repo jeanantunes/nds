@@ -140,6 +140,8 @@ var fornecedorController = $.extend(true,{
 					
 					fornecedorController.limparCamposModal();
 					
+					$("#fornecedorController-cnpj", fornecedorController.workspace).prop('disabled', false);
+					
 					$.postJSON(
 						 contextPath +"/cadastro/fornecedor/novoCadastro",
 						null,
@@ -388,7 +390,7 @@ var fornecedorController = $.extend(true,{
 						
 						FORNECEDOR.bloquearCamposFormTelefone(indBloqueiaCamposEdicaoFornecedor);
 
-						
+						$("#fornecedorController-cnpj", fornecedorController.workspace).prop('disabled', true);
 						
 					},
 					function(result) {
