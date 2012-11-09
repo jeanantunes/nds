@@ -50,7 +50,6 @@ import br.com.abril.nds.model.cadastro.ParametroSistema;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
-import br.com.abril.nds.model.cadastro.TipoEntrega;
 import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
@@ -961,8 +960,6 @@ public class CotaController {
 			numeroCpfCnpj = numeroCpfCnpj.replace(".", "").replace("-", "").replace("/", "");
 		}
 		
-		validarParametrosPesquisa(numCota,nomeCota,numeroCpfCnpj, logradouro, bairro, municipio);
-		
 		nomeCota = PessoaUtil.removerSufixoDeTipo(nomeCota);
 		
 		FiltroCotaDTO filtro = new FiltroCotaDTO( numCota,nomeCota,numeroCpfCnpj, logradouro, bairro, municipio );
@@ -1117,28 +1114,6 @@ public class CotaController {
 	private String tratarValor(Object valor){
 		
 		return (valor == null)?"":valor.toString();
-	}
-	
-	/**
-	 * Valida os parâmetros de pesquisa da consulta de cotas cadastradas
-	 * 
-	 * @param numCota - número da cota
-	 * @param nomeCota - nome da cota
-	 * @param numeroCpfCnpj - número do CNPJ ou CPF
-	 * 
-	 */
-	private void validarParametrosPesquisa(Integer numCota,String nomeCota, String numeroCpfCnpj,
-			String logradouro, String bairro, String municipio) {
-		
-		if(numCota == null 
-				&& (nomeCota == null || nomeCota.isEmpty())
-				&& (numeroCpfCnpj == null || numeroCpfCnpj.isEmpty())
-				&& (logradouro == null || logradouro.isEmpty())
-				&& (bairro == null || bairro.isEmpty())
-				&& (municipio == null || municipio.isEmpty())){
-			
-			throw new ValidacaoException(TipoMensagem.WARNING,"Pelo menos um dos filtros deve ser informado!");
-		}
 	}
 	
 	/**
