@@ -964,7 +964,7 @@ public class CotaController {
 		nomeCota = PessoaUtil.removerSufixoDeTipo(nomeCota);
 		
 		Integer numeroCota = (numCota!= null)?numCota.intValue():null;
-		
+		    
 		FiltroCotaDTO filtro = new FiltroCotaDTO(numeroCota ,nomeCota,numeroCpfCnpj, logradouro, bairro, municipio );
 		
 		configurarPaginacaoPesquisa(filtro, sortorder, sortname, page, rp);
