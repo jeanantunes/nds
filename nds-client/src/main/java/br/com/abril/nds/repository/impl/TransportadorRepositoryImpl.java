@@ -135,7 +135,7 @@ public class TransportadorRepositoryImpl extends
 		
 		StringBuilder hql = new StringBuilder("select new ");
 		hql.append(CotaAtendidaTransportadorVO.class.getCanonicalName())
-		   .append("(cota.numeroCota, cota.pessoa.nome, cota.box.nome || '-' || cota.box.codigo, ")
+		   .append("(cota.numeroCota, CASE WHEN cota.pessoa.class = 'J' THEN cota.pessoa.razaoSocial ELSE cota.pessoa.nome END, cota.box.nome || '-' || cota.box.codigo, ")
 		   .append(" assoc.rota.roteiro.descricaoRoteiro, assoc.rota.descricaoRota, ")
 		   .append(" coalesce(cota.parametroDistribuicao.taxaFixa, cota.parametroDistribuicao.percentualFaturamento))")
 		   .append(" from AssociacaoVeiculoMotoristaRota assoc ")
