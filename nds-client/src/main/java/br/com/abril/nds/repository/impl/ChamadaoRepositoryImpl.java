@@ -376,7 +376,7 @@ public class ChamadaoRepositoryImpl extends AbstractRepositoryModel<Cota,Long> i
 //	        .append(") ")
 // Comentado Por Eduardo "PunkRock" Castro em 09-11-2012 -> DD-MM-YYYY	
 	    	
-	        .append("lancamento.STATUS = :statusLancamentoBalanceadoRec ")
+	        .append("and lancamento.STATUS = :statusLancamentoBalanceadoRec ")
 
 	    	
 	        .append("and lancamento.TIPO_LANCAMENTO = :tipoLancamento ")
