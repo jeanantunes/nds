@@ -382,7 +382,7 @@ public class InterfaceExecutor {
 			Table tblLogradouro = db.getTable("LOG_LOGRADOURO");
 			Table tblLocalidade = db.getTable("LOG_LOCALIDADE");
 			Table tblUf = db.getTable("LOG_FAIXA_UF");
-			/*
+
 			for(Map<String, Object> row : tblBairro) {
 					
 				if(row != null && !row.isEmpty()) {
@@ -396,15 +396,8 @@ public class InterfaceExecutor {
 					Localidade l = new Localidade();
 					l.set_id( "localidade/" + (row.get("LOC_NU") != null ? row.get("LOC_NU").toString() : "" ));
 					doc.setLocalidade(l);
-					try {
-						couchDbClient.create(doc);
-					} catch (UpdateConflictException ex) {
-						try {
-							couchDbClient.update(doc);
-						} catch (UpdateConflictException exx) {
-						}
-					}
-					
+
+					saveOrUpdate(couchDbClient, doc);
 				}
 			}
 
@@ -435,24 +428,16 @@ public class InterfaceExecutor {
 				bf.set_id("bairro/" + (row.get("BAI_NU_FIM") != null ? row.get("BAI_NU_FIM").toString() : "" ));
 				doc.setBairroFinal(bf);
 
-				try {
-					couchDbClient.create(doc);
-				} catch (UpdateConflictException ex) {
-					try {
-						couchDbClient.update(doc);
-					} catch (UpdateConflictException exx) {
-					}
-				}
+				saveOrUpdate(couchDbClient, doc);
 			}
 			
-			*/
 			for(Map<String, Object> row : tblLocalidade) {
 				 
 				Localidade doc = new Localidade();
 				
 				doc.setTipoDocumento("localidade");					
 				doc.set_id("localidade/" + (row.get("LOC_NU") != null ? row.get("LOC_NU").toString() : "" ));
-				doc.setNome((row.get("LOG_NO") != null ? row.get("LOG_NO").toString() : "" ));
+				doc.setNome((row.get("LOC_NO") != null ? row.get("LOC_NO").toString() : "" ));
 				doc.setCep((row.get("CEP") != null ? row.get("CEP").toString() : "" ));
 				doc.setAbreviatura((row.get("LOG_NO_ABREV") != null ? row.get("LOG_NO_ABREV").toString() : "" ));
 				doc.setCodigoMunicipioIBGE((row.get("MUN_NU") != null ? Long.valueOf( row.get("MUN_NU").toString() ) : null ));
@@ -461,16 +446,9 @@ public class InterfaceExecutor {
 				u.set_id("uf/" + (row.get("UFE_SG") != null ? row.get("UFE_SG").toString() : "" ));
 				doc.setUnidadeFederacao(u);
 
-				try {
-					couchDbClient.create(doc);
-				} catch (UpdateConflictException ex) {
-					try {
-						couchDbClient.update(doc);
-					} catch (UpdateConflictException exx) {
-					}
-				}
+				saveOrUpdate(couchDbClient, doc);
 			}
-/*
+
 			for(Map<String, Object> row : tblUf) {
 								
 				
@@ -481,21 +459,26 @@ public class InterfaceExecutor {
 				doc.setFaixaCepInicial((row.get("UFE_CEP_INI") != null ? row.get("UFE_CEP_INI").toString() : "" ));
 				doc.setFaixaCepFinal((row.get("UFE_CEP_FIM") != null ? row.get("UFE_CEP_FIM").toString() : "" ));
 
-				try {
-					couchDbClient.create(doc);
-				} catch (UpdateConflictException ex) {
-					try {
-						couchDbClient.update(doc);
-					} catch (UpdateConflictException exx) {
-					}
-				}
+				saveOrUpdate(couchDbClient, doc);
 			}
-				*/		
 
 		} catch (Throwable e) {
 			throw new RuntimeException(e);
 		}
 		
+	}
+
+
+	private <T extends IntegracaoDocument> void saveOrUpdate(CouchDbConnector couchDbClient, T doc) {
+		try {
+			couchDbClient.create(doc);
+		} catch (UpdateConflictException ex) {
+			try {
+				doc.set_rev( couchDbClient.get(doc.getClass(), doc.get_id()).get_rev() );
+				couchDbClient.update(doc);
+			} catch (UpdateConflictException exx) {
+			}
+		}
 	}
 	
 	
