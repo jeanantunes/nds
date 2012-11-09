@@ -621,7 +621,9 @@ var produtoEdicaoController =$.extend(true,  {
 								var naoEditavel = result.origemInterface;
 
 							    $("#produtoEdicaoController-tabSegmentacao").toggle(naoEditavel);
-								
+									$("#produtoEdicaoController-precoVenda").attr("readonly", false);	
+								} else {
+									$("#produtoEdicaoController-precoVenda").attr("readonly", true);	
 								$('#produtoEdicaoController-dataRecolhimentoPrevisto').attr("readonly", naoEditavel);
 								$("#produtoEdicaoController-ped").attr("readonly", naoEditavel);		
 								$("#produtoEdicaoController-descricaoProduto").attr("readonly", naoEditavel);

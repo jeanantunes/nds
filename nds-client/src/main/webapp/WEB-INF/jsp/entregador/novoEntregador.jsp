@@ -23,7 +23,6 @@
 	
 			<div id="dadosCadastrais">
 				<fieldset style="width:765px; margin:5px;">
-					<legend>Entregador - Pessoa Física</legend>
 					<jsp:include page="dadosCadastraisPF.jsp" />
 					<jsp:include page="dadosCadastraisPJ.jsp" />
 				</fieldset>
