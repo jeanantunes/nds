@@ -348,7 +348,6 @@ var transportadorController = $.extend(true, {
 				sortorder : "asc"
 			});
 			$(".boxRotaGrid", transportadorController.workspace).flexOptions({url: contextPath + "/cadastro/transportador/carregarRotas"});
-			
 			$("#gridCotasAtendidas", transportadorController.workspace).flexigrid({
 				dataType : 'json',
 				preProcess: function(data){
@@ -427,6 +426,7 @@ var transportadorController = $.extend(true, {
 			$.mask.definitions['#']='[\-\.0-9]';
 			
 			$("#inscEstadual", transportadorController.workspace).mask("?##################",{placeholder:" "});
+			
 	},
 	
 	popup_novo_transportador : function() {
@@ -1058,20 +1058,23 @@ var transportadorController = $.extend(true, {
 						page: result[0].page, total: result[0].total, rows: result[0].rows
 					});
 				}
-				
+				$(".veiculosGrid", transportadorController.workspace).flexReload();
+
 				if (result[1] != ""){
 					
 					$(".motoristasGrid", transportadorController.workspace).flexAddData({
 						page: result[1].page, total: result[1].total, rows: result[1].rows
 					});
 				}
-				
+				$(".motoristasGrid", transportadorController.workspace).flexReload();
+
 				if (result[2] != ""){
 					
 					$(".boxRotaGrid", transportadorController.workspace).flexAddData({
 						page: result[2].page, total: result[2].total, rows: result[2].rows
 					});
 				}
+				$(".boxRotaGrid", transportadorController.workspace).flexReload();
 				
 				if (result[3] != ""){
 					
@@ -1079,8 +1082,11 @@ var transportadorController = $.extend(true, {
 						page: result[3].page, total: result[3].total, rows: result[3].rows
 					});
 				}
+				$(".associacaoGrid", transportadorController.workspace).flexReload();
+				
 			}
 		);
+		
 	},
 	
 	carregarCotasAtendidas : function(){
