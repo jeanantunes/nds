@@ -8,6 +8,7 @@ import br.com.abril.nds.dto.ValidacaoControleDeAprovacaoFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoGeracaoCobrancaFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoLancamentoFaltaESobraFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoRecebimentoFisicoFecharDiaDTO;
+import br.com.abril.nds.dto.fechamentodiario.ResumoEstoqueDTO;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
@@ -38,5 +39,9 @@ public interface FecharDiaRepository {
 			List<GrupoMovimentoEstoque> gruposMovimentoEstoque, 
 			List<GrupoMovimentoFinaceiro> gruposMovimentoFinanceiro,
 			Date dataMovimento, StatusAprovacao statusAprovacao);
+	
+	ResumoEstoqueDTO obterResumoEstoque(Date dataOperacaoDistribuidor);
+	
+	
 	
 }

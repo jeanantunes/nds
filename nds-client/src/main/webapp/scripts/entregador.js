@@ -1,5 +1,35 @@
 var entregadorController = $.extend(true, {
 	
+	preencherComboUF : function (ufSelecionado) {
+
+		var idComboUF = "#ufOrgaoEmissor";
+
+		$.postJSON(
+			contextPath + '/cadastro/endereco/obterDadosComboUF',
+			null,
+			function(result) {
+
+				$(idComboUF, Endereco.workspace).html("");
+				
+				$(idComboUF, Endereco.workspace).append('<option selected="selected"></option>');
+
+				$.each(result, function(index, value) {
+
+					var option = "<option value='" + value + "'>" + value + "</option>";
+
+					$(idComboUF, Endereco.workspace).append(option);	
+				});
+				
+				if (ufSelecionado) {
+					
+					$(idComboUF, Endereco.workspace).val(ufSelecionado);
+				}
+			},
+			null,
+			true
+		);
+	},
+	
 	obterCota: function(numeroCota, isPF) {
 		
 		var sufixo = "PJ";
@@ -82,6 +112,7 @@ var entregadorController = $.extend(true, {
 			$("#idEntregadorPF", this.workspace).val("");
 			$("#naoComissionadoPF", this.workspace).click();
 			$("#naoProcuracaoPF", this.workspace).click();
+			$("#percentualComissaoPF", this.workspace).mask("999,99");
 
 		} else {
 
@@ -93,6 +124,8 @@ var entregadorController = $.extend(true, {
 			$("#idEntregadorPJ", this.workspace).val("");
 			$("#naoComissionadoPJ", this.workspace).click();
 			$("#naoProcuracaoPJ", this.workspace).click();
+			$("#percentualComissaoPJ", this.workspace).mask("999,99");
+			
 		}
 		
 		$.postJSON(
@@ -117,6 +150,8 @@ var entregadorController = $.extend(true, {
 
 			$("#dadosCadastraisPF", this.workspace).show();
 			$("#dadosCadastraisPJ", this.workspace).hide();
+			
+			entregadorController.preencherComboUF();
 
 		} else {
 
@@ -233,15 +268,17 @@ var entregadorController = $.extend(true, {
 					$("#nomeEntregador", this.workspace).val(result.pessoaFisica.nome);
 					$("#apelido", this.workspace).val(result.pessoaFisica.apelido);
 					$("#cpf", this.workspace).val(result.pessoaFisica.cpf).mask("999.999.999-99");
-					$("#rg", this.workspace).val(result.pessoaFisica.rg).mask("99.999.999-9");
+					$("#rg", this.workspace).val(result.pessoaFisica.rg);
 					$("#dataNascimento", this.workspace).val(result.dataNascimentoEntregadorFormatada).mask("99/99/9999");
 					$("#orgaoEmissor", this.workspace).val(result.pessoaFisica.orgaoEmissor);
-					$("#ufOrgaoEmissor", this.workspace).val(result.pessoaFisica.ufOrgaoEmissor);
+					entregadorController.preencherComboUF(result.pessoaFisica.ufOrgaoEmissor);
+					//$("#ufOrgaoEmissor", this.workspace).val(result.pessoaFisica.ufOrgaoEmissor);
 					$("#estadoCivil", this.workspace).val(result.pessoaFisica.estadoCivil);
 					$("#sexo", this.workspace).val(result.pessoaFisica.sexo);
 					$("#nacionalidade", this.workspace).val(result.pessoaFisica.nacionalidade);
 					$("#natural", this.workspace).val(result.pessoaFisica.natural);
 					$("#emailPF", this.workspace).val(result.pessoaFisica.email);
+					$("#percentualComissaoPF", this.workspace).mask("999,99");
 					$("#percentualComissaoPF", this.workspace).val(result.entregador.percentualComissao);
 
 					if (result.entregador.comissionado) {
@@ -283,8 +320,10 @@ var entregadorController = $.extend(true, {
 					$("#razaoSocial", this.workspace).val(result.pessoaJuridica.razaoSocial);
 					$("#nomeFantasia", this.workspace).val(result.pessoaJuridica.nomeFantasia);
 					$("#cnpj", this.workspace).val(result.pessoaJuridica.cnpj).mask("99.999.999/9999-99");
-					$("#inscricaoEstadual", this.workspace).val(result.pessoaJuridica.inscricaoEstadual).mask("999.999.999.999");
+					//$("#inscricaoEstadual", this.workspace).val(result.pessoaJuridica.inscricaoEstadual).mask("999.999.999.999");
+					$("#inscricaoEstadual", this.workspace).val(result.pessoaJuridica.inscricaoEstadual);
 					$("#emailPJ", this.workspace).val(result.pessoaJuridica.email);
+					$("#percentualComissaoPJ", this.workspace).mask("999,99");
 					$("#percentualComissaoPJ", this.workspace).val(result.entregador.percentualComissao);
 
 					if (result.entregador.comissionado) {
@@ -362,8 +401,10 @@ var entregadorController = $.extend(true, {
 								result.mensagens.tipoMensagem, 
 								result.mensagens.listaMensagens, ""
 							);
+							
 						}
 					);
+					$( this, this.workspace ).dialog( "close" );
 				},
 				"Cancelar": function() {
 					$( this, this.workspace ).dialog( "close" );
@@ -707,8 +748,8 @@ var entregadorController = $.extend(true, {
 					$("#nomeEntregador", this.workspace).val(result.nome);
 					$("#apelido", this.workspace).val(result.apelido);
 					$("#cpf", this.workspace).val(result.cpf).mask("999.999.999-99");
-					$("#rg", this.workspace).val(result.rg).mask("99.999.999-9");
-					$("#dataNascimento", this.workspace).val(result.dataNascimento).mask("99/99/9999");
+					$("#rg", this.workspace).val(result.rg);
+					$("#dataNascimento", this.workspace).val(result.dataNascimento.$).mask("99/99/9999");
 					$("#orgaoEmissor", this.workspace).val(result.orgaoEmissor);
 					$("#ufOrgaoEmissor", this.workspace).val(result.ufOrgaoEmissor);
 					$("#estadoCivil", this.workspace).val(result.estadoCivil);
@@ -750,7 +791,7 @@ var entregadorController = $.extend(true, {
 		$("#rgProcuradorProcuracaoPF", this.workspace).mask("99.999.999-9");
 		$("#cnpj", this.workspace).mask("99.999.999/9999-99");
 		$("#rgProcuradorProcuracaoPJ", this.workspace).mask("99.999.999-9");
-		$("input[id^='percentualComissaoPF']", this.workspace).maskMoney({
+		/*$("input[id^='percentualComissaoPF']", this.workspace).maskMoney({
 			 thousands:'.', 
 			 decimal:',', 
 			 precision:2
@@ -759,7 +800,7 @@ var entregadorController = $.extend(true, {
 			 thousands:'.', 
 			 decimal:',', 
 			 precision:2
-		}); 
+		});*/ 
 	},
 	
 	showComissaoPJ: function(show) {
@@ -790,7 +831,7 @@ var entregadorController = $.extend(true, {
 					$("#razaoSocial", this.workspace).val(result.razaoSocial);
 					$("#nomeFantasia", this.workspace).val(result.nomeFantasia);
 					$("#cnpj", this.workspace).val(result.cnpj).mask("99.999.999/9999-99");
-					$("#inscricaoEstadual", this.workspace).val(result.inscricaoEstadual).mask("999.999.999.999");
+					//$("#inscricaoEstadual", this.workspace).val(result.inscricaoEstadual).mask("999.999.999.999");
 					$("#emailPJ", this.workspace).val(result.email);	
 
 				} else {

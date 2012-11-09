@@ -753,8 +753,7 @@ public class EnderecoController {
 		
 		List<EnderecoAssociacaoDTO> lista = (List<EnderecoAssociacaoDTO>) 
 				this.session.getAttribute(ATRIBUTO_SESSAO_LISTA_ENDERECOS_REMOVER);
-		
-		if (lista == null){
+				if (lista == null){
 			
 			lista = new ArrayList<EnderecoAssociacaoDTO>();
 		}

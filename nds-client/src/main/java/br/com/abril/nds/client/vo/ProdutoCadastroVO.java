@@ -2,6 +2,7 @@ package br.com.abril.nds.client.vo;
 
 import java.io.Serializable;
 
+import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.FormaComercializacao;
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.Produto;
@@ -55,6 +56,8 @@ public class ProdutoCadastroVO implements Serializable {
 	
 	private String temaSecundario;
 	
+	private Origem origem;
+	
 	/**
 	 * 
 	 */
@@ -70,7 +73,7 @@ public class ProdutoCadastroVO implements Serializable {
 			String tributacaoFiscal, String classeSocial, String sexo, 
 			String faixaEtaria, String formatoProduto, 
 			String tipoLancamento, String temaPrincipal, 
-			String temaSecundario) {
+			String temaSecundario, Origem origem) {
 		this.id = id;
 		this.codigo = codigo;
 		this.nome = nome;
@@ -93,6 +96,7 @@ public class ProdutoCadastroVO implements Serializable {
 		this.tipoLancamento = tipoLancamento;
 		this.temaPrincipal = temaPrincipal;
 		this.temaSecundario = temaSecundario;
+		this.origem = origem;
 		
 	}
 
@@ -404,6 +408,14 @@ public class ProdutoCadastroVO implements Serializable {
 		this.temaSecundario = temaSecundario;
 	}
 	
+	public Origem getOrigem() {
+		return origem;
+	}
+
+	public void setOrigem(Origem origem) {
+		this.origem = origem;
+	}
+
 	public static ProdutoCadastroVO parseProdutoToProdutoCadastroVO(Produto produto) {
 
 		if (produto == null) {
@@ -437,9 +449,10 @@ public class ProdutoCadastroVO implements Serializable {
 			produto.getSegmentacao()!=null?(produto.getSegmentacao().getFormatoProduto()!=null?produto.getSegmentacao().getFormatoProduto().name():""):"",
 			produto.getSegmentacao()!=null?(produto.getSegmentacao().getTipoLancamento()!=null?produto.getSegmentacao().getTipoLancamento().name():""):"",
 			produto.getSegmentacao()!=null?(produto.getSegmentacao().getTemaPrincipal()!=null?produto.getSegmentacao().getTemaPrincipal().name():""):"",
-			produto.getSegmentacao()!=null?(produto.getSegmentacao().getTemaSecundario()!=null?produto.getSegmentacao().getTemaSecundario().name():""):"");
+			produto.getSegmentacao()!=null?(produto.getSegmentacao().getTemaSecundario()!=null?produto.getSegmentacao().getTemaSecundario().name():""):"",
+			produto.getOrigem());
 		
 		return produtoCadastroVO;
 	}
-	
+
 }

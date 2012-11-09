@@ -58,6 +58,7 @@ import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.util.export.NDSFileHeader;
 import br.com.abril.nds.vo.PaginacaoVO;
+import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
@@ -555,9 +556,18 @@ public class FecharDiaController {
 		
 		if (hasPendenciaValidacao != null && !hasPendenciaValidacao) {
 			
-			this.fecharDiaService.processarControleDeAprovacao();
+			this.fecharDiaService.processarFechamentoDoDia(getUsuario(), getDataFechamento());
 			
 			this.session.removeAttribute(ATRIBUTO_SESSAO_POSSUI_PENDENCIAS_VALIDACAO);
+			
+			result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, " Fechamento do Dia efetuado com sucesso."),
+					Constantes.PARAM_MSGS).recursive().serialize();
+		}
+		else{
+			
+			result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING, "Fechamento do Dia não pode ser confirmado! Existem pendências em aberto!"),
+					Constantes.PARAM_MSGS).recursive().serialize();
+			
 		}
 	}
 

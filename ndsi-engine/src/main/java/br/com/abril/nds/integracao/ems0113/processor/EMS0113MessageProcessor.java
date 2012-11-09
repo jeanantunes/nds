@@ -51,8 +51,9 @@ public class EMS0113MessageProcessor extends AbstractRepository implements Messa
 			
 			if (null != descontoLogistica ) {
 								
-				descontoLogistica.setPercentualDesconto(input.getPercentDesconto().floatValue());
-				descontoLogistica.setPercentualPrestacaoServico(input.getPercentPrestServico().floatValue());
+				// Divisão por 100 Realizado em conjunto com Cesar Pop Punk
+				descontoLogistica.setPercentualDesconto(input.getPercentDesconto().floatValue()/100);
+				descontoLogistica.setPercentualPrestacaoServico(input.getPercentPrestServico().floatValue()/100);
 				descontoLogistica.setDataInicioVigencia(input.getDataInicioDesconto());
 				
 				getSession().merge(descontoLogistica);
@@ -61,8 +62,9 @@ public class EMS0113MessageProcessor extends AbstractRepository implements Messa
 				
 				descontoLogistica.setId(null);//auto increment
 				descontoLogistica.setTipoDesconto(input.getTipoDesconto());
-				descontoLogistica.setPercentualDesconto(input.getPercentDesconto().floatValue());
-				descontoLogistica.setPercentualPrestacaoServico(input.getPercentPrestServico().floatValue());
+				// Divisão por 100 Realizado em conjunto com Cesar Pop Punk
+				descontoLogistica.setPercentualDesconto(input.getPercentDesconto().floatValue()/100);
+				descontoLogistica.setPercentualPrestacaoServico(input.getPercentPrestServico().floatValue()/100);
 				descontoLogistica.setDataInicioVigencia(input.getDataInicioDesconto());
 				
 				getSession().persist(descontoLogistica);

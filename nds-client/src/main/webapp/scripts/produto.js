@@ -243,6 +243,21 @@ var produtoController = $.extend(true, {
 				produtoController.carregarProdutoEditado(id);		
 			}
 		);
+		
+		$("#codigoProdutoCadastro", this.workspace).disable();
+	},
+	
+	habilitarDesabilitarCamposInterface : function(habilitar) {
+		
+		$("#comboFornecedoresCadastro", produtoController.workspace).attr('disabled',!habilitar);
+		$("#segmentacaoClasseSocial", produtoController.workspace).attr('disabled',!habilitar);
+		$("#segmentacaoSexo", produtoController.workspace).attr('disabled',!habilitar);
+		$("#segmentacaoFaixaEtaria", produtoController.workspace).attr('disabled',!habilitar);
+		$("#segmentacaoFormato", produtoController.workspace).attr('disabled',!habilitar);
+		$("#segmentacaoTipoLancamento", produtoController.workspace).attr('disabled',!habilitar);
+		$("#segmentacaoTemaPrincipal", produtoController.workspace).attr('disabled',!habilitar);
+		$("#segmentacaoTemaSecundario", produtoController.workspace).attr('disabled',!habilitar);
+		
 	},
 	
 	carregarProdutoEditado : function(id) {
@@ -262,6 +277,9 @@ var produtoController = $.extend(true, {
 						$("#subGrupoEditorial", produtoController.workspace).val(result.subGrupoEditorial);
 						$("#comboEditor", produtoController.workspace).val(result.codigoEditor);
 						$("#comboFornecedoresCadastro", produtoController.workspace).val(result.codigoFornecedor);
+
+						produtoController.habilitarDesabilitarCamposInterface(!(result.origem == "INTERFACE"));
+						
 						$("#comboTipoDesconto", produtoController.workspace).val(result.tipoDesconto);
 						$("#comboTipoProdutoCadastro", produtoController.workspace).val(result.codigoTipoProduto);
 						$("#segmentacaoClasseSocial", produtoController.workspace).val(result.classeSocial);
@@ -359,7 +377,11 @@ var produtoController = $.extend(true, {
 			form: $("#dialog-novo", this.workspace).parents("form")
 		});
 
+		produtoController.habilitarDesabilitarCamposInterface(true);
+		
 		this.carregarNovoProduto(this.limparModalCadastro);
+		
+		$("#codigoProdutoCadastro", this.workspace).enable();
 	},
 
 	carregarNovoProduto : function(callback) {
