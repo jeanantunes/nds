@@ -64,8 +64,8 @@ var parametroCobrancaCotaController = $.extend(true, {
 	    $("#diaDoMes", this.workspace).numeric();
 	    $(".dataInputMask", this.workspace).mask("99/99/9999");
 	    $("#parametroCobrancaDateInicio", this.workspace).val(formatDateToString(new Date()));
-	    $("#primeiroDiaQuinzenal", this.workspace).numeric();
-	    $("#segundoDiaQuinzenal", this.workspace).numeric();
+	    $("#primeiroDiaQuinzenalParametroCobrancaCota", this.workspace).numeric();
+	    $("#segundoDiaQuinzenalParametroCobrancaCota", this.workspace).numeric();
 	},
 
     definirModoTela : function(modoTela, idHistorico) {
@@ -459,7 +459,7 @@ var parametroCobrancaCotaController = $.extend(true, {
 		$("#quinzenal", this.workspace).attr("checked", false);
 		
 		$("#_idFormaCobranca", this.workspace).val("");
-		$("#tipoCobranca", this.workspace).val("");
+		$("#tipoCobrancaParametroCobrancaCota", this.workspace).val("");
 		$("#tipoFormaCobranca", this.workspace).val("");
 		$("#banco", this.workspace).val("");
 		$("#numBanco", this.workspace).val("");
@@ -469,8 +469,8 @@ var parametroCobrancaCotaController = $.extend(true, {
 		$("#conta", this.workspace).val("");
 	    $("#contaDigito", this.workspace).val("");
 	    $("#diaDoMes", this.workspace).val("");
-	    $("#primeiroDiaQuinzenal", this.workspace).val("");
-	    $("#segundoDiaQuinzenal", this.workspace).val("");
+	    $("#primeiroDiaQuinzenalParametroCobrancaCota", this.workspace).val("");
+	    $("#segundoDiaQuinzenalParametroCobrancaCota", this.workspace).val("");
 
 		$("#recebeEmail", this.workspace).attr("checked", false);
 		$("#PS", this.workspace).attr("checked", false);
@@ -592,7 +592,7 @@ var parametroCobrancaCotaController = $.extend(true, {
 		//hidden
 		$("#_idFormaCobranca", this.workspace).val(resultado.idFormaCobranca);
 		
-		$("#tipoCobranca", this.workspace).val(resultado.tipoCobranca);
+		$("#tipoCobrancaParametroCobrancaCota", this.workspace).val(resultado.tipoCobranca);
         $("#tipoFormaCobranca", this.workspace).val(resultado.tipoFormaCobranca);
 		if (parametroCobrancaCotaController.isModoTelaCadastroCota()) {
             parametroCobrancaCotaController.carregarBancos(resultado.idBanco);
@@ -615,8 +615,8 @@ var parametroCobrancaCotaController = $.extend(true, {
 		$("#conta", this.workspace).val(resultado.conta);
 	    $("#contaDigito", this.workspace).val(resultado.contaDigito);
 	    $("#diaDoMes", this.workspace).val(resultado.diaDoMes);
-	    $("#primeiroDiaQuinzenal", this.workspace).val(resultado.primeiroDiaQuinzenal);
-	    $("#segundoDiaQuinzenal", this.workspace).val(resultado.segundoDiaQuinzenal);
+	    $("#primeiroDiaQuinzenalParametroCobrancaCota", this.workspace).val(resultado.primeiroDiaQuinzenal);
+	    $("#segundoDiaQuinzenalParametroCobrancaCota", this.workspace).val(resultado.segundoDiaQuinzenal);
 	    
 		
 		$("#recebeEmail", this.workspace).attr("checked", resultado.recebeEmail);
@@ -649,14 +649,14 @@ var parametroCobrancaCotaController = $.extend(true, {
 				   //hidden
 				   $("#_idFormaCobranca", this.workspace).val(resultado.idFormaCobranca);
 				
-				   $("#tipoCobranca", this.workspace).val(resultado.tipoCobranca);
+				   $("#tipoCobrancaParametroCobrancaCota", this.workspace).val(resultado.tipoCobranca);
 				   $("#tipoFormaCobranca", this.workspace).val(resultado.tipoFormaCobranca);
 				   if (resultado.diasDoMes.length == 1){
 				       $("#diaDoMes", this.workspace).val(resultado.diasDoMes[0]);
 				   }
 				   else if (resultado.diasDoMes.length > 1){
-					   $("#primeiroDiaQuinzenal", this.workspace).val(resultado.diasDoMes[0]);
-					   $("#segundoDiaQuinzenal", this.workspace).val(resultado.diasDoMes[1]);
+					   $("#primeiroDiaQuinzenalParametroCobrancaCota", this.workspace).val(resultado.diasDoMes[0]);
+					   $("#segundoDiaQuinzenalParametroCobrancaCota", this.workspace).val(resultado.diasDoMes[1]);
 				   }
 				   $("#PS", this.workspace).attr("checked", resultado.segunda);
 				   $("#PT", this.workspace).attr("checked", resultado.terca);
@@ -692,7 +692,7 @@ var parametroCobrancaCotaController = $.extend(true, {
 		var idCota = $("#_idCota", this.workspace).val();
 		var idParametroCobranca = $("#_idParametroCobranca", this.workspace).val();
 		
-		var tipoCobranca        = $("#tipoCobranca", this.workspace).val();
+		var tipoCobranca        = $("#tipoCobrancaParametroCobrancaCota", this.workspace).val();
 		var tipoFormaCobranca   = $("#tipoFormaCobranca", this.workspace).val();
 		var idBanco             = $("#banco", this.workspace).val();
 		var numBanco            = $("#numBanco", this.workspace).val();
@@ -702,8 +702,8 @@ var parametroCobrancaCotaController = $.extend(true, {
 		var conta               = $("#conta", this.workspace).val();
 		var contaDigito         = $("#contaDigito", this.workspace).val();
 		var diaDoMes            = $("#diaDoMes", this.workspace).val();
-		var primeiroDiaQuinzenal= $("#primeiroDiaQuinzenal", this.workspace).val();
-		var segundoDiaQuinzenal = $("#segundoDiaQuinzenal", this.workspace).val();
+		var primeiroDiaQuinzenal= $("#primeiroDiaQuinzenalParametroCobrancaCota", this.workspace).val();
+		var segundoDiaQuinzenal = $("#segundoDiaQuinzenalParametroCobrancaCota", this.workspace).val();
 
 		$("#recebeEmail", this.workspace).val(0);
 		//if (document.formularioDadosBoleto.recebeEmail.checked){
@@ -983,3 +983,4 @@ var parametroCobrancaCotaController = $.extend(true, {
 	}
 	
 }, BaseController);
+//@ sourceURL=parametroCobrancaCota.js
