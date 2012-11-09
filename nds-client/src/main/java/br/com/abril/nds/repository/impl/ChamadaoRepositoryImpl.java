@@ -367,12 +367,18 @@ public class ChamadaoRepositoryImpl extends AbstractRepositoryModel<Cota,Long> i
     		.append("on produtoFornecedor.PRODUTO_ID = produto.ID ")
 	            
 	    	.append("where estoqueProdCota.PRODUTO_EDICAO_ID = produtoEdicao.ID ") 
-	        .append("and ( ")
-	        .append("(lancamento.STATUS = :statusLancamentoBalanceadoRec ")
-	        .append("and lancamento.DATA_REC_PREVISTA > :dataRecolhimento) ")
-	        .append("or (lancamento.STATUS = :statusLancamentoExpedido) ")
-	        .append("or (lancamento.STATUS = :statusLancamentoEmBalanceamentoRec) ")
-	        .append(") ")
+
+//	        .append("and ( ")
+//	        .append("(lancamento.STATUS = :statusLancamentoBalanceadoRec ")
+//	        .append("and lancamento.DATA_REC_PREVISTA > :dataRecolhimento) ")
+//	        .append("or (lancamento.STATUS = :statusLancamentoExpedido) ")
+//	        .append("or (lancamento.STATUS = :statusLancamentoEmBalanceamentoRec) ")
+//	        .append(") ")
+// Comentado Por Eduardo "PunkRock" Castro em 09-11-2012 -> DD-MM-YYYY	
+	    	
+	        .append("lancamento.STATUS = :statusLancamentoBalanceadoRec ")
+
+	    	
 	        .append("and lancamento.TIPO_LANCAMENTO = :tipoLancamento ")
 	        .append("and (estoqueProdCota.QTDE_RECEBIDA - estoqueProdCota.QTDE_DEVOLVIDA) > 0 ")
 	        
