@@ -1,7 +1,5 @@
 package br.com.abril.nds.controllers.expedicao;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -105,27 +103,26 @@ public class MapaAbastecimentoController {
 		result.include("listaBoxes",carregarBoxes(boxService.buscarTodos(TipoBox.LANCAMENTO)));
 		result.include("listaRotas",carregarRota(rotaService.obterRotas()));
 		
-		result.include("listaProdutos", this.carregarProdutos());
-		
 		result.forwardTo(MapaAbastecimentoController.class).mapaAbastecimento();
 	}
 	
 	/**
 	 * Carrega a lista de Produtos.
 	 */
-	private List<ItemDTO<String, String>> carregarProdutos() {
+	@Post
+	public void getProdutos(Date dataLancamento) {
 		
 		List<Produto> listaProdutos = produtoService.obterProdutosOrganizadosNome();
 		
-		List<ItemDTO<String, String>> listaProdutosCombo = new ArrayList<ItemDTO<String,String>>();
+		List<ItemDTO<String, String>> produtos = new ArrayList<ItemDTO<String,String>>();
 				
 		for(Produto produto : listaProdutos) {
 			
-			listaProdutosCombo.add(new ItemDTO<String, String>(produto.getCodigo(), produto.getNome()));
+			produtos.add(new ItemDTO<String, String>(produto.getCodigo(), produto.getNome()));
 		}
 		
-		return listaProdutosCombo;			
-	}	
+		this.result.use(Results.json()).from(produtos, "result").recursive().serialize();
+	}
 
 	/**
 	 * Carrega a lista de Boxes
