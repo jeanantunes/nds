@@ -91,13 +91,13 @@ public class GeracaoArquivosController {
 			}
 		} catch	(RuntimeException e) {
 			if (e.getMessage().equals("Nenhum registro encontrado!")) {
-				
+				qtdArquivosGerados = 0;
 			}
 		}
 		
 		// incluir a quantidade de arquivos gerados.
 		
-		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Geração efetuada com sucesso."), "result").recursive().serialize();
+		result.use(Results.json()).from(Integer.valueOf(qtdArquivosGerados), "result").recursive().serialize();
 	}
 
 	/**

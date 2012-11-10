@@ -52,6 +52,6 @@ $(function(){
 <fieldset class="grids classFieldset"
 	style="text-align: center !important;">
 	<legend>Arquivos Gerados</legend>
-	<h2 align="left">Quantidade de Arquivos Gerados:&nbsp;<spam id="qtdArquivosGerados">0</spam></h2>
+	<h2>Quantidade de Arquivos Gerados:&nbsp;<spam id="qtdArquivosGerados">0</spam></h2>
 
 </fieldset>
