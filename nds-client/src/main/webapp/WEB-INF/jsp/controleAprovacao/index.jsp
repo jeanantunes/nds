@@ -72,7 +72,7 @@ $(function(){
 				</td>
 				
 				<td width="400">
-					<span class="bt_novos">
+					<span class="bt_novos" title="Pesquisar">
 						<a href="javascript:;" onclick="controleAprovacaoController.pesquisar();"><img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" /></a>
 					</span>
 				</td>
