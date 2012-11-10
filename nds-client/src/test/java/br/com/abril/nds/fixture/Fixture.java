@@ -3612,14 +3612,14 @@ public class Fixture {
        
         
         HistoricoTitularidadeCotaEndereco endereco1 = new HistoricoTitularidadeCotaEndereco(
-                10, "Centro", "13720-000", 150, "São José do Rio Pardo", null,
-                "Rua", "Treze de Maio", "13", "SP", 15, TipoEndereco.COMERCIAL,
+                "10", "Centro", "13720-000", 150, "São José do Rio Pardo", null,
+                "Rua", "Treze de Maio", "13", "SP", "15", TipoEndereco.COMERCIAL,
                 true);
         historico.addEndereco(endereco1);
         
         HistoricoTitularidadeCotaEndereco endereco2 = new HistoricoTitularidadeCotaEndereco(
-                10, "Centro", "13720-000", 150, "São José do Rio Pardo", null,
-                "Rua", "Nove de Julho", "100", "SP", 15, TipoEndereco.RESIDENCIAL,
+                "10", "Centro", "13720-000", 150, "São José do Rio Pardo", null,
+                "Rua", "Nove de Julho", "100", "SP", "15", TipoEndereco.RESIDENCIAL,
                 false);
         historico.addEndereco(endereco2);
         
@@ -3698,8 +3698,8 @@ public class Fixture {
         pdv.setTipoPonto(tipoPonto);
         
         HistoricoTitularidadeCotaEndereco enderecoPDV = new HistoricoTitularidadeCotaEndereco(
-                10, "Centro", "13720-000", 99, "São José do Rio Pardo", null,
-                "Rua", "Benjamin Constant", "50", "SP", 15, TipoEndereco.COMERCIAL,
+                "10", "Centro", "13720-000", 99, "São José do Rio Pardo", null,
+                "Rua", "Benjamin Constant", "50", "SP", "15", TipoEndereco.COMERCIAL,
                 true);
         pdv.addEndereco(enderecoPDV);
         

@@ -374,7 +374,7 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		endereco.setUf(enderecoVO.getUf());
 		
 		endereco.setCodigoBairro(
-			(enderecoVO.getCodigoBairro() == null) ? null : enderecoVO.getCodigoBairro().intValue());
+			(enderecoVO.getCodigoBairro() == null) ? null : enderecoVO.getCodigoBairro());
 		
 		endereco.setCodigoCidadeIBGE(
 			(enderecoVO.getCodigoCidadeIBGE() == null) ? null : enderecoVO.getCodigoCidadeIBGE().intValue());
@@ -416,7 +416,7 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		enderecoVO.setUf(endereco.getUf());
 		
 		enderecoVO.setCodigoBairro(
-			(endereco.getCodigoBairro() == null) ? null : endereco.getCodigoBairro().longValue());
+			(endereco.getCodigoBairro() == null) ? null : endereco.getCodigoBairro());
 		
 		enderecoVO.setCodigoCidadeIBGE(
 			(endereco.getCodigoCidadeIBGE() == null) ? null : endereco.getCodigoCidadeIBGE().longValue());

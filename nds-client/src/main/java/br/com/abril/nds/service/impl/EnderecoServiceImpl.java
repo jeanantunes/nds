@@ -287,23 +287,28 @@ public class EnderecoServiceImpl implements EnderecoService {
 			try {
 				ObjectMapper om = new ObjectMapper();
 				
-				logradouro = om.treeToValue(list.get(0), Logradouro.class);
-				localidade = om.treeToValue(list.get(1), Localidade.class);
-				bairroInicial = om.treeToValue(list.get(2), Bairro.class);
+				ret = new EnderecoVO();
+
+				if (list.size() == 3) {
+					logradouro = om.treeToValue(list.get(0), Logradouro.class);
+					localidade = om.treeToValue(list.get(1), Localidade.class);
+					bairroInicial = om.treeToValue(list.get(2), Bairro.class);
+					ret.setBairro(bairroInicial.getNome());
+					ret.setUf(logradouro.getUf());
+					ret.setCep(logradouro.getCep());
+					ret.setLogradouro(logradouro.getNome());				
+					ret.setTipoLogradouro(logradouro.getTipoLogradouro());				
+					ret.setCodigoBairro(bairroInicial.get_id());				
+					ret.setBairro(bairroInicial.getNome());				
+				} else {
+					localidade = om.treeToValue(list.get(0), Localidade.class);
+				}
 //				bairroFinal = om.treeToValue(list.get(3), Bairro.class);
 				
-				ret = new EnderecoVO();
 								
-				ret.setBairro(bairroInicial.getNome());
-				ret.setUf(logradouro.getUf());
-				ret.setCep(logradouro.getCep());
 				ret.setCodigoCidadeIBGE(localidade.getCodigoMunicipioIBGE());				
 				ret.setIdLocalidade(localidade.get_id());
 				ret.setLocalidade(localidade.getNome());				
-				ret.setLogradouro(logradouro.getNome());				
-				ret.setTipoLogradouro(logradouro.getTipoLogradouro());				
-				ret.setCodigoBairro(bairroInicial.get_id());				
-				ret.setBairro(bairroInicial.getNome());				
 				
 			} catch (JsonParseException e) {
 				// TODO Auto-generated catch block

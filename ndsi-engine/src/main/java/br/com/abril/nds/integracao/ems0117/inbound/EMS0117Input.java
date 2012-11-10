@@ -21,7 +21,7 @@ public class EMS0117Input implements Serializable {
 	private String nomeJornaleiro;
 	private Integer qtdeCotas;
 	private String endereco;
-	private Integer codBairro;
+	private String codBairro;
 	private String municipio;
 	private String siglaUF;
 	private String cep;
@@ -77,11 +77,11 @@ public class EMS0117Input implements Serializable {
 	}
 	
 	@Field(offset = 79, length = 5)
-	public Integer getCodBairro() {
+	public String getCodBairro() {
 		return codBairro;
 	}
 	
-	public void setCodBairro(Integer codBairro) {
+	public void setCodBairro(String codBairro) {
 		this.codBairro = codBairro;
 	}
 	
