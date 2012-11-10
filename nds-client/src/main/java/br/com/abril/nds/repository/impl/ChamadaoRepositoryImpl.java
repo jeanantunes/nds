@@ -376,7 +376,7 @@ public class ChamadaoRepositoryImpl extends AbstractRepositoryModel<Cota,Long> i
 //	        .append(") ")
 // Comentado Por Eduardo "PunkRock" Castro em 09-11-2012 -> DD-MM-YYYY	
 	    	
-	        .append("and lancamento.DATA_REC_PREVISTA = :dataRecolhimento ")
+	        .append("and lancamento.DATA_REC_PREVISTA >= :dataRecolhimento ")
 
 	    	
 	        .append("and lancamento.TIPO_LANCAMENTO = :tipoLancamento ")
