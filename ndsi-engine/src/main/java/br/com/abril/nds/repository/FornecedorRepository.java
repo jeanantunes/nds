@@ -61,6 +61,14 @@ public interface FornecedorRepository extends Repository<Fornecedor, Long> {
 	 */
 	List<FornecedorDTO> obterFornecedoresPorFiltro(FiltroConsultaFornecedorDTO filtroConsultaFornecedor);
 	
+	/**
+	 * Método que retorna uma lista de fornecedores com base no desconto recebido. 
+	 * 
+	 * @param idDesconto - id do Desconto
+	 * 
+	 * @return List<FornecedorDTO>
+	 */
+	List<Fornecedor> obterFornecedoresPorDesconto(Long idDesconto);
 
 	/**
 	 * Método que retorna a contagem de fornecedores com base no filtro recebido. 

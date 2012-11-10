@@ -17,6 +17,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -26,7 +27,7 @@ import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 
 import br.com.abril.nds.model.Origem;
-import br.com.abril.nds.model.cadastro.desconto.HistoricoDescontoFornecedor;
+import br.com.abril.nds.model.cadastro.desconto.Desconto;
 
 /**
  * @author francisco.garcia
@@ -97,9 +98,9 @@ public class Fornecedor implements Serializable {
 	@Column(name = "EMAIL_NFE")
 	private String emailNfe;
 	
-	@Cascade(value = org.hibernate.annotations.CascadeType.SAVE_UPDATE)
-	@JoinColumn(name = "DESCONTO_ID", unique=true, nullable=true)
-	private HistoricoDescontoFornecedor desconto;
+	@OneToOne(optional = true)
+	@JoinColumn(name = "DESCONTO_ID")
+	private Desconto desconto;
 
 	/**
 	 * Fornecedores associados à Cota
@@ -260,11 +261,11 @@ public class Fornecedor implements Serializable {
 		this.cotas = cotas;
 	}
 	
-	public HistoricoDescontoFornecedor getDesconto() {
+	public Desconto getDesconto() {
 		return desconto;
 	}
 
-	public void setDesconto(HistoricoDescontoFornecedor desconto) {
+	public void setDesconto(Desconto desconto) {
 		this.desconto = desconto;
 	}
 

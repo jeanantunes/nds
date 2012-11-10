@@ -32,6 +32,7 @@ import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.cadastro.desconto.Desconto;
 import br.com.abril.nds.model.cadastro.desconto.DescontoCota;
 import br.com.abril.nds.model.cadastro.desconto.DescontoCotaProdutoExcessao;
 import br.com.abril.nds.model.cadastro.desconto.DescontoDistribuidor;
@@ -50,6 +51,7 @@ import br.com.abril.nds.repository.DescontoProdutoEdicaoExcessaoRepository;
 import br.com.abril.nds.repository.DescontoProdutoEdicaoRepository;
 import br.com.abril.nds.repository.DescontoProdutoRepository;
 import br.com.abril.nds.repository.DescontoProximosLancamentosRepository;
+import br.com.abril.nds.repository.DescontoRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.FornecedorRepository;
 import br.com.abril.nds.repository.HistoricoDescontoCotaProdutoRepository;
@@ -68,6 +70,9 @@ import br.com.abril.nds.vo.ValidacaoVO;
 @Service
 public class DescontoServiceImpl implements DescontoService {
 
+	@Autowired
+	private DescontoRepository descontoRepository;
+	
 	@Autowired
 	private DescontoDistribuidorRepository descontoDistribuidorRepository;
 	
@@ -201,24 +206,42 @@ public class DescontoServiceImpl implements DescontoService {
 		}
 
 		if(fornecedores != null && !fornecedores.isEmpty()) {
+			
+			Distribuidor distribuidor = distribuidorRepository.obter();
+			Date dataAtual = new Date();
+			
+			/*
+			 * Cria um desconto a ser utilizado em um ou mais fornecedores
+			 */
+			Desconto desconto =  new Desconto();
+			desconto.setDataAlteracao(dataAtual);
+			desconto.setTipoDesconto(TipoDesconto.GERAL);
+			desconto.setUsado(false);
+			desconto.setUsuario(usuario);
+			desconto.setValor(valorDesconto);
+			
+			Long idDesconto = descontoRepository.adicionar(desconto);
+			
+			desconto = descontoRepository.buscarPorId(idDesconto);
+			
 			for(Long idFornecedor : fornecedores) {
 				
 				Fornecedor fornecedor = fornecedorRepository.buscarPorId(idFornecedor);
+				fornecedor.setDesconto(desconto);
+				fornecedorRepository.merge(fornecedor);
 				
 				/*
 				 * Atualiza o historico do desconto para o fornecedor
 				 */
-				HistoricoDescontoFornecedor desconto = new HistoricoDescontoFornecedor();
-				desconto.setDesconto(valorDesconto);
-				desconto.setUsuario(usuarioRepository.buscarPorId(usuario.getId()));
-				desconto.setDataAlteracao(new Date());
-				desconto.setFornecedor(fornecedor);
-				desconto.setDistribuidor(distribuidorRepository.obter());
-
-				historicoDescontoFornecedorRepository.adicionar(desconto);
+				HistoricoDescontoFornecedor historicoDesconto = new HistoricoDescontoFornecedor();
+				historicoDesconto.setValor(valorDesconto);
+				historicoDesconto.setDesconto(desconto);
+				historicoDesconto.setUsuario(usuario);
+				historicoDesconto.setDataAlteracao(dataAtual);
+				historicoDesconto.setFornecedor(fornecedor);
+				historicoDesconto.setDistribuidor(distribuidor);
 				
-				fornecedor.setDesconto(desconto);
-				fornecedorRepository.merge(fornecedor);
+				historicoDescontoFornecedorRepository.adicionar(historicoDesconto);
 				
 			}
 		}
@@ -513,10 +536,10 @@ public class DescontoServiceImpl implements DescontoService {
 		switch (tipoDesconto) {
 		case GERAL :
 
-			DescontoDistribuidor desconto = descontoDistribuidorRepository.buscarPorId(idDesconto);
+			List<Fornecedor> fornecedores = fornecedorRepository.obterFornecedoresPorDesconto(idDesconto);
 
-			if(desconto!= null){
-				listaFornecedores.addAll(desconto.getFornecedores());
+			if(fornecedores!= null){
+				listaFornecedores.addAll(fornecedores);
 			}
 			break;
 
@@ -843,35 +866,36 @@ public class DescontoServiceImpl implements DescontoService {
 	 */
 	private void excluirDescontoDistribuidor(Long idDesconto){
 
-		DescontoDistribuidor desconto = descontoDistribuidorRepository.buscarPorId(idDesconto);
-
+		Desconto desconto = descontoRepository.buscarPorId(idDesconto);
+		
 		validarExclusaoDesconto(desconto.getDataAlteracao());
+		
+		List<Fornecedor> fornecedores = descontoRepository.buscarFornecedoresQueUsam(desconto);
 
-		for (Fornecedor fornecedor : desconto.getFornecedores()) {
+		for (Fornecedor fornecedor : fornecedores) {
 
-			DescontoDistribuidor ultimoDesconto =
-					descontoDistribuidorRepository.buscarUltimoDescontoValido(idDesconto,fornecedor);
+			Desconto ultimoDesconto = descontoRepository.buscarUltimoDescontoValido(idDesconto, fornecedor);
 
-			Set<Fornecedor> fornecedores = new HashSet<Fornecedor>();
-
-			fornecedores.add(fornecedor);
+			Set<Fornecedor> fornecARemoverDesconto = new HashSet<Fornecedor>();
+			
+			/*
+			fornecARemoverDesconto.add(fornecedor);
 
 			if (ultimoDesconto != null) {
 
 				if (ultimoDesconto.getDataAlteracao().before(desconto.getDataAlteracao())) {
 
-					processarDescontoDistribuidor(fornecedores, ultimoDesconto.getDesconto());
+					processarDescontoDistribuidor(fornecARemoverDesconto, ultimoDesconto.getDesconto());
 				}
 
 			} else {
 
-				processarDescontoDistribuidor(fornecedores, BigDecimal.ZERO);
+				processarDescontoDistribuidor(fornecARemoverDesconto, BigDecimal.ZERO);
 			}
+			*/
 		}
 
-		desconto.setFornecedores(null);
-
-		descontoDistribuidorRepository.remover(desconto);
+		descontoRepository.remover(desconto);
 	}
 
 	/*

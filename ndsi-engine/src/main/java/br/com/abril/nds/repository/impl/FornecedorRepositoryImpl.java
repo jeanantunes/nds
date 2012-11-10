@@ -15,11 +15,9 @@ import org.springframework.stereotype.Repository;
 import br.com.abril.nds.dto.FornecedorDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaFornecedorDTO;
-import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.EnderecoFornecedor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoFornecedor;
-import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.repository.FornecedorRepository;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
@@ -432,6 +430,26 @@ public class FornecedorRepositoryImpl extends
 		criteria.setMaxResults(1);
 
 		return (EnderecoFornecedor) criteria.uniqueResult();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Fornecedor> obterFornecedoresPorDesconto(Long idDesconto) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append("select f ");
+		hql.append("from Fornecedor f, HistoricoDescontoFornecedor hdf ");
+		hql.append("where f.desconto.id = hdf.desconto.id ");
+		hql.append("and f.id = hdf.fornecedor.id ");
+		hql.append("and f.desconto.id = :idDesconto ");
+		
+		Query q = getSession().createQuery(hql.toString());
+		
+		q.setParameter("idDesconto", idDesconto);
+		
+		return q.list();
+
 	}
 	
 }

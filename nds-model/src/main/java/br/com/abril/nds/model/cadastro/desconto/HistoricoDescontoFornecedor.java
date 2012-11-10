@@ -31,8 +31,8 @@ public class HistoricoDescontoFornecedor implements Serializable {
 	@Column(name = "ID")
 	private Long id;
 	
-	@Column(name = "DESCONTO", precision=5, scale=2)
-	private BigDecimal desconto;
+	@Column(name = "VALOR", precision=5, scale=2)
+	private BigDecimal valor;
 	
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name="DATA_ALTERACAO")
@@ -41,6 +41,10 @@ public class HistoricoDescontoFornecedor implements Serializable {
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "USUARIO_ID")
 	private Usuario usuario;
+	
+	@ManyToOne(optional=false)
+	@JoinColumn(name = "DESCONTO_ID")
+	private Desconto desconto;
 	
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "FORNECEDOR_ID")
@@ -65,17 +69,19 @@ public class HistoricoDescontoFornecedor implements Serializable {
 		this.id = id;
 	}
 
-	/**
-	 * @return the desconto
-	 */
-	public BigDecimal getDesconto() {
+	public BigDecimal getValor() {
+		return valor;
+	}
+
+	public void setValor(BigDecimal valor) {
+		this.valor = valor;
+	}
+
+	public Desconto getDesconto() {
 		return desconto;
 	}
 
-	/**
-	 * @param desconto the desconto to set
-	 */
-	public void setDesconto(BigDecimal desconto) {
+	public void setDesconto(Desconto desconto) {
 		this.desconto = desconto;
 	}
 
@@ -107,6 +113,14 @@ public class HistoricoDescontoFornecedor implements Serializable {
 		this.usuario = usuario;
 	}
 
+	public Fornecedor getFornecedor() {
+		return fornecedor;
+	}
+
+	public void setFornecedor(Fornecedor fornecedor) {
+		this.fornecedor = fornecedor;
+	}
+
 	/**
 	 * @return the distribuidor
 	 */
@@ -119,14 +133,6 @@ public class HistoricoDescontoFornecedor implements Serializable {
 	 */
 	public void setDistribuidor(Distribuidor distribuidor) {
 		this.distribuidor = distribuidor;
-	}
-
-	public Fornecedor getFornecedor() {
-		return fornecedor;
-	}
-
-	public void setFornecedor(Fornecedor fornecedor) {
-		this.fornecedor = fornecedor;
 	}
 
 }
