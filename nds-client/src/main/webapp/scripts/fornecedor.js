@@ -391,7 +391,6 @@ var fornecedorController = $.extend(true,{
 						
 						$("#fornecedorController-inicioAtividade", fornecedorController.workspace).html(result.inicioAtividade);
 						$("#fornecedorController-idFornecedor", fornecedorController.workspace).val(result.idFornecedor);
-						$("#fornecedorController-codigoInterface").mask("9999");
 						$("#fornecedorController-codigoInterface", fornecedorController.workspace).val(result.codigoInterface);
 						$("#fornecedorController-razaoSocial", fornecedorController.workspace).val(result.razaoSocial);
 						$("#fornecedorController-nomeFantasia", fornecedorController.workspace).val(result.nomeFantasia);
@@ -435,7 +434,8 @@ var fornecedorController = $.extend(true,{
 						
 						FORNECEDOR.bloquearCamposFormTelefone(indBloqueiaCamposEdicaoFornecedor);
 
-						
+						$("#fornecedorController-cnpj", fornecedorController.workspace).prop('disabled', true);
+
 						
 					},
 					function(result) {
