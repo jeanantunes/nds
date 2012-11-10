@@ -33,11 +33,13 @@ import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.util.export.NDSFileHeader;
 import br.com.abril.nds.vo.PaginacaoVO;
+import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.view.Results;
 
 /**
  * @author InfoA2
@@ -78,12 +80,14 @@ public class GeracaoArquivosController {
 	@Post
 	public void gerar(Date dataLctoPrevisto, String operacao) {
 		// Inclui o pacote na classe
-				
+		
+		int qtdArquivosGerados = 0;
 		try {
 			if (operacao.equals("REPARTE")) {
 				route197.execute(getUsuario().getLogin(), dataLctoPrevisto);
 			} else {
-				route198.execute(getUsuario().getLogin(), dataLctoPrevisto);			
+				qtdArquivosGerados = route198.execute(getUsuario().getLogin(), 
+						dataLctoPrevisto);
 			}
 		} catch	(RuntimeException e) {
 			if (e.getMessage().equals("Nenhum registro encontrado!")) {
@@ -91,6 +95,9 @@ public class GeracaoArquivosController {
 			}
 		}
 		
+		// incluir a quantidade de arquivos gerados.
+		
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Geração efetuada com sucesso."), "result").recursive().serialize();
 	}
 
 	/**

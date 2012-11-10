@@ -50,12 +50,18 @@ public class EMS0198MessageProcessor extends AbstractRepository implements Messa
 	private Date dataLctoDistrib;
 
 	private static SimpleDateFormat sdf = new SimpleDateFormat("ddMMyyyy");
-
+	
+	/** Quantidade de arquivos processados. */
+	private int quantidadeArquivosGerados = 0;
+	
 	@Override
 	public void processMessage(Message message) {
 		
+		// Reinicia a contagem dos arquivos gerados:
+		this.quantidadeArquivosGerados = 0;
+		
+		
 		List<PDV> pdvs = findListPDV(message);
-
 		
 		int numeroCota = pdvs.get(0).getCota().getNumeroCota();
 
@@ -184,6 +190,11 @@ public class EMS0198MessageProcessor extends AbstractRepository implements Messa
 		
 		print.println(fixedFormatManager.export(outtrailer));
 
+		/*
+		 * A quantidade de arquivos gerados é incrementado aqui pois 
+		 * considera-se que o arquivo foi gerado corretamente.
+		 */
+		this.quantidadeArquivosGerados++;
 	}
 
 	private Integer criaDetalhes(PrintWriter print, Cota cota, Set<MovimentoEstoqueCota> movimentoEstoqueCotas) {
@@ -247,4 +258,14 @@ public class EMS0198MessageProcessor extends AbstractRepository implements Messa
 		this.dataLctoDistrib = data;
 		
 	}
+
+	/**
+	 * Retorna a quantidade de arquivos gerados apos o processamento.
+	 * 
+	 * @return
+	 */
+	public int getQuantidadeArquivosGerados() {
+		return quantidadeArquivosGerados;
+	}
+	
 }
