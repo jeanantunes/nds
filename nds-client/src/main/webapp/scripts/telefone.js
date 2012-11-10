@@ -13,6 +13,10 @@ function Telefone(paramTela,message) {
 		$("#"+paramTela+"numeroTelefone", Telefone.workspace).numeric();
 		$("#"+paramTela+"numeroTelefone", Telefone.workspace).mask("9999-9999");
 		$("#"+paramTela+"ramal", Telefone.workspace).numeric();
+		$("#"+paramTela+"radioID", Telefone.workspace).keyup(function(e) {
+			var valor = $("#"+paramTela+"radioID", Telefone.workspace).val().replace(/[^0-9\*]/g,"");
+			$("#"+paramTela+"radioID", Telefone.workspace).val(valor);
+		});
 
 	};
 
@@ -161,13 +165,15 @@ function Telefone(paramTela,message) {
 
 	this.adicionarTelefone = function() {
 
+		var ramal = ($("#"+paramTela+"tipoTelefone",Telefone.workspace).val() != "RADIO" ? $("#"+paramTela+"ramal",Telefone.workspace).val() : $("#"+paramTela+"radioID",Telefone.workspace).val());
+		
 		var data = {
 				tela:paramTela,
 				referencia:$("#"+paramTela+"referenciaHidden",Telefone.workspace).val(),
 				tipoTelefone:$("#"+paramTela+"tipoTelefone",Telefone.workspace).val(),
 				ddd:$("#"+paramTela+"ddd",Telefone.workspace).val(),
 				numero:$("#"+paramTela+"numeroTelefone",Telefone.workspace).val(),
-				ramal:$("#"+paramTela+"ramal",Telefone.workspace).val(),
+				ramal: ramal,
 				principal:(""+$("#"+paramTela+"telefonePrincipal",Telefone.workspace).attr("checked")=='checked')};
 
 		var _this = this;
@@ -251,7 +257,11 @@ function Telefone(paramTela,message) {
 						$("#"+paramTela+"tipoTelefone", Telefone.workspace).val(result.tipoTelefone);
 						$("#"+paramTela+"ddd", Telefone.workspace).val(result.telefone.ddd);
 						$("#"+paramTela+"numeroTelefone", Telefone.workspace).val(result.telefone.numero);
-						$("#"+paramTela+"ramal", Telefone.workspace).val(result.telefone.ramal);
+						if (result.tipoTelefone == "RADIO") {
+							$("#"+paramTela+"radioID", Telefone.workspace).val(result.telefone.ramal);
+						} else {
+							$("#"+paramTela+"ramal", Telefone.workspace).val(result.telefone.ramal);
+						}
 						$("#"+paramTela+"telefonePrincipal", Telefone.workspace).attr("checked",
 								result.principal);
 
@@ -269,6 +279,7 @@ function Telefone(paramTela,message) {
 		$("#"+paramTela+"ddd").val("");
 		$("#"+paramTela+"numeroTelefone").val("");
 		$("#"+paramTela+"ramal").val("");
+		$("#"+paramTela+"radioID").val("");
 		$("#"+paramTela+"telefonePrincipal").attr("checked", false);
 	};
 
@@ -286,6 +297,7 @@ function Telefone(paramTela,message) {
 		$("#"+paramTela+"ddd").prop('disabled', indBloqueiaCampo);
 		$("#"+paramTela+"numeroTelefone").prop('disabled', indBloqueiaCampo);
 		$("#"+paramTela+"ramal").prop('disabled', indBloqueiaCampo);
+		$("#"+paramTela+"radioID").prop('disabled', indBloqueiaCampo);
 		$("#"+paramTela+"telefonePrincipal").prop('disabled', indBloqueiaCampo);
 		
 	};
@@ -295,9 +307,14 @@ function Telefone(paramTela,message) {
 		var lbl = $("#"+paramTela + idLbl);
 		var campo = $("#"+paramTela + idCampo);
 
+		var ramal = $("#"+paramTela + "ramalTD");
+		var radioID = $("#"+paramTela + "radioIDTD");
+		
 		switch (opcao) {
 		case 'COMERCIAL':
 		case 'FAX':
+			ramal.show();
+			radioID.hide();
 			div1.show();
 			lbl.text('Ramal:');
 			campo.css('width', 40);
@@ -306,14 +323,18 @@ function Telefone(paramTela,message) {
 			div1.show();
 			lbl.text('ID:');
 			campo.css('width', 167);
+			ramal.hide();
+			radioID.show();
 			break;
 		default:
 			div1.hide();
 			campo.val("");
+			ramal.show();
+			radioID.hide();
 			break;
 		}
 	};
-
+	
 	this.carregarTelefones = function() {
 		this.popularGrid();
 		
@@ -341,3 +362,4 @@ function Telefone(paramTela,message) {
 	};
 
 }
+//@ sourceURL=scriptTelefone.js
