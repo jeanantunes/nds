@@ -42,8 +42,11 @@
 			</tr>
 			<tr id="${param.tela}trRamalId">
 				<td id="${param.tela}lblRamalId">Ramal: </td>
-				<td>
+				<td style="hidden" id="${param.tela}ramalTD">
 					<input type="text" style="width:40px; float:left;" id="${param.tela}ramal" maxlength="255"/>
+				</td>
+				<td style="display:none" id="${param.tela}radioIDTD">
+					<input type="text" style="width:40px; float:left;" id="${param.tela}radioID" maxlength="255"/>
 				</td>
 			</tr>
 			<tr>
