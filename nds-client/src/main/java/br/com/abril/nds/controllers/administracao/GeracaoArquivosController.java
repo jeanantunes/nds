@@ -97,7 +97,7 @@ public class GeracaoArquivosController {
 		
 		// incluir a quantidade de arquivos gerados.
 		
-		result.use(Results.json()).from(Integer.valueOf(qtdArquivosGerados), "result").recursive().serialize();
+		result.use(Results.json()).from(Integer.valueOf(qtdArquivosGerados), "result").serialize();
 	}
 
 	/**

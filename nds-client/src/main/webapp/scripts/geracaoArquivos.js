@@ -38,8 +38,8 @@ GeracaoArquivos.prototype.btnGerarOnClick = function() {
 	
 	$.postJSON(this.path + 'gerar',
 			params, 
-			function(result) {
-				$("#qtdArquivosGerados", this.workspace).html(result);
+			function(data) {
+				$("#qtdArquivosGerados", this.workspace).html(data.int);
 			},
 			function(result) {
 				
