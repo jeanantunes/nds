@@ -60,7 +60,6 @@ public class EMS0198MessageProcessor extends AbstractRepository implements Messa
 		// Reinicia a contagem dos arquivos gerados:
 		this.quantidadeArquivosGerados = 0;
 		
-		
 		List<PDV> pdvs = findListPDV(message);
 		
 		int numeroCota = pdvs.get(0).getCota().getNumeroCota();

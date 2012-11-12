@@ -40,19 +40,21 @@ public class EMS0198Detalhe {
 	 * O tamanho de 150 posições deve ser suficiente para este tipo de linha.
 	 * 
 	 * @return
-	 */	@Field(offset = 1, length = 150)
+	 */	
+	@Field(offset = 1, length = 150)
 	public String getTipoRegistro() {
-		this.registro = "2|" + this.codigoCota + "|" + 
-								this.codigoProduto + "|" +
-								this.edicao + "|" +
-								this.nomePublicacao + "|" +
-								this.codigoDeBarras + "|" +
-								this.precoCusto + "|" +
-								this.precoVenda + "|" +
-								this.desconto + "|" +
-								this.quantidade + "|" +
-								this.dataEncalhe  + "|" +
-								this.diaChamada;
+		this.registro = "2" 
+				+ "|" + this.codigoCota 
+				+ "|" + this.codigoProduto
+				+ "|" + this.edicao
+				+ "|" + this.nomePublicacao 
+				+ "|" + this.codigoDeBarras 
+				+ "|" + this.precoCusto 
+				+ "|" + this.precoVenda 
+				+ "|" + this.desconto 
+				+ "|" + this.quantidade
+				+ "|" + this.dataEncalhe 
+				+ "|" + this.diaChamada;
 							
 		return registro;
 	}
