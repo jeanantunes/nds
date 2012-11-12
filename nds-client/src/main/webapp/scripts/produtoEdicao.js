@@ -621,6 +621,7 @@ var produtoEdicaoController =$.extend(true,  {
 							$("#produtoEdicaoController-descricaoProduto").val(result.descricaoProduto);
 							$("#produtoEdicaoController-descricaoBrinde").val(result.idBrinde);
 							
+							//Segmentação
 							$("#produtoEdicaoController-classeSocial").val(result.classeSocial);
 							$("#produtoEdicaoController-sexo").val(result.sexo);
 							$("#produtoEdicaoController-faixaEtaria").val(result.faixaEtaria);
@@ -628,8 +629,6 @@ var produtoEdicaoController =$.extend(true,  {
 							$("#produtoEdicaoController-temaSecundario").val(result.temaSecundario);
 
 							var naoEditavel = result.origemInterface;
-
-						    $("#produtoEdicaoController-tabSegmentacao").toggle(!naoEditavel);
 							
 							$("#produtoEdicaoController-ped").attr("readonly", naoEditavel);		
 							$("#produtoEdicaoController-descricaoProduto").attr("readonly", naoEditavel);
@@ -653,6 +652,13 @@ var produtoEdicaoController =$.extend(true,  {
 							$("#produtoEdicaoController-boletimInformativo").attr("readonly", naoEditavel);
 							$("#produtoEdicaoController-numeroLancamento").attr("readonly", naoEditavel);
 							$("#produtoEdicaoController-descricaoDesconto").attr("readonly", naoEditavel);
+							
+							//Segmentação
+						    $("#produtoEdicaoController-classeSocial option").not(":selected").attr("disabled", naoEditavel);
+						    $("#produtoEdicaoController-sexo option").not(":selected").attr("disabled", naoEditavel);
+						    $("#produtoEdicaoController-faixaEtaria option").not(":selected").attr("disabled", naoEditavel);
+						    $("#produtoEdicaoController-temaPrincipal option").not(":selected").attr("disabled", naoEditavel);
+						    $("#produtoEdicaoController-temaSecundario option").not(":selected").attr("disabled", naoEditavel);    
 
 							$("#produtoEdicaoController-precoVenda").attr("readonly", false); 
 							$("#produtoEdicaoController-imagemCapa").attr("readonly", false);

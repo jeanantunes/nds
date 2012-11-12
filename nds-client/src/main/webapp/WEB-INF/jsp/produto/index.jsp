@@ -111,13 +111,13 @@
 					<table width="400" border="0" cellspacing="0" cellpadding="0">
 						<tr>
 							<td>	
-								<fieldset style="width:380px!important; margin-bottom:10px; height: 42px;">
+								<fieldset style="width:381px!important; float:left; margin-bottom:10px; margin-right:0px;">
 									<legend>Outros</legend>
 										
 									<table>
 										<tr>									
 											<td width="120">Periodicidade: </td>
-											<td width="210">
+											<td style="width:200px;">
 												<select name="comboPeriodicidade" id="comboPeriodicidade" style="width:150px;" >
 													<option value="" selected="selected"></option>
 													<option value="SEMANAL" >Semanal</option>
@@ -303,7 +303,7 @@
 				<td width="43">C&oacute;digo:</td>
 				<td width="123" >
 			    	<input type="text" name="codigoProduto" id="codigoProduto"
-						   style="width: 80px; float: left; margin-right: 5px;" maxlength="255"
+						   style="width: 80px; float: left; margin-right: 5px;" maxlength="8"
 						   onchange="pesquisaProdutoCadastroProduto.pesquisarPorCodigoProduto('#codigoProduto', '#produto', '#edicao', false,
 								   									   produtoController.pesquisarProdutosSuccessCallBack,
 								   									   produtoController.pesquisarProdutosErrorCallBack);" />
