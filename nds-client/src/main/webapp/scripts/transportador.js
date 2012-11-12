@@ -1227,6 +1227,18 @@ var transportadorController = $.extend(true, {
 		});
 	},
 	
+	mostrarOpcaoSelecionada : function() {
+
+		if ($("#modalidadeCobranca").val() == "TAXA_FIXA") {
+			$(".transpTaxaFixa", this.workspace).show();
+			$(".transpPercentual", this.workspace).hide();
+		} else {
+			$(".transpTaxaFixa", this.workspace).hide();
+			$(".transpPercentual", this.workspace).show();
+		}
+
+	},
+	
 	mostrarOpcaoTaxaFixa : function(){
 		
 		$(".transpTaxaFixa", this.workspace).show();

@@ -380,10 +380,17 @@ public class TransportadorController {
 			
 			boolean isPercentual = ModalidadeCobranca.PERCENTUAL.equals(
 					transportador.getParametroCobrancaTransportador().getModalidadeCobranca());
-			boolean isMaiorCem = 100D 
-					< transportador.getParametroCobrancaTransportador().getValor().doubleValue();
-			if (isPercentual && isMaiorCem) {
-				msgs.add("O percentual não deve ser maior que 100%.");
+			
+			if (isPercentual) {
+				
+				if (transportador.getParametroCobrancaTransportador().getValor() == null) {
+					msgs.add("É necessário informar um percentual.");
+				} else {
+					boolean isMaiorCem = 100D < transportador.getParametroCobrancaTransportador().getValor().doubleValue();
+					if (isPercentual && isMaiorCem) {
+						msgs.add("O percentual não deve ser maior que 100%.");
+					}
+				}
 			}
 		}
 		
