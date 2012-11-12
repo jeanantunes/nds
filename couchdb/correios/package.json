@@ -1,0 +1,15 @@
+{
+    "name"   : "cep"
+    , "description": "A simple hello-world Couch app"
+    , "version": "0.1.0"
+    , "private": true
+    , "dependencies": {
+        "jasmine-node": null
+        , "tap": null
+        , "cradle": null
+    }
+    , "engines": {
+        "node": "0.8.x"
+        , "npm":  "1.1.x"
+  }
+}

@@ -2,9 +2,14 @@ package br.com.abril.nds.integracao.model.canonic;
 
 import java.util.Date;
 
+import org.codehaus.jackson.annotate.JsonProperty;
+
 public class IntegracaoDocument {
 
+	@JsonProperty("_id")
 	private String _id;
+	
+	@JsonProperty("_rev")
 	private String _rev;
 	private String tipoDocumento;
 	private String subTipoDocumento;

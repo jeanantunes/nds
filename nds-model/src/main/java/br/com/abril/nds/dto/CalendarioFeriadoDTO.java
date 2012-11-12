@@ -11,7 +11,7 @@ public class CalendarioFeriadoDTO implements Serializable, Comparable<Calendario
 	
 	private TipoFeriado tipoFeriado;
 	
-	private Long idLocalidade;
+	private String idLocalidade;
 	
 	private String ufSigla;
 	
@@ -84,7 +84,7 @@ public class CalendarioFeriadoDTO implements Serializable, Comparable<Calendario
 	 *
 	 * @return Long
 	 */
-	public Long getIdLocalidade() {
+	public String getIdLocalidade() {
 		return idLocalidade;
 	}
 
@@ -92,7 +92,7 @@ public class CalendarioFeriadoDTO implements Serializable, Comparable<Calendario
 	 * Atribuí idLocalidade
 	 * @param idLocalidade 
 	 */
-	public void setIdLocalidade(Long idLocalidade) {
+	public void setIdLocalidade(String idLocalidade) {
 		this.idLocalidade = idLocalidade;
 	}
 

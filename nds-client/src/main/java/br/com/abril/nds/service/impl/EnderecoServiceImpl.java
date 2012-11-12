@@ -1,30 +1,66 @@
 package br.com.abril.nds.service.impl;
 
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
+import javax.annotation.PostConstruct;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.JsonParseException;
+import org.codehaus.jackson.map.JsonMappingException;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.ektorp.ComplexKey;
+import org.ektorp.CouchDbConnector;
+import org.ektorp.CouchDbInstance;
+import org.ektorp.ViewQuery;
+import org.ektorp.ViewResult;
+import org.ektorp.http.HttpClient;
+import org.ektorp.http.RestTemplate;
+import org.ektorp.http.StdHttpClient;
+import org.ektorp.impl.StdCouchDbInstance;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import br.com.abril.nds.client.endereco.vo.EnderecoVO;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.EnderecoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.integracao.couchdb.CouchDbProperties;
+import br.com.abril.nds.integracao.model.canonic.EMS0128Input;
+import br.com.abril.nds.model.Capa;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.TipoEndereco;
 import br.com.abril.nds.model.dne.Bairro;
 import br.com.abril.nds.model.dne.Localidade;
 import br.com.abril.nds.model.dne.Logradouro;
+import br.com.abril.nds.model.dne.UnidadeFederacao;
 import br.com.abril.nds.repository.BairroRepository;
 import br.com.abril.nds.repository.EnderecoRepository;
 import br.com.abril.nds.repository.LocalidadeRepository;
 import br.com.abril.nds.repository.LogradouroRepository;
+import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.service.EnderecoService;
 import br.com.abril.nds.service.exception.EnderecoUniqueConstraintViolationException;
 import br.com.abril.nds.util.TipoMensagem;
+import br.com.abril.nds.vo.EnderecoVO;
 import br.com.abril.nds.vo.ValidacaoVO;
 
 @Service
@@ -41,6 +77,33 @@ public class EnderecoServiceImpl implements EnderecoService {
 	
 	@Autowired
 	private LocalidadeRepository localidadeRepository;
+	
+	
+	private static final String DB_NAME  =  "correios";
+
+	@Autowired
+	private CouchDbProperties couchDbProperties;
+
+	private CouchDbConnector couchDbConnector;
+	
+	@PostConstruct
+	public void initCouchDbClient() throws MalformedURLException {
+		HttpClient authenticatedHttpClient = new StdHttpClient.Builder()
+                .url(
+                		new URL(
+                		couchDbProperties.getProtocol(), 
+                		couchDbProperties.getHost(), 
+                		couchDbProperties.getPort(), 
+                		"")
+                	)
+                .username(couchDbProperties.getUsername())
+                .password(couchDbProperties.getPassword())
+                .build();
+		CouchDbInstance dbInstance = new StdCouchDbInstance(authenticatedHttpClient);
+		this.couchDbConnector = dbInstance.createConnector(DB_NAME, true);
+				
+	}
+
 	
 	@Override
 	@Transactional
@@ -178,7 +241,37 @@ public class EnderecoServiceImpl implements EnderecoService {
 	@Transactional(readOnly = true)
 	public List<String> obterUnidadeFederacaoBrasil() {
 
-		return this.enderecoRepository.obterUnidadeFederacaoBrasil();
+		ViewQuery query = new ViewQuery()
+	    	.designDocId("_design/cep")
+	    	.viewName("ufs")
+	    	.includeDocs(true);
+	
+		List<JsonNode> list = couchDbConnector.queryView(query, JsonNode.class);
+		List<String> ret = null;
+		if (!list.isEmpty()) {
+			
+			try {
+				ObjectMapper om = new ObjectMapper();
+				
+				ret = new ArrayList<String>();
+	
+				for (JsonNode jsonUf: list) {
+					ret.add( om.treeToValue(jsonUf, UnidadeFederacao.class).getSigla() );
+				}			
+				
+			} catch (JsonParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (JsonMappingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+				
+		}		
+		return ret;
 	}
 
 	/**
@@ -202,13 +295,69 @@ public class EnderecoServiceImpl implements EnderecoService {
 	@Override
 	@Transactional
 	public EnderecoVO obterEnderecoPorCep(String cep) {
-
 		if (cep == null || cep.trim().isEmpty()) {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "O CEP é obrigatório para a pesquisa.");
-		}
+		}		
 		
-		return this.enderecoRepository.obterEnderecoPorCep(cep);
+		ViewQuery query = new ViewQuery()
+        	.designDocId("_design/cep")
+        	.viewName("full")
+        	.includeDocs(true)
+        	.startKey(ComplexKey.of(cep))
+        	.endKey(ComplexKey.of(cep, ComplexKey.emptyObject()));        	
+		
+		List<JsonNode> list = couchDbConnector.queryView(query, JsonNode.class);
+		EnderecoVO ret = null;
+		if (!list.isEmpty()) {
+			
+			Logradouro logradouro = null;
+			Localidade localidade = null;
+			Bairro bairroInicial = null;
+//			Bairro bairroFinal = null;
+			try {
+				ObjectMapper om = new ObjectMapper();
+				
+				ret = new EnderecoVO();
+
+				if (list.size() == 3) {
+					logradouro = om.treeToValue(list.get(0), Logradouro.class);
+					localidade = om.treeToValue(list.get(1), Localidade.class);
+					bairroInicial = om.treeToValue(list.get(2), Bairro.class);
+					ret.setBairro(bairroInicial.getNome());
+					ret.setUf(logradouro.getUf());
+					ret.setCep(logradouro.getCep());
+					ret.setLogradouro(logradouro.getNome());				
+					ret.setTipoLogradouro(logradouro.getTipoLogradouro());				
+					ret.setCodigoBairro(bairroInicial.get_id());				
+					ret.setBairro(bairroInicial.getNome());				
+				} else {
+					localidade = om.treeToValue(list.get(0), Localidade.class);
+				}
+//				bairroFinal = om.treeToValue(list.get(3), Bairro.class);
+				
+								
+				ret.setCodigoCidadeIBGE(localidade.getCodigoMunicipioIBGE());				
+				ret.setIdLocalidade(localidade.get_id());
+				ret.setLocalidade(localidade.getNome());				
+				
+			} catch (JsonParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (JsonMappingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+						
+	/*		
+			
+			
+			*/
+		}
+		return ret;
 	}
 
 	/**
@@ -258,4 +407,7 @@ public class EnderecoServiceImpl implements EnderecoService {
 		
 		return this.localidadeRepository.pesquisarLocalidades(nomeLocalidade);
 	}
+	
+	
+	
 }
