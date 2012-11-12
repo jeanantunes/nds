@@ -18,11 +18,12 @@ public class EMS0197Header implements Serializable {
 	private String dataLctoDistrib;
 	
 	
-	@Field(length = 1000, offset = 1)
+	@Field(offset = 1, length = 100)
 	public String getTipoRegistro() {
-		this.tipoRegistro="1"+"|"+this.numeroCota
-							 +"|" +this.nomePDV
-							 +"|" +this.dataLctoDistrib;
+		this.tipoRegistro = "1" 
+				+ "|" + this.numeroCota 
+				+ "|" + this.nomePDV
+				+ "|" + this.dataLctoDistrib;
 
 		return tipoRegistro;
 	}

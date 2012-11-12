@@ -34,9 +34,10 @@ public class EMS0198Header  implements Serializable {
 	@Field(offset = 1, length = 100)
 	public String getTipoRegistro() {
 		
-		registro = "1|" + this.codigoCota + "|" + 
-							this.nomeCota + "|" +
-							this.data;
+		registro = "1" 
+				+ "|" + this.codigoCota 
+				+ "|" + this.nomeCota 
+				+ "|" + this.data;
 		
 		return registro;
 	}
