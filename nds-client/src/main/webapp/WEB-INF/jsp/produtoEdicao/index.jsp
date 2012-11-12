@@ -348,27 +348,40 @@ fieldset {
 							<thead />
 							<tbody>
 								<tr>
-									<td width="112">Classe Social:</td>
-									<td width="281">
-										<select name="select4" id="produtoEdicaoController-select7" style="width:250px;" disabled="disabled">
-											<option selected="selected">Selecione...</option>
-										</select>
+									<td width="160"><strong>Classe Social:</strong></td>
+									<td width="320">
+										<select name="classeSocial" id="produtoEdicaoController-classeSocial" style="width:150px;">
+					                        <option value="">Selecione</option>
+					                        <c:forEach varStatus="counter" var="itemClasseSocial" items="${listaClasseSocial}">
+							                    <option value="${itemClasseSocial.key}">${itemClasseSocial.value}</option>
+							                </c:forEach>
+					                    </select> 
 									</td>
 								</tr>
+	
+								
 								<tr>
-									<td>Sexo:</td>
+									<td><strong>Sexo:</strong></td>
 									<td>
-										<select name="select4" id="produtoEdicaoController-select8" style="width:250px;" disabled="disabled">
-											<option selected="selected">Selecione...</option>
-										</select>
+										<select name="sexo" id="produtoEdicaoController-sexo" style="width:150px;">
+					                        <option value="">Selecione</option>
+					                        <c:forEach varStatus="counter" var="itemSexo" items="${listaSexo}">
+							                    <option value="${itemSexo.key}">${itemSexo.value}</option>
+							                </c:forEach>
+					                    </select> 
 									</td>
 								</tr>
+								
+								
 								<tr>
-									<td>Faixa-Et&aacute;ria:</td>
+									<td><strong>Faixa-Et&aacute;ria:</strong></td>
 									<td>
-										<select name="select4" id="produtoEdicaoController-select10" style="width:250px;" disabled="disabled">
-											<option selected="selected">Selecione...</option>
-										</select>
+										<select name="faixaEtaria" id="produtoEdicaoController-faixaEtaria" style="width:150px;">
+					                        <option value="">Selecione</option>
+					                        <c:forEach varStatus="counter" var="itemFaixaEtaria" items="${listaFaixaEtaria}">
+							                    <option value="${itemFaixaEtaria.key}">${itemFaixaEtaria.value}</option>
+							                </c:forEach>
+					                    </select> 
 									</td>
 								</tr>
 							</tbody>
@@ -380,20 +393,29 @@ fieldset {
 							<thead />
 							<tbody>
 								<tr>
-									<td width="112">Tema Principal:</td>
-									<td width="281">
-										<select name="select" id="produtoEdicaoController-select5" style="width:250px;" disabled="disabled">
-											<option selected="selected">Selecione...</option>
-										</select>
+									<td><strong>Tema Principal:</strong></td>
+									<td>
+										<select name="temaPrincipal" id="produtoEdicaoController-temaPrincipal" style="width:150px;">
+					                        <option value="">Selecione</option>
+					                        <c:forEach varStatus="counter" var="itemTema" items="${listaTemaProduto}">
+							                    <option value="${itemTema.key}">${itemTema.value}</option>
+							                </c:forEach>
+					                    </select> 
 									</td>
 								</tr>
+								
+								
 								<tr>
-									<td>Tema Secund&aacute;rio:</td>
+									<td><strong>Tema Secundario:</strong></td>
 									<td>
-										<select name="select" id="produtoEdicaoController-select6" style="width:250px;" disabled="disabled">
-											<option selected="selected">Selecione...</option>
-										</select>
+										<select name="temaSecundario" id="produtoEdicaoController-temaSecundario" style="width:150px;">
+					                        <option value="">Selecione</option>
+					                        <c:forEach varStatus="counter" var="itemTema" items="${listaTemaProduto}">
+							                    <option value="${itemTema.key}">${itemTema.value}</option>
+							                </c:forEach>
+					                    </select> 
 									</td>
+								</tr>
 							</tbody>
 						</table>
 					</fieldset>
