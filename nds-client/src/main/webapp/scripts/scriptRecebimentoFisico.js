@@ -227,8 +227,8 @@ var recebimentoFisicoController = $.extend(true, {
 			
 			recebimentoFisicoController.popup_adicionar();
 			
-			$("#novoNumeroNota").val($("#notaFiscal").val());
-			$("#novoSerieNota").val($("#serie").val());		
+			$("#novoNumeroNota", this.workspace).val($("#notaFiscal", this.workspace).val());
+			$("#novoSerieNota", this.workspace).val($("#serie", this.workspace).val());		
 		}
 		
 	},

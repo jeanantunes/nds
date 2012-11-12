@@ -13,8 +13,16 @@ public class EMS0198Trailer {
 	
 	private String quantidadeRegistros;
 
-	
-	@Field(offset = 1, length = 1000)
+	/**
+	 * 
+	 * FIXME: O tamanho esta "erroneamente" fixado em 20 posições porque este
+	 * a API FixedFormat4J gera apenas arquivos do tipo posicional (e 
+	 * este arquivo é do tipo que utiliza delimitadores).
+	 * O tamanho de 20 posições deve ser suficiente para este tipo de linha.
+	 * 
+	 * @return
+	 */
+	@Field(offset = 1, length = 20)
 	public String getRegistro() {
 		
 		registro = "3|" + this.codigoCota + "|" + this.quantidadeRegistros;
