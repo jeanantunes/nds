@@ -138,7 +138,7 @@
 	
 	<div id="exportacaoPeriodosModal">
 		            
-		<span class="bt_novos" title="Gerar Arquivo">
+		<span class="bt_novos">
 		            
 		<!-- ARQUIVO EXCEL -->
 		<a href="${pageContext.request.contextPath}/parciais/exportarPeriodos?fileType=XLS" rel="tipsy" title="Gerar Arquivo">
@@ -146,7 +146,7 @@
 				<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" /></a>
 		</span>
 		
-		<span class="bt_novos" title="Imprimir">
+		<span class="bt_novos">
 			
 		<!-- IMPRIMIR PDF -->	
 		<a href="${pageContext.request.contextPath}/parciais/exportarPeriodos?fileType=PDF" rel="tipsy" title="Imprimir">
@@ -155,7 +155,7 @@
 				</span>
 		</div>   
 	
-	 <span id="btnIncluirPeriodosModal" class="bt_novos" title="Novo"><a href="javascript:;" onclick="ParciaisController.popup(true);" rel="tipsy" title="Incluir Novo Período"><img src="${pageContext.request.contextPath}/images/ico_add.gif" hspace="5" border="0" alt="Incluir Períodos" /></a></span>
+	 <span id="btnIncluirPeriodosModal" class="bt_novos"><a href="javascript:;" onclick="ParciaisController.popup(true);" rel="tipsy" title="Incluir Novo Período"><img src="${pageContext.request.contextPath}/images/ico_add.gif" hspace="5" border="0" alt="Incluir Períodos" /></a></span>
 	
 	
 	</div>
@@ -187,13 +187,13 @@
 
 		<div class="areaBts">
 			<div class="area">
-				<span class="bt_arq" title="Gerar Arquivo">
+				<span class="bt_arq">
 				<!-- ARQUIVO EXCEL -->
 				<a href="${pageContext.request.contextPath}/parciais/exportar?fileType=XLS" rel="tipsy" title="Gerar Arquivo">
 					<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" /></a>
 			</span>
 	
-			<span class="bt_arq" title="Imprimir">
+			<span class="bt_arq">
 			<!-- IMPRIMIR PDF -->	
 				<a href="${pageContext.request.contextPath}/parciais/exportar?fileType=PDF" rel="tipsy" title="Imprimir">
 					<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" /></a>
