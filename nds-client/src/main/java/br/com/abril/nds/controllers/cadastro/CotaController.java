@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -50,7 +51,6 @@ import br.com.abril.nds.model.cadastro.ParametroSistema;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
-import br.com.abril.nds.model.cadastro.TipoEntrega;
 import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
@@ -531,7 +531,7 @@ public class CotaController {
 	@Path("/salvarCotaCNPJ")
 	public void salvarCotaPessoaJuridica(CotaDTO cotaDTO){
 		
-		validarFormatoData();
+		validar();
 		
 		cotaDTO.setTipoPessoa(TipoPessoa.JURIDICA);
 
@@ -544,7 +544,78 @@ public class CotaController {
 		result.use(Results.json()).from(cotaDTO, "result").recursive().serialize();
 	}
 	
+	private void validar() {
+		
+		List<String> mensagensValidacao = new ArrayList<String>();
 
+		validarEnderecos(mensagensValidacao);
+		
+		validarTelefones(mensagensValidacao);
+			
+		validarFormatoData(mensagensValidacao);
+
+	}
+
+	private void validarEnderecos(List<String> mensagensValidacao) {
+		@SuppressWarnings("unchecked")
+		List<EnderecoAssociacaoDTO> listaEnderecosSalvar = (List<EnderecoAssociacaoDTO>) this.session.getAttribute(LISTA_ENDERECOS_SALVAR_SESSAO);
+		@SuppressWarnings("unchecked")
+		List<EnderecoAssociacaoDTO> listaEnderecosExibir = (List<EnderecoAssociacaoDTO>) this.session.getAttribute(LISTA_ENDERECOS_EXIBICAO);
+
+		List<EnderecoAssociacaoDTO> listaEnderecos = new ArrayList<EnderecoAssociacaoDTO>();
+		if (listaEnderecosSalvar != null && !listaEnderecosSalvar.isEmpty()) {
+			listaEnderecos.addAll(listaEnderecosSalvar);
+		}
+		if (listaEnderecosExibir != null && !listaEnderecosExibir.isEmpty()) {
+			listaEnderecos.addAll(listaEnderecosExibir);
+		}
+		
+		if (listaEnderecos.isEmpty()) {
+			mensagensValidacao.add("Pelo menos um endereço deve ser cadastrado para a cota.");
+		} else {
+			boolean temPrincipal = false;
+			for (EnderecoAssociacaoDTO enderecoAssociacao : listaEnderecos) {
+				if (enderecoAssociacao.isEnderecoPrincipal()) {
+					temPrincipal = true;
+					break;
+				}
+			}
+			if (!temPrincipal) {
+				mensagensValidacao.add("Deve haver ao menos um endereço principal para o entregador.");
+			}
+		}
+	}
+
+	private void validarTelefones(List<String> mensagensValidacao) {
+		@SuppressWarnings("unchecked")
+		Map<Integer, TelefoneAssociacaoDTO> mapaTelefones = (Map<Integer, TelefoneAssociacaoDTO>) this.session.getAttribute(LISTA_TELEFONES_SALVAR_SESSAO);
+
+		List<TelefoneAssociacaoDTO> listaTelefones = new ArrayList<TelefoneAssociacaoDTO>();
+		
+		if (mapaTelefones != null) {
+			listaTelefones.addAll(mapaTelefones.values());
+		}
+		
+ 		if (listaTelefones == null || listaTelefones.isEmpty()) {
+			mensagensValidacao.add("Pelo menos um telefone deve ser cadastrado para a cota.");
+		} else {
+			boolean temPrincipal = false;
+			
+			for (TelefoneAssociacaoDTO telefoneAssociacao : listaTelefones){
+
+				if (telefoneAssociacao.isPrincipal()) {
+					
+					temPrincipal = true;
+					
+					break;
+				}
+			}
+			
+			if (!temPrincipal) {
+				mensagensValidacao.add("Deve haver ao menos um telefone principal para o entregador.");
+			}
+		}
+	}
 	
 	/**
 	 * Salva os dados de uma cota do tipo CPF
@@ -555,7 +626,7 @@ public class CotaController {
 	@Path("/salvarCotaCPF")
 	public void salvarCotaPessoaFisica(CotaDTO cotaDTO){
 		
-		validarFormatoData();
+		validar();
 		
 		cotaDTO.setTipoPessoa(TipoPessoa.FISICA);
 		
@@ -597,10 +668,8 @@ public class CotaController {
 	/**
 	 * Valida o formato das datas utilizadas na tela de cadastro de cota
 	 */
-	private void validarFormatoData(){
-		
-		List<String> mensagensValidacao = new ArrayList<String>();
-		
+	private void validarFormatoData(List<String> mensagensValidacao){
+
 		if (validator.hasErrors()) {
 			
 			for (Message message : validator.getErrors()) {
@@ -618,10 +687,12 @@ public class CotaController {
 				}
 			}
 			
-			if (!mensagensValidacao.isEmpty()){
-				throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, mensagensValidacao));
-			}
 		}
+
+		if (!mensagensValidacao.isEmpty()){
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, mensagensValidacao));
+		}
+	
 	}
 	
 	/**
@@ -681,6 +752,8 @@ public class CotaController {
 	@Post
 	@Path("/salvarEnderecos")
 	public void salvarEnderecos(Long idCota){
+	
+		validar();
 		
 		processarEnderecosCota(idCota);
 	
@@ -696,6 +769,8 @@ public class CotaController {
 	@Post
 	@Path("/salvarTelefones")
 	public void salvarTelefones(Long idCota){
+		
+		validar();
 		
 		processarTelefonesCota(idCota);
 		
@@ -953,7 +1028,7 @@ public class CotaController {
 	 */
 	@Post
 	@Path("/pesquisarCotas")
-	public void pesquisarCotas(Integer numCota,String nomeCota,String numeroCpfCnpj, String sortorder, 
+	public void pesquisarCotas(BigInteger numCota,String nomeCota,String numeroCpfCnpj, String sortorder, 
 							   String logradouro, String bairro, String municipio,
 			 				   String sortname, int page, int rp){
 		
@@ -961,11 +1036,11 @@ public class CotaController {
 			numeroCpfCnpj = numeroCpfCnpj.replace(".", "").replace("-", "").replace("/", "");
 		}
 		
-		validarParametrosPesquisa(numCota,nomeCota,numeroCpfCnpj, logradouro, bairro, municipio);
-		
 		nomeCota = PessoaUtil.removerSufixoDeTipo(nomeCota);
 		
-		FiltroCotaDTO filtro = new FiltroCotaDTO( numCota,nomeCota,numeroCpfCnpj, logradouro, bairro, municipio );
+		Integer numeroCota = (numCota!= null)?numCota.intValue():null;
+		
+		FiltroCotaDTO filtro = new FiltroCotaDTO(numeroCota ,nomeCota,numeroCpfCnpj, logradouro, bairro, municipio );
 		
 		configurarPaginacaoPesquisa(filtro, sortorder, sortname, page, rp);
 		
@@ -1117,28 +1192,6 @@ public class CotaController {
 	private String tratarValor(Object valor){
 		
 		return (valor == null)?"":valor.toString();
-	}
-	
-	/**
-	 * Valida os parâmetros de pesquisa da consulta de cotas cadastradas
-	 * 
-	 * @param numCota - número da cota
-	 * @param nomeCota - nome da cota
-	 * @param numeroCpfCnpj - número do CNPJ ou CPF
-	 * 
-	 */
-	private void validarParametrosPesquisa(Integer numCota,String nomeCota, String numeroCpfCnpj,
-			String logradouro, String bairro, String municipio) {
-		
-		if(numCota == null 
-				&& (nomeCota == null || nomeCota.isEmpty())
-				&& (numeroCpfCnpj == null || numeroCpfCnpj.isEmpty())
-				&& (logradouro == null || logradouro.isEmpty())
-				&& (bairro == null || bairro.isEmpty())
-				&& (municipio == null || municipio.isEmpty())){
-			
-			throw new ValidacaoException(TipoMensagem.WARNING,"Pelo menos um dos filtros deve ser informado!");
-		}
 	}
 	
 	/**

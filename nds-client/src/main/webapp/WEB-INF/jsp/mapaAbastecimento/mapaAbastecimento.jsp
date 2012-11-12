@@ -46,10 +46,7 @@
 			<legend>Selecione um ou mais Produtos</legend>
 			<select id="selectProdutos" name="selectProdutos"
 					size="1" multiple="multiple" style="width:440px; height:150px;" >
-					
-			    <c:forEach items="${listaProdutos}" var="produto">
-			    	<option value="${produto.key}_${produto.value}">${produto.value}</option>
-		      	</c:forEach>
+				
 	      	</select>
 		</fieldset>
 	</div>
