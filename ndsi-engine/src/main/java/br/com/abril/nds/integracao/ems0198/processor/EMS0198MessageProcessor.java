@@ -4,7 +4,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -50,21 +49,24 @@ public class EMS0198MessageProcessor extends AbstractRepository implements Messa
 
 	private Date dataLctoDistrib;
 
-	private String nomeArquivo;
-
 	private static SimpleDateFormat sdf = new SimpleDateFormat("ddMMyyyy");
-
+	
+	/** Quantidade de arquivos processados. */
+	private int quantidadeArquivosGerados = 0;
+	
 	@Override
 	public void processMessage(Message message) {
 		
+		// Reinicia a contagem dos arquivos gerados:
+		this.quantidadeArquivosGerados = 0;
+		
+		
 		List<PDV> pdvs = findListPDV(message);
-
 		
 		int numeroCota = pdvs.get(0).getCota().getNumeroCota();
 
 		int qtdeRegistros = 0;
 		
-		this.nomeArquivo = String.format("%1$04d%2$s", numeroCota, sdf.format(dataLctoDistrib));
 		PrintWriter print =  geraArquivo(message, this.dataLctoDistrib, pdvs.get(0).getNome(), numeroCota);
 							
 		for (PDV pdv: pdvs) {
@@ -82,7 +84,7 @@ public class EMS0198MessageProcessor extends AbstractRepository implements Messa
 				
 				numeroCota = pdv.getCota().getNumeroCota();
 				
-				print = geraArquivo(message, this.dataLctoDistrib, pdvs.get(0).getNome(), numeroCota);
+				print = geraArquivo(message, this.dataLctoDistrib, pdv.getNome(), numeroCota);
 				
 				qtdeRegistros = 0;
 				
@@ -94,13 +96,60 @@ public class EMS0198MessageProcessor extends AbstractRepository implements Messa
 		
 		print.flush();
 		print.close();
-			
+		
 	}
+	
+	private List<PDV> findListPDV(Message message) {
+
+		StringBuilder sql = new StringBuilder();
+
+		sql.append(" select pdv from PDV pdv ");
+		sql.append(" join fetch pdv.cota co ");
+		sql.append(" join fetch co.pessoa p ");
+		sql.append(" left join fetch co.movimentoEstoqueCotas mov ");
+		sql.append(" left join fetch mov.produtoEdicao pe ");
+		sql.append(" left join fetch pe.chamadaEncalhes ce");
+		sql.append(" left join fetch pe.produto pd ");
+		sql.append(" left join mov.tipoMovimento tme ");
+		sql.append(" left join pe.lancamentos lan ");
+
+		sql.append(" where pdv.caracteristicas.pontoPrincipal = true ");
+		sql.append(" and lan.dataLancamentoDistribuidor = :dataLancDistrib ");
+		sql.append(" and tme.grupoMovimentoEstoque = :tipoMovimento ");
+		sql.append(" order by co.numeroCota");
+
+		Query query = this.getSession().createQuery(sql.toString());
+		query.setParameter("dataLancDistrib", this.dataLctoDistrib);
+		query.setParameter("tipoMovimento",
+				GrupoMovimentoEstoque.ENVIO_JORNALEIRO);
+
+		@SuppressWarnings("unchecked")
+		List<PDV> pdvs = (List<PDV>) query.list();
+
+		if (pdvs.isEmpty()) {
+
+			message.getHeader().put(
+					MessageHeaderProperties.FILE_NAME.getValue(), "");
+			message.getHeader().put(
+					MessageHeaderProperties.LINE_NUMBER.getValue(), 0);
+
+			this.ndsiLoggerFactory.getLogger().logWarning(message,
+					EventoExecucaoEnum.GERACAO_DE_ARQUIVO,
+					"Nenhum registro encontrado!");
+
+			throw new RuntimeException("Nenhum registro encontrado!");
+		} else {
+
+			return pdvs;
+		}
+	}
+	
 	
 	private PrintWriter geraArquivo(Message message, Date data, String nome, int numeroCota) {
 		
 		try {
-			 														
+			
+			String nomeArquivo = String.format("%1$04d%2$s", numeroCota, sdf.format(dataLctoDistrib));
 
 			PrintWriter print = new PrintWriter(new FileWriter(message.getHeader().get(
 					MessageHeaderProperties.OUTBOUND_FOLDER.getValue()) + "/" + nomeArquivo + ".enc"));
@@ -119,51 +168,6 @@ public class EMS0198MessageProcessor extends AbstractRepository implements Messa
 						
 	}
 	
-	
-	private List<PDV> findListPDV(Message message) {
-		
-			
-		StringBuilder sql = new StringBuilder();
-
-		sql.append(" select pdv from PDV pdv ");
-		sql.append(" join fetch pdv.cota co ");
-		sql.append(" join fetch co.pessoa p ");
-		sql.append(" left join fetch co.movimentoEstoqueCotas mov ");
-		sql.append(" left join fetch mov.produtoEdicao pe ");
-		sql.append(" left join fetch pe.chamadaEncalhes ce");
-		sql.append(" left join fetch pe.produto pd ");
-		sql.append(" left join mov.tipoMovimento tme ");
-		sql.append(" left join pe.lancamentos lan ");
-		
-		sql.append(" where pdv.caracteristicas.pontoPrincipal = true ");
-		sql.append(" and lan.dataLancamentoDistribuidor = :dataLancDistrib ");
-		sql.append(" and tme.grupoMovimentoEstoque = :tipoMovimento ");
-		sql.append(" order by co.numeroCota");
-
-		Query query = this.getSession().createQuery(sql.toString());
-		query.setParameter("dataLancDistrib", this.dataLctoDistrib);
-		query.setParameter("tipoMovimento", GrupoMovimentoEstoque.ENVIO_JORNALEIRO);
-
-		@SuppressWarnings("unchecked")
-		List<PDV> pdvs = (List<PDV>) query.list();
-
-		if (pdvs.isEmpty()) {
-
-			message.getHeader().put(MessageHeaderProperties.FILE_NAME.getValue(), "");
-			message.getHeader().put(MessageHeaderProperties.LINE_NUMBER.getValue(), 0);
-
-			
-			this.ndsiLoggerFactory.getLogger().logWarning(message,
-					EventoExecucaoEnum.GERACAO_DE_ARQUIVO, "Nenhum registro encontrado!");
-
-			throw new RuntimeException("Nenhum registro encontrado!");
-
-		} else {
-
-			return pdvs;
-			
-		}
-	}
 	
 	private void criaHeader(PrintWriter print, Integer numeroCota, String nome, Date data) {
 
@@ -186,6 +190,11 @@ public class EMS0198MessageProcessor extends AbstractRepository implements Messa
 		
 		print.println(fixedFormatManager.export(outtrailer));
 
+		/*
+		 * A quantidade de arquivos gerados é incrementado aqui pois 
+		 * considera-se que o arquivo foi gerado corretamente.
+		 */
+		this.quantidadeArquivosGerados++;
 	}
 
 	private Integer criaDetalhes(PrintWriter print, Cota cota, Set<MovimentoEstoqueCota> movimentoEstoqueCotas) {
@@ -249,4 +258,14 @@ public class EMS0198MessageProcessor extends AbstractRepository implements Messa
 		this.dataLctoDistrib = data;
 		
 	}
+
+	/**
+	 * Retorna a quantidade de arquivos gerados apos o processamento.
+	 * 
+	 * @return
+	 */
+	public int getQuantidadeArquivosGerados() {
+		return quantidadeArquivosGerados;
+	}
+	
 }
