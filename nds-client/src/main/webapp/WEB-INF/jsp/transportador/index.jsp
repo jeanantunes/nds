@@ -329,7 +329,7 @@
 								</span>
 							</td>
 							<td valign="top">
-								<span class="bt_novos"	title="Confirmar">
+								<span class="bt_novos">
 									<a href="javascript:;" onclick="transportadorController.confirmarAssociacao();" rel="tipsy" title="Confirmar Associação">
 										<img border="0" src="${pageContext.request.contextPath}/images/ico_check.gif">
 									</a>
