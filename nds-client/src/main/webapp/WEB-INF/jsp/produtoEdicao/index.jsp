@@ -117,7 +117,7 @@ fieldset {
 								<tr>
 									<td>Edi&ccedil;&atilde;o:</td>
 									<td><input type="text" name="numeroEdicao" id="produtoEdicaoController-numeroEdicao" style="width:50px;" /></td>
-									<td>PED:</td>
+									<td>PEB:</td>
 									<td><input type="text" name="ped" id="produtoEdicaoController-ped" style="width:50px;" /></td>
 									<td>Pct. Padr&atilde;o:</td>
 									<td><input type="text" name="pacotePadrao" id="produtoEdicaoController-pacotePadrao" style="width:50px;" /></td>
