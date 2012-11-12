@@ -51,6 +51,7 @@ import br.com.abril.nds.model.cadastro.TipoEndereco;
 import br.com.abril.nds.model.dne.Bairro;
 import br.com.abril.nds.model.dne.Localidade;
 import br.com.abril.nds.model.dne.Logradouro;
+import br.com.abril.nds.model.dne.UnidadeFederacao;
 import br.com.abril.nds.repository.BairroRepository;
 import br.com.abril.nds.repository.EnderecoRepository;
 import br.com.abril.nds.repository.LocalidadeRepository;
@@ -240,7 +241,37 @@ public class EnderecoServiceImpl implements EnderecoService {
 	@Transactional(readOnly = true)
 	public List<String> obterUnidadeFederacaoBrasil() {
 
-		return this.enderecoRepository.obterUnidadeFederacaoBrasil();
+		ViewQuery query = new ViewQuery()
+	    	.designDocId("_design/cep")
+	    	.viewName("ufs")
+	    	.includeDocs(true);
+	
+		List<JsonNode> list = couchDbConnector.queryView(query, JsonNode.class);
+		List<String> ret = null;
+		if (!list.isEmpty()) {
+			
+			try {
+				ObjectMapper om = new ObjectMapper();
+				
+				ret = new ArrayList<String>();
+	
+				for (JsonNode jsonUf: list) {
+					ret.add( om.treeToValue(jsonUf, UnidadeFederacao.class).getSigla() );
+				}			
+				
+			} catch (JsonParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (JsonMappingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+				
+		}		
+		return ret;
 	}
 
 	/**

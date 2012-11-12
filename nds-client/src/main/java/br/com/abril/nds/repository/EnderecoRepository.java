@@ -29,8 +29,6 @@ public interface EnderecoRepository extends Repository<Endereco, Long> {
 	List<Endereco> buscarEnderecosPessoa(Long idPessoa, Set<Long> idsIgnorar);
 
 	List<String> obterMunicipiosCotas();
-
-	List<String> obterUnidadeFederacaoBrasil();
 	
 	List<Localidade> obterLocalidadesPorUFNome(String nome, String siglaUF);
 	

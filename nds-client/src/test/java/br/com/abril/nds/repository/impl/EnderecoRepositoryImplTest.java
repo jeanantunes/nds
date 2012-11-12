@@ -57,13 +57,6 @@ public class EnderecoRepositoryImplTest extends AbstractRepositoryImplTest {
 		Assert.assertNotNull(string);
 	}
 	
-	@Test
-	public void obterUnidadeFederacaoBrasil(){
-				
-		List<String> string = enderecoRepository.obterUnidadeFederacaoBrasil();
-		
-		Assert.assertNotNull(string);
-	}
 	
 	@Test
 	public void obterLocalidadesPorUFNomeNome(){

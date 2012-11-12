@@ -97,6 +97,7 @@ public class EnderecoRepositoryImpl extends AbstractRepositoryModel<Endereco, Lo
 	/**
 	 * {@inheritDoc}
 	 */
+	/*
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<String> obterUnidadeFederacaoBrasil() {
@@ -111,7 +112,7 @@ public class EnderecoRepositoryImpl extends AbstractRepositoryModel<Endereco, Lo
 		
 		return query.list();
 	}
-
+*/
 	/**
 	 * {@inheritDoc}
 	 */

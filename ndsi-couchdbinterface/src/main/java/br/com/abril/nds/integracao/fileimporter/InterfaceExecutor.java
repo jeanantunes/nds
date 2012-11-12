@@ -456,6 +456,7 @@ public class InterfaceExecutor {
 				
 				doc.setTipoDocumento("uf");					
 				doc.set_id("uf/" + (row.get("UFE_SG") != null ? row.get("UFE_SG").toString() : "" ));
+				doc.setSigla((row.get("UFE_SG") != null ? row.get("UFE_SG").toString() : "" ));
 				doc.setFaixaCepInicial((row.get("UFE_CEP_INI") != null ? row.get("UFE_CEP_INI").toString() : "" ));
 				doc.setFaixaCepFinal((row.get("UFE_CEP_FIM") != null ? row.get("UFE_CEP_FIM").toString() : "" ));
 
