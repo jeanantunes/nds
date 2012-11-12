@@ -13,7 +13,7 @@ import br.com.abril.nds.integracao.engine.RouteInterface;
 
 @Component
 @Scope("prototype")
-public class EMS0198Route extends FileOutputRoute{
+public class EMS0198Route extends FileOutputRoute {
 	
 	@Autowired
 	private EMS0198MessageProcessor messageProcessor;
@@ -33,9 +33,11 @@ public class EMS0198Route extends FileOutputRoute{
 		return RouteInterface.EMS0198;
 	}
 	
-	public void execute(String userName, Date data) {
+	public int execute(String userName, Date data) {
 		messageProcessor.setDataLctoDistrib(data);
 		execute(userName);
+		
+		return messageProcessor.getQuantidadeArquivosGerados();
 	}
 	
 }
