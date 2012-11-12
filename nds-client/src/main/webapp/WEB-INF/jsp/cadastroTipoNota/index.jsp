@@ -16,8 +16,8 @@ $(function(){
   <form id="pesquisar_tipo_nota_form">	
   <div class="areaBts">
   	<div class="area">
-  		<span class="bt_arq" title="Gerar Arquivo"><a href="${pageContext.request.contextPath}/administracao/cadastroTipoNota/exportar?fileType=XLS" rel="tipsy" title="Gerar Arquivo"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" /></a></span>
-    	<span class="bt_arq" title="Imprimir"><a href="${pageContext.request.contextPath}/administracao/cadastroTipoNota/exportar?fileType=PDF" rel="tipsy" title="Imprimir"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" /></a></span>
+  		<span class="bt_arq"><a href="${pageContext.request.contextPath}/administracao/cadastroTipoNota/exportar?fileType=XLS" rel="tipsy" title="Gerar Arquivo"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" /></a></span>
+    	<span class="bt_arq"><a href="${pageContext.request.contextPath}/administracao/cadastroTipoNota/exportar?fileType=PDF" rel="tipsy" title="Imprimir"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" /></a></span>
   	</div>
   </div>
  <div class="linha_separa_fields">&nbsp;</div>

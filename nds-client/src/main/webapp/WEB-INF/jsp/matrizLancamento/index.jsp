@@ -135,17 +135,17 @@ var lancamentosSelecionados = [];
 		     
 			  <div class="areaBts">
 			  		<div class="area">
-			  			<span class="bt_novos" title="Voltar Configuração Inicial">
+			  			<span class="bt_novos">
 		        			<!-- Voltar Configuração Inicial -->
 		        			<a id="linkVoltarConfiguracaoInicial" href="javascript:;" onclick="balanceamentoLancamento.abrirAlertaVoltarConfiguracaoInicial();" rel="tipsy" title="Clique para Voltar Configuração Inicial"><img src="<c:url value='images/bt_devolucao.png'/>" title="Voltar Configuração Inicial" border="0" hspace="5" /></a>
 		        		</span>
 			  			
-			  			<span class="bt_novos" title="Reprogramar">
+			  			<span class="bt_novos" >
 			  				<!-- Reprogramar -->
 			  				<a id="linkReprogramar" href="javascript:;" onclick="balanceamentoLancamento.reprogramarSelecionados();" rel="tipsy" title="Clique para Reprogramar"><img src="<c:url value='images/ico_reprogramar.gif'/>"  hspace="5" border="0" /></a>                    
 		                </span>
 		                
-		                <span class="bt_novos" style="border-width: 2px; border-color: #00CD00;" title="Confirmar">
+		                <span class="bt_novos" style="border-width: 2px; border-color: #00CD00;">
 		                    <!-- CONFIRMAR -->	
 		                    <a id="linkConfirmar" href="javascript:;" onclick="balanceamentoLancamento.obterConfirmacaoBalanceamento();" rel="tipsy" title="Confirmar Balanceamento">
 		                        <img src="<c:url value='images/ico_check.gif'/>"  hspace="5" border="0" />
@@ -154,7 +154,7 @@ var lancamentosSelecionados = [];
 			  			
 			  			
 			  			
-			  			 <span class="bt_arq" title="Gerar Arquivo">
+			  			 <span class="bt_arq">
 							<!-- ARQUIVO -->
 							<a id="linkArquivo" href="${pageContext.request.contextPath}/matrizLancamento/exportar?fileType=XLS" rel="tipsy" title="Gerar Arquivo">
 							    <img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
@@ -162,7 +162,7 @@ var lancamentosSelecionados = [];
 						</span>
 		            
 					
-						<span class="bt_arq" title="Imprimir">
+						<span class="bt_arq">
 							<!-- IMPRIMIR -->	
 							<a id="linkImprimir" href="${pageContext.request.contextPath}/matrizLancamento/exportar?fileType=PDF" rel="tipsy" title="Imprimir">
 							    <img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
