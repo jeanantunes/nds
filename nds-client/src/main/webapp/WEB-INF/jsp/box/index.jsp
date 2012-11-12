@@ -74,7 +74,7 @@ $(function(){
 	<form action="/cadastro/box/" id="pesquisar_box_form">
 	<div class="areaBts">
 		<div class="area">
-			<span class="bt_novos" title="Novo">
+			<span class="bt_novos">
 				<a href="javascript:;" id="btnNovo" rel="tipsy" title="Incluir Novo Box">
 					<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/>
 				</a>

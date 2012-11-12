@@ -724,7 +724,7 @@ public class EnderecoController {
 				
 				if (!enderecoAssociacao.equals(enderecoAssociacaoAtual) && enderecoAssociacaoAtual.isEnderecoPrincipal()) {
 					
-					throw new ValidacaoException(TipoMensagem.WARNING, "Já existe um endereço principal.");
+					enderecoAssociacao.setEnderecoPrincipal(false); 
 				}
 			}
 		}

@@ -384,10 +384,10 @@ public class TelefoneController {
 					if (principal) {
 
 						if (referencia == null) {
-							throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Já existe um telefone principal."));
-
+							dto.setPrincipal(false);
+							
 						} else if (!referencia.equals(dto.getReferencia())) {
-							throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Já existe um telefone principal."));
+							dto.setPrincipal(false);
 						}
 					}
 				}

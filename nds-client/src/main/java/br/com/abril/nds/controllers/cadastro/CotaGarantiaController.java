@@ -527,7 +527,7 @@ public class CotaGarantiaController {
     public void getFiador(Long idFiador, String documento) {
         Fiador fiador = cotaGarantiaService.getFiador(idFiador, documento);
         if (fiador != null) {
-            result.use(CustomJson.class).from(fiador).exclude(EnderecoFiador.class, "enderecoFiador").serialize();
+            result.use(CustomJson.class).from(fiador).exclude(Fiador.class, "enderecoFiador").serialize();
         } else {
             result.use(CustomJson.class).from("NotFound").serialize();
         }

@@ -288,7 +288,7 @@
 	<form action="/produto" id="pesquisar_form">
 	<div class="areaBts">
 		<div class="area">
-			<span class="bt_novos" title="Novo">
+			<span class="bt_novos">
 				<a href="javascript:;" onclick="produtoController.novoProduto();" rel="tipsy" title="Novo Produto">
 					<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0" />
 				</a>

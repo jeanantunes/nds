@@ -167,6 +167,8 @@ var fornecedorController = $.extend(true,{
 		
 		novoFornecedor:	function (isEdicao, indBloqueiaCamposEdicaoFornecedor) {
 				
+				$("#fornecedorController-cnpj").attr('disabled', false);
+			
 				if (!isEdicao) {
 					
 					fornecedorController.limparCamposModal();
@@ -205,7 +207,7 @@ var fornecedorController = $.extend(true,{
 						form: $("#fornecedorController-dialogNovoFornecedor", this.workspace).parents("form"),
 						buttons : {},
 						beforeClose: function(event, ui) {
-							
+
 							if (!fecharModalCadastroFornecedor){
 								
 								fornecedorController.cancelarCadastro();
@@ -268,8 +270,12 @@ var fornecedorController = $.extend(true,{
 			
 			cadastrarFornecedor:function () {
 				
+				$("#fornecedorController-cnpj").attr('disabled', false);
+
 				var formData = $("#fornecedorController-formNovoFornecedor", fornecedorController.workspace).serializeArray();
-				
+
+				$("#fornecedorController-cnpj").attr('disabled', true);
+
 				$.postJSON(
 					 contextPath +"/cadastro/fornecedor/cadastrarFornecedor",
 					formData,
