@@ -93,7 +93,7 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 				PrintWriter print = new PrintWriter(new FileWriter(
 						message.getHeader().get(
 								MessageHeaderProperties.OUTBOUND_FOLDER.getValue())
-								+ "/" + nomeArquivo + ".rep"));	
+						+ "/" + nomeArquivo + ".rep"));	
 					
 				//REGISTRO TIPO 1
 				EMS0197Header outHeader = new EMS0197Header();
