@@ -289,7 +289,7 @@ var fiadorController = $.extend(true, {
 			$("#fiadorController-garantia-valorGarantia", fiadorController.workspace).priceFormat({
 			    centsSeparator: ',',
 			    thousandsSeparator: '.',
-			    centsLimit: 4
+			    centsLimit: 2
 			});
 			
 			$(".fiadorController-cotasAssociadasGrid", fiadorController.workspace).flexigrid({
@@ -437,7 +437,7 @@ var fiadorController = $.extend(true, {
 		},
 		
 		excluirFiador:function (idFiador){
-			$(".fiadorController-dialog-excluir-fiador", fiadorController.workspace).dialog({
+			$("#fiadorController-dialog-excluir-fiador", fiadorController.workspace).dialog({
 				resizable: false,
 				height:'auto',
 				width:300,
@@ -469,7 +469,7 @@ var fiadorController = $.extend(true, {
 						$(this).dialog("close");
 					}
 				},
-				form: $(".fiadorController-dialog-excluir-fiador").parents("form")
+				form: $("#fiadorController-dialog-excluir-fiador").parents("form")
 			});
 			
 			$(".fiadorController-dialog-excluir-fiador", fiadorController.workspace).show();
@@ -774,6 +774,7 @@ var fiadorController = $.extend(true, {
 		adicionarSocio: function (){
 			var data = {
 					"referencia" : $("#fiadorController-socio-idSocioEdicao", fiadorController.workspace).val(),
+					"pessoa.socioPrincipal" : ("" + $("#fiadorController-isSocioPrincipal", fiadorController.workspace).attr("checked") == 'checked'),
 					"pessoa.nome" : $('#fiadorController-socio-nomeFiadorCpf', fiadorController.workspace).val(),
 					"pessoa.email" : $('#fiadorController-socio-emailFiadorCpf', fiadorController.workspace).val(),
 					"pessoa.cpf" : $('#fiadorController-socio-cpfFiador', fiadorController.workspace).val(),
@@ -784,8 +785,7 @@ var fiadorController = $.extend(true, {
 					"pessoa.estadoCivil" : $('#fiadorController-socio-estadoCivilFiadorCpf', fiadorController.workspace).val(),
 					"pessoa.sexo" : $('#fiadorController-socio-selectSexoFiador', fiadorController.workspace).val(),
 					"pessoa.nacionalidade" : $('#fiadorController-socio-nacionalidadeFiadorCpf', fiadorController.workspace).val(),
-					"pessoa.natural" : $('#fiadorController-socio-naturalFiadorCpf', fiadorController.workspace).val(),
-					"pessoa.socioPrincipal" : ("" + $('#fiadorController-socio-checkboxSocioPrincipal', fiadorController.workspace).attr("checked") == 'checked')};
+					"pessoa.natural" : $('#fiadorController-socio-naturalFiadorCpf', fiadorController.workspace).val()};
 		    
 		    if (this.addConjuge){ 
 		        var conjuge ={"nome" : $('#fiadorController-socio-nomeConjugeCpf', fiadorController.workspace).val(),
