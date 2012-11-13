@@ -16,6 +16,8 @@ import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
+import br.com.abril.nds.model.cadastro.HistoricoSituacaoCota;
+import br.com.abril.nds.model.cadastro.MotivoAlteracaoSituacao;
 import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
 import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
@@ -198,6 +200,18 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 			cota.setPessoa(pessoa);
 			getSession().persist(cota);
 
+			// HistoricoSituacaoCota - Realizado em conjunto com Cesar Pop Punk
+			HistoricoSituacaoCota historicoSituacaoCota = new HistoricoSituacaoCota();
+			historicoSituacaoCota.setCota(cota);
+			historicoSituacaoCota.setSituacaoAnterior(null);
+			historicoSituacaoCota.setNovaSituacao(cota.getSituacaoCadastro());
+			historicoSituacaoCota.setMotivo(MotivoAlteracaoSituacao.OUTROS);
+			historicoSituacaoCota.setDataInicioValidade(null);
+			historicoSituacaoCota.setDataFimValidade(null);
+			historicoSituacaoCota.setDescricao("INTERFACE");
+			
+			getSession().persist(historicoSituacaoCota);
+			
 			// ParametroCobrancaCota - Realizado em conjunto com Cesar Pop Punk
 			ParametroCobrancaCota parametroCobrancaCota = new ParametroCobrancaCota();
 			parametroCobrancaCota.setCota(cota);

@@ -93,6 +93,8 @@ public class HistoricoSituacaoCotaRepositoryImpl extends AbstractRepositoryModel
 		hql += totalizarResultados ? " count(hsc) " : " hsc ";
 		
 		hql += " from HistoricoSituacaoCota hsc ";
+		hql += " join hsc.cota c ";
+		hql += " join c.pessoa p ";
 		
 		if (filtro != null) {
 			
@@ -181,6 +183,12 @@ public class HistoricoSituacaoCotaRepositoryImpl extends AbstractRepositoryModel
 			
 			switch (filtro.getOrdenacaoColuna()) {
 			
+				case NUMERO_COTA :
+					hql += "order by c.numeroCota ";
+					break;
+				case NOME_COTA :
+					hql += "order by CASE WHEN p.class = 'J' THEN p.razaoSocial else p.nome END ";
+					break;
 				case DATA:
 					hql += "order by hsc.dataInicioValidade ";
 					break;

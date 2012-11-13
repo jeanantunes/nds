@@ -388,9 +388,11 @@ public class ManutencaoStatusCotaController {
 		
 		for (SituacaoCadastro situacaoCadastro : SituacaoCadastro.values()) {
 			
-			listaSituacoesStatusCota.add(
-				new ItemDTO<SituacaoCadastro, String>(situacaoCadastro, situacaoCadastro.toString())
-			);
+			if (!situacaoCadastro.equals(SituacaoCadastro.PENDENTE)) {
+				listaSituacoesStatusCota.add(
+					new ItemDTO<SituacaoCadastro, String>(situacaoCadastro, situacaoCadastro.toString())
+				);
+			}
 		}
 		
 		result.include("listaSituacoesStatusCota", listaSituacoesStatusCota);
