@@ -1,5 +1,6 @@
 package br.com.abril.nds.service;
 
+import java.util.Date;
 import java.util.List;
 
 import br.com.abril.nds.dto.ConsultaProdutoDTO;
@@ -40,6 +41,8 @@ public interface ProdutoService {
 	 * @return {@link Produto}
 	 */
 	Produto obterProdutoPorCodigo(String codigoProduto);
+	
+	Produto obterProdutoBalanceadosPorCodigo(String codigoProduto, Date dataLancamento);
 	
 	String obterNomeProdutoPorCodigo(String codigoProduto);
 
@@ -94,6 +97,6 @@ public interface ProdutoService {
 	 */
 	List<Produto> obterProdutos();
 	
-	List<Produto> obterProdutosOrganizadosNome();
+	List<Produto> obterProdutosBalanceadosOrdenadosNome(Date dataLancamento);
 	
 }
