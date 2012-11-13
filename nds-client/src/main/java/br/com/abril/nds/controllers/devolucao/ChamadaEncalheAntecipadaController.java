@@ -337,7 +337,7 @@ public class ChamadaEncalheAntecipadaController {
 		
 		validarDataRecolhimento(dataRecolhimento);
 		
-		if(!gravarTodos.isEmpty()){
+		if (Boolean.getBoolean(gravarTodos)) {
 			
 			FiltroChamadaAntecipadaEncalheDTO filtro = getFiltroSessionSemPaginacao();
 			filtro.setDataAntecipacao(DateUtil.parseDataPTBR(dataRecolhimento));
@@ -347,11 +347,9 @@ public class ChamadaEncalheAntecipadaController {
 			
 			result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
 											"result").recursive().serialize();
-		}
-		else{
+		} else{
 			
 			gravarChamadaEncalheAnteicipada(listaChamadaEncalheAntecipada,dataRecolhimento,codigoProduto,numeroEdicao,dataProgramada);
-			
 		}	
 	}
 	
