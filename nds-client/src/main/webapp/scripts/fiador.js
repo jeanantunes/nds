@@ -863,16 +863,16 @@ var fiadorController = $.extend(true, {
 							$('#fiadorController-socio-naturalConjugeCpf', fiadorController.workspace).val(result[20]);
 							
 							if (result[21] == "true"){
-								$('#fiadorController-socio-checkboxSocioPrincipal', fiadorController.workspace).check();
+								$('#fiadorController-isSocioPrincipal', fiadorController.workspace).check();
 							} else {
-								$('#fiadorController-socio-checkboxSocioPrincipal', fiadorController.workspace).uncheck();
+								$('#fiadorController-isSocioPrincipall', fiadorController.workspace).uncheck();
 							}
 						} else {
 							
 							if (result[11] == "true"){
-								$('#fiadorController-socio-checkboxSocioPrincipal', fiadorController.workspace).check();
+								$('#fiadorController-isSocioPrincipal', fiadorController.workspace).check();
 							} else {
-								$('#fiadorController-socio-checkboxSocioPrincipal', fiadorController.workspace).uncheck();
+								$('#fiadorController-isSocioPrincipal', fiadorController.workspace).uncheck();
 							}
 						}
 						
