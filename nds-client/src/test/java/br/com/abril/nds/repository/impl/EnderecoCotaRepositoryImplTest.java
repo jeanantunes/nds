@@ -21,7 +21,6 @@ public class EnderecoCotaRepositoryImplTest extends AbstractRepositoryImplTest {
 		
 		Endereco endereco = new Endereco();
 		endereco.setId(1L);
-		endereco.setCodigoBairro("1");
 		endereco.setBairro("testeBairro");
 		
 		Long idCota = 1L;

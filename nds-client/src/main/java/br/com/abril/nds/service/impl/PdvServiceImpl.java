@@ -1138,7 +1138,7 @@ public class PdvServiceImpl implements PdvService {
                     enderecoPDV = new EnderecoPDV();
                 }
                 
-                Endereco endereco = new Endereco(dto.getCodigoBairro(),
+                Endereco endereco = new Endereco(
                         dto.getBairro(), dto.getCep(),
                         dto.getCodigoCidadeIBGE(), dto.getCidade(),
                         dto.getComplemento(), dto.getTipoLogradouro(),

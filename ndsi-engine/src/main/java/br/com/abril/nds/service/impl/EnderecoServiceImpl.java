@@ -2,12 +2,8 @@ package br.com.abril.nds.service.impl;
 
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -15,8 +11,6 @@ import java.util.Set;
 
 import javax.annotation.PostConstruct;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpGet;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
@@ -25,27 +19,17 @@ import org.ektorp.ComplexKey;
 import org.ektorp.CouchDbConnector;
 import org.ektorp.CouchDbInstance;
 import org.ektorp.ViewQuery;
-import org.ektorp.ViewResult;
 import org.ektorp.http.HttpClient;
-import org.ektorp.http.RestTemplate;
 import org.ektorp.http.StdHttpClient;
 import org.ektorp.impl.StdCouchDbInstance;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.EnderecoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.couchdb.CouchDbProperties;
-import br.com.abril.nds.integracao.model.canonic.EMS0128Input;
-import br.com.abril.nds.model.Capa;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.TipoEndereco;
 import br.com.abril.nds.model.dne.Bairro;
@@ -56,7 +40,6 @@ import br.com.abril.nds.repository.BairroRepository;
 import br.com.abril.nds.repository.EnderecoRepository;
 import br.com.abril.nds.repository.LocalidadeRepository;
 import br.com.abril.nds.repository.LogradouroRepository;
-import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.service.EnderecoService;
 import br.com.abril.nds.service.exception.EnderecoUniqueConstraintViolationException;
 import br.com.abril.nds.util.TipoMensagem;
@@ -329,7 +312,6 @@ public class EnderecoServiceImpl implements EnderecoService {
 					ret.setCep(logradouro.getCep());
 					ret.setLogradouro(logradouro.getNome());				
 					ret.setTipoLogradouro(logradouro.getTipoLogradouro());				
-					ret.setCodigoBairro(bairroInicial.get_id());				
 					ret.setBairro(bairroInicial.getNome());				
 				} else {
 					localidade = om.treeToValue(list.get(0), Localidade.class);

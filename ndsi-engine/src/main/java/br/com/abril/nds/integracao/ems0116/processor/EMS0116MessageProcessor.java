@@ -136,13 +136,16 @@ public class EMS0116MessageProcessor extends AbstractRepository implements
 			if (!input.getEndereco().isEmpty()
 					&& !".".equals(input.getEndereco())) {
 
-				Endereco endereco = new Endereco();
-				endereco.setCodigoBairro(input.getCodBairro());
-				endereco.setCep(input.getCep());
-				endereco.setCidade(input.getNomeMunicipio());
-				endereco.setLogradouro(input.getEndereco());
+				Endereco endereco = getEnderecoSaneado(input.getCep());
+				if (null == endereco ) {
+					endereco = new Endereco();
+					endereco.setCep(input.getCep());
+					endereco.setCidade(input.getNomeMunicipio());
+					endereco.setLogradouro(input.getEndereco());
+					endereco.setUf(input.getSiglaUF());
+				}
 				endereco.setNumero(null);
-				endereco.setUf(input.getSiglaUF());
+				
 				getSession().persist(endereco);
 
 				EnderecoPDV enderecoPDV = new EnderecoPDV();
@@ -256,14 +259,16 @@ public class EMS0116MessageProcessor extends AbstractRepository implements
 						.list();
 
 				if (enderecosPDV.isEmpty()) {
-
-					endereco = new Endereco();
-					endereco.setCodigoBairro(input.getCodBairro());
-					endereco.setCep(input.getCep());
-					endereco.setCidade(input.getNomeMunicipio());
-					endereco.setLogradouro(input.getEndereco());
-					endereco.setNumero(null);
-					endereco.setUf(input.getSiglaUF());
+					
+					endereco = getEnderecoSaneado(input.getCep());
+					if (null == endereco ) {
+						endereco = new Endereco();
+						endereco.setCep(input.getCep());
+						endereco.setCidade(input.getNomeMunicipio());
+						endereco.setLogradouro(input.getEndereco());
+						endereco.setNumero(null);
+						endereco.setUf(input.getSiglaUF());
+					}
 					getSession().persist(endereco);
 
 					enderecoPDV = new EnderecoPDV();
@@ -297,13 +302,15 @@ public class EMS0116MessageProcessor extends AbstractRepository implements
 
 							if (enderecos.isEmpty()) {
 
-								endereco = new Endereco();
-								endereco.setCodigoBairro(input.getCodBairro());
-								endereco.setCep(input.getCep());
-								endereco.setCidade(input.getNomeMunicipio());
-								endereco.setLogradouro(input.getEndereco());
+								endereco = getEnderecoSaneado(input.getCep());
+								if (null == endereco ) {
+									endereco = new Endereco();
+									endereco.setCep(input.getCep());
+									endereco.setCidade(input.getNomeMunicipio());
+									endereco.setLogradouro(input.getEndereco());
+									endereco.setUf(input.getSiglaUF());
+								}
 								endereco.setNumero(null);
-								endereco.setUf(input.getSiglaUF());
 								getSession().persist(endereco);
 
 							} else {
