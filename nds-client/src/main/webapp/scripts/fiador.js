@@ -865,7 +865,7 @@ var fiadorController = $.extend(true, {
 							if (result[21] == "true"){
 								$('#fiadorController-isSocioPrincipal', fiadorController.workspace).check();
 							} else {
-								$('#fiadorController-isSocioPrincipall', fiadorController.workspace).uncheck();
+								$('#fiadorController-isSocioPrincipal', fiadorController.workspace).uncheck();
 							}
 						} else {
 							
