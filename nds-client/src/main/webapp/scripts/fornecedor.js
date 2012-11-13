@@ -167,6 +167,7 @@ var fornecedorController = $.extend(true,{
 		
 		novoFornecedor:	function (isEdicao, indBloqueiaCamposEdicaoFornecedor) {
 				
+				$("#fornecedorController-codigoInterface").attr('disabled', false);
 				$("#fornecedorController-cnpj").attr('disabled', false);
 			
 				if (!isEdicao) {
@@ -270,12 +271,14 @@ var fornecedorController = $.extend(true,{
 			
 			cadastrarFornecedor:function () {
 				
+				$("#fornecedorController-codigoInterface").attr('disabled', false);
 				$("#fornecedorController-cnpj").attr('disabled', false);
-
+				
 				var formData = $("#fornecedorController-formNovoFornecedor", fornecedorController.workspace).serializeArray();
 
 				$("#fornecedorController-cnpj").attr('disabled', true);
-
+				$("#fornecedorController-codigoInterface").attr('disabled', true);
+				
 				$.postJSON(
 					 contextPath +"/cadastro/fornecedor/cadastrarFornecedor",
 					formData,
@@ -441,8 +444,7 @@ var fornecedorController = $.extend(true,{
 						FORNECEDOR.bloquearCamposFormTelefone(indBloqueiaCamposEdicaoFornecedor);
 
 						$("#fornecedorController-cnpj", fornecedorController.workspace).prop('disabled', true);
-
-						
+						$("#fornecedorController-codigoInterface", fornecedorController.workspace).prop('disabled', true);
 					},
 					function(result) {
 						exibirMensagem(

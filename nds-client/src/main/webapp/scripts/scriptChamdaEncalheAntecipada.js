@@ -125,7 +125,8 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 			var params = {'codigoProduto':chamdaEncalheAnteipadaController.getHiddenProduto(),
 				'numeroEdicao':chamdaEncalheAnteipadaController.getHiddenNumeroEdicao(),
 				'dataRecolhimento':$("#dataAntecipacao",this.workspace).val(),
-				'dataProgramada':$("#dataProgramada").val()};
+				'dataProgramada':$("#dataProgramada").val(),
+				'gravarTodos':$("#sel", this.workspace).is(':checked')};
 			
 			if(chamdaEncalheAnteipadaController.tipoPesquisaGridCota == chamdaEncalheAnteipadaController.tipoPesquisaSelecionado){
 				
@@ -147,14 +148,11 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 			}
 			else {
 				
-				var checkTodos  = $("#sel",this.workspace).attr('checked');
-				
-				if(typeof checkTodos == "undefined" || !checkTodos == 'checked'){
+				var checkTodos = params['gravarTodos'];
+				if(checkTodos == "undefined" || !checkTodos ){
 					
 					params = serializeArrayToPost('listaChamadaEncalheAntecipada', chamdaEncalheAnteipadaController.obterParametrosGrid(chamdaEncalheAnteipadaController.nameGrid),params);
-					checkTodos="";
 				}
-				params['gravarTodos'] = checkTodos;
 			
 				$.postJSON(contextPath + "/devolucao/chamadaEncalheAntecipada/gravarCotas",
 						params , 

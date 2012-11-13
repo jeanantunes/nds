@@ -379,12 +379,6 @@ var chamadaoController = $.extend(true, {
 	
 	aplicarMascaraCampos : function() {
 		
-		$("#qtdExemplaresParcial", chamadaoController.workspace).priceFormat({
-			allowNegative: true,
-			centsSeparator: '',
-		    thousandsSeparator: '.'
-		});
-		
 		$("#valorParcial", chamadaoController.workspace).priceFormat({
 			allowNegative: true,
 			centsSeparator: ',',
@@ -494,7 +488,8 @@ var chamadaoController = $.extend(true, {
 	
 	cancelarChamadao : function() {
 		var param = {chamarTodos:chamadaoController.verifyCheckAll() };
-		param = serializeArrayToPost('fornecedores', fornecedores, param);
+		
+		param = serializeArrayToPost('listaChamadao', chamadaoController.getListaChamadao(), param);
 		
 		$.postJSON(contextPath + "/devolucao/chamadao/cancelarChamadao",
 					param,

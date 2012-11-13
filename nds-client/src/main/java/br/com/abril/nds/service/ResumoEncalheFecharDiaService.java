@@ -32,5 +32,7 @@ public interface ResumoEncalheFecharDiaService {
 	 * @return List<VendaFechamentoDiaDTO>
 	 */
 	List<VendaFechamentoDiaDTO> obterDadosVendaEncalhe(Date dataOperacao);
+	
+	BigDecimal obterValorVendaEncalhe(Date dataOperacao);
 
 }

@@ -33,6 +33,8 @@ public class VendaFechamentoDiaDTO implements Serializable {
 	
 	@Export(label = "Dt. Rclto", alignment=Alignment.CENTER, exhibitionOrder = 6)
 	private String dataRecolhimento;
+	
+	private BigDecimal precoVenda;
 
 	public String getCodigo() {
 		return codigo;
@@ -81,5 +83,47 @@ public class VendaFechamentoDiaDTO implements Serializable {
 	public void setDataRecolhimento(Date dataRecolhimento) {
 		this.dataRecolhimento = DateUtil.formatarData(dataRecolhimento, Constantes.DATE_PATTERN_PT_BR);
 	}
+
+	public BigDecimal getPrecoVenda() {
+		return precoVenda;
+	}
+
+	public void setPrecoVenda(BigDecimal precoVenda) {
+		this.precoVenda = precoVenda;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((codigo == null) ? 0 : codigo.hashCode());
+		result = prime * result
+				+ ((numeroEdicao == null) ? 0 : numeroEdicao.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		VendaFechamentoDiaDTO other = (VendaFechamentoDiaDTO) obj;
+		if (codigo == null) {
+			if (other.codigo != null)
+				return false;
+		} else if (!codigo.equals(other.codigo))
+			return false;
+		if (numeroEdicao == null) {
+			if (other.numeroEdicao != null)
+				return false;
+		} else if (!numeroEdicao.equals(other.numeroEdicao))
+			return false;
+		return true;
+	}
+	
+	
 	
 }
