@@ -13,5 +13,7 @@ META-INF/
 /nds-client/src/main/java/applicationContext.xml
 /nds-client/velocity.log
 *.swp
+packages
+node_modules
 
 /nds-client/src/main/resources/reports/CEDevolucao.jasper

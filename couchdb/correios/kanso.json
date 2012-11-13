@@ -1,0 +1,13 @@
+{
+    "name": "cep"
+    , "version": "0.0.1"
+    , "description": "A Cep on Couchdb."
+    , "load": "lib/app"
+    , "modules": "lib"
+    , "dependencies": {
+        "modules": null
+        , "properties": null
+        , "settings": null
+        , "couchtypes": null
+    }
+}

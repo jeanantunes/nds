@@ -111,13 +111,13 @@
 					<table width="400" border="0" cellspacing="0" cellpadding="0">
 						<tr>
 							<td>	
-								<fieldset style="width:380px!important; margin-bottom:10px; height: 42px;">
+								<fieldset style="width:381px!important; float:left; margin-bottom:10px; margin-right:0px;">
 									<legend>Outros</legend>
 										
 									<table>
 										<tr>									
 											<td width="120">Periodicidade: </td>
-											<td width="210">
+											<td style="width:200px;">
 												<select name="comboPeriodicidade" id="comboPeriodicidade" style="width:150px;" >
 													<option value="" selected="selected"></option>
 													<option value="SEMANAL" >Semanal</option>
@@ -288,7 +288,7 @@
 	<form action="/produto" id="pesquisar_form">
 	<div class="areaBts">
 		<div class="area">
-			<span class="bt_novos" title="Novo">
+			<span class="bt_novos">
 				<a href="javascript:;" onclick="produtoController.novoProduto();" rel="tipsy" title="Novo Produto">
 					<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0" />
 				</a>
@@ -303,7 +303,7 @@
 				<td width="43">C&oacute;digo:</td>
 				<td width="123" >
 			    	<input type="text" name="codigoProduto" id="codigoProduto"
-						   style="width: 80px; float: left; margin-right: 5px;" maxlength="255"
+						   style="width: 80px; float: left; margin-right: 5px;" maxlength="8"
 						   onchange="pesquisaProdutoCadastroProduto.pesquisarPorCodigoProduto('#codigoProduto', '#produto', '#edicao', false,
 								   									   produtoController.pesquisarProdutosSuccessCallBack,
 								   									   produtoController.pesquisarProdutosErrorCallBack);" />

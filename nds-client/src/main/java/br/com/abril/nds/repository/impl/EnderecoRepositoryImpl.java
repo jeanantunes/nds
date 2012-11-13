@@ -11,12 +11,12 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
-import br.com.abril.nds.client.endereco.vo.EnderecoVO;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.dne.Bairro;
 import br.com.abril.nds.model.dne.Localidade;
 import br.com.abril.nds.model.dne.Logradouro;
 import br.com.abril.nds.repository.EnderecoRepository;
+import br.com.abril.nds.vo.EnderecoVO;
 
 /**
  * Repositorio responsavel por controlar os dados referentes a entidade
@@ -97,6 +97,7 @@ public class EnderecoRepositoryImpl extends AbstractRepositoryModel<Endereco, Lo
 	/**
 	 * {@inheritDoc}
 	 */
+	/*
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<String> obterUnidadeFederacaoBrasil() {
@@ -111,7 +112,7 @@ public class EnderecoRepositoryImpl extends AbstractRepositoryModel<Endereco, Lo
 		
 		return query.list();
 	}
-
+*/
 	/**
 	 * {@inheritDoc}
 	 */

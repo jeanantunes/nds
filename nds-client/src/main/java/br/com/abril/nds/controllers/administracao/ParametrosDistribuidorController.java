@@ -594,7 +594,7 @@ public class ParametrosDistribuidorController {
 			grupoService.salvarGrupoCotas(idGrupo,cotas, nome, diasSemana, tipoCota);
 		} else {
 		
-			List<Long> municipios = (List<Long>) (session.getAttribute(MUNICIPIOS_SELECIONADOS) == null ?
+			List<String> municipios = (List<String>) (session.getAttribute(MUNICIPIOS_SELECIONADOS) == null ?
 					null
 					:session.getAttribute(MUNICIPIOS_SELECIONADOS));
 			

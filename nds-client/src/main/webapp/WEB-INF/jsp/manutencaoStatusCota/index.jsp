@@ -25,7 +25,7 @@
 	<div class="areaBts">
 		<div class="area">
 
-			<span class="bt_novos" title="Novo" id="botao-novo-status-cota">
+			<span class="bt_novos" id="botao-novo-status-cota">
 				<a href="javascript:;" onclick="manutencaoStatusCotaController.novo();" rel="tipsy" title="Incluir Novo Status"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" border="0" /></a>
 			</span>
 		</div>

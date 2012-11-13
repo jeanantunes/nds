@@ -11,7 +11,7 @@ import br.com.abril.nds.repository.LocalidadeRepository;
 
 @Repository
 public class LocalidadeRepositoryImpl extends
-AbstractRepositoryModel<Localidade, Long> implements LocalidadeRepository {
+AbstractRepositoryModel<Localidade, String> implements LocalidadeRepository {
 
 	public LocalidadeRepositoryImpl() {
 		super(Localidade.class);

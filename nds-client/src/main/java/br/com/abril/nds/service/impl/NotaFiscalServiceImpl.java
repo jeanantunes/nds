@@ -1640,8 +1640,8 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		}
 		if (novoEndereco.getCodigoUf() == null
 				&& novoEndereco.getCodigoCidadeIBGE() != null) {
-			novoEndereco.setCodigoUf(Integer.parseInt(novoEndereco
-					.getCodigoCidadeIBGE().toString().substring(0, 2)));
+			novoEndereco.setCodigoUf(novoEndereco
+					.getCodigoCidadeIBGE().toString().substring(0, 2));
 		}
 		enderecoRepository.adicionar(novoEndereco);
 		return novoEndereco;

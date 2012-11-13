@@ -67,8 +67,8 @@ public interface GrupoService {
 	 * @param nomeDiferenca
 	 * @param diasSemana
 	 */
-	void salvarGrupoMunicipios(Long idGrupo, List<Long> municipios, String nomeDiferenca,
-			List<DiaSemana> diasSemana);
+	void salvarGrupoMunicipios(Long idGrupo, List<String> idMunicipios,
+			String nome, List<DiaSemana> diasSemana);
 
 	/**
 	 * Obtém ids das Localidades do Grupo
@@ -85,5 +85,7 @@ public interface GrupoService {
 	 * @return
 	 */
 	List<Long> obterCotasDoGrupo(Long idGrupo);
+
+
 
 }

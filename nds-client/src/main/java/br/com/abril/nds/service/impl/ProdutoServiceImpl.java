@@ -1,9 +1,8 @@
 package br.com.abril.nds.service.impl;
 
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
+import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -13,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.abril.nds.dto.ConsultaProdutoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.Origem;
-import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.DescontoLogistica;
 import br.com.abril.nds.model.cadastro.Editor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
@@ -90,6 +88,23 @@ public class ProdutoServiceImpl implements ProdutoService {
 		}
 		
 		return produtoRepository.obterProdutoPorCodigo(codigoProduto);
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public Produto obterProdutoBalanceadosPorCodigo(String codigoProduto, Date dataLancamento) {
+		
+		if (codigoProduto == null || codigoProduto.isEmpty()){
+			
+			throw new ValidacaoException(TipoMensagem.ERROR, "Código é obrigatório!");
+		}
+		
+		if (dataLancamento == null) {
+			
+			throw new ValidacaoException(TipoMensagem.ERROR, "Data de lançamento é obrigatória!");
+		}
+		
+		return produtoRepository.obterProdutoBalanceadosPorCodigo(codigoProduto, dataLancamento);
 	}
 	
 	@Transactional(readOnly = true)
@@ -262,8 +277,14 @@ public class ProdutoServiceImpl implements ProdutoService {
 	}
 
 	@Transactional(readOnly=true)
-	public List<Produto> obterProdutosOrganizadosNome() {
-		return produtoRepository.buscarProdutosOrganizadosNome();
+	public List<Produto> obterProdutosBalanceadosOrdenadosNome(Date dataLancamento) {
+		
+		if (dataLancamento == null) {
+		
+			throw new ValidacaoException(TipoMensagem.ERROR, "Data de lançamento é obrigatória!");
+		}
+		
+		return produtoRepository.buscarProdutosBalanceadosOrdenadosNome(dataLancamento);
 	}
 	
 	

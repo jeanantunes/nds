@@ -168,6 +168,9 @@ public class ProdutoEdicao implements Serializable {
 	@OneToMany(mappedBy = "produtoEdicao")
 	protected Set<FechamentoDiarioLancamentoReparte> historicoMovimentoRepartes;
 	
+	@Embedded
+	private SegmentacaoProduto segmentacao;
+	
 	public Long getId() {
 		return id;
 	}
@@ -533,7 +536,13 @@ public class ProdutoEdicao implements Serializable {
 			Set<FechamentoDiarioLancamentoReparte> historicoMovimentoRepartes) {
 		this.historicoMovimentoRepartes = historicoMovimentoRepartes;
 	}
-	
-	
+
+	public SegmentacaoProduto getSegmentacao() {
+		return segmentacao;
+	}
+
+	public void setSegmentacao(SegmentacaoProduto segmentacao) {
+		this.segmentacao = segmentacao;
+	}
 	
 }

@@ -16,7 +16,7 @@ public class EnderecoDTO implements Serializable {
 
     private Long id;
 
-    private Integer codigoBairro;
+    private String codigoBairro;
 
     private String bairro;
 
@@ -36,15 +36,15 @@ public class EnderecoDTO implements Serializable {
 
     private String uf;
 
-    private Integer codigoUf;
+    private String codigoUf;
     
     public EnderecoDTO() {
     }    
     
-    public EnderecoDTO(Integer codigoBairro, String bairro, String cep,
+    public EnderecoDTO(String codigoBairro, String bairro, String cep,
             Integer codigoCidadeIBGE, String cidade, String complemento,
             String tipoLogradouro, String logradouro, String numero, String uf,
-            Integer codigoUf) {
+            String codigoUf) {
         this.codigoBairro = codigoBairro;
         this.bairro = bairro;
         this.cep = cep;
@@ -130,11 +130,11 @@ public class EnderecoDTO implements Serializable {
         this.uf = uf;
     }
 
-    public Integer getCodigoBairro() {
+    public String getCodigoBairro() {
         return codigoBairro;
     }
 
-    public void setCodigoBairro(Integer codigoBairro) {
+    public void setCodigoBairro(String codigoBairro) {
         this.codigoBairro = codigoBairro;
     }
 
@@ -146,11 +146,11 @@ public class EnderecoDTO implements Serializable {
         this.codigoCidadeIBGE = codigoCidadeIBGE;
     }
 
-    public Integer getCodigoUf() {
+    public String getCodigoUf() {
         return codigoUf;
     }
 
-    public void setCodigoUf(Integer codigoUf) {
+    public void setCodigoUf(String codigoUf) {
         this.codigoUf = codigoUf;
     }
     
