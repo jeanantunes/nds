@@ -149,7 +149,7 @@ var fornecedorController = $.extend(true,{
 								
 								fecharModalCadastroFornecedor = true;
 								
-								$( "#fornecedorController-dialogNovoFornecedor", fornecedorController.workspace ).dialog( "close" );								
+								$("#fornecedorController-dialogNovoFornecedor", fornecedorController.workspace ).dialog( "close" );								
 								$("#dialog-cancelar-cadastro-fornecedor", fornecedorController.workspace).dialog("close");
 							}
 						);
@@ -207,7 +207,7 @@ var fornecedorController = $.extend(true,{
 						form: $("#fornecedorController-dialogNovoFornecedor", this.workspace).parents("form"),
 						buttons : {},
 						beforeClose: function(event, ui) {
-
+							
 							if (!fecharModalCadastroFornecedor){
 								
 								fornecedorController.cancelarCadastro();
