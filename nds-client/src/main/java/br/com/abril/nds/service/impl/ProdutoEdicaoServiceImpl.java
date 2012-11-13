@@ -715,7 +715,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			dto.setParcial(pe.isParcial());
 			dto.setPossuiBrinde(pe.isPossuiBrinde());
 			
-			BigDecimal percentualDesconto = Util.nvl(pe.getProduto().getDesconto(), BigDecimal.ZERO);
+			BigDecimal percentualDesconto = Util.nvl(pe.getProduto().getDesconto().getValor(), BigDecimal.ZERO);
 			BigDecimal valorDesconto = MathUtil.calculatePercentageValue(precoVenda, percentualDesconto);
 			dto.setDesconto(valorDesconto);
 

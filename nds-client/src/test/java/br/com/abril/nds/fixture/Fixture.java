@@ -93,9 +93,10 @@ import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.nds.model.cadastro.TipoRoteiro;
 import br.com.abril.nds.model.cadastro.TipoTelefone;
 import br.com.abril.nds.model.cadastro.TributacaoFiscal;
+import br.com.abril.nds.model.cadastro.desconto.Desconto;
 import br.com.abril.nds.model.cadastro.desconto.DescontoCota;
+import br.com.abril.nds.model.cadastro.desconto.DescontoCotaProdutoExcessao;
 import br.com.abril.nds.model.cadastro.desconto.DescontoDistribuidor;
-import br.com.abril.nds.model.cadastro.desconto.DescontoProdutoEdicao;
 import br.com.abril.nds.model.cadastro.desconto.TipoDesconto;
 import br.com.abril.nds.model.cadastro.pdv.AreaInfluenciaPDV;
 import br.com.abril.nds.model.cadastro.pdv.CaracteristicasPDV;
@@ -3540,16 +3541,46 @@ public class Fixture {
 		return grupo;
 	}
 	
-	public static DescontoProdutoEdicao descontoProdutoEdicao(Cota cota, BigDecimal desconto, Fornecedor fornecedor, ProdutoEdicao produtoEdicao, br.com.abril.nds.model.cadastro.desconto.TipoDesconto tipoDesconto){
+	public static DescontoCotaProdutoExcessao descontoProdutoEdicao(Cota cota, Desconto desconto, Distribuidor distribuidor, Fornecedor fornecedor, ProdutoEdicao produtoEdicao, br.com.abril.nds.model.cadastro.desconto.TipoDesconto tipoDesconto){
 		
-		DescontoProdutoEdicao descontoP = new DescontoProdutoEdicao();
+		DescontoCotaProdutoExcessao descontoP = new DescontoCotaProdutoExcessao();
 		descontoP.setCota(cota);
 		descontoP.setDesconto(desconto);
 		descontoP.setFornecedor(fornecedor);
+		descontoP.setDistribuidor(distribuidor);
+		descontoP.setProduto(produtoEdicao.getProduto());
 		descontoP.setProdutoEdicao(produtoEdicao);
 		descontoP.setTipoDesconto(tipoDesconto);
+		descontoP.setUsuario(desconto.getUsuario());
+		descontoP.setDescontoPredominante(false);
 		
 		return descontoP;
+	}
+	
+	public static Desconto desconto(Usuario usuario, br.com.abril.nds.model.cadastro.desconto.TipoDesconto tipoDesconto){
+		
+		Desconto desconto = new Desconto();
+		desconto.setId(1L);
+		desconto.setDataAlteracao(new Date());
+		desconto.setValor(new BigDecimal("10"));
+		desconto.setTipoDesconto(TipoDesconto.ESPECIFICO);
+		desconto.setUsado(false);
+		desconto.setUsuario(usuario);
+		
+		return desconto;
+	}
+	
+	public static Desconto descontoOne(Usuario usuario, br.com.abril.nds.model.cadastro.desconto.TipoDesconto tipoDesconto){
+		
+		Desconto desconto = new Desconto();
+		desconto.setId(1L);
+		desconto.setDataAlteracao(new Date());
+		desconto.setValor(BigDecimal.ONE);
+		desconto.setTipoDesconto(TipoDesconto.ESPECIFICO);
+		desconto.setUsado(false);
+		desconto.setUsuario(usuario);
+		
+		return desconto;
 	}
 	
     public static DescontoLogistica descontoLogistica(Date dataInicioVigencia, Float percentualDesconto, Float percentualPrestacaoServico, Integer tipoDesconto, String descricao){

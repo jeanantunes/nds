@@ -22,8 +22,9 @@ public class DescontoRepositoryImpl extends AbstractRepositoryModel<Desconto, Lo
 		super(Desconto.class);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public List<Fornecedor> buscarFornecedoresQueUsam(Desconto desconto) {
+	public List<Fornecedor> buscarFornecedoresQueUsamDescontoGeral(Desconto desconto) {
 		
 		StringBuilder hql = new StringBuilder();
 		
@@ -41,19 +42,40 @@ public class DescontoRepositoryImpl extends AbstractRepositoryModel<Desconto, Lo
 		
 	}
 
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Fornecedor> buscarFornecedoresQueUsamDescontoEspecifico(
+			Desconto desconto) {
+
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append("select f ");
+		hql.append("from Fornecedor f, HistoricoDescontoCotaProdutoExcessao hdcpe ");
+		hql.append("where f.id = hdcpe.fornecedor.id ");
+		hql.append("and hdcpe.desconto.id = :idDesconto ");
+		
+		Query q = getSession().createQuery(hql.toString());
+		
+		q.setParameter("idDesconto", desconto.getId());
+		
+		return q.list();
+		
+	}
+	
 	@Override
 	public Desconto buscarUltimoDescontoValido(Long idDesconto, Fornecedor fornecedor) {
 
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append("select desconto ");
-		hql.append("from Fornecedor f join f.desconto desconto, HistoricoDescontoFornecedor hdf ");
-		hql.append("where hdf.desconto.id = desconto.id ");
-		hql.append("desconto.dataAlteracao = (select max(descontoSub.dataAlteracao) from HistoricoDescontoFornecedor descontoSub  ");
-		hql.append(" JOIN descontoSub.fornecedor fornecedorSub ");
-		hql.append(" where fornecedorSub.id = :idFornecedor ");
+		hql.append("select d ");
+		hql.append("from Fornecedor as f join f.desconto as d, HistoricoDescontoFornecedor as hdf ");
+		hql.append("where hdf.desconto.id = d.id ");
+		hql.append("and d.dataAlteracao = (select max(descontoSub.dataAlteracao) from HistoricoDescontoFornecedor descontoSub ");
+		hql.append("join descontoSub.fornecedor fornecedorSub ");
+		hql.append("where fornecedorSub.id = :idFornecedor ");
 		
-		if(idDesconto!= null){
+		if(idDesconto != null){
 			hql.append(" and descontoSub.desconto.id <> (:idUltimoDesconto) ");
 		}
 		
@@ -74,6 +96,5 @@ public class DescontoRepositoryImpl extends AbstractRepositoryModel<Desconto, Lo
 		return (Desconto) query.uniqueResult();
 		
 	}
-	
 
 }

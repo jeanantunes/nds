@@ -115,10 +115,11 @@ import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.nds.model.cadastro.TipoRoteiro;
 import br.com.abril.nds.model.cadastro.TipoTelefone;
 import br.com.abril.nds.model.cadastro.TributacaoFiscal;
+import br.com.abril.nds.model.cadastro.desconto.Desconto;
 import br.com.abril.nds.model.cadastro.desconto.DescontoCota;
+import br.com.abril.nds.model.cadastro.desconto.DescontoCotaProdutoExcessao;
 import br.com.abril.nds.model.cadastro.desconto.DescontoDistribuidor;
 import br.com.abril.nds.model.cadastro.desconto.DescontoProduto;
-import br.com.abril.nds.model.cadastro.desconto.DescontoProdutoEdicao;
 import br.com.abril.nds.model.cadastro.desconto.TipoDesconto;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaCaucaoLiquida;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaChequeCaucao;
@@ -3293,7 +3294,9 @@ public class DataLoader {
                                         .doubleValue()
                                 - Util.nvl(movE.getEstoqueProdutoCota()
                                         .getProdutoEdicao().getProduto()
-                                        .getDesconto(), BigDecimal.ZERO).doubleValue();
+                                        .getDesconto() != null ? movE.getEstoqueProdutoCota()
+                                                .getProdutoEdicao().getProduto()
+                                                .getDesconto().getValor() : null, BigDecimal.ZERO).doubleValue();
                         totalD += totalItem;
                     }
                 }
@@ -3319,7 +3322,10 @@ public class DataLoader {
                                         .doubleValue() - Util.nvl(movE
                                         .getEstoqueProdutoCota()
                                         .getProdutoEdicao().getProduto()
-                                        .getDesconto(), BigDecimal.ZERO).doubleValue());
+                                        .getDesconto() != null ? movE
+                                                .getEstoqueProdutoCota()
+                                                .getProdutoEdicao().getProduto()
+                                                .getDesconto().getValor() : null, BigDecimal.ZERO).doubleValue());
                         totalD += totalItem;
                     }
                 }
@@ -3345,7 +3351,10 @@ public class DataLoader {
                                         .doubleValue() - Util.nvl(movE
                                         .getEstoqueProdutoCota()
                                         .getProdutoEdicao().getProduto()
-                                        .getDesconto(), BigDecimal.ZERO).doubleValue());
+                                        .getDesconto() != null ? movE
+                                                .getEstoqueProdutoCota()
+                                                .getProdutoEdicao().getProduto()
+                                                .getDesconto().getValor() : null, BigDecimal.ZERO).doubleValue());
                         totalD += totalItem;
                     }
                 }
@@ -8155,7 +8164,8 @@ public class DataLoader {
             total += (movE.getQtde().doubleValue() * (movE
                     .getEstoqueProdutoCota().getProdutoEdicao().getPrecoVenda()
                     .doubleValue() - Util.nvl(movE.getEstoqueProdutoCota()
-                    .getProdutoEdicao().getProduto().getDesconto(), BigDecimal.ZERO)
+                    .getProdutoEdicao().getProduto().getDesconto() != null ? movE.getEstoqueProdutoCota()
+                            .getProdutoEdicao().getProduto().getDesconto().getValor() : null, BigDecimal.ZERO)
                     .doubleValue()));
         }
         return new BigDecimal(total);
@@ -12258,23 +12268,31 @@ public class DataLoader {
 	
 	private static void criarDescontoProdutoEdicao(Session session) {
 
-		DescontoProdutoEdicao descontoProdutoEdicao = 
-				Fixture.descontoProdutoEdicao(cotaManoel, new BigDecimal("10"), fornecedorDinap, produtoEdicaoVeja1, TipoDesconto.ESPECIFICO);
+		Distribuidor distribuidor = Fixture.distribuidor(1, juridicaValida, new Date(), null);
+		
+		save(session, distribuidor);
+		
+		Desconto desconto = Fixture.desconto(usuarioJoao, TipoDesconto.ESPECIFICO);
+		
+		save(session, desconto);
+		
+		DescontoCotaProdutoExcessao descontoProdutoEdicao = 
+				Fixture.descontoProdutoEdicao(cotaManoel, desconto, distribuidor, fornecedorDinap, produtoEdicaoVeja1, TipoDesconto.ESPECIFICO);
 
 		save(session, descontoProdutoEdicao);
 		
 		descontoProdutoEdicao = 
-				Fixture.descontoProdutoEdicao(cotaJose, new BigDecimal("10"), fornecedorDinap, produtoEdicaoVeja1, TipoDesconto.ESPECIFICO);
+				Fixture.descontoProdutoEdicao(cotaJose, desconto, distribuidor, fornecedorDinap, produtoEdicaoVeja1, TipoDesconto.ESPECIFICO);
 
 		save(session, descontoProdutoEdicao);
 		
 		descontoProdutoEdicao = 
-				Fixture.descontoProdutoEdicao(cotaMaria, new BigDecimal("10"), fornecedorDinap, produtoEdicaoVeja1, TipoDesconto.ESPECIFICO);
+				Fixture.descontoProdutoEdicao(cotaMaria, desconto, distribuidor, fornecedorDinap, produtoEdicaoVeja1, TipoDesconto.ESPECIFICO);
 
 		save(session, descontoProdutoEdicao);
 		
 		descontoProdutoEdicao = 
-				Fixture.descontoProdutoEdicao(cotaGuilherme, new BigDecimal("10"), fornecedorDinap, produtoEdicaoVeja1, TipoDesconto.ESPECIFICO);
+				Fixture.descontoProdutoEdicao(cotaGuilherme, desconto, distribuidor, fornecedorDinap, produtoEdicaoVeja1, TipoDesconto.ESPECIFICO);
 
 		save(session, descontoProdutoEdicao);
 	}

@@ -13,7 +13,9 @@ import br.com.abril.nds.model.cadastro.desconto.Desconto;
  */
 public interface DescontoRepository extends Repository<Desconto, Long> {
 
-	List<Fornecedor> buscarFornecedoresQueUsam(Desconto desconto);
+	List<Fornecedor> buscarFornecedoresQueUsamDescontoGeral(Desconto desconto);
+	
+	List<Fornecedor> buscarFornecedoresQueUsamDescontoEspecifico(Desconto desconto);
 
 	Desconto buscarUltimoDescontoValido(Long idDesconto, Fornecedor fornecedor);
 	

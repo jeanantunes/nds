@@ -36,50 +36,28 @@ public class DescontoCotaRepositoryImpl extends AbstractRepositoryModel<Desconto
 		
         StringBuilder hql = new StringBuilder();
         
-        hql.append(" select 1L as idTipoDesconto ");
+        hql.append("select hdcpe.desconto.id as idTipoDesconto ");
+		hql.append(", hdcpe.usuario.nome as nomeUsuario ");
+		hql.append(", hdcpe.valor as desconto ");
+		hql.append(", hdcpe.dataAlteracao as dataAlteracao ");
 		hql.append(", c.numeroCota as numeroCota ");
-		hql.append(", dpe.desconto as desconto ");
-		hql.append(", case when pessoa.nomeFantasia = null then pessoa.nome else pessoa.nomeFantasia end as nomeCota ");
-		hql.append(", juridica.nomeFantasia as fornecedor ");
+		hql.append(", coalesce(pessoa.nomeFantasia, pessoa.nome, pessoa.nomeFantasia) as nomeCota "); //case when pessoa.nomeFantasia = null then pessoa.nome else pessoa.nomeFantasia end as nomeCota ");
+		hql.append(", (case ");
+		hql.append("when (select count(hdcpe1.desconto.id) from HistoricoDescontoCotaProdutoExcessao hdcpe1 ");
+		hql.append("where hdcpe1.desconto.id = hdcpe.desconto.id ");
+		hql.append("group by hdcpe1.desconto.id) > 1 ");
+		hql.append("then 'Diversos' ");
+		hql.append("when (select count(hdcpe1.desconto.id) from HistoricoDescontoCotaProdutoExcessao hdcpe1 ");
+		hql.append("where hdcpe1.desconto.id = hdcpe.desconto.id ");
+		hql.append("group by hdcpe1.desconto.id) = 1 then pessoa.razaoSocial ");
+		hql.append("else null end) as fornecedor");
 	    hql.append(", 'Específico' as descTipoDesconto ");
-        hql.append("from DescontoCotaProdutoExcessao dpe ");
-        hql.append("join dpe.cota c ");
+        hql.append("from HistoricoDescontoCotaProdutoExcessao hdcpe ");
+        hql.append("join hdcpe.cota c ");
         hql.append("join c.pessoa as pessoa ");
-        hql.append("join dpe.fornecedor as fornecedor ");
+        hql.append("join hdcpe.fornecedor as fornecedor ");
         hql.append("join fornecedor.juridica as juridica ");
         
-        /*hql.append(", (case ");
-		hql.append("     when (select count(fornecedor.id) from DescontoProdutoEdicaoExcessao excessoes ");
-		hql.append("     where excessoes.cota.id = c.id ) > 1 ");
-		hql.append("     then 'Diversos' ");
-		hql.append("     when (select count(fornecedor.id) from DescontoProdutoEdicaoExcessao excessoes ");
-		hql.append("     where excessoes.cota.id = c.id ) = 1 then fornecedor.juridica.razaoSocial ");
-	    hql.append("     else '' end) as fornecedor ");*/
-        
-		/*
-		hql.append(" select dc.id as idTipoDesconto, ");
-		hql.append(" cota.numeroCota as numeroCota, ");
-		hql.append(" case when pessoa.nomeFantasia = null then pessoa.nome else pessoa.nomeFantasia end as nomeCota, ");
-		hql.append(" dc.desconto as desconto, ");	
-		
-		hql.append(" (case ");
-		hql.append("     when (select count(fornecedor.id) from DescontoCota descontoCota JOIN descontoCota.fornecedores fornecedor  ");
-		hql.append("     where descontoCota.id = dc.id ) > 1 ");
-		hql.append("     then 'Diversos' ");
-		hql.append("     when (select count(fornecedor.id) from DescontoCota descontoCota JOIN descontoCota.fornecedores fornecedor  ");
-		hql.append("     where descontoCota.id = dc.id ) = 1 then fornecedor.juridica.razaoSocial ");
-	    hql.append("     else '' end) as fornecedor, ");
-	    
-		hql.append(" dc.dataAlteracao as dataAlteracao, ");	
-		hql.append(" usuario.nome as nomeUsuario, ");
-		hql.append(" 'Específico' as descTipoDesconto ");
-		
-		hql.append(" from DescontoCota dc "); 
-		hql.append(" join dc.cota cota ");	
-		hql.append(" join cota.pessoa pessoa ");
-		hql.append(" join dc.usuario usuario ");
-		hql.append(" left join dc.fornecedores fornecedor ");
-        */
         return hql;
 	}
 	
@@ -156,7 +134,7 @@ public class DescontoCotaRepositoryImpl extends AbstractRepositoryModel<Desconto
 			param.put("numeroCota", filtro.getNumeroCota());
 		}
 		
-		//hql.append(" group by c.id, fornecedor.id, dpe.desconto ");
+		hql.append("group by hdcpe.desconto, hdcpe.dataAlteracao ");
  
 		hql = ordenacaoDescontoCota(filtro,hql);
 		

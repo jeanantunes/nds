@@ -1,7 +1,7 @@
 package br.com.abril.nds.model.cadastro.desconto;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,8 +11,11 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 
 import br.com.abril.nds.model.cadastro.Cota;
@@ -20,6 +23,7 @@ import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.seguranca.Usuario;
 
 @Entity
 @Table(name = "DESCONTO_COTA_PRODUTO_EXCESSOES",
@@ -34,10 +38,15 @@ public class DescontoCotaProdutoExcessao implements Serializable {
 	@Column(name = "ID")
 	private Long id;
 	
-	@Column(name = "DESCONTO", nullable=false, precision=5, scale=2)
-	private BigDecimal desconto;
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name="DATA_ALTERACAO")
+	private Date dataAlteracao;
+	
+	@OneToOne(optional = true)
+	@JoinColumn(name = "DESCONTO_ID")
+	private Desconto desconto;
 
-	@ManyToOne(optional = true)
+	@ManyToOne(optional = false)
 	@JoinColumn(name = "DISTRIBUIDOR_ID", referencedColumnName="ID")
 	private Distribuidor distribuidor;
 	
@@ -63,6 +72,10 @@ public class DescontoCotaProdutoExcessao implements Serializable {
 	
 	@Column(name = "DESCONTO_PREDOMINANTE", nullable = false)
 	private boolean descontoPredominante;
+	
+	@ManyToOne(optional = false)
+	@JoinColumn(name = "USUARIO_ID")
+	private Usuario usuario;
 
 	public Long getId() {
 		return id;
@@ -72,11 +85,19 @@ public class DescontoCotaProdutoExcessao implements Serializable {
 		this.id = id;
 	}
 
-	public BigDecimal getDesconto() {
+	public Date getDataAlteracao() {
+		return dataAlteracao;
+	}
+
+	public void setDataAlteracao(Date dataAlteracao) {
+		this.dataAlteracao = dataAlteracao;
+	}
+
+	public Desconto getDesconto() {
 		return desconto;
 	}
 
-	public void setDesconto(BigDecimal desconto) {
+	public void setDesconto(Desconto desconto) {
 		this.desconto = desconto;
 	}
 
@@ -134,6 +155,14 @@ public class DescontoCotaProdutoExcessao implements Serializable {
 
 	public void setDescontoPredominante(boolean descontoPredominante) {
 		this.descontoPredominante = descontoPredominante;
+	}
+
+	public Usuario getUsuario() {
+		return usuario;
+	}
+
+	public void setUsuario(Usuario usuario) {
+		this.usuario = usuario;
 	}
 
 }

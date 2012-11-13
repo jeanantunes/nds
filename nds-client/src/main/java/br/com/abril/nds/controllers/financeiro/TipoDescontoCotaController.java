@@ -461,8 +461,9 @@ public class TipoDescontoCotaController {
 			
 			if (future.isDone()) {
 				resultado = future.get();
-				result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS,  resultado),"result").recursive().serialize();
+				result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS,  resultado), "result").recursive().serialize();
 			} 
+			
 		} catch (Exception e) {
 			
 			List<String> mensagens = new ArrayList<String>();

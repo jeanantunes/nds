@@ -24,6 +24,7 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -31,6 +32,7 @@ import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 
 import br.com.abril.nds.model.Origem;
+import br.com.abril.nds.model.cadastro.desconto.Desconto;
 import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.fechar.dia.FechamentoDiarioLancamentoReparte;
@@ -168,8 +170,9 @@ public class ProdutoEdicao implements Serializable {
 	@OneToMany(mappedBy = "produtoEdicao")
 	protected Set<FechamentoDiarioLancamentoReparte> historicoMovimentoRepartes;
 	
-	@Column(name = "DESCONTO", precision=5, scale=2)
-	private BigDecimal desconto;
+	@OneToOne(optional = true)
+	@JoinColumn(name = "DESCONTO_ID")
+	private Desconto desconto;
 	
 	public Long getId() {
 		return id;
@@ -537,11 +540,11 @@ public class ProdutoEdicao implements Serializable {
 		this.historicoMovimentoRepartes = historicoMovimentoRepartes;
 	}
 
-	public BigDecimal getDesconto() {
+	public Desconto getDesconto() {
 		return desconto;
 	}
 
-	public void setDesconto(BigDecimal desconto) {
+	public void setDesconto(Desconto desconto) {
 		this.desconto = desconto;
 	}
 	

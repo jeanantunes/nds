@@ -1,7 +1,6 @@
 package br.com.abril.nds.model.cadastro;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -17,12 +16,14 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import br.com.abril.nds.model.Origem;
+import br.com.abril.nds.model.cadastro.desconto.Desconto;
 
 /**
  * @author francisco.garcia
@@ -148,8 +149,9 @@ public class Produto implements Serializable {
 	@Embedded
 	private SegmentacaoProduto segmentacao;
 	
-	@Column(name = "DESCONTO", precision=5, scale=2)
-	private BigDecimal desconto;
+	@OneToOne(optional = true)
+	@JoinColumn(name = "DESCONTO_ID")
+	private Desconto desconto;
 	
 	public Long getId() {
 		return id;
@@ -553,15 +555,15 @@ public class Produto implements Serializable {
 		this.segmentacao = segmentacao;
 	}
 
-	public BigDecimal getDesconto() {
+    public Desconto getDesconto() {
 		return desconto;
 	}
 
-	public void setDesconto(BigDecimal desconto) {
+	public void setDesconto(Desconto desconto) {
 		this.desconto = desconto;
 	}
-	
-    /**
+
+	/**
      * Verifica se o produto é um publicação
      * 
      * @return true se o produto é uma publicação, false caso contrário

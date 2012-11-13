@@ -43,7 +43,7 @@ public class DescontoProdutoEdicaoExcessaoRepositoryImpl extends AbstractReposit
 	 * {@inheritDoc}
 	 */
 	@Override
-	public DescontoCotaProdutoExcessao buscarDescontoProdutoEdicaoExcessao(TipoDesconto tipoDesconto,
+	public DescontoCotaProdutoExcessao buscarDescontoCotaProdutoExcessao(TipoDesconto tipoDesconto,
 															 Fornecedor fornecedor, 
 															 Cota cota,
 															 Produto produto, ProdutoEdicao produtoEdicao) {

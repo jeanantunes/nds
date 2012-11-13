@@ -23,19 +23,19 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.seguranca.Usuario;
 
 @Entity
-@Table(name = "HISTORICO_DESCONTO_PRODUTO_COTA_EXCESSAO")
-@SequenceGenerator(name="HISTORICO_DESCONTO_PRODUTO_COTA_EXCESSAO_SEQ", initialValue = 1, allocationSize = 1)
+@Table(name = "HISTORICO_DESCONTO_COTA_PRODUTO_EXCESSAO")
+@SequenceGenerator(name="HISTORICO_DESCONTO_COTA_PRODUTO_EXCESSAO_SEQ", initialValue = 1, allocationSize = 1)
 public class HistoricoDescontoCotaProdutoExcessao implements Serializable {
 
 	private static final long serialVersionUID = 3028451605686762672L;
 
 	@Id
-	@GeneratedValue(generator = "HISTORICO_DESCONTO_PRODUTO_COTA_EXCESSAO_SEQ")
+	@GeneratedValue(generator = "HISTORICO_DESCONTO_COTA_PRODUTO_EXCESSAO_SEQ")
 	@Column(name = "ID")
 	private Long id;
 	
-	@Column(name = "DESCONTO", nullable=false, precision=5, scale=2)
-	private BigDecimal desconto;
+	@Column(name = "VALOR", nullable=false, precision=5, scale=2)
+	private BigDecimal valor;
 	
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name="DATA_ALTERACAO")
@@ -65,6 +65,9 @@ public class HistoricoDescontoCotaProdutoExcessao implements Serializable {
 	@JoinColumn(name = "DISTRIBUIDOR_ID")
 	private Distribuidor distribuidor;
 	
+	@ManyToOne(optional=false)
+	@JoinColumn(name = "DESCONTO_ID")
+	private Desconto desconto;
 
 	/**
 	 * @return the id
@@ -80,18 +83,12 @@ public class HistoricoDescontoCotaProdutoExcessao implements Serializable {
 		this.id = id;
 	}
 
-	/**
-	 * @return the desconto
-	 */
-	public BigDecimal getDesconto() {
-		return desconto;
+	public BigDecimal getValor() {
+		return valor;
 	}
 
-	/**
-	 * @param desconto the desconto to set
-	 */
-	public void setDesconto(BigDecimal desconto) {
-		this.desconto = desconto;
+	public void setValor(BigDecimal valor) {
+		this.valor = valor;
 	}
 
 	/**
@@ -166,6 +163,14 @@ public class HistoricoDescontoCotaProdutoExcessao implements Serializable {
 
 	public void setFornecedor(Fornecedor fornecedor) {
 		this.fornecedor = fornecedor;
+	}
+
+	public Desconto getDesconto() {
+		return desconto;
+	}
+
+	public void setDesconto(Desconto desconto) {
+		this.desconto = desconto;
 	}
 
 }
