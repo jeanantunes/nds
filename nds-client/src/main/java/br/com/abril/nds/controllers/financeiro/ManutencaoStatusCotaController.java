@@ -285,7 +285,9 @@ public class ManutencaoStatusCotaController {
 			
 			historicoSituacaoCotaVO.setUsuario(historicoSituacaoCota.getResponsavel().getNome());
 			
-			historicoSituacaoCotaVO.setStatusAnterior(historicoSituacaoCota.getSituacaoAnterior().toString());
+			if (historicoSituacaoCota.getSituacaoAnterior() != null) {
+				historicoSituacaoCotaVO.setStatusAnterior(historicoSituacaoCota.getSituacaoAnterior().toString());
+			}
 			
 			historicoSituacaoCotaVO.setStatusAtualizado(historicoSituacaoCota.getNovaSituacao().toString());
 			
