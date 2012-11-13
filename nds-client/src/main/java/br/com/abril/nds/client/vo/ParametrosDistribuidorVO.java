@@ -1,9 +1,9 @@
 package br.com.abril.nds.client.vo;
 
-import br.com.abril.nds.client.endereco.vo.EnderecoVO;
 import br.com.abril.nds.model.cadastro.ObrigacaoFiscal;
 import br.com.abril.nds.model.cadastro.TipoAtividade;
 import br.com.abril.nds.model.cadastro.TipoContabilizacaoCE;
+import br.com.abril.nds.vo.EnderecoVO;
 
 
 /**

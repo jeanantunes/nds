@@ -156,6 +156,11 @@ public class ManutencaoStatusCotaController {
 		novoHistoricoSituacaoCota.setSituacaoAnterior(
 			novoHistoricoSituacaoCota.getCota().getSituacaoCadastro());
 		
+		if (novoHistoricoSituacaoCota.getDataInicioValidade() == null) {
+			
+			novoHistoricoSituacaoCota.setDataInicioValidade(new Date());
+		}
+		
 		this.criarJobAtualizacaoNovaSituacaoCota(novoHistoricoSituacaoCota);
 		
 		this.criarJobAtualizacaoSituacaoAnteriorCota(novoHistoricoSituacaoCota);
@@ -280,7 +285,9 @@ public class ManutencaoStatusCotaController {
 			
 			historicoSituacaoCotaVO.setUsuario(historicoSituacaoCota.getResponsavel().getNome());
 			
-			historicoSituacaoCotaVO.setStatusAnterior(historicoSituacaoCota.getSituacaoAnterior().toString());
+			if (historicoSituacaoCota.getSituacaoAnterior() != null) {
+				historicoSituacaoCotaVO.setStatusAnterior(historicoSituacaoCota.getSituacaoAnterior().toString());
+			}
 			
 			historicoSituacaoCotaVO.setStatusAtualizado(historicoSituacaoCota.getNovaSituacao().toString());
 			
@@ -383,9 +390,11 @@ public class ManutencaoStatusCotaController {
 		
 		for (SituacaoCadastro situacaoCadastro : SituacaoCadastro.values()) {
 			
-			listaSituacoesStatusCota.add(
-				new ItemDTO<SituacaoCadastro, String>(situacaoCadastro, situacaoCadastro.toString())
-			);
+			if (!situacaoCadastro.equals(SituacaoCadastro.PENDENTE)) {
+				listaSituacoesStatusCota.add(
+					new ItemDTO<SituacaoCadastro, String>(situacaoCadastro, situacaoCadastro.toString())
+				);
+			}
 		}
 		
 		result.include("listaSituacoesStatusCota", listaSituacoesStatusCota);
@@ -511,12 +520,8 @@ public class ManutencaoStatusCotaController {
 			novoHistoricoSituacaoCota.setCota(cota);
 		}
 		
-		if (novoHistoricoSituacaoCota.getDataInicioValidade() == null
-				&& novoHistoricoSituacaoCota.getDataFimValidade() == null) {
-			
-			listaMensagens.add("Informe o período ou apenas a data inicial!");
-			
-		} else {
+		if (novoHistoricoSituacaoCota.getDataInicioValidade() != null
+				|| novoHistoricoSituacaoCota.getDataFimValidade() != null) {
 			
 			if (novoHistoricoSituacaoCota.getDataInicioValidade() == null) {
 				
@@ -537,17 +542,6 @@ public class ManutencaoStatusCotaController {
 					listaMensagens.add("A data inicial do período deve ser igual ou maior que a data atual!");
 				}
 			}
-		}
-		
-		if (novoHistoricoSituacaoCota.getMotivo() == null) {
-			
-			listaMensagens.add("O preenchimento do campo [Motivo] é obrigatório!");
-		}
-		
-		if (novoHistoricoSituacaoCota.getDescricao() == null
-				|| novoHistoricoSituacaoCota.getDescricao().trim().isEmpty()) {
-			
-			listaMensagens.add("O preenchimento do campo [Descrição] é obrigatório!");
 		}
 		
 		if (!listaMensagens.isEmpty()) {

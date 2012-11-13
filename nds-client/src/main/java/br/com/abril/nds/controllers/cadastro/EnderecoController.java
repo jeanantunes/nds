@@ -7,7 +7,6 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import br.com.abril.nds.client.endereco.vo.EnderecoVO;
 import br.com.abril.nds.client.util.PaginacaoUtil;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.EnderecoDTO;
@@ -22,6 +21,7 @@ import br.com.abril.nds.util.ItemAutoComplete;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
+import br.com.abril.nds.vo.EnderecoVO;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Path;
@@ -340,7 +340,7 @@ public class EnderecoController {
 				
 				String nomeExibicao = bairro.getNome();
 				
-				Long chave = bairro.getId();
+				String chave = bairro.get_id();
 				
 				listaAutoComplete.add(new ItemAutoComplete(nomeExibicao, null, chave));
 			}
@@ -368,7 +368,7 @@ public class EnderecoController {
 				
 				String nomeExibicao = logradouro.getNome();
 				
-				Long chave = logradouro.getId();
+				String chave = logradouro.get_id();
 				
 				listaAutoComplete.add(new ItemAutoComplete(nomeExibicao, null, chave));
 			}
@@ -528,7 +528,7 @@ public class EnderecoController {
 		for (Logradouro logradouro : logradouros){
 			
 			ItemAutoComplete itemAutoComplete = 
-					new ItemAutoComplete(logradouro.getNome(), logradouro.getNome(), logradouro.getId());
+					new ItemAutoComplete(logradouro.getNome(), logradouro.getNome(), logradouro.get_id());
 			
 			autoCompleteLogradouros.add(itemAutoComplete);
 		}
@@ -551,7 +551,7 @@ public class EnderecoController {
 		for (Bairro bairro : bairros){
 			
 			ItemAutoComplete itemAutoComplete = 
-					new ItemAutoComplete(bairro.getNome(), bairro.getNome(), bairro.getId());
+					new ItemAutoComplete(bairro.getNome(), bairro.getNome(), bairro.get_id());
 			
 			autoCompleteBairros.add(itemAutoComplete);
 		}
@@ -574,7 +574,7 @@ public class EnderecoController {
 		for (Localidade localidade : localidades){
 			
 			ItemAutoComplete itemAutoComplete = 
-					new ItemAutoComplete(localidade.getNome(), localidade.getNome(), localidade.getId());
+					new ItemAutoComplete(localidade.getNome(), localidade.getNome(), localidade.get_id());
 			
 			autoCompleteLocalidades.add(itemAutoComplete);
 		}
@@ -724,7 +724,7 @@ public class EnderecoController {
 				
 				if (!enderecoAssociacao.equals(enderecoAssociacaoAtual) && enderecoAssociacaoAtual.isEnderecoPrincipal()) {
 					
-					throw new ValidacaoException(TipoMensagem.WARNING, "Já existe um endereço principal.");
+					enderecoAssociacao.setEnderecoPrincipal(false); 
 				}
 			}
 		}
@@ -753,8 +753,7 @@ public class EnderecoController {
 		
 		List<EnderecoAssociacaoDTO> lista = (List<EnderecoAssociacaoDTO>) 
 				this.session.getAttribute(ATRIBUTO_SESSAO_LISTA_ENDERECOS_REMOVER);
-		
-		if (lista == null){
+				if (lista == null){
 			
 			lista = new ArrayList<EnderecoAssociacaoDTO>();
 		}
@@ -775,4 +774,5 @@ public class EnderecoController {
 		
 		return lista;
 	}
+			
 }

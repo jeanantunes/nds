@@ -226,7 +226,9 @@ var recebimentoFisicoController = $.extend(true, {
 			recebimentoFisicoController.ocultarBtns();
 			
 			recebimentoFisicoController.popup_adicionar();
-		
+			
+			$("#novoNumeroNota", this.workspace).val($("#notaFiscal", this.workspace).val());
+			$("#novoSerieNota", this.workspace).val($("#serie", this.workspace).val());		
 		}
 		
 	},
@@ -726,10 +728,10 @@ var recebimentoFisicoController = $.extend(true, {
 		
 		$.postJSON(this.path + 'confirmarRecebimentoFisico', listaDeValores, 
 		function(result) {
-			exibirMensagem(result.tipoMensagem, result.listaMensagens);
+
+			$(".grids", this.workspace).hide();
 			
-			recebimentoFisicoController.pesquisarItemNotaGrid();
-		
+			recebimentoFisicoController.ocultarBtns();
 		});
 		
 	},

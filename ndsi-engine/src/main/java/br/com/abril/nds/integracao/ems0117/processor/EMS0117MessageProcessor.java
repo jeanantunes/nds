@@ -12,19 +12,25 @@ import br.com.abril.nds.integracao.ems0117.inbound.EMS0117Input;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.engine.data.Message;
 import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
+import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
+import br.com.abril.nds.model.cadastro.HistoricoSituacaoCota;
+import br.com.abril.nds.model.cadastro.MotivoAlteracaoSituacao;
+import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
 import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.TelefoneCota;
+import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.cadastro.TipoEndereco;
 import br.com.abril.nds.model.cadastro.TipoTelefone;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
+import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.impl.AbstractRepository;
 
 @Component
@@ -105,11 +111,15 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 			List<PessoaFisica> pessoas = (List<PessoaFisica>) query.list();
 			PessoaFisica pessoaFis = null;
 
+			String cpf = input.getCpfCNPJ();
+
 			if (pessoas.isEmpty()) {
 
 				pessoaFis = new PessoaFisica();
 				pessoaFis.setNome(input.getNomeJornaleiro());
-				pessoaFis.setCpf(input.getCpfCNPJ());
+				
+				// Corrigido para retirar os 3 "0"s antes do número do CPF (Realizado por Cesar Pop Punk)
+				pessoaFis.setCpf(cpf.substring(3, cpf.length()));
 				getSession().persist(pessoaFis);
 
 				pessoa = pessoaFis;
@@ -124,7 +134,8 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 					}
 				}
 
-				pessoaFis.setCpf(input.getCpfCNPJ());
+				// Corrigido para retirar os 3 "0"s antes do número do CPF (Realizado por Cesar Pop Punk)
+				pessoaFis.setCpf(cpf.substring(3, cpf.length()));
 				pessoaFis.setNome(input.getNomeJornaleiro());
 				pessoa = pessoaFis;
 			}
@@ -191,6 +202,34 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 			cota.setPessoa(pessoa);
 			getSession().persist(cota);
 
+			// HistoricoSituacaoCota - Realizado em conjunto com Cesar Pop Punk
+			HistoricoSituacaoCota historicoSituacaoCota = new HistoricoSituacaoCota();
+			historicoSituacaoCota.setCota(cota);
+			historicoSituacaoCota.setSituacaoAnterior(null);
+			historicoSituacaoCota.setNovaSituacao(cota.getSituacaoCadastro());
+			historicoSituacaoCota.setMotivo(MotivoAlteracaoSituacao.OUTROS);
+			historicoSituacaoCota.setDataInicioValidade(new Date());
+			historicoSituacaoCota.setDataFimValidade(null);
+			historicoSituacaoCota.setDescricao("INTERFACE");
+			historicoSituacaoCota.setDataEdicao(new Date());
+			historicoSituacaoCota.setTipoEdicao(TipoEdicao.INCLUSAO);
+			
+			Usuario usuarioResponsavel = new Usuario();
+			usuarioResponsavel.setId(2L);
+			historicoSituacaoCota.setResponsavel(usuarioResponsavel);
+			
+			getSession().persist(historicoSituacaoCota);
+			
+			// ParametroCobrancaCota - Realizado em conjunto com Cesar Pop Punk
+			ParametroCobrancaCota parametroCobrancaCota = new ParametroCobrancaCota();
+			parametroCobrancaCota.setCota(cota);
+			if (input.getCondPrazoPagamento().equals("S")) {
+				parametroCobrancaCota.setTipoCota(TipoCota.CONSIGNADO);
+			} else {
+				parametroCobrancaCota.setTipoCota(TipoCota.A_VISTA);
+			}
+			getSession().persist(parametroCobrancaCota);
+			
 			if (!input.getEndereco().isEmpty()
 					&& !".".equals(input.getEndereco())) {
 

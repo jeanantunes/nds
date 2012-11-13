@@ -44,12 +44,12 @@ public class GrupoCota implements Serializable {
 	@Enumerated(EnumType.STRING)
 	@Column(name = "TIPO_COTA")
 	private TipoCaracteristicaSegmentacaoPDV tipoCota;
-	
+	/*
 	@ManyToMany
 	@JoinTable(name = "GRUPO_MUNICIPIO", joinColumns = {@JoinColumn(name = "GRUPO_COTA_ID")}, 
 	inverseJoinColumns = {@JoinColumn(name = "LOCALIDADE_ID")})
 	private Set<Localidade> municipios;
-	
+	*/
 	@ElementCollection(targetClass = DiaSemana.class) 
 	@CollectionTable(name = "DIA_RECOLHIMENTO_GRUPO_COTA",
 	    joinColumns = @JoinColumn(name = "GRUPO_ID"))
@@ -75,7 +75,7 @@ public class GrupoCota implements Serializable {
 		this.tipoGrupo = tipoGrupo;
 		this.diasRecolhimento = diasRecolhimento;
 		this.tipoCota = tipoCota;
-		this.municipios = municipios;
+//		this.municipios = municipios;
 		this.cotas = cotas;
 	}
 
@@ -124,16 +124,19 @@ public class GrupoCota implements Serializable {
 	/**
 	 * @return the municipios
 	 */
+	/*
 	public Set<Localidade> getMunicipios() {
 		return municipios;
 	}
-
+	 */
 	/**
 	 * @param municipios the municipios to set
 	 */
+	/*
 	public void setMunicipios(Set<Localidade> municipios) {
 		this.municipios = municipios;
 	}
+	*/
 	
 	/**
 	 * @return the tipoGrupo

@@ -15,11 +15,9 @@ import org.springframework.stereotype.Repository;
 import br.com.abril.nds.dto.FornecedorDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaFornecedorDTO;
-import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.EnderecoFornecedor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoFornecedor;
-import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.repository.FornecedorRepository;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
@@ -269,7 +267,7 @@ public class FornecedorRepositoryImpl extends
 		if (filtroConsultaFornecedor.getCnpj() != null 
 				&& !filtroConsultaFornecedor.getCnpj().isEmpty()) {
 			
-			query.setParameter("cnpj", "%" + filtroConsultaFornecedor.getCnpj() + "%");
+			query.setParameter("cnpj", "%" + filtroConsultaFornecedor.getCnpj().replaceAll("[./-]", "") + "%");
 		}
 		
 		if (filtroConsultaFornecedor.getNomeFantasia() != null 

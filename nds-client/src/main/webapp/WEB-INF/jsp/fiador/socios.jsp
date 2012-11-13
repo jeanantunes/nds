@@ -6,9 +6,18 @@
 <jsp:include page="dadosCadastraisCpf.jsp">
 	<jsp:param value="fiadorController-socio-" name="prefix"/>
 </jsp:include>
-
+<table>
+	<tr> 
+		<td> Principal: </td> 
+		<td> <input type="checkbox" id="fiadorController-isSocioPrincipal" /> </td>
+	</tr>
+</table>
 <br />
-<span class="bt_novos"><a href="javascript:fiadorController.adicionarSocio();" id="fiadorController-btnAddEditarSocio" rel="tipsy" title="Incluir Novo Sócio"><img src="${pageContext.request.contextPath}/images/ico_add.gif" hspace="5" border="0"/></a></span>
+<span class="bt_novos">
+	<a href="javascript:fiadorController.adicionarSocio();" id="fiadorController-btnAddEditarSocio" rel="tipsy" title="Incluir Novo Sócio">
+		<img src="${pageContext.request.contextPath}/images/ico_add.gif" hspace="5" border="0"/>
+	</a>
+</span>
 </fieldset>
 
 <fieldset style="margin:5px; width:880px;">

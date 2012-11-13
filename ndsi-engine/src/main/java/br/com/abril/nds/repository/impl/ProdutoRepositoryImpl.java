@@ -1,19 +1,19 @@
 package br.com.abril.nds.repository.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
 import org.hibernate.Query;
-import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.ConsultaProdutoDTO;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.Produto;
+import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.repository.ProdutoRepository;
 
 /**
@@ -66,6 +66,26 @@ public class ProdutoRepositoryImpl extends AbstractRepositoryModel<Produto, Long
 		
 		Query query = super.getSession().createQuery(hql);
 
+		query.setParameter("codigoProduto", codigoProduto);
+		
+		return (Produto) query.uniqueResult();
+	}
+	
+	@Override
+	public Produto obterProdutoBalanceadosPorCodigo(String codigoProduto, Date dataLancamento) {
+		
+		String hql = " select produto "
+				+ " from Lancamento lancamento "
+				+ " join lancamento.produtoEdicao produtoEdicao "
+				+ " join produtoEdicao.produto produto "
+				+ " where lancamento.status = :status "
+				+ " and lancamento.dataLancamentoDistribuidor = :dataLancamentoDistribuidor "
+				+ " and produto.codigo = :codigoProduto ";
+		
+		Query query = super.getSession().createQuery(hql);
+		
+		query.setParameter("status", StatusLancamento.BALANCEADO);
+		query.setParameter("dataLancamentoDistribuidor", dataLancamento);
 		query.setParameter("codigoProduto", codigoProduto);
 		
 		return (Produto) query.uniqueResult();
@@ -292,13 +312,24 @@ public class ProdutoRepositoryImpl extends AbstractRepositoryModel<Produto, Long
 
 	}
 
-	public List<Produto> buscarProdutosOrganizadosNome() {
+	@SuppressWarnings("unchecked")
+	public List<Produto> buscarProdutosBalanceadosOrdenadosNome(Date dataLancamento) {
 		
-		Criteria criteria = getSession().createCriteria(Produto.class, "produto");
+		String hql = " select produto "
+				+ " from Lancamento lancamento "
+				+ " join lancamento.produtoEdicao produtoEdicao "
+				+ " join produtoEdicao.produto produto "
+				+ " where lancamento.status = :status "
+				+ " and lancamento.dataLancamentoDistribuidor = :dataLancamentoDistribuidor "
+				+ " group by produto.id "
+				+ " order by produto.nome ";
 		
-		criteria.addOrder(Order.asc("produto.nome"));
+		Query query = super.getSession().createQuery(hql);
 		
-		return criteria.list();
+		query.setParameter("status", StatusLancamento.BALANCEADO);
+		query.setParameter("dataLancamentoDistribuidor", dataLancamento);
+		
+		return query.list();
 	}
 	
 	

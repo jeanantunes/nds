@@ -3,79 +3,43 @@ package br.com.abril.nds.model.dne;
 import java.io.Serializable;
 import java.util.List;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import br.com.abril.nds.integracao.model.canonic.IntegracaoDocument;
 
 
 /**
  * @author Discover Technology
  *
  */
-@Entity
-@Table(name="LOG_LOCALIDADE")
-public class Localidade implements Serializable {
+public class Localidade  extends IntegracaoDocument implements Serializable {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 4438288966441513488L;
 
-	@Id
-	@Column(name="LOC_NU", unique=true, nullable=false)
-	private Long id;
 
-	@Column(name="LOC_NO_ABREV", length=72)
 	private String abreviatura;
 
-	@Column(name="CEP", length=16)
 	private String cep;
 
-	@Column(name="LOC_NU_SUB")
 	private Long chaveSubordinacao;
 
-	@Column(name="MUN_NU")
 	private Long codigoMunicipioIBGE;
 
-	@Column(name="LOC_NO", length=144)
 	private String nome;
 
-	@Column(name="LOC_IN_TIPO_LOC", length=2)
 	private String tipoLocalidade;
 
-	@Column(name="LOC_IN_SIT", length=2)
 	private String sit;
 
-    @ManyToOne
-	@JoinColumn(name="UFE_SG")
 	private UnidadeFederacao unidadeFederacao;
 
-	@OneToMany(mappedBy="localidade")
 	private List<Bairro> bairros;
 
-	@OneToMany(mappedBy="localidade")
 	private List<Logradouro> logradouros;
 
     public Localidade() {
     }
-
-	/**
-	 * @return the id
-	 */
-	public Long getId() {
-		return id;
-	}
-
-	/**
-	 * @param id the id to set
-	 */
-	public void setId(Long id) {
-		this.id = id;
-	}
 
 	/**
 	 * @return the abreviatura

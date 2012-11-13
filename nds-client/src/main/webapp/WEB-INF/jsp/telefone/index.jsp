@@ -42,8 +42,11 @@
 			</tr>
 			<tr id="${param.tela}trRamalId">
 				<td id="${param.tela}lblRamalId">Ramal: </td>
-				<td>
+				<td style="hidden" id="${param.tela}ramalTD">
 					<input type="text" style="width:40px; float:left;" id="${param.tela}ramal" maxlength="255"/>
+				</td>
+				<td style="display:none" id="${param.tela}radioIDTD">
+					<input type="text" style="width:40px; float:left;" id="${param.tela}radioID" maxlength="255"/>
 				</td>
 			</tr>
 			<tr>
@@ -60,8 +63,8 @@
 
 				<td>
 
-					<div id="${param.tela}wrapperBtnAdicionarTelefoneHabilitado" style="display: none">
-						<span class="bt_novos">
+					<div id="${param.tela}wrapperBtnAdicionarTelefoneHabilitado" >
+						<span class="bt_add">
 							<a href="javascript:;" onclick="${param.tela}.adicionarTelefone();" id="${param.tela}botaoAddEditar" rel="tipsy" title="Incluir Novo Telefone"><img src="${pageContext.request.contextPath}/images/ico_add.gif" hspace="5" border="0"/></a>
 						</span>
 					</div>

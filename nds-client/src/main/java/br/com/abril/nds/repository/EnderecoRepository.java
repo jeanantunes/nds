@@ -4,11 +4,11 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-import br.com.abril.nds.client.endereco.vo.EnderecoVO;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.dne.Bairro;
 import br.com.abril.nds.model.dne.Localidade;
 import br.com.abril.nds.model.dne.Logradouro;
+import br.com.abril.nds.vo.EnderecoVO;
 
 /**
  * Interface que define as regras para repositório referente a entidade
@@ -29,8 +29,6 @@ public interface EnderecoRepository extends Repository<Endereco, Long> {
 	List<Endereco> buscarEnderecosPessoa(Long idPessoa, Set<Long> idsIgnorar);
 
 	List<String> obterMunicipiosCotas();
-
-	List<String> obterUnidadeFederacaoBrasil();
 	
 	List<Localidade> obterLocalidadesPorUFNome(String nome, String siglaUF);
 	

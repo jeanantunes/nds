@@ -1,6 +1,8 @@
 <head>
 </head>
 <div id="dadosCadastraisPJ" style="display:none">
+	<legend>Entregador - Pessoa Jurídica</legend>
+	<div>
 	<form id="formDadosEntregadorPJ">
 		<input type="hidden" name="entregador.id" id="idEntregadorPJ"/>
 	    <table width="765" cellpadding="2" cellspacing="2" style="text-align:left;">
@@ -47,4 +49,5 @@
 	    </tr>
 	     </table>
 	</form>
+	</div>
 </div>

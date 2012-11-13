@@ -1,7 +1,5 @@
 package br.com.abril.nds.controllers.expedicao;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -39,6 +37,7 @@ import br.com.abril.nds.service.MapaAbastecimentoService;
 import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.service.RotaService;
 import br.com.abril.nds.service.RoteirizacaoService;
+import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.ValidacaoVO;
@@ -105,27 +104,48 @@ public class MapaAbastecimentoController {
 		result.include("listaBoxes",carregarBoxes(boxService.buscarTodos(TipoBox.LANCAMENTO)));
 		result.include("listaRotas",carregarRota(rotaService.obterRotas()));
 		
-		result.include("listaProdutos", this.carregarProdutos());
-		
 		result.forwardTo(MapaAbastecimentoController.class).mapaAbastecimento();
 	}
 	
 	/**
 	 * Carrega a lista de Produtos.
 	 */
-	private List<ItemDTO<String, String>> carregarProdutos() {
+	@Post
+	public void getProdutos(Date dataLancamento) {
 		
-		List<Produto> listaProdutos = produtoService.obterProdutosOrganizadosNome();
+		List<Produto> listaProdutos = produtoService.obterProdutosBalanceadosOrdenadosNome(dataLancamento);
 		
-		List<ItemDTO<String, String>> listaProdutosCombo = new ArrayList<ItemDTO<String,String>>();
+		if (listaProdutos.isEmpty()) {
+			
+			throw new ValidacaoException(
+				TipoMensagem.WARNING, "Não existem produtos balanceados na data informada!");
+		}
+		
+		List<ItemDTO<String, String>> produtos = new ArrayList<ItemDTO<String,String>>();
 				
 		for(Produto produto : listaProdutos) {
 			
-			listaProdutosCombo.add(new ItemDTO<String, String>(produto.getCodigo(), produto.getNome()));
+			produtos.add(new ItemDTO<String, String>(produto.getCodigo(), produto.getNome()));
 		}
 		
-		return listaProdutosCombo;			
-	}	
+		this.result.use(Results.json()).from(produtos, "result").recursive().serialize();
+	}
+	
+	@Post
+	public void getProdutosPorCodigo(String codigoProduto, Date dataLancamento) throws ValidacaoException{
+		
+		Produto produto = produtoService.obterProdutoBalanceadosPorCodigo(codigoProduto, dataLancamento);
+		
+		if (produto == null) {
+			
+			throw new ValidacaoException(
+				TipoMensagem.WARNING, "Não existe produto balanceado com o código \"" + codigoProduto + "\" na data informada!");
+			
+		} else {
+			
+			result.use(Results.json()).from(produto, "result").serialize();
+		}		
+	}
 
 	/**
 	 * Carrega a lista de Boxes
@@ -196,7 +216,7 @@ public class MapaAbastecimentoController {
 		if(filtro.getTipoConsulta() == null)
 			throw new ValidacaoException(TipoMensagem.WARNING, " 'Tipo de consulta' deve ser selecionado.");
 				
-		if(filtro.getDataDate() == null && !filtro.getDataLancamento().isEmpty())
+		if(filtro.getDataDate() == null)
 			throw new ValidacaoException(TipoMensagem.WARNING, "'Data de Lançamento' não é válida.");
 		
 		if(filtro.getDataLancamento() == null || filtro.getDataLancamento().isEmpty())

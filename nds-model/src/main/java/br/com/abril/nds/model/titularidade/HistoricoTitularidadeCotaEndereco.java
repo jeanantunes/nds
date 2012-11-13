@@ -24,7 +24,7 @@ public class HistoricoTitularidadeCotaEndereco implements Serializable {
      * Código do bairro
      */
     @Column(name = "ENDERECO_CODIGO_BAIRRO")
-    private Integer codigoBairro;
+    private String codigoBairro;
 
     /**
      * Bairro do endereço
@@ -84,7 +84,7 @@ public class HistoricoTitularidadeCotaEndereco implements Serializable {
      * Código da UF do endereço
      */
     @Column(name = "ENDERECO_CODIGO_UF", length = 2)
-    private Integer codigoUf;
+    private String codigoUf;
     
     /**
      * Tipo do endereço
@@ -102,10 +102,10 @@ public class HistoricoTitularidadeCotaEndereco implements Serializable {
     public HistoricoTitularidadeCotaEndereco() {
     }
 
-    public HistoricoTitularidadeCotaEndereco(Integer codigoBairro,
+    public HistoricoTitularidadeCotaEndereco(String codigoBairro,
             String bairro, String cep, Integer codigoCidadeIBGE, String cidade,
             String complemento, String tipoLogradouro, String logradouro,
-            String numero, String uf, Integer codigoUf,
+            String numero, String uf, String codigoUf,
             TipoEndereco tipoEndereco, boolean principal) {
         this.codigoBairro = codigoBairro;
         this.bairro = bairro;
@@ -125,14 +125,14 @@ public class HistoricoTitularidadeCotaEndereco implements Serializable {
     /**
      * @return the codigoBairro
      */
-    public Integer getCodigoBairro() {
+    public String getCodigoBairro() {
         return codigoBairro;
     }
 
     /**
      * @param codigoBairro the codigoBairro to set
      */
-    public void setCodigoBairro(Integer codigoBairro) {
+    public void setCodigoBairro(String codigoBairro) {
         this.codigoBairro = codigoBairro;
     }
 
@@ -265,14 +265,14 @@ public class HistoricoTitularidadeCotaEndereco implements Serializable {
     /**
      * @return the codigoUf
      */
-    public Integer getCodigoUf() {
+    public String getCodigoUf() {
         return codigoUf;
     }
 
     /**
      * @param codigoUf the codigoUf to set
      */
-    public void setCodigoUf(Integer codigoUf) {
+    public void setCodigoUf(String codigoUf) {
         this.codigoUf = codigoUf;
     }
 

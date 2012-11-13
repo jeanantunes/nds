@@ -13,6 +13,12 @@ $(function(){
 
 <body>
 
+	<form id="form-cancelar-cadastro-fornecedor">
+	<div id="dialog-cancelar-cadastro-fornecedor" title="Fornecedores" style="display: none;">
+		<p>Dados não salvos serão perdidos. Confirma o cancelamento?</p>
+	</div>
+	</form>
+
 	<form id="form-dialog-excluir">
 	<div id="fornecedorController-dialog-excluir" title="Excluir Fornecedor">
 		<p>Confirma a exclusão deste Fornecedor?</p>
@@ -30,7 +36,7 @@ $(function(){
 	</div>
 	<div class="areaBts">
 		<div class="area">
-			<span class="bt_novos" title="Novo">
+			<span class="bt_novos">
            	<a href="javascript:;" onclick="fornecedorController.novoFornecedor();" rel="tipsy" title="Incluir Novo Fornecedor">
            		<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/>
            	</a>
@@ -49,7 +55,7 @@ $(function(){
               </td>
                 <td width="41">CNPJ:</td>
                 <td width="138"><input type="text" name="filtroConsultaFornecedor.cnpj" id="fornecedorController-filtroConsultaFornecedorCnpj" style="width:130px;"/></td>
-                <td width="93">Nome Fantasia:</td>
+                <td width="110" align="center">Nome Fantasia:</td>
                 <td width="155"><input type="text" name="filtroConsultaFornecedor.nomeFantasia" id="fornecedorController-filtroConsultaFornecedorNomeFantasia" style="width:150px;"/></td>
               <td width="216"><span class="bt_novos"><a href="javascript:;" onclick="fornecedorController.pesquisarFornecedores();"><img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" /></a></span></td>
             </tr>

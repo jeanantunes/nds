@@ -167,7 +167,7 @@
 						<tr>
 							<td width="117">Cobrança</td>
 							<td>
-								<select style="width: 100px;" id="modelidadeCobranca">
+								<select style="width: 100px;" id="modalidadeCobranca" onchange="transportadorController.mostrarOpcaoSelecionada()" >
 									<option onclick="transportadorController.mostrarOpcaoTaxaFixa();" value="TAXA_FIXA">Taxa Fixa</option>
 									<option onclick="transportadorController.mostrarOpcaoPercentual()" value="PERCENTUAL">Percentual</option>
 								</select>
@@ -329,7 +329,7 @@
 								</span>
 							</td>
 							<td valign="top">
-								<span class="bt_novos"	title="Confirmar">
+								<span class="bt_novos">
 									<a href="javascript:;" onclick="transportadorController.confirmarAssociacao();" rel="tipsy" title="Confirmar Associação">
 										<img border="0" src="${pageContext.request.contextPath}/images/ico_check.gif">
 									</a>
