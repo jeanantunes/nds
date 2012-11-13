@@ -361,6 +361,9 @@ public class FiadorController {
 	private void preencherDadosFiador(Pessoa pessoa) {
 		
 		List<Pessoa> sociosAdicionar = null;
+		
+		List<String> mensagensValidacao = new ArrayList<>();
+
 		if (pessoa instanceof PessoaFisica){
 			
 			PessoaFisica p = (PessoaFisica) pessoa;
@@ -385,6 +388,7 @@ public class FiadorController {
 				sociosAdicionar = new ArrayList<Pessoa>();
 				
 				for (SocioCadastrado cadastrado : sociosCadastrados){
+
 					sociosAdicionar.add(cadastrado.getPessoa());
 					
 					PessoaFisica p = (PessoaFisica) cadastrado.getPessoa();
@@ -398,6 +402,10 @@ public class FiadorController {
 					p.setCpf(p.getCpf().replace(".", "").replace("-", ""));
 					p.setRg(p.getRg().replace("-", "").replace(".", ""));
 				}
+			
+			} else {
+				
+				mensagensValidacao.add("Cadastre ao menos 1 sócio.");
 			}
 		}
 		
@@ -414,24 +422,25 @@ public class FiadorController {
 			
 			if (listaEnderecosExibir == null || listaEnderecosExibir.isEmpty()){
 				
-				throw new ValidacaoException(TipoMensagem.WARNING, "Cadastre ao menos 1 endereço.");
-			}
+				mensagensValidacao.add("Cadastre ao menos 1 endereço.");
+
+			} else {
 			
-			boolean valido = false;
-			
-			for (EnderecoAssociacaoDTO dto : listaEnderecosExibir){
-			
-				if (dto.getTipoEndereco() != null){
-					
-					valido = true;
-					break;
-				}
-			}
-			
-			
-			if (!valido){
+				boolean valido = false;
 				
-				throw new ValidacaoException(TipoMensagem.WARNING, "Cadastre ao menos 1 endereço.");
+				for (EnderecoAssociacaoDTO dto : listaEnderecosExibir){
+				
+					if (dto.getTipoEndereco() != null){
+						
+						valido = true;
+						break;
+					}
+				}
+
+				if (!valido){
+					
+					mensagensValidacao.add("Cadastre ao menos 1 endereço.");
+				}
 			}
 		}
 		
@@ -448,24 +457,25 @@ public class FiadorController {
 			
 			if (list == null || list.isEmpty()){
 				
-				throw new ValidacaoException(TipoMensagem.WARNING, "Cadastre ao menos 1 telefone.");
-			}
+				mensagensValidacao.add("Cadastre ao menos 1 telefone.");
 			
-			boolean valido = false;
+			} else {
 			
-			for (TelefoneAssociacaoDTO dto : list){
-			
-				if (dto.getTipoTelefone() != null){
-					
-					valido = true;
-					break;
-				}
-			}
-			
-			
-			if (!valido){
+				boolean valido = false;
 				
-				throw new ValidacaoException(TipoMensagem.WARNING, "Cadastre ao menos 1 telefone.");
+				for (TelefoneAssociacaoDTO dto : list){
+				
+					if (dto.getTipoTelefone() != null){
+						
+						valido = true;
+						break;
+					}
+				}
+
+				if (!valido){
+					
+					mensagensValidacao.add("Cadastre ao menos 1 telefone.");
+				}
 			}
 		}
 		
@@ -487,6 +497,16 @@ public class FiadorController {
 			for (GarantiaCadastrada garantiaCadastrada : listaGarantiaSessao){
 				listaGarantiaAdicionar.add(garantiaCadastrada.getGarantia());
 			}
+		}
+		
+		if (listaGarantiaAdicionar == null || listaGarantiaAdicionar.isEmpty()) {
+			
+			mensagensValidacao.add("Cadastre ao menos 1 garantia.");
+		}
+		
+		if (mensagensValidacao != null && !mensagensValidacao.isEmpty()) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, mensagensValidacao);
 		}
 		
 		Set<Long> listaGarantiaRemover = (Set<Long>) 
@@ -702,12 +722,29 @@ public class FiadorController {
 		
 		List<String> msgsValidacao = new ArrayList<String>();
 		
-		CPFValidator cpfValidator = new CPFValidator(true);
+		String mensagemDataNascimentoFiadorInvalida = "";
 		
+		String mensagemDataNascimentoConjugeInvalida = "";
+		
+		CPFValidator cpfValidator = new CPFValidator(true);
+
 		if (pessoa == null){
 			throw new ValidacaoException(TipoMensagem.WARNING, "CPF é obrigatório.");
 		}
 		
+		if (validator.hasErrors()) {
+			
+			for (Message message : validator.getErrors()) {
+				if (message.getCategory().equals("dataNascimento")){
+					mensagemDataNascimentoFiadorInvalida = "Data de nascimento do fiador inválida.";
+				}
+				
+				if (message.getCategory().equals("conjuge.dataNascimento")){
+					mensagemDataNascimentoConjugeInvalida = "Data de nascimento do conjuge do sócio inválida.";
+				}
+			}
+		}
+
 		if (pessoa.getNome() == null || pessoa.getNome().trim().isEmpty()){
 			msgsValidacao.add("Nome é obrigatório.");
 		}
@@ -748,8 +785,13 @@ public class FiadorController {
 		}
 		
 		
-		if (pessoa.getDataNascimento() == null){
-			msgsValidacao.add("Data Nascimento é obrigatório.");
+		if (pessoa.getDataNascimento() == null) {
+			
+			mensagemDataNascimentoFiadorInvalida = 
+					mensagemDataNascimentoFiadorInvalida.isEmpty() ? 
+							"Data Nascimento é obrigatório." : mensagemDataNascimentoFiadorInvalida;  
+			
+			msgsValidacao.add(mensagemDataNascimentoFiadorInvalida);
 		}
 		
 		if (pessoa.getEstadoCivil() == null){
@@ -806,26 +848,17 @@ public class FiadorController {
 				msgsValidacao.add("UF do Orgão Emissor do conjuge é obrigatório.");
 			}
 
-			
 			if (pessoa.getDataNascimento() == null){
-				msgsValidacao.add("Data Nascimento do conjuge é obrigatório.");
+
+				mensagemDataNascimentoConjugeInvalida = 
+						mensagemDataNascimentoConjugeInvalida.isEmpty() ? 
+								"Data Nascimento do conjuge é obrigatório." : mensagemDataNascimentoConjugeInvalida;  
+				
+				msgsValidacao.add(mensagemDataNascimentoFiadorInvalida);
 			}
 			
 			if (pessoa.getSexo() == null){
 				msgsValidacao.add("Sexo do conjuge é obrigatório.");
-			}
-		}
-		
-		if (validator.hasErrors()) {
-			
-			for (Message message : validator.getErrors()) {
-				if (message.getCategory().equals("dataNascimento")){
-					msgsValidacao.add("Data de nascimento do sócio inválida.");
-				}
-				
-				if (message.getCategory().equals("conjuge.dataNascimento")){
-					msgsValidacao.add("Data de nascimento do conjuge do sócio inválida.");
-				}
 			}
 		}
 		
