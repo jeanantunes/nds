@@ -2234,8 +2234,8 @@ public class Fixture {
 		feriado.setData(data);
 		feriado.setDescricao(descricao);
 		feriado.setTipoFeriado(tipoFeriado);
-		feriado.setUnidadeFederacao(unidadeFederacao);
-		feriado.setLocalidade(localidade);
+		feriado.setUnidadeFederacao("SP");
+		feriado.setLocalidade("São Paulo");
 		
 		feriado.setIndEfetuaCobranca(indEfetuaCobranca);
 		feriado.setIndOpera(indOpera);
@@ -3155,7 +3155,7 @@ public class Fixture {
 		
 		Localidade localidade = new Localidade();
 		
-		localidade.setId(id);
+		localidade.set_id(id.toString());
 		localidade.setNome(nome);
 		localidade.setUnidadeFederacao(unidadeFederacao);
 		localidade.setCodigoMunicipioIBGE(codigoMunicipioIBGE);
@@ -3167,7 +3167,7 @@ public class Fixture {
 		
 		Bairro bairro = new Bairro();
 		
-		bairro.setId(id);
+		bairro.set_id(id.toString());
 		bairro.setNome(nome);
 		bairro.setLocalidade(localidade);
 		
@@ -3181,8 +3181,10 @@ public class Fixture {
 		Logradouro logradouro = new Logradouro();
 		
 		logradouro.setCep(cep);
-		logradouro.setChaveBairroInicial(chaveBairroInicial);
-		logradouro.setId(id);
+		Bairro b = new Bairro();
+		b.set_id("bairro/" + chaveBairroInicial.toString());
+		logradouro.setBairroInicial(b);
+		logradouro.set_id(id.toString());
 		logradouro.setLocalidade(localidade);
 		logradouro.setNome(nome);
 		logradouro.setTipoLogradouro(tipoLogradouro);
@@ -3533,7 +3535,7 @@ public class Fixture {
 		grupo.setCotas(cotas);
 		grupo.setDiasRecolhimento(diasRecolhimento);
 		grupo.setId(id);
-		grupo.setMunicipios(municipios);
+//		grupo.setMunicipios(municipios);
 		grupo.setNome(nome);
 		grupo.setTipoCota(tipoCota);
 		grupo.setTipoGrupo(tipoGrupo);
@@ -3641,14 +3643,14 @@ public class Fixture {
        
         
         HistoricoTitularidadeCotaEndereco endereco1 = new HistoricoTitularidadeCotaEndereco(
-                10, "Centro", "13720-000", 150, "São José do Rio Pardo", null,
-                "Rua", "Treze de Maio", "13", "SP", 15, TipoEndereco.COMERCIAL,
+                "10", "Centro", "13720-000", 150, "São José do Rio Pardo", null,
+                "Rua", "Treze de Maio", "13", "SP", "15", TipoEndereco.COMERCIAL,
                 true);
         historico.addEndereco(endereco1);
         
         HistoricoTitularidadeCotaEndereco endereco2 = new HistoricoTitularidadeCotaEndereco(
-                10, "Centro", "13720-000", 150, "São José do Rio Pardo", null,
-                "Rua", "Nove de Julho", "100", "SP", 15, TipoEndereco.RESIDENCIAL,
+                "10", "Centro", "13720-000", 150, "São José do Rio Pardo", null,
+                "Rua", "Nove de Julho", "100", "SP", "15", TipoEndereco.RESIDENCIAL,
                 false);
         historico.addEndereco(endereco2);
         
@@ -3727,8 +3729,8 @@ public class Fixture {
         pdv.setTipoPonto(tipoPonto);
         
         HistoricoTitularidadeCotaEndereco enderecoPDV = new HistoricoTitularidadeCotaEndereco(
-                10, "Centro", "13720-000", 99, "São José do Rio Pardo", null,
-                "Rua", "Benjamin Constant", "50", "SP", 15, TipoEndereco.COMERCIAL,
+                "10", "Centro", "13720-000", 99, "São José do Rio Pardo", null,
+                "Rua", "Benjamin Constant", "50", "SP", "15", TipoEndereco.COMERCIAL,
                 true);
         pdv.addEndereco(enderecoPDV);
         

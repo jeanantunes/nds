@@ -1,38 +1,42 @@
 package br.com.abril.nds.integracao.fileimporter;
 
-import java.io.Console;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.Properties;
+import java.util.Map;
 import java.util.Scanner;
-import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.commons.io.IOCase;
 import org.apache.commons.io.filefilter.RegexFileFilter;
 import org.apache.commons.lang.StringUtils;
+import org.ektorp.CouchDbConnector;
+import org.ektorp.CouchDbInstance;
+import org.ektorp.UpdateConflictException;
+import org.ektorp.http.HttpClient;
+import org.ektorp.http.StdHttpClient;
+import org.ektorp.impl.StdCouchDbInstance;
 import org.lightcouch.CouchDbClient;
+import org.lightcouch.CouchDbException;
 import org.lightcouch.NoDocumentException;
 import org.lightcouch.View;
 import org.lightcouch.ViewResult;
 import org.lightcouch.ViewResult.Rows;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.integracao.couchdb.CouchDbProperties;
-import br.com.abril.nds.integracao.dto.SolicitacaoDTO;
 import br.com.abril.nds.integracao.icd.model.DetalheFaltaSobra;
 import br.com.abril.nds.integracao.icd.model.MotivoSituacaoFaltaSobra;
 import br.com.abril.nds.integracao.icd.model.SolicitacaoFaltaSobra;
@@ -52,9 +56,14 @@ import br.com.abril.nds.integracao.repository.LogExecucaoArquivoRepository;
 import br.com.abril.nds.integracao.repository.LogExecucaoRepository;
 import br.com.abril.nds.integracao.repository.ParametroSistemaRepository;
 import br.com.abril.nds.integracao.service.IcdObjectService;
+import br.com.abril.nds.model.dne.Bairro;
+import br.com.abril.nds.model.dne.Localidade;
+import br.com.abril.nds.model.dne.Logradouro;
+import br.com.abril.nds.model.dne.UnidadeFederacao;
 
 import com.ancientprogramming.fixedformat4j.format.FixedFormatManager;
-import com.ancientprogramming.fixedformat4j.format.impl.FixedFormatManagerImpl;
+import com.healthmarketscience.jackcess.Database;
+import com.healthmarketscience.jackcess.Table;
 
 /**
  * Realiza a execução das interfaces de integração. <br>
@@ -89,7 +98,7 @@ public class InterfaceExecutor {
 	
 	@Autowired
 	private CouchDbProperties couchDbProperties;
-	
+		
 	private boolean processadoComSucesso = true;
 
 	private String diretorio;
@@ -100,6 +109,23 @@ public class InterfaceExecutor {
 		ClassPathXmlApplicationContext classPathXmlApplicationContext = new ClassPathXmlApplicationContext(SPRING_FILE_LOCATION);
 		classPathXmlApplicationContext.registerShutdownHook();
 		applicationContext = classPathXmlApplicationContext;
+	}
+
+	
+	public CouchDbConnector initCouchDbClient(String dataBaseName) throws MalformedURLException {
+		HttpClient authenticatedHttpClient = new StdHttpClient.Builder()
+                .url(
+                		new URL(
+                		couchDbProperties.getProtocol(), 
+                		couchDbProperties.getHost(), 
+                		couchDbProperties.getPort(), 
+                		"")
+                	)
+                .username(couchDbProperties.getUsername())
+                .password(couchDbProperties.getPassword())
+                .build();
+		CouchDbInstance dbInstance = new StdCouchDbInstance(authenticatedHttpClient);
+		return dbInstance.createConnector(dataBaseName, true);				
 	}
 	
 	
@@ -341,72 +367,119 @@ public class InterfaceExecutor {
 	private void executarInterfaceCorreios() {
 		
 		String diretorio = parametroSistemaRepository.getParametro("CORREIOS_DIR");
-		CouchDbClient couchDbClient = this.getCouchDbClientInstance("db_integracao");
+		CouchDbConnector couchDbClient = null;
+		try {
+			couchDbClient = initCouchDbClient("correios");
+		} catch (MalformedURLException e1) {
+			return;
+		}
 		
 		try {
-/*
-			Scanner scan = new Scanner(System.in);
-			String line;
-			String unixCommand = "/usr/bin/mdb-export " + diretorio + "data/dnecom.mdb LOG_BAIRRO"; 
-			ProcessBuilder builder = new ProcessBuilder(new String [] { "/bin/csh", "-c", unixCommand} );
-			builder.redirectErrorStream(true);
-			Process process = builder.start();
 			
-			
-			OutputStream stdin = process.getOutputStream ();
-			InputStream stderr = process.getErrorStream ();
-			InputStream stdout = process.getInputStream ();
+			Database db = Database.open(new File(diretorio + "dnecom.mdb"));
 
-			BufferedReader reader = new BufferedReader (new InputStreamReader(stdout));
-			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(stdin));
-			
+			Table tblBairro = db.getTable("LOG_BAIRRO");
+			Table tblLogradouro = db.getTable("LOG_LOGRADOURO");
+			Table tblLocalidade = db.getTable("LOG_LOCALIDADE");
+			Table tblUf = db.getTable("LOG_FAIXA_UF");
 
-			while (scan.hasNext()) {
-			    String input = scan.nextLine();
-			    if (input.trim().equals("exit")) {
-			        // Putting 'exit' amongst the echo --EOF--s below doesn't work.
-			        writer.write("exit\n");
-			    } else {
-			        writer.write("((" + input + ") && echo --EOF--) || echo --EOF--\n");
-			    }
-			    writer.flush();
+			for(Map<String, Object> row : tblBairro) {
+					
+				if(row != null && !row.isEmpty()) {
+					
+					Bairro doc = new Bairro();
+					doc.setTipoDocumento("bairro");					
+					doc.set_id( "bairro/" + (row.get("BAI_NU") != null ? row.get("BAI_NU").toString() : "" ));
+					
+					doc.setNome((row.get("BAI_NO") != null ? row.get("BAI_NO").toString() : "" ));
+					doc.setUf((row.get("UFE_SG") != null ? row.get("UFE_SG").toString() : "" ));
+					Localidade l = new Localidade();
+					l.set_id( "localidade/" + (row.get("LOC_NU") != null ? row.get("LOC_NU").toString() : "" ));
+					doc.setLocalidade(l);
 
-			    line = reader.readLine();
-			    while (line != null && ! line.trim().equals("--EOF--")) {
-			        System.out.println ("Stdout: " + line);
-			        line = reader.readLine();
-			    }
-			    if (line == null) {
-			        break;
-			    }
-			}
-			
-			writer.close();
-*/
-			Process process = Runtime.getRuntime().exec(diretorio + "bin/cep-export");
-			int retorno = process.waitFor();
-			
-			if (retorno != 0) {
-				throw new RuntimeException("ERRO");
+					saveOrUpdate(couchDbClient, doc);
+				}
 			}
 
-			IntegracaoDocument doc = new IntegracaoDocument();
-			doc.set_id("AtualizacaoCep");
+			for(Map<String, Object> row : tblLogradouro) {
+				
+							
+				Logradouro doc = new Logradouro();
+				
+				doc.setTipoDocumento("logradouro");
+				doc.set_id("logradouro/" + (row.get("LOG_NU") != null ? row.get("LOG_NU").toString() : "" ));
+				doc.setNome((row.get("LOG_NO") != null ? row.get("LOG_NO").toString() : "" ));
+				doc.setComplemento((row.get("LOG_COMPLEMENTO") != null ? row.get("LOG_COMPLEMENTO").toString() : "" ));
+				doc.setCep((row.get("CEP") != null ? row.get("CEP").toString() : "" ));
+				doc.setUf((row.get("UFE_SG") != null ? row.get("UFE_SG").toString() : "" ));				
+				doc.setAbreviatura((row.get("LOG_NO_ABREV") != null ? row.get("LOG_NO_ABREV").toString() : "" ));
+				doc.setTipoLogradouro((row.get("TLO_TX") != null ? row.get("TLO_TX").toString() : "" ));
+				
+				Localidade l = new Localidade();
+				l.set_id("localidade/" + (row.get("LOC_NU") != null ? row.get("LOC_NU").toString() : "" ));
+				doc.setLocalidade(l);
+				
+				
+				Bairro bi = new Bairro();
+				bi.set_id("bairro/" + (row.get("BAI_NU_INI") != null ? row.get("BAI_NU_INI").toString() : "" ));
+				doc.setBairroInicial(bi);
+				
+				Bairro bf = new Bairro();
+				bf.set_id("bairro/" + (row.get("BAI_NU_FIM") != null ? row.get("BAI_NU_FIM").toString() : "" ));
+				doc.setBairroFinal(bf);
+
+				saveOrUpdate(couchDbClient, doc);
+			}
 			
-			try {
-				doc = couchDbClient.find(IntegracaoDocument.class, doc.get_id());
-			} catch (NoDocumentException e) {
-				doc.setTipoDocumento("AtualizacaoCep");
-				couchDbClient.save(doc);
+			for(Map<String, Object> row : tblLocalidade) {
+				 
+				Localidade doc = new Localidade();
+				
+				doc.setTipoDocumento("localidade");					
+				doc.set_id("localidade/" + (row.get("LOC_NU") != null ? row.get("LOC_NU").toString() : "" ));
+				doc.setNome((row.get("LOC_NO") != null ? row.get("LOC_NO").toString() : "" ));
+				doc.setCep((row.get("CEP") != null ? row.get("CEP").toString() : "" ));
+				doc.setAbreviatura((row.get("LOG_NO_ABREV") != null ? row.get("LOG_NO_ABREV").toString() : "" ));
+				doc.setCodigoMunicipioIBGE((row.get("MUN_NU") != null ? Long.valueOf( row.get("MUN_NU").toString() ) : null ));
+				
+				UnidadeFederacao u = new UnidadeFederacao();
+				u.set_id("uf/" + (row.get("UFE_SG") != null ? row.get("UFE_SG").toString() : "" ));
+				doc.setUnidadeFederacao(u);
+
+				saveOrUpdate(couchDbClient, doc);
 			}
 
-			FileInputStream in = new FileInputStream(new File(diretorio + "data/dnecom.tar.gz"));
-			couchDbClient.saveAttachment(in, "dnecom", "application/x-gzip-compressed", doc.get_id(), doc.get_rev());
+			for(Map<String, Object> row : tblUf) {
+								
+				
+				UnidadeFederacao doc = new UnidadeFederacao();
+				
+				doc.setTipoDocumento("uf");					
+				doc.set_id("uf/" + (row.get("UFE_SG") != null ? row.get("UFE_SG").toString() : "" ));
+				doc.setSigla((row.get("UFE_SG") != null ? row.get("UFE_SG").toString() : "" ));
+				doc.setFaixaCepInicial((row.get("UFE_CEP_INI") != null ? row.get("UFE_CEP_INI").toString() : "" ));
+				doc.setFaixaCepFinal((row.get("UFE_CEP_FIM") != null ? row.get("UFE_CEP_FIM").toString() : "" ));
+
+				saveOrUpdate(couchDbClient, doc);
+			}
 
 		} catch (Throwable e) {
 			throw new RuntimeException(e);
 		}
 		
+	}
+
+
+	private <T extends IntegracaoDocument> void saveOrUpdate(CouchDbConnector couchDbClient, T doc) {
+		try {
+			couchDbClient.create(doc);
+		} catch (UpdateConflictException ex) {
+			try {
+				doc.set_rev( couchDbClient.get(doc.getClass(), doc.get_id()).get_rev() );
+				couchDbClient.update(doc);
+			} catch (UpdateConflictException exx) {
+			}
+		}
 	}
 	
 	

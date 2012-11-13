@@ -437,10 +437,10 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 		if (novoEndereco.getCodigoUf() == null
 				&& novoEndereco.getCodigoCidadeIBGE() != null) {
 			if (novoEndereco.getCodigoCidadeIBGE().toString().length() > 2) {
-				novoEndereco.setCodigoUf(Integer.parseInt(novoEndereco
-						.getCodigoCidadeIBGE().toString().substring(0, 2)));
+				novoEndereco.setCodigoUf(novoEndereco
+						.getCodigoCidadeIBGE().toString().substring(0, 2));
 			} else {
-				novoEndereco.setCodigoUf(novoEndereco.getCodigoCidadeIBGE());
+				novoEndereco.setCodigoUf(novoEndereco.getCodigoCidadeIBGE().toString());
 			}
 		}
 		enderecoRepository.adicionar(novoEndereco);

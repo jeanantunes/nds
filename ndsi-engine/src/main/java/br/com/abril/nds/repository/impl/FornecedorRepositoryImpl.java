@@ -267,7 +267,7 @@ public class FornecedorRepositoryImpl extends
 		if (filtroConsultaFornecedor.getCnpj() != null 
 				&& !filtroConsultaFornecedor.getCnpj().isEmpty()) {
 			
-			query.setParameter("cnpj", "%" + filtroConsultaFornecedor.getCnpj() + "%");
+			query.setParameter("cnpj", "%" + filtroConsultaFornecedor.getCnpj().replaceAll("[./-]", "") + "%");
 		}
 		
 		if (filtroConsultaFornecedor.getNomeFantasia() != null 

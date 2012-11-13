@@ -23,13 +23,13 @@
 
 		<div class="areaBts">
 			<div class="area">
-				<span class="bt_novos" title="Novo">
+				<span class="bt_novos">
 		           	<a href="javascript:;" id="linkBtnNovoEntregadorPF" rel="tipsy" title="Incluir Novo Entregador Pessoa Física">
 		           		<img src="${pageContext.request.contextPath}/images/ico_jornaleiro.gif" hspace="5" border="0"/>
 		           	</a>
 		        </span>
 
-		        <span class="bt_novos" title="Novo">
+		        <span class="bt_novos">
 		        	<a href="javascript:;" id="linkBtnNovoEntregadorPJ" rel="tipsy" title="Incluir Novo Entregador Pessoa Juridica">
 		        		<img src="${pageContext.request.contextPath}/images/ico_usuarios1.gif" hspace="5" border="0"/>
 		        	</a>

@@ -294,7 +294,7 @@ public class CalendarioServiceImpl implements CalendarioService {
 		boolean indOpera = calendarioFeriado.isIndOpera();
 		boolean indRepeteAnualmente = calendarioFeriado.isIndRepeteAnualmente();
 		boolean indEfetuaCobranca = calendarioFeriado.isIndEfetuaCobranca();
-		Long idLocalidade = calendarioFeriado.getIdLocalidade();
+		String idLocalidade = calendarioFeriado.getIdLocalidade();
 
 		Feriado feriado = null;
 		UnidadeFederacao unidadeFederacao = null;
@@ -360,9 +360,9 @@ public class CalendarioServiceImpl implements CalendarioService {
 			feriado.setIndOpera(indOpera);
 			feriado.setIndRepeteAnualmente(indRepeteAnualmente);
 
-			feriado.setLocalidade(localidade);
+			feriado.setLocalidade(localidade.get_id());
 			feriado.setTipoFeriado(tipoFeriado);
-			feriado.setUnidadeFederacao(unidadeFederacao);
+			feriado.setUnidadeFederacao(unidadeFederacao.get_id());
 
 			feriado.setOrigem(Origem.MANUAL);
 			verificarFeriadoAnualExistente(feriado);
@@ -404,7 +404,7 @@ public class CalendarioServiceImpl implements CalendarioService {
 
 		Date dataFeriado = calendarioFeriado.getDataFeriado();
 		TipoFeriado tipoFeriado = calendarioFeriado.getTipoFeriado();
-		Long idLocalidade = calendarioFeriado.getIdLocalidade();
+		String idLocalidade = calendarioFeriado.getIdLocalidade();
 
 		Feriado feriado = null;
 

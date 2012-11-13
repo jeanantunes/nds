@@ -19,7 +19,7 @@ public class EMS0131Output implements Serializable {
 	private String nomeDoJornaleiro; //NOME -- PESSOA
 	private Integer quantidadeDeCotas; 
 	private String endereco; //LOGRADOURO -- ENDERECO
-	private Integer codigoDoBairro; // CODIGO_BAIRRO -- ENDERECO
+	private String codigoDoBairro; // CODIGO_BAIRRO -- ENDERECO
 	private String municipio; //CIDADE -- ENDERECO
 	private String siglaUf; //UF -- ENDERECO
 	private String cep; //CEP -- ENDEERCO
@@ -74,10 +74,10 @@ public class EMS0131Output implements Serializable {
 	}
 	
 	@Field(offset = 81, length = 3)
-	public Integer getCodigoDoBairro() {
+	public String getCodigoDoBairro() {
 		return codigoDoBairro;
 	}
-	public void setCodigoDoBairro(Integer codigoDoBairro) {
+	public void setCodigoDoBairro(String codigoDoBairro) {
 		this.codigoDoBairro = codigoDoBairro;
 	}
 	

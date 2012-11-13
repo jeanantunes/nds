@@ -149,7 +149,7 @@ var fornecedorController = $.extend(true,{
 								
 								fecharModalCadastroFornecedor = true;
 								
-								$( "#fornecedorController-dialogNovoFornecedor", fornecedorController.workspace ).dialog( "close" );								
+								$("#fornecedorController-dialogNovoFornecedor", fornecedorController.workspace ).dialog( "close" );								
 								$("#dialog-cancelar-cadastro-fornecedor", fornecedorController.workspace).dialog("close");
 							}
 						);
@@ -167,6 +167,8 @@ var fornecedorController = $.extend(true,{
 		
 		novoFornecedor:	function (isEdicao, indBloqueiaCamposEdicaoFornecedor) {
 				
+				$("#fornecedorController-cnpj").attr('disabled', false);
+			
 				if (!isEdicao) {
 					
 					fornecedorController.limparCamposModal();
@@ -268,8 +270,12 @@ var fornecedorController = $.extend(true,{
 			
 			cadastrarFornecedor:function () {
 				
+				$("#fornecedorController-cnpj").attr('disabled', false);
+
 				var formData = $("#fornecedorController-formNovoFornecedor", fornecedorController.workspace).serializeArray();
-				
+
+				$("#fornecedorController-cnpj").attr('disabled', true);
+
 				$.postJSON(
 					 contextPath +"/cadastro/fornecedor/cadastrarFornecedor",
 					formData,

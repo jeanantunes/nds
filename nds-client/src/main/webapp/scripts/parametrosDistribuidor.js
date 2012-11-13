@@ -280,18 +280,25 @@ var parametrosDistribuidorController = $.extend(true, {
 			$('#prazoContrato', this.workspace).val("").disable();
 			$('#informacoesComplementaresContrato', this.workspace).wysiwyg('clear');
 		}
+		
+		parametrosDistribuidorController.exibirContratoCota();
 	},
 
 	utilizaProcuracaoEntregadoresListener: function() {
 		if (!$('#utilizaProcuracaoEntregadores', this.workspace).is(':checked')) {
 			$('#informacoesComplementaresProcuracao', this.workspace).wysiwyg('clear');
-		} 
+		}
+		
+		parametrosDistribuidorController.exibirProcuracao();
+		
 	},
 
 	utilizaTermoAdesaoListener: function() {
 		if (!$('#utilizaTermoAdesaoEntregaBancas', this.workspace).is(':checked')) {
 			$('#complementoTermoAdesaoEntregaBancas', this.workspace).wysiwyg('clear');
-		} 
+		}
+		
+		parametrosDistribuidorController.exibirAdesao();		
 	},
 
 	utilizaGarantiaListener: function(tipoGarantia, validadeGarantia) {
@@ -526,6 +533,12 @@ var parametrosDistribuidorController = $.extend(true, {
 		$("#cnpj", this.workspace).mask("99.999.999/9999-99");
 		
 		$("#numero", this.workspace).numeric();
+		
+		parametrosDistribuidorController.exibirProcuracao();
+		
+		parametrosDistribuidorController.exibirAdesao();
+
+		parametrosDistribuidorController.exibirContratoCota();
 	},
 	
 	dialogConfirmarGrupo: function() {
@@ -545,7 +558,37 @@ var parametrosDistribuidorController = $.extend(true, {
 				}
 			}
 		});
+	 },
+	 
+	 exibirProcuracao:function(){
+		
+		 if($('#utilizaProcuracaoEntregadores', this.workspace).is(':checked')){
+			 $(".exibirProcuracao").show();
+		 }else{
+			 $(".exibirProcuracao").hide();
+		 }
+	 },
+	 
+	 
+	 exibirAdesao:function(){
+		
+		 if($('#utilizaTermoAdesaoEntregaBancas', this.workspace).is(':checked')){
+			 $(".exibirAdesao").show();
+		 }else{
+			 $(".exibirAdesao").hide();
+		 }
+	 },
+	 
+	 exibirContratoCota:function(){
+		
+		 if($('#utilizaContratoComCotas', this.workspace).is(':checked')){
+			 $(".exibirContratoComCotas").show();
+		 }else{
+			 $(".exibirContratoComCotas").hide();
+		 }
 	 }
+	 
+	 
 }, BaseController);
 
 //@ sourceURL=parametrosDistribuidor.js

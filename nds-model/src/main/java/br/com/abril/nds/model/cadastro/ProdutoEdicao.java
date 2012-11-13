@@ -170,9 +170,13 @@ public class ProdutoEdicao implements Serializable {
 	@OneToMany(mappedBy = "produtoEdicao")
 	protected Set<FechamentoDiarioLancamentoReparte> historicoMovimentoRepartes;
 	
+
 	@OneToOne(optional = true)
 	@JoinColumn(name = "DESCONTO_ID")
 	private Desconto desconto;
+
+	@Embedded
+	private SegmentacaoProduto segmentacao;
 	
 	public Long getId() {
 		return id;
@@ -546,6 +550,15 @@ public class ProdutoEdicao implements Serializable {
 
 	public void setDesconto(Desconto desconto) {
 		this.desconto = desconto;
+	}
+	
+	public SegmentacaoProduto getSegmentacao() {
+		return segmentacao;
+	}
+
+	public void setSegmentacao(SegmentacaoProduto segmentacao) {
+		this.segmentacao = segmentacao;
+
 	}
 	
 }

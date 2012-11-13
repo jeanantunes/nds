@@ -63,9 +63,10 @@ public class GeracaoArquivosController {
 		int qtdArquivosGerados = 0;
 		try {
 			if (operacao.equals("REPARTE")) {
-				route197.execute(getUsuario().getLogin(), dataLctoPrevisto);
+				qtdArquivosGerados = route197.execute(getUsuario().getLogin(),
+						dataLctoPrevisto);
 			} else {
-				qtdArquivosGerados = route198.execute(getUsuario().getLogin(), 
+				qtdArquivosGerados = route198.execute(getUsuario().getLogin(),
 						dataLctoPrevisto);
 			}
 		} catch	(RuntimeException e) {

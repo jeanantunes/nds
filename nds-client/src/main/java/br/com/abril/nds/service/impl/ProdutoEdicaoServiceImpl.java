@@ -29,6 +29,7 @@ import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.ParametroSistema;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.cadastro.SegmentacaoProduto;
 import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.model.cadastro.desconto.DescontoProdutoEdicao;
 import br.com.abril.nds.model.cadastro.desconto.TipoDesconto;
@@ -528,6 +529,18 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 				
 			// Texto boletim informativo:
 			produtoEdicao.setBoletimInformativo(dto.getBoletimInformativo());
+			
+			
+			//Segmentação
+			SegmentacaoProduto segm = produtoEdicao.getSegmentacao()!=null?produtoEdicao.getSegmentacao():new SegmentacaoProduto();
+			segm.setClasseSocial(dto.getClasseSocial());
+			segm.setSexo(dto.getSexo());
+			segm.setFaixaEtaria(dto.getFaixaEtaria());
+			segm.setTemaPrincipal(dto.getTemaPrincipal());
+			segm.setTemaSecundario(dto.getTemaSecundario());
+			
+			produtoEdicao.setSegmentacao(segm);
+			
 		}
 		
 		//Campos editáveis, independente da Origem
@@ -754,6 +767,28 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 				dto.setDataRecolhimentoReal(uLancamento.getDataRecolhimentoDistribuidor());
 				dto.setSemanaRecolhimento(DateUtil.obterNumeroSemanaNoAno(uLancamento.getDataRecolhimentoDistribuidor()));
 			}
+			
+			SegmentacaoProduto segm = pe.getSegmentacao();
+			if(segm!=null){
+				
+				dto.setClasseSocial(segm.getClasseSocial());
+				dto.setSexo(segm.getSexo());
+				dto.setFaixaEtaria(segm.getFaixaEtaria());
+				dto.setTemaPrincipal(segm.getTemaPrincipal());
+				dto.setTemaSecundario(segm.getTemaSecundario());
+			}
+			else{
+				
+				segm = pe.getProduto().getSegmentacao();
+				if(segm!=null){
+					dto.setClasseSocial(segm.getClasseSocial());
+					dto.setSexo(segm.getSexo());
+					dto.setFaixaEtaria(segm.getFaixaEtaria());
+					dto.setTemaPrincipal(segm.getTemaPrincipal());
+					dto.setTemaSecundario(segm.getTemaSecundario());
+				}
+			}	
+			
 		} else {
 			
 			// Edição criada pelo Distribuidor:

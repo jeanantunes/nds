@@ -138,12 +138,12 @@ public class GrupoServiceImpl implements GrupoService {
 
 	@Override
 	@Transactional
-	public void salvarGrupoMunicipios(Long idGrupo, List<Long> idMunicipios,
+	public void salvarGrupoMunicipios(Long idGrupo, List<String> idMunicipios,
 			String nome, List<DiaSemana> diasSemana) {
 		
 		HashSet<Localidade> municipios = new HashSet<Localidade>();
 		
-		for(Long id : idMunicipios) {
+		for(String id : idMunicipios) {
 			municipios.add(localidadeRepository.buscarPorId(id));
 		}
 		
@@ -158,7 +158,7 @@ public class GrupoServiceImpl implements GrupoService {
 		grupo.setNome(nome);
 		grupo.setDiasRecolhimento(new HashSet<DiaSemana>(diasSemana));
 		grupo.setTipoGrupo(TipoGrupo.MUNICIPIO);
-		grupo.setMunicipios(municipios);
+		//grupo.setMunicipios(municipios);
 		
 		grupoRepository.merge(grupo);
 	}
@@ -170,10 +170,10 @@ public class GrupoServiceImpl implements GrupoService {
 		GrupoCota grupo = grupoRepository.buscarPorId(idGrupo);
 		
 		List<Long> ids = new ArrayList<Long>();
-				
+		/*		
 		for(Localidade local : grupo.getMunicipios())
-			ids.add(local.getId());
-				
+			ids.add(local.get_id());
+			*/	
 		return ids;
 	}
 

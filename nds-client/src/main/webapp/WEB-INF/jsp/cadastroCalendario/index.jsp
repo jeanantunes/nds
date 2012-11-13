@@ -251,13 +251,13 @@
 
 			<div class="areaBts">
 				<div class="area">
-					<span class="bt_novos" title="Novo">
+					<span class="bt_novos">
 						<a href="javascript:;" onclick="CadastroCalendario.popupNovoCadastroFeriado();" rel="tipsy" title="Incluir Novo Feriado">
 							<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0" />
 						</a>
 					</span>
 					
-					<span class="bt_arq" title="Imprimir">
+					<span class="bt_arq">
 						<a href="${pageContext.request.contextPath}/administracao/cadastroCalendario/gerarRelatorioCalendario?fileType=PDF&tipoPesquisaFeriado=FERIADO_ANUAL" rel="tipsy" title="Imprimir">
 							<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />
 						</a>

@@ -25,7 +25,9 @@ public class EMS0198Trailer {
 	@Field(offset = 1, length = 20)
 	public String getRegistro() {
 		
-		registro = "3|" + this.codigoCota + "|" + this.quantidadeRegistros;
+		registro = "3" 
+				+ "|" + this.codigoCota 
+				+ "|" + this.quantidadeRegistros;
 		
 		return registro;
 	}

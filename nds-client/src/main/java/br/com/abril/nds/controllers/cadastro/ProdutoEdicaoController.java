@@ -11,10 +11,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.DetalheProdutoVO;
+import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Brinde;
+import br.com.abril.nds.model.cadastro.ClasseSocial;
+import br.com.abril.nds.model.cadastro.FaixaEtaria;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.cadastro.Sexo;
+import br.com.abril.nds.model.cadastro.TemaProduto;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Permissao;
@@ -49,11 +54,22 @@ public class ProdutoEdicaoController {
 	@Autowired
 	private ProdutoEdicaoService produtoEdicaoService;
 	
+	private static List<ItemDTO<ClasseSocial,String>> listaClasseSocial =  new ArrayList<ItemDTO<ClasseSocial,String>>();
+	  
+	private static List<ItemDTO<Sexo,String>> listaSexo =  new ArrayList<ItemDTO<Sexo,String>>();
+	
+	private static List<ItemDTO<FaixaEtaria,String>> listaFaixaEtaria =  new ArrayList<ItemDTO<FaixaEtaria,String>>();
+
+	private static List<ItemDTO<TemaProduto,String>> listaTemaProduto =  new ArrayList<ItemDTO<TemaProduto,String>>();
+
+	
 	/** Traz a página inicial. */
 	@Get
 	@Path("/")
 	@Rules(Permissao.ROLE_CADASTRO_EDICAO)
 	public void index() {
+		
+		this.carregarDadosSegmentacao();
 		
 		List<Brinde> brindes = brindeService.obterBrindes();
 
@@ -150,7 +166,8 @@ public class ProdutoEdicaoController {
 			BigDecimal desconto, Long peso, 
 			BigDecimal largura, BigDecimal comprimento, BigDecimal espessura,
 			String chamadaCapa, boolean parcial, boolean possuiBrinde,
-			String boletimInformativo, Integer numeroLancamento, Long descricaoBrinde, String descricaoProduto) {
+			String boletimInformativo, Integer numeroLancamento, Long descricaoBrinde, String descricaoProduto,
+            ClasseSocial classeSocial,Sexo sexo,FaixaEtaria faixaEtaria,TemaProduto temaPrincipal,TemaProduto temaSecundario) {
 		
 		// DTO para transportar os dados:
 		ProdutoEdicaoDTO dto = new ProdutoEdicaoDTO();
@@ -181,6 +198,13 @@ public class ProdutoEdicaoController {
 		dto.setNumeroLancamento(numeroLancamento);
 		dto.setIdBrinde(descricaoBrinde);
 		dto.setNomeComercial(descricaoProduto);
+		
+		//Segmentação
+		dto.setClasseSocial(classeSocial);
+		dto.setFaixaEtaria(faixaEtaria);
+		dto.setSexo(sexo);
+		dto.setTemaPrincipal(temaPrincipal);
+		dto.setTemaSecundario(temaSecundario);
 		
 		ValidacaoVO vo = null;
 		 
@@ -407,4 +431,35 @@ public class ProdutoEdicaoController {
 		return produtoLancamentoVO;
 	}
 
+	
+	/**
+	 * Carrega os combos do modal de inclusão/edição do Produto-Segmentação.
+	 */
+	@Post
+	public void carregarDadosSegmentacao() {
+		
+		listaClasseSocial.clear();
+		for(ClasseSocial item:ClasseSocial.values()){
+			listaClasseSocial.add(new ItemDTO<ClasseSocial,String>(item,item.getDescClasseSocial()));
+		}
+		result.include("listaClasseSocial",listaClasseSocial);
+		
+		listaSexo.clear();
+		for(Sexo item:Sexo.values()){
+			listaSexo.add(new ItemDTO<Sexo,String>(item,item.name()));
+		}
+		result.include("listaSexo",listaSexo);	
+		
+		listaFaixaEtaria.clear();
+		for(FaixaEtaria item:FaixaEtaria.values()){
+			listaFaixaEtaria.add(new ItemDTO<FaixaEtaria,String>(item,item.getDescFaixaEtaria()));
+		}
+		result.include("listaFaixaEtaria",listaFaixaEtaria);	
+		
+		listaTemaProduto.clear();
+		for(TemaProduto item:TemaProduto.values()){
+			listaTemaProduto.add(new ItemDTO<TemaProduto,String>(item,item.getDescTemaProduto()));
+		}
+		result.include("listaTemaProduto",listaTemaProduto);	
+    }
 }

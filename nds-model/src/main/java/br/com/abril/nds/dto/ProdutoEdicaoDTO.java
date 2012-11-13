@@ -5,6 +5,15 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 
+import javax.persistence.Column;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+
+import br.com.abril.nds.model.cadastro.ClasseSocial;
+import br.com.abril.nds.model.cadastro.FaixaEtaria;
+import br.com.abril.nds.model.cadastro.FormatoProduto;
+import br.com.abril.nds.model.cadastro.Sexo;
+import br.com.abril.nds.model.cadastro.TemaProduto;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
@@ -87,6 +96,18 @@ public class ProdutoEdicaoDTO implements Serializable {
 	
 	private String editor;
 	
+	
+	//Segmentação
+	private ClasseSocial classeSocial;
+	
+	private Sexo sexo;
+	
+	private FaixaEtaria faixaEtaria;
+	
+	private TemaProduto temaPrincipal;
+	
+	private TemaProduto temaSecundario;
+
 	
 	
 	/**
@@ -566,6 +587,67 @@ public class ProdutoEdicaoDTO implements Serializable {
 	 */
 	public void setNomeComercial(String nomeComercial) {
 		this.nomeComercial = nomeComercial;
+	}
+	
+	/**
+	 * @return the classeSocial
+	 */
+	public ClasseSocial getClasseSocial() {
+		return classeSocial;
+	}
+	/**
+	 * @param classeSocial the classeSocial to set
+	 */
+	public void setClasseSocial(ClasseSocial classeSocial) {
+		this.classeSocial = classeSocial;
+	}
+	/**
+	 * @return the sexo
+	 */
+	public Sexo getSexo() {
+		return sexo;
+	}
+	/**
+	 * @param sexo the sexo to set
+	 */
+	public void setSexo(Sexo sexo) {
+		this.sexo = sexo;
+	}
+	/**
+	 * @return the faixaEtaria
+	 */
+	public FaixaEtaria getFaixaEtaria() {
+		return faixaEtaria;
+	}
+	/**
+	 * @param faixaEtaria the faixaEtaria to set
+	 */
+	public void setFaixaEtaria(FaixaEtaria faixaEtaria) {
+		this.faixaEtaria = faixaEtaria;
+	}
+	/**
+	 * @return the temaPrincipal
+	 */
+	public TemaProduto getTemaPrincipal() {
+		return temaPrincipal;
+	}
+	/**
+	 * @param temaPrincipal the temaPrincipal to set
+	 */
+	public void setTemaPrincipal(TemaProduto temaPrincipal) {
+		this.temaPrincipal = temaPrincipal;
+	}
+	/**
+	 * @return the temaSecundario
+	 */
+	public TemaProduto getTemaSecundario() {
+		return temaSecundario;
+	}
+	/**
+	 * @param temaSecundario the temaSecundario to set
+	 */
+	public void setTemaSecundario(TemaProduto temaSecundario) {
+		this.temaSecundario = temaSecundario;
 	}
 	
 }
