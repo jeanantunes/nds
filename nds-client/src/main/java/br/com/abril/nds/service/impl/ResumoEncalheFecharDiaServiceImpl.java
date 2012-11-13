@@ -9,13 +9,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.EncalheFecharDiaDTO;
-import br.com.abril.nds.dto.ReparteFecharDiaDTO;
 import br.com.abril.nds.dto.ResumoEncalheFecharDiaDTO;
 import br.com.abril.nds.dto.VendaFechamentoDiaDTO;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.repository.ResumoEncalheFecharDiaRepository;
 import br.com.abril.nds.service.ResumoEncalheFecharDiaService;
-import br.com.abril.nds.service.ResumoReparteFecharDiaService;
 
 
 @Service
@@ -24,9 +22,6 @@ public class ResumoEncalheFecharDiaServiceImpl implements ResumoEncalheFecharDia
 	@Autowired
 	private ResumoEncalheFecharDiaRepository resumoEncalheFecharDiaRepository;
 	
-	@Autowired
-	private ResumoReparteFecharDiaService resumoFecharDiaService;
-
 	@Override
 	@Transactional
 	public BigDecimal obterValorEncalheFisico(Date dataOperacao, boolean juramentada) {		 
@@ -54,8 +49,7 @@ public class ResumoEncalheFecharDiaServiceImpl implements ResumoEncalheFecharDia
 		BigDecimal totalJuramentado = this.obterValorEncalheFisico(dataOperacao, true);
 		dto.setTotalJuramentado(totalJuramentado);
 		
-		List<ReparteFecharDiaDTO> lista = this.resumoFecharDiaService.obterValorReparte(dataOperacao, true);
-		BigDecimal venda = lista.get(0).getValorTotalReparte().subtract(totalFisico);
+		BigDecimal venda = this.obterValorVendaEncalhe(dataOperacao);
 		dto.setVenda(venda);
 		
 		BigDecimal totalFaltas = this.obterValorFaltas(dataOperacao);
@@ -90,10 +84,14 @@ public class ResumoEncalheFecharDiaServiceImpl implements ResumoEncalheFecharDia
 	
 	@Override
 	@Transactional
-	public List<VendaFechamentoDiaDTO> obterDadosVendaEncalhe(Date dataOperacao){
-		
-		//TODO implementar metodo com os dados de venda de encalhe no fechamento do dia
-		return null;
+	public List<VendaFechamentoDiaDTO> obterDadosVendaEncalhe(Date dataOperacao){		
+		return this.resumoEncalheFecharDiaRepository.obterDadosVendaEncalhe(dataOperacao);
+	}
+
+	@Override
+	@Transactional
+	public BigDecimal obterValorVendaEncalhe(Date dataOperacao) {		
+		return this.resumoEncalheFecharDiaRepository.obterValorVendaEncalhe(dataOperacao);
 	}
 
 }

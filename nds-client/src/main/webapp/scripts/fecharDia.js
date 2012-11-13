@@ -726,13 +726,22 @@ var fecharDiaController =  $.extend(true, {
 		      
 	},
 	
-	popup_vendasTot : function() {
+	popup_vendasTot : function(tipoVenda) {
 		
-		$(".vendasDialogGrid", fecharDiaController.workspace).flexOptions({
-			url: contextPath + "/administracao/fecharDia/obterGridVendaSuplementar",
-			dataType : 'json',
-			params: []
-		});
+		if(tipoVenda == "encalhe"){
+			$(".vendasDialogGrid", fecharDiaController.workspace).flexOptions({
+				url: contextPath + "/administracao/fecharDia/obterGridVenda",
+				dataType : 'json',
+				params: [{name: "tipoVenda", value: tipoVenda}]
+			});
+		}else{
+			$(".vendasDialogGrid", fecharDiaController.workspace).flexOptions({
+				url: contextPath + "/administracao/fecharDia/obterGridVenda",
+				dataType : 'json',
+				params: [{name: "tipoVenda", value: tipoVenda}]
+			});
+			
+		}
 		
 		$(".vendasDialogGrid", fecharDiaController.workspace).flexReload();
 		

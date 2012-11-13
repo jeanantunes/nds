@@ -385,7 +385,9 @@ obterColunasGridPesquisaSemCota:function(){
 
 		var novoHistoricoSituacaoCota = [
 				{
-					name: 'novoHistoricoSituacaoCota.cota.numeroCota', value: $("#numeroCota", manutencaoStatusCotaController.workspace).val()
+					name: 'novoHistoricoSituacaoCota.cota.numeroCota', value: $("#numeroCotaNovo", manutencaoStatusCotaController.workspace).html()
+					// Comentado pq este número da cota é da pesquisa!
+					//name: 'novoHistoricoSituacaoCota.cota.numeroCota', value: $("#numeroCota", manutencaoStatusCotaController.workspace).val()
 				},
 				{
 					name: 'novoHistoricoSituacaoCota.novaSituacao', value: $("#novoStatusCota", manutencaoStatusCotaController.workspace).val()
@@ -460,3 +462,4 @@ obterColunasGridPesquisaSemCota:function(){
 	}
 
 }, BaseController);
+//@ sourceURL=manutencaoStatusCota.js
