@@ -49,7 +49,7 @@ public class DescontoCotaRepositoryImpl extends AbstractRepositoryModel<Desconto
 		hql.append("then 'Diversos' ");
 		hql.append("when (select count(hdcpe1.desconto.id) from HistoricoDescontoCotaProdutoExcessao hdcpe1 ");
 		hql.append("where hdcpe1.desconto.id = hdcpe.desconto.id ");
-		hql.append("group by hdcpe1.desconto.id) = 1 then pessoa.razaoSocial ");
+		hql.append("group by hdcpe1.desconto.id) = 1 then fornecedor.juridica.razaoSocial ");
 		hql.append("else null end) as fornecedor");
 	    hql.append(", 'Específico' as descTipoDesconto ");
         hql.append("from HistoricoDescontoCotaProdutoExcessao hdcpe ");

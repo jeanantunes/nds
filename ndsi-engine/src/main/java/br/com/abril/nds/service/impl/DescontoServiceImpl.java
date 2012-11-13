@@ -336,10 +336,10 @@ public class DescontoServiceImpl implements DescontoService {
 		 */
 		Desconto desconto =  new Desconto();
 		desconto.setDataAlteracao(new Date());
-		desconto.setTipoDesconto(TipoDesconto.ESPECIFICO);
 		desconto.setUsado(false);
 		desconto.setUsuario(usuario);
 		desconto.setValor(descontoDTO.getDescontoProduto());
+		desconto.setTipoDesconto(TipoDesconto.PRODUTO);
 		
 		Long idDesconto = descontoRepository.adicionar(desconto);
 		
