@@ -285,7 +285,9 @@ public class ManutencaoStatusCotaController {
 			
 			historicoSituacaoCotaVO.setUsuario(historicoSituacaoCota.getResponsavel().getNome());
 			
-			historicoSituacaoCotaVO.setStatusAnterior(historicoSituacaoCota.getSituacaoAnterior().toString());
+			if (historicoSituacaoCota.getSituacaoAnterior() != null) {
+				historicoSituacaoCotaVO.setStatusAnterior(historicoSituacaoCota.getSituacaoAnterior().toString());
+			}
 			
 			historicoSituacaoCotaVO.setStatusAtualizado(historicoSituacaoCota.getNovaSituacao().toString());
 			
@@ -388,9 +390,11 @@ public class ManutencaoStatusCotaController {
 		
 		for (SituacaoCadastro situacaoCadastro : SituacaoCadastro.values()) {
 			
-			listaSituacoesStatusCota.add(
-				new ItemDTO<SituacaoCadastro, String>(situacaoCadastro, situacaoCadastro.toString())
-			);
+			if (!situacaoCadastro.equals(SituacaoCadastro.PENDENTE)) {
+				listaSituacoesStatusCota.add(
+					new ItemDTO<SituacaoCadastro, String>(situacaoCadastro, situacaoCadastro.toString())
+				);
+			}
 		}
 		
 		result.include("listaSituacoesStatusCota", listaSituacoesStatusCota);
