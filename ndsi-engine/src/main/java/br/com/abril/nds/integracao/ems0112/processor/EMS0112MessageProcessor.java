@@ -21,6 +21,7 @@ import br.com.abril.nds.model.cadastro.TipoEndereco;
 import br.com.abril.nds.model.cadastro.TipoTelefone;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 import br.com.abril.nds.repository.impl.AbstractRepository;
+import br.com.abril.nds.service.EnderecoService;
 
 @Component
 
@@ -33,6 +34,7 @@ public class EMS0112MessageProcessor extends AbstractRepository implements Messa
 	
 	@Autowired
 	private DistribuidorService distribuidorService;
+	
 	
 	@Override
 	public void preProcess(AtomicReference<Object> tempVar) {
@@ -146,15 +148,18 @@ public class EMS0112MessageProcessor extends AbstractRepository implements Messa
 			
 			
 			//ENDERECO EDITOR [COMERCIAL]
-			Endereco endComercial = new Endereco();
-			endComercial.setTipoLogradouro(input.getTipoLogradouroEditor());
-			endComercial.setLogradouro(input.getLogradouroEditor());
+			Endereco endComercial = getEnderecoSaneado(input.getCepEditor());
+			if (null == endComercial ) {
+				endComercial = new Endereco();
+				endComercial.setTipoLogradouro(input.getTipoLogradouroEditor());
+				endComercial.setLogradouro(input.getLogradouroEditor());
+				endComercial.setCidade(input.getCidadeEditor());
+				endComercial.setUf(input.getUfEditor());
+				endComercial.setCep(input.getCepEditor());
+				endComercial.setBairro(input.getBairroEditor());				
+			}
 			endComercial.setNumero(input.getNumeroEditor());
-			endComercial.setComplemento(input.getComplementoEditor());
-			endComercial.setCidade(input.getCidadeEditor());
-			endComercial.setUf(input.getUfEditor());
-			endComercial.setCep(input.getCepEditor());
-			endComercial.setCodigoBairro(input.getBairroEditor());
+			endComercial.setComplemento(input.getComplementoEditor());			
 			getSession().persist(endComercial);
 			
 			EnderecoEditor enderecoEditorCom = new EnderecoEditor();
@@ -165,15 +170,18 @@ public class EMS0112MessageProcessor extends AbstractRepository implements Messa
 			
 			
 			//ENDERECO EDITOR [ENTREGA]
-			Endereco endEntrega = new Endereco();
-			endEntrega.setTipoLogradouro(input.getTipoLogradouroEntrega());
-			endEntrega.setLogradouro(input.getLogradouroEntrega());
+			Endereco endEntrega = getEnderecoSaneado(input.getCepEntrega());
+			if (null == endEntrega ) {
+				endEntrega = new Endereco();				
+				endEntrega.setTipoLogradouro(input.getTipoLogradouroEntrega());
+				endEntrega.setLogradouro(input.getLogradouroEntrega());
+				endEntrega.setCidade(input.getCidadeEntrega());
+				endEntrega.setUf(input.getUfEntrega());
+				endEntrega.setCep(input.getCepEntrega());
+				endEntrega.setBairro(input.getBairroEntrega());
+			}
 			endEntrega.setNumero(input.getNumeroEntrega());
 			endEntrega.setComplemento(input.getComplementoEntrega());
-			endEntrega.setCidade(input.getCidadeEntrega());
-			endEntrega.setUf(input.getUfEntrega());
-			endEntrega.setCep(input.getCepEntrega());
-			endEntrega.setCodigoBairro(input.getBairroEntrega());
 			getSession().persist(endEntrega);
 			
 			EnderecoEditor enderecoEditorEnt = new EnderecoEditor();		
@@ -226,8 +234,7 @@ public class EMS0112MessageProcessor extends AbstractRepository implements Messa
 		}
 		
 	}
-	
-	
+
 	private void atualizaEndereco(EMS0112Input input, Message message, Editor editor, TipoEndereco tipo){
 		
 		StringBuilder sql = new StringBuilder();
@@ -246,16 +253,6 @@ public class EMS0112MessageProcessor extends AbstractRepository implements Messa
 			
 			if(ed.getTipoEndereco() == TipoEndereco.COMERCIAL){
 				
-				if(!input.getTipoLogradouroEditor().equals(ed.getTipoEndereco().toString())){
-					ed.getEndereco().setTipoLogradouro(input.getTipoLogradouroEditor());
-					ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Atualizacao do Tipo Endereco para: "+ed.getTipoEndereco().toString());
-				}
-				
-				if(!input.getLogradouroEditor().equals(ed.getEndereco().getLogradouro())){
-					ed.getEndereco().setLogradouro(input.getLogradouroEditor());
-					ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Atualizacao do Logradouro para: "+ed.getEndereco().getLogradouro());
-				}
-				
 				if(!input.getNumeroEditor().equals(ed.getEndereco().getNumero())){
 					ed.getEndereco().setNumero(input.getNumeroEditor());
 					ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Atualizacao do Numero Endereco para: "+ed.getEndereco().getNumero());
@@ -266,38 +263,46 @@ public class EMS0112MessageProcessor extends AbstractRepository implements Messa
 					ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Atualizacao do Complemento para: "+ed.getEndereco().getComplemento());
 				}
 				
-				if(!input.getCidadeEditor().equals(ed.getEndereco().getCidade())){
-					ed.getEndereco().setCidade(input.getCidadeEditor());
-					ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Atualizacao da Cidade para: "+ed.getEndereco().getCidade());
-				}
-				
-				if(!input.getUfEditor().equals(ed.getEndereco().getUf())){
-					ed.getEndereco().setUf(input.getUfEditor());
-					ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Atualizacao da Sigla UF para: "+ed.getEndereco().getUf());
-				}
-				
 				if(!input.getCepEditor().equals(ed.getEndereco().getCep())){
-					ed.getEndereco().setCep(input.getCepEditor());
-					ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Atualizacao do CEP para: "+ed.getEndereco().getCep());
+					
+					Endereco endEditor = getEnderecoSaneado(input.getCepEditor());
+					
+					endEditor = (null != endEditor ) ? endEditor : ed.getEndereco();
+
+					
+					if(!endEditor.getTipoLogradouro().equals(ed.getTipoEndereco().toString())){
+						ed.getEndereco().setTipoLogradouro(endEditor.getTipoLogradouro());
+						ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Atualizacao do Tipo Endereco para: "+ed.getTipoEndereco().toString());
+					}
+
+					if(!endEditor.getLogradouro().equals(ed.getEndereco().getLogradouro())){
+						ed.getEndereco().setLogradouro(endEditor.getLogradouro());
+						ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Atualizacao do Logradouro para: "+ed.getEndereco().getLogradouro());
+					}
+
+					if(!endEditor.getCidade().equals(ed.getEndereco().getCidade())){
+						ed.getEndereco().setCidade(endEditor.getCidade());
+						ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Atualizacao da Cidade para: "+ed.getEndereco().getCidade());
+					}
+
+					if(!endEditor.getUf().equals(ed.getEndereco().getUf())){
+						ed.getEndereco().setUf(endEditor.getUf());
+						ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Atualizacao da Sigla UF para: "+ed.getEndereco().getUf());
+					}
+
+					if(!endEditor.getCep().equals(ed.getEndereco().getCep())){
+						ed.getEndereco().setCep(endEditor.getCep());
+						ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Atualizacao do CEP para: "+ed.getEndereco().getCep());
+					}
+
+					if(!endEditor.getBairro().equals(ed.getEndereco().getBairro())){
+						ed.getEndereco().setBairro(endEditor.getBairro());
+						ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Atualizacao do Bairro para: "+ed.getEndereco().getBairro());
+					}						
+
 				}
-				
-				if(!input.getBairroEditor().equals(ed.getEndereco().getCodigoBairro())){
-					ed.getEndereco().setCodigoBairro(input.getBairroEditor());
-					ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Atualizacao do Codigo Bairro para: "+ed.getEndereco().getCodigoBairro());
-				}
-				
 				
 			}else if(ed.getTipoEndereco() == TipoEndereco.LOCAL_ENTREGA){
-				
-				if(!input.getTipoLogradouroEntrega().equals(ed.getTipoEndereco().toString())){
-					ed.getEndereco().setTipoLogradouro(input.getTipoLogradouroEntrega());
-					ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Atualizacao do Tipo Endereco para: "+ed.getTipoEndereco().toString());
-				}
-				
-				if(!input.getLogradouroEntrega().equals(ed.getEndereco().getLogradouro())){
-					ed.getEndereco().setLogradouro(input.getLogradouroEntrega());
-					ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Atualizacao do Logradouro para: "+ed.getEndereco().getLogradouro());
-				}
 				
 				if(!input.getNumeroEntrega().equals(ed.getEndereco().getNumero())){
 					ed.getEndereco().setNumero(input.getNumeroEntrega());
@@ -309,24 +314,41 @@ public class EMS0112MessageProcessor extends AbstractRepository implements Messa
 					ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Atualizacao do Complemento para: "+ed.getEndereco().getComplemento());
 				}
 				
-				if(!input.getCidadeEntrega().equals(ed.getEndereco().getCidade())){
-					ed.getEndereco().setCidade(input.getCidadeEntrega());
-					ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Atualizacao da Cidade para: "+ed.getEndereco().getCidade());
-				}
-				
-				if(!input.getUfEntrega().equals(ed.getEndereco().getUf())){
-					ed.getEndereco().setUf(input.getUfEntrega());
-					ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Atualizacao da Sigla UF para: "+ed.getEndereco().getUf());
-				}
-				
 				if(!input.getCepEntrega().equals(ed.getEndereco().getCep())){
-					ed.getEndereco().setCep(input.getCepEntrega());
-					ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Atualizacao do CEP para: "+ed.getEndereco().getCep());
-				}
-				
-				if(!input.getBairroEntrega().equals(ed.getEndereco().getCodigoBairro())){
-					ed.getEndereco().setCodigoBairro(input.getBairroEntrega());
-					ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Atualizacao do Codigo Bairro para: "+ed.getEndereco().getCodigoBairro());
+					
+					Endereco endEntrega = getEnderecoSaneado(input.getCepEntrega());
+					
+					endEntrega = (null != endEntrega ) ? endEntrega : ed.getEndereco();
+									
+					if(!endEntrega.getTipoLogradouro().equals(ed.getTipoEndereco().toString())){
+						ed.getEndereco().setTipoLogradouro(endEntrega.getTipoLogradouro());
+						ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Atualizacao do Tipo Endereco para: "+ed.getTipoEndereco().toString());
+					}
+					
+					if(!endEntrega.getLogradouro().equals(ed.getEndereco().getLogradouro())){
+						ed.getEndereco().setLogradouro(endEntrega.getLogradouro());
+						ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Atualizacao do Logradouro para: "+ed.getEndereco().getLogradouro());
+					}
+					
+					if(!endEntrega.getCidade().equals(ed.getEndereco().getCidade())){
+						ed.getEndereco().setCidade(endEntrega.getCidade());
+						ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Atualizacao da Cidade para: "+ed.getEndereco().getCidade());
+					}
+					
+					if(!endEntrega.getUf().equals(ed.getEndereco().getUf())){
+						ed.getEndereco().setUf(endEntrega.getUf());
+						ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Atualizacao da Sigla UF para: "+ed.getEndereco().getUf());
+					}
+					
+					if(!endEntrega.getCep().equals(ed.getEndereco().getCep())){
+						ed.getEndereco().setCep(endEntrega.getCep());
+						ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Atualizacao do CEP para: "+ed.getEndereco().getCep());
+					}
+					
+					if(!endEntrega.getBairro().equals(ed.getEndereco().getBairro())){
+						ed.getEndereco().setBairro(endEntrega.getBairro());
+						ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Atualizacao do Codigo Bairro para: "+ed.getEndereco().getBairro());
+					}
 				}
 			}
 		
@@ -338,15 +360,20 @@ public class EMS0112MessageProcessor extends AbstractRepository implements Messa
 			
 			if(tipo == TipoEndereco.COMERCIAL){
 				//ENDERECO EDITOR [COMERCIAL]
-				Endereco endComercial = new Endereco();
-				endComercial.setTipoLogradouro(input.getTipoLogradouroEditor());
-				endComercial.setLogradouro(input.getLogradouroEditor());
+				
+				Endereco endComercial = getEnderecoSaneado(input.getCepEditor());
+				if (null == endComercial) {
+					endComercial = new Endereco();
+					endComercial.setTipoLogradouro(input.getTipoLogradouroEditor());
+					endComercial.setLogradouro(input.getLogradouroEditor());
+					endComercial.setCidade(input.getCidadeEditor());
+					endComercial.setUf(input.getUfEditor());
+					endComercial.setCep(input.getCepEditor());
+					endComercial.setBairro(input.getBairroEditor());
+				}
 				endComercial.setNumero(input.getNumeroEditor());
 				endComercial.setComplemento(input.getComplementoEditor());
-				endComercial.setCidade(input.getCidadeEditor());
-				endComercial.setUf(input.getUfEditor());
-				endComercial.setCep(input.getCepEditor());
-				endComercial.setCodigoBairro(input.getBairroEditor());
+				
 				getSession().persist(endComercial);
 				
 				EnderecoEditor enderecoEditorCom = new EnderecoEditor();
@@ -358,15 +385,19 @@ public class EMS0112MessageProcessor extends AbstractRepository implements Messa
 			
 			}else if(tipo == TipoEndereco.LOCAL_ENTREGA){
 				//ENDERECO EDITOR [ENTREGA]
-				Endereco endEntrega = new Endereco();
-				endEntrega.setTipoLogradouro(input.getTipoLogradouroEntrega());
-				endEntrega.setLogradouro(input.getLogradouroEntrega());
+				Endereco endEntrega = getEnderecoSaneado(input.getCepEntrega());
+				if (null == endEntrega) {
+					endEntrega = new Endereco();
+					endEntrega.setTipoLogradouro(input.getTipoLogradouroEntrega());
+					endEntrega.setLogradouro(input.getLogradouroEntrega());
+					endEntrega.setCidade(input.getCidadeEntrega());
+					endEntrega.setUf(input.getUfEntrega());
+					endEntrega.setCep(input.getCepEntrega());
+					endEntrega.setBairro(input.getBairroEntrega());
+				}
 				endEntrega.setNumero(input.getNumeroEntrega());
 				endEntrega.setComplemento(input.getComplementoEntrega());
-				endEntrega.setCidade(input.getCidadeEntrega());
-				endEntrega.setUf(input.getUfEntrega());
-				endEntrega.setCep(input.getCepEntrega());
-				endEntrega.setCodigoBairro(input.getBairroEntrega());
+
 				getSession().persist(endEntrega);
 				
 				EnderecoEditor enderecoEditorEnt = new EnderecoEditor();		
