@@ -2,7 +2,6 @@ package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -10,10 +9,11 @@ import org.hibernate.Query;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
-import br.com.abril.nds.client.vo.VendaSuplementarVO;
 import br.com.abril.nds.dto.SuplementarFecharDiaDTO;
 import br.com.abril.nds.dto.VendaFechamentoDiaDTO;
+import br.com.abril.nds.model.cadastro.FormaComercializacao;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
+import br.com.abril.nds.model.estoque.TipoVendaEncalhe;
 import br.com.abril.nds.repository.ResumoSuplementarFecharDiaRepository;
 
 @Repository
@@ -99,36 +99,30 @@ public class ResumoSuplementarFecharDiaRepositoryImpl extends AbstractRepository
 
 	@Override
 	public BigDecimal obterValorVenda(Date dataOperacao) {
+		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append("SELECT ");
-				hql.append(" ( ");
-				hql.append(" coalesce( (SELECT me2.qtde from MovimentoEstoque as me2 ");       
-				hql.append(" JOIN me2.tipoMovimento as tm2 ");       
-				hql.append(" WHERE tm2.grupoMovimentoEstoque = :vendaEncalheSuplementar");
-				hql.append(" AND me2.data = :dataOperacao), 0) ");
-			hql.append(" - ");
-				hql.append(" coalesce( (SELECT me2.qtde from MovimentoEstoque as me2");       
-				hql.append(" JOIN me2.tipoMovimento as tm2 ");       
-				hql.append(" WHERE tm2.grupoMovimentoEstoque = :estornoVendaEncalheSuplementar");
-				hql.append(" AND me2.data = :dataOperacao),0) ");
-			hql.append(" ) * pe.precoVenda ");
-		hql.append(" FROM MovimentoEstoque as me ");		 
-		hql.append(" JOIN me.produtoEdicao as pe ");		
-		hql.append(" WHERE me.data = :dataOperacao");				
-		hql.append(" GROUP BY me.data");
-	
+		hql.append(" SELECT   ");
+		hql.append(" SUM(ve.qntProduto * pe.precoVenda)");
+		hql.append(" FROM VendaProduto as ve ");		 
+		hql.append(" JOIN ve.produtoEdicao as pe ");					
+		hql.append(" JOIN pe.produto as p ");					
+		hql.append(" WHERE ve.dataVenda = :dataOperacao ");
+		hql.append(" AND ve.tipoComercializacaoVenda = :tipoComercializacaoVenda ");
+		
+		hql.append(" AND ve.tipoVenda = :suplementar");
 
-	Query query = super.getSession().createQuery(hql.toString());
-	
-	query.setParameter("dataOperacao", dataOperacao);
-	
-	query.setParameter("vendaEncalheSuplementar", GrupoMovimentoEstoque.VENDA_ENCALHE_SUPLEMENTAR );
-	query.setParameter("estornoVendaEncalheSuplementar", GrupoMovimentoEstoque.ESTORNO_VENDA_ENCALHE_SUPLEMENTAR );
-	
-	BigDecimal total =  (BigDecimal) query.uniqueResult();
-	
-	return total != null ? total : BigDecimal.ZERO ;
+		Query query = super.getSession().createQuery(hql.toString());
+		
+		query.setParameter("dataOperacao", dataOperacao);
+		
+		query.setParameter("suplementar", TipoVendaEncalhe.SUPLEMENTAR);
+		
+		query.setParameter("tipoComercializacaoVenda", FormaComercializacao.CONTA_FIRME);	
+		
+		BigDecimal total =  (BigDecimal) query.uniqueResult();
+		
+		return total != null ? total : BigDecimal.ZERO ;
 	}
 
 	@Override
@@ -149,70 +143,36 @@ public class ResumoSuplementarFecharDiaRepositoryImpl extends AbstractRepository
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<VendaFechamentoDiaDTO> obterVendasSuplementar(Date dataOperacao) {
+		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append("SELECT ");				
-			hql.append(" (SELECT me2.id from MovimentoEstoque as me2 ");       
-			hql.append(" JOIN me2.tipoMovimento as tm2 ");       
-			hql.append(" WHERE tm2.grupoMovimentoEstoque = :vendaEncalheSuplementar");
-			hql.append(" AND me2.data = :dataOperacao) as idVendaSuplementar, ");			
-			hql.append(" (SELECT me2.id from MovimentoEstoque as me2");       
-			hql.append(" JOIN me2.tipoMovimento as tm2 ");       
-			hql.append(" WHERE tm2.grupoMovimentoEstoque = :estornoVendaEncalheSuplementar");
-			hql.append(" AND me2.data = :dataOperacao) as idEncalheSuplementar ");			
-		hql.append(" FROM MovimentoEstoque as me ");		 
-		hql.append(" JOIN me.produtoEdicao as pe ");		
-		hql.append(" WHERE me.data = :dataOperacao");				
-		hql.append(" GROUP BY me.data");
+		hql.append(" SELECT p.codigo as codigo,  ");
+		hql.append(" p.nome as nomeProduto, ");
+		hql.append(" pe.numeroEdicao as numeroEdicao, ");
+		hql.append(" ve.qntProduto as qtde, ");
+		hql.append(" (ve.qntProduto * pe.precoVenda) as valor, ");
+		hql.append(" ve.dataVenda as dataRecolhimento ");
+		
+		hql.append(" FROM VendaProduto as ve ");		 
+		hql.append(" JOIN ve.produtoEdicao as pe ");					
+		hql.append(" JOIN pe.produto as p ");					
+		hql.append(" WHERE ve.dataVenda = :dataOperacao ");
+		hql.append(" AND ve.tipoComercializacaoVenda = :tipoComercializacaoVenda ");
+		
+		hql.append(" AND ve.tipoVenda = :suplementar");
 
 		Query query = super.getSession().createQuery(hql.toString());
 		
 		query.setParameter("dataOperacao", dataOperacao);
 		
-		query.setParameter("vendaEncalheSuplementar", GrupoMovimentoEstoque.VENDA_ENCALHE_SUPLEMENTAR );
-		query.setParameter("estornoVendaEncalheSuplementar", GrupoMovimentoEstoque.ESTORNO_VENDA_ENCALHE_SUPLEMENTAR );
+		query.setParameter("suplementar", TipoVendaEncalhe.SUPLEMENTAR);
 		
-		query.setResultTransformer(new AliasToBeanResultTransformer(
-				VendaSuplementarVO.class));
-		
-		List<VendaSuplementarVO> teste = query.list();
-		List<VendaFechamentoDiaDTO> listaFinal = new ArrayList<VendaFechamentoDiaDTO>();
-		
-		for(VendaSuplementarVO vo: teste){
-			if(vo.getIdVendaSuplementar() != null){				
-				listaFinal.add(obterVenda(vo));				
-			}
-		}
-		return listaFinal;
-		
-	}
-
-	private VendaFechamentoDiaDTO obterVenda(VendaSuplementarVO vo) {
-		
-		StringBuilder hql = new StringBuilder();
-		
-		
-		hql.append(" SELECT p.codigo as codigo,  ");
-			hql.append(" p.nome as nomeProduto, ");
-			hql.append(" pe.numeroEdicao as numeroEdicao, ");
-			hql.append(" me.qtde as qtde, ");
-			hql.append(" (me.qtde * pe.precoVenda) as valor, ");
-			hql.append(" ce.data as dataRecolhimento ");					
-		hql.append(" FROM ConferenciaEncalhe as ce ");		 
-		hql.append(" JOIN ce.movimentoEstoque as me ");		 
-		hql.append(" JOIN me.produtoEdicao as pe ");
-		hql.append(" JOIN pe.produto as p ");
-		hql.append(" WHERE me.id = :idMovimentacao");				
-		
-
-		Query query = super.getSession().createQuery(hql.toString());	
-		
-		query.setParameter("idMovimentacao", vo.getIdVendaSuplementar());		
+		query.setParameter("tipoComercializacaoVenda", FormaComercializacao.CONTA_FIRME);		
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(
 				VendaFechamentoDiaDTO.class));
 		
-		return (VendaFechamentoDiaDTO) query.uniqueResult();
+		return query.list();
 		
 	}
 

@@ -35,7 +35,7 @@ public class AlteracaoCotaRepositoryImpl extends AbstractRepositoryModel<Cota, L
 	public List<ConsultaAlteracaoCotaDTO> pesquisarAlteracaoCota(FiltroAlteracaoCotaDTO filtroAlteracaoCotaDTO){
 		
 		StringBuilder hql = new StringBuilder();
-		boolean addedAnd = false;
+		//boolean addedAnd = false;
 		
 		hql.append(" select new ").append(ConsultaAlteracaoCotaDTO.class.getCanonicalName());
 		hql.append(" (cota.id, cota.numeroCota, pessoa.nome,  parametroCobranca.fatorVencimento, parametroCobranca.valorMininoCobranca, parametroDistribuicao.descricaoTipoEntrega, box.nome) ");
@@ -47,99 +47,108 @@ public class AlteracaoCotaRepositoryImpl extends AbstractRepositoryModel<Cota, L
         hql.append(" LEFT JOIN cota.box box ");
         hql.append(" LEFT JOIN cota.parametroCobranca parametroCobranca ");
 
+        hql.append(" WHERE  enderecoCota.principal = :enderecoPrincipal ");
+        
 		if (filtroAlteracaoCotaDTO.getNumeroCota() != null && filtroAlteracaoCotaDTO.getNumeroCota()>0) {
-			if(addedAnd)
+			//if(addedAnd)
 				hql.append(" and ");
-			else
-				hql.append(" where ");
+			/*else
+				hql.append(" where ");*/
 			
 			hql.append(" cota.numeroCota = :numeroCota ");
 			
-			addedAnd = true;
+			//addedAnd = true;
 
 		}
 		
 		if (filtroAlteracaoCotaDTO.getNomeCota() != null && !filtroAlteracaoCotaDTO.getNomeCota().isEmpty()&& !"-1".equals(filtroAlteracaoCotaDTO.getNomeCota())) {
-			if(addedAnd)
+			/*if(addedAnd)*/
 				hql.append(" and ");
-			else
-				hql.append(" where ");	
+			/*else
+				hql.append(" where ");*/	
 			
 			hql.append("  (upper(pessoa.nome) like upper(:nomeCota) OR upper(pessoa.razaoSocial) like  upper(:nomeCota ) )");
 			
-			addedAnd = true;
+			//addedAnd = true;
 
 		}
 		
 		if (filtroAlteracaoCotaDTO.getIdBairro() != null && filtroAlteracaoCotaDTO.getIdBairro()>0) {
-			if(addedAnd)
+			/*if(addedAnd)*/
 				hql.append(" and ");
-			else
-				hql.append(" where ");	
+			/*else
+				hql.append(" where ");*/	
 		
 			hql.append(" endereco.codigoBairro = :idBairro ");
 			
-			addedAnd = true;
+			/*addedAnd = true;*/
 
 		}
 		
 		if (filtroAlteracaoCotaDTO.getIdMunicipio() != null && !filtroAlteracaoCotaDTO.getIdMunicipio().isEmpty()&& !"-1".equals(filtroAlteracaoCotaDTO.getIdMunicipio())) {
-			if(addedAnd)
+			/*if(addedAnd)*/
 				hql.append(" and ");
-			else
-				hql.append(" where ");	
+			/*else
+				hql.append(" where ");*/	
 			
 			hql.append("  upper(endereco.cidade) like :idMunicipio ");
 			
-			addedAnd = true;
+			/*addedAnd = true;*/
 
 		}
 		
 		
 		if (filtroAlteracaoCotaDTO.getIdVrMinimo() != null && !filtroAlteracaoCotaDTO.getIdVrMinimo().toString().isEmpty() && filtroAlteracaoCotaDTO.getIdVrMinimo().doubleValue() > 0) {
-			if(addedAnd)
+			//if(addedAnd)
 				hql.append(" and ");
-			else
-				hql.append(" where ");		
+			/*else
+				hql.append(" where ");*/		
 			
 			hql.append(" parametroCobranca.valorMininoCobranca >= :idVrMinimo ");
 			
-			addedAnd = true;
+			//addedAnd = true;
 		}
 		
 		if (filtroAlteracaoCotaDTO.getDescricaoTipoEntrega() != null ) {
-			if(addedAnd)
+			/*if(addedAnd)*/
 				hql.append(" and ");
-			else
-				hql.append(" where ");
+			/*else
+				hql.append(" where ");*/
 			
 			hql.append(" parametroDistribuicao.descricaoTipoEntrega = :descricaoTipoEntrega ");
 			
-			addedAnd = true;
+			/*addedAnd = true;*/
 
 		}
 		
 		if (filtroAlteracaoCotaDTO.getIdVencimento() != null && filtroAlteracaoCotaDTO.getIdVencimento()>0) {
-			if(addedAnd)
+			/*if(addedAnd)*/
 				hql.append(" and ");
-			else
-				hql.append(" where ");
+			/*else
+				hql.append(" where ");*/
 			
 			hql.append(" parametroCobranca.fatorVencimento = :fatorVencimento ");
 			
-			addedAnd = true;
+			/*addedAnd = true;*/
 
 		}
 		
 		
 		
-		
-		
 		if (filtroAlteracaoCotaDTO.getPaginacao() != null && filtroAlteracaoCotaDTO.getPaginacao().getSortOrder() != null) {
-			hql.append(" order by ").append(filtroAlteracaoCotaDTO.getPaginacao().getSortOrder()).append(" ").append(filtroAlteracaoCotaDTO.getPaginacao().getOrdenacao().getOrdenacao());
+			if ( "numeroCota".equals(filtroAlteracaoCotaDTO.getPaginacao().getSortOrder()) ) {
+				hql.append(" order by cota.numeroCota ").append(filtroAlteracaoCotaDTO.getPaginacao().getOrdenacao().getOrdenacao());
+			}
+			else if ("nomeRazaoSocial".equals(filtroAlteracaoCotaDTO.getPaginacao().getSortOrder())) {
+				hql.append(" order by CASE WHEN pessoa.class = 'J' THEN pessoa.razaoSocial ELSE pessoa.nome END ").append(filtroAlteracaoCotaDTO.getPaginacao().getOrdenacao().getOrdenacao());
+			} else {
+				hql.append(" order by ").append(filtroAlteracaoCotaDTO.getPaginacao().getSortOrder()).append(" ").append(filtroAlteracaoCotaDTO.getPaginacao().getOrdenacao().getOrdenacao());
+			}
 		}
 		
 		Query query = getSession().createQuery(hql.toString());
+
+		query.setParameter("enderecoPrincipal", true);
 
 		if (filtroAlteracaoCotaDTO.getNumeroCota() != null && filtroAlteracaoCotaDTO.getNumeroCota()>0) {
 			query.setParameter("numeroCota", filtroAlteracaoCotaDTO.getNumeroCota());
@@ -149,9 +158,10 @@ public class AlteracaoCotaRepositoryImpl extends AbstractRepositoryModel<Cota, L
 			query.setParameter("nomeCota", filtroAlteracaoCotaDTO.getNomeCota().toUpperCase() +"%" );
 		}
 		
+		/* o ID do bairro não existirá mais no sistema
 		if (filtroAlteracaoCotaDTO.getIdBairro() != null && filtroAlteracaoCotaDTO.getIdBairro()>0) {
 			query.setParameter("idBairro", filtroAlteracaoCotaDTO.getIdBairro());
-		}
+		}*/
 		
 		if (filtroAlteracaoCotaDTO.getIdMunicipio() != null && !filtroAlteracaoCotaDTO.getIdMunicipio().isEmpty() && !"-1".equals(filtroAlteracaoCotaDTO.getIdMunicipio())) {
 			query.setParameter("idMunicipio", filtroAlteracaoCotaDTO.getIdMunicipio().toUpperCase() +"%" );
