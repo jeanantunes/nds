@@ -194,7 +194,7 @@ public class FornecedorController {
 
 	@Post
 	public void editarFornecedor(Long idFornecedor) {
-
+		
 		if (idFornecedor == null) {
 
 			throw new ValidacaoException(TipoMensagem.WARNING, "Fornecedor inválido.");
@@ -206,6 +206,8 @@ public class FornecedorController {
 
 			throw new ValidacaoException(TipoMensagem.WARNING, "Fornecedor inválido.");
 		}
+		
+		limparSessao();
 		
 		List<EnderecoAssociacaoDTO> listaEnderecoAssociacao = 
 				this.fornecedorService.obterEnderecosFornecedor(idFornecedor);
@@ -229,13 +231,17 @@ public class FornecedorController {
 		this.result.use(Results.json()).from(fornecedorDTO, "result").recursive().serialize();
 	}
 	
-	@Post
-	public void novoCadastro() {
-
+	private void limparSessao() {
 		this.session.removeAttribute(LISTA_ENDERECOS_SALVAR_SESSAO);
 		this.session.removeAttribute(LISTA_ENDERECOS_REMOVER_SESSAO);
 		this.session.removeAttribute(LISTA_TELEFONES_SALVAR_SESSAO);
-		this.session.removeAttribute(LISTA_TELEFONES_REMOVER_SESSAO);
+		this.session.removeAttribute(LISTA_TELEFONES_REMOVER_SESSAO);		
+	}
+
+	@Post
+	public void novoCadastro() {
+
+		limparDadosSessao();
 		
 		Distribuidor distribuidor = distribuidorService.obter();
 		
