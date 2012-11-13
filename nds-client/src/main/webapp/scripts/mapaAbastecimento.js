@@ -7,7 +7,6 @@ function MapaAbastecimento(pathTela, objName, workspace) {
 	this.mapas = [];
 	this.produtosSelecionados = [],
 	
-	//Pesquisa por código de produto
 	this.pesquisarPorCodigoProduto = function(idCodigo, idProduto, idEdicao, isFromModal, successCallBack, errorCallBack) {
 		
 		var codigoProduto = $(idCodigo, _workspace).val();
@@ -18,8 +17,9 @@ function MapaAbastecimento(pathTela, objName, workspace) {
 		
 		if (codigoProduto && codigoProduto.length > 0) {
 			
-			$.postJSON(contextPath + "/produto/pesquisarPorCodigoProduto",
-					   {codigoProduto:codigoProduto},
+			$.postJSON(contextPath + "/mapaAbastecimento/getProdutosPorCodigo",
+					   {codigoProduto:codigoProduto,
+					    dataLancamento: T.get("dataLancamento")},
 					   function(result) {
 							
 							T.adicionarProduto(result.codigo, result.nome);
@@ -51,29 +51,29 @@ function MapaAbastecimento(pathTela, objName, workspace) {
 					   });
 					   
 					   $("#selectProdutos", _workspace).html(options);
+					   
+					   $("#dialog-pesq-produtos").dialog({
+							resizable: false,
+							height:300,
+							width:500,
+							modal: true,
+							buttons: {
+								"Confirmar": function() {
+									
+									T.getProdutosSelecionados();
+									
+									T.mostrarProdutosSelecionados();
+
+									$( this ).dialog( "close" );
+								},
+								"Cancelar": function() {
+									$( this ).dialog( "close" );
+								}
+							},
+							form: $("#dialog-pesq-produtos", _workspace).parents("form")
+						});
 				   }
 		);
-		
-		$("#dialog-pesq-produtos").dialog({
-			resizable: false,
-			height:300,
-			width:500,
-			modal: true,
-			buttons: {
-				"Confirmar": function() {
-					
-					T.getProdutosSelecionados();
-					
-					T.mostrarProdutosSelecionados();
-
-					$( this ).dialog( "close" );
-				},
-				"Cancelar": function() {
-					$( this ).dialog( "close" );
-				}
-			},
-			form: $("#dialog-pesq-produtos", _workspace).parents("form")
-		});
 	},
 	
 	this.limparProdutosSelecionados = function() {
