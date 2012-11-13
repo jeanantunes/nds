@@ -475,7 +475,6 @@ public class FiadorServiceImpl implements FiadorService {
 				endereco = enderecoFiador.getEndereco();				
 			}
 			
-			endereco.setCodigoBairro(dto.getCodigoBairro());
 			endereco.setBairro(dto.getBairro());
 			endereco.setCep(dto.getCep());
 			endereco.setCodigoCidadeIBGE(dto.getCodigoCidadeIBGE());

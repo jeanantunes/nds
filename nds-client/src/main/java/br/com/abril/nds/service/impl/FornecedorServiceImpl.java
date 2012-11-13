@@ -465,7 +465,7 @@ public class FornecedorServiceImpl implements FornecedorService {
 
 			EnderecoDTO dto = enderecoAssociacao.getEndereco();
 			
-            Endereco endereco = new Endereco(dto.getCodigoBairro(),
+            Endereco endereco = new Endereco(
                     dto.getBairro(), dto.getCep(), dto.getCodigoCidadeIBGE(),
                     dto.getCidade(), dto.getComplemento(),
                     dto.getTipoLogradouro(), dto.getLogradouro(),

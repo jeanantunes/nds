@@ -74,7 +74,6 @@ public class EMS0130MessageProcessor extends AbstractRepository implements Messa
 				if(!pdv.getEnderecos().isEmpty()){
 					Endereco endereco = pdv.getEnderecos().iterator().next().getEndereco();
 					output.setEndereco(endereco.getLogradouro());
-					output.setCodigoBairro(endereco.getCodigoBairro());
 					output.setNomeMunicipio(endereco.getCidade());
 					output.setSiglaUf(endereco.getUf());
 					output.setCep(endereco.getCep());				

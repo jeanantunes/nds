@@ -21,12 +21,6 @@ public class HistoricoTitularidadeCotaEndereco implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
-     * Código do bairro
-     */
-    @Column(name = "ENDERECO_CODIGO_BAIRRO")
-    private String codigoBairro;
-
-    /**
      * Bairro do endereço
      */
     @Column(name = "ENDERECO_BAIRRO", length = 60)
@@ -102,12 +96,11 @@ public class HistoricoTitularidadeCotaEndereco implements Serializable {
     public HistoricoTitularidadeCotaEndereco() {
     }
 
-    public HistoricoTitularidadeCotaEndereco(String codigoBairro,
+    public HistoricoTitularidadeCotaEndereco(
             String bairro, String cep, Integer codigoCidadeIBGE, String cidade,
             String complemento, String tipoLogradouro, String logradouro,
             String numero, String uf, String codigoUf,
             TipoEndereco tipoEndereco, boolean principal) {
-        this.codigoBairro = codigoBairro;
         this.bairro = bairro;
         this.cep = cep;
         this.codigoCidadeIBGE = codigoCidadeIBGE;
@@ -122,19 +115,6 @@ public class HistoricoTitularidadeCotaEndereco implements Serializable {
         this.principal = principal;
     }
 
-    /**
-     * @return the codigoBairro
-     */
-    public String getCodigoBairro() {
-        return codigoBairro;
-    }
-
-    /**
-     * @param codigoBairro the codigoBairro to set
-     */
-    public void setCodigoBairro(String codigoBairro) {
-        this.codigoBairro = codigoBairro;
-    }
 
     /**
      * @return the bairro
