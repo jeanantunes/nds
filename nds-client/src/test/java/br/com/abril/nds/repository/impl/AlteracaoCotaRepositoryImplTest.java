@@ -73,7 +73,7 @@ public class AlteracaoCotaRepositoryImplTest extends AbstractRepositoryImplTest 
 
 		FiltroAlteracaoCotaDTO filtroAlteracaoCotaDTO = new FiltroAlteracaoCotaDTO();
 		filtroAlteracaoCotaDTO.setPaginacao(paginacao);
-		filtroAlteracaoCotaDTO.setIdBairro(1);
+		filtroAlteracaoCotaDTO.setIdBairro("1");
 
 		List<ConsultaAlteracaoCotaDTO> pesquisarAlteracaoCota = this.alteracaoCotaRepository
 				.pesquisarAlteracaoCota(filtroAlteracaoCotaDTO);
