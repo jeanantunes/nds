@@ -23,9 +23,7 @@ public class EnderecoVO extends IntegracaoDocument implements Serializable {
 	private String logradouro;
 	
 	private String tipoLogradouro;
-	
-	private String codigoBairro;
-	
+		
 	private String bairro;
 	
 	private TipoEndereco tipoEndereco;
@@ -131,20 +129,6 @@ public class EnderecoVO extends IntegracaoDocument implements Serializable {
 	 */
 	public void setTipoLogradouro(String tipoLogradouro) {
 		this.tipoLogradouro = tipoLogradouro;
-	}
-
-	/**
-	 * @return the codigoBairro
-	 */
-	public String getCodigoBairro() {
-		return codigoBairro;
-	}
-
-	/**
-	 * @param codigoBairro the codigoBairro to set
-	 */
-	public void setCodigoBairro(String codigoBairro) {
-		this.codigoBairro = codigoBairro;
 	}
 
 	/**

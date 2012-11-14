@@ -458,7 +458,6 @@ public class TransportadorServiceImpl implements TransportadorService {
 					endereco = enderecoTransportador.getEndereco();				
 				}
 				
-				endereco.setCodigoBairro(enderecoDTO.getCodigoBairro());
 				endereco.setBairro(enderecoDTO.getBairro());
 				endereco.setCep(enderecoDTO.getCep());
 				endereco.setCodigoCidadeIBGE(enderecoDTO.getCodigoCidadeIBGE());

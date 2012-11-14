@@ -233,14 +233,16 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 			if (!input.getEndereco().isEmpty()
 					&& !".".equals(input.getEndereco())) {
 
-				Endereco endereco = new Endereco();
-				endereco.setCodigoBairro(input.getCodBairro());
-				endereco.setCep(input.getCep());
-				endereco.setCidade(input.getMunicipio());
-				endereco.setLogradouro(input.getEndereco());
+				Endereco endereco = getEnderecoSaneado(input.getCep());
+				if (null == endereco ) {
+					endereco = new Endereco();
+					endereco.setCep(input.getCep());
+					endereco.setCidade(input.getMunicipio());
+					endereco.setLogradouro(input.getEndereco());
+					endereco.setUf(input.getSiglaUF());
+					endereco.setCodigoCidadeIBGE(input.getCodCidadeIbge());
+				}
 				endereco.setNumero(input.getNumLogradouro());
-				endereco.setUf(input.getSiglaUF());
-				endereco.setCodigoCidadeIBGE(input.getCodCidadeIbge());
 				getSession().persist(endereco);
 
 				EnderecoCota enderecoCota = new EnderecoCota();
@@ -331,14 +333,16 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 
 				if (enderecosCota.isEmpty()) {
 
-					endereco = new Endereco();
-					endereco.setCodigoBairro(input.getCodBairro());
-					endereco.setCep(input.getCep());
-					endereco.setCidade(input.getMunicipio());
-					endereco.setLogradouro(input.getEndereco());
+					endereco = getEnderecoSaneado(input.getCep());
+					if (null == endereco ) {
+						endereco = new Endereco();
+						endereco.setCep(input.getCep());
+						endereco.setCidade(input.getMunicipio());
+						endereco.setLogradouro(input.getEndereco());
+						endereco.setUf(input.getSiglaUF());
+						endereco.setCodigoCidadeIBGE(input.getCodCidadeIbge());
+					}
 					endereco.setNumero(input.getNumLogradouro());
-					endereco.setUf(input.getSiglaUF());
-					endereco.setCodigoCidadeIBGE(input.getCodCidadeIbge());
 					getSession().persist(endereco);
 
 					enderecoCota = new EnderecoCota();
@@ -372,15 +376,17 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 
 							if (enderecos.isEmpty()) {
 
-								endereco = new Endereco();
-								endereco.setCodigoBairro(input.getCodBairro());
-								endereco.setCep(input.getCep());
-								endereco.setCidade(input.getMunicipio());
-								endereco.setLogradouro(input.getEndereco());
+								endereco = getEnderecoSaneado(input.getCep());
+								if (null == endereco ) {
+									endereco = new Endereco();
+									endereco.setCep(input.getCep());
+									endereco.setCidade(input.getMunicipio());
+									endereco.setLogradouro(input.getEndereco());
+									endereco.setUf(input.getSiglaUF());
+									endereco.setCodigoCidadeIBGE(input.getCodCidadeIbge());
+								}
 								endereco.setNumero(input.getNumLogradouro());
-								endereco.setUf(input.getSiglaUF());
-								endereco.setCodigoCidadeIBGE(input
-										.getCodCidadeIbge());
+
 								getSession().persist(endereco);
 
 							} else {
