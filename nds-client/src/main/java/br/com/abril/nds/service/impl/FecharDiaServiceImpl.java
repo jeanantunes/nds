@@ -27,6 +27,7 @@ import br.com.abril.nds.dto.ValidacaoLancamentoFaltaESobraFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoRecebimentoFisicoFecharDiaDTO;
 import br.com.abril.nds.dto.VendaFechamentoDiaDTO;
 import br.com.abril.nds.dto.fechamentodiario.DividaDTO;
+import br.com.abril.nds.dto.fechamentodiario.FechamentoDiarioDTO;
 import br.com.abril.nds.dto.fechamentodiario.ResumoEstoqueDTO;
 import br.com.abril.nds.dto.fechamentodiario.ResumoEstoqueDTO.ResumoEstoqueExemplar;
 import br.com.abril.nds.dto.fechamentodiario.ResumoEstoqueDTO.ResumoEstoqueProduto;
@@ -418,7 +419,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
         return dividaService.contarDividasVencerApos(data);
     }
     
-    private void salvarResumoFechamentoDiario(Usuario usuario, Date dataFechamento) throws FechamentoDiarioException{
+    private FechamentoDiarioDTO salvarResumoFechamentoDiario(Usuario usuario, Date dataFechamento) throws FechamentoDiarioException{
     	
     	validarDadosFechamentoDiario(dataFechamento, "Data de fechamento inválida!");
     	validarDadosFechamentoDiario(usuario, "Usúario informado inválido!");
@@ -428,6 +429,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
     	validarDadosFechamentoDiario(usuario, "Usúario não identificado para operação de fechamento do dia!");
     	
     	FechamentoDiario fechamento = new FechamentoDiario();
+    	FechamentoDiarioDTO.Builder builder = new FechamentoDiarioDTO.Builder(dataFechamento);
     	
     	fechamento.setDataFechamento(dataFechamento);
     	fechamento.setUsuario(usuario);
@@ -436,24 +438,34 @@ public class FecharDiaServiceImpl implements FecharDiaService {
     	
     	validarDadosFechamentoDiario(fechamento,null);
     	
-    	incluirResumoReparte(fechamento); 
+    	ResumoReparteFecharDiaDTO resumoReparte = incluirResumoReparte(fechamento); 
+    	builder.resumoReparte(resumoReparte);
     	
-    	incluirResumoEncalhe(fechamento); 
+    	ResumoEncalheFecharDiaDTO resumoEncalhe = incluirResumoEncalhe(fechamento); 
+    	builder.resumoEncalhe(resumoEncalhe);
     	
-    	incluirResumoSuplementar(fechamento); 
+    	ResumoSuplementarFecharDiaDTO resumoSuplementar = incluirResumoSuplementar(fechamento); 
+    	builder.resumoSuplementar(resumoSuplementar);
     	
-    	incluirResumoDividaReceber(fechamento);  
+    	List<SumarizacaoDividasDTO> dividasReceber = incluirResumoDividaReceber(fechamento);  
+    	builder.dividasReceber(dividasReceber);
     	
-    	incluirResumoDividaVencer(fechamento); 
+    	List<SumarizacaoDividasDTO> dividasVencer = incluirResumoDividaVencer(fechamento); 
+    	builder.dividasVencer(dividasVencer);
     	
-    	incluirResumoCotas(fechamento); 
+    	ResumoFechamentoDiarioCotasDTO resumoCotas = incluirResumoCotas(fechamento); 
+    	builder.resumoCotas(resumoCotas);
     	
-    	incluirResumoEstoque(fechamento);
+    	ResumoEstoqueDTO resumoEstoque = incluirResumoEstoque(fechamento);
+    	builder.resumoEstoque(resumoEstoque);
     	
-    	incluirResumoConsignado(fechamento); 
+    	ResumoFechamentoDiarioConsignadoDTO resumoConsignado = incluirResumoConsignado(fechamento); 
+    	builder.resumoConsignado(resumoConsignado);
+    	
+    	return builder.build();
     }
 
-	private void incluirResumoConsignado(FechamentoDiario fechamento) throws FechamentoDiarioException {
+	private ResumoFechamentoDiarioConsignadoDTO incluirResumoConsignado(FechamentoDiario fechamento) throws FechamentoDiarioException {
 		
 		ResumoFechamentoDiarioConsignadoDTO resumoConsignado = obterResumoConsignado(fechamento.getDataFechamento());
 		
@@ -462,6 +474,8 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		incluirResumoValorConsignado(fechamento, resumoConsignado);
 		
 		incluirResumoValorAvista(fechamento, resumoConsignado);
+		
+		return resumoConsignado;
 	}
 
 	private void incluirResumoValorAvista(FechamentoDiario fechamento,ResumoFechamentoDiarioConsignadoDTO resumoConsignado)
@@ -500,7 +514,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		fechamentoDiarioResumoConsignadoRepository.adicionar(valorResumoConsignado);
 	}
 
-	private void incluirResumoEstoque(FechamentoDiario fechamento) throws FechamentoDiarioException {
+	private ResumoEstoqueDTO incluirResumoEstoque(FechamentoDiario fechamento) throws FechamentoDiarioException {
 		
 		ResumoEstoqueDTO resumoEstoque = obterResumoEstoque(fechamento.getDataFechamento());
 		
@@ -532,6 +546,8 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		
 		incluirResumoEstoque(fechamento,TipoEstoque.DANIFICADO, estoqueExemplar.getQuantidadeDanificados(), 
 				estoqueProduto.getQuantidadeDanificados() ,valorResumo.getValorDanificados());
+		
+		return resumoEstoque;
 	}
 
 	private void incluirResumoEstoque(FechamentoDiario fechamentoDiario ,TipoEstoque tipoEstoque, Integer qntExemplares, Integer qntProdutos, BigDecimal valorTotal ) {
@@ -547,7 +563,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		fechamentoDiarioResumoEstoqueRepository.adicionar(resumoLancamento);
 	}
 
-	private void incluirResumoCotas(FechamentoDiario fechamento) throws FechamentoDiarioException {
+	private ResumoFechamentoDiarioCotasDTO incluirResumoCotas(FechamentoDiario fechamento) throws FechamentoDiarioException {
 		
 		ResumoFechamentoDiarioCotasDTO resumoCotas = obterResumoCotas(fechamento.getDataFechamento());
 		
@@ -575,6 +591,8 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		
 		incluirCotasFechamentoDiario(resumoCotas.getNovas(),TipoSituacaoCota.NOVAS,consolidadoCota);
 		
+		return resumoCotas;
+		
 	}
 
 	private void incluirCotasFechamentoDiario(List<Cota> cotas, TipoSituacaoCota tipoDetalheCota,FechamentoDiarioConsolidadoCota fechamentoDiarioConsolidadoCota) {
@@ -595,7 +613,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		}
 	}
 
-	private void incluirResumoDividaVencer(FechamentoDiario fechamento) throws FechamentoDiarioException {
+	private List<SumarizacaoDividasDTO> incluirResumoDividaVencer(FechamentoDiario fechamento) throws FechamentoDiarioException {
 		
 		List<SumarizacaoDividasDTO> resumoDividas = dividaService.sumarizacaoDividasVencerApos(fechamento.getDataFechamento());
 		
@@ -604,9 +622,11 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		List<Divida> dividas = dividaService.obterDividasVencerApos(fechamento.getDataFechamento(), null);
 		
 		incluirDividas(fechamento, resumoDividas, dividas,TipoDividaFechamentoDia.A_VENCER);
+		
+		return resumoDividas;
 	}
 
-	private void incluirResumoDividaReceber(FechamentoDiario fechamento) throws FechamentoDiarioException {
+	private List<SumarizacaoDividasDTO> incluirResumoDividaReceber(FechamentoDiario fechamento) throws FechamentoDiarioException {
 		
 		List<SumarizacaoDividasDTO> resumoDividas = dividaService.sumarizacaoDividasReceberEm(fechamento.getDataFechamento());
 		
@@ -615,6 +635,8 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		List<Divida> dividas = dividaService.obterDividasReceberEm(fechamento.getDataFechamento(), null);
 		
 		incluirDividas(fechamento, resumoDividas, dividas,TipoDividaFechamentoDia.A_RECEBER);
+		
+		return resumoDividas;
 	}
 
 	private void incluirDividas(FechamentoDiario fechamento,
@@ -668,7 +690,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		}
 	}
 
-	private void incluirResumoSuplementar(FechamentoDiario fechamento) throws FechamentoDiarioException {
+	private ResumoSuplementarFecharDiaDTO incluirResumoSuplementar(FechamentoDiario fechamento) throws FechamentoDiarioException {
 		
 		ResumoSuplementarFecharDiaDTO resumoSuplementar = resumoSuplementarFecharDiaService.obterResumoGeralEncalhe(fechamento.getDataFechamento());
 		
@@ -689,6 +711,8 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		incluirLancamentosSuplementar(consolidadoSuplementar);
 	
 		incluirVendaSuplementar(fechamento,consolidadoSuplementar);
+		
+		return resumoSuplementar;
 	}
 
 	private void incluirLancamentosSuplementar(FechamentoDiarioConsolidadoSuplementar consolidadoSuplementar)
@@ -738,7 +762,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		}
 	}
 
-	private void incluirResumoEncalhe(FechamentoDiario fechamento) throws FechamentoDiarioException {
+	private ResumoEncalheFecharDiaDTO incluirResumoEncalhe(FechamentoDiario fechamento) throws FechamentoDiarioException {
 		
 		ResumoEncalheFecharDiaDTO resumoEncalhe = this.resumoEncalheFecharDiaService.obterResumoGeralEncalhe(fechamento.getDataFechamento());
 		
@@ -763,12 +787,15 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		
 		incluirVendaEncalhe(fechamento, consolidadoEncalhe);
 		
+		return resumoEncalhe;
+		
 	}
 
 	private void incluirLancamentosEncalhe(FechamentoDiario fechamento,FechamentoDiarioConsolidadoEncalhe consolidadoEncalhe)
 			throws FechamentoDiarioException {
 		
-		List<EncalheFecharDiaDTO> listaEncalhe = this.resumoEncalheFecharDiaService.obterDadosGridEncalhe(fechamento.getDataFechamento());
+		List<EncalheFecharDiaDTO> listaEncalhe = 
+		        this.resumoEncalheFecharDiaService.obterDadosGridEncalhe(fechamento.getDataFechamento());
 		
 		if(listaEncalhe!= null && !listaEncalhe.isEmpty()){
 			
@@ -812,7 +839,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		}
 	}
 	
-	private void incluirResumoReparte(FechamentoDiario fechamento) throws FechamentoDiarioException {
+	private ResumoReparteFecharDiaDTO incluirResumoReparte(FechamentoDiario fechamento) throws FechamentoDiarioException {
 		
 		ResumoReparteFecharDiaDTO resumoReparte = resumoReparteFecharDiaService.obterResumoGeralReparte(fechamento.getDataFechamento());
 		
@@ -826,7 +853,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 	    consolidadoReparte.setValorFaltas(resumoReparte.getTotalFaltas());
 	    consolidadoReparte.setValorReparte(resumoReparte.getTotalReparte());
 	    consolidadoReparte.setValorSobras(resumoReparte.getTotalSobras());
-	    consolidadoReparte.setValorTransferido(resumoReparte.getTotalTranferencia());
+	    consolidadoReparte.setValorTransferido(resumoReparte.getTotalTransferencia());
 	    consolidadoReparte.setFechamentoDiario(fechamento);
 	    
 	    consolidadoReparte = fechamentoConsolidadoReparteRepository.merge(consolidadoReparte);
@@ -834,6 +861,8 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 	    validarDadosFechamentoDiario(consolidadoReparte,null);
 	    
 	    incluirLancamentosReparte(fechamento, consolidadoReparte);
+	    
+	    return resumoReparte;
 	}
 
 	private void incluirLancamentosReparte(FechamentoDiario fechamento,FechamentoDiarioConsolidadoReparte consolidadoReparte)
@@ -914,17 +943,18 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 	
 	@Transactional
 	@Override
-	public void processarFechamentoDoDia(Usuario usuario, Date dataFechamento){
+	public FechamentoDiarioDTO processarFechamentoDoDia(Usuario usuario, Date dataFechamento){
 		
 		processarControleDeAprovacao();
 		
 		try {
 		
-			salvarResumoFechamentoDiario(usuario, dataFechamento);
+			return salvarResumoFechamentoDiario(usuario, dataFechamento);
 		
 		} catch (FechamentoDiarioException e) {
 			
 			throw new ValidacaoException(TipoMensagem.ERROR, e.getMessage());
 		}
 	}
+  
 }

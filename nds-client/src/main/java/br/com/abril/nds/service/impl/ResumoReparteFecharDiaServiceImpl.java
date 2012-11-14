@@ -69,8 +69,8 @@ public class ResumoReparteFecharDiaServiceImpl  implements ResumoReparteFecharDi
 		dto.setTotalFaltas(totalFaltas);
 		
 		lista = this.obterValorTransferencia(dataOperacao, true);
-		BigDecimal totalTranferencia =  lista.get(0).getTransferencias() != null ? lista.get(0).getFaltas() : BigDecimal.ZERO;		
-		dto.setTotalTranferencia(totalTranferencia);
+		BigDecimal totalTransferencia =  lista.get(0).getTransferencias() != null ? lista.get(0).getFaltas() : BigDecimal.ZERO;		
+		dto.setTotalTransferencia(totalTransferencia);
 		
 		BigDecimal totalADistribuir = (totalReparte.add(totalSobras)).subtract(totalFaltas);
 		dto.setTotalADistribuir(totalADistribuir);		

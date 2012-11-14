@@ -9,6 +9,7 @@ import br.com.abril.nds.dto.ValidacaoConfirmacaoDeExpedicaoFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoControleDeAprovacaoFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoLancamentoFaltaESobraFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoRecebimentoFisicoFecharDiaDTO;
+import br.com.abril.nds.dto.fechamentodiario.FechamentoDiarioDTO;
 import br.com.abril.nds.dto.fechamentodiario.ResumoEstoqueDTO;
 import br.com.abril.nds.dto.fechamentodiario.SumarizacaoDividasDTO;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
@@ -164,6 +165,9 @@ public interface FecharDiaService {
 	 * @param usuario - usuario
 	 * 
 	 * @param dataFechamento - data de fechamento
+	 * 
+	 * @return DTO com as informações do fechamento diário
 	 */
-	void processarFechamentoDoDia(Usuario usuario, Date dataFechamento);
+	FechamentoDiarioDTO processarFechamentoDoDia(Usuario usuario, Date dataFechamento);
+ 
 }

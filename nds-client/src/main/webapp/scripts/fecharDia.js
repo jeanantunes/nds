@@ -644,7 +644,16 @@ var fecharDiaController =  $.extend(true, {
 		
 		$.postJSON(
 				contextPath + "/administracao/fecharDia/confirmar",
-				null
+				null, 
+				function(){
+				    $.fileDownload(contextPath + "/administracao/fecharDia/gerarRelatorioFechamentoDiario", {
+                        httpMethod : "POST",
+                        data : [],
+                        failCallback : function() {
+                            exibirMensagem("ERROR", ["Erro na geração do Relatório de Fechamento Diário!"]);
+                        }
+                    });
+		        }
 			);
 	},
 	

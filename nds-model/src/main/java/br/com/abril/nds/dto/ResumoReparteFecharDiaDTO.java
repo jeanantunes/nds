@@ -16,7 +16,7 @@ public class ResumoReparteFecharDiaDTO implements Serializable {
 	
 	private BigDecimal totalFaltas;
 	
-	private BigDecimal totalTranferencia;
+	private BigDecimal totalTransferencia;
 	
 	private BigDecimal totalADistribuir;
 	
@@ -50,12 +50,12 @@ public class ResumoReparteFecharDiaDTO implements Serializable {
 		this.totalFaltas = totalFaltas;
 	}
 
-	public BigDecimal getTotalTranferencia() {
-		return totalTranferencia;
+	public BigDecimal getTotalTransferencia() {
+		return totalTransferencia;
 	}
 
-	public void setTotalTranferencia(BigDecimal totalTranferencia) {
-		this.totalTranferencia = totalTranferencia;
+	public void setTotalTransferencia(BigDecimal totalTransferencia) {
+		this.totalTransferencia = totalTransferencia;
 	}
 
 	public BigDecimal getTotalADistribuir() {

@@ -4,6 +4,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>NDS - Novo Distrib</title>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/fecharDia.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.fileDownload.js"></script>
 <script language="javascript" type="text/javascript">
 
 	/*

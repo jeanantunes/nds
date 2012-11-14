@@ -1,0 +1,1410 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="fechamento_diario_sumarizacao_detalhe" pageWidth="800" pageHeight="525" orientation="Landscape" whenNoDataType="BlankPage" columnWidth="800" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" whenResourceMissingType="Empty">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["C:\\workspace\\NDS\\nds-client\\src\\main\\resources\\reports\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="dataFechamento" class="java.util.Date" isForPrompting="false">
+		<defaultValueExpression><![CDATA[new java.util.Date()]]></defaultValueExpression>
+	</parameter>
+	<field name="resumoReparte.totalReparte" class="java.math.BigDecimal"/>
+	<field name="resumoReparte.totalSobras" class="java.math.BigDecimal"/>
+	<field name="resumoReparte.totalFaltas" class="java.math.BigDecimal"/>
+	<field name="resumoReparte.totalTransferencia" class="java.math.BigDecimal"/>
+	<field name="resumoReparte.totalADistribuir" class="java.math.BigDecimal"/>
+	<field name="resumoReparte.totalDistribuido" class="java.math.BigDecimal"/>
+	<field name="resumoReparte.sobraDistribuido" class="java.math.BigDecimal"/>
+	<field name="resumoReparte.diferenca" class="java.math.BigDecimal"/>
+	<field name="resumoEncalhe.totalLogico" class="java.math.BigDecimal"/>
+	<field name="resumoEncalhe.totalFisico" class="java.math.BigDecimal"/>
+	<field name="resumoEncalhe.totalJuramentado" class="java.math.BigDecimal"/>
+	<field name="resumoEncalhe.venda" class="java.math.BigDecimal"/>
+	<field name="resumoEncalhe.totalSobras" class="java.math.BigDecimal"/>
+	<field name="resumoEncalhe.totalFaltas" class="java.math.BigDecimal"/>
+	<field name="resumoEncalhe.saldo" class="java.math.BigDecimal"/>
+	<field name="resumoSuplementar.totalEstoqueLogico" class="java.math.BigDecimal"/>
+	<field name="resumoSuplementar.totalTransferencia" class="java.math.BigDecimal"/>
+	<field name="resumoSuplementar.totalVenda" class="java.math.BigDecimal"/>
+	<field name="resumoSuplementar.saldo" class="java.math.BigDecimal"/>
+	<field name="dividasReceber" class="java.util.List"/>
+	<field name="dividasVencer" class="java.util.List"/>
+	<field name="resumoCotas.quantidadeTotal" class="java.lang.Long"/>
+	<field name="resumoCotas.quantidadeAtivas" class="java.lang.Long"/>
+	<field name="resumoCotas.ausentesExpedicaoReparte" class="java.util.List"/>
+	<field name="resumoCotas.ausentesRecolhimentoEncalhe" class="java.util.List"/>
+	<field name="resumoCotas.novas" class="java.util.List"/>
+	<field name="resumoCotas.inativas" class="java.util.List"/>
+	<field name="resumoEstoque.resumoEstoqueProduto.quantidadeLancamento" class="java.lang.Integer"/>
+	<field name="resumoEstoque.resumoEstoqueProduto.quantidadeJuramentado" class="java.lang.Integer"/>
+	<field name="resumoEstoque.resumoEstoqueProduto.quantidadeSuplementar" class="java.lang.Integer"/>
+	<field name="resumoEstoque.resumoEstoqueProduto.quantidadeRecolhimento" class="java.lang.Integer"/>
+	<field name="resumoEstoque.resumoEstoqueProduto.quantidadeDanificados" class="java.lang.Integer"/>
+	<field name="resumoEstoque.resumoEstoqueExemplar.quantidadeLancamento" class="java.lang.Integer"/>
+	<field name="resumoEstoque.resumoEstoqueExemplar.quantidadeJuramentado" class="java.lang.Integer"/>
+	<field name="resumoEstoque.resumoEstoqueExemplar.quantidadeSuplementar" class="java.lang.Integer"/>
+	<field name="resumoEstoque.resumoEstoqueExemplar.quantidadeRecolhimento" class="java.lang.Integer"/>
+	<field name="resumoEstoque.resumoEstoqueExemplar.quantidadeDanificados" class="java.lang.Integer"/>
+	<field name="resumoEstoque.valorResumoEstoque.valorLancamento" class="java.math.BigDecimal"/>
+	<field name="resumoEstoque.valorResumoEstoque.valorJuramentado" class="java.math.BigDecimal"/>
+	<field name="resumoEstoque.valorResumoEstoque.valorSuplementar" class="java.math.BigDecimal"/>
+	<field name="resumoEstoque.valorResumoEstoque.valorRecolhimento" class="java.math.BigDecimal"/>
+	<field name="resumoEstoque.valorResumoEstoque.valorDanificados" class="java.math.BigDecimal"/>
+	<field name="resumoConsignado.resumoConsignado.saldoAnterior" class="java.math.BigDecimal"/>
+	<field name="resumoConsignado.resumoConsignado.valorEntradas" class="java.math.BigDecimal"/>
+	<field name="resumoConsignado.resumoConsignado.valorSaidas" class="java.math.BigDecimal"/>
+	<field name="resumoConsignado.resumoConsignado.saldoAtual" class="java.math.BigDecimal"/>
+	<field name="resumoConsignado.resumoAVista.saldoAnterior" class="java.math.BigDecimal"/>
+	<field name="resumoConsignado.resumoAVista.valorEntradas" class="java.math.BigDecimal"/>
+	<field name="resumoConsignado.resumoAVista.valorSaidas" class="java.math.BigDecimal"/>
+	<field name="resumoConsignado.resumoAVista.saldoAtual" class="java.math.BigDecimal"/>
+	<detail>
+		<band height="508" splitType="Stretch">
+			<frame>
+				<reportElement stretchType="RelativeToBandHeight" x="3" y="168" width="790" height="66"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<frame>
+					<reportElement mode="Opaque" x="0" y="0" width="395" height="20" forecolor="#000000" backcolor="#E3E3E3"/>
+					<box>
+						<pen lineColor="#999999"/>
+						<topPen lineColor="#999999"/>
+						<leftPen lineColor="#999999"/>
+						<bottomPen lineColor="#999999"/>
+						<rightPen lineWidth="0.0" lineColor="#999999"/>
+					</box>
+				</frame>
+				<frame>
+					<reportElement mode="Opaque" x="394" y="0" width="396" height="20" forecolor="#000000" backcolor="#E3E3E3"/>
+					<box>
+						<leftPen lineWidth="0.0" lineColor="#999999"/>
+					</box>
+				</frame>
+				<staticText>
+					<reportElement mode="Transparent" x="394" y="0" width="394" height="20" backcolor="#FFFFFF"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" isBold="true" isUnderline="false"/>
+					</textElement>
+					<text><![CDATA[DÍVIDAS A VENCER]]></text>
+				</staticText>
+				<subreport isUsingCache="false">
+					<reportElement stretchType="RelativeToBandHeight" x="400" y="27" width="385" height="33"/>
+					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{dividasVencer})]]></dataSourceExpression>
+					<subreportExpression class="java.lang.String"><![CDATA[Thread.currentThread().getContextClassLoader().getResource("/reports/fechamento_diario_sumarizacao_dividas_receber_vencer.jasper").toURI().getPath()]]></subreportExpression>
+				</subreport>
+				<subreport isUsingCache="false">
+					<reportElement stretchType="RelativeToBandHeight" x="6" y="26" width="385" height="33"/>
+					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{dividasReceber})]]></dataSourceExpression>
+					<subreportExpression class="java.lang.String"><![CDATA[Thread.currentThread().getContextClassLoader().getResource("/reports/fechamento_diario_sumarizacao_dividas_receber_vencer.jasper").toURI().getPath()]]></subreportExpression>
+				</subreport>
+				<line>
+					<reportElement stretchType="RelativeToBandHeight" x="394" y="0" width="1" height="66"/>
+					<graphicElement>
+						<pen lineWidth="0.25" lineColor="#999999"/>
+					</graphicElement>
+				</line>
+				<staticText>
+					<reportElement mode="Transparent" x="0" y="0" width="395" height="20" backcolor="#FFFFFF"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" isBold="true" isUnderline="false"/>
+					</textElement>
+					<text><![CDATA[DÍVIDAS A RECEBER]]></text>
+				</staticText>
+			</frame>
+			<frame>
+				<reportElement x="3" y="6" width="790" height="155"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<staticText>
+					<reportElement mode="Opaque" x="0" y="0" width="264" height="20" backcolor="#E3E3E3"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" isBold="true" isUnderline="false"/>
+					</textElement>
+					<text><![CDATA[REPARTE]]></text>
+				</staticText>
+				<staticText>
+					<reportElement mode="Opaque" x="526" y="0" width="264" height="20" backcolor="#E3E3E3"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" isBold="true" isUnderline="false"/>
+					</textElement>
+					<text><![CDATA[SUPLEMENTAR]]></text>
+				</staticText>
+				<staticText>
+					<reportElement mode="Opaque" x="264" y="0" width="262" height="20" backcolor="#E3E3E3"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" isBold="true" isUnderline="false"/>
+					</textElement>
+					<text><![CDATA[ENCALHE]]></text>
+				</staticText>
+				<frame>
+					<reportElement x="527" y="0" width="262" height="155"/>
+					<box>
+						<pen lineWidth="0.25" lineColor="#999999"/>
+						<topPen lineWidth="0.0" lineColor="#999999"/>
+						<leftPen lineWidth="0.25" lineColor="#999999"/>
+						<bottomPen lineWidth="0.0" lineColor="#999999"/>
+						<rightPen lineWidth="0.0" lineColor="#999999"/>
+					</box>
+					<textField pattern="#,##0.00">
+						<reportElement x="124" y="77" width="119" height="15"/>
+						<box>
+							<pen lineWidth="0.25" lineStyle="Dashed"/>
+							<topPen lineWidth="0.0" lineStyle="Dashed"/>
+							<leftPen lineWidth="0.0" lineStyle="Dashed"/>
+							<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+							<rightPen lineWidth="0.0" lineStyle="Dashed"/>
+						</box>
+						<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+							<font fontName="Arial"/>
+						</textElement>
+						<textFieldExpression class="java.lang.String"><![CDATA[$F{resumoSuplementar.saldo}]]></textFieldExpression>
+					</textField>
+					<staticText>
+						<reportElement x="25" y="48" width="100" height="15"/>
+						<box>
+							<pen lineWidth="0.25" lineStyle="Dashed"/>
+							<topPen lineWidth="0.0" lineStyle="Dashed"/>
+							<leftPen lineWidth="0.0" lineStyle="Dashed"/>
+							<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+							<rightPen lineWidth="0.0" lineStyle="Dashed"/>
+						</box>
+						<textElement verticalAlignment="Middle">
+							<font fontName="Arial"/>
+						</textElement>
+						<text><![CDATA[Transferências]]></text>
+					</staticText>
+					<staticText>
+						<reportElement x="25" y="34" width="100" height="15"/>
+						<box>
+							<pen lineStyle="Dashed"/>
+							<topPen lineStyle="Dashed"/>
+							<leftPen lineStyle="Dashed"/>
+							<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+							<rightPen lineStyle="Dashed"/>
+						</box>
+						<textElement verticalAlignment="Middle">
+							<font fontName="Arial"/>
+						</textElement>
+						<text><![CDATA[Estoque Lógico]]></text>
+					</staticText>
+					<textField pattern="#,##0.00">
+						<reportElement x="124" y="61" width="119" height="15"/>
+						<box>
+							<pen lineWidth="0.25" lineStyle="Dashed"/>
+							<topPen lineWidth="0.0" lineStyle="Dashed"/>
+							<leftPen lineWidth="0.0" lineStyle="Dashed"/>
+							<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+							<rightPen lineWidth="0.0" lineStyle="Dashed"/>
+						</box>
+						<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+							<font fontName="Arial"/>
+						</textElement>
+						<textFieldExpression class="java.lang.String"><![CDATA[$F{resumoSuplementar.totalVenda}]]></textFieldExpression>
+					</textField>
+					<staticText>
+						<reportElement x="25" y="61" width="100" height="15"/>
+						<box>
+							<pen lineWidth="0.25" lineStyle="Dashed"/>
+							<topPen lineWidth="0.0" lineStyle="Dashed"/>
+							<leftPen lineWidth="0.0" lineStyle="Dashed"/>
+							<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+							<rightPen lineWidth="0.0" lineStyle="Dashed"/>
+						</box>
+						<textElement verticalAlignment="Middle">
+							<font fontName="Arial"/>
+						</textElement>
+						<text><![CDATA[Vendas]]></text>
+					</staticText>
+					<staticText>
+						<reportElement x="25" y="77" width="100" height="15"/>
+						<box>
+							<pen lineWidth="0.25" lineStyle="Dashed"/>
+							<topPen lineWidth="0.0" lineStyle="Dashed"/>
+							<leftPen lineWidth="0.0" lineStyle="Dashed"/>
+							<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+							<rightPen lineWidth="0.0" lineStyle="Dashed"/>
+						</box>
+						<textElement verticalAlignment="Middle">
+							<font fontName="Arial"/>
+						</textElement>
+						<text><![CDATA[Saldo]]></text>
+					</staticText>
+					<textField pattern="#,##0.00" isBlankWhenNull="true">
+						<reportElement x="124" y="34" width="119" height="15"/>
+						<box>
+							<pen lineStyle="Dashed"/>
+							<topPen lineStyle="Dashed"/>
+							<leftPen lineStyle="Dashed"/>
+							<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+							<rightPen lineStyle="Dashed"/>
+						</box>
+						<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+							<font fontName="Arial"/>
+						</textElement>
+						<textFieldExpression class="java.lang.String"><![CDATA[$F{resumoSuplementar.totalEstoqueLogico}]]></textFieldExpression>
+					</textField>
+					<textField pattern="#,##0.00">
+						<reportElement x="124" y="48" width="119" height="15"/>
+						<box>
+							<pen lineWidth="0.25" lineStyle="Dashed"/>
+							<topPen lineWidth="0.0" lineStyle="Dashed"/>
+							<leftPen lineWidth="0.0" lineStyle="Dashed"/>
+							<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+							<rightPen lineWidth="0.0" lineStyle="Dashed"/>
+						</box>
+						<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+							<font fontName="Arial"/>
+						</textElement>
+						<textFieldExpression class="java.lang.String"><![CDATA[$F{resumoSuplementar.totalTransferencia}]]></textFieldExpression>
+					</textField>
+				</frame>
+				<frame>
+					<reportElement x="264" y="0" width="262" height="155"/>
+					<textField pattern="#,##0.00" isBlankWhenNull="true">
+						<reportElement x="116" y="117" width="119" height="15"/>
+						<box>
+							<pen lineWidth="0.25" lineStyle="Dashed"/>
+							<topPen lineWidth="0.0" lineStyle="Dashed"/>
+							<leftPen lineWidth="0.0" lineStyle="Dashed"/>
+							<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+							<rightPen lineWidth="0.0" lineStyle="Dashed"/>
+						</box>
+						<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+							<font fontName="Arial"/>
+						</textElement>
+						<textFieldExpression class="java.lang.String"><![CDATA[$F{resumoEncalhe.saldo}]]></textFieldExpression>
+					</textField>
+					<textField pattern="#,##0.00" isBlankWhenNull="true">
+						<reportElement x="116" y="62" width="119" height="15"/>
+						<box>
+							<pen lineStyle="Dashed"/>
+							<topPen lineStyle="Dashed"/>
+							<leftPen lineStyle="Dashed"/>
+							<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+							<rightPen lineStyle="Dashed"/>
+						</box>
+						<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+							<font fontName="Arial"/>
+						</textElement>
+						<textFieldExpression class="java.lang.String"><![CDATA[$F{resumoEncalhe.totalJuramentado}]]></textFieldExpression>
+					</textField>
+					<textField pattern="#,##0.00" isBlankWhenNull="true">
+						<reportElement x="116" y="89" width="119" height="15"/>
+						<box>
+							<pen lineWidth="0.25" lineStyle="Dashed"/>
+							<topPen lineWidth="0.0" lineStyle="Dashed"/>
+							<leftPen lineWidth="0.0" lineStyle="Dashed"/>
+							<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+							<rightPen lineWidth="0.0" lineStyle="Dashed"/>
+						</box>
+						<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+							<font fontName="Arial"/>
+						</textElement>
+						<textFieldExpression class="java.lang.String"><![CDATA[$F{resumoEncalhe.totalSobras}]]></textFieldExpression>
+					</textField>
+					<textField pattern="#,##0.00" isBlankWhenNull="true">
+						<reportElement x="116" y="104" width="119" height="15"/>
+						<box>
+							<pen lineWidth="0.25" lineStyle="Dashed"/>
+							<topPen lineWidth="0.0" lineStyle="Dashed"/>
+							<leftPen lineWidth="0.0" lineStyle="Dashed"/>
+							<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+							<rightPen lineWidth="0.0" lineStyle="Dashed"/>
+						</box>
+						<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+							<font fontName="Arial"/>
+						</textElement>
+						<textFieldExpression class="java.lang.String"><![CDATA[$F{resumoEncalhe.totalFaltas}]]></textFieldExpression>
+					</textField>
+					<staticText>
+						<reportElement x="17" y="117" width="100" height="15"/>
+						<box>
+							<pen lineWidth="0.25" lineStyle="Dashed"/>
+							<topPen lineWidth="0.0" lineStyle="Dashed"/>
+							<leftPen lineWidth="0.0" lineStyle="Dashed"/>
+							<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+							<rightPen lineWidth="0.0" lineStyle="Dashed"/>
+						</box>
+						<textElement verticalAlignment="Middle">
+							<font fontName="Arial"/>
+						</textElement>
+						<text><![CDATA[Saldo]]></text>
+					</staticText>
+					<staticText>
+						<reportElement x="17" y="33" width="100" height="15"/>
+						<box>
+							<pen lineStyle="Dashed"/>
+							<topPen lineStyle="Dashed"/>
+							<leftPen lineStyle="Dashed"/>
+							<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+							<rightPen lineStyle="Dashed"/>
+						</box>
+						<textElement verticalAlignment="Middle">
+							<font fontName="Arial"/>
+						</textElement>
+						<text><![CDATA[Lógico]]></text>
+					</staticText>
+					<staticText>
+						<reportElement x="17" y="89" width="100" height="15"/>
+						<box>
+							<pen lineWidth="0.25" lineStyle="Dashed"/>
+							<topPen lineWidth="0.0" lineStyle="Dashed"/>
+							<leftPen lineWidth="0.0" lineStyle="Dashed"/>
+							<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+							<rightPen lineWidth="0.0" lineStyle="Dashed"/>
+						</box>
+						<textElement verticalAlignment="Middle">
+							<font fontName="Arial"/>
+						</textElement>
+						<text><![CDATA[Sobras em]]></text>
+					</staticText>
+					<staticText>
+						<reportElement x="17" y="104" width="100" height="15"/>
+						<box>
+							<pen lineWidth="0.25" lineStyle="Dashed"/>
+							<topPen lineWidth="0.0" lineStyle="Dashed"/>
+							<leftPen lineWidth="0.0" lineStyle="Dashed"/>
+							<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+							<rightPen lineWidth="0.0" lineStyle="Dashed"/>
+						</box>
+						<textElement verticalAlignment="Middle">
+							<font fontName="Arial"/>
+						</textElement>
+						<text><![CDATA[Faltas em]]></text>
+					</staticText>
+					<textField pattern="#,##0.00" isBlankWhenNull="true">
+						<reportElement x="116" y="33" width="119" height="15"/>
+						<box>
+							<pen lineWidth="0.25" lineStyle="Dashed"/>
+							<topPen lineWidth="0.0" lineStyle="Dashed"/>
+							<leftPen lineWidth="0.0" lineStyle="Dashed"/>
+							<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+							<rightPen lineWidth="0.0" lineStyle="Dashed"/>
+						</box>
+						<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+							<font fontName="Arial"/>
+						</textElement>
+						<textFieldExpression class="java.lang.String"><![CDATA[$F{resumoEncalhe.totalLogico}]]></textFieldExpression>
+					</textField>
+					<staticText>
+						<reportElement x="17" y="62" width="100" height="15"/>
+						<box>
+							<pen lineWidth="0.25" lineStyle="Dashed"/>
+							<topPen lineWidth="0.0" lineStyle="Dashed"/>
+							<leftPen lineWidth="0.0" lineStyle="Dashed"/>
+							<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+							<rightPen lineWidth="0.0" lineStyle="Dashed"/>
+						</box>
+						<textElement verticalAlignment="Middle">
+							<font fontName="Arial"/>
+						</textElement>
+						<text><![CDATA[Juramentado]]></text>
+					</staticText>
+					<staticText>
+						<reportElement x="17" y="75" width="100" height="15"/>
+						<box>
+							<pen lineWidth="0.25" lineStyle="Dashed"/>
+							<topPen lineWidth="0.0" lineStyle="Dashed"/>
+							<leftPen lineWidth="0.0" lineStyle="Dashed"/>
+							<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+							<rightPen lineWidth="0.0" lineStyle="Dashed"/>
+						</box>
+						<textElement verticalAlignment="Middle">
+							<font fontName="Arial"/>
+						</textElement>
+						<text><![CDATA[Venda]]></text>
+					</staticText>
+					<textField pattern="#,##0.00" isBlankWhenNull="true">
+						<reportElement x="116" y="75" width="119" height="15"/>
+						<box>
+							<pen lineWidth="0.25" lineStyle="Dashed"/>
+							<topPen lineWidth="0.0" lineStyle="Dashed"/>
+							<leftPen lineWidth="0.0" lineStyle="Dashed"/>
+							<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+							<rightPen lineWidth="0.0" lineStyle="Dashed"/>
+						</box>
+						<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+							<font fontName="Arial"/>
+						</textElement>
+						<textFieldExpression class="java.lang.String"><![CDATA[$F{resumoEncalhe.venda}]]></textFieldExpression>
+					</textField>
+					<textField pattern="#,##0.00" isBlankWhenNull="true">
+						<reportElement x="116" y="48" width="119" height="15"/>
+						<box>
+							<pen lineWidth="0.25" lineStyle="Dashed"/>
+							<topPen lineWidth="0.0" lineStyle="Dashed"/>
+							<leftPen lineWidth="0.0" lineStyle="Dashed"/>
+							<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+							<rightPen lineWidth="0.0" lineStyle="Dashed"/>
+						</box>
+						<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+							<font fontName="Arial"/>
+						</textElement>
+						<textFieldExpression class="java.lang.String"><![CDATA[$F{resumoEncalhe.totalFisico}]]></textFieldExpression>
+					</textField>
+					<staticText>
+						<reportElement x="17" y="48" width="100" height="15"/>
+						<box>
+							<pen lineWidth="0.25" lineStyle="Dashed"/>
+							<topPen lineWidth="0.0" lineStyle="Dashed"/>
+							<leftPen lineWidth="0.0" lineStyle="Dashed"/>
+							<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+							<rightPen lineWidth="0.0" lineStyle="Dashed"/>
+						</box>
+						<textElement verticalAlignment="Middle">
+							<font fontName="Arial"/>
+						</textElement>
+						<text><![CDATA[Físico]]></text>
+					</staticText>
+				</frame>
+				<frame>
+					<reportElement x="2" y="0" width="262" height="155"/>
+					<box>
+						<rightPen lineWidth="0.25" lineColor="#999999"/>
+					</box>
+				</frame>
+				<staticText>
+					<reportElement x="14" y="34" width="100" height="15"/>
+					<box>
+						<pen lineStyle="Dashed"/>
+						<topPen lineStyle="Dashed"/>
+						<leftPen lineStyle="Dashed"/>
+						<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+						<rightPen lineStyle="Dashed"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial"/>
+					</textElement>
+					<text><![CDATA[(+) Reparte R$]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="14" y="48" width="100" height="15"/>
+					<box>
+						<pen lineWidth="0.25" lineStyle="Dashed"/>
+						<topPen lineWidth="0.0" lineStyle="Dashed"/>
+						<leftPen lineWidth="0.0" lineStyle="Dashed"/>
+						<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+						<rightPen lineWidth="0.0" lineStyle="Dashed"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial"/>
+					</textElement>
+					<text><![CDATA[(+) Sobras]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="14" y="61" width="100" height="15"/>
+					<box>
+						<pen lineWidth="0.25" lineStyle="Dashed"/>
+						<topPen lineWidth="0.0" lineStyle="Dashed"/>
+						<leftPen lineWidth="0.0" lineStyle="Dashed"/>
+						<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+						<rightPen lineWidth="0.0" lineStyle="Dashed"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial"/>
+					</textElement>
+					<text><![CDATA[(-) Faltas]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="14" y="76" width="100" height="15"/>
+					<box>
+						<pen lineWidth="0.25" lineStyle="Dashed"/>
+						<topPen lineWidth="0.0" lineStyle="Dashed"/>
+						<leftPen lineWidth="0.0" lineStyle="Dashed"/>
+						<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+						<rightPen lineWidth="0.0" lineStyle="Dashed"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial"/>
+					</textElement>
+					<text><![CDATA[(+) Transferência]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="14" y="90" width="100" height="15"/>
+					<box>
+						<pen lineWidth="0.25" lineStyle="Dashed"/>
+						<topPen lineWidth="0.0" lineStyle="Dashed"/>
+						<leftPen lineWidth="0.0" lineStyle="Dashed"/>
+						<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+						<rightPen lineWidth="0.0" lineStyle="Dashed"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial"/>
+					</textElement>
+					<text><![CDATA[(=) A Distribuir]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="14" y="103" width="100" height="15"/>
+					<box>
+						<pen lineWidth="0.25" lineStyle="Dashed"/>
+						<topPen lineWidth="0.0" lineStyle="Dashed"/>
+						<leftPen lineWidth="0.0" lineStyle="Dashed"/>
+						<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+						<rightPen lineWidth="0.0" lineStyle="Dashed"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial"/>
+					</textElement>
+					<text><![CDATA[Distribuído]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="14" y="118" width="100" height="15"/>
+					<box>
+						<pen lineWidth="0.25" lineStyle="Dashed"/>
+						<topPen lineWidth="0.0" lineStyle="Dashed"/>
+						<leftPen lineWidth="0.0" lineStyle="Dashed"/>
+						<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+						<rightPen lineWidth="0.0" lineStyle="Dashed"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial"/>
+					</textElement>
+					<text><![CDATA[Sobra Dist.]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="14" y="132" width="100" height="15"/>
+					<box>
+						<pen lineWidth="0.25" lineStyle="Dashed"/>
+						<topPen lineWidth="0.0" lineStyle="Dashed"/>
+						<leftPen lineWidth="0.0" lineStyle="Dashed"/>
+						<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+						<rightPen lineWidth="0.0" lineStyle="Dashed"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial"/>
+					</textElement>
+					<text><![CDATA[Diferença]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="113" y="34" width="119" height="15"/>
+					<box>
+						<pen lineStyle="Dashed"/>
+						<topPen lineStyle="Dashed"/>
+						<leftPen lineStyle="Dashed"/>
+						<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+						<rightPen lineStyle="Dashed"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+						<font fontName="Arial"/>
+					</textElement>
+					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{resumoReparte.totalReparte}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="113" y="48" width="119" height="15"/>
+					<box>
+						<pen lineWidth="0.25" lineStyle="Dashed"/>
+						<topPen lineWidth="0.0" lineStyle="Dashed"/>
+						<leftPen lineWidth="0.0" lineStyle="Dashed"/>
+						<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+						<rightPen lineWidth="0.0" lineStyle="Dashed"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+						<font fontName="Arial"/>
+					</textElement>
+					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{resumoReparte.totalSobras}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="113" y="61" width="119" height="15"/>
+					<box>
+						<pen lineWidth="0.25" lineStyle="Dashed"/>
+						<topPen lineWidth="0.0" lineStyle="Dashed"/>
+						<leftPen lineWidth="0.0" lineStyle="Dashed"/>
+						<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+						<rightPen lineWidth="0.0" lineStyle="Dashed"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+						<font fontName="Arial"/>
+					</textElement>
+					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{resumoReparte.totalFaltas}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="113" y="76" width="119" height="15"/>
+					<box>
+						<pen lineWidth="0.25" lineStyle="Dashed"/>
+						<topPen lineWidth="0.0" lineStyle="Dashed"/>
+						<leftPen lineWidth="0.0" lineStyle="Dashed"/>
+						<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+						<rightPen lineWidth="0.0" lineStyle="Dashed"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+						<font fontName="Arial"/>
+					</textElement>
+					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{resumoReparte.totalTransferencia}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="113" y="90" width="119" height="15"/>
+					<box>
+						<pen lineWidth="0.25" lineStyle="Dashed"/>
+						<topPen lineWidth="0.0" lineStyle="Dashed"/>
+						<leftPen lineWidth="0.0" lineStyle="Dashed"/>
+						<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+						<rightPen lineWidth="0.0" lineStyle="Dashed"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+						<font fontName="Arial"/>
+					</textElement>
+					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{resumoReparte.totalADistribuir}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="113" y="103" width="119" height="15"/>
+					<box>
+						<pen lineWidth="0.25" lineStyle="Dashed"/>
+						<topPen lineWidth="0.0" lineStyle="Dashed"/>
+						<leftPen lineWidth="0.0" lineStyle="Dashed"/>
+						<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+						<rightPen lineWidth="0.0" lineStyle="Dashed"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+						<font fontName="Arial"/>
+					</textElement>
+					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{resumoReparte.totalDistribuido}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="113" y="118" width="119" height="15"/>
+					<box>
+						<pen lineWidth="0.25" lineStyle="Dashed"/>
+						<topPen lineWidth="0.0" lineStyle="Dashed"/>
+						<leftPen lineWidth="0.0" lineStyle="Dashed"/>
+						<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+						<rightPen lineWidth="0.0" lineStyle="Dashed"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+						<font fontName="Arial"/>
+					</textElement>
+					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{resumoReparte.sobraDistribuido}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="113" y="132" width="119" height="15"/>
+					<box>
+						<pen lineWidth="0.25" lineStyle="Dashed"/>
+						<topPen lineWidth="0.0" lineStyle="Dashed"/>
+						<leftPen lineWidth="0.0" lineStyle="Dashed"/>
+						<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+						<rightPen lineWidth="0.0" lineStyle="Dashed"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+						<font fontName="Arial"/>
+					</textElement>
+					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{resumoReparte.diferenca}]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement positionType="Float" x="3" y="241" width="790" height="66"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<frame>
+					<reportElement mode="Opaque" x="0" y="0" width="790" height="20" forecolor="#000000" backcolor="#E3E3E3"/>
+					<box>
+						<pen lineColor="#999999"/>
+						<topPen lineColor="#999999"/>
+						<leftPen lineColor="#999999"/>
+						<bottomPen lineColor="#999999"/>
+						<rightPen lineWidth="0.25" lineColor="#999999"/>
+					</box>
+				</frame>
+				<staticText>
+					<reportElement mode="Transparent" x="0" y="0" width="790" height="20" backcolor="#FFFFFF"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" isBold="true" isUnderline="false"/>
+					</textElement>
+					<text><![CDATA[COTAS]]></text>
+				</staticText>
+				<frame>
+					<reportElement mode="Opaque" x="4" y="28" width="129" height="15" backcolor="#E3E3E3"/>
+					<staticText>
+						<reportElement x="0" y="0" width="129" height="15"/>
+						<textElement textAlignment="Center" verticalAlignment="Middle">
+							<font fontName="Arial"/>
+						</textElement>
+						<text><![CDATA[Total]]></text>
+					</staticText>
+				</frame>
+				<frame>
+					<reportElement mode="Opaque" x="134" y="28" width="129" height="15" backcolor="#E3E3E3"/>
+					<staticText>
+						<reportElement x="0" y="0" width="129" height="15"/>
+						<textElement textAlignment="Center" verticalAlignment="Middle">
+							<font fontName="Arial"/>
+						</textElement>
+						<text><![CDATA[Ativas]]></text>
+					</staticText>
+				</frame>
+				<frame>
+					<reportElement mode="Opaque" x="264" y="28" width="129" height="15" backcolor="#E3E3E3"/>
+					<staticText>
+						<reportElement x="0" y="0" width="129" height="15"/>
+						<textElement textAlignment="Center" verticalAlignment="Middle">
+							<font fontName="Arial"/>
+						</textElement>
+						<text><![CDATA[Ausentes - Reparte]]></text>
+					</staticText>
+				</frame>
+				<frame>
+					<reportElement mode="Opaque" x="394" y="28" width="130" height="15" backcolor="#E3E3E3"/>
+					<staticText>
+						<reportElement x="1" y="0" width="129" height="15"/>
+						<textElement textAlignment="Center" verticalAlignment="Middle">
+							<font fontName="Arial"/>
+						</textElement>
+						<text><![CDATA[Ausentes - Encalhe]]></text>
+					</staticText>
+				</frame>
+				<frame>
+					<reportElement mode="Opaque" x="525" y="28" width="129" height="15" backcolor="#E3E3E3"/>
+					<staticText>
+						<reportElement x="0" y="0" width="129" height="15"/>
+						<textElement textAlignment="Center" verticalAlignment="Middle">
+							<font fontName="Arial"/>
+						</textElement>
+						<text><![CDATA[Novos]]></text>
+					</staticText>
+				</frame>
+				<frame>
+					<reportElement mode="Opaque" x="655" y="28" width="129" height="15" backcolor="#E3E3E3"/>
+					<staticText>
+						<reportElement x="0" y="0" width="129" height="15"/>
+						<textElement textAlignment="Center" verticalAlignment="Middle">
+							<font fontName="Arial"/>
+						</textElement>
+						<text><![CDATA[Inativas]]></text>
+					</staticText>
+				</frame>
+				<textField pattern="" isBlankWhenNull="true">
+					<reportElement x="4" y="43" width="129" height="15"/>
+					<box>
+						<pen lineWidth="0.25" lineStyle="Dashed"/>
+						<topPen lineWidth="0.0" lineStyle="Dashed"/>
+						<leftPen lineWidth="0.0" lineStyle="Dashed"/>
+						<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+						<rightPen lineWidth="0.0" lineStyle="Dashed"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+						<font fontName="Arial"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{resumoCotas.quantidadeTotal}]]></textFieldExpression>
+				</textField>
+				<textField pattern="" isBlankWhenNull="true">
+					<reportElement x="134" y="43" width="129" height="15"/>
+					<box>
+						<pen lineWidth="0.25" lineStyle="Dashed"/>
+						<topPen lineWidth="0.0" lineStyle="Dashed"/>
+						<leftPen lineWidth="0.0" lineStyle="Dashed"/>
+						<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+						<rightPen lineWidth="0.0" lineStyle="Dashed"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+						<font fontName="Arial"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{resumoCotas.quantidadeAtivas}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="264" y="43" width="129" height="15"/>
+					<box>
+						<pen lineWidth="0.25" lineStyle="Dashed"/>
+						<topPen lineWidth="0.0" lineStyle="Dashed"/>
+						<leftPen lineWidth="0.0" lineStyle="Dashed"/>
+						<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+						<rightPen lineWidth="0.0" lineStyle="Dashed"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+						<font fontName="Arial"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{resumoCotas.ausentesExpedicaoReparte}.size()]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="394" y="43" width="129" height="15"/>
+					<box>
+						<pen lineWidth="0.25" lineStyle="Dashed"/>
+						<topPen lineWidth="0.0" lineStyle="Dashed"/>
+						<leftPen lineWidth="0.0" lineStyle="Dashed"/>
+						<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+						<rightPen lineWidth="0.0" lineStyle="Dashed"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+						<font fontName="Arial"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{resumoCotas.ausentesRecolhimentoEncalhe}.size()]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="525" y="43" width="129" height="15"/>
+					<box>
+						<pen lineWidth="0.25" lineStyle="Dashed"/>
+						<topPen lineWidth="0.0" lineStyle="Dashed"/>
+						<leftPen lineWidth="0.0" lineStyle="Dashed"/>
+						<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+						<rightPen lineWidth="0.0" lineStyle="Dashed"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+						<font fontName="Arial"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{resumoCotas.novas}.size()]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="655" y="43" width="129" height="15"/>
+					<box>
+						<pen lineWidth="0.25" lineStyle="Dashed"/>
+						<topPen lineWidth="0.0" lineStyle="Dashed"/>
+						<leftPen lineWidth="0.0" lineStyle="Dashed"/>
+						<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+						<rightPen lineWidth="0.0" lineStyle="Dashed"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+						<font fontName="Arial"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{resumoCotas.inativas}.size()]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement positionType="Float" x="3" y="315" width="790" height="95" isRemoveLineWhenBlank="true"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<frame>
+					<reportElement mode="Opaque" x="0" y="0" width="790" height="20" forecolor="#000000" backcolor="#E3E3E3"/>
+					<box>
+						<pen lineColor="#999999"/>
+						<topPen lineColor="#999999"/>
+						<leftPen lineColor="#999999"/>
+						<bottomPen lineColor="#999999"/>
+						<rightPen lineWidth="0.25" lineColor="#999999"/>
+					</box>
+				</frame>
+				<staticText>
+					<reportElement mode="Transparent" x="0" y="0" width="790" height="20" backcolor="#FFFFFF"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" isBold="true" isUnderline="false"/>
+					</textElement>
+					<text><![CDATA[ESTOQUE]]></text>
+				</staticText>
+				<frame>
+					<reportElement mode="Opaque" x="4" y="29" width="129" height="15" backcolor="#E3E3E3"/>
+					<staticText>
+						<reportElement x="0" y="0" width="129" height="15"/>
+						<textElement textAlignment="Center" verticalAlignment="Middle">
+							<font fontName="Arial"/>
+						</textElement>
+						<text><![CDATA[]]></text>
+					</staticText>
+				</frame>
+				<frame>
+					<reportElement mode="Opaque" x="134" y="29" width="129" height="15" backcolor="#E3E3E3"/>
+				</frame>
+				<frame>
+					<reportElement mode="Opaque" x="264" y="29" width="129" height="15" backcolor="#E3E3E3"/>
+					<staticText>
+						<reportElement x="0" y="0" width="129" height="15"/>
+						<textElement textAlignment="Center" verticalAlignment="Middle">
+							<font fontName="Arial"/>
+						</textElement>
+						<text><![CDATA[Juramentada]]></text>
+					</staticText>
+				</frame>
+				<frame>
+					<reportElement mode="Opaque" x="394" y="29" width="130" height="15" backcolor="#E3E3E3"/>
+					<staticText>
+						<reportElement x="0" y="0" width="129" height="15"/>
+						<textElement textAlignment="Center" verticalAlignment="Middle">
+							<font fontName="Arial"/>
+						</textElement>
+						<text><![CDATA[Suplementar]]></text>
+					</staticText>
+				</frame>
+				<frame>
+					<reportElement mode="Opaque" x="525" y="29" width="129" height="15" backcolor="#E3E3E3"/>
+					<staticText>
+						<reportElement x="0" y="0" width="129" height="15"/>
+						<textElement textAlignment="Center" verticalAlignment="Middle">
+							<font fontName="Arial"/>
+						</textElement>
+						<text><![CDATA[Recolhimento]]></text>
+					</staticText>
+				</frame>
+				<frame>
+					<reportElement mode="Opaque" x="655" y="29" width="129" height="15" backcolor="#E3E3E3"/>
+					<staticText>
+						<reportElement x="0" y="0" width="129" height="15"/>
+						<textElement textAlignment="Center" verticalAlignment="Middle">
+							<font fontName="Arial"/>
+						</textElement>
+						<text><![CDATA[Danificados]]></text>
+					</staticText>
+				</frame>
+				<staticText>
+					<reportElement x="4" y="45" width="129" height="15"/>
+					<box>
+						<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+					</box>
+					<textElement verticalAlignment="Middle" markup="none">
+						<font fontName="Arial"/>
+					</textElement>
+					<text><![CDATA[Produto]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="134" y="45" width="129" height="15"/>
+					<box>
+						<pen lineStyle="Dashed"/>
+						<topPen lineStyle="Dashed"/>
+						<leftPen lineStyle="Dashed"/>
+						<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+						<rightPen lineStyle="Dashed"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+						<font fontName="Arial"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{resumoEstoque.resumoEstoqueProduto.quantidadeLancamento}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="264" y="45" width="129" height="15"/>
+					<box>
+						<pen lineStyle="Dashed"/>
+						<topPen lineStyle="Dashed"/>
+						<leftPen lineStyle="Dashed"/>
+						<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+						<rightPen lineStyle="Dashed"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+						<font fontName="Arial"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{resumoEstoque.resumoEstoqueProduto.quantidadeJuramentado}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="394" y="45" width="129" height="15"/>
+					<box>
+						<pen lineStyle="Dashed"/>
+						<topPen lineStyle="Dashed"/>
+						<leftPen lineStyle="Dashed"/>
+						<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+						<rightPen lineStyle="Dashed"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+						<font fontName="Arial"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{resumoEstoque.resumoEstoqueProduto.quantidadeSuplementar}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="525" y="45" width="129" height="15"/>
+					<box>
+						<pen lineStyle="Dashed"/>
+						<topPen lineStyle="Dashed"/>
+						<leftPen lineStyle="Dashed"/>
+						<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+						<rightPen lineStyle="Dashed"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+						<font fontName="Arial"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{resumoEstoque.resumoEstoqueProduto.quantidadeRecolhimento}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="655" y="45" width="129" height="15"/>
+					<box>
+						<pen lineStyle="Dashed"/>
+						<topPen lineStyle="Dashed"/>
+						<leftPen lineStyle="Dashed"/>
+						<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+						<rightPen lineStyle="Dashed"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+						<font fontName="Arial"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{resumoEstoque.resumoEstoqueProduto.quantidadeDanificados}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="4" y="59" width="129" height="15"/>
+					<box>
+						<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+					</box>
+					<textElement verticalAlignment="Middle" markup="none">
+						<font fontName="Arial"/>
+					</textElement>
+					<text><![CDATA[Exemplar]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="4" y="73" width="129" height="15"/>
+					<box>
+						<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+					</box>
+					<textElement verticalAlignment="Middle" markup="none">
+						<font fontName="Arial"/>
+					</textElement>
+					<text><![CDATA[Valor R$]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="134" y="59" width="129" height="15"/>
+					<box>
+						<pen lineStyle="Dashed"/>
+						<topPen lineStyle="Dashed"/>
+						<leftPen lineStyle="Dashed"/>
+						<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+						<rightPen lineStyle="Dashed"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+						<font fontName="Arial"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{resumoEstoque.resumoEstoqueExemplar.quantidadeLancamento}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="394" y="59" width="129" height="15"/>
+					<box>
+						<pen lineStyle="Dashed"/>
+						<topPen lineStyle="Dashed"/>
+						<leftPen lineStyle="Dashed"/>
+						<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+						<rightPen lineStyle="Dashed"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+						<font fontName="Arial"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{resumoEstoque.resumoEstoqueExemplar.quantidadeSuplementar}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="264" y="59" width="129" height="15"/>
+					<box>
+						<pen lineStyle="Dashed"/>
+						<topPen lineStyle="Dashed"/>
+						<leftPen lineStyle="Dashed"/>
+						<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+						<rightPen lineStyle="Dashed"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+						<font fontName="Arial"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{resumoEstoque.resumoEstoqueExemplar.quantidadeJuramentado}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="525" y="59" width="129" height="15"/>
+					<box>
+						<pen lineStyle="Dashed"/>
+						<topPen lineStyle="Dashed"/>
+						<leftPen lineStyle="Dashed"/>
+						<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+						<rightPen lineStyle="Dashed"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+						<font fontName="Arial"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{resumoEstoque.resumoEstoqueExemplar.quantidadeRecolhimento}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="655" y="59" width="129" height="15"/>
+					<box>
+						<pen lineStyle="Dashed"/>
+						<topPen lineStyle="Dashed"/>
+						<leftPen lineStyle="Dashed"/>
+						<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+						<rightPen lineStyle="Dashed"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+						<font fontName="Arial"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{resumoEstoque.resumoEstoqueExemplar.quantidadeDanificados}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00" isBlankWhenNull="true">
+					<reportElement x="394" y="73" width="129" height="15"/>
+					<box>
+						<pen lineStyle="Dashed"/>
+						<topPen lineStyle="Dashed"/>
+						<leftPen lineStyle="Dashed"/>
+						<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+						<rightPen lineStyle="Dashed"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+						<font fontName="Arial"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{resumoEstoque.valorResumoEstoque.valorSuplementar}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00" isBlankWhenNull="true">
+					<reportElement x="525" y="73" width="129" height="15"/>
+					<box>
+						<pen lineStyle="Dashed"/>
+						<topPen lineStyle="Dashed"/>
+						<leftPen lineStyle="Dashed"/>
+						<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+						<rightPen lineStyle="Dashed"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+						<font fontName="Arial"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{resumoEstoque.valorResumoEstoque.valorRecolhimento}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00" isBlankWhenNull="true">
+					<reportElement x="264" y="73" width="129" height="15"/>
+					<box>
+						<pen lineStyle="Dashed"/>
+						<topPen lineStyle="Dashed"/>
+						<leftPen lineStyle="Dashed"/>
+						<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+						<rightPen lineStyle="Dashed"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+						<font fontName="Arial"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{resumoEstoque.valorResumoEstoque.valorJuramentado}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00" isBlankWhenNull="true">
+					<reportElement x="134" y="73" width="129" height="15"/>
+					<box>
+						<pen lineStyle="Dashed"/>
+						<topPen lineStyle="Dashed"/>
+						<leftPen lineStyle="Dashed"/>
+						<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+						<rightPen lineStyle="Dashed"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+						<font fontName="Arial"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{resumoEstoque.valorResumoEstoque.valorLancamento}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00" isBlankWhenNull="true">
+					<reportElement x="655" y="73" width="129" height="15"/>
+					<box>
+						<pen lineStyle="Dashed"/>
+						<topPen lineStyle="Dashed"/>
+						<leftPen lineStyle="Dashed"/>
+						<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+						<rightPen lineStyle="Dashed"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+						<font fontName="Arial"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{resumoEstoque.valorResumoEstoque.valorDanificados}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="134" y="29" width="129" height="15"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial"/>
+					</textElement>
+					<text><![CDATA[Lançamento]]></text>
+				</staticText>
+			</frame>
+			<frame>
+				<reportElement positionType="Float" x="3" y="419" width="790" height="85" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<elementGroup>
+					<frame>
+						<reportElement positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="0" y="0" width="790" height="20" forecolor="#000000" backcolor="#E3E3E3"/>
+						<box>
+							<pen lineColor="#999999"/>
+							<topPen lineColor="#999999"/>
+							<leftPen lineColor="#999999"/>
+							<bottomPen lineColor="#999999"/>
+							<rightPen lineWidth="0.25" lineColor="#999999"/>
+						</box>
+					</frame>
+					<staticText>
+						<reportElement positionType="Float" stretchType="RelativeToTallestObject" mode="Transparent" x="0" y="0" width="790" height="20" backcolor="#FFFFFF"/>
+						<textElement textAlignment="Center" verticalAlignment="Middle">
+							<font fontName="Arial" isBold="true" isUnderline="false"/>
+						</textElement>
+						<text><![CDATA[CONSIGNADO]]></text>
+					</staticText>
+					<frame>
+						<reportElement positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="9" y="30" width="154" height="15" backcolor="#E3E3E3"/>
+					</frame>
+					<frame>
+						<reportElement positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="164" y="30" width="154" height="15" backcolor="#E3E3E3"/>
+						<staticText>
+							<reportElement x="0" y="0" width="154" height="15"/>
+							<box rightPadding="5"/>
+							<textElement textAlignment="Right" verticalAlignment="Middle">
+								<font fontName="Arial"/>
+							</textElement>
+							<text><![CDATA[Saldo Anterior R$]]></text>
+						</staticText>
+					</frame>
+					<frame>
+						<reportElement positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="319" y="30" width="154" height="15" backcolor="#E3E3E3"/>
+						<staticText>
+							<reportElement x="0" y="0" width="154" height="15"/>
+							<box rightPadding="5"/>
+							<textElement textAlignment="Right" verticalAlignment="Middle">
+								<font fontName="Arial"/>
+							</textElement>
+							<text><![CDATA[Entrada R$]]></text>
+						</staticText>
+					</frame>
+					<frame>
+						<reportElement positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="474" y="30" width="154" height="15" backcolor="#E3E3E3"/>
+						<staticText>
+							<reportElement x="0" y="0" width="154" height="15"/>
+							<box rightPadding="5"/>
+							<textElement textAlignment="Right" verticalAlignment="Middle">
+								<font fontName="Arial"/>
+							</textElement>
+							<text><![CDATA[Saídas R$]]></text>
+						</staticText>
+					</frame>
+					<frame>
+						<reportElement positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="629" y="30" width="154" height="15" backcolor="#E3E3E3"/>
+					</frame>
+					<staticText>
+						<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="9" y="46" width="155" height="15"/>
+						<box>
+							<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+						</box>
+						<textElement verticalAlignment="Middle" markup="none">
+							<font fontName="Arial"/>
+						</textElement>
+						<text><![CDATA[Consignado]]></text>
+					</staticText>
+					<textField pattern="#,##0.00" isBlankWhenNull="true">
+						<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="164" y="46" width="155" height="15"/>
+						<box rightPadding="5">
+							<pen lineStyle="Dashed"/>
+							<topPen lineStyle="Dashed"/>
+							<leftPen lineStyle="Dashed"/>
+							<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+							<rightPen lineStyle="Dashed"/>
+						</box>
+						<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+							<font fontName="Arial"/>
+						</textElement>
+						<textFieldExpression class="java.lang.String"><![CDATA[$F{resumoConsignado.resumoConsignado.saldoAnterior}]]></textFieldExpression>
+					</textField>
+					<textField pattern="#,##0.00" isBlankWhenNull="true">
+						<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="319" y="46" width="155" height="15"/>
+						<box rightPadding="5">
+							<pen lineStyle="Dashed"/>
+							<topPen lineStyle="Dashed"/>
+							<leftPen lineStyle="Dashed"/>
+							<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+							<rightPen lineStyle="Dashed"/>
+						</box>
+						<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+							<font fontName="Arial"/>
+						</textElement>
+						<textFieldExpression class="java.lang.String"><![CDATA[$F{resumoConsignado.resumoConsignado.valorEntradas}]]></textFieldExpression>
+					</textField>
+					<textField pattern="#,##0.00" isBlankWhenNull="true">
+						<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="474" y="46" width="155" height="15"/>
+						<box rightPadding="5">
+							<pen lineStyle="Dashed"/>
+							<topPen lineStyle="Dashed"/>
+							<leftPen lineStyle="Dashed"/>
+							<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+							<rightPen lineStyle="Dashed"/>
+						</box>
+						<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+							<font fontName="Arial"/>
+						</textElement>
+						<textFieldExpression class="java.lang.String"><![CDATA[$F{resumoConsignado.resumoConsignado.valorSaidas}]]></textFieldExpression>
+					</textField>
+					<textField pattern="#,##0.00" isBlankWhenNull="true">
+						<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="629" y="46" width="155" height="15"/>
+						<box rightPadding="5">
+							<pen lineStyle="Dashed"/>
+							<topPen lineStyle="Dashed"/>
+							<leftPen lineStyle="Dashed"/>
+							<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+							<rightPen lineStyle="Dashed"/>
+						</box>
+						<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+							<font fontName="Arial"/>
+						</textElement>
+						<textFieldExpression class="java.lang.String"><![CDATA[$F{resumoConsignado.resumoConsignado.saldoAtual}]]></textFieldExpression>
+					</textField>
+					<staticText>
+						<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="9" y="60" width="155" height="15"/>
+						<box>
+							<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+						</box>
+						<textElement verticalAlignment="Middle" markup="none">
+							<font fontName="Arial"/>
+						</textElement>
+						<text><![CDATA[A Vista]]></text>
+					</staticText>
+					<textField pattern="#,##0.00" isBlankWhenNull="true">
+						<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="164" y="60" width="155" height="15"/>
+						<box rightPadding="5">
+							<pen lineStyle="Dashed"/>
+							<topPen lineStyle="Dashed"/>
+							<leftPen lineStyle="Dashed"/>
+							<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+							<rightPen lineStyle="Dashed"/>
+						</box>
+						<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+							<font fontName="Arial"/>
+						</textElement>
+						<textFieldExpression class="java.lang.String"><![CDATA[$F{resumoConsignado.resumoAVista.saldoAnterior}]]></textFieldExpression>
+					</textField>
+					<textField pattern="#,##0.00" isBlankWhenNull="true">
+						<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="474" y="60" width="155" height="15"/>
+						<box rightPadding="5">
+							<pen lineStyle="Dashed"/>
+							<topPen lineStyle="Dashed"/>
+							<leftPen lineStyle="Dashed"/>
+							<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+							<rightPen lineStyle="Dashed"/>
+						</box>
+						<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+							<font fontName="Arial"/>
+						</textElement>
+						<textFieldExpression class="java.lang.String"><![CDATA[$F{resumoConsignado.resumoAVista.valorSaidas}]]></textFieldExpression>
+					</textField>
+					<textField pattern="#,##0.00" isBlankWhenNull="true">
+						<reportElement positionType="Float" x="319" y="60" width="155" height="15"/>
+						<box rightPadding="5">
+							<pen lineStyle="Dashed"/>
+							<topPen lineStyle="Dashed"/>
+							<leftPen lineStyle="Dashed"/>
+							<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+							<rightPen lineStyle="Dashed"/>
+						</box>
+						<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+							<font fontName="Arial"/>
+						</textElement>
+						<textFieldExpression class="java.lang.String"><![CDATA[$F{resumoConsignado.resumoAVista.valorEntradas}]]></textFieldExpression>
+					</textField>
+					<textField pattern="#,##0.00" isBlankWhenNull="true">
+						<reportElement positionType="Float" x="629" y="60" width="155" height="15"/>
+						<box rightPadding="5">
+							<pen lineStyle="Dashed"/>
+							<topPen lineStyle="Dashed"/>
+							<leftPen lineStyle="Dashed"/>
+							<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+							<rightPen lineStyle="Dashed"/>
+						</box>
+						<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+							<font fontName="Arial"/>
+						</textElement>
+						<textFieldExpression class="java.lang.String"><![CDATA[$F{resumoConsignado.resumoAVista.saldoAtual}]]></textFieldExpression>
+					</textField>
+				</elementGroup>
+				<staticText>
+					<reportElement x="629" y="30" width="154" height="15"/>
+					<box rightPadding="5"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial"/>
+					</textElement>
+					<text><![CDATA[Saldo Atual R$]]></text>
+				</staticText>
+			</frame>
+		</band>
+	</detail>
+</jasperReport>
