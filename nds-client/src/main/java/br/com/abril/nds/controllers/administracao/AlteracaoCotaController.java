@@ -131,22 +131,21 @@ public class AlteracaoCotaController {
 	@Path("/pesquisarAlteracaoCota.json")
 	public void pesquisarAlteracaoCota(FiltroAlteracaoCotaDTO filtroAlteracaoCotaDTO, String sortname, String sortorder, int page, int rp) {
 		
-		int startSearch = page * rp - rp;
-
 		PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortname);
 		if ("DESC".equalsIgnoreCase(sortorder)) {
-			paginacao.setOrdenacao(paginacao.getOrdenacao().ASC);
+			paginacao.setOrdenacao(PaginacaoVO.Ordenacao.ASC);
 		} else {
-			paginacao.setOrdenacao(paginacao.getOrdenacao().DESC);
+			paginacao.setOrdenacao(PaginacaoVO.Ordenacao.DESC);
 		}
 		filtroAlteracaoCotaDTO.setPaginacao(paginacao);
 		
 		filtroAlteracaoCotaDTO.setNomeCota(PessoaUtil.removerSufixoDeTipo(filtroAlteracaoCotaDTO.getNomeCota()));
 		
 		List<ConsultaAlteracaoCotaDTO> listaCotas = this.alteracaoCotaService.pesquisarAlteracaoCota(filtroAlteracaoCotaDTO);
+		final int qtdCotas = this.alteracaoCotaService.contarAlteracaoCota(
+				filtroAlteracaoCotaDTO);
+		
 		List<ConsultaAlteracaoCotaDTO> listaFornecedores = this.alteracaoCotaService.pesquisarAlteracaoCotaFornecedor(filtroAlteracaoCotaDTO);
-		
-		
 		
 		for (ConsultaAlteracaoCotaDTO consultaAlteracaoCotaDTO : listaFornecedores) {	
 			if(listaCotas.contains(consultaAlteracaoCotaDTO)){ 
@@ -201,7 +200,7 @@ public class AlteracaoCotaController {
 		
 		
 		
-		this.result.use(FlexiGridJson.class).from(lista).total(lista.size()).page(page).serialize();
+		this.result.use(FlexiGridJson.class).from(lista).total(Integer.valueOf(qtdCotas)).page(page).serialize();
 		
 	}
 	

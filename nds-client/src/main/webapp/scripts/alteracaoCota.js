@@ -163,7 +163,7 @@ var alteracaoCotaController = $.extend(true, {
 				sortable : true,
 				align : 'right'
 			}, {
-				display : 'Ação',
+				display : 'A&ccedil;&atilde;o',
 				name : 'acao',
 				width : 60,
 				sortable : false,
@@ -176,7 +176,6 @@ var alteracaoCotaController = $.extend(true, {
 			rp : 15,
 			showTableToggleBtn : true,
 			width : 960,
-			height : 'auto',
 			singleSelect : true
 		});
 	},
