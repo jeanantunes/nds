@@ -11,6 +11,7 @@ import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaFornecedorDTO;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoFornecedor;
+import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 
 public interface FornecedorService {
@@ -170,6 +171,10 @@ public interface FornecedorService {
 	public Integer obterMinCodigoInterfaceDisponivel();
 	
 	public Fornecedor obterFornecedorPorCodigoInterface(Integer codigoInterface);
+
+	List<Pessoa> obterFornecedorPorNome(String nomeFornecedor);
+
+	List<Pessoa> obterFornecedorPorNomeFantasia(String nomeFantasia);
 
 
 }

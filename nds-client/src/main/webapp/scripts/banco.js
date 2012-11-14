@@ -96,6 +96,8 @@ var bancoController = $.extend(true, {
 			$("#alterJuros", this.workspace).numeric();	
 			$("#alterMulta", this.workspace).numeric();
 			$("#alterVrMulta", this.workspace).numeric();
+			
+			$("#nome", this.workspace).autocomplete({source: ""});
 
 		},
 		
@@ -380,7 +382,36 @@ var bancoController = $.extend(true, {
 	    limparVrMulta : function(){
 	    	$("#newVrMulta", this.workspace).val("");
 	    	$("#alterVrMulta", this.workspace).val("");
-	    }
+	    },
+	    
+		exibirAutoComplete : function(result, idCampoNome) {
+			
+			$(idCampoNome,this.workspace).autocomplete({
+				source: result,
+				minLength: 4,
+				delay : 0,
+			});
+		},
+		
+		autoCompletarPorNomeBanco : function(idCampoNome) {
+			
+			var nomeBanco = $(idCampoNome,this.workspace).val();
+			
+			nomeBanco = $.trim(nomeBanco);
+			
+			$(idCampoNome,this.workspace).autocomplete({source: ""});
+			
+			if (nomeBanco && nomeBanco.length > 2) {
+				
+				$.postJSON(
+					contextPath + "/banco/autoCompletarPorNomeBanco", {nomeBanco:nomeBanco},
+					function(result) { 
+						bancoController.exibirAutoComplete(result, idCampoNome); 
+					},
+					null
+				);
+			}
+		}
 	    
 }, BaseController);
 

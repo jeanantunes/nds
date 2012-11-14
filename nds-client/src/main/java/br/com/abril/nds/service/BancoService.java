@@ -41,4 +41,6 @@ public interface BancoService {
 	List<ItemDTO<Moeda, String>> getComboMoedas();
 		
 	List<ItemDTO<Integer, String>> getComboBancos();
+
+	List<Banco> obterBancosPorNome(String nomeBanco);
 }

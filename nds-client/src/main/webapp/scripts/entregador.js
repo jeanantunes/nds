@@ -800,7 +800,11 @@ var entregadorController = $.extend(true, {
 			 thousands:'.', 
 			 decimal:',', 
 			 precision:2
-		});*/ 
+		});*/
+		
+		$("#filtroEntregador.nomeRazaoSocial",this.workspace).autocomplete({source: ""});
+		
+		$("#filtroEntregador.apelidoNomeFantasia",this.workspace).autocomplete({source: ""});
 	},
 	
 	showComissaoPJ: function(show) {
