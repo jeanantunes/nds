@@ -428,6 +428,9 @@ var transportadorController = $.extend(true, {
 			
 			$("#inscEstadual", transportadorController.workspace).mask("?##################",{placeholder:" "});
 			
+			$("#razaoSocialPesquisa", transportadorController.workspace).autocomplete({source: ""});
+			$("#nomeFantasiaPesquisa", transportadorController.workspace).autocomplete({source: ""});
+			
 	},
 	
 	popup_novo_transportador : function() {

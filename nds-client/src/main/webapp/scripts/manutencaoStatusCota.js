@@ -296,7 +296,7 @@ obterColunasGridPesquisaSemCota:function(){
 	
 	callBackSuccess:function () {
 		
-		pesquisaCotaManutencaoStatusCota.obterPorNumeroCota($("#numeroCota",manutencaoStatusCotaController.workspace).val(), false, function(result) {
+		pesquisaCotaManutencaoStatusCota.obterPorNumeroCota($("#numeroCotaManutencaoStatusCota",manutencaoStatusCotaController.workspace).val(), false, function(result) {
 
 			if (!result) {
 
@@ -353,7 +353,7 @@ obterColunasGridPesquisaSemCota:function(){
 
 	obterDadosFiltro : function(numeroCota) {
 		
-		var numCota = $("#numeroCota",manutencaoStatusCotaController.workspace).val();
+		var numCota = $("#numeroCotaManutencaoStatusCota",manutencaoStatusCotaController.workspace).val();
 		
 		if(numeroCota){
 			
@@ -387,7 +387,7 @@ obterColunasGridPesquisaSemCota:function(){
 				{
 					name: 'novoHistoricoSituacaoCota.cota.numeroCota', value: $("#numeroCotaNovo", manutencaoStatusCotaController.workspace).html()
 					// Comentado pq este número da cota é da pesquisa!
-					//name: 'novoHistoricoSituacaoCota.cota.numeroCota', value: $("#numeroCota", manutencaoStatusCotaController.workspace).val()
+					//name: 'novoHistoricoSituacaoCota.cota.numeroCota', value: $("#numeroCotaManutencaoStatusCota", manutencaoStatusCotaController.workspace).val()
 				},
 				{
 					name: 'novoHistoricoSituacaoCota.novaSituacao', value: $("#novoStatusCota", manutencaoStatusCotaController.workspace).val()
@@ -458,7 +458,7 @@ obterColunasGridPesquisaSemCota:function(){
 	},
 	
 	isCotainformadaParaPesquisa:function(){
-		return ($("#numeroCota",manutencaoStatusCotaController.workspace).val().trim().length > 0);
+		return ($("#numeroCotaManutencaoStatusCota",manutencaoStatusCotaController.workspace).val().trim().length > 0);
 	}
 
 }, BaseController);
