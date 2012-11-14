@@ -324,7 +324,7 @@ var fiadorController = $.extend(true, {
 			
 			$("#numeroCota", fiadorController.workspace).numeric();
 		
-			
+			$("#fiadorController-nomeFiadorPesquisa", fiadorController.workspace).autocomplete({source: ""});
 			
 		},
 		
@@ -1172,8 +1172,6 @@ var fiadorController = $.extend(true, {
 			$("#fiadorController-cotasAssociadas-numeroCota", fiadorController.workspace).val("");
 			$("#fiadorController-cotasAssociadas-nomeCota", fiadorController.workspace).val("");
 		}
-		
-		
-		
+	
 }, BaseController);
 //@ sourceURL=fiador.js

@@ -29,6 +29,7 @@ import br.com.abril.nds.model.cadastro.AssociacaoVeiculoMotoristaRota;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoTransportador;
 import br.com.abril.nds.model.cadastro.Motorista;
+import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.TelefoneTransportador;
@@ -1011,5 +1012,19 @@ public class TransportadorServiceImpl implements TransportadorService {
 	@Transactional
 	public List<MovimentoFinanceiroDTO> obterDetalhesTrasportadorPorCota(FiltroRelatorioServicosEntregaDTO filtro) {
 		return movimentoFinanceiroCotaRepository.obterDetalhesTrasportadorPorCota(filtro);
+	}
+	
+	@Override
+	@Transactional(readOnly=true)
+	public List<Pessoa> obterTransportadorPorNome(String nomeTransportador) {
+		
+		return transportadorRepository.obterTransportadorPorNome(nomeTransportador);
+	}
+	
+	@Override
+	@Transactional(readOnly=true)
+	public List<Pessoa> obterTransportadorPorNomeFantasia(String nomeFantasia) {
+		
+		return transportadorRepository.obterTransportadorPorNomeFantasia(nomeFantasia);
 	}
 }

@@ -9,6 +9,7 @@ import br.com.abril.nds.dto.ProcuracaoImpressaoWrapper;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroEntregadorDTO;
 import br.com.abril.nds.model.cadastro.Entregador;
+import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.ProcuracaoEntregador;
 import br.com.abril.nds.model.cadastro.TelefoneEntregador;
 
@@ -172,4 +173,8 @@ public interface EntregadorService {
 	 * @return Entregador
 	 */
 	public Entregador obterEntregadorPorCodigo(Long codigo);
+
+	List<Pessoa> obterEntregadorPorApelido(String apelidoEntregador);
+
+	List<Pessoa> obterEntregadorPorNome(String nomeEntregador);
 }
