@@ -146,7 +146,7 @@ var alteracaoCotaController = $.extend(true, {
 				sortable : true,
 				align : 'right'
 			}, {
-				display : 'Ação',
+				display : 'A&ccedil;&atilde;o',
 				name : 'acao',
 				width : 60,
 				sortable : false,

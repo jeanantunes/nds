@@ -8,10 +8,10 @@ import org.hibernate.type.StandardBasicTypes;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.ConsultaAlteracaoCotaDTO;
-import br.com.abril.nds.dto.ResumoConsignadoCotaChamadaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroAlteracaoCotaDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.repository.AlteracaoCotaRepository;
+import br.com.abril.nds.vo.PaginacaoVO;
 
 /**
  * Classe de implementação referente ao acesso a dados da entidade 
@@ -39,6 +39,26 @@ public class AlteracaoCotaRepositoryImpl extends AbstractRepositoryModel<Cota, L
 		
 		hql.append(" select new ").append(ConsultaAlteracaoCotaDTO.class.getCanonicalName());
 		hql.append(" (cota.id, cota.numeroCota, pessoa.nome,  parametroCobranca.fatorVencimento, parametroCobranca.valorMininoCobranca, parametroDistribuicao.descricaoTipoEntrega, box.nome) ");
+		Query query = templateAlteracaoCota(filtroAlteracaoCotaDTO, hql);
+		
+		PaginacaoVO vo = filtroAlteracaoCotaDTO.getPaginacao();
+		query.setMaxResults(vo.getQtdResultadosPorPagina());
+		query.setFirstResult(vo.getPosicaoInicial());
+		
+		return query.list();
+	}
+
+	/**
+	 * Contém a consulta HQL para pesquisar as Alterações Cotas.<br>
+	 * 
+	 * @param filtroAlteracaoCotaDTO
+	 * @param hql
+	 * 
+	 * @return
+	 */
+	private Query templateAlteracaoCota(
+			FiltroAlteracaoCotaDTO filtroAlteracaoCotaDTO, StringBuilder hql) {
+		
 		hql.append(" from Cota cota ");
 		hql.append(" LEFT JOIN cota.parametroDistribuicao parametroDistribuicao ");
 		hql.append(" LEFT JOIN cota.pessoa pessoa ");
@@ -49,7 +69,8 @@ public class AlteracaoCotaRepositoryImpl extends AbstractRepositoryModel<Cota, L
 
         hql.append(" WHERE  enderecoCota.principal = :enderecoPrincipal ");
         
-		if (filtroAlteracaoCotaDTO.getNumeroCota() != null && filtroAlteracaoCotaDTO.getNumeroCota()>0) {
+		if (filtroAlteracaoCotaDTO.getNumeroCota() != null 
+				&& filtroAlteracaoCotaDTO.getNumeroCota()>0) {
 			//if(addedAnd)
 				hql.append(" and ");
 			/*else
@@ -61,7 +82,9 @@ public class AlteracaoCotaRepositoryImpl extends AbstractRepositoryModel<Cota, L
 
 		}
 		
-		if (filtroAlteracaoCotaDTO.getNomeCota() != null && !filtroAlteracaoCotaDTO.getNomeCota().isEmpty()&& !"-1".equals(filtroAlteracaoCotaDTO.getNomeCota())) {
+		if (filtroAlteracaoCotaDTO.getNomeCota() != null 
+				&& !filtroAlteracaoCotaDTO.getNomeCota().isEmpty()
+				&& !"-1".equals(filtroAlteracaoCotaDTO.getNomeCota())) {
 			/*if(addedAnd)*/
 				hql.append(" and ");
 			/*else
@@ -73,7 +96,8 @@ public class AlteracaoCotaRepositoryImpl extends AbstractRepositoryModel<Cota, L
 
 		}
 		
-		if (filtroAlteracaoCotaDTO.getIdBairro() != null && filtroAlteracaoCotaDTO.getIdBairro()>0) {
+		if (filtroAlteracaoCotaDTO.getIdBairro() != null 
+				&& filtroAlteracaoCotaDTO.getIdBairro()>0) {
 			/*if(addedAnd)*/
 				hql.append(" and ");
 			/*else
@@ -85,7 +109,9 @@ public class AlteracaoCotaRepositoryImpl extends AbstractRepositoryModel<Cota, L
 
 		}
 		
-		if (filtroAlteracaoCotaDTO.getIdMunicipio() != null && !filtroAlteracaoCotaDTO.getIdMunicipio().isEmpty()&& !"-1".equals(filtroAlteracaoCotaDTO.getIdMunicipio())) {
+		if (filtroAlteracaoCotaDTO.getIdMunicipio() != null 
+				&& !filtroAlteracaoCotaDTO.getIdMunicipio().isEmpty()
+				&& !"-1".equals(filtroAlteracaoCotaDTO.getIdMunicipio())) {
 			/*if(addedAnd)*/
 				hql.append(" and ");
 			/*else
@@ -98,7 +124,9 @@ public class AlteracaoCotaRepositoryImpl extends AbstractRepositoryModel<Cota, L
 		}
 		
 		
-		if (filtroAlteracaoCotaDTO.getIdVrMinimo() != null && !filtroAlteracaoCotaDTO.getIdVrMinimo().toString().isEmpty() && filtroAlteracaoCotaDTO.getIdVrMinimo().doubleValue() > 0) {
+		if (filtroAlteracaoCotaDTO.getIdVrMinimo() != null 
+				&& !filtroAlteracaoCotaDTO.getIdVrMinimo().toString().isEmpty() 
+				&& filtroAlteracaoCotaDTO.getIdVrMinimo().doubleValue() > 0) {
 			//if(addedAnd)
 				hql.append(" and ");
 			/*else
@@ -121,7 +149,8 @@ public class AlteracaoCotaRepositoryImpl extends AbstractRepositoryModel<Cota, L
 
 		}
 		
-		if (filtroAlteracaoCotaDTO.getIdVencimento() != null && filtroAlteracaoCotaDTO.getIdVencimento()>0) {
+		if (filtroAlteracaoCotaDTO.getIdVencimento() != null 
+				&& filtroAlteracaoCotaDTO.getIdVencimento()>0) {
 			/*if(addedAnd)*/
 				hql.append(" and ");
 			/*else
@@ -179,10 +208,21 @@ public class AlteracaoCotaRepositoryImpl extends AbstractRepositoryModel<Cota, L
 			query.setParameter("fatorVencimento",filtroAlteracaoCotaDTO.getIdVencimento());
 		}
 		
-		
-		
-		return query.list();
+		return query;
 	}
+	
+	@Override
+	public int contarAlteracaoCota(FiltroAlteracaoCotaDTO filtroAlteracaoCotaDTO) {
+		
+		StringBuilder hql = new StringBuilder();
+		//boolean addedAnd = false;
+		
+		hql.append(" select count(cota) ");
+		Query query = templateAlteracaoCota(filtroAlteracaoCotaDTO, hql);
+		
+		return ((Number) query.uniqueResult()).intValue();
+	}
+	
 	
 	@Override
 	@SuppressWarnings("unchecked")
