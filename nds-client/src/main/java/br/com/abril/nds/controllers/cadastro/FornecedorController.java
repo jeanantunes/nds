@@ -51,6 +51,7 @@ import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.util.StringUtils;
 import br.com.caelum.vraptor.view.Results;
 
 /**
@@ -265,7 +266,7 @@ public class FornecedorController {
 		mapa.put("data", DateUtil.formatarDataPTBR(new Date()));
 		
 		if (novoCodigoInterface != null) {
-			mapa.put("nextCodigo", novoCodigoInterface);
+			mapa.put("nextCodigo", String.format("%04d", novoCodigoInterface));
 		}
 		
 		this.result.use(CustomJson.class).from(mapa).serialize();
