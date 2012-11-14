@@ -4,6 +4,7 @@ import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import javax.annotation.PostConstruct;
 
@@ -460,7 +461,7 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		    distribuidor.setPoliticaChamadao(politicaChamadao);
 		}
 		Integer chamadaoDiasSuspensao = parametrosDistribuidor.getChamadaoDiasSuspensao();
-		BigDecimal chamadaoConsignado = CurrencyUtil.converterValor(parametrosDistribuidor.getChamadaoValorConsignado());
+		BigDecimal chamadaoConsignado = CurrencyUtil.getBigDecimal(parametrosDistribuidor.getChamadaoValorConsignado());
 		politicaChamadao.setDiasSuspenso(chamadaoDiasSuspensao);
 		politicaChamadao.setValorConsignado(chamadaoConsignado);
 		
@@ -609,7 +610,7 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		}
 
 		if (parametrosDistribuidor.getSugereSuspensaoQuandoAtingirReais() != null && !parametrosDistribuidor.getSugereSuspensaoQuandoAtingirReais().isEmpty()) {
-			politicaSuspensao.setValor(CurrencyUtil.converterValor(parametrosDistribuidor.getSugereSuspensaoQuandoAtingirReais()));
+			politicaSuspensao.setValor(CurrencyUtil.getBigDecimal(parametrosDistribuidor.getSugereSuspensaoQuandoAtingirReais()));
 		} else {
 			politicaSuspensao.setValor(null);
 		}

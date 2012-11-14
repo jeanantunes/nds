@@ -96,14 +96,18 @@ public class AlteracaoCotaRepositoryImpl extends AbstractRepositoryModel<Cota, L
 
 		}
 		
+<<<<<<< HEAD
 		if (filtroAlteracaoCotaDTO.getIdBairro() != null 
 				&& filtroAlteracaoCotaDTO.getIdBairro()>0) {
+=======
+		if (filtroAlteracaoCotaDTO.getIdBairro() != null && !filtroAlteracaoCotaDTO.getIdBairro().isEmpty() && !"-1".equals(filtroAlteracaoCotaDTO.getIdBairro())) {
+>>>>>>> master
 			/*if(addedAnd)*/
 				hql.append(" and ");
 			/*else
 				hql.append(" where ");*/	
 		
-			hql.append(" endereco.codigoBairro = :idBairro ");
+			hql.append(" endereco.bairro = :idBairro ");
 			
 			/*addedAnd = true;*/
 
@@ -187,10 +191,9 @@ public class AlteracaoCotaRepositoryImpl extends AbstractRepositoryModel<Cota, L
 			query.setParameter("nomeCota", filtroAlteracaoCotaDTO.getNomeCota().toUpperCase() +"%" );
 		}
 		
-		/* o ID do bairro não existirá mais no sistema
-		if (filtroAlteracaoCotaDTO.getIdBairro() != null && filtroAlteracaoCotaDTO.getIdBairro()>0) {
+		if (filtroAlteracaoCotaDTO.getIdBairro() != null && !filtroAlteracaoCotaDTO.getIdBairro().isEmpty() && !"-1".equals(filtroAlteracaoCotaDTO.getIdBairro())) {
 			query.setParameter("idBairro", filtroAlteracaoCotaDTO.getIdBairro());
-		}*/
+		}
 		
 		if (filtroAlteracaoCotaDTO.getIdMunicipio() != null && !filtroAlteracaoCotaDTO.getIdMunicipio().isEmpty() && !"-1".equals(filtroAlteracaoCotaDTO.getIdMunicipio())) {
 			query.setParameter("idMunicipio", filtroAlteracaoCotaDTO.getIdMunicipio().toUpperCase() +"%" );

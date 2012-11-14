@@ -16,6 +16,23 @@ var alteracaoCotaController = $.extend(true, {
 	
 	pesquisaCotaAlteracaoCota : null,
 
+	carregarBairros : function(cidade) {
+		
+		$("#idBairro option", alteracaoCotaController.workspace).remove();
+		
+		$.postJSON(contextPath + '/administracao/alteracaoCota/buscarBairroPorCidade.json', {
+			'cidade' : cidade
+		}, function(data) {
+			$(data).each(function() {
+				$("#idBairro", alteracaoCotaController.workspace).append($("<option/>", {value: "-1", text: ""}));
+				$("#idBairro", alteracaoCotaController.workspace).append($("<option/>", {value: $(this)[0].toString(),
+															 			   text: $(this)[0].toString() 
+															 			  }));
+			});
+		});
+
+	},
+	
 	init : function(pesquisaCota) {
 		this.pesquisaCotaAlteracaoCota = pesquisaCota;
 		
