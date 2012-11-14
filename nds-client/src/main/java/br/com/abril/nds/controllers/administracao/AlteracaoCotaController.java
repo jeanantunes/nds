@@ -33,7 +33,9 @@ import br.com.abril.nds.model.cadastro.ParametroSistema;
 import br.com.abril.nds.model.cadastro.PoliticaSuspensao;
 import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.model.cadastro.desconto.TipoDesconto;
+import br.com.abril.nds.model.dne.Bairro;
 import br.com.abril.nds.model.seguranca.Permissao;
+import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.serialization.custom.PlainJSONSerialization;
 import br.com.abril.nds.service.AlteracaoCotaService;
@@ -117,6 +119,13 @@ public class AlteracaoCotaController {
 		result.include("listBaseCalculo", BaseCalculo.values());
 		result.include("listValoresMinimos", parametroCobrancaCotaService.comboValoresMinimos());
 		
+	}
+	
+	@Post
+	@Path("/buscarBairroPorCidade.json")
+	public void buscarBairroPorCidade(String cidade) {
+		List<Bairro> bairros = enderecoService.obterBairrosPorCidade(cidade); 
+		result.use(CustomJson.class).from(bairros).serialize();
 	}
 	
 	@Path("/pesquisarAlteracaoCota.json")
@@ -287,13 +296,21 @@ public class AlteracaoCotaController {
 			cota.getParametroCobranca().setFatorVencimento(filtroAlteracaoCotaDTO.getFiltroModalFinanceiro().getIdVencimento());
 			try {
 			//Valor Minimo
-			cota.getParametroCobranca().setValorMininoCobranca(new BigDecimal(filtroAlteracaoCotaDTO.getFiltroModalFinanceiro().getVrMinimo()));
+			if (filtroAlteracaoCotaDTO.getFiltroModalFinanceiro().getVrMinimo() == null) {
+				cota.getParametroCobranca().setValorMininoCobranca(new BigDecimal(""));
+			} else {
+				cota.getParametroCobranca().setValorMininoCobranca(new BigDecimal(filtroAlteracaoCotaDTO.getFiltroModalFinanceiro().getVrMinimo()));
+			}
 			
 			//Suspensao = true -> Cria Politica de Suspensao
 			if (cota.isSugereSuspensao()){
 				PoliticaSuspensao politicaSuspensao = new PoliticaSuspensao();
-				politicaSuspensao.setNumeroAcumuloDivida(filtroAlteracaoCotaDTO.getFiltroModalFinanceiro().getQtdDividaEmAberto());	
-				politicaSuspensao.setValor(new BigDecimal(filtroAlteracaoCotaDTO.getFiltroModalFinanceiro().getVrDividaEmAberto()));	
+				if (filtroAlteracaoCotaDTO.getFiltroModalFinanceiro().getQtdDividaEmAberto() != null) {
+					politicaSuspensao.setNumeroAcumuloDivida(filtroAlteracaoCotaDTO.getFiltroModalFinanceiro().getQtdDividaEmAberto());
+				}
+				if (filtroAlteracaoCotaDTO.getFiltroModalFinanceiro().getVrDividaEmAberto() != null) {
+					politicaSuspensao.setValor(new BigDecimal(filtroAlteracaoCotaDTO.getFiltroModalFinanceiro().getVrDividaEmAberto()));
+				}
 				cota.getParametroCobranca().setPoliticaSuspensao(politicaSuspensao);
 			}
 			

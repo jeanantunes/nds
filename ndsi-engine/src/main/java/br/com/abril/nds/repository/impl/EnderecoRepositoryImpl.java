@@ -192,5 +192,22 @@ public class EnderecoRepositoryImpl extends AbstractRepositoryModel<Endereco, Lo
 											  nomeLogradouro, MatchMode.ANYWHERE)));
 
 		return criteria.list();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Bairro> obterBairrosPorCidade(String cidade) {
+		StringBuilder hql = new StringBuilder("select endereco.bairro ");
+		hql.append(" from EnderecoCota enderecoCota ")
+		   .append(" join enderecoCota.endereco endereco ")
+		   .append(" where endereco.cidade = :cidade")
+		   .append(" and endereco.bairro is not null")
+		   .append(" group by endereco.bairro");
+
+		Query query = this.getSession().createQuery(hql.toString());
+
+		query.setParameter("cidade", cidade);
+		
+		return query.list();
 	}	
 }
