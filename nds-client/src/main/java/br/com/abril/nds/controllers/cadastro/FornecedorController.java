@@ -16,6 +16,7 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
+import br.com.abril.nds.client.util.PessoaUtil;
 import br.com.abril.nds.dto.ComboTipoFornecedorDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.FornecedorDTO;
@@ -109,7 +110,8 @@ public class FornecedorController {
 		
 		filtroConsultaFornecedor = prepararFiltroFornecedor(filtroConsultaFornecedor, page, sortname, sortorder, rp);
 		
-		
+		filtroConsultaFornecedor.setNomeFantasia(PessoaUtil.removerSufixoDeTipo(filtroConsultaFornecedor.getNomeFantasia()));
+		filtroConsultaFornecedor.setRazaoSocial(PessoaUtil.removerSufixoDeTipo(filtroConsultaFornecedor.getRazaoSocial()));
 		
 		Long quantidadeRegistros =
 				this.fornecedorService.obterContagemFornecedoresPorFiltro(filtroConsultaFornecedor);		

@@ -37,6 +37,7 @@ import br.com.abril.nds.service.PessoaService;
 import br.com.abril.nds.service.TelefoneService;
 import br.com.abril.nds.util.CellModel;
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.ItemAutoComplete;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
@@ -148,6 +149,8 @@ public class FiadorController {
 		if (filtro.getCpfCnpj() != null){
 			filtro.setCpfCnpj(filtro.getCpfCnpj().replace(".", "").replace("-", "").replace("/", ""));
 		}
+		
+		filtro.setNome(PessoaUtil.removerSufixoDeTipo(filtro.getNome()));
 		
 		ConsultaFiadorDTO consultaFiadorDTO = this.fiadorService.obterFiadores(filtro);
 		

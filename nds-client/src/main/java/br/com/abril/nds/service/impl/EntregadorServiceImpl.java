@@ -425,5 +425,17 @@ public class EntregadorServiceImpl implements EntregadorService {
 		return entregadorRepository.obterPorNome(nome);
 	}
 	
+	@Override
+	@Transactional(readOnly=true)
+	public List<Pessoa> obterEntregadorPorApelido(String apelidoEntregador) {
+		
+		return entregadorRepository.obterEntregadorPorApelido(apelidoEntregador);
+	}
 	
+	@Override
+	@Transactional(readOnly=true)
+	public List<Pessoa> obterEntregadorPorNome(String nomeEntregador) {
+		
+		return entregadorRepository.obterEntregadorPorNome(nomeEntregador);
+	}
 }

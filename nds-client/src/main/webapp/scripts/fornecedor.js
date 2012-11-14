@@ -86,6 +86,8 @@ var fornecedorController = $.extend(true,{
 			   $("#fornecedorController-inscricaoEstadual", fornecedorController.workspace).mask("?##################",{placeholder:" "});
 			});
 			
+			$("#fornecedorController-filtroConsultaFornecedorRazaoSocial", fornecedorController.workspace).autocomplete({source: ""});
+			$("#fornecedorController-filtroConsultaFornecedorNomeFantasia", fornecedorController.workspace).autocomplete({source: ""});
 			
 		},
 		

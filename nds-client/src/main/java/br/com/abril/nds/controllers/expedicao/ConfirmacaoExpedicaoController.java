@@ -373,7 +373,7 @@ public class ConfirmacaoExpedicaoController {
 						expedicao.setSelecionado(true);
 					}
 					
-					listaCelula.add(new CellModelKeyValue<LancamentoNaoExpedidoDTO>(expedicao.getCodigo().intValue(),expedicao));			
+					listaCelula.add(new CellModelKeyValue<LancamentoNaoExpedidoDTO>(Integer.valueOf(expedicao.getCodigo()),expedicao));			
 				}
 				
 				if(listaExpedicoes.isEmpty()) {
