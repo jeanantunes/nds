@@ -294,11 +294,17 @@ public class FecharDiaController {
 		
 	}
 	
+
 	@Post
-	@Path("/obterGridVendaSuplementar")
-	public void obterGridVendaSuplementar(){
+	@Path("/obterGridVenda")
+	public void obterGridVenda(String tipoVenda){
 		
-		List<VendaFechamentoDiaDTO> listaReparte = resumoSuplementarFecharDiaService.obterVendasSuplementar(distribuidor.getDataOperacao());
+		List<VendaFechamentoDiaDTO> listaReparte = null;
+		if(tipoVenda.equals("encalhe")){
+			listaReparte = resumoEncalheFecharDiaService.obterDadosVendaEncalhe(distribuidor.getDataOperacao());
+		}else if(tipoVenda.equals("suplementar")){
+			listaReparte = resumoSuplementarFecharDiaService.obterVendasSuplementar(distribuidor.getDataOperacao());			
+		}
 		
 		TableModel<CellModelKeyValue<VendaFechamentoDiaDTO>> tableModel = new TableModel<CellModelKeyValue<VendaFechamentoDiaDTO>>();
 		
@@ -309,6 +315,8 @@ public class FecharDiaController {
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
 		
 	}
+	
+	
 	
 	@Get
 	public void exportarResumoReparte(FileType fileType){

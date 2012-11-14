@@ -368,7 +368,7 @@ public class CotaServiceImpl implements CotaService {
 				enderecoCota.setCota(cota);
 			}
 
-			Endereco endereco = new Endereco(enderecoDTO.getCodigoBairro(),
+			Endereco endereco = new Endereco(
                     enderecoDTO.getBairro(), enderecoDTO.getCep(),
                     enderecoDTO.getCodigoCidadeIBGE(), enderecoDTO.getCidade(),
                     enderecoDTO.getComplemento(),

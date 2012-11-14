@@ -25,7 +25,7 @@ public class ResumoReparteFecharDiaRepositoryImpl  extends AbstractRepository im
 		StringBuilder hql = new StringBuilder();
 		
 		if(soma){
-			hql.append(" SELECT SUM(pe.precoVenda) as valorTotalReparte ");			
+			hql.append(" SELECT SUM(pe.precoVenda * l.reparte) as valorTotalReparte ");			
 		}else{
 			hql.append(" SELECT p.codigo as codigo,  ");
 			hql.append(" p.nome as nomeProduto, ");
@@ -62,9 +62,9 @@ public class ResumoReparteFecharDiaRepositoryImpl  extends AbstractRepository im
 		
 		if(soma){
 			if(tipoDiferenca.equals("sobra")){
-				hql.append(" SELECT SUM(pe.precoVenda) as sobras ");				
+				hql.append(" SELECT SUM(pe.precoVenda * dif.qtde) as sobras ");				
 			}else{
-				hql.append(" SELECT SUM(pe.precoVenda) as faltas ");
+				hql.append(" SELECT SUM(pe.precoVenda * dif.qtde) as faltas ");
 			}
 		}else{
 			hql.append(" SELECT p.codigo as codigo,  ");
@@ -111,7 +111,7 @@ public class ResumoReparteFecharDiaRepositoryImpl  extends AbstractRepository im
 		
 
 		if(soma){
-			hql.append(" SELECT SUM(pe.precoVenda) as transferencias ");			
+			hql.append(" SELECT SUM(pe.precoVenda * me.qtde) as transferencias ");			
 		}else{
 			hql.append(" SELECT p.codigo as codigo,  ");
 			hql.append(" p.nome as nomeProduto, ");
@@ -151,7 +151,7 @@ public class ResumoReparteFecharDiaRepositoryImpl  extends AbstractRepository im
 		
 
 		if(soma){
-			hql.append(" SELECT SUM(pe.precoVenda) as distribuidos ");			
+			hql.append(" SELECT SUM(pe.precoVenda * me.qtde) as distribuidos ");			
 		}else{
 			hql.append(" SELECT p.codigo as codigo,  ");
 			hql.append(" p.nome as nomeProduto, ");
@@ -208,9 +208,7 @@ public class ResumoReparteFecharDiaRepositoryImpl  extends AbstractRepository im
 		
 		hql.append(" (SELECT COUNT(me.id) ");		
 		hql.append(" from MovimentoEstoque me ");
-		hql.append(" JOIN me.tipoMovimento as tm ");
-		hql.append(" JOIN me.produtoEdicao as pe ");
-		hql.append(" JOIN pe.produto as p ");
+		hql.append(" JOIN me.tipoMovimento as tm ");		
 		hql.append(" WHERE me.dataCriacao = :dataOperacaoDistribuidor ");
 		hql.append(" AND tm.grupoMovimentoEstoque IN (:listaGrupoMovimentoEstoque) ) as qtdTransferido,");
 		
@@ -252,8 +250,6 @@ public class ResumoReparteFecharDiaRepositoryImpl  extends AbstractRepository im
 		listaGrupoMovimentoEstoque.add(GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_RECOLHIMENTO);
 		listaGrupoMovimentoEstoque.add(GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_SUPLEMENTAR);
 		
-
-		
 		query.setParameter("dataOperacaoDistribuidor", dataOperacaoDistribuidor);
 		
 		query.setParameterList("listaStatus", listaStatus);
@@ -269,8 +265,6 @@ public class ResumoReparteFecharDiaRepositoryImpl  extends AbstractRepository im
 		query.setParameter("grupoMovimento", GrupoMovimentoEstoque.ENVIO_JORNALEIRO);
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(ReparteFecharDiaDTO.class));
-		
-		
 		
 		return query.list();
 	}

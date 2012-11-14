@@ -120,12 +120,16 @@ public class AlteracaoCotaController {
 	}
 	
 	@Path("/pesquisarAlteracaoCota.json")
-	public void pesquisarAlteracaoCota(FiltroAlteracaoCotaDTO filtroAlteracaoCotaDTO, String sortname, int page, int rp) {
+	public void pesquisarAlteracaoCota(FiltroAlteracaoCotaDTO filtroAlteracaoCotaDTO, String sortname, String sortorder, int page, int rp) {
 		
 		int startSearch = page * rp - rp;
-		
+
 		PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortname);
-		paginacao.setOrdenacao(paginacao.getOrdenacao().ASC);
+		if ("DESC".equalsIgnoreCase(sortorder)) {
+			paginacao.setOrdenacao(paginacao.getOrdenacao().ASC);
+		} else {
+			paginacao.setOrdenacao(paginacao.getOrdenacao().DESC);
+		}
 		filtroAlteracaoCotaDTO.setPaginacao(paginacao);
 		
 		filtroAlteracaoCotaDTO.setNomeCota(PessoaUtil.removerSufixoDeTipo(filtroAlteracaoCotaDTO.getNomeCota()));

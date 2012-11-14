@@ -448,7 +448,7 @@
       </tr>
       <tr>
         <td align="left" style="border-bottom:1px solid #ccc;">Venda</td>
-        <td align="right" style="border-bottom:1px solid #ccc;"><a href="javascript:;" onclick="fecharDiaController.popup_vendasTot();"><div id="vendaEncalhe"></div></a></td>
+        <td align="right" style="border-bottom:1px solid #ccc;"><a href="javascript:;" onclick="fecharDiaController.popup_vendasTot('encalhe');"><div id="vendaEncalhe"></div></a></td>
       </tr>
       <tr>
         <td align="left" style="border-bottom:1px solid #ccc;">Sobras</td>
@@ -483,7 +483,7 @@
         </tr>
       <tr>
         <td align="left" style="border-bottom:1px solid #ccc;">Vendas</td>
-        <td align="right" style="border-bottom:1px solid #ccc;"><a href="javascript:;" onclick="fecharDiaController.popup_vendasTot();"><div id="totalSuplementarVenda"></div></a></td>
+        <td align="right" style="border-bottom:1px solid #ccc;"><a href="javascript:;" onclick="fecharDiaController.popup_vendasTot('suplementar');"><div id="totalSuplementarVenda"></div></a></td>
         </tr>
       <tr>
         <td align="left" style="border-bottom:1px solid #ccc;">Saldo</td>
