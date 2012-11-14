@@ -124,6 +124,11 @@ public class VisaoEstoqueServiceImpl implements VisaoEstoqueService {
 		
 		for (VisaoEstoqueDetalheDTO dto: list) {
 			
+			if (dto.getPrecoCapa() == null || dto.getQtde() == null) {
+				
+				continue;
+			}
+			
 			precoCapa = CurrencyUtil.converterValor(dto.getPrecoCapa());
 			qtde = CurrencyUtil.converterValor(dto.getQtde());
 			dto.setValor(precoCapa.multiply(qtde));
