@@ -284,7 +284,6 @@ var fornecedorController = $.extend(true,{
 				var formData = $("#fornecedorController-formNovoFornecedor", fornecedorController.workspace).serializeArray();
 
 				if (manterDesabilitado) {
-					$("#fornecedorController-codigoInterface").attr('disabled', true);
 					$("#fornecedorController-cnpj").attr('disabled', true);
 				} else {
 					$("#fornecedorController-codigoInterface").attr('disabled', false);
