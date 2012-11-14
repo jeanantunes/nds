@@ -274,13 +274,22 @@ var fornecedorController = $.extend(true,{
 			
 			cadastrarFornecedor:function () {
 				
-				$("#fornecedorController-codigoInterface").attr('disabled', false);
-				$("#fornecedorController-cnpj").attr('disabled', false);
+				var manterDesabilitado = false;
+				if ($("#fornecedorController-codigoInterface").attr('disabled')  == 'disabled' || $("#fornecedorController-cnpj").attr('disabled') == 'disabled') {
+					manterDesabilitado = true;
+					$("#fornecedorController-codigoInterface").attr('disabled', false);
+					$("#fornecedorController-cnpj").attr('disabled', false);
+				}
 				
 				var formData = $("#fornecedorController-formNovoFornecedor", fornecedorController.workspace).serializeArray();
 
-				$("#fornecedorController-cnpj").attr('disabled', true);
-				$("#fornecedorController-codigoInterface").attr('disabled', true);
+				if (manterDesabilitado) {
+					$("#fornecedorController-codigoInterface").attr('disabled', true);
+					$("#fornecedorController-cnpj").attr('disabled', true);
+				} else {
+					$("#fornecedorController-codigoInterface").attr('disabled', false);
+					$("#fornecedorController-cnpj").attr('disabled', false);
+				}
 				
 				$.postJSON(
 					 contextPath +"/cadastro/fornecedor/cadastrarFornecedor",
