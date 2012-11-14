@@ -228,23 +228,32 @@ public class LancamentoRepositoryImpl extends
 		}
 		
 		hql.append(" join lancamento.recebimentos itemRecebido ");
-				
+		
+		boolean where = false;
+		
 		if (estudo != null && estudo == true ) {
 
-			hql.append(" where lancamento.status=:statusEstudoFechado ");
+			hql.append(" join lancamento.estudo estudo ");
 			
-			parametros.put("statusEstudoFechado", StatusLancamento.ESTUDO_FECHADO);
-		} else {
-
-			hql.append(" where (lancamento.status=:statusConfirmado ");
-			hql.append(" or lancamento.status=:statusBalanceado ");
-			hql.append(" or lancamento.status=:statusEstudoFechado) ");
+			hql.append(" where estudo.status = :statusEstudo ");
 			
-			parametros.put("statusConfirmado", StatusLancamento.CONFIRMADO);
-			parametros.put("statusBalanceado", StatusLancamento.BALANCEADO);
-			parametros.put("statusEstudoFechado", StatusLancamento.ESTUDO_FECHADO);
+			parametros.put("statusEstudo", StatusLancamento.ESTUDO_FECHADO);
+			
+			where = true;
 		}
 		
+		if (!where) {
+			
+			hql.append(" where ");
+			
+		} else {
+			
+			hql.append(" and ");
+		}
+		
+		hql.append(" (lancamento.status=:statusConfirmado ");
+		
+		parametros.put("statusBalanceado", StatusLancamento.BALANCEADO);
 		
 		if (data != null) {
 			
