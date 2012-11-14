@@ -409,7 +409,7 @@
 				</td>
                 <td width="85">Municipio:</td>
                 <td colspan="3">
-					<select name="filtroAlteracaoCotaDTO.idMunicipio" id="idMunicipio" style="width:280px;">
+					<select name="filtroAlteracaoCotaDTO.idMunicipio" id="idMunicipio" style="width:280px;" onchange="alteracaoCotaController.carregarBairros(this.value)">
               			<option selected="selected" value="-1"></option>
 						<c:forEach items="${listMunicipios}" var="municipio">
 							<option value="${municipio}">${municipio}</option>

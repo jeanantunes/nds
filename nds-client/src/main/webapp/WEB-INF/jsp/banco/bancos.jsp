@@ -42,8 +42,8 @@ label {
 						id="newNumero" style="width: 143px;" />
 					</td>
 					<td width="67">Nome:</td>
-					<td width="219"><input type="text" name="newNome" maxlength="100"
-						id="newNome" style="width: 215px;" />
+					<td width="219">
+						<input type="text" name="newNome" maxlength="100" id="newNome" style="width: 215px;"/>
 					</td>
 				</tr>
 				<tr>
@@ -198,7 +198,8 @@ label {
 				<tr>
 					<td width="41">Nome:</td>
 					<td colspan="3"><input type="text" name="nome" maxlength="100"
-						id="nome" style="width: 180px;" />
+						id="nome" style="width: 180px;"
+						onkeyup='bancoController.autoCompletarPorNomeBanco("#nome")' />
 					</td>
 					<td width="54">Número:</td>
 					<td width="143"><input type="text" name="numero" maxlength="4"

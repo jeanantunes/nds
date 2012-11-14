@@ -39,9 +39,9 @@ var confirmaExpedicaoController = $.extend(true, {
 				sortable : true,
 				align : 'center'
 			}, {
-				display : 'Pre&ccedilo',
+				display : 'Pre&ccedilo Capa',
 				name : 'preco',
-				width : 50,
+				width : 70,
 				sortable : true,
 				align : 'right'
 			}, {
@@ -53,7 +53,7 @@ var confirmaExpedicaoController = $.extend(true, {
 			}, {
 				display : 'Reparte',
 				name : 'reparte',
-				width : 70,
+				width : 50,
 				sortable : true,
 				align : 'center'
 			}, {

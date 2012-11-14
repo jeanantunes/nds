@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 import br.com.abril.nds.client.vo.CotaAtendidaTransportadorVO;
 import br.com.abril.nds.dto.ConsultaTransportadorDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaTransportadorDTO;
+import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.Transportador;
 import br.com.abril.nds.repository.TransportadorRepository;
 
@@ -32,12 +33,12 @@ public class TransportadorRepositoryImpl extends
 		
 		if (filtro.getRazaoSocial() != null && !filtro.getRazaoSocial().isEmpty()){
 			
-			hql.append(" and (tr.pessoaJuridica.razaoSocial like :razaoSocial) ");
+			hql.append(" and ( lower( tr.pessoaJuridica.razaoSocial ) like :razaoSocial) ");
 		}
 		
 		if (filtro.getNomeFantasia() != null && !filtro.getNomeFantasia().isEmpty()){
 			
-			hql.append(" and (tr.pessoaJuridica.nomeFantasia like :nomeFantasia) ");
+			hql.append(" and ( lower( tr.pessoaJuridica.nomeFantasia ) like :nomeFantasia) ");
 		}
 		
 		if (filtro.getCnpj() != null && !filtro.getCnpj().isEmpty()){
@@ -101,12 +102,12 @@ public class TransportadorRepositoryImpl extends
 		
 		if (filtro.getRazaoSocial() != null && !filtro.getRazaoSocial().isEmpty()){
 			
-			query.setParameter("razaoSocial", "%" + filtro.getRazaoSocial() + "%");
+			query.setParameter("razaoSocial", "%" + filtro.getRazaoSocial().toLowerCase().trim() + "%");
 		}
 		
 		if (filtro.getNomeFantasia() != null && !filtro.getNomeFantasia().isEmpty()){
 			
-			query.setParameter("nomeFantasia", "%" + filtro.getNomeFantasia() + "%");
+			query.setParameter("nomeFantasia", "%" + filtro.getNomeFantasia().toLowerCase().trim() + "%");
 		}
 		
 		if (filtro.getCnpj() != null && !filtro.getCnpj().isEmpty()){
@@ -175,6 +176,34 @@ public class TransportadorRepositoryImpl extends
 		
 		Query query = this.getSession().createQuery(hql.toString());
 		query.setParameter("idTransportador", idTransportador);
+		
+		return query.list();
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Pessoa> obterTransportadorPorNome(String nomeTransportador) {
+		
+		StringBuilder hql = new StringBuilder("select pessoa ");
+		hql.append(" from Transportador t join t.pessoaJuridica pessoa ")
+		   .append(" where lower(pessoa.razaoSocial) like :nomeTransportador  ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("nomeTransportador", "%" + nomeTransportador.toLowerCase() + "%");
+		
+		return query.list();
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Pessoa> obterTransportadorPorNomeFantasia(String nomeFantasia) {
+		
+		StringBuilder hql = new StringBuilder("select pessoa ");
+		hql.append(" from Transportador t join t.pessoaJuridica pessoa ")
+		   .append(" where lower(pessoa.nomeFantasia) like :nomeFantasia  ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("nomeFantasia", "%" + nomeFantasia.toLowerCase() + "%");
 		
 		return query.list();
 	}

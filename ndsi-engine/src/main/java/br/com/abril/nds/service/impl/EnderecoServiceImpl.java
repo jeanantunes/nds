@@ -389,7 +389,11 @@ public class EnderecoServiceImpl implements EnderecoService {
 		
 		return this.localidadeRepository.pesquisarLocalidades(nomeLocalidade);
 	}
-	
-	
+
+	@Override
+	@Transactional(readOnly = true)
+	public List<Bairro> obterBairrosPorCidade(String cidade) {
+		return this.enderecoRepository.obterBairrosPorCidade(cidade);
+	}
 	
 }
