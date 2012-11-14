@@ -25,7 +25,7 @@
     </tr>
     <tr>
         <td width="104">Inscrição Municipal:</td>
-        <td width="312"><input type="text" maxlength="20" style="width:150px" name="cotaDTO.inscricaoMunicipal" id="inscricaoMunicipal" /></td>
+        <td width="312"><input type="text" maxlength="15" style="width:150px" name="cotaDTO.inscricaoMunicipal" id="inscricaoMunicipal" /></td>
         <td width="126">E-mail:</td>
         <td width="300"><input type="text" maxlength="200" style="width:230px" name="cotaDTO.email" id="email" onblur="MANTER_COTA.validarEmail('#email')"/></td>
     </tr>
