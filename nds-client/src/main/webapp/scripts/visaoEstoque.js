@@ -97,7 +97,11 @@ var visaoEstoqueController = $.extend(true, {
 	montaInputTransferencia : function(data) {
 		
 		$.each(data.rows, function(index, value) {
-				
+			
+			if (!value.cell.precoCapa) {
+				value.cell.precoCapa = "";
+			}
+			
 			value.cell.estoque = value.cell.qtde;
 			value.cell.transferir = '<input type="text" id="inputVisaoEstoqueTransferencia_' + value.cell.produtoEdicaoId + '" style="width:80px; text-align:center;" onchange="visaoEstoqueController.ajustarSaldo(this)"/>';
 			value.cell.check = '<input type="checkbox" class="visaoEstoqueCheck" name="checkVisaoEstoqueTransferir" value="' + value.cell.produtoEdicaoId + '" onclick="visaoEstoqueController.verificarCheck();" />';
@@ -110,7 +114,11 @@ var visaoEstoqueController = $.extend(true, {
 	montaInputInventario : function(data) {
 		
 		$.each(data.rows, function(index, value) {
-				
+			
+			if (!value.cell.precoCapa) {
+				value.cell.precoCapa = "";
+			}
+			
 			value.cell.diferenca = value.cell.qtde;
 			value.cell.estoque = '<input type="text" class="inputVisaoEstoqueInventario" id="inputVisaoEstoqueInventario_' + value.cell.produtoEdicaoId + '" style="width:80px; text-align:center;" onchange="visaoEstoqueController.ajustarDiferenca(this)"/>';
 		});
@@ -260,7 +268,8 @@ var visaoEstoqueController = $.extend(true, {
 		var params = $("#pesquisarVisaoEstoqueForm", this.workspace).serialize();
 		
 		$("." + grid).flexOptions({
-			url : this.path + 'pesquisarDetalhe.json?' + params, 
+			url : this.path + 'pesquisarDetalhe.json?' + params,
+			preProcess : visaoEstoqueController.preProcessPopupDetalhe,
 			newp:1
 		});
 		
@@ -282,6 +291,21 @@ var visaoEstoqueController = $.extend(true, {
 		});
 	},
 	
+	preProcessPopupDetalhe : function(data) {
+		
+		$.each(data.rows, function(index, value) {
+			
+			if (!value.cell.valor) {
+				value.cell.valor = "";
+			}
+			
+			if (!value.cell.precoCapa) {
+				value.cell.precoCapa = "";
+			}
+		});
+		
+		return data;
+	},
 	
 	popup_transferencia : function(tipoEstoque, estoque) {
 		
@@ -678,3 +702,5 @@ var visaoEstoqueController = $.extend(true, {
 	
 		
 }, BaseController);
+
+//@ sourceURL=visaoEstoque.js
