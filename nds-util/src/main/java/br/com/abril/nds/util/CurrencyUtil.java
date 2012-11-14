@@ -110,6 +110,17 @@ public abstract class CurrencyUtil {
 		}
 	}
 	
+	
+	/**
+	 * Obtém o BigDecimal de uma String no formato monetario brasileiro
+	 * 
+	 * @param numero - valor em String Ex: 1.000,00
+	 * @return BigDecimal 1000.00
+	 */
+	public static BigDecimal getBigDecimal(String numero) {
+		return new BigDecimal(numero.replace(".", "").replace(",", "."));
+	}
+	
 	/**
 	 * Converte uma String de moeda sem símbolo monetário.
 	 * 
