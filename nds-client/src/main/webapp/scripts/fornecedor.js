@@ -280,7 +280,6 @@ var fornecedorController = $.extend(true,{
 				var formData = $("#fornecedorController-formNovoFornecedor", fornecedorController.workspace).serializeArray();
 
 				$("#fornecedorController-cnpj").attr('disabled', true);
-				$("#fornecedorController-codigoInterface").attr('disabled', true);
 				
 				$.postJSON(
 					 contextPath +"/cadastro/fornecedor/cadastrarFornecedor",
