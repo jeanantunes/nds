@@ -49,4 +49,6 @@ public interface FiadorRepository extends Repository<Fiador, Long> {
 	 * @return Fiador
 	 */
 	public abstract Fiador obterPorCpfCnpj(String doc);
+
+	List<Pessoa> obterFiadorPorNome(String nomeFiador);
 }

@@ -16,6 +16,7 @@ import br.com.abril.nds.dto.filtro.FiltroConsultaTransportadorDTO;
 import br.com.abril.nds.dto.filtro.FiltroRelatorioServicosEntregaDTO;
 import br.com.abril.nds.model.cadastro.AssociacaoVeiculoMotoristaRota;
 import br.com.abril.nds.model.cadastro.Motorista;
+import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.Transportador;
 import br.com.abril.nds.model.cadastro.Veiculo;
 
@@ -106,5 +107,9 @@ public interface TransportadorService {
 	 * @return
 	 */
 	List<MovimentoFinanceiroDTO> obterDetalhesTrasportadorPorCota(FiltroRelatorioServicosEntregaDTO filtro);
+
+	List<Pessoa> obterTransportadorPorNome(String nomeTransportador);
+
+	List<Pessoa> obterTransportadorPorNomeFantasia(String razaoSocial);
 	
 }

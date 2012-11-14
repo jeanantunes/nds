@@ -20,6 +20,7 @@ import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroEntregadorDTO;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.Entregador;
+import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.ProcuracaoEntregador;
 import br.com.abril.nds.model.cadastro.TipoEndereco;
 import br.com.abril.nds.repository.EntregadorRepository;
@@ -60,7 +61,7 @@ public class EntregadorRepositoryImpl extends AbstractRepositoryModel<Entregador
 	    if (filtroEntregador.getNomeRazaoSocial() != null 
 	    		&& !filtroEntregador.getNomeRazaoSocial().isEmpty()) {
 	    	
-	    	query.setParameter("nome", "%" + filtroEntregador.getNomeRazaoSocial() + "%");
+	    	query.setParameter("nome", "%" + filtroEntregador.getNomeRazaoSocial().toLowerCase().trim() + "%");
 	    }
 	    
 	    if (filtroEntregador.getCpfCnpj() != null 
@@ -76,7 +77,7 @@ public class EntregadorRepositoryImpl extends AbstractRepositoryModel<Entregador
 	    if (filtroEntregador.getApelidoNomeFantasia() != null 
 	    		&& !filtroEntregador.getApelidoNomeFantasia().isEmpty()) {
 	    	
-	    	query.setParameter("apelido", "%" + filtroEntregador.getApelidoNomeFantasia() + "%");
+	    	query.setParameter("apelido", "%" + filtroEntregador.getApelidoNomeFantasia().toLowerCase().trim() + "%");
 	    }
 
 	    if (filtroEntregador.getPaginacao() != null 
@@ -149,8 +150,8 @@ public class EntregadorRepositoryImpl extends AbstractRepositoryModel<Entregador
 	    	condition = condition == "" ? " where " : " and ";
 	    	
 	    	builder.append(condition);
-	    	builder.append(" (entregador.pessoa.nome like :nome ");
-	    	builder.append(" or entregador.pessoa.razaoSocial like :nome )");
+	    	builder.append(" ( lower( entregador.pessoa.nome ) like :nome ");
+	    	builder.append(" or lower( entregador.pessoa.razaoSocial ) like :nome )");
 	    }
 
 	    if (filtroEntregador.getCpfCnpj() != null && !filtroEntregador.getCpfCnpj().isEmpty()) {
@@ -167,8 +168,8 @@ public class EntregadorRepositoryImpl extends AbstractRepositoryModel<Entregador
 	    	condition = condition == "" ? " where " : " and ";
 	    	
 	    	builder.append(condition);
-	    	builder.append(" (entregador.pessoa.apelido like :apelido ");
-	    	builder.append(" or entregador.pessoa.nomeFantasia like :apelido )");
+	    	builder.append(" ( lower( entregador.pessoa.apelido ) like :apelido ");
+	    	builder.append(" or lower( entregador.pessoa.nomeFantasia ) like :apelido )");
 	    }
 	    
 	    builder.append(getOrdenacao(filtroEntregador));
@@ -473,5 +474,39 @@ public class EntregadorRepositoryImpl extends AbstractRepositoryModel<Entregador
 			return null;
 		
 		return (Entregador) criteria.uniqueResult();
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Pessoa> obterEntregadorPorApelido(String apelidoEntregador) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select pessoa from Entregador ent join ent.pessoa pessoa ")
+		.append(" where  ")
+		
+		 .append(" lower(pessoa.nomeFantasia) like :apelidoEntregador or lower(pessoa.apelido) like :apelidoEntregador ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("apelidoEntregador", "%" + apelidoEntregador.toLowerCase() + "%");
+		
+		return query.list();
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Pessoa> obterEntregadorPorNome(String nomeEntregador) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select pessoa from Entregador ent join ent.pessoa pessoa ")
+		.append(" where  ")
+		
+		 .append(" lower(pessoa.nome) like :nomeEntregador or lower(pessoa.razaoSocial) like :nomeEntregador ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("nomeEntregador", "%" + nomeEntregador.toLowerCase() + "%");
+		
+		return query.list();
 	}
 }

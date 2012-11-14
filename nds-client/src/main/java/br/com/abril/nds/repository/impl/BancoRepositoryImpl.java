@@ -205,4 +205,19 @@ public class BancoRepositoryImpl extends AbstractRepositoryModel<Banco,Long> imp
 		return (Banco) criteria.uniqueResult();
 	}
 	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Banco> obterBancosPorNome(String nomeBanco) {
+		
+		StringBuilder hql = new StringBuilder();
+		hql.append(" from Banco b ");		
+		hql.append(" where lower(b.nome) like :nome or lower(b.apelido) like :nome ");
+		
+		Query query = super.getSession().createQuery(hql.toString());
+			
+	    query.setParameter("nome", "%" + nomeBanco.toLowerCase() + "%");
+		
+		return query.list();
+	}
+	
 }

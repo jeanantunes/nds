@@ -1,5 +1,6 @@
 <head>
 <script type="text/javascript" src="scripts/fornecedor.js"></script>
+<script type="text/javascript" src="scripts/pessoa.js"></script>
 <script language="javascript" type="text/javascript">
 $(function(){
 	fornecedorController.init();
@@ -51,12 +52,19 @@ $(function(){
             <tr>
               <td width="81">Razão Social:</td>
               <td colspan="3">
-              	<input type="text" name="filtroConsultaFornecedor.razaoSocial" id="fornecedorController-filtroConsultaFornecedorRazaoSocial" style="width:180px;"/>
+              	<input type="text" name="filtroConsultaFornecedor.razaoSocial" id="fornecedorController-filtroConsultaFornecedorRazaoSocial" style="width:180px;"
+              	onkeyup='PESSOA.autoCompletarPorNomeFornecedor("#fornecedorController-filtroConsultaFornecedorRazaoSocial",fornecedorController.workspace)'/>
               </td>
                 <td width="41">CNPJ:</td>
-                <td width="138"><input type="text" name="filtroConsultaFornecedor.cnpj" id="fornecedorController-filtroConsultaFornecedorCnpj" style="width:130px;"/></td>
+                <td width="138">
+                	<input type="text" name="filtroConsultaFornecedor.cnpj" id="fornecedorController-filtroConsultaFornecedorCnpj" style="width:130px;"/>
+                </td>
                 <td width="110" align="center">Nome Fantasia:</td>
-                <td width="155"><input type="text" name="filtroConsultaFornecedor.nomeFantasia" id="fornecedorController-filtroConsultaFornecedorNomeFantasia" style="width:150px;"/></td>
+                <td width="155">
+                	<input type="text" name="filtroConsultaFornecedor.nomeFantasia" id="fornecedorController-filtroConsultaFornecedorNomeFantasia" style="width:150px;"
+                	onkeyup='PESSOA.autoCompletarPorNomeFantasiaFornecedor("#fornecedorController-filtroConsultaFornecedorNomeFantasia",fornecedorController.workspace)'/>
+                </td>
+              
               <td width="216"><span class="bt_novos"><a href="javascript:;" onclick="fornecedorController.pesquisarFornecedores();"><img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" /></a></span></td>
             </tr>
           </table>
