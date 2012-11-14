@@ -96,12 +96,9 @@ public class AlteracaoCotaRepositoryImpl extends AbstractRepositoryModel<Cota, L
 
 		}
 		
-<<<<<<< HEAD
 		if (filtroAlteracaoCotaDTO.getIdBairro() != null 
-				&& filtroAlteracaoCotaDTO.getIdBairro()>0) {
-=======
-		if (filtroAlteracaoCotaDTO.getIdBairro() != null && !filtroAlteracaoCotaDTO.getIdBairro().isEmpty() && !"-1".equals(filtroAlteracaoCotaDTO.getIdBairro())) {
->>>>>>> master
+				&& !filtroAlteracaoCotaDTO.getIdBairro().isEmpty() 
+				&& !"-1".equals(filtroAlteracaoCotaDTO.getIdBairro())) {
 			/*if(addedAnd)*/
 				hql.append(" and ");
 			/*else
