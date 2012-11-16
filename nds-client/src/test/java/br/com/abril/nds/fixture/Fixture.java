@@ -1005,7 +1005,23 @@ public class Fixture {
 		return tipoMovimento;
 	}
 
+	public static TipoMovimentoEstoque tipoMovimentoEstornoFuroPublicacao() {
+		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
+		tipoMovimento.setAprovacaoAutomatica(true);
+		tipoMovimento.setDescricao("Estorno reparte por furo de publicação");
+		tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.ESTORNO_REPARTE_FURO_PUBLICACAO);
+		return tipoMovimento;
+		
+	}
 	
+	public static TipoMovimentoEstoque tipoMovimentoEstornoCotaFuroPublicacao() {
+		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
+		tipoMovimento.setAprovacaoAutomatica(true);
+		tipoMovimento.setDescricao("Estorno reparte cota por furo de publicação");
+		tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_FURO_PUBLICACAO);
+		return tipoMovimento;
+		
+	}
 	
 	public static TipoMovimentoFinanceiro tipoMovimentoFinanceiroCompraEncalhe() {
 		TipoMovimentoFinanceiro tipoMovimento = new TipoMovimentoFinanceiro();
