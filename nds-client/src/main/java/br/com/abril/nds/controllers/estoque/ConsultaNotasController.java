@@ -268,7 +268,9 @@ public class ConsultaNotasController {
 		for (NotaFiscalEntradaFornecedor notaFiscal : listaNotasFiscais) {
 			
 			String notaRecebida = 
-				StatusNotaFiscalEntrada.RECEBIDA.equals(notaFiscal.getStatusNotaFiscal()) ? "*" : " ";
+				StatusNotaFiscalEntrada.RECEBIDA.equals(notaFiscal.getStatusNotaFiscal()) 
+					? DateUtil.formatarDataPTBR(notaFiscal.getDataRecebimento())
+					: " ";
 			
 			ConsultaNotaFiscalVO consultaNotaFiscalVO = new ConsultaNotaFiscalVO();
 			
@@ -334,7 +336,9 @@ public class ConsultaNotasController {
 		for (NotaFiscalEntradaFornecedor notaFiscal : listaNotasFiscais) {
 
 			String notaRecebida = 
-				StatusNotaFiscalEntrada.RECEBIDA.equals(notaFiscal.getStatusNotaFiscal()) ? "*" : " ";
+				StatusNotaFiscalEntrada.RECEBIDA.equals(notaFiscal.getStatusNotaFiscal()) 
+					? DateUtil.formatarDataPTBR(notaFiscal.getDataRecebimento())
+					: " ";
 			
 			DecimalFormat decimalFormat = new DecimalFormat("#,###.00");
 			

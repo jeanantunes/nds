@@ -1,6 +1,7 @@
 package br.com.abril.nds.model.fiscal;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -56,6 +57,9 @@ public abstract class NotaFiscalEntrada extends NotaFiscal {
 	@OneToMany(mappedBy = "notaFiscal", cascade={CascadeType.ALL})
 	protected List<ItemNotaFiscalEntrada> itens = new ArrayList<ItemNotaFiscalEntrada>();	
 	
+	@Column(name = "DATA_RECEBIMENTO")
+	protected Date dataRecebimento;
+	
 	
 	public Long getId() {
 		return id;
@@ -109,6 +113,14 @@ public abstract class NotaFiscalEntrada extends NotaFiscal {
 	 */
 	public void setItens(List<ItemNotaFiscalEntrada> itens) {
 		this.itens = itens;
+	}
+	
+	public Date getDataRecebimento() {
+		return dataRecebimento;
+	}
+
+	public void setDataRecebimento(Date dataRecebimento) {
+		this.dataRecebimento = dataRecebimento;
 	}
 	
 }

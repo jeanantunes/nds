@@ -192,7 +192,7 @@ public class NotaFiscalEntradaRepositoryImpl extends AbstractRepositoryModel<Not
 						break;
 					case NOTA_RECEBIDA:
 						orderByColumn += orderByColumn.equals("") ? "" : ",";
-						orderByColumn += " notaFiscal.statusNotaFiscal ";
+						orderByColumn += " notaFiscal.dataRecebimento ";
 						break;
 					case NUMERO_NOTA:
 						orderByColumn += orderByColumn.equals("") ? "" : ",";
