@@ -127,7 +127,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 	@Override
 	@Transactional(readOnly = true)
 	public FuroProdutoDTO obterProdutoEdicaoPorCodigoEdicaoDataLancamento(
-			String codigo, String nomeProduto, Long edicao, Date dataLancamento) {
+			String codigo, String nomeProduto, Long edicao, Date dataLancamento, boolean furado) {
 		
 		List<String> mensagensValidacao = new ArrayList<String>();
 		
@@ -149,7 +149,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		
 		FuroProdutoDTO furoProdutoDTO = produtoEdicaoRepository.
 				obterProdutoEdicaoPorCodigoEdicaoDataLancamento(
-						codigo, nomeProduto, edicao, dataLancamento);
+						codigo, nomeProduto, edicao, dataLancamento, furado);
 		
 		if (furoProdutoDTO != null){
 			//buscar path de imagens
