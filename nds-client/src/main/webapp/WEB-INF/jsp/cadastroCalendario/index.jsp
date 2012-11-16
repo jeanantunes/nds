@@ -114,7 +114,7 @@
 						<option value="">Selecione...</option>
 						
 						<c:forEach var="item" items="${listaLocalidade}">
-		       				<option value="${item.id}">${item.nome}</option>
+		       				<option value="${item}">${item}</option>
 		    			</c:forEach>
 		    			
 	    			</select>
@@ -213,7 +213,7 @@
 						<option value="">Selecione...</option>
 						
 						<c:forEach var="item" items="${listaLocalidade}">
-		       				<option value="${item.id}">${item.nome}</option>
+		       				<option value="${item}">${item}</option>
 		    			</c:forEach>
 		    			
 	    			</select>					

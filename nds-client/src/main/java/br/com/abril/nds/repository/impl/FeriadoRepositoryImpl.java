@@ -51,11 +51,11 @@ public class FeriadoRepositoryImpl extends
 		}
 
 		if (uf != null) {
-			criteria.add(Restrictions.eq("unidadeFederacao.sigla", uf));
+			criteria.add(Restrictions.eq("unidadeFederacao", uf));
 		}
 
 		if (idLocalidade != null) {
-			criteria.add(Restrictions.eq("localidade.id", idLocalidade));
+			criteria.add(Restrictions.eq("localidade", idLocalidade));
 		}
 
 		return criteria.list();
@@ -73,9 +73,8 @@ public class FeriadoRepositoryImpl extends
 
 		sql.append(" f.data as dataFeriado, 			");
 		sql.append(" f.tipoFeriado as tipoFeriado,  	");
-		sql.append(" localidade.id as idLocalidade,		");
-		sql.append(" uf.sigla as ufSigla, 				");
-		sql.append(" localidade.nome as nomeCidade, 	");
+		sql.append(" f.localidade as localidade,		");
+		sql.append(" f.unidadeFederacao as ufSigla, 				");		
 		sql.append(" f.indRepeteAnualmente as indRepeteAnualmente, 	");
 		sql.append(" f.indOpera as indOpera,	 					");
 		sql.append(" f.indEfetuaCobranca as indEfetuaCobranca, 		");
@@ -84,10 +83,6 @@ public class FeriadoRepositoryImpl extends
 		sql.append(" from ");
 
 		sql.append(" Feriado f ");
-
-		sql.append(" left join f.localidade as localidade ");
-
-		sql.append(" left join f.unidadeFederacao as uf ");
 
 		sql.append(" where ");
 
@@ -133,9 +128,8 @@ public class FeriadoRepositoryImpl extends
 
 		sql.append(" f.data as dataFeriado, 			");
 		sql.append(" f.tipoFeriado as tipoFeriado,  	");
-		sql.append(" localidade.id as idLocalidade,		");
-		sql.append(" uf.sigla as ufSigla, 				");
-		sql.append(" localidade.nome as nomeCidade, 	");
+		sql.append(" f.localidade as localidade,		");
+		sql.append(" f.unidadeFederacao as ufSigla, 				");		
 		sql.append(" f.indRepeteAnualmente as indRepeteAnualmente, 	");
 		sql.append(" f.indOpera as indOpera,	 					");
 		sql.append(" f.indEfetuaCobranca as indEfetuaCobranca, 		");
@@ -144,10 +138,6 @@ public class FeriadoRepositoryImpl extends
 		sql.append(" from ");
 
 		sql.append(" Feriado f ");
-
-		sql.append(" left join f.localidade as localidade ");
-
-		sql.append(" left join f.unidadeFederacao as uf ");
 
 		sql.append(" where ");
 
@@ -194,9 +184,8 @@ public class FeriadoRepositoryImpl extends
 
 		sql.append(" f.data as dataFeriado, 			");
 		sql.append(" f.tipoFeriado as tipoFeriado,  	");
-		sql.append(" localidade.id as idLocalidade,		");
-		sql.append(" uf.sigla as ufSigla, 				");
-		sql.append(" localidade.nome as nomeCidade, 	");
+		sql.append(" f.localidade as localidade,		");
+		sql.append(" f.unidadeFederacao as ufSigla, 				");		
 		sql.append(" f.indRepeteAnualmente as indRepeteAnualmente, 	");
 		sql.append(" f.indOpera as indOpera,	 					");
 		sql.append(" f.indEfetuaCobranca as indEfetuaCobranca, 		");
@@ -205,10 +194,6 @@ public class FeriadoRepositoryImpl extends
 		sql.append(" from ");
 
 		sql.append(" Feriado f ");
-
-		sql.append(" left join f.localidade as localidade ");
-
-		sql.append(" left join f.unidadeFederacao as uf ");
 
 		sql.append(" where ");
 
