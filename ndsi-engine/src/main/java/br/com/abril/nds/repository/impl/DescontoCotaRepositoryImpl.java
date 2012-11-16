@@ -41,7 +41,7 @@ public class DescontoCotaRepositoryImpl extends AbstractRepositoryModel<Desconto
 		hql.append(", hdcpe.valor as desconto ");
 		hql.append(", hdcpe.dataAlteracao as dataAlteracao ");
 		hql.append(", c.numeroCota as numeroCota ");
-		hql.append(", coalesce(pessoa.nomeFantasia, pessoa.nome, pessoa.nomeFantasia) as nomeCota "); //case when pessoa.nomeFantasia = null then pessoa.nome else pessoa.nomeFantasia end as nomeCota ");
+		hql.append(", coalesce(pessoa.razaoSocial, pessoa.nome, '') as nomeCota ");
 		hql.append(", (case ");
 		hql.append("when (select count(hdcpe1.desconto.id) from HistoricoDescontoCotaProdutoExcessao hdcpe1 ");
 		hql.append("where hdcpe1.desconto.id = hdcpe.desconto.id ");
