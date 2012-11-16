@@ -91,32 +91,13 @@ public class FuroProdutoServiceImpl implements FuroProdutoService {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Lançamento não encontrado.");
 		}
 		
-		DateFormat df = new SimpleDateFormat("dd-MM-yyyy");
-		try {
-			novaData = df.parse("17-11-2012");
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
-		
 		if (novaData.equals(lancamento.getDataLancamentoDistribuidor()) 
 				|| novaData.before(lancamento.getDataLancamentoDistribuidor())){
 			mensagensValidacao.add("Nova data deve ser maior que a data de lançamento atual.");
 		}
 
-		try {
-			novaData = df.parse("08-11-2012");
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
-
 		if (novaData.after(lancamento.getDataRecolhimentoDistribuidor())){
 			mensagensValidacao.add("Nova data não deve ser maior que data de recolhimento.");
-		}
-
-		try {
-			novaData = df.parse("14-11-2012");
-		} catch (ParseException e) {
-			e.printStackTrace();
 		}
 
 		if (!mensagensValidacao.isEmpty()){
