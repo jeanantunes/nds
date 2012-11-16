@@ -337,7 +337,7 @@ public class ChamadaEncalheAntecipadaController {
 		
 		validarDataRecolhimento(dataRecolhimento);
 		
-		if (Boolean.getBoolean(gravarTodos)) {
+		if (Boolean.parseBoolean(gravarTodos)) {
 			
 			FiltroChamadaAntecipadaEncalheDTO filtro = getFiltroSessionSemPaginacao();
 			filtro.setDataAntecipacao(DateUtil.parseDataPTBR(dataRecolhimento));
