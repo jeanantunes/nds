@@ -680,7 +680,7 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 				
 				var cotaSelecionada = {'codigoProduto':chamdaEncalheAnteipadaController.getHiddenProduto(),
 						'numeroEdicao':chamdaEncalheAnteipadaController.getHiddenNumeroEdicao(),
-						'numeroCota=':codigoCota,
+						'numeroCota':codigoCota,
 						'nomeCota':nomeCota,
 						'id':id,
 						'qntExemplares':qntExemplares,
