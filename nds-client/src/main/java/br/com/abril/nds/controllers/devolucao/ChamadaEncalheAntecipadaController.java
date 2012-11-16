@@ -207,6 +207,40 @@ public class ChamadaEncalheAntecipadaController {
 		
 		tratarFiltro(filtro);
 		
+		ResultadoChamadaEncalheAntecipadaVO vo = efetuarConsulta(filtro);
+		
+		result.use(Results.json()).withoutRoot().from(vo).recursive().serialize();
+	}
+	
+	/**
+	 * Pesquisa as cotas relacionadas a um produto que seja candidato a
+	 * antecipação de colhimento de encalhe (mas não envia nenhuma mensagem 
+	 * para a tela).<br>
+	 * TODO: Precisa de refactoring posteriormente.
+	 * 
+	 * @param codigoProduto
+	 * @param numeroEdicao
+	 * @param box
+	 * @param fornecedor
+	 */
+	@Post
+	@Path("/pesquisarSemMensagem")
+	public void pesquisarCotasPorProdutoSemMensagem(String codigoProduto,
+			Long numeroEdicao, Long box, Long fornecedor, Long rota,
+			Long roteiro, boolean programacaoRealizada, Integer municipio,
+			Long tipoPontoPDV, String sortorder, String sortname, int page, 
+			int rp) {
+		
+		validarParametrosPesquisa(codigoProduto, numeroEdicao);
+		
+		FiltroChamadaAntecipadaEncalheDTO filtro = 
+				new FiltroChamadaAntecipadaEncalheDTO(codigoProduto,numeroEdicao,box,fornecedor,
+													  rota,roteiro,programacaoRealizada, municipio,tipoPontoPDV);
+		
+		configurarPaginacaoPesquisa(filtro, sortorder, sortname, page, rp);
+		
+		tratarFiltro(filtro);
+		
 		efetuarConsulta(filtro);
 	}
 	
@@ -670,7 +704,7 @@ public class ChamadaEncalheAntecipadaController {
 	 * 
 	 * @param filtro
 	 */
-	private void efetuarConsulta(FiltroChamadaAntecipadaEncalheDTO filtro) {
+	private ResultadoChamadaEncalheAntecipadaVO efetuarConsulta(FiltroChamadaAntecipadaEncalheDTO filtro) {
 		
 		InfoChamdaAntecipadaEncalheDTO infoChamdaAntecipadaEncalheDTO = 
 				chamadaAntecipadaEncalheService.obterInfoChamdaAntecipadaEncalhe(filtro);
@@ -693,8 +727,8 @@ public class ChamadaEncalheAntecipadaController {
 		tableModel.setTotal(infoChamdaAntecipadaEncalheDTO.getTotalRegistros().intValue());
 		
 		ResultadoChamadaEncalheAntecipadaVO resultadoChamadaEncalheAntecipadaVO = new ResultadoChamadaEncalheAntecipadaVO(tableModel,null,null);
-		
-		result.use(Results.json()).withoutRoot().from(resultadoChamadaEncalheAntecipadaVO).recursive().serialize();
+
+		return resultadoChamadaEncalheAntecipadaVO;
 	}
 	
 	/**
