@@ -278,5 +278,12 @@ public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long>
 	 * @param fornecedores
 	 * @return
 	public Set<ProdutoEdicao> filtrarDescontoProdutoEdicaoPorProduto(Produto produto);*/
+
+	/**
+	 * Verifica se a expedição física de um produto edição já foi realizada
+	 * @param produtoEdicao
+	 * @return
+	 */
+	public boolean validarExpedicaoFisicaProdutoEdicao(ProdutoEdicao produtoEdicao);
 	
 }

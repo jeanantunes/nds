@@ -154,10 +154,22 @@ public class FuroProdutoController {
 	}
 
 	@Post
+	public void validarFuro(String codigoProduto, Long idProdutoEdicao, String novaData, 
+			Long idLancamento) throws Exception {
+
+		validarDadosEntradaConfirmarFuro(codigoProduto, idProdutoEdicao, novaData, idLancamento);
+
+		this.furoProdutoService.validarFuroProduto(codigoProduto, 
+				idProdutoEdicao, idLancamento, 
+				new SimpleDateFormat(Constantes.DATE_PATTERN_PT_BR).parse(novaData), this.getIdUsuario());
+
+		result.use(Results.json()).from(true, "result").serialize();
+
+	}
+	
+	@Post
 	public void confirmarFuro(String codigoProduto, Long idProdutoEdicao, String novaData, 
 			Long idLancamento) throws Exception{
-		
-		validarDadosEntradaConfirmarFuro(codigoProduto, idProdutoEdicao, novaData, idLancamento);
 		
 		try {
 			this.furoProdutoService.efetuarFuroProduto(codigoProduto, 
