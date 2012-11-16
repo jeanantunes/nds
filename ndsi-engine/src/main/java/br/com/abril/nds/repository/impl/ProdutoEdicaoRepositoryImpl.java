@@ -85,7 +85,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 	
 	@Override
 	public FuroProdutoDTO obterProdutoEdicaoPorCodigoEdicaoDataLancamento(
-			String codigo, String nomeProduto, Long edicao, Date dataLancamento) {
+			String codigo, String nomeProduto, Long edicao, Date dataLancamento, boolean furado) {
 		StringBuilder hql = new StringBuilder();
 		
 		// Corrigido para obter o saldo real do produto. Implementado em conjunto com Eduardo Punk Rock.
@@ -100,8 +100,11 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		   .append(" and   produtoEdicao.id                      = lancamento.produtoEdicao.id ")
 		   .append(" and   produto.codigo                        = :codigo ")
 		   .append(" and   produtoEdicao.numeroEdicao            = :edicao")
-		   .append(" and   lancamento.dataLancamentoDistribuidor = :dataLancamento ")
-		   .append(" and   lancamento.status                     != :statusFuro");
+		   .append(" and   lancamento.dataLancamentoDistribuidor = :dataLancamento ");
+		   
+		   if (furado) {
+			   hql.append(" and   lancamento.status                     != :statusFuro");
+		   }
 
 		/*hql.append("select new ")
 		   .append(FuroProdutoDTO.class.getCanonicalName())
@@ -128,7 +131,11 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		query.setParameter("codigo", codigo);
 		query.setParameter("edicao", edicao);
 		query.setParameter("dataLancamento", dataLancamento);
-		query.setParameter("statusFuro", StatusLancamento.FURO);
+		
+		if (furado) {
+			query.setParameter("statusFuro", StatusLancamento.FURO);
+		}
+		
 		/*
 		 * Comentario da verificacao por nome Eduardo "PunkRock" Castro
 		if (nomeProduto != null && !nomeProduto.isEmpty()){

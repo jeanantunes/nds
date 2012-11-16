@@ -60,7 +60,7 @@ public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long>
 	 * @return {@link FuroProdutoDTO}
 	 */
 	FuroProdutoDTO obterProdutoEdicaoPorCodigoEdicaoDataLancamento(
-			String codigo, String nomeProduto, Long edicao, Date dataLancamento);
+			String codigo, String nomeProduto, Long edicao, Date dataLancamento, boolean furado);
 	
 	/**
 	 * Obtém um produto de edição de acordo com o 
