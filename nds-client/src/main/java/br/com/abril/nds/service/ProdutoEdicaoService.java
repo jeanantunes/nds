@@ -51,7 +51,7 @@ public interface ProdutoEdicaoService {
 	 * @return {@link FuroProdutoDTO}
 	 */
 	FuroProdutoDTO obterProdutoEdicaoPorCodigoEdicaoDataLancamento(
-			String codigo, String nomeProduto, Long edicao, Date dataLancamento);
+			String codigo, String nomeProduto, Long edicao, Date dataLancamento, boolean furado);
 	
 	/**
 	 * Obtém um produtos edição de acordo
@@ -167,5 +167,5 @@ public interface ProdutoEdicaoService {
 	 * @return
 	 */
 	public ProdutoEdicaoDTO obterProdutoEdicaoDTO(String codigoProduto, String idProdutoEdicao);
-	
+
 }

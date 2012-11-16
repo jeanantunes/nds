@@ -44,7 +44,21 @@ public class FuroProdutoDTO implements Serializable {
 		this.idLancamento = idLancamento;
 		this.idProdutoEdicao = idProdutoEdicao;
 	}
-	
+
+	public FuroProdutoDTO(String codigoProduto, String nomeProduto, Long edicao, BigInteger qtdExemplares, 
+			Date dataLancamento, Long idLancamento, Long idProdutoEdicao){
+		this.codigoProduto = codigoProduto;
+		this.nomeProduto = nomeProduto;
+		this.edicao = edicao;
+		this.quantidadeExemplares = qtdExemplares;
+		if (dataLancamento != null){
+			this.novaData = new SimpleDateFormat(DATE_PATTERN_PT_BR).format(dataLancamento);
+		}
+		this.pathImagem = "" + codigoProduto + edicao;
+		this.idLancamento = idLancamento;
+		this.idProdutoEdicao = idProdutoEdicao;
+	}
+
 	public FuroProdutoDTO(String codigoProduto){
 		this(codigoProduto, null, null, null, null, null, null, null);
 	}

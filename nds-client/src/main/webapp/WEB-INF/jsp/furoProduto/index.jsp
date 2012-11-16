@@ -12,6 +12,9 @@
 
 <body>
 	<form action="lancamento/furoProduto/pesquisar" method="post">
+		<div id="dialog-confirmar-furo-produto" title="Furo de Produto" style="display:none;">
+			<strong>Expedição Lógica já realizada, todos os movimentos serão extornados. Confirmar?</strong>
+		</div>
 		<div id="dialog-novo" title="Furo de Produto">
 			<strong>Confirma o Furo de Produto?</strong>
 		</div>

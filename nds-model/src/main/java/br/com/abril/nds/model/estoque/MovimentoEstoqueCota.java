@@ -20,7 +20,7 @@ import br.com.abril.nds.model.planejamento.Lancamento;
 
 @Entity
 @Table(name = "MOVIMENTO_ESTOQUE_COTA")
-public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque {
+public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque implements Cloneable {
 	
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "COTA_ID")
@@ -58,6 +58,35 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque {
 	@Column(name = "STATUS_ESTOQUE_FINANCEIRO")
 	private StatusEstoqueFinanceiro statusEstoqueFinanceiro;
 
+	public Object clone() {
+
+		MovimentoEstoqueCota mec = new MovimentoEstoqueCota();
+		mec.setAprovadoAutomaticamente(this.isAprovadoAutomaticamente());
+		mec.setAprovador(this.getAprovador());
+		mec.setCota(this.getCota());
+		mec.setData(this.getData());
+		mec.setDataAprovacao(this.getDataAprovacao());
+		mec.setDataCriacao(this.getDataCriacao());
+		mec.setDataIntegracao(this.getDataIntegracao());
+		mec.setEstoqueProdutoCota(this.getEstoqueProdutoCota());
+		mec.setEstoqueProdutoCotaJuramentado(this.getEstoqueProdutoCotaJuramentado());
+		mec.setEstudoCota(this.getEstudoCota());
+		mec.setLancamento(this.getLancamento());
+		mec.setListaConferenciasEncalhe(this.getListaConferenciasEncalhe());
+		mec.setListaItemNotaEnvio(this.getListaItemNotaEnvio());
+		mec.setListaProdutoServicos(this.getListaProdutoServicos());
+		mec.setMotivo(this.getMotivo());
+		mec.setProdutoEdicao(this.getProdutoEdicao());
+		mec.setQtde(this.getQtde());
+		mec.setStatus(this.getStatus());
+		mec.setStatusEstoqueFinanceiro(this.getStatusEstoqueFinanceiro());
+		mec.setStatusIntegracao(this.getStatusIntegracao());
+		mec.setTipoMovimento(this.getTipoMovimento());
+		mec.setUsuario(this.getUsuario());
+
+        return mec;
+    }
+	
 	/**
 	 * @return the statusEstoqueFinanceiro
 	 */
