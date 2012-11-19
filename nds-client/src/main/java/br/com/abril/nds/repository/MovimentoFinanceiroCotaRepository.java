@@ -141,5 +141,8 @@ public interface MovimentoFinanceiroCotaRepository extends Repository<MovimentoF
 	BigDecimal obterSaldoDistribuidor(Date data, 
 							 	      TipoCota tipoCota, 
 							 	      OperacaoFinaceira operacaoFinaceira);
+
+
+	List<Long> obterIdsMovimentosFinanceiroCota(FiltroDebitoCreditoDTO filtroDebitoCreditoDTO);
 	
 }
