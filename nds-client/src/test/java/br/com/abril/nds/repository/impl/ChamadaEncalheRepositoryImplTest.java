@@ -100,7 +100,7 @@ public class ChamadaEncalheRepositoryImplTest extends
 		CFOP cfop = Fixture.cfop5102();
 		save(cfop);
 
-		TipoNotaFiscal tipoNotaFiscal = Fixture.tipoNotaFiscalRecebimento();
+		TipoNotaFiscal tipoNotaFiscal = Fixture.tipoNotaFiscalRecebimento(cfop);
 		save(tipoNotaFiscal);
 
 		NotaFiscalEntradaFornecedor notaFiscal1Veja = Fixture

@@ -126,7 +126,7 @@ public class ConsolidadoFinanceiroCotaRepositoryImplTest extends AbstractReposit
 		CFOP cfop = Fixture.cfop5102();		
 		save(cfop);
 				
-		TipoNotaFiscal tipoNotaFiscal = Fixture.tipoNotaFiscalRecebimento();
+		TipoNotaFiscal tipoNotaFiscal = Fixture.tipoNotaFiscalRecebimento(cfop);
 		save(tipoNotaFiscal);
 					
 		NotaFiscalEntradaFornecedor notaFiscal = Fixture.notaFiscalEntradaFornecedor(cfop, fornecedor, tipoNotaFiscal, usuario, new BigDecimal(145),  new BigDecimal(10),  new BigDecimal(10));
@@ -254,7 +254,7 @@ public class ConsolidadoFinanceiroCotaRepositoryImplTest extends AbstractReposit
 		CFOP cfop = Fixture.cfop5102();		
 		save(cfop);
 				
-		TipoNotaFiscal tipoNotaFiscal = Fixture.tipoNotaFiscalRecebimento();
+		TipoNotaFiscal tipoNotaFiscal = Fixture.tipoNotaFiscalRecebimento(cfop);
 		save(tipoNotaFiscal);
 					
 		NotaFiscalEntradaFornecedor notaFiscal = Fixture.notaFiscalEntradaFornecedor(cfop, fornecedor, tipoNotaFiscal, usuario, new BigDecimal(145),  new BigDecimal(10),  new BigDecimal(10));

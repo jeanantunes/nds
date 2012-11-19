@@ -1,7 +1,9 @@
 package br.com.abril.nds.repository.impl;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import junit.framework.Assert;
 
@@ -13,8 +15,10 @@ import br.com.abril.nds.dto.ConsultaFiadorDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaFiadorDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaFiadorDTO.OrdenacaoColunaFiador;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.EstadoCivil;
 import br.com.abril.nds.model.cadastro.Fiador;
+import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.Sexo;
@@ -111,6 +115,221 @@ public class FiadorRepositoryImplTest extends AbstractRepositoryImplTest{
 		
 		Assert.assertNotNull(fiador);
 	}
+	
+//	TESTES SEM USO DE MASSA
+	
+//	getNome
+	@Test
+	public void testarObterFiadoresCpfCnpjGetNome() {
+		
+		FiltroConsultaFiadorDTO filtroConsultaFiadorDTO = new FiltroConsultaFiadorDTO();
+		filtroConsultaFiadorDTO.setNome("testeNome");
+		filtroConsultaFiadorDTO.setCpfCnpj(CPF);
+		filtroConsultaFiadorDTO.setOrdenacaoColunaFiador(OrdenacaoColunaFiador.NOME);
+		filtroConsultaFiadorDTO.setPaginacaoVO(new PaginacaoVO(1, 50, "asc"));
+		
+		ConsultaFiadorDTO consultaFiadorDTO = this.fiadorRepository.obterFiadoresCpfCnpj(filtroConsultaFiadorDTO);	
+		
+		Assert.assertNotNull(consultaFiadorDTO);
+		
+	}
+	
+//	CPF_CNPJ
+	@Test
+	public void testarObterFiadoresCpfCnpjOrdenacaoCOlunaFiadorCPFCNPJ() {
+		
+		FiltroConsultaFiadorDTO filtroConsultaFiadorDTO = new FiltroConsultaFiadorDTO();
+		filtroConsultaFiadorDTO.setNome("testeNome");
+		filtroConsultaFiadorDTO.setCpfCnpj(CPF);
+		filtroConsultaFiadorDTO.setOrdenacaoColunaFiador(OrdenacaoColunaFiador.CPF_CNPJ);
+		filtroConsultaFiadorDTO.setPaginacaoVO(new PaginacaoVO(1, 50, "asc"));
+		
+		ConsultaFiadorDTO consultaFiadorDTO = this.fiadorRepository.obterFiadoresCpfCnpj(filtroConsultaFiadorDTO);	
+		
+		Assert.assertNotNull(consultaFiadorDTO);
+		
+	}
+	
+//	EMAIL
+	@Test
+	public void testarObterFiadoresCpfCnpjOrdenacaoCOlunaFiadorEMAIL() {
+		
+		FiltroConsultaFiadorDTO filtroConsultaFiadorDTO = new FiltroConsultaFiadorDTO();
+		filtroConsultaFiadorDTO.setNome("testeNome");
+		filtroConsultaFiadorDTO.setCpfCnpj(CPF);
+		filtroConsultaFiadorDTO.setOrdenacaoColunaFiador(OrdenacaoColunaFiador.EMAIL);
+		filtroConsultaFiadorDTO.setPaginacaoVO(new PaginacaoVO(1, 50, "asc"));
+		
+		ConsultaFiadorDTO consultaFiadorDTO = this.fiadorRepository.obterFiadoresCpfCnpj(filtroConsultaFiadorDTO);
+		
+		Assert.assertNotNull(consultaFiadorDTO);
+		
+	}
+	
+//	NOME
+	@Test
+	public void testarObterFiadoresCpfCnpjOrdenacaoCOlunaFiadorNOME() {
+		
+		FiltroConsultaFiadorDTO filtroConsultaFiadorDTO = new FiltroConsultaFiadorDTO();
+		filtroConsultaFiadorDTO.setNome("testeNome");
+		filtroConsultaFiadorDTO.setCpfCnpj(CPF);
+		filtroConsultaFiadorDTO.setOrdenacaoColunaFiador(OrdenacaoColunaFiador.NOME);
+		filtroConsultaFiadorDTO.setPaginacaoVO(new PaginacaoVO(1, 50, "asc"));
+		
+		ConsultaFiadorDTO consultaFiadorDTO = this.fiadorRepository.obterFiadoresCpfCnpj(filtroConsultaFiadorDTO);	
+		
+		Assert.assertNotNull(consultaFiadorDTO);
+		
+	}
+	
+//	RG_INSCRICAO
+	@Test
+	public void testarObterFiadoresCpfCnpjOrdenacaoCOlunaFiadorRGINSCRICAO() {
+		
+		FiltroConsultaFiadorDTO filtroConsultaFiadorDTO = new FiltroConsultaFiadorDTO();
+		filtroConsultaFiadorDTO.setNome("testeNome");
+		filtroConsultaFiadorDTO.setCpfCnpj(CPF);
+		filtroConsultaFiadorDTO.setOrdenacaoColunaFiador(OrdenacaoColunaFiador.RG_INSCRICAO);
+		filtroConsultaFiadorDTO.setPaginacaoVO(new PaginacaoVO(1, 50, "asc"));
+		
+		ConsultaFiadorDTO consultaFiadorDTO = this.fiadorRepository.obterFiadoresCpfCnpj(filtroConsultaFiadorDTO);	
+		
+		Assert.assertNotNull(consultaFiadorDTO);
+		
+	}
+	
+//	TELEFONE
+	@Test
+	public void testarObterFiadoresCpfCnpjOrdenacaoCOlunaFiadorTELEFONE() {
+		
+		FiltroConsultaFiadorDTO filtroConsultaFiadorDTO = new FiltroConsultaFiadorDTO();
+		filtroConsultaFiadorDTO.setNome("testeNome");
+		filtroConsultaFiadorDTO.setCpfCnpj(CPF);
+		filtroConsultaFiadorDTO.setOrdenacaoColunaFiador(OrdenacaoColunaFiador.TELEFONE);
+		filtroConsultaFiadorDTO.setPaginacaoVO(new PaginacaoVO(1, 50, "asc"));
+		
+		ConsultaFiadorDTO consultaFiadorDTO = this.fiadorRepository.obterFiadoresCpfCnpj(filtroConsultaFiadorDTO);	
+		
+		Assert.assertNotNull(consultaFiadorDTO);
+		
+	}
+	
+	@Test
+	public void testarBuscarPessoaFiadorPorId() {
+		
+		Pessoa pessoa;
+		
+		Long idFiador = 1L;
+		
+		pessoa = fiadorRepository.buscarPessoaFiadorPorId(idFiador);
+		
+//		Assert.assertNotNull(pessoa);
+		
+	}
+	
+	@Test
+	public void testarBuscarIdPessoaFiador() {
+		
+		Long idPessoaFiador;
+		
+		Long idFiador = 1L;
+		
+		idPessoaFiador = fiadorRepository.buscarIdPessoaFiador(idFiador);
+		
+//		Assert.assertNotNull(idPessoaFiador);
+		
+	}
+	
+	@Test
+	public void testarBuscarSociosFiador() {
+		
+		List<Pessoa> listaSociosFiador;
+		
+		Long idFiador = 1L;
+		
+		listaSociosFiador = fiadorRepository.buscarSociosFiador(idFiador);
+		
+		Assert.assertNotNull(listaSociosFiador);
+		
+	}
+	
+	@Test
+	public void testarBuscarDataInicioAtividadeFiadorPorId() {
+		
+		Date dataInicioAtividade;
+		
+		Long id = 1L;
+		
+		dataInicioAtividade = fiadorRepository.buscarDataInicioAtividadeFiadorPorId(id);
+		
+//		Assert.assertNotNull(dataInicioAtividade);
+		
+	}
+	
+	@Test
+	public void testarObterCotasAssociadaFiador() {
+		
+		List<Cota> cotasAssociada;
+		
+		Long idFiador = 1L;
+		Set<Long> cotasIgnorar = new HashSet<Long>();
+		cotasIgnorar.add(1L);
+		cotasIgnorar.add(2L);
+		cotasIgnorar.add(3L);
+		
+		cotasAssociada = fiadorRepository.obterCotasAssociadaFiador(idFiador, cotasIgnorar);
+		
+		Assert.assertNotNull(cotasAssociada);
+		
+	}
+	
+	@Test
+	public void testarVerificarAssociacaoFiadorCota() {
+		
+		boolean verificarAssociacao;
+		
+		Long idFiador = 1L;
+		Integer numeroCota = 1;
+		Set<Long> idsIgnorar = new HashSet<Long>();
+		idsIgnorar.add(1L);
+		idsIgnorar.add(2L);
+		idsIgnorar.add(3L);
+		
+		verificarAssociacao = fiadorRepository.verificarAssociacaoFiadorCota(idFiador, numeroCota, idsIgnorar);
+		
+		Assert.assertFalse(verificarAssociacao);
+		
+	}
+	
+	@Test
+	public void testarBuscarSocioFiadorPorCPF() {
+		
+		PessoaFisica pessoaFisica;
+		
+		Long idFiador = 1L;
+		String cpf = CPF;
+		
+		pessoaFisica = fiadorRepository.buscarSocioFiadorPorCPF(idFiador, cpf);
+		
+		Assert.assertNull(pessoaFisica);
+		
+	}
+	
+	@Test
+	public void testarBuscaFiador() {
+		
+		List<ItemDTO<Long,String>> buscaFiador;
+		
+		String nome = "testeNome";
+		int maxResults = 1;
+		
+		buscaFiador = fiadorRepository.buscaFiador(nome, maxResults);
+		
+		Assert.assertNotNull(buscaFiador);
+		
+	}
+	
+	
 	
 	
 	

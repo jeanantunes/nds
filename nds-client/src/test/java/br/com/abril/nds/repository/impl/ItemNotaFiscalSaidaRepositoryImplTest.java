@@ -52,7 +52,7 @@ public class ItemNotaFiscalSaidaRepositoryImplTest extends AbstractRepositoryImp
 		CFOP cfop5102 = Fixture.cfop5102();
 		save(cfop5102);
 		
-		TipoNotaFiscal tipoNotaFiscal = Fixture.tipoNotaFiscalRecebimento();
+		TipoNotaFiscal tipoNotaFiscal = Fixture.tipoNotaFiscalRecebimento(cfop5102);
 		save(tipoNotaFiscal);
 		
 		box1 = Fixture.criarBox(1, "BX-001", TipoBox.LANCAMENTO);
