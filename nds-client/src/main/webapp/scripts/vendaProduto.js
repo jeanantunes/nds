@@ -132,7 +132,7 @@ var vendaProdutoController = $.extend(true, {
 			width : 750,
 			height : 200
 		});
-	
+
 	},
 	
 	popup_detalhes : function(numEdicao) {
@@ -178,6 +178,8 @@ var vendaProdutoController = $.extend(true, {
 					}
 				}
 			);
+		} else {
+			$("#produto", vendaProdutoController.workspace).val("");
 		}
 	},
 	
@@ -186,9 +188,22 @@ var vendaProdutoController = $.extend(true, {
 		
 		if (produto && produto.length > 0){
 			$.postJSON(contextPath + "/lancamento/furoProduto/pesquisarPorNomeProduto", {nomeProduto:produto}, vendaProdutoController.exibirAutoComplete);
+		} else {
+			$("#codigo", vendaProdutoController.workspace).val("");
 		}
 	},
 	
+	pesquisarPorNomeSuccessCallBack : function(result, successCallBack) {
+		if (result != "") {
+			$("#codigo", vendaProdutoController.workspace).val(result.codigo);
+			$("#produto", vendaProdutoController.workspace).val(result.nome);
+
+			if (successCallBack) {
+				successCallBack();
+			}
+		}
+	},
+
 	exibirAutoComplete : function(result){
 		$("#produto", vendaProdutoController.workspace).autocomplete({
 			source: result,
@@ -285,3 +300,4 @@ var vendaProdutoController = $.extend(true, {
 	}
 	
 }, BaseController);
+//@ sourceURL=vendaProduto.js
