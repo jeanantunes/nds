@@ -1,6 +1,7 @@
 package br.com.abril.nds.model.cadastro;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Set;
 
 import javax.persistence.CollectionTable;
@@ -44,12 +45,13 @@ public class GrupoCota implements Serializable {
 	@Enumerated(EnumType.STRING)
 	@Column(name = "TIPO_COTA")
 	private TipoCaracteristicaSegmentacaoPDV tipoCota;
-	/*
-	@ManyToMany
-	@JoinTable(name = "GRUPO_MUNICIPIO", joinColumns = {@JoinColumn(name = "GRUPO_COTA_ID")}, 
-	inverseJoinColumns = {@JoinColumn(name = "LOCALIDADE_ID")})
-	private Set<Localidade> municipios;
-	*/
+		
+	@ElementCollection(targetClass = String.class) 
+	@CollectionTable(name = "GRUPO_MUNICIPIO",
+	    joinColumns = @JoinColumn(name = "GRUPO_COTA_ID"))
+	@Column(name = "LOCALIDADE")	
+	private Set<String> municipios;
+	
 	@ElementCollection(targetClass = DiaSemana.class) 
 	@CollectionTable(name = "DIA_RECOLHIMENTO_GRUPO_COTA",
 	    joinColumns = @JoinColumn(name = "GRUPO_ID"))
@@ -180,6 +182,18 @@ public class GrupoCota implements Serializable {
 		this.cotas = cotas;
 	}
 
-	
+	/**
+	 * @return the municipios
+	 */
+	public Set<String> getMunicipios() {
+		return municipios;
+	}
+
+	/**
+	 * @param municipios the municipios to set
+	 */
+	public void setMunicipios(Set<String> municipios) {
+		this.municipios = municipios;
+	}
 	
 }

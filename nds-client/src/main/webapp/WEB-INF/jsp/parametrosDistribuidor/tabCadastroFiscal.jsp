@@ -84,12 +84,6 @@
 	<fieldset
 		style="width: 440px !important; margin-bottom: 5px; float: left;">
 		
-		<input type="hidden" name="parametrosDistribuidor.endereco.codigoBairro"
-			   id="codigoBairro" value="${parametrosDistribuidor.endereco.codigoBairro}" />
-		
-		<input type="hidden" name="parametrosDistribuidor.endereco.codigoCidadeIBGE"
-			   id="codigoCidadeIBGE" value="${parametrosDistribuidor.endereco.codigoCidadeIBGE}" />
-		
 		<legend>Endereço</legend>
 		<table width="443" cellpadding="2" cellspacing="2"
 			style="text-align: left">

@@ -197,7 +197,7 @@ public class EnderecoRepositoryImpl extends AbstractRepositoryModel<Endereco, Lo
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<String> obterBairrosPorCidade(String cidade) {
-		StringBuilder hql = new StringBuilder("select endereco.bairro ");
+		StringBuilder hql = new StringBuilder("select distinct(endereco.bairro) ");
 		hql.append(" from EnderecoCota enderecoCota ")
 		   .append(" join enderecoCota.endereco endereco ")
 		   .append(" where endereco.cidade = :cidade")

@@ -303,6 +303,7 @@ public class EnderecoServiceImpl implements EnderecoService {
 					ret.setBairro(bairroInicial.getNome());				
 				} else {
 					localidade = om.treeToValue(list.get(0), Localidade.class);
+					ret.setUf(localidade.getUnidadeFederacao().get_id().replace("uf/", ""));
 				}
 //				bairroFinal = om.treeToValue(list.get(3), Bairro.class);
 				
