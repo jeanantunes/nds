@@ -195,21 +195,21 @@ public class ProdutoRepositoryImpl extends AbstractRepositoryModel<Produto, Long
 		}
 		
 		if (nome != null && !nome.isEmpty()) {
-			hql.append(auxHql).append(" produto.nome like :nome ");
+			hql.append(auxHql).append(" lower( produto.nome ) like :nome ");
 			auxHql = " and ";
 		}
 		
 		if (fornecedor != null && !fornecedor.isEmpty()) {
 			
 			hql.append(auxHql);
-			hql.append(" fornecedorProd.juridica.razaoSocial like :fornecedor ");
+			hql.append(" lower( fornecedorProd.juridica.razaoSocial ) like :fornecedor ");
 			auxHql = " and ";
 		}
 		
 		if (editor != null && !editor.isEmpty()) {
 			
 			hql.append(auxHql);
-			hql.append(" editorProd.pessoaJuridica.razaoSocial like :nomeEditor ");
+			hql.append(" lower( editorProd.pessoaJuridica.razaoSocial ) like :nomeEditor ");
 			auxHql = " and ";
 		}
 
@@ -245,15 +245,15 @@ public class ProdutoRepositoryImpl extends AbstractRepositoryModel<Produto, Long
 		}
 		
 		if (nome != null && !nome.isEmpty()) {
-			query.setParameter("nome", "%" + nome + "%");
+			query.setParameter("nome", "%" + nome.toLowerCase().trim() + "%");
 		}
 		
 		if (fornecedor != null && !fornecedor.isEmpty()) {
-			query.setParameter("fornecedor", "%" + fornecedor + "%");
+			query.setParameter("fornecedor", "%" + fornecedor.toLowerCase().trim() + "%");
 		}
 		
 		if (editor != null && !editor.isEmpty()) {
-			query.setParameter("nomeEditor", "%" + editor + "%");
+			query.setParameter("nomeEditor", "%" + editor.toLowerCase().trim() + "%");
 		}
 		
 		if (codigoTipoProduto != null && codigoTipoProduto > 0) {
