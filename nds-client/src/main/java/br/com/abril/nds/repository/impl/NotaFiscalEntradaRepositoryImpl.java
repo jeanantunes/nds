@@ -167,7 +167,7 @@ public class NotaFiscalEntradaRepositoryImpl extends AbstractRepositoryModel<Not
 
 		PaginacaoVO paginacao = filtroConsultaNotaFiscal.getPaginacao();
 
-		if (filtroConsultaNotaFiscal.getListaColunaOrdenacao() != null || 
+		if (filtroConsultaNotaFiscal.getListaColunaOrdenacao() != null && 
 				!filtroConsultaNotaFiscal.getListaColunaOrdenacao().isEmpty()) {
 
 			hql.append(" order by ");
@@ -192,7 +192,7 @@ public class NotaFiscalEntradaRepositoryImpl extends AbstractRepositoryModel<Not
 						break;
 					case NOTA_RECEBIDA:
 						orderByColumn += orderByColumn.equals("") ? "" : ",";
-						orderByColumn += " notaFiscal.statusNotaFiscal ";
+						orderByColumn += " notaFiscal.dataRecebimento ";
 						break;
 					case NUMERO_NOTA:
 						orderByColumn += orderByColumn.equals("") ? "" : ",";
@@ -292,13 +292,7 @@ public class NotaFiscalEntradaRepositoryImpl extends AbstractRepositoryModel<Not
 		
 			this.adicionar(notaFiscal);
 	}
-	@Override	
-	public NotaFiscalEntrada obterNotaFiscalPorNumero(String numero){
-		String hql = "from NotaFiscalEntrada nf where nf.numero = :numero ";
-		Query query = super.getSession().createQuery(hql);
-		query.setParameter("numero", numero);
-		return (NotaFiscalEntrada) query.uniqueResult();
-	}
+	
 	/**
 	 * Metodo para buscar nota com numero,serie, cnpj e chaveDeAcesso 
 	 * @param filtroConsultaNotaFiscal

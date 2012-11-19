@@ -298,6 +298,9 @@ public class DataLoader {
 	private static TipoMovimentoEstoque tipoMovimentoEstornoCotaAusente;
 	private static TipoMovimentoEstoque tipoMovimentoSuplementarCotaAusente;
 
+	private static TipoMovimentoEstoque tipoMovimentoEstornoFuroPublicacao;
+	private static TipoMovimentoEstoque tipoMovimentoEstornoCotaFuroPublicacao;
+	
 	private static TipoMovimentoEstoque tipoMovimentoEstornoCotaEnvioReparte;
 	private static TipoMovimentoEstoque tipoMovimentoEntradaSuplementarEnvioReparte;
 	
@@ -1143,7 +1146,7 @@ public class DataLoader {
 
 		gerarLogExecucaoInterfaces(session);
 
-		gerarLogradouros(session);
+		//gerarLogradouros(session);
 
 		//criarNovaNotaFiscal(session);
 		
@@ -5761,6 +5764,9 @@ public class DataLoader {
 		tipoMovimentoCompraEncalhe = Fixture.tipoMovimentoCompraEncalhe();
 		tipoMovimentoEstornoCompraEncalhe = Fixture.tipoMovimentoEstornoCompraEncalhe();
 
+		tipoMovimentoEstornoFuroPublicacao = Fixture.tipoMovimentoEstornoFuroPublicacao();
+		tipoMovimentoEstornoCotaFuroPublicacao = Fixture.tipoMovimentoEstornoCotaFuroPublicacao();
+
 		tipoMovimentoVendaEncalhe = Fixture.tipoMovimentoVendaEncalhe();
 		tipoMovimentoEstornoVendaEncalhe = Fixture.tipoMovimentoEstornoVendaEncalhe();
 
@@ -5774,7 +5780,7 @@ public class DataLoader {
 
 		save(session, tipoMovimentoVendaEncalhe,tipoMovimentoFinanceiroCompraEncalhe,tipoMovimentoEstornoVendaEncalhe,tipoMovimentoVendaEncalheSuplementar,
 					  tipoMovimentoEstornoVendaEncalheSuplementar,tipoMovimentoEstoqueCompraSuplementar,tipoMovimentoEstoqueEstornoCompraSuplementar, 
-					  tipoMovimentoEncalheAntecipado,tipoMovimentoCompraEncalhe,tipoMovimentoEstornoCompraEncalhe);
+					  tipoMovimentoEncalheAntecipado,tipoMovimentoCompraEncalhe,tipoMovimentoEstornoCompraEncalhe, tipoMovimentoEstornoCotaFuroPublicacao, tipoMovimentoEstornoFuroPublicacao);
 
 
 		tipoMovimentoSuplementarCotaAusente = Fixture.tipoMovimentoSuplementarCotaAusente();
@@ -5844,7 +5850,7 @@ public class DataLoader {
 				tipoMovimentoTransferenciaEntradaLancamento, tipoMovimentoTransferenciaSaidaLancamento, 
 				tipoMovimentoTransferenciaEntradaSuplementar, tipoMovimentoTransferenciaSaidaSuplementar,
 				tipoMovimentoTransferenciaEntradaRecolhimento, tipoMovimentoTransferenciaSaidaRecolhimento,
-				tipoMovimentoTransferenciaEntradaProdutosDanificados, tipoMovimentoTransferenciaSaidaProdutosDanificados);
+				tipoMovimentoTransferenciaEntradaProdutosDanificados, tipoMovimentoTransferenciaSaidaProdutosDanificados, tipoMovimentoEstornoCotaFuroPublicacao);
 
 	}
 

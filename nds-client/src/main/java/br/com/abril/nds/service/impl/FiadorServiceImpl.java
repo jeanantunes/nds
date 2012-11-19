@@ -933,4 +933,11 @@ public class FiadorServiceImpl implements FiadorService {
 		
 		return this.fiadorRepository.obterFiadorPorCnpj(cnpj);
 	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public List<Pessoa> obterFiadorPorNome(String nomeFiador) {
+		
+		return fiadorRepository.obterFiadorPorNome(nomeFiador);
+	}
 }

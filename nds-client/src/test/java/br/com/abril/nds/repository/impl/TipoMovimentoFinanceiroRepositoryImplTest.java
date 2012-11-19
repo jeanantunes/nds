@@ -33,4 +33,12 @@ public class TipoMovimentoFinanceiroRepositoryImplTest extends AbstractRepositor
 		Assert.assertNotNull(tipoMovimentoFinanceiro);
 	}
 	
+	@Test
+	public void buscarPorDescricao(){
+		
+		String descricao = "descricaoteste";
+		
+		TipoMovimentoFinanceiro tipoMovimentoFinanceiro = tipoMovimentoFinanceiroRepository.buscarPorDescricao(descricao);
+	}
+	
 }

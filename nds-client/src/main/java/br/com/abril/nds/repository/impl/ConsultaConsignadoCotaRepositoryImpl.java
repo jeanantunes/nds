@@ -17,6 +17,7 @@ import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque.Dominio;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.OperacaoEstoque;
+import br.com.abril.nds.model.movimentacao.TipoMovimento;
 import br.com.abril.nds.repository.ConsultaConsignadoCotaRepository;
 
 @Repository
@@ -42,9 +43,9 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		   .append("        pe.precoVenda as precoCapa, ")
 		   .append("        ("+ this.getHQLDesconto() +") as desconto, ")
 		   .append("        (pe.precoVenda - (pe.precoVenda * ("+ this.getHQLDesconto() +") / 100)) as precoDesconto, ")
-		   .append("        (movimento.qtde) as reparte, ")		
-		   .append("        (pe.precoVenda * movimento.qtde) as total, ")
-		   .append("        ((pe.precoVenda - (pe.precoVenda * ("+ this.getHQLDesconto() +") / 100)) * movimento.qtde)  as totalDesconto ");
+		   .append("        CASE WHEN movimento.tipoMovimento.operacaoEstoque  = :tipoOperacaoEntrada THEN (movimento.qtde) ELSE (movimento.qtde*-1) END as reparte, ")		
+		   .append("        CASE WHEN movimento.tipoMovimento.operacaoEstoque  = :tipoOperacaoEntrada THEN (pe.precoVenda * movimento.qtde) ELSE (pe.precoVenda * movimento.qtde*-1) END as total, ")
+		   .append("        CASE WHEN movimento.tipoMovimento.operacaoEstoque  = :tipoOperacaoEntrada THEN ((pe.precoVenda - (pe.precoVenda * ("+ this.getHQLDesconto() +") / 100)) * movimento.qtde) ELSE ((pe.precoVenda - (pe.precoVenda * ("+ this.getHQLDesconto() +") / 100)) * movimento.qtde*-1) END as totalDesconto ");
 		
 		hql.append(getHQLFromEWhereConsignadoCota(filtro));
 		
@@ -145,11 +146,17 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		StringBuilder hql = new StringBuilder();
 		
 		hql.append(" SELECT SUM(( (pe.precoVenda - (pe.precoVenda * ("+ this.getHQLDesconto() +") / 100)) * movimento.qtde ");
-		if (filtro.getIdCota() == null) {
+
+		hql.append("            * CASE WHEN tipoMovimento.operacaoEstoque = (:tipoOperacaoEntrada) THEN 1 ")
+		   .append("                   WHEN tipoMovimento.operacaoEstoque = (:tipoOperacaoSaida) THEN -1 ")
+		   .append("                   ELSE 0 END ");
+
+		// TODO: Verificar pq existe isso se mesmo com a cota, isto deve ser aplicado na consulta consignado cota
+		/*if (filtro.getIdCota() == null) {
 			hql.append("            * CASE WHEN tipoMovimento.grupoMovimentoEstoque IN (:tipoMovimentoEntrada) THEN 1 ")
 			   .append("                   WHEN tipoMovimento.grupoMovimentoEstoque IN (:tipoMovimentoSaida) THEN -1 ")
 			   .append("                   ELSE 0 END ");
-		}
+		}*/
 		hql.append("           )) ");
 		
 		hql.append(getHQLFromEWhereConsignadoCota(filtro));
@@ -273,6 +280,14 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 	
 	private void buscarParametrosConsignadoCota(Query query, FiltroConsultaConsignadoCotaDTO filtro){
 		
+		if(query.getQueryString().contains(":tipoOperacaoEntrada")) {
+			query.setParameter("tipoOperacaoEntrada", OperacaoEstoque.ENTRADA);
+		}
+
+		if(query.getQueryString().contains(":tipoOperacaoSaida")) {
+			query.setParameter("tipoOperacaoSaida", OperacaoEstoque.SAIDA);
+		}
+
 		List<GrupoMovimentoEstoque> listaGrupoMovimentoEstoquesEntrada = new ArrayList<GrupoMovimentoEstoque>();
 		List<GrupoMovimentoEstoque> listaGrupoMovimentoEstoquesSaida = new ArrayList<GrupoMovimentoEstoque>();
 		List<GrupoMovimentoEstoque> listaGrupoMovimentoEstoques = new ArrayList<GrupoMovimentoEstoque>();
@@ -323,7 +338,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		if(filtro.getIdFornecedor() != null ) { 
 			query.setParameter("idFornecedor", filtro.getIdFornecedor());
 		}
-		
+	
 	}
 	
 	private String getHQLDesconto(){

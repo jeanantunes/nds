@@ -37,4 +37,7 @@ public interface EnderecoRepository extends Repository<Endereco, Long> {
 	List<Logradouro> obterLogradourosPorCodigoBairroNome(Long codigoBairro, String nomeLogradouro);
 	
 	EnderecoVO obterEnderecoPorCep(String cep);
+	
+	List<Bairro> obterBairrosPorCidade(String cidade);
+	
 }

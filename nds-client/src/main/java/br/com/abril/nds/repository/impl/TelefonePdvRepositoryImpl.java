@@ -85,8 +85,9 @@ public class TelefonePdvRepositoryImpl extends AbstractRepositoryModel<TelefoneP
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Telefone> buscarTelefonesPessoaPorPdv(Long idPdv) {
-		StringBuilder hql = new StringBuilder("select c.pessoa.telefones ");
+		StringBuilder hql = new StringBuilder("select telefones.telefone ");
 		hql.append(" from PDV c ")
+		   .append(" inner join c.telefones as telefones ")
 		   .append(" where c.id = :idPdv");
 		
 		Query query = this.getSession().createQuery(hql.toString());

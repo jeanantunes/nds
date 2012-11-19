@@ -49,4 +49,6 @@ public interface EnderecoService {
 	
 	void validarEndereco(EnderecoDTO endereco, TipoEndereco tipoEndereco);
 	
+	List<Bairro> obterBairrosPorCidade(String cidade);
+	
 }

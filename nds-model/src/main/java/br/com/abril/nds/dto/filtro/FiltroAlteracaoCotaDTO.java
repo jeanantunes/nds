@@ -18,7 +18,7 @@ public class FiltroAlteracaoCotaDTO extends FiltroDTO implements Serializable {
 	private Integer numeroCota; 
 	private String nomeCota; 
 	private Long idFornecedor;
-	private Integer idBairro;
+	private String idBairro;
 	private String idMunicipio; 
 	private DescricaoTipoEntrega descricaoTipoEntrega; 
 	private TipoDesconto tipoDesconto;
@@ -49,11 +49,11 @@ public class FiltroAlteracaoCotaDTO extends FiltroDTO implements Serializable {
 	public void setIdFornecedor(Long idFornecedor) {
 		this.idFornecedor = idFornecedor;
 	}
-	public Integer getIdBairro() {
+	public String getIdBairro() {
 		return idBairro;
 	}
-	public void setIdBairro(Integer idBairro) {
-		this.idBairro = idBairro;
+	public void setIdBairro(String bairro) {
+		this.idBairro = bairro;
 	}
 	public String getIdMunicipio() {
 		return idMunicipio;

@@ -202,7 +202,12 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		
 		hql.append(" select cota.numeroCota as numCota, ");
 		hql.append(" 		cota.id as idCota, 			");
-		hql.append(" 		pessoa.nome as nomeCota, 	");
+		
+		hql.append(" case pessoa.class ");
+		
+		hql.append("       when 'F' then pessoa.nome ");
+				
+		hql.append("       when 'J' then pessoa.razaoSocial end  as nomeCota,");
 		
 		hql.append(" (	");
 		hql.append(	getSubHqlTotalQtdeValorPrevistaDaEmissaoCE(filtro, false));

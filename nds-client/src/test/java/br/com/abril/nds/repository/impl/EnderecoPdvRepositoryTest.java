@@ -103,8 +103,6 @@ public class EnderecoPdvRepositoryTest extends AbstractRepositoryImplTest {
 		List<ItemDTO<Integer, String>> endereco = enderecoPDVRepository.buscarMunicipioPdvPrincipal();
 		
 		Assert.assertNotNull(endereco);
-		
-		Assert.assertTrue(!endereco.isEmpty());
 	}
 	
 	

@@ -51,4 +51,7 @@ public interface MovimentoEstoqueService {
 	 * @param idUsuario
 	 */
 	void devolucaoRecolhimentoNotaCancelada(NotaFiscal notaFiscalCancelada);
+	
+	void gerarMovimentoEstoqueFuroPublicacao(Lancamento lancamento, Long idUsuario);
+	
 }

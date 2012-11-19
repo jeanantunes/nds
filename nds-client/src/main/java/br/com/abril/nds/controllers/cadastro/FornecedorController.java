@@ -16,6 +16,7 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
+import br.com.abril.nds.client.util.PessoaUtil;
 import br.com.abril.nds.dto.ComboTipoFornecedorDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.FornecedorDTO;
@@ -50,6 +51,7 @@ import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.util.StringUtils;
 import br.com.caelum.vraptor.view.Results;
 
 /**
@@ -109,7 +111,8 @@ public class FornecedorController {
 		
 		filtroConsultaFornecedor = prepararFiltroFornecedor(filtroConsultaFornecedor, page, sortname, sortorder, rp);
 		
-		
+		filtroConsultaFornecedor.setNomeFantasia(PessoaUtil.removerSufixoDeTipo(filtroConsultaFornecedor.getNomeFantasia()));
+		filtroConsultaFornecedor.setRazaoSocial(PessoaUtil.removerSufixoDeTipo(filtroConsultaFornecedor.getRazaoSocial()));
 		
 		Long quantidadeRegistros =
 				this.fornecedorService.obterContagemFornecedoresPorFiltro(filtroConsultaFornecedor);		
@@ -263,7 +266,7 @@ public class FornecedorController {
 		mapa.put("data", DateUtil.formatarDataPTBR(new Date()));
 		
 		if (novoCodigoInterface != null) {
-			mapa.put("nextCodigo", novoCodigoInterface);
+			mapa.put("nextCodigo", String.format("%04d", novoCodigoInterface));
 		}
 		
 		this.result.use(CustomJson.class).from(mapa).serialize();

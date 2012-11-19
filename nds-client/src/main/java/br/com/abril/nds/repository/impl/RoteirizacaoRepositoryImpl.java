@@ -77,8 +77,10 @@ public class RoteirizacaoRepositoryImpl extends AbstractRepositoryModel<Roteiriz
 	
 	@Override
 	public Integer buscarMaiorOrdem(Long rotaId){
-		Criteria criteria  = getSession().createCriteria(Roteirizacao.class);
-		criteria.add(Restrictions.eq("rota.id", rotaId));
+		Criteria criteria  = getSession().createCriteria(Roteiro.class);
+		criteria.setFetchMode("rotas", FetchMode.JOIN);
+		criteria.createAlias("rotas", "rotas") ;
+		criteria.add(Restrictions.eq("rotas.id", rotaId));
 		criteria.setProjection(Projections.max("ordem"));  
 		return (Integer) criteria.uniqueResult();  
 	}
@@ -86,7 +88,7 @@ public class RoteirizacaoRepositoryImpl extends AbstractRepositoryModel<Roteiriz
 	
 	public List<PDV> buscarPdvRoteirizacaoNumeroCota(Integer numeroCota, Long rotaId , Roteiro roteiro ){
 		Boolean exibirPontoPrincipal =  Boolean.FALSE;
-		DetachedCriteria subquery = DetachedCriteria.forClass(Roteirizacao.class);
+		DetachedCriteria subquery = DetachedCriteria.forClass(Roteiro.class);
 		exibirPontoPrincipal = getSubqueyCotasDisponiveis(rotaId, roteiro,
 				exibirPontoPrincipal, subquery);
 
@@ -100,9 +102,9 @@ public class RoteirizacaoRepositoryImpl extends AbstractRepositoryModel<Roteiriz
 	}
 	
 	
-	public List<PDV> buscarRoteirizacaoPorEndereco(String CEP, String uf, String municipio, String bairro,  Long rotaId , Roteiro roteiro ){
+	public List<PDV> buscarRoteirizacaoPorEndereco(String CEP, String uf, String cidade, String bairro,  Long rotaId , Roteiro roteiro ){
 		Boolean exibirPontoPrincipal =  Boolean.FALSE;
-		DetachedCriteria subquery = DetachedCriteria.forClass(Roteirizacao.class);
+		DetachedCriteria subquery = DetachedCriteria.forClass(Roteiro.class);
 		exibirPontoPrincipal = getSubqueyCotasDisponiveis(rotaId, roteiro,
 				exibirPontoPrincipal, subquery);
 		
@@ -119,8 +121,8 @@ public class RoteirizacaoRepositoryImpl extends AbstractRepositoryModel<Roteiriz
 				criteria.add(Restrictions.eq("endereco.uf", uf));
 			}
 			
-			if (municipio != null && !municipio.equals("") ) {
-				criteria.add(Restrictions.eq("endereco.municipio", municipio));
+			if (cidade != null && !cidade.equals("") ) {
+				criteria.add(Restrictions.eq("endereco.cidade", cidade));
 			}
 			
 			if (bairro != null && !bairro.equals("") ) {
@@ -137,15 +139,17 @@ public class RoteirizacaoRepositoryImpl extends AbstractRepositoryModel<Roteiriz
 
 	private Boolean getSubqueyCotasDisponiveis(Long rotaId, Roteiro roteiro,
 			Boolean exibirPontoPrincipal, DetachedCriteria subquery) {
-		subquery.createAlias("rota", "rota") ;
-		subquery.createAlias("pdv", "pdv") ;
-		subquery.createAlias("rota.roteiro", "roteiro") ;
+		subquery.setFetchMode("rotas", FetchMode.JOIN);
+		subquery.createAlias("rotas", "rotas") ;
+		subquery.setFetchMode("rotas.rotaPDVs", FetchMode.JOIN);
+		subquery.createAlias("rotas.rotaPDVs", "rotaPDVs");
+		subquery.createAlias("rotaPDVs.pdv", "pdv");
 		subquery.setProjection(Projections.projectionList().add(Projections.property("pdv.id")));
 		if ( roteiro.getTipoRoteiro().compareTo(TipoRoteiro.NORMAL) == 0 ){
-			subquery.add(Restrictions.eq("roteiro.tipoRoteiro", TipoRoteiro.NORMAL));
+			subquery.add(Restrictions.eq("tipoRoteiro", TipoRoteiro.NORMAL));
 			exibirPontoPrincipal =  Boolean.TRUE;
 		} else {
-			subquery.add(Restrictions.eq("rota.id", rotaId));
+			subquery.add(Restrictions.eq("rotas.id", rotaId));
 		}
 		return exibirPontoPrincipal;
 	}
@@ -184,21 +188,23 @@ public class RoteirizacaoRepositoryImpl extends AbstractRepositoryModel<Roteiriz
 
 	@Override
 	public List<ConsultaRoteirizacaoDTO> buscarRoteirizacaoPorNumeroCota(Integer numeroCota, TipoRoteiro tipoRoteiro, String  orderBy, Ordenacao ordenacao, int initialResult, int maxResults) {
-		Criteria criteria  = getSession().createCriteria(Roteirizacao.class);
-		criteria.createAlias("rota", "rota") ;
-		criteria.createAlias("rota.roteiro", "roteiro") ;
-		criteria.createAlias("roteiro.roteirizacao", "roteirizacao") ;
+		Criteria criteria  = getSession().createCriteria(Roteiro.class);
+		criteria.setFetchMode("rotas", FetchMode.JOIN);
+		criteria.createAlias("rotas", "rotas") ;
+		criteria.createAlias("roteirizacao", "roteirizacao") ;
 		criteria.createAlias("roteirizacao.box", "box") ;
-		criteria.createAlias("pdv", "pdv") ;
+		criteria.setFetchMode("rotas.rotaPDVs", FetchMode.JOIN);
+		criteria.createAlias("rotas.rotaPDVs", "rotaPDVs");
+		criteria.createAlias("rotaPDVs.pdv", "pdv");
 		criteria.createAlias("pdv.cota", "cota") ;
 		criteria.createAlias("cota.pessoa", "pessoa") ;
 		
 		criteria.add(Restrictions.eq("cota.numeroCota", numeroCota));
-	    criteria.add(Restrictions.eq("roteiro.tipoRoteiro", tipoRoteiro));
+	    criteria.add(Restrictions.eq("tipoRoteiro", tipoRoteiro));
 		criteria.setProjection(Projections.distinct(Projections.projectionList()
 				.add(Projections.property("box.nome"), "nomeBox")
-				.add(Projections.property("roteiro.descricaoRoteiro"), "descricaoRoteiro")
-				.add(Projections.property("rota.descricaoRota"), "descricaoRota")
+				.add(Projections.property("descricaoRoteiro"), "descricaoRoteiro")
+				.add(Projections.property("rotas.descricaoRota"), "descricaoRota")
 				.add(Projections.property("cota.numeroCota"), "numeroCota")
 				.add(Projections.property("pessoa.nome"), "nome")));
 		

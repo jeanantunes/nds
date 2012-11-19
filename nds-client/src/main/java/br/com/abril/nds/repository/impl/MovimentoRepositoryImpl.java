@@ -86,7 +86,7 @@ public class MovimentoRepositoryImpl extends AbstractRepositoryModel<Movimento, 
 		
 		aplicarParametrosParaPesquisaMovimentoAprovacao(filtro, query);
 		
-		if (filtro != null && filtro.getPaginacao() != null) {
+ 		if (filtro != null && filtro.getPaginacao() != null) {
 			
 			if (filtro.getPaginacao().getPosicaoInicial() != null) {
 				query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
