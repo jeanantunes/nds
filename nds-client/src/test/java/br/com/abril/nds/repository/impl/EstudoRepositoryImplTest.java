@@ -4,10 +4,12 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
+import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
+import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.fixture.Fixture;
@@ -27,7 +29,7 @@ import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.repository.EstudoRepository;
 import br.com.abril.nds.util.Constantes;
 
-@Ignore
+
 public class EstudoRepositoryImplTest extends AbstractRepositoryImplTest {
 	
 	@Autowired
@@ -70,7 +72,7 @@ public class EstudoRepositoryImplTest extends AbstractRepositoryImplTest {
 		save(produto);
 		
 		ProdutoEdicao produtoEdicao = 
-			Fixture.produtoEdicao(1L, 1, 1, new Long(10000), BigDecimal.TEN, BigDecimal.TEN, "ABCDEFGHIJKLMNOPQRSTU", produto, null, false);
+			Fixture.produtoEdicao(1L, 1, 1, new Long(10000), BigDecimal.TEN, BigDecimal.TEN, "ABCD", produto, null, false);
 		
 		save(produtoEdicao);
 		
@@ -95,6 +97,24 @@ public class EstudoRepositoryImplTest extends AbstractRepositoryImplTest {
 		save(estudo);
 		
 		return estudo;
+	}
+	
+//	TESTE SEM USO DE MASSA
+	
+	@Test
+	public void testarObterEstudoDoLancamentoPorDataProdutoEdicao() {
+		
+		Estudo estudo;
+		
+		Calendar data = Calendar.getInstance();
+		Date dataReferencia = data.getTime();
+		
+		Long idProdutoEdicao = 1L;
+		
+		estudo = estudoRepository.obterEstudoDoLancamentoPorDataProdutoEdicao(dataReferencia, idProdutoEdicao);
+		
+		Assert.assertNull(estudo);
+		
 	}
 
 }

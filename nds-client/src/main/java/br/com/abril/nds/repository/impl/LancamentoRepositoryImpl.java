@@ -177,7 +177,7 @@ public class LancamentoRepositoryImpl extends
 		} else if(sortOrder.equals(LancamentoNaoExpedidoDTO.SortColumn.EDICAO)) {
 			order =  "produtoEdicao.numeroEdicao";
 		} else if(sortOrder.equals(LancamentoNaoExpedidoDTO.SortColumn.CLASSIFICACAO_PRODUTO)) {
-			order = "produto.tipoproduto.nome";
+			order = "produto.tipoProduto.descricao";
 		} else if(sortOrder.equals(LancamentoNaoExpedidoDTO.SortColumn.PRECO_PRODUTO)) {
 			order =  "produtoEdicao.precoVenda";
 		} else if(sortOrder.equals(LancamentoNaoExpedidoDTO.SortColumn.QTDE_PACOTE_PADRAO)) {
@@ -251,7 +251,8 @@ public class LancamentoRepositoryImpl extends
 			hql.append(" and ");
 		}
 		
-		hql.append(" (lancamento.status=:statusConfirmado ");
+		//hql.append(" lancamento.status=:statusConfirmado ");
+		hql.append(" lancamento.status=:statusBalanceado ");
 		
 		parametros.put("statusBalanceado", StatusLancamento.BALANCEADO);
 		

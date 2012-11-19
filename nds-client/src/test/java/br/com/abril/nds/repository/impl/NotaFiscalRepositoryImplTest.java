@@ -58,6 +58,7 @@ import br.com.abril.nds.model.fiscal.nota.Veiculo;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.repository.NotaFiscalRepository;
 import br.com.abril.nds.vo.PaginacaoVO;
+import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 
 public class NotaFiscalRepositoryImplTest  extends AbstractRepositoryImplTest {
@@ -454,6 +455,208 @@ public class NotaFiscalRepositoryImplTest  extends AbstractRepositoryImplTest {
 			
 		}
 		
+		
+	}
+	
+	@Test
+	public void obterListaNotasFiscaisPor(){
+	StatusProcessamentoInterno status = StatusProcessamentoInterno.ENVIADA;
+		
+		List<NotaFiscal> notaFiscal = notaFiscalRepository.obterListaNotasFiscaisPor(status);
+		
+		Assert.assertNotNull(notaFiscal);
+	}
+	
+	@Test
+	public void obterQtdeRegistroNotaFiscal(){
+	
+		FiltroMonitorNfeDTO filtro = new FiltroMonitorNfeDTO();
+		filtro.setBox(1);
+		filtro.setDataInicial(Fixture.criarData(06, Calendar.NOVEMBER, 2012));
+		filtro.setDataFinal(Fixture.criarData(06, Calendar.DECEMBER, 2012));
+		filtro.setDocumentoPessoa("54545454w");
+		filtro.setTipoNfe("entrada");
+		filtro.setNumeroNotaInicial(555L);
+		filtro.setNumeroNotaFinal(784L);
+		filtro.setChaveAcesso("46874646546546546546548764");
+		filtro.setSituacaoNfe("aceita");
+		filtro.setSerie(1);
+		
+		
+		notaFiscalRepository.obterQtdeRegistroNotaFiscal(filtro);
+		
+	}
+	
+	@Test
+	public void obterQtdeRegistroNotaFiscalDocumentoCPF(){
+	
+		FiltroMonitorNfeDTO filtro = new FiltroMonitorNfeDTO();
+		filtro.setBox(1);
+		filtro.setDataInicial(Fixture.criarData(06, Calendar.NOVEMBER, 2012));
+		filtro.setDataFinal(Fixture.criarData(06, Calendar.DECEMBER, 2012));
+		filtro.setDocumentoPessoa("468787748798");
+		filtro.setIndDocumentoCPF(true);
+		filtro.setTipoNfe("entrada");
+		filtro.setNumeroNotaInicial(555L);
+		filtro.setNumeroNotaFinal(784L);
+		filtro.setChaveAcesso("46874646546546546546548764");
+		filtro.setSituacaoNfe("aceita");
+		filtro.setSerie(1);
+		
+		
+		notaFiscalRepository.obterQtdeRegistroNotaFiscal(filtro);
+		
+	}
+	
+	@Test
+	public void pesquisarNotaFiscalFiltro(){
+	
+		FiltroMonitorNfeDTO filtro = new FiltroMonitorNfeDTO();
+		filtro.setBox(1);
+		filtro.setDataInicial(Fixture.criarData(06, Calendar.NOVEMBER, 2012));
+		filtro.setDataFinal(Fixture.criarData(06, Calendar.DECEMBER, 2012));
+		filtro.setDocumentoPessoa("468787748798");
+		filtro.setIndDocumentoCPF(true);
+		filtro.setTipoNfe("entrada");
+		filtro.setNumeroNotaInicial(555L);
+		filtro.setNumeroNotaFinal(784L);
+		filtro.setChaveAcesso("46874646546546546546548764");
+		filtro.setSituacaoNfe("aceita");
+		filtro.setSerie(1);
+		
+		List<NfeDTO> nfeDTOs =  notaFiscalRepository.pesquisarNotaFiscal(filtro);
+		
+		Assert.assertNotNull(nfeDTOs);
+		
+	}
+	
+	@Test
+	public void pesquisarNotaFiscalFiltroOrdenacaoNota(){
+	
+		FiltroMonitorNfeDTO filtro = new FiltroMonitorNfeDTO();
+		
+		filtro.setPaginacao(new PaginacaoVO());
+		filtro.setOrdenacaoColuna(OrdenacaoColuna.NOTA);
+		
+		List<NfeDTO> nfeDTOs =  notaFiscalRepository.pesquisarNotaFiscal(filtro);
+		
+		Assert.assertNotNull(nfeDTOs);
+		
+	}
+	
+	@Test
+	public void pesquisarNotaFiscalFiltroOrdenacaoSerie(){
+	
+		FiltroMonitorNfeDTO filtro = new FiltroMonitorNfeDTO();
+		
+		filtro.setPaginacao(new PaginacaoVO());
+		filtro.setOrdenacaoColuna(OrdenacaoColuna.SERIE);
+		
+		List<NfeDTO> nfeDTOs =  notaFiscalRepository.pesquisarNotaFiscal(filtro);
+		
+		Assert.assertNotNull(nfeDTOs);
+		
+	}
+
+	@Test
+	public void pesquisarNotaFiscalFiltroOrdenacaoTipoEmissao(){
+	
+		FiltroMonitorNfeDTO filtro = new FiltroMonitorNfeDTO();
+		
+		filtro.setPaginacao(new PaginacaoVO());
+		filtro.setOrdenacaoColuna(OrdenacaoColuna.TIPO_EMISSAO);
+		
+		List<NfeDTO> nfeDTOs =  notaFiscalRepository.pesquisarNotaFiscal(filtro);
+		
+		Assert.assertNotNull(nfeDTOs);
+		
+	}
+	
+	@Test
+	public void pesquisarNotaFiscalFiltroOrdenacaoCNPJDestinatario(){
+	
+		FiltroMonitorNfeDTO filtro = new FiltroMonitorNfeDTO();
+		
+		filtro.setPaginacao(new PaginacaoVO());
+		filtro.setOrdenacaoColuna(OrdenacaoColuna.CNPJ_DESTINATARIO);
+		
+		List<NfeDTO> nfeDTOs =  notaFiscalRepository.pesquisarNotaFiscal(filtro);
+		
+		Assert.assertNotNull(nfeDTOs);
+		
+	}
+	
+	@Test
+	public void pesquisarNotaFiscalFiltroOrdenacaoCNPJRemetente(){
+	
+		FiltroMonitorNfeDTO filtro = new FiltroMonitorNfeDTO();
+		
+		filtro.setPaginacao(new PaginacaoVO());
+		filtro.setOrdenacaoColuna(OrdenacaoColuna.CNPJ_REMETENTE);
+		
+		List<NfeDTO> nfeDTOs =  notaFiscalRepository.pesquisarNotaFiscal(filtro);
+		
+		Assert.assertNotNull(nfeDTOs);
+		
+	}
+	
+	@Test
+	public void pesquisarNotaFiscalFiltroOrdenacaoCPFRemetente(){
+	
+		FiltroMonitorNfeDTO filtro = new FiltroMonitorNfeDTO();
+		
+		filtro.setPaginacao(new PaginacaoVO());
+		filtro.setOrdenacaoColuna(OrdenacaoColuna.CPF_REMETENTE);
+		
+		List<NfeDTO> nfeDTOs =  notaFiscalRepository.pesquisarNotaFiscal(filtro);
+		
+		Assert.assertNotNull(nfeDTOs);
+		
+	}
+	
+	@Test
+	public void pesquisarNotaFiscalFiltroOrdenacaoStatusNFE(){
+	
+		FiltroMonitorNfeDTO filtro = new FiltroMonitorNfeDTO();
+		
+		filtro.setPaginacao(new PaginacaoVO());
+		filtro.setOrdenacaoColuna(OrdenacaoColuna.STATUS_NFE);
+		
+		List<NfeDTO> nfeDTOs =  notaFiscalRepository.pesquisarNotaFiscal(filtro);
+		
+		Assert.assertNotNull(nfeDTOs);
+		
+	}
+	
+	@Test
+	public void pesquisarNotaFiscalFiltroOrdenacaoTipoNFE(){
+	
+		FiltroMonitorNfeDTO filtro = new FiltroMonitorNfeDTO();
+		
+		filtro.setPaginacao(new PaginacaoVO());
+		filtro.setOrdenacaoColuna(OrdenacaoColuna.TIPO_NFE);
+		
+		List<NfeDTO> nfeDTOs =  notaFiscalRepository.pesquisarNotaFiscal(filtro);
+		
+		Assert.assertNotNull(nfeDTOs);
+		
+	}
+	
+	@Test
+	public void pesquisarNotaFiscalFiltroOrdenacaoMovimentoIntegracao(){
+	
+		FiltroMonitorNfeDTO filtro = new FiltroMonitorNfeDTO();
+		
+		filtro.setPaginacao(new PaginacaoVO());
+		filtro.getPaginacao().setOrdenacao(Ordenacao.ASC);
+		filtro.getPaginacao().setPaginaAtual(1);
+		filtro.getPaginacao().setQtdResultadosPorPagina(1);
+		filtro.setOrdenacaoColuna(OrdenacaoColuna.MOVIMENTO_INTEGRACAO);
+		
+		
+		List<NfeDTO> nfeDTOs =  notaFiscalRepository.pesquisarNotaFiscal(filtro);
+		
+		Assert.assertNotNull(nfeDTOs);
 		
 	}
 	

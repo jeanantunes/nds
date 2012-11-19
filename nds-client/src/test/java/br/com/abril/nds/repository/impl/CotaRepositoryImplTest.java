@@ -578,7 +578,7 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 		
 		save(cfop);
 		
-		TipoNotaFiscal tipoNotaFiscal = Fixture.tipoNotaFiscalRecebimento();
+		TipoNotaFiscal tipoNotaFiscal = Fixture.tipoNotaFiscalRecebimento(cfop);
 		
 		save(tipoNotaFiscal);
 		

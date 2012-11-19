@@ -24,6 +24,8 @@ public class AlteracaoCotaRepositoryImplTest extends AbstractRepositoryImplTest 
 	public void testarObterCobrancasPorIDS() {
 
 		PaginacaoVO paginacao = new PaginacaoVO();
+		paginacao.setPaginaAtual(1);
+		paginacao.setQtdResultadosPorPagina(1);
 
 		FiltroAlteracaoCotaDTO filtroAlteracaoCotaDTO = new FiltroAlteracaoCotaDTO();
 		filtroAlteracaoCotaDTO.setPaginacao(paginacao);
@@ -38,6 +40,8 @@ public class AlteracaoCotaRepositoryImplTest extends AbstractRepositoryImplTest 
 	public void testarPesquisarAlteracaoCotaNumeroCota() {
 
 		PaginacaoVO paginacao = new PaginacaoVO();
+		paginacao.setPaginaAtual(1);
+		paginacao.setQtdResultadosPorPagina(1);
 
 		FiltroAlteracaoCotaDTO filtroAlteracaoCotaDTO = new FiltroAlteracaoCotaDTO();
 		filtroAlteracaoCotaDTO.setPaginacao(paginacao);
@@ -54,6 +58,8 @@ public class AlteracaoCotaRepositoryImplTest extends AbstractRepositoryImplTest 
 	public void testarPesquisarAlteracaoCotaNomeCota() {
 
 		PaginacaoVO paginacao = new PaginacaoVO();
+		paginacao.setPaginaAtual(1);
+		paginacao.setQtdResultadosPorPagina(1);
 
 		FiltroAlteracaoCotaDTO filtroAlteracaoCotaDTO = new FiltroAlteracaoCotaDTO();
 		filtroAlteracaoCotaDTO.setPaginacao(paginacao);
@@ -67,25 +73,11 @@ public class AlteracaoCotaRepositoryImplTest extends AbstractRepositoryImplTest 
 	}
 
 	@Test
-	public void testarPesquisarAlteracaoCotaIdBairro() {
-
-		PaginacaoVO paginacao = new PaginacaoVO();
-
-		FiltroAlteracaoCotaDTO filtroAlteracaoCotaDTO = new FiltroAlteracaoCotaDTO();
-		filtroAlteracaoCotaDTO.setPaginacao(paginacao);
-		filtroAlteracaoCotaDTO.setIdBairro(1);
-
-		List<ConsultaAlteracaoCotaDTO> pesquisarAlteracaoCota = this.alteracaoCotaRepository
-				.pesquisarAlteracaoCota(filtroAlteracaoCotaDTO);
-
-		Assert.assertNotNull(pesquisarAlteracaoCota);
-
-	}
-
-	@Test
 	public void testarPesquisarAlteracaoCotaIdMunicipio() {
 
 		PaginacaoVO paginacao = new PaginacaoVO();
+		paginacao.setPaginaAtual(1);
+		paginacao.setQtdResultadosPorPagina(1);
 
 		FiltroAlteracaoCotaDTO filtroAlteracaoCotaDTO = new FiltroAlteracaoCotaDTO();
 		filtroAlteracaoCotaDTO.setPaginacao(paginacao);
@@ -102,6 +94,8 @@ public class AlteracaoCotaRepositoryImplTest extends AbstractRepositoryImplTest 
 	public void testarPesquisarAlteracaoCotaIdFornecedor() {
 
 		PaginacaoVO paginacao = new PaginacaoVO();
+		paginacao.setPaginaAtual(1);
+		paginacao.setQtdResultadosPorPagina(1);
 
 		FiltroAlteracaoCotaDTO filtroAlteracaoCotaDTO = new FiltroAlteracaoCotaDTO();
 		filtroAlteracaoCotaDTO.setPaginacao(paginacao);
@@ -118,6 +112,8 @@ public class AlteracaoCotaRepositoryImplTest extends AbstractRepositoryImplTest 
 	public void testarPesquisarAlteracaoCotaTipoDesconto() {
 
 		PaginacaoVO paginacao = new PaginacaoVO();
+		paginacao.setPaginaAtual(1);
+		paginacao.setQtdResultadosPorPagina(1);
 
 		FiltroAlteracaoCotaDTO filtroAlteracaoCotaDTO = new FiltroAlteracaoCotaDTO();
 		filtroAlteracaoCotaDTO.setPaginacao(paginacao);
@@ -134,6 +130,8 @@ public class AlteracaoCotaRepositoryImplTest extends AbstractRepositoryImplTest 
 	public void testarPesquisarAlteracaoCotaIdVrMinimo() {
 
 		PaginacaoVO paginacao = new PaginacaoVO();
+		paginacao.setPaginaAtual(1);
+		paginacao.setQtdResultadosPorPagina(1);
 
 		FiltroAlteracaoCotaDTO filtroAlteracaoCotaDTO = new FiltroAlteracaoCotaDTO();
 		filtroAlteracaoCotaDTO.setPaginacao(paginacao);
@@ -150,6 +148,8 @@ public class AlteracaoCotaRepositoryImplTest extends AbstractRepositoryImplTest 
 	public void testarPesquisarAlteracaoCotaDescricaoTipoEntrega() {
 
 		PaginacaoVO paginacao = new PaginacaoVO();
+		paginacao.setPaginaAtual(1);
+		paginacao.setQtdResultadosPorPagina(1);
 
 		FiltroAlteracaoCotaDTO filtroAlteracaoCotaDTO = new FiltroAlteracaoCotaDTO();
 		filtroAlteracaoCotaDTO.setPaginacao(paginacao);

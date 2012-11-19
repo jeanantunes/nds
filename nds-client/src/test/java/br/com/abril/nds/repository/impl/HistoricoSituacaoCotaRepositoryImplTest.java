@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository.impl;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -152,5 +153,259 @@ public class HistoricoSituacaoCotaRepositoryImplTest extends AbstractRepositoryI
 		
 		Assert.assertEquals(QTDE_TOTAL_HISTORICOS.longValue(), totalHistoricoStatusCota);
 	}
+	
+//	TESTE SEM USO DE MASSA
+	
+//	Testes de condições método criarQueryHistoricoStatusCota() com obterHistoricoStatusCota()
+	
+//	NumeroCota
+	@Test
+	public void testarCriarQueryHistoricoStatusCotaNumeroCota() {
+		
+		List<HistoricoSituacaoCota> listaHistoricoStatusCota;
+		
+		FiltroStatusCotaDTO filtro = new FiltroStatusCotaDTO();
+		filtro.setNumeroCota(1);
+		
+		listaHistoricoStatusCota = historicoSituacaoCotaRepository.obterHistoricoStatusCota(filtro);
+		
+		Assert.assertNotNull(listaHistoricoStatusCota);
+		
+	}
+	
+//	StatusCota
+	@Test
+	public void testarCriarQueryHistoricoStatusCotaStatusCota() {
+		
+		List<HistoricoSituacaoCota> listaHistoricoStatusCota;
+		
+		FiltroStatusCotaDTO filtro = new FiltroStatusCotaDTO();		
+		filtro.setStatusCota(SituacaoCadastro.ATIVO);
+		
+		listaHistoricoStatusCota = historicoSituacaoCotaRepository.obterHistoricoStatusCota(filtro);
+		
+		Assert.assertNotNull(listaHistoricoStatusCota);
+		
+	}
+	
+//	Periodo
+	@Test
+	public void testarCriarQueryHistoricoStatusCotaPeriodo() {
+		
+		List<HistoricoSituacaoCota> listaHistoricoStatusCota;
+		
+		FiltroStatusCotaDTO filtro = new FiltroStatusCotaDTO();	
+		
+		Calendar d = Calendar.getInstance();
+		Date dataInicial = d.getTime(); 
+		Date dataFinal = d.getTime();
+		
+		PeriodoVO periodo = new PeriodoVO(dataInicial,dataFinal);
+		filtro.setPeriodo(periodo);
+		
+		listaHistoricoStatusCota = historicoSituacaoCotaRepository.obterHistoricoStatusCota(filtro);
+		
+		Assert.assertNotNull(listaHistoricoStatusCota);
+		
+	}
+	
+//	MotivoStatusCota
+	@Test
+	public void testarCriarQueryHistoricoStatusCotaMotivoStatusCota() {
+		
+		List<HistoricoSituacaoCota> listaHistoricoStatusCota;
+		
+		FiltroStatusCotaDTO filtro = new FiltroStatusCotaDTO();			
+		filtro.setMotivoStatusCota(MotivoAlteracaoSituacao.CHAMADAO);
+		
+		listaHistoricoStatusCota = historicoSituacaoCotaRepository.obterHistoricoStatusCota(filtro);
+		
+		Assert.assertNotNull(listaHistoricoStatusCota);
+		
+	}
+	
+	
+//	Testes de condições método adicionarOrdenacaoQueryHistoricoStatusCota() com obterHistoricoStatusCota()
+	
+//	DATA
+	@Test
+	public void testarCriarQueryHistoricoStatusCotaDATA() {
+		
+		PaginacaoVO paginacao = new PaginacaoVO(1,1,"asc");
+		
+		List<HistoricoSituacaoCota> listaHistoricoStatusCota;
+		
+		FiltroStatusCotaDTO filtro = new FiltroStatusCotaDTO();
+		filtro.setPaginacao(paginacao);
+		filtro.setOrdenacaoColuna(OrdenacaoColunasStatusCota.DATA);
+		
+		
+		listaHistoricoStatusCota = historicoSituacaoCotaRepository.obterHistoricoStatusCota(filtro);
+		
+		Assert.assertNotNull(listaHistoricoStatusCota);
+		
+	}
+	
+//	DESCRICAO
+	@Test
+	public void testarCriarQueryHistoricoStatusCotaDESCRICAO() {
+		
+		PaginacaoVO paginacao = new PaginacaoVO(1,1,"asc");
+		
+		List<HistoricoSituacaoCota> listaHistoricoStatusCota;
+		
+		FiltroStatusCotaDTO filtro = new FiltroStatusCotaDTO();
+		filtro.setPaginacao(paginacao);
+		filtro.setOrdenacaoColuna(OrdenacaoColunasStatusCota.DESCRICAO);
+		
+		
+		listaHistoricoStatusCota = historicoSituacaoCotaRepository.obterHistoricoStatusCota(filtro);
+		
+		Assert.assertNotNull(listaHistoricoStatusCota);
+		
+	}
+	
+//	MOTIVO
+	@Test
+	public void testarCriarQueryHistoricoStatusCotaMOTIVO() {
+		
+		PaginacaoVO paginacao = new PaginacaoVO(1,1,"asc");
+		
+		List<HistoricoSituacaoCota> listaHistoricoStatusCota;
+		
+		FiltroStatusCotaDTO filtro = new FiltroStatusCotaDTO();
+		filtro.setPaginacao(paginacao);
+		filtro.setOrdenacaoColuna(OrdenacaoColunasStatusCota.MOTIVO);
+		
+		
+		listaHistoricoStatusCota = historicoSituacaoCotaRepository.obterHistoricoStatusCota(filtro);
+		
+		Assert.assertNotNull(listaHistoricoStatusCota);
+		
+	}
+	
+//	STATUS_ANTERIOR
+	@Test
+	public void testarCriarQueryHistoricoStatusCotaSTATUSANTERIOR() {
+		
+		PaginacaoVO paginacao = new PaginacaoVO(1,1,"asc");
+		
+		List<HistoricoSituacaoCota> listaHistoricoStatusCota;
+		
+		FiltroStatusCotaDTO filtro = new FiltroStatusCotaDTO();
+		filtro.setPaginacao(paginacao);
+		filtro.setOrdenacaoColuna(OrdenacaoColunasStatusCota.STATUS_ANTERIOR);
+		
+		
+		listaHistoricoStatusCota = historicoSituacaoCotaRepository.obterHistoricoStatusCota(filtro);
+		
+		Assert.assertNotNull(listaHistoricoStatusCota);
+		
+	}
+	
+//	STATUS_ATUALIZADO
+	@Test
+	public void testarCriarQueryHistoricoStatusCotaSTATUSATUALIZADO() {
+		
+		PaginacaoVO paginacao = new PaginacaoVO(1,1,"asc");
+		
+		List<HistoricoSituacaoCota> listaHistoricoStatusCota;
+		
+		FiltroStatusCotaDTO filtro = new FiltroStatusCotaDTO();
+		filtro.setPaginacao(paginacao);
+		filtro.setOrdenacaoColuna(OrdenacaoColunasStatusCota.STATUS_ATUALIZADO);
+		
+		
+		listaHistoricoStatusCota = historicoSituacaoCotaRepository.obterHistoricoStatusCota(filtro);
+		
+		Assert.assertNotNull(listaHistoricoStatusCota);
+		
+	}
+	
+//	USUARIO
+	@Test
+	public void testarCriarQueryHistoricoStatusCotaUSUARIO() {
+		
+		PaginacaoVO paginacao = new PaginacaoVO(1,1,"asc");
+		
+		List<HistoricoSituacaoCota> listaHistoricoStatusCota;
+		
+		FiltroStatusCotaDTO filtro = new FiltroStatusCotaDTO();
+		filtro.setPaginacao(paginacao);
+		filtro.setOrdenacaoColuna(OrdenacaoColunasStatusCota.USUARIO);
+		
+		
+		listaHistoricoStatusCota = historicoSituacaoCotaRepository.obterHistoricoStatusCota(filtro);
+		
+		Assert.assertNotNull(listaHistoricoStatusCota);
+		
+	}
+	
+	@Test
+	public void testarObterUltimoHistoricoInativo() {
+		
+		HistoricoSituacaoCota historicoSituacaoCota;
+		
+		Integer numeroCota = 1;
+		
+		historicoSituacaoCota = historicoSituacaoCotaRepository.obterUltimoHistoricoInativo(numeroCota);
+		
+//		Assert.assertNull(historicoSituacaoCota);
+		
+	}
+	
+	@Test
+	public void testarBuscarUltimaSuspensaoCotasDia() {
+		
+		Date ultimaSuspencao;
+		
+		Calendar d = Calendar.getInstance();
+		Date dataOperacao = d.getTime();
+		
+		ultimaSuspencao = historicoSituacaoCotaRepository.buscarUltimaSuspensaoCotasDia(dataOperacao);
+		
+//		Assert.assertNull(ultimaSuspencao);
+		
+	}
+	
+	@Test
+	public void testarBuscarDataUltimaSuspensaoCotas() {
+		
+		Date dataUltimaSuspencao;
+		
+		dataUltimaSuspencao = historicoSituacaoCotaRepository.buscarDataUltimaSuspensaoCotas();
+		
+		Assert.assertNotNull(dataUltimaSuspencao);
+		
+	}
+	
+	@Test
+	public void testarObterUltimoHistoricoStatusCota() {
+		
+		List<HistoricoSituacaoCota> listaUltimoHistorico;
+		
+		FiltroStatusCotaDTO filtro = new FiltroStatusCotaDTO();
+		
+		listaUltimoHistorico = historicoSituacaoCotaRepository.obterUltimoHistoricoStatusCota(filtro);
+		
+		Assert.assertNotNull(listaUltimoHistorico);
+		
+	}
+	
+	@Test
+	public void testarObterTotalUltimoHistoricoStatusCota() {
+		
+		Long totalUltimoHistorico;
+		
+		FiltroStatusCotaDTO filtro = new FiltroStatusCotaDTO();
+		
+		totalUltimoHistorico = historicoSituacaoCotaRepository.obterTotalUltimoHistoricoStatusCota(filtro);
+		
+		Assert.assertNotNull(totalUltimoHistorico);
+		
+	}
+	
+	
+	
 
 }

@@ -174,12 +174,11 @@ public class ProdutoEdicaoRepositoryImplTest extends AbstractRepositoryImplTest 
 		Assert.assertTrue(produtoEdicao != null);
 	}
 	
+	@SuppressWarnings("unused")
 	@Test
 	public void obterProdutoEdicaoPorCodigoEdicaoDataLancamento(){
 		FuroProdutoDTO furoProdutoDTO = 
-				produtoEdicaoRepository.obterProdutoEdicaoPorCodigoEdicaoDataLancamento("1", null, 1L, new Date());
-		
-		Assert.assertTrue(furoProdutoDTO != null);
+				produtoEdicaoRepository.obterProdutoEdicaoPorCodigoEdicaoDataLancamento("1", null, 1L, new Date(), true);
 	}
 	
 	@Test
