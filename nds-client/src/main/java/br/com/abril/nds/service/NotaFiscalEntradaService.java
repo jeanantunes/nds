@@ -21,8 +21,6 @@ public interface NotaFiscalEntradaService {
 
 	void inserirNotaFiscal(NotaFiscalEntradaCota notaFiscal, Integer numeroCota, Long idControleConferenciaEncalheCota);
 	
-	NotaFiscalEntrada obterNotaFiscalPorNumero(String numero);
-	
 	List<NotaFiscalEntrada> obterNotaFiscalPorNumeroSerieCnpj(FiltroConsultaNotaFiscalDTO filtroConsultaNotaFiscal);
 
 	List<ItemDTO<Long, String>> obterFornecedorNotaFiscal(List<Long> listaIdNotaFiscal);

@@ -10,7 +10,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
@@ -21,13 +20,10 @@ import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoEndereco;
-import br.com.abril.nds.model.dne.Bairro;
 import br.com.abril.nds.model.dne.Localidade;
-import br.com.abril.nds.model.dne.Logradouro;
 import br.com.abril.nds.model.dne.UnidadeFederacao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.EnderecoRepository;
-import br.com.abril.nds.vo.EnderecoVO;
 
 public class EnderecoRepositoryImplTest extends AbstractRepositoryImplTest {
 	
@@ -175,14 +171,6 @@ public class EnderecoRepositoryImplTest extends AbstractRepositoryImplTest {
 		List<String> localidade = enderecoRepository.obterLocalidadesPorUFNome(null, siglaUF);
 		
 		Assert.assertNotNull(localidade);
-	}
-	
-	@Test
-	public void obterEnderecoPorCep(){
-		String cep = "12345-000";
-				
-		EnderecoVO enderecoVO = enderecoRepository.obterEnderecoPorCep(cep);
-		
 	}
 	
 	@Test

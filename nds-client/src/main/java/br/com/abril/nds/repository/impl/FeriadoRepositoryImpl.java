@@ -38,7 +38,7 @@ public class FeriadoRepositoryImpl extends
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<Feriado> obterFeriados(Date data, TipoFeriado tipoFeriado,
-			String uf, String idLocalidade) {
+			String uf, String localidade) {
 
 		Criteria criteria = super.getSession().createCriteria(Feriado.class);
 
@@ -54,8 +54,8 @@ public class FeriadoRepositoryImpl extends
 			criteria.add(Restrictions.eq("unidadeFederacao", uf));
 		}
 
-		if (idLocalidade != null) {
-			criteria.add(Restrictions.eq("localidade", idLocalidade));
+		if (localidade != null) {
+			criteria.add(Restrictions.eq("localidade", localidade));
 		}
 
 		return criteria.list();

@@ -60,7 +60,14 @@ var EmissaoCEController = $.extend(true, {
 	},
 	
 	processaRetornoPesquisa : function(result) {
-				
+		
+		$.each(result.rows, function(index, row) {
+	
+			if(!row.cell.nomeCota){
+				row.cell.nomeCota = "";
+			}	
+		})		
+		
 		return result;
 	},
 	

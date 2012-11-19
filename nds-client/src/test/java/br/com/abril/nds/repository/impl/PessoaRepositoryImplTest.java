@@ -1,6 +1,8 @@
 package br.com.abril.nds.repository.impl;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import junit.framework.Assert;
 
@@ -58,5 +60,72 @@ public class PessoaRepositoryImplTest extends AbstractRepositoryImplTest {
 		Assert.assertTrue(pessoas.contains(pf1));
 		Assert.assertTrue(pessoas.contains(pj1));
 	}
+	
+	@Test
+	public void buscarPorCnpj(){
+		String cnpj = "5445.45.45.4.4";
+		
+		List<PessoaJuridica> pessoaJuridica = pessoaRepository.buscarPorCnpj(cnpj);
+		
+		Assert.assertNotNull(pessoaJuridica);
+	}
+	
+	@Test
+	public void obterSociosPorFiadorIdFiador(){
+		Long idFiador = 1L;
+		
+		List<PessoaFisica> pessoaFisica = pessoaRepository.obterSociosPorFiador(idFiador, null, null);
+		
+		Assert.assertNotNull(pessoaFisica);
+	}
+	
+	@Test
+	public void obterSociosPorFiadorIdsIgnorar(){
+		Set<Long> idsIgnorar = new HashSet<Long>();
+		idsIgnorar.add(1L);
+		idsIgnorar.add(2L);
+		
+		List<PessoaFisica> pessoaFisica = pessoaRepository.obterSociosPorFiador(null, idsIgnorar, null);
+		
+		Assert.assertNotNull(pessoaFisica);
+	}
+	
+	@Test
+	public void obterSociosPorFiadorCpfsIgnorar(){
+		Set<String> cpfIgnorar = new HashSet<String>();
+		cpfIgnorar.add("1.98984.5");
+		cpfIgnorar.add("1.65656.5");
+		
+		List<PessoaFisica> pessoaFisica = pessoaRepository.obterSociosPorFiador(null, null, cpfIgnorar);
+		
+		Assert.assertNotNull(pessoaFisica);
+	}
+	
+	@Test
+	public void buscarPorCPF(){
+		String cpf = "857878.787.8";
+		
+		PessoaFisica pessoaFisica = pessoaRepository.buscarPorCPF(cpf);
+	}
 
+	@Test
+	public void buscarPorCNPJ(){
+		String cnpj = "857878.787.8";
+		
+		PessoaJuridica pessoaJuridica = pessoaRepository.buscarPorCNPJ(cnpj);
+	}
+	
+	@Test
+	public void buscarIdPessoaPorCPF(){
+		String cpf = "857878.787.8";
+		
+		pessoaRepository.buscarIdPessoaPorCPF(cpf);
+	}
+	
+	@Test
+	public void buscarIdPessoaPorCNPJ(){
+		String cnpj = "857878.787.8";
+		
+		pessoaRepository.buscarIdPessoaPorCNPJ(cnpj);
+	}
 }

@@ -136,7 +136,7 @@ public class ControleConferenciaEncalheCotaRepositoryImplTest extends AbstractRe
 		cfop = Fixture.cfop5102();
 		save(cfop);
 		
-		tipoNotaFiscal = Fixture.tipoNotaFiscalRecebimento();
+		tipoNotaFiscal = Fixture.tipoNotaFiscalRecebimento(cfop);
 		save(tipoNotaFiscal);
 		
 		NotaFiscalEntradaFornecedor notaFiscal1Veja = Fixture
