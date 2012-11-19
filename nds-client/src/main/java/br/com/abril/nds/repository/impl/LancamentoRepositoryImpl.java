@@ -251,7 +251,8 @@ public class LancamentoRepositoryImpl extends
 			hql.append(" and ");
 		}
 		
-		hql.append(" (lancamento.status=:statusConfirmado ");
+		//hql.append(" lancamento.status=:statusConfirmado ");
+		hql.append(" lancamento.status=:statusBalanceado ");
 		
 		parametros.put("statusBalanceado", StatusLancamento.BALANCEADO);
 		

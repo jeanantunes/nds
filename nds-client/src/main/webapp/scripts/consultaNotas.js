@@ -61,7 +61,7 @@ init : function() {
 			align : 'right'
 		}, {
 			display : 'Nota Recebida',
-			name : 'statusNotaFiscal',
+			name : 'dataRecebimento',
 			width : 110,
 			sortable : true,
 			align : 'center'
