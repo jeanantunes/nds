@@ -174,7 +174,7 @@ public class VisaoEstoqueRepositoryImpl extends AbstractRepository implements Vi
 		
 		StringBuilder hql = new StringBuilder();
 		hql.append(" SELECT pe.id as produtoEdicaoId")
-		   .append("       ,pe.codigo as codigo")
+		   .append("       ,pr.codigo as codigo")
 		   .append("       ,pe.nomeComercial as produto")
 		   .append("       ,pe.numeroEdicao as edicao")
 		   .append("       ,pe.precoVenda as precoCapa")
@@ -183,10 +183,11 @@ public class VisaoEstoqueRepositoryImpl extends AbstractRepository implements Vi
 		   .append("       ,ep." + coluna + " as qtde")
 		   .append("   FROM HistoricoEstoqueProduto as ep ")
 		   .append("   JOIN ep.produtoEdicao as pe ")
+		   .append("   JOIN pe.produto as pr ")
 		   .append("   JOIN pe.lancamentos as lan ");
 		
 		if(filtro.getIdFornecedor() != -1) {
-			hql.append("   JOIN pe.produto.fornecedores f ");
+			hql.append("   JOIN pr.fornecedores f ");
 		}
 		   
 		hql.append("  WHERE ep." + coluna + " > 0 ");
@@ -231,7 +232,7 @@ public class VisaoEstoqueRepositoryImpl extends AbstractRepository implements Vi
 		   .append("   JOIN pe.produto as pr ")
 		   .append("   JOIN pe.lancamentos as lan ");
 		if(filtro.getIdFornecedor() != -1) {
-			hql.append("   JOIN pe.produto.fornecedores f ");
+			hql.append("   JOIN pr.fornecedores f ");
 		}
 		hql.append("  WHERE ep.qtde > 0 ");
 		hql.append("    AND ep.data = :data ");

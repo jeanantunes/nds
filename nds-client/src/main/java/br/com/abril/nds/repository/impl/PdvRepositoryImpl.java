@@ -322,7 +322,7 @@ public class PdvRepositoryImpl extends AbstractRepositoryModel<PDV, Long> implem
 			}
 			
 			if (municipio != null && !municipio.equals("") ) {
-				criteria.add(Restrictions.eq("endereco.municipio", municipio));
+				criteria.add(Restrictions.eq("endereco.cidade", municipio));
 			}
 			
 			if (bairro != null && !bairro.equals("") ) {

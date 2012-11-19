@@ -188,7 +188,7 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 			param.put("nomeProduto", filtro.getNomeProduto()+ "%");
 		}
 
-		if (filtro.getCodigoEditor() != null && !filtro.getCodigoEditor().isEmpty() && !filtro.getCodigoFornecedor().equals("0")) {
+		if (filtro.getCodigoEditor() != null && !filtro.getCodigoEditor().isEmpty() && !filtro.getCodigoEditor().equals("0")) {
 			param.put("codigoEditor", Long.parseLong(filtro.getCodigoEditor()));
 		}
 
@@ -223,7 +223,7 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		// Soma todos os valores de participacao
 		for (RegistroCurvaABCDistribuidorVO registro : lista) {
 			if (registro.getFaturamentoCapa()!=null) {
-				participacaoTotal.add(registro.getFaturamentoCapa());
+				participacaoTotal = participacaoTotal.add(registro.getFaturamentoCapa());
 			}
 		}
 

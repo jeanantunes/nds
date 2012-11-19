@@ -5,6 +5,7 @@ import java.util.List;
 import junit.framework.Assert;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -23,6 +24,7 @@ import br.com.abril.nds.model.dne.UnidadeFederacao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.LocalidadeRepository;
 
+@Ignore
 public class LocalidadeRepositoryImplTest extends AbstractRepositoryImplTest {
 
 	@Autowired
@@ -101,12 +103,25 @@ public class LocalidadeRepositoryImplTest extends AbstractRepositoryImplTest {
 	}
 	
 	@Test
-	public void teste() {
+	public void testarObterListaLocalidadeCotas() {
 		
 		List<Localidade> listaLocalidade = localidadeRepository.obterListaLocalidadeCotas();
 		
 		Assert.assertNotNull(listaLocalidade);
 				
+	}
+	
+	@Test
+	public void testarPesquisarLocalidades() {
+		
+		List<Localidade> listaLocalidades;
+		
+		String nomeLocalidade = "testeLocalidade";
+		
+		listaLocalidades = localidadeRepository.pesquisarLocalidades(nomeLocalidade);
+		
+		Assert.assertNotNull(listaLocalidades);
+		
 	}
 	
 	
