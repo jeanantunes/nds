@@ -52,7 +52,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		hql.append(getOrderBy(filtro));
 
 		Query query =  getSession().createQuery(hql.toString());
-		
+				
 		buscarParametrosConsignadoCota(query, filtro);
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(
@@ -63,8 +63,9 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		
 		if(filtro.getPaginacao().getQtdResultadosPorPagina() != null && limitar) 
 			query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
-				
-		return  query.list();
+		
+		return query.list();
+		
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -110,7 +111,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		if(filtro.getPaginacao().getQtdResultadosPorPagina() != null && limitar) 
 			query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
 				
-		return  query.list();
+		return query.list();
 		 
 	}
 	

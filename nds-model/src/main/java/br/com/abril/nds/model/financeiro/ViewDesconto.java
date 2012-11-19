@@ -18,7 +18,7 @@ public class ViewDesconto implements Serializable {
 	private static final long serialVersionUID = -6426590627621374640L;
 	
 	@Id
-	private Long id;
+	private Long id = 1L;
 
 	@Column(name = "DESCONTO")
 	private BigDecimal desconto;
@@ -28,6 +28,9 @@ public class ViewDesconto implements Serializable {
 	
 	@Column(name = "PRODUTO_EDICAO_ID")
 	private Long produtoEdicaoId;
+	
+	@Column(name = "NUMERO_EDICAO")
+	private Long numeroEdicao;
 	
 	@Column(name = "FORNECEDOR_ID")
 	private Long fornecedorId;
@@ -62,6 +65,14 @@ public class ViewDesconto implements Serializable {
 
 	public void setProdutoEdicaoId(Long produtoEdicaoId) {
 		this.produtoEdicaoId = produtoEdicaoId;
+	}
+
+	public Long getNumeroEdicao() {
+		return numeroEdicao;
+	}
+
+	public void setNumeroEdicao(Long numeroEdicao) {
+		this.numeroEdicao = numeroEdicao;
 	}
 
 	public Long getFornecedorId() {
