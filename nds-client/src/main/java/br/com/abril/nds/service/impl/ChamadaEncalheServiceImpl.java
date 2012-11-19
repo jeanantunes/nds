@@ -102,7 +102,8 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 			if(cota.getPessoa() instanceof PessoaJuridica)
 				dto.setInscricaoEstadual(((PessoaJuridica)cota.getPessoa()).getInscricaoEstadual());
 			
-			dto.setNumeroNome(dto.getNumCota()+ " " + dto.getNomeCota().toUpperCase());
+			
+			dto.setNumeroNome(dto.getNumCota()+ " " + ((dto.getNomeCota()!= null)?dto.getNomeCota().toUpperCase():""));
 			dto.setCnpj(cota.getPessoa().getDocumento());
 									
 			dto.setDataEmissao(DateUtil.formatarDataPTBR(new Date()));
