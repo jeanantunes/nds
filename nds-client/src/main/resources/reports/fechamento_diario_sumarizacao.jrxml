@@ -108,7 +108,7 @@
 			<subreport isUsingCache="false">
 				<reportElement stretchType="RelativeToBandHeight" x="3" y="21" width="788" height="38"/>
 				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource(Arrays.asList($P{fechamentoDiarioDTO}))]]></dataSourceExpression>
-				<subreportExpression class="java.lang.String"><![CDATA[Thread.currentThread().getContextClassLoader().getResource("/reports/fechamento_diario_sumarizacao_detalhe.jasper").toURI().getPath()]]></subreportExpression>
+				<subreportExpression class="java.lang.String"><![CDATA[Thread.currentThread().getContextClassLoader().getResource("reports/fechamento_diario_sumarizacao_detalhe.jasper").toURI().getPath()]]></subreportExpression>
 			</subreport>
 		</band>
 	</detail>

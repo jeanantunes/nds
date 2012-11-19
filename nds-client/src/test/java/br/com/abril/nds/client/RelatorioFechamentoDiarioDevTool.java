@@ -1,7 +1,9 @@
 package br.com.abril.nds.client;
 
+import java.io.File;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -9,7 +11,10 @@ import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JREmptyDataSource;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperCompileManager;
-import net.sf.jasperreports.engine.JasperRunManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.export.JRPdfExporter;
+import net.sf.jasperreports.engine.export.JRPdfExporterParameter;
 
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -71,12 +76,51 @@ public class RelatorioFechamentoDiarioDevTool {
         url = Thread.currentThread().getContextClassLoader().getResource("reports/fechamento_diario_sumarizacao_dividas_receber_vencer.jrxml");
         path = url.toURI().getPath();
         JasperCompileManager.compileReportToFile(path, "target/test-classes/reports/fechamento_diario_sumarizacao_dividas_receber_vencer.jasper");
+        
+        url = Thread.currentThread().getContextClassLoader().getResource("reports/fechamento_diario_lancamento.jrxml");
+        path = url.toURI().getPath();
+        JasperCompileManager.compileReportToFile(path, "target/test-classes/reports/fechamento_diario_lancamento.jasper");
+        
+        url = Thread.currentThread().getContextClassLoader().getResource("reports/fechamento_diario_encalhe.jrxml");
+        path = url.toURI().getPath();
+        JasperCompileManager.compileReportToFile(path, "target/test-classes/reports/fechamento_diario_encalhe.jasper");
+        
+        url = Thread.currentThread().getContextClassLoader().getResource("reports/fechamento_diario_suplementar.jrxml");
+        path = url.toURI().getPath();
+        JasperCompileManager.compileReportToFile(path, "target/test-classes/reports/fechamento_diario_suplementar.jasper");
+        
+        url = Thread.currentThread().getContextClassLoader().getResource("reports/fechamento_diario_faltas_sobras.jrxml");
+        path = url.toURI().getPath();
+        JasperCompileManager.compileReportToFile(path, "target/test-classes/reports/fechamento_diario_faltas_sobras.jasper");
     }
     
     private static void runReportPdf(JRDataSource dataSource, Map<String, Object> parameters) throws Exception {
         URL url = Thread.currentThread().getContextClassLoader().getResource("reports/fechamento_diario_sumarizacao.jasper");
         String path = url.toURI().getPath();
-        JasperRunManager.runReportToPdfFile(path, "target/fechamentoDiario.pdf", parameters, dataSource);
+        JasperPrint jpSumarizacao = JasperFillManager.fillReport(path, parameters, new JREmptyDataSource());
+        
+        url = Thread.currentThread().getContextClassLoader().getResource("reports/fechamento_diario_lancamento.jasper");
+        path = url.toURI().getPath();
+        JasperPrint jpLancamento = JasperFillManager.fillReport(path, parameters, new JREmptyDataSource());
+        
+        url = Thread.currentThread().getContextClassLoader().getResource("reports/fechamento_diario_encalhe.jasper");
+        path = url.toURI().getPath();
+        JasperPrint jpEncalhe = JasperFillManager.fillReport(path, parameters, new JREmptyDataSource());
+        
+        url = Thread.currentThread().getContextClassLoader().getResource("reports/fechamento_diario_suplementar.jasper");
+        path = url.toURI().getPath();
+        JasperPrint jpSuplementar = JasperFillManager.fillReport(path, parameters, new JREmptyDataSource());
+        
+        url = Thread.currentThread().getContextClassLoader().getResource("reports/fechamento_diario_faltas_sobras.jasper");
+        path = url.toURI().getPath();
+        JasperPrint jpFaltasSobras = JasperFillManager.fillReport(path, parameters, new JREmptyDataSource());
+        
+        JRPdfExporter exp = new JRPdfExporter();
+        exp.setParameter(JRPdfExporterParameter.JASPER_PRINT_LIST, Arrays.asList(jpSumarizacao, jpLancamento, jpEncalhe, jpSuplementar, jpFaltasSobras));
+        
+        exp.setParameter(JRPdfExporterParameter.OUTPUT_FILE, new File("target/fechamentoDiario.pdf"));
+        
+        exp.exportReport();
     }
 
 }

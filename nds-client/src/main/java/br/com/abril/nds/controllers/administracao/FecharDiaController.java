@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
+import br.com.abril.nds.client.report.RelatorioFechamentoDiario;
 import br.com.abril.nds.client.vo.DetalheCotaFechamentoDiarioVO;
 import br.com.abril.nds.dto.EncalheFecharDiaDTO;
 import br.com.abril.nds.dto.FecharDiaDTO;
@@ -57,7 +58,6 @@ import br.com.abril.nds.service.ResumoSuplementarFecharDiaService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.DateUtil;
-import br.com.abril.nds.util.JasperUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.export.FileExporter;
@@ -686,11 +686,7 @@ public class FecharDiaController {
     public Download gerarRelatorioFechamentoDiario() {
         FechamentoDiarioDTO dto = getFechamentoDiarioDTO();
         
-        Map<String, Object> parameters = new HashMap<>();
-        parameters.put("dataFechamento", dto.getDataFechamento());
-        parameters.put("fechamentoDiarioDTO", dto);
-        
-        byte[] relatorio = JasperUtil.runReportPdf(FECHAMENTO_DIARIO_REPORT_NAME, parameters);
+        byte[] relatorio = RelatorioFechamentoDiario.exportPdf(dto);
 
         if (relatorio != null) {
             long size = relatorio.length;
