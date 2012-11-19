@@ -178,10 +178,10 @@ public class VendaProdutoEncalheRepositoryImpl extends AbstractRepositoryModel<V
 				hql.append(" order by venda.produtoEdicao.numeroEdicao ");
 				break;
 			case PRECO_CAPA:	
-				hql.append(" order by venda.produtoEdicao.precoVenda - venda.produtoEdicao.desconto ");
+				hql.append(" order by venda.produtoEdicao.precoVenda - (produtoEdicao.precoVenda * " + this.obterSQLDesconto() + " / 100) ");
 				break;
 			case PRECO_DESCONTO:	
-				hql.append(" order by venda.produtoEdicao.desconto ");
+				hql.append(" order by (produtoEdicao.precoVenda * " + this.obterSQLDesconto() + " / 100) ");
 				break;
 			case QNT_PRODUTO:	
 				hql.append(" order by venda.qntProduto ");
