@@ -124,7 +124,7 @@ public class AlteracaoCotaController {
 	@Post
 	@Path("/buscarBairroPorCidade.json")
 	public void buscarBairroPorCidade(String cidade) {
-		List<Bairro> bairros = enderecoService.obterBairrosPorCidade(cidade); 
+		List<String> bairros = enderecoService.obterBairrosPorCidade(cidade); 
 		result.use(CustomJson.class).from(bairros).serialize();
 	}
 	

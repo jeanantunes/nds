@@ -25,7 +25,7 @@ import br.com.abril.nds.model.dne.UnidadeFederacao;
  */
 @Entity
 @Table(name = "FERIADO", uniqueConstraints = { @UniqueConstraint(columnNames = {
-		"DATA", "LOCALIDADE_ID", "UFE_SG", "TIPO_FERIADO" }) })
+		"DATA", "LOCALIDADE", "UFE_SG", "TIPO_FERIADO" }) })
 @SequenceGenerator(name = "FERIADO_SEQ", initialValue = 1, allocationSize = 1)
 public class Feriado {
 
@@ -44,7 +44,7 @@ public class Feriado {
 	@Column(name = "UFE_SG")
 	private String unidadeFederacao;
 	
-	@Column(name = "LOCALIDADE_ID")
+	@Column(name = "LOCALIDADE")
 	private String localidade;
 
 	@Enumerated(EnumType.STRING)

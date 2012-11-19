@@ -93,7 +93,7 @@ public interface CalendarioService {
 	 */
 	public Map<Date, String> obterListaDataFeriado(int anoVigencia);
 	
-	public List<Localidade> obterListaLocalidadeCotas();
+	public List<String> obterListaLocalidadeCotas();
 
 	public void excluirFeriado(CalendarioFeriadoDTO calendarioFeriado);
 	

@@ -452,7 +452,7 @@ public class ParametrosDistribuidorController {
 		List<Long> selecionados = getSelecionados(TipoGrupo.MUNICIPIO);
 				
 		for(MunicipioDTO municipio : municipios) {
-			if(selecionados.contains(municipio.getId()))
+			if(selecionados.contains(municipio.getMunicipio()))
 				municipio.setSelecionado(true);
 		}
 		

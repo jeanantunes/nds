@@ -31,7 +31,7 @@ var CadastroCalendario = $.extend(true, {
 				align : 'left'
 			}, {
 				display : 'Cidade',
-				name : 'nomeCidade',
+				name : 'localidade',
 				width : 60,
 				sortable : true,
 				align : 'left'
@@ -86,7 +86,7 @@ var CadastroCalendario = $.extend(true, {
 				align : 'left'
 			}, {
 				display : 'Cidade',
-				name : 'nomeCidade',
+				name : 'localidade',
 				width : 60,
 				sortable : true,
 				align : 'left'
@@ -303,7 +303,7 @@ var CadastroCalendario = $.extend(true, {
 				cell.indOpera = (cell.indOpera == false) ?  'Não' : 'Sim';
 				cell.indRepeteAnualmente = (cell.indRepeteAnualmente  == false) ?  'Não' : 'Sim';
 				cell.indEfetuaCobranca = (cell.indEfetuaCobranca) == false ?  'Não' : 'Sim';
-				cell.nomeCidade = (typeof cell.nomeCidade == 'undefined') ? '-' : cell.nomeCidade;
+				cell.localidade = (typeof cell.localidade == 'undefined') ? '-' : cell.localidade;
 
 				
 			});
@@ -325,13 +325,13 @@ var CadastroCalendario = $.extend(true, {
 
 				var dtFeriado 	 			= CadastroCalendario.concatenarChar(cell.dataFeriado);
 				var tipoFeriado  			= CadastroCalendario.concatenarChar(cell.tipoFeriado);
-				var idLocalidade 			= CadastroCalendario.concatenarChar(cell.idLocalidade);
+				var localidade 				= cell.localidade;
 				var indRepeteAnualmente  	= cell.indRepeteAnualmente;
 				var indOpera 				= cell.indOpera;
 				var indEfetuaCobranca 		= cell.indEfetuaCobranca;
 				var descricaoFeriado		= CadastroCalendario.concatenarChar(cell.descricaoFeriado);
 
-				var parametros = [ dtFeriado, tipoFeriado, idLocalidade, indRepeteAnualmente, indOpera, indEfetuaCobranca, descricaoFeriado ];
+				var parametros = [ dtFeriado, tipoFeriado, localidade, indRepeteAnualmente, indOpera, indEfetuaCobranca, descricaoFeriado ];
 				
 				var imgDetalhar = '<img src="' + contextPath + '/images/ico_detalhes.png" border="0" hspace="3"/>';
 				cell.acao = '<a href="javascript:;" onclick="CadastroCalendario.editarFeriado('+ parametros +');" style="margin-right:10px;">' + imgDetalhar + '</a>';
@@ -342,7 +342,7 @@ var CadastroCalendario = $.extend(true, {
 				cell.indOpera = (cell.indOpera == false) ?  'N' : 'S';
 				cell.indRepeteAnualmente = (cell.indRepeteAnualmente  == false) ?  'N' : 'S';
 				cell.indEfetuaCobranca = (cell.indEfetuaCobranca) == false ?  'N' : 'S';
-				cell.nomeCidade = (typeof cell.nomeCidade == 'undefined') ? '-' : cell.nomeCidade;
+				cell.localidade = (typeof cell.localidade == 'undefined') ? '-' : cell.localidade;
 
 				
 			});
