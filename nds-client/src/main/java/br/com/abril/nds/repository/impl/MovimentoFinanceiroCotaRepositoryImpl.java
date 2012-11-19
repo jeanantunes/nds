@@ -289,6 +289,17 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 	}
 
 	@Override
+	public List<Long> obterIdsMovimentosFinanceiroCota(FiltroDebitoCreditoDTO filtroDebitoCreditoDTO) {
+		
+		String hql = " select movimentoFinanceiroCota.id " + 
+					 getQueryObterMovimentosFinanceiroCota(filtroDebitoCreditoDTO);
+
+		Query query = criarQueryObterMovimentosFinanceiroCota(hql, filtroDebitoCreditoDTO);
+
+		return (List<Long>) query.list();
+	}
+
+	@Override
 	public BigDecimal obterSomatorioValorMovimentosFinanceiroCota(FiltroDebitoCreditoDTO filtroDebitoCreditoDTO) {
 		
 		String hql = " select sum(movimentoFinanceiroCota.valor) " + 
