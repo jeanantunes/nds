@@ -48,39 +48,39 @@
 			<table width="800" border="0" cellspacing="1" cellpadding="1">
 				<tr>
 					<td width="135"><strong>C&oacute;digo:</strong></td>
-					<td width="260"><input type="text" name="codigoProdutoCadastro" id="codigoProdutoCadastro" style="width:80px;" maxlength="30" /></td>
+					<td width="260"><input type="text"  name="codigoProdutoCadastro" id="codigoProdutoCadastro" style="width:80px;" maxlength="30" /></td>
 					<td width="142"><strong>Produto:</strong></td>
-					<td width="250"><input type="text" name="nomeProduto" id="nomeProduto" style="width:250px;" maxlength="60" /></td>
+					<td width="250"><input type="text" class="habilitarCampoInterface" name="nomeProduto" id="nomeProduto" style="width:250px;" maxlength="60" /></td>
 				</tr>
 				<tr>
 					<td><strong>Fornecedor:</strong></td>
 					<td>
-						<select name="comboFornecedoresCadastro" id="comboFornecedoresCadastro" style="width:200px;" >
+						<select class="habilitarCampoInterface" name="comboFornecedoresCadastro" id="comboFornecedoresCadastro" style="width:200px;" >
 						</select>
 					</td>	
 					<td><strong>Editor:</strong></td>
 					<td>
-						<select name="comboEditor" id="comboEditor" style="width:210px;" >
+						<select class="habilitarCampoInterface" name="comboEditor" id="comboEditor" style="width:210px;" >
 						</select>
 					</td>
 				</tr>
 				<tr>
 					<td><strong> Slogan do Produto:</strong></td>
-					<td colspan="3"><input type="text" name="sloganProduto" id="sloganProduto" maxlength="50" style="width:652px;" /></td>
+					<td colspan="3"><input type="text" class="habilitarCampoInterface" name="sloganProduto" id="sloganProduto" maxlength="50" style="width:652px;" /></td>
 				</tr>
 				<tr>
 					<td><strong>Tipo de Produto:</strong></td>
 					<td>
-						<select name="comboTipoProdutoCadastro" id="comboTipoProdutoCadastro" style="width:200px;" >
+						<select name="comboTipoProdutoCadastro" class="habilitarCampoInterface" id="comboTipoProdutoCadastro" style="width:200px;" >
 						</select>
 					</td>
 					<td><strong>Forma Comercializa&ccedil;&atilde;o:</strong></td>
 					<td>
 						<table width="229" border="0" cellspacing="1" cellpadding="1">
 							<tr>
-								<td width="21"><input type="radio" name="formaComercializacao" id="formaComercializacaoConsignado" value="CONSIGNADO" /></td>
+								<td width="21"><input type="radio" class="habilitarCampoInterface" name="formaComercializacao" id="formaComercializacaoConsignado" value="CONSIGNADO" /></td>
 								<td width="86">Consignado</td>
-								<td width="21"><input type="radio" name="formaComercializacao" id="formaComercializacaoContaFirme" value="CONTA_FIRME" /></td>
+								<td width="21"><input type="radio" class="habilitarCampoInterface" name="formaComercializacao" id="formaComercializacaoContaFirme" value="CONTA_FIRME" /></td>
 								<td width="88">Conta Firme</td>
 							</tr>
 						</table>
@@ -88,14 +88,14 @@
 				</tr>
 				<tr>
 					<td><strong>PEB:</strong></td>
-					<td><input type="text" name="peb" id="peb" style="width:80px;" maxlength="9" /></td>
+					<td><input type="text" name="peb" id="peb" style="width:80px;" maxlength="9" class="habilitarCampoInterface"/></td>
 					<td><strong>Pacote Padr&atilde;o:</strong></td>
-					<td><input type="text" name="pacotePadrao" id="pacotePadrao" style="width:80px;" maxlength="4" /></td>
+					<td><input type="text" name="pacotePadrao" id="pacotePadrao" style="width:80px;" maxlength="4" class="habilitarCampoInterface"/></td>
 				</tr>
 				<tr>
 					<td><strong>Tipo de Desconto:</strong></td>
 					<td>
-						<select name="comboTipoDesconto" readonly="readonly" disabled="disabled" id="comboTipoDesconto" style="width:200px;" onchange="produtoController.carregarPercentualDesconto();" >
+						<select name="comboTipoDesconto"  id="comboTipoDesconto" class="habilitarCampoInterface" style="width:200px;" onchange="produtoController.carregarPercentualDesconto();" >
 						</select>
 					</td>
 					<td><strong>% Desconto:</strong></td>
@@ -118,7 +118,7 @@
 										<tr>									
 											<td width="120">Periodicidade: </td>
 											<td style="width:200px;">
-												<select name="comboPeriodicidade" id="comboPeriodicidade" style="width:150px;" >
+												<select name="comboPeriodicidade" id="comboPeriodicidade" style="width:150px;" class="habilitarCampoInterface" >
 													<option value="" selected="selected"></option>
 													<option value="SEMANAL" >Semanal</option>
 													<option value="QUINZENAL" >Quinzenal</option>
@@ -142,11 +142,11 @@
 									<table width="380" border="0" cellspacing="1" cellpadding="1">
 										<tr>
 											<td width="100">Grupo Editorial:</td>
-											<td ><input type="text" name="grupoEditorial" id="grupoEditorial" maxlength="25" value="" style="width:200px;" ></td>
+											<td ><input class="habilitarCampoInterface" type="text" name="grupoEditorial" id="grupoEditorial" maxlength="25" value="" style="width:200px;" ></td>
 										</tr>
 										<tr>
 											<td width="120" >SubGrupo Editorial:</td>
-											<td><input type="text" name="subGrupoEditorial" id="subGrupoEditorial" maxlength="25" value="" style="width:200px;" ></td>
+											<td><input class="habilitarCampoInterface" type="text" name="subGrupoEditorial" id="subGrupoEditorial" maxlength="25" value="" style="width:200px;" ></td>
 										</tr>
 									</table>
 								</fieldset>
@@ -159,11 +159,11 @@
 									<legend>Tributa&ccedil;&atilde;o Fiscal</legend>
 									<table width="229" border="0" cellpadding="1" cellspacing="1">
 										<tr>
-											<td width="20"><input type="radio" name="radioTributacaoFiscal" id="radioTributado" value="TRIBUTADO" /></td>
+											<td width="20"><input class="habilitarCampoInterface" type="radio" name="radioTributacaoFiscal" id="radioTributado" value="TRIBUTADO" /></td>
 											<td width="59">Tributado</td>
-											<td width="20"><input type="radio" name="radioTributacaoFiscal" id="radioIsento" value="ISENTO" /></td>
+											<td width="20"><input class="habilitarCampoInterface" type="radio" name="radioTributacaoFiscal" id="radioIsento" value="ISENTO" /></td>
 											<td width="37">Isento</td>
-											<td width="20"><input type="radio" name="radioTributacaoFiscal" id="radioTributacaoOutros" value="OUTROS" /></td>
+											<td width="20"><input class="habilitarCampoInterface" type="radio" name="radioTributacaoFiscal" id="radioTributacaoOutros" value="OUTROS" /></td>
 											<td width="81"> Outros</td>
 										</tr>
 									</table>
@@ -174,7 +174,7 @@
 				</td>
 				
 				<td style="vertical-align: top;" >
-					<fieldset style="width:385px!important; margin:0 auto!important 10px auto!important; height: 205px;">
+					<fieldset style="width:385px!important; margin:0 auto!important 10px auto!important; height: 205px;" id="fieldSegmentacao">
 						<legend>P&uacute;blico-Alvo</legend>
 						<table width="380" border="0" cellspacing="1" cellpadding="1">
 							<tr>
@@ -185,7 +185,7 @@
 										<tr>
 											<td width="160"><strong>Classe Social:</strong></td>
 											<td width="320">
-												<select name="segmentacaoClasseSocial" id="segmentacaoClasseSocial" style="width:150px;">
+												<select class="habilitarCampoInterfaceSegmentacao" name="segmentacaoClasseSocial" id="segmentacaoClasseSocial" style="width:150px;">
 							                        <option value="">Selecione</option>
 							                        <c:forEach varStatus="counter" var="itemClasseSocial" items="${listaClasseSocial}">
 									                    <option value="${itemClasseSocial.key}">${itemClasseSocial.value}</option>
@@ -198,7 +198,7 @@
 										<tr>
 											<td><strong>Sexo:</strong></td>
 											<td>
-												<select name="segmentacaoSexo" id="segmentacaoSexo" style="width:150px;">
+												<select class="habilitarCampoInterfaceSegmentacao" name="segmentacaoSexo" id="segmentacaoSexo" style="width:150px;">
 							                        <option value="">Selecione</option>
 							                        <c:forEach varStatus="counter" var="itemSexo" items="${listaSexo}">
 									                    <option value="${itemSexo.key}">${itemSexo.value}</option>
@@ -211,7 +211,7 @@
 										<tr>
 											<td><strong>Faixa-Et&aacute;ria:</strong></td>
 											<td>
-												<select name="segmentacaoFaixaEtaria" id="segmentacaoFaixaEtaria" style="width:150px;">
+												<select class="habilitarCampoInterfaceSegmentacao" name="segmentacaoFaixaEtaria" id="segmentacaoFaixaEtaria" style="width:150px;">
 							                        <option value="">Selecione</option>
 							                        <c:forEach varStatus="counter" var="itemFaixaEtaria" items="${listaFaixaEtaria}">
 									                    <option value="${itemFaixaEtaria.key}">${itemFaixaEtaria.value}</option>
@@ -224,7 +224,7 @@
 										<tr>
 											<td width="137"><strong>Formato:</strong></td>
 											<td width="200">
-												<select name="segmentacaoFormato" id="segmentacaoFormato" style="width:150px;">
+												<select class="habilitarCampoInterfaceSegmentacao" name="segmentacaoFormato" id="segmentacaoFormato" style="width:150px;">
 							                        <option value="">Selecione</option>
 							                        <c:forEach varStatus="counter" var="itemFormato" items="${listaFormatoProduto}">
 									                    <option value="${itemFormato.key}">${itemFormato.value}</option>
@@ -237,7 +237,7 @@
 										<tr>
 											<td><strong>Tipo de Lan&ccedil;amento:</strong></td>
 											<td>
-												<select name="segmentacaoTipoLancamento" id="segmentacaoTipoLancamento" style="width:150px;">
+												<select class="habilitarCampoInterfaceSegmentacao" name="segmentacaoTipoLancamento" id="segmentacaoTipoLancamento" style="width:150px;">
 							                        <option value="">Selecione</option>
 							                        <c:forEach varStatus="counter" var="itemTipoLancamento" items="${listaTipoLancamento}">
 									                    <option value="${itemTipoLancamento.key}">${itemTipoLancamento.value}</option>
@@ -250,7 +250,7 @@
 										<tr>
 											<td><strong>Tema Principal:</strong></td>
 											<td>
-												<select name="segmentacaoTemaPrincipal" id="segmentacaoTemaPrincipal" style="width:150px;">
+												<select class="habilitarCampoInterfaceSegmentacao" name="segmentacaoTemaPrincipal" id="segmentacaoTemaPrincipal" style="width:150px;">
 							                        <option value="">Selecione</option>
 							                        <c:forEach varStatus="counter" var="itemTema" items="${listaTemaProduto}">
 									                    <option value="${itemTema.key}">${itemTema.value}</option>
@@ -263,7 +263,7 @@
 										<tr>
 											<td><strong>Tema Secundario:</strong></td>
 											<td>
-												<select name="segmentacaoTemaSecundario" id="segmentacaoTemaSecundario" style="width:150px;">
+												<select class="habilitarCampoInterfaceSegmentacao" name="segmentacaoTemaSecundario" id="segmentacaoTemaSecundario" style="width:150px;">
 							                        <option value="">Selecione</option>
 							                        <c:forEach varStatus="counter" var="itemTema" items="${listaTemaProduto}">
 									                    <option value="${itemTema.key}">${itemTema.value}</option>
@@ -304,7 +304,7 @@
 				<td width="123" >
 			    	<input type="text" name="codigoProduto" id="codigoProduto"
 						   style="width: 80px; float: left; margin-right: 5px;" maxlength="8"
-						   onchange="pesquisaProdutoCadastroProduto.pesquisarPorCodigoProduto('#codigoProduto', '#produto', '#edicao', false,
+						   onchange="pesquisaProdutoCadastroProduto.pesquisarPorCodigoProduto('#codigoProduto', '#produto', '', false,
 								   									   produtoController.pesquisarProdutosSuccessCallBack,
 								   									   produtoController.pesquisarProdutosErrorCallBack);" />
 				</td>
@@ -328,7 +328,7 @@
 			<tr>
 				<td>Editor:</td>
 				<td colspan="3" >
-					<input type="text" style="width:410px;" name="edicao" id="edicao" maxlength="20" disabled="disabled"/>
+					<input type="text" style="width:410px;" name="edicao" id="edicao" maxlength="20"/>
 				</td>
 				<td>Tipo de Produto:</td>
 				<td>

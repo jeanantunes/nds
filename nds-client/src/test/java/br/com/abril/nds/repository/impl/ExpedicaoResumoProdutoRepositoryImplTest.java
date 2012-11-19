@@ -106,7 +106,7 @@ public class ExpedicaoResumoProdutoRepositoryImplTest extends AbstractRepository
 			save(produtoEdicao);
 			
 			
-			TipoNotaFiscal tipoNotaFiscal = Fixture.tipoNotaFiscalRecebimento();
+			TipoNotaFiscal tipoNotaFiscal = Fixture.tipoNotaFiscalRecebimento(cfop);
 			save(tipoNotaFiscal);
 
 			

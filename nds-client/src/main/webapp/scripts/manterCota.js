@@ -12,6 +12,7 @@ var MANTER_COTA = $.extend(true, {
     tipoCotaSelecionada:"",
     tipoCota_CPF:"FISICA",
     tipoCota_CNPJ:"JURIDICA",
+	confirmado:false,
     fecharModalCadastroCota:false,
     isAlteracaoTitularidade: false,
     _workspace: this.workspace,
@@ -274,6 +275,8 @@ var MANTER_COTA = $.extend(true, {
 
     editar:function(numeroCota,idCota){
 
+        MANTER_COTA.confirmado = false;
+        
         MANTER_COTA.numeroCota = numeroCota;
         MANTER_COTA.idCota = idCota;
 
@@ -385,6 +388,8 @@ var MANTER_COTA = $.extend(true, {
 
         //Define a função salvar inicial ao abrir o dialog de cadastro de cota
         TAB_COTA.funcaoSalvar = MANTER_COTA.salvarDadosCadastrais;
+        
+        MANTER_COTA.confirmado = false;
 
         $('input[id^="historico"]', this.workspace).numeric();
 
@@ -423,6 +428,7 @@ var MANTER_COTA = $.extend(true, {
                         click: function() {
                             if(TAB_COTA.funcaoSalvar)
                                 TAB_COTA.funcaoSalvar();
+                            	MANTER_COTA.confirmado = true;
                         }
                     },
                     {id:"btn_cancelar_cota",text:"Cancelar",
@@ -436,11 +442,16 @@ var MANTER_COTA = $.extend(true, {
 
                     clearMessageDialogTimeout();
 
+                    var confirmado = MANTER_COTA.confirmado; 
+
+                    MANTER_COTA.confirmado = false;
+
                     if (MANTER_COTA.isModoTelaCadastroCota()) {
-                        if (!MANTER_COTA.fecharModalCadastroCota) {
+                        if (!MANTER_COTA.fecharModalCadastroCota && !confirmado) {
                             MANTER_COTA.cancelarCadastro();
                         }
-                        return MANTER_COTA.fecharModalCadastroCota;
+
+                        return MANTER_COTA.fecharModalCadastroCota || confirmado;
                     } else {
                         MANTER_COTA.recarregarCadastroCota();
                         return true;
@@ -1931,6 +1942,11 @@ function GridAntigosProprietarios(element, workspace) {
                 total:0
             });
         }
+        
+        $(document).live('keypress', function(e) { 
+
+        	MANTER_COTA.confirmado = false; 
+        });
     };
 }
 

@@ -252,12 +252,6 @@ public class NotaFiscalEntradaServiceImpl implements NotaFiscalEntradaService {
 		return detalheNotaFiscalDTO;
 	}
 	
-	@Override
-	@Transactional
-	public NotaFiscalEntrada obterNotaFiscalPorNumero(String numero){
-		return notaFiscalRepository.obterNotaFiscalPorNumero(numero);
-
-	}
 	
 	@Override
 	@Transactional
