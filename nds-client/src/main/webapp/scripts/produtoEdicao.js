@@ -433,7 +433,7 @@ var produtoEdicaoController =$.extend(true,  {
 		var listaMensagens = (mensagens && mensagens.listaMensagens) ? mensagens.listaMensagens : null;
 		if (tipoMensagem && listaMensagens) {
 			exibirMensagem(tipoMensagem, listaMensagens);				
-			$(".grids").hide();
+			$(".grids",produtoEdicaoController.workspace).hide();
 		}else{
 
 			var nProduto = '';
@@ -459,7 +459,7 @@ var produtoEdicaoController =$.extend(true,  {
 				cProduto = row.cell.codigoProduto;
 			});
 
-			$(".grids").show();
+			$(".grids",produtoEdicaoController.workspace).show();
 
 			//
 			var txt = '';
@@ -506,7 +506,7 @@ var produtoEdicaoController =$.extend(true,  {
 			}
 		});
 
-		$(".grids").show();
+		$(".grids",produtoEdicaoController.workspace).show();
 
 		return resultado;
 	},
