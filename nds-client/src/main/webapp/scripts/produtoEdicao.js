@@ -690,7 +690,10 @@ var produtoEdicaoController =$.extend(true,  {
 							$("#produtoEdicaoController-dataRecolhimentoPrevisto").attr("disabled", naoEditavel);
 							$("#produtoEdicaoController-repartePrevisto").attr("readonly", naoEditavel);
 							$("#produtoEdicaoController-repartePromocional").attr("readonly", naoEditavel);
-							$("#produtoEdicaoController-codigoDeBarrasCorporativo").attr("readonly", naoEditavel);							
+							$("#produtoEdicaoController-codigoDeBarrasCorporativo").attr("readonly", naoEditavel);	
+							
+							$('.target_visible').css({'visibility': naoEditavel?'visible':'hidden', display: ''});							
+							
 							$("#produtoEdicaoController-desconto").attr("readonly", naoEditavel);
 							$("#produtoEdicaoController-largura").attr("readonly", naoEditavel);
 							$("#produtoEdicaoController-comprimento").attr("readonly", naoEditavel);
