@@ -296,7 +296,7 @@ public class AlteracaoCotaController {
 			try {
 			//Valor Minimo
 			if (filtroAlteracaoCotaDTO.getFiltroModalFinanceiro().getVrMinimo() == null) {
-				cota.getParametroCobranca().setValorMininoCobranca(new BigDecimal(""));
+				cota.getParametroCobranca().setValorMininoCobranca(new BigDecimal("0"));
 			} else {
 				cota.getParametroCobranca().setValorMininoCobranca(new BigDecimal(filtroAlteracaoCotaDTO.getFiltroModalFinanceiro().getVrMinimo()));
 			}
