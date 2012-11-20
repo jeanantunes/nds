@@ -440,10 +440,8 @@ public class FecharDiaServiceImpl implements FecharDiaService {
     	validarDadosFechamentoDiario(fechamento,null);
     	
     	incluirResumoReparte(fechamento, builder); 
-
     	
-    	ResumoEncalheFecharDiaDTO resumoEncalhe = incluirResumoEncalhe(fechamento); 
-    	builder.resumoEncalhe(resumoEncalhe);
+    	incluirResumoEncalhe(fechamento, builder); 
     	
     	ResumoSuplementarFecharDiaDTO resumoSuplementar = incluirResumoSuplementar(fechamento); 
     	builder.resumoSuplementar(resumoSuplementar);
@@ -763,9 +761,10 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		}
 	}
 
-	private ResumoEncalheFecharDiaDTO incluirResumoEncalhe(FechamentoDiario fechamento) throws FechamentoDiarioException {
+	private void incluirResumoEncalhe(FechamentoDiario fechamento, Builder builder) throws FechamentoDiarioException {
 		
 		ResumoEncalheFecharDiaDTO resumoEncalhe = this.resumoEncalheFecharDiaService.obterResumoGeralEncalhe(fechamento.getDataFechamento());
+		builder.resumoEncalhe(resumoEncalhe);
 		
 		validarDadosFechamentoDiario(resumoEncalhe, "Erro na obtenção dos dados de Resumo de Encalhe!");
 		
@@ -784,15 +783,14 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		
 		validarDadosFechamentoDiario(consolidadoEncalhe,null);
 		
-		incluirLancamentosEncalhe(fechamento, consolidadoEncalhe);
+		List<EncalheFecharDiaDTO> lancamentosEncalhe = incluirLancamentosEncalhe(fechamento, consolidadoEncalhe);
+		builder.encalhe(lancamentosEncalhe);
 		
 		incluirVendaEncalhe(fechamento, consolidadoEncalhe);
 		
-		return resumoEncalhe;
-		
 	}
 
-	private void incluirLancamentosEncalhe(FechamentoDiario fechamento,FechamentoDiarioConsolidadoEncalhe consolidadoEncalhe)
+	private List<EncalheFecharDiaDTO> incluirLancamentosEncalhe(FechamentoDiario fechamento,FechamentoDiarioConsolidadoEncalhe consolidadoEncalhe)
 			throws FechamentoDiarioException {
 		
 		List<EncalheFecharDiaDTO> listaEncalhe = 
@@ -815,6 +813,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 				fechamentoDiarioLancamentoEncalheRepository.adicionar(lancamentoEncalhe);
 			}
 		}
+		return listaEncalhe;
 	}
 
 	private void incluirVendaEncalhe(FechamentoDiario fechamento,FechamentoDiarioConsolidadoEncalhe consolidadoEncalhe) {

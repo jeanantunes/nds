@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import br.com.abril.nds.dto.EncalheFecharDiaDTO;
 import br.com.abril.nds.dto.ReparteFecharDiaDTO;
 import br.com.abril.nds.dto.ResumoEncalheFecharDiaDTO;
 import br.com.abril.nds.dto.ResumoFechamentoDiarioConsignadoDTO;
@@ -27,6 +28,8 @@ public class FechamentoDiarioDTO implements Serializable {
     private Sumarizacao sumarizacao;
     
     private List<ReparteFecharDiaDTO> reparte = new ArrayList<>();
+    
+    private List<EncalheFecharDiaDTO> encalhe = new ArrayList<>();
 
     private FechamentoDiarioDTO(Builder builder) {
         this.dataFechamento = builder.dataFechamento;
@@ -42,6 +45,7 @@ public class FechamentoDiarioDTO implements Serializable {
         this.sumarizacao.resumoConsignado = builder.resumoConsignado;
         
         this.reparte = builder.reparte;
+        this.encalhe = builder.encalhe;
                
     }
 
@@ -66,7 +70,12 @@ public class FechamentoDiarioDTO implements Serializable {
         return reparte;
     }
 
-
+    /**
+     * @return the encalhe
+     */
+    public List<EncalheFecharDiaDTO> getEncalhe() {
+        return encalhe;
+    }
 
     /**
      * Builder para o DTO de fechamento diário
@@ -93,6 +102,8 @@ public class FechamentoDiarioDTO implements Serializable {
         private ResumoFechamentoDiarioConsignadoDTO resumoConsignado;
         
         private List<ReparteFecharDiaDTO> reparte;
+        
+        private List<EncalheFecharDiaDTO> encalhe;
         
         public Builder(Date dataFechamento) {
             this.dataFechamento = dataFechamento;
@@ -142,6 +153,11 @@ public class FechamentoDiarioDTO implements Serializable {
             this.reparte = reparte;
             return this;
         }
+        
+        public Builder encalhe(List<EncalheFecharDiaDTO> encalhe) {
+            this.encalhe = encalhe;
+            return this;
+        }
 
         public FechamentoDiarioDTO build() {
             return new FechamentoDiarioDTO(this);
@@ -150,7 +166,7 @@ public class FechamentoDiarioDTO implements Serializable {
     }
     
     /**
-     * Sumarizacao do Fechamento diário
+     * Sumarização do Fechamento diário
   
      * @author francisco.garcia
      *
@@ -228,7 +244,6 @@ public class FechamentoDiarioDTO implements Serializable {
         public ResumoFechamentoDiarioConsignadoDTO getResumoConsignado() {
             return resumoConsignado;
         }
-        
         
     }
     

@@ -1,7 +1,6 @@
 package br.com.abril.nds.client;
 
 import java.io.File;
-import java.math.BigDecimal;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Arrays;
@@ -19,7 +18,6 @@ import net.sf.jasperreports.engine.export.JRPdfExporterParameter;
 
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import br.com.abril.nds.dto.ReparteFecharDiaDTO;
 import br.com.abril.nds.dto.fechamentodiario.FechamentoDiarioDTO;
 import br.com.abril.nds.fixture.DataLoader;
 import br.com.abril.nds.service.FecharDiaService;
@@ -96,15 +94,11 @@ public class RelatorioFechamentoDiarioDevTool {
     
     private static void runReportPdf(FechamentoDiarioDTO dto, Map<String, Object> parameters) throws Exception {
         JasperPrint jpSumarizacao = fillSumarizacao(dto, parameters);
-        
         JasperPrint jpLancamento = fillReparte(dto, parameters);
+        JasperPrint jpEncalhe = fillEncalhe(dto, parameters);
         
-        URL url = Thread.currentThread().getContextClassLoader().getResource("reports/fechamento_diario_encalhe.jasper");
+        URL url = Thread.currentThread().getContextClassLoader().getResource("reports/fechamento_diario_suplementar.jasper");
         String path = url.toURI().getPath();
-        JasperPrint jpEncalhe = JasperFillManager.fillReport(path, parameters, new JREmptyDataSource());
-        
-        url = Thread.currentThread().getContextClassLoader().getResource("reports/fechamento_diario_suplementar.jasper");
-        path = url.toURI().getPath();
         JasperPrint jpSuplementar = JasperFillManager.fillReport(path, parameters, new JREmptyDataSource());
         
         url = Thread.currentThread().getContextClassLoader().getResource("reports/fechamento_diario_faltas_sobras.jasper");
@@ -119,9 +113,14 @@ public class RelatorioFechamentoDiarioDevTool {
         exp.exportReport();
     }
 
-    private static JasperPrint fillReparte(FechamentoDiarioDTO dto,
-            Map<String, Object> parameters) throws URISyntaxException,
-            JRException {
+    private static JasperPrint fillEncalhe(FechamentoDiarioDTO dto, Map<String, Object> parameters) throws URISyntaxException, JRException {
+        URL url = Thread.currentThread().getContextClassLoader().getResource("reports/fechamento_diario_encalhe.jasper");
+        String path = url.toURI().getPath();
+        JasperPrint jpEncalhe = JasperFillManager.fillReport(path, parameters, new JRBeanCollectionDataSource(dto.getEncalhe()));
+        return jpEncalhe;
+    }
+
+    private static JasperPrint fillReparte(FechamentoDiarioDTO dto, Map<String, Object> parameters) throws URISyntaxException, JRException {
         URL url = Thread.currentThread().getContextClassLoader().getResource("reports/fechamento_diario_lancamento.jasper");
         String path = url.toURI().getPath();
         JasperPrint jpLancamento = JasperFillManager.fillReport(path, parameters, new JRBeanCollectionDataSource(dto.getReparte()));

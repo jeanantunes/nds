@@ -41,7 +41,7 @@
 				<textElement textAlignment="Center" markup="none">
 					<font fontName="Times New Roman" size="7"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{edicao}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{edicao}]]></textFieldExpression>
 			</textField>
 			<textField pattern="000" isBlankWhenNull="true">
 				<reportElement style="zebrado" stretchType="RelativeToTallestObject" mode="Opaque" x="417" y="0" width="26" height="11"/>
@@ -55,7 +55,7 @@
 				<textElement textAlignment="Center" markup="none">
 					<font fontName="Times New Roman" size="7"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{item}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{item}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement style="zebrado" stretchType="RelativeToTallestObject" mode="Opaque" x="32" y="0" width="189" height="11"/>
@@ -67,7 +67,7 @@
 				<textElement markup="none">
 					<font fontName="Times New Roman" size="7"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{nome}+ "\n" + $F{descricao}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{nome}+ "\n" + $F{descricao}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement style="zebrado" stretchType="RelativeToTallestObject" mode="Opaque" x="0" y="0" width="32" height="11"/>
@@ -81,7 +81,7 @@
 				<textElement textAlignment="Center" markup="none">
 					<font fontName="Times New Roman" size="7"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{editor}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{editor}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement style="zebrado" stretchType="RelativeToTallestObject" mode="Opaque" x="375" y="0" width="42" height="11"/>
@@ -95,7 +95,7 @@
 				<textElement textAlignment="Center" markup="none">
 					<font fontName="Times New Roman" size="7"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[String.format("%06d%s", $F{notaEnvio}, br.com.abril.nds.util.Util.nvl($F{codigoNotaEnvioMultipla}, ""))]]></textFieldExpression>
+				<textFieldExpression><![CDATA[String.format("%06d%s", $F{notaEnvio}, br.com.abril.nds.util.Util.nvl($F{codigoNotaEnvioMultipla}, ""))]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement style="zebrado" stretchType="RelativeToTallestObject" mode="Opaque" x="754" y="0" width="42" height="11"/>
@@ -108,7 +108,7 @@
 				<textElement textAlignment="Center" markup="none">
 					<font fontName="Times New Roman" size="7"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{tipoRecolhimento}.equals("P") ? "*******" : $F{pacotePadrao}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{tipoRecolhimento}.equals("P") ? "*******" : $F{pacotePadrao}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
 				<reportElement style="zebrado" stretchType="RelativeToTallestObject" mode="Opaque" x="619" y="0" width="41" height="11"/>
@@ -121,7 +121,7 @@
 				<textElement textAlignment="Right" markup="none">
 					<font fontName="Times New Roman" size="7"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{precoCapa}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{precoCapa}]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
 				<reportElement style="zebrado" stretchType="RelativeToTallestObject" mode="Opaque" x="333" y="0" width="42" height="11"/>
@@ -135,7 +135,7 @@
 				<textElement textAlignment="Center" markup="none">
 					<font fontName="Times New Roman" size="7"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{dataRecolhimento}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{dataRecolhimento}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement style="zebrado" stretchType="RelativeToTallestObject" mode="Opaque" x="535" y="0" width="42" height="11"/>
@@ -149,7 +149,7 @@
 				<textElement textAlignment="Center" markup="none">
 					<font fontName="Times New Roman" size="7"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{qtdeVenda}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{qtdeVenda}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement style="zebrado" stretchType="RelativeToTallestObject" mode="Opaque" x="493" y="0" width="42" height="11"/>
@@ -163,7 +163,7 @@
 				<textElement textAlignment="Center" markup="none">
 					<font fontName="Times New Roman" size="7"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{tipoRecolhimento}.equals("P") ? "*******" : $F{qtdeDevolvida}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{tipoRecolhimento}.equals("P") ? "*******" : $F{qtdeDevolvida}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement style="zebrado" stretchType="RelativeToTallestObject" mode="Opaque" x="451" y="0" width="42" height="11"/>
@@ -177,7 +177,7 @@
 				<textElement textAlignment="Center" markup="none">
 					<font fontName="Times New Roman" size="7"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{tipoRecolhimento}.equals("P") ? "*******" : $F{qtdeEnviada}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{tipoRecolhimento}.equals("P") ? "*******" : $F{qtdeEnviada}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement style="zebrado" stretchType="RelativeToTallestObject" mode="Opaque" x="443" y="0" width="8" height="11"/>
@@ -191,7 +191,7 @@
 				<textElement textAlignment="Center" markup="none">
 					<font fontName="Times New Roman" size="7"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{tipoRecolhimento}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{tipoRecolhimento}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement style="zebrado" stretchType="RelativeToTallestObject" mode="Opaque" x="577" y="0" width="42" height="11"/>
@@ -205,7 +205,7 @@
 				<textElement textAlignment="Center" markup="none">
 					<font fontName="Times New Roman" size="7"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{tipoRecolhimento}.equals("P") ? "*******" : $F{qtdeRecebida}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{tipoRecolhimento}.equals("P") ? "*******" : $F{qtdeRecebida}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
 				<reportElement style="zebrado" stretchType="RelativeToTallestObject" mode="Opaque" x="660" y="0" width="94" height="11"/>
@@ -218,7 +218,7 @@
 				<textElement textAlignment="Right" markup="none">
 					<font fontName="Times New Roman" size="7"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{valorVenda}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{valorVenda}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement style="zebrado" stretchType="RelativeToTallestObject" mode="Opaque" x="291" y="0" width="42" height="11"/>
@@ -232,7 +232,7 @@
 				<textElement textAlignment="Center" markup="none">
 					<font fontName="Times New Roman" size="7"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{tipoRecolhimento}.equals("P") ? "*******" : $F{formaDevolucao}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{tipoRecolhimento}.equals("P") ? "*******" : $F{formaDevolucao}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement style="zebrado" stretchType="RelativeToTallestObject" mode="Opaque" x="220" y="0" width="49" height="11"/>
@@ -244,7 +244,7 @@
 				<textElement textAlignment="Right" markup="none">
 					<font fontName="Times New Roman" size="7"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{codigo}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{codigo}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
