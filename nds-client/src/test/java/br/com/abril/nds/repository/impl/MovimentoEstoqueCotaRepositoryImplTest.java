@@ -19,9 +19,11 @@ import br.com.abril.nds.dto.ConsultaEncalheDTO;
 import br.com.abril.nds.dto.ConsultaEncalheDetalheDTO;
 import br.com.abril.nds.dto.ConsultaEncalheRodapeDTO;
 import br.com.abril.nds.dto.ContagemDevolucaoDTO;
+import br.com.abril.nds.dto.MovimentoEstoqueCotaDTO;
 import br.com.abril.nds.dto.ProdutoAbastecimentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDetalheDTO;
+import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDetalheDTO.OrdenacaoColunaDetalhe;
 import br.com.abril.nds.dto.filtro.FiltroDigitacaoContagemDevolucaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroDigitacaoContagemDevolucaoDTO.OrdenacaoColuna;
 import br.com.abril.nds.dto.filtro.FiltroMapaAbastecimentoDTO;
@@ -50,6 +52,7 @@ import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
+import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.model.estoque.RecebimentoFisico;
 import br.com.abril.nds.model.estoque.StatusEstoqueFinanceiro;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
@@ -78,6 +81,7 @@ import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.vo.PaginacaoVO;
+import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 
 public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryImplTest {
@@ -196,7 +200,9 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		cfop = Fixture.cfop5102();
 		save(cfop);
 		
-		tipoNotaFiscal = Fixture.tipoNotaFiscalRecebimento();
+		tipoNotaFiscal = Fixture.tipoNotaFiscalRecebimento(cfop);
+		tipoNotaFiscal.setCfopEstado(cfop);
+		tipoNotaFiscal.setCfopOutrosEstados(cfop);
 		save(tipoNotaFiscal);
 		
 		NotaFiscalEntradaFornecedor notaFiscal1Veja = Fixture
@@ -747,7 +753,18 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 	}
 	
 	@Test
-	public void testObterQtdProdutoEdicaoEncalhePrimeiroDia() {
+	public void obterListaMovimentoEstoqueCotaParaOperacaoConferenciaEncalhe() {
+		
+		Long idControleConferenciaEncalheCota = 1L;
+		
+		List<MovimentoEstoqueCota> listaMovimentoEstoqueCotas = movimentoEstoqueCotaRepository.obterListaMovimentoEstoqueCotaParaOperacaoConferenciaEncalhe(idControleConferenciaEncalheCota);
+		
+		Assert.assertNotNull(listaMovimentoEstoqueCotas);
+		
+	}
+	
+	@Test
+	public void obterQtdProdutoEdicaoEncalhePrimeiroDia() {
 		
 		setUpForConsultaEncalhe();
 		
@@ -762,7 +779,91 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 	}
 
 	@Test
-	public void testObterQtdItemProdutoEdicaoEncalhePrimeiroDia() {
+	@SuppressWarnings("unused")
+	public void obterQtdProdutoEdicaoEncalhe() {
+		
+		setUpForConsultaEncalhe();
+		
+		FiltroConsultaEncalheDTO filtro = new FiltroConsultaEncalheDTO();
+		
+		Integer qtde = movimentoEstoqueCotaRepository.obterQtdProdutoEdicaoEncalhe(filtro, false);
+		
+	}
+
+	@Test
+	@SuppressWarnings("unused")
+	public void obterQtdProdutoEdicaoEncalhePorIdFornecedor() {
+		
+		setUpForConsultaEncalhe();
+		
+		FiltroConsultaEncalheDTO filtro = new FiltroConsultaEncalheDTO();
+		filtro.setDataRecolhimentoInicial(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
+		filtro.setDataRecolhimentoFinal(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
+		filtro.setIdFornecedor(fornecedorDinap.getId());
+		
+		Integer qtde = movimentoEstoqueCotaRepository.obterQtdProdutoEdicaoEncalhe(filtro, false);
+		
+	}
+
+	@Test
+	@SuppressWarnings("unused")
+	public void obterQtdProdutoEdicaoEncalhePorIdCota() {
+		
+		setUpForConsultaEncalhe();
+		
+		FiltroConsultaEncalheDTO filtro = obterFiltroConsultaEncalhe();
+		filtro.setDataRecolhimentoInicial(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
+		filtro.setDataRecolhimentoFinal(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
+		filtro.setIdCota(cotaManoel.getId());
+		
+		Integer qtde = movimentoEstoqueCotaRepository.obterQtdProdutoEdicaoEncalhe(filtro, false);
+		
+	}
+
+	@Test
+	@SuppressWarnings("unused")
+	public void obterQtdItemProdutoEdicaoEncalhe() {
+		
+		setUpForConsultaEncalhe();
+		
+		FiltroConsultaEncalheDTO filtro = new FiltroConsultaEncalheDTO();
+		filtro.setDataRecolhimentoInicial(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
+		filtro.setDataRecolhimentoFinal(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
+		
+		BigDecimal qtde = movimentoEstoqueCotaRepository.obterQtdItemProdutoEdicaoEncalhe(filtro, false);
+		
+	}
+
+	@Test
+	@SuppressWarnings("unused")
+	public void obterQtdItemProdutoEdicaoEncalhePorIdFornecedor() {
+		
+		setUpForConsultaEncalhe();
+		
+		FiltroConsultaEncalheDTO filtro = new FiltroConsultaEncalheDTO();
+		filtro.setDataRecolhimentoInicial(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
+		filtro.setDataRecolhimentoFinal(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
+		
+		BigDecimal qtde = movimentoEstoqueCotaRepository.obterQtdItemProdutoEdicaoEncalhe(filtro, false);
+		
+	}
+
+	@Test
+	@SuppressWarnings("unused")
+	public void obterQtdItemProdutoEdicaoEncalhePorIdCota() {
+		
+		setUpForConsultaEncalhe();
+		
+		FiltroConsultaEncalheDTO filtro = new FiltroConsultaEncalheDTO();
+		filtro.setDataRecolhimentoInicial(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
+		filtro.setDataRecolhimentoFinal(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
+		
+		BigDecimal qtde = movimentoEstoqueCotaRepository.obterQtdItemProdutoEdicaoEncalhe(filtro, false);
+		
+	}
+
+	@Test
+	public void obterQtdItemProdutoEdicaoEncalhePrimeiroDia() {
 		
 		setUpForConsultaEncalhe();
 		
@@ -775,7 +876,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 	}
 
 	@Test
-	public void testObterQtdProdutoEdicaoEncalheAposPrimeiroDia() {
+	public void obterQtdProdutoEdicaoEncalheAposPrimeiroDia() {
 
 		setUpForConsultaEncalhe();
 		
@@ -791,7 +892,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 	}
 
 	@Test
-	public void testObterQtdItemProdutoEdicaoEncalheAposPrimeiroDia() {
+	public void obterQtdItemProdutoEdicaoEncalheAposPrimeiroDia() {
 		
 		setUpForConsultaEncalhe();
 		
@@ -806,7 +907,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 	}
 	
 	@Test
-	public void testObterQtdConsultaEncalhe() {
+	public void obterQtdConsultaEncalhe() {
 		
 		setUpForConsultaEncalhe();
 		
@@ -818,7 +919,51 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 	}
 	
 	@Test
-	public void testObterListaConsultaEncalhe() {
+	public void obterQtdConsultaEncalheNulo() {
+		
+		setUpForConsultaEncalhe();
+		
+		FiltroConsultaEncalheDTO filtro = new FiltroConsultaEncalheDTO();
+		filtro.setDataRecolhimentoInicial(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
+		filtro.setDataRecolhimentoFinal(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
+		
+		Integer qtde = movimentoEstoqueCotaRepository.obterQtdConsultaEncalhe(filtro);
+		
+		Assert.assertEquals(1, qtde.intValue());
+	}
+	
+	@Test
+	@SuppressWarnings("unused")
+	public void obterQtdConsultaEncalhePorIdCota() {
+		
+		setUpForConsultaEncalhe();
+		
+		FiltroConsultaEncalheDTO filtro = new FiltroConsultaEncalheDTO();
+		filtro.setDataRecolhimentoInicial(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
+		filtro.setDataRecolhimentoFinal(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
+		filtro.setIdCota(1L);
+		
+		Integer qtde = movimentoEstoqueCotaRepository.obterQtdConsultaEncalhe(filtro);
+		
+	}
+	
+	@Test
+	@SuppressWarnings("unused")
+	public void obterQtdConsultaEncalhePorIdFornecedor() {
+		
+		setUpForConsultaEncalhe();
+		
+		FiltroConsultaEncalheDTO filtro = new FiltroConsultaEncalheDTO();
+		filtro.setDataRecolhimentoInicial(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
+		filtro.setDataRecolhimentoFinal(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
+		filtro.setIdFornecedor(1L);
+		
+		Integer qtde = movimentoEstoqueCotaRepository.obterQtdConsultaEncalhe(filtro);
+		
+	}
+
+	@Test
+	public void obterListaConsultaEncalhe() {
 		
 		setUpForConsultaEncalhe();
 		
@@ -834,18 +979,264 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		ConsultaEncalheDTO cEncalhe_1 = listaConsultaEncalhe.get(0);
 		Assert.assertEquals((8*15), cEncalhe_1.getValor().intValue());
 		
+	}
 
-//		ConsultaEncalheDTO cEncalhe_2 = listaConsultaEncalhe.get(1);
-//		Assert.assertEquals((50*15), cEncalhe_2.getValor().intValue());
-//		
-//		ConsultaEncalheDTO cEncalhe_3 = listaConsultaEncalhe.get(2);
-//		Assert.assertEquals((45*15), cEncalhe_3.getValor().intValue());
+	@Test
+	public void obterListaConsultaEncalhePorIdCota() {
 		
+		setUpForConsultaEncalhe();
+		
+		FiltroConsultaEncalheDTO filtro = obterFiltroConsultaEncalhe();
+		filtro.setDataRecolhimentoInicial(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
+		filtro.setDataRecolhimentoFinal(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
+		filtro.setIdCota(1L);
+
+		List<ConsultaEncalheDTO> listaConsultaEncalhe = movimentoEstoqueCotaRepository.obterListaConsultaEncalhe(filtro);
+		
+		Assert.assertNotNull(listaConsultaEncalhe);
 		
 	}
 
 	@Test
-	public void testObterListaConsultaEncalheDetalhe() {
+	public void obterListaConsultaEncalhePorFornecedor() {
+		
+		setUpForConsultaEncalhe();
+		
+		FiltroConsultaEncalheDTO filtro = obterFiltroConsultaEncalhe();
+		filtro.setDataRecolhimentoInicial(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
+		filtro.setDataRecolhimentoFinal(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
+		filtro.setIdFornecedor(1L);
+
+		List<ConsultaEncalheDTO> listaConsultaEncalhe = movimentoEstoqueCotaRepository.obterListaConsultaEncalhe(filtro);
+		
+		Assert.assertNotNull(listaConsultaEncalhe);
+		
+	}
+
+	@Test
+	public void obterListaConsultaEncalheOrdenadoCodigoProduto() {
+		
+		setUpForConsultaEncalhe();
+		
+		FiltroConsultaEncalheDTO filtro = obterFiltroConsultaEncalhe();
+		filtro.setDataRecolhimentoInicial(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
+		filtro.setDataRecolhimentoFinal(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
+		filtro.setOrdenacaoColuna(FiltroConsultaEncalheDTO.OrdenacaoColuna.CODIGO_PRODUTO);
+
+		List<ConsultaEncalheDTO> listaConsultaEncalhe = movimentoEstoqueCotaRepository.obterListaConsultaEncalhe(filtro);
+		
+		Assert.assertNotNull(listaConsultaEncalhe);
+		
+	}
+
+	@Test
+	public void obterListaConsultaEncalheOrdenadoNomeProduto() {
+		
+		setUpForConsultaEncalhe();
+		
+		FiltroConsultaEncalheDTO filtro = obterFiltroConsultaEncalhe();
+		filtro.setDataRecolhimentoInicial(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
+		filtro.setDataRecolhimentoFinal(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
+		filtro.setOrdenacaoColuna(FiltroConsultaEncalheDTO.OrdenacaoColuna.NOME_PRODUTO);
+
+		List<ConsultaEncalheDTO> listaConsultaEncalhe = movimentoEstoqueCotaRepository.obterListaConsultaEncalhe(filtro);
+		
+		Assert.assertNotNull(listaConsultaEncalhe);
+		
+	}
+
+	@Test
+	public void obterListaConsultaEncalheOrdenadoNumeroEdicao() {
+		
+		setUpForConsultaEncalhe();
+		
+		FiltroConsultaEncalheDTO filtro = obterFiltroConsultaEncalhe();
+		filtro.setDataRecolhimentoInicial(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
+		filtro.setDataRecolhimentoFinal(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
+		filtro.setOrdenacaoColuna(FiltroConsultaEncalheDTO.OrdenacaoColuna.NUMERO_EDICAO);
+
+		List<ConsultaEncalheDTO> listaConsultaEncalhe = movimentoEstoqueCotaRepository.obterListaConsultaEncalhe(filtro);
+		
+		Assert.assertNotNull(listaConsultaEncalhe);
+		
+	}
+
+	@Test
+	public void obterListaConsultaEncalheOrdenadoPrecoCapa() {
+		
+		setUpForConsultaEncalhe();
+		
+		FiltroConsultaEncalheDTO filtro = obterFiltroConsultaEncalhe();
+		filtro.setDataRecolhimentoInicial(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
+		filtro.setDataRecolhimentoFinal(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
+		filtro.setOrdenacaoColuna(FiltroConsultaEncalheDTO.OrdenacaoColuna.PRECO_CAPA);
+
+		List<ConsultaEncalheDTO> listaConsultaEncalhe = movimentoEstoqueCotaRepository.obterListaConsultaEncalhe(filtro);
+		
+		Assert.assertNotNull(listaConsultaEncalhe);
+		
+	}
+
+	@Test
+	public void obterListaConsultaEncalheOrdenadoPrecoComDesconto() {
+		
+		setUpForConsultaEncalhe();
+		
+		FiltroConsultaEncalheDTO filtro = obterFiltroConsultaEncalhe();
+		filtro.setDataRecolhimentoInicial(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
+		filtro.setDataRecolhimentoFinal(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
+		filtro.setOrdenacaoColuna(FiltroConsultaEncalheDTO.OrdenacaoColuna.PRECO_COM_DESCONTO);
+
+		List<ConsultaEncalheDTO> listaConsultaEncalhe = movimentoEstoqueCotaRepository.obterListaConsultaEncalhe(filtro);
+		
+		Assert.assertNotNull(listaConsultaEncalhe);
+		
+	}
+
+	@Test
+	public void obterListaConsultaEncalheOrdenadoReparte() {
+		
+		setUpForConsultaEncalhe();
+		
+		FiltroConsultaEncalheDTO filtro = obterFiltroConsultaEncalhe();
+		filtro.setDataRecolhimentoInicial(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
+		filtro.setDataRecolhimentoFinal(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
+		filtro.setOrdenacaoColuna(FiltroConsultaEncalheDTO.OrdenacaoColuna.REPARTE);
+
+		List<ConsultaEncalheDTO> listaConsultaEncalhe = movimentoEstoqueCotaRepository.obterListaConsultaEncalhe(filtro);
+		
+		Assert.assertNotNull(listaConsultaEncalhe);
+		
+	}
+
+	@Test
+	public void obterListaConsultaEncalheOrdenadoEncalhe() {
+		
+		setUpForConsultaEncalhe();
+		
+		FiltroConsultaEncalheDTO filtro = obterFiltroConsultaEncalhe();
+		filtro.setDataRecolhimentoInicial(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
+		filtro.setDataRecolhimentoFinal(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
+		filtro.setOrdenacaoColuna(FiltroConsultaEncalheDTO.OrdenacaoColuna.ENCALHE);
+
+		List<ConsultaEncalheDTO> listaConsultaEncalhe = movimentoEstoqueCotaRepository.obterListaConsultaEncalhe(filtro);
+		
+		Assert.assertNotNull(listaConsultaEncalhe);
+		
+	}
+
+	@Test
+	public void obterListaConsultaEncalheOrdenadoFornecedor() {
+		
+		setUpForConsultaEncalhe();
+		
+		FiltroConsultaEncalheDTO filtro = obterFiltroConsultaEncalhe();
+		filtro.setDataRecolhimentoInicial(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
+		filtro.setDataRecolhimentoFinal(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
+		filtro.setOrdenacaoColuna(FiltroConsultaEncalheDTO.OrdenacaoColuna.FORNECEDOR);
+
+		List<ConsultaEncalheDTO> listaConsultaEncalhe = movimentoEstoqueCotaRepository.obterListaConsultaEncalhe(filtro);
+		
+		Assert.assertNotNull(listaConsultaEncalhe);
+		
+	}
+
+	@Test
+	public void obterListaConsultaEncalheOrdenadoValor() {
+		
+		setUpForConsultaEncalhe();
+		
+		FiltroConsultaEncalheDTO filtro = obterFiltroConsultaEncalhe();
+		filtro.setDataRecolhimentoInicial(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
+		filtro.setDataRecolhimentoFinal(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
+		filtro.setOrdenacaoColuna(FiltroConsultaEncalheDTO.OrdenacaoColuna.VALOR);
+
+		List<ConsultaEncalheDTO> listaConsultaEncalhe = movimentoEstoqueCotaRepository.obterListaConsultaEncalhe(filtro);
+		
+		Assert.assertNotNull(listaConsultaEncalhe);
+		
+	}
+
+	@Test
+	public void obterListaConsultaEncalheOrdenadoValorComDesconto() {
+		
+		setUpForConsultaEncalhe();
+		
+		FiltroConsultaEncalheDTO filtro = obterFiltroConsultaEncalhe();
+		filtro.setDataRecolhimentoInicial(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
+		filtro.setDataRecolhimentoFinal(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
+		filtro.setOrdenacaoColuna(FiltroConsultaEncalheDTO.OrdenacaoColuna.VALOR_COM_DESCONTO);
+
+		List<ConsultaEncalheDTO> listaConsultaEncalhe = movimentoEstoqueCotaRepository.obterListaConsultaEncalhe(filtro);
+		
+		Assert.assertNotNull(listaConsultaEncalhe);
+		
+	}
+
+	@Test
+	public void obterListaConsultaEncalheOrdenadoRecolhimento() {
+		
+		setUpForConsultaEncalhe();
+		
+		FiltroConsultaEncalheDTO filtro = obterFiltroConsultaEncalhe();
+		filtro.setDataRecolhimentoInicial(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
+		filtro.setDataRecolhimentoFinal(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
+		filtro.setOrdenacaoColuna(FiltroConsultaEncalheDTO.OrdenacaoColuna.RECOLHIMENTO);
+
+		List<ConsultaEncalheDTO> listaConsultaEncalhe = movimentoEstoqueCotaRepository.obterListaConsultaEncalhe(filtro);
+		
+		Assert.assertNotNull(listaConsultaEncalhe);
+		
+	}
+
+	@Test
+	public void obterListaConsultaEncalheOrdenacaoDESC() {
+		
+		setUpForConsultaEncalhe();
+		
+		FiltroConsultaEncalheDTO filtro = obterFiltroConsultaEncalhe();
+		filtro.setDataRecolhimentoInicial(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
+		filtro.setDataRecolhimentoFinal(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
+		filtro.setOrdenacaoColuna(FiltroConsultaEncalheDTO.OrdenacaoColuna.CODIGO_PRODUTO);
+		filtro.setPaginacao(new PaginacaoVO());
+		filtro.getPaginacao().setOrdenacao(Ordenacao.DESC);
+
+		List<ConsultaEncalheDTO> listaConsultaEncalhe = movimentoEstoqueCotaRepository.obterListaConsultaEncalhe(filtro);
+		
+		Assert.assertNotNull(listaConsultaEncalhe);
+		
+	}
+	
+	@Test
+	@SuppressWarnings("unused")
+	public void obterQtdeMovimentoEstoqueCotaParaProdutoEdicaoNoPeriodo() {
+		
+		Long idCota = 1L;
+		Long idProdutoEdicao = 1L; 
+		Date dataInicial = Fixture.criarData(01, Calendar.NOVEMBER, 2012);
+		Date dataFinal = Fixture.criarData(31, Calendar.NOVEMBER, 2012);
+		OperacaoEstoque operacaoEstoque = OperacaoEstoque.SAIDA;
+		
+		BigInteger QtdeMovimentoEstoqueCota = movimentoEstoqueCotaRepository.obterQtdeMovimentoEstoqueCotaParaProdutoEdicaoNoPeriodo(idCota, idProdutoEdicao, dataInicial, dataFinal, operacaoEstoque);		
+		
+	}
+
+	@Test
+	@SuppressWarnings("unused")
+	public void obterValorTotalMovimentoEstoqueCotaParaProdutoEdicaoNoPeriodo() {
+		
+		Long idCota = 1L;
+		Long idProdutoEdicao = 1L; 
+		Date dataInicial = Fixture.criarData(01, Calendar.NOVEMBER, 2012);
+		Date dataFinal = Fixture.criarData(31, Calendar.NOVEMBER, 2012);
+		OperacaoEstoque operacaoEstoque = OperacaoEstoque.SAIDA;
+		
+		BigDecimal QtdeMovimentoEstoqueCota = movimentoEstoqueCotaRepository.obterValorTotalMovimentoEstoqueCotaParaProdutoEdicaoNoPeriodo(idCota, idProdutoEdicao, dataInicial, dataFinal, operacaoEstoque);		
+		
+	}
+
+	@Test
+	public void obterListaConsultaEncalheDetalhe() {
 		
 		setUpForConsultaEncalhe();
 		
@@ -865,7 +1256,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 	}
 
 	@Test
-	public void testObterQtdeConsultaEncalheDetalhe() {
+	public void obterListaConsultaEncalheDetalhePorCota() {
 		
 		setUpForConsultaEncalhe();
 		
@@ -873,6 +1264,150 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		filtro.setDataMovimento(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
 		filtro.setDataRecolhimento(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
 		filtro.setIdProdutoEdicao(veja1.getId());
+		filtro.setIdCota(cotaManoel.getId());
+
+		List<ConsultaEncalheDetalheDTO> listaConsultaEncalheDetalhe = movimentoEstoqueCotaRepository.obterListaConsultaEncalheDetalhe(filtro);
+		
+		Assert.assertNotNull(listaConsultaEncalheDetalhe);
+		
+	}
+
+	@Test
+	public void obterListaConsultaEncalheDetalhePorFornecedor() {
+		
+		setUpForConsultaEncalhe();
+		
+		FiltroConsultaEncalheDetalheDTO filtro = new FiltroConsultaEncalheDetalheDTO();
+		filtro.setDataMovimento(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
+		filtro.setDataRecolhimento(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
+		filtro.setIdProdutoEdicao(veja1.getId());
+		filtro.setIdFornecedor(fornecedorDinap.getId());
+
+		List<ConsultaEncalheDetalheDTO> listaConsultaEncalheDetalhe = movimentoEstoqueCotaRepository.obterListaConsultaEncalheDetalhe(filtro);
+		
+		Assert.assertNotNull(listaConsultaEncalheDetalhe);
+		
+	}
+
+	@Test
+	public void obterListaConsultaEncalheDetalheOrdenadoNumeroCota() {
+		
+		setUpForConsultaEncalhe();
+		
+		FiltroConsultaEncalheDetalheDTO filtro = new FiltroConsultaEncalheDetalheDTO();
+		filtro.setDataMovimento(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
+		filtro.setDataRecolhimento(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
+		filtro.setOrdenacaoColunaDetalhe(OrdenacaoColunaDetalhe.NUMERO_COTA);
+		filtro.setPaginacao(new PaginacaoVO());
+		filtro.getPaginacao().setOrdenacao(Ordenacao.ASC);
+
+		List<ConsultaEncalheDetalheDTO> listaConsultaEncalheDetalhe = movimentoEstoqueCotaRepository.obterListaConsultaEncalheDetalhe(filtro);
+		
+		Assert.assertNotNull(listaConsultaEncalheDetalhe);
+		
+	}
+
+	@Test
+	public void obterListaConsultaEncalheDetalheOrdenadoNomeCota() {
+		
+		setUpForConsultaEncalhe();
+		
+		FiltroConsultaEncalheDetalheDTO filtro = new FiltroConsultaEncalheDetalheDTO();
+		filtro.setDataMovimento(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
+		filtro.setDataRecolhimento(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
+		filtro.setOrdenacaoColunaDetalhe(OrdenacaoColunaDetalhe.NOME_COTA);
+		filtro.setPaginacao(new PaginacaoVO());
+		filtro.getPaginacao().setOrdenacao(Ordenacao.ASC);
+
+		List<ConsultaEncalheDetalheDTO> listaConsultaEncalheDetalhe = movimentoEstoqueCotaRepository.obterListaConsultaEncalheDetalhe(filtro);
+		
+		Assert.assertNotNull(listaConsultaEncalheDetalhe);
+		
+	}
+
+	@Test
+	public void obterListaConsultaEncalheDetalheOrdenadoObservacao() {
+		
+		setUpForConsultaEncalhe();
+		
+		FiltroConsultaEncalheDetalheDTO filtro = new FiltroConsultaEncalheDetalheDTO();
+		filtro.setDataMovimento(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
+		filtro.setDataRecolhimento(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
+		filtro.setOrdenacaoColunaDetalhe(OrdenacaoColunaDetalhe.OBSERVACAO);
+		filtro.setPaginacao(new PaginacaoVO());
+		filtro.getPaginacao().setOrdenacao(Ordenacao.ASC);
+
+		List<ConsultaEncalheDetalheDTO> listaConsultaEncalheDetalhe = movimentoEstoqueCotaRepository.obterListaConsultaEncalheDetalhe(filtro);
+		
+		Assert.assertNotNull(listaConsultaEncalheDetalhe);
+		
+	}
+
+	@Test
+	public void obterListaConsultaEncalheDetalheComPaginacao() {
+		
+		setUpForConsultaEncalhe();
+		
+		FiltroConsultaEncalheDetalheDTO filtro = new FiltroConsultaEncalheDetalheDTO();
+		filtro.setDataMovimento(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
+		filtro.setDataRecolhimento(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
+		filtro.setPaginacao(new PaginacaoVO());
+		filtro.getPaginacao().setPaginaAtual(1);
+		filtro.getPaginacao().setQtdResultadosPorPagina(1);
+
+		List<ConsultaEncalheDetalheDTO> listaConsultaEncalheDetalhe = movimentoEstoqueCotaRepository.obterListaConsultaEncalheDetalhe(filtro);
+		
+		Assert.assertNotNull(listaConsultaEncalheDetalhe);
+		
+	}
+
+	@Test
+	public void obterQtdeConsultaEncalheDetalhe() {
+		
+		setUpForConsultaEncalhe();
+		
+		FiltroConsultaEncalheDetalheDTO filtro = new FiltroConsultaEncalheDetalheDTO();
+		filtro.setDataMovimento(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
+		filtro.setDataRecolhimento(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
+		filtro.setIdProdutoEdicao(veja1.getId());
+
+		Integer qtdeConsultaEncalheDetalhe = movimentoEstoqueCotaRepository.obterQtdeConsultaEncalheDetalhe(filtro);
+		
+		Assert.assertNotNull(qtdeConsultaEncalheDetalhe);
+		
+		Integer tamanhoEsperado = 1;
+		
+		Assert.assertEquals(tamanhoEsperado, qtdeConsultaEncalheDetalhe);
+		
+	}
+
+	@Test
+	public void obterQtdeConsultaEncalheDetalhePorIdCota() {
+		
+		setUpForConsultaEncalhe();
+		
+		FiltroConsultaEncalheDetalheDTO filtro = new FiltroConsultaEncalheDetalheDTO();
+		filtro.setDataMovimento(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
+		filtro.setDataRecolhimento(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
+		filtro.setIdProdutoEdicao(veja1.getId());
+		filtro.setIdCota(cotaManoel.getId());
+
+		Integer qtdeConsultaEncalheDetalhe = movimentoEstoqueCotaRepository.obterQtdeConsultaEncalheDetalhe(filtro);
+		
+		Assert.assertNotNull(qtdeConsultaEncalheDetalhe);
+		
+	}
+
+	@Test
+	public void obterQtdeConsultaEncalheDetalhePorIdFornecedor() {
+		
+		setUpForConsultaEncalhe();
+		
+		FiltroConsultaEncalheDetalheDTO filtro = new FiltroConsultaEncalheDetalheDTO();
+		filtro.setDataMovimento(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
+		filtro.setDataRecolhimento(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
+		filtro.setIdProdutoEdicao(veja1.getId());
+		filtro.setIdFornecedor(fornecedorDinap.getId());
 
 		Integer qtdeConsultaEncalheDetalhe = movimentoEstoqueCotaRepository.obterQtdeConsultaEncalheDetalhe(filtro);
 		
@@ -929,6 +1464,197 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 	}
 	
 	@Test
+	public void testarObterListaContagemDevolucaoNulo() {
+		
+		setUpForContagemDevolucao();
+		
+		FiltroDigitacaoContagemDevolucaoDTO filtro = new FiltroDigitacaoContagemDevolucaoDTO();
+		filtro.setPeriodo(new Intervalo<Date>(Fixture.criarData(27, Calendar.FEBRUARY, 2012), Fixture.criarData(1, Calendar.MARCH, 2012)));
+		TipoMovimentoEstoque tipoMovimentoEstoque = obterTipoMovimento(); 
+		boolean indBuscaTotalParcial = false;
+		
+		List<ContagemDevolucaoDTO> retorno = 
+				movimentoEstoqueCotaRepository.obterListaContagemDevolucao(filtro, tipoMovimentoEstoque, indBuscaTotalParcial);
+		
+		Assert.assertNotNull(retorno);
+		
+	}
+	
+	@Test
+	public void testarObterListaContagemDevolucaoPorIdFornecedor() {
+		
+		setUpForContagemDevolucao();
+		
+		FiltroDigitacaoContagemDevolucaoDTO filtro = new FiltroDigitacaoContagemDevolucaoDTO();
+		filtro.setPeriodo(new Intervalo<Date>(Fixture.criarData(27, Calendar.FEBRUARY, 2012), Fixture.criarData(1, Calendar.MARCH, 2012)));
+		filtro.setIdFornecedor(1L);
+		TipoMovimentoEstoque tipoMovimentoEstoque = obterTipoMovimento(); 
+		boolean indBuscaTotalParcial = false;
+		
+		List<ContagemDevolucaoDTO> retorno = 
+				movimentoEstoqueCotaRepository.obterListaContagemDevolucao(filtro, tipoMovimentoEstoque, indBuscaTotalParcial);
+		
+		Assert.assertNotNull(retorno);
+		
+	}
+	
+	@Test
+	public void testarObterListaContagemDevolucaoComPagianacao() {
+		
+		setUpForContagemDevolucao();
+		
+		FiltroDigitacaoContagemDevolucaoDTO filtro = new FiltroDigitacaoContagemDevolucaoDTO();
+		filtro.setPeriodo(new Intervalo<Date>(Fixture.criarData(27, Calendar.FEBRUARY, 2012), Fixture.criarData(1, Calendar.MARCH, 2012)));
+		TipoMovimentoEstoque tipoMovimentoEstoque = obterTipoMovimento(); 
+		filtro.setPaginacao(new PaginacaoVO());
+		filtro.getPaginacao().setOrdenacao(PaginacaoVO.Ordenacao.ASC);
+		filtro.getPaginacao().setPaginaAtual(1);
+		filtro.getPaginacao().setQtdResultadosPorPagina(500);
+		boolean indBuscaTotalParcial = false;
+		
+		List<ContagemDevolucaoDTO> retorno = 
+				movimentoEstoqueCotaRepository.obterListaContagemDevolucao(filtro, tipoMovimentoEstoque, indBuscaTotalParcial);
+		
+		Assert.assertNotNull(retorno);
+		
+	}
+	
+	@Test
+	public void testarObterListaContagemDevolucaoOrdenadoCodigoProduto() {
+		
+		setUpForContagemDevolucao();
+		
+		FiltroDigitacaoContagemDevolucaoDTO filtro = new FiltroDigitacaoContagemDevolucaoDTO();
+		filtro.setPeriodo(new Intervalo<Date>(Fixture.criarData(27, Calendar.FEBRUARY, 2012), Fixture.criarData(1, Calendar.MARCH, 2012)));
+		filtro.setOrdenacaoColuna(FiltroDigitacaoContagemDevolucaoDTO.OrdenacaoColuna.CODIGO_PRODUTO);
+		filtro.setPaginacao(new PaginacaoVO());
+		TipoMovimentoEstoque tipoMovimentoEstoque = obterTipoMovimento(); 
+		boolean indBuscaTotalParcial = false;
+		
+		List<ContagemDevolucaoDTO> retorno = 
+				movimentoEstoqueCotaRepository.obterListaContagemDevolucao(filtro, tipoMovimentoEstoque, indBuscaTotalParcial);
+		
+		Assert.assertNotNull(retorno);
+		
+	}
+	
+	@Test
+	public void testarObterListaContagemDevolucaoOrdenadoNomeProduto() {
+		
+		setUpForContagemDevolucao();
+		
+		FiltroDigitacaoContagemDevolucaoDTO filtro = new FiltroDigitacaoContagemDevolucaoDTO();
+		filtro.setPeriodo(new Intervalo<Date>(Fixture.criarData(27, Calendar.FEBRUARY, 2012), Fixture.criarData(1, Calendar.MARCH, 2012)));
+		filtro.setOrdenacaoColuna(FiltroDigitacaoContagemDevolucaoDTO.OrdenacaoColuna.NOME_PRODUTO);
+		filtro.setPaginacao(new PaginacaoVO());
+		TipoMovimentoEstoque tipoMovimentoEstoque = obterTipoMovimento(); 
+		boolean indBuscaTotalParcial = false;
+		
+		List<ContagemDevolucaoDTO> retorno = 
+				movimentoEstoqueCotaRepository.obterListaContagemDevolucao(filtro, tipoMovimentoEstoque, indBuscaTotalParcial);
+		
+		Assert.assertNotNull(retorno);
+		
+	}
+	
+	@Test
+	public void testarObterListaContagemDevolucaoOrdenadoNumeroEdicao() {
+		
+		setUpForContagemDevolucao();
+		
+		FiltroDigitacaoContagemDevolucaoDTO filtro = new FiltroDigitacaoContagemDevolucaoDTO();
+		filtro.setPeriodo(new Intervalo<Date>(Fixture.criarData(27, Calendar.FEBRUARY, 2012), Fixture.criarData(1, Calendar.MARCH, 2012)));
+		filtro.setOrdenacaoColuna(FiltroDigitacaoContagemDevolucaoDTO.OrdenacaoColuna.NUMERO_EDICAO);
+		filtro.setPaginacao(new PaginacaoVO());
+		TipoMovimentoEstoque tipoMovimentoEstoque = obterTipoMovimento(); 
+		boolean indBuscaTotalParcial = false;
+		
+		List<ContagemDevolucaoDTO> retorno = 
+				movimentoEstoqueCotaRepository.obterListaContagemDevolucao(filtro, tipoMovimentoEstoque, indBuscaTotalParcial);
+		
+		Assert.assertNotNull(retorno);
+		
+	}
+	
+	@Test
+	public void testarObterListaContagemDevolucaoOrdenadoPrecoCapa() {
+		
+		setUpForContagemDevolucao();
+		
+		FiltroDigitacaoContagemDevolucaoDTO filtro = new FiltroDigitacaoContagemDevolucaoDTO();
+		filtro.setPeriodo(new Intervalo<Date>(Fixture.criarData(27, Calendar.FEBRUARY, 2012), Fixture.criarData(1, Calendar.MARCH, 2012)));
+		filtro.setOrdenacaoColuna(FiltroDigitacaoContagemDevolucaoDTO.OrdenacaoColuna.PRECO_CAPA);
+		filtro.setPaginacao(new PaginacaoVO());
+		TipoMovimentoEstoque tipoMovimentoEstoque = obterTipoMovimento(); 
+		boolean indBuscaTotalParcial = false;
+		
+		List<ContagemDevolucaoDTO> retorno = 
+				movimentoEstoqueCotaRepository.obterListaContagemDevolucao(filtro, tipoMovimentoEstoque, indBuscaTotalParcial);
+		
+		Assert.assertNotNull(retorno);
+		
+	}
+	
+	@Test
+	public void testarObterListaContagemDevolucaoOrdenadoQuantidadeDevolucao() {
+		
+		setUpForContagemDevolucao();
+		
+		FiltroDigitacaoContagemDevolucaoDTO filtro = new FiltroDigitacaoContagemDevolucaoDTO();
+		filtro.setPeriodo(new Intervalo<Date>(Fixture.criarData(27, Calendar.FEBRUARY, 2012), Fixture.criarData(1, Calendar.MARCH, 2012)));
+		filtro.setOrdenacaoColuna(FiltroDigitacaoContagemDevolucaoDTO.OrdenacaoColuna.QTD_DEVOLUCAO);
+		filtro.setPaginacao(new PaginacaoVO());
+		TipoMovimentoEstoque tipoMovimentoEstoque = obterTipoMovimento(); 
+		boolean indBuscaTotalParcial = false;
+		
+		List<ContagemDevolucaoDTO> retorno = 
+				movimentoEstoqueCotaRepository.obterListaContagemDevolucao(filtro, tipoMovimentoEstoque, indBuscaTotalParcial);
+		
+		Assert.assertNotNull(retorno);
+		
+	}
+	
+	@Test
+	public void testarObterListaContagemDevolucaoOrdenadoQuantidadeNota() {
+		
+		setUpForContagemDevolucao();
+		
+		FiltroDigitacaoContagemDevolucaoDTO filtro = new FiltroDigitacaoContagemDevolucaoDTO();
+		filtro.setPeriodo(new Intervalo<Date>(Fixture.criarData(27, Calendar.FEBRUARY, 2012), Fixture.criarData(1, Calendar.MARCH, 2012)));
+		filtro.setOrdenacaoColuna(FiltroDigitacaoContagemDevolucaoDTO.OrdenacaoColuna.QTD_NOTA);
+		filtro.setPaginacao(new PaginacaoVO());
+		TipoMovimentoEstoque tipoMovimentoEstoque = obterTipoMovimento(); 
+		boolean indBuscaTotalParcial = true;
+		
+		List<ContagemDevolucaoDTO> retorno = 
+				movimentoEstoqueCotaRepository.obterListaContagemDevolucao(filtro, tipoMovimentoEstoque, indBuscaTotalParcial);
+		
+		Assert.assertNotNull(retorno);
+		
+	}
+
+	
+	@Test
+	public void testarObterListaContagemDevolucaoOrdenadoDESC() {
+		
+		setUpForContagemDevolucao();
+		
+		FiltroDigitacaoContagemDevolucaoDTO filtro = new FiltroDigitacaoContagemDevolucaoDTO();
+		filtro.setPeriodo(new Intervalo<Date>(Fixture.criarData(27, Calendar.FEBRUARY, 2012), Fixture.criarData(1, Calendar.MARCH, 2012)));
+		filtro.setOrdenacaoColuna(FiltroDigitacaoContagemDevolucaoDTO.OrdenacaoColuna.CODIGO_PRODUTO);
+		filtro.setPaginacao(new PaginacaoVO());
+		filtro.getPaginacao().setOrdenacao(PaginacaoVO.Ordenacao.ASC);
+		TipoMovimentoEstoque tipoMovimentoEstoque = obterTipoMovimento(); 
+		boolean indBuscaTotalParcial = false;
+		
+		List<ContagemDevolucaoDTO> retorno = 
+				movimentoEstoqueCotaRepository.obterListaContagemDevolucao(filtro, tipoMovimentoEstoque, indBuscaTotalParcial);
+		
+		Assert.assertNotNull(retorno);
+		
+	}
+
+	@Test
 	public void testarObterValorTotal() {
 		
 		setUpForContagemDevolucao();
@@ -938,6 +1664,21 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 				obterTipoMovimento());
 		
 		Assert.assertEquals(475, total.intValue());
+	}
+	
+	@Test
+	@SuppressWarnings("unused")
+	public void testarObterValorTotalNulo() {
+		
+		setUpForContagemDevolucao();
+		
+		FiltroDigitacaoContagemDevolucaoDTO filtro = obterFiltroDigitacaoContagemDevolucao();
+		filtro.setIdFornecedor(null);
+		
+		BigDecimal total = movimentoEstoqueCotaRepository.obterValorTotalGeralContagemDevolucao(
+				filtro, 
+				obterTipoMovimento());
+		
 	}
 	
 	@Test
@@ -1057,6 +1798,290 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 	}
 	
 	@Test
+	public void obterDadosAbastecimentoPorIdEntregador() {
+		
+		setUpForMapaAbastecimento();
+		
+		FiltroMapaAbastecimentoDTO filtro = new FiltroMapaAbastecimentoDTO();
+		filtro.setPaginacao(new PaginacaoVO());
+		filtro.getPaginacao().setSortColumn("box");
+		filtro.getPaginacao().setOrdenacao(Ordenacao.ASC);
+		filtro.setIdEntregador(1L);
+		
+		List<AbastecimentoDTO> listaMovimento = movimentoEstoqueCotaRepository.obterDadosAbastecimento(filtro);
+
+		Assert.assertNotNull(listaMovimento);	
+	}
+	
+	@Test
+	public void obterDadosAbastecimentoPorData() {
+		
+		setUpForMapaAbastecimento();
+		
+		FiltroMapaAbastecimentoDTO filtro = new FiltroMapaAbastecimentoDTO();
+		filtro.setPaginacao(new PaginacaoVO());
+		filtro.getPaginacao().setSortColumn("box");
+		filtro.getPaginacao().setOrdenacao(Ordenacao.ASC);
+		filtro.setDataDate(new Date());
+		
+		List<AbastecimentoDTO> listaMovimento = movimentoEstoqueCotaRepository.obterDadosAbastecimento(filtro);
+
+		Assert.assertNotNull(listaMovimento);	
+	}
+	
+	@Test
+	public void obterDadosAbastecimentoPorBox() {
+		
+		setUpForMapaAbastecimento();
+		
+		FiltroMapaAbastecimentoDTO filtro = new FiltroMapaAbastecimentoDTO();
+		filtro.setPaginacao(new PaginacaoVO());
+		filtro.getPaginacao().setSortColumn("box");
+		filtro.getPaginacao().setOrdenacao(Ordenacao.ASC);
+		filtro.setBox(box1.getId());
+		
+		List<AbastecimentoDTO> listaMovimento = movimentoEstoqueCotaRepository.obterDadosAbastecimento(filtro);
+
+		Assert.assertNotNull(listaMovimento);	
+	}
+	
+	@Test
+	public void obterDadosAbastecimentoPorRota() {
+		
+		setUpForMapaAbastecimento();
+		
+		FiltroMapaAbastecimentoDTO filtro = new FiltroMapaAbastecimentoDTO();
+		filtro.setPaginacao(new PaginacaoVO());
+		filtro.getPaginacao().setSortColumn("box");
+		filtro.getPaginacao().setOrdenacao(Ordenacao.ASC);
+		filtro.setRota(rota1.getId());
+		
+		List<AbastecimentoDTO> listaMovimento = movimentoEstoqueCotaRepository.obterDadosAbastecimento(filtro);
+
+		Assert.assertNotNull(listaMovimento);	
+	}
+	
+	@Test
+	public void obterDadosAbastecimentoPorRoteiro() {
+		
+		setUpForMapaAbastecimento();
+		
+		FiltroMapaAbastecimentoDTO filtro = new FiltroMapaAbastecimentoDTO();
+		filtro.setPaginacao(new PaginacaoVO());
+		filtro.getPaginacao().setSortColumn("box");
+		filtro.getPaginacao().setOrdenacao(Ordenacao.ASC);
+		filtro.setRoteiro(1L);
+		
+		List<AbastecimentoDTO> listaMovimento = movimentoEstoqueCotaRepository.obterDadosAbastecimento(filtro);
+
+		Assert.assertNotNull(listaMovimento);	
+	}
+	
+	@Test
+	public void obterDadosAbastecimentoporCodigosProduto() {
+		
+		setUpForMapaAbastecimento();
+		
+		FiltroMapaAbastecimentoDTO filtro = new FiltroMapaAbastecimentoDTO();
+		filtro.setPaginacao(new PaginacaoVO());
+		filtro.getPaginacao().setSortColumn("box");
+		filtro.getPaginacao().setOrdenacao(Ordenacao.ASC);
+		filtro.setCodigosProduto(new ArrayList<String>());
+		filtro.getCodigosProduto().add(veja1.getProduto().getCodigo());
+		filtro.getCodigosProduto().add(quatroRoda2.getProduto().getCodigo());
+		
+		List<AbastecimentoDTO> listaMovimento = movimentoEstoqueCotaRepository.obterDadosAbastecimento(filtro);
+
+		Assert.assertNotNull(listaMovimento);	
+	}
+	
+	@Test
+	public void obterDadosAbastecimentoPorEdicaoProduto() {
+		
+		setUpForMapaAbastecimento();
+		
+		FiltroMapaAbastecimentoDTO filtro = new FiltroMapaAbastecimentoDTO();
+		filtro.setPaginacao(new PaginacaoVO());
+		filtro.getPaginacao().setSortColumn("box");
+		filtro.getPaginacao().setOrdenacao(Ordenacao.ASC);
+		filtro.setEdicaoProduto(1L);
+		
+		List<AbastecimentoDTO> listaMovimento = movimentoEstoqueCotaRepository.obterDadosAbastecimento(filtro);
+
+		Assert.assertNotNull(listaMovimento);	
+	}
+	
+	@Test
+	public void obterDadosAbastecimentoPorCodigoCota() {
+		
+		setUpForMapaAbastecimento();
+		
+		FiltroMapaAbastecimentoDTO filtro = new FiltroMapaAbastecimentoDTO();
+		filtro.setPaginacao(new PaginacaoVO());
+		filtro.getPaginacao().setSortColumn("box");
+		filtro.getPaginacao().setOrdenacao(Ordenacao.ASC);
+		filtro.setCodigoCota(cotaManoel.getNumeroCota());
+		
+		List<AbastecimentoDTO> listaMovimento = movimentoEstoqueCotaRepository.obterDadosAbastecimento(filtro);
+
+		Assert.assertNotNull(listaMovimento);	
+	}
+	
+	@Test
+	public void obterDadosAbastecimentoExcluindoProdutoSemReparte() {
+		
+		setUpForMapaAbastecimento();
+		
+		FiltroMapaAbastecimentoDTO filtro = new FiltroMapaAbastecimentoDTO();
+		filtro.setPaginacao(new PaginacaoVO());
+		filtro.getPaginacao().setSortColumn("box");
+		filtro.getPaginacao().setOrdenacao(Ordenacao.ASC);
+		filtro.setExcluirProdutoSemReparte(false);
+		
+		List<AbastecimentoDTO> listaMovimento = movimentoEstoqueCotaRepository.obterDadosAbastecimento(filtro);
+
+		Assert.assertNotNull(listaMovimento);	
+	}
+	
+	@Test
+	public void obterDadosAbastecimentoOrdenacaoBox() {
+		
+		setUpForMapaAbastecimento();
+		
+		FiltroMapaAbastecimentoDTO filtro = new FiltroMapaAbastecimentoDTO();
+		filtro.setPaginacao(new PaginacaoVO());
+		filtro.getPaginacao().setSortColumn("box");
+		filtro.getPaginacao().setOrdenacao(Ordenacao.ASC);
+		
+		List<AbastecimentoDTO> listaMovimento = movimentoEstoqueCotaRepository.obterDadosAbastecimento(filtro);
+
+		Assert.assertNotNull(listaMovimento);	
+	}
+	
+	@Test
+	public void obterDadosAbastecimentoOrdenacaoTotalProduto() {
+		
+		setUpForMapaAbastecimento();
+		
+		FiltroMapaAbastecimentoDTO filtro = new FiltroMapaAbastecimentoDTO();
+		filtro.setPaginacao(new PaginacaoVO());
+		filtro.getPaginacao().setSortColumn("totalProduto");
+		filtro.getPaginacao().setOrdenacao(Ordenacao.ASC);
+		
+		List<AbastecimentoDTO> listaMovimento = movimentoEstoqueCotaRepository.obterDadosAbastecimento(filtro);
+
+		Assert.assertNotNull(listaMovimento);	
+	}
+	
+	@Test
+	public void obterDadosAbastecimentoOrdenacaoTotalReparte() {
+		
+		setUpForMapaAbastecimento();
+		
+		FiltroMapaAbastecimentoDTO filtro = new FiltroMapaAbastecimentoDTO();
+		filtro.setPaginacao(new PaginacaoVO());
+		filtro.getPaginacao().setSortColumn("totalReparte");
+		filtro.getPaginacao().setOrdenacao(Ordenacao.ASC);
+		
+		List<AbastecimentoDTO> listaMovimento = movimentoEstoqueCotaRepository.obterDadosAbastecimento(filtro);
+
+		Assert.assertNotNull(listaMovimento);	
+	}
+	
+	@Test
+	public void obterDadosAbastecimentoOrdenacaoPorTotalBox() {
+		
+		setUpForMapaAbastecimento();
+		
+		FiltroMapaAbastecimentoDTO filtro = new FiltroMapaAbastecimentoDTO();
+		filtro.setPaginacao(new PaginacaoVO());
+		filtro.getPaginacao().setSortColumn("totalBox");
+		filtro.getPaginacao().setOrdenacao(Ordenacao.ASC);
+		
+		List<AbastecimentoDTO> listaMovimento = movimentoEstoqueCotaRepository.obterDadosAbastecimento(filtro);
+
+		Assert.assertNotNull(listaMovimento);	
+	}
+	
+	@Test
+	public void obterDadosAbastecimentoOrdenacaoPorCodigoCota() {
+		
+		setUpForMapaAbastecimento();
+		
+		FiltroMapaAbastecimentoDTO filtro = new FiltroMapaAbastecimentoDTO();
+		filtro.setPaginacao(new PaginacaoVO());
+		filtro.getPaginacao().setSortColumn("codigoCota");
+		filtro.getPaginacao().setOrdenacao(Ordenacao.ASC);
+		
+		List<AbastecimentoDTO> listaMovimento = movimentoEstoqueCotaRepository.obterDadosAbastecimento(filtro);
+
+		Assert.assertNotNull(listaMovimento);	
+	}
+	
+	@Test
+	public void obterDadosAbastecimentoOrdenacaoPorNomeCota() {
+		
+		setUpForMapaAbastecimento();
+		
+		FiltroMapaAbastecimentoDTO filtro = new FiltroMapaAbastecimentoDTO();
+		filtro.setPaginacao(new PaginacaoVO());
+		filtro.getPaginacao().setSortColumn("nomeCota");
+		filtro.getPaginacao().setOrdenacao(Ordenacao.ASC);
+		
+		List<AbastecimentoDTO> listaMovimento = movimentoEstoqueCotaRepository.obterDadosAbastecimento(filtro);
+
+		Assert.assertNotNull(listaMovimento);	
+	}
+	
+	@Test
+	public void obterDadosAbastecimentoOrdenacaoPorReparte() {
+		
+		setUpForMapaAbastecimento();
+		
+		FiltroMapaAbastecimentoDTO filtro = new FiltroMapaAbastecimentoDTO();
+		filtro.setPaginacao(new PaginacaoVO());
+		filtro.getPaginacao().setSortColumn("reparte");
+		filtro.getPaginacao().setOrdenacao(Ordenacao.ASC);
+		
+		List<AbastecimentoDTO> listaMovimento = movimentoEstoqueCotaRepository.obterDadosAbastecimento(filtro);
+
+		Assert.assertNotNull(listaMovimento);	
+	}
+	
+	@Test
+	public void obterDadosAbastecimentoOrdenacaoPorMateiralPromocional() {
+		
+		setUpForMapaAbastecimento();
+		
+		FiltroMapaAbastecimentoDTO filtro = new FiltroMapaAbastecimentoDTO();
+		filtro.setPaginacao(new PaginacaoVO());
+		filtro.getPaginacao().setSortColumn("materialPromocional");
+		filtro.getPaginacao().setOrdenacao(Ordenacao.ASC);
+		
+		List<AbastecimentoDTO> listaMovimento = movimentoEstoqueCotaRepository.obterDadosAbastecimento(filtro);
+
+		Assert.assertNotNull(listaMovimento);	
+	}
+	
+	@Test
+	public void obterDadosAbastecimentoComPaginacao() {
+		
+		setUpForMapaAbastecimento();
+		
+		FiltroMapaAbastecimentoDTO filtro = new FiltroMapaAbastecimentoDTO();
+		filtro.setPaginacao(new PaginacaoVO());
+		filtro.getPaginacao().setSortColumn("box");
+		filtro.getPaginacao().setOrdenacao(Ordenacao.ASC);
+		filtro.getPaginacao().setPaginaAtual(1);
+		filtro.getPaginacao().setQtdResultadosPorPagina(1);
+		
+		List<AbastecimentoDTO> listaMovimento = movimentoEstoqueCotaRepository.obterDadosAbastecimento(filtro);
+
+		Assert.assertNotNull(listaMovimento);	
+	}
+	
+	@Test
+	@SuppressWarnings("unused")
 	public void countObterDadosAbastecimento() {
 		
 		setUpForMapaAbastecimento();
@@ -1078,6 +2103,31 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 	}	
 	
 	@Test
+	@SuppressWarnings("unused")
+	public void countObterDadosAbastecimentoNulo() {
+		
+		setUpForMapaAbastecimento();
+		
+		FiltroMapaAbastecimentoDTO filtro = new FiltroMapaAbastecimentoDTO();
+	
+		Long count = movimentoEstoqueCotaRepository.countObterDadosAbastecimento(filtro);
+
+	}	
+	
+	@Test
+	@SuppressWarnings("unused")
+	public void countObterDadosAbastecimentoSemReparte() {
+		
+		setUpForMapaAbastecimento();
+		
+		FiltroMapaAbastecimentoDTO filtro = new FiltroMapaAbastecimentoDTO();
+		filtro.setExcluirProdutoSemReparte(true);
+	
+		Long count = movimentoEstoqueCotaRepository.countObterDadosAbastecimento(filtro);
+
+	}	
+	
+	@Test
 	public void obterDetalhesAbastecimento() {
 		
 		setUpForMapaAbastecimento();
@@ -1089,6 +2139,708 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		
 		List<ProdutoAbastecimentoDTO> listaMovimento = 
 				movimentoEstoqueCotaRepository.obterDetlhesDadosAbastecimento(box1.getId(), filtro);
+
+		Assert.assertNotNull(listaMovimento);
+	}
+	
+	@Test
+	public void obterDetalhesAbastecimentoSemReparte() {
+		
+		setUpForMapaAbastecimento();
+		
+		FiltroMapaAbastecimentoDTO filtro = new FiltroMapaAbastecimentoDTO();
+		filtro.setPaginacaoDetalhes(new PaginacaoVO());
+		filtro.getPaginacaoDetalhes().setOrdenacao(Ordenacao.ASC);
+		filtro.getPaginacaoDetalhes().setSortColumn("codigoProduto");
+		filtro.setExcluirProdutoSemReparte(true);
+		
+		List<ProdutoAbastecimentoDTO> listaMovimento = 
+				movimentoEstoqueCotaRepository.obterDetlhesDadosAbastecimento(box1.getId(), filtro);
+
+		Assert.assertNotNull(listaMovimento);
+	}
+	
+	@Test
+	public void obterDetalhesAbastecimentoOrdenacaoCodigoProduto() {
+		
+		setUpForMapaAbastecimento();
+		
+		FiltroMapaAbastecimentoDTO filtro = new FiltroMapaAbastecimentoDTO();
+		filtro.setPaginacaoDetalhes(new PaginacaoVO());
+		filtro.getPaginacaoDetalhes().setOrdenacao(Ordenacao.ASC);
+		filtro.getPaginacaoDetalhes().setSortColumn("codigoProduto");
+		
+		List<ProdutoAbastecimentoDTO> listaMovimento = 
+				movimentoEstoqueCotaRepository.obterDetlhesDadosAbastecimento(box1.getId(), filtro);
+
+		Assert.assertNotNull(listaMovimento);
+	}
+	
+	@Test
+	public void obterDetalhesAbastecimentoOrdenacaoNomeProduto() {
+		
+		setUpForMapaAbastecimento();
+		
+		FiltroMapaAbastecimentoDTO filtro = new FiltroMapaAbastecimentoDTO();
+		filtro.setPaginacaoDetalhes(new PaginacaoVO());
+		filtro.getPaginacaoDetalhes().setOrdenacao(Ordenacao.ASC);
+		filtro.getPaginacaoDetalhes().setSortColumn("nomeProduto");
+		
+		List<ProdutoAbastecimentoDTO> listaMovimento = 
+				movimentoEstoqueCotaRepository.obterDetlhesDadosAbastecimento(box1.getId(), filtro);
+
+		Assert.assertNotNull(listaMovimento);
+	}
+	
+	@Test
+	public void obterDetalhesAbastecimentoOrdenacaoNumeroEdicao() {
+		
+		setUpForMapaAbastecimento();
+		
+		FiltroMapaAbastecimentoDTO filtro = new FiltroMapaAbastecimentoDTO();
+		filtro.setPaginacaoDetalhes(new PaginacaoVO());
+		filtro.getPaginacaoDetalhes().setOrdenacao(Ordenacao.ASC);
+		filtro.getPaginacaoDetalhes().setSortColumn("numeroEdicao");
+		
+		List<ProdutoAbastecimentoDTO> listaMovimento = 
+				movimentoEstoqueCotaRepository.obterDetlhesDadosAbastecimento(box1.getId(), filtro);
+
+		Assert.assertNotNull(listaMovimento);
+	}
+	
+	@Test
+	public void obterDetalhesAbastecimentoOrdenacaoReparte() {
+		
+		setUpForMapaAbastecimento();
+		
+		FiltroMapaAbastecimentoDTO filtro = new FiltroMapaAbastecimentoDTO();
+		filtro.setPaginacaoDetalhes(new PaginacaoVO());
+		filtro.getPaginacaoDetalhes().setOrdenacao(Ordenacao.ASC);
+		filtro.getPaginacaoDetalhes().setSortColumn("reparte");
+		
+		List<ProdutoAbastecimentoDTO> listaMovimento = 
+				movimentoEstoqueCotaRepository.obterDetlhesDadosAbastecimento(box1.getId(), filtro);
+
+		Assert.assertNotNull(listaMovimento);
+	}
+	
+	@Test
+	public void obterDetalhesAbastecimentoOrdenacaoPrecoCapa() {
+		
+		setUpForMapaAbastecimento();
+		
+		FiltroMapaAbastecimentoDTO filtro = new FiltroMapaAbastecimentoDTO();
+		filtro.setPaginacaoDetalhes(new PaginacaoVO());
+		filtro.getPaginacaoDetalhes().setOrdenacao(Ordenacao.ASC);
+		filtro.getPaginacaoDetalhes().setSortColumn("precoCapa");
+		
+		List<ProdutoAbastecimentoDTO> listaMovimento = 
+				movimentoEstoqueCotaRepository.obterDetlhesDadosAbastecimento(box1.getId(), filtro);
+		Assert.assertNotNull(listaMovimento);
+
+	}
+	
+	@Test
+	public void obterDetalhesAbastecimentoOrdenacaoTotal() {
+		
+		setUpForMapaAbastecimento();
+		
+		FiltroMapaAbastecimentoDTO filtro = new FiltroMapaAbastecimentoDTO();
+		filtro.setPaginacaoDetalhes(new PaginacaoVO());
+		filtro.getPaginacaoDetalhes().setOrdenacao(Ordenacao.ASC);
+		filtro.getPaginacaoDetalhes().setSortColumn("total");
+		
+		List<ProdutoAbastecimentoDTO> listaMovimento = 
+				movimentoEstoqueCotaRepository.obterDetlhesDadosAbastecimento(box1.getId(), filtro);
+
+		Assert.assertNotNull(listaMovimento);
+	}
+	
+	@Test
+	public void obterMapaAbastecimentoPorBoxSemReparte() {
+		
+		setUpForMapaAbastecimento();
+		
+		FiltroMapaAbastecimentoDTO filtro = new FiltroMapaAbastecimentoDTO();
+		filtro.setPaginacao(new PaginacaoVO());
+		filtro.getPaginacao().setOrdenacao(Ordenacao.ASC);
+		filtro.getPaginacao().setSortColumn("codigoBox");
+		filtro.setExcluirProdutoSemReparte(true);
+		
+		List<ProdutoAbastecimentoDTO> listaMovimento = 
+				movimentoEstoqueCotaRepository.obterMapaAbastecimentoPorBox(filtro);
+
+		Assert.assertNotNull(listaMovimento);
+	}
+	
+	@Test
+	public void obterMapaAbastecimentoPorBoxOrdenacaoCodigoBox() {
+		
+		setUpForMapaAbastecimento();
+		
+		FiltroMapaAbastecimentoDTO filtro = new FiltroMapaAbastecimentoDTO();
+		filtro.setPaginacao(new PaginacaoVO());
+		filtro.getPaginacao().setOrdenacao(Ordenacao.ASC);
+		filtro.getPaginacao().setSortColumn("codigoBox");
+		
+		List<ProdutoAbastecimentoDTO> listaMovimento = 
+				movimentoEstoqueCotaRepository.obterMapaAbastecimentoPorBox(filtro);
+
+		Assert.assertNotNull(listaMovimento);
+	}
+	
+	@Test
+	public void obterMapaAbastecimentoPorBoxOrdenacaoCodigoProduto() {
+		
+		setUpForMapaAbastecimento();
+		
+		FiltroMapaAbastecimentoDTO filtro = new FiltroMapaAbastecimentoDTO();
+		filtro.setPaginacao(new PaginacaoVO());
+		filtro.getPaginacao().setOrdenacao(Ordenacao.ASC);
+		filtro.getPaginacao().setSortColumn("codigoProduto");
+		
+		List<ProdutoAbastecimentoDTO> listaMovimento = 
+				movimentoEstoqueCotaRepository.obterMapaAbastecimentoPorBox(filtro);
+
+		Assert.assertNotNull(listaMovimento);
+	}
+	
+	@Test
+	public void obterMapaAbastecimentoPorBoxOrdenacaoNomeProduto() {
+		
+		setUpForMapaAbastecimento();
+		
+		FiltroMapaAbastecimentoDTO filtro = new FiltroMapaAbastecimentoDTO();
+		filtro.setPaginacao(new PaginacaoVO());
+		filtro.getPaginacao().setOrdenacao(Ordenacao.ASC);
+		filtro.getPaginacao().setSortColumn("nomeProduto");
+		
+		List<ProdutoAbastecimentoDTO> listaMovimento = 
+				movimentoEstoqueCotaRepository.obterMapaAbastecimentoPorBox(filtro);
+
+		Assert.assertNotNull(listaMovimento);
+	}
+	
+	@Test
+	public void obterMapaAbastecimentoPorBoxOrdenacaoNumeroEdicao() {
+		
+		setUpForMapaAbastecimento();
+		
+		FiltroMapaAbastecimentoDTO filtro = new FiltroMapaAbastecimentoDTO();
+		filtro.setPaginacao(new PaginacaoVO());
+		filtro.getPaginacao().setOrdenacao(Ordenacao.ASC);
+		filtro.getPaginacao().setSortColumn("numeroEdicao");
+		
+		List<ProdutoAbastecimentoDTO> listaMovimento = 
+				movimentoEstoqueCotaRepository.obterMapaAbastecimentoPorBox(filtro);
+
+		Assert.assertNotNull(listaMovimento);
+	}
+	
+	@Test
+	public void obterMapaAbastecimentoPorBoxOrdenacaoPrecoCapa() {
+		
+		setUpForMapaAbastecimento();
+		
+		FiltroMapaAbastecimentoDTO filtro = new FiltroMapaAbastecimentoDTO();
+		filtro.setPaginacao(new PaginacaoVO());
+		filtro.getPaginacao().setOrdenacao(Ordenacao.ASC);
+		filtro.getPaginacao().setSortColumn("precoCapa");
+		
+		List<ProdutoAbastecimentoDTO> listaMovimento = 
+				movimentoEstoqueCotaRepository.obterMapaAbastecimentoPorBox(filtro);
+
+		Assert.assertNotNull(listaMovimento);
+	}
+	
+	@Test
+	public void obterMapaAbastecimentoPorBoxRotaSemReparte() {
+		
+		setUpForMapaAbastecimento();
+		
+		FiltroMapaAbastecimentoDTO filtro = new FiltroMapaAbastecimentoDTO();
+		filtro.setPaginacao(new PaginacaoVO());
+		filtro.getPaginacao().setOrdenacao(Ordenacao.ASC);
+		filtro.getPaginacao().setSortColumn("codigoCota");
+		filtro.setExcluirProdutoSemReparte(true);
+		
+		List<ProdutoAbastecimentoDTO> listaMovimento = 
+				movimentoEstoqueCotaRepository.obterMapaAbastecimentoPorBoxRota(filtro);
+
+		Assert.assertNotNull(listaMovimento);
+	}
+	
+	@Test
+	public void obterMapaAbastecimentoPorBoxRotaOrdenacaoCodigoCota() {
+		
+		setUpForMapaAbastecimento();
+		
+		FiltroMapaAbastecimentoDTO filtro = new FiltroMapaAbastecimentoDTO();
+		filtro.setPaginacao(new PaginacaoVO());
+		filtro.getPaginacao().setOrdenacao(Ordenacao.ASC);
+		filtro.getPaginacao().setSortColumn("codigoCota");
+		
+		List<ProdutoAbastecimentoDTO> listaMovimento = 
+				movimentoEstoqueCotaRepository.obterMapaAbastecimentoPorBoxRota(filtro);
+
+		Assert.assertNotNull(listaMovimento);
+
+	}
+	
+	@Test
+	public void obterMapaAbastecimentoPorBoxRotaOrdenacaoCodigoRota() {
+		
+		setUpForMapaAbastecimento();
+		
+		FiltroMapaAbastecimentoDTO filtro = new FiltroMapaAbastecimentoDTO();
+		filtro.setPaginacao(new PaginacaoVO());
+		filtro.getPaginacao().setOrdenacao(Ordenacao.ASC);
+		filtro.getPaginacao().setSortColumn("codigoRota");
+		
+		List<ProdutoAbastecimentoDTO> listaMovimento = 
+				movimentoEstoqueCotaRepository.obterMapaAbastecimentoPorBoxRota(filtro);
+
+		Assert.assertNotNull(listaMovimento);
+	}
+	
+	@Test
+	public void obterMapaAbastecimentoPorBoxRotaOrdenacaoMaterialPromocional() {
+		
+		setUpForMapaAbastecimento();
+		
+		FiltroMapaAbastecimentoDTO filtro = new FiltroMapaAbastecimentoDTO();
+		filtro.setPaginacao(new PaginacaoVO());
+		filtro.getPaginacao().setOrdenacao(Ordenacao.ASC);
+		filtro.getPaginacao().setSortColumn("materialPromocional");
+		
+		List<ProdutoAbastecimentoDTO> listaMovimento = 
+				movimentoEstoqueCotaRepository.obterMapaAbastecimentoPorBoxRota(filtro);
+
+		Assert.assertNotNull(listaMovimento);
+	}
+	
+	@Test
+	public void obterMapaAbastecimentoPorBoxRotaComPaginacao() {
+		
+		setUpForMapaAbastecimento();
+		
+		FiltroMapaAbastecimentoDTO filtro = new FiltroMapaAbastecimentoDTO();
+		filtro.setPaginacao(new PaginacaoVO());
+		filtro.getPaginacao().setOrdenacao(Ordenacao.ASC);
+		filtro.getPaginacao().setSortColumn("codigoCota");
+		filtro.getPaginacao().setPaginaAtual(1);
+		filtro.getPaginacao().setQtdResultadosPorPagina(1);
+		
+		List<ProdutoAbastecimentoDTO> listaMovimento = 
+				movimentoEstoqueCotaRepository.obterMapaAbastecimentoPorBoxRota(filtro);
+
+		Assert.assertNotNull(listaMovimento);
+	}
+	
+	@Test
+	@SuppressWarnings("unused")
+	public void countObterMapaAbastecimentoPorBoxRota() {
+		
+		setUpForMapaAbastecimento();
+		
+		FiltroMapaAbastecimentoDTO filtro = new FiltroMapaAbastecimentoDTO();
+		
+		Long totalMovimento = 
+				movimentoEstoqueCotaRepository.countObterMapaAbastecimentoPorBoxRota(filtro);
+
+	}
+	
+	@Test
+	@SuppressWarnings("unused")
+	public void countObterMapaAbastecimentoPorBoxRotaSemReparte() {
+		
+		setUpForMapaAbastecimento();
+		
+		FiltroMapaAbastecimentoDTO filtro = new FiltroMapaAbastecimentoDTO();
+		filtro.setExcluirProdutoSemReparte(true);
+		
+		Long totalMovimento = 
+				movimentoEstoqueCotaRepository.countObterMapaAbastecimentoPorBoxRota(filtro);
+
+	}
+	
+	@Test
+	public void obterMapaAbastecimentoPorProdutoEdicao() {
+		
+		setUpForMapaAbastecimento();
+		
+		FiltroMapaAbastecimentoDTO filtro = new FiltroMapaAbastecimentoDTO();
+		filtro.setPaginacao(new PaginacaoVO());
+		filtro.getPaginacao().setOrdenacao(Ordenacao.ASC);
+		filtro.getPaginacao().setSortColumn("codigoBox");
+		
+		List<ProdutoAbastecimentoDTO> listaMovimento = 
+				movimentoEstoqueCotaRepository.obterMapaAbastecimentoPorProdutoEdicao(filtro);
+
+		Assert.assertNotNull(listaMovimento);
+	}
+	
+	@Test
+	public void obterMapaAbastecimentoPorProdutoEdicaoSemReparte() {
+		
+		setUpForMapaAbastecimento();
+		
+		FiltroMapaAbastecimentoDTO filtro = new FiltroMapaAbastecimentoDTO();
+		filtro.setExcluirProdutoSemReparte(true);
+		filtro.setPaginacao(new PaginacaoVO());
+		filtro.getPaginacao().setOrdenacao(Ordenacao.ASC);
+		filtro.getPaginacao().setSortColumn("codigoBox");
+		
+		List<ProdutoAbastecimentoDTO> listaMovimento = 
+				movimentoEstoqueCotaRepository.obterMapaAbastecimentoPorProdutoEdicao(filtro);
+
+		Assert.assertNotNull(listaMovimento);
+	}
+	
+	@Test
+	public void obterMapaAbastecimentoPorProdutoEdicaoComPaginacao() {
+		
+		setUpForMapaAbastecimento();
+		
+		FiltroMapaAbastecimentoDTO filtro = new FiltroMapaAbastecimentoDTO();
+		filtro.setPaginacao(new PaginacaoVO());
+		filtro.getPaginacao().setPaginaAtual(1);
+		filtro.getPaginacao().setQtdResultadosPorPagina(1);
+		filtro.getPaginacao().setOrdenacao(Ordenacao.ASC);
+		filtro.getPaginacao().setSortColumn("codigoBox");
+		
+		List<ProdutoAbastecimentoDTO> listaMovimento = 
+				movimentoEstoqueCotaRepository.obterMapaAbastecimentoPorProdutoEdicao(filtro);
+
+		Assert.assertNotNull(listaMovimento);
+	}
+	
+	@Test
+	@SuppressWarnings("unused")
+	public void countObterMapaAbastecimentoPorProdutoEdicao() {
+		
+		setUpForMapaAbastecimento();
+		
+		FiltroMapaAbastecimentoDTO filtro = new FiltroMapaAbastecimentoDTO();
+		
+		Long totalMovimento = 
+				movimentoEstoqueCotaRepository.countObterMapaAbastecimentoPorProdutoEdicao(filtro);
+
+	}
+	
+	@Test
+	@SuppressWarnings("unused")
+	public void countObterMapaAbastecimentoPorProdutoEdicaoSemReparte() {
+		
+		setUpForMapaAbastecimento();
+		
+		FiltroMapaAbastecimentoDTO filtro = new FiltroMapaAbastecimentoDTO();
+		filtro.setExcluirProdutoSemReparte(true);
+		
+		Long totalMovimento = 
+				movimentoEstoqueCotaRepository.countObterMapaAbastecimentoPorProdutoEdicao(filtro);
+
+	}
+	
+	@Test
+	public void obterMapaAbastecimentoPorCota() {
+		
+		setUpForMapaAbastecimento();
+		
+		FiltroMapaAbastecimentoDTO filtro = new FiltroMapaAbastecimentoDTO();
+		filtro.setPaginacao(new PaginacaoVO());
+		filtro.getPaginacao().setOrdenacao(Ordenacao.ASC);
+		filtro.getPaginacao().setSortColumn("codigoProduto");
+		
+		List<ProdutoAbastecimentoDTO> listaMovimento = 
+				movimentoEstoqueCotaRepository.obterMapaAbastecimentoPorCota(filtro);
+
+		Assert.assertNotNull(listaMovimento);
+	}
+	
+	@Test
+	public void obterMapaAbastecimentoPorCotaSemReparte() {
+		
+		setUpForMapaAbastecimento();
+		
+		FiltroMapaAbastecimentoDTO filtro = new FiltroMapaAbastecimentoDTO();
+		filtro.setPaginacao(new PaginacaoVO());
+		filtro.getPaginacao().setOrdenacao(Ordenacao.ASC);
+		filtro.getPaginacao().setSortColumn("codigoProduto");
+		filtro.setExcluirProdutoSemReparte(true);
+		
+		List<ProdutoAbastecimentoDTO> listaMovimento = 
+				movimentoEstoqueCotaRepository.obterMapaAbastecimentoPorCota(filtro);
+
+		Assert.assertNotNull(listaMovimento);
+	}
+	
+	@Test
+	public void obterMapaAbastecimentoPorCotaComPaginacao() {
+		
+		setUpForMapaAbastecimento();
+		
+		FiltroMapaAbastecimentoDTO filtro = new FiltroMapaAbastecimentoDTO();
+		filtro.setPaginacao(new PaginacaoVO());
+		filtro.getPaginacao().setPaginaAtual(1);
+		filtro.getPaginacao().setQtdResultadosPorPagina(1);
+		filtro.getPaginacao().setOrdenacao(Ordenacao.ASC);
+		filtro.getPaginacao().setSortColumn("codigoProduto");
+		
+		List<ProdutoAbastecimentoDTO> listaMovimento = 
+				movimentoEstoqueCotaRepository.obterMapaAbastecimentoPorCota(filtro);
+
+		Assert.assertNotNull(listaMovimento);
+	}
+	
+	@Test
+	@SuppressWarnings("unused")
+	public void countObterMapaAbastecimentoPorCota() {
+		
+		setUpForMapaAbastecimento();
+		
+		FiltroMapaAbastecimentoDTO filtro = new FiltroMapaAbastecimentoDTO();
+		
+		Long totalMovimento = 
+				movimentoEstoqueCotaRepository.countObterMapaAbastecimentoPorCota(filtro);
+
+	}
+	
+	@Test
+	@SuppressWarnings("unused")
+	public void countObterMapaAbastecimentoPorCotaSemReparte() {
+		
+		setUpForMapaAbastecimento();
+		
+		FiltroMapaAbastecimentoDTO filtro = new FiltroMapaAbastecimentoDTO();
+		filtro.setExcluirProdutoSemReparte(true);
+		
+		Long totalMovimento = 
+				movimentoEstoqueCotaRepository.countObterMapaAbastecimentoPorCota(filtro);
+
+	}
+	
+	@Test
+	public void obterMapaDeImpressaoPorProdutoQuebrandoPorCota() {
+		
+		setUpForMapaAbastecimento();
+		
+		FiltroMapaAbastecimentoDTO filtro = new FiltroMapaAbastecimentoDTO();
+		filtro.setPaginacao(new PaginacaoVO());
+		filtro.getPaginacao().setOrdenacao(Ordenacao.ASC);
+		filtro.getPaginacao().setSortColumn("codigoCota");
+		
+		List<ProdutoAbastecimentoDTO> listaMovimento = 
+				movimentoEstoqueCotaRepository.obterMapaDeImpressaoPorProdutoQuebrandoPorCota(filtro);
+
+		Assert.assertNotNull(listaMovimento);
+	}
+	
+	@Test
+	public void obterMapaDeImpressaoPorProdutoQuebrandoPorCotaSemReparte() {
+		
+		setUpForMapaAbastecimento();
+		
+		FiltroMapaAbastecimentoDTO filtro = new FiltroMapaAbastecimentoDTO();
+		filtro.setPaginacao(new PaginacaoVO());
+		filtro.getPaginacao().setOrdenacao(Ordenacao.ASC);
+		filtro.getPaginacao().setSortColumn("codigoCota");
+		filtro.setExcluirProdutoSemReparte(true);
+		
+		List<ProdutoAbastecimentoDTO> listaMovimento = 
+				movimentoEstoqueCotaRepository.obterMapaDeImpressaoPorProdutoQuebrandoPorCota(filtro);
+
+		Assert.assertNotNull(listaMovimento);
+	}
+	
+	@Test
+	public void obterMapaDeImpressaoPorProdutoQuebrandoPorCotaComPaginacao() {
+		
+		setUpForMapaAbastecimento();
+		
+		FiltroMapaAbastecimentoDTO filtro = new FiltroMapaAbastecimentoDTO();
+		filtro.setPaginacao(new PaginacaoVO());
+		filtro.getPaginacao().setPaginaAtual(1);
+		filtro.getPaginacao().setQtdResultadosPorPagina(1);
+		filtro.getPaginacao().setOrdenacao(Ordenacao.ASC);
+		filtro.getPaginacao().setSortColumn("codigoCota");
+		
+		List<ProdutoAbastecimentoDTO> listaMovimento = 
+				movimentoEstoqueCotaRepository.obterMapaDeImpressaoPorProdutoQuebrandoPorCota(filtro);
+
+		Assert.assertNotNull(listaMovimento);
+	}
+	
+	@Test
+	@SuppressWarnings("unused")
+	public void countObterMapaDeImpressaoPorProdutoQuebrandoPorCota() {
+		
+		setUpForMapaAbastecimento();
+		
+		FiltroMapaAbastecimentoDTO filtro = new FiltroMapaAbastecimentoDTO();
+		
+		Long totalMovimento = 
+				movimentoEstoqueCotaRepository.countObterMapaDeImpressaoPorProdutoQuebrandoPorCota(filtro);
+
+	}
+	
+	@Test
+	@SuppressWarnings("unused")
+	public void countObterMapaDeImpressaoPorProdutoQuebrandoPorCotaSemReparte() {
+		
+		setUpForMapaAbastecimento();
+		
+		FiltroMapaAbastecimentoDTO filtro = new FiltroMapaAbastecimentoDTO();
+		filtro.setExcluirProdutoSemReparte(true);
+		
+		Long totalMovimento = 
+				movimentoEstoqueCotaRepository.countObterMapaDeImpressaoPorProdutoQuebrandoPorCota(filtro);
+
+	}
+	
+	@Test
+	public void obterMapaDeAbastecimentoPorEntregador() {
+		
+		setUpForMapaAbastecimento();
+		
+		FiltroMapaAbastecimentoDTO filtro = new FiltroMapaAbastecimentoDTO();
+		filtro.setPaginacao(new PaginacaoVO());
+		filtro.getPaginacao().setOrdenacao(Ordenacao.ASC);
+		filtro.getPaginacao().setSortColumn("codigoProduto");
+		filtro.setIdEntregador(1L);
+		
+		List<ProdutoAbastecimentoDTO> listaMovimento = 
+				movimentoEstoqueCotaRepository.obterMapaDeAbastecimentoPorEntregador(filtro);
+
+		Assert.assertNotNull(listaMovimento);
+	}
+	
+	@Test
+	public void obterMapaDeAbastecimentoPorEntregadorSemReparte() {
+		
+		setUpForMapaAbastecimento();
+		
+		FiltroMapaAbastecimentoDTO filtro = new FiltroMapaAbastecimentoDTO();
+		filtro.setPaginacao(new PaginacaoVO());
+		filtro.getPaginacao().setOrdenacao(Ordenacao.ASC);
+		filtro.getPaginacao().setSortColumn("codigoProduto");
+		filtro.setIdEntregador(1L);
+		filtro.setExcluirProdutoSemReparte(true);
+		
+		List<ProdutoAbastecimentoDTO> listaMovimento = 
+				movimentoEstoqueCotaRepository.obterMapaDeAbastecimentoPorEntregador(filtro);
+
+		Assert.assertNotNull(listaMovimento);
+	}
+	
+	@Test
+	public void obterMapaDeAbastecimentoPorEntregadorComPaginacao() {
+		
+		setUpForMapaAbastecimento();
+		
+		FiltroMapaAbastecimentoDTO filtro = new FiltroMapaAbastecimentoDTO();
+		filtro.setPaginacao(new PaginacaoVO());
+		filtro.getPaginacao().setPaginaAtual(1);
+		filtro.getPaginacao().setQtdResultadosPorPagina(1);
+		filtro.getPaginacao().setOrdenacao(Ordenacao.ASC);
+		filtro.getPaginacao().setSortColumn("codigoProduto");
+		filtro.setIdEntregador(1L);
+		
+		List<ProdutoAbastecimentoDTO> listaMovimento = 
+				movimentoEstoqueCotaRepository.obterMapaDeAbastecimentoPorEntregador(filtro);
+
+		Assert.assertNotNull(listaMovimento);
+	}
+	
+	@Test
+	@SuppressWarnings("unused")
+	public void countObterMapaDeAbastecimentoPorEntregador() {
+		
+		setUpForMapaAbastecimento();
+		
+		FiltroMapaAbastecimentoDTO filtro = new FiltroMapaAbastecimentoDTO();
+		
+		Long totalMovimento = 
+				movimentoEstoqueCotaRepository.countObterMapaDeAbastecimentoPorEntregador(filtro);
+
+	}
+	
+	@SuppressWarnings("unused")
+	public void countObterMapaDeAbastecimentoPorEntregadorSemReparte() {
+		
+		setUpForMapaAbastecimento();
+		
+		FiltroMapaAbastecimentoDTO filtro = new FiltroMapaAbastecimentoDTO();
+		filtro.setExcluirProdutoSemReparte(true);
+		
+		Long totalMovimento = 
+				movimentoEstoqueCotaRepository.countObterMapaDeAbastecimentoPorEntregador(filtro);
+
+	}
+	
+	@Test
+	public void obterMapaDeImpressaoPorEntregador() {
+		
+		setUpForMapaAbastecimento();
+		
+		FiltroMapaAbastecimentoDTO filtro = new FiltroMapaAbastecimentoDTO();
+		filtro.setPaginacao(new PaginacaoVO());
+		filtro.getPaginacao().setOrdenacao(Ordenacao.ASC);
+		filtro.getPaginacao().setSortColumn("codigoCota");
+		
+		List<ProdutoAbastecimentoDTO> listaMovimento = 
+				movimentoEstoqueCotaRepository.obterMapaDeImpressaoPorEntregador(filtro);
+
+		Assert.assertNotNull(listaMovimento);
+	}
+	
+	@Test
+	public void obterMapaDeImpressaoPorEntregadorSemReparte() {
+		
+		setUpForMapaAbastecimento();
+		
+		FiltroMapaAbastecimentoDTO filtro = new FiltroMapaAbastecimentoDTO();
+		filtro.setPaginacao(new PaginacaoVO());
+		filtro.getPaginacao().setOrdenacao(Ordenacao.ASC);
+		filtro.getPaginacao().setSortColumn("codigoCota");
+		filtro.setExcluirProdutoSemReparte(true);
+		
+		List<ProdutoAbastecimentoDTO> listaMovimento = 
+				movimentoEstoqueCotaRepository.obterMapaDeImpressaoPorEntregador(filtro);
+		
+		Assert.assertNotNull(listaMovimento);
+
+	}
+	
+	@Test
+	@SuppressWarnings("unused")
+	public void obterMapaDeImpressaoPorEntregadorComPaginacao() {
+		
+		setUpForMapaAbastecimento();
+		
+		FiltroMapaAbastecimentoDTO filtro = new FiltroMapaAbastecimentoDTO();
+		filtro.setPaginacao(new PaginacaoVO());
+		filtro.getPaginacao().setPaginaAtual(1);
+		filtro.getPaginacao().setQtdResultadosPorPagina(1);
+		filtro.getPaginacao().setOrdenacao(Ordenacao.ASC);
+		filtro.getPaginacao().setSortColumn("codigoCota");
+		
+		List<ProdutoAbastecimentoDTO> listaMovimento = 
+				movimentoEstoqueCotaRepository.obterMapaDeImpressaoPorEntregador(filtro);
+
+	}
+	
+	public void obterMovimentoCotasPorTipoMovimento() {
+		
+		Date data = Fixture.criarData(1, Calendar.NOVEMBER, 2012);
+		List<Integer> numCotas = new ArrayList<>();
+		numCotas.add(1);
+		GrupoMovimentoEstoque grupoMovimentoEstoque = GrupoMovimentoEstoque.ENVIO_ENCALHE;
+		
+		List<MovimentoEstoqueCotaDTO> listaMovimento = 
+				movimentoEstoqueCotaRepository.obterMovimentoCotasPorTipoMovimento(data, numCotas, grupoMovimentoEstoque);
+		
+		Assert.assertNotNull(listaMovimento);
 
 	}
 	
@@ -1163,6 +2915,244 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 	}
 	
 	@Test
+	public void obterMovimentoEstoqueCotaPorReparteEncalhe() {
+		
+		setUpForNotaFiscal();
+		
+		ParametrosRecolhimentoDistribuidor parametrosRecolhimentoDistribuidor = new ParametrosRecolhimentoDistribuidor();
+		parametrosRecolhimentoDistribuidor.setDiaRecolhimentoPrimeiro(false);
+		parametrosRecolhimentoDistribuidor.setDiaRecolhimentoSegundo(false);
+		parametrosRecolhimentoDistribuidor.setDiaRecolhimentoTerceiro(true);
+		parametrosRecolhimentoDistribuidor.setDiaRecolhimentoQuarto(true);
+		parametrosRecolhimentoDistribuidor.setDiaRecolhimentoQuinto(false);
+
+		Distribuidor distribuidor = new Distribuidor();
+		distribuidor.setParametrosRecolhimentoDistribuidor(parametrosRecolhimentoDistribuidor);
+		
+		List<GrupoMovimentoEstoque> listaGrupoMovimentoEstoques = new ArrayList<GrupoMovimentoEstoque>();
+		listaGrupoMovimentoEstoques.add(GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
+		listaGrupoMovimentoEstoques.add(GrupoMovimentoEstoque.COMPRA_SUPLEMENTAR);
+		listaGrupoMovimentoEstoques.add(GrupoMovimentoEstoque.ENVIO_ENCALHE);
+		listaGrupoMovimentoEstoques.add(GrupoMovimentoEstoque.ENCALHE_ANTECIPADO);
+		
+		Intervalo<Date> periodo = new Intervalo<Date>();
+		periodo.setDe(DateUtil.parseData("01/01/2012", "dd/MM/yyyy"));
+		periodo.setAte(DateUtil.parseData("01/01/2013", "dd/MM/yyyy"));
+		
+		List<MovimentoEstoqueCota> listaMovimentoEstoqueCota = this.movimentoEstoqueCotaRepository.obterMovimentoEstoqueCotaPor(distribuidor, cotaManoel.getId(), GrupoNotaFiscal.NF_REMESSA_CONSIGNACAO, listaGrupoMovimentoEstoques, periodo, null, null);
+		
+		Assert.assertNotNull(listaMovimentoEstoqueCota);
+
+	}
+
+	@Test
+	public void obterMovimentoEstoqueCotaPorPeriodo() {
+		
+		setUpForNotaFiscal();
+		
+		ParametrosRecolhimentoDistribuidor parametrosRecolhimentoDistribuidor = new ParametrosRecolhimentoDistribuidor();
+		parametrosRecolhimentoDistribuidor.setDiaRecolhimentoPrimeiro(false);
+		parametrosRecolhimentoDistribuidor.setDiaRecolhimentoSegundo(false);
+		parametrosRecolhimentoDistribuidor.setDiaRecolhimentoTerceiro(false);
+		parametrosRecolhimentoDistribuidor.setDiaRecolhimentoQuarto(false);
+		parametrosRecolhimentoDistribuidor.setDiaRecolhimentoQuinto(false);
+
+		Intervalo<Date> periodo = new Intervalo<Date>();
+		periodo.setDe(DateUtil.parseData("01/01/2012", "dd/MM/yyyy"));
+		periodo.setAte(DateUtil.parseData("01/01/2013", "dd/MM/yyyy"));
+
+		Distribuidor distribuidor = new Distribuidor();
+		distribuidor.setParametrosRecolhimentoDistribuidor(parametrosRecolhimentoDistribuidor);
+		
+		List<MovimentoEstoqueCota> listaMovimentoEstoqueCota = this.movimentoEstoqueCotaRepository.obterMovimentoEstoqueCotaPor(distribuidor, cotaManoel.getId(), GrupoNotaFiscal.NF_REMESSA_CONSIGNACAO, null, null, null, null);
+
+		Assert.assertNotNull(listaMovimentoEstoqueCota);
+		
+	}
+
+	@Test
+	public void obterMovimentoEstoqueCotaPorGruposMovimentoEstoque() {
+		
+		setUpForNotaFiscal();
+		
+		ParametrosRecolhimentoDistribuidor parametrosRecolhimentoDistribuidor = new ParametrosRecolhimentoDistribuidor();
+		parametrosRecolhimentoDistribuidor.setDiaRecolhimentoPrimeiro(false);
+		parametrosRecolhimentoDistribuidor.setDiaRecolhimentoSegundo(false);
+		parametrosRecolhimentoDistribuidor.setDiaRecolhimentoTerceiro(false);
+		parametrosRecolhimentoDistribuidor.setDiaRecolhimentoQuarto(false);
+		parametrosRecolhimentoDistribuidor.setDiaRecolhimentoQuinto(false);
+
+		List<GrupoMovimentoEstoque> listaGrupoMovimentoEstoques = new ArrayList<GrupoMovimentoEstoque>();
+		listaGrupoMovimentoEstoques.add(GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
+		listaGrupoMovimentoEstoques.add(GrupoMovimentoEstoque.COMPRA_SUPLEMENTAR);
+		listaGrupoMovimentoEstoques.add(GrupoMovimentoEstoque.ENVIO_ENCALHE);
+		listaGrupoMovimentoEstoques.add(GrupoMovimentoEstoque.ENCALHE_ANTECIPADO);
+		
+		Distribuidor distribuidor = new Distribuidor();
+		distribuidor.setParametrosRecolhimentoDistribuidor(parametrosRecolhimentoDistribuidor);
+		
+		List<MovimentoEstoqueCota> listaMovimentoEstoqueCota = this.movimentoEstoqueCotaRepository.obterMovimentoEstoqueCotaPor(distribuidor, cotaManoel.getId(), GrupoNotaFiscal.NF_REMESSA_CONSIGNACAO, listaGrupoMovimentoEstoques, null, null, null);
+
+		Assert.assertNotNull(listaMovimentoEstoqueCota);
+		
+	}
+
+	@Test
+	public void obterMovimentoEstoqueCotaPorFornecedores() {
+		
+		setUpForNotaFiscal();
+		
+		ParametrosRecolhimentoDistribuidor parametrosRecolhimentoDistribuidor = new ParametrosRecolhimentoDistribuidor();
+		parametrosRecolhimentoDistribuidor.setDiaRecolhimentoPrimeiro(false);
+		parametrosRecolhimentoDistribuidor.setDiaRecolhimentoSegundo(false);
+		parametrosRecolhimentoDistribuidor.setDiaRecolhimentoTerceiro(false);
+		parametrosRecolhimentoDistribuidor.setDiaRecolhimentoQuarto(false);
+		parametrosRecolhimentoDistribuidor.setDiaRecolhimentoQuinto(false);
+
+		List<Long> listaFornecedores =  new ArrayList<Long>();
+		for (Fornecedor fornecedor: veja1.getProduto().getFornecedores()) {
+			listaFornecedores.add(fornecedor.getId());
+		}
+		
+		Distribuidor distribuidor = new Distribuidor();
+		distribuidor.setParametrosRecolhimentoDistribuidor(parametrosRecolhimentoDistribuidor);
+		
+		List<MovimentoEstoqueCota> listaMovimentoEstoqueCota = this.movimentoEstoqueCotaRepository.obterMovimentoEstoqueCotaPor(distribuidor, cotaManoel.getId(), GrupoNotaFiscal.NF_REMESSA_CONSIGNACAO, null, null, listaFornecedores, null);
+
+		Assert.assertNotNull(listaMovimentoEstoqueCota);
+		
+	}
+
+	@Test
+	public void obterMovimentoEstoqueCotaPorPrimeiroDiaRecolhimento() {
+		
+		setUpForNotaFiscal();
+		
+		ParametrosRecolhimentoDistribuidor parametrosRecolhimentoDistribuidor = new ParametrosRecolhimentoDistribuidor();
+		parametrosRecolhimentoDistribuidor.setDiaRecolhimentoPrimeiro(true);
+		parametrosRecolhimentoDistribuidor.setDiaRecolhimentoSegundo(false);
+		parametrosRecolhimentoDistribuidor.setDiaRecolhimentoTerceiro(false);
+		parametrosRecolhimentoDistribuidor.setDiaRecolhimentoQuarto(false);
+		parametrosRecolhimentoDistribuidor.setDiaRecolhimentoQuinto(false);
+
+		Distribuidor distribuidor = new Distribuidor();
+		distribuidor.setParametrosRecolhimentoDistribuidor(parametrosRecolhimentoDistribuidor);
+		
+		List<MovimentoEstoqueCota> listaMovimentoEstoqueCota = this.movimentoEstoqueCotaRepository.obterMovimentoEstoqueCotaPor(distribuidor, cotaManoel.getId(), GrupoNotaFiscal.NF_DEVOLUCAO_REMESSA_CONSIGNACAO, null, null, null, null);
+
+		Assert.assertNotNull(listaMovimentoEstoqueCota);
+		
+	}
+
+	@Test
+	public void obterMovimentoEstoqueCotaPorSegundoDiaRecolhimento() {
+		
+		setUpForNotaFiscal();
+		
+		ParametrosRecolhimentoDistribuidor parametrosRecolhimentoDistribuidor = new ParametrosRecolhimentoDistribuidor();
+		parametrosRecolhimentoDistribuidor.setDiaRecolhimentoPrimeiro(false);
+		parametrosRecolhimentoDistribuidor.setDiaRecolhimentoSegundo(true);
+		parametrosRecolhimentoDistribuidor.setDiaRecolhimentoTerceiro(false);
+		parametrosRecolhimentoDistribuidor.setDiaRecolhimentoQuarto(false);
+		parametrosRecolhimentoDistribuidor.setDiaRecolhimentoQuinto(false);
+
+		Distribuidor distribuidor = new Distribuidor();
+		distribuidor.setParametrosRecolhimentoDistribuidor(parametrosRecolhimentoDistribuidor);
+		
+		List<MovimentoEstoqueCota> listaMovimentoEstoqueCota = this.movimentoEstoqueCotaRepository.obterMovimentoEstoqueCotaPor(distribuidor, cotaManoel.getId(), GrupoNotaFiscal.NF_DEVOLUCAO_REMESSA_CONSIGNACAO, null, null, null, null);
+
+		Assert.assertNotNull(listaMovimentoEstoqueCota);
+		
+	}
+
+	@Test
+	public void obterMovimentoEstoqueCotaPorTerceiroDiaRecolhimento() {
+		
+		setUpForNotaFiscal();
+		
+		ParametrosRecolhimentoDistribuidor parametrosRecolhimentoDistribuidor = new ParametrosRecolhimentoDistribuidor();
+		parametrosRecolhimentoDistribuidor.setDiaRecolhimentoPrimeiro(false);
+		parametrosRecolhimentoDistribuidor.setDiaRecolhimentoSegundo(false);
+		parametrosRecolhimentoDistribuidor.setDiaRecolhimentoTerceiro(true);
+		parametrosRecolhimentoDistribuidor.setDiaRecolhimentoQuarto(false);
+		parametrosRecolhimentoDistribuidor.setDiaRecolhimentoQuinto(false);
+
+		Distribuidor distribuidor = new Distribuidor();
+		distribuidor.setParametrosRecolhimentoDistribuidor(parametrosRecolhimentoDistribuidor);
+		
+		List<MovimentoEstoqueCota> listaMovimentoEstoqueCota = this.movimentoEstoqueCotaRepository.obterMovimentoEstoqueCotaPor(distribuidor, cotaManoel.getId(), GrupoNotaFiscal.NF_DEVOLUCAO_REMESSA_CONSIGNACAO, null, null, null, null);
+
+		Assert.assertNotNull(listaMovimentoEstoqueCota);
+		
+	}
+
+	@Test
+	public void obterMovimentoEstoqueCotaPorQuartoDiaRecolhimento() {
+		
+		setUpForNotaFiscal();
+		
+		ParametrosRecolhimentoDistribuidor parametrosRecolhimentoDistribuidor = new ParametrosRecolhimentoDistribuidor();
+		parametrosRecolhimentoDistribuidor.setDiaRecolhimentoPrimeiro(false);
+		parametrosRecolhimentoDistribuidor.setDiaRecolhimentoSegundo(false);
+		parametrosRecolhimentoDistribuidor.setDiaRecolhimentoTerceiro(false);
+		parametrosRecolhimentoDistribuidor.setDiaRecolhimentoQuarto(true);
+		parametrosRecolhimentoDistribuidor.setDiaRecolhimentoQuinto(false);
+
+		Distribuidor distribuidor = new Distribuidor();
+		distribuidor.setParametrosRecolhimentoDistribuidor(parametrosRecolhimentoDistribuidor);
+		
+		List<MovimentoEstoqueCota> listaMovimentoEstoqueCota = this.movimentoEstoqueCotaRepository.obterMovimentoEstoqueCotaPor(distribuidor, cotaManoel.getId(), GrupoNotaFiscal.NF_DEVOLUCAO_REMESSA_CONSIGNACAO, null, null, null, null);
+
+		Assert.assertNotNull(listaMovimentoEstoqueCota);
+		
+	}
+
+	@Test
+	public void obterMovimentoEstoqueCotaPorQuintoDiaRecolhimento() {
+		
+		setUpForNotaFiscal();
+		
+		ParametrosRecolhimentoDistribuidor parametrosRecolhimentoDistribuidor = new ParametrosRecolhimentoDistribuidor();
+		parametrosRecolhimentoDistribuidor.setDiaRecolhimentoPrimeiro(false);
+		parametrosRecolhimentoDistribuidor.setDiaRecolhimentoSegundo(false);
+		parametrosRecolhimentoDistribuidor.setDiaRecolhimentoTerceiro(false);
+		parametrosRecolhimentoDistribuidor.setDiaRecolhimentoQuarto(false);
+		parametrosRecolhimentoDistribuidor.setDiaRecolhimentoQuinto(true);
+
+		Distribuidor distribuidor = new Distribuidor();
+		distribuidor.setParametrosRecolhimentoDistribuidor(parametrosRecolhimentoDistribuidor);
+		
+		List<MovimentoEstoqueCota> listaMovimentoEstoqueCota = this.movimentoEstoqueCotaRepository.obterMovimentoEstoqueCotaPor(distribuidor, cotaManoel.getId(), GrupoNotaFiscal.NF_DEVOLUCAO_REMESSA_CONSIGNACAO, null, null, null, null);
+
+		Assert.assertNotNull(listaMovimentoEstoqueCota);
+		
+	}
+
+	@Test
+	public void obterMovimentoEstoqueCotaPorProdutos() {
+		
+		setUpForNotaFiscal();
+		
+		ParametrosRecolhimentoDistribuidor parametrosRecolhimentoDistribuidor = new ParametrosRecolhimentoDistribuidor();
+		parametrosRecolhimentoDistribuidor.setDiaRecolhimentoPrimeiro(false);
+		parametrosRecolhimentoDistribuidor.setDiaRecolhimentoSegundo(false);
+		parametrosRecolhimentoDistribuidor.setDiaRecolhimentoTerceiro(false);
+		parametrosRecolhimentoDistribuidor.setDiaRecolhimentoQuarto(false);
+		parametrosRecolhimentoDistribuidor.setDiaRecolhimentoQuinto(false);
+
+		List<Long> listaProdutos =  new ArrayList<Long>();
+		listaProdutos.add(veja1.getProduto().getId());
+		
+		Distribuidor distribuidor = new Distribuidor();
+		distribuidor.setParametrosRecolhimentoDistribuidor(parametrosRecolhimentoDistribuidor);
+		
+		List<MovimentoEstoqueCota> listaMovimentoEstoqueCota = this.movimentoEstoqueCotaRepository.obterMovimentoEstoqueCotaPor(distribuidor, cotaManoel.getId(), GrupoNotaFiscal.NF_REMESSA_CONSIGNACAO, null, null, null, listaProdutos);
+
+		Assert.assertNotNull(listaMovimentoEstoqueCota);
+		
+	}
+
+	@Test
 	public void obterQuantidadeProdutoEdicaoMovimentadoPorCota() {
 		
 		setUpForMapaAbastecimento();
@@ -1186,6 +3176,38 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		FiltroConsultaEncalheDTO filtro = obterFiltroConsultaEncalhe();
 		filtro.setDataRecolhimentoInicial(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
 		filtro.setDataRecolhimentoFinal(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
+
+		ConsultaEncalheRodapeDTO valoresTotais = movimentoEstoqueCotaRepository.obterValoresTotais(filtro);
+		
+		Assert.assertNotNull(valoresTotais);
+		
+	}
+	
+	@Test
+	public void obterValorTotalRepartePorCota() {
+		
+		setUpForConsultaEncalhe();
+		
+		FiltroConsultaEncalheDTO filtro = obterFiltroConsultaEncalhe();
+		filtro.setDataRecolhimentoInicial(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
+		filtro.setDataRecolhimentoFinal(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
+		filtro.setIdCota(cotaManoel.getId());
+
+		ConsultaEncalheRodapeDTO valoresTotais = movimentoEstoqueCotaRepository.obterValoresTotais(filtro);
+		
+		Assert.assertNotNull(valoresTotais);
+		
+	}
+	
+	@Test
+	public void obterValorTotalRepartePorFornecedor() {
+		
+		setUpForConsultaEncalhe();
+		
+		FiltroConsultaEncalheDTO filtro = obterFiltroConsultaEncalhe();
+		filtro.setDataRecolhimentoInicial(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
+		filtro.setDataRecolhimentoFinal(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
+		filtro.setIdFornecedor(fornecedorDinap.getId());
 
 		ConsultaEncalheRodapeDTO valoresTotais = movimentoEstoqueCotaRepository.obterValoresTotais(filtro);
 		
@@ -1264,7 +3286,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 	}
 	
 	@Test
-	public void testObterMovimentosPendentesGerarFinanceiro(){
+	public void obterMovimentosPendentesGerarFinanceiro(){
 		
 		this.setupFinanceiroReparteEncalhe();
 		
@@ -1276,7 +3298,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 	}
 	
 	@Test
-	public void testObterMovimentosEstornados(){
+	public void obterMovimentosEstornados(){
 		
 		this.setupFinanceiroReparteEncalhe();
 		
@@ -1288,7 +3310,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 	}
 	
 	@Test
-	public void testObterValorTotalMovimentosPendentesGerarFinanceiro(){
+	public void obterValorTotalMovimentosPendentesGerarFinanceiro(){
 		
 		this.setupFinanceiroReparteEncalhe();
 
@@ -1300,7 +3322,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 	}
 	
 	@Test
-	public void testObterValorTotalMovimentosEstornados(){
+	public void obterValorTotalMovimentosEstornados(){
 		
 		this.setupFinanceiroReparteEncalhe();
 		

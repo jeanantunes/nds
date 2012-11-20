@@ -44,5 +44,18 @@ public class TipoGeradorFluxoPDVRepositoryTest extends AbstractRepositoryImplTes
 
 	}
 	
+	@Test
+	public void obterTiposGeradorFluxoNotIn(){
+		
+		List<TipoGeradorFluxoPDV> tipos = tipoGeradorFluxoPDVRepsitory.obterTiposGeradorFluxoNotIn(tipoGeradorFluxoPDV.getCodigo(),tipoGeradorFluxoPDV1.getCodigo());
+		
+		Set<TipoGeradorFluxoPDV> set = new HashSet<TipoGeradorFluxoPDV>();
+		set.addAll(tipos);
+		
+		Assert.assertNotNull(tipos);
+				
+
+	}
+	
 	
 }

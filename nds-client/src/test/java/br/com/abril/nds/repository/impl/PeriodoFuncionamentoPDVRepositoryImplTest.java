@@ -91,6 +91,7 @@ public class PeriodoFuncionamentoPDVRepositoryImplTest extends AbstractRepositor
 		Set<PeriodoFuncionamentoPDV> set = new HashSet<PeriodoFuncionamentoPDV>();
 		set.addAll(periodos);
 		
+		Assert.assertNotNull(set);
 		Assert.assertTrue(!set.isEmpty());
 
 	}

@@ -27,7 +27,7 @@ public class RelatorioTiposProdutosRepositoryImpl extends AbstractRepository imp
 		StringBuilder sb = new StringBuilder();
 		
 		sb.append("SELECT p.id AS codigo, " +
-				"p.descricao AS produto, " +
+				"p.nomeComercial AS produto, " +
 				"pe.numeroEdicao AS edicao, " +
 				"pe.precoVenda AS precoCapa, " +
 				"( " +

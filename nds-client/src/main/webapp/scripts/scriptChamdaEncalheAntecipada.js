@@ -118,6 +118,20 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 			$("#ceAntecipadaGrid",this.workspace).flexReload();
 		},
 		
+		pesquisarCotasPorProdutoSemMensagem:function(){
+			
+			$("#ceAntecipadaGrid",this.workspace).flexOptions({
+				url: contextPath + "/devolucao/chamadaEncalheAntecipada/pesquisarSemMensagem",
+				params: chamdaEncalheAnteipadaController.params(),newp: 1,
+				onSuccess:function(){
+					chamdaEncalheAnteipadaController.sumarizarCotasSelecionadas(chamdaEncalheAnteipadaController.nameGrid);
+					chamdaEncalheAnteipadaController.processarRenderizacaoDeBotoesCE();			
+				}
+			});
+			
+			$("#ceAntecipadaGrid",this.workspace).flexReload();
+		},		
+		
 		gravar: function (){
 			
 			var listaChamadaEncalheAntecipada = null;
@@ -158,13 +172,18 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 						params , 
 						function (result){
 					
-							chamdaEncalheAnteipadaController.pesquisarCotasPorProduto();
+							if (checkTodos) {
+								chamdaEncalheAnteipadaController.pesquisarCotasPorProdutoSemMensagem();								
+							} else {
+								chamdaEncalheAnteipadaController.pesquisarCotasPorProduto();
+							}
+							
 							chamdaEncalheAnteipadaController.zerarTotais();
 							
-							 $("#dialog-novo",this.workspace).dialog("close");
+							$("#dialog-novo",this.workspace).dialog("close");
 							 
-							 chamdaEncalheAnteipadaController.desmarcarCheckTodos();
-							 chamdaEncalheAnteipadaController.exibirMensagemSucesso(result);
+							chamdaEncalheAnteipadaController.desmarcarCheckTodos();
+							chamdaEncalheAnteipadaController.exibirMensagemSucesso(result);
 					 
 						}, null,true);
 			}
@@ -680,7 +699,7 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 				
 				var cotaSelecionada = {'codigoProduto':chamdaEncalheAnteipadaController.getHiddenProduto(),
 						'numeroEdicao':chamdaEncalheAnteipadaController.getHiddenNumeroEdicao(),
-						'numeroCota=':codigoCota,
+						'numeroCota':codigoCota,
 						'nomeCota':nomeCota,
 						'id':id,
 						'qntExemplares':qntExemplares,

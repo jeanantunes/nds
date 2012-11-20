@@ -89,8 +89,12 @@ public class VendaProdutoController {
 	}
 	
 	private TableModel<CellModelKeyValue<VendaProdutoDTO>> efetuarConsultaVendaProduto(FiltroVendaProdutoDTO filtro) {
-		 
+		
 		List<VendaProdutoDTO> listaVendaProdutoDTO =  this.vendaProdutoService.buscaVendaPorProduto(filtro);				
+
+		if (listaVendaProdutoDTO == null || listaVendaProdutoDTO.isEmpty()) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
+		}
 		
 		TableModel<CellModelKeyValue<VendaProdutoDTO>> tableModel = new TableModel<CellModelKeyValue<VendaProdutoDTO>>();
 

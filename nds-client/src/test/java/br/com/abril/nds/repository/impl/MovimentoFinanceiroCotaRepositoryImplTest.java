@@ -14,10 +14,14 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.dto.CotaFaturamentoDTO;
+import br.com.abril.nds.dto.CotaTransportadorDTO;
 import br.com.abril.nds.dto.DebitoCreditoCotaDTO;
+import br.com.abril.nds.dto.MovimentoFinanceiroDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroDebitoCreditoDTO;
 import br.com.abril.nds.dto.filtro.FiltroDebitoCreditoDTO.ColunaOrdenacao;
+import br.com.abril.nds.dto.filtro.FiltroRelatorioServicosEntregaDTO;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Banco;
@@ -39,6 +43,7 @@ import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.MovimentoFinanceiroCotaRepository;
 import br.com.abril.nds.vo.PaginacaoVO;
+import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 public class MovimentoFinanceiroCotaRepositoryImplTest extends AbstractRepositoryImplTest  {
 	
@@ -128,21 +133,44 @@ public class MovimentoFinanceiroCotaRepositoryImplTest extends AbstractRepositor
 	}
 	
 	@Test
-	public void obterMovimentoFinanceiroCotaDataOperacao() {
+	public void obterMovimentoFinanceiroCota() {
 		
 		List<MovimentoFinanceiroCota> listaMovimentoFinanceiro =
 			movimentoFinanceiroCotaRepository.obterMovimentoFinanceiroCota(null);
 		
-		Assert.assertTrue(!listaMovimentoFinanceiro.isEmpty());
+		Assert.assertNotNull(listaMovimentoFinanceiro);
 		
-		listaMovimentoFinanceiro =
+		Assert.assertTrue(!listaMovimentoFinanceiro.isEmpty());
+
+	}
+	
+	@Test
+	public void obterMovimentoFinanceiroCotaPorCota() {
+		
+		List<MovimentoFinanceiroCota> listaMovimentoFinanceiro =
 				movimentoFinanceiroCotaRepository.obterMovimentoFinanceiroCota(cotaManoel.getId());
 		
+		Assert.assertNotNull(listaMovimentoFinanceiro);
+
 		Assert.assertTrue(!listaMovimentoFinanceiro.isEmpty());
+		
 	}
 	
 	@Test
 	public void obterDebitoCredioCotaDataOperacao() {
+		
+		Integer numeroCota = 123;
+		
+		Date dataOperacao = new Date();
+		
+		List<DebitoCreditoCotaDTO> listaDebitoCreditoCota =
+				movimentoFinanceiroCotaRepository.obterDebitoCreditoCotaDataOperacao(numeroCota, dataOperacao, null);
+		
+		Assert.assertNotNull(listaDebitoCreditoCota);
+		
+	}
+	
+	public void obterDebitoCredioCotaDataOperacaoPoriposMovimentoFinanceiroIgnorados() {
 		
 		Integer numeroCota = 123;
 		
@@ -158,15 +186,15 @@ public class MovimentoFinanceiroCotaRepositoryImplTest extends AbstractRepositor
 				tipoMovimentoFinanceiroEnvioEncalhe
 		);
 
-		
-		@SuppressWarnings("unused")
 		List<DebitoCreditoCotaDTO> listaDebitoCreditoCota =
 				movimentoFinanceiroCotaRepository.obterDebitoCreditoCotaDataOperacao(numeroCota, dataOperacao, tiposMovimentoFinanceiroIgnorados);
+		
+		Assert.assertNotNull(listaDebitoCreditoCota);
 		
 	}
 	
 	@Test
-	public void obterDebitoCreditoPorPeriodoOperacao() {
+	public void obterDebitoCreditoPorPeriodoOperacaoPorTiposMovimentoFinanceiroIgnorados() {
 		
 		FiltroConsultaEncalheDTO filtro = new FiltroConsultaEncalheDTO();
 		
@@ -206,6 +234,20 @@ public class MovimentoFinanceiroCotaRepositoryImplTest extends AbstractRepositor
 		
 	}
 	
+	@Test
+	public void obterDebitoCreditoPorPeriodoOperacao() {
+		
+		FiltroConsultaEncalheDTO filtro = new FiltroConsultaEncalheDTO();
+		filtro.setIdCota(cotaManoel.getId());
+		filtro.setDataRecolhimentoInicial(new Date());
+		filtro.setDataRecolhimentoFinal(new Date());
+		
+		
+		List<DebitoCreditoCotaDTO> listaDebitoCreditoCotaDTO = movimentoFinanceiroCotaRepository.obterDebitoCreditoPorPeriodoOperacao(filtro, null); 
+		
+		Assert.assertNotNull(listaDebitoCreditoCotaDTO);
+		
+	}
 	
 	@Test
 	public void obterMovimentosFinanceiroCotaSucesso() {
@@ -267,6 +309,480 @@ public class MovimentoFinanceiroCotaRepositoryImplTest extends AbstractRepositor
 			
 	}
 	
+	@Test
+	public void obterMovimentosFinanceiroCotaPorIdTipoMovimento() {
+		
+		FiltroDebitoCreditoDTO filtroDebitoCreditoDTO = getFiltroDebitoCredito();
+		filtroDebitoCreditoDTO.setIdTipoMovimento(1L);
+
+		List<MovimentoFinanceiroCota> listaMovimentoFinanceiroCota = 
+				this.movimentoFinanceiroCotaRepository.obterMovimentosFinanceiroCota(filtroDebitoCreditoDTO);
+		
+		Assert.assertNotNull(listaMovimentoFinanceiroCota);
+	}
+
+	@Test
+	public void obterMovimentosFinanceiroCotaPorIdPeriodoLancamento() {
+		
+		FiltroDebitoCreditoDTO filtroDebitoCreditoDTO = getFiltroDebitoCredito();
+		filtroDebitoCreditoDTO.setDataLancamentoInicio(Fixture.criarData(1, Calendar.NOVEMBER, 2012));
+		filtroDebitoCreditoDTO.setDataLancamentoFim(Fixture.criarData(31, Calendar.NOVEMBER, 2012));
+
+		List<MovimentoFinanceiroCota> listaMovimentoFinanceiroCota = 
+				this.movimentoFinanceiroCotaRepository.obterMovimentosFinanceiroCota(filtroDebitoCreditoDTO);
+		
+		Assert.assertNotNull(listaMovimentoFinanceiroCota);
+	}
+
+	@Test
+	public void obterMovimentosFinanceiroCotaPorIdPeriodoVencimento() {
+		
+		FiltroDebitoCreditoDTO filtroDebitoCreditoDTO = getFiltroDebitoCredito();
+		filtroDebitoCreditoDTO.setDataVencimentoInicio(Fixture.criarData(1, Calendar.NOVEMBER, 2012));
+		filtroDebitoCreditoDTO.setDataVencimentoFim(Fixture.criarData(31, Calendar.NOVEMBER, 2012));
+
+		List<MovimentoFinanceiroCota> listaMovimentoFinanceiroCota = 
+				this.movimentoFinanceiroCotaRepository.obterMovimentosFinanceiroCota(filtroDebitoCreditoDTO);
+		
+		Assert.assertNotNull(listaMovimentoFinanceiroCota);
+	}
+
+	@Test
+	public void obterMovimentosFinanceiroCotaPorIdNumeroCota() {
+		
+		FiltroDebitoCreditoDTO filtroDebitoCreditoDTO = getFiltroDebitoCredito();
+		filtroDebitoCreditoDTO.setNumeroCota(1);
+
+		List<MovimentoFinanceiroCota> listaMovimentoFinanceiroCota = 
+				this.movimentoFinanceiroCotaRepository.obterMovimentosFinanceiroCota(filtroDebitoCreditoDTO);
+		
+		Assert.assertNotNull(listaMovimentoFinanceiroCota);
+	}
+
+	@Test
+	public void obterMovimentosFinanceiroCotaPaginacao() {
+		
+		FiltroDebitoCreditoDTO filtroDebitoCreditoDTO = getFiltroDebitoCredito();
+		filtroDebitoCreditoDTO.setPaginacao(new PaginacaoVO());
+		filtroDebitoCreditoDTO.getPaginacao().setPaginaAtual(1);
+		filtroDebitoCreditoDTO.getPaginacao().setQtdResultadosPorPagina(1);
+		filtroDebitoCreditoDTO.getPaginacao().setOrdenacao(Ordenacao.ASC);
+
+		List<MovimentoFinanceiroCota> listaMovimentoFinanceiroCota = 
+				this.movimentoFinanceiroCotaRepository.obterMovimentosFinanceiroCota(filtroDebitoCreditoDTO);
+		
+		Assert.assertNotNull(listaMovimentoFinanceiroCota);
+	}
+
+	@Test
+	public void obterMovimentosFinanceiroCotaOrdenadoDataLancamento() {
+		
+		FiltroDebitoCreditoDTO filtroDebitoCreditoDTO = getFiltroDebitoCredito();
+		filtroDebitoCreditoDTO.setColunaOrdenacao(FiltroDebitoCreditoDTO.ColunaOrdenacao.DATA_LANCAMENTO);
+
+		List<MovimentoFinanceiroCota> listaMovimentoFinanceiroCota = 
+				this.movimentoFinanceiroCotaRepository.obterMovimentosFinanceiroCota(filtroDebitoCreditoDTO);
+		
+		Assert.assertNotNull(listaMovimentoFinanceiroCota);
+	}
+	
+	@Test
+	public void obterMovimentosFinanceiroCotaOrdenadoDataVencimento() {
+		
+		FiltroDebitoCreditoDTO filtroDebitoCreditoDTO = getFiltroDebitoCredito();
+		filtroDebitoCreditoDTO.setColunaOrdenacao(FiltroDebitoCreditoDTO.ColunaOrdenacao.DATA_VENCIMENTO);
+
+		List<MovimentoFinanceiroCota> listaMovimentoFinanceiroCota = 
+				this.movimentoFinanceiroCotaRepository.obterMovimentosFinanceiroCota(filtroDebitoCreditoDTO);
+		
+		Assert.assertNotNull(listaMovimentoFinanceiroCota);
+	}
+	
+	@Test
+	public void obterMovimentosFinanceiroCotaOrdenadoNomeCota() {
+		
+		FiltroDebitoCreditoDTO filtroDebitoCreditoDTO = getFiltroDebitoCredito();
+		filtroDebitoCreditoDTO.setColunaOrdenacao(FiltroDebitoCreditoDTO.ColunaOrdenacao.NOME_COTA);
+
+		List<MovimentoFinanceiroCota> listaMovimentoFinanceiroCota = 
+				this.movimentoFinanceiroCotaRepository.obterMovimentosFinanceiroCota(filtroDebitoCreditoDTO);
+		
+		Assert.assertNotNull(listaMovimentoFinanceiroCota);
+	}
+	
+	@Test
+	public void obterMovimentosFinanceiroCotaOrdenadoNumeroCota() {
+		
+		FiltroDebitoCreditoDTO filtroDebitoCreditoDTO = getFiltroDebitoCredito();
+		filtroDebitoCreditoDTO.setColunaOrdenacao(FiltroDebitoCreditoDTO.ColunaOrdenacao.NUMERO_COTA);
+
+		List<MovimentoFinanceiroCota> listaMovimentoFinanceiroCota = 
+				this.movimentoFinanceiroCotaRepository.obterMovimentosFinanceiroCota(filtroDebitoCreditoDTO);
+		
+		Assert.assertNotNull(listaMovimentoFinanceiroCota);
+	}
+	
+	@Test
+	public void obterMovimentosFinanceiroCotaOrdenadoObservacao() {
+		
+		FiltroDebitoCreditoDTO filtroDebitoCreditoDTO = getFiltroDebitoCredito();
+		filtroDebitoCreditoDTO.setColunaOrdenacao(FiltroDebitoCreditoDTO.ColunaOrdenacao.OBSERVACAO);
+
+		List<MovimentoFinanceiroCota> listaMovimentoFinanceiroCota = 
+				this.movimentoFinanceiroCotaRepository.obterMovimentosFinanceiroCota(filtroDebitoCreditoDTO);
+		
+		Assert.assertNotNull(listaMovimentoFinanceiroCota);
+	}
+	
+	@Test
+	public void obterMovimentosFinanceiroCotaOrdenadoTipoLancamento() {
+		
+		FiltroDebitoCreditoDTO filtroDebitoCreditoDTO = getFiltroDebitoCredito();
+		filtroDebitoCreditoDTO.setColunaOrdenacao(FiltroDebitoCreditoDTO.ColunaOrdenacao.TIPO_LANCAMENTO);
+
+		List<MovimentoFinanceiroCota> listaMovimentoFinanceiroCota = 
+				this.movimentoFinanceiroCotaRepository.obterMovimentosFinanceiroCota(filtroDebitoCreditoDTO);
+		
+		Assert.assertNotNull(listaMovimentoFinanceiroCota);
+	}
+
+	@Test
+	public void obterMovimentosFinanceiroCotaOrdenadoValor() {
+		
+		FiltroDebitoCreditoDTO filtroDebitoCreditoDTO = getFiltroDebitoCredito();
+		filtroDebitoCreditoDTO.setColunaOrdenacao(FiltroDebitoCreditoDTO.ColunaOrdenacao.VALOR);
+
+		List<MovimentoFinanceiroCota> listaMovimentoFinanceiroCota = 
+				this.movimentoFinanceiroCotaRepository.obterMovimentosFinanceiroCota(filtroDebitoCreditoDTO);
+		
+		Assert.assertNotNull(listaMovimentoFinanceiroCota);
+	}
+
+	@Test
+	@SuppressWarnings("unused")
+	public void obterMovimentoFinanceiroCotaParaMovimentoEstoqueCota() {
+		
+		Long idMovimentoEstoqueCota = 1L;
+		
+		MovimentoFinanceiroCota movimentoFinanceiroCota = 
+				this.movimentoFinanceiroCotaRepository.obterMovimentoFinanceiroCotaParaMovimentoEstoqueCota(idMovimentoEstoqueCota);
+
+	}
+
+	@Test
+	@SuppressWarnings("unused")
+	public void obterContagemMovimentosFinanceiroCota() {
+		
+		FiltroDebitoCreditoDTO filtroDebitoCreditoDTO = new FiltroDebitoCreditoDTO();
+		
+		Integer totalMovimentosFinanceiroCota = 
+				this.movimentoFinanceiroCotaRepository.obterContagemMovimentosFinanceiroCota(filtroDebitoCreditoDTO);
+
+	}
+
+	@Test
+	@SuppressWarnings("unused")
+	public void obterQuantidadeMovimentoFinanceiroDataOperacao() {
+		
+		Date dataAtual = Fixture.criarData(06, Calendar.NOVEMBER, 2012);
+		
+		Long totalMovimentosFinanceiroCota = 
+				this.movimentoFinanceiroCotaRepository.obterQuantidadeMovimentoFinanceiroDataOperacao(dataAtual);
+
+	}
+
+	@Test
+	@SuppressWarnings("unused")
+	public void obterSomatorioValorMovimentosFinanceiroCota() {
+		
+		FiltroDebitoCreditoDTO filtroDebitoCreditoDTO = new FiltroDebitoCreditoDTO();
+		
+		BigDecimal somatoriaMovimentosFinanceiroCota = 
+				this.movimentoFinanceiroCotaRepository.obterSomatorioValorMovimentosFinanceiroCota(filtroDebitoCreditoDTO);
+
+	}
+
+	@Test
+	@SuppressWarnings("unused")
+	public void obterSaldoCotaPorOperacaoPorOperacaoCredito() {
+		
+		Integer numeroCota = 1; 
+		OperacaoFinaceira operacao = OperacaoFinaceira.CREDITO;
+		
+		BigDecimal somatoriaMovimentosFinanceiroCota = 
+				this.movimentoFinanceiroCotaRepository.obterSaldoCotaPorOperacao(numeroCota, operacao);
+
+	}
+
+	@Test
+	@SuppressWarnings("unused")
+	public void obterSaldoCotaPorOperacaoPorOperacaoDebito() {
+		
+		Integer numeroCota = 1; 
+		OperacaoFinaceira operacao = OperacaoFinaceira.DEBITO;
+		
+		BigDecimal somatoriaMovimentosFinanceiroCota = 
+				this.movimentoFinanceiroCotaRepository.obterSaldoCotaPorOperacao(numeroCota, operacao);
+
+	}
+
+	@Test
+	public void obterMovimentosFinanceirosPorCobranca() {
+		
+		Long idCobranca = 1L;
+		
+		List<MovimentoFinanceiroCota> listaMovimentosFinanceiroCotas = 
+				this.movimentoFinanceiroCotaRepository.obterMovimentosFinanceirosPorCobranca(idCobranca);
+		
+		Assert.assertNotNull(listaMovimentosFinanceiroCotas);
+
+	}
+
+	@Test
+	@SuppressWarnings("unused")
+	public void obterSaldoCobrancaPorOperacaoPorCredito() {
+		
+		Long idCobranca = 1L; 
+		OperacaoFinaceira operacao = OperacaoFinaceira.CREDITO;
+		
+		BigDecimal somatoriaMovimentosFinanceiroCota = 
+				this.movimentoFinanceiroCotaRepository.obterSaldoCobrancaPorOperacao(idCobranca, operacao);
+
+	}
+
+	@Test
+	@SuppressWarnings("unused")
+	public void obterSaldoCobrancaPorOperacaoPorDebito() {
+		
+		Long idCobranca = 1L; 
+		OperacaoFinaceira operacao = OperacaoFinaceira.DEBITO;
+		
+		BigDecimal somatoriaMovimentosFinanceiroCota = 
+				this.movimentoFinanceiroCotaRepository.obterSaldoCobrancaPorOperacao(idCobranca, operacao);
+
+	}
+
+	@Test
+	public void obterDebitoCreditoSumarizadosParaCotaDataOperacao() {
+		
+		Integer numeroCota = 1; 
+		Date dataOperacao = Fixture.criarData(06, Calendar.NOVEMBER, 2012); 
+		
+		List<DebitoCreditoCotaDTO> listaDebitoCreditoCotas = 
+				this.movimentoFinanceiroCotaRepository.obterDebitoCreditoSumarizadosParaCotaDataOperacao(numeroCota, dataOperacao, null);
+		
+		Assert.assertNotNull(listaDebitoCreditoCotas);
+
+	}
+
+	@Test
+	public void obterDebitoCreditoSumarizadosParaCotaDataOperacaoPorTipoMovimentoFinanceiroIgnorados() {
+		
+		Integer numeroCota = 1; 
+		Date dataOperacao = Fixture.criarData(06, Calendar.NOVEMBER, 2012); 
+		List<TipoMovimentoFinanceiro> tiposMovimentoFinanceiroIgnorados = new ArrayList<TipoMovimentoFinanceiro>();
+		tiposMovimentoFinanceiroIgnorados.add(tipoMovimentoFinanceiroEnvioEncalhe);
+		tiposMovimentoFinanceiroIgnorados.add(tipoMovimentoFinanceiroReparte);
+		
+		List<DebitoCreditoCotaDTO> listaDebitoCreditoCotas = 
+				this.movimentoFinanceiroCotaRepository.obterDebitoCreditoSumarizadosParaCotaDataOperacao(numeroCota, dataOperacao, tiposMovimentoFinanceiroIgnorados);
+		
+		Assert.assertNotNull(listaDebitoCreditoCotas);
+
+	}
+
+	@Test
+	public void obterFaturamentoCotasPorPeriodo() {
+		
+		List<Cota> cotas = new ArrayList<Cota>();
+		cotas.add(cotaManoel);
+		Date dataInicial = Fixture.criarData(01, Calendar.NOVEMBER, 2012); 
+		Date dataFinal = Fixture.criarData(31, Calendar.NOVEMBER, 2012); 
+		
+		List<CotaFaturamentoDTO> listaCotaFaturamentos = 
+				this.movimentoFinanceiroCotaRepository.obterFaturamentoCotasPorPeriodo(cotas, dataInicial, dataFinal);
+		
+		Assert.assertNotNull(listaCotaFaturamentos);
+
+	}
+
+	@Test
+	public void obterResumoTransportadorCotaOrdenadoRoteiro() {
+		
+		FiltroRelatorioServicosEntregaDTO filtro = new FiltroRelatorioServicosEntregaDTO();
+		filtro.setPaginacao(new PaginacaoVO());
+		filtro.getPaginacao().setSortColumn("roteiro");
+		
+		List<CotaTransportadorDTO> listaCotaTransportadores = this.movimentoFinanceiroCotaRepository.obterResumoTransportadorCota(filtro);
+		
+		Assert.assertNotNull(listaCotaTransportadores);
+
+	}
+
+	@Test
+	public void obterResumoTransportadorCotaOrdenadoRota() {
+		
+		FiltroRelatorioServicosEntregaDTO filtro = new FiltroRelatorioServicosEntregaDTO();
+		filtro.setPaginacao(new PaginacaoVO());
+		filtro.getPaginacao().setSortColumn("rota");
+		
+		List<CotaTransportadorDTO> listaCotaTransportadores = this.movimentoFinanceiroCotaRepository.obterResumoTransportadorCota(filtro);
+		
+		Assert.assertNotNull(listaCotaTransportadores);
+
+	}
+
+	@Test
+	public void obterResumoTransportadorCotaOrdenadoNumeroCota() {
+		
+		FiltroRelatorioServicosEntregaDTO filtro = new FiltroRelatorioServicosEntregaDTO();
+		filtro.setPaginacao(new PaginacaoVO());
+		filtro.getPaginacao().setSortColumn("numCota");
+		
+		List<CotaTransportadorDTO> listaCotaTransportadores = this.movimentoFinanceiroCotaRepository.obterResumoTransportadorCota(filtro);
+		
+		Assert.assertNotNull(listaCotaTransportadores);
+
+	}
+
+	@Test
+	public void obterResumoTransportadorCotaOrdenadoNomeCota() {
+		
+		FiltroRelatorioServicosEntregaDTO filtro = new FiltroRelatorioServicosEntregaDTO();
+		filtro.setPaginacao(new PaginacaoVO());
+		filtro.getPaginacao().setSortColumn("nomeCota");
+		
+		List<CotaTransportadorDTO> listaCotaTransportadores = this.movimentoFinanceiroCotaRepository.obterResumoTransportadorCota(filtro);
+		
+		Assert.assertNotNull(listaCotaTransportadores);
+
+	}
+
+	@Test
+	public void obterResumoTransportadorCotaOrdenadoValor() {
+		
+		FiltroRelatorioServicosEntregaDTO filtro = new FiltroRelatorioServicosEntregaDTO();
+		filtro.setPaginacao(new PaginacaoVO());
+		filtro.getPaginacao().setSortColumn("valor");
+		
+		List<CotaTransportadorDTO> listaCotaTransportadores = this.movimentoFinanceiroCotaRepository.obterResumoTransportadorCota(filtro);
+		
+		Assert.assertNotNull(listaCotaTransportadores);
+
+	}
+
+	@Test
+	public void obterResumoTransportadorCotaPorDataDe() {
+		
+		FiltroRelatorioServicosEntregaDTO filtro = new FiltroRelatorioServicosEntregaDTO();
+		filtro.setPaginacao(new PaginacaoVO());
+		filtro.getPaginacao().setSortColumn("roteiro");
+		filtro.setEntregaDataInicio(Fixture.criarData(06, Calendar.NOVEMBER, 2012));
+		
+		List<CotaTransportadorDTO> listaCotaTransportadores = this.movimentoFinanceiroCotaRepository.obterResumoTransportadorCota(filtro);
+		
+		Assert.assertNotNull(listaCotaTransportadores);
+
+	}
+
+	@Test
+	public void obterResumoTransportadorCotaPorDataAte() {
+		
+		FiltroRelatorioServicosEntregaDTO filtro = new FiltroRelatorioServicosEntregaDTO();
+		filtro.setPaginacao(new PaginacaoVO());
+		filtro.getPaginacao().setSortColumn("roteiro");
+		filtro.setEntregaDataFim(Fixture.criarData(06, Calendar.NOVEMBER, 2012));
+		
+		List<CotaTransportadorDTO> listaCotaTransportadores = this.movimentoFinanceiroCotaRepository.obterResumoTransportadorCota(filtro);
+		
+		Assert.assertNotNull(listaCotaTransportadores);
+
+	}
+
+	@Test
+	public void obterResumoTransportadorCotaPorDataIdTransportador() {
+		
+		FiltroRelatorioServicosEntregaDTO filtro = new FiltroRelatorioServicosEntregaDTO();
+		filtro.setPaginacao(new PaginacaoVO());
+		filtro.getPaginacao().setSortColumn("roteiro");
+		filtro.setIdTransportador(1L);
+		
+		List<CotaTransportadorDTO> listaCotaTransportadores = this.movimentoFinanceiroCotaRepository.obterResumoTransportadorCota(filtro);
+		
+		Assert.assertNotNull(listaCotaTransportadores);
+
+	}
+
+	@Test
+	public void obterResumoTransportadorCotaPaginacao() {
+		
+		FiltroRelatorioServicosEntregaDTO filtro = new FiltroRelatorioServicosEntregaDTO();
+		filtro.setPaginacao(new PaginacaoVO());
+		filtro.getPaginacao().setSortColumn("roteiro");
+		filtro.setPaginacao(new PaginacaoVO());
+		filtro.getPaginacao().setPaginaAtual(1);
+		filtro.getPaginacao().setQtdResultadosPorPagina(1);
+		
+		List<CotaTransportadorDTO> listaCotaTransportadores = this.movimentoFinanceiroCotaRepository.obterResumoTransportadorCota(filtro);
+		
+		Assert.assertNotNull(listaCotaTransportadores);
+
+	}
+
+	@Test
+	@SuppressWarnings("unused")
+	public void obterCountResumoTransportadorCota() {
+		
+		FiltroRelatorioServicosEntregaDTO filtro = new FiltroRelatorioServicosEntregaDTO();
+		
+		Long totalCotaTransportadores = this.movimentoFinanceiroCotaRepository.obterCountResumoTransportadorCota(filtro);
+		
+	}
+
+	@Test
+	@SuppressWarnings("unused")
+	public void obterCountResumoTransportadorCotaPorDataDe() {
+		
+		FiltroRelatorioServicosEntregaDTO filtro = new FiltroRelatorioServicosEntregaDTO();
+		filtro.setEntregaDataInicio(Fixture.criarData(06, Calendar.NOVEMBER, 2012));
+		
+		Long totalCotaTransportadores = this.movimentoFinanceiroCotaRepository.obterCountResumoTransportadorCota(filtro);
+		
+	}
+
+	@Test
+	@SuppressWarnings("unused")
+	public void obterCountResumoTransportadorCotaPorDataAte() {
+		
+		FiltroRelatorioServicosEntregaDTO filtro = new FiltroRelatorioServicosEntregaDTO();
+		filtro.setEntregaDataFim(Fixture.criarData(06, Calendar.NOVEMBER, 2012));
+		
+		Long totalCotaTransportadores = this.movimentoFinanceiroCotaRepository.obterCountResumoTransportadorCota(filtro);
+		
+	}
+
+	@Test
+	@SuppressWarnings("unused")
+	public void obterCountResumoTransportadorCotaPorIdCota() {
+		
+		FiltroRelatorioServicosEntregaDTO filtro = new FiltroRelatorioServicosEntregaDTO();
+		filtro.setIdCota(1L);
+		
+		Long totalCotaTransportadores = this.movimentoFinanceiroCotaRepository.obterCountResumoTransportadorCota(filtro);
+		
+	}
+
+	@Test
+	public void obterDetalhesTrasportadorPorCota() {
+		
+		FiltroRelatorioServicosEntregaDTO filtro = new FiltroRelatorioServicosEntregaDTO();
+		
+		List<MovimentoFinanceiroDTO> listaMovimentoFinanceiros = this.movimentoFinanceiroCotaRepository.obterDetalhesTrasportadorPorCota(filtro);
+		
+		Assert.assertNotNull(listaMovimentoFinanceiros);
+		
+	}
+
 	private FiltroDebitoCreditoDTO getFiltroDebitoCredito() {
 
 		Calendar calendar = Calendar.getInstance();

@@ -1146,7 +1146,7 @@ public class DataLoader {
 
 		gerarLogExecucaoInterfaces(session);
 
-		gerarLogradouros(session);
+		//gerarLogradouros(session);
 
 		//criarNovaNotaFiscal(session);
 		

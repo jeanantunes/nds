@@ -76,58 +76,6 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 		//return  popularEndereco(query.list());
 	}
 	
-	private void getHQLProdutos(StringBuilder hql, FiltroRomaneioDTO filtro) {
-		
-		for (int index = 0 ; index < filtro.getProdutos().size() ; index++){
-			
-			hql.append(", coalesce((select itemNota.reparte ")
-			   .append(" from itemNota ")
-			   .append(" where itemNota.produtoEdicao.id = lancamento.produtoEdicao.id ")
-			   .append(" and lancamento.produtoEdicao.id = :idProdutoEdicao").append(index)
-			   .append(" and lancamento.dataLancamentoDistribuidor = :data),0) as qtdProduto").append(index);
-		}
-	}
-
-	private List<RomaneioDTO> popularEndereco(List<RomaneioDTO> listaRomaneios){
-		List<RomaneioDTO> listaAux = new ArrayList<RomaneioDTO>();
-		for(RomaneioDTO romaneio:listaRomaneios){
-			StringBuilder hql = new StringBuilder();
-			
-			hql.append("SELECT endereco.logradouro as logradouro, ");
-			hql.append("endereco.bairro as bairro, ");		
-			hql.append("endereco.cidade as cidade, ");
-			hql.append("endereco.uf as uf ");
-			
-			hql.append(" from EnderecoCota endCota ");
-			hql.append(" LEFT JOIN endCota.endereco as endereco ");
-			
-			hql.append( " WHERE endCota.cota.id =:idCota ");
-			hql.append( " AND (endCota.tipoEndereco = 'LOCAL_ENTREGA' OR endCota.principal = 1) ");
-			
-			Query query =  getSession().createQuery(hql.toString());
-			
-			query.setParameter("idCota", romaneio.getIdCota());
-			
-			query.setMaxResults(1);
-			
-			query.setResultTransformer(new AliasToBeanResultTransformer(Endereco.class));
-			
-			Endereco dto = (Endereco) query.uniqueResult();
-			
-			if(dto != null){
-				
-				romaneio.setLogradouro(
-					dto.getLogradouro() + ", " + 
-					dto.getBairro() + ", " + 
-					dto.getCidade() + " - " + 
-					dto.getUf());
-			}
-			
-			listaAux.add(romaneio);
-		}
-		return listaAux;
-	}
-	
 	private String getSqlFromEWhereRomaneio(FiltroRomaneioDTO filtro) {
 		
 		StringBuilder hql = new StringBuilder();
@@ -182,7 +130,7 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 			hql.append(" and lancamento.dataLancamentoDistribuidor = :data ");
 		}
 		
-		if (filtro.getProdutos() != null && filtro.getProdutos().size() == 1){
+		if (filtro.getProdutos() != null && !filtro.getProdutos().isEmpty()){
 			
 			hql.append(" and lancamento.produtoEdicao.id in (:produtos) ");
 		}
@@ -269,17 +217,9 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 		}
 		
 		if (filtro.getProdutos() != null && !filtro.getProdutos().isEmpty()){
-			
-			if (filtro.getProdutos().size() == 1){
-			
-				query.setParameterList("produtos", filtro.getProdutos());
-			} else if (!queryCount){
-				
-				for (int index = 0 ; index < filtro.getProdutos().size() ; index++){
-					
-					query.setParameter("idProdutoEdicao" + index, filtro.getProdutos().get(index));
-				}
-			}
+		
+			query.setParameterList("produtos", filtro.getProdutos());
+
 		}
 	}
 

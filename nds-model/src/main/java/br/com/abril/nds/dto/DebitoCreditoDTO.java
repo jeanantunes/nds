@@ -26,6 +26,8 @@ public class DebitoCreditoDTO implements Serializable {
 	
 	private String observacao;
 
+	private boolean permiteAlteracao;
+	
 	/**
 	 * @return the id
 	 */
@@ -151,6 +153,14 @@ public class DebitoCreditoDTO implements Serializable {
 	 */
 	public void setObservacao(String observacao) {
 		this.observacao = observacao;
+	}
+	
+	public boolean isPermiteAlteracao() {
+		return permiteAlteracao;
+	}
+
+	public void setPermiteAlteracao(boolean permiteAlteracao) {
+		this.permiteAlteracao = permiteAlteracao;
 	}
 
 	public DebitoCreditoDTO(){

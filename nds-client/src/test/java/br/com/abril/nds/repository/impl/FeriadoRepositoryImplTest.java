@@ -42,7 +42,7 @@ public class FeriadoRepositoryImplTest extends AbstractRepositoryImplTest {
 	@Before
 	public void setUp() {
 		UF_SP = Fixture.criarUnidadeFederacao("SP");
-		save(UF_SP);
+//		save(UF_SP);
 		
 		Feriado feriado = Fixture.feriado(FERIADO_SETE_SETEMBRO,
 				TipoFeriado.FEDERAL, null, null, "Independência do Brasil",
@@ -205,5 +205,40 @@ public class FeriadoRepositoryImplTest extends AbstractRepositoryImplTest {
 				DateUtil.parseDataPTBR("07/09/2002"), TipoFeriado.ESTADUAL);
 		Assert.assertNull(feriado);
 	}
+	
+	
+//	TESTE if obterFeriados()
+	
+//	uf
+	@Test
+	public void obterFeriadosUf() {
+		
+		Date dataFeriado = FERIADO_SETE_SETEMBRO;
+
+		TipoFeriado tipoFeriado = TipoFeriado.FEDERAL;
+
+		List<Feriado> listaFeriado = feriadoRepository.obterFeriados(
+				dataFeriado, tipoFeriado, "SP", null);
+
+		Assert.assertNotNull(listaFeriado);
+		
+	}
+
+//	idLocalidade
+	@Test
+	public void obterFeriadosIdLocalidade() {
+		
+		Date dataFeriado = FERIADO_SETE_SETEMBRO;
+
+		TipoFeriado tipoFeriado = TipoFeriado.FEDERAL;
+
+		List<Feriado> listaFeriado = feriadoRepository.obterFeriados(
+				dataFeriado, tipoFeriado, null, "1");
+
+		Assert.assertNotNull(listaFeriado);
+		
+	}
+	
+	
 
 }

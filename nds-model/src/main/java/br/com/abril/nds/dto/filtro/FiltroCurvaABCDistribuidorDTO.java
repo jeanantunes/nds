@@ -25,6 +25,10 @@ public class FiltroCurvaABCDistribuidorDTO extends FiltroCurvaABCDTO implements 
 
 	private TipoConsultaCurvaABC tipoConsultaCurvaABC; 
 	
+	public FiltroCurvaABCDistribuidorDTO() {
+	
+	}
+
 	public FiltroCurvaABCDistribuidorDTO(Date dataDe, Date dataAte,
 			String codigoFornecedor, String codigoProduto, String nomeProduto,
 			List<Long> edicaoProduto, String codigoEditor, Integer codigoCota,

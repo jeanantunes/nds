@@ -49,4 +49,7 @@ public interface MovimentoFinanceiroCotaService {
 	void processarRegistrohistoricoFinanceiro(
 			HistoricoFinanceiroInput vendaInput);
 
+
+	boolean existeOutrosMovimentosFinanceiroCota(FiltroDebitoCreditoDTO filtroDebitoCredito, Long idMovimentoFinanceiroAtual);
+
 }
