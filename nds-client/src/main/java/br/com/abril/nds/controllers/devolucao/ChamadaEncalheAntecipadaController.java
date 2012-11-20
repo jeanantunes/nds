@@ -398,14 +398,13 @@ public class ChamadaEncalheAntecipadaController {
 	public void cancelarChamdaEncalheCotas(List<ChamadaEncalheAntecipadaVO> listaChamadaEncalheAntecipada,
 											String codigoProduto,Long numeroEdicao,String cancelarTodos){
 		
-		if(!cancelarTodos.isEmpty()){
+		if(Boolean.parseBoolean(cancelarTodos)){
 			
 			FiltroChamadaAntecipadaEncalheDTO filtro = getFiltroSessionSemPaginacao();
 			
 			chamadaAntecipadaEncalheService.cancelarChamadaAntecipadaCota(filtro);
 		
-		}
-		else{
+		} else {
 			
 			InfoChamdaAntecipadaEncalheDTO infoChamdaAntecipadaEncalheDTO = getInfoChamadaEncalhe(listaChamadaEncalheAntecipada,
 																								  null,codigoProduto,

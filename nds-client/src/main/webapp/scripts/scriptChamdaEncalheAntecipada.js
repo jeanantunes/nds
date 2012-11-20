@@ -811,9 +811,10 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 		
 		cancelarProgramacaoAntecipacaoEncalhe:function(){
 			
-
-			var params = {codigoProduto:chamdaEncalheAnteipadaController.getHiddenProduto(),
-					numeroEdicao:chamdaEncalheAnteipadaController.getHiddenNumeroEdicao()};
+			var params = {
+					codigoProduto:chamdaEncalheAnteipadaController.getHiddenProduto(),
+					numeroEdicao:chamdaEncalheAnteipadaController.getHiddenNumeroEdicao(),
+					'cancelarTodos':$("#sel", this.workspace).is(':checked')};
 
 			if(chamdaEncalheAnteipadaController.tipoPesquisaGridCota == chamdaEncalheAnteipadaController.tipoPesquisaSelecionado){				
 				params = serializeArrayToPost('listaChamadaEncalheAntecipada', chamdaEncalheAnteipadaController.obterParametrosGrid(chamdaEncalheAnteipadaController.nameGridPesquisaCota), params);
@@ -835,21 +836,22 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 			}
 			else{
 				
-				var checkTodos  = $("#sel",this.workspace).attr('checked');
-				
-				if(typeof checkTodos == "undefined" || !checkTodos == 'checked'){
+				var checkTodos = params['cancelarTodos'];
+				if(checkTodos == "undefined" || !checkTodos ){
 					
 					params = serializeArrayToPost('listaChamadaEncalheAntecipada', chamdaEncalheAnteipadaController.obterParametrosGrid(chamdaEncalheAnteipadaController.nameGrid), params);
-					
-					checkTodos="";
 				}
-				params['cancelarTodos']=checkTodos;
 				
 				$.postJSON(contextPath + "/devolucao/chamadaEncalheAntecipada/cancelarChamdaEncalheCotas",
 						params, 
 						function (result){
 					
-							chamdaEncalheAnteipadaController.pesquisarCotasPorProduto();
+							if (checkTodos) {
+								$("#grids",this.workspace).hide();
+							} else {
+								chamdaEncalheAnteipadaController.pesquisarCotasPorProduto();
+							}
+							
 							chamdaEncalheAnteipadaController.zerarTotais();
 						
 							chamdaEncalheAnteipadaController.desmarcarCheckTodos();
