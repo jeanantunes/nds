@@ -398,7 +398,7 @@ public class ParametrosDistribuidorController {
             erros.add("É necessário informar a Validade da Garantia Imóvel!");
         }
 	    
-	    if (vo.isUtilizaAntecedenciaValidade() && vo.getValidadeAntecedenciaValidade() == null) {
+	    if (vo.getValidadeAntecedenciaValidade() == null) {
             erros.add("É necessário informar a Validade da Garantia Antecedência da Validade!");
         }
 	    
