@@ -47,9 +47,14 @@ $(function(){
 		  <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 		      <tr>
 		        <td width="46">Código:</td>
-		        <td colspan="3"><input type="text" name="textfield5" id="codigo" style="width:80px;" onblur="vendaProdutoController.buscarNomeProduto();"/></td>
+		        <td colspan="3"><input type="text" name="textfield5" id="codigo" style="width:80px;" onchange="vendaProdutoController.pesquisarPorCodigoProduto('#codigo', '#produto', false,
+										undefined,
+										undefined);" /></td>
 		        <td width="51">Produto:</td>
-		        <td width="164"><input type="text" name="publica" id="produto" onkeyup="vendaProdutoController.pesquisarPorNomeProduto();" style="width:150px;"/></td>
+		        <td width="164"><input type="text" name="publica" id="produto" style="width:150px;" onkeyup="vendaProdutoController.autoCompletarPorNome('#produto', false);"
+								onblur="vendaProdutoController.pesquisarPorNome('#codigo', '#produto', false,
+									undefined,
+									undefined);" /></td>
 		        <td width="45">Edição:</td>
 		        <td width="95"><input type="text" name="edicoes" id="edicoes" style="width:80px;"/></td>
 		        <td width="67">Fornecedor:</td>

@@ -27,15 +27,15 @@ public class VendaProdutoRepositoryImpl extends AbstractRepositoryModel<Moviment
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append("SELECT estoqueProduto.produtoEdicao.numeroEdicao as numEdicao, ");
+		hql.append("SELECT new ").append(VendaProdutoDTO.class.getCanonicalName()).append("( estoqueProduto.produtoEdicao.numeroEdicao as numEdicao, ");
 		hql.append(" lancamento.dataLancamentoDistribuidor as dataLancamento, ");
 		hql.append(" lancamento.dataRecolhimentoDistribuidor as dataRecolhimento, ");
-		hql.append(" (estoqueProduto.qtde + estoqueProduto.qtdeSuplementar) as reparte, ");
-		hql.append(" ((estoqueProduto.qtde + estoqueProduto.qtdeSuplementar) - estoqueProduto.qtdeDevolucaoEncalhe)  as venda, ");
-		hql.append(" (((estoqueProduto.qtde + estoqueProduto.qtdeSuplementar) - estoqueProduto.qtdeDevolucaoEncalhe) / (estoqueProduto.qtde + estoqueProduto.qtdeSuplementar))  as percentagemVenda, ");
+		hql.append(" COALESCE((estoqueProduto.qtde + estoqueProduto.qtdeSuplementar), 0) as reparte, ");
+		hql.append(" COALESCE(((estoqueProduto.qtde + estoqueProduto.qtdeSuplementar) - estoqueProduto.qtdeDevolucaoEncalhe), 0)  as venda, ");
+		hql.append(" COALESCE(((estoqueProduto.qtde + estoqueProduto.qtdeSuplementar) - estoqueProduto.qtdeDevolucaoEncalhe) / (estoqueProduto.qtde + estoqueProduto.qtdeSuplementar), 0) as percentagemVenda, ");
 		hql.append(" produtoEdicao.precoVenda  as precoCapa, ");
 		hql.append(" produtoEdicao.chamadaCapa as chamadaCapa, ");
-		hql.append(" (((estoqueProduto.qtde + estoqueProduto.qtdeSuplementar) - estoqueProduto.qtdeDevolucaoEncalhe) * produtoEdicao.precoVenda)  as total ");
+		hql.append(" COALESCE(((estoqueProduto.qtde + estoqueProduto.qtdeSuplementar) - estoqueProduto.qtdeDevolucaoEncalhe) * produtoEdicao.precoVenda, 0)  as total) ");
 		
 		
 		hql.append(getSqlFromEWhereVendaPorProduto(filtro));
@@ -50,8 +50,8 @@ public class VendaProdutoRepositoryImpl extends AbstractRepositoryModel<Moviment
 			query.setParameter(key, param.get(key));
 		}
 		
-		query.setResultTransformer(new AliasToBeanResultTransformer(
-				VendaProdutoDTO.class));
+		/*query.setResultTransformer(new AliasToBeanResultTransformer(
+				VendaProdutoDTO.class));*/
 		
 		if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
 			query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
@@ -83,7 +83,7 @@ public class VendaProdutoRepositoryImpl extends AbstractRepositoryModel<Moviment
 			hql.append( (usarAnd ? " and ":" where ") + " produtoEdicao.numeroEdicao = :edicao ");
 			usarAnd = true;
 		}
-		if(filtro.getIdFornecedor() !=null){
+		if(filtro.getIdFornecedor() !=null && filtro.getIdFornecedor() != -1){
 			hql.append( (usarAnd ? " and ":" where ") + " fornecedor.id = :idFornecedor ");
 			usarAnd = true;
 		}
@@ -130,7 +130,7 @@ public class VendaProdutoRepositoryImpl extends AbstractRepositoryModel<Moviment
 		if(filtro.getEdicao() != null){ 
 			param.put("edicao", filtro.getEdicao());
 		}
-		if(filtro.getIdFornecedor() != null){ 
+		if(filtro.getIdFornecedor() != null && filtro.getIdFornecedor() != -1){ 
 			param.put("idFornecedor", filtro.getIdFornecedor());
 		}
 	
