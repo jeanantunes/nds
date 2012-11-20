@@ -131,6 +131,7 @@ public class ParciaisServiceImpl implements ParciaisService{
 		periodo.setLancamentoParcial(lancamentoParcial);
 		periodo.setTipo(TipoLancamentoParcial.PARCIAL);
 		periodo.setStatus(StatusLancamentoParcial.PROJETADO);
+		periodo.setNumeroPeriodo(lancamentoParcial.getPeriodos().size());
 		
 		return periodo;
 	}
