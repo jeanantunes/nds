@@ -243,7 +243,7 @@ fieldset {
 									<td>Cod. de Barras:</td>
 									<td><input type="text" name="codigoDeBarras" id="produtoEdicaoController-codigoDeBarras" style="width:180px;" maxlength="18" /></td>
 								</tr>
-								<tr>
+								<tr class="target_visible">
 									<td>Cod. Barras Corporativo:</td>
 									<td><input type="text" name="codigoDeBarrasCorporativo" id="produtoEdicaoController-codigoDeBarrasCorporativo" maxlength="25" style="width:180px;" /></td>
 								</tr>
