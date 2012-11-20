@@ -152,7 +152,6 @@ var parametrosDistribuidorController = $.extend(true, {
 			{name:'parametrosDistribuidor.validadeCaucaoLiquida', value: $('#validadeCaucaoLiquida', this.workspace).val()},
 			{name:'parametrosDistribuidor.utilizaNotaPromissoria', value: $('#utilizaNotaPromissoria', this.workspace).is(':checked')},
 			{name:'parametrosDistribuidor.validadeNotaPromissoria', value: $('#validadeNotaPromissoria', this.workspace).val()},
-			{name:'parametrosDistribuidor.utilizaAntecedenciaValidade', value: $('#utilizaAntecedenciaValidade', this.workspace).is(':checked')},
 			{name:'parametrosDistribuidor.validadeAntecedenciaValidade', value: $('#validadeAntecedenciaValidade', this.workspace).val()},
 			{name:'parametrosDistribuidor.utilizaOutros', value: $('#utilizaOutros', this.workspace).is(':checked')},
 			{name:'parametrosDistribuidor.validadeOutros', value: $('#validadeOutros', this.workspace).val()},
@@ -328,8 +327,7 @@ var parametrosDistribuidorController = $.extend(true, {
 			$('#utilizaImovel', this.workspace).uncheck();
 			$('#validadeImovel', this.workspace).val('').disable();
 			
-			$('#utilizaAntecedenciaValidade', this.workspace).uncheck();
-			$('#validadeAntecedenciaValidade', this.workspace).val('').disable();
+		
 			
 			$('#utilizaOutros', this.workspace).uncheck();
 			$('#validadeOutros', this.workspace).val('').disable();

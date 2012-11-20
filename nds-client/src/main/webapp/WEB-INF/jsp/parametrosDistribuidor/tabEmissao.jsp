@@ -81,7 +81,7 @@
 					target="_blank">Modelo 2</a></td>
 				<td width="20"><input type="radio" name="impressaoNECADANFE"
 					id="impressaoNECADANFE" value="DANFE" /></td>
-				<td width="111"><a href="javascript:;" target="_blank">Danfe</a></td>
+				<td width="111">Danfe</td>
 			</tr>
 			<tr>
 				<td>&nbsp;</td>
