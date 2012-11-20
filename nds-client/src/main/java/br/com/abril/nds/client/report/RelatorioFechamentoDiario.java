@@ -9,6 +9,7 @@ import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JREmptyDataSource;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import net.sf.jasperreports.engine.export.JRPdfExporter;
 import net.sf.jasperreports.engine.export.JRPdfExporterParameter;
 
@@ -83,15 +84,71 @@ public class RelatorioFechamentoDiario {
      */
     private static enum Relatorio {
         
-        SUMARIZACAO("fechamento_diario_sumarizacao.jasper"),
+        SUMARIZACAO("fechamento_diario_sumarizacao.jasper") {
+            @Override
+            Map<String, Object> processParameters(FechamentoDiarioDTO dto) {
+                Map<String, Object> parameters = getDefaultParameters(dto);
+                parameters.put(PARAMETRO_FECHAMENTO_DIARIO_DTO, dto.getSumarizacao());
+                return parameters;
+            }
+
+            @Override
+            JRDataSource createDataSource(FechamentoDiarioDTO dto) {
+                return new JREmptyDataSource();
+            }
+        },
         
-        LANCAMENTO("fechamento_diario_lancamento.jasper"), 
+        LANCAMENTO("fechamento_diario_lancamento.jasper") {
+            @Override
+            Map<String, Object> processParameters(FechamentoDiarioDTO dto) {
+                Map<String, Object> parameters = getDefaultParameters(dto);
+                return parameters;
+            }
+
+            @Override
+            JRDataSource createDataSource(FechamentoDiarioDTO dto) {
+                return new JRBeanCollectionDataSource(dto.getReparte());
+            }
+        }, 
         
-        ENCALHE("fechamento_diario_encalhe.jasper"),
+        ENCALHE("fechamento_diario_encalhe.jasper") {
+            @Override
+            Map<String, Object> processParameters(FechamentoDiarioDTO dto) {
+                Map<String, Object> parameters = getDefaultParameters(dto);
+                return parameters;
+            }
+
+            @Override
+            JRDataSource createDataSource(FechamentoDiarioDTO dto) {
+                return new JREmptyDataSource();
+            }
+        },
         
-        SUPLEMENTAR("fechamento_diario_suplementar.jasper"),
+        SUPLEMENTAR("fechamento_diario_suplementar.jasper") {
+            @Override
+            Map<String, Object> processParameters(FechamentoDiarioDTO dto) {
+                Map<String, Object> parameters = getDefaultParameters(dto);
+                return parameters;
+            }
+
+            @Override
+            JRDataSource createDataSource(FechamentoDiarioDTO dto) {
+                return new JREmptyDataSource();
+            }
+        },
         
-        FALTAS_SOBRAS("fechamento_diario_faltas_sobras.jasper");
+        FALTAS_SOBRAS("fechamento_diario_faltas_sobras.jasper") {
+            @Override
+            Map<String, Object> processParameters(FechamentoDiarioDTO dto) {
+                Map<String, Object> parameters = getDefaultParameters(dto);
+                return parameters;
+            }
+
+            @Override
+            JRDataSource createDataSource(FechamentoDiarioDTO dto) {
+                return new JREmptyDataSource();
+            }
+        };
         
         private String reportName;
         
@@ -102,22 +159,15 @@ public class RelatorioFechamentoDiario {
         public String getReportName() {
             return reportName;
         }
+        
+        abstract Map<String, Object> processParameters(FechamentoDiarioDTO dto);
 
-        public Map<String, Object> processParameters(FechamentoDiarioDTO dto) {
+        abstract JRDataSource createDataSource(FechamentoDiarioDTO dto);
+        
+        protected Map<String, Object> getDefaultParameters(FechamentoDiarioDTO dto) {
             Map<String, Object> parameters = new HashMap<>();
             parameters.put(PARAMETRO_DATA_FECHAMENTO, dto.getDataFechamento());
-            
-            if (SUMARIZACAO.equals(this)) {
-                parameters.put(PARAMETRO_FECHAMENTO_DIARIO_DTO, dto);
-            }
             return parameters;
-        }
-        
-        public JRDataSource createDataSource(FechamentoDiarioDTO dto) {
-            if (SUMARIZACAO.equals(this)) {
-                return new JREmptyDataSource();
-            } 
-            return new JREmptyDataSource();
         }
              
     }

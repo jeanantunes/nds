@@ -1,23 +1,25 @@
 package br.com.abril.nds.client;
 
 import java.io.File;
+import java.math.BigDecimal;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JREmptyDataSource;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import net.sf.jasperreports.engine.export.JRPdfExporter;
 import net.sf.jasperreports.engine.export.JRPdfExporterParameter;
 
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import br.com.abril.nds.dto.ReparteFecharDiaDTO;
 import br.com.abril.nds.dto.fechamentodiario.FechamentoDiarioDTO;
 import br.com.abril.nds.fixture.DataLoader;
 import br.com.abril.nds.service.FecharDiaService;
@@ -44,12 +46,10 @@ public class RelatorioFechamentoDiarioDevTool {
     } 
 
     private static void gerarRelatorio(FechamentoDiarioDTO dto) throws Exception {
-        JRDataSource dataSource = new JREmptyDataSource();
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("dataFechamento", dto.getDataFechamento());
-        parameters.put("fechamentoDiarioDTO", dto);
-        
-        runReportPdf(dataSource, parameters);
+       
+        runReportPdf(dto, parameters);
     }
 
     private static FechamentoDiarioDTO fecharDia() {
@@ -94,17 +94,13 @@ public class RelatorioFechamentoDiarioDevTool {
         JasperCompileManager.compileReportToFile(path, "target/test-classes/reports/fechamento_diario_faltas_sobras.jasper");
     }
     
-    private static void runReportPdf(JRDataSource dataSource, Map<String, Object> parameters) throws Exception {
-        URL url = Thread.currentThread().getContextClassLoader().getResource("reports/fechamento_diario_sumarizacao.jasper");
+    private static void runReportPdf(FechamentoDiarioDTO dto, Map<String, Object> parameters) throws Exception {
+        JasperPrint jpSumarizacao = fillSumarizacao(dto, parameters);
+        
+        JasperPrint jpLancamento = fillReparte(dto, parameters);
+        
+        URL url = Thread.currentThread().getContextClassLoader().getResource("reports/fechamento_diario_encalhe.jasper");
         String path = url.toURI().getPath();
-        JasperPrint jpSumarizacao = JasperFillManager.fillReport(path, parameters, new JREmptyDataSource());
-        
-        url = Thread.currentThread().getContextClassLoader().getResource("reports/fechamento_diario_lancamento.jasper");
-        path = url.toURI().getPath();
-        JasperPrint jpLancamento = JasperFillManager.fillReport(path, parameters, new JREmptyDataSource());
-        
-        url = Thread.currentThread().getContextClassLoader().getResource("reports/fechamento_diario_encalhe.jasper");
-        path = url.toURI().getPath();
         JasperPrint jpEncalhe = JasperFillManager.fillReport(path, parameters, new JREmptyDataSource());
         
         url = Thread.currentThread().getContextClassLoader().getResource("reports/fechamento_diario_suplementar.jasper");
@@ -121,6 +117,25 @@ public class RelatorioFechamentoDiarioDevTool {
         exp.setParameter(JRPdfExporterParameter.OUTPUT_FILE, new File("target/fechamentoDiario.pdf"));
         
         exp.exportReport();
+    }
+
+    private static JasperPrint fillReparte(FechamentoDiarioDTO dto,
+            Map<String, Object> parameters) throws URISyntaxException,
+            JRException {
+        URL url = Thread.currentThread().getContextClassLoader().getResource("reports/fechamento_diario_lancamento.jasper");
+        String path = url.toURI().getPath();
+        JasperPrint jpLancamento = JasperFillManager.fillReport(path, parameters, new JRBeanCollectionDataSource(dto.getReparte()));
+        return jpLancamento;
+    }
+
+    private static JasperPrint fillSumarizacao(FechamentoDiarioDTO dto, Map<String, Object> parameters) throws URISyntaxException, JRException {
+        URL url = Thread.currentThread().getContextClassLoader().getResource("reports/fechamento_diario_sumarizacao.jasper");
+        String path = url.toURI().getPath();
+       
+        Map<String, Object> newParameters = new HashMap<>(parameters);
+        newParameters.put("fechamentoDiarioDTO", dto.getSumarizacao());
+        JasperPrint jpSumarizacao = JasperFillManager.fillReport(path, newParameters, new JREmptyDataSource());
+        return jpSumarizacao;
     }
 
 }

@@ -609,12 +609,6 @@
 <br />
           <br />
 
-
-
-        <br clear="all" />
-          <a href="relatorio_geral_financeiro_fisico_1.htm" target="_blank">rel_1</a> |  <a href="relatorio_geral_financeiro_fisico_2.htm" target="_blank">rel_2</a> |  <a href="relatorio_geral_financeiro_fisico_3.htm" target="_blank">rel_3</a><br />
-          <br clear="all" />
-        <br />
 	
         <br clear="all" />
           

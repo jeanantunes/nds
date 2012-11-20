@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="fechamento_diario_encalhe" pageWidth="842" pageHeight="600" orientation="Landscape" whenNoDataType="BlankPage" columnWidth="810" leftMargin="16" rightMargin="16" topMargin="8" bottomMargin="8" whenResourceMissingType="Empty">
 	<property name="ireport.zoom" value="2.0"/>
-	<property name="ireport.x" value="0"/>
+	<property name="ireport.x" value="231"/>
 	<property name="ireport.y" value="0"/>
 	<style name="zebrado">
 		<conditionalStyle>
@@ -19,7 +19,10 @@
 	<parameter name="dataFechamento" class="java.util.Date" isForPrompting="false">
 		<defaultValueExpression><![CDATA[new java.util.Date()]]></defaultValueExpression>
 	</parameter>
-	<parameter name="fechamentoDiarioDTO" class="java.lang.Object" isForPrompting="false"/>
+	<field name="codigo" class="java.lang.String"/>
+	<field name="nomeProduto" class="java.lang.String"/>
+	<field name="numeroEdicao" class="java.lang.String"/>
+	<field name="precoCapa" class="java.math.BigDecimal"/>
 	<pageHeader>
 		<band height="68" splitType="Stretch">
 			<frame>
@@ -222,7 +225,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 					<font fontName="Arial" isBold="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["10/10/2012"]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{dataFechamento}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="zebrado" mode="Opaque" x="76" y="0" width="64" height="20" backcolor="#FFFFFF"/>

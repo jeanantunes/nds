@@ -58,6 +58,15 @@ public class ReparteFecharDiaDTO implements Serializable {
 	@Export(label = "Diferença", alignment=Alignment.CENTER, exhibitionOrder = 12)
 	private Integer qtdDiferenca;
 	
+	private Long qtdeSobraDe = Long.valueOf(0);
+	
+	private Long qtdeSobraEm = Long.valueOf(0);
+	
+	private Long qtdeFaltaDe = Long.valueOf(0);
+	
+	private Long qtdeFaltaEm = Long.valueOf(0);
+	
+	
 	public String getCodigo() {
 		return codigo;
 	}
@@ -193,5 +202,63 @@ public class ReparteFecharDiaDTO implements Serializable {
 	public void setQtdDiferenca(Integer qtdDiferenca) {
 		this.qtdDiferenca = qtdDiferenca;
 	}
+
+    /**
+     * @return the qtdeSobraDe
+     */
+    public Long getQtdeSobraDe() {
+        return qtdeSobraDe;
+    }
+
+    /**
+     * @param qtdeSobraDe the qtdeSobraDe to set
+     */
+    public void setQtdeSobraDe(Long qtdeSobraDe) {
+        this.qtdeSobraDe = qtdeSobraDe;
+    }
+
+    /**
+     * @return the qtdeSobraEm
+     */
+    public Long getQtdeSobraEm() {
+        return qtdeSobraEm;
+    }
+
+    /**
+     * @param qtdeSobraEm the qtdeSobraEm to set
+     */
+    public void setQtdeSobraEm(Long qtdeSobraEm) {
+        this.qtdeSobraEm = qtdeSobraEm;
+    }
+
+    /**
+     * @return the qtdeFaltaDe
+     */
+    public Long getQtdeFaltaDe() {
+        return qtdeFaltaDe;
+    }
+
+    /**
+     * @param qtdeFaltaDe the qtdeFaltaDe to set
+     */
+    public void setQtdeFaltaDe(Long qtdeFaltaDe) {
+        this.qtdeFaltaDe = qtdeFaltaDe;
+    }
+
+    /**
+     * @return the qtdeFaltaEm
+     */
+    public Long getQtdeFaltaEm() {
+        return qtdeFaltaEm;
+    }
+
+    /**
+     * @param qtdeFaltaEm the qtdeFaltaEm to set
+     */
+    public void setQtdeFaltaEm(Long qtdeFaltaEm) {
+        this.qtdeFaltaEm = qtdeFaltaEm;
+    }
+	
+	
 	
 }

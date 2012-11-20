@@ -1,9 +1,11 @@
 package br.com.abril.nds.dto.fechamentodiario;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import br.com.abril.nds.dto.ReparteFecharDiaDTO;
 import br.com.abril.nds.dto.ResumoEncalheFecharDiaDTO;
 import br.com.abril.nds.dto.ResumoFechamentoDiarioConsignadoDTO;
 import br.com.abril.nds.dto.ResumoFechamentoDiarioCotasDTO;
@@ -22,32 +24,25 @@ public class FechamentoDiarioDTO implements Serializable {
 
     private Date dataFechamento;
     
-    private ResumoReparteFecharDiaDTO resumoReparte;
+    private Sumarizacao sumarizacao;
     
-    private ResumoEncalheFecharDiaDTO resumoEncalhe;
-    
-    private ResumoSuplementarFecharDiaDTO resumoSuplementar;
-
-    private List<SumarizacaoDividasDTO> dividasReceber;
-    
-    private List<SumarizacaoDividasDTO> dividasVencer;
-    
-    private ResumoFechamentoDiarioCotasDTO resumoCotas;
-    
-    private ResumoEstoqueDTO resumoEstoque;
-    
-    private ResumoFechamentoDiarioConsignadoDTO resumoConsignado;
+    private List<ReparteFecharDiaDTO> reparte = new ArrayList<>();
 
     private FechamentoDiarioDTO(Builder builder) {
         this.dataFechamento = builder.dataFechamento;
-        this.resumoReparte = builder.resumoReparte;
-        this.resumoEncalhe = builder.resumoEncalhe;
-        this.resumoSuplementar = builder.resumoSuplementar;
-        this.dividasReceber = builder.dividasReceber;
-        this.dividasVencer = builder.dividasVencer;
-        this.resumoCotas = builder.resumoCotas;
-        this.resumoEstoque = builder.resumoEstoque;
-        this.resumoConsignado = builder.resumoConsignado;
+      
+        this.sumarizacao = new Sumarizacao();
+        this.sumarizacao.resumoReparte = builder.resumoReparte;
+        this.sumarizacao.resumoEncalhe = builder.resumoEncalhe;
+        this.sumarizacao.resumoSuplementar = builder.resumoSuplementar;
+        this.sumarizacao.dividasReceber = builder.dividasReceber;
+        this.sumarizacao.dividasVencer = builder.dividasVencer;
+        this.sumarizacao.resumoCotas = builder.resumoCotas;
+        this.sumarizacao.resumoEstoque = builder.resumoEstoque;
+        this.sumarizacao.resumoConsignado = builder.resumoConsignado;
+        
+        this.reparte = builder.reparte;
+               
     }
 
     /**
@@ -56,62 +51,22 @@ public class FechamentoDiarioDTO implements Serializable {
     public Date getDataFechamento() {
         return dataFechamento;
     }
-
+    
     /**
-     * @return the resumoReparte
+     * @return the sumarizacao
      */
-    public ResumoReparteFecharDiaDTO getResumoReparte() {
-        return resumoReparte;
-    }
-
-    /**
-     * @return the resumoEncalhe
-     */
-    public ResumoEncalheFecharDiaDTO getResumoEncalhe() {
-        return resumoEncalhe;
-    }
-
-    /**
-     * @return the resumoSuplementar
-     */
-    public ResumoSuplementarFecharDiaDTO getResumoSuplementar() {
-        return resumoSuplementar;
-    }
-
-    /**
-     * @return the dividasReceber
-     */
-    public List<SumarizacaoDividasDTO> getDividasReceber() {
-        return dividasReceber;
-    }
-
-    /**
-     * @return the dividasVencer
-     */
-    public List<SumarizacaoDividasDTO> getDividasVencer() {
-        return dividasVencer;
-    }
-
-    /**
-     * @return the resumoCotas
-     */
-    public ResumoFechamentoDiarioCotasDTO getResumoCotas() {
-        return resumoCotas;
-    }
-
-    /**
-     * @return the resumoEstoque
-     */
-    public ResumoEstoqueDTO getResumoEstoque() {
-        return resumoEstoque;
+    public Sumarizacao getSumarizacao() {
+        return sumarizacao;
     }
     
     /**
-     * @return the resumoConsignado
+     * @return the reparte
      */
-    public ResumoFechamentoDiarioConsignadoDTO getResumoConsignado() {
-        return resumoConsignado;
+    public List<ReparteFecharDiaDTO> getReparte() {
+        return reparte;
     }
+
+
 
     /**
      * Builder para o DTO de fechamento diário
@@ -136,6 +91,8 @@ public class FechamentoDiarioDTO implements Serializable {
         private ResumoEstoqueDTO resumoEstoque;
         
         private ResumoFechamentoDiarioConsignadoDTO resumoConsignado;
+        
+        private List<ReparteFecharDiaDTO> reparte;
         
         public Builder(Date dataFechamento) {
             this.dataFechamento = dataFechamento;
@@ -180,10 +137,98 @@ public class FechamentoDiarioDTO implements Serializable {
             this.resumoConsignado = resumoConsignado;
             return this;
         }
+        
+        public Builder reparte(List<ReparteFecharDiaDTO> reparte) {
+            this.reparte = reparte;
+            return this;
+        }
 
         public FechamentoDiarioDTO build() {
             return new FechamentoDiarioDTO(this);
         }
+        
+    }
+    
+    /**
+     * Sumarizacao do Fechamento diário
+  
+     * @author francisco.garcia
+     *
+     */
+    public static class Sumarizacao {
+        
+        private ResumoReparteFecharDiaDTO resumoReparte;
+        
+        private ResumoEncalheFecharDiaDTO resumoEncalhe;
+        
+        private ResumoSuplementarFecharDiaDTO resumoSuplementar;
+
+        private List<SumarizacaoDividasDTO> dividasReceber;
+        
+        private List<SumarizacaoDividasDTO> dividasVencer;
+        
+        private ResumoFechamentoDiarioCotasDTO resumoCotas;
+        
+        private ResumoEstoqueDTO resumoEstoque;
+        
+        private ResumoFechamentoDiarioConsignadoDTO resumoConsignado;
+
+        /**
+         * @return the resumoReparte
+         */
+        public ResumoReparteFecharDiaDTO getResumoReparte() {
+            return resumoReparte;
+        }
+
+        /**
+         * @return the resumoEncalhe
+         */
+        public ResumoEncalheFecharDiaDTO getResumoEncalhe() {
+            return resumoEncalhe;
+        }
+
+        /**
+         * @return the resumoSuplementar
+         */
+        public ResumoSuplementarFecharDiaDTO getResumoSuplementar() {
+            return resumoSuplementar;
+        }
+
+        /**
+         * @return the dividasReceber
+         */
+        public List<SumarizacaoDividasDTO> getDividasReceber() {
+            return dividasReceber;
+        }
+
+        /**
+         * @return the dividasVencer
+         */
+        public List<SumarizacaoDividasDTO> getDividasVencer() {
+            return dividasVencer;
+        }
+
+        /**
+         * @return the resumoCotas
+         */
+        public ResumoFechamentoDiarioCotasDTO getResumoCotas() {
+            return resumoCotas;
+        }
+
+        /**
+         * @return the resumoEstoque
+         */
+        public ResumoEstoqueDTO getResumoEstoque() {
+            return resumoEstoque;
+        }
+
+        /**
+         * @return the resumoConsignado
+         */
+        public ResumoFechamentoDiarioConsignadoDTO getResumoConsignado() {
+            return resumoConsignado;
+        }
+        
         
     }
     
