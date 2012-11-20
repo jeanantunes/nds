@@ -22,7 +22,6 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.service.CapaService;
 
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 /**
@@ -57,8 +56,6 @@ public class CapaServiceImpl implements CapaService {
 		return hasCapa(produtoEdicao.getProduto().getCodigo(),
 				produtoEdicao.getNumeroEdicao());
 	}
-	
-	
 
 	@Override
 	@Transactional(readOnly=true)
@@ -89,6 +86,20 @@ public class CapaServiceImpl implements CapaService {
 	@Transactional(readOnly=true)
 	public void saveCapa(long idProdutoEdicao, String contentType, InputStream inputStream) {
 		ProdutoEdicao produtoEdicao = getProdutoEdicao(idProdutoEdicao);
+		
+        //Remove capa antiga
+		try{
+			
+			String id = toId(produtoEdicao.getProduto().getCodigo(), produtoEdicao.getNumeroEdicao());
+			// Obter o atributo 'rev':
+			JsonObject json = couchDbClient.find(JsonObject.class, id);	
+		    this.couchDbClient.remove(json);
+		}
+		catch (NoDocumentException e){
+			
+			e.printStackTrace();
+		}
+		
 		saveCapa(produtoEdicao.getProduto().getCodigo(),
 				produtoEdicao.getNumeroEdicao(), contentType, inputStream);
 
@@ -173,9 +184,16 @@ public class CapaServiceImpl implements CapaService {
 		ProdutoEdicao pe = getProdutoEdicao(idProdutoEdicao);
 		String id = toId(pe.getProduto().getCodigo(), pe.getNumeroEdicao());
 		
-		// Obter o atributo 'rev':
-		JsonObject json = couchDbClient.find(JsonObject.class, id);	
-		this.couchDbClient.remove(json);
+		try{
+			
+			// Obter o atributo 'rev':
+		    JsonObject json = couchDbClient.find(JsonObject.class, id);	
+		    this.couchDbClient.remove(json);
+		}
+		catch (NoDocumentException e){
+			
+			throw new NoDocumentException("Capa ainda não definida.");
+		}
 	}
 
 }

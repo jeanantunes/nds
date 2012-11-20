@@ -7,7 +7,6 @@ import java.util.List;
 
 import br.com.abril.nds.dto.FuroProdutoDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
-import br.com.abril.nds.dto.ProdutoEdicaoSuplementarDTO;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.service.exception.UniqueConstraintViolationException;
@@ -107,17 +106,6 @@ public interface ProdutoEdicaoService {
 			Intervalo<Date> dataLancamento, Intervalo<BigDecimal> preco , StatusLancamento statusLancamento,
 			String codigoDeBarras, boolean brinde,
 			String sortorder, String sortname, int page, int maxResults);
-	
-	/**
-	 * Pesquisa as últimas edições cadastradas, .<br>
-	 * 
-	 * @param codigoProduto
-	 * @param maxResults
-	 * 
-	 * @return
-	 */
-	public List<ProdutoEdicaoDTO> pesquisarUltimasEdicoes(String codigoProduto,
-			int maxResults);
 	
 	/**
 	 * Obtém a quantidade de edições cadastradas filtradas pelos critérios 
