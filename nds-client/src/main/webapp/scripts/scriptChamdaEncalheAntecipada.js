@@ -373,9 +373,7 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 		},
 		
 		montarComboBoxs:function(result) {
-			var comboBoxes = "<option selected='selected'  value='-1'></option>";  
-				
-			comboBoxes = comboBoxes + montarComboBox(result, true);
+			var comboBoxes = montarComboBox(result, true);
 			
 			$("#box",this.workspace).html(comboBoxes);
 		}, 
