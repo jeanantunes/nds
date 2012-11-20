@@ -36,6 +36,7 @@ import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoBox;
+import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.financeiro.ConsolidadoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
@@ -802,4 +803,64 @@ public class MovimentoFinanceiroCotaRepositoryImplTest extends AbstractRepositor
 		return filtroDebitoCreditoDTO;
 	}
 
+	@Test
+	@SuppressWarnings("unused")
+	public void obterSaldoDistribuidor() {
+		
+		Date data = null;
+	    TipoCota tipoCota = null; 
+	    OperacaoFinaceira operacaoFinaceira = null;
+		
+		BigDecimal saldo = this.movimentoFinanceiroCotaRepository.obterSaldoDistribuidor(data, tipoCota, operacaoFinaceira);
+		
+	}
+	
+	@Test
+	@SuppressWarnings("unused")
+	public void obterSaldoDistribuidorPorData() {
+		
+		Date data = Fixture.criarData(20, Calendar.NOVEMBER, 2012);
+	    TipoCota tipoCota = null; 
+	    OperacaoFinaceira operacaoFinaceira = null;
+		
+		BigDecimal saldo = this.movimentoFinanceiroCotaRepository.obterSaldoDistribuidor(data, tipoCota, operacaoFinaceira);
+		
+	}
+	
+	@Test
+	@SuppressWarnings("unused")
+	public void obterSaldoDistribuidorPorTipoCota() {
+		
+		Date data = null;
+	    TipoCota tipoCota = TipoCota.A_VISTA; 
+	    OperacaoFinaceira operacaoFinaceira = null;
+		
+		BigDecimal saldo = this.movimentoFinanceiroCotaRepository.obterSaldoDistribuidor(data, tipoCota, operacaoFinaceira);
+		
+	}
+	
+	@Test
+	@SuppressWarnings("unused")
+	public void obterSaldoDistribuidorPorOperacaoFinanceiraCredito() {
+		
+		Date data = null;
+	    TipoCota tipoCota = null; 
+	    OperacaoFinaceira operacaoFinaceira = OperacaoFinaceira.CREDITO;
+		
+		BigDecimal saldo = this.movimentoFinanceiroCotaRepository.obterSaldoDistribuidor(data, tipoCota, operacaoFinaceira);
+		
+	}
+	
+	@Test
+	@SuppressWarnings("unused")
+	public void obterSaldoDistribuidorPorOperacaoFinanceiraDebito() {
+		
+		Date data = null;
+	    TipoCota tipoCota = null; 
+	    OperacaoFinaceira operacaoFinaceira = OperacaoFinaceira.DEBITO;
+		
+		BigDecimal saldo = this.movimentoFinanceiroCotaRepository.obterSaldoDistribuidor(data, tipoCota, operacaoFinaceira);
+		
+	}
+	
 }

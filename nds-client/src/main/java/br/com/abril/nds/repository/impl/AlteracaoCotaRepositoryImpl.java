@@ -96,19 +96,18 @@ public class AlteracaoCotaRepositoryImpl extends AbstractRepositoryModel<Cota, L
 
 		}
 		
-		if (filtroAlteracaoCotaDTO.getIdBairro() != null 
-				&& !filtroAlteracaoCotaDTO.getIdBairro().isEmpty() 
-				&& !"-1".equals(filtroAlteracaoCotaDTO.getIdBairro())) {
+		//O campo idBairro não será mais utilizado no sistema
+		/*if (filtroAlteracaoCotaDTO.getIdBairro() != null && filtroAlteracaoCotaDTO.getIdBairro()>0) {
 			/*if(addedAnd)*/
-				hql.append(" and ");
+				//hql.append(" and ");
 			/*else
 				hql.append(" where ");*/	
 		
-			hql.append(" endereco.bairro = :idBairro ");
+			//hql.append(" endereco.codigoBairro = :idBairro ");
 			
-			/*addedAnd = true;*/
+			/*addedAnd = true;
 
-		}
+		}*/
 		
 		if (filtroAlteracaoCotaDTO.getIdMunicipio() != null 
 				&& !filtroAlteracaoCotaDTO.getIdMunicipio().isEmpty()

@@ -138,6 +138,8 @@ public class ChamadaEncalheCotaRepositoryImplTest extends
 		save(cfop);
 
 		tipoNotaFiscal = Fixture.tipoNotaFiscalRecebimento(cfop);
+		tipoNotaFiscal.setCfopEstado(cfop);
+		tipoNotaFiscal.setCfopOutrosEstados(cfop);
 		save(tipoNotaFiscal);
 
 		NotaFiscalEntradaFornecedor notaFiscal1Veja = Fixture

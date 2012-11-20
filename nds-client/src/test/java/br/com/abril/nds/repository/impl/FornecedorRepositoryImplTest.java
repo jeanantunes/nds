@@ -13,7 +13,9 @@ import br.com.abril.nds.dto.FornecedorDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaFornecedorDTO;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.cadastro.Editor;
+import br.com.abril.nds.model.cadastro.EnderecoFornecedor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.GrupoFornecedor;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoFornecedor;
@@ -64,9 +66,56 @@ public class FornecedorRepositoryImplTest extends AbstractRepositoryImplTest {
 	}
 
 	@Test
-	public void obterFornecedoresDeProduto() {
+	public void obterFornecedoresNaoReferenciadosComCota(){
+		List<Fornecedor> lista = fornecedorRepository.obterFornecedoresNaoReferenciadosComCota(1L);
+		Assert.assertNotNull(lista);
+	}
+	
+	@Test
+	public void obterFornecedoresCota(){
+		List<Fornecedor> lista = fornecedorRepository.obterFornecedoresCota(1L);
+		Assert.assertNotNull(lista);
+	}
+	
+	@Test
+	public void obterFornecedoresAtivos(){
+		List<Fornecedor> lista = fornecedorRepository.obterFornecedoresAtivos();
+		Assert.assertNotNull(lista);
+	}
+	
+	@Test
+	public void obterFornecedores(){
+		List<Fornecedor> lista = fornecedorRepository.obterFornecedores();
+		Assert.assertNotNull(lista);
+	}
+	
+	@Test
+	public void obterFornecedoresPorCnpj(){
+		List<Fornecedor> lista = fornecedorRepository.obterFornecedores("123.456.789-87");
+		Assert.assertNotNull(lista);
+	}
+	
+	@Test
+	public void obterFornecedoresDeProdutoPorCodigoProduto() {
 		List<Fornecedor> fornecedores =
 			fornecedorRepository.obterFornecedoresDeProduto(produto.getCodigo(), null);
+		
+		Assert.assertTrue(fornecedores.size() == 1);
+		Assert.assertTrue(fornecedores.contains(fornecedor1));
+	}
+	
+	@Test
+	public void obterFornecedoresDeProdutoPorGrupoFornecedor() {
+		List<Fornecedor> fornecedores =
+			fornecedorRepository.obterFornecedoresDeProduto(null, GrupoFornecedor.OUTROS);
+		
+		Assert.assertNotNull(fornecedores);
+	}
+	
+	@Test
+	public void obterFornecedoresDeProduto() {
+		List<Fornecedor> fornecedores =
+			fornecedorRepository.obterFornecedoresDeProduto(null, null);
 		
 		Assert.assertTrue(fornecedores.size() == 1);
 		Assert.assertTrue(fornecedores.contains(fornecedor1));
@@ -227,6 +276,30 @@ public class FornecedorRepositoryImplTest extends AbstractRepositoryImplTest {
 	}
 	
 	@Test
+	public void obterFornecedoresPorFiltroPorCnpj(){
+		FiltroConsultaFornecedorDTO filtro = new FiltroConsultaFornecedorDTO();
+		filtro.setCnpj("123.456.789-87");
+		List<FornecedorDTO> lista = fornecedorRepository.obterFornecedoresPorFiltro(filtro);
+		Assert.assertNotNull(lista);
+	}
+	
+	@Test
+	public void obterFornecedoresPorFiltroPorNomeFantasia(){
+		FiltroConsultaFornecedorDTO filtro = new FiltroConsultaFornecedorDTO();
+		filtro.setNomeFantasia("Nome Fantasia");
+		List<FornecedorDTO> lista = fornecedorRepository.obterFornecedoresPorFiltro(filtro);
+		Assert.assertNotNull(lista);
+	}
+	
+	@Test
+	public void obterFornecedoresPorFiltroPorRazaoSocial(){
+		FiltroConsultaFornecedorDTO filtro = new FiltroConsultaFornecedorDTO();
+		filtro.setRazaoSocial("Razao Social");
+		List<FornecedorDTO> lista = fornecedorRepository.obterFornecedoresPorFiltro(filtro);
+		Assert.assertNotNull(lista);
+	}
+	
+	@Test
 	public void obterContagemFornecedoresPorFiltro() {
 		
 		FiltroConsultaFornecedorDTO filtroConsultaFornecedor = new FiltroConsultaFornecedorDTO();
@@ -240,12 +313,23 @@ public class FornecedorRepositoryImplTest extends AbstractRepositoryImplTest {
 		Assert.assertEquals(expected, contagemFornecedores);
 	}
 	
+	@Test
+	public void obterFornecedoresIdNomeNulo(){
+		fornecedorRepository.obterFornecedoresIdNome(null, null);
+	}
 	
 	@Test
-	public void obterFornecedoresIdNome(){
-		fornecedorRepository.obterFornecedoresIdNome(null, null);
+	public void obterFornecedoresIdNomePorSituacaoCadastro(){
 		fornecedorRepository.obterFornecedoresIdNome(SituacaoCadastro.ATIVO, null);
-		fornecedorRepository.obterFornecedoresIdNome(SituacaoCadastro.ATIVO, true);
+	}
+	
+	@Test
+	public void obterFornecedoresIdNomePorInterfaceTrue(){
+		fornecedorRepository.obterFornecedoresIdNome(null, true);
+	}
+	
+	@Test
+	public void obterFornecedoresIdNomePorInterfaceFalse(){
 		fornecedorRepository.obterFornecedoresIdNome(null, false);
 	}
 	
@@ -257,6 +341,38 @@ public class FornecedorRepositoryImplTest extends AbstractRepositoryImplTest {
 		
 		Assert.assertNotNull(fornecedores);
 		
+	}
+	
+	@SuppressWarnings("unused")
+	@Test
+	public void obterQuantidadeFornecedoresPorIdPessoa(){
+		Integer qtdade = fornecedorRepository.obterQuantidadeFornecedoresPorIdPessoa(1L, null);
+	}
+	
+	@SuppressWarnings("unused")
+	@Test
+	public void obterQuantidadeFornecedoresPorIdPessoaEIdFornecedor(){
+		Integer qtdade = fornecedorRepository.obterQuantidadeFornecedoresPorIdPessoa(1L, 1L);
+	}
+	
+	@Test
+	public void obterFornecedoresPorIdPessoa(){
+		List<Fornecedor> fornecedores =
+				this.fornecedorRepository.obterFornecedoresPorIdPessoa(1L);
+			
+			Assert.assertNotNull(fornecedores);
+	}
+	
+	@SuppressWarnings("unused")
+	@Test
+	public void obterFornecedorPorCodigo(){
+		Fornecedor fornecedor =  fornecedorRepository.obterFornecedorPorCodigo(1);
+	}
+	
+	@SuppressWarnings("unused")
+	@Test
+	public void obterMinCodigoInterfaceDisponivel(){
+		Integer minCodigo = fornecedorRepository.obterMinCodigoInterfaceDisponivel();
 	}
 	
 	@Test
@@ -276,9 +392,15 @@ public class FornecedorRepositoryImplTest extends AbstractRepositoryImplTest {
 		Assert.assertEquals(idsForncedores.size(), fornecedores.size());
 	}
 	
+	@SuppressWarnings("unused")
 	@Test
 	public void obterMaxCodigoInterface(){
-		this.fornecedorRepository.obterMaxCodigoInterface();
+		Integer maxCodigo = fornecedorRepository.obterMaxCodigoInterface();
 	}
 	
+	@SuppressWarnings("unused")
+	@Test
+	public void obterEnderecoPrincipal(){
+		EnderecoFornecedor endereco = fornecedorRepository.obterEnderecoPrincipal(1L);
+	}
 }

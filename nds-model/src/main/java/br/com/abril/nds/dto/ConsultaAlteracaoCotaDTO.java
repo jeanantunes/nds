@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 
 import br.com.abril.nds.model.cadastro.DescricaoTipoEntrega;
+import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.desconto.TipoDesconto;
 
 public class ConsultaAlteracaoCotaDTO implements Serializable {
@@ -34,6 +35,29 @@ public class ConsultaAlteracaoCotaDTO implements Serializable {
 	public ConsultaAlteracaoCotaDTO(){
 		
 	}
+	public ConsultaAlteracaoCotaDTO(Long idCota, Integer numeroCota, String clazz, String nomeRazaoSocial, String nome, Integer vencimento,
+			BigDecimal financeiro, DescricaoTipoEntrega tipoEntrega, String box) {
+		super();
+		this.idCota = idCota;
+		this.numeroCota = numeroCota;
+		this.nomeRazaoSocial = (clazz.equals("J") ? nomeRazaoSocial : nome) ;
+		this.vencimento = vencimento;
+		if(financeiro != null){
+			this.valorMinimo = financeiro.toString();
+		} else {
+			this.valorMinimo = BigDecimal.ZERO.toString();
+		}	
+		if(tipoEntrega != null) {
+			this.tipoEntrega = tipoEntrega.getValue();
+		} else {
+			this.tipoEntrega ="";
+		}	
+		
+		
+		
+		this.box = box;
+	}
+	
 	public ConsultaAlteracaoCotaDTO(Long idCota, Integer numeroCota, String nomeRazaoSocial, Integer vencimento,
 			BigDecimal financeiro, DescricaoTipoEntrega tipoEntrega, String box) {
 		super();
