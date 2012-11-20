@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.abril.nds.dto.DetalheItemNotaFiscalDTO;
 import br.com.abril.nds.dto.DetalheNotaFiscalDTO;
 import br.com.abril.nds.dto.ItemDTO;
+import br.com.abril.nds.dto.NotaFiscalEntradaFornecedorDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaNotaFiscalDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
@@ -217,6 +218,15 @@ public class NotaFiscalEntradaServiceImpl implements NotaFiscalEntradaService {
 		return notaFiscalDAO.obterNotasFiscaisCadastradas(filtroConsultaNotaFiscal);
 	}
 
+	@Override
+	@Transactional(readOnly=true)
+	public List<NotaFiscalEntradaFornecedorDTO> obterNotasFiscaisCadastradasDTO(FiltroConsultaNotaFiscalDTO filtroConsultaNotaFiscal) {
+		
+		validarPeriodo(filtroConsultaNotaFiscal);
+
+		return notaFiscalDAO.obterNotasFiscaisCadastradasDTO(filtroConsultaNotaFiscal);
+	}
+	
 
 	@Override
 	@Transactional
@@ -261,7 +271,6 @@ public class NotaFiscalEntradaServiceImpl implements NotaFiscalEntradaService {
 	
 	}
 
-	
 }
 
 

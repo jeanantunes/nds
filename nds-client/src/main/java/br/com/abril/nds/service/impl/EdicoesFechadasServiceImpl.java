@@ -1,6 +1,6 @@
 package br.com.abril.nds.service.impl;
 
-import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 
@@ -40,7 +40,7 @@ public class EdicoesFechadasServiceImpl implements EdicoesFechadasService {
 	 */
 	@Override
 	@Transactional(readOnly = true)
-	public BigDecimal obterTotalResultadoEdicoesFechadas(
+	public BigInteger obterTotalResultadoEdicoesFechadas(
 			Date dataDe, Date dateAte, Long idFornecedor) {
 		
 		// Filtra por fornecedor específico
