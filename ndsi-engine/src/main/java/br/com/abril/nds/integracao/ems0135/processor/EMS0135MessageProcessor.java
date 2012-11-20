@@ -128,7 +128,10 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 		notafiscalEntrada.setValorLiquido(BigDecimal.ZERO);
 		notafiscalEntrada.setValorDesconto(BigDecimal.ZERO);
 		
-		PessoaJuridica emitente = this.obterPessoaJuridica( parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.CNPJ_PJ_IMPORTACAO_NRE).getValor() );
+		PessoaJuridica emitente = this.obterPessoaJuridica( input.getCnpjEmissor() );
+		
+// Comentado pelo Cesar "PunkPop" no dia de hoje :-)		
+//		PessoaJuridica emitente = this.obterPessoaJuridica( parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.CNPJ_PJ_IMPORTACAO_NRE).getValor() );
 		
 		notafiscalEntrada.setEmitente(emitente);		
 		notafiscalEntrada.setTipoNotaFiscal(obterTipoNotaFiscal(GrupoNotaFiscal.RECEBIMENTO_MERCADORIAS));		
