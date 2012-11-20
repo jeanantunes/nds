@@ -324,7 +324,7 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 		
 		
 		notaFiscal.setStatusNotaFiscal(StatusNotaFiscalEntrada.RECEBIDA);		
-		
+		notaFiscal.setDataRecebimento(new Date());
 		notaFiscalRepository.merge(notaFiscal);
 		
 		RecebimentoFisico recebimentoFisico = recebimentoFisicoRepository.obterRecebimentoFisicoPorNotaFiscal(notaFiscal.getId());
@@ -412,6 +412,7 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 		}
 		
 		notaFiscal.setStatusNotaFiscal(StatusNotaFiscalEntrada.RECEBIDA);
+		notaFiscal.setDataRecebimento(new Date());
 		
 		notaFiscal.setOrigem(Origem.MANUAL);
 		
