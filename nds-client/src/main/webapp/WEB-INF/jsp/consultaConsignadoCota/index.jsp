@@ -100,7 +100,7 @@
 	         
 	         <div class="pesqTodos" style="display:none;">
 	       	  <legend>Consignados</legend>
-	        <div class="grids" style="display:noneA;">
+	        <div class="grids">
 	       	  <table class="consignadosGrid"></table>
 	         </div>
          </div>
