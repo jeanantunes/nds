@@ -72,7 +72,7 @@
 				<td width="20"><input type="radio" name="impressaoNECADANFE"
 					id="impressaoNECADANFEMODELO1" value="MODELO_1" /></td>
 				<td width="79"><a
-					href="${pageContext.request.contextPath}/modelos/ce_modelo_1.htm"
+					href="${pageContext.request.contextPath}/modelos/ce_modelo_3.htm"
 					target="_blank">Modelo 1</a></td>
 				<td width="20"><input type="radio" name="impressaoNECADANFE"
 					id="impressaoNECADANFEMODELO2" value="MODELO_2" /></td>
@@ -127,7 +127,7 @@
 				<td width="79">Modelo 1</td>
 				<td width="20"><input type="radio" name="interfaceLED"
 					id="interfaceLEDMODELO2" value="MODELO_2" /></td>
-				<td width="75">>Modelo 2</td>
+				<td width="75">Modelo 2</td>
 				<td width="20"><input type="radio" name="interfaceLED"
 					id="interfaceLEDMODELO3" value="MODELO_3" /></td>
 				<td width="111">Modelo 3</td>
