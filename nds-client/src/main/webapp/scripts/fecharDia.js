@@ -115,49 +115,49 @@ var fecharDiaController =  $.extend(true, {
 				align : 'right'
 			}, {
 				display : 'Reparte',
-				name : 'qtdReparte',
+				name : 'qtdReparteFormatado',
 				width : 50,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Sobra em',
-				name : 'qtdSobras',
+				name : 'qtdSobrasFormatado',
 				width : 50,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Falta em',
-				name : 'qtdFaltas',
+				name : 'qtdFaltasFormatado',
 				width : 50,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Transf.',
-				name : 'qtdTransferido',
+				name : 'qtdTransferenciaFormatado',
 				width : 50,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'A Distr',
-				name : 'aDistr',
+				name : 'qtdADistribuirFormatado',
 				width : 50,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Distribuido',
-				name : 'qtdDistribuido',
+				name : 'qtdDistribuidoFormatado',
 				width : 50,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Sobra Distr',
-				name : 'sobraDistri',
+				name : 'qtdDiferencaFormatado',
 				width : 55,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Dif.',
-				name : 'dif',
+				name : 'qtdDiferencaFormatado',
 				width : 40,
 				sortable : true,
 				align : 'center'
@@ -729,12 +729,14 @@ var fecharDiaController =  $.extend(true, {
 	popup_vendasTot : function(tipoVenda) {
 		
 		if(tipoVenda == "encalhe"){
+			$("#tipoVenda").val(tipoVenda);
 			$(".vendasDialogGrid", fecharDiaController.workspace).flexOptions({
 				url: contextPath + "/administracao/fecharDia/obterGridVenda",
 				dataType : 'json',
 				params: [{name: "tipoVenda", value: tipoVenda}]
 			});
 		}else{
+			$("#tipoVenda").val(tipoVenda);
 			$(".vendasDialogGrid", fecharDiaController.workspace).flexOptions({
 				url: contextPath + "/administracao/fecharDia/obterGridVenda",
 				dataType : 'json',
@@ -1356,6 +1358,27 @@ var fecharDiaController =  $.extend(true, {
 	   linhaBranco += "</tr>";
 	   
 	   return linhaBranco; 
+	},
+	
+	exportarVendaEncalheOuSuplementar : function(tipoArquivo){
+		
+		params = [];
+		
+		params.push({
+			'name' : 'fileType',
+			'value' : tipoArquivo
+		},{
+			'name' : 'tipoVenda',
+			'value' : $("#tipoVenda").val()
+		});
+		
+		
+		$.fileDownload(
+				contextPath + '/administracao/fecharDia/exportarVendaSuplemntar',{
+					httpMethod : "POST",
+					data : params
+				});
+		
 	}
 
 }, BaseController);
