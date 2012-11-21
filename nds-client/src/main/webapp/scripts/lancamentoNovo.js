@@ -916,9 +916,17 @@ var lancamentoNovoController = $.extend(true, {
 	},
 	
 	verificarTipoEstoque : function(estoques) {
-				
-		if(estoques.length == 1) {
-			lancamentoNovoController.tipoEstoqueSelecionado = estoques[0].nameEnum;;
+		
+		if (estoques.length == 0) {
+			
+			lancamentoNovoController.tipoEstoqueSelecionado = null;
+			
+			$("#reparteProduto", lancamentoNovoController.workspace).text(0);
+		
+		} else if (estoques.length == 1) {
+			
+			lancamentoNovoController.tipoEstoqueSelecionado = estoques[0].nameEnum;
+			
 			$("#reparteProduto", lancamentoNovoController.workspace).text(estoques[0].qtde);
 		
 		} else  {

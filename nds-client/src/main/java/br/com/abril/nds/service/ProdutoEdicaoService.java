@@ -7,7 +7,6 @@ import java.util.List;
 
 import br.com.abril.nds.dto.FuroProdutoDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
-import br.com.abril.nds.dto.ProdutoEdicaoSuplementarDTO;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.service.exception.UniqueConstraintViolationException;
@@ -51,7 +50,7 @@ public interface ProdutoEdicaoService {
 	 * @return {@link FuroProdutoDTO}
 	 */
 	FuroProdutoDTO obterProdutoEdicaoPorCodigoEdicaoDataLancamento(
-			String codigo, String nomeProduto, Long edicao, Date dataLancamento);
+			String codigo, String nomeProduto, Long edicao, Date dataLancamento, boolean furado);
 	
 	/**
 	 * Obtém um produtos edição de acordo
@@ -109,17 +108,6 @@ public interface ProdutoEdicaoService {
 			String sortorder, String sortname, int page, int maxResults);
 	
 	/**
-	 * Pesquisa as últimas edições cadastradas, .<br>
-	 * 
-	 * @param codigoProduto
-	 * @param maxResults
-	 * 
-	 * @return
-	 */
-	public List<ProdutoEdicaoDTO> pesquisarUltimasEdicoes(String codigoProduto,
-			int maxResults);
-	
-	/**
 	 * Obtém a quantidade de edições cadastradas filtradas pelos critérios 
 	 * escolhidos pelo usuário.
 	 * 
@@ -167,5 +155,5 @@ public interface ProdutoEdicaoService {
 	 * @return
 	 */
 	public ProdutoEdicaoDTO obterProdutoEdicaoDTO(String codigoProduto, String idProdutoEdicao);
-	
+
 }

@@ -9,7 +9,7 @@ public class LancamentoNaoExpedidoDTO implements Serializable {
 
 	private Long idLancamento;		
 	private String dataEntrada;
-	private Long codigo;
+	private String codigo;
 	private String produto;
 	private Long edicao;
 	private String classificacao;
@@ -21,7 +21,7 @@ public class LancamentoNaoExpedidoDTO implements Serializable {
 	private Integer estudo;
 	private Boolean selecionado; 
 	
-	public LancamentoNaoExpedidoDTO(Long idLancamento, String dataEntrada, Long codigo, String produto, Long edicao, String classificacao, String preco, Integer pctPadrao, Integer reparte, String dataChamada, String fornecedor, Integer estudo, Boolean selecionado) {
+	public LancamentoNaoExpedidoDTO(Long idLancamento, String dataEntrada, String codigo, String produto, Long edicao, String classificacao, String preco, Integer pctPadrao, Integer reparte, String dataChamada, String fornecedor, Integer estudo, Boolean selecionado) {
 		super();
 		this.idLancamento = idLancamento;
 		this.dataEntrada = dataEntrada;
@@ -66,14 +66,14 @@ public class LancamentoNaoExpedidoDTO implements Serializable {
 
 
 
-	public Long getCodigo() {
+	public String getCodigo() {
 		return codigo;
 	}
 
 
 
 
-	public void setCodigo(Long codigo) {
+	public void setCodigo(String codigo) {
 		this.codigo = codigo;
 	}
 

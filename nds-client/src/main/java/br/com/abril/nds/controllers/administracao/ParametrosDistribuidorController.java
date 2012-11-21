@@ -398,7 +398,7 @@ public class ParametrosDistribuidorController {
             erros.add("É necessário informar a Validade da Garantia Imóvel!");
         }
 	    
-	    if (vo.isUtilizaAntecedenciaValidade() && vo.getValidadeAntecedenciaValidade() == null) {
+	    if (vo.getValidadeAntecedenciaValidade() == null) {
             erros.add("É necessário informar a Validade da Garantia Antecedência da Validade!");
         }
 	    
@@ -452,7 +452,7 @@ public class ParametrosDistribuidorController {
 		List<Long> selecionados = getSelecionados(TipoGrupo.MUNICIPIO);
 				
 		for(MunicipioDTO municipio : municipios) {
-			if(selecionados.contains(municipio.getId()))
+			if(selecionados.contains(municipio.getMunicipio()))
 				municipio.setSelecionado(true);
 		}
 		

@@ -1,5 +1,6 @@
 <head>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/entregador.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pessoa.js"></script>
 <script type="text/javascript">
 	$(function() {
 		entregadorController.init();
@@ -46,11 +47,13 @@
             <tr>
               <td width="117">Nome/Razão Social:</td>
               <td colspan="3">
-              	<input type="text" name="filtroEntregador.nomeRazaoSocial" id="textfield2" style="width:160px;"/>
+              	<input type="text" name="filtroEntregador.nomeRazaoSocial" id="filtroEntregador-nomeRazaoSocial" style="width:160px;" 
+              	onkeyup='PESSOA.autoCompletarPorNomeEntregador("#filtroEntregador-nomeRazaoSocial",entregadorController.workspace)'/>
               </td>
                 <td width="146">Apelido / Nome Fantasia:</td>
               <td width="145">
-              	<input type="text" name="filtroEntregador.apelidoNomeFantasia" id="textfield" style="width:130px;"/>
+              	<input type="text" name="filtroEntregador.apelidoNomeFantasia" id="filtroEntregador-apelidoNomeFantasia" style="width:130px;"
+              	onkeyup='PESSOA.autoCompletarPorApelidoEntregador("#filtroEntregador-apelidoNomeFantasia",entregadorController.workspace)'/>
               </td>
               <td width="79">CPF / CNPJ:</td>
               <td width="152">

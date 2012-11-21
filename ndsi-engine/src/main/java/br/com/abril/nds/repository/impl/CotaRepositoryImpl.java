@@ -345,7 +345,11 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 
 		StringBuilder hql = new StringBuilder();
 
-		hql.append("SELECT count ( cota.id ) ");
+		/*
+		 * Foi incluido a cláusula DISTINCT para evitar o cenário de mais de um 
+		 * PDV associado a mesma cota.
+		 */
+		hql.append("SELECT DISTINCT count ( cota.id ) ");
 
 		hql.append(getSqlFromEWhereCotasSujeitasAntecipacoEncalhe(filtro));
 
@@ -389,7 +393,11 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 
 		StringBuilder hql = new StringBuilder();
 
-		hql.append("SELECT new ")
+		/*
+		 * Foi incluido a cláusula DISTINCT para evitar o cenário de mais de um 
+		 * PDV associado a mesma cota.
+		 */
+		hql.append("SELECT DISTINCT new ")
 				.append(ChamadaAntecipadaEncalheDTO.class.getCanonicalName())
 				.append(" ( box.codigo, box.nome ,cota.numeroCota, estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida, ")
 				.append(" lancamento.id ,")
@@ -1508,7 +1516,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" select localidade.id as id, ");
+		hql.append(" select  ");
 		hql.append(" 		endereco.cidade as municipio, ");
 		hql.append(" 		count(cota.id) as qtde ");
 				
@@ -1550,7 +1558,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 	
 	private void gerarWhereFromObterQtdeCotaMunicipio(StringBuilder hql) {
 		
-		hql.append(" from Cota cota, Localidade localidade ");
+		hql.append(" from Cota cota ");
 		hql.append(" join cota.pessoa pessoa ");
 		hql.append(" join cota.pdvs pdv ");
 		hql.append(" join cota.enderecos enderecoCota ");
@@ -1558,7 +1566,6 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 		
 		hql.append(" where pdv.caracteristicas.pontoPrincipal=true ");
 		hql.append(" and enderecoCota.principal=true ");
-		hql.append(" and endereco.cidade=localidade.nome ");	
 	}
 	
 	@Override

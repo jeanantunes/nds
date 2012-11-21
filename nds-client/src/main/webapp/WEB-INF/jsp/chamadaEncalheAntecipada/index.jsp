@@ -131,7 +131,6 @@
 			    <td width="58">Box:</td>
 			    <td colspan="3">
 				    <select name="box" id="box" style="width:150px;" onchange="chamdaEncalheAnteipadaController.recarregarComboRoteiroRotas(this.value)" class="campoDePesquisa">
-				      <option selected="selected" value="-1"></option>
 				      <option selected="selected">Todos</option>
 				      <c:forEach var="box" items="${listaBoxes}">
 								<option value="${box.key}">${box.value}</option>

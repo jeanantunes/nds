@@ -4,6 +4,7 @@
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
 	<script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.price_format.1.7.js"></script>
 	<script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaCota.js"></script>
+	<script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/pessoa.js"></script>
 	
 	<script language="javascript" type="text/javascript">
 	
@@ -114,7 +115,8 @@
 				<tr>
 					<td width="41">Nome:</td>
               		<td colspan="3">
-              			<input type="text" name="textfield2" id="fiadorController-nomeFiadorPesquisa" style="width:180px;" maxlength="255"/>
+              			<input type="text" name="textfield2" id="fiadorController-nomeFiadorPesquisa" style="width:180px;" maxlength="255" 
+              			onkeyup='PESSOA.autoCompletarPorNomeFiador("#fiadorController-nomeFiadorPesquisa",fiadorController.workspace)'/>
               		</td>
                 	<td width="74">CPF/CNPJ:</td>
                 	<td width="139">

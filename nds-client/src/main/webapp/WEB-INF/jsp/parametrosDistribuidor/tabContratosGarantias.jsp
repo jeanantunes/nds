@@ -48,6 +48,15 @@
         <fieldset style="width: 420px !important; margin-bottom: 5px; float: left; margin-left:10px;">
           <legend>Garantia</legend>
           <table width="335" border="0" cellspacing="0" cellpadding="0">
+          	<tr>
+          		<td>Antecedência da Validade</td>
+              <td>
+                  
+                      <input name="parametrosDistribuidor.validadeAntecedenciaValidade" type="text"
+                          style="float: left; width: 60px;" value="${parametrosDistribuidor.validadeAntecedenciaValidade}"
+                          id="validadeAntecedenciaValidade" />
+              </td>
+          	</tr>
             <tr>
               <td width="143">Utiliza Garantia para PDVs?</td>
               <td width="192">
@@ -188,32 +197,7 @@
               </td>
             </tr>
             <tr class="class_linha_1">
-              <td>
-                <c:if test="${parametrosDistribuidor.utilizaAntecedenciaValidade}">
-                  <input name="parametrosDistribuidor.utilizaAntecedenciaValidade" id="utilizaAntecedenciaValidade"
-                    checked="checked" type="checkbox" onclick="parametrosDistribuidorController.utilizaGarantiaListener(this, 'validadeAntecedenciaValidade');" />
-                </c:if> 
-                <c:if test="${not parametrosDistribuidor.utilizaAntecedenciaValidade}">
-                  <input name="parametrosDistribuidor.utilizaAntecedenciaValidade" id="utilizaAntecedenciaValidade"
-                    type="checkbox" onclick="parametrosDistribuidorController.utilizaGarantiaListener(this, 'validadeAntecedenciaValidade');" />
-                </c:if>
-              </td>
-              <td>Antecedência da Validade</td>
-              <td>
-                  <c:if test="${parametrosDistribuidor.utilizaAntecedenciaValidade}">
-                      <input name="parametrosDistribuidor.validadeAntecedenciaValidade" type="text"
-                          style="float: left; width: 60px;" value="${parametrosDistribuidor.validadeAntecedenciaValidade}"
-                          id="validadeAntecedenciaValidade" />
-                  </c:if>
-                  <c:if test="${not parametrosDistribuidor.utilizaAntecedenciaValidade}">
-                      <input name="parametrosDistribuidor.validadeAntecedenciaValidade" type="text"
-                          style="float: left; width: 60px;" value="${parametrosDistribuidor.validadeAntecedenciaValidade}"
-                          id="validadeAntecedenciaValidade" disabled="disabled" />
-                  </c:if>        
-              </td>
-            </tr>
-            <tr class="class_linha_2">
-              <td>
+                           <td>
                 <c:if test="${parametrosDistribuidor.utilizaOutros}">
                   <input name="parametrosDistribuidor.utilizaOutros" id="utilizaOutros" checked="checked" type="checkbox" 
                   onclick="parametrosDistribuidorController.utilizaGarantiaListener(this, 'validadeOutros');"/>

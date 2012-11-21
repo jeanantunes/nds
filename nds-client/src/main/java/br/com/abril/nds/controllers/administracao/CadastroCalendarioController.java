@@ -83,7 +83,7 @@ public class CadastroCalendarioController {
 	
 	private void carregarComboMunicipio() {
 		
-		List<Localidade> listaLocalidade = calendarioService.obterListaLocalidadeCotas();
+		List<String> listaLocalidade = calendarioService.obterListaLocalidadeCotas();
 		
 		this.result.include("listaLocalidade", listaLocalidade);
 		
@@ -137,7 +137,7 @@ public class CadastroCalendarioController {
 		
 		calendarioFeriado.setDataFeriado(DateUtil.parseDataPTBR(dtFeriado));
 		calendarioFeriado.setTipoFeriado(TipoFeriado.valueOf(descTipoFeriado));
-		calendarioFeriado.setIdLocalidade(idLocalidade);
+		calendarioFeriado.setLocalidade(idLocalidade);
 		calendarioFeriado.setIndRepeteAnualmente(indRepeteAnualmente);
 		
 		calendarioService.excluirFeriado(calendarioFeriado);
@@ -169,7 +169,7 @@ public class CadastroCalendarioController {
 		calendarioFeriado.setIndEfetuaCobranca(indEfetuaCobranca);
 		calendarioFeriado.setIndRepeteAnualmente(indRepeteAnualmente);
 
-		calendarioFeriado.setIdLocalidade(idLocalidade);
+		calendarioFeriado.setLocalidade(idLocalidade);
 		
 		calendarioService.cadastrarFeriado(calendarioFeriado);
 		

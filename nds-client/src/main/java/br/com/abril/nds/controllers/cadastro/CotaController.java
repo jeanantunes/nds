@@ -62,7 +62,6 @@ import br.com.abril.nds.service.FileService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.PessoaFisicaService;
 import br.com.abril.nds.service.PessoaJuridicaService;
-import br.com.abril.nds.service.TipoEntregaService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.DateUtil;
@@ -129,9 +128,6 @@ public class CotaController {
 	
 	@Autowired
 	private ParametroCobrancaCotaController financeiroController;
-	
-	@Autowired
-	private TipoEntregaService tipoEntregaService;
 	
 	@Autowired
 	private PdvController pdvController;
@@ -530,9 +526,7 @@ public class CotaController {
 	@Post
 	@Path("/salvarCotaCNPJ")
 	public void salvarCotaPessoaJuridica(CotaDTO cotaDTO){
-		
-		validar();
-		
+
 		cotaDTO.setTipoPessoa(TipoPessoa.JURIDICA);
 
 		cotaDTO = salvarDadosCota(cotaDTO);
@@ -581,7 +575,7 @@ public class CotaController {
 				}
 			}
 			if (!temPrincipal) {
-				mensagensValidacao.add("Deve haver ao menos um endereço principal para o entregador.");
+				mensagensValidacao.add("Deve haver ao menos um endereço principal para a cota.");
 			}
 		}
 	}
@@ -590,10 +584,17 @@ public class CotaController {
 		@SuppressWarnings("unchecked")
 		Map<Integer, TelefoneAssociacaoDTO> mapaTelefones = (Map<Integer, TelefoneAssociacaoDTO>) this.session.getAttribute(LISTA_TELEFONES_SALVAR_SESSAO);
 
+		@SuppressWarnings("unchecked")
+		List<TelefoneAssociacaoDTO> telefonesExibicao = (List<TelefoneAssociacaoDTO>) this.session.getAttribute(LISTA_TELEFONES_EXIBICAO);
+		
 		List<TelefoneAssociacaoDTO> listaTelefones = new ArrayList<TelefoneAssociacaoDTO>();
 		
 		if (mapaTelefones != null) {
 			listaTelefones.addAll(mapaTelefones.values());
+		}
+		
+		if (telefonesExibicao != null && telefonesExibicao.size() > 0){
+			listaTelefones.addAll(telefonesExibicao);
 		}
 		
  		if (listaTelefones == null || listaTelefones.isEmpty()) {
@@ -612,7 +613,7 @@ public class CotaController {
 			}
 			
 			if (!temPrincipal) {
-				mensagensValidacao.add("Deve haver ao menos um telefone principal para o entregador.");
+				mensagensValidacao.add("Deve haver ao menos um telefone principal para a cota.");
 			}
 		}
 	}
@@ -625,8 +626,6 @@ public class CotaController {
 	@Post
 	@Path("/salvarCotaCPF")
 	public void salvarCotaPessoaFisica(CotaDTO cotaDTO){
-		
-		validar();
 		
 		cotaDTO.setTipoPessoa(TipoPessoa.FISICA);
 		

@@ -91,7 +91,7 @@ public abstract class Cobranca {
 	protected Divida divida;
 	
 	@OneToMany(mappedBy = "cobranca")
-	protected List<BaixaCobranca> baixasCobranca = new ArrayList<>();
+	protected List<BaixaCobranca> baixasCobranca = new ArrayList<BaixaCobranca>();
 	
 	@Column(name="VIAS")
 	protected Integer vias;

@@ -85,9 +85,28 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 	
 	@Override
 	public FuroProdutoDTO obterProdutoEdicaoPorCodigoEdicaoDataLancamento(
-			String codigo, String nomeProduto, Long edicao, Date dataLancamento) {
+			String codigo, String nomeProduto, Long edicao, Date dataLancamento, boolean furado) {
 		StringBuilder hql = new StringBuilder();
+		
+		// Corrigido para obter o saldo real do produto. Implementado em conjunto com Eduardo Punk Rock.
 		hql.append("select new ")
+		   .append(FuroProdutoDTO.class.getCanonicalName())
+		   .append("(produto.codigo, produto.nome, produtoEdicao.numeroEdicao, estoqueProduto.qtde, ")
+		   .append("   lancamento.dataLancamentoDistribuidor, lancamento.id, produtoEdicao.id)")
+		   .append(" from Produto produto, ProdutoEdicao produtoEdicao, ")
+		   .append("      Lancamento lancamento, EstoqueProduto estoqueProduto ")
+		   .append(" where produtoEdicao.produto.id              = produto.id ")
+		   .append(" and   estoqueProduto.produtoEdicao.id       = lancamento.produtoEdicao.id ")
+		   .append(" and   produtoEdicao.id                      = lancamento.produtoEdicao.id ")
+		   .append(" and   produto.codigo                        = :codigo ")
+		   .append(" and   produtoEdicao.numeroEdicao            = :edicao")
+		   .append(" and   lancamento.dataLancamentoDistribuidor = :dataLancamento ");
+		   
+		   if (furado) {
+			   hql.append(" and   lancamento.status                     != :statusFuro");
+		   }
+
+		/*hql.append("select new ")
 		   .append(FuroProdutoDTO.class.getCanonicalName())
 		   .append("(produto.codigo, produto.nome, produtoEdicao.numeroEdicao, estudo.qtdeReparte, lancamento.reparte, ")
 		   .append("   lancamento.dataLancamentoDistribuidor, lancamento.id, produtoEdicao.id)")
@@ -99,7 +118,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		   .append(" and   produto.codigo                        = :codigo ")
 		   .append(" and   produtoEdicao.numeroEdicao            = :edicao")
 		   .append(" and   lancamento.dataLancamentoDistribuidor = :dataLancamento ")
-		   .append(" and   lancamento.status                     != :statusFuro");
+		   .append(" and   lancamento.status                     != :statusFuro");*/
 
 		/*
 		 * Comentario da verificacao por nome Eduardo "PunkRock" Castro
@@ -112,7 +131,11 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		query.setParameter("codigo", codigo);
 		query.setParameter("edicao", edicao);
 		query.setParameter("dataLancamento", dataLancamento);
-		query.setParameter("statusFuro", StatusLancamento.FURO);
+		
+		if (furado) {
+			query.setParameter("statusFuro", StatusLancamento.FURO);
+		}
+		
 		/*
 		 * Comentario da verificacao por nome Eduardo "PunkRock" Castro
 		if (nomeProduto != null && !nomeProduto.isEmpty()){
@@ -703,6 +726,26 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		Query query = this.getSession().createQuery(queryString);
 		
 		return new HashSet<ProdutoEdicao>(query.list());
+	}
+
+	/* (non-Javadoc)
+	 * @see br.com.abril.nds.repository.ProdutoEdicaoRepository#validarExpedicaoFisicaProdutoEdicao(br.com.abril.nds.model.cadastro.ProdutoEdicao)
+	 */
+	@Override
+	public boolean validarExpedicaoFisicaProdutoEdicao(ProdutoEdicao produtoEdicao) {
+		String queryString = "SELECT notaEnvioItem from " +
+							 "ProdutoEdicao produtoEdicao, " +
+							 "ItemNotaEnvio notaEnvioItem " +
+							 "where notaEnvioItem.produtoEdicao.id = produtoEdicao.id " +
+							 "and produtoEdicao.id = :produtoEdicaoId";
+		Query query = this.getSession().createQuery(queryString);
+
+		query.setParameter("produtoEdicaoId", produtoEdicao.getId());
+		
+		List lista = query.list();
+		
+		// Retorna true caso não seja encontrado resultado para a lista (nenhum registro encontrado, logo, não existe expedição física realizada)
+		return (lista == null || lista.size() == 0);
 	}
 
 	/*@Override

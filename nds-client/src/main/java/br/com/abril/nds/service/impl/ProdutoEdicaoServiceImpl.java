@@ -51,7 +51,6 @@ import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.service.exception.UniqueConstraintViolationException;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.Intervalo;
-import br.com.abril.nds.util.MathUtil;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.ValidacaoVO;
@@ -127,7 +126,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 	@Override
 	@Transactional(readOnly = true)
 	public FuroProdutoDTO obterProdutoEdicaoPorCodigoEdicaoDataLancamento(
-			String codigo, String nomeProduto, Long edicao, Date dataLancamento) {
+			String codigo, String nomeProduto, Long edicao, Date dataLancamento, boolean furado) {
 		
 		List<String> mensagensValidacao = new ArrayList<String>();
 		
@@ -149,7 +148,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		
 		FuroProdutoDTO furoProdutoDTO = produtoEdicaoRepository.
 				obterProdutoEdicaoPorCodigoEdicaoDataLancamento(
-						codigo, nomeProduto, edicao, dataLancamento);
+						codigo, nomeProduto, edicao, dataLancamento, furado);
 		
 		if (furoProdutoDTO != null){
 			//buscar path de imagens
@@ -270,15 +269,6 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			String codigoDeBarras, boolean brinde) {
 		
 		return this.produtoEdicaoRepository.countPesquisarEdicoes(codigoProduto, nome, dataLancamento, preco, statusLancamento, codigoDeBarras, brinde);
-	}
-	
-	@Override
-	@Transactional(readOnly = true)
-	public List<ProdutoEdicaoDTO> pesquisarUltimasEdicoes(String codigoProduto,
-			int maxResults) {
-		
-		return this.produtoEdicaoRepository.pesquisarEdicoes(codigoProduto,null,null,null,null,null,false, "DESC",
-				"numeroEdicao", 0, 5);
 	}
 	
 	/**
@@ -507,8 +497,11 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			produtoEdicao.setNumeroEdicao(dto.getNumeroEdicao());
 			produtoEdicao.setPacotePadrao(dto.getPacotePadrao());
 			produtoEdicao.setNomeComercial(dto.getNomeComercialProduto());
+			produtoEdicao.setCaracteristicaProduto(dto.getCaracteristicaProduto());
 			produtoEdicao.setPrecoPrevisto(dto.getPrecoPrevisto());
-				
+			produtoEdicao.setPeb(dto.getPeb());	
+			produtoEdicao.setGrupoProduto(dto.getGrupoProduto());
+			
 			// Reparte:
 			produtoEdicao.setReparteDistribuido(repartePrevisto.add(repartePromocional));
 				
@@ -530,6 +523,9 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			// Texto boletim informativo:
 			produtoEdicao.setBoletimInformativo(dto.getBoletimInformativo());
 			
+			//Desconto Fornecedor x Distribuidor
+			produtoEdicao.setDescricaoDesconto(dto.getDescricaoDesconto());
+			produtoEdicao.setDesconto(dto.getDesconto());
 			
 			//Segmentação
 			SegmentacaoProduto segm = produtoEdicao.getSegmentacao()!=null?produtoEdicao.getSegmentacao():new SegmentacaoProduto();
@@ -552,7 +548,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		produtoEdicao.setPossuiBrinde(false);
 		produtoEdicao.setBrinde(null);
 		
-		if(dto.getIdBrinde()!=null){
+		if(dto.getIdBrinde()!=null && dto.isPossuiBrinde()){
 			Brinde brinde = brindeRepository.buscarPorId(dto.getIdBrinde());
 	        if (brinde!=null){ 
 	        	produtoEdicao.setPossuiBrinde(true);
@@ -689,21 +685,20 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		Produto produto = pService.obterProdutoPorCodigo(codigoProduto);
 
 		ProdutoEdicaoDTO dto = new ProdutoEdicaoDTO();
+		
 		dto.setNomeProduto(produto.getNome());
 		dto.setCodigoProduto(produto.getCodigo());
-		
+		dto.setFase(produto.getFase());
+		dto.setPacotePadrao(produto.getPacotePadrao());
+		dto.setPeso(produto.getPeso());
+
 		String nomeFornecedor = "";
 		if (produto.getFornecedor() != null 
 				&& produto.getFornecedor().getJuridica() != null) {
 			nomeFornecedor = produto.getFornecedor().getJuridica().getNomeFantasia();
 		}
-		
 		dto.setNomeFornecedor(nomeFornecedor);
-		dto.setFase(produto.getFase());
-		dto.setPacotePadrao(produto.getPacotePadrao());
-		dto.setPeso(produto.getPeso());
-		dto.setDescricaoDesconto("");
-		dto.setNomeComercial(produto.getNomeComercial());
+
 		dto.setDesconto(produto.getDescontoLogistica() == null 
 				? BigDecimal.ZERO : BigDecimal.valueOf(
 						produto.getDescontoLogistica().getPercentualDesconto()));
@@ -712,13 +707,15 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 
 			Long id = Long.valueOf(idProdutoEdicao);
 			ProdutoEdicao pe = this.obterProdutoEdicao(id, false);
-
-			dto.setId(id);
 			
+			dto.setId(id);
 			dto.setNomeComercialProduto(pe.getNomeComercial());
+			dto.setCaracteristicaProduto(pe.getCaracteristicaProduto());
+			dto.setGrupoProduto(pe.getGrupoProduto()!=null?pe.getGrupoProduto():produto.getTipoProduto()!=null?produto.getTipoProduto().getGrupoProduto():null);
 			dto.setNumeroEdicao(pe.getNumeroEdicao());
 			dto.setPacotePadrao(pe.getPacotePadrao());
 			dto.setPrecoPrevisto(pe.getPrecoPrevisto());
+			
 			BigDecimal precoVenda = pe.getPrecoVenda();
             dto.setPrecoVenda(precoVenda);
 			dto.setExpectativaVenda(pe.getExpectativaVenda());
@@ -727,10 +724,11 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			dto.setChamadaCapa(pe.getChamadaCapa());
 			dto.setParcial(pe.isParcial());
 			dto.setPossuiBrinde(pe.isPossuiBrinde());
-			
-			BigDecimal percentualDesconto = Util.nvl(pe.getProduto().getDesconto(), BigDecimal.ZERO);
-			BigDecimal valorDesconto = MathUtil.calculatePercentageValue(precoVenda, percentualDesconto);
-			dto.setDesconto(valorDesconto);
+		
+			//Desconto Fornecedor x Distribuidor
+			dto.setDescricaoDesconto(pe.getDescricaoDesconto()!=null?pe.getDescricaoDesconto():produto.getDescricaoDesconto());
+			BigDecimal percentualDesconto = Util.nvl(pe.getDesconto()!=null?pe.getDesconto():produto.getDesconto()!=null?produto.getDesconto():BigDecimal.ZERO, BigDecimal.ZERO);
+			dto.setDesconto(percentualDesconto);
 
 			dto.setPeso(pe.getPeso());
 			dto.setBoletimInformativo(pe.getBoletimInformativo());

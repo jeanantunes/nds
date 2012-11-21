@@ -137,7 +137,7 @@ public class NegociacaoDividaRepositoryImpl extends AbstractRepositoryModel<Nego
 	@SuppressWarnings("unchecked")
 	public List<ConsultaFollowupNegociacaoDTO>obterNegociacaoFollowup(FiltroFollowupNegociacaoDTO filtro){
 		
-		StringBuilder hql = new StringBuilder();
+		StringBuilder hql = new StringBuilder();	
 		
 		hql.append(" select ")
 			

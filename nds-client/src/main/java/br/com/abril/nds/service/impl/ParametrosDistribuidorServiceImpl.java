@@ -240,7 +240,7 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		
 		// Garantia
 		parametrosDistribuidor.setUtilizaGarantiaPdv(distribuidor.isUtilizaGarantiaPdv());
-		if (distribuidor.isUtilizaGarantiaPdv()) {
+		
 		    for (TipoGarantiaAceita tipoGarantiaAceita : distribuidor
 		            .getTiposGarantiasAceita()) {
 		        
@@ -266,7 +266,7 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		            .setValidadeNotaPromissoria(tipoGarantiaAceita
 		                    .getValor());
 		        } else if (tipoGarantiaAceita.getTipoGarantia() == TipoGarantia.ANTECEDENCIA_VALIDADE) {
-		            parametrosDistribuidor.setUtilizaAntecedenciaValidade(true);
+		           
 		            parametrosDistribuidor
 		            .setValidadeAntecedenciaValidade(tipoGarantiaAceita
 		                    .getValor());
@@ -276,7 +276,7 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		                    .getValor());
 		        }
 		    }
-		}
+		
 		
 
 		// Negociação de Dividas
@@ -373,9 +373,6 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		endereco.setCidade(enderecoVO.getLocalidade());
 		endereco.setUf(enderecoVO.getUf());
 		
-		endereco.setCodigoBairro(
-			(enderecoVO.getCodigoBairro() == null) ? null : enderecoVO.getCodigoBairro());
-		
 		endereco.setCodigoCidadeIBGE(
 			(enderecoVO.getCodigoCidadeIBGE() == null) ? null : enderecoVO.getCodigoCidadeIBGE().intValue());
 		
@@ -414,9 +411,6 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		enderecoVO.setBairro(endereco.getBairro());
 		enderecoVO.setLocalidade(endereco.getCidade());
 		enderecoVO.setUf(endereco.getUf());
-		
-		enderecoVO.setCodigoBairro(
-			(endereco.getCodigoBairro() == null) ? null : endereco.getCodigoBairro());
 		
 		enderecoVO.setCodigoCidadeIBGE(
 			(endereco.getCodigoCidadeIBGE() == null) ? null : endereco.getCodigoCidadeIBGE().longValue());
@@ -466,10 +460,14 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		    distribuidor.setPoliticaChamadao(politicaChamadao);
 		}
 		Integer chamadaoDiasSuspensao = parametrosDistribuidor.getChamadaoDiasSuspensao();
-		BigDecimal chamadaoConsignado = CurrencyUtil.converterValor(parametrosDistribuidor.getChamadaoValorConsignado());
 		politicaChamadao.setDiasSuspenso(chamadaoDiasSuspensao);
-		politicaChamadao.setValorConsignado(chamadaoConsignado);
-		
+		if (parametrosDistribuidor
+							.getChamadaoValorConsignado() != null) {
+			BigDecimal chamadaoConsignado = CurrencyUtil
+					.getBigDecimal(parametrosDistribuidor
+							.getChamadaoValorConsignado());
+			politicaChamadao.setValorConsignado(chamadaoConsignado);
+		}
 		ParametrosRecolhimentoDistribuidor parametrosRecolhimentoDistribuidor = null;
 		if (distribuidor.getParametrosRecolhimentoDistribuidor() != null) {
 			parametrosRecolhimentoDistribuidor = distribuidor.getParametrosRecolhimentoDistribuidor();
@@ -615,7 +613,7 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		}
 
 		if (parametrosDistribuidor.getSugereSuspensaoQuandoAtingirReais() != null && !parametrosDistribuidor.getSugereSuspensaoQuandoAtingirReais().isEmpty()) {
-			politicaSuspensao.setValor(CurrencyUtil.converterValor(parametrosDistribuidor.getSugereSuspensaoQuandoAtingirReais()));
+			politicaSuspensao.setValor(CurrencyUtil.getBigDecimal(parametrosDistribuidor.getSugereSuspensaoQuandoAtingirReais()));
 		} else {
 			politicaSuspensao.setValor(null);
 		}
@@ -805,13 +803,6 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
                 distribuidor.removerTipoGarantiaAceita(TipoGarantia.NOTA_PROMISSORIA);
             }
             
-            if (parametrosDistribuidor.isUtilizaAntecedenciaValidade()) {
-                distribuidor.addTipoGarantiaAceita(TipoGarantia.ANTECEDENCIA_VALIDADE, parametrosDistribuidor
-                                .getValidadeAntecedenciaValidade());
-            } else {
-                distribuidor.removerTipoGarantiaAceita(TipoGarantia.ANTECEDENCIA_VALIDADE);
-            }
-            
             if (parametrosDistribuidor.isUtilizaOutros()) {
                 distribuidor.addTipoGarantiaAceita(TipoGarantia.OUTROS, parametrosDistribuidor
                                 .getValidadeOutros());
@@ -821,6 +812,9 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		} else {
 		    distribuidor.removerTodosTiposGarantiasAceitas();
 		}
+		
+		distribuidor.addTipoGarantiaAceita(TipoGarantia.ANTECEDENCIA_VALIDADE, parametrosDistribuidor
+                 .getValidadeAntecedenciaValidade());
     }
 
 	/**

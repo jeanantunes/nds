@@ -73,5 +73,7 @@ public interface BancoRepository extends Repository<Banco,Long>{
 	 * @return boolean: true, caso o banco esteja relacionado com alguma cobranca em aberto
 	 */
 	boolean verificarPedencias(long idBanco);
+
+	List<Banco> obterBancosPorNome(String nomeBanco);
 	
 }

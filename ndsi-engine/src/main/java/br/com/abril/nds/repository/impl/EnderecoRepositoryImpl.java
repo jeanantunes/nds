@@ -118,7 +118,7 @@ public class EnderecoRepositoryImpl extends AbstractRepositoryModel<Endereco, Lo
 	 */
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<Localidade> obterLocalidadesPorUFNome(String nome, String siglaUF) {
+	public List<String> obterLocalidadesPorUFNome(String nome, String siglaUF) {
 
 		Criteria criteria = super.getSession().createCriteria(Localidade.class);
 
@@ -165,7 +165,7 @@ public class EnderecoRepositoryImpl extends AbstractRepositoryModel<Endereco, Lo
 	 */
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<Bairro> obterBairrosPorCodigoIBGENome(String nome, Long codigoIBGE) {
+	public List<String> obterBairrosPorCodigoIBGENome(String nome, Long codigoIBGE) {
 
 		Criteria criteria = super.getSession().createCriteria(Bairro.class);
 
@@ -183,7 +183,7 @@ public class EnderecoRepositoryImpl extends AbstractRepositoryModel<Endereco, Lo
 	 */
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<Logradouro> obterLogradourosPorCodigoBairroNome(Long codigoBairro, String nomeLogradouro) {
+	public List<String> obterLogradourosPorCodigoBairroNome(Long codigoBairro, String nomeLogradouro) {
 
 		Criteria criteria = super.getSession().createCriteria(Logradouro.class);
 
@@ -192,5 +192,82 @@ public class EnderecoRepositoryImpl extends AbstractRepositoryModel<Endereco, Lo
 											  nomeLogradouro, MatchMode.ANYWHERE)));
 
 		return criteria.list();
-	}	
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<String> obterBairrosPorCidade(String cidade) {
+		StringBuilder hql = new StringBuilder("select distinct(endereco.bairro) ");
+		hql.append(" from EnderecoCota enderecoCota ")
+		   .append(" join enderecoCota.endereco endereco ")
+		   .append(" where endereco.cidade = :cidade")
+		   .append(" and endereco.bairro is not null")
+		   .append(" group by endereco.bairro");
+
+		Query query = this.getSession().createQuery(hql.toString());
+
+		query.setParameter("cidade", cidade);
+		
+		return query.list();
+	}
+	
+	
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<String> obterListaLocalidadeCotas() {
+		
+		StringBuffer hql = new StringBuffer();
+		
+		hql.append(" select distinct(endereco.cidade) ");
+		
+		hql.append(" from Cota cota 				");
+		
+		hql.append(" inner join cota.enderecos as enderecoCota			");
+		
+		hql.append(" inner join enderecoCota.endereco as endereco		");
+		
+		hql.append(" where enderecoCota.principal = :indPrincipal  	");
+						
+		Query query = getSession().createQuery(hql.toString());
+		
+		query.setParameter("indPrincipal", true);
+		
+		return query.list();
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<String> pesquisarLocalidades(String nomeLocalidade) {
+		
+		Query query = 
+				this.getSession().createQuery("select distinct(e.cidade) from Endereco e where e.cidade like :nome ");
+		query.setParameter("nome", "%" + nomeLocalidade + "%");
+		
+		return query.list();
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<String> pesquisarLogradouros(String nomeLogradouro) {
+		
+		Query query = 
+				this.getSession().createQuery("select distinct(e.logradouro) from Endereco e where e.logradouro like :nome ");
+		query.setParameter("nome", "%" + nomeLogradouro + "%");
+		
+		return query.list();
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<String> pesquisarBairros(String nomeBairro) {
+
+		Query query = this.getSession().createQuery(
+				"select distinct(e.bairro) from Endereco e where e.bairro like :nome ");
+		query.setParameter("nome", "%" + nomeBairro + "%");
+
+		return query.list();
+	}
+	
 }

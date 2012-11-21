@@ -67,6 +67,13 @@ public class ProdutoRepositoryImplTest extends AbstractRepositoryImplTest {
 	}
 	
 	@Test
+	public void obterNomeProdutoPorCodigo() {
+		String codigoProduto = "1.55";
+		
+		produtoRepository.obterNomeProdutoPorCodigo(codigoProduto);
+	}
+	
+	@Test
 	public void pesquisarProdutos() {
 		
 		List<ConsultaProdutoDTO> listaProdutos = 
@@ -74,6 +81,80 @@ public class ProdutoRepositoryImplTest extends AbstractRepositoryImplTest {
 				"1", "", "teste", "editor", 1L, "asc", "codigo", 1, 15);
 		
 		Assert.assertNotNull(listaProdutos);
+	}
+	
+	@Test
+	public void pesquisarProdutosProdutoNomeProduto() {
+		
+		List<ConsultaProdutoDTO> listaProdutos = 
+			this.produtoRepository.pesquisarProdutos(
+				"1", "produtoTeste", "teste", "editor", 1L, "asc", "codigo", 1, 15);
+		
+		Assert.assertNotNull(listaProdutos);
+	}
+	
+	@Test
+	public void pesquisarCountProdutosProduto() {
+		
+		String produto = "produtoTeste";
+		
+		produtoRepository.pesquisarCountProdutos(null, produto, null, null, null);
+	}
+	
+	@Test
+	public void pesquisarCountProdutosFornecedor() {
+		
+		String fornecedor = "fornecedorTeste";
+		
+		produtoRepository.pesquisarCountProdutos(null, null, fornecedor, null, null);
+	}
+	
+	@Test
+	public void pesquisarCountProdutosEditor() {
+		
+		String editor = "editorTeste";
+		
+		produtoRepository.pesquisarCountProdutos(null, null, null, editor, null);
+	}
+	
+	@Test
+	public void pesquisarCountProdutosCodTipoproduto() {
+		
+		Long codTipoproduto = 1L;
+		
+		produtoRepository.pesquisarCountProdutos(null, null, null, null, codTipoproduto);
+	}
+	
+	@Test
+	public void obterProdutoPorID() {
+		
+		Long id = 1L;
+		
+		Produto produto = produtoRepository.obterProdutoPorID(id);
+	}
+	
+	@Test
+	public void obterProdutoPorNomeProdutoOuCodigoNome() {
+		
+		String nome = "produtoTeste";
+		
+		Produto produto = produtoRepository.obterProdutoPorNomeProdutoOuCodigo(nome, null);
+	}
+	
+	@Test
+	public void obterProdutoPorNomeProdutoOuCodigoCodigo() {
+		
+		String codigo = "454.5748";
+		
+		Produto produto = produtoRepository.obterProdutoPorNomeProdutoOuCodigo(null, codigo);
+	}
+	
+	@Test
+	public void obterGrupoProduto() {
+		
+		String codigoProduto = "454.5748";
+		
+		GrupoProduto grupoProduto = produtoRepository.obterGrupoProduto(codigoProduto);
 	}
 	
 }

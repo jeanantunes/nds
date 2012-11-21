@@ -233,7 +233,6 @@ public class HistoricoTitularidadeServiceImpl implements HistoricoTitularidadeSe
 		historicoTitularidadeCotaEndereco.setBairro(endereco.getBairro());
 		historicoTitularidadeCotaEndereco.setCep(endereco.getCep());
 		historicoTitularidadeCotaEndereco.setCidade(endereco.getCidade());
-		historicoTitularidadeCotaEndereco.setCodigoBairro(endereco.getCodigoBairro());
 		historicoTitularidadeCotaEndereco.setCodigoCidadeIBGE(endereco.getCodigoCidadeIBGE());
 		historicoTitularidadeCotaEndereco.setCodigoUf(endereco.getCodigoUf());
 		historicoTitularidadeCotaEndereco.setComplemento(endereco.getComplemento());

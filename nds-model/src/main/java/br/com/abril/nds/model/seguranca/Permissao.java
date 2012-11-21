@@ -100,8 +100,7 @@ public enum Permissao
 
 	ROLE_ADMINISTRACAO_INICIAR_DIA("Iniciar o Dia",												  		   Permissao.ROLE_ADMINISTRACAO),	
 	ROLE_ADMINISTRACAO_RELATORIO_SERVICO_ENTREGA("Relatórios de Serviço de Entrega",					   Permissao.ROLE_ADMINISTRACAO),
-	ROLE_ADMINISTRACAO_ALTERACAO_COTA("Alteração / Cota",			          					 		   Permissao.ROLE_ADMINISTRACAO),
-
+	
 	ROLE_ADMINISTRACAO_GERACAO_ARQUIVO("Geracao De Arquivos",									           Permissao.ROLE_ADMINISTRACAO),
 	ROLE_ADMINISTRACAO_TIPO_NOTA("Tipos de NF-e",													  	   Permissao.ROLE_ADMINISTRACAO),
 	ROLE_ADMINISTRACAO_PARAMETROS_SISTEMA("Parâmetros de Sistema",	          					 		   Permissao.ROLE_ADMINISTRACAO),

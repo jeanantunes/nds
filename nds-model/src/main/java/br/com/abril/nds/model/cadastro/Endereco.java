@@ -39,9 +39,6 @@ public class Endereco implements Serializable, Cloneable {
 	@Column(name = "ID")
 	private Long id;
 	
-	@Column(name = "CODIGO_BAIRRO", nullable = true)
-	private String codigoBairro;
-	
 	@Column(name = "BAIRRO", length=60)
 	@NFEWhens(value = {
 			@NFEWhen(condition = NFEConditions.IDENTIFICACAO_EMITENTE, export = @NFEExport(secao=TipoSecao.C05, posicao=3, tamanho=60)),
@@ -116,11 +113,10 @@ public class Endereco implements Serializable, Cloneable {
 	public Endereco() {
 	}
 
-	public Endereco(String codigoBairro, String bairro, String cep,
+	public Endereco(String bairro, String cep,
             Integer codigoCidadeIBGE, String cidade, String complemento,
             String tipoLogradouro, String logradouro, String numero, String uf,
             String codigoUf, Pessoa pessoa) {
-        this.codigoBairro = codigoBairro;
         this.bairro = bairro;
         this.cep = cep;
         this.codigoCidadeIBGE = codigoCidadeIBGE;
@@ -222,14 +218,6 @@ public class Endereco implements Serializable, Cloneable {
 		this.pessoa = pessoa;
 	}
 
-	public String getCodigoBairro() {
-		return codigoBairro;
-	}
-
-	public void setCodigoBairro(String codigoBairro) {
-		this.codigoBairro = codigoBairro;
-	}
-	
 	public Integer getCodigoCidadeIBGE() {
 		return codigoCidadeIBGE;
 	}

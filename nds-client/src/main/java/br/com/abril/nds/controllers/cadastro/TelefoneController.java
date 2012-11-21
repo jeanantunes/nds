@@ -234,25 +234,30 @@ public class TelefoneController {
 		
 		TelefoneAssociacaoDTO telefoneAssociacaoDTO = telefonesSalvarSessao.remove(referencia);
 		
+		Set<Long> setTelefonesRemover = this.obterTelefonesRemoverSessao();
 		if (telefoneAssociacaoDTO != null &&
 				telefoneAssociacaoDTO.getTelefone() != null &&
 				telefoneAssociacaoDTO.getTelefone().getId() != null){
 			
-			Set<Long> setTelefonesRemover = this.obterTelefonesRemoverSessao();
-			setTelefonesRemover.add(telefoneAssociacaoDTO.getTelefone().getId());
-			
-			this.httpSession.setAttribute(LISTA_TELEFONES_REMOVER_SESSAO, setTelefonesRemover);
+			setTelefonesRemover.add(telefoneAssociacaoDTO.getTelefone().getId());	
 		} else {
 			
-			Set<Long> setTelefonesRemover = this.obterTelefonesRemoverSessao();
 			setTelefonesRemover.add(referencia.longValue());
-			
-			this.httpSession.setAttribute(LISTA_TELEFONES_REMOVER_SESSAO, setTelefonesRemover);
 		}
+		this.httpSession.setAttribute(LISTA_TELEFONES_REMOVER_SESSAO, setTelefonesRemover);
 		
 		this.httpSession.setAttribute(LISTA_TELEFONES_SALVAR_SESSAO, telefonesSalvarSessao);
 		
 		this.pesquisarTelefones(tela, null, null);
+		
+		List<TelefoneAssociacaoDTO> telefonesExibicao = this.obterTelefonesExibicao();
+		for (TelefoneAssociacaoDTO item : telefonesExibicao){
+		    if (item.getReferencia() == referencia){
+			    telefonesExibicao.remove(item);
+			    break;
+		    }
+	    }
+		this.httpSession.setAttribute(LISTA_TELEFONES_EXIBICAO, telefonesExibicao);
 	}
 	
 	@Post

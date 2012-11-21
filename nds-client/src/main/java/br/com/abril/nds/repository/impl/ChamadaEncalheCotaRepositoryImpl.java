@@ -180,7 +180,11 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 
 		StringBuilder hql = new StringBuilder();
 
-		hql.append(" SELECT  chamadaEncalheCota.qtdePrevista ");
+		/*
+		 * Foi incluido a cláusula DISTINCT para evitar o cenário de mais de um 
+		 * PDV associado a mesma cota.
+		 */
+		hql.append(" SELECT DISTINCT chamadaEncalheCota.qtdePrevista ");
 
 		hql.append(getSqlFromEWhereCotasProgramadaParaAntecipacaoEncalhe(filtro));
 
@@ -203,7 +207,11 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 
 		StringBuilder hql = new StringBuilder();
 
-		hql.append("SELECT count ( cota.id ) ");
+		/*
+		 * Foi incluido a cláusula DISTINCT para evitar o cenário de mais de um 
+		 * PDV associado a mesma cota.
+		 */
+		hql.append("SELECT DISTINCT count ( cota.id ) ");
 
 		hql.append(getSqlFromEWhereCotasProgramadaParaAntecipacaoEncalhe(filtro));
 
@@ -223,7 +231,11 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 
 		StringBuilder hql = new StringBuilder();
 
-		hql.append("SELECT new ")
+		/*
+		 * Foi incluido a cláusula DISTINCT para evitar o cenário de mais de um 
+		 * PDV associado a mesma cota.
+		 */
+		hql.append("SELECT DISTINCT new ")
 				.append(ChamadaAntecipadaEncalheDTO.class.getCanonicalName())
 				.append(" (box.codigo, ")
 				.append(" box.nome, ")

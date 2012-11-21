@@ -36,6 +36,7 @@ import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.ItemNotaFiscalEntradaRepository;
+import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 public class ItemNotaFiscalEntradaRepositoryImplTest extends AbstractRepositoryImplTest {
 
@@ -55,7 +56,7 @@ public class ItemNotaFiscalEntradaRepositoryImplTest extends AbstractRepositoryI
 		CFOP cfop5102 = Fixture.cfop5102();
 		save(cfop5102);
 		
-		TipoNotaFiscal tipoNotaFiscal = Fixture.tipoNotaFiscalRecebimento();
+		TipoNotaFiscal tipoNotaFiscal = Fixture.tipoNotaFiscalRecebimento(cfop5102);
 		save(tipoNotaFiscal);
 		
 		box1 = Fixture.criarBox(1, "BX-001", TipoBox.LANCAMENTO);
@@ -363,6 +364,16 @@ public class ItemNotaFiscalEntradaRepositoryImplTest extends AbstractRepositoryI
 	}
 	
 	@Test
+	public void buscarItensPorIdNota(){
+		Long idNotaFiscal = 1L;
+		
+		List <ItemNotaFiscalEntrada> itemNotaFiscalEntradas = 
+				itemNotaFiscalEntradaRepository.buscarItensPorIdNota(idNotaFiscal);
+		
+		Assert.assertNotNull(itemNotaFiscalEntradas);
+	}
+	
+	@Test
 	public void testObterListaItemNotaFiscalEntradaDadosDanfe() {
 		
 		@SuppressWarnings("unused")
@@ -370,7 +381,81 @@ public class ItemNotaFiscalEntradaRepositoryImplTest extends AbstractRepositoryI
 		
 		Assert.assertEquals(1, result.size());
 
-		
 	}
 	
+	@Test
+	public void obtemPorControleConferenciaEncalheCotaIdControleConferencia(){
+		Long idControleConferencia = 1L;
+		
+		List <ItemNotaFiscalEntrada> itemNotaFiscalEntradas = 
+			itemNotaFiscalEntradaRepository.obtemPorControleConferenciaEncalheCota
+			(idControleConferencia, null, null, null, null);
+		
+		Assert.assertNotNull(itemNotaFiscalEntradas);
+	}
+	
+	@Test
+	public void obtemPorControleConferenciaEncalheCotaOrdenacaoAsc(){
+		
+		Long idControleConferencia = 1L;
+		String orderBy = "NCMProduto";
+		Ordenacao ordenacao = Ordenacao.ASC;
+
+		
+		List <ItemNotaFiscalEntrada> itemNotaFiscalEntradas = 
+			itemNotaFiscalEntradaRepository.obtemPorControleConferenciaEncalheCota
+			(idControleConferencia, orderBy, ordenacao, null, null);
+		
+		Assert.assertNotNull(itemNotaFiscalEntradas);
+	}
+	
+	@Test
+	public void obtemPorControleConferenciaEncalheCotaOrdenacaoDesc(){
+		
+		Long idControleConferencia = 1L;
+		String orderBy = "NCMProduto";
+		Ordenacao ordenacao = Ordenacao.DESC;
+
+		
+		List <ItemNotaFiscalEntrada> itemNotaFiscalEntradas = 
+			itemNotaFiscalEntradaRepository.obtemPorControleConferenciaEncalheCota
+			(idControleConferencia, orderBy, ordenacao, null, null);
+		
+		Assert.assertNotNull(itemNotaFiscalEntradas);
+	}
+	
+	@Test
+	public void obtemPorControleConferenciaEncalheCotaFirstResult(){
+		
+		Long idControleConferencia = 1L;
+		Integer firstResult = 1;
+				
+		List <ItemNotaFiscalEntrada> itemNotaFiscalEntradas = 
+			itemNotaFiscalEntradaRepository.obtemPorControleConferenciaEncalheCota
+			(idControleConferencia, null, null, firstResult, null);
+		
+		Assert.assertNotNull(itemNotaFiscalEntradas);
+	}
+	
+	@Test
+	public void obtemPorControleConferenciaEncalheCotaMaxResult(){
+		
+		Long idControleConferencia = 1L;
+		Integer maxtResult = 1;
+				
+		List <ItemNotaFiscalEntrada> itemNotaFiscalEntradas = 
+			itemNotaFiscalEntradaRepository.obtemPorControleConferenciaEncalheCota
+			(idControleConferencia, null, null, null, maxtResult);
+		
+		Assert.assertNotNull(itemNotaFiscalEntradas);
+	}
+	
+	@Test
+	public void quantidadePorControleConferenciaEncalheCota(){
+		
+		Long idControleConferencia = 1L;
+						
+		itemNotaFiscalEntradaRepository.quantidadePorControleConferenciaEncalheCota(idControleConferencia);
+		
+	}
 }

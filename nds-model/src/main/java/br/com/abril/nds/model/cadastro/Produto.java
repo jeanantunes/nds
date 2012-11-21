@@ -149,7 +149,11 @@ public class Produto implements Serializable {
 	@Embedded
 	private SegmentacaoProduto segmentacao;
 	
+	@Column(name="DESCONTO")
 	private BigDecimal desconto;
+	
+	@Column(name="DESCRICAO_DESCONTO")
+	private String descricaoDesconto;
 	
 	public Long getId() {
 		return id;
@@ -553,15 +557,35 @@ public class Produto implements Serializable {
 		this.segmentacao = segmentacao;
 	}
 
+	/**
+	 * @return the desconto
+	 */
 	public BigDecimal getDesconto() {
 		return desconto;
 	}
 
+	/**
+	 * @param desconto the desconto to set
+	 */
 	public void setDesconto(BigDecimal desconto) {
 		this.desconto = desconto;
 	}
-	
-    /**
+
+	/**
+	 * @return the descricaoDesconto
+	 */
+	public String getDescricaoDesconto() {
+		return descricaoDesconto;
+	}
+
+	/**
+	 * @param descricaoDesconto the descricaoDesconto to set
+	 */
+	public void setDescricaoDesconto(String descricaoDesconto) {
+		this.descricaoDesconto = descricaoDesconto;
+	}
+
+	/**
      * Verifica se o produto é um publicação
      * 
      * @return true se o produto é uma publicação, false caso contrário
