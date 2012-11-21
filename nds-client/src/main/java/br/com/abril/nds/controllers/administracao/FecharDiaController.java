@@ -373,25 +373,26 @@ public class FecharDiaController {
 		
 	}
 	
-	@Get
-	public void exportarVendaSuplemntar(FileType fileType){		
+	@Post
+	@Path("/exportarVendaSuplemntar")
+	public void exportarVendaSuplemntar(FileType fileType, String tipoVenda){		
 		try {
 			
-			List<VendaFechamentoDiaDTO> listaReparte = resumoSuplementarFecharDiaService.obterVendasSuplementar(distribuidor.getDataOperacao());
+			List<VendaFechamentoDiaDTO> listaVenda = null;
+			if(tipoVenda.equals("encalhe")){
+				listaVenda = resumoEncalheFecharDiaService.obterDadosVendaEncalhe(distribuidor.getDataOperacao());
+			}else if(tipoVenda.equals("suplementar"))
+				listaVenda = resumoSuplementarFecharDiaService.obterVendasSuplementar(distribuidor.getDataOperacao());
 			
-			if(listaReparte.isEmpty()) {
+			if(listaVenda.isEmpty()) {
 				throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");
 			}
 			
-				FileExporter.to("recebimento_fisico", fileType).inHTTPResponse(this.getNDSFileHeader(), null, null, 
-						listaReparte, VendaFechamentoDiaDTO.class, this.httpResponse);
+				FileExporter.to("venda_" + tipoVenda, fileType).inHTTPResponse(this.getNDSFileHeader(), null, null, 
+						listaVenda, VendaFechamentoDiaDTO.class, this.httpResponse);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
-		
-		
-		result.nothing();
 		
 	}
 	
