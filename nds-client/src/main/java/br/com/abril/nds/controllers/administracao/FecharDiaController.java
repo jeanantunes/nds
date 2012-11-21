@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
@@ -691,6 +692,9 @@ public class FecharDiaController {
         if (relatorio != null) {
             long size = relatorio.length;
             InputStream inputStream = new ByteArrayInputStream(relatorio);
+            Cookie cookie = new Cookie("fileDownload", "true");
+            cookie.setPath("/");
+            httpResponse.addCookie(cookie);
             InputStreamDownload download = new InputStreamDownload(inputStream, FileType.PDF.getContentType(),
                     FECHAMENTO_DIARIO_REPORT_EXPORT_NAME, true, size);
             return download;

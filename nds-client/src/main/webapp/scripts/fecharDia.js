@@ -649,6 +649,7 @@ var fecharDiaController =  $.extend(true, {
 				    $.fileDownload(contextPath + "/administracao/fecharDia/gerarRelatorioFechamentoDiario", {
                         httpMethod : "POST",
                         data : [],
+                        preparingMessageHtml: "Gerando relatório do Fechamento Diário, por favor, aguarde...",
                         failCallback : function() {
                             exibirMensagem("ERROR", ["Erro na geração do Relatório de Fechamento Diário!"]);
                         }
