@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="fechamento_diario_encalhe" pageWidth="842" pageHeight="600" orientation="Landscape" whenNoDataType="BlankPage" columnWidth="810" leftMargin="16" rightMargin="16" topMargin="8" bottomMargin="8" whenResourceMissingType="Empty">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="fechamento_diario_encalhe" pageWidth="842" pageHeight="600" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="810" leftMargin="16" rightMargin="16" topMargin="8" bottomMargin="8" whenResourceMissingType="Empty">
 	<property name="ireport.zoom" value="2.0"/>
-	<property name="ireport.x" value="0"/>
+	<property name="ireport.x" value="575"/>
 	<property name="ireport.y" value="0"/>
 	<style name="zebrado">
 		<conditionalStyle>
 			<conditionExpression><![CDATA[$V{REPORT_COUNT}%2 == 1]]></conditionExpression>
 			<style backcolor="#F0F0F0"/>
 		</conditionalStyle>
-        <conditionalStyle>
+		<conditionalStyle>
 			<conditionExpression><![CDATA[$V{REPORT_COUNT}%2 == 0]]></conditionExpression>
 			<style backcolor="#F8F8F8"/>
 		</conditionalStyle>
@@ -30,23 +30,23 @@
 	<field name="diferencas" class="java.lang.Long"/>
 	<variable name="totalLogico" class="java.lang.Long" calculation="Sum">
 		<variableExpression><![CDATA[$F{qtde}]]></variableExpression>
-		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+		<initialValueExpression><![CDATA[Long.valueOf(0)]]></initialValueExpression>
 	</variable>
 	<variable name="totalFisico" class="java.lang.Long" calculation="Sum">
 		<variableExpression><![CDATA[$F{qtdeFisico}]]></variableExpression>
-		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+		<initialValueExpression><![CDATA[Long.valueOf(0)]]></initialValueExpression>
 	</variable>
 	<variable name="totalJuramentado" class="java.lang.Long" calculation="Sum">
 		<variableExpression><![CDATA[$F{qtdeLogicoJuramentado}]]></variableExpression>
-		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+		<initialValueExpression><![CDATA[Long.valueOf(0)]]></initialValueExpression>
 	</variable>
 	<variable name="totalVendaEncalhe" class="java.lang.Long" calculation="Sum">
 		<variableExpression><![CDATA[$F{qtdeVendaEncalhe}]]></variableExpression>
-		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+		<initialValueExpression><![CDATA[Long.valueOf(0)]]></initialValueExpression>
 	</variable>
 	<variable name="totalDiferencas" class="java.lang.Long" calculation="Sum">
 		<variableExpression><![CDATA[$F{diferencas}]]></variableExpression>
-		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+		<initialValueExpression><![CDATA[Long.valueOf(0)]]></initialValueExpression>
 	</variable>
 	<pageHeader>
 		<band height="68" splitType="Stretch">
@@ -331,7 +331,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{diferencas}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement style="zebrado" mode="Opaque" x="384" y="0" width="72" height="20" />
+				<reportElement style="zebrado" mode="Opaque" x="384" y="0" width="72" height="20"/>
 				<box rightPadding="2">
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -344,7 +344,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{precoVenda}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement style="zebrado" mode="Opaque" x="456" y="0" width="58" height="20" />
+				<reportElement style="zebrado" mode="Opaque" x="456" y="0" width="58" height="20"/>
 				<box rightPadding="2">
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -386,7 +386,7 @@
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA["Total Geral:"]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="true">
+			<textField pattern="#,##0" isBlankWhenNull="true">
 				<reportElement mode="Opaque" x="456" y="1" width="58" height="20" backcolor="#CCCCCC"/>
 				<box>
 					<topPen lineWidth="0.5"/>
@@ -399,7 +399,7 @@
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$V{totalLogico}]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="true">
+			<textField pattern="#,##0" isBlankWhenNull="true">
 				<reportElement mode="Opaque" x="672" y="1" width="75" height="20" backcolor="#CCCCCC"/>
 				<box>
 					<topPen lineWidth="0.5"/>
@@ -412,7 +412,7 @@
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$V{totalVendaEncalhe}]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="true">
+			<textField pattern="#,##0" isBlankWhenNull="true">
 				<reportElement mode="Opaque" x="747" y="1" width="55" height="20" backcolor="#CCCCCC"/>
 				<box>
 					<topPen lineWidth="0.5"/>
@@ -425,7 +425,7 @@
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$V{totalDiferencas}]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="true">
+			<textField pattern="#,##0" isBlankWhenNull="true">
 				<reportElement mode="Opaque" x="514" y="1" width="58" height="20" backcolor="#CCCCCC"/>
 				<box>
 					<topPen lineWidth="0.5"/>
@@ -438,7 +438,7 @@
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$V{totalFisico}]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="true">
+			<textField pattern="#,##0" isBlankWhenNull="true">
 				<reportElement mode="Opaque" x="572" y="1" width="100" height="20" backcolor="#CCCCCC"/>
 				<box>
 					<topPen lineWidth="0.5"/>

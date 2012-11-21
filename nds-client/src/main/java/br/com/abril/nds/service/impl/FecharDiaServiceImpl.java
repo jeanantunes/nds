@@ -443,8 +443,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
     	
     	incluirResumoEncalhe(fechamento, builder); 
     	
-    	ResumoSuplementarFecharDiaDTO resumoSuplementar = incluirResumoSuplementar(fechamento); 
-    	builder.resumoSuplementar(resumoSuplementar);
+    	incluirResumoSuplementar(fechamento, builder); 
     	
     	List<SumarizacaoDividasDTO> dividasReceber = incluirResumoDividaReceber(fechamento);  
     	builder.dividasReceber(dividasReceber);
@@ -689,9 +688,10 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		}
 	}
 
-	private ResumoSuplementarFecharDiaDTO incluirResumoSuplementar(FechamentoDiario fechamento) throws FechamentoDiarioException {
+	private ResumoSuplementarFecharDiaDTO incluirResumoSuplementar(FechamentoDiario fechamento, Builder builder) throws FechamentoDiarioException {
 		
 		ResumoSuplementarFecharDiaDTO resumoSuplementar = resumoSuplementarFecharDiaService.obterResumoGeralEncalhe(fechamento.getDataFechamento());
+		builder.resumoSuplementar(resumoSuplementar);
 		
 		validarDadosFechamentoDiario(resumoSuplementar, "Erro na obtenção dos dados de Resumo de Suplementar!");
 		
@@ -707,14 +707,15 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		
 		validarDadosFechamentoDiario(consolidadoSuplementar,null);
 		
-		incluirLancamentosSuplementar(consolidadoSuplementar);
+		List<SuplementarFecharDiaDTO> lancamentosSuplementar = incluirLancamentosSuplementar(consolidadoSuplementar);
+		builder.suplementar(lancamentosSuplementar);
 	
 		incluirVendaSuplementar(fechamento,consolidadoSuplementar);
 		
 		return resumoSuplementar;
 	}
 
-	private void incluirLancamentosSuplementar(FechamentoDiarioConsolidadoSuplementar consolidadoSuplementar)
+	private List<SuplementarFecharDiaDTO> incluirLancamentosSuplementar(FechamentoDiarioConsolidadoSuplementar consolidadoSuplementar)
 			throws FechamentoDiarioException {
 		
 		List<SuplementarFecharDiaDTO> listaSuplementar = this.resumoSuplementarFecharDiaService.obterDadosGridSuplementar();
@@ -736,6 +737,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 				fechamentoDiarioLancamentoSuplementarRepository.adicionar(lancamentoSuplementar);
 			}
 		}
+		return listaSuplementar;
 	}
 
 	private void incluirVendaSuplementar(FechamentoDiario fechamento, FechamentoDiarioConsolidadoSuplementar consolidadoSuplementar) {

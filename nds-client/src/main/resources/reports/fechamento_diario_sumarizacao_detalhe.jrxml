@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="fechamento_diario_sumarizacao_detalhe" pageWidth="800" pageHeight="525" orientation="Landscape" whenNoDataType="BlankPage" columnWidth="800" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" whenResourceMissingType="Empty">
 	<property name="ireport.zoom" value="1.5"/>
-	<property name="ireport.x" value="542"/>
+	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA["C:\\workspace\\NDS\\nds-client\\src\\main\\resources\\reports\\"]]></defaultValueExpression>
@@ -96,12 +96,12 @@
 				<subreport isUsingCache="false">
 					<reportElement stretchType="RelativeToBandHeight" x="400" y="27" width="385" height="33"/>
 					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{dividasVencer})]]></dataSourceExpression>
-					<subreportExpression class="java.lang.String"><![CDATA[Thread.currentThread().getContextClassLoader().getResource("reports/fechamento_diario_sumarizacao_dividas_receber_vencer.jasper").toURI().getPath()]]></subreportExpression>
+					<subreportExpression class="java.lang.String"><![CDATA[Thread.currentThread().getContextClassLoader().getResource("/reports/fechamento_diario_sumarizacao_dividas_receber_vencer.jasper").toURI().getPath()]]></subreportExpression>
 				</subreport>
 				<subreport isUsingCache="false">
 					<reportElement stretchType="RelativeToBandHeight" x="6" y="26" width="385" height="33"/>
 					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{dividasReceber})]]></dataSourceExpression>
-					<subreportExpression class="java.lang.String"><![CDATA[Thread.currentThread().getContextClassLoader().getResource("reports/fechamento_diario_sumarizacao_dividas_receber_vencer.jasper").toURI().getPath()]]></subreportExpression>
+					<subreportExpression class="java.lang.String"><![CDATA[Thread.currentThread().getContextClassLoader().getResource("/reports/fechamento_diario_sumarizacao_dividas_receber_vencer.jasper").toURI().getPath()]]></subreportExpression>
 				</subreport>
 				<line>
 					<reportElement stretchType="RelativeToBandHeight" x="394" y="0" width="1" height="66"/>

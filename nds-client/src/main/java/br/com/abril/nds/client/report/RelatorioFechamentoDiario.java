@@ -133,7 +133,7 @@ public class RelatorioFechamentoDiario {
 
             @Override
             JRDataSource createDataSource(FechamentoDiarioDTO dto) {
-                return new JREmptyDataSource();
+                return new JRBeanCollectionDataSource(dto.getSuplementar());
             }
         },
         

@@ -12,6 +12,7 @@ import br.com.abril.nds.dto.ResumoFechamentoDiarioConsignadoDTO;
 import br.com.abril.nds.dto.ResumoFechamentoDiarioCotasDTO;
 import br.com.abril.nds.dto.ResumoReparteFecharDiaDTO;
 import br.com.abril.nds.dto.ResumoSuplementarFecharDiaDTO;
+import br.com.abril.nds.dto.SuplementarFecharDiaDTO;
 
 /**
  * DTO com as informações do fechamento diário
@@ -30,6 +31,10 @@ public class FechamentoDiarioDTO implements Serializable {
     private List<ReparteFecharDiaDTO> reparte = new ArrayList<>();
     
     private List<EncalheFecharDiaDTO> encalhe = new ArrayList<>();
+    
+    private List<SuplementarFecharDiaDTO> suplementar = new ArrayList<>();
+    
+    private List<DiferencaDTO> faltasSobras = new ArrayList<>();
 
     private FechamentoDiarioDTO(Builder builder) {
         this.dataFechamento = builder.dataFechamento;
@@ -46,7 +51,8 @@ public class FechamentoDiarioDTO implements Serializable {
         
         this.reparte = builder.reparte;
         this.encalhe = builder.encalhe;
-               
+        this.suplementar = builder.suplementar;      
+        this.faltasSobras = builder.faltasSobras;
     }
 
     /**
@@ -76,6 +82,21 @@ public class FechamentoDiarioDTO implements Serializable {
     public List<EncalheFecharDiaDTO> getEncalhe() {
         return encalhe;
     }
+    
+    /**
+     * @return the suplementar
+     */
+    public List<SuplementarFecharDiaDTO> getSuplementar() {
+        return suplementar;
+    }
+
+    /**
+     * @return the faltasSobras
+     */
+    public List<DiferencaDTO> getFaltasSobras() {
+        return faltasSobras;
+    }
+
 
     /**
      * Builder para o DTO de fechamento diário
@@ -101,9 +122,13 @@ public class FechamentoDiarioDTO implements Serializable {
         
         private ResumoFechamentoDiarioConsignadoDTO resumoConsignado;
         
-        private List<ReparteFecharDiaDTO> reparte;
+        private List<ReparteFecharDiaDTO> reparte = new ArrayList<>();
         
-        private List<EncalheFecharDiaDTO> encalhe;
+        private List<EncalheFecharDiaDTO> encalhe = new ArrayList<>();
+        
+        private List<SuplementarFecharDiaDTO> suplementar = new ArrayList<>();
+        
+        private List<DiferencaDTO> faltasSobras = new ArrayList<>();
         
         public Builder(Date dataFechamento) {
             this.dataFechamento = dataFechamento;
@@ -156,6 +181,16 @@ public class FechamentoDiarioDTO implements Serializable {
         
         public Builder encalhe(List<EncalheFecharDiaDTO> encalhe) {
             this.encalhe = encalhe;
+            return this;
+        }
+        
+        public Builder suplementar(List<SuplementarFecharDiaDTO> suplementar) {
+            this.suplementar = suplementar;
+            return this;
+        }
+        
+        public Builder faltasSobras(List<DiferencaDTO> faltasSobras) {
+            this.faltasSobras = faltasSobras;
             return this;
         }
 
