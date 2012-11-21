@@ -364,7 +364,7 @@ public class DescontoServiceImpl implements DescontoService {
 				produto = produtoRepository.obterProdutoPorCodigo(descontoDTO.getCodigoProduto());
 				
 				if(produto != null) {
-					produto.setDesconto(desconto);
+					produto.setDescontoProduto(desconto);
 					produtoRepository.merge(produto);
 					
 					HistoricoDescontoProduto hdp = new HistoricoDescontoProduto();
@@ -426,7 +426,7 @@ public class DescontoServiceImpl implements DescontoService {
 				produtoEdicao = produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(descontoDTO.getCodigoProduto(), descontoDTO.getEdicaoProduto());
 				
 				if(produtoEdicao != null) {
-					produtoEdicao.setDesconto(desconto);
+					produtoEdicao.setDescontoProdutoEdicao(desconto);
 					produtoEdicaoRepository.merge(produtoEdicao);
 					
 					hdpe = new HistoricoDescontoProdutoEdicao();
@@ -1075,7 +1075,7 @@ public class DescontoServiceImpl implements DescontoService {
 		} else {
 			//Produto possivelmente com mais de um fornecedor, seguindo
 			// a instrução passada, utilizar o desconto do produto
-			percentual = produtoEdicao.getProduto().getDesconto().getValor();
+			percentual = produtoEdicao.getProduto().getDescontoProduto().getValor();
 		}
 		return Util.nvl(percentual, BigDecimal.ZERO);
 	}

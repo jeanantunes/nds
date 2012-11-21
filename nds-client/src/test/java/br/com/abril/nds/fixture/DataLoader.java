@@ -3299,7 +3299,7 @@ public class DataLoader {
                                         .getProdutoEdicao().getProduto()
                                         .getDesconto() != null ? movE.getEstoqueProdutoCota()
                                                 .getProdutoEdicao().getProduto()
-                                                .getDesconto().getValor() : null, BigDecimal.ZERO).doubleValue();
+                                                .getDescontoProduto().getValor() : null, BigDecimal.ZERO).doubleValue();
                         totalD += totalItem;
                     }
                 }
@@ -3328,7 +3328,7 @@ public class DataLoader {
                                         .getDesconto() != null ? movE
                                                 .getEstoqueProdutoCota()
                                                 .getProdutoEdicao().getProduto()
-                                                .getDesconto().getValor() : null, BigDecimal.ZERO).doubleValue());
+                                                .getDescontoProduto().getValor() : null, BigDecimal.ZERO).doubleValue());
                         totalD += totalItem;
                     }
                 }
@@ -3357,7 +3357,7 @@ public class DataLoader {
                                         .getDesconto() != null ? movE
                                                 .getEstoqueProdutoCota()
                                                 .getProdutoEdicao().getProduto()
-                                                .getDesconto().getValor() : null, BigDecimal.ZERO).doubleValue());
+                                                .getDescontoProduto().getValor() : null, BigDecimal.ZERO).doubleValue());
                         totalD += totalItem;
                     }
                 }
@@ -8171,7 +8171,7 @@ public class DataLoader {
                     .getEstoqueProdutoCota().getProdutoEdicao().getPrecoVenda()
                     .doubleValue() - Util.nvl(movE.getEstoqueProdutoCota()
                     .getProdutoEdicao().getProduto().getDesconto() != null ? movE.getEstoqueProdutoCota()
-                            .getProdutoEdicao().getProduto().getDesconto().getValor() : null, BigDecimal.ZERO)
+                            .getProdutoEdicao().getProduto().getDescontoProduto().getValor() : null, BigDecimal.ZERO)
                     .doubleValue()));
         }
         return new BigDecimal(total);
