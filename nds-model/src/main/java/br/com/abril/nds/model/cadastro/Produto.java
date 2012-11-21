@@ -1,6 +1,7 @@
 package br.com.abril.nds.model.cadastro;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -151,7 +152,13 @@ public class Produto implements Serializable {
 	
 	@OneToOne(optional = true)
 	@JoinColumn(name = "DESCONTO_ID")
-	private Desconto desconto;
+	private Desconto descontoProduto;
+
+	@Column(name="DESCONTO")
+	private BigDecimal desconto;
+	
+	@Column(name="DESCRICAO_DESCONTO")
+	private String descricaoDesconto;
 	
 	public Long getId() {
 		return id;
@@ -555,12 +562,34 @@ public class Produto implements Serializable {
 		this.segmentacao = segmentacao;
 	}
 
-    public Desconto getDesconto() {
+	public Desconto getDescontoProduto() {
+		return descontoProduto;
+	}
+
+	public void setDescontoProduto(Desconto descontoProduto) {
+		this.descontoProduto = descontoProduto;
+	}
+
+	public BigDecimal getDesconto() {
 		return desconto;
 	}
 
-	public void setDesconto(Desconto desconto) {
+	public void setDesconto(BigDecimal desconto) {
 		this.desconto = desconto;
+	}
+
+	/**
+	 * @return the descricaoDesconto
+	 */
+	public String getDescricaoDesconto() {
+		return descricaoDesconto;
+	}
+
+	/**
+	 * @param descricaoDesconto the descricaoDesconto to set
+	 */
+	public void setDescricaoDesconto(String descricaoDesconto) {
+		this.descricaoDesconto = descricaoDesconto;
 	}
 
 	/**

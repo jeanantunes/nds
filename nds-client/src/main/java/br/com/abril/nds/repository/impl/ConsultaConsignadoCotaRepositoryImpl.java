@@ -40,8 +40,8 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		   .append("        pe.id as idProdutoEdicao, ")	
 		   .append("        pe.numeroEdicao as numeroEdicao, ")
 		   .append("        pessoa.razaoSocial as nomeFornecedor, ")
-		   .append("        movimento.data as dataLancamento, ")
-		   .append("        pe.precoVenda as precoCapa ")
+		   .append("        lancamento.dataLancamentoDistribuidor as dataLancamento, ")
+		   .append("        pe.precoVenda as precoCapa, ")
 		   .append("        ("+ this.getHQLDesconto() +") as desconto, ")
 		   .append("        (pe.precoVenda - (pe.precoVenda * ("+ this.getHQLDesconto() +") / 100)) as precoDesconto, ")
 		   .append("        CASE WHEN movimento.tipoMovimento.operacaoEstoque  = :tipoOperacaoEntrada THEN (movimento.qtde) ELSE (movimento.qtde*-1) END as reparte, ")		
@@ -77,7 +77,9 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		StringBuilder hql = new StringBuilder();
 		
 		hql.append(" SELECT cota.numeroCota as numeroCota, ")
-		   .append("        pessoaCota.nome as nomeCota, ")
+		   .append("        (CASE WHEN (pessoaCota.nome is not null) then ( pessoaCota.nome ) ")
+		   .append(" 			WHEN (pessoaCota.razaoSocial is not null) then ( pessoaCota.razaoSocial )")
+		   .append(" 			ELSE null END) as nomeCota, ")
 		   .append("        SUM(movimento.qtde *  ")
 		   .append("            CASE WHEN tipoMovimento.grupoMovimentoEstoque IN (:tipoMovimentoEntrada) THEN 1 ")
 		   .append("                 WHEN tipoMovimento.grupoMovimentoEstoque IN (:tipoMovimentoSaida) THEN -1 ")
@@ -117,9 +119,26 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 	}
 	
 	@Override
+	public Long buscarTodasMovimentacoesPorCota(
+			FiltroConsultaConsignadoCotaDTO filtro) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" SELECT count(movimento)  ");
+		
+		hql.append(getHQLFromEWhereConsignadoCota(filtro));
+
+		Query query =  getSession().createQuery(hql.toString());
+		
+		buscarParametrosConsignadoCota(query, filtro);
+		
+		return (Long) query.uniqueResult();
+	}
+	
 	@SuppressWarnings("unchecked")
-	public Integer buscarTodasMovimentacoesPorCota(
-			FiltroConsultaConsignadoCotaDTO filtro, boolean limitar) {
+	@Override
+	public Long buscarTodosMovimentosCotaPeloFornecedor(
+			FiltroConsultaConsignadoCotaDTO filtro) {
 		
 		StringBuilder hql = new StringBuilder();
 		
@@ -135,9 +154,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		
 		List<Long> totalRegistros = query.list();
 		
-		return (totalRegistros == null) ? 0 : totalRegistros.size();
-		
-		
+		return (totalRegistros == null) ? 0L : totalRegistros.size();
 	}
 
 	@Override
@@ -192,7 +209,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		
 		hql.append(getHQLFromEWhereConsignadoCota(filtro));
 		
-		hql.append(getGroupBy(filtro));
+		hql.append(getGroupByTotalDetalhado(filtro));
 
 		Query query =  getSession().createQuery(hql.toString());
 		
@@ -209,6 +226,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		StringBuilder hql = new StringBuilder();
 	
 		hql.append(" FROM MovimentoEstoqueCota movimento ");
+		hql.append(" join movimento.lancamento lancamento ");
 		hql.append(" LEFT JOIN movimento.cota as cota ");
 		hql.append(" LEFT JOIN movimento.tipoMovimento as tipoMovimento ");
 		hql.append(" LEFT JOIN movimento.produtoEdicao as pe ");
@@ -262,20 +280,17 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 	private String getGroupBy(FiltroConsultaConsignadoCotaDTO filtro){
 		StringBuilder hql = new StringBuilder();
 		
-		if(filtro.getIdCota() != null){
-	        hql.append(" GROUP BY produto.codigo, ")
-			   .append("          produto.nome, ")	
-			   .append("          pe.numeroEdicao , ")
-			   .append("          pessoa.razaoSocial,  ")
-			   .append("          fornecedor.id, ")
-			   .append("          movimento.data, ")
-			   .append("          pe.precoVenda ");
-		} else {
-	        hql.append("  GROUP BY cota.numeroCota,  ")
-			   .append("          pessoaCota.nome,  ")
-			   .append("          pessoa.razaoSocial,  ")
-			   .append("          fornecedor.id ");
-		}
+	    hql.append("  GROUP BY cota.numeroCota,  ")
+		   .append("          fornecedor.id ");
+
+		return hql.toString();	
+	}
+	
+	private String getGroupByTotalDetalhado(FiltroConsultaConsignadoCotaDTO filtro){
+		
+		StringBuilder hql = new StringBuilder();
+		
+	    hql.append("  GROUP BY fornecedor.id ");
 
 		return hql.toString();	
 	}

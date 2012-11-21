@@ -5,13 +5,9 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 
-import javax.persistence.Column;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-
 import br.com.abril.nds.model.cadastro.ClasseSocial;
 import br.com.abril.nds.model.cadastro.FaixaEtaria;
-import br.com.abril.nds.model.cadastro.FormatoProduto;
+import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.Sexo;
 import br.com.abril.nds.model.cadastro.TemaProduto;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
@@ -36,9 +32,11 @@ public class ProdutoEdicaoDTO implements Serializable {
 	private BigDecimal precoCusto;
 	private Long peso;
 	private String codigoProduto;
-	private String nomeProduto;
 	
+	private String nomeProduto;
 	private String nomeComercial;
+	private GrupoProduto grupoProduto;
+	
 	private boolean possuiBrinde;
 	private String descricaoBrinde;
 	private Long idBrinde;
@@ -80,7 +78,6 @@ public class ProdutoEdicaoDTO implements Serializable {
 	private float largura;
 	private float comprimento;
 	private float espessura;
-	
 	private String boletimInformativo;
 	
 	// Lancamento:
@@ -88,24 +85,16 @@ public class ProdutoEdicaoDTO implements Serializable {
 	private Date dataLancamentoPrevisto;
 	private Date dataRecolhimentoPrevisto;
 	private Date dataRecolhimentoReal;
-	
 	private Integer semanaRecolhimento;
-	
 	private Boolean origemInterface;
-	
-	
 	private String editor;
-	
+	private String caracteristicaProduto;
 	
 	//Segmentação
 	private ClasseSocial classeSocial;
-	
 	private Sexo sexo;
-	
 	private FaixaEtaria faixaEtaria;
-	
 	private TemaProduto temaPrincipal;
-	
 	private TemaProduto temaSecundario;
 
 	
@@ -517,6 +506,20 @@ public class ProdutoEdicaoDTO implements Serializable {
 	}
 	
 	/**
+	 * @return the caracteristicaProduto
+	 */
+	public String getCaracteristicaProduto() {
+		return caracteristicaProduto;
+	}
+	
+	/**
+	 * @param caracteristicaProduto the caracteristicaProduto to set
+	 */
+	public void setCaracteristicaProduto(String caracteristicaProduto) {
+		this.caracteristicaProduto = caracteristicaProduto;
+	}
+	
+	/**
 	 * @return the dataRecolhimentoPrevisto
 	 */
 	public Date getDataRecolhimentoPrevisto() {
@@ -649,5 +652,16 @@ public class ProdutoEdicaoDTO implements Serializable {
 	public void setTemaSecundario(TemaProduto temaSecundario) {
 		this.temaSecundario = temaSecundario;
 	}
-	
+	/**
+	 * @return the grupoProduto
+	 */
+	public GrupoProduto getGrupoProduto() {
+		return grupoProduto;
+	}
+	/**
+	 * @param grupoProduto the grupoProduto to set
+	 */
+	public void setGrupoProduto(GrupoProduto grupoProduto) {
+		this.grupoProduto = grupoProduto;
+	}
 }

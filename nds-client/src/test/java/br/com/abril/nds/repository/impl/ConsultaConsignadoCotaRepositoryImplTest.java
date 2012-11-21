@@ -385,13 +385,13 @@ public class ConsultaConsignadoCotaRepositoryImplTest extends
 	@Test
 	public void buscarTodasMovimentacoesPorCota(){
 		
-		Integer totalRegistros = 
+		Long totalRegistros = 
 				this.consignadoCotaRepository.buscarTodasMovimentacoesPorCota(
-						this.filtroConsultaConsignadoCotaDTO, false);
+						this.filtroConsultaConsignadoCotaDTO);
 		
 		Assert.assertNotNull(totalRegistros);
 		
-		Integer tamanhoEsperado = 3;
+		Long tamanhoEsperado = 3L;
 		
 		Assert.assertEquals(tamanhoEsperado, totalRegistros);
 		

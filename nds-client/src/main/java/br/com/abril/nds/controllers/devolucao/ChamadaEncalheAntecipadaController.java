@@ -213,38 +213,6 @@ public class ChamadaEncalheAntecipadaController {
 	}
 	
 	/**
-	 * Pesquisa as cotas relacionadas a um produto que seja candidato a
-	 * antecipação de colhimento de encalhe (mas não envia nenhuma mensagem 
-	 * para a tela).<br>
-	 * TODO: Precisa de refactoring posteriormente.
-	 * 
-	 * @param codigoProduto
-	 * @param numeroEdicao
-	 * @param box
-	 * @param fornecedor
-	 */
-	@Post
-	@Path("/pesquisarSemMensagem")
-	public void pesquisarCotasPorProdutoSemMensagem(String codigoProduto,
-			Long numeroEdicao, Long box, Long fornecedor, Long rota,
-			Long roteiro, boolean programacaoRealizada, Integer municipio,
-			Long tipoPontoPDV, String sortorder, String sortname, int page, 
-			int rp) {
-		
-		validarParametrosPesquisa(codigoProduto, numeroEdicao);
-		
-		FiltroChamadaAntecipadaEncalheDTO filtro = 
-				new FiltroChamadaAntecipadaEncalheDTO(codigoProduto,numeroEdicao,box,fornecedor,
-													  rota,roteiro,programacaoRealizada, municipio,tipoPontoPDV);
-		
-		configurarPaginacaoPesquisa(filtro, sortorder, sortname, page, rp);
-		
-		tratarFiltro(filtro);
-		
-		efetuarConsulta(filtro);
-	}
-	
-	/**
 	 * Obtem o valor sumarizado das cotas e exemplares referente o filtro de pesquisa da tela.
 	 */
 	@Post
@@ -402,11 +370,12 @@ public class ChamadaEncalheAntecipadaController {
 	@Path("/reprogramarCotas")
 	public void reprogramarCotas(List<ChamadaEncalheAntecipadaVO> listaChamadaEncalheAntecipada,
 								String dataRecolhimento, String codigoProduto, 
-								Long numeroEdicao,String dataProgramada,String gravarTodos){
+								Long numeroEdicao, String dataProgramada, 
+								String gravarTodos) {
 		
 		validarDataRecolhimento(dataRecolhimento);
 		
-		if(!gravarTodos.isEmpty()){
+		if (Boolean.parseBoolean(gravarTodos)) {
 			
 			FiltroChamadaAntecipadaEncalheDTO filtro = getFiltroSessionSemPaginacao();
 			filtro.setDataAntecipacao(DateUtil.parseDataPTBR(dataRecolhimento));
@@ -429,14 +398,13 @@ public class ChamadaEncalheAntecipadaController {
 	public void cancelarChamdaEncalheCotas(List<ChamadaEncalheAntecipadaVO> listaChamadaEncalheAntecipada,
 											String codigoProduto,Long numeroEdicao,String cancelarTodos){
 		
-		if(!cancelarTodos.isEmpty()){
+		if(Boolean.parseBoolean(cancelarTodos)){
 			
 			FiltroChamadaAntecipadaEncalheDTO filtro = getFiltroSessionSemPaginacao();
 			
 			chamadaAntecipadaEncalheService.cancelarChamadaAntecipadaCota(filtro);
 		
-		}
-		else{
+		} else {
 			
 			InfoChamdaAntecipadaEncalheDTO infoChamdaAntecipadaEncalheDTO = getInfoChamadaEncalhe(listaChamadaEncalheAntecipada,
 																								  null,codigoProduto,

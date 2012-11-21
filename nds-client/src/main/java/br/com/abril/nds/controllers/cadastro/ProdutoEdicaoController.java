@@ -17,6 +17,7 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Brinde;
 import br.com.abril.nds.model.cadastro.ClasseSocial;
 import br.com.abril.nds.model.cadastro.FaixaEtaria;
+import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.Sexo;
 import br.com.abril.nds.model.cadastro.TemaProduto;
@@ -26,6 +27,7 @@ import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.serialization.custom.PlainJSONSerialization;
 import br.com.abril.nds.service.BrindeService;
+import br.com.abril.nds.service.CapaService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.Intervalo;
@@ -54,6 +56,9 @@ public class ProdutoEdicaoController {
 	@Autowired
 	private ProdutoEdicaoService produtoEdicaoService;
 	
+	@Autowired
+	private CapaService capaService;
+	
 	private static List<ItemDTO<ClasseSocial,String>> listaClasseSocial =  new ArrayList<ItemDTO<ClasseSocial,String>>();
 	  
 	private static List<ItemDTO<Sexo,String>> listaSexo =  new ArrayList<ItemDTO<Sexo,String>>();
@@ -62,6 +67,8 @@ public class ProdutoEdicaoController {
 
 	private static List<ItemDTO<TemaProduto,String>> listaTemaProduto =  new ArrayList<ItemDTO<TemaProduto,String>>();
 
+	private static List<ItemDTO<GrupoProduto,String>> listaGrupoProduto =  new ArrayList<ItemDTO<GrupoProduto,String>>();
+
 	
 	/** Traz a página inicial. */
 	@Get
@@ -69,14 +76,47 @@ public class ProdutoEdicaoController {
 	@Rules(Permissao.ROLE_CADASTRO_EDICAO)
 	public void index() {
 		
-		this.carregarDadosSegmentacao();
-		
-		List<Brinde> brindes = brindeService.obterBrindes();
-
-		result.include("brindes", brindes);
+		this.carregarDadosCombo();
 	}
 
-	
+	/**
+	 * Carrega os combos do modal de inclusão/edição do Produto-Segmentação.
+	 */
+	private void carregarDadosCombo() {
+		
+		listaClasseSocial.clear();
+		for(ClasseSocial item:ClasseSocial.values()){
+			listaClasseSocial.add(new ItemDTO<ClasseSocial,String>(item,item.getDescClasseSocial()));
+		}
+		result.include("listaClasseSocial",listaClasseSocial);
+		
+		listaSexo.clear();
+		for(Sexo item:Sexo.values()){
+			listaSexo.add(new ItemDTO<Sexo,String>(item,item.name()));
+		}
+		result.include("listaSexo",listaSexo);	
+		
+		listaFaixaEtaria.clear();
+		for(FaixaEtaria item:FaixaEtaria.values()){
+			listaFaixaEtaria.add(new ItemDTO<FaixaEtaria,String>(item,item.getDescFaixaEtaria()));
+		}
+		result.include("listaFaixaEtaria",listaFaixaEtaria);	
+		
+		listaTemaProduto.clear();
+		for(TemaProduto item:TemaProduto.values()){
+			listaTemaProduto.add(new ItemDTO<TemaProduto,String>(item,item.getDescTemaProduto()));
+		}
+		result.include("listaTemaProduto",listaTemaProduto);	
+		
+		listaGrupoProduto.clear();
+		for(GrupoProduto item:GrupoProduto.values()){
+			listaGrupoProduto.add(new ItemDTO<GrupoProduto,String>(item,item.getNome()));
+		}
+		result.include("listaGrupoProduto",listaGrupoProduto);
+		
+		List<Brinde> brindes = brindeService.obterBrindes();
+		result.include("brindes", brindes);
+    }
 	
 	@Post
 	@Path("/pesquisarEdicoes.json")
@@ -144,42 +184,37 @@ public class ProdutoEdicaoController {
 	}
 	
 	@Post
-	@Path("/ultimasEdicoes.json")
-	public void ultimasEdicoes(String codigoProduto) {
-			
-		List<ProdutoEdicaoDTO> lst = produtoEdicaoService.pesquisarUltimasEdicoes(codigoProduto, 5);
-
-		this.result.use(FlexiGridJson.class).from(lst).total(lst.size()).page(1).serialize();
-	}
-	
-	
-	@Post
 	public void salvar(UploadedFile imagemCapa,
 			String codigoProduto, Long idProdutoEdicao,
-			String codigoProdutoEdicao, String nomeComercialProduto,
+			String codigoProdutoEdicao, String nomeComercialProduto,Integer peb,
 			Long numeroEdicao, int pacotePadrao,
 			TipoLancamento tipoLancamento,
-			BigDecimal precoPrevisto, BigDecimal precoVenda,
+			String precoPrevisto, String precoVenda,GrupoProduto categoria,
 			Date dataLancamentoPrevisto, Date dataRecolhimentoPrevisto,
 			BigInteger repartePrevisto, BigInteger repartePromocional,
 			String codigoDeBarras, String codigoDeBarrasCorporativo,
-			BigDecimal desconto, Long peso, 
+			BigDecimal desconto, String descricaoDesconto,Long peso, 
 			BigDecimal largura, BigDecimal comprimento, BigDecimal espessura,
 			String chamadaCapa, boolean parcial, boolean possuiBrinde,
 			String boletimInformativo, Integer numeroLancamento, Long descricaoBrinde, String descricaoProduto,
             ClasseSocial classeSocial,Sexo sexo,FaixaEtaria faixaEtaria,TemaProduto temaPrincipal,TemaProduto temaSecundario) {
+			
+		BigDecimal pPrevisto = precoPrevisto!=null?new BigDecimal(this.getValorSemMascara(precoPrevisto)):null;
+		BigDecimal pVenda = precoVenda!=null?new BigDecimal(this.getValorSemMascara(precoVenda)):null;
 		
 		// DTO para transportar os dados:
 		ProdutoEdicaoDTO dto = new ProdutoEdicaoDTO();
 		
 		dto.setId(idProdutoEdicao);
 		dto.setNomeComercialProduto(nomeComercialProduto);
+		dto.setPeb(peb);
+		dto.setCaracteristicaProduto(descricaoProduto);
 		dto.setNumeroEdicao(numeroEdicao);
 		dto.setCodigoProduto(codigoProdutoEdicao);
 		dto.setPacotePadrao(pacotePadrao);
 		dto.setTipoLancamento(tipoLancamento);
-		dto.setPrecoPrevisto(precoPrevisto);
-		dto.setPrecoVenda(precoVenda);
+		dto.setPrecoPrevisto(pPrevisto);
+		dto.setPrecoVenda(pVenda);
 		dto.setDataLancamentoPrevisto(dataLancamentoPrevisto);
 		dto.setDataRecolhimentoPrevisto(dataRecolhimentoPrevisto);
 		dto.setDataRecolhimentoDistribuidor(dataRecolhimentoPrevisto);
@@ -188,6 +223,7 @@ public class ProdutoEdicaoController {
 		dto.setCodigoDeBarras(codigoDeBarras);
 		dto.setCodigoDeBarrasCorporativo(codigoDeBarrasCorporativo);
 		dto.setDesconto(desconto);
+		dto.setDescricaoDesconto(descricaoDesconto);
 		dto.setPeso(peso);
 		dto.setLargura(largura == null ? 0 : largura.floatValue());
 		dto.setComprimento(comprimento == null ? 0 : comprimento.floatValue());
@@ -197,7 +233,8 @@ public class ProdutoEdicaoController {
 		dto.setPossuiBrinde(possuiBrinde);
 		dto.setNumeroLancamento(numeroLancamento);
 		dto.setIdBrinde(descricaoBrinde);
-		dto.setNomeComercial(descricaoProduto);
+		dto.setBoletimInformativo(boletimInformativo);
+		dto.setGrupoProduto(categoria);
 		
 		//Segmentação
 		dto.setClasseSocial(classeSocial);
@@ -218,6 +255,7 @@ public class ProdutoEdicaoController {
 			InputStream imgInputStream = null;
 			
 			if (imagemCapa != null) {
+               			
 				contentType = imagemCapa.getContentType();
 				imgInputStream = imagemCapa.getFile();
 			}
@@ -395,7 +433,11 @@ public class ProdutoEdicaoController {
 		if (produtoEdicao!=null){
 		    
 		    BigDecimal precoVenda = produtoEdicao.getPrecoVenda();
+<<<<<<< HEAD
 		    BigDecimal percentualDesconto = Util.nvl(produtoEdicao.getProduto().getDesconto().getValor(), BigDecimal.ZERO);
+=======
+		    BigDecimal percentualDesconto = Util.nvl(produtoEdicao.getDesconto()!=null?produtoEdicao.getDesconto():BigDecimal.ZERO, BigDecimal.ZERO);
+>>>>>>> DGBti/master
             BigDecimal valorDesconto = MathUtil.calculatePercentageValue(precoVenda, percentualDesconto);
 			
 			BigDecimal precoComDesconto = precoVenda.subtract(valorDesconto);
@@ -413,8 +455,6 @@ public class ProdutoEdicaoController {
 				
 			}
 			
-			
-			
 			produtoLancamentoVO = new DetalheProdutoVO(produtoEdicao.getId(),
 													   produtoEdicao.getProduto().getNome(),
 													   produtoEdicao.getProduto().getCodigo(),
@@ -431,35 +471,18 @@ public class ProdutoEdicaoController {
 		return produtoLancamentoVO;
 	}
 
-	
-	/**
-	 * Carrega os combos do modal de inclusão/edição do Produto-Segmentação.
-	 */
-	@Post
-	public void carregarDadosSegmentacao() {
-		
-		listaClasseSocial.clear();
-		for(ClasseSocial item:ClasseSocial.values()){
-			listaClasseSocial.add(new ItemDTO<ClasseSocial,String>(item,item.getDescClasseSocial()));
+	private String getValorSemMascara(String valor) {
+
+		String chr = String.valueOf(valor.charAt(valor.length()-3));
+		if (",".equals(chr)){
+		    valor = valor.replaceAll("\\.", "");
+		    valor = valor.replaceAll(",", "\\.");
 		}
-		result.include("listaClasseSocial",listaClasseSocial);
 		
-		listaSexo.clear();
-		for(Sexo item:Sexo.values()){
-			listaSexo.add(new ItemDTO<Sexo,String>(item,item.name()));
+		if (".".equals(chr)){
+		    valor = valor.replaceAll(",", "");
 		}
-		result.include("listaSexo",listaSexo);	
-		
-		listaFaixaEtaria.clear();
-		for(FaixaEtaria item:FaixaEtaria.values()){
-			listaFaixaEtaria.add(new ItemDTO<FaixaEtaria,String>(item,item.getDescFaixaEtaria()));
-		}
-		result.include("listaFaixaEtaria",listaFaixaEtaria);	
-		
-		listaTemaProduto.clear();
-		for(TemaProduto item:TemaProduto.values()){
-			listaTemaProduto.add(new ItemDTO<TemaProduto,String>(item,item.getDescTemaProduto()));
-		}
-		result.include("listaTemaProduto",listaTemaProduto);	
-    }
+
+		return valor;
+	}
 }

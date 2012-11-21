@@ -4,7 +4,6 @@ import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import javax.annotation.PostConstruct;
 
@@ -241,7 +240,7 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		
 		// Garantia
 		parametrosDistribuidor.setUtilizaGarantiaPdv(distribuidor.isUtilizaGarantiaPdv());
-		if (distribuidor.isUtilizaGarantiaPdv()) {
+		
 		    for (TipoGarantiaAceita tipoGarantiaAceita : distribuidor
 		            .getTiposGarantiasAceita()) {
 		        
@@ -267,7 +266,7 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		            .setValidadeNotaPromissoria(tipoGarantiaAceita
 		                    .getValor());
 		        } else if (tipoGarantiaAceita.getTipoGarantia() == TipoGarantia.ANTECEDENCIA_VALIDADE) {
-		            parametrosDistribuidor.setUtilizaAntecedenciaValidade(true);
+		           
 		            parametrosDistribuidor
 		            .setValidadeAntecedenciaValidade(tipoGarantiaAceita
 		                    .getValor());
@@ -277,7 +276,7 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		                    .getValor());
 		        }
 		    }
-		}
+		
 		
 
 		// Negociação de Dividas
@@ -461,10 +460,14 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		    distribuidor.setPoliticaChamadao(politicaChamadao);
 		}
 		Integer chamadaoDiasSuspensao = parametrosDistribuidor.getChamadaoDiasSuspensao();
-		BigDecimal chamadaoConsignado = CurrencyUtil.getBigDecimal(parametrosDistribuidor.getChamadaoValorConsignado());
 		politicaChamadao.setDiasSuspenso(chamadaoDiasSuspensao);
-		politicaChamadao.setValorConsignado(chamadaoConsignado);
-		
+		if (parametrosDistribuidor
+							.getChamadaoValorConsignado() != null) {
+			BigDecimal chamadaoConsignado = CurrencyUtil
+					.getBigDecimal(parametrosDistribuidor
+							.getChamadaoValorConsignado());
+			politicaChamadao.setValorConsignado(chamadaoConsignado);
+		}
 		ParametrosRecolhimentoDistribuidor parametrosRecolhimentoDistribuidor = null;
 		if (distribuidor.getParametrosRecolhimentoDistribuidor() != null) {
 			parametrosRecolhimentoDistribuidor = distribuidor.getParametrosRecolhimentoDistribuidor();
@@ -800,13 +803,6 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
                 distribuidor.removerTipoGarantiaAceita(TipoGarantia.NOTA_PROMISSORIA);
             }
             
-            if (parametrosDistribuidor.isUtilizaAntecedenciaValidade()) {
-                distribuidor.addTipoGarantiaAceita(TipoGarantia.ANTECEDENCIA_VALIDADE, parametrosDistribuidor
-                                .getValidadeAntecedenciaValidade());
-            } else {
-                distribuidor.removerTipoGarantiaAceita(TipoGarantia.ANTECEDENCIA_VALIDADE);
-            }
-            
             if (parametrosDistribuidor.isUtilizaOutros()) {
                 distribuidor.addTipoGarantiaAceita(TipoGarantia.OUTROS, parametrosDistribuidor
                                 .getValidadeOutros());
@@ -816,6 +812,9 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		} else {
 		    distribuidor.removerTodosTiposGarantiasAceitas();
 		}
+		
+		distribuidor.addTipoGarantiaAceita(TipoGarantia.ANTECEDENCIA_VALIDADE, parametrosDistribuidor
+                 .getValidadeAntecedenciaValidade());
     }
 
 	/**
