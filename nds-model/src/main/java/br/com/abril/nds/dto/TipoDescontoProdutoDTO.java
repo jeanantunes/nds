@@ -37,12 +37,13 @@ public class TipoDescontoProdutoDTO implements Serializable {
     }
 	
 	public TipoDescontoProdutoDTO(String codigoProduto, String nomeProduto,
-            Long numeroEdicao, BigDecimal desconto, Date dataAlteracao) {
+            Long numeroEdicao, BigDecimal desconto, Date dataAlteracao, String nomeUsuario) {
         this.codigoProduto = codigoProduto;
         this.nomeProduto = nomeProduto;
         this.numeroEdicao = numeroEdicao;
         this.desconto = desconto;
         this.dataAlteracao = dataAlteracao;
+        this.nomeUsuario = nomeUsuario; 
     }
 
     /**

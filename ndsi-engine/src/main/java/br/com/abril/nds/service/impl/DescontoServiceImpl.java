@@ -428,16 +428,18 @@ public class DescontoServiceImpl implements DescontoService {
 				if(produtoEdicao != null) {
 					produtoEdicao.setDesconto(desconto);
 					produtoEdicaoRepository.merge(produtoEdicao);
+					
+					hdpe = new HistoricoDescontoProdutoEdicao();
+					hdpe.setDataAlteracao(new Date());
+					hdpe.setDesconto(descontoDTO.getDescontoProduto());
+					hdpe.setProduto(produtoEdicao.getProduto());
+					hdpe.setProdutoEdicao(produtoEdicao);
+					hdpe.setDistribuidor(distribuidor);
+					hdpe.setFornecedor(produtoEdicao.getProduto().getFornecedor());
+					hdpe.setUsuario(usuario);
+					
+					historicoDescontoProdutoEdicaoRepository.merge(hdpe);
 				}
-				
-				hdpe = new HistoricoDescontoProdutoEdicao();
-				hdpe.setDataAlteracao(new Date());
-				hdpe.setDesconto(descontoDTO.getDescontoProduto());
-				hdpe.setDistribuidor(distribuidor);
-				hdpe.setFornecedor(produtoEdicao.getProduto().getFornecedor());
-				hdpe.setUsuario(usuario);
-				
-				historicoDescontoProdutoEdicaoRepository.merge(hdpe);
 				
 				break;
 				
@@ -460,6 +462,8 @@ public class DescontoServiceImpl implements DescontoService {
 					} else {
 						dpe = new DescontoCotaProdutoExcessao();
 						dpe.setFornecedor(null);
+						dpe.setDistribuidor(distribuidor);
+						dpe.setUsuario(usuario);
 						dpe.setCota(cota);
 						dpe.setProduto(produtoEdicao.getProduto());
 						dpe.setProdutoEdicao(produtoEdicao);

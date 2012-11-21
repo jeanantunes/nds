@@ -17,7 +17,6 @@ import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque.Dominio;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.OperacaoEstoque;
-import br.com.abril.nds.model.movimentacao.TipoMovimento;
 import br.com.abril.nds.repository.ConsultaConsignadoCotaRepository;
 
 @Repository
@@ -37,10 +36,12 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		
 		hql.append(" SELECT produto.codigo as codigoProduto, ")
 		   .append("        produto.nome as nomeProduto, ")	
+		   .append("        cota.id as idProdutoEdicao, ")
+		   .append("        pe.id as idProdutoEdicao, ")	
 		   .append("        pe.numeroEdicao as numeroEdicao, ")
 		   .append("        pessoa.razaoSocial as nomeFornecedor, ")
 		   .append("        movimento.data as dataLancamento, ")
-		   .append("        pe.precoVenda as precoCapa, ")
+		   .append("        pe.precoVenda as precoCapa ")
 		   .append("        ("+ this.getHQLDesconto() +") as desconto, ")
 		   .append("        (pe.precoVenda - (pe.precoVenda * ("+ this.getHQLDesconto() +") / 100)) as precoDesconto, ")
 		   .append("        CASE WHEN movimento.tipoMovimento.operacaoEstoque  = :tipoOperacaoEntrada THEN (movimento.qtde) ELSE (movimento.qtde*-1) END as reparte, ")		
@@ -65,7 +66,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 			query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
 		
 		return query.list();
-		
+				
 	}
 	
 	@SuppressWarnings("unchecked")

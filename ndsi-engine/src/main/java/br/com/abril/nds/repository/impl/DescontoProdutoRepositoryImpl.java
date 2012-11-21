@@ -49,9 +49,9 @@ public class DescontoProdutoRepositoryImpl extends AbstractRepositoryModel<Desco
 		
 		hql .append("select new ")
 			.append(TipoDescontoProdutoDTO.class.getCanonicalName())
-			.append("(p.codigo, p.nome, pe.numeroEdicao, d.valor as desconto, d.dataAlteracao) ")
+			.append("(p.codigo, p.nome, pe.numeroEdicao, d.valor, d.dataAlteracao, u.nome) ")
 			.append("\n")
-			.append("from ProdutoEdicao pe join pe.produto p join pe.desconto as d")
+			.append("from ProdutoEdicao pe join pe.produto p join pe.desconto as d join d.usuario u")
 			.append("\n")
 			.append("where p.codigo = :codigoProduto ")
 			.append("\n");
