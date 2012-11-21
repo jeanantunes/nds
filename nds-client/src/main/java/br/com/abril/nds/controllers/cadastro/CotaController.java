@@ -584,10 +584,17 @@ public class CotaController {
 		@SuppressWarnings("unchecked")
 		Map<Integer, TelefoneAssociacaoDTO> mapaTelefones = (Map<Integer, TelefoneAssociacaoDTO>) this.session.getAttribute(LISTA_TELEFONES_SALVAR_SESSAO);
 
+		@SuppressWarnings("unchecked")
+		List<TelefoneAssociacaoDTO> telefonesExibicao = (List<TelefoneAssociacaoDTO>) this.session.getAttribute(LISTA_TELEFONES_EXIBICAO);
+		
 		List<TelefoneAssociacaoDTO> listaTelefones = new ArrayList<TelefoneAssociacaoDTO>();
 		
 		if (mapaTelefones != null) {
 			listaTelefones.addAll(mapaTelefones.values());
+		}
+		
+		if (telefonesExibicao != null && telefonesExibicao.size() > 0){
+			listaTelefones.addAll(telefonesExibicao);
 		}
 		
  		if (listaTelefones == null || listaTelefones.isEmpty()) {
