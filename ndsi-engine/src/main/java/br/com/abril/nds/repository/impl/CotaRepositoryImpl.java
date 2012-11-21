@@ -345,7 +345,11 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 
 		StringBuilder hql = new StringBuilder();
 
-		hql.append("SELECT count ( cota.id ) ");
+		/*
+		 * Foi incluido a cláusula DISTINCT para evitar o cenário de mais de um 
+		 * PDV associado a mesma cota.
+		 */
+		hql.append("SELECT DISTINCT count ( cota.id ) ");
 
 		hql.append(getSqlFromEWhereCotasSujeitasAntecipacoEncalhe(filtro));
 
@@ -389,7 +393,11 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 
 		StringBuilder hql = new StringBuilder();
 
-		hql.append("SELECT new ")
+		/*
+		 * Foi incluido a cláusula DISTINCT para evitar o cenário de mais de um 
+		 * PDV associado a mesma cota.
+		 */
+		hql.append("SELECT DISTINCT new ")
 				.append(ChamadaAntecipadaEncalheDTO.class.getCanonicalName())
 				.append(" ( box.codigo, box.nome ,cota.numeroCota, estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida, ")
 				.append(" lancamento.id ,")
