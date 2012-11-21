@@ -185,10 +185,11 @@ var alteracaoCotaController = $.extend(true, {
 		$("#totalCotasSelecionadas", this.workspace).html(0);
 		$("#alteracaoCotaCheckAll", this.workspace).attr("checked",false);
 		
-		var params = $("#pesquisarForm", this.workspace).serialize();
+		var params = $("#pesquisarForm", this.workspace).serializeArray();
 		
 		$(".alteracaoGrid", this.workspace).flexOptions({
-			url: contextPath + "/administracao/alteracaoCota/pesquisarAlteracaoCota.json?"+params,
+			"url" : contextPath + "/administracao/alteracaoCota/pesquisarAlteracaoCota.json",
+			params: params,
 			newp: 1
 		});
 	

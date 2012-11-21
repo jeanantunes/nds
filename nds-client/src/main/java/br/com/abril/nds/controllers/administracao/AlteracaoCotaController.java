@@ -129,7 +129,7 @@ public class AlteracaoCotaController {
 	}
 	
 	@Path("/pesquisarAlteracaoCota.json")
-	public void pesquisarAlteracaoCota(FiltroAlteracaoCotaDTO filtroAlteracaoCotaDTO, String sortname, String sortorder, int page, int rp) {
+	public void pesquisarAlteracaoCota(FiltroAlteracaoCotaDTO filtroAlteracaoCotaDTO, String sortname, String sortorder, int rp, int page) {
 		
 		PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortname);
 		if ("DESC".equalsIgnoreCase(sortorder)) {

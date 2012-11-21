@@ -153,8 +153,8 @@ public class EMS0106MessageProcessor extends AbstractRepository implements Messa
 		sql.append("SELECT lcto FROM Lancamento lcto ");
 		sql.append("      JOIN FETCH lcto.produtoEdicao pe ");
 		sql.append("    WHERE pe = :produtoEdicao ");
-		sql.append("      AND lcto.dataLancamentoDistribuidor >= :dataOperacao ");
-		sql.append(" ORDER BY lcto.dataLancamentoDistribuidor ASC");
+		sql.append("      AND lcto.dataLancamentoPrevista >= :dataOperacao ");
+		sql.append(" ORDER BY lcto.dataLancamentoPrevista ASC");
 		
 		Query query = getSession().createQuery(sql.toString());
 		

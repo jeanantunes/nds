@@ -1,6 +1,6 @@
 package br.com.abril.nds.service;
 
-import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 
@@ -13,7 +13,7 @@ import br.com.abril.nds.client.vo.RegistroEdicoesFechadasVO;
 public interface EdicoesFechadasService {
 	
 	public List<RegistroEdicoesFechadasVO> obterResultadoEdicoesFechadas(Date dataDe, Date dateAte, Long idFornecedor);
-	public BigDecimal obterTotalResultadoEdicoesFechadas(Date dataDe, Date dateAte, Long idFornecedor);
+	public BigInteger obterTotalResultadoEdicoesFechadas(Date dataDe, Date dateAte, Long idFornecedor);
 	public abstract List<RegistroEdicoesFechadasVO> obterResultadoEdicoesFechadas(Date dataDe,
 			Date dateAte, Long idFornecedor, String sortorder, String sortname, Integer firstResult,
 			Integer maxResults);

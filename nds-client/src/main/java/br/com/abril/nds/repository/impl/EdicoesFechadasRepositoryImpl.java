@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository.impl;
  
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 
@@ -28,7 +29,7 @@ public class EdicoesFechadasRepositoryImpl extends AbstractRepositoryModel<Movim
 	 * @see br.com.abril.nds.repository.EdicoesFechadasRepository#obterResultadoTotalEdicoesFechadas(java.util.Date, java.util.Date, java.lang.String)
 	 */
 	@Override
-	public BigDecimal obterResultadoTotalEdicoesFechadas(Date dataDe, Date dataAte, Long idFornecedor) {
+	public BigInteger obterResultadoTotalEdicoesFechadas(Date dataDe, Date dataAte, Long idFornecedor) {
 		StringBuilder hql = new StringBuilder();
 		
 		hql.append("SELECT ( sum(movimentoEstoque.qtde) ) ");
@@ -56,7 +57,7 @@ public class EdicoesFechadasRepositoryImpl extends AbstractRepositoryModel<Movim
 	    	query.setParameter("idFornecedor", idFornecedor);
 	    }
 		
-		return (BigDecimal) query.uniqueResult();
+		return (BigInteger) query.uniqueResult();
 	}
 
 	
