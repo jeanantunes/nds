@@ -7,8 +7,6 @@ import br.com.abril.nds.dto.ConsultaRoteirizacaoDTO;
 import br.com.abril.nds.dto.RotaRoteirizacaoDTO;
 import br.com.abril.nds.dto.RoteiroRoteirizacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaRoteirizacaoDTO;
-import br.com.abril.nds.model.LogBairro;
-import br.com.abril.nds.model.LogLocalidade;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Roteirizacao;
 import br.com.abril.nds.model.cadastro.Roteiro;
@@ -34,12 +32,6 @@ public interface RoteirizacaoRepository extends Repository<Roteirizacao, Long> {
     
     List<PDV> buscarRoteirizacaoPorEndereco (String CEP, String uf, String municipio, String bairro, Long rotaId , Roteiro roteiro );
     	
-	List<String> buscarUF();
-	
-	List<LogLocalidade> buscarMunicipioPorUf(String uf);
-	
-	List<LogBairro> buscarBairroPorMunicipio(Long municipio, String uf);
-	
 	List<ConsultaRoteirizacaoDTO> buscarRoteirizacao(FiltroConsultaRoteirizacaoDTO filtro);
 	
 	List<ConsultaRoteirizacaoDTO>  buscarRoteirizacaoPorNumeroCota(Integer numeroCota, TipoRoteiro tipoRoteiro, String  orderBy, Ordenacao ordenacao, int initialResult, int maxResults);
