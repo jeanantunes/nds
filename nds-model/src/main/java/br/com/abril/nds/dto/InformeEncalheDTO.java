@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import br.com.abril.nds.util.CurrencyUtil;
+
 /**
  * 
  * @author Diego Fernandes
@@ -54,6 +56,10 @@ public class InformeEncalheDTO implements Serializable {
 	private String nomeEditor;
 	
 	private boolean imagem;
+	
+	private String precoVendaFormatado;
+	
+	private String precoDescontoFormatado;
 
 	/**
 	 * @return the idLancamento
@@ -166,6 +172,7 @@ public class InformeEncalheDTO implements Serializable {
 	 */
 	public void setPrecoVenda(BigDecimal precoVenda) {
 		this.precoVenda = precoVenda;
+		this.precoVendaFormatado = CurrencyUtil.formatarValor(precoVenda);
 	}
 
 	/**
@@ -221,6 +228,7 @@ public class InformeEncalheDTO implements Serializable {
 	 */
 	public void setPrecoDesconto(BigDecimal precoDesconto) {
 		this.precoDesconto = precoDesconto;
+		this.precoDescontoFormatado = CurrencyUtil.formatarValor(precoDesconto);
 	}
 
 	/**
@@ -297,4 +305,17 @@ public class InformeEncalheDTO implements Serializable {
 		this.imagem = imagem;
 	}
 
+	/**
+	 * @return the precoVendaFormatado
+	 */
+	public String getPrecoVendaFormatado() {
+		return precoVendaFormatado;
+	}
+
+	/**
+	 * @return the precoDescontoFormatado
+	 */
+	public String getPrecoDescontoFormatado() {
+		return precoDescontoFormatado;
+	}
 }

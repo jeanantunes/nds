@@ -823,6 +823,7 @@ public class LancamentoRepositoryImpl extends
 		
 		query.setParameter("dataInicioRecolhimento", dataInicioRecolhimento.getTime());
 		query.setParameter("dataFimRecolhimento", dataFimRecolhimento.getTime());
+		query.setParameter("statusLancamento", StatusLancamento.BALANCEADO_RECOLHIMENTO);
 		
 		if (maxResults != null) {
 			query.setMaxResults(maxResults);
@@ -862,6 +863,8 @@ public class LancamentoRepositoryImpl extends
 		
 		hql.append(" lancamento.dataRecolhimentoDistribuidor between :dataInicioRecolhimento and :dataFimRecolhimento ");
 		
+		hql.append(" and lancamento.status = :statusLancamento ");
+		
 		
 		if (idFornecedor != null) {
 			hql.append(" and fornecedor.id = :idFornecedor ");
@@ -876,6 +879,8 @@ public class LancamentoRepositoryImpl extends
 		query.setParameter("dataInicioRecolhimento", dataInicioRecolhimento.getTime());
 		
 		query.setParameter("dataFimRecolhimento", dataFimRecolhimento.getTime());
+		
+		query.setParameter("statusLancamento", StatusLancamento.BALANCEADO_RECOLHIMENTO);
 
 		return hql.toString();
 		
@@ -903,6 +908,8 @@ public class LancamentoRepositoryImpl extends
 		query.setParameter("dataInicioRecolhimento", dataInicioRecolhimento.getTime());
 		
 		query.setParameter("dataFimRecolhimento", dataFimRecolhimento.getTime());
+
+		query.setParameter("statusLancamento", StatusLancamento.BALANCEADO_RECOLHIMENTO);
 		
 		return (Long) query.uniqueResult();
 		
