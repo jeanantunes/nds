@@ -43,8 +43,11 @@ var romaneiosController = $.extend(true, {
 		$( "#dataLancamento", romaneiosController.workspace ).datepicker({
 			showOn: "button",
 			buttonImage: contextPath +"/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
-			buttonImageOnly: true
+			buttonImageOnly: true,
+			dateFormat : 'dd/mm/yy'
 		});
+		
+		$("#dataLancamento", romaneiosController.workspace).mask("99/99/9999");
 		
 		$("#selectProdutos", romaneiosController.workspace).multiselect({
 			selectedList : 6
