@@ -395,8 +395,21 @@ public class EnderecoServiceImpl implements EnderecoService {
 
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<String> obterListaLocalidadeCotas() {
 		return this.enderecoRepository.obterListaLocalidadeCotas();
+	}
+
+
+	@Override
+	@Transactional(readOnly = true)	
+	public List<String> obterLocalidadesPorUF(String uf) {
+		if (uf == null || uf.isEmpty()) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "A escolha da UF é obrigatória.");
+		}
+		
+		return this.enderecoRepository.obterLocalidadesPorUF(uf);
 	}
 	
 }

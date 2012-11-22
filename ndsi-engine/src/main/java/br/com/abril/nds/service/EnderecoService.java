@@ -54,5 +54,7 @@ public interface EnderecoService {
 	String buscarLocalidadePorIbge(String codigoIbge);
 
 	List<String> obterListaLocalidadeCotas();
+
+	List<String> obterLocalidadesPorUF(String uf);
 	
 }
