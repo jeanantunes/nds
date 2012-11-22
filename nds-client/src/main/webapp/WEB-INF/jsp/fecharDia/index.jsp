@@ -3,6 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>NDS - Novo Distrib</title>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.fileDownload.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/fecharDia.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.fileDownload.js"></script>
 <script language="javascript" type="text/javascript">
@@ -156,6 +157,7 @@
 	</form>
 
 	<form id="form-venda-total">
+		<input type="hidden" name="tipoVenda" id="tipoVenda" />
 		<div id="dialog-venda-total" title="Movimento" style="display:none;">
 			<fieldset style="width:850px;">
 		    	<legend>Vendas</legend>
@@ -163,14 +165,14 @@
 		    </fieldset>
 		    <br clear="all" />
 		    <span class="bt_novos" title="Gerar Arquivo">  
-			    <a href="${pageContext.request.contextPath}/administracao/fecharDia/exportarVendaSuplemntar?fileType=XLS">
+			    <a href="javaScript:;" onclick="fecharDiaController.exportarVendaEncalheOuSuplementar('XLS');">
 		    		<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
 		    		Arquivo
 		    	</a>
 	    	</span>
 		
 			<span class="bt_novos" title="Imprimir">		
-			 	<a href="${pageContext.request.contextPath}/administracao/fecharDia/exportarVendaSuplemntar?fileType=PDF">
+			 	<a href="javaScript:;" onclick="fecharDiaController.exportarVendaEncalheOuSuplementar('PDF');">
 		    		<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
 		    		Imprimir
 			    </a>		

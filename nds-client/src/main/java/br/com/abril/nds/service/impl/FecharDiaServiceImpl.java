@@ -881,12 +881,12 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		    	ProdutoEdicao produtoEdicao = produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(item.getCodigo(), item.getNumeroEdicao());
 		    	
 		    	movimentoReparte.setProdutoEdicao(produtoEdicao);
-		    	movimentoReparte.setQuantidadeADistribuir(item.getQtdADistribuir());
-		    	movimentoReparte.setQuantidadeDiferenca(item.getQtdDiferenca());
+		    	movimentoReparte.setQuantidadeADistribuir(item.getQtdADistribuir().intValue());
+		    	movimentoReparte.setQuantidadeDiferenca(item.getQtdDiferenca().intValue());
 		    	movimentoReparte.setQuantidadeDistribuido(Util.nvl(item.getQtdDistribuido(),0).intValue());
 		    	movimentoReparte.setQuantidadeFaltaEM(Util.nvl(item.getQtdFaltas(),0).intValue());
 		    	movimentoReparte.setQuantidadeReparte(Util.nvl(item.getQtdReparte(),0).intValue());
-		    	movimentoReparte.setQuantidadeSobraDistribuido(item.getQtdSobraDiferenca());
+		    	movimentoReparte.setQuantidadeSobraDistribuido(item.getQtdSobraDiferenca().intValue());
 		    	movimentoReparte.setQuantidadeSobraEM(Util.nvl(item.getQtdSobras(),0).intValue());
 		    	movimentoReparte.setQuantidadeTranferencia(Util.nvl(item.getQtdTransferido(),0).intValue());
 		    	movimentoReparte.setFechamentoDiarioConsolidadoReparte(consolidadoReparte);

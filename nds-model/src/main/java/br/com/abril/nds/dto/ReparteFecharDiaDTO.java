@@ -34,29 +34,37 @@ public class ReparteFecharDiaDTO implements Serializable {
 	
 	private BigDecimal valorTotalReparte;
 	
-	@Export(label = "Reparte", alignment=Alignment.CENTER, exhibitionOrder = 5)
 	private Long qtdReparte;
 	
-	@Export(label = "Sobras", alignment=Alignment.CENTER, exhibitionOrder = 6)
 	private Long qtdSobras;
 	
-	@Export(label = "Faltas", alignment=Alignment.CENTER, exhibitionOrder = 7)
 	private Long qtdFaltas;
 	
-	@Export(label = "Transf.", alignment=Alignment.CENTER, exhibitionOrder = 8)
 	private Long qtdTransferido;
 	
-	@Export(label = "A Distr.", alignment=Alignment.CENTER, exhibitionOrder = 9)
-	private Integer qtdADistribuir;
+	private Long qtdADistribuir;
 	
-	@Export(label = "Distribuido", alignment=Alignment.CENTER, exhibitionOrder = 10)
 	private Long qtdDistribuido;
 	
-	@Export(label = "Sobra Distr.", alignment=Alignment.LEFT, exhibitionOrder = 11)
-	private Integer qtdSobraDiferenca;
+	private Long qtdSobraDiferenca;
 	
-	@Export(label = "Diferença", alignment=Alignment.CENTER, exhibitionOrder = 12)
-	private Integer qtdDiferenca;
+	private Long qtdDiferenca;
+	
+	private String qtdReparteFormatado;
+	
+	private String qtdSobrasFormatado;
+	
+	private String qtdFaltasFormatado;
+	
+	private String qtdTransferenciaFormatado;
+	
+	private String qtdADistribuirFormatado;
+	
+	private String qtdDistribuidoFormatado;
+	
+	private String qtdSobraDistribuidoFormatado;
+	
+	private String qtdDiferencaFormatado;
 	
 	private Long qtdeSobraDe = Long.valueOf(0);
 	
@@ -152,7 +160,7 @@ public class ReparteFecharDiaDTO implements Serializable {
 	}
 
 	public void setQtdSobras(Long qtdSobras) {
-		this.qtdSobras = qtdSobras;
+		this.qtdSobras = qtdSobras;		
 	}
 
 	public Long getQtdFaltas() {
@@ -171,11 +179,11 @@ public class ReparteFecharDiaDTO implements Serializable {
 		this.qtdTransferido = qtdTransferido;
 	}
 
-	public Integer getQtdADistribuir() {
+	public Long getQtdADistribuir() {
 		return qtdADistribuir;
 	}
 
-	public void setQtdADistribuir(Integer qtdADistribuir) {
+	public void setQtdADistribuir(Long qtdADistribuir) {
 		this.qtdADistribuir = qtdADistribuir;
 	}
 
@@ -187,20 +195,91 @@ public class ReparteFecharDiaDTO implements Serializable {
 		this.qtdDistribuido = qtdDistribuido;
 	}
 
-	public Integer getQtdSobraDiferenca() {
+	public Long getQtdSobraDiferenca() {
 		return qtdSobraDiferenca;
 	}
 
-	public void setQtdSobraDiferenca(Integer qtdSobraDiferenca) {
+	public void setQtdSobraDiferenca(Long qtdSobraDiferenca) {
 		this.qtdSobraDiferenca = qtdSobraDiferenca;
 	}
 
-	public Integer getQtdDiferenca() {
+	public Long getQtdDiferenca() {
 		return qtdDiferenca;
 	}
 
-	public void setQtdDiferenca(Integer qtdDiferenca) {
+	public void setQtdDiferenca(Long qtdDiferenca) {
 		this.qtdDiferenca = qtdDiferenca;
+	}
+
+	@Export(label = "Reparte", alignment=Alignment.CENTER, exhibitionOrder = 5)
+	public String getQtdReparteFormatado() {
+		return qtdReparteFormatado;
+	}
+
+	public void setQtdReparteFormatado(String qtdReparteFormatado) {
+		this.qtdReparteFormatado = qtdReparteFormatado;
+	}
+	@Export(label = "Sobras", alignment=Alignment.CENTER, exhibitionOrder = 6)
+	public String getQtdSobrasFormatado() {
+		return qtdSobrasFormatado;
+	}
+
+	public void setQtdSobrasFormatado(String qtdSobrasFormatado) {
+		this.qtdSobrasFormatado = qtdSobrasFormatado;
+	}
+	
+	@Export(label = "Faltas", alignment=Alignment.CENTER, exhibitionOrder = 7)
+	public String getQtdFaltasFormatado() {
+		return qtdFaltasFormatado;
+	}
+
+	public void setQtdFaltasFormatado(String qtdFaltasFormatado) {
+		this.qtdFaltasFormatado = qtdFaltasFormatado;
+	}
+
+	@Export(label = "Transf.", alignment=Alignment.CENTER, exhibitionOrder = 8)
+	public String getQtdTransferenciaFormatado() {
+		return qtdTransferenciaFormatado;
+	}
+
+	public void setQtdTransferenciaFormatado(String qtdTransferenciaFormatado) {
+		this.qtdTransferenciaFormatado = qtdTransferenciaFormatado;
+	}
+
+	@Export(label = "A Distr.", alignment=Alignment.CENTER, exhibitionOrder = 9)
+	public String getQtdADistribuirFormatado() {
+		return qtdADistribuirFormatado;
+	}
+
+	public void setQtdADistribuirFormatado(String qtdADistribuirFormatado) {
+		this.qtdADistribuirFormatado = qtdADistribuirFormatado;
+	}
+
+	@Export(label = "Distribuido", alignment=Alignment.CENTER, exhibitionOrder = 10)
+	public String getQtdDistribuidoFormatado() {
+		return qtdDistribuidoFormatado;
+	}
+
+	public void setQtdDistribuidoFormatado(String qtdDistribuidoFormatado) {
+		this.qtdDistribuidoFormatado = qtdDistribuidoFormatado;
+	}
+
+	@Export(label = "Sobra Distr.", alignment=Alignment.LEFT, exhibitionOrder = 11)
+	public String getQtdSobraDistribuidoFormatado() {
+		return qtdSobraDistribuidoFormatado;
+	}
+
+	public void setQtdSobraDistribuidoFormatado(String qtdSobraDistribuidoFormatado) {
+		this.qtdSobraDistribuidoFormatado = qtdSobraDistribuidoFormatado;
+	}
+
+	@Export(label = "Diferença", alignment=Alignment.CENTER, exhibitionOrder = 12)
+	public String getQtdDiferencaFormatado() {
+		return qtdDiferencaFormatado;
+	}
+
+	public void setQtdDiferencaFormatado(String qtdDiferencaFormatado) {
+		this.qtdDiferencaFormatado = qtdDiferencaFormatado;
 	}
 
     /**
@@ -258,7 +337,37 @@ public class ReparteFecharDiaDTO implements Serializable {
     public void setQtdeFaltaEm(Long qtdeFaltaEm) {
         this.qtdeFaltaEm = qtdeFaltaEm;
     }
-	
-	
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((codigo == null) ? 0 : codigo.hashCode());
+		result = prime * result
+				+ ((numeroEdicao == null) ? 0 : numeroEdicao.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ReparteFecharDiaDTO other = (ReparteFecharDiaDTO) obj;
+		if (codigo == null) {
+			if (other.codigo != null)
+				return false;
+		} else if (!codigo.equals(other.codigo))
+			return false;
+		if (numeroEdicao == null) {
+			if (other.numeroEdicao != null)
+				return false;
+		} else if (!numeroEdicao.equals(other.numeroEdicao))
+			return false;
+		return true;
+	}
 	
 }
