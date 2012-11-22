@@ -114,8 +114,6 @@ public class FecharDiaController {
 	
 	private static final String FECHAMENTO_DIARIO_DTO_SESSION_KEY = "FECHAMENTO_DIARIO_DTO_SESSION_KEY"; 
 	
-	private static final String FECHAMENTO_DIARIO_REPORT_NAME = "fechamento_diario_sumarizacao.jasper";
-	
 	private static final String FECHAMENTO_DIARIO_REPORT_EXPORT_NAME = "relatorio-fechamento-diario.pdf";
 	
 	@Path("/")
@@ -685,7 +683,7 @@ public class FecharDiaController {
 	}
 	
     @Post
-    public Download gerarRelatorioFechamentoDiario() {
+    public Download gerarRelatorioFechamentoDiario(ModoDownload modoDownload) {
         FechamentoDiarioDTO dto = getFechamentoDiarioDTO();
         
         byte[] relatorio = RelatorioFechamentoDiario.exportPdf(dto);
@@ -693,9 +691,14 @@ public class FecharDiaController {
         if (relatorio != null) {
             long size = relatorio.length;
             InputStream inputStream = new ByteArrayInputStream(relatorio);
-            Cookie cookie = new Cookie("fileDownload", "true");
-            cookie.setPath("/");
-            httpResponse.addCookie(cookie);
+
+            //Inclui o cookie requerido pelo plugin para tratamento da conclusão do download
+            if (ModoDownload.JQUERY_FILE_DOWNLOAD_PLUGIN.equals(modoDownload)) {
+                Cookie cookie = new Cookie("fileDownload", "true");
+                cookie.setPath("/");
+                httpResponse.addCookie(cookie);
+            }
+            
             InputStreamDownload download = new InputStreamDownload(inputStream, FileType.PDF.getContentType(),
                     FECHAMENTO_DIARIO_REPORT_EXPORT_NAME, true, size);
             return download;
@@ -723,6 +726,28 @@ public class FecharDiaController {
     
     private void clearFechamentoDiarioDTO() {
         setFechamentoDiarioDTO(null);
+    }
+    
+    /**
+     * Enum com o modo de download sendo utilizado
+     * 
+     * @author francisco.garcia
+     *
+     */
+    public static enum ModoDownload {
+       
+        /**
+         * Download normal
+         */
+        REGULAR_DOWNLOAD,
+        
+        /**
+         * Download sendo efetuado pelo plugin 'jQuery File Download Plugin', que
+         * requer parâmetros extras para o tratamento da conclusão do download
+         * 
+         */
+        JQUERY_FILE_DOWNLOAD_PLUGIN
+        
     }
 
 }

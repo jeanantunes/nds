@@ -22,6 +22,9 @@
 </script>
 <style type="text/css">
 .linha_separa_fields{width:400px!important;}
+
+.no-close-button .ui-dialog-titlebar-close {display: none; }
+
 </style>
 </head>
 
