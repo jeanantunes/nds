@@ -98,11 +98,11 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 
 		if (INDICE_PESSOA_FISICA.equals(input.getTipoPessoa())) {
 
-			query.setParameter("cpf", input.getCpfCNPJ());
+			query.setParameter("cpf", input.getCpf());
 
 		} else if (INDICE_PESSOA_JURIDICA.equals(input.getTipoPessoa())) {
 
-			query.setParameter("cnpj", input.getCpfCNPJ());
+			query.setParameter("cnpj", input.getCnpj());
 		}
 
 		// Definir Pessoa
@@ -111,15 +111,11 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 			List<PessoaFisica> pessoas = (List<PessoaFisica>) query.list();
 			PessoaFisica pessoaFis = null;
 
-			String cpf = input.getCpfCNPJ();
-
 			if (pessoas.isEmpty()) {
 
 				pessoaFis = new PessoaFisica();
 				pessoaFis.setNome(input.getNomeJornaleiro());
-				
-				// Corrigido para retirar os 3 "0"s antes do número do CPF (Realizado por Cesar Pop Punk)
-				pessoaFis.setCpf(cpf.substring(3, cpf.length()));
+				pessoaFis.setCpf(input.getCpf());
 				getSession().persist(pessoaFis);
 
 				pessoa = pessoaFis;
@@ -128,14 +124,13 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 
 				for (PessoaFisica pessoaFis2 : pessoas) {
 
-					if (pessoaFis2.getCpf().equals(input.getCpfCNPJ())) {
+					if (pessoaFis2.getCpf().equals(input.getCpf())) {
 
 						pessoaFis = pessoaFis2;
 					}
 				}
 
-				// Corrigido para retirar os 3 "0"s antes do número do CPF (Realizado por Cesar Pop Punk)
-				pessoaFis.setCpf(cpf.substring(3, cpf.length()));
+				pessoaFis.setCpf(input.getCpf());
 				pessoaFis.setNome(input.getNomeJornaleiro());
 				pessoa = pessoaFis;
 			}
@@ -149,7 +144,7 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 
 				pessoaJur = new PessoaJuridica();
 				pessoaJur.setRazaoSocial(input.getNomeJornaleiro());
-				pessoaJur.setCnpj(input.getCpfCNPJ());
+				pessoaJur.setCnpj(input.getCnpj());
 				pessoaJur.setInscricaoEstadual(input.getInscrEstadual());
 				pessoaJur.setInscricaoMunicipal(input.getInscrMunicipal());
 				getSession().persist(pessoaJur);
@@ -160,14 +155,14 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 
 				for (PessoaJuridica pessoaJur2 : pessoas) {
 
-					if (pessoaJur2.getCnpj().equals(input.getCpfCNPJ())) {
+					if (pessoaJur2.getCnpj().equals(input.getCnpj())) {
 
 						pessoaJur = pessoaJur2;
 					}
 				}
 
 				pessoaJur.setRazaoSocial(input.getNomeJornaleiro());
-				pessoaJur.setCnpj(input.getCpfCNPJ());
+				pessoaJur.setCnpj(input.getCnpj());
 				pessoaJur.setInscricaoEstadual(input.getInscrEstadual());
 				pessoaJur.setInscricaoMunicipal(input.getInscrMunicipal());
 				pessoa = pessoaJur;
