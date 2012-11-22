@@ -1187,7 +1187,7 @@ var roteirizacao = $.extend(true, {
         roteirizacao.resetComboBairro();
         roteirizacao.resetComboMunicipio();
         $.each(result, function(index, row){
-                $('#comboMunicipio', roteirizacao.workspace).append('<option value="'+row.locNu+'">'+row.locNo+'</option>');
+                $('#comboMunicipio', roteirizacao.workspace).append('<option value="'+row+'">'+row+'</option>');
             }
         );
 
@@ -1198,7 +1198,7 @@ var roteirizacao = $.extend(true, {
         $('#comboBairro', roteirizacao.workspace).append('<option value="">Todos</option>');
         roteirizacao.resetComboBairro();
         $.each(result, function(index, row){
-                $('#comboBairro', roteirizacao.workspace).append('<option>'+row.baiNo+'</option>');
+                $('#comboBairro', roteirizacao.workspace).append('<option>'+row+'</option>');
             }
         );
 

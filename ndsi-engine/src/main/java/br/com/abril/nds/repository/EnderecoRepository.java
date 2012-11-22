@@ -48,4 +48,6 @@ public interface EnderecoRepository extends Repository<Endereco, Long> {
 	
 	List<String> pesquisarLocalidades(String nomeLocalidade);
 
+	List<String> obterLocalidadesPorUF(String uf);
+
 }

@@ -270,4 +270,15 @@ public class EnderecoRepositoryImpl extends AbstractRepositoryModel<Endereco, Lo
 		return query.list();
 	}
 	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<String> obterLocalidadesPorUF(String uf) {
+
+		Query query = this.getSession().createQuery("select distinct(e.cidade) from Endereco e where e.uf = :uf");
+		query.setParameter("uf", uf);
+
+		return query.list();
+	}
+	
+	
 }
