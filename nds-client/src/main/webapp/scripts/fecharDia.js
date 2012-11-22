@@ -653,6 +653,7 @@ var fecharDiaController =  $.extend(true, {
 				function(){
 				    $.fileDownload(contextPath + "/administracao/fecharDia/gerarRelatorioFechamentoDiario", {
                         httpMethod : "POST",
+                        cookiePath : contextPath,
                         data : [{name: 'modoDownload', value: ModoDownload.JQUERY_FILE_DOWNLOAD_PLUGIN.value}],
                         preparingMessageHtml: "Gerando relatório do Fechamento Diário, por favor, aguarde...",
                         dialogOptions: { modal: true, closeOnEscape: false, dialogClass: 'no-close-button' },

@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
@@ -104,6 +105,9 @@ public class FecharDiaController {
 	
 	@Autowired
 	private HttpServletResponse httpResponse;
+	
+	@Autowired
+	private HttpServletRequest httpRequest;
 	
 	@Autowired
 	private HttpSession session;
@@ -695,7 +699,7 @@ public class FecharDiaController {
             //Inclui o cookie requerido pelo plugin para tratamento da conclusão do download
             if (ModoDownload.JQUERY_FILE_DOWNLOAD_PLUGIN.equals(modoDownload)) {
                 Cookie cookie = new Cookie("fileDownload", "true");
-                cookie.setPath("/");
+                cookie.setPath(httpRequest.getContextPath());
                 httpResponse.addCookie(cookie);
             }
             
