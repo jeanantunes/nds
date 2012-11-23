@@ -25,6 +25,7 @@ import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
 import br.com.abril.nds.model.cadastro.TipoGarantia;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantia;
 import br.com.abril.nds.serialization.custom.CustomJson;
+import br.com.abril.nds.serialization.custom.CustomJson2;
 import br.com.abril.nds.serialization.custom.PlainJSONSerialization;
 import br.com.abril.nds.service.CotaGarantiaService;
 import br.com.abril.nds.util.StringUtil;
@@ -147,9 +148,9 @@ public class CotaGarantiaController {
 	        CotaGarantiaDTO<CotaGarantia> cotaGarantia = cotaGarantiaService.getByCota(idCota);
 	        
 	        if (cotaGarantia != null && cotaGarantia.getCotaGarantia() != null) {			
-	            result.use(CustomJson.class).from(cotaGarantia).exclude(Fiador.class, "fiador").serialize();		
+	            result.use(CustomJson2.class).from(cotaGarantia).recursive().serialize();
 	        }else{			
-	            result.use(CustomJson.class).from("OK").serialize();		
+	            result.use(CustomJson.class).from("OK").serialize();
 	        }	
 	    } else {
 	        CotaGarantiaDTO<?> cotaGarantia = cotaGarantiaService.obterGarantiaHistoricoTitularidadeCota(idCota, idHistorico);
@@ -527,7 +528,9 @@ public class CotaGarantiaController {
     public void getFiador(Long idFiador, String documento) {
         Fiador fiador = cotaGarantiaService.getFiador(idFiador, documento);
         if (fiador != null) {
-            result.use(CustomJson.class).from(fiador).exclude(Fiador.class, "enderecoFiador").serialize();
+            result.use(Results.json()).from(fiador).include(
+            	"pessoa", "enderecoFiador", "enderecoFiador.endereco", "telefonesFiador",
+            	"telefonesFiador.telefone", "garantias").serialize();
         } else {
             result.use(CustomJson.class).from("NotFound").serialize();
         }

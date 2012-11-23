@@ -152,7 +152,7 @@ public class ResumoEncalheFecharDiaRepositoryImpl extends AbstractRepository imp
 	private List<EncalheFecharDiaDTO> obterListaFinalGridEncalhe(List<EncalheFecharDiaDTO> listaDeEncalheFisico, List<EncalheFecharDiaDTO> listaDeEncalheJuramentado,
 			List<EncalheFecharDiaDTO> listaDeEncalheLogico) {
 		
-		Set<EncalheFecharDiaDTO> listaFinal = new HashSet<>();
+		Set<EncalheFecharDiaDTO> listaFinal = new HashSet<EncalheFecharDiaDTO>();
 		
 		listaFinal.addAll(listaDeEncalheJuramentado);
 		

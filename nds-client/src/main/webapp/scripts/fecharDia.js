@@ -1,3 +1,8 @@
+var ModoDownload = {
+    REGULAR_DOWNLOAD: {value: 'REGULAR_DOWNLOAD'},
+    JQUERY_FILE_DOWNLOAD_PLUGIN : {value: 'JQUERY_FILE_DOWNLOAD_PLUGIN'}
+};
+
 var fecharDiaController =  $.extend(true, {
 	
 	init : function() {
@@ -644,7 +649,19 @@ var fecharDiaController =  $.extend(true, {
 		
 		$.postJSON(
 				contextPath + "/administracao/fecharDia/confirmar",
-				null
+				null, 
+				function(){
+				    $.fileDownload(contextPath + "/administracao/fecharDia/gerarRelatorioFechamentoDiario", {
+                        httpMethod : "POST",
+                        cookiePath : contextPath,
+                        data : [{name: 'modoDownload', value: ModoDownload.JQUERY_FILE_DOWNLOAD_PLUGIN.value}],
+                        preparingMessageHtml: "Gerando relatório do Fechamento Diário, por favor, aguarde...",
+                        dialogOptions: { modal: true, closeOnEscape: false, dialogClass: 'no-close-button' },
+                        failCallback : function() {
+                            exibirMensagem("ERROR", ["Erro na geração do Relatório de Fechamento Diário!"]);
+                        }
+                    });
+		        }
 			);
 	},
 	
