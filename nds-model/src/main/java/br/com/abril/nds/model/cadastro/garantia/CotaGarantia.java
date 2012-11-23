@@ -3,6 +3,7 @@ package br.com.abril.nds.model.cadastro.garantia;
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
@@ -48,8 +49,7 @@ public abstract class CotaGarantia implements Serializable {
 	@Column(name="ID")
 	private Long id;
 	
-	@JsonIgnore
-	@OneToOne(optional = false)
+	@OneToOne(optional = false, cascade=CascadeType.DETACH)
 	@JoinColumn(name = "COTA_ID")
 	private Cota cota;
 	
