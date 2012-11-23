@@ -2833,7 +2833,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 	public void obterMovimentoCotasPorTipoMovimento() {
 		
 		Date data = Fixture.criarData(1, Calendar.NOVEMBER, 2012);
-		List<Integer> numCotas = new ArrayList<>();
+		List<Integer> numCotas = new ArrayList<Integer>();
 		numCotas.add(1);
 		GrupoMovimentoEstoque grupoMovimentoEstoque = GrupoMovimentoEstoque.ENVIO_ENCALHE;
 		

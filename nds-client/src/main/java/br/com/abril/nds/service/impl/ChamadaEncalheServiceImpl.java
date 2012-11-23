@@ -25,6 +25,7 @@ import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.repository.ChamadaEncalheRepository;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.service.ChamadaEncalheService;
+import br.com.abril.nds.service.ControleNumeracaoSlipService;
 import br.com.abril.nds.service.RecolhimentoService;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;

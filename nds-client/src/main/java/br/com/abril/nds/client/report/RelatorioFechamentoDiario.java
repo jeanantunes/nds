@@ -52,7 +52,7 @@ public class RelatorioFechamentoDiario {
      * @return byte[] com o relatório exportado
      */
     public static byte[] exportPdf(FechamentoDiarioDTO dto) {
-        List<JasperPrint> toPrint = new ArrayList<>(Relatorio.values().length);
+        List<JasperPrint> toPrint = new ArrayList<JasperPrint>(Relatorio.values().length);
         
         for (Relatorio relatorio : Relatorio.values()) {
             toPrint.add(JasperUtil.fillReport(relatorio.getReportName(), relatorio.processParameters(dto), relatorio.createDataSource(dto)));
@@ -165,7 +165,7 @@ public class RelatorioFechamentoDiario {
         abstract JRDataSource createDataSource(FechamentoDiarioDTO dto);
         
         protected Map<String, Object> getDefaultParameters(FechamentoDiarioDTO dto) {
-            Map<String, Object> parameters = new HashMap<>();
+            Map<String, Object> parameters = new HashMap<String, Object>();
             parameters.put(PARAMETRO_DATA_FECHAMENTO, dto.getDataFechamento());
             return parameters;
         }
