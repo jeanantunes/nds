@@ -813,7 +813,8 @@ public class DescontoServiceImpl implements DescontoService {
             //Neste caso, o produto possui apenas um fornecedor
             //Recuperar o desconto utilizando a cota, o produto edição e o fornecedor
             Fornecedor fornecedor = produtoEdicao.getProduto().getFornecedor();
-            percentual = descontoProdutoEdicaoRepository.obterDescontoPorCotaProdutoEdicao(cota.getId(), produtoEdicao.getId(), fornecedor.getId());
+            // TODO: Sergio, favor setar o valor de desconto correto neste ponto após a funcionalidade ficar disponível
+            percentual = new BigDecimal(10);//descontoProdutoEdicaoRepository.obterDescontoPorCotaProdutoEdicao(cota.getId(), produtoEdicao.getId(), fornecedor.getId());
         } else {
             //Produto possivelmente com mais de um fornecedor, seguindo
             // a instrução passada, utilizar o desconto do produto

@@ -381,7 +381,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 
 	@Override
 	@Transactional
-	public void encerrarOperacaoEncalhe(Date dataEncalhe) {
+	public void encerrarOperacaoEncalhe(Date dataEncalhe) throws Exception {
 
 		Integer totalCotasAusentes = this.buscarQuantidadeCotasAusentes(dataEncalhe);
 		
@@ -402,8 +402,10 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 			
 			this.gerarNotaFiscal(dataEncalhe);
 			
+		} catch (ValidacaoException e) {
+			throw e;
 		} catch (Exception e) {
-			throw new RuntimeException(e);
+			throw new Exception(e);
 		}
 	}
 	

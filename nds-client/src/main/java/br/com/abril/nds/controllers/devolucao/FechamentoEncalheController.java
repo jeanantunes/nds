@@ -342,7 +342,7 @@ public class FechamentoEncalheController {
 		} catch (Exception e) {
 			this.result.use(
 				Results.json()).from(
-					new ValidacaoVO(TipoMensagem.ERROR, "Erro ao tentar encerrar a operação de encalhe!"), "result").recursive().serialize();
+					new ValidacaoVO(TipoMensagem.ERROR, "Erro ao tentar encerrar a operação de encalhe!" + e.getMessage()), "result").recursive().serialize();
 			throw new ValidacaoException();
 		}
 
