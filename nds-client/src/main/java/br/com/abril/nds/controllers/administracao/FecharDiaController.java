@@ -473,7 +473,7 @@ public class FecharDiaController {
 	public void obterSumarizacaoDividas() {
         Date dataFechamento = getDataFechamento();
         
-        Map<TipoDivida, List<SumarizacaoDividasDTO>> sumarizacao = new HashMap<>();
+        Map<TipoDivida, List<SumarizacaoDividasDTO>> sumarizacao = new HashMap<TipoDivida, List<SumarizacaoDividasDTO>>();
         
         List<SumarizacaoDividasDTO> aReceber = fecharDiaService.sumarizacaoDividasReceberEm(dataFechamento);
         List<SumarizacaoDividasDTO> aVencer = fecharDiaService.sumarizacaoDividasVencerApos(dataFechamento);
@@ -492,7 +492,7 @@ public class FecharDiaController {
 	    List<Divida> dividas = fecharDiaService.obterDividasReceberEm(dataFechamento, paginacao);
 	    Long totalDividas = fecharDiaService.contarDividasReceberEm(dataFechamento);
 	    
-	    List<DividaDTO> dividasDTO = new ArrayList<>();
+	    List<DividaDTO> dividasDTO = new ArrayList<DividaDTO>();
 	    for (Divida divida : dividas) {
 	        dividasDTO.add(DividaDTO.fromDivida(divida));
 	    }
@@ -504,7 +504,7 @@ public class FecharDiaController {
 	    Date dataFechamento = getDataFechamento();
         
         List<Divida> dividas = fecharDiaService.obterDividasReceberEm(dataFechamento, null);
-        List<DividaDTO> dividasDTO = new ArrayList<>(dividas.size());
+        List<DividaDTO> dividasDTO = new ArrayList<DividaDTO>(dividas.size());
 
         for (Divida divida : dividas) {
             dividasDTO.add(DividaDTO.fromDivida(divida));
@@ -525,7 +525,7 @@ public class FecharDiaController {
         List<Divida> dividas = fecharDiaService.obterDividasVencerApos(dataFechamento, paginacao);
         Long totalDividas = fecharDiaService.contarDividasVencerApos(dataFechamento);
         
-        List<DividaDTO> dividasDTO = new ArrayList<>();
+        List<DividaDTO> dividasDTO = new ArrayList<DividaDTO>();
         for (Divida divida : dividas) {
             dividasDTO.add(DividaDTO.fromDivida(divida));
         }
@@ -537,7 +537,7 @@ public class FecharDiaController {
 	    Date dataFechamento = getDataFechamento();
         
         List<Divida> dividas = fecharDiaService.obterDividasVencerApos(dataFechamento, null);
-        List<DividaDTO> dividasDTO = new ArrayList<>(dividas.size());
+        List<DividaDTO> dividasDTO = new ArrayList<DividaDTO>(dividas.size());
 
         for (Divida divida : dividas) {
             dividasDTO.add(DividaDTO.fromDivida(divida));

@@ -31,7 +31,7 @@ public class TributacaoRepositoryImplTest extends AbstractRepositoryImplTest {
 	@Test
 	public void buscar2() {
 
-		List<String> ufs = new ArrayList<>();
+		List<String> ufs = new ArrayList<String>();
 		ufs.add("SP");
 		ufs.add("MG");
 		Tributacao tributacao = tributacaoRepository.buscar("1",

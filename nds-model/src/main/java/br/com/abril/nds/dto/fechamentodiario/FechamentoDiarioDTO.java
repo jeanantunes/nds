@@ -28,13 +28,13 @@ public class FechamentoDiarioDTO implements Serializable {
     
     private Sumarizacao sumarizacao;
     
-    private List<ReparteFecharDiaDTO> reparte = new ArrayList<>();
+    private List<ReparteFecharDiaDTO> reparte = new ArrayList<ReparteFecharDiaDTO>();
     
-    private List<EncalheFecharDiaDTO> encalhe = new ArrayList<>();
+    private List<EncalheFecharDiaDTO> encalhe = new ArrayList<EncalheFecharDiaDTO>();
     
-    private List<SuplementarFecharDiaDTO> suplementar = new ArrayList<>();
+    private List<SuplementarFecharDiaDTO> suplementar = new ArrayList<SuplementarFecharDiaDTO>();
     
-    private List<DiferencaDTO> faltasSobras = new ArrayList<>();
+    private List<DiferencaDTO> faltasSobras = new ArrayList<DiferencaDTO>();
 
     private FechamentoDiarioDTO(Builder builder) {
         this.dataFechamento = builder.dataFechamento;
@@ -122,13 +122,13 @@ public class FechamentoDiarioDTO implements Serializable {
         
         private ResumoFechamentoDiarioConsignadoDTO resumoConsignado;
         
-        private List<ReparteFecharDiaDTO> reparte = new ArrayList<>();
+        private List<ReparteFecharDiaDTO> reparte = new ArrayList<ReparteFecharDiaDTO>();
         
-        private List<EncalheFecharDiaDTO> encalhe = new ArrayList<>();
+        private List<EncalheFecharDiaDTO> encalhe = new ArrayList<EncalheFecharDiaDTO>();
         
-        private List<SuplementarFecharDiaDTO> suplementar = new ArrayList<>();
+        private List<SuplementarFecharDiaDTO> suplementar = new ArrayList<SuplementarFecharDiaDTO>();
         
-        private List<DiferencaDTO> faltasSobras = new ArrayList<>();
+        private List<DiferencaDTO> faltasSobras = new ArrayList<DiferencaDTO>();
         
         public Builder(Date dataFechamento) {
             this.dataFechamento = dataFechamento;

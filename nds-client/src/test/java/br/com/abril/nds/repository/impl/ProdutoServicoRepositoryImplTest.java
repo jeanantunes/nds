@@ -169,7 +169,7 @@ public class ProdutoServicoRepositoryImplTest extends
 		MovimentoEstoqueCota movimento = Fixture.movimentoEstoqueCota(cromoBrasileiraoEd1, tipoMovimentoEncalhe,
 				usuario, estoqueProdutoCota, BigInteger.valueOf(10), cota, StatusAprovacao.APROVADO, "motivo");
 		
-		listaMovimentoEstoqueCota = new ArrayList<>();
+		listaMovimentoEstoqueCota = new ArrayList<MovimentoEstoqueCota>();
 		listaMovimentoEstoqueCota.add(movimento);
 		
 		itemNotaFiscal.setIdProdutoEdicao(1L);
@@ -182,9 +182,9 @@ public class ProdutoServicoRepositoryImplTest extends
 
 	@Test
 	public void atualizarProdutosQuePossuemNota() {
-		List<ProdutoServico> listaProdutoServico = new ArrayList<>();
+		List<ProdutoServico> listaProdutoServico = new ArrayList<ProdutoServico>();
 		listaProdutoServico.add(produtoServico);
-		List<ItemNotaFiscal> listItemNotaFiscal = new ArrayList<>();
+		List<ItemNotaFiscal> listItemNotaFiscal = new ArrayList<ItemNotaFiscal>();
 		listItemNotaFiscal.add(itemNotaFiscal);
 		
 		produtoServicoRepositoryImpl.atualizarProdutosQuePossuemNota(listaProdutoServico, listItemNotaFiscal);
@@ -193,10 +193,10 @@ public class ProdutoServicoRepositoryImplTest extends
 	
 	@Test
 	public void atualizarProdutosQuePossuemNotaProdutoServicoListaMovimentoEstoque() {
-		List<ProdutoServico> listaProdutoServico = new ArrayList<>();
+		List<ProdutoServico> listaProdutoServico = new ArrayList<ProdutoServico>();
 		listaProdutoServico.add(produtoServico);
 		produtoServico.setListaMovimentoEstoqueCota(listaMovimentoEstoqueCota);
-		List<ItemNotaFiscal> listItemNotaFiscal = new ArrayList<>();
+		List<ItemNotaFiscal> listItemNotaFiscal = new ArrayList<ItemNotaFiscal>();
 		listItemNotaFiscal.add(itemNotaFiscal);
 		
 		produtoServicoRepositoryImpl.atualizarProdutosQuePossuemNota(listaProdutoServico, listItemNotaFiscal);

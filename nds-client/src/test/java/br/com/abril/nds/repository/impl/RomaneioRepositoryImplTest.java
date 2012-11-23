@@ -35,7 +35,7 @@ public class RomaneioRepositoryImplTest extends AbstractRepositoryImplTest {
 
 	@Test
 	public void buscarRomaneiosPorProdutos() {
-		List<Long> listaProdutos = new ArrayList<>();
+		List<Long> listaProdutos = new ArrayList<Long>();
 		listaProdutos.add(1L);
 		listaProdutos.add(2L);
 
