@@ -66,6 +66,15 @@ public class ReparteFecharDiaDTO implements Serializable {
 	
 	private String qtdDiferencaFormatado;
 	
+	private Long qtdeSobraDe = Long.valueOf(0);
+	
+	private Long qtdeSobraEm = Long.valueOf(0);
+	
+	private Long qtdeFaltaDe = Long.valueOf(0);
+	
+	private Long qtdeFaltaEm = Long.valueOf(0);
+	
+	
 	public String getCodigo() {
 		return codigo;
 	}
@@ -201,6 +210,7 @@ public class ReparteFecharDiaDTO implements Serializable {
 	public void setQtdDiferenca(Long qtdDiferenca) {
 		this.qtdDiferenca = qtdDiferenca;
 	}
+
 	@Export(label = "Reparte", alignment=Alignment.CENTER, exhibitionOrder = 5)
 	public String getQtdReparteFormatado() {
 		return qtdReparteFormatado;
@@ -272,6 +282,62 @@ public class ReparteFecharDiaDTO implements Serializable {
 		this.qtdDiferencaFormatado = qtdDiferencaFormatado;
 	}
 
+    /**
+     * @return the qtdeSobraDe
+     */
+    public Long getQtdeSobraDe() {
+        return qtdeSobraDe;
+    }
+
+    /**
+     * @param qtdeSobraDe the qtdeSobraDe to set
+     */
+    public void setQtdeSobraDe(Long qtdeSobraDe) {
+        this.qtdeSobraDe = qtdeSobraDe;
+    }
+
+    /**
+     * @return the qtdeSobraEm
+     */
+    public Long getQtdeSobraEm() {
+        return qtdeSobraEm;
+    }
+
+    /**
+     * @param qtdeSobraEm the qtdeSobraEm to set
+     */
+    public void setQtdeSobraEm(Long qtdeSobraEm) {
+        this.qtdeSobraEm = qtdeSobraEm;
+    }
+
+    /**
+     * @return the qtdeFaltaDe
+     */
+    public Long getQtdeFaltaDe() {
+        return qtdeFaltaDe;
+    }
+
+    /**
+     * @param qtdeFaltaDe the qtdeFaltaDe to set
+     */
+    public void setQtdeFaltaDe(Long qtdeFaltaDe) {
+        this.qtdeFaltaDe = qtdeFaltaDe;
+    }
+
+    /**
+     * @return the qtdeFaltaEm
+     */
+    public Long getQtdeFaltaEm() {
+        return qtdeFaltaEm;
+    }
+
+    /**
+     * @param qtdeFaltaEm the qtdeFaltaEm to set
+     */
+    public void setQtdeFaltaEm(Long qtdeFaltaEm) {
+        this.qtdeFaltaEm = qtdeFaltaEm;
+    }
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -281,8 +347,6 @@ public class ReparteFecharDiaDTO implements Serializable {
 				+ ((numeroEdicao == null) ? 0 : numeroEdicao.hashCode());
 		return result;
 	}
-
-	
 
 	@Override
 	public boolean equals(Object obj) {
@@ -305,9 +369,5 @@ public class ReparteFecharDiaDTO implements Serializable {
 			return false;
 		return true;
 	}
-
-	
-	
-	
 	
 }

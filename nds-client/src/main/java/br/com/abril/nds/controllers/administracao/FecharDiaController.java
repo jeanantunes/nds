@@ -1,18 +1,25 @@
 package br.com.abril.nds.controllers.administracao;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
+import br.com.abril.nds.client.report.RelatorioFechamentoDiario;
 import br.com.abril.nds.client.vo.DetalheCotaFechamentoDiarioVO;
 import br.com.abril.nds.dto.EncalheFecharDiaDTO;
 import br.com.abril.nds.dto.FecharDiaDTO;
@@ -30,6 +37,7 @@ import br.com.abril.nds.dto.ValidacaoLancamentoFaltaESobraFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoRecebimentoFisicoFecharDiaDTO;
 import br.com.abril.nds.dto.VendaFechamentoDiaDTO;
 import br.com.abril.nds.dto.fechamentodiario.DividaDTO;
+import br.com.abril.nds.dto.fechamentodiario.FechamentoDiarioDTO;
 import br.com.abril.nds.dto.fechamentodiario.ResumoEstoqueDTO;
 import br.com.abril.nds.dto.fechamentodiario.SumarizacaoDividasDTO;
 import br.com.abril.nds.dto.fechamentodiario.TipoDivida;
@@ -64,11 +72,15 @@ import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.interceptor.download.Download;
+import br.com.caelum.vraptor.interceptor.download.InputStreamDownload;
 import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/administracao/fecharDia")
 public class FecharDiaController {
+    
+    private static final Logger LOG = LoggerFactory.getLogger(FecharDiaController.class);
 	
 	@Autowired
 	private FecharDiaService fecharDiaService;
@@ -95,11 +107,18 @@ public class FecharDiaController {
 	private HttpServletResponse httpResponse;
 	
 	@Autowired
+	private HttpServletRequest httpRequest;
+	
+	@Autowired
 	private HttpSession session;
 	
 	private static Distribuidor distribuidor;
 
 	private static final String ATRIBUTO_SESSAO_POSSUI_PENDENCIAS_VALIDACAO = "atributoSessaoValidacao";
+	
+	private static final String FECHAMENTO_DIARIO_DTO_SESSION_KEY = "FECHAMENTO_DIARIO_DTO_SESSION_KEY"; 
+	
+	private static final String FECHAMENTO_DIARIO_REPORT_EXPORT_NAME = "relatorio-fechamento-diario.pdf";
 	
 	@Path("/")
 	@Rules(Permissao.ROLE_ADMINISTRACAO_FECHAR_DIA)
@@ -559,25 +578,32 @@ public class FecharDiaController {
 	
 	@Post
 	public void confirmar() {
-		
-		Boolean hasPendenciaValidacao = 
-			(Boolean) this.session.getAttribute(ATRIBUTO_SESSAO_POSSUI_PENDENCIAS_VALIDACAO);
-		
-		if (hasPendenciaValidacao != null && !hasPendenciaValidacao) {
-			
-			this.fecharDiaService.processarFechamentoDoDia(getUsuario(), getDataFechamento());
-			
-			this.session.removeAttribute(ATRIBUTO_SESSAO_POSSUI_PENDENCIAS_VALIDACAO);
-			
-			result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, " Fechamento do Dia efetuado com sucesso."),
-					Constantes.PARAM_MSGS).recursive().serialize();
+		try {
+		    Boolean hasPendenciaValidacao = (Boolean) this.session.getAttribute(ATRIBUTO_SESSAO_POSSUI_PENDENCIAS_VALIDACAO);
+		    
+		    if (hasPendenciaValidacao != null && !hasPendenciaValidacao) {
+		        
+		        FechamentoDiarioDTO dto = this.fecharDiaService.processarFechamentoDoDia(getUsuario(), getDataFechamento());
+		        setFechamentoDiarioDTO(dto);
+		        
+		        this.session.removeAttribute(ATRIBUTO_SESSAO_POSSUI_PENDENCIAS_VALIDACAO);
+		        
+		        result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, " Fechamento do Dia efetuado com sucesso."),
+		                Constantes.PARAM_MSGS).recursive().serialize();
+		    }
+		    else{
+		        
+		        result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING, "Fechamento do Dia não pode ser confirmado! Existem pendências em aberto!"),
+		                Constantes.PARAM_MSGS).recursive().serialize();
+		        
+		    }
+		    
+		} catch (RuntimeException ex) {
+		    clearFechamentoDiarioDTO();
+		    LOG.error("ERRO AO CONFIRMAR FECHAMENTO DO DIA!", ex);
+		    throw ex;
 		}
-		else{
-			
-			result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING, "Fechamento do Dia não pode ser confirmado! Existem pendências em aberto!"),
-					Constantes.PARAM_MSGS).recursive().serialize();
-			
-		}
+	    
 	}
 
 	private List<DetalheCotaFechamentoDiarioVO> obterDetalheCotaFechamentoDiario(TipoResumo tipoResumo) {
@@ -660,8 +686,72 @@ public class FecharDiaController {
 		result.use(CustomMapJson.class).put("resumo", resumoFechamentoDiarioEstoque).serialize();
 	}
 	
+    @Post
+    public Download gerarRelatorioFechamentoDiario(ModoDownload modoDownload) {
+        FechamentoDiarioDTO dto = getFechamentoDiarioDTO();
+        
+        byte[] relatorio = RelatorioFechamentoDiario.exportPdf(dto);
+
+        if (relatorio != null) {
+            long size = relatorio.length;
+            InputStream inputStream = new ByteArrayInputStream(relatorio);
+
+            //Inclui o cookie requerido pelo plugin para tratamento da conclusão do download
+            if (ModoDownload.JQUERY_FILE_DOWNLOAD_PLUGIN.equals(modoDownload)) {
+                Cookie cookie = new Cookie("fileDownload", "true");
+                cookie.setPath(httpRequest.getContextPath());
+                httpResponse.addCookie(cookie);
+            }
+            
+            InputStreamDownload download = new InputStreamDownload(inputStream, FileType.PDF.getContentType(),
+                    FECHAMENTO_DIARIO_REPORT_EXPORT_NAME, true, size);
+            return download;
+        }
+        return null;
+    }
+
+	
     private Date getDataFechamento() {
         return distribuidorService.obter().getDataOperacao();
+    }
+    
+    private FechamentoDiarioDTO getFechamentoDiarioDTO() {
+        FechamentoDiarioDTO dto = (FechamentoDiarioDTO) session.getAttribute(FECHAMENTO_DIARIO_DTO_SESSION_KEY);
+        if (dto == null) {
+            throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Fechamento Diário não foi confirmado!"));
+        }
+        clearFechamentoDiarioDTO();
+        return dto;
+    }
+    
+    private void setFechamentoDiarioDTO(FechamentoDiarioDTO dto) {
+        session.setAttribute(FECHAMENTO_DIARIO_DTO_SESSION_KEY, dto);
+    }
+    
+    private void clearFechamentoDiarioDTO() {
+        setFechamentoDiarioDTO(null);
+    }
+    
+    /**
+     * Enum com o modo de download sendo utilizado
+     * 
+     * @author francisco.garcia
+     *
+     */
+    public static enum ModoDownload {
+       
+        /**
+         * Download normal
+         */
+        REGULAR_DOWNLOAD,
+        
+        /**
+         * Download sendo efetuado pelo plugin 'jQuery File Download Plugin', que
+         * requer parâmetros extras para o tratamento da conclusão do download
+         * 
+         */
+        JQUERY_FILE_DOWNLOAD_PLUGIN
+        
     }
 
 }

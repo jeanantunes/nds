@@ -30,6 +30,21 @@ public class SuplementarFecharDiaDTO implements Serializable {
 	
 	private Integer diferenca;
 	
+	/**
+	 * quantidade total de exemplares de cada produto;
+	 */
+	private Long quantidadeLogico;
+	
+	/**
+	 *quantidade de exemplares destinada às cotas;
+	 */
+	private Long quantidadedeVenda;
+	
+	/**
+	 * saldo do estoque, gerado pela subtração de Lógico – Venda;
+	 */
+	private Long saldo;
+	
 	public String getCodigo() {
 		return codigo;
 	}
@@ -85,7 +100,47 @@ public class SuplementarFecharDiaDTO implements Serializable {
 	public void setDiferenca(Integer diferenca) {
 		this.diferenca = diferenca;
 	}
-	
-	
+
+    /**
+     * @return the quantidadeLogico
+     */
+    public Long getQuantidadeLogico() {
+        return quantidadeLogico;
+    }
+
+    /**
+     * @param quantidadeLogico the quantidadeLogico to set
+     */
+    public void setQuantidadeLogico(Long quantidadeLogico) {
+        this.quantidadeLogico = quantidadeLogico;
+    }
+
+    /**
+     * @return the quantidadedeVenda
+     */
+    public Long getQuantidadedeVenda() {
+        return quantidadedeVenda;
+    }
+
+    /**
+     * @param quantidadedeVenda the quantidadedeVenda to set
+     */
+    public void setQuantidadedeVenda(Long quantidadedeVenda) {
+        this.quantidadedeVenda = quantidadedeVenda;
+    }
+
+    /**
+     * @return the saldo
+     */
+    public Long getSaldo() {
+        return saldo;
+    }
+
+    /**
+     * @param saldo the saldo to set
+     */
+    public void setSaldo(Long saldo) {
+        this.saldo = saldo;
+    }
 
 }

@@ -232,7 +232,7 @@ public class FecharDiaRepositoryImpl extends AbstractRepository implements Fecha
 
 		StringBuilder hql = new StringBuilder();
 
-		hql.append(" SELECT movimento.tipoMovimento.descricao as descricaoTipoMovimento ");
+		hql.append(" SELECT movimento ");
 
 		hql.append(" FROM Movimento movimento ");
 		hql.append(" WHERE movimento.data = :dataMovimento ");
@@ -242,14 +242,14 @@ public class FecharDiaRepositoryImpl extends AbstractRepository implements Fecha
 
 		if (gruposMovimentoEstoque != null) {
 		
-			restricaoGrupos = " movimento.tipoMovimento.grupoMovimentoEstoque IN :gruposMovimentoEstoque ";
+			restricaoGrupos = " movimento.tipoMovimento.grupoMovimentoEstoque IN (:gruposMovimentoEstoque) ";
 		}
 		
 		if (gruposMovimentoFinanceiro != null) {
 		
 			restricaoGrupos += restricaoGrupos.isEmpty() ? " " : " OR ";
 			
-			restricaoGrupos += " movimento.tipoMovimento.grupoMovimentoFinaceiro IN :gruposMovimentoFinanceiro "; 
+			restricaoGrupos += " movimento.tipoMovimento.grupoMovimentoFinaceiro IN (:gruposMovimentoFinanceiro) "; 
 		}
 
 		if (!restricaoGrupos.isEmpty()) {
