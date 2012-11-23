@@ -70,11 +70,11 @@ public class BoxServiceImpl implements BoxService {
 			throw new UniqueConstraintViolationException("Código "
 					+ entity.getCodigo() + " do box em uso.");		}
 		
-		if (entity.getId() != null &&  hasAssociacao(entity.getId())) {
+		/*if (entity.getId() != null &&  hasAssociacao(entity.getId())) {
 			throw new RelationshipRestrictionException(
 						"Box está em uso e não pode ser editado.");
 			
-		}
+		}*/
 		
 		
 		return boxRepository.merge(entity);

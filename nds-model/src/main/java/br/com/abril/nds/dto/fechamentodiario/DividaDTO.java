@@ -13,6 +13,7 @@ import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.util.export.Export;
+import br.com.abril.nds.util.export.Export.Alignment;
 import br.com.abril.nds.util.export.Exportable;
 
 /**
@@ -45,12 +46,12 @@ public class DividaDTO implements Serializable {
     
     private BigDecimal valor = BigDecimal.ZERO;
     
-    @Export(label = "Valor R$", exhibitionOrder = 5)
+    @Export(label = "Valor R$", exhibitionOrder = 5, alignment = Alignment.RIGHT)
     private String valorFormatado = CurrencyUtil.formatarValor(BigDecimal.ZERO);
     
     private Date dataVencimento;
     
-    @Export(label = "Dt. Vencto", exhibitionOrder = 6)
+    @Export(label = "Dt. Vencto", exhibitionOrder = 6, alignment = Alignment.CENTER)
     private String dataVencimentoFormatada;
     
     private TipoCobranca formaPagamento;

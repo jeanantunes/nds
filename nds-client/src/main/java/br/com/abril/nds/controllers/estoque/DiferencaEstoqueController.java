@@ -2130,7 +2130,7 @@ public class DiferencaEstoqueController {
 		
 		if (produtoEdicao == null) {
 			
-			listaMensagensErro.add("Produto inválido: Código [" + diferenca.getCodigoProduto() + "] - Edição [" + diferenca.getNumeroEdicao() + " ]");
+			throw new ValidacaoException(TipoMensagem.WARNING,"Produto inválido: Código [" + diferenca.getCodigoProduto() + "] - Edição [" + diferenca.getNumeroEdicao() + " ]");
 		}
 		
 		String mensagemErro = validarEstoqueDiferenca(diferenca.getQtdeEstoqueAtual(),diferenca.getQuantidade() ,tipoDiferenca, new BigInteger(diferenca.getPacotePadrao()),false); 

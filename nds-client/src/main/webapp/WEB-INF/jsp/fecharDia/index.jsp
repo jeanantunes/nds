@@ -3,7 +3,9 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>NDS - Novo Distrib</title>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.fileDownload.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/fecharDia.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.fileDownload.js"></script>
 <script language="javascript" type="text/javascript">
 
 	/*
@@ -20,6 +22,9 @@
 </script>
 <style type="text/css">
 .linha_separa_fields{width:400px!important;}
+
+.no-close-button .ui-dialog-titlebar-close {display: none; }
+
 </style>
 </head>
 
@@ -155,6 +160,7 @@
 	</form>
 
 	<form id="form-venda-total">
+		<input type="hidden" name="tipoVenda" id="tipoVenda" />
 		<div id="dialog-venda-total" title="Movimento" style="display:none;">
 			<fieldset style="width:850px;">
 		    	<legend>Vendas</legend>
@@ -162,14 +168,14 @@
 		    </fieldset>
 		    <br clear="all" />
 		    <span class="bt_novos" title="Gerar Arquivo">  
-			    <a href="${pageContext.request.contextPath}/administracao/fecharDia/exportarVendaSuplemntar?fileType=XLS">
+			    <a href="javaScript:;" onclick="fecharDiaController.exportarVendaEncalheOuSuplementar('XLS');">
 		    		<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
 		    		Arquivo
 		    	</a>
 	    	</span>
 		
 			<span class="bt_novos" title="Imprimir">		
-			 	<a href="${pageContext.request.contextPath}/administracao/fecharDia/exportarVendaSuplemntar?fileType=PDF">
+			 	<a href="javaScript:;" onclick="fecharDiaController.exportarVendaEncalheOuSuplementar('PDF');">
 		    		<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
 		    		Imprimir
 			    </a>		
@@ -185,9 +191,19 @@
 		        <table class="suplementarDialogGrid"></table>
 		    </fieldset>
 		    <br clear="all" />
-		    <span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="../images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
+		     <span class="bt_novos" title="Gerar Arquivo">  
+			    <a href="${pageContext.request.contextPath}/administracao/fecharDia/exportarResumoSuplementar?fileType=XLS">
+		    		<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
+		    		Arquivo
+		    	</a>
+	    	</span>
 		
-		<span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="../images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
+			<span class="bt_novos" title="Imprimir">		
+			 	<a href="${pageContext.request.contextPath}/administracao/fecharDia/exportarResumoSuplementar?fileType=PDF">
+		    		<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
+		    		Imprimir
+			    </a>		
+			</span>
 		
 		</div>
 	</form>
@@ -199,9 +215,21 @@
 		        <table class="recolhimentoDialogGrid"></table>
 		    </fieldset>
 		    <br clear="all" />
-		    <span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="../images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
+		    <span class="bt_novos" title="Gerar Arquivo">
+			    <a href="${pageContext.request.contextPath}/administracao/fecharDia/exportarResumoEncalhe?fileType=XLS">
+			    	<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
+			    	Arquivo
+			    </a>
+		    </span>
 		
-		<span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="../images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
+			<span class="bt_novos" title="Imprimir">
+			
+			<a href="${pageContext.request.contextPath}/administracao/fecharDia/exportarResumoEncalhe?fileType=PDF">
+		    	<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
+		    	Imprimir
+			</a>
+			
+			</span>
 	</form>
 
 </div>
@@ -213,9 +241,21 @@
 		        <table class="reparteDialogGrid"></table>
 		    </fieldset>
 		    <br clear="all" />
-		    <span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="../images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
+		    <span class="bt_novos" title="Gerar Arquivo">
+		    	<a href="${pageContext.request.contextPath}/administracao/fecharDia/exportarResumoReparte?fileType=XLS">
+		    		<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
+		    		Arquivo
+		    	</a>		    
+		    </span>
 		
-			<span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="../images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
+			<span class="bt_novos" title="Imprimir">
+			
+			<a href="${pageContext.request.contextPath}/administracao/fecharDia/exportarResumoReparte?fileType=PDF">
+		    	<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
+		    	Arquivo
+		    </a>
+			
+			</span>
 		
 		</div>
 	</form>
@@ -314,11 +354,6 @@
     <br />
    
     <div class="container">
-    
-     <div id="effect" style="padding: 0 .7em;" class="ui-state-highlight ui-corner-all"> 
-				<p><span style="float: left; margin-right: .3em;" class="ui-icon ui-icon-info"></span>
-				<b>Confirmação de Valores < evento > com < status >.</b></p>
-	</div>
     	
       <fieldset class="classFieldset">
    	    <legend> Fechar o Dia</legend>
@@ -332,7 +367,12 @@
               		<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/bt_devolucao.png">Iniciar Fechamento do Dia</a>
               	</span>
               </td>
-              <td width="529"><span class="bt_confirmar_novo grids" style="display:none;" title="Confirmar"><a onclick="fecharDiaController.popup();" href="javascript:;"><img width="16" border="0" hspace="5" height="16" alt="Confirmar" src="../images/ico_check.gif">Confirmar</a></span></td>
+              <td width="529">
+              		<span class="bt_confirmar_novo grids" style="display:none;" title="Confirmar">
+              			<a onclick="fecharDiaController.popup();" href="javascript:;">
+              			<img width="16" border="0" hspace="5" height="16" alt="Confirmar" src="${pageContext.request.contextPath}/images/ico_check.gif">Confirmar</a>
+              	</span>
+             </td>
             </tr>
           </table>
 
@@ -346,7 +386,7 @@
   <tr>
     <td height="26" align="center" bgcolor="#F4F4F4"><strong><a href="javascript:;" onclick="fecharDiaController.popup_repartes();">REPARTE</a></strong></td>
     <td align="center" bgcolor="#F4F4F4" style="width:10px; border-left:1px solid #ccc;">&nbsp;</td>
-    <td align="center" bgcolor="#F4F4F4"><strong><a href="javascript:;" onclick="fecharDiaController.popup_recolhimento();">ENCALHE</a></strong></td>
+    <td align="center" bgcolor="#F4F4F4"><strong><a href="javascript:;" onclick="fecharDiaController.popup_encalhe();">ENCALHE</a></strong></td>
     <td align="center" bgcolor="#F4F4F4" style="width:10px; border-left:1px solid #ccc;">&nbsp;</td>
     <td align="center" bgcolor="#F4F4F4"><strong><a href="javascript:;" onclick="fecharDiaController.popup_suplementar();">SUPLEMENTAR</a></strong></td>
     </tr>
@@ -413,19 +453,19 @@
       </tr>
       <tr>
         <td align="left" style="border-bottom:1px solid #ccc;">Venda</td>
-        <td align="right" style="border-bottom:1px solid #ccc;"><a href="javascript:;" onclick="fecharDiaController.popup_vendasTot();"><div id="vendaEncalhe"></div></a></td>
+        <td align="right" style="border-bottom:1px solid #ccc;"><a href="javascript:;" onclick="fecharDiaController.popup_vendasTot('encalhe');"><div id="vendaEncalhe"></div></a></td>
       </tr>
       <tr>
         <td align="left" style="border-bottom:1px solid #ccc;">Sobras</td>
-        <td align="right" style="border-bottom:1px solid #ccc;">37,00</td>
+        <td align="right" style="border-bottom:1px solid #ccc;"><div id="totalSobraEncalhe"></div></td>
       </tr>
       <tr>
         <td align="left" style="border-bottom:1px solid #ccc;">Faltas</td>
-        <td align="right" style="border-bottom:1px solid #ccc;">37,00</td>
+        <td align="right" style="border-bottom:1px solid #ccc;"><div id="totalFaltaEncalhe"></div></td>
       </tr>
       <tr>
         <td align="left" style="border-bottom:1px solid #ccc;">Saldo</td>
-        <td align="right" style="border-bottom:1px solid #ccc;">482,84</td>
+        <td align="right" style="border-bottom:1px solid #ccc;"><div id="saldoEncalhe"></div></td>
       </tr>
       <tr>
         <td align="left">&nbsp;</td>
@@ -448,7 +488,7 @@
         </tr>
       <tr>
         <td align="left" style="border-bottom:1px solid #ccc;">Vendas</td>
-        <td align="right" style="border-bottom:1px solid #ccc;"><a href="javascript:;" onclick="fecharDiaController.popup_vendasTot();"><div id="totalSuplementarVenda"></div></a></td>
+        <td align="right" style="border-bottom:1px solid #ccc;"><a href="javascript:;" onclick="fecharDiaController.popup_vendasTot('suplementar');"><div id="totalSuplementarVenda"></div></a></td>
         </tr>
       <tr>
         <td align="left" style="border-bottom:1px solid #ccc;">Saldo</td>
@@ -523,27 +563,27 @@
                 </tr>
                 <tr>
                   <td width="129" style="border-bottom:1px solid #ccc;">Produto</td>
-                  <td width="150" align="center" style="border-bottom:1px solid #ccc;">90</td>
-                  <td width="150" align="center" style="border-bottom:1px solid #ccc;">05</td>
-                  <td width="150" align="center" style="border-bottom:1px solid #ccc;">05</td>
-                  <td width="150" align="center" style="border-bottom:1px solid #ccc;">05</td>
-                  <td width="150" align="center" style="border-bottom:1px solid #ccc;">00</td>
+                  <td width="150" align="center" style="border-bottom:1px solid #ccc;" id="produtolancamento"></td>
+                  <td width="150" align="center" style="border-bottom:1px solid #ccc;" id="produtoJuramentado"></td>
+                  <td width="150" align="center" style="border-bottom:1px solid #ccc;" id="produtoSuplenetar"></td>
+                  <td width="150" align="center" style="border-bottom:1px solid #ccc;" id="produtoRecolhimento"></td>
+                  <td width="150" align="center" style="border-bottom:1px solid #ccc;" id="produtoDanificados"></td>
                 </tr>
                 <tr>
                   <td style="border-bottom:1px solid #ccc;">Exemplar</td>
-                  <td align="center" style="border-bottom:1px solid #ccc;">90</td>
-                  <td align="center" style="border-bottom:1px solid #ccc;">05</td>
-                  <td align="center" style="border-bottom:1px solid #ccc;">05</td>
-                  <td align="center" style="border-bottom:1px solid #ccc;">05</td>
-                  <td align="center" style="border-bottom:1px solid #ccc;">00</td>
+                  <td align="center" style="border-bottom:1px solid #ccc;" id="exemplarlancamento"></td>
+                  <td align="center" style="border-bottom:1px solid #ccc;" id="exemplarJuramentado"></td>
+                  <td align="center" style="border-bottom:1px solid #ccc;" id="exemplarSuplenetar"></td>
+                  <td align="center" style="border-bottom:1px solid #ccc;" id="exemplarRecolhimento"></td>
+                  <td align="center" style="border-bottom:1px solid #ccc;" id="exemplarDanificados"></td>
                 </tr>
                 <tr>
                   <td style="border-bottom:1px solid #ccc;">Valor R$</td>
-                  <td align="center" style="border-bottom:1px solid #ccc;">90</td>
-                  <td align="center" style="border-bottom:1px solid #ccc;">05</td>
-                  <td align="center" style="border-bottom:1px solid #ccc;">05</td>
-                  <td align="center" style="border-bottom:1px solid #ccc;">05</td>
-                  <td align="center" style="border-bottom:1px solid #ccc;">00</td>
+                  <td align="center" style="border-bottom:1px solid #ccc;" id="valorlancamento"></td>
+                  <td align="center" style="border-bottom:1px solid #ccc;" id="valorJuramentado"></td>
+                  <td align="center" style="border-bottom:1px solid #ccc;" id="valorSuplenetar"></td>
+                  <td align="center" style="border-bottom:1px solid #ccc;" id="valorRecolhimento"></td>
+                  <td align="center" style="border-bottom:1px solid #ccc;" id="valorDanificados"></td>
                 </tr>
                 <tr>
                   <td>&nbsp;</td>
@@ -565,58 +605,17 @@
               <td width="950" height="26" align="center" bgcolor="#F4F4F4"><strong>CONSIGNADO</strong></td>
             </tr>
             <tr>
-              <td valign="top"><table width="910" border="0" cellpadding="2" cellspacing="1" style="margin-left:10px; margin-right:10px;">
-                <tr>
-                  <td align="left">&nbsp;</td>
-                  <td align="right">&nbsp;</td>
-                  <td align="right">&nbsp;</td>
-                  <td align="right">&nbsp;</td>
-                  <td align="right">&nbsp;</td>
-                </tr>
-                <tr class="header_table">
-                  <td>&nbsp;</td>
-                  <td align="right">Saldo Anterior  R$</td>
-                  <td align="right">Entradas  R$</td>
-                  <td align="right">Saídas  R$</td>
-                  <td align="right">Saldo Atual  R$</td>
-                </tr>
-                <tr>
-                  <td width="164" style="border-bottom:1px solid #ccc;">Consignado</td>
-                  <td width="180" align="right" style="border-bottom:1px solid #ccc;">2.386.172,32</td>
-                  <td width="180" align="right" style="border-bottom:1px solid #ccc;">120.661,32</td>
-                  <td width="180" align="right" style="border-bottom:1px solid #ccc;">84.249,48</td>
-                  <td width="180" align="right" style="border-bottom:1px solid #ccc;">2.872.584,16</td>
-                </tr>
-                <tr>
-                  <td style="border-bottom:1px solid #ccc;">A Vista</td>
-                  <td align="right" style="border-bottom:1px solid #ccc;">474.641,28</td>
-                  <td align="right" style="border-bottom:1px solid #ccc;">15.187,80</td>
-                  <td align="right" style="border-bottom:1px solid #ccc;">8.649,53</td>
-                  <td align="right" style="border-bottom:1px solid #ccc;">481.179,55</td>
-                </tr>
-                <tr>
-                  <td>&nbsp;</td>
-                  <td align="center">&nbsp;</td>
-                  <td align="center">&nbsp;</td>
-                  <td align="center">&nbsp;</td>
-                  <td align="center">&nbsp;</td>
-                </tr>
-              </table></td>
+              <td valign="top">
+	              <table id="tabela_consignado" width="910" border="0" cellpadding="2" cellspacing="1" style="margin-left:10px; margin-right:10px;">
+	              </table>
+              </td>
             </tr>
         </table>
 <br />
           <br />
 
-
-
+	
         <br clear="all" />
-          <a href="relatorio_geral_financeiro_fisico_1.htm" target="_blank">rel_1</a> |  <a href="relatorio_geral_financeiro_fisico_2.htm" target="_blank">rel_2</a> |  <a href="relatorio_geral_financeiro_fisico_3.htm" target="_blank">rel_3</a><br />
-          <br clear="all" />
-        <br />
-	<span class="bt_confirmar_novo" title="Confirmar"><a onclick="fecharDiaController.popup();" href="javascript:;"><img width="16" border="0" hspace="5" height="16" alt="Confirmar" src="../images/ico_check.gif">Confirmar</a></span>
-          
-          
-          <br clear="all" />
           
 	
         
@@ -652,206 +651,6 @@ $(".popCotasGrid").flexigrid({
 			height : 200
 		});
 
-
-	
-	
-	$(".suplementarDialogGrid").flexigrid({
-			url : '../xml/suplementarDialogGrid-xml.xml',
-			dataType : 'xml',
-			colModel : [ {
-				display : 'Código',
-				name : 'codigo',
-				width : 60,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Produto',
-				name : 'produto',
-				width : 250,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Edição',
-				name : 'edicao',
-				width : 120,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Preço Capa R$',
-				name : 'precoCapa',
-				width : 100,
-				sortable : true,
-				align : 'right'
-			}, {
-				display : 'Qtde Contabil',
-				name : 'qtdeContabil',
-				width : 90,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Qtde Fisico',
-				name : 'qtdeFisico',
-				width : 80,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Dif.',
-				name : 'dif',
-				width : 40,
-				sortable : true,
-				align : 'center'
-			}],
-			sortname : "codigo",
-			sortorder : "asc",
-			usepager : true,
-			useRp : true,
-			rp : 15,
-			showTableToggleBtn : true,
-			width : 850,
-			height : 255
-		});
-		
-	$(".recolhimentoDialogGrid").flexigrid({
-			url : '../xml/recolhimentoDialogGrid-xml.xml',
-			dataType : 'xml',
-			colModel : [ {
-				display : 'Código',
-				name : 'codigo',
-				width : 80,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Produto',
-				name : 'produto',
-				width : 200,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Edição',
-				name : 'edicao',
-				width : 100,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Preço Capa R$',
-				name : 'precoCapa',
-				width : 100,
-				sortable : true,
-				align : 'right'
-			}, {
-				display : 'Qtde',
-				name : 'qtde',
-				width : 90,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Venda Encalhe',
-				name : 'vendaEncalhe',
-				width : 100,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Diferença',
-				name : 'dif',
-				width : 70,
-				sortable : true,
-				align : 'center'
-			}],
-			sortname : "codigo",
-			sortorder : "asc",
-			usepager : true,
-			useRp : true,
-			rp : 15,
-			showTableToggleBtn : true,
-			width : 850,
-			height : 255
-		});
-	$(".reparteDialogGrid").flexigrid({
-			url : '../xml/reparteDialogGrid-xml.xml',
-			dataType : 'xml',
-			colModel : [ {
-				display : 'Código',
-				name : 'codigo',
-				width : 60,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Produto',
-				name : 'produto',
-				width : 110,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Edição',
-				name : 'edicao',
-				width : 60,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Preço Capa R$',
-				name : 'precoCapa',
-				width : 60,
-				sortable : true,
-				align : 'right'
-			}, {
-				display : 'Reparte',
-				name : 'reparte',
-				width : 50,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Sobra em',
-				name : 'sobraEm',
-				width : 50,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Falta em',
-				name : 'faltaEm',
-				width : 50,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Transf.',
-				name : 'transf',
-				width : 50,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'A Distr',
-				name : 'aDistr',
-				width : 50,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Distribuido',
-				name : 'distribuido',
-				width : 50,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Sobra Distr',
-				name : 'sobraDistri',
-				width : 55,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Dif.',
-				name : 'dif',
-				width : 40,
-				sortable : true,
-				align : 'center'
-			}],
-			sortname : "codigo",
-			sortorder : "asc",
-			usepager : true,
-			useRp : true,
-			rp : 15,
-			showTableToggleBtn : true,
-			width : 850,
-			height : 255
-		});
-	
 	$(".estoque-recoltoGrid").flexigrid({
 			url : '../xml/estoque_recolto-xml.xml',
 			dataType : 'xml',

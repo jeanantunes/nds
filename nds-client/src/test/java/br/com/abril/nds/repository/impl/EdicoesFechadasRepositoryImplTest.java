@@ -1,6 +1,6 @@
 package br.com.abril.nds.repository.impl;
 
-import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -20,7 +20,7 @@ public class EdicoesFechadasRepositoryImplTest extends
 	@Test
 	public void testarObterResultadoTotalEdicoesFechadas() {
 
-		BigDecimal totalEdicoes;
+		BigInteger totalEdicoes;
 
 		Calendar d = Calendar.getInstance();
 		Date dataDe = d.getTime();

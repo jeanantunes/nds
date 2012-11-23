@@ -48,6 +48,7 @@ import br.com.abril.nds.service.DebitoCreditoCotaService;
 import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
 import br.com.abril.nds.service.RoteirizacaoService;
 import br.com.abril.nds.service.TipoMovimentoFinanceiroService;
+import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.util.CellModel;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.CurrencyUtil;
@@ -104,6 +105,9 @@ public class DebitoCreditoCotaController {
 	@Autowired
 	private DistribuidorService distribuidorService;
 
+	@Autowired
+	private UsuarioService usuarioService;
+	
 	@Autowired
 	private HttpServletResponse httpResponse;
 	
@@ -511,16 +515,8 @@ public class DebitoCreditoCotaController {
 		}
 	}
 	
-	//TODO: não há como reconhecer usuario, ainda
 	private Usuario getUsuario() {
-			
-		Usuario usuario = new Usuario();
-			
-		usuario.setId(1L);
-			
-		usuario.setNome("Jornaleiro da Silva");
-			
-		return usuario;
+		return usuarioService.getUsuarioLogado();
 	}
 	
 	@Post
@@ -605,8 +601,7 @@ public class DebitoCreditoCotaController {
 
 			debitoCredito.setValor(getValorSemMascara(debitoCredito.getValor()));
 
-			//TODO: remover mock de usuário.
-			debitoCredito.setIdUsuario(1L);
+			debitoCredito.setIdUsuario(this.getUsuario().getId());
 			
 			debitoCredito.setId(null);
 			
@@ -630,7 +625,7 @@ public class DebitoCreditoCotaController {
 		
 		validarPreenchimentoCamposEdicao(debitoCredito);
 		
-		existeMovimentoFinanceiroCota(Arrays.asList(debitoCredito), debitoCredito.getTipoMovimentoFinanceiro().getId());
+		existeMovimentoFinanceiroCota(debitoCredito);
 		
 		//TODO: remover mock de usuário.
 		debitoCredito.setIdUsuario(1L);
@@ -690,6 +685,9 @@ public class DebitoCreditoCotaController {
 				this.movimentoFinanceiroCotaService.obterMovimentoFinanceiroCotaPorId(idMovimento);
 
 		DebitoCreditoDTO debitoCredito = new DebitoCreditoDTO();
+
+		// Caso esteja aprovado ou a data de vencimento (campo data) seja menor que a data atual
+		debitoCredito.setPermiteAlteracao( !(movimentoFinanceiroCota.getStatus() == StatusAprovacao.APROVADO || movimentoFinanceiroCota.getData().before(new Date()) ) );
 
 		Pessoa pessoa = movimentoFinanceiroCota.getCota().getPessoa();
 
@@ -754,7 +752,7 @@ public class DebitoCreditoCotaController {
 
 		List<CellModel> listaCellModel = new ArrayList<CellModel>();
 
-		DecimalFormat decimalFormat = new DecimalFormat("#,###.00");
+		DecimalFormat decimalFormat = new DecimalFormat("#,##0.00");
 
 		for (MovimentoFinanceiroCota movimentoFinanceiroCota : listaDebitoCredito) {
 
@@ -978,6 +976,22 @@ public class DebitoCreditoCotaController {
 		}
 	}
 
+	private void existeMovimentoFinanceiroCota(DebitoCreditoDTO debitoCredito) {
+		
+		Long id = debitoCredito.getId();
+		
+		FiltroDebitoCreditoDTO filtroDebitoCredito = new FiltroDebitoCreditoDTO();
+		
+		filtroDebitoCredito.setDataVencimentoInicio(DateUtil.parseDataPTBR(debitoCredito.getDataVencimento()));
+		filtroDebitoCredito.setDataVencimentoFim(DateUtil.parseDataPTBR(debitoCredito.getDataVencimento()));
+		filtroDebitoCredito.setNumeroCota(debitoCredito.getNumeroCota());
+			
+		if (this.movimentoFinanceiroCotaService.existeOutrosMovimentosFinanceiroCota(filtroDebitoCredito, id)) {
+			ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.WARNING, "Já existe um movimento para esta cota, nesta data.");
+			throw new ValidacaoException(validacao);
+		}
+	}
+	
 	private void existeMovimentoFinanceiroCota(
 			List<DebitoCreditoDTO> listaNovosDebitoCredito, Long idTipoMovimento) {
 		

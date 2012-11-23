@@ -248,7 +248,6 @@ public class HistoricoTitularidadeServiceImplTest extends AbstractRepositoryImpl
 		Assert.assertEquals(historicoEndereco.getNumero(), endereco.getNumero());
 		Assert.assertEquals(historicoEndereco.getTipoLogradouro(), endereco.getTipoLogradouro());
 		Assert.assertEquals(historicoEndereco.getUf(), endereco.getUf());
-		Assert.assertEquals(historicoEndereco.getCodigoBairro(), endereco.getCodigoBairro());
 		Assert.assertEquals(historicoEndereco.getCodigoCidadeIBGE(), endereco.getCodigoCidadeIBGE());
 		Assert.assertEquals(historicoEndereco.getCodigoUf(), endereco.getCodigoUf());
 	}

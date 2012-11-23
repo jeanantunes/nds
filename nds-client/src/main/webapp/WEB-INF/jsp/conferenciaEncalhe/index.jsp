@@ -148,13 +148,13 @@
 					<table class="conferenciaEncalheGrid" style="width: 941px;" id="dadosGridConferenciaEncalhe">
 						<tr class="header_table">
 							<td style="width: 65px; text-align: left;">Exemplares</td>
-							<td style="width: 165px; text-align: left;">Código de Barras</td>
-							<td style="width: 50px; text-align: center;">SM</td>
+							<td style="width: 145px; text-align: left;">Código de Barras</td>
+							<td style="width: 40px; text-align: center;">SM</td>
 							<td style="width: 65px; text-align: left;">Código</td>
 							<td style="width: 70px; text-align: left;">Produto</td>
 							<td style="width: 40px; text-align: left;">Edição</td>
-							<td style="width: 70px; text-align: right;" nowrap="nowrap">Preço Capa R$</td>
-							<td style="width: 50px; text-align: right;" nowrap="nowrap">Desconto R$</td>
+							<td style="width: 80px; text-align: right;" nowrap="nowrap">Preço Capa R$</td>
+							<td style="width: 70px; text-align: right;" nowrap="nowrap">Desconto R$</td>
 							<td style="width: 50px; text-align: right;">Total R$</td>
 							<td style="width: 20px; text-align: center;">Dia</td>
 							<td style="width: 70px; text-align: center;">Juramentada</td>

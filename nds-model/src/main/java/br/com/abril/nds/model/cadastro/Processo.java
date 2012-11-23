@@ -15,7 +15,10 @@ public enum Processo {
 	LANCAMENTO_FALTA_SOBRA("Lançamento faltas e sobra"),
 	VENDA_SUPLEMENTAR("Venda de Suplementar"),
 	FECHAMENTO_ENCALHE("Fechamento de Encalhe"),
-	DEVOLUCAO_AO_FORNECEDOR("Devolução ao Fornecedor"),
+	DEVOLUCAO_AO_FORNECEDOR("Devolução ao Fornecedor"), 
+	DEVOLUCAO_ENCALHE("Nota da Devolução do Encalhe"),
+	CONSIGNACAO_REPARTE_NORMAL("Consignação do Reparte Normal"),
+	NOTA_LANCAMENTO("Nota de Lançamento (NE/NECA)")
 	;
 	private String processo;
 	

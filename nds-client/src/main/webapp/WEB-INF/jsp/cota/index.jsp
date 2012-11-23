@@ -90,7 +90,7 @@
              		<input name="numCota" 
 	              		   id="numCota" 
 	              		   type="text"
-	              		   maxlength="11"
+	              		   maxlength="32"
 	              		   style="width:70px; 
 	              		   float:left; margin-right:5px;"
 	              		    />

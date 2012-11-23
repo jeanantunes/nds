@@ -5,13 +5,13 @@
 			furoProdutoController.init();
 		});
 	</script>
-	<style type="text/css">
-		.dados, .dadosFiltro, .grids{display:none;}
-	</style>
 </head>
 
 <body>
 	<form action="lancamento/furoProduto/pesquisar" method="post">
+		<div id="dialog-confirmar-furo-produto" title="Furo de Produto" style="display:none;">
+			<strong>Expedição Lógica já realizada, todos os movimentos serão extornados. Confirmar?</strong>
+		</div>
 		<div id="dialog-novo" title="Furo de Produto">
 			<strong>Confirma o Furo de Produto?</strong>
 		</div>
@@ -54,7 +54,7 @@
 	  	
 	  	<div class="linha_separa_fields">&nbsp;</div>
 	  	
-	  	<fieldset class="grids fieldGrid" id="resultado">
+	  	<fieldset style="display: none;" id="resultado">
 	  		<legend>Furo do Produto</legend>
 	  			<div class="imgProduto">
 	  				<img src="" alt="" id="imagem"/>

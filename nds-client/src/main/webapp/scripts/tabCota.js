@@ -18,21 +18,25 @@ function TabCota(tabName) {
 		/**DADOS CADASTRAIS**/
 		case 0: 
 			MANTER_COTA.carregarDadosCadastrais();
+			MANTER_COTA.confirmado = false;
 			break;
 			
 		/**ENDERECOS**/
 		case 1:
 			MANTER_COTA.carregarEnderecos();
+			MANTER_COTA.confirmado = false;
 			break;
 		
 		/**TELEFONES**/
 		case 2: 
 			MANTER_COTA.carregarTelefones();
+			MANTER_COTA.confirmado = false;
 			break;
 
 		/**PDV**/
 		case 3: 
 			MANTER_COTA.carregarPDV();
+			MANTER_COTA.confirmado = false;
 			break;
 		
 		/**GARANTIA**/
@@ -41,33 +45,39 @@ function TabCota(tabName) {
 				return tipoCotaGarantia.salva(callBack);
 			};
 			tipoCotaGarantia.onOpen(MANTER_COTA.tipoCotaSelecionada);
+			MANTER_COTA.confirmado = false;
 			break;
 		
 		/**Fornecedor**/
 		case 5:
 
 			MANTER_COTA.carregarFornecedores();
+			MANTER_COTA.confirmado = false;
 
 			break;
 
 		/**Desconto**/		
 		case 6:
 			MANTER_COTA.carregarDescontos();
+			MANTER_COTA.confirmado = false;
 			break;
 		
 		/**Financeiro**/
 		case 7:
 			MANTER_COTA.carregaFinanceiroCota();
+			MANTER_COTA.confirmado = false;
 			break;
 		
 		/**Distribuidor**/
 		case 8:
 			MANTER_COTA.carregarDistribuicao();
+			MANTER_COTA.confirmado = false;
 			break;
 		
 		/**Socios**/
 		case 9:
 			MANTER_COTA.carregarDadosSocio();
+			MANTER_COTA.confirmado = false;
 			break;
 	}
 		

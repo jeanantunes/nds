@@ -131,7 +131,6 @@
 			    <td width="58">Box:</td>
 			    <td colspan="3">
 				    <select name="box" id="box" style="width:150px;" onchange="chamdaEncalheAnteipadaController.recarregarComboRoteiroRotas(this.value)" class="campoDePesquisa">
-				      <option selected="selected" value="-1"></option>
 				      <option selected="selected">Todos</option>
 				      <c:forEach var="box" items="${listaBoxes}">
 								<option value="${box.key}">${box.value}</option>
@@ -178,7 +177,7 @@
 			  	<td colspan="3">
 					
 					<select class="campoDePesquisa" name="municipio" id="municipio" style="width:150px;">
-			      		<option selected="selected">Todos</option>
+			      		<option selected="selected" value="">Todos</option>
 			      		<c:forEach var="municipio" items="${listaMunicipios}">
 								<option value="${municipio.key}">${municipio.value}</option>
 						</c:forEach>
@@ -190,7 +189,7 @@
 	
 				<td>
 					<select class="campoDePesquisa" name="tipoPonto" id="tipoPontoPDV" style="width:150px;">
-			      		<option selected="selected">Todos</option>
+			      		<option selected="selected" value="">Todos</option>
 			      		<c:forEach var="tpPonto" items="${listaTipoPonto}">
 								<option value="${tpPonto.key}">${tpPonto.value}</option>
 						</c:forEach>

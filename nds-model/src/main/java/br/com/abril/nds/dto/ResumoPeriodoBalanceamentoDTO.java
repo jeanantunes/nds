@@ -2,6 +2,7 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Date;
 
 import br.com.abril.nds.util.CurrencyUtil;
@@ -14,9 +15,9 @@ public class ResumoPeriodoBalanceamentoDTO implements Serializable {
 	private Date data;
 	private String dataFormatada;
 	private Long qtdeTitulos;
-	private BigDecimal qtdeExemplares;
+	private BigInteger qtdeExemplares;
 	private String qtdeExemplaresFormatada;
-	private BigDecimal pesoTotal;
+	private BigInteger pesoTotal;
 	private String pesoTotalFormatado;
 	private BigDecimal valorTotal;
 	private String valorTotalFormatado;
@@ -47,14 +48,14 @@ public class ResumoPeriodoBalanceamentoDTO implements Serializable {
 		this.qtdeTitulos = qtdeTitulos;
 	}
 	
-	public BigDecimal getQtdeExemplares() {
+	public BigInteger getQtdeExemplares() {
 		return qtdeExemplares;
 	}
 	
-	public void setQtdeExemplares(BigDecimal qtdeExemplares) {
+	public void setQtdeExemplares(BigInteger qtdeExemplares) {
 		this.qtdeExemplares = qtdeExemplares;
 		if (qtdeExemplares != null) {
-			qtdeExemplaresFormatada = qtdeExemplares.toBigInteger().toString();
+			qtdeExemplaresFormatada = qtdeExemplares.toString();
 		}
 	}
 	
@@ -62,11 +63,11 @@ public class ResumoPeriodoBalanceamentoDTO implements Serializable {
 		return qtdeExemplaresFormatada;
 	}
 	
-	public BigDecimal getPesoTotal() {
+	public BigInteger getPesoTotal() {
 		return pesoTotal;
 	}
 	
-	public void setPesoTotal(BigDecimal pesoTotal) {
+	public void setPesoTotal(BigInteger pesoTotal) {
 		this.pesoTotal = pesoTotal;
 		if (pesoTotal != null) {
 			pesoTotalFormatado = pesoTotal.toString();
@@ -95,8 +96,8 @@ public class ResumoPeriodoBalanceamentoDTO implements Serializable {
 	public static ResumoPeriodoBalanceamentoDTO empty(Date data) {
 		ResumoPeriodoBalanceamentoDTO resumo = new ResumoPeriodoBalanceamentoDTO();
 		resumo.setData(data);
-		resumo.setPesoTotal(BigDecimal.ZERO);
-		resumo.setQtdeExemplares(BigDecimal.ZERO);
+		resumo.setPesoTotal(BigInteger.ZERO);
+		resumo.setQtdeExemplares(BigInteger.ZERO);
 		resumo.setQtdeTitulos(0L);
 		resumo.setValorTotal(BigDecimal.ZERO);
 		return resumo;

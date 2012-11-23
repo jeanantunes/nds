@@ -38,12 +38,12 @@ label {
 			<table width="626" border="0" cellpadding="2" cellspacing="1">
 				<tr>
 					<td width="105">Número Banco:</td>
-					<td width="214"><input type="text" name="newNumero" maxlength="17"
+					<td width="214"><input type="text" name="newNumero" maxlength="4"
 						id="newNumero" style="width: 143px;" />
 					</td>
 					<td width="67">Nome:</td>
-					<td width="219"><input type="text" name="newNome" maxlength="100"
-						id="newNome" style="width: 215px;" />
+					<td width="219">
+						<input type="text" name="newNome" maxlength="100" id="newNome" style="width: 215px;"/>
 					</td>
 				</tr>
 				<tr>
@@ -52,7 +52,7 @@ label {
 						style="width: 143px;" />
 					</td>
 					<td>Agência:</td>
-					<td><input maxlength="17" type="text" name="newAgencia" id="newAgencia"
+					<td><input maxlength="10" type="text" name="newAgencia" id="newAgencia"
 						style="width: 215px;" />
 					</td>
 				</tr>
@@ -76,7 +76,7 @@ label {
 													
 					</td>
 					<td>Juros %:</td>
-					<td><input maxlength="17" type="text" name="newJuros" id="newJuros"
+					<td><input maxlength="5" type="text" name="newJuros" id="newJuros"
 						style="width: 80px; text-align:right;" />
 					</td>
 				</tr>
@@ -88,8 +88,8 @@ label {
 	
 					<td>Multa %:</td>
 					<td>
-					    <input onchange="bancoController.limparVrMulta();" maxlength="17" type="text" name="newMulta" id="newMulta" style="width:80px; text-align:right;" />
-					    ou R$: <input onchange="bancoController.limparMulta();" maxlength="17" type="text" name="newVrMulta" id="newVrMulta" style="width:80px; text-align:right;" />
+					    <input onchange="bancoController.limparVrMulta();" maxlength="5" type="text" name="newMulta" id="newMulta" style="width:80px; text-align:right;" />
+					    ou R$: <input onchange="bancoController.limparMulta();" maxlength="10" type="text" name="newVrMulta" id="newVrMulta" style="width:80px; text-align:right;" />
 					</td>
 
 				</tr>
@@ -118,7 +118,7 @@ label {
 			<table width="626" border="0" cellpadding="2" cellspacing="1">
 				<tr>
 					<td width="111">Número Banco:</td>
-					<td width="216"><input type="text" name="alterNumero" maxlength="17"
+					<td width="216"><input type="text" name="alterNumero" maxlength="4"
 						id="alterNumero" style="width: 143px;" />
 					</td>
 					<td width="73">Nome:</td>
@@ -132,7 +132,7 @@ label {
 						style="width: 143px;" />
 					</td>
 					<td>Agência:</td>
-					<td><input maxlength="17" type="text" name="alterAgencia" id="alterAgencia"
+					<td><input maxlength="10" type="text" name="alterAgencia" id="alterAgencia"
 						style="width: 215px;" />
 					</td>
 				</tr>
@@ -156,7 +156,7 @@ label {
 								                
 					</td>
 					<td>Juros %:</td>
-					<td><input maxlength="17" type="text" name="alterJuros" id="alterJuros"
+					<td><input maxlength="5" type="text" name="alterJuros" id="alterJuros"
 						style="width: 80px;" />
 					</td>
 				</tr>
@@ -168,8 +168,8 @@ label {
 					
 					<td>Multa %:</td>
 					<td>
-					    <input onchange="bancoController.limparVrMulta();" maxlength="17" type="text" name="alterMulta" id="alterMulta" style="width:80px; text-align:right;" />
-					    ou R$: <input onchange="bancoController.limparMulta();" maxlength="17" type="text" name="alterVrMulta" id="alterVrMulta" style="width:80px; text-align:right;" />
+					    <input onchange="bancoController.limparVrMulta();" maxlength="5" type="text" name="alterMulta" id="alterMulta" style="width:80px; text-align:right;" />
+					    ou R$: <input onchange="bancoController.limparMulta();" maxlength="10" type="text" name="alterVrMulta" id="alterVrMulta" style="width:80px; text-align:right;" />
 					</td>
 					
 				</tr>
@@ -197,16 +197,17 @@ label {
 				class="filtro">
 				<tr>
 					<td width="41">Nome:</td>
-					<td colspan="3"><input type="text" name="nome"
-						id="nome" style="width: 180px;" />
+					<td colspan="3"><input type="text" name="nome" maxlength="100"
+						id="nome" style="width: 180px;"
+						onkeyup='bancoController.autoCompletarPorNomeBanco("#nome")' />
 					</td>
 					<td width="54">Número:</td>
-					<td width="143"><input type="text" name="numero"
+					<td width="143"><input type="text" name="numero" maxlength="4"
 						id="numero" style="width: 130px;" />
 					</td>
 					<td width="56">Cedente:</td>
-					<td width="160"><input type="text" name="cedente"
-						id="cedente" style="width: 150px;" />
+					<td width="160"><input type="text" name="cedente" maxlength="17"
+						id="cedente" style="width: 150px;" maxLength="255" />
 					</td>
 					<td width="20"><input name="ativo" type="checkbox"
 						id="ativo" style="float: left;" value="" checked="checked" />

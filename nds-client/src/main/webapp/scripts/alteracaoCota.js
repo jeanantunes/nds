@@ -16,6 +16,23 @@ var alteracaoCotaController = $.extend(true, {
 	
 	pesquisaCotaAlteracaoCota : null,
 
+	carregarBairros : function(cidade) {
+		
+		$("#idBairro option", alteracaoCotaController.workspace).remove();
+		
+		$.postJSON(contextPath + '/administracao/alteracaoCota/buscarBairroPorCidade.json', {
+			'cidade' : cidade
+		}, function(data) {
+			$("#idBairro", alteracaoCotaController.workspace).append($("<option/>", {value: "-1", text: ""}));
+			$(data).each(function() {
+				$("#idBairro", alteracaoCotaController.workspace).append($("<option/>", {value: $(this)[0].toString(),
+															 			   text: $(this)[0].toString() 
+															 			  }));
+			});
+		});
+
+	},
+	
 	init : function(pesquisaCota) {
 		this.pesquisaCotaAlteracaoCota = pesquisaCota;
 		
@@ -146,7 +163,7 @@ var alteracaoCotaController = $.extend(true, {
 				sortable : true,
 				align : 'right'
 			}, {
-				display : 'Ação',
+				display : 'A&ccedil;&atilde;o',
 				name : 'acao',
 				width : 60,
 				sortable : false,
@@ -159,7 +176,6 @@ var alteracaoCotaController = $.extend(true, {
 			rp : 15,
 			showTableToggleBtn : true,
 			width : 960,
-			height : 'auto',
 			singleSelect : true
 		});
 	},
@@ -169,10 +185,11 @@ var alteracaoCotaController = $.extend(true, {
 		$("#totalCotasSelecionadas", this.workspace).html(0);
 		$("#alteracaoCotaCheckAll", this.workspace).attr("checked",false);
 		
-		var params = $("#pesquisarForm", this.workspace).serialize();
+		var params = $("#pesquisarForm", this.workspace).serializeArray();
 		
 		$(".alteracaoGrid", this.workspace).flexOptions({
-			url: contextPath + "/administracao/alteracaoCota/pesquisarAlteracaoCota.json?"+params,
+			"url" : contextPath + "/administracao/alteracaoCota/pesquisarAlteracaoCota.json",
+			params: params,
 			newp: 1
 		});
 	

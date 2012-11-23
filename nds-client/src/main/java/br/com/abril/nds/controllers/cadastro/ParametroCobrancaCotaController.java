@@ -745,7 +745,7 @@ public class ParametroCobrancaCotaController {
 	 */
 	public void validarFormaCobranca(FormaCobrancaDTO formaCobranca){
 		
-		validar();
+		//validar();
 		
 		if(formaCobranca.getTipoCobranca()==null){
 			throw new ValidacaoException(TipoMensagem.WARNING, "Escolha um Tipo de Pagamento.");

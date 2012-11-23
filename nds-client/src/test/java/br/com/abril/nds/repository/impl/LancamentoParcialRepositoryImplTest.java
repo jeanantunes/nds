@@ -113,4 +113,146 @@ public class LancamentoParcialRepositoryImplTest extends AbstractRepositoryImplT
 		Assert.assertTrue(total == 1);
 		
 	}
+	
+//	Testes de condições getSqlFromEWhereLancamentosParciais() com buscarLancamentosParciais()
+	
+//	CODIGO_PRODUTO
+	@Test
+	public void getSqlFromEWhereLancamentosParciaisCODIGOPRODUTO() {
+				
+		FiltroParciaisDTO filtro = new FiltroParciaisDTO();
+		filtro.setCodigoProduto(produtoVeja.getCodigo());
+		filtro.setDataInicial("10/10/2000");
+		filtro.setDataFinal("10/10/2013");
+		filtro.setEdicaoProduto(produtoEdicaoVeja1.getNumeroEdicao());
+		filtro.setIdFornecedor(fornecedorFC.getId());
+		filtro.setNomeProduto(produtoVeja.getNome());
+		filtro.setStatus(StatusLancamentoParcial.PROJETADO.name());
+		filtro.setPaginacao(new PaginacaoVO(1, 10,"ASC", FiltroParciaisDTO.ColunaOrdenacao.CODIGO_PRODUTO.toString()));
+				
+		List<ParcialDTO> lancamento = lancamentoParcialRepository.buscarLancamentosParciais(filtro);
+		
+		Assert.assertEquals(lancamento.size(), 1);
+		
+	}
+	
+//	DATA_LANCAMENTO
+	@Test
+	public void getSqlFromEWhereLancamentosParciaisDATALANCAMENTO() {
+				
+		FiltroParciaisDTO filtro = new FiltroParciaisDTO();
+		filtro.setCodigoProduto(produtoVeja.getCodigo());
+		filtro.setDataInicial("10/10/2000");
+		filtro.setDataFinal("10/10/2013");
+		filtro.setEdicaoProduto(produtoEdicaoVeja1.getNumeroEdicao());
+		filtro.setIdFornecedor(fornecedorFC.getId());
+		filtro.setNomeProduto(produtoVeja.getNome());
+		filtro.setStatus(StatusLancamentoParcial.PROJETADO.name());
+		filtro.setPaginacao(new PaginacaoVO(1, 10,"ASC", FiltroParciaisDTO.ColunaOrdenacao.DATA_LANCAMENTO.toString()));
+				
+		List<ParcialDTO> lancamento = lancamentoParcialRepository.buscarLancamentosParciais(filtro);
+		
+		Assert.assertEquals(lancamento.size(), 1);
+		
+	}
+	
+//	DATA_RECOLHIMENTO
+	@Test
+	public void getSqlFromEWhereLancamentosParciaisDATARECOLHIMENTO() {
+				
+		FiltroParciaisDTO filtro = new FiltroParciaisDTO();
+		filtro.setCodigoProduto(produtoVeja.getCodigo());
+		filtro.setDataInicial("10/10/2000");
+		filtro.setDataFinal("10/10/2013");
+		filtro.setEdicaoProduto(produtoEdicaoVeja1.getNumeroEdicao());
+		filtro.setIdFornecedor(fornecedorFC.getId());
+		filtro.setNomeProduto(produtoVeja.getNome());
+		filtro.setStatus(StatusLancamentoParcial.PROJETADO.name());
+		filtro.setPaginacao(new PaginacaoVO(1, 10,"ASC", FiltroParciaisDTO.ColunaOrdenacao.DATA_RECOLHIMENTO.toString()));
+				
+		List<ParcialDTO> lancamento = lancamentoParcialRepository.buscarLancamentosParciais(filtro);
+		
+		Assert.assertEquals(lancamento.size(), 1);
+		
+	}
+	
+//	NOME_FORNECEDOR
+	@Test
+	public void getSqlFromEWhereLancamentosParciaisNOMEFORNECEDOR() {
+				
+		FiltroParciaisDTO filtro = new FiltroParciaisDTO();
+		filtro.setCodigoProduto(produtoVeja.getCodigo());
+		filtro.setDataInicial("10/10/2000");
+		filtro.setDataFinal("10/10/2013");
+		filtro.setEdicaoProduto(produtoEdicaoVeja1.getNumeroEdicao());
+		filtro.setIdFornecedor(fornecedorFC.getId());
+		filtro.setNomeProduto(produtoVeja.getNome());
+		filtro.setStatus(StatusLancamentoParcial.PROJETADO.name());
+		filtro.setPaginacao(new PaginacaoVO(1, 10,"ASC", FiltroParciaisDTO.ColunaOrdenacao.NOME_FORNECEDOR.toString()));
+				
+		List<ParcialDTO> lancamento = lancamentoParcialRepository.buscarLancamentosParciais(filtro);
+		
+		Assert.assertEquals(lancamento.size(), 1);
+		
+	}
+	
+//	NOME_PRODUTO
+	@Test
+	public void getSqlFromEWhereLancamentosParciaisNOMEPRODUTO() {
+				
+		FiltroParciaisDTO filtro = new FiltroParciaisDTO();
+		filtro.setCodigoProduto(produtoVeja.getCodigo());
+		filtro.setDataInicial("10/10/2000");
+		filtro.setDataFinal("10/10/2013");
+		filtro.setEdicaoProduto(produtoEdicaoVeja1.getNumeroEdicao());
+		filtro.setIdFornecedor(fornecedorFC.getId());
+		filtro.setNomeProduto(produtoVeja.getNome());
+		filtro.setStatus(StatusLancamentoParcial.PROJETADO.name());
+		filtro.setPaginacao(new PaginacaoVO(1, 10,"ASC", FiltroParciaisDTO.ColunaOrdenacao.NOME_PRODUTO.toString()));
+				
+		List<ParcialDTO> lancamento = lancamentoParcialRepository.buscarLancamentosParciais(filtro);
+		
+		Assert.assertEquals(lancamento.size(), 1);
+		
+	}
+	
+//	NUM_EDICAO
+	@Test
+	public void getSqlFromEWhereLancamentosParciaisNUMEDICAO() {
+				
+		FiltroParciaisDTO filtro = new FiltroParciaisDTO();
+		filtro.setCodigoProduto(produtoVeja.getCodigo());
+		filtro.setDataInicial("10/10/2000");
+		filtro.setDataFinal("10/10/2013");
+		filtro.setEdicaoProduto(produtoEdicaoVeja1.getNumeroEdicao());
+		filtro.setIdFornecedor(fornecedorFC.getId());
+		filtro.setNomeProduto(produtoVeja.getNome());
+		filtro.setStatus(StatusLancamentoParcial.PROJETADO.name());
+		filtro.setPaginacao(new PaginacaoVO(1, 10,"ASC", FiltroParciaisDTO.ColunaOrdenacao.NUM_EDICAO.toString()));
+				
+		List<ParcialDTO> lancamento = lancamentoParcialRepository.buscarLancamentosParciais(filtro);
+		
+		Assert.assertEquals(lancamento.size(), 1);
+		
+	}
+	
+//	STATUS_PARCIAL
+	@Test
+	public void getSqlFromEWhereLancamentosParciaisSTATUSPARCIAL() {
+				
+		FiltroParciaisDTO filtro = new FiltroParciaisDTO();
+		filtro.setCodigoProduto(produtoVeja.getCodigo());
+		filtro.setDataInicial("10/10/2000");
+		filtro.setDataFinal("10/10/2013");
+		filtro.setEdicaoProduto(produtoEdicaoVeja1.getNumeroEdicao());
+		filtro.setIdFornecedor(fornecedorFC.getId());
+		filtro.setNomeProduto(produtoVeja.getNome());
+		filtro.setStatus(StatusLancamentoParcial.PROJETADO.name());
+		filtro.setPaginacao(new PaginacaoVO(1, 10,"ASC", FiltroParciaisDTO.ColunaOrdenacao.STATUS_PARCIAL.toString()));
+				
+		List<ParcialDTO> lancamento = lancamentoParcialRepository.buscarLancamentosParciais(filtro);
+		
+		Assert.assertEquals(lancamento.size(), 1);
+		
+	}
 }

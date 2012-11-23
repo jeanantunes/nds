@@ -1,6 +1,7 @@
 package br.com.abril.nds.service.impl;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.text.DateFormat;
@@ -602,7 +603,7 @@ public class MonitorNFEServiceImpl implements MonitorNFEService {
 		String NCMProduto 			= "";
 		String CFOPProduto 			= "";
 		Long unidadeProduto 		= 0L;
-		BigDecimal quantidadeProduto = BigDecimal.ZERO;
+		BigInteger quantidadeProduto = BigInteger.ZERO;
 		BigDecimal valorUnitarioProduto = BigDecimal.ZERO;
 		BigDecimal valorTotalProduto = BigDecimal.ZERO;
 		String CSTProduto = "";

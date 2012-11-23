@@ -5,16 +5,25 @@ var produtoController = $.extend(true, {
 	
 	inicializar : function (pesquisaProduto) {
 		
+		produtoController.aplicarMascaras();
+		
 		produtoController.pesquisaProduto = pesquisaProduto;
 		
 		this.iniciarGrid();
 		$( "#tabProduto", this.workspace).tabs();
+		
+		$("#fieldSegmentacao", produtoController.workspace).hide();
 
 	},
 
 	aplicarMascaras : function () {
 		$("#peb", this.workspace).numeric();
-		$("#pacotePadrao", this.workspace).numeric();
+		$("#pacotePadrao", this.workspace).numeric(
+		    {
+		    	decimal : false,
+		    	negative : false
+		    }
+		);
 	},
 
 	buscarValueRadio:function(radioName) {
@@ -236,6 +245,22 @@ var produtoController = $.extend(true, {
 				produtoController.carregarProdutoEditado(id);		
 			}
 		);
+		
+		$("#codigoProdutoCadastro", this.workspace).disable();
+	},
+	
+	habilitarDesabilitarCamposInterface : function(habilitar) {
+		
+		$(".habilitarCampoInterface", produtoController.workspace).attr('disabled',!habilitar);
+		
+		if(!habilitar){
+			$("#fieldSegmentacao", produtoController.workspace).show();
+		}
+		else{
+			$("#fieldSegmentacao", produtoController.workspace).hide();
+		}
+		
+		$(".habilitarCampoInterfaceSegmentacao", produtoController.workspace).attr('disabled',!habilitar);
 	},
 	
 	carregarProdutoEditado : function(id) {
@@ -255,6 +280,9 @@ var produtoController = $.extend(true, {
 						$("#subGrupoEditorial", produtoController.workspace).val(result.subGrupoEditorial);
 						$("#comboEditor", produtoController.workspace).val(result.codigoEditor);
 						$("#comboFornecedoresCadastro", produtoController.workspace).val(result.codigoFornecedor);
+
+						produtoController.habilitarDesabilitarCamposInterface(!(result.origem == "INTERFACE"));
+						
 						$("#comboTipoDesconto", produtoController.workspace).val(result.tipoDesconto);
 						$("#comboTipoProdutoCadastro", produtoController.workspace).val(result.codigoTipoProduto);
 						$("#segmentacaoClasseSocial", produtoController.workspace).val(result.classeSocial);
@@ -352,7 +380,11 @@ var produtoController = $.extend(true, {
 			form: $("#dialog-novo", this.workspace).parents("form")
 		});
 
+		produtoController.habilitarDesabilitarCamposInterface(true);
+		
 		this.carregarNovoProduto(this.limparModalCadastro);
+		
+		$("#codigoProdutoCadastro", this.workspace).enable();
 	},
 
 	carregarNovoProduto : function(callback) {

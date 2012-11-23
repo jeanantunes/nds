@@ -2,6 +2,8 @@
 </head>
 
 <div id="dadosCadastraisPF" style="display:none">
+	<legend>Entregador - Pessoa Física</legend>
+	<div>
 	<form id="formDadosEntregadorPF">
 		<input type="hidden" name="entregador.id" id="idEntregadorPF"/>
        <table width="754" cellpadding="2" cellspacing="2" style="text-align:left;">
@@ -30,9 +32,6 @@
          <td width="59"><input type="text" id="orgaoEmissor" style="width:50px" /></td>
          <td width="31">UF:</td>
          <td width="135"><select id="ufOrgaoEmissor" style="width:50px">
-           <option selected="selected"> </option>
-           <option>RJ</option>
-           <option>SP</option>
          </select></td>
        </tr>
        <tr>
@@ -83,4 +82,5 @@
        </tr>
      </table>
     </form>
+    </div>
  </div>

@@ -115,77 +115,21 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		} else {
 			
 			hql.append(" select sum(_chamEncCota.qtdePrevista) 				");
-			
 		}
 		
-		hql.append(" from ChamadaEncalheCota _chamEncCota 				")
+		hql.append(" from ChamadaEncalheCota _chamEncCota 					")
 		.append(" join _chamEncCota.chamadaEncalhe  _chamadaEncalhe 	")
 		.append(" join _chamEncCota.cota _cota 							")
-		.append(" join _cota.pessoa _pessoa 							")
-		.append(" join _chamadaEncalhe.produtoEdicao _produtoEdicao 	")
-		.append(" join _produtoEdicao.produto _produto 					")
-		.append(" join _produto.fornecedores _fornecedores 				")
-		.append(" JOIN _cota.box _box 									")
-		.append(" JOIN _cota.pdvs _pdv 									")
-		.append(" JOIN _pdv.rotas _rotaPdv 								")
-		.append(" JOIN _rotaPdv.rota _rota 								")
-		.append(" JOIN _rota.roteiro _roteiro 							");
-		
-		boolean contemWhere = false;
-		
+		.append(" where _cota.id = cota.id ");
+
 		if(filtro.getDtRecolhimentoDe() != null) {
 			
-			hql.append(((contemWhere)?" and ":" where ")+" _chamadaEncalhe.dataRecolhimento >=:dataDe ");
-			contemWhere = true;
+			hql.append(" and _chamadaEncalhe.dataRecolhimento >=:dataDe ");
 		}
 		
 		if(filtro.getDtRecolhimentoAte() != null) {
-			hql.append(((contemWhere)?" and ":" where ")+" _chamadaEncalhe.dataRecolhimento <=:dataAte ");
-			contemWhere = true;
+			hql.append(" and _chamadaEncalhe.dataRecolhimento <=:dataAte ");
 		}
-		
-		if(filtro.getNumCotaDe() != null) {
-
-			hql.append(((contemWhere)?"and":"where")+" _cota.numeroCota >=:cotaDe ");
-			contemWhere = true;
-		}
-		
-		if(filtro.getNumCotaAte() != null) {
-			
-			hql.append(((contemWhere)?"and":"where")+" _cota.numeroCota <=:cotaAte ");
-			contemWhere = true;
-		}
-		
-		if(filtro.getIdRoteiro() != null) {
-			
-			hql.append(((contemWhere)?"and":"where")+" _roteiro.id <=:idRoteiro ");
-			contemWhere = true;
-		}
-				
-		if(filtro.getIdRota() != null) {
-			
-			hql.append(((contemWhere)?"and":"where")+" _rota.id <=:idRota ");
-			contemWhere = true;
-		}
-		
-		if(filtro.getIdBoxDe() != null) {
-			
-			hql.append(((contemWhere)?"and":"where")+" _box.codigo >=:codBox ");
-			contemWhere = true;
-		}
-		
-		if(filtro.getIdBoxAte() != null) {
-			
-			hql.append(((contemWhere)?"and":"where")+" _box.codigo <=:codBox");
-			contemWhere = true;
-		}
-		
-		if(filtro.getFornecedores() != null && !filtro.getFornecedores().isEmpty()) {
-			
-			hql.append(((contemWhere)?"and":"where")+" _fornecedores.id in (:listaFornecedores) ");
-			contemWhere = true;
-		}
-
 		
 		return hql.toString();
 		
@@ -199,27 +143,18 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		HashMap<String, Object> param = new HashMap<String, Object>();
 		
 		StringBuilder hql = new StringBuilder();
-		
-		hql.append(" select cota.numeroCota as numCota, ");
-		hql.append(" 		cota.id as idCota, 			");
-		hql.append(" 		pessoa.nome as nomeCota, 	");
-		
-		hql.append(" (	");
-		hql.append(	getSubHqlTotalQtdeValorPrevistaDaEmissaoCE(filtro, false));
-		hql.append(" )	as qtdeExemplares, ");
-
-		hql.append(" (	");
-		hql.append(	getSubHqlTotalQtdeValorPrevistaDaEmissaoCE(filtro, true));
-		hql.append(" )	as vlrTotalCe ");
 				
+		hql.append(" select cota.numeroCota as numCota, ");
+		hql.append(" cota.id as idCota, ");
+		hql.append(" case pessoa.class ");
+		hql.append("      when 'F' then pessoa.nome ");
+		hql.append("      when 'J' then pessoa.razaoSocial end  as nomeCota,");		
+		hql.append("(").append(getSubHqlTotalQtdeValorPrevistaDaEmissaoCE(filtro, false)).append(" ) as qtdeExemplares, ");	
+		hql.append("(").append(getSubHqlTotalQtdeValorPrevistaDaEmissaoCE(filtro, true)).append(" ) as vlrTotalCe ");	
+		
 		gerarFromWhere(filtro, hql, param);
 		
-
-		hql.append(" group by   ")
-		
-		.append(" cota.numeroCota,	")
-		.append(" cota.id,  		")
-		.append(" pessoa.nome  		");
+		hql.append(" group by cota   ");
 		
 		gerarOrdenacao(filtro, hql);		
 				
@@ -365,30 +300,25 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		
 		hql.append("chamEncCota.id as idChamEncCota,	");
 		
-		hql.append("	cota.numeroCota as numCota, 							");
-		hql.append("	chamadaEncalhe.dataRecolhimento as dataRecolhimento, 	");
-		hql.append("	cota.id as idCota, 										");
-		hql.append("	pessoa.nome as nomeCota, 								");
-		
-		
-		hql.append(" (	");
-		hql.append(	getSubHqlTotalQtdeValorPrevistaDaEmissaoCE(filtro, false));
-		hql.append(" )	as qtdeExemplares, ");
-
-		hql.append(" (	");
-		hql.append(	getSubHqlTotalQtdeValorPrevistaDaEmissaoCE(filtro, true));
-		hql.append(" )	as vlrTotalCe, ");
-		
-		hql.append("	box.codigo as box, 						");
-		hql.append("	cast (rota.id as string) as codigoRota, ");
-		hql.append("	rota.descricaoRota as nomeRota 			");
+		hql.append(" cota.numeroCota as numCota, 							");
+		hql.append(" chamadaEncalhe.dataRecolhimento as dataRecolhimento, 	");
+		hql.append(" cota.id as idCota, 										");
+		hql.append(" case pessoa.class ");
+		hql.append("       when 'F' then pessoa.nome ");
+		hql.append("       when 'J' then pessoa.razaoSocial end  as nomeCota,");
+		hql.append("(").append(getSubHqlTotalQtdeValorPrevistaDaEmissaoCE(filtro, false)).append(" ) as qtdeExemplares, ");	
+		hql.append("(").append(getSubHqlTotalQtdeValorPrevistaDaEmissaoCE(filtro, true)).append(" ) as vlrTotalCe, ");	
+		hql.append(" box.codigo as box, 						");
+		hql.append(" cast (rota.id as string) as codigoRota, ");
+		hql.append(" rota.descricaoRota as nomeRota, 		");
+		hql.append(" cast (roteiro.id as string) as codigoRoteiro, ");
+		hql.append(" roteiro.descricaoRoteiro as nomeRoteiro 	  ");
 		
 		gerarFromWhere(filtro, hql, param);
 		
-
 		hql.append(" group by cota ");
 		
-		gerarOrdenacao(filtro, hql);		
+		hql.append( " order by box.codigo, roteiro.ordem, rota.ordem, rotaPdv.ordem ");
 				
 		Query query =  getSession().createQuery(hql.toString());
 		
@@ -456,23 +386,18 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		hql.append(" select sum(_chamEncCota.qtdePrevista) 				")		
 		.append(" from ChamadaEncalheCota _chamEncCota 					")
 		.append(" join _chamEncCota.chamadaEncalhe  _chamadaEncalhe 	")
-		.append(" join _chamEncCota.cota _cota 							");
-		
-		boolean contemWhere = false;
+		.append(" join _chamEncCota.cota _cota 							")
+		.append(" where _chamadaEncalhe.id = chamadaEncalhe.id ");
 
-		hql.append(((contemWhere)?"and":"where")+" _cota.id =:idCota ");
-		
-		contemWhere = true;
+		hql.append("and _cota.id =:idCota ");
 		
 		if(filtro.getDtRecolhimentoDe() != null) {
 			
-			hql.append(((contemWhere)?" and ":" where ")+" _chamadaEncalhe.dataRecolhimento >=:dataDe ");
-			contemWhere = true;
+			hql.append(" and _chamadaEncalhe.dataRecolhimento >=:dataDe ");
 		}
 		
 		if(filtro.getDtRecolhimentoAte() != null) {
-			hql.append(((contemWhere)?" and ":" where ")+" _chamadaEncalhe.dataRecolhimento <=:dataAte ");
-			contemWhere = true;
+			hql.append(" and _chamadaEncalhe.dataRecolhimento <=:dataAte ");
 		}
 		
 		return hql.toString();		

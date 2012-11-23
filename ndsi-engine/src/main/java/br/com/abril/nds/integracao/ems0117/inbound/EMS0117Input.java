@@ -21,7 +21,7 @@ public class EMS0117Input implements Serializable {
 	private String nomeJornaleiro;
 	private Integer qtdeCotas;
 	private String endereco;
-	private Integer codBairro;
+	private String codBairro;
 	private String municipio;
 	private String siglaUF;
 	private String cep;
@@ -33,7 +33,8 @@ public class EMS0117Input implements Serializable {
 	private String codTipoBox;
 	private String codCapataz;
 	private String repartePDV;
-	private String cpfCNPJ;
+	private String cpf;
+	private String cnpj;
 	private String tipoPessoa;
 	private String numLogradouro;
 	private Integer codCidadeIbge;
@@ -77,11 +78,11 @@ public class EMS0117Input implements Serializable {
 	}
 	
 	@Field(offset = 79, length = 5)
-	public Integer getCodBairro() {
+	public String getCodBairro() {
 		return codBairro;
 	}
 	
-	public void setCodBairro(Integer codBairro) {
+	public void setCodBairro(String codBairro) {
 		this.codBairro = codBairro;
 	}
 	
@@ -184,13 +185,22 @@ public class EMS0117Input implements Serializable {
 		this.codCapataz = codCapataz;
 	}
 
-	@Field(offset = 137, length = 14)
-	public String getCpfCNPJ() {
-		return cpfCNPJ;
+	@Field(offset = 140, length = 11)
+	public String getCpf() {
+		return cpf;
 	}
 	
-	public void setCpfCNPJ(String cpfCNPJ) {
-		this.cpfCNPJ = cpfCNPJ;
+	public void setCpf(String cpf) {
+		this.cpf = cpf;
+	}
+
+	@Field(offset = 137, length = 14)
+	public String getCnpj() {
+		return cnpj;
+	}
+	
+	public void setCnpj(String cnpj) {
+		this.cnpj = cnpj;
 	}
 	
 	@Field(offset = 151, length = 1)
@@ -257,7 +267,8 @@ public class EMS0117Input implements Serializable {
 				* result
 				+ ((condPrazoPagamento == null) ? 0 : condPrazoPagamento
 						.hashCode());
-		result = prime * result + ((cpfCNPJ == null) ? 0 : cpfCNPJ.hashCode());
+		result = prime * result + ((cpf == null) ? 0 : cpf.hashCode());
+		result = prime * result + ((cnpj == null) ? 0 : cnpj.hashCode());
 		result = prime * result + ((ddd == null) ? 0 : ddd.hashCode());
 		result = prime * result
 				+ ((endereco == null) ? 0 : endereco.hashCode());
@@ -334,10 +345,15 @@ public class EMS0117Input implements Serializable {
 				return false;
 		} else if (!condPrazoPagamento.equals(other.condPrazoPagamento))
 			return false;
-		if (cpfCNPJ == null) {
-			if (other.cpfCNPJ != null)
+		if (cpf == null) {
+			if (other.cpf != null)
 				return false;
-		} else if (!cpfCNPJ.equals(other.cpfCNPJ))
+		} else if (!cpf.equals(other.cpf))
+			return false;
+		if (cnpj == null) {
+			if (other.cnpj != null)
+				return false;
+		} else if (!cnpj.equals(other.cnpj))
 			return false;
 		if (ddd == null) {
 			if (other.ddd != null)
@@ -417,7 +433,7 @@ public class EMS0117Input implements Serializable {
 				+ situacaoCota + ", condPrazoPagamento=" + condPrazoPagamento
 				+ ", codBox=" + codBox + ", codTipoBox=" + codTipoBox
 				+ ", codCapataz=" + codCapataz + ", repartePDV=" + repartePDV
-				+ ", cpfCNPJ=" + cpfCNPJ + ", tipoPessoa=" + tipoPessoa
+				+ ", cpf=" + cpf + ", cnpj=" + cnpj + ", tipoPessoa=" + tipoPessoa
 				+ ", numLogradouro=" + numLogradouro + ", codCidade="
 				+ codCidadeIbge + ", inscrEstadual=" + inscrEstadual
 				+ ", inscrMunicipal=" + inscrMunicipal + "]";

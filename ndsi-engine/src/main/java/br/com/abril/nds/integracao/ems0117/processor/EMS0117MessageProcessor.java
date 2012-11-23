@@ -12,19 +12,25 @@ import br.com.abril.nds.integracao.ems0117.inbound.EMS0117Input;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.engine.data.Message;
 import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
+import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
+import br.com.abril.nds.model.cadastro.HistoricoSituacaoCota;
+import br.com.abril.nds.model.cadastro.MotivoAlteracaoSituacao;
+import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
 import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.TelefoneCota;
+import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.cadastro.TipoEndereco;
 import br.com.abril.nds.model.cadastro.TipoTelefone;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
+import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.impl.AbstractRepository;
 
 @Component
@@ -92,11 +98,11 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 
 		if (INDICE_PESSOA_FISICA.equals(input.getTipoPessoa())) {
 
-			query.setParameter("cpf", input.getCpfCNPJ());
+			query.setParameter("cpf", input.getCpf());
 
 		} else if (INDICE_PESSOA_JURIDICA.equals(input.getTipoPessoa())) {
 
-			query.setParameter("cnpj", input.getCpfCNPJ());
+			query.setParameter("cnpj", input.getCnpj());
 		}
 
 		// Definir Pessoa
@@ -109,7 +115,7 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 
 				pessoaFis = new PessoaFisica();
 				pessoaFis.setNome(input.getNomeJornaleiro());
-				pessoaFis.setCpf(input.getCpfCNPJ());
+				pessoaFis.setCpf(input.getCpf());
 				getSession().persist(pessoaFis);
 
 				pessoa = pessoaFis;
@@ -118,13 +124,13 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 
 				for (PessoaFisica pessoaFis2 : pessoas) {
 
-					if (pessoaFis2.getCpf().equals(input.getCpfCNPJ())) {
+					if (pessoaFis2.getCpf().equals(input.getCpf())) {
 
 						pessoaFis = pessoaFis2;
 					}
 				}
 
-				pessoaFis.setCpf(input.getCpfCNPJ());
+				pessoaFis.setCpf(input.getCpf());
 				pessoaFis.setNome(input.getNomeJornaleiro());
 				pessoa = pessoaFis;
 			}
@@ -138,7 +144,7 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 
 				pessoaJur = new PessoaJuridica();
 				pessoaJur.setRazaoSocial(input.getNomeJornaleiro());
-				pessoaJur.setCnpj(input.getCpfCNPJ());
+				pessoaJur.setCnpj(input.getCnpj());
 				pessoaJur.setInscricaoEstadual(input.getInscrEstadual());
 				pessoaJur.setInscricaoMunicipal(input.getInscrMunicipal());
 				getSession().persist(pessoaJur);
@@ -149,14 +155,14 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 
 				for (PessoaJuridica pessoaJur2 : pessoas) {
 
-					if (pessoaJur2.getCnpj().equals(input.getCpfCNPJ())) {
+					if (pessoaJur2.getCnpj().equals(input.getCnpj())) {
 
 						pessoaJur = pessoaJur2;
 					}
 				}
 
 				pessoaJur.setRazaoSocial(input.getNomeJornaleiro());
-				pessoaJur.setCnpj(input.getCpfCNPJ());
+				pessoaJur.setCnpj(input.getCnpj());
 				pessoaJur.setInscricaoEstadual(input.getInscrEstadual());
 				pessoaJur.setInscricaoMunicipal(input.getInscrMunicipal());
 				pessoa = pessoaJur;
@@ -191,17 +197,47 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 			cota.setPessoa(pessoa);
 			getSession().persist(cota);
 
+			// HistoricoSituacaoCota - Realizado em conjunto com Cesar Pop Punk
+			HistoricoSituacaoCota historicoSituacaoCota = new HistoricoSituacaoCota();
+			historicoSituacaoCota.setCota(cota);
+			historicoSituacaoCota.setSituacaoAnterior(null);
+			historicoSituacaoCota.setNovaSituacao(cota.getSituacaoCadastro());
+			historicoSituacaoCota.setMotivo(MotivoAlteracaoSituacao.OUTROS);
+			historicoSituacaoCota.setDataInicioValidade(new Date());
+			historicoSituacaoCota.setDataFimValidade(null);
+			historicoSituacaoCota.setDescricao("INTERFACE");
+			historicoSituacaoCota.setDataEdicao(new Date());
+			historicoSituacaoCota.setTipoEdicao(TipoEdicao.INCLUSAO);
+			
+			Usuario usuarioResponsavel = new Usuario();
+			usuarioResponsavel.setId(2L);
+			historicoSituacaoCota.setResponsavel(usuarioResponsavel);
+			
+			getSession().persist(historicoSituacaoCota);
+			
+			// ParametroCobrancaCota - Realizado em conjunto com Cesar Pop Punk
+			ParametroCobrancaCota parametroCobrancaCota = new ParametroCobrancaCota();
+			parametroCobrancaCota.setCota(cota);
+			if (input.getCondPrazoPagamento().equals("S")) {
+				parametroCobrancaCota.setTipoCota(TipoCota.CONSIGNADO);
+			} else {
+				parametroCobrancaCota.setTipoCota(TipoCota.A_VISTA);
+			}
+			getSession().persist(parametroCobrancaCota);
+			
 			if (!input.getEndereco().isEmpty()
 					&& !".".equals(input.getEndereco())) {
 
-				Endereco endereco = new Endereco();
-				endereco.setCodigoBairro(input.getCodBairro());
-				endereco.setCep(input.getCep());
-				endereco.setCidade(input.getMunicipio());
-				endereco.setLogradouro(input.getEndereco());
+				Endereco endereco = getEnderecoSaneado(input.getCep());
+				if (null == endereco ) {
+					endereco = new Endereco();
+					endereco.setCep(input.getCep());
+					endereco.setCidade(input.getMunicipio());
+					endereco.setLogradouro(input.getEndereco());
+					endereco.setUf(input.getSiglaUF());
+					endereco.setCodigoCidadeIBGE(input.getCodCidadeIbge());
+				}
 				endereco.setNumero(input.getNumLogradouro());
-				endereco.setUf(input.getSiglaUF());
-				endereco.setCodigoCidadeIBGE(input.getCodCidadeIbge());
 				getSession().persist(endereco);
 
 				EnderecoCota enderecoCota = new EnderecoCota();
@@ -292,14 +328,16 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 
 				if (enderecosCota.isEmpty()) {
 
-					endereco = new Endereco();
-					endereco.setCodigoBairro(input.getCodBairro());
-					endereco.setCep(input.getCep());
-					endereco.setCidade(input.getMunicipio());
-					endereco.setLogradouro(input.getEndereco());
+					endereco = getEnderecoSaneado(input.getCep());
+					if (null == endereco ) {
+						endereco = new Endereco();
+						endereco.setCep(input.getCep());
+						endereco.setCidade(input.getMunicipio());
+						endereco.setLogradouro(input.getEndereco());
+						endereco.setUf(input.getSiglaUF());
+						endereco.setCodigoCidadeIBGE(input.getCodCidadeIbge());
+					}
 					endereco.setNumero(input.getNumLogradouro());
-					endereco.setUf(input.getSiglaUF());
-					endereco.setCodigoCidadeIBGE(input.getCodCidadeIbge());
 					getSession().persist(endereco);
 
 					enderecoCota = new EnderecoCota();
@@ -333,15 +371,17 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 
 							if (enderecos.isEmpty()) {
 
-								endereco = new Endereco();
-								endereco.setCodigoBairro(input.getCodBairro());
-								endereco.setCep(input.getCep());
-								endereco.setCidade(input.getMunicipio());
-								endereco.setLogradouro(input.getEndereco());
+								endereco = getEnderecoSaneado(input.getCep());
+								if (null == endereco ) {
+									endereco = new Endereco();
+									endereco.setCep(input.getCep());
+									endereco.setCidade(input.getMunicipio());
+									endereco.setLogradouro(input.getEndereco());
+									endereco.setUf(input.getSiglaUF());
+									endereco.setCodigoCidadeIBGE(input.getCodCidadeIbge());
+								}
 								endereco.setNumero(input.getNumLogradouro());
-								endereco.setUf(input.getSiglaUF());
-								endereco.setCodigoCidadeIBGE(input
-										.getCodCidadeIbge());
+
 								getSession().persist(endereco);
 
 							} else {

@@ -21,11 +21,11 @@ public interface FeriadoRepository extends Repository<Feriado, Long> {
 	 * @param data
 	 * @param tipoFeriado
 	 * @param uf
-	 * @param idLocalidade
+	 * @param localidade
 	 * 
 	 * @return  {@link List<Feriado>}
 	 */
-	public List<Feriado> obterFeriados(Date data, TipoFeriado tipoFeriado, String uf, Long idLocalidade);
+	public List<Feriado> obterFeriados(Date data, TipoFeriado tipoFeriado, String uf, String localidade);
 
 	
 	/**

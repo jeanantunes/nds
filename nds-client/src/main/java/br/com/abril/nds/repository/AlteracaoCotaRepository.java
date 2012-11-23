@@ -14,5 +14,16 @@ public interface AlteracaoCotaRepository extends Repository<Cota, Long> {
 
 	
 	List<ConsultaAlteracaoCotaDTO> pesquisarAlteracaoCota(FiltroAlteracaoCotaDTO dto);
+	
+	/**
+	 * Retorna a quantidade de Alterações Cotas pelos critérios de pesquisa
+	 * especificados.
+	 * 
+	 * @param filtroAlteracaoCotaDTO
+	 * 
+	 * @return
+	 */
+	int contarAlteracaoCota(FiltroAlteracaoCotaDTO filtroAlteracaoCotaDTO);
+	
 	List<ConsultaAlteracaoCotaDTO> pesquisarAlteracaoCotaFornecedor(FiltroAlteracaoCotaDTO dto);
 }

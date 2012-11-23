@@ -2,7 +2,9 @@ package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import junit.framework.Assert;
 
@@ -138,4 +140,82 @@ public class EstudoCotaRepositoryImplTest extends AbstractRepositoryImplTest {
 		return estudo;
 	}
 	
+	@Test
+	public void obterEstudoCotaPorDataProdutoEdicaoDataLancamento() {
+		
+		Date dataDeLancamento = Fixture.criarData(29, Calendar.OCTOBER, 2012);
+		
+		List<EstudoCota> estudoCotas = estudoCotaRepository.obterEstudoCotaPorDataProdutoEdicao(dataDeLancamento, null);
+		
+		Assert.assertNotNull(estudoCotas);
+		
+	}
+	
+	@Test
+	public void obterEstudoCotaPorDataProdutoEdicaoIdProdutoEdicao() {
+		Long idProdutoEdicao = 1L;
+				
+		List<EstudoCota> estudoCotas = estudoCotaRepository.obterEstudoCotaPorDataProdutoEdicao(null, idProdutoEdicao);
+		
+		Assert.assertNotNull(estudoCotas);
+		
+	}
+	
+	@Test
+	public void obterEstudoCotaDataLancamento() {
+		Date dataDeLancamento = Fixture.criarData(29, Calendar.OCTOBER, 2012);
+				
+		EstudoCota estudoCotas = estudoCotaRepository.obterEstudoCota(dataDeLancamento, null, null);
+		
+			
+	}
+	
+	@Test
+	public void obterEstudoCotaIdProdutoEdicao() {
+		Long idProdutoEdicao = 1L;
+				
+		EstudoCota estudoCotas = estudoCotaRepository.obterEstudoCota(null, idProdutoEdicao, null);
+		
+			
+	}
+	
+	@Test
+	public void obterEstudoCotaIdCota() {
+		Long idCota = 1L;
+						
+		EstudoCota estudoCotas = estudoCotaRepository.obterEstudoCota(null, null, idCota);
+		
+			
+	}
+	
+	@Test
+	public void obterEstudoCotaDeLancamentoComEstudoFechadoDataLancamentoDistribuidor() {
+		Date dataLancamentoDistribuidor = Fixture.criarData(29, Calendar.OCTOBER, 2012);
+						
+		EstudoCota estudoCotas = 
+		estudoCotaRepository.obterEstudoCotaDeLancamentoComEstudoFechado(dataLancamentoDistribuidor, null, null);
+		
+			
+	}
+	
+	@Test
+	public void obterEstudoCotaDeLancamentoComEstudoFechadoIdProdutoEdicao() {
+		Long idProdutoEdicao = 1L;
+						
+		EstudoCota estudoCotas = 
+		estudoCotaRepository.obterEstudoCotaDeLancamentoComEstudoFechado(null, idProdutoEdicao, null);
+		
+			
+	}
+	
+	@Test
+	public void obterEstudoCotaDeLancamentoComEstudoFechadoNumeroCota() {
+		Integer numeroCota = 1;
+						
+		EstudoCota estudoCotas = 
+		estudoCotaRepository.obterEstudoCotaDeLancamentoComEstudoFechado(null, null, numeroCota);
+		
+			
+	}
+
 }

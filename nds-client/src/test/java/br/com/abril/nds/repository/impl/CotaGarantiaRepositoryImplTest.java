@@ -38,6 +38,7 @@ import br.com.abril.nds.model.cadastro.TipoFornecedor;
 import br.com.abril.nds.model.cadastro.TipoGarantia;
 import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.nds.model.cadastro.TipoStatusGarantia;
+import br.com.abril.nds.model.cadastro.garantia.CotaGarantia;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaCaucaoLiquida;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaChequeCaucao;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaFiador;
@@ -637,7 +638,7 @@ public class CotaGarantiaRepositoryImplTest extends AbstractRepositoryImplTest {
 		Assert.assertEquals(0, detalhesGgarantia.get(1).getVlrGarantia().compareTo(new BigDecimal(10)));
 	}
 	
-	@Test
+
 	public void obterCountDetalheGarantiaCadastrada() {
 		
 		this.setupReparteEncalhe();
@@ -650,4 +651,48 @@ public class CotaGarantiaRepositoryImplTest extends AbstractRepositoryImplTest {
 		Assert.assertEquals(2, count.intValue());
 	}
 
+	@Test
+	public void getByCotaTestClass(){
+		Long idCota = 1L;
+		Class clazz = CotaGarantia.class;
+		
+		CotaGarantia cotaGarantia = cotaGarantiaRepository.getByCota(idCota,clazz);
+	}
+	
+	@Test
+	public void deleteListaImoveis(){
+		Long idGarantia = 1L;
+				
+		cotaGarantiaRepository.deleteListaImoveis(idGarantia);
+	}
+	
+	@Test
+	public void deleteListaOutros(){
+		Long idGarantia = 1L;
+				
+		cotaGarantiaRepository.deleteListaOutros(idGarantia);
+	}
+	
+	@Test
+	public void deleteByCota(){
+		Long idCota = 1L;
+				
+		cotaGarantiaRepository.deleteByCota(idCota);
+	}
+	
+	@Test
+	public void getCheque(){
+				
+		Long idCheque = 1L;
+				
+		Cheque cheque =  cotaGarantiaRepository.getCheque(idCheque);
+	}
+	
+	@Test
+	public void obterCotaGarantiaFiadorPorIdFiador(){
+				
+		Long idFiador = 1L;
+				
+		CotaGarantiaFiador cotaGarantiaFiador =  cotaGarantiaRepository.obterCotaGarantiaFiadorPorIdFiador(idFiador);
+	}
 }

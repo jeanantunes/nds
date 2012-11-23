@@ -36,7 +36,11 @@ public interface BancoService {
 	
 	void dasativarBanco(long idBanco);
 
+	Banco obterBancoPorApelido(String apelido);
+	
 	List<ItemDTO<Moeda, String>> getComboMoedas();
 		
 	List<ItemDTO<Integer, String>> getComboBancos();
+
+	List<Banco> obterBancosPorNome(String nomeBanco);
 }

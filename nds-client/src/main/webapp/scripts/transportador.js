@@ -348,7 +348,6 @@ var transportadorController = $.extend(true, {
 				sortorder : "asc"
 			});
 			$(".boxRotaGrid", transportadorController.workspace).flexOptions({url: contextPath + "/cadastro/transportador/carregarRotas"});
-			
 			$("#gridCotasAtendidas", transportadorController.workspace).flexigrid({
 				dataType : 'json',
 				preProcess: function(data){
@@ -410,6 +409,7 @@ var transportadorController = $.extend(true, {
 			$("#gridCotasAtendidas", transportadorController.workspace).flexOptions({url: contextPath + "/cadastro/transportador/carregarCotasAtendidas"});
 			
 			$("#cnpj", transportadorController.workspace).mask("99.999.999/9999-99");
+			$("#cnpjPesquisa", transportadorController.workspace).mask("99.999.999/9999-99");
 			
 			$("#valorTaxaFixa", transportadorController.workspace).maskMoney({
 				 thousands:'.', 
@@ -427,6 +427,10 @@ var transportadorController = $.extend(true, {
 			$.mask.definitions['#']='[\-\.0-9]';
 			
 			$("#inscEstadual", transportadorController.workspace).mask("?##################",{placeholder:" "});
+			
+			$("#razaoSocialPesquisa", transportadorController.workspace).autocomplete({source: ""});
+			$("#nomeFantasiaPesquisa", transportadorController.workspace).autocomplete({source: ""});
+			
 	},
 	
 	popup_novo_transportador : function() {
@@ -476,8 +480,8 @@ var transportadorController = $.extend(true, {
 									{name:"transportador.parametroCobrancaTransportador.periodicidadeCobranca", 
 										value:$("[name=radioPeriodicidade]:checked", transportadorController.workspace).val()},
 									{name:"transportador.parametroCobrancaTransportador.diaCobranca", value: diaCobranca},
-									{name:"transportador.parametroCobrancaTransportador.modelidadeCobranca", 
-										value: $("#modelidadeCobranca", transportadorController.workspace).val()},
+									{name:"transportador.parametroCobrancaTransportador.modalidadeCobranca", 
+										value: $("#modalidadeCobranca", transportadorController.workspace).val()},
 									{name: "transportador.parametroCobrancaTransportador.valor", value: valorCobranca},
 									{name: "transportador.parametroCobrancaTransportador.porEntrega", 
 										value: $("#checkPorEntrega").is(':checked')}
@@ -938,9 +942,20 @@ var transportadorController = $.extend(true, {
 					$("#cnpj", transportadorController.workspace).val(result[4]);
 					$("#inscEstadual", transportadorController.workspace).val(result[5]);
 					
-					$("#modelidadeCobranca", transportadorController.workspace).val(result[6]);
-					$("#valorTaxaFixa", transportadorController.workspace).val(transportadorController.preparaValor(result[7]));
-					 
+					$("#modalidadeCobranca", transportadorController.workspace).val(result[6]);
+					if (result[6] == 'TAXA_FIXA') {
+						$(".transpTaxaFixa", this.workspace).show();
+						$(".transpPercentual", this.workspace).hide();
+						$("#valorTaxaFixa", 
+								transportadorController.workspace).val(transportadorController.preparaValor(result[7]));
+					}
+					if (result[6] == 'PERCENTUAL') {
+						$(".transpTaxaFixa", this.workspace).hide();
+						$(".transpPercentual", this.workspace).show();
+						$("#valorPercentualFaturamento", 
+								transportadorController.workspace).val(transportadorController.preparaValor(result[7]));
+					}
+					
 					if (result[8] == "true"){
 						
 						$("#checkPorEntrega", transportadorController.workspace).check();
@@ -1047,20 +1062,23 @@ var transportadorController = $.extend(true, {
 						page: result[0].page, total: result[0].total, rows: result[0].rows
 					});
 				}
-				
+				$(".veiculosGrid", transportadorController.workspace).flexReload();
+
 				if (result[1] != ""){
 					
 					$(".motoristasGrid", transportadorController.workspace).flexAddData({
 						page: result[1].page, total: result[1].total, rows: result[1].rows
 					});
 				}
-				
+				$(".motoristasGrid", transportadorController.workspace).flexReload();
+
 				if (result[2] != ""){
 					
 					$(".boxRotaGrid", transportadorController.workspace).flexAddData({
 						page: result[2].page, total: result[2].total, rows: result[2].rows
 					});
 				}
+				$(".boxRotaGrid", transportadorController.workspace).flexReload();
 				
 				if (result[3] != ""){
 					
@@ -1068,8 +1086,11 @@ var transportadorController = $.extend(true, {
 						page: result[3].page, total: result[3].total, rows: result[3].rows
 					});
 				}
+				$(".associacaoGrid", transportadorController.workspace).flexReload();
+				
 			}
 		);
+		
 	},
 	
 	carregarCotasAtendidas : function(){
@@ -1207,6 +1228,18 @@ var transportadorController = $.extend(true, {
 			},
 			form: $("#dialog-excluir-associacao", this.workspace).parents("form")
 		});
+	},
+	
+	mostrarOpcaoSelecionada : function() {
+
+		if ($("#modalidadeCobranca").val() == "TAXA_FIXA") {
+			$(".transpTaxaFixa", this.workspace).show();
+			$(".transpPercentual", this.workspace).hide();
+		} else {
+			$(".transpTaxaFixa", this.workspace).hide();
+			$(".transpPercentual", this.workspace).show();
+		}
+
 	},
 	
 	mostrarOpcaoTaxaFixa : function(){

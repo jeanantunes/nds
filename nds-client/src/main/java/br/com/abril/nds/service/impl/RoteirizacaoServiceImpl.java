@@ -22,8 +22,6 @@ import br.com.abril.nds.dto.RoteirizacaoDTO;
 import br.com.abril.nds.dto.RoteiroRoteirizacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaRoteirizacaoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.model.LogBairro;
-import br.com.abril.nds.model.LogLocalidade;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Endereco;
@@ -301,24 +299,6 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 			lista.add(cotaDisponivelRoteirizacaoDTO);
 		}
 		return lista;
-	}
-
-	@Override
-	@Transactional(readOnly=true)
-	public List<String> buscarUF() {
-		return roteirizacaoRepository.buscarUF();
-	}
-
-	@Override
-	@Transactional(readOnly=true)
-	public List<LogLocalidade> buscarMunicipioPorUf(String uf) {
-		return roteirizacaoRepository.buscarMunicipioPorUf(uf);
-	}
-
-	@Override
-	@Transactional(readOnly=true)
-	public List<LogBairro> buscarBairroPorMunicipio(Long municipio, String uf) {
-		return roteirizacaoRepository.buscarBairroPorMunicipio(municipio, uf);
 	}
 	
 	@Override

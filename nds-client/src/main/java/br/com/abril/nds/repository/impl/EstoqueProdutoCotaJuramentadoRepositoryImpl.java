@@ -6,7 +6,6 @@ import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
-import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCotaJuramentado;
 import br.com.abril.nds.repository.EstoqueProdutoCotaJuramentadoRepository;
 
@@ -35,7 +34,7 @@ public class EstoqueProdutoCotaJuramentadoRepositoryImpl extends AbstractReposit
 			throw new IllegalArgumentException("Informe os parâmetros corretamente!");
 		}
 		
-		Criteria criteria = super.getSession().createCriteria(EstoqueProdutoCota.class);
+		Criteria criteria = super.getSession().createCriteria(EstoqueProdutoCotaJuramentado.class);
 		
 		criteria.add(Restrictions.eq("produtoEdicao.id", idProdutoEdicao));
 		criteria.add(Restrictions.eq("cota.id", idCota));

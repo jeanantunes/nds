@@ -475,7 +475,6 @@ public class FiadorServiceImpl implements FiadorService {
 				endereco = enderecoFiador.getEndereco();				
 			}
 			
-			endereco.setCodigoBairro(dto.getCodigoBairro());
 			endereco.setBairro(dto.getBairro());
 			endereco.setCep(dto.getCep());
 			endereco.setCodigoCidadeIBGE(dto.getCodigoCidadeIBGE());
@@ -933,5 +932,12 @@ public class FiadorServiceImpl implements FiadorService {
 	public Fiador obterFiadorPorCNPJ(String cnpj) {
 		
 		return this.fiadorRepository.obterFiadorPorCnpj(cnpj);
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public List<Pessoa> obterFiadorPorNome(String nomeFiador) {
+		
+		return fiadorRepository.obterFiadorPorNome(nomeFiador);
 	}
 }

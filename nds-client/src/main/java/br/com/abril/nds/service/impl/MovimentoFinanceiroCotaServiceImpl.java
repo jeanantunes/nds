@@ -386,7 +386,8 @@ public class MovimentoFinanceiroCotaServiceImpl implements
     /**
 	 * Gera Financeiro para Movimentos de Estoque da Cota.
 	 * @param cota
-	 * @param movimentosEstoqueCota
+	 * @param movimentosEstoqueCota - movimentos
+	 * @param movimentosEstoqueCota - movimentos de estorno
 	 * @param dataOperacao
 	 * @param usuario
 	 */
@@ -705,6 +706,23 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 			throw new ImportacaoException("Cota inexistente."); 
 		}
 		return cota;
+	}
+
+	@Transactional(readOnly=true)
+	@Override
+	public boolean existeOutrosMovimentosFinanceiroCota(FiltroDebitoCreditoDTO filtroDebitoCredito, Long idMovimentoFinanceiroAtual) {
+		List<Long> ids = this.movimentoFinanceiroCotaRepository.obterIdsMovimentosFinanceiroCota(filtroDebitoCredito);
+		// Além do registro atual, existem outros, logo deve ser true
+		if (ids.size() > 1) {
+			return true;
+		}
+		
+		// Se existe apenas um objeto e o id não é o mesmo
+		if ( !ids.get(0).equals(idMovimentoFinanceiroAtual) ) {
+			return true;
+		}
+		
+		return false;
 	}
 	
 }

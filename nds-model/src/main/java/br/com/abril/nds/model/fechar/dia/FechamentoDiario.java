@@ -8,6 +8,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
@@ -33,29 +35,30 @@ public class FechamentoDiario implements Serializable {
 	@Temporal(TemporalType.DATE)
 	private Date dataFechamento; 
 	
-	@Column(name="USUARIO")
+	@ManyToOne(optional = false)
+	@JoinColumn(name = "USUARIO_ID")
 	private Usuario usuario;
 	
 	@OneToOne(mappedBy = "fechamentoDiario")
-	private HistoricoFechamentoDiarioConsolidadoReparte consolidadoReparte;
+	private FechamentoDiarioConsolidadoReparte consolidadoReparte;
 	
 	@OneToOne(mappedBy = "fechamentoDiario")
-	private HistoricoFechamentoDiarioConsolidadoEncalhe consolidadoEncalhe;
+	private FechamentoDiarioConsolidadoEncalhe consolidadoEncalhe;
 	
 	@OneToOne(mappedBy = "fechamentoDiario")
-	private HistoricoFechamentoDiarioConsolidadoSuplementar consolidadoSuplementar;
+	private FechamentoDiarioConsolidadoSuplementar consolidadoSuplementar;
 	
 	@OneToMany(mappedBy = "fechamentoDiario")
-	private List<HistoricoFechamentoDiarioConsolidadoDivida> consolidadoDividas;
+	private List<FechamentoDiarioConsolidadoDivida> consolidadoDividas;
 	
 	@OneToOne(mappedBy = "fechamentoDiario")
-	private HistoricoFechamentoDiarioConsolidadoCota consolidadoCota;
+	private FechamentoDiarioConsolidadoCota consolidadoCota;
 	
 	@OneToMany(mappedBy = "fechamentoDiario")
-	private List<HistoricoFechamentoDiarioResumoConsignado> consolidadoResumoConsignado;
+	private List<FechamentoDiarioConsignado> consolidadoResumoConsignado;
 	
 	@OneToMany(mappedBy = "fechamentoDiario")
-	private List<HistoricoFechamentoDiarioResumoEstoque> consolidadoResumoEstoque;
+	private List<FechamentoDiarioResumoEstoque> consolidadoResumoEstoque;
 	
 
 	public Long getId() {
@@ -82,65 +85,65 @@ public class FechamentoDiario implements Serializable {
 		this.usuario = usuario;
 	}
 
-	public HistoricoFechamentoDiarioConsolidadoReparte getConsolidadoReparte() {
+	public FechamentoDiarioConsolidadoReparte getConsolidadoReparte() {
 		return consolidadoReparte;
 	}
 
-	public void setConsolidadoReparte(HistoricoFechamentoDiarioConsolidadoReparte consolidadoReparte) {
+	public void setConsolidadoReparte(FechamentoDiarioConsolidadoReparte consolidadoReparte) {
 		this.consolidadoReparte = consolidadoReparte;
 	}
 
-	public HistoricoFechamentoDiarioConsolidadoEncalhe getConsolidadoEncalhe() {
+	public FechamentoDiarioConsolidadoEncalhe getConsolidadoEncalhe() {
 		return consolidadoEncalhe;
 	}
 
 	public void setConsolidadoEncalhe(
-			HistoricoFechamentoDiarioConsolidadoEncalhe consolidadoEncalhe) {
+			FechamentoDiarioConsolidadoEncalhe consolidadoEncalhe) {
 		this.consolidadoEncalhe = consolidadoEncalhe;
 	}
 
-	public HistoricoFechamentoDiarioConsolidadoSuplementar getConsolidadoSuplementar() {
+	public FechamentoDiarioConsolidadoSuplementar getConsolidadoSuplementar() {
 		return consolidadoSuplementar;
 	}
 
 	public void setConsolidadoSuplementar(
-			HistoricoFechamentoDiarioConsolidadoSuplementar consolidadoSuplementar) {
+			FechamentoDiarioConsolidadoSuplementar consolidadoSuplementar) {
 		this.consolidadoSuplementar = consolidadoSuplementar;
 	}
 
-	public List<HistoricoFechamentoDiarioConsolidadoDivida> getConsolidadoDividas() {
+	public List<FechamentoDiarioConsolidadoDivida> getConsolidadoDividas() {
 		return consolidadoDividas;
 	}
 
 	public void setConsolidadoDividas(
-			List<HistoricoFechamentoDiarioConsolidadoDivida> consolidadoDividas) {
+			List<FechamentoDiarioConsolidadoDivida> consolidadoDividas) {
 		this.consolidadoDividas = consolidadoDividas;
 	}
 
-	public HistoricoFechamentoDiarioConsolidadoCota getConsolidadoCota() {
+	public FechamentoDiarioConsolidadoCota getConsolidadoCota() {
 		return consolidadoCota;
 	}
 
 	public void setConsolidadoCota(
-			HistoricoFechamentoDiarioConsolidadoCota consolidadoCota) {
+			FechamentoDiarioConsolidadoCota consolidadoCota) {
 		this.consolidadoCota = consolidadoCota;
 	}
 
-	public List<HistoricoFechamentoDiarioResumoConsignado> getConsolidadoResumoConsignado() {
+	public List<FechamentoDiarioConsignado> getConsolidadoResumoConsignado() {
 		return consolidadoResumoConsignado;
 	}
 
 	public void setConsolidadoResumoConsignado(
-			List<HistoricoFechamentoDiarioResumoConsignado> consolidadoResumoConsignado) {
+			List<FechamentoDiarioConsignado> consolidadoResumoConsignado) {
 		this.consolidadoResumoConsignado = consolidadoResumoConsignado;
 	}
 
-	public List<HistoricoFechamentoDiarioResumoEstoque> getConsolidadoResumoEstoque() {
+	public List<FechamentoDiarioResumoEstoque> getConsolidadoResumoEstoque() {
 		return consolidadoResumoEstoque;
 	}
 
 	public void setConsolidadoResumoEstoque(
-			List<HistoricoFechamentoDiarioResumoEstoque> consolidadoResumoEstoque) {
+			List<FechamentoDiarioResumoEstoque> consolidadoResumoEstoque) {
 		this.consolidadoResumoEstoque = consolidadoResumoEstoque;
 	}
 	

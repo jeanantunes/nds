@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.jdt.internal.core.search.matching.QualifiedTypeDeclarationPattern;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -15,6 +16,7 @@ import br.com.abril.nds.dto.ConsultaConsignadoCotaDTO;
 import br.com.abril.nds.dto.ConsultaConsignadoCotaPeloFornecedorDTO;
 import br.com.abril.nds.dto.TotalConsultaConsignadoCotaDetalhado;
 import br.com.abril.nds.dto.filtro.FiltroConsultaConsignadoCotaDTO;
+import br.com.abril.nds.dto.filtro.FiltroConsultaConsignadoCotaDTO.ColunaOrdenacaoConsultaConsignadoCota;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
@@ -41,6 +43,7 @@ import br.com.abril.nds.model.fiscal.NCM;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.ConsultaConsignadoCotaRepository;
 import br.com.abril.nds.vo.PaginacaoVO;
+import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 public class ConsultaConsignadoCotaRepositoryImplTest extends
 		AbstractRepositoryImplTest {
@@ -49,6 +52,9 @@ public class ConsultaConsignadoCotaRepositoryImplTest extends
 	private ConsultaConsignadoCotaRepository consignadoCotaRepository;
 	
 	private FiltroConsultaConsignadoCotaDTO filtroConsultaConsignadoCotaDTO;
+	
+	private Fornecedor fornecedorAcme;
+	private Cota cotaManoelCunha;
 	
 	@Before
 	public void setUp(){
@@ -65,7 +71,7 @@ public class ConsultaConsignadoCotaRepositoryImplTest extends
 		TipoFornecedor tipoFornecedorOutros = Fixture.tipoFornecedorOutros();
 		TipoFornecedor tipoFornecedorPublicacao = Fixture.tipoFornecedorPublicacao();
 
-		Fornecedor fornecedorAcme = Fixture.fornecedorAcme(tipoFornecedorOutros);
+		fornecedorAcme = Fixture.fornecedorAcme(tipoFornecedorOutros);
 		fornecedorAcme.setCodigoInterface(123);
 		fornecedorAcme.setResponsavel("João");
 		fornecedorAcme.setOrigem(Origem.INTERFACE);
@@ -91,7 +97,7 @@ public class ConsultaConsignadoCotaRepositoryImplTest extends
 				"sys.discover@gmail.com", "Manoel da Cunha");
 		
 		Box box1 = Fixture.criarBox(1, "BX-001", TipoBox.LANCAMENTO);
-		Cota cotaManoelCunha = Fixture.cota(1232, manoelCunha, SituacaoCadastro.ATIVO,box1);
+		cotaManoelCunha = Fixture.cota(1232, manoelCunha, SituacaoCadastro.ATIVO,box1);
 
 		Set<Fornecedor> fornecedores = new HashSet<Fornecedor>();
 		fornecedores.add(fornecedorAcme);
@@ -193,6 +199,158 @@ public class ConsultaConsignadoCotaRepositoryImplTest extends
 	}
 	
 	@Test
+	public void buscarConsignadoCotaIdCota(){
+		
+		FiltroConsultaConsignadoCotaDTO	filtroConsultaConsignadoCotaDTO = new FiltroConsultaConsignadoCotaDTO();
+		filtroConsultaConsignadoCotaDTO.setPaginacao(new PaginacaoVO());
+		filtroConsultaConsignadoCotaDTO.setIdCota(cotaManoelCunha.getId());
+		
+		
+		List<ConsultaConsignadoCotaDTO> lista =
+				this.consignadoCotaRepository.buscarConsignadoCota(filtroConsultaConsignadoCotaDTO, false);
+		
+		Assert.assertNotNull(lista);
+
+		int tamanhoEsperado = 4;
+		
+		Assert.assertEquals(tamanhoEsperado, lista.size());
+	}
+	
+	@Test
+	public void buscarConsignadoCotaIdCotaNulo(){
+		
+		FiltroConsultaConsignadoCotaDTO	filtroConsultaConsignadoCotaDTO = new FiltroConsultaConsignadoCotaDTO();
+		filtroConsultaConsignadoCotaDTO.setIdCota(null);
+		filtroConsultaConsignadoCotaDTO.setPaginacao(new PaginacaoVO());
+		
+		
+		List<ConsultaConsignadoCotaDTO> lista =
+				this.consignadoCotaRepository.buscarConsignadoCota(filtroConsultaConsignadoCotaDTO, false);
+		
+		Assert.assertNotNull(lista);
+}
+	
+	
+	
+	@Test
+	public void buscarConsignadoCotaIdFornecedor(){
+		
+		FiltroConsultaConsignadoCotaDTO	filtroConsultaConsignadoCotaDTO = new FiltroConsultaConsignadoCotaDTO();
+		filtroConsultaConsignadoCotaDTO.setPaginacao(new PaginacaoVO());
+		filtroConsultaConsignadoCotaDTO.setIdFornecedor(fornecedorAcme.getId());
+		
+		List<ConsultaConsignadoCotaDTO> lista =
+				this.consignadoCotaRepository.buscarConsignadoCota(filtroConsultaConsignadoCotaDTO, false);
+		
+		Assert.assertNotNull(lista);
+
+		int tamanhoEsperado = 2;
+		
+		Assert.assertEquals(tamanhoEsperado, lista.size());
+	}
+	
+	@Test
+	public void buscarConsignadoCotaIdCotaOrderByIdCota(){
+		
+		FiltroConsultaConsignadoCotaDTO	filtroConsultaConsignadoCotaDTO = new FiltroConsultaConsignadoCotaDTO();
+		filtroConsultaConsignadoCotaDTO.setPaginacao(new PaginacaoVO());
+		filtroConsultaConsignadoCotaDTO.getPaginacao().setSortColumn("");
+		filtroConsultaConsignadoCotaDTO.setIdCota(cotaManoelCunha.getId());
+		
+		
+		List<ConsultaConsignadoCotaDTO> lista =
+				this.consignadoCotaRepository.buscarConsignadoCota(filtroConsultaConsignadoCotaDTO, false);
+		
+		Assert.assertNotNull(lista);
+
+		int tamanhoEsperado = 4;
+		
+		Assert.assertEquals(tamanhoEsperado, lista.size());
+	}
+	
+	
+	@Test
+	public void buscarConsignadoCotaOrderByIdFornecedor(){
+		
+		FiltroConsultaConsignadoCotaDTO	filtroConsultaConsignadoCotaDTO = new FiltroConsultaConsignadoCotaDTO();
+		filtroConsultaConsignadoCotaDTO.setPaginacao(new PaginacaoVO());
+		filtroConsultaConsignadoCotaDTO.getPaginacao().setSortColumn("");
+		filtroConsultaConsignadoCotaDTO.setIdFornecedor(fornecedorAcme.getId());
+		
+		List<ConsultaConsignadoCotaDTO> lista =
+				this.consignadoCotaRepository.buscarConsignadoCota(filtroConsultaConsignadoCotaDTO, false);
+		
+		Assert.assertNotNull(lista);
+
+		int tamanhoEsperado = 2;
+		
+		Assert.assertEquals(tamanhoEsperado, lista.size());
+	}
+	
+	@Test
+	public void buscarConsignadoCotaOrderByIdFornecedorOrdenacao(){
+		
+		FiltroConsultaConsignadoCotaDTO	filtroConsultaConsignadoCotaDTO = new FiltroConsultaConsignadoCotaDTO();
+		filtroConsultaConsignadoCotaDTO.setPaginacao(new PaginacaoVO());
+		filtroConsultaConsignadoCotaDTO.getPaginacao().setOrdenacao(Ordenacao.ASC);
+		filtroConsultaConsignadoCotaDTO.getPaginacao().setSortColumn("");
+		filtroConsultaConsignadoCotaDTO.setIdFornecedor(fornecedorAcme.getId());
+		
+		List<ConsultaConsignadoCotaDTO> lista =
+				this.consignadoCotaRepository.buscarConsignadoCota(filtroConsultaConsignadoCotaDTO, false);
+		
+		Assert.assertNotNull(lista);
+
+		int tamanhoEsperado = 2;
+		
+		Assert.assertEquals(tamanhoEsperado, lista.size());
+	}
+	
+	
+
+	
+	@Test
+	public void buscarConsignadoCotaPaginacaoNull(){
+		
+		FiltroConsultaConsignadoCotaDTO	filtroConsultaConsignadoCotaDTO = new FiltroConsultaConsignadoCotaDTO();
+		filtroConsultaConsignadoCotaDTO.setPaginacao(new PaginacaoVO());
+				
+		List<ConsultaConsignadoCotaDTO> lista =
+				this.consignadoCotaRepository.buscarConsignadoCota(filtroConsultaConsignadoCotaDTO, false);
+		
+		Assert.assertNotNull(lista);
+		
+
+	}
+		
+	@Test
+	public void buscarConsignadoCotaPaginacaoNotNull(){
+		
+		FiltroConsultaConsignadoCotaDTO filtroConsultaConsignadoCotaDTO = new FiltroConsultaConsignadoCotaDTO();
+		PaginacaoVO paginacao = new PaginacaoVO(1, 1, "des");
+		filtroConsultaConsignadoCotaDTO.setPaginacao(paginacao);
+		
+		List<ConsultaConsignadoCotaDTO> lista =
+				this.consignadoCotaRepository.buscarConsignadoCota(filtroConsultaConsignadoCotaDTO, false);
+		
+		Assert.assertNotNull(lista);
+		
+	}
+	
+	@Test
+	public void buscarConsignadoCotaPaginacaoNotNullLimitar(){
+		
+		FiltroConsultaConsignadoCotaDTO filtroConsultaConsignadoCotaDTO = new FiltroConsultaConsignadoCotaDTO();
+		PaginacaoVO paginacao = new PaginacaoVO(1, 1, "des");
+		filtroConsultaConsignadoCotaDTO.setPaginacao(paginacao);
+				
+		List<ConsultaConsignadoCotaDTO> lista =
+				this.consignadoCotaRepository.buscarConsignadoCota(filtroConsultaConsignadoCotaDTO, true);
+		
+		Assert.assertNotNull(lista);
+	}
+	
+	@Test
 	public void buscarMovimentosCotaPeloFornecedor(){
 		
 		List<ConsultaConsignadoCotaPeloFornecedorDTO> lista = 
@@ -208,19 +366,38 @@ public class ConsultaConsignadoCotaRepositoryImplTest extends
 	}
 	
 	@Test
+	public void buscarMovimentosCotaPeloFornecedorIdCota(){
+		
+		FiltroConsultaConsignadoCotaDTO filtroConsultaConsignadoCotaDTO = new FiltroConsultaConsignadoCotaDTO();
+		filtroConsultaConsignadoCotaDTO.setIdCota(cotaManoelCunha.getId());
+		filtroConsultaConsignadoCotaDTO.setPaginacao (new PaginacaoVO());
+		
+		
+		List<ConsultaConsignadoCotaPeloFornecedorDTO> lista = 
+				this.consignadoCotaRepository.buscarMovimentosCotaPeloFornecedor(
+						filtroConsultaConsignadoCotaDTO, false);
+		
+		Assert.assertNotNull(lista);
+		
+				
+	}
+	
+	@Test
 	public void buscarTodasMovimentacoesPorCota(){
 		
-		Integer totalRegistros = 
+		Long totalRegistros = 
 				this.consignadoCotaRepository.buscarTodasMovimentacoesPorCota(
-						this.filtroConsultaConsignadoCotaDTO, false);
+						this.filtroConsultaConsignadoCotaDTO);
 		
 		Assert.assertNotNull(totalRegistros);
 		
-		Integer tamanhoEsperado = 3;
+		Long tamanhoEsperado = 3L;
 		
 		Assert.assertEquals(tamanhoEsperado, totalRegistros);
 		
 	}
+	
+	
 	
 	@Test
 	public void buscarTotalGeralDaCota(){
@@ -230,6 +407,19 @@ public class ConsultaConsignadoCotaRepositoryImplTest extends
 		
 		Assert.assertNotNull(resultado);
 	}
+	
+	@Test
+	public void buscarTotalGeralDaCotaIdCota(){
+		
+		FiltroConsultaConsignadoCotaDTO filtroConsultaConsignadoCotaDTO = new FiltroConsultaConsignadoCotaDTO();
+		filtroConsultaConsignadoCotaDTO.setIdCota(cotaManoelCunha.getId());
+		
+		BigDecimal resultado =
+				this.consignadoCotaRepository.buscarTotalGeralDaCota(filtroConsultaConsignadoCotaDTO);
+		
+		Assert.assertNotNull(resultado);
+	}
+
 	
 	@Test
 	public void buscarTotalDetalhado(){

@@ -36,8 +36,13 @@ GeracaoArquivos.prototype.btnGerarOnClick = function() {
 	var _this = this;
 	var params = this.getParams();
 	
-	$.postJSON(this.path + 'gerar', params, function(data) {
-		
-
-	});
+	$.postJSON(this.path + 'gerar',
+			params, 
+			function(data) {
+				$("#qtdArquivosGerados", this.workspace).html(data.int);
+			},
+			function(result) {
+				
+			}
+	);
 };

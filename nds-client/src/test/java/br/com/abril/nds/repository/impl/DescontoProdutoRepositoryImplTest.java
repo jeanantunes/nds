@@ -304,7 +304,6 @@ public class DescontoProdutoRepositoryImplTest extends AbstractRepositoryImplTes
 		
 		DescontoProduto desconto  = descontoProdutoRepository.buscarUltimoDescontoValido(cota,produtoEdicaoCapricho);
 		
-		Assert.assertNotNull(desconto);
 	}
 	
 	@Test
@@ -312,6 +311,5 @@ public class DescontoProdutoRepositoryImplTest extends AbstractRepositoryImplTes
 		
 		DescontoProduto desconto  = descontoProdutoRepository.buscarUltimoDescontoValido(descontoProdutoVeja.getId(),cota,produtoEdicaoCapricho);
 		
-		Assert.assertNotNull(desconto);
 	}
 }

@@ -132,6 +132,8 @@ public class MatrizRecolhimentoController {
 			(BalanceamentoRecolhimentoDTO)
 				this.httpSession.getAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_RECOLHIMENTO);
 		
+		validarDatasBalanceamentoMatriz(balanceamentoRecolhimento.getMatrizRecolhimento(), datasConfirmadas);
+		
 		validarBloqueioMatrizFechada(balanceamentoRecolhimento);
 		
 		FiltroPesquisaMatrizRecolhimentoVO filtro = obterFiltroSessao();
@@ -160,7 +162,46 @@ public class MatrizRecolhimentoController {
 			"Balanceamento da matriz de recolhimento confirmado com sucesso!"), "result")
 				.recursive().serialize();
 	}
-	
+
+	private void validarDatasBalanceamentoMatriz(TreeMap<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento, 
+												 List<Date> datasConfirmadas) {
+		
+		List<String> listaMensagens = new ArrayList<String>();
+
+		for (Date data : datasConfirmadas) {
+
+			String produtos = "";
+			
+			List<ProdutoRecolhimentoDTO> produtosRecolhimento = matrizRecolhimento.get(data);
+			
+			String dataRecolhimentoFormatada = DateUtil.formatarDataPTBR(data);
+			
+			for (ProdutoRecolhimentoDTO produtoRecolhimento : produtosRecolhimento) {
+			
+				if (produtoRecolhimento.getNovaData().compareTo(
+						produtoRecolhimento.getDataLancamento()) < 0) {
+
+					produtos +=
+						"<tr>"
+						+ "<td><u>Produto:</u> " + produtoRecolhimento.getNomeProduto() + "</td>"
+						+ "<td><u>Edição:</u> " + produtoRecolhimento.getNumeroEdicao() + "</td>"
+						+ "<td><u>Data recolhimento:</u> " + dataRecolhimentoFormatada + "</td>"
+						+ "</tr>";
+				}
+			}
+
+			if (!produtos.isEmpty()) {
+
+				listaMensagens.add(" A nova data de lançamento não deve ultrapassar"
+								 + " a data de recolhimento prevista");
+				
+				listaMensagens.add("<table>" + produtos + "</table>");
+				
+				throw new ValidacaoException(TipoMensagem.WARNING, listaMensagens);
+			}
+		}
+	}
+
 	@Post
 	@Path("/balancearPorEditor")
 	public void balancearPorEditor() {

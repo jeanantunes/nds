@@ -176,7 +176,7 @@ public class ChamadaAntecipadaEncalheRepositoryImplTest extends AbstractReposito
 		CFOP cfop5102 = Fixture.cfop5102();
 		save(cfop5102);
 		
-		TipoNotaFiscal tipoNotaFiscalRecebimento = Fixture.tipoNotaFiscalRecebimento();
+		TipoNotaFiscal tipoNotaFiscalRecebimento = Fixture.tipoNotaFiscalRecebimento(cfop5102);
 		save(tipoNotaFiscalRecebimento);
 		
 		NotaFiscalEntradaFornecedor notaFiscalFornecedor = Fixture

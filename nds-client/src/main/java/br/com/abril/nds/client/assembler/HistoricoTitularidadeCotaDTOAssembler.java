@@ -203,7 +203,6 @@ public final class HistoricoTitularidadeCotaDTOAssembler {
         dto.setNumero(endereco.getNumero());
         dto.setComplemento(endereco.getComplemento());
         dto.setBairro(endereco.getBairro());
-        dto.setCodigoBairro(endereco.getCodigoBairro());
         dto.setCep(endereco.getCep());
         dto.setCidade(endereco.getCidade());
         dto.setCodigoCidadeIBGE(endereco.getCodigoCidadeIBGE());

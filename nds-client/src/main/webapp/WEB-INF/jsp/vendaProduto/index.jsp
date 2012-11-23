@@ -3,7 +3,11 @@
 <script type="text/javascript" src="scripts/endereco.js"></script>
 <script type="text/javascript" src="scripts/vendaProduto.js"></script>
 <script language="javascript" type="text/javascript">
-	
+
+$(function(){
+	vendaProdutoController.init();
+});
+
 </script>
 <style type="text/css">
 #dialog-detalhes fieldset{width:750px!important;}
@@ -14,8 +18,6 @@
 	<form id="form-detalhes">
 	<div id="dialog-detalhes" title="Detalhes do Produto">
      <fieldset>
-     	<legend>Produto: 4455  - Veja - Edição 001 - Tipo de Lançamento: Parcial</legend>
-        
         <table class="detalhesVendaGrid"></table>
          <span class="bt_novos" title="Gerar Arquivo">
          	<a href="${pageContext.request.contextPath}/lancamento/vendaProduto/exportar?fileType=XLS&tipoExportacao=popup">
@@ -45,9 +47,14 @@
 		  <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 		      <tr>
 		        <td width="46">Código:</td>
-		        <td colspan="3"><input type="text" name="textfield5" id="codigo" style="width:80px;" onblur="vendaProdutoController.buscarNomeProduto();"/></td>
+		        <td colspan="3"><input type="text" name="textfield5" id="codigo" style="width:80px;" onchange="vendaProdutoController.pesquisarPorCodigoProduto('#codigo', '#produto', false,
+										undefined,
+										undefined);" /></td>
 		        <td width="51">Produto:</td>
-		        <td width="164"><input type="text" name="publica" id="produto" onkeyup="vendaProdutoController.pesquisarPorNomeProduto();" style="width:150px;"/></td>
+		        <td width="164"><input type="text" name="publica" id="produto" style="width:150px;" onkeyup="vendaProdutoController.autoCompletarPorNome('#produto', false);"
+								onblur="vendaProdutoController.pesquisarPorNome('#codigo', '#produto', false,
+									undefined,
+									undefined);" /></td>
 		        <td width="45">Edição:</td>
 		        <td width="95"><input type="text" name="edicoes" id="edicoes" style="width:80px;"/></td>
 		        <td width="67">Fornecedor:</td>
@@ -63,9 +70,9 @@
 		      </tr>
 			</table>		
 		</fieldset>
-	      <div class="linha_separa_fields">&nbsp;</div>
+		  <div class="grids" style="display:none;">
+		      <div class="linha_separa_fields">&nbsp;</div>
 		      <fieldset class="classFieldset">
-		       	  <legend>Produto: 4455 - Veja - Tipo de Lançamento: Normal</legend>
 		        	<table class="parciaisGrid"></table>
 		            <!--<span class="bt_novos" title="Novo"><a href="javascript:;" onclick="popup();"><img src="../images/ico_salvar.gif" hspace="5" border="0"/>Novo</a></span>-->
 		            <span class="bt_novos" title="Gerar Arquivo">
@@ -81,8 +88,8 @@
 						</a>
 					</span>	        
 		      </fieldset>
+		      <div class="linha_separa_fields">&nbsp;</div>
 	      </div>
-	      <div class="linha_separa_fields">&nbsp;</div>
     </div>
 </div> 
 </body>
