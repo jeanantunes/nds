@@ -1,12 +1,15 @@
 package br.com.abril.nds.controllers.cadastro;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.poi.util.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.CotaGarantiaDTO;
 import br.com.abril.nds.dto.FormaCobrancaCaucaoLiquidaDTO;
@@ -49,15 +52,12 @@ public class CotaGarantiaController {
 	@Autowired
 	private CotaGarantiaService cotaGarantiaService;
 	
-	
+	@Autowired
 	private Result result;
 	
-	
-    public CotaGarantiaController(Result result) {
+    public CotaGarantiaController() {
 		
 		super();
-		
-		this.result = result;  
 	}
 
 	@Post
@@ -142,13 +142,13 @@ public class CotaGarantiaController {
 	}
 	
 	@Post("/getByCota.json")
+	@Transactional(readOnly = true)
 	public void getByCota(Long idCota, ModoTela modoTela, Long idHistorico) {
 		
 	    if (ModoTela.CADASTRO_COTA == modoTela) {
 	        CotaGarantiaDTO<CotaGarantia> cotaGarantia = cotaGarantiaService.getByCota(idCota);
-	        
 	        if (cotaGarantia != null && cotaGarantia.getCotaGarantia() != null) {			
-	            result.use(CustomJson2.class).from(cotaGarantia).recursive().serialize();
+	            result.use(Results.json()).from(cotaGarantia).serialize();
 	        }else{			
 	            result.use(CustomJson.class).from("OK").serialize();
 	        }	

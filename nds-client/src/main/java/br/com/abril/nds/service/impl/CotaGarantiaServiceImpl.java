@@ -114,7 +114,6 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 	 * br.com.abril.nds.service.CotaGarantiaService#getByCota(java.lang.Long)
 	 */
 	@Override
-	@Transactional(readOnly = true)
 	public CotaGarantiaDTO<CotaGarantia> getByCota(Long idCota) {
 		
 		CotaGarantia cotaGarantia = cotaGarantiaRepository.getByCota(idCota);
@@ -160,7 +159,7 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 			cotaGarantiaOutros.getOutros().size();			
 			
 		}
-
+		
 		return new CotaGarantiaDTO<CotaGarantia>(tipo, cotaGarantia);
 	}
 
