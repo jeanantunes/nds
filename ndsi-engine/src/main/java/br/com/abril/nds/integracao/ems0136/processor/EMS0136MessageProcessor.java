@@ -238,6 +238,7 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 		pLancamentoParcial.setStatus(this.obterStatusLancamentoParcial(input));
 		pLancamentoParcial.setNumeroPeriodo(input.getNumeroPeriodo());
 		pLancamentoParcial.setTipo(this.obterTipoLancamentoParcial(input));
+		pLancamentoParcial.setStatus((input.getDataRecolhimento().compareTo(new Date()) < 0 ? StatusLancamentoParcial.RECOLHIDO :  StatusLancamentoParcial.PROJETADO ));
 		
 		this.getSession().persist(pLancamentoParcial);
 		
