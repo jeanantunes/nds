@@ -40,6 +40,8 @@ public class CotaEmissaoDTO implements Serializable{
 	private Integer box;
 	private String codigoRota;
 	private String nomeRota;
+	private String codigoRoteiro;
+	private String nomeRoteiro;
 	
 	private String numDocumento;
 	
@@ -378,6 +380,22 @@ public class CotaEmissaoDTO implements Serializable{
 	 */
 	public void setVlrTotalLiquido(String vlrTotalLiquido) {
 		this.vlrTotalLiquido = vlrTotalLiquido;
+	}
+
+	public String getCodigoRoteiro() {
+		return codigoRoteiro;
+	}
+
+	public void setCodigoRoteiro(String codigoRoteiro) {
+		this.codigoRoteiro = codigoRoteiro;
+	}
+
+	public String getNomeRoteiro() {
+		return nomeRoteiro;
+	}
+
+	public void setNomeRoteiro(String nomeRoteiro) {
+		this.nomeRoteiro = nomeRoteiro;
 	}
 	
 	
