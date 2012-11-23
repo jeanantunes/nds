@@ -353,8 +353,8 @@ public class DescontoServiceImpl implements DescontoService {
 		 *  2 |		X	|				|					|		X
 		 *  3 |		X	|		X		|					|
 		 *  4 |		X	|		X		|					|		X
-		 *  5 |		X	|				|			X		|
-		 *  6 |		X	|				|			X		|		X
+		 *  5 |		X	|		X		|			X		|
+		 *  6 |		X	|		X		|			X		|		X
 		 * 
 		 */
 		switch(obterCombinacaoDesconto(descontoDTO, usuario)) {
@@ -518,8 +518,8 @@ public class DescontoServiceImpl implements DescontoService {
 		 *  2 |		X	|				|					|		X
 		 *  3 |		X	|		X		|					|
 		 *  4 |		X	|		X		|					|		X
-		 *  5 |		X	|				|			X		|
-		 *  6 |		X	|				|			X		|		X
+		 *  5 |		X	|		X		|			X		|
+		 *  6 |		X	|		X		|			X		|		X
 		 * 
 		 */
 		
