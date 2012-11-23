@@ -15,8 +15,6 @@ import br.com.abril.nds.dto.RoteiroRoteirizacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaRoteirizacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaRoteirizacaoDTO.OrdenacaoColunaConsulta;
 import br.com.abril.nds.fixture.Fixture;
-import br.com.abril.nds.model.LogBairro;
-import br.com.abril.nds.model.LogLocalidade;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
@@ -462,32 +460,7 @@ public class RoteirizacaoRepositoryImplTest extends AbstractRepositoryImplTest {
 
 		Assert.assertNotNull(lista);
 	}
-
-	@Test
-	public void buscarUF() {
-
-		List<String> lista = roteirizacaoRepository.buscarUF();
-
-		Assert.assertNotNull(lista);
-	}
-
-	@Test
-	public void buscarMunicipioPorUf() {
-
-		List<LogLocalidade> lista = roteirizacaoRepository
-				.buscarMunicipioPorUf("Mococa");
-
-		Assert.assertNotNull(lista);
-	}
-
-	@Test
-	public void buscarBairroPorMunicipio() {
-
-		List<LogBairro> lista = roteirizacaoRepository
-				.buscarBairroPorMunicipio(1L, "Mococa");
-
-		Assert.assertNotNull(lista);
-	}
+	
 
 	@Test
 	public void buscarRoteirizacaoPorNumeroCota() {
