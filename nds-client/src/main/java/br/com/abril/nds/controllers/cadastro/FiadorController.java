@@ -365,7 +365,7 @@ public class FiadorController {
 		
 		List<Pessoa> sociosAdicionar = null;
 		
-		List<String> mensagensValidacao = new ArrayList<>();
+		List<String> mensagensValidacao = new ArrayList<String>();
 
 		if (pessoa instanceof PessoaFisica){
 			
