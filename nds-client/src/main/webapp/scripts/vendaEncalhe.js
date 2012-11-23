@@ -758,21 +758,21 @@ var VENDA_PRODUTO = {
  
  	atribuirDadosProduto:function(resultado, index){
  		
- 		$("#codBarras"+index, VENDA_PRODUTO.workspace).val(resultado.produto.codigoBarras);
- 		$("#codProduto"+index, VENDA_PRODUTO.workspace).val(resultado.produto.codigoProduto);
-		$("#nmProduto"+index, VENDA_PRODUTO.workspace).val(resultado.produto.nomeProduto);
-		$("#numEdicao"+index, VENDA_PRODUTO.workspace).val(resultado.produto.numeroEdicao);
-		$("#precoDesconto"+index, VENDA_PRODUTO.workspace).val(resultado.produto.precoDesconto);
-		$("#qntDisponivel"+index, VENDA_PRODUTO.workspace).val(resultado.produto.qntDisponivelProduto);
-		$("#qntSolicitada"+index, VENDA_PRODUTO.workspace).val(resultado.produto.qntProduto);
-		$("#hiddenTotal"+index, VENDA_PRODUTO.workspace).val(resultado.produto.valoTotalProduto);
-		$("#totalFormatado"+index, VENDA_PRODUTO.workspace).val(resultado.produto.valoTotalProduto);
-		$("#formaVenda"+index, VENDA_PRODUTO.workspace).val(resultado.produto.formaVenda);
-		$("#tipoVenda"+index,VENDA_PRODUTO.workspace).val(resultado.produto.tipoVendaEncalhe);
-		$("#hiddenComercializacao" + index, VENDA_PRODUTO.workspace).val(resultado.produto.formaComercializacao);
-		$("#hiddenTipoVenda" + index, VENDA_PRODUTO.workspace).val(resultado.produto.tipoVenda);
+ 		$("#codBarras"+index, VENDA_PRODUTO.workspace).val(resultado.codigoBarras);
+ 		$("#codProduto"+index, VENDA_PRODUTO.workspace).val(resultado.codigoProduto);
+		$("#nmProduto"+index, VENDA_PRODUTO.workspace).val(resultado.nomeProduto);
+		$("#numEdicao"+index, VENDA_PRODUTO.workspace).val(resultado.numeroEdicao);
+		$("#precoDesconto"+index, VENDA_PRODUTO.workspace).val(resultado.precoDesconto);
+		$("#qntDisponivel"+index, VENDA_PRODUTO.workspace).val(resultado.qntDisponivelProduto);
+		$("#qntSolicitada"+index, VENDA_PRODUTO.workspace).val(resultado.qntProduto);
+		$("#hiddenTotal"+index, VENDA_PRODUTO.workspace).val(resultado.valoTotalProduto);
+		$("#totalFormatado"+index, VENDA_PRODUTO.workspace).val(resultado.valoTotalProduto);
+		$("#formaVenda"+index, VENDA_PRODUTO.workspace).val(resultado.formaVenda);
+		$("#tipoVenda"+index,VENDA_PRODUTO.workspace).val(resultado.tipoVendaEncalhe);
+		$("#hiddenComercializacao" + index, VENDA_PRODUTO.workspace).val(resultado.formaComercializacao);
+		$("#hiddenTipoVenda" + index, VENDA_PRODUTO.workspace).val(resultado.tipoVenda);
 		
-		if(resultado.produto.tipoVendaEncalhe == 'Suplementar'){
+		if(resultado.tipoVendaEncalhe == 'Suplementar'){
 			$("#qntSolicitada"+index, VENDA_PRODUTO.workspace).attr("class","sum_qntSolicitada_suplemtar");
 			$("#hiddenTotal"+index, VENDA_PRODUTO.workspace).attr("class","sum_total_suplemtar");
 		}
