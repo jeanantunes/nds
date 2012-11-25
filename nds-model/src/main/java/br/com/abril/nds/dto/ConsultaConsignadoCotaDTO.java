@@ -23,7 +23,7 @@ public class ConsultaConsignadoCotaDTO implements Serializable {
 	@Export(label = "Produto" , alignment= Alignment.LEFT, exhibitionOrder = 2)
 	private String nomeProduto;
 	
-	private Long idProdutoEdicao;
+	private Long produtoEdicaoId;
 	
 	@Export(label = "Edição" , alignment= Alignment.LEFT, exhibitionOrder = 3)
 	private Long numeroEdicao;
@@ -89,12 +89,12 @@ public class ConsultaConsignadoCotaDTO implements Serializable {
 		this.nomeProduto = nomeProduto;
 	}
 
-	public Long getIdProdutoEdicao() {
-		return idProdutoEdicao;
+	public Long getProdutoEdicaoId() {
+		return produtoEdicaoId;
 	}
 
-	public void setIdProdutoEdicao(Long idProdutoEdicao) {
-		this.idProdutoEdicao = idProdutoEdicao;
+	public void setProdutoEdicaoId(Long produtoEdicaoId) {
+		this.produtoEdicaoId = produtoEdicaoId;
 	}
 
 	public Long getNumeroEdicao() {

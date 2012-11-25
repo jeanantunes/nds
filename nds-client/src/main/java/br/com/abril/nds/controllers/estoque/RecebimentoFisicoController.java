@@ -14,9 +14,9 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.util.NFEImportUtil;
 import br.com.abril.nds.client.vo.RecebimentoFisicoVO;
-import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.dto.CabecalhoNotaDTO;
 import br.com.abril.nds.dto.RecebimentoFisicoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaNotaFiscalDTO;
@@ -37,7 +37,6 @@ import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
-import br.com.abril.nds.service.CFOPService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.NotaFiscalEntradaService;
 import br.com.abril.nds.service.PessoaJuridicaService;
@@ -96,9 +95,6 @@ public class RecebimentoFisicoController {
 	
 	@Autowired
 	private TipoNotaFiscalService tipoNotaService;
-
-	@Autowired
-	private CFOPService cfopService;
 	
 	@Autowired
 	private Validator validator;
@@ -1257,7 +1253,7 @@ public class RecebimentoFisicoController {
 				
 				RecebimentoFisicoDTO recFisicoDTO = new RecebimentoFisicoDTO();
 				BigDecimal precoVenda = produtoEdicao.getPrecoVenda();
-				BigDecimal percentualDesconto = Util.nvl(produtoEdicao.getProduto().getDesconto().getValor(), BigDecimal.ZERO);
+				BigDecimal percentualDesconto = Util.nvl(produtoEdicao.getProduto().getDescontoProduto().getValor(), BigDecimal.ZERO);
 				BigDecimal valorDesconto = MathUtil.calculatePercentageValue(precoVenda, percentualDesconto);
                 recFisicoDTO.setPrecoDesconto(precoVenda.subtract(valorDesconto));
 

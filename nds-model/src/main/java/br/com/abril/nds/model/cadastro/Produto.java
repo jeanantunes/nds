@@ -148,6 +148,13 @@ public class Produto implements Serializable {
 	@Embedded
 	private SegmentacaoProduto segmentacao;
 	
+<<<<<<< HEAD
+=======
+	@OneToOne(optional = true)
+	@JoinColumn(name = "DESCONTO_ID")
+	private Desconto descontoProduto;
+
+>>>>>>> def3e02f049b86bfdb61ff735cad04f3f09f735b
 	@Column(name="DESCONTO")
 	private BigDecimal desconto;
 	
@@ -556,23 +563,34 @@ public class Produto implements Serializable {
 		this.segmentacao = segmentacao;
 	}
 
+<<<<<<< HEAD
 	/**
 	 * @return the desconto
 	 */
+=======
+	public Desconto getDescontoProduto() {
+		return descontoProduto;
+	}
+
+	public void setDescontoProduto(Desconto descontoProduto) {
+		this.descontoProduto = descontoProduto;
+	}
+
+>>>>>>> def3e02f049b86bfdb61ff735cad04f3f09f735b
 	public BigDecimal getDesconto() {
 		return desconto;
 	}
 
-	/**
-	 * @param desconto the desconto to set
-	 */
 	public void setDesconto(BigDecimal desconto) {
 		this.desconto = desconto;
 	}
 
 	/**
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> def3e02f049b86bfdb61ff735cad04f3f09f735b
 	 * @return the descricaoDesconto
 	 */
 	public String getDescricaoDesconto() {
@@ -587,7 +605,10 @@ public class Produto implements Serializable {
 	}
 
 	/**
+<<<<<<< HEAD
 >>>>>>> DGBti/master
+=======
+>>>>>>> def3e02f049b86bfdb61ff735cad04f3f09f735b
      * Verifica se o produto é um publicação
      * 
      * @return true se o produto é uma publicação, false caso contrário

@@ -36,6 +36,8 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		
 		hql.append(" SELECT produto.codigo as codigoProduto, ")
 		   .append("        produto.nome as nomeProduto, ")	
+		   .append("        cota.id as idProdutoEdicao, ")
+		   .append("        pe.id as idProdutoEdicao, ")	
 		   .append("        pe.numeroEdicao as numeroEdicao, ")
 		   .append("        pessoa.razaoSocial as nomeFornecedor, ")
 		   .append("        lancamento.dataLancamentoDistribuidor as dataLancamento, ")
@@ -64,7 +66,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 			query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
 		
 		return query.list();
-		
+				
 	}
 	
 	@SuppressWarnings("unchecked")

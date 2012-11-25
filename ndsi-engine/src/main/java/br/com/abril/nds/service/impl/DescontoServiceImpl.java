@@ -353,8 +353,8 @@ public class DescontoServiceImpl implements DescontoService {
 		 *  2 |		X	|				|					|		X
 		 *  3 |		X	|		X		|					|
 		 *  4 |		X	|		X		|					|		X
-		 *  5 |		X	|				|			X		|
-		 *  6 |		X	|				|			X		|		X
+		 *  5 |		X	|		X		|			X		|
+		 *  6 |		X	|		X		|			X		|		X
 		 * 
 		 */
 		switch(obterCombinacaoDesconto(descontoDTO, usuario)) {
@@ -364,7 +364,11 @@ public class DescontoServiceImpl implements DescontoService {
 				produto = produtoRepository.obterProdutoPorCodigo(descontoDTO.getCodigoProduto());
 				
 				if(produto != null) {
+<<<<<<< HEAD
 					produto.setDesconto(desconto.getValor());
+=======
+					produto.setDescontoProduto(desconto);
+>>>>>>> def3e02f049b86bfdb61ff735cad04f3f09f735b
 					produtoRepository.merge(produto);
 					
 					HistoricoDescontoProduto hdp = new HistoricoDescontoProduto();
@@ -426,18 +430,24 @@ public class DescontoServiceImpl implements DescontoService {
 				produtoEdicao = produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(descontoDTO.getCodigoProduto(), descontoDTO.getEdicaoProduto());
 				
 				if(produtoEdicao != null) {
+<<<<<<< HEAD
 					produtoEdicao.setDesconto(desconto.getValor());
+=======
+					produtoEdicao.setDescontoProdutoEdicao(desconto);
+>>>>>>> def3e02f049b86bfdb61ff735cad04f3f09f735b
 					produtoEdicaoRepository.merge(produtoEdicao);
+					
+					hdpe = new HistoricoDescontoProdutoEdicao();
+					hdpe.setDataAlteracao(new Date());
+					hdpe.setDesconto(descontoDTO.getDescontoProduto());
+					hdpe.setProduto(produtoEdicao.getProduto());
+					hdpe.setProdutoEdicao(produtoEdicao);
+					hdpe.setDistribuidor(distribuidor);
+					hdpe.setFornecedor(produtoEdicao.getProduto().getFornecedor());
+					hdpe.setUsuario(usuario);
+					
+					historicoDescontoProdutoEdicaoRepository.merge(hdpe);
 				}
-				
-				hdpe = new HistoricoDescontoProdutoEdicao();
-				hdpe.setDataAlteracao(new Date());
-				hdpe.setDesconto(descontoDTO.getDescontoProduto());
-				hdpe.setDistribuidor(distribuidor);
-				hdpe.setFornecedor(produtoEdicao.getProduto().getFornecedor());
-				hdpe.setUsuario(usuario);
-				
-				historicoDescontoProdutoEdicaoRepository.merge(hdpe);
 				
 				break;
 				
@@ -460,6 +470,8 @@ public class DescontoServiceImpl implements DescontoService {
 					} else {
 						dpe = new DescontoCotaProdutoExcessao();
 						dpe.setFornecedor(null);
+						dpe.setDistribuidor(distribuidor);
+						dpe.setUsuario(usuario);
 						dpe.setCota(cota);
 						dpe.setProduto(produtoEdicao.getProduto());
 						dpe.setProdutoEdicao(produtoEdicao);
@@ -514,8 +526,8 @@ public class DescontoServiceImpl implements DescontoService {
 		 *  2 |		X	|				|					|		X
 		 *  3 |		X	|		X		|					|
 		 *  4 |		X	|		X		|					|		X
-		 *  5 |		X	|				|			X		|
-		 *  6 |		X	|				|			X		|		X
+		 *  5 |		X	|		X		|			X		|
+		 *  6 |		X	|		X		|			X		|		X
 		 * 
 		 */
 		
@@ -1076,7 +1088,11 @@ public class DescontoServiceImpl implements DescontoService {
         }
         return Util.nvl(percentual, BigDecimal.ZERO);
     }
+<<<<<<< HEAD
 	
+=======
+
+>>>>>>> def3e02f049b86bfdb61ff735cad04f3f09f735b
 	@Override
 	@Transactional(readOnly = true)
 	public BigDecimal obterComissaoCota(Integer numeroCota){

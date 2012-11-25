@@ -171,6 +171,13 @@ public class ProdutoEdicao implements Serializable {
 	@OneToMany(mappedBy = "produtoEdicao")
 	protected Set<FechamentoDiarioLancamentoReparte> historicoMovimentoRepartes;
 	
+<<<<<<< HEAD
+=======
+	@OneToOne(optional = true)
+	@JoinColumn(name = "DESCONTO_ID")
+	private Desconto descontoProdutoEdicao;
+
+>>>>>>> def3e02f049b86bfdb61ff735cad04f3f09f735b
 	@Enumerated(EnumType.STRING)
 	@Column(name = "GRUPO_PRODUTO")
 	private GrupoProduto grupoProduto;
@@ -520,7 +527,19 @@ public class ProdutoEdicao implements Serializable {
 			Set<FechamentoDiarioLancamentoReparte> historicoMovimentoRepartes) {
 		this.historicoMovimentoRepartes = historicoMovimentoRepartes;
 	}
+<<<<<<< HEAD
 
+=======
+
+	public Desconto getDescontoProdutoEdicao() {
+		return descontoProdutoEdicao;
+	}
+
+	public void setDescontoProdutoEdicao(Desconto descontoProdutoEdicao) {
+		this.descontoProdutoEdicao = descontoProdutoEdicao;
+	}
+	
+>>>>>>> def3e02f049b86bfdb61ff735cad04f3f09f735b
 	public SegmentacaoProduto getSegmentacao() {
 		return segmentacao;
 	}

@@ -27,7 +27,6 @@ import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.serialization.custom.PlainJSONSerialization;
 import br.com.abril.nds.service.BrindeService;
-import br.com.abril.nds.service.CapaService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.Intervalo;
@@ -55,9 +54,6 @@ public class ProdutoEdicaoController {
 	
 	@Autowired
 	private ProdutoEdicaoService produtoEdicaoService;
-	
-	@Autowired
-	private CapaService capaService;
 	
 	private static List<ItemDTO<ClasseSocial,String>> listaClasseSocial =  new ArrayList<ItemDTO<ClasseSocial,String>>();
 	  
@@ -433,7 +429,11 @@ public class ProdutoEdicaoController {
 		if (produtoEdicao!=null){
 		    
 		    BigDecimal precoVenda = produtoEdicao.getPrecoVenda();
+<<<<<<< HEAD
 
+=======
+
+>>>>>>> def3e02f049b86bfdb61ff735cad04f3f09f735b
 		    BigDecimal percentualDesconto = Util.nvl(produtoEdicao.getDesconto()!=null?produtoEdicao.getDesconto():BigDecimal.ZERO, BigDecimal.ZERO);
 
             BigDecimal valorDesconto = MathUtil.calculatePercentageValue(precoVenda, percentualDesconto);

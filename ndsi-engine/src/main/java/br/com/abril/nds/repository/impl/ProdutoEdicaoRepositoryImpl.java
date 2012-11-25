@@ -580,6 +580,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		return criteria.list();
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<TipoDescontoProdutoDTO> obterProdutosEdicoesPorCodigoProdutoComDesconto(
 			String codigoProduto) {
@@ -589,9 +590,12 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 //		case when pe.desconto is null or pe.desconto = 0 then (case when p.desconto is null then 0 else p.desconto end) else pe.desconto end		
 		hql .append("select new ")
 			.append(TipoDescontoProdutoDTO.class.getCanonicalName())
-			.append("(p.codigo, p.nome, pe.numeroEdicao, coalesce(pe.desconto, p.desconto, 0), p.dataDesativacao) ")
-		.append("from ProdutoEdicao pe join pe.produto p ")
-		.append("where p.codigo = :codigoProduto");
+			.append("(p.codigo, p.nome, pe.numeroEdicao, d.valor, d.dataAlteracao, u.nome) ")
+			.append("\n")
+			.append("from ProdutoEdicao pe join pe.produto p join pe.desconto as d join d.usuario u")
+			.append("\n")
+			.append("where p.codigo = :codigoProduto ")
+			.append("\n");
 		
 		Query q = getSession().createQuery(hql.toString());
 		
