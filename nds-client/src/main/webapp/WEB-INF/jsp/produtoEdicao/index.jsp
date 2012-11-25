@@ -2,6 +2,7 @@
 
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/produtoEdicao.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.price_format.1.7.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.form.js"></script>
 
 <script type="text/javascript">
@@ -118,7 +119,7 @@ fieldset {
 									<td>Edi&ccedil;&atilde;o:</td>
 									<td><input type="text" name="numeroEdicao" id="produtoEdicaoController-numeroEdicao" style="width:50px;" /></td>
 									<td>PEB:</td>
-									<td><input type="text" name="ped" id="produtoEdicaoController-ped" style="width:50px;" /></td>
+									<td><input type="text" name="peb" id="produtoEdicaoController-peb" style="width:50px;" /></td>
 									<td>Pct. Padr&atilde;o:</td>
 									<td><input type="text" name="pacotePadrao" id="produtoEdicaoController-pacotePadrao" style="width:50px;" /></td>
 								</tr>
@@ -230,8 +231,11 @@ fieldset {
 								<tr>
 									<td width="145">Categoria:</td>
 									<td width="193">
-										<select name="select2" id="produtoEdicaoController-select2" style="width:180px;" >
-											<option selected="selected">Selecione...</option>
+										<select name="categoria" id="produtoEdicaoController-categoria" style="width:180px;" >
+											<option value="">Selecione</option>
+					                        <c:forEach items="${listaGrupoProduto}" var="categoria">
+												<option value="${categoria.key}" >${categoria.value}</option>
+											</c:forEach>
 										</select>
 									</td>
 								</tr>
@@ -239,7 +243,7 @@ fieldset {
 									<td>Cod. de Barras:</td>
 									<td><input type="text" name="codigoDeBarras" id="produtoEdicaoController-codigoDeBarras" style="width:180px;" maxlength="18" /></td>
 								</tr>
-								<tr>
+								<tr class="target_visible">
 									<td>Cod. Barras Corporativo:</td>
 									<td><input type="text" name="codigoDeBarrasCorporativo" id="produtoEdicaoController-codigoDeBarrasCorporativo" maxlength="25" style="width:180px;" /></td>
 								</tr>
@@ -251,13 +255,16 @@ fieldset {
 						<table width="250" border="0" cellspacing="1" cellpadding="1">
 							<thead />
 							<tbody>
+
 								<tr>
 									<td colspan="2"><input type="text" name="descricaoDesconto" id="produtoEdicaoController-descricaoDesconto" style="width:235px;" /></td>
 								</tr>
+								
 								<tr>
-									<td>Desconto:</td>
+									<td>Desconto %:</td>
 									<td><input type="text" name="desconto" id="produtoEdicaoController-desconto" style="width:113px;" /></td>
 								</tr>
+								
 							</tbody>
 						</table>
 					</fieldset>

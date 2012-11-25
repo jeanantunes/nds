@@ -176,7 +176,7 @@
     
     
 <!-- Pesquisar -->    
-<a href="javascript:;" onclick="EmissaoCEController.cliquePesquisar();"><img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" /></a></span></td>
+<a href="javascript:;" onclick="EmissaoCEController.cliquePesquisar();"></a></span></td>
 
 
     </tr>

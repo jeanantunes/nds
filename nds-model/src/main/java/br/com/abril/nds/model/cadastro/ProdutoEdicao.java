@@ -24,7 +24,6 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -32,7 +31,6 @@ import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 
 import br.com.abril.nds.model.Origem;
-import br.com.abril.nds.model.cadastro.desconto.Desconto;
 import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.fechar.dia.FechamentoDiarioLancamentoReparte;
@@ -89,6 +87,9 @@ public class ProdutoEdicao implements Serializable {
 	
 	@Column(name = "PEB", nullable = false)
 	protected int peb;
+	
+	@Column(name = "CARACTERISTICA_PRODUTO")
+	protected String caracteristicaProduto;
 	
 	@Column(name = "PRECO_CUSTO")
 	protected BigDecimal precoCusto;
@@ -170,13 +171,18 @@ public class ProdutoEdicao implements Serializable {
 	@OneToMany(mappedBy = "produtoEdicao")
 	protected Set<FechamentoDiarioLancamentoReparte> historicoMovimentoRepartes;
 	
-
-	@OneToOne(optional = true)
-	@JoinColumn(name = "DESCONTO_ID")
-	private Desconto desconto;
-
+	@Enumerated(EnumType.STRING)
+	@Column(name = "GRUPO_PRODUTO")
+	private GrupoProduto grupoProduto;
+	
 	@Embedded
 	private SegmentacaoProduto segmentacao;
+
+	@Column(name="DESCONTO")
+	private BigDecimal desconto;
+	
+	@Column(name="DESCRICAO_DESCONTO")
+	private String descricaoDesconto;
 	
 	public Long getId() {
 		return id;
@@ -243,7 +249,15 @@ public class ProdutoEdicao implements Serializable {
 	public Long getPeso() {
 		return peso;
 	}
-	
+
+	public String getCaracteristicaProduto() {
+		return caracteristicaProduto;
+	}
+
+	public void setCaracteristicaProduto(String caracteristicaProduto) {
+		this.caracteristicaProduto = caracteristicaProduto;
+	}
+
 	public void setPeso(Long peso) {
 		this.peso = peso;
 	}
@@ -296,44 +310,7 @@ public class ProdutoEdicao implements Serializable {
 	public void setCodigoDeBarras(String codigoDeBarras) {
 		this.codigoDeBarras = codigoDeBarras;
 	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result
-				+ ((numeroEdicao == null) ? 0 : numeroEdicao.hashCode());
-		result = prime * result + ((produto == null) ? 0 : produto.hashCode());
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		ProdutoEdicao other = (ProdutoEdicao) obj;
-		if (numeroEdicao == null) {
-			if (other.numeroEdicao != null)
-				return false;
-		} else if (!numeroEdicao.equals(other.numeroEdicao))
-			return false;
-		if (produto == null) {
-			if (other.produto != null)
-				return false;
-		} else if (!produto.equals(other.produto))
-			return false;
-		return true;
-	}
-
-	@Override
-	public String toString() {
-		return produto.toString() + "-" + numeroEdicao.toString();
-	}
-
+	
 	/**
 	 * @return the parcial
 	 */
@@ -544,14 +521,6 @@ public class ProdutoEdicao implements Serializable {
 		this.historicoMovimentoRepartes = historicoMovimentoRepartes;
 	}
 
-	public Desconto getDesconto() {
-		return desconto;
-	}
-
-	public void setDesconto(Desconto desconto) {
-		this.desconto = desconto;
-	}
-	
 	public SegmentacaoProduto getSegmentacao() {
 		return segmentacao;
 	}
@@ -559,6 +528,79 @@ public class ProdutoEdicao implements Serializable {
 	public void setSegmentacao(SegmentacaoProduto segmentacao) {
 		this.segmentacao = segmentacao;
 
+	}
+
+	public GrupoProduto getGrupoProduto() {
+		return grupoProduto;
+	}
+
+	public void setGrupoProduto(GrupoProduto grupoProduto) {
+		this.grupoProduto = grupoProduto;
+	}
+
+	/**
+	 * @return the desconto
+	 */
+	public BigDecimal getDesconto() {
+		return desconto;
+	}
+
+	/**
+	 * @param desconto the desconto to set
+	 */
+	public void setDesconto(BigDecimal desconto) {
+		this.desconto = desconto;
+	}
+
+	/**
+	 * @return the descricaoDesconto
+	 */
+	public String getDescricaoDesconto() {
+		return descricaoDesconto;
+	}
+
+	/**
+	 * @param descricaoDesconto the descricaoDesconto to set
+	 */
+	public void setDescricaoDesconto(String descricaoDesconto) {
+		this.descricaoDesconto = descricaoDesconto;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((numeroEdicao == null) ? 0 : numeroEdicao.hashCode());
+		result = prime * result + ((produto == null) ? 0 : produto.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ProdutoEdicao other = (ProdutoEdicao) obj;
+		if (numeroEdicao == null) {
+			if (other.numeroEdicao != null)
+				return false;
+		} else if (!numeroEdicao.equals(other.numeroEdicao))
+			return false;
+		if (produto == null) {
+			if (other.produto != null)
+				return false;
+		} else if (!produto.equals(other.produto))
+			return false;
+		return true;
+	}
+
+	@Override
+	public String toString() {
+		return produto.toString() + "-" + numeroEdicao.toString();
 	}
 	
 }

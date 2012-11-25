@@ -5,9 +5,6 @@
 			furoProdutoController.init();
 		});
 	</script>
-	<style type="text/css">
-		.dados, .dadosFiltro, .grids{display:none;}
-	</style>
 </head>
 
 <body>
@@ -57,7 +54,7 @@
 	  	
 	  	<div class="linha_separa_fields">&nbsp;</div>
 	  	
-	  	<fieldset class="grids fieldGrid" id="resultado">
+	  	<fieldset style="display: none;" id="resultado">
 	  		<legend>Furo do Produto</legend>
 	  			<div class="imgProduto">
 	  				<img src="" alt="" id="imagem"/>

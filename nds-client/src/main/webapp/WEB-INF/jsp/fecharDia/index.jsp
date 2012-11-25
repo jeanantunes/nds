@@ -3,7 +3,9 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>NDS - Novo Distrib</title>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.fileDownload.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/fecharDia.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.fileDownload.js"></script>
 <script language="javascript" type="text/javascript">
 
 	/*
@@ -20,6 +22,9 @@
 </script>
 <style type="text/css">
 .linha_separa_fields{width:400px!important;}
+
+.no-close-button .ui-dialog-titlebar-close {display: none; }
+
 </style>
 </head>
 
@@ -155,6 +160,7 @@
 	</form>
 
 	<form id="form-venda-total">
+		<input type="hidden" name="tipoVenda" id="tipoVenda" />
 		<div id="dialog-venda-total" title="Movimento" style="display:none;">
 			<fieldset style="width:850px;">
 		    	<legend>Vendas</legend>
@@ -162,14 +168,14 @@
 		    </fieldset>
 		    <br clear="all" />
 		    <span class="bt_novos" title="Gerar Arquivo">  
-			    <a href="${pageContext.request.contextPath}/administracao/fecharDia/exportarVendaSuplemntar?fileType=XLS">
+			    <a href="javaScript:;" onclick="fecharDiaController.exportarVendaEncalheOuSuplementar('XLS');">
 		    		<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
 		    		Arquivo
 		    	</a>
 	    	</span>
 		
 			<span class="bt_novos" title="Imprimir">		
-			 	<a href="${pageContext.request.contextPath}/administracao/fecharDia/exportarVendaSuplemntar?fileType=PDF">
+			 	<a href="javaScript:;" onclick="fecharDiaController.exportarVendaEncalheOuSuplementar('PDF');">
 		    		<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
 		    		Imprimir
 			    </a>		
@@ -608,12 +614,6 @@
 <br />
           <br />
 
-
-
-        <br clear="all" />
-          <a href="relatorio_geral_financeiro_fisico_1.htm" target="_blank">rel_1</a> |  <a href="relatorio_geral_financeiro_fisico_2.htm" target="_blank">rel_2</a> |  <a href="relatorio_geral_financeiro_fisico_3.htm" target="_blank">rel_3</a><br />
-          <br clear="all" />
-        <br />
 	
         <br clear="all" />
           

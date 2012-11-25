@@ -31,24 +31,30 @@ public interface EnderecoService {
 	
 	List<String> obterUnidadeFederacaoBrasil();
 	
-	List<Localidade> obterLocalidadesPorUFNome(String nome, String siglaUF);
+	List<String> obterLocalidadesPorUFNome(String nome, String siglaUF);
 	
-	List<Bairro> obterBairrosPorCodigoIBGENome(String nome, Long codigoIBGE);
+	List<String> obterBairrosPorCodigoIBGENome(String nome, Long codigoIBGE);
 	
-	List<Logradouro> obterLogradourosPorCodigoBairroNome(Long codigoBairro, String nomeLogradouro);
+	List<String> obterLogradourosPorCodigoBairroNome(Long codigoBairro, String nomeLogradouro);
 	
 	EnderecoVO obterEnderecoPorCep(String cep);
 
-	List<Logradouro> pesquisarLogradouros(String nomeLogradouro);
+	List<String> pesquisarLogradouros(String nomeLogradouro);
 
-	List<Bairro> pesquisarBairros(String nomeBairro);
+	List<String> pesquisarBairros(String nomeBairro);
 	
-	List<Bairro> pesquisarTodosBairros(); 
+	List<String> pesquisarTodosBairros(); 
 
-	List<Localidade> pesquisarLocalidades(String nomeLocalidade);
+	List<String> pesquisarLocalidades(String nomeLocalidade);
 	
 	void validarEndereco(EnderecoDTO endereco, TipoEndereco tipoEndereco);
 	
-	List<Bairro> obterBairrosPorCidade(String cidade);
+	List<String> obterBairrosPorCidade(String cidade);
+
+	String buscarLocalidadePorIbge(String codigoIbge);
+
+	List<String> obterListaLocalidadeCotas();
+
+	List<String> obterLocalidadesPorUF(String uf);
 	
 }

@@ -225,7 +225,7 @@ var consultaConsignadoCotaController = $.extend(true, {
 		var idFornecedor = $('#idFornecedor', consultaConsignadoCotaController.workspace).val();
 		
 		if(idFornecedor == "-1"){
-			idFornecedor = ""
+			idFornecedor = "";
 		}else if(idFornecedor == "0"){
 			idFornecedor = "";
 		}
@@ -236,6 +236,11 @@ var consultaConsignadoCotaController = $.extend(true, {
 		}
 		
 		if(cota != "" && idFornecedor == "" ){
+		
+			$("#numeroNomeCota", consultaConsignadoCotaController.workspace).html(
+				"Consignados da Cota: " + $("#codigoCota", consultaConsignadoCotaController.workspace).val()
+				+ " - " + $("#nomeCota", consultaConsignadoCotaController.workspace).html()
+			);
 			
 			$(".consignadosCotaGrid", consultaConsignadoCotaController.workspace).flexOptions({
 				url: contextPath + "/financeiro/consultaConsignadoCota/pesquisarConsignadoCota",
@@ -286,7 +291,10 @@ var consultaConsignadoCotaController = $.extend(true, {
 							"<tr> <td><strong>Total Geral:</strong></td>" +
         						" <td>&nbsp;</td> "+
         						" <td align='right'><strong>"+result+"</strong></td></tr>");
-				}else{					
+				}else{
+					
+					
+					
 					$("#totalGeralCota", consultaConsignadoCotaController.workspace).html(" <table width='190' border='0' cellspacing='1' cellpadding='1' align='right' >" +
 												"<tr> <td><strong>Total Geral:</strong></td>" +
 			                						" <td>&nbsp;</td> "+
@@ -403,14 +411,25 @@ var consultaConsignadoCotaController = $.extend(true, {
  		
 		numeroCota = $("#codigoCota", consultaConsignadoCotaController.workspace).val();
  		
+		numeroCota = $.trim(numeroCota);
+		
+		if (numeroCota.length < 1) {
+			
+			$("#nomeCota", consultaConsignadoCotaController.workspace).html("");
+			
+			return;
+		}
+		
  		$.postJSON(
 			contextPath + "/financeiro/consultaConsignadoCota/buscarCotaPorNumero",
 			{ "numeroCota": numeroCota },
 			function(result) {
-				$("#nomeCota", consultaConsignadoCotaController.workspace).html(result);				  
-				$("#numeroNomeCota", consultaConsignadoCotaController.workspace).html("Consignados da Cota: " + numeroCota + " - " + result);
+				$("#nomeCota", consultaConsignadoCotaController.workspace).html(result);
 			},
-			null,
+			function() {
+			    $("#nomeCota", consultaConsignadoCotaController.workspace).html("");
+			    $("#codigoCota", consultaConsignadoCotaController.workspace).val("");
+			},
 			true
 		);
  	},

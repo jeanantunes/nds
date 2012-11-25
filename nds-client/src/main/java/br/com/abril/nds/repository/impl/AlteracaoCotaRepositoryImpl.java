@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import br.com.abril.nds.dto.ConsultaAlteracaoCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroAlteracaoCotaDTO;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.repository.AlteracaoCotaRepository;
 import br.com.abril.nds.vo.PaginacaoVO;
 
@@ -38,7 +39,9 @@ public class AlteracaoCotaRepositoryImpl extends AbstractRepositoryModel<Cota, L
 		//boolean addedAnd = false;
 		
 		hql.append(" select new ").append(ConsultaAlteracaoCotaDTO.class.getCanonicalName());
-		hql.append(" (cota.id, cota.numeroCota, pessoa.nome,  parametroCobranca.fatorVencimento, parametroCobranca.valorMininoCobranca, parametroDistribuicao.descricaoTipoEntrega, box.nome) ");
+		hql.append(" (cota.id, cota.numeroCota, ");
+		hql.append(" pessoa.class, pessoa.razaoSocial, pessoa.nome, ");
+		hql.append(" parametroCobranca.fatorVencimento, parametroCobranca.valorMininoCobranca, parametroDistribuicao.descricaoTipoEntrega, box.nome) ");
 		Query query = templateAlteracaoCota(filtroAlteracaoCotaDTO, hql);
 		
 		PaginacaoVO vo = filtroAlteracaoCotaDTO.getPaginacao();

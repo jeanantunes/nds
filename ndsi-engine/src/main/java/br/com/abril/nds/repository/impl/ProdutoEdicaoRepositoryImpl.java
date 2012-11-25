@@ -195,16 +195,26 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<ProdutoEdicao> obterProdutoPorCodigoNome(String codigoNomeProduto) {
+	public List<ProdutoEdicao> obterProdutoPorCodigoNome(String codigoNomeProduto, Integer quantidadeRegisttros) {
 		
-		StringBuilder hql = new StringBuilder("select pe ");
-		hql.append(" from ProdutoEdicao pe ")
-		   .append(" where pe.produto.nome like :nomeProduto ")
-		   .append(" or pe.produto.codigo = :codigoProduto ");
+		StringBuilder hql = new StringBuilder("select produtoEdicao ");
+		hql.append(" from ProdutoEdicao produtoEdicao ")
+			.append(" join produtoEdicao.produto produto ")
+			.append(" join produtoEdicao.chamadaEncalhes chamadaEncalhe ")
+			.append(" join chamadaEncalhe.chamadaEncalheCotas chamadaEncalheCota ")
+			.append(" where chamadaEncalheCota.fechado = :fechado ")
+			.append(" and (produto.nome like :nomeProduto ")
+			.append(" or produto.codigo = :codigoProduto) ")
+			.append(" group by produtoEdicao.id ")
+			.append(" order by produto.nome asc, ")
+			.append(" produtoEdicao.numeroEdicao desc ");
 		
 		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("fechado", false);
 		query.setParameter("nomeProduto", "%" + codigoNomeProduto + "%");
 		query.setParameter("codigoProduto", codigoNomeProduto);
+		
+		query.setMaxResults(quantidadeRegisttros);
 		
 		return query.list();
 	}

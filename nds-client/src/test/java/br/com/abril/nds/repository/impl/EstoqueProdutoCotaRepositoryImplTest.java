@@ -2,10 +2,8 @@ package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -255,21 +253,6 @@ public class EstoqueProdutoCotaRepositoryImplTest extends AbstractRepositoryImpl
 		
 		Assert.assertTrue(listaEstoqueProdutoCota.size() > 0);
 	}
-	
-	@Ignore
-	@Test
-	public void testObterValorTotalReparteCota() {
-		
-		List<Long> listaIdProdutoEdicao = new LinkedList<Long>();
-		
-		listaIdProdutoEdicao.add(1L);
-		
-		listaIdProdutoEdicao.add(2L);
-		
-		BigDecimal valorTotalReparteCota = 
-				estoqueProdutoCotaRepository.obterValorTotalReparteCota(123, listaIdProdutoEdicao, 1L);
-		
-	}
 
 	@Test
 	public void testObterFaturamentoCota() {
@@ -329,24 +312,6 @@ public class EstoqueProdutoCotaRepositoryImplTest extends AbstractRepositoryImpl
 		quantidadeEstoque = estoqueProdutoCotaRepository.buscarQuantidadeEstoqueProdutoEdicao(numeroEdicao, codigoProduto, numeroCota);
 		
 		Assert.assertNull(quantidadeEstoque);		
-		
-	}
-	
-	@Test
-	public void testarObterValorTotalReparteCota() {
-		
-		BigDecimal valorTotal;
-		
-		Integer numeroCota = 1;
-		
-		List<Long> listaIdProdutoEdicao = new ArrayList<Long>();
-		listaIdProdutoEdicao.add(1L);
-		listaIdProdutoEdicao.add(2L);
-		listaIdProdutoEdicao.add(3L);
-		
-		Long idDistribuidor = 1L;
-		
-		valorTotal = estoqueProdutoCotaRepository.obterValorTotalReparteCota(numeroCota, listaIdProdutoEdicao, idDistribuidor);
 		
 	}
 	

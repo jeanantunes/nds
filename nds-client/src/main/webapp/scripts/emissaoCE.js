@@ -61,12 +61,26 @@ var EmissaoCEController = $.extend(true, {
 	
 	processaRetornoPesquisa : function(result) {
 		
+		if (result.mensagens) {
+
+			exibirMensagem(
+					result.mensagens.tipoMensagem, 
+					result.mensagens.listaMensagens
+			);
+			
+			$(".grids", this.workspace).hide();
+
+			return result;
+		}
+		
 		$.each(result.rows, function(index, row) {
 	
 			if(!row.cell.nomeCota){
 				row.cell.nomeCota = "";
 			}	
-		})		
+		});
+		
+		$(".grids", this.workspace).show();
 		
 		return result;
 	},

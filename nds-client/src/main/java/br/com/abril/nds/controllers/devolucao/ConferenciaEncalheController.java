@@ -79,6 +79,8 @@ public class ConferenciaEncalheController {
 	
 	private static final String NUMERO_COTA = "numeroCotaConferenciaEncalhe";
 	
+	private static final int QUANTIDADE_MAX_REGISTROS = 15;
+	
 	@Autowired
 	private ConferenciaEncalheService conferenciaEncalheService;
 	
@@ -839,11 +841,12 @@ public class ConferenciaEncalheController {
 	@Post
 	public void pesquisarProdutoPorCodigoNome(String codigoNomeProduto){
 		
-		List<ProdutoEdicao> listaProdutoEdicao = this.produtoEdicaoService.obterProdutoPorCodigoNome(codigoNomeProduto);
+		List<ProdutoEdicao> listaProdutoEdicao =
+			this.produtoEdicaoService.obterProdutoPorCodigoNome(codigoNomeProduto, QUANTIDADE_MAX_REGISTROS);
+		
+		List<ItemAutoComplete> listaProdutos = new ArrayList<ItemAutoComplete>();
 		
 		if (listaProdutoEdicao != null && !listaProdutoEdicao.isEmpty()){
-			
-			List<ItemAutoComplete> listaProdutos = new ArrayList<ItemAutoComplete>();
 			
 			for (ProdutoEdicao produtoEdicao : listaProdutoEdicao){
 				
@@ -854,11 +857,10 @@ public class ConferenciaEncalheController {
 								new Object[]{produtoEdicao.getProduto().getCodigo(), produtoEdicao.getId()}));
 			}
 			
-			result.use(Results.json()).from(listaProdutos, "result").recursive().serialize();
-		} else {
-		
-			result.use(Results.json()).from("", "result").serialize();
+			
 		}
+		
+		result.use(Results.json()).from(listaProdutos, "result").recursive().serialize();
 	}
 	
 	@Post

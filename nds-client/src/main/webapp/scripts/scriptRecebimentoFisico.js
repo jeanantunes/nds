@@ -208,6 +208,7 @@ var recebimentoFisicoController = $.extend(true, {
 			if (recebimentoFisicoController.indNotaFiscalInterface){
 				$('#chBoxReplicaValorRepartePrevistoAll', this.workspace).attr('disabled', false);
 				recebimentoFisicoController.carregarItemNotaGridNotaInterface();
+				
 	    	}else{
 				$('#chBoxReplicaValorRepartePrevistoAll', this.workspace).attr('disabled', true);
 				recebimentoFisicoController.carregarItemNotaGridNotaManual();
@@ -944,13 +945,24 @@ var recebimentoFisicoController = $.extend(true, {
 			$("#botoesOpacos", this.workspace).hide();
 			$("#botaoNovoProdutoOpaco", this.workspace).hide();
 			$("#botaoAdicionarOpaco", this.workspace).hide();
-			$("#botaoNovoProduto", this.workspace).show();
+			
+			if(recebimentoFisicoController.indNotaFiscalInterface){
+				$("#botaoNovoProduto", this.workspace).hide();
+			}else{
+				$("#botaoNovoProduto", this.workspace).show();
+			}
+				
 			
 		}else{
 
 			$("#botoesOpacos", this.workspace).show();
-			$("#botoesNormais", this.workspace).hide();
-			$("#botaoNovoProdutoOpaco", this.workspace).show();
+			$("#botoesNormais", this.workspace).hide();			
+			
+			if(recebimentoFisicoController.indNotaFiscalInterface){
+				$("#botaoNovoProdutoOpaco", this.workspace).hide();
+			}else{
+				$("#botaoNovoProdutoOpaco", this.workspace).show();
+			}
 			$("#botaoAdicionarOpaco", this.workspace).show();
 			$("#botaoNovoProduto", this.workspace).hide();
 
@@ -1031,7 +1043,11 @@ var recebimentoFisicoController = $.extend(true, {
 			
 			$('#botaoNovoProdutoOpaco', this.workspace).hide();
 			
-			$('#botaoNovoProduto', this.workspace).show();
+			if(recebimentoFisicoController.indNotaFiscalInterface){
+				$("#botaoNovoProduto", this.workspace).hide();
+			}else{
+				$("#botaoNovoProduto", this.workspace).show();
+			}
 			
 			$('#botaoAdicionarOpaco', this.workspace).hide();
 			
@@ -1046,7 +1062,11 @@ var recebimentoFisicoController = $.extend(true, {
 			
 			$('#botoesNormais', this.workspace).hide();
 			
-			$('#botaoNovoProdutoOpaco', this.workspace).show();
+			if(recebimentoFisicoController.indNotaFiscalInterface){
+				$("#botaoNovoProdutoOpaco", this.workspace).hide();
+			}else{
+				$("#botaoNovoProdutoOpaco", this.workspace).show();
+			}
 			
 			$('#botaoNovoProduto', this.workspace).hide();
 			

@@ -2,10 +2,11 @@ package br.com.abril.nds.controllers.estoque;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.text.DateFormat;
 import java.text.DecimalFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -23,6 +24,7 @@ import br.com.abril.nds.client.vo.ResultadoConsultaDetallheNFVO;
 import br.com.abril.nds.dto.DetalheItemNotaFiscalDTO;
 import br.com.abril.nds.dto.DetalheNotaFiscalDTO;
 import br.com.abril.nds.dto.ItemDTO;
+import br.com.abril.nds.dto.NotaFiscalEntradaFornecedorDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaNotaFiscalDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaNotaFiscalDTO.ColunaOrdenacao;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -30,8 +32,6 @@ import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
-import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
-import br.com.abril.nds.model.fiscal.StatusNotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
@@ -112,8 +112,8 @@ public class ConsultaNotasController {
 		
 		FiltroConsultaNotaFiscalDTO filtro = this.obterFiltroExportacao();
 		
-		List<NotaFiscalEntradaFornecedor> listaNotasFiscais =
-			notaFiscalService.obterNotasFiscaisCadastradas(filtro);
+		List<NotaFiscalEntradaFornecedorDTO> listaNotasFiscais =
+			notaFiscalService.obterNotasFiscaisCadastradasDTO(filtro);
 		
 		List<ConsultaNotaFiscalVO> listaConsultaNF = this.obterListaConsultaNotasFiscais(listaNotasFiscais);
 		
@@ -132,30 +132,19 @@ public class ConsultaNotasController {
 		
 		try {
 			
-			List<NotaFiscalEntradaFornecedor> listaNotasFiscais =
-					notaFiscalService.obterNotasFiscaisCadastradas(filtroConsultaNotaFiscal);
+			List<NotaFiscalEntradaFornecedorDTO> listaNotasFiscais =
+					notaFiscalService.obterNotasFiscaisCadastradasDTO(filtroConsultaNotaFiscal);
+			/*List<NotaFiscalEntradaFornecedor> listaNotasFiscais =
+					notaFiscalService.obterNotasFiscaisCadastradas(filtroConsultaNotaFiscal);*/
 
-			Integer quantidadeRegistros = this.notaFiscalService.obterQuantidadeNotasFicaisCadastradas(filtroConsultaNotaFiscal);
+ 			Integer quantidadeRegistros = this.notaFiscalService.obterQuantidadeNotasFicaisCadastradas(filtroConsultaNotaFiscal);
 			
 			if (quantidadeRegistros <= 0) {
 				throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
 			} 
 			
 			List<CellModel> listaCellModel = getTableModelNotasFiscais(listaNotasFiscais);
-			
-			if (FiltroConsultaNotaFiscalDTO.ColunaOrdenacao.VALOR.toString().equals(sortname)) {
-				Collections.sort(listaCellModel, new Comparator<CellModel>() {
-					@Override
-					public int compare(CellModel o1, CellModel o2) {
-						/*BigDecimal cellO1 = new BigDecimal((String) o1.getCell()[5]);
-						BigDecimal cellO2 = new BigDecimal((String) o2.getCell()[5]);*/
-						BigDecimal cellO1 = CurrencyUtil.converterValor((String) o1.getCell()[5]);
-						BigDecimal cellO2 = CurrencyUtil.converterValor((String) o2.getCell()[5]);
-						return cellO1.compareTo(cellO2);
-					}
-				});
-			}
-			
+		
 			TableModel<CellModel> tableModel = new TableModel();
 			tableModel.setRows(listaCellModel);
 			
@@ -259,28 +248,29 @@ public class ConsultaNotasController {
 		result.include("dataAtual", DateUtil.formatarData(new Date(), "dd/MM/yyyy"));
 	}
 	
-	private List<ConsultaNotaFiscalVO> obterListaConsultaNotasFiscais(List<NotaFiscalEntradaFornecedor> listaNotasFiscais) {
+	private List<ConsultaNotaFiscalVO> obterListaConsultaNotasFiscais(List<NotaFiscalEntradaFornecedorDTO> listaNotasFiscais) {
 
 		Map<Long, String> mapaFornecedorNotaFiscal = obterMapaFornecedorNotaFiscal(listaNotasFiscais);
 		
 		List<ConsultaNotaFiscalVO> listaConsultasNF = new ArrayList<ConsultaNotaFiscalVO>();
 
-		for (NotaFiscalEntradaFornecedor notaFiscal : listaNotasFiscais) {
-			
-			String notaRecebida = 
-				StatusNotaFiscalEntrada.RECEBIDA.equals(notaFiscal.getStatusNotaFiscal()) 
-					? DateUtil.formatarDataPTBR(notaFiscal.getDataRecebimento())
-					: " ";
+		DateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+		
+		for (NotaFiscalEntradaFornecedorDTO notaFiscal : listaNotasFiscais) {
 			
 			ConsultaNotaFiscalVO consultaNotaFiscalVO = new ConsultaNotaFiscalVO();
 			
-			consultaNotaFiscalVO.setDataEmissao(notaFiscal.getDataEmissao());
-			consultaNotaFiscalVO.setDataExpedicao(notaFiscal.getDataExpedicao());
+			try {
+				consultaNotaFiscalVO.setDataEmissao( sdf.parse(notaFiscal.getDataEmissao()) );
+				consultaNotaFiscalVO.setDataExpedicao( sdf.parse(notaFiscal.getDataExpedicao()) );
+			} catch (ParseException e) {
+				throw new ValidacaoException(TipoMensagem.ERROR, e.getMessage());
+			}
 			consultaNotaFiscalVO.setNomeFornecedor(mapaFornecedorNotaFiscal.get(notaFiscal.getId()));
-			consultaNotaFiscalVO.setNotaRecebida(notaRecebida);
-			consultaNotaFiscalVO.setNumeroNota(notaFiscal.getNumero());
-			consultaNotaFiscalVO.setTipoNotaFiscal(notaFiscal.getTipoNotaFiscal().getDescricao());
-			consultaNotaFiscalVO.setValor(CurrencyUtil.formatarValor(this.obterValorTotalNota(notaFiscal.getId())));
+			consultaNotaFiscalVO.setNotaRecebida(notaFiscal.getNotaRecebida());
+			consultaNotaFiscalVO.setNumeroNota( Long.parseLong(notaFiscal.getNumero()) );
+			consultaNotaFiscalVO.setTipoNotaFiscal(notaFiscal.getDescricao());
+			consultaNotaFiscalVO.setValor(CurrencyUtil.formatarValor(notaFiscal.getValorTotalNota()));
 			
 			listaConsultasNF.add(consultaNotaFiscalVO);
 		}
@@ -295,7 +285,7 @@ public class ConsultaNotasController {
 	 * 
 	 * @return Map<Long, String>
 	 */
-	private Map<Long, String> obterMapaFornecedorNotaFiscal(List<NotaFiscalEntradaFornecedor> listaNotaFiscalEntradaFornecedor) {
+	private Map<Long, String> obterMapaFornecedorNotaFiscal(List<NotaFiscalEntradaFornecedorDTO> listaNotaFiscalEntradaFornecedor) {
 		
 		Map<Long, String> mapaFornecedorNotaFiscal = new LinkedHashMap<Long, String>();
 		
@@ -305,7 +295,7 @@ public class ConsultaNotasController {
 		
 		List<Long> listaIdNotaFiscal = new ArrayList<Long>();
 		
-		for(NotaFiscalEntradaFornecedor notaFiscalEntradaFornecedor : listaNotaFiscalEntradaFornecedor) {
+		for(NotaFiscalEntradaFornecedorDTO notaFiscalEntradaFornecedor : listaNotaFiscalEntradaFornecedor) {
 			listaIdNotaFiscal.add(notaFiscalEntradaFornecedor.getId());
 		}
 		
@@ -327,31 +317,26 @@ public class ConsultaNotasController {
 		
 	}
 	
-	private List<CellModel> getTableModelNotasFiscais(List<NotaFiscalEntradaFornecedor> listaNotasFiscais) {
+	private List<CellModel> getTableModelNotasFiscais(List<NotaFiscalEntradaFornecedorDTO> listaNotasFiscais) {
 
 		Map<Long, String> mapaFornecedorNotaFiscal = obterMapaFornecedorNotaFiscal(listaNotasFiscais);
 		
 		List<CellModel> listaCellModels = new LinkedList<CellModel>();
 
-		for (NotaFiscalEntradaFornecedor notaFiscal : listaNotasFiscais) {
+		for (NotaFiscalEntradaFornecedorDTO notaFiscal : listaNotasFiscais) {
 
-			String notaRecebida = 
-				StatusNotaFiscalEntrada.RECEBIDA.equals(notaFiscal.getStatusNotaFiscal()) 
-					? DateUtil.formatarDataPTBR(notaFiscal.getDataRecebimento())
-					: " ";
-			
 			DecimalFormat decimalFormat = new DecimalFormat("#,###.00");
-			
+
 			CellModel cellModel = 
 					new CellModel(
 							notaFiscal.getId().intValue(), 
 							itemExibicaoToString(notaFiscal.getNumero()),
-							itemExibicaoToString(DateUtil.formatarDataPTBR(notaFiscal.getDataEmissao())), 
-							itemExibicaoToString(DateUtil.formatarDataPTBR(notaFiscal.getDataExpedicao())), 
-							itemExibicaoToString(notaFiscal.getTipoNotaFiscal().getDescricao()), 
+							itemExibicaoToString(notaFiscal.getDataEmissao()), 
+							itemExibicaoToString(notaFiscal.getDataExpedicao()), 
+							itemExibicaoToString(notaFiscal.getDescricao()), 
 							itemExibicaoToString(mapaFornecedorNotaFiscal.get(notaFiscal.getId())),
-							itemExibicaoToString(decimalFormat.format(obterValorTotalNota(notaFiscal.getId()))),
-							notaRecebida, 
+							itemExibicaoToString(decimalFormat.format(notaFiscal.getValorTotalNota())),
+							notaFiscal.getNotaRecebida(), 
 							" ", 
 							itemExibicaoToString(notaFiscal.getId()));
 

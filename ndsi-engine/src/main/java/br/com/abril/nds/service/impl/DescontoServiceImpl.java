@@ -364,7 +364,7 @@ public class DescontoServiceImpl implements DescontoService {
 				produto = produtoRepository.obterProdutoPorCodigo(descontoDTO.getCodigoProduto());
 				
 				if(produto != null) {
-					produto.setDesconto(desconto);
+					produto.setDesconto(desconto.getValor());
 					produtoRepository.merge(produto);
 					
 					HistoricoDescontoProduto hdp = new HistoricoDescontoProduto();
@@ -426,7 +426,7 @@ public class DescontoServiceImpl implements DescontoService {
 				produtoEdicao = produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(descontoDTO.getCodigoProduto(), descontoDTO.getEdicaoProduto());
 				
 				if(produtoEdicao != null) {
-					produtoEdicao.setDesconto(desconto);
+					produtoEdicao.setDesconto(desconto.getValor());
 					produtoEdicaoRepository.merge(produtoEdicao);
 				}
 				
@@ -1058,24 +1058,25 @@ public class DescontoServiceImpl implements DescontoService {
 	 */
 	@Override
 	@Transactional
-	public BigDecimal obterDescontoPorCotaProdutoEdicao(Cota cota,
-			ProdutoEdicao produtoEdicao) {
-		Validate.notNull(cota, "Cota não deve ser nula!");
-		Validate.notNull(produtoEdicao, "Edição do produto não deve ser nula!");
-		BigDecimal percentual = null;
-		if (produtoEdicao.getProduto().isPublicacao()) {
-			//Neste caso, o produto possui apenas um fornecedor
-			//Recuperar o desconto utilizando a cota, o produto edição e o fornecedor
-			Fornecedor fornecedor = produtoEdicao.getProduto().getFornecedor();
-			percentual = descontoProdutoEdicaoRepository.obterDescontoPorCotaProdutoEdicao(cota.getId(), produtoEdicao.getId(), fornecedor.getId());
-		} else {
-			//Produto possivelmente com mais de um fornecedor, seguindo
-			// a instrução passada, utilizar o desconto do produto
-			percentual = produtoEdicao.getProduto().getDesconto().getValor();
-		}
-		return Util.nvl(percentual, BigDecimal.ZERO);
-	}
-
+    public BigDecimal obterDescontoPorCotaProdutoEdicao(Cota cota,
+            ProdutoEdicao produtoEdicao) {
+        Validate.notNull(cota, "Cota não deve ser nula!");
+        Validate.notNull(produtoEdicao, "Edição do produto não deve ser nula!");
+        BigDecimal percentual = null;
+        if (produtoEdicao.getProduto().isPublicacao()) {
+            //Neste caso, o produto possui apenas um fornecedor
+            //Recuperar o desconto utilizando a cota, o produto edição e o fornecedor
+            Fornecedor fornecedor = produtoEdicao.getProduto().getFornecedor();
+            // TODO: Sergio, favor setar o valor de desconto correto neste ponto após a funcionalidade ficar disponível
+            percentual = new BigDecimal(10);//descontoProdutoEdicaoRepository.obterDescontoPorCotaProdutoEdicao(cota.getId(), produtoEdicao.getId(), fornecedor.getId());
+        } else {
+            //Produto possivelmente com mais de um fornecedor, seguindo
+            // a instrução passada, utilizar o desconto do produto
+            percentual = produtoEdicao.getProduto().getDesconto();
+        }
+        return Util.nvl(percentual, BigDecimal.ZERO);
+    }
+	
 	@Override
 	@Transactional(readOnly = true)
 	public BigDecimal obterComissaoCota(Integer numeroCota){

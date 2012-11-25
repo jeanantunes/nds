@@ -6,7 +6,6 @@ public class MunicipioDTO  implements Serializable {
 	 
 	private static final long serialVersionUID = 1753803641359682149L;
 
-	private Long id;
 	private String municipio;
 	private Integer qtde;
 	private Boolean selecionado;
@@ -15,9 +14,8 @@ public class MunicipioDTO  implements Serializable {
 		
 	}
 	
-	public MunicipioDTO(Long id, String municipio, Integer qtde, Boolean selecionado) {
+	public MunicipioDTO(String municipio, Integer qtde, Boolean selecionado) {
 		super();
-		this.id = id;
 		this.municipio = municipio;
 		this.qtde = qtde;
 		this.selecionado = selecionado;
@@ -64,20 +62,6 @@ public class MunicipioDTO  implements Serializable {
 	/**
 	 * @return the codigoMunicipioIBGE
 	 */	
-
-	/**
-	 * @return the id
-	 */
-	public Long getId() {
-		return id;
-	}
-
-	/**
-	 * @param id the id to set
-	 */
-	public void setId(Long id) {
-		this.id = id;
-	}
-	
+		
 	
 }

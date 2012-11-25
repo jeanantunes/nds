@@ -1,6 +1,7 @@
 package br.com.abril.nds.model.cadastro;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -16,14 +17,12 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import br.com.abril.nds.model.Origem;
-import br.com.abril.nds.model.cadastro.desconto.Desconto;
 
 /**
  * @author francisco.garcia
@@ -149,9 +148,11 @@ public class Produto implements Serializable {
 	@Embedded
 	private SegmentacaoProduto segmentacao;
 	
-	@OneToOne(optional = true)
-	@JoinColumn(name = "DESCONTO_ID")
-	private Desconto desconto;
+	@Column(name="DESCONTO")
+	private BigDecimal desconto;
+	
+	@Column(name="DESCRICAO_DESCONTO")
+	private String descricaoDesconto;
 	
 	public Long getId() {
 		return id;
@@ -555,15 +556,38 @@ public class Produto implements Serializable {
 		this.segmentacao = segmentacao;
 	}
 
-    public Desconto getDesconto() {
+	/**
+	 * @return the desconto
+	 */
+	public BigDecimal getDesconto() {
 		return desconto;
 	}
 
-	public void setDesconto(Desconto desconto) {
+	/**
+	 * @param desconto the desconto to set
+	 */
+	public void setDesconto(BigDecimal desconto) {
 		this.desconto = desconto;
 	}
 
 	/**
+<<<<<<< HEAD
+=======
+	 * @return the descricaoDesconto
+	 */
+	public String getDescricaoDesconto() {
+		return descricaoDesconto;
+	}
+
+	/**
+	 * @param descricaoDesconto the descricaoDesconto to set
+	 */
+	public void setDescricaoDesconto(String descricaoDesconto) {
+		this.descricaoDesconto = descricaoDesconto;
+	}
+
+	/**
+>>>>>>> DGBti/master
      * Verifica se o produto é um publicação
      * 
      * @return true se o produto é uma publicação, false caso contrário

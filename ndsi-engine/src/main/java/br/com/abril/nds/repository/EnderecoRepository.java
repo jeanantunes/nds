@@ -30,14 +30,24 @@ public interface EnderecoRepository extends Repository<Endereco, Long> {
 
 	List<String> obterMunicipiosCotas();
 	
-	List<Localidade> obterLocalidadesPorUFNome(String nome, String siglaUF);
+	List<String> obterLocalidadesPorUFNome(String nome, String siglaUF);
 	
-	List<Bairro> obterBairrosPorCodigoIBGENome(String nome, Long codigoIBGE); 
+	List<String> obterBairrosPorCodigoIBGENome(String nome, Long codigoIBGE); 
 	
-	List<Logradouro> obterLogradourosPorCodigoBairroNome(Long codigoBairro, String nomeLogradouro);
+	List<String> obterLogradourosPorCodigoBairroNome(Long codigoBairro, String nomeLogradouro);
 	
 	EnderecoVO obterEnderecoPorCep(String cep);
 	
-	List<Bairro> obterBairrosPorCidade(String cidade);
+	List<String> obterBairrosPorCidade(String cidade);
 	
+	List<String> pesquisarBairros(String nomeBairro);
+	
+	List<String> pesquisarLogradouros(String nomeLogradouro);
+
+	List<String> obterListaLocalidadeCotas();
+	
+	List<String> pesquisarLocalidades(String nomeLocalidade);
+
+	List<String> obterLocalidadesPorUF(String uf);
+
 }

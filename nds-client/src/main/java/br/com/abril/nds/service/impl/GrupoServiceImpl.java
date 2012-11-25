@@ -16,10 +16,9 @@ import br.com.abril.nds.model.TipoGrupo;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.GrupoCota;
 import br.com.abril.nds.model.cadastro.pdv.TipoCaracteristicaSegmentacaoPDV;
-import br.com.abril.nds.model.dne.Localidade;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.GrupoRepository;
-import br.com.abril.nds.repository.LocalidadeRepository;
+import br.com.abril.nds.service.EnderecoService;
 import br.com.abril.nds.service.GrupoService;
 
 @Service
@@ -33,7 +32,7 @@ public class GrupoServiceImpl implements GrupoService {
 	private CotaRepository cotaRepository;
 	
 	@Autowired
-	private LocalidadeRepository localidadeRepository;
+	private EnderecoService enderecoServcie;
 	
 	@Override
 	@Transactional
@@ -141,10 +140,10 @@ public class GrupoServiceImpl implements GrupoService {
 	public void salvarGrupoMunicipios(Long idGrupo, List<String> idMunicipios,
 			String nome, List<DiaSemana> diasSemana) {
 		
-		HashSet<Localidade> municipios = new HashSet<Localidade>();
+		HashSet<String> municipios = new HashSet<String>();
 		
 		for(String id : idMunicipios) {
-			municipios.add(localidadeRepository.buscarPorId(id));
+			municipios.add(enderecoServcie.buscarLocalidadePorIbge(id));
 		}
 		
 		GrupoCota grupo;

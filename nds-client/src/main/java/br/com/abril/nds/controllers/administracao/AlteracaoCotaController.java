@@ -124,12 +124,12 @@ public class AlteracaoCotaController {
 	@Post
 	@Path("/buscarBairroPorCidade.json")
 	public void buscarBairroPorCidade(String cidade) {
-		List<Bairro> bairros = enderecoService.obterBairrosPorCidade(cidade); 
+		List<String> bairros = enderecoService.obterBairrosPorCidade(cidade); 
 		result.use(CustomJson.class).from(bairros).serialize();
 	}
 	
 	@Path("/pesquisarAlteracaoCota.json")
-	public void pesquisarAlteracaoCota(FiltroAlteracaoCotaDTO filtroAlteracaoCotaDTO, String sortname, String sortorder, int page, int rp) {
+	public void pesquisarAlteracaoCota(FiltroAlteracaoCotaDTO filtroAlteracaoCotaDTO, String sortname, String sortorder, int rp, int page) {
 		
 		PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortname);
 		if ("DESC".equalsIgnoreCase(sortorder)) {
@@ -296,7 +296,7 @@ public class AlteracaoCotaController {
 			try {
 			//Valor Minimo
 			if (filtroAlteracaoCotaDTO.getFiltroModalFinanceiro().getVrMinimo() == null) {
-				cota.getParametroCobranca().setValorMininoCobranca(new BigDecimal(""));
+				cota.getParametroCobranca().setValorMininoCobranca(new BigDecimal("0"));
 			} else {
 				cota.getParametroCobranca().setValorMininoCobranca(new BigDecimal(filtroAlteracaoCotaDTO.getFiltroModalFinanceiro().getVrMinimo()));
 			}

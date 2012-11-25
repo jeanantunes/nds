@@ -1152,7 +1152,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		switch (grupoNotaFiscal) {
 
 		case NF_REMESSA_CONSIGNACAO:
-			itensNotaFiscal = this.obterItensNFeRemessaEmConsignacao(
+			itensNotaFiscal = this.obterItensNFeRemessaEmConsignacao(	
 					distribuidor, idCota, periodo, listaIdFornecedores,
 					listaIdProdutos, tipoNotaFiscal);
 			break;
@@ -1638,11 +1638,11 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		if (novoEndereco.getCep() != null) {
 			novoEndereco.setCep(novoEndereco.getCep().replace("-", ""));
 		}
-		if (novoEndereco.getCodigoUf() == null
+		/*if (novoEndereco.getCodigoUf() == null
 				&& novoEndereco.getCodigoCidadeIBGE() != null) {
 			novoEndereco.setCodigoUf(novoEndereco
 					.getCodigoCidadeIBGE().toString().substring(0, 2));
-		}
+		}*/
 		enderecoRepository.adicionar(novoEndereco);
 		return novoEndereco;
 	}

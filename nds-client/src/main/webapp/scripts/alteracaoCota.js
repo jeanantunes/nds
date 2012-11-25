@@ -23,8 +23,8 @@ var alteracaoCotaController = $.extend(true, {
 		$.postJSON(contextPath + '/administracao/alteracaoCota/buscarBairroPorCidade.json', {
 			'cidade' : cidade
 		}, function(data) {
+			$("#idBairro", alteracaoCotaController.workspace).append($("<option/>", {value: "-1", text: ""}));
 			$(data).each(function() {
-				$("#idBairro", alteracaoCotaController.workspace).append($("<option/>", {value: "-1", text: ""}));
 				$("#idBairro", alteracaoCotaController.workspace).append($("<option/>", {value: $(this)[0].toString(),
 															 			   text: $(this)[0].toString() 
 															 			  }));
@@ -185,10 +185,11 @@ var alteracaoCotaController = $.extend(true, {
 		$("#totalCotasSelecionadas", this.workspace).html(0);
 		$("#alteracaoCotaCheckAll", this.workspace).attr("checked",false);
 		
-		var params = $("#pesquisarForm", this.workspace).serialize();
+		var params = $("#pesquisarForm", this.workspace).serializeArray();
 		
 		$(".alteracaoGrid", this.workspace).flexOptions({
-			url: contextPath + "/administracao/alteracaoCota/pesquisarAlteracaoCota.json?"+params,
+			"url" : contextPath + "/administracao/alteracaoCota/pesquisarAlteracaoCota.json",
+			params: params,
 			newp: 1
 		});
 	
