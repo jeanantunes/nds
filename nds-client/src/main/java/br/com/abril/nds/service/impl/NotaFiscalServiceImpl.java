@@ -1650,7 +1650,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	public byte[] imprimirNotasEnvio(List<NotaEnvio> notasEnvio) {
 		
 		return null;
-		
+
 	}
 
 }

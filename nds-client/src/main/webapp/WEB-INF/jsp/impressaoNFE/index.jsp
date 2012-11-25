@@ -24,8 +24,10 @@
 					</c:if> --%>
 					
 					<td width="82">Tipo de Nota:</td>
+
 					<td width="209">
 					<select name="tipoNFe" id="tipoNFe" style="width: 200px; font-size: 11px !important">
+
 							<option value="-1">Selecione...</option>
 							<c:forEach items="${tipoNotas}" var="tipoNota">
 								<option value="${tipoNota.key}">${tipoNota.value}</option>
@@ -33,11 +35,13 @@
 					</select>
 					</td>
 					<td width="97">Data Movimento:</td>
+
 					<td width="238"><input name="dataMovimentoInicial" type="text" id="dataMovimentoInicial" style="width: 76px;" maxlength="10" />
 						&nbsp;&nbsp;Até&nbsp; <input name="dataMovimentoFinal" type="text" id="dataMovimentoFinal" style="width: 76px;" maxlength="10" /></td>
 					<td width="83">Data Emissão:</td>
 					<td width="210"><input name="dataEmissao" type="text" id="dataEmissao" style="width: 80px;"
 						value="${dataAtual}" maxlength="10" /></td>
+
 				</tr>
 				<tr>
 					<td>Roteiro:</td>
