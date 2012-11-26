@@ -361,7 +361,11 @@ public class DescontoServiceImpl implements DescontoService {
 				produto = produtoRepository.obterProdutoPorCodigo(descontoDTO.getCodigoProduto());
 				
 				if(produto != null) {
+<<<<<<< HEAD
+					produto.setDesconto(desconto.getValor());
+=======
 					produto.setDescontoProduto(desconto);
+>>>>>>> def3e02f049b86bfdb61ff735cad04f3f09f735b
 					produtoRepository.merge(produto);
 					
 					HistoricoDescontoProduto hdp = new HistoricoDescontoProduto();
@@ -423,7 +427,11 @@ public class DescontoServiceImpl implements DescontoService {
 				produtoEdicao = produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(descontoDTO.getCodigoProduto(), descontoDTO.getEdicaoProduto());
 				
 				if(produtoEdicao != null) {
+<<<<<<< HEAD
+					produtoEdicao.setDesconto(desconto.getValor());
+=======
 					produtoEdicao.setDescontoProdutoEdicao(desconto);
+>>>>>>> def3e02f049b86bfdb61ff735cad04f3f09f735b
 					produtoEdicaoRepository.merge(produtoEdicao);
 					
 					hdpe = new HistoricoDescontoProdutoEdicao();
@@ -1081,7 +1089,11 @@ public class DescontoServiceImpl implements DescontoService {
         }
         return Util.nvl(percentual, BigDecimal.ZERO);
     }
+<<<<<<< HEAD
+	
+=======
 
+>>>>>>> def3e02f049b86bfdb61ff735cad04f3f09f735b
 	@Override
 	@Transactional(readOnly = true)
 	public BigDecimal obterComissaoCota(Integer numeroCota){

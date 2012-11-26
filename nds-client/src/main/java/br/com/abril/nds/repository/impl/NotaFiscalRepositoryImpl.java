@@ -14,6 +14,7 @@ import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.NfeDTO;
 import br.com.abril.nds.dto.filtro.FiltroMonitorNfeDTO;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.StatusProcessamentoInterno;
 import br.com.abril.nds.repository.NotaFiscalRepository;
@@ -558,6 +559,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		}
 
 		return sqlQuery.list();
+
 	}
 	
 	@SuppressWarnings("unchecked")
