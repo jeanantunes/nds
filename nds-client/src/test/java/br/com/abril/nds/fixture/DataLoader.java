@@ -28,7 +28,6 @@ import org.hibernate.Transaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
 import br.com.abril.nds.integracao.model.canonic.InterfaceEnum;
 import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.Origem;
@@ -406,11 +405,11 @@ public class DataLoader {
 	private static CFOP cfop5102;
 	private static TipoNotaFiscal tipoNotaFiscalRecebimento; //Precisa Remover
 	private static TipoNotaFiscal tipoNotaFiscalDevolucao;//Precisa Remover
-	private static Usuario usuarioJoao;
+	public static Usuario usuarioJoao;
 	private static Fornecedor fornecedorAcme;
 	private static Fornecedor fornecedorDinap;
 	private static Fornecedor fornecedorFc;
-	private static Distribuidor distribuidor;
+	public static Distribuidor distribuidor;
 
 	private static NCM ncmCartaz;	
 	private static NCM ncmCd;	

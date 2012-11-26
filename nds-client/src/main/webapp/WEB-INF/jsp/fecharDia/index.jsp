@@ -5,6 +5,7 @@
 <title>NDS - Novo Distrib</title>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.fileDownload.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/fecharDia.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.fileDownload.js"></script>
 <script language="javascript" type="text/javascript">
 
 	/*
@@ -21,6 +22,9 @@
 </script>
 <style type="text/css">
 .linha_separa_fields{width:400px!important;}
+
+.no-close-button .ui-dialog-titlebar-close {display: none; }
+
 </style>
 </head>
 
@@ -610,12 +614,6 @@
 <br />
           <br />
 
-
-
-        <br clear="all" />
-          <a href="relatorio_geral_financeiro_fisico_1.htm" target="_blank">rel_1</a> |  <a href="relatorio_geral_financeiro_fisico_2.htm" target="_blank">rel_2</a> |  <a href="relatorio_geral_financeiro_fisico_3.htm" target="_blank">rel_3</a><br />
-          <br clear="all" />
-        <br />
 	
         <br clear="all" />
           

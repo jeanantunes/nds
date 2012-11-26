@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.dto.CapaDTO;
 import br.com.abril.nds.dto.CotaEmissaoDTO;
@@ -62,7 +63,7 @@ public class EmissaoCEController {
 	
 	@Autowired
 	private ChamadaEncalheService chamadaEncalheService;
-	
+		
 	@Autowired
 	private HttpServletResponse httpResponse;
 		
@@ -93,10 +94,7 @@ public class EmissaoCEController {
 		
 		result.forwardTo(EmissaoCEController.class).emissaoCE();
 	}
-		
 
-
-	
 	@Post
 	public void pesquisar(FiltroEmissaoCE filtro, String sortname, String sortorder) {
 		
@@ -111,6 +109,10 @@ public class EmissaoCEController {
 		session.setAttribute(FILTRO_SESSION_ATTRIBUTE, filtro);
 	
 		List<CotaEmissaoDTO> lista = chamadaEncalheService.obterDadosEmissaoChamadasEncalhe(filtro); 
+		
+		if(lista == null || lista.isEmpty()){
+			throw new ValidacaoException(TipoMensagem.WARNING,"Nenhum dado foi encontrado!");
+		}
 		
 		result.use(FlexiGridJson.class).from(lista).page(1).total(lista.size()).serialize();
 		
@@ -185,19 +187,26 @@ public class EmissaoCEController {
 	
 	public void imprimirCE() {
 		
-		switch (distribuidorService.obter().getTipoImpressaoCE()) {
-		case MODELO_1:
-			result.forwardTo(EmissaoCEController.class).modelo1();
-			break;
-		case MODELO_2:
-			result.forwardTo(EmissaoCEController.class).modelo2();
-			break;
-
-		default:
-			break;
+		Distribuidor distribuidor = distribuidorService.obter();
+		
+		if(distribuidor != null && distribuidor.getTipoImpressaoCE()!= null){
+			
+			switch (distribuidor.getTipoImpressaoCE()) {
+				case MODELO_1:
+					result.forwardTo(EmissaoCEController.class).modelo1();
+					break;
+				case MODELO_2:
+					result.forwardTo(EmissaoCEController.class).modelo2();
+					break;
+	
+				default:
+					break;
+			}
 		}
 		
-		
+		else{
+			result.nothing();
+		}
 	}
 
 	public void modelo1() {
@@ -224,7 +233,7 @@ public class EmissaoCEController {
 			result.include("capas", capas);
 			
 		}
-		
+			
 		result.include("cotasEmissao", cotasEmissao);
 		
 		result.include("dadosDistribuidor", dadosDistribuidor);
@@ -299,4 +308,6 @@ public class EmissaoCEController {
 		usuario.setId(1L);
 		return usuario;
 	}
+	
+	
 }

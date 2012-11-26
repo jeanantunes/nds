@@ -58,7 +58,7 @@ InformeEncalhe.prototype.initGrid = function() {
 				}, {
 					display : 'Código',
 					name : 'codigoProduto',
-					width : 40,
+					width : 60,
 					sortable : true,
 					align : 'left'
 				}, {
@@ -92,14 +92,14 @@ InformeEncalhe.prototype.initGrid = function() {
 				}, {
 
 					display : 'Preço de Capa R$',
-					name : 'precoVenda',
+					name : 'precoVendaFormatado',
 					width : 90,
 					sortable : true,
 					align : 'right'
 				}, {
 
 					display : 'Preço Desconto R$',
-					name : 'precoDesconto',
+					name : 'precoDescontoFormatado',
 					width : 90,
 					sortable : true,
 					align : 'right'
@@ -107,7 +107,7 @@ InformeEncalhe.prototype.initGrid = function() {
 
 					display : 'Data de Lançamento',
 					name : 'dataLancamento',
-					width : 110,
+					width : 90,
 					sortable : true,
 					align : 'center'
 				}, {
@@ -115,7 +115,7 @@ InformeEncalhe.prototype.initGrid = function() {
 					name : 'dataRecolhimento',
 					width : 90,
 					sortable : true,
-					align : 'left'
+					align : 'center'
 				}, {
 
 					display : 'Ação',
@@ -323,8 +323,8 @@ function CapaPopup(idProdutoEdicao) {
 		resizable : false,
 		height : 'auto',
 		width : 'auto',
-		modal : false
-
+		modal : false,
+		escondeHeader:false
 	});
 
 	this.loadCapa();

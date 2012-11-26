@@ -12,15 +12,13 @@ import br.com.abril.nds.dto.RotaRoteirizacaoDTO;
 import br.com.abril.nds.dto.RoteirizacaoDTO;
 import br.com.abril.nds.dto.RoteiroRoteirizacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaRoteirizacaoDTO;
-import br.com.abril.nds.model.LogBairro;
-import br.com.abril.nds.model.LogLocalidade;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.Roteirizacao;
 import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.TipoRoteiro;
-import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
+import br.com.abril.nds.vo.ValidacaoVO;
 
 public interface RoteirizacaoService {
 	
@@ -80,12 +78,6 @@ public interface RoteirizacaoService {
 	void excluirRoteirizacao(List<Long> roteirizacaoId);
 	
 	List<CotaDisponivelRoteirizacaoDTO> buscarRoteirizacaoPorEndereco (String CEP, String uf, String municipio, String bairro,  Long rotaId ,  Long roteiroId);
-	
-	List<String> buscarUF();
-	
-	List<LogLocalidade> buscarMunicipioPorUf(String uf);
-	
-	List<LogBairro> buscarBairroPorMunicipio(Long municipio, String uf);
 	
 	List<Roteiro> buscarRoteiroEspecial();
 	

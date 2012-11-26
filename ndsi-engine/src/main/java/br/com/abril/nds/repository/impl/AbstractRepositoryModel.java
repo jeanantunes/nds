@@ -74,4 +74,10 @@ public abstract class AbstractRepositoryModel<T, K extends Serializable> extends
 	public void detach(T entity){
 		this.getSession().evict(entity);
 	}
+	
+	@Override
+	public void clear(){
+		this.getSession().clear();
+	}
+
 }

@@ -23,29 +23,33 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 		super(ChamadaEncalheCota.class);
 	}
 
-	@SuppressWarnings("unchecked")
-	public List<Long> obterListaIdProdutoEdicaoChamaEncalheCota(
+	public BigDecimal obterReparteDaChamaEncalheCota(
 			Integer numeroCota, Date dataOperacao, boolean indPesquisaCEFutura,
 			boolean conferido, boolean postergado) {
 
 		StringBuilder hql = new StringBuilder();
 
-		hql.append(" select chamadaEncalheCota.chamadaEncalhe.produtoEdicao.id ");
-
+		hql.append(" select sum ( ");
+		hql.append(" chamadaEncalheCota.qtdePrevista * (produtoEdicao.precoVenda - ");
+		hql.append("(produtoEdicao.precoVenda * (" + this.getSubQueryDesconto() + " / 100 ))) ");
+		hql.append(" ) ");
+		
 		hql.append(" from ChamadaEncalheCota chamadaEncalheCota ");
-
+		hql.append(" join chamadaEncalheCota.chamadaEncalhe chamadaEncalhe ");
+		hql.append(" join chamadaEncalhe.produtoEdicao produtoEdicao ");
+		hql.append(" join chamadaEncalheCota.cota cota ");
+		hql.append(" join produtoEdicao.produto produto ");
+		hql.append(" join produto.fornecedores fornecedor ");
+		
 		hql.append(" where ");
-
-		hql.append(" chamadaEncalheCota.cota.numeroCota = :numeroCota ");
-
+		hql.append(" cota.numeroCota = :numeroCota ");
 		hql.append(" and chamadaEncalheCota.fechado = :conferido ");
-
 		hql.append(" and chamadaEncalheCota.postergado = :postergado ");
 
 		if (indPesquisaCEFutura) {
-			hql.append(" and chamadaEncalheCota.chamadaEncalhe.dataRecolhimento >= :dataOperacao ");
+			hql.append(" and chamadaEncalhe.dataRecolhimento >= :dataOperacao ");
 		} else {
-			hql.append(" and chamadaEncalheCota.chamadaEncalhe.dataRecolhimento = :dataOperacao ");
+			hql.append(" and chamadaEncalhe.dataRecolhimento = :dataOperacao ");
 		}
 
 		Query query = this.getSession().createQuery(hql.toString());
@@ -58,8 +62,7 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 
 		query.setParameter("dataOperacao", dataOperacao);
 
-		return query.list();
-
+		return (BigDecimal) query.uniqueResult();
 	}
 
 	public Long obterQtdListaChamaEncalheCota(Integer numeroCota,
@@ -429,5 +432,23 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 		query.setParameter("idChamada", idChamadaEncalhe);
 
 		return (Long) query.uniqueResult();
+	}
+	
+	/**
+	 * Retorna String referente a uma subquery que obtém o percentual de desconto
+	 * para determinado produtoEdicao a partir de idCota e idFornecedor. 
+	 * 
+	 * @return String
+	 */
+	private String getSubQueryDesconto() {
+		
+		StringBuilder hql = new StringBuilder("coalesce ((select view.desconto");
+		hql.append(" from ViewDesconto view ")
+		   .append(" where view.cotaId = cota.id ")
+		   .append(" and view.produtoEdicaoId = produtoEdicao.id ")
+		   .append(" and view.fornecedorId = fornecedor.id),0) ");
+		
+		return hql.toString();
+		
 	}
 }

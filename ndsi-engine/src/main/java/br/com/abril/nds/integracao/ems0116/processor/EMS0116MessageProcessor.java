@@ -229,8 +229,9 @@ public class EMS0116MessageProcessor extends AbstractRepository implements
 				for (TipoPontoPDV tpdvs2 : tpdvs) {
 
 					if (tpdvs2.getCodigo().equals(input.getTipoPontoVenda())) {
-
-						pdv.getSegmentacao().setTipoPontoPDV(tpdvs2);
+						if (null != pdv.getSegmentacao()) {
+							pdv.getSegmentacao().setTipoPontoPDV(tpdvs2);
+						}
 					}
 				}
 			}
@@ -262,13 +263,14 @@ public class EMS0116MessageProcessor extends AbstractRepository implements
 					
 					endereco = getEnderecoSaneado(input.getCep());
 					if (null == endereco ) {
-						endereco = new Endereco();
+						endereco = new Endereco();						
 						endereco.setCep(input.getCep());
 						endereco.setCidade(input.getNomeMunicipio());
 						endereco.setLogradouro(input.getEndereco());
-						endereco.setNumero(null);
 						endereco.setUf(input.getSiglaUF());
 					}
+					endereco.setNumero(null);
+
 					getSession().persist(endereco);
 
 					enderecoPDV = new EnderecoPDV();

@@ -19,29 +19,7 @@ public interface EstoqueProdutoCotaRepository extends Repository<EstoqueProdutoC
 	 * @param numeroCota - número da cota
 	 * @return BigDecimal 
 	 */
-	BigDecimal buscarQuantidadeEstoqueProdutoEdicao(Long numeroEdicao, String codigoProduto ,Integer numeroCota);
-	
-	/**
-	 * Obtém o valor total de reparte para cota especifica 
-	 * O valor do produto utilizado no calculo é o precoVenda subtraido
-	 * do desconto. 
-	 * 
-	 * Sendo que o valor de desconto utilizado pode ser o 
-	 * parametrizado na entidade ProdutoEdicao (campo desconto), Cota (campo fatorDesconto) ou 
-	 * Distribuidor (campo fatorDesconto), sendo utilizado o valor que for encontrado primeiro
-	 * nesta ordem.
-	 * 
-	 * @param numeroCota
-	 * @param listaIdProdutoEdicao
-	 * @param idDistribuidor
-	 * 
-	 * @return BigDecimal
-	 */
-	BigDecimal obterValorTotalReparteCota(
-			Integer numeroCota, 
-			List<Long> listaIdProdutoEdicao, 
-			Long idDistribuidor);
-	
+	BigDecimal buscarQuantidadeEstoqueProdutoEdicao(Long numeroEdicao, String codigoProduto ,Integer numeroCota);	
 
 	/**
 	 * Obtém uma lista de estoque de produto da cota de acordo o parâmetro informado.

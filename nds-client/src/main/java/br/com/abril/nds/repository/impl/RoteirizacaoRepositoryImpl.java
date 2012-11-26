@@ -18,8 +18,6 @@ import br.com.abril.nds.dto.ConsultaRoteirizacaoDTO;
 import br.com.abril.nds.dto.RotaRoteirizacaoDTO;
 import br.com.abril.nds.dto.RoteiroRoteirizacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaRoteirizacaoDTO;
-import br.com.abril.nds.model.LogBairro;
-import br.com.abril.nds.model.LogLocalidade;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.Roteirizacao;
@@ -153,38 +151,7 @@ public class RoteirizacaoRepositoryImpl extends AbstractRepositoryModel<Roteiriz
 		}
 		return exibirPontoPrincipal;
 	}
-	
-	
-
-	@Override
-	public List<String> buscarUF(){
-
-		Criteria criteria  = getSession().createCriteria(LogLocalidade.class);
-		criteria.setProjection(Projections.property("ufeSg"));
-		criteria.setProjection(Projections.distinct(Projections.property("ufeSg")));
-		criteria.addOrder(Order.asc("ufeSg"));
-		return criteria.list();  
-
-	}
-	
-	@Override
-	public List<LogLocalidade> buscarMunicipioPorUf(String uf){
-		Criteria criteria  = getSession().createCriteria(LogLocalidade.class);
-		criteria.add(Restrictions.eq("ufeSg", uf));
-		criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-		criteria.addOrder(Order.asc("locNo"));
-		return criteria.list();  
-	}
-	
-	@Override
-	public List<LogBairro> buscarBairroPorMunicipio(Long municipio, String uf){
-		Criteria criteria  = getSession().createCriteria(LogBairro.class);
-		criteria.add(Restrictions.eq("logLocalidade.locNu", municipio));
-		criteria.add(Restrictions.eq("ufeSg", uf));
-		criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-		criteria.addOrder(Order.asc("baiNo"));
-		return criteria.list();  
-	}
+		
 
 	@Override
 	public List<ConsultaRoteirizacaoDTO> buscarRoteirizacaoPorNumeroCota(Integer numeroCota, TipoRoteiro tipoRoteiro, String  orderBy, Ordenacao ordenacao, int initialResult, int maxResults) {

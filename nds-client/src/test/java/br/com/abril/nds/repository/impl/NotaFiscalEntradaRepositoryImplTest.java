@@ -311,7 +311,7 @@ public class NotaFiscalEntradaRepositoryImplTest extends
 	
 	@Test
 	public void obterListaFornecedorNotaFiscal(){
-		List<Long> filtroConsultaNotaFiscal = new ArrayList<>();
+		List<Long> filtroConsultaNotaFiscal = new ArrayList<Long>();
 		filtroConsultaNotaFiscal.add(1L);
 		List<ItemDTO<Long, String>> lista = notaFiscalRepository.obterListaFornecedorNotaFiscal(filtroConsultaNotaFiscal);
 		Assert.assertNotNull(lista);

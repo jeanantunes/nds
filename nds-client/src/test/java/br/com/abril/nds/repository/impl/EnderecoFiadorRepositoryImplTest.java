@@ -79,7 +79,7 @@ public class EnderecoFiadorRepositoryImplTest extends AbstractRepositoryImplTest
 	
 	@Test
 	public void excluirEnderecosFiador(){
-		List<Long> idsEnderecoFiador = new ArrayList<>();
+		List<Long> idsEnderecoFiador = new ArrayList<Long>();
 		idsEnderecoFiador.add(1L);
 		
 			enderecoFiadorRepository.excluirEnderecosFiador(idsEnderecoFiador);

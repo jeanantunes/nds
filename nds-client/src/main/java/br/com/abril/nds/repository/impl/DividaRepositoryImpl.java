@@ -677,7 +677,7 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 	private Map<TipoCobranca, SumarizacaoDividasDTO> sumarizarDividas(Date data, TipoDivida tipoDivida) {
 	    boolean isDividaReceber = TipoDivida.DIVIDA_A_RECEBER.equals(tipoDivida);
 	    
-	    Map<String, Object> parametros = new HashMap<>();
+	    Map<String, Object> parametros = new HashMap<String, Object>();
 	    parametros.put("data", data);
 	    parametros.put("statusCobrancaPago", StatusCobranca.PAGO);
 	    
@@ -703,7 +703,7 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 	    }
 	    
 	    List<Map<String, Object>> maps = query.list();
-	    Map<TipoCobranca, SumarizacaoDividasDTO> sumarizacoes = new EnumMap<>(TipoCobranca.class);
+	    Map<TipoCobranca, SumarizacaoDividasDTO> sumarizacoes = new EnumMap<TipoCobranca, SumarizacaoDividasDTO>(TipoCobranca.class);
 	    
 	    for (Map<String, Object> map : maps) {
 	        
