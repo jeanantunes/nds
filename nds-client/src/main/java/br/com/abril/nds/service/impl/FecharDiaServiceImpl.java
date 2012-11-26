@@ -56,6 +56,7 @@ import br.com.abril.nds.model.fechar.dia.FechamentoDiarioConsolidadoReparte;
 import br.com.abril.nds.model.fechar.dia.FechamentoDiarioConsolidadoSuplementar;
 import br.com.abril.nds.model.fechar.dia.FechamentoDiarioCota;
 import br.com.abril.nds.model.fechar.dia.FechamentoDiarioCota.TipoSituacaoCota;
+import br.com.abril.nds.model.fechar.dia.FechamentoDiarioDiferenca;
 import br.com.abril.nds.model.fechar.dia.FechamentoDiarioDivida;
 import br.com.abril.nds.model.fechar.dia.FechamentoDiarioLancamentoEncalhe;
 import br.com.abril.nds.model.fechar.dia.FechamentoDiarioLancamentoReparte;
@@ -475,19 +476,20 @@ public class FecharDiaServiceImpl implements FecharDiaService {
     }
 
     /**
-     * Inluir as diferenças nas informações do fechamento diário
+     * Inclui as diferenças nas informações do fechamento diário
      * 
      * @param fechamento
-     *            Fechamento em processamento
-     * @return Lista de diferenças na data em fechamento
+     *            Fechamento diário em processamento
+     * @return Lista de diferenças lançadas na data em fechamento
      */
-    private List<DiferencaDTO> incluirFaltasSobras(FechamentoDiario fechamento) {
+    protected List<DiferencaDTO> incluirFaltasSobras(FechamentoDiario fechamento) {
         Date dataFechamento = fechamento.getDataFechamento();
         
         List<Diferenca> diferencas = obterDiferencas(dataFechamento);
     	List<DiferencaDTO> diferencasDTO = new ArrayList<>(diferencas.size());
     	
     	for (Diferenca diferenca : diferencas) {
+    	    fechamento.addDiferenca(FechamentoDiarioDiferenca.fromDiferenca(diferenca));
     	    DiferencaDTO dto = DiferencaDTO.fromDiferenca(diferenca);
     	    diferencasDTO.add(dto);
     	}
@@ -844,7 +846,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 				lancamentoEncalhe.setQuantidade(Util.nvl(item.getQtde(),0).intValue());
 				lancamentoEncalhe.setFechamentoDiarioConsolidadoEncalhe(consolidadoEncalhe);
 				
-				//TODO: descomentar fechamentoDiarioLancamentoEncalheRepository.adicionar(lancamentoEncalhe);
+				fechamentoDiarioLancamentoEncalheRepository.adicionar(lancamentoEncalhe);
 			}
 		}
 		return listaEncalhe;
@@ -913,12 +915,12 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		    	ProdutoEdicao produtoEdicao = produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(item.getCodigo(), item.getNumeroEdicao());
 		    	
 		    	movimentoReparte.setProdutoEdicao(produtoEdicao);
-		    	//movimentoReparte.setQuantidadeADistribuir(item.getQtdADistribuir().intValue());
-		    	//movimentoReparte.setQuantidadeDiferenca(item.getQtdDiferenca().intValue());
+		    	movimentoReparte.setQuantidadeADistribuir(item.getQtdADistribuir().intValue());
+		    	movimentoReparte.setQuantidadeDiferenca(item.getQtdDiferenca().intValue());
 		    	movimentoReparte.setQuantidadeDistribuido(Util.nvl(item.getQtdDistribuido(),0).intValue());
 		    	movimentoReparte.setQuantidadeFaltaEM(Util.nvl(item.getQtdFaltas(),0).intValue());
 		    	movimentoReparte.setQuantidadeReparte(Util.nvl(item.getQtdReparte(),0).intValue());
-		    	//movimentoReparte.setQuantidadeSobraDistribuido(item.getQtdSobraDiferenca().intValue());
+		    	movimentoReparte.setQuantidadeSobraDistribuido(item.getQtdSobraDiferenca().intValue());
 		    	movimentoReparte.setQuantidadeSobraEM(Util.nvl(item.getQtdSobras(),0).intValue());
 		    	movimentoReparte.setQuantidadeTranferencia(Util.nvl(item.getQtdTransferido(),0).intValue());
 		    	movimentoReparte.setFechamentoDiarioConsolidadoReparte(consolidadoReparte);
