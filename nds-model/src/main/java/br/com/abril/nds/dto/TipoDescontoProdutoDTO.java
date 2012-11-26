@@ -5,8 +5,8 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 import br.com.abril.nds.util.export.Export;
-import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.util.export.Export.Alignment;
+import br.com.abril.nds.util.export.Exportable;
 
 @Exportable
 public class TipoDescontoProdutoDTO implements Serializable {
@@ -84,10 +84,10 @@ public class TipoDescontoProdutoDTO implements Serializable {
 	/**
 	 * @param numeroEdicao the numeroEdicao to set
 	 */
-	public void setNumeroEdicao(Long numeroEdicao) {
-		this.numeroEdicao = numeroEdicao;
+	public void setNumeroEdicao(Number numeroEdicao) {
+		this.numeroEdicao = numeroEdicao != null ? numeroEdicao.longValue() : null;
 	}
-
+	
 	/**
 	 * @return the desconto
 	 */
@@ -141,8 +141,8 @@ public class TipoDescontoProdutoDTO implements Serializable {
 	/**
 	 * @param idTipoDesconto the idTipoDesconto to set
 	 */
-	public void setIdTipoDesconto(Long idTipoDesconto) {
-		this.idTipoDesconto = idTipoDesconto;
+	public void setIdTipoDesconto(Number idTipoDesconto) {
+		this.idTipoDesconto = idTipoDesconto != null ? idTipoDesconto.longValue() : null;
 	}
 
 }

@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository.impl;
 
+import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,6 +10,7 @@ import org.hibernate.criterion.Projection;
 import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.transform.AliasToBeanResultTransformer;
+import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -47,25 +49,26 @@ public class DescontoProdutoRepositoryImpl extends AbstractRepositoryModel<Desco
 
 		StringBuilder hql = new StringBuilder();
 		
-		hql .append("select new ")
-			.append(TipoDescontoProdutoDTO.class.getCanonicalName())
-			.append("(p.codigo, p.nome, pe.numeroEdicao, d.valor, d.dataAlteracao, u.nome) ")
-			.append("\n")
-			.append("from ProdutoEdicao pe join pe.produto p join pe.desconto as d join d.usuario u")
-			.append("\n")
-			.append("where p.codigo = :codigoProduto ")
-			.append("\n");
-
+		hql.append("select ")
+		.append("vdpe.desconto_id as idTipoDesconto ")
+		.append(", vdpe.codigo as codigoProduto ")
+		.append(", vdpe.nome_produto as nomeProduto ")
+		.append(", vdpe.numero_edicao as numeroEdicao ")
+		.append(", vdpe.valor as desconto ")
+		.append(", vdpe.data_alteracao as dataAlteracao ")
+		.append(", vdpe.nome_usuario as nomeUsuario ")
+		.append("from VIEW_DESCONTO_PRODUTOS_EDICOES as vdpe ")
+		.append("where vdpe.codigo = :codigoProduto ");
+		
 		//Monta a ordenacao
 		if (filtro.getPaginacao() != null) {
 
 			Map<String, String> columnToSort = new HashMap<String, String>();
-			columnToSort.put("codigoProduto", "p.codigo");
-			columnToSort.put("nomeProduto", "p.nome");
-			columnToSort.put("numeroEdicao", "pe.numeroEdicao");
-			columnToSort.put("desconto", "coalesce(pe.desconto, p.desconto, 0)");
-			columnToSort.put("dataAlteracao", "p.dataDesativacao");
-			columnToSort.put("nomeUsuario", "p.dataDesativacao");
+			columnToSort.put("codigoProduto", "vdpe.codigo");
+			columnToSort.put("nomeProduto",   "vdpe.nome_produto");
+			columnToSort.put("numeroEdicao",  "vdpe.numero_edicao");
+			columnToSort.put("dataAlteracao", "vdpe.data_alteracao");
+			columnToSort.put("nomeUsuario",   "vdpe.nome_usuario");
 
 			//Verifica a entrada para evitar expressoes SQL
 			if (filtro.getPaginacao().getSortColumn() == null 
@@ -86,7 +89,7 @@ public class DescontoProdutoRepositoryImpl extends AbstractRepositoryModel<Desco
 
 		}
 
-		Query q = getSession().createQuery(hql.toString());
+		Query q = getSession().createSQLQuery(hql.toString());
 
 		q.setParameter("codigoProduto", filtro.getCodigoProduto());
 
@@ -95,73 +98,10 @@ public class DescontoProdutoRepositoryImpl extends AbstractRepositoryModel<Desco
 			.setMaxResults( filtro.getPaginacao().getQtdResultadosPorPagina() );
 		}
 
+		q.setResultTransformer(Transformers.aliasToBean(TipoDescontoProdutoDTO.class));
+		
 		return (List<TipoDescontoProdutoDTO>) q.list();
-		/*
-		List<TipoDescontoProdutoDTO> descontosProduto = new ArrayList<TipoDescontoProdutoDTO>();
-
-		descontosProduto = produtoEdicaoRepository.obterProdutosEdicoesPorCodigoProdutoComDesconto(filtro.getCodigoProduto());
-
-		for(ProdutoEdicao pe : produtosEdicao) {
-			TipoDescontoProdutoDTO tdp = new TipoDescontoProdutoDTO();
-			tdp.setCodigoProduto(filtro.getCodigoProduto());
-			tdp.setDataAlteracao(new Date());
-			tdp.setDesconto(pe.getDesconto());
-			tdp.setIdTipoDesconto(3L);
-			tdp.setNomeProduto(pe.getProduto().getNome());
-			tdp.setNomeUsuario("Anonimo");
-			tdp.setNumeroEdicao(pe.getNumeroEdicao());
-
-			descontosProduto.add(tdp);
-		}
-
-		return descontosProduto;*/
-
-		/*
-		Criteria criteria = this.getSession().createCriteria(DescontoProduto.class);
-
-		criteria.createAlias("usuario", "usuario");
-		criteria.createAlias("produtoEdicao", "produtoEdicao");
-		criteria.createAlias("produtoEdicao.produto", "produto");
-
-		ProjectionList projectionList = (ProjectionList) getAliasProjectionTipoDescontoProduto();
-
-		if (filtro != null && filtro.getCodigoProduto() != null && !filtro.getCodigoProduto().isEmpty()) {
-
-			criteria.add(Restrictions.eq("produto.codigo", filtro.getCodigoProduto()));
-		}
-
-		if (filtro != null && filtro.getPaginacao() != null) {
-
-			if(filtro.getPaginacao().getPosicaoInicial()!= null){
-
-				criteria.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
-			}
-
-			if(filtro.getPaginacao().getQtdResultadosPorPagina()!= null){				
-
-				criteria.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
-
-			}
-
-			if (filtro.getOrdenacaoColuna() != null && filtro.getPaginacao().getOrdenacao() != null) {
-
-				switch(filtro.getPaginacao().getOrdenacao()) {
-
-				case ASC:
-					criteria.addOrder(Order.asc(filtro.getOrdenacaoColuna().toString()));
-					break;
-				case DESC:
-					criteria.addOrder(Order.desc(filtro.getOrdenacaoColuna().toString()));
-					break;
-				}
-			}
-		}
-
-		criteria.setProjection(projectionList);
-
-		criteria.setResultTransformer(new AliasToBeanResultTransformer(TipoDescontoProdutoDTO.class));
-
-		return criteria.list();*/
+		
 	}
 
 	/*
@@ -191,7 +131,24 @@ public class DescontoProdutoRepositoryImpl extends AbstractRepositoryModel<Desco
 	@Override
 	public Integer buscarQuantidadeTipoDescontoProduto(FiltroTipoDescontoProdutoDTO filtro) {
 
-		return produtoEdicaoRepository.obterProdutosEdicoesPorCodigoProdutoComDesconto(filtro.getCodigoProduto()).size();
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append("select ")
+		.append("count(*) ")
+		.append("from VIEW_DESCONTO_PRODUTOS_EDICOES as vdpe ")
+		.append("where vdpe.codigo = :codigoProduto ");
+		
+		Query q = getSession().createSQLQuery(hql.toString());
+
+		q.setParameter("codigoProduto", filtro.getCodigoProduto());
+
+		if (filtro.getPaginacao() != null && filtro.getPaginacao().getQtdResultadosPorPagina() != null) {
+			q.setFirstResult( filtro.getPaginacao().getQtdResultadosPorPagina() * ( (filtro.getPaginacao().getPaginaAtual() - 1 )))
+			.setMaxResults( filtro.getPaginacao().getQtdResultadosPorPagina() );
+		}
+
+		
+		return ((BigInteger) q.uniqueResult()).intValue();
 
 	}
 

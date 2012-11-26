@@ -80,7 +80,7 @@
 		
 		var key = e.charCode ? e.charCode : e.keyCode ? e.keyCode : 0;
 		
-		if(key == 13 && this.nodeName.toLowerCase() == "input")
+		if((key == 13 || key == 08) && this.nodeName.toLowerCase() == "input")
 		{
 			return true;
 		}

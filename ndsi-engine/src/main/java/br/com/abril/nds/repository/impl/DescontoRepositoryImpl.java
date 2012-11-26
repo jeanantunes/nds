@@ -29,10 +29,10 @@ public class DescontoRepositoryImpl extends AbstractRepositoryModel<Desconto, Lo
 		StringBuilder hql = new StringBuilder();
 		
 		hql.append("select f ");
-		hql.append("from Fornecedor f, HistoricoDescontoFornecedor hdf ");
-		hql.append("where f.desconto.id = hdf.desconto.id ");
-		hql.append("and f.id = hdf.fornecedor.id ");
-		hql.append("and f.desconto.id = :idDesconto ");
+		hql.append("from HistoricoDescontoFornecedor hdf join hdf.fornecedor f ");
+		hql.append("where f.id = hdf.fornecedor.id ");
+		hql.append("and hdf.desconto.id = :idDesconto ");
+		hql.append("order by hdf.dataAlteracao desc ");
 		
 		Query q = getSession().createQuery(hql.toString());
 		

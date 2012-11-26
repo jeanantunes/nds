@@ -23,14 +23,14 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.seguranca.Usuario;
 
 @Entity
-@Table(name = "HISTORICO_DESCONTO_COTA_PRODUTO_EXCESSAO")
-@SequenceGenerator(name="HISTORICO_DESCONTO_COTA_PRODUTO_EXCESSAO_SEQ", initialValue = 1, allocationSize = 1)
+@Table(name = "HISTORICO_DESCONTO_COTA_PRODUTO_EXCESSOES")
+@SequenceGenerator(name="HISTORICO_DESCONTO_COTA_PRODUTO_EXCESSOES_SEQ", initialValue = 1, allocationSize = 1)
 public class HistoricoDescontoCotaProdutoExcessao implements Serializable {
 
 	private static final long serialVersionUID = 3028451605686762672L;
 
 	@Id
-	@GeneratedValue(generator = "HISTORICO_DESCONTO_COTA_PRODUTO_EXCESSAO_SEQ")
+	@GeneratedValue(generator = "HISTORICO_DESCONTO_COTA_PRODUTO_EXCESSOES_SEQ")
 	@Column(name = "ID")
 	private Long id;
 	

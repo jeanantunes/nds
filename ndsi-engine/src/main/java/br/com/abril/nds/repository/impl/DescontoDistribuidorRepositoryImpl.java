@@ -54,6 +54,7 @@ public class DescontoDistribuidorRepositoryImpl extends AbstractRepositoryModel<
 		}
 		
 		hql.append("group by hdf.desconto, hdf.dataAlteracao ");
+		hql.append("order by hdf.dataAlteracao desc ");
 		
 		
 		if(filtro.getIdFornecedores()!=null && !filtro.getIdFornecedores().isEmpty()) {
