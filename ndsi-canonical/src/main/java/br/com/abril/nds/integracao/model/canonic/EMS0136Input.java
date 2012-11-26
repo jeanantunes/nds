@@ -34,9 +34,6 @@ public class EMS0136Input extends IntegracaoDocument implements Serializable {
 	/** Número do Período. */
 	private Integer numeroPeriodo;
 	
-	/** Valor do Desconto. */
-	private BigDecimal valorDesconto;
-	
 	/** Data de Lançamento da publicação. */
 	private Date dataLancamento;
 	
@@ -92,16 +89,7 @@ public class EMS0136Input extends IntegracaoDocument implements Serializable {
 		this.numeroPeriodo = numeroPeriodo;
 	}
 
-	@Field(offset = 36, length = 5)
-	public BigDecimal getValorDesconto() {
-		return valorDesconto;
-	}
-
-	public void setValorDesconto(BigDecimal valorDesconto) {
-		this.valorDesconto = valorDesconto;
-	}
-
-	@Field(offset = 41, length = 8)
+	@Field(offset = 36, length = 8)
 	@FixedFormatPattern("yyyyMMdd")
 	public Date getDataLancamento() {
 		return dataLancamento;
@@ -111,7 +99,7 @@ public class EMS0136Input extends IntegracaoDocument implements Serializable {
 		this.dataLancamento = dataLancamento;
 	}
 
-	@Field(offset = 49, length = 8)
+	@Field(offset = 44, length = 8)
 	@FixedFormatPattern("yyyyMMdd")
 	public Date getDataRecolhimento() {
 		return dataRecolhimento;
@@ -121,7 +109,7 @@ public class EMS0136Input extends IntegracaoDocument implements Serializable {
 		this.dataRecolhimento = dataRecolhimento;
 	}
 
-	@Field(offset = 57, length = 1)
+	@Field(offset = 52, length = 1)
 	public String getTipoRecolhimento() {
 		return tipoRecolhimento;
 	}

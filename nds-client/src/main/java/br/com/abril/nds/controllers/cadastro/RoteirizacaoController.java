@@ -29,8 +29,6 @@ import br.com.abril.nds.dto.RoteiroRoteirizacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaRoteirizacaoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
-import br.com.abril.nds.model.LogBairro;
-import br.com.abril.nds.model.LogLocalidade;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
@@ -76,7 +74,7 @@ public class RoteirizacaoController {
 	
 	@Autowired
 	private RoteirizacaoService roteirizacaoService;
-
+	
 	@Autowired
 	private CotaService cotaService;
 	
@@ -354,19 +352,19 @@ public class RoteirizacaoController {
 	
 	@Path("/iniciaTelaCotas")
 	public void iniciaTelaCotas() {
-		List<String> uf = roteirizacaoService.buscarUF();
+		List<String> uf = enderecoService.obterUnidadeFederacaoBrasil();
 		result.use(Results.json()).from(uf, "result").serialize();
 	}
 	
 	@Path("/buscalistaMunicipio")
 	public void buscalistaMunicipio(String uf) {
-		List<LogLocalidade> lista = roteirizacaoService.buscarMunicipioPorUf(uf);
+		List<String> lista = enderecoService.obterLocalidadesPorUF(uf);
 		result.use(Results.json()).from(lista, "result").serialize();
 	}
 	
 	@Path("/buscalistaBairro")
-	public void buscalistaBairro(String uf, Long municipio) {
-		List<LogBairro> bairro = roteirizacaoService.buscarBairroPorMunicipio(municipio, uf);
+	public void buscalistaBairro(String municipio) {
+		List<String> bairro = enderecoService.obterBairrosPorCidade(municipio);
 		result.use(Results.json()).from(bairro, "result").serialize();
 	}
 	

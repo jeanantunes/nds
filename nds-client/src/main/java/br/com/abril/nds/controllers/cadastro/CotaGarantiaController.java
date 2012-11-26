@@ -1,12 +1,15 @@
 package br.com.abril.nds.controllers.cadastro;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.poi.util.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.CotaGarantiaDTO;
 import br.com.abril.nds.dto.FormaCobrancaCaucaoLiquidaDTO;
@@ -25,6 +28,7 @@ import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
 import br.com.abril.nds.model.cadastro.TipoGarantia;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantia;
 import br.com.abril.nds.serialization.custom.CustomJson;
+import br.com.abril.nds.serialization.custom.CustomJson2;
 import br.com.abril.nds.serialization.custom.PlainJSONSerialization;
 import br.com.abril.nds.service.CotaGarantiaService;
 import br.com.abril.nds.util.StringUtil;
@@ -48,15 +52,12 @@ public class CotaGarantiaController {
 	@Autowired
 	private CotaGarantiaService cotaGarantiaService;
 	
-	
+	@Autowired
 	private Result result;
 	
-	
-    public CotaGarantiaController(Result result) {
+    public CotaGarantiaController() {
 		
 		super();
-		
-		this.result = result;  
 	}
 
 	@Post
@@ -141,15 +142,15 @@ public class CotaGarantiaController {
 	}
 	
 	@Post("/getByCota.json")
+	@Transactional(readOnly = true)
 	public void getByCota(Long idCota, ModoTela modoTela, Long idHistorico) {
 		
 	    if (ModoTela.CADASTRO_COTA == modoTela) {
 	        CotaGarantiaDTO<CotaGarantia> cotaGarantia = cotaGarantiaService.getByCota(idCota);
-	        
 	        if (cotaGarantia != null && cotaGarantia.getCotaGarantia() != null) {			
-	            result.use(CustomJson.class).from(cotaGarantia).exclude(Fiador.class, "fiador").serialize();		
+	            result.use(Results.json()).from(cotaGarantia).serialize();
 	        }else{			
-	            result.use(CustomJson.class).from("OK").serialize();		
+	            result.use(CustomJson.class).from("OK").serialize();
 	        }	
 	    } else {
 	        CotaGarantiaDTO<?> cotaGarantia = cotaGarantiaService.obterGarantiaHistoricoTitularidadeCota(idCota, idHistorico);
@@ -527,7 +528,9 @@ public class CotaGarantiaController {
     public void getFiador(Long idFiador, String documento) {
         Fiador fiador = cotaGarantiaService.getFiador(idFiador, documento);
         if (fiador != null) {
-            result.use(CustomJson.class).from(fiador).exclude(Fiador.class, "enderecoFiador").serialize();
+            result.use(Results.json()).from(fiador).include(
+            	"pessoa", "enderecoFiador", "enderecoFiador.endereco", "telefonesFiador",
+            	"telefonesFiador.telefone", "garantias").serialize();
         } else {
             result.use(CustomJson.class).from("NotFound").serialize();
         }

@@ -55,7 +55,7 @@ public class TelefoneFiadorRepositoryImplTest extends
 
 	@Test
 	public void removerTelefonesFiador() {
-		Collection<Long> listaTelefones = new ArrayList<>();
+		Collection<Long> listaTelefones = new ArrayList<Long>();
 		listaTelefones.add(1L);
 		listaTelefones.add(2L);
 

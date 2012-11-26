@@ -319,7 +319,7 @@ public class DividaServiceImpl implements DividaService {
     public List<SumarizacaoDividasDTO> sumarizacaoDividasReceberEm(Date data) {
         Map<TipoCobranca, SumarizacaoDividasDTO> mapaSumarizacao = criarMapaTiposCobrancaDistribuidor(
                 data, TipoDivida.DIVIDA_A_RECEBER, dividaRepository.sumarizacaoDividasReceberEm(data));
-	    return new ArrayList<>(mapaSumarizacao.values());
+	    return new ArrayList<SumarizacaoDividasDTO>(mapaSumarizacao.values());
     }
 
 
@@ -331,7 +331,7 @@ public class DividaServiceImpl implements DividaService {
     public List<SumarizacaoDividasDTO> sumarizacaoDividasVencerApos(Date data) {
         Map<TipoCobranca, SumarizacaoDividasDTO> mapaSumarizacao = criarMapaTiposCobrancaDistribuidor(data, TipoDivida.DIVIDA_A_VENCER,
                 dividaRepository.sumarizacaoDividasVencerApos(data));
-        return new ArrayList<>(mapaSumarizacao.values());
+        return new ArrayList<SumarizacaoDividasDTO>(mapaSumarizacao.values());
     }
 
     /**
@@ -386,7 +386,7 @@ public class DividaServiceImpl implements DividaService {
      */
     private Map<TipoCobranca, SumarizacaoDividasDTO> criarMapaTiposCobrancaDistribuidor(Date data, TipoDivida tipoDivida,
             Map<TipoCobranca, SumarizacaoDividasDTO> sumarizacao) {
-        Map<TipoCobranca, SumarizacaoDividasDTO> novaSumarizacao = new EnumMap<>(sumarizacao);
+        Map<TipoCobranca, SumarizacaoDividasDTO> novaSumarizacao = new EnumMap<TipoCobranca, SumarizacaoDividasDTO>(sumarizacao);
         Distribuidor distribuidor = distribuidorService.obter();
         for (PoliticaCobranca pc : distribuidor.getPoliticasCobranca()) {
             FormaCobranca formaCobranca = pc.getFormaCobranca();

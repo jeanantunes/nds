@@ -24,6 +24,9 @@ public class EncalheFecharDiaDTO implements Serializable {
 	@Export(label = "Preço Capa", alignment=Alignment.RIGHT, exhibitionOrder = 4)
 	private BigDecimal precoVenda;
 	
+	/**
+	 * Lógico: quantidade total de exemplares de cada produto recebido no encalhe;
+	 */
 	@Export(label = "Qtde", alignment=Alignment.CENTER, exhibitionOrder = 5)
 	private Long qtde;
 	
@@ -32,6 +35,27 @@ public class EncalheFecharDiaDTO implements Serializable {
 	
 	@Export(label = "Diferença", alignment=Alignment.LEFT, exhibitionOrder = 7)
 	private Integer diferenca;
+	
+	/**
+	 * quantidade de exemplares conferida no Fechamento do Encalhe; 
+	 */
+	private Long qtdeFisico;
+	
+	/**
+	 * quantidade de exemplares de cada produto juramentado no encalhe;
+	 */
+	private Long qtdeLogicoJuramentado;
+	
+	/**
+	 * : quantidade de exemplares de cada produto e edição que teve sua venda realizada
+	 */
+	private Long qtdeVendaEncalhe;
+	
+	/**
+	 * quantidade de exemplares resultantes da subtração de: 
+	 * Lógico - Físico - Lógico Juramentado - Venda de Encalhe;
+	 */
+	private Long diferencas;
 
 	public String getCodigo() {
 		return codigo;
@@ -89,7 +113,63 @@ public class EncalheFecharDiaDTO implements Serializable {
 		this.diferenca = diferenca;
 	}
 
-	@Override
+	/**
+     * @return the qtdeFisico
+     */
+    public Long getQtdeFisico() {
+        return qtdeFisico;
+    }
+
+    /**
+     * @param qtdeFisico the qtdeFisico to set
+     */
+    public void setQtdeFisico(Long qtdeFisico) {
+        this.qtdeFisico = qtdeFisico;
+    }
+
+    /**
+     * @return the qtdeLogicoJuramentado
+     */
+    public Long getQtdeLogicoJuramentado() {
+        return qtdeLogicoJuramentado;
+    }
+
+    /**
+     * @param qtdeLogicoJuramentado the qtdeLogicoJuramentado to set
+     */
+    public void setQtdeLogicoJuramentado(Long qtdeLogicoJuramentado) {
+        this.qtdeLogicoJuramentado = qtdeLogicoJuramentado;
+    }
+
+    /**
+     * @return the qtdeVendaEncalhe
+     */
+    public Long getQtdeVendaEncalhe() {
+        return qtdeVendaEncalhe;
+    }
+
+    /**
+     * @param qtdeVendaEncalhe the qtdeVendaEncalhe to set
+     */
+    public void setQtdeVendaEncalhe(Long qtdeVendaEncalhe) {
+        this.qtdeVendaEncalhe = qtdeVendaEncalhe;
+    }
+
+    /**
+     * @return the diferencas
+     */
+    public Long getDiferencas() {
+        return diferencas;
+    }
+
+    /**
+     * @param diferencas the diferencas to set
+     */
+    public void setDiferencas(Long diferencas) {
+        this.diferencas = diferencas;
+    }
+
+    @Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;

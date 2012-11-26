@@ -55,7 +55,7 @@ public class EMS0116Input implements Serializable {
 		this.codBairro = codBairro;
 	}
 	
-	@Field(offset = 50, length = 60)
+	@Field(offset = 50, length = 20)
 	public String getNomeMunicipio() {
 		return nomeMunicipio;
 	}
