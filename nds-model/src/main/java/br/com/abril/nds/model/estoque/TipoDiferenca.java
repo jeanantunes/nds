@@ -1,5 +1,10 @@
 package br.com.abril.nds.model.estoque;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.Set;
+
 /**
  * @author francisco.garcia
  * @version 1.0
@@ -16,6 +21,10 @@ public enum TipoDiferenca {
 	
 	private String descricao;
 	
+	private static final Set<TipoDiferenca> TIPOS_DIFERENCA_DE = EnumSet.of(FALTA_DE, SOBRA_DE);
+
+	private static final Set<TipoDiferenca> TIPOS_DIFERENCA_EM = EnumSet.of(FALTA_EM, SOBRA_EM);
+	
 	private TipoDiferenca(GrupoMovimentoEstoque tipoMovimentoEstoque, String descricao) {
 		
 		this.tipoMovimentoEstoque = tipoMovimentoEstoque;
@@ -30,6 +39,33 @@ public enum TipoDiferenca {
 	public String getDescricao() {
 		return descricao;
 	}
+	
+    /**
+     * Verifica se a diferença é do tipo DE
+     * 
+     * @return true se o tipo da diferença é do tipo DE, false caso contrário
+     */
+	public boolean isDiferencaDe() {
+	    return TIPOS_DIFERENCA_DE.contains(this);
+	}
+	
+	/**
+	 * Separa os tipos de diferença DE
+	 * 
+	 * @return subgrupo de tipos de diferença DE
+	 */
+	public static Collection<TipoDiferenca> getTiposDiferencaDe() {
+	    return Collections.unmodifiableSet(TIPOS_DIFERENCA_DE);
+	}
+	
+	/**
+	 * Separa os tipos de diferença EM
+	 * 
+	 * @return subgrupo de tipos de diferença EM
+	 */
+	public static Collection<TipoDiferenca> getTiposDiferencaEm() {
+        return Collections.unmodifiableSet(TIPOS_DIFERENCA_EM);
+    }
 	
 	@Override
 	public String toString() {

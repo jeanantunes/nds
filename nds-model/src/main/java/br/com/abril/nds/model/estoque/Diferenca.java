@@ -292,4 +292,32 @@ public class Diferenca implements Serializable {
 	public void setExistemRateios(boolean existemRateios) {
 		this.existemRateios = existemRateios;
 	}
+	
+	/**
+	 * Calcula o valor total da diferença R$, não
+	 * levando em considereação o desconto do
+	 * produto
+	 * @return total da diferença em R$
+	 */
+	public BigDecimal getValorTotal() {
+	   BigDecimal preco = produtoEdicao.getPrecoVenda();
+       BigDecimal exemplares = new BigDecimal(getQtdeExemplares());
+	   return exemplares.multiply(preco);
+	}
+	
+    /**
+     * Calcula a qtde de exemplares da diferença
+     * 
+     * @return qtde da diferença em exemplares
+     */
+	public BigInteger getQtdeExemplares() {
+	    if (tipoDiferenca.isDiferencaDe()) {
+	        BigInteger porPactote = BigInteger.valueOf(produtoEdicao.getPacotePadrao());
+	        return qtde.multiply(porPactote);
+	    }
+	    return qtde;
+	}
+	
+	
+	
 }
