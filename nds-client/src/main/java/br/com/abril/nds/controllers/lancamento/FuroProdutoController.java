@@ -177,8 +177,16 @@ public class FuroProdutoController {
 				idProdutoEdicao, idLancamento, 
 				new SimpleDateFormat(Constantes.DATE_PATTERN_PT_BR).parse(novaData), this.getIdUsuario());
 
-		result.use(Results.json()).from(true, "result").serialize();
-
+		boolean produtoExpedido = this.furoProdutoService.verificarProdutoExpedido(idLancamento);
+		
+		if (produtoExpedido) {
+			
+			result.use(Results.json()).from(true, "result").serialize();
+			
+		} else {
+			
+			confirmarFuro(codigoProduto, idProdutoEdicao, novaData, idLancamento);
+		}		
 	}
 	
 	@Post
