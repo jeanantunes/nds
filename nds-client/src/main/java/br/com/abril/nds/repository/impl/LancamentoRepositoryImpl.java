@@ -1121,9 +1121,9 @@ public class LancamentoRepositoryImpl extends
 		sql.append(" ) is not null ");
 		
 		sql.append(" and ( ");
-		sql.append("	(lancamento.DATA_LCTO_PREVISTA between :periodoInicial and :periodoFinal ");
+		sql.append("	(lancamento.DATA_LCTO_DISTRIBUIDOR between :periodoInicial and :periodoFinal ");
 		sql.append("		and  UPPER(lancamento.STATUS) in ( :statusLancamentoNoPeriodo )) ");
-		sql.append(" 	or (lancamento.DATA_LCTO_PREVISTA < :periodoInicial ");
+		sql.append(" 	or (lancamento.DATA_LCTO_DISTRIBUIDOR < :periodoInicial ");
 		sql.append("		and UPPER(lancamento.STATUS) in ( :statusLancamentoDataMenorInicial )) "); 
 		sql.append(" ) ");
 		
