@@ -85,7 +85,8 @@ public class RomaneioServiceImpl implements RomaneioService {
 		
 		if (filtro != null){
 			
-			List<RomaneioDTO> listaDTOParaExportacao = this.buscarRomaneio(filtro, false);
+			List<RomaneioDTO> listaDTOParaExportacao = this.buscarRomaneio(
+					filtro, false);
 			
 			if (!listaDTOParaExportacao.isEmpty()){
 			

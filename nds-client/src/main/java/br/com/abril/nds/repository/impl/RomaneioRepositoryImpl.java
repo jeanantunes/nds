@@ -1,6 +1,5 @@
 package br.com.abril.nds.repository.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.Query;
@@ -10,7 +9,6 @@ import org.springframework.stereotype.Repository;
 import br.com.abril.nds.dto.RomaneioDTO;
 import br.com.abril.nds.dto.filtro.FiltroRomaneioDTO;
 import br.com.abril.nds.model.cadastro.Box;
-import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.repository.RomaneioRepository;
 
@@ -23,20 +21,59 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<RomaneioDTO> buscarRomaneios(FiltroRomaneioDTO filtro, boolean limitar) {
+	public List<RomaneioDTO> buscarRomaneios(FiltroRomaneioDTO filtro, 
+			boolean limitar) {
+		
+		Query query = this.createQueryBuscarRomaneio(filtro, true);
+		query.setResultTransformer(new AliasToBeanResultTransformer(
+				RomaneioDTO.class));
+		
+		// Realiza a paginação:
+		if (limitar) {
+			
+			if (filtro.getPaginacao().getPosicaoInicial() != null) {
+				query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
+			}
+			
+			if (filtro.getPaginacao().getQtdResultadosPorPagina() != null) {
+				query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
+			}
+		}
+		
+		return  query.list();
+		//return  popularEndereco(query.list());
+	}
+	
+	
+	/**
+	 * Gera a consulta que pesquisa os romaneios com os critérios definidos
+	 * pelo usuário.
+	 * 
+	 * @param filtro
+	 * @param ordenarConsulta
+	 * 
+	 * @return
+	 */
+	private Query createQueryBuscarRomaneio(FiltroRomaneioDTO filtro, 
+			boolean ordenarConsulta) {
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append("SELECT notaEnvio.destinatario.numeroCota as numeroCota, ");
-		hql.append("notaEnvio.destinatario.nome as nome, ");
-		//hql.append("cota.id as idCota, ");
-		hql.append("rotaPDV.id as idRota, ");
-		hql.append("notaEnvio.numero as numeroNotaEnvio, ");
-		hql.append("endereco.logradouro as logradouro, ");
-		hql.append("endereco.bairro as bairro, ");		
-		hql.append("endereco.cidade as cidade, ");
-		hql.append("endereco.uf as uf ");
-		
+		/*
+		 * Incluido a condição DISTINCT para retirar a repetição 
+		 * (plano cartesiano) pelos ProdutosEdição contido nas NotaEnvioItem,
+		 * RotaPDV e Cotas.
+		 */
+		hql.append("SELECT DISTINCT ");
+		hql.append("  notaEnvio.destinatario.numeroCota as numeroCota ");
+		hql.append(", notaEnvio.destinatario.nome as nome ");
+//		hql.append(", cota.id as idCota ");
+//		hql.append(", rotaPDV.id as idRota ");
+		hql.append(", notaEnvio.numero as numeroNotaEnvio ");
+		hql.append(", endereco.logradouro as logradouro ");
+//		hql.append(", endereco.bairro as bairro ");		
+//		hql.append(", endereco.cidade as cidade ");
+//		hql.append(", endereco.uf as uf ");
 		
 		//if (filtro.getProdutos() != null && filtro.getProdutos().size() == 1){
 		if (filtro.getProdutos() != null){
@@ -54,26 +91,14 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 		
 		hql.append(getSqlFromEWhereRomaneio(filtro));
 		
-		hql.append(getOrderBy(filtro));
+		if (ordenarConsulta) {
+			hql.append(getOrderBy(filtro));
+		}
 		
 		Query query =  getSession().createQuery(hql.toString());
+		this.setarParametrosRomaneio(filtro, query);
 		
-		this.setarParametrosRomaneio(filtro, query, false);
-		
-		query.setResultTransformer(new AliasToBeanResultTransformer(RomaneioDTO.class));
-		
-		if(filtro.getPaginacao().getQtdResultadosPorPagina() != null){ 
-			
-			query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
-		}
-		
-		if(filtro.getPaginacao().getQtdResultadosPorPagina() != null && limitar){ 
-			
-			query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
-		}
-				
-		return  query.list();
-		//return  popularEndereco(query.list());
+		return query;
 	}
 	
 	private String getSqlFromEWhereRomaneio(FiltroRomaneioDTO filtro) {
@@ -191,7 +216,7 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 		return hql.toString();
 	}
 	
-	private void setarParametrosRomaneio(FiltroRomaneioDTO filtro, Query query, boolean queryCount){
+	private void setarParametrosRomaneio(FiltroRomaneioDTO filtro, Query query) {
 		
 		query.setParameter("situacaoInativo", SituacaoCadastro.INATIVO);
 		query.setParameter("pontoPrincipal", true);
@@ -225,20 +250,32 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 
 	@Override
 	public Integer buscarTotal(FiltroRomaneioDTO filtro, boolean countCotas) {
-		StringBuilder hql = new StringBuilder();
 		
-		hql.append("select count( "+ (countCotas ? "distinct" : "") +" cota.numeroCota) ");
-		
-		hql.append(getSqlFromEWhereRomaneio(filtro));
-		
-		hql.append(getOrderBy(filtro));
-		
-		Query query =  getSession().createQuery(hql.toString());
-		
-		this.setarParametrosRomaneio(filtro, query, true);
-		
-		Long totalRegistros = (Long) query.uniqueResult();
-		
-		return (totalRegistros == null) ? 0 : totalRegistros.intValue();
+		Number totalRegistros = null;
+		if (countCotas) {
+			
+			StringBuilder hql = new StringBuilder();
+			
+			hql.append("select count( "+ (countCotas ? "distinct" : "") +" cota.numeroCota) ");
+			hql.append(getSqlFromEWhereRomaneio(filtro));
+			hql.append(getOrderBy(filtro));
+			
+			Query query =  getSession().createQuery(hql.toString());
+			
+			this.setarParametrosRomaneio(filtro, query);
+			
+			totalRegistros = (Long) query.uniqueResult();
+		} else {
+			
+			Query query = createQueryBuscarRomaneio(filtro, false);
+			
+			@SuppressWarnings("rawtypes")
+			List lst = query.list();
+			
+			totalRegistros = (lst == null || lst.isEmpty()) ? 0 : lst.size();
+		}
+	
+		return totalRegistros.intValue();
 	}
+	
 }
