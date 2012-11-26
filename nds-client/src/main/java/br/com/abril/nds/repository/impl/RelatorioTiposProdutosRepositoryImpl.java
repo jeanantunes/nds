@@ -13,8 +13,47 @@ import br.com.abril.nds.repository.RelatorioTiposProdutosRepository;
 @Repository
 public class RelatorioTiposProdutosRepositoryImpl extends AbstractRepository implements RelatorioTiposProdutosRepository {
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<RelatorioTiposProdutosDTO> gerarRelatorio(FiltroRelatorioTiposProdutos filtro) {
+		
+		Query query = getSession().createQuery(obterHql(filtro,false));
+		
+		this.aplicarFiltroQuery(query, filtro);
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(RelatorioTiposProdutosDTO.class));
+		
+		if(filtro.getPaginacaoVO().getQtdResultadosTotal()!= null){
+
+			Long qntTotal = obterQunatidade(filtro);
+		
+			filtro.getPaginacaoVO().setQtdResultadosTotal( (qntTotal==null) ? 0 : qntTotal.intValue() );
+		}
+		
+		Integer paginaAtual = filtro.getPaginacaoVO().getPaginaAtual();
+		Integer qtdResultadosPorPagina = filtro.getPaginacaoVO().getQtdResultadosPorPagina();
+		
+		if(paginaAtual!= null && qtdResultadosPorPagina!= null ){
+			query.setFirstResult((paginaAtual - 1) * qtdResultadosPorPagina);
+		}
+		
+		if(qtdResultadosPorPagina!= null){
+			query.setMaxResults(qtdResultadosPorPagina);
+		}
+		
+		return query.list();
+	}
+	
+	private Long obterQunatidade(FiltroRelatorioTiposProdutos filtro){
+		
+		Query query = getSession().createQuery(obterHql(filtro,true));
+		
+		this.aplicarFiltroQuery(query, filtro);
+		
+		return (Long) query.uniqueResult();
+	}
+	
+	private String obterHql(FiltroRelatorioTiposProdutos filtro, boolean isCount){
 		
 		boolean hasTipoProduto = filtro.getTipoProduto() != null && filtro.getTipoProduto().longValue() != -1L;
 		boolean hasLancamentoDe = filtro.getDataLancamentoDe() != null;
@@ -24,55 +63,125 @@ public class RelatorioTiposProdutosRepositoryImpl extends AbstractRepository imp
 		
 		boolean hasFilter = hasTipoProduto || hasLancamentoDe || hasLancamentoAte || hasRecolhimentoDe || hasRecolhimentoAte;
 		
-		StringBuilder sb = new StringBuilder();
+		StringBuilder hql = new StringBuilder();
 		
-		sb.append("SELECT p.id AS codigo, " +
-				"p.nomeComercial AS produto, " +
-				"pe.numeroEdicao AS edicao, " +
-				"pe.precoVenda AS precoCapa, " +
-				"( " +
-				" (" +
-				"	(select sum(mec.qtde) from MovimentoEstoqueCota mec where mec.tipoMovimento.operacaoEstoque = 'SAIDA' and mec.lancamento.id = l.id)" +
-				" - " +
-				"   (select sum(mec.qtde) from MovimentoEstoqueCota mec where mec.tipoMovimento.operacaoEstoque = 'ENTRADA' and mec.lancamento.id = l.id)" +
-				" )" +
-				" * pe.precoVenda" +
-				") AS faturamento, " +
-				"t.descricao AS tipoProduto, " +
-				"l.dataRecolhimentoDistribuidor AS recolhimento, " +
-				"l.dataLancamentoDistribuidor AS lancamento " +
+		if(isCount){
+			
+			hql.append(" select count (p.codigo) ");
+			
+		}else{
+			
+			hql.append("SELECT p.codigo AS codigo, " +
+					"p.nome AS produto, " +
+					"pe.numeroEdicao AS edicao, " +
+					"pe.precoVenda AS precoCapa, " +
+					"( " +
+					" (" +
+					"	(select sum(mec.qtde) from MovimentoEstoqueCota mec where mec.tipoMovimento.operacaoEstoque = 'SAIDA' and mec.lancamento.id = l.id)" +
+					" - " +
+					"   (select sum(mec.qtde) from MovimentoEstoqueCota mec where mec.tipoMovimento.operacaoEstoque = 'ENTRADA' and mec.lancamento.id = l.id)" +
+					" )" +
+					" * pe.precoVenda" +
+					") AS faturamento, " +
+					"t.descricao AS tipoProduto, " +
+					"l.dataRecolhimentoDistribuidor AS recolhimento, " +
+					"l.dataLancamentoDistribuidor AS lancamento " );
+		}
+		
+		hql.append(
 				"FROM ProdutoEdicao pe " +
 				"JOIN pe.produto p " +
 				"JOIN p.tipoProduto t " +
 				"JOIN pe.lancamentos l");
 		
 		if(hasFilter) {
-			sb.append(" where true = true");
+			hql.append(" where true = true");
 			
 			if(hasTipoProduto) {
-				sb.append(" and t.id = :idTipoProduto");
+				hql.append(" and t.id = :idTipoProduto");
 			}
 			if(hasLancamentoDe) {
-				sb.append(" and l.dataLancamentoDistribuidor >= :dataLancamentoDe");
+				hql.append(" and l.dataLancamentoDistribuidor >= :dataLancamentoDe");
 			}
 			if(hasLancamentoAte) {
-				sb.append(" and l.dataLancamentoDistribuidor <= :dataLancamentoAte");
+				hql.append(" and l.dataLancamentoDistribuidor <= :dataLancamentoAte");
 			}
 			if(hasRecolhimentoDe) {
-				sb.append(" and l.dataRecolhimentoDistribuidor >= :dataRecolhimentoDe");
+				hql.append(" and l.dataRecolhimentoDistribuidor >= :dataRecolhimentoDe");
 			}
 			if(hasRecolhimentoAte) {
-				sb.append(" and l.dataRecolhimentoDistribuidor <= :dataRecolhimentoAte");
+				hql.append(" and l.dataRecolhimentoDistribuidor <= :dataRecolhimentoAte");
 			}
 		}
 		
-		sb.append(" order by " + filtro.getPaginacaoVO().getSortColumn() + " " + filtro.getPaginacaoVO().getSortOrder());
+		if(filtro.getPaginacaoVO()!= null){
+			
+			hql.append(aplicarOrdenacao(filtro) + " " + filtro.getPaginacaoVO().getSortOrder());
+		}
 		
+		return hql.toString();
+
+	}
+	
+	private String aplicarOrdenacao(FiltroRelatorioTiposProdutos filtro){
 		
-		Query query = getSession().createQuery(sb.toString());
+		StringBuilder hql = new StringBuilder();
 		
+		if (filtro.getOrdenacaoColuna() != null ){
+			
+			switch (filtro.getOrdenacaoColuna()) {
+				
+				case CODIGO:
+					hql.append(" order by p.codigo ");
+					break;
+				case DATA_LANCAMENTO:
+					hql.append(" order by l.dataLancamentoDistribuidor ");
+					break;
+				case DATA_RECOLHIMENTO:
+					hql.append(" order by l.dataRecolhimentoDistribuidor ");
+					break;
+				case FATURAMENTO:
+					hql.append(" order by (select sum(mec.qtde) from MovimentoEstoqueCota mec where mec.tipoMovimento.operacaoEstoque = 'SAIDA' and mec.lancamento.id = l.id)" )
+					.append(" - ")
+					.append("   (select sum(mec.qtde) from MovimentoEstoqueCota mec where mec.tipoMovimento.operacaoEstoque = 'ENTRADA' and mec.lancamento.id = l.id)" )
+					.append(" ) * pe.precoVenda ");
+					
+					break;
+				case NOME_PRODUTO:
+					hql.append(" order by  p.nome ");
+					break;
+				case NUMERO_EDICAO:
+					hql.append(" order by pe.numeroEdicao ");
+					break;
+				case PRECO_CAPA:
+					hql.append(" order by pe.precoVenda ");
+					break;
+				case TIPO_PRODUTO:
+					hql.append(" order by t.descricao ");
+					break;
+				default:
+					hql.append(" order by pe.numeroEdicao ");
+			}
+			
+			if (filtro.getPaginacaoVO().getOrdenacao() != null) {
+				hql.append( filtro.getPaginacaoVO().getOrdenacao().toString());
+			}
+		}
+		
+		return hql.toString();
+	}
+	
+	private void aplicarFiltroQuery(Query query, FiltroRelatorioTiposProdutos filtro){
+		
+		boolean hasTipoProduto = filtro.getTipoProduto() != null && filtro.getTipoProduto().longValue() != -1L;
+		boolean hasLancamentoDe = filtro.getDataLancamentoDe() != null;
+		boolean hasLancamentoAte = filtro.getDataLancamentoAte() != null;
+		boolean hasRecolhimentoDe = filtro.getDataRecolhimentoDe() != null;
+		boolean hasRecolhimentoAte = filtro.getDataRecolhimentoAte() != null;
+		
+		boolean hasFilter = hasTipoProduto || hasLancamentoDe || hasLancamentoAte || hasRecolhimentoDe || hasRecolhimentoAte;
+				
 		if(hasFilter) {
-			sb.append(" where true = true");
 			
 			if(hasTipoProduto) {
 				query.setParameter("idTipoProduto", filtro.getTipoProduto());
@@ -90,21 +199,5 @@ public class RelatorioTiposProdutosRepositoryImpl extends AbstractRepository imp
 				query.setParameter("dataRecolhimentoAte", filtro.getDataRecolhimentoAte());
 			}
 		}
-		
-		query.setResultTransformer(new AliasToBeanResultTransformer(RelatorioTiposProdutosDTO.class));
-
-		int total = query.list().size();
-		filtro.getPaginacaoVO().setQtdResultadosTotal(total);
-		
-		Integer paginaAtual = filtro.getPaginacaoVO().getPaginaAtual();
-		Integer qtdResultadosPorPagina = filtro.getPaginacaoVO().getQtdResultadosPorPagina();
-		
-		query.setFirstResult((paginaAtual - 1) * qtdResultadosPorPagina);
-		query.setMaxResults(qtdResultadosPorPagina);
-		
-		
-		List result = query.list();
-		
-		return result;
 	}
 }
