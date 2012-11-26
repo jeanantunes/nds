@@ -21,6 +21,7 @@ import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.LancamentoParcial;
 import br.com.abril.nds.model.planejamento.PeriodoLancamentoParcial;
+import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamentoParcial;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
@@ -214,6 +215,7 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 		lancamento.setReparte(BigInteger.ZERO);
 		lancamento.setRepartePromocional(BigInteger.ZERO);
 		lancamento.setSequenciaMatriz(Integer.valueOf(0));
+		lancamento.setStatus(StatusLancamento.TRANSMITIDO);
 		
 		this.getSession().persist(lancamento);
 		
