@@ -109,8 +109,7 @@ var furoProdutoController = $.extend(true, {
 		// typeof result.mensagens != "object"
 		if (result.boolean == true) {
 			furoProdutoController.popUpConfirmarFuroProduto(data);
-		};
-		
+		}
 	},
 	
 	popUpConfirmarFuroProduto : function(data) {
