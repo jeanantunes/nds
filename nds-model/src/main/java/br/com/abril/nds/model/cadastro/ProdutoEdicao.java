@@ -24,6 +24,7 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -31,6 +32,7 @@ import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 
 import br.com.abril.nds.model.Origem;
+import br.com.abril.nds.model.cadastro.desconto.Desconto;
 import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.fechar.dia.FechamentoDiarioLancamentoReparte;
@@ -171,13 +173,10 @@ public class ProdutoEdicao implements Serializable {
 	@OneToMany(mappedBy = "produtoEdicao")
 	protected Set<FechamentoDiarioLancamentoReparte> historicoMovimentoRepartes;
 	
-<<<<<<< HEAD
-=======
 	@OneToOne(optional = true)
 	@JoinColumn(name = "DESCONTO_ID")
 	private Desconto descontoProdutoEdicao;
 
->>>>>>> def3e02f049b86bfdb61ff735cad04f3f09f735b
 	@Enumerated(EnumType.STRING)
 	@Column(name = "GRUPO_PRODUTO")
 	private GrupoProduto grupoProduto;
@@ -527,9 +526,6 @@ public class ProdutoEdicao implements Serializable {
 			Set<FechamentoDiarioLancamentoReparte> historicoMovimentoRepartes) {
 		this.historicoMovimentoRepartes = historicoMovimentoRepartes;
 	}
-<<<<<<< HEAD
-
-=======
 
 	public Desconto getDescontoProdutoEdicao() {
 		return descontoProdutoEdicao;
@@ -539,7 +535,6 @@ public class ProdutoEdicao implements Serializable {
 		this.descontoProdutoEdicao = descontoProdutoEdicao;
 	}
 	
->>>>>>> def3e02f049b86bfdb61ff735cad04f3f09f735b
 	public SegmentacaoProduto getSegmentacao() {
 		return segmentacao;
 	}

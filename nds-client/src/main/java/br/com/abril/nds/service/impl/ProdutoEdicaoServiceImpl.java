@@ -724,24 +724,11 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			dto.setChamadaCapa(pe.getChamadaCapa());
 			dto.setParcial(pe.isParcial());
 			dto.setPossuiBrinde(pe.isPossuiBrinde());
-<<<<<<< HEAD
-<<<<<<< HEAD
 			
-			BigDecimal percentualDesconto = Util.nvl(pe.getProduto().getDesconto().getValor(), BigDecimal.ZERO);
-			BigDecimal valorDesconto = MathUtil.calculatePercentageValue(precoVenda, percentualDesconto);
-			dto.setDesconto(valorDesconto);
-=======
-=======
->>>>>>> def3e02f049b86bfdb61ff735cad04f3f09f735b
-		
 			//Desconto Fornecedor x Distribuidor
 			dto.setDescricaoDesconto(pe.getDescricaoDesconto()!=null?pe.getDescricaoDesconto():produto.getDescricaoDesconto());
 			BigDecimal percentualDesconto = Util.nvl(pe.getDesconto()!=null?pe.getDesconto():produto.getDesconto()!=null?produto.getDesconto():BigDecimal.ZERO, BigDecimal.ZERO);
 			dto.setDesconto(percentualDesconto);
-<<<<<<< HEAD
->>>>>>> DGBti/master
-=======
->>>>>>> def3e02f049b86bfdb61ff735cad04f3f09f735b
 
 			dto.setPeso(pe.getPeso());
 			dto.setBoletimInformativo(pe.getBoletimInformativo());
