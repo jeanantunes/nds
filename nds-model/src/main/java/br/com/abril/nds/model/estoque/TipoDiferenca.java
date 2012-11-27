@@ -25,6 +25,10 @@ public enum TipoDiferenca {
 
 	private static final Set<TipoDiferenca> TIPOS_DIFERENCA_EM = EnumSet.of(FALTA_EM, SOBRA_EM);
 	
+	private static final Set<TipoDiferenca> TIPOS_DIFERENCA_FALTA = EnumSet.of(FALTA_DE, FALTA_EM);
+	
+	private static final Set<TipoDiferenca> TIPOS_DIFERENCA_SOBRA = EnumSet.of(SOBRA_DE, SOBRA_EM);
+	
 	private TipoDiferenca(GrupoMovimentoEstoque tipoMovimentoEstoque, String descricao) {
 		
 		this.tipoMovimentoEstoque = tipoMovimentoEstoque;
@@ -47,6 +51,24 @@ public enum TipoDiferenca {
      */
 	public boolean isDiferencaDe() {
 	    return TIPOS_DIFERENCA_DE.contains(this);
+	}
+	
+	/**
+	 * Verifica se a diferença é do tipo FALTA
+	 * 
+	 * @return true se o tipo de diferença é do tipo FALTA, false caso contrário
+	 */
+	public boolean isFalta() {
+	    return TIPOS_DIFERENCA_FALTA.contains(this);
+	}
+	
+	/**
+     * Verifica se a diferença é do tipo SOBRA
+     * 
+     * @return true se o tipo de diferença é do tipo SOBRA, false caso contrário
+     */
+	public boolean isSobra() {
+	    return TIPOS_DIFERENCA_SOBRA.contains(this);
 	}
 	
 	/**

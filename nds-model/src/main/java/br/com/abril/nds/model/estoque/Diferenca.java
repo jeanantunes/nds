@@ -294,7 +294,7 @@ public class Diferenca implements Serializable {
 	}
 	
 	/**
-	 * Calcula o valor total da diferença R$, não
+	 * Calcula o valor total absoluto da diferença R$, não
 	 * levando em considereação o desconto do
 	 * produto
 	 * @return total da diferença em R$
@@ -316,6 +316,18 @@ public class Diferenca implements Serializable {
 	        return qtde.multiply(porPactote);
 	    }
 	    return qtde;
+	}
+	
+    /**
+     * Calcula o valor real da diferença R$, ou seja, caso a diferença seja dos
+     * tipos {@link TipoDiferenca#FALTA_DE} ou {@link TipoDiferenca#FALTA_EM} o
+     * valor será nagtivo.
+     * 
+     * @return valor total real da diferença
+     */
+	public BigDecimal getValorTotalReal() {
+	    BigDecimal totalReal = getValorTotal();
+        return tipoDiferenca.isSobra() ? totalReal : totalReal.negate();
 	}
 	
 	

@@ -107,5 +107,45 @@ public class DiferencaTest {
 
         Assert.assertEquals(BigInteger.valueOf(2), diferenca.getQtdeExemplares());  
     }
+    
+    @Test
+    public void testValorTotalRealSobraDe() {
+        Diferenca diferenca = new Diferenca();
+        diferenca.setProdutoEdicao(edicao);
+        diferenca.setQtde(BigInteger.valueOf(2));
+        diferenca.setTipoDiferenca(TipoDiferenca.SOBRA_DE);
+
+        Assert.assertEquals(BigDecimal.valueOf(225).setScale(2), diferenca.getValorTotalReal());
+    }
+    
+    @Test
+    public void testValorTotalRealSobraEm() {
+        Diferenca diferenca = new Diferenca();
+        diferenca.setProdutoEdicao(edicao);
+        diferenca.setQtde(BigInteger.valueOf(2));
+        diferenca.setTipoDiferenca(TipoDiferenca.SOBRA_EM);
+
+        Assert.assertEquals(BigDecimal.valueOf(22.5).setScale(2), diferenca.getValorTotalReal());
+    }
+    
+    @Test
+    public void testValorTotalRealFaltaDe() {
+        Diferenca diferenca = new Diferenca();
+        diferenca.setProdutoEdicao(edicao);
+        diferenca.setQtde(BigInteger.valueOf(3));
+        diferenca.setTipoDiferenca(TipoDiferenca.FALTA_DE);
+
+        Assert.assertEquals(BigDecimal.valueOf(-337.5).setScale(2), diferenca.getValorTotalReal());
+    }
+    
+    @Test
+    public void testValorTotalRealFaltaEm() {
+        Diferenca diferenca = new Diferenca();
+        diferenca.setProdutoEdicao(edicao);
+        diferenca.setQtde(BigInteger.valueOf(3));
+        diferenca.setTipoDiferenca(TipoDiferenca.FALTA_EM);
+
+        Assert.assertEquals(BigDecimal.valueOf(-33.75).setScale(2), diferenca.getValorTotalReal());
+    }
 
 }

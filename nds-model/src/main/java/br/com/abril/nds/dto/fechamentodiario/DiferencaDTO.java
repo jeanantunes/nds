@@ -168,7 +168,7 @@ public class DiferencaDTO implements Serializable {
         dto.setNomeProduto(produto.getNome());
         dto.setNumeroEdicao(produtoEdicao.getNumeroEdicao());
         dto.setQtdeExemplar(diferenca.getQtdeExemplares().longValue());
-        dto.setTotal(diferenca.getValorTotal());
+        dto.setTotal(diferenca.getValorTotalReal());
         dto.setTipoDiferenca(diferenca.getTipoDiferenca());
         if (lancamento != null) {
             dto.setStatusAprovacao(lancamento.getStatus());
