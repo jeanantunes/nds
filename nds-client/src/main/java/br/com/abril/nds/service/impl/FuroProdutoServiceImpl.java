@@ -1,7 +1,5 @@
 package br.com.abril.nds.service.impl;
 
-import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -16,7 +14,6 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
-import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.movimentacao.FuroProduto;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.HistoricoLancamento;
@@ -120,26 +117,34 @@ public class FuroProdutoServiceImpl implements FuroProdutoService {
 		
 	}
 
+	@Override
+	@Transactional(readOnly=true)
+	public boolean verificarProdutoExpedido(Long idLancamento) {
+		
+		Lancamento lancamento = this.lancamentoRepository.buscarPorId(idLancamento);
+		
+		if (lancamento == null) {
+			
+			throw new ValidacaoException(TipoMensagem.ERROR, "Lançamento não encontrado.");
+		}
+		
+		return lancamento.getStatus().equals(StatusLancamento.EXPEDIDO);
+	}
+	
 	@Transactional
 	@Override
 	public void efetuarFuroProduto(String codigoProduto, Long idProdutoEdicao, Long idLancamento, Date novaData, Long idUsuario) {		
 		
 		Lancamento lancamento = this.lancamentoRepository.buscarPorId(idLancamento);
 		
-		Estudo estudo = 
-			this.estudoRepository.obterEstudoDoLancamentoPorDataProdutoEdicao(
-					lancamento.getDataLancamentoDistribuidor(), 
-					idProdutoEdicao);
-		
-		if (estudo != null){
-			estudo.setDataLancamento(novaData);
+		if (this.verificarProdutoExpedido(idLancamento)) {
+
+			// Geração de movimentação de estoque por cota / movimentação de estoque / estoque / estoque cota
+			movimentoEstoqueService.gerarMovimentoEstoqueFuroPublicacao(lancamento, idUsuario);
 		}
 		
 		lancamento.setDataLancamentoDistribuidor(novaData);
 		lancamento.setStatus(StatusLancamento.FURO);
-		
-		// Geração de movimentação de estoque por cota / movimentação de estoque / estoque / estoque cota
-		movimentoEstoqueService.gerarMovimentoEstoqueFuroPublicacao(lancamento, idUsuario);
 		
 		FuroProduto furoProduto = new FuroProduto();
 		furoProduto.setData(new Date());
@@ -159,10 +164,6 @@ public class FuroProdutoServiceImpl implements FuroProdutoService {
 		historicoLancamento.setTipoEdicao(TipoEdicao.ALTERACAO);
 		
 		this.furoProdutoRepository.adicionar(furoProduto);
-		
-		if (estudo != null){
-			this.estudoRepository.alterar(estudo);
-		}
 		
 		this.lancamentoRepository.alterar(lancamento);
 		

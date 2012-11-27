@@ -13,8 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.RelatorioTiposProdutosVO;
 import br.com.abril.nds.dto.RelatorioTiposProdutosDTO;
-import br.com.abril.nds.dto.filtro.FiltroCotaInadimplenteDTO;
 import br.com.abril.nds.dto.filtro.FiltroRelatorioTiposProdutos;
+import br.com.abril.nds.dto.filtro.FiltroResumoExpedicaoDTO;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.TipoProduto;
@@ -23,6 +23,7 @@ import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.RelatorioTiposProdutosService;
 import br.com.abril.nds.service.TipoProdutoService;
+import br.com.abril.nds.util.Util;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.util.export.NDSFileHeader;
@@ -74,28 +75,50 @@ public class RelatorioTiposProdutosController {
 	@Path("/pesquisar.json")
 	public void pesquisar(FiltroRelatorioTiposProdutos filtro, String sortname, String sortorder, int rp, int page) {
 		
-//		FiltroRelatorioTiposProdutos filtroSession = (FiltroRelatorioTiposProdutos) session
-//				.getAttribute(FILTRO_RELATORIO_TIPOS_PRODUTOS);
-		
-		PaginacaoVO vo = new PaginacaoVO();
-		vo.setSortColumn(sortname);
-		vo.setSortOrder(sortorder);
-		vo.setQtdResultadosPorPagina(rp);
-		vo.setPaginaAtual(page);
-		
-		filtro.setPaginacaoVO(vo);
-		
-		this.session.setAttribute(FILTRO_RELATORIO_TIPOS_PRODUTOS, filtro);
+		tratarFiltroPesquisa(filtro, sortorder, sortname, page, rp);
 		
  		List<RelatorioTiposProdutosVO> list = this.convertList(service.gerarRelatorio(filtro));
+ 		
 		result.use(FlexiGridJson.class).from(list).total(filtro.getPaginacaoVO().getQtdResultadosTotal()).page(page).serialize();
 	}
+	
+	private void tratarFiltroPesquisa(FiltroRelatorioTiposProdutos filtro, 
+										 String sortorder,String sortname, 
+										 int page, int rp) {
+		if (filtro != null) {
+
+			PaginacaoVO paginacao = new PaginacaoVO();
+			
+			paginacao.setSortOrder(sortorder);
+			paginacao.setQtdResultadosPorPagina(rp);
+			paginacao.setPaginaAtual(page);
+			
+			filtro.setPaginacaoVO(paginacao);
+			
+			filtro.setOrdenacaoColuna(Util.getEnumByStringValue(FiltroRelatorioTiposProdutos.OrdenacaoColuna.values(), sortname));
+		}
+
+		FiltroRelatorioTiposProdutos filtroSession = 
+				(FiltroRelatorioTiposProdutos) session.getAttribute(FILTRO_RELATORIO_TIPOS_PRODUTOS);
+
+		if (filtroSession != null && !filtroSession.equals(filtro)) {
+
+			filtro.getPaginacaoVO().setPaginaAtual(1);
+		}
+
+		this.session.setAttribute(FILTRO_RELATORIO_TIPOS_PRODUTOS, filtro);
+}
 	
 	
 	@Path("/exportar")
 	public void exportar(FileType fileType) throws IOException {
 		
 		FiltroRelatorioTiposProdutos filtro = (FiltroRelatorioTiposProdutos) this.session.getAttribute(FILTRO_RELATORIO_TIPOS_PRODUTOS);
+		
+		filtro.getPaginacaoVO().setPaginaAtual(null);
+		filtro.getPaginacaoVO().setQtdResultadosPorPagina(null);
+		filtro.getPaginacaoVO().setQtdResultadosTotal(null);
+		
 		List<RelatorioTiposProdutosVO> list = this.convertList(service.gerarRelatorio(filtro));
 		
 		FileExporter.to("relatorio-tipos-produtos", fileType).inHTTPResponse(
