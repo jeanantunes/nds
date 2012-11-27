@@ -17,12 +17,14 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import br.com.abril.nds.model.Origem;
+import br.com.abril.nds.model.cadastro.desconto.Desconto;
 
 /**
  * @author francisco.garcia
@@ -148,13 +150,10 @@ public class Produto implements Serializable {
 	@Embedded
 	private SegmentacaoProduto segmentacao;
 	
-<<<<<<< HEAD
-=======
 	@OneToOne(optional = true)
 	@JoinColumn(name = "DESCONTO_ID")
 	private Desconto descontoProduto;
 
->>>>>>> def3e02f049b86bfdb61ff735cad04f3f09f735b
 	@Column(name="DESCONTO")
 	private BigDecimal desconto;
 	
@@ -563,11 +562,9 @@ public class Produto implements Serializable {
 		this.segmentacao = segmentacao;
 	}
 
-<<<<<<< HEAD
 	/**
 	 * @return the desconto
 	 */
-=======
 	public Desconto getDescontoProduto() {
 		return descontoProduto;
 	}
@@ -576,7 +573,6 @@ public class Produto implements Serializable {
 		this.descontoProduto = descontoProduto;
 	}
 
->>>>>>> def3e02f049b86bfdb61ff735cad04f3f09f735b
 	public BigDecimal getDesconto() {
 		return desconto;
 	}
