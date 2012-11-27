@@ -37,6 +37,11 @@ import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
+<<<<<<< HEAD
+=======
+import br.com.abril.nds.service.CFOPService;
+import br.com.abril.nds.service.DescontoService;
+>>>>>>> DGBti/master
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.NotaFiscalEntradaService;
 import br.com.abril.nds.service.PessoaJuridicaService;
@@ -98,6 +103,9 @@ public class RecebimentoFisicoController {
 	
 	@Autowired
 	private Validator validator;
+	
+	@Autowired
+	private DescontoService descontoService; 
 	
 	public RecebimentoFisicoController(
 			Result result, 

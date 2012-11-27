@@ -2,7 +2,10 @@ var recebimentoFisicoController = $.extend(true, {
 	
 	path: contextPath + '/estoque/recebimentoFisico/',
 	
+	novoValorTotalTyped: false, 
+	
 	init: function() {
+		var _this = this;
 		
 		$("#datepickerLancto", this.workspace).datepicker({
 			showOn: "button",
@@ -65,6 +68,10 @@ var recebimentoFisicoController = $.extend(true, {
 			 precision:2
 		});
 		
+		$("#novoValorTotal", this.workspace).keyup(function(){
+			_this.novoValorTotalTyped = true;
+		});
+		
 		$("#novoValorTotal", this.workspace).maskMoney({
 			 thousands:'.', 
 			 decimal:',', 
@@ -81,6 +88,11 @@ var recebimentoFisicoController = $.extend(true, {
 		$("#repartePrevisto", this.workspace).numeric();
 
 		$("#produto", this.workspace).autocomplete({source: ""});
+		
+		$("#cnpj", this.workspace).mask("99.999.999/9999-99");
+		
+		
+		
 		
 		recebimentoFisicoController.ocultarBtns();
 		
@@ -125,7 +137,7 @@ var recebimentoFisicoController = $.extend(true, {
 			return;
 		}
 		
-		$.postJSON(this.path + 'buscaCnpj', {cnpj:cnpj}, 
+		$.postJSON(this.path + 'buscaCnpj', {cnpj:removeSpecialCharacteres(cnpj)}, 
 		function(result) { 
 			$("#fornecedor", this.workspace).val(result.cnpj);
 		});	
@@ -148,6 +160,7 @@ var recebimentoFisicoController = $.extend(true, {
 		}else{
 			
 			$("#cnpj", this.workspace).val(cnpjDoFornecedor);
+			$("#cnpj", this.workspace).mask("99.999.999/9999-99");
 			
 			$("#cnpj", this.workspace).attr("disabled", false);
 			
@@ -248,6 +261,7 @@ var recebimentoFisicoController = $.extend(true, {
 			return;
 		}
 		
+		this.novoValorTotalTyped=false;
 		recebimentoFisicoController.limparCamposNovoItem();
 		
 		$("#dialog-novo-item", this.workspace).dialog({
@@ -424,6 +438,7 @@ var recebimentoFisicoController = $.extend(true, {
 		$("#datepickerRecolhimento", this.workspace).val("");
 		$("#repartePrevisto", this.workspace).val("");
 		$("#tipoLancamento", this.workspace).val("");		
+		$("#novoValorTotal", this.workspace).val("");
 	
 	},
 
@@ -442,6 +457,8 @@ var recebimentoFisicoController = $.extend(true, {
 		$("#tipoLancamento", this.workspace).val("");
 		$("#peso", this.workspace).val("");
 		$("#pacotePadrao", this.workspace).val("");
+		$("#novoValorTotal", this.workspace).val("");
+		
 	
 	},
 	
@@ -855,6 +872,7 @@ var recebimentoFisicoController = $.extend(true, {
 	editarItemNotaFiscal : function(lineId) {
 		
 		recebimentoFisicoController.lineIdItemNotaEmEdicao = lineId;
+		this.novoValorTotalTyped=true;
 		
 		recebimentoFisicoController.limparCamposNovoItem();
 		
@@ -917,6 +935,9 @@ var recebimentoFisicoController = $.extend(true, {
 			var imgExclusao = '<img src="'+contextPath+'/images/ico_excluir.gif" width="15" height="15" alt="Salvar" hspace="5" border="0" />'; 
 			
 			var imgEdicao = '<img src="'+contextPath+'/images/ico_editar.gif" width="15" height="15" alt="Salvar" hspace="5" border="0" />'; 
+			
+			value.cell.precoCapa = $.formatNumber(value.cell.precoCapa, {format:"#,##0.00", locale:"br"}); 
+			value.cell.valorTotal = $.formatNumber(value.cell.valorTotal, {format:"#,##0.00", locale:"br"}); 
 			
 			if(edicaoItemNotaPermitida == "S") {
 				
@@ -1015,6 +1036,10 @@ var recebimentoFisicoController = $.extend(true, {
 				value.cell.qtdExemplar 	=  '<input name="qtdExemplar" disabled="disabled" style="width: 45px;" type="text" value="'+qtdExemplar+'"/>';
 			}
 			
+			
+			value.cell.precoCapa = $.formatNumber(value.cell.precoCapa, {format:"#,##0.00", locale:"br"}); 
+			value.cell.valorTotal = $.formatNumber(value.cell.valorTotal, {format:"#,##0.00", locale:"br"}); 
+			
 			if(edicaoItemNotaPermitida == "S") {
 				
 				value.cell.acao =  '<a href="javascript:;" onclick="recebimentoFisicoController.editarItemNotaFiscal('+[lineId]+');">' + imgEdicao + '</a>' +
@@ -1025,6 +1050,9 @@ var recebimentoFisicoController = $.extend(true, {
 				value.cell.acao = 	'<a href="javascript:;" style="opacity:0.4; filter:alpha(opacity=40)"  >' + imgEdicao   + '</a>' + 
 							 		'<a href="javascript:;" style="opacity:0.4; filter:alpha(opacity=40)"  >' + imgExclusao + '</a>' ;
 			}
+			
+			
+			
 			
 			if(edicaoItemRecFisicoPermitida == "S") {
 				value.cell.replicaQtd = '<input title="Replicar Item" onclick="recebimentoFisicoController.replicarValorRepartePrevisto('+
@@ -1182,8 +1210,11 @@ var recebimentoFisicoController = $.extend(true, {
 	},
 	
 	popup_adicionar : function() {
+		this.limparCamposNovaNota();
 		
+		this.novoValorTotalTyped = false;
 		recebimentoFisicoController.montaGridItens();
+		
 		
 		$( "#dialog-adicionar", this.workspace ).dialog({
 			resizable: false,
@@ -1196,6 +1227,8 @@ var recebimentoFisicoController = $.extend(true, {
 				           text:"Confirmar", 
 				           click: function() {
 				        	   recebimentoFisicoController.incluirNota();
+				        	   recebimentoFisicoController.limparCamposPesquisa();
+				        	   $(".grids", recebimentoFisicoController.workspace).hide();
 				           }
 			           },
 			           {
@@ -1575,16 +1608,19 @@ var recebimentoFisicoController = $.extend(true, {
 			valorTotal += intValue(removeMascaraPriceFormat($(colunaValor).find("div").find('input[name="itensRecebimento.valorItem"]').val()));
 			
 		});
-
-        $("#novoValorTotal", this.workspace).val(valorTotal);
+		
+		if(!this.novoValorTotalTyped){
+			$("#novoValorTotal", this.workspace).val(valorTotal);
+		        
+	        $("#novoValorTotal", this.workspace).priceFormat({
+				allowNegative: true,
+				centsSeparator: ',',
+			    thousandsSeparator: '.'
+			});
+		}
+       
         
-        $("#novoValorTotal", this.workspace).priceFormat({
-			allowNegative: true,
-			centsSeparator: ',',
-		    thousandsSeparator: '.'
-		});
-        
-        $("#labelValorTotal", this.workspace).html($("#novoValorTotal").val());
+        $("#labelValorTotal", this.workspace).html($.formatNumber(valorTotal/100,{locale:'br'}));
 	},
     
     replicarQuantidadeItem : function(index){
@@ -1813,6 +1849,7 @@ var recebimentoFisicoController = $.extend(true, {
 			function(result) {
 				
 				recebimentoFisicoController.limparCamposNovaNota();
+				recebimentoFisicoController.limpar
 				
 				$("#dialog-adicionar", this.workspace).dialog( "close" );
 	
