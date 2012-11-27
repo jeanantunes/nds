@@ -15,6 +15,7 @@ import org.springframework.stereotype.Repository;
 import br.com.abril.nds.client.vo.NegociacaoDividaDetalheVO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaDividasCotaDTO;
 import br.com.abril.nds.model.StatusCobranca;
+import br.com.abril.nds.model.financeiro.Boleto;
 import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.financeiro.StatusBaixa;
 import br.com.abril.nds.repository.CobrancaRepository;
@@ -369,5 +370,14 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
 		query.setResultTransformer(new AliasToBeanResultTransformer(NegociacaoDividaDetalheVO.class));
 		
 		return query.list();
+	}
+
+	@Override
+	public void atualizarVias(Boleto boleto) {
+		// Atualiza a via do boleto
+		if (boleto.getVias() != null) {
+			boleto.setVias(boleto.getVias()+1);
+			this.alterar(boleto);
+		}
 	}
 }
