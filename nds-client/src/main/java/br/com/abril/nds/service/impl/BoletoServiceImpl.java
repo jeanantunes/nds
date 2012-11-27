@@ -1027,12 +1027,13 @@ public class BoletoServiceImpl implements BoletoService {
 	 * @throws IOException
 	 */
 	@Override
-	@Transactional(readOnly=true)
+	@Transactional
 	public byte[] gerarImpressaoBoleto(String nossoNumero) throws IOException {
 		
 		Boleto boleto = boletoRepository.obterPorNossoNumero(nossoNumero,null);
 		GeradorBoleto geradorBoleto = new GeradorBoleto(this.geraCorpoBoleto(boleto)) ;
 		byte[] b = geradorBoleto.getBytePdf();
+		cobrancaRepository.atualizarVias(boleto); 
         return b;
 	}
 	

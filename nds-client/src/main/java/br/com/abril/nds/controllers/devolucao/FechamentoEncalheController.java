@@ -435,7 +435,7 @@ public class FechamentoEncalheController {
 					boxId);
 		}
 		
-		this.result.use(Results.json()).from("", "result").recursive().serialize();
+		this.result.use(Results.json()).from("", "result").serialize();
 	}
 
 	private void gravaFechamentoEncalhe(
