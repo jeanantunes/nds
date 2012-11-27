@@ -4,13 +4,13 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
 import junit.framework.Assert;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -242,7 +242,7 @@ public class EstoqueProdutoCotaRepositoryImplTest extends AbstractRepositoryImpl
 		save(politicaCobranca);
 		
 	}
-	
+	@Ignore
 	@Test
 	public void buscarEstoqueProdutoCotaPorIdProdutEdicao() {
 		
@@ -253,21 +253,7 @@ public class EstoqueProdutoCotaRepositoryImplTest extends AbstractRepositoryImpl
 		
 		Assert.assertTrue(listaEstoqueProdutoCota.size() > 0);
 	}
-	
-	@Test
-	public void testObterValorTotalReparteCota() {
-		
-		List<Long> listaIdProdutoEdicao = new LinkedList<Long>();
-		
-		listaIdProdutoEdicao.add(1L);
-		
-		listaIdProdutoEdicao.add(2L);
-		
-		BigDecimal valorTotalReparteCota = 
-				estoqueProdutoCotaRepository.obterValorTotalReparteCota(123, listaIdProdutoEdicao, 1L);
-		
-	}
-	
+
 	@Test
 	public void testObterFaturamentoCota() {
 		Double faturamento = null;
@@ -275,4 +261,96 @@ public class EstoqueProdutoCotaRepositoryImplTest extends AbstractRepositoryImpl
 		faturamento  = estoqueProdutoCotaRepository.obterFaturamentoCota(123L);
 		
 	}
+	
+	@Test
+	public void testarBuscarEstoquePorProdutoECota() {
+		
+		EstoqueProdutoCota estoquePorProduto;
+		
+		Long idProdutoEdicao = 1L;
+		Long idCota = 2L;
+		
+		estoquePorProduto = estoqueProdutoCotaRepository.buscarEstoquePorProdutoECota(idProdutoEdicao, idCota);
+		
+	}
+	
+	@Test
+	public void testarBuscarEstoquePorProdutEdicaoECota() {
+		
+		EstoqueProdutoCota estoquePorProduto;
+		
+		Long idProdutoEdicao = 1L;
+		Long idCota = 2L;
+		
+		estoquePorProduto = estoqueProdutoCotaRepository.buscarEstoquePorProdutEdicaoECota(idProdutoEdicao, idCota);
+		
+		
+	}
+	
+	@Test
+	public void testarBuscarListaEstoqueProdutoCota() {
+		
+		List<EstoqueProdutoCota> listaEstoqueProduto;
+		
+		Long idLancamento = 1L;
+		
+		listaEstoqueProduto = estoqueProdutoCotaRepository.buscarListaEstoqueProdutoCota(idLancamento);
+		
+		Assert.assertNotNull(listaEstoqueProduto);
+		
+	}
+	
+	@Test
+	public void testarBuscarQuantidadeEstoqueProdutoEdicao() {
+		
+		BigDecimal quantidadeEstoque;
+		
+		Long numeroEdicao = 1L;
+		String codigoProduto = "123";
+		Integer numeroCota = 1;
+		
+		quantidadeEstoque = estoqueProdutoCotaRepository.buscarQuantidadeEstoqueProdutoEdicao(numeroEdicao, codigoProduto, numeroCota);
+		
+		Assert.assertNull(quantidadeEstoque);		
+		
+	}
+	
+	@Test
+	@SuppressWarnings("unused")
+	public void testarObterConsignado() {
+		
+		BigDecimal consignado;
+		
+		boolean cotaInadimplente = false;
+		
+		consignado = estoqueProdutoCotaRepository.obterConsignado(cotaInadimplente);
+		
+	}
+	
+	@Test
+	@SuppressWarnings("unused")
+	public void testarObterConsignadoCotaInadimplente() {
+		
+		BigDecimal consignado;
+		
+		boolean cotaInadimplente = true;
+		
+		consignado = estoqueProdutoCotaRepository.obterConsignado(cotaInadimplente);
+		
+	}
+	
+	@Test
+	public void testarObterFaturamentoCota() {
+		
+		Double faturamentoCota;
+		
+		Long idCota = 1L;
+		
+		faturamentoCota = estoqueProdutoCotaRepository.obterFaturamentoCota(idCota);
+		
+		Assert.assertNotNull(faturamentoCota);
+		
+	}
+	
+	
 }

@@ -469,17 +469,11 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	 */
 	private BigDecimal obterValorTotalReparte(Long idDistribuidor, Integer numeroCota, Date dataOperacao) {
 		
-		List<Long> listaIdProdutoEdicao = 
-				chamadaEncalheCotaRepository.obterListaIdProdutoEdicaoChamaEncalheCota(numeroCota, dataOperacao, true, false, false);
-		
-		BigDecimal reparte = BigDecimal.ZERO;
-		
-		if(listaIdProdutoEdicao != null && !listaIdProdutoEdicao.isEmpty()) {
-			reparte = estoqueProdutoCotaRepository.obterValorTotalReparteCota(numeroCota, listaIdProdutoEdicao, idDistribuidor);
-		} 
+		BigDecimal reparte =
+			chamadaEncalheCotaRepository.obterReparteDaChamaEncalheCota(
+				numeroCota, dataOperacao, true, false, false);
 		
 		return reparte;
-		
 	}
 	
 	@Transactional(readOnly = true)
@@ -680,7 +674,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		    
 			produtoEdicaoDTO = new ProdutoEdicaoDTO();
 			
-		    Cota cota = cotaRepository.obterPorNumerDaCotaAtiva(numeroCota);
+		    Cota cota = cotaRepository.obterPorNumerDaCota(numeroCota);
 		    
 			ChamadaEncalhe chamadaEncalhe = this.validarExistenciaChamadaEncalheParaCotaProdutoEdicao(cota, produtoEdicao);
 			
@@ -800,7 +794,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		    
 			produtoEdicaoDTO = new ProdutoEdicaoDTO();
 			
-		    Cota cota = cotaRepository.obterPorNumerDaCotaAtiva(numeroCota);
+		    Cota cota = cotaRepository.obterPorNumerDaCota(numeroCota);
 		    
 			ChamadaEncalhe chamadaEncalhe = this.validarExistenciaChamadaEncalheParaCotaProdutoEdicao(cota, produtoEdicao);
 			

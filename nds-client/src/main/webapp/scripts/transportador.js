@@ -428,6 +428,9 @@ var transportadorController = $.extend(true, {
 			
 			$("#inscEstadual", transportadorController.workspace).mask("?##################",{placeholder:" "});
 			
+			$("#razaoSocialPesquisa", transportadorController.workspace).autocomplete({source: ""});
+			$("#nomeFantasiaPesquisa", transportadorController.workspace).autocomplete({source: ""});
+			
 	},
 	
 	popup_novo_transportador : function() {
@@ -1225,6 +1228,18 @@ var transportadorController = $.extend(true, {
 			},
 			form: $("#dialog-excluir-associacao", this.workspace).parents("form")
 		});
+	},
+	
+	mostrarOpcaoSelecionada : function() {
+
+		if ($("#modalidadeCobranca").val() == "TAXA_FIXA") {
+			$(".transpTaxaFixa", this.workspace).show();
+			$(".transpPercentual", this.workspace).hide();
+		} else {
+			$(".transpTaxaFixa", this.workspace).hide();
+			$(".transpPercentual", this.workspace).show();
+		}
+
 	},
 	
 	mostrarOpcaoTaxaFixa : function(){

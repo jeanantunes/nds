@@ -39,6 +39,7 @@ import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCota;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaPDV;
 import br.com.abril.nds.repository.PdvRepository;
 import br.com.abril.nds.vo.PaginacaoVO;
+import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 public class PdvRepositoryTest extends AbstractRepositoryImplTest {
 	
@@ -117,6 +118,40 @@ public class PdvRepositoryTest extends AbstractRepositoryImplTest {
 		
 	}
 	
+	
+	
+	@Test
+	public void obterQntPDVIdCota(){
+		Long idCota = 1L;
+		
+		pdvRepository.obterQntPDV(idCota, null);
+		
+	}
+	
+	@Test
+	public void obterQntPDVIdPdvIgnorar(){
+		Long idPdvIgnorar = 1L;
+		
+		pdvRepository.obterQntPDV(null, idPdvIgnorar);
+		
+	}
+	
+	@Test
+	public void existePDVPrincipalIdcota(){
+		Long idCota = 1L;
+		
+		pdvRepository.existePDVPrincipal(idCota, null);
+		
+	}
+	
+	@Test
+	public void existePDVPrincipalidPdvIgnorar(){
+		Long idPdvIgnorar = 1L;
+		
+		pdvRepository.existePDVPrincipal(null, idPdvIgnorar);
+		
+	}
+	
 	@Test
 	public void obterPDVsPorCota(){
 		
@@ -129,9 +164,59 @@ public class PdvRepositoryTest extends AbstractRepositoryImplTest {
 		
 		Assert.assertNotNull(lista);
 		
-		Assert.assertTrue(!lista.isEmpty());
 
 	}
+	
+	@Test
+	public void obterPDVsPorCotaPaginacao(){
+		
+		FiltroPdvDTO filtro = new FiltroPdvDTO();
+		filtro.setIdCota(cotaManoel.getId());
+		filtro.setPaginacao(new PaginacaoVO());
+		filtro.getPaginacao().setOrdenacao(Ordenacao.ASC);
+		filtro.getPaginacao().setPaginaAtual(1);
+		filtro.getPaginacao().setQtdResultadosPorPagina(1);
+		filtro.setColunaOrdenacao(ColunaOrdenacao.CONTATO);
+		
+		List<PdvDTO> lista = pdvRepository.obterPDVsPorCota(filtro);
+		
+		Assert.assertNotNull(lista);
+		
+	}
+	
+	@Test
+	public void obterPDVIdCota(){
+		Long idCota = 1L;
+		
+		PDV pdv = pdvRepository.obterPDV(idCota, null);
+		
+	}
+	
+	@Test
+	public void obterPDVIdPDV(){
+		Long idPDV = 1L;
+		
+		PDV pdv = pdvRepository.obterPDV(null, idPDV);
+		
+	}
+	
+	@Test
+	public void setarPDVPrincipalPrincipal(){
+		boolean principal = true; 
+		
+		pdvRepository.setarPDVPrincipal(principal, null);
+		
+	}
+	
+	@Test
+	public void setarPDVPrincipalIdCota(){
+		boolean principal = false; 
+		Long idCota = 1L; 
+		
+		pdvRepository.setarPDVPrincipal(principal, idCota);
+		
+	}
+	
 	
 	@Test
 	public void obterPDVPrincipal(){
@@ -142,6 +227,17 @@ public class PdvRepositoryTest extends AbstractRepositoryImplTest {
 		Assert.assertEquals(cotaManoel, pdv.getCota());
 		
 		Assert.assertTrue(pdv.getCaracteristicas().isPontoPrincipal());
+		
+	}
+	
+	@Test
+	public void obterPDVPorRota(){
+		
+		Long idRota = 1L; 
+		
+		List<PDV> pdv =  pdvRepository.obterPDVPorRota(idRota);
+		
+		Assert.assertNotNull(pdv);
 		
 	}
 	
@@ -262,5 +358,59 @@ public class PdvRepositoryTest extends AbstractRepositoryImplTest {
         Assert.assertNotNull(pdv);
         Assert.assertEquals(expected, pdv);
     }
+	
+	@Test
+	public void obterPDVPorCotaEEnderecoNumCota(){
+		
+		Integer numCota = 1; 
+		
+		List<PDV> pdv =  pdvRepository.obterPDVPorCotaEEndereco(numCota, null, null, null, null);
+		
+		Assert.assertNotNull(pdv);
+		
+	}
 
+	@Test
+	public void obterPDVPorCotaEEnderecoCidade(){
+		
+		String cidade = "cidadeTeste"; 
+		
+		List<PDV> pdv =  pdvRepository.obterPDVPorCotaEEndereco(null, cidade, null, null, null);
+		
+		Assert.assertNotNull(pdv);
+		
+	}
+	
+	@Test
+	public void obterPDVPorCotaEEnderecoUf(){
+		
+		String uf = "ufTeste"; 
+		
+		List<PDV> pdv =  pdvRepository.obterPDVPorCotaEEndereco(null, null, uf, null, null);
+		
+		Assert.assertNotNull(pdv);
+		
+	}
+	
+	@Test
+	public void obterPDVPorCotaEEnderecoBairro(){
+		
+		String bairro = "bairroTeste"; 
+		
+		List<PDV> pdv =  pdvRepository.obterPDVPorCotaEEndereco(null, null, null, bairro, null);
+		
+		Assert.assertNotNull(pdv);
+		
+	}
+	
+	@Test
+	public void obterPDVPorCotaEEnderecoCep(){
+		
+		String cep = "cepTeste"; 
+		
+		List<PDV> pdv =  pdvRepository.obterPDVPorCotaEEndereco(null, null, null, null, cep);
+		
+		Assert.assertNotNull(pdv);
+		
+	}
 }

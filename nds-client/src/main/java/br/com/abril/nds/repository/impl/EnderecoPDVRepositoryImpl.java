@@ -102,11 +102,15 @@ public class EnderecoPDVRepositoryImpl extends AbstractRepositoryModel<EnderecoP
 		
 		StringBuilder hql  = new StringBuilder();
 		
-		hql.append(" select endereco.codigoCidadeIBGE as key, endereco.cidade as value from ")
-			.append(" PDV pdv join pdv.enderecos enderecoPDV join enderecoPDV.endereco endereco ")
+		hql.append(" select endereco.codigoCidadeIBGE as key, endereco.cidade as value ")
+		   .append(" from EnderecoCota enderecoCota ")
+		   .append(" join enderecoCota.endereco endereco ")
+		   .append(" group by endereco.cidade");
+
+		/*.append(" from PDV pdv join pdv.enderecos enderecoPDV join enderecoPDV.endereco endereco ")
 			.append(" where pdv.caracteristicas.pontoPrincipal = true ")
 			.append(" group by endereco.codigoCidadeIBGE, endereco.cidade ")
-			.append(" order by endereco.cidade ");
+			.append(" order by endereco.cidade ");*/
 		
 		Query query = getSession().createQuery(hql.toString());
 		

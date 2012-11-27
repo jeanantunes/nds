@@ -166,7 +166,7 @@ public class MatrizRecolhimentoController {
 	private void validarDatasBalanceamentoMatriz(TreeMap<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento, 
 												 List<Date> datasConfirmadas) {
 		
-		List<String> listaMensagens = new ArrayList<>();
+		List<String> listaMensagens = new ArrayList<String>();
 
 		for (Date data : datasConfirmadas) {
 

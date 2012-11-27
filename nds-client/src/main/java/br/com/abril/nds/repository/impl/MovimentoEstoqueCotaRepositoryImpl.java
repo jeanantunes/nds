@@ -1602,7 +1602,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 				nome = " codigoCota ";
 				break;
 			case CODIGO_ROTA:
-				nome = " descricaoRota ";
+				nome = " codigoRota ";
 				break;
 			case NOME_COTA:
 				nome = " nomeCota ";

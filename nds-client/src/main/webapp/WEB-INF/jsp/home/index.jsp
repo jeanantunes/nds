@@ -48,12 +48,14 @@
 						{
 							_original_init : $.ui.dialog.prototype._init,
 							_original_open : $.ui.dialog.prototype.open,				
-							_original_close : $.ui.dialog.prototype.close,				
+							_original_close : $.ui.dialog.prototype.close,	
+						    						
 							_init : function() {
 								var self = this.element;
 	
 								var diaOpt = {
-									form: this.options.form
+									form: this.options.form,
+									escondeHeader:this.options.escondeHeader,	
 								};
 	
 								$.fn.extend(true, this.options, diaOpt);
@@ -66,13 +68,17 @@
 								var self = this.element, o = this.options;
 								self.parent().appendTo(o.form);
 								//self.parent().css("top", "58px");
-								escondeHeader();
-								redimensionarWorkspace();
+								if(o.escondeHeader || o.escondeHeader == undefined){
+									escondeHeader();
+									redimensionarWorkspace();
+								}
 								this._original_open();
 							},
 							close : function() {
-								mostraHeader();
-								redimensionarWorkspace();
+								if(this.options.escondeHeader || this.options.escondeHeader == undefined){
+									mostraHeader();
+									redimensionarWorkspace();
+								}
 								this._original_close();
 							}
 							

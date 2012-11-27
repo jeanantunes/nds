@@ -15,11 +15,10 @@ import org.springframework.stereotype.Repository;
 import br.com.abril.nds.dto.FornecedorDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaFornecedorDTO;
-import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.EnderecoFornecedor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoFornecedor;
-import br.com.abril.nds.model.cadastro.PessoaJuridica;
+import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.repository.FornecedorRepository;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
@@ -247,13 +246,13 @@ public class FornecedorRepositoryImpl extends
 		if (filtroConsultaFornecedor.getNomeFantasia() != null 
 				&& !filtroConsultaFornecedor.getNomeFantasia().isEmpty()) {
 			
-			hql.append(" and fornecedor.juridica.nomeFantasia like :nomeFantasia ");
+			hql.append(" and lower( fornecedor.juridica.nomeFantasia ) like :nomeFantasia ");
 		}
 
 		if (filtroConsultaFornecedor.getRazaoSocial() != null 
 				&& !filtroConsultaFornecedor.getRazaoSocial().isEmpty()) {
 			
-			hql.append(" and fornecedor.juridica.razaoSocial like :razaoSocial ");
+			hql.append(" and lower(fornecedor.juridica.razaoSocial ) like :razaoSocial ");
 		}
 		
 		return hql.toString();
@@ -269,19 +268,19 @@ public class FornecedorRepositoryImpl extends
 		if (filtroConsultaFornecedor.getCnpj() != null 
 				&& !filtroConsultaFornecedor.getCnpj().isEmpty()) {
 			
-			query.setParameter("cnpj", "%" + filtroConsultaFornecedor.getCnpj() + "%");
+			query.setParameter("cnpj", "%" + filtroConsultaFornecedor.getCnpj().replaceAll("[./-]", "") + "%");
 		}
 		
 		if (filtroConsultaFornecedor.getNomeFantasia() != null 
 				&& !filtroConsultaFornecedor.getNomeFantasia().isEmpty()) {
 			
-			query.setParameter("nomeFantasia", "%" + filtroConsultaFornecedor.getNomeFantasia() + "%");
+			query.setParameter("nomeFantasia", "%" + filtroConsultaFornecedor.getNomeFantasia().toLowerCase().trim() + "%");
 		}
 
 		if (filtroConsultaFornecedor.getRazaoSocial() != null 
 				&& !filtroConsultaFornecedor.getRazaoSocial().isEmpty()) {
 			
-			query.setParameter("razaoSocial", "%" + filtroConsultaFornecedor.getRazaoSocial() + "%");
+			query.setParameter("razaoSocial", "%" + filtroConsultaFornecedor.getRazaoSocial().toLowerCase().trim() + "%");
 		}
 
 		return query;
@@ -434,4 +433,33 @@ public class FornecedorRepositoryImpl extends
 		return (EnderecoFornecedor) criteria.uniqueResult();
 	}
 	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Pessoa> obterFornecedorPorNome(String nomeFornecedor) {
+		
+		String hql = "select pessoa from Fornecedor fornecedor "
+				+ " join  fornecedor.juridica pessoa "
+				+ " where lower(pessoa.razaoSocial) like :nomeFornecedor ";
+		
+		Query query = super.getSession().createQuery(hql);
+		
+		query.setParameter("nomeFornecedor", "%" + nomeFornecedor.toLowerCase() + "%");
+		
+		return query.list();
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Pessoa> obterFornecedorPorNomeFantasia(String nomeFantasia) {
+		
+		String hql = "select pessoa from Fornecedor fornecedor "
+				+ " join  fornecedor.juridica pessoa "
+				+ " where lower(pessoa.nomeFantasia) like :nomeFantasia ";
+		
+		Query query = super.getSession().createQuery(hql);
+		
+		query.setParameter("nomeFantasia", "%" + nomeFantasia.toLowerCase() + "%");
+		
+		return query.list();
+	}
 }

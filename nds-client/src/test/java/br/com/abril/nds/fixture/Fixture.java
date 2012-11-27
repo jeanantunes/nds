@@ -6,6 +6,7 @@ import java.math.BigInteger;
 import java.net.URL;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -65,6 +66,7 @@ import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.PoliticaSuspensao;
+import br.com.abril.nds.model.cadastro.Processo;
 import br.com.abril.nds.model.cadastro.ProcuracaoEntregador;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
@@ -1005,7 +1007,23 @@ public class Fixture {
 		return tipoMovimento;
 	}
 
+	public static TipoMovimentoEstoque tipoMovimentoEstornoFuroPublicacao() {
+		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
+		tipoMovimento.setAprovacaoAutomatica(true);
+		tipoMovimento.setDescricao("Estorno reparte por furo de publicação");
+		tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.ESTORNO_REPARTE_FURO_PUBLICACAO);
+		return tipoMovimento;
+		
+	}
 	
+	public static TipoMovimentoEstoque tipoMovimentoEstornoCotaFuroPublicacao() {
+		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
+		tipoMovimento.setAprovacaoAutomatica(true);
+		tipoMovimento.setDescricao("Estorno reparte cota por furo de publicação");
+		tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_FURO_PUBLICACAO);
+		return tipoMovimento;
+		
+	}
 	
 	public static TipoMovimentoFinanceiro tipoMovimentoFinanceiroCompraEncalhe() {
 		TipoMovimentoFinanceiro tipoMovimento = new TipoMovimentoFinanceiro();
@@ -2233,8 +2251,8 @@ public class Fixture {
 		feriado.setData(data);
 		feriado.setDescricao(descricao);
 		feriado.setTipoFeriado(tipoFeriado);
-		feriado.setUnidadeFederacao(unidadeFederacao);
-		feriado.setLocalidade(localidade);
+		feriado.setUnidadeFederacao("SP");
+		feriado.setLocalidade("São Paulo");
 		
 		feriado.setIndEfetuaCobranca(indEfetuaCobranca);
 		feriado.setIndOpera(indOpera);
@@ -3154,7 +3172,7 @@ public class Fixture {
 		
 		Localidade localidade = new Localidade();
 		
-		localidade.setId(id);
+		localidade.set_id(id.toString());
 		localidade.setNome(nome);
 		localidade.setUnidadeFederacao(unidadeFederacao);
 		localidade.setCodigoMunicipioIBGE(codigoMunicipioIBGE);
@@ -3166,7 +3184,7 @@ public class Fixture {
 		
 		Bairro bairro = new Bairro();
 		
-		bairro.setId(id);
+		bairro.set_id(id.toString());
 		bairro.setNome(nome);
 		bairro.setLocalidade(localidade);
 		
@@ -3180,8 +3198,10 @@ public class Fixture {
 		Logradouro logradouro = new Logradouro();
 		
 		logradouro.setCep(cep);
-		logradouro.setChaveBairroInicial(chaveBairroInicial);
-		logradouro.setId(id);
+		Bairro b = new Bairro();
+		b.set_id("bairro/" + chaveBairroInicial.toString());
+		logradouro.setBairroInicial(b);
+		logradouro.set_id(id.toString());
 		logradouro.setLocalidade(localidade);
 		logradouro.setNome(nome);
 		logradouro.setTipoLogradouro(tipoLogradouro);
@@ -3532,7 +3552,7 @@ public class Fixture {
 		grupo.setCotas(cotas);
 		grupo.setDiasRecolhimento(diasRecolhimento);
 		grupo.setId(id);
-		grupo.setMunicipios(municipios);
+//		grupo.setMunicipios(municipios);
 		grupo.setNome(nome);
 		grupo.setTipoCota(tipoCota);
 		grupo.setTipoGrupo(tipoGrupo);
@@ -3610,14 +3630,14 @@ public class Fixture {
        
         
         HistoricoTitularidadeCotaEndereco endereco1 = new HistoricoTitularidadeCotaEndereco(
-                10, "Centro", "13720-000", 150, "São José do Rio Pardo", null,
-                "Rua", "Treze de Maio", "13", "SP", 15, TipoEndereco.COMERCIAL,
+                "Centro", "13720-000", 150, "São José do Rio Pardo", null,
+                "Rua", "Treze de Maio", "13", "SP", "15", TipoEndereco.COMERCIAL,
                 true);
         historico.addEndereco(endereco1);
         
         HistoricoTitularidadeCotaEndereco endereco2 = new HistoricoTitularidadeCotaEndereco(
-                10, "Centro", "13720-000", 150, "São José do Rio Pardo", null,
-                "Rua", "Nove de Julho", "100", "SP", 15, TipoEndereco.RESIDENCIAL,
+                "Centro", "13720-000", 150, "São José do Rio Pardo", null,
+                "Rua", "Nove de Julho", "100", "SP", "15", TipoEndereco.RESIDENCIAL,
                 false);
         historico.addEndereco(endereco2);
         
@@ -3696,8 +3716,8 @@ public class Fixture {
         pdv.setTipoPonto(tipoPonto);
         
         HistoricoTitularidadeCotaEndereco enderecoPDV = new HistoricoTitularidadeCotaEndereco(
-                10, "Centro", "13720-000", 99, "São José do Rio Pardo", null,
-                "Rua", "Benjamin Constant", "50", "SP", 15, TipoEndereco.COMERCIAL,
+                "Centro", "13720-000", 99, "São José do Rio Pardo", null,
+                "Rua", "Benjamin Constant", "50", "SP", "15", TipoEndereco.COMERCIAL,
                 true);
         pdv.addEndereco(enderecoPDV);
         
@@ -4228,29 +4248,68 @@ public class Fixture {
 	   return avista;
    }
 
-public static CFOP cfop5102() {
-	// TODO Auto-generated method stub
-	return null;
-}
+	public static CFOP cfop5102() {
+		CFOP cfop = new CFOP();
+		cfop.setCodigo("5102");
+		cfop.setDescricao("Venda de mercadoria adquirida ou recebida de terceiros");
+		return cfop;
+	}
+	
+	public static TipoNotaFiscal tipoNotaFiscalRecebimento(CFOP cfop) {
+		
+		TipoNotaFiscal tipoNotaFiscal = new TipoNotaFiscal();
+		
+		tipoNotaFiscal.setDescricao("RECEBIMENTO DE MERCADORIAS ENCALHE");
+		tipoNotaFiscal.setGrupoNotaFiscal(GrupoNotaFiscal.RECEBIMENTO_MERCADORIAS_ENCALHE);
+		tipoNotaFiscal.setNopDescricao("NF-e de DevoluÃ§Ã£o de Remessa para DistruibuiÃ§Ã£o");
+		tipoNotaFiscal.setEmitente(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
+		tipoNotaFiscal.setDestinatario(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
+		tipoNotaFiscal.setContribuinte(false);
+		tipoNotaFiscal.setNopCodigo(0L);
+		tipoNotaFiscal.setTipoOperacao(TipoOperacao.ENTRADA);
+		tipoNotaFiscal.setTipoAtividade(TipoAtividade.PRESTADOR_SERVICO);
+		tipoNotaFiscal.setSerieNotaFiscal(4);
+		
+		tipoNotaFiscal.setCfopEstado(cfop);
+		tipoNotaFiscal.setCfopOutrosEstados(cfop);
+		
+		return tipoNotaFiscal;
 
-public static TipoNotaFiscal tipoNotaFiscalRecebimento() {
-	// TODO Auto-generated method stub
-	return null;
-}
-
-public static CFOP cfop1209() {
-	// TODO Auto-generated method stub
-	return null;
-}
-
-public static CFOP cfop1210() {
-	// TODO Auto-generated method stub
-	return null;
-}
-
-public static TipoNotaFiscal tipoNotaFiscalDevolucao() {
-	// TODO Auto-generated method stub
-	return null;
-}
+	}
+	
+	public static CFOP cfop1209() {
+		CFOP cfop = new CFOP();
+		cfop.setCodigo("1209");
+		cfop.setDescricao("DevoluÃ§Ã£o de mercadoria adquirida ou recebida de terceiros, remetida em transferÃªncia dentro do estado");
+		return cfop;
+	}
+	
+	public static CFOP cfop1210() {
+		CFOP cfop = new CFOP();
+		cfop.setCodigo("1210");
+		cfop.setDescricao("DevoluÃ§Ã£o de mercadoria adquirida ou recebida de terceiros, remetida em transferÃªncia fora do estado");
+		return cfop;
+	}
+	
+	public static TipoNotaFiscal tipoNotaFiscalDevolucao(CFOP cfop) {
+		TipoNotaFiscal tipoNotaFiscal = new TipoNotaFiscal();
+		
+		tipoNotaFiscal.setDescricao("DEVOLUCAO");
+		tipoNotaFiscal.setGrupoNotaFiscal(GrupoNotaFiscal.DEVOLUCAO_MERCADORIA_FORNECEDOR);
+		tipoNotaFiscal.setNopDescricao("NF-e de Remessa em Consignação (NECE / DANFE)");
+		tipoNotaFiscal.setEmitente(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
+		tipoNotaFiscal.setDestinatario(TipoUsuarioNotaFiscal.COTA);
+		tipoNotaFiscal.setContribuinte(true);
+		tipoNotaFiscal.setNopCodigo(0L);
+		tipoNotaFiscal.setTipoOperacao(TipoOperacao.SAIDA);
+		tipoNotaFiscal.setTipoAtividade(TipoAtividade.MERCANTIL);
+		tipoNotaFiscal.setSerieNotaFiscal(3);
+		tipoNotaFiscal.setProcesso(new HashSet<Processo>());
+		
+		tipoNotaFiscal.setCfopEstado(cfop);
+		tipoNotaFiscal.setCfopOutrosEstados(cfop);
+		
+		return tipoNotaFiscal;
+	}
    
 }

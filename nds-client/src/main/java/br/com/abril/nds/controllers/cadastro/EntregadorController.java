@@ -150,7 +150,10 @@ public class EntregadorController {
 			String sortname, String sortorder) {
 
 		filtroEntregador = prepararFiltroEntregador(filtroEntregador, page, sortname, sortorder, rp);
-
+		
+		filtroEntregador.setNomeRazaoSocial(PessoaUtil.removerSufixoDeTipo(filtroEntregador.getNomeRazaoSocial()));
+		filtroEntregador.setApelidoNomeFantasia(PessoaUtil.removerSufixoDeTipo(filtroEntregador.getApelidoNomeFantasia()));
+		
 		List<Entregador> listaEntregador = this.entregadorService.obterEntregadoresPorFiltro(filtroEntregador);
 		
 		if (listaEntregador == null || listaEntregador.isEmpty()) {

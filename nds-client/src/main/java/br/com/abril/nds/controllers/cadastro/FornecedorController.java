@@ -16,6 +16,7 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
+import br.com.abril.nds.client.util.PessoaUtil;
 import br.com.abril.nds.dto.ComboTipoFornecedorDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.FornecedorDTO;
@@ -50,6 +51,7 @@ import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.util.StringUtils;
 import br.com.caelum.vraptor.view.Results;
 
 /**
@@ -109,7 +111,8 @@ public class FornecedorController {
 		
 		filtroConsultaFornecedor = prepararFiltroFornecedor(filtroConsultaFornecedor, page, sortname, sortorder, rp);
 		
-		
+		filtroConsultaFornecedor.setNomeFantasia(PessoaUtil.removerSufixoDeTipo(filtroConsultaFornecedor.getNomeFantasia()));
+		filtroConsultaFornecedor.setRazaoSocial(PessoaUtil.removerSufixoDeTipo(filtroConsultaFornecedor.getRazaoSocial()));
 		
 		Long quantidadeRegistros =
 				this.fornecedorService.obterContagemFornecedoresPorFiltro(filtroConsultaFornecedor);		
@@ -194,7 +197,7 @@ public class FornecedorController {
 
 	@Post
 	public void editarFornecedor(Long idFornecedor) {
-
+		
 		if (idFornecedor == null) {
 
 			throw new ValidacaoException(TipoMensagem.WARNING, "Fornecedor inválido.");
@@ -206,6 +209,8 @@ public class FornecedorController {
 
 			throw new ValidacaoException(TipoMensagem.WARNING, "Fornecedor inválido.");
 		}
+		
+		limparSessao();
 		
 		List<EnderecoAssociacaoDTO> listaEnderecoAssociacao = 
 				this.fornecedorService.obterEnderecosFornecedor(idFornecedor);
@@ -229,13 +234,17 @@ public class FornecedorController {
 		this.result.use(Results.json()).from(fornecedorDTO, "result").recursive().serialize();
 	}
 	
-	@Post
-	public void novoCadastro() {
-
+	private void limparSessao() {
 		this.session.removeAttribute(LISTA_ENDERECOS_SALVAR_SESSAO);
 		this.session.removeAttribute(LISTA_ENDERECOS_REMOVER_SESSAO);
 		this.session.removeAttribute(LISTA_TELEFONES_SALVAR_SESSAO);
-		this.session.removeAttribute(LISTA_TELEFONES_REMOVER_SESSAO);
+		this.session.removeAttribute(LISTA_TELEFONES_REMOVER_SESSAO);		
+	}
+
+	@Post
+	public void novoCadastro() {
+
+		limparDadosSessao();
 		
 		Distribuidor distribuidor = distribuidorService.obter();
 		
@@ -257,7 +266,7 @@ public class FornecedorController {
 		mapa.put("data", DateUtil.formatarDataPTBR(new Date()));
 		
 		if (novoCodigoInterface != null) {
-			mapa.put("nextCodigo", novoCodigoInterface);
+			mapa.put("nextCodigo", String.format("%04d", novoCodigoInterface));
 		}
 		
 		this.result.use(CustomJson.class).from(mapa).serialize();

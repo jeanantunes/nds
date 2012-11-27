@@ -376,7 +376,7 @@ public class ChamadaoRepositoryImpl extends AbstractRepositoryModel<Cota,Long> i
 //	        .append(") ")
 // Comentado Por Eduardo "PunkRock" Castro em 09-11-2012 -> DD-MM-YYYY	
 	    	
-	        .append("and lancamento.STATUS = :statusLancamentoBalanceadoRec ")
+	        .append("and lancamento.DATA_REC_PREVISTA >= :dataRecolhimento ")
 
 	    	
 	        .append("and lancamento.TIPO_LANCAMENTO = :tipoLancamento ")
@@ -473,13 +473,15 @@ public class ChamadaoRepositoryImpl extends AbstractRepositoryModel<Cota,Long> i
 	private void aplicarParametrosParaPesquisaConsignadosCota(FiltroChamadaoDTO filtro, 
 													 	 	  Query query) {
 		
-		query.setParameter("statusLancamentoBalanceadoRec",
-						   StatusLancamento.BALANCEADO_RECOLHIMENTO.toString());
-		
-		query.setParameter("statusLancamentoEmBalanceamentoRec",
-				   StatusLancamento.EM_BALANCEAMENTO_RECOLHIMENTO.toString());
-		
-		query.setParameter("statusLancamentoExpedido", StatusLancamento.EXPEDIDO.toString());
+
+//Comentado Por Eduardo "PunkRock" Castro em 09-11-2012 -> DD-MM-YYYY			
+//		query.setParameter("statusLancamentoBalanceadoRec",
+//						   StatusLancamento.BALANCEADO_RECOLHIMENTO.toString());
+//		
+//		query.setParameter("statusLancamentoEmBalanceamentoRec",
+//				   StatusLancamento.EM_BALANCEAMENTO_RECOLHIMENTO.toString());
+//		
+//		query.setParameter("statusLancamentoExpedido", StatusLancamento.EXPEDIDO.toString());
 		
 		query.setParameter("chamadaEncalheAntecipada", TipoChamadaEncalhe.ANTECIPADA.toString());
 		

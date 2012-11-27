@@ -61,7 +61,7 @@
 				</tr>
 				<tr>
 					<td>
-						<input type="text" id="codigoProdutoInput" style="width:40px;" maxlength="30" onchange="lancamentoNovoController.limparProduto()"
+						<input type="text" id="codigoProdutoInput" style="width:75px;" maxlength="30" onchange="lancamentoNovoController.limparProduto()"
 							onblur="pesquisaProdutoLancamentoFaltasSobras.pesquisarPorCodigoProduto(codigoProdutoInput, nomeProdutoInput, edicaoProdutoInput, true);"/>
 					</td>
 					<td>
@@ -76,7 +76,7 @@
 					<td align="center" id="pacotePadrao"></td>
 					<td align="center" id="reparteProduto"></td>
 					<td>
-						<input id="diferencaProdutoInput" style="width: 60px; text-align: center;" maxlength="255" />
+						<input id="diferencaProdutoInput" style="width: 40px; text-align: center;" maxlength="10" />
 					</td>
 				</tr>
     		</table>

@@ -28,7 +28,6 @@ import org.hibernate.Transaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
 import br.com.abril.nds.integracao.model.canonic.InterfaceEnum;
 import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.Origem;
@@ -297,6 +296,9 @@ public class DataLoader {
 	private static TipoMovimentoEstoque tipoMovimentoEstornoCotaAusente;
 	private static TipoMovimentoEstoque tipoMovimentoSuplementarCotaAusente;
 
+	private static TipoMovimentoEstoque tipoMovimentoEstornoFuroPublicacao;
+	private static TipoMovimentoEstoque tipoMovimentoEstornoCotaFuroPublicacao;
+	
 	private static TipoMovimentoEstoque tipoMovimentoEstornoCotaEnvioReparte;
 	private static TipoMovimentoEstoque tipoMovimentoEntradaSuplementarEnvioReparte;
 	
@@ -403,11 +405,11 @@ public class DataLoader {
 	private static CFOP cfop5102;
 	private static TipoNotaFiscal tipoNotaFiscalRecebimento; //Precisa Remover
 	private static TipoNotaFiscal tipoNotaFiscalDevolucao;//Precisa Remover
-	private static Usuario usuarioJoao;
+	public static Usuario usuarioJoao;
 	private static Fornecedor fornecedorAcme;
 	private static Fornecedor fornecedorDinap;
 	private static Fornecedor fornecedorFc;
-	private static Distribuidor distribuidor;
+	public static Distribuidor distribuidor;
 
 	private static NCM ncmCartaz;	
 	private static NCM ncmCd;	
@@ -1142,7 +1144,7 @@ public class DataLoader {
 
 		gerarLogExecucaoInterfaces(session);
 
-		gerarLogradouros(session);
+		//gerarLogradouros(session);
 
 		//criarNovaNotaFiscal(session);
 		
@@ -5752,6 +5754,9 @@ public class DataLoader {
 		tipoMovimentoCompraEncalhe = Fixture.tipoMovimentoCompraEncalhe();
 		tipoMovimentoEstornoCompraEncalhe = Fixture.tipoMovimentoEstornoCompraEncalhe();
 
+		tipoMovimentoEstornoFuroPublicacao = Fixture.tipoMovimentoEstornoFuroPublicacao();
+		tipoMovimentoEstornoCotaFuroPublicacao = Fixture.tipoMovimentoEstornoCotaFuroPublicacao();
+
 		tipoMovimentoVendaEncalhe = Fixture.tipoMovimentoVendaEncalhe();
 		tipoMovimentoEstornoVendaEncalhe = Fixture.tipoMovimentoEstornoVendaEncalhe();
 
@@ -5765,7 +5770,7 @@ public class DataLoader {
 
 		save(session, tipoMovimentoVendaEncalhe,tipoMovimentoFinanceiroCompraEncalhe,tipoMovimentoEstornoVendaEncalhe,tipoMovimentoVendaEncalheSuplementar,
 					  tipoMovimentoEstornoVendaEncalheSuplementar,tipoMovimentoEstoqueCompraSuplementar,tipoMovimentoEstoqueEstornoCompraSuplementar, 
-					  tipoMovimentoEncalheAntecipado,tipoMovimentoCompraEncalhe,tipoMovimentoEstornoCompraEncalhe);
+					  tipoMovimentoEncalheAntecipado,tipoMovimentoCompraEncalhe,tipoMovimentoEstornoCompraEncalhe, tipoMovimentoEstornoCotaFuroPublicacao, tipoMovimentoEstornoFuroPublicacao);
 
 
 		tipoMovimentoSuplementarCotaAusente = Fixture.tipoMovimentoSuplementarCotaAusente();
@@ -5835,7 +5840,7 @@ public class DataLoader {
 				tipoMovimentoTransferenciaEntradaLancamento, tipoMovimentoTransferenciaSaidaLancamento, 
 				tipoMovimentoTransferenciaEntradaSuplementar, tipoMovimentoTransferenciaSaidaSuplementar,
 				tipoMovimentoTransferenciaEntradaRecolhimento, tipoMovimentoTransferenciaSaidaRecolhimento,
-				tipoMovimentoTransferenciaEntradaProdutosDanificados, tipoMovimentoTransferenciaSaidaProdutosDanificados);
+				tipoMovimentoTransferenciaEntradaProdutosDanificados, tipoMovimentoTransferenciaSaidaProdutosDanificados, tipoMovimentoEstornoCotaFuroPublicacao);
 
 	}
 

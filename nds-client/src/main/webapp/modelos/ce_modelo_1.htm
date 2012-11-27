@@ -3,6 +3,9 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>NDS - Novo Distrib</title>
+<link rel="stylesheet" type="text/css" href="../css/NDS.css" />
+<link rel="stylesheet" type="text/css" href="../css/menu_superior.css" />
+<script language="javascript" type="text/javascript" src="../scripts/jquery-ui-1.8.16.custom/development-bundle/jquery-1.6.2.js"></script>
 <style type="text/css">
 
 body{font-size:11px!important;}
@@ -24,7 +27,7 @@ function imprimir(){
     <td width="781" valign="top">
     <table width="760" border="0" cellpadding="0" cellspacing="0" style="margin-bottom:10px; margin-top:10px;">
   <tr>
-    <td width="121" rowspan="6" valign="top"><span class="logo"><img src="images/logo_sistema.png" width="110" height="70" alt="Novo Distrib"  /></span></td>
+    <td width="121" rowspan="6" valign="top"><span class="logo"><img src="../images/logo_sistema.png" width="110" height="70" alt="Novo Distrib"  /></span></td>
     <td height="16" colspan="4" style="border-left:1px solid #000; border-top:1px solid #000;"><span class="titulo">Razão Social<br />
     </span></td>
     <td width="237" align="center" style="border-left:1px solid #000;"><span class="titulo" style="font-size:13px!important;"><strong>CHAMADA DE ENCALHE</strong></span></td>
@@ -56,14 +59,14 @@ function imprimir(){
     <td align="center"><span class="titulo">UF</span></td>
     <td align="center"><span class="titulo">CEP</span></td>
     <td align="center"><span class="titulo">Inscrição Estadual</span></td>
-    <td style="border-left:1px solid #000;"><span class="titulo">Natureza da Operação</span></td>
+    <td style="border-left:1px solid #000;">&nbsp;</td>
     </tr>
   <tr>
     <td style="border-left:1px solid #000;border-bottom:1px solid #000;"><span  class="dadosNota">FORTALEZA</span></td>
     <td align="center" style="border-bottom:1px solid #000;"><span class="dadosNota">CE</span></td>
     <td align="center" style="border-bottom:1px solid #000;"><span class="dadosNota">60842-395</span></td>
     <td align="center" style="border-bottom:1px solid #000;"><span class="dadosNota">060084472</span></td>
-    <td align="center" style="border-left:1px solid #000;"><span class="dadosNota">5949 REMESSA P/ DISTRIBUIÇÃO</span></td>
+    <td align="center" style="border-left:1px solid #000;">&nbsp;</td>
     </tr>
   </table>
 <table width="760" border="0" cellpadding="0" cellspacing="0" >
@@ -93,14 +96,12 @@ function imprimir(){
 </table>
 <table width="760" border="0" cellpadding="0" cellspacing="0" style="margin-bottom:10px;">
   <tr>
-    <td width="158" align="center" style="border-left:1px solid #000;"><span class="titulo">Data de Recolhimento</span></td>
-    <td width="158" align="center" style="border-left:1px solid #000;"><span class="titulo">Número CE</span></td>
-    <td width="152" align="center" style="border-right:1px solid #000;border-left:1px solid #000;"><span class="titulo">Data de Emissão</span></td>
-    <td width="292" style="border-right:1px solid #000;"><span class="titulo">Box / Rota</span></td>
+    <td width="179" align="center" style="border-left:1px solid #000;"><span class="titulo">Data de Recolhimento</span></td>
+    <td width="161" align="center" style="border-right:1px solid #000;border-left:1px solid #000;"><span class="titulo">Data de Emissão</span></td>
+    <td width="420" style="border-right:1px solid #000;"><span class="titulo">Box / Rota</span></td>
   </tr>
   <tr>
     <td align="center" style="border-left:1px solid #000;border-bottom:1px solid #000;"><span class="dadosNota">24/04/2012</span></td>
-    <td align="center" style="border-bottom:1px solid #000;border-left:1px solid #000;"><span class="dadosNota">24042012</span></td>
     <td align="center" style="border-bottom:1px solid #000;border-right:1px solid #000;border-left:1px solid #000;"><span class="dadosNota">13/09/2011</span></td>
     <td style="border-bottom:1px solid #000;border-right:1px solid #000;"><span class="dadosNota">Box: 400 - Rota: 37 - ASSUNÇÃO</span></td>
   </tr>
@@ -109,100 +110,85 @@ function imprimir(){
             <tr class="class_linha_3">
               <td align="center" class="relatorios" style="padding-left:5px; border-left:1px solid #000; border-top:1px solid #000; border-bottom:1px solid #000;"><strong>Seq</strong></td>
               <td class="relatorios" style="padding-left:5px; border-left:1px solid #000; border-top:1px solid #000; border-bottom:1px solid #000;"><strong>Código</strong></td>
-              <td class="relatorios" style="padding-left:5px; border-left:1px solid #000; border-top:1px solid #000; border-bottom:1px solid #000;"><strong>Publicação</strong></td>
-              <td class="relatorios" style="padding-left:5px; border-left:1px solid #000; border-top:1px solid #000; border-bottom:1px solid #000;border-right:1px solid #000;"><strong>Edição</strong></td>
-              <td align="center" class="relatorios" style="padding-left:5px; border-top:1px solid #000; border-bottom:1px solid #000;border-right:1px solid #000;"><strong>TP</strong></td>
+              <td class="relatorios" style="padding-left:5px; border-left:1px solid #000; border-top:1px solid #000; border-bottom:1px solid #000;"><strong>Produto</strong></td>
+              <td class="relatorios" style="padding-left:5px; border-left:1px solid #000; border-top:1px solid #000; border-bottom:1px solid #000;"><strong>Edição</strong></td>
+              <td class="relatorios" style="padding-left:5px; border-left:1px solid #000; border-top:1px solid #000; border-bottom:1px solid #000;border-right:1px solid #000;"><strong>Desconto</strong></td>
+              <td align="center" class="relatorios" style="padding-left:5px; border-top:1px solid #000; border-bottom:1px solid #000;border-right:1px solid #000;"><strong>TR</strong></td>
               <td align="center" class="relatorios" style="padding-left:5px; border-top:1px solid #000; border-bottom:1px solid #000;border-right:1px solid #000;"><strong>Data Lancto</strong></td>
-              <td align="right" class="relatorios" style="padding-left:5px; border-top:1px solid #000; border-bottom:1px solid #000;border-right:1px solid #000;"><strong>Preço Capa R$</strong></td>
+              <td align="right" class="relatorios" style="padding-left:5px; border-top:1px solid #000; border-bottom:1px solid #000;border-right:1px solid #000;"><strong>Preço Desc R$</strong></td>
               <td align="center" class="relatorios" style="padding-left:5px; border-top:1px solid #000; border-bottom:1px solid #000;"><strong>Reparte</strong></td>
               <td align="center" class="relatorios" style="padding-left:5px; border-left:1px solid #000; border-top:1px solid #000; border-bottom:1px solid #000;border-right:1px solid #000;"><strong>Qtde. Dev</strong></td>
   </tr>
             <tr class="class_linha_3">
-              <td colspan="9" class="relatorios" style="padding-left:5px; border-left:1px solid #000; border-bottom:1px solid #000; border-right:1px solid #000;"><strong>Código de Barras</strong></td>
+              <td colspan="10" class="relatorios" style="padding-left:5px; border-left:1px solid #000; border-bottom:1px solid #000; border-right:1px solid #000;"><strong>Código de Barras</strong></td>
             </tr>
             <tr class="class_linha_1">
-              <td width="42" align="center" style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">1</td>
-              <td width="79" style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">5499</td>
-              <td width="224" style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">BILLBOARD BRASIL</td>
-              <td width="54" style="border-left:1px solid #000;border-bottom:1px solid #000;border-right:1px solid #000;padding-left:5px; ">0028</td>
-              <td width="48" align="center" style="border-bottom:1px solid #000;border-right:1px solid #000;padding-left:5px; ">F</td>
-              <td width="81" align="center" style="border-bottom:1px solid #000;border-right:1px solid #000;padding-left:5px; ">01/01/2012</td>
-              <td width="94" align="right" style="border-bottom:1px solid #000;border-right:1px solid #000;padding-left:5px; ">10,90</td>
-              <td width="68" align="center" style="border-bottom:1px solid #000;padding-left:5px; ">10</td>
+              <td width="44" align="center" style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">1</td>
+              <td width="78" style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">5499</td>
+              <td width="175" style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">BILLBOARD BRASIL</td>
+              <td width="57" style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0028</td>
+              <td width="62" align="right" style="border-left:1px solid #000;border-bottom:1px solid #000;border-right:1px solid #000;padding-left:5px; ">2,0</td>
+              <td width="45" align="center" style="border-bottom:1px solid #000;border-right:1px solid #000;padding-left:5px; ">F</td>
+              <td width="80" align="center" style="border-bottom:1px solid #000;border-right:1px solid #000;padding-left:5px; ">01/01/2012</td>
+              <td width="82" align="right" style="border-bottom:1px solid #000;border-right:1px solid #000;padding-left:5px; ">10,90</td>
+              <td width="67" align="center" style="border-bottom:1px solid #000;padding-left:5px; ">10</td>
               <td width="70" align="center" style="border-left:1px solid #000;border-bottom:1px solid #000;border-right:1px solid #000;padding-left:5px; ">&nbsp;</td>
             </tr>
             <tr class="class_linha_1">
               <td colspan="2" style="border-left:1px solid #000;padding-left:5px; border-bottom:1px solid #000;">98191836575691</td>
               <td style="border-left:1px solid #000;padding-left:5px; border-bottom:1px solid #000;">BILLBOARD BRASIL</td>
-              <td style="border-left:1px solid #000;padding-left:5px; border-bottom:1px solid #000;border-right:1px solid #000;">&nbsp;</td>
-              <td align="center" style="padding-left:5px; border-bottom:1px solid #000;border-right:1px solid #000;">&nbsp;</td>
-              <td align="center" style="padding-left:5px; border-bottom:1px solid #000;border-right:1px solid #000;">&nbsp;</td>
-              <td align="right" style="padding-left:5px; border-bottom:1px solid #000;border-right:1px solid #000;">&nbsp;</td>
-              <td align="center" style="padding-left:5px; border-bottom:1px solid #000;">&nbsp;</td>
-              <td align="center" style="border-left:1px solid #000;padding-left:5px; border-bottom:1px solid #000;border-right:1px solid #000;">&nbsp;</td>
+              <td colspan="7" style="border-left:1px solid #000;padding-left:5px; border-bottom:1px solid #000;border-right:1px solid #000;">7 exes. (30/09) + 3 exes. (30/11)</td>
             </tr>
             <tr class="class_linha_2">
               <td align="center" style="padding-left:5px; border-left:1px solid #000;border-bottom:1px solid #000;">2</td>
               <td style="padding-left:5px; border-left:1px solid #000;border-bottom:1px solid #000;">6131001</td>
               <td style="padding-left:5px; border-left:1px solid #000;border-bottom:1px solid #000;">CARAS</td>
-              <td style="padding-left:5px; border-left:1px solid #000;border-bottom:1px solid #000;border-right:1px solid #000;">0578</td>
-              <td align="center" style="padding-left:5px; border-bottom:1px solid #000;border-right:1px solid #000;">&nbsp;</td>
+              <td style="padding-left:5px; border-left:1px solid #000;border-bottom:1px solid #000;">0578</td>
+              <td align="right" style="padding-left:5px; border-left:1px solid #000;border-bottom:1px solid #000;border-right:1px solid #000;">2,0</td>
+              <td align="center" style="padding-left:5px; border-bottom:1px solid #000;border-right:1px solid #000;">F</td>
               <td align="center" style="padding-left:5px; border-bottom:1px solid #000;border-right:1px solid #000;">01/01/2012</td>
               <td align="right" style="padding-left:5px; border-bottom:1px solid #000;border-right:1px solid #000;">10,90</td>
               <td align="center" style="padding-left:5px; border-bottom:1px solid #000;">4</td>
-              <td align="center" style="padding-left:5px; border-left:1px solid #000;border-bottom:1px solid #000;border-right:1px solid #000;">077</td>
+              <td align="center" style="padding-left:5px; border-left:1px solid #000;border-bottom:1px solid #000;border-right:1px solid #000;">&nbsp;</td>
             </tr>
             <tr class="class_linha_2">
-              <td colspan="2" align="center" style="padding-left:5px; border-left:1px solid #000;border-bottom:1px solid #000;">98191836575691</td>
-              <td style="border-left:1px solid #000;border-bottom:1px solid #000;">CARAS</td>
-              <td style="padding-left:5px; border-left:1px solid #000;border-bottom:1px solid #000;border-right:1px solid #000;">&nbsp;</td>
-              <td align="center" style="padding-left:5px; border-bottom:1px solid #000;border-right:1px solid #000;">&nbsp;</td>
-              <td align="center" style="padding-left:5px; border-bottom:1px solid #000;border-right:1px solid #000;">&nbsp;</td>
-              <td align="right" style="padding-left:5px; border-bottom:1px solid #000;border-right:1px solid #000;">&nbsp;</td>
-              <td align="center" style="padding-left:5px; border-bottom:1px solid #000;">&nbsp;</td>
-              <td align="center" style="padding-left:5px; border-left:1px solid #000;border-bottom:1px solid #000;border-right:1px solid #000;">&nbsp;</td>
+              <td colspan="2" style="padding-left:5px; border-left:1px solid #000;border-bottom:1px solid #000;">98191836575691</td>
+              <td style="border-left:1px solid #000;border-bottom:1px solid #000;">&nbsp;</td>
+              <td colspan="7" style="padding-left:5px; border-left:1px solid #000;border-bottom:1px solid #000;border-right:1px solid #000;">&nbsp;</td>
             </tr>
             <tr class="class_linha_1">
               <td align="center" style="padding-left:5px; border-left:1px solid #000;border-bottom:1px solid #000;">3</td>
               <td style="padding-left:5px; border-left:1px solid #000;border-bottom:1px solid #000;">28915001</td>
               <td style="padding-left:5px; border-left:1px solid #000;border-bottom:1px solid #000;">COQ. CONHEC MAIS</td>
-              <td style="padding-left:5px; border-left:1px solid #000;border-bottom:1px solid #000;border-right:1px solid #000;">1128</td>
-              <td align="center" style="padding-left:5px;border-bottom:1px solid #000;border-right:1px solid #000;">&nbsp;</td>
+              <td style="padding-left:5px; border-left:1px solid #000;border-bottom:1px solid #000;">1128</td>
+              <td align="right" style="padding-left:5px; border-left:1px solid #000;border-bottom:1px solid #000;border-right:1px solid #000;">2,0</td>
+              <td align="center" style="padding-left:5px;border-bottom:1px solid #000;border-right:1px solid #000;">F</td>
               <td align="center" style="padding-left:5px;border-bottom:1px solid #000;border-right:1px solid #000;">01/01/2012</td>
               <td align="right" style="padding-left:5px;border-bottom:1px solid #000;border-right:1px solid #000;">10,90</td>
               <td align="center" style="padding-left:5px;border-bottom:1px solid #000;">4</td>
-              <td align="center" style="padding-left:5px; border-left:1px solid #000;border-bottom:1px solid #000;border-right:1px solid #000;">077</td>
-            </tr>
-            <tr class="class_linha_1">
-              <td colspan="2" align="center" style="padding-left:5px; border-left:1px solid #000;border-bottom:1px solid #000;">98191836575691</td>
-              <td style="padding-left:5px; border-left:1px solid #000;border-bottom:1px solid #000;">COQ. CONHEC MAIS</td>
-              <td style="padding-left:5px; border-left:1px solid #000;border-bottom:1px solid #000;border-right:1px solid #000;">&nbsp;</td>
-              <td align="center" style="padding-left:5px;border-bottom:1px solid #000;border-right:1px solid #000;">&nbsp;</td>
-              <td align="center" style="padding-left:5px;border-bottom:1px solid #000;border-right:1px solid #000;">&nbsp;</td>
-              <td align="right" style="padding-left:5px;border-bottom:1px solid #000;border-right:1px solid #000;">&nbsp;</td>
-              <td align="center" style="padding-left:5px;border-bottom:1px solid #000;">&nbsp;</td>
               <td align="center" style="padding-left:5px; border-left:1px solid #000;border-bottom:1px solid #000;border-right:1px solid #000;">&nbsp;</td>
             </tr>
+            <tr class="class_linha_1">
+              <td colspan="2" style="padding-left:5px; border-left:1px solid #000;border-bottom:1px solid #000;">98191836575691</td>
+              <td style="padding-left:5px; border-left:1px solid #000;border-bottom:1px solid #000;">&nbsp;</td>
+              <td colspan="7" style="padding-left:5px; border-left:1px solid #000;border-bottom:1px solid #000;border-right:1px solid #000;">&nbsp;</td>
+            </tr>
             <tr class="class_linha_2">
-              <td align="center" style="padding-left:5px; border-left:1px solid #000;border-bottom:1px solid #000;">7</td>
+              <td align="center" style="padding-left:5px; border-left:1px solid #000;border-bottom:1px solid #000;">4</td>
               <td style="padding-left:5px; border-left:1px solid #000;border-bottom:1px solid #000;">43569001</td>
               <td style="padding-left:5px; border-left:1px solid #000;border-bottom:1px solid #000;">INVISTA</td>
-              <td style="padding-left:5px; border-left:1px solid #000;border-bottom:1px solid #000;border-right:1px solid #000;">1678</td>
-              <td align="center" style="padding-left:5px; border-bottom:1px solid #000;border-right:1px solid #000;">&nbsp;</td>
+              <td style="padding-left:5px; border-left:1px solid #000;border-bottom:1px solid #000;">1678</td>
+              <td align="right" style="padding-left:5px; border-left:1px solid #000;border-bottom:1px solid #000;border-right:1px solid #000;">2,0</td>
+              <td align="center" style="padding-left:5px; border-bottom:1px solid #000;border-right:1px solid #000;">F</td>
               <td align="center" style="padding-left:5px; border-bottom:1px solid #000;border-right:1px solid #000;">01/01/2012</td>
               <td align="right" style="padding-left:5px; border-bottom:1px solid #000;border-right:1px solid #000;">10,90</td>
               <td align="center" style="padding-left:5px; border-bottom:1px solid #000;">4</td>
-              <td align="center" style="padding-left:5px; border-left:1px solid #000;border-bottom:1px solid #000;border-right:1px solid #000;">077</td>
+              <td align="center" style="padding-left:5px; border-left:1px solid #000;border-bottom:1px solid #000;border-right:1px solid #000;">&nbsp;</td>
             </tr>
             <tr class="class_linha_2">
-              <td colspan="2" align="center" style="padding-left:5px; border-left:1px solid #000;border-bottom:1px solid #000;">98191836575691</td>
-              <td style="padding-left:5px; border-left:1px solid #000;border-bottom:1px solid #000;">INVISTA</td>
-              <td style="padding-left:5px; border-left:1px solid #000;border-bottom:1px solid #000;border-right:1px solid #000;">&nbsp;</td>
-              <td align="center" style="padding-left:5px;border-bottom:1px solid #000;border-right:1px solid #000;">&nbsp;</td>
-              <td align="center" style="padding-left:5px;border-bottom:1px solid #000;border-right:1px solid #000;">&nbsp;</td>
-              <td align="right" style="padding-left:5px;border-bottom:1px solid #000;border-right:1px solid #000;">&nbsp;</td>
-              <td align="center" style="padding-left:5px; border-bottom:1px solid #000;">&nbsp;</td>
-              <td align="center" style="padding-left:5px; border-left:1px solid #000;border-bottom:1px solid #000;border-right:1px solid #000;">&nbsp;</td>
+              <td colspan="2" style="padding-left:5px; border-left:1px solid #000;border-bottom:1px solid #000;">98191836575691</td>
+              <td style="padding-left:5px; border-left:1px solid #000;border-bottom:1px solid #000;">&nbsp;</td>
+              <td colspan="7" style="padding-left:5px; border-left:1px solid #000;border-bottom:1px solid #000;border-right:1px solid #000;">&nbsp;</td>
             </tr>
 </table>
 <table width="760" border="0" cellpadding="1" cellspacing="1">
@@ -218,7 +204,7 @@ function imprimir(){
   </tr>
   <tr>
     <td>&nbsp;</td>
-    <td align="right"><strong> DESCONTO %</strong></td>
+    <td align="right"><strong> Desconto %</strong></td>
     <td align="right" style="border-bottom:1px solid #000;">106.521.176,12</td>
   </tr>
   <tr>
@@ -228,8 +214,13 @@ function imprimir(){
   </tr>
   <tr>
     <td>&nbsp;</td>
+    <td align="right"><strong>Encalhe</strong></td>
+    <td align="right" style="border-bottom:1px solid #000;">999</td>
+  </tr>
+  <tr>
+    <td>&nbsp;</td>
     <td align="right"><strong>Total Líquido R$</strong></td>
-    <td align="right" style="border-bottom:1px solid #000;">&nbsp;</td>
+    <td align="right" style="border-bottom:1px solid #000;">100.000.000,00</td>
   </tr>
 </table>
     </td>
@@ -270,12 +261,12 @@ function imprimir(){
     </table>
       <table width="410" border="0" cellpadding="0" cellspacing="0" style="margin-bottom:10px;">
         <tr>
-          <td width="249" height="24" align="center" style="border-left:1px solid #000;"><span class="titulo">Data de Recolhimento</span></td>
-          <td width="317" align="center" style="border-left:1px solid #000;border-right:1px solid #000;"><span class="titulo">Chamada de Encalhe</span></td>
+          <td width="207" height="24" align="center" style="border-left:1px solid #000;"><span class="titulo">Data de Recolhimento</span></td>
+          <td width="203" align="center" style="border-left:1px solid #000;border-right:1px solid #000;">Data Emissão</td>
         </tr>
         <tr>
           <td height="22" align="center" style="border-left:1px solid #000;border-bottom:1px solid #000;"><span class="dadosNota">24/04/2012</span></td>
-          <td align="center" style="border-bottom:1px solid #000;border-left:1px solid #000;border-right:1px solid #000;"><span class="dadosNota">Documento Nº 540256</span></td>
+          <td align="center" style="border-bottom:1px solid #000;border-left:1px solid #000;border-right:1px solid #000;"><span class="dadosNota">22/04/2012</span></td>
         </tr>
         <tr>
           <td height="18" colspan="2" style="border-left:1px solid #000;border-right:1px solid #000;"><span class="titulo">Cliente</span></td>
@@ -293,65 +284,70 @@ function imprimir(){
       <table width="410" border="0" cellpadding="0" cellspacing="0" style="margin-top:5px;">
         <tr class="class_linha_3">
           <td class="relatorios" style="padding-left:5px; border-left:1px solid #000; border-top:1px solid #000; border-bottom:1px solid #000;"><strong>Seq</strong></td>
-          <td colspan="2" align="center" class="relatorios" style="padding-left:5px; border-left:1px solid #000; border-top:1px solid #000; border-bottom:1px solid #000;border-right:1px solid #000;"><strong>Publicação</strong></td>
+          <td colspan="3" align="center" class="relatorios" style="padding-left:5px; border-left:1px solid #000; border-top:1px solid #000; border-bottom:1px solid #000;border-right:1px solid #000;"><strong>Produto</strong></td>
           <td align="center" class="relatorios" style="padding-left:5px; border-top:1px solid #000; border-bottom:1px solid #000;"><strong>Reparte</strong></td>
           <td align="center" class="relatorios" style="padding-left:5px; border-left:1px solid #000; border-top:1px solid #000; border-bottom:1px solid #000;border-right:1px solid #000;"><strong>Qtde. Dev</strong></td>
         </tr>
         <tr class="class_linha_3">
           <td class="relatorios" style="padding-left:5px; border-left:1px solid #000; border-bottom:1px solid #000; "><strong>Código</strong></td>
           <td width="67" align="left" class="relatorios" style="padding-left:5px; border-left:1px solid #000; border-bottom:1px solid #000;"><strong>Edição</strong></td>
-          <td width="126" align="right" class="relatorios" style="padding-left:5px; border-left:1px solid #000; border-bottom:1px solid #000; border-right:1px solid #000; "><strong>Preço Capa R$</strong></td>
+          <td width="67" align="right" class="relatorios" style="padding-left:5px; border-left:1px solid #000; border-bottom:1px solid #000;"><strong>Desc</strong></td>
+          <td width="126" align="right" class="relatorios" style="padding-left:5px; border-left:1px solid #000; border-bottom:1px solid #000; border-right:1px solid #000; "><strong>Preço Desc R$</strong></td>
           <td class="relatorios" style="padding-left:5px; border-bottom:1px solid #000; ">&nbsp;</td>
           <td class="relatorios" style="padding-left:5px; border-left:1px solid #000; border-bottom:1px solid #000; border-right:1px solid #000;">&nbsp;</td>
         </tr>
         <tr class="class_linha_1">
           <td width="89" style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">1</td>
-          <td colspan="2" style="border-left:1px solid #000;border-bottom:1px solid #000;border-right:1px solid #000;padding-left:5px; ">BILLBOARD BRASIL</td>
+          <td colspan="3" style="border-left:1px solid #000;border-bottom:1px solid #000;border-right:1px solid #000;padding-left:5px; ">BILLBOARD BRASIL</td>
           <td width="61" align="center" style="border-bottom:1px solid #000;padding-left:5px; ">10</td>
           <td width="67" align="center" style="border-left:1px solid #000;border-bottom:1px solid #000;border-right:1px solid #000;padding-left:5px; ">&nbsp;</td>
         </tr>
         <tr class="class_linha_1">
           <td style="border-left:1px solid #000;padding-left:5px; border-bottom:1px solid #000;">27.078.001</td>
           <td style="border-left:1px solid #000;padding-left:5px; border-bottom:1px solid #000;">0028</td>
+          <td align="right" style="border-left:1px solid #000;padding-left:5px; border-bottom:1px solid #000;">2,00</td>
           <td align="right" style="border-left:1px solid #000;padding-left:5px; border-bottom:1px solid #000;border-right:1px solid #000;">10,90</td>
           <td align="center" style="padding-left:5px; border-bottom:1px solid #000;">&nbsp;</td>
           <td align="center" style="border-left:1px solid #000;padding-left:5px; border-bottom:1px solid #000;border-right:1px solid #000;">&nbsp;</td>
         </tr>
         <tr class="class_linha_2">
           <td align="left" style="padding-left:5px; border-left:1px solid #000;border-bottom:1px solid #000;">2</td>
-          <td colspan="2" style="padding-left:5px; border-left:1px solid #000;border-bottom:1px solid #000;border-right:1px solid #000;">CARAS</td>
+          <td colspan="3" style="padding-left:5px; border-left:1px solid #000;border-bottom:1px solid #000;border-right:1px solid #000;">CARAS</td>
           <td align="center" style="padding-left:5px; border-bottom:1px solid #000;">4</td>
-          <td align="center" style="padding-left:5px; border-left:1px solid #000;border-bottom:1px solid #000;border-right:1px solid #000;">077</td>
+          <td align="center" style="padding-left:5px; border-left:1px solid #000;border-bottom:1px solid #000;border-right:1px solid #000;">&nbsp;</td>
         </tr>
         <tr class="class_linha_2">
           <td style="padding-left:5px; border-left:1px solid #000;border-bottom:1px solid #000;">28915001</td>
           <td style="padding-left:5px; border-left:1px solid #000;border-bottom:1px solid #000;">0578</td>
+          <td align="right" style="padding-left:5px; border-left:1px solid #000;border-bottom:1px solid #000;">2,00</td>
           <td align="right" style="border-left:1px solid #000;border-bottom:1px solid #000;border-right:1px solid #000;">10,90</td>
           <td align="center" style="padding-left:5px; border-bottom:1px solid #000;">&nbsp;</td>
           <td align="center" style="padding-left:5px; border-left:1px solid #000;border-bottom:1px solid #000;border-right:1px solid #000;">&nbsp;</td>
         </tr>
         <tr class="class_linha_1">
           <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">3</td>
-          <td colspan="2" style="border-left:1px solid #000;border-bottom:1px solid #000;border-right:1px solid #000;padding-left:5px; ">BILLBOARD BRASIL</td>
+          <td colspan="3" style="border-left:1px solid #000;border-bottom:1px solid #000;border-right:1px solid #000;padding-left:5px; ">BILLBOARD BRASIL</td>
           <td align="center" style="border-bottom:1px solid #000;padding-left:5px; ">10</td>
           <td align="center" style="border-left:1px solid #000;border-bottom:1px solid #000;border-right:1px solid #000;padding-left:5px; ">&nbsp;</td>
         </tr>
         <tr class="class_linha_1">
           <td style="border-left:1px solid #000;padding-left:5px; border-bottom:1px solid #000;">27.078.001</td>
           <td style="border-left:1px solid #000;padding-left:5px; border-bottom:1px solid #000;">0028</td>
+          <td align="right" style="border-left:1px solid #000;padding-left:5px; border-bottom:1px solid #000;">2,00</td>
           <td align="right" style="border-left:1px solid #000;padding-left:5px; border-bottom:1px solid #000;border-right:1px solid #000;">10,90</td>
           <td align="center" style="padding-left:5px; border-bottom:1px solid #000;">&nbsp;</td>
           <td align="center" style="border-left:1px solid #000;padding-left:5px; border-bottom:1px solid #000;border-right:1px solid #000;">&nbsp;</td>
         </tr>
         <tr class="class_linha_2">
           <td align="left" style="padding-left:5px; border-left:1px solid #000;border-bottom:1px solid #000;">4</td>
-          <td colspan="2" style="padding-left:5px; border-left:1px solid #000;border-bottom:1px solid #000;border-right:1px solid #000;">CARAS</td>
+          <td colspan="3" style="padding-left:5px; border-left:1px solid #000;border-bottom:1px solid #000;border-right:1px solid #000;">INVISTA</td>
           <td align="center" style="padding-left:5px; border-bottom:1px solid #000;">4</td>
-          <td align="center" style="padding-left:5px; border-left:1px solid #000;border-bottom:1px solid #000;border-right:1px solid #000;">077</td>
+          <td align="center" style="padding-left:5px; border-left:1px solid #000;border-bottom:1px solid #000;border-right:1px solid #000;">&nbsp;</td>
         </tr>
         <tr class="class_linha_2">
           <td style="padding-left:5px; border-left:1px solid #000;border-bottom:1px solid #000;">28915001</td>
           <td style="padding-left:5px; border-left:1px solid #000;border-bottom:1px solid #000;">0578</td>
+          <td align="right" style="padding-left:5px; border-left:1px solid #000;border-bottom:1px solid #000;">2,00</td>
           <td align="right" style="border-left:1px solid #000;border-bottom:1px solid #000;border-right:1px solid #000;">10,90</td>
           <td align="center" style="padding-left:5px; border-bottom:1px solid #000;">&nbsp;</td>
           <td align="center" style="padding-left:5px; border-left:1px solid #000;border-bottom:1px solid #000;border-right:1px solid #000;">&nbsp;</td>
@@ -370,7 +366,7 @@ function imprimir(){
         </tr>
         <tr>
           <td>&nbsp;</td>
-          <td align="right"><strong> DESCONTO %</strong></td>
+          <td align="right"><strong> Desconto %</strong></td>
           <td align="right" style="border-bottom:1px solid #000;">106.521.176,12</td>
         </tr>
         <tr>
@@ -380,8 +376,13 @@ function imprimir(){
         </tr>
         <tr>
           <td>&nbsp;</td>
+          <td align="right"><strong>Encalhe</strong></td>
+          <td align="right" style="border-bottom:1px solid #000;">999</td>
+        </tr>
+        <tr>
+          <td>&nbsp;</td>
           <td align="right"><strong>Total Líquido R$</strong></td>
-          <td align="right" style="border-bottom:1px solid #000;">&nbsp;</td>
+          <td align="right" style="border-bottom:1px solid #000;">100.000.000,00</td>
         </tr>
     </table></td>
   </tr>

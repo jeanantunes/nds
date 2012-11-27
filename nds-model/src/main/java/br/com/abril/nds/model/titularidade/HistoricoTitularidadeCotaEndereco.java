@@ -21,12 +21,6 @@ public class HistoricoTitularidadeCotaEndereco implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
-     * Código do bairro
-     */
-    @Column(name = "ENDERECO_CODIGO_BAIRRO")
-    private Integer codigoBairro;
-
-    /**
      * Bairro do endereço
      */
     @Column(name = "ENDERECO_BAIRRO", length = 60)
@@ -84,7 +78,7 @@ public class HistoricoTitularidadeCotaEndereco implements Serializable {
      * Código da UF do endereço
      */
     @Column(name = "ENDERECO_CODIGO_UF", length = 2)
-    private Integer codigoUf;
+    private String codigoUf;
     
     /**
      * Tipo do endereço
@@ -102,12 +96,11 @@ public class HistoricoTitularidadeCotaEndereco implements Serializable {
     public HistoricoTitularidadeCotaEndereco() {
     }
 
-    public HistoricoTitularidadeCotaEndereco(Integer codigoBairro,
+    public HistoricoTitularidadeCotaEndereco(
             String bairro, String cep, Integer codigoCidadeIBGE, String cidade,
             String complemento, String tipoLogradouro, String logradouro,
-            String numero, String uf, Integer codigoUf,
+            String numero, String uf, String codigoUf,
             TipoEndereco tipoEndereco, boolean principal) {
-        this.codigoBairro = codigoBairro;
         this.bairro = bairro;
         this.cep = cep;
         this.codigoCidadeIBGE = codigoCidadeIBGE;
@@ -122,19 +115,6 @@ public class HistoricoTitularidadeCotaEndereco implements Serializable {
         this.principal = principal;
     }
 
-    /**
-     * @return the codigoBairro
-     */
-    public Integer getCodigoBairro() {
-        return codigoBairro;
-    }
-
-    /**
-     * @param codigoBairro the codigoBairro to set
-     */
-    public void setCodigoBairro(Integer codigoBairro) {
-        this.codigoBairro = codigoBairro;
-    }
 
     /**
      * @return the bairro
@@ -265,14 +245,14 @@ public class HistoricoTitularidadeCotaEndereco implements Serializable {
     /**
      * @return the codigoUf
      */
-    public Integer getCodigoUf() {
+    public String getCodigoUf() {
         return codigoUf;
     }
 
     /**
      * @param codigoUf the codigoUf to set
      */
-    public void setCodigoUf(Integer codigoUf) {
+    public void setCodigoUf(String codigoUf) {
         this.codigoUf = codigoUf;
     }
 

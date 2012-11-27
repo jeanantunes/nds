@@ -80,7 +80,6 @@ public class EMS0131MessageProcessor extends AbstractRepository implements Messa
 						output.setNomeDoJornaleiro(cota.getPessoa().getNome());
 						output.setQuantidadeDeCotas(cota.getParametroDistribuicao().getQtdePDV());
 						output.setEndereco(enderecoCota.getEndereco().getLogradouro());
-						output.setCodigoDoBairro(enderecoCota.getEndereco().getCodigoBairro());
 						output.setMunicipio(enderecoCota.getEndereco().getCidade());
 						output.setSiglaUf(enderecoCota.getEndereco().getUf());
 						output.setCep(enderecoCota.getEndereco().getCep());

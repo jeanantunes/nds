@@ -50,8 +50,8 @@ $(function(){
 <div class="linha_separa_fields">&nbsp;</div>
 
 <fieldset class="grids classFieldset"
-	style="text-align: center !important;">
+	style="">
 	<legend>Arquivos Gerados</legend>
-	<h2>Quantidade de Arquivos Gerados: 99999</h2>
+	<h2>Quantidade de Arquivos Gerados:&nbsp;<spam id="qtdArquivosGerados">0</spam></h2>
 
 </fieldset>

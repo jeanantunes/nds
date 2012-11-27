@@ -8,7 +8,7 @@
 	
 	<script type="text/javascript">
 
-		var pesquisaCotaManutencaoStatusCota = new PesquisaCota();
+		var pesquisaCotaManutencaoStatusCota = new PesquisaCota(manutencaoStatusCotaController.workspace);
 		
 		$(function(){
 			manutencaoStatusCotaController.init(pesquisaCotaManutencaoStatusCota);
@@ -25,7 +25,7 @@
 	<div class="areaBts">
 		<div class="area">
 
-			<span class="bt_novos" title="Novo" id="botao-novo-status-cota">
+			<span class="bt_novos" id="botao-novo-status-cota">
 				<a href="javascript:;" onclick="manutencaoStatusCotaController.novo();" rel="tipsy" title="Incluir Novo Status"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" border="0" /></a>
 			</span>
 		</div>
@@ -42,12 +42,12 @@
 			<tr>
 				<td width="47">Cota:</td>
 				<td colspan="3">
-					<input name="numeroCota"  class="campoDePesquisa"
+					<input name="numeroCotaManutencaoStatusCota"  class="campoDePesquisa"
 						   type="text"
-						   id="numeroCota"
+						   id="numeroCotaManutencaoStatusCota"
 						   maxlength="255"
 						   style="width: 80px; margin-right: 5px; float: left;"
-						   onchange="pesquisaCotaManutencaoStatusCota.pesquisarPorNumeroCota('#numeroCota', '#nomeCota', false, manutencaoStatusCotaController.callBackSuccess,manutencaoStatusCotaController.callBackErro);" />
+						   onchange="pesquisaCotaManutencaoStatusCota.pesquisarPorNumeroCota('#numeroCotaManutencaoStatusCota', '#nomeCota', false, manutencaoStatusCotaController.callBackSuccess,manutencaoStatusCotaController.callBackErro);" />
 
 				</td>
 				<td width="42">Nome:</td>
@@ -58,7 +58,7 @@
 						   maxlength="255" 
 						   style="width: 200px;"
 						   onkeyup="pesquisaCotaManutencaoStatusCota.autoCompletarPorNome('#nomeCota');" 
-		      		 	   onblur="pesquisaCotaManutencaoStatusCota.pesquisarPorNomeCota('#numeroCota', '#nomeCota', false, manutencaoStatusCotaController.callBackSuccess,manutencaoStatusCotaController.callBackErro);" />
+		      		 	   onblur="pesquisaCotaManutencaoStatusCota.pesquisarPorNomeCota('#numeroCotaManutencaoStatusCota', '#nomeCota', false, manutencaoStatusCotaController.callBackSuccess,manutencaoStatusCotaController.callBackErro);" />
 				</td>
 				<td width="55">Box:</td>
 				<td width="149">

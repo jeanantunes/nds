@@ -177,7 +177,7 @@ public class LancamentoRepositoryImpl extends
 		} else if(sortOrder.equals(LancamentoNaoExpedidoDTO.SortColumn.EDICAO)) {
 			order =  "produtoEdicao.numeroEdicao";
 		} else if(sortOrder.equals(LancamentoNaoExpedidoDTO.SortColumn.CLASSIFICACAO_PRODUTO)) {
-			order = "produto.tipoproduto.nome";
+			order = "produto.tipoProduto.descricao";
 		} else if(sortOrder.equals(LancamentoNaoExpedidoDTO.SortColumn.PRECO_PRODUTO)) {
 			order =  "produtoEdicao.precoVenda";
 		} else if(sortOrder.equals(LancamentoNaoExpedidoDTO.SortColumn.QTDE_PACOTE_PADRAO)) {
@@ -228,23 +228,33 @@ public class LancamentoRepositoryImpl extends
 		}
 		
 		hql.append(" join lancamento.recebimentos itemRecebido ");
-				
+		
+		boolean where = false;
+		
 		if (estudo != null && estudo == true ) {
 
-			hql.append(" where lancamento.status=:statusEstudoFechado ");
+			hql.append(" join lancamento.estudo estudo ");
 			
-			parametros.put("statusEstudoFechado", StatusLancamento.ESTUDO_FECHADO);
-		} else {
-
-			hql.append(" where (lancamento.status=:statusConfirmado ");
-			hql.append(" or lancamento.status=:statusBalanceado ");
-			hql.append(" or lancamento.status=:statusEstudoFechado) ");
+			hql.append(" where estudo.status = :statusEstudo ");
 			
-			parametros.put("statusConfirmado", StatusLancamento.CONFIRMADO);
-			parametros.put("statusBalanceado", StatusLancamento.BALANCEADO);
-			parametros.put("statusEstudoFechado", StatusLancamento.ESTUDO_FECHADO);
+			parametros.put("statusEstudo", StatusLancamento.ESTUDO_FECHADO);
+			
+			where = true;
 		}
 		
+		if (!where) {
+			
+			hql.append(" where ");
+			
+		} else {
+			
+			hql.append(" and ");
+		}
+		
+		//hql.append(" lancamento.status=:statusConfirmado ");
+		hql.append(" lancamento.status=:statusBalanceado ");
+		
+		parametros.put("statusBalanceado", StatusLancamento.BALANCEADO);
 		
 		if (data != null) {
 			
@@ -813,6 +823,7 @@ public class LancamentoRepositoryImpl extends
 		
 		query.setParameter("dataInicioRecolhimento", dataInicioRecolhimento.getTime());
 		query.setParameter("dataFimRecolhimento", dataFimRecolhimento.getTime());
+		query.setParameter("statusLancamento", StatusLancamento.BALANCEADO_RECOLHIMENTO);
 		
 		if (maxResults != null) {
 			query.setMaxResults(maxResults);
@@ -852,6 +863,8 @@ public class LancamentoRepositoryImpl extends
 		
 		hql.append(" lancamento.dataRecolhimentoDistribuidor between :dataInicioRecolhimento and :dataFimRecolhimento ");
 		
+		hql.append(" and lancamento.status = :statusLancamento ");
+		
 		
 		if (idFornecedor != null) {
 			hql.append(" and fornecedor.id = :idFornecedor ");
@@ -866,6 +879,8 @@ public class LancamentoRepositoryImpl extends
 		query.setParameter("dataInicioRecolhimento", dataInicioRecolhimento.getTime());
 		
 		query.setParameter("dataFimRecolhimento", dataFimRecolhimento.getTime());
+		
+		query.setParameter("statusLancamento", StatusLancamento.BALANCEADO_RECOLHIMENTO);
 
 		return hql.toString();
 		
@@ -893,6 +908,8 @@ public class LancamentoRepositoryImpl extends
 		query.setParameter("dataInicioRecolhimento", dataInicioRecolhimento.getTime());
 		
 		query.setParameter("dataFimRecolhimento", dataFimRecolhimento.getTime());
+
+		query.setParameter("statusLancamento", StatusLancamento.BALANCEADO_RECOLHIMENTO);
 		
 		return (Long) query.uniqueResult();
 		
@@ -1104,9 +1121,9 @@ public class LancamentoRepositoryImpl extends
 		sql.append(" ) is not null ");
 		
 		sql.append(" and ( ");
-		sql.append("	(lancamento.DATA_LCTO_PREVISTA between :periodoInicial and :periodoFinal ");
+		sql.append("	(lancamento.DATA_LCTO_DISTRIBUIDOR between :periodoInicial and :periodoFinal ");
 		sql.append("		and  UPPER(lancamento.STATUS) in ( :statusLancamentoNoPeriodo )) ");
-		sql.append(" 	or (lancamento.DATA_LCTO_PREVISTA < :periodoInicial ");
+		sql.append(" 	or (lancamento.DATA_LCTO_DISTRIBUIDOR < :periodoInicial ");
 		sql.append("		and UPPER(lancamento.STATUS) in ( :statusLancamentoDataMenorInicial )) "); 
 		sql.append(" ) ");
 		

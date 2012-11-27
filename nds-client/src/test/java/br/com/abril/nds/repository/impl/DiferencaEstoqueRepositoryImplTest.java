@@ -120,12 +120,12 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 		
 		StatusConfirmacao statusPendente = StatusConfirmacao.PENDENTE;
 		
-		TipoNotaFiscal tipoNotaFiscal = Fixture.tipoNotaFiscalRecebimento();
-		
-		save(tipoNotaFiscal);
-		
 		CFOP cfop = Fixture.cfop5102();
 		save(cfop);
+		
+		TipoNotaFiscal tipoNotaFiscal = Fixture.tipoNotaFiscalRecebimento(cfop);
+		
+		save(tipoNotaFiscal);
 		
 		fornecedor = Fixture.fornecedorDinap(tipoFornecedorPublicacao);
 		save(fornecedor);

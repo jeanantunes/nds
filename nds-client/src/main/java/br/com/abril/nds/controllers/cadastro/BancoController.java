@@ -1,6 +1,7 @@
 package br.com.abril.nds.controllers.cadastro;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -13,14 +14,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 
 import br.com.abril.nds.client.annotation.Rules;
+import br.com.abril.nds.client.util.PessoaUtil;
 import br.com.abril.nds.client.vo.BancoVO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaBancosDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaBancosDTO.OrdenacaoColunaBancos;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Banco;
+import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.BancoService;
 import br.com.abril.nds.util.CellModel;
+import br.com.abril.nds.util.ItemAutoComplete;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
@@ -473,5 +477,23 @@ public class BancoController {
 		this.bancoService.dasativarBanco(idBanco);
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Banco "+nomebanco+" desativado com sucesso."),"result").recursive().serialize();
     }
+	
+	@Post
+	public void autoCompletarPorNomeBanco(String nomeBanco){
+		
+		List<Banco> listabancos = bancoService.obterBancosPorNome(nomeBanco);
+		
+		List<ItemAutoComplete> listaCotasAutoComplete = new ArrayList<ItemAutoComplete>();
+		
+		if (listabancos != null && !listabancos.isEmpty()) {
+			
+			for (Banco banco : listabancos) {
+					
+				listaCotasAutoComplete.add(new ItemAutoComplete(banco.getNome(), null, banco.getId()));
+			}
+		}
+		
+		this.result.use(Results.json()).from(listaCotasAutoComplete, "result").include("value", "chave").serialize();
+	}
 	
 }

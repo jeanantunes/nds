@@ -12,7 +12,10 @@ import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.EncalheFecharDiaDTO;
+import br.com.abril.nds.dto.VendaFechamentoDiaDTO;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
+import br.com.abril.nds.model.cadastro.FormaComercializacao;
+import br.com.abril.nds.model.estoque.TipoVendaEncalhe;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.repository.ResumoEncalheFecharDiaRepository;
 
@@ -149,7 +152,7 @@ public class ResumoEncalheFecharDiaRepositoryImpl extends AbstractRepository imp
 	private List<EncalheFecharDiaDTO> obterListaFinalGridEncalhe(List<EncalheFecharDiaDTO> listaDeEncalheFisico, List<EncalheFecharDiaDTO> listaDeEncalheJuramentado,
 			List<EncalheFecharDiaDTO> listaDeEncalheLogico) {
 		
-		Set<EncalheFecharDiaDTO> listaFinal = new HashSet<>();
+		Set<EncalheFecharDiaDTO> listaFinal = new HashSet<EncalheFecharDiaDTO>();
 		
 		listaFinal.addAll(listaDeEncalheJuramentado);
 		
@@ -183,6 +186,67 @@ public class ResumoEncalheFecharDiaRepositoryImpl extends AbstractRepository imp
 		}else{
 			query.setParameter("status", StatusAprovacao.GANHO);
 		}
+		
+		BigDecimal total =  (BigDecimal) query.uniqueResult();
+		
+		return total != null ? total : BigDecimal.ZERO ;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<VendaFechamentoDiaDTO> obterDadosVendaEncalhe(Date dataOperacao) {
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" SELECT p.codigo as codigo,  ");
+		hql.append(" p.nome as nomeProduto, ");
+		hql.append(" pe.numeroEdicao as numeroEdicao, ");
+		hql.append(" ve.qntProduto as qtde, ");
+		hql.append(" (ve.qntProduto * pe.precoVenda) as valor, ");
+		hql.append(" ve.dataVenda as dataRecolhimento ");
+		
+		hql.append(" FROM VendaProduto as ve ");		 
+		hql.append(" JOIN ve.produtoEdicao as pe ");					
+		hql.append(" JOIN pe.produto as p ");					
+		hql.append(" WHERE ve.dataVenda = :dataOperacao ");
+		hql.append(" AND ve.tipoComercializacaoVenda = :tipoComercializacaoVenda ");
+		
+		hql.append(" AND ve.tipoVenda = :suplementar");
+
+		Query query = super.getSession().createQuery(hql.toString());
+		
+		query.setParameter("dataOperacao", dataOperacao);
+		
+		query.setParameter("suplementar", TipoVendaEncalhe.ENCALHE);
+		
+		query.setParameter("tipoComercializacaoVenda", FormaComercializacao.CONTA_FIRME);		
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(
+				VendaFechamentoDiaDTO.class));
+		
+		return query.list();
+	}
+
+	@Override
+	public BigDecimal obterValorVendaEncalhe(Date dataOperacao) {
+StringBuilder hql = new StringBuilder();
+		
+		hql.append(" SELECT   ");
+		hql.append(" SUM(ve.qntProduto * pe.precoVenda)");
+		hql.append(" FROM VendaProduto as ve ");		 
+		hql.append(" JOIN ve.produtoEdicao as pe ");					
+		hql.append(" JOIN pe.produto as p ");					
+		hql.append(" WHERE ve.dataVenda = :dataOperacao ");
+		hql.append(" AND ve.tipoComercializacaoVenda = :tipoComercializacaoVenda ");
+		
+		hql.append(" AND ve.tipoVenda = :suplementar");
+
+		Query query = super.getSession().createQuery(hql.toString());
+		
+		query.setParameter("dataOperacao", dataOperacao);
+		
+		query.setParameter("suplementar", TipoVendaEncalhe.ENCALHE);
+		
+		query.setParameter("tipoComercializacaoVenda", FormaComercializacao.CONTA_FIRME);	
 		
 		BigDecimal total =  (BigDecimal) query.uniqueResult();
 		

@@ -152,7 +152,6 @@ var parametrosDistribuidorController = $.extend(true, {
 			{name:'parametrosDistribuidor.validadeCaucaoLiquida', value: $('#validadeCaucaoLiquida', this.workspace).val()},
 			{name:'parametrosDistribuidor.utilizaNotaPromissoria', value: $('#utilizaNotaPromissoria', this.workspace).is(':checked')},
 			{name:'parametrosDistribuidor.validadeNotaPromissoria', value: $('#validadeNotaPromissoria', this.workspace).val()},
-			{name:'parametrosDistribuidor.utilizaAntecedenciaValidade', value: $('#utilizaAntecedenciaValidade', this.workspace).is(':checked')},
 			{name:'parametrosDistribuidor.validadeAntecedenciaValidade', value: $('#validadeAntecedenciaValidade', this.workspace).val()},
 			{name:'parametrosDistribuidor.utilizaOutros', value: $('#utilizaOutros', this.workspace).is(':checked')},
 			{name:'parametrosDistribuidor.validadeOutros', value: $('#validadeOutros', this.workspace).val()},
@@ -280,18 +279,25 @@ var parametrosDistribuidorController = $.extend(true, {
 			$('#prazoContrato', this.workspace).val("").disable();
 			$('#informacoesComplementaresContrato', this.workspace).wysiwyg('clear');
 		}
+		
+		parametrosDistribuidorController.exibirContratoCota();
 	},
 
 	utilizaProcuracaoEntregadoresListener: function() {
 		if (!$('#utilizaProcuracaoEntregadores', this.workspace).is(':checked')) {
 			$('#informacoesComplementaresProcuracao', this.workspace).wysiwyg('clear');
-		} 
+		}
+		
+		parametrosDistribuidorController.exibirProcuracao();
+		
 	},
 
 	utilizaTermoAdesaoListener: function() {
 		if (!$('#utilizaTermoAdesaoEntregaBancas', this.workspace).is(':checked')) {
 			$('#complementoTermoAdesaoEntregaBancas', this.workspace).wysiwyg('clear');
-		} 
+		}
+		
+		parametrosDistribuidorController.exibirAdesao();		
 	},
 
 	utilizaGarantiaListener: function(tipoGarantia, validadeGarantia) {
@@ -321,8 +327,7 @@ var parametrosDistribuidorController = $.extend(true, {
 			$('#utilizaImovel', this.workspace).uncheck();
 			$('#validadeImovel', this.workspace).val('').disable();
 			
-			$('#utilizaAntecedenciaValidade', this.workspace).uncheck();
-			$('#validadeAntecedenciaValidade', this.workspace).val('').disable();
+		
 			
 			$('#utilizaOutros', this.workspace).uncheck();
 			$('#validadeOutros', this.workspace).val('').disable();
@@ -526,6 +531,12 @@ var parametrosDistribuidorController = $.extend(true, {
 		$("#cnpj", this.workspace).mask("99.999.999/9999-99");
 		
 		$("#numero", this.workspace).numeric();
+		
+		parametrosDistribuidorController.exibirProcuracao();
+		
+		parametrosDistribuidorController.exibirAdesao();
+
+		parametrosDistribuidorController.exibirContratoCota();
 	},
 	
 	dialogConfirmarGrupo: function() {
@@ -545,7 +556,37 @@ var parametrosDistribuidorController = $.extend(true, {
 				}
 			}
 		});
+	 },
+	 
+	 exibirProcuracao:function(){
+		
+		 if($('#utilizaProcuracaoEntregadores', this.workspace).is(':checked')){
+			 $(".exibirProcuracao").show();
+		 }else{
+			 $(".exibirProcuracao").hide();
+		 }
+	 },
+	 
+	 
+	 exibirAdesao:function(){
+		
+		 if($('#utilizaTermoAdesaoEntregaBancas', this.workspace).is(':checked')){
+			 $(".exibirAdesao").show();
+		 }else{
+			 $(".exibirAdesao").hide();
+		 }
+	 },
+	 
+	 exibirContratoCota:function(){
+		
+		 if($('#utilizaContratoComCotas', this.workspace).is(':checked')){
+			 $(".exibirContratoComCotas").show();
+		 }else{
+			 $(".exibirContratoComCotas").hide();
+		 }
 	 }
+	 
+	 
 }, BaseController);
 
 //@ sourceURL=parametrosDistribuidor.js

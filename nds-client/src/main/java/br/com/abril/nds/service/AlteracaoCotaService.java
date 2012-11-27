@@ -4,7 +4,6 @@ import java.util.List;
 
 import br.com.abril.nds.dto.ConsultaAlteracaoCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroAlteracaoCotaDTO;
-import br.com.abril.nds.model.cadastro.Cota;
 
 /**
  * @author Discover Technology
@@ -12,6 +11,16 @@ import br.com.abril.nds.model.cadastro.Cota;
 public interface AlteracaoCotaService {
 
 	List<ConsultaAlteracaoCotaDTO> pesquisarAlteracaoCota(FiltroAlteracaoCotaDTO filtroAlteracaoCotaDTO); 
+	
+	/**
+	 * Retorna a quantidade de Alterações Cotas pelos critérios de pesquisa
+	 * especificados.
+	 * 
+	 * @param filtroAlteracaoCotaDTO
+	 * 
+	 * @return
+	 */
+	int contarAlteracaoCota(FiltroAlteracaoCotaDTO filtroAlteracaoCotaDTO);
 	
 	List<ConsultaAlteracaoCotaDTO> pesquisarAlteracaoCotaFornecedor(FiltroAlteracaoCotaDTO filtroAlteracaoCotaDTO); 
 	

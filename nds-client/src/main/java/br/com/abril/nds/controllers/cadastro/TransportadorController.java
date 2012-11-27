@@ -15,6 +15,7 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
+import br.com.abril.nds.client.util.PessoaUtil;
 import br.com.abril.nds.client.vo.CotaAtendidaTransportadorVO;
 import br.com.abril.nds.dto.AssociacaoVeiculoMotoristaRotaDTO;
 import br.com.abril.nds.dto.ConsultaTransportadorDTO;
@@ -179,6 +180,9 @@ public class TransportadorController {
 			
 			filtro.setCnpj(filtro.getCnpj().replace(".", "").replace("/", "").replace("-", ""));
 		}
+		
+		filtro.setNomeFantasia(PessoaUtil.removerSufixoDeTipo(filtro.getNomeFantasia()));
+		filtro.setRazaoSocial(PessoaUtil.removerSufixoDeTipo(filtro.getRazaoSocial()));
 		
 		ConsultaTransportadorDTO consulta = this.transportadorService.consultarTransportadores(filtro);
 		
@@ -380,10 +384,17 @@ public class TransportadorController {
 			
 			boolean isPercentual = ModalidadeCobranca.PERCENTUAL.equals(
 					transportador.getParametroCobrancaTransportador().getModalidadeCobranca());
-			boolean isMaiorCem = 100D 
-					< transportador.getParametroCobrancaTransportador().getValor().doubleValue();
-			if (isPercentual && isMaiorCem) {
-				msgs.add("O percentual não deve ser maior que 100%.");
+			
+			if (isPercentual) {
+				
+				if (transportador.getParametroCobrancaTransportador().getValor() == null) {
+					msgs.add("É necessário informar um percentual.");
+				} else {
+					boolean isMaiorCem = 100D < transportador.getParametroCobrancaTransportador().getValor().doubleValue();
+					if (isPercentual && isMaiorCem) {
+						msgs.add("O percentual não deve ser maior que 100%.");
+					}
+				}
 			}
 		}
 		

@@ -98,51 +98,6 @@ public class EstoqueProdutoCotaRepositoryImpl extends AbstractRepositoryModel<Es
 		
 		return (BigDecimal) query.uniqueResult();
 	}
-
-	
-	public BigDecimal obterValorTotalReparteCota(
-			Integer numeroCota, 
-			List<Long> listaIdProdutoEdicao, 
-			Long idDistribuidor) {
-		
-		String subQueryConsultaValorComissionamento = getSubQueryConsultaValorComissionamento();
-		
-		StringBuilder hql = new StringBuilder();
-		
-			hql.append(" select ")
-			
-			.append(" sum( estoqueProdutoCota.qtdeRecebida * ")
-			
-			.append(" ( produtoEdicao.precoVenda - ( produtoEdicao.precoVenda  *  (( ")
-			
-			.append( subQueryConsultaValorComissionamento )
-			
-			.append(") / 100 ) ) ) ) ")
-			
-			.append(" from EstoqueProdutoCota estoqueProdutoCota ")
-			
-			.append(" join estoqueProdutoCota.cota cota ")
-			
-			.append(" join estoqueProdutoCota.produtoEdicao produtoEdicao ")
-			
-			.append(" left join produtoEdicao.produto.fornecedores fornecedor ")
-			
-			.append(" where ")
-			
-			.append(" produtoEdicao.id in ( :listaIdProdutoEdicao ) ")
-
-			.append(" and cota.numeroCota = :numeroCota ");
-			
-		
-		Query query = this.getSession().createQuery(hql.toString());
-		
-		query.setParameterList("listaIdProdutoEdicao", listaIdProdutoEdicao);
-		
-		query.setParameter("numeroCota", numeroCota);
-		
-		return (BigDecimal) query.uniqueResult();
-	}
-	
 	
 	/**
 	 * Retorna String referente a uma subquery que obtém o valor comissionamento 

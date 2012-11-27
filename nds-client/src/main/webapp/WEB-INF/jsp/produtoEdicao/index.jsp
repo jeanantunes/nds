@@ -2,6 +2,7 @@
 
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/produtoEdicao.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.price_format.1.7.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.form.js"></script>
 
 <script type="text/javascript">
@@ -117,8 +118,8 @@ fieldset {
 								<tr>
 									<td>Edi&ccedil;&atilde;o:</td>
 									<td><input type="text" name="numeroEdicao" id="produtoEdicaoController-numeroEdicao" style="width:50px;" /></td>
-									<td>PED:</td>
-									<td><input type="text" name="ped" id="produtoEdicaoController-ped" style="width:50px;" /></td>
+									<td>PEB:</td>
+									<td><input type="text" name="peb" id="produtoEdicaoController-peb" style="width:50px;" /></td>
 									<td>Pct. Padr&atilde;o:</td>
 									<td><input type="text" name="pacotePadrao" id="produtoEdicaoController-pacotePadrao" style="width:50px;" /></td>
 								</tr>
@@ -230,8 +231,11 @@ fieldset {
 								<tr>
 									<td width="145">Categoria:</td>
 									<td width="193">
-										<select name="select2" id="produtoEdicaoController-select2" style="width:180px;" >
-											<option selected="selected">Selecione...</option>
+										<select name="categoria" id="produtoEdicaoController-categoria" style="width:180px;" >
+											<option value="">Selecione</option>
+					                        <c:forEach items="${listaGrupoProduto}" var="categoria">
+												<option value="${categoria.key}" >${categoria.value}</option>
+											</c:forEach>
 										</select>
 									</td>
 								</tr>
@@ -239,7 +243,7 @@ fieldset {
 									<td>Cod. de Barras:</td>
 									<td><input type="text" name="codigoDeBarras" id="produtoEdicaoController-codigoDeBarras" style="width:180px;" maxlength="18" /></td>
 								</tr>
-								<tr>
+								<tr class="target_visible">
 									<td>Cod. Barras Corporativo:</td>
 									<td><input type="text" name="codigoDeBarrasCorporativo" id="produtoEdicaoController-codigoDeBarrasCorporativo" maxlength="25" style="width:180px;" /></td>
 								</tr>
@@ -251,13 +255,16 @@ fieldset {
 						<table width="250" border="0" cellspacing="1" cellpadding="1">
 							<thead />
 							<tbody>
+
 								<tr>
 									<td colspan="2"><input type="text" name="descricaoDesconto" id="produtoEdicaoController-descricaoDesconto" style="width:235px;" /></td>
 								</tr>
+								
 								<tr>
-									<td>Desconto:</td>
+									<td>Desconto %:</td>
 									<td><input type="text" name="desconto" id="produtoEdicaoController-desconto" style="width:113px;" /></td>
 								</tr>
+								
 							</tbody>
 						</table>
 					</fieldset>
@@ -350,25 +357,34 @@ fieldset {
 								<tr>
 									<td width="112">Classe Social:</td>
 									<td width="281">
-										<select name="select4" id="produtoEdicaoController-select7" style="width:250px;" disabled="disabled">
-											<option selected="selected">Selecione...</option>
-										</select>
+										<select name="classeSocial" id="produtoEdicaoController-classeSocial" style="width:150px;">
+-					                        <option value="">Selecione</option>
+-					                        <c:forEach varStatus="counter" var="itemClasseSocial" items="${listaClasseSocial}">
+-							                    <option value="${itemClasseSocial.key}">${itemClasseSocial.value}</option>
+-							                </c:forEach>
+-					                    </select>
 									</td>
 								</tr>
 								<tr>
 									<td>Sexo:</td>
 									<td>
-										<select name="select4" id="produtoEdicaoController-select8" style="width:250px;" disabled="disabled">
-											<option selected="selected">Selecione...</option>
-										</select>
+										<select name="sexo" id="produtoEdicaoController-sexo" style="width:150px;">
+-					                        <option value="">Selecione</option>
+-					                        <c:forEach varStatus="counter" var="itemSexo" items="${listaSexo}">
+-							                    <option value="${itemSexo.key}">${itemSexo.value}</option>
+-							                </c:forEach>
+-					                    </select>
 									</td>
 								</tr>
 								<tr>
 									<td>Faixa-Et&aacute;ria:</td>
 									<td>
-										<select name="select4" id="produtoEdicaoController-select10" style="width:250px;" disabled="disabled">
-											<option selected="selected">Selecione...</option>
-										</select>
+										<select name="faixaEtaria" id="produtoEdicaoController-faixaEtaria" style="width:150px;">
+-					                        <option value="">Selecione</option>
+-					                        <c:forEach varStatus="counter" var="itemFaixaEtaria" items="${listaFaixaEtaria}">
+-							                    <option value="${itemFaixaEtaria.key}">${itemFaixaEtaria.value}</option>
+-							                </c:forEach>
+-					                    </select>
 									</td>
 								</tr>
 							</tbody>
@@ -382,17 +398,23 @@ fieldset {
 								<tr>
 									<td width="112">Tema Principal:</td>
 									<td width="281">
-										<select name="select" id="produtoEdicaoController-select5" style="width:250px;" disabled="disabled">
-											<option selected="selected">Selecione...</option>
-										</select>
+										<select name="temaPrincipal" id="produtoEdicaoController-temaPrincipal" style="width:150px;">
+-					                        <option value="">Selecione</option>
+-					                        <c:forEach varStatus="counter" var="itemTema" items="${listaTemaProduto}">
+-							                    <option value="${itemTema.key}">${itemTema.value}</option>
+-							                </c:forEach>
+-					                    </select>
 									</td>
 								</tr>
 								<tr>
 									<td>Tema Secund&aacute;rio:</td>
 									<td>
-										<select name="select" id="produtoEdicaoController-select6" style="width:250px;" disabled="disabled">
-											<option selected="selected">Selecione...</option>
-										</select>
+										<select name="temaSecundario" id="produtoEdicaoController-temaSecundario" style="width:150px;">
+-					                        <option value="">Selecione</option>
+-					                        <c:forEach varStatus="counter" var="itemTema" items="${listaTemaProduto}">
+-							                    <option value="${itemTema.key}">${itemTema.value}</option>
+-							                </c:forEach>
+-					                    </select>
 									</td>
 							</tbody>
 						</table>
@@ -407,7 +429,7 @@ fieldset {
 
 	<div class="areaBts">
 		<div class="area">
-			<span class="bt_novos" title="Novo">
+			<span class="bt_novos">
 				<a href="javascript:;" onclick="produtoEdicaoController.novaEdicao();" rel="tipsy" title="Incluir Nova Edição"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/></a>
 			</span>
 		</div>
@@ -435,7 +457,7 @@ fieldset {
 					
 					<td width="65">
 					
-						<input type="text" name="pCodigoProduto" id="produtoEdicaoController-pCodigoProduto" maxlength="255" 
+						<input type="text" name="pCodigoProduto" id="produtoEdicaoController-pCodigoProduto" maxlength="8" 
 								style="width:60px;" 
 								onchange="produtoEdicaoController.pesquisarPorCodigoProduto('#produtoEdicaoController-pCodigoProduto', '#produtoEdicaoController-pNome', false,
 										undefined,

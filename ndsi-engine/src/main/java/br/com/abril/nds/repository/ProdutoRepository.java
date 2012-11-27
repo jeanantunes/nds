@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository;
 
+import java.util.Date;
 import java.util.List;
 
 import br.com.abril.nds.dto.ConsultaProdutoDTO;
@@ -41,6 +42,8 @@ public interface ProdutoRepository extends Repository<Produto, Long> {
 	 */
 	Produto obterProdutoPorCodigo(String codigoProduto);
 	
+	Produto obterProdutoBalanceadosPorCodigo(String codigoProduto, Date dataLancamento);
+	
 	String obterNomeProdutoPorCodigo(String codigoProduto);
 	
 	List<ConsultaProdutoDTO> pesquisarProdutos(String codigo, String produto, String fornecedor, String editor,
@@ -61,6 +64,6 @@ public interface ProdutoRepository extends Repository<Produto, Long> {
 	
 	GrupoProduto obterGrupoProduto(String codigoProduto);
 	
-	List<Produto> buscarProdutosOrganizadosNome();
+	List<Produto> buscarProdutosBalanceadosOrdenadosNome(Date dataLancamento);
 	
 }

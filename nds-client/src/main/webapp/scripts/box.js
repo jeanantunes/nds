@@ -179,6 +179,7 @@ var boxController = $.extend(true, {
 
 		$("#boxTipoBox").attr('disabled', false);
 		var obj = $("#novo_box_form", this.workspace).serialize();
+		$("#boxTipoBox").attr('disabled', true);
 		
 		$.postJSON(this.path + 'salvar.json', obj, function(data) {
 			var tipoMensagem = data.tipoMensagem;

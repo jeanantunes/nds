@@ -200,7 +200,7 @@ public class ExpedicaoResumoBoxRepositoryImplTest extends AbstractRepositoryImpl
 				tipoMovimentoSobraEm, tipoMovimentoSobraDe,
 				tipoMovimentoRecFisico, tipoMovimentoRecReparte);
 		
-		TipoNotaFiscal tipoNotaFiscalRecebimento = Fixture.tipoNotaFiscalRecebimento();
+		TipoNotaFiscal tipoNotaFiscalRecebimento = Fixture.tipoNotaFiscalRecebimento(cfop5102);
 		save(tipoNotaFiscalRecebimento);
 		
 		NotaFiscalEntradaFornecedor notaFiscalFornecedor = Fixture

@@ -11,6 +11,8 @@ var produtoController = $.extend(true, {
 		
 		this.iniciarGrid();
 		$( "#tabProduto", this.workspace).tabs();
+		
+		$("#fieldSegmentacao", produtoController.workspace).hide();
 
 	},
 
@@ -249,15 +251,16 @@ var produtoController = $.extend(true, {
 	
 	habilitarDesabilitarCamposInterface : function(habilitar) {
 		
-		$("#comboFornecedoresCadastro", produtoController.workspace).attr('disabled',!habilitar);
-		$("#segmentacaoClasseSocial", produtoController.workspace).attr('disabled',!habilitar);
-		$("#segmentacaoSexo", produtoController.workspace).attr('disabled',!habilitar);
-		$("#segmentacaoFaixaEtaria", produtoController.workspace).attr('disabled',!habilitar);
-		$("#segmentacaoFormato", produtoController.workspace).attr('disabled',!habilitar);
-		$("#segmentacaoTipoLancamento", produtoController.workspace).attr('disabled',!habilitar);
-		$("#segmentacaoTemaPrincipal", produtoController.workspace).attr('disabled',!habilitar);
-		$("#segmentacaoTemaSecundario", produtoController.workspace).attr('disabled',!habilitar);
+		$(".habilitarCampoInterface", produtoController.workspace).attr('disabled',!habilitar);
 		
+		if(!habilitar){
+			$("#fieldSegmentacao", produtoController.workspace).show();
+		}
+		else{
+			$("#fieldSegmentacao", produtoController.workspace).hide();
+		}
+		
+		$(".habilitarCampoInterfaceSegmentacao", produtoController.workspace).attr('disabled',!habilitar);
 	},
 	
 	carregarProdutoEditado : function(id) {

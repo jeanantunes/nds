@@ -1,9 +1,9 @@
 package br.com.abril.nds.client.vo;
 
-import br.com.abril.nds.client.endereco.vo.EnderecoVO;
 import br.com.abril.nds.model.cadastro.ObrigacaoFiscal;
 import br.com.abril.nds.model.cadastro.TipoAtividade;
 import br.com.abril.nds.model.cadastro.TipoContabilizacaoCE;
+import br.com.abril.nds.vo.EnderecoVO;
 
 
 /**
@@ -159,7 +159,7 @@ public class ParametrosDistribuidorVO {
     
     private Integer validadeNotaPromissoria;
     
-    private boolean utilizaAntecedenciaValidade;
+   
     
     private Integer validadeAntecedenciaValidade;
     
@@ -859,19 +859,7 @@ public class ParametrosDistribuidorVO {
         this.validadeNotaPromissoria = validadeNotaPromissoria;
     }
 
-    /**
-     * @return the utilizaAntecedenciaValidade
-     */
-    public boolean isUtilizaAntecedenciaValidade() {
-        return utilizaAntecedenciaValidade;
-    }
-
-    /**
-     * @param utilizaAntecedenciaValidade the utilizaAntecedenciaValidade to set
-     */
-    public void setUtilizaAntecedenciaValidade(boolean utilizaAntecedenciaValidade) {
-        this.utilizaAntecedenciaValidade = utilizaAntecedenciaValidade;
-    }
+   
 
     /**
      * @return the validadeAntecedenciaValidade
@@ -1117,7 +1105,7 @@ public class ParametrosDistribuidorVO {
     public boolean isGarantiasUtilizadas() {
         return utilizaChequeCaucao || utilizaCaucaoLiquida || utilizaFiador
                 || utilizaNotaPromissoria || utilizaImovel
-                || utilizaAntecedenciaValidade || utilizaOutros;
+                || utilizaOutros;
     }
 
 	/**

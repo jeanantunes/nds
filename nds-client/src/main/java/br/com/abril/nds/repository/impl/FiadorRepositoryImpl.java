@@ -82,7 +82,7 @@ public class FiadorRepositoryImpl extends AbstractRepositoryModel<Fiador, Long> 
 		if (filtroConsultaFiadorDTO.getNome() != null &&
 				!filtroConsultaFiadorDTO.getNome().isEmpty()){
 			
-			hql.append(" and (p.nome like :nome or p.razaoSocial like :nome or p.nomeFantasia like :nome) ");
+			hql.append(" and (lower( p.nome ) like :nome or lower ( p.razaoSocial ) like :nome or lower( p.nomeFantasia) like :nome) ");
 		}
 		
 		ConsultaFiadorDTO consultaFiadorDTO = new ConsultaFiadorDTO();
@@ -159,7 +159,7 @@ public class FiadorRepositoryImpl extends AbstractRepositoryModel<Fiador, Long> 
 		if (filtro.getNome() != null &&
 				!filtro.getNome().isEmpty()){
 			
-			query.setParameter("nome", "%" + filtro.getNome() + "%");
+			query.setParameter("nome", "%" + filtro.getNome().toLowerCase().trim() + "%");
 		}
 	}
 	
@@ -285,5 +285,19 @@ public class FiadorRepositoryImpl extends AbstractRepositoryModel<Fiador, Long> 
 		query.setResultTransformer(new AliasToBeanResultTransformer(ItemDTO.class));
 		return query.list();
 		
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Pessoa> obterFiadorPorNome(String nomeFiador) {
+	
+		StringBuilder hql = new StringBuilder("select p from Fiador f, Pessoa p ");
+		hql.append(" where f.pessoa.id = p.id ")
+		   .append(" and lower(p.nome) like :nomeFiador or lower(p.razaoSocial) like :nomeFiador or lower(p.nomeFantasia) like :nomeFiador ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("nomeFiador", "%" + nomeFiador.toLowerCase() + "%");
+		
+		return query.list();
 	}
 }

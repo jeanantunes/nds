@@ -16,8 +16,6 @@ public class EnderecoDTO implements Serializable {
 
     private Long id;
 
-    private Integer codigoBairro;
-
     private String bairro;
 
     private String cep;
@@ -36,16 +34,15 @@ public class EnderecoDTO implements Serializable {
 
     private String uf;
 
-    private Integer codigoUf;
+    private String codigoUf;
     
     public EnderecoDTO() {
     }    
     
-    public EnderecoDTO(Integer codigoBairro, String bairro, String cep,
+    public EnderecoDTO(String bairro, String cep,
             Integer codigoCidadeIBGE, String cidade, String complemento,
             String tipoLogradouro, String logradouro, String numero, String uf,
-            Integer codigoUf) {
-        this.codigoBairro = codigoBairro;
+            String codigoUf) {
         this.bairro = bairro;
         this.cep = cep;
         this.codigoCidadeIBGE = codigoCidadeIBGE;
@@ -130,14 +127,6 @@ public class EnderecoDTO implements Serializable {
         this.uf = uf;
     }
 
-    public Integer getCodigoBairro() {
-        return codigoBairro;
-    }
-
-    public void setCodigoBairro(Integer codigoBairro) {
-        this.codigoBairro = codigoBairro;
-    }
-
     public Integer getCodigoCidadeIBGE() {
         return codigoCidadeIBGE;
     }
@@ -146,11 +135,11 @@ public class EnderecoDTO implements Serializable {
         this.codigoCidadeIBGE = codigoCidadeIBGE;
     }
 
-    public Integer getCodigoUf() {
+    public String getCodigoUf() {
         return codigoUf;
     }
 
-    public void setCodigoUf(Integer codigoUf) {
+    public void setCodigoUf(String codigoUf) {
         this.codigoUf = codigoUf;
     }
     
@@ -167,8 +156,6 @@ public class EnderecoDTO implements Serializable {
         result = prime * result + ((bairro == null) ? 0 : bairro.hashCode());
         result = prime * result + ((cep == null) ? 0 : cep.hashCode());
         result = prime * result + ((cidade == null) ? 0 : cidade.hashCode());
-        result = prime * result
-                + ((codigoBairro == null) ? 0 : codigoBairro.hashCode());
         result = prime
                 * result
                 + ((codigoCidadeIBGE == null) ? 0 : codigoCidadeIBGE.hashCode());
@@ -220,13 +207,6 @@ public class EnderecoDTO implements Serializable {
                 return false;
             }
         } else if (!cidade.equals(other.cidade)) {
-            return false;
-        }
-        if (codigoBairro == null) {
-            if (other.codigoBairro != null) {
-                return false;
-            }
-        } else if (!codigoBairro.equals(other.codigoBairro)) {
             return false;
         }
         if (codigoCidadeIBGE == null) {
@@ -302,7 +282,6 @@ public class EnderecoDTO implements Serializable {
         dto.setNumero(endereco.getNumero());
         dto.setComplemento(endereco.getComplemento());
         dto.setBairro(endereco.getBairro());
-        dto.setCodigoBairro(endereco.getCodigoBairro());
         dto.setCep(endereco.getCep());
         dto.setCidade(endereco.getCidade());
         dto.setCodigoCidadeIBGE(endereco.getCodigoCidadeIBGE());

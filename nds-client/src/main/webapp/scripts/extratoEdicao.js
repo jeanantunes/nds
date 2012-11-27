@@ -8,7 +8,7 @@ var jsExtratoEdicao = $.extend(true, {
 		
 		$("#edicao", jsExtratoEdicao.workspace).numeric();
 		
-		$("#produto", jsExtratoEdicao.workspace).autocomplete({
+		$("#idProdutoExtratoEdicao", jsExtratoEdicao.workspace).autocomplete({
 			source: ''
 		});
 		
@@ -20,7 +20,7 @@ var jsExtratoEdicao = $.extend(true, {
 		
 		var numeroEdicao = jQuery("#edicao", jsExtratoEdicao.workspace).val();
 		var codigoProduto = jQuery("#codigo", jsExtratoEdicao.workspace).val();
-		var nomeProduto = jQuery("#produto", jsExtratoEdicao.workspace).val();
+		var nomeProduto = jQuery("#idProdutoExtratoEdicao", jsExtratoEdicao.workspace).val();
 		var precoCapa = jQuery("#precoCapa", jsExtratoEdicao.workspace).val();
 		var nomeFornecedor = jQuery("#nomeFornecedor", jsExtratoEdicao.workspace).val();
 		
@@ -71,7 +71,7 @@ var jsExtratoEdicao = $.extend(true, {
 		$("#nomeFornecedor", jsExtratoEdicao.workspace).val("");
 		$("#precoCapa", jsExtratoEdicao.workspace).val("");
 		
-		pesquisaProdutoExtratoEdicao.pesquisarPorCodigoProduto('#codigo', '#produto', '#edicao', false, jsExtratoEdicao.pesquisarProdutoCallBack);	
+		pesquisaProdutoExtratoEdicao.pesquisarPorCodigoProduto('#codigo', '#idProdutoExtratoEdicao', '#edicao', false, jsExtratoEdicao.pesquisarProdutoCallBack);	
 	},
 
 	pesquisarProdutoPorNome : function() {
@@ -79,7 +79,7 @@ var jsExtratoEdicao = $.extend(true, {
 		$("#nomeFornecedor", jsExtratoEdicao.workspace).val("");
 		$("#precoCapa", jsExtratoEdicao.workspace).val("");
 		
-		pesquisaProdutoExtratoEdicao.pesquisarPorNomeProduto('#codigo', '#produto', '#edicao', false, jsExtratoEdicao.pesquisarProdutoCallBack);
+		pesquisaProdutoExtratoEdicao.pesquisarPorNomeProduto('#codigo', '#idProdutoExtratoEdicao', '#edicao', false, jsExtratoEdicao.pesquisarProdutoCallBack);
 	},
 
 	validarNumeroEdicao : function() {

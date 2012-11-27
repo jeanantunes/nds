@@ -86,6 +86,8 @@ var fornecedorController = $.extend(true,{
 			   $("#fornecedorController-inscricaoEstadual", fornecedorController.workspace).mask("?##################",{placeholder:" "});
 			});
 			
+			$("#fornecedorController-filtroConsultaFornecedorRazaoSocial", fornecedorController.workspace).autocomplete({source: ""});
+			$("#fornecedorController-filtroConsultaFornecedorNomeFantasia", fornecedorController.workspace).autocomplete({source: ""});
 			
 		},
 		
@@ -149,7 +151,7 @@ var fornecedorController = $.extend(true,{
 								
 								fecharModalCadastroFornecedor = true;
 								
-								$( "#fornecedorController-dialogNovoFornecedor", fornecedorController.workspace ).dialog( "close" );								
+								$("#fornecedorController-dialogNovoFornecedor", fornecedorController.workspace ).dialog( "close" );								
 								$("#dialog-cancelar-cadastro-fornecedor", fornecedorController.workspace).dialog("close");
 							}
 						);
@@ -166,6 +168,10 @@ var fornecedorController = $.extend(true,{
 		},
 		
 		novoFornecedor:	function (isEdicao, indBloqueiaCamposEdicaoFornecedor) {
+				
+				$("#fornecedorController-cnpj").attr('disabled', false);
+			
+				$("#fornecedorController-codigoInterface", fornecedorController.workspace).enable();
 				
 				if (!isEdicao) {
 					
@@ -268,7 +274,21 @@ var fornecedorController = $.extend(true,{
 			
 			cadastrarFornecedor:function () {
 				
+				var manterDesabilitado = false;
+				if ($("#fornecedorController-codigoInterface").attr('disabled')  == 'disabled' || $("#fornecedorController-cnpj").attr('disabled') == 'disabled') {
+					manterDesabilitado = true;
+					$("#fornecedorController-codigoInterface").attr('disabled', false);
+					$("#fornecedorController-cnpj").attr('disabled', false);
+				}
+				
 				var formData = $("#fornecedorController-formNovoFornecedor", fornecedorController.workspace).serializeArray();
+
+				if (manterDesabilitado) {
+					$("#fornecedorController-cnpj").attr('disabled', true);
+				} else {
+					$("#fornecedorController-codigoInterface").attr('disabled', false);
+					$("#fornecedorController-cnpj").attr('disabled', false);
+				}
 				
 				$.postJSON(
 					 contextPath +"/cadastro/fornecedor/cadastrarFornecedor",
@@ -391,7 +411,6 @@ var fornecedorController = $.extend(true,{
 						
 						$("#fornecedorController-inicioAtividade", fornecedorController.workspace).html(result.inicioAtividade);
 						$("#fornecedorController-idFornecedor", fornecedorController.workspace).val(result.idFornecedor);
-						$("#fornecedorController-codigoInterface").mask("9999");
 						$("#fornecedorController-codigoInterface", fornecedorController.workspace).val(result.codigoInterface);
 						$("#fornecedorController-razaoSocial", fornecedorController.workspace).val(result.razaoSocial);
 						$("#fornecedorController-nomeFantasia", fornecedorController.workspace).val(result.nomeFantasia);
@@ -435,7 +454,9 @@ var fornecedorController = $.extend(true,{
 						
 						FORNECEDOR.bloquearCamposFormTelefone(indBloqueiaCamposEdicaoFornecedor);
 
+						$("#fornecedorController-cnpj", fornecedorController.workspace).prop('disabled', true);
 						
+						$("#fornecedorController-codigoInterface", fornecedorController.workspace).disable();
 						
 					},
 					function(result) {

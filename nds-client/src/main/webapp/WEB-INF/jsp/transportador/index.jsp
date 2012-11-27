@@ -167,7 +167,7 @@
 						<tr>
 							<td width="117">Cobrança</td>
 							<td>
-								<select style="width: 100px;" id="modalidadeCobranca">
+								<select style="width: 100px;" id="modalidadeCobranca" onchange="transportadorController.mostrarOpcaoSelecionada()" >
 									<option onclick="transportadorController.mostrarOpcaoTaxaFixa();" value="TAXA_FIXA">Taxa Fixa</option>
 									<option onclick="transportadorController.mostrarOpcaoPercentual()" value="PERCENTUAL">Percentual</option>
 								</select>
@@ -329,7 +329,7 @@
 								</span>
 							</td>
 							<td valign="top">
-								<span class="bt_novos"	title="Confirmar">
+								<span class="bt_novos">
 									<a href="javascript:;" onclick="transportadorController.confirmarAssociacao();" rel="tipsy" title="Confirmar Associação">
 										<img border="0" src="${pageContext.request.contextPath}/images/ico_check.gif">
 									</a>
@@ -364,9 +364,17 @@
 		<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 			<tr>
 				<td width="85">Razão Social:</td>
-				<td colspan="3"><input type="text" id="razaoSocialPesquisa" style="width: 190px;" maxlength="255" /></td>
+				
+				<td colspan="3"><input type="text" id="razaoSocialPesquisa" style="width: 190px;" maxlength="255" 
+								onkeyup='PESSOA.autoCompletarPorNomeTransportador("#razaoSocialPesquisa",transportadorController.workspace)' />
+				</td>
+				
 				<td width="104">Nome Fantasia:</td>
-				<td width="192"><input type="text" id="nomeFantasiaPesquisa" style="width: 190px;" maxlength="255" /></td>
+				
+				<td width="192"><input type="text" id="nomeFantasiaPesquisa" style="width: 190px;" maxlength="255" 
+								onkeyup='PESSOA.autoCompletarPorNomeFantasiaTransportador("#nomeFantasiaPesquisa",transportadorController.workspace)'/>
+				</td>
+				
 				<td width="42">CNPJ:</td>
 				<td width="179"><input type="text" id="cnpjPesquisa" style="width: 110px;" maxlength="255" /></td>
 				<td width="109"><span class="bt_novos">

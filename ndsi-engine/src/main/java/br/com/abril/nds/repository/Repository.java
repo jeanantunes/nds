@@ -30,4 +30,7 @@ public interface Repository<T, K extends Serializable> {
 	void flush();
 
 	public abstract void detach(T entity);
+	
+	public abstract void clear();
+
 }

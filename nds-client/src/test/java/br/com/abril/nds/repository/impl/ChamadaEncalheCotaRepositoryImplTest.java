@@ -137,7 +137,7 @@ public class ChamadaEncalheCotaRepositoryImplTest extends
 		cfop = Fixture.cfop5102();
 		save(cfop);
 
-		tipoNotaFiscal = Fixture.tipoNotaFiscalRecebimento();
+		tipoNotaFiscal = Fixture.tipoNotaFiscalRecebimento(cfop);
 		save(tipoNotaFiscal);
 
 		NotaFiscalEntradaFornecedor notaFiscal1Veja = Fixture
@@ -311,24 +311,6 @@ public class ChamadaEncalheCotaRepositoryImplTest extends
 	private ChamadaEncalheCotaRepository chamadaEncalheCotaRepository;
 
 	@Test
-	public void testObterListaChamaEncalheCota() {
-
-		Integer numeroCota = 123;
-		Date dataOperacao = Fixture.criarData(28, Calendar.FEBRUARY, 2012);
-		boolean indPesquisaCEFutura = true;
-		boolean conferido = false;
-		boolean postergado = false;
-
-		List<Long> listaIdProdutoEdicaoChamadaEncalheCota = chamadaEncalheCotaRepository
-				.obterListaIdProdutoEdicaoChamaEncalheCota(numeroCota,
-						dataOperacao, indPesquisaCEFutura, conferido,
-						postergado);
-
-		Assert.assertEquals(1, listaIdProdutoEdicaoChamadaEncalheCota.size());
-
-	}
-
-	@Test
 	public void testObterQtdListaChamaEncalheCota() {
 
 		Integer numeroCota = 123;
@@ -349,9 +331,7 @@ public class ChamadaEncalheCotaRepositoryImplTest extends
 	// TESTES SEM USO DE MASSA--------------------------
 
 	@Test
-	public void testarObterListaIdProdutoEdicaoChamaEncalheCota() {
-
-		List<Long> listaIdProduto;
+	public void testarObterReparteDaChamaEncalheCota() {
 
 		Integer numeroCota = 1;
 
@@ -362,13 +342,11 @@ public class ChamadaEncalheCotaRepositoryImplTest extends
 		boolean conferido = false;
 		boolean postergado = false;
 
-		listaIdProduto = chamadaEncalheCotaRepository
-				.obterListaIdProdutoEdicaoChamaEncalheCota(numeroCota,
-						dataOperacao, indPesquisaCEFutura, conferido,
-						postergado);
+		chamadaEncalheCotaRepository.obterReparteDaChamaEncalheCota(
+			numeroCota, dataOperacao, indPesquisaCEFutura,
+			conferido, postergado);
 
-		Assert.assertNotNull(listaIdProduto);
-
+		Assert.assertTrue(true);
 	}
 
 	@Test

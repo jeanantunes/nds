@@ -61,8 +61,8 @@ public class FuroProdutoController {
 		
 		FuroProdutoDTO furoProdutoDTO = null;
 		try {
-			furoProdutoDTO = produtoEdicaoService.obterProdutoEdicaoPorCodigoEdicaoDataLancamento(
-					codigo, produto, edicao, new SimpleDateFormat(Constantes.DATE_PATTERN_PT_BR).parse(dataLancamento));
+			furoProdutoDTO = produtoEdicaoService.obterProdutoEdicaoPorCodigoEdicaoDataLancamento(codigo, produto, edicao, new SimpleDateFormat(Constantes.DATE_PATTERN_PT_BR).parse(dataLancamento), false);
+			
 		} catch (Exception e) {
 			
 			if (e instanceof ValidacaoException){
@@ -71,27 +71,41 @@ public class FuroProdutoController {
 				throw new ValidacaoException(TipoMensagem.ERROR, "Erro ao pesquisar produto: " + e.getMessage());
 			}
 		}
-		
-		if (furoProdutoDTO != null){
-			
-			String path = furoProdutoDTO.getPathImagem();
-			path = path.replace("\\", "/");
-			furoProdutoDTO.setPathImagem(null);
-			File imagem = null;
-			for (String ext : Constantes.EXTENSOES_IMAGENS){
-				imagem = new File(path + ext);
-				
-				String raizApp = VRaptorRequestHolder.currentRequest().getRequest().getContextPath();
-				if (imagem.exists()){
-					furoProdutoDTO.setPathImagem(path.substring(
-									path.indexOf(raizApp)) + ext);
-					break;
-				}
-			}
-			result.use(Results.json()).from(furoProdutoDTO, "result").serialize();
-		} else {
+		if (furoProdutoDTO == null){
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
 		}
+		
+		try {
+			furoProdutoDTO = produtoEdicaoService.obterProdutoEdicaoPorCodigoEdicaoDataLancamento(
+					codigo, produto, edicao, new SimpleDateFormat(Constantes.DATE_PATTERN_PT_BR).parse(dataLancamento), true);
+			
+		} catch (Exception e) {
+			
+			if (e instanceof ValidacaoException){
+				throw e;
+			} else {
+				throw new ValidacaoException(TipoMensagem.ERROR, "Erro ao pesquisar produto: " + e.getMessage());
+			}
+		}
+		if (furoProdutoDTO == null){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Produto já furado.");
+		}
+		
+		String path = furoProdutoDTO.getPathImagem();
+		path = path.replace("\\", "/");
+		furoProdutoDTO.setPathImagem(null);
+		File imagem = null;
+		for (String ext : Constantes.EXTENSOES_IMAGENS){
+			imagem = new File(path + ext);
+			
+			String raizApp = VRaptorRequestHolder.currentRequest().getRequest().getContextPath();
+			if (imagem.exists()){
+				furoProdutoDTO.setPathImagem(path.substring(
+								path.indexOf(raizApp)) + ext);
+				break;
+			}
+		}
+		result.use(Results.json()).from(furoProdutoDTO, "result").serialize();
 		
 		result.forwardTo(FuroProdutoController.class).index();
 	}
@@ -154,10 +168,30 @@ public class FuroProdutoController {
 	}
 
 	@Post
+	public void validarFuro(String codigoProduto, Long idProdutoEdicao, String novaData, 
+			Long idLancamento) throws Exception {
+
+		validarDadosEntradaConfirmarFuro(codigoProduto, idProdutoEdicao, novaData, idLancamento);
+
+		this.furoProdutoService.validarFuroProduto(codigoProduto, 
+				idProdutoEdicao, idLancamento, 
+				new SimpleDateFormat(Constantes.DATE_PATTERN_PT_BR).parse(novaData), this.getIdUsuario());
+
+		boolean produtoExpedido = this.furoProdutoService.verificarProdutoExpedido(idLancamento);
+		
+		if (produtoExpedido) {
+			
+			result.use(Results.json()).from(true, "result").serialize();
+			
+		} else {
+			
+			confirmarFuro(codigoProduto, idProdutoEdicao, novaData, idLancamento);
+		}		
+	}
+	
+	@Post
 	public void confirmarFuro(String codigoProduto, Long idProdutoEdicao, String novaData, 
 			Long idLancamento) throws Exception{
-		
-		validarDadosEntradaConfirmarFuro(codigoProduto, idProdutoEdicao, novaData, idLancamento);
 		
 		try {
 			this.furoProdutoService.efetuarFuroProduto(codigoProduto, 

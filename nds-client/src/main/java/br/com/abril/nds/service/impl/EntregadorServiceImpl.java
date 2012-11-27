@@ -284,7 +284,7 @@ public class EntregadorServiceImpl implements EntregadorService {
 			}
 
             EnderecoDTO dto = enderecoAssociacao.getEndereco();
-            Endereco endereco = new Endereco(dto.getCodigoBairro(),
+            Endereco endereco = new Endereco(
                     dto.getBairro(), dto.getCep(), dto.getCodigoCidadeIBGE(),
                     dto.getCidade(), dto.getComplemento(),
                     dto.getTipoLogradouro(), dto.getLogradouro(),
@@ -425,5 +425,17 @@ public class EntregadorServiceImpl implements EntregadorService {
 		return entregadorRepository.obterPorNome(nome);
 	}
 	
+	@Override
+	@Transactional(readOnly=true)
+	public List<Pessoa> obterEntregadorPorApelido(String apelidoEntregador) {
+		
+		return entregadorRepository.obterEntregadorPorApelido(apelidoEntregador);
+	}
 	
+	@Override
+	@Transactional(readOnly=true)
+	public List<Pessoa> obterEntregadorPorNome(String nomeEntregador) {
+		
+		return entregadorRepository.obterEntregadorPorNome(nomeEntregador);
+	}
 }
