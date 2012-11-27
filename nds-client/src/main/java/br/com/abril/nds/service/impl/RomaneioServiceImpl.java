@@ -79,14 +79,16 @@ public class RomaneioServiceImpl implements RomaneioService {
 		return this.produtoEdicaoRepository.buscarProdutosLancadosData(data);
 	}
 	
+	
 	@Transactional
 	@Override
-	public byte[] gerarRelatorio(FiltroRomaneioDTO filtro, String limitar, FileType fileType) throws URISyntaxException, JRException{
+	public byte[] gerarRelatorio(FiltroRomaneioDTO filtro, String limitar, 
+			FileType fileType) throws URISyntaxException, JRException {
 		
-		if (filtro != null){
+		if (filtro != null) {
 			
-			List<RomaneioDTO> listaDTOParaExportacao = this.buscarRomaneio(
-					filtro, false);
+			List<RomaneioDTO> listaDTOParaExportacao = 
+					romaneioRepository.buscarRomaneiosParaExportacao(filtro);
 			
 			if (!listaDTOParaExportacao.isEmpty()){
 			

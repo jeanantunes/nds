@@ -92,7 +92,7 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 		hql.append(getSqlFromEWhereRomaneio(filtro));
 		
 		if (ordenarConsulta) {
-			hql.append(getOrderBy(filtro));
+			hql.append(getOrderBy(filtro, false));
 		}
 		
 		Query query =  getSession().createQuery(hql.toString());
@@ -162,56 +162,74 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 
 		return hql.toString();
 	}
-
-	private StringBuilder getOrderClause(StringBuilder hql) {
-		if (hql == null || hql.length() == 0) {
-			hql.append(" order by ");
-		} else {
+	
+	
+	/**
+	 * Incluir uma virgula (separador) para os critérios de order by.<br>
+	 * Caso não haja consulta HQL não incluirá nada, retornando o próprio
+	 * parâmetro.
+	 * 
+	 * @param hql
+	 * @return
+	 */
+	private StringBuilder addSeparadorOrderBy(StringBuilder hql) {
+		if (hql != null && hql.length() > 0) {
 			hql.append(", ");
 		}
+		
 		return hql;
 	}
 	
-	private String getOrderBy(FiltroRomaneioDTO filtro){
+	private String getOrderBy(FiltroRomaneioDTO filtro, boolean isImpressao) {
 		
-		if(filtro.getPaginacao() == null || filtro.getPaginacao().getSortColumn() == null){
+		if(filtro.getPaginacao() == null 
+				|| filtro.getPaginacao().getSortColumn() == null) {
 			return "";
 		}
 		
 		StringBuilder hql = new StringBuilder();
 		
-		//hql.append(" order by rotaPDV.id asc ");
-		
-		if(filtro.getIdRoteiro() == null && filtro.getIdRota() != null){
-			hql = getOrderClause(hql);
+		if (filtro.getIdRoteiro() == null && filtro.getIdRota() != null) {
+			hql = addSeparadorOrderBy(hql);
 			hql.append(" rotaPDV.ordem ");
 		}
 		
-		if(filtro.getIdRoteiro() != null && filtro.getIdRota() == null){
-			hql = getOrderClause(hql);
+		if (filtro.getIdRoteiro() != null && filtro.getIdRota() == null) {
+			hql = addSeparadorOrderBy(hql);
 			hql.append(" roteiro.ordem ");
 		}
 		
-		if(filtro.getIdRoteiro() != null && filtro.getIdRota() != null){
-			hql = getOrderClause(hql);
-			hql.append(" roteiro.ordem asc, rotaPDV.ordem asc ");
+		if (filtro.getIdRoteiro() != null && filtro.getIdRota() != null) {
+			hql = addSeparadorOrderBy(hql);
+			hql.append(" roteiro.ordem asc, rotaPDV.ordem ");
 		}
 		
-		if ("numeroCota".equals(filtro.getPaginacao().getSortColumn())){
-			hql = getOrderClause(hql);
+		if ("numeroCota".equals(filtro.getPaginacao().getSortColumn())) {
+			hql = addSeparadorOrderBy(hql);
 			hql.append(" cota.numeroCota ");
-		} else if ("nome".equals(filtro.getPaginacao().getSortColumn())){
-			hql = getOrderClause(hql);
+		} else if ("nome".equals(filtro.getPaginacao().getSortColumn())) {
+			hql = addSeparadorOrderBy(hql);
 			hql.append(" notaEnvio.destinatario.nome ");
 		} else {
-			hql = getOrderClause(hql);
+			hql = addSeparadorOrderBy(hql);
 			hql.append(" notaEnvio.numero ");
 		}
 		
-		if (filtro.getPaginacao().getOrdenacao() != null) {
-			
-			hql.append( filtro.getPaginacao().getOrdenacao().toString());
+		
+		if (hql.length() > 0 && filtro.getPaginacao().getOrdenacao() != null) {
+			hql.append(filtro.getPaginacao().getOrdenacao().toString());
 		}
+
+		/* Quando for impressão, a primeira ordenação é pela rotaPDV.id */
+		if (isImpressao) {
+			hql.insert(0, " rotaPDV.id asc, ");
+		}
+		
+		
+		if (hql.length() > 0) {
+			hql.insert(0, " order by ");
+		}
+		
 		
 		return hql.toString();
 	}
@@ -258,7 +276,7 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 			
 			hql.append("select count( "+ (countCotas ? "distinct" : "") +" cota.numeroCota) ");
 			hql.append(getSqlFromEWhereRomaneio(filtro));
-			hql.append(getOrderBy(filtro));
+			hql.append(getOrderBy(filtro, false));
 			
 			Query query =  getSession().createQuery(hql.toString());
 			
@@ -276,6 +294,70 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 		}
 	
 		return totalRegistros.intValue();
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<RomaneioDTO> buscarRomaneiosParaExportacao(
+			FiltroRomaneioDTO filtro) {
+		
+		Query query = this.createQueryBuscarRomaneioParaExportacao(filtro);
+		query.setResultTransformer(new AliasToBeanResultTransformer(
+				RomaneioDTO.class));
+		
+		return query.list();
+	}
+	
+	/**
+	 * Gera a consulta que pesquisa os romaneios com os critérios definidos
+	 * pelo usuário.
+	 * 
+	 * @param filtro
+	 * @param ordenarConsulta
+	 * 
+	 * @return
+	 */
+	private Query createQueryBuscarRomaneioParaExportacao(
+			FiltroRomaneioDTO filtro) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		/*
+		 * Incluido a condição DISTINCT para retirar a repetição 
+		 * (plano cartesiano) pelos ProdutosEdição contido nas NotaEnvioItem,
+		 * RotaPDV e Cotas.
+		 */
+		hql.append("SELECT DISTINCT ");
+		hql.append("  notaEnvio.destinatario.numeroCota as numeroCota ");
+		hql.append(", notaEnvio.destinatario.nome as nome ");
+//		hql.append(", cota.id as idCota ");
+		hql.append(", rotaPDV.id as idRota ");
+		hql.append(", notaEnvio.numero as numeroNotaEnvio ");
+		hql.append(", endereco.logradouro as logradouro ");
+//		hql.append(", endereco.bairro as bairro ");		
+//		hql.append(", endereco.cidade as cidade ");
+//		hql.append(", endereco.uf as uf ");
+		
+		//if (filtro.getProdutos() != null && filtro.getProdutos().size() == 1){
+		if (filtro.getProdutos() != null){
+		
+			hql.append(", round(itemNota.reparte / lancamento.produtoEdicao.pacotePadrao) as pacote ");
+			//hql.append(", lancDif.diferenca.qtde as quebra ");
+			hql.append(", itemNota.reparte as reparteTotal ");
+		}
+		
+		// Código comentado pelo Eduardo Punk Rock
+		/*if (filtro.getProdutos() != null && filtro.getProdutos().size() > 1){
+			
+			this.getHQLProdutos(hql, filtro);
+		}*/
+		
+		hql.append(getSqlFromEWhereRomaneio(filtro));
+		hql.append(getOrderBy(filtro, true));		
+		Query query =  getSession().createQuery(hql.toString());
+		this.setarParametrosRomaneio(filtro, query);
+		
+		return query;
 	}
 	
 }
