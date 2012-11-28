@@ -30,6 +30,7 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.TipoSlip;
+import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.FormaComercializacao;
@@ -190,8 +191,18 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 
 		slipVendaEncalhe.setNomeCota(itemVE.getCota().getPessoa().getNome());
 		slipVendaEncalhe.setNumeroCota(itemVE.getCota().getNumeroCota().toString());
-		slipVendaEncalhe.setNumeroBox(itemVE.getCota().getBox().getCodigo().toString());
-		slipVendaEncalhe.setDescricaoBox(itemVE.getCota().getBox().getTipoBox().name());
+		
+		Box box = itemVE.getCota().getBox();
+		
+		if(box!= null){
+			slipVendaEncalhe.setNumeroBox(itemVE.getCota().getBox().getCodigo().toString());
+			slipVendaEncalhe.setDescricaoBox(itemVE.getCota().getBox().getTipoBox().name());
+		}
+		else{
+			slipVendaEncalhe.setNumeroBox("");
+			slipVendaEncalhe.setDescricaoBox("");
+		}
+		
 		slipVendaEncalhe.setData(DateUtil.formatarDataPTBR(itemVE.getDataVenda()));
 		slipVendaEncalhe.setHora(DateUtil.formatarData(itemVE.getHorarioVenda(), "HH:mm"));
 		slipVendaEncalhe.setUsuario(itemVE.getUsuario().getNome());
@@ -285,6 +296,10 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 	public VendaEncalheDTO buscarVendaEncalhe(Long idVendaEncalhe) {
 
 		VendaEncalheDTO vendaEncalheDTO = vendaProdutoRepository.buscarVendaProdutoEncalhe(idVendaEncalhe);
+		
+		if(vendaEncalheDTO == null){
+			throw new ValidacaoException(TipoMensagem.ERROR,"Venda não encontrada!");
+		}
 		
 		if(vendaEncalheDTO!= null){
 			
@@ -1203,8 +1218,11 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 
 	private TipoVendaEncalhe obterTipoVenda(EstoqueProduto estoqueProduto){
 		
-		if(estoqueProduto.getQtdeSuplementar()!= null
-					&& estoqueProduto.getQtdeSuplementar().compareTo(BigInteger.ZERO) <= 0){
+		if(estoqueProduto.getQtdeSuplementar() == null){
+			return  TipoVendaEncalhe.ENCALHE;
+		}
+		
+		if(estoqueProduto.getQtdeSuplementar().compareTo(BigInteger.ZERO) <= 0){
 			
 			return  TipoVendaEncalhe.ENCALHE;		
 				
