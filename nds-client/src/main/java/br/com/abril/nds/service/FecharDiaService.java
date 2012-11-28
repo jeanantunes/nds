@@ -13,6 +13,7 @@ import br.com.abril.nds.dto.fechamentodiario.FechamentoDiarioDTO;
 import br.com.abril.nds.dto.fechamentodiario.ResumoEstoqueDTO;
 import br.com.abril.nds.dto.fechamentodiario.SumarizacaoDividasDTO;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
+import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.financeiro.Divida;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.vo.PaginacaoVO;
@@ -169,5 +170,13 @@ public interface FecharDiaService {
 	 * @return DTO com as informações do fechamento diário
 	 */
 	FechamentoDiarioDTO processarFechamentoDoDia(Usuario usuario, Date dataFechamento);
- 
+	
+    /**
+     * Obtém as diferenças lançadas da na data
+     * 
+     * @param data
+     *            data para recuperação das diferenças
+     * @return lista de diferenças lançadas na data
+     */
+	List<Diferenca> obterDiferencas(Date data);
 }
