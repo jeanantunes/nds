@@ -31,18 +31,32 @@
             <tr>
               <td colspan="2">&nbsp;</td>
             </tr>
-            <tr>
-              <td colspan="2">Informações complementares do Contrato:</td>
-            </tr>
-            <tr>
-              <td colspan="2"><textarea name="parametrosDistribuidor.informacoesComplementaresContrato" rows="4"
-                  id="informacoesComplementaresContrato" style="width: 350px;">${parametrosDistribuidor.informacoesComplementaresContrato}</textarea></td>
-            </tr>
-          </table>
+            </table>
+			
+			<div class="exibirContratoComCotas">
+				<table width="392" border="0" cellspacing="1" cellpadding="1">
+				<tr>
+				  <td colspan="2">Informações complementares do Contrato:</td>
+				</tr>
+				<tr>
+				  <td colspan="2"><textarea name="parametrosDistribuidor.informacoesComplementaresContrato" rows="4"
+					  id="informacoesComplementaresContrato" style="width: 350px;">${parametrosDistribuidor.informacoesComplementaresContrato}</textarea></td>
+				</tr>
+			  </table>
+			</div>
         </fieldset>
         <fieldset style="width: 420px !important; margin-bottom: 5px; float: left; margin-left:10px;">
           <legend>Garantia</legend>
           <table width="335" border="0" cellspacing="0" cellpadding="0">
+          	<tr>
+          		<td>Antecedência da Validade</td>
+              <td>
+                  
+                      <input name="parametrosDistribuidor.validadeAntecedenciaValidade" type="text"
+                          style="float: left; width: 60px;" value="${parametrosDistribuidor.validadeAntecedenciaValidade}"
+                          id="validadeAntecedenciaValidade" />
+              </td>
+          	</tr>
             <tr>
               <td width="143">Utiliza Garantia para PDVs?</td>
               <td width="192">
@@ -183,32 +197,7 @@
               </td>
             </tr>
             <tr class="class_linha_1">
-              <td>
-                <c:if test="${parametrosDistribuidor.utilizaAntecedenciaValidade}">
-                  <input name="parametrosDistribuidor.utilizaAntecedenciaValidade" id="utilizaAntecedenciaValidade"
-                    checked="checked" type="checkbox" onclick="parametrosDistribuidorController.utilizaGarantiaListener(this, 'validadeAntecedenciaValidade');" />
-                </c:if> 
-                <c:if test="${not parametrosDistribuidor.utilizaAntecedenciaValidade}">
-                  <input name="parametrosDistribuidor.utilizaAntecedenciaValidade" id="utilizaAntecedenciaValidade"
-                    type="checkbox" onclick="parametrosDistribuidorController.utilizaGarantiaListener(this, 'validadeAntecedenciaValidade');" />
-                </c:if>
-              </td>
-              <td>Antecedência da Validade</td>
-              <td>
-                  <c:if test="${parametrosDistribuidor.utilizaAntecedenciaValidade}">
-                      <input name="parametrosDistribuidor.validadeAntecedenciaValidade" type="text"
-                          style="float: left; width: 60px;" value="${parametrosDistribuidor.validadeAntecedenciaValidade}"
-                          id="validadeAntecedenciaValidade" />
-                  </c:if>
-                  <c:if test="${not parametrosDistribuidor.utilizaAntecedenciaValidade}">
-                      <input name="parametrosDistribuidor.validadeAntecedenciaValidade" type="text"
-                          style="float: left; width: 60px;" value="${parametrosDistribuidor.validadeAntecedenciaValidade}"
-                          id="validadeAntecedenciaValidade" disabled="disabled" />
-                  </c:if>        
-              </td>
-            </tr>
-            <tr class="class_linha_2">
-              <td>
+                           <td>
                 <c:if test="${parametrosDistribuidor.utilizaOutros}">
                   <input name="parametrosDistribuidor.utilizaOutros" id="utilizaOutros" checked="checked" type="checkbox" 
                   onclick="parametrosDistribuidorController.utilizaGarantiaListener(this, 'validadeOutros');"/>
@@ -254,14 +243,21 @@
             <tr>
               <td colspan="2">&nbsp;</td>
             </tr>
-            <tr>
-              <td colspan="2">Informações complementares da Procuração:</td>
-            </tr>
-            <tr>
-              <td colspan="2"><textarea name="parametrosDistribuidor.informacoesComplementaresProcuracao" rows="4"
-                  id="informacoesComplementaresProcuracao" style="width: 150px;">${parametrosDistribuidor.informacoesComplementaresProcuracao}</textarea></td>
-            </tr>
-          </table>
+		</table>
+		
+		<div class="exibirProcuracao">		
+			<table width="393" border="0" cellspacing="1" cellpadding="1">
+				<tr>
+				  <td colspan="2">Informações complementares da Procuração:</td>
+				</tr>
+				<tr>
+				  <td colspan="2">
+					<textarea  name="parametrosDistribuidor.informacoesComplementaresProcuracao" rows="4"
+					  id="informacoesComplementaresProcuracao" style="width: 150px;">${parametrosDistribuidor.informacoesComplementaresProcuracao}</textarea></td>
+				</tr>
+			  </table>
+		</div>
+		 
         </fieldset>
         <fieldset style="width: 420px !important; margin-bottom: 5px;">
           <legend>Termo de Adesão</legend>
@@ -282,14 +278,19 @@
             <tr>
               <td colspan="2">&nbsp;</td>
             </tr>
-            <tr>
-              <td colspan="2">Informações complementares do Termo de Adesão:</td>
-            </tr>
-            <tr>
-              <td colspan="2"><textarea name="parametrosDistribuidor.complementoTermoAdesaoEntregaBancas"
-                  rows="4" id="complementoTermoAdesaoEntregaBancas" style="width: 150px;">${parametrosDistribuidor.complementoTermoAdesaoEntregaBancas}</textarea></td>
-            </tr>
-          </table>
+			</table>
+		 <div class="exibirAdesao">		
+			<table width="393" border="0" cellspacing="1" cellpadding="1">
+				<tr>
+				  <td colspan="2">Informações complementares do Termo de Adesão:</td>
+				</tr>
+				<tr>
+				  <td colspan="2"><textarea name="parametrosDistribuidor.complementoTermoAdesaoEntregaBancas"
+					  rows="4" id="complementoTermoAdesaoEntregaBancas" style="width: 150px;">${parametrosDistribuidor.complementoTermoAdesaoEntregaBancas}</textarea></td>
+				</tr>
+			 </table>
+		 </div>
+		 
         </fieldset>
       </td>
     </tr>

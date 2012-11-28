@@ -21,6 +21,7 @@ import br.com.abril.nds.dto.filtro.FiltroRelatorioServicosEntregaDTO;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
@@ -285,6 +286,17 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 		Query query = criarQueryObterMovimentosFinanceiroCota(hql, filtroDebitoCreditoDTO);
 
 		return ((Long) query.uniqueResult()).intValue();
+	}
+
+	@Override
+	public List<Long> obterIdsMovimentosFinanceiroCota(FiltroDebitoCreditoDTO filtroDebitoCreditoDTO) {
+		
+		String hql = " select movimentoFinanceiroCota.id " + 
+					 getQueryObterMovimentosFinanceiroCota(filtroDebitoCreditoDTO);
+
+		Query query = criarQueryObterMovimentosFinanceiroCota(hql, filtroDebitoCreditoDTO);
+
+		return (List<Long>) query.list();
 	}
 
 	@Override
@@ -613,7 +625,7 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
    	    }
 
         if (produto!=null && !"".equals(produto)){
-	       hql.append(auxC+" view.produtoId = "+produto);
+	       hql.append(auxC+" view.produtoEdicaoId = "+produto);
 	 	   auxC = " and ";
 	    }
 
@@ -809,6 +821,55 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 
 		return count;
 	}
+	
+	@Override
+	public BigDecimal obterSaldoDistribuidor(Date data, 
+									 	     TipoCota tipoCota, 
+									 	     OperacaoFinaceira operacaoFinaceira) {
+		
+		StringBuilder hql = new StringBuilder(" select sum(mfc.valor) ");
+		
+		hql.append(" from MovimentoFinanceiroCota mfc ");
 
+		hql.append(" where mfc.status = :statusAprovacao ");
+		
+		if (operacaoFinaceira != null) {
+			
+			hql.append(" and mfc.tipoMovimento.operacaoFinaceira = :operacaoFinanceira ");
+		}
+		
+		if (tipoCota != null) {
+			
+			hql.append(" and mfc.cota.parametroCobranca.tipoCota = :tipoCota ");
+		}
+		
+		if (data != null) {
+		
+			hql.append(" and mfc.data = :data ");
+		}
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		query.setParameter("statusAprovacao", StatusAprovacao.APROVADO);
+
+		if (operacaoFinaceira != null) {
+			
+			query.setParameter("operacaoFinanceira", operacaoFinaceira);
+		}
+		
+		if (tipoCota != null) {
+			
+			query.setParameter("tipoCota", tipoCota);
+		}
+		
+		if (data != null) {
+			
+			query.setParameter("data", data);
+		}
+		
+		Object result = query.uniqueResult();
+
+		return (result == null) ? BigDecimal.ZERO : (BigDecimal) result;
+	}
 
 }

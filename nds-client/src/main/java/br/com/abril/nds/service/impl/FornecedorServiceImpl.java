@@ -25,6 +25,7 @@ import br.com.abril.nds.model.cadastro.EnderecoFornecedor;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoFornecedor;
+import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.Telefone;
@@ -465,7 +466,7 @@ public class FornecedorServiceImpl implements FornecedorService {
 
 			EnderecoDTO dto = enderecoAssociacao.getEndereco();
 			
-            Endereco endereco = new Endereco(dto.getCodigoBairro(),
+            Endereco endereco = new Endereco(
                     dto.getBairro(), dto.getCep(), dto.getCodigoCidadeIBGE(),
                     dto.getCidade(), dto.getComplemento(),
                     dto.getTipoLogradouro(), dto.getLogradouro(),
@@ -671,7 +672,19 @@ public class FornecedorServiceImpl implements FornecedorService {
 		
 	}
 	
+	@Override
+	@Transactional(readOnly=true)
+	public List<Pessoa> obterFornecedorPorNome(String nomeFornecedor) {
+		
+		return fornecedorRepository.obterFornecedorPorNome(nomeFornecedor);
+	}
 	
+	@Override
+	@Transactional(readOnly=true)
+	public List<Pessoa> obterFornecedorPorNomeFantasia(String nomeFantasia) {
+		
+		return fornecedorRepository.obterFornecedorPorNomeFantasia(nomeFantasia);
+	}
 	
 }
 

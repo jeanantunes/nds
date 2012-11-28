@@ -25,7 +25,9 @@ import br.com.abril.nds.repository.EstudoRepository;
 import br.com.abril.nds.repository.FuroProdutoRepository;
 import br.com.abril.nds.repository.HistoricoLancamentoRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
+import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.service.FuroProdutoService;
+import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.vo.ValidacaoVO;
@@ -47,11 +49,17 @@ public class FuroProdutoServiceImpl implements FuroProdutoService {
 	
 	@Autowired
 	private EstudoRepository estudoRepository;
-	
+
+	@Autowired
+	private ProdutoEdicaoRepository produtoEdicaoRepository;
+
+	@Autowired
+	private MovimentoEstoqueService movimentoEstoqueService;
+
 	@Transactional
 	@Override
-	public void efetuarFuroProduto(String codigoProduto, Long idProdutoEdicao, Long idLancamento, Date novaData, Long idUsuario) {		
-		
+	public void validarFuroProduto(String codigoProduto, Long idProdutoEdicao, Long idLancamento, Date novaData, Long idUsuario) {
+	
 		List<String> mensagensValidacao = new ArrayList<String>();
 		
 		if (codigoProduto == null || codigoProduto.isEmpty()){
@@ -84,11 +92,11 @@ public class FuroProdutoServiceImpl implements FuroProdutoService {
 				|| novaData.before(lancamento.getDataLancamentoDistribuidor())){
 			mensagensValidacao.add("Nova data deve ser maior que a data de lançamento atual.");
 		}
-		
+
 		if (novaData.after(lancamento.getDataRecolhimentoDistribuidor())){
 			mensagensValidacao.add("Nova data não deve ser maior que data de recolhimento.");
 		}
-		
+
 		if (!mensagensValidacao.isEmpty()){
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, mensagensValidacao));
 		}
@@ -103,17 +111,36 @@ public class FuroProdutoServiceImpl implements FuroProdutoService {
 				new SimpleDateFormat(Constantes.DATE_PATTERN_PT_BR).format(novaData));
 		}
 		
-		if (lancamento.getStatus().equals(StatusLancamento.EXPEDIDO)){
+		if (!validarExpedicaoFisica(lancamento)) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Produto já expedido não pode sofrer furo.");
 		}
 		
-		Estudo estudo = 
-			this.estudoRepository.obterEstudoDoLancamentoPorDataProdutoEdicao(
-					lancamento.getDataLancamentoDistribuidor(), 
-					idProdutoEdicao);
+	}
+
+	@Override
+	@Transactional(readOnly=true)
+	public boolean verificarProdutoExpedido(Long idLancamento) {
 		
-		if (estudo != null){
-			estudo.setDataLancamento(novaData);
+		Lancamento lancamento = this.lancamentoRepository.buscarPorId(idLancamento);
+		
+		if (lancamento == null) {
+			
+			throw new ValidacaoException(TipoMensagem.ERROR, "Lançamento não encontrado.");
+		}
+		
+		return lancamento.getStatus().equals(StatusLancamento.EXPEDIDO);
+	}
+	
+	@Transactional
+	@Override
+	public void efetuarFuroProduto(String codigoProduto, Long idProdutoEdicao, Long idLancamento, Date novaData, Long idUsuario) {		
+		
+		Lancamento lancamento = this.lancamentoRepository.buscarPorId(idLancamento);
+		
+		if (this.verificarProdutoExpedido(idLancamento)) {
+
+			// Geração de movimentação de estoque por cota / movimentação de estoque / estoque / estoque cota
+			movimentoEstoqueService.gerarMovimentoEstoqueFuroPublicacao(lancamento, idUsuario);
 		}
 		
 		lancamento.setDataLancamentoDistribuidor(novaData);
@@ -138,13 +165,25 @@ public class FuroProdutoServiceImpl implements FuroProdutoService {
 		
 		this.furoProdutoRepository.adicionar(furoProduto);
 		
-		if (estudo != null){
-			this.estudoRepository.alterar(estudo);
-		}
-		
 		this.lancamentoRepository.alterar(lancamento);
 		
 		this.historicoLancamentoRepository.adicionar(historicoLancamento);
 	}
 
+	/**
+	 * Valida se o lançamento já sofreu expedição física -> Possui registro em itemNotaFiscal
+	 * @param lancamento
+	 * @return
+	 */
+	@Transactional(readOnly=true)
+	private boolean validarExpedicaoFisica(Lancamento lancamento) {
+		
+		// !lancamento.getStatus().equals(StatusLancamento.EXPEDIDO)
+		if ( produtoEdicaoRepository.validarExpedicaoFisicaProdutoEdicao(lancamento.getProdutoEdicao()) ) {
+			return true;
+		}
+		
+		return false;
+	}
+	
 }

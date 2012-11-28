@@ -5,6 +5,6 @@ public enum StatusIntegracao {
 	EM_PROCESSO,
 	SOLICITADO,
 	REJEITADO,
-	DESPRESADO,
+	DESPREZADO,
 	NAO_INTEGRADO
 }

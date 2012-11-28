@@ -1,154 +1,205 @@
 package br.com.abril.nds.repository.impl;
 
-import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.Date;
+import java.util.ArrayList;
+import java.util.List;
 
+import javax.swing.SortOrder;
+
+import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import br.com.abril.nds.fixture.Fixture;
-import br.com.abril.nds.model.StatusConfirmacao;
-import br.com.abril.nds.model.aprovacao.StatusAprovacao;
-import br.com.abril.nds.model.cadastro.Box;
-import br.com.abril.nds.model.cadastro.Cota;
-import br.com.abril.nds.model.cadastro.Editor;
-import br.com.abril.nds.model.cadastro.Fornecedor;
-import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
-import br.com.abril.nds.model.cadastro.PessoaJuridica;
-import br.com.abril.nds.model.cadastro.Produto;
-import br.com.abril.nds.model.cadastro.ProdutoEdicao;
-import br.com.abril.nds.model.cadastro.SituacaoCadastro;
-import br.com.abril.nds.model.cadastro.TipoFornecedor;
-import br.com.abril.nds.model.cadastro.TipoProduto;
-import br.com.abril.nds.model.cadastro.TributacaoFiscal;
-import br.com.abril.nds.model.estoque.Diferenca;
-import br.com.abril.nds.model.estoque.EstoqueProduto;
-import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
-import br.com.abril.nds.model.estoque.MovimentoEstoque;
-import br.com.abril.nds.model.estoque.RateioDiferenca;
-import br.com.abril.nds.model.estoque.RecebimentoFisico;
-import br.com.abril.nds.model.estoque.TipoDiferenca;
-import br.com.abril.nds.model.estoque.TipoDirecionamentoDiferenca;
-import br.com.abril.nds.model.estoque.TipoEstoque;
-import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
-import br.com.abril.nds.model.fiscal.CFOP;
-import br.com.abril.nds.model.fiscal.ItemNotaFiscalEntrada;
-import br.com.abril.nds.model.fiscal.NCM;
-import br.com.abril.nds.model.fiscal.NotaFiscalEntrada;
-import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
-import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
-import br.com.abril.nds.model.planejamento.Estudo;
-import br.com.abril.nds.model.planejamento.EstudoCota;
-import br.com.abril.nds.model.planejamento.TipoLancamento;
-import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.dto.DetalheDiferencaCotaDTO;
+import br.com.abril.nds.dto.RateioDiferencaCotaDTO;
+import br.com.abril.nds.dto.filtro.FiltroDetalheDiferencaCotaDTO;
+import br.com.abril.nds.dto.filtro.FiltroDetalheDiferencaCotaDTO.ColunaOrdenacao;
+import br.com.abril.nds.repository.RateioDiferencaRepository;
+import br.com.abril.nds.vo.PaginacaoVO;
+
+
 
 public class RateioDiferencaRepositoryImplTest extends AbstractRepositoryImplTest{
 
 	@Autowired
-	private RateioDiferencaRepositoryImpl rateioDiferencaRepositoryImpl;
+	private RateioDiferencaRepository rateioDiferencaRepository;
 	
-	private Diferenca diferenca;
+	FiltroDetalheDiferencaCotaDTO filtro = new FiltroDetalheDiferencaCotaDTO();
 	
 	@Before
 	public void setUp(){
-		Box box300Reparte = Fixture.boxReparte300();
-		save(box300Reparte);
 		
-		Usuario usuario = Fixture.usuarioJoao();
-		save(usuario);
+		filtro.setCodigoProduto("1a");
+		filtro.setDescricaoProduto("produtoTeste");
+		filtro.setIdDiferenca(1L);
+		filtro.setNomeFornecedor("fornecedorTeste");
+		filtro.setNumeroEdicao("55.b");
+		filtro.setQuantidade(BigInteger.ONE);
+		filtro.setTipoDiferenca("tipoDiferencaTeste");
+	}
+	
+	@Test
+	public void removerRateioDiferencaPorDiferenca(){
+		Long idDiferenca = 1L;
 		
-		NCM ncmRevistas = Fixture.ncm(49029000l,"REVISTAS","KG");
-		save(ncmRevistas);
+		rateioDiferencaRepository.removerRateioDiferencaPorDiferenca(idDiferenca);
+	}
+	
+	@Test
+	public void removerRateiosNaoAssociadosDiferenca(){
+		List<Long> idrateios = new ArrayList<Long>();
+		idrateios.add(1L);
+		idrateios.add(2L);
+		Long idDiferenca = 1L;
 		
-		TipoProduto tipoProduto = Fixture.tipoRevista(ncmRevistas);
-		save(tipoProduto);
-		
-		Editor abril = Fixture.editoraAbril();
-		save(abril.getPessoaJuridica(), abril);
-		
-		Produto produto = Fixture.produto("jkgfhfhjgh", "descricao", "nome", PeriodicidadeProduto.ANUAL, tipoProduto, 5, 5, new Long(100), TributacaoFiscal. TRIBUTADO);
-		produto.setEditor(abril);
-		save(produto);
+		rateioDiferencaRepository.removerRateiosNaoAssociadosDiferenca(idDiferenca, idrateios);
+	}
+	
+	@Test
+	public void obterRateioDiferencaCota(){
 				
-		ProdutoEdicao produtoEdicao = Fixture.produtoEdicao(1L, 1, 1, new Long(100), BigDecimal.TEN, BigDecimal.TEN, "ABCDEFGHIJKLMNOPQ", produto, null, false);
-		save(produtoEdicao);
+		List<RateioDiferencaCotaDTO> rateioDiferencaCotaDTOs = 
+				rateioDiferencaRepository.obterRateioDiferencaCota(filtro);
 		
-		PessoaJuridica pessoaJuridica = Fixture.pessoaJuridica("razaoSocial", "cnpj", "ie", "email", "99.999-9");
-		save(pessoaJuridica);
+		Assert.assertNotNull(rateioDiferencaCotaDTOs);
+	}
+	
+	@Test
+	public void obterRateioDiferencaCotaPosicaoInicial(){
 		
-		TipoFornecedor tipoFornecedorPublicacao = Fixture.tipoFornecedorPublicacao();
-		save(tipoFornecedorPublicacao);
+		filtro.setPaginacao(new PaginacaoVO());
+		filtro.getPaginacao().setQtdResultadosPorPagina(1);
+		filtro.getPaginacao().setPaginaAtual(1);
 		
-		Fornecedor fornecedor = Fixture.fornecedorFC(tipoFornecedorPublicacao);
-		save(fornecedor);
-		
-		TipoNotaFiscal tipoNotaFiscal = Fixture.tipoNotaFiscalRecebimento();
-		save(tipoNotaFiscal);
-		
-		CFOP cfop = Fixture.cfop5102();
-		save(cfop);
-		
-		NotaFiscalEntrada notaFiscal = 
-				Fixture.notaFiscalEntradaFornecedor(cfop, fornecedor, tipoNotaFiscal, 
-						usuario, BigDecimal.TEN, BigDecimal.ZERO, BigDecimal.TEN);
-		save(notaFiscal);
 				
-		ItemNotaFiscalEntrada itemNotaFiscal = 
+		List<RateioDiferencaCotaDTO> rateioDiferencaCotaDTOs = 
+				rateioDiferencaRepository.obterRateioDiferencaCota(filtro);
+		
+		Assert.assertNotNull(rateioDiferencaCotaDTOs);
+	}
+	
+	@Test
+	public void obterRateioDiferencaCotaOrdenacaoBox(){
 				
-				Fixture.itemNotaFiscal(
-						produtoEdicao, 
-						usuario, 
-						notaFiscal, 
-						new Date(), 
-						new Date(),
-						TipoLancamento.LANCAMENTO,
-						BigInteger.ONE);
+		filtro.setPaginacao(new PaginacaoVO());
+		filtro.getPaginacao().setSortOrder("Asc");
+		filtro.setColunaOrdenacao(ColunaOrdenacao.BOX);
 		
-		save(itemNotaFiscal);
+		List<RateioDiferencaCotaDTO> rateioDiferencaCotaDTOs = 
+				rateioDiferencaRepository.obterRateioDiferencaCota(filtro);
 		
-		NotaFiscalEntradaFornecedor notaFiscalFornecedor = 
-				Fixture.notaFiscalEntradaFornecedor(cfop, fornecedor, tipoNotaFiscal, 
-						usuario, BigDecimal.TEN, BigDecimal.ZERO, BigDecimal.TEN);
-		save(notaFiscalFornecedor);
-		
-		RecebimentoFisico recebimentoFisico = Fixture.recebimentoFisico(notaFiscalFornecedor, usuario, new Date(), new Date(), StatusConfirmacao.CONFIRMADO);
-		save(recebimentoFisico);
-		
-		ItemRecebimentoFisico itemRecebimentoFisico = 
-				Fixture.itemRecebimentoFisico(itemNotaFiscal, recebimentoFisico, BigInteger.TEN);
-		save(itemRecebimentoFisico);
-		
-		TipoMovimentoEstoque tipoMovimento = Fixture.tipoMovimentoFaltaDe();
-		save(tipoMovimento);
-		
-		EstoqueProduto estoqueProduto = Fixture.estoqueProduto(produtoEdicao, BigInteger.TEN);
-		save(estoqueProduto);
-		
-		MovimentoEstoque movimentoEstoque = 
-			Fixture.movimentoEstoque(itemRecebimentoFisico, produtoEdicao, tipoMovimento, usuario,
-				estoqueProduto, new Date(), BigInteger.valueOf(1),
-				StatusAprovacao.APROVADO, "Aprovado");
+		Assert.assertNotNull(rateioDiferencaCotaDTOs);
+	}
+	
+	@Test
+	public void obterRateioDiferencaCotaOrdenacaoCota(){
 				
-		save(movimentoEstoque);
+		filtro.setPaginacao(new PaginacaoVO());
+		filtro.getPaginacao().setSortOrder("Asc");
+		filtro.setColunaOrdenacao(ColunaOrdenacao.COTA);
 		
-		diferenca = 
-				Fixture.diferenca(BigInteger.TEN, usuario, produtoEdicao, TipoDiferenca.FALTA_DE, StatusConfirmacao.CONFIRMADO, itemRecebimentoFisico,true, TipoEstoque.LANCAMENTO,TipoDirecionamentoDiferenca.ESTOQUE,new Date());
+		List<RateioDiferencaCotaDTO> rateioDiferencaCotaDTOs = 
+				rateioDiferencaRepository.obterRateioDiferencaCota(filtro);
 		
-		save(diferenca);
+		Assert.assertNotNull(rateioDiferencaCotaDTOs);
+	}
+	
+	@Test
+	public void obterRateioDiferencaCotaOrdenacaoData(){
+				
+		filtro.setPaginacao(new PaginacaoVO());
+		filtro.getPaginacao().setSortOrder("Asc");
+		filtro.setColunaOrdenacao(ColunaOrdenacao.DATA);
 		
-		Cota cota = Fixture.cota(1, pessoaJuridica, SituacaoCadastro.ATIVO, box300Reparte);
-		save(cota);
+		List<RateioDiferencaCotaDTO> rateioDiferencaCotaDTOs = 
+				rateioDiferencaRepository.obterRateioDiferencaCota(filtro);
 		
-		Estudo estudo = Fixture.estudo(BigInteger.TEN, new Date(), produtoEdicao);
-		save(estudo);
+		Assert.assertNotNull(rateioDiferencaCotaDTOs);
+	}
+	
+	@Test
+	public void obterRateioDiferencaCotaOrdenacaoExemplares(){
+				
+		filtro.setPaginacao(new PaginacaoVO());
+		filtro.getPaginacao().setSortOrder("Asc");
+		filtro.setColunaOrdenacao(ColunaOrdenacao.EXEMPLARES);
 		
-		EstudoCota estudoCota = Fixture.estudoCota(BigInteger.TEN, BigInteger.TEN, estudo, cota);
-		save(estudoCota);
+		List<RateioDiferencaCotaDTO> rateioDiferencaCotaDTOs = 
+				rateioDiferencaRepository.obterRateioDiferencaCota(filtro);
 		
-		RateioDiferenca rateioDiferenca = Fixture.rateioDiferenca(BigInteger.TEN, cota, diferenca, estudoCota, new Date());
-
-		save(rateioDiferenca);
+		Assert.assertNotNull(rateioDiferencaCotaDTOs);
+	}
+	
+	@Test
+	public void obterRateioDiferencaCotaOrdenacaoNome(){
+				
+		filtro.setPaginacao(new PaginacaoVO());
+		filtro.getPaginacao().setSortOrder("Asc");
+		filtro.setColunaOrdenacao(ColunaOrdenacao.NOME);
+		
+		List<RateioDiferencaCotaDTO> rateioDiferencaCotaDTOs = 
+				rateioDiferencaRepository.obterRateioDiferencaCota(filtro);
+		
+		Assert.assertNotNull(rateioDiferencaCotaDTOs);
+	}
+	
+	@Test
+	public void obterRateioDiferencaCotaOrdenacaoPrecoDesconto(){
+				
+		filtro.setPaginacao(new PaginacaoVO());
+		filtro.getPaginacao().setSortOrder("Asc");
+		filtro.setColunaOrdenacao(ColunaOrdenacao.PRECO_DESCONTO);
+		
+		List<RateioDiferencaCotaDTO> rateioDiferencaCotaDTOs = 
+				rateioDiferencaRepository.obterRateioDiferencaCota(filtro);
+		
+		Assert.assertNotNull(rateioDiferencaCotaDTOs);
+	}
+	
+	@Test
+	public void obterRateioDiferencaCotaOrdenacaoTotal(){
+				
+		filtro.setPaginacao(new PaginacaoVO());
+		filtro.getPaginacao().setSortOrder("Asc");
+		filtro.setColunaOrdenacao(ColunaOrdenacao.TOTAL);
+		
+		List<RateioDiferencaCotaDTO> rateioDiferencaCotaDTOs = 
+				rateioDiferencaRepository.obterRateioDiferencaCota(filtro);
+		
+		Assert.assertNotNull(rateioDiferencaCotaDTOs);
+	}
+	
+	@Test
+	public void obterRateioDiferencaCotaOrdenacaoTotalAprovadas(){
+				
+		filtro.setPaginacao(new PaginacaoVO());
+		filtro.getPaginacao().setSortOrder("Asc");
+		filtro.setColunaOrdenacao(ColunaOrdenacao.TOTAL_APROVADAS);
+		
+		List<RateioDiferencaCotaDTO> rateioDiferencaCotaDTOs = 
+				rateioDiferencaRepository.obterRateioDiferencaCota(filtro);
+		
+		Assert.assertNotNull(rateioDiferencaCotaDTOs);
+	}
+	
+	@Test
+	public void obterRateioDiferencaCotaOrdenacaoTotalRejeitadas(){
+				
+		filtro.setPaginacao(new PaginacaoVO());
+		filtro.getPaginacao().setSortOrder("Desc");
+		filtro.setColunaOrdenacao(ColunaOrdenacao.TOTAL_REJEITADAS);
+		
+		List<RateioDiferencaCotaDTO> rateioDiferencaCotaDTOs = 
+				rateioDiferencaRepository.obterRateioDiferencaCota(filtro);
+		
+		Assert.assertNotNull(rateioDiferencaCotaDTOs);
+	}
+	
+	@Test
+	public void obterDetalhesDiferencaCota(){
+				
+		DetalheDiferencaCotaDTO detalheDiferencaCotaDTO = rateioDiferencaRepository.obterDetalhesDiferencaCota(filtro);
 	}
 	
 }

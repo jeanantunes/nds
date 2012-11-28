@@ -25,7 +25,7 @@ import br.com.abril.nds.model.dne.UnidadeFederacao;
  */
 @Entity
 @Table(name = "FERIADO", uniqueConstraints = { @UniqueConstraint(columnNames = {
-		"DATA", "LOCALIDADE_ID", "UFE_SG", "TIPO_FERIADO" }) })
+		"DATA", "LOCALIDADE", "UFE_SG", "TIPO_FERIADO" }) })
 @SequenceGenerator(name = "FERIADO_SEQ", initialValue = 1, allocationSize = 1)
 public class Feriado {
 
@@ -41,13 +41,11 @@ public class Feriado {
 	@Column(name = "DESCRICAO", nullable = false)
 	private String descricao;
 
-	@ManyToOne
-	@JoinColumn(name = "UFE_SG")
-	private UnidadeFederacao unidadeFederacao;
+	@Column(name = "UFE_SG")
+	private String unidadeFederacao;
 	
-	@ManyToOne
-	@JoinColumn(name = "LOCALIDADE_ID")
-	private Localidade localidade;
+	@Column(name = "LOCALIDADE")
+	private String localidade;
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "TIPO_FERIADO")
@@ -123,7 +121,7 @@ public class Feriado {
 	 *
 	 * @return Localidade
 	 */
-	public Localidade getLocalidade() {
+	public String getLocalidade() {
 		return localidade;
 	}
 
@@ -131,7 +129,7 @@ public class Feriado {
 	 * Atribuí localidade
 	 * @param localidade 
 	 */
-	public void setLocalidade(Localidade localidade) {
+	public void setLocalidade(String localidade) {
 		this.localidade = localidade;
 	}
 
@@ -208,7 +206,7 @@ public class Feriado {
 	 *
 	 * @return UnidadeFederacao
 	 */
-	public UnidadeFederacao getUnidadeFederacao() {
+	public String getUnidadeFederacao() {
 		return unidadeFederacao;
 	}
 
@@ -216,7 +214,7 @@ public class Feriado {
 	 * Atribuí unidadeFederacao
 	 * @param unidadeFederacao 
 	 */
-	public void setUnidadeFederacao(UnidadeFederacao unidadeFederacao) {
+	public void setUnidadeFederacao(String unidadeFederacao) {
 		this.unidadeFederacao = unidadeFederacao;
 	}
 

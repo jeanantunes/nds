@@ -672,21 +672,23 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		MovimentoFinanceiroCota movimentoFinanceiroCota = null;
 		
 		TipoMovimentoFinanceiro tipoMovimentoFinanceiro = null;
+
+		// Não consegui compreender pq ele negativa a dívida, desta forma, estava poderia gerar uma dívida negativa, além disto, esta condição sempre dava true: (vlMovFinanTotal.compareTo(valorMinino) < 0 (linha 688 desta classe)
+		//vlMovFinanTotal = vlMovFinanTotal.negate();
 		
 		//se existe divida
-		if (vlMovFinanTotal.compareTo(BigDecimal.ZERO) < 0){
+		if (vlMovFinanTotal.compareTo(BigDecimal.ZERO) > 0){
 			
-			vlMovFinanTotal = vlMovFinanTotal.negate();
-
 			boolean cotaSuspensa = SituacaoCadastro.SUSPENSO.equals(this.obterSitiacaoCadastroCota(cota.getId()));
 
-			BigDecimal valorMinino = this.obterValorMinino(cota, valorMininoDistribuidor);
+			BigDecimal valorMinino
+			= this.obterValorMinino(cota, valorMininoDistribuidor);
 			
 			//caso a cota não esteja suspensa e não tenha alcançado o valor minino de cobrança ou não seja um dia de concentração de cobrança
 			if ( (!cotaSuspensa)&&(vlMovFinanTotal.compareTo(valorMinino) < 0) || 
 					((diasSemanaConcentracaoPagamento != null) && 
 					!diasSemanaConcentracaoPagamento.contains(Calendar.getInstance().get(Calendar.DAY_OF_MONTH))) ){
-				
+
 				//gerar postergado
 				consolidadoFinanceiroCota.setValorPostergado(vlMovFinanTotal);
 				

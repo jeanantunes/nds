@@ -149,7 +149,7 @@ public class BalanceamentoLancamentoTest extends AbstractRepositoryImplTest {
 		CFOP cfop = Fixture.cfop5102();
 		save(cfop);
 		
-		TipoNotaFiscal tipoNotaFiscal = Fixture.tipoNotaFiscalRecebimento();
+		TipoNotaFiscal tipoNotaFiscal = Fixture.tipoNotaFiscalRecebimento(cfop);
 		save(tipoNotaFiscal);
 		
 		NotaFiscalEntradaFornecedor notaFiscal1Veja = Fixture
@@ -326,7 +326,8 @@ public class BalanceamentoLancamentoTest extends AbstractRepositoryImplTest {
 			Fixture.criarPeriodoLancamentoParcial(lancamentoCapricho,
 												  lancamentoParcialCapricho,
 												  StatusLancamentoParcial.PROJETADO,
-												  TipoLancamentoParcial.FINAL);
+												  TipoLancamentoParcial.FINAL,
+												  1);
 
 		save(periodoLancamentoCapricho);
 		

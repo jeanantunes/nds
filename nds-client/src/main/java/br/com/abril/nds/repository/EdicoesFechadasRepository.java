@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 
@@ -38,7 +39,7 @@ public interface EdicoesFechadasRepository extends Repository<MovimentoEstoque, 
 	 * @param idFornecedor
 	 * @return
 	 */
-	public BigDecimal obterResultadoTotalEdicoesFechadas(Date dataDe, Date dateAte, Long idFornecedor);
+	public BigInteger obterResultadoTotalEdicoesFechadas(Date dataDe, Date dateAte, Long idFornecedor);
 
 
 

@@ -6,6 +6,7 @@ import br.com.abril.nds.client.vo.EntregadorCotaProcuracaoPaginacaoVO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroEntregadorDTO;
 import br.com.abril.nds.model.cadastro.Entregador;
+import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.ProcuracaoEntregador;
 
 /**
@@ -105,5 +106,9 @@ public interface EntregadorRepository extends Repository<Entregador, Long> {
 	public Long obterMinCodigoEntregadorDisponivel();
 	
 	public Entregador obterEntregadorPorCodigo(Long codigo);
+
+	List<Pessoa> obterEntregadorPorApelido(String apelidoEntregador);
+
+	List<Pessoa> obterEntregadorPorNome(String nomeEntregador);
 
 }

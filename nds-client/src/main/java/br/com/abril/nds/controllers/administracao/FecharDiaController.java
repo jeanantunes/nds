@@ -1,29 +1,44 @@
 package br.com.abril.nds.controllers.administracao;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.math.BigDecimal;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
+import br.com.abril.nds.client.report.RelatorioFechamentoDiario;
 import br.com.abril.nds.client.vo.DetalheCotaFechamentoDiarioVO;
+import br.com.abril.nds.dto.EncalheFecharDiaDTO;
 import br.com.abril.nds.dto.FecharDiaDTO;
 import br.com.abril.nds.dto.ReparteFecharDiaDTO;
+import br.com.abril.nds.dto.ResumoEncalheFecharDiaDTO;
+import br.com.abril.nds.dto.ResumoFechamentoDiarioConsignadoDTO;
 import br.com.abril.nds.dto.ResumoFechamentoDiarioCotasDTO;
 import br.com.abril.nds.dto.ResumoFechamentoDiarioCotasDTO.TipoResumo;
+import br.com.abril.nds.dto.ResumoReparteFecharDiaDTO;
+import br.com.abril.nds.dto.ResumoSuplementarFecharDiaDTO;
+import br.com.abril.nds.dto.SuplementarFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoConfirmacaoDeExpedicaoFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoControleDeAprovacaoFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoLancamentoFaltaESobraFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoRecebimentoFisicoFecharDiaDTO;
-import br.com.abril.nds.dto.VendaSuplementarDTO;
+import br.com.abril.nds.dto.VendaFechamentoDiaDTO;
 import br.com.abril.nds.dto.fechamentodiario.DividaDTO;
+import br.com.abril.nds.dto.fechamentodiario.FechamentoDiarioDTO;
+import br.com.abril.nds.dto.fechamentodiario.ResumoEstoqueDTO;
 import br.com.abril.nds.dto.fechamentodiario.SumarizacaoDividasDTO;
 import br.com.abril.nds.dto.fechamentodiario.TipoDivida;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -51,16 +66,21 @@ import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.util.export.NDSFileHeader;
 import br.com.abril.nds.vo.PaginacaoVO;
+import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.interceptor.download.Download;
+import br.com.caelum.vraptor.interceptor.download.InputStreamDownload;
 import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/administracao/fecharDia")
 public class FecharDiaController {
+    
+    private static final Logger LOG = LoggerFactory.getLogger(FecharDiaController.class);
 	
 	@Autowired
 	private FecharDiaService fecharDiaService;
@@ -86,7 +106,19 @@ public class FecharDiaController {
 	@Autowired
 	private HttpServletResponse httpResponse;
 	
+	@Autowired
+	private HttpServletRequest httpRequest;
+	
+	@Autowired
+	private HttpSession session;
+	
 	private static Distribuidor distribuidor;
+
+	private static final String ATRIBUTO_SESSAO_POSSUI_PENDENCIAS_VALIDACAO = "atributoSessaoValidacao";
+	
+	private static final String FECHAMENTO_DIARIO_DTO_SESSION_KEY = "FECHAMENTO_DIARIO_DTO_SESSION_KEY"; 
+	
+	private static final String FECHAMENTO_DIARIO_REPORT_EXPORT_NAME = "relatorio-fechamento-diario.pdf";
 	
 	@Path("/")
 	@Rules(Permissao.ROLE_ADMINISTRACAO_FECHAR_DIA)
@@ -140,6 +172,7 @@ public class FecharDiaController {
 		
 	}
 	
+	//Grid que é acionado nas validações
 	@Post
 	@Path("/obterLancamentoFaltaESobra")
 	public void obterLancamentoFaltaESobra(){
@@ -181,7 +214,9 @@ public class FecharDiaController {
 			}
 		}
 		
-		result.use(Results.json()).from(pendencia).recursive().serialize();
+		this.session.setAttribute(ATRIBUTO_SESSAO_POSSUI_PENDENCIAS_VALIDACAO, pendencia);
+		
+		this.result.use(Results.json()).from(pendencia).recursive().serialize();
 		
 	}
 	
@@ -189,66 +224,18 @@ public class FecharDiaController {
 	@Path("obterResumoQuadroReparte")
 	public void obterResumoQuadroReparte(){
 		
-		List<BigDecimal> listaDeResultados = new ArrayList<BigDecimal>();
-
-		List<ReparteFecharDiaDTO> lista = this.resumoFecharDiaService.obterValorReparte(distribuidor.getDataOperacao(), true);
+		ResumoReparteFecharDiaDTO dto = this.resumoFecharDiaService.obterResumoGeralReparte(distribuidor.getDataOperacao());
 		
-		BigDecimal totalReparte = lista.get(0).getValorTotalReparte();
-		listaDeResultados.add(totalReparte);
-		
-		lista = this.resumoFecharDiaService.obterValorDiferenca(distribuidor.getDataOperacao(), true, "sobra");
-		BigDecimal totalSobras = lista.get(0).getSobras() != null ? lista.get(0).getSobras() : BigDecimal.ZERO;
-		listaDeResultados.add(totalSobras);
-		
-		
-		lista = this.resumoFecharDiaService.obterValorDiferenca(distribuidor.getDataOperacao(), true, "falta");
-		BigDecimal totalFaltas = lista.get(0).getFaltas() != null ? lista.get(0).getFaltas() : BigDecimal.ZERO;
-		listaDeResultados.add(totalFaltas);
-		
-		
-		lista = this.resumoFecharDiaService.obterValorTransferencia(distribuidor.getDataOperacao(), true);
-		BigDecimal totalTranferencia = BigDecimal.ZERO;
-		if(lista.get(0).getTransferencias() != null){
-			totalTranferencia = lista.get(0).getTransferencias();			
-		}
-		listaDeResultados.add(totalTranferencia);
-		
-		
-		BigDecimal totalADistribuir = (totalReparte.add(totalSobras)).subtract(totalFaltas);
-		listaDeResultados.add(totalADistribuir);
-		
-		lista = this.resumoFecharDiaService.obterValorDistribuido(distribuidor.getDataOperacao(), true);
-		BigDecimal totalDistribuido = lista.get(0).getDistribuidos() != null ? lista.get(0).getDistribuidos() : BigDecimal.ZERO;
-		listaDeResultados.add(totalDistribuido);
-		
-		BigDecimal sobraDistribuido = totalADistribuir.subtract(totalDistribuido);
-		listaDeResultados.add(sobraDistribuido);
-		BigDecimal diferenca = totalDistribuido.subtract(sobraDistribuido);
-		listaDeResultados.add(diferenca);
-		
-		result.use(Results.json()).from(listaDeResultados, "result").serialize();
+		result.use(Results.json()).from(dto, "result").recursive().serialize();
 	}
 	
 	@Post
 	@Path("obterResumoQuadroEncalhe")
 	public void obterResumoQuadroEncalhe(){
 		
-		List<BigDecimal> listaDeEncalhes = new ArrayList<BigDecimal>();
+		ResumoEncalheFecharDiaDTO dto = this.resumoEncalheFecharDiaService.obterResumoGeralEncalhe(distribuidor.getDataOperacao());
 		
-		BigDecimal totalLogico = this.resumoEncalheFecharDiaService.obterValorEncalheLogico(distribuidor.getDataOperacao());
-		listaDeEncalhes.add(totalLogico);
-		
-		BigDecimal totalFisico = this.resumoEncalheFecharDiaService.obterValorEncalheFisico(distribuidor.getDataOperacao(), false);
-		listaDeEncalhes.add(totalFisico);
-		
-		BigDecimal totalJuramentado = this.resumoEncalheFecharDiaService.obterValorEncalheFisico(distribuidor.getDataOperacao(), true);;
-		listaDeEncalhes.add(totalJuramentado);
-		
-		List<ReparteFecharDiaDTO> lista = this.resumoFecharDiaService.obterValorReparte(distribuidor.getDataOperacao(), true);
-		BigDecimal venda = lista.get(0).getValorTotalReparte().subtract(totalFisico) ;
-		listaDeEncalhes.add(venda);
-		
-		result.use(Results.json()).from(listaDeEncalhes, "result").recursive().serialize();
+		result.use(Results.json()).from(dto, "result").recursive().serialize();
 		
 	}
 	
@@ -257,21 +244,9 @@ public class FecharDiaController {
 	@Path("obterResumoQuadroSuplementar")
 	public void obterResumoQuadroSuplementar(){
 		
-		List<BigDecimal> listaDeSuplementares = new ArrayList<BigDecimal>();
+		ResumoSuplementarFecharDiaDTO dto = this.resumoSuplementarFecharDiaService.obterResumoGeralEncalhe(distribuidor.getDataOperacao());
 		
-		BigDecimal totalEstoqueLogico = this.resumoSuplementarFecharDiaService.obterValorEstoqueLogico(distribuidor.getDataOperacao());
-		listaDeSuplementares.add(totalEstoqueLogico);
-		
-		BigDecimal totalTransferencia = this.resumoSuplementarFecharDiaService.obterValorTransferencia(distribuidor.getDataOperacao());
-		listaDeSuplementares.add(totalTransferencia);
-		
-		BigDecimal totalVenda = this.resumoSuplementarFecharDiaService.obterValorVenda(distribuidor.getDataOperacao());
-		listaDeSuplementares.add(totalVenda);
-		
-		BigDecimal totalFisico = this.resumoSuplementarFecharDiaService.obterValorFisico(distribuidor.getDataOperacao());
-		listaDeSuplementares.add(totalEstoqueLogico.subtract(totalFisico));
-		
-		result.use(Results.json()).from(listaDeSuplementares, "result").recursive().serialize();
+		result.use(Results.json()).from(dto, "result").recursive().serialize();
 	}
 	
 	@Post
@@ -291,12 +266,50 @@ public class FecharDiaController {
 	}
 	
 	@Post
-	@Path("/obterGridVendaSuplemntar")
-	public void obterGridVendaSuplemntar(){
+	@Path("/obterGridEncalhe")
+	public void obterGridEncalhe(){
 		
-		List<VendaSuplementarDTO> listaReparte = resumoSuplementarFecharDiaService.obterVendasSuplementar(distribuidor.getDataOperacao());
+		List<EncalheFecharDiaDTO> listaEncalhe = this.resumoEncalheFecharDiaService.obterDadosGridEncalhe(distribuidor.getDataOperacao());
 		
-		TableModel<CellModelKeyValue<VendaSuplementarDTO>> tableModel = new TableModel<CellModelKeyValue<VendaSuplementarDTO>>();
+		TableModel<CellModelKeyValue<EncalheFecharDiaDTO>> tableModel = new TableModel<CellModelKeyValue<EncalheFecharDiaDTO>>();
+		
+		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaEncalhe));
+		
+		tableModel.setTotal(listaEncalhe.size());
+		
+		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+		
+	}
+	
+	@Post
+	@Path("/obterGridSuplementar")
+	public void obterGridSuplementar(){
+		
+		List<SuplementarFecharDiaDTO> listaSuplementar = this.resumoSuplementarFecharDiaService.obterDadosGridSuplementar();
+		
+		TableModel<CellModelKeyValue<SuplementarFecharDiaDTO>> tableModel = new TableModel<CellModelKeyValue<SuplementarFecharDiaDTO>>();
+		
+		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaSuplementar));
+		
+		tableModel.setTotal(listaSuplementar.size());
+		
+		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+		
+	}
+	
+
+	@Post
+	@Path("/obterGridVenda")
+	public void obterGridVenda(String tipoVenda){
+		
+		List<VendaFechamentoDiaDTO> listaReparte = null;
+		if(tipoVenda.equals("encalhe")){
+			listaReparte = resumoEncalheFecharDiaService.obterDadosVendaEncalhe(distribuidor.getDataOperacao());
+		}else if(tipoVenda.equals("suplementar")){
+			listaReparte = resumoSuplementarFecharDiaService.obterVendasSuplementar(distribuidor.getDataOperacao());			
+		}
+		
+		TableModel<CellModelKeyValue<VendaFechamentoDiaDTO>> tableModel = new TableModel<CellModelKeyValue<VendaFechamentoDiaDTO>>();
 		
 		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaReparte));
 		
@@ -306,18 +319,21 @@ public class FecharDiaController {
 		
 	}
 	
+	
+	
 	@Get
-	public void exportarVendaSuplemntar(FileType fileType){		
+	public void exportarResumoReparte(FileType fileType){
+		
+		
 		try {
-			
-			List<VendaSuplementarDTO> listaReparte = resumoSuplementarFecharDiaService.obterVendasSuplementar(distribuidor.getDataOperacao());
-			
-			if(listaReparte.isEmpty()) {
-				throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");
-			}
-			
-				FileExporter.to("recebimento_fisico", fileType).inHTTPResponse(this.getNDSFileHeader(), null, null, 
-						listaReparte, VendaSuplementarDTO.class, this.httpResponse);
+		List<ReparteFecharDiaDTO> listaReparte = this.resumoFecharDiaService.obterResumoReparte(distribuidor.getDataOperacao());
+		
+		if(listaReparte.isEmpty()) {
+			throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");
+		}
+		
+			FileExporter.to("resumo_reparte", fileType).inHTTPResponse(this.getNDSFileHeader(), null, null, 
+					listaReparte, ReparteFecharDiaDTO.class, this.httpResponse);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -327,6 +343,79 @@ public class FecharDiaController {
 		result.nothing();
 		
 	}
+	
+	@Get
+	public void exportarResumoEncalhe(FileType fileType){
+		
+		
+		try {
+		
+		List<EncalheFecharDiaDTO> listaEncalhe = this.resumoEncalheFecharDiaService.obterDadosGridEncalhe(distribuidor.getDataOperacao());
+		
+		if(listaEncalhe.isEmpty()) {
+			throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");
+		}
+		
+			FileExporter.to("resumo_reparte", fileType).inHTTPResponse(this.getNDSFileHeader(), null, null, 
+					listaEncalhe, EncalheFecharDiaDTO.class, this.httpResponse);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		
+		
+		result.nothing();
+		
+	}
+	
+	@Get
+	public void exportarResumoSuplementar(FileType fileType){
+		
+		
+		try {
+		
+		List<SuplementarFecharDiaDTO> listaSuplementar = this.resumoSuplementarFecharDiaService.obterDadosGridSuplementar();
+		
+		if(listaSuplementar.isEmpty()) {
+			throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");
+		}
+		
+			FileExporter.to("resumo_reparte", fileType).inHTTPResponse(this.getNDSFileHeader(), null, null, 
+					listaSuplementar, SuplementarFecharDiaDTO.class, this.httpResponse);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		
+		
+		result.nothing();
+		
+	}
+	
+	@Post
+	@Path("/exportarVendaSuplemntar")
+	public void exportarVendaSuplemntar(FileType fileType, String tipoVenda){		
+		try {
+			
+			List<VendaFechamentoDiaDTO> listaVenda = null;
+			if(tipoVenda.equals("encalhe")){
+				listaVenda = resumoEncalheFecharDiaService.obterDadosVendaEncalhe(distribuidor.getDataOperacao());
+			}else if(tipoVenda.equals("suplementar"))
+				listaVenda = resumoSuplementarFecharDiaService.obterVendasSuplementar(distribuidor.getDataOperacao());
+			
+			if(listaVenda.isEmpty()) {
+				throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");
+			}
+			
+				FileExporter.to("venda_" + tipoVenda, fileType).inHTTPResponse(this.getNDSFileHeader(), null, null, 
+						listaVenda, VendaFechamentoDiaDTO.class, this.httpResponse);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+	}
+	
+	
 	
 	@Get
 	public void exportarRecebimentoFisico(FileType fileType){
@@ -350,6 +439,8 @@ public class FecharDiaController {
 		result.nothing();
 		
 	}
+	
+	
 	
 	private NDSFileHeader getNDSFileHeader() {
 		
@@ -382,7 +473,7 @@ public class FecharDiaController {
 	public void obterSumarizacaoDividas() {
         Date dataFechamento = getDataFechamento();
         
-        Map<TipoDivida, List<SumarizacaoDividasDTO>> sumarizacao = new HashMap<>();
+        Map<TipoDivida, List<SumarizacaoDividasDTO>> sumarizacao = new HashMap<TipoDivida, List<SumarizacaoDividasDTO>>();
         
         List<SumarizacaoDividasDTO> aReceber = fecharDiaService.sumarizacaoDividasReceberEm(dataFechamento);
         List<SumarizacaoDividasDTO> aVencer = fecharDiaService.sumarizacaoDividasVencerApos(dataFechamento);
@@ -399,13 +490,13 @@ public class FecharDiaController {
 	    PaginacaoVO paginacao = new PaginacaoVO(page, rp, null);
 	    
 	    List<Divida> dividas = fecharDiaService.obterDividasReceberEm(dataFechamento, paginacao);
-	    int totalDividas = fecharDiaService.contarDividasReceberEm(dataFechamento);
+	    Long totalDividas = fecharDiaService.contarDividasReceberEm(dataFechamento);
 	    
-	    List<DividaDTO> dividasDTO = new ArrayList<>();
+	    List<DividaDTO> dividasDTO = new ArrayList<DividaDTO>();
 	    for (Divida divida : dividas) {
 	        dividasDTO.add(DividaDTO.fromDivida(divida));
 	    }
-	    result.use(FlexiGridJson.class).from(dividasDTO).page(page).total(totalDividas).serialize();       
+	    result.use(FlexiGridJson.class).from(dividasDTO).page(page).total(totalDividas.intValue()).serialize();       
 	}
 	
 	@Get
@@ -413,7 +504,7 @@ public class FecharDiaController {
 	    Date dataFechamento = getDataFechamento();
         
         List<Divida> dividas = fecharDiaService.obterDividasReceberEm(dataFechamento, null);
-        List<DividaDTO> dividasDTO = new ArrayList<>(dividas.size());
+        List<DividaDTO> dividasDTO = new ArrayList<DividaDTO>(dividas.size());
 
         for (Divida divida : dividas) {
             dividasDTO.add(DividaDTO.fromDivida(divida));
@@ -432,13 +523,13 @@ public class FecharDiaController {
         PaginacaoVO paginacao = new PaginacaoVO(page, rp, null);
         
         List<Divida> dividas = fecharDiaService.obterDividasVencerApos(dataFechamento, paginacao);
-        int totalDividas = fecharDiaService.contarDividasVencerApos(dataFechamento);
+        Long totalDividas = fecharDiaService.contarDividasVencerApos(dataFechamento);
         
-        List<DividaDTO> dividasDTO = new ArrayList<>();
+        List<DividaDTO> dividasDTO = new ArrayList<DividaDTO>();
         for (Divida divida : dividas) {
             dividasDTO.add(DividaDTO.fromDivida(divida));
         }
-        result.use(FlexiGridJson.class).from(dividasDTO).page(page).total(totalDividas).serialize();            
+        result.use(FlexiGridJson.class).from(dividasDTO).page(page).total(totalDividas.intValue()).serialize();            
 	}
 	
 	@Get
@@ -446,7 +537,7 @@ public class FecharDiaController {
 	    Date dataFechamento = getDataFechamento();
         
         List<Divida> dividas = fecharDiaService.obterDividasVencerApos(dataFechamento, null);
-        List<DividaDTO> dividasDTO = new ArrayList<>(dividas.size());
+        List<DividaDTO> dividasDTO = new ArrayList<DividaDTO>(dividas.size());
 
         for (Divida divida : dividas) {
             dividasDTO.add(DividaDTO.fromDivida(divida));
@@ -483,6 +574,36 @@ public class FecharDiaController {
 			this.obterDetalheCotaFechamentoDiario(tipoResumo);
 		
 		result.use(FlexiGridJson.class).from(listaDetalhesCotaFechamentoDiarioVO).page(1).total(listaDetalhesCotaFechamentoDiarioVO.size()).serialize();
+	}
+	
+	@Post
+	public void confirmar() {
+		try {
+		    Boolean hasPendenciaValidacao = (Boolean) this.session.getAttribute(ATRIBUTO_SESSAO_POSSUI_PENDENCIAS_VALIDACAO);
+		    
+		    if (hasPendenciaValidacao != null && !hasPendenciaValidacao) {
+		        
+		        FechamentoDiarioDTO dto = this.fecharDiaService.processarFechamentoDoDia(getUsuario(), getDataFechamento());
+		        setFechamentoDiarioDTO(dto);
+		        
+		        this.session.removeAttribute(ATRIBUTO_SESSAO_POSSUI_PENDENCIAS_VALIDACAO);
+		        
+		        result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, " Fechamento do Dia efetuado com sucesso."),
+		                Constantes.PARAM_MSGS).recursive().serialize();
+		    }
+		    else{
+		        
+		        result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING, "Fechamento do Dia não pode ser confirmado! Existem pendências em aberto!"),
+		                Constantes.PARAM_MSGS).recursive().serialize();
+		        
+		    }
+		    
+		} catch (RuntimeException ex) {
+		    clearFechamentoDiarioDTO();
+		    LOG.error("ERRO AO CONFIRMAR FECHAMENTO DO DIA!", ex);
+		    throw ex;
+		}
+	    
 	}
 
 	private List<DetalheCotaFechamentoDiarioVO> obterDetalheCotaFechamentoDiario(TipoResumo tipoResumo) {
@@ -546,9 +667,91 @@ public class FecharDiaController {
 		
         result.nothing();
 	}
-    
+	
+	@Post
+	public void obterResumoConsignado() {
+		
+		ResumoFechamentoDiarioConsignadoDTO resumoFechamentoDiarioConsignado = 
+			this.fecharDiaService.obterResumoConsignado(getDataFechamento());
+		
+		result.use(CustomMapJson.class).put("resumo", resumoFechamentoDiarioConsignado).serialize();
+	}
+	
+	@Post
+	public void obterResumoEstoque() {
+		
+		ResumoEstoqueDTO resumoFechamentoDiarioEstoque = 
+			this.fecharDiaService.obterResumoEstoque(getDataFechamento());
+		
+		result.use(CustomMapJson.class).put("resumo", resumoFechamentoDiarioEstoque).serialize();
+	}
+	
+    @Post
+    public Download gerarRelatorioFechamentoDiario(ModoDownload modoDownload) {
+        FechamentoDiarioDTO dto = getFechamentoDiarioDTO();
+        
+        byte[] relatorio = RelatorioFechamentoDiario.exportPdf(dto);
+
+        if (relatorio != null) {
+            long size = relatorio.length;
+            InputStream inputStream = new ByteArrayInputStream(relatorio);
+
+            //Inclui o cookie requerido pelo plugin para tratamento da conclusão do download
+            if (ModoDownload.JQUERY_FILE_DOWNLOAD_PLUGIN.equals(modoDownload)) {
+                Cookie cookie = new Cookie("fileDownload", "true");
+                cookie.setPath(httpRequest.getContextPath());
+                httpResponse.addCookie(cookie);
+            }
+            
+            InputStreamDownload download = new InputStreamDownload(inputStream, FileType.PDF.getContentType(),
+                    FECHAMENTO_DIARIO_REPORT_EXPORT_NAME, true, size);
+            return download;
+        }
+        return null;
+    }
+
+	
     private Date getDataFechamento() {
         return distribuidorService.obter().getDataOperacao();
+    }
+    
+    private FechamentoDiarioDTO getFechamentoDiarioDTO() {
+        FechamentoDiarioDTO dto = (FechamentoDiarioDTO) session.getAttribute(FECHAMENTO_DIARIO_DTO_SESSION_KEY);
+        if (dto == null) {
+            throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Fechamento Diário não foi confirmado!"));
+        }
+        clearFechamentoDiarioDTO();
+        return dto;
+    }
+    
+    private void setFechamentoDiarioDTO(FechamentoDiarioDTO dto) {
+        session.setAttribute(FECHAMENTO_DIARIO_DTO_SESSION_KEY, dto);
+    }
+    
+    private void clearFechamentoDiarioDTO() {
+        setFechamentoDiarioDTO(null);
+    }
+    
+    /**
+     * Enum com o modo de download sendo utilizado
+     * 
+     * @author francisco.garcia
+     *
+     */
+    public static enum ModoDownload {
+       
+        /**
+         * Download normal
+         */
+        REGULAR_DOWNLOAD,
+        
+        /**
+         * Download sendo efetuado pelo plugin 'jQuery File Download Plugin', que
+         * requer parâmetros extras para o tratamento da conclusão do download
+         * 
+         */
+        JQUERY_FILE_DOWNLOAD_PLUGIN
+        
     }
 
 }

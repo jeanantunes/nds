@@ -307,9 +307,9 @@ $(function(){
 						         <tr>
 						             <td width="68">Todo dia:</td>
 						             <td width="320">
-						                 <input maxlength="2" type="text" name="primeiroDiaQuinzenal" id="primeiroDiaQuinzenal" style="width:60px;"/>
+						                 <input maxlength="2" type="text" name="primeiroDiaQuinzenalParametroCobrancaCota" id="primeiroDiaQuinzenalParametroCobrancaCota" style="width:60px;"/>
 						                 e 
-						                 <input maxlength="2" type="text" name="segundoDiaQuinzenal" id="segundoDiaQuinzenal" style="width:60px;"/>
+						                 <input maxlength="2" type="text" name="segundoDiaQuinzenalParametroCobrancaCota" id="segundoDiaQuinzenalParametroCobrancaCota" style="width:60px;"/>
 						             </td>
 						         </tr>
 						     </table>
@@ -409,7 +409,7 @@ $(function(){
 					    <td valign="top">&nbsp;</td>
 					    <td valign="top">
 		
-					        <select name="tipoCobranca" id="tipoCobranca" style="width:150px;" onchange="parametroCobrancaCotaController.opcaoPagto(this.value);">
+					        <select name="tipoCobrancaParametroCobrancaCota" id="tipoCobrancaParametroCobrancaCota" style="width:150px;" onchange="parametroCobrancaCotaController.opcaoPagto(this.value);">
 		                        <option value="">Selecione</option>
 		                        <c:forEach varStatus="counter" var="itemTipoCobranca" items="${listaTiposCobranca}">
 				                    <option value="${itemTipoCobranca.key}">${itemTipoCobranca.value}</option>

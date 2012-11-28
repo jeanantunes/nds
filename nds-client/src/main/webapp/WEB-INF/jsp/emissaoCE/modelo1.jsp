@@ -56,7 +56,10 @@ $(function(){$('img.capaImg').load(function() {
     <td widlth="781" valign="top">
     <table width="760" border="0" cellpadding="0" cellspacing="0" style="margin-bottom:10px; margin-top:10px;">
   <tr>
-    <td width="121" rowspan="6" valign="top"><span class="logo"><img src="../images/logo_sistema.png" width="110" height="70" alt="Novo Distrib"  /></span></td>
+    <td width="121" rowspan="6" valign="top"><span class="logo">
+    	<img src="${pageContext.request.contextPath}/cadastro/distribuidor/logo" width="110" height="70" alt="Novo Distrib"  />
+    	</span>
+    </td>
     <td height="16" colspan="4" style="border-left:1px solid #000; border-top:1px solid #000;"><span class="titulo">Razão Social<br />
     </span></td>
     <td width="237" align="center" style="border-left:1px solid #000;"><span class="titulo" style="font-size:13px!important;"><strong>CHAMADA DE ENCALHE</strong></span></td>
@@ -127,12 +130,12 @@ $(function(){$('img.capaImg').load(function() {
   <tr>
     <td width="179" align="center" style="border-left:1px solid #000;"><span class="titulo">Data de Recolhimento</span></td>
     <td width="161" align="center" style="border-right:1px solid #000;border-left:1px solid #000;"><span class="titulo">Data de Emissão</span></td>
-    <td width="420" style="border-right:1px solid #000;"><span class="titulo">Box / Rota</span></td>
+    <td width="420" style="border-right:1px solid #000;"><span class="titulo">Box / Roteiro / Rota</span></td>
   </tr>
   <tr>
     <td align="center" style="border-left:1px solid #000;border-bottom:1px solid #000;"><span class="dadosNota">${cotaEmissao.dataRecolhimento}</span></td>
     <td align="center" style="border-bottom:1px solid #000;border-right:1px solid #000;border-left:1px solid #000;"><span class="dadosNota">${cotaEmissao.dataEmissao}</span></td>
-    <td style="border-bottom:1px solid #000;border-right:1px solid #000;"><span class="dadosNota">Box: ${cotaEmissao.box} - Rota: ${cotaEmissao.codigoRota} - ${cotaEmissao.nomeRota}</span></td>
+    <td style="border-bottom:1px solid #000;border-right:1px solid #000;"><span class="dadosNota">Box: ${cotaEmissao.box} / Roteiro:${cotaEmissao.codigoRoteiro} - ${cotaEmissao.nomeRoteiro} / Rota: ${cotaEmissao.codigoRota} - ${cotaEmissao.nomeRota}</span></td>
   </tr>
 </table>
 <table width="760" border="0" cellpadding="0" cellspacing="0" style="margin-top:5px;">
@@ -165,7 +168,7 @@ $(function(){$('img.capaImg').load(function() {
               <td width="80" align="center" style="border-bottom:1px solid #000;border-right:1px solid #000;padding-left:5px; ">${produto.dataLancamento}</td>
               <td width="82" align="right" style="border-bottom:1px solid #000;border-right:1px solid #000;padding-left:5px; ">${produto.precoComDesconto}</td>
               <td width="67" align="center" style="border-bottom:1px solid #000;padding-left:5px; ">${produto.reparte}</td>
-              <td width="70" align="center" style="border-left:1px solid #000;border-bottom:1px solid #000;border-right:1px solid #000;padding-left:5px; ">${produto.quantidadeDevolvida}</td>
+              <td width="70" align="center" style="border-left:1px solid #000;border-bottom:1px solid #000;border-right:1px solid #000;padding-left:5px; "></td>
             </tr>
             <tr class="class_linha_${status.index%2==0?1:2}">
               <td colspan="2" style="border-left:1px solid #000;padding-left:5px; border-bottom:1px solid #000;">${produto.codigoBarras}</td>
@@ -202,12 +205,12 @@ $(function(){$('img.capaImg').load(function() {
   <tr>
     <td>&nbsp;</td>
     <td align="right"><strong>Encalhe</strong></td>
-    <td align="right" style="border-bottom:1px solid #000;">${cotaEmissao.vlrEncalhe}</td>
+    <td align="right" style="border-bottom:1px solid #000;"></td>
   </tr>
   <tr>
     <td>&nbsp;</td>
     <td align="right"><strong>Total Líquido R$</strong></td>
-    <td align="right" style="border-bottom:1px solid #000;">${cotaEmissao.vlrTotalLiquido}</td>
+    <td align="right" style="border-bottom:1px solid #000;"></td>
   </tr>
 </table>
 
@@ -265,10 +268,10 @@ $(function(){$('img.capaImg').load(function() {
           <td colspan="2" style="border-left:1px solid #000;border-bottom:1px solid #000;border-right:1px solid #000;"><span class="dadosNota">${cotaEmissao.numCota} - ${cotaEmissao.nomeCota.toUpperCase()}</span></td>
         </tr>
         <tr>
-          <td height="17" colspan="2" style="border-left:1px solid #000;border-right:1px solid #000;"><span class="titulo">Box/Rota</span></td>
+          <td height="17" colspan="2" style="border-left:1px solid #000;border-right:1px solid #000;"><span class="titulo">Box / Roteiro / Rota</span></td>
         </tr>
         <tr>
-          <td colspan="2" style="border-left:1px solid #000;border-bottom:1px solid #000;border-right:1px solid #000;"><span class="dadosNota">Box: ${cotaEmissao.box} - Rota: ${cotaEmissao.codigoRota} - ${cotaEmissao.nomeRota}</span></td>
+          <td colspan="2" style="border-left:1px solid #000;border-bottom:1px solid #000;border-right:1px solid #000;"><span class="dadosNota">Box: ${cotaEmissao.box} / Roteiro:${cotaEmissao.codigoRoteiro} - ${cotaEmissao.nomeRoteiro} / Rota: ${cotaEmissao.codigoRota} - ${cotaEmissao.nomeRota}</span></td>
         </tr>
     </table>
       <table width="410" border="0" cellpadding="0" cellspacing="0" style="margin-top:5px;">
@@ -294,7 +297,7 @@ $(function(){$('img.capaImg').load(function() {
 	          <td width="89" style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">${produto.sequencia}</td>
 	          <td colspan="3" style="border-left:1px solid #000;border-bottom:1px solid #000;border-right:1px solid #000;padding-left:5px; ">${produto.nomeProduto}</td>
 	          <td width="61" align="center" style="border-bottom:1px solid #000;padding-left:5px; ">${produto.reparte}</td>
-	          <td width="67" align="center" style="border-left:1px solid #000;border-bottom:1px solid #000;border-right:1px solid #000;padding-left:5px; ">${produto.quantidadeDevolvida}</td>
+	          <td width="67" align="center" style="border-left:1px solid #000;border-bottom:1px solid #000;border-right:1px solid #000;padding-left:5px; "></td>
 	        </tr>
 	        <tr class="class_linha_1">
 	          <td style="border-left:1px solid #000;padding-left:5px; border-bottom:1px solid #000;">${produto.codigoProduto}</td>
@@ -326,18 +329,18 @@ $(function(){$('img.capaImg').load(function() {
   </tr>
   <tr>
     <td>&nbsp;</td>
-    <td align="right"><strong>Vale Reparte Líquido R$</strong></td>
+    <td  width="430" align="right"><strong>Vale Reparte Líquido R$</strong></td>
     <td align="right" style="border-bottom:1px solid #000;">${cotaEmissao.vlrReparteLiquido}</td>
   </tr>
   <tr>
     <td>&nbsp;</td>
     <td align="right"><strong>Encalhe</strong></td>
-    <td align="right" style="border-bottom:1px solid #000;">${cotaEmissao.vlrEncalhe}</td>
+    <td align="right" style="border-bottom:1px solid #000;"></td>
   </tr>
   <tr>
     <td>&nbsp;</td>
     <td align="right"><strong>Total Líquido R$</strong></td>
-    <td align="right" style="border-bottom:1px solid #000;">${cotaEmissao.vlrTotalLiquido}</td>
+    <td align="right" style="border-bottom:1px solid #000;"></td>
   </tr>
 </table>
        
@@ -354,7 +357,9 @@ $(function(){$('img.capaImg').load(function() {
 	    <td widlth="781" valign="top">
 		    <table width="760" border="0" cellpadding="0" cellspacing="0" style="margin-bottom:10px; margin-top:10px;">
 			  <tr>
-			    <td width="121" rowspan="6" valign="top"><span class="logo"><img src="../images/logo_sistema.png" width="110" height="70" alt="Novo Distrib"  /></span></td>
+			    <td width="121" rowspan="6" valign="top"><span class="logo">
+			    	<img src="${pageContext.request.contextPath}/cadastro/distribuidor/logo" width="110" height="70" alt="Novo Distrib"  /></span>
+			    </td>
 			    <td height="16" colspan="4" style="border-left:1px solid #000; border-top:1px solid #000;"><span class="titulo">Razão Social<br />
 			    </span></td>
 			    <td width="237" align="center" style="border-left:1px solid #000;"><span class="titulo" style="font-size:13px!important;"><strong>CHAMADA DE ENCALHE</strong></span></td>
@@ -424,12 +429,15 @@ $(function(){$('img.capaImg').load(function() {
 	  <tr>
 	    <td width="179" align="center" style="border-left:1px solid #000;"><span class="titulo">Data de Recolhimento</span></td>
 	    <td width="161" align="center" style="border-right:1px solid #000;border-left:1px solid #000;"><span class="titulo">Data de Emissão</span></td>
-	    <td width="420" style="border-right:1px solid #000;"><span class="titulo">Box / Rota</span></td>
+	    <td width="420" style="border-right:1px solid #000;"><span class="titulo">Box / Roteiro / Rota</span></td>
 	  </tr>
 	  <tr>
 	    <td align="center" style="border-left:1px solid #000;border-bottom:1px solid #000;"><span class="dadosNota">${cotaEmissao.dataRecolhimento}</span></td>
 	    <td align="center" style="border-bottom:1px solid #000;border-right:1px solid #000;border-left:1px solid #000;"><span class="dadosNota">${cotaEmissao.dataEmissao}</span></td>
-	    <td style="border-bottom:1px solid #000;border-right:1px solid #000;"><span class="dadosNota">Box: ${cotaEmissao.box} - Rota: ${cotaEmissao.codigoRota} - ${cotaEmissao.nomeRota}</span></td>
+	    <td style="border-bottom:1px solid #000;border-right:1px solid #000;">
+	    	<span class="dadosNota">Box: ${cotaEmissao.box} / Roteiro:${cotaEmissao.codigoRoteiro} - ${cotaEmissao.nomeRoteiro} / Rota: ${cotaEmissao.codigoRota} - ${cotaEmissao.nomeRota}
+	    	</span>
+	    </td>
 	  </tr>
 	</table>
 	</td></tr></table>

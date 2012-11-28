@@ -38,6 +38,7 @@ import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.CFOPService;
+import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.NotaFiscalEntradaService;
 import br.com.abril.nds.service.PessoaJuridicaService;
@@ -102,6 +103,9 @@ public class RecebimentoFisicoController {
 	
 	@Autowired
 	private Validator validator;
+	
+	@Autowired
+	private DescontoService descontoService; 
 	
 	public RecebimentoFisicoController(
 			Result result, 
@@ -1183,7 +1187,7 @@ public class RecebimentoFisicoController {
 		List<String> msgs = new ArrayList<String>();
 		msgs.add("Itens Confirmados com Sucesso.");
 		ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.SUCCESS, msgs);
-		result.use(Results.json()).from(validacao, "result").include("listaMensagens").serialize();	
+		result.use(Results.json()).from(validacao, Constantes.PARAM_MSGS).recursive().serialize();	
 		
 		
 	}

@@ -126,8 +126,18 @@ public class ChamadaoController {
 		
 		FiltroChamadaoDTO filtroSessao = this.obterFiltroParaExportacao();
 		
-		ConsultaChamadaoDTO consultaChamadaoDTO = 
+		ConsultaChamadaoDTO consultaChamadaoDTO = null;
+		
+		if (filtroSessao.isChamadaEncalhe()) {
+			
+			consultaChamadaoDTO = 
+				this.chamadaoService.obterConsignadosComChamadao(filtroSessao);
+			
+		} else {
+			
+			consultaChamadaoDTO = 
 				this.chamadaoService.obterConsignados(filtroSessao);
+		}
 		
 		List<ConsignadoCotaChamadaoDTO> listaConsignadoCotaChamadaoDTO =
 				consultaChamadaoDTO.getListaConsignadoCotaChamadaoDTO();

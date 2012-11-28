@@ -1,43 +1,43 @@
 package br.com.abril.nds.repository.impl;
 
-import static org.junit.Assert.fail;
+import java.util.List;
 
-import org.junit.Before;
+import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.dto.ConsultaFollowupChamadaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroFollowupCadastroDTO;
 import br.com.abril.nds.dto.filtro.FiltroFollowupChamadaoDTO;
-import br.com.abril.nds.repository.FollowupCadastroRepository;
 import br.com.abril.nds.vo.PaginacaoVO;
 
 
 public class FollowupChamadaoRepositoryImplTest extends AbstractRepositoryImplTest {
 	
 	@Autowired
-	FollowupCadastroRepository repository;
-	
-	@Before
-	public void setup(){
-		
-		
-		
-	}
+	private FollowupChamadaoRepositoryImpl followupChamadaoRepositoryImpl;
 	
 	@Test
-	public void obterConsignadosParaChamadao() {
-		FiltroFollowupCadastroDTO filtro = new  FiltroFollowupCadastroDTO();
-		filtro.setPaginacao(new PaginacaoVO());
-		repository.obterConsignadosParaChamadao(filtro);
+	public void testarObterConsignadosParaChamadao() {
+		
+		PaginacaoVO paginacao = new PaginacaoVO(1,1,"asc");
+		
+		List<ConsultaFollowupChamadaoDTO> listaConsignados;
+		
+		FiltroFollowupChamadaoDTO filtro = new FiltroFollowupChamadaoDTO();
+		filtro.setPaginacao(paginacao);
+		
+		listaConsignados = followupChamadaoRepositoryImpl.obterConsignadosParaChamadao(filtro);
+		
+		Assert.assertNotNull(listaConsignados);
+		
 	}
-	
-	
 
 	@Test
-	public void test() {
-		fail("Not yet implemented");
+	public void obterConsignadosParaChamadao() {
 		FiltroFollowupChamadaoDTO filtro = new  FiltroFollowupChamadaoDTO();
-		repository.obterConsignadosParaChamadao(null);
+		filtro.setPaginacao(new PaginacaoVO());
+		followupChamadaoRepositoryImpl.obterConsignadosParaChamadao(filtro);
 	}
 
 }

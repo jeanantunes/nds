@@ -2,6 +2,7 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Date;
 
 import br.com.abril.nds.util.Constantes;
@@ -26,9 +27,9 @@ public class VendaProdutoDTO implements Serializable {
 	private String dataRecolhimento;
 	
 	@Export(label = "Reparte", alignment=Alignment.CENTER, exhibitionOrder = 4)
-	private BigDecimal reparte;
+	private BigInteger reparte;
 	
-	private BigDecimal venda;
+	private BigInteger venda;
 	
 	
 	private BigDecimal percentagemVenda;
@@ -54,18 +55,50 @@ public class VendaProdutoDTO implements Serializable {
 		
 	}
 	
-	public VendaProdutoDTO(Long numEdicao, String dataLancamento, String dataRecolhimento, BigDecimal reparte, BigDecimal venda,  
+	public VendaProdutoDTO(Long numEdicao, String dataLancamento, String dataRecolhimento, BigInteger reparte, BigInteger venda,  
 			BigDecimal percentagemVenda, BigDecimal precoCapa, BigDecimal total, BigDecimal encalhe) {
 		super();
 		this.numEdicao = numEdicao;
-		this.dataLancamento = dataLancamento;
-		this.dataRecolhimento = dataRecolhimento;
+		//this.dataLancamento = dataLancamento;
+		//this.dataRecolhimento = dataRecolhimento;
 		this.reparte = reparte;
 		this.venda = venda;
 		this.percentagemVenda = percentagemVenda;
 		this.precoCapa = precoCapa;
 		this.total = total;
 		this.encalhe = encalhe;
+	}
+	
+	public VendaProdutoDTO(Long numEdicao, Date dataLancamento, Date dataRecolhimento, BigInteger reparte, BigInteger venda,  
+			Number percentagemVenda, Number precoCapa, String chamadaCapa, Number total) {
+		super();
+		this.numEdicao = numEdicao;
+		this.dataLancamento = DateUtil.formatarData(dataLancamento, Constantes.DATE_PATTERN_PT_BR);
+		this.dataRecolhimento = DateUtil.formatarData(dataRecolhimento, Constantes.DATE_PATTERN_PT_BR);
+		this.reparte = reparte;
+		this.venda = venda;
+		if (percentagemVenda instanceof BigInteger) {
+			this.percentagemVenda = new BigDecimal((BigInteger) percentagemVenda);
+		} else {
+			this.percentagemVenda = (BigDecimal) percentagemVenda;
+		}
+		if (precoCapa instanceof BigInteger) {
+			this.precoCapa = new BigDecimal((BigInteger) precoCapa);
+		} else {
+			this.precoCapa = (BigDecimal) precoCapa;
+		}
+		this.chamadaCapa = chamadaCapa;
+		if (total instanceof BigInteger) {
+			this.total = new BigDecimal((BigInteger) total);
+		} else {
+			this.total = (BigDecimal) total;
+		}
+		
+		this.percentagemVendaFormatado = CurrencyUtil.formatarValor(percentagemVenda);
+		this.valorVendaFormatado = CurrencyUtil.formatarValor(venda);
+		this.valorPrecoCapaFormatado = CurrencyUtil.formatarValor(precoCapa);
+		this.valorTotalFormatado = CurrencyUtil.formatarValor(total);
+		
 	}
 	
 	
@@ -78,40 +111,20 @@ public class VendaProdutoDTO implements Serializable {
 		this.numEdicao = numEdicao;
 	}
 
-	public String getDataLancamento() {
-		return dataLancamento;
-	}
-
-	public void setDataLancamento(Date dataLancamento) {
+	/*public void setDataLancamento(Date dataLancamento) {
 		this.dataLancamento =  DateUtil.formatarData(dataLancamento, Constantes.DATE_PATTERN_PT_BR);
-	}
+	}*/
 
-	public String getDataRecolhimento() {
-		return dataRecolhimento;
-	}
-
-	public void setDataRecolhimento(Date dataRecolhimento) {
+	/*public void setDataRecolhimento(Date dataRecolhimento) {
 		this.dataRecolhimento = DateUtil.formatarData(dataRecolhimento, Constantes.DATE_PATTERN_PT_BR);
-	}
-
-	public BigDecimal getReparte() {
-		return reparte;
-	}
-
-	public void setReparte(BigDecimal reparte) {
-		this.reparte = reparte;
-	}
-
-	public BigDecimal getVenda() {
-		return venda;
-	}
-
-	public void setVenda(BigDecimal venda) {
+	}*/
+	
+	/*public void setVenda(BigDecimal venda) {
 		this.venda = venda;
 		if (venda != null) {
 			valorVendaFormatado = CurrencyUtil.formatarValor(venda);
 		}
-	}
+	}/
 	
 	@Export(label = "Venda", alignment=Alignment.CENTER, exhibitionOrder = 5)
 	public String getValorVendaFormatado() {
@@ -187,7 +200,101 @@ public class VendaProdutoDTO implements Serializable {
 	public void setChamadaCapa(String chamadaCapa) {
 		this.chamadaCapa = (chamadaCapa != null) ? chamadaCapa : "";
 	}
-	
-	
+
+	public BigInteger getReparte() {
+		return reparte;
+	}
+
+	public void setReparte(BigInteger reparte) {
+		this.reparte = reparte;
+	}
+
+	public BigInteger getVenda() {
+		return venda;
+	}
+
+	public void setVenda(BigInteger venda) {
+		this.venda = venda;
+	}
+
+	public BigDecimal getPercentagemVenda() {
+		return percentagemVenda;
+	}
+
+	public void setPercentagemVenda(BigDecimal percentagemVenda) {
+		this.percentagemVenda = percentagemVenda;
+	}
+
+	public BigDecimal getPrecoCapa() {
+		return precoCapa;
+	}
+
+	public void setPrecoCapa(BigDecimal precoCapa) {
+		this.precoCapa = precoCapa;
+	}
+
+	public BigDecimal getTotal() {
+		return total;
+	}
+
+	public void setTotal(BigDecimal total) {
+		this.total = total;
+	}
+
+	public BigDecimal getEncalhe() {
+		return encalhe;
+	}
+
+	public void setEncalhe(BigDecimal encalhe) {
+		this.encalhe = encalhe;
+	}
+
+	public String getValorVendaFormatado() {
+		return valorVendaFormatado;
+	}
+
+	public void setValorVendaFormatado(String valorVendaFormatado) {
+		this.valorVendaFormatado = valorVendaFormatado;
+	}
+
+	public String getValorPrecoCapaFormatado() {
+		return valorPrecoCapaFormatado;
+	}
+
+	public void setValorPrecoCapaFormatado(String valorPrecoCapaFormatado) {
+		this.valorPrecoCapaFormatado = valorPrecoCapaFormatado;
+	}
+
+	public String getValorTotalFormatado() {
+		return valorTotalFormatado;
+	}
+
+	public void setValorTotalFormatado(String valorTotalFormatado) {
+		this.valorTotalFormatado = valorTotalFormatado;
+	}
+
+	public String getPercentagemVendaFormatado() {
+		return percentagemVendaFormatado;
+	}
+
+	public void setPercentagemVendaFormatado(String percentagemVendaFormatado) {
+		this.percentagemVendaFormatado = percentagemVendaFormatado;
+	}
+
+	public String getDataLancamento() {
+		return dataLancamento;
+	}
+
+	public void setDataLancamento(String dataLancamento) {
+		this.dataLancamento = dataLancamento;
+	}
+
+	public String getDataRecolhimento() {
+		return dataRecolhimento;
+	}
+
+	public void setDataRecolhimento(String dataRecolhimento) {
+		this.dataRecolhimento = dataRecolhimento;
+	}
 
 }

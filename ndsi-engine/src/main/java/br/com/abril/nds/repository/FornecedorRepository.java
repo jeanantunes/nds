@@ -8,6 +8,7 @@ import br.com.abril.nds.dto.filtro.FiltroConsultaFornecedorDTO;
 import br.com.abril.nds.model.cadastro.EnderecoFornecedor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoFornecedor;
+import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 
 /**
@@ -124,4 +125,8 @@ public interface FornecedorRepository extends Repository<Fornecedor, Long> {
 	public List<Fornecedor> obterFornecedoresPorIdPessoa(Long idPessoa);
 
 	public abstract EnderecoFornecedor obterEnderecoPrincipal(long idFornecedor);
+
+	List<Pessoa> obterFornecedorPorNome(String nomeFornecedor);
+
+	List<Pessoa> obterFornecedorPorNomeFantasia(String nomeFantasia);
 }

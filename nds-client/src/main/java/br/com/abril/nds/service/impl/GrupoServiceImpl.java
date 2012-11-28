@@ -16,10 +16,9 @@ import br.com.abril.nds.model.TipoGrupo;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.GrupoCota;
 import br.com.abril.nds.model.cadastro.pdv.TipoCaracteristicaSegmentacaoPDV;
-import br.com.abril.nds.model.dne.Localidade;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.GrupoRepository;
-import br.com.abril.nds.repository.LocalidadeRepository;
+import br.com.abril.nds.service.EnderecoService;
 import br.com.abril.nds.service.GrupoService;
 
 @Service
@@ -33,7 +32,7 @@ public class GrupoServiceImpl implements GrupoService {
 	private CotaRepository cotaRepository;
 	
 	@Autowired
-	private LocalidadeRepository localidadeRepository;
+	private EnderecoService enderecoServcie;
 	
 	@Override
 	@Transactional
@@ -138,13 +137,13 @@ public class GrupoServiceImpl implements GrupoService {
 
 	@Override
 	@Transactional
-	public void salvarGrupoMunicipios(Long idGrupo, List<Long> idMunicipios,
+	public void salvarGrupoMunicipios(Long idGrupo, List<String> idMunicipios,
 			String nome, List<DiaSemana> diasSemana) {
 		
-		HashSet<Localidade> municipios = new HashSet<Localidade>();
+		HashSet<String> municipios = new HashSet<String>();
 		
-		for(Long id : idMunicipios) {
-			municipios.add(localidadeRepository.buscarPorId(id));
+		for(String id : idMunicipios) {
+			municipios.add(enderecoServcie.buscarLocalidadePorIbge(id));
 		}
 		
 		GrupoCota grupo;
@@ -158,7 +157,7 @@ public class GrupoServiceImpl implements GrupoService {
 		grupo.setNome(nome);
 		grupo.setDiasRecolhimento(new HashSet<DiaSemana>(diasSemana));
 		grupo.setTipoGrupo(TipoGrupo.MUNICIPIO);
-		grupo.setMunicipios(municipios);
+		//grupo.setMunicipios(municipios);
 		
 		grupoRepository.merge(grupo);
 	}
@@ -170,10 +169,10 @@ public class GrupoServiceImpl implements GrupoService {
 		GrupoCota grupo = grupoRepository.buscarPorId(idGrupo);
 		
 		List<Long> ids = new ArrayList<Long>();
-				
+		/*		
 		for(Localidade local : grupo.getMunicipios())
-			ids.add(local.getId());
-				
+			ids.add(local.get_id());
+			*/	
 		return ids;
 	}
 

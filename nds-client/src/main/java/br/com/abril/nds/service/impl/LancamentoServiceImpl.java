@@ -112,7 +112,7 @@ public class LancamentoServiceImpl implements LancamentoService {
 		LancamentoNaoExpedidoDTO dto = new LancamentoNaoExpedidoDTO(
 				lancamento.getId(), 
 				sdf.format(maisRecente), 
-				lancamento.getProdutoEdicao().getProduto().getId(), 
+				lancamento.getProdutoEdicao().getProduto().getCodigo(), 
 				lancamento.getProdutoEdicao().getProduto().getNome(), 
 				lancamento.getProdutoEdicao().getNumeroEdicao(), 
 				lancamento.getProdutoEdicao().getProduto().getTipoProduto().getDescricao(), 

@@ -60,6 +60,18 @@ var descontoCotaController = $.extend(true,{
 				   null,
 				   true,"idModalDescontoEspecifico");
 		
+	    verificadorProgressoGravacaoDescontoGeral = setInterval(function () {
+			$.getJSON(contextPath +"/financeiro/tipoDescontoCota/verificaProgressoGravacaoDescontoEspecifico",
+					   null,				   
+					   function(result) {
+							
+					   		if (!result.ativo) {
+					   			exibirMensagem(result.tipoMensagem, result.listaMensagens);
+					   			clearInterval(verificadorProgressoGravacaoDescontoGeral);
+					   }
+			});
+	    }, 20000);
+		
 		$(".tiposDescEspecificoGrid",this.workspace).flexReload();
 	},
 	

@@ -1,6 +1,8 @@
 <head>
 </head>
 <div id="dadosCadastraisPJ" style="display:none">
+	<legend>Entregador - Pessoa Jurídica</legend>
+	<div>
 	<form id="formDadosEntregadorPJ">
 		<input type="hidden" name="entregador.id" id="idEntregadorPJ"/>
 	    <table width="765" cellpadding="2" cellspacing="2" style="text-align:left;">
@@ -20,7 +22,7 @@
 	      <td>CNPJ:</td>
 	      <td><input type="text" id="cnpj" style="width:230px" /></td>
 	      <td>Inscrição Estadual:</td>
-	      <td><input type="text" id="inscricaoEstadual" style="width:230px" /></td>
+	      <td><input type="text" id="inscricaoEstadual" style="width:230px" maxlength="20" /></td>
 	    </tr>
 	    <tr>
 	        <td width="128">E-mail:</td>
@@ -47,4 +49,5 @@
 	    </tr>
 	     </table>
 	</form>
+	</div>
 </div>

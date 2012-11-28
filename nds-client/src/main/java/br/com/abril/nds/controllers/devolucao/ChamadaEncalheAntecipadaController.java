@@ -207,7 +207,9 @@ public class ChamadaEncalheAntecipadaController {
 		
 		tratarFiltro(filtro);
 		
-		efetuarConsulta(filtro);
+		ResultadoChamadaEncalheAntecipadaVO vo = efetuarConsulta(filtro);
+		
+		result.use(Results.json()).withoutRoot().from(vo).recursive().serialize();
 	}
 	
 	/**
@@ -337,21 +339,21 @@ public class ChamadaEncalheAntecipadaController {
 		
 		validarDataRecolhimento(dataRecolhimento);
 		
-		if(!gravarTodos.isEmpty()){
+		if (Boolean.parseBoolean(gravarTodos)) {
 			
 			FiltroChamadaAntecipadaEncalheDTO filtro = getFiltroSessionSemPaginacao();
 			filtro.setDataAntecipacao(DateUtil.parseDataPTBR(dataRecolhimento));
 			filtro.setDataProgramada(dataProgramada);
 			
 			chamadaAntecipadaEncalheService.gravarChamadaAntecipacaoEncalheProduto(filtro);
-			
-			result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
-											"result").recursive().serialize();
-		}
-		else{
+
+			result.use(Results.json()).from(
+					new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
+					"result").recursive().serialize();
+		
+		} else{
 			
 			gravarChamadaEncalheAnteicipada(listaChamadaEncalheAntecipada,dataRecolhimento,codigoProduto,numeroEdicao,dataProgramada);
-			
 		}	
 	}
 	
@@ -368,11 +370,12 @@ public class ChamadaEncalheAntecipadaController {
 	@Path("/reprogramarCotas")
 	public void reprogramarCotas(List<ChamadaEncalheAntecipadaVO> listaChamadaEncalheAntecipada,
 								String dataRecolhimento, String codigoProduto, 
-								Long numeroEdicao,String dataProgramada,String gravarTodos){
+								Long numeroEdicao, String dataProgramada, 
+								String gravarTodos) {
 		
 		validarDataRecolhimento(dataRecolhimento);
 		
-		if(!gravarTodos.isEmpty()){
+		if (Boolean.parseBoolean(gravarTodos)) {
 			
 			FiltroChamadaAntecipadaEncalheDTO filtro = getFiltroSessionSemPaginacao();
 			filtro.setDataAntecipacao(DateUtil.parseDataPTBR(dataRecolhimento));
@@ -395,14 +398,13 @@ public class ChamadaEncalheAntecipadaController {
 	public void cancelarChamdaEncalheCotas(List<ChamadaEncalheAntecipadaVO> listaChamadaEncalheAntecipada,
 											String codigoProduto,Long numeroEdicao,String cancelarTodos){
 		
-		if(!cancelarTodos.isEmpty()){
+		if(Boolean.parseBoolean(cancelarTodos)){
 			
 			FiltroChamadaAntecipadaEncalheDTO filtro = getFiltroSessionSemPaginacao();
 			
 			chamadaAntecipadaEncalheService.cancelarChamadaAntecipadaCota(filtro);
 		
-		}
-		else{
+		} else {
 			
 			InfoChamdaAntecipadaEncalheDTO infoChamdaAntecipadaEncalheDTO = getInfoChamadaEncalhe(listaChamadaEncalheAntecipada,
 																								  null,codigoProduto,
@@ -670,7 +672,7 @@ public class ChamadaEncalheAntecipadaController {
 	 * 
 	 * @param filtro
 	 */
-	private void efetuarConsulta(FiltroChamadaAntecipadaEncalheDTO filtro) {
+	private ResultadoChamadaEncalheAntecipadaVO efetuarConsulta(FiltroChamadaAntecipadaEncalheDTO filtro) {
 		
 		InfoChamdaAntecipadaEncalheDTO infoChamdaAntecipadaEncalheDTO = 
 				chamadaAntecipadaEncalheService.obterInfoChamdaAntecipadaEncalhe(filtro);
@@ -693,8 +695,8 @@ public class ChamadaEncalheAntecipadaController {
 		tableModel.setTotal(infoChamdaAntecipadaEncalheDTO.getTotalRegistros().intValue());
 		
 		ResultadoChamadaEncalheAntecipadaVO resultadoChamadaEncalheAntecipadaVO = new ResultadoChamadaEncalheAntecipadaVO(tableModel,null,null);
-		
-		result.use(Results.json()).withoutRoot().from(resultadoChamadaEncalheAntecipadaVO).recursive().serialize();
+
+		return resultadoChamadaEncalheAntecipadaVO;
 	}
 	
 	/**

@@ -5,6 +5,11 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 
+import br.com.abril.nds.model.cadastro.ClasseSocial;
+import br.com.abril.nds.model.cadastro.FaixaEtaria;
+import br.com.abril.nds.model.cadastro.GrupoProduto;
+import br.com.abril.nds.model.cadastro.Sexo;
+import br.com.abril.nds.model.cadastro.TemaProduto;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
@@ -27,9 +32,11 @@ public class ProdutoEdicaoDTO implements Serializable {
 	private BigDecimal precoCusto;
 	private Long peso;
 	private String codigoProduto;
-	private String nomeProduto;
 	
+	private String nomeProduto;
 	private String nomeComercial;
+	private GrupoProduto grupoProduto;
+	
 	private boolean possuiBrinde;
 	private String descricaoBrinde;
 	private Long idBrinde;
@@ -71,7 +78,6 @@ public class ProdutoEdicaoDTO implements Serializable {
 	private float largura;
 	private float comprimento;
 	private float espessura;
-	
 	private String boletimInformativo;
 	
 	// Lancamento:
@@ -79,14 +85,18 @@ public class ProdutoEdicaoDTO implements Serializable {
 	private Date dataLancamentoPrevisto;
 	private Date dataRecolhimentoPrevisto;
 	private Date dataRecolhimentoReal;
-	
 	private Integer semanaRecolhimento;
-	
 	private Boolean origemInterface;
-	
-	
 	private String editor;
+	private String caracteristicaProduto;
 	
+	//Segmentação
+	private ClasseSocial classeSocial;
+	private Sexo sexo;
+	private FaixaEtaria faixaEtaria;
+	private TemaProduto temaPrincipal;
+	private TemaProduto temaSecundario;
+
 	
 	
 	/**
@@ -496,6 +506,20 @@ public class ProdutoEdicaoDTO implements Serializable {
 	}
 	
 	/**
+	 * @return the caracteristicaProduto
+	 */
+	public String getCaracteristicaProduto() {
+		return caracteristicaProduto;
+	}
+	
+	/**
+	 * @param caracteristicaProduto the caracteristicaProduto to set
+	 */
+	public void setCaracteristicaProduto(String caracteristicaProduto) {
+		this.caracteristicaProduto = caracteristicaProduto;
+	}
+	
+	/**
 	 * @return the dataRecolhimentoPrevisto
 	 */
 	public Date getDataRecolhimentoPrevisto() {
@@ -568,4 +592,76 @@ public class ProdutoEdicaoDTO implements Serializable {
 		this.nomeComercial = nomeComercial;
 	}
 	
+	/**
+	 * @return the classeSocial
+	 */
+	public ClasseSocial getClasseSocial() {
+		return classeSocial;
+	}
+	/**
+	 * @param classeSocial the classeSocial to set
+	 */
+	public void setClasseSocial(ClasseSocial classeSocial) {
+		this.classeSocial = classeSocial;
+	}
+	/**
+	 * @return the sexo
+	 */
+	public Sexo getSexo() {
+		return sexo;
+	}
+	/**
+	 * @param sexo the sexo to set
+	 */
+	public void setSexo(Sexo sexo) {
+		this.sexo = sexo;
+	}
+	/**
+	 * @return the faixaEtaria
+	 */
+	public FaixaEtaria getFaixaEtaria() {
+		return faixaEtaria;
+	}
+	/**
+	 * @param faixaEtaria the faixaEtaria to set
+	 */
+	public void setFaixaEtaria(FaixaEtaria faixaEtaria) {
+		this.faixaEtaria = faixaEtaria;
+	}
+	/**
+	 * @return the temaPrincipal
+	 */
+	public TemaProduto getTemaPrincipal() {
+		return temaPrincipal;
+	}
+	/**
+	 * @param temaPrincipal the temaPrincipal to set
+	 */
+	public void setTemaPrincipal(TemaProduto temaPrincipal) {
+		this.temaPrincipal = temaPrincipal;
+	}
+	/**
+	 * @return the temaSecundario
+	 */
+	public TemaProduto getTemaSecundario() {
+		return temaSecundario;
+	}
+	/**
+	 * @param temaSecundario the temaSecundario to set
+	 */
+	public void setTemaSecundario(TemaProduto temaSecundario) {
+		this.temaSecundario = temaSecundario;
+	}
+	/**
+	 * @return the grupoProduto
+	 */
+	public GrupoProduto getGrupoProduto() {
+		return grupoProduto;
+	}
+	/**
+	 * @param grupoProduto the grupoProduto to set
+	 */
+	public void setGrupoProduto(GrupoProduto grupoProduto) {
+		this.grupoProduto = grupoProduto;
+	}
 }

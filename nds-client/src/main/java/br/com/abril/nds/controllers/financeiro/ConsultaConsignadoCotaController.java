@@ -191,7 +191,7 @@ public class ConsultaConsignadoCotaController {
 		
 		TableModel<CellModelKeyValue<ConsultaConsignadoCotaDTO>> tableModel = new TableModel<CellModelKeyValue<ConsultaConsignadoCotaDTO>>();
 		
-		Integer totalRegistros = this.consultaConsignadoCota.buscarTodasMovimentacoesPorCota(filtro, false);
+		Long totalRegistros = this.consultaConsignadoCota.buscarTodasMovimentacoesPorCota(filtro);
 		if(totalRegistros == 0){
 			throw new ValidacaoException(TipoMensagem.WARNING, "A pesquisa realizada não obteve resultado.");
 		}
@@ -200,7 +200,7 @@ public class ConsultaConsignadoCotaController {
 		
 		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
 		
-		tableModel.setTotal(totalRegistros);
+		tableModel.setTotal(totalRegistros.intValue());
 		
 		return tableModel;
 	}
@@ -236,7 +236,7 @@ public class ConsultaConsignadoCotaController {
 		
 		TableModel<CellModelKeyValue<ConsultaConsignadoCotaPeloFornecedorDTO>> tableModel = new TableModel<CellModelKeyValue<ConsultaConsignadoCotaPeloFornecedorDTO>>();
 		
-		Integer totalRegistros = this.consultaConsignadoCota.buscarTodasMovimentacoesPorCota(filtro, false);
+		Long totalRegistros = this.consultaConsignadoCota.buscarTodosMovimentosCotaPeloFornecedor(filtro);
 		if(totalRegistros == 0){
 			throw new ValidacaoException(TipoMensagem.WARNING, "A pesquisa realizada não obteve resultado.");
 		}
@@ -245,7 +245,7 @@ public class ConsultaConsignadoCotaController {
 		
 		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
 		
-		tableModel.setTotal(totalRegistros);
+		tableModel.setTotal(totalRegistros.intValue());
 		
 		return tableModel;
 	}
@@ -322,7 +322,7 @@ public class ConsultaConsignadoCotaController {
 		Cota cota = this.cotaService.obterPorNumeroDaCota(numeroCota);
 		
 		if (cota == null) {
-			throw new ValidacaoException(TipoMensagem.WARNING, "Cota inexistente.");			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Cota " + numeroCota + " inexistente.");
 		}
 
 		Pessoa pessoa = cota.getPessoa();

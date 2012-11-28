@@ -1,5 +1,6 @@
 <html>
 	<head>
+		<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/NDS.css" />
 		<style type="text/css">
 			body{
 				font-size:12px!important;
@@ -36,7 +37,7 @@
 				table-layout: fixed;
 			}
 		</style>
-		
+		<script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/jquery-1.6.2.js"></script>
 		<script type="text/javascript">
 		$(function() {
 			
@@ -47,7 +48,7 @@
 	</head>
 	<body>
 		<header>
-			<table align="left" width="662" border="0" align="center" cellpadding="0" cellspacing="0">
+			<table align="center" width="662" border="0" align="center" cellpadding="0" cellspacing="0">
 				<tr>
 					<td width="21" height="92" bgcolor="#F3F3F3">&nbsp;</td>
 					<td width="185" bgcolor="#F3F3F3">
@@ -63,7 +64,7 @@
 					<td>&nbsp;</td>
 					<td>
 						<span id="btImpressao" class="bt_novos" title="Imprimir">
-							<a href="javascript:;" onclick="$('#btImpressao').hide();window.print();">
+							<a href="javascript:;" onclick="$('#btImpressao').hide();window.print();$('#btImpressao').show();">
 								<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" 
 								hspace="5" border="0" />Imprimir</a>
 						</span>
@@ -74,293 +75,304 @@
 			</table>
 		</header>
 		
-		<table align="left" width="662" border="0" align="center" cellpadding="0" cellspacing="0" style="border: 1px solid #000;">
+		<table align="center">
 			<tr>
-				<td width="794" align="center" valign="middle"></td>
-				<td height="23" colspan="2" align="center" style="border-left: 1px solid #000; border-bottom: 1px solid #000;">
-					<strong>Recolhimento</strong>
+				<td>
+					<table width="662" border="0" align="center" cellpadding="0" cellspacing="0" style="border: 1px solid #000;">
+						<tr>
+							<td width="794" align="center" valign="middle"></td>
+							<td height="23" colspan="2" align="center" style="border-left: 1px solid #000; border-bottom: 1px solid #000;">
+								<strong>Recolhimento</strong>
+							</td>
+						</tr>
+						<tr>
+							<td width="794" align="center" valign="middle"><h2>AGÊNCIAS	SÃO PAULO</h2></td>
+							<td width="98" align="center" style="border-left: 1px solid #000; border-bottom: 1px solid #000;">
+								<strong>${diaMesInicioRecolhimento}º DIA</strong>
+							</td>
+							<td width="71" rowspan="2" align="center" style="border-left: 1px solid #000; border-bottom: 1px solid #000;">
+								<strong>${dataInicioRecolhimento}</strong>
+							</td>
+						</tr>
+						<tr>
+							<td width="794" align="center" valign="middle" style="border-bottom: 1px solid #000;">&nbsp;</td>
+							<td align="center" style="border-left: 1px solid #000; border-bottom: 1px solid #000;">${diaSemanaInicioRecolhimento}</td>
+						</tr>
+						<tr>
+							<td align="center" style="border-bottom: 1px solid #000;">
+								<p>Marca registrada Treelog - Distribuidora de Publicações</p>
+							</td>
+							<td align="center" style="border-left: 1px solid #000; border-bottom: 1px solid #000;">
+								<strong>${diaMesFimRecolhimento}º DIA</strong>
+							</td>
+							<td rowspan="2" align="center" style="border-left: 1px solid #000;">
+								<strong>${dataFimRecolhimento}</strong>
+							</td>
+						</tr>
+						<tr>
+							<td align="center"><p>Registro Nº 800310340</p></td>
+							<td align="center" style="border-left: 1px solid #000;">${diaSemanaFimRecolhimento}</td>
+						</tr>
+					</table>
 				</td>
 			</tr>
+		
 			<tr>
-				<td width="794" align="center" valign="middle"><h2>AGÊNCIAS	SÃO PAULO</h2></td>
-				<td width="98" align="center" style="border-left: 1px solid #000; border-bottom: 1px solid #000;">
-					<strong>${diaMesInicioRecolhimento}º DIA</strong>
+				<td>
+		
+					<table align="center" width="662" border="0" align="center" cellpadding="2" cellspacing="0" 
+						style="border:1px solid #000; margin-top:5px;" class="relatorio">
+					<tr>
+						<c:forEach items="${colunas}" var="coluna_">
+							<td width="${coluna_.largura}%" height="31" align="center" class="relatorioHeader">
+								<strong>${coluna_.nome}</strong>
+							</td>
+						</c:forEach>
+					</tr>
+					
+					<c:set var="tableFechada" value="false"></c:set>
+					<c:set var="indexImg" value="0"></c:set>
+					
+					<c:forEach items="${dados}" var="dado" varStatus="index">
+			            
+			            <c:choose>
+			           		<c:when test="${!dado.imagem}">
+			           			<c:if test="${tableImagemAberta && tableFechada}">
+				            		</tr>
+									</table>
+									<br/>
+			            		</c:if>
+				           		
+				           		<c:if test="${dado != null && tableFechada}">
+				           			
+				           			<table align="left" width="662" border="0" align="center" cellpadding="2" cellspacing="0" 
+					            		style="border:1px solid #000; margin-top:5px;" class="relatorio">
+									<tr>
+										<c:forEach items="${colunas}" var="coluna_">
+											<td width="${coluna_.largura}%" height="31" align="center" class="relatorioHeader">
+												<strong>${coluna_.nome}</strong>
+											</td>
+										</c:forEach>
+									</tr>
+									
+									<c:set var="tableFechada" value="false"></c:set>
+									<c:set var="indexImg" value="0"></c:set>
+					            </c:if>
+					            
+					            <c:if test="${dado == null}">
+					            	<c:set var="tableFechada" value="false"></c:set>
+					            	<table><tr><td></td></tr></table>
+					            </c:if>
+					            
+					            <c:choose>
+					            	<c:when test="${dado.idProdutoEdicao != null}">
+							            <tr class="${index.count % 2 == 0 ? 'class_linha_1' : 'class_linha_2'}">
+					           		
+							           		<c:set var="contains" value="false" />
+											<c:forEach var="coluna" items="${colunas}">
+											  <c:if test="${coluna.param eq 'codigoProduto'}">
+											    <c:set var="contains" value="true" />
+											  </c:if>
+											</c:forEach>
+											
+											<c:if test="${contains}">
+												<td align="center">
+													${dado.codigoProduto}
+												</td>
+											</c:if>
+											
+											
+											<c:set var="contains" value="false" />
+											<c:forEach var="coluna" items="${colunas}">
+											  <c:if test="${coluna.param eq 'nomeProduto'}">
+											    <c:set var="contains" value="true" />
+											  </c:if>
+											</c:forEach>
+											
+											<c:if test="${contains}">
+												<td>
+													<div style="white-space:nowrap; overflow: hidden;">
+														${dado.nomeProduto}
+													</div>
+												</td>
+											</c:if>
+											
+											
+											<c:set var="contains" value="false" />
+											<c:forEach var="coluna" items="${colunas}">
+											  <c:if test="${coluna.param eq 'numeroEdicao'}">
+											    <c:set var="contains" value="true" />
+											  </c:if>
+											</c:forEach>
+											
+											<c:if test="${contains}">
+												<td align="center">
+													${dado.numeroEdicao}
+												</td>
+											</c:if>
+											
+											<c:set var="contains" value="false" />
+											<c:forEach var="coluna" items="${colunas}">
+											  <c:if test="${coluna.param eq 'chamadaCapa'}">
+											    <c:set var="contains" value="true" />
+											  </c:if>
+											</c:forEach>
+											
+											<c:if test="${contains}">
+												<td align="center">
+													${dado.chamadaCapa}
+												</td>
+											</c:if>
+											
+											
+											<c:set var="contains" value="false" />
+											<c:forEach var="coluna" items="${colunas}">
+											  <c:if test="${coluna.param eq 'codigoDeBarras'}">
+											    <c:set var="contains" value="true" />
+											  </c:if>
+											</c:forEach>
+											
+											<c:if test="${contains}">
+												<td>
+													${dado.codigoDeBarras}
+												</td>
+											</c:if>
+											
+											
+											<c:set var="contains" value="false" />
+											<c:forEach var="coluna" items="${colunas}">
+											  <c:if test="${coluna.param eq 'precoVenda'}">
+											    <c:set var="contains" value="true" />
+											  </c:if>
+											</c:forEach>
+											
+											<c:if test="${contains}">
+												<td align="right">
+													${dado.precoVenda}
+												</td>
+											</c:if>
+											
+											
+											<c:set var="contains" value="false" />
+											<c:forEach var="coluna" items="${colunas}">
+											  <c:if test="${coluna.param eq 'nomeEditor'}">
+											    <c:set var="contains" value="true" />
+											  </c:if>
+											</c:forEach>
+											
+											<c:if test="${contains}">
+												
+													<td style="overflow: hidden;">
+														<div style="white-space: nowrap;">
+														${dado.nomeEditor}
+														</div>
+													</td>
+											</c:if>
+											
+											
+											<c:set var="contains" value="false" />
+											<c:forEach var="coluna" items="${colunas}">
+											  <c:if test="${coluna.param eq 'brinde'}">
+											    <c:set var="contains" value="true" />
+											  </c:if>
+											</c:forEach>
+											
+											<c:if test="${contains}">
+												<td align="center">
+													${dado.brinde ? "Sim" : "Não"}
+												</td>
+											</c:if>
+											
+											
+											<c:set var="contains" value="false" />
+											<c:forEach var="coluna" items="${colunas}">
+											  <c:if test="${coluna.param eq 'dataLancamento'}">
+											    <c:set var="contains" value="true" />
+											  </c:if>
+											</c:forEach>
+											
+											<c:if test="${contains}">
+												<td align="center">
+													<fmt:formatDate value="${dado.dataLancamento}" pattern="dd/MM/yyyy"/>
+												</td>
+											</c:if>
+											
+											
+											<c:set var="contains" value="false" />
+											<c:forEach var="coluna" items="${colunas}">
+											  <c:if test="${coluna.param eq 'dataRecolhimento'}">
+											    <c:set var="contains" value="true" />
+											  </c:if>
+											</c:forEach>
+											
+											<c:if test="${contains}">
+												<td align="center">
+													<fmt:formatDate value="${dado.dataRecolhimento}" pattern="dd/MM/yyyy"/>
+												</td>
+											</c:if>
+											
+											
+											<c:set var="contains" value="false" />
+											<c:forEach var="coluna" items="${colunas}">
+											  <c:if test="${coluna.param eq 'dataRecolhimentoParcialFinal'}">
+											    <c:set var="contains" value="true" />
+											  </c:if>
+											</c:forEach>
+											
+											<c:if test="${contains}">
+												<td align="center">
+													<fmt:formatDate value="${dado.dataRecolhimentoParcialFinal}" pattern="dd/MM/yyyy"/>
+												</td>
+											</c:if>
+										</tr>
+									</c:when>
+									<c:otherwise>
+										<c:if test="${dado != null && !dado.imagem}">
+											<tr><td style="line-height: 28px; border: 0px;">&nbsp;</td></tr>
+										</c:if>
+									</c:otherwise>
+								</c:choose>
+							</c:when>
+							<c:otherwise>
+								
+								<c:if test="${!tableFechada}">
+									</table>
+									
+									<br/>
+						           	<c:set var="tableFechada" value="true"></c:set>
+						           	
+						           	<c:if test="${dado.idProdutoEdicao != null}">
+						           	
+							           	<table style="page-break-after: always; border:1px solid #000; margin-top:5px; border-left: 1px solid; border-right: 1px solid; border-bottom: 1px solid;" 
+							           			align="left" width="662" border="0" align="center" cellpadding="2" 
+							           			cellspacing="0">
+							        	<tr>
+							        	
+							        	<c:set value="true" var="tableImagemAberta"></c:set>
+							        </c:if>
+						        </c:if>
+						        
+				        		<c:if test="${dado.idProdutoEdicao != null}">
+									<td align="center">
+										<div align="center"><strong>${dado.seqCapa == null ? '-' : dado.seqCapa}</strong></div>
+										<img src="<c:url value='/capa/${dado.idProdutoEdicao}'></c:url>" width="110" height="143"></img>
+									<td>
+								</c:if>
+								
+								<c:set var="indexImg" value="${indexImg + 1}"></c:set>
+								
+								<c:if test="${indexImg % 5 == 0}">
+									</tr><tr>
+								</c:if>
+							</c:otherwise>
+						</c:choose>
+					</c:forEach>
+					
+					<c:if test="!tableFechada">
+						</table>
+					</c:if>
 				</td>
-				<td width="71" rowspan="2" align="center" style="border-left: 1px solid #000; border-bottom: 1px solid #000;">
-					<strong>${dataInicioRecolhimento}</strong>
-				</td>
-			</tr>
-			<tr>
-				<td width="794" align="center" valign="middle" style="border-bottom: 1px solid #000;">&nbsp;</td>
-				<td align="center" style="border-left: 1px solid #000; border-bottom: 1px solid #000;">${diaSemanaInicioRecolhimento}</td>
-			</tr>
-			<tr>
-				<td align="center" style="border-bottom: 1px solid #000;">
-					<p>Marca registrada Treelog - Distribuidora de Publicações</p>
-				</td>
-				<td align="center" style="border-left: 1px solid #000; border-bottom: 1px solid #000;">
-					<strong>${diaMesFimRecolhimento}º DIA</strong>
-				</td>
-				<td rowspan="2" align="center" style="border-left: 1px solid #000;">
-					<strong>${dataFimRecolhimento}</strong>
-				</td>
-			</tr>
-			<tr>
-				<td align="center"><p>Registro Nº 800310340</p></td>
-				<td align="center" style="border-left: 1px solid #000;">${diaSemanaFimRecolhimento}</td>
 			</tr>
 		</table>
-		
-		<table align="left" width="662" border="0" align="center" cellpadding="2" cellspacing="0" 
-			style="border:1px solid #000; margin-top:5px;" class="relatorio">
-		<tr>
-			<c:forEach items="${colunas}" var="coluna_">
-				<td width="${coluna_.largura}%" height="31" align="center" class="relatorioHeader">
-					<strong>${coluna_.nome}</strong>
-				</td>
-			</c:forEach>
-		</tr>
-		
-		<c:set var="tableFechada" value="false"></c:set>
-		<c:set var="indexImg" value="0"></c:set>
-		
-		<c:forEach items="${dados}" var="dado" varStatus="index">
-            
-            <c:choose>
-           		<c:when test="${!dado.imagem}">
-           			<c:if test="${tableImagemAberta && tableFechada}">
-	            		</tr>
-						</table>
-						<br/>
-            		</c:if>
-	           		
-	           		<c:if test="${dado != null && tableFechada}">
-	           			
-	           			<table align="left" width="662" border="0" align="center" cellpadding="2" cellspacing="0" 
-		            		style="border:1px solid #000; margin-top:5px;" class="relatorio">
-						<tr>
-							<c:forEach items="${colunas}" var="coluna_">
-								<td width="${coluna_.largura}%" height="31" align="center" class="relatorioHeader">
-									<strong>${coluna_.nome}</strong>
-								</td>
-							</c:forEach>
-						</tr>
-						
-						<c:set var="tableFechada" value="false"></c:set>
-						<c:set var="indexImg" value="0"></c:set>
-		            </c:if>
-		            
-		            <c:if test="${dado == null}">
-		            	<c:set var="tableFechada" value="false"></c:set>
-		            	<table><tr><td></td></tr></table>
-		            </c:if>
-		            
-		            <c:choose>
-		            	<c:when test="${dado.idProdutoEdicao != null}">
-				            <tr class="${index.count % 2 == 0 ? 'class_linha_1' : 'class_linha_2'}">
-		           		
-				           		<c:set var="contains" value="false" />
-								<c:forEach var="coluna" items="${colunas}">
-								  <c:if test="${coluna.param eq 'codigoProduto'}">
-								    <c:set var="contains" value="true" />
-								  </c:if>
-								</c:forEach>
-								
-								<c:if test="${contains}">
-									<td align="center">
-										${dado.codigoProduto}
-									</td>
-								</c:if>
-								
-								
-								<c:set var="contains" value="false" />
-								<c:forEach var="coluna" items="${colunas}">
-								  <c:if test="${coluna.param eq 'nomeProduto'}">
-								    <c:set var="contains" value="true" />
-								  </c:if>
-								</c:forEach>
-								
-								<c:if test="${contains}">
-									<td>
-										<div style="white-space:nowrap; overflow: hidden;">
-											${dado.nomeProduto}
-										</div>
-									</td>
-								</c:if>
-								
-								
-								<c:set var="contains" value="false" />
-								<c:forEach var="coluna" items="${colunas}">
-								  <c:if test="${coluna.param eq 'numeroEdicao'}">
-								    <c:set var="contains" value="true" />
-								  </c:if>
-								</c:forEach>
-								
-								<c:if test="${contains}">
-									<td align="center">
-										${dado.numeroEdicao}
-									</td>
-								</c:if>
-								
-								<c:set var="contains" value="false" />
-								<c:forEach var="coluna" items="${colunas}">
-								  <c:if test="${coluna.param eq 'chamadaCapa'}">
-								    <c:set var="contains" value="true" />
-								  </c:if>
-								</c:forEach>
-								
-								<c:if test="${contains}">
-									<td align="center">
-										${dado.chamadaCapa}
-									</td>
-								</c:if>
-								
-								
-								<c:set var="contains" value="false" />
-								<c:forEach var="coluna" items="${colunas}">
-								  <c:if test="${coluna.param eq 'codigoDeBarras'}">
-								    <c:set var="contains" value="true" />
-								  </c:if>
-								</c:forEach>
-								
-								<c:if test="${contains}">
-									<td>
-										${dado.codigoDeBarras}
-									</td>
-								</c:if>
-								
-								
-								<c:set var="contains" value="false" />
-								<c:forEach var="coluna" items="${colunas}">
-								  <c:if test="${coluna.param eq 'precoVenda'}">
-								    <c:set var="contains" value="true" />
-								  </c:if>
-								</c:forEach>
-								
-								<c:if test="${contains}">
-									<td align="right">
-										${dado.precoVenda}
-									</td>
-								</c:if>
-								
-								
-								<c:set var="contains" value="false" />
-								<c:forEach var="coluna" items="${colunas}">
-								  <c:if test="${coluna.param eq 'nomeEditor'}">
-								    <c:set var="contains" value="true" />
-								  </c:if>
-								</c:forEach>
-								
-								<c:if test="${contains}">
-									
-										<td style="overflow: hidden;">
-											<div style="white-space: nowrap;">
-											${dado.nomeEditor}
-											</div>
-										</td>
-								</c:if>
-								
-								
-								<c:set var="contains" value="false" />
-								<c:forEach var="coluna" items="${colunas}">
-								  <c:if test="${coluna.param eq 'brinde'}">
-								    <c:set var="contains" value="true" />
-								  </c:if>
-								</c:forEach>
-								
-								<c:if test="${contains}">
-									<td align="center">
-										${dado.brinde ? "Sim" : "Não"}
-									</td>
-								</c:if>
-								
-								
-								<c:set var="contains" value="false" />
-								<c:forEach var="coluna" items="${colunas}">
-								  <c:if test="${coluna.param eq 'dataLancamento'}">
-								    <c:set var="contains" value="true" />
-								  </c:if>
-								</c:forEach>
-								
-								<c:if test="${contains}">
-									<td align="center">
-										<fmt:formatDate value="${dado.dataLancamento}" pattern="dd/MM/yyyy"/>
-									</td>
-								</c:if>
-								
-								
-								<c:set var="contains" value="false" />
-								<c:forEach var="coluna" items="${colunas}">
-								  <c:if test="${coluna.param eq 'dataRecolhimento'}">
-								    <c:set var="contains" value="true" />
-								  </c:if>
-								</c:forEach>
-								
-								<c:if test="${contains}">
-									<td align="center">
-										<fmt:formatDate value="${dado.dataRecolhimento}" pattern="dd/MM/yyyy"/>
-									</td>
-								</c:if>
-								
-								
-								<c:set var="contains" value="false" />
-								<c:forEach var="coluna" items="${colunas}">
-								  <c:if test="${coluna.param eq 'dataRecolhimentoParcialFinal'}">
-								    <c:set var="contains" value="true" />
-								  </c:if>
-								</c:forEach>
-								
-								<c:if test="${contains}">
-									<td align="center">
-										<fmt:formatDate value="${dado.dataRecolhimentoParcialFinal}" pattern="dd/MM/yyyy"/>
-									</td>
-								</c:if>
-							</tr>
-						</c:when>
-						<c:otherwise>
-							<c:if test="${dado != null && !dado.imagem}">
-								<tr><td style="line-height: 28px; border: 0px;">&nbsp;</td></tr>
-							</c:if>
-						</c:otherwise>
-					</c:choose>
-				</c:when>
-				<c:otherwise>
-					
-					<c:if test="${!tableFechada}">
-						</table>
-						
-						<br/>
-			           	<c:set var="tableFechada" value="true"></c:set>
-			           	
-			           	<c:if test="${dado.idProdutoEdicao != null}">
-			           	
-				           	<table style="page-break-after: always; border:1px solid #000; margin-top:5px; border-left: 1px solid; border-right: 1px solid; border-bottom: 1px solid;" 
-				           			align="left" width="662" border="0" align="center" cellpadding="2" 
-				           			cellspacing="0">
-				        	<tr>
-				        	
-				        	<c:set value="true" var="tableImagemAberta"></c:set>
-				        </c:if>
-			        </c:if>
-			        
-	        		<c:if test="${dado.idProdutoEdicao != null}">
-						<td align="center">
-							<div align="center"><strong>${dado.seqCapa == null ? '-' : dado.seqCapa}</strong></div>
-							<img src="<c:url value='/capa/${dado.idProdutoEdicao}'></c:url>" width="110" height="143"></img>
-						<td>
-					</c:if>
-					
-					<c:set var="indexImg" value="${indexImg + 1}"></c:set>
-					
-					<c:if test="${indexImg % 5 == 0}">
-						</tr><tr>
-					</c:if>
-				</c:otherwise>
-			</c:choose>
-		</c:forEach>
-		
-		<c:if test="!tableFechada">
-			</table>
-		</c:if>
 	</body>
 </html>

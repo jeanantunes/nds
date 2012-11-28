@@ -54,4 +54,6 @@ public interface FiadorService {
 	PessoaFisica buscarSocioFiadorPorCPF(Long idFiador, String cpf);
 
 	Fiador obterFiadorPorCNPJ(String cnpj);
+
+	List<Pessoa> obterFiadorPorNome(String nomeFiador);
 }

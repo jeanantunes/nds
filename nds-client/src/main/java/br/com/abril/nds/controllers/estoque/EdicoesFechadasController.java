@@ -1,7 +1,7 @@
 package br.com.abril.nds.controllers.estoque;
 
 import java.io.IOException;
-import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -123,7 +123,7 @@ public class EdicoesFechadasController {
 		FiltroEdicoesFechadasDTO filtro = carregarFiltro(sortorder, sortname, page, rp, sdf.parse(dataDe), sdf.parse(dataAte), idFornecedor);	
 
 		List<RegistroEdicoesFechadasVO> resultado = null;
-		BigDecimal saldoTotal = new BigDecimal("0");
+		BigInteger saldoTotal = new BigInteger("0");
 		try {
 			resultado = edicoesFechadasService.obterResultadoEdicoesFechadas(sdf.parse(dataDe), sdf.parse(dataAte), idFornecedor);
 			saldoTotal = edicoesFechadasService.obterTotalResultadoEdicoesFechadas(sdf.parse(dataDe), sdf.parse(dataAte), idFornecedor);
@@ -153,7 +153,7 @@ public class EdicoesFechadasController {
 			
 			ResultadoEdicoesFechadasVO resultadoEdicoesFechadas = new ResultadoEdicoesFechadasVO();
 			resultadoEdicoesFechadas.setTableModel(tableModel);
-			resultadoEdicoesFechadas.setSaldoTotal(saldoTotal.toBigInteger());
+			resultadoEdicoesFechadas.setSaldoTotal(saldoTotal);
 			
 			result.use(Results.json()).withoutRoot().from(resultadoEdicoesFechadas).recursive().serialize();
 		}
@@ -225,9 +225,9 @@ public class EdicoesFechadasController {
 		FiltroEdicoesFechadasDTO filtroSessao = this.obterFiltroParaExportacao();
 		List<RegistroEdicoesFechadasVO> lista = edicoesFechadasService.obterResultadoEdicoesFechadas(filtroSessao.getDataDe(), filtroSessao.getDataAte(), filtroSessao.getCodigoFornecedor());
 		
-		BigDecimal	saldoTotal = edicoesFechadasService.obterTotalResultadoEdicoesFechadas(filtroSessao.getDataDe(), filtroSessao.getDataAte(), filtroSessao.getCodigoFornecedor());
+		BigInteger	saldoTotal = edicoesFechadasService.obterTotalResultadoEdicoesFechadas(filtroSessao.getDataDe(), filtroSessao.getDataAte(), filtroSessao.getCodigoFornecedor());
 		ResultadoEdicoesFechadasVO resultadoTotalEdicoesFechadas = new ResultadoEdicoesFechadasVO();
-		resultadoTotalEdicoesFechadas.setSaldoTotal(saldoTotal.toBigInteger());
+		resultadoTotalEdicoesFechadas.setSaldoTotal(saldoTotal);
 		
 		FileExporter.to("consulta-edicoes-fechadas-com-saldo", fileType).inHTTPResponse(this.getNDSFileHeader(), filtroSessao, resultadoTotalEdicoesFechadas, lista, RegistroEdicoesFechadasVO.class, this.httpServletResponse);
 	}

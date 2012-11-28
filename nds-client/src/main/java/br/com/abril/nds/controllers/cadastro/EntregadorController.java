@@ -3,6 +3,9 @@ package br.com.abril.nds.controllers.cadastro;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -147,7 +150,10 @@ public class EntregadorController {
 			String sortname, String sortorder) {
 
 		filtroEntregador = prepararFiltroEntregador(filtroEntregador, page, sortname, sortorder, rp);
-
+		
+		filtroEntregador.setNomeRazaoSocial(PessoaUtil.removerSufixoDeTipo(filtroEntregador.getNomeRazaoSocial()));
+		filtroEntregador.setApelidoNomeFantasia(PessoaUtil.removerSufixoDeTipo(filtroEntregador.getApelidoNomeFantasia()));
+		
 		List<Entregador> listaEntregador = this.entregadorService.obterEntregadoresPorFiltro(filtroEntregador);
 		
 		if (listaEntregador == null || listaEntregador.isEmpty()) {
@@ -212,6 +218,15 @@ public class EntregadorController {
 		cpfEntregador = cpfEntregador.replaceAll("\\.", "").replaceAll("-", "");
 
 		pessoaFisica.setCpf(cpfEntregador);
+		
+		if (dataNascimento != null && !dataNascimento.isEmpty()) {
+			DateFormat sdf = new SimpleDateFormat("dd/MM/yyyy"); 
+			try {
+				pessoaFisica.setDataNascimento(sdf.parse(dataNascimento));
+			} catch (ParseException e) {
+				throw new ValidacaoException(TipoMensagem.ERROR, "Ocorreu um erro ao tentar gravar a data de nascimento.");
+			}
+		}
 
 		PessoaFisica pessoaFisicaExistente = this.pessoaFisicaService.buscarPorCpf(cpfEntregador);
 
@@ -802,15 +817,19 @@ public class EntregadorController {
 				
 				listaMensagens.add("O preenchimento do campo [Sexo] é obrigatório.");
 			}
-			
-			if(dataNascimento ==  null || dataNascimento.isEmpty()) {
+
+			// Data de nascimento não é mais obrigatório - Definido em 08/11/2012
+			/*if(dataNascimento ==  null || dataNascimento.isEmpty()) {
 				
 				listaMensagens.add("O preenchimento do campo [Data Nascimento] é obrigatório.");
 				
-			} else if(!DateUtil.isValidDatePTBR(dataNascimento)){
-				
-				listaMensagens.add("Campo [Data Nascimento] inválido.");
-				
+			} else*/ 
+			if (dataNascimento != null && !dataNascimento.isEmpty()) {
+				if(!DateUtil.isValidDatePTBR(dataNascimento)){
+					
+					listaMensagens.add("Campo [Data Nascimento] inválido.");
+					
+				}
 			}
 			
 			String cpfEntregador = cpfCnpj.get(CPF);
@@ -869,12 +888,12 @@ public class EntregadorController {
 				}
 			}
 			
-			validarTelefone(listaMensagens);
-			
 			validarEndereco(listaMensagens);
 			
 		}
-		
+
+		validarTelefone(listaMensagens);
+
 		if (isComissionado && percentualComissao == null) {
 			
 			listaMensagens.add("O preenchimento do campo [Percentual da comissão] é obrigatório.");
@@ -883,7 +902,11 @@ public class EntregadorController {
 			
 			try {
 				
-				new BigDecimal(getValorSemMascara(percentualComissao));
+				BigDecimal percentualComissaoValue = new BigDecimal(getValorSemMascara(percentualComissao));
+				
+				if (new Double(getValorSemMascara(percentualComissao)) > 100) {
+					listaMensagens.add("O valor máximo de percentual de comissão não pode ultrapassar 100%.");
+				}
 				
 			} catch (NumberFormatException e) {
 				
@@ -1260,7 +1283,7 @@ public class EntregadorController {
 
 	private String getValorSemMascara(String valor) {
 
-		valor = valor.replaceAll("\\.", "");
+		//valor = valor.replaceAll("\\.", "");
 		valor = valor.replaceAll(",", "\\.");
 
 		return valor;

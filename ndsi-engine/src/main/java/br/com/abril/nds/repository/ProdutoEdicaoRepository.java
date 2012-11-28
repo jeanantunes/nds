@@ -60,7 +60,7 @@ public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long>
 	 * @return {@link FuroProdutoDTO}
 	 */
 	FuroProdutoDTO obterProdutoEdicaoPorCodigoEdicaoDataLancamento(
-			String codigo, String nomeProduto, Long edicao, Date dataLancamento);
+			String codigo, String nomeProduto, Long edicao, Date dataLancamento, boolean furado);
 	
 	/**
 	 * Obtém um produto de edição de acordo com o 
@@ -99,7 +99,7 @@ public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long>
 
 	ProdutoEdicao obterProdutoEdicaoPorSM(Long sm);
 	
-	List<ProdutoEdicao> obterProdutoPorCodigoNome(String codigoNomeProduto);
+	List<ProdutoEdicao> obterProdutoPorCodigoNome(String codigoNomeProduto, Integer quantidadeRegisttros);
 	
 	/**
 	 * Obtém uma lista de produtos edição de acordo com o parâmetro iformado.
@@ -278,5 +278,12 @@ public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long>
 	 * @param fornecedores
 	 * @return
 	public Set<ProdutoEdicao> filtrarDescontoProdutoEdicaoPorProduto(Produto produto);*/
+
+	/**
+	 * Verifica se a expedição física de um produto edição já foi realizada
+	 * @param produtoEdicao
+	 * @return
+	 */
+	public boolean validarExpedicaoFisicaProdutoEdicao(ProdutoEdicao produtoEdicao);
 	
 }

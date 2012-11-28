@@ -124,6 +124,11 @@ public class VisaoEstoqueServiceImpl implements VisaoEstoqueService {
 		
 		for (VisaoEstoqueDetalheDTO dto: list) {
 			
+			if (dto.getPrecoCapa() == null || dto.getQtde() == null) {
+				
+				continue;
+			}
+			
 			precoCapa = CurrencyUtil.converterValor(dto.getPrecoCapa());
 			qtde = CurrencyUtil.converterValor(dto.getQtde());
 			dto.setValor(precoCapa.multiply(qtde));
@@ -144,9 +149,19 @@ public class VisaoEstoqueServiceImpl implements VisaoEstoqueService {
 		TipoMovimentoEstoque tipoMovimentoEntrada = 
 				this.tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(filtro.getGrupoMovimentoEntrada());
 
+		if (tipoMovimentoEntrada == null) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Tipo de movimento de entrada não encontrado!");
+		}
+		
 		TipoMovimentoEstoque tipoMovimentoSaida = 
 				this.tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(filtro.getGrupoMovimentoSaida());
 
+		if (tipoMovimentoSaida == null) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Tipo de movimento de saída não encontrado!");
+		}
+		
 		for (VisaoEstoqueTransferenciaDTO dto : filtro.getListaTransferencia()) {
 
 			movimentoEstoqueService.gerarMovimentoEstoque(

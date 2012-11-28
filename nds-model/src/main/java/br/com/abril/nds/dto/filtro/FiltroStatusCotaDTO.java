@@ -47,6 +47,8 @@ public class FiltroStatusCotaDTO implements Serializable {
 	 */
 	public enum OrdenacaoColunasStatusCota {
 		
+		NUMERO_COTA("numeroCota"),
+		NOME_COTA("nomeCota"),
 		DATA("data"),
 		STATUS_ANTERIOR("statusAnterior"),
 		STATUS_ATUALIZADO("statusAtualizado"),

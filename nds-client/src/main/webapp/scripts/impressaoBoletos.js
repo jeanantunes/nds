@@ -119,7 +119,7 @@ var impressaoBoletosController = $.extend(true, {
 			
 			var nossoNumero  = row.cell.nossoNumero;
 			
-			var linkImpressao = '<a href="javascript:;" onclick="impressaoBoletosController.imprimirDivida(' + nossoNumero + ');" style="cursor:pointer">' +
+			var linkImpressao = '<a href="javascript:;" onclick="impressaoBoletosController.imprimirDivida(\'' + nossoNumero + '\');" style="cursor:pointer">' +
 				 '<img src="' + contextPath + '/images/ico_impressora.gif" hspace="5" border="0px" title="Imprime" />' +
 				 '</a>';			
 			
@@ -129,7 +129,7 @@ var impressaoBoletosController = $.extend(true, {
 			
 			if(row.cell.suportaEmail == "true"){
 			 
-				linkEmail ='<a href="javascript:;" onclick="impressaoBoletosController.enviarDivida(' + nossoNumero + ');" style="cursor:pointer">' +
+				linkEmail ='<a href="javascript:;" onclick="impressaoBoletosController.enviarDivida(\'' + nossoNumero + '\');" style="cursor:pointer">' +
                  '<img src="' + contextPath + '/images/ico_email.png" hspace="5" border="0px" title="Enviar Arquivo por E-Mail" />' +
                   '</a>';		 					 
 				
@@ -340,7 +340,8 @@ recarregarComboRoteiroRotas:function(idBox){
 		$.postJSON(contextPath + "/financeiro/impressaoBoletos/habilitarAcaoGeracaoDivida",
 				[{name:"dataPesquisa",value:valor}], function(result){
 			
-			if(result.isAcaoGeraDivida == true){
+			//if(result.isAcaoGeraDivida == true){
+			if(result == true){
 				$("#divGerarDivida", impressaoBoletosController.workspace).show();	
 			}
 			else{
@@ -350,3 +351,4 @@ recarregarComboRoteiroRotas:function(idBox){
 	}
 
 }, BaseController);
+//@ sourceURL=impressaoBoletos.js

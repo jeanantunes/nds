@@ -29,7 +29,7 @@ public class ParametroCobrancaTransportador implements Serializable {
 	private static final long serialVersionUID = -5150610869351056930L;
 
 	
-	public enum ModelidadeCobranca{
+	public enum ModalidadeCobranca{
 		
 		TAXA_FIXA("TF", "Taxa Fixa"),
 		PERCENTUAL("P", "Percentual");
@@ -38,7 +38,7 @@ public class ParametroCobrancaTransportador implements Serializable {
 		
 		private String descricao;
 		
-		private ModelidadeCobranca(String codigo, String descricao){
+		private ModalidadeCobranca(String codigo, String descricao){
 			
 			this.codigo = codigo;
 			this.descricao = descricao;
@@ -68,7 +68,7 @@ public class ParametroCobrancaTransportador implements Serializable {
 	
 	@Enumerated(EnumType.STRING)
 	@Column(name = "MODELIDADE_COBRANCA")
-	private ModelidadeCobranca modelidadeCobranca;
+	private ModalidadeCobranca modalidadeCobranca;
 	
 	@Column(name = "VALOR")
 	private BigDecimal valor;
@@ -96,12 +96,12 @@ public class ParametroCobrancaTransportador implements Serializable {
 		this.id = id;
 	}
 
-	public ModelidadeCobranca getModelidadeCobranca() {
-		return modelidadeCobranca;
+	public ModalidadeCobranca getModalidadeCobranca() {
+		return modalidadeCobranca;
 	}
 
-	public void setModelidadeCobranca(ModelidadeCobranca modelidadeCobranca) {
-		this.modelidadeCobranca = modelidadeCobranca;
+	public void setModalidadeCobranca(ModalidadeCobranca modalidadeCobranca) {
+		this.modalidadeCobranca = modalidadeCobranca;
 	}
 
 	public BigDecimal getValor() {

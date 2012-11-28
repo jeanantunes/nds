@@ -122,9 +122,9 @@ public class NotaFiscalServiceImplTest extends AbstractRepositoryImplTest {
 //
 //			this.notasParaTesteArquivo.add(notaTesteArquivo);
 //		}
-		tipoNotaFiscalDevolucao = Fixture.tipoNotaFiscalDevolucao();
 		CFOP cfop1209 =Fixture.cfop1209();
 		CFOP cfop1210 =Fixture.cfop1210();
+		tipoNotaFiscalDevolucao = Fixture.tipoNotaFiscalDevolucao(null);
 		tipoNotaFiscalDevolucao.setCfopEstado(cfop1209);
 		tipoNotaFiscalDevolucao.setCfopOutrosEstados(cfop1210);
 		save(cfop1209,cfop1210,tipoNotaFiscalDevolucao);

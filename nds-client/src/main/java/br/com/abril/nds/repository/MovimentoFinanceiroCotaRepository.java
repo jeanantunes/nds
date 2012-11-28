@@ -12,6 +12,7 @@ import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroDebitoCreditoDTO;
 import br.com.abril.nds.dto.filtro.FiltroRelatorioServicosEntregaDTO;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
@@ -136,4 +137,12 @@ public interface MovimentoFinanceiroCotaRepository extends Repository<MovimentoF
 	List<MovimentoFinanceiroDTO> obterDetalhesTrasportadorPorCota(FiltroRelatorioServicosEntregaDTO filtro);
 	
 	Long obterCountResumoTransportadorCota(FiltroRelatorioServicosEntregaDTO filtro);
+	
+	BigDecimal obterSaldoDistribuidor(Date data, 
+							 	      TipoCota tipoCota, 
+							 	      OperacaoFinaceira operacaoFinaceira);
+
+
+	List<Long> obterIdsMovimentosFinanceiroCota(FiltroDebitoCreditoDTO filtroDebitoCreditoDTO);
+	
 }

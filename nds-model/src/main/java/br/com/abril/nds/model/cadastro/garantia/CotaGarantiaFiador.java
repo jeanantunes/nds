@@ -3,6 +3,7 @@
  */
 package br.com.abril.nds.model.cadastro.garantia;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
@@ -23,7 +24,7 @@ public class CotaGarantiaFiador extends CotaGarantia {
 	private static final long serialVersionUID = -8954847105572780016L;
 	
 	
-	@ManyToOne(optional=true,fetch=FetchType.EAGER)
+	@ManyToOne(optional=true,fetch=FetchType.EAGER, cascade=CascadeType.DETACH)
 	@JoinColumn(name="FIADOR_ID")
 	private Fiador fiador;
 

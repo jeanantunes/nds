@@ -31,6 +31,20 @@ public class PessoaUtil {
 	public static String obterNomeExibicaoPeloTipo(Pessoa pessoa) {
 		return obterNomeExibicaoPeloTipo(pessoa, true);
 	}
+	
+	/**
+	 * Obtém o nome de exibição de acordo com o tipo de pessoa.
+	 * 
+	 * Se for Física retorna o apelido e se for jurídica retorna a nome fantasia.
+	 * 
+	 * @param pessoa
+	 *            - pessoa
+	 * 
+	 * @return Nome para exibição
+	 */
+	public static String obterApelidoExibicaoPeloTipo(Pessoa pessoa) {
+		return obterApelidoExibicaoPeloTipo(pessoa,true);
+	}
 
 	/**
 	 * Obtém o nome de exibição de acordo com o tipo de pessoa.
@@ -70,6 +84,46 @@ public class PessoaUtil {
 		
 		return nomeExibicao;
 	}
+	
+	/**
+	 * Obtém o apelido de exibição de acordo com o tipo de pessoa.
+	 * 
+	 * Se for Física retorna o apelido e se for jurídica retorna a nome fantasia.
+	 * 
+	 * @param pessoa
+	 *            - pessoa
+	 * @param inclueSufixo - indica se deve ser incluido o sufixo ao nome <code>" (PF)"</code> para pessoa física ou <code>" (PJ)"</code> para jurídica
+	 * 
+	 * @return Nome para exibição
+	 */
+	public static String obterApelidoExibicaoPeloTipo(Pessoa pessoa,boolean inclueSufixo) {
+		
+		String nomeExibicao = null;
+		String sufixo = null;
+	
+		if (pessoa != null) {
+	
+			if (pessoa instanceof PessoaJuridica) {
+	
+				nomeExibicao = ((PessoaJuridica) pessoa).getNomeFantasia();
+	
+				sufixo =  SUFIXO_PESSOA_JURIDICA;
+	
+			} else if (pessoa instanceof PessoaFisica) {
+	
+				nomeExibicao = ((PessoaFisica) pessoa).getApelido();
+	
+				sufixo = SUFIXO_PESSOA_FISICA;
+			}
+		}
+		
+		if(inclueSufixo && nomeExibicao != null){
+			nomeExibicao += sufixo;
+		}
+		
+		return nomeExibicao;
+	}
+
 
 	/**
 	 * Remove o sufixo do tipo de pessoa.

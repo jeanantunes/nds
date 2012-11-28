@@ -17,17 +17,27 @@ public class EMS0197Detalhe {
 	private String descontoPE;
 	private String qtdeMEC;
 	
-	@Field(length = 1000, offset = 1)
+	/**
+	 * 
+	 * FIXME: O tamanho esta "erroneamente" fixado em 150 posições porque este
+	 * a API FixedFormat4J gera apenas arquivos do tipo posicional (e 
+	 * este arquivo é do tipo que utiliza delimitadores).
+	 * O tamanho de 150 posições deve ser suficiente para este tipo de linha.
+	 * 
+	 * @return
+	 */	
+	@Field(offset = 1, length = 150)
 	public String getTipoRegistro() {
-		this.tipoRegistro="2"+"|"+this.numeroCota
-							 +"|"+this.codProduto
-							 +"|"+this.numEdicao
-							 +"|"+this.nomeProduto
-							 +"|"+this.codigoDeBarrasPE
-							 +"|"+this.precoCustoPE
-							 +"|"+this.precoVendaPE
-							 +"|"+this.descontoPE
-							 +"|"+this.qtdeMEC;
+		this.tipoRegistro = "2" 
+				+ "|" + this.numeroCota 
+				+ "|" + this.codProduto
+				+ "|" + this.numEdicao 
+				+ "|" + this.nomeProduto 
+				+ "|" + this.codigoDeBarrasPE 
+				+ "|" + this.precoCustoPE 
+				+ "|" + this.precoVendaPE 
+				+ "|" + this.descontoPE 
+				+ "|" + this.qtdeMEC;
 
 		return tipoRegistro;
 	}

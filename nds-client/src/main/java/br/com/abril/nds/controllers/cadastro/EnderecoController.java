@@ -7,7 +7,6 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import br.com.abril.nds.client.endereco.vo.EnderecoVO;
 import br.com.abril.nds.client.util.PaginacaoUtil;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.EnderecoDTO;
@@ -22,6 +21,7 @@ import br.com.abril.nds.util.ItemAutoComplete;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
+import br.com.abril.nds.vo.EnderecoVO;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Path;
@@ -298,23 +298,16 @@ public class EnderecoController {
 			return;
 		}
 		
-		List<Localidade> localidades = this.enderecoService.obterLocalidadesPorUFNome(nomeLocalidade, siglaUF);
+		List<String> localidades = this.enderecoService.obterLocalidadesPorUFNome(nomeLocalidade, siglaUF);
 		
 		List<ItemAutoComplete> listaAutoComplete = new ArrayList<ItemAutoComplete>();
 		
 		if (localidades != null && !localidades.isEmpty()) {
 			
-			for (Localidade localidade : localidades) {
+			for (String localidade : localidades) {
 				
-				String nomeExibicao = localidade.getNome();
 				
-				Long chave = localidade.getCodigoMunicipioIBGE();
-				
-				if(chave == null) {
-					continue;
-				}
-				
-				listaAutoComplete.add(new ItemAutoComplete(nomeExibicao, null, chave));
+				listaAutoComplete.add(new ItemAutoComplete(localidade, null, null));
 			}
 		}
 		
@@ -330,19 +323,15 @@ public class EnderecoController {
 			return;
 		}
 		
-		List<Bairro> bairros = this.enderecoService.obterBairrosPorCodigoIBGENome(nomeBairro, codigoIBGE);
+		List<String> bairros = this.enderecoService.obterBairrosPorCodigoIBGENome(nomeBairro, codigoIBGE);
 		
 		List<ItemAutoComplete> listaAutoComplete = new ArrayList<ItemAutoComplete>();
 		
 		if (bairros != null && !bairros.isEmpty()) {
 			
-			for (Bairro bairro : bairros) {
+			for (String bairro : bairros) {				
 				
-				String nomeExibicao = bairro.getNome();
-				
-				Long chave = bairro.getId();
-				
-				listaAutoComplete.add(new ItemAutoComplete(nomeExibicao, null, chave));
+				listaAutoComplete.add(new ItemAutoComplete(bairro, null, null));
 			}
 		}
 
@@ -358,19 +347,15 @@ public class EnderecoController {
 			return;
 		}
 		
-		List<Logradouro> logradouros = this.enderecoService.obterLogradourosPorCodigoBairroNome(codigoBairro, nomeLogradouro);
+		List<String> logradouros = this.enderecoService.obterLogradourosPorCodigoBairroNome(codigoBairro, nomeLogradouro);
 		
 		List<ItemAutoComplete> listaAutoComplete = new ArrayList<ItemAutoComplete>();
 		
 		if (logradouros != null && !logradouros.isEmpty()) {
 			
-			for (Logradouro logradouro : logradouros) {
+			for (String logradouro : logradouros) {
 				
-				String nomeExibicao = logradouro.getNome();
-				
-				Long chave = logradouro.getId();
-				
-				listaAutoComplete.add(new ItemAutoComplete(nomeExibicao, null, chave));
+				listaAutoComplete.add(new ItemAutoComplete(logradouro, null, null));
 			}
 		}
 
@@ -522,13 +507,13 @@ public class EnderecoController {
 		List<ItemAutoComplete> autoCompleteLogradouros = 
 				new ArrayList<ItemAutoComplete>();
 		
-		List<Logradouro> logradouros = 
+		List<String> logradouros = 
 				this.enderecoService.pesquisarLogradouros(nomeLogradouro);
 		
-		for (Logradouro logradouro : logradouros){
+		for (String logradouro : logradouros){
 			
 			ItemAutoComplete itemAutoComplete = 
-					new ItemAutoComplete(logradouro.getNome(), logradouro.getNome(), logradouro.getId());
+					new ItemAutoComplete(logradouro, null, null);
 			
 			autoCompleteLogradouros.add(itemAutoComplete);
 		}
@@ -545,13 +530,13 @@ public class EnderecoController {
 		List<ItemAutoComplete> autoCompleteBairros = 
 				new ArrayList<ItemAutoComplete>();
 		
-		List<Bairro> bairros = 
+		List<String> bairros = 
 				this.enderecoService.pesquisarBairros(nomeBairro);
 		
-		for (Bairro bairro : bairros){
+		for (String bairro : bairros){
 			
 			ItemAutoComplete itemAutoComplete = 
-					new ItemAutoComplete(bairro.getNome(), bairro.getNome(), bairro.getId());
+					new ItemAutoComplete(bairro, null, null);
 			
 			autoCompleteBairros.add(itemAutoComplete);
 		}
@@ -568,13 +553,13 @@ public class EnderecoController {
 		List<ItemAutoComplete> autoCompleteLocalidades = 
 				new ArrayList<ItemAutoComplete>();
 		
-		List<Localidade> localidades = 
+		List<String> localidades = 
 				this.enderecoService.pesquisarLocalidades(nomeLocalidade);
 		
-		for (Localidade localidade : localidades){
+		for (String localidade : localidades){
 			
 			ItemAutoComplete itemAutoComplete = 
-					new ItemAutoComplete(localidade.getNome(), localidade.getNome(), localidade.getId());
+					new ItemAutoComplete(localidade, null, null);
 			
 			autoCompleteLocalidades.add(itemAutoComplete);
 		}
@@ -724,7 +709,7 @@ public class EnderecoController {
 				
 				if (!enderecoAssociacao.equals(enderecoAssociacaoAtual) && enderecoAssociacaoAtual.isEnderecoPrincipal()) {
 					
-					throw new ValidacaoException(TipoMensagem.WARNING, "Já existe um endereço principal.");
+					enderecoAssociacao.setEnderecoPrincipal(false); 
 				}
 			}
 		}
@@ -753,8 +738,7 @@ public class EnderecoController {
 		
 		List<EnderecoAssociacaoDTO> lista = (List<EnderecoAssociacaoDTO>) 
 				this.session.getAttribute(ATRIBUTO_SESSAO_LISTA_ENDERECOS_REMOVER);
-		
-		if (lista == null){
+				if (lista == null){
 			
 			lista = new ArrayList<EnderecoAssociacaoDTO>();
 		}
@@ -775,4 +759,5 @@ public class EnderecoController {
 		
 		return lista;
 	}
+			
 }

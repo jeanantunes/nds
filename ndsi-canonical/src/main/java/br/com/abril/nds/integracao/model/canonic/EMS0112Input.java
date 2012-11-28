@@ -58,8 +58,8 @@ public class EMS0112Input extends IntegracaoDocument implements Serializable{
 	private String ufOrgaoEmissor;//IGNORAR
 	private String cnpj;
 	private String inscricaoEstadual;
-	private Integer bairroEditor;
-	private Integer bairroEntrega;
+	private String bairroEditor;
+	private String bairroEntrega;
 	
 	@Field(offset=1, length=7)
 	public Integer getCodigoDistribuidor() {
@@ -335,18 +335,18 @@ public class EMS0112Input extends IntegracaoDocument implements Serializable{
 	}
 	
 	@Field(offset=440, length=5)	
-	public Integer getBairroEditor() {
+	public String getBairroEditor() {
 		return bairroEditor;
 	}
-	public void setBairroEditor(Integer bairroEditor) {
+	public void setBairroEditor(String bairroEditor) {
 		this.bairroEditor = bairroEditor;
 	}
 	
 	@Field(offset=445, length=5)	
-	public Integer getBairroEntrega() {
+	public String getBairroEntrega() {
 		return bairroEntrega;
 	}
-	public void setBairroEntrega(Integer bairroEntrega) {
+	public void setBairroEntrega(String bairroEntrega) {
 		this.bairroEntrega = bairroEntrega;
 	}
 	

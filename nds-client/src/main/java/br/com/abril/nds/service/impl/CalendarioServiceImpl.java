@@ -36,9 +36,8 @@ import br.com.abril.nds.model.dne.Localidade;
 import br.com.abril.nds.model.dne.UnidadeFederacao;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.FeriadoRepository;
-import br.com.abril.nds.repository.LocalidadeRepository;
-import br.com.abril.nds.repository.UnidadeFederacaoRepository;
 import br.com.abril.nds.service.CalendarioService;
+import br.com.abril.nds.service.EnderecoService;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.export.FileExporter.FileType;
@@ -55,10 +54,7 @@ public class CalendarioServiceImpl implements CalendarioService {
 	protected FeriadoRepository feriadoRepository;
 
 	@Autowired
-	private LocalidadeRepository localidadeRepository;
-
-	@Autowired
-	private UnidadeFederacaoRepository unidadeFederacaoRepository;
+	private EnderecoService enderecoService;
 
 	@Autowired
 	private DistribuidorRepository distribuidorRepository;
@@ -265,11 +261,11 @@ public class CalendarioServiceImpl implements CalendarioService {
 
 		if (TipoFeriado.FEDERAL.equals(tipoFeriado)) {
 			calendarioFeriado.setUfSigla(null);
-			calendarioFeriado.setIdLocalidade(null);
+			calendarioFeriado.setLocalidade(null);
 		}
 
 		if (TipoFeriado.ESTADUAL.equals(tipoFeriado)) {
-			calendarioFeriado.setIdLocalidade(null);
+			calendarioFeriado.setLocalidade(null);
 		}
 
 		if (TipoFeriado.MUNICIPAL.equals(tipoFeriado)) {
@@ -294,10 +290,10 @@ public class CalendarioServiceImpl implements CalendarioService {
 		boolean indOpera = calendarioFeriado.isIndOpera();
 		boolean indRepeteAnualmente = calendarioFeriado.isIndRepeteAnualmente();
 		boolean indEfetuaCobranca = calendarioFeriado.isIndEfetuaCobranca();
-		Long idLocalidade = calendarioFeriado.getIdLocalidade();
+		String localidade = calendarioFeriado.getLocalidade();
 
 		Feriado feriado = null;
-		UnidadeFederacao unidadeFederacao = null;
+		String unidadeFederacao = null;
 
 		if (calendarioFeriado.isIndRepeteAnualmente()) {
 			feriado = feriadoRepository
@@ -307,12 +303,11 @@ public class CalendarioServiceImpl implements CalendarioService {
 			String uf = null;
 
 			if (TipoFeriado.ESTADUAL.equals(tipoFeriado)) {
-				unidadeFederacao = obterUfDistribuidor();
-				uf = unidadeFederacao.getSigla();
+				uf = obterUfDistribuidor();
 			}
 
 			List<Feriado> listaFeriado = feriadoRepository.obterFeriados(data,
-					tipoFeriado, uf, idLocalidade);
+					tipoFeriado, uf, localidade);
 
 			if (listaFeriado != null && !listaFeriado.isEmpty()) {
 				feriado = listaFeriado.get(0);
@@ -338,18 +333,7 @@ public class CalendarioServiceImpl implements CalendarioService {
 
 		} else {
 
-			Localidade localidade = null;
-
-			if (idLocalidade != null) {
-
-				localidade = localidadeRepository.buscarPorId(idLocalidade);
-
-				if (localidade == null) {
-					throw new ValidacaoException(TipoMensagem.WARNING,
-							"Localidade não foi encontrada");
-				}
-
-			}
+			
 
 			feriado = new Feriado();
 
@@ -404,7 +388,7 @@ public class CalendarioServiceImpl implements CalendarioService {
 
 		Date dataFeriado = calendarioFeriado.getDataFeriado();
 		TipoFeriado tipoFeriado = calendarioFeriado.getTipoFeriado();
-		Long idLocalidade = calendarioFeriado.getIdLocalidade();
+		String idLocalidade = calendarioFeriado.getLocalidade();
 
 		Feriado feriado = null;
 
@@ -415,8 +399,7 @@ public class CalendarioServiceImpl implements CalendarioService {
 			String uf = null;
 
 			if (TipoFeriado.ESTADUAL.equals(tipoFeriado)) {
-				UnidadeFederacao unidadeFederacao = obterUfDistribuidor();
-				uf = unidadeFederacao.getSigla();
+				uf = obterUfDistribuidor();
 			}
 
 			List<Feriado> feriados = feriadoRepository.obterFeriados(
@@ -437,7 +420,7 @@ public class CalendarioServiceImpl implements CalendarioService {
 		return feriado;
 	}
 
-	private UnidadeFederacao obterUfDistribuidor() {
+	private String obterUfDistribuidor() {
 
 		EnderecoDistribuidor endDistribuidor = distribuidorRepository
 				.obterEnderecoPrincipal();
@@ -451,15 +434,7 @@ public class CalendarioServiceImpl implements CalendarioService {
 
 		}
 
-		UnidadeFederacao unidadeFederacao = unidadeFederacaoRepository
-				.buscarPorId(endDistribuidor.getEndereco().getUf());
-
-		if (unidadeFederacao == null) {
-			throw new ValidacaoException(TipoMensagem.WARNING,
-					"Uf não foi encontrada");
-		}
-
-		return unidadeFederacao;
+		return endDistribuidor.getEndereco().getUf();
 
 	}
 
@@ -769,9 +744,9 @@ public class CalendarioServiceImpl implements CalendarioService {
 	}
 
 	@Transactional
-	public List<Localidade> obterListaLocalidadeCotas() {
+	public List<String> obterListaLocalidadeCotas() {
 
-		return localidadeRepository.obterListaLocalidadeCotas();
+		return enderecoService.obterListaLocalidadeCotas();
 
 	}
 

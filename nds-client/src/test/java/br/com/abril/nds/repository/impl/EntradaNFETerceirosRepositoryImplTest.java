@@ -101,7 +101,7 @@ public class EntradaNFETerceirosRepositoryImplTest extends
 		save(cfop5102);
 
 		TipoNotaFiscal tipoNotaFiscalRecebimento = Fixture
-				.tipoNotaFiscalRecebimento();
+				.tipoNotaFiscalRecebimento(cfop5102);
 
 		save(tipoNotaFiscalRecebimento);
 

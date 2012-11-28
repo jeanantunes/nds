@@ -53,6 +53,8 @@ var ConferenciaEncalhe = $.extend(true, {
 
 	init : function() {
 	
+		$("#pesq_prod", ConferenciaEncalhe.workspace).autocomplete({source: []});
+		
 		$('#qtdeExemplar', ConferenciaEncalhe.workspace).focus();
 	
 		$("#dataNotaFiscal", ConferenciaEncalhe.workspace).datepicker({
@@ -1183,18 +1185,20 @@ var ConferenciaEncalhe = $.extend(true, {
 			$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/pesquisarProdutoPorCodigoNome', 
 					{codigoNomeProduto:codigoNomeProduto}, 
 					function(result){
-						
-						if (result[0]){
 							
-							$("#pesq_prod", ConferenciaEncalhe.workspace).autocomplete({
-								source: result,
-								select: function(event, ui){
-									
-									$("#codProduto", ConferenciaEncalhe.workspace).val(ui.item.chave.string);
-									ConferenciaEncalhe.idProdutoEdicao = ui.item.chave.long;
-								}
-							});
-						}
+						$("#pesq_prod", ConferenciaEncalhe.workspace).autocomplete({
+							source: result,
+							select: function(event, ui){
+								
+								$("#codProduto", ConferenciaEncalhe.workspace).val(ui.item.chave.string);
+								ConferenciaEncalhe.idProdutoEdicao = ui.item.chave.long;
+							},
+							delay : 0,
+						});
+						
+						$("#pesq_prod", ConferenciaEncalhe.workspace).autocomplete(
+							"search", codigoNomeProduto
+						);
 					}
 			);
 		}
