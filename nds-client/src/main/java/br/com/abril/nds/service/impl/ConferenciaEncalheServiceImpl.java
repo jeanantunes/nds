@@ -1087,7 +1087,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	    Date dataRecolhimentoReferencia = obterDataRecolhimentoReferencia();
 	    Distribuidor distribuidor = distribuidorService.obter();
 		Date dataOperacao = distribuidor.getDataOperacao();
-		//TODO verificar se é utilizado new Date() mesmo
 		Date dataCriacao = new Date();
 		Integer numeroCota = controleConfEncalheCota.getCota().getNumeroCota();
 		
