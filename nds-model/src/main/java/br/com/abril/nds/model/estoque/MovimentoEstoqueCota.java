@@ -3,6 +3,7 @@ package br.com.abril.nds.model.estoque;
 import java.util.List;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
@@ -21,6 +22,9 @@ import br.com.abril.nds.model.planejamento.Lancamento;
 @Entity
 @Table(name = "MOVIMENTO_ESTOQUE_COTA")
 public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque implements Cloneable {
+	
+	@Embedded
+	private ValoresAplicados valoresAplicados;
 	
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "COTA_ID")
@@ -57,7 +61,7 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque implements C
 
 	@Column(name = "STATUS_ESTOQUE_FINANCEIRO")
 	private StatusEstoqueFinanceiro statusEstoqueFinanceiro;
-
+	
 	public Object clone() {
 
 		MovimentoEstoqueCota mec = new MovimentoEstoqueCota();
@@ -196,6 +200,14 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque implements C
 	public void setEstoqueProdutoCotaJuramentado(
 			EstoqueProdutoCotaJuramentado estoqueProdutoCotaJuramentado) {
 		this.estoqueProdutoCotaJuramentado = estoqueProdutoCotaJuramentado;
+	}
+
+	public ValoresAplicados getValoresAplicados() {
+		return valoresAplicados;
+	}
+
+	public void setValoresAplicados(ValoresAplicados valoresAplicados) {
+		this.valoresAplicados = valoresAplicados;
 	}
 
 }

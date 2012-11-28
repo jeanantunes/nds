@@ -1,7 +1,6 @@
 package br.com.abril.nds.model.cadastro.desconto;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -20,19 +19,16 @@ import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.seguranca.Usuario;
 
 @Entity
-@Table(name = "HISTORICO_DESCONTO_FORNECEDOR")
-@SequenceGenerator(name="HISTORICO_DESCONTO_FORNECEDOR_SEQ", initialValue = 1, allocationSize = 1)
+@Table(name = "HISTORICO_DESCONTOS_FORNECEDORES")
+@SequenceGenerator(name="HISTORICO_DESCONTO_FORNECEDORES_SEQ", initialValue = 1, allocationSize = 1)
 public class HistoricoDescontoFornecedor implements Serializable {
 
 	private static final long serialVersionUID = 3028451605686762672L;
 
 	@Id
-	@GeneratedValue(generator = "HISTORICO_DESCONTO_FORNECEDOR_SEQ")
+	@GeneratedValue(generator = "HISTORICO_DESCONTO_FORNECEDORES_SEQ")
 	@Column(name = "ID")
 	private Long id;
-	
-	@Column(name = "VALOR", precision=5, scale=2)
-	private BigDecimal valor;
 	
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name="DATA_ALTERACAO")
@@ -67,14 +63,6 @@ public class HistoricoDescontoFornecedor implements Serializable {
 	 */
 	public void setId(Long id) {
 		this.id = id;
-	}
-
-	public BigDecimal getValor() {
-		return valor;
-	}
-
-	public void setValor(BigDecimal valor) {
-		this.valor = valor;
 	}
 
 	public Desconto getDesconto() {

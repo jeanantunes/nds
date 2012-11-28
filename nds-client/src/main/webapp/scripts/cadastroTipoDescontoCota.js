@@ -15,12 +15,12 @@ var descontoCotaController = $.extend(true,{
 			width:560,
 			modal: true,
 			buttons: [{
-						id:"id_confirmar_especifico",text:"Confirmar",
+						id:"id_confirmar_especifico", text:"Confirmar",
 						click: function() {
 							descontoCotaController.novoDescontoEspecifico();
 						}
 				},{
-					id:"id_close_especifico",text:"Cancelar",
+					id:"id_close_especifico", text:"Cancelar",
 					click: function() {
 						$( this ).dialog( "close" );
 					}
@@ -30,10 +30,10 @@ var descontoCotaController = $.extend(true,{
 		});		      
 	},
 	
-	novoDescontoEspecifico:function() {
+	novoDescontoEspecifico: function() {
 		
-		var cotaEspecifica = $("#numCotaEspecifico",this.workspace).val();
-		var descontoEspecifico = $("#descontoEspecifico",this.workspace).justPercent("floatValue");
+		var cotaEspecifica = $("#numCotaEspecifico", this.workspace).val();
+		var descontoEspecifico = $("#descontoEspecifico", this.workspace).justPercent("floatValue");
 		
 		var fornecedores = new Array();
 		
@@ -41,36 +41,24 @@ var descontoCotaController = $.extend(true,{
 			 fornecedores.push($(this).val());
 		});
 		
-		var param = {numeroCota:cotaEspecifica,desconto:descontoEspecifico};		
+		var param = {numeroCota: cotaEspecifica, desconto: descontoEspecifico};		
 		param = serializeArrayToPost('fornecedores', fornecedores, param);
 		
-		$.postJSON(contextPath+"/financeiro/tipoDescontoCota/novoDescontoEspecifico",param,				   
+		$.postJSON(contextPath +"/financeiro/tipoDescontoCota/novoDescontoEspecifico", param,				   
 				function(result) {
 			           
-						 if (result.tipoMensagem && result.tipoMensagem !="SUCCESS" && result.listaMensagens) {			      
+						 if (result.tipoMensagem && result.tipoMensagem != "SUCCESS" && result.listaMensagens) {			      
 							   exibirMensagemDialog(result.tipoMensagem, result.listaMensagens, "idModalDescontoEspecifico");
 					       }
 						   else{
-							   exibirMensagem(result.tipoMensagem, result.listaMensagens, "");
 							   tipoDescontoController.fecharDialogs();
+							   exibirMensagem(result.tipoMensagem, result.listaMensagens, "");
 							   tipoDescontoController.pesquisar();
-							   $(".tiposDescEspecificoGrid",this.workspace).flexReload();
+							   $(".tiposDescEspecificoGrid", this.workspace).flexReload();
 						   }
 	               },
 				   null,
 				   true,"idModalDescontoEspecifico");
-		
-	    verificadorProgressoGravacaoDescontoGeral = setInterval(function () {
-			$.getJSON(contextPath +"/financeiro/tipoDescontoCota/verificaProgressoGravacaoDescontoEspecifico",
-					   null,				   
-					   function(result) {
-							
-					   		if (!result.ativo) {
-					   			exibirMensagem(result.tipoMensagem, result.listaMensagens);
-					   			clearInterval(verificadorProgressoGravacaoDescontoGeral);
-					   }
-			});
-	    }, 20000);
 		
 		$(".tiposDescEspecificoGrid",this.workspace).flexReload();
 	},
@@ -110,15 +98,15 @@ var descontoCotaController = $.extend(true,{
 		$("#selectFornecedor_option_especifico",this.workspace).clear();
 	},
 	
-	init:function(){
+	init: function(){
 		
 		$("select[name='selectFornecedorSelecionado_especifico']",this.workspace).multiSelect("select[name='selectFornecedor_especifico']", {trigger: "#linkFornecedorVoltarTodos_especifico"});
 		
 		$("select[name='selectFornecedor_especifico']",this.workspace).multiSelect("select[name='selectFornecedorSelecionado_especifico']", {trigger: "#linkFornecedorEnviarTodos_especifico"});
 		
-		$("#descontoEspecifico",this.workspace).justPercent();
+		$("#descontoEspecifico", this.workspace).justPercent();
 		
-		$(".tiposDescEspecificoGrid",this.workspace).flexigrid({
+		$(".tiposDescEspecificoGrid", this.workspace).flexigrid({
 			preProcess: tipoDescontoController.executarPreProcessamento,
 			dataType : 'json',
 			colModel : [ {

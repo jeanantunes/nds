@@ -7,17 +7,13 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.Future;
 
 import org.apache.commons.lang.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.component.DescontoComponent;
-import br.com.abril.nds.component.singleton.ProcessoCadastroDescontoSingleton;
 import br.com.abril.nds.dto.CotaDescontoProdutoDTO;
 import br.com.abril.nds.dto.DescontoProdutoDTO;
 import br.com.abril.nds.dto.TipoDescontoCotaDTO;
@@ -230,7 +226,6 @@ public class DescontoServiceImpl implements DescontoService {
 				 * Atualiza o historico do desconto para o fornecedor
 				 */
 				HistoricoDescontoFornecedor historicoDesconto = new HistoricoDescontoFornecedor();
-				historicoDesconto.setValor(valorDesconto);
 				historicoDesconto.setDesconto(desconto);
 				historicoDesconto.setUsuario(usuario);
 				historicoDesconto.setDataAlteracao(dataAtual);
@@ -346,6 +341,8 @@ public class DescontoServiceImpl implements DescontoService {
 		desconto = descontoRepository.buscarPorId(idDesconto);
 		
 		Distribuidor distribuidor = this.distribuidorRepository.obter();
+		
+		Date dataAtual = new Date();
 
 		/**
 		 * 		Produto | ProdutoEdicao | QuantidadeEdicoes | Cota Especifica
@@ -368,9 +365,9 @@ public class DescontoServiceImpl implements DescontoService {
 					produtoRepository.merge(produto);
 					
 					HistoricoDescontoProduto hdp = new HistoricoDescontoProduto();
-					hdp.setDataAlteracao(new Date());
+					hdp.setDataAlteracao(dataAtual);
 					hdp.setProduto(produto);
-					hdp.setDesconto(descontoDTO.getDescontoProduto());
+					hdp.setDesconto(desconto);
 					hdp.setDistribuidor(distribuidor);
 					hdp.setFornecedor(produto.getFornecedor());
 					hdp.setUsuario(usuario);
@@ -410,7 +407,7 @@ public class DescontoServiceImpl implements DescontoService {
 					descontoProdutoEdicaoExcessaoRepository.merge(dpe);	
 					
 					HistoricoDescontoCotaProdutoExcessao hdcp = new HistoricoDescontoCotaProdutoExcessao();
-					hdcp.setDataAlteracao(new Date());
+					hdcp.setDataAlteracao(dataAtual);
 					hdcp.setDesconto(desconto);
 					hdcp.setDistribuidor(distribuidor);
 					hdcp.setFornecedor(null);
@@ -426,13 +423,13 @@ public class DescontoServiceImpl implements DescontoService {
 				produtoEdicao = produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(descontoDTO.getCodigoProduto(), descontoDTO.getEdicaoProduto());
 				
 				if(produtoEdicao != null) {
-					
+
 					produtoEdicao.setDescontoProdutoEdicao(desconto);
 					produtoEdicaoRepository.merge(produtoEdicao);
 					
 					hdpe = new HistoricoDescontoProdutoEdicao();
-					hdpe.setDataAlteracao(new Date());
-					hdpe.setDesconto(descontoDTO.getDescontoProduto());
+					hdpe.setDataAlteracao(dataAtual);
+					hdpe.setDesconto(desconto);
 					hdpe.setProduto(produtoEdicao.getProduto());
 					hdpe.setProdutoEdicao(produtoEdicao);
 					hdpe.setDistribuidor(distribuidor);
@@ -466,7 +463,8 @@ public class DescontoServiceImpl implements DescontoService {
 						dpe.setDistribuidor(distribuidor);
 						dpe.setUsuario(usuario);
 						dpe.setCota(cota);
-						dpe.setProduto(produtoEdicao.getProduto());
+						if(produtoEdicao != null)
+							dpe.setProduto(produtoEdicao.getProduto());
 						dpe.setProdutoEdicao(produtoEdicao);
 						dpe.setDesconto(desconto);
 						dpe.setDescontoPredominante(descontoDTO.isDescontoPredominante());
@@ -476,8 +474,11 @@ public class DescontoServiceImpl implements DescontoService {
 					descontoProdutoEdicaoExcessaoRepository.merge(dpe);	
 					
 					hdpe = new HistoricoDescontoProdutoEdicao();
-					hdpe.setDataAlteracao(new Date());
-					hdpe.setDesconto(descontoDTO.getDescontoProduto());
+					hdpe.setDataAlteracao(dataAtual);
+					hdpe.setDesconto(desconto);
+					if(produtoEdicao != null)
+						hdpe.setProduto(produtoEdicao.getProduto());
+					hdpe.setProdutoEdicao(produtoEdicao);
 					hdpe.setDistribuidor(distribuidor);
 					hdpe.setFornecedor(produtoEdicao.getProduto().getFornecedor());
 					hdpe.setUsuario(usuario);
@@ -496,7 +497,7 @@ public class DescontoServiceImpl implements DescontoService {
 
 				DescontoProximosLancamentos descontoProximosLancamentos = new DescontoProximosLancamentos();
 
-				descontoProximosLancamentos.setDataInicioDesconto(new Date());
+				descontoProximosLancamentos.setDataInicioDesconto(dataAtual);
 				descontoProximosLancamentos.setProduto(produto);
 				descontoProximosLancamentos.setQuantidadeProximosLancamaentos(descontoDTO.getQuantidadeEdicoes());
 				descontoProximosLancamentos.setValorDesconto(descontoDTO.getDescontoProduto());
@@ -565,7 +566,7 @@ public class DescontoServiceImpl implements DescontoService {
 
 	@Override
 	@Transactional(readOnly=true)
-	public List<Fornecedor> busacarFornecedoresAssociadosADesconto(Long idDesconto,TipoDesconto tipoDesconto) {
+	public List<Fornecedor> buscarFornecedoresAssociadosADesconto(Long idDesconto,TipoDesconto tipoDesconto) {
 		
 		List<Fornecedor> listaFornecedores = new ArrayList<Fornecedor>();
 
@@ -1081,7 +1082,7 @@ public class DescontoServiceImpl implements DescontoService {
         }
         return Util.nvl(percentual, BigDecimal.ZERO);
     }
-	
+
 	@Override
 	@Transactional(readOnly = true)
 	public BigDecimal obterComissaoCota(Integer numeroCota){
@@ -1099,61 +1100,6 @@ public class DescontoServiceImpl implements DescontoService {
 		}
 
 		return desc.compareTo(BigDecimal.ZERO) > 0 ? desc.divide(new BigDecimal(descontos.size())) : BigDecimal.ZERO;
-	}
-
-	@Override
-	@Async
-	@Transactional
-	public Future<String> executarDescontoEspecifico(final Integer numeroCota, final BigDecimal desconto, final List<Long> fornecedores, Usuario usuario) {
-
-		ProcessoCadastroDescontoSingleton.iniciarProcesso(TipoDesconto.ESPECIFICO);
-
-		try {
-
-			incluirDescontoCota(desconto, fornecedores, numeroCota, usuario);
-
-		} finally {
-			ProcessoCadastroDescontoSingleton.encerrarProcesso(TipoDesconto.ESPECIFICO);
-		}
-
-		return new AsyncResult<String>("Desconto cadastrado com sucesso !");
-	}
-
-	@Override
-	@Async
-	@Transactional
-	public Future<String> executarDescontoProduto(DescontoProdutoDTO desconto, List<Integer> cotas, Usuario usuario) {
-
-		ProcessoCadastroDescontoSingleton.iniciarProcesso(TipoDesconto.PRODUTO);
-
-		try {
-
-			desconto.setCotas(cotas);
-			incluirDescontoProduto(desconto, usuario);
-
-		} finally {
-			ProcessoCadastroDescontoSingleton.encerrarProcesso(TipoDesconto.PRODUTO);
-		}
-
-		return new AsyncResult<String>("Desconto cadastrado com sucesso !");
-	}	
-
-	@Override
-	@Async
-	@Transactional
-	public Future<String> executarDescontoGeral(BigDecimal desconto, List<Long> fornecedores, Usuario usuario) {
-
-		ProcessoCadastroDescontoSingleton.iniciarProcesso(TipoDesconto.GERAL);
-
-		try {
-
-			incluirDescontoDistribuidor(desconto, fornecedores, usuario);
-
-		} finally {
-			ProcessoCadastroDescontoSingleton.encerrarProcesso(TipoDesconto.GERAL);
-		}
-
-		return new AsyncResult<String>("Desconto cadastrado com sucesso !");
 	}
 
 }

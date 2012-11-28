@@ -22,23 +22,27 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.seguranca.Usuario;
 
 @Entity
-@Table(name = "HISTORICO_DESCONTO_PRODUTO_EDICAO")
-@SequenceGenerator(name="HISTORICO_DESCONTO_PRODUTO_EDICAO_SEQ", initialValue = 1, allocationSize = 1)
+@Table(name = "HISTORICO_DESCONTO_PRODUTO_EDICOES")
+@SequenceGenerator(name="HISTORICO_DESCONTO_PRODUTO_EDICOES_SEQ", initialValue = 1, allocationSize = 1)
 public class HistoricoDescontoProdutoEdicao implements Serializable {
 
 	private static final long serialVersionUID = -7746843614617906694L;
 
 	@Id
-	@GeneratedValue(generator = "HISTORICO_DESCONTO_PRODUTO_EDICAO_SEQ")
+	@GeneratedValue(generator = "HISTORICO_DESCONTO_PRODUTO_EDICOES_SEQ")
 	@Column(name = "ID")
 	private Long id;
 	
-	@Column(name = "DESCONTO")
-	private BigDecimal desconto;
+	@Column(name = "VALOR")
+	private BigDecimal valor;
 	
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name="DATA_ALTERACAO")
 	private Date dataAlteracao;
+	
+	@ManyToOne(optional=false)
+	@JoinColumn(name = "DESCONTO_ID")
+	private Desconto desconto;
 	
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "USUARIO_ID")
@@ -74,17 +78,19 @@ public class HistoricoDescontoProdutoEdicao implements Serializable {
 		this.id = id;
 	}
 
-	/**
-	 * @return the desconto
-	 */
-	public BigDecimal getDesconto() {
+	public BigDecimal getValor() {
+		return valor;
+	}
+
+	public void setValor(BigDecimal valor) {
+		this.valor = valor;
+	}
+
+	public Desconto getDesconto() {
 		return desconto;
 	}
 
-	/**
-	 * @param desconto the desconto to set
-	 */
-	public void setDesconto(BigDecimal desconto) {
+	public void setDesconto(Desconto desconto) {
 		this.desconto = desconto;
 	}
 

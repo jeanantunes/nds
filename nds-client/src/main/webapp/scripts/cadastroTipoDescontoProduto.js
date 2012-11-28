@@ -36,15 +36,13 @@ var descontoProdutoController = $.extend(true,{
 		});	
 	},
 
-	novoDescontoProduto:function() {
+	novoDescontoProduto: function() {
 		
 		var data = descontoProdutoController.obterParametrosNovoDescontoProduto();
 
 		$.postJSON(contextPath+"/financeiro/tipoDescontoCota/novoDescontoProduto",
 				   data,
 				   function(result) {
-
-					   tipoDescontoController.pesquisarDescontoProduto();
 
 					   $( "#dialog-produto",this.workspace ).dialog( "close" );
 
@@ -53,25 +51,12 @@ var descontoProdutoController = $.extend(true,{
 					   if (tipoMensagem && listaMensagens) {
 					       exibirMensagem(tipoMensagem, listaMensagens);
 				       }
+					   
+					   tipoDescontoController.pesquisarDescontoProduto();
 	               },
 				   null,
 				   true);
 
-	    verificadorProgressoGravacaoDescontoGeral = setInterval(function () {
-			$.getJSON(contextPath +"/financeiro/tipoDescontoCota/verificaProgressoGravacaoDescontoProduto",
-					   null,				   
-					   function(result) {
-					   		if (!result.ativo) {
-					   			exibirMensagem(result.tipoMensagem, result.listaMensagens);
-					   			//clearInterval(verificadorProgressoGravacaoDescontoGeral);
-					   		}
-					   		
-					   		if(result.tipoMensagem == 'SUCCESS') {
-					   			clearInterval(verificadorProgressoGravacaoDescontoGeral);
-					   		}
-				   	   });
-	    }, 20000);
-		
 	},
 
 	obterParametrosNovoDescontoProduto: function() {
@@ -191,7 +176,7 @@ var descontoProdutoController = $.extend(true,{
 		});	
 	},
 	
-	init:function(pesquisaCota){
+	init: function(pesquisaCota){
 		
 		descontoProdutoController.pesquisaCota = pesquisaCota;
 		

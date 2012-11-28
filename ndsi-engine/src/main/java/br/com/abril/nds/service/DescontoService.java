@@ -2,7 +2,6 @@ package br.com.abril.nds.service;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.Future;
 
 import br.com.abril.nds.dto.CotaDescontoProdutoDTO;
 import br.com.abril.nds.dto.DescontoProdutoDTO;
@@ -71,7 +70,7 @@ public interface DescontoService {
 	 * @param tipoDesconto - tipo de desconto
 	 * @return List<Fornecedor>
 	 */
-	List<Fornecedor> busacarFornecedoresAssociadosADesconto(Long idDesconto, br.com.abril.nds.model.cadastro.desconto.TipoDesconto tipoDesconto);
+	List<Fornecedor> buscarFornecedoresAssociadosADesconto(Long idDesconto, br.com.abril.nds.model.cadastro.desconto.TipoDesconto tipoDesconto);
 
 	/**
 	 * Método que realiza a inclusão de um tipo de desconto para produto.
@@ -125,10 +124,5 @@ public interface DescontoService {
 
 	BigDecimal obterComissaoCota(Integer numeroCota);
 		
-	Future<String> executarDescontoEspecifico(final Integer numeroCota, final BigDecimal desconto, final List<Long> fornecedores, Usuario usuario);
-
-	Future<String> executarDescontoProduto(DescontoProdutoDTO desconto, List<Integer> cotas, Usuario usuario);
-
-	Future<String> executarDescontoGeral(BigDecimal desconto, List<Long> fornecedores, Usuario usuario); 
 }
 	
