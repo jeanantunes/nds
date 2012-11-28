@@ -37,32 +37,39 @@ public class RecebimentoFisicoRepositoryImpl extends AbstractRepositoryModel<Rec
 		
 		hql.append(RecebimentoFisicoDTO.class.getCanonicalName());
 		
-		hql.append(" ( 	itemNotaFiscal.id, 									");
-		hql.append(" 	itemRecebimentoFisico.id, 							");
-		hql.append(" 	itemNotaFiscal.produtoEdicao.produto.codigo, 		");
-		hql.append("  	itemNotaFiscal.produtoEdicao.produto.nome, 			");
-		hql.append("  	itemNotaFiscal.produtoEdicao.numeroEdicao, 			");
-		hql.append("  	itemNotaFiscal.produtoEdicao.id, 					");
-		hql.append(" 	itemNotaFiscal.preco, 								");
-		hql.append(" 	itemNotaFiscal.qtde, 								");
-		hql.append(" 	itemRecebimentoFisico.qtdeFisico, 					");
-		hql.append("	itemNotaFiscal.produtoEdicao.pacotePadrao, 			");
-		hql.append("	itemNotaFiscal.produtoEdicao.peso, 					");
-		hql.append(" 	itemNotaFiscal.dataLancamento, 						");
-		hql.append(" 	itemNotaFiscal.dataRecolhimento, 					");
-		hql.append(" 	itemNotaFiscal.tipoLancamento, 						");
-		hql.append(" 	diferenca.qtde,  									");
-		hql.append(" 	diferenca.tipoDiferenca,  							");
-		hql.append(" 	itemNotaFiscal.origem  )							");
+		hql.append(" ( 	itemNotaFiscal.id, 													");
+		hql.append(" 	itemRecebimentoFisico.id, 											");
+		hql.append(" 	produto.codigo, 													");
+		hql.append("  	produto.nome, 														");
+		hql.append("  	produtoEdicao.numeroEdicao, 										");
+		hql.append("  	produtoEdicao.id, 													");
+		hql.append(" 	produtoEdicao.precoVenda as precoCapa,								");
+		hql.append(" 	descontoLogistica.percentualDesconto as percentualDesconto,			");
+		hql.append(" 	itemNotaFiscal.qtde, 												");
+		hql.append(" 	itemRecebimentoFisico.qtdeFisico, 									");
+		hql.append("	produtoEdicao.pacotePadrao, 										");
+		hql.append("	produtoEdicao.peso, 												");
+		hql.append(" 	itemNotaFiscal.dataLancamento, 										");
+		hql.append(" 	itemNotaFiscal.dataRecolhimento, 									");
+		hql.append(" 	itemNotaFiscal.tipoLancamento, 										");
+		hql.append(" 	diferenca.qtde,  													");
+		hql.append(" 	diferenca.tipoDiferenca,  											");
+		hql.append(" 	itemNotaFiscal.origem  )											");
 		
 		hql.append(" from ");
 
 		hql.append(" ItemNotaFiscalEntrada itemNotaFiscal ");
 
+		hql.append(" join itemNotaFiscal.produtoEdicao as produtoEdicao ");
+
+		hql.append(" join produtoEdicao.produto as produto ");
+
+		hql.append(" left join produto.descontoLogistica as descontoLogistica ");
+
 		hql.append(" left join itemNotaFiscal.recebimentoFisico as itemRecebimentoFisico ");
 		
 		hql.append(" left join itemRecebimentoFisico.diferenca as diferenca ");
-		
+
 		hql.append(" where ");
 		
 		hql.append(" itemNotaFiscal.notaFiscal.id = :idNotaFiscal ");
