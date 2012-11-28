@@ -395,14 +395,13 @@ var vendaProdutoController = $.extend(true, {
 	
 	executarPreProcessamentoFilha : function(resultado) {
 		if (resultado.mensagens) {
+			$("#dialog-detalhes", vendaProdutoController.workspace).dialog("close");
 			exibirMensagem(
 				resultado.mensagens.tipoMensagem, 
 				resultado.mensagens.listaMensagens
 			);
-			$(".grids", vendaProdutoController.workspace).hide();
 			return resultado;
 		}
-		$(".grids", vendaProdutoController.workspace).show();
 		return resultado;
 	}
 	
