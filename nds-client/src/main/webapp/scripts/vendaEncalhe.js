@@ -347,6 +347,16 @@ var VENDA_PRODUTO = {
 	
 	executarPreProcessamentoGridVenda:function(result){
 		
+		if (result.mensagens) {
+
+			exibirMensagem(
+					result.mensagens.tipoMensagem, 
+					result.mensagens.listaMensagens
+			);
+
+			return;
+		}
+		
 		VENDA_PRODUTO.showModalVendas();
 		
 		if(VENDA_PRODUTO.vendaNova == true){

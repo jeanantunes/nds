@@ -83,9 +83,11 @@ public class ResumoEncalheFecharDiaRepositoryImpl extends AbstractRepository imp
 		hql.append(" pe.numeroEdicao as numeroEdicao, ");
 		hql.append(" pe.precoVenda as precoVenda, ");
 		hql.append(" COALESCE(COUNT(*),0) as qtde ");
-		hql.append(" from ConferenciaEncalhe AS ce ");		
+		
+		hql.append(" FROM ConferenciaEncalhe AS ce ");		
 		hql.append(" JOIN ce.produtoEdicao as pe ");
 		hql.append(" JOIN pe.produto as p ");
+		
 		hql.append(" WHERE ce.data = :dataOperacaoDistribuidor ");
 		hql.append(" GROUP BY p.codigo, p.nome, pe.numeroEdicao, pe.precoVenda ");
 		
@@ -95,74 +97,170 @@ public class ResumoEncalheFecharDiaRepositoryImpl extends AbstractRepository imp
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(EncalheFecharDiaDTO.class));
 		
-		List<EncalheFecharDiaDTO> listaDeEncalheFisico = query.list();
+		List<EncalheFecharDiaDTO> listaFinal = query.list();
 		
+		hql = new StringBuilder();
+		
+		hql.append(" SELECT p.codigo as codigo,  ");
+		hql.append(" p.nome as nomeProduto, ");
+		hql.append(" pe.numeroEdicao as numeroEdicao, ");
+		hql.append(" pe.precoVenda as precoVenda, ");
+		hql.append(" COALESCE(COUNT(*),0) as qtde ");
+		
+		hql.append(" FROM ConferenciaEncalhe AS ce ");		
+		hql.append(" JOIN ce.produtoEdicao as pe ");
+		hql.append(" JOIN pe.produto as p ");
+		
+		hql.append(" WHERE ce.data = :dataOperacaoDistribuidor ");
+		hql.append(" AND ce.juramentada = :juramentada ");
+		hql.append(" GROUP BY p.codigo, p.nome, pe.numeroEdicao, pe.precoVenda ");
+		
+		query = super.getSession().createQuery(hql.toString());
+		
+		query.setParameter("dataOperacaoDistribuidor", dataOperacaoDistribuidor);
+		query.setParameter("juramentada", true);
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(EncalheFecharDiaDTO.class));
+		
+		List<EncalheFecharDiaDTO> listaDeEncalheJuramentado = query.list();
+		
+		listaFinal = obterListaFinalParaGridEncalhe(listaFinal, listaDeEncalheJuramentado, "quantidade");
+		
+		hql = new StringBuilder();
 
-		StringBuilder hqlJuramentado = new StringBuilder();
+		hql.append(" SELECT p.codigo as codigo,  ");
+		hql.append(" p.nome as nomeProduto, ");
+		hql.append(" pe.numeroEdicao as numeroEdicao, ");
+		hql.append(" pe.precoVenda as precoVenda, ");
+		hql.append(" COUNT(*) as qtde ");
 		
-		hqlJuramentado.append(" SELECT p.codigo as codigo,  ");
-		hqlJuramentado.append(" p.nome as nomeProduto, ");
-		hqlJuramentado.append(" pe.numeroEdicao as numeroEdicao, ");
-		hqlJuramentado.append(" pe.precoVenda as precoVenda, ");
-		hqlJuramentado.append(" COALESCE(COUNT(*),0) as qtde ");
-		hqlJuramentado.append(" from ConferenciaEncalhe AS ce ");		
-		hqlJuramentado.append(" JOIN ce.produtoEdicao as pe ");
-		hqlJuramentado.append(" JOIN pe.produto as p ");
-		hqlJuramentado.append(" WHERE ce.data = :dataOperacaoDistribuidor ");
-		hqlJuramentado.append(" AND ce.juramentada = :juramentada ");
-		hqlJuramentado.append(" GROUP BY p.codigo, p.nome, pe.numeroEdicao, pe.precoVenda ");
+		hql.append(" from ChamadaEncalheCota AS cec ");		
+		hql.append(" JOIN cec.chamadaEncalhe AS ce ");		
+		hql.append(" JOIN ce.produtoEdicao as pe ");
+		hql.append(" JOIN pe.produto as p ");
 		
-		Query queryJuramentado = super.getSession().createQuery(hqlJuramentado.toString());
+		hql.append(" WHERE ce.dataRecolhimento = :dataOperacaoDistribuidor ");
+		hql.append(" AND ce.tipoChamadaEncalhe in (:listaTipoChamadaEncalhe) ");
+		hql.append(" GROUP BY p.codigo, p.nome, pe.numeroEdicao, pe.precoVenda ");
 		
-		queryJuramentado.setParameter("dataOperacaoDistribuidor", dataOperacaoDistribuidor);
-		queryJuramentado.setParameter("juramentada", true);
+		query = super.getSession().createQuery(hql.toString());
 		
-		queryJuramentado.setResultTransformer(new AliasToBeanResultTransformer(EncalheFecharDiaDTO.class));
+		List<TipoChamadaEncalhe> listaTipoChamadaEncalhe = new ArrayList<TipoChamadaEncalhe>();
 		
-		List<EncalheFecharDiaDTO> listaDeEncalheJuramentado = queryJuramentado.list();
+		listaTipoChamadaEncalhe.add(TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO);
+		listaTipoChamadaEncalhe.add(TipoChamadaEncalhe.ANTECIPADA);
+		listaTipoChamadaEncalhe.add(TipoChamadaEncalhe.CHAMADAO);
 		
-		StringBuilder hqlLogico = new StringBuilder();
+		query.setParameter("dataOperacaoDistribuidor", dataOperacaoDistribuidor);		
+		query.setParameterList("listaTipoChamadaEncalhe", listaTipoChamadaEncalhe);	
 		
-		hqlLogico.append(" SELECT p.codigo as codigo,  ");
-		hqlLogico.append(" p.nome as nomeProduto, ");
-		hqlLogico.append(" pe.numeroEdicao as numeroEdicao, ");
-		hqlLogico.append(" pe.precoVenda as precoVenda, ");
-		hqlLogico.append(" COUNT(*) as qtde ");		
-		hqlLogico.append(" from ChamadaEncalheCota AS cec ");		
-		hqlLogico.append(" JOIN cec.chamadaEncalhe AS ce ");		
-		hqlLogico.append(" JOIN ce.produtoEdicao as pe ");
-		hqlLogico.append(" JOIN pe.produto as p ");
-		hqlLogico.append(" WHERE ce.dataRecolhimento = :dataOperacaoDistribuidor ");
-		hqlLogico.append(" AND ce.tipoChamadaEncalhe = :tipoChamadaEncalhe ");
+		query.setResultTransformer(new AliasToBeanResultTransformer(EncalheFecharDiaDTO.class));
 		
-		Query queryLogico = super.getSession().createQuery(hqlLogico.toString());
+		List<EncalheFecharDiaDTO> listaDeEncalheLogico = query.list();
 		
-		queryLogico.setParameter("dataOperacaoDistribuidor", dataOperacaoDistribuidor);		
-		queryLogico.setParameter("tipoChamadaEncalhe", TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO);	
+		listaFinal = obterListaFinalParaGridEncalhe(listaFinal, listaDeEncalheLogico, "quantidade");
 		
-		queryLogico.setResultTransformer(new AliasToBeanResultTransformer(EncalheFecharDiaDTO.class));
+		//FIM DAS SUB-LISTAS		
 		
-		List<EncalheFecharDiaDTO> listaDeEncalheLogico = queryLogico.list();
+		hql = new StringBuilder();
 		
-		return obterListaFinalGridEncalhe(listaDeEncalheFisico,
-				listaDeEncalheJuramentado, listaDeEncalheLogico);
+		hql.append(" SELECT p.codigo as codigo,  ");
+		hql.append(" p.nome as nomeProduto, ");
+		hql.append(" pe.numeroEdicao as numeroEdicao, ");
+		hql.append(" pe.precoVenda as precoVenda, ");
+		hql.append(" count(*) as qtde ");		
+		
+		hql.append(" FROM VendaProduto as ve ");		 
+		hql.append(" JOIN ve.produtoEdicao as pe ");					
+		hql.append(" JOIN pe.produto as p ");					
+		hql.append(" WHERE ve.dataVenda = :dataOperacao ");
+		hql.append(" AND ve.tipoComercializacaoVenda = :tipoComercializacaoVenda ");		
+		hql.append(" AND ve.tipoVenda = :suplementar");
+
+		query = super.getSession().createQuery(hql.toString());
+		
+		query.setParameter("dataOperacao", dataOperacaoDistribuidor);
+		
+		query.setParameter("suplementar", TipoVendaEncalhe.ENCALHE);
+		
+		query.setParameter("tipoComercializacaoVenda", FormaComercializacao.CONTA_FIRME);		
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(EncalheFecharDiaDTO.class));
+		
+		List<EncalheFecharDiaDTO> listaDeVendaEncalhe = query.list();
+		
+		listaFinal = obterListaFinalParaGridEncalhe(listaFinal, listaDeVendaEncalhe, "vendaEncalhe");
+		
+		return completarListaComItemDiferenca(listaFinal);
 		
 	}
 
-	private List<EncalheFecharDiaDTO> obterListaFinalGridEncalhe(List<EncalheFecharDiaDTO> listaDeEncalheFisico, List<EncalheFecharDiaDTO> listaDeEncalheJuramentado,
-			List<EncalheFecharDiaDTO> listaDeEncalheLogico) {
+	private List<EncalheFecharDiaDTO> obterListaFinalParaGridEncalhe(List<EncalheFecharDiaDTO> listaDeQuantidades, 
+				List<EncalheFecharDiaDTO> listaParaComparacao, String tipoLista){
+	
+		Set<EncalheFecharDiaDTO> listaRetorno = new HashSet<EncalheFecharDiaDTO>(listaDeQuantidades);
 		
-		Set<EncalheFecharDiaDTO> listaFinal = new HashSet<EncalheFecharDiaDTO>();
+		for(EncalheFecharDiaDTO dtoPrincipal: listaDeQuantidades){
+			EncalheFecharDiaDTO objetoFinal = dtoPrincipal;
+			for(EncalheFecharDiaDTO comp: listaParaComparacao){
+				if(objetoFinal.getCodigo().equals(comp.getCodigo()) && objetoFinal.getNumeroEdicao().equals(comp.getNumeroEdicao())){
+					if(tipoLista.equals("quantidade")){
+						objetoFinal.setQtde(objetoFinal.getQtde() + 1);
+					}
+					if(tipoLista.equals("vendaEncalhe")){
+						objetoFinal.setQtdeVendaEncalhe(comp.getQtde().longValue());							
+					}
+					listaRetorno.add(objetoFinal);
+				}else{
+					listaRetorno.add(comp);								
+				}
+			}				
+		}
 		
-		listaFinal.addAll(listaDeEncalheJuramentado);
+		return new ArrayList<EncalheFecharDiaDTO>(listaRetorno);
+	}
+	
+	private List<EncalheFecharDiaDTO> completarListaComItemDiferenca(List<EncalheFecharDiaDTO> listaFinal) {
 		
-		listaFinal.addAll(listaDeEncalheFisico);
+		Set<EncalheFecharDiaDTO> listaRetorno = new HashSet<EncalheFecharDiaDTO>(listaFinal);
+		for(EncalheFecharDiaDTO dto : listaFinal){
+			EncalheFecharDiaDTO objetoFinal = dto;
+			if(dto.getQtde() != null && dto.getQtdeVendaEncalhe() != null){
+				long diferenca = dto.getQtde() - dto.getQtdeVendaEncalhe();
+				objetoFinal.setDiferencas(diferenca);				
+			}else{
+				objetoFinal.setDiferencas(null);
+			}
+			listaRetorno.add(objetoFinal);
+		}
+		return formatarDadosNulos(new ArrayList<EncalheFecharDiaDTO>(listaRetorno));
+	}
+	
+	private List<EncalheFecharDiaDTO> formatarDadosNulos(ArrayList<EncalheFecharDiaDTO> listaFinal) {
+		 
+		Set<EncalheFecharDiaDTO> listaRetorno = new HashSet<EncalheFecharDiaDTO>(listaFinal);
+		for(EncalheFecharDiaDTO dto : listaFinal){
+			EncalheFecharDiaDTO objetoFinal = dto;
+			if(dto.getQtde() == null){
+				objetoFinal.setQtdeFormatado("");
+			}else{
+				objetoFinal.setQtdeFormatado(dto.getQtde().toString());
+			}
+			if(dto.getQtdeVendaEncalhe() == null){
+				objetoFinal.setVendaEncalheFormatado("");
+			}else{
+				objetoFinal.setVendaEncalheFormatado(dto.getQtdeVendaEncalhe().toString());				
+			}
+			if(dto.getDiferencas() == null){
+				objetoFinal.setDifencaFormatado("");
+			}else{
+				objetoFinal.setDifencaFormatado(dto.getDiferencas().toString());								
+			}
+			
+			listaRetorno.add(objetoFinal);
+		}
 		
-		listaFinal.addAll(listaDeEncalheLogico);
-		
-		List<EncalheFecharDiaDTO> goma = new ArrayList<EncalheFecharDiaDTO>(listaFinal);
-		
-		return goma;
+		return new ArrayList<EncalheFecharDiaDTO>(listaRetorno);
 	}
 
 	@Override
@@ -228,7 +326,7 @@ public class ResumoEncalheFecharDiaRepositoryImpl extends AbstractRepository imp
 
 	@Override
 	public BigDecimal obterValorVendaEncalhe(Date dataOperacao) {
-StringBuilder hql = new StringBuilder();
+		StringBuilder hql = new StringBuilder();
 		
 		hql.append(" SELECT   ");
 		hql.append(" SUM(ve.qntProduto * pe.precoVenda)");
@@ -236,8 +334,7 @@ StringBuilder hql = new StringBuilder();
 		hql.append(" JOIN ve.produtoEdicao as pe ");					
 		hql.append(" JOIN pe.produto as p ");					
 		hql.append(" WHERE ve.dataVenda = :dataOperacao ");
-		hql.append(" AND ve.tipoComercializacaoVenda = :tipoComercializacaoVenda ");
-		
+		hql.append(" AND ve.tipoComercializacaoVenda = :tipoComercializacaoVenda ");		
 		hql.append(" AND ve.tipoVenda = :suplementar");
 
 		Query query = super.getSession().createQuery(hql.toString());

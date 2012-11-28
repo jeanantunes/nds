@@ -29,6 +29,7 @@ import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.seguranca.Permissao;
+import br.com.abril.nds.serialization.custom.CustomMapJson;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.BoxService;
 import br.com.abril.nds.service.EntregadorService;
@@ -274,10 +275,8 @@ public class MapaAbastecimentoController {
 	 */
 	private void tratarFiltro(FiltroMapaAbastecimentoDTO filtroAtual) {
 
-		switch(filtroAtual.getTipoConsulta()) {
+		switch(filtroAtual.getTipoConsulta()) {		
 			case BOX:
-				if(filtroAtual.getBox()==null)
-					throw new ValidacaoException(TipoMensagem.WARNING, "'Box' não foi preenchido.");	
 				break;
 			case COTA:
 				if(filtroAtual.getCodigoCota()==null)
@@ -349,6 +348,9 @@ public class MapaAbastecimentoController {
 		
 		this.result.use(Results.json()).from(combos, "result").recursive().serialize();
 	}
+	
+	
+	
 		
 	public void imprimirMapaAbastecimento() {
 
@@ -560,6 +562,25 @@ public class MapaAbastecimentoController {
 		Long totalRegistros = mapaAbastecimentoService.countObterMapaDeAbastecimentoPorEntregador(filtro);
 
 		result.use(FlexiGridJson.class).from(lista).page(filtro.getPaginacao().getPaginaAtual()).total(totalRegistros.intValue()).serialize();
+		
+	}
+
+	@Post
+	public void buscarRotaPorRoteiro(Long idRoteiro) {
+		List<Rota> rotas = roteirizacaoService.buscarRotaPorRoteiro(idRoteiro);		
+		result.use(CustomMapJson.class).put("rotas", carregarRota(rotas)).serialize();
+	}
+
+	@Post
+	public void buscarRoteiroPorBox(Long idBox) {
+		 List<Roteiro> roteiros =  roteirizacaoService.buscarRoteiroDeBox(idBox);
+		 List<Rota> rotas;
+		 if (idBox != null) {
+			rotas = roteirizacaoService.buscarRotaDeBox(idBox);
+		}else{
+			rotas = roteirizacaoService.buscarRotas();
+		}
+		result.use(CustomMapJson.class).put("roteiros", carregarRoteiro(roteiros)).put("rotas", carregarRota(rotas)).serialize();
 		
 	}
 

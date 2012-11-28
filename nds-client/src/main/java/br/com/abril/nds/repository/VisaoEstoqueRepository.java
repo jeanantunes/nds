@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository;
 
+import java.math.BigInteger;
 import java.util.List;
 
 import br.com.abril.nds.dto.VisaoEstoqueDTO;
@@ -21,4 +22,11 @@ public interface VisaoEstoqueRepository {
 	List<VisaoEstoqueDetalheDTO> obterVisaoEstoqueDetalheHistorico(FiltroConsultaVisaoEstoque filtro);
 	
 	List<VisaoEstoqueDetalheJuramentadoDTO> obterVisaoEstoqueDetalheJuramentado(FiltroConsultaVisaoEstoque filtro);
+
+	public abstract BigInteger obterQuantidadeEstoqueJuramentado(long idProdutoEdicao);
+
+	public abstract BigInteger obterQuantidadeEstoqueHistorico(long idProdutoEdicao,
+			String tipoEstoque);
+
+	public abstract BigInteger obterQuantidadeEstoque(long idProdutoEdicao, String tipoEstoque);
 }
