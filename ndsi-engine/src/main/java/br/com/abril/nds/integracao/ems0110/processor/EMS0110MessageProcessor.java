@@ -238,7 +238,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 	 */
 	private void inserirDescontoProdutoEdicao(ProdutoEdicao produtoEdicao, Produto produto) {
 		
-		GrupoProduto grupoProduto = produtoRepository.obterGrupoProduto(produto.getCodigo());
+		GrupoProduto grupoProduto = produto.getTipoProduto().getGrupoProduto() ;
 		
 		if(GrupoProduto.OUTROS.equals(grupoProduto)) {
 			return;
