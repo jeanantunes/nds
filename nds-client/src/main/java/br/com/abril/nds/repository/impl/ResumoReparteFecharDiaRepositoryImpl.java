@@ -244,7 +244,7 @@ public class ResumoReparteFecharDiaRepositoryImpl  extends AbstractRepository im
 		
 		List<ReparteFecharDiaDTO> listaFinalDeSobras = query.list();
 		
-		listaFinal =  obterListaFinalParaGridReparte(listaFinal, listaFinalDeSobras, dataOperacaoDistribuidor, "sobras");
+		listaFinal =  obterListaFinalParaGridReparte(listaFinal, listaFinalDeSobras, "sobras");
 		
 		//FINAL DE SOBRAS
 		
@@ -278,7 +278,7 @@ public class ResumoReparteFecharDiaRepositoryImpl  extends AbstractRepository im
 		
 		List<ReparteFecharDiaDTO> listaFinalDeFaltas = query.list();
 		
-		listaFinal =  obterListaFinalParaGridReparte(listaFinal, listaFinalDeFaltas, dataOperacaoDistribuidor, "faltas");
+		listaFinal =  obterListaFinalParaGridReparte(listaFinal, listaFinalDeFaltas, "faltas");
 		
 		//FIM DAS FALTAS
 		
@@ -315,7 +315,7 @@ public class ResumoReparteFecharDiaRepositoryImpl  extends AbstractRepository im
 		
 		List<ReparteFecharDiaDTO> listaFinalDeTransferencias = query.list();
 		
-		listaFinal =  obterListaFinalParaGridReparte(listaFinal, listaFinalDeTransferencias, dataOperacaoDistribuidor, "transferencias");
+		listaFinal =  obterListaFinalParaGridReparte(listaFinal, listaFinalDeTransferencias, "transferencias");
 		
 		//FIM DOS TRANSFERIDOS
 		
@@ -347,7 +347,7 @@ public class ResumoReparteFecharDiaRepositoryImpl  extends AbstractRepository im
 		
 		List<ReparteFecharDiaDTO> listaFinalDeDistribuidos = query.list();
 		
-		listaFinal =  obterListaFinalParaGridReparte(listaFinal, listaFinalDeDistribuidos, dataOperacaoDistribuidor, "distribuidos");
+		listaFinal =  obterListaFinalParaGridReparte(listaFinal, listaFinalDeDistribuidos, "distribuidos");
 		
 		listaFinal = completarListaComItensCalculados(listaFinal);
 		
@@ -355,7 +355,7 @@ public class ResumoReparteFecharDiaRepositoryImpl  extends AbstractRepository im
 	}
 	
 	private List<ReparteFecharDiaDTO> obterListaFinalParaGridReparte(List<ReparteFecharDiaDTO> listaFinal, List<ReparteFecharDiaDTO> listaParaComparacao, 
-			Date dataOperacaoDistribuidor, String tipoDaLista){
+			String tipoDaLista){
 		
 		if(listaFinal != null){
 			int tamanhoListaReparte = listaFinal.size();

@@ -408,19 +408,19 @@ var fecharDiaController =  $.extend(true, {
 				align : 'right'
 			}, {
 				display : 'Qtde',
-				name : 'qtde',
+				name : 'qtdeFormatado',
 				width : 90,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Venda Encalhe',
-				name : 'venda',
+				name : 'vendaEncalheFormatado',
 				width : 100,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Diferença',
-				name : 'diferenca',
+				name : 'difencaFormatado',
 				width : 70,
 				sortable : true,
 				align : 'center'
