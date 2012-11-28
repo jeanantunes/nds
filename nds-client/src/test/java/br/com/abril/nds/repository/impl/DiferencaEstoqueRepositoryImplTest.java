@@ -393,6 +393,7 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 		
 		FiltroLancamentoDiferencaEstoqueDTO filtro = new FiltroLancamentoDiferencaEstoqueDTO();
 		
+		
 		diferencasLancamento = diferencaEstoqueRepository.obterDiferencasLancamento(filtro);
 		
 		Assert.assertNotNull(diferencasLancamento);
