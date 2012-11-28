@@ -573,6 +573,37 @@ function MapaAbastecimento(pathTela, objName, workspace) {
 
 	});
 	
+
+	this.buscarRotaPorRoteiro = function() {
+		if(T.get('tipoConsulta') == 'ROTA'){
+			$.postJSON(contextPath +'/mapaAbastecimento/buscarRotaPorRoteiro',
+					{idRoteiro:T.get("roteiro")},
+					function(result) {
+						var comboRota =  montarComboBoxCustomJson(result.rotas, true,'Selecione...');
+						$('#rota', _workspace).html(comboRota);
+					}
+				
+			);
+		}
+	};
+	this.buscarRoteiroPorBox = function() {
+		
+		if(T.get('tipoConsulta') == 'ROTA'){
+			$.postJSON(contextPath +'/mapaAbastecimento/buscarRoteiroPorBox',
+					{idBox:T.get("box")},
+					function(result) {
+						var comboRota =  montarComboBoxCustomJson(result.roteiros, true,'Selecione...');
+						$('#rota', _workspace).html(comboRota);
+						
+						var comboRoteiro =  montarComboBoxCustomJson(result.rotas, true,'Selecione...');
+						$('#roteiro', _workspace).html(comboRoteiro);
+					}
+				
+			);
+		}
+		
+	};
+	
 	T.bloquearLinkProdutos();
 	T.limparProdutosSelecionados();
 }
