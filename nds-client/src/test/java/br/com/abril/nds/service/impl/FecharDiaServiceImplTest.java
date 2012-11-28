@@ -115,7 +115,7 @@ public class FecharDiaServiceImplTest {
         Assert.assertEquals(produto.getNome(), diferencaDTO.getNomeProduto());
         Assert.assertEquals(produtoEdicao.getNumeroEdicao(), diferencaDTO.getNumeroEdicao());
         Assert.assertEquals(diferenca.getTipoDiferenca(), diferencaDTO.getTipoDiferenca());
-        Assert.assertEquals(diferenca.getValorTotalReal(), diferencaDTO.getTotal());
+        Assert.assertEquals(diferenca.getValorTotal(), diferencaDTO.getTotal());
         LancamentoDiferenca lancamento = diferenca.getLancamentoDiferenca();
         if (lancamento != null) {
             Assert.assertEquals(lancamento.getStatus(), diferencaDTO.getStatusAprovacao());
