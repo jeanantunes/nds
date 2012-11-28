@@ -1,5 +1,7 @@
 package br.com.abril.nds.service;
 
+import java.math.BigInteger;
+import java.util.Date;
 import java.util.List;
 
 import br.com.abril.nds.dto.VisaoEstoqueDTO;
@@ -18,5 +20,8 @@ public interface VisaoEstoqueService {
 	void transferirEstoque(FiltroConsultaVisaoEstoque filtro, Usuario usuario);
 	
 	void atualizarInventarioEstoque(List<VisaoEstoqueTransferenciaDTO> invetarioAtualizar, TipoEstoque tipoEstoque, Usuario usuario);
+
+	public abstract BigInteger obtemQuantidadeEstoque(long idProdutoEdicao, String tipoEstoque,
+			Date dataMovimentacao);
 	
 }
