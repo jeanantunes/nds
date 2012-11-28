@@ -270,7 +270,7 @@ public class RoteirizacaoRepositoryImpl extends AbstractRepositoryModel<Roteiriz
 
 	private void getParameterConsulta(FiltroConsultaRoteirizacaoDTO filtro, Query query) {
 		
-		if(filtro.getIdBox()!= null){
+		if(filtro.getIdBox()!= null && filtro.getIdBox() > 0){
 			query.setParameter("idBox", filtro.getIdBox());
 		}
 		
@@ -301,8 +301,9 @@ public class RoteirizacaoRepositoryImpl extends AbstractRepositoryModel<Roteiriz
 			.append(" join cota.pessoa pessoa ")
 			.append(" where 1 = 1 "); 
 			
-		if(filtro.getIdBox()!= null){
-			hql.append(" and box.id =:idBox ");
+		if(filtro.getIdBox()!= null) {
+					
+			hql.append( (filtro.getIdBox() < 1) ? "and roteirizacao.box IS NULL" : " and box.id =:idBox ");
 		}
 		
 		if(filtro.getIdRoteiro()!= null){

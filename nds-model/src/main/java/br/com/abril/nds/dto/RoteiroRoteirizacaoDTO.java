@@ -6,9 +6,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import br.com.abril.nds.util.Ordenavel;
 import br.com.abril.nds.util.StringUtil;
 
-public class RoteiroRoteirizacaoDTO implements Serializable {
+public class RoteiroRoteirizacaoDTO implements Serializable, Ordenavel {
 
 	private static final long serialVersionUID = 1L;
 

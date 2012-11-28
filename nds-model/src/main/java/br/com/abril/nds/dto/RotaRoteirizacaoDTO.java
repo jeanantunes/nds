@@ -8,7 +8,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-public class RotaRoteirizacaoDTO implements Serializable {
+import br.com.abril.nds.util.Ordenavel;
+
+public class RotaRoteirizacaoDTO implements Serializable, Ordenavel {
 
 	private static final long serialVersionUID = 1L;
 
