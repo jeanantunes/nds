@@ -26,6 +26,8 @@ public class ProdutoRecolhimentoVO {
 	
 	private BigDecimal precoDesconto;
 	
+	private Long idFornecedor;
+	
 	private String nomeFornecedor;
 	
 	private String nomeEditor;
@@ -148,6 +150,20 @@ public class ProdutoRecolhimentoVO {
 	 */
 	public void setPrecoDesconto(BigDecimal precoDesconto) {
 		this.precoDesconto = precoDesconto;
+	}
+
+	/**
+	 * @return the idFornecedor
+	 */
+	public Long getIdFornecedor() {
+		return idFornecedor;
+	}
+
+	/**
+	 * @param idFornecedor the idFornecedor to set
+	 */
+	public void setIdFornecedor(Long idFornecedor) {
+		this.idFornecedor = idFornecedor;
 	}
 
 	/**
