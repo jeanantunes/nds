@@ -21,13 +21,12 @@ public interface ChamadaEncalheCotaRepository extends Repository<ChamadaEncalheC
 	 * 
 	 * @param numeroCota
 	 * @param dataOperacao
-	 * @param indPesquisaCEFutura
 	 * @param conferido
 	 * @param postergado
 	 * 
 	 * @return List - Long
 	 */
-	public BigDecimal obterReparteDaChamaEncalheCota(Integer numeroCota, Date dataOperacao, boolean indPesquisaCEFutura, boolean conferido, boolean postergado);
+	public BigDecimal obterReparteDaChamaEncalheCota(Integer numeroCota, Date dataOperacao, boolean conferido, boolean postergado);
 	
 	
 	/**

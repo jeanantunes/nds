@@ -24,7 +24,7 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 	}
 
 	public BigDecimal obterReparteDaChamaEncalheCota(
-			Integer numeroCota, Date dataOperacao, boolean indPesquisaCEFutura,
+			Integer numeroCota, Date dataOperacao,
 			boolean conferido, boolean postergado) {
 
 		StringBuilder hql = new StringBuilder();
@@ -46,12 +46,8 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 		hql.append(" and chamadaEncalheCota.fechado = :conferido ");
 		hql.append(" and chamadaEncalheCota.postergado = :postergado ");
 
-		if (indPesquisaCEFutura) {
-			hql.append(" and chamadaEncalhe.dataRecolhimento >= :dataOperacao ");
-		} else {
-			hql.append(" and chamadaEncalhe.dataRecolhimento = :dataOperacao ");
-		}
-
+		hql.append(" and chamadaEncalhe.dataRecolhimento = :dataOperacao ");
+		
 		Query query = this.getSession().createQuery(hql.toString());
 
 		query.setParameter("numeroCota", numeroCota);
