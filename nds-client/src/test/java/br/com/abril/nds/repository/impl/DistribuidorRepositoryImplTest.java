@@ -19,6 +19,7 @@ import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.EnderecoDistribuidor;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.FormaEmissao;
 import br.com.abril.nds.model.cadastro.Fornecedor;
@@ -26,6 +27,7 @@ import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
 import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
+import br.com.abril.nds.model.cadastro.TelefoneDistribuidor;
 import br.com.abril.nds.model.cadastro.TipoFornecedor;
 import br.com.abril.nds.model.cadastro.TipoGarantia;
 import br.com.abril.nds.repository.DistribuidorRepository;
@@ -127,6 +129,7 @@ public class DistribuidorRepositoryImplTest extends AbstractRepositoryImplTest {
 		idsFornecedores.add(fornecedorDinap.getId());
 		List<DistribuicaoFornecedor> resultado = distribuidorRepository
 				.buscarDiasDistribuicaoFornecedor(idsFornecedores, OperacaoDistribuidor.DISTRIBUICAO);
+		Assert.assertNotNull(resultado);
 		Assert.assertEquals(3, resultado.size());
 		Assert.assertTrue(resultado.contains(dinapSegunda));
 		Assert.assertTrue(resultado.contains(dinapQuarta));
@@ -134,12 +137,55 @@ public class DistribuidorRepositoryImplTest extends AbstractRepositoryImplTest {
 		
 	}	
 	
+	@SuppressWarnings("unused")
+	@Test
+	public void obterEnderecoPrincipal(){
+		EnderecoDistribuidor endereco = distribuidorRepository.obterEnderecoPrincipal();
+	}
+	
+	@SuppressWarnings("unused")
+	@Test
+	public void obterTelefonePrincipal(){
+		TelefoneDistribuidor telefone = distribuidorRepository.obterTelefonePrincipal();
+	}
+	
 	@Test
 	public void obtemTiposGarantiasAceitas(){
 		List<TipoGarantia> garantias =  distribuidorRepository.obtemTiposGarantiasAceitas();
 		
+		Assert.assertNotNull(garantias);
 		Assert.assertEquals(TipoGarantia.values().length, garantias.size());
 		Assert.assertTrue(garantias.containsAll(Arrays.asList(TipoGarantia.values())));
 	}
 
+	@Test
+	public void obterNomeCNPJDistribuidor(){
+		List<String> lista = distribuidorRepository.obterNomeCNPJDistribuidor();
+		Assert.assertNotNull(lista);
+	}
+	
+	@SuppressWarnings("unused")
+	@Test
+	public void obterInformacoesComplementaresProcuracao(){
+		String informacoes = distribuidorRepository.obterInformacoesComplementaresProcuracao();
+	}
+	
+	@SuppressWarnings("unused")
+	@Test
+	public void obterRazaoSocialDistribuidor(){
+		String razaoSocial = distribuidorRepository.obterRazaoSocialDistribuidor();
+	}
+	
+	@SuppressWarnings("unused")
+	@Test
+	public void obterInformacoesComplementaresTermoAdesao(){
+		String informacoes = distribuidorRepository.obterInformacoesComplementaresTermoAdesao();
+	}
+	
+	@SuppressWarnings("unused")
+	@Test
+	public void buscarInicioSemana(){
+		DiaSemana diaSemana = distribuidorRepository.buscarInicioSemana();
+	}
+	
 }

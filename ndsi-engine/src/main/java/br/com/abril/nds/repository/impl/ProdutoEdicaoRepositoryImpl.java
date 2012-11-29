@@ -430,7 +430,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		hql.append(" SELECT pe ");
 		
 		// Corpo da consulta com os filtros:
-		Query query = this.queryBodyPesquisarEdicoes(hql, codigoProduto, null, null, null, null, null, false, "numeroEdicao", "DESC");
+		Query query = this.queryBodyPesquisarEdicoes(hql, codigoProduto, null, null, null, null, null, false, "pe.numeroEdicao", "DESC");
 		
 		query.setMaxResults(qtdEdicoes);
 		
@@ -530,7 +530,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 				   + " join fetch produtoEdicao.produto " 
 				   + " where ((produtoEdicao.produto.id = :idProduto "
 				   + " and 	 produtoEdicao.numeroEdicao   = :numeroEdicao)"
-				   + " or 	 (produtoEdicao.nome  = :nome))";
+				   + " or 	 (produtoEdicao.nomeComercial  = :nome))";
 		
 		Query query = super.getSession().createQuery(hql);
 
@@ -621,7 +621,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		
 		Query query = 
 			this.getSession().createQuery(
-				"select nome from ProdutoEdicao where id = :idProdutoEdicao");
+				"select produtoEdicao.nomeComercial from ProdutoEdicao produtoEdicao where produtoEdicao.id = :idProdutoEdicao");
 		
 		query.setParameter("idProdutoEdicao", idProdutoEdicao);
 		

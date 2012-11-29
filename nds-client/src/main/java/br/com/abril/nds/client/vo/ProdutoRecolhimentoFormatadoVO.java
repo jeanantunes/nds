@@ -8,6 +8,8 @@ package br.com.abril.nds.client.vo;
  */
 public class ProdutoRecolhimentoFormatadoVO {
 
+	private Long idFornecedor;
+	
 	private String idLancamento;
 	
 	private String sequencia;
@@ -49,6 +51,20 @@ public class ProdutoRecolhimentoFormatadoVO {
 	private String novaData;
 	
 	private boolean bloqueioAlteracaoBalanceamento;
+
+	/**
+	 * @return the idFornecedor
+	 */
+	public Long getIdFornecedor() {
+		return idFornecedor;
+	}
+
+	/**
+	 * @param idFornecedor the idFornecedor to set
+	 */
+	public void setIdFornecedor(Long idFornecedor) {
+		this.idFornecedor = idFornecedor;
+	}
 
 	/**
 	 * @return the idLancamento

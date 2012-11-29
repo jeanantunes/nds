@@ -863,7 +863,9 @@ var ConferenciaEncalhe = $.extend(true, {
 		
 		$("#cod_barras", ConferenciaEncalhe.workspace).val(result.codigoDeBarras);
 		$("#sm", ConferenciaEncalhe.workspace).val(result.codigoSM);
-		$("#codProduto", ConferenciaEncalhe.workspace).val(result.idProdutoEdicao);
+		$("#codProduto", ConferenciaEncalhe.workspace).val(result.codigo);
+		
+		$("#idProdutoEdicaoHidden", ConferenciaEncalhe.workspace).val(result.idProdutoEdicao);
 		
 		$("#nomeProduto", ConferenciaEncalhe.workspace).text(result.nomeProduto);
 		$("#edicaoProduto", ConferenciaEncalhe.workspace).text(result.numeroEdicao);
@@ -877,7 +879,7 @@ var ConferenciaEncalhe = $.extend(true, {
 	
 	adicionarProdutoConferido : function(){
 		
-		var data = [{name: "idProdutoEdicao", value: $("#codProduto", ConferenciaEncalhe.workspace).val()}, 
+		var data = [{name: "idProdutoEdicao", value: $("#idProdutoEdicaoHidden", ConferenciaEncalhe.workspace).val()}, 
 		            {name: "quantidade", value: $("#qtdeExemplar", ConferenciaEncalhe.workspace).val()}];
 		
 		$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/adicionarProdutoConferido', data,
