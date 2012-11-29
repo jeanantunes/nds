@@ -5,6 +5,7 @@ import java.util.List;
 import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
 
 /**
  * Interface que define as regras de acesso a dados referentes a entidade
@@ -37,4 +38,15 @@ public interface DistribuicaoFornecedorRepository extends Repository<Distribuica
 	 * @param listaDistribuicaoFornecedor
 	 */
 	public void gravarAtualizarDadosFornecedor(List<DistribuicaoFornecedor> listaDistribuicaoFornecedor);
+
+	/**
+	 * Obtém os códigos referente aos dias da distribuição de acordo com o fornecedor e a operação.
+	 * 
+	 * @param idFornecedor
+	 * @param operacaoDistribuidor
+	 * 
+	 * @return {@link List<Integer>}
+	 * 
+	 */
+	List<Integer> obterCodigosDiaDistribuicaoFornecedor(Long idFornecedor, OperacaoDistribuidor operacaoDistribuidor);
 }

@@ -277,7 +277,10 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	 * @return {@link br.com.abril.nds.model.planejamento.Lancamento}
 	 */
 	Lancamento obterProximoLancamento(Lancamento lancamentoAtual);
+
+	Date obterDataMinimaProdutoEdicao(Long idProdutoEdicao, String propertyLancamentoDistribuidor);
 	
+	Date obterDataMaximaProdutoEdicao(Long idProdutoEdicao, String propertyLancamentoDistribuidor);
 
 }
 	
