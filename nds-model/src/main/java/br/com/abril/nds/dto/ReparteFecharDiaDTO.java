@@ -2,28 +2,62 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 
+import br.com.abril.nds.util.Util;
 import br.com.abril.nds.util.export.Export;
-import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.util.export.Export.Alignment;
+import br.com.abril.nds.util.export.Exportable;
 
 @Exportable
 public class ReparteFecharDiaDTO implements Serializable {
 
-	private static final long serialVersionUID = 2126291233836764519L;
+	private static final long serialVersionUID = 1L;
 	
-	@Export(label = "Código", alignment=Alignment.LEFT, exhibitionOrder = 1)
+    @Export(label = "Código", alignment = Alignment.LEFT, exhibitionOrder = 1)
 	private String codigo;
 	
-	@Export(label = "Produto", alignment=Alignment.LEFT, exhibitionOrder = 2)
+    @Export(label = "Produto", alignment = Alignment.LEFT, exhibitionOrder = 2)
 	private String nomeProduto;
 	
-	@Export(label = "Edição", alignment=Alignment.LEFT, exhibitionOrder = 3)
+    @Export(label = "Edição", alignment = Alignment.LEFT, exhibitionOrder = 3)
 	private Long numeroEdicao;
 	
-	@Export(label = "Preço Capa", alignment=Alignment.LEFT, exhibitionOrder = 4)
+    @Export(label = "Preço Capa", alignment = Alignment.LEFT, exhibitionOrder = 4)
 	private BigDecimal precoVenda;
+
+    @Export(label = "Reparte", alignment = Alignment.CENTER, exhibitionOrder = 5)
+	private BigInteger qtdeReparte;
 	
+    @Export(label = "Sobras", alignment = Alignment.CENTER, exhibitionOrder = 6)
+	private BigInteger qtdeSobra;
+	
+    @Export(label = "Faltas", alignment = Alignment.CENTER, exhibitionOrder = 7)
+	private BigInteger qtdeFalta;
+	
+	private BigInteger qtdeSobraDe;
+	
+	private BigInteger qtdeSobraEm;
+	
+	private BigInteger qtdeFaltaDe;
+	
+	private BigInteger qtdeFaltaEm;
+
+    @Export(label = "Transf.", alignment = Alignment.CENTER, exhibitionOrder = 8)
+	private BigInteger qtdeTransferencia;
+	
+    @Export(label = "A Distr.", alignment = Alignment.CENTER, exhibitionOrder = 9)
+	private BigInteger qtdeDistribuir;
+	
+    @Export(label = "Distribuido", alignment = Alignment.CENTER, exhibitionOrder = 10)
+	private BigInteger qtdeDistribuido;
+	
+    @Export(label = "Sobra Distr.", alignment = Alignment.LEFT, exhibitionOrder = 11)
+	private BigInteger qtdeSobraDistribuicao;
+	
+    @Export(label = "Diferença", alignment = Alignment.CENTER, exhibitionOrder = 12)
+	private BigInteger qtdeDiferenca;
+
 	private BigDecimal sobras;
 	
 	private BigDecimal faltas;
@@ -33,341 +67,254 @@ public class ReparteFecharDiaDTO implements Serializable {
 	private BigDecimal distribuidos;
 	
 	private BigDecimal valorTotalReparte;
+
+	public ReparteFecharDiaDTO() {
+    }
 	
-	private Long qtdReparte;
-	
-	private Long qtdSobras;
-	
-	private Long qtdFaltas;
-	
-	private Long qtdTransferido;
-	
-	private Long qtdADistribuir;
-	
-	private Long qtdDistribuido;
-	
-	private Long qtdSobraDiferenca;
-	
-	private Long qtdDiferenca;
-	
-	private String qtdReparteFormatado;
-	
-	private String qtdSobrasFormatado;
-	
-	private String qtdFaltasFormatado;
-	
-	private String qtdTransferenciaFormatado;
-	
-	private String qtdADistribuirFormatado;
-	
-	private String qtdDistribuidoFormatado;
-	
-	private String qtdSobraDistribuidoFormatado;
-	
-	private String qtdDiferencaFormatado;
-	
-	private Long qtdeSobraDe = Long.valueOf(0);
-	
-	private Long qtdeSobraEm = Long.valueOf(0);
-	
-	private Long qtdeFaltaDe = Long.valueOf(0);
-	
-	private Long qtdeFaltaEm = Long.valueOf(0);
-	
-	
-	public String getCodigo() {
-		return codigo;
-	}
+    public ReparteFecharDiaDTO(String codigo, String nomeProduto, Long numeroEdicao, BigDecimal precoVenda, BigInteger qtdeReparte,
+            BigInteger qtdeSobraDe, BigInteger qtdeSobraEm, BigInteger qtdeFaltaDe, BigInteger qtdeFaltaEm, BigInteger qtdeDistribuido, 
+            BigInteger qtdeTransferencia) {
+        this.codigo = codigo;
+        this.nomeProduto = nomeProduto;
+        this.numeroEdicao = numeroEdicao;
+        this.precoVenda = precoVenda;
+        this.qtdeReparte = qtdeReparte;
+        this.qtdeSobraDe = Util.nvl(qtdeSobraDe, BigInteger.ZERO);
+        this.qtdeSobraEm = Util.nvl(qtdeSobraEm, BigInteger.ZERO);
+        this.qtdeFaltaDe = Util.nvl(qtdeFaltaDe, BigInteger.ZERO);
+        this.qtdeFaltaEm = Util.nvl(qtdeFaltaEm, BigInteger.ZERO);
+        this.qtdeDistribuido = Util.nvl(qtdeDistribuido, BigInteger.ZERO);
+        this.qtdeTransferencia = Util.nvl(qtdeTransferencia, BigInteger.ZERO);
+        
+        this.qtdeSobra = this.qtdeSobraDe.add(this.qtdeSobraEm);
+        this.qtdeFalta = this.qtdeFaltaDe.add(this.qtdeFaltaEm);
+        this.qtdeDistribuir = this.qtdeReparte.add(this.qtdeSobra).subtract(this.qtdeFalta).add(this.qtdeTransferencia);
+        this.qtdeSobraDistribuicao = this.qtdeDistribuir.subtract(this.qtdeDistribuido);
+        this.qtdeDiferenca = this.qtdeDistribuido.subtract(this.qtdeSobraDistribuicao);
+    }
 
-	public void setCodigo(String codigo) {
-		this.codigo = codigo;
-	}
 
-	public String getNomeProduto() {
-		return nomeProduto;
-	}
+    /**
+     * @return the sobras
+     */
+    public BigDecimal getSobras() {
+        return sobras;
+    }
 
-	public void setNomeProduto(String nomeProduto) {
-		this.nomeProduto = nomeProduto;
-	}
 
-	public Long getNumeroEdicao() {
-		return numeroEdicao;
-	}
+    /**
+     * @param sobras the sobras to set
+     */
+    public void setSobras(BigDecimal sobras) {
+        this.sobras = sobras;
+    }
 
-	public void setNumeroEdicao(Long numeroEdicao) {
-		this.numeroEdicao = numeroEdicao;
-	}
 
-	public BigDecimal getValorTotalReparte() {
-		return valorTotalReparte;
-	}
+    /**
+     * @return the transferencias
+     */
+    public BigDecimal getTransferencias() {
+        return transferencias;
+    }
 
-	public void setValorTotalReparte(BigDecimal valorTotalReparte) {
-		this.valorTotalReparte = valorTotalReparte;
-	}
-	
-	public BigDecimal getPrecoVenda() {
-		return precoVenda;
-	}
 
-	public void setPrecoVenda(BigDecimal precoVenda) {
-		this.precoVenda = precoVenda;
-	}
+    /**
+     * @param transferencias the transferencias to set
+     */
+    public void setTransferencias(BigDecimal transferencias) {
+        this.transferencias = transferencias;
+    }
 
-	public BigDecimal getSobras() {
-		return sobras;
-	}
 
-	public void setSobras(BigDecimal sobras) {
-		this.sobras = sobras;
-	}
+    /**
+     * @return the valorTotalReparte
+     */
+    public BigDecimal getValorTotalReparte() {
+        return valorTotalReparte;
+    }
 
-	public BigDecimal getFaltas() {
-		return faltas;
-	}
 
-	public void setFaltas(BigDecimal faltas) {
-		this.faltas = faltas;
-	}
+    /**
+     * @param valorTotalReparte the valorTotalReparte to set
+     */
+    public void setValorTotalReparte(BigDecimal valorTotalReparte) {
+        this.valorTotalReparte = valorTotalReparte;
+    }
 
-	public BigDecimal getTransferencias() {
-		return transferencias;
-	}
 
-	public void setTransferencias(BigDecimal transferencias) {
-		this.transferencias = transferencias;
-	}
+    /**
+     * @return the serialversionuid
+     */
+    public static long getSerialversionuid() {
+        return serialVersionUID;
+    }
 
-	public BigDecimal getDistribuidos() {
-		return distribuidos;
-	}
 
-	public void setDistribuidos(BigDecimal distribuidos) {
-		this.distribuidos = distribuidos;
-	}
+    /**
+     * @return the codigo
+     */
+    public String getCodigo() {
+        return codigo;
+    }
 
-	public Long getQtdReparte() {
-		return qtdReparte;
-	}
+    /**
+     * @param codigo the codigo to set
+     */
+    public void setCodigo(String codigo) {
+        this.codigo = codigo;
+    }
 
-	public void setQtdReparte(Long qtdReparte) {
-		this.qtdReparte = qtdReparte;
-	}
+    /**
+     * @return the nomeProduto
+     */
+    public String getNomeProduto() {
+        return nomeProduto;
+    }
 
-	public Long getQtdSobras() {
-		return qtdSobras;
-	}
+    /**
+     * @param nomeProduto the nomeProduto to set
+     */
+    public void setNomeProduto(String nomeProduto) {
+        this.nomeProduto = nomeProduto;
+    }
 
-	public void setQtdSobras(Long qtdSobras) {
-		this.qtdSobras = qtdSobras;		
-	}
+    /**
+     * @return the numeroEdicao
+     */
+    public Long getNumeroEdicao() {
+        return numeroEdicao;
+    }
 
-	public Long getQtdFaltas() {
-		return qtdFaltas;
-	}
+    /**
+     * @param numeroEdicao the numeroEdicao to set
+     */
+    public void setNumeroEdicao(Long numeroEdicao) {
+        this.numeroEdicao = numeroEdicao;
+    }
 
-	public void setQtdFaltas(Long qtdFaltas) {
-		this.qtdFaltas = qtdFaltas;
-	}
+    /**
+     * @return the precoVenda
+     */
+    public BigDecimal getPrecoVenda() {
+        return precoVenda;
+    }
 
-	public Long getQtdTransferido() {
-		return qtdTransferido;
-	}
+    /**
+     * @param precoVenda the precoVenda to set
+     */
+    public void setPrecoVenda(BigDecimal precoVenda) {
+        this.precoVenda = precoVenda;
+    }
 
-	public void setQtdTransferido(Long qtdTransferido) {
-		this.qtdTransferido = qtdTransferido;
-	}
+    /**
+     * @return the qtdeReparte
+     */
+    public BigInteger getQtdeReparte() {
+        return qtdeReparte;
+    }
 
-	public Long getQtdADistribuir() {
-		return qtdADistribuir;
-	}
 
-	public void setQtdADistribuir(Long qtdADistribuir) {
-		this.qtdADistribuir = qtdADistribuir;
-	}
+    /**
+     * @return the qtdeSobra
+     */
+    public BigInteger getQtdeSobra() {
+        return qtdeSobra;
+    }
 
-	public Long getQtdDistribuido() {
-		return qtdDistribuido;
-	}
 
-	public void setQtdDistribuido(Long qtdDistribuido) {
-		this.qtdDistribuido = qtdDistribuido;
-	}
+    /**
+     * @return the qtdeFalta
+     */
+    public BigInteger getQtdeFalta() {
+        return qtdeFalta;
+    }
 
-	public Long getQtdSobraDiferenca() {
-		return qtdSobraDiferenca;
-	}
-
-	public void setQtdSobraDiferenca(Long qtdSobraDiferenca) {
-		this.qtdSobraDiferenca = qtdSobraDiferenca;
-	}
-
-	public Long getQtdDiferenca() {
-		return qtdDiferenca;
-	}
-
-	public void setQtdDiferenca(Long qtdDiferenca) {
-		this.qtdDiferenca = qtdDiferenca;
-	}
-
-	@Export(label = "Reparte", alignment=Alignment.CENTER, exhibitionOrder = 5)
-	public String getQtdReparteFormatado() {
-		return qtdReparteFormatado;
-	}
-
-	public void setQtdReparteFormatado(String qtdReparteFormatado) {
-		this.qtdReparteFormatado = qtdReparteFormatado;
-	}
-	@Export(label = "Sobras", alignment=Alignment.CENTER, exhibitionOrder = 6)
-	public String getQtdSobrasFormatado() {
-		return qtdSobrasFormatado;
-	}
-
-	public void setQtdSobrasFormatado(String qtdSobrasFormatado) {
-		this.qtdSobrasFormatado = qtdSobrasFormatado;
-	}
-	
-	@Export(label = "Faltas", alignment=Alignment.CENTER, exhibitionOrder = 7)
-	public String getQtdFaltasFormatado() {
-		return qtdFaltasFormatado;
-	}
-
-	public void setQtdFaltasFormatado(String qtdFaltasFormatado) {
-		this.qtdFaltasFormatado = qtdFaltasFormatado;
-	}
-
-	@Export(label = "Transf.", alignment=Alignment.CENTER, exhibitionOrder = 8)
-	public String getQtdTransferenciaFormatado() {
-		return qtdTransferenciaFormatado;
-	}
-
-	public void setQtdTransferenciaFormatado(String qtdTransferenciaFormatado) {
-		this.qtdTransferenciaFormatado = qtdTransferenciaFormatado;
-	}
-
-	@Export(label = "A Distr.", alignment=Alignment.CENTER, exhibitionOrder = 9)
-	public String getQtdADistribuirFormatado() {
-		return qtdADistribuirFormatado;
-	}
-
-	public void setQtdADistribuirFormatado(String qtdADistribuirFormatado) {
-		this.qtdADistribuirFormatado = qtdADistribuirFormatado;
-	}
-
-	@Export(label = "Distribuido", alignment=Alignment.CENTER, exhibitionOrder = 10)
-	public String getQtdDistribuidoFormatado() {
-		return qtdDistribuidoFormatado;
-	}
-
-	public void setQtdDistribuidoFormatado(String qtdDistribuidoFormatado) {
-		this.qtdDistribuidoFormatado = qtdDistribuidoFormatado;
-	}
-
-	@Export(label = "Sobra Distr.", alignment=Alignment.LEFT, exhibitionOrder = 11)
-	public String getQtdSobraDistribuidoFormatado() {
-		return qtdSobraDistribuidoFormatado;
-	}
-
-	public void setQtdSobraDistribuidoFormatado(String qtdSobraDistribuidoFormatado) {
-		this.qtdSobraDistribuidoFormatado = qtdSobraDistribuidoFormatado;
-	}
-
-	@Export(label = "Diferença", alignment=Alignment.CENTER, exhibitionOrder = 12)
-	public String getQtdDiferencaFormatado() {
-		return qtdDiferencaFormatado;
-	}
-
-	public void setQtdDiferencaFormatado(String qtdDiferencaFormatado) {
-		this.qtdDiferencaFormatado = qtdDiferencaFormatado;
-	}
 
     /**
      * @return the qtdeSobraDe
      */
-    public Long getQtdeSobraDe() {
+    public BigInteger getQtdeSobraDe() {
         return qtdeSobraDe;
     }
 
-    /**
-     * @param qtdeSobraDe the qtdeSobraDe to set
-     */
-    public void setQtdeSobraDe(Long qtdeSobraDe) {
-        this.qtdeSobraDe = qtdeSobraDe;
-    }
 
     /**
      * @return the qtdeSobraEm
      */
-    public Long getQtdeSobraEm() {
+    public BigInteger getQtdeSobraEm() {
         return qtdeSobraEm;
     }
 
-    /**
-     * @param qtdeSobraEm the qtdeSobraEm to set
-     */
-    public void setQtdeSobraEm(Long qtdeSobraEm) {
-        this.qtdeSobraEm = qtdeSobraEm;
-    }
 
     /**
      * @return the qtdeFaltaDe
      */
-    public Long getQtdeFaltaDe() {
+    public BigInteger getQtdeFaltaDe() {
         return qtdeFaltaDe;
     }
 
-    /**
-     * @param qtdeFaltaDe the qtdeFaltaDe to set
-     */
-    public void setQtdeFaltaDe(Long qtdeFaltaDe) {
-        this.qtdeFaltaDe = qtdeFaltaDe;
-    }
 
     /**
      * @return the qtdeFaltaEm
      */
-    public Long getQtdeFaltaEm() {
+    public BigInteger getQtdeFaltaEm() {
         return qtdeFaltaEm;
     }
 
+
     /**
-     * @param qtdeFaltaEm the qtdeFaltaEm to set
+     * @return the qtdeTransferencia
      */
-    public void setQtdeFaltaEm(Long qtdeFaltaEm) {
-        this.qtdeFaltaEm = qtdeFaltaEm;
+    public BigInteger getQtdeTransferencia() {
+        return qtdeTransferencia;
     }
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((codigo == null) ? 0 : codigo.hashCode());
-		result = prime * result
-				+ ((numeroEdicao == null) ? 0 : numeroEdicao.hashCode());
-		return result;
-	}
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		ReparteFecharDiaDTO other = (ReparteFecharDiaDTO) obj;
-		if (codigo == null) {
-			if (other.codigo != null)
-				return false;
-		} else if (!codigo.equals(other.codigo))
-			return false;
-		if (numeroEdicao == null) {
-			if (other.numeroEdicao != null)
-				return false;
-		} else if (!numeroEdicao.equals(other.numeroEdicao))
-			return false;
-		return true;
-	}
+    /**
+     * @return the qtdeDistribuir
+     */
+    public BigInteger getQtdeDistribuir() {
+        return qtdeDistribuir;
+    }
+
+
+    /**
+     * @return the qtdeDistribuido
+     */
+    public BigInteger getQtdeDistribuido() {
+        return qtdeDistribuido;
+    }
+
+
+    /**
+     * @return the qtdeSobraDistribuicao
+     */
+    public BigInteger getQtdeSobraDistribuicao() {
+        return qtdeSobraDistribuicao;
+    }
+
+
+    /**
+     * @return the qtdeDiferenca
+     */
+    public BigInteger getQtdeDiferenca() {
+        return qtdeDiferenca;
+    }
+
+
+    /**
+     * @return the faltas
+     */
+    public BigDecimal getFaltas() {
+        return faltas;
+    }
+
+
+    /**
+     * @return the distribuidos
+     */
+    public BigDecimal getDistribuidos() {
+        return distribuidos;
+    }
 	
 }

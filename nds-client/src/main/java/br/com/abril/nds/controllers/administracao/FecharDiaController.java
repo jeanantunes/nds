@@ -316,7 +316,6 @@ public class FecharDiaController {
 		tableModel.setTotal(listaReparte.size());
 		
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
-		
 	}
 	
 	
