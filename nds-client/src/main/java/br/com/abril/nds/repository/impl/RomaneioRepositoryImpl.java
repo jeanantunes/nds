@@ -220,16 +220,20 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 			hql.append(filtro.getPaginacao().getOrdenacao().toString());
 		}
 
-		/* Quando for impressão, a primeira ordenação é pela rotaPDV.id */
+		/* Quando for impressão, deve ordenar por [box / roteiro / rota]. */
 		if (isImpressao) {
-			hql.insert(0, " rotaPDV.id asc, ");
+			
+			// Já contém parâmetros de ordenação/paginação:
+			if (hql.length() > 0) {
+				hql.insert(0, ", ");
+			}
+			
+			hql.insert(0, "box.codigo asc, roteiro.ordem asc, roteiro.descricaoRoteiro asc, rota.ordem asc, rota.descricaoRota asc");
 		}
-		
 		
 		if (hql.length() > 0) {
 			hql.insert(0, " order by ");
 		}
-		
 		
 		return hql.toString();
 	}
@@ -330,13 +334,18 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 		hql.append("SELECT DISTINCT ");
 		hql.append("  notaEnvio.destinatario.numeroCota as numeroCota ");
 		hql.append(", notaEnvio.destinatario.nome as nome ");
-//		hql.append(", cota.id as idCota ");
-		hql.append(", rotaPDV.id as idRota ");
+		hql.append(", cota.id as idCota ");
 		hql.append(", notaEnvio.numero as numeroNotaEnvio ");
+		hql.append(", box.id as idBox ");
+		hql.append(", box.nome as nomeBox ");
+		hql.append(", roteiro.id as idRoteiro ");
+		hql.append(", roteiro.descricaoRoteiro as nomeRoteiro ");
+		hql.append(", rota.id as idRota ");
+		hql.append(", rota.descricaoRota as nomeRota ");
 		hql.append(", endereco.logradouro as logradouro ");
-//		hql.append(", endereco.bairro as bairro ");		
-//		hql.append(", endereco.cidade as cidade ");
-//		hql.append(", endereco.uf as uf ");
+		hql.append(", endereco.bairro as bairro ");		
+		hql.append(", endereco.cidade as cidade ");
+		hql.append(", endereco.uf as uf ");
 		
 		//if (filtro.getProdutos() != null && filtro.getProdutos().size() == 1){
 		if (filtro.getProdutos() != null){

@@ -5,7 +5,10 @@ import java.math.BigInteger;
 
 public class RomaneioDTO implements Serializable {
 
-	private static final long serialVersionUID = -5072658433127977634L;
+
+	/** */
+	private static final long serialVersionUID = 566928363862946994L;
+	
 	
 	private Integer numeroCota;
 	
@@ -25,7 +28,14 @@ public class RomaneioDTO implements Serializable {
 	
 	private Long idCota;
 	
+	private Long idBox;
+	private String nomeBox;
+	
+	private Long idRoteiro;
+	private String nomeRoteiro;
+	
 	private Long idRota;
+	private String nomeRota;
 	
 	private Long qtdCotas;
 	
@@ -48,6 +58,7 @@ public class RomaneioDTO implements Serializable {
 	private BigInteger qtdProduto5;
 	
 	private Long numeroNotaEnvio;
+		
 	
 	public RomaneioDTO() {}
 	
@@ -228,5 +239,45 @@ public class RomaneioDTO implements Serializable {
 
 	public void setNumeroNotaEnvio(Long numeroNotaEnvio) {
 		this.numeroNotaEnvio = numeroNotaEnvio;
+	}
+
+	public String getNomeBox() {
+		return nomeBox;
+	}
+
+	public void setNomeBox(String nomeBox) {
+		this.nomeBox = nomeBox;
+	}
+
+	public String getNomeRoteiro() {
+		return nomeRoteiro;
+	}
+
+	public void setNomeRoteiro(String nomeRoteiro) {
+		this.nomeRoteiro = nomeRoteiro;
+	}
+
+	public String getNomeRota() {
+		return nomeRota;
+	}
+
+	public void setNomeRota(String nomeRota) {
+		this.nomeRota = nomeRota;
+	}
+
+	public Long getIdBox() {
+		return idBox;
+	}
+
+	public void setIdBox(Long idBox) {
+		this.idBox = idBox;
+	}
+
+	public Long getIdRoteiro() {
+		return idRoteiro;
+	}
+
+	public void setIdRoteiro(Long idRoteiro) {
+		this.idRoteiro = idRoteiro;
 	}
 }
