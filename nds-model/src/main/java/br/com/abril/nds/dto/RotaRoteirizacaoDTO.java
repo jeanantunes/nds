@@ -22,6 +22,8 @@ public class RotaRoteirizacaoDTO implements Serializable, Ordenavel {
 	
 	private Boolean selecionado;
 	
+	private Long entregadorId;
+	
 	private List<PdvRoteirizacaoDTO> pdvs = new ArrayList<PdvRoteirizacaoDTO>();
 	
 	private Set<Long> pdvsExclusao = new HashSet<Long>();
@@ -35,6 +37,13 @@ public class RotaRoteirizacaoDTO implements Serializable, Ordenavel {
 		this.nome = nome;
 	}
 
+	public RotaRoteirizacaoDTO(Long id, Integer ordem, String nome, Long entregadorId) {
+		this.id = id;
+		this.ordem = ordem;
+		this.nome = nome;
+		this.entregadorId = entregadorId;
+	}
+	
 	/**
 	 * @return the ordem
 	 */
@@ -282,4 +291,14 @@ public class RotaRoteirizacaoDTO implements Serializable, Ordenavel {
             }
         }
     }
+
+	public Long getEntregadorId() {
+		return entregadorId;
+	}
+
+	public void setEntregadorId(Long entregadorId) {
+		this.entregadorId = entregadorId;
+	}
+	
+	
 }

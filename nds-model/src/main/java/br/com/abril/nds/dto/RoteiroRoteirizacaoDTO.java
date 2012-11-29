@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import br.com.abril.nds.util.OrdenacaoUtil;
 import br.com.abril.nds.util.Ordenavel;
 import br.com.abril.nds.util.StringUtil;
 
@@ -80,6 +81,7 @@ public class RoteiroRoteirizacaoDTO implements Serializable, Ordenavel {
 	 * @return the listaRota
 	 */
 	public List<RotaRoteirizacaoDTO> getRotas() {
+		OrdenacaoUtil.sortList(rotas);
 		return rotas;
 	}
 
@@ -234,4 +236,14 @@ public class RoteiroRoteirizacaoDTO implements Serializable, Ordenavel {
         }
         return max;
     }
+
+	public Long getMaiorIdRota() {
+		  Long max = 0L;
+	        for (RotaRoteirizacaoDTO rota : todasRotas) {
+	            if (rota.getId() > max) {
+	                max = rota.getId();
+	            }
+	        }
+	        return max;
+	}
 }

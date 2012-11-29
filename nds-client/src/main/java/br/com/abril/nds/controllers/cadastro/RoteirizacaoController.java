@@ -727,7 +727,7 @@ public class RoteirizacaoController {
 	   }
 	   
 	   dto.addAllRoteiro(this.obterRoteirosTransferidos(idBox));
-	   
+	   	   	   	   
 	   result.use(CustomJson.class).from(dto).serialize();
 	}
 
@@ -920,19 +920,21 @@ public class RoteirizacaoController {
 	 * @param pdvs
 	 */
 	private void validaNovosPdvs(List<PdvRoteirizacaoDTO> pdvs, List<PdvRoteirizacaoDTO> pdvsAtual){
+		
 		RoteirizacaoDTO roteirizacao = getDTO();
+		
 		Long idBox = null;
+		
 		if (!roteirizacao.isBoxEspecial()) {
 		    idBox = roteirizacao.getBox().getId();
 		}
 		
 		for(PdvRoteirizacaoDTO itemPdvDTO:pdvs){
+			
 			if (!this.roteirizacaoService.verificaDisponibilidadePdv(itemPdvDTO.getId(), idBox)){
-				throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "O [PDV "+itemPdvDTO.getId()+"] já pertence à um [Box] roteirizado !"));
+				throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "O [PDV "+itemPdvDTO.getId()+" "+itemPdvDTO.getPdv()+"] já pertence à um [Box] roteirizado !"));
 			}
 		}
-		
-		this.verificaOrdemPdvs(pdvs, pdvsAtual);
 	}
 	
 	/**
@@ -995,7 +997,9 @@ public class RoteirizacaoController {
 		pdvs = this.trataPdvsRepetidos(pdvs, pdvsAtual);
 		
 		this.validaNovosPdvs(pdvs, pdvsAtual);
-			
+		
+		this.verificaOrdemPdvs(pdvs, pdvsAtual);
+		
 		rota.addAllPdv(pdvs);
 			
 		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "PDV adicionado com sucesso."), "result").recursive().serialize(); 

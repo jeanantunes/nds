@@ -520,7 +520,8 @@ public class RoteirizacaoRepositoryImpl extends AbstractRepositoryModel<Roteiriz
 		
         StringBuilder hql = new StringBuilder();
 		
-		hql.append(" select b from Box b, Roteirizacao r ");
+		hql.append(" select b from Box b "); 
+		hql.append(" join b.roteirizacao r ");
 		hql.append(" join r.roteiros roteiro ");
 		hql.append(" join roteiro.rotas rota ");
 		hql.append(" join rota.rotaPDVs rotaPdv ");
