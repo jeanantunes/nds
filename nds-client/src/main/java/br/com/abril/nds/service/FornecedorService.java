@@ -16,6 +16,8 @@ import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 
 public interface FornecedorService {
 
+	Fornecedor obterPorId(Long idFornecedor);
+	
 	Fornecedor obterFornecedorUnico(String codigoProduto);
 	
 	List<Fornecedor> obterFornecedores();

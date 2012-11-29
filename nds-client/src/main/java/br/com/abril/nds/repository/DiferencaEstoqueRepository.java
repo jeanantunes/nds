@@ -78,4 +78,13 @@ public interface DiferencaEstoqueRepository extends Repository<Diferenca, Long> 
 	boolean existeDiferencaPorNota(Long idProdutoEdicao, Date dataNotaEnvio,
 			  					   Integer numeroCota);
 	
+	 /**
+     * Obtém as diferenças lançadas da na data
+     * 
+     * @param data
+     *            data para recuperação das diferenças
+     * @return lista de diferenças lançadas na data
+     */
+	List<Diferenca> obterDiferencas(Date data);
+	
 }

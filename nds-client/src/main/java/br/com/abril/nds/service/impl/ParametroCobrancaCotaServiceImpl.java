@@ -1064,5 +1064,11 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 	public List<BigDecimal> comboValoresMinimos(){
 		return this.parametroCobrancaCotaRepository.comboValoresMinimos();
 	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public FormaCobranca obterFormaCobrancaPrincipal() {
+		return this.formaCobrancaRepository.obterFormaCobrancaPrincipal();
+	}
 	
 }

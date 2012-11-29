@@ -80,6 +80,18 @@ public class FormaCobrancaRepositoryImpl extends AbstractRepositoryModel<FormaCo
         return (FormaCobranca) query.uniqueResult();
 	}
 
+	@Override
+	public FormaCobranca obterFormaCobrancaPrincipal() {
+		StringBuilder hql = new StringBuilder();
+		hql.append(" select f from PoliticaCobranca p ");		
+		hql.append(" join p.formaCobranca f ");		
+		hql.append(" where p.principal = :principal ");
+		Query query = super.getSession().createQuery(hql.toString());
+        query.setParameter("principal", true);
+        query.setMaxResults(1);
+		return (FormaCobranca) query.uniqueResult();
+	}
+
 	
 	/**
 	 * Obtém lista de forma de cobranca da Cota

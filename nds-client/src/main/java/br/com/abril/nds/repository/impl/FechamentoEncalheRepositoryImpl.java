@@ -408,6 +408,31 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		return ((Long)query.uniqueResult()).intValue();
 	}
 	
+	
+	@SuppressWarnings("unchecked")
+	public List<Cota> buscarCotaFechamentoChamadaEncalhe(Date dataEncalhe) {
+		
+		StringBuffer hql = new StringBuffer();
+		
+		hql.append("  SELECT cota  ")
+			.append("  FROM ChamadaEncalhe chamadaEncalhe ")
+			.append("  join chamadaEncalhe.chamadaEncalheCotas chamadaEncalheCota ")
+			.append("  join chamadaEncalheCota.cota cota ")
+			.append("  join chamadaEncalheCota.conferenciasEncalhe conferenciaEncalhe ")
+			.append("  join conferenciaEncalhe.controleConferenciaEncalheCota controleConferenciaEncalheCota ")
+			.append("  join controleConferenciaEncalheCota.controleConferenciaEncalhe controleConferenciaEncalhe ");
+
+		hql.append("   WHERE controleConferenciaEncalheCota.dataOperacao= :dataEncalhe")
+			.append("   AND chamadaEncalheCota.fechado= false")
+			.append("   AND chamadaEncalheCota.postergado= false");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setDate("dataEncalhe", dataEncalhe);
+        
+		return query.list();
+	}
+	
+	
 	@SuppressWarnings("unchecked")
 	public List<Cota> buscarCotaChamadaEncalhe(Date dataEncalhe) {
 		StringBuffer hql = new StringBuffer();

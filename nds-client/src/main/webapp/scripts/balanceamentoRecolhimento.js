@@ -11,7 +11,7 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 				
 				if (result == "true") {
 					
-					$("#dialog-confirm").dialog({
+					$("#dialog-confirm", balanceamentoRecolhimentoController.workspace).dialog({
 						resizable: false,
 						height:'auto',
 						width:600,
@@ -28,7 +28,7 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 								$(this).dialog("close");
 							}
 						},
-						form: $("#dialog-confirm", this.workspace).parents("form")			
+						form: $("#dialog-confirm", balanceamentoRecolhimentoController.workspace).parents("form")			
 					});
 					
 				} else {
@@ -291,6 +291,9 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 		
 		retornoHTML += '<input type="hidden" name="hiddenBloqueioAlteracaoBalanceamento"'
 				    + 	     ' value="' + row.cell.bloqueioAlteracaoBalanceamento + '" />';
+		
+		retornoHTML += '<input type="hidden" name="hiddenIdFornecedor"'
+		    		+ 	     ' value="' + row.cell.idFornecedor + '" />';
 		
 		retornoHTML += '<input type="text" name="novaData"'
 					 + 	     ' value="' + row.cell.novaData + '"'
@@ -707,6 +710,11 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 			function(result) {
 				
 				balanceamentoRecolhimentoController.montarResumoPeriodoBalanceamento(result);
+
+				exibirMensagem(
+					'SUCCESS', 
+					[ 'Balanceamento concluído com sucesso.' ]
+				);
 			},
 			function(result) {
 				
@@ -725,6 +733,11 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 			function(result) {
 				
 				balanceamentoRecolhimentoController.montarResumoPeriodoBalanceamento(result);
+				
+				exibirMensagem(
+					'SUCCESS', 
+					[ 'Balanceamento concluído com sucesso.' ]
+				);
 			},
 			function() {
 				
@@ -765,6 +778,11 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 			function(result) {
 				
 				balanceamentoRecolhimentoController.montarResumoPeriodoBalanceamento(result);
+				
+				exibirMensagem(
+					'SUCCESS', 
+					[ 'Configuração reiniciada com sucesso.' ]
+				);
 			},
 			function() {
 				
@@ -796,13 +814,13 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 				
 				clearMessageDialogTimeout();
 			},
-			form: $("#dialogReprogramarBalanceamento", this.workspace).parents("form")
+			form: $("#dialogReprogramarBalanceamento", balanceamentoRecolhimentoController.workspace).parents("form")
 		});
 	},
 	
 	processarReprogramacao : function() {
 		
-		var linhasDaGrid = $('.balanceamentoGrid tr');
+		var linhasDaGrid = $('.balanceamentoGrid tr', balanceamentoRecolhimentoController.workspace);
 		
 		var listaProdutoRecolhimento = new Array();
 		
@@ -812,7 +830,7 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 			
 			var linha = $(value);
 			
-			var colunaCheck = linha.find("td")[17];
+			var colunaCheck = linha.find("td")[18];
 			
 			var inputCheck = $(colunaCheck).find("div").find('input[name="checkReprogramar"]');
 			
@@ -826,8 +844,9 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 				
 				var sequencia = balanceamentoRecolhimentoController.obterValorInputColuna(linha, 0, "sequencia");
 				var novaData = balanceamentoRecolhimentoController.obterValorInputColuna(linha, 17, "novaData");
+				var idFornecedor = balanceamentoRecolhimentoController.obterValorInputColuna(linha, 17, "hiddenIdFornecedor");
 				
-				listaProdutoRecolhimento.push({idLancamento:idLancamento,sequencia:sequencia,novaData:novaData});
+				listaProdutoRecolhimento.push({idFornecedor:idFornecedor,idLancamento:idLancamento,sequencia:sequencia,novaData:novaData});
 			}
 		});
 		
@@ -855,7 +874,7 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 				   true
 		);
 	},
-	
+
 	reprogramarRecolhimentoUnico : function(idRow) {
 		
 		var linhasDaGrid = $('.balanceamentoGrid tr', balanceamentoRecolhimentoController.workspace);
@@ -874,8 +893,9 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 				
 				var sequencia = balanceamentoRecolhimentoController.obterValorInputColuna(linha, 0, "sequencia");
 				var novaData = balanceamentoRecolhimentoController.obterValorInputColuna(linha, 17, "novaData");
+				var idFornecedor = balanceamentoRecolhimentoController.obterValorInputColuna(linha, 17, "hiddenIdFornecedor");
 				
-				linhaSelecionada = {idLancamento:idLancamento,sequencia:sequencia,novaData:novaData};
+				linhaSelecionada = {idFornecedor:idFornecedor,idLancamento:idLancamento,sequencia:sequencia,novaData:novaData};
 			}
 		});
 		
@@ -981,7 +1001,7 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 			beforeClose: function() {
 				clearMessageDialogTimeout("dialog-confirmar");
 		    },
-		    form: $("#dialog-confirm-balanceamento", this.workspace).parents("form")
+		    form: $("#dialog-confirm-balanceamento", balanceamentoRecolhimentoController.workspace).parents("form")
 		});
 	},
 	

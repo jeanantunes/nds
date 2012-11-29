@@ -978,6 +978,24 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 		
 	}
 	
+	@Test
+	public void testObterDiferencas() {
+	    List<Diferenca> diferencas = diferencaEstoqueRepository.obterDiferencas(new Date());
+	    Assert.assertNotNull(diferencas);
+	    
+	    Assert.assertEquals(qtdeMovimentosConsulta + qtdeMovimentosLancamento, diferencas.size());
+	}
+	
+	@Test
+    public void testObterDiferencasVazio() {
+        List<Diferenca> diferencas = diferencaEstoqueRepository.obterDiferencas(DateUtil.adicionarDias(new Date(), -10));
+        Assert.assertNotNull(diferencas);
+        
+        Assert.assertTrue(diferencas.isEmpty());
+    }
+	
+	
+	
 	
 	
 }

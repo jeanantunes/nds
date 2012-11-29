@@ -2,8 +2,13 @@ package br.com.abril.nds.dto.fechamentodiario;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Objects;
 
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
+import br.com.abril.nds.model.cadastro.Produto;
+import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.estoque.Diferenca;
+import br.com.abril.nds.model.estoque.LancamentoDiferenca;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
 
 /**
@@ -143,6 +148,33 @@ public class DiferencaDTO implements Serializable {
      */
     public void setMotivo(String motivo) {
         this.motivo = motivo;
+    }
+
+    /**
+     * Constrói um DTO com informações da entidade Diferenca
+     * 
+     * @param diferenca
+     *            entidade diferença para criação do DTO
+     * @return DTO criado com as informações da entidade
+     */
+    public static DiferencaDTO fromDiferenca(Diferenca diferenca) {
+        Objects.requireNonNull(diferenca, "Diferença não deve ser nula!");
+        DiferencaDTO dto = new DiferencaDTO();
+        ProdutoEdicao produtoEdicao = diferenca.getProdutoEdicao();
+        Produto produto = produtoEdicao.getProduto();
+        LancamentoDiferenca lancamento = diferenca.getLancamentoDiferenca();
+        
+        dto.setCodigoProduto(produto.getCodigo());
+        dto.setNomeProduto(produto.getNome());
+        dto.setNumeroEdicao(produtoEdicao.getNumeroEdicao());
+        dto.setQtdeExemplar(diferenca.getQtdeExemplares().longValue());
+        dto.setTotal(diferenca.getValorTotal());
+        dto.setTipoDiferenca(diferenca.getTipoDiferenca());
+        if (lancamento != null) {
+            dto.setStatusAprovacao(lancamento.getStatus());
+            dto.setMotivo(lancamento.getMotivo());
+        }
+        return dto;
     }
 
 }

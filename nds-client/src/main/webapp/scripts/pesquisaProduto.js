@@ -172,7 +172,7 @@ function PesquisaProduto(workspace) {
 		$(idEdicao, pesquisaProduto.workspace).focus();
 		
 		if (errorCallBack) {
-			this.errorCallBack();
+			errorCallBack();
 		}
 	},
 	

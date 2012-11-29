@@ -190,11 +190,14 @@ function montarComboBox(result, incluirTodos) {
 	
 	return options;
 }
-function montarComboBoxCustomJson(result, incluirTodos) {
+function montarComboBoxCustomJson(result, incluirTodos, labelTodos) {
 	var options = "";
 	
 	if (incluirTodos) {
-		options += "<option selected='selected'  value=''>Todos</option>";
+		if(!labelTodos){
+			labelTodos = 'Todos';
+		}
+		options += "<option selected='selected'  value=''>"+labelTodos+"</option>";
 	}
 	
 	$.each(result, function(index, row) {

@@ -202,14 +202,7 @@ public class VisaoEstoqueController {
 			
 			VisaoEstoqueConferenciaCegaVO vo = new VisaoEstoqueConferenciaCegaVO(dto);
 			
-			if (filtro.getListaTransferencia() != null) {
-				for(VisaoEstoqueTransferenciaDTO dtoTela : filtro.getListaTransferencia()) {
-					if(dtoTela.getProdutoEdicaoId().longValue() == dto.getProdutoEdicaoId().longValue()) {
-						vo.setEstoque(dtoTela.getQtde().toString());
-						break;
-					}
-				}
-			}
+			
 			
 			listaExport.add(vo);
 		}
