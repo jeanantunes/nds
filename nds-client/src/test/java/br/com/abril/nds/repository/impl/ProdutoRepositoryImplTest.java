@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
+import java.util.Calendar;
 import java.util.List;
 
 import org.junit.Assert;
@@ -155,6 +156,19 @@ public class ProdutoRepositoryImplTest extends AbstractRepositoryImplTest {
 		String codigoProduto = "454.5748";
 		
 		GrupoProduto grupoProduto = produtoRepository.obterGrupoProduto(codigoProduto);
+	}
+	
+	@SuppressWarnings("unused")
+	@Test
+	public void obterProdutoBalanceadosPorCodigo(){
+		Produto produto = produtoRepository.obterProdutoBalanceadosPorCodigo("1", Fixture.criarData(10, Calendar.FEBRUARY, 2012));
+	}
+	
+	@Test
+	public void buscarProdutosBalanceadosOrdenadosNome(){
+		List<Produto> lista = produtoRepository.buscarProdutosBalanceadosOrdenadosNome(Fixture.criarData(10, Calendar.FEBRUARY, 2012));
+		
+		Assert.assertNotNull(lista);
 	}
 	
 }

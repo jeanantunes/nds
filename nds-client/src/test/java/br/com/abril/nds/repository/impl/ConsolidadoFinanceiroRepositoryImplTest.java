@@ -15,6 +15,8 @@ import br.com.abril.nds.dto.FiltroConsolidadoConsignadoCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsolidadoEncalheCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsolidadoEncalheCotaDTO.OrdenacaoColuna;
 import br.com.abril.nds.dto.filtro.FiltroConsolidadoVendaCotaDTO;
+import br.com.abril.nds.fixture.Fixture;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.financeiro.ConsolidadoFinanceiroCota;
 import br.com.abril.nds.repository.ConsolidadoFinanceiroRepository;
 import br.com.abril.nds.vo.PaginacaoVO;
@@ -53,6 +55,7 @@ public class ConsolidadoFinanceiroRepositoryImplTest extends
 
 	}
 
+	
 	// CODIGO_PRODUTO
 	@Test
 	public void testarObterMovimentoEstoqueCotaEncalheOrdenacaoColunaCODIGOPRODUTO() {
@@ -494,6 +497,19 @@ public class ConsolidadoFinanceiroRepositoryImplTest extends
 		
 	}
 	
+	@Test
+	public void buscarPorCotaEData() {
+		
+		Cota cota = new Cota();
+		cota.setId(1L);
+		
+
+		java.sql.Date data = new java.sql.Date(Fixture.criarData(14, Calendar.NOVEMBER, 2012).getTime());
+
+		ConsolidadoFinanceiroCota consolidadoFinanceiroCota = 
+				consolidadoFinanceiroRepository.buscarPorCotaEData(cota, data);
+		
+	}
 	
 
 }

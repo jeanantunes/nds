@@ -465,15 +465,22 @@ var roteirizacao = $.extend(true, {
     boxSelecionadoListener : function(idBox, nomeBox) {
         roteirizacao.tipoInclusao = TipoInclusao.ROTEIRO;
         if (!roteirizacao.boxReadonly) {
-            var isBoxSelecionado = roteirizacao.idBox != "";
+            
+        	var isBoxSelecionado = roteirizacao.idBox != "";
+           
             var isBoxDiferente = roteirizacao.idBox != idBox;
+            
             if (isBoxSelecionado && isBoxDiferente) {
-                var dialog = new ConfirmDialog("Ao alterar o Box selecionado as informações não confirmadas serão perdidas.<br/>Confirma?", function() {
-                    roteirizacao.processarAlteracaoBox(idBox, nomeBox);
+               
+            	var dialog = new ConfirmDialog("Ao alterar o Box selecionado as informações não confirmadas serão perdidas.<br/>Confirma?", function() {
+                
+            		roteirizacao.processarAlteracaoBox(idBox, nomeBox);
                     return true;
-                }, function() {
-                });
+                    
+                }, null);
+            	
                 dialog.open();
+                
             } else {
                 if (isBoxDiferente) {
                     roteirizacao.processarAlteracaoBox(idBox, nomeBox);
@@ -1037,6 +1044,7 @@ var roteirizacao = $.extend(true, {
                 var listaMensagens = result.listaMensagens;
                 if (tipoMensagem == "SUCCESS") {
                     element.defaultValue = ordem;
+                    $(".cotasRotaGrid", roteirizacao.workspace).flexReload();
                 } else {
                     exibirMensagemDialog(tipoMensagem, listaMensagens);
                     $(element).val(ordemAntiga);
@@ -2281,9 +2289,7 @@ var roteirizacao = $.extend(true, {
                 var tipoMensagem = result.tipoMensagem;
                 var listaMensagens = result.listaMensagens;
                 if (tipoMensagem && listaMensagens) {
-                    if (tipoMensagem == 'SUCCESS') {
-                        $('#dialog-roteirizacao', roteirizacao.workspace).dialog("close");
-                    }
+                 
                     exibirMensagem(tipoMensagem, listaMensagens);
                 }
             },
