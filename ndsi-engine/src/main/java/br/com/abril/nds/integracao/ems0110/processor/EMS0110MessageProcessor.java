@@ -442,6 +442,8 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
 					"Atualizacao do Peso para: " + input.getPesoUni());
 		}
+		
+		this.getSession().merge(edicao);
 	}
 	
 	@Override
