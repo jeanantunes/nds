@@ -339,13 +339,12 @@ public class ChamadaEncalheCotaRepositoryImplTest extends
 
 		Calendar now = Calendar.getInstance();
 		Date dataOperacao = now.getTime();
-
-		boolean indPesquisaCEFutura = false;
+		
 		boolean conferido = false;
 		boolean postergado = false;
 
 		chamadaEncalheCotaRepository.obterReparteDaChamaEncalheCota(
-			numeroCota, dataOperacao, indPesquisaCEFutura,
+			numeroCota, dataOperacao,
 			conferido, postergado);
 
 		Assert.assertTrue(true);
