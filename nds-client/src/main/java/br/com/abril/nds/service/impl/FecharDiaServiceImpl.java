@@ -846,7 +846,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 				lancamentoEncalhe.setQuantidade(Util.nvl(item.getQtde(),0).intValue());
 				lancamentoEncalhe.setFechamentoDiarioConsolidadoEncalhe(consolidadoEncalhe);
 				
-				fechamentoDiarioLancamentoEncalheRepository.adicionar(lancamentoEncalhe);
+				//TODO: descomentar fechamentoDiarioLancamentoEncalheRepository.adicionar(lancamentoEncalhe);
 			}
 		}
 		return listaEncalhe;

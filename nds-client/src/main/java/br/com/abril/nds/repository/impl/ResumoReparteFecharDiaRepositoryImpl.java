@@ -224,8 +224,7 @@ public class ResumoReparteFecharDiaRepositoryImpl  extends AbstractRepository im
         hql.append("join lancamento.produtoEdicao produtoEdicao ");
         hql.append("join produtoEdicao.produto produto ");
         hql.append("where expedicao.dataExpedicao >= :dataInicio and expedicao.dataExpedicao < :dataFim ");
-       
-
+    
         Query query = getSession().createQuery(hql.toString());
         query.setParameter("data", dataInicio);
         query.setParameter("dataInicio", dataInicio);

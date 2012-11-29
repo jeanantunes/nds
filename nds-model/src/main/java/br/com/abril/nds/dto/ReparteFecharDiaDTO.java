@@ -57,6 +57,8 @@ public class ReparteFecharDiaDTO implements Serializable {
 	
     @Export(label = "Diferença", alignment = Alignment.CENTER, exhibitionOrder = 12)
 	private BigInteger qtdeDiferenca;
+    
+    private BigInteger qtdeDiferencaLogicoFisico;
 
 	private BigDecimal sobras;
 	
@@ -91,6 +93,7 @@ public class ReparteFecharDiaDTO implements Serializable {
         this.qtdeDistribuir = this.qtdeReparte.add(this.qtdeSobra).subtract(this.qtdeFalta).add(this.qtdeTransferencia);
         this.qtdeSobraDistribuicao = this.qtdeDistribuir.subtract(this.qtdeDistribuido);
         this.qtdeDiferenca = this.qtdeDistribuido.subtract(this.qtdeSobraDistribuicao);
+        this.qtdeDiferencaLogicoFisico = this.qtdeDistribuir.subtract(this.qtdeDistribuido);
     }
 
 
@@ -316,5 +319,14 @@ public class ReparteFecharDiaDTO implements Serializable {
     public BigDecimal getDistribuidos() {
         return distribuidos;
     }
+
+    /**
+     * @return the qtdeDiferencaLogicoFisico
+     */
+    public BigInteger getQtdeDiferencaLogicoFisico() {
+        return qtdeDiferencaLogicoFisico;
+    }
+    
+    
 	
 }
