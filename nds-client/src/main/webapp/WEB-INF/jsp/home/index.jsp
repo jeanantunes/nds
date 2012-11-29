@@ -34,7 +34,7 @@
 <script type="text/javascript" src="scripts/jquery.dateFormat-1.0.js"></script>
 
 <script type="text/javascript" src="scripts/jshashtable-2.1.js"></script>
-<script type="text/javascript" src="scripts/jquery.numberformatter-1.2.3.js"></script>
+
 
 <script type="text/javascript" src="scripts/commonsbehaviour.js"></script>
 

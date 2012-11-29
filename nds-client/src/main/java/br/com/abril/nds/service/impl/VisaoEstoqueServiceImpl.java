@@ -62,7 +62,11 @@ public class VisaoEstoqueServiceImpl implements VisaoEstoqueService {
 		
 		List<VisaoEstoqueDTO> list = new ArrayList<VisaoEstoqueDTO>();
 		
-		if (DateUtil.isHoje(filtro.getDataMovimentacao())) {
+		Distribuidor distribuidor = this.distribuidorService.obter();
+		
+		Date dataOperacao = distribuidor.getDataOperacao();
+		
+		if (filtro.getDataMovimentacao().compareTo(dataOperacao) == 0) {
 
 			// Busca na tabela estoque
 			filtro.setTipoEstoque(TipoEstoque.LANCAMENTO.toString());
@@ -96,7 +100,7 @@ public class VisaoEstoqueServiceImpl implements VisaoEstoqueService {
 			list.add(visaoEstoqueRepository.obterVisaoEstoqueHistorico(filtro));
 			
 			filtro.setTipoEstoque(TipoEstoque.PRODUTOS_DANIFICADOS.toString());
-			list.add(visaoEstoqueRepository.obterVisaoEstoque(filtro));
+			list.add(visaoEstoqueRepository.obterVisaoEstoqueHistorico(filtro));
 		}
 		
 		return list;

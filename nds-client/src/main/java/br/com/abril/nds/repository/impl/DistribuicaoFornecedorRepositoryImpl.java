@@ -7,6 +7,8 @@ import javax.persistence.NoResultException;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projection;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
@@ -144,4 +146,28 @@ public class DistribuicaoFornecedorRepositoryImpl extends AbstractRepositoryMode
 		
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<Integer> obterCodigosDiaDistribuicaoFornecedor(Long idFornecedor, OperacaoDistribuidor operacaoDistribuidor) {
+
+		Criteria criteria = getSession().createCriteria(DistribuicaoFornecedor.class);
+		
+		criteria.setProjection(Projections.property("codigoDiaSemana"));
+		
+		if (idFornecedor != null) {
+		
+			criteria.add(Restrictions.eq("fornecedor.id", idFornecedor));
+		}
+		
+		if (operacaoDistribuidor != null) {
+			
+			criteria.add(Restrictions.eq("operacaoDistribuidor", operacaoDistribuidor));
+		}
+		
+		return criteria.list();
+	}
+	
 }
