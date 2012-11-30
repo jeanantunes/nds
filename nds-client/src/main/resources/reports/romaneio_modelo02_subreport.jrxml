@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="romaneio_modelo02_subreport" pageWidth="802" pageHeight="555" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" whenResourceMissingType="Empty" uuid="26b67611-3ef0-4785-888a-77a0f9fb4cb7">
 	<property name="ireport.zoom" value="2.853116706110015"/>
-	<property name="ireport.x" value="1575"/>
+	<property name="ireport.x" value="982"/>
 	<property name="ireport.y" value="0"/>
 	<style name="zebrado" mode="Opaque" backcolor="#F0F0F0">
 		<conditionalStyle>
@@ -34,47 +34,14 @@
 	<field name="uf" class="java.lang.String">
 		<fieldDescription><![CDATA[uf]]></fieldDescription>
 	</field>
-	<field name="pacote" class="java.math.BigInteger">
+	<field name="pacote" class="java.lang.Number">
 		<fieldDescription><![CDATA[pacote]]></fieldDescription>
 	</field>
-	<field name="quebra" class="java.math.BigInteger">
+	<field name="quebra" class="java.lang.Number">
 		<fieldDescription><![CDATA[quebra]]></fieldDescription>
 	</field>
-	<field name="reparteTotal" class="java.math.BigInteger">
+	<field name="reparteTotal" class="java.lang.Number">
 		<fieldDescription><![CDATA[reparteTotal]]></fieldDescription>
-	</field>
-	<field name="qtdCotas" class="java.lang.Long">
-		<fieldDescription><![CDATA[qtdCotas]]></fieldDescription>
-	</field>
-	<field name="idRota" class="java.lang.Long">
-		<fieldDescription><![CDATA[idRota]]></fieldDescription>
-	</field>
-	<field name="idCota" class="java.lang.Long">
-		<fieldDescription><![CDATA[idCota]]></fieldDescription>
-	</field>
-	<field name="numeroTelefone" class="java.lang.String">
-		<fieldDescription><![CDATA[numeroTelefone]]></fieldDescription>
-	</field>
-	<field name="cota" class="java.lang.String">
-		<fieldDescription><![CDATA[cota]]></fieldDescription>
-	</field>
-	<field name="qtdProduto0" class="java.math.BigInteger">
-		<fieldDescription><![CDATA[qtdProduto0]]></fieldDescription>
-	</field>
-	<field name="qtdProduto1" class="java.math.BigInteger">
-		<fieldDescription><![CDATA[qtdProduto1]]></fieldDescription>
-	</field>
-	<field name="qtdProduto2" class="java.math.BigInteger">
-		<fieldDescription><![CDATA[qtdProduto2]]></fieldDescription>
-	</field>
-	<field name="qtdProduto3" class="java.math.BigInteger">
-		<fieldDescription><![CDATA[qtdProduto3]]></fieldDescription>
-	</field>
-	<field name="qtdProduto5" class="java.math.BigInteger">
-		<fieldDescription><![CDATA[qtdProduto5]]></fieldDescription>
-	</field>
-	<field name="qtdProduto4" class="java.math.BigInteger">
-		<fieldDescription><![CDATA[qtdProduto4]]></fieldDescription>
 	</field>
 	<columnHeader>
 		<band height="28" splitType="Stretch">

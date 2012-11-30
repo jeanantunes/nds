@@ -7,7 +7,7 @@ public class RomaneioDTO implements Serializable {
 
 
 	/** */
-	private static final long serialVersionUID = 566928363862946994L;
+	private static final long serialVersionUID = 6721772921124214158L;
 	
 	
 	private Integer numeroCota;
@@ -165,24 +165,30 @@ public class RomaneioDTO implements Serializable {
 		return pacote;
 	}
 
-	public void setPacote(BigInteger pacote) {
-		this.pacote = pacote;
+	public void setPacote(Number pacote) {
+		this.pacote = (pacote == null 
+				? BigInteger.ZERO
+				: BigInteger.valueOf(pacote.longValue()));
 	}
 
 	public BigInteger getQuebra() {
 		return quebra;
 	}
 
-	public void setQuebra(BigInteger quebra) {
-		this.quebra = quebra;
+	public void setQuebra(Number quebra) {
+		this.quebra = (quebra == null 
+				? BigInteger.ZERO
+				: BigInteger.valueOf(quebra.longValue()));
 	}
 
 	public BigInteger getReparteTotal() {
 		return reparteTotal;
 	}
 
-	public void setReparteTotal(BigInteger reparteTotal) {
-		this.reparteTotal = reparteTotal;
+	public void setReparteTotal(Number reparteTotal) {
+		this.reparteTotal = (reparteTotal == null
+				? BigInteger.ZERO
+				: BigInteger.valueOf(reparteTotal.longValue()));
 	}
 
 	public BigInteger getQtdProduto1() {
