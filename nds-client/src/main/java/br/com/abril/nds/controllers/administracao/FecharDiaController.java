@@ -582,6 +582,9 @@ public class FecharDiaController {
 	
 	@Post
 	public void confirmar() {
+		//Unlock na base de dados
+		this.fecharDiaService.setLockBancoDeDados(false);		
+		
 		try {
 		    Boolean hasPendenciaValidacao = (Boolean) this.session.getAttribute(ATRIBUTO_SESSAO_POSSUI_PENDENCIAS_VALIDACAO);
 		    
@@ -601,8 +604,6 @@ public class FecharDiaController {
 		                Constantes.PARAM_MSGS).recursive().serialize();
 		        
 		    }
-		    
-		    this.fecharDiaService.setLockBancoDeDados(false);
 		    
 		} catch (RuntimeException ex) {
 		    clearFechamentoDiarioDTO();
