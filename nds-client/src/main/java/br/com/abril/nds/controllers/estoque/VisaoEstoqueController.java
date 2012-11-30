@@ -15,7 +15,6 @@ import br.com.abril.nds.client.vo.VisaoEstoqueConferenciaCegaVO;
 import br.com.abril.nds.dto.VisaoEstoqueDTO;
 import br.com.abril.nds.dto.VisaoEstoqueDetalheDTO;
 import br.com.abril.nds.dto.VisaoEstoqueDetalheJuramentadoDTO;
-import br.com.abril.nds.dto.VisaoEstoqueTransferenciaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaVisaoEstoque;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Distribuidor;

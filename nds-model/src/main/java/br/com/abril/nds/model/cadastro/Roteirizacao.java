@@ -1,5 +1,6 @@
 package br.com.abril.nds.model.cadastro;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -23,8 +24,13 @@ import org.hibernate.annotations.CascadeType;
 @Entity
 @Table(name = "ROTEIRIZACAO")
 @SequenceGenerator(name="ROTEIRIZACAO_SEQ", initialValue = 1, allocationSize = 1)
-public class Roteirizacao {
+public class Roteirizacao implements Serializable{
 
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8484659529985789201L;
 
 	@Id
 	@GeneratedValue(generator = "ROTEIRIZACAO_SEQ")

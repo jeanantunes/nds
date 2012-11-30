@@ -4907,6 +4907,17 @@ public class DataLoader {
 
 						itemPlacar10, 4);
 		session.save(lancamentoPlacar10SemEstudo);
+		
+		Expedicao expedicao = new Expedicao();
+	    expedicao.setDataExpedicao(distribuidor.getDataOperacao());
+	    expedicao.setResponsavel(usuarioJoao);
+
+	    lancamentoVeja1EcncalheAnt.setExpedicao(expedicao);
+	    expedicao.getLancamentos().add(lancamentoVeja1EcncalheAnt);
+
+	    lancamentoSuper1EcncalheAnt.setExpedicao(expedicao);
+	    expedicao.getLancamentos().add(lancamentoSuper1EcncalheAnt);
+	    save(session, expedicao, lancamentoVeja1EcncalheAnt, lancamentoSuper1EcncalheAnt);
 	}
 
 	private static void criarProdutosEdicao(Session session) {

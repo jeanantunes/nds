@@ -127,6 +127,8 @@ public class ManutencaoStatusCotaController {
 
 			this.processarHistoricoStatusCota(listaHistoricoStatusCota, filtro);
 		}
+		
+		result.nothing();
 	}
 	
 	@Post
