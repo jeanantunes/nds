@@ -27,10 +27,12 @@ import br.com.abril.nds.model.cadastro.EnderecoDistribuidor;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.Rota;
+import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.TelefoneCota;
 import br.com.abril.nds.model.cadastro.TelefoneDistribuidor;
+import br.com.abril.nds.model.cadastro.TipoRoteiro;
 import br.com.abril.nds.model.envio.nota.IdentificacaoDestinatario;
 import br.com.abril.nds.model.envio.nota.IdentificacaoEmitente;
 import br.com.abril.nds.model.envio.nota.ItemNotaEnvio;
@@ -297,6 +299,17 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 							+ cota.getNumeroCota());*/
 		}
 
+		if(idRota == null) {
+			Long idRoteiro = null;
+			List<Roteiro> roteiros = cota.getBox().getRoteirizacao().getRoteiros();
+			for(Roteiro r : roteiros) {
+				if(!r.getTipoRoteiro().equals(TipoRoteiro.ESPECIAL)) {
+					idRoteiro = r.getId();
+				}
+			}
+			idRota = (Long) cota.getBox().getRoteirizacao().getRoteiro(idRoteiro).getRotas().get(0).getId();
+		}
+		
 		NotaEnvio notaEnvio = criarNotaEnvio(idCota, idRota, chaveAcesso,
 				codigoNaturezaOperacao, descricaoNaturezaOperacao, dataEmissao,
 				distribuidor, cota);
@@ -365,7 +378,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 		emitente.setDocumento(documento);
 		emitente.setNome(pessoaEmitente.getNome());
 		emitente.setPessoaEmitenteReferencia(pessoaEmitente);
-		emitente.setInscricaoEstual(pessoaEmitente.getInscricaoEstadual());
+		emitente.setInscricaoEstadual(pessoaEmitente.getInscricaoEstadual());
 
 		EnderecoDistribuidor enderecoDistribuidor = distribuidorRepository
 				.obterEnderecoPrincipal();
@@ -407,7 +420,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 
 		if (enderecoCota == null) {
 			throw new ValidacaoException(TipoMensagem.ERROR,
-					"Endere�o principal da cota " + cota.getId()
+					"Endereço principal da cota " + cota.getId()
 							+ " não encontrada!");
 		}
 
@@ -420,7 +433,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 
 		if (cota.getPessoa() instanceof PessoaJuridica) {
 			PessoaJuridica pessoaJuridica = (PessoaJuridica) cota.getPessoa();
-			destinatario.setInscricaoEstual(pessoaJuridica
+			destinatario.setInscricaoEstadual(pessoaJuridica
 					.getInscricaoEstadual());
 		}
 		destinatario.setNome(cota.getPessoa().getNome());
@@ -482,10 +495,13 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 	public List<NotaEnvio> gerarNotasEnvio(FiltroConsultaNotaEnvioDTO filtro, List<Long> idCotasSuspensasAusentes) {
 		
 		List<NotaEnvio> listaNotaEnvio = new ArrayList<NotaEnvio>();
+		List<SituacaoCadastro> situacoesCadastro = new ArrayList<SituacaoCadastro>();
+		situacoesCadastro.add(SituacaoCadastro.ATIVO);
+		situacoesCadastro.add(SituacaoCadastro.SUSPENSO);
 		
 		Set<Long> listaIdCotas = this.cotaRepository
 				.obterIdCotasEntre(filtro.getIntervaloCota(), filtro.getIntervaloBox(),
-						SituacaoCadastro.ATIVO, filtro.getIdRoteiro(), filtro.getIdRota(), null, null, null, null);
+						situacoesCadastro, filtro.getIdRoteiro(), filtro.getIdRota(), null, null, null, null);
 		
 		if (idCotasSuspensasAusentes != null) {
 			listaIdCotas.addAll(idCotasSuspensasAusentes);

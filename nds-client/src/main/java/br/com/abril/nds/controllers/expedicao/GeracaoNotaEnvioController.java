@@ -28,6 +28,7 @@ import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
+import br.com.abril.nds.service.CotaAusenteService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.GeracaoNotaEnvioService;
 import br.com.abril.nds.service.MovimentoEstoqueCotaService;
@@ -74,6 +75,9 @@ public class GeracaoNotaEnvioController {
 	
 	@Autowired
 	private NotaFiscalService notaFiscalService;
+	
+	@Autowired
+	private CotaAusenteService cotaAusenteService;
 
 	@Autowired
 	private NFeService nfeService;
@@ -150,7 +154,7 @@ public class GeracaoNotaEnvioController {
 		
 		FiltroConsultaNotaEnvioDTO filtro = this.getFiltroNotaEnvioSessao();
 		
-		List<ConsultaNotaEnvioDTO> cotasAusentes =	
+		List<ConsultaNotaEnvioDTO> cotasAusentes =
 				geracaoNotaEnvioService.busca(filtro.getIntervaloBox(), filtro.getIntervaloCota(), filtro.getIntervaloMovimento(), 
 						filtro.getIdFornecedores(), null, null, null, null, 
 						SituacaoCadastro.SUSPENSO, filtro.getIdRoteiro(), filtro.getIdRota());
@@ -177,21 +181,6 @@ public class GeracaoNotaEnvioController {
 				this.httpServletResponse);
 		
 		result.use(Results.nothing());
-	}
-	
-	@Post
-	public void buscarCotasAusentes() {
-		
-		FiltroConsultaNotaEnvioDTO filtro = this.getFiltroNotaEnvioSessao();
-		
-		List<ConsultaNotaEnvioDTO> cotasAusentes =	
-				geracaoNotaEnvioService.busca(filtro.getIntervaloBox(), filtro.getIntervaloCota(), filtro.getIntervaloMovimento(), 
-						filtro.getIdFornecedores(), null, null, null, null, 
-						SituacaoCadastro.SUSPENSO, filtro.getIdRoteiro(), filtro.getIdRota());
-		
-		result.use(FlexiGridJson.class).from(cotasAusentes)
-				.page(filtro.getPaginacaoVO().getPaginaAtual())
-				.total(cotasAusentes.size()).serialize();
 	}
 	
 	@Post

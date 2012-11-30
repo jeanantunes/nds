@@ -1367,7 +1367,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public Set<Long> obterIdCotasEntre(Intervalo<Integer> intervaloCota, Intervalo<Integer> intervaloBox, SituacaoCadastro situacao
+	public Set<Long> obterIdCotasEntre(Intervalo<Integer> intervaloCota, Intervalo<Integer> intervaloBox, List<SituacaoCadastro> situacoesCadastro
 										, Long idRoteiro, Long idRota, String sortName, String sortOrder, Integer maxResults, Integer page) {
 		
 		Set<Long> listaIdCotas = new HashSet<Long>();
@@ -1391,9 +1391,11 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 			criteria.add(Restrictions.between("box.codigo", intervaloBox.getDe(),
 					intervaloBox.getAte()));
 		}
-		if(situacao != null){
-			criteria.add(Restrictions.eq("situacaoCadastro", situacao));
+		
+		if(situacoesCadastro != null){
+			criteria.add(Restrictions.in("situacaoCadastro", situacoesCadastro));
 		}
+		
 		if(idRoteiro != null || idRota != null){
 			criteria.createAlias("pdvs.rotas", "rotaPdv");
 		    criteria.createAlias("rotaPdv.rota", "rota");

@@ -254,8 +254,8 @@ public class MonitorNFEServiceImpl implements MonitorNFEService {
 		String emissorNome 							 = identificacaoEmitente.getNome();
 		
 		String emissorFantasia 						 = identificacaoEmitente.getNomeFantasia();
-		String emissorInscricaoEstadual 			 = identificacaoEmitente.getInscricaoEstual();
-		String emissorInscricaoEstadualSubstituto 	 = identificacaoEmitente.getInscricaoEstualSubstituto();
+		String emissorInscricaoEstadual 			 = identificacaoEmitente.getInscricaoEstadual();
+		String emissorInscricaoEstadualSubstituto 	 = identificacaoEmitente.getInscricaoEstadualSubstituto();
 		String emissorInscricaoMunicipal 			 = identificacaoEmitente.getInscricaoMunicipal();
 
 		String emissorCNPJ 							 = "";
@@ -381,7 +381,7 @@ public class MonitorNFEServiceImpl implements MonitorNFEService {
 		
 		String destinatarioCNPJ 				= "";
 		String destinatarioNome 				= identificacaoDestinatario.getNome();
-		String destinatarioInscricaoEstadual 	= identificacaoDestinatario.getInscricaoEstual();
+		String destinatarioInscricaoEstadual 	= identificacaoDestinatario.getInscricaoEstadual();
 		
 		String destinatarioLogradouro 			= "";
 		String destinatarioNumero 				= "";

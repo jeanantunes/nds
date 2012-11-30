@@ -11964,8 +11964,8 @@ public class DataLoader {
 		session.save(enderecoEmitente);
 		
 		
-		String inscricaoEstualEmitente = "";
-		String inscricaoEstualSubstituto = "";
+		String inscricaoEstadualEmitente = "";
+		String inscricaoEstadualSubstituto = "";
 		String inscricaoMunicipalEmitente = "";
 		String nomEmitente = "";
 		String nomeFantasiaEmitente = "";
@@ -11980,8 +11980,8 @@ public class DataLoader {
 						cnae, 
 						documentoEmitente, 
 						enderecoEmitente, 
-						inscricaoEstualEmitente, 
-						inscricaoEstualSubstituto, 
+						inscricaoEstadualEmitente, 
+						inscricaoEstadualSubstituto, 
 						inscricaoMunicipalEmitente, 
 						nomEmitente, 
 						nomeFantasiaEmitente, 

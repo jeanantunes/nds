@@ -73,8 +73,11 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 		
 		TipoNotaFiscal tipoNotaFiscal = this.tipoNotaFiscalRepository.buscarPorId(idTipoNotaFiscal);
 		
+		List<SituacaoCadastro> situacoesCadastro = new ArrayList<SituacaoCadastro>();
+		situacoesCadastro.add(situacaoCadastro);
+		
 		Set<Long> idsCotasDestinatarias =
-				this.cotaRepository.obterIdCotasEntre(intervalorCota, intervaloBox, situacaoCadastro, idRoteiro, idRota, null, null, null, null);
+				this.cotaRepository.obterIdCotasEntre(intervalorCota, intervaloBox, situacoesCadastro, idRoteiro, idRota, null, null, null, null);
 		
 		ConsultaLoteNotaFiscalDTO dadosConsultaLoteNotaFiscal = new ConsultaLoteNotaFiscalDTO();
 		

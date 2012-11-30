@@ -243,8 +243,6 @@ var geracaoNotaEnvioController = $.extend({
 			
 			var _this = this;
 			
-			var gridCotasAusentes = $("#geracaoNotaEnvio-flexigrid-cotasAusentes");
-			
 			$.postJSON(this.path + 'hasCotasAusentes', null, function(data) {
 				
 				var tipoMensagem = data.tipoMensagem;
@@ -253,12 +251,8 @@ var geracaoNotaEnvioController = $.extend({
 				if (tipoMensagem && listaMensagens) {
 					exibirMensagemDialog(tipoMensagem, listaMensagens, "");
 				}
-				if (data.cotasAusentes) {
-					$('#geracaoNotaEnvio-dialog-cotasAusentes').dialog("open");
-					_this.gridReaload(gridCotasAusentes, 'buscarCotasAusentes');
-				} else {
-					_this.gerarNotaEnvio();
-				}
+				
+				_this.gerarNotaEnvio();
 				
 			});
 		},

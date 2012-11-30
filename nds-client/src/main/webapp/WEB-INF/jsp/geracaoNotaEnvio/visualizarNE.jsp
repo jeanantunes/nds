@@ -92,7 +92,7 @@ line-height: 28px;
 			<td align="center" style="border-bottom: 1px solid #000;"><span
 				class="dadosNota"><c:out value="${notaEnvio.emitente.endereco.cep}"/></span></td>
 			<td align="center" style="border-bottom: 1px solid #000;"><span
-				class="dadosNota"><c:out value="${notaEnvio.emitente.inscricaoEstual}"/></span></td>
+				class="dadosNota"><c:out value="${notaEnvio.emitente.inscricaoEstadual}"/></span></td>
 			<td style="border-left: 1px solid #000;">&nbsp;</td>
 			<td>&nbsp;</td>
 			<td style="border-right: 1px solid #000;">&nbsp;</td>
@@ -176,7 +176,7 @@ line-height: 28px;
 				class="dadosNota">61.438.248/0062-45</span></td>
 			<td align="center"
 				style="border-bottom: 1px solid #000; border-right: 1px solid #000;"><span
-				class="dadosNota"><c:out value="${notaEnvio.destinatario.inscricaoEstual}"/></span></td>
+				class="dadosNota"><c:out value="${notaEnvio.destinatario.inscricaoEstadual}"/></span></td>
 		</tr>
 	</table>
 	<table width="760" border="0" align="center" cellpadding="0"
@@ -200,8 +200,8 @@ line-height: 28px;
 		<c:set  var="totalComDesconto" value="0"/>
 		<c:set  var="totalRepartes" value="0"/>
 		<c:forEach items="${notaEnvio.listaItemNotaEnvio}" var="itemNotaEnvio" varStatus="status">
-			<c:set var="totalPrecoCapa" value="${totalPrecoCapa + itemNotaEnvio.precoCapa}" />
-			<c:set var="totalComDesconto" value="${totalComDesconto + (itemNotaEnvio.precoCapa * (100 - itemNotaEnvio.desconto) / 100)}" />
+			<c:set var="totalPrecoCapa" value="${totalPrecoCapa + (itemNotaEnvio.precoCapa * itemNotaEnvio.reparte)}" />
+			<c:set var="totalComDesconto" value="${totalComDesconto + ((itemNotaEnvio.precoCapa * (100 - itemNotaEnvio.desconto) / 100) * itemNotaEnvio.reparte)}" />
 			<c:set var="totalRepartes" value="${totalRepartes + itemNotaEnvio.reparte}" />
 		
 			<tr class="class_linha_${(status.index % 2) +1}">
@@ -232,12 +232,12 @@ line-height: 28px;
 			<td width="430">&nbsp;</td>
 			<td width="203" align="right"><strong>TOTAL PREÇO CAPA
 					R$</strong></td>
-			<td width="117" align="right" style="border-bottom: 1px solid #000;"><fmt:formatNumber value="${totalPrecoCapa * totalRepartes }" type="NUMBER"  minFractionDigits="2"  /></td>
+			<td width="117" align="right" style="border-bottom: 1px solid #000;"><fmt:formatNumber value="${totalPrecoCapa}" type="NUMBER"  minFractionDigits="2"  /></td>
 		</tr>
 		<tr>
 			<td>&nbsp;</td>
 			<td align="right"><strong>TOTAL PREÇO COM DESCONTO R$</strong></td>
-			<td align="right" style="border-bottom: 1px solid #000;"><fmt:formatNumber value="${totalComDesconto * totalRepartes}" type="NUMBER"  minFractionDigits="2"  /></td>
+			<td align="right" style="border-bottom: 1px solid #000;"><fmt:formatNumber value="${totalComDesconto}" type="NUMBER"  minFractionDigits="2"  /></td>
 		</tr>
 		<tr>
 			<td>&nbsp;</td>
@@ -247,7 +247,7 @@ line-height: 28px;
 		<tr>
 			<td>&nbsp;</td>
 			<td align="right"><strong>TOTAL REPARTE DO DIA</strong></td>
-			<td align="right" style="border-bottom: 1px solid #000;"><c:out value="${totalRepartes }"></c:out>
+			<td align="right" style="border-bottom: 1px solid #000;"><c:out value="${totalRepartes}"></c:out>
 				Exemplares</td>
 		</tr>
 	</table>

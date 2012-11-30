@@ -471,15 +471,17 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 		
 		Intervalo<Integer> intervaloCota = new Intervalo<Integer>(1, 10);
 		Intervalo<Integer> intervaloBox = new Intervalo<Integer>(1, 2);
-		SituacaoCadastro situacao =  SituacaoCadastro.ATIVO;
+		List<SituacaoCadastro> situacoesCadastro = new ArrayList<SituacaoCadastro>();
+		situacoesCadastro.add(SituacaoCadastro.ATIVO);
+		
 		cotaRepository.obterIdCotasEntre(intervaloCota, intervaloBox,
-				situacao, null, null, null, null, null, null);
+				situacoesCadastro, null, null, null, null, null, null);
 		
 		cotaRepository.obterIdCotasEntre(null, intervaloBox,
-				situacao, null, null, null, null, null, null);
+				situacoesCadastro, null, null, null, null, null, null);
 		
 		cotaRepository.obterIdCotasEntre(intervaloCota, null,
-				situacao, null, null, null, null, null, null);
+				situacoesCadastro, null, null, null, null, null, null);
 		
 		cotaRepository.obterIdCotasEntre(intervaloCota, intervaloBox,
 				null, null, null, null, null, null, null);
@@ -1198,7 +1200,10 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 	
 	@Test
 	public void obterIdCotasEntrePorSituacao() {
-		Set<Long> set = cotaRepository.obterIdCotasEntre(null, null, SituacaoCadastro.ATIVO,
+		List<SituacaoCadastro> situacoesCadastro = new ArrayList<SituacaoCadastro>();
+		situacoesCadastro.add(SituacaoCadastro.ATIVO);
+		
+		Set<Long> set = cotaRepository.obterIdCotasEntre(null, null, situacoesCadastro,
 				null, null, null, null, null, null);
 		Assert.assertNotNull(set);
 	}

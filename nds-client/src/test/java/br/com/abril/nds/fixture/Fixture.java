@@ -3430,8 +3430,8 @@ public class Fixture {
 			String cnae,
 			String documento,
 			Endereco endereco,
-			String inscricaoEstual,
-			String inscricaoEstualSubstituto,
+			String inscricaoEstadual,
+			String inscricaoEstadualSubstituto,
 			String inscricaoMunicipal,
 			String nome,
 			String nomeFantasia,
@@ -3444,8 +3444,8 @@ public class Fixture {
 		identificacaoEmitente.setCnae(cnae);
 		identificacaoEmitente.setDocumento(documento);
 		identificacaoEmitente.setEndereco(endereco);
-		identificacaoEmitente.setInscricaoEstual(inscricaoEstual);
-		identificacaoEmitente.setInscricaoEstualSubstituto(inscricaoEstualSubstituto);
+		identificacaoEmitente.setInscricaoEstadual(inscricaoEstadual);
+		identificacaoEmitente.setInscricaoEstadualSubstituto(inscricaoEstadualSubstituto);
 		identificacaoEmitente.setInscricaoMunicipal(inscricaoMunicipal);
 		identificacaoEmitente.setNome(nome);
 		identificacaoEmitente.setNomeFantasia(nomeFantasia);
@@ -3474,7 +3474,7 @@ public class Fixture {
 		identificacaoDestinatario.setDocumento(documento);
 		identificacaoDestinatario.setEmail(email);
 		identificacaoDestinatario.setEndereco(endereco);
-		identificacaoDestinatario.setInscricaoEstual(inscricaoEstadual);
+		identificacaoDestinatario.setInscricaoEstadual(inscricaoEstadual);
 		identificacaoDestinatario.setInscricaoSuframa(inscricaoSuframa);
 		identificacaoDestinatario.setNome(nome);
 		identificacaoDestinatario.setNomeFantasia(nomeFantasia);
