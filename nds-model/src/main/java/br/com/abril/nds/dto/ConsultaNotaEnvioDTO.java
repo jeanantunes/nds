@@ -28,6 +28,8 @@ public class ConsultaNotaEnvioDTO implements Serializable {
 	private BigDecimal totalDesconto;
 	
 	private boolean notaImpressa;
+	
+	private boolean cotaSuspensa;
 
 	/**
 	 * @return the idCota
@@ -125,6 +127,14 @@ public class ConsultaNotaEnvioDTO implements Serializable {
 	 */
 	public void setNotaImpressa(boolean notaImpressa) {
 		this.notaImpressa = notaImpressa;
+	}
+
+	public boolean isCotaSuspensa() {
+		return cotaSuspensa;
+	}
+
+	public void setCotaSuspensa(boolean cotaSuspensa) {
+		this.cotaSuspensa = cotaSuspensa;
 	}
 	
 }
