@@ -36,6 +36,7 @@ import br.com.abril.nds.model.cadastro.pdv.EnderecoPDV;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.model.cadastro.pdv.RotaPDV;
 import br.com.abril.nds.repository.BoxRepository;
+import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.EntregadorRepository;
 import br.com.abril.nds.repository.PdvRepository;
 import br.com.abril.nds.repository.RotaRepository;
@@ -66,6 +67,9 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 	
 	@Autowired
 	private EntregadorRepository entregadorRepository;
+	
+	@Autowired
+	private CotaRepository cotaRepository;
 	
 	@Override
 	@Transactional(readOnly=true)
@@ -266,10 +270,9 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 		for (Long id : roteirizacaoId ){
 			
 			Roteirizacao roteirizacao = this.roteirizacaoRepository.buscarPorId(id);
-			
+
 			roteirizacaoRepository.remover(roteirizacao);
 		}	
-		
 	}
 
 	@Override
@@ -694,14 +697,34 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
                 Rota rota = novaRotaRoteiro(roteiro, rotaDTO);
                 for (PdvRoteirizacaoDTO pdvDTO : rotaDTO.getPdvs()) {
                     novoPDVRota(rota, pdvDTO, roteirizacao.getBox());
+                    atribuirBoxCota(pdvDTO, roteirizacao.getBox());
                 } 
             }
         }
         roteirizacaoRepository.adicionar(roteirizacao);
         return roteirizacao;
     }
+	
+	/**
+	 * Atribui o box da roteirização para cota para facilitar as consultas
+	 * 
+	 * @param pdvDTO
+	 * @param box
+	 */
+	private void atribuirBoxCota(PdvRoteirizacaoDTO pdvDTO, Box box) {
+		
+		 PDV pdv = pdvRepository.buscarPorId(pdvDTO.getId());
+		 
+		 Cota cota  = pdv.getCota();
+		 
+		 if(pdv.getCaracteristicas()!= null && pdv.getCaracteristicas().isPontoPrincipal() ){
+			 
+			 cota.setBox(box);
+			 cotaRepository.merge(cota);
+		 }
+	}
 
-	 /**
+	/**
      * Processa as informações de uma roteirização existente
      * 
      * @param dto

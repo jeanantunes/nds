@@ -14,6 +14,9 @@ public interface GeracaoNotaEnvioService {
 	public abstract List<ConsultaNotaEnvioDTO> busca(Intervalo<Integer> intervaloBox, Intervalo<Integer> intervalorCota, Intervalo<Date> intervaloDateMovimento,
 			List<Long> listIdFornecedor, String sortname, String sortorder, Integer resultsPage, Integer page,
 			SituacaoCadastro situacaoCadastro, Long idRoteiro, Long idRota);
+	
+	public abstract Integer buscaCotasNotasDeEnvioQtd(Intervalo<Integer> intervaloBox, Intervalo<Integer> intervalorCota, Intervalo<Date> intervaloDateMovimento,
+			List<Long> listIdFornecedor, SituacaoCadastro situacaoCadastro, Long idRoteiro, Long idRota);
 
 	public abstract NotaEnvio gerar(Long idCota, Long idRota, String chaveAcesso,
 			Integer codigoNaturezaOperacao, String descricaoNaturezaOperacao, Date dataEmissao, Intervalo<Date> periodo, List<Long> listaIdFornecedores);

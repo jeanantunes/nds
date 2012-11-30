@@ -115,8 +115,8 @@ public class MonitorNFEServiceImplTest {
 		String cnae = "";
 		String documentoEmitente = "";
 		Endereco enderecoEmitente = null;
-		String inscricaoEstualEmitente = "";
-		String inscricaoEstualSubstituto = "";
+		String inscricaoEstadualEmitente = "";
+		String inscricaoEstadualSubstituto = "";
 		String inscricaoMunicipalEmitente = "";
 		String nomEmitente = "";
 		String nomeFantasiaEmitente = "";
@@ -131,8 +131,8 @@ public class MonitorNFEServiceImplTest {
 						cnae, 
 						documentoEmitente, 
 						enderecoEmitente, 
-						inscricaoEstualEmitente, 
-						inscricaoEstualSubstituto, 
+						inscricaoEstadualEmitente, 
+						inscricaoEstadualSubstituto, 
 						inscricaoMunicipalEmitente, 
 						nomEmitente, 
 						nomeFantasiaEmitente, 
