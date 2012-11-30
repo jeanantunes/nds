@@ -102,7 +102,10 @@ public class EntradaNFETerceirosRepositoryImplTest extends
 
 		TipoNotaFiscal tipoNotaFiscalRecebimento = Fixture
 				.tipoNotaFiscalRecebimento(cfop5102);
-
+		
+		tipoNotaFiscalRecebimento.setCfopEstado(cfop5102);
+		tipoNotaFiscalRecebimento.setCfopOutrosEstados(cfop5102);
+		
 		save(tipoNotaFiscalRecebimento);
 
 		String naturezaOperacao = "00001";

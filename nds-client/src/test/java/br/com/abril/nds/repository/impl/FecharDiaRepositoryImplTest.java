@@ -11,10 +11,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.dto.ValidacaoConfirmacaoDeExpedicaoFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoControleDeAprovacaoFecharDiaDTO;
+import br.com.abril.nds.dto.ValidacaoGeracaoCobrancaFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoLancamentoFaltaESobraFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoRecebimentoFisicoFecharDiaDTO;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
+import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.movimentacao.Movimento;
@@ -130,5 +132,75 @@ public class FecharDiaRepositoryImplTest extends AbstractRepositoryImplTest {
 		
 		Assert.assertNotNull(movimentos);
 	}
+	
+	@Test
+	public void obterMovimentosPorStatusDataNulo() {
 
+		List<GrupoMovimentoEstoque> gruposMovimentoEstoque = null;
+		List<GrupoMovimentoFinaceiro> gruposMovimentoFinanceiro = null;
+		
+		List<Movimento> movimentos =  this.fecharDiaRepositoryImpl.obterMovimentosPorStatusData(
+												gruposMovimentoEstoque, 
+												gruposMovimentoFinanceiro, 
+												new Date(), 
+												StatusAprovacao.PENDENTE);
+		
+		Assert.assertNotNull(movimentos);
+	}
+	
+	@Test
+	public void obterMovimentosPorStatusDataPorGrupoMovimentosEstoque() {
+
+		List<GrupoMovimentoEstoque> gruposMovimentoEstoque = new ArrayList<GrupoMovimentoEstoque>();
+		List<GrupoMovimentoFinaceiro> gruposMovimentoFinanceiro = null;
+		
+		gruposMovimentoEstoque.add(GrupoMovimentoEstoque.SOBRA_DE);
+
+		List<Movimento> movimentos =  this.fecharDiaRepositoryImpl.obterMovimentosPorStatusData(
+												gruposMovimentoEstoque, 
+												gruposMovimentoFinanceiro, 
+												new Date(), 
+												StatusAprovacao.PENDENTE);
+		
+		Assert.assertNotNull(movimentos);
+	}
+	
+	@Test
+	public void obterMovimentosPorStatusDataPorGrupoMovimentoFinaceiro() {
+
+		List<GrupoMovimentoEstoque> gruposMovimentoEstoque = null;
+		List<GrupoMovimentoFinaceiro> gruposMovimentoFinanceiro = new ArrayList<GrupoMovimentoFinaceiro>();
+		
+		gruposMovimentoFinanceiro.add(GrupoMovimentoFinaceiro.DEBITO);
+
+		List<Movimento> movimentos =  this.fecharDiaRepositoryImpl.obterMovimentosPorStatusData(
+												gruposMovimentoEstoque, 
+												gruposMovimentoFinanceiro, 
+												new Date(), 
+												StatusAprovacao.PENDENTE);
+		
+		Assert.assertNotNull(movimentos);
+	}
+	
+	@Test
+	public void obterFormasDeCobranca() {
+		
+		List<ValidacaoGeracaoCobrancaFecharDiaDTO> listaFormasCobranca =  this.fecharDiaRepositoryImpl.obterFormasDeCobranca();
+		
+		Assert.assertNotNull(listaFormasCobranca);
+		
+	}
+	
+	@Test
+	public void obterDiasDaConcentracao() {
+		
+		FormaCobranca formaCobranca = new FormaCobranca();
+		formaCobranca.setId(1L);
+		
+		List<ValidacaoGeracaoCobrancaFecharDiaDTO> listaFormasCobranca =  this.fecharDiaRepositoryImpl.obterDiasDaConcentracao(formaCobranca);
+	
+		Assert.assertNotNull(listaFormasCobranca);
+		
+	}
+	
 }

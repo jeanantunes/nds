@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.dto.TipoDescontoCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroTipoDescontoCotaDTO;
+import br.com.abril.nds.dto.filtro.FiltroTipoDescontoCotaDTO.OrdenacaoColunaConsulta;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
@@ -151,6 +152,10 @@ public class DescontoCotaRepositoryImplTest extends AbstractRepositoryImplTest{
         filtro.setOrdenacaoColuna(FiltroTipoDescontoCotaDTO.OrdenacaoColunaConsulta.USUARIO);
 		lista = descontoCotaRepository.obterDescontoCota(filtro);
 		Assert.assertTrue(!lista.isEmpty());
+		
+        filtro.setOrdenacaoColuna(FiltroTipoDescontoCotaDTO.OrdenacaoColunaConsulta.TIPO_DESCONTO);
+		lista = descontoCotaRepository.obterDescontoCota(filtro);
+		Assert.assertTrue(!lista.isEmpty());
 	}
 	
 	@Test
@@ -160,6 +165,52 @@ public class DescontoCotaRepositoryImplTest extends AbstractRepositoryImplTest{
 		Integer quantidade = descontoCotaRepository.obterQuantidadeDescontoCota(filtro);
 	    Assert.assertTrue(quantidade > 0);
 	}
+
+	@Test
+	public void testObterQuantidadeDescontoCotaNumeroCota() {
+		
+		FiltroTipoDescontoCotaDTO filtro = new FiltroTipoDescontoCotaDTO();
+		filtro.setNumeroCota(1);
+		
+		Integer quantidade = descontoCotaRepository.obterQuantidadeDescontoCota(filtro);
+	    Assert.assertTrue(quantidade > 0);
+	}
+
+	
+	@Test
+	public void obterQuantidadeDescontoCotaPaginacao() {
+		
+		FiltroTipoDescontoCotaDTO filtro = new FiltroTipoDescontoCotaDTO();
+		filtro.setPaginacao(new PaginacaoVO());
+		filtro.getPaginacao().setPaginaAtual(1);
+		filtro.getPaginacao().setQtdResultadosPorPagina(1);
+		
+		List<TipoDescontoCotaDTO> tipoDescontoCotaDTOs = descontoCotaRepository.obterDescontoCota(filtro);
+		
+		Assert.assertNotNull(tipoDescontoCotaDTOs); 
+	  }
+	
+	@Test
+	public void obterQuantidadeDescontoCotaNumeroCota() {
+		
+		FiltroTipoDescontoCotaDTO filtro = new FiltroTipoDescontoCotaDTO();
+		filtro.setNumeroCota(1);
+		
+		List<TipoDescontoCotaDTO> tipoDescontoCotaDTOs = descontoCotaRepository.obterDescontoCota(filtro);
+		
+		Assert.assertNotNull(tipoDescontoCotaDTOs); 
+	  }
+	
+	
+	@Test
+	public void testeObterUltimoDescontoValidoFornecedorCota(){
+		Fornecedor fornecedor = new Fornecedor();
+		Cota cota = new Cota();
+		fornecedor.setId(1L);
+		cota.setId(1L);
+		
+		DescontoCota descontoCota = descontoCotaRepository.buscarUltimoDescontoValido(fornecedor, cota);
+	 }
 	
 	@Test
 	public void testeObterUltimoDescontoValido(){
