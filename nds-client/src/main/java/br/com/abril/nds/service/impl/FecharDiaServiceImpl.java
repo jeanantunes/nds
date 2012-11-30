@@ -846,7 +846,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 				lancamentoEncalhe.setQuantidade(Util.nvl(item.getQtde(),0).intValue());
 				lancamentoEncalhe.setFechamentoDiarioConsolidadoEncalhe(consolidadoEncalhe);
 				
-				//TODO: descomentar fechamentoDiarioLancamentoEncalheRepository.adicionar(lancamentoEncalhe);
+				fechamentoDiarioLancamentoEncalheRepository.adicionar(lancamentoEncalhe);
 			}
 		}
 		return listaEncalhe;
@@ -904,7 +904,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 	private List<ReparteFecharDiaDTO> incluirLancamentosReparte(FechamentoDiario fechamento,FechamentoDiarioConsolidadoReparte consolidadoReparte)
 			throws FechamentoDiarioException {
 		
-		List<ReparteFecharDiaDTO> listaReparte = resumoReparteFecharDiaService.obterResumoReparte(fechamento.getDataFechamento());
+		List<ReparteFecharDiaDTO> listaReparte = resumoReparteFecharDiaService.obterResumoReparte(fechamento.getDataFechamento(), null);
 		
 	    if(listaReparte!= null && !listaReparte.isEmpty()){
 	    	

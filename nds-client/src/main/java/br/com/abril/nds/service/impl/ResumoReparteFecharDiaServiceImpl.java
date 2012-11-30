@@ -3,6 +3,7 @@ package br.com.abril.nds.service.impl;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,6 +13,7 @@ import br.com.abril.nds.dto.ReparteFecharDiaDTO;
 import br.com.abril.nds.dto.ResumoReparteFecharDiaDTO;
 import br.com.abril.nds.repository.ResumoReparteFecharDiaRepository;
 import br.com.abril.nds.service.ResumoReparteFecharDiaService;
+import br.com.abril.nds.vo.PaginacaoVO;
 
 @Service
 public class ResumoReparteFecharDiaServiceImpl  implements ResumoReparteFecharDiaService {
@@ -45,8 +47,8 @@ public class ResumoReparteFecharDiaServiceImpl  implements ResumoReparteFecharDi
 
 	@Override
 	@Transactional
-	public List<ReparteFecharDiaDTO> obterResumoReparte(Date dataOperacao) {
-		return this.resumoFecharDiaRepository.obterResumoReparte(dataOperacao);
+	public List<ReparteFecharDiaDTO> obterResumoReparte(Date dataOperacao, PaginacaoVO paginacao) {
+		return this.resumoFecharDiaRepository.obterResumoReparte(dataOperacao, paginacao);
 	}
 
 	@Override
@@ -88,6 +90,13 @@ public class ResumoReparteFecharDiaServiceImpl  implements ResumoReparteFecharDi
 		
 		return dto;
 	}
+
+    @Override
+    @Transactional(readOnly = true)
+    public Long contarLancamentosExpedidos(Date data) {
+        Objects.requireNonNull(data, "Data para contagem dos lançamentos expedidos não deve ser nula!");
+        return resumoFecharDiaRepository.contarLancamentosExpedidos(data);
+    }
 
 		
 
