@@ -15,7 +15,6 @@ import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.movimentacao.FuroProduto;
-import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.HistoricoLancamento;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
