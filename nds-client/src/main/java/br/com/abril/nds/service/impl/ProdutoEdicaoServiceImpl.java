@@ -735,7 +735,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			dto.setOrigemInterface(pe.getOrigem().equals(br.com.abril.nds.model.Origem.INTERFACE));
 			dto.setNumeroLancamento(pe.getNumeroLancamento());
 			dto.setPeb(pe.getPeb());
-			dto.setEditor(pe.getProduto().getEditor().getPessoaJuridica().getNome());
+			dto.setEditor(pe.getProduto().getEditor() != null ? pe.getProduto().getEditor().getPessoaJuridica().getNome() : "");
 			if (pe.getBrinde() !=null) {
 				dto.setDescricaoBrinde(pe.getBrinde().getDescricao());
 				dto.setIdBrinde(pe.getBrinde().getId());
@@ -755,14 +755,15 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			if (uLancamento != null) {
 				dto.setSituacaoLancamento(uLancamento.getStatus());
 				dto.setTipoLancamento(uLancamento.getTipoLancamento());
-				if(uLancamento.getStatus() != StatusLancamento.EXCLUIDO){					
-					dto.setDataLancamento(uLancamento.getDataLancamentoDistribuidor());
-				}				
-				dto.setDataLancamentoPrevisto(uLancamento.getDataLancamentoPrevista());
+				
+				dto.setDataLancamento(this.lancamentoRepository.obterDataMinimaProdutoEdicao(pe.getId(), "dataLancamentoDistribuidor"));
+				dto.setDataLancamentoPrevisto(this.lancamentoRepository.obterDataMinimaProdutoEdicao(pe.getId(), "dataLancamentoPrevista"));
+
+				dto.setDataRecolhimentoPrevisto(this.lancamentoRepository.obterDataMaximaProdutoEdicao(pe.getId(), "dataRecolhimentoPrevista"));
+				dto.setDataRecolhimentoReal(this.lancamentoRepository.obterDataMaximaProdutoEdicao(pe.getId(), "dataRecolhimentoDistribuidor"));
+
 				dto.setRepartePrevisto(uLancamento.getReparte());
 				dto.setRepartePromocional(uLancamento.getRepartePromocional());
-				dto.setDataRecolhimentoPrevisto(uLancamento.getDataRecolhimentoPrevista());
-				dto.setDataRecolhimentoReal(uLancamento.getDataRecolhimentoDistribuidor());
 				dto.setSemanaRecolhimento(DateUtil.obterNumeroSemanaNoAno(uLancamento.getDataRecolhimentoDistribuidor()));
 			}
 			

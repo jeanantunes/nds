@@ -14,6 +14,7 @@ import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
+import br.com.abril.nds.model.cadastro.Entregador;
 import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.Roteirizacao;
 import br.com.abril.nds.model.cadastro.Roteiro;
@@ -234,9 +235,14 @@ public class RoteirizacaoDTO implements Serializable{
                     roteiro.getDescricaoRoteiro());
             dto.addRoteiro(roteiroDTO);
 
-            for(Rota rota : roteiro.getRotas()){
-                RotaRoteirizacaoDTO rotaDTO = new RotaRoteirizacaoDTO(
-                        rota.getId(), rota.getOrdem(), rota.getDescricaoRota());
+            for (Rota rota : roteiro.getRotas()) {
+            	
+            	Entregador entregador = rota.getEntregador();
+            	            			
+            	Long entregadorId = (entregador == null? null : entregador.getId());	
+                
+            	RotaRoteirizacaoDTO rotaDTO = new RotaRoteirizacaoDTO(
+                        rota.getId(), rota.getOrdem(), rota.getDescricaoRota(), entregadorId);
                 roteiroDTO.addRota(rotaDTO);
 
                 for(RotaPDV rotaPdv : rota.getRotaPDVs()){

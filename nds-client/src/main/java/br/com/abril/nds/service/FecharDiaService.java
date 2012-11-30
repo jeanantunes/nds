@@ -13,6 +13,7 @@ import br.com.abril.nds.dto.fechamentodiario.FechamentoDiarioDTO;
 import br.com.abril.nds.dto.fechamentodiario.ResumoEstoqueDTO;
 import br.com.abril.nds.dto.fechamentodiario.SumarizacaoDividasDTO;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
+import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.financeiro.Divida;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.vo.PaginacaoVO;
@@ -170,6 +171,7 @@ public interface FecharDiaService {
 	 */
 	FechamentoDiarioDTO processarFechamentoDoDia(Usuario usuario, Date dataFechamento);
 	
+
 	/**
 	 * Efetua o Lock/unlock do banco de dados. Usado para travar o banco para insert/update/delete na fechar dia.
 	 * 
@@ -179,4 +181,14 @@ public interface FecharDiaService {
 	 */
 	void setLockBancoDeDados(boolean lockBancoDeDados);
  
+
+    /**
+     * Obtém as diferenças lançadas da na data
+     * 
+     * @param data
+     *            data para recuperação das diferenças
+     * @return lista de diferenças lançadas na data
+     */
+	List<Diferenca> obterDiferencas(Date data);
+
 }

@@ -115,7 +115,8 @@ public class EntityInterceptor extends EmptyInterceptor {
 		if (sql != null && !sql.trim().isEmpty()) {
 			
 			if (sql.trim().toUpperCase().startsWith(TipoOperacaoSQL.DELETE.getOperacao()) 
-					|| sql.trim().toUpperCase().startsWith(TipoOperacaoSQL.UPDATE.getOperacao())) {
+					|| sql.trim().toUpperCase().startsWith(TipoOperacaoSQL.UPDATE.getOperacao())
+					|| sql.trim().toUpperCase().startsWith(TipoOperacaoSQL.INSERT.getOperacao())) {
 				
 				this.validarAndamnetoFechamentoDiario();
 			}

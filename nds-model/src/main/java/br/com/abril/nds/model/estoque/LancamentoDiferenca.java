@@ -48,6 +48,12 @@ public class LancamentoDiferenca implements Serializable {
 	@OneToOne(optional = true)
 	@JoinColumn(name = "MOVIMENTO_ESTOQUE_COTA_ID")
 	private MovimentoEstoqueCota movimentoEstoqueCota;
+	
+	/**
+	 * Motivo do status de aprovação
+	 */
+	@Column(name = "MOTIVO", nullable = true)
+	private String motivo;
 
 	public Long getId() {
 		return id;
@@ -96,4 +102,20 @@ public class LancamentoDiferenca implements Serializable {
 	public void setMovimentoEstoqueCota(MovimentoEstoqueCota movimentoEstoqueCota) {
 		this.movimentoEstoqueCota = movimentoEstoqueCota;
 	}
+
+    /**
+     * @return the motivo
+     */
+    public String getMotivo() {
+        return motivo;
+    }
+
+    /**
+     * @param motivo the motivo to set
+     */
+    public void setMotivo(String motivo) {
+        this.motivo = motivo;
+    }
+	
+	
 }

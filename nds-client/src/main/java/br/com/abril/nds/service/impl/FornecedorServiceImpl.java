@@ -685,6 +685,14 @@ public class FornecedorServiceImpl implements FornecedorService {
 		
 		return fornecedorRepository.obterFornecedorPorNomeFantasia(nomeFantasia);
 	}
-	
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional
+	public Fornecedor obterPorId(Long idFornecedor) {
+		return this.fornecedorRepository.buscarPorId(idFornecedor);
+	}
 }
 

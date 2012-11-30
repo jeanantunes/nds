@@ -12,8 +12,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import javax.swing.text.html.parser.DTD;
-
 import junit.framework.Assert;
 
 import org.junit.Before;
@@ -374,7 +372,6 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 				TipoLancamentoParcial.PARCIAL,
 				1);
 
-
 		Estudo estudo2 = Fixture.estudo(BigInteger.valueOf(180),
 				Fixture.criarData(12, Calendar.MARCH, 2012), infoExame3);
 
@@ -547,7 +544,7 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 	}
 
 	@Test
-	public void obterLancamentosNaoExpedidosPagincaoQntPacotePadrão() {
+	public void obterLancamentosNaoExpedidosPagincaoQntPacotePadrao() {
 		PaginacaoVO paginacao = new PaginacaoVO();
 		paginacao.setSortColumn(SortColumn.QTDE_PACOTE_PADRAO.getProperty());
 		paginacao.setQtdResultadosPorPagina(1);

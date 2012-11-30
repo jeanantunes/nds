@@ -194,6 +194,7 @@ public class LancamentoServiceImpl implements LancamentoService {
 	}
 
 	@Override
+	@Transactional
 	public Lancamento obterPorId(Long idLancamento) {
 		return lancamentoRepository.buscarPorId(idLancamento);
 	}
