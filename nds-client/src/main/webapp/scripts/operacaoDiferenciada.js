@@ -48,12 +48,12 @@ var OperacaoDiferenciadaController = $.extend(true, {
 	editarPorTipo : function(result) {
 		
 		if(OperacaoDiferenciadaController.grupoSelecionado.tipoGrupo == 'TIPO_COTA') {
-			$('#radioTipoCota', this.workspace).prop('checked', true);
-			$('#comboTipoCota', this.workspace).val(OperacaoDiferenciadaController.grupoSelecionado.tipoCota);
+			$('#radioTipoCota', OperacaoDiferenciadaController.workspace).prop('checked', true);
+			$('#comboTipoCota', OperacaoDiferenciadaController.workspace).val(OperacaoDiferenciadaController.grupoSelecionado.tipoCota);
 			OperacaoDiferenciadaController.carregarTipoCota();
 			
 		} else if (OperacaoDiferenciadaController.grupoSelecionado.tipoGrupo == 'MUNICIPIO') {
-			$('#radioMunicipios', this.workspace).prop('checked', true);
+			$('#radioMunicipios', OperacaoDiferenciadaController.workspace).prop('checked', true);
 			OperacaoDiferenciadaController.carregarMunicipios();
 		}
 		OperacaoDiferenciadaController.dialogDetalhesGrupo();
@@ -62,8 +62,8 @@ var OperacaoDiferenciadaController = $.extend(true, {
 	salvarGrupo : function() {
 		
 		if( this.grupoSelecionado ) {
-			$('#nomeDiferenca').val(this.grupoSelecionado.nome);
-			$('#diaSemana').val(this.grupoSelecionado.diasSemana);
+			$('#nomeDiferenca', OperacaoDiferenciadaController.workspace).val(this.grupoSelecionado.nome);
+			$('#diaSemana', OperacaoDiferenciadaController.workspace).val(this.grupoSelecionado.diasSemana);
 		}
 		
 		OperacaoDiferenciadaController.dialogConfirmarGrupo();
@@ -78,10 +78,10 @@ var OperacaoDiferenciadaController = $.extend(true, {
 	
 	carregarMunicipios : function() {
 				
-		$('.selecionarMunicipio', this.workspace).show();
-		$('.selecionarCotas', this.workspace).hide();
+		$('.selecionarMunicipio', OperacaoDiferenciadaController.workspace).show();
+		$('.selecionarCotas', OperacaoDiferenciadaController.workspace).hide();
 		
-		$('[name=selecao]').attr('name','selecaoInativo');
+		$('[name=selecao]', OperacaoDiferenciadaController.workspace).attr('name','selecaoInativo');
 
 		var data = [];
 		
@@ -89,15 +89,15 @@ var OperacaoDiferenciadaController = $.extend(true, {
 			data.push({name:'idGrupo',		value: OperacaoDiferenciadaController.grupoSelecionado.idGrupo });
 		}
 		
-		$(".selMunicipiosGrid", this.workspace).flexOptions({ params:data });		
-		$(".selMunicipiosGrid", this.workspace).flexReload();
+		$(".selMunicipiosGrid", OperacaoDiferenciadaController.workspace).flexOptions({ params:data });		
+		$(".selMunicipiosGrid", OperacaoDiferenciadaController.workspace).flexReload();
 	},
 	
 	selecionarPorTipoCota : function() {
-		$('#comboTipoCota', this.workspace).val("");
-		$('#comboTipoCota', this.workspace).show();
-		$('.selecionarMunicipio', this.workspace).hide();
-		$('#selectCota', this.workspace).hide();
+		$('#comboTipoCota', OperacaoDiferenciadaController.workspace).val("");
+		$('#comboTipoCota', OperacaoDiferenciadaController.workspace).show();
+		$('.selecionarMunicipio', OperacaoDiferenciadaController.workspace).hide();
+		$('#selectCota', OperacaoDiferenciadaController.workspace).hide();
 	},
 	
 	selecionarPorMunicipio : function() {
@@ -106,8 +106,8 @@ var OperacaoDiferenciadaController = $.extend(true, {
 	
 	carregarTipoCota : function() {
 				
-		$('.selecionarCotas', this.workspace).show();
-		$('.selecionarMunicipio', this.workspace).hide();
+		$('.selecionarCotas', OperacaoDiferenciadaController.workspace).show();
+		$('.selecionarMunicipio', OperacaoDiferenciadaController.workspace).hide();
 		
 		$('[name=selecao]').attr('name','selecaoInativo');
 		
@@ -117,23 +117,23 @@ var OperacaoDiferenciadaController = $.extend(true, {
 			data.push({name:'idGrupo',		value: OperacaoDiferenciadaController.grupoSelecionado.idGrupo });
 		}
 		
-		data.push({name:'tipoCota',		value: $('#comboTipoCota', this.workspace).val() });
+		data.push({name:'tipoCota',		value: $('#comboTipoCota', OperacaoDiferenciadaController.workspace).val() });
 		
-		$(".selCotasGrid", this.workspace).flexOptions({ params:data });		
-		$(".selCotasGrid", this.workspace).flexReload();
+		$(".selCotasGrid", OperacaoDiferenciadaController.workspace).flexOptions({ params:data });		
+		$(".selCotasGrid", OperacaoDiferenciadaController.workspace).flexReload();
 	},
 	
 	novoGrupo : function() {
 		
 		this.grupoSelecionado = null;
 		
-		$('#comboTipoCota', this.workspace).hide();
-		$('#radioTipoCota', this.workspace).prop('checked', false);
-		$('#radioMunicipios', this.workspace).prop('checked', false);
-		$('#comboTipoCota', this.workspace).val('');
+		$('#comboTipoCota', OperacaoDiferenciadaController.workspace).hide();
+		$('#radioTipoCota', OperacaoDiferenciadaController.workspace).prop('checked', false);
+		$('#radioMunicipios', OperacaoDiferenciadaController.workspace).prop('checked', false);
+		$('#comboTipoCota', OperacaoDiferenciadaController.workspace).val('');
 		
-		$('.selecionarCotas', this.workspace).hide();
-		$('.selecionarMunicipio', this.workspace).hide();
+		$('.selecionarCotas', OperacaoDiferenciadaController.workspace).hide();
+		$('.selecionarMunicipio', OperacaoDiferenciadaController.workspace).hide();
 		
 		this.dialogDetalhesGrupo();
 	},
@@ -146,11 +146,11 @@ var OperacaoDiferenciadaController = $.extend(true, {
 		$.postJSON(contextPath + '/administracao/parametrosDistribuidor/excluirGrupo',
 				data,
 				function(result){										
-					$(".gruposGrid", this.workspace).flexReload();
+					$(".gruposGrid", OperacaoDiferenciadaController.workspace).flexReload();
 					exibirMensagem('SUCCESS', ['Grupo excluido com sucesso.']);										
 				});		
 		
-		$( "#dialog-confirm-grupo" , this.workspace).dialog( "close" );
+		$( "#dialog-confirm-grupo" , OperacaoDiferenciadaController.workspace).dialog( "close" );
 		
 	},
 
@@ -158,9 +158,9 @@ var OperacaoDiferenciadaController = $.extend(true, {
 
 		var data = [];
 		
-		data.push({name: "nomeDiferenca", value: $("#nomeDiferenca", this.workspace).val()});
+		data.push({name: "nomeDiferenca", value: $("#nomeDiferenca", OperacaoDiferenciadaController.workspace).val()});
 		
-		$.each($("#diaSemana", this.workspace).val(), 
+		$.each($("#diaSemana", OperacaoDiferenciadaController.workspace).val(), 
 			function(index, val) {
 				
 				data.push({name: "diasSemana", value: val});
@@ -170,7 +170,7 @@ var OperacaoDiferenciadaController = $.extend(true, {
 		$.postJSON(contextPath + "/administracao/parametrosDistribuidor/cadastrarOperacaoDiferenciada", data,
 			function(result){
 				
-				$( this, this.workspace ).dialog( "close" );
+				$( this, OperacaoDiferenciadaController.workspace ).dialog( "close" );
 			}, null, true
 		);
 	},
@@ -191,7 +191,7 @@ var OperacaoDiferenciadaController = $.extend(true, {
 	adicionarSelecaoMunicipio : function(id, check) {
 		
 		if(check.checked==false) {
-			$("#selecionarTodosID").attr("checked",false);
+			$("#selecionarTodosID", OperacaoDiferenciadaController.workspace).attr("checked",false);
 		}
 		
 		var dados = [];		
@@ -206,7 +206,7 @@ var OperacaoDiferenciadaController = $.extend(true, {
 	adicionarSelecaoCota : function(id, check) {
 		
 		if(check.checked==false) {
-			$("#selecionarTodosID").attr("checked",false);
+			$("#selecionarTodosID", OperacaoDiferenciadaController.workspace).attr("checked",false);
 		}
 		
 		var dados = [];		
@@ -221,7 +221,7 @@ var OperacaoDiferenciadaController = $.extend(true, {
 		
 		var dados = [];
 		
-		$.each( $('[name=selecao]'), function(index, item) { 
+		$.each( $('[name=selecao]', OperacaoDiferenciadaController.workspace), function(index, item) { 
 		    $(item).attr('checked', elementoCheck.checked);
 		    dados.push({ name : 'selecionados[' + index + ']', value: $(item).attr('id') });
 		});
@@ -237,7 +237,7 @@ var OperacaoDiferenciadaController = $.extend(true, {
 		
 		var dados = [];
 		
-		$.each( $('[name=selecao]'), function(index, item) { 
+		$.each( $('[name=selecao]', OperacaoDiferenciadaController.workspace), function(index, item) { 
 		    $(item).attr('checked', elementoCheck.checked);
 		    dados.push({ name : 'selecionados[' + index + ']', value: $(item).attr('idcota') });
 		});
@@ -269,7 +269,7 @@ var OperacaoDiferenciadaController = $.extend(true, {
 	 */
 	set : function(campo,value) {
 				
-		var elemento = $("#" + campo, this.workspace);
+		var elemento = $("#" + campo, OperacaoDiferenciadaController.workspace);
 		
 		if(elemento.attr('type') == 'checkbox') {
 			
@@ -290,7 +290,7 @@ var OperacaoDiferenciadaController = $.extend(true, {
 	 */
 	get : function(campo) {
 		
-		var elemento = $("#" + campo, this.workspace);
+		var elemento = $("#" + campo, OperacaoDiferenciadaController.workspace);
 		
 		if(elemento.attr('type') == 'checkbox') {
 			return (elemento.attr('checked') == 'checked') ;
@@ -311,12 +311,12 @@ var OperacaoDiferenciadaController = $.extend(true, {
 				"Confirmar": function() {
 					var data = [];
 					
-					data.push({name: "nome", value: $("#nomeDiferenca", this.workspace ).val()});
+					data.push({name: "nome", value: $("#nomeDiferenca", OperacaoDiferenciadaController.workspace ).val()});
 					
 					if(OperacaoDiferenciadaController.grupoSelecionado)
 						data.push({name: "idGrupo", value: OperacaoDiferenciadaController.grupoSelecionado.idGrupo});
 					
-					$.each($("#diaSemana", this.workspace ).val(), 
+					$.each($("#diaSemana", OperacaoDiferenciadaController.workspace ).val(), 
 						function(index, val) {							
 							data.push({name: "diasSemana", value: val});
 						}
@@ -337,13 +337,13 @@ var OperacaoDiferenciadaController = $.extend(true, {
 					$( this ).dialog( "close" );
 				}
 			},
-			form: $("#dialog-confirm-grupo", this.workspace).parents("form")
+			form: $("#dialog-confirm-grupo", OperacaoDiferenciadaController.workspace).parents("form")
 		});
 	},
 	
 	dialogDetalhesGrupo : function() {
 		
-		$( "#dialog-novo-grupo", this.workspace ).dialog({
+		$( "#dialog-novo-grupo", OperacaoDiferenciadaController.workspace ).dialog({
 			resizable: false,
 			height:470,
 			width:750,
@@ -356,14 +356,14 @@ var OperacaoDiferenciadaController = $.extend(true, {
 					$( this ).dialog( "close" );
 				}
 			},
-			form: $("#dialog-novo-grupo", this.workspace).parents("form")
+			form: $("#dialog-novo-grupo", OperacaoDiferenciadaController.workspace).parents("form")
 		});
 
 	},
 
 	dialogExcluirGrupo : function(index) {
 		
-		$( "#dialog-confirm-grupo", this.workspace ).dialog({
+		$( "#dialog-confirm-grupo", OperacaoDiferenciadaController.workspace ).dialog({
 			resizable: false,
 			height:'auto',
 			width:400,
@@ -373,15 +373,15 @@ var OperacaoDiferenciadaController = $.extend(true, {
 					OperacaoDiferenciadaController.excluirGrupo(index);				
 				},
 				"Cancelar": function() {
-					$( this, this.workspace ).dialog( "close" );
+					$( this, OperacaoDiferenciadaController.workspace ).dialog( "close" );
 				}
 			},
-			form: $("#dialog-confirm-grupo", this.workspace).parents("form")
+			form: $("#dialog-confirm-grupo", OperacaoDiferenciadaController.workspace).parents("form")
 		});
 	},
 	
 	inicializarGrids : function() {
-		$(".selMunicipiosGrid", this.workspace).flexigrid({
+		$(".selMunicipiosGrid", OperacaoDiferenciadaController.workspace).flexigrid({
 			autoload : false,
 			url : contextPath + '/administracao/parametrosDistribuidor/obterMunicipios',
 			dataType : 'json',
@@ -415,7 +415,7 @@ var OperacaoDiferenciadaController = $.extend(true, {
 		});
 	
 	
-	$(".selCotasGrid", this.workspace).flexigrid({
+	$(".selCotasGrid", OperacaoDiferenciadaController.workspace).flexigrid({
 			autoload : false,
 			url : contextPath + '/administracao/parametrosDistribuidor/obterCotas',
 			dataType : 'json',
@@ -461,7 +461,7 @@ var OperacaoDiferenciadaController = $.extend(true, {
 		});
 	
 
-		$(".gruposGrid", this.workspace).flexigrid({
+		$(".gruposGrid", OperacaoDiferenciadaController.workspace).flexigrid({
 			autoload : true,
 			url : contextPath + '/administracao/parametrosDistribuidor/obterGrupos',
 			dataType : 'json',

@@ -588,7 +588,7 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		if ("codProduto".equals(coluna))
 			orderBy += " produto.codigo ";
 		else if("nomeProduto".equals(coluna))
-			orderBy += " produto.descricao ";
+			orderBy += " produto.nome ";
 		else if("edProduto".equals(coluna))
 			orderBy += " produtoEdicao.numeroEdicao ";
 		else if("pctPadrao".equals(coluna))

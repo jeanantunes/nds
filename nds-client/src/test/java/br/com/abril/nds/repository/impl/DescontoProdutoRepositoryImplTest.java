@@ -300,16 +300,53 @@ public class DescontoProdutoRepositoryImplTest extends AbstractRepositoryImplTes
 	}
 	
 	@Test
+	public void obterTipoDescontoProdutoPorCotaNulo() {
+		
+		List<TipoDescontoProdutoDTO> descontosProduto = 
+				this.descontoProdutoRepository.obterTiposDescontoProdutoPorCota(null, null, null);
+
+		Assert.assertNotNull(descontosProduto);
+	}
+	
+	@Test
+	public void obterTipoDescontoProdutoPorCotaSortOrderAsc() {
+		
+		List<TipoDescontoProdutoDTO> descontosProduto = 
+				this.descontoProdutoRepository.obterTiposDescontoProdutoPorCota(null, "asc", "dataAlteracao");
+
+		Assert.assertNotNull(descontosProduto);
+	}
+	
+	@Test
+	public void obterTipoDescontoProdutoPorCotaPorIdCota() {
+		
+		List<TipoDescontoProdutoDTO> descontosProduto = 
+				this.descontoProdutoRepository.obterTiposDescontoProdutoPorCota(1L, null, null);
+
+		Assert.assertNotNull(descontosProduto);
+	}
+	
+	@SuppressWarnings("unused")
+	@Test
 	public void testObterUltimoDescontoValido(){
 		
 		DescontoProduto desconto  = descontoProdutoRepository.buscarUltimoDescontoValido(cota,produtoEdicaoCapricho);
 		
 	}
 	
+	@SuppressWarnings("unused")
 	@Test
 	public void testObterUltimoDescontoValidoDoUltimo(){
 		
 		DescontoProduto desconto  = descontoProdutoRepository.buscarUltimoDescontoValido(descontoProdutoVeja.getId(),cota,produtoEdicaoCapricho);
+		
+	}
+	
+	@SuppressWarnings("unused")
+	@Test
+	public void testObterUltimoDescontoValidoDoUltimoIdDescontoNulo(){
+		
+		DescontoProduto desconto  = descontoProdutoRepository.buscarUltimoDescontoValido(null,cota,produtoEdicaoCapricho);
 		
 	}
 }

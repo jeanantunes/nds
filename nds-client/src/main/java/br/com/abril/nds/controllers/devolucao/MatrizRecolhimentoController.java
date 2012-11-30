@@ -30,10 +30,14 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.service.DistribuicaoFornecedorService;
 import br.com.abril.nds.service.FornecedorService;
+import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.RecolhimentoService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.Constantes;
@@ -77,6 +81,12 @@ public class MatrizRecolhimentoController {
 	
 	@Autowired
 	private DistribuidorService distribuidorService;
+	
+	@Autowired
+	private DistribuicaoFornecedorService distribuicaoFornecedorService;
+	
+	@Autowired
+	private LancamentoService lancamentoService;
 	
 	private static final String ATRIBUTO_SESSAO_FILTRO_PESQUISA_BALANCEAMENTO_RECOLHIMENTO = "filtroPesquisaBalanceamentoRecolhimento";
 	
@@ -790,7 +800,9 @@ public class MatrizRecolhimentoController {
 			
 			
 			produtoRecolhimentoVO.setPrecoDesconto(precoDesconto);
-
+			
+			produtoRecolhimentoVO.setIdFornecedor(produtoRecolhimentoDTO.getIdFornecedor());
+			
 			produtoRecolhimentoVO.setNomeFornecedor(produtoRecolhimentoDTO.getNomeFornecedor());
 			
 			produtoRecolhimentoVO.setNomeEditor(produtoRecolhimentoDTO.getNomeEditor());
@@ -877,6 +889,8 @@ public class MatrizRecolhimentoController {
 	
 		ProdutoRecolhimentoFormatadoVO produtoRecolhimentoFormatado =
 			new ProdutoRecolhimentoFormatadoVO();
+		
+		produtoRecolhimentoFormatado.setIdFornecedor(produtoRecolhimento.getIdFornecedor());
 		
 		produtoRecolhimentoFormatado.setIdLancamento(produtoRecolhimento.getIdLancamento());		
 			
@@ -1108,6 +1122,35 @@ public class MatrizRecolhimentoController {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING,
 				"É necessário selecionar ao menos um produto para realizar a reprogramação!");
+		}
+
+		for (ProdutoRecolhimentoFormatadoVO produto : listaProdutoRecolhimento) {
+
+			Fornecedor fornecedor = this.fornecedorService.obterPorId(produto.getIdFornecedor());
+			
+			List<Integer> diasRecolhimentoFornecedor = 
+					this.distribuicaoFornecedorService.obterCodigosDiaDistribuicaoFornecedor(
+							fornecedor.getId(), OperacaoDistribuidor.RECOLHIMENTO);
+
+			Date novaData = DateUtil.parseDataPTBR(produto.getNovaData());
+			
+			int codigoDiaCorrente = DateUtil.obterDiaDaSemana(novaData);
+
+			if (!diasRecolhimentoFornecedor.contains(codigoDiaCorrente)) {
+
+				throw new ValidacaoException(
+					TipoMensagem.WARNING, 
+					"Não é permitido a reprogramação, pois o parametro de recolhimento não está configurado para esta e fornecedor."
+				);
+			}
+
+			Lancamento lancamento = this.lancamentoService.obterPorId(Long.parseLong(produto.getIdLancamento()));
+			
+			if (!(novaData.compareTo(lancamento.getDataLancamentoDistribuidor()) > 0)) {
+
+				throw new ValidacaoException(TipoMensagem.WARNING,
+						"A data de recolhimento deve ser maior que a data de lançamento.");
+			}
 		}
 	}
 	

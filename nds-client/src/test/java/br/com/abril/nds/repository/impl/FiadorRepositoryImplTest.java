@@ -329,7 +329,12 @@ public class FiadorRepositoryImplTest extends AbstractRepositoryImplTest{
 		
 	}
 	
-	
+	@Test
+	public void obterFiadorPorNome(){
+		List<Pessoa> lista = fiadorRepository.obterFiadorPorNome("testeNome");
+		
+		Assert.assertNotNull(lista);
+	}
 	
 	
 	
