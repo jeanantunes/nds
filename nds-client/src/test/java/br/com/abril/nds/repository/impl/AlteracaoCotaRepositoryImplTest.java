@@ -72,21 +72,6 @@ public class AlteracaoCotaRepositoryImplTest extends AbstractRepositoryImplTest 
 
 	}
 
-	@Test
-	public void testarPesquisarAlteracaoCotaIdBairro() {
-
-		PaginacaoVO paginacao = new PaginacaoVO();
-
-		FiltroAlteracaoCotaDTO filtroAlteracaoCotaDTO = new FiltroAlteracaoCotaDTO();
-		filtroAlteracaoCotaDTO.setPaginacao(paginacao);
-		filtroAlteracaoCotaDTO.setIdBairro("1");
-
-		List<ConsultaAlteracaoCotaDTO> pesquisarAlteracaoCota = this.alteracaoCotaRepository
-				.pesquisarAlteracaoCota(filtroAlteracaoCotaDTO);
-
-		Assert.assertNotNull(pesquisarAlteracaoCota);
-
-	}
 
 	@Test
 	public void testarPesquisarAlteracaoCotaIdMunicipio() {
@@ -195,6 +180,37 @@ public class AlteracaoCotaRepositoryImplTest extends AbstractRepositoryImplTest 
 
 		Assert.assertNotNull(pesquisarAlteracaoCota);
 
+	}
+	
+	@Test
+	public void pesquisarAlteracaoCotaFornecedor(){
+		FiltroAlteracaoCotaDTO dto = new FiltroAlteracaoCotaDTO();
+		List<ConsultaAlteracaoCotaDTO> lista = alteracaoCotaRepository.pesquisarAlteracaoCotaFornecedor(dto);
+		Assert.assertNotNull(lista);
+	}
+	
+	@Test
+	public void pesquisarAlteracaoCotaFornecedorPorNumeroCota(){
+		FiltroAlteracaoCotaDTO dto = new FiltroAlteracaoCotaDTO();
+		dto.setNumeroCota(1);
+		List<ConsultaAlteracaoCotaDTO> lista = alteracaoCotaRepository.pesquisarAlteracaoCotaFornecedor(dto);
+		Assert.assertNotNull(lista);
+	}
+	
+	@Test
+	public void pesquisarAlteracaoCotaFornecedorPorIdFornecedor(){
+		FiltroAlteracaoCotaDTO dto = new FiltroAlteracaoCotaDTO();
+		dto.setIdFornecedor(1L);
+		List<ConsultaAlteracaoCotaDTO> lista = alteracaoCotaRepository.pesquisarAlteracaoCotaFornecedor(dto);
+		Assert.assertNotNull(lista);
+	}
+	
+	@Test
+	public void pesquisarAlteracaoCotaFornecedorPorTipoDesconto(){
+		FiltroAlteracaoCotaDTO dto = new FiltroAlteracaoCotaDTO();
+		dto.setTipoDesconto(TipoDesconto.PRODUTO);
+		List<ConsultaAlteracaoCotaDTO> lista = alteracaoCotaRepository.pesquisarAlteracaoCotaFornecedor(dto);
+		Assert.assertNotNull(lista);
 	}
 
 }

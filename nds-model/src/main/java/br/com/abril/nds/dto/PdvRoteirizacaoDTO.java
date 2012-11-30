@@ -3,9 +3,10 @@ package br.com.abril.nds.dto;
 import java.io.Serializable;
 
 import br.com.abril.nds.model.cadastro.Endereco;
+import br.com.abril.nds.util.Ordenavel;
 import br.com.abril.nds.util.Util;
 
-public class PdvRoteirizacaoDTO implements Serializable {
+public class PdvRoteirizacaoDTO implements Serializable, Ordenavel {
 
 	private static final long serialVersionUID = 1L;
 	
