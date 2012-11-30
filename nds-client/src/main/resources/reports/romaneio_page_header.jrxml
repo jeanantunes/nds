@@ -25,13 +25,14 @@
 		<band height="115">
 			<frame>
 				<reportElement uuid="762fda1c-6f41-4ab6-9bcc-221138fa3b4f" x="0" y="0" width="802" height="75"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
 				<elementGroup>
-					<rectangle>
-						<reportElement uuid="dc79b805-5be8-4f61-9932-5a9e47369f14" mode="Transparent" x="0" y="0" width="802" height="75"/>
-						<graphicElement>
-							<pen lineWidth="0.5"/>
-						</graphicElement>
-					</rectangle>
 					<image>
 						<reportElement uuid="674aca91-3b1d-47e2-bf5d-5f6b2b0b3537" x="3" y="1" width="129" height="73"/>
 						<imageExpression><![CDATA[$P{SUBREPORT_DIR} + "logo_2.jpg"]]></imageExpression>
@@ -60,13 +61,14 @@ LOGÍSTICA E DISTRIBUIÇÃO]]></text>
 			</frame>
 			<frame>
 				<reportElement uuid="3231a2f3-dbf8-4008-833a-6dfca8013f47" x="0" y="80" width="802" height="35"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
 				<elementGroup>
-					<rectangle>
-						<reportElement uuid="7b0be5fd-8c5c-46e4-9e15-23774200e5f2" mode="Transparent" x="0" y="0" width="802" height="35"/>
-						<graphicElement>
-							<pen lineWidth="0.5"/>
-						</graphicElement>
-					</rectangle>
 					<staticText>
 						<reportElement uuid="f7dc6c59-d373-4a86-b2b9-89ba59ef9a65" x="0" y="0" width="802" height="20"/>
 						<textElement textAlignment="Center" verticalAlignment="Middle"/>
