@@ -243,8 +243,6 @@ var geracaoNotaEnvioController = $.extend({
 			
 			var _this = this;
 			
-			var gridCotasAusentes = $("#geracaoNotaEnvio-flexigrid-cotasAusentes");
-			
 			$.postJSON(this.path + 'hasCotasAusentes', null, function(data) {
 				
 				var tipoMensagem = data.tipoMensagem;
@@ -253,12 +251,8 @@ var geracaoNotaEnvioController = $.extend({
 				if (tipoMensagem && listaMensagens) {
 					exibirMensagemDialog(tipoMensagem, listaMensagens, "");
 				}
-				if (data.cotasAusentes) {
-					$('#geracaoNotaEnvio-dialog-cotasAusentes').dialog("open");
-					_this.gridReaload(gridCotasAusentes, 'buscarCotasAusentes');
-				} else {
-					_this.gerarNotaEnvio();
-				}
+				
+				_this.gerarNotaEnvio();
 				
 			});
 		},
@@ -395,6 +389,13 @@ var geracaoNotaEnvioController = $.extend({
 					}else {
 						data.rows[index].cell["notaImpressa"] = "";
 					}
+					
+					if(data.rows[index].cell["cotaSuspensa"]) {
+						data.rows[index].cell["cotaSuspensa"] = '<a href="javascript:;" ><img src="' + contextPath + '/images/ico_suspenso.gif" border="0" />';
+			
+					}else {
+						data.rows[index].cell["cotaSuspensa"] = "";
+					}
 				}
 				return data;
 			}
@@ -471,24 +472,30 @@ var geracaoNotaEnvioController = $.extend({
 			display : 'Total Exemplares',
 			name : 'exemplares',
 			width : 110,
-			sortable : true,
+			sortable : false,
 			align : 'center',
 		}, {
 			display : 'Total R$',
 			name : 'total',
-			width : 120,
-			sortable : true,
+			width : 70,
+			sortable : false,
 			align : 'right',
 		}, {
 			display : 'Total Desconto R$',
 			name : 'totalDesconto',
 			width : 120,
-			sortable : true,
+			sortable : false,
 			align : 'right',
 		}, {
 			display : 'Status',
 			name : 'notaImpressa',
-			width : 80,
+			width : 50,
+			sortable : false,
+			align : 'center',
+		}, {
+			display : 'Suspensa',
+			name : 'cotaSuspensa',
+			width : 60,
 			sortable : true,
 			align : 'center',
 		}],

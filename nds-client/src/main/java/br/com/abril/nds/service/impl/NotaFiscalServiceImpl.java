@@ -604,7 +604,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		}
 		identificacaoEmitente
 		.setDocumento(distribuidor.getJuridica().getCnpj());
-		identificacaoEmitente.setInscricaoEstual(distribuidor.getJuridica()
+		identificacaoEmitente.setInscricaoEstadual(distribuidor.getJuridica()
 				.getInscricaoEstadual());
 		identificacaoEmitente.setInscricaoMunicipal(distribuidor.getJuridica()
 				.getInscricaoMunicipal());
@@ -681,7 +681,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 
 		if (cota.getPessoa() instanceof PessoaJuridica) {
 			PessoaJuridica pessoaJuridica = (PessoaJuridica) cota.getPessoa();
-			destinatario.setInscricaoEstual(pessoaJuridica
+			destinatario.setInscricaoEstadual(pessoaJuridica
 					.getInscricaoEstadual());
 			destinatario.setNomeFantasia(pessoaJuridica.getNomeFantasia());
 		}
@@ -733,7 +733,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 			throw new ValidacaoException(TipoMensagem.ERROR,
 					"Erro ao adicionar o endereço do Emitente!");
 		}
-		destinatario.setInscricaoEstual(fornecedor.getJuridica().getInscricaoEstadual());
+		destinatario.setInscricaoEstadual(fornecedor.getJuridica().getInscricaoEstadual());
 		destinatario.setNomeFantasia(fornecedor.getJuridica().getNomeFantasia());
 
 		destinatario.setNome(fornecedor.getJuridica().getNome());

@@ -73,8 +73,11 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 		
 		TipoNotaFiscal tipoNotaFiscal = this.tipoNotaFiscalRepository.buscarPorId(idTipoNotaFiscal);
 		
+		List<SituacaoCadastro> situacoesCadastro = new ArrayList<SituacaoCadastro>();
+		situacoesCadastro.add(situacaoCadastro);
+		
 		Set<Long> idsCotasDestinatarias =
-				this.cotaRepository.obterIdCotasEntre(intervalorCota, intervaloBox, situacaoCadastro, idRoteiro, idRota);
+				this.cotaRepository.obterIdCotasEntre(intervalorCota, intervaloBox, situacoesCadastro, idRoteiro, idRota, null, null, null, null);
 		
 		ConsultaLoteNotaFiscalDTO dadosConsultaLoteNotaFiscal = new ConsultaLoteNotaFiscalDTO();
 		
@@ -119,7 +122,7 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 			List<Long> listIdFornecedor, List<Long> listIdProduto,
 			Long idTipoNotaFiscal, Date dataEmissao, List<Long> idCotasSuspensas, Condicao condicao) throws FileNotFoundException, IOException {
 		
-		Set<Long> listaIdCota = this.cotaRepository.obterIdCotasEntre(intervalorCota,intervaloBox, null, null, null);
+		Set<Long> listaIdCota = this.cotaRepository.obterIdCotasEntre(intervalorCota,intervaloBox, null, null, null, null, null, null, null);
 		
 		TipoNotaFiscal tipoNotaFiscal = this.tipoNotaFiscalRepository.buscarPorId(idTipoNotaFiscal);
 		
