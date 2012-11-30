@@ -960,5 +960,14 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 			throw new ValidacaoException(TipoMensagem.ERROR, e.getMessage());
 		}
 	}
+
+	@Override
+	@Transactional
+	public void setLockBancoDeDados(boolean lockBancoDeDados) {
+		Distribuidor distribuidor = this.distribuidorRepository.obter();
+		
+		distribuidor.setFechamentoDiarioEmAndamento(lockBancoDeDados);
+		
+	}
   
 }

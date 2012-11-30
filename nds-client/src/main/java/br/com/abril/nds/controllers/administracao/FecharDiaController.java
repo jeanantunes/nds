@@ -130,7 +130,11 @@ public class FecharDiaController {
 	@SuppressWarnings("static-access")
 	@Post
 	public void inicializarValidacoes(){		
+		
+		this.fecharDiaService.setLockBancoDeDados(true);
+		
 		FecharDiaDTO dto = new FecharDiaDTO();
+		
 		dto.setBaixaBancaria(this.fecharDiaService.existeCobrancaParaFecharDia(distribuidor.getDataOperacao()));
 		dto.setGeracaoDeCobranca(this.fecharDiaService.existeGeracaoDeCobranca(distribuidor.getDataOperacao()));
 		dto.setRecebimentoFisico(this.fecharDiaService.existeNotaFiscalSemRecebimentoFisico(distribuidor.getDataOperacao()));
@@ -597,6 +601,8 @@ public class FecharDiaController {
 		                Constantes.PARAM_MSGS).recursive().serialize();
 		        
 		    }
+		    
+		    this.fecharDiaService.setLockBancoDeDados(false);
 		    
 		} catch (RuntimeException ex) {
 		    clearFechamentoDiarioDTO();

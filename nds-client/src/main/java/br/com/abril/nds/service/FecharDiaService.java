@@ -169,5 +169,14 @@ public interface FecharDiaService {
 	 * @return DTO com as informações do fechamento diário
 	 */
 	FechamentoDiarioDTO processarFechamentoDoDia(Usuario usuario, Date dataFechamento);
+	
+	/**
+	 * Efetua o Lock/unlock do banco de dados. Usado para travar o banco para insert/update/delete na fechar dia.
+	 * 
+	 * @param lockBancoDeDados 
+	 * 
+	 * @return void
+	 */
+	void setLockBancoDeDados(boolean lockBancoDeDados);
  
 }
