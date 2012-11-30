@@ -904,7 +904,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 	private List<ReparteFecharDiaDTO> incluirLancamentosReparte(FechamentoDiario fechamento,FechamentoDiarioConsolidadoReparte consolidadoReparte)
 			throws FechamentoDiarioException {
 		
-		List<ReparteFecharDiaDTO> listaReparte = resumoReparteFecharDiaService.obterResumoReparte(fechamento.getDataFechamento());
+		List<ReparteFecharDiaDTO> listaReparte = resumoReparteFecharDiaService.obterResumoReparte(fechamento.getDataFechamento(), null);
 		
 	    if(listaReparte!= null && !listaReparte.isEmpty()){
 	    	
@@ -915,14 +915,14 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		    	ProdutoEdicao produtoEdicao = produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(item.getCodigo(), item.getNumeroEdicao());
 		    	
 		    	movimentoReparte.setProdutoEdicao(produtoEdicao);
-		    	movimentoReparte.setQuantidadeADistribuir(item.getQtdADistribuir().intValue());
-		    	movimentoReparte.setQuantidadeDiferenca(item.getQtdDiferenca().intValue());
-		    	movimentoReparte.setQuantidadeDistribuido(Util.nvl(item.getQtdDistribuido(),0).intValue());
-		    	movimentoReparte.setQuantidadeFaltaEM(Util.nvl(item.getQtdFaltas(),0).intValue());
-		    	movimentoReparte.setQuantidadeReparte(Util.nvl(item.getQtdReparte(),0).intValue());
-		    	movimentoReparte.setQuantidadeSobraDistribuido(item.getQtdSobraDiferenca().intValue());
-		    	movimentoReparte.setQuantidadeSobraEM(Util.nvl(item.getQtdSobras(),0).intValue());
-		    	movimentoReparte.setQuantidadeTranferencia(Util.nvl(item.getQtdTransferido(),0).intValue());
+		    	movimentoReparte.setQuantidadeADistribuir(item.getQtdeDistribuir().intValue());
+		    	movimentoReparte.setQuantidadeDiferenca(item.getQtdeDiferenca().intValue());
+		    	movimentoReparte.setQuantidadeDistribuido(Util.nvl(item.getQtdeDistribuido(),0).intValue());
+		    	movimentoReparte.setQuantidadeFaltaEM(Util.nvl(item.getQtdeFalta(),0).intValue());
+		    	movimentoReparte.setQuantidadeReparte(Util.nvl(item.getQtdeReparte(),0).intValue());
+		    	movimentoReparte.setQuantidadeSobraDistribuido(item.getQtdeSobraDistribuicao().intValue());
+		    	movimentoReparte.setQuantidadeSobraEM(Util.nvl(item.getQtdeSobra(),0).intValue());
+		    	movimentoReparte.setQuantidadeTranferencia(Util.nvl(item.getQtdeTransferencia(),0).intValue());
 		    	movimentoReparte.setFechamentoDiarioConsolidadoReparte(consolidadoReparte);
 		    	
 		    	fechamentoLancamentoReparteRepository.adicionar(movimentoReparte);

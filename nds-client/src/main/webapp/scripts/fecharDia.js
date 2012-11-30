@@ -98,73 +98,73 @@ var fecharDiaController =  $.extend(true, {
 				display : 'Código',
 				name : 'codigo',
 				width : 60,
-				sortable : true,
+				sortable : false,
 				align : 'left'
 			}, {
 				display : 'Produto',
 				name : 'nomeProduto',
 				width : 110,
-				sortable : true,
+				sortable : false,
 				align : 'left'
 			}, {
 				display : 'Edição',
 				name : 'numeroEdicao',
 				width : 60,
-				sortable : true,
+				sortable : false,
 				align : 'left'
 			}, {
 				display : 'Preço Capa R$',
 				name : 'precoVenda',
 				width : 60,
-				sortable : true,
+				sortable : false,
 				align : 'right'
 			}, {
 				display : 'Reparte',
-				name : 'qtdReparteFormatado',
+				name : 'qtdeReparte',
 				width : 50,
-				sortable : true,
+				sortable : false,
 				align : 'center'
 			}, {
 				display : 'Sobra em',
-				name : 'qtdSobrasFormatado',
+				name : 'qtdeSobra',
 				width : 50,
-				sortable : true,
+				sortable : false,
 				align : 'center'
 			}, {
 				display : 'Falta em',
-				name : 'qtdFaltasFormatado',
+				name : 'qtdeFalta',
 				width : 50,
-				sortable : true,
+				sortable : false,
 				align : 'center'
 			}, {
 				display : 'Transf.',
-				name : 'qtdTransferenciaFormatado',
+				name : 'qtdeTransferencia',
 				width : 50,
-				sortable : true,
+				sortable : false,
 				align : 'center'
 			}, {
 				display : 'A Distr',
-				name : 'qtdADistribuirFormatado',
+				name : 'qtdeDistribuir',
 				width : 50,
-				sortable : true,
+				sortable : false,
 				align : 'center'
 			}, {
 				display : 'Distribuido',
-				name : 'qtdDistribuidoFormatado',
+				name : 'qtdeDistribuido',
 				width : 50,
-				sortable : true,
+				sortable : false,
 				align : 'center'
 			}, {
 				display : 'Sobra Distr',
-				name : 'qtdDiferencaFormatado',
+				name : 'qtdeSobraDistribuicao',
 				width : 55,
-				sortable : true,
+				sortable : false,
 				align : 'center'
 			}, {
 				display : 'Dif.',
-				name : 'qtdDiferencaFormatado',
+				name : 'qtdeDiferenca',
 				width : 40,
-				sortable : true,
+				sortable : false,
 				align : 'center'
 			}],
 			sortname : "codigo",
