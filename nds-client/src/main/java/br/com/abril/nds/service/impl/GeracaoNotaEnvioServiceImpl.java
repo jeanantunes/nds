@@ -4,10 +4,14 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.MathContext;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.beanutils.BeanComparator;
+import org.apache.commons.collections.comparators.ComparableComparator;
+import org.apache.commons.collections.comparators.ReverseComparator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -94,8 +98,8 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 
 
 		Set<Long> idsCotasDestinatarias = this.cotaRepository
-				.obterIdCotasEntre(intervalorCota, intervaloBox,
-						situacaoCadastro, idRoteiro, idRota);
+				.obterIdsCotasComNotaEnvioEntre(intervalorCota, intervaloBox,
+						listIdFornecedor, situacaoCadastro, idRoteiro, idRota, sortname, sortorder, resultsPage, page);
 
 		List<ConsultaNotaEnvioDTO> listaCotaExemplares = new ArrayList<ConsultaNotaEnvioDTO>();
 
@@ -107,7 +111,10 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 
 			cotaExemplares.setIdCota(cota.getId());
 			cotaExemplares.setNomeCota(cota.getPessoa().getNome());
-			cotaExemplares.setNumeroCota(cota.getNumeroCota());			
+			cotaExemplares.setNumeroCota(cota.getNumeroCota());	
+			if(cota.getSituacaoCadastro().equals(SituacaoCadastro.SUSPENSO)) {
+				cotaExemplares.setCotaSuspensa(true);
+			}
 
 			List<MovimentoEstoqueCota> listaMovimentoEstoqueCota = obterItensNotaVenda(
 					distribuidor, idCota, intervaloDateMovimento, listIdFornecedor);
@@ -117,8 +124,31 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 				listaCotaExemplares.add(cotaExemplares);
 			}
 		}
-				
+		
+		if(sortname == null || "".equals(sortname)) 
+			sortname = "numeroCota";
+		
+		BeanComparator beanComparator = null;
+		if(sortorder != null && !sortorder.isEmpty() && "desc".equals(sortorder))
+			beanComparator = new BeanComparator(sortname, new ReverseComparator(new ComparableComparator()));
+		else 
+			beanComparator = new BeanComparator(sortname);
+		
+		Collections.sort(listaCotaExemplares, beanComparator);
+		
 		return listaCotaExemplares;
+	}
+	
+	@Override
+	@Transactional
+	public Integer buscaCotasNotasDeEnvioQtd(Intervalo<Integer> intervaloBox, Intervalo<Integer> intervalorCota,
+			Intervalo<Date> intervaloDateMovimento, List<Long> listIdFornecedor, SituacaoCadastro situacaoCadastro, Long idRoteiro,
+			Long idRota) {
+		
+		Set<Long> idsCotasDestinatarias = this.cotaRepository
+				.obterIdsCotasComNotaEnvioEntre(intervalorCota, intervaloBox,
+						null, situacaoCadastro, idRoteiro, idRota, null, null, null, null);
+		return idsCotasDestinatarias.size();
 	}
 
 	private List<MovimentoEstoqueCota> obterItensNotaVenda(Distribuidor distribuidor,
@@ -455,7 +485,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 		
 		Set<Long> listaIdCotas = this.cotaRepository
 				.obterIdCotasEntre(filtro.getIntervaloCota(), filtro.getIntervaloBox(),
-						SituacaoCadastro.ATIVO, filtro.getIdRoteiro(), filtro.getIdRota());
+						SituacaoCadastro.ATIVO, filtro.getIdRoteiro(), filtro.getIdRota(), null, null, null, null);
 		
 		if (idCotasSuspensasAusentes != null) {
 			listaIdCotas.addAll(idCotasSuspensasAusentes);
@@ -473,4 +503,5 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 		
 		return listaNotaEnvio;
 	}
+
 }

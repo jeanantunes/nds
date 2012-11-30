@@ -227,10 +227,32 @@ public interface CotaRepository extends Repository<Cota, Long> {
      *            TODO
      * @param situacao
      *            TODO
+     * @param sortName TODO
+     * @param sortOrder TODO
+     * @param maxResults TODO
+     * @param page TODO
      * @return ids das cotas
      */
     Set<Long> obterIdCotasEntre(Intervalo<Integer> intervaloCota,
-            Intervalo<Integer> intervaloBox, SituacaoCadastro situacao, Long idRoteiro, Long idRota);
+            Intervalo<Integer> intervaloBox, SituacaoCadastro situacao, Long idRoteiro, Long idRota, String sortName, String sortOrder, Integer maxResults, Integer page);
+    
+    /**
+     * Retorna todos os ids das cotas que estão entre o itervalo de cotas e possuam Notas de Envio
+     * 
+     * @param intervaloCota
+     * @param intervaloBox
+     * @param listIdsFornecedores TODO
+     * @param situacao
+     * @param idRoteiro
+     * @param idRota
+     * @param sortName
+     * @param sortOrder
+     * @param maxResults
+     * @param page
+     * @return
+     */
+    Set<Long> obterIdsCotasComNotaEnvioEntre(Intervalo<Integer> intervaloCota,
+            Intervalo<Integer> intervaloBox, List<Long> listIdsFornecedores, SituacaoCadastro situacao, Long idRoteiro, Long idRota, String sortName, String sortOrder, Integer maxResults, Integer page);
 
     Long obterQuantidadeCotas(SituacaoCadastro situacaoCadastro);
     

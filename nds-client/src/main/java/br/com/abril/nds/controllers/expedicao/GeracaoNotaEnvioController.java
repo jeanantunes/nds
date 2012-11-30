@@ -1,8 +1,6 @@
 package br.com.abril.nds.controllers.expedicao;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -50,8 +48,6 @@ import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
-import br.com.caelum.vraptor.interceptor.download.Download;
-import br.com.caelum.vraptor.interceptor.download.InputStreamDownload;
 import br.com.caelum.vraptor.view.Results;
 
 @Resource
@@ -130,19 +126,21 @@ public class GeracaoNotaEnvioController {
 			List<Long> listaIdFornecedores, Long idRoteiro, Long idRota,
 			String sortname, String sortorder, int rp, int page) {
 		
-		
 		FiltroConsultaNotaEnvioDTO filtro = 
 				this.setFiltroNotaEnvioSessao(intervaloBoxDe, intervaloBoxAte, intervaloCotaDe, 
 						intervaloCotaAte, intervaloMovimentoDe, intervaloMovimentoAte, dataEmissao, 
 						listaIdFornecedores, idRoteiro, idRota, sortname, sortorder, rp, page);
-		
 		
 		List<ConsultaNotaEnvioDTO> listaCotaExemplares = 
 				this.geracaoNotaEnvioService.busca(filtro.getIntervaloBox(), filtro.getIntervaloCota(), 
 						filtro.getIntervaloMovimento(), listaIdFornecedores, 
 						sortname, sortorder, rp, page, null, idRoteiro, idRota);
 		
-		result.use(FlexiGridJson.class).from(listaCotaExemplares).page(page).total(listaCotaExemplares.size()).serialize();
+		Integer qtdResult = geracaoNotaEnvioService.buscaCotasNotasDeEnvioQtd(filtro.getIntervaloBox(), filtro.getIntervaloCota(), 
+																			filtro.getIntervaloMovimento(), listaIdFornecedores, 
+																			null, idRoteiro, idRota);
+		
+		result.use(FlexiGridJson.class).from(listaCotaExemplares).page(page).total(qtdResult).serialize();
 	}
 	
 	@Post
