@@ -76,12 +76,10 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 //		hql.append(", endereco.uf as uf ");
 		
 		//if (filtro.getProdutos() != null && filtro.getProdutos().size() == 1){
-		if (filtro.getProdutos() != null){
-		
-			hql.append(", round(itemNota.reparte / lancamento.produtoEdicao.pacotePadrao) as pacote ");
+			//hql.append(", round(itemNota.reparte / lancamento.produtoEdicao.pacotePadrao) as pacote ");
 			//hql.append(", lancDif.diferenca.qtde as quebra ");
-			hql.append(", itemNota.reparte as reparteTotal ");
-		}
+			//hql.append(", itemNota.reparte as reparteTotal ");
+		//}
 		
 		// Código comentado pelo Eduardo Punk Rock
 		/*if (filtro.getProdutos() != null && filtro.getProdutos().size() > 1){
