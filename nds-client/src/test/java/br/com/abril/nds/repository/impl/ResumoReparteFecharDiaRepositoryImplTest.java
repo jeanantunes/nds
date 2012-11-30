@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.util.BigIntegerUtil;
 import br.com.abril.nds.dto.ReparteFecharDiaDTO;
+import br.com.abril.nds.dto.fechamentodiario.SumarizacaoReparteDTO;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
@@ -303,6 +304,20 @@ public class ResumoReparteFecharDiaRepositoryImplTest extends AbstractRepository
     public void testContarLancamentosExpedidosZero() {
         Long resultado = repository.contarLancamentosExpedidos(DateUtil.adicionarDias(distribuidor.getDataOperacao(), 1));
         Assert.assertEquals(Long.valueOf(0), resultado);
+    }
+    
+    @Test
+    public void testObterSumarioReparte() {
+        SumarizacaoReparteDTO sumario = repository.obterSumarizacaoReparte(distribuidor.getDataOperacao());
+        Assert.assertEquals(BigDecimal.valueOf(4125).setScale(2), sumario.getTotalReparte().setScale(2));
+        Assert.assertEquals(BigDecimal.valueOf(195).setScale(2), sumario.getTotalSobras().setScale(2));
+        Assert.assertEquals(BigDecimal.valueOf(261).setScale(2), sumario.getTotalFaltas().setScale(2));
+        Assert.assertEquals(BigDecimal.valueOf(-54).setScale(2), sumario.getTotalTransferencias().setScale(2));
+        Assert.assertEquals(BigDecimal.valueOf(3774).setScale(2), sumario.getTotalDistribuido().setScale(2));
+        Assert.assertEquals(BigDecimal.valueOf(4005).setScale(2), sumario.getTotalDistribuir().setScale(2));
+        Assert.assertEquals(BigDecimal.valueOf(231).setScale(2), sumario.getTotalSobraDistribuicao().setScale(2));
+        Assert.assertEquals(BigDecimal.valueOf(3543).setScale(2), sumario.getTotalDiferenca().setScale(2));
+        
     }
 
     private void criarDistribuidor() {
