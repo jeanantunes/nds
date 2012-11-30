@@ -1,12 +1,9 @@
 package br.com.abril.nds.controllers.estoque;
 
 import java.io.IOException;
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -18,7 +15,6 @@ import br.com.abril.nds.client.vo.VisaoEstoqueConferenciaCegaVO;
 import br.com.abril.nds.dto.VisaoEstoqueDTO;
 import br.com.abril.nds.dto.VisaoEstoqueDetalheDTO;
 import br.com.abril.nds.dto.VisaoEstoqueDetalheJuramentadoDTO;
-import br.com.abril.nds.dto.VisaoEstoqueTransferenciaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaVisaoEstoque;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Distribuidor;
@@ -86,15 +82,18 @@ public class VisaoEstoqueController {
 	@Path("/pesquisar.json")
 	public void pesquisar(FiltroConsultaVisaoEstoque filtro) {
 		
+		this.atualizarDataMovimentacao(filtro);
+		
 		this.session.setAttribute(FILTRO_VISAO_ESTOQUE, filtro);
 		
 		List<VisaoEstoqueDTO> listVisaoEstoque = visaoEstoqueService.obterVisaoEstoque(filtro);
 		result.use(FlexiGridJson.class).from(listVisaoEstoque).total(listVisaoEstoque.size()).serialize();
 	}
 	
-	
 	@Path("/pesquisarDetalhe.json")
 	public void pesquisarDetalhe(FiltroConsultaVisaoEstoque filtro, String sortname, String sortorder, int rp, int page) {
+		
+		this.atualizarDataMovimentacao(filtro);
 		
 		this.session.setAttribute(FILTRO_VISAO_ESTOQUE, filtro);
 		
@@ -105,6 +104,8 @@ public class VisaoEstoqueController {
 	
 	@Path("/transferir")
 	public void transferir(FiltroConsultaVisaoEstoque filtro) {
+		
+		this.atualizarDataMovimentacao(filtro);
 		
 		TipoEstoque entrada  = Util.getEnumByStringValue(TipoEstoque.values(), filtro.getTipoEstoqueSelecionado());
 		TipoEstoque saida = Util.getEnumByStringValue(TipoEstoque.values(), filtro.getTipoEstoque());
@@ -142,6 +143,8 @@ public class VisaoEstoqueController {
 	@Path("/inventario")
 	public void inventario(FiltroConsultaVisaoEstoque filtro) {
 
+		this.atualizarDataMovimentacao(filtro);
+		
 		TipoEstoque tipoEstoque = Util.getEnumByStringValue(TipoEstoque.values(), filtro.getTipoEstoque());
 		
 		this.visaoEstoqueService.atualizarInventarioEstoque(
@@ -194,6 +197,8 @@ public class VisaoEstoqueController {
 	@Path("/gerarDadosConferenciaCega")
 	public void gerarDadosConferenciaCega(FiltroConsultaVisaoEstoque filtro) throws IOException {
 		
+		this.atualizarDataMovimentacao(filtro);
+		
 		List<? extends VisaoEstoqueDetalheDTO> listDetalhe = visaoEstoqueService.obterVisaoEstoqueDetalhe(filtro);
 		
 		List<VisaoEstoqueConferenciaCegaVO> listaExport = new ArrayList<VisaoEstoqueConferenciaCegaVO>();
@@ -202,14 +207,7 @@ public class VisaoEstoqueController {
 			
 			VisaoEstoqueConferenciaCegaVO vo = new VisaoEstoqueConferenciaCegaVO(dto);
 			
-			if (filtro.getListaTransferencia() != null) {
-				for(VisaoEstoqueTransferenciaDTO dtoTela : filtro.getListaTransferencia()) {
-					if(dtoTela.getProdutoEdicaoId().longValue() == dto.getProdutoEdicaoId().longValue()) {
-						vo.setEstoque(dtoTela.getQtde().toString());
-						break;
-					}
-				}
-			}
+			
 			
 			listaExport.add(vo);
 		}
@@ -249,6 +247,18 @@ public class VisaoEstoqueController {
 		return ndsFileHeader;
 	}
 	
+	private void atualizarDataMovimentacao(FiltroConsultaVisaoEstoque filtro) {
+		
+		Distribuidor distribuidor = this.distribuidorService.obter();
+		
+		Date dataOperacao = distribuidor.getDataOperacao();
+		
+		if (filtro.getDataMovimentacao() == null
+				|| DateUtil.isDataInicialMaiorDataFinal(filtro.getDataMovimentacao(), dataOperacao)) {
+			
+			filtro.setDataMovimentacao(dataOperacao);
+		}
+	}
 	
 	// TODO: não há como reconhecer usuario, ainda
 	private Usuario getUsuario() {

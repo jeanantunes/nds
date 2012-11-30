@@ -110,5 +110,7 @@ public interface EntregadorRepository extends Repository<Entregador, Long> {
 	List<Pessoa> obterEntregadorPorApelido(String apelidoEntregador);
 
 	List<Pessoa> obterEntregadorPorNome(String nomeEntregador);
+	
+	List<Entregador> obterEntregadoresSemRota();
 
 }

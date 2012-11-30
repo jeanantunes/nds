@@ -222,7 +222,7 @@ var VENDA_PRODUTO = {
 		$.postJSON(contextPath + "/devolucao/vendaEncalhe/obterBoxCota", 
 					{numeroCota:$("#numCotaVenda", VENDA_PRODUTO.workspace).val()},
 					function(result) {
-			 			$("#span_nome_box_venda", VENDA_PRODUTO.workspace).html(result.box);			
+			 			$("#span_nome_box_venda", VENDA_PRODUTO.workspace).html(result);			
 					},null,true);
 					
 		VENDA_PRODUTO.recalcularPrecoVendaItens(); 
@@ -347,14 +347,25 @@ var VENDA_PRODUTO = {
 	
 	executarPreProcessamentoGridVenda:function(result){
 		
-		VENDA_PRODUTO.showModalVendas();
-		
-		if(VENDA_PRODUTO.vendaNova == true){
-		
-			return VENDA_PRODUTO.processarDadosNovaVenda(result);
+		if (result.mensagens) {
+
+			exibirMensagem(
+					result.mensagens.tipoMensagem, 
+					result.mensagens.listaMensagens
+			);
+			return result;
+		}else{
+			
+			VENDA_PRODUTO.showModalVendas();
+			
+			if(VENDA_PRODUTO.vendaNova == true){
+			
+				return VENDA_PRODUTO.processarDadosNovaVenda(result);
+			}
+			
+			return VENDA_PRODUTO.processarDadosEdicaoVenda(result) ;
 		}
 		
-		return VENDA_PRODUTO.processarDadosEdicaoVenda(result) ;
 	},
 	
 	processarDadosEdicaoVenda:function(result){

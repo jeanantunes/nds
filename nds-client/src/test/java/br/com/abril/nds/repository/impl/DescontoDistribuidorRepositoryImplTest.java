@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -23,6 +24,8 @@ import br.com.abril.nds.model.cadastro.TipoFornecedor;
 import br.com.abril.nds.model.cadastro.desconto.DescontoDistribuidor;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.DescontoDistribuidorRepository;
+import br.com.abril.nds.vo.PaginacaoVO;
+import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 public class DescontoDistribuidorRepositoryImplTest extends AbstractRepositoryImplTest{
 	
@@ -134,6 +137,50 @@ public class DescontoDistribuidorRepositoryImplTest extends AbstractRepositoryIm
 		lista = descontoDistribuidorRepository.buscarDescontos(filtro);
 		
 		Assert.assertTrue(!lista.isEmpty());
+		
+		filtro.setOrdenacaoColuna(FiltroTipoDescontoDTO.OrdenacaoColunaConsulta.TIPO_DESCONTO);
+		
+		lista = descontoDistribuidorRepository.buscarDescontos(filtro);
+		
+		Assert.assertTrue(!lista.isEmpty());
+	}
+	
+	@Test
+	public void testbuscarDescontosPaginacaoOrdenacao() {
+		
+		FiltroTipoDescontoDTO filtro = new FiltroTipoDescontoDTO();
+		filtro.setOrdenacaoColuna(FiltroTipoDescontoDTO.OrdenacaoColunaConsulta.TIPO_DESCONTO);
+		filtro.setPaginacao(new PaginacaoVO());
+		filtro.getPaginacao().setOrdenacao(Ordenacao.ASC);
+		
+		List<TipoDescontoDTO> tipoDescontoDTOs = descontoDistribuidorRepository.buscarDescontos(filtro);
+		
+	    Assert.assertNotNull(tipoDescontoDTOs);
+	}
+	
+	@Test
+	public void testbuscarDescontosPaginacao() {
+		
+		FiltroTipoDescontoDTO filtro = new FiltroTipoDescontoDTO();
+		filtro.setPaginacao(new PaginacaoVO());
+		filtro.getPaginacao().setPaginaAtual(1);
+		filtro.getPaginacao().setQtdResultadosPorPagina(2);
+		
+		List<TipoDescontoDTO> tipoDescontoDTOs = descontoDistribuidorRepository.buscarDescontos(filtro);
+		
+	    Assert.assertNotNull(tipoDescontoDTOs);
+	}
+	
+	@Test
+	public void testbuscarDescontosIdFornecedor() {
+		
+		FiltroTipoDescontoDTO filtro = new FiltroTipoDescontoDTO();
+		filtro.setIdFornecedores(new ArrayList<Long>());
+		filtro.getIdFornecedores().add(1L); 
+		
+		List<TipoDescontoDTO> tipoDescontoDTOs = descontoDistribuidorRepository.buscarDescontos(filtro);
+		
+	    Assert.assertNotNull(tipoDescontoDTOs);
 	}
 	
 	@Test
@@ -147,11 +194,24 @@ public class DescontoDistribuidorRepositoryImplTest extends AbstractRepositoryIm
 	}
 	
 	@Test
+	public void buscarUltimoDescontoValidoFornecedor() {
+		
+		Fornecedor fornecedor = new Fornecedor();
+		fornecedor.setId(1L);
+		
+		DescontoDistribuidor descontoDistribuidor = descontoDistribuidorRepository.buscarUltimoDescontoValido(fornecedor);
+ }
+	
+		
+		
+	@Test
 	public void testeBuscarUltimoDescontoPorData(){
 		
 		DescontoDistribuidor desconto = descontoDistribuidorRepository.buscarUltimoDescontoValido(desconto4.getId(), fornecedor3);
 		
 		Assert.assertNull(desconto);
 	}
+	
+	
 	
 }

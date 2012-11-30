@@ -27,7 +27,8 @@ import br.com.abril.nds.repository.EnderecoRepository;
 
 public class EnderecoRepositoryImplTest extends AbstractRepositoryImplTest {
 	
-	private static final Integer NUMERO_COTA = null;
+
+	private static final Integer NUMERO_COTA = 1;
 
 	@Autowired
 	EnderecoRepository enderecoRepository;
@@ -62,12 +63,13 @@ public class EnderecoRepositoryImplTest extends AbstractRepositoryImplTest {
 		usuario = Fixture.usuarioJoao();
 		save(usuario);
 		
+
 		UnidadeFederacao uf = Fixture.criarUnidadeFederacao("SP");
 		save(uf);
 		
 		Localidade localidade = Fixture.criarLocalidade(1L, "Mococa", 1L, uf);
 		save(localidade);
-			
+
 	}
 	
 	private void criarEnderecoCota(Cota cota) {

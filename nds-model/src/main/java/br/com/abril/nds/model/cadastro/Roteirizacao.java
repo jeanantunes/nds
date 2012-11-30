@@ -1,5 +1,6 @@
 package br.com.abril.nds.model.cadastro;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -12,6 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -22,8 +24,13 @@ import org.hibernate.annotations.CascadeType;
 @Entity
 @Table(name = "ROTEIRIZACAO")
 @SequenceGenerator(name="ROTEIRIZACAO_SEQ", initialValue = 1, allocationSize = 1)
-public class Roteirizacao {
+public class Roteirizacao implements Serializable{
 
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8484659529985789201L;
 
 	@Id
 	@GeneratedValue(generator = "ROTEIRIZACAO_SEQ")
@@ -37,6 +44,7 @@ public class Roteirizacao {
 	@OneToMany(orphanRemoval = true)
 	@JoinColumn( name="ROTEIRIZACAO_ID")
 	@Cascade(value = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.SAVE_UPDATE})
+	@OrderBy("ordem ASC")
 	private List<Roteiro> roteiros = new ArrayList<Roteiro>();
 	
 	public Long getId() {

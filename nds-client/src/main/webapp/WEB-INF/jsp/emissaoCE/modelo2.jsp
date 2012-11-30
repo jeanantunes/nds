@@ -130,7 +130,7 @@ $(function(){$('img.capaImg').load(function() {
   <tr>
     <td align="center" style="border-left:1px solid #000;border-bottom:1px solid #000;"><span class="dadosNota">${cotaEmissao.dataRecolhimento}</span></td>
     <td align="center" style="border-bottom:1px solid #000;border-right:1px solid #000;border-left:1px solid #000;"><span class="dadosNota">${cotaEmissao.dataEmissao}</span></td>
-    <td style="border-bottom:1px solid #000;border-right:1px solid #000;"><span class="dadosNota">Box: ${cotaEmissao.box} / Roteiro: ${cotaEmissao.codigoRoteiro} - ${cotaEmissao.nomeRoteiro} / Rota: ${cotaEmissao.codigoRota} - ${cotaEmissao.nomeRota}</span></td>
+    <td style="border-bottom:1px solid #000;border-right:1px solid #000;"><span class="dadosNota">Box: ${cotaEmissao.box} / Roteiro: ${cotaEmissao.nomeRoteiro} / Rota: ${cotaEmissao.nomeRota}</span></td>
   </tr>
 </table>
 <table width="850" border="0" align="center" cellpadding="0" cellspacing="0" style="margin-top:5px;">
@@ -325,7 +325,7 @@ $(function(){$('img.capaImg').load(function() {
   <tr>
     <td align="center" style="border-left:1px solid #000;border-bottom:1px solid #000;"><span class="dadosNota">${cotaEmissao.dataRecolhimento}</span></td>
     <td align="center" style="border-bottom:1px solid #000;border-right:1px solid #000;border-left:1px solid #000;"><span class="dadosNota">${cotaEmissao.dataEmissao}</span></td>
-    <td style="border-bottom:1px solid #000;border-right:1px solid #000;"><span class="dadosNota">Box: ${cotaEmissao.box} / Roteiro: ${cotaEmissao.codigoRoteiro} - ${cotaEmissao.nomeRoteiro} / Rota: ${cotaEmissao.codigoRota} - ${cotaEmissao.nomeRota}</span></td>
+    <td style="border-bottom:1px solid #000;border-right:1px solid #000;"><span class="dadosNota">Box: ${cotaEmissao.box} / Roteiro: ${cotaEmissao.nomeRoteiro} / Rota: ${cotaEmissao.nomeRota}</span></td>
   </tr>
 </table>
 

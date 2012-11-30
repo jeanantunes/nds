@@ -13,8 +13,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.dto.BandeirasDTO;
 import br.com.abril.nds.dto.CapaDTO;
 import br.com.abril.nds.dto.CotaEmissaoDTO;
+import br.com.abril.nds.dto.FornecedoresBandeiraDTO;
 import br.com.abril.nds.dto.ProdutoEmissaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroEmissaoCE;
 import br.com.abril.nds.fixture.Fixture;
@@ -47,6 +49,7 @@ import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.ChamadaEncalheRepository;
 import br.com.abril.nds.util.Intervalo;
+import br.com.abril.nds.vo.PaginacaoVO;
 
 public class ChamadaEncalheRepositoryImplTest extends
 		AbstractRepositoryImplTest {
@@ -477,4 +480,146 @@ public class ChamadaEncalheRepositoryImplTest extends
 
 	}
 	
+	@Test
+	public void obterBandeirasNoIntervalo() {
+		Intervalo<Date> intervalo = new Intervalo<>();
+		intervalo.setDe(Fixture.criarData(01, Calendar.SEPTEMBER, 2012));
+		intervalo.setAte(Fixture.criarData(01, Calendar.OCTOBER, 2012));
+		List<BandeirasDTO> lista = chamadaEncalheRepository
+				.obterBandeirasNoIntervalo(intervalo, null);
+		Assert.assertNotNull(lista);
+	}
+	
+	@Test
+	public void obterBandeirasNoIntervaloPorIntervalo() {
+		Intervalo<Date> intervalo = new Intervalo<>();
+		intervalo.setDe(Fixture.criarData(01, Calendar.SEPTEMBER, 2012));
+		intervalo.setAte(Fixture.criarData(01, Calendar.OCTOBER, 2012));
+
+		List<BandeirasDTO> lista = chamadaEncalheRepository
+				.obterBandeirasNoIntervalo(intervalo, new PaginacaoVO());
+		Assert.assertNotNull(lista);
+	}
+	
+	@Test
+	public void obterBandeirasNoIntervaloPaginado() {
+		Intervalo<Date> intervalo = new Intervalo<>();
+		intervalo.setDe(Fixture.criarData(01, Calendar.SEPTEMBER, 2012));
+		intervalo.setAte(Fixture.criarData(01, Calendar.OCTOBER, 2012));
+		
+		PaginacaoVO paginacaoVO = new PaginacaoVO();
+		paginacaoVO.setPaginaAtual(1);
+		paginacaoVO.setQtdResultadosPorPagina(15);
+
+		List<BandeirasDTO> lista = chamadaEncalheRepository
+				.obterBandeirasNoIntervalo(intervalo, paginacaoVO);
+		Assert.assertNotNull(lista);
+	}
+	
+	@Test
+	public void obterBandeirasNoIntervaloSortColumnCodProduto() {
+		Intervalo<Date> intervalo = new Intervalo<>();
+		intervalo.setDe(Fixture.criarData(01, Calendar.SEPTEMBER, 2012));
+		intervalo.setAte(Fixture.criarData(01, Calendar.OCTOBER, 2012));
+		
+		PaginacaoVO paginacaoVO = new PaginacaoVO();
+		paginacaoVO.setPaginaAtual(1);
+		paginacaoVO.setQtdResultadosPorPagina(15);
+		paginacaoVO.setSortOrder("asc");
+		paginacaoVO.setSortColumn("codProduto");
+
+		List<BandeirasDTO> lista = chamadaEncalheRepository
+				.obterBandeirasNoIntervalo(intervalo, paginacaoVO);
+		Assert.assertNotNull(lista);
+	}
+	
+	@Test
+	public void obterBandeirasNoIntervaloSortColumnNomeProduto() {
+		Intervalo<Date> intervalo = new Intervalo<>();
+		intervalo.setDe(Fixture.criarData(01, Calendar.SEPTEMBER, 2012));
+		intervalo.setAte(Fixture.criarData(01, Calendar.OCTOBER, 2012));
+		
+		PaginacaoVO paginacaoVO = new PaginacaoVO();
+		paginacaoVO.setPaginaAtual(1);
+		paginacaoVO.setQtdResultadosPorPagina(15);
+		paginacaoVO.setSortOrder("asc");
+		paginacaoVO.setSortColumn("nomeProduto");
+
+		List<BandeirasDTO> lista = chamadaEncalheRepository
+				.obterBandeirasNoIntervalo(intervalo, paginacaoVO);
+		Assert.assertNotNull(lista);
+	}
+	
+	@Test
+	public void obterBandeirasNoIntervaloSortColumnEdProduto() {
+		Intervalo<Date> intervalo = new Intervalo<>();
+		intervalo.setDe(Fixture.criarData(01, Calendar.SEPTEMBER, 2012));
+		intervalo.setAte(Fixture.criarData(01, Calendar.OCTOBER, 2012));
+		
+		PaginacaoVO paginacaoVO = new PaginacaoVO();
+		paginacaoVO.setPaginaAtual(1);
+		paginacaoVO.setQtdResultadosPorPagina(15);
+		paginacaoVO.setSortOrder("asc");
+		paginacaoVO.setSortColumn("edProduto");
+
+		List<BandeirasDTO> lista = chamadaEncalheRepository
+				.obterBandeirasNoIntervalo(intervalo, paginacaoVO);
+		Assert.assertNotNull(lista);
+	}
+	
+	@Test
+	public void obterBandeirasNoIntervaloSortColumnPctPadrao() {
+		Intervalo<Date> intervalo = new Intervalo<>();
+		intervalo.setDe(Fixture.criarData(01, Calendar.SEPTEMBER, 2012));
+		intervalo.setAte(Fixture.criarData(01, Calendar.OCTOBER, 2012));
+		
+		PaginacaoVO paginacaoVO = new PaginacaoVO();
+		paginacaoVO.setPaginaAtual(1);
+		paginacaoVO.setQtdResultadosPorPagina(15);
+		paginacaoVO.setSortOrder("asc");
+		paginacaoVO.setSortColumn("pctPadrao");
+
+		List<BandeirasDTO> lista = chamadaEncalheRepository
+				.obterBandeirasNoIntervalo(intervalo, paginacaoVO);
+		Assert.assertNotNull(lista);
+	}
+	
+	@Test
+	public void obterBandeirasNoIntervaloSortOrderDesc() {
+		Intervalo<Date> intervalo = new Intervalo<>();
+		intervalo.setDe(Fixture.criarData(01, Calendar.SEPTEMBER, 2012));
+		intervalo.setAte(Fixture.criarData(01, Calendar.OCTOBER, 2012));
+		
+		PaginacaoVO paginacaoVO = new PaginacaoVO();
+		paginacaoVO.setPaginaAtual(1);
+		paginacaoVO.setQtdResultadosPorPagina(15);
+		paginacaoVO.setSortOrder("desc");
+		paginacaoVO.setSortColumn("codProduto");
+
+		List<BandeirasDTO> lista = chamadaEncalheRepository
+				.obterBandeirasNoIntervalo(intervalo, paginacaoVO);
+		Assert.assertNotNull(lista);
+	}
+	
+	@SuppressWarnings("unused")
+	@Test
+	public void countObterBandeirasNoIntervalo() {
+		Intervalo<Date> intervalo = new Intervalo<>();
+		intervalo.setDe(Fixture.criarData(01, Calendar.SEPTEMBER, 2012));
+		intervalo.setAte(Fixture.criarData(01, Calendar.OCTOBER, 2012));
+
+		Long count = chamadaEncalheRepository
+				.countObterBandeirasNoIntervalo(intervalo);
+	}
+	
+	@Test
+	public void obterDadosFornecedoresParaImpressaoBandeira() {
+		Intervalo<Date> intervalo = new Intervalo<>();
+		intervalo.setDe(Fixture.criarData(01, Calendar.SEPTEMBER, 2012));
+		intervalo.setAte(Fixture.criarData(01, Calendar.OCTOBER, 2012));
+
+		List<FornecedoresBandeiraDTO> lista = chamadaEncalheRepository
+				.obterDadosFornecedoresParaImpressaoBandeira(intervalo);
+		Assert.assertNotNull(lista);
+	}
 }

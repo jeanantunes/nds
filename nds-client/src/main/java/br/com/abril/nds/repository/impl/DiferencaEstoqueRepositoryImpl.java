@@ -561,5 +561,17 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 		
 		return ((Long) query.uniqueResult() != null);
 	}
+
+    /**
+     * {@inheritDoc}
+     */
+	@SuppressWarnings("unchecked")
+    @Override
+    public List<Diferenca> obterDiferencas(Date data) {
+        String hql = "from Diferenca diferenca where diferenca.dataMovimento = :data";
+        Query query = getSession().createQuery(hql);
+        query.setParameter("data", data);
+        return query.list();
+    }
 	
 }

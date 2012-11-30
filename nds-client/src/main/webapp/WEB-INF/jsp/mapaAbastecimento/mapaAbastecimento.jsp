@@ -121,7 +121,7 @@
               <td>
 			  
 <!-- Box -->
-<select id="box" name="select" style="width:120px;">
+<select id="box" name="select" style="width:120px;" onchange="MA.buscarRoteiroPorBox()">
        <option selected="selected" value="">Selecione...</option>
 	        
 </select>
@@ -132,7 +132,7 @@
               <td>Roteiro:</td>
               <td>
 			  
-<select id="roteiro" disabled="disabled" name="select" style="width:140px;">
+<select id="roteiro" disabled="disabled" name="select" style="width:140px;" onchange="MA.buscarRotaPorRoteiro()">
        <option selected="selected" value="">Selecione...</option>
 	        
 </select>	  			  

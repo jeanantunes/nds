@@ -4,8 +4,8 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 
 import br.com.abril.nds.util.export.Export;
-import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.util.export.Export.Alignment;
+import br.com.abril.nds.util.export.Exportable;
 
 @Exportable
 public class EncalheFecharDiaDTO implements Serializable {
@@ -56,6 +56,12 @@ public class EncalheFecharDiaDTO implements Serializable {
 	 * Lógico - Físico - Lógico Juramentado - Venda de Encalhe;
 	 */
 	private Long diferencas;
+	
+	private String qtdeFormatado;
+	
+	private String vendaEncalheFormatado;
+	
+	private String difencaFormatado;
 
 	public String getCodigo() {
 		return codigo;
@@ -168,8 +174,32 @@ public class EncalheFecharDiaDTO implements Serializable {
     public void setDiferencas(Long diferencas) {
         this.diferencas = diferencas;
     }
+    
+    public String getQtdeFormatado() {
+		return qtdeFormatado;
+	}
 
-    @Override
+	public void setQtdeFormatado(String qtdeFormatado) {
+		this.qtdeFormatado = qtdeFormatado;
+	}
+
+	public String getVendaEncalheFormatado() {
+		return vendaEncalheFormatado;
+	}
+
+	public void setVendaEncalheFormatado(String vendaEncalheFormatado) {
+		this.vendaEncalheFormatado = vendaEncalheFormatado;
+	}
+
+	public String getDifencaFormatado() {
+		return difencaFormatado;
+	}
+
+	public void setDifencaFormatado(String difencaFormatado) {
+		this.difencaFormatado = difencaFormatado;
+	}
+
+	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;

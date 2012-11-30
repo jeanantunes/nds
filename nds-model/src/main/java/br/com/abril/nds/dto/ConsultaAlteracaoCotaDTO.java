@@ -53,11 +53,10 @@ public class ConsultaAlteracaoCotaDTO implements Serializable {
 			this.tipoEntrega ="";
 		}	
 		
-		
-		
 		this.box = box;
 	}
 	
+		
 	public ConsultaAlteracaoCotaDTO(Long idCota, String nomeFornecedor, String tipoDesconto){
 		this.idCota = idCota;
 		this.nomeFornecedor = nomeFornecedor;

@@ -1382,5 +1382,34 @@ public class LancamentoRepositoryImpl extends
 		
 		return (Lancamento) criteria.uniqueResult();
 	}
-	
+
+	public Date obterDataMinimaProdutoEdicao(Long idProdutoEdicao, String propertyLancamentoDistribuidor) {
+		
+		Criteria criteria = getSession().createCriteria(Lancamento.class);
+		
+		criteria.setProjection(Projections.min(propertyLancamentoDistribuidor));
+		
+		criteria.add(Restrictions.eq("produtoEdicao.id", idProdutoEdicao));
+
+		criteria.add(Restrictions.ne("status", StatusLancamento.EXCLUIDO));
+		
+		criteria.add(Restrictions.ne("status", StatusLancamento.FURO));
+		
+		return (Date) criteria.uniqueResult();
+	}
+
+	public Date obterDataMaximaProdutoEdicao(Long idProdutoEdicao, String propertyLancamentoDistribuidor) {
+		
+		Criteria criteria = getSession().createCriteria(Lancamento.class);
+		
+		criteria.setProjection(Projections.max(propertyLancamentoDistribuidor));
+		
+		criteria.add(Restrictions.eq("produtoEdicao.id", idProdutoEdicao));
+		
+		criteria.add(Restrictions.ne("status", StatusLancamento.EXCLUIDO));
+		
+		criteria.add(Restrictions.ne("status", StatusLancamento.FURO));
+		
+		return (Date) criteria.uniqueResult();
+	}
 }

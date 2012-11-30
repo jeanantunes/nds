@@ -47,19 +47,7 @@ public class LancamentoPorEdicaoDTO implements Serializable  {
 	public LancamentoPorEdicaoDTO() {
 		
 	}
-	
-	public LancamentoPorEdicaoDTO(String dataLancamento, String dataRecolhimento, BigDecimal reparte, BigDecimal encalhe, BigDecimal venda,  
-			BigDecimal vendaAcumulada, BigDecimal percentualVenda) {
-		super();
-		this.dataLancamento = dataLancamento;
-		this.dataRecolhimento = dataRecolhimento;
-		this.reparte = reparte;
-		this.venda = venda;		
-		this.vendaAcumulada = vendaAcumulada;
-		this.percentualVenda = percentualVenda;
-	}
-	
-	
+
 	public String getPeriodo() {
 		return periodo;
 	}
@@ -88,27 +76,25 @@ public class LancamentoPorEdicaoDTO implements Serializable  {
 		return reparte;
 	}
 
-	public void setReparte(BigDecimal reparte) {
-		this.reparte = reparte;
+	public void setReparte(Number reparte) {
+		this.reparte = new BigDecimal(reparte != null ? reparte.longValue() : 0);
 	}
 	
 	public BigDecimal getEncalhe() {
 		return encalhe;
 	}
 
-	public void setEncalhe(BigDecimal encalhe) {
-		this.encalhe = encalhe;
+	public void setEncalhe(Number encalhe) {
+		this.encalhe = new BigDecimal(encalhe != null ? encalhe.longValue() : 0);
 	}
 
 	public BigDecimal getVenda() {
 		return venda;
 	}
 
-	public void setVenda(BigDecimal venda) {
-		this.venda = venda;
-		if (venda != null) {
-			vendaFormatado = CurrencyUtil.formatarValor(venda);
-		}
+	public void setVenda(Number venda) {
+		this.venda = new BigDecimal(venda != null ? venda.longValue() : 0);
+		this.vendaFormatado = CurrencyUtil.formatarValor(this.venda);
 	}
 	
 	@Export(label = "Venda", alignment=Alignment.CENTER, exhibitionOrder = 6)
@@ -120,11 +106,9 @@ public class LancamentoPorEdicaoDTO implements Serializable  {
 		return vendaAcumulada;
 	}
 
-	public void setVendaAcumulada(BigDecimal vendaAcumulada) {
-		this.vendaAcumulada = vendaAcumulada;
-		if (vendaAcumulada != null) {
-			vendaAcumuladaFormatado = CurrencyUtil.formatarValor(vendaAcumulada);
-		}
+	public void setVendaAcumulada(Number vendaAcumulada) {
+		this.vendaAcumulada = new BigDecimal(vendaAcumulada != null ? vendaAcumulada.longValue() : 0);
+		this.vendaAcumuladaFormatado = CurrencyUtil.formatarValor(this.vendaAcumulada);
 	}
 	
 	@Export(label = "Venda Acumulada", alignment=Alignment.CENTER, exhibitionOrder = 7)
@@ -136,11 +120,9 @@ public class LancamentoPorEdicaoDTO implements Serializable  {
 		return percentualVenda;
 	}
 
-	public void setPercentualVenda(BigDecimal percentualVenda) {
-		this.percentualVenda = percentualVenda;
-		if (percentualVenda != null) {
-			percentualVendaFormatado = CurrencyUtil.formatarValor(percentualVenda);
-		}
+	public void setPercentualVenda(Number percentualVenda) {
+		this.percentualVenda = new BigDecimal(percentualVenda != null ? percentualVenda.longValue() : 0);
+		this.percentualVendaFormatado = CurrencyUtil.formatarValor(this.percentualVenda);
 	}
 	
 	@Export(label = "% Venda", alignment=Alignment.CENTER, exhibitionOrder = 8)
