@@ -283,8 +283,8 @@ public class NFeServiceImpl implements NFeService {
 		String emissorNome 							 = identificacaoEmitente.getNome();
 
 		String emissorFantasia 						 = identificacaoEmitente.getNomeFantasia();
-		String emissorInscricaoEstadual 			 = identificacaoEmitente.getInscricaoEstual();
-		String emissorInscricaoEstadualSubstituto 	 = identificacaoEmitente.getInscricaoEstualSubstituto();
+		String emissorInscricaoEstadual 			 = identificacaoEmitente.getInscricaoEstadual();
+		String emissorInscricaoEstadualSubstituto 	 = identificacaoEmitente.getInscricaoEstadualSubstituto();
 		String emissorInscricaoMunicipal 			 = identificacaoEmitente.getInscricaoMunicipal();
 
 		String emissorCNPJ 							 = "";
@@ -410,7 +410,7 @@ public class NFeServiceImpl implements NFeService {
 
 		String destinatarioCNPJ 				= "";
 		String destinatarioNome 				= identificacaoDestinatario.getNome();
-		String destinatarioInscricaoEstadual 	= identificacaoDestinatario.getInscricaoEstual();
+		String destinatarioInscricaoEstadual 	= identificacaoDestinatario.getInscricaoEstadual();
 
 		String destinatarioLogradouro 			= "";
 		String destinatarioNumero 				= "";
@@ -782,7 +782,7 @@ public class NFeServiceImpl implements NFeService {
 		String emissorNome 							 = notaEnvio.getEmitente().getNome();
 
 		String emissorFantasia 						 = notaEnvio.getEmitente().getNome();
-		String emissorInscricaoEstadual 			 = notaEnvio.getEmitente().getInscricaoEstual();
+		String emissorInscricaoEstadual 			 = notaEnvio.getEmitente().getInscricaoEstadual();
 
 		String emissorCNPJ 							 = "";
 
@@ -861,7 +861,7 @@ public class NFeServiceImpl implements NFeService {
 
 		String destinatarioCNPJ 				= "";
 		String destinatarioNome 				= notaEnvio.getDestinatario().getNome();
-		String destinatarioInscricaoEstadual 	= notaEnvio.getDestinatario().getInscricaoEstual();
+		String destinatarioInscricaoEstadual 	= notaEnvio.getDestinatario().getInscricaoEstadual();
 
 		String destinatarioLogradouro 			= "";
 		String destinatarioNumero 				= "";

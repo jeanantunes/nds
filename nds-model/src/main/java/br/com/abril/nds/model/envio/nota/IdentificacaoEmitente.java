@@ -40,7 +40,7 @@ public class IdentificacaoEmitente implements Serializable {
 	 * IE
 	 */
 	@Column(name="IE_EMITENTE", nullable=false, length=14)
-	private String inscricaoEstual;
+	private String inscricaoEstadual;
 	
 	
 	@OneToOne(optional=false)
@@ -94,17 +94,17 @@ public class IdentificacaoEmitente implements Serializable {
 	}
 
 	/**
-	 * @return the inscricaoEstual
+	 * @return the inscricaoEstadual
 	 */
-	public String getInscricaoEstual() {
-		return inscricaoEstual;
+	public String getInscricaoEstadual() {
+		return inscricaoEstadual;
 	}
 
 	/**
-	 * @param inscricaoEstual the inscricaoEstual to set
+	 * @param inscricaoEstadual the inscricaoEstadual to set
 	 */
-	public void setInscricaoEstual(String inscricaoEstual) {
-		this.inscricaoEstual = inscricaoEstual;
+	public void setInscricaoEstadual(String inscricaoEstadual) {
+		this.inscricaoEstadual = inscricaoEstadual;
 	}
 
 	/**
