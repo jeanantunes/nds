@@ -87,7 +87,7 @@ var descontoProdutoController = $.extend(true,{
 			
 		$("input[id^=cotaInput]",this.workspace).each(function(index, value) {
 			if ($(this).val()) {
-				data.push({name:'cotas' , value: $(this).val()});
+				data.push({name:'descontoDTO.cotas' , value: $(this).val()});
 			}
 		});
 		

@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import br.com.abril.nds.dto.DescontoProdutoDTO;
 import br.com.abril.nds.dto.InformeEncalheDTO;
 import br.com.abril.nds.dto.LancamentoNaoExpedidoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -32,7 +31,6 @@ import br.com.abril.nds.repository.HistoricoLancamentoRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.repository.UsuarioRepository;
-import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.util.TipoMensagem;
@@ -173,37 +171,9 @@ public class LancamentoServiceImpl implements LancamentoService {
 		historico.setTipoEdicao(TipoEdicao.ALTERACAO);
 		historicoLancamentoRepository.adicionar(historico);
 		
-		/*movimentoEstoqueService.gerarMovimentoEstoqueDeExpedicao(
-				lancamento.getDataLancamentoPrevista(), 
-				lancamento.getProdutoEdicao().getId(),
-				idUsuario);*/
-		movimentoEstoqueService.gerarMovimentoEstoqueDeExpedicao(
-				lancamento,
-				idUsuario);
+		movimentoEstoqueService.gerarMovimentoEstoqueDeExpedicao(lancamento, idUsuario);
 		
 		
-		DescontoProximosLancamentos desconto = this.descontoProximosLancamentosRepository.
-		obterDescontoProximosLancamentosPor(lancamento.getProdutoEdicao().getProduto().getId(), 
-				lancamento.getDataLancamentoPrevista());
-				
-		if (desconto != null) {	
-		
-			Integer quantidade = desconto.getQuantidadeProximosLancamaentos();
-						
-			DescontoProduto descontoProduto = new DescontoProduto();
-			
-			descontoProduto.setCotas(desconto.getCotas());
-			descontoProduto.setDataAlteracao(new Date());
-			descontoProduto.setDesconto(desconto.getValorDesconto());
-			descontoProduto.setProdutoEdicao(lancamento.getProdutoEdicao());
-			descontoProduto.setDistribuidor(desconto.getDistribuidor());
-			descontoProduto.setUsuario(usuario);
-			
-			this.descontoProdutoRepository.adicionar(descontoProduto);
-			
-			desconto.setQuantidadeProximosLancamaentos(--quantidade);
-			this.descontoProximosLancamentosRepository.alterar(desconto);
-		}
 	}
 
 	@Override

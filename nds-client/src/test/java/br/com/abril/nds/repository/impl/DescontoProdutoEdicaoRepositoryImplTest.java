@@ -9,7 +9,6 @@ import java.util.Set;
 
 import junit.framework.Assert;
 
-import org.hibernate.mapping.Array;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -275,27 +274,20 @@ public class DescontoProdutoEdicaoRepositoryImplTest extends AbstractRepositoryI
 	@Test
 	public void obterDescontoPorCotaProdutoEdicaoIdCota() {
 		
-		Long idCota = 1L;
+		Cota cota = new Cota();
+		cota.setId(1L);
 		
-		descontoProdutoEdicaoRepository.obterDescontoPorCotaProdutoEdicao(idCota, null, null);
+		descontoProdutoEdicaoRepository.obterDescontoPorCotaProdutoEdicao(cota, null);
 				
 	}
 	
 	@Test
 	public void obterDescontoPorCotaProdutoEdicaoIdProdutoEdicao() {
 		
-		Long idProdutoEdicao = 1L;
+		ProdutoEdicao produtoEdicao = new ProdutoEdicao();
+		produtoEdicao.setId(1L);
 		
-		descontoProdutoEdicaoRepository.obterDescontoPorCotaProdutoEdicao(null, idProdutoEdicao, null);
-				
-	}
-	
-	@Test
-	public void obterDescontoPorCotaProdutoEdicaoIdFornecedor() {
-		
-		Long idFornecedor = 1L;
-		
-		descontoProdutoEdicaoRepository.obterDescontoPorCotaProdutoEdicao(null, null, idFornecedor);
+		descontoProdutoEdicaoRepository.obterDescontoPorCotaProdutoEdicao(null, produtoEdicao);
 				
 	}
 	
