@@ -250,7 +250,8 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 				.findDescontoLogisticaByTipoDesconto(Integer.parseInt( input.getTipoDesconto()) );
 		
 		produto.setOrigem(Origem.INTERFACE);
-		if (produto.getTipoProduto() != tipoProduto) {
+		
+		if (null != produto.getTipoProduto() && !produto.getTipoProduto().equals( tipoProduto )) {
 
 			produto.setTipoProduto(tipoProduto);
 			this.ndsiLoggerFactory.getLogger().logInfo(
@@ -259,7 +260,7 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 					"Atualizacao do Tipo de Publicacao para: "
 							+ tipoProduto.getDescricao());
 		}
-		if (!produto.getNome().equals(input.getNomePublicacao())) {
+		if (null != produto.getNome() && !produto.getNome().equals(input.getNomePublicacao())) {
 
 			produto.setNome(input.getNomePublicacao());
 			this.ndsiLoggerFactory.getLogger().logInfo(
@@ -268,7 +269,7 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 					"Atualizacao do Nome da Publicacao para: "
 							+ input.getNomePublicacao());
 		}
-		if (produto.getCodigoContexto() != input.getContextoPublicacao()) {
+		if (null != produto.getCodigoContexto() && !produto.getCodigoContexto().equals(input.getContextoPublicacao())) {
 
 			produto.setCodigoContexto(input.getContextoPublicacao());
 			this.ndsiLoggerFactory.getLogger().logInfo(
@@ -277,7 +278,7 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 					"Atualizacao do Contexto Publicacao para: "
 							+ input.getContextoPublicacao());
 		}
-		if (!produto.getNomeComercial().equals(input.getNomePublicacao())) {
+		if (null != produto.getNomeComercial() && !produto.getNomeComercial().equals(input.getNomePublicacao())) {
 
 			produto.setNomeComercial(input.getNomePublicacao());
 			this.ndsiLoggerFactory.getLogger().logInfo(
@@ -286,14 +287,14 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 					"Atualizacao da Descricao para: "
 							+ input.getNomePublicacao());
 		}
-		if (!produto.getEditor().getCodigo().equals(input.getCodigoEditor())) {
+		if (null != produto.getEditor() && null != produto.getEditor().getCodigo() && !produto.getEditor().getCodigo().equals(input.getCodigoEditor())) {
 
 			produto.setEditor(editor);
 			this.ndsiLoggerFactory.getLogger().logInfo(message,
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
 					"Atualizacao do Editor para: " + editor.getPessoaJuridica().getNome());
 		}
-		if (produto.getPeriodicidade() != PeriodicidadeProduto.getByOrdem(input.getPeriodicidade())) {
+		if (null != produto.getPeriodicidade() && !produto.getPeriodicidade().equals( PeriodicidadeProduto.getByOrdem(input.getPeriodicidade())) ) {
 
 			produto.setPeriodicidade(PeriodicidadeProduto.getByOrdem(input.getPeriodicidade()));
 			this.ndsiLoggerFactory.getLogger().logInfo(
@@ -302,28 +303,21 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 					"Atualizacao da Periodicidade para: "
 							+ PeriodicidadeProduto.getByOrdem(input.getPeriodicidade()));
 		}
-		if (!produto.getSlogan().equals(input.getSlogan())) {
+		if (null != produto.getSlogan() && !produto.getSlogan().equals(input.getSlogan())) {
 
 			produto.setSlogan(input.getSlogan());
 			this.ndsiLoggerFactory.getLogger().logInfo(message,
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
 					"Atualizacao do Slogan para: " + input.getSlogan());
-		}
-		if (produto.getPeb() != input.getPeb()) {
-
-			produto.setPeb(input.getPeb());
-			this.ndsiLoggerFactory.getLogger().logInfo(message,
-					EventoExecucaoEnum.INF_DADO_ALTERADO,
-					"Atualizacao do PEB para: " + input.getPeb());
-		}
-		if (produto.getPeso().equals(input.getPeso())) {
+		}		
+		if (null != produto.getPeso() && !produto.getPeso().equals(input.getPeso())) {
 
 			produto.setPeso(input.getPeso());
 			this.ndsiLoggerFactory.getLogger().logInfo(message,
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
 					"Atualizacao do Peso para: " + input.getPeso());
 		}
-		if (!produto.getCodigo().equals(input.getCodigoPublicacao())) {
+		if (null != produto.getCodigo() && !produto.getCodigo().equals(input.getCodigoPublicacao())) {
 
 			produto.setCodigo(input.getCodigoPublicacao());
 			this.ndsiLoggerFactory.getLogger().logInfo(
@@ -339,7 +333,7 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
 					"Atualizacao do Status para: " + input.isStatus());
 		}
-		if (!produto.getDataDesativacao().equals(input.getDataDesativacao())) {
+		if (null != produto.getDataDesativacao() && !produto.getDataDesativacao().equals(input.getDataDesativacao())) {
 
 			produto.setDataDesativacao(input.getDataDesativacao());
 			this.ndsiLoggerFactory.getLogger().logInfo(
@@ -364,7 +358,7 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 					"Atualizacao do Pacote Padrao para: "
 							+ input.getPacotePadrao());
 		}
-		if (!produto.getPeso().equals(input.getPeso())) {
+		if (null != produto.getPeso() && !produto.getPeso().equals(input.getPeso())) {
 
 			produto.setPeso(input.getPeso());
 			this.ndsiLoggerFactory.getLogger().logInfo(message,
@@ -372,7 +366,7 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 					"Atualizacao do Peso para: " + input.getPeso());
 		}
 
-		if (fornecedor != null) {
+		if (null != produto.getFornecedor() && null != fornecedor) {
 
 			if (produto.getFornecedor().getCodigoInterface() != fornecedor
 					.getCodigoInterface()) {
@@ -387,7 +381,7 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 			}
 		}
 
-		if (descontoLogistica != null) {
+		if (null != produto.getDescontoLogistica() && null != descontoLogistica) {
 
 			if (!produto.getDescontoLogistica().equals(descontoLogistica)) {
 
@@ -403,14 +397,14 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 		}
 
 		TributacaoFiscal tributacaoFiscal = getTributacaoFiscal(input.getCodigoSituacaoTributaria());
-		if (produto.getTributacaoFiscal() != tributacaoFiscal) {
+		if (null != produto.getTributacaoFiscal() && produto.getTributacaoFiscal() != tributacaoFiscal) {
 			produto.setTributacaoFiscal(tributacaoFiscal);
 			this.ndsiLoggerFactory.getLogger().logInfo(message,
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
 					"Atualizacao da Tributação Fiscal para: " + tributacaoFiscal);
 		}
 		
-		if (produto.getFormaComercializacao().equals(
+		if (null != produto.getFormaComercializacao() && produto.getFormaComercializacao().equals(
 					(input.getFormaComercializacao().equals("CON") 
 							? FormaComercializacao.CONSIGNADO 
 							: FormaComercializacao.CONTA_FIRME

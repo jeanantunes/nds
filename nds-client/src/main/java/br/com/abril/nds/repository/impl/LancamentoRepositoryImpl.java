@@ -29,10 +29,13 @@ import br.com.abril.nds.dto.ProdutoLancamentoDTO;
 import br.com.abril.nds.dto.ProdutoRecolhimentoDTO;
 import br.com.abril.nds.dto.ResumoPeriodoBalanceamentoDTO;
 import br.com.abril.nds.dto.SumarioLancamentosDTO;
+import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.pdv.TipoCaracteristicaSegmentacaoPDV;
+import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
+import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
@@ -1382,5 +1385,54 @@ public class LancamentoRepositoryImpl extends
 		
 		return (Lancamento) criteria.uniqueResult();
 	}
-	
+
+	public Date obterDataMinimaProdutoEdicao(Long idProdutoEdicao, String propertyLancamentoDistribuidor) {
+		
+		Criteria criteria = getSession().createCriteria(Lancamento.class);
+		
+		criteria.setProjection(Projections.min(propertyLancamentoDistribuidor));
+		
+		criteria.add(Restrictions.eq("produtoEdicao.id", idProdutoEdicao));
+
+		criteria.add(Restrictions.ne("status", StatusLancamento.EXCLUIDO));
+		
+		criteria.add(Restrictions.ne("status", StatusLancamento.FURO));
+		
+		return (Date) criteria.uniqueResult();
+	}
+
+	public Date obterDataMaximaProdutoEdicao(Long idProdutoEdicao, String propertyLancamentoDistribuidor) {
+		
+		Criteria criteria = getSession().createCriteria(Lancamento.class);
+		
+		criteria.setProjection(Projections.max(propertyLancamentoDistribuidor));
+		
+		criteria.add(Restrictions.eq("produtoEdicao.id", idProdutoEdicao));
+		
+		criteria.add(Restrictions.ne("status", StatusLancamento.EXCLUIDO));
+		
+		criteria.add(Restrictions.ne("status", StatusLancamento.FURO));
+		
+		return (Date) criteria.uniqueResult();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<MovimentoEstoqueCota> buscarMovimentosEstoqueCotaParaFuro(Lancamento lancamento, TipoMovimentoEstoque tipoMovimentoEstoqueFuro) {
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select mec ")
+		   .append(" from Lancamento l ")
+		   .append(" join l.movimentoEstoqueCotas mec ")
+		   .append(" where l.id = :idLancamento ")
+		   .append(" and mec.tipoMovimento != :tipoMovimentoEstoqueFuro ")
+		   .append(" and mec.movimentoEstoqueCotaFuro is null ");
+		
+        Query query = super.getSession().createQuery(hql.toString());
+        
+        query.setParameter("idLancamento", lancamento.getId());
+        query.setParameter("tipoMovimentoEstoqueFuro", tipoMovimentoEstoqueFuro);
+		
+    	return query.list();
+	}
 }

@@ -19,7 +19,6 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
-import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.FornecedorService;
@@ -117,21 +116,18 @@ public class VendaProdutoController {
 		
 		TableModel<CellModelKeyValue<LancamentoPorEdicaoDTO>> tableModel = efetuarConsultaLancamentoEdicao(filtro);
 		
+		if (tableModel.getRows() == null || tableModel.getRows().isEmpty()) {
+
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro foi encontrado.");
+		}
+		
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
 	}
 	
 	private TableModel<CellModelKeyValue<LancamentoPorEdicaoDTO>> efetuarConsultaLancamentoEdicao(FiltroVendaProdutoDTO filtro) {
 		 
 		List<LancamentoPorEdicaoDTO> listaAux =  this.vendaProdutoService.buscaLancamentoPorEdicao(filtro);		
-		List<LancamentoPorEdicaoDTO> listaLancamentoPorEdicao = new ArrayList<LancamentoPorEdicaoDTO>();
-		int cont = 1;
-		if(!listaAux.isEmpty()){
-			for(LancamentoPorEdicaoDTO dto: listaAux){
-				dto.setPeriodo(cont+"º");
-				listaLancamentoPorEdicao.add(dto);
-				cont++;
-			}			
-		}
+		List<LancamentoPorEdicaoDTO> listaLancamentoPorEdicao = obterListaComPeriodos(listaAux);
 		
 		TableModel<CellModelKeyValue<LancamentoPorEdicaoDTO>> tableModel = new TableModel<CellModelKeyValue<LancamentoPorEdicaoDTO>>();
 
@@ -144,6 +140,21 @@ public class VendaProdutoController {
 		return tableModel;
 	}
 
+	private List<LancamentoPorEdicaoDTO> obterListaComPeriodos(List<LancamentoPorEdicaoDTO> listaAux) {
+		
+		List<LancamentoPorEdicaoDTO> listaLancamentoPorEdicao = new ArrayList<LancamentoPorEdicaoDTO>();
+		
+		int cont = 1;
+		if(!listaAux.isEmpty()){
+			for(LancamentoPorEdicaoDTO dto: listaAux){
+				dto.setPeriodo(cont+"º");
+				listaLancamentoPorEdicao.add(dto);
+				cont++;
+			}			
+		}
+		
+		return listaLancamentoPorEdicao; 
+	}
 
 	private void validarEntrada(FiltroVendaProdutoDTO filtro) {
 		
@@ -170,7 +181,8 @@ public class VendaProdutoController {
 					listaDTOParaExportacao, VendaProdutoDTO.class, this.httpResponse);
 			
 		}else if(tipoExportacao.equals("popup")){
-			List<LancamentoPorEdicaoDTO> lista = this.vendaProdutoService.buscaLancamentoPorEdicao(filtro);
+			List<LancamentoPorEdicaoDTO> listaAux = this.vendaProdutoService.buscaLancamentoPorEdicao(filtro);
+			List<LancamentoPorEdicaoDTO> lista = obterListaComPeriodos(listaAux);
 			
 			if(lista.isEmpty()) {
 				throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");

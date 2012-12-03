@@ -34,6 +34,7 @@ public class TipoMovimentoFinanceiroRepositoryImplTest extends AbstractRepositor
 	}
 	
 	@Test
+	@SuppressWarnings("unused")
 	public void buscarPorDescricao(){
 		
 		String descricao = "descricaoteste";

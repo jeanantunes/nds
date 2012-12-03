@@ -83,14 +83,14 @@ public class IdentificacaoEmitente implements Serializable {
 	 */
 	@Column(name="IE_EMITENTE", nullable=false, length=14)
 	@NFEExport(secao=TipoSecao.C, posicao=2, tamanho=14)
-	private String inscricaoEstual;
+	private String inscricaoEstadual;
 	
 	/**
 	 * IEST
 	 */
 	@Column(name="IE_SUBSTITUTO_TRIBUTARIO_EMITENTE", length=14, nullable=true)
 	@NFEExport(secao=TipoSecao.C, posicao=3, tamanho=14)
-	private String inscricaoEstualSubstituto;
+	private String inscricaoEstadualSubstituto;
 	
 	/**
 	 * IM
@@ -206,37 +206,37 @@ public class IdentificacaoEmitente implements Serializable {
 
 
 	/**
-	 * @return the inscricaoEstual
+	 * @return the inscricaoEstadual
 	 */
-	public String getInscricaoEstual() {
-		return inscricaoEstual;
+	public String getInscricaoEstadual() {
+		return inscricaoEstadual;
 	}
 
 
 
 	/**
-	 * @param inscricaoEstual the inscricaoEstual to set
+	 * @param inscricaoEstadual the inscricaoEstadual to set
 	 */
-	public void setInscricaoEstual(String inscricaoEstual) {
-		this.inscricaoEstual = inscricaoEstual;
+	public void setInscricaoEstadual(String inscricaoEstadual) {
+		this.inscricaoEstadual = inscricaoEstadual;
 	}
 
 
 
 	/**
-	 * @return the inscricaoEstualSubstituto
+	 * @return the inscricaoEstadualSubstituto
 	 */
-	public String getInscricaoEstualSubstituto() {
-		return inscricaoEstualSubstituto;
+	public String getInscricaoEstadualSubstituto() {
+		return inscricaoEstadualSubstituto;
 	}
 
 
 
 	/**
-	 * @param inscricaoEstualSubstituto the inscricaoEstualSubstituto to set
+	 * @param inscricaoEstadualSubstituto the inscricaoEstadualSubstituto to set
 	 */
-	public void setInscricaoEstualSubstituto(String inscricaoEstualSubstituto) {
-		this.inscricaoEstualSubstituto = inscricaoEstualSubstituto;
+	public void setInscricaoEstadualSubstituto(String inscricaoEstadualSubstituto) {
+		this.inscricaoEstadualSubstituto = inscricaoEstadualSubstituto;
 	}
 
 
@@ -344,11 +344,11 @@ public class IdentificacaoEmitente implements Serializable {
 		result = prime * result
 				+ ((endereco == null) ? 0 : endereco.hashCode());
 		result = prime * result
-				+ ((inscricaoEstual == null) ? 0 : inscricaoEstual.hashCode());
+				+ ((inscricaoEstadual == null) ? 0 : inscricaoEstadual.hashCode());
 		result = prime
 				* result
-				+ ((inscricaoEstualSubstituto == null) ? 0
-						: inscricaoEstualSubstituto.hashCode());
+				+ ((inscricaoEstadualSubstituto == null) ? 0
+						: inscricaoEstadualSubstituto.hashCode());
 		result = prime
 				* result
 				+ ((inscricaoMunicipal == null) ? 0 : inscricaoMunicipal
@@ -406,19 +406,19 @@ public class IdentificacaoEmitente implements Serializable {
 		} else if (!endereco.equals(other.endereco)) {
 			return false;
 		}
-		if (inscricaoEstual == null) {
-			if (other.inscricaoEstual != null) {
+		if (inscricaoEstadual == null) {
+			if (other.inscricaoEstadual != null) {
 				return false;
 			}
-		} else if (!inscricaoEstual.equals(other.inscricaoEstual)) {
+		} else if (!inscricaoEstadual.equals(other.inscricaoEstadual)) {
 			return false;
 		}
-		if (inscricaoEstualSubstituto == null) {
-			if (other.inscricaoEstualSubstituto != null) {
+		if (inscricaoEstadualSubstituto == null) {
+			if (other.inscricaoEstadualSubstituto != null) {
 				return false;
 			}
-		} else if (!inscricaoEstualSubstituto
-				.equals(other.inscricaoEstualSubstituto)) {
+		} else if (!inscricaoEstadualSubstituto
+				.equals(other.inscricaoEstadualSubstituto)) {
 			return false;
 		}
 		if (inscricaoMunicipal == null) {
@@ -478,10 +478,10 @@ public class IdentificacaoEmitente implements Serializable {
 				+ (nome != null ? "nome=" + nome + ", " : "")
 				+ (nomeFantasia != null ? "nomeFantasia=" + nomeFantasia + ", "
 						: "")
-				+ (inscricaoEstual != null ? "inscricaoEstual="
-						+ inscricaoEstual + ", " : "")
-				+ (inscricaoEstualSubstituto != null ? "inscricaoEstualSubstituto="
-						+ inscricaoEstualSubstituto + ", "
+				+ (inscricaoEstadual != null ? "inscricaoEstadual="
+						+ inscricaoEstadual + ", " : "")
+				+ (inscricaoEstadualSubstituto != null ? "inscricaoEstadualSubstituto="
+						+ inscricaoEstadualSubstituto + ", "
 						: "")
 				+ (inscricaoMunicipal != null ? "inscricaoMunicipal="
 						+ inscricaoMunicipal + ", " : "")

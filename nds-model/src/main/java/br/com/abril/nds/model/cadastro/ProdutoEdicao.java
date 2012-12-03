@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
@@ -118,7 +119,7 @@ public class ProdutoEdicao implements Serializable {
 	@Column(name = "POSSUI_BRINDE", nullable = true)
 	protected boolean possuiBrinde;
 	
-	@ManyToOne
+	@ManyToOne(cascade = { CascadeType.MERGE , CascadeType.PERSIST } )
 	@JoinColumn(name = "BRINDE_ID")
 	private Brinde brinde;
 	

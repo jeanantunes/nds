@@ -1,20 +1,14 @@
 package br.com.abril.nds.repository.impl;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.dto.filtro.FiltroConsultaBancosDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaBancosDTO.OrdenacaoColunaBancos;
-import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.cadastro.Banco;
-import br.com.abril.nds.model.cadastro.FormaCobranca;
-import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
-import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.repository.BancoRepository;
 import br.com.abril.nds.repository.FormaCobrancaRepository;
 import br.com.abril.nds.vo.PaginacaoVO;
@@ -323,4 +317,10 @@ public class BancoRepositoryImplTest extends AbstractRepositoryImplTest {
 		
 	}
 
+	@SuppressWarnings("unused")
+	@Test
+	public void obterbancoPorApelido(){
+		Banco banco = bancoRepository.obterbancoPorApelido("");
+	}
+	
 }

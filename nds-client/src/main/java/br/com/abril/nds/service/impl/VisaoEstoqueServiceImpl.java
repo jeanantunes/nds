@@ -3,6 +3,7 @@ package br.com.abril.nds.service.impl;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +20,6 @@ import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.Diferenca;
-import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.estoque.TipoDirecionamentoDiferenca;
 import br.com.abril.nds.model.estoque.TipoEstoque;
@@ -62,7 +62,11 @@ public class VisaoEstoqueServiceImpl implements VisaoEstoqueService {
 		
 		List<VisaoEstoqueDTO> list = new ArrayList<VisaoEstoqueDTO>();
 		
-		if (DateUtil.isHoje(filtro.getDataMovimentacao())) {
+		Distribuidor distribuidor = this.distribuidorService.obter();
+		
+		Date dataOperacao = distribuidor.getDataOperacao();
+		
+		if (filtro.getDataMovimentacao().compareTo(dataOperacao) == 0) {
 
 			// Busca na tabela estoque
 			filtro.setTipoEstoque(TipoEstoque.LANCAMENTO.toString());
@@ -96,7 +100,7 @@ public class VisaoEstoqueServiceImpl implements VisaoEstoqueService {
 			list.add(visaoEstoqueRepository.obterVisaoEstoqueHistorico(filtro));
 			
 			filtro.setTipoEstoque(TipoEstoque.PRODUTOS_DANIFICADOS.toString());
-			list.add(visaoEstoqueRepository.obterVisaoEstoque(filtro));
+			list.add(visaoEstoqueRepository.obterVisaoEstoqueHistorico(filtro));
 		}
 		
 		return list;
@@ -136,6 +140,22 @@ public class VisaoEstoqueServiceImpl implements VisaoEstoqueService {
 		
 		return list;
 	}
+	
+	@Override
+	@Transactional(readOnly=true)
+	public BigInteger obtemQuantidadeEstoque(long idProdutoEdicao, String tipoEstoque, Date dataMovimentacao){ 
+		BigInteger qtd;
+		if (tipoEstoque.equals(TipoEstoque.LANCAMENTO_JURAMENTADO.toString())) {
+			qtd = visaoEstoqueRepository.obterQuantidadeEstoqueJuramentado(idProdutoEdicao);
+		} else {
+			if (DateUtil.isHoje(dataMovimentacao)) {
+				qtd = visaoEstoqueRepository.obterQuantidadeEstoque(idProdutoEdicao, tipoEstoque);
+			} else {
+				qtd = visaoEstoqueRepository.obterQuantidadeEstoqueHistorico(idProdutoEdicao, tipoEstoque);
+			}
+		}
+		return qtd;
+	}
 
 	@Override
 	@Transactional
@@ -163,6 +183,11 @@ public class VisaoEstoqueServiceImpl implements VisaoEstoqueService {
 		}
 		
 		for (VisaoEstoqueTransferenciaDTO dto : filtro.getListaTransferencia()) {
+			BigInteger qtdEstoque =  this.obtemQuantidadeEstoque(dto.getProdutoEdicaoId(), filtro.getTipoEstoque(), filtro.getDataMovimentacao());
+			
+			if(qtdEstoque.longValue() < dto.getQtde()){
+				throw new ValidacaoException(TipoMensagem.WARNING, "Não é possivel transferir quantidade superior a do estoque disponível.");
+			}
 
 			movimentoEstoqueService.gerarMovimentoEstoque(
 					dto.getProdutoEdicaoId(), 
@@ -231,17 +256,5 @@ public class VisaoEstoqueServiceImpl implements VisaoEstoqueService {
 			
 			this.diferencaEstoqueRepository.adicionar(diferenca);
 		}
-	}
-	
-	private TipoMovimentoEstoque buscaTipoMovimento() {
-		
-		TipoMovimentoEstoque tipoMovimento = 
-				tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.VENDA_ENCALHE);
-		
-		if(tipoMovimento == null){
-			throw new ValidacaoException(TipoMensagem.ERROR,"Não foi encontrado tipo de movimento de estoque para venda de encalhe!");
-		}
-		
-		return tipoMovimento;
 	}
 }

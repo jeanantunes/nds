@@ -27,15 +27,16 @@ public class VendaProdutoRepositoryImpl extends AbstractRepositoryModel<Moviment
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append("SELECT new ").append(VendaProdutoDTO.class.getCanonicalName()).append("( estoqueProduto.produtoEdicao.numeroEdicao as numEdicao, ");
+		hql.append(" select ");
+		hql.append(" estoqueProduto.produtoEdicao.numeroEdicao as numEdicao, ");
 		hql.append(" lancamento.dataLancamentoDistribuidor as dataLancamento, ");
 		hql.append(" lancamento.dataRecolhimentoDistribuidor as dataRecolhimento, ");
 		hql.append(" COALESCE((estoqueProduto.qtde + estoqueProduto.qtdeSuplementar), 0) as reparte, ");
 		hql.append(" COALESCE(((estoqueProduto.qtde + estoqueProduto.qtdeSuplementar) - estoqueProduto.qtdeDevolucaoEncalhe), 0)  as venda, ");
-		hql.append(" COALESCE(((estoqueProduto.qtde + estoqueProduto.qtdeSuplementar) - estoqueProduto.qtdeDevolucaoEncalhe) / (estoqueProduto.qtde + estoqueProduto.qtdeSuplementar), 0) as percentagemVenda, ");
+		hql.append(" COALESCE(ROUND(((estoqueProduto.qtde + estoqueProduto.qtdeSuplementar) - estoqueProduto.qtdeDevolucaoEncalhe) / (estoqueProduto.qtde + estoqueProduto.qtdeSuplementar)), 0) as percentagemVenda, ");
 		hql.append(" produtoEdicao.precoVenda  as precoCapa, ");
 		hql.append(" produtoEdicao.chamadaCapa as chamadaCapa, ");
-		hql.append(" COALESCE(((estoqueProduto.qtde + estoqueProduto.qtdeSuplementar) - estoqueProduto.qtdeDevolucaoEncalhe) * produtoEdicao.precoVenda, 0)  as total) ");
+		hql.append(" COALESCE(((estoqueProduto.qtde + estoqueProduto.qtdeSuplementar) - estoqueProduto.qtdeDevolucaoEncalhe) * produtoEdicao.precoVenda, 0)  as total ");
 		
 		
 		hql.append(getSqlFromEWhereVendaPorProduto(filtro));
@@ -50,8 +51,8 @@ public class VendaProdutoRepositoryImpl extends AbstractRepositoryModel<Moviment
 			query.setParameter(key, param.get(key));
 		}
 		
-		/*query.setResultTransformer(new AliasToBeanResultTransformer(
-				VendaProdutoDTO.class));*/
+		query.setResultTransformer(new AliasToBeanResultTransformer(
+				VendaProdutoDTO.class));
 		
 		if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
 			query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
@@ -60,7 +61,6 @@ public class VendaProdutoRepositoryImpl extends AbstractRepositoryModel<Moviment
 			query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
 				
 		return query.list();
-		 
 	}
 	
 	private String getSqlFromEWhereVendaPorProduto(FiltroVendaProdutoDTO filtro) {
@@ -144,13 +144,13 @@ public class VendaProdutoRepositoryImpl extends AbstractRepositoryModel<Moviment
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" SELECT DISTINCT lancamento.lancamentoInicial as dataLancamento, ");
-		hql.append(" lancamento.recolhimentoFinal as dataRecolhimento, ");
+		hql.append(" SELECT DISTINCT lancamento.dataLancamentoDistribuidor as dataLancamento, ");
+		hql.append(" lancamento.dataRecolhimentoDistribuidor as dataRecolhimento, ");
 		hql.append(" (estoqueProduto.qtde + estoqueProduto.qtdeSuplementar) as reparte, ");
 		hql.append(" estoqueProduto.qtdeDevolucaoEncalhe  as encalhe, ");
 		hql.append(" ((estoqueProduto.qtde + estoqueProduto.qtdeSuplementar) - estoqueProduto.qtdeDevolucaoEncalhe)  as venda, ");
 		hql.append(" ((estoqueProduto.qtde + estoqueProduto.qtdeSuplementar) - estoqueProduto.qtdeDevolucaoEncalhe)  as vendaAcumulada, ");
-		hql.append(" (((estoqueProduto.qtde + estoqueProduto.qtdeSuplementar) - estoqueProduto.qtdeDevolucaoEncalhe) / (estoqueProduto.qtde + estoqueProduto.qtdeSuplementar))  as percentualVenda ");
+		hql.append(" ROUND((((estoqueProduto.qtde + estoqueProduto.qtdeSuplementar) - estoqueProduto.qtdeDevolucaoEncalhe) / (estoqueProduto.qtde + estoqueProduto.qtdeSuplementar))) as percentualVenda ");
 		
 		
 		hql.append(getSqlFromEWhereLancamentoPorEdicao(filtro));
@@ -175,7 +175,7 @@ public class VendaProdutoRepositoryImpl extends AbstractRepositoryModel<Moviment
 		StringBuilder hql = new StringBuilder();
 	
 
-		hql.append(" from LancamentoParcial lancamento ");
+		hql.append(" from Lancamento lancamento ");
 		hql.append(" LEFT JOIN lancamento.produtoEdicao as produtoEdicao ");
 		hql.append(" LEFT JOIN lancamento.produtoEdicao.produto as produto ");
 		hql.append(" LEFT JOIN lancamento.produtoEdicao.movimentoEstoques as movimentoEstoque ");

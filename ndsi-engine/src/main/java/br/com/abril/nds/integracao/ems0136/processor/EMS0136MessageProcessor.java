@@ -48,11 +48,6 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 	public void processMessage(Message message) {
 		
 		EMS0136Input input = (EMS0136Input) message.getBody();
-		if (input == null) {
-			this.ndsiLoggerFactory.getLogger().logError(message,
-					EventoExecucaoEnum.ERRO_INFRA, "NAO ENCONTROU o Arquivo");
-			return;
-		}
 		
 		// Validar código do distribuidor:
 		Distribuidor distribuidor = this.distribuidorService.obter();
@@ -84,18 +79,19 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 			
 			// Novo Lançamento Parcial:
 			lancamentoParcial = this.gerarNovoLancamentoParcial(input, 
-					produtoEdicao);
+					produtoEdicao);			
+		} else {		
 			
-			// Novo Lançamento:
-			Lancamento lancamento = this.gerarNovoLancamento(input, produtoEdicao);
-			
-			// Novo Período Lançamento Parcial;
-			this.gerarNovoPeriodoLancamentoParcial(input, lancamentoParcial, 
-					lancamento);
-		} else {
-			
-			this.atualizarLancamentoParcial(input, lancamentoParcial);		
+			this.atualizarLancamentoParcial(input, lancamentoParcial);			
 		}
+		
+		// Novo Lançamento:
+		Lancamento lancamento = this.gerarNovoLancamento(input, produtoEdicao);
+		
+		// Novo Período Lançamento Parcial;
+		this.gerarNovoPeriodoLancamentoParcial(input, lancamentoParcial, 
+				lancamento);
+		
 		
 	}
 	
@@ -307,16 +303,7 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 				return;
 			}
 		}
-		
-		
-		/*
-		 * Cenário em que não existe "Período Lançamento Parcial" com o mesmo
-		 * "Número de Período":
-		 */
-		Lancamento lancamento = this.gerarNovoLancamento(input, 
-				lancamentoParcial.getProdutoEdicao());
-		this.gerarNovoPeriodoLancamentoParcial(input, lancamentoParcial, 
-				lancamento);		
+			
 	}
 	
 	

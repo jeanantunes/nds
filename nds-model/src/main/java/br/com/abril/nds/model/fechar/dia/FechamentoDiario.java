@@ -1,6 +1,7 @@
 package br.com.abril.nds.model.fechar.dia;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -16,6 +17,9 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 
 import br.com.abril.nds.model.seguranca.Usuario;
 
@@ -60,7 +64,10 @@ public class FechamentoDiario implements Serializable {
 	@OneToMany(mappedBy = "fechamentoDiario")
 	private List<FechamentoDiarioResumoEstoque> consolidadoResumoEstoque;
 	
-
+    @OneToMany(mappedBy = "fechamentoDiario")
+    @Cascade(CascadeType.ALL)
+	private List<FechamentoDiarioDiferenca> diferencas;
+	
 	public Long getId() {
 		return id;
 	}
@@ -146,5 +153,32 @@ public class FechamentoDiario implements Serializable {
 			List<FechamentoDiarioResumoEstoque> consolidadoResumoEstoque) {
 		this.consolidadoResumoEstoque = consolidadoResumoEstoque;
 	}
+
+    /**
+     * @return the diferencas
+     */
+    public List<FechamentoDiarioDiferenca> getDiferencas() {
+        return diferencas;
+    }
+
+    /**
+     * @param diferencas the diferencas to set
+     */
+    public void setDiferencas(List<FechamentoDiarioDiferenca> diferencas) {
+        this.diferencas = diferencas;
+    }
+    
+    /**
+     * Adiciona uma diferença ao fechamento diário
+     * 
+     * @param diferenca diferença para inclusão
+     */
+    public void addDiferenca(FechamentoDiarioDiferenca diferenca) {
+        if (diferencas == null) {
+            diferencas = new ArrayList<>();
+        }
+        diferenca.setFechamentoDiario(this);
+        diferencas.add(diferenca);
+    }
 	
 }
