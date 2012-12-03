@@ -786,6 +786,8 @@ public class LancamentoRepositoryImpl extends
 		hql.append(" lancamento.sequenciaMatriz as sequenciaMatriz,			  	");
 		hql.append(" produto.codigo as codigoProduto, 	");
 		hql.append(" produto.nome as nomeProduto,		");
+		hql.append(" periodoLancamentoParcial.tipo as tipoLancamentoParcial, ");
+//		hql.append(" lancamento.editor as nomeEditor,		");
 		hql.append(" produtoEdicao.numeroEdicao as numeroEdicao,		");
 		hql.append(" produtoEdicao.chamadaCapa as chamadaCapa,		");
 		hql.append(" produtoEdicao.codigoDeBarras as codigoDeBarras, ");
@@ -801,8 +803,10 @@ public class LancamentoRepositoryImpl extends
 		
 		hql.append(" lancamento.dataRecolhimentoDistribuidor as dataRecolhimento, 	");
 		
-		hql.append(" lancamentoParcial.recolhimentoFinal as dataRecolhimentoFinal 	");
+		hql.append(" lancamentoParcial.recolhimentoFinal as dataRecolhimentoFinal, 	");
 		
+		hql.append(" editorPessoaJuridica.razaoSocial as nomeEditor		");
+
 		hql.append(this.getHQLObtemLancamentoInformeRecolhimento(idFornecedor, dataInicioRecolhimento, dataFimRecolhimento));
 
 		hql.append(" order by ");
@@ -856,6 +860,8 @@ public class LancamentoRepositoryImpl extends
 		hql.append(" inner join lancamento.produtoEdicao as produtoEdicao 	");
 		hql.append(" inner join produtoEdicao.produto as produto 			");
 		hql.append(" inner join produto.fornecedores as fornecedor 			");
+		hql.append(" left join produto.editor as editor ");
+		hql.append(" left join editor.pessoaJuridica as editorPessoaJuridica ");
 		hql.append(" left join lancamento.periodoLancamentoParcial as periodoLancamentoParcial 	");
 		hql.append(" left join periodoLancamentoParcial.lancamentoParcial as lancamentoParcial	");
 		

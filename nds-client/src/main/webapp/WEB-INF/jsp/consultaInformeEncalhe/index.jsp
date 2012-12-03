@@ -128,10 +128,10 @@ fieldset label {
 					</tr>
 					<tr>
 						<td><input name="tipoImpressao.colunas[]"
-							id="tipoImpressao.colunas.dataRecolhimentoParcialFinal"
-							type="checkbox" value="dataRecolhimentoParcialFinal" /></td>
+							id="tipoImpressao.colunas.tipoLancamentoParcial"
+							type="checkbox" value="tipoLancamentoParcial" /></td>
 						<td><label
-							for="tipoImpressao.colunas.dataRecolhimentoParcialFinal">Recolhimento
+							for="tipoImpressao.colunas.tipoLancamentoParcial">Recolhimento
 								Parcial/Final</label></td>
 					</tr>
 				</table>

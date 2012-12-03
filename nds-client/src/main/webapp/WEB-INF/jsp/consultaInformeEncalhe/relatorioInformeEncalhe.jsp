@@ -86,7 +86,7 @@
 							</td>
 						</tr>
 						<tr>
-							<td width="794" align="center" valign="middle"><h2>AGÊNCIAS	SÃO PAULO</h2></td>
+							<td width="794" align="center" valign="middle"><h2>${nomeDistribuidor}</h2></td>
 							<td width="98" align="center" style="border-left: 1px solid #000; border-bottom: 1px solid #000;">
 								<strong>${diaMesInicioRecolhimento}º DIA</strong>
 							</td>
@@ -314,14 +314,14 @@
 											
 											<c:set var="contains" value="false" />
 											<c:forEach var="coluna" items="${colunas}">
-											  <c:if test="${coluna.param eq 'dataRecolhimentoParcialFinal'}">
+											  <c:if test="${coluna.param eq 'tipoLancamentoParcial'}">
 											    <c:set var="contains" value="true" />
 											  </c:if>
 											</c:forEach>
 											
 											<c:if test="${contains}">
 												<td align="center">
-													<fmt:formatDate value="${dado.dataRecolhimentoParcialFinal}" pattern="dd/MM/yyyy"/>
+													${dado.tipoLancamentoParcial}
 												</td>
 											</c:if>
 										</tr>

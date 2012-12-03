@@ -7,8 +7,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-import javax.annotation.PostConstruct;
-
 import org.apache.commons.io.IOUtils;
 import org.lightcouch.NoDocumentException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +16,6 @@ import br.com.abril.nds.dto.ColunaRelatorioInformeEncalhe;
 import br.com.abril.nds.dto.InformeEncalheDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.TipoImpressaoInformeEncalheDTO;
-import br.com.abril.nds.dto.TipoImpressaoInformeEncalheDTO.Capas;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.DiaSemana;
@@ -30,15 +27,13 @@ import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TipoMensagem;
-import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
+import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
-import br.com.caelum.vraptor.interceptor.download.ByteArrayDownload;
-import br.com.caelum.vraptor.interceptor.download.Download;
 
 /**
  * 
@@ -63,6 +58,9 @@ public class ConsultaInformeEncalheController {
 	
 	@Autowired 
 	private CapaService capaService;	
+	
+	@Autowired
+	private DistribuidorService distribuidorService;
 	
 	
 	private DiaSemana inicioDaSemana;
@@ -257,13 +255,17 @@ public class ConsultaInformeEncalheController {
 						"dataRecolhimento"));
 			}
 			
-			if (tipoImpressao.getColunas().contains("dataRecolhimentoParcialFinal")){
+			if (tipoImpressao.getColunas().contains("tipoLancamentoParcial")){
 				
-				colunas.add(new ColunaRelatorioInformeEncalhe("Parcial / Final",
+				colunas.add(new ColunaRelatorioInformeEncalhe("P / F",
 						this.calcularTamanhoColunaRelatorio(qtdColunas, 5), 
-						"dataRecolhimentoParcialFinal"));
+						"tipoLancamentoParcial"));
 			}
 		}
+		
+		String nomeDistribuidor = this.distribuidorService.obter().getJuridica().getRazaoSocial();
+		
+		this.result.include("nomeDistribuidor", nomeDistribuidor);
 		
 		this.result.include("colunas", colunas);
 		

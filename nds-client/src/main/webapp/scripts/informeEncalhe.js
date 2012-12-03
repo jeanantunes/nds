@@ -364,7 +364,9 @@ CapaPopup.prototype.loadCapa = function() {
 						_this.changeStatus(_this.statusEnum.CAPA);				
 					}).error(function() {
 				_this.changeStatus(_this.statusEnum.NO_CAPA);
-			}).attr('src', contextPath + "/capa/" + this.idProdutoEdicao +"?" + Math.random());
+			}).attr('src', contextPath + "/capa/" + this.idProdutoEdicao +"?" + Math.random())
+			  .attr('height', '300px')
+			  .attr('width', '250px');
 };
 
 CapaPopup.prototype.openDialogUpload = function(event) {
