@@ -918,7 +918,7 @@ var COTA_DESCONTO = $.extend(true,
 
             $(".descProdutosGrid", this.workspace).flexReload();
 
-            $(".grids", this.workspace).show();
+            $(".grids", MANTER_COTA.workspace).show();
         },
 
         obterDescontoCota : function(numCota){
@@ -933,7 +933,7 @@ var COTA_DESCONTO = $.extend(true,
 
             $(".descCotaGrid", this.workspace).flexReload();
 
-            $(".grids", this.workspace).show();
+            $(".grids", MANTER_COTA.workspace).show();
         },
 
 
@@ -944,11 +944,11 @@ var COTA_DESCONTO = $.extend(true,
                     resultado.mensagens.tipoMensagem,
                     resultado.mensagens.listaMensagens
                 );
-                $(".grids", this.workspace).hide();
+                $(".grids", MANTER_COTA.workspace).hide();
                 return resultado;
             }
 
-            $(".grids", this.workspace).show();
+            $(".grids", MANTER_COTA.workspace).show();
 
             return resultado;
         }

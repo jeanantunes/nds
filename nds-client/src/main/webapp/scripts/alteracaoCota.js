@@ -187,6 +187,7 @@ var alteracaoCotaController = $.extend(true, {
 		
 		var params = $("#pesquisarForm", this.workspace).serializeArray();
 		
+				
 		$(".alteracaoGrid", this.workspace).flexOptions({
 			"url" : contextPath + "/administracao/alteracaoCota/pesquisarAlteracaoCota.json",
 			params: params,

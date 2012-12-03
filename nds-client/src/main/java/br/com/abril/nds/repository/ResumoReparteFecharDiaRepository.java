@@ -4,24 +4,19 @@ import java.util.Date;
 import java.util.List;
 
 import br.com.abril.nds.dto.ReparteFecharDiaDTO;
+import br.com.abril.nds.dto.fechamentodiario.SumarizacaoReparteDTO;
 import br.com.abril.nds.vo.PaginacaoVO;
 
 /**
  * @deprecated Repositórios devem estar associados a uma entidade no modelo.
- * Considerar refatoração, extinguindo este repositório e enviando oa métodos para
- * reposítórios que estejam "associados" com as consultas efetuadas
+ * Considerar refatoração, extinguindo este repositório e enviando os métodos para
+ * repositórios que estejam "associados" com as consultas efetuadas
  * 
  */
 @Deprecated
 public interface ResumoReparteFecharDiaRepository {
-	
-	List<ReparteFecharDiaDTO> obterValorDiferenca(Date dataOperacao, boolean soma, String tipoDiferenca);
 
-	List<ReparteFecharDiaDTO> obterValorTransferencia(Date dataOperacao, boolean soma);
-
-	List<ReparteFecharDiaDTO> obterValorReparte(Date dataOperacaoDistribuidor, boolean soma);
-
-	List<ReparteFecharDiaDTO> obterValorDistribuido(Date dataOperacao, boolean soma);
+	SumarizacaoReparteDTO obterSumarizacaoReparte(Date data);
 
 	List<ReparteFecharDiaDTO> obterResumoReparte(Date data);
 
