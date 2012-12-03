@@ -8,7 +8,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-public class RotaRoteirizacaoDTO implements Serializable {
+import br.com.abril.nds.util.Ordenavel;
+
+public class RotaRoteirizacaoDTO implements Serializable, Ordenavel {
 
 	private static final long serialVersionUID = 1L;
 
@@ -19,6 +21,8 @@ public class RotaRoteirizacaoDTO implements Serializable {
 	private String nome;
 	
 	private Boolean selecionado;
+	
+	private Long entregadorId;
 	
 	private List<PdvRoteirizacaoDTO> pdvs = new ArrayList<PdvRoteirizacaoDTO>();
 	
@@ -33,6 +37,13 @@ public class RotaRoteirizacaoDTO implements Serializable {
 		this.nome = nome;
 	}
 
+	public RotaRoteirizacaoDTO(Long id, Integer ordem, String nome, Long entregadorId) {
+		this.id = id;
+		this.ordem = ordem;
+		this.nome = nome;
+		this.entregadorId = entregadorId;
+	}
+	
 	/**
 	 * @return the ordem
 	 */
@@ -280,4 +291,14 @@ public class RotaRoteirizacaoDTO implements Serializable {
             }
         }
     }
+
+	public Long getEntregadorId() {
+		return entregadorId;
+	}
+
+	public void setEntregadorId(Long entregadorId) {
+		this.entregadorId = entregadorId;
+	}
+	
+	
 }

@@ -10,7 +10,9 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -61,7 +63,11 @@ public class Box implements Serializable {
 	
 	@OneToMany(mappedBy = "box")
 	private Set<Cota> cotas = new HashSet<Cota>();
-
+	
+	@OneToOne(mappedBy="box")
+	@JoinColumn(name="ROTEIRIZACAO_ID", unique=true)
+	private Roteirizacao roteirizacao;
+	
 	public Set<Cota> getCotas() {
 		return cotas;
 	}
@@ -108,6 +114,13 @@ public class Box implements Serializable {
 		this.tipoBox = tipoBox;
 	}
 
+	public Roteirizacao getRoteirizacao() {
+		return roteirizacao;
+	}
+
+	public void setRoteirizacao(Roteirizacao roteirizacao) {
+		this.roteirizacao = roteirizacao;
+	}
 
 	@Override
 	public int hashCode() {

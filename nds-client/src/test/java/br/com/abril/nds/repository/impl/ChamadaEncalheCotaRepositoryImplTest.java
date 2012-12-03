@@ -138,6 +138,8 @@ public class ChamadaEncalheCotaRepositoryImplTest extends
 		save(cfop);
 
 		tipoNotaFiscal = Fixture.tipoNotaFiscalRecebimento(cfop);
+		tipoNotaFiscal.setCfopEstado(cfop);
+		tipoNotaFiscal.setCfopOutrosEstados(cfop);
 		save(tipoNotaFiscal);
 
 		NotaFiscalEntradaFornecedor notaFiscal1Veja = Fixture
@@ -337,13 +339,12 @@ public class ChamadaEncalheCotaRepositoryImplTest extends
 
 		Calendar now = Calendar.getInstance();
 		Date dataOperacao = now.getTime();
-
-		boolean indPesquisaCEFutura = false;
+		
 		boolean conferido = false;
 		boolean postergado = false;
 
 		chamadaEncalheCotaRepository.obterReparteDaChamaEncalheCota(
-			numeroCota, dataOperacao, indPesquisaCEFutura,
+			numeroCota, dataOperacao,
 			conferido, postergado);
 
 		Assert.assertTrue(true);

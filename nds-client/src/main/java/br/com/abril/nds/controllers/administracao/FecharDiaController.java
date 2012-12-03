@@ -251,18 +251,12 @@ public class FecharDiaController {
 	
 	@Post
 	@Path("/obterGridReparte")
-	public void obterGridReparte(){
-		
-		List<ReparteFecharDiaDTO> listaReparte = this.resumoFecharDiaService.obterResumoReparte(distribuidor.getDataOperacao());
-		
-		TableModel<CellModelKeyValue<ReparteFecharDiaDTO>> tableModel = new TableModel<CellModelKeyValue<ReparteFecharDiaDTO>>();
-		
-		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaReparte));
-		
-		tableModel.setTotal(listaReparte.size());
-		
-		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
-		
+	public void obterGridReparte(Integer page, Integer rp){
+	    Date dataFechamento = getDataFechamento();
+	    PaginacaoVO paginacao = new PaginacaoVO(page, rp, null);
+		List<ReparteFecharDiaDTO> listaReparte = resumoFecharDiaService.obterResumoReparte(dataFechamento, paginacao);
+		Long countReparte = resumoFecharDiaService.contarLancamentosExpedidos(dataFechamento);
+		result.use(FlexiGridJson.class).from(listaReparte).page(page).total(countReparte.intValue()).serialize();    
 	}
 	
 	@Post
@@ -316,7 +310,6 @@ public class FecharDiaController {
 		tableModel.setTotal(listaReparte.size());
 		
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
-		
 	}
 	
 	
@@ -326,7 +319,7 @@ public class FecharDiaController {
 		
 		
 		try {
-		List<ReparteFecharDiaDTO> listaReparte = this.resumoFecharDiaService.obterResumoReparte(distribuidor.getDataOperacao());
+		List<ReparteFecharDiaDTO> listaReparte = this.resumoFecharDiaService.obterResumoReparte(distribuidor.getDataOperacao(), null);
 		
 		if(listaReparte.isEmpty()) {
 			throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");

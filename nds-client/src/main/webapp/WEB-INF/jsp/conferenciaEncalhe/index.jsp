@@ -135,6 +135,9 @@
 					<td class="class_linha_2" align="center" id="desconto"></td>
 					<td class="class_linha_2" align="center" id="valorTotal"></td>
 					<td align="center">
+						
+						<input name="idProdutoEdicaoHidden" type="hidden" id="idProdutoEdicaoHidden" />
+						
 						<a href="javascript:;" class="ok_filtro" onclick="ConferenciaEncalhe.adicionarProdutoConferido();">
 							<img src="${pageContext.request.contextPath}/images/bt_check.gif" alt="Incluir" width="22" height="22" border="0" />
 						</a>

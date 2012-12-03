@@ -1,13 +1,18 @@
 package br.com.abril.nds.repository.impl;
 
+import java.lang.reflect.Constructor;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+import java.util.Objects;
 
 import org.hibernate.Query;
+import org.hibernate.transform.AliasToBeanConstructorResultTransformer;
 import org.hibernate.transform.AliasToBeanResultTransformer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.ReparteFecharDiaDTO;
@@ -16,9 +21,14 @@ import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.repository.ResumoReparteFecharDiaRepository;
+import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.vo.PaginacaoVO;
+
 
 @Repository
 public class ResumoReparteFecharDiaRepositoryImpl  extends AbstractRepository implements ResumoReparteFecharDiaRepository {
+    
+    private static final Logger LOG = LoggerFactory.getLogger(ResumoReparteFecharDiaRepositoryImpl.class);
 	
 	@SuppressWarnings("unchecked")
 	@Override
@@ -176,289 +186,126 @@ public class ResumoReparteFecharDiaRepositoryImpl  extends AbstractRepository im
 		
 		return query.list();
 	}
-	
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<ReparteFecharDiaDTO> obterResumoReparte(Date dataOperacaoDistribuidor ){
 		
-		StringBuilder hql = new StringBuilder();
-		
-		hql.append(" SELECT p.codigo as codigo,  ");
-		hql.append(" p.nome as nomeProduto, ");
-		hql.append(" pe.numeroEdicao as numeroEdicao, ");
-		hql.append(" pe.precoVenda as precoVenda, ");
-		hql.append(" count(*) as qtdReparte ");
-		
-		hql.append(" from Lancamento l ");
-		hql.append(" JOIN l.produtoEdicao as pe ");
-		hql.append(" JOIN pe.produto as p ");
-		hql.append(" WHERE l.dataLancamentoPrevista = :dataOperacaoDistribuidor ");
-		hql.append(" AND l.status IN (:listaStatus)");
-		hql.append(" GROUP BY p.codigo, p.nome, pe.numeroEdicao, pe.precoVenda");
-		
-		Query query = super.getSession().createQuery(hql.toString());
-		
-		List<StatusLancamento> listaStatus = new ArrayList<StatusLancamento>();
-		
-		listaStatus.add(StatusLancamento.CONFIRMADO);
-		listaStatus.add(StatusLancamento.BALANCEADO);
-		listaStatus.add(StatusLancamento.ESTUDO_FECHADO);
-		
-		query.setParameter("dataOperacaoDistribuidor", dataOperacaoDistribuidor);
-		
-		query.setParameterList("listaStatus", listaStatus);		
-		
-		query.setResultTransformer(new AliasToBeanResultTransformer(ReparteFecharDiaDTO.class));
-		
-		List<ReparteFecharDiaDTO> listaFinal = query.list();
-		
-		////////////////////////////////////////////////////////////
-		
-		hql = new StringBuilder();
-		
-		hql.append(" SELECT p.codigo as codigo,  ");
-		hql.append(" p.nome as nomeProduto, ");
-		hql.append(" pe.numeroEdicao as numeroEdicao, ");
-		hql.append(" pe.precoVenda as precoVenda, ");
-		hql.append(" count(*) as qtdSobras ");
-		
-		hql.append(" FROM Diferenca as dif ");
-		hql.append(" JOIN dif.produtoEdicao as pe ");
-		hql.append(" JOIN pe.produto as p ");
-		hql.append(" WHERE dif.dataMovimento = :dataOperacaoDistribuidor ");		
-		hql.append(" AND dif.tipoDiferenca IN (:listaSobras) ");
-		hql.append(" GROUP BY p.codigo, p.nome, pe.numeroEdicao, pe.precoVenda");
-		
-		query = super.getSession().createQuery(hql.toString());
-		
-		List<TipoDiferenca> listaDeSobras = new ArrayList<TipoDiferenca>();
-		
-		listaDeSobras.add(TipoDiferenca.SOBRA_DE);
-		listaDeSobras.add(TipoDiferenca.SOBRA_EM);
-		
-		query.setParameter("dataOperacaoDistribuidor", dataOperacaoDistribuidor);
-		
-		query.setParameterList("listaSobras", listaDeSobras);
-		
-		query.setResultTransformer(new AliasToBeanResultTransformer(ReparteFecharDiaDTO.class));
-		
-		List<ReparteFecharDiaDTO> listaFinalDeSobras = query.list();
-		
-		listaFinal =  obterListaFinalParaGridReparte(listaFinal, listaFinalDeSobras, "sobras");
-		
-		//FINAL DE SOBRAS
-		
-		hql = new StringBuilder();
-		
-		hql.append(" SELECT p.codigo as codigo,  ");
-		hql.append(" p.nome as nomeProduto, ");
-		hql.append(" pe.numeroEdicao as numeroEdicao, ");
-		hql.append(" pe.precoVenda as precoVenda, ");
-		hql.append(" count(*) as qtdFaltas ");
-		
-		hql.append(" FROM Diferenca as dif ");
-		hql.append(" JOIN dif.produtoEdicao as pe ");
-		hql.append(" JOIN pe.produto as p ");
-		hql.append(" WHERE dif.dataMovimento = :dataOperacaoDistribuidor ");		
-		hql.append(" AND dif.tipoDiferenca IN (:listaDeFaltas) ");
-		hql.append(" GROUP BY p.codigo, p.nome, pe.numeroEdicao, pe.precoVenda");
-		
-		query = super.getSession().createQuery(hql.toString());
-		
-		List<TipoDiferenca> listaDeFaltas = new ArrayList<TipoDiferenca>();
-		
-		listaDeFaltas.add(TipoDiferenca.FALTA_DE);
-		listaDeFaltas.add(TipoDiferenca.FALTA_EM);
-		
-		query.setParameter("dataOperacaoDistribuidor", dataOperacaoDistribuidor);
-		
-		query.setParameterList("listaDeFaltas", listaDeFaltas);
-		
-		query.setResultTransformer(new AliasToBeanResultTransformer(ReparteFecharDiaDTO.class));
-		
-		List<ReparteFecharDiaDTO> listaFinalDeFaltas = query.list();
-		
-		listaFinal =  obterListaFinalParaGridReparte(listaFinal, listaFinalDeFaltas, "faltas");
-		
-		//FIM DAS FALTAS
-		
-		hql = new StringBuilder();
-		
-		hql.append(" SELECT p.codigo as codigo,  ");
-		hql.append(" p.nome as nomeProduto, ");
-		hql.append(" pe.numeroEdicao as numeroEdicao, ");
-		hql.append(" pe.precoVenda as precoVenda, ");
-		hql.append(" count(*) as qtdTransferido ");
-		
-		hql.append(" from MovimentoEstoque me ");
-		hql.append(" JOIN me.tipoMovimento as tm ");
-		hql.append(" JOIN me.produtoEdicao as pe ");
-		hql.append(" JOIN pe.produto as p ");
-		hql.append(" WHERE me.dataCriacao = :dataOperacaoDistribuidor ");
-		hql.append(" AND tm.grupoMovimentoEstoque IN (:listaGrupoMovimentoEstoque) ");
-		hql.append(" GROUP BY p.codigo, p.nome, pe.numeroEdicao, pe.precoVenda");
-		
-		query = super.getSession().createQuery(hql.toString());
-		
-		List<GrupoMovimentoEstoque> listaGrupoMovimentoEstoque = new ArrayList<GrupoMovimentoEstoque>();
-		
-		listaGrupoMovimentoEstoque.add(GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_LANCAMENTO);
-		listaGrupoMovimentoEstoque.add(GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_PRODUTOS_DANIFICADOS);
-		listaGrupoMovimentoEstoque.add(GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_RECOLHIMENTO);
-		listaGrupoMovimentoEstoque.add(GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_SUPLEMENTAR);
-		
-		query.setParameter("dataOperacaoDistribuidor", dataOperacaoDistribuidor);
-		
-		query.setParameterList("listaGrupoMovimentoEstoque", listaGrupoMovimentoEstoque);
-		
-		query.setResultTransformer(new AliasToBeanResultTransformer(ReparteFecharDiaDTO.class));
-		
-		List<ReparteFecharDiaDTO> listaFinalDeTransferencias = query.list();
-		
-		listaFinal =  obterListaFinalParaGridReparte(listaFinal, listaFinalDeTransferencias, "transferencias");
-		
-		//FIM DOS TRANSFERIDOS
-		
-		hql = new StringBuilder();
-		
-		hql.append(" SELECT p.codigo as codigo,  ");
-		hql.append(" p.nome as nomeProduto, ");
-		hql.append(" pe.numeroEdicao as numeroEdicao, ");
-		hql.append(" pe.precoVenda as precoVenda, ");
-		hql.append(" count(*) as qtdDistribuido ");
-		
-		hql.append(" from MovimentoEstoque me ");
-		hql.append(" JOIN me.tipoMovimento as tm ");
-		hql.append(" JOIN me.produtoEdicao as pe ");
-		hql.append(" JOIN pe.produto as p ");
-		hql.append(" WHERE me.dataCriacao = :dataOperacaoDistribuidor ");
-		hql.append(" AND tm.grupoMovimentoEstoque = :grupoMovimento ");
-		hql.append(" AND me.status = :status ");
-		hql.append(" GROUP BY p.codigo, p.nome, pe.numeroEdicao, pe.precoVenda");
-		
-		query = super.getSession().createQuery(hql.toString());
-		
-				
-		query.setParameter("dataOperacaoDistribuidor", dataOperacaoDistribuidor);		
-		query.setParameter("grupoMovimento", GrupoMovimentoEstoque.ENVIO_JORNALEIRO);		
-		query.setParameter("status", StatusAprovacao.APROVADO);		
-		
-		query.setResultTransformer(new AliasToBeanResultTransformer(ReparteFecharDiaDTO.class));
-		
-		List<ReparteFecharDiaDTO> listaFinalDeDistribuidos = query.list();
-		
-		listaFinal =  obterListaFinalParaGridReparte(listaFinal, listaFinalDeDistribuidos, "distribuidos");
-		
-		listaFinal = completarListaComItensCalculados(listaFinal);
-		
-		return listaFinal;
-	}
-	
-	private List<ReparteFecharDiaDTO> obterListaFinalParaGridReparte(List<ReparteFecharDiaDTO> listaFinal, List<ReparteFecharDiaDTO> listaParaComparacao, 
-			String tipoDaLista){
-		
-		if(listaFinal != null){
-			int tamanhoListaReparte = listaFinal.size();
-			int tamanhoListaComparacao = listaParaComparacao.size();
-			Set<ReparteFecharDiaDTO> listaRetorno = new HashSet<ReparteFecharDiaDTO>(listaFinal);
-			
-			if(tamanhoListaReparte >= tamanhoListaComparacao){
-				for(ReparteFecharDiaDTO reparte: listaFinal){
-					ReparteFecharDiaDTO objetoFinal = reparte;
-					for(ReparteFecharDiaDTO comp: listaParaComparacao){
-						if(reparte.getCodigo().equals(comp.getCodigo()) && reparte.getNumeroEdicao() == comp.getNumeroEdicao()){
-							if(tipoDaLista.equals("sobras")){
-								objetoFinal.setQtdSobras(comp.getQtdSobras());							
-							}else if(tipoDaLista.equals("faltas")){
-								objetoFinal.setQtdFaltas(comp.getQtdFaltas());
-							}else if(tipoDaLista.equals("transferencias")){
-								objetoFinal.setQtdTransferido(comp.getQtdTransferido());
-							}else if(tipoDaLista.equals("distribuidos")){
-								objetoFinal.setQtdDistribuido(comp.getQtdDistribuido());
-							}
-							listaRetorno.add(objetoFinal);
-						}else{
-							listaRetorno.add(objetoFinal);								
-						}
-					}				
-				}
-			}
-			return new ArrayList<ReparteFecharDiaDTO>(listaRetorno);
-		}else{
-			return listaParaComparacao;
-		}
-	}
-	
-	private List<ReparteFecharDiaDTO> completarListaComItensCalculados(List<ReparteFecharDiaDTO> listaFinal) {
-		
-		Set<ReparteFecharDiaDTO> listaRetorno = new HashSet<ReparteFecharDiaDTO>(listaFinal);
-		for(ReparteFecharDiaDTO dto : listaFinal){
-			ReparteFecharDiaDTO objetoFinal = dto;
-			if(dto.getQtdReparte() != null && dto.getQtdSobras() != null && dto.getQtdFaltas() != null){
-				long aDistribuir = (dto.getQtdReparte() + dto.getQtdSobras()) - dto.getQtdFaltas();
-				objetoFinal.setQtdADistribuir(aDistribuir);
-				long sobaDistribuida = aDistribuir - dto.getQtdDistribuido();
-				objetoFinal.setQtdSobraDiferenca(sobaDistribuida);
-				long diferenca = dto.getQtdDistribuido() - sobaDistribuida;
-				objetoFinal.setQtdDiferenca(diferenca);
-				listaRetorno.add(objetoFinal);
-			}
-		}
-		
-		
-		
-		return formatarDadosNulos(new ArrayList<ReparteFecharDiaDTO>(listaRetorno));
+    @Override
+	public List<ReparteFecharDiaDTO> obterResumoReparte(Date data){
+	   return obterLancamentosExpedidos(data, null);
 	}
 
-	private List<ReparteFecharDiaDTO> formatarDadosNulos(ArrayList<ReparteFecharDiaDTO> listaFinal) {
-		 
-		Set<ReparteFecharDiaDTO> listaRetorno = new HashSet<ReparteFecharDiaDTO>(listaFinal);
-		for(ReparteFecharDiaDTO dto : listaFinal){
-			ReparteFecharDiaDTO objetoFinal = dto;
-			if(dto.getQtdReparte() == null){
-				objetoFinal.setQtdReparteFormatado("");
-			}else{
-				objetoFinal.setQtdReparteFormatado(dto.getQtdReparte().toString());
-			}
-			if(dto.getQtdSobras() == null){
-				objetoFinal.setQtdSobrasFormatado("");
-			}else{
-				objetoFinal.setQtdSobrasFormatado(dto.getQtdSobras().toString());
-			}
-			if(dto.getQtdFaltas() == null){
-				objetoFinal.setQtdFaltasFormatado("");
-			}else{
-				objetoFinal.setQtdFaltasFormatado(dto.getQtdFaltas().toString());
-			}
-			if(dto.getQtdTransferido() == null){
-				objetoFinal.setQtdTransferenciaFormatado("");
-			}else{
-				objetoFinal.setQtdTransferenciaFormatado(dto.getQtdTransferido().toString());
-			}
-			if(dto.getQtdADistribuir() == null){
-				objetoFinal.setQtdADistribuirFormatado("");
-			}else{
-				objetoFinal.setQtdADistribuirFormatado(dto.getQtdADistribuir().toString());
-			}
-			if(dto.getQtdDistribuido() == null){
-				objetoFinal.setQtdDistribuidoFormatado("");
-			}else{
-				objetoFinal.setQtdDistribuidoFormatado(dto.getQtdDistribuido().toString());
-			}
-			if(dto.getQtdSobraDiferenca() == null){
-				objetoFinal.setQtdSobraDistribuidoFormatado("");
-			}else{
-				objetoFinal.setQtdSobraDistribuidoFormatado(dto.getQtdSobraDiferenca().toString());
-			}
-			if(dto.getQtdDiferenca() == null){
-				objetoFinal.setQtdDiferencaFormatado("");
-			}else{
-				objetoFinal.setQtdDiferencaFormatado(dto.getQtdDiferenca().toString());
-			}
-			listaRetorno.add(objetoFinal);
-		}
-		
-		return new ArrayList<ReparteFecharDiaDTO>(listaRetorno);
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<ReparteFecharDiaDTO> obterResumoReparte(Date data, PaginacaoVO paginacao) {
+        return obterLancamentosExpedidos(data, paginacao);
+    }
+
+    @Override
+    public Long contarLancamentosExpedidos(Date data) {
+        Objects.requireNonNull(data, "Data para contagem dos lançamentos expedidos não deve ser nula!");
+        
+        Date dataInicio = DateUtil.removerTimestamp(data);
+        Date dataFim = DateUtil.adicionarDias(dataInicio, 1);
+        
+        StringBuilder hql = new StringBuilder("select count(lancamento) ");
+        hql.append("from Expedicao expedicao ");
+        hql.append("join expedicao.lancamentos lancamento ");
+        hql.append("where expedicao.dataExpedicao >= :dataInicio and expedicao.dataExpedicao < :dataFim ");
+        //É permitido o furo após a expedição, mas pela implementação atual não está desvinculando o lançamento furado da expedição
+        //então para calculo do reparte edxpedido do dia são excluídos os lançamentos com furo após expedição na query
+        hql.append("and lancamento.status <> :statusFuro ");
+ 
+        Query query = getSession().createQuery(hql.toString());
+        query.setParameter("dataInicio", dataInicio);
+        query.setParameter("dataFim", dataFim);
+        query.setParameter("statusFuro", StatusLancamento.FURO);
+        
+        return (Long) query.uniqueResult();
+    }
+
+    
+    @SuppressWarnings("unchecked")
+    private List<ReparteFecharDiaDTO> obterLancamentosExpedidos(Date data, PaginacaoVO paginacao) {
+        Objects.requireNonNull(data, "Data para consulta ao resumo do reparte não deve ser nula!");
+
+        Date dataInicio = DateUtil.removerTimestamp(data);
+        Date dataFim = DateUtil.adicionarDias(dataInicio, 1);
+        
+        String exemplaresDiferencaDe = "qtde * produtoEdicao.pacotePadrao";
+        String exemplaresDiferencaEm = "qtde";
+        
+        String templateHqlDiferenca = new StringBuilder("(select sum(%s) from Diferenca diferenca ") 
+        .append("where diferenca.dataMovimento = :data and diferenca.produtoEdicao.id = produtoEdicao.id and diferenca.tipoDiferenca = :%s) as %s ").toString();
+        
+        StringBuilder hql = new StringBuilder("select produto.codigo as codigo, ");
+        hql.append("produto.nome as nomeProduto, ");
+        hql.append("produtoEdicao.numeroEdicao as numeroEdicao, ");
+        hql.append("produtoEdicao.precoVenda as precoVenda, ");
+        hql.append("lancamento.reparte as qtdeReparte, ");
+        
+        //Diferenças, convertendo as qtde sempre para exemplares
+        hql.append(String.format(templateHqlDiferenca, exemplaresDiferencaDe, "tipoDiferencaSobraDe", "qtdeSobraDe")).append(",");
+        hql.append(String.format(templateHqlDiferenca, exemplaresDiferencaEm, "tipoDiferencaSobraEm", "qtdeSobraEm")).append(",");
+        hql.append(String.format(templateHqlDiferenca, exemplaresDiferencaDe, "tipoDiferencaFaltaDe", "qtdeFaltaDe")).append(",");
+        hql.append(String.format(templateHqlDiferenca, exemplaresDiferencaEm, "tipoDiferencaFaltaEm", "qtdeFaltaEm")).append(",");
+        
+        //Quantidade efetiva distribuída, considerando movimento de envio de reparte, como também o estorno, em caso de furo
+        hql.append("(select sum(case when movimentoEstoque.tipoMovimento.grupoMovimentoEstoque = :grupoMovimentoEnvioJornaleiro ");
+        hql.append("then movimentoEstoque.qtde else (movimentoEstoque.qtde * -1) end) from MovimentoEstoque movimentoEstoque where movimentoEstoque.data = :data "); 
+        hql.append("and movimentoEstoque.produtoEdicao.id = produtoEdicao.id and movimentoEstoque.status = :statusAprovado ");
+        hql.append("and movimentoEstoque.tipoMovimento.grupoMovimentoEstoque in (:grupoMovimentoEnvioJornaleiro, :grupoMovimentoEstornoEnvioJornaleiro)) as qtdeDistribuido, ");
+        
+        //Transferências de estoque de lançamento, entrada e saída
+        hql.append("(select sum(case when movimentoEstoque.tipoMovimento.grupoMovimentoEstoque = :grupoTransferenciaLancamentoEntrada ");
+        hql.append("then movimentoEstoque.qtde else (movimentoEstoque.qtde * -1) end) from MovimentoEstoque movimentoEstoque where movimentoEstoque.data = :data "); 
+        hql.append("and movimentoEstoque.produtoEdicao.id = produtoEdicao.id and movimentoEstoque.status = :statusAprovado ");
+        hql.append("and movimentoEstoque.tipoMovimento.grupoMovimentoEstoque in (:grupoTransferenciaLancamentoEntrada, :grupoTransferenciaLancamentoSaida)) as qtdeTransferencia ");
+     
+        hql.append("from Expedicao expedicao ");
+        hql.append("join expedicao.lancamentos lancamento ");
+        hql.append("join lancamento.produtoEdicao produtoEdicao ");
+        hql.append("join produtoEdicao.produto produto ");
+        hql.append("where expedicao.dataExpedicao >= :dataInicio and expedicao.dataExpedicao < :dataFim ");
+        //É permitido o furo após a expedição, mas pela implementação atual não está desvinculando o lançamento furado da expedição
+        //então para calculo do reparte edxpedido do dia são excluídos os lançamentos com furo após expedição na query
+        hql.append("and lancamento.status <> :statusFuro ");
+        hql.append("order by codigo asc");
+    
+        Query query = getSession().createQuery(hql.toString());
+        query.setParameter("data", dataInicio);
+        query.setParameter("dataInicio", dataInicio);
+        query.setParameter("dataFim", dataFim);
+        query.setParameter("tipoDiferencaSobraDe", TipoDiferenca.SOBRA_DE);
+        query.setParameter("tipoDiferencaSobraEm", TipoDiferenca.SOBRA_EM);
+        query.setParameter("tipoDiferencaFaltaDe", TipoDiferenca.FALTA_DE);
+        query.setParameter("tipoDiferencaFaltaEm", TipoDiferenca.FALTA_EM);
+        query.setParameter("statusAprovado", StatusAprovacao.APROVADO);
+        query.setParameter("grupoMovimentoEnvioJornaleiro", GrupoMovimentoEstoque.ENVIO_JORNALEIRO);
+        query.setParameter("grupoMovimentoEstornoEnvioJornaleiro", GrupoMovimentoEstoque.ESTORNO_REPARTE_FURO_PUBLICACAO);
+        query.setParameter("grupoTransferenciaLancamentoEntrada", GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_LANCAMENTO);
+        query.setParameter("grupoTransferenciaLancamentoSaida", GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_LANCAMENTO);
+        query.setParameter("statusFuro", StatusLancamento.FURO);
+        
+        if (paginacao != null) {
+            query.setFirstResult(paginacao.getPosicaoInicial());
+            query.setMaxResults(paginacao.getQtdResultadosPorPagina());
+        }
+        
+        try {
+            Constructor<ReparteFecharDiaDTO> constructor = ReparteFecharDiaDTO.class
+                    .getConstructor(String.class, String.class, Long.class,
+                            BigDecimal.class, BigInteger.class,
+                            BigInteger.class, BigInteger.class,
+                            BigInteger.class, BigInteger.class,
+                            BigInteger.class, BigInteger.class);
+            query.setResultTransformer(new AliasToBeanConstructorResultTransformer(constructor));
+        } catch (NoSuchMethodException | SecurityException e) {
+            String msg = "Erro definindo result transformer para classe: " + ReparteFecharDiaDTO.class.getName();
+            LOG.error(msg, e);
+            throw new RuntimeException(msg, e);
+        } 
+        return query.list();
+    }
+
 
 }

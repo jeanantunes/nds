@@ -1,12 +1,15 @@
 package br.com.abril.nds.repository.impl;
 
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import junit.framework.Assert;
 
+import org.hibernate.mapping.Array;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +28,7 @@ import br.com.abril.nds.model.cadastro.desconto.DescontoProdutoEdicao;
 import br.com.abril.nds.model.cadastro.desconto.TipoDesconto;
 import br.com.abril.nds.model.fiscal.NCM;
 import br.com.abril.nds.repository.DescontoProdutoEdicaoRepository;
+import br.com.abril.nds.util.EntityUtil;
 
 public class DescontoProdutoEdicaoRepositoryImplTest extends AbstractRepositoryImplTest{
 	
@@ -34,6 +38,8 @@ public class DescontoProdutoEdicaoRepositoryImplTest extends AbstractRepositoryI
 	private Fornecedor fornecedor;
 
 	private Cota cota;
+	
+	private ProdutoEdicao produtoEdicaoVeja1;
 	
 	
 	@Before
@@ -66,7 +72,7 @@ public class DescontoProdutoEdicaoRepositoryImplTest extends AbstractRepositoryI
 		
 		save(produtoBoaForma,produtoVeja);
 		
-		ProdutoEdicao produtoEdicaoVeja1 = Fixture.produtoEdicao("COD_1", 1L, 10, 14,
+		produtoEdicaoVeja1 = Fixture.produtoEdicao("COD_1", 1L, 10, 14,
 				new Long(100), BigDecimal.TEN, new BigDecimal(20),
 				"111", produtoVeja, null, false, "Veja 1");
 		save(produtoEdicaoVeja1);
@@ -111,6 +117,47 @@ public class DescontoProdutoEdicaoRepositoryImplTest extends AbstractRepositoryI
 		DescontoProdutoEdicao descontoProdutoEdicao4 = Fixture.descontoProdutoEdicao(cota, BigDecimal.ONE, fornecedor, produtoEdicaoBoaForma1, TipoDesconto.PRODUTO);
 		save(descontoProdutoEdicao4);
 		
+	}
+	
+	
+	@Test
+	public void buscarDescontoProdutoEdicaoTipoDesconto() {
+		
+		TipoDesconto tipo = TipoDesconto.ESPECIFICO;
+		
+		DescontoProdutoEdicao descontoProdutoEdicao = 
+				descontoProdutoEdicaoRepository.buscarDescontoProdutoEdicao(tipo, null, null, null);
+		
+	}
+	
+	@Test
+	public void buscarDescontoProdutoEdicaoFornecedor() {
+		
+		Fornecedor fornecedor = new Fornecedor();
+		fornecedor.setId(1L);
+		
+		DescontoProdutoEdicao descontoProdutoEdicao = 
+				descontoProdutoEdicaoRepository.buscarDescontoProdutoEdicao(null, fornecedor, null, null);
+	}
+	
+	@Test
+	public void buscarDescontoProdutoEdicaoCota() {
+		
+		Cota cota = new Cota();
+		cota.setId(1L);
+		
+		DescontoProdutoEdicao descontoProdutoEdicao = 
+				descontoProdutoEdicaoRepository.buscarDescontoProdutoEdicao(null, null, cota, null);
+	}
+	
+	@Test
+	public void buscarDescontoProdutoEdicaoProdutoEdicao() {
+		
+		ProdutoEdicao produto = new ProdutoEdicao();
+		produto.setId(1L);
+		
+		DescontoProdutoEdicao descontoProdutoEdicao = 
+				descontoProdutoEdicaoRepository.buscarDescontoProdutoEdicao(null, null, null, produto);
 	}
 	
 	@Test
@@ -193,6 +240,79 @@ public class DescontoProdutoEdicaoRepositoryImplTest extends AbstractRepositoryI
 			
 			Assert.assertTrue(this.cota.equals(desconto.getCota()));
 		}
+	}
+	
+	@Test
+	public void obterDescontoProdutoEdicaoProdutoEdicao() {
+		
+		ProdutoEdicao produto = new ProdutoEdicao(); 
+		produto.setId(1L);
+		
+		Set<DescontoProdutoEdicao> descontoProdutoEdicaos = descontoProdutoEdicaoRepository.obterDescontosProdutoEdicao(produto);
+		
+		Assert.assertNotNull(descontoProdutoEdicaos);
+		
+	}
+	
+	@Test
+	public void obterDescontoProdutoEdicaoProdutoTipoDesconto() {
+		
+		TipoDesconto tipo = TipoDesconto.ESPECIFICO;
+		
+		Set<DescontoProdutoEdicao> descontoProdutoEdicaos = 
+				descontoProdutoEdicaoRepository.obterDescontoProdutoEdicao(tipo, null, null);
+		
+		Assert.assertNotNull(descontoProdutoEdicaos);
+		
+	}
+	
+	@Test
+	public void obterDescontoPorCotaProdutoEdicaoIdCota() {
+		
+		Long idCota = 1L;
+		
+		descontoProdutoEdicaoRepository.obterDescontoPorCotaProdutoEdicao(idCota, null, null);
+				
+	}
+	
+	@Test
+	public void obterDescontoPorCotaProdutoEdicaoIdProdutoEdicao() {
+		
+		Long idProdutoEdicao = 1L;
+		
+		descontoProdutoEdicaoRepository.obterDescontoPorCotaProdutoEdicao(null, idProdutoEdicao, null);
+				
+	}
+	
+	@Test
+	public void obterDescontoPorCotaProdutoEdicaoIdFornecedor() {
+		
+		Long idFornecedor = 1L;
+		
+		descontoProdutoEdicaoRepository.obterDescontoPorCotaProdutoEdicao(null, null, idFornecedor);
+				
+	}
+	
+	@Test
+	public void salvarListaDescontoProdutoEdicao() throws IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchMethodException {
+		
+		ProdutoEdicao produtoEdicao1 = EntityUtil.clonarSemID(produtoEdicaoVeja1);
+		produtoEdicao1.setNumeroEdicao(100L);
+		save(produtoEdicao1);
+		
+		DescontoProdutoEdicao descontoProdutoEdicao = new DescontoProdutoEdicao();
+		descontoProdutoEdicao.setCota(cota);
+		descontoProdutoEdicao.setFornecedor(fornecedor);
+		descontoProdutoEdicao.setProdutoEdicao(produtoEdicao1);
+		descontoProdutoEdicao.setTipoDesconto(TipoDesconto.ESPECIFICO);
+		descontoProdutoEdicao.setDesconto(BigDecimal.ONE);
+		
+		List<DescontoProdutoEdicao> lista = new ArrayList<DescontoProdutoEdicao>(); 
+		lista.add(descontoProdutoEdicao);
+		
+		
+		descontoProdutoEdicaoRepository.salvarListaDescontoProdutoEdicao(lista);
+				
 	}
 	
 	private void testeRetornoDesconto(List<DescontoProdutoEdicao> descontos, TipoDesconto tipoDesconto){

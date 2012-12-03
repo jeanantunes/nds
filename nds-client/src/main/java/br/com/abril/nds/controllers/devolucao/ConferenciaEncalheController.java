@@ -38,6 +38,7 @@ import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.serialization.custom.CustomJson;
+import br.com.abril.nds.serialization.custom.CustomMapJson;
 import br.com.abril.nds.service.ConferenciaEncalheService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.exception.ChamadaEncalheCotaInexistenteException;
@@ -810,9 +811,8 @@ public class ConferenciaEncalheController {
 				
 				dados.put("indGeraDocumentoConfEncalheCota", dadosDocumentacaoConfEncalheCota.isIndGeraDocumentacaoConferenciaEncalhe());
 			}
-
 			
-			this.result.use(CustomJson.class).from(dados).serialize();			
+			this.result.use(CustomMapJson.class).put("result", dados).serialize();
 			
 		} else {
 			
@@ -1370,7 +1370,10 @@ public class ConferenciaEncalheController {
 		conferenciaEncalheDTO.setPrecoCapa(produtoEdicao.getPrecoVenda());
 		conferenciaEncalheDTO.setPrecoCapaInformado(produtoEdicao.getPrecoVenda());
 		
-		conferenciaEncalheDTO.setTipoChamadaEncalhe(produtoEdicao.getTipoChamadaEncalhe().name());
+		if (produtoEdicao.getTipoChamadaEncalhe() != null) {
+			conferenciaEncalheDTO.setTipoChamadaEncalhe(produtoEdicao.getTipoChamadaEncalhe().name());
+		}
+		
 		conferenciaEncalheDTO.setDataRecolhimento(produtoEdicao.getDataRecolhimentoDistribuidor());
 		
 		conferenciaEncalheDTO.setParcial(produtoEdicao.isParcial());
@@ -1392,6 +1395,12 @@ public class ConferenciaEncalheController {
 		conferenciaEncalheDTO.setDesconto(produtoEdicao.getDesconto());
 		
 		conferenciaEncalheDTO.setValorTotal(produtoEdicao.getPrecoVenda().subtract(produtoEdicao.getDesconto()).multiply(new BigDecimal( conferenciaEncalheDTO.getQtdExemplar()) ));
+		
+		conferenciaEncalheDTO.setNomeEditor(produtoEdicao.getEditor());
+		
+		conferenciaEncalheDTO.setNomeFornecedor(produtoEdicao.getNomeFornecedor());
+		
+		conferenciaEncalheDTO.setChamadaCapa(produtoEdicao.getChamadaCapa());
 		
 		if (adicionarGrid){
 			

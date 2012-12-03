@@ -154,8 +154,8 @@ public class NotaFiscalRepositoryImplTest  extends AbstractRepositoryImplTest {
 		save(enderecoEmitente);
 		
 		
-		String inscricaoEstualEmitente = "";
-		String inscricaoEstualSubstituto = "";
+		String inscricaoEstadualEmitente = "";
+		String inscricaoEstadualSubstituto = "";
 		String inscricaoMunicipalEmitente = "";
 		String nomEmitente = "";
 		String nomeFantasiaEmitente = "";
@@ -170,8 +170,8 @@ public class NotaFiscalRepositoryImplTest  extends AbstractRepositoryImplTest {
 						cnae, 
 						documentoEmitente, 
 						enderecoEmitente, 
-						inscricaoEstualEmitente, 
-						inscricaoEstualSubstituto, 
+						inscricaoEstadualEmitente, 
+						inscricaoEstadualSubstituto, 
 						inscricaoMunicipalEmitente, 
 						nomEmitente, 
 						nomeFantasiaEmitente, 
