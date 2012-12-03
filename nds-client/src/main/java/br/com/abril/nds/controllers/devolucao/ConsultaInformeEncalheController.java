@@ -303,6 +303,7 @@ public class ConsultaInformeEncalheController {
 							
 							if (i < dados.size()){
 							
+								img.setSequenciaMatriz(info.getSequenciaMatriz());
 								img.setIdProdutoEdicao(dados.get(i).getIdProdutoEdicao());
 							}
 							
@@ -316,12 +317,14 @@ public class ConsultaInformeEncalheController {
 						
 						InformeEncalheDTO dt = new InformeEncalheDTO();
 						dt.setImagem(true);
+						dt.setSequenciaMatriz(info.getSequenciaMatriz());
 						listaResult.add(dt);
 					}
 				} else {
 					
 					InformeEncalheDTO dt = new InformeEncalheDTO();
 					dt.setImagem(true);
+					dt.setSequenciaMatriz(info.getSequenciaMatriz());
 					listaResult.add(dt);
 				}
 			}
@@ -346,6 +349,7 @@ public class ConsultaInformeEncalheController {
 					if (i < dados.size()){
 					
 						img.setIdProdutoEdicao(dados.get(i).getIdProdutoEdicao());
+						img.setSequenciaMatriz(dados.get(i).getSequenciaMatriz());
 					}
 					
 					listaResult.add(img);
@@ -389,6 +393,7 @@ public class ConsultaInformeEncalheController {
 					InformeEncalheDTO inDto = new InformeEncalheDTO();
 					inDto.setImagem(true);
 					inDto.setIdProdutoEdicao(listaResult.get(index).getIdProdutoEdicao());
+					inDto.setSequenciaMatriz(listaResult.get(index).getSequenciaMatriz());
 					listaResult.add(inDto);
 					
 					imgAdd++;

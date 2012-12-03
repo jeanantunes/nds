@@ -63,8 +63,8 @@
 				<tr>
 					<td>&nbsp;</td>
 					<td>
-						<span id="btImpressao" class="bt_novos" title="Imprimir">
-							<a href="javascript:;" onclick="$('#btImpressao').hide();window.print();$('#btImpressao').show();">
+						<span id="btImpressaoInforme" class="bt_novos" title="Imprimir">
+							<a href="javascript:;" onclick="$('#btImpressaoInforme').hide();window.print();$('#btImpressao').show();">
 								<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" 
 								hspace="5" border="0" />Imprimir</a>
 						</span>
@@ -354,7 +354,7 @@
 						        
 				        		<c:if test="${dado.idProdutoEdicao != null}">
 									<td align="center">
-										<div align="center"><strong>${dado.seqCapa == null ? '-' : dado.seqCapa}</strong></div>
+										<div align="center"><strong>${dado.sequenciaMatriz == null ? '-' : dado.sequenciaMatriz}</strong></div>
 										<img src="<c:url value='/capa/${dado.idProdutoEdicao}'></c:url>" width="110" height="143"></img>
 									<td>
 								</c:if>

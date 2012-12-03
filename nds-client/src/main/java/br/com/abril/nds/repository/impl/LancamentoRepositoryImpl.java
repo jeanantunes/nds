@@ -790,7 +790,6 @@ public class LancamentoRepositoryImpl extends
 		hql.append(" produto.codigo as codigoProduto, 	");
 		hql.append(" produto.nome as nomeProduto,		");
 		hql.append(" periodoLancamentoParcial.tipo as tipoLancamentoParcial, ");
-//		hql.append(" lancamento.editor as nomeEditor,		");
 		hql.append(" produtoEdicao.numeroEdicao as numeroEdicao,		");
 		hql.append(" produtoEdicao.chamadaCapa as chamadaCapa,		");
 		hql.append(" produtoEdicao.codigoDeBarras as codigoDeBarras, ");
