@@ -159,7 +159,7 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 						function (result){
 					
 							if (checkTodos) {
-								$("#grids",this.workspace).hide();
+								$("#grids",chamdaEncalheAnteipadaController.workspace).hide();
 							} else {
 								chamdaEncalheAnteipadaController.pesquisarCotasPorProduto();
 							}
@@ -407,7 +407,7 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 					resultado.mensagens.listaMensagens,""
 				);
 				
-				$("#grids",this.workspace).hide();
+				$("#grids",chamdaEncalheAnteipadaController.workspace).hide();
 
 				return resultado.tableModel;
 			}
@@ -445,7 +445,7 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 			chamdaEncalheAnteipadaController.setHiddenMunicipio();
 			chamdaEncalheAnteipadaController.setHiddenTipoPontoPDV();
 			
-			$("#grids",this.workspace).show();
+			$("#grids",chamdaEncalheAnteipadaController.workspace).show();
 			$("#gridAntecipada",this.workspace).show();
 			$("#gridPesquisaCota",this.workspace).hide();
 			
@@ -529,7 +529,7 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 					resultado.mensagens.listaMensagens
 				);
 				
-				$("#grids",this.workspace).hide();
+				$("#grids",chamdaEncalheAnteipadaController.workspace).hide();
 
 				return resultado;
 			}
@@ -579,7 +579,7 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 			chamdaEncalheAnteipadaController.setHiddenMunicipio();
 			chamdaEncalheAnteipadaController.setHiddenTipoPontoPDV();
 			
-			$("#grids",this.workspace).show();
+			$("#grids",chamdaEncalheAnteipadaController.workspace).show();
 			$("#gridAntecipada",this.workspace).hide();
 			$("#gridPesquisaCota",this.workspace).show();
 			
@@ -847,7 +847,7 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 						function (result){
 					
 							if (checkTodos) {
-								$("#grids",this.workspace).hide();
+								$("#grids",chamdaEncalheAnteipadaController.workspace).hide();
 							} else {
 								chamdaEncalheAnteipadaController.pesquisarCotasPorProduto();
 							}
@@ -905,7 +905,7 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 						function (result){
 							
 							if (checkTodos) {
-								$("#grids",this.workspace).hide();
+								$("#grids",chamdaEncalheAnteipadaController.workspace).hide();
 							} else {
 								chamdaEncalheAnteipadaController.pesquisarCotasPorProduto();
 							}
