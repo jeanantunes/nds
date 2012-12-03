@@ -63,8 +63,8 @@
 				<tr>
 					<td>&nbsp;</td>
 					<td>
-						<span id="btImpressao" class="bt_novos" title="Imprimir">
-							<a href="javascript:;" onclick="$('#btImpressao').hide();window.print();$('#btImpressao').show();">
+						<span id="btImpressaoInforme" class="bt_novos" title="Imprimir">
+							<a href="javascript:;" onclick="$('#btImpressaoInforme').hide();window.print();$('#btImpressao').show();">
 								<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" 
 								hspace="5" border="0" />Imprimir</a>
 						</span>
@@ -86,7 +86,7 @@
 							</td>
 						</tr>
 						<tr>
-							<td width="794" align="center" valign="middle"><h2>AGÊNCIAS	SÃO PAULO</h2></td>
+							<td width="794" align="center" valign="middle"><h2>${nomeDistribuidor}</h2></td>
 							<td width="98" align="center" style="border-left: 1px solid #000; border-bottom: 1px solid #000;">
 								<strong>${diaMesInicioRecolhimento}º DIA</strong>
 							</td>
@@ -314,14 +314,14 @@
 											
 											<c:set var="contains" value="false" />
 											<c:forEach var="coluna" items="${colunas}">
-											  <c:if test="${coluna.param eq 'dataRecolhimentoParcialFinal'}">
+											  <c:if test="${coluna.param eq 'tipoLancamentoParcial'}">
 											    <c:set var="contains" value="true" />
 											  </c:if>
 											</c:forEach>
 											
 											<c:if test="${contains}">
 												<td align="center">
-													<fmt:formatDate value="${dado.dataRecolhimentoParcialFinal}" pattern="dd/MM/yyyy"/>
+													${dado.tipoLancamentoParcial}
 												</td>
 											</c:if>
 										</tr>
@@ -354,7 +354,7 @@
 						        
 				        		<c:if test="${dado.idProdutoEdicao != null}">
 									<td align="center">
-										<div align="center"><strong>${dado.seqCapa == null ? '-' : dado.seqCapa}</strong></div>
+										<div align="center"><strong>${dado.sequenciaMatriz == null ? '-' : dado.sequenciaMatriz}</strong></div>
 										<img src="<c:url value='/capa/${dado.idProdutoEdicao}'></c:url>" width="110" height="143"></img>
 									<td>
 								</c:if>

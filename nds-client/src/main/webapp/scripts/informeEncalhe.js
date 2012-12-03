@@ -230,6 +230,19 @@ InformeEncalhe.prototype.initDialogImprimir = function() {
 		width:'auto',
 		modal: true,
 		buttons: {
+			"Visualizar impressão": function() {
+				
+				$("input[name='idFornecedor']", this.workspace).val($("#idFornecdorSelect").val());
+				$("input[name='semanaRecolhimento']", this.workspace).val($("#semanaRecolhimentoBox").val());
+				$("input[name='dataRecolhimento']", this.workspace).val($("#dataRecolhimentoBox").val());
+				
+				$( this ).dialog( "close" );
+				$("#form-imprimir", this.workspace).attr("action", contextPath + '/devolucao/informeEncalhe/relatorioInformeEncalhe');
+				$("#form-imprimir", this.workspace).attr("method", "POST");
+				$("#form-imprimir", this.workspace).attr("target", "_blank");
+				$("#form-imprimir", this.workspace).submit();
+
+			},
 			"Imprimir": function() {
 				
 				$("input[name='idFornecedor']", this.workspace).val($("#idFornecdorSelect").val());
@@ -364,7 +377,9 @@ CapaPopup.prototype.loadCapa = function() {
 						_this.changeStatus(_this.statusEnum.CAPA);				
 					}).error(function() {
 				_this.changeStatus(_this.statusEnum.NO_CAPA);
-			}).attr('src', contextPath + "/capa/" + this.idProdutoEdicao +"?" + Math.random());
+			}).attr('src', contextPath + "/capa/" + this.idProdutoEdicao +"?" + Math.random())
+			  .attr('height', '300px')
+			  .attr('width', '250px');
 };
 
 CapaPopup.prototype.openDialogUpload = function(event) {
