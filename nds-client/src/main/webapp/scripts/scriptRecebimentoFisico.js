@@ -525,7 +525,7 @@ var recebimentoFisicoController = $.extend(true, {
 				sortable : false,
 				align : 'center'
 			}, {
-				display : 'Preço com desconto dos produtos/edição',
+				display : 'Preço c/ Desconto R$',
 				name : 'precoCapa',
 				width : 120,
 				sortable : false,
