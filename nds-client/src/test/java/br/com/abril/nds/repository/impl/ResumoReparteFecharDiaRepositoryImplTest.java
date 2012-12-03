@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.util.BigIntegerUtil;
 import br.com.abril.nds.dto.ReparteFecharDiaDTO;
+import br.com.abril.nds.dto.fechamentodiario.SumarizacaoReparteDTO;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
@@ -79,6 +80,10 @@ public class ResumoReparteFecharDiaRepositoryImplTest extends AbstractRepository
     private Produto produtoQuatroRodas;
     
     private Produto produtoPlacar;
+    
+    private Produto produtoCaras;
+    
+    private Produto produtoCapricho;
 
     private ProdutoEdicao produtoEdicaoVeja1;
 
@@ -86,7 +91,11 @@ public class ResumoReparteFecharDiaRepositoryImplTest extends AbstractRepository
 
     private ProdutoEdicao produtoEdicaoQuatroRodas1;
     
+    private ProdutoEdicao produtoEdicaoCaras1;
+    
     private ProdutoEdicao produtoEdicaoPlacar1;
+    
+    private ProdutoEdicao produtoEdicaoCapricho1;
 
     private EstoqueProduto estoqueProdutoVeja1;
     
@@ -95,6 +104,10 @@ public class ResumoReparteFecharDiaRepositoryImplTest extends AbstractRepository
     private EstoqueProduto estoqueProdutoSuper1;
     
     private EstoqueProduto estoqueProdutoPlacar1;
+    
+    private EstoqueProduto estoqueProdutoCaras1;
+    
+    private EstoqueProduto estoqueProdutoCapricho1;
 
     private CFOP cfop5949;
 
@@ -112,6 +125,10 @@ public class ResumoReparteFecharDiaRepositoryImplTest extends AbstractRepository
     
     private ItemNotaFiscalEntrada itemNotaFiscalPlacar1;
 
+    private ItemNotaFiscalEntrada itemNotaFiscalCaras1;
+    
+    private ItemNotaFiscalEntrada itemNotaFiscalCapricho1;
+    
     private RecebimentoFisico recebimentoFisico;
 
     private ItemRecebimentoFisico itemRecebimentoFisicoVeja1;
@@ -121,6 +138,10 @@ public class ResumoReparteFecharDiaRepositoryImplTest extends AbstractRepository
     private ItemRecebimentoFisico itemRecebimentoFisicoQuatroRodas1;
     
     private ItemRecebimentoFisico itemRecebimentoFisicoPlacar1;
+    
+    private ItemRecebimentoFisico itemRecebimentoFisicoCaras1;
+    
+    private ItemRecebimentoFisico itemRecebimentoFisicoCapricho1;
 
     private Lancamento lancamentoVeja1;
 
@@ -129,6 +150,10 @@ public class ResumoReparteFecharDiaRepositoryImplTest extends AbstractRepository
     private Lancamento lancamentoQuatroRodas1;
     
     private Lancamento lancamentoPlacar1;
+    
+    private Lancamento lancamentoCaras1;
+    
+    private Lancamento lancamentoCapricho1;
 
     private Cota cotaManoel;
 
@@ -145,6 +170,8 @@ public class ResumoReparteFecharDiaRepositoryImplTest extends AbstractRepository
     private Diferenca diferencaSuper1;
 
     private Diferenca diferencaQuatroRodas1;
+    
+    private Diferenca diferencaCaras1;
 
     private EstudoCota ecManoelVeja1;
 
@@ -304,6 +331,20 @@ public class ResumoReparteFecharDiaRepositoryImplTest extends AbstractRepository
         Long resultado = repository.contarLancamentosExpedidos(DateUtil.adicionarDias(distribuidor.getDataOperacao(), 1));
         Assert.assertEquals(Long.valueOf(0), resultado);
     }
+    
+    @Test
+    public void testObterSumarioReparte() {
+        SumarizacaoReparteDTO sumario = repository.obterSumarizacaoReparte(distribuidor.getDataOperacao());
+        Assert.assertEquals(BigDecimal.valueOf(4125).setScale(2), sumario.getTotalReparte().setScale(2));
+        Assert.assertEquals(BigDecimal.valueOf(195).setScale(2), sumario.getTotalSobras().setScale(2));
+        Assert.assertEquals(BigDecimal.valueOf(261).setScale(2), sumario.getTotalFaltas().setScale(2));
+        Assert.assertEquals(BigDecimal.valueOf(-54).setScale(2), sumario.getTotalTransferencias().setScale(2));
+        Assert.assertEquals(BigDecimal.valueOf(3774).setScale(2), sumario.getTotalDistribuido().setScale(2));
+        Assert.assertEquals(BigDecimal.valueOf(4005).setScale(2), sumario.getTotalDistribuir().setScale(2));
+        Assert.assertEquals(BigDecimal.valueOf(231).setScale(2), sumario.getTotalSobraDistribuicao().setScale(2));
+        Assert.assertEquals(BigDecimal.valueOf(3543).setScale(2), sumario.getTotalDiferenca().setScale(2));
+        
+    }
 
     private void criarDistribuidor() {
         PessoaJuridica juridicaDistrib = Fixture.pessoaJuridica("Distribuidor Acme", "56.003.315/0001-47", "333333333333", "distrib_acme@mail.com", "99.999-9");
@@ -363,6 +404,18 @@ public class ResumoReparteFecharDiaRepositoryImplTest extends AbstractRepository
         produtoPlacar.setEditor(editoraAbril);
         produtoPlacar.setTributacaoFiscal(TributacaoFiscal.TRIBUTADO);
         save(produtoPlacar);
+        
+        produtoCaras = Fixture.produtoCaras(tipoProdutoRevista);
+        produtoCaras.addFornecedor(fornecedorDinap);
+        produtoCaras.setEditor(editoraAbril);
+        produtoCaras.setTributacaoFiscal(TributacaoFiscal.TRIBUTADO);
+        save(produtoCaras);
+        
+        produtoCapricho = Fixture.produtoCapricho(tipoProdutoRevista);
+        produtoCapricho.addFornecedor(fornecedorDinap);
+        produtoCapricho.setEditor(editoraAbril);
+        produtoCapricho.setTributacaoFiscal(TributacaoFiscal.TRIBUTADO);
+        save(produtoCapricho);
 
         produtoEdicaoVeja1 = Fixture.produtoEdicao(1L, 10, 14, Long.valueOf(100), BigDecimal.TEN, BigDecimal.valueOf(22.5), "110", produtoVeja, null, false);
         save(produtoEdicaoVeja1);
@@ -375,6 +428,12 @@ public class ResumoReparteFecharDiaRepositoryImplTest extends AbstractRepository
         
         produtoEdicaoPlacar1 = Fixture.produtoEdicao(1L, 10, 30, Long.valueOf(100), BigDecimal.TEN, BigDecimal.valueOf(15.5), "130", produtoPlacar, null, false);
         save(produtoEdicaoPlacar1);
+        
+        produtoEdicaoCaras1 = Fixture.produtoEdicao(1L, 10, 30, Long.valueOf(100), BigDecimal.TEN, BigDecimal.valueOf(30), "140", produtoCaras, null, false);
+        save(produtoEdicaoCaras1);
+        
+        produtoEdicaoCapricho1 = Fixture.produtoEdicao(1L, 10, 30, Long.valueOf(100), BigDecimal.TEN, BigDecimal.valueOf(11), "150", produtoCapricho, null, false);
+        save(produtoEdicaoCapricho1);
     }
 
     private void criarFornecedores() {
@@ -414,6 +473,22 @@ public class ResumoReparteFecharDiaRepositoryImplTest extends AbstractRepository
                 new Date(), BigInteger.valueOf(30), StatusLancamento.EXPEDIDO,
                 null, 4);
         save(lancamentoPlacar1);
+        
+        lancamentoCaras1 = Fixture.lancamento(TipoLancamento.LANCAMENTO,
+                produtoEdicaoCaras1,  DateUtil.adicionarDias(new Date(), 1),
+                DateUtil.adicionarDias(new Date(),
+                        produtoEdicaoCaras1.getPeb() + 1), new Date(),
+                new Date(), BigInteger.valueOf(25), StatusLancamento.BALANCEADO,
+                null, 1);
+        save(lancamentoCaras1);
+        
+        lancamentoCapricho1 = Fixture.lancamento(TipoLancamento.LANCAMENTO,
+                produtoEdicaoCapricho1,  new Date(),
+                DateUtil.adicionarDias(new Date(),
+                        produtoEdicaoCapricho1.getPeb()), new Date(),
+                new Date(), BigInteger.valueOf(20), StatusLancamento.BALANCEADO,
+                null, 5);
+        save(lancamentoCapricho1);
     }
 
     private void criarRecebimentoFisico() {
@@ -446,6 +521,18 @@ public class ResumoReparteFecharDiaRepositoryImplTest extends AbstractRepository
         save(itemRecebimentoFisicoPlacar1);
         lancamentoPlacar1.getRecebimentos().add(itemRecebimentoFisicoPlacar1);
         save(lancamentoPlacar1);
+        
+        itemRecebimentoFisicoCaras1 = Fixture.itemRecebimentoFisico(
+                itemNotaFiscalCaras1, recebimentoFisico, BigInteger.valueOf(23));
+        save(itemRecebimentoFisicoCaras1);
+        lancamentoCaras1.getRecebimentos().add(itemRecebimentoFisicoCaras1);
+        save(lancamentoCaras1);
+        
+        itemRecebimentoFisicoCapricho1 = Fixture.itemRecebimentoFisico(
+                itemNotaFiscalCapricho1, recebimentoFisico, BigInteger.valueOf(20));
+        save(itemRecebimentoFisicoCapricho1);
+        lancamentoCapricho1.getRecebimentos().add(itemRecebimentoFisicoCapricho1);
+        save(lancamentoCapricho1);
         
         TipoMovimentoEstoque tipoMovimentoRecebimentoFisico = Fixture.tipoMovimentoRecebimentoFisico();
         save(tipoMovimentoRecebimentoFisico);
@@ -489,13 +576,33 @@ public class ResumoReparteFecharDiaRepositoryImplTest extends AbstractRepository
                 produtoEdicaoPlacar1, tipoMovimentoRecebimentoFisico, usuarioJoao, estoqueProdutoPlacar1,
                 distribuidor.getDataOperacao(), BigInteger.valueOf(30), StatusAprovacao.APROVADO, "OK");
         save(movimentoPlacar1);
+        
+        estoqueProdutoCaras1 = new EstoqueProduto();
+        estoqueProdutoCaras1.setProdutoEdicao(produtoEdicaoCaras1);
+        estoqueProdutoCaras1.setQtde(BigInteger.valueOf(23));
+        save(estoqueProdutoCaras1);
+        
+        MovimentoEstoque movimentoCaras1 = Fixture.movimentoEstoque(null,
+                produtoEdicaoCaras1, tipoMovimentoRecebimentoFisico, usuarioJoao, estoqueProdutoCaras1,
+                distribuidor.getDataOperacao(), BigInteger.valueOf(23), StatusAprovacao.APROVADO, "OK");
+        save(movimentoCaras1);
+        
+        estoqueProdutoCapricho1 = new EstoqueProduto();
+        estoqueProdutoCapricho1.setProdutoEdicao(produtoEdicaoCapricho1);
+        estoqueProdutoCapricho1.setQtde(BigInteger.valueOf(20));
+        save(estoqueProdutoCapricho1);
+        
+        MovimentoEstoque movimentoCapricho1 = Fixture.movimentoEstoque(null,
+                produtoEdicaoCapricho1, tipoMovimentoRecebimentoFisico, usuarioJoao, estoqueProdutoCapricho1,
+                distribuidor.getDataOperacao(), BigInteger.valueOf(20), StatusAprovacao.APROVADO, "OK");
+        save(movimentoCapricho1);
     }
 
     private void criarNotaFiscalEntradaFornecedor() {
         notaFiscalFornecedor = Fixture.notaFiscalEntradaFornecedor(cfop5949,
                 fornecedorDinap, tipoNotaFiscalRemessaDistribuicao,
-                usuarioJoao, new BigDecimal(4590), BigDecimal.ZERO,
-                BigDecimal.valueOf(4590));
+                usuarioJoao, new BigDecimal(5560), BigDecimal.ZERO,
+                BigDecimal.valueOf(5560));
         save(notaFiscalFornecedor);
 
         itemNotaFiscalVeja1 = Fixture.itemNotaFiscal(produtoEdicaoVeja1,
@@ -525,6 +632,20 @@ public class ResumoReparteFecharDiaRepositoryImplTest extends AbstractRepository
                 lancamentoPlacar1.getDataRecolhimentoPrevista(),
                 TipoLancamento.LANCAMENTO, BigInteger.valueOf(30));
         save(itemNotaFiscalPlacar1);
+        
+        itemNotaFiscalCaras1 = Fixture.itemNotaFiscal(
+                produtoEdicaoCaras1, usuarioJoao, notaFiscalFornecedor,
+                lancamentoCaras1.getDataLancamentoPrevista(),
+                lancamentoCaras1.getDataRecolhimentoPrevista(),
+                TipoLancamento.LANCAMENTO, BigInteger.valueOf(25));
+        save(itemNotaFiscalCaras1);
+        
+        itemNotaFiscalCapricho1 = Fixture.itemNotaFiscal(
+                produtoEdicaoCapricho1, usuarioJoao, notaFiscalFornecedor,
+                lancamentoCapricho1.getDataLancamentoPrevista(),
+                lancamentoCapricho1.getDataRecolhimentoPrevista(),
+                TipoLancamento.LANCAMENTO, BigInteger.valueOf(20));
+        save(itemNotaFiscalCapricho1);
     }
 
     private void criarParametrosNotaFiscal() {
@@ -582,6 +703,12 @@ public class ResumoReparteFecharDiaRepositoryImplTest extends AbstractRepository
                 StatusConfirmacao.CONFIRMADO, null, false,
                 TipoEstoque.LANCAMENTO, null, distribuidor.getDataOperacao());
         save(diferencaQuatroRodas1);
+        
+        diferencaCaras1 = Fixture.diferenca(BigInteger.valueOf(2),
+                usuarioJoao, produtoEdicaoCaras1, TipoDiferenca.FALTA_EM,
+                StatusConfirmacao.CONFIRMADO, null, false,
+                TipoEstoque.LANCAMENTO, null, distribuidor.getDataOperacao());
+        save(diferencaCaras1);
     }
 
     private void criarTransferencias() {
@@ -647,6 +774,18 @@ public class ResumoReparteFecharDiaRepositoryImplTest extends AbstractRepository
         ecJosePlacar1 = Fixture.estudoCota(BigInteger.valueOf(10), BigInteger.valueOf(10), estudoPlacar1, cotaJose);
         ecMariaPlacar1 = Fixture.estudoCota(BigInteger.valueOf(10), BigInteger.valueOf(10), estudoPlacar1, cotaMaria);
         save(estudoPlacar1, ecManoelPlacar1, ecJosePlacar1, ecMariaPlacar1);
+        
+        Estudo estudoCaras1 = Fixture.estudo(BigInteger.valueOf(23), lancamentoCaras1.getDataLancamentoDistribuidor(), produtoEdicaoCaras1);
+        EstudoCota ecManoelCaras1 = Fixture.estudoCota(BigInteger.valueOf(8), BigInteger.valueOf(8), estudoCaras1, cotaManoel);
+        EstudoCota ecJoseCaras1 = Fixture.estudoCota(BigInteger.valueOf(8), BigInteger.valueOf(8), estudoCaras1, cotaJose);
+        EstudoCota ecMariaCaras1 = Fixture.estudoCota(BigInteger.valueOf(7), BigInteger.valueOf(7), estudoCaras1, cotaMaria);
+        save(estudoCaras1, ecManoelCaras1, ecJoseCaras1, ecMariaCaras1);
+        
+        Estudo estudoCapricho1 = Fixture.estudo(BigInteger.valueOf(20), lancamentoCapricho1.getDataLancamentoDistribuidor(), produtoEdicaoCapricho1);
+        EstudoCota ecManoelCapricho1 = Fixture.estudoCota(BigInteger.valueOf(10), BigInteger.valueOf(10), estudoCapricho1, cotaManoel);
+        EstudoCota ecJoseCapricho1 = Fixture.estudoCota(BigInteger.valueOf(5), BigInteger.valueOf(5), estudoCapricho1, cotaJose);
+        EstudoCota ecMariaCapricho1 = Fixture.estudoCota(BigInteger.valueOf(5), BigInteger.valueOf(5), estudoCapricho1, cotaMaria);
+        save(estudoCapricho1, ecManoelCapricho1, ecJoseCapricho1, ecMariaCapricho1);
     }
 
     private void criarExpedicao() {
