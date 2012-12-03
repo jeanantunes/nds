@@ -1056,7 +1056,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			gerarCobrancaService.gerarCobranca(
 					controleConferenciaEncalheCota.getCota().getId(), 
 					controleConferenciaEncalheCota.getUsuario().getId(), 
-					nossoNumeroCollection);
+					nossoNumeroCollection, false);
 		} catch (Exception e) {
 			
 			// TODO Auto-generated catch block
