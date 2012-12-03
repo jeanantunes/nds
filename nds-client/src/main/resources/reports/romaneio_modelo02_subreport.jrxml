@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="romaneio_modelo02_subreport" pageWidth="802" pageHeight="555" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" whenResourceMissingType="Empty" uuid="26b67611-3ef0-4785-888a-77a0f9fb4cb7">
 	<property name="ireport.zoom" value="2.853116706110015"/>
-	<property name="ireport.x" value="982"/>
+	<property name="ireport.x" value="1099"/>
 	<property name="ireport.y" value="0"/>
 	<style name="zebrado" mode="Opaque" backcolor="#F0F0F0">
 		<conditionalStyle>
@@ -43,6 +43,9 @@
 	<field name="reparteTotal" class="java.lang.Number">
 		<fieldDescription><![CDATA[reparteTotal]]></fieldDescription>
 	</field>
+	<variable name="SOMA_REPARTE_TOTAL" class="java.math.BigDecimal" resetType="Page" calculation="Sum">
+		<variableExpression><![CDATA[$F{reparteTotal}]]></variableExpression>
+	</variable>
 	<columnHeader>
 		<band height="28" splitType="Stretch">
 			<staticText>
@@ -290,17 +293,18 @@
 		</band>
 	</detail>
 	<pageFooter>
-		<band height="16" splitType="Stretch">
-			<printWhenExpression><![CDATA[$F{qtdCotas} != null && $F{qtdCotas} != 0L]]></printWhenExpression>
+		<band height="21" splitType="Stretch">
 			<textField>
-				<reportElement uuid="7fc400e7-6555-4181-b396-9b37e74a687a" x="0" y="1" width="100" height="15"/>
+				<reportElement uuid="7fc400e7-6555-4181-b396-9b37e74a687a" x="0" y="6" width="100" height="15"/>
 				<textElement verticalAlignment="Middle" markup="html"/>
-				<textFieldExpression><![CDATA["<b>Total:</b> " + $F{qtdCotas}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[" <b>Total Cotas:</b> " + $V{COLUMN_COUNT}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="e9be3799-014e-4aac-ba5b-7d22d19921d8" x="752" y="0" width="50" height="16"/>
-				<textElement textAlignment="Right" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$F{reparteTotal}]]></textFieldExpression>
+				<reportElement uuid="e9be3799-014e-4aac-ba5b-7d22d19921d8" x="520" y="5" width="50" height="16"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{SOMA_REPARTE_TOTAL}]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageFooter>
