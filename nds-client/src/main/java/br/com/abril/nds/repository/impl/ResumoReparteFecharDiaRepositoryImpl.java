@@ -36,32 +36,37 @@ public class ResumoReparteFecharDiaRepositoryImpl  extends AbstractRepository im
         
         Date dataInicio = DateUtil.removerTimestamp(data);
         Date dataFim = DateUtil.adicionarDias(dataInicio, 1);
+        
+        String templateHqlProdutoEdicaoExpedido = new StringBuilder("(select distinct(produtoEdicaoExpedido.id) from Expedicao expedicao ")
+        .append("join expedicao.lancamentos lancamento join lancamento.produtoEdicao produtoEdicaoExpedido where " )
+        .append("expedicao.dataExpedicao >= :dataInicio and expedicao.dataExpedicao < :dataFim and lancamento.status <> :statusFuro)").toString();
 
         String templateHqlDiferenca =  new StringBuilder("(select sum(case when diferenca.tipoDiferenca = :%s then (diferenca.qtde * diferenca.produtoEdicao.pacotePadrao * diferenca.produtoEdicao.precoVenda) ")
-        .append("else (diferenca.qtde * diferenca.produtoEdicao.precoVenda) end) from Diferenca diferenca where diferenca.dataMovimento = :data and diferenca.tipoDiferenca in (:%s, :%s)) as %s ").toString();
-       
+        .append("else (diferenca.qtde * diferenca.produtoEdicao.precoVenda) end) from Diferenca diferenca where diferenca.dataMovimento = :data and diferenca.tipoDiferenca in (:%s, :%s) ")
+        .append("and diferenca.produtoEdicao.id in ").append(templateHqlProdutoEdicaoExpedido).append(") as %s ").toString();
+
+        StringBuilder hql = new StringBuilder("select sum(lancamento.reparte * produtoEdicao.precoVenda) as totalReparte, ");
 	    
-	    StringBuilder hql = new StringBuilder("select sum(lancamento.reparte * produtoEdicao.precoVenda) as totalReparte, ");
-	    hql.append(String.format(templateHqlDiferenca, "tipoDiferencaSobraDe", "tipoDiferencaSobraDe", "tipoDiferencaSobraEm", "totalSobras")).append(",");
-	    hql.append(String.format(templateHqlDiferenca, "tipoDiferencaFaltaDe", "tipoDiferencaFaltaDe", "tipoDiferencaFaltaEm", "totalFaltas")).append(",");
+	    hql.append(String.format(templateHqlDiferenca, "tipoDiferencaSobraDe", "tipoDiferencaSobraDe", "tipoDiferencaSobraEm", "totalSobras")).append(",")
+	    .append(String.format(templateHqlDiferenca, "tipoDiferencaFaltaDe", "tipoDiferencaFaltaDe", "tipoDiferencaFaltaEm", "totalFaltas")).append(",");
 	    
-	    hql.append("(select sum(case when movimentoEstoque.tipoMovimento.grupoMovimentoEstoque = :grupoTransferenciaLancamentoEntrada ");
-        hql.append("then (movimentoEstoque.qtde * movimentoEstoque.produtoEdicao.precoVenda) else (movimentoEstoque.qtde * movimentoEstoque.produtoEdicao.precoVenda * -1) end) ");
-        hql.append("from MovimentoEstoque movimentoEstoque where movimentoEstoque.data = :data and movimentoEstoque.status = :statusAprovado "); 
-        hql.append("and movimentoEstoque.tipoMovimento.grupoMovimentoEstoque in (:grupoTransferenciaLancamentoEntrada, :grupoTransferenciaLancamentoSaida)) as totalTransferencias, ");
+	    hql.append("(select sum(case when movimentoEstoque.tipoMovimento.grupoMovimentoEstoque = :grupoTransferenciaLancamentoEntrada ")
+        .append("then (movimentoEstoque.qtde * movimentoEstoque.produtoEdicao.precoVenda) else (movimentoEstoque.qtde * movimentoEstoque.produtoEdicao.precoVenda * -1) end) ")
+        .append("from MovimentoEstoque movimentoEstoque where movimentoEstoque.data = :data and movimentoEstoque.status = :statusAprovado ")
+        .append("and movimentoEstoque.tipoMovimento.grupoMovimentoEstoque in (:grupoTransferenciaLancamentoEntrada, :grupoTransferenciaLancamentoSaida) ")
+        .append("and movimentoEstoque.produtoEdicao.id in ").append(templateHqlProdutoEdicaoExpedido).append(") as totalTransferencias, ");
 	    
-        hql.append("(select sum(case when movimentoEstoque.tipoMovimento.grupoMovimentoEstoque = :grupoMovimentoEnvioJornaleiro ");
-        hql.append("then (movimentoEstoque.qtde * movimentoEstoque.produtoEdicao.precoVenda) else (movimentoEstoque.qtde * movimentoEstoque.produtoEdicao.precoVenda * -1) end) ");
-        hql.append("from MovimentoEstoque movimentoEstoque where movimentoEstoque.data = :data and movimentoEstoque.status = :statusAprovado "); 
-        hql.append("and movimentoEstoque.tipoMovimento.grupoMovimentoEstoque in (:grupoMovimentoEnvioJornaleiro, :grupoMovimentoEstornoEnvioJornaleiro)) as totalDistribuido ");
+        hql.append("(select sum(case when movimentoEstoque.tipoMovimento.grupoMovimentoEstoque = :grupoMovimentoEnvioJornaleiro ")
+        .append("then (movimentoEstoque.qtde * movimentoEstoque.produtoEdicao.precoVenda) else (movimentoEstoque.qtde * movimentoEstoque.produtoEdicao.precoVenda * -1) end) ")
+        .append("from MovimentoEstoque movimentoEstoque where movimentoEstoque.data = :data and movimentoEstoque.status = :statusAprovado ")
+        .append("and movimentoEstoque.tipoMovimento.grupoMovimentoEstoque in (:grupoMovimentoEnvioJornaleiro, :grupoMovimentoEstornoEnvioJornaleiro) ")
+        .append("and movimentoEstoque.produtoEdicao.id in ").append(templateHqlProdutoEdicaoExpedido).append(") as totalDistribuido ");
         
-        hql.append("from Expedicao expedicao ");
-        hql.append("join expedicao.lancamentos lancamento ");
-        hql.append("join lancamento.produtoEdicao produtoEdicao ");
-        hql.append("where expedicao.dataExpedicao >= :dataInicio and expedicao.dataExpedicao < :dataFim ");
-        //É permitido o furo após a expedição, mas pela implementação atual não está desvinculando o lançamento furado da expedição
-        //então para calculo do reparte edxpedido do dia são excluídos os lançamentos com furo após expedição na query
-        hql.append("and lancamento.status <> :statusFuro ");
+        hql.append("from Expedicao expedicao ")
+        .append("join expedicao.lancamentos lancamento ")
+        .append("join lancamento.produtoEdicao produtoEdicao ")
+        .append("where expedicao.dataExpedicao >= :dataInicio and expedicao.dataExpedicao < :dataFim ")
+        .append("and lancamento.status <> :statusFuro ");
  
         Query query = getSession().createQuery(hql.toString());
         query.setParameter("data", data);

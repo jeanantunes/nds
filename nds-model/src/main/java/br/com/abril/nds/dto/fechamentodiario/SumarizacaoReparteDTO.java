@@ -42,7 +42,7 @@ public class SumarizacaoReparteDTO implements Serializable {
         this.totalDistribuido = Util.nvl(totalDistribuido, BigDecimal.ZERO);
         
         this.totalDistribuir = this.totalReparte.add(this.totalSobras)
-                .subtract(totalFaltas).add(this.totalTransferencias);
+                .subtract(this.totalFaltas).add(this.totalTransferencias);
         this.totalSobraDistribuicao = this.totalDistribuir.subtract(this.totalDistribuido);
         this.totalDiferenca = this.totalDistribuido.subtract(this.totalSobraDistribuicao);
     }
