@@ -1002,6 +1002,8 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		
 		distribuidor.setFechamentoDiarioEmAndamento(lockBancoDeDados);
 		
+		distribuidorRepository.alterar(distribuidor);
+		
 	}
 	
     /**
