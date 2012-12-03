@@ -155,17 +155,17 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 	
 	@Override
 	@Transactional(noRollbackFor = GerarCobrancaValidacaoException.class)
-	public void gerarCobranca(Long idCota, Long idUsuario, Set<String> setNossoNumero)
+	public void gerarCobranca(Long idCota, Long idUsuario, Set<String> setNossoNumero, boolean validarFechamentoEncalhe)
 		throws GerarCobrancaValidacaoException, IOException{
 		
-		this.processarCobranca(idCota, idUsuario, setNossoNumero);
+		this.processarCobranca(idCota, idUsuario, setNossoNumero, validarFechamentoEncalhe);
 		
 		this.geradorArquivoCobrancaBancoService.prepararGerarArquivoCobrancaCnab();
 	}
 
 
 	private void processarCobranca(Long idCota, Long idUsuario,
-			Set<String> setNossoNumero) throws GerarCobrancaValidacaoException {
+			Set<String> setNossoNumero, boolean validarFechamentoEncalhe) throws GerarCobrancaValidacaoException {
 		Distribuidor distribuidor = this.distribuidorRepository.obter();
 		
 		if (this.consolidadoFinanceiroRepository.obterQuantidadeDividasGeradasData((distribuidor.getDataOperacao())) > 0){
@@ -174,11 +174,15 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 					new ValidacaoException(TipoMensagem.WARNING, "Já foram geradas dívidas para esta data de operação."));
 		}
 		
-		//alteração na EMS 0028, agora deve verificar se o Fechamento do Encalhe(EMS 0181) tenha sido finalizado
-		if (!this.fechamentoEncalheRepository.buscaControleFechamentoEncalhe(distribuidor.getDataOperacao())){
-			
-			throw new GerarCobrancaValidacaoException(
-					new ValidacaoException(TipoMensagem.WARNING, "O fechamento de encalhe deve ser concluído antes de gerar dívidas."));
+		//flag criada para não permitir a validação do fechamento de encalhe (data operação) no momento da conferência de encalhe.
+		if (validarFechamentoEncalhe) {
+		
+			//alteração na EMS 0028, agora deve verificar se o Fechamento do Encalhe(EMS 0181) tenha sido finalizado
+			if (!this.fechamentoEncalheRepository.buscaControleFechamentoEncalhe(distribuidor.getDataOperacao())){
+				
+				throw new GerarCobrancaValidacaoException(
+						new ValidacaoException(TipoMensagem.WARNING, "O fechamento de encalhe deve ser concluído antes de gerar dívidas."));
+			}
 		}
 	
 		this.gerarCobrancaCota(idCota, idUsuario, setNossoNumero);

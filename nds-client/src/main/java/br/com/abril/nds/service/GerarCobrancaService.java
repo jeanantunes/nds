@@ -7,7 +7,7 @@ import br.com.abril.nds.exception.GerarCobrancaValidacaoException;
 
 public interface GerarCobrancaService {
 
-	void gerarCobranca(Long idCota, Long idUsuario, Set<String> setNossoNumero)
+	void gerarCobranca(Long idCota, Long idUsuario, Set<String> setNossoNumero, boolean validarFechamentoEncalhe)
 		throws GerarCobrancaValidacaoException, IOException;
 	
 	void gerarCobrancaCota(Long idCota, Long idUsuario, Set<String> setNossoNumero)
