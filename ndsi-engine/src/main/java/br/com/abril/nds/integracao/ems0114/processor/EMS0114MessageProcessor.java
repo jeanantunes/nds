@@ -64,7 +64,7 @@ public class EMS0114MessageProcessor extends AbstractRepository implements
 		final String codigoProduto = input.getCodProd();
 		final Long edicao = input.getEdicao();
 		ProdutoEdicao produtoEdicao = this.obterProdutoEdicao(codigoProduto,
-				edicao);
+				edicao, message);
 		if (produtoEdicao == null) {
 			this.ndsiLoggerFactory.getLogger().logError(message,
 					EventoExecucaoEnum.RELACIONAMENTO,
@@ -134,11 +134,12 @@ public class EMS0114MessageProcessor extends AbstractRepository implements
 	 * 
 	 * @param codigoPublicacao Código da Publicação.
 	 * @param edicao Número da Edição.
+	 * @param message 
 	 * 
 	 * @return
 	 */
 	private ProdutoEdicao obterProdutoEdicao(String codigoPublicacao,
-			Long edicao) {
+			Long edicao, Message message) {
 
 		try {
 
@@ -154,6 +155,13 @@ public class EMS0114MessageProcessor extends AbstractRepository implements
 			return (ProdutoEdicao) criteria.uniqueResult();
 
 		} catch (Exception e) {
+			this.ndsiLoggerFactory.getLogger().logError(message
+					, EventoExecucaoEnum.HIERARQUIA
+					, "produto.codigo: " + codigoPublicacao.toString() 
+						+ ", produtoEdicao.numeroEdicao:" 
+						+ edicao.toString() + " Erro:" + e.getMessage());
+
+
 			throw new RuntimeException(e);
 		}
 	}	
