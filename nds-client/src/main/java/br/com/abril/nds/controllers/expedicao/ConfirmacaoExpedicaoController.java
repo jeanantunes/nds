@@ -286,7 +286,7 @@ public class ConfirmacaoExpedicaoController {
 			
 			boolean isNewSearch = !ultimaPesquisa.equals((String)session.getAttribute("ultimaPesquisa"));
 			
-			if(isNewSearch) {				
+			if(isNewSearch) {
 				session.setAttribute("selecionados", null);
 				session.setAttribute("ultimaPesquisa", ultimaPesquisa);				
 			}			
@@ -301,7 +301,7 @@ public class ConfirmacaoExpedicaoController {
 				grid = gerarGrid(
 						page, rp, sortname, sortorder, idFornecedor, dtLancamento, estudo);
 			
-			}catch(ValidacaoException e) {
+			} catch(ValidacaoException e) {
 				mensagens = e.getValidacao().getListaMensagens();
 				status=e.getValidacao().getTipoMensagem().name();
 				grid = new TableModel<CellModelKeyValue<LancamentoNaoExpedidoDTO>>();
@@ -354,7 +354,7 @@ public class ConfirmacaoExpedicaoController {
 			session.setAttribute("estudo",estudo);
 			
 			if(date == null && !dtLancamento.trim().isEmpty()) {
-				throw new ValidacaoException("/pesquisarExpedicoes",new ValidacaoVO(TipoMensagem.WARNING,DATA_INVALIDA));
+				throw new ValidacaoException("/pesquisarExpedicoes", new ValidacaoVO(TipoMensagem.WARNING,DATA_INVALIDA));
 			} else {
 			
 				List<LancamentoNaoExpedidoDTO> listaExpedicoes = 

@@ -1,5 +1,6 @@
 package br.com.abril.nds.service.impl;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
@@ -24,6 +25,7 @@ import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.model.estoque.StatusEstoqueFinanceiro;
 import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
+import br.com.abril.nds.model.estoque.ValoresAplicados;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.ProdutoServico;
 import br.com.abril.nds.model.planejamento.EstudoCota;
@@ -164,10 +166,14 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 		for( EstudoCota estudoCota:listaEstudoCota ) {
 			
 			movimentoEstoqueCota = 
-					gerarMovimentoCota(dataLancamento,idProdutoEdicao,estudoCota.getCota().getId(),	
+					gerarMovimentoCota(dataLancamento, idProdutoEdicao, estudoCota.getCota().getId(),	
 					idUsuario, estudoCota.getQtdeEfetiva(),tipoMovimentoCota);
 			
 			movimentoEstoqueCota.setEstudoCota(estudoCota);
+			
+			//TODO: Sérgio - Implementar lógica de desconto aqui
+			ValoresAplicados valoresAplicados = new ValoresAplicados(new BigDecimal("10"), new BigDecimal("5"));
+			movimentoEstoqueCota.setValoresAplicados(valoresAplicados);
 			
 			// Implementando por Eduardo Punk Rock - Seta o lançamento que gerou os movimentos na movimentoEstoqueCota
 			movimentoEstoqueCota.setLancamento(lancamento);

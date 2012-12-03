@@ -14,6 +14,11 @@ public class ValoresAplicados implements Serializable {
 	 */
 	private static final long serialVersionUID = 1373107779645109174L;
 
+	public ValoresAplicados(BigDecimal valor, BigDecimal desconto) {
+		this.valor = valor;
+		this.desconto = desconto;
+	}
+	
 	@Column(name = "VALOR_APLICADO")
 	private BigDecimal valor;
 	
@@ -27,16 +32,8 @@ public class ValoresAplicados implements Serializable {
 		return valor;
 	}
 
-	public void setValor(BigDecimal valor) {
-		this.valor = valor;
-	}
-
 	public BigDecimal getDesconto() {
 		return desconto;
-	}
-
-	public void setDesconto(BigDecimal desconto) {
-		this.desconto = desconto;
 	}
 	
 }
