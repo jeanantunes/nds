@@ -171,6 +171,17 @@ public interface FecharDiaService {
 	 */
 	FechamentoDiarioDTO processarFechamentoDoDia(Usuario usuario, Date dataFechamento);
 	
+
+	/**
+	 * Efetua o Lock/unlock do banco de dados. Usado para travar o banco para insert/update/delete na fechar dia.
+	 * 
+	 * @param lockBancoDeDados 
+	 * 
+	 * @return void
+	 */
+	void setLockBancoDeDados(boolean lockBancoDeDados);
+ 
+
     /**
      * Obtém as diferenças lançadas da na data
      * 
@@ -179,4 +190,5 @@ public interface FecharDiaService {
      * @return lista de diferenças lançadas na data
      */
 	List<Diferenca> obterDiferencas(Date data);
+
 }
