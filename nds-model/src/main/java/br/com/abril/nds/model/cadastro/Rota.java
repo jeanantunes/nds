@@ -45,6 +45,7 @@ public class Rota implements Serializable {
     @ManyToOne
     @JoinColumn(name = "ROTEIRO_ID")
     private Roteiro roteiro;
+    
     @OneToOne(mappedBy = "rota")
     private Entregador entregador;
 
@@ -197,7 +198,7 @@ public class Rota implements Serializable {
             if (pdvsExclusao.contains(rotaPDV.getPdv().getId())) {
                 
             	PDV pdv = rotaPDV.getPdv();
-            	
+           
             	if (pdv.getCaracteristicas().isPontoPrincipal()) {
             	
             		pdv.getCota().setBox(null);

@@ -333,4 +333,41 @@ public class PdvRepositoryImpl extends AbstractRepositoryModel<PDV, Long> implem
 
 		return  (List<PDV>)criteria.list();  
 	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<PDV> obterPDVsPrincipaisPor(Integer numCota, String municipio,
+			String uf, String bairro, String cep) {
+
+		Criteria criteria  = getSession().createCriteria(PDV.class,"pdv" );
+		criteria.setFetchMode("cota", FetchMode.JOIN);
+		criteria.createAlias("cota", "cota");
+		criteria.createAlias("enderecos", "enderecos") ;
+		criteria.createAlias("enderecos.endereco", "endereco");
+		
+		criteria.add(Restrictions.eq("caracteristicas.pontoPrincipal", true));
+		
+		if (numCota != null && !numCota.equals("") ) {
+			criteria.add(Restrictions.eq("cota.numeroCota", numCota));
+		}
+		
+		if (cep != null && !cep.equals("") ) {
+			criteria.add(Restrictions.eq("endereco.cep", cep));
+		} else {
+			if (uf != null && !uf.equals("") ) {
+				criteria.add(Restrictions.eq("endereco.uf", uf));
+			}
+			
+			if (municipio != null && !municipio.equals("") ) {
+				criteria.add(Restrictions.eq("endereco.cidade", municipio));
+			}
+			
+			if (bairro != null && !bairro.equals("") ) {
+				criteria.add(Restrictions.eq("endereco.bairro", bairro));
+			}
+			
+		}
+		
+		return  (List<PDV>)criteria.list();  
+	}
 }
