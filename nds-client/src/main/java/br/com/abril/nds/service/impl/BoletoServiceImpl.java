@@ -939,9 +939,12 @@ public class BoletoServiceImpl implements BoletoService {
         	
         	if (formaCobranca.getBanco().getApelido().equals(boleto.getBanco().getApelido())) {
         		
-        		corpoBoleto.setContaTipoDeCobranca(formaCobranca.getFormaCobrancaBoleto().toString());
+        		if (formaCobranca.getFormaCobrancaBoleto() != null) {
         		
-        		break;
+        			corpoBoleto.setContaTipoDeCobranca(formaCobranca.getFormaCobrancaBoleto().toString());
+        			
+        			break;
+        		}
         	}
         }
         

@@ -59,6 +59,8 @@ public class PoliticaCobrancaRepositoryImpl extends AbstractRepositoryModel<Poli
 		
 		criteria.createAlias("formaCobranca", "formaCobranca");
 		
+		criteria.add(Restrictions.eq("ativo", true));
+		
 		criteria.add(Restrictions.in("formaCobranca.tipoCobranca", tiposCobranca));
 		
 		return criteria.list();
