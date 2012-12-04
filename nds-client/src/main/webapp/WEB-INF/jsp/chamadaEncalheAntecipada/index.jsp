@@ -216,7 +216,7 @@
 	     
 	     <div class="linha_separa_fields">&nbsp;</div>
 	      
-	          <div class="grids" id="grids" style="display:none;">
+	          <div class="grids" id="gridsCEAntecipada" style="display:none;">
 				
 				 <fieldset class="fieldGrid">
 	       	  		<legend> CE Produto</legend>	  
