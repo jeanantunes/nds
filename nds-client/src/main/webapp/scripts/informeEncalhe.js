@@ -235,6 +235,7 @@ InformeEncalhe.prototype.initDialogImprimir = function() {
 				$("input[name='idFornecedor']", this.workspace).val($("#idFornecdorSelect").val());
 				$("input[name='semanaRecolhimento']", this.workspace).val($("#semanaRecolhimentoBox").val());
 				$("input[name='dataRecolhimento']", this.workspace).val($("#dataRecolhimentoBox").val());
+				$("input[name='somenteVisualizarImpressao']", this.workspace).val(true);
 				
 				$( this ).dialog( "close" );
 				$("#form-imprimir", this.workspace).attr("action", contextPath + '/devolucao/informeEncalhe/relatorioInformeEncalhe');
@@ -248,6 +249,7 @@ InformeEncalhe.prototype.initDialogImprimir = function() {
 				$("input[name='idFornecedor']", this.workspace).val($("#idFornecdorSelect").val());
 				$("input[name='semanaRecolhimento']", this.workspace).val($("#semanaRecolhimentoBox").val());
 				$("input[name='dataRecolhimento']", this.workspace).val($("#dataRecolhimentoBox").val());
+				$("input[name='somenteVisualizarImpressao']", this.workspace).val(false);
 				
 				$( this ).dialog( "close" );
 				$("#form-imprimir", this.workspace).attr("action", contextPath + '/devolucao/informeEncalhe/relatorioInformeEncalhe');

@@ -45,6 +45,7 @@ fieldset label {
 	<form id="form-imprimir">
 	<div id="dialog-imprimir" title="Imprimir Informe de Encalhe">
 			<input type="hidden" name="idFornecedor"/>
+			<input type="hidden" name="somenteVisualizarImpressao"/>
 			<input type="hidden" name="semanaRecolhimento"/>
 			<input type="hidden" name="dataRecolhimento"/>
 			<input type="hidden" name="sortname" value="nomeProduto"/>
