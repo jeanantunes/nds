@@ -59,7 +59,7 @@
 	<columnHeader>
 		<band height="14" splitType="Stretch">
 			<staticText>
-				<reportElement uuid="c5c79c75-2076-4b71-9ade-8ffff29127bc" stretchType="RelativeToBandHeight" mode="Opaque" x="0" y="0" width="40" height="14" backcolor="#999999"/>
+				<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="0" y="0" width="40" height="14" backcolor="#999999"/>
 				<box leftPadding="0">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -73,7 +73,7 @@
 				<text><![CDATA[Cota]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="68ba45a5-9c22-4e87-89c4-1fb9e1c1819f" stretchType="RelativeToBandHeight" mode="Opaque" x="40" y="0" width="190" height="14" backcolor="#999999"/>
+				<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="40" y="0" width="190" height="14" backcolor="#999999"/>
 				<box leftPadding="0">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -87,7 +87,7 @@
 				<text><![CDATA[Nome]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="a8e91f64-e631-4191-ad0d-06890e532643" stretchType="RelativeToBandHeight" mode="Opaque" x="230" y="0" width="205" height="14" backcolor="#999999"/>
+				<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="230" y="0" width="205" height="14" backcolor="#999999"/>
 				<box leftPadding="0">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -101,7 +101,7 @@
 				<text><![CDATA[Endereço]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement uuid="68308bea-e25c-46c6-b8b2-a3e845b6bf2e" stretchType="RelativeToBandHeight" mode="Opaque" x="435" y="0" width="61" height="14" backcolor="#999999"/>
+				<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="435" y="0" width="61" height="14" backcolor="#999999"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -114,7 +114,7 @@
 				<textFieldExpression><![CDATA[$P{NOME_PRODUTO_0}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement uuid="69cdf188-b94b-4a44-bf35-76cc943eac7a" stretchType="RelativeToBandHeight" mode="Opaque" x="496" y="0" width="61" height="14" backcolor="#999999"/>
+				<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="496" y="0" width="61" height="14" backcolor="#999999"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -127,7 +127,7 @@
 				<textFieldExpression><![CDATA[$P{NOME_PRODUTO_1}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement uuid="e95a6cb6-6d2d-420f-8f75-583010756f27" stretchType="RelativeToBandHeight" mode="Opaque" x="557" y="0" width="61" height="14" backcolor="#999999"/>
+				<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="557" y="0" width="61" height="14" backcolor="#999999"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -140,7 +140,7 @@
 				<textFieldExpression><![CDATA[$P{NOME_PRODUTO_2}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement uuid="c78dfbca-d4ee-4687-abfc-c90974ba0fad" stretchType="RelativeToBandHeight" mode="Opaque" x="618" y="0" width="61" height="14" backcolor="#999999"/>
+				<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="618" y="0" width="61" height="14" backcolor="#999999"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -153,7 +153,7 @@
 				<textFieldExpression><![CDATA[$P{NOME_PRODUTO_3}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement uuid="611c4001-1c2b-4d15-b40d-e70bd0affe42" stretchType="RelativeToBandHeight" mode="Opaque" x="679" y="0" width="61" height="14" backcolor="#999999"/>
+				<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="679" y="0" width="61" height="14" backcolor="#999999"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -166,7 +166,7 @@
 				<textFieldExpression><![CDATA[$P{NOME_PRODUTO_4}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement uuid="b802045c-0a48-4ca8-9e8a-59e1f54a493e" stretchType="RelativeToBandHeight" mode="Opaque" x="740" y="0" width="61" height="14" backcolor="#999999"/>
+				<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="740" y="0" width="61" height="14" backcolor="#999999"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -183,7 +183,7 @@
 	<detail>
 		<band height="30" splitType="Stretch">
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="416c35c8-cf0e-4b73-ab2f-9ed456ad848c" style="zebrado" x="0" y="0" width="40" height="30"/>
+				<reportElement style="zebrado" x="0" y="0" width="40" height="30"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -196,7 +196,7 @@
 				<textFieldExpression><![CDATA[$F{numeroCota}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="5b36ae2f-be09-4118-a358-c8cd316c90d6" style="zebrado" x="40" y="0" width="190" height="30"/>
+				<reportElement style="zebrado" x="40" y="0" width="190" height="30"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -209,7 +209,7 @@
 				<textFieldExpression><![CDATA[$F{nome}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement uuid="48a6ccba-8c2a-416c-b8fe-e01110975d8c" style="zebrado" x="230" y="0" width="205" height="30"/>
+				<reportElement style="zebrado" x="230" y="0" width="205" height="30"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -225,7 +225,7 @@
 + ($F{uf} == null ? "" : $F{uf})]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="32a7d631-8daf-417e-ba1f-c6687971ccf9" style="zebrado" x="435" y="0" width="61" height="30"/>
+				<reportElement style="zebrado" x="435" y="0" width="61" height="30"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -238,7 +238,7 @@
 				<textFieldExpression><![CDATA[$F{qtdProduto0}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="7ba583f3-c3d7-4d77-872a-a08037f1af2c" style="zebrado" x="496" y="0" width="61" height="30"/>
+				<reportElement style="zebrado" x="496" y="0" width="61" height="30"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -251,7 +251,7 @@
 				<textFieldExpression><![CDATA[$F{qtdProduto1}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="41b921be-6541-4197-af49-c384f39acd1a" style="zebrado" x="557" y="0" width="61" height="30"/>
+				<reportElement style="zebrado" x="557" y="0" width="61" height="30"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -264,7 +264,7 @@
 				<textFieldExpression><![CDATA[$F{qtdProduto2}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="fbe58828-d23d-4fd5-b1b7-d569170f4d9b" style="zebrado" x="618" y="0" width="61" height="30"/>
+				<reportElement style="zebrado" x="618" y="0" width="61" height="30"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -277,7 +277,7 @@
 				<textFieldExpression><![CDATA[$F{qtdProduto3}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="c05dfca6-c1e7-49f6-88d6-068e476185db" style="zebrado" x="679" y="0" width="61" height="30"/>
+				<reportElement style="zebrado" x="679" y="0" width="61" height="30"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -290,7 +290,7 @@
 				<textFieldExpression><![CDATA[$F{qtdProduto4}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="a924a652-4d5a-42f7-895b-cc4e71f1c5ee" style="zebrado" x="740" y="0" width="61" height="30"/>
+				<reportElement style="zebrado" x="740" y="0" width="61" height="30"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -307,7 +307,7 @@
 	<pageFooter>
 		<band height="21" splitType="Stretch">
 			<textField>
-				<reportElement uuid="7fc400e7-6555-4181-b396-9b37e74a687a" x="0" y="6" width="100" height="15"/>
+				<reportElement x="0" y="6" width="100" height="15"/>
 				<textElement verticalAlignment="Middle" markup="html"/>
 				<textFieldExpression><![CDATA[" <b>Total Cotas:</b> " + $V{COLUMN_COUNT}]]></textFieldExpression>
 			</textField>

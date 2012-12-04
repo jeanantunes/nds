@@ -27,7 +27,7 @@
 	<pageHeader>
 		<band height="115">
 			<subreport>
-				<reportElement uuid="c9986786-7ff2-4f2a-a5ec-bb5a78928673" x="0" y="0" width="802" height="115" isPrintWhenDetailOverflows="true"/>
+				<reportElement x="0" y="0" width="802" height="115" isPrintWhenDetailOverflows="true"/>
 				<subreportParameter name="SUBREPORT_DIR">
 					<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
 				</subreportParameter>
@@ -54,7 +54,7 @@
 	<detail>
 		<band height="440" splitType="Stretch">
 			<subreport>
-				<reportElement uuid="7bb5e680-2fc3-4ce5-bcc7-128d8fa9da5b" x="0" y="0" width="802" height="440" isPrintWhenDetailOverflows="true"/>
+				<reportElement x="0" y="0" width="802" height="440" isPrintWhenDetailOverflows="true"/>
 				<subreportParameter name="SUBREPORT_DIR">
 					<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
 				</subreportParameter>
