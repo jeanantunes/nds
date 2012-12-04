@@ -87,109 +87,126 @@ public class RomaneioServiceImpl implements RomaneioService {
 		
 		if (filtro != null) {
 			
-			List<RomaneioDTO> listaDTOParaExportacao = 
+			List<RomaneioDTO> lstRomaneioDTO = 
 					romaneioRepository.buscarRomaneiosParaExportacao(filtro);
+			List<RomaneioModelo01DTO> lstRelatorio = 
+					new ArrayList<RomaneioModelo01DTO>();
 			
-			if (!listaDTOParaExportacao.isEmpty()){
-			
-				Long idRota = null;
-				Long qtdCotas = 0L;
-				for (RomaneioDTO romaeio : listaDTOParaExportacao){
+			// Formata os romaneios para o relatório:
+			if (lstRomaneioDTO != null && !lstRomaneioDTO.isEmpty()){
+				
+				Long idBox = Long.valueOf(0);
+				Long idRoteiro = Long.valueOf(0);
+				Long idRota = Long.valueOf(0);
+				RomaneioModelo01DTO dto = null;
+				for (RomaneioDTO romaeio : lstRomaneioDTO){
 					
-					qtdCotas++;
-					
-					if (romaeio.getIdRota() != null && romaeio.getIdRota().equals(idRota)){
+					if (idBox.equals(romaeio.getIdBox())
+							&& idRoteiro.equals(romaeio.getIdRoteiro())
+							&& idRota.equals(romaeio.getIdRota())) {
 						
-						romaeio.setIdRota(null);
+						dto.getItens().add(romaeio);
 					} else {
 						
+						// Novo RomaneioModelo01DTO:
+						idBox = romaeio.getIdBox();
+						idRoteiro = romaeio.getIdRoteiro();
 						idRota = romaeio.getIdRota();
-						romaeio.setQtdCotas(qtdCotas);
-						qtdCotas = 0L;
+						
+						dto = new RomaneioModelo01DTO();
+						dto.setDataGeracao(filtro.getData());
+						dto.setEntregaBox(romaeio.getNomeBox());
+						dto.setRota(romaeio.getNomeRota());
+						dto.setRoteiro(romaeio.getNomeRoteiro());
+						
+						dto.setItens(new ArrayList<RomaneioDTO>());
+						dto.getItens().add(romaeio);
+						
+						lstRelatorio.add(dto);
 					}
 				}
-				
-				listaDTOParaExportacao.get(listaDTOParaExportacao.size() - 1).setQtdCotas(qtdCotas);
 			}
-			
-			RomaneioModelo01DTO dto = new RomaneioModelo01DTO();
-			dto.setDataGeracao(filtro.getData());
-			dto.setEntregaBox(filtro.getBox());
-			dto.setRota(filtro.getRota());
-			dto.setRoteiro(filtro.getRoteiro());
-			dto.setItens(listaDTOParaExportacao);
-			
-			List<RomaneioModelo01DTO> lista = new ArrayList<RomaneioModelo01DTO>();
-			lista.add(dto);
-			
-			JRDataSource jrDataSource = new JRBeanCollectionDataSource(lista);
 			
 			URL diretorioReports = Thread.currentThread().getContextClassLoader().getResource("reports/");
+			StringBuilder path = new StringBuilder();
+			path.append(diretorioReports.toURI().getPath());
 			
-			String path = "";
-			
-			if (filtro.getProdutos() == null || 
-					filtro.getProdutos().isEmpty()){
+			final int qtdProdutos = (filtro.getProdutos() == null 
+					? 0 : filtro.getProdutos().size()); 
+			switch (qtdProdutos) {
 				
-				path = diretorioReports.toURI().getPath() + "/romaneio_modelo01.jasper";
-			} else if (filtro.getProdutos().size() == 1) {
-				
-				Long idProdutoEdicao = filtro.getProdutos().get(0);
-				
-				ProdutoEdicao produtoEdicao = this.produtoEdicaoRepository.buscarPorId(idProdutoEdicao);
-				
-				dto.setCodigoProduto(produtoEdicao.getProduto().getCodigo());
-				dto.setNomeProduto(produtoEdicao.getNomeComercial());
-				dto.setEdicao(produtoEdicao.getNumeroEdicao());
-				dto.setPacotePadrao(new Long(produtoEdicao.getPacotePadrao()));
-				
-				path = diretorioReports.toURI().getPath() + "/romaneio_modelo02.jasper";
-			} else {
-				
-				if (filtro.getProdutos().size() > 0){
+				// nenhum produto a exibir:
+				case 0:
 					
-					dto.setNomeProduto0(this.produtoEdicaoRepository.buscarNome(filtro.getProdutos().get(0)));
-				}
-				
-				if (filtro.getProdutos().size() > 1){
+					path.append("/romaneio_modelo01.jasper");
+					break;
+	
+				// apenas um produto a exibir:
+				case 1:
 					
-					dto.setNomeProduto1(this.produtoEdicaoRepository.buscarNome(filtro.getProdutos().get(1)));
-				}
-
-				if (filtro.getProdutos().size() > 2){
+					Long idProdutoEdicao = filtro.getProdutos().get(0);
+					ProdutoEdicao produtoEdicao = this.produtoEdicaoRepository.buscarPorId(idProdutoEdicao);
+					for (RomaneioModelo01DTO dto :lstRelatorio) {
+						
+						dto.setCodigoProduto(
+								produtoEdicao.getProduto().getCodigo());
+						dto.setNomeProduto(this.tratarNomeProdutoEdicao(
+								produtoEdicao));
+						dto.setEdicao(produtoEdicao.getNumeroEdicao());
+						dto.setPacotePadrao(
+								Long.valueOf(produtoEdicao.getPacotePadrao()));
+					}
 					
-					dto.setNomeProduto2(this.produtoEdicaoRepository.buscarNome(filtro.getProdutos().get(2)));
-				}
+					path.append("/romaneio_modelo02.jasper");
+					break;
 				
-				if (filtro.getProdutos().size() > 3){
+				// vários produtos a exibir:
+				default:
 					
-					dto.setNomeProduto3(this.produtoEdicaoRepository.buscarNome(filtro.getProdutos().get(3)));
-				}
-				
-				if (filtro.getProdutos().size() > 4){
+					List<String> nomesProduto = new ArrayList<>();
+					for (Long idEdicao : filtro.getProdutos()) {
+						nomesProduto.add(
+								this.tratarNomeProdutoEdicao(
+										this.produtoEdicaoRepository.buscarPorId(
+												idEdicao)));
+					}
 					
-					dto.setNomeProduto4(this.produtoEdicaoRepository.buscarNome(filtro.getProdutos().get(4)));
-				}
-				
-				if (filtro.getProdutos().size() > 5){
+					final int qtdNomeProdutos = nomesProduto.size();
+					for (RomaneioModelo01DTO dto : lstRelatorio) {
+						
+						switch (qtdNomeProdutos) {
+						case 6:
+							dto.setNomeProduto5(nomesProduto.get(5));
+						case 5:
+							dto.setNomeProduto4(nomesProduto.get(4));
+						case 4:
+							dto.setNomeProduto3(nomesProduto.get(3));
+						case 3:
+							dto.setNomeProduto2(nomesProduto.get(2));
+						case 2:
+						default:
+							dto.setNomeProduto1(nomesProduto.get(1));
+							dto.setNomeProduto0(nomesProduto.get(0));
+							break;
+						}
+					}
 					
-					dto.setNomeProduto5(this.produtoEdicaoRepository.buscarNome(filtro.getProdutos().get(5)));
-				}
-				
-				path = diretorioReports.toURI().getPath() + "/romaneio_modelo03.jasper";
+					path.append("/romaneio_modelo03.jasper");
+					break;
 			}
 			
+			JRDataSource jrDataSource = new JRBeanCollectionDataSource(lstRelatorio);
 			Map<String, Object> parameters = new HashMap<String, Object>();
-			
 			parameters.put("SUBREPORT_DIR", diretorioReports.toURI().getPath());
 			
-			if (FileType.PDF == fileType){
+			if (FileType.PDF == fileType) {
 			
-				return JasperRunManager.runReportToPdf(path, parameters, jrDataSource);
-			} else if (FileType.XLS == fileType){
-				
-				JasperPrint jasperPrint = JasperFillManager.fillReport(path,
+				return JasperRunManager.runReportToPdf(path.toString(),
 						parameters, jrDataSource);
+			} else if (FileType.XLS == fileType) {
+				
+				JasperPrint jasperPrint = JasperFillManager.fillReport(
+						path.toString(), parameters, jrDataSource);
 
 				JRXlsExporter exporter = new JRXlsExporter();
 
@@ -212,6 +229,26 @@ public class RomaneioServiceImpl implements RomaneioService {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Filtro inválido.");
 		}
 	}
+	
+	/**
+	 * Para obter e tratar o nome comercial do produto.
+	 * 
+	 * @param pEdicao
+	 * @return
+	 */
+	private String tratarNomeProdutoEdicao(ProdutoEdicao pEdicao) {
+		
+		String nome = "";
+		if (pEdicao != null 
+				&& pEdicao.getProduto() != null 
+				&& pEdicao.getProduto().getNome() != null) {
+			
+			nome = pEdicao.getProduto().getNome();
+		}
+		
+		return nome;
+	}
+	
 	
 	@Override
 	@Transactional

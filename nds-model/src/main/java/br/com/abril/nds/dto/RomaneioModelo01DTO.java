@@ -7,11 +7,10 @@ import java.util.List;
 
 public class RomaneioModelo01DTO implements Serializable {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -8142125302068788378L;
+	/** */
+	private static final long serialVersionUID = 2712304820403183614L;
 
+	
 	private String roteiro;
 	
 	private String entregaBox;
@@ -171,4 +170,5 @@ public class RomaneioModelo01DTO implements Serializable {
 	public void setPacotePadrao(Long pacotePadrao) {
 		this.pacotePadrao = pacotePadrao;
 	}
+	
 }
