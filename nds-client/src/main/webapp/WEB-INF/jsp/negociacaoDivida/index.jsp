@@ -345,7 +345,7 @@
 			</form> 
 		</div>
 
-		<div id="dialog-excluir" title="Baixa Banc�ria" style="display:none;">
+		<div id="dialog-excluir" title="Baixa Bancária" style="display:none;">
 			<p>Deseja confirmar Baixa Manual deste Boleto?</p>
 		</div>
 
