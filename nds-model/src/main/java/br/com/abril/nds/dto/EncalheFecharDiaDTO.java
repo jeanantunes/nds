@@ -2,6 +2,7 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Export.Alignment;
@@ -28,7 +29,7 @@ public class EncalheFecharDiaDTO implements Serializable {
 	 * Lógico: quantidade total de exemplares de cada produto recebido no encalhe;
 	 */
 	@Export(label = "Qtde", alignment=Alignment.CENTER, exhibitionOrder = 5)
-	private Long qtde;
+	private BigInteger qtde;
 	
 	@Export(label = "Venda Encalhe", alignment=Alignment.LEFT, exhibitionOrder = 6)
 	private BigDecimal venda;
@@ -44,12 +45,12 @@ public class EncalheFecharDiaDTO implements Serializable {
 	/**
 	 * quantidade de exemplares de cada produto juramentado no encalhe;
 	 */
-	private Long qtdeLogicoJuramentado;
+	private BigInteger qtdeLogicoJuramentado;
 	
 	/**
 	 * : quantidade de exemplares de cada produto e edição que teve sua venda realizada
 	 */
-	private Long qtdeVendaEncalhe;
+	private BigInteger qtdeVendaEncalhe;
 	
 	/**
 	 * quantidade de exemplares resultantes da subtração de: 
@@ -95,11 +96,11 @@ public class EncalheFecharDiaDTO implements Serializable {
 		this.precoVenda = precoVenda;
 	}
 
-	public Long getQtde() {
+	public BigInteger getQtde() {
 		return qtde;
 	}
 
-	public void setQtde(Long qtde) {
+	public void setQtde(BigInteger qtde) {
 		this.qtde = qtde;
 	}
 
@@ -136,28 +137,28 @@ public class EncalheFecharDiaDTO implements Serializable {
     /**
      * @return the qtdeLogicoJuramentado
      */
-    public Long getQtdeLogicoJuramentado() {
+    public BigInteger getQtdeLogicoJuramentado() {
         return qtdeLogicoJuramentado;
     }
 
     /**
      * @param qtdeLogicoJuramentado the qtdeLogicoJuramentado to set
      */
-    public void setQtdeLogicoJuramentado(Long qtdeLogicoJuramentado) {
+    public void setQtdeLogicoJuramentado(BigInteger qtdeLogicoJuramentado) {
         this.qtdeLogicoJuramentado = qtdeLogicoJuramentado;
     }
 
     /**
      * @return the qtdeVendaEncalhe
      */
-    public Long getQtdeVendaEncalhe() {
+    public BigInteger getQtdeVendaEncalhe() {
         return qtdeVendaEncalhe;
     }
 
     /**
      * @param qtdeVendaEncalhe the qtdeVendaEncalhe to set
      */
-    public void setQtdeVendaEncalhe(Long qtdeVendaEncalhe) {
+    public void setQtdeVendaEncalhe(BigInteger qtdeVendaEncalhe) {
         this.qtdeVendaEncalhe = qtdeVendaEncalhe;
     }
 
@@ -263,5 +264,11 @@ public class EncalheFecharDiaDTO implements Serializable {
 			return false;
 		return true;
 	}
+	
+    @Override
+    public String toString() {
+        return new StringBuilder("Produto [").append(nomeProduto).append("],")
+                .append("Qtde [").append(qtde).append("]").toString();
+    }
 	
 }
