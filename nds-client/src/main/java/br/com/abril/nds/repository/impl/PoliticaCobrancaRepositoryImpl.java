@@ -51,6 +51,18 @@ public class PoliticaCobrancaRepositoryImpl extends AbstractRepositoryModel<Poli
 		return (PoliticaCobranca) query.uniqueResult();
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<PoliticaCobranca> obterPoliticasCobranca(List<TipoCobranca> tiposCobranca) {
+		
+		Criteria criteria = super.getSession().createCriteria(PoliticaCobranca.class);
+		
+		criteria.createAlias("formaCobranca", "formaCobranca");
+		
+		criteria.add(Restrictions.in("formaCobranca.tipoCobranca", tiposCobranca));
+		
+		return criteria.list();
+	}
 	
 	/**
 	 * Obtém Lista de políticas de cobrança para os parametros
