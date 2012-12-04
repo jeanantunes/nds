@@ -88,7 +88,6 @@
 				<span class="bt_novos"><a href="javascript:;" onclick="fechamentoEncalheController.popup_encerrarEncalhe();" rel="tipsy" title="Cotas Ausentes"><img src="${pageContext.request.contextPath}/images/ico_usuarios1.gif" hspace="5" border="0" /></a></span>
 				<span class="bt_novos"><a href="javascript:;" onclick="fechamentoEncalheController.salvarNoEncerrementoOperacao();" rel="tipsy" title="Encerrar Opera&ccedil;&atilde;o Encalhe"><img src="${pageContext.request.contextPath}/images/ico_check.gif" hspace="5" border="0" /></a></span>
 				<span class="bt_novos"><a href="javascript:;" onclick="fechamentoEncalheController.analiticoEncalhe();" rel="tipsy" title="Anal&iacute;tico Encalhe"><img src="${pageContext.request.contextPath}/images/bt_lancamento.png" hspace="5" border="0" /></a></span>
-				<span class="bt_novos"><a href="javascript:;" id="sel" onclick="fechamentoEncalheController.replicarTodos();" rel="tipsy" title="Replicar Todos"><img src="${pageContext.request.contextPath}/images/ico_atualizar.gif" border="0" /></a><label for="sel"></label></span>
 			</div>
 			
 			<span class="bt_arq"><a href="javascript:;" onclick="fechamentoEncalheController.imprimirArquivo('XLS');" rel="tipsy" title="Gerar Arquivo"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" /></a></span>
@@ -130,7 +129,14 @@
     <fieldset class="fieldGrid">
        	<legend> Fechamento Encalhe</legend>
         <div class="grids" style="display:none;" id="divFechamentoGrid">	
+			
 			<table class="fechamentoGrid"></table>
+			
+			<span class="bt_sellAll" style="float:right;">
+				<label for="sel">Selecionar Todos</label>
+				<input type="checkbox" id="sel" name="Todos" onclick="fechamentoEncalheController.checkAll(this);" style="float:right;margin-right:65px;"/>
+			</span>
+			
 		</div>
 	</fieldset>
 </body>

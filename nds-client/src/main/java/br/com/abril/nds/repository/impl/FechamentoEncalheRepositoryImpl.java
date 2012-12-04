@@ -50,6 +50,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		hql.append("SELECT distinct  p.codigo as  codigo ");
 		hql.append(" , p.nome as produto ");
 		hql.append(" , pe.numeroEdicao as edicao");
+		hql.append(", (pe.precoVenda * (" + this.getSubQueryDesconto() + " / 100 )) as precoCapaDesconto ");
 		hql.append(" , pe.precoVenda as precoCapa ");
 		hql.append(" , pe.id as produtoEdicao ");
 		hql.append(" ,  case when  pe.parcial  = true  then 'P' else 'N' end  as tipo ");
@@ -61,14 +62,10 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		hql.append("  JOIN mec.produtoEdicao as pe ");		
 		hql.append("  JOIN pe.produto as p ");
 		hql.append("  JOIN ce.chamadaEncalheCota as cec ");
+		hql.append("  JOIN ce.chamadaEncalheCota.cota as cota ");
 		hql.append("  JOIN cec.chamadaEncalhe as che ");
-
-		
-		if (filtro.getFornecedorId() != null) {
-			hql.append("  JOIN p.fornecedores as pf ");
-			
-		}
-		
+		hql.append("  JOIN p.fornecedores as pf ");
+	
 		hql.append(" WHERE ccec.dataOperacao =:dataEncalhe ");
 
 		if (filtro.getBoxId() != null) {
@@ -78,7 +75,6 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		if (filtro.getFornecedorId() != null) {
 			hql.append("  and pf.id = :fornecedorId ");
 		}
-		
 		
 		hql.append(" group by p.codigo,  p.nome, pe.numeroEdicao, pe.precoVenda, pe.id , pe.parcial, che.dataRecolhimento");
 		
@@ -95,11 +91,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		
 		query.setDate("dataEncalhe", filtro.getDataEncalhe());
 		query.setParameter("tipoVenda", TipoVendaEncalhe.ENCALHE);
-		
-		
-		
-		
-		
+
 		if (filtro.getBoxId() != null) {
 			query.setLong("boxId", filtro.getBoxId());
 		}
@@ -107,9 +99,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		if (filtro.getFornecedorId() != null) {
 			query.setLong("fornecedorId", filtro.getFornecedorId());
 		}
-		
-		
-		
+
 		if (page != null){
 			query.setFirstResult(page);
 		}
@@ -117,11 +107,28 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		if (rp != null){
 			query.setMaxResults(rp);
 		}
-		
-	
+
 		query.setResultTransformer(Transformers.aliasToBean(FechamentoFisicoLogicoDTO.class));
 			
 		return query.list();
+	}
+	
+	/**
+	 * Retorna String referente a uma subquery que obtém o percentual de desconto
+	 * para determinado produtoEdicao a partir de idCota e idFornecedor. 
+	 * 
+	 * @return String
+	 */
+	private String getSubQueryDesconto() {
+		
+		StringBuilder hql = new StringBuilder("coalesce ((select view.desconto");
+		hql.append(" from ViewDesconto view ")
+		   .append(" where view.cotaId = cota.id ")
+		   .append(" and view.produtoEdicaoId = pe.id ")
+		   .append(" and view.fornecedorId = pf.id),0) ");
+		
+		return hql.toString();
+		
 	}
 
 	@Override
