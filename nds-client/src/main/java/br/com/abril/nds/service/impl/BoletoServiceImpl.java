@@ -3,6 +3,7 @@ package br.com.abril.nds.service.impl;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -928,13 +929,19 @@ public class BoletoServiceImpl implements BoletoService {
         corpoBoleto.setContaNumeroBanco(boleto.getBanco().getNumeroBanco());                  
         corpoBoleto.setContaCarteira(boleto.getBanco().getCarteira());
        
-        Set<FormaCobranca> formasCobranca = 
-        		boleto.getCota().getParametroCobranca().getFormasCobrancaCota();
+        List<TipoCobranca> tiposCobranca = Arrays.asList(TipoCobranca.BOLETO, TipoCobranca.BOLETO_EM_BRANCO);
         
-        for (FormaCobranca formaCobranca : formasCobranca) {
+        List<PoliticaCobranca> politicasCobranca = politicaCobrancaRepository.obterPoliticasCobranca(tiposCobranca);
+        
+        for (PoliticaCobranca politicaCobranca : politicasCobranca) {
         	
-        	if(formaCobranca.getBanco().getApelido().equals(boleto.getBanco().getApelido())) {
+        	FormaCobranca formaCobranca = politicaCobranca.getFormaCobranca();
+        	
+        	if (formaCobranca.getBanco().getApelido().equals(boleto.getBanco().getApelido())) {
+        		
         		corpoBoleto.setContaTipoDeCobranca(formaCobranca.getFormaCobrancaBoleto().toString());
+        		
+        		break;
         	}
         }
         
