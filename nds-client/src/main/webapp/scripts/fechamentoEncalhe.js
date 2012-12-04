@@ -84,7 +84,7 @@ var fechamentoEncalheController = $.extend(true, {
 			}, {
 				display : 'Produto',
 				name : 'produto',
-				width : 190,
+				width : 110,
 				sortable : true,
 				align : 'left'
 			},{
@@ -94,14 +94,14 @@ var fechamentoEncalheController = $.extend(true, {
 				sortable : true,
 				align : 'left'
 			}, {
-				display : 'Tipo',
-				name : 'tipo',
-				width : 23,
-				sortable : false,
-				align : 'left'
-			},{
 				display : 'Pre&ccedil;o Capa R$',
 				name : 'precoCapaFormatado',
+				width : 80,
+				sortable : true,
+				align : 'right'
+			}, {
+				display : 'Pre&ccedil;o Desc R$',
+				name : 'precoCapaDescFormatado',
 				width : 80,
 				sortable : true,
 				align : 'right'
@@ -130,11 +130,11 @@ var fechamentoEncalheController = $.extend(true, {
 				sortable : false,
 				align : 'right'
 			},{
-			display : 'Estoque',
-			name : 'estoque',
-			width : 60,
-			sortable : false,
-			align : 'right'
+				display : 'Estoque',
+				name : 'estoque',
+				width : 60,
+				sortable : false,
+				align : 'right'
 			},{
 				display : 'Replicar Qtde.',
 				name : 'replicar',
@@ -207,9 +207,8 @@ var fechamentoEncalheController = $.extend(true, {
 			
 			var fechado = row.cell.fechado == false ? '' : 'disabled="disabled"';
 			row.cell.fisico = '<input type="text" style="width: 60px" id = "'+row.cell.produtoEdicao+'"  name="fisico" value="' + valorFisico + '" onchange="fechamentoEncalheController.onChangeFisico(this, ' + index + ')" ' + fechado + '/>';
-			
-			row.cell.replicar = '<span title="Replicar"><a href="javascript:;" onclick="fechamentoEncalheController.replicar(' + index + ')"><img src="' + contextPath + '/images/ico_atualizar.gif" border="0" /></a></span>';
-			
+		
+			row.cell.replicar = '<input type="checkbox"  id="ch'+index+'" name="checkgroupFechamento" onclick="fechamentoEncalheController.replicar(' + index + ');"' + fechado+ '/>';
 			
 			if (fechado != '') {
 				$('#divBotoesPrincipais', fechamentoEncalheController.workspace).hide();
@@ -223,19 +222,37 @@ var fechamentoEncalheController = $.extend(true, {
 	
 		var tabela = $('.fechamentoGrid', fechamentoEncalheController.workspace).get(0);
 		for (i=0; i<tabela.rows.length; i++) {
-			fechamentoEncalheController.replicar(i);
+			fechamentoEncalheController.replicarItem(i);
 		}
 	},
 	
-	replicar : function(index) {
+	replicar:function(index){
+		$("#sel",this.workspace).attr("checked",false);
+		fechamentoEncalheController.replicarItem(index);
+	},
+	
+	replicarItem : function(index) {
 		
 		var tabela = $('.fechamentoGrid', fechamentoEncalheController.workspace).get(0);
 		var valor = tabela.rows[index].cells[5].firstChild.innerHTML;
 		var campo = tabela.rows[index].cells[7].firstChild.firstChild;
 		var diferenca = tabela.rows[index].cells[8].firstChild;
-
+		
+		if(campo.disabled){
+			return;
+		}
+		
 		campo.value = valor;
 		diferenca.innerHTML = "0";
+	},
+	
+	checkAll:function(input){
+			
+		checkAll(input,"checkgroupFechamento");
+		
+		if(input.checked == true){
+			fechamentoEncalheController.replicarTodos();
+		}
 	},
 	
 	onChangeFisico : function(campo, index) {

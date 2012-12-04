@@ -25,7 +25,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.client.assembler.HistoricoTitularidadeCotaDTOAssembler;
-import br.com.abril.nds.controllers.cadastro.EnderecoController;
 import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.CotaDTO.TipoPessoa;
 import br.com.abril.nds.dto.CotaSuspensaoDTO;
@@ -285,34 +284,6 @@ public class CotaServiceImpl implements CotaService {
 	/**
 	 * ENDERECO
 	 * 
-	 * Valida se a lista de endereços pertencentes a uma cota, 
-	 * tem pelo menos um e somente um endereço principal
-	 * 
-	 * @param enderecos lista de edereços para serem validados
-	 */
-	private void validarEnderecoPrincipalPorCota(List<EnderecoAssociacaoDTO> enderecos) {
-		
-		boolean hasEnderecoPrincipal = false;
-		
-		for (EnderecoAssociacaoDTO enderecoAssociacao : enderecos){
-			
-			if (hasEnderecoPrincipal && enderecoAssociacao.isEnderecoPrincipal()){
-				
-				throw new ValidacaoException(TipoMensagem.WARNING, "Apenas um endereço principal é permitido.");
-			}
-
-			hasEnderecoPrincipal = hasEnderecoPrincipal==false?enderecoAssociacao.isEnderecoPrincipal():hasEnderecoPrincipal;
-		}
-		
-		if (!hasEnderecoPrincipal) {
-			
-			throw new ValidacaoException(TipoMensagem.WARNING, "É necessario cadastrar pelo menos um endereço principal.");
-		}
-	}
-	
-	/**
-	 * ENDERECO
-	 * 
 	 * {@inheritDoc}
 	 */
 	@Override
@@ -372,15 +343,18 @@ public class CotaServiceImpl implements CotaService {
 	@Transactional
 	public void processarEnderecos(Long idCota,
 								   List<EnderecoAssociacaoDTO> listaEnderecoAssociacaoSalvar,
-								   List<EnderecoAssociacaoDTO> listaEnderecoAssociacaoRemover) {
+								   List<EnderecoAssociacaoDTO> listaEnderecoAssociacaoRemover
+								   ) {
 
 		if (idCota == null){
+			
 			throw new ValidacaoException(TipoMensagem.ERROR, "Cota é obrigatório.");
 		}
 		
 		Cota cota = this.cotaRepository.buscarPorId(idCota);
 		
 		if (cota == null){
+			
 			throw new ValidacaoException(TipoMensagem.ERROR, "Cota não encontrada.");
 		}
 		
@@ -436,8 +410,6 @@ public class CotaServiceImpl implements CotaService {
 	 * @param listaEnderecoAssociacao
 	 */
 	private void salvarEnderecosCota(Cota cota, List<EnderecoAssociacaoDTO> listaEnderecoAssociacao) {
-		
-		validarEnderecoPrincipalPorCota(listaEnderecoAssociacao);
 		
 		Pessoa pessoa = cota.getPessoa();
 		

@@ -112,7 +112,7 @@ public class Lancamento implements Serializable {
 	@ManyToOne(cascade = {CascadeType.ALL})
 	@JoinColumns({
 		@JoinColumn(name = "PRODUTO_EDICAO_ID", referencedColumnName = "PRODUTO_EDICAO_ID", insertable = false, updatable = false),
-		@JoinColumn(name = "DATA_LCTO_PREVISTA", referencedColumnName = "DATA_LANCAMENTO", insertable = false, updatable = false) })
+		@JoinColumn(name = "DATA_LCTO_DISTRIBUIDOR", referencedColumnName = "DATA_LANCAMENTO", insertable = false, updatable = false) })
 	private Estudo estudo;
 	
 	@ManyToOne(optional = true)

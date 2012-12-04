@@ -255,6 +255,17 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 			hql.append("   AND fornecedor.id = :idFornecedor");
 		}
 		
+		//Filtra os registro que ja teve enclahe finalizado
+		hql.append(" AND not exists ( ")
+		.append(" select chamadaCota  from ConferenciaEncalhe conferencia " +
+				" join   conferencia.chamadaEncalheCota chamadaCota " +
+				" join   chamadaCota.chamadaEncalhe chamadaEncalhe " +
+				" join   conferencia.controleConferenciaEncalheCota controleCota " +
+				" join   controleCota.controleConferenciaEncalhe controle, "  +
+				" FechamentoEncalhe fechamentoEncalhe" )
+		.append(" where  chamadaEncalhe.produtoEdicao.id = pe.id and chamadaCota.cota.id = cota.id " +
+				" and fechamentoEncalhe.fechamentoEncalhePK.produtoEdicao.id = pe.id " +
+				" and fechamentoEncalhe.fechamentoEncalhePK.dataEncalhe = controleCota.dataOperacao ) ");
 
 		return hql.toString();
 	}
