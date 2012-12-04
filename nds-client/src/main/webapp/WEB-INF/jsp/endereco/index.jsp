@@ -20,7 +20,7 @@
 	<div name="${param.telaEndereco}formEnderecos" id="${param.telaEndereco}formEnderecos">
 		 <fieldset style="width:880px!important; margin:5px;">
  			<legend>Endereço</legend>
-			<input type="hidden" name="enderecoAssociacao.id" id="${param.telaEndereco}idEndereco"/>
+			<input type="hidden" name="enderecoAssociacao.id" id="${param.telaEndereco}idEndereco"/>			
 			
 			<input type="hidden" name="enderecoAssociacao.endereco.id" id="${param.telaEndereco}enderecoid"/>
 			
@@ -31,6 +31,8 @@
 			<input type="hidden" name="enderecoAssociacao.endereco.codigoCidadeIBGE" id="${param.telaEndereco}codigoCidadeIBGE"/>
 			
 			<input type="hidden" id="${param.telaEndereco}idLocalidade"/>
+			
+			<input type="hidden" name="enderecoAssociacao.enderecoPessoa" id="${param.telaEndereco}enderecoPessoa"/>
 	
 			<table width="754" cellpadding="2" cellspacing="2" style="text-align:left ">
 				<tr>
