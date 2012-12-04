@@ -34,10 +34,10 @@ public class NegociacaoDividaRepositoryImpl extends AbstractRepositoryModel<Nego
 		hql.append(" SELECT cobranca.dataEmissao as dtEmissao, ");
 		hql.append(" cobranca.dataVencimento as dtVencimento, ");
 		hql.append(" cobranca.valor as vlDivida, ");
-		hql.append(" cobranca.encargos as encargos, ");
+		hql.append(" COALESCE(cobranca.encargos, 0) as encargos, ");
 		hql.append(" CASE WHEN (datediff(cobranca.dataVencimento, current_date())) < 0 ");
 		hql.append(" THEN 0 ELSE datediff(cobranca.dataVencimento, current_date()) END  as prazo, ");
-		hql.append(" (cobranca.encargos + cobranca.valor) as total, ");
+		hql.append(" (COALESCE(cobranca.encargos, 0) + cobranca.valor) as total, ");
 		hql.append(" cobranca.id as idCobranca ");
 		
 		this.getObterCotaPorNumeroFrom(hql, filtro);
