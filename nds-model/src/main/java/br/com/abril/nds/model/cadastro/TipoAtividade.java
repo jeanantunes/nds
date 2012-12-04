@@ -3,6 +3,7 @@ package br.com.abril.nds.model.cadastro;
 public enum TipoAtividade {
 
 	PRESTADOR_SERVICO("Prestador Serviço"),
+	PRESTADOR_FILIAL("Prestador de Serviços - Filial"),
 	MERCANTIL("Mercantil");
 	
 	private String descricao;
