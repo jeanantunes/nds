@@ -288,6 +288,7 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 		return ((Long) query.uniqueResult()).intValue();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Long> obterIdsMovimentosFinanceiroCota(FiltroDebitoCreditoDTO filtroDebitoCreditoDTO) {
 		
@@ -578,11 +579,11 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 	    
 	    hql.append(" COALESCE(sum( ");
 	    
-	    hql.append("              (COALESCE(epc.qtdeRecebida,0) - COALESCE(epc.qtdeDevolvida,0)) * ");
+	    hql.append("              (COALESCE(epc.qtdeRecebida, 0) - COALESCE(epc.qtdeDevolvida, 0)) * ");
 	    
-	    hql.append("              (COALESCE(epc.produtoEdicao.precoVenda,0) - ");
+	    hql.append("              (COALESCE(epc.produtoEdicao.precoVenda, 0) - ");
 	    
-	    hql.append("               COALESCE(("+obterHQLDesconto("c.id","epc.produtoEdicao.id","fornecedor.id")+"),0)) ");
+	    hql.append("               COALESCE((mec.valoresAplicados.valorDesconto), 0)) ");
 	    
 	    hql.append("         ),0 ) as faturamentoLiquido ");
 	    
@@ -613,31 +614,6 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 		return query.list();
 	}
 
-
-	private String obterHQLDesconto(String cota, String produto, String fornecedor){
-	   	
-        String auxC = " where ";
-	    StringBuilder hql = new StringBuilder("select view.desconto from ViewDesconto view ");
-		
-   	    if (cota!=null && !"".equals(cota)){
-		   hql.append(auxC+" view.cotaId = "+cota);
-		   auxC = " and ";
-   	    }
-
-        if (produto!=null && !"".equals(produto)){
-	       hql.append(auxC+" view.produtoEdicaoId = "+produto);
-	 	   auxC = " and ";
-	    }
-
-	    if (fornecedor!=null && !"".equals(fornecedor)){
-	 	   hql.append(auxC+" view.fornecedorId = "+fornecedor);
-	 	   auxC = " and ";
-	    }	 
-
-	    return hql.toString();
-	}
-	
-	
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<CotaTransportadorDTO> obterResumoTransportadorCota(FiltroRelatorioServicosEntregaDTO filtro) {

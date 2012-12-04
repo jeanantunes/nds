@@ -123,9 +123,7 @@ public class LancamentoServiceImpl implements LancamentoService {
 				lancamento.getProdutoEdicao().getPacotePadrao(), 
 				lancamento.getReparte().intValue(), 
 				sdf.format(lancamento.getDataRecolhimentoPrevista()), 
-				fornecedor, 
-				(lancamento.getEstudo()==null) ? null : lancamento.getEstudo().getQtdeReparte().intValue(),
-				false);
+				fornecedor, (lancamento.getEstudo()==null) ? null : lancamento.getEstudo().getQtdeReparte().intValue(), false);
 		
 		return dto;
 	}

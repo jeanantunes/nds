@@ -18,34 +18,47 @@ public class ValoresAplicados implements Serializable {
 		super();
 	}
 	
-	public ValoresAplicados(BigDecimal valor, BigDecimal desconto) {
-		this.valor = valor;
-		this.desconto = desconto;
+	public ValoresAplicados(BigDecimal precoVenda, BigDecimal precoComDesconto, BigDecimal valorDesconto) {
+		this.precoVenda = precoVenda;
+		this.precoComDesconto = precoComDesconto;
+		this.valorDesconto = valorDesconto;
 	}
 	
-	@Column(name = "VALOR_APLICADO")
-	private BigDecimal valor;
+	@Column(name = "PRECO_VENDA")
+	private BigDecimal precoVenda;
 	
-	@Column(name = "DESCONTO")
-	private BigDecimal desconto;
-
+	@Column(name = "PRECO_COM_DESCONTO")
+	private BigDecimal precoComDesconto;
+	
+	@Column(name = "VALOR_DESCONTO")
+	private BigDecimal valorDesconto;
+	
+	
 	/**
 	 * Getters e Setters 
 	 */
-	public BigDecimal getValor() {
-		return valor;
+	public BigDecimal getPrecoVenda() {
+		return precoVenda;
 	}
 
-	public void setValor(BigDecimal valor) {
-		this.valor = valor;
+	public void setPrecoVenda(BigDecimal precoVenda) {
+		this.precoVenda = precoVenda;
 	}
 
-	public BigDecimal getDesconto() {
-		return desconto;
+	public BigDecimal getPrecoComDesconto() {
+		return precoComDesconto;
 	}
 
-	public void setDesconto(BigDecimal desconto) {
-		this.desconto = desconto;
+	public void setPrecoComDesconto(BigDecimal precoComDesconto) {
+		this.precoComDesconto = precoComDesconto;
+	}
+
+	public BigDecimal getValorDesconto() {
+		return valorDesconto;
+	}
+
+	public void setValorDesconto(BigDecimal valorDesconto) {
+		this.valorDesconto = valorDesconto;
 	}
 
 }

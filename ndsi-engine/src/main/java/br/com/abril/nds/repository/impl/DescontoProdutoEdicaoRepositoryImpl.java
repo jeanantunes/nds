@@ -236,27 +236,12 @@ public class DescontoProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel
 		
         return desconto;
         
-        /*StringBuilder hql = new StringBuilder("select view.desconto ");
-        hql.append("from ViewDesconto view ")
-           .append("where view.cotaId = :idCota ")
-           .append("and view.produtoEdicaoId = :idProdutoEdicao ")
-           .append("and view.fornecedorId = :idFornecedor ");
-        Query query = getSession().createQuery(hql.toString());
-        query.setParameter("idCota", idCota);
-        query.setParameter("idProdutoEdicao", idProdutoEdicao);
-        query.setParameter("idFornecedor", idFornecedor);*/
     }
 
 	private Query obterDescontoCotaProdutoEdicaoExcessoes(Cota cota, ProdutoEdicao produtoEdicao) {
 		
 		StringBuilder hql = new StringBuilder("select ")
-			.append("vdcfpe.desconto_id as idTipoDesconto ")
-			.append(", vdcfpe.codigo_produto as codigoProduto ")
-			.append(", vdcfpe.nome_produto as nomeProduto ")
-			.append(", vdcfpe.numero_edicao as numeroEdicao ")
-			.append(", vdcfpe.valor as desconto ")
-			.append(", vdcfpe.data_alteracao as dataAlteracao ")
-			.append(", vdcfpe.nome_usuario as nomeUsuario ") 
+			.append(" vdcfpe.valor as desconto ")
 		    .append("from VIEW_DESCONTO_COTA_FORNECEDOR_PRODUTOS_EDICOES as vdcfpe ") 
 		    .append("where 1 = 1 ")
 		    .append("and vdcfpe.fornecedor_id = :idFornecedor ")
@@ -277,13 +262,7 @@ public class DescontoProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel
 	private Query obterDescontoCotaProdutoExcessoes(Cota cota, ProdutoEdicao produtoEdicao) {
 		
 		StringBuilder hql = new StringBuilder("select ")
-			.append("vdcfpe.desconto_id as idTipoDesconto ")
-			.append(", vdcfpe.codigo_produto as codigoProduto ")
-			.append(", vdcfpe.nome_produto as nomeProduto ")
-			.append(", vdcfpe.numero_edicao as numeroEdicao ")
-			.append(", vdcfpe.valor as desconto ")
-			.append(", vdcfpe.data_alteracao as dataAlteracao ")
-			.append(", vdcfpe.nome_usuario as nomeUsuario ") 
+			.append(" vdcfpe.valor as desconto ")
 		    .append("from VIEW_DESCONTO_COTA_FORNECEDOR_PRODUTOS_EDICOES as vdcfpe ") 
 		    .append("where 1 = 1 ")
 		    .append("and vdcfpe.fornecedor_id = :idFornecedor ")
@@ -302,13 +281,7 @@ public class DescontoProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel
 	private Query obterDescontoCotaExcessoes(Cota cota, ProdutoEdicao produtoEdicao) {
 		
 		StringBuilder hql = new StringBuilder("select ")
-			.append("vdcfpe.desconto_id as idTipoDesconto ")
-			.append(", vdcfpe.codigo_produto as codigoProduto ")
-			.append(", vdcfpe.nome_produto as nomeProduto ")
-			.append(", vdcfpe.numero_edicao as numeroEdicao ")
-			.append(", vdcfpe.valor as desconto ")
-			.append(", vdcfpe.data_alteracao as dataAlteracao ")
-			.append(", vdcfpe.nome_usuario as nomeUsuario ") 
+			.append(" vdcfpe.valor as desconto ")
 		    .append("from VIEW_DESCONTO_COTA_FORNECEDOR_PRODUTOS_EDICOES as vdcfpe ") 
 		    .append("where 1 = 1 ")
 		    .append("and vdcfpe.fornecedor_id = :idFornecedor ")
@@ -325,13 +298,7 @@ public class DescontoProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel
 	private Query obterDescontoProdutoEdicao(ProdutoEdicao produtoEdicao) {
 		
 		StringBuilder hql = new StringBuilder("select ")
-			.append("vdpe.desconto_id as idTipoDesconto ")
-			.append(", vdpe.codigo as codigoProduto ")
-			.append(", vdpe.nome_produto as nomeProduto ")
-			.append(", vdpe.numero_edicao as numeroEdicao ")
-			.append(", vdpe.valor as desconto ")
-			.append(", vdpe.data_alteracao as dataAlteracao ")
-			.append(", vdpe.nome_usuario as nomeUsuario ") 
+			.append(" vdpe.valor as desconto ")
 		    .append("from VIEW_DESCONTO_PRODUTOS_EDICOES as vdpe ") 
 		    .append("where 1 = 1 ")
 		    .append("and vdpe.codigo = :codigoProduto ")
@@ -346,15 +313,18 @@ public class DescontoProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel
 	}
 	
 	private Query obterDescontoProduto(ProdutoEdicao produtoEdicao) {
-		
+		/*
 		StringBuilder hql = new StringBuilder("select ")
-			.append("vdpe.desconto_id as idTipoDesconto ")
-			.append(", vdpe.codigo as codigoProduto ")
-			.append(", vdpe.nome_produto as nomeProduto ")
-			.append(", vdpe.numero_edicao as numeroEdicao ")
-			.append(", vdpe.valor as desconto ")
-			.append(", vdpe.data_alteracao as dataAlteracao ")
-			.append(", vdpe.nome_usuario as nomeUsuario ") 
+		.append("vdcfpe.desconto_id as idTipoDesconto ")
+		.append(", vdcfpe.codigo_produto as codigoProduto ")
+		.append(", vdcfpe.nome_produto as nomeProduto ")
+		.append(", vdcfpe.numero_edicao as numeroEdicao ")
+		.append(", vdcfpe.valor as desconto ")
+		.append(", vdcfpe.data_alteracao as dataAlteracao ")
+		.append(", vdcfpe.nome_usuario as nomeUsuario ") 
+		*/
+		StringBuilder hql = new StringBuilder("select ")
+			.append(" vdpe.valor as desconto ")
 		    .append("from VIEW_DESCONTO_PRODUTOS_EDICOES as vdpe ") 
 		    .append("where 1 = 1 ")
 		    .append("and vdpe.codigo = :codigoProduto ")

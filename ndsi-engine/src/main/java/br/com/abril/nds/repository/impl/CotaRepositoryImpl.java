@@ -1009,7 +1009,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 
 		hql.append("SELECT new ").append(ResultadoCurvaABCCotaDTO.class.getCanonicalName())
 		.append(" ( (sum(estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida)), ")
-		.append("   ( sum((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * (estoqueProdutoCota.produtoEdicao.precoVenda - ( "+this.obterSQLDesconto()+" ))) ) ) ");
+		.append("   ( sum((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * (estoqueProdutoCota.produtoEdicao.precoVenda - ( movimentos.valoresAplicados.valorDesconto ))) ) ) ");
 
 		hql.append(getWhereQueryObterCurvaABCCota(filtro));
 
@@ -1042,7 +1042,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 		.append("   estoqueProdutoCota.produtoEdicao.numeroEdicao , ")
 		.append("   (sum(movimentos.qtde)) , ")
 		.append("   (sum(estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida)), ")
-		.append("   ( sum((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * (estoqueProdutoCota.produtoEdicao.precoVenda - ( "+this.obterSQLDesconto()+" ))) ) , ")
+		.append("   ( sum((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * (estoqueProdutoCota.produtoEdicao.precoVenda - ( movimentos.valoresAplicados.valorDesconto ))) ) , ")
 		.append("     estoqueProdutoCota.cota.id , estoqueProdutoCota.produtoEdicao.produto.id ) ");
 
 		hql.append(getWhereQueryObterCurvaABCCota(filtro));
@@ -1677,17 +1677,6 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 		return ((Long)query.uniqueResult()).intValue();
 	}
 	
-	private String obterSQLDesconto(){
-		
-		StringBuilder hql = new StringBuilder("select view.desconto ");
-		hql.append(" from ViewDesconto view ")
-		   .append(" where view.cotaId = estoqueProdutoCota.cota.id ")
-		   .append(" and view.produtoEdicaoId = estoqueProdutoCota.produtoEdicao.id ")
-		   .append(" and view.fornecedorId = fornecedores.id ");
-		
-		return hql.toString();
-	}
-
     /**
      * {@inheritDoc}
      */

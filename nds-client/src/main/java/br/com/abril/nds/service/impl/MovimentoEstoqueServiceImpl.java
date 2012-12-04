@@ -14,7 +14,6 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
-import br.com.abril.nds.model.cadastro.desconto.DescontoProduto;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCotaJuramentado;
@@ -27,7 +26,6 @@ import br.com.abril.nds.model.estoque.StatusEstoqueFinanceiro;
 import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.ValoresAplicados;
-import br.com.abril.nds.model.financeiro.DescontoProximosLancamentos;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.ProdutoServico;
 import br.com.abril.nds.model.planejamento.EstudoCota;
@@ -185,10 +183,10 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 			ProdutoEdicao produtoEdicao = produtoEdicaoService.obterProdutoEdicao(idProdutoEdicao, false);
 			BigDecimal precoVenda = produtoEdicao.getPrecoVenda();
 			
-			BigDecimal desconto = descontoService.obterDescontoPorCotaProdutoEdicao(estudoCota.getCota(), produtoEdicao);
-			BigDecimal valor = precoVenda.subtract(precoVenda.multiply(desconto.divide(new BigDecimal("100"))));
+			BigDecimal valorDesconto = descontoService.obterDescontoPorCotaProdutoEdicao(estudoCota.getCota(), produtoEdicao);
+			BigDecimal precoComDesconto = precoVenda.subtract(precoVenda.multiply(valorDesconto.divide(new BigDecimal("100"))));
 			
-			ValoresAplicados valoresAplicados = new ValoresAplicados(valor, desconto);
+			ValoresAplicados valoresAplicados = new ValoresAplicados(produtoEdicao.getPrecoVenda(), precoComDesconto, valorDesconto);
 			movimentoEstoqueCota.setValoresAplicados(valoresAplicados);
 
 			// Implementando por Eduardo Punk Rock - Seta o lançamento que gerou os movimentos na movimentoEstoqueCota

@@ -207,29 +207,14 @@ public class CotaGarantiaRepositoryImpl extends AbstractRepositoryModel<CotaGara
 		
 		return (Long) query.uniqueResult();
 	}
-	
-	private String obterHqlDescontoProdutoCota(){
-		
-		StringBuilder hql = new StringBuilder();
-		
-		hql.append("   ( mec.produtoEdicao.precoVenda - ")
-		   .append("    ( mec.produtoEdicao.precoVenda * ")
-		   .append("     ( COALESCE((select desconto ")
-		   .append("                 from ViewDesconto ")
-		   .append("                 where cotaId = garantia.cota ")
-		   .append("                 and produtoEdicaoId = mec.produtoEdicao.id ")
-		   .append("                ),0) / 100 )    ")
-		   .append("   ))");
 
-		return hql.toString();
-	}
 	private String obterHqlFaturamentoCota(){
 		
 		StringBuilder hql = new StringBuilder();
          
 		hql.append("(")
 		   .append(" COALESCE( ")
-		   .append("          ( select sum(mec.qtde * ("+this.obterHqlDescontoProdutoCota()+") )  ")
+		   .append("          ( select sum(mec.qtde * (mec.precoVenda - (mec.precoVenda * mec.valoresAplicados.valorDesconto / 100 )) )  ")
 		   .append("            from MovimentoEstoqueCota mec" )
 		   .append("            where mec.cota = garantia.cota ")
 		   .append("            and mec.tipoMovimento.operacaoEstoque = :movimentoEntrada")
@@ -237,7 +222,7 @@ public class CotaGarantiaRepositoryImpl extends AbstractRepositoryModel<CotaGara
 		   .append("          )")
 		   .append("       ,0)  -  "  )
 		   .append(" COALESCE( ")
-		   .append("          ( select sum(mec.qtde * ("+this.obterHqlDescontoProdutoCota()+") )  ")
+		   .append("          ( select sum(mec.qtde * (mec.precoVenda * mec.valoresAplicados.valorDesconto / 100) )  ")
 		   .append("            from MovimentoEstoqueCota mec" )
 		   .append("            where mec.cota = garantia.cota ")
 		   .append("            and mec.tipoMovimento.operacaoEstoque = :movimentoSaida")
