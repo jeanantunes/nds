@@ -236,8 +236,16 @@
 				<table width="800" border="0" cellpadding="2" cellspacing="1" class="filtro">
 				
 		            <tr>
-		              <td>Cota:</td>
-			              <td>
+		        		<td>Tipo:</td>
+		        		<td>
+		        			<select name="tipoPesquisa" id="tipoPesquisa" style="width:100px;">
+		        				<option selected="selected" value="">Selecione...</option>   	
+		        				<option value="cota">Cota</option>   
+		                  	</select>
+		                </td>
+		              	
+		              	<td>Cota:</td>
+			            <td>
 			              	
 			              <input name="cotaPesquisaPdv" 
 					               id="cotaPesquisaPdv" 

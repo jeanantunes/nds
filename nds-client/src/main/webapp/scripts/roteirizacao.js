@@ -1229,7 +1229,8 @@ var roteirizacao = $.extend(true, {
         var uf = $("#comboUf", this.workspace).val();
         var bairro = $("#comboBairro", this.workspace).val();
         var cep = $("#cepPesquisa", this.workspace).val();
-
+        var pesquisaPorCota = $("#tipoPesquisa", this.workspace).val() == "cota";
+        
         $(".cotasDisponiveisGrid", this.workspace).flexOptions({
             url: contextPath + "/cadastro/roteirizacao/obterPdvsDisponiveis",
             params: [
@@ -1237,7 +1238,8 @@ var roteirizacao = $.extend(true, {
                 {name:'municipio', value:municipio},
                 {name:'uf', value:uf},
                 {name:'bairro', value:bairro},
-                {name:'cep', value:cep}
+                {name:'cep', value:cep},
+                {name: 'pesquisaPorCota', value:pesquisaPorCota}
             ] ,
             newp: 1
         });
