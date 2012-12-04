@@ -29,11 +29,12 @@ import br.com.abril.nds.model.cadastro.pdv.RotaPDV;
 @SequenceGenerator(name = "ROTA_SEQ", initialValue = 1, allocationSize = 1)
 public class Rota implements Serializable {
 
-    /**
+	/**
      * Serial Version UID
      */
-    private static final long serialVersionUID = -7234522705455824338L;
-
+	private static final long serialVersionUID = -6297324866478453809L;
+	
+	
     @Id
     @GeneratedValue(generator = "ROTA_SEQ")
     @Column(name = "ID")
