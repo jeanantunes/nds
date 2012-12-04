@@ -130,7 +130,11 @@ public class FecharDiaController {
 	@SuppressWarnings("static-access")
 	@Post
 	public void inicializarValidacoes(){		
+		
+		this.fecharDiaService.setLockBancoDeDados(true);
+		
 		FecharDiaDTO dto = new FecharDiaDTO();
+		
 		dto.setBaixaBancaria(this.fecharDiaService.existeCobrancaParaFecharDia(distribuidor.getDataOperacao()));
 		dto.setGeracaoDeCobranca(this.fecharDiaService.existeGeracaoDeCobranca(distribuidor.getDataOperacao()));
 		dto.setRecebimentoFisico(this.fecharDiaService.existeNotaFiscalSemRecebimentoFisico(distribuidor.getDataOperacao()));
@@ -569,6 +573,9 @@ public class FecharDiaController {
 	
 	@Post
 	public void confirmar() {
+		//Unlock na base de dados
+		this.fecharDiaService.setLockBancoDeDados(false);
+		
 		try {
 		    Boolean hasPendenciaValidacao = (Boolean) this.session.getAttribute(ATRIBUTO_SESSAO_POSSUI_PENDENCIAS_VALIDACAO);
 		    
@@ -584,6 +591,8 @@ public class FecharDiaController {
 		    }
 		    else{
 		        
+		    	//Lock novamente na base de dados.
+				this.fecharDiaService.setLockBancoDeDados(true);
 		        result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING, "Fechamento do Dia não pode ser confirmado! Existem pendências em aberto!"),
 		                Constantes.PARAM_MSGS).recursive().serialize();
 		        
