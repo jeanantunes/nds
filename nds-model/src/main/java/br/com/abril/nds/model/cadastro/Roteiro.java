@@ -163,6 +163,7 @@ public class Roteiro implements Serializable {
 	    while(iterator.hasNext()) {
 	        Rota rota = iterator.next();
 	        if (idsRotas.contains(rota.getId())) {
+	        	
 	            iterator.remove();
 	        }
 	    }

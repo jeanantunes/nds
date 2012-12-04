@@ -185,14 +185,15 @@ public class ResumoSuplementarFecharDiaRepositoryImpl extends AbstractRepository
 		hql.append(" SELECT p.codigo as codigo,  ");
 		hql.append(" p.nome as nomeProduto, ");
 		hql.append(" pe.numeroEdicao as numeroEdicao, ");
-		hql.append(" pe.precoVenda as precoVenda ");								
+		hql.append(" pe.precoVenda as precoVenda, ");								
+		hql.append(" count(*) as quantidadeContabil ");								
 		hql.append(" FROM EstoqueProduto as ep ");				 
 		hql.append(" JOIN ep.produtoEdicao as pe ");
 		hql.append(" JOIN pe.produto as p ");
 		hql.append(" WHERE ep.qtdeSuplementar is not null");				
+		hql.append(" GROUP BY p.codigo, p.nome, pe.numeroEdicao, pe.precoVenda");				
 
 		Query query = super.getSession().createQuery(hql.toString());	
-		
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(
 				SuplementarFecharDiaDTO.class));
