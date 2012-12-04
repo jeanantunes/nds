@@ -463,21 +463,9 @@ var fecharDiaController =  $.extend(true, {
 				sortable : true,
 				align : 'right'
 			}, {
-				display : 'Qtde Contabil',
-				name : 'qtdeContabil',
+				display : 'Qtde',
+				name : 'quantidadeContabil',
 				width : 90,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Qtde Fisico',
-				name : 'qtdeFisico',
-				width : 80,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Dif.',
-				name : 'dif',
-				width : 40,
 				sortable : true,
 				align : 'center'
 			}],

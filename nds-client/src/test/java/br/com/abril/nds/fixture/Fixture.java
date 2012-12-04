@@ -4106,15 +4106,13 @@ public class Fixture {
 	   return consolidadoEncalhe;
    }
    
-   public static FechamentoDiarioLancamentoSuplementar historicoFechamentoDiarioLancamentoSuplementar(ProdutoEdicao produtoEdicaoVeja,
-		   Integer quantidadeDiferenca, Integer quantidadeContabilizada, Integer quantidadeFisico ){
+   public static FechamentoDiarioLancamentoSuplementar historicoFechamentoDiarioLancamentoSuplementar(ProdutoEdicao produtoEdicaoVeja, Long quantidadeContabilizada){
 	   
 	   FechamentoDiarioLancamentoSuplementar historicoMovimentoSuplementar = new FechamentoDiarioLancamentoSuplementar();
 	   
 	   historicoMovimentoSuplementar.setProdutoEdicao(produtoEdicaoVeja);
-	   historicoMovimentoSuplementar.setQuantidadeDiferenca(quantidadeDiferenca);
 	   historicoMovimentoSuplementar.setQuantidadeContabilizada(quantidadeContabilizada);
-	   historicoMovimentoSuplementar.setQuantidadeFisico(quantidadeFisico);
+	   
 	   
 	   return historicoMovimentoSuplementar;
    }

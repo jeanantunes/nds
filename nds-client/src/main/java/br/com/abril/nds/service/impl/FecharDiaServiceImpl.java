@@ -765,8 +765,6 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 				lancamentoSuplementar.setProdutoEdicao(produtoEdicao);
 				lancamentoSuplementar.setFechamentoDiarioConsolidadoSuplementar(consolidadoSuplementar);
 				lancamentoSuplementar.setQuantidadeContabilizada(item.getQuantidadeContabil());
-				lancamentoSuplementar.setQuantidadeDiferenca(item.getDiferenca());
-				lancamentoSuplementar.setQuantidadeFisico(item.getQuantidadeFisico());
 				
 				fechamentoDiarioLancamentoSuplementarRepository.adicionar(lancamentoSuplementar);
 			}
