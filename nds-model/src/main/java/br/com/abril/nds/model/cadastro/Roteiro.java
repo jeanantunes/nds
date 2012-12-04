@@ -15,6 +15,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -46,6 +47,7 @@ public class Roteiro implements Serializable {
 	@OneToMany(orphanRemoval = true)
 	@JoinColumn( name="ROTEIRO_ID")
 	@Cascade(value = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.SAVE_UPDATE, CascadeType.DELETE})
+	@OrderBy("ordem ASC")
 	private List<Rota> rotas = new ArrayList<Rota>();
 	
 	@Column(name="ORDEM", nullable = false)
@@ -161,6 +163,7 @@ public class Roteiro implements Serializable {
 	    while(iterator.hasNext()) {
 	        Rota rota = iterator.next();
 	        if (idsRotas.contains(rota.getId())) {
+	        	
 	            iterator.remove();
 	        }
 	    }

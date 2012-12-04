@@ -42,6 +42,7 @@ import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.FormaEmissao;
+import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoBox;
@@ -363,6 +364,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				
 				validarProdutoEdicaoSemChamadaEncalheCota(cota.getId(), produtoEdicao.getId(), dataOperacao);
 				
+				return null;
 			}
 			
 			return listaChamadaEncalheCota.get(0).getChamadaEncalhe();
@@ -471,7 +473,12 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		BigDecimal reparte =
 			chamadaEncalheCotaRepository.obterReparteDaChamaEncalheCota(
-				numeroCota, dataOperacao, true, false, false);
+				numeroCota, dataOperacao, false, false);
+		
+		if (reparte == null) {
+			
+			reparte = BigDecimal.ZERO;
+		}
 		
 		return reparte;
 	}
@@ -704,6 +711,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			produtoEdicaoDTO.setPermiteValeDesconto(produtoEdicao.isPermiteValeDesconto());
 			produtoEdicaoDTO.setParcial(produtoEdicao.isParcial());
 			
+			produtoEdicaoDTO.setNomeFornecedor(this.obterNomeFornecedor(produtoEdicao));
+			produtoEdicaoDTO.setEditor(this.obterEditor(produtoEdicao));
+			produtoEdicaoDTO.setChamadaCapa(produtoEdicao.getChamadaCapa());
 			
 			Integer sequenciaMatriz = produtoEdicaoRepository.obterCodigoMatrizPorProdutoEdicao(produtoEdicao.getId());
 			produtoEdicaoDTO.setSequenciaMatriz(sequenciaMatriz);
@@ -734,7 +744,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		    
 			produtoEdicaoDTO = new ProdutoEdicaoDTO();
 			
-		    Cota cota = cotaRepository.obterPorNumerDaCotaAtiva(numeroCota);
+		    Cota cota = cotaRepository.obterPorNumerDaCota(numeroCota);
 		    
 			ChamadaEncalhe chamadaEncalhe = this.validarExistenciaChamadaEncalheParaCotaProdutoEdicao(cota, produtoEdicao);
 			
@@ -764,6 +774,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			produtoEdicaoDTO.setPermiteValeDesconto(produtoEdicao.isPermiteValeDesconto());
 			produtoEdicaoDTO.setParcial(produtoEdicao.isParcial());
 			
+			produtoEdicaoDTO.setNomeFornecedor(this.obterNomeFornecedor(produtoEdicao));
+			produtoEdicaoDTO.setEditor(this.obterEditor(produtoEdicao));
+			produtoEdicaoDTO.setChamadaCapa(produtoEdicao.getChamadaCapa());
 			
 			Integer sequenciaMatriz = produtoEdicaoRepository.obterCodigoMatrizPorProdutoEdicao(produtoEdicao.getId());
 			produtoEdicaoDTO.setSequenciaMatriz(sequenciaMatriz);
@@ -824,6 +837,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			produtoEdicaoDTO.setPermiteValeDesconto(produtoEdicao.isPermiteValeDesconto());
 			produtoEdicaoDTO.setParcial(produtoEdicao.isParcial());
 			
+			produtoEdicaoDTO.setNomeFornecedor(this.obterNomeFornecedor(produtoEdicao));
+			produtoEdicaoDTO.setEditor(this.obterEditor(produtoEdicao));
+			produtoEdicaoDTO.setChamadaCapa(produtoEdicao.getChamadaCapa());
 			
 			Integer sequenciaMatriz = produtoEdicaoRepository.obterCodigoMatrizPorProdutoEdicao(produtoEdicao.getId());
 			produtoEdicaoDTO.setSequenciaMatriz(sequenciaMatriz);
@@ -831,6 +847,23 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		}
 		
 		return produtoEdicaoDTO;
+	}
+
+	private String obterEditor(ProdutoEdicao produtoEdicao) {
+		
+		return produtoEdicao.getProduto().getEditor().getPessoaJuridica().getRazaoSocial();
+	}
+
+	private String obterNomeFornecedor(ProdutoEdicao produtoEdicao) {
+		
+		Fornecedor fornecedor = produtoEdicao.getProduto().getFornecedor();
+		
+		if (fornecedor != null) {
+		
+			return fornecedor.getJuridica().getRazaoSocial();
+		}
+
+		return null;
 	}
 	
 	/**
@@ -1023,7 +1056,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			gerarCobrancaService.gerarCobranca(
 					controleConferenciaEncalheCota.getCota().getId(), 
 					controleConferenciaEncalheCota.getUsuario().getId(), 
-					nossoNumeroCollection);
+					nossoNumeroCollection, false);
 		} catch (Exception e) {
 			
 			// TODO Auto-generated catch block

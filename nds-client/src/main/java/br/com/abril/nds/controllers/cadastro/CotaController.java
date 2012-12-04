@@ -13,13 +13,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.util.PaginacaoUtil;
 import br.com.abril.nds.client.util.PessoaUtil;
@@ -99,7 +96,6 @@ public class CotaController {
 	public static final String LISTA_ENDERECOS_REMOVER_SESSAO = "listaEnderecoRemoverSessaoCota";
 
 	public static final String LISTA_ENDERECOS_EXIBICAO = "listaEnderecoExibicaoCota";
-
 	
 	public static final String TERMO_ADESAO = "imgTermoAdesao";
 	
@@ -182,7 +178,6 @@ public class CotaController {
 		obterTelefones(idCota);
 	}
 	
-	
 	public void historicoTitularidade(Long idCota, Long idHistorico) {
 	    CotaDTO cotaDTO = cotaService.obterHistoricoTitularidade(idCota, idHistorico);
 	    carregarEnderecosHistoricoTitularidade(idCota, idHistorico);
@@ -199,8 +194,6 @@ public class CotaController {
         List<TelefoneAssociacaoDTO> telefones = cotaService.obterTelefonesHistoricoTitularidade(idCota, idHistorico);
         session.setAttribute(LISTA_TELEFONES_EXIBICAO, telefones);
     }
-    
-    
 
 	@SuppressWarnings("unchecked")
 	/**
@@ -218,6 +211,7 @@ public class CotaController {
 		
 		this.cotaService.processarEnderecos(idCota, listaEnderecoAssociacaoSalvar, listaEnderecoAssociacaoRemover);
 		
+		this.session.setAttribute(EnderecoController.ENDERECO_PENDENTE, Boolean.FALSE);
 		this.session.removeAttribute(LISTA_ENDERECOS_SALVAR_SESSAO);
 		this.session.removeAttribute(LISTA_ENDERECOS_REMOVER_SESSAO);
 		
@@ -551,8 +545,10 @@ public class CotaController {
 	}
 
 	private void validarEnderecos(List<String> mensagensValidacao) {
+		
 		@SuppressWarnings("unchecked")
 		List<EnderecoAssociacaoDTO> listaEnderecosSalvar = (List<EnderecoAssociacaoDTO>) this.session.getAttribute(LISTA_ENDERECOS_SALVAR_SESSAO);
+		
 		@SuppressWarnings("unchecked")
 		List<EnderecoAssociacaoDTO> listaEnderecosExibir = (List<EnderecoAssociacaoDTO>) this.session.getAttribute(LISTA_ENDERECOS_EXIBICAO);
 
@@ -560,6 +556,7 @@ public class CotaController {
 		if (listaEnderecosSalvar != null && !listaEnderecosSalvar.isEmpty()) {
 			listaEnderecos.addAll(listaEnderecosSalvar);
 		}
+		
 		if (listaEnderecosExibir != null && !listaEnderecosExibir.isEmpty()) {
 			listaEnderecos.addAll(listaEnderecosExibir);
 		}
@@ -909,7 +906,6 @@ public class CotaController {
 	    result.use(FlexiGridJson.class).from(descontosProduto).page(1).total(1).serialize();
 	}
 	
-	
 	@Post
 	@Path("/obterTiposDescontoCota")
 	public void obterTiposDescontoCota(Long idCota, ModoTela modoTela, Long idHistorico, String sortorder, String sortname) {
@@ -947,7 +943,6 @@ public class CotaController {
 				    
 	                    }
 
-					
 	                }
 				
 	            }
@@ -956,7 +951,6 @@ public class CotaController {
 
 	            result.nothing();
 
-			
 	        }
 		
 	    } else {
@@ -1445,10 +1439,13 @@ public class CotaController {
 	@Post
 	public void recarregarEndereco(Long idCota, Long idHistorico, ModoTela modoTela){
 		if (modoTela == ModoTela.CADASTRO_COTA) {
+		
 		    obterEndereco(idCota);
 		} else {
+			
 		    carregarEnderecosHistoricoTitularidade(idCota, idHistorico);
 		}
+		
 		this.result.use(Results.json()).from("", "result").serialize();
 	}
 	
@@ -1462,8 +1459,10 @@ public class CotaController {
 	@Post
 	public void recarregarTelefone(Long idCota, Long idHistorico, ModoTela modoTela){
 		if (modoTela == ModoTela.CADASTRO_COTA) {
+			
 		    obterTelefones(idCota);
 		} else {
+			
 		    carregarTelefonesHistoricoTitularidade(idCota, idHistorico);
 		}
 		
@@ -1477,11 +1476,15 @@ public class CotaController {
 	 */
 	private void obterEndereco(Long idCota){
 		
-		List<EnderecoAssociacaoDTO> listaEnderecoAssociacao = this.cotaService.obterEnderecosPorIdCota(idCota);
+		Boolean enderecoPendente = (Boolean) this.session.getAttribute(EnderecoController.ENDERECO_PENDENTE);
 		
-		this.session.setAttribute(LISTA_ENDERECOS_EXIBICAO, listaEnderecoAssociacao);
+		if (enderecoPendente==null || !enderecoPendente){
+			
+			List<EnderecoAssociacaoDTO> listaEnderecoAssociacao = this.cotaService.obterEnderecosPorIdCota(idCota);
+		
+			this.session.setAttribute(LISTA_ENDERECOS_EXIBICAO, listaEnderecoAssociacao);
+		}
 	}
-	
 	
 	/**
 	 * Obtem os telefones da sessão referente a cota informada
@@ -1503,9 +1506,13 @@ public class CotaController {
 		this.session.removeAttribute(LISTA_TELEFONES_SALVAR_SESSAO);
 		this.session.removeAttribute(LISTA_TELEFONES_REMOVER_SESSAO);
 		this.session.removeAttribute(LISTA_TELEFONES_EXIBICAO);
+		
 		this.session.removeAttribute(LISTA_ENDERECOS_SALVAR_SESSAO);
 		this.session.removeAttribute(LISTA_ENDERECOS_REMOVER_SESSAO);
 		this.session.removeAttribute(LISTA_ENDERECOS_EXIBICAO);
+		
+		this.session.removeAttribute(EnderecoController.ENDERECO_PENDENTE);
+		
 		this.session.removeAttribute(FILTRO_SESSION_ATTRIBUTE);
 	}
 	

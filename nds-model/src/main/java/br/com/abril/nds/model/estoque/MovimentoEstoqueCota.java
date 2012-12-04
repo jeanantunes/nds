@@ -34,6 +34,10 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque implements C
 	@JoinColumn(name = "ESTOQUE_PROD_COTA_JURAMENTADO_ID")
 	private EstoqueProdutoCotaJuramentado estoqueProdutoCotaJuramentado;
 	
+	@OneToOne(optional = true)
+	@JoinColumn(name = "MOVIMENTO_ESTOQUE_COTA_FURO_ID")
+	MovimentoEstoqueCota movimentoEstoqueCotaFuro;
+	
 	/**
 	 * Estudo cota que originou o movimento, 
 	 * caso o movimento seja de reparte
@@ -70,7 +74,7 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque implements C
 		mec.setDataIntegracao(this.getDataIntegracao());
 		mec.setEstoqueProdutoCota(this.getEstoqueProdutoCota());
 		mec.setEstoqueProdutoCotaJuramentado(this.getEstoqueProdutoCotaJuramentado());
-		mec.setEstudoCota(this.getEstudoCota());
+		//mec.setEstudoCota(this.getEstudoCota());
 		mec.setLancamento(this.getLancamento());
 		mec.setListaConferenciasEncalhe(this.getListaConferenciasEncalhe());
 		mec.setListaItemNotaEnvio(this.getListaItemNotaEnvio());
@@ -198,4 +202,13 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque implements C
 		this.estoqueProdutoCotaJuramentado = estoqueProdutoCotaJuramentado;
 	}
 
+	public MovimentoEstoqueCota getMovimentoEstoqueCotaFuro() {
+		return movimentoEstoqueCotaFuro;
+	}
+
+	public void setMovimentoEstoqueCotaFuro(
+			MovimentoEstoqueCota movimentoEstoqueCotaFuro) {
+		this.movimentoEstoqueCotaFuro = movimentoEstoqueCotaFuro;
+	}
+	
 }

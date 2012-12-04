@@ -257,7 +257,7 @@ public class ImpressaoBoletosController {
 
 		try {
 			this.gerarCobrancaService.gerarCobranca(null, this.getUsuario()
-					.getId(), new HashSet<String>());
+					.getId(), new HashSet<String>(), true);
 		} catch (GerarCobrancaValidacaoException e) {
 
 			throw e.getValidacaoException();

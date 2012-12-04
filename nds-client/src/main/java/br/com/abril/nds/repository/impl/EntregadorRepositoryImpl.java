@@ -509,4 +509,14 @@ public class EntregadorRepositoryImpl extends AbstractRepositoryModel<Entregador
 		
 		return query.list();
 	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Entregador> obterEntregadoresSemRota() {
+		
+		Criteria criteria = this.getSession().createCriteria(Entregador.class);
+		criteria.add(Restrictions.isNull("rota"));
+		
+		return criteria.list();
+	}
 }

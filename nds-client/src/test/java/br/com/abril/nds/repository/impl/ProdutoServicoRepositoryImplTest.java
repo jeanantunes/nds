@@ -257,8 +257,8 @@ public class ProdutoServicoRepositoryImplTest extends
 
 		save(enderecoEmitente);
 
-		String inscricaoEstualEmitente = "";
-		String inscricaoEstualSubstituto = "";
+		String inscricaoEstadualEmitente = "";
+		String inscricaoEstadualSubstituto = "";
 		String inscricaoMunicipalEmitente = "";
 		String nomEmitente = "";
 		String nomeFantasiaEmitente = "";
@@ -268,8 +268,8 @@ public class ProdutoServicoRepositoryImplTest extends
 
 		IdentificacaoEmitente identificacaoEmitente = Fixture
 				.identificacaoEmitente(cnae, documentoEmitente,
-						enderecoEmitente, inscricaoEstualEmitente,
-						inscricaoEstualSubstituto, inscricaoMunicipalEmitente,
+						enderecoEmitente, inscricaoEstadualEmitente,
+						inscricaoEstadualSubstituto, inscricaoMunicipalEmitente,
 						nomEmitente, nomeFantasiaEmitente,
 						pessoaEmitenteReferencia, regimeTributario,
 						telefoneEmitente);

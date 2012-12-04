@@ -106,10 +106,16 @@ var furoProdutoController = $.extend(true, {
 	
 	posProcessarConfirmacao : function(result, data) {
 	
-		// typeof result.mensagens != "object"
-		if (result.boolean == true) {
-			furoProdutoController.popUpConfirmarFuroProduto(data);
-		};
+		if (result == undefined) {
+			furoProdutoController.limparCampos();
+		} else {
+
+			// typeof result.mensagens != "object"
+			if (result.boolean == true) {
+				furoProdutoController.popUpConfirmarFuroProduto(data);
+			}
+
+		}
 		
 	},
 	

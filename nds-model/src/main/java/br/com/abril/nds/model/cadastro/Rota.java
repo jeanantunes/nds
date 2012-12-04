@@ -14,6 +14,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -45,12 +46,14 @@ public class Rota implements Serializable {
     @ManyToOne
     @JoinColumn(name = "ROTEIRO_ID")
     private Roteiro roteiro;
+    
     @OneToOne(mappedBy = "rota")
     private Entregador entregador;
 
     @OneToMany(mappedBy = "rota", orphanRemoval = true)
     @Cascade(value = { CascadeType.MERGE, CascadeType.PERSIST,
             CascadeType.SAVE_UPDATE, CascadeType.DELETE })
+    @OrderBy("ordem ASC")
     private List<RotaPDV> rotaPDVs = new ArrayList<RotaPDV>();
 
     @Column(name = "ORDEM", nullable = false)
@@ -131,11 +134,7 @@ public class Rota implements Serializable {
             throw new IllegalArgumentException("Ordem [" + ordem
                     + "] para o PDV não é válida!");
         }
-        RotaPDV rotaPdvExistente = getRotaPDVByOrdem(ordem);
-        if (rotaPdvExistente != null) {
-            throw new IllegalArgumentException("Ordem [" + ordem
-                    + "] para o PDV já utilizada!");
-        }
+
         if (rotaPDVs == null) {
             rotaPDVs = new ArrayList<RotaPDV>();
         }
@@ -153,26 +152,21 @@ public class Rota implements Serializable {
     /**
      * Altera a ordem da Associação RotaPDV
      * 
-     * @param idPdv
-     *            identificador do PDV para alteração
-     * @param ordem
-     *            nova ordem do PDV
-     * @throws IllegalArgumentException
-     *             caso a ordem não for válida
+     * @param idPdv identificador do PDV para alteração
+     * @param ordem nova ordem do PDV
+     * @throws IllegalArgumentException caso a ordem não for válida
      */
     public void alterarOrdemPdv(Long idPdv, Integer ordem) {
-        if (ordem <= 0) {
-            throw new IllegalArgumentException("Ordem [" + ordem
-                    + "] para o PDV não é válida!");
-        } else {
-            RotaPDV rotaPdvAlteracao = getRotaPDVPorPDV(idPdv);
-            RotaPDV rotaPdvExistente = getRotaPDVByOrdem(ordem);
-            if (rotaPdvExistente != null
-                    && !rotaPdvAlteracao.equals(rotaPdvExistente)) {
-                throw new IllegalArgumentException("Ordem [" + ordem
-                        + "] para o PDV já utilizada!");
-            }
-            rotaPdvAlteracao.setOrdem(ordem);
+        
+    	if (ordem <= 0) {
+        
+    		throw new IllegalArgumentException("Ordem [" + ordem + "] para o PDV não é válida!");
+        
+    	} else {
+            
+        	RotaPDV rotaPdvAlteracao = getRotaPDVPorPDV(idPdv);
+                    
+        	rotaPdvAlteracao.setOrdem(ordem);
         }
     }
 
@@ -205,7 +199,7 @@ public class Rota implements Serializable {
             if (pdvsExclusao.contains(rotaPDV.getPdv().getId())) {
                 
             	PDV pdv = rotaPDV.getPdv();
-            	
+           
             	if (pdv.getCaracteristicas().isPontoPrincipal()) {
             	
             		pdv.getCota().setBox(null);

@@ -126,9 +126,17 @@
 		        <p>Diferenças não direcionadas, caso não seja direcionadas serão transferidas para o estoque Ganhos/Perdas!</p>
 				<p>Deseja realizar o direcionamento?
 		        <br clear="all" />
-		        <span class="bt_novos"><a href="../Estoque/lancamento_faltas_sobras.htm"><img src="../images/ico_check.gif" hspace="5" border="0" />Sim</a></span>
+		        <span class="bt_novos">
+		        	<a href="../Estoque/lancamento_faltas_sobras.htm">
+		        		<img src="${pageContext.request.contextPath}/images/ico_check.gif" hspace="5" border="0" />
+		        	Sim</a>
+		        </span>
 		        
-		        <span class="bt_novos"><a href="javascript:;" onclick="popup_transferencias();"><img src="../images/ico_excluir.gif" hspace="5" border="0" />Não</a></span>
+		        <span class="bt_novos">
+		        	<a href="javascript:;" onclick="popup_transferencias();">
+		        		<img src="${pageContext.request.contextPath}/images/ico_excluir.gif" hspace="5" border="0" />
+		        	Não</a>
+		        </span>
 		
 				</p>
 	    </fieldset>

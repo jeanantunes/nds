@@ -33,6 +33,9 @@
 <script type="text/javascript" src="scripts/jquery.calculation.min.js"></script> 		
 <script type="text/javascript" src="scripts/jquery.dateFormat-1.0.js"></script>
 
+<script type="text/javascript" src="scripts/jshashtable-2.1.js"></script>
+
+
 <script type="text/javascript" src="scripts/commonsbehaviour.js"></script>
 
 <link rel="stylesheet" type="text/css" href="scripts/tools-1.2.6/css/tools.css" />

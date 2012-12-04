@@ -29,6 +29,11 @@ var relatorioTiposProdutosController = $.extend(true, {
 			buttonImageOnly: true
 		});
 		
+		$("#dateLanctoDe", this.workspace).mask("99/99/9999");
+		$("#dateLanctoAte", this.workspace).mask("99/99/9999");
+		$("#dateRecoltoDe", this.workspace).mask("99/99/9999");
+		$("#dateRecoltoAte", this.workspace).mask("99/99/9999");
+		
 		this.initGrid();
 	},
 	
@@ -47,6 +52,31 @@ var relatorioTiposProdutosController = $.extend(true, {
 	},
 	
 	processarRetornoPesquisa : function(result) {
+		
+		if (result.mensagens) {
+
+			exibirMensagem(
+					result.mensagens.tipoMensagem, 
+					result.mensagens.listaMensagens
+			);
+			
+			$(".grids", relatorioTiposProdutosController.workspace).hide();
+
+			return result;
+		}
+		
+		$.each(result.rows, function(index, row) {
+	
+			if(!row.cell.nomeCota){
+				row.cell.nomeCota = "";
+			}
+			
+			if(!row.cell.precoCapa){
+				row.cell.precoCapa = "0,00";
+			}
+			
+		});
+		
 		$(".grids", relatorioTiposProdutosController.workspace).show();
 
 		return result;

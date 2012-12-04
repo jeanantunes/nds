@@ -59,7 +59,7 @@ public class IdentificacaoDestinatario implements Serializable {
 	 */
 	@Column(name="IE_DESTINATARIO", nullable=true, length=14)
 	@NFEExport(secao=TipoSecao.E, posicao=1, tamanho=14)
-	private String inscricaoEstual;
+	private String inscricaoEstadual;
 	
 	/**
 	 * ISUF
@@ -152,18 +152,18 @@ public class IdentificacaoDestinatario implements Serializable {
 
 
 	/**
-	 * @return the inscricaoEstual
+	 * @return the inscricaoEstadual
 	 */
-	public String getInscricaoEstual() {
-		return inscricaoEstual;
+	public String getInscricaoEstadual() {
+		return inscricaoEstadual;
 	}
 
 
 	/**
-	 * @param inscricaoEstual the inscricaoEstual to set
+	 * @param inscricaoEstadual the inscricaoEstadual to set
 	 */
-	public void setInscricaoEstual(String inscricaoEstual) {
-		this.inscricaoEstual = inscricaoEstual;
+	public void setInscricaoEstadual(String inscricaoEstadual) {
+		this.inscricaoEstadual = inscricaoEstadual;
 	}
 
 

@@ -191,7 +191,7 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 			final BigInteger repartePrevisto = BigInteger.valueOf(
 					input.getRepartePrevisto());
 			
-			if (!lancamento.getReparte().equals(repartePrevisto)) {
+			if (null != lancamento.getReparte() && !lancamento.getReparte().equals(repartePrevisto)) {
 				
 				this.ndsiLoggerFactory.getLogger().logInfo(message,
 						EventoExecucaoEnum.INF_DADO_ALTERADO,
@@ -205,7 +205,7 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 			
 			final BigInteger repartePromocional = BigInteger.valueOf(
 					input.getRepartePromocional());
-			if (!lancamento.getRepartePromocional().equals(repartePromocional)) {
+			if (null != lancamento.getRepartePromocional() && !lancamento.getRepartePromocional().equals(repartePromocional)) {
 				this.ndsiLoggerFactory.getLogger().logInfo(message,
 						EventoExecucaoEnum.INF_DADO_ALTERADO,
 						"Alteracao do REPARTE PROMOCIONAL do Produto: "
@@ -217,7 +217,7 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 			
 			final TipoLancamento tipoLancamento = 
 					this.parseTipo(input.getTipoLancamento());  
-			if (!lancamento.getTipoLancamento().equals(tipoLancamento)) {
+			if (null != lancamento.getTipoLancamento() && !lancamento.getTipoLancamento().equals(tipoLancamento)) {
 				this.ndsiLoggerFactory.getLogger().logInfo(message,
 						EventoExecucaoEnum.INF_DADO_ALTERADO,
 						"Alteracao do TIPO LANCAMENTO do Produto: "
@@ -235,7 +235,7 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 			final Date dtLancamentoAtual = this.normalizarDataSemHora(
 					lancamento.getDataLancamentoPrevista());
 			final Date dtLancamentoNovo = this.normalizarDataSemHora(dataLancamento);
-			if (!dtLancamentoAtual.equals(dtLancamentoNovo)) {
+			if (null != dtLancamentoAtual && !dtLancamentoAtual.equals(dtLancamentoNovo)) {
 				this.ndsiLoggerFactory.getLogger().logInfo(message,
 						EventoExecucaoEnum.INF_DADO_ALTERADO,
 						"Alteracao da DATA LANCAMENTO PREVISTO do Produto: "
@@ -254,7 +254,7 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 			
 			final Date dtLancamentoDistribuidor = this.normalizarDataSemHora(lancamento.getDataLancamentoDistribuidor());
 			
-			if (!dtLancamentoDistribuidor.equals(dtLancamentoNovo) && isStatusBalanceado) {
+			if (null != dtLancamentoDistribuidor && !dtLancamentoDistribuidor.equals(dtLancamentoNovo) && isStatusBalanceado) {
 				
 				this.ndsiLoggerFactory.getLogger().logInfo(message,
 						EventoExecucaoEnum.INF_DADO_ALTERADO,

@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository.impl;
 
+import java.math.BigInteger;
 import java.util.List;
 
 import org.hibernate.Query;
@@ -270,4 +271,66 @@ public class VisaoEstoqueRepositoryImpl extends AbstractRepository implements Vi
 		
 		return null;
 	}
+	
+	@Override
+	public BigInteger obterQuantidadeEstoque(long idProdutoEdicao, String tipoEstoque){
+		String coluna = this.getColunaQtde(tipoEstoque);
+		
+		StringBuilder hql = new StringBuilder();
+		hql.append(" SELECT ep." + coluna + " as qtde")
+		   .append("   FROM EstoqueProduto as ep ")
+		   .append("   JOIN ep.produtoEdicao as pe ")
+		   .append("   JOIN pe.lancamentos as lan ");		
+		   
+		hql.append("  WHERE pe.id = :idProdutoEdicao");		
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		query.setLong("idProdutoEdicao", idProdutoEdicao);
+
+		return (BigInteger) query.uniqueResult();
+	}
+	
+	@Override
+	public BigInteger obterQuantidadeEstoqueHistorico(long idProdutoEdicao, String tipoEstoque){
+		String coluna = this.getColunaQtde(tipoEstoque);
+		
+		StringBuilder hql = new StringBuilder();
+		hql.append(" SELECT ep." + coluna + " as qtde")
+		   .append("   FROM HistoricoEstoqueProduto as ep ")
+		   .append("   JOIN ep.produtoEdicao as pe ")
+		   .append("   JOIN pe.produto as pr ")
+		   .append("   JOIN pe.lancamentos as lan ");	
+		   
+		hql.append("  WHERE pe.id = :idProdutoEdicao");		
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		query.setLong("idProdutoEdicao", idProdutoEdicao);
+
+		return (BigInteger) query.uniqueResult();
+	}
+	
+	@Override
+	public BigInteger obterQuantidadeEstoqueJuramentado(long idProdutoEdicao){
+		
+		
+		StringBuilder hql = new StringBuilder();
+		hql.append(" SELECT ep.qtde as qtde")
+		  .append("   FROM EstoqueProdutoCotaJuramentado as ep ")
+		   .append("   JOIN ep.cota as co ")
+		   .append("   JOIN co.pessoa as pess ")
+		   .append("   JOIN ep.produtoEdicao as pe ")
+		   .append("   JOIN pe.produto as pr ")
+		   .append("   JOIN pe.lancamentos as lan ");
+		   
+		hql.append("  WHERE pe.id = :idProdutoEdicao");		
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		query.setLong("idProdutoEdicao", idProdutoEdicao);
+
+		return (BigInteger) query.uniqueResult();
+	}
+	
 }

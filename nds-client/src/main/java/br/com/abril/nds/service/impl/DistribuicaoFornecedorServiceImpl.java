@@ -203,5 +203,14 @@ public class DistribuicaoFornecedorServiceImpl implements DistribuicaoFornecedor
 		distribuicaoFornecedor.setOperacaoDistribuidor(operacao);
 		return distribuicaoFornecedor;
 	}
-	
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional
+	public List<Integer> obterCodigosDiaDistribuicaoFornecedor(Long idFornecedor, OperacaoDistribuidor operacaoDistribuidor) {
+
+		return this.distribuicaoFornecedorRepository.obterCodigosDiaDistribuicaoFornecedor(idFornecedor, operacaoDistribuidor);
+	}
 }

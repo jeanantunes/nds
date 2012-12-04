@@ -29,10 +29,13 @@ import br.com.abril.nds.dto.ProdutoLancamentoDTO;
 import br.com.abril.nds.dto.ProdutoRecolhimentoDTO;
 import br.com.abril.nds.dto.ResumoPeriodoBalanceamentoDTO;
 import br.com.abril.nds.dto.SumarioLancamentosDTO;
+import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.pdv.TipoCaracteristicaSegmentacaoPDV;
+import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
+import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
@@ -786,6 +789,7 @@ public class LancamentoRepositoryImpl extends
 		hql.append(" lancamento.sequenciaMatriz as sequenciaMatriz,			  	");
 		hql.append(" produto.codigo as codigoProduto, 	");
 		hql.append(" produto.nome as nomeProduto,		");
+		hql.append(" periodoLancamentoParcial.tipo as tipoLancamentoParcial, ");
 		hql.append(" produtoEdicao.numeroEdicao as numeroEdicao,		");
 		hql.append(" produtoEdicao.chamadaCapa as chamadaCapa,		");
 		hql.append(" produtoEdicao.codigoDeBarras as codigoDeBarras, ");
@@ -801,8 +805,10 @@ public class LancamentoRepositoryImpl extends
 		
 		hql.append(" lancamento.dataRecolhimentoDistribuidor as dataRecolhimento, 	");
 		
-		hql.append(" lancamentoParcial.recolhimentoFinal as dataRecolhimentoFinal 	");
+		hql.append(" lancamentoParcial.recolhimentoFinal as dataRecolhimentoFinal, 	");
 		
+		hql.append(" editorPessoaJuridica.razaoSocial as nomeEditor		");
+
 		hql.append(this.getHQLObtemLancamentoInformeRecolhimento(idFornecedor, dataInicioRecolhimento, dataFimRecolhimento));
 
 		hql.append(" order by ");
@@ -856,6 +862,8 @@ public class LancamentoRepositoryImpl extends
 		hql.append(" inner join lancamento.produtoEdicao as produtoEdicao 	");
 		hql.append(" inner join produtoEdicao.produto as produto 			");
 		hql.append(" inner join produto.fornecedores as fornecedor 			");
+		hql.append(" left join produto.editor as editor ");
+		hql.append(" left join editor.pessoaJuridica as editorPessoaJuridica ");
 		hql.append(" left join lancamento.periodoLancamentoParcial as periodoLancamentoParcial 	");
 		hql.append(" left join periodoLancamentoParcial.lancamentoParcial as lancamentoParcial	");
 		
@@ -1121,9 +1129,9 @@ public class LancamentoRepositoryImpl extends
 		sql.append(" ) is not null ");
 		
 		sql.append(" and ( ");
-		sql.append("	(lancamento.DATA_LCTO_PREVISTA between :periodoInicial and :periodoFinal ");
+		sql.append("	(lancamento.DATA_LCTO_DISTRIBUIDOR between :periodoInicial and :periodoFinal ");
 		sql.append("		and  UPPER(lancamento.STATUS) in ( :statusLancamentoNoPeriodo )) ");
-		sql.append(" 	or (lancamento.DATA_LCTO_PREVISTA < :periodoInicial ");
+		sql.append(" 	or (lancamento.DATA_LCTO_DISTRIBUIDOR < :periodoInicial ");
 		sql.append("		and UPPER(lancamento.STATUS) in ( :statusLancamentoDataMenorInicial )) "); 
 		sql.append(" ) ");
 		
@@ -1382,5 +1390,54 @@ public class LancamentoRepositoryImpl extends
 		
 		return (Lancamento) criteria.uniqueResult();
 	}
-	
+
+	public Date obterDataMinimaProdutoEdicao(Long idProdutoEdicao, String propertyLancamentoDistribuidor) {
+		
+		Criteria criteria = getSession().createCriteria(Lancamento.class);
+		
+		criteria.setProjection(Projections.min(propertyLancamentoDistribuidor));
+		
+		criteria.add(Restrictions.eq("produtoEdicao.id", idProdutoEdicao));
+
+		criteria.add(Restrictions.ne("status", StatusLancamento.EXCLUIDO));
+		
+		criteria.add(Restrictions.ne("status", StatusLancamento.FURO));
+		
+		return (Date) criteria.uniqueResult();
+	}
+
+	public Date obterDataMaximaProdutoEdicao(Long idProdutoEdicao, String propertyLancamentoDistribuidor) {
+		
+		Criteria criteria = getSession().createCriteria(Lancamento.class);
+		
+		criteria.setProjection(Projections.max(propertyLancamentoDistribuidor));
+		
+		criteria.add(Restrictions.eq("produtoEdicao.id", idProdutoEdicao));
+		
+		criteria.add(Restrictions.ne("status", StatusLancamento.EXCLUIDO));
+		
+		criteria.add(Restrictions.ne("status", StatusLancamento.FURO));
+		
+		return (Date) criteria.uniqueResult();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<MovimentoEstoqueCota> buscarMovimentosEstoqueCotaParaFuro(Lancamento lancamento, TipoMovimentoEstoque tipoMovimentoEstoqueFuro) {
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select mec ")
+		   .append(" from Lancamento l ")
+		   .append(" join l.movimentoEstoqueCotas mec ")
+		   .append(" where l.id = :idLancamento ")
+		   .append(" and mec.tipoMovimento != :tipoMovimentoEstoqueFuro ")
+		   .append(" and mec.movimentoEstoqueCotaFuro is null ");
+		
+        Query query = super.getSession().createQuery(hql.toString());
+        
+        query.setParameter("idLancamento", lancamento.getId());
+        query.setParameter("tipoMovimentoEstoqueFuro", tipoMovimentoEstoqueFuro);
+		
+    	return query.list();
+	}
 }

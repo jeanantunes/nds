@@ -155,17 +155,17 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 	
 	@Override
 	@Transactional(noRollbackFor = GerarCobrancaValidacaoException.class)
-	public void gerarCobranca(Long idCota, Long idUsuario, Set<String> setNossoNumero)
+	public void gerarCobranca(Long idCota, Long idUsuario, Set<String> setNossoNumero, boolean validarFechamentoEncalhe)
 		throws GerarCobrancaValidacaoException, IOException{
 		
-		this.processarCobranca(idCota, idUsuario, setNossoNumero);
+		this.processarCobranca(idCota, idUsuario, setNossoNumero, validarFechamentoEncalhe);
 		
 		this.geradorArquivoCobrancaBancoService.prepararGerarArquivoCobrancaCnab();
 	}
 
 
 	private void processarCobranca(Long idCota, Long idUsuario,
-			Set<String> setNossoNumero) throws GerarCobrancaValidacaoException {
+			Set<String> setNossoNumero, boolean validarFechamentoEncalhe) throws GerarCobrancaValidacaoException {
 		Distribuidor distribuidor = this.distribuidorRepository.obter();
 		
 		if (this.consolidadoFinanceiroRepository.obterQuantidadeDividasGeradasData((distribuidor.getDataOperacao())) > 0){
@@ -174,11 +174,15 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 					new ValidacaoException(TipoMensagem.WARNING, "Já foram geradas dívidas para esta data de operação."));
 		}
 		
-		//alteração na EMS 0028, agora deve verificar se o Fechamento do Encalhe(EMS 0181) tenha sido finalizado
-		if (!this.fechamentoEncalheRepository.buscaControleFechamentoEncalhe(distribuidor.getDataOperacao())){
-			
-			throw new GerarCobrancaValidacaoException(
-					new ValidacaoException(TipoMensagem.WARNING, "O fechamento de encalhe deve ser concluído antes de gerar dívidas."));
+		//flag criada para não permitir a validação do fechamento de encalhe (data operação) no momento da conferência de encalhe.
+		if (validarFechamentoEncalhe) {
+		
+			//alteração na EMS 0028, agora deve verificar se o Fechamento do Encalhe(EMS 0181) tenha sido finalizado
+			if (!this.fechamentoEncalheRepository.buscaControleFechamentoEncalhe(distribuidor.getDataOperacao())){
+				
+				throw new GerarCobrancaValidacaoException(
+						new ValidacaoException(TipoMensagem.WARNING, "O fechamento de encalhe deve ser concluído antes de gerar dívidas."));
+			}
 		}
 	
 		this.gerarCobrancaCota(idCota, idUsuario, setNossoNumero);
@@ -218,7 +222,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			
 			List<ControleBaixaBancaria> listaControleBaixaBancaria =
 				this.controleBaixaBancariaRepository.obterListaControleBaixaBancaria(
-					new Date(), StatusControle.CONCLUIDO_SUCESSO);
+					distribuidorRepository.obter().getDataOperacao(), StatusControle.CONCLUIDO_SUCESSO);
 			
 			if (listaControleBaixaBancaria == null || listaControleBaixaBancaria.isEmpty()) {
 				
@@ -509,6 +513,10 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		BigDecimal vlMovFinanVendaEncalhe = BigDecimal.ZERO;
 
 		for (MovimentoFinanceiroCota movimentoFinanceiroCota : movimentos){
+			
+			if (!movimentoFinanceiroCota.getCota().getId().equals(cota.getId())) {
+				continue;
+			}
 
 			switch (((TipoMovimentoFinanceiro) movimentoFinanceiroCota.getTipoMovimento()).getGrupoMovimentoFinaceiro()){
 				case CREDITO:
@@ -606,10 +614,15 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		FormaCobranca formaCobrancaPrincipal = this.financeiroService.obterFormaCobrancaPrincipalCota(cota.getId());
 		
 		if (formaCobrancaPrincipal == null){
+		
+			// Obtém a forma de cobrança principal
+			formaCobrancaPrincipal = financeiroService.obterFormaCobrancaPrincipal();
 			
-			msgs.add("Forma de cobrança principal para cota de número: " + cota.getNumeroCota() + " não encontrada.");
+			if (formaCobrancaPrincipal == null) {
+				msgs.add("Forma de cobrança principal para cota de número: " + cota.getNumeroCota() + " não encontrada. Também não encontrada forma de cobrança padrão principal.");
+				return null;
+			}
 			
-			return null;
 		}
 		
 		Date dataVencimento = null;
@@ -673,7 +686,6 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		
 		TipoMovimentoFinanceiro tipoMovimentoFinanceiro = null;
 
-		// Não consegui compreender pq ele negativa a dívida, desta forma, estava poderia gerar uma dívida negativa, além disto, esta condição sempre dava true: (vlMovFinanTotal.compareTo(valorMinino) < 0 (linha 688 desta classe)
 		//vlMovFinanTotal = vlMovFinanTotal.negate();
 		
 		//se existe divida
@@ -827,6 +839,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			cobranca.setDivida(novaDivida);
 			cobranca.setStatusCobranca(StatusCobranca.NAO_PAGO);
 			cobranca.setDataVencimento(dataVencimento);
+			cobranca.setVias(0);
 			
 			cobranca.setNossoNumero(
 					Util.gerarNossoNumero(

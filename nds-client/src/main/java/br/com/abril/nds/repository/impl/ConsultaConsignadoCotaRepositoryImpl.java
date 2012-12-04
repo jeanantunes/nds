@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.hibernate.Query;
 import org.hibernate.transform.AliasToBeanResultTransformer;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.ConsultaConsignadoCotaDTO;
@@ -18,10 +19,14 @@ import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque.Dominio;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.repository.ConsultaConsignadoCotaRepository;
+import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
 
 @Repository
 public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryModel<MovimentoEstoqueCota, Long> implements
 		ConsultaConsignadoCotaRepository {
+
+	@Autowired
+	private TipoMovimentoEstoqueRepository tipoMovimentoEstoqueRepository;
 
 	public ConsultaConsignadoCotaRepositoryImpl() {
 		super(MovimentoEstoqueCota.class);
@@ -38,7 +43,8 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		   .append("        produto.nome as nomeProduto, ")	
 		   .append("        pe.numeroEdicao as numeroEdicao, ")
 		   .append("        pessoa.razaoSocial as nomeFornecedor, ")
-		   .append("        lancamento.dataLancamentoDistribuidor as dataLancamento, ")
+		   .append("        CASE WHEN movimentoEstoqueCotaFuro is not null THEN movimento.dataCriacao ")
+		   .append("			 ELSE (CASE WHEN tipoMovimento = :tipoMovimentoCotaFuro THEN movimento.dataCriacao ELSE lancamento.dataLancamentoDistribuidor END) END as dataLancamento, ")
 		   .append("        pe.precoVenda as precoCapa, ")
 		   .append("        ("+ this.getHQLDesconto() +") as desconto, ")
 		   .append("        (pe.precoVenda - (pe.precoVenda * ("+ this.getHQLDesconto() +") / 100)) as precoDesconto, ")
@@ -53,6 +59,8 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		Query query =  getSession().createQuery(hql.toString());
 		
 		buscarParametrosConsignadoCota(query, filtro);
+		
+		query.setParameter("tipoMovimentoCotaFuro", tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.ESTORNO_REPARTE_FURO_PUBLICACAO));
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(
 				ConsultaConsignadoCotaDTO.class));
@@ -232,7 +240,8 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		hql.append(" LEFT JOIN produto.fornecedores as fornecedor ");
 		hql.append(" LEFT JOIN fornecedor.juridica as pessoa ");		
 		hql.append(" LEFT JOIN cota.pessoa as pessoaCota ");
-
+		hql.append(" LEFT JOIN movimento.movimentoEstoqueCotaFuro as movimentoEstoqueCotaFuro ");
+		
 		hql.append(" WHERE tipoMovimento.grupoMovimentoEstoque IN (:tipoMovimento) " );
 		hql.append("   AND parametroCobranca.tipoCota = :tipoCota  " );
 		
@@ -243,6 +252,17 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 			hql.append("   AND fornecedor.id = :idFornecedor");
 		}
 		
+		//Filtra os registro que ja teve enclahe finalizado
+		hql.append(" AND not exists ( ")
+		.append(" select chamadaCota  from ConferenciaEncalhe conferencia " +
+				" join   conferencia.chamadaEncalheCota chamadaCota " +
+				" join   chamadaCota.chamadaEncalhe chamadaEncalhe " +
+				" join   conferencia.controleConferenciaEncalheCota controleCota " +
+				" join   controleCota.controleConferenciaEncalhe controle, "  +
+				" FechamentoEncalhe fechamentoEncalhe" )
+		.append(" where  chamadaEncalhe.produtoEdicao.id = pe.id and chamadaCota.cota.id = cota.id " +
+				" and fechamentoEncalhe.fechamentoEncalhePK.produtoEdicao.id = pe.id " +
+				" and fechamentoEncalhe.fechamentoEncalhePK.dataEncalhe = controleCota.dataOperacao ) ");
 
 		return hql.toString();
 	}

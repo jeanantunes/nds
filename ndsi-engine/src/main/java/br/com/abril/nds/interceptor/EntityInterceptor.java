@@ -39,6 +39,8 @@ public class EntityInterceptor extends EmptyInterceptor {
 	
 	private Session session;
 	
+	private boolean liberarLock = false;
+	
 	public EntityInterceptor() {
 		
 	}
@@ -52,7 +54,12 @@ public class EntityInterceptor extends EmptyInterceptor {
 	public boolean onSave(Object entity, Serializable id, Object[] state,
 			String[] propertyNames, org.hibernate.type.Type[] types) {
 
-		this.validarAndamnetoFechamentoDiario();
+		if(!validarLiberacaoLock(entity, propertyNames)){
+			this.validarAndamnetoFechamentoDiario();
+		}else{
+			liberarLock = true;
+		}
+		
 		
 		// Necessario pois a integracao ira usar os servicos
 		if (null != SecurityContextHolder.getContext().getAuthentication()) {
@@ -91,7 +98,12 @@ public class EntityInterceptor extends EmptyInterceptor {
 			Object[] currentState, Object[] previousState,
 			String[] propertyNames, org.hibernate.type.Type[] types) {
 
-		this.validarAndamnetoFechamentoDiario();
+		
+		if(!validarLiberacaoLock(entity, propertyNames)){
+			this.validarAndamnetoFechamentoDiario();
+		}else{
+			liberarLock = true;
+		}
 		
 		// Necessario pois a integracao ira usar os servicos
 		if (null != SecurityContextHolder.getContext().getAuthentication()) {
@@ -108,16 +120,18 @@ public class EntityInterceptor extends EmptyInterceptor {
 		}
 		return false;
 	}
-	
+
 	@Override
 	public String onPrepareStatement(String sql) {
 		
 		if (sql != null && !sql.trim().isEmpty()) {
 			
 			if (sql.trim().toUpperCase().startsWith(TipoOperacaoSQL.DELETE.getOperacao()) 
-					|| sql.trim().toUpperCase().startsWith(TipoOperacaoSQL.UPDATE.getOperacao())) {
-				
-				this.validarAndamnetoFechamentoDiario();
+					|| sql.trim().toUpperCase().startsWith(TipoOperacaoSQL.UPDATE.getOperacao())
+					|| sql.trim().toUpperCase().startsWith(TipoOperacaoSQL.INSERT.getOperacao())) {
+				if(!liberarLock){
+					this.validarAndamnetoFechamentoDiario();					
+				}
 			}
 		}
 		
@@ -198,4 +212,15 @@ public class EntityInterceptor extends EmptyInterceptor {
 			throw new RuntimeException("Fechamento diario em andamento! Por favor aguarde.");
 		}
 	}
+	
+	private boolean validarLiberacaoLock(Object entity, String[] propertyNames) {
+		boolean liberar = false;
+		for(Object objeto: propertyNames){
+			if(objeto.equals("fechamentoDiarioEmAndamento") && entity instanceof Distribuidor){
+				liberar = true;			
+			}
+		}
+		return liberar;
+	}
+	
 }
