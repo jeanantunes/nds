@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
 import br.com.abril.nds.util.CurrencyUtil;
 
 /**
@@ -60,6 +61,8 @@ public class InformeEncalheDTO implements Serializable {
 	private String precoVendaFormatado;
 	
 	private String precoDescontoFormatado;
+	
+	private String tipoLancamentoParcial;
 
 	/**
 	 * @return the idLancamento
@@ -317,5 +320,19 @@ public class InformeEncalheDTO implements Serializable {
 	 */
 	public String getPrecoDescontoFormatado() {
 		return precoDescontoFormatado;
+	}
+
+	/**
+	 * @return the tipoLancamentoParcial
+	 */
+	public String getTipoLancamentoParcial() {
+		return tipoLancamentoParcial;
+	}
+
+	/**
+	 * @param tipoLancamentoParcial the tipoLancamentoParcial to set
+	 */
+	public void setTipoLancamentoParcial(TipoLancamentoParcial tipoLancamentoParcial) {
+		this.tipoLancamentoParcial = tipoLancamentoParcial != null ? tipoLancamentoParcial.getDescricao() : "";
 	}
 }

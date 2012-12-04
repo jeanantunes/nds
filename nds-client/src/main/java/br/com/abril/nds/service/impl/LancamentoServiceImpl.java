@@ -18,6 +18,7 @@ import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.cadastro.desconto.DescontoProduto;
 import br.com.abril.nds.model.estoque.Expedicao;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
+import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.financeiro.DescontoProximosLancamentos;
 import br.com.abril.nds.model.planejamento.HistoricoLancamento;
 import br.com.abril.nds.model.planejamento.Lancamento;
@@ -28,6 +29,7 @@ import br.com.abril.nds.repository.DescontoProximosLancamentosRepository;
 import br.com.abril.nds.repository.ExpedicaoRepository;
 import br.com.abril.nds.repository.HistoricoLancamentoRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
+import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.repository.UsuarioRepository;
 import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
@@ -58,6 +60,9 @@ public class LancamentoServiceImpl implements LancamentoService {
 	
 	@Autowired
 	private DescontoProdutoRepository descontoProdutoRepository;
+
+	@Autowired
+	private MovimentoEstoqueCotaRepository movimentoEstoqueCotaRepository;
 	
 	@Override
 	@Transactional
@@ -148,6 +153,12 @@ public class LancamentoServiceImpl implements LancamentoService {
 		lancamento.setDataStatus(new Date());
 		lancamento.setStatus(StatusLancamento.EXPEDIDO);
 		lancamento.setExpedicao(expedicao);
+		
+		List<MovimentoEstoqueCota> movimentos = lancamento.getMovimentoEstoqueCotas();
+		for (MovimentoEstoqueCota movimento : movimentos) {
+			movimento.setEstudoCota(null);
+			movimentoEstoqueCotaRepository.alterar(movimento);
+		}
 		
 		lancamentoRepository.alterar(lancamento);
 		

@@ -1078,14 +1078,14 @@ var fecharDiaController =  $.extend(true, {
 		
 		$.postJSON(contextPath + "/administracao/fecharDia/obterResumoQuadroReparte", null,
 				function(result){					
-					$("#totalReparte").html(result.totalReparte);
-					$("#totalSobras").html(result.totalSobras);
-					$("#totalFaltas").html(result.totalFaltas);
-					$("#totalTransferencia").html(result.totalTranferencia);
-					$("#totalADistribuir").html(result.totalADistribuir);
-					$("#totalDistribuido").html(result.totalDistribuido);
-					$("#totalSobraDistribuido").html(result.sobraDistribuido);
-					$("#totalDiferenca").html(result.diferenca);
+					$("#totalReparte").html(result.totalReparteFormatado);
+					$("#totalSobras").html(result.totalSobrasFormatado);
+					$("#totalFaltas").html(result.totalFaltasFormatado);
+					$("#totalTransferencia").html(result.totalsTranferenciasFormatado);
+					$("#totalADistribuir").html(result.totalDistribuirFormatado);
+					$("#totalDistribuido").html(result.totalDistribuidoFormatado);
+					$("#totalSobraDistribuido").html(result.totalSobraDistribuicaoFormatado);
+					$("#totalDiferenca").html(result.totalDiferencaFormatado);
 				}
 			);
 	},

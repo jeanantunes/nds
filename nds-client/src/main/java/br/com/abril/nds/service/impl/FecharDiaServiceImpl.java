@@ -19,7 +19,6 @@ import br.com.abril.nds.dto.ResumoFechamentoDiarioConsignadoDTO;
 import br.com.abril.nds.dto.ResumoFechamentoDiarioConsignadoDTO.ResumoAVista;
 import br.com.abril.nds.dto.ResumoFechamentoDiarioConsignadoDTO.ResumoConsignado;
 import br.com.abril.nds.dto.ResumoFechamentoDiarioCotasDTO;
-import br.com.abril.nds.dto.ResumoReparteFecharDiaDTO;
 import br.com.abril.nds.dto.ResumoSuplementarFecharDiaDTO;
 import br.com.abril.nds.dto.SuplementarFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoConfirmacaoDeExpedicaoFecharDiaDTO;
@@ -37,6 +36,7 @@ import br.com.abril.nds.dto.fechamentodiario.ResumoEstoqueDTO.ResumoEstoqueExemp
 import br.com.abril.nds.dto.fechamentodiario.ResumoEstoqueDTO.ResumoEstoqueProduto;
 import br.com.abril.nds.dto.fechamentodiario.ResumoEstoqueDTO.ValorResumoEstoque;
 import br.com.abril.nds.dto.fechamentodiario.SumarizacaoDividasDTO;
+import br.com.abril.nds.dto.fechamentodiario.SumarizacaoReparteDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Cota;
@@ -875,20 +875,20 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 	
 	private void incluirResumoReparte(FechamentoDiario fechamento, Builder builder) throws FechamentoDiarioException {
 		
-		ResumoReparteFecharDiaDTO resumoReparte = resumoReparteFecharDiaService.obterResumoGeralReparte(fechamento.getDataFechamento());
+	    SumarizacaoReparteDTO resumoReparte = resumoReparteFecharDiaService.obterSumarizacaoReparte(fechamento.getDataFechamento());
 		builder.resumoReparte(resumoReparte);
 		
 		validarDadosFechamentoDiario(resumoReparte,"Erro na obtenção dos dados de Resumo de Reparte!");
 		
 		FechamentoDiarioConsolidadoReparte consolidadoReparte = new FechamentoDiarioConsolidadoReparte();
 		
-		consolidadoReparte.setValorSobraDistribuida(resumoReparte.getTotalADistribuir());
-		consolidadoReparte.setValorDiferenca(resumoReparte.getDiferenca());
+		consolidadoReparte.setValorSobraDistribuida(resumoReparte.getTotalSobraDistribuicao());
+		consolidadoReparte.setValorDiferenca(resumoReparte.getTotalDiferenca());
 		consolidadoReparte.setValorDistribuido(resumoReparte.getTotalDistribuido());
 	    consolidadoReparte.setValorFaltas(resumoReparte.getTotalFaltas());
 	    consolidadoReparte.setValorReparte(resumoReparte.getTotalReparte());
 	    consolidadoReparte.setValorSobras(resumoReparte.getTotalSobras());
-	    consolidadoReparte.setValorTransferido(resumoReparte.getTotalTransferencia());
+	    consolidadoReparte.setValorTransferido(resumoReparte.getTotalTransferencias());
 	    consolidadoReparte.setFechamentoDiario(fechamento);
 	    
 	    consolidadoReparte = fechamentoConsolidadoReparteRepository.merge(consolidadoReparte);

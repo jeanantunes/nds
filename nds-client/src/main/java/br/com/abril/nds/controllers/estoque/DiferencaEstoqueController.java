@@ -60,7 +60,6 @@ import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DiferencaEstoqueService;
 import br.com.abril.nds.service.EstoqueProdutoService;
-import br.com.abril.nds.service.EstudoService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.ItemNotaEnvioService;
 import br.com.abril.nds.service.MovimentoEstoqueCotaService;
@@ -120,9 +119,6 @@ public class DiferencaEstoqueController {
 	
 	@Autowired
 	private ProdutoService produtoService;
-		
-	@Autowired
-	private EstudoService estudoService;
 	
 	@Autowired
 	private MovimentoEstoqueCotaService movimentoEstoqueCotaService;
@@ -616,7 +612,7 @@ public class DiferencaEstoqueController {
 			DiferencaVO diferencaVO = obterDiferencaVO(tipoDiferenca,codigoProduto,edicaoProduto, diferenca, reparteAtual,tipoEstoque,pacotePadrao);
 			diferencaVO.setTipoDirecionamento(TipoDirecionamentoDiferenca.ESTOQUE);
 				
-			incluirDiferencaEstoque(diferencaVO,tipoDiferenca);		
+			incluirDiferencaEstoque(diferencaVO, tipoDiferenca);		
 		}
 		
 		this.httpSession.setAttribute(MODO_NOVA_DIFERENCA_SESSION_ATTRIBUTE,true);
@@ -649,10 +645,19 @@ public class DiferencaEstoqueController {
 			 		
 			validarTipoDiferenca(tipoDiferencas, qntDiferenca, qntReparteRateio);
 			
-			String msgErro =  validarEstoqueDiferenca(diferencaEditavel.getQtdeEstoqueAtual(),qntDiferenca, tipoDiferencas,pacotePadrao, false);
+			String mensagemErro = null;
 			
-			if(msgErro!= null){
-				throw new ValidacaoException(TipoMensagem.WARNING,msgErro);
+			if (!TipoDirecionamentoDiferenca.COTA.equals(diferencaEditavel.getTipoDirecionamento())) {
+			
+				mensagemErro =  
+					validarEstoqueDiferenca(
+						diferencaEditavel.getQtdeEstoqueAtual(), qntDiferenca, 
+							tipoDiferencas,pacotePadrao, false);
+			}
+			
+			if (mensagemErro != null) {
+				
+				throw new ValidacaoException(TipoMensagem.WARNING, mensagemErro);
 			}
 			
 			diferencaEditavel.setQuantidade(qntDiferenca);
@@ -826,7 +831,7 @@ public class DiferencaEstoqueController {
 		
 		Date dataMovimentacao = this.dataMovimentacaoDiferenca();
 		
-		this.validarNovaDiferenca(diferencaVO,dataMovimentacao,tipoDiferenca);
+		this.validarNovaDiferenca(diferencaVO, dataMovimentacao, tipoDiferenca);
 		
 		Diferenca diferenca = this.obterDiferenca(diferencaVO, tipoDiferenca, id, dataMovimentacao); 
 		
@@ -2099,7 +2104,10 @@ public class DiferencaEstoqueController {
 		
 		TipoDiferenca tipoDiferenca = diferencaVO.getTipoDiferenca();
 		
-		String mensagemErro = this.validarEstoqueDiferenca(novoRateioCota.getReparteCota(), novoRateioCota.getQuantidade(), tipoDiferenca, valorPacotePadrao, true); 
+		String mensagemErro = 
+			this.validarEstoqueDiferenca(
+				novoRateioCota.getReparteCota(), novoRateioCota.getQuantidade(), 
+					tipoDiferenca, valorPacotePadrao, true); 
 		
 		if(mensagemErro != null){
 			
@@ -2133,9 +2141,17 @@ public class DiferencaEstoqueController {
 			throw new ValidacaoException(TipoMensagem.WARNING,"Produto inválido: Código [" + diferenca.getCodigoProduto() + "] - Edição [" + diferenca.getNumeroEdicao() + " ]");
 		}
 		
-		String mensagemErro = validarEstoqueDiferenca(diferenca.getQtdeEstoqueAtual(),diferenca.getQuantidade() ,tipoDiferenca, new BigInteger(diferenca.getPacotePadrao()),false); 
+		String mensagemErro = null;
 		
-		if(mensagemErro!= null){
+		if (!TipoDirecionamentoDiferenca.COTA.equals(diferenca.getTipoDirecionamento())) {
+			
+			mensagemErro = 
+				validarEstoqueDiferenca(
+					diferenca.getQtdeEstoqueAtual(),diferenca.getQuantidade() ,
+						tipoDiferenca, new BigInteger(diferenca.getPacotePadrao()), false); 
+		}
+
+		if (mensagemErro != null) {
 			
 			listaMensagensErro.add(mensagemErro);
 		}
@@ -2155,7 +2171,8 @@ public class DiferencaEstoqueController {
 	}
 
 	private String validarEstoqueDiferenca(BigInteger qtdeEstoqueAtual, BigInteger quantidade, 
-											TipoDiferenca tipoDiferenca,BigInteger valorPacotePadrao, boolean isRateioCota) {
+											TipoDiferenca tipoDiferenca,BigInteger valorPacotePadrao, 
+											boolean isRateioCota) {
 		
 		if (quantidade.compareTo(BigInteger.ZERO) == 0) {
 			

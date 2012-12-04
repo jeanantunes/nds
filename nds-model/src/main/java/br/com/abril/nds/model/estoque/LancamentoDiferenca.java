@@ -95,6 +95,14 @@ public class LancamentoDiferenca implements Serializable {
 		this.movimentoEstoque = movimentoEstoque;
 	}
 
+    public String getMotivo() {
+        return motivo;
+    }
+
+    public void setMotivo(String motivo) {
+        this.motivo = motivo;
+    }
+
 	public MovimentoEstoqueCota getMovimentoEstoqueCota() {
 		return movimentoEstoqueCota;
 	}
@@ -102,20 +110,5 @@ public class LancamentoDiferenca implements Serializable {
 	public void setMovimentoEstoqueCota(MovimentoEstoqueCota movimentoEstoqueCota) {
 		this.movimentoEstoqueCota = movimentoEstoqueCota;
 	}
-
-    /**
-     * @return the motivo
-     */
-    public String getMotivo() {
-        return motivo;
-    }
-
-    /**
-     * @param motivo the motivo to set
-     */
-    public void setMotivo(String motivo) {
-        this.motivo = motivo;
-    }
-	
 	
 }

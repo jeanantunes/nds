@@ -796,7 +796,7 @@ public class ConferenciaEncalheController {
 				String[] tiposDocumento = null;
 				
 				if(	dadosDocumentacaoConfEncalheCota.getNossoNumero()!=null && 
-					!dadosDocumentacaoConfEncalheCota.getNossoNumero().isEmpty() && !dadosDocumentacaoConfEncalheCota.isUtilizaSlipBoleto()) {
+					!dadosDocumentacaoConfEncalheCota.getNossoNumero().isEmpty() && dadosDocumentacaoConfEncalheCota.isUtilizaSlipBoleto()) {
 					
 					tiposDocumento = new String[]{
 							TipoDocumentoConferenciaEncalhe.SLIP.name(), 

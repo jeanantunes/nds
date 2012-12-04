@@ -152,8 +152,13 @@ public abstract class Util {
 				return codSacado + auxData + n1 + n2 + n3 + idMovimentoFinanceiro + (idFornecedor == null ? "0" : idFornecedor);
 				
 			case HSBC:
-				//alterado para não ultrapassar 13 caracteres
-				return Util.padLeft(codSacado + auxData + idMovimentoFinanceiro, "0", 13);
+				
+				// return Util.padLeft(codSacado + auxData + idMovimentoFinanceiro, "0", 13);
+				
+				// Foi alterada a forma para composição do nosso número conforme foi pedido.
+				// De [número cota + dd/MM/yyyy + id movimento financeiro] para [número cota + id movimento financeiro].
+				// A forma antiga estava estourando o limite máximo de 13 caracteres.
+				return Util.padLeft(codSacado + idMovimentoFinanceiro, "0", 14);
 				
 			case MERCANTIL_DO_BRASIL:
 				return codSacado + auxData + n1 + n2 + n3 + idMovimentoFinanceiro + (idFornecedor == null ? "0" : idFornecedor);

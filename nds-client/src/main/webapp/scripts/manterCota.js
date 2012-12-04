@@ -37,17 +37,17 @@ var MANTER_COTA = $.extend(true, {
     
     initCotaGridPrincipal: function() {
 
-        $(".pessoasGrid", this.workspace).flexigrid({
+        $(".pessoasGrid", MANTER_COTA.workspace).flexigrid({
             preProcess: MANTER_COTA.executarPreProcessamento,
             dataType : 'json',
             colModel : [  {
-                display : 'Código',
+                display : 'CÃ³digo',
                 name : 'numero',
                 width : 60,
                 sortable : true,
                 align : 'left'
             },{
-                display : 'Nome / Razão Social',
+                display : 'Nome / RazÃ£o Social',
                 name : 'nome',
                 width : 130,
                 sortable : true,
@@ -89,7 +89,7 @@ var MANTER_COTA = $.extend(true, {
                 sortable : true,
                 align : 'left'
             }, {
-                display : 'Ação',
+                display : 'AÃ§Ã£o',
                 name : 'acao',
                 width : 60,
                 sortable : false,
@@ -217,7 +217,7 @@ var MANTER_COTA = $.extend(true, {
                 resultado.mensagens.listaMensagens
             );
 
-            $("#grids", this.workspace).hide();
+            $("#gridsCota", this.workspace).hide();
 
             return resultado.tableModel;
         }
@@ -238,19 +238,19 @@ var MANTER_COTA = $.extend(true, {
             row.cell.acao = linkEdicao + linkExclusao;
         });
 
-        $("#grids", this.workspace).show();
+        $("#gridsCota", this.workspace).show();
 
         return resultado;
     },
 
     pesquisar:function(){
 
-        $(".pessoasGrid", this.workspace).flexOptions({
+        $(".pessoasGrid", MANTER_COTA.workspace).flexOptions({
             url: contextPath + "/cadastro/cota/pesquisarCotas",
             params: MANTER_COTA.formDataPesquisa(),newp: 1
         });
 
-        $(".pessoasGrid", this.workspace).flexReload();
+        $(".pessoasGrid", MANTER_COTA.workspace).flexReload();
     },
 
     exibirDialogExclusao:function (idCota){
@@ -386,7 +386,7 @@ var MANTER_COTA = $.extend(true, {
 
     popupCota: function(novo) {
 
-        //Define a função salvar inicial ao abrir o dialog de cadastro de cota
+        //Define a funÃ§Ã£o salvar inicial ao abrir o dialog de cadastro de cota
         TAB_COTA.funcaoSalvar = MANTER_COTA.salvarDadosCadastrais;
         
         MANTER_COTA.confirmado = false;
@@ -470,7 +470,7 @@ var MANTER_COTA = $.extend(true, {
                 height:590,
                 width:950,
                 modal: true,
-                title: novo ? "Nova Cota" : "Histórico de Titularidade Cota - " + MANTER_COTA.numeroCota,
+                title: novo ? "Nova Cota" : "HistÃ³rico de Titularidade Cota - " + MANTER_COTA.numeroCota,
                 buttons: [
                     {id:"btn_fechar_historico_titularidade_cota", text:"Fechar",
                         click: function() {
@@ -602,12 +602,12 @@ var MANTER_COTA = $.extend(true, {
     },
 
     /**
-     * Flag que indica alterações no cadastro da cota.
+     * Flag que indica alteraÃ§Ãµes no cadastro da cota.
      */
     _indCadastroCotaAlterado : false,
     
     /**
-     * Detecta que se houveram quaisquer alterações no cadastro de cota.
+     * Detecta que se houveram quaisquer alteraÃ§Ãµes no cadastro de cota.
      */
     verificarAlteracoesCadastroCota : function() {
     	
@@ -833,7 +833,7 @@ var COTA_DESCONTO = $.extend(true,
                 preProcess: COTA_DESCONTO.getDataFromResult,
                 dataType : 'json',
                 colModel : [ {
-                    display : 'Código',
+                    display : 'CÃ³digo',
                     name : 'codigoProduto',
                     width : 80,
                     sortable : true,
@@ -845,7 +845,7 @@ var COTA_DESCONTO = $.extend(true,
                     sortable : true,
                     align : 'left'
                 }, {
-                    display : 'Edição',
+                    display : 'EdiÃ§Ã£o',
                     name : 'numeroEdicao',
                     width : 60,
                     sortable : true,
@@ -857,7 +857,7 @@ var COTA_DESCONTO = $.extend(true,
                     sortable : true,
                     align : 'right'
                 }, {
-                    display : 'Data da Alteração',
+                    display : 'Data da AlteraÃ§Ã£o',
                     name : 'dataAlteracao',
                     width : 120,
                     sortable : true,
@@ -893,7 +893,7 @@ var COTA_DESCONTO = $.extend(true,
                     sortable : true,
                     align : 'left'
                 }, {
-                    display : 'Última Atualização',
+                    display : 'Ãšltima AtualizaÃ§Ã£o',
                     name : 'dataAlteracao',
                     width : 100,
                     sortable : true,
@@ -918,7 +918,7 @@ var COTA_DESCONTO = $.extend(true,
 
             $(".descProdutosGrid", this.workspace).flexReload();
 
-            $(".grids", this.workspace).show();
+            $(".grids", MANTER_COTA.workspace).show();
         },
 
         obterDescontoCota : function(numCota){
@@ -933,7 +933,7 @@ var COTA_DESCONTO = $.extend(true,
 
             $(".descCotaGrid", this.workspace).flexReload();
 
-            $(".grids", this.workspace).show();
+            $(".grids", MANTER_COTA.workspace).show();
         },
 
 
@@ -944,11 +944,11 @@ var COTA_DESCONTO = $.extend(true,
                     resultado.mensagens.tipoMensagem,
                     resultado.mensagens.listaMensagens
                 );
-                $(".grids", this.workspace).hide();
+                $(".grids", MANTER_COTA.workspace).hide();
                 return resultado;
             }
 
-            $(".grids", this.workspace).show();
+            $(".grids", MANTER_COTA.workspace).show();
 
             return resultado;
         }
@@ -1161,7 +1161,7 @@ var COTA_CNPJ = $.extend(true, {
 
                 COTA_CNPJ.carregarDadosCadastraisCnpj(result);
 
-                exibirMensagemDialog("SUCCESS",["Operação realizada com sucesso."],"dialog-cota");
+                exibirMensagemDialog("SUCCESS",["OperaÃ§Ã£o realizada com sucesso."],"dialog-cota");
 
                 if (MANTER_COTA.isAlteracaoTitularidade) {
                     MANTER_COTA.isAlteracaoTitularidade = false;
@@ -1368,7 +1368,7 @@ var COTA_CPF = $.extend(true, {
 
                 COTA_CPF.carregarDadosCpf(result);
 
-                exibirMensagemDialog("SUCCESS",["Operação realizada com sucesso."],"dialog-cota");
+                exibirMensagemDialog("SUCCESS",["OperaÃ§Ã£o realizada com sucesso."],"dialog-cota");
 
                 if (MANTER_COTA.isAlteracaoTitularidade) {
                     MANTER_COTA.isAlteracaoTitularidade = false;
@@ -1576,7 +1576,7 @@ var SOCIO_COTA = $.extend(true, {
                 sortable : false,
                 align : 'center'
             }, {
-                display : 'Ação',
+                display : 'AÃ§Ã£o',
                 name : 'acao',
                 width : 60,
                 sortable : false,
@@ -1902,7 +1902,7 @@ function GridAntigosProprietarios(element, workspace) {
                 }
             },
             colModel : [{
-                display : 'Período',
+                display : 'PerÃ­odo',
                 name : 'periodo',
                 width : 120,
                 sortable : true,
@@ -1920,7 +1920,7 @@ function GridAntigosProprietarios(element, workspace) {
                 sortable : true,
                 align : 'left'
             },{
-                display : 'Ação',
+                display : 'AÃ§Ã£o',
                 name : 'acao',
                 width : 30,
                 sortable : false,
