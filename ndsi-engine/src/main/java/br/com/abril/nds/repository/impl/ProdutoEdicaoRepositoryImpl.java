@@ -619,10 +619,8 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 	@Override
 	public String buscarNome(Long idProdutoEdicao) {
 		
-		Query query = 
-			this.getSession().createQuery(
-				"select nome from ProdutoEdicao where id = :idProdutoEdicao");
-		
+		Query query = this.getSession().createQuery(
+				"select nomeComercial from ProdutoEdicao where id = :idProdutoEdicao");
 		query.setParameter("idProdutoEdicao", idProdutoEdicao);
 		
 		return (String) query.uniqueResult();

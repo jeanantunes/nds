@@ -15,6 +15,9 @@ import br.com.abril.nds.repository.RomaneioRepository;
 @Repository
 public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> implements RomaneioRepository {
 
+	/** Quantidade máxima de produtos exibidos no relatório.*/
+	private static final int QUANTIDADE_MAX_PRODUTOS_POR_RELATORIO = 6;
+	
 	public RomaneioRepositoryImpl() {
 		super(Box.class);
 	}
@@ -264,10 +267,29 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 		if (filtro.getProdutos() != null && !filtro.getProdutos().isEmpty()){
 		
 			query.setParameterList("produtos", filtro.getProdutos());
-
 		}
 	}
 
+	/**
+	 * Preenche os parâmetros para exibir os romaneios para exportação.
+	 * 
+	 * @param filtro
+	 * @param query
+	 * @param qtdProdutos
+	 */
+	private void setarParametrosRomaneioParaExportacao(FiltroRomaneioDTO filtro,
+			Query query, int qtdProdutos) {
+		
+		this.setarParametrosRomaneio(filtro, query);
+		
+		// Cenário em que o usuário selecionou dois ou mais produtos:
+		if (qtdProdutos > 1) {
+			for (int index = 0; index < qtdProdutos; index++) {
+				query.setParameter("idProdutoEdicao" + index, filtro.getProdutos().get(index));
+			}
+		}
+	}
+	
 	@Override
 	public Integer buscarTotal(FiltroRomaneioDTO filtro, boolean countCotas) {
 		
@@ -345,26 +367,38 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 		hql.append(", endereco.cidade as cidade ");
 		hql.append(", endereco.uf as uf ");
 		
-		//if (filtro.getProdutos() != null && filtro.getProdutos().size() == 1){
-		if (filtro.getProdutos() != null) {
+		int qtdProdutos = 0;
+		if (filtro.getProdutos() != null && !filtro.getProdutos().isEmpty()) {
 		
-			hql.append(", round(itemNota.reparte / lancamento.produtoEdicao.pacotePadrao) as pacote ");
-			hql.append(", mod(itemNota.reparte, (itemNota.reparte / lancamento.produtoEdicao.pacotePadrao)) as quebra ");
-			hql.append(", itemNota.reparte as reparteTotal ");
+			if (filtro.getProdutos().size() == 1) {
+				
+				// Exibir os detalhes de um produto:
+				hql.append(", round(itemNota.reparte / lancamento.produtoEdicao.pacotePadrao) as pacote ");
+				hql.append(", mod(itemNota.reparte, (itemNota.reparte / lancamento.produtoEdicao.pacotePadrao)) as quebra ");
+				hql.append(", itemNota.reparte as reparteTotal ");
+			} else {
+				
+				// Exibir a quantidade de reparte de 'n' produtos:
+				qtdProdutos = Math.min(filtro.getProdutos().size(), 
+						QUANTIDADE_MAX_PRODUTOS_POR_RELATORIO);
+				for (int index = 0; index < qtdProdutos; index++) {
+					
+					hql.append(", coalesce((select iNotaEnvio.reparte ");
+					hql.append("  from ItemNotaEnvio iNotaEnvio ");
+					hql.append(" where iNotaEnvio.produtoEdicao.id = :idProdutoEdicao").append(index);
+					hql.append("   and iNotaEnvio.itemNotaEnvioPK.notaEnvio = itemNota.itemNotaEnvioPK.notaEnvio )");
+					hql.append(", 0) as qtdProduto").append(index);
+					hql.append(" ");	// para evitar problemas de concatenação
+				}
+			}
 		}
 		
-		// Código comentado pelo Eduardo Punk Rock
-		/*if (filtro.getProdutos() != null && filtro.getProdutos().size() > 1){
-			
-			this.getHQLProdutos(hql, filtro);
-		}*/
-		
 		hql.append(getSqlFromEWhereRomaneio(filtro));
-		hql.append(getOrderBy(filtro, true));		
+		hql.append(getOrderBy(filtro, true));
 		Query query =  getSession().createQuery(hql.toString());
-		this.setarParametrosRomaneio(filtro, query);
+		this.setarParametrosRomaneioParaExportacao(filtro, query, qtdProdutos);
 		
 		return query;
 	}
-	
+		
 }
