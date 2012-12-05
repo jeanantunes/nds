@@ -742,10 +742,10 @@ public class RoteirizacaoController {
 
 	@Post
 	@Path("/recarregarCotasRota")
-	public void recarregarCotasRota(Long idRoteiro, Integer ordem, String sortname, String sortorder) {
+	public void recarregarCotasRota(Long idRoteiro, Long idRota, Integer ordemRota, String sortname, String sortorder) {
 	    RoteirizacaoDTO roteirizacao = getDTO();
 	    RoteiroRoteirizacaoDTO roteiro = roteirizacao.getRoteiro(idRoteiro);
-	    RotaRoteirizacaoDTO rota = roteiro.getRotaByOrdem(ordem);
+	    RotaRoteirizacaoDTO rota = roteiro.getRotaByOrdem(ordemRota);
 	    List<PdvRoteirizacaoDTO> pdvs = rota.getPdvs();
 	    
 	    if (pdvs != null){
@@ -1090,7 +1090,7 @@ public class RoteirizacaoController {
 		
 		for (RotaRoteirizacaoDTO rota : rotasDto){
 			
-			if (rota.getId() <= novoId){
+			if (rota.getId() != null && rota.getId() <= novoId){
 				
 				novoId = rota.getId() - 1;
 			}
