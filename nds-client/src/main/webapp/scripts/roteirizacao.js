@@ -36,6 +36,7 @@ var roteirizacao = $.extend(true, {
     idRota: "",
     nomeBox: "",
     nomeRoteiro : "",
+    ordemRotaSelecionada: "",
     pdvsSelecionados: [],
     nomeRota : "",
     tipoInclusao: TipoInclusao.ROTEIRO,
@@ -298,7 +299,7 @@ var roteirizacao = $.extend(true, {
                 $.each(data.rows, function(index, value) {
                     var id = value.cell.id;
                     var selecione = '<input type="radio" value="' + id +'" name="rotaRadio" ';
-                    selecione += 'onclick="roteirizacao.rotaSelecionadaListener(\'' +  id  + '\', \''+ value.cell.nome +'\');"';
+                    selecione += 'onclick="roteirizacao.rotaSelecionadaListener(\'' +  id  + '\', \''+ value.cell.nome +'\', \''+value.cell.ordem+'\');"';
                     if (id == roteirizacao.idRota) {
                         selecione += 'checked';
                     }
@@ -353,9 +354,10 @@ var roteirizacao = $.extend(true, {
         roteirizacao.limparInfoCotasRota();
     },
 
-    rotaSelecionadaListener : function(idRota, nomeRota) {
+    rotaSelecionadaListener : function(idRota, nomeRota, ordemRota) {
         roteirizacao.idRota = idRota;
         roteirizacao.nomeRota = nomeRota;
+        roteirizacao.ordemRotaSelecionada = ordemRota;
         roteirizacao.popularGridCotasRota();
         roteirizacao.definirTransferenciaRota();
         roteirizacao.tipoExclusao = TipoExclusao.ROTA;
@@ -1009,7 +1011,8 @@ var roteirizacao = $.extend(true, {
             onSubmit    : function(){
                 $('.cotasRotaGrid').flexOptions({params: [
                     {name:'idRoteiro', value: roteirizacao.idRoteiro},
-                    {name:'idRota', value: roteirizacao.idRota}
+                    {name:'idRota', value: roteirizacao.idRota},
+                    {name:'ordemRota', value: roteirizacao.ordemRotaSelecionada}
                 ]});
                 return true;
             },

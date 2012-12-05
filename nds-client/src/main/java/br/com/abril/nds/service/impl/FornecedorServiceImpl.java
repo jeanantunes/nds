@@ -21,6 +21,7 @@ import br.com.abril.nds.dto.filtro.FiltroConsultaFornecedorDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Endereco;
+import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.EnderecoFornecedor;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.Fornecedor;
@@ -447,39 +448,81 @@ public class FornecedorServiceImpl implements FornecedorService {
 		}
 	}
 
-	/*
-	 * Método responsável por salvar os endereços referentes ao fornecedor em questão.
+	/**
+	 * ENDERECO
+	 * 
+	 * Retorna um Endereco à ser editado ou cadastrado
+	 * @param enderecoDTO
+	 * @param pessoa
+	 * @param novo
+	 * @return Endereco
+	 */
+	private Endereco obterEndereco(EnderecoDTO enderecoDTO, Pessoa pessoa, boolean novo){
+		
+		Endereco endereco = new Endereco();
+		
+		if (!novo){
+			
+			endereco = this.enderecoRepository.buscarPorId(enderecoDTO.getId());
+		}
+
+		endereco.setBairro(enderecoDTO.getBairro());
+		endereco.setCep(enderecoDTO.getCep());
+		endereco.setCodigoCidadeIBGE(enderecoDTO.getCodigoCidadeIBGE());
+		endereco.setCidade(enderecoDTO.getCidade());
+		endereco.setComplemento(enderecoDTO.getComplemento());
+		endereco.setTipoLogradouro(enderecoDTO.getTipoLogradouro());
+		endereco.setLogradouro(enderecoDTO.getLogradouro());
+		endereco.setNumero(enderecoDTO.getNumero());
+		endereco.setUf(enderecoDTO.getUf());
+		endereco.setCodigoUf(enderecoDTO.getCodigoUf());
+		endereco.setPessoa(pessoa);
+		
+	    return endereco;
+	}
+	
+	/**
+	 * ENDERECO
+	 * 
+	 * Persiste EnderecoFornecedor e Endereco
+	 * @param fornecedor
+	 * @param listaEnderecoAssociacao
 	 */
 	private void salvarEnderecosFornecedor(Fornecedor fornecedor, 
 										   List<EnderecoAssociacaoDTO> listaEnderecoAssociacao) {
 		
+		Pessoa pessoa = fornecedor.getJuridica();
+		
 		for (EnderecoAssociacaoDTO enderecoAssociacao : listaEnderecoAssociacao) {
 
+			EnderecoDTO enderecoDTO = enderecoAssociacao.getEndereco();
+			
 			EnderecoFornecedor enderecoFornecedor = this.enderecoFornecedorRepository.buscarPorId(enderecoAssociacao.getId());
 
+			Endereco endereco = null;
+			
+			boolean novoEnderecoFornecedor = false;
+			
 			if (enderecoFornecedor == null) {
 
+				novoEnderecoFornecedor = true;
+				
 				enderecoFornecedor = new EnderecoFornecedor();
 
 				enderecoFornecedor.setFornecedor(fornecedor);
 			}
+			
+			
+			boolean novoEndereco = (novoEnderecoFornecedor && !enderecoAssociacao.isEnderecoPessoa());
+			
+			endereco = this.obterEndereco(enderecoDTO, pessoa, novoEndereco);
 
-			EnderecoDTO dto = enderecoAssociacao.getEndereco();
-			
-            Endereco endereco = new Endereco(
-                    dto.getBairro(), dto.getCep(), dto.getCodigoCidadeIBGE(),
-                    dto.getCidade(), dto.getComplemento(),
-                    dto.getTipoLogradouro(), dto.getLogradouro(),
-                    dto.getNumero(), dto.getUf(), dto.getCodigoUf(),
-                    fornecedor.getJuridica());
-            endereco.setId(dto.getId());
-			
-            enderecoFornecedor.setEndereco(endereco);
+			enderecoFornecedor.setEndereco(endereco);
 
 			enderecoFornecedor.setPrincipal(enderecoAssociacao.isEnderecoPrincipal());
 
 			enderecoFornecedor.setTipoEndereco(enderecoAssociacao.getTipoEndereco());
-
+				
 			this.enderecoFornecedorRepository.merge(enderecoFornecedor);
 		}
 	}
