@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="romaneio_modelo02" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" whenResourceMissingType="Empty" uuid="d388ecf9-cbf5-4473-b7ce-47859b05d074">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="romaneio_modelo02" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" whenResourceMissingType="Empty">
 	<property name="ireport.zoom" value="1.9487171000000147"/>
 	<property name="ireport.x" value="925"/>
 	<property name="ireport.y" value="523"/>
@@ -39,7 +39,7 @@
 	<pageHeader>
 		<band height="140">
 			<subreport>
-				<reportElement uuid="c9986786-7ff2-4f2a-a5ec-bb5a78928673" x="0" y="0" width="802" height="115" isPrintWhenDetailOverflows="true"/>
+				<reportElement x="0" y="0" width="802" height="115" isPrintWhenDetailOverflows="true"/>
 				<subreportParameter name="SUBREPORT_DIR">
 					<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
 				</subreportParameter>
@@ -62,7 +62,7 @@
 				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "romaneio_page_header.jasper"]]></subreportExpression>
 			</subreport>
 			<frame>
-				<reportElement uuid="a98d7dae-4860-4faf-9432-741c6685611f" x="0" y="117" width="802" height="20"/>
+				<reportElement x="0" y="117" width="802" height="20"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -71,22 +71,22 @@
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textField>
-					<reportElement uuid="0e8f35bf-23df-4682-9373-d7e3f8348090" x="0" y="0" width="150" height="20"/>
+					<reportElement x="0" y="0" width="150" height="20"/>
 					<textElement verticalAlignment="Middle" markup="html"/>
 					<textFieldExpression><![CDATA["<b>Código:</b> " + $F{codigoProduto}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement uuid="0e8f35bf-23df-4682-9373-d7e3f8348090" x="151" y="0" width="400" height="20"/>
+					<reportElement x="151" y="0" width="400" height="20"/>
 					<textElement verticalAlignment="Middle" markup="html"/>
 					<textFieldExpression><![CDATA["<b>Produto:</b> " + $F{nomeProduto}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement uuid="0e8f35bf-23df-4682-9373-d7e3f8348090" x="551" y="0" width="120" height="20"/>
+					<reportElement x="551" y="0" width="120" height="20"/>
 					<textElement verticalAlignment="Middle" markup="html"/>
 					<textFieldExpression><![CDATA["<b>Edição:</b> " + $F{edicao}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement uuid="0e8f35bf-23df-4682-9373-d7e3f8348090" x="651" y="0" width="150" height="20"/>
+					<reportElement x="651" y="0" width="150" height="20"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle" markup="html"/>
 					<textFieldExpression><![CDATA["<b>Pacote:</b> " + $F{pacotePadrao}]]></textFieldExpression>
 				</textField>
@@ -96,7 +96,7 @@
 	<detail>
 		<band height="415" splitType="Stretch">
 			<subreport>
-				<reportElement uuid="30580157-3919-45bb-8efc-7adab733b285" x="0" y="0" width="802" height="415"/>
+				<reportElement x="0" y="0" width="802" height="415"/>
 				<subreportParameter name="SUBREPORT_DIR">
 					<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
 				</subreportParameter>
