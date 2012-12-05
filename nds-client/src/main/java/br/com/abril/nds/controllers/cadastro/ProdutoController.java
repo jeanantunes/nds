@@ -94,6 +94,8 @@ public class ProdutoController {
 	
 	private static List<ItemDTO<Long,String>> listaDescontoLogistica =  new ArrayList<ItemDTO<Long,String>>();
 	
+	private static final String PRODUTO_MANUAL = "MANUAL";
+	
 	public ProdutoController(Result result) {
 		this.result = result;
 	}
@@ -304,10 +306,24 @@ public class ProdutoController {
 		listaCombos.add(parseComboFornecedor(this.fornecedorService.obterFornecedores()));
 
 		listaCombos.add(parseComboEditor(this.editorService.obterEditores()));
-		
-		listaCombos.add(getComboDescontoLogistica());
-		
+	
 		this.result.use(Results.json()).from(listaCombos, "result").recursive().serialize();
+	}
+	
+	@Post
+	public void carregarDadosDesconto (String origemProduto){
+		
+		if(PRODUTO_MANUAL.equals(origemProduto)){
+			
+			List<BaseComboVO> listaBaseComboVO = new ArrayList<BaseComboVO>();
+			listaBaseComboVO.add(new BaseComboVO(null, "Produto Manual"));
+			
+			this.result.use(Results.json()).from(listaBaseComboVO, "result").recursive().serialize();
+		}
+		else{
+			
+			this.result.use(Results.json()).from(getComboDescontoLogistica(), "result").recursive().serialize();
+		}
 	}
 	
 	/**
@@ -634,5 +650,7 @@ public class ProdutoController {
 	private BaseComboVO getDefaultBaseComboVO() {
 		return new BaseComboVO(0L, "");
 	}
+	
+	
 	
 }

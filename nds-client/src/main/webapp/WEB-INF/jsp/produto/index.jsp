@@ -99,7 +99,7 @@
 						</select>
 					</td>
 					<td><strong>% Desconto:</strong></td>
-					<td><input type="text" name="percentualDesconto" id="percentualDesconto" style="width:80px;" readonly="readonly" disabled="disabled" /></td>
+					<td><input type="text" name="percentualDesconto" id="percentualDesconto" style="width:80px;" readonly="readonly" disabled="disabled" maxlength="4" /></td>
 				</tr>
 			</table>
 		</fieldset>
