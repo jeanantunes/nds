@@ -354,10 +354,14 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		hql.append("   FROM ProdutoEdicao pe ");
 		hql.append("        JOIN pe.produto pr ");
 		hql.append("        JOIN pr.fornecedores fr JOIN fr.juridica jr ");
-		hql.append("        JOIN pe.lancamentos ln ");
+		hql.append("        LEFT JOIN pe.lancamentos ln ");
 		hql.append("  WHERE pe.ativo = :indAtivo ");
 		
-		hql.append(" AND ln.id = (select max(ln.id) from ln where ln.produtoEdicao.id = pe.id) ");
+		
+		/**
+		 * Comentado por Eduardo "PunkRock" Castro em 05/12 devido a existencia de dados na tabela de ProdutoEdicao e não eh apresentado no grid
+		 */
+		//hql.append(" AND ln.id = (select max(ln.id) from ln where ln.produtoEdicao.id = pe.id) ");
 		
 		// Filtros opcionais da pesquisa:
 		if (dataLancamento != null) {
