@@ -1,6 +1,5 @@
 package br.com.abril.nds.service;
 
-import java.io.IOException;
 
 /**
  * Interface que define serviços referentes 
@@ -12,10 +11,8 @@ public interface GeradorArquivoCobrancaBancoService {
 	
 
 	/**
-	 * Prepara os dados e gera o arquivo de cobrança para o banco. 
-	 * 
-	 * @throws IOException
+	 * Prepara os dados e gera o arquivo de cobrança para o banco.
 	 */
-	void prepararGerarArquivoCobrancaCnab() throws IOException;
+	void prepararGerarArquivoCobrancaCnab();
 	
 }

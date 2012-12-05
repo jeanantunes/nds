@@ -765,8 +765,6 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 				lancamentoSuplementar.setProdutoEdicao(produtoEdicao);
 				lancamentoSuplementar.setFechamentoDiarioConsolidadoSuplementar(consolidadoSuplementar);
 				lancamentoSuplementar.setQuantidadeContabilizada(item.getQuantidadeContabil());
-				lancamentoSuplementar.setQuantidadeDiferenca(item.getDiferenca());
-				lancamentoSuplementar.setQuantidadeFisico(item.getQuantidadeFisico());
 				
 				fechamentoDiarioLancamentoSuplementarRepository.adicionar(lancamentoSuplementar);
 			}
@@ -995,6 +993,17 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		}
 	}
 
+	@Override
+	@Transactional
+	public void setLockBancoDeDados(boolean lockBancoDeDados) {
+		Distribuidor distribuidor = this.distribuidorRepository.obter();
+		
+		distribuidor.setFechamentoDiarioEmAndamento(lockBancoDeDados);
+		
+		distribuidorRepository.alterar(distribuidor);
+		
+	}
+	
     /**
      * {@inheritDoc}
      */

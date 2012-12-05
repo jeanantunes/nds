@@ -43,6 +43,18 @@ public interface PdvRepository extends Repository<PDV, Long> {
 	 */
 	public PDV obterPDVPrincipal(Long idCota);
 	
+	/**
+	 * Obtém somente os pdvs principais de acordo com os parametros.
+	 * 
+	 * @param numCota
+	 * @param municipio
+	 * @param uf
+	 * @param bairro
+	 * @param cep
+	 * @return
+	 */
+	public List<PDV> obterPDVsPrincipaisPor(Integer numCota, String municipio, String uf, String bairro, String cep);
+	
     /**
      * Recupera os PDV's do histórico de titularidade da cota
      * 

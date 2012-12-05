@@ -20,6 +20,10 @@ public interface ResumoSuplementarFecharDiaRepository {
 
 	List<VendaFechamentoDiaDTO> obterVendasSuplementar(Date dataOperacao);
 
+	/*
+	 * Obs: Não é necessário passar a data da operação nesse metodo pois a pesquisa é feita
+	 * em uma tabela que só tem os dados atuais.
+	 */
 	List<SuplementarFecharDiaDTO> obterDadosGridSuplementar();
 
 }
