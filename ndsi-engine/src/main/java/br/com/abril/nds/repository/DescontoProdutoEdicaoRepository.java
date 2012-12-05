@@ -126,12 +126,11 @@ public interface DescontoProdutoEdicaoRepository extends Repository<DescontoProd
      * cota, edição do produto e fornecedor 
      * 
      * 
-     * @param idCota identificador da cota para recuperação do desconto
-     * @param idProdutoEdicao identificador do produto edição para recuperação do desconto
-     * @param idFornecedor identificador do fornecedor para recuperação do desconto
-     * @return peercentual de desconto a ser utilizado
+     * @param cota identificador da cota para recuperação do desconto
+	 * @param produtoEdicao identificador do produto edição para recuperação do desconto
+	 * @return peercentual de desconto a ser utilizado
      */
-	BigDecimal obterDescontoPorCotaProdutoEdicao(Long idCota, Long idProdutoEdicao, Long idFornecedor);
+	BigDecimal obterDescontoPorCotaProdutoEdicao(Cota cota, ProdutoEdicao produtoEdicao);
 	
 	/**
 	 * Salva uma lista de descontosProdutoEdicao

@@ -1,6 +1,5 @@
 package br.com.abril.nds.repository;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Set;
 
@@ -121,19 +120,7 @@ public interface DescontoProdutoEdicaoExcessaoRepository extends Repository<Desc
 	 * @return {@link Set} {@link DescontoCotaProdutoExcessao}
 	 */
 	Set<DescontoCotaProdutoExcessao> obterDescontoProdutoEdicaoExcessao(TipoDesconto tipoDesconto, Fornecedor fornecedor, Cota cota,ProdutoEdicao produtoEdicao);
-	
-	/**
-     * Recupera o percentual de desconto a ser aplicado para o produto edição de acordo com a
-     * cota, edição do produto e fornecedor 
-     * 
-     * 
-     * @param idCota identificador da cota para recuperação do desconto
-     * @param idProdutoEdicao identificador do produto edição para recuperação do desconto
-     * @param idFornecedor identificador do fornecedor para recuperação do desconto
-     * @return peercentual de desconto a ser utilizado
-     */
-	BigDecimal obterDescontoPorCotaProdutoEdicao(Long idCota, Long idProdutoEdicao, Long idFornecedor);
-	
+		
 	/**
 	 * Salva uma lista de descontosProdutoEdicao
 	 * @param lista

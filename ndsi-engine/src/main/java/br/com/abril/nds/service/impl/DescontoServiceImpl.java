@@ -388,30 +388,34 @@ public class DescontoServiceImpl implements DescontoService {
 					
 					Cota cota = cotaRepository.buscarPorId(cotaId.longValue());
 					
-					DescontoCotaProdutoExcessao dpe = descontoProdutoEdicaoExcessaoRepository.buscarDescontoCotaProdutoExcessao(
+					DescontoCotaProdutoExcessao dcpe = descontoProdutoEdicaoExcessaoRepository.buscarDescontoCotaProdutoExcessao(
 							TipoDesconto.PRODUTO, null, cota, produto, null);
-					if(dpe != null) {
-						dpe.setDesconto(desconto);
-						dpe.setDescontoPredominante(descontoDTO.isDescontoPredominante());
+					if(dcpe != null) {
+						dcpe.setDesconto(desconto);
+						dcpe.setDescontoPredominante(descontoDTO.isDescontoPredominante());
 					} else {
-						dpe = new DescontoCotaProdutoExcessao();
-						dpe.setDistribuidor(distribuidor);
-						dpe.setFornecedor(null);
-						dpe.setCota(cota);
-						dpe.setProduto(produto);
-						dpe.setDesconto(desconto);
-						dpe.setDescontoPredominante(descontoDTO.isDescontoPredominante());
+						dcpe = new DescontoCotaProdutoExcessao();
+						dcpe.setDistribuidor(distribuidor);
+						dcpe.setFornecedor(produto.getFornecedor());
+						dcpe.setCota(cota);
+						dcpe.setUsuario(usuario);
+						dcpe.setProduto(produto);
+						dcpe.setDesconto(desconto);
+						dcpe.setDescontoPredominante(descontoDTO.isDescontoPredominante());
 					}
 
-					dpe.setTipoDesconto(TipoDesconto.PRODUTO);
-					descontoProdutoEdicaoExcessaoRepository.merge(dpe);	
+					dcpe.setTipoDesconto(TipoDesconto.PRODUTO);
+					descontoProdutoEdicaoExcessaoRepository.merge(dcpe);	
 					
 					HistoricoDescontoCotaProdutoExcessao hdcp = new HistoricoDescontoCotaProdutoExcessao();
 					hdcp.setDataAlteracao(dataAtual);
 					hdcp.setDesconto(desconto);
 					hdcp.setDistribuidor(distribuidor);
-					hdcp.setFornecedor(null);
+					hdcp.setFornecedor(produto.getFornecedor());
+					hdcp.setCota(cota);
 					hdcp.setUsuario(usuario);
+					hdcp.setValor(desconto.getValor());
+					hdcp.setProduto(produto);
 					
 					historicoDescontoCotaProdutoRepository.merge(hdcp);
 				}
@@ -459,12 +463,13 @@ public class DescontoServiceImpl implements DescontoService {
 						dpe.setDescontoPredominante(descontoDTO.isDescontoPredominante());
 					} else {
 						dpe = new DescontoCotaProdutoExcessao();
-						dpe.setFornecedor(null);
 						dpe.setDistribuidor(distribuidor);
 						dpe.setUsuario(usuario);
 						dpe.setCota(cota);
-						if(produtoEdicao != null)
+						if(produtoEdicao != null) {
 							dpe.setProduto(produtoEdicao.getProduto());
+							dpe.setFornecedor(produtoEdicao.getProduto().getFornecedor());
+						}
 						dpe.setProdutoEdicao(produtoEdicao);
 						dpe.setDesconto(desconto);
 						dpe.setDescontoPredominante(descontoDTO.isDescontoPredominante());
@@ -476,8 +481,9 @@ public class DescontoServiceImpl implements DescontoService {
 					hdpe = new HistoricoDescontoProdutoEdicao();
 					hdpe.setDataAlteracao(dataAtual);
 					hdpe.setDesconto(desconto);
-					if(produtoEdicao != null)
+					if(produtoEdicao != null) {
 						hdpe.setProduto(produtoEdicao.getProduto());
+					}
 					hdpe.setProdutoEdicao(produtoEdicao);
 					hdpe.setDistribuidor(distribuidor);
 					hdpe.setFornecedor(produtoEdicao.getProduto().getFornecedor());
@@ -1072,9 +1078,9 @@ public class DescontoServiceImpl implements DescontoService {
         if (produtoEdicao.getProduto().isPublicacao()) {
             //Neste caso, o produto possui apenas um fornecedor
             //Recuperar o desconto utilizando a cota, o produto edição e o fornecedor
-            Fornecedor fornecedor = produtoEdicao.getProduto().getFornecedor();
-            // TODO: Sergio, favor setar o valor de desconto correto neste ponto após a funcionalidade ficar disponível
-            percentual = new BigDecimal(10);//descontoProdutoEdicaoRepository.obterDescontoPorCotaProdutoEdicao(cota.getId(), produtoEdicao.getId(), fornecedor.getId());
+
+        	// TODO: Sergio, favor setar o valor de desconto correto neste ponto após a funcionalidade ficar disponível
+            percentual = descontoProdutoEdicaoRepository.obterDescontoPorCotaProdutoEdicao(cota, produtoEdicao);
         } else {
             //Produto possivelmente com mais de um fornecedor, seguindo
             // a instrução passada, utilizar o desconto do produto

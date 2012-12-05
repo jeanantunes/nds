@@ -41,18 +41,18 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		
 		hql.append(" SELECT produto.codigo as codigoProduto, ")
 		   .append("        produto.nome as nomeProduto, ")	
-		   .append("        cota.id as idProdutoEdicao, ")
-		   .append("        pe.id as idProdutoEdicao, ")	
+		   .append("        cota.id as cotaId, ")
+		   .append("        pe.id as produtoEdicaoId, ")	
 		   .append("        pe.numeroEdicao as numeroEdicao, ")
 		   .append("        pessoa.razaoSocial as nomeFornecedor, ")
 		   .append("        CASE WHEN movimentoEstoqueCotaFuro is not null THEN movimento.dataCriacao ")
 		   .append("			 ELSE (CASE WHEN tipoMovimento = :tipoMovimentoCotaFuro THEN movimento.dataCriacao ELSE lancamento.dataLancamentoDistribuidor END) END as dataLancamento, ")
 		   .append("        pe.precoVenda as precoCapa, ")
-		   .append("        ("+ this.getHQLDesconto() +") as desconto, ")
-		   .append("        (pe.precoVenda - (pe.precoVenda * ("+ this.getHQLDesconto() +") / 100)) as precoDesconto, ")
+		   .append("        movimento.valoresAplicados.valorDesconto as desconto, ")
+		   .append("        (pe.precoVenda - (pe.precoVenda * (movimento.valoresAplicados.valorDesconto) / 100)) as precoDesconto, ")
 		   .append("        CASE WHEN movimento.tipoMovimento.operacaoEstoque  = :tipoOperacaoEntrada THEN (movimento.qtde) ELSE (movimento.qtde*-1) END as reparte, ")		
 		   .append("        CASE WHEN movimento.tipoMovimento.operacaoEstoque  = :tipoOperacaoEntrada THEN (pe.precoVenda * movimento.qtde) ELSE (pe.precoVenda * movimento.qtde*-1) END as total, ")
-		   .append("        CASE WHEN movimento.tipoMovimento.operacaoEstoque  = :tipoOperacaoEntrada THEN ((pe.precoVenda - (pe.precoVenda * ("+ this.getHQLDesconto() +") / 100)) * movimento.qtde) ELSE ((pe.precoVenda - (pe.precoVenda * ("+ this.getHQLDesconto() +") / 100)) * movimento.qtde*-1) END as totalDesconto ");
+		   .append("        CASE WHEN movimento.tipoMovimento.operacaoEstoque  = :tipoOperacaoEntrada THEN ((pe.precoVenda - (pe.precoVenda * (movimento.valoresAplicados.valorDesconto) / 100)) * movimento.qtde) ELSE ((pe.precoVenda - (pe.precoVenda * (movimento.valoresAplicados.valorDesconto) / 100)) * movimento.qtde*-1) END as totalDesconto ");
 		
 		hql.append(getHQLFromEWhereConsignadoCota(filtro));
 		
@@ -96,7 +96,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		   .append("            CASE WHEN tipoMovimento.grupoMovimentoEstoque IN (:tipoMovimentoEntrada) THEN 1 ")
 		   .append("                 WHEN tipoMovimento.grupoMovimentoEstoque IN (:tipoMovimentoSaida) THEN -1 ")
 		   .append("                 ELSE 0 END) as total, ")
-		   .append("        SUM((pe.precoVenda - (pe.precoVenda * ("+ this.getHQLDesconto() +") / 100)) * movimento.qtde *  ")
+		   .append("        SUM((pe.precoVenda - (pe.precoVenda * (movimento.valoresAplicados.valorDesconto) / 100)) * movimento.qtde *  ")
 		   .append("            CASE WHEN tipoMovimento.grupoMovimentoEstoque IN (:tipoMovimentoEntrada) THEN 1 ")
 		   .append("                 WHEN tipoMovimento.grupoMovimentoEstoque IN (:tipoMovimentoSaida) THEN -1 ")
 		   .append("                 ELSE 0 END)  as totalDesconto, ")
@@ -172,7 +172,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" SELECT SUM(( (pe.precoVenda - (pe.precoVenda * ("+ this.getHQLDesconto() +") / 100)) * movimento.qtde ");
+		hql.append(" SELECT SUM(( (pe.precoVenda - (pe.precoVenda * (movimento.valoresAplicados.valorDesconto) / 100)) * movimento.qtde ");
 
 		hql.append("            * CASE WHEN tipoMovimento.operacaoEstoque = (:tipoOperacaoEntrada) THEN 1 ")
 		   .append("                   WHEN tipoMovimento.operacaoEstoque = (:tipoOperacaoSaida) THEN -1 ")
@@ -204,7 +204,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		 
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append("SELECT SUM(( (pe.precoVenda - (pe.precoVenda * ("+ this.getHQLDesconto() +") / 100)) * movimento.qtde ");
+		hql.append("SELECT SUM(( (pe.precoVenda - (pe.precoVenda * (movimento.valoresAplicados.valorDesconto) / 100)) * movimento.qtde ");
 
 		if (filtro.getIdCota() == null) {
 			hql.append("            * CASE WHEN tipoMovimento.grupoMovimentoEstoque IN (:tipoMovimentoEntrada) THEN 1 ")
@@ -377,18 +377,5 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		}
 	
 	}
-	
-	private String getHQLDesconto(){
 		
-		StringBuilder hql = new StringBuilder();
-
-		hql.append(" COALESCE((SELECT view.desconto")
-		   .append(" FROM ViewDesconto view ")
-		   .append(" WHERE view.cotaId = cota.id ")
-		   .append("   AND view.produtoEdicaoId = pe.id ")
-		   .append("   AND view.fornecedorId = fornecedor.id),0) ");
-		
-		return hql.toString();
-	}
-	
 }

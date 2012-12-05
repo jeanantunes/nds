@@ -14,26 +14,51 @@ public class ValoresAplicados implements Serializable {
 	 */
 	private static final long serialVersionUID = 1373107779645109174L;
 
-	public ValoresAplicados(BigDecimal valor, BigDecimal desconto) {
-		this.valor = valor;
-		this.desconto = desconto;
+	public ValoresAplicados() {
+		super();
 	}
 	
-	@Column(name = "VALOR_APLICADO")
-	private BigDecimal valor;
+	public ValoresAplicados(BigDecimal precoVenda, BigDecimal precoComDesconto, BigDecimal valorDesconto) {
+		this.precoVenda = precoVenda;
+		this.precoComDesconto = precoComDesconto;
+		this.valorDesconto = valorDesconto;
+	}
 	
-	@Column(name = "DESCONTO")
-	private BigDecimal desconto;
-
+	@Column(name = "PRECO_VENDA")
+	private BigDecimal precoVenda;
+	
+	@Column(name = "PRECO_COM_DESCONTO")
+	private BigDecimal precoComDesconto;
+	
+	@Column(name = "VALOR_DESCONTO")
+	private BigDecimal valorDesconto;
+	
+	
 	/**
 	 * Getters e Setters 
 	 */
-	public BigDecimal getValor() {
-		return valor;
+	public BigDecimal getPrecoVenda() {
+		return precoVenda;
 	}
 
-	public BigDecimal getDesconto() {
-		return desconto;
+	public void setPrecoVenda(BigDecimal precoVenda) {
+		this.precoVenda = precoVenda;
 	}
-	
+
+	public BigDecimal getPrecoComDesconto() {
+		return precoComDesconto;
+	}
+
+	public void setPrecoComDesconto(BigDecimal precoComDesconto) {
+		this.precoComDesconto = precoComDesconto;
+	}
+
+	public BigDecimal getValorDesconto() {
+		return valorDesconto;
+	}
+
+	public void setValorDesconto(BigDecimal valorDesconto) {
+		this.valorDesconto = valorDesconto;
+	}
+
 }
