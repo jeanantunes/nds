@@ -29,6 +29,8 @@ import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.repository.ResumoEncalheFecharDiaRepository;
+import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.vo.PaginacaoVO;
 
 public class ResumoEncalheFecharDiaRepositoryImplTest extends AbstractDataUtilRepositoryImplTest {
 
@@ -101,7 +103,7 @@ public class ResumoEncalheFecharDiaRepositoryImplTest extends AbstractDataUtilRe
     
     @Test
     public void testObterDadosGridEncalhe() {
-        List<EncalheFecharDiaDTO> resultado = repository.obterDadosGridEncalhe(distribuidor.getDataOperacao());
+        List<EncalheFecharDiaDTO> resultado = repository.obterDadosGridEncalhe(distribuidor.getDataOperacao(), null);
         Assert.assertNotNull(resultado);
         Assert.assertEquals(3, resultado.size());
         
@@ -111,11 +113,12 @@ public class ResumoEncalheFecharDiaRepositoryImplTest extends AbstractDataUtilRe
         Assert.assertEquals(produtoVeja.getNome(), encalheVeja1.getNomeProduto());
         Assert.assertEquals(produtoEdicaoVeja1.getNumeroEdicao(), encalheVeja1.getNumeroEdicao());
         Assert.assertEquals(produtoEdicaoVeja1.getPrecoVenda().setScale(2), encalheVeja1.getPrecoVenda());
-        Assert.assertEquals(BigInteger.valueOf(63), encalheVeja1.getQtde());
-        Assert.assertEquals(fechamentoVeja1.getQuantidade(), encalheVeja1.getQtdeFisico());
+        Assert.assertEquals(BigInteger.valueOf(63), encalheVeja1.getQtdeLogico());
+        Assert.assertEquals(BigInteger.valueOf(fechamentoVeja1.getQuantidade()), encalheVeja1.getQtdeFisico());
         BigInteger qtdeVendaEncalheVeja = vendaEncalheVeja1Manoel.getQntProduto().add(vendaEncalheVeja1Maria.getQntProduto());
         Assert.assertEquals(qtdeVendaEncalheVeja, encalheVeja1.getQtdeVendaEncalhe());
-        Assert.assertNull(encalheVeja1.getQtdeLogicoJuramentado());
+        Assert.assertEquals(BigInteger.ZERO, encalheVeja1.getQtdeLogicoJuramentado());
+        Assert.assertEquals(BigInteger.ZERO, encalheVeja1.getQtdeDiferenca());
         
         EncalheFecharDiaDTO encalheQuatroRodas1 = resultado.get(1);
         Assert.assertNotNull(encalheQuatroRodas1);
@@ -123,10 +126,11 @@ public class ResumoEncalheFecharDiaRepositoryImplTest extends AbstractDataUtilRe
         Assert.assertEquals(produtoQuatroRodas.getNome(), encalheQuatroRodas1.getNomeProduto());
         Assert.assertEquals(produtoEdicaoQuatroRodas1.getNumeroEdicao(), encalheQuatroRodas1.getNumeroEdicao());
         Assert.assertEquals(produtoEdicaoQuatroRodas1.getPrecoVenda().setScale(2), encalheQuatroRodas1.getPrecoVenda());
-        Assert.assertEquals(BigInteger.valueOf(36), encalheQuatroRodas1.getQtde());
-        Assert.assertEquals(fechamentoQuatroRodas1.getQuantidade(), encalheQuatroRodas1.getQtdeFisico());
-        Assert.assertNull(encalheQuatroRodas1.getQtdeVendaEncalhe());
+        Assert.assertEquals(BigInteger.valueOf(36), encalheQuatroRodas1.getQtdeLogico());
+        Assert.assertEquals(BigInteger.valueOf(fechamentoQuatroRodas1.getQuantidade()), encalheQuatroRodas1.getQtdeFisico());
+        Assert.assertEquals(BigInteger.ZERO, encalheQuatroRodas1.getQtdeVendaEncalhe());
         Assert.assertEquals(BigInteger.valueOf(19), encalheQuatroRodas1.getQtdeLogicoJuramentado());
+        Assert.assertEquals(BigInteger.ZERO, encalheQuatroRodas1.getQtdeDiferenca());
         
         EncalheFecharDiaDTO encalheSuper1 = resultado.get(2);
         Assert.assertNotNull(encalheSuper1);
@@ -134,11 +138,59 @@ public class ResumoEncalheFecharDiaRepositoryImplTest extends AbstractDataUtilRe
         Assert.assertEquals(produtoSuper.getNome(), encalheSuper1.getNomeProduto());
         Assert.assertEquals(produtoEdicaoSuper1.getNumeroEdicao(), encalheSuper1.getNumeroEdicao());
         Assert.assertEquals(produtoEdicaoSuper1.getPrecoVenda().setScale(2), encalheSuper1.getPrecoVenda());
-        Assert.assertEquals(BigInteger.valueOf(45), encalheSuper1.getQtde());
-        Assert.assertEquals(fechamentoSuper1.getQuantidade(), encalheSuper1.getQtdeFisico());
+        Assert.assertEquals(BigInteger.valueOf(45), encalheSuper1.getQtdeLogico());
+        Assert.assertEquals(BigInteger.valueOf(fechamentoSuper1.getQuantidade()), encalheSuper1.getQtdeFisico());
         Assert.assertEquals(vendaEncalheSuper1Manoel.getQntProduto(), encalheSuper1.getQtdeVendaEncalhe());
-        Assert.assertNull(encalheSuper1.getQtdeLogicoJuramentado());
+        Assert.assertEquals(BigInteger.valueOf(17), encalheSuper1.getQtdeLogicoJuramentado());
+        Assert.assertEquals(BigInteger.ZERO, encalheSuper1.getQtdeDiferenca());
     }
+    
+    @Test
+    public void testObterDadosGridEncalhePaginado() {
+        PaginacaoVO paginacao = new PaginacaoVO(1, 2, null);
+        List<EncalheFecharDiaDTO> resultado = repository.obterDadosGridEncalhe(distribuidor.getDataOperacao(), paginacao);
+        Assert.assertNotNull(resultado);
+        Assert.assertEquals(2, resultado.size());
+        
+        EncalheFecharDiaDTO encalheVeja1 = resultado.get(0);
+        Assert.assertNotNull(encalheVeja1);
+        Assert.assertEquals(produtoVeja.getCodigo(), encalheVeja1.getCodigo());
+        Assert.assertEquals(produtoVeja.getNome(), encalheVeja1.getNomeProduto());
+        Assert.assertEquals(produtoEdicaoVeja1.getNumeroEdicao(), encalheVeja1.getNumeroEdicao());
+        Assert.assertEquals(produtoEdicaoVeja1.getPrecoVenda().setScale(2), encalheVeja1.getPrecoVenda());
+        
+        EncalheFecharDiaDTO encalheQuatroRodas1 = resultado.get(1);
+        Assert.assertNotNull(encalheQuatroRodas1);
+        Assert.assertEquals(produtoQuatroRodas.getCodigo(), encalheQuatroRodas1.getCodigo());
+        Assert.assertEquals(produtoQuatroRodas.getNome(), encalheQuatroRodas1.getNomeProduto());
+        Assert.assertEquals(produtoEdicaoQuatroRodas1.getNumeroEdicao(), encalheQuatroRodas1.getNumeroEdicao());
+        Assert.assertEquals(produtoEdicaoQuatroRodas1.getPrecoVenda().setScale(2), encalheQuatroRodas1.getPrecoVenda());
+        
+        paginacao = new PaginacaoVO(2, 2, null);
+        resultado = repository.obterDadosGridEncalhe(distribuidor.getDataOperacao(), paginacao);
+        Assert.assertNotNull(resultado);
+        Assert.assertEquals(1, resultado.size());
+        
+        EncalheFecharDiaDTO encalheSuper1 = resultado.get(0);
+        Assert.assertNotNull(encalheSuper1);
+        Assert.assertEquals(produtoSuper.getCodigo(), encalheSuper1.getCodigo());
+        Assert.assertEquals(produtoSuper.getNome(), encalheSuper1.getNomeProduto());
+        Assert.assertEquals(produtoEdicaoSuper1.getNumeroEdicao(), encalheSuper1.getNumeroEdicao());
+        Assert.assertEquals(produtoEdicaoSuper1.getPrecoVenda().setScale(2), encalheSuper1.getPrecoVenda());
+    }
+    
+    @Test
+    public void testContarProdutoEdicaoEncalhe() {
+        Long resultado = repository.contarProdutoEdicaoEncalhe(distribuidor.getDataOperacao());
+        Assert.assertEquals(Long.valueOf(3), resultado);
+    }
+    
+    @Test
+    public void testContarProdutoEdicaoEncalheZero() {
+        Long resultado = repository.contarProdutoEdicaoEncalhe(DateUtil.adicionarDias(distribuidor.getDataOperacao(), -1));
+        Assert.assertEquals(Long.valueOf(0), resultado);
+    }
+    
     
     private Date balancearRecolhimento() {
         lancamentoVeja1.setStatus(StatusLancamento.BALANCEADO_RECOLHIMENTO);
@@ -371,6 +423,7 @@ public class ResumoEncalheFecharDiaRepositoryImplTest extends AbstractDataUtilRe
                 ecMariaSuper1.getQtdeEfetiva().subtract(BigInteger.valueOf(3)),
                 produtoEdicaoSuper1);
         ceMariaSuper1.setFechado(true);
+        confMariaSuper1.setJuramentada(true);
         save(ctrlConfMaria, confMariaSuper1, ceMariaSuper1);
         
         epcMariaSuper1.setQtdeDevolvida(BigInteger.valueOf(3));
@@ -434,15 +487,15 @@ public class ResumoEncalheFecharDiaRepositoryImplTest extends AbstractDataUtilRe
 
     private void fechamentoEncalhe() {
         fechamentoVeja1 = new FechamentoEncalhe(produtoEdicaoVeja1, distribuidor.getDataOperacao());
-        fechamentoVeja1.setQuantidade(Long.valueOf(27));
+        fechamentoVeja1.setQuantidade(Long.valueOf(56));
         save(fechamentoVeja1);
         
         fechamentoQuatroRodas1 = new FechamentoEncalhe(produtoEdicaoQuatroRodas1, distribuidor.getDataOperacao());
-        fechamentoQuatroRodas1.setQuantidade(Long.valueOf(6));
+        fechamentoQuatroRodas1.setQuantidade(Long.valueOf(17));
         save(fechamentoQuatroRodas1);
         
         fechamentoSuper1 = new FechamentoEncalhe(produtoEdicaoSuper1, distribuidor.getDataOperacao());
-        fechamentoSuper1.setQuantidade(Long.valueOf(5));
+        fechamentoSuper1.setQuantidade(Long.valueOf(26));
         save(fechamentoSuper1);
     }
     

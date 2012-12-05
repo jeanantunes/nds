@@ -385,46 +385,58 @@ var fecharDiaController =  $.extend(true, {
 			colModel : [ {
 				display : 'Código',
 				name : 'codigo',
-				width : 80,
-				sortable : true,
+				width : 60,
+				sortable : false,
 				align : 'left'
 			}, {
 				display : 'Produto',
 				name : 'nomeProduto',
 				width : 200,
-				sortable : true,
+				sortable : false,
 				align : 'left'
 			}, {
 				display : 'Edição',
 				name : 'numeroEdicao',
-				width : 100,
-				sortable : true,
+				width : 40,
+				sortable : false,
 				align : 'left'
 			}, {
 				display : 'Preço Capa R$',
-				name : 'precoVenda',
-				width : 100,
-				sortable : true,
+				name : 'precoVendaFormatado',
+				width : 80,
+				sortable : false,
 				align : 'right'
 			}, {
-				display : 'Qtde',
-				name : 'qtdeFormatado',
-				width : 90,
-				sortable : true,
+				display : 'Lógico',
+				name : 'qtdeLogico',
+				width : 80,
+				sortable : false,
 				align : 'center'
 			}, {
-				display : 'Venda Encalhe',
-				name : 'vendaEncalheFormatado',
-				width : 100,
-				sortable : true,
+				display : 'Físico',
+				name : 'qtdeFisico',
+				width : 80,
+				sortable : false,
 				align : 'center'
 			}, {
-				display : 'Diferença',
-				name : 'difencaFormatado',
+				display : 'Lógico Juramentado',
+				name : 'qtdeLogicoJuramentado',
 				width : 70,
-				sortable : true,
+				sortable : false,
 				align : 'center'
-			}],
+			}, {
+                display : 'Venda Encalhe',
+                name : 'qtdeVendaEncalhe',
+                width : 70,
+                sortable : false,
+                align : 'center'
+            }, {
+                display : 'Diferenças',
+                name : 'qtdeDiferenca',
+                width : 60,
+                sortable : false,
+                align : 'center'
+            }],
 			sortname : "codigo",
 			sortorder : "asc",
 			usepager : true,
