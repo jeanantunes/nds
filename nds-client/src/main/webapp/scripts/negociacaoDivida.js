@@ -216,6 +216,11 @@ var negociacaoDividaController = $.extend(true, {
 	
 	popup_formaPgto : function() {
 		
+		if ($("#totalSelecionado", this.workspace).html() == "0,00") {
+			exibirMensagem("WARNING", ["Não foram selecionadas dívidas para negociação."], "")
+			return;
+		}
+		
 		$('span[name$="botoes"]').hide();
 		
 		$.postJSON(contextPath + '/financeiro/negociacaoDivida/buscarComissaoCota',
