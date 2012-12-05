@@ -1,12 +1,16 @@
 package br.com.abril.nds.client.vo;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.FormaComercializacao;
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.TributacaoFiscal;
+import br.com.abril.nds.util.CurrencyUtil;
 
 public class ProdutoCadastroVO implements Serializable {
 
@@ -57,6 +61,8 @@ public class ProdutoCadastroVO implements Serializable {
 	private String temaSecundario;
 	
 	private Origem origem;
+	
+	private String desconto;
 	
 	/**
 	 * 
@@ -415,6 +421,14 @@ public class ProdutoCadastroVO implements Serializable {
 	public void setOrigem(Origem origem) {
 		this.origem = origem;
 	}
+	
+	public String getDesconto() {
+		return desconto;
+	}
+
+	public void setDesconto(String desconto) {
+		this.desconto = desconto;
+	}
 
 	public static ProdutoCadastroVO parseProdutoToProdutoCadastroVO(Produto produto) {
 
@@ -452,7 +466,23 @@ public class ProdutoCadastroVO implements Serializable {
 			produto.getSegmentacao()!=null?(produto.getSegmentacao().getTemaSecundario()!=null?produto.getSegmentacao().getTemaSecundario().name():""):"",
 			produto.getOrigem());
 		
+		if(Origem.INTERFACE.equals(produto.getOrigem())){
+			
+			if(produto.getDescontoLogistica()!= null){
+
+				produtoCadastroVO.setDesconto(CurrencyUtil.formatarValor( produto.getDescontoLogistica().getPercentualDesconto()).replace(",","."));
+			}
+			else{
+				produtoCadastroVO.setDesconto(CurrencyUtil.formatarValor(produto.getDesconto()).replace(",","."));
+			}
+		}
+		else{
+			
+			if(produto.getDesconto()!= null){
+				produtoCadastroVO.setDesconto(CurrencyUtil.formatarValor(produto.getDesconto()).replace(",","."));
+			}
+		}
+		
 		return produtoCadastroVO;
 	}
-
 }
