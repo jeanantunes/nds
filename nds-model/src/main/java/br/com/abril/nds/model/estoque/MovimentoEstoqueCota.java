@@ -206,10 +206,6 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque implements C
 		this.estoqueProdutoCotaJuramentado = estoqueProdutoCotaJuramentado;
 	}
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> e1b3d978ef82f141da23f1eee27fbcfc5c64ad33
 	public ValoresAplicados getValoresAplicados() {
 		return valoresAplicados;
 	}
@@ -226,9 +222,5 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque implements C
 			MovimentoEstoqueCota movimentoEstoqueCotaFuro) {
 		this.movimentoEstoqueCotaFuro = movimentoEstoqueCotaFuro;
 	}
-	
-<<<<<<< HEAD
->>>>>>> DGBti/master
-=======
->>>>>>> e1b3d978ef82f141da23f1eee27fbcfc5c64ad33
+
 }
