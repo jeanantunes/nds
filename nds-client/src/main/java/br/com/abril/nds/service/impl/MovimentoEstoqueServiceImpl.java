@@ -110,7 +110,8 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 		
 		BigInteger total = BigInteger.ZERO;
 		
-		List<MovimentoEstoqueCota> listaMovimentoEstoqueCotas = lancamento.getMovimentoEstoqueCotas();
+		//List<MovimentoEstoqueCota> listaMovimentoEstoqueCotas = lancamento.getMovimentoEstoqueCotas();
+		List<MovimentoEstoqueCota> listaMovimentoEstoqueCotas = lancamentoRepository.buscarMovimentosEstoqueCotaParaFuro(lancamento, tipoMovimentoCota);
 		
 		MovimentoEstoqueCota movimento = null;
 		
@@ -130,6 +131,10 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 			movimentoEstoqueCotaRepository.adicionar(movimento);
 
 			total = total.add(movimento.getQtde());
+
+			// Seta o movimento do furo no movimento original
+			movimentoEstoqueCota.setMovimentoEstoqueCotaFuro(movimento);
+			movimentoEstoqueCotaRepository.alterar(movimentoEstoqueCota);
 			
 		}
 

@@ -89,6 +89,7 @@ import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.EnderecoCotaRepository;
 import br.com.abril.nds.repository.EnderecoPDVRepository;
+import br.com.abril.nds.repository.EnderecoRepository;
 import br.com.abril.nds.repository.EntregadorRepository;
 import br.com.abril.nds.repository.EstoqueProdutoCotaRepository;
 import br.com.abril.nds.repository.HistoricoNumeroCotaRepository;
@@ -139,6 +140,9 @@ public class CotaServiceImpl implements CotaService {
 		
 	@Autowired
 	private EnderecoCotaRepository enderecoCotaRepository;
+	
+	@Autowired
+	private EnderecoRepository enderecoRepository;
 	
 	@Autowired
 	private UsuarioRepository usuarioRepository;
@@ -261,8 +265,37 @@ public class CotaServiceImpl implements CotaService {
 		
 		return listaCotas.get(0);
 	}
-
+	
 	/**
+	 * @see br.com.abril.nds.service.CotaService#obterPorId(java.lang.Long)
+	 */
+	@Override
+	@Transactional
+	public Cota obterPorId(Long idCota) {
+
+		if (idCota == null) {
+
+			throw new ValidacaoException(TipoMensagem.ERROR, "Id da cota não pode ser nulo.");
+		}
+		
+		return this.cotaRepository.buscarPorId(idCota);
+	}
+	
+	/**
+	 * ENDERECO
+	 * 
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional
+	public EnderecoCota obterEnderecoPrincipal(long idCota) {
+
+		return this.cotaRepository.obterEnderecoPrincipal(idCota);
+	}
+	
+	/**
+	 * ENDERECO
+	 * 
 	 * @see br.com.abril.nds.service.CotaService#obterEnderecosPorIdCota(java.lang.Long)
 	 */
 	@Transactional(readOnly = true)
@@ -301,38 +334,27 @@ public class CotaServiceImpl implements CotaService {
 		return listRetorno;
 	}	
 	
-	
 	/**
-	 * @see br.com.abril.nds.service.CotaService#obterPorId(java.lang.Long)
-	 */
-	@Override
-	@Transactional
-	public Cota obterPorId(Long idCota) {
-
-		if (idCota == null) {
-
-			throw new ValidacaoException(TipoMensagem.ERROR, "Id da cota não pode ser nulo.");
-		}
-		
-		return this.cotaRepository.buscarPorId(idCota);
-	}
-
-	/**
+	 * ENDERECO
+	 * 
 	 * @see br.com.abril.nds.service.CotaService#processarEnderecos(java.util.Long, java.util.List, java.util.List)
 	 */
 	@Override
 	@Transactional
 	public void processarEnderecos(Long idCota,
 								   List<EnderecoAssociacaoDTO> listaEnderecoAssociacaoSalvar,
-								   List<EnderecoAssociacaoDTO> listaEnderecoAssociacaoRemover) {
+								   List<EnderecoAssociacaoDTO> listaEnderecoAssociacaoRemover
+								   ) {
 
 		if (idCota == null){
+			
 			throw new ValidacaoException(TipoMensagem.ERROR, "Cota é obrigatório.");
 		}
 		
 		Cota cota = this.cotaRepository.buscarPorId(idCota);
 		
 		if (cota == null){
+			
 			throw new ValidacaoException(TipoMensagem.ERROR, "Cota não encontrada.");
 		}
 		
@@ -347,9 +369,47 @@ public class CotaServiceImpl implements CotaService {
 		}
 	}
 	
-	private void salvarEnderecosCota(Cota cota, List<EnderecoAssociacaoDTO> listaEnderecoAssociacao) {
+	/**
+	 * ENDERECO
+	 * 
+	 * Retorna um Endereco à ser editado ou cadastrado
+	 * @param enderecoDTO
+	 * @param pessoa
+	 * @param novo
+	 * @return Endereco
+	 */
+	private Endereco obterEndereco(EnderecoDTO enderecoDTO, Pessoa pessoa, boolean novo){
+		
+		Endereco endereco = new Endereco();
+		
+		if (!novo){
+			
+			endereco = this.enderecoRepository.buscarPorId(enderecoDTO.getId());
+		}
 
-		validarEnderecoPrincipalPorCota(listaEnderecoAssociacao, cota);
+		endereco.setBairro(enderecoDTO.getBairro());
+		endereco.setCep(enderecoDTO.getCep());
+		endereco.setCodigoCidadeIBGE(enderecoDTO.getCodigoCidadeIBGE());
+		endereco.setCidade(enderecoDTO.getCidade());
+		endereco.setComplemento(enderecoDTO.getComplemento());
+		endereco.setTipoLogradouro(enderecoDTO.getTipoLogradouro());
+		endereco.setLogradouro(enderecoDTO.getLogradouro());
+		endereco.setNumero(enderecoDTO.getNumero());
+		endereco.setUf(enderecoDTO.getUf());
+		endereco.setCodigoUf(enderecoDTO.getCodigoUf());
+		endereco.setPessoa(pessoa);
+		
+	    return endereco;
+	}
+	
+	/**
+	 * ENDERECO
+	 * 
+	 * Persiste EnderecoCota e Endereco
+	 * @param cota
+	 * @param listaEnderecoAssociacao
+	 */
+	private void salvarEnderecosCota(Cota cota, List<EnderecoAssociacaoDTO> listaEnderecoAssociacao) {
 		
 		Pessoa pessoa = cota.getPessoa();
 		
@@ -359,34 +419,44 @@ public class CotaServiceImpl implements CotaService {
 			
 			this.enderecoService.validarEndereco(enderecoDTO, enderecoAssociacao.getTipoEndereco());
 			
+			
 			EnderecoCota enderecoCota = this.enderecoCotaRepository.buscarPorId(enderecoAssociacao.getId());
-
+			
+			Endereco endereco = null;
+			
+			boolean novoEnderecoCota = false;
+			
 			if (enderecoCota == null) {
 
+				novoEnderecoCota = true;
+				
 				enderecoCota = new EnderecoCota();
 
 				enderecoCota.setCota(cota);
 			}
-
-			Endereco endereco = new Endereco(
-                    enderecoDTO.getBairro(), enderecoDTO.getCep(),
-                    enderecoDTO.getCodigoCidadeIBGE(), enderecoDTO.getCidade(),
-                    enderecoDTO.getComplemento(),
-                    enderecoDTO.getTipoLogradouro(),
-                    enderecoDTO.getLogradouro(), enderecoDTO.getNumero(),
-                    enderecoDTO.getUf(), enderecoDTO.getCodigoUf(), pessoa);
-            endereco.setId(enderecoDTO.getId());
 			
+			
+			boolean novoEndereco = (novoEnderecoCota && !enderecoAssociacao.isEnderecoPessoa());
+			
+			endereco = this.obterEndereco(enderecoDTO, pessoa, novoEndereco);
+
             enderecoCota.setEndereco(endereco);
 
 			enderecoCota.setPrincipal(enderecoAssociacao.isEnderecoPrincipal());
 
 			enderecoCota.setTipoEndereco(enderecoAssociacao.getTipoEndereco());
-
+				
 			this.enderecoCotaRepository.merge(enderecoCota);
 		}
 	}
 
+	/**
+	 * ENDERECO
+	 * 
+	 * Remove lista de EnderecoCota
+	 * @param cota
+	 * @param listaEnderecoAssociacao
+	 */
 	private void removerEnderecosCota(Cota cota,
 									  List<EnderecoAssociacaoDTO> listaEnderecoAssociacao) {
 		
@@ -417,6 +487,14 @@ public class CotaServiceImpl implements CotaService {
 		}
 	}
 	
+	/**
+	 * TELEFONE
+	 * 
+	 * Obtém telefones da Cota
+	 * @param idCota
+	 * @param idsIgnorar
+	 * @return List<TelefoneAssociacaoDTO>
+	 */
 	@SuppressWarnings("unused")
 	@Transactional(readOnly = true)
 	@Override
@@ -453,6 +531,14 @@ public class CotaServiceImpl implements CotaService {
 		return listaTelAssoc;
 	}
 	
+	/**
+	 * TELEFONE
+	 * 
+	 * Processa Telefones para Alteracao e Remocao
+	 * @param idCota
+	 * @param listaTelefonesAdicionar
+	 * @param listaTelefonesRemover
+	 */
 	@Transactional
 	public void processarTelefones(Long idCota, 
 			List<TelefoneAssociacaoDTO> listaTelefonesAdicionar, 
@@ -486,6 +572,13 @@ public class CotaServiceImpl implements CotaService {
 		
 	}
 
+	/**
+	 * TELEFONE
+	 * 
+	 * Persiste Telefones
+	 * @param cota
+	 * @param listaTelefonesCota
+	 */
 	private void salvarTelefonesCota(Cota cota, List<TelefoneAssociacaoDTO> listaTelefonesCota) {
 		
 		Pessoa pessoa = cota.getPessoa();
@@ -518,6 +611,12 @@ public class CotaServiceImpl implements CotaService {
 		}
 	}
 
+	/**
+	 * TELEFONE
+	 * 
+	 * Remove Telefones
+	 * @param listaTelefonesCota
+	 */
 	private void removerTelefonesCota(Collection<Long> listaTelefonesCota) {
 		
 		if (listaTelefonesCota != null && !listaTelefonesCota.isEmpty()){
@@ -563,7 +662,6 @@ public class CotaServiceImpl implements CotaService {
 		
 		return cotasDTO;
 	}
-	
 	
 	@Override
 	@Transactional
@@ -741,18 +839,6 @@ public class CotaServiceImpl implements CotaService {
 		dto.setFimPeriodoCarencia(DateUtil.formatarDataPTBR(parametro.getFimPeriodoCarencia()));
 		
 		return dto;
-	}
-
-	@Override
-	@Transactional
-	public List<Fornecedor> obterFornecedoresCota(Long idCota) {
-		Cota cota = this.obterPorId(idCota);
-		Set<Fornecedor> fornecedores = cota.getFornecedores();
-		List<Fornecedor> listaFornecedores = new ArrayList<Fornecedor>();
-		for(Fornecedor itemFornecedor:fornecedores){
-			listaFornecedores.add(itemFornecedor);
-		}
-		return listaFornecedores;
 	}
 	
 	@Override
@@ -1726,16 +1812,6 @@ public class CotaServiceImpl implements CotaService {
 		return lista;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	@Transactional
-	public EnderecoCota obterEnderecoPrincipal(long idCota) {
-
-		return this.cotaRepository.obterEnderecoPrincipal(idCota);
-	}
-
 	/* (non-Javadoc)
 	 * @see br.com.abril.nds.service.CotaService#obterCotasEntre(br.com.abril.nds.util.Intervalo, br.com.abril.nds.util.Intervalo, br.com.abril.nds.model.cadastro.SituacaoCadastro)
 	 */
@@ -1985,68 +2061,16 @@ public class CotaServiceImpl implements CotaService {
 		return dto;
 	}
 	
-	/**
-	 * Valida se a lista de endereços pertencentes a uma cota, 
-	 * tem pelo menos um e somente um endereço principal
-	 * 
-	 * @param listaEnderecos lista de edereços para serem validados
-	 * @param cota cota relacionada com os endereços cadastrados
-	 */
-	private void validarEnderecoPrincipalPorCota(List<EnderecoAssociacaoDTO> listaEnderecos, Cota cota) {
-		
-		List<EnderecoAssociacaoDTO> enderecoAssociacaoValidacao = this.obterEnderecoAssociacaoDTOsCota(cota);
-		
-		enderecoAssociacaoValidacao.addAll(listaEnderecos);
-		
-		boolean isEnderecoPrincipal = false;
-		boolean hasEnderecoPrincipal = false;
-		
-		for (EnderecoAssociacaoDTO enderecoAssociacao : enderecoAssociacaoValidacao){
-			
-			if (isEnderecoPrincipal && enderecoAssociacao.isEnderecoPrincipal()){
-				
-				throw new ValidacaoException(TipoMensagem.WARNING, "Apenas um endereço principal é permitido.");
-			}
-			
-			if (enderecoAssociacao.isEnderecoPrincipal()){
-				isEnderecoPrincipal = enderecoAssociacao.isEnderecoPrincipal();
-				hasEnderecoPrincipal = isEnderecoPrincipal;
-			}
+	@Override
+	@Transactional
+	public List<Fornecedor> obterFornecedoresCota(Long idCota) {
+		Cota cota = this.obterPorId(idCota);
+		Set<Fornecedor> fornecedores = cota.getFornecedores();
+		List<Fornecedor> listaFornecedores = new ArrayList<Fornecedor>();
+		for(Fornecedor itemFornecedor:fornecedores){
+			listaFornecedores.add(itemFornecedor);
 		}
-		
-		if (!hasEnderecoPrincipal) {
-			throw new ValidacaoException(TipoMensagem.WARNING, "É necessario cadastrar pelo menos um endereço principal.");
-		}
-	}
-	
-	
-	/**
-	 * Obtém uma lista de DTO de EnderecoAssociacao dos endereços pertencentes a cota parametrizada.
-	 * 
-	 * @param cota
-	 * @return
-	 */
-	private List<EnderecoAssociacaoDTO> obterEnderecoAssociacaoDTOsCota(Cota cota) {
-		
-		Set<EnderecoCota> enderecosCadastrados = cota.getEnderecos();
-		
-		List<EnderecoAssociacaoDTO> enderecoAssociacaoCadastrado = new ArrayList<EnderecoAssociacaoDTO>();
-		
-		if(enderecosCadastrados != null) {
-		
-			for(EnderecoCota enderecoCota : enderecosCadastrados) {
-				
-				EnderecoAssociacaoDTO enderecoAssociacao = new EnderecoAssociacaoDTO();
-				
-				enderecoAssociacao.setEndereco(EnderecoDTO.fromEndereco(enderecoCota.getEndereco()));
-				enderecoAssociacao.setEnderecoPrincipal(enderecoCota.isPrincipal());
-				enderecoAssociacao.setTipoEndereco(enderecoCota.getTipoEndereco());
-				
-				enderecoAssociacaoCadastrado.add(enderecoAssociacao);
-			}
-		}
-		
-		return enderecoAssociacaoCadastrado;
+		return listaFornecedores;
 	}
 
 	/**

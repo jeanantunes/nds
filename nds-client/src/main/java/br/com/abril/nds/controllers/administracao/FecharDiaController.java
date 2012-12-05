@@ -28,7 +28,6 @@ import br.com.abril.nds.dto.ResumoEncalheFecharDiaDTO;
 import br.com.abril.nds.dto.ResumoFechamentoDiarioConsignadoDTO;
 import br.com.abril.nds.dto.ResumoFechamentoDiarioCotasDTO;
 import br.com.abril.nds.dto.ResumoFechamentoDiarioCotasDTO.TipoResumo;
-import br.com.abril.nds.dto.ResumoReparteFecharDiaDTO;
 import br.com.abril.nds.dto.ResumoSuplementarFecharDiaDTO;
 import br.com.abril.nds.dto.SuplementarFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoConfirmacaoDeExpedicaoFecharDiaDTO;
@@ -40,6 +39,7 @@ import br.com.abril.nds.dto.fechamentodiario.DividaDTO;
 import br.com.abril.nds.dto.fechamentodiario.FechamentoDiarioDTO;
 import br.com.abril.nds.dto.fechamentodiario.ResumoEstoqueDTO;
 import br.com.abril.nds.dto.fechamentodiario.SumarizacaoDividasDTO;
+import br.com.abril.nds.dto.fechamentodiario.SumarizacaoReparteDTO;
 import br.com.abril.nds.dto.fechamentodiario.TipoDivida;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
@@ -130,7 +130,11 @@ public class FecharDiaController {
 	@SuppressWarnings("static-access")
 	@Post
 	public void inicializarValidacoes(){		
+		
+		this.fecharDiaService.setLockBancoDeDados(true);
+		
 		FecharDiaDTO dto = new FecharDiaDTO();
+		
 		dto.setBaixaBancaria(this.fecharDiaService.existeCobrancaParaFecharDia(distribuidor.getDataOperacao()));
 		dto.setGeracaoDeCobranca(this.fecharDiaService.existeGeracaoDeCobranca(distribuidor.getDataOperacao()));
 		dto.setRecebimentoFisico(this.fecharDiaService.existeNotaFiscalSemRecebimentoFisico(distribuidor.getDataOperacao()));
@@ -223,10 +227,8 @@ public class FecharDiaController {
 	@Post
 	@Path("obterResumoQuadroReparte")
 	public void obterResumoQuadroReparte(){
-		
-		ResumoReparteFecharDiaDTO dto = this.resumoFecharDiaService.obterResumoGeralReparte(distribuidor.getDataOperacao());
-		
-		result.use(Results.json()).from(dto, "result").recursive().serialize();
+		SumarizacaoReparteDTO dto = resumoFecharDiaService.obterSumarizacaoReparte(getDataFechamento());
+		result.use(CustomMapJson.class).put("result", dto).serialize();
 	}
 	
 	@Post
@@ -571,6 +573,9 @@ public class FecharDiaController {
 	
 	@Post
 	public void confirmar() {
+		//Unlock na base de dados
+		this.fecharDiaService.setLockBancoDeDados(false);
+		
 		try {
 		    Boolean hasPendenciaValidacao = (Boolean) this.session.getAttribute(ATRIBUTO_SESSAO_POSSUI_PENDENCIAS_VALIDACAO);
 		    
@@ -586,6 +591,8 @@ public class FecharDiaController {
 		    }
 		    else{
 		        
+		    	//Lock novamente na base de dados.
+				this.fecharDiaService.setLockBancoDeDados(true);
 		        result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING, "Fechamento do Dia não pode ser confirmado! Existem pendências em aberto!"),
 		                Constantes.PARAM_MSGS).recursive().serialize();
 		        

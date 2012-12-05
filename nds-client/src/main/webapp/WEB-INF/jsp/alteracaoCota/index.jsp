@@ -481,7 +481,9 @@
             </tr>
 		</table>
 	</fieldset>
-    
+</form>    
+   
+   
     <div class="linha_separa_fields">&nbsp;</div>
     <fieldset class="classFieldset">
        	<legend>Resultado da Pesquisa</legend>
@@ -505,5 +507,5 @@
 			alteracaoCotaController.init();
 		});
 	</script>
-</form>
+
 </body>

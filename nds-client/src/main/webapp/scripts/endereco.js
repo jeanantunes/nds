@@ -205,6 +205,7 @@ function Endereco(paramTela, paramMessage) {
 				$("#"+paramTela+"principal", Endereco.workspace).attr("checked", result.enderecoPrincipal);
 				$("#"+paramTela+"codigoBairro", Endereco.workspace).val(result.endereco.codigoBairro);
 				$("#"+paramTela+"codigoCidadeIBGE", Endereco.workspace).val(result.endereco.codigoCidadeIBGE);
+				$("#"+paramTela+"enderecoPessoa", Endereco.workspace).val(result.enderecoPessoa);
 			},
 			null, 
 			true,

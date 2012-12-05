@@ -112,28 +112,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 		query.setParameter("numeroEdicao", input.getEdicaoProd());
 		query.setParameter("codigo", input.getCodProd());
 
-		@SuppressWarnings("unchecked")
-		List<ProdutoEdicao> produtoEdicoes = (List<ProdutoEdicao>) query.list();
-
-		if (!produtoEdicoes.isEmpty()) {
-
-			ProdutoEdicao produtoEdicao = null;
-
-			for (ProdutoEdicao produtoEdicao2 : produtoEdicoes) {
-
-				if (produtoEdicao2.getNumeroEdicao().equals(
-						input.getEdicaoProd())) {
-
-					produtoEdicao = produtoEdicao2;
-				}
-			}
-
-			return produtoEdicao;
-
-		} else {
-
-			return null;
-		}
+		return (ProdutoEdicao) query.uniqueResult();
 	}
 
 	private Produto findProduto(Message message) {

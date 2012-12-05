@@ -463,21 +463,9 @@ var fecharDiaController =  $.extend(true, {
 				sortable : true,
 				align : 'right'
 			}, {
-				display : 'Qtde Contabil',
-				name : 'qtdeContabil',
+				display : 'Qtde',
+				name : 'quantidadeContabil',
 				width : 90,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Qtde Fisico',
-				name : 'qtdeFisico',
-				width : 80,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Dif.',
-				name : 'dif',
-				width : 40,
 				sortable : true,
 				align : 'center'
 			}],
@@ -910,6 +898,7 @@ var fecharDiaController =  $.extend(true, {
 		$('#confirmacaoDeExpedicao').remove();
 		$('#fechamentoDeEncalhe').remove();
 		$('#lancamentoDeFaltasESobras').remove();
+		$('#controleDeAplicacao').remove();
 		
 	},
 	
@@ -1075,7 +1064,7 @@ var fecharDiaController =  $.extend(true, {
 			$.postJSON(contextPath + "/administracao/fecharDia/validacoesDoCotroleDeAprovacao", null,
 					function(result){
 						if(result){							
-							var conferenciaDeAprovacao = "<tr class='class_linha_1'><td>Controle de Aprovações:</td>";
+							var conferenciaDeAprovacao = "<tr class='class_linha_1' id='controleDeAplicacao'><td>Controle de Aprovações:</td>";
 							var imagem = "<td align='center'><img src='"+ contextPath +"/images/ico_bloquear.gif' alt='Processo Efetuado' width='16' height='16' /></td></tr>";
 							$('#tabela-validacao').append(conferenciaDeAprovacao + imagem);
 						}
@@ -1089,14 +1078,14 @@ var fecharDiaController =  $.extend(true, {
 		
 		$.postJSON(contextPath + "/administracao/fecharDia/obterResumoQuadroReparte", null,
 				function(result){					
-					$("#totalReparte").html(result.totalReparte);
-					$("#totalSobras").html(result.totalSobras);
-					$("#totalFaltas").html(result.totalFaltas);
-					$("#totalTransferencia").html(result.totalTranferencia);
-					$("#totalADistribuir").html(result.totalADistribuir);
-					$("#totalDistribuido").html(result.totalDistribuido);
-					$("#totalSobraDistribuido").html(result.sobraDistribuido);
-					$("#totalDiferenca").html(result.diferenca);
+					$("#totalReparte").html(result.totalReparteFormatado);
+					$("#totalSobras").html(result.totalSobrasFormatado);
+					$("#totalFaltas").html(result.totalFaltasFormatado);
+					$("#totalTransferencia").html(result.totalsTranferenciasFormatado);
+					$("#totalADistribuir").html(result.totalDistribuirFormatado);
+					$("#totalDistribuido").html(result.totalDistribuidoFormatado);
+					$("#totalSobraDistribuido").html(result.totalSobraDistribuicaoFormatado);
+					$("#totalDiferenca").html(result.totalDiferencaFormatado);
 				}
 			);
 	},

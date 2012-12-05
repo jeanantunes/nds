@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="romaneio_modelo01_subreport" pageWidth="555" pageHeight="802" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" whenResourceMissingType="Empty">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="romaneio_modelo01_subreport" pageWidth="802" pageHeight="555" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" whenResourceMissingType="Empty" uuid="b59350e7-7a51-4407-bc94-87163952076a">
 	<property name="ireport.zoom" value="1.9487171000000065"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
@@ -13,193 +13,165 @@
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
-	<field name="nome" class="java.lang.String">
-		<fieldDescription><![CDATA[nome]]></fieldDescription>
-	</field>
-	<field name="cota" class="java.lang.String">
-		<fieldDescription><![CDATA[cota]]></fieldDescription>
-	</field>
-	<field name="idRota" class="java.lang.Long">
-		<fieldDescription><![CDATA[idRota]]></fieldDescription>
-	</field>
-	<field name="uf" class="java.lang.String">
-		<fieldDescription><![CDATA[uf]]></fieldDescription>
-	</field>
-	<field name="cidade" class="java.lang.String">
-		<fieldDescription><![CDATA[cidade]]></fieldDescription>
-	</field>
-	<field name="qtdProduto4" class="java.math.BigInteger">
-		<fieldDescription><![CDATA[qtdProduto4]]></fieldDescription>
-	</field>
-	<field name="qtdCotas" class="java.lang.Long">
-		<fieldDescription><![CDATA[qtdCotas]]></fieldDescription>
-	</field>
-	<field name="quebra" class="java.math.BigInteger">
-		<fieldDescription><![CDATA[quebra]]></fieldDescription>
-	</field>
-	<field name="numeroTelefone" class="java.lang.String">
-		<fieldDescription><![CDATA[numeroTelefone]]></fieldDescription>
-	</field>
-	<field name="idCota" class="java.lang.Long">
-		<fieldDescription><![CDATA[idCota]]></fieldDescription>
-	</field>
-	<field name="qtdProduto2" class="java.math.BigInteger">
-		<fieldDescription><![CDATA[qtdProduto2]]></fieldDescription>
-	</field>
-	<field name="qtdProduto0" class="java.math.BigInteger">
-		<fieldDescription><![CDATA[qtdProduto0]]></fieldDescription>
-	</field>
 	<field name="numeroNotaEnvio" class="java.lang.Long">
 		<fieldDescription><![CDATA[numeroNotaEnvio]]></fieldDescription>
-	</field>
-	<field name="reparteTotal" class="java.math.BigInteger">
-		<fieldDescription><![CDATA[reparteTotal]]></fieldDescription>
-	</field>
-	<field name="qtdProduto5" class="java.math.BigInteger">
-		<fieldDescription><![CDATA[qtdProduto5]]></fieldDescription>
-	</field>
-	<field name="qtdProduto1" class="java.math.BigInteger">
-		<fieldDescription><![CDATA[qtdProduto1]]></fieldDescription>
-	</field>
-	<field name="qtdProduto3" class="java.math.BigInteger">
-		<fieldDescription><![CDATA[qtdProduto3]]></fieldDescription>
 	</field>
 	<field name="numeroCota" class="java.lang.Integer">
 		<fieldDescription><![CDATA[numeroCota]]></fieldDescription>
 	</field>
-	<field name="pacote" class="java.math.BigInteger">
-		<fieldDescription><![CDATA[pacote]]></fieldDescription>
-	</field>
-	<field name="bairro" class="java.lang.String">
-		<fieldDescription><![CDATA[bairro]]></fieldDescription>
+	<field name="nome" class="java.lang.String">
+		<fieldDescription><![CDATA[nome]]></fieldDescription>
 	</field>
 	<field name="logradouro" class="java.lang.String">
 		<fieldDescription><![CDATA[logradouro]]></fieldDescription>
 	</field>
+	<field name="bairro" class="java.lang.String">
+		<fieldDescription><![CDATA[bairro]]></fieldDescription>
+	</field>
+	<field name="cidade" class="java.lang.String">
+		<fieldDescription><![CDATA[cidade]]></fieldDescription>
+	</field>
+	<field name="uf" class="java.lang.String">
+		<fieldDescription><![CDATA[uf]]></fieldDescription>
+	</field>
 	<columnHeader>
 		<band height="14" splitType="Stretch">
 			<staticText>
-				<reportElement mode="Opaque" x="52" y="0" width="71" height="14" backcolor="#999999"/>
-				<box leftPadding="0">
-					<pen lineWidth="0.5"/>
-					<topPen lineWidth="0.5"/>
-					<leftPen lineWidth="0.5"/>
-					<bottomPen lineWidth="0.5"/>
-					<rightPen lineWidth="0.5"/>
-				</box>
-				<textElement>
-					<font isBold="true"/>
-				</textElement>
-				<text><![CDATA[Cota]]></text>
-			</staticText>
-			<staticText>
-				<reportElement mode="Opaque" x="123" y="0" width="98" height="14" backcolor="#999999"/>
-				<box leftPadding="0">
-					<pen lineWidth="0.5"/>
-					<topPen lineWidth="0.5"/>
-					<leftPen lineWidth="0.5"/>
-					<bottomPen lineWidth="0.5"/>
-					<rightPen lineWidth="0.5"/>
-				</box>
-				<textElement>
-					<font isBold="true"/>
-				</textElement>
-				<text><![CDATA[Nome]]></text>
-			</staticText>
-			<staticText>
-				<reportElement mode="Opaque" x="221" y="0" width="221" height="14" backcolor="#999999"/>
-				<box leftPadding="0">
-					<pen lineWidth="0.5"/>
-					<topPen lineWidth="0.5"/>
-					<leftPen lineWidth="0.5"/>
-					<bottomPen lineWidth="0.5"/>
-					<rightPen lineWidth="0.5"/>
-				</box>
-				<textElement>
-					<font isBold="true"/>
-				</textElement>
-				<text><![CDATA[Endereço]]></text>
-			</staticText>
-			<staticText>
-				<reportElement mode="Opaque" x="442" y="0" width="31" height="14" backcolor="#999999"/>
-				<box leftPadding="0">
-					<pen lineWidth="0.5"/>
-					<topPen lineWidth="0.5"/>
-					<leftPen lineWidth="0.5"/>
-					<bottomPen lineWidth="0.5"/>
-					<rightPen lineWidth="0.5"/>
-				</box>
-				<textElement textAlignment="Center">
-					<font isBold="true"/>
-				</textElement>
-				<text><![CDATA[Hora]]></text>
-			</staticText>
-			<staticText>
-				<reportElement mode="Opaque" x="473" y="0" width="82" height="14" backcolor="#999999"/>
-				<box leftPadding="0">
-					<pen lineWidth="0.5"/>
-					<topPen lineWidth="0.5"/>
-					<leftPen lineWidth="0.5"/>
-					<bottomPen lineWidth="0.5"/>
-					<rightPen lineWidth="0.5"/>
-				</box>
-				<textElement textAlignment="Center">
-					<font isBold="true"/>
-				</textElement>
-				<text><![CDATA[Assinatura]]></text>
-			</staticText>
-			<staticText>
-				<reportElement mode="Opaque" x="0" y="0" width="52" height="14" backcolor="#999999"/>
+				<reportElement uuid="10b88dde-2cc2-4cc0-b251-4d03e922f394" mode="Opaque" x="0" y="0" width="50" height="14" backcolor="#999999"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
 					<bottomPen lineWidth="0.5"/>
 					<rightPen lineWidth="0.5"/>
 				</box>
-				<textElement>
+				<textElement verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
-				<text><![CDATA[Nº NE]]></text>
+				<text><![CDATA[ Nº NE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="ed40cf94-b0ad-46eb-b7e8-4aa54eec5ad3" mode="Opaque" x="50" y="0" width="40" height="14" backcolor="#999999"/>
+				<box leftPadding="0">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[ Cota]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="96c34fbe-d8d4-4476-a23b-177cb14085aa" mode="Opaque" x="90" y="0" width="190" height="14" backcolor="#999999"/>
+				<box leftPadding="0">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[ Nome]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="194d9d0e-611d-47f3-bc0c-2f8da872daf5" mode="Opaque" x="280" y="0" width="290" height="14" backcolor="#999999"/>
+				<box leftPadding="0">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[ Endereço]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="2c19ed40-e1cc-448e-9ab8-fc7d8f92967e" mode="Opaque" x="570" y="0" width="60" height="14" backcolor="#999999"/>
+				<box leftPadding="0">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Hora]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="1450263c-05d8-4373-9fdd-52fcdbd1fbc7" mode="Opaque" x="630" y="0" width="172" height="14" backcolor="#999999"/>
+				<box leftPadding="0">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Assinatura]]></text>
 			</staticText>
 		</band>
 	</columnHeader>
 	<detail>
 		<band height="17" splitType="Stretch">
 			<textField isBlankWhenNull="true">
-				<reportElement style="zebrado" x="52" y="0" width="71" height="17"/>
+				<reportElement uuid="074887ce-7519-4303-943f-3bf70937f084" style="zebrado" x="0" y="0" width="50" height="17"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
 					<bottomPen lineWidth="0.5"/>
 					<rightPen lineWidth="0.5"/>
 				</box>
-				<textElement/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{numeroNotaEnvio}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="373a6bb1-84b1-45ec-bf10-787c0d96c633" style="zebrado" x="50" y="0" width="40" height="17"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{numeroCota}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement style="zebrado" x="123" y="0" width="98" height="17"/>
+				<reportElement uuid="1c3d847d-b62b-48c8-9eac-0358bc96bd39" style="zebrado" x="90" y="0" width="190" height="17"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
 					<bottomPen lineWidth="0.5"/>
 					<rightPen lineWidth="0.5"/>
 				</box>
-				<textElement/>
+				<textElement verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{nome}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement style="zebrado" x="221" y="0" width="221" height="17"/>
+				<reportElement uuid="456bc9dd-11ab-4d86-92a0-d216551d7a62" style="zebrado" x="280" y="0" width="290" height="17"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
 					<bottomPen lineWidth="0.5"/>
 					<rightPen lineWidth="0.5"/>
 				</box>
-				<textElement/>
-				<textFieldExpression><![CDATA[$F{logradouro}]]></textFieldExpression>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[($F{logradouro} == null ? "" : $F{logradouro} + ", ")
++ ($F{bairro} == null ? "" : $F{bairro} + ", ")
++ ($F{cidade} == null ? "" : $F{cidade} + ", ")
++ ($F{uf} == null ? "" : $F{uf})]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement style="zebrado" x="442" y="0" width="31" height="17"/>
+				<reportElement uuid="414ff53f-f61e-4c23-ae86-c0287aeac130" style="zebrado" x="570" y="0" width="60" height="17"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -210,7 +182,7 @@
 				<text><![CDATA[]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="zebrado" x="473" y="0" width="82" height="17"/>
+				<reportElement uuid="42abc1d9-c964-4575-a319-032f0371ac83" style="zebrado" x="630" y="0" width="172" height="17"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -220,38 +192,14 @@
 				<textElement markup="none"/>
 				<text><![CDATA[]]></text>
 			</staticText>
-			<break>
-				<reportElement x="0" y="16" width="100" height="1">
-					<printWhenExpression><![CDATA[$F{idRota} != null]]></printWhenExpression>
-				</reportElement>
-			</break>
-			<textField isBlankWhenNull="true">
-				<reportElement style="zebrado" x="0" y="0" width="52" height="17"/>
-				<box>
-					<topPen lineWidth="0.5"/>
-					<leftPen lineWidth="0.5"/>
-					<bottomPen lineWidth="0.5"/>
-					<rightPen lineWidth="0.5"/>
-				</box>
-				<textElement/>
-				<textFieldExpression><![CDATA[$F{numeroNotaEnvio}]]></textFieldExpression>
-			</textField>
 		</band>
 	</detail>
 	<pageFooter>
-		<band height="16" splitType="Stretch">
-			<printWhenExpression><![CDATA[$F{qtdCotas} != null && $F{qtdCotas} != 0L]]></printWhenExpression>
-			<staticText>
-				<reportElement x="0" y="1" width="58" height="15"/>
-				<textElement>
-					<font isBold="true"/>
-				</textElement>
-				<text><![CDATA[Total Cotas:]]></text>
-			</staticText>
+		<band height="21" splitType="Stretch">
 			<textField>
-				<reportElement x="58" y="1" width="65" height="15"/>
-				<textElement markup="none"/>
-				<textFieldExpression><![CDATA[$F{qtdCotas}]]></textFieldExpression>
+				<reportElement uuid="ffe6ab55-d387-45f0-b786-5d138fd6a45d" x="0" y="5" width="150" height="15"/>
+				<textElement verticalAlignment="Middle" markup="html"/>
+				<textFieldExpression><![CDATA[" <b>Total Cotas:</b> " + $V{COLUMN_COUNT}]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageFooter>

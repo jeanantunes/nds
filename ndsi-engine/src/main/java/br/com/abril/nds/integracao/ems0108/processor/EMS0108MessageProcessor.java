@@ -96,6 +96,7 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 							return ;
 						} else {							
 							lancamento.setDataRecolhimentoDistribuidor(input.getDataMovimento());
+							this.getSession().merge(lancamento);
 						}
 					}
 				} else {
@@ -149,6 +150,7 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 						return ;
 					} else {
 						lancamento.setDataLancamentoDistribuidor(input.getDataMovimento());
+						this.getSession().merge(lancamento);
 					}
 				}
 			}

@@ -217,29 +217,36 @@ public class RoteirizacaoDTO implements Serializable{
      * @return DTO com as informações da roteirização existente
      */
 	public static RoteirizacaoDTO toDTO(Roteirizacao roteirizacao, List<Box> disponiveis, boolean addBoxEspecial) {
-	    RoteirizacaoDTO dto = new RoteirizacaoDTO(TipoEdicaoRoteirizacao.ALTERACAO, BoxRoteirizacaoDTO.toDTOs(disponiveis), addBoxEspecial);
-	    dto.setId(roteirizacao.getId());
+	    
+		RoteirizacaoDTO dto = new RoteirizacaoDTO(TipoEdicaoRoteirizacao.ALTERACAO, BoxRoteirizacaoDTO.toDTOs(disponiveis), addBoxEspecial);
+	    
+		dto.setId(roteirizacao.getId());
 
         Box box = roteirizacao.getBox();
+        
         BoxRoteirizacaoDTO boxDTO = null;
+        
         if (box != null) {
             boxDTO = new BoxRoteirizacaoDTO(box.getId(), box.getNome());
         } else {
             boxDTO = BoxRoteirizacaoDTO.ESPECIAL;
         }
+        
         dto.setBox(boxDTO);
         
         for(Roteiro roteiro : roteirizacao.getRoteiros()){
-            RoteiroRoteirizacaoDTO roteiroDTO = new RoteiroRoteirizacaoDTO(
+            
+        	RoteiroRoteirizacaoDTO roteiroDTO = new RoteiroRoteirizacaoDTO(
                     roteiro.getId(), roteiro.getOrdem(),
                     roteiro.getDescricaoRoteiro());
-            dto.addRoteiro(roteiroDTO);
+            
+        	dto.addRoteiro(roteiroDTO);
 
             for (Rota rota : roteiro.getRotas()) {
             	
             	Entregador entregador = rota.getEntregador();
             	            			
-            	Long entregadorId = (entregador == null? null : entregador.getId());	
+            	Long entregadorId = (entregador == null ? null : entregador.getId());	
                 
             	RotaRoteirizacaoDTO rotaDTO = new RotaRoteirizacaoDTO(
                         rota.getId(), rota.getOrdem(), rota.getDescricaoRota(), entregadorId);
@@ -253,15 +260,20 @@ public class RoteirizacaoDTO implements Serializable{
 
                     Endereco endereco = null;
                     EnderecoPDV enderecoPdvEntrega  = pdv.getEnderecoEntrega();
+                    
                     if (enderecoPdvEntrega != null){
                         endereco = enderecoPdvEntrega .getEndereco();
                         origemEndereco = OrigemEndereco.PDV;
+                    
                     } else {
-                        EnderecoCota enderecoPrincipalCota = cota.getEnderecoPrincipal();
-                        if (enderecoPrincipalCota != null){
+                    
+                    	EnderecoCota enderecoPrincipalCota = cota.getEnderecoPrincipal();
+                        
+                    	if (enderecoPrincipalCota != null){
                             endereco = enderecoPrincipalCota.getEndereco();
                         }    
-                        origemEndereco = OrigemEndereco.COTA;
+                        
+                    	origemEndereco = OrigemEndereco.COTA;
                     }
                     PdvRoteirizacaoDTO pdvDTO = new PdvRoteirizacaoDTO(
                             pdv.getId(), pdv.getNome(), origemEndereco,
