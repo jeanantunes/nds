@@ -263,18 +263,12 @@ public class FecharDiaController {
 	
 	@Post
 	@Path("/obterGridEncalhe")
-	public void obterGridEncalhe(){
-		
-		List<EncalheFecharDiaDTO> listaEncalhe = this.resumoEncalheFecharDiaService.obterDadosGridEncalhe(distribuidor.getDataOperacao());
-		
-		TableModel<CellModelKeyValue<EncalheFecharDiaDTO>> tableModel = new TableModel<CellModelKeyValue<EncalheFecharDiaDTO>>();
-		
-		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaEncalhe));
-		
-		tableModel.setTotal(listaEncalhe.size());
-		
-		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
-		
+	public void obterGridEncalhe(Integer page, Integer rp){
+	    Date dataFechamento = getDataFechamento();
+	    PaginacaoVO paginacao = new PaginacaoVO(page, rp, null);
+	    List<EncalheFecharDiaDTO> listaEncalhe = resumoEncalheFecharDiaService.obterDadosGridEncalhe(dataFechamento, paginacao);
+	    Long countEncalhe = resumoEncalheFecharDiaService.contarProdutoEdicaoEncalhe(dataFechamento);
+		result.use(FlexiGridJson.class).from(listaEncalhe).page(page).total(countEncalhe.intValue()).serialize();    
 	}
 	
 	@Post
@@ -345,13 +339,13 @@ public class FecharDiaController {
 		
 		try {
 		
-		List<EncalheFecharDiaDTO> listaEncalhe = this.resumoEncalheFecharDiaService.obterDadosGridEncalhe(distribuidor.getDataOperacao());
+		List<EncalheFecharDiaDTO> listaEncalhe = this.resumoEncalheFecharDiaService.obterDadosGridEncalhe(distribuidor.getDataOperacao(), null);
 		
 		if(listaEncalhe.isEmpty()) {
 			throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");
 		}
 		
-			FileExporter.to("resumo_reparte", fileType).inHTTPResponse(this.getNDSFileHeader(), null, null, 
+			FileExporter.to("resumo_encalhe", fileType).inHTTPResponse(this.getNDSFileHeader(), null, null, 
 					listaEncalhe, EncalheFecharDiaDTO.class, this.httpResponse);
 		} catch (IOException e) {
 			e.printStackTrace();

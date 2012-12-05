@@ -274,11 +274,13 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 		sql.append("SELECT p ");
 		sql.append("FROM   Produto p ");
 		sql.append("WHERE ");
-		sql.append("	   p.codigo    = :codigoProduto ");
+		sql.append("	  p.codigo    = :codigoProduto  ");
+		sql.append("	  and p.origem = :origem  ");
 
 		Query query = getSession().createQuery(sql.toString());
 
 		query.setParameter("codigoProduto", codigoPublicacao);
+		query.setParameter("origem", Origem.MANUAL);
 
 		return (Produto) query.uniqueResult();
 	}

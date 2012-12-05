@@ -147,7 +147,21 @@ public class RoteiroRoteirizacaoDTO implements Serializable, Ordenavel {
      */
 	public RotaRoteirizacaoDTO getRota(Long id) {
         for (RotaRoteirizacaoDTO rota : todasRotas) {
-            if (rota.getId().equals(id)) {
+            if (rota.getId() != null && rota.getId().equals(id)) {
+                return rota;
+            }
+        }
+        return null;
+    }
+	
+	 /**
+     * Recupera a rota pela ordem
+     * @param ordem ordem da rota
+     * @return rota
+     */
+	public RotaRoteirizacaoDTO getRotaByOrdem(Integer ordem) {
+        for (RotaRoteirizacaoDTO rota : todasRotas) {
+            if (rota.getOrdem() != null && rota.getOrdem().equals(ordem)) {
                 return rota;
             }
         }
@@ -230,7 +244,7 @@ public class RoteiroRoteirizacaoDTO implements Serializable, Ordenavel {
     public int getMaiorOrdemRota() {
         int max = 0;
         for (RotaRoteirizacaoDTO rota : todasRotas) {
-            if (rota.getOrdem() > max) {
+            if (rota.getOrdem()!= null && rota.getOrdem() > max) {
                 max = rota.getOrdem();
             }
         }
@@ -240,7 +254,7 @@ public class RoteiroRoteirizacaoDTO implements Serializable, Ordenavel {
 	public Long getMaiorIdRota() {
 		  Long max = 0L;
 	        for (RotaRoteirizacaoDTO rota : todasRotas) {
-	            if (rota.getId() > max) {
+	            if (rota.getId() != null && rota.getId() > max) {
 	                max = rota.getId();
 	            }
 	        }

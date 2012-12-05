@@ -63,13 +63,13 @@ public class ApplicationContextListener implements ServletContextListener {
 
 		// this.agendarIntegracaoOperacionalDistribuidor();
 
-		try {
+		/*try {
 			StdSchedulerFactory.getDefaultScheduler().start();
 		} catch (SchedulerException e) {
 			logger.fatal("Falha ao inicializar agendador do Quartz", e);
 
 			throw new RuntimeException(e);
-		}
+		}*/
 
 	}
 
