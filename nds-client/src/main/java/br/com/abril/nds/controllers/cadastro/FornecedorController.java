@@ -194,6 +194,23 @@ public class FornecedorController {
 		
 		this.result.use(Results.json()).from(pessoaJuridica, "result").serialize();		
 	}
+	
+	/**
+	 * Obtem os endereços da sessão referente ao fornecedor informado
+	 * 
+	 * @param idFornecedor - identificador do fornecedor
+	 */
+	private void obterEndereco(Long idFornecedor){
+		
+		Boolean enderecoPendente = (Boolean) this.session.getAttribute(EnderecoController.ENDERECO_PENDENTE);
+		
+		if (enderecoPendente==null || !enderecoPendente){
+			
+			List<EnderecoAssociacaoDTO> listaEnderecoAssociacao = this.fornecedorService.obterEnderecosFornecedor(idFornecedor);
+		
+			this.session.setAttribute(LISTA_ENDERECOS_EXIBICAO, listaEnderecoAssociacao);
+		}
+	}
 
 	@Post
 	public void editarFornecedor(Long idFornecedor) {
@@ -211,11 +228,8 @@ public class FornecedorController {
 		}
 		
 		limparSessao();
-		
-		List<EnderecoAssociacaoDTO> listaEnderecoAssociacao = 
-				this.fornecedorService.obterEnderecosFornecedor(idFornecedor);
 
-		this.session.setAttribute(LISTA_ENDERECOS_SALVAR_SESSAO, listaEnderecoAssociacao);
+		obterEndereco(idFornecedor);
 
 		List<TelefoneAssociacaoDTO> listaTelefoneAssociacao = 
 				this.fornecedorService.obterTelefonesFornecedor(idFornecedor);
@@ -235,6 +249,7 @@ public class FornecedorController {
 	}
 	
 	private void limparSessao() {
+		
 		this.session.removeAttribute(LISTA_ENDERECOS_SALVAR_SESSAO);
 		this.session.removeAttribute(LISTA_ENDERECOS_REMOVER_SESSAO);
 		this.session.removeAttribute(LISTA_TELEFONES_SALVAR_SESSAO);
@@ -279,6 +294,78 @@ public class FornecedorController {
 		this.result.include("combo", combo);
 	}
 	
+	/**
+	 * Valida existência de endereço e existência de endereço principal
+	 * @param mensagensValidacao
+	 */
+    private void validarEnderecos(List<String> mensagensValidacao) {
+		
+		@SuppressWarnings("unchecked")
+		List<EnderecoAssociacaoDTO> listaEnderecosSalvar = (List<EnderecoAssociacaoDTO>) this.session.getAttribute(LISTA_ENDERECOS_SALVAR_SESSAO);
+		
+		@SuppressWarnings("unchecked")
+		List<EnderecoAssociacaoDTO> listaEnderecosExibir = (List<EnderecoAssociacaoDTO>) this.session.getAttribute(LISTA_ENDERECOS_EXIBICAO);
+
+		List<EnderecoAssociacaoDTO> listaEnderecos = new ArrayList<EnderecoAssociacaoDTO>();
+		if (listaEnderecosSalvar != null && !listaEnderecosSalvar.isEmpty()) {
+			listaEnderecos.addAll(listaEnderecosSalvar);
+		}
+		
+		if (listaEnderecosExibir != null && !listaEnderecosExibir.isEmpty()) {
+			listaEnderecos.addAll(listaEnderecosExibir);
+		}
+		
+		if (listaEnderecos.isEmpty()) {
+			mensagensValidacao.add("Pelo menos um endereço deve ser cadastrado para o fornecedor.");
+		} else {
+			boolean temPrincipal = false;
+			for (EnderecoAssociacaoDTO enderecoAssociacao : listaEnderecos) {
+				if (enderecoAssociacao.isEnderecoPrincipal()) {
+					temPrincipal = true;
+					break;
+				}
+			}
+			if (!temPrincipal) {
+				mensagensValidacao.add("Deve haver ao menos um endereço principal para o fornecedor.");
+			}
+		}
+	}
+    
+    /**
+	 * Valida existência de telefone e existência de telefone principal
+	 * @param mensagensValidacao
+	 */
+    private void validaTelefones(List<String> mensagensValidacao){
+    
+    	Map<Integer, TelefoneAssociacaoDTO> map = this.obterTelefonesSalvarSessao();
+
+		if (map.keySet().isEmpty()) {
+			
+			mensagensValidacao.add("Pelo menos um telefone deve ser cadastrado para o fornecedor.");
+		
+		} else {
+			
+			boolean temPrincipal = false;
+			
+			for (Integer key : map.keySet()){
+
+				TelefoneAssociacaoDTO telefoneAssociacaoDTO = map.get(key);
+				
+				if (telefoneAssociacaoDTO.isPrincipal()) {
+					
+					temPrincipal = true;
+					
+					break;
+				}
+			}
+			
+			if (!temPrincipal) {
+				
+				mensagensValidacao.add("Deve haver ao menos um telefone principal para o fornecedor.");
+			}
+		}
+    }
+
 	private void validarFornecedorDTO(FornecedorDTO fornecedorDTO) {
 		
 		List<String> mensagens = new ArrayList<String>();
@@ -307,7 +394,6 @@ public class FornecedorController {
 					mensagens.add(" Valor do campo [Codigo] já esta sendo utilizado.");
 				}
 			}
-			
 			
 		}
 		
@@ -397,63 +483,10 @@ public class FornecedorController {
 			}	
 		}
 		
-		@SuppressWarnings("unchecked")
-		List<EnderecoAssociacaoDTO> listaEnderecoAssociacaoSalvar = 
-				(List<EnderecoAssociacaoDTO>) this.session.getAttribute(
-						LISTA_ENDERECOS_SALVAR_SESSAO);
-		
-		Map<Integer, TelefoneAssociacaoDTO> map = this.obterTelefonesSalvarSessao();
-		
-		if (map.keySet().isEmpty()) {
-			
-			mensagens.add("Pelo menos um telefone deve ser cadastrado para o fornecedor.");
-		
-		} else {
-			
-			boolean temPrincipal = false;
-			
-			for (Integer key : map.keySet()){
+		this.validaTelefones(mensagens);
 
-				TelefoneAssociacaoDTO telefoneAssociacaoDTO = map.get(key);
-				
-				if (telefoneAssociacaoDTO.isPrincipal()) {
-					
-					temPrincipal = true;
-					
-					break;
-				}
-			}
-			
-			if (!temPrincipal) {
-				
-				mensagens.add("Deve haver ao menos um telefone principal para o fornecedor.");
-			}
-		}
-		
-		if (listaEnderecoAssociacaoSalvar == null || listaEnderecoAssociacaoSalvar.isEmpty()) {
-			
-			mensagens.add("Pelo menos um endereço deve ser cadastrado para o fornecedor.");
-		
-		} else {
-			
-			boolean temPrincipal = false;
-			
-			for (EnderecoAssociacaoDTO enderecoAssociacao : listaEnderecoAssociacaoSalvar) {
-				
-				if (enderecoAssociacao.isEnderecoPrincipal()) {
-					
-					temPrincipal = true;
-					
-					break;
-				}
-			}
-
-			if (!temPrincipal) {
-				
-				mensagens.add("Deve haver ao menos um endereço principal para o fornecedor.");
-			}
-		}
-
+        this.validarEnderecos(mensagens);
+        
 		if (!mensagens.isEmpty()) {
 			
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, mensagens));
@@ -478,6 +511,7 @@ public class FornecedorController {
 												  listaEnderecoAssociacaoSalvar, 
 												  listaEnderecoAssociacaoRemover);
 
+		this.session.setAttribute(EnderecoController.ENDERECO_PENDENTE, Boolean.FALSE);
 		this.session.removeAttribute(LISTA_ENDERECOS_SALVAR_SESSAO);
 		this.session.removeAttribute(LISTA_ENDERECOS_REMOVER_SESSAO);
 	}
@@ -695,9 +729,12 @@ public class FornecedorController {
 		this.session.removeAttribute(LISTA_TELEFONES_EXIBICAO);
 		this.session.removeAttribute(LISTA_TELEFONES_REMOVER_SESSAO);
 		this.session.removeAttribute(LISTA_TELEFONES_SALVAR_SESSAO);
+		
 		this.session.removeAttribute(LISTA_ENDERECOS_EXIBICAO);
 		this.session.removeAttribute(LISTA_ENDERECOS_REMOVER_SESSAO);
 		this.session.removeAttribute(LISTA_ENDERECOS_SALVAR_SESSAO);
+		
+		this.session.removeAttribute(EnderecoController.ENDERECO_PENDENTE);
 	}
 	
 }

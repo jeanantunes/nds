@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.export.cnab.cobranca.DetalheSegmentoP;
 import br.com.abril.nds.export.cnab.cobranca.Header;
 import br.com.abril.nds.export.cnab.cobranca.Trailer;
@@ -31,6 +32,7 @@ import br.com.abril.nds.repository.ParametroSistemaRepository;
 import br.com.abril.nds.service.GeradorArquivoCobrancaBancoService;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.TipoMensagem;
 
 import com.ancientprogramming.fixedformat4j.format.FixedFormatManager;
 import com.ancientprogramming.fixedformat4j.format.impl.FixedFormatManagerImpl;
@@ -58,7 +60,7 @@ public class GeradorArquivoCobrancaBancoServiceImpl implements GeradorArquivoCob
 	
 	@Override
 	@Transactional
-	public void prepararGerarArquivoCobrancaCnab() throws IOException {
+	public void prepararGerarArquivoCobrancaCnab() {
 		
 		Long controleArquivoCobranca = this.processarGeracaoArquivoCobrancaCnab();
 		
@@ -72,7 +74,7 @@ public class GeradorArquivoCobrancaBancoServiceImpl implements GeradorArquivoCob
 		}
 	}
 	
-	protected Long processarGeracaoArquivoCobrancaCnab() throws IOException {
+	protected Long processarGeracaoArquivoCobrancaCnab() {
 		
 		Map<Banco, List<DetalheSegmentoP>> mapaDadosArquivoCobranca =
 			this.prepararDadosArquivoCobranca();
@@ -86,10 +88,8 @@ public class GeradorArquivoCobrancaBancoServiceImpl implements GeradorArquivoCob
 	 * Gera arquivo de cobrança de acordo com os dados informados.
 	 * 
 	 * @param mapaArquivoCobranca - mapa contendo os dados para geração do arquivo.
-	 * 
-	 * @throws IOException
 	 */
-	private Long gerarArquivo(Map<Banco, List<DetalheSegmentoP>> mapaArquivoCobranca) throws IOException {
+	private Long gerarArquivo(Map<Banco, List<DetalheSegmentoP>> mapaArquivoCobranca) {
 		
 		if (mapaArquivoCobranca == null || mapaArquivoCobranca.isEmpty()) {
 			return null;
@@ -160,14 +160,21 @@ public class GeradorArquivoCobrancaBancoServiceImpl implements GeradorArquivoCob
 	private void criarArquivo(List<String> conteudoLinhas,
 							  File diretorioArquivoCobranca,
 							  Distribuidor distribuidor,
-							  Long controleArquivoCobranca) throws IOException {
+							  Long controleArquivoCobranca) {
 		
 		File file = new File(diretorioArquivoCobranca,
 			this.getNomeArquivoCobranca(distribuidor, controleArquivoCobranca));
 		
 		if (file != null) {
 		
-			FileUtils.writeLines(file, "UTF8", conteudoLinhas);
+			try {
+			
+				FileUtils.writeLines(file, "UTF8", conteudoLinhas);
+			
+			} catch (IOException e) {
+
+				throw new ValidacaoException(TipoMensagem.WARNING, "Erro ao gerar o arquivo de cobrança!");
+			}
 		}
 	}
 	
