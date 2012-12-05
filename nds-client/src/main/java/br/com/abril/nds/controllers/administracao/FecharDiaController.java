@@ -194,8 +194,8 @@ public class FecharDiaController {
 	}
 	
 	@Post
-	@Path("validacoesDoCotroleDeAprovacao")
-	public void validacoesDoCotroleDeAprovacao(){
+	@Path("validacoesDoControleDeAprovacao")
+	public void validacoesDoControleDeAprovacao(){
 		
 		List<ValidacaoControleDeAprovacaoFecharDiaDTO> listaLancamentoFaltaESobra = this.fecharDiaService.obterPendenciasDeAprovacao(distribuidor.getDataOperacao(), StatusAprovacao.PENDENTE);
 		Boolean pendencia = false;

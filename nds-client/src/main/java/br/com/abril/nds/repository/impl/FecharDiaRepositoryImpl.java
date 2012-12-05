@@ -52,7 +52,7 @@ public class FecharDiaRepositoryImpl extends AbstractRepository implements Fecha
 
 		hql.append(" SELECT notaFiscal from NotaFiscalEntradaFornecedor notaFiscal ");		
 		hql.append("WHERE notaFiscal.statusNotaFiscal != :statusNF  ");
-		hql.append("AND notaFiscal.dataEmissao = :dataOperacao  ");
+		hql.append("AND cast(notaFiscal.dataEmissao as date) = :dataOperacao  ");		
 		
 		Query query = super.getSession().createQuery(hql.toString());
 		
@@ -69,7 +69,8 @@ public class FecharDiaRepositoryImpl extends AbstractRepository implements Fecha
 
 		hql.append(" select numero as numeroNotaFiscal from NotaFiscalEntradaFornecedor notaFiscal ");		
 		hql.append("WHERE notaFiscal.statusNotaFiscal != :statusNF ");
-		hql.append("AND notaFiscal.dataEmissao = :dataOperacao ");
+		hql.append("AND cast(notaFiscal.dataEmissao as date) = :dataOperacao ");
+		hql.append("GROUP BY numero");
 		
 		Query query = super.getSession().createQuery(hql.toString());
 		

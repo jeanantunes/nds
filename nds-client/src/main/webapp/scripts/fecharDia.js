@@ -531,6 +531,7 @@ var fecharDiaController =  $.extend(true, {
 		}
 		
 		$("#dialog-lancto-faltas-sobras", fecharDiaController.workspace).show();
+		fecharDiaController.redirecionarFaltasESobras();
 		
 		return resultado;
 		
@@ -869,7 +870,7 @@ var fecharDiaController =  $.extend(true, {
 			resizable: false,
 			height:'auto',
 			width:300,
-			modal: true,
+			modal: false,
 			buttons: {
 				"Fechar": function() {
 					$( this ).dialog( "close" );
@@ -1061,7 +1062,7 @@ var fecharDiaController =  $.extend(true, {
 	
 	validacaoControleDeAprovacao : function(result){
 		if(result.controleDeAprovacao){
-			$.postJSON(contextPath + "/administracao/fecharDia/validacoesDoCotroleDeAprovacao", null,
+			$.postJSON(contextPath + "/administracao/fecharDia/validacoesDoControleDeAprovacao", null,
 					function(result){
 						if(result){							
 							var conferenciaDeAprovacao = "<tr class='class_linha_1' id='controleDeAplicacao'><td>Controle de Aprovações:</td>";
@@ -1384,6 +1385,22 @@ var fecharDiaController =  $.extend(true, {
 					httpMethod : "POST",
 					data : params
 				});
+		
+	},
+	
+	redirecionarFaltasESobras : function(){
+		url = '\'estoque/diferenca/lancamento\'';
+		
+		var link = '<span class="bt_novos"> <a href="javascript:;" onclick="$(\'#workspace\').tabs(\'addTab\', \'Lançamento Faltas e Sobras\', ' + url + '),fecharDiaController.customizarDialogFaltasESobras(); "  style="cursor:pointer">' +
+						   	 '<img src="' + contextPath + '/images/ico_check.gif" hspace="5" border="0" />Sim' +
+						   '</a> </span>';
+		$("#linkParaFaltasESobra").html(link);
+		
+	},
+	customizarDialogFaltasESobras : function(){		
+		
+		parent.$('#dialog-lancto-faltas-sobras').dialog("option", "modal", false);
+		parent.$('#dialog-lancto-faltas-sobras').dialog('close');
 		
 	}
 
