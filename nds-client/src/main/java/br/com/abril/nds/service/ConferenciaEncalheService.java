@@ -15,7 +15,6 @@ import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.exception.ChamadaEncalheCotaInexistenteException;
 import br.com.abril.nds.service.exception.ConferenciaEncalheExistenteException;
 import br.com.abril.nds.service.exception.ConferenciaEncalheFinalizadaException;
-import br.com.abril.nds.service.exception.EncalheExcedeReparteException;
 import br.com.abril.nds.service.exception.EncalheRecolhimentoParcialException;
 import br.com.abril.nds.service.exception.EncalheSemPermissaoSalvarException;
 import br.com.abril.nds.service.impl.ConferenciaEncalheServiceImpl.TipoDocumentoConferenciaEncalhe;
@@ -153,7 +152,6 @@ public interface ConferenciaEncalheService {
 	 * 
 	 * @throws EncalheSemPermissaoSalvarException
 	 * @throws ConferenciaEncalheFinalizadaException
-	 * @throws EncalheExcedeReparteException
 	 * 
 	 * @return Long
 	 */
@@ -161,7 +159,7 @@ public interface ConferenciaEncalheService {
 			ControleConferenciaEncalheCota controleConfEncalheCota, 
 			List<ConferenciaEncalheDTO> listaConferenciaEncalhe, 
 			Set<Long> listaIdConferenciaEncalheParaExclusao,
-			Usuario usuario) throws EncalheSemPermissaoSalvarException, ConferenciaEncalheFinalizadaException, EncalheExcedeReparteException;
+			Usuario usuario) throws EncalheSemPermissaoSalvarException, ConferenciaEncalheFinalizadaException;
 	
 	
 	/**
@@ -175,14 +173,12 @@ public interface ConferenciaEncalheService {
 	 * @param listaConferenciaEncalhe
 	 * @param listaIdConferenciaEncalheParaExclusao
 	 * @param usuario
-	 * 
-	 * @throws EncalheExcedeReparteException
 	 */
 	public DadosDocumentacaoConfEncalheCotaDTO finalizarConferenciaEncalhe(
 			ControleConferenciaEncalheCota controleConfEncalheCota, 
 			List<ConferenciaEncalheDTO> listaConferenciaEncalhe, 
 			Set<Long> listaIdConferenciaEncalheParaExclusao,
-			Usuario usuario) throws EncalheExcedeReparteException;
+			Usuario usuario);
 	
 	/**
 	 * Gera arquivo de slip a partir do ControleConferenciaEncalheCota
