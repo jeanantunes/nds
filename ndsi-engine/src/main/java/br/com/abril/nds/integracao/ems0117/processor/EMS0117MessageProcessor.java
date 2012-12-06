@@ -121,7 +121,7 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 				pessoa = pessoaFis;
 
 			} else {
-
+//Não Precisa iterar, isso eh uma busca por uma unique 
 				for (PessoaFisica pessoaFis2 : pessoas) {
 
 					if (pessoaFis2.getCpf().equals(input.getCpf())) {
@@ -227,16 +227,20 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 			
 			if (!input.getEndereco().isEmpty()
 					&& !".".equals(input.getEndereco())) {
-
-				Endereco endereco = getEnderecoSaneado(input.getCep());
-				if (null == endereco ) {
+				Endereco endereco = null;
+//				Endereco endereco = getEnderecoSaneado(input.getCep());
+//				if (null == endereco ) {
 					endereco = new Endereco();
 					endereco.setCep(input.getCep());
 					endereco.setCidade(input.getMunicipio());
 					endereco.setLogradouro(input.getEndereco());
 					endereco.setUf(input.getSiglaUF());
 					endereco.setCodigoCidadeIBGE(input.getCodCidadeIbge());
-				}
+					Endereco endTmp = getEnderecoSaneado(input.getCep());
+					if (null != endTmp) {
+						endereco.setBairro(endTmp.getBairro());
+					}
+//				}
 				endereco.setNumero(input.getNumLogradouro());
 				getSession().persist(endereco);
 
@@ -328,15 +332,19 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 
 				if (enderecosCota.isEmpty()) {
 
-					endereco = getEnderecoSaneado(input.getCep());
-					if (null == endereco ) {
+//					endereco = getEnderecoSaneado(input.getCep());
+//					if (null == endereco ) {
 						endereco = new Endereco();
 						endereco.setCep(input.getCep());
 						endereco.setCidade(input.getMunicipio());
 						endereco.setLogradouro(input.getEndereco());
 						endereco.setUf(input.getSiglaUF());
 						endereco.setCodigoCidadeIBGE(input.getCodCidadeIbge());
-					}
+						Endereco endTmp = getEnderecoSaneado(input.getCep());
+						if (null != endTmp) {
+							endereco.setBairro(endTmp.getBairro());
+						}						
+//					}
 					endereco.setNumero(input.getNumLogradouro());
 					getSession().persist(endereco);
 
@@ -371,15 +379,19 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 
 							if (enderecos.isEmpty()) {
 
-								endereco = getEnderecoSaneado(input.getCep());
-								if (null == endereco ) {
+//								endereco = getEnderecoSaneado(input.getCep());
+//								if (null == endereco ) {
 									endereco = new Endereco();
 									endereco.setCep(input.getCep());
 									endereco.setCidade(input.getMunicipio());
 									endereco.setLogradouro(input.getEndereco());
 									endereco.setUf(input.getSiglaUF());
 									endereco.setCodigoCidadeIBGE(input.getCodCidadeIbge());
-								}
+									Endereco endTmp = getEnderecoSaneado(input.getCep());
+									if (null != endTmp) {
+										endereco.setBairro(endTmp.getBairro());
+									}									
+//								}
 								endereco.setNumero(input.getNumLogradouro());
 
 								getSession().persist(endereco);
@@ -404,8 +416,6 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 							"Atualizacao do  Endereco Cota "
 									+ enderecoCota.getId());
 
-					// Alteração para falso no principal, todos os dados de importacao se tornavam enderecos principais Eduardo "PunkRock" Castro
-					enderecoCota.setPrincipal(false);
 					enderecoCota.setTipoEndereco(TipoEndereco.COMERCIAL);
 					enderecoCota.setEndereco(endereco);
 					enderecoCota.setCota(cota);
@@ -502,8 +512,6 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 
 
 					// Alteração para falso no principal, todos os dados de importacao se tornavam telefones principais Eduardo "PunkRock" Castro
-
-					telefoneCota.setPrincipal(false);
 					telefoneCota.setTipoTelefone(TipoTelefone.COMERCIAL);
 					telefoneCota.setTelefone(telefone);
 					telefoneCota.setCota(cota);
