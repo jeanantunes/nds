@@ -31,7 +31,6 @@
 			
 			<div id="manutencaoEnderecos">
 				<fieldset style="width:765px; margin:5px;">
-					<legend>Endereços</legend>
 						<jsp:include page="../endereco/index.jsp">
 						<jsp:param value="ENDERECO_ENTREGADOR" name="telaEndereco"/>
 						</jsp:include>
@@ -42,7 +41,6 @@
 			<div id="manutencaoTelefones">
 				<br clear="all"/>
 					<fieldset style="width:765px; margin:5px;">
-						<legend>Endereços</legend>
 						<jsp:include page="../telefone/index.jsp">
 						<jsp:param value="ENTREGADOR" name="tela"/>
 						</jsp:include>
