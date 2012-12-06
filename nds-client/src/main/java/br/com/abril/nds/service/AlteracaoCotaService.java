@@ -22,7 +22,5 @@ public interface AlteracaoCotaService {
 	 */
 	int contarAlteracaoCota(FiltroAlteracaoCotaDTO filtroAlteracaoCotaDTO);
 	
-	List<ConsultaAlteracaoCotaDTO> pesquisarAlteracaoCotaFornecedor(FiltroAlteracaoCotaDTO filtroAlteracaoCotaDTO); 
-	
 	FiltroAlteracaoCotaDTO preencherFiltroAlteracaoCotaDTO(FiltroAlteracaoCotaDTO filtroAlteracaoCotaDTO);
 }

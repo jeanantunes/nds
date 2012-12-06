@@ -7,11 +7,14 @@ import java.util.Set;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.sql.JoinType;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.model.cadastro.Endereco;
+import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.dne.Bairro;
 import br.com.abril.nds.model.dne.Localidade;
 import br.com.abril.nds.model.dne.Logradouro;
@@ -92,6 +95,18 @@ public class EnderecoRepositoryImpl extends AbstractRepositoryModel<Endereco, Lo
 		Query query = this.getSession().createQuery(hql.toString());
 
 		return query.list();
+	}
+	
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<String> obterBairrosCotas(){
+		Criteria criteria = getSession().createCriteria(EnderecoCota.class);
+		criteria.createAlias("endereco", "endereco", JoinType.INNER_JOIN);		
+		criteria.add(Restrictions.isNotNull("endereco.bairro"));
+		criteria.setProjection(Projections.groupProperty("endereco.bairro"));
+		
+		return criteria.list();
 	}
 
 	/**
