@@ -25,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.client.util.BigDecimalUtil;
 import br.com.abril.nds.client.util.BigIntegerUtil;
+import br.com.abril.nds.client.vo.ParametrosDistribuidorVO;
 import br.com.abril.nds.dto.ComposicaoCobrancaSlipDTO;
 import br.com.abril.nds.dto.ConferenciaEncalheDTO;
 import br.com.abril.nds.dto.DadosDocumentacaoConfEncalheCotaDTO;
@@ -979,7 +980,11 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		documentoConferenciaEncalhe.setIndGeraDocumentacaoConferenciaEncalhe(FormaEmissao.INDIVIDUAL_BOX.equals(formaEmissao));
 		
-		documentoConferenciaEncalhe.setUtilizaSlipBoleto(parametrosDistribuidorService.getParametrosDistribuidor().getBoletoSlipImpressao());
+		ParametrosDistribuidorVO parametrosDistribuidor = parametrosDistribuidorService.getParametrosDistribuidor();
+		
+		documentoConferenciaEncalhe.setUtilizaSlipBoleto(parametrosDistribuidor.getBoletoSlipImpressao());
+		
+		documentoConferenciaEncalhe.setUtilizaSlip(parametrosDistribuidor.getSlipImpressao());
 		
 		return documentoConferenciaEncalhe;
 		
@@ -2339,19 +2344,14 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		default:
 			
 			return null;
-		
-		}
-		
+		}	
 	}
 	
 	public enum TipoDocumentoConferenciaEncalhe {
 		
 		SLIP, BOLETO_OU_RECIBO;
 		
-	}
-	
-	
-	
+	}	
 	
 	/**
 	 * Obtém o valor total de débito ou credito de uma cota na dataOperacao.	
@@ -2516,13 +2516,13 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		BigInteger qtdeTotalProdutosDia = null;
 		BigDecimal valorTotalEncalheDia = null;
-		long dAnt=0;
-		long d=0;
+		long diaAnt=0;
+		long dia=0;
 		boolean exibeSubtotalDia = false;
 		
 		for(ProdutoEdicaoSlipDTO produtoEdicaoSlip : listaProdutoEdicaoSlip) {
 				
- 			dAnt=d;
+ 			diaAnt=dia;
  			
 			BigInteger reparte = obterQtdeReparteParaProdutoEdicao(
 					idCota, 
@@ -2542,14 +2542,14 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			
 			valorDevido = BigDecimalUtil.soma(valorDevido,produtoEdicaoSlip.getPrecoVenda().multiply(new BigDecimal(produtoEdicaoSlip.getReparte().intValue())));
 			
-			d = this.obterDiasEntreDatas(produtoEdicaoSlip);
+			dia = this.obterDiasEntreDatas(produtoEdicaoSlip);
  
 			String numCE = formatter.format(produtoEdicaoSlip.getIdChamadaEncalhe());
 			
-			produtoEdicaoSlip.setOrdinalDiaConferenciaEncalhe(d==dAnt?"":this.getDiaMesOrdinal(d)+" DIA - CE NUM "+numCE);
+			produtoEdicaoSlip.setOrdinalDiaConferenciaEncalhe(dia==diaAnt?"":this.getDiaMesOrdinal(dia)+" DIA - CE NUM "+numCE);
 		
 		    exibeSubtotalDia = (listaProdutoEdicaoSlip.indexOf(produtoEdicaoSlip)==(listaProdutoEdicaoSlip.size()-1))||
-		    		           (d!=this.obterDiasEntreDatas(listaProdutoEdicaoSlip.get(listaProdutoEdicaoSlip.indexOf(produtoEdicaoSlip)+1)));	
+		    		           (dia!=this.obterDiasEntreDatas(listaProdutoEdicaoSlip.get(listaProdutoEdicaoSlip.indexOf(produtoEdicaoSlip)+1)));	
 			                     
 			produtoEdicaoSlip.setQtdeTotalProdutos(!exibeSubtotalDia?"":"Total de Produtos do dia:"+this.space(133 - (CurrencyUtil.formatarValor(qtdeTotalProdutosDia).length()))+CurrencyUtil.formatarValor(qtdeTotalProdutosDia));
  			produtoEdicaoSlip.setValorTotalEncalhe(!exibeSubtotalDia?"":"Total do Encalhe do dia:"+this.space(133 - (CurrencyUtil.formatarValor(valorTotalEncalheDia).length()))+CurrencyUtil.formatarValor(valorTotalEncalheDia));
