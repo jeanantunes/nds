@@ -573,7 +573,7 @@ public class FecharDiaController {
 		try {
 		    Boolean hasPendenciaValidacao = (Boolean) this.session.getAttribute(ATRIBUTO_SESSAO_POSSUI_PENDENCIAS_VALIDACAO);
 		    
-		   // if (hasPendenciaValidacao != null && !hasPendenciaValidacao) {
+		   if (hasPendenciaValidacao != null && !hasPendenciaValidacao) {
 		        
 		        FechamentoDiarioDTO dto = this.fecharDiaService.processarFechamentoDoDia(getUsuario(), getDataFechamento());
 		        setFechamentoDiarioDTO(dto);
@@ -582,15 +582,15 @@ public class FecharDiaController {
 		        
 		        result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, " Fechamento do Dia efetuado com sucesso."),
 		                Constantes.PARAM_MSGS).recursive().serialize();
-//		    }
-//		    else{
-//		        
-//		    	//Lock novamente na base de dados.
-//				this.fecharDiaService.setLockBancoDeDados(true);
-//		        result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING, "Fechamento do Dia não pode ser confirmado! Existem pendências em aberto!"),
-//		                Constantes.PARAM_MSGS).recursive().serialize();
-//		        
-//		    }
+		    }
+		    else{
+		        
+		    	//Lock novamente na base de dados.
+				this.fecharDiaService.setLockBancoDeDados(true);
+		        result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING, "Fechamento do Dia não pode ser confirmado! Existem pendências em aberto!"),
+		                Constantes.PARAM_MSGS).recursive().serialize();
+		        
+		    }
 		    
 		} catch (RuntimeException ex) {
 		    clearFechamentoDiarioDTO();
