@@ -31,7 +31,7 @@ public interface ConsolidadoFinanceiroRepository extends Repository<ConsolidadoF
 	
 	Date buscarDiaUltimaDividaGerada();
 
-	Long obterQuantidadeDividasGeradasData(Date data);
+	Long obterQuantidadeDividasGeradasData(Date data, Long idCota);
 
 	ConsolidadoFinanceiroCota buscarPorCotaEData(Cota cota, java.sql.Date data);
 }

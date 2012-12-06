@@ -505,40 +505,9 @@ var ConferenciaEncalhe = $.extend(true, {
 	
 	gerarDocumentosConferenciaEncalhe : function(tiposDocumento) {
 		
-		var fileArray = [];
+		var file = contextPath + '/devolucao/conferenciaEncalhe/gerarDocumentoConferenciaEncalhe';
 		
-		 $.each(tiposDocumento, function(index, value){
-			 
-			 if(value == 'SLIP') {
-				 fileArray[index] = contextPath + '/devolucao/conferenciaEncalhe/gerarSlip';
-			 } 
-			 
-			 if(value == 'BOLETO_OU_RECIBO') {
-				 fileArray[index] = contextPath + '/devolucao/conferenciaEncalhe/gerarBoletoOuRecibo';
-			 }
-			 
-		 });
-		
-		 var fileIndex = 0;
-
-		 $('#download-iframe', ConferenciaEncalhe.workspace).attr('src', fileArray[fileIndex]);
-		 
-		 fileIndex++;
-
-		 var interval = setInterval(function() {
-			 
-		        if(fileIndex < fileArray.length) {
-		            
-		        	$('#download-iframe', ConferenciaEncalhe.workspace).attr('src', fileArray[fileIndex]);
-		            
-		        	fileIndex++;
-		            
-		        } else {
-		            clearInterval(interval);
-		        }
-		        
-		    }, 100 );
-		
+		$('#download-iframe', ConferenciaEncalhe.workspace).attr('src', file);		
 	},
 	
 	carregarGridItensNotaFiscal : function (modeloConferenciaEncalhe) {
