@@ -278,9 +278,9 @@ public class NegociacaoDividaController {
 			Integer ativarAposPagar, List<ParcelaNegociacao> parcelas, List<Long> idsCobrancas, Long idBanco,
 			BigDecimal valorDividaComissao,boolean recebeCobrancaPorEmail){
 		
-		if (!validarValorTotalNegociacao(parcelas, valorDividaComissao)) {
+		/*if (!validarValorTotalNegociacao(parcelas, valorDividaComissao)) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Valores das parcelas não conferem com o valor total da dívida.");
-		}
+		}*/
 		
 		Long idNegociacao = (Long) this.session.getAttribute(ID_ULTIMA_NEGOCIACAO);
 		
@@ -343,7 +343,7 @@ public class NegociacaoDividaController {
 	private boolean validarValorTotalNegociacao(List<ParcelaNegociacao> parcelas, BigDecimal valorDivida) {
 		BigDecimal valorConferir = BigDecimal.ZERO;
 		for (ParcelaNegociacao parcela : parcelas) {
-			valorConferir.add(parcela.getNegociacao().getValorDividaPagaComissao());
+			valorConferir.add(parcela.getMovimentoFinanceiroCota().getValor());
 		}
 		if (valorConferir.equals(valorDivida)) {
 			return true;
