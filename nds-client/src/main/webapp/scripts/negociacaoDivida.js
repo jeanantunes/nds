@@ -215,11 +215,15 @@ var negociacaoDividaController = $.extend(true, {
 	},
 	
 	popup_formaPgto : function() {
-		
+
 		if ($("#totalSelecionado", this.workspace).html() == "0,00") {
 			exibirMensagem("WARNING", ["Não foram selecionadas dívidas para negociação."], "")
 			return;
 		}
+
+		$("#formaPgtoForm")[0].reset();
+
+		negociacaoDividaController.comissaoCota();
 		
 		$('span[name$="botoes"]').hide();
 		
@@ -229,7 +233,7 @@ var negociacaoDividaController = $.extend(true, {
 			
 				$("#comissaoAtualCota",negociacaoDividaController.workspace).val(floatToPrice(result));
 				
-				$('#formaPgto_numEnomeCota',negociacaoDividaController.workspace).html('<strong>Cota:</strong> ' + $('#negociacaoDivida_numCota',negociacaoDividaController.workspace).val() +' - <strong>Nome: </strong>'+ $('#negociacaoDivida_nomeCota').html());
+				$('#formaPgto_numEnomeCota',negociacaoDividaController.workspace).html('<strong>Cota:</strong> ' + $('#negociacaoDivida_numCota',negociacaoDividaController.workspace).val() +' - <strong>Nome: </strong>'+ $('#negociacaoDivida_nomeCota').html()+' - <strong>Status: </strong>'+ $('#negociacaoDivida_statusCota').html());
 				$('#dividaSelecionada',negociacaoDividaController.workspace).html($('#totalSelecionado',negociacaoDividaController.workspace).html());
 				$('#valorSelecionado',negociacaoDividaController.workspace).val(priceToFloat($('#totalSelecionado',negociacaoDividaController.workspace).html()));
 				$('#numeroCota',negociacaoDividaController.workspace).val($('#negociacaoDivida_numCota',negociacaoDividaController.workspace).val());
@@ -254,6 +258,10 @@ var negociacaoDividaController = $.extend(true, {
 			} ,
 			null
 		);
+	},
+	
+	limparCampos : function() {
+		
 	},
 	
 	confirmarNegociacao : function(){
