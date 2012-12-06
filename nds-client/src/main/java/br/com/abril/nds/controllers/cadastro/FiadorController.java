@@ -669,6 +669,8 @@ public class FiadorController {
 		this.httpSession.removeAttribute(CotasAssociadasController.LISTA_COTAS_ASSOCIADAS_SALVAR_SESSAO);
 		this.httpSession.removeAttribute(CotasAssociadasController.LISTA_COTAS_ASSOCIADAS_REMOVER_SESSAO);
 		this.httpSession.removeAttribute(ID_FIADOR_EDICAO);
+		
+		this.httpSession.removeAttribute(EnderecoController.ENDERECO_PENDENTE);
 	}
 	
 	private TableModel<CellModel> getTableModelFiadores(ConsultaFiadorDTO consulta, Integer page) {
