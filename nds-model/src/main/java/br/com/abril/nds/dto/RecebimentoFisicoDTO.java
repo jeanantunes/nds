@@ -28,7 +28,9 @@ public class RecebimentoFisicoDTO implements Serializable {
 	private BigDecimal precoCapa;
 	
 	private BigDecimal precoDesconto;
-	
+
+	private BigDecimal precoItem;
+
 	private int pacotePadrao;
 	
 	private Long peso;
@@ -83,6 +85,7 @@ public class RecebimentoFisicoDTO implements Serializable {
 			Long edicao,
 			Long idProdutoEdicao,
 			BigDecimal precoCapa,
+			BigDecimal precoItem,
 			Float percentualDesconto, 
 			BigInteger repartePrevisto, 
 			BigInteger qtdFisico,
@@ -104,10 +107,11 @@ public class RecebimentoFisicoDTO implements Serializable {
 
 		// caso possua um percentual de desconto (logistica)
 		if (percentualDesconto != null) {
-			this.precoCapa = precoCapa.subtract( precoCapa.multiply(new BigDecimal(percentualDesconto.floatValue())).divide(new BigDecimal(100)) );
+			this.precoCapa = precoCapa.subtract( precoItem.multiply(new BigDecimal(percentualDesconto.floatValue())).divide(new BigDecimal(100)) );
 		} else {
 			this.precoCapa = precoCapa;
 		}
+		this.precoItem = precoItem;
 		this.repartePrevisto = repartePrevisto;
 		this.qtdFisico = qtdFisico;
 		this.pacotePadrao = pacotePadrao;
@@ -296,6 +300,14 @@ public class RecebimentoFisicoDTO implements Serializable {
 
 	public void setPeso(Long peso) {
 		this.peso = peso;
+	}
+
+	public BigDecimal getPrecoItem() {
+		return precoItem;
+	}
+
+	public void setPrecoItem(BigDecimal precoItem) {
+		this.precoItem = precoItem;
 	}
 
 	/* (non-Javadoc)
