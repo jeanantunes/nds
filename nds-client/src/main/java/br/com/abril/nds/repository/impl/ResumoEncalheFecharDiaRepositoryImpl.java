@@ -3,6 +3,7 @@ package br.com.abril.nds.repository.impl;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -13,11 +14,12 @@ import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.EncalheFecharDiaDTO;
+import br.com.abril.nds.dto.ResumoEncalheFecharDiaDTO;
 import br.com.abril.nds.dto.VendaFechamentoDiaDTO;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.FormaComercializacao;
+import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.estoque.TipoVendaEncalhe;
-import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.repository.ResumoEncalheFecharDiaRepository;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.PaginacaoVO;
@@ -25,59 +27,12 @@ import br.com.abril.nds.vo.PaginacaoVO;
 @Repository
 public class ResumoEncalheFecharDiaRepositoryImpl extends AbstractRepository implements
 		ResumoEncalheFecharDiaRepository {
-    
-	@Override
-	public BigDecimal obterValorEncalheFisico(Date dataOperacaoDistribuidor, boolean juramentada) {
-		
-		StringBuilder hql = new StringBuilder();
-		
-		hql.append(" SELECT (ce.qtde * pe.precoVenda) ");			
-		hql.append(" from ConferenciaEncalhe AS ce ");		
-		hql.append(" JOIN ce.produtoEdicao as pe ");		
-		hql.append(" WHERE ce.data = :dataOperacaoDistribuidor ");
-		
-		if(juramentada){
-			hql.append(" AND ce.juramentada = :juramentada ");
-		}
-		
-		Query query = super.getSession().createQuery(hql.toString());
-		
-		query.setParameter("dataOperacaoDistribuidor", dataOperacaoDistribuidor);
-		
-		if(juramentada){
-			query.setParameter("juramentada", juramentada);
-		}
-		
-		BigDecimal total =  (BigDecimal) query.uniqueResult();
-		
-		return total != null ? total : BigDecimal.ZERO ;
-	}
-
-	@Override
-	public BigDecimal obterValorEncalheLogico(Date dataOperacaoDistribuidor) {
-		
-		StringBuilder hql = new StringBuilder();
-		
-		hql.append(" SELECT (cec.qtdePrevista * pe.precoVenda) ");			
-		hql.append(" from ChamadaEncalheCota AS cec ");		
-		hql.append(" JOIN cec.chamadaEncalhe AS ce ");		
-		hql.append(" JOIN ce.produtoEdicao as pe ");		
-		hql.append(" WHERE ce.dataRecolhimento = :dataOperacaoDistribuidor ");
-		hql.append(" AND ce.tipoChamadaEncalhe = :tipoChamadaEncalhe ");
-		
-		Query query = super.getSession().createQuery(hql.toString());
-		
-		query.setParameter("dataOperacaoDistribuidor", dataOperacaoDistribuidor);		
-		query.setParameter("tipoChamadaEncalhe", TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO);		
-		
-		BigDecimal total =  (BigDecimal) query.uniqueResult();
-		
-		return total != null ? total : BigDecimal.ZERO ;
-	}
 	
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<EncalheFecharDiaDTO> obterDadosGridEncalhe(Date data, PaginacaoVO paginacao) {
+	    Objects.requireNonNull(data, "Data para consulta dos produtos conferidos no encalhe não deve ser nula!");
+	    
 	    StringBuilder hql = new StringBuilder("select new map(produto.codigo as codigo, ");
         hql.append("produto.nome as nomeProduto, ");
         hql.append("produtoEdicao.numeroEdicao as numeroEdicao, ");
@@ -162,33 +117,6 @@ public class ResumoEncalheFecharDiaRepositoryImpl extends AbstractRepository imp
                 
         return (Long) query.uniqueResult();
 	}
-	
-	@Override
-	public BigDecimal obterValorFaltasOuSobras(Date dataOperacao, StatusAprovacao status) {
-
-		StringBuilder hql = new StringBuilder();
-		
-		hql.append(" SELECT (me.qtde * pe.precoVenda) ");			
-		hql.append(" FROM LancamentoDiferenca AS ld ");		
-		hql.append(" JOIN ld.movimentoEstoque as me ");	
-		hql.append(" JOIN me.produtoEdicao as pe ");	
-		hql.append(" WHERE me.data = :dataOperacaoDistribuidor ");
-		hql.append(" AND ld.status = :status ");			
-		
-		Query query = super.getSession().createQuery(hql.toString());
-		
-		query.setParameter("dataOperacaoDistribuidor", dataOperacao);
-		
-		if(status.equals(StatusAprovacao.PERDA)){
-			query.setParameter("status", StatusAprovacao.PERDA);			
-		}else{
-			query.setParameter("status", StatusAprovacao.GANHO);
-		}
-		
-		BigDecimal total =  (BigDecimal) query.uniqueResult();
-		
-		return total != null ? total : BigDecimal.ZERO ;
-	}
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -224,30 +152,85 @@ public class ResumoEncalheFecharDiaRepositoryImpl extends AbstractRepository imp
 		return query.list();
 	}
 
+    /**
+     * {@inheritDoc}
+     */
 	@Override
-	public BigDecimal obterValorVendaEncalhe(Date dataOperacao) {
-		StringBuilder hql = new StringBuilder();
-		
-		hql.append(" SELECT   ");
-		hql.append(" SUM(ve.qntProduto * pe.precoVenda)");
-		hql.append(" FROM VendaProduto as ve ");		 
-		hql.append(" JOIN ve.produtoEdicao as pe ");					
-		hql.append(" JOIN pe.produto as p ");					
-		hql.append(" WHERE ve.dataVenda = :dataOperacao ");
-		hql.append(" AND ve.tipoComercializacaoVenda = :tipoComercializacaoVenda ");		
-		hql.append(" AND ve.tipoVenda = :suplementar");
+    public ResumoEncalheFecharDiaDTO obterResumoEncalhe(Date data) {
+	    Objects.requireNonNull(data, "Data para resumo de encalhe não deve ser nula!");
+        
+	    String templateHqlProdutoEdicaoEncalhe = new StringBuilder("(select distinct(confEncalhe.produtoEdicao.id) from ConferenciaEncalhe confEncalhe ")
+        .append("where confEncalhe.data = :data)").toString();
+	    
+	    String templateHqlDiferenca =  new StringBuilder("(select sum(case when diferenca.tipoDiferenca = :%s then (diferenca.qtde * diferenca.produtoEdicao.pacotePadrao * diferenca.produtoEdicao.precoVenda) ")
+        .append("else (diferenca.qtde * diferenca.produtoEdicao.precoVenda) end) from Diferenca diferenca where diferenca.dataMovimento = :data and diferenca.tipoDiferenca in (:%s, :%s) ")
+        .append("and diferenca.lancamentoDiferenca.status in(:statusPerdaGanho) and diferenca.produtoEdicao.id in ").append(templateHqlProdutoEdicaoEncalhe).append(") as %s ").toString();
+	    
+        //TOTAL ENCALHE LÓGICO
+        StringBuilder hql = new StringBuilder("select new map(sum(conferenciaEncalhe.qtde * produtoEdicao.precoVenda) as totalLogico, ");
+        
+        //TOTAL ENCALHE FÍSICO
+        hql.append("(select sum(fechamentoEncalhe.quantidade * fechamentoEncalhe.fechamentoEncalhePK.produtoEdicao.precoVenda) from  ");
+        hql.append("FechamentoEncalhe fechamentoEncalhe where fechamentoEncalhe.fechamentoEncalhePK.dataEncalhe = :data) as totalFisico, ");
+        
+        //TOTAL ENCALHE LÓGICO JURAMENTADO
+        hql.append("(select coalesce(sum(conferenciaEncalheJuramentada.qtde * conferenciaEncalheJuramentada.produtoEdicao.precoVenda), 0) ");
+        hql.append("from ConferenciaEncalhe conferenciaEncalheJuramentada where conferenciaEncalheJuramentada.juramentada is true and ");
+        hql.append("conferenciaEncalheJuramentada.data = :data) as totalJuramentado, ");
+        
+        //TOTAL VENDA ENCALHE
+        hql.append("(select coalesce(sum(vendaEncalhe.qntProduto * vendaEncalhe.produtoEdicao.precoVenda), 0) from VendaProduto vendaEncalhe ");
+        hql.append("where vendaEncalhe.produtoEdicao.id in (").append(templateHqlProdutoEdicaoEncalhe).append(") and ");
+        hql.append("vendaEncalhe.dataVenda = :data and vendaEncalhe.tipoVenda = :tipoVendaEncalhe ");
+        hql.append("and vendaEncalhe.tipoComercializacaoVenda = :tipoComercializacaoVista) as totalVenda, ");
+        
+        //TOTAL SOBRAS
+        hql.append(String.format(templateHqlDiferenca, "tipoDiferencaSobraDe", "tipoDiferencaSobraDe", "tipoDiferencaSobraEm", "totalSobras")).append(",");
+        
+        //TOTAL FALTAS
+        hql.append(String.format(templateHqlDiferenca, "tipoDiferencaFaltaDe", "tipoDiferencaFaltaDe", "tipoDiferencaFaltaEm", "totalFaltas")).append(")");
 
-		Query query = super.getSession().createQuery(hql.toString());
-		
-		query.setParameter("dataOperacao", dataOperacao);
-		
-		query.setParameter("suplementar", TipoVendaEncalhe.ENCALHE);
-		
-		query.setParameter("tipoComercializacaoVenda", FormaComercializacao.CONTA_FIRME);	
-		
-		BigDecimal total =  (BigDecimal) query.uniqueResult();
-		
-		return total != null ? total : BigDecimal.ZERO ;
-	}
+        hql.append("from ConferenciaEncalhe conferenciaEncalhe ");
+        hql.append("join conferenciaEncalhe.produtoEdicao produtoEdicao ");
+        hql.append("join produtoEdicao.produto produto ");
+        hql.append("where conferenciaEncalhe.data = :data ");
+        
+        Query query = getSession().createQuery(hql.toString());
+        query.setParameter("data", data);
+        query.setParameter("tipoVendaEncalhe", TipoVendaEncalhe.ENCALHE);
+        query.setParameter("tipoComercializacaoVista", FormaComercializacao.CONTA_FIRME);
+        query.setParameter("tipoDiferencaSobraDe", TipoDiferenca.SOBRA_DE);
+        query.setParameter("tipoDiferencaSobraEm", TipoDiferenca.SOBRA_EM);
+        query.setParameter("tipoDiferencaFaltaDe", TipoDiferenca.FALTA_DE);
+        query.setParameter("tipoDiferencaFaltaEm", TipoDiferenca.FALTA_EM);
+        query.setParameterList("statusPerdaGanho", Arrays.asList(StatusAprovacao.GANHO, StatusAprovacao.PERDA));
+        
+        @SuppressWarnings("unchecked")
+        Map<String, Object> map = (Map<String, Object>) query.uniqueResult();
+  
+        BigDecimal totalLogico = Util.nvl((BigDecimal) map.get("totalLogico"), BigDecimal.ZERO);
+        BigDecimal totalFisico = Util.nvl((BigDecimal) map.get("totalFisico"), BigDecimal.ZERO);
+        BigDecimal totalJuramentado = Util.nvl((BigDecimal) map.get("totalJuramentado"), BigDecimal.ZERO);
+        BigDecimal totalVenda = Util.nvl((BigDecimal) map.get("totalVenda"), BigDecimal.ZERO);
+        BigDecimal totalSobras = Util.nvl((BigDecimal) map.get("totalSobras"), BigDecimal.ZERO);
+        BigDecimal totalFaltas = Util.nvl((BigDecimal) map.get("totalFaltas"), BigDecimal.ZERO);
+        
+        BigDecimal fisicoJuramentado = totalFisico.add(totalJuramentado);
+        BigDecimal faltaSobras = totalSobras.subtract(totalFaltas);
+        
+        //Saldo = Lógico - (Físico + Lógico Juramentado) - Venda de Encalhe + Sobras - Faltas ;
+        BigDecimal saldo = totalLogico.subtract(fisicoJuramentado).subtract(totalVenda).add(faltaSobras);
+     
+        ResumoEncalheFecharDiaDTO dto = new ResumoEncalheFecharDiaDTO();
+        dto.setTotalLogico(totalLogico);
+        dto.setTotalFisico(totalFisico);
+        dto.setTotalJuramentado(totalJuramentado);
+        dto.setVenda(totalVenda);
+        dto.setTotalSobras(totalSobras);
+        dto.setTotalFaltas(totalFaltas);
+        dto.setSaldo(saldo);
+	    
+        return dto;
+    }
 
 }
