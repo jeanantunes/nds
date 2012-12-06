@@ -120,7 +120,7 @@ public class ResumoEncalheFecharDiaRepositoryImpl extends AbstractRepository imp
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<VendaFechamentoDiaDTO> obterDadosVendaEncalhe(Date dataOperacao) {
+	public List<VendaFechamentoDiaDTO> obterDadosVendaEncalhe(Date dataOperacao, PaginacaoVO paginacao) {
 		StringBuilder hql = new StringBuilder();
 		
 		hql.append(" SELECT p.codigo as codigo,  ");
@@ -136,15 +136,20 @@ public class ResumoEncalheFecharDiaRepositoryImpl extends AbstractRepository imp
 		hql.append(" WHERE ve.dataVenda = :dataOperacao ");
 		hql.append(" AND ve.tipoComercializacaoVenda = :tipoComercializacaoVenda ");
 		
-		hql.append(" AND ve.tipoVenda = :suplementar");
+		hql.append(" AND ve.tipoVenda = :encalhe");
 
 		Query query = super.getSession().createQuery(hql.toString());
 		
 		query.setParameter("dataOperacao", dataOperacao);
 		
-		query.setParameter("suplementar", TipoVendaEncalhe.ENCALHE);
+		query.setParameter("encalhe", TipoVendaEncalhe.ENCALHE);
 		
-		query.setParameter("tipoComercializacaoVenda", FormaComercializacao.CONTA_FIRME);		
+		query.setParameter("tipoComercializacaoVenda", FormaComercializacao.CONTA_FIRME);	
+		
+		if (paginacao != null) {
+		    query.setFirstResult(paginacao.getPosicaoInicial());
+	        query.setMaxResults(paginacao.getQtdResultadosPorPagina());
+	    }
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(
 				VendaFechamentoDiaDTO.class));
@@ -231,6 +236,22 @@ public class ResumoEncalheFecharDiaRepositoryImpl extends AbstractRepository imp
         dto.setSaldo(saldo);
 	    
         return dto;
+    }
+
+    @Override
+    public Long contarVendasEncalhe(Date data) {
+        Objects.requireNonNull(data, "Data para contagem das vendas de encalhe não deve ser nula!");
+        
+        StringBuilder hql = new StringBuilder("select count(vendaEncalhe) from VendaProduto vendaEncalhe ");
+        hql.append("where vendaEncalhe.dataVenda = :data and vendaEncalhe.tipoVenda = :tipoVendaEncalhe ");
+        hql.append("and vendaEncalhe.tipoComercializacaoVenda = :tipoComercializacaoVista");
+        
+        Query query = getSession().createQuery(hql.toString());
+        query.setParameter("data", data);
+        query.setParameter("tipoVendaEncalhe", TipoVendaEncalhe.ENCALHE);
+        query.setParameter("tipoComercializacaoVista", FormaComercializacao.CONTA_FIRME);        
+        
+        return (Long) query.uniqueResult();
     }
 
 }
