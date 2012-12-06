@@ -515,8 +515,8 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 
 		ProdutoEdicao produtoEdicao = 
 				produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(vnd.getCodigoProduto(), vnd.getNumeroEdicao());
-
-		if (isVendaConsignadoCota(produtoEdicao)) {
+			
+		if (isVendaSuplementarConsignadoCota(produtoEdicao)) {
 
 			return criarVendaSuplementarConsignado(vnd, numeroCota,dataVencimentoDebito, usuario, produtoEdicao);
 			
@@ -720,7 +720,7 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 				chamadaEncalheRepository.obterPorNumeroEdicaoEMaiorDataRecolhimento(produtoEdicao,TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO);
 		
 		if(chamadaEncalhe == null){
-			throw new ValidacaoException(TipoMensagem.WARNING,"Não existe chamada de encalhe para o produto " + produtoEdicao.getProduto().getNome() + " - " + produtoEdicao.getNumeroEdicao());
+			return;
 		}
 		
 		ChamadaEncalheCota chamadaEncalheCota = 
@@ -750,7 +750,7 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 	 * @return boolean
 	 */
 	private boolean isVendaConsignadoCota(ProdutoEdicao produtoEdicao) {
-
+		
 		ChamadaEncalhe chamadaEncalhe = 
 				chamadaEncalheRepository.obterPorNumeroEdicaoEMaiorDataRecolhimento(produtoEdicao,TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO);
 
@@ -829,7 +829,11 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 		ChamadaEncalhe chamadaEncalhe = 
 				chamadaEncalheRepository.obterPorNumeroEdicaoEMaiorDataRecolhimento(vendaProduto.getProdutoEdicao(),
 																					TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO);
-
+		
+		if(chamadaEncalhe == null){
+			return;
+		}
+		
 		ChamadaEncalheCota chamadaEncalheCota = 
 				chamadaEncalheCotaRepository.buscarPorChamadaEncalheECota(chamadaEncalhe.getId(),vendaProduto.getCota().getId());
 
@@ -864,7 +868,11 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 
 		ChamadaEncalhe chamadaEncalhe = 
 				chamadaEncalheRepository.obterPorNumeroEdicaoEMaiorDataRecolhimento(vendaProduto.getProdutoEdicao(),TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO);
-
+		
+		if(chamadaEncalhe == null){
+			return;
+		}
+		
 		ChamadaEncalheCota chamadaEncalheCota = 
 				chamadaEncalheCotaRepository.buscarPorChamadaEncalheECota(chamadaEncalhe.getId(),vendaProduto.getCota().getId());
 
@@ -1170,7 +1178,7 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 		
 		if(TipoVendaEncalhe.SUPLEMENTAR.equals(tipoVendaEncalhe)){
 			
-			if (isVendaConsignadoCota(produtoEdicao)){
+			if (isVendaSuplementarConsignadoCota(produtoEdicao)){
 				
 				formaComercializacao = FormaComercializacao.CONSIGNADO;
 			}
@@ -1193,6 +1201,18 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 		}
 		
 		return formaComercializacao;
+	}
+	
+	private boolean isVendaSuplementarConsignadoCota(ProdutoEdicao produtoEdicao){
+		
+		List<ChamadaEncalhe> chamadas = 
+				chamadaEncalheRepository.obterChamadaEncalhePorProdutoEdicao(produtoEdicao, TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO) ;
+		
+		if(chamadas.isEmpty()){
+			return true;
+		}
+		
+		return isVendaConsignadoCota(produtoEdicao);
 	}
 	
 	private boolean isConsignadoVendaEncalhe(ProdutoEdicao produtoEdicao) {
@@ -1258,7 +1278,7 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 	}
 
 	@Override
-	@Transactional(readOnly = true)
+	@Transactional
 	public byte[] geraImpressaoVenda(FiltroVendaEncalheDTO filtro) {
 
 		List<VendaProduto> vendas = vendaProdutoRepository

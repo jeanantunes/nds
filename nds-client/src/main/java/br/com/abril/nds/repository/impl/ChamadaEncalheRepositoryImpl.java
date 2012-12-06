@@ -93,6 +93,24 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		
 		return (ChamadaEncalhe) query.uniqueResult();
 	}
+	
+	public List<ChamadaEncalhe> obterChamadaEncalhePorProdutoEdicao(ProdutoEdicao produtoEdicao,
+			 												  TipoChamadaEncalhe tipoChamadaEncalhe) {
+
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select chamadaEncalhe from ChamadaEncalhe chamadaEncalhe ")
+		.append(" where  ")
+		.append(" chamadaEncalhe.tipoChamadaEncalhe = :tipoChamadaEncalhe ")
+		.append(" and chamadaEncalhe.produtoEdicao = :produtoEdicao ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		query.setParameter("tipoChamadaEncalhe", tipoChamadaEncalhe);
+		query.setParameter("produtoEdicao", produtoEdicao);
+		
+		return  query.list();
+	}
 
 	/**
 	 * SubHql que obtém a quantidade total prevista da chamada de encalhe ou  
