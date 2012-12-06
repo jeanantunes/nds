@@ -237,7 +237,7 @@ public class FecharDiaController {
 		
 		ResumoEncalheFecharDiaDTO dto = this.resumoEncalheFecharDiaService.obterResumoGeralEncalhe(distribuidor.getDataOperacao());
 		
-		result.use(Results.json()).from(dto, "result").recursive().serialize();
+		result.use(CustomMapJson.class).put("result", dto).serialize();
 		
 	}
 	
@@ -571,7 +571,7 @@ public class FecharDiaController {
 		this.fecharDiaService.setLockBancoDeDados(false);
 		
 		try {
-		    Boolean hasPendenciaValidacao = (Boolean) this.session.getAttribute(ATRIBUTO_SESSAO_POSSUI_PENDENCIAS_VALIDACAO);
+		    Boolean hasPendenciaValidacao =  (Boolean) this.session.getAttribute(ATRIBUTO_SESSAO_POSSUI_PENDENCIAS_VALIDACAO);
 		    
 		    if (hasPendenciaValidacao != null && !hasPendenciaValidacao) {
 		        
