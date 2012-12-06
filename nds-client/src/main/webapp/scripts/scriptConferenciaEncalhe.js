@@ -324,21 +324,22 @@ var ConferenciaEncalhe = $.extend(true, {
 						
 						ConferenciaEncalhe.carregarListaConferencia(data);
 						
+					} else if(result.tipoMensagem == 'WARNING') {
+						
+						$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/carregarListaConferencia', 
+								null, 
+								function(result){
+									
+									ConferenciaEncalhe.abrirDialogNotaFiscalDivergente(result);
+								}
+						);
+						
+						playSound();
 					}
 				
 					exibirMensagem(result.tipoMensagem, result.listaMensagens);
 				},
-				
-				function(){
-					
-					$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/carregarListaConferencia', 
-							null, 
-							function(result){
-								
-								ConferenciaEncalhe.abrirDialogNotaFiscalDivergente(result);
-							}
-					);
-				}, true, "idModalDadosNotaFiscal"
+				null, true, "idModalDadosNotaFiscal"
 		);
 		
 	},
@@ -604,13 +605,7 @@ var ConferenciaEncalhe = $.extend(true, {
 		
 	},
 	
-	abrirDialogNotaFiscalDivergente : function(result){
-		
-		if (result.mensagens){
-			
-			exibirMensagem(result.mensagens.tipoMensagem, result.mensagens.listaMensagens);
-			return;
-		}
+	abrirDialogNotaFiscalDivergente : function(result) {
 		
 		ConferenciaEncalhe.modalAberta = true;
 		

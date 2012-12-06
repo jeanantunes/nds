@@ -7,7 +7,10 @@ import br.com.abril.nds.dto.ReparteFecharDiaDTO;
 import br.com.abril.nds.dto.fechamentodiario.SumarizacaoReparteDTO;
 import br.com.abril.nds.vo.PaginacaoVO;
 
-
+/**
+ * @deprecated Mover os métodos para {@link FecharDiaService} e remover este service.
+ **/
+@Deprecated
 public interface ResumoReparteFecharDiaService {
 	
     SumarizacaoReparteDTO obterSumarizacaoReparte(Date data);

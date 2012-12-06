@@ -41,13 +41,13 @@ var MANTER_COTA = $.extend(true, {
             preProcess: MANTER_COTA.executarPreProcessamento,
             dataType : 'json',
             colModel : [  {
-                display : 'CÃ³digo',
+                display : 'Código',
                 name : 'numero',
                 width : 60,
                 sortable : true,
                 align : 'left'
             },{
-                display : 'Nome / RazÃ£o Social',
+                display : 'Nome / Razão Social',
                 name : 'nome',
                 width : 130,
                 sortable : true,
@@ -89,7 +89,7 @@ var MANTER_COTA = $.extend(true, {
                 sortable : true,
                 align : 'left'
             }, {
-                display : 'AÃ§Ã£o',
+                display : 'Ação',
                 name : 'acao',
                 width : 60,
                 sortable : false,
@@ -470,7 +470,7 @@ var MANTER_COTA = $.extend(true, {
                 height:590,
                 width:950,
                 modal: true,
-                title: novo ? "Nova Cota" : "HistÃ³rico de Titularidade Cota - " + MANTER_COTA.numeroCota,
+                title: novo ? "Nova Cota" : "Histórico de Titularidade Cota - " + MANTER_COTA.numeroCota,
                 buttons: [
                     {id:"btn_fechar_historico_titularidade_cota", text:"Fechar",
                         click: function() {
@@ -833,7 +833,7 @@ var COTA_DESCONTO = $.extend(true,
                 preProcess: COTA_DESCONTO.getDataFromResult,
                 dataType : 'json',
                 colModel : [ {
-                    display : 'CÃ³digo',
+                    display : 'Código',
                     name : 'codigoProduto',
                     width : 80,
                     sortable : true,
@@ -845,7 +845,7 @@ var COTA_DESCONTO = $.extend(true,
                     sortable : true,
                     align : 'left'
                 }, {
-                    display : 'EdiÃ§Ã£o',
+                    display : 'Edição',
                     name : 'numeroEdicao',
                     width : 60,
                     sortable : true,
@@ -857,7 +857,7 @@ var COTA_DESCONTO = $.extend(true,
                     sortable : true,
                     align : 'right'
                 }, {
-                    display : 'Data da AlteraÃ§Ã£o',
+                    display : 'Data da Alteração',
                     name : 'dataAlteracao',
                     width : 120,
                     sortable : true,
@@ -893,7 +893,7 @@ var COTA_DESCONTO = $.extend(true,
                     sortable : true,
                     align : 'left'
                 }, {
-                    display : 'Ãšltima AtualizaÃ§Ã£o',
+                    display : 'Última Atualização',
                     name : 'dataAlteracao',
                     width : 100,
                     sortable : true,
@@ -1161,7 +1161,7 @@ var COTA_CNPJ = $.extend(true, {
 
                 COTA_CNPJ.carregarDadosCadastraisCnpj(result);
 
-                exibirMensagemDialog("SUCCESS",["OperaÃ§Ã£o realizada com sucesso."],"dialog-cota");
+                exibirMensagemDialog("SUCCESS",["Operação realizada com sucesso."],"dialog-cota");
 
                 if (MANTER_COTA.isAlteracaoTitularidade) {
                     MANTER_COTA.isAlteracaoTitularidade = false;
@@ -1368,7 +1368,7 @@ var COTA_CPF = $.extend(true, {
 
                 COTA_CPF.carregarDadosCpf(result);
 
-                exibirMensagemDialog("SUCCESS",["OperaÃ§Ã£o realizada com sucesso."],"dialog-cota");
+                exibirMensagemDialog("SUCCESS",["Operação realizada com sucesso."],"dialog-cota");
 
                 if (MANTER_COTA.isAlteracaoTitularidade) {
                     MANTER_COTA.isAlteracaoTitularidade = false;
@@ -1902,7 +1902,7 @@ function GridAntigosProprietarios(element, workspace) {
                 }
             },
             colModel : [{
-                display : 'PerÃ­odo',
+                display : 'Período',
                 name : 'periodo',
                 width : 120,
                 sortable : true,
@@ -1920,7 +1920,7 @@ function GridAntigosProprietarios(element, workspace) {
                 sortable : true,
                 align : 'left'
             },{
-                display : 'AÃ§Ã£o',
+                display : 'Ação',
                 name : 'acao',
                 width : 30,
                 sortable : false,

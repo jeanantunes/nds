@@ -1,6 +1,5 @@
 package br.com.abril.nds.service.impl;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -156,7 +155,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 	@Override
 	@Transactional(noRollbackFor = GerarCobrancaValidacaoException.class)
 	public void gerarCobranca(Long idCota, Long idUsuario, Set<String> setNossoNumero, boolean validarFechamentoEncalhe)
-		throws GerarCobrancaValidacaoException, IOException{
+		throws GerarCobrancaValidacaoException {
 		
 		this.processarCobranca(idCota, idUsuario, setNossoNumero, validarFechamentoEncalhe);
 		

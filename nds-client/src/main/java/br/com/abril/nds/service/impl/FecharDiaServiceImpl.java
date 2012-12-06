@@ -828,7 +828,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 			throws FechamentoDiarioException {
 		
 		List<EncalheFecharDiaDTO> listaEncalhe = 
-		        this.resumoEncalheFecharDiaService.obterDadosGridEncalhe(fechamento.getDataFechamento());
+		        this.resumoEncalheFecharDiaService.obterDadosGridEncalhe(fechamento.getDataFechamento(), null);
 		
 		if(listaEncalhe!= null && !listaEncalhe.isEmpty()){
 			
@@ -839,9 +839,9 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 				ProdutoEdicao produtoEdicao = produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(item.getCodigo(), item.getNumeroEdicao());
 				
 				lancamentoEncalhe.setProdutoEdicao(produtoEdicao);
-				lancamentoEncalhe.setQuantidadeDiferenca(item.getDiferenca());
-				lancamentoEncalhe.setQuantidadeVendaEncalhe(Util.nvl(item.getQtde(),0).intValue());
-				lancamentoEncalhe.setQuantidade(Util.nvl(item.getQtde(),0).intValue());
+				lancamentoEncalhe.setQuantidadeDiferenca(item.getQtdeDiferenca().intValue());
+				lancamentoEncalhe.setQuantidadeVendaEncalhe(Util.nvl(item.getQtdeVendaEncalhe(),0).intValue());
+				lancamentoEncalhe.setQuantidade(Util.nvl(item.getQtdeLogico(),0).intValue());
 				lancamentoEncalhe.setFechamentoDiarioConsolidadoEncalhe(consolidadoEncalhe);
 				
 				fechamentoDiarioLancamentoEncalheRepository.adicionar(lancamentoEncalhe);

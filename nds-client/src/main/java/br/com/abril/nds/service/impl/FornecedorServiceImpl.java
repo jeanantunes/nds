@@ -548,9 +548,12 @@ public class FornecedorServiceImpl implements FornecedorService {
 
 			EnderecoFornecedor enderecoFornecedor = this.enderecoFornecedorRepository.buscarPorId(enderecoAssociacao.getId());
 			
-			idsEndereco.add(enderecoAssociacao.getEndereco().getId());
-
-			this.enderecoFornecedorRepository.remover(enderecoFornecedor);
+			if(enderecoFornecedor!= null){
+				
+				idsEndereco.add(enderecoAssociacao.getEndereco().getId());
+	
+				this.enderecoFornecedorRepository.remover(enderecoFornecedor);
+			}
 		}
 
 		if (!idsEndereco.isEmpty()) {

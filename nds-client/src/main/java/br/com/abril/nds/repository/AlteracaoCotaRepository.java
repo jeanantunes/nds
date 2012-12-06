@@ -24,6 +24,4 @@ public interface AlteracaoCotaRepository extends Repository<Cota, Long> {
 	 * @return
 	 */
 	int contarAlteracaoCota(FiltroAlteracaoCotaDTO filtroAlteracaoCotaDTO);
-	
-	List<ConsultaAlteracaoCotaDTO> pesquisarAlteracaoCotaFornecedor(FiltroAlteracaoCotaDTO dto);
 }

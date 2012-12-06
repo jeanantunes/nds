@@ -15,11 +15,13 @@
 </style>
 
 
-<fieldset>
+<fieldset style="left: 10px">
+
 <legend>Características</legend>
-<table width="777" border="0" cellspacing="1" cellpadding="1">
+
+<table border="0" cellspacing="1" cellpadding="1">
   <tr>
-    <td colspan="2" class="complementar" colspan="2">
+     <td colspan="2" class="complementar" colspan="2">
     	  <input name="balcaoCentral" type="checkbox" value="" id="balcaoCentral" />
 	      <label for="balcaoCentral" >Balcão Central</label>
 	      <br clear="all" />
@@ -35,45 +37,50 @@
       </td>
   </tr>
 </table>
+
 </fieldset>
 
-<fieldset>
- <legend>Segmentação</legend>
+<fieldset style="left: 10px">
+
+    <legend>Segmentação</legend>
+ 
     <table width="522" border="0" cellspacing="1" cellpadding="1">
-  <tr>
-    <td width="123">Tipo de Ponto:</td>
-    <td width="392">
-	    <select name="selectdTipoPonto" id="selectdTipoPonto" style="width:232px;">
-	      <option selected="selected">Selecione...</option>     
-	      <c:forEach items="${listaTipoPontoPDV}" var="item">
-		      <option value="${item.key}">${item.value}</option>	          
-		  </c:forEach>
-	    </select>
-    </td>
-    </tr>
     
-    <tr>
-	    <td>Características:</td>
-	    <td>
-		    <select style="width:232px;" id="selectCaracteristica" name="selectCaracteristica">
-		      <option selected="selected">Selecione...</option>
-		       <c:forEach items="${listaCaracteristicaPDV}" var="item">
-			      <option value="${item.key}">${item.value}</option>	          
-			  </c:forEach>
-		    </select>
-	    </td>
-  </tr>
+	    <tr>
+		    <td width="123">Tipo de Ponto:</td>
+		    <td width="392">
+			    <select name="selectdTipoPonto" id="selectdTipoPonto" style="width:232px;">
+			      <option selected="selected">Selecione...</option>     
+			      <c:forEach items="${listaTipoPontoPDV}" var="item">
+				      <option value="${item.key}">${item.value}</option>	          
+				  </c:forEach>
+			    </select>
+		    </td>
+	    </tr>
     
-  <tr>
-    <td>Área de Influência:</td>
-    <td>
-	    <select name="selectAreainfluencia" id="selectAreainfluencia" style="width:232px;">
-	      <option selected="selected">Selecione....</option>
-	       <c:forEach items="${listaAreaInfluenciaPDV}" var="item">
-	    	  <option value="${item.key}">${item.value}</option>	          
-	  	   </c:forEach>
-	    </select></td>
-    </tr>
+	    <tr>
+		    <td>Características:</td>
+		    <td>
+			    <select style="width:232px;" id="selectCaracteristica" name="selectCaracteristica">
+			      <option selected="selected">Selecione...</option>
+			       <c:forEach items="${listaCaracteristicaPDV}" var="item">
+				      <option value="${item.key}">${item.value}</option>	          
+				  </c:forEach>
+			    </select>
+		    </td>
+	    </tr>
+    
+	    <tr>
+		    <td>Área de Influência:</td>
+		    <td>
+			    <select name="selectAreainfluencia" id="selectAreainfluencia" style="width:232px;">
+			      <option selected="selected">Selecione....</option>
+			       <c:forEach items="${listaAreaInfluenciaPDV}" var="item">
+			    	  <option value="${item.key}">${item.value}</option>	          
+			  	   </c:forEach>
+			    </select>
+			</td>
+	    </tr>
  
     </table>
  </fieldset>
