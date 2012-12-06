@@ -1,6 +1,7 @@
 package br.com.abril.nds.model.estoque;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -11,6 +12,7 @@ import javax.persistence.JoinColumns;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.pk.FechamentoEncalhePK;
 
 @Entity
@@ -32,6 +34,16 @@ public class FechamentoEncalhe implements Serializable {
         @JoinColumn(name="PRODUTO_EDICAO_ID", referencedColumnName="PRODUTO_EDICAO_ID")
     })
 	private List<FechamentoEncalheBox> listFechamentoEncalheBox;
+	
+	public FechamentoEncalhe() {
+	}
+	
+	public FechamentoEncalhe(ProdutoEdicao produtoEdicao, Date data) {
+	    FechamentoEncalhePK pk = new FechamentoEncalhePK();
+	    pk.setDataEncalhe(data);
+	    pk.setProdutoEdicao(produtoEdicao);
+	    this.fechamentoEncalhePK = pk;
+	}
 
 	
 	

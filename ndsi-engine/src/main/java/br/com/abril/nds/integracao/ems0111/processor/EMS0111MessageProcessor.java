@@ -118,8 +118,13 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 		if (input.getRepartePrevisto().equals(0L)) {
 			return;
 		}
+		
+		/**
+		 * Modificado devido ser incoerente a realizar busca por um campo e persistir outro junto com a o Eduardo "PunkRock" Castro em 05/12
+		 */
+//		final Date dataGeracaoArquivo = input.getDataGeracaoArquivo();
+		final Date dataGeracaoArquivo = input.getDataLancamento();
 
-		final Date dataGeracaoArquivo = input.getDataGeracaoArquivo();
 		Lancamento lancamento = this.getLancamentoPrevistoMaisProximo(
 				produtoEdicao, dataGeracaoArquivo);
 		if (lancamento == null ) {
@@ -315,7 +320,7 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 		
 		Criteria criteria = this.getSession().createCriteria(Lancamento.class);
 
-		criteria.add(Restrictions.gt("dataLancamentoPrevista", dataGeracaoArquivo));
+		criteria.add(Restrictions.ge("dataLancamentoPrevista", dataGeracaoArquivo));
 		criteria.add(Restrictions.eq("produtoEdicao", produtoEdicao));
 		criteria.addOrder(Order.asc("dataLancamentoPrevista"));
 		
