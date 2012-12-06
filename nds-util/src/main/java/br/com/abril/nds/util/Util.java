@@ -221,9 +221,8 @@ public abstract class Util {
 	public static String adicionarMascaraCEP(String cep) {
 		
 		if (cep == null) return "";
-		
-		
-		cep = cep.replace("-", "");
+
+		cep = cep.replace("-", "").trim();
 		
 		if (cep.length() < 8) {
 			cep = Util.padLeft(cep, "0", 8);

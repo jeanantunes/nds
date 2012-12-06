@@ -184,37 +184,37 @@ var fecharDiaController =  $.extend(true, {
 				display : 'Código',
 				name : 'codigo',
 				width : 60,
-				sortable : true,
+				sortable : false,
 				align : 'left'
 			}, {
 				display : 'Produto',
 				name : 'nomeProduto',
 				width : 250,
-				sortable : true,
+				sortable : false,
 				align : 'left'
 			}, {
 				display : 'Edição',
 				name : 'numeroEdicao',
 				width : 130,
-				sortable : true,
+				sortable : false,
 				align : 'left'
 			}, {
 				display : 'Qtde',
 				name : 'qtde',
 				width : 110,
-				sortable : true,
+				sortable : false,
 				align : 'center'
 			}, {
 				display : 'Valor R$',
-				name : 'valor',
+				name : 'valorFormatado',
 				width : 100,
-				sortable : true,
+				sortable : false,
 				align : 'right'
 			}, {
 				display : 'Dt. Rclto',
 				name : 'dataRecolhimento',
 				width : 90,
-				sortable : true,
+				sortable : false,
 				align : 'center'
 			}],
 			sortname : "codigo",
@@ -1106,13 +1106,13 @@ var fecharDiaController =  $.extend(true, {
 	iniciarResumoEncalhe : function(){
 		$.postJSON(contextPath + "/administracao/fecharDia/obterResumoQuadroEncalhe", null,
 				function(result){
-					$("#totalEncalheLogico").html(result.totalLogico);
-					$("#totalEncalheFisico").html(result.totalFisico);
-					$("#totalEncalheJuramentada").html(result.totalJuramentado);
-					$("#vendaEncalhe").html(result.venda);
-					$("#totalSobraEncalhe").html(result.totalSobras);
-					$("#totalFaltaEncalhe").html(result.totalFaltas);
-					$("#saldoEncalhe").html(result.saldo);
+					$("#totalEncalheLogico").html(result.totalLogicoFormatado);
+					$("#totalEncalheFisico").html(result.totalFisicoFormatado);
+					$("#totalEncalheJuramentada").html(result.totalJuramentadoFormatado);
+					$("#vendaEncalhe").html(result.vendaFormatado);
+					$("#totalSobraEncalhe").html(result.totalSobrasFormatado);
+					$("#totalFaltaEncalhe").html(result.totalFaltasFormatado);
+					$("#saldoEncalhe").html(result.saldoFormatado);
 				}
 			);
 	},

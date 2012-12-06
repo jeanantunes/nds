@@ -42,7 +42,7 @@
 </div>
 
 
-<form action="/administracao/alteracaoCota" id="pesquisarForm">
+<form action="/administracao/alteracaoCota" id="alteracaoForm">
 
 	<div id="dialog-novo" title="Alterar Cota">
 		<jsp:include page="../messagesDialog.jsp">
@@ -381,7 +381,8 @@
 			</div>
 		</div>
 	</div>
-
+</form>
+<form id="pesquisarForm">
 
 		<fieldset class="classFieldset">
    		<legend> Pesquisar         </legend>
@@ -433,7 +434,7 @@
               		<select name="filtroAlteracaoCotaDTO.idBairro" id="idBairro" style="width:100px;">
               			<option selected="selected" value="-1"></option>
 						<c:forEach items="${listBairros}" var="bairro">
-							<option value="${bairro.id}">${bairro.nome}</option>
+							<option value="${bairro}">${bairro}</option>
 						</c:forEach>
 					</select>              	
               	</td>
@@ -483,7 +484,7 @@
 	</fieldset>
 </form>    
    
-   
+  <form id="gridForm">
     <div class="linha_separa_fields">&nbsp;</div>
     <fieldset class="classFieldset">
        	<legend>Resultado da Pesquisa</legend>
@@ -500,7 +501,7 @@
 			</table>
         </div>
     </fieldset>
-
+</form>
 
 	<script type="text/javascript">
 		$(function(){

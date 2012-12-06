@@ -72,7 +72,7 @@ var bancoController = $.extend(true, {
 				rp : 15,
 				showTableToggleBtn : true,
 				width : 960,
-				height : 'auto'
+				height : 180
 			});
 		
 			$("#numero", this.workspace).numeric();	
@@ -84,9 +84,6 @@ var bancoController = $.extend(true, {
 			$("#newConta", this.workspace).numeric();	
 			//$("#newDigito", this.workspace).numeric();
 			$("#newCarteira", this.workspace).numeric();
-			$("#newJuros", this.workspace).numeric();	
-			$("#newMulta", this.workspace).numeric();
-			$("#newVrMulta", this.workspace).numeric();
 			
 			$("#alterNumero", this.workspace).numeric();	
 			$("#alterCodigoCedente", this.workspace).numeric();	
@@ -98,6 +95,43 @@ var bancoController = $.extend(true, {
 			$("#alterVrMulta", this.workspace).numeric();
 			
 			$("#nome", this.workspace).autocomplete({source: ""});
+			
+			$('#newJuros', this.workspace).priceFormat({
+				allowNegative: false,
+				centsSeparator: ',',
+			    thousandsSeparator: '.'
+			});
+			
+			$('#newMulta', this.workspace).priceFormat({
+				allowNegative: false,
+				centsSeparator: ',',
+			    thousandsSeparator: '.'
+			});
+			
+			$('#newVrMulta', this.workspace).priceFormat({
+				allowNegative: false,
+				centsSeparator: ',',
+			    thousandsSeparator: '.'
+			});
+			
+			
+			$('#alterJuros', this.workspace).priceFormat({
+				allowNegative: false,
+				centsSeparator: ',',
+			    thousandsSeparator: '.'
+			});
+			
+			$('#alterMulta', this.workspace).priceFormat({
+				allowNegative: false,
+				centsSeparator: ',',
+			    thousandsSeparator: '.'
+			});
+			
+			$('#alterVrMulta', this.workspace).priceFormat({
+				allowNegative: false,
+				centsSeparator: ',',
+			    thousandsSeparator: '.'
+			});
 
 		},
 		
@@ -161,7 +195,7 @@ var bancoController = $.extend(true, {
 					           id:"bt_confirmar",
 					           text:"Confirmar", 
 					           click: function() {
-					        	   bancoController.desativarBanco(idBanco);
+					        	   bancoController.excluirBanco(idBanco);
 					           }
 				           },
 				           {
@@ -181,7 +215,7 @@ var bancoController = $.extend(true, {
 			});
 		},
 		
-	    mostrarGridConsulta : function() {
+	    mostrarGridConsulta : function(skipMsg) {
 	    	
 	    	$("#ativo", this.workspace).val(0);
 	    	if (document.formularioFiltro.ativo.checked){
@@ -198,7 +232,8 @@ var bancoController = $.extend(true, {
 				         {name:'cedente', value:$("#cedente", this.workspace).val()},
 				         {name:'ativo', value:$("#ativo", this.workspace).val() }
 				        ] ,
-				        newp: 1
+				 newp: 1,
+				 preProcess: function(resultado){return bancoController.getDataFromResult(resultado, skipMsg);}
 			});
 			
 			/*RECARREGA GRID CONFORME A EXECUCAO DO METODO COM OS PARAMETROS PASSADOS*/
@@ -207,10 +242,10 @@ var bancoController = $.extend(true, {
 			$(".grids", this.workspace).show();
 		},
 		
-		getDataFromResult : function(resultado) {
-			
+		getDataFromResult : function(resultado, skipMsg) {
+						
 			//TRATAMENTO NA FLEXGRID PARA EXIBIR MENSAGENS DE VALIDACAO
-			if (resultado.mensagens) {
+			if (resultado.mensagens && !skipMsg) {
 				exibirMensagem(
 					resultado.mensagens.tipoMensagem, 
 					resultado.mensagens.listaMensagens
@@ -219,28 +254,37 @@ var bancoController = $.extend(true, {
 				return resultado.tableModel;
 			}
 			
-			var dadosPesquisa;
+			var dadosPesquisa = null;
+			
 			$.each(resultado, function(index, value) {
+				
+				
 				  if(value[0] == "TblModelBancos") {
 					  dadosPesquisa = value[1];
+				  
+				  
+					  $.each(dadosPesquisa.rows, 
+								function(index, row) {
+			
+									 var linkEditar = '<a href="javascript:;" onclick="bancoController.editarBanco(' + row.cell[0] + ');" style="margin-right:10px; ">' +
+				                                      '<img src="' + contextPath + '/images/ico_editar.gif" hspace="5" border="0px" title="Altera banco" />' +
+					                                  '</a>';			
+								
+							         var linkExcluir =    '<a href="javascript:;" onclick="bancoController.popup_excluir(' + row.cell[0] + ');" style="cursor:pointer">' +
+							                              '<img src="'+ contextPath + '/images/ico_excluir.gif" border="0px" title="Exclui banco" />' +
+										                  '</a>';		 					 
+													
+								     row.cell[9] = linkEditar + linkExcluir;
+			
+						         }
+						);
 				  }
-		    });
-
-			$.each(dadosPesquisa.rows, 
-					function(index, row) {
-
-						 var linkEditar = '<a href="javascript:;" onclick="bancoController.editarBanco(' + row.cell[0] + ');" style="margin-right:10px; ">' +
-	                                      '<img src="' + contextPath + '/images/ico_editar.gif" hspace="5" border="0px" title="Altera banco" />' +
-		                                  '</a>';			
-					
-				         var linkExcluir =    '<a href="javascript:;" onclick="bancoController.popup_excluir(' + row.cell[0] + ');" style="cursor:pointer">' +
-				                              '<img src="'+ contextPath + '/images/ico_excluir.gif" border="0px" title="Exclui banco" />' +
-							                  '</a>';		 					 
-										
-					     row.cell[9] = linkEditar + linkExcluir;
-
-			         }
-			);
+			});
+			
+			if(!dadosPesquisa) {
+				$(".grids", this.workspace).hide();
+				return resultado.tableModel;
+			}
 			
 			return dadosPesquisa;
 		},
@@ -261,10 +305,10 @@ var bancoController = $.extend(true, {
 					 digito     : $("#newDigito", this.workspace).val(),
 					 apelido    : $("#newApelido", this.workspace).val(),
 					 carteira   : $("#newCarteira", this.workspace).val(),
-					 juros      : $("#newJuros", this.workspace).val(),
+					 juros      : priceToFloat($("#newJuros", this.workspace).val()),
 					 ativo      : $("#newAtivo", this.workspace).is(':checked'),
-					 multa      : $("#newMulta", this.workspace).val(),
-					 vrMulta    : $("#newVrMulta", this.workspace).val(),
+					 multa      : priceToFloat($("#newMulta", this.workspace).val()),
+					 vrMulta    : priceToFloat($("#newVrMulta", this.workspace).val()),
 					 instrucoes : $("#newInstrucoes", this.workspace).val()
 			
 			};
@@ -294,10 +338,10 @@ var bancoController = $.extend(true, {
 					 digito     : $("#alterDigito", this.workspace).val(),
 					 apelido    : $("#alterApelido", this.workspace).val(),
 					 carteira   : $("#alterCarteira", this.workspace).val(),
-					 juros      : $("#alterJuros", this.workspace).val(),					
+					 juros      : priceToFloat($("#alterJuros", this.workspace).val()),					
 					 ativo      : $("#alterAtivo", this.workspace).is(':checked'),					
-					 multa      : $("#alterMulta", this.workspace).val(),
-					 vrMulta    : $("#alterVrMulta", this.workspace).val(),
+					 multa      : priceToFloat($("#alterMulta", this.workspace).val()),
+					 vrMulta    : priceToFloat($("#alterVrMulta", this.workspace).val()),
 					 instrucoes : $("#alterInstrucoes", this.workspace).val()};
 
 			$.postJSON(contextPath + "/banco/alteraBanco", param,
@@ -344,17 +388,21 @@ var bancoController = $.extend(true, {
 			
 			bancoController.popup_alterar();
 		},
-	    desativarBanco : function(idBanco) {
+	    excluirBanco : function(idBanco) {
 	    	var data = [{name: 'idBanco', value: idBanco}];
-			$.postJSON(contextPath + "/banco/desativaBanco",
+			$.postJSON(contextPath + "/banco/excluirBanco",
 					   data,
 					   function(result) {
-						   bancoController.fecharDialogs();
-						   bancoController.mostrarGridConsulta();
+						   $( "#dialog-excluir", this.workspace ).dialog( "close" );
+						   bancoController.mostrarGridConsulta(true);
+						   if (result.tipoMensagem && result.listaMensagens) 
+							   exibirMensagem(result.tipoMensagem,result.listaMensagens);
 				       },
 				       function(result) {
-				    	   bancoController.fecharDialogs();
-						   bancoController.mostrarGridConsulta();
+				    	   $( "#dialog-excluir", this.workspace ).dialog( "close" );
+				    	   bancoController.mostrarGridConsulta(true);
+				    	   if (result.tipoMensagem && result.listaMensagens) 
+							   exibirMensagem(result.tipoMensagem,result.listaMensagens);
 				       });
 		},
 		
@@ -375,13 +423,30 @@ var bancoController = $.extend(true, {
 		}, 
 	    
 	    limparMulta : function(){
-	    	$("#newMulta", this.workspace).val("");
-	    	$("#alterMulta", this.workspace).val("");
+	    	
+	    	if(priceToFloat($("#newVrMulta", this.workspace).val()) == 0.0)
+	    		$("#newVrMulta", this.workspace).val("");
+	    	else 	    	
+	    		$("#newMulta", this.workspace).val("");
+	    	
+	    	if(priceToFloat($("#alterVrMulta", this.workspace).val()) == 0.0)
+	    		$("#alterVrMulta", this.workspace).val("");
+	    	else 	    	
+	    		$("#alterMulta", this.workspace).val("");
+	    	
 	    },
 	    
 	    limparVrMulta : function(){
-	    	$("#newVrMulta", this.workspace).val("");
-	    	$("#alterVrMulta", this.workspace).val("");
+	    	
+	    	if(priceToFloat($("#newMulta", this.workspace).val()) == 0.0)
+	    		$("#newMulta", this.workspace).val("");
+	    	else 	    	
+	    		$("#newVrMulta", this.workspace).val("");
+	    	
+	    	if(priceToFloat($("#alterMulta", this.workspace).val()) == 0.0)
+	    		$("#alterMulta", this.workspace).val("");
+	    	else 	    	
+	    		$("#alterVrMulta", this.workspace).val("");
 	    },
 	    
 		exibirAutoComplete : function(result, idCampoNome) {

@@ -6,6 +6,7 @@ import java.math.BigInteger;
 import java.util.Date;
 
 import br.com.abril.nds.util.Constantes;
+import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
@@ -27,14 +28,16 @@ public class VendaFechamentoDiaDTO implements Serializable {
 	
 	@Export(label = "Qtde", alignment=Alignment.CENTER, exhibitionOrder = 4)
 	private BigInteger qtde;
-	
-	@Export(label = "Valor R$", alignment=Alignment.RIGHT, exhibitionOrder = 5)
+
 	private BigDecimal valor;
 	
 	@Export(label = "Dt. Rclto", alignment=Alignment.CENTER, exhibitionOrder = 6)
 	private String dataRecolhimento;
 	
 	private BigDecimal precoVenda;
+	
+	@Export(label = "Valor R$", alignment=Alignment.RIGHT, exhibitionOrder = 5)
+	private String valorFormatado;
 
 	public String getCodigo() {
 		return codigo;
@@ -74,6 +77,7 @@ public class VendaFechamentoDiaDTO implements Serializable {
 
 	public void setValor(BigDecimal valor) {
 		this.valor = valor;
+		this.valorFormatado = CurrencyUtil.formatarValor(valor);
 	}
 
 	public String getDataRecolhimento() {
@@ -91,6 +95,10 @@ public class VendaFechamentoDiaDTO implements Serializable {
 	public void setPrecoVenda(BigDecimal precoVenda) {
 		this.precoVenda = precoVenda;
 	}
+	
+	public String getValorFormatado() {
+        return valorFormatado;
+    }
 
 	@Override
 	public int hashCode() {

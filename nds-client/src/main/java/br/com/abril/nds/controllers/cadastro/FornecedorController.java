@@ -196,7 +196,7 @@ public class FornecedorController {
 	}
 	
 	/**
-	 * Obtem os endereços da sessão referente ao fornecedor informado
+	 * Obtem os endereços referentes ao fornecedor informado e salva em sessao
 	 * 
 	 * @param idFornecedor - identificador do fornecedor
 	 */
