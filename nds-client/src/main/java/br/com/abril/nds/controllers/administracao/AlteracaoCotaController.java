@@ -33,7 +33,6 @@ import br.com.abril.nds.model.cadastro.ParametroSistema;
 import br.com.abril.nds.model.cadastro.PoliticaSuspensao;
 import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.model.cadastro.desconto.TipoDesconto;
-import br.com.abril.nds.model.dne.Bairro;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
@@ -104,9 +103,8 @@ public class AlteracaoCotaController {
 	public void index()
 	{
 		result.include("listFornecedores", fornecedorService.obterFornecedoresAtivos());
-		result.include("listBairros", enderecoService.pesquisarTodosBairros());
-		List<String> obterMunicipiosCotas = enderecoService.obterMunicipiosCotas();
-		result.include("listMunicipios", obterMunicipiosCotas);
+		result.include("listBairros", enderecoService.obterBairrosCotas());
+		result.include("listMunicipios", enderecoService.obterMunicipiosCotas());
 		
 		List<Integer> listaVencimento = new ArrayList<Integer>();
 		for(int i = 1; i < 31; i++){
@@ -128,7 +126,7 @@ public class AlteracaoCotaController {
 		result.use(CustomJson.class).from(bairros).serialize();
 	}
 	
-	@Path("/pesquisarAlteracaoCota.json")
+	@Post("/pesquisarAlteracaoCota.json")
 	public void pesquisarAlteracaoCota(FiltroAlteracaoCotaDTO filtroAlteracaoCotaDTO, String sortname, String sortorder, int rp, int page) {
 		
 		PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortname);
@@ -143,64 +141,9 @@ public class AlteracaoCotaController {
 		
 		List<ConsultaAlteracaoCotaDTO> listaCotas = this.alteracaoCotaService.pesquisarAlteracaoCota(filtroAlteracaoCotaDTO);
 		final int qtdCotas = this.alteracaoCotaService.contarAlteracaoCota(
-				filtroAlteracaoCotaDTO);
+				filtroAlteracaoCotaDTO);		
 		
-		List<ConsultaAlteracaoCotaDTO> listaFornecedores = this.alteracaoCotaService.pesquisarAlteracaoCotaFornecedor(filtroAlteracaoCotaDTO);
-		
-		for (ConsultaAlteracaoCotaDTO consultaAlteracaoCotaDTO : listaFornecedores) {	
-			if(listaCotas.contains(consultaAlteracaoCotaDTO)){ 
-				
-				ConsultaAlteracaoCotaDTO dto = listaCotas.get(listaCotas.indexOf(consultaAlteracaoCotaDTO));
-				
-				if(dto.getTipoDesconto() == null){
-					if(consultaAlteracaoCotaDTO.getTipoDesconto() != null)
-						dto.setTipoDesconto(consultaAlteracaoCotaDTO.getTipoDesconto());
-					if(dto.getNomeFornecedor()!= null)
-						dto.setTipoDesconto("/ ");
-				}else if (consultaAlteracaoCotaDTO.getTipoDesconto() == null && dto.getNomeFornecedor()!= null)
-					dto.setTipoDesconto(dto.getTipoDesconto()+"/ ");
-				else
-					dto.setTipoDesconto(dto.getTipoDesconto()+"/"+consultaAlteracaoCotaDTO.getTipoDesconto());
-				
-				if(dto.getNomeFornecedor() == null)
-					dto.setNomeFornecedor(consultaAlteracaoCotaDTO.getNomeFornecedor());
-				else
-					dto.setNomeFornecedor(dto.getNomeFornecedor()+"/"+consultaAlteracaoCotaDTO.getNomeFornecedor());
-				
-				
-				
-			}	 
-		}
-		
-		List<ConsultaAlteracaoCotaDTO> lista = new ArrayList<ConsultaAlteracaoCotaDTO>(listaCotas);
-		for (ConsultaAlteracaoCotaDTO consultaAlteracaoCotaDTO : listaCotas){
-			if((filtroAlteracaoCotaDTO.getIdFornecedor() != -1 || filtroAlteracaoCotaDTO.getTipoDesconto() != null)
-					&& consultaAlteracaoCotaDTO.getNomeFornecedor() == null)
-				lista.remove(consultaAlteracaoCotaDTO);
-			
-				if(consultaAlteracaoCotaDTO.getNomeFornecedor() == null)
-					consultaAlteracaoCotaDTO.setNomeFornecedor("");
-				
-				if(consultaAlteracaoCotaDTO.getTipoDesconto() == null)
-					consultaAlteracaoCotaDTO.setTipoDesconto("");
-				
-				if(consultaAlteracaoCotaDTO.getTipoEntrega() == null)
-					consultaAlteracaoCotaDTO.setTipoEntrega("");
-				
-				if(consultaAlteracaoCotaDTO.getValorMinimo() == null)
-					consultaAlteracaoCotaDTO.setValorMinimo("");
-				
-				if(consultaAlteracaoCotaDTO.getBox() == null)
-					consultaAlteracaoCotaDTO.setBox("");
-				
-				if(consultaAlteracaoCotaDTO.getNomeRazaoSocial() == null)
-					consultaAlteracaoCotaDTO.setNomeRazaoSocial("");
-			
-		}
-		
-		
-		
-		this.result.use(FlexiGridJson.class).from(lista).total(Integer.valueOf(qtdCotas)).page(page).serialize();
+		this.result.use(FlexiGridJson.class).from(listaCotas).total(qtdCotas).page(page).serialize();
 		
 	}
 	
@@ -488,31 +431,6 @@ public class AlteracaoCotaController {
 			filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().getFiltroCheckDistribEmisDoc().setIsChamdaEncalheEmail(cota.getParametroDistribuicao().getChamadaEncalheEmail());
 	
 	}
-	
-
-	/*public static void main(String[] args) {
-		Fornecedor f = new Fornecedor();
-		f.setId(1l);
-		
-		Fornecedor f2 = new Fornecedor();
-		f2.setId(2l);
-
-		Fornecedor f3 = new Fornecedor();
-		f3.setId(3l);
-		
-		List<Fornecedor> listaFornecedor = new ArrayList<Fornecedor>();
-		listaFornecedor.add(f);
-		listaFornecedor.add(f2);
-		listaFornecedor.add(f3);
-		
-		List<Fornecedor> listaFornecedorCota = new ArrayList<Fornecedor>();
-		listaFornecedorCota.add(f);
-		listaFornecedorCota.add(f2);
-		
-		removerFornecedorAssociadoLista(listaFornecedorCota, listaFornecedor);
-		
-		System.out.println("OK");
-	}*/
 	
 	private static void removerFornecedorAssociadoLista(List<ItemDTO<Long, String>> listFornecedoresCota, List<ItemDTO<Long, String>> fornecedoresAtivos) {
 		
