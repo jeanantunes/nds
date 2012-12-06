@@ -177,7 +177,7 @@ public class NegociacaoDividaController {
 			
 			Double encargos = 0.0;
 			
-			if( !filtro.getTipoPagamento().equals(TipoCobranca.CHEQUE) || (filtro.getIsentaEncargos()!= null && filtro.getIsentaEncargos()) )
+			if( !filtro.getTipoPagamento().equals(TipoCobranca.CHEQUE) && (filtro.getIsentaEncargos()!= null && !filtro.getIsentaEncargos()) )
 				encargos = calcularEncargos(valorParcela, DateUtil.parseDataPTBR(parcela.getDataVencimento()),filtro.getNumeroCota(), banco);
 						
 			parcela.setEncargos(CurrencyUtil.formatarValor(encargos));
@@ -278,13 +278,17 @@ public class NegociacaoDividaController {
 			Integer ativarAposPagar, List<ParcelaNegociacao> parcelas, List<Long> idsCobrancas, Long idBanco,
 			BigDecimal valorDividaComissao,boolean recebeCobrancaPorEmail){
 		
+		if (!validarValorTotalNegociacao(parcelas, valorDividaComissao)) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Valores das parcelas não conferem com o valor total da dívida.");
+		}
+		
 		Long idNegociacao = (Long) this.session.getAttribute(ID_ULTIMA_NEGOCIACAO);
 		
 		if (idNegociacao != null){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Negociação já efetuada.");
 			
-			this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Negociação já efetuada."), "result").recursive().serialize();
-			
-			return;
+			/*this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING, "Negociação já efetuada."), "result").recursive().serialize();
+			return;*/
 		}
 		
 		FiltroConsultaNegociacaoDivida filtro = (FiltroConsultaNegociacaoDivida) 
@@ -336,6 +340,18 @@ public class NegociacaoDividaController {
 		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Negociação efetuada."), "result").recursive().serialize();
 	}
 	
+	private boolean validarValorTotalNegociacao(List<ParcelaNegociacao> parcelas, BigDecimal valorDivida) {
+		BigDecimal valorConferir = BigDecimal.ZERO;
+		for (ParcelaNegociacao parcela : parcelas) {
+			valorConferir.add(parcela.getNegociacao().getValorDividaPagaComissao());
+		}
+		if (valorConferir.equals(valorDivida)) {
+			return true;
+		}
+		return false;
+	}
+
+
 	@Post
 	public void buscarComissaoCota(){
 		
