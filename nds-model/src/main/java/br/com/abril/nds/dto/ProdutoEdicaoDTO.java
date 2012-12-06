@@ -97,6 +97,26 @@ public class ProdutoEdicaoDTO implements Serializable {
 	private TemaProduto temaPrincipal;
 	private TemaProduto temaSecundario;
 
+	public ProdutoEdicaoDTO() {};
+	
+	public ProdutoEdicaoDTO(
+			Long id, 
+			String codigoProduto, 
+			String nomeComercial, 
+			Long numeroEdicao, 
+			String nomeFornecedor, 
+			String statusLancamento, 
+			String statusSituacao, 
+			String temBrinde) {
+		this.id = id;
+		this.codigoProduto  = codigoProduto;
+		this.nomeComercial  = nomeComercial;
+		this.numeroEdicao = numeroEdicao;
+		this.nomeFornecedor = nomeFornecedor;
+		this.statusLancamento  = statusLancamento;
+		this.statusSituacao = statusSituacao; 
+		this.temBrinde = temBrinde;		
+	};
 	
 	
 	/**
