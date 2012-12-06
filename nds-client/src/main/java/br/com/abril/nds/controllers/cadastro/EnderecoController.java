@@ -52,6 +52,10 @@ public class EnderecoController {
 	
 	public static  String ATRIBUTO_SESSAO_LISTA_ENDERECOS_EXIBIR = "";
 	
+	/**
+	 * Atributo armazenado na sessão que, indica se existe endereços pendentes de persistência
+	 * Mantendo o status caso o usuário troque de aba e ainda não tenha confirmado as suas atividades na aba endereços
+	 */
 	public static  String ENDERECO_PENDENTE = "";
 	
 	@Autowired
@@ -134,12 +138,19 @@ public class EnderecoController {
 	public static void setarParametros(String listaSalvar, String listaRemover, String listaExibir){
 		
 		ATRIBUTO_SESSAO_LISTA_ENDERECOS_SALVAR = listaSalvar;
+		
 		ATRIBUTO_SESSAO_LISTA_ENDERECOS_REMOVER = listaRemover;
+		
 		ATRIBUTO_SESSAO_LISTA_ENDERECOS_EXIBIR = listaExibir;
 	}
-
+	
 	/**
-	 * Método que realiza a pesquisa dos endereços cadastrados para uma determinada pessoa.
+	 * ENDERECO - SESSAO
+	 * 
+	 * Método que realiza a pesquisa dos endereços cadastrados na sessão.
+	 * @param tela
+	 * @param sortname
+	 * @param sortorder
 	 */
 	@Post
 	public void pesquisarEnderecos( Tela tela, String sortname, String sortorder) {
@@ -176,6 +187,8 @@ public class EnderecoController {
 	}
 	
 	/**
+	 * ENDERECO - SESSAO
+	 * 
 	 * Atualiza sessao ao incluir ou alterar um endereco
 	 * @param enderecoAssociacao
 	 * @param listaEnderecoAssociacao
@@ -231,8 +244,9 @@ public class EnderecoController {
 	}
 
 	/**
-	 * Método responsável por incluir/alterar um endereço para a pessoa em questão.
+	 * ENDERECO - SESSAO
 	 * 
+	 * Método responsável por incluir/alterar um endereço para a pessoa em questão. 
 	 * @param enderecoAssociacao
 	 */
 	public void incluirNovoEndereco(Tela tela,EnderecoAssociacaoDTO enderecoAssociacao) {
@@ -315,8 +329,9 @@ public class EnderecoController {
 	}
 	
 	/**
-	 * Método que irá remover um endereço a partir de seu ID. 
+	 * ENDERECO - SESSAO
 	 * 
+	 * Método que irá remover um endereço a partir de seu ID.  
 	 * @param idEnderecoAssociacao
 	 */
 	@Post
@@ -364,8 +379,9 @@ public class EnderecoController {
 	}
 
 	/**
-	 * Método responsável por preparar um endereço para a edição.
+	 * ENDERECO - SESSAO
 	 * 
+	 * Método responsável por preparar um endereço para a edição.
 	 * @param idEnderecoAssociacao
 	 */
 	@Post
@@ -758,7 +774,7 @@ public class EnderecoController {
 		return new CellModel(
 				enderecoAssociacao.getId().intValue(),
 				enderecoAssociacao.getTipoEndereco() == null ? "": enderecoAssociacao.getTipoEndereco().getTipoEndereco(),
-				enderecoAssociacao.getEndereco().getLogradouro() 
+				enderecoAssociacao.getEndereco().getTipoLogradouro() + " " + enderecoAssociacao.getEndereco().getLogradouro() 
 					+ ", nº: " + enderecoAssociacao.getEndereco().getNumero(), 
 				enderecoAssociacao.getEndereco().getBairro(),
 				Util.adicionarMascaraCEP(enderecoAssociacao.getEndereco().getCep()), 
