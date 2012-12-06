@@ -104,7 +104,7 @@ public class ParametroCobrancaController {
     	listaTiposCobranca.clear();
     	listaFornecedores.clear();
     	
-    	listaBancos = this.bancoService.getComboBancos();
+    	listaBancos = this.bancoService.getComboBancos(true);
     	listaTiposCobranca = this.parametroCobrancaCotaService.getComboTiposCobranca();
     	listaFornecedores = this.fornecedorService.obterFornecedoresIdNome(null, null);
     	

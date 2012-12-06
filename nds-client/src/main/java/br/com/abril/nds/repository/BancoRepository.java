@@ -75,5 +75,12 @@ public interface BancoRepository extends Repository<Banco,Long>{
 	boolean verificarPedencias(long idBanco);
 
 	List<Banco> obterBancosPorNome(String nomeBanco);
+
+	/**
+	 * Obtém bancos por status de atividade
+	 * @param ativo - Filtro utilizado na pesquisa. Ativo(true) - Inativo(false)
+	 * @return
+	 */
+	List<Banco> obterBancosPorStatus(Boolean ativo);
 	
 }
