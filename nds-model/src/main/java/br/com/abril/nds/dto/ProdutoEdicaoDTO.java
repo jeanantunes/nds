@@ -306,7 +306,10 @@ public class ProdutoEdicaoDTO implements Serializable {
 		return this.statusLancamento;
 	}
 	public void setStatusLancamento(TipoLancamento statusLancamento) {
-		this.statusLancamento = statusLancamento.getDescricao(); 
+		this.statusLancamento = "";
+		if (null != statusLancamento) {
+			this.statusLancamento = statusLancamento.getDescricao();
+		}
 	}
 	
 	/**
@@ -316,7 +319,10 @@ public class ProdutoEdicaoDTO implements Serializable {
 		return this.statusSituacao;
 	}
 	public void setStatusSituacao(StatusLancamento statusSituacao) {
-		this.statusSituacao = statusSituacao.getDescricao();
+		this.statusSituacao = "";
+		if (null != statusSituacao) {
+			this.statusSituacao = statusSituacao.getDescricao();
+		}
 	}
 	
 	/**
