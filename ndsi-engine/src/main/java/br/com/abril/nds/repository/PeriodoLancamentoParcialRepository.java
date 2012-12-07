@@ -9,7 +9,8 @@ import br.com.abril.nds.dto.filtro.FiltroParciaisDTO;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.PeriodoLancamentoParcial;
 
-public interface PeriodoLancamentoParcialRepository  extends Repository<PeriodoLancamentoParcial, Long>  {
+public interface PeriodoLancamentoParcialRepository extends
+		Repository<PeriodoLancamentoParcial, Long> {
 
 	/**
 	 * Retorna DTOs de periodos parciais de acordo com o filtro
@@ -25,7 +26,7 @@ public interface PeriodoLancamentoParcialRepository  extends Repository<PeriodoL
 	 * @return
 	 */
 	Integer totalObterPeriodosParciais(FiltroParciaisDTO filtro);
-	
+
 	/**
 	 * Obtém Periodo por id do Lancamento
 	 * 
@@ -37,40 +38,49 @@ public interface PeriodoLancamentoParcialRepository  extends Repository<PeriodoL
 	/**
 	 * Retorna se novo periodo é válido para o Lancamento
 	 * 
-	 * @param idLancamento - Id do lançamento a ser alterado
-	 * @param dataLancamento - Nova data de Lancamento
-	 * @param dataRecolhimento - Nova data de Recolhimento
+	 * @param idLancamento
+	 *            - Id do lançamento a ser alterado
+	 * @param dataLancamento
+	 *            - Nova data de Lancamento
+	 * @param dataRecolhimento
+	 *            - Nova data de Recolhimento
 	 * @return
 	 */
 	Boolean verificarValidadeNovoPeriodoParcial(Long idLancamento,
 			Date dataLancamento, Date dataRecolhimento);
-	
-	
+
 	/**
-	 * Obtem detalhes das vendas do produtoEdição nas datas de Lancamento e Recolhimento
+	 * Obtem detalhes das vendas do produtoEdição nas datas de Lancamento e
+	 * Recolhimento
+	 * 
 	 * @param dataLancamento
 	 * @param dataRecolhimento
 	 * @param idProdutoEdicao
 	 * @return List<ParcialVendaDTO>
 	 */
-	List<ParcialVendaDTO> obterDetalhesVenda(Date dataLancamento, Date dataRecolhimento, Long idProdutoEdicao);
+	List<ParcialVendaDTO> obterDetalhesVenda(Date dataLancamento,
+			Date dataRecolhimento, Long idProdutoEdicao);
 
 	/**
 	 * Obtém lançamento de periodo parcial posterior.
-	 * @param dataRecolhimento 
+	 * 
+	 * @param dataRecolhimento
 	 * 
 	 * @param idLancamento
 	 * @return
 	 */
-	Lancamento obterLancamentoPosterior(Long idProdutoEdicao, Date dataRecolhimento);
+	Lancamento obterLancamentoPosterior(Long idProdutoEdicao,
+			Date dataRecolhimento);
 
 	/**
 	 * Obtém lançamento de periodo parcial anterior.
-	 * @param dataRecolhimento 
+	 * 
+	 * @param dataRecolhimento
 	 * 
 	 * @param idLancamento
 	 * @return
 	 */
-	Lancamento obterLancamentoAnterior(Long idProdutoEdicao, Date dataLancamento);
+	Lancamento obterLancamentoAnterior(Long idProdutoEdicao,
+			Date dataLancamento);
 
 }
