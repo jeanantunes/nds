@@ -10,6 +10,7 @@ import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.transform.AliasToBeanConstructorResultTransformer;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
@@ -288,17 +289,18 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 			Intervalo<Date> dataLancamento, Intervalo<BigDecimal> preco , StatusLancamento statusLancamento,
 			String codigoDeBarras, boolean brinde,
 			String sortorder, String sortname, int initialResult, int maxResults) {
-		
-		StringBuilder hql = new StringBuilder();
-		hql.append(" SELECT pe.id as id, pr.codigo as codigoProduto, pr.nomeComercial as nomeComercial, ");
-		hql.append("        pe.numeroEdicao as numeroEdicao, jr.razaoSocial as nomeFornecedor, ");
-		hql.append("        ln.tipoLancamento as statusLancamento, ln.status as statusSituacao, ");
-		hql.append("        pe.possuiBrinde as temBrinde ");
+			
+		StringBuilder hql = new StringBuilder()
+			.append(" SELECT pe.id as id, pr.codigo as codigoProduto, pr.nomeComercial as nomeComercial, ")
+			.append("        pe.numeroEdicao as numeroEdicao, jr.razaoSocial as nomeFornecedor, ")
+			.append("        ln.tipoLancamento as statusLancamento, ln.status as statusSituacao, ")
+			.append("        pe.possuiBrinde as temBrinde ");
 		
 		// Corpo da consulta com os filtros:
 		Query query = this.queryBodyPesquisarEdicoes(hql, codigoProduto, nome, dataLancamento, preco, statusLancamento, codigoDeBarras, brinde, sortname, sortorder);
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(ProdutoEdicaoDTO.class));
+		
 		query.setFirstResult(initialResult);
 		query.setMaxResults(maxResults);
 		

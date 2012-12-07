@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.dto.EncalheFecharDiaDTO;
 import br.com.abril.nds.dto.ResumoEncalheFecharDiaDTO;
+import br.com.abril.nds.dto.VendaFechamentoDiaDTO;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
@@ -209,6 +210,38 @@ public class ResumoEncalheFecharDiaRepositoryImplTest extends AbstractDataUtilRe
         Assert.assertEquals(BigDecimal.valueOf(19.5).setScale(2), resumo.getTotalSobras().setScale(2));
         Assert.assertEquals(BigDecimal.ZERO.setScale(2), resumo.getTotalFaltas().setScale(2));
         Assert.assertEquals(BigDecimal.valueOf(19.5).setScale(2), resumo.getSaldo().setScale(2));
+    }
+    
+    @Test
+    public void testObterDadosVendaEncalhe() {
+        List<VendaFechamentoDiaDTO> vendasEncalhe = repository.obterDadosVendaEncalhe(distribuidor.getDataOperacao(), null);
+        Assert.assertNotNull(vendasEncalhe);
+        Assert.assertEquals(3, vendasEncalhe.size());
+    }
+    
+    @Test
+    public void testObterDadosVendaEncalhePaginado() {
+        PaginacaoVO paginacao = new PaginacaoVO(1, 2, null);
+        List<VendaFechamentoDiaDTO> vendasEncalhe = repository.obterDadosVendaEncalhe(distribuidor.getDataOperacao(), paginacao);
+        Assert.assertNotNull(vendasEncalhe);
+        Assert.assertEquals(2, vendasEncalhe.size());
+        
+        paginacao = new PaginacaoVO(2, 2, null);
+        vendasEncalhe = repository.obterDadosVendaEncalhe(distribuidor.getDataOperacao(), paginacao);
+        Assert.assertNotNull(vendasEncalhe);
+        Assert.assertEquals(1, vendasEncalhe.size());
+    }
+    
+    @Test
+    public void testContarVendasEncalhe() {
+        Long resultado = repository.contarVendasEncalhe(distribuidor.getDataOperacao());
+        Assert.assertEquals(Long.valueOf(3), resultado);
+    }
+    
+    @Test
+    public void testContarVendasEncalheZero() {
+        Long resultado = repository.contarVendasEncalhe(DateUtil.adicionarDias(distribuidor.getDataOperacao(), 1));
+        Assert.assertEquals(Long.valueOf(0), resultado);
     }
     
     private Date balancearRecolhimento() {

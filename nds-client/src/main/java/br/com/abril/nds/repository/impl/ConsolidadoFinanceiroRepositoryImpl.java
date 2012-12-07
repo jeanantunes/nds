@@ -472,13 +472,26 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 	}
 
 	@Override
-	public Long obterQuantidadeDividasGeradasData(Date data) {
+	public Long obterQuantidadeDividasGeradasData(Date data, Long idCota) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append("select count(c.id) from ConsolidadoFinanceiroCota c where c.dataConsolidado = :data ");
+		
+		if (idCota != null) {
+			
+			hql.append("and c.cota.id = :idCota");
+		}
 		
 		Query query = 
-				this.getSession().createQuery(
-						"select count(c.id) from ConsolidadoFinanceiroCota c where c.dataConsolidado = :data ");
+				this.getSession().createQuery(hql.toString());
 		
 		query.setParameter("data", data);
+		
+		if (idCota != null) {
+			
+			query.setParameter("idCota", idCota);
+		}
 		
 		return (Long) query.uniqueResult();
 	}
