@@ -566,7 +566,7 @@ public class FecharDiaController {
 		this.fecharDiaService.setLockBancoDeDados(false);
 		
 		try {
-		    Boolean hasPendenciaValidacao = false; //TODO: descomentar(Boolean) this.session.getAttribute(ATRIBUTO_SESSAO_POSSUI_PENDENCIAS_VALIDACAO);
+		    Boolean hasPendenciaValidacao = (Boolean) this.session.getAttribute(ATRIBUTO_SESSAO_POSSUI_PENDENCIAS_VALIDACAO);
 		    
 		   if (hasPendenciaValidacao != null && !hasPendenciaValidacao) {
 		        
