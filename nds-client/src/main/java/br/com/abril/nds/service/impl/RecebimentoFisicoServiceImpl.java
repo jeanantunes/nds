@@ -233,7 +233,7 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 	@Transactional
 	public void confirmarRecebimentoFisico(Usuario usuarioLogado, NotaFiscalEntrada notaFiscal, List<RecebimentoFisicoDTO> listaItensNota, Date dataAtual){
 		
-		verificarValorDaNota(listaItensNota,notaFiscal.getValorBruto());
+		verificarValorDaNota(recebimentoFisicoRepository.obterListaItemRecebimentoFisico(notaFiscal.getId()),notaFiscal.getValorBruto());
 		
 		inserirDadosRecebimentoFisico(usuarioLogado, notaFiscal, listaItensNota, dataAtual);
 		
@@ -264,7 +264,7 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 		BigDecimal somaValorDosItens = new BigDecimal(0.0);
 		
 		for(RecebimentoFisicoDTO recebimentoFisicoDTO : listaItensNota) {
-			somaValorDosItens = somaValorDosItens.add(recebimentoFisicoDTO.getValorTotal());
+			somaValorDosItens = somaValorDosItens.add( recebimentoFisicoDTO.getPrecoItem().multiply(new BigDecimal(recebimentoFisicoDTO.getRepartePrevisto())) );
 		}
 		
 		if(valorBruto == null){

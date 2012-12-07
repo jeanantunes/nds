@@ -8,13 +8,6 @@
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.fileDownload.js"></script>
 <script language="javascript" type="text/javascript">
 
-	/*
-	/dialog-encalhe-sobras
-	/dialog-encalhe-faltas
-	/dialog-estoque-lancto
-	/dialog-estoque-recolto
-	*/
-	
 	$(function() {
 		fecharDiaController.init();		
 	});		
@@ -126,11 +119,7 @@
 		        <p>Diferenças não direcionadas, caso não seja direcionadas serão transferidas para o estoque Ganhos/Perdas!</p>
 				<p>Deseja realizar o direcionamento?
 		        <br clear="all" />
-		        <span class="bt_novos">
-		        	<a href="../Estoque/lancamento_faltas_sobras.htm">
-		        		<img src="${pageContext.request.contextPath}/images/ico_check.gif" hspace="5" border="0" />
-		        	Sim</a>
-		        </span>
+		       	<div id="linkParaFaltasESobra"></div>		        	
 		        
 		        <span class="bt_novos">
 		        	<a href="javascript:;" onclick="popup_transferencias();">
