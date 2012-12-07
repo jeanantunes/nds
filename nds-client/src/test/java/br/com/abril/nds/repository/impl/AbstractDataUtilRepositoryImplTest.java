@@ -34,6 +34,7 @@ import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
 import br.com.abril.nds.model.estoque.Expedicao;
+import br.com.abril.nds.model.estoque.HistoricoEstoqueProduto;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
@@ -57,6 +58,7 @@ import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.Util;
 
 /**
  * Classe base para testes de repositório com métodos utilitários
@@ -66,7 +68,6 @@ import br.com.abril.nds.util.DateUtil;
  *
  */
 public class AbstractDataUtilRepositoryImplTest extends AbstractRepositoryImplTest {
-
   
     protected Distribuidor distribuidor;
     protected Produto produtoVeja;
@@ -165,6 +166,13 @@ public class AbstractDataUtilRepositoryImplTest extends AbstractRepositoryImplTe
     protected EstoqueProdutoCota epcMariaVeja1;
     protected EstoqueProdutoCota epcMariaQuatroRodas1;
     protected EstoqueProdutoCota epcMariaSuper1;
+   
+    protected TipoMovimentoEstoque tmTransferenciaSaidaLancamento;
+    protected TipoMovimentoEstoque tmTransferenciaEntradaSuplementar;
+    protected TipoMovimentoEstoque tmTransferenciaSaidaSuplementar;
+    protected TipoMovimentoEstoque tmTransferenciaEntradaLancamento;
+    
+    protected HistoricoEstoqueProduto historicoQuatroRodas1;
     
     protected void criarUsuarios() {
         usuarioJoao = Fixture.usuarioJoao();
@@ -390,6 +398,11 @@ public class AbstractDataUtilRepositoryImplTest extends AbstractRepositoryImplTe
         estoqueProdutoQuatroRodas1 = new EstoqueProduto();
         estoqueProdutoQuatroRodas1.setProdutoEdicao(produtoEdicaoQuatroRodas1);
         estoqueProdutoQuatroRodas1.setQtde(BigInteger.valueOf(50));
+        BigInteger suplementarAnteriorQR1 = BigInteger.ZERO;
+        if (historicoQuatroRodas1 != null) {
+            suplementarAnteriorQR1 = Util.nvl(historicoQuatroRodas1.getQtdeSuplementar(), BigInteger.ZERO);
+        }
+        estoqueProdutoQuatroRodas1.setQtdeSuplementar(suplementarAnteriorQR1);
         save(estoqueProdutoQuatroRodas1);
     
         MovimentoEstoque movimentoQuatroRodas1 = Fixture.movimentoEstoque(null,
@@ -542,16 +555,16 @@ public class AbstractDataUtilRepositoryImplTest extends AbstractRepositoryImplTe
     }
     
     protected void criarTransferencias() {
-        TipoMovimentoEstoque tmTransferenciaSaidaLancamento = Fixture.tipoMovimentoTransferenciaSaidaLancamento();
+        tmTransferenciaSaidaLancamento = Fixture.tipoMovimentoTransferenciaSaidaLancamento();
         save(tmTransferenciaSaidaLancamento);
         
-        TipoMovimentoEstoque tmTransferenciaEntradaSuplementar = Fixture.tipoMovimentoTransferenciaEntradaSuplementar();
+        tmTransferenciaEntradaSuplementar = Fixture.tipoMovimentoTransferenciaEntradaSuplementar();
         save(tmTransferenciaEntradaSuplementar);
         
-        TipoMovimentoEstoque tmTransferenciaSaidaSuplementar = Fixture.tipoMovimentoTransferenciaSaidaSuplementar();
+        tmTransferenciaSaidaSuplementar = Fixture.tipoMovimentoTransferenciaSaidaSuplementar();
         save(tmTransferenciaSaidaSuplementar);
         
-        TipoMovimentoEstoque tmTransferenciaEntradaLancamento = Fixture.tipoMovimentoTransferenciaEntradaLancamento();
+        tmTransferenciaEntradaLancamento = Fixture.tipoMovimentoTransferenciaEntradaLancamento();
         save(tmTransferenciaEntradaLancamento);
         
         MovimentoEstoque movimentoSaidaLancamentoQuatroRodas1 = Fixture.movimentoEstoque(null,
@@ -576,7 +589,7 @@ public class AbstractDataUtilRepositoryImplTest extends AbstractRepositoryImplTe
                 movimentoEntradaLancamentoQuatroRodas1);
         
         estoqueProdutoQuatroRodas1.setQtde(estoqueProdutoQuatroRodas1.getQtde().subtract(BigInteger.valueOf(3)));
-        estoqueProdutoQuatroRodas1.setQtdeSuplementar(BigInteger.valueOf(3));
+        estoqueProdutoQuatroRodas1.setQtdeSuplementar(estoqueProdutoQuatroRodas1.getQtdeSuplementar().add(BigInteger.valueOf(3)));
         save(estoqueProdutoQuatroRodas1);
     }
     
