@@ -323,12 +323,14 @@ public class CotaServiceImpl implements CotaService {
 				endRemover.add(dto.getEndereco().getId());
 			}
 		}
+		else{
 		
-		List<EnderecoAssociacaoDTO> lista = this.enderecoService.buscarEnderecosPorIdPessoa(idPessoa, endRemover);
-		
-		if (lista!= null && !lista.isEmpty()){
+			List<EnderecoAssociacaoDTO> lista = this.enderecoService.buscarEnderecosPorIdPessoa(idPessoa, endRemover);
 			
-			listRetorno.addAll(lista);
+			if (lista!= null && !lista.isEmpty()){
+				
+				listRetorno.addAll(lista);
+			}
 		}
 		
 		return listRetorno;
@@ -406,6 +408,7 @@ public class CotaServiceImpl implements CotaService {
 	 * ENDERECO
 	 * 
 	 * Persiste EnderecoCota e Endereco
+	 * Valida apenas endereços vinculados à cota
 	 * @param cota
 	 * @param listaEnderecoAssociacao
 	 */
@@ -414,11 +417,15 @@ public class CotaServiceImpl implements CotaService {
 		Pessoa pessoa = cota.getPessoa();
 		
 		for (EnderecoAssociacaoDTO enderecoAssociacao : listaEnderecoAssociacao) {
-
+			
+			if (enderecoAssociacao.getTipoEndereco() == null){
+				
+				continue;
+			}
+            
 			EnderecoDTO enderecoDTO = enderecoAssociacao.getEndereco();
-			
+			    
 			this.enderecoService.validarEndereco(enderecoDTO, enderecoAssociacao.getTipoEndereco());
-			
 			
 			EnderecoCota enderecoCota = this.enderecoCotaRepository.buscarPorId(enderecoAssociacao.getId());
 			
