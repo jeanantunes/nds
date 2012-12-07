@@ -656,11 +656,10 @@ public class ConferenciaEncalheController {
 		
 	}
 
-	public void gerarSlip() throws IOException {
+	public void gerarDocumentoConferenciaEncalhe() throws IOException {
 		
 		DadosDocumentacaoConfEncalheCotaDTO dadosDocumentacaoConfEncalheCota = 
 				(DadosDocumentacaoConfEncalheCotaDTO) this.session.getAttribute(DADOS_DOCUMENTACAO_CONF_ENCALHE_COTA);
-		
 		
 		byte[] retorno = null; 
 		
@@ -676,25 +675,14 @@ public class ConferenciaEncalheController {
 			retorno = PDFUtil.mergePDFs(arquivos);
 			
 			escreverArquivoParaResponse(retorno, "slipBoleto");
-		} else {
+			
+		} else if (dadosDocumentacaoConfEncalheCota.isUtilizaSlip()) {
 			
 			byte[] slip =  conferenciaEncalheService.gerarDocumentosConferenciaEncalhe(dadosDocumentacaoConfEncalheCota, TipoDocumentoConferenciaEncalhe.SLIP);
 			
 			escreverArquivoParaResponse(slip, "slip");
 		}
 	}
-
-	public void gerarBoletoOuRecibo() throws IOException {
-		
-		DadosDocumentacaoConfEncalheCotaDTO dadosDocumentacaoConfEncalheCota = 
-				(DadosDocumentacaoConfEncalheCotaDTO) this.session.getAttribute(DADOS_DOCUMENTACAO_CONF_ENCALHE_COTA);
-		
-		byte[] boletoOuRecibo = conferenciaEncalheService.gerarDocumentosConferenciaEncalhe(dadosDocumentacaoConfEncalheCota, TipoDocumentoConferenciaEncalhe.BOLETO_OU_RECIBO);
-	
-		escreverArquivoParaResponse(boletoOuRecibo, "boletoOuRecibo");
-		
-	}
-
 	
 	@Post
 	public void finalizarConferencia() {
@@ -780,26 +768,7 @@ public class ConferenciaEncalheController {
 			dados.put("tipoMensagem", TipoMensagem.SUCCESS);
 			dados.put("listaMensagens", 	new String[]{"Operação efetuada com sucesso."});
 
-			if(dadosDocumentacaoConfEncalheCota!=null && dadosDocumentacaoConfEncalheCota.isIndGeraDocumentacaoConferenciaEncalhe()) {
-
-				String[] tiposDocumento = null;
-				
-				if(	dadosDocumentacaoConfEncalheCota.getNossoNumero()!=null && 
-					!dadosDocumentacaoConfEncalheCota.getNossoNumero().isEmpty() && dadosDocumentacaoConfEncalheCota.isUtilizaSlipBoleto()) {
-					
-					tiposDocumento = new String[]{
-							TipoDocumentoConferenciaEncalhe.SLIP.name(), 
-							TipoDocumentoConferenciaEncalhe.BOLETO_OU_RECIBO.name()};
-				} else {
-					
-					tiposDocumento = new String[]{TipoDocumentoConferenciaEncalhe.SLIP.name()};
-					
-				}
-				
-				dados.put("tiposDocumento", tiposDocumento);
-				
-				dados.put("indGeraDocumentoConfEncalheCota", dadosDocumentacaoConfEncalheCota.isIndGeraDocumentacaoConferenciaEncalhe());
-			}
+			dados.put("indGeraDocumentoConfEncalheCota", dadosDocumentacaoConfEncalheCota.isIndGeraDocumentacaoConferenciaEncalhe());
 			
 			this.result.use(CustomMapJson.class).put("result", dados).serialize();
 			

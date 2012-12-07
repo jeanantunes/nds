@@ -748,6 +748,8 @@ public class EnderecoController {
 
 				idCellModel = enderecoAssociacao.getEndereco().getId() == null ? (int) System.currentTimeMillis() * -1 : enderecoAssociacao.getEndereco().getId().intValue();
 				
+				enderecoAssociacao.setEnderecoPessoa(false);
+				
 				enderecoAssociacao.setId(idCellModel);
 			}
 

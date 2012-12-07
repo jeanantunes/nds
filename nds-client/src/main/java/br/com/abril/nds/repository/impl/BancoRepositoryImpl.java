@@ -220,4 +220,12 @@ public class BancoRepositoryImpl extends AbstractRepositoryModel<Banco,Long> imp
 		return query.list();
 	}
 	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Banco> obterBancosPorStatus(Boolean ativo) {
+		Criteria criteria = getSession().createCriteria(Banco.class);
+		criteria.add(Restrictions.eq("ativo", ativo));
+		return criteria.list();
+	}
+	
 }

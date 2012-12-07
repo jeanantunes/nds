@@ -194,8 +194,8 @@ public class FecharDiaController {
 	}
 	
 	@Post
-	@Path("validacoesDoCotroleDeAprovacao")
-	public void validacoesDoCotroleDeAprovacao(){
+	@Path("validacoesDoControleDeAprovacao")
+	public void validacoesDoControleDeAprovacao(){
 		
 		List<ValidacaoControleDeAprovacaoFecharDiaDTO> listaLancamentoFaltaESobra = this.fecharDiaService.obterPendenciasDeAprovacao(distribuidor.getDataOperacao(), StatusAprovacao.PENDENTE);
 		Boolean pendencia = false;
@@ -568,7 +568,7 @@ public class FecharDiaController {
 		try {
 		    Boolean hasPendenciaValidacao = false; //TODO: descomentar(Boolean) this.session.getAttribute(ATRIBUTO_SESSAO_POSSUI_PENDENCIAS_VALIDACAO);
 		    
-		    if (hasPendenciaValidacao != null && !hasPendenciaValidacao) {
+		   if (hasPendenciaValidacao != null && !hasPendenciaValidacao) {
 		        
 		        FechamentoDiarioDTO dto = this.fecharDiaService.processarFechamentoDoDia(getUsuario(), getDataFechamento());
 		        setFechamentoDiarioDTO(dto);

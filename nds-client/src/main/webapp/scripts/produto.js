@@ -13,6 +13,8 @@ var produtoController = $.extend(true, {
 		$( "#tabProduto", this.workspace).tabs();
 		
 		$("#fieldSegmentacao", produtoController.workspace).hide();
+		
+		$(".bt_arq", this.workspace).hide();
 
 	},
 
@@ -513,7 +515,19 @@ var produtoController = $.extend(true, {
 	},
 	
 	executarPreProcessamento : function(resultado) {
+		
+		if (resultado.mensagens) {
 
+			$(".bt_arq", this.workspace).hide();
+			$(".grids", this.workspace).hide();
+			
+			exibirMensagem(
+					resultado.mensagens.tipoMensagem, 
+					resultado.mensagens.listaMensagens
+			);
+			return resultado;
+		}
+		
 		$.each(resultado.rows, function(index, row) {
 			
 			var linkAprovar = '<a href="javascript:;" onclick="produtoController.editarProduto(' + row.cell.id + ');" style="cursor:pointer">' +
@@ -528,6 +542,8 @@ var produtoController = $.extend(true, {
 		});
 			
 		$(".grids", this.workspace).show();
+		
+		$(".bt_arq", this.workspace).show();
 		
 		return resultado;
 	},	

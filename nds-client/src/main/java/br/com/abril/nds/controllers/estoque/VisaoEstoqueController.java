@@ -32,6 +32,7 @@ import br.com.abril.nds.util.Util;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.util.export.NDSFileHeader;
+import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Resource;
@@ -91,7 +92,16 @@ public class VisaoEstoqueController {
 	}
 	
 	@Path("/pesquisarDetalhe.json")
-	public void pesquisarDetalhe(FiltroConsultaVisaoEstoque filtro, String sortname, String sortorder, int rp, int page) {
+	public void pesquisarDetalhe(FiltroConsultaVisaoEstoque filtro, String sortname, String sortorder, int rp, int page) {		
+		
+		if("undefined".equalsIgnoreCase(sortorder)){
+			sortorder = null;
+		}
+		
+		if("undefined".equalsIgnoreCase(sortname)){
+			sortname = null;
+		}
+		filtro.setPaginacao(new PaginacaoVO(page, rp,sortorder,sortname));
 		
 		this.atualizarDataMovimentacao(filtro);
 		

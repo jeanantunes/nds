@@ -491,6 +491,8 @@ var visaoEstoqueController = $.extend(true, {
 				sortable : true,
 				align : 'right'
 			}],
+			sortname : "codigo",
+			sortorder : "asc",
 			width : 795,
 			height : 200
 		});
@@ -561,6 +563,8 @@ var visaoEstoqueController = $.extend(true, {
 				sortable : true,
 				align : 'right'
 			}],
+			sortname : "codigo",
+			sortorder : "asc",
 			width : 795,
 			height : 200
 		});
