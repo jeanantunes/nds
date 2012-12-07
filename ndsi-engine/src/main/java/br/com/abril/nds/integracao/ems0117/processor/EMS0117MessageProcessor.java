@@ -239,6 +239,7 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 					Endereco endTmp = getEnderecoSaneado(input.getCep());
 					if (null != endTmp) {
 						endereco.setBairro(endTmp.getBairro());
+						endereco.setTipoLogradouro(endTmp.getTipoLogradouro());
 					}
 //				}
 				endereco.setNumero(input.getNumLogradouro());
@@ -314,23 +315,8 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 
 			if (!input.getEndereco().isEmpty()
 					&& !".".equals(input.getEndereco())) {
-
-				// Verifica EnderecoCota
-				sql = new StringBuilder();
-				sql.append("SELECT ec  ");
-				sql.append("FROM EnderecoCota ec ");
-				sql.append("JOIN FETCH ec.endereco ed  ");
-				sql.append("WHERE ");
-				sql.append("     ec.cota = :numeroCota ");
-				sql.append(" AND    ed.logradouro = :logradouro ");
-				query = getSession().createQuery(sql.toString());
-				query.setParameter("numeroCota", cota);
-				query.setParameter("logradouro", input.getEndereco());
-
-				List<EnderecoCota> enderecosCota = (List<EnderecoCota>) query
-						.list();
-
-				if (enderecosCota.isEmpty()) {
+			
+				if (cota.getEnderecos().isEmpty()) {
 
 //					endereco = getEnderecoSaneado(input.getCep());
 //					if (null == endereco ) {
@@ -343,6 +329,7 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 						Endereco endTmp = getEnderecoSaneado(input.getCep());
 						if (null != endTmp) {
 							endereco.setBairro(endTmp.getBairro());
+							endereco.setTipoLogradouro(endTmp.getTipoLogradouro());
 						}						
 //					}
 					endereco.setNumero(input.getNumLogradouro());
@@ -358,7 +345,7 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 
 				} else {
 
-					for (EnderecoCota enderecoCota2 : enderecosCota) {
+					for (EnderecoCota enderecoCota2 : cota.getEnderecos()) {
 
 						if (enderecoCota2.getCota().equals(cota)) {
 
@@ -390,6 +377,7 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 									Endereco endTmp = getEnderecoSaneado(input.getCep());
 									if (null != endTmp) {
 										endereco.setBairro(endTmp.getBairro());
+										endereco.setTipoLogradouro(endTmp.getTipoLogradouro());
 									}									
 //								}
 								endereco.setNumero(input.getNumLogradouro());
