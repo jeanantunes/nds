@@ -171,7 +171,6 @@ public class LancamentoServiceImpl implements LancamentoService {
 		
 		movimentoEstoqueService.gerarMovimentoEstoqueDeExpedicao(lancamento, idUsuario);
 		
-		
 	}
 
 	@Override

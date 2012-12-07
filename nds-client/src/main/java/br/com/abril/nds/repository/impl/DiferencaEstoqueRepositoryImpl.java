@@ -175,15 +175,12 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 			
 		} else {
 
-			String innerHQLDesconto = this.obterHQLDesconto(null);  
-
-			//+ " diferenca.qtde * diferenca.produtoEdicao.pacotePadrao * (diferenca.produtoEdicao.precoVenda - (diferenca.produtoEdicao.precoVenda * ("+ innerHQLDesconto +") / 100))) "
 			hql = " select diferenca, "
 				+ " (case when (diferenca.tipoDiferenca = 'FALTA_DE' or "
 				+ " diferenca.tipoDiferenca = 'SOBRA_DE') then ("
-				+ " diferenca.qtde * (diferenca.produtoEdicao.precoVenda - (diferenca.produtoEdicao.precoVenda * ("+ innerHQLDesconto +") / 100))) "
+				+ " diferenca.qtde * (diferenca.produtoEdicao.precoVenda - (diferenca.produtoEdicao.precoVenda * (coalesce(diferenca.produtoEdicao.produto.desconto, 0)) / 100))) "
 				+ " when (diferenca.tipoDiferenca = 'FALTA_EM' or diferenca.tipoDiferenca = 'SOBRA_EM') then ("
-				+ " diferenca.qtde * (diferenca.produtoEdicao.precoVenda - (diferenca.produtoEdicao.precoVenda * ("+ innerHQLDesconto +") / 100))) "
+				+ " diferenca.qtde * (diferenca.produtoEdicao.precoVenda - (diferenca.produtoEdicao.precoVenda * (coalesce(diferenca.produtoEdicao.produto.desconto, 0)) / 100))) "
 				+ " else 0 end) as valorTotalDiferenca ";
 		}
 
@@ -205,28 +202,6 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 		}
 		
 		return hql;
-	}
-
-	private String obterHQLDesconto(Long idCota) {
-		
-		StringBuilder hql = new StringBuilder();
-		
-		if (idCota != null) {
-
-			hql.append(" coalesce ( ")
-			   .append(" coalesce(( ")
-			   .append(" select view.desconto")
-			   .append(" from ViewDesconto view ")
-			   .append(" where view.cotaId = :idCota ")
-			   .append(" and view.produtoEdicaoId = diferenca.produtoEdicao.id ")
-			   .append(" and view.fornecedorId = fornecedor.id), diferenca.produtoEdicao.produto.desconto), 0) ");
-		
-		} else {
-
-			hql.append(" coalesce (diferenca.produtoEdicao.produto.desconto, 0) ");
-		}
-
-		return hql.toString();
 	}
 
 	//TODO: Sérgio - Validar o parametro idCota pois pode quebrar a consulta 
@@ -359,15 +334,12 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 			
 		} else {
 			
-			String innerHQLDesconto = this.obterHQLDesconto(filtro.getIdCota());  
-
-			//+ " diferenca.qtde * diferenca.produtoEdicao.pacotePadrao * (diferenca.produtoEdicao.precoVenda - (diferenca.produtoEdicao.precoVenda * ("+ innerHQLDesconto +") / 100))) "
 			hql = " select diferenca, "
 				+ " (case when (diferenca.tipoDiferenca = 'FALTA_DE' or "
 				+ " diferenca.tipoDiferenca = 'SOBRA_DE') then ("
-				+ " diferenca.qtde * (diferenca.produtoEdicao.precoVenda - (diferenca.produtoEdicao.precoVenda * ("+ innerHQLDesconto +") / 100))) "
+				+ " diferenca.qtde * diferenca.produtoEdicao.precoVenda) "
 				+ " when (diferenca.tipoDiferenca = 'FALTA_EM' or diferenca.tipoDiferenca = 'SOBRA_EM') then ("
-				+ " diferenca.qtde * (diferenca.produtoEdicao.precoVenda - (diferenca.produtoEdicao.precoVenda * ("+ innerHQLDesconto +") / 100))) "
+				+ " diferenca.qtde * diferenca.produtoEdicao.precoVenda) "
 				+ " else 0 end) as valorTotalDiferenca, "
 				+ " (select count(rateios) from RateioDiferenca rateios where rateios.diferenca.id = diferenca.id) ";
 		}
