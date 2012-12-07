@@ -421,11 +421,11 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		hql.append(" 	    produto.nome as nomeProduto, 					");
 		hql.append(" 	    produtoEdicao.id as idProdutoEdicao, 			");
 		hql.append(" 	    produtoEdicao.numeroEdicao as edicao, 			");
-		hql.append(" 	    ("+ this.obterSQLDesconto() +") as desconto, 	");
-		hql.append(" 	    produtoEdicao.precoVenda as precoVenda, 		");
+		hql.append(" 	    (movimentoCota.valoresAplciados.valorDesconto) as desconto, 	");
+		hql.append(" 	    movimentoCota.valoresAplciados.precoVenda as precoVenda, 		");
 		hql.append(" 	    produtoEdicao.parcial as tipoRecolhimento, 		");
 		hql.append(" 	    lancamentos.dataLancamentoDistribuidor as dataLancamento, ");
-		hql.append(" 	    (produtoEdicao.precoVenda - (produtoEdicao.precoVenda * ("+ this.obterSQLDesconto() +") / 100)) as precoComDesconto, ");
+		hql.append(" 	    (movimentoCota.valoresAplciados.precoComDesconto) as precoComDesconto, ");
 		
 		hql.append(" ( ");
 		hql.append(obterSubHqlQtdeReparte(filtro));
@@ -480,17 +480,6 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		}
 	}
 	
-	private String obterSQLDesconto(){
-		
-		StringBuilder hql = new StringBuilder("coalesce ((select view.desconto ");
-		hql.append(" from ViewDesconto view ")
-		   .append(" where view.cotaId = cota.id ")
-		   .append(" and view.produtoEdicaoId = produtoEdicao.id ")
-		   .append(" and view.fornecedorId = fornecedores.id),0) ");
-		
-		return hql.toString();
-	}
-
 	@Override
 	public Date obterProximaDataEncalhe(Date base) {
 		StringBuilder sb = new StringBuilder();

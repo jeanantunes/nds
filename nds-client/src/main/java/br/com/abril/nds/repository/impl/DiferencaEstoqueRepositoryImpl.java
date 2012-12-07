@@ -229,6 +229,7 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 		return hql.toString();
 	}
 
+	//TODO: Sérgio - Validar o parametro idCota pois pode quebrar a consulta 
 	@SuppressWarnings("unchecked")
 	public List<Diferenca> obterDiferencas(FiltroConsultaDiferencaEstoqueDTO filtro,
 										   Date dataLimiteLancamentoPesquisa) {

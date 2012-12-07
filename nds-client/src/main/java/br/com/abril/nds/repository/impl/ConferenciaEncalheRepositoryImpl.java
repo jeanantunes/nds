@@ -45,13 +45,13 @@ public class ConferenciaEncalheRepositoryImpl extends
 		hql.append(" conferencia.movimentoEstoqueCota.produtoEdicao.numeroEdicao as numeroEdicao,	");
 		hql.append(" conferencia.movimentoEstoqueCota.produtoEdicao.id as idProdutoEdicao,			");
 		
-		hql.append(" (conferencia.movimentoEstoqueCota.produtoEdicao.precoVenda -	");
-		hql.append(" ( conferencia.movimentoEstoqueCota.produtoEdicao.precoVenda * ("+ this.obterHQLDesconto("conferencia.movimentoEstoqueCota.cota.id", "conferencia.movimentoEstoqueCota.produtoEdicao.id", "fornecedor.id") + ") / 100 )) as precoVenda,	");
+		hql.append(" (conferencia.movimentoEstoqueCota.valoresAplicados.precoVenda -	");
+		hql.append(" ( conferencia.movimentoEstoqueCota.valoresAplicados.precoVenda * (conferencia.movimentoEstoqueCota.valoresAplicados.valorDesconto) / 100 )) as precoVenda,	");
 		
 		hql.append(" conferencia.movimentoEstoqueCota.qtde as encalhe, ");
 		
 		hql.append(" ((conferencia.movimentoEstoqueCota.produtoEdicao.precoVenda -  			");
-		hql.append(" ( conferencia.movimentoEstoqueCota.produtoEdicao.precoVenda * ("+ this.obterHQLDesconto("conferencia.movimentoEstoqueCota.cota.id", "conferencia.movimentoEstoqueCota.produtoEdicao.id", "fornecedor.id") +") / 100 ))  ");
+		hql.append(" ( conferencia.movimentoEstoqueCota.produtoEdicao.precoVenda * (conferencia.movimentoEstoqueCota.valoresAplicados.valorDesconto) / 100 ))  ");
 		hql.append(" * conferencia.movimentoEstoqueCota.qtde) as valorTotal, ");
 		hql.append(" conferencia.controleConferenciaEncalheCota.dataOperacao as dataOperacao,");
 		hql.append(" conferencia.chamadaEncalheCota.chamadaEncalhe.dataRecolhimento as dataRecolhimento");
@@ -453,13 +453,15 @@ public class ConferenciaEncalheRepositoryImpl extends
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" select sum( (conferencia.precoCapaInformado - (conferencia.precoCapaInformado * ("+ this.obterHQLDesconto("cota.id", "produtoEdicao.id", "fornecedor.id") +") / 100 )) * conferencia.qtdeInformada ) ");
+		hql.append(" select sum( (conferencia.precoCapaInformado - (conferencia.precoCapaInformado * (mec.valoresAplicados.valorDesconto) * conferencia.qtdeInformada ) ");
 		
 		hql.append(" from ConferenciaEncalhe conferencia  ");
 		
 		hql.append("  join conferencia.controleConferenciaEncalheCota controleConferenciaEncalheCota ");
 		
 		hql.append("  join controleConferenciaEncalheCota.cota cota ");
+		
+		hql.append("  join cota.movimentoEstoqueCotas mec ");
 		
 		hql.append("  join conferencia.produtoEdicao produtoEdicao ");
 		
@@ -477,33 +479,4 @@ public class ConferenciaEncalheRepositoryImpl extends
 		return (BigDecimal) query.uniqueResult();
 	}
 
-	
-    private String obterHQLDesconto(String cota, String produto, String fornecedor){
-    	
-		String auxC = " where ";
-		StringBuilder hql = new StringBuilder("coalesce ((select view.desconto from ViewDesconto view ");
-		
-
-    	 if (cota!=null && !"".equals(cota)){
- 		    hql.append(auxC+" view.cotaId = "+cota);
- 		    auxC = " and ";
- 		 }
-
-
-		 if (produto!=null && !"".equals(produto)){
-	 	     hql.append(auxC+" view.produtoEdicaoId = "+produto);
-	 	     auxC = " and ";
-	     }
-
-
-		 if (fornecedor!=null && !"".equals(fornecedor)){
-	 	     hql.append(auxC+" view.fornecedorId = "+fornecedor);
-	 	     auxC = " and ";
-		 }
-		 
-		 hql.append("),0)");
-
-		return hql.toString();
-	}
-    
 }

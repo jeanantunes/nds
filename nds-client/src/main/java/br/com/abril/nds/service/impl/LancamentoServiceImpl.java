@@ -68,7 +68,7 @@ public class LancamentoServiceImpl implements LancamentoService {
 	@Transactional
 	public List<LancamentoNaoExpedidoDTO> obterLancamentosNaoExpedidos(PaginacaoVO paginacaoVO, Date data, Long idFornecedor, Boolean estudo) {
 		
-		List<Lancamento> lancametos =lancamentoRepository.obterLancamentosNaoExpedidos(
+		List<Lancamento> lancametos = lancamentoRepository.obterLancamentosNaoExpedidos(
 				paginacaoVO, data, idFornecedor, estudo);
 		
 		 List<LancamentoNaoExpedidoDTO> dtos = new ArrayList<LancamentoNaoExpedidoDTO>();
