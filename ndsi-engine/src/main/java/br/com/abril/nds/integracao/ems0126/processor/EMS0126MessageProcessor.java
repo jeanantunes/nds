@@ -53,6 +53,7 @@ public class EMS0126MessageProcessor extends AbstractRepository implements
 		if (null != produtoEdicao) {
 			// Inserir codigo de barras
 			produtoEdicao.setCodigoDeBarras(input.getCodigoBarras());
+			this.getSession().merge(produtoEdicao);
 
 		} else {
 			ndsiLoggerFactory.getLogger().logError(
