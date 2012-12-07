@@ -92,15 +92,20 @@ public class EMS0132MessageProcessor extends AbstractRepository implements Messa
 	
 	private List<Estudo> buscarLancamentosPorDataOperacao(Message message, Date dataOperacao) {
 		
-		String hql = " select estudo from Estudo estudo  ";
-		hql += " join fetch estudo.produtoEdicao produtoEdicao ";
-		hql += " join fetch produtoEdicao.produto produto ";
-		hql += " join fetch estudo.lancamentos lancamentos ";
-		hql += " where lancamentos.dataLancamentoDistribuidor = :dataOperacao ";
+		
+		StringBuilder hql = new StringBuilder()
+		.append("SELECT l ")
+		.append("FROM Lancamento l ")
+		.append("WHERE l.id ")
+		.append("IN (SELECT lc.id FROM Lancamento lc ")
+		.append("JOIN l.produtoEdicao pe ")
+		.append("JOIN pe.produto p ")
+		.append("JOIN p.fornecedores f ")
+		.append("WHERE l.dataLancamentoDistribuidor = :dataOperacao)");
 		
 		try {
 		
-			Query query = this.getSession().createQuery(hql);
+			Query query = this.getSession().createQuery(hql.toString());
 					
 			query.setParameter("dataOperacao", dataOperacao);
 			
