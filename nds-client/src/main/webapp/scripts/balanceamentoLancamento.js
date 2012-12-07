@@ -321,8 +321,8 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 		
 		$(T.linhasDestacadas).each(function(i, item){
 			 id = '#row' + item;			    	
-			 $(id).removeClass("erow").addClass("gridLinhaDestacada");
-			 $(id).children("td").removeClass("sorted");
+			 $(id, _workspace).removeClass("erow").addClass("gridLinhaDestacada");
+			 $(id, _workspace).children("td").removeClass("sorted");
 		});
 		 
 
