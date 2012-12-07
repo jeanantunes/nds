@@ -384,29 +384,16 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 
 							getSession().persist(endereco);
 
-						} else {
-
-							for (Endereco endereco2 : enderecos) {
-
-								if (endereco2.getLogradouro().equals(
-										input.getEndereco())) {
-
-									endereco = endereco2;
-								}
-							}
-						}
+							EnderecoCota endCota = new EnderecoCota();
+							endCota.setTipoEndereco(TipoEndereco.COMERCIAL);
+							endCota.setEndereco(endereco);
+							endCota.setCota(cota);
+							
+							getSession().persist(endCota);
+							
+						} 
 					
 					}
-
-					ndsiLoggerFactory.getLogger().logInfo(
-							message,
-							EventoExecucaoEnum.INF_DADO_ALTERADO,
-							"Atualizacao do  Endereco Cota "
-									+ enderecoCota.getId());
-
-					enderecoCota.setTipoEndereco(TipoEndereco.COMERCIAL);
-					enderecoCota.setEndereco(endereco);
-					enderecoCota.setCota(cota);
 
 				}
 			} else {
