@@ -24,6 +24,6 @@ public interface ResumoSuplementarFecharDiaService {
 	
 	ResumoSuplementarFecharDiaDTO obterResumoGeralEncalhe(Date dataOperacional);
 
-	List<SuplementarFecharDiaDTO> obterDadosGridSuplementar();
+	List<SuplementarFecharDiaDTO> obterDadosGridSuplementar(Date data);
 
 }

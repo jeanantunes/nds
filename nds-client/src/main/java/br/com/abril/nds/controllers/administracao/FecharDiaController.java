@@ -275,7 +275,7 @@ public class FecharDiaController {
 	@Path("/obterGridSuplementar")
 	public void obterGridSuplementar(){
 		
-		List<SuplementarFecharDiaDTO> listaSuplementar = this.resumoSuplementarFecharDiaService.obterDadosGridSuplementar();
+		List<SuplementarFecharDiaDTO> listaSuplementar = this.resumoSuplementarFecharDiaService.obterDadosGridSuplementar(getDataFechamento());
 		
 		TableModel<CellModelKeyValue<SuplementarFecharDiaDTO>> tableModel = new TableModel<CellModelKeyValue<SuplementarFecharDiaDTO>>();
 		
@@ -358,7 +358,7 @@ public class FecharDiaController {
 		
 		try {
 		
-		List<SuplementarFecharDiaDTO> listaSuplementar = this.resumoSuplementarFecharDiaService.obterDadosGridSuplementar();
+		List<SuplementarFecharDiaDTO> listaSuplementar = this.resumoSuplementarFecharDiaService.obterDadosGridSuplementar(getDataFechamento());
 		
 		if(listaSuplementar.isEmpty()) {
 			throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");
@@ -566,7 +566,7 @@ public class FecharDiaController {
 		this.fecharDiaService.setLockBancoDeDados(false);
 		
 		try {
-		    Boolean hasPendenciaValidacao = (Boolean) this.session.getAttribute(ATRIBUTO_SESSAO_POSSUI_PENDENCIAS_VALIDACAO);
+		    Boolean hasPendenciaValidacao = false; //TODO: descomentar(Boolean) this.session.getAttribute(ATRIBUTO_SESSAO_POSSUI_PENDENCIAS_VALIDACAO);
 		    
 		    if (hasPendenciaValidacao != null && !hasPendenciaValidacao) {
 		        
