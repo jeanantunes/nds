@@ -618,6 +618,11 @@ var relatorioVendasController = $.extend(true, {
 	esconde_pesq_avancada : function() {
 		$('#pesquisaAvancada', relatorioVendasController.workspace).fadeOut("slow");
 	},
+	
+	limparFiltros: function() {
+		$(".filtro", relatorioVendasController.workspace).find("input").val("");
+		$(".filtro", relatorioVendasController.workspace).find("select").val(0);
+	},
 
 	mostra_distrib : function() {
 		$('#relatorioDistribuidor', relatorioVendasController.workspace).show();
