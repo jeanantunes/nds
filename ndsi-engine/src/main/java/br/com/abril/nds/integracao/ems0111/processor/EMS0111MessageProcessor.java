@@ -154,7 +154,7 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 			
 			lancamento.setStatus(
 					(input.getRepartePrevisto() == 0) ? 
-							StatusLancamento.CANCELADO : StatusLancamento.TRANSMITIDO);
+							StatusLancamento.CANCELADO : StatusLancamento.CONFIRMADO);
 			
 			lancamento.setRepartePromocional(BigInteger.valueOf(input.getRepartePromocional()));// confirmado
 			

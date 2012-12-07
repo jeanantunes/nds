@@ -11,13 +11,20 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.dto.EncalheFecharDiaDTO;
+import br.com.abril.nds.dto.ResumoEncalheFecharDiaDTO;
+import br.com.abril.nds.dto.VendaFechamentoDiaDTO;
 import br.com.abril.nds.fixture.Fixture;
+import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.FormaComercializacao;
 import br.com.abril.nds.model.estoque.ConferenciaEncalhe;
+import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.FechamentoEncalhe;
+import br.com.abril.nds.model.estoque.LancamentoDiferenca;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
+import br.com.abril.nds.model.estoque.TipoDiferenca;
+import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.TipoVendaEncalhe;
 import br.com.abril.nds.model.estoque.VendaProduto;
@@ -191,6 +198,51 @@ public class ResumoEncalheFecharDiaRepositoryImplTest extends AbstractDataUtilRe
         Assert.assertEquals(Long.valueOf(0), resultado);
     }
     
+    @Test
+    public void testObterResumoEncalhe() {
+        ResumoEncalheFecharDiaDTO resumo = repository.obterResumoEncalhe(distribuidor.getDataOperacao());
+        Assert.assertNotNull(resumo);
+        
+        Assert.assertEquals(BigDecimal.valueOf(2943).setScale(2), resumo.getTotalLogico().setScale(2));
+        Assert.assertEquals(BigDecimal.valueOf(2073).setScale(2), resumo.getTotalFisico().setScale(2));
+        Assert.assertEquals(BigDecimal.valueOf(673.5).setScale(2), resumo.getTotalJuramentado().setScale(2));
+        Assert.assertEquals(BigDecimal.valueOf(196.5).setScale(2), resumo.getVenda().setScale(2));
+        Assert.assertEquals(BigDecimal.valueOf(19.5).setScale(2), resumo.getTotalSobras().setScale(2));
+        Assert.assertEquals(BigDecimal.ZERO.setScale(2), resumo.getTotalFaltas().setScale(2));
+        Assert.assertEquals(BigDecimal.valueOf(19.5).setScale(2), resumo.getSaldo().setScale(2));
+    }
+    
+    @Test
+    public void testObterDadosVendaEncalhe() {
+        List<VendaFechamentoDiaDTO> vendasEncalhe = repository.obterDadosVendaEncalhe(distribuidor.getDataOperacao(), null);
+        Assert.assertNotNull(vendasEncalhe);
+        Assert.assertEquals(3, vendasEncalhe.size());
+    }
+    
+    @Test
+    public void testObterDadosVendaEncalhePaginado() {
+        PaginacaoVO paginacao = new PaginacaoVO(1, 2, null);
+        List<VendaFechamentoDiaDTO> vendasEncalhe = repository.obterDadosVendaEncalhe(distribuidor.getDataOperacao(), paginacao);
+        Assert.assertNotNull(vendasEncalhe);
+        Assert.assertEquals(2, vendasEncalhe.size());
+        
+        paginacao = new PaginacaoVO(2, 2, null);
+        vendasEncalhe = repository.obterDadosVendaEncalhe(distribuidor.getDataOperacao(), paginacao);
+        Assert.assertNotNull(vendasEncalhe);
+        Assert.assertEquals(1, vendasEncalhe.size());
+    }
+    
+    @Test
+    public void testContarVendasEncalhe() {
+        Long resultado = repository.contarVendasEncalhe(distribuidor.getDataOperacao());
+        Assert.assertEquals(Long.valueOf(3), resultado);
+    }
+    
+    @Test
+    public void testContarVendasEncalheZero() {
+        Long resultado = repository.contarVendasEncalhe(DateUtil.adicionarDias(distribuidor.getDataOperacao(), 1));
+        Assert.assertEquals(Long.valueOf(0), resultado);
+    }
     
     private Date balancearRecolhimento() {
         lancamentoVeja1.setStatus(StatusLancamento.BALANCEADO_RECOLHIMENTO);
@@ -475,7 +527,22 @@ public class ResumoEncalheFecharDiaRepositoryImplTest extends AbstractDataUtilRe
         
         estoqueProdutoQuatroRodas1.setQtdeDevolucaoEncalhe(movimentoEncalheQuatroRodas1.getQtde());
         save(estoqueProdutoQuatroRodas1);
+
+        Diferenca diferencaGanhoSuper1 = Fixture.diferenca(BigInteger.valueOf(1), usuarioJoao,
+                produtoEdicaoSuper1, TipoDiferenca.SOBRA_EM,
+                StatusConfirmacao.CONFIRMADO, null,
+                true, TipoEstoque.SUPLEMENTAR, null,
+                distribuidor.getDataOperacao());
+        LancamentoDiferenca lctoGanhoSuper1 = new LancamentoDiferenca();
+       
+        lctoGanhoSuper1.setDataProcessamento(distribuidor.getDataOperacao());
+        lctoGanhoSuper1.setDiferenca(diferencaGanhoSuper1);
+        diferencaGanhoSuper1.setLancamentoDiferenca(lctoGanhoSuper1);
+        lctoGanhoSuper1.setMotivo("Motivo");
+        lctoGanhoSuper1.setStatus(StatusAprovacao.GANHO);
         
+        save(diferencaGanhoSuper1, lctoGanhoSuper1);
+
         MovimentoEstoque movimentoEncalheSuper1 = Fixture.movimentoEstoque(null,
                 produtoEdicaoSuper1, tipoMovimentoRecebimentoEncalhe, usuarioJoao, estoqueProdutoSuper1,
                 distribuidor.getDataOperacao(), BigInteger.valueOf(5), StatusAprovacao.APROVADO, "OK");

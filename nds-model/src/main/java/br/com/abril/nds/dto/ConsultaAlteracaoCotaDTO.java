@@ -4,8 +4,6 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 
 import br.com.abril.nds.model.cadastro.DescricaoTipoEntrega;
-import br.com.abril.nds.model.cadastro.PessoaJuridica;
-import br.com.abril.nds.model.cadastro.desconto.TipoDesconto;
 
 public class ConsultaAlteracaoCotaDTO implements Serializable {
 
@@ -131,12 +129,20 @@ public class ConsultaAlteracaoCotaDTO implements Serializable {
 	}
 
 	public String getTipoEntrega() {
+		
 		return tipoEntrega;
 	}
 
 	public void setTipoEntrega(String tipoEntrega) {
-		this.tipoEntrega = tipoEntrega;
+		if (tipoEntrega !=null) {
+			this.tipoEntrega = DescricaoTipoEntrega.valueOf(tipoEntrega).getValue();
+		}else{
+			this.tipoEntrega = null;
+		}
 	}
+	
+	
+	
 
 	@Override
 	public int hashCode() {

@@ -111,7 +111,7 @@ var alteracaoCotaController = $.extend(true, {
 	iniciarGrid : function() {
 		
 	
-		$(".alteracaoGrid", this.workspace).flexigrid({
+		$(".alteracaoGrid", this.workspace).flexigrid({			
 			dataType : 'json',
 			preProcess: alteracaoCotaController.executarPreProcessamento,
 			colModel : [ {
@@ -169,14 +169,18 @@ var alteracaoCotaController = $.extend(true, {
 				sortable : false,
 				align : 'center'
 			}],
-			sortname : "cota.numeroCota",
+			sortname : "numeroCota",
 			sortorder : "asc",
 			usepager : true,
 			useRp : true,
 			rp : 15,
 			showTableToggleBtn : true,
-			width : 960,
-			singleSelect : true
+			width : 960
+		});
+		$(".alteracaoGrid", this.workspace).flexOptions({
+			url: contextPath + "/administracao/alteracaoCota/pesquisarAlteracaoCota.json",
+			params: [],
+			newp: 1
 		});
 	},
 	
@@ -185,11 +189,10 @@ var alteracaoCotaController = $.extend(true, {
 		$("#totalCotasSelecionadas", this.workspace).html(0);
 		$("#alteracaoCotaCheckAll", this.workspace).attr("checked",false);
 		
-		var params = $("#pesquisarForm", this.workspace).serializeArray();
+		var params = $("#pesquisarForm :input[value][value!=''][value!='-1']", this.workspace).serializeArray();
 		
 				
 		$(".alteracaoGrid", this.workspace).flexOptions({
-			"url" : contextPath + "/administracao/alteracaoCota/pesquisarAlteracaoCota.json",
 			params: params,
 			newp: 1
 		});
@@ -210,10 +213,12 @@ var alteracaoCotaController = $.extend(true, {
 			row.cell.acao = campoSelect;
 			
 			row.cell.vencimento = row.cell.vencimento == null || row.cell.vencimento == -1 ? '' : row.cell.vencimento;
+			row.cell.nomeFornecedor = (row.cell.nomeFornecedor)?row.cell.nomeFornecedor:"";
+			row.cell.tipoDesconto = (row.cell.tipoDesconto)?row.cell.tipoDesconto:"";
+			row.cell.valorMinimo = (row.cell.valorMinimo)?row.cell.valorMinimo:"";
+			row.cell.tipoEntrega = (row.cell.tipoEntrega)?row.cell.tipoEntrega:"";
+			row.cell.box = (row.cell.box)?row.cell.box:"";
 		});
-
-			
-		$(".grids", this.workspace).show();
 		
 		return resultado;
 	},	
@@ -238,10 +243,15 @@ var alteracaoCotaController = $.extend(true, {
 	carregarAlteracao : function() {
 		var linhasSelecionadas = 0;
 		
+		this.listListaLinhaSelecao = new Array();
+		
+		var listListaLinhaSelecao = this.listListaLinhaSelecao;
+		
 		$(".selectLine", this.workspace).each(function(index, element) {	
 			if(element.checked){
 				element.name = 'filtroAlteracaoCotaDTO.listaLinhaSelecao['+ linhasSelecionadas +']';
 				linhasSelecionadas++;
+				listListaLinhaSelecao.push({name:element.name, value:element.value});
 			}
 			
 		});
@@ -273,7 +283,7 @@ var alteracaoCotaController = $.extend(true, {
 		
 		alteracaoCotaController.limparCamposAbas();
 		
-		var params = $("#pesquisarForm", this.workspace).serialize();
+		var params = $("#gridForm", this.workspace).serializeArray();
 		
 		
 
@@ -450,10 +460,12 @@ var alteracaoCotaController = $.extend(true, {
 	
 	salvarAlteracao : function() {
 		
-		var  dataForm = $("#pesquisarForm", this.workspace).serializeArray();
+		var  dataForm = $("#alteracaoForm :input[value][value!=''][value!='-1']", this.workspace).serializeArray();
 		$("#idListaFornecedorAssociado option", this.workspace).each(function (index) {
 			 dataForm.push({name: 'filtroAlteracaoCotaDTO.filtroModalFornecedor.listaFornecedoresSelecionados['+index+']', value:$(this, this.workspace).val() } );
 		});
+		
+		dataForm =  dataForm.concat(this.listListaLinhaSelecao);
 		
 		
 		$.postJSON(contextPath + "/administracao/alteracaoCota/salvarAlteracao",

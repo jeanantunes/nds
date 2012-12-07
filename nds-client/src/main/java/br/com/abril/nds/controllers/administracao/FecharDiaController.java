@@ -194,8 +194,8 @@ public class FecharDiaController {
 	}
 	
 	@Post
-	@Path("validacoesDoCotroleDeAprovacao")
-	public void validacoesDoCotroleDeAprovacao(){
+	@Path("validacoesDoControleDeAprovacao")
+	public void validacoesDoControleDeAprovacao(){
 		
 		List<ValidacaoControleDeAprovacaoFecharDiaDTO> listaLancamentoFaltaESobra = this.fecharDiaService.obterPendenciasDeAprovacao(distribuidor.getDataOperacao(), StatusAprovacao.PENDENTE);
 		Boolean pendencia = false;
@@ -237,7 +237,7 @@ public class FecharDiaController {
 		
 		ResumoEncalheFecharDiaDTO dto = this.resumoEncalheFecharDiaService.obterResumoGeralEncalhe(distribuidor.getDataOperacao());
 		
-		result.use(Results.json()).from(dto, "result").recursive().serialize();
+		result.use(CustomMapJson.class).put("result", dto).serialize();
 		
 	}
 	
@@ -290,22 +290,17 @@ public class FecharDiaController {
 
 	@Post
 	@Path("/obterGridVenda")
-	public void obterGridVenda(String tipoVenda){
-		
-		List<VendaFechamentoDiaDTO> listaReparte = null;
-		if(tipoVenda.equals("encalhe")){
-			listaReparte = resumoEncalheFecharDiaService.obterDadosVendaEncalhe(distribuidor.getDataOperacao());
-		}else if(tipoVenda.equals("suplementar")){
-			listaReparte = resumoSuplementarFecharDiaService.obterVendasSuplementar(distribuidor.getDataOperacao());			
+	public void obterGridVenda(String tipoVenda, Integer page, Integer rp){
+		List<VendaFechamentoDiaDTO> lista = null;
+		Long total = Long.valueOf(0);
+		PaginacaoVO paginacao = new PaginacaoVO(page, rp, null);
+		if(tipoVenda.equals("encalhe")) {
+			lista = resumoEncalheFecharDiaService.obterDadosVendaEncalhe(distribuidor.getDataOperacao(), paginacao);
+			total = resumoEncalheFecharDiaService.contarVendasEncalhe(getDataFechamento());
+		} else if(tipoVenda.equals("suplementar")){
+			lista = resumoSuplementarFecharDiaService.obterVendasSuplementar(distribuidor.getDataOperacao());			
 		}
-		
-		TableModel<CellModelKeyValue<VendaFechamentoDiaDTO>> tableModel = new TableModel<CellModelKeyValue<VendaFechamentoDiaDTO>>();
-		
-		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaReparte));
-		
-		tableModel.setTotal(listaReparte.size());
-		
-		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+		result.use(FlexiGridJson.class).from(lista).page(page).total(total.intValue()).serialize();    
 	}
 	
 	
@@ -388,7 +383,7 @@ public class FecharDiaController {
 			
 			List<VendaFechamentoDiaDTO> listaVenda = null;
 			if(tipoVenda.equals("encalhe")){
-				listaVenda = resumoEncalheFecharDiaService.obterDadosVendaEncalhe(distribuidor.getDataOperacao());
+				listaVenda = resumoEncalheFecharDiaService.obterDadosVendaEncalhe(distribuidor.getDataOperacao(), null);
 			}else if(tipoVenda.equals("suplementar"))
 				listaVenda = resumoSuplementarFecharDiaService.obterVendasSuplementar(distribuidor.getDataOperacao());
 			
@@ -573,7 +568,7 @@ public class FecharDiaController {
 		try {
 		    Boolean hasPendenciaValidacao = (Boolean) this.session.getAttribute(ATRIBUTO_SESSAO_POSSUI_PENDENCIAS_VALIDACAO);
 		    
-		    if (hasPendenciaValidacao != null && !hasPendenciaValidacao) {
+		   if (hasPendenciaValidacao != null && !hasPendenciaValidacao) {
 		        
 		        FechamentoDiarioDTO dto = this.fecharDiaService.processarFechamentoDoDia(getUsuario(), getDataFechamento());
 		        setFechamentoDiarioDTO(dto);

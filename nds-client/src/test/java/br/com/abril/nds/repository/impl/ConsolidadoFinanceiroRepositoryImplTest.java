@@ -491,7 +491,7 @@ public class ConsolidadoFinanceiroRepositoryImplTest extends
 		Calendar d = Calendar.getInstance();
 		Date data = d.getTime();
 		
-		quantidadeDividas = consolidadoFinanceiroRepository.obterQuantidadeDividasGeradasData(data);
+		quantidadeDividas = consolidadoFinanceiroRepository.obterQuantidadeDividasGeradasData(data, null);
 		
 		Assert.assertNotNull(quantidadeDividas);
 		

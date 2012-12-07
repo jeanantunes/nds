@@ -472,10 +472,19 @@ public class FecharDiaServiceImpl implements FecharDiaService {
     	List<DiferencaDTO> diferencasDTO = incluirFaltasSobras(fechamento);
     	builder.faltasSobras(diferencasDTO);
     	
+    	liberarNovaDataOperacionalParaDistribuidor(dataFechamento);
+    	
     	return builder.build();
     }
 
-    /**
+    private void liberarNovaDataOperacionalParaDistribuidor(Date dataFechamento) {
+		Distribuidor distribuidor = distribuidorRepository.obter();		
+		distribuidor.setDataOperacao(DateUtil.adicionarDias(dataFechamento, 1));
+		distribuidorRepository.alterar(distribuidor);
+		
+	}
+
+	/**
      * Inclui as diferenças nas informações do fechamento diário
      * 
      * @param fechamento
@@ -852,7 +861,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 
 	private void incluirVendaEncalhe(FechamentoDiario fechamento,FechamentoDiarioConsolidadoEncalhe consolidadoEncalhe) {
 		
-		List<VendaFechamentoDiaDTO> vendasEncalhe = resumoEncalheFecharDiaService.obterDadosVendaEncalhe(fechamento.getDataFechamento());
+		List<VendaFechamentoDiaDTO> vendasEncalhe = resumoEncalheFecharDiaService.obterDadosVendaEncalhe(fechamento.getDataFechamento(), null);
 
 		if(vendasEncalhe!= null && !vendasEncalhe.isEmpty() ){
 	
