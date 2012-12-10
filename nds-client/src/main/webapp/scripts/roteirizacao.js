@@ -43,6 +43,7 @@ var roteirizacao = $.extend(true, {
     tipoExclusao: null,
     idsCotas: [],
     boxReadonly : false,
+    modificada: false,
 
     definirTransferenciaCota : function() {
         if (!roteirizacao.isTransferenciaCota()) {
@@ -148,7 +149,7 @@ var roteirizacao = $.extend(true, {
         if ( $('input[name=tipoRoteiro]').is(':checked') ){
             tipoRoteiro = 'ESPECIAL';
         }
-
+        
         $.postJSON(contextPath + '/cadastro/roteirizacao/incluirRoteiro',
             {
                 'idBox' :  roteirizacao.idBox,
@@ -172,6 +173,8 @@ var roteirizacao = $.extend(true, {
             null,
             true
         );
+        
+        roteirizacao.modificada = true;
     },
 
     //Busca dados para o auto complete do nome da cota
@@ -297,7 +300,7 @@ var roteirizacao = $.extend(true, {
         $(".rotasGrid", roteirizacao.workspace).flexigrid({
             preProcess: function(data) {
                 $.each(data.rows, function(index, value) {
-                	debugger;
+
                 	var rota = value.cell;
                 	
                     var id = rota.id ? rota.id : null;
@@ -489,7 +492,7 @@ var roteirizacao = $.extend(true, {
            
             var isBoxDiferente = roteirizacao.idBox != idBox;
             
-            if (isBoxSelecionado && isBoxDiferente) {
+            if (isBoxSelecionado && isBoxDiferente && roteirizacao.modificada) {
                
             	var dialog = new ConfirmDialog("Ao alterar o Box selecionado as informações não confirmadas serão perdidas.<br/>Confirma?", function() {
                 
@@ -535,6 +538,7 @@ var roteirizacao = $.extend(true, {
             null,
             true
         );
+       roteirizacao.modificada = false;
     },
 
     popularGrids : function(data) {
@@ -690,6 +694,7 @@ var roteirizacao = $.extend(true, {
             null,
             true
         );
+        roteirizacao.modificada = true;
     },
 
     buscaRotasSelecionadas : function(){
@@ -721,6 +726,7 @@ var roteirizacao = $.extend(true, {
             null,
             true
         );
+        roteirizacao.modificada = true;
     },
 
     excluirRoteiro : function(){
@@ -743,6 +749,7 @@ var roteirizacao = $.extend(true, {
             null,
             true
         );
+        roteirizacao.modificada = true;
     },
 
     excluirCotas : function(){
@@ -773,6 +780,7 @@ var roteirizacao = $.extend(true, {
             null,
             true
         );
+        roteirizacao.modificada = true;
     },
 
     popupExcluirRotaRoteiro : function() {
@@ -847,7 +855,6 @@ var roteirizacao = $.extend(true, {
     },
 
     popupTransferirRota : function() {
-        //$( "#dialog:ui-dialog" ).dialog( "destroy" );
         $("#roteiroTranferenciaNome", roteirizacao.workspace).val('');
         $("#dialog-transfere-rota", roteirizacao.workspace ).dialog({
             resizable: false,
@@ -871,7 +878,7 @@ var roteirizacao = $.extend(true, {
             },
             form: $("#dialog-transfere-rota", this.workspace).parents("form")
         });
-
+        
     },
 
 //	    transferirRotas : function() {
@@ -934,6 +941,7 @@ var roteirizacao = $.extend(true, {
             null,
             true
         );
+        roteirizacao.modificada = true;
     },
 
     selecionaRoteiroTranferencia : function(roteiro) {
@@ -1080,6 +1088,7 @@ var roteirizacao = $.extend(true, {
             null,
             true
         );
+        roteirizacao.modificada = true;
     },
 
     limparGridCotasRota : function() {
@@ -1474,6 +1483,7 @@ var roteirizacao = $.extend(true, {
             null,
             true
         );
+        roteirizacao.modificada = true;
     },
 
     popupExcluirPdvs : function() {
@@ -1555,7 +1565,6 @@ var roteirizacao = $.extend(true, {
     },
 
     popupTransferirCota : function() {
-        //$( "#dialog:ui-dialog" ).dialog( "destroy" );
         $('#lstRotaTranferencia', roteirizacao.workspace).val('');
         $("#dialog-transfere-cotas", roteirizacao.workspace ).dialog({
             resizable: false,
@@ -1661,6 +1670,7 @@ var roteirizacao = $.extend(true, {
             null,
             true
         );
+        roteirizacao.modificada = true;
     },
 
     transferirRoteirizacaoComNovaRota : function() {
@@ -1687,6 +1697,7 @@ var roteirizacao = $.extend(true, {
             null,
             true
         );
+        roteirizacao.modificada = true;
     },
 
     excluirRoteirizacao :  function(){
@@ -1707,7 +1718,7 @@ var roteirizacao = $.extend(true, {
             null,
             true
         );
-
+        roteirizacao.modificada = true;
     },
 
     popupExcluirRoteirizacao : function() {
@@ -2108,6 +2119,7 @@ var roteirizacao = $.extend(true, {
         roteirizacao.boxReadonly = true;
         roteirizacao.limparCamposPesquisaGrids();
         roteirizacao.prepararPopupRoteirizacao();
+        roteirizacao.modificada = false;
 
     },
 
@@ -2194,6 +2206,7 @@ var roteirizacao = $.extend(true, {
         roteirizacao.limparCamposPesquisaGrids();
         roteirizacao.definirTipoEdicao(TipoEdicao.NOVO);
         roteirizacao.prepararPopupRoteirizacao();
+        roteirizacao.modificada = false;
     },
 
     limparCamposPesquisaGrids : function() {
@@ -2541,6 +2554,8 @@ var roteirizacao = $.extend(true, {
                                      null,
                                     true
                                 );
+                                
+                                roteirizacao.modificada = true;
                             },
                             "Cancelar": function() {
                                 $("#dialog-transfere-cotas", roteirizacao.workspace).dialog("close");
@@ -2594,6 +2609,8 @@ var roteirizacao = $.extend(true, {
                                     null,
                                     true
                                 );
+                                
+                                roteirizacao.modificada = true;
                             },
                             "Cancelar": function() {
                                 $("#dialog-transfere-rota", roteirizacao.workspace).dialog("close");
@@ -2650,6 +2667,8 @@ var roteirizacao = $.extend(true, {
                                     null,
                                     true
                                 );
+                                
+                                roteirizacao.modificada = true;
                             },
                             "Cancelar": function() {
                                 $("#dialog-transfere-roteiro", roteirizacao.workspace).dialog("close");
@@ -2898,6 +2917,7 @@ var roteirizacao = $.extend(true, {
             },
             true
         );
+        roteirizacao.modificada = true;
     },
 
     obterParametrosCopia: function() {

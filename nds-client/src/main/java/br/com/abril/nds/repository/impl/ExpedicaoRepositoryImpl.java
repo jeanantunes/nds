@@ -1,5 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -100,7 +102,7 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 						.append("produtoEd.numeroEdicao,")
 						.append("produtoEd.precoVenda,")
 						.append("("+ this.getHQLDesconto() +") as desconto,")
-						.append("estudo.qtdeReparte,")
+						.append("sum(estudoCota.qtdeEfetiva) as qtdeReparte,")
 						.append(" SUM (( case ")
 							.append(" when (diferenca.tipoDiferenca = 'FALTA_DE') then (-(diferenca.qtde * produtoEd.pacotePadrao))")
 							.append(" when (diferenca.tipoDiferenca = 'SOBRA_DE') then (diferenca.qtde * produtoEd.pacotePadrao)")
@@ -108,26 +110,26 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 							.append(" when (diferenca.tipoDiferenca = 'SOBRA_EM') then (diferenca.qtde)")
 							.append(" else 0")
 						.append(" end )) as qntDiferenca, ")
-						.append(" produtoEd.precoVenda * estudo.qtdeReparte, ")
+						.append(" sum(estudoCota.qtdeEfetiva)*sum(produtoEd.precoVenda), ")
 						.append(" juridica.razaoSocial ")
 						
 			.append(" ) ");
-		}	
+		}
 		
 		hql.append( "FROM" )
-			.append( " Box box")
-			.append(" JOIN box.cotas cota")
-			.append(" JOIN cota.estudoCotas estudoCota ")
+			.append(" Expedicao expedicao ")
+			.append(" join expedicao.lancamentos lancamento ")
+			.append(" join lancamento.estudo estudo ")
+			.append(" join estudo.produtoEdicao produtoEd ")
+			.append(" join produtoEd.produto produto ")
+			.append(" join estudo.estudoCotas estudoCota ")
+			.append(" join estudoCota.cota cota ")
+			.append(" join cota.box box ")
 			.append(" LEFT JOIN estudoCota.rateiosDiferenca rateioDiferenca ")
 			.append(" LEFT JOIN rateioDiferenca.diferenca diferenca")
-			.append(" JOIN estudoCota.estudo estudo")
-			.append(" JOIN estudo.produtoEdicao produtoEd")
-			.append(" JOIN produtoEd.produto produto ")
 			.append(" JOIN produto.fornecedores fornecedor ")
 			.append(" JOIN fornecedor.juridica juridica ")
-			.append(" JOIN produtoEd.lancamentos lancamento ")
-			.append(" JOIN lancamento.expedicao expedicao ")
-
+			
 			.append(" WHERE ")
 			.append(" lancamento.dataLancamentoDistribuidor = :dataLancamento ")
 			.append(" and lancamento.status = :status ")
@@ -135,12 +137,7 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 			.append(" and box.codigo = :codigoBox ");
 		
 		hql.append(" group by ")
-			.append("produto.codigo,")
-			.append("produto.nome,")
-			.append("produtoEd.numeroEdicao,")
-			.append("produtoEd.precoVenda,")
-			.append("estudo.qtdeReparte,")
-			.append("produtoEd.precoVenda*estudo.qtdeReparte ");
+			.append("produtoEd.id ");
 
 		return hql.toString();
 	}
@@ -162,7 +159,7 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(gerarQueryResumoProduto(Boolean.FALSE))
+		hql.append(getHqlResumoLancamentoPorBox())
 					
 		.append(getOrderBy(filtro));
 		
@@ -170,6 +167,7 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 		
 		query.setParameter("dataLancamento", filtro.getDataLancamento());
 		query.setParameter("status",StatusLancamento.EXPEDIDO);
+		query.setParameter("tipoBox", TipoBox.LANCAMENTO);
 		
 		if (filtro.getPaginacao() != null) {
 			
@@ -187,61 +185,6 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 	}
 	
 	/**
-	 * Retorna o sql referente a consulta de Reusumo de produtos expedidos
-	 * @param isCount
-	 * @return String
-	 */
-	private String gerarQueryResumoProduto(boolean isCount){
-		
-		StringBuilder hql = new StringBuilder();
-		
-		if (isCount){
-			
-			hql.append("SELECT count (produto.codigo) ");
-		}
-		else{
-		
-			hql.append("SELECT new ") .append(ExpedicaoDTO.class.getCanonicalName()) 
-			.append(" ( ") 
-						.append("produto.codigo,")
-						.append("produto.nome,")
-						.append("produtoEd.numeroEdicao,")
-						.append("produtoEd.precoVenda,")
-						.append("estudo.qtdeReparte,")
-						.append(" SUM (( case ")
-							.append(" when (diferenca.tipoDiferenca = 'FALTA_DE') then (-(diferenca.qtde * produtoEd.pacotePadrao))")
-							.append(" when (diferenca.tipoDiferenca = 'SOBRA_DE') then (diferenca.qtde * produtoEd.pacotePadrao)")
-							.append(" when (diferenca.tipoDiferenca = 'FALTA_EM') then (-diferenca.qtde)")
-							.append(" when (diferenca.tipoDiferenca = 'SOBRA_EM') then (diferenca.qtde)")
-							.append(" else 0")
-						.append(" end )) as qntDiferenca, ")
-						.append("produtoEd.precoVenda*estudo.qtdeReparte ")
-			.append(" ) ");
-		}	
-		
-		hql.append( "FROM" )
-			.append( " Estudo estudo join estudo.lancamentos lancamento ") 
-			.append( " JOIN lancamento.recebimentos itemRecebimento ")
-			.append("  JOIN lancamento.expedicao expedicao ")
-			.append( " LEFT JOIN itemRecebimento.diferenca diferenca")
-			.append( " JOIN lancamento.produtoEdicao produtoEd ")
-			.append( " JOIN produtoEd.produto produto ")
-			.append(" WHERE ")
-			.append(" lancamento.dataLancamentoDistribuidor =:dataLancamento ")
-			.append(" and lancamento.status =:status ");
-		
-		hql.append(" group by ")
-			.append("produto.codigo,")
-			.append("produto.nome,")
-			.append("produtoEd.numeroEdicao,")
-			.append("produtoEd.precoVenda,")
-			.append("estudo.qtdeReparte,")
-			.append("produtoEd.precoVenda*estudo.qtdeReparte ");
-
-		return hql.toString();
-	}
-	
-	/**
 	 * Retorna uma string com o conteudo da ordenação da consulta
 	 * @param filtro
 	 * @return
@@ -250,27 +193,29 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 		
 		StringBuilder hql = new StringBuilder();
 		
+		hql.append(" ORDER BY box.id ");
+		
 		if (filtro.getOrdenacaoColunaProduto() != null ){
 			
 			switch (filtro.getOrdenacaoColunaProduto()) {
 				
 				case CODIGO_PRODUTO:
-					hql.append(" ORDER BY produto.codigo ");
+					hql.append(" , produto.codigo ");
 					break;
 				case DESCRICAO_PRODUTO:
-					hql.append(" ORDER BY produto.nome ");
+					hql.append(" , produto.nome ");
 					break;
 				case NUMERO_EDICAO:
-					hql.append(" ORDER BY produtoEd.numeroEdicao ");
+					hql.append(" , produtoEd.numeroEdicao ");
 					break;
 				case PRECO_CAPA:
-					hql.append(" ORDER BY produtoEd.precoVenda ");
+					hql.append(" , produtoEd.precoVenda ");
 					break;
 				case REPARTE:
-					hql.append(" ORDER BY estudo.qtdeReparte ");
+					hql.append(" , estudo.qtdeReparte ");
 					break;
 				case DIFERENCA:
-					hql.append(" ORDER BY ")
+					hql.append(" , ")
 					.append(" sum( ( case ")
 						.append(" when (diferenca.tipoDiferenca = 'FALTA_DE') then (-(diferenca.qtde * produtoEd.pacotePadrao))")
 						.append(" when (diferenca.tipoDiferenca = 'SOBRA_DE') then (diferenca.qtde *  produtoEd.pacotePadrao)")
@@ -280,10 +225,10 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 					.append(" end ) )");
 					break;
 				case VALOR_FATURADO:
-					hql.append(" ORDER BY  produtoEd.precoVenda*estudo.qtdeReparte ");
+					hql.append(" ,  produtoEd.precoVenda*estudo.qtdeReparte ");
 					break;
 				default:
-					hql.append(" ORDER BY produto.codigo ");
+					hql.append(" , produto.codigo ");
 			}
 			
 			if (filtro.getPaginacao().getOrdenacao() != null) {
@@ -306,16 +251,44 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 		ScrollableResults results = query.scroll();
 		
 		List<ExpedicaoDTO> listRetorno = new ArrayList<ExpedicaoDTO>();
-		ExpedicaoDTO dto;
+		ExpedicaoDTO dto = null;
+		Long qntProduto = 0L;
+		BigInteger reparte = BigInteger.ZERO;
+		BigDecimal valorFaturado = BigDecimal.ZERO;
+		BigInteger diferenca = BigInteger.ZERO;
+		ExpedicaoDTO dtoBoxAux = null;
 		
 		while (results.next()){
 			
 			dto = (ExpedicaoDTO) results.get(0);
 			
-			Long qntProduto = obterQuantidadeResumoExpedicaoPorBox(dto.getIdBox(), filtro.getDataLancamento());
-			dto.setQntProduto(qntProduto);
+			if (dtoBoxAux != null && !dto.getIdBox().equals(dtoBoxAux.getIdBox())){
+				dtoBoxAux.setQntProduto(qntProduto);
+				dtoBoxAux.setQntReparte(reparte);
+				dtoBoxAux.setValorFaturado(valorFaturado);
+				dtoBoxAux.setQntDiferenca(diferenca);
+				listRetorno.add(dtoBoxAux);
+				qntProduto = 0L;
+				reparte = BigInteger.ZERO;
+				valorFaturado = BigDecimal.ZERO;
+				diferenca = BigInteger.ZERO;
+			}
 			
-			listRetorno.add(dto);
+			qntProduto += obterQuantidadeResumoExpedicaoPorBox(dto.getIdBox(), filtro.getDataLancamento());
+			reparte = reparte.add(dto.getQntReparte());
+			valorFaturado = valorFaturado.add(dto.getValorFaturado());
+			diferenca = diferenca.add(dto.getQntDiferenca());
+			
+			dtoBoxAux = dto;
+		}
+		
+		if (dtoBoxAux != null){
+			
+			dtoBoxAux.setQntProduto(qntProduto);
+			dtoBoxAux.setQntReparte(reparte);
+			dtoBoxAux.setValorFaturado(valorFaturado);
+			dtoBoxAux.setQntDiferenca(diferenca);
+			listRetorno.add(dtoBoxAux);
 		}
 		
 		return listRetorno;
@@ -333,7 +306,7 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 			.append(" ( ") 
 			
 						.append("lancamento.dataLancamentoDistribuidor, ")
-						.append("box.id,")
+						.append(" box.id,")
 						.append("box.codigo || '-'|| box.nome,")
 						.append("box.nome,")
 						.append(" SUM (produtoEdicao.precoVenda ) as totalVendas,")
@@ -345,25 +318,31 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 							.append(" when (diferenca.tipoDiferenca = 'SOBRA_EM') then (diferenca.qtde)")
 							.append(" else 0")
 						.append(" end )) as qntDiferenca, ")
-						.append(" (SUM (estudoCota.qtdeEfetiva)*SUM (produtoEdicao.precoVenda )) as totalFaturado")
+						.append(" (SUM (estudoCota.qtdeEfetiva)*SUM (produtoEdicao.precoVenda )) as totalFaturado,")
+						.append("produto.codigo,")
+						.append("produto.nome,")
+						.append("produtoEdicao.numeroEdicao")
 			.append(" ) ")
 			
 			.append( "FROM" )
-			.append( " Box box")
-			.append(" JOIN box.cotas cota")
-			.append(" JOIN cota.estudoCotas estudoCota ")
+			
+			.append(" Expedicao expedicao ")
+			.append(" join expedicao.lancamentos lancamento ")
+			.append(" join lancamento.estudo estudo ")
+			.append(" join estudo.produtoEdicao produtoEdicao ")
+			.append(" join produtoEdicao.produto produto ")
+			.append(" join estudo.estudoCotas estudoCota ")
+			.append(" join estudoCota.cota cota ")
+			.append(" join cota.box box ")
 			.append(" LEFT JOIN estudoCota.rateiosDiferenca rateioDiferenca ")
 			.append(" LEFT JOIN rateioDiferenca.diferenca diferenca")
-			.append(" JOIN estudoCota.estudo estudo")
-			.append(" JOIN estudo.produtoEdicao produtoEdicao")
-			.append(" JOIN produtoEdicao.lancamentos lancamento ")
-			.append(" JOIN lancamento.expedicao expedicao ")
+			
 			.append(" WHERE ")
 			.append(" lancamento.dataLancamentoDistribuidor =:dataLancamento ")
 			.append(" and lancamento.status =:status ")
 			.append(" and box.tipoBox =:tipoBox ")
 			
-			.append(" GROUP BY box.id,box.codigo ");
+			.append(" GROUP BY box.id, produtoEdicao.id ");
 		
 		return hql.toString();
 	}
@@ -371,10 +350,11 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 	@Override
 	public Long obterQuantidadeResumoExpedicaoPorProduto(FiltroResumoExpedicaoDTO filtro) {
 		
-		Query query = getSession().createQuery(gerarQueryResumoProduto(Boolean.TRUE));
+		Query query = getSession().createQuery(getHqlResumoLancamentoPorBox());
 		
 		query.setParameter("dataLancamento", filtro.getDataLancamento());
 		query.setParameter("status",StatusLancamento.EXPEDIDO);
+		query.setParameter("tipoBox", TipoBox.LANCAMENTO);
 		
 		@SuppressWarnings("unchecked")
 		List<Long> conts  = query.list();
