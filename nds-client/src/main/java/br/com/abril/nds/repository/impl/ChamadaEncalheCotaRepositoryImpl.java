@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.ChamadaAntecipadaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroChamadaAntecipadaEncalheDTO;
+import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.repository.ChamadaEncalheCotaRepository;
@@ -30,21 +31,23 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 		StringBuilder hql = new StringBuilder();
 
 		hql.append(" select sum ( ");
-		hql.append(" chamadaEncalheCota.qtdePrevista * (produtoEdicao.precoVenda - ");
-		hql.append("(produtoEdicao.precoVenda * (" + this.getSubQueryDesconto() + " / 100 ))) ");
+		hql.append(" mec.reparte * (mec.valoresAplicados.valorComDesconto) ");
 		hql.append(" ) ");
 		
 		hql.append(" from ChamadaEncalheCota chamadaEncalheCota ");
 		hql.append(" join chamadaEncalheCota.chamadaEncalhe chamadaEncalhe ");
 		hql.append(" join chamadaEncalhe.produtoEdicao produtoEdicao ");
 		hql.append(" join chamadaEncalheCota.cota cota ");
+		hql.append(" join cota.movimentoEstoqueCotas mec ");
 		hql.append(" join produtoEdicao.produto produto ");
 		hql.append(" join produto.fornecedores fornecedor ");
 		
 		hql.append(" where ");
 		hql.append(" cota.numeroCota = :numeroCota ");
 		hql.append(" and chamadaEncalheCota.fechado = :conferido ");
-		hql.append(" and chamadaEncalheCota.postergado = :postergado ");
+		hql.append(" and chamadaEncalheCota.fechado = :postergado ");
+		hql.append(" and mec.tipoMovimento.grupoMovimento = :grupoMovimento ");
+		hql.append(" and mec.lancamento in (chamadaEncalheCota.chamadaEncalhe.lancamentos) ");
 
 		hql.append(" and chamadaEncalhe.dataRecolhimento = :dataOperacao ");
 		
@@ -55,6 +58,8 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 		query.setParameter("conferido", conferido);
 
 		query.setParameter("postergado", postergado);
+		
+		query.setParameter("grupoMovimento", GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
 
 		query.setParameter("dataOperacao", dataOperacao);
 
@@ -429,22 +434,5 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 
 		return (Long) query.uniqueResult();
 	}
-	
-	/**
-	 * Retorna String referente a uma subquery que obtém o percentual de desconto
-	 * para determinado produtoEdicao a partir de idCota e idFornecedor. 
-	 * 
-	 * @return String
-	 */
-	private String getSubQueryDesconto() {
-		
-		StringBuilder hql = new StringBuilder("coalesce ((select view.desconto");
-		hql.append(" from ViewDesconto view ")
-		   .append(" where view.cotaId = cota.id ")
-		   .append(" and view.produtoEdicaoId = produtoEdicao.id ")
-		   .append(" and view.fornecedorId = fornecedor.id),0) ");
-		
-		return hql.toString();
-		
-	}
+
 }

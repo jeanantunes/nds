@@ -22,8 +22,6 @@ import br.com.abril.nds.model.planejamento.HistoricoLancamento;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
-import br.com.abril.nds.repository.DescontoProdutoRepository;
-import br.com.abril.nds.repository.DescontoProximosLancamentosRepository;
 import br.com.abril.nds.repository.ExpedicaoRepository;
 import br.com.abril.nds.repository.HistoricoLancamentoRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
@@ -54,19 +52,13 @@ public class LancamentoServiceImpl implements LancamentoService {
 	private ExpedicaoRepository expedicaoRepository;
 	
 	@Autowired
-	private DescontoProximosLancamentosRepository descontoProximosLancamentosRepository;
-	
-	@Autowired
-	private DescontoProdutoRepository descontoProdutoRepository;
-
-	@Autowired
 	private MovimentoEstoqueCotaRepository movimentoEstoqueCotaRepository;
 	
 	@Override
 	@Transactional
 	public List<LancamentoNaoExpedidoDTO> obterLancamentosNaoExpedidos(PaginacaoVO paginacaoVO, Date data, Long idFornecedor, Boolean estudo) {
 		
-		List<Lancamento> lancametos =lancamentoRepository.obterLancamentosNaoExpedidos(
+		List<Lancamento> lancametos = lancamentoRepository.obterLancamentosNaoExpedidos(
 				paginacaoVO, data, idFornecedor, estudo);
 		
 		 List<LancamentoNaoExpedidoDTO> dtos = new ArrayList<LancamentoNaoExpedidoDTO>();
@@ -168,6 +160,30 @@ public class LancamentoServiceImpl implements LancamentoService {
 		historicoLancamentoRepository.adicionar(historico);
 		
 		movimentoEstoqueService.gerarMovimentoEstoqueDeExpedicao(lancamento, idUsuario);
+		
+		// TODO: Sergio, vc poderia corrigir este trecho após finalizar a implementação do DescontoCota fzd favor? Obrigado.
+		/*DescontoProximosLancamentos desconto = this.descontoProximosLancamentosRepository.
+		obterDescontoProximosLancamentosPor(lancamento.getProdutoEdicao().getProduto().getId(), 
+				lancamento.getDataLancamentoPrevista());
+				
+		if (desconto != null) {	
+		
+			Integer quantidade = desconto.getQuantidadeProximosLancamaentos();
+						
+			DescontoProduto descontoProduto = new DescontoProduto();
+			
+			descontoProduto.setCotas(desconto.getCotas());
+			descontoProduto.setDataAlteracao(new Date());
+			descontoProduto.setDesconto(desconto.getValorDesconto());
+			descontoProduto.setProdutoEdicao(lancamento.getProdutoEdicao());
+			descontoProduto.setDistribuidor(desconto.getDistribuidor());
+			descontoProduto.setUsuario(usuario);
+			
+			this.descontoProdutoRepository.adicionar(descontoProduto);
+			
+			desconto.setQuantidadeProximosLancamaentos(--quantidade);
+			this.descontoProximosLancamentosRepository.alterar(desconto);
+		}*/
 
 	}
 

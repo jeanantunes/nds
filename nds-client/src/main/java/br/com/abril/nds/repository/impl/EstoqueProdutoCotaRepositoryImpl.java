@@ -132,8 +132,7 @@ public class EstoqueProdutoCotaRepositoryImpl extends AbstractRepositoryModel<Es
 				
 		StringBuilder hql = new StringBuilder();
 
-		hql.append(" SELECT sum((epc.qtdeRecebida - epc.qtdeDevolvida) * (mec.valoresAplicados.preComDesconto))")
-		
+		hql.append(" SELECT sum((epc.qtdeRecebida - epc.qtdeDevolvida) * (mec.valoresAplicados.precoComDesconto)) ")
 		.append(" FROM EstoqueProdutoCota AS epc ")
 		.append(" JOIN epc.movimentos as mec ")
 		.append(" JOIN epc.cota as cota ")

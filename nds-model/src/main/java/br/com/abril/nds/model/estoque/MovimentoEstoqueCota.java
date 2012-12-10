@@ -222,5 +222,5 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque implements C
 			MovimentoEstoqueCota movimentoEstoqueCotaFuro) {
 		this.movimentoEstoqueCotaFuro = movimentoEstoqueCotaFuro;
 	}
-	
+
 }

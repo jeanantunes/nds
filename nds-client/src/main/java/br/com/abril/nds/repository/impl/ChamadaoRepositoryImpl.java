@@ -11,7 +11,7 @@ import br.com.abril.nds.dto.ResumoConsignadoCotaChamadaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroChamadaoDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
-import br.com.abril.nds.model.planejamento.StatusLancamento;
+import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.repository.ChamadaoRepository;
@@ -41,8 +41,7 @@ public class ChamadaoRepositoryImpl extends AbstractRepositoryModel<Cota,Long> i
 		hql.append("SELECT ")
 			.append(" sum(estoqueProdCota.QTDE_RECEBIDA ")
 			.append(" - estoqueProdCota.QTDE_DEVOLVIDA) as qtdExemplaresTotal, ")
-			.append(" sum((produtoEdicao.PRECO_VENDA - (produtoEdicao.PRECO_VENDA * ("+ this.obterSQLDescontoObterResumoConsignadosParaChamadao() +") / 100)) * ")
-			.append(" (estoqueProdCota.QTDE_RECEBIDA - estoqueProdCota.QTDE_DEVOLVIDA)) as valorTotal ");
+			.append(" sum((mec.PRECO_COM_DESCONTO) * (estoqueProdCota.QTDE_RECEBIDA - estoqueProdCota.QTDE_DEVOLVIDA)) as valorTotal ");
 		
 		hql.append(this.gerarQueryConsignados(filtro));
 		
@@ -67,8 +66,7 @@ public class ChamadaoRepositoryImpl extends AbstractRepositoryModel<Cota,Long> i
 		
 		hql.append("SELECT ")
 			.append(" sum(chamadaEncalheCota.qtdePrevista) as qtdExemplaresTotal, ")
-			.append(" sum((produtoEdicao.precoVenda - (produtoEdicao.precoVenda * (" + this.obterSQLDescontoChamadaEncalheParaChamadao() + " / 100))) * ")
-			.append("chamadaEncalheCota.qtdePrevista) as valorTotal ");
+			.append(" sum(mec.valoresAplicados.valorComDesconto * mec.qtde) as valorTotal ");
 		
 		hql.append(this.gerarQueryChamadasEncalhe(filtro));
 		
@@ -93,8 +91,8 @@ public class ChamadaoRepositoryImpl extends AbstractRepositoryModel<Cota,Long> i
 			.append("produto.NOME as nomeProduto, ")
 			.append("produtoEdicao.NUMERO_EDICAO as numeroEdicao, ")
 			.append("produtoEdicao.PRECO_VENDA as precoVenda, ")
-			.append("("+ this.obterSQLDescontoObterResumoConsignadosParaChamadao() +") as desconto, ")
-			.append("(produtoEdicao.PRECO_VENDA - (produtoEdicao.PRECO_VENDA * ("+ this.obterSQLDescontoObterResumoConsignadosParaChamadao() +") / 100)) as precoDesconto, ")
+			.append("(mec.VALOR_DESCONTO) as desconto, ")
+			.append("(mec.PRECO_COM_DESCONTO) as precoDesconto, ")
 			.append("estoqueProdCota.QTDE_RECEBIDA - estoqueProdCota.QTDE_DEVOLVIDA as reparte, ")
 			.append("(case ")
 			.append("when (select count(produtoFor.FORNECEDORES_ID) from PRODUTO_FORNECEDOR produtoFor ")
@@ -110,8 +108,7 @@ public class ChamadaoRepositoryImpl extends AbstractRepositoryModel<Cota,Long> i
 			.append("lancamento.DATA_REC_PREVISTA as dataRecolhimento, ")
 			.append("produtoEdicao.PRECO_VENDA * ")
 			.append("(estoqueProdCota.QTDE_RECEBIDA - estoqueProdCota.QTDE_DEVOLVIDA) as valorTotal, ")
-			.append("(produtoEdicao.PRECO_VENDA - (produtoEdicao.PRECO_VENDA * ("+ this.obterSQLDescontoObterResumoConsignadosParaChamadao() +") / 100)) * ")
-			.append("(estoqueProdCota.QTDE_RECEBIDA - estoqueProdCota.QTDE_DEVOLVIDA) as valorTotalDesconto, ")
+			.append("(mec.PRECO_COM_DESCONTO) * (estoqueProdCota.QTDE_RECEBIDA - estoqueProdCota.QTDE_DEVOLVIDA) as valorTotalDesconto, ")
 			.append("lancamento.ID as idLancamento, ")
 			.append("produtoEdicao.POSSUI_BRINDE as possuiBrinde ");
 		
@@ -212,14 +209,13 @@ public class ChamadaoRepositoryImpl extends AbstractRepositoryModel<Cota,Long> i
 			.append("produto.codigo as codigoProduto, ")
 			.append("produto.nome as nomeProduto, ")
 			.append("produtoEdicao.numeroEdicao as numeroEdicao, ")
-			.append("produtoEdicao.precoVenda as precoVenda, ")
-			.append("(produtoEdicao.precoVenda - (produtoEdicao.precoVenda * (" + this.obterSQLDescontoChamadaEncalheParaChamadao() + ") / 100)) as precoDesconto, ")
+			.append("mec.valoresAplicados.precoVenda as precoVenda, ")
+			.append("(mec.valoresAplicados.precoComDesconto) as precoDesconto, ")
 			.append("chamadaEncalheCota.qtdePrevista as reparte, ")
 			.append("juridica.razaoSocial as nomeFornecedor, ")
 			.append("chamadaEncalhe.dataRecolhimento as dataRecolhimento, ")
-			.append("produtoEdicao.precoVenda * chamadaEncalheCota.qtdePrevista as valorTotal, ")
-			.append("(produtoEdicao.precoVenda - (produtoEdicao.precoVenda * (" + this.obterSQLDescontoChamadaEncalheParaChamadao() + " / 100))) * ")
-			.append("chamadaEncalheCota.qtdePrevista as valorTotalDesconto, ")
+			.append("mec.valoresAplicados.precoVenda * mec.qtde as valorTotal, ")
+			.append("(mec.valoresAplicados.valorComDesconto) * mec.qtde as valorTotalDesconto, ")
 			.append("produtoEdicao.possuiBrinde as possuiBrinde ");
 		
 		hql.append(this.gerarQueryChamadasEncalhe(filtro));
@@ -362,6 +358,9 @@ public class ChamadaoRepositoryImpl extends AbstractRepositoryModel<Cota,Long> i
 	        .append("inner join LANCAMENTO lancamento ") 
 	        .append("on (produtoEdicao.ID = lancamento.PRODUTO_EDICAO_ID ")
 	        .append("and estudo.DATA_LANCAMENTO = lancamento.DATA_LCTO_PREVISTA) ")
+	        
+	        .append("inner join MOVIMENTO_ESTOQUE_COTA mec ")
+	        .append("on (mec.COTA_ID = cota.ID and mec.LANCAMENTO_ID = lancamento.ID) ")
 	            
     		.append("inner join PRODUTO_FORNECEDOR produtoFornecedor ")
     		.append("on produtoFornecedor.PRODUTO_ID = produto.ID ")
@@ -434,9 +433,12 @@ public class ChamadaoRepositoryImpl extends AbstractRepositoryModel<Cota,Long> i
 			.append(" JOIN produto.fornecedores fornecedores ")
 			.append(" JOIN fornecedores.juridica juridica ")
 			.append(" JOIN chamadaEncalheCota.cota cota ")
+			.append(" JOIN cota.movimentoEstoqueCotas mec ")
 			
 			.append(" WHERE chamadaEncalhe.tipoChamadaEncalhe = :tipoChamadaEncalhe ")
-			.append(" AND produto.tipoProduto.grupoProduto != :grupoProduto ");
+			.append(" AND produto.tipoProduto.grupoProduto != :grupoProduto ")
+			.append(" AND mec.tipoMovimento.grupoMovimento = :grupoMovimento ")
+			.append(" AND mec.lancamento in (chamadaEncalheCota.chamadaEncalhe.lancamentos) ");
 		
 		if (filtro != null) {
 		
@@ -522,6 +524,7 @@ public class ChamadaoRepositoryImpl extends AbstractRepositoryModel<Cota,Long> i
 		
 		query.setParameter("tipoChamadaEncalhe", TipoChamadaEncalhe.CHAMADAO);
 		query.setParameter("grupoProduto", GrupoProduto.OUTROS);
+		query.setParameter("grupoMovimento", GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
 		
 		if (filtro == null) {
 			
@@ -544,26 +547,5 @@ public class ChamadaoRepositoryImpl extends AbstractRepositoryModel<Cota,Long> i
 			query.setParameter("idEditor", filtro.getIdEditor());
 		}
 	}
-	
-	private String obterSQLDescontoObterResumoConsignadosParaChamadao(){
-		
-		StringBuilder hql = new StringBuilder("coalesce ((select view.DESCONTO");
-		hql.append(" from VIEW_DESCONTO view ")
-		   .append(" where view.COTA_ID = cota.ID ")
-		   .append(" and view.PRODUTO_EDICAO_ID = produtoEdicao.ID ")
-		   .append(" and view.FORNECEDOR_ID = produtoFornecedor.FORNECEDORES_ID),0) ");
-		
-		return hql.toString();
-	}
-	
-	private String obterSQLDescontoChamadaEncalheParaChamadao(){
-		
-		StringBuilder hql = new StringBuilder("coalesce ((select view.desconto");
-		hql.append(" from ViewDesconto view ")
-		   .append(" where view.cotaId = cota.id ")
-		   .append(" and view.produtoEdicaoId = produtoEdicao.id ")
-		   .append(" and view.fornecedorId = fornecedores.id), 0) ");
-		
-		return hql.toString();
-	}
+
 }
