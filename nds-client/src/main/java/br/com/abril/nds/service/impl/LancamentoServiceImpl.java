@@ -15,11 +15,9 @@ import br.com.abril.nds.dto.InformeEncalheDTO;
 import br.com.abril.nds.dto.LancamentoNaoExpedidoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.TipoEdicao;
-import br.com.abril.nds.model.cadastro.desconto.DescontoProduto;
 import br.com.abril.nds.model.estoque.Expedicao;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
-import br.com.abril.nds.model.financeiro.DescontoProximosLancamentos;
 import br.com.abril.nds.model.planejamento.HistoricoLancamento;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
@@ -170,34 +168,7 @@ public class LancamentoServiceImpl implements LancamentoService {
 		historicoLancamentoRepository.adicionar(historico);
 		
 		movimentoEstoqueService.gerarMovimentoEstoqueDeExpedicao(lancamento, idUsuario);
-		
-<<<<<<< HEAD
-		
-=======
-		// TODO: Sergio, vc poderia corrigir este trecho após finalizar a implementação do DescontoCota fzd favor? Obrigado.
-		/*DescontoProximosLancamentos desconto = this.descontoProximosLancamentosRepository.
-		obterDescontoProximosLancamentosPor(lancamento.getProdutoEdicao().getProduto().getId(), 
-				lancamento.getDataLancamentoPrevista());
-				
-		if (desconto != null) {	
-		
-			Integer quantidade = desconto.getQuantidadeProximosLancamaentos();
-						
-			DescontoProduto descontoProduto = new DescontoProduto();
-			
-			descontoProduto.setCotas(desconto.getCotas());
-			descontoProduto.setDataAlteracao(new Date());
-			descontoProduto.setDesconto(desconto.getValorDesconto());
-			descontoProduto.setProdutoEdicao(lancamento.getProdutoEdicao());
-			descontoProduto.setDistribuidor(desconto.getDistribuidor());
-			descontoProduto.setUsuario(usuario);
-			
-			this.descontoProdutoRepository.adicionar(descontoProduto);
-			
-			desconto.setQuantidadeProximosLancamaentos(--quantidade);
-			this.descontoProximosLancamentosRepository.alterar(desconto);
-		}*/
->>>>>>> DGBti/master
+
 	}
 
 	@Override
