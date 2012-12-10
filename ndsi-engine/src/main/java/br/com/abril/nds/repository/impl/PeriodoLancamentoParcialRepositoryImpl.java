@@ -49,6 +49,7 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 		hql.append("			and lancamentoSupl.dataLancamentoDistribuidor <= lancamento.dataRecolhimentoDistribuidor) ");		
 		hql.append(" 		as suplementacao, ");
 		
+		// TODO columa a arrumar:
 		hql.append("		(select sum(movimento.qtde) from ConferenciaEncalhe conferencia ");
 		hql.append("		 	join conferencia.movimentoEstoqueCota movimento ");
 		hql.append("		 	join conferencia.chamadaEncalheCota chamadaEncalheCota ");
@@ -67,6 +68,7 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 		hql.append("          where pEdicao.id = produtoEdicao.id) ");
 		hql.append("        as vendas, ");
 
+		// TODO columa a arrumar:
 		hql.append("		sum(mCota.qtde) - (select sum(movimento.qtde) from ConferenciaEncalhe conferencia ");
 		hql.append("		 	join conferencia.movimentoEstoqueCota movimento ");
 		hql.append("		 	join conferencia.chamadaEncalheCota chamadaEncalheCota ");
@@ -76,6 +78,7 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 		hql.append("			and chamadaEncalhe.produtoEdicao.id = lancamento.produtoEdicao.id ");
 		hql.append("			group by chamadaEncalhe.id) as vendaCE, ");
 		
+		// TODO columa a arrumar:
 		hql.append(" 		(select sum(movCota.qtde) from Lancamento lancamentoSupl ");
 		hql.append("		 	left join lancamentoSupl.movimentoEstoqueCotas movCota ");
 		hql.append("			join lancamentoSupl.produtoEdicao pe ");
@@ -83,6 +86,7 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 		hql.append("			and lancamentoSupl.dataLancamentoDistribuidor <= lancamento.dataRecolhimentoDistribuidor) ");		
 		hql.append(" 		as reparteAcum, ");
 		
+		// TODO columa a arrumar:
 		hql.append("		((select sum(liMCota.qtde) from Lancamento lancamentoInicial ");
 		hql.append("			 left join lancamentoInicial.movimentoEstoqueCotas liMCota ");
 		hql.append("			where lancamentoInicial.dataLancamentoDistribuidor=lancamentoParcial.lancamentoInicial ");
@@ -97,7 +101,7 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 		hql.append("			group by chamadaEncalhe.id)) ");
 		hql.append(" 		 as vendaAcumulada, ");
 		
-
+		// TODO columa a arrumar:
 		hql.append("		round((((select sum(liMCota.qtde) from Lancamento lancamentoInicial ");
 		hql.append("			 left join lancamentoInicial.movimentoEstoqueCotas liMCota ");
 		hql.append("			where lancamentoInicial.dataLancamentoDistribuidor=lancamentoParcial.lancamentoInicial ");
@@ -111,6 +115,7 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 		hql.append("			and chamadaEncalhe.produtoEdicao.id = lancamento.produtoEdicao.id ");
 		hql.append("			group by chamadaEncalhe.id)) ");
 		
+		// TODO columa a arrumar:
 		hql.append(" 		/(select sum(movCota.qtde) from Lancamento lancamentoSupl ");
 		hql.append("		 	left join lancamentoSupl.movimentoEstoqueCotas movCota ");
 		hql.append("			join lancamentoSupl.produtoEdicao pe ");
