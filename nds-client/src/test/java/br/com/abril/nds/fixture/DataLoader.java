@@ -2410,12 +2410,16 @@ public class DataLoader {
 
 	private static void gerarTipoLicencaMunicipalPDV(Session session) {
 
-		TipoLicencaMunicipal tipoLicencaMunicipal = Fixture.criarTipoLicencaMunicipal(10L, "Licença 1");
-		TipoLicencaMunicipal tipoLicencaMunicipal1 = Fixture.criarTipoLicencaMunicipal(11L, "Licença 2");
-		TipoLicencaMunicipal tipoLicencaMunicipal2 = Fixture.criarTipoLicencaMunicipal(12L, "Licença 3");
-		TipoLicencaMunicipal tipoLicencaMunicipal3 = Fixture.criarTipoLicencaMunicipal(13L, "Licença 4");
+		TipoLicencaMunicipal tipoLicencaMunicipal1 = Fixture.criarTipoLicencaMunicipal(1L,  "TPU");
+		TipoLicencaMunicipal tipoLicencaMunicipal2 = Fixture.criarTipoLicencaMunicipal(2L, "CCM PS JURIDICA");
+		TipoLicencaMunicipal tipoLicencaMunicipal3 = Fixture.criarTipoLicencaMunicipal(3L, "CCM PESSOA FISICA");
+		TipoLicencaMunicipal tipoLicencaMunicipal4 = Fixture.criarTipoLicencaMunicipal(4L, "PROCESSO");
+		TipoLicencaMunicipal tipoLicencaMunicipal5 = Fixture.criarTipoLicencaMunicipal(5L,  "CONTRATO DE LOCAÇÃO");
+		TipoLicencaMunicipal tipoLicencaMunicipal6 = Fixture.criarTipoLicencaMunicipal(6L, "RECUO DE ALÇADA");
+		TipoLicencaMunicipal tipoLicencaMunicipal7 = Fixture.criarTipoLicencaMunicipal(7L, "CCM");
+		TipoLicencaMunicipal tipoLicencaMunicipal8 = Fixture.criarTipoLicencaMunicipal(8L, "ALVARÁ");
 
-		save(session,tipoLicencaMunicipal,tipoLicencaMunicipal1,tipoLicencaMunicipal2,tipoLicencaMunicipal3);
+		save(session,tipoLicencaMunicipal1,tipoLicencaMunicipal2,tipoLicencaMunicipal3,tipoLicencaMunicipal4,tipoLicencaMunicipal5,tipoLicencaMunicipal6,tipoLicencaMunicipal7,tipoLicencaMunicipal8);
 	}
 
 	private static void gerarTipoEstabelecimentoAssociacaoPDV(Session session) {
