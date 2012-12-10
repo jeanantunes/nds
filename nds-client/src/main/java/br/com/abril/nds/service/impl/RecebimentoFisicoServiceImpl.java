@@ -264,7 +264,7 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 		BigDecimal somaValorDosItens = new BigDecimal(0.0);
 		
 		for(RecebimentoFisicoDTO recebimentoFisicoDTO : listaItensNota) {
-			somaValorDosItens = somaValorDosItens.add( recebimentoFisicoDTO.getPrecoItem().multiply(new BigDecimal(recebimentoFisicoDTO.getRepartePrevisto())) );
+			somaValorDosItens = somaValorDosItens.add( recebimentoFisicoDTO.getPrecoItem().multiply( BigDecimal.valueOf( recebimentoFisicoDTO.getRepartePrevisto().doubleValue() ) ));
 		}
 		
 		if(valorBruto == null){
