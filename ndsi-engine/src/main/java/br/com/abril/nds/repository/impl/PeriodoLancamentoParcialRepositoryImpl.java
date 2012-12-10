@@ -119,20 +119,14 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 		hql.append("		 * 100 )");
 		hql.append(" 		as percVendaAcumulada, ");
 		
-		
-//		hql.append(" COALESCE(ROUND(((estoqueProduto.qtde + estoqueProduto.qtdeSuplementar) - estoqueProduto.qtdeDevolucaoEncalhe) / (estoqueProduto.qtde + estoqueProduto.qtdeSuplementar)), 0) as percentagemVenda, ");
-				
-		hql.append("		  ((sum(mCota.qtde) - (select sum(movimento.qtde) from ConferenciaEncalhe conferencia ");
-		hql.append("		 	join conferencia.movimentoEstoqueCota movimento ");
-		hql.append("		 	join conferencia.chamadaEncalheCota chamadaEncalheCota ");
-		hql.append("		 	join chamadaEncalheCota.chamadaEncalhe chamadaEncalhe ");
-		hql.append("			where chamadaEncalhe.dataRecolhimento >= lancamento.dataLancamentoDistribuidor ");
-		hql.append("			and chamadaEncalhe.dataRecolhimento <= lancamento.dataRecolhimentoDistribuidor ");
-		hql.append("			and chamadaEncalhe.produtoEdicao.id = lancamento.produtoEdicao.id ");
-		hql.append("			group by chamadaEncalhe.id)) ");
-		hql.append(" 		   /sum(mCota.qtde)) * 100 ");
-		hql.append("		 as percVenda, ");
-		
+		hql.append("		(select CASE");
+		hql.append("		        WHEN (count(eProduto) > 0) ");
+		hql.append("		        THEN (((eProduto.qtde + eProduto.qtdeSuplementar) - eProduto.qtdeDevolucaoEncalhe) / (eProduto.qtde + eProduto.qtdeSuplementar)) ");
+		hql.append("		        ELSE 0 END ");
+		hql.append("           from EstoqueProduto eProduto left join eProduto.produtoEdicao pEdicao ");
+		hql.append("          where pEdicao.id = produtoEdicao.id) ");
+		hql.append("        as percVenda, ");
+
 		hql.append("		 lancamento.id as idLancamento ");
 		
 		hql.append(getSqlFromEWherePeriodosParciais(filtro));
