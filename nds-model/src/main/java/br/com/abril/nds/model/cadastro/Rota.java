@@ -65,7 +65,7 @@ public class Rota implements Serializable {
     public Rota() {
     }
 
-    public Rota(String descricaoRota, Integer ordem) {
+      public Rota(String descricaoRota, Integer ordem) {
         this.descricaoRota = descricaoRota;
         this.ordem = ordem;
     }
@@ -199,7 +199,7 @@ public class Rota implements Serializable {
             if (pdvsExclusao.contains(rotaPDV.getPdv().getId())) {
                 
             	PDV pdv = rotaPDV.getPdv();
-           
+            	
             	if (pdv.getCaracteristicas().isPontoPrincipal()) {
             	
             		pdv.getCota().setBox(null);
