@@ -72,7 +72,7 @@ public class EMS0106MessageProcessor extends AbstractRepository implements Messa
 			estudo = new Estudo();
 			estudo.setQtdeReparte(BigInteger.valueOf(
 					input.getReparteDistribuir()));
-			estudo.setDataLancamento(lancamento.getDataLancamentoDistribuidor());
+			estudo.setDataLancamento(lancamento.getDataLancamentoPrevista());
 			estudo.setProdutoEdicao(produtoEdicao);
 			estudo.setStatus(StatusLancamento.ESTUDO_FECHADO);
 			estudo.setDataCadastro(new Date());			
