@@ -214,9 +214,16 @@ public class RotaRoteirizacaoDTO implements Serializable, Ordenavel {
      *         rota já cadastrada
      */
 	public boolean isNovo() {
-	    return id != null && id < 0;
+	    return id == null || (id != null && id < 0);
 	}
 	
+	public boolean isEntregador() {
+		return this.entregadorId != null;
+	}
+	
+	public boolean hasPDVsAssociados() {
+		return (this.getPdvs() != null && !this.getPdvs().isEmpty());
+	}
 	
 	public Set<Long> getPdvsExclusao() {
         return pdvsExclusao;

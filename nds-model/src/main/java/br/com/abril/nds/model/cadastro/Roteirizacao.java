@@ -47,6 +47,13 @@ public class Roteirizacao implements Serializable{
 	@OrderBy("ordem ASC")
 	private List<Roteiro> roteiros = new ArrayList<Roteiro>();
 	
+	/**
+	 * Construtor padrão
+	 */
+	public Roteirizacao() {
+		
+	}
+
 	public Long getId() {
 		return id;
 	}
@@ -91,35 +98,14 @@ public class Roteirizacao implements Serializable{
 	    if (roteiro.getOrdem() <= 0) {
             throw new IllegalArgumentException("Ordem [" + roteiro.getOrdem()  + "] para o Roteiro não é válida!");
         }
-        Roteiro roteiroExistente = getRoteiroByOrdem(roteiro.getOrdem());
-        if (roteiroExistente != null) {
-            throw new IllegalArgumentException("Ordem [" + roteiro.getOrdem()  + "] para o Roteiro já utilizada!");
-        }
-	    
+       
 	    if (roteiros == null) {
 			roteiros = new ArrayList<Roteiro>();
 		}
 		roteiro.setRoteirizacao(this);
 		roteiros.add(roteiro);
 	}
-	
-    /**
-     * Recupera o roteiro pela ordem
-     * 
-     * @param ordem
-     *            ordem para recuperação do roteiro
-     * @return Roteiro que corresponde à ordem recebida ou null caso não exista
-     *         Roteiro para a ordem recebida
-     */
-	private Roteiro getRoteiroByOrdem(Integer ordem) {
-	    for (Roteiro roteiro : roteiros) {
-	        if (roteiro.getOrdem().equals(ordem)) {
-	            return roteiro;
-	        }
-	    }
-        return null;
-    }
-
+	    
     /**
      * Desassocia os roteiros da roteirização de acordo com os identificadores
      * recebidos
