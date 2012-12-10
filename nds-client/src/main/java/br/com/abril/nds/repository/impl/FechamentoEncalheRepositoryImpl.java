@@ -50,8 +50,8 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		hql.append("SELECT distinct  p.codigo as  codigo ");
 		hql.append(" , p.nome as produto ");
 		hql.append(" , pe.numeroEdicao as edicao");
-		hql.append(", (pe.precoVenda * (" + this.getSubQueryDesconto() + " / 100 )) as precoCapaDesconto ");
-		hql.append(" , pe.precoVenda as precoCapa ");
+		hql.append(", (mec.valoresAplicados.precoComDesconto) as precoCapaDesconto ");
+		hql.append(" , mec.valoresAplicados.precoVenda as precoCapa ");
 		hql.append(" , pe.id as produtoEdicao ");
 		hql.append(" ,  case when  pe.parcial  = true  then 'P' else 'N' end  as tipo ");
 		hql.append(" , che.dataRecolhimento as dataRecolhimento ");
@@ -111,24 +111,6 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		query.setResultTransformer(Transformers.aliasToBean(FechamentoFisicoLogicoDTO.class));
 			
 		return query.list();
-	}
-	
-	/**
-	 * Retorna String referente a uma subquery que obtém o percentual de desconto
-	 * para determinado produtoEdicao a partir de idCota e idFornecedor. 
-	 * 
-	 * @return String
-	 */
-	private String getSubQueryDesconto() {
-		
-		StringBuilder hql = new StringBuilder("coalesce ((select view.desconto");
-		hql.append(" from ViewDesconto view ")
-		   .append(" where view.cotaId = cota.id ")
-		   .append(" and view.produtoEdicaoId = pe.id ")
-		   .append(" and view.fornecedorId = pf.id),0) ");
-		
-		return hql.toString();
-		
 	}
 
 	@Override
