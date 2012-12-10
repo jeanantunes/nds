@@ -52,20 +52,8 @@ public class EditorRepositoryImpl extends AbstractRepositoryModel<Editor, Long> 
 		StringBuilder hql = new StringBuilder();
 
 		hql.append("SELECT new ").append(ResultadoCurvaABCEditor.class.getCanonicalName())
-<<<<<<< HEAD
 		.append(" ( (sum(estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida)), ")
 		.append("   ( sum((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * (movimentos.valoresAplicados.precoComDesconto)) ) ) ");
-=======
-		   .append(" ( ")
-	       .append("   case when (lancamento.status = :statusLancamentoRecolhido) then ( ")
-		   .append("  		(sum(estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida)) ")
-		   .append(" ) else 0 end, ")
-		   
-  		   .append("   case when (lancamento.status = :statusLancamentoRecolhido) then ( ")
-		   .append("   ( sum((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * (estoqueProdutoCota.produtoEdicao.precoVenda - (("+ this.getHQLDesconto() +") * estoqueProdutoCota.produtoEdicao.precoVenda / 100))) )  ")
-		   .append(" ) else 0 end ")
-		   .append(" ) ");
->>>>>>> DGBti/master
 
 		hql.append(getWhereQueryObterCurvaABCEditor(filtro));
 
@@ -368,27 +356,9 @@ public class EditorRepositoryImpl extends AbstractRepositoryModel<Editor, Long> 
 		    
 		    .append(" sum(estoqueProduto.QTDE_RECEBIDA) as reparte,  ")
 		    
-<<<<<<< HEAD
 		    .append(" sum(estoqueProduto.QTDE_RECEBIDA-estoqueProduto.QTDE_DEVOLVIDA) as vendaExemplares,  ")
 		    
 		    .append(" sum((estoqueProduto.QTDE_RECEBIDA-estoqueProduto.QTDE_DEVOLVIDA)*(movimentos.PRECO_COM_DESCONTO))) as faturamentoCapa , ")
-=======
-   		    .append("   case when (lancamento.status = :statusLancamentoRecolhido) then ( ")
-		    .append(" 			sum(estoqueProduto.QTDE_RECEBIDA-estoqueProduto.QTDE_DEVOLVIDA)  ")
-			.append("		) else 0 end as vendaExemplares, ")
-
-   		    .append("   case when (lancamento.status = :statusLancamentoRecolhido) then ( ")
-		    .append(" 	sum((estoqueProduto.QTDE_RECEBIDA-estoqueProduto.QTDE_DEVOLVIDA)*(produtoEdicao.PRECO_VENDA-(  ")
-		    .append("	 coalesce((select viewDesconto.DESCONTO  ")
-		    .append("    from  ")
-		    .append("        VIEW_DESCONTO viewDesconto  ")
-		    .append("    where  ")
-		    .append("        viewDesconto.COTA_ID=estoqueProduto.COTA_ID  ")
-		    .append("        and viewDesconto.PRODUTO_EDICAO_ID=estoqueProduto.PRODUTO_EDICAO_ID  ")
-		    .append("        and viewDesconto.FORNECEDOR_ID=fornecedor.ID),  ")
-		    .append("    0)*produtoEdicao.PRECO_VENDA/100))) ") 
-			.append("		) else 0 end as faturamentoCapa, ")
->>>>>>> DGBti/master
 		    
 		    .append( this.getSqlMargemDistribuidor()).append(" as valorMargemDistribuidor ")
 		    

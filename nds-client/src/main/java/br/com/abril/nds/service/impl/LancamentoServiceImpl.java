@@ -171,8 +171,6 @@ public class LancamentoServiceImpl implements LancamentoService {
 		
 		movimentoEstoqueService.gerarMovimentoEstoqueDeExpedicao(lancamento, idUsuario);
 		
-<<<<<<< HEAD
-=======
 		// TODO: Sergio, vc poderia corrigir este trecho após finalizar a implementação do DescontoCota fzd favor? Obrigado.
 		/*DescontoProximosLancamentos desconto = this.descontoProximosLancamentosRepository.
 		obterDescontoProximosLancamentosPor(lancamento.getProdutoEdicao().getProduto().getId(), 
@@ -196,7 +194,7 @@ public class LancamentoServiceImpl implements LancamentoService {
 			desconto.setQuantidadeProximosLancamaentos(--quantidade);
 			this.descontoProximosLancamentosRepository.alterar(desconto);
 		}*/
->>>>>>> DGBti/master
+
 	}
 
 	@Override
