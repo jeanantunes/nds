@@ -218,9 +218,19 @@ public class ConferenciaEncalheRepositoryImpl extends
 		hql.append(" PROD_EDICAO.NUMERO_EDICAO AS numeroEdicao,              ");
 		hql.append(" PROD_EDICAO.PRECO_VENDA AS precoCapa,                   ");		
 		
-		hql.append("        ( PROD_EDICAO.PRECO_VENDA *  (  ");
-		hql.append("          coalesce ((SELECT DESCONTO FROM VIEW_DESCONTO WHERE COTA_ID = COTA.ID AND PRODUTO_ID = PROD_EDICAO.ID AND FORNECEDOR_ID = (SELECT F.ID FROM FORNECEDOR F, PRODUTO_FORNECEDOR PF WHERE F.ID = PF.FORNECEDORES_ID AND PF.PRODUTO_ID = PROD.ID)),0)"	);		
-		hql.append("         ) / 100 ) AS desconto         	");
+		hql.append(" (SELECT mec.PRECO_COM_DESCONTO  						 ");
+		hql.append(" FROM movimento_estoque_cota mec 						 ");
+		hql.append(" 	, chamada_encalhe_lancamento cel					 ");
+		hql.append(" 	, chamada_encalhe ce 								 ");
+		hql.append(" 	, chamada_encalhe_cota cec					 		 ");
+		hql.append(" WHERE cel.LANCAMENTO_ID = mec.LANCAMENTO_ID  			 ");
+		hql.append(" AND cel.CHAMADA_ENCALHE_ID = ce.ID 				 	 ");
+		hql.append(" AND ce.ID = cec.CHAMADA_ENCALHE_ID 		 			 ");
+		hql.append(" AND mec.COTA_ID = cec.COTA_ID  						 ");
+		hql.append(" AND mec.PRODUTO_EDICAO_ID = CH_ENCALHE.PRODUTO_EDICAO_ID");
+		hql.append(" AND mec.COTA_ID = CH_ENCALHE_COTA.COTA_ID				 ");
+		hql.append(" AND CH_ENCALHE.ID = ce.ID								 ");
+		hql.append(") AS desconto	 		 								 ");
 		
 		hql.append("    FROM    ");
 		
@@ -318,16 +328,33 @@ public class ConferenciaEncalheRepositoryImpl extends
 		hql.append(" PROD_EDICAO.PRECO_VENDA AS precoCapa,                   ");
 		hql.append(" PROD_EDICAO.PARCIAL AS parcial, 						 ");
 		
-		hql.append("        ( PROD_EDICAO.PRECO_VENDA *  ( ");
-		hql.append("          coalesce ((SELECT DESCONTO FROM VIEW_DESCONTO WHERE COTA_ID = CH_ENCALHE_COTA.COTA_ID AND PRODUTO_ID = PROD_EDICAO.ID AND FORNECEDOR_ID = (SELECT F.ID FROM FORNECEDOR F, PRODUTO_FORNECEDOR PF WHERE F.ID = PF.FORNECEDORES_ID AND PF.PRODUTO_ID = PROD.ID)),0)"	);		
-		hql.append("         ) / 100 ) AS desconto,        ");
+		hql.append(" (SELECT mec.PRECO_COM_DESCONTO  						 ");
+		hql.append(" FROM movimento_estoque_cota mec 						 ");
+		hql.append(" 	, chamada_encalhe_lancamento cel					 ");
+		hql.append(" 	, chamada_encalhe ce 								 ");
+		hql.append(" 	, chamada_encalhe_cota cec					 		 ");
+		hql.append(" WHERE cel.LANCAMENTO_ID = mec.LANCAMENTO_ID  			 ");
+		hql.append(" AND cel.CHAMADA_ENCALHE_ID = ce.ID 				 	 ");
+		hql.append(" AND ce.ID = cec.CHAMADA_ENCALHE_ID 		 			 ");
+		hql.append(" AND mec.COTA_ID = cec.COTA_ID  						 ");
+		hql.append(" AND mec.PRODUTO_EDICAO_ID = CH_ENCALHE.PRODUTO_EDICAO_ID");
+		hql.append(" AND mec.COTA_ID = CH_ENCALHE_COTA.COTA_ID				 ");
+		hql.append(" AND CH_ENCALHE.ID = ce.ID								 ");
+		hql.append(") AS desconto,	 		 								 ");
 		
-		hql.append("         CONF_ENCALHE.QTDE * ( PROD_EDICAO.PRECO_VENDA - ( PROD_EDICAO.PRECO_VENDA *  ");
-		
-		hql.append(" ( 							");
-		hql.append("          coalesce ((SELECT DESCONTO FROM VIEW_DESCONTO WHERE COTA_ID = CH_ENCALHE_COTA.COTA_ID AND PRODUTO_ID = PROD_EDICAO.ID AND FORNECEDOR_ID = (SELECT F.ID FROM FORNECEDOR F, PRODUTO_FORNECEDOR PF WHERE F.ID = PF.FORNECEDORES_ID AND PF.PRODUTO_ID = PROD.ID)),0)"	);
-		hql.append(" ) 							");
-		hql.append(" /100)) AS valorTotal,  	");
+		hql.append(" CONF_ENCALHE.QTDE * (SELECT mec.PRECO_COM_DESCONTO		 ");
+		hql.append(" FROM movimento_estoque_cota mec 						 ");
+		hql.append(" 	, chamada_encalhe_lancamento cel					 ");
+		hql.append(" 	, chamada_encalhe ce 								 ");
+		hql.append(" 	, chamada_encalhe_cota cec					 		 ");
+		hql.append(" WHERE cel.LANCAMENTO_ID = mec.LANCAMENTO_ID  			 ");
+		hql.append(" AND cel.CHAMADA_ENCALHE_ID = ce.ID 				 	 ");
+		hql.append(" AND ce.ID = cec.CHAMADA_ENCALHE_ID 		 			 ");
+		hql.append(" AND mec.COTA_ID = cec.COTA_ID  						 ");
+		hql.append(" AND mec.PRODUTO_EDICAO_ID = CH_ENCALHE.PRODUTO_EDICAO_ID");
+		hql.append(" AND mec.COTA_ID = CH_ENCALHE_COTA.COTA_ID				 ");
+		hql.append(" AND CH_ENCALHE.ID = ce.ID								 ");
+		hql.append(") AS valorTotal,	 		 							 ");
 		
 		hql.append("         TO_DAYS(CONF_ENCALHE.DATA)-TO_DAYS(CH_ENCALHE.DATA_RECOLHIMENTO) + 1 AS dia,                ");
 		hql.append("         CONF_ENCALHE.OBSERVACAO AS observacao,                                                      ");
