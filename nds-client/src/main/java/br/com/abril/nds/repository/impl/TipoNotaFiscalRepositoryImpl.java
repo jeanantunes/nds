@@ -203,7 +203,7 @@ public class TipoNotaFiscalRepositoryImpl extends AbstractRepositoryModel<TipoNo
 			hql.append("  tipoNota.tipoAtividade=:tipoAtividade ");
 		}
 		
-		hql.append(" group by tipoNota ");
+		hql.append(" group by tipoNota.descricao, tipoNota.tipoAtividade, tipoNota.cfopEstado, tipoNota.cfopOutrosEstados  ");
 		
 		return hql.toString();
 	}

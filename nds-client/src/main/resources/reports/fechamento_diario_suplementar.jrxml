@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="fechamento_diario_suplementar" pageWidth="842" pageHeight="600" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="810" leftMargin="16" rightMargin="16" topMargin="8" bottomMargin="8" whenResourceMissingType="Empty">
 	<property name="ireport.zoom" value="1.5"/>
-	<property name="ireport.x" value="0"/>
+	<property name="ireport.x" value="590"/>
 	<property name="ireport.y" value="0"/>
 	<style name="zebrado">
 		<conditionalStyle>
@@ -23,20 +23,30 @@
 	<field name="nomeProduto" class="java.lang.String"/>
 	<field name="numeroEdicao" class="java.lang.Long"/>
 	<field name="precoVenda" class="java.math.BigDecimal"/>
-	<field name="quantidadeLogico" class="java.lang.Long"/>
-	<field name="quantidadedeVenda" class="java.lang.Long"/>
-	<field name="saldo" class="java.lang.Long"/>
-	<variable name="totalLogico" class="java.lang.Long" calculation="Sum">
+	<field name="quantidadeLogico" class="java.math.BigInteger"/>
+	<field name="quantidadeVenda" class="java.math.BigInteger"/>
+	<field name="quantidadeTransferenciaEntrada" class="java.math.BigInteger"/>
+	<field name="quantidadeTransferenciaSaida" class="java.math.BigInteger"/>
+	<field name="quantidadeContabil" class="java.math.BigInteger"/>
+	<variable name="totalLogico" class="java.math.BigInteger" calculation="Sum">
 		<variableExpression><![CDATA[$F{quantidadeLogico}]]></variableExpression>
-		<initialValueExpression><![CDATA[Long.valueOf(0)]]></initialValueExpression>
+		<initialValueExpression><![CDATA[java.math.BigInteger.ZERO]]></initialValueExpression>
 	</variable>
-	<variable name="totalVenda" class="java.lang.Long" calculation="Sum">
-		<variableExpression><![CDATA[$F{quantidadedeVenda}]]></variableExpression>
-		<initialValueExpression><![CDATA[Long.valueOf(0)]]></initialValueExpression>
+	<variable name="totalVenda" class="java.math.BigInteger" calculation="Sum">
+		<variableExpression><![CDATA[$F{quantidadeVenda}]]></variableExpression>
+		<initialValueExpression><![CDATA[java.math.BigInteger.ZERO]]></initialValueExpression>
 	</variable>
-	<variable name="totalSaldo" class="java.lang.Long" calculation="Sum">
-		<variableExpression><![CDATA[$F{saldo}]]></variableExpression>
-		<initialValueExpression><![CDATA[Long.valueOf(0)]]></initialValueExpression>
+	<variable name="totalSaldo" class="java.math.BigInteger" calculation="Sum">
+		<variableExpression><![CDATA[$F{quantidadeContabil}]]></variableExpression>
+		<initialValueExpression><![CDATA[java.math.BigInteger.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="totalTransferenciaEntrada" class="java.math.BigInteger" calculation="Sum">
+		<variableExpression><![CDATA[$F{quantidadeTransferenciaEntrada}]]></variableExpression>
+		<initialValueExpression><![CDATA[java.math.BigInteger.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="totalTransferenciaSaida" class="java.math.BigInteger" calculation="Sum">
+		<variableExpression><![CDATA[$F{quantidadeTransferenciaSaida}]]></variableExpression>
+		<initialValueExpression><![CDATA[java.math.BigInteger.ZERO]]></initialValueExpression>
 	</variable>
 	<pageHeader>
 		<band height="68" splitType="Stretch">
@@ -94,9 +104,9 @@
 		</band>
 	</pageHeader>
 	<columnHeader>
-		<band height="24">
+		<band height="41">
 			<staticText>
-				<reportElement mode="Opaque" x="0" y="4" width="76" height="20" backcolor="#CCCCCC"/>
+				<reportElement mode="Opaque" x="0" y="21" width="76" height="20" backcolor="#CCCCCC"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -109,7 +119,7 @@
 				<text><![CDATA[Dt. Operação]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="76" y="4" width="64" height="20" backcolor="#CCCCCC"/>
+				<reportElement mode="Opaque" x="76" y="21" width="64" height="20" backcolor="#CCCCCC"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -122,7 +132,7 @@
 				<text><![CDATA[Código]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="140" y="4" width="325" height="20" backcolor="#CCCCCC"/>
+				<reportElement mode="Opaque" x="140" y="21" width="200" height="20" backcolor="#CCCCCC"/>
 				<box leftPadding="5">
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -135,7 +145,7 @@
 				<text><![CDATA[Produto]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="465" y="4" width="40" height="20" backcolor="#CCCCCC"/>
+				<reportElement mode="Opaque" x="340" y="21" width="40" height="20" backcolor="#CCCCCC"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -148,7 +158,7 @@
 				<text><![CDATA[Edição]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="505" y="4" width="72" height="20" backcolor="#CCCCCC"/>
+				<reportElement mode="Opaque" x="380" y="21" width="72" height="20" backcolor="#CCCCCC"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -161,7 +171,7 @@
 				<text><![CDATA[Preço Capa R$]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="652" y="4" width="75" height="20" backcolor="#CCCCCC"/>
+				<reportElement mode="Opaque" x="527" y="21" width="75" height="20" backcolor="#CCCCCC"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -174,7 +184,7 @@
 				<text><![CDATA[Venda]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="577" y="4" width="75" height="20" backcolor="#CCCCCC"/>
+				<reportElement mode="Opaque" x="452" y="21" width="75" height="20" backcolor="#CCCCCC"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -187,7 +197,7 @@
 				<text><![CDATA[Lógico]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="727" y="4" width="75" height="20" backcolor="#CCCCCC"/>
+				<reportElement mode="Opaque" x="727" y="21" width="75" height="20" backcolor="#CCCCCC"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -198,6 +208,45 @@
 					<font fontName="Arial" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Saldo]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="602" y="21" width="65" height="20" backcolor="#CCCCCC"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Entrada]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="667" y="21" width="60" height="20" backcolor="#CCCCCC"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Saída]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="602" y="1" width="125" height="20" backcolor="#CCCCCC"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Transferências]]></text>
 			</staticText>
 		</band>
 	</columnHeader>
@@ -230,7 +279,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{codigo}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement style="zebrado" mode="Opaque" x="140" y="0" width="325" height="20"/>
+				<reportElement style="zebrado" mode="Opaque" x="140" y="0" width="200" height="20"/>
 				<box leftPadding="5">
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -243,7 +292,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{nomeProduto}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement style="zebrado" mode="Opaque" x="465" y="0" width="40" height="20"/>
+				<reportElement style="zebrado" mode="Opaque" x="340" y="0" width="40" height="20"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -256,7 +305,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{numeroEdicao}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement style="zebrado" mode="Opaque" x="652" y="0" width="75" height="20"/>
+				<reportElement style="zebrado" mode="Opaque" x="527" y="0" width="75" height="20"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -266,7 +315,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 					<font fontName="Arial" isBold="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{quantidadedeVenda}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{quantidadeVenda}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement style="zebrado" mode="Opaque" x="727" y="0" width="75" height="20"/>
@@ -279,10 +328,10 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 					<font fontName="Arial" isBold="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{saldo}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{quantidadeContabil}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement style="zebrado" mode="Opaque" x="505" y="0" width="72" height="20"/>
+				<reportElement style="zebrado" mode="Opaque" x="380" y="0" width="72" height="20"/>
 				<box rightPadding="2">
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -295,7 +344,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{precoVenda}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement style="zebrado" mode="Opaque" x="577" y="0" width="75" height="20"/>
+				<reportElement style="zebrado" mode="Opaque" x="452" y="0" width="75" height="20"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -307,12 +356,38 @@
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{quantidadeLogico}]]></textFieldExpression>
 			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement style="zebrado" mode="Opaque" x="602" y="0" width="65" height="20"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Arial" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{quantidadeTransferenciaEntrada}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement style="zebrado" mode="Opaque" x="667" y="0" width="60" height="20"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Arial" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{quantidadeTransferenciaSaida}]]></textFieldExpression>
+			</textField>
 		</band>
 	</detail>
 	<lastPageFooter>
 		<band height="24">
 			<textField>
-				<reportElement mode="Opaque" x="0" y="1" width="577" height="20" backcolor="#CCCCCC"/>
+				<reportElement mode="Opaque" x="0" y="1" width="452" height="20" backcolor="#CCCCCC"/>
 				<box leftPadding="0" rightPadding="3">
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -325,7 +400,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA["Total Geral:"]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0" isBlankWhenNull="true">
-				<reportElement mode="Opaque" x="652" y="1" width="75" height="20" backcolor="#CCCCCC"/>
+				<reportElement mode="Opaque" x="527" y="1" width="75" height="20" backcolor="#CCCCCC"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -351,7 +426,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$V{totalSaldo}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0" isBlankWhenNull="true">
-				<reportElement mode="Opaque" x="577" y="1" width="75" height="20" backcolor="#CCCCCC"/>
+				<reportElement mode="Opaque" x="452" y="1" width="75" height="20" backcolor="#CCCCCC"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -362,6 +437,32 @@
 					<font isBold="false"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$V{totalLogico}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement mode="Opaque" x="602" y="1" width="65" height="20" backcolor="#CCCCCC"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$V{totalTransferenciaEntrada}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement mode="Opaque" x="667" y="1" width="60" height="20" backcolor="#CCCCCC"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{quantidadeTransferenciaSaida}]]></textFieldExpression>
 			</textField>
 		</band>
 	</lastPageFooter>

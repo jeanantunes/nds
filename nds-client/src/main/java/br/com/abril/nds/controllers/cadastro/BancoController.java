@@ -14,13 +14,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 
 import br.com.abril.nds.client.annotation.Rules;
-import br.com.abril.nds.client.util.PessoaUtil;
 import br.com.abril.nds.client.vo.BancoVO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaBancosDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaBancosDTO.OrdenacaoColunaBancos;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Banco;
-import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.BancoService;
 import br.com.abril.nds.util.CellModel;
@@ -460,22 +458,30 @@ public class BancoController {
 	 * @throws Mansagens de validação segundo as regras de desativação de banco
 	 */
 	@Post
-	@Path("/desativaBanco")
-	public void desativaBanco(long idBanco){
+	@Path("/excluirBanco")
+	public void excluirBanco(long idBanco){
 		
 		Banco banco = this.bancoService.obterBancoPorId(idBanco);
 		String nomebanco = banco.getNome();
 		
-		if (!banco.isAtivo()){
-			throw new ValidacaoException(TipoMensagem.WARNING, "Banco "+nomebanco+" já desativado.");
+		String msg = null;
+		TipoMensagem tipoMsg = TipoMensagem.SUCCESS;
+		
+		try {
+			this.bancoService.excluirBanco(idBanco);
+			msg = "Banco " + nomebanco + " excluido com sucesso.";
+		} catch(DataIntegrityViolationException e) {
+			
+			if(!banco.isAtivo()) {
+				tipoMsg = TipoMensagem.WARNING;
+				msg = "Banco " + nomebanco + " está em uso, não pode ser excluido.";
+			} else {				
+				this.bancoService.dasativarBanco(idBanco);
+				msg = "Banco " + nomebanco + " desativado com sucesso.";
+			}
 		}
 		
-		if (this.bancoService.verificarPendencias(idBanco)){
-			throw new ValidacaoException(TipoMensagem.WARNING, "O banco "+nomebanco+" possui pendências e não pode ser desativado.");
-		}
-
-		this.bancoService.dasativarBanco(idBanco);
-		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Banco "+nomebanco+" desativado com sucesso."),"result").recursive().serialize();
+		result.use(Results.json()).from(new ValidacaoVO(tipoMsg, msg),"result").recursive().serialize();
     }
 	
 	@Post

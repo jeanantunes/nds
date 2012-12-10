@@ -324,21 +324,22 @@ var ConferenciaEncalhe = $.extend(true, {
 						
 						ConferenciaEncalhe.carregarListaConferencia(data);
 						
+					} else if(result.tipoMensagem == 'WARNING') {
+						
+						$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/carregarListaConferencia', 
+								null, 
+								function(result){
+									
+									ConferenciaEncalhe.abrirDialogNotaFiscalDivergente(result);
+								}
+						);
+						
+						playSound();
 					}
 				
 					exibirMensagem(result.tipoMensagem, result.listaMensagens);
 				},
-				
-				function(){
-					
-					$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/carregarListaConferencia', 
-							null, 
-							function(result){
-								
-								ConferenciaEncalhe.abrirDialogNotaFiscalDivergente(result);
-							}
-					);
-				}, true, "idModalDadosNotaFiscal"
+				null, true, "idModalDadosNotaFiscal"
 		);
 		
 	},
@@ -504,40 +505,9 @@ var ConferenciaEncalhe = $.extend(true, {
 	
 	gerarDocumentosConferenciaEncalhe : function(tiposDocumento) {
 		
-		var fileArray = [];
+		var file = contextPath + '/devolucao/conferenciaEncalhe/gerarDocumentoConferenciaEncalhe';
 		
-		 $.each(tiposDocumento, function(index, value){
-			 
-			 if(value == 'SLIP') {
-				 fileArray[index] = contextPath + '/devolucao/conferenciaEncalhe/gerarSlip';
-			 } 
-			 
-			 if(value == 'BOLETO_OU_RECIBO') {
-				 fileArray[index] = contextPath + '/devolucao/conferenciaEncalhe/gerarBoletoOuRecibo';
-			 }
-			 
-		 });
-		
-		 var fileIndex = 0;
-
-		 $('#download-iframe', ConferenciaEncalhe.workspace).attr('src', fileArray[fileIndex]);
-		 
-		 fileIndex++;
-
-		 var interval = setInterval(function() {
-			 
-		        if(fileIndex < fileArray.length) {
-		            
-		        	$('#download-iframe', ConferenciaEncalhe.workspace).attr('src', fileArray[fileIndex]);
-		            
-		        	fileIndex++;
-		            
-		        } else {
-		            clearInterval(interval);
-		        }
-		        
-		    }, 100 );
-		
+		$('#download-iframe', ConferenciaEncalhe.workspace).attr('src', file);		
 	},
 	
 	carregarGridItensNotaFiscal : function (modeloConferenciaEncalhe) {
@@ -604,13 +574,7 @@ var ConferenciaEncalhe = $.extend(true, {
 		
 	},
 	
-	abrirDialogNotaFiscalDivergente : function(result){
-		
-		if (result.mensagens){
-			
-			exibirMensagem(result.mensagens.tipoMensagem, result.mensagens.listaMensagens);
-			return;
-		}
+	abrirDialogNotaFiscalDivergente : function(result) {
 		
 		ConferenciaEncalhe.modalAberta = true;
 		

@@ -2,10 +2,11 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 
 import br.com.abril.nds.util.export.Export;
-import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.util.export.Export.Alignment;
+import br.com.abril.nds.util.export.Exportable;
 
 @Exportable
 public class SuplementarFecharDiaDTO implements Serializable {
@@ -24,23 +25,32 @@ public class SuplementarFecharDiaDTO implements Serializable {
 	@Export(label = "Preço Capa", alignment=Alignment.RIGHT, exhibitionOrder = 4)
 	private BigDecimal precoVenda;
 	
+	/**
+	 * Quantidade(atual) de exemplares do estoque suplementar 
+	 */
 	@Export(label = "Qtde", alignment=Alignment.RIGHT, exhibitionOrder = 5)
-	private Long quantidadeContabil;
+	private BigInteger quantidadeContabil;
 	
 	/**
-	 * quantidade total de exemplares de cada produto;
+	 * Quantidade(anterior) de exemplares do estoque suplementar;
 	 */
-	private Long quantidadeLogico;
+	private BigInteger quantidadeLogico;
 	
 	/**
-	 *quantidade de exemplares destinada às cotas;
+	 *Quantidade de exemplares vendidos do estoque suplementar;
 	 */
-	private Long quantidadedeVenda;
+	private BigInteger quantidadeVenda;
 	
 	/**
-	 * saldo do estoque, gerado pela subtração de Lógico – Venda;
+	 * Quantidade de exemplares entrada transferência
 	 */
-	private Long saldo;
+	private BigInteger quantidadeTransferenciaEntrada;
+	
+	/**
+     * Quantidade de exemplares saida transferência
+     */
+    private BigInteger quantidadeTransferenciaSaida;
+
 	
 	public String getCodigo() {
 		return codigo;
@@ -74,54 +84,52 @@ public class SuplementarFecharDiaDTO implements Serializable {
 		this.precoVenda = precoVenda;
 	}
 
-	public Long getQuantidadeContabil() {
+	public BigInteger getQuantidadeContabil() {
 		return quantidadeContabil;
 	}
 
-	public void setQuantidadeContabil(Long quantidadeContabil) {
+	public void setQuantidadeContabil(BigInteger quantidadeContabil) {
 		this.quantidadeContabil = quantidadeContabil;
 	}	
 
     /**
      * @return the quantidadeLogico
      */
-    public Long getQuantidadeLogico() {
+    public BigInteger getQuantidadeLogico() {
         return quantidadeLogico;
     }
 
     /**
      * @param quantidadeLogico the quantidadeLogico to set
      */
-    public void setQuantidadeLogico(Long quantidadeLogico) {
+    public void setQuantidadeLogico(BigInteger quantidadeLogico) {
         this.quantidadeLogico = quantidadeLogico;
     }
 
-    /**
-     * @return the quantidadedeVenda
-     */
-    public Long getQuantidadedeVenda() {
-        return quantidadedeVenda;
+    public BigInteger getQuantidadeVenda() {
+        return quantidadeVenda;
     }
 
-    /**
-     * @param quantidadedeVenda the quantidadedeVenda to set
-     */
-    public void setQuantidadedeVenda(Long quantidadedeVenda) {
-        this.quantidadedeVenda = quantidadedeVenda;
+    public void setQuantidadeVenda(BigInteger quantidadeVenda) {
+        this.quantidadeVenda = quantidadeVenda;
     }
-
-    /**
-     * @return the saldo
-     */
-    public Long getSaldo() {
-        return saldo;
+    
+    public BigInteger getQuantidadeTransferenciaEntrada() {
+        return quantidadeTransferenciaEntrada;
     }
-
-    /**
-     * @param saldo the saldo to set
-     */
-    public void setSaldo(Long saldo) {
-        this.saldo = saldo;
+    
+    public void setQuantidadeTransferenciaEntrada(
+            BigInteger quantidadeTransferenciaEntrada) {
+        this.quantidadeTransferenciaEntrada = quantidadeTransferenciaEntrada;
+    }
+    
+    public BigInteger getQuantidadeTransferenciaSaida() {
+        return quantidadeTransferenciaSaida;
+    }
+    
+    public void setQuantidadeTransferenciaSaida(
+            BigInteger quantidadeTransferenciaSaida) {
+        this.quantidadeTransferenciaSaida = quantidadeTransferenciaSaida;
     }
 
 }

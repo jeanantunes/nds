@@ -97,9 +97,37 @@
 					</td>
 					
 					<td>Tipo Logradouro:</td>
-					<td>
-						<input type="text" style="width:250px" 
-							   name="enderecoAssociacao.endereco.tipoLogradouro" id="${param.telaEndereco}tipoLogradouro" />
+					<td>	   
+					   <select  style="width:255px" name="enderecoAssociacao.endereco.tipoLogradouro" id="${param.telaEndereco}tipoLogradouro">
+							<option value="">Selecione</option>
+							<option value="Aeroporto">Aeroporto</option>
+						    <option value="Alameda">Alameda</option>
+						    <option value="Apartamento">Apartamento</option>
+						    <option value="Avenida">Avenida</option>
+						    <option value="Beco">Beco</option>
+						    <option value="Bloco">Bloco</option>
+						    <option value="Caminho">Caminho</option>
+						    <option value="Escadinha">Escadinha</option>
+						    <option value="Estação">Estação</option>
+						    <option value="Estrada">Estrada</option>
+						    <option value="Fazenda">Fazenda</option>
+						    <option value="Fortaleza">Fortaleza</option>
+						    <option value="Galeria">Galeria</option>
+						    <option value="Ladeira">Ladeira</option>
+						    <option value="Largo">Largo</option>
+						    <option value="Praça">Praça</option>
+						    <option value="Parque">Parque</option>
+						    <option value="Praia">Praia</option>
+						    <option value="Quadra">Quadra</option>
+						    <option value="Quilômetro">Quilômetro</option>
+						    <option value="Quinta">Quinta</option>
+						    <option value="Rodovia">Rodovia</option>
+						    <option value="Rua">Rua</option>
+						    <option value="Super Quadra">Super Quadra</option>
+						    <option value="Travessa">Travessa</option>
+						    <option value="Viaduto">Viaduto</option>
+						    <option value="Vila">Vila</option>
+						</select>	   
 					</td>
 					
 				</tr>

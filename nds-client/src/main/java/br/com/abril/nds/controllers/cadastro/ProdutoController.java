@@ -1,19 +1,31 @@
 package br.com.abril.nds.controllers.cadastro;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.BaseComboVO;
+import br.com.abril.nds.client.vo.CotaVO;
 import br.com.abril.nds.client.vo.ProdutoCadastroVO;
 import br.com.abril.nds.dto.ConsultaProdutoDTO;
+import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.ItemDTO;
+import br.com.abril.nds.dto.filtro.FiltroCotaDTO;
+import br.com.abril.nds.dto.filtro.FiltroProdutoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.ClasseSocial;
 import br.com.abril.nds.model.cadastro.DescontoLogistica;
+import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Editor;
 import br.com.abril.nds.model.cadastro.FaixaEtaria;
 import br.com.abril.nds.model.cadastro.FormatoProduto;
@@ -26,6 +38,7 @@ import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Permissao;
+import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.DescontoLogisticaService;
 import br.com.abril.nds.service.DescontoService;
@@ -38,7 +51,11 @@ import br.com.abril.nds.service.TipoProdutoService;
 import br.com.abril.nds.service.exception.UniqueConstraintViolationException;
 import br.com.abril.nds.util.ItemAutoComplete;
 import br.com.abril.nds.util.TipoMensagem;
+import br.com.abril.nds.util.export.FileExporter;
+import br.com.abril.nds.util.export.NDSFileHeader;
+import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.vo.ValidacaoVO;
+import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
@@ -55,6 +72,12 @@ import br.com.caelum.vraptor.view.Results;
 public class ProdutoController {
 
 	private Result result;
+	
+	@Autowired
+	private HttpSession session;
+	
+	@Autowired
+	private HttpServletResponse response;
 	
 	@Autowired
 	private ProdutoService produtoService;
@@ -80,6 +103,9 @@ public class ProdutoController {
 	@Autowired
 	private DescontoLogisticaService descontoLogisticaService;
 	
+	@Autowired
+	private DistribuidorService distribuidorService;
+	
 	private static List<ItemDTO<ClasseSocial,String>> listaClasseSocial =  new ArrayList<ItemDTO<ClasseSocial,String>>();
 	  
 	private static List<ItemDTO<Sexo,String>> listaSexo =  new ArrayList<ItemDTO<Sexo,String>>();
@@ -92,8 +118,10 @@ public class ProdutoController {
 	
 	private static List<ItemDTO<TemaProduto,String>> listaTemaProduto =  new ArrayList<ItemDTO<TemaProduto,String>>();
 	
-	private static List<ItemDTO<Long,String>> listaDescontoLogistica =  new ArrayList<ItemDTO<Long,String>>();
-	
+	private static final String PRODUTO_MANUAL = "MANUAL";
+
+	private static final String FILTRO_SESSION_ATTRIBUTE = "filtroListaCadastroDeProdutos";
+		
 	public ProdutoController(Result result) {
 		this.result = result;
 	}
@@ -282,6 +310,11 @@ public class ProdutoController {
 		
 		int startSearch = page*rp - rp;
 		
+		FiltroProdutoDTO filtroProdutoDTO = 
+				new FiltroProdutoDTO(codigo,produto,editor,fornecedor,codigoTipoProduto,sortorder,sortname);
+		
+		session.setAttribute(FILTRO_SESSION_ATTRIBUTE, filtroProdutoDTO);
+		
 		List<ConsultaProdutoDTO> listaProdutos =
 			this.produtoService.pesquisarProdutos(codigo, produto, fornecedor, editor, 
 				codigoTipoProduto, sortorder, sortname, startSearch, rp);
@@ -304,10 +337,24 @@ public class ProdutoController {
 		listaCombos.add(parseComboFornecedor(this.fornecedorService.obterFornecedores()));
 
 		listaCombos.add(parseComboEditor(this.editorService.obterEditores()));
-		
-		listaCombos.add(getComboDescontoLogistica());
-		
+	
 		this.result.use(Results.json()).from(listaCombos, "result").recursive().serialize();
+	}
+	
+	@Post
+	public void carregarDadosDesconto (String origemProduto){
+		
+		if(PRODUTO_MANUAL.equals(origemProduto)){
+			
+			List<BaseComboVO> listaBaseComboVO = new ArrayList<BaseComboVO>();
+			listaBaseComboVO.add(new BaseComboVO(null, "Produto Manual"));
+			
+			this.result.use(Results.json()).from(listaBaseComboVO, "result").recursive().serialize();
+		}
+		else{
+			
+			this.result.use(Results.json()).from(getComboDescontoLogistica(), "result").recursive().serialize();
+		}
 	}
 	
 	/**
@@ -611,17 +658,6 @@ public class ProdutoController {
 		for (DescontoLogistica descontoLogistica : listaDescontos) {
 			listaBaseComboVO.add(new BaseComboVO(descontoLogistica.getId(), descontoLogistica.getDescricao()));                       
 		}
-		
-		/*listaBaseComboVO.add(new BaseComboVO(1l,"NORMAL"));                       
-		listaBaseComboVO.add(new BaseComboVO(2l,"PRODUTOS TRIBUTADOS"));          
-		listaBaseComboVO.add(new BaseComboVO(3l,"VIDEO PRINT DE 1/1/96 A 1/1/97"));
-		listaBaseComboVO.add(new BaseComboVO(4l,"CROMOS - NORMAL EXC. JUIZ E BH"));
-		listaBaseComboVO.add(new BaseComboVO(5l,"IMPORTADAS - ELETROLIBER"));     
-		listaBaseComboVO.add(new BaseComboVO(6l,"PROMOCOES"));
-		listaBaseComboVO.add(new BaseComboVO(7l,"ESPECIAL GLOBO"));
-		listaBaseComboVO.add(new BaseComboVO(8l,"MAGALI FOME ZERO"));
-		listaBaseComboVO.add(new BaseComboVO(9l,"IMPORTADAS MAG"));
-		listaBaseComboVO.add(new BaseComboVO(11l,"IMPORTADAS MAGEXPRESS"));*/
 
 		return listaBaseComboVO;
 	}
@@ -633,6 +669,57 @@ public class ProdutoController {
 	 */
 	private BaseComboVO getDefaultBaseComboVO() {
 		return new BaseComboVO(0L, "");
+	}
+	
+	private NDSFileHeader getNDSFileHeader() {
+		
+		NDSFileHeader ndsFileHeader = new NDSFileHeader();
+		
+		Distribuidor distribuidor = this.distribuidorService.obter();
+		
+		if (distribuidor != null) {
+			
+			ndsFileHeader.setNomeDistribuidor(distribuidor.getJuridica().getRazaoSocial());
+			ndsFileHeader.setCnpjDistribuidor(distribuidor.getJuridica().getCnpj());
+		}
+		
+		ndsFileHeader.setData(new Date());
+		
+		ndsFileHeader.setNomeUsuario(this.getUsuario().getNome());
+		
+		return ndsFileHeader;
+	}
+	
+	@Get
+	public void exportar(FileType fileType) throws IOException {
+		
+		FiltroProdutoDTO filtro = (FiltroProdutoDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
+		
+		List<ConsultaProdutoDTO> listaProdutos = null;
+		
+		if (filtro != null){
+			
+			listaProdutos =
+					this.produtoService.pesquisarProdutos(filtro.getCodigo(), filtro.getNome(), filtro.getFornecedor(), filtro.getEditor(), 
+						filtro.getTipoProduto().getCodigo(), null, null, 0, 0);
+		}
+		
+		if (listaProdutos == null || listaProdutos.isEmpty()){
+			
+			listaProdutos = new ArrayList<ConsultaProdutoDTO>();
+		}
+		
+		FileExporter.to("produtos", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, null, 
+				listaProdutos, ConsultaProdutoDTO.class, this.response);
+		
+		result.nothing();
+	}
+	
+	private Usuario getUsuario() {
+		//TODO getUsuario
+		Usuario usuario = new Usuario();
+		usuario.setId(1L);
+		return usuario;
 	}
 	
 }

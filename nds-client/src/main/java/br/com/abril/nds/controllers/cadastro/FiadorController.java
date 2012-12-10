@@ -320,7 +320,7 @@ public class FiadorController {
 				}
 			}
 		}
-		
+
 		List<EnderecoAssociacaoDTO> listaExibir = this.enderecoService.buscarEnderecosPorIdPessoa(id, idsIgnorar);
 		
 		this.httpSession.setAttribute(LISTA_ENDERECOS_EXIBICAO, listaExibir);
@@ -605,8 +605,8 @@ public class FiadorController {
 				dados.add(DateUtil.formatarDataPTBR(fisica.getDataNascimento()));
 				dados.add(fisica.getOrgaoEmissor());
 				dados.add(fisica.getUfOrgaoEmissor());
-				dados.add(fisica.getEstadoCivil().name());
-				dados.add(fisica.getSexo().name());
+				dados.add(fisica.getEstadoCivil()!=null?fisica.getEstadoCivil().name():null);
+				dados.add(fisica.getSexo()!=null?fisica.getSexo().name():null);
 				dados.add(fisica.getNacionalidade());
 				dados.add(fisica.getNatural());
 				
@@ -669,6 +669,8 @@ public class FiadorController {
 		this.httpSession.removeAttribute(CotasAssociadasController.LISTA_COTAS_ASSOCIADAS_SALVAR_SESSAO);
 		this.httpSession.removeAttribute(CotasAssociadasController.LISTA_COTAS_ASSOCIADAS_REMOVER_SESSAO);
 		this.httpSession.removeAttribute(ID_FIADOR_EDICAO);
+		
+		this.httpSession.removeAttribute(EnderecoController.ENDERECO_PENDENTE);
 	}
 	
 	private TableModel<CellModel> getTableModelFiadores(ConsultaFiadorDTO consulta, Integer page) {

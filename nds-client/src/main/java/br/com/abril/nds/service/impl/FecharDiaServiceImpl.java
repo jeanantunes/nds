@@ -472,10 +472,19 @@ public class FecharDiaServiceImpl implements FecharDiaService {
     	List<DiferencaDTO> diferencasDTO = incluirFaltasSobras(fechamento);
     	builder.faltasSobras(diferencasDTO);
     	
+    	liberarNovaDataOperacionalParaDistribuidor(dataFechamento);
+    	
     	return builder.build();
     }
 
-    /**
+    private void liberarNovaDataOperacionalParaDistribuidor(Date dataFechamento) {
+		Distribuidor distribuidor = distribuidorRepository.obter();		
+		distribuidor.setDataOperacao(DateUtil.adicionarDias(dataFechamento, 1));
+		distribuidorRepository.alterar(distribuidor);
+		
+	}
+
+	/**
      * Inclui as diferenças nas informações do fechamento diário
      * 
      * @param fechamento
@@ -752,7 +761,9 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 	private List<SuplementarFecharDiaDTO> incluirLancamentosSuplementar(FechamentoDiarioConsolidadoSuplementar consolidadoSuplementar)
 			throws FechamentoDiarioException {
 		
-		List<SuplementarFecharDiaDTO> listaSuplementar = this.resumoSuplementarFecharDiaService.obterDadosGridSuplementar();
+	    FechamentoDiario fechamentoDiario = consolidadoSuplementar.getFechamentoDiario();
+	    
+		List<SuplementarFecharDiaDTO> listaSuplementar = this.resumoSuplementarFecharDiaService.obterDadosGridSuplementar(fechamentoDiario.getDataFechamento());
 		
 		if(listaSuplementar!= null && !listaSuplementar.isEmpty()){
 			
@@ -764,7 +775,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 				
 				lancamentoSuplementar.setProdutoEdicao(produtoEdicao);
 				lancamentoSuplementar.setFechamentoDiarioConsolidadoSuplementar(consolidadoSuplementar);
-				lancamentoSuplementar.setQuantidadeContabilizada(item.getQuantidadeContabil());
+				lancamentoSuplementar.setQuantidadeContabilizada(item.getQuantidadeContabil().longValue());
 				
 				fechamentoDiarioLancamentoSuplementarRepository.adicionar(lancamentoSuplementar);
 			}
@@ -828,7 +839,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 			throws FechamentoDiarioException {
 		
 		List<EncalheFecharDiaDTO> listaEncalhe = 
-		        this.resumoEncalheFecharDiaService.obterDadosGridEncalhe(fechamento.getDataFechamento());
+		        this.resumoEncalheFecharDiaService.obterDadosGridEncalhe(fechamento.getDataFechamento(), null);
 		
 		if(listaEncalhe!= null && !listaEncalhe.isEmpty()){
 			
@@ -839,9 +850,9 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 				ProdutoEdicao produtoEdicao = produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(item.getCodigo(), item.getNumeroEdicao());
 				
 				lancamentoEncalhe.setProdutoEdicao(produtoEdicao);
-				lancamentoEncalhe.setQuantidadeDiferenca(item.getDiferenca());
-				lancamentoEncalhe.setQuantidadeVendaEncalhe(Util.nvl(item.getQtde(),0).intValue());
-				lancamentoEncalhe.setQuantidade(Util.nvl(item.getQtde(),0).intValue());
+				lancamentoEncalhe.setQuantidadeDiferenca(item.getQtdeDiferenca().intValue());
+				lancamentoEncalhe.setQuantidadeVendaEncalhe(Util.nvl(item.getQtdeVendaEncalhe(),0).intValue());
+				lancamentoEncalhe.setQuantidade(Util.nvl(item.getQtdeLogico(),0).intValue());
 				lancamentoEncalhe.setFechamentoDiarioConsolidadoEncalhe(consolidadoEncalhe);
 				
 				fechamentoDiarioLancamentoEncalheRepository.adicionar(lancamentoEncalhe);
@@ -852,7 +863,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 
 	private void incluirVendaEncalhe(FechamentoDiario fechamento,FechamentoDiarioConsolidadoEncalhe consolidadoEncalhe) {
 		
-		List<VendaFechamentoDiaDTO> vendasEncalhe = resumoEncalheFecharDiaService.obterDadosVendaEncalhe(fechamento.getDataFechamento());
+		List<VendaFechamentoDiaDTO> vendasEncalhe = resumoEncalheFecharDiaService.obterDadosVendaEncalhe(fechamento.getDataFechamento(), null);
 
 		if(vendasEncalhe!= null && !vendasEncalhe.isEmpty() ){
 	
