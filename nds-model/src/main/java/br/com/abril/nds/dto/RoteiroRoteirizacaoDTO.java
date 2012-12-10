@@ -103,7 +103,7 @@ public class RoteiroRoteirizacaoDTO implements Serializable, Ordenavel {
      *         roteiro já cadastrado
      */
 	public boolean isNovo() {
-	    return id != null && id < 0;
+	    return id == null || (id != null && id < 0);
 	}
 	
 	/**
@@ -115,13 +115,7 @@ public class RoteiroRoteirizacaoDTO implements Serializable, Ordenavel {
 			rotas = new ArrayList<RotaRoteirizacaoDTO>();
 		}
 		
-		for (RotaRoteirizacaoDTO dto : todasRotas){
-			
-			if (dto.getOrdem() <= rota.getOrdem()){
-				
-				rota.setOrdem(dto.getOrdem() + 1);
-			}
-		}
+		OrdenacaoUtil.incluirItemOrdenado(rota, rotas);
 		
 		rotas.add(rota);
 		todasRotas.add(rota);
