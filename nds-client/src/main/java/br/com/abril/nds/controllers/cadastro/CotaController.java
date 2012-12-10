@@ -201,13 +201,18 @@ public class CotaController {
 	 * 
 	 * @param idCota - identificador da cota
 	 */
-	private void processarEnderecosCota(Long idCota) {
+	private boolean processarEnderecosCota(Long idCota) {
 
 		List<EnderecoAssociacaoDTO> listaEnderecoAssociacaoSalvar = 
 				(List<EnderecoAssociacaoDTO>) this.session.getAttribute(LISTA_ENDERECOS_SALVAR_SESSAO);
 		
 		List<EnderecoAssociacaoDTO> listaEnderecoAssociacaoRemover = 
 				(List<EnderecoAssociacaoDTO>) this.session.getAttribute(LISTA_ENDERECOS_REMOVER_SESSAO);
+		
+		if ((listaEnderecoAssociacaoSalvar == null || listaEnderecoAssociacaoSalvar.size()<=0)&&(listaEnderecoAssociacaoRemover == null || listaEnderecoAssociacaoRemover.size()<=0)){
+			
+			return false;
+		}
 		
 		this.cotaService.processarEnderecos(idCota, listaEnderecoAssociacaoSalvar, listaEnderecoAssociacaoRemover);
 		
@@ -216,6 +221,8 @@ public class CotaController {
 		this.session.removeAttribute(LISTA_ENDERECOS_REMOVER_SESSAO);
 		
 		obterEndereco(idCota);
+		
+		return true;
 	}
 
 	/**
@@ -223,8 +230,7 @@ public class CotaController {
 	 * 
 	 * @param idCota - identificador da cota
 	 */
-	private void processarTelefonesCota(Long idCota){
-		
+	private boolean processarTelefonesCota(Long idCota){
 		
 		Map<Integer, TelefoneAssociacaoDTO> map = this.obterTelefonesSalvarSessao();
 		
@@ -238,12 +244,20 @@ public class CotaController {
 		}
 		
 		Set<Long> telefonesRemover = this.obterTelefonesRemoverSessao();
+		
+		if ((map == null || map.size() <= 0)&&(telefonesRemover == null || telefonesRemover.size() <=0 )){
+			
+			return false;
+		}
+		
 		this.cotaService.processarTelefones(idCota, lista, telefonesRemover);
 		
 		this.session.removeAttribute(LISTA_TELEFONES_SALVAR_SESSAO);
 		this.session.removeAttribute(LISTA_TELEFONES_REMOVER_SESSAO);
 		
 		obterTelefones(idCota);
+		
+		return true;
 	}
 	
 	/**
@@ -543,7 +557,7 @@ public class CotaController {
 		validarFormatoData(mensagensValidacao);
 
 	}
-
+	
 	private void validarEnderecos(List<String> mensagensValidacao) {
 		
 		@SuppressWarnings("unchecked")
@@ -751,10 +765,19 @@ public class CotaController {
 	
 		validar();
 		
-		processarEnderecosCota(idCota);
+		boolean alteracoesEndereco = processarEnderecosCota(idCota);
+		
+		boolean alteracoesTelefone = processarTelefonesCota(idCota);
+		
+		if (alteracoesEndereco || alteracoesTelefone){
 	
-		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação realizada com sucesso."),
-				Constantes.PARAM_MSGS).recursive().serialize();
+		    result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação realizada com sucesso."),
+			    	Constantes.PARAM_MSGS).recursive().serialize();
+		}
+		else{
+			
+			result.nothing();
+		}
 	}
 	
 	/**
@@ -768,10 +791,19 @@ public class CotaController {
 		
 		validar();
 		
-		processarTelefonesCota(idCota);
+		boolean alteracoesTelefone = processarTelefonesCota(idCota);
 		
-		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação realizada com sucesso."),
-				Constantes.PARAM_MSGS).recursive().serialize();
+		boolean alteracoesEndereco = processarEnderecosCota(idCota);
+		
+		if (alteracoesEndereco || alteracoesTelefone){
+			
+		    result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação realizada com sucesso."),
+			    	Constantes.PARAM_MSGS).recursive().serialize();
+		}
+		else{
+			
+			result.nothing();
+		}
 	}
 	
 	/**

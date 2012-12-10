@@ -78,8 +78,8 @@ public class ResumoSuplementarFecharDiaServiceImp implements
 
 	@Override
 	@Transactional
-	public List<SuplementarFecharDiaDTO> obterDadosGridSuplementar() {
-		return this.resumoSuplementarFecharDiaRepository.obterDadosGridSuplementar();
+	public List<SuplementarFecharDiaDTO> obterDadosGridSuplementar(Date data) {
+		return this.resumoSuplementarFecharDiaRepository.obterDadosGridSuplementar(data);
 	}
 
 }

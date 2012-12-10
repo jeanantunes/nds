@@ -2159,6 +2159,8 @@ public class DiferencaEstoqueController {
 		if (!this.diferencaEstoqueService.validarDataLancamentoDiferenca(
 				dataMovimento, produtoEdicao.getId(), tipoDiferenca)) {
 			
+			//TODO: Não bloquear lançamento. Gerar PERDA ou GANHO (confirmarLancamentosDiferenca -> status lançamento diferença).
+			
 			listaMensagensErro.add("Prazo para lançamento de diferença esgotado para o Produto: Código [" + diferenca.getCodigoProduto() + "] - Edição [" + diferenca.getNumeroEdicao() + " ]");
 		}
 		

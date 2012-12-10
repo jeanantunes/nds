@@ -26,8 +26,8 @@ $(function(){
  		<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
      		<tr>
        			<td width="64">Operação:</td>
-         		<td width="175">
-         			 <select name="operacao" id="operacaoID" style="width:150px;" class="campoDePesquisa">
+         		<td width="215">
+         			 <select name="operacao" id="operacaoID" style="width:200px;" class="campoDePesquisa">
 					     <option selected="selected" value="">Todos</option>
 					     <c:forEach var="operacao" items="${listaAtividades}">
 								<option value="${operacao.key}">${operacao.value}</option>

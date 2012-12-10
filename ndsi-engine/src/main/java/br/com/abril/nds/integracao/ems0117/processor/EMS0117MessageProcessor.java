@@ -239,6 +239,7 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 					Endereco endTmp = getEnderecoSaneado(input.getCep());
 					if (null != endTmp) {
 						endereco.setBairro(endTmp.getBairro());
+						endereco.setTipoLogradouro(endTmp.getTipoLogradouro());
 					}
 //				}
 				endereco.setNumero(input.getNumLogradouro());
@@ -308,29 +309,13 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 			
 			setSituacaoCadastro(input, cota);
 
-			cota.setSugereSuspensao(true);
-			cota.setBox(box);
+			cota.setSugereSuspensao(true);			
 			cota.setPessoa(pessoa);
 
 			if (!input.getEndereco().isEmpty()
 					&& !".".equals(input.getEndereco())) {
-
-				// Verifica EnderecoCota
-				sql = new StringBuilder();
-				sql.append("SELECT ec  ");
-				sql.append("FROM EnderecoCota ec ");
-				sql.append("JOIN FETCH ec.endereco ed  ");
-				sql.append("WHERE ");
-				sql.append("     ec.cota = :numeroCota ");
-				sql.append(" AND    ed.logradouro = :logradouro ");
-				query = getSession().createQuery(sql.toString());
-				query.setParameter("numeroCota", cota);
-				query.setParameter("logradouro", input.getEndereco());
-
-				List<EnderecoCota> enderecosCota = (List<EnderecoCota>) query
-						.list();
-
-				if (enderecosCota.isEmpty()) {
+			
+				if (cota.getEnderecos().isEmpty()) {
 
 //					endereco = getEnderecoSaneado(input.getCep());
 //					if (null == endereco ) {
@@ -343,6 +328,7 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 						Endereco endTmp = getEnderecoSaneado(input.getCep());
 						if (null != endTmp) {
 							endereco.setBairro(endTmp.getBairro());
+							endereco.setTipoLogradouro(endTmp.getTipoLogradouro());
 						}						
 //					}
 					endereco.setNumero(input.getNumLogradouro());
@@ -358,67 +344,56 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 
 				} else {
 
-					for (EnderecoCota enderecoCota2 : enderecosCota) {
+					for (EnderecoCota enderecoCota2 : cota.getEnderecos()) {
 
-						if (enderecoCota2.getCota().equals(cota)) {
+						enderecoCota = enderecoCota2;
 
-							enderecoCota = enderecoCota2;
+						
+						// Verifica EnderecoCota
+						sql = new StringBuilder();
+						sql.append("SELECT ec  ");
+						sql.append("FROM EnderecoCota ec ");
+						sql.append("JOIN FETCH ec.endereco ed  ");
+						sql.append("WHERE ");
+						sql.append("     ec.cota = :numeroCota ");
+						sql.append(" AND    ed.logradouro = :logradouro ");
+						query = getSession().createQuery(sql.toString());
+						query.setParameter("numeroCota", cota);
+						query.setParameter("logradouro", input.getEndereco());
 
-							// Definir Endereco
-							sql = new StringBuilder();
-							sql.append("SELECT e  ");
-							sql.append("FROM Endereco e ");
-							sql.append("WHERE ");
-							sql.append("     e.logradouro = :logradouro ");
-							query = getSession().createQuery(sql.toString());
-							query.setParameter("logradouro",
-									input.getEndereco());
+						List<Endereco> enderecos = (List<Endereco>) query
+								.list();
 
-							List<Endereco> enderecos = (List<Endereco>) query
-									.list();
-
-							if (enderecos.isEmpty()) {
+						if (enderecos.isEmpty()) {
 
 //								endereco = getEnderecoSaneado(input.getCep());
 //								if (null == endereco ) {
-									endereco = new Endereco();
-									endereco.setCep(input.getCep());
-									endereco.setCidade(input.getMunicipio());
-									endereco.setLogradouro(input.getEndereco());
-									endereco.setUf(input.getSiglaUF());
-									endereco.setCodigoCidadeIBGE(input.getCodCidadeIbge());
-									Endereco endTmp = getEnderecoSaneado(input.getCep());
-									if (null != endTmp) {
-										endereco.setBairro(endTmp.getBairro());
-									}									
+								endereco = new Endereco();
+								endereco.setCep(input.getCep());
+								endereco.setCidade(input.getMunicipio());
+								endereco.setLogradouro(input.getEndereco());
+								endereco.setUf(input.getSiglaUF());
+								endereco.setCodigoCidadeIBGE(input.getCodCidadeIbge());
+								Endereco endTmp = getEnderecoSaneado(input.getCep());
+								if (null != endTmp) {
+									endereco.setBairro(endTmp.getBairro());
+									endereco.setTipoLogradouro(endTmp.getTipoLogradouro());
+								}									
 //								}
-								endereco.setNumero(input.getNumLogradouro());
+							endereco.setNumero(input.getNumLogradouro());
 
-								getSession().persist(endereco);
+							getSession().persist(endereco);
 
-							} else {
-
-								for (Endereco endereco2 : enderecos) {
-
-									if (endereco2.getLogradouro().equals(
-											input.getEndereco())) {
-
-										endereco = endereco2;
-									}
-								}
-							}
-						}
+							EnderecoCota endCota = new EnderecoCota();
+							endCota.setTipoEndereco(TipoEndereco.COMERCIAL);
+							endCota.setEndereco(endereco);
+							endCota.setCota(cota);
+							
+							getSession().persist(endCota);
+							
+						} 
+					
 					}
-
-					ndsiLoggerFactory.getLogger().logInfo(
-							message,
-							EventoExecucaoEnum.INF_DADO_ALTERADO,
-							"Atualizacao do  Endereco Cota "
-									+ enderecoCota.getId());
-
-					enderecoCota.setTipoEndereco(TipoEndereco.COMERCIAL);
-					enderecoCota.setEndereco(endereco);
-					enderecoCota.setCota(cota);
 
 				}
 			} else {
