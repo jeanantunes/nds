@@ -466,6 +466,18 @@ var produtoEdicaoController =$.extend(true,  {
 				}else{
 					row.cell.nomeComercial = '';
 				}
+				
+				//
+				if(row.cell.statusLancamento == ''){
+					row.cell.statusLancamento = '-';
+				}
+				
+				//
+				if(row.cell.statusSituacao == ''){
+					row.cell.statusSituacao = '-';
+				}
+				
+				
 				cProduto = row.cell.codigoProduto;
 			});
 

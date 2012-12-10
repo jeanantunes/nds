@@ -17,6 +17,7 @@ import br.com.abril.nds.dto.filtro.FiltroCurvaABCEditorDTO;
 import br.com.abril.nds.dto.filtro.FiltroPesquisarHistoricoEditorDTO;
 import br.com.abril.nds.model.cadastro.Editor;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
+import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.repository.EditorRepository;
 import br.com.abril.nds.util.MathUtil;
 
@@ -51,8 +52,20 @@ public class EditorRepositoryImpl extends AbstractRepositoryModel<Editor, Long> 
 		StringBuilder hql = new StringBuilder();
 
 		hql.append("SELECT new ").append(ResultadoCurvaABCEditor.class.getCanonicalName())
+<<<<<<< HEAD
 		.append(" ( (sum(estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida)), ")
 		.append("   ( sum((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * (movimentos.valoresAplicados.precoComDesconto)) ) ) ");
+=======
+		   .append(" ( ")
+	       .append("   case when (lancamento.status = :statusLancamentoRecolhido) then ( ")
+		   .append("  		(sum(estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida)) ")
+		   .append(" ) else 0 end, ")
+		   
+  		   .append("   case when (lancamento.status = :statusLancamentoRecolhido) then ( ")
+		   .append("   ( sum((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * (estoqueProdutoCota.produtoEdicao.precoVenda - (("+ this.getHQLDesconto() +") * estoqueProdutoCota.produtoEdicao.precoVenda / 100))) )  ")
+		   .append(" ) else 0 end ")
+		   .append(" ) ");
+>>>>>>> DGBti/master
 
 		hql.append(getWhereQueryObterCurvaABCEditor(filtro));
 
@@ -63,6 +76,8 @@ public class EditorRepositoryImpl extends AbstractRepositoryModel<Editor, Long> 
 		for(String key : param.keySet()){
 			query.setParameter(key, param.get(key));
 		}
+		
+		query.setParameter("statusLancamentoRecolhido", StatusLancamento.RECOLHIDO);
 		
 		if (filtro.getEdicaoProduto() != null && !filtro.getEdicaoProduto().isEmpty()) {
 			query.setParameterList("edicaoProduto", (filtro.getEdicaoProduto()));
@@ -93,6 +108,8 @@ public class EditorRepositoryImpl extends AbstractRepositoryModel<Editor, Long> 
 		for(String key : param.keySet()){
 			query.setParameter(key, param.get(key));
 		}
+
+		query.setParameter("statusLancamentoRecolhido", StatusLancamento.RECOLHIDO);
 		
 		if (filtro.getEdicaoProduto() != null && !filtro.getEdicaoProduto().isEmpty()) {
 			query.setParameterList("edicaoProduto", (filtro.getEdicaoProduto()));
@@ -113,14 +130,15 @@ public class EditorRepositoryImpl extends AbstractRepositoryModel<Editor, Long> 
 		StringBuilder hql = new StringBuilder();
 
 		hql.append(" FROM EstoqueProdutoCota AS estoqueProdutoCota ")
-		.append(" LEFT JOIN estoqueProdutoCota.movimentos AS movimentos ")
-		.append(" LEFT JOIN estoqueProdutoCota.produtoEdicao.produto.fornecedores AS fornecedores ")
-		.append(" LEFT JOIN estoqueProdutoCota.cota.enderecos AS enderecos ")
-		.append(" LEFT JOIN enderecos.endereco AS endereco ")
-		.append(" LEFT JOIN estoqueProdutoCota.cota.pdvs AS pdv ")
-		.append(" LEFT JOIN estoqueProdutoCota.cota.pessoa AS pessoa ")
-		.append(" LEFT JOIN estoqueProdutoCota.produtoEdicao.produto.editor editor ")
-		.append(" LEFT JOIN editor.pessoaJuridica pessoaEditor ");
+		.append(" JOIN estoqueProdutoCota.movimentos AS movimentos ")
+		.append(" LEFT JOIN movimentos.lancamento AS lancamento ")
+		.append(" JOIN estoqueProdutoCota.produtoEdicao.produto.fornecedores AS fornecedores ")
+		.append(" JOIN estoqueProdutoCota.cota.enderecos AS enderecos ")
+		.append(" JOIN enderecos.endereco AS endereco ")
+		.append(" JOIN estoqueProdutoCota.cota.pdvs AS pdv ")
+		.append(" JOIN estoqueProdutoCota.cota.pessoa AS pessoa ")
+		.append(" JOIN estoqueProdutoCota.produtoEdicao.produto.editor editor ")
+		.append(" JOIN editor.pessoaJuridica pessoaEditor ");
 
 		hql.append(" WHERE movimentos.data BETWEEN :dataDe AND :dataAte ");
 		hql.append(" AND movimentos.tipoMovimento.grupoMovimentoEstoque = :grupoMovimentoEstoque ");
@@ -223,7 +241,18 @@ public class EditorRepositoryImpl extends AbstractRepositoryModel<Editor, Long> 
 			}
 			vendaTotal = vendaTotal.add(registro.getVendaExemplares());
 			
-			registro.setPorcentagemMargemDistribuidor(MathUtil.divide(registro.getValorMargemDistribuidor(),registro.getFaturamentoCapa()));
+			BigDecimal porcentagemMargem = null;
+			
+			if (registro.getFaturamentoCapa() != null && registro.getFaturamentoCapa().compareTo(BigDecimal.ZERO) > 0) {
+				
+				porcentagemMargem = MathUtil.divide(registro.getValorMargemDistribuidor(),registro.getFaturamentoCapa());	
+			
+			} else {
+			
+				porcentagemMargem = BigDecimal.ZERO; 
+			}
+
+			registro.setPorcentagemMargemDistribuidor(porcentagemMargem);
 		}
 
 		BigDecimal participacaoRegistro = BigDecimal.ZERO;
@@ -269,8 +298,10 @@ public class EditorRepositoryImpl extends AbstractRepositoryModel<Editor, Long> 
 		.append(" ((sum (( estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida )) * produtoEdicao.precoVenda)")
 		.append(" * ( movimentos.valoresAplicados.precoComDesconto ))");
 
-		String hqlFaturamento = " ( sum ( (estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida )) * produtoEdicao.precoVenda )";
-		
+		String hqlFaturamento = "   case when (lancamento.status = :statusLancamentoRecolhido) then ( " 
+							  + " 		(sum ( (estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida )) * produtoEdicao.precoVenda )"
+							  + "	) else 0 end ";
+
 		hql.append("SELECT ")
 			
 			.append("   pessoaJuridica.razaoSocial as nomeEditor , ")
@@ -281,10 +312,12 @@ public class EditorRepositoryImpl extends AbstractRepositoryModel<Editor, Long> 
 			
 			.append("   produtoEdicao.numeroEdicao as edicaoProduto , ")
 			
-			.append("   sum(movimentos.qtde) as reparte , ")
+			.append("   sum(estoqueProdutoCota.qtdeRecebida) as reparte,")
 			
-			.append("   sum(estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) as vendaExemplares ,")
-			
+   		    .append("   case when (lancamento.status = :statusLancamentoRecolhido) then ( ")
+			.append("   	sum(estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) ")
+			.append("	) else 0 end as vendaExemplares, ")
+
 			.append(hqlFaturamento).append(" as faturamento ,")
 					
 			.append(hqlMargemCota).append("  as valorMargemCota, ")
@@ -294,6 +327,7 @@ public class EditorRepositoryImpl extends AbstractRepositoryModel<Editor, Long> 
 
 		hql.append(" FROM EstoqueProdutoCota  estoqueProdutoCota ")
 		.append(" JOIN estoqueProdutoCota.movimentos  movimentos ")
+		.append(" LEFT JOIN movimentos.lancamento as lancamento ")
 		.append(" JOIN estoqueProdutoCota.produtoEdicao produtoEdicao")
 		.append(" JOIN produtoEdicao.produto produto ")
 		.append(" JOIN produto.fornecedores  fornecedores ")
@@ -314,6 +348,7 @@ public class EditorRepositoryImpl extends AbstractRepositoryModel<Editor, Long> 
 
 		query.setParameter("codigoEditor", Long.parseLong(filtro.getNumeroEditor()));
 		query.setParameter("grupoMovimentoEstoque", GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
+		query.setParameter("statusLancamentoRecolhido", StatusLancamento.RECOLHIDO);
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(RegistroHistoricoEditorVO.class));
 		
@@ -331,50 +366,73 @@ public class EditorRepositoryImpl extends AbstractRepositoryModel<Editor, Long> 
 		    
 		    .append(" pessoaEditor.RAZAO_SOCIAL as nomeEditor,  ")
 		    
-		    .append(" sum(movimentos.QTDE) as reparte,  ")
+		    .append(" sum(estoqueProduto.QTDE_RECEBIDA) as reparte,  ")
 		    
+<<<<<<< HEAD
 		    .append(" sum(estoqueProduto.QTDE_RECEBIDA-estoqueProduto.QTDE_DEVOLVIDA) as vendaExemplares,  ")
 		    
 		    .append(" sum((estoqueProduto.QTDE_RECEBIDA-estoqueProduto.QTDE_DEVOLVIDA)*(movimentos.PRECO_COM_DESCONTO))) as faturamentoCapa , ")
+=======
+   		    .append("   case when (lancamento.status = :statusLancamentoRecolhido) then ( ")
+		    .append(" 			sum(estoqueProduto.QTDE_RECEBIDA-estoqueProduto.QTDE_DEVOLVIDA)  ")
+			.append("		) else 0 end as vendaExemplares, ")
+
+   		    .append("   case when (lancamento.status = :statusLancamentoRecolhido) then ( ")
+		    .append(" 	sum((estoqueProduto.QTDE_RECEBIDA-estoqueProduto.QTDE_DEVOLVIDA)*(produtoEdicao.PRECO_VENDA-(  ")
+		    .append("	 coalesce((select viewDesconto.DESCONTO  ")
+		    .append("    from  ")
+		    .append("        VIEW_DESCONTO viewDesconto  ")
+		    .append("    where  ")
+		    .append("        viewDesconto.COTA_ID=estoqueProduto.COTA_ID  ")
+		    .append("        and viewDesconto.PRODUTO_EDICAO_ID=estoqueProduto.PRODUTO_EDICAO_ID  ")
+		    .append("        and viewDesconto.FORNECEDOR_ID=fornecedor.ID),  ")
+		    .append("    0)*produtoEdicao.PRECO_VENDA/100))) ") 
+			.append("		) else 0 end as faturamentoCapa, ")
+>>>>>>> DGBti/master
 		    
 		    .append( this.getSqlMargemDistribuidor()).append(" as valorMargemDistribuidor ")
 		    
 		    .append(" from  ")
 		    .append("    ESTOQUE_PRODUTO_COTA as estoqueProduto  ")
-		    .append(" left outer join  ")
+		    .append(" inner join  ")
 		    .append("    MOVIMENTO_ESTOQUE_COTA as movimentos  ")
 		    .append("        on estoqueProduto.ID=movimentos.ESTOQUE_PROD_COTA_ID  ")
+		    
 		    .append(" left outer join  ")
+		    .append("    LANCAMENTO as lancamento  ")
+		    .append("        on estoqueProduto.ID=movimentos.ESTOQUE_PROD_COTA_ID  ")
+		    
+		    .append(" inner join  ")
 		    .append("    PRODUTO_EDICAO as produtoEdicao  ")
 		    .append("        on estoqueProduto.PRODUTO_EDICAO_ID=produtoEdicao.ID  ")
-		    .append(" left outer join  ")
+		    .append(" inner join  ")
 		    .append("    PRODUTO as produto  ")
 		    .append("        on produtoEdicao.PRODUTO_ID=produto.ID  ")
-		    .append(" left outer join  ")
+		    .append(" inner join  ")
 		    .append("    PRODUTO_FORNECEDOR as produtoFornecedor  ")
 		    .append("        on produto.ID=produtoFornecedor.PRODUTO_ID  ")
-		    .append(" left outer join  ")
+		    .append(" inner join  ")
 		    .append("    FORNECEDOR as fornecedor  ")
 		    .append("        on produtoFornecedor.fornecedores_ID=fornecedor.ID  ")
-		    .append(" left outer join  ")
+		    .append(" inner join  ")
 		    .append("    EDITOR as editor  ")
 		    .append("        on produto.EDITOR_ID=editor.ID  ")
-		    .append(" left outer join  ")
+		    .append(" inner join  ")
 		    .append("    PESSOA as pessoaEditor  ")
 		    .append("        on editor.JURIDICA_ID=pessoaEditor.ID  ")
-		    .append(" left outer join  ")
+		    .append(" inner join  ")
 		    .append("    COTA as cota  ")
 		    .append("        on estoqueProduto.COTA_ID=cota.ID  ")
-		    .append(" left outer join  ")
+		    .append(" inner join  ")
 		    .append("    ENDERECO_COTA as enderecoCota  ")
 		    .append("        on cota.ID=enderecoCota.COTA_ID  ")
-		    .append(" left outer join  ")
+		    .append(" inner join  ")
 		    .append("    ENDERECO as endereco  ")
 		    .append("        on enderecoCota.ENDERECO_ID=endereco.ID  ")
-		    .append(" left outer join  ")
+		    .append(" inner join  ")
 		    .append("    PDV as pdv  ")
 		    .append("        on cota.ID=pdv.COTA_ID  ")
-		    .append(" left outer join  ")
+		    .append(" inner join  ")
 		    .append("    PESSOA as pessoaCota  ")
 		    .append("        on cota.PESSOA_ID=pessoaCota.ID cross  ")
 		    .append(" join  ")

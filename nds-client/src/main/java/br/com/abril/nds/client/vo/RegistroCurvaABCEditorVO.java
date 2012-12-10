@@ -200,7 +200,7 @@ public class RegistroCurvaABCEditorVO extends RegistroCurvaABCDTO implements
 
 	private void formatarCampos() {
 		reparteFormatado = CurrencyUtil.formatarValorTruncado(reparte);
-		vendaExemplaresFormatado = CurrencyUtil.formatarValorTruncado(vendaExemplares);
+		vendaExemplaresFormatado = String.valueOf(vendaExemplares);
 		porcentagemVendaExemplaresFormatado = CurrencyUtil.formatarValor(porcentagemVendaExemplares);
 		faturamentoCapaFormatado = CurrencyUtil.formatarValor(faturamentoCapa);
 	}

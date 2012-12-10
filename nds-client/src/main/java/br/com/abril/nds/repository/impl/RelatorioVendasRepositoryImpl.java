@@ -12,6 +12,7 @@ import br.com.abril.nds.client.vo.ResultadoCurvaABCDistribuidor;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCDistribuidorDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.repository.RelatorioVendasRepository;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.vo.ValidacaoVO;
@@ -31,8 +32,14 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		StringBuilder hql = new StringBuilder();
 
 		hql.append("SELECT new ").append(ResultadoCurvaABCDistribuidor.class.getCanonicalName())
-		.append(" ( (sum(estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida)), ")
-		.append("   ( sum((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * (estoqueProdutoCota.produtoEdicao.precoVenda - ( "+this.obterSQLDesconto()+" ))) ) ) ");
+		   .append(" ( ")
+		   .append("   case when (lancamento.status = :statusLancamentoRecolhido) then ( ")
+		   .append("  			sum(estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida)) ")
+		   .append(" 		else 0 end, ")
+		   .append("   case when (lancamento.status = :statusLancamentoRecolhido) then ( ")
+		   .append("   			sum((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * (estoqueProdutoCota.produtoEdicao.precoVenda - ( "+this.obterSQLDesconto()+" ))) ) ")
+		   .append(" 		else 0 end ")
+		   .append(" ) ");
 
 		hql.append(getWhereQueryObterCurvaABCDistribuidor(filtro));
 
@@ -43,6 +50,8 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		for(String key : param.keySet()){
 			query.setParameter(key, param.get(key));
 		}
+
+		query.setParameter("statusLancamentoRecolhido", StatusLancamento.RECOLHIDO);
 		
 		if (filtro.getEdicaoProduto() != null && !filtro.getEdicaoProduto().isEmpty()) {
 			query.setParameterList("edicaoProduto", (filtro.getEdicaoProduto()));
@@ -64,10 +73,14 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		.append("   case when (pessoa.nome is not null) then ( pessoa.nome ) ")
 		.append("     when (pessoa.razaoSocial is not null) then ( pessoa.razaoSocial ) ")
 		.append("     else null end , ")
-		.append("   case when sum(pdv) is null then 0 else sum(pdv) end, " )
+		.append("   case when pdv is null then 0 else count(distinct pdv) end, " )
 		.append("   endereco.cidade, " )
-		.append("   (sum(estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida)), ")
-		.append("   ( sum((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * (estoqueProdutoCota.produtoEdicao.precoVenda - ( "+this.obterSQLDesconto()+" ))) ) , ")
+		.append("   case when (lancamento.status = :statusLancamentoRecolhido) then ( ")
+		.append(" 		   sum(estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida)) ")
+		.append(" 		   else 0 end, ")
+		.append("   case when (lancamento.status = :statusLancamentoRecolhido) then ( ")
+		.append("          sum((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * (estoqueProdutoCota.produtoEdicao.precoVenda - ( "+this.obterSQLDesconto()+" ))) ) ")
+		.append("          else 0 end , ")
 		.append("  estoqueProdutoCota.produtoEdicao.produto.id ,")
 		.append("  estoqueProdutoCota.cota.id )");
 		
@@ -81,11 +94,13 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		for(String key : param.keySet()){
 			query.setParameter(key, param.get(key));
 		}
+
+		query.setParameter("statusLancamentoRecolhido", StatusLancamento.RECOLHIDO);
 		
 		if (filtro.getEdicaoProduto() != null && !filtro.getEdicaoProduto().isEmpty()) {
 			query.setParameterList("edicaoProduto", (filtro.getEdicaoProduto()));
 		}
-
+		
 		return complementarCurvaABCDistribuidor((List<RegistroCurvaABCDistribuidorVO>) query.list());
 
 	}
@@ -101,6 +116,7 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 
 		hql.append(" FROM EstoqueProdutoCota AS estoqueProdutoCota ")
 		.append(" LEFT JOIN estoqueProdutoCota.movimentos AS movimentos ")
+		.append(" LEFT JOIN movimentos.lancamento AS lancamento ")
 		.append(" LEFT JOIN estoqueProdutoCota.produtoEdicao.produto.fornecedores AS fornecedores ")
 		.append(" LEFT JOIN estoqueProdutoCota.cota.enderecos AS enderecos ")
 		.append(" LEFT JOIN enderecos.endereco AS endereco ")

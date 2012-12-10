@@ -3,29 +3,42 @@ package br.com.abril.nds.dto;
 import java.io.Serializable;
 
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
+import br.com.abril.nds.util.export.Export;
+import br.com.abril.nds.util.export.Export.Alignment;
+import br.com.abril.nds.util.export.Exportable;
 
+@Exportable
 public class ConsultaProdutoDTO implements Serializable {
 
 	private static final long serialVersionUID = -8072285478313345444L;
 
 	private Long id;
 	
+	@Export(label="Código", alignment=Alignment.CENTER)
 	private String codigo;
 
+	@Export(label="Produto", alignment=Alignment.LEFT)
 	private String produtoDescricao;
-
+	
+	@Export(label="Tipo Produto", alignment=Alignment.LEFT)
 	private String tipoProdutoDescricao;
 	
+	@Export(label="Editor", alignment=Alignment.LEFT)
 	private String nomeEditor;
 	
+	@Export(label="Fornecedor", alignment=Alignment.LEFT)
 	private String tipoContratoFornecedor;
 	
+	@Export(label="PEB", alignment=Alignment.CENTER)
 	private Integer peb;
 	
+	@Export(label="Pcte. Padrão" , alignment=Alignment.CENTER)
 	private Integer pacotePadrao;
 	
+	@Export(label="Desconto %", alignment=Alignment.RIGHT)
 	private Float percentualDesconto;
 
+	@Export(label="Periodicidade", alignment=Alignment.CENTER)
 	private PeriodicidadeProduto periodicidade;
 
 	

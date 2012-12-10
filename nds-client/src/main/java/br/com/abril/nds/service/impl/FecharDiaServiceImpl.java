@@ -761,7 +761,9 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 	private List<SuplementarFecharDiaDTO> incluirLancamentosSuplementar(FechamentoDiarioConsolidadoSuplementar consolidadoSuplementar)
 			throws FechamentoDiarioException {
 		
-		List<SuplementarFecharDiaDTO> listaSuplementar = this.resumoSuplementarFecharDiaService.obterDadosGridSuplementar();
+	    FechamentoDiario fechamentoDiario = consolidadoSuplementar.getFechamentoDiario();
+	    
+		List<SuplementarFecharDiaDTO> listaSuplementar = this.resumoSuplementarFecharDiaService.obterDadosGridSuplementar(fechamentoDiario.getDataFechamento());
 		
 		if(listaSuplementar!= null && !listaSuplementar.isEmpty()){
 			
@@ -773,7 +775,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 				
 				lancamentoSuplementar.setProdutoEdicao(produtoEdicao);
 				lancamentoSuplementar.setFechamentoDiarioConsolidadoSuplementar(consolidadoSuplementar);
-				lancamentoSuplementar.setQuantidadeContabilizada(item.getQuantidadeContabil());
+				lancamentoSuplementar.setQuantidadeContabilizada(item.getQuantidadeContabil().longValue());
 				
 				fechamentoDiarioLancamentoSuplementarRepository.adicionar(lancamentoSuplementar);
 			}

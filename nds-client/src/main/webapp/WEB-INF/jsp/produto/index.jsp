@@ -293,6 +293,19 @@
 					<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0" />
 				</a>
 			</span>
+			
+			<span class="bt_arq">
+				<a href="${pageContext.request.contextPath}/produto/exportar?fileType=XLS" rel="tipsy" title="Gerar Arquivo">
+					<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
+				</a>
+			</span>
+			
+			<span class="bt_arq">
+				<a href="${pageContext.request.contextPath}/produto/exportar?fileType=PDF" rel="tipsy" title="Imprimir">
+					<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
+				</a>
+			</span>
+			
 		</div>
 	</div>
 	<div class="linha_separa_fields">&nbsp;</div>
