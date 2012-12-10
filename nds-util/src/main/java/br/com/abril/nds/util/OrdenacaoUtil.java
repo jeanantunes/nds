@@ -17,6 +17,9 @@ public class OrdenacaoUtil  {
 	
 	public static <T extends Ordenavel> void incluirListaOrdenada(List<T> listaItensNovos, List<T> listaItensExistentes) {
 		
+		if (listaItensNovos == null || listaItensExistentes == null)
+			return;
+		
 		Integer ordemItemAnterior = 0;
 		
 		OrdenacaoUtil.sortList(listaItensExistentes);
