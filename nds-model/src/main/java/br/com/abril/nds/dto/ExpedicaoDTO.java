@@ -37,7 +37,7 @@ public class ExpedicaoDTO implements Serializable {
 	public ExpedicaoDTO() {}
 	
 	public ExpedicaoDTO(String codigoProduto, String nomeProduto,
-						Long numeroEdicao, BigDecimal precoCapa, BigDecimal desconto,BigInteger qntReparte,
+						Long numeroEdicao, BigDecimal precoCapa, BigDecimal desconto, BigInteger qntReparte,
 						BigInteger qntDiferenca, BigDecimal valorFaturado, String razaoSocial) {
 		
 		this.codigoProduto = codigoProduto;
@@ -68,7 +68,8 @@ public class ExpedicaoDTO implements Serializable {
 	
 	public ExpedicaoDTO(Date dataLancamento, Long idBox, String codigoBox, String nomeBox,
 			BigDecimal precoCapa, BigInteger qntReparte,
-			BigInteger qntDiferenca, BigDecimal valorFaturado) {
+			BigInteger qntDiferenca, BigDecimal valorFaturado,
+			String codigoProduto, String nomeProduto, Long numeroEdicao) {
 
 		
 		this.dataLancamento = dataLancamento;
@@ -79,6 +80,9 @@ public class ExpedicaoDTO implements Serializable {
 		this.qntReparte = qntReparte;
 		this.qntDiferenca = qntDiferenca;
 		this.valorFaturado = valorFaturado;
+		this.codigoProduto = codigoProduto;
+		this.nomeProduto = nomeProduto;
+		this.numeroEdicao = numeroEdicao;
 	}
 	
 
