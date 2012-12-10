@@ -150,6 +150,9 @@ public class Produto implements Serializable {
 	@Embedded
 	private SegmentacaoProduto segmentacao;
 	
+	/**
+	 * Desconto aplicado no cadastro de Tipo Desconto Cota
+	 */
 	@OneToOne(optional = true)
 	@JoinColumn(name = "DESCONTO_ID")
 	private Desconto descontoProduto;

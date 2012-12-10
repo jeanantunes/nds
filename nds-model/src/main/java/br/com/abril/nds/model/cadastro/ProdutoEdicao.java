@@ -174,6 +174,9 @@ public class ProdutoEdicao implements Serializable {
 	@OneToMany(mappedBy = "produtoEdicao")
 	protected Set<FechamentoDiarioLancamentoReparte> historicoMovimentoRepartes;
 	
+	/**
+	 * Desconto aplicado no cadastro de Tipo Desconto Cota
+	 */
 	@OneToOne(optional = true)
 	@JoinColumn(name = "DESCONTO_ID")
 	private Desconto descontoProdutoEdicao;
