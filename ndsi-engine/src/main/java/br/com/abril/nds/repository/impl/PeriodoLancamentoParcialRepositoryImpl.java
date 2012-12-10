@@ -40,11 +40,11 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 		
 		hql.append("		sum(lancamento.reparte) as reparte,  ");
 		
-		hql.append(" 		(select sum(movCota.qtde) from Lancamento lancamentoSupl ");
-		hql.append("		 	left join lancamentoSupl.movimentoEstoqueCotas movCota ");
-		hql.append("			join lancamentoSupl.produtoEdicao pe ");
-		hql.append("		 where pe.id = produtoEdicao.id ");
-		hql.append("		    and lancamentoSupl.tipoLancamento = 'SUPLEMENTAR' ");
+		hql.append(" 		(select sum(lancamentoSupl.reparte) " );
+		hql.append("           from Lancamento lancamentoSupl ");
+		hql.append("		   join lancamentoSupl.produtoEdicao pe ");
+		hql.append("		  where pe.id = produtoEdicao.id ");
+		hql.append("		    and lancamentoSupl.tipoLancamento <> 'LANCAMENTO' ");
 		hql.append("			and lancamentoSupl.dataLancamentoDistribuidor >= lancamento.dataLancamentoDistribuidor ");
 		hql.append("			and lancamentoSupl.dataLancamentoDistribuidor <= lancamento.dataRecolhimentoDistribuidor) ");		
 		hql.append(" 		as suplementacao, ");
