@@ -114,14 +114,17 @@ public class VendaProdutoEncalheRepositoryImpl extends AbstractRepositoryModel<V
 			.append(" produtoEdicao.numeroEdicao as numeroEdicao ,")
 			.append(" produto.nome as nomeProduto ,")
 			.append(" produto.codigo as codigoProduto ,")
-			.append(" produtoEdicao.precoVenda - (produtoEdicao.precoVenda * " + this.obterSQLDesconto() + " / 100) as precoDesconto ,")
+			.append(" mec.valoresAplicados.precoComDesconto as precoDesconto,")
 			.append(" venda.valorTotalVenda as valoTotalProduto ,")
 			.append(" venda.qntProduto as qntProduto, ")
 			.append(" usuario as usuario ");
 		}
 	
 		hql.append(" from VendaProduto venda ")
-		    .append(" join venda.produtoEdicao as produtoEdicao ")
+		    
+			.append(" join venda.produtoEdicao as produtoEdicao ")
+	        .append(" join venda.movimentoFinanceiro as movimentoFinanceiro  ")
+	        .append(" join movimentoFinanceiro.movimentos as mec ")
 		    .append(" join produtoEdicao.produto as produto ")
 		    .append(" join produto.fornecedores as fornecedores ")
 		    .append(" join venda.usuario as usuario ")
@@ -178,10 +181,10 @@ public class VendaProdutoEncalheRepositoryImpl extends AbstractRepositoryModel<V
 				hql.append(" order by venda.produtoEdicao.numeroEdicao ");
 				break;
 			case PRECO_CAPA:	
-				hql.append(" order by venda.produtoEdicao.precoVenda - (produtoEdicao.precoVenda * " + this.obterSQLDesconto() + " / 100) ");
+				hql.append(" order by mec.valoresAplicados.precoComDesconto ");
 				break;
 			case PRECO_DESCONTO:	
-				hql.append(" order by (produtoEdicao.precoVenda * " + this.obterSQLDesconto() + " / 100) ");
+				hql.append(" order by ( mec.valoresAplicados.precoVenda * mec.valoresAplicados.valorDesconto / 100 ) ");
 				break;
 			case QNT_PRODUTO:	
 				hql.append(" order by venda.qntProduto ");
@@ -214,7 +217,7 @@ public class VendaProdutoEncalheRepositoryImpl extends AbstractRepositoryModel<V
 			.append(" venda.produtoEdicao.numeroEdicao as numeroEdicao ,")
 			.append(" venda.produtoEdicao.produto.nome as nomeProduto ,")
 			.append(" venda.produtoEdicao.produto.codigo as codigoProduto ,")
-			.append(" produtoEdicao.precoVenda - (produtoEdicao.precoVenda * " + this.obterSQLDesconto() + " / 100) as precoDesconto ,")
+			.append(" mec.valoresAplicados.precoComDesconto as precoDesconto ,")
 			.append(" venda.valorTotalVenda as valoTotalProduto ,")
 			.append(" venda.qntProduto as qntProduto ,")
 			.append(" venda.produtoEdicao.codigoDeBarras as codigoBarras ,")
@@ -223,6 +226,9 @@ public class VendaProdutoEncalheRepositoryImpl extends AbstractRepositoryModel<V
 			.append(" venda.tipoVenda as tipoVendaEncalhe ,")
 			.append(" venda.dataVencimentoDebito as dataVencimentoDebito ")
 	        .append(" from VendaProduto venda ")
+	        
+	        .append(" join venda.movimentoFinanceiro as movimentoFinanceiro  ")
+	        .append(" join movimentoFinanceiro.movimentos as mec ")
 	        .append(" join venda.produtoEdicao as produtoEdicao ")
 		    .append(" join produtoEdicao.produto as produto ")
 		    .append(" join produto.fornecedores as fornecedores ")
@@ -238,16 +244,6 @@ public class VendaProdutoEncalheRepositoryImpl extends AbstractRepositoryModel<V
 			
 	}
 	
-	private String obterSQLDesconto() {
-		
-		StringBuilder hql = new StringBuilder("coalesce ((select view.desconto ");
-        
-		hql.append(" from ViewDesconto view ")
-           .append(" where view.cotaId = venda.cota.id ")
-           .append(" and view.produtoEdicaoId = produtoEdicao.id ")
-           .append(" and view.fornecedorId = fornecedores.id), 0) ");
-		
-		return hql.toString();
-	}
+	
 	
 }
