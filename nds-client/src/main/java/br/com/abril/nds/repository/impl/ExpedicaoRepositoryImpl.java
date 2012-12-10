@@ -110,7 +110,7 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 							.append(" when (diferenca.tipoDiferenca = 'SOBRA_EM') then (diferenca.qtde)")
 							.append(" else 0")
 						.append(" end )) as qntDiferenca, ")
-						.append(" sum(estudoCota.qtdeEfetiva)*sum(produtoEd.precoVenda), ")
+						.append(" sum(estudoCota.qtdeEfetiva) * sum(produtoEd.precoVenda), ")
 						.append(" juridica.razaoSocial ")
 						
 			.append(" ) ");
