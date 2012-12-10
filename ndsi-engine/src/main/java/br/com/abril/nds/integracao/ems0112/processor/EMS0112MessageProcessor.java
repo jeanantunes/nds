@@ -6,6 +6,7 @@ import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.engine.data.Message;
 import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
@@ -148,7 +149,16 @@ public class EMS0112MessageProcessor extends AbstractRepository implements Messa
 			
 			
 			//ENDERECO EDITOR [COMERCIAL]
-			Endereco endComercial = getEnderecoSaneado(input.getCepEditor());
+			Endereco endComercial = null;
+			try {
+				endComercial = getEnderecoSaneado(input.getCepEditor());
+			}catch (ValidacaoException ex ) {
+				ndsiLoggerFactory.getLogger().logError(
+						message, 
+						EventoExecucaoEnum.HIERARQUIA, 
+						"Editor: "+ input.getNumeroEditor() +", Endereco Não Encontrado para o Cep:"+input.getCepEntrega());
+			}	
+			
 			if (null == endComercial ) {
 				endComercial = new Endereco();
 				endComercial.setTipoLogradouro(input.getTipoLogradouroEditor());
@@ -170,7 +180,15 @@ public class EMS0112MessageProcessor extends AbstractRepository implements Messa
 			
 			
 			//ENDERECO EDITOR [ENTREGA]
-			Endereco endEntrega = getEnderecoSaneado(input.getCepEntrega());
+			Endereco endEntrega = null;
+			try {
+				endEntrega = getEnderecoSaneado(input.getCepEntrega());
+			}catch (ValidacaoException ex ) {
+				ndsiLoggerFactory.getLogger().logError(
+						message, 
+						EventoExecucaoEnum.HIERARQUIA, 
+						"Editor: "+ input.getNumeroEditor() +", Endereco Não Encontrado para o Cep:"+input.getCepEntrega());
+			}
 			if (null == endEntrega ) {
 				endEntrega = new Endereco();				
 				endEntrega.setTipoLogradouro(input.getTipoLogradouroEntrega());
@@ -265,7 +283,16 @@ public class EMS0112MessageProcessor extends AbstractRepository implements Messa
 				
 				if(!input.getCepEditor().equals(ed.getEndereco().getCep())){
 					
-					Endereco endEditor = getEnderecoSaneado(input.getCepEditor());
+					
+					Endereco endEditor = null;
+					try {
+						endEditor = getEnderecoSaneado(input.getCepEditor());
+					}catch (ValidacaoException ex ) {
+						ndsiLoggerFactory.getLogger().logError(
+								message, 
+								EventoExecucaoEnum.HIERARQUIA, 
+								"Editor: "+ input.getNumeroEditor() +", Endereco Não Encontrado para o Cep:"+input.getCepEntrega());
+					}					
 					
 					endEditor = (null != endEditor ) ? endEditor : ed.getEndereco();
 
@@ -316,7 +343,15 @@ public class EMS0112MessageProcessor extends AbstractRepository implements Messa
 				
 				if(!input.getCepEntrega().equals(ed.getEndereco().getCep())){
 					
-					Endereco endEntrega = getEnderecoSaneado(input.getCepEntrega());
+					Endereco endEntrega = null;
+					try {
+						endEntrega = getEnderecoSaneado(input.getCepEntrega());
+					}catch (ValidacaoException ex ) {
+						ndsiLoggerFactory.getLogger().logError(
+								message, 
+								EventoExecucaoEnum.HIERARQUIA, 
+								"Editor: "+ input.getNumeroEditor() +", Endereco Não Encontrado para o Cep:"+input.getCepEntrega());
+					}	
 					
 					endEntrega = (null != endEntrega ) ? endEntrega : ed.getEndereco();
 									
@@ -361,7 +396,16 @@ public class EMS0112MessageProcessor extends AbstractRepository implements Messa
 			if(tipo == TipoEndereco.COMERCIAL){
 				//ENDERECO EDITOR [COMERCIAL]
 				
-				Endereco endComercial = getEnderecoSaneado(input.getCepEditor());
+				Endereco endComercial = null;
+				try {
+					endComercial = getEnderecoSaneado(input.getCepEditor());
+				}catch (ValidacaoException ex ) {
+					ndsiLoggerFactory.getLogger().logError(
+							message, 
+							EventoExecucaoEnum.HIERARQUIA, 
+							"Editor: "+ input.getNumeroEditor() +", Endereco Não Encontrado para o Cep:"+input.getCepEntrega());
+				}	
+
 				if (null == endComercial) {
 					endComercial = new Endereco();
 					endComercial.setTipoLogradouro(input.getTipoLogradouroEditor());
@@ -385,7 +429,17 @@ public class EMS0112MessageProcessor extends AbstractRepository implements Messa
 			
 			}else if(tipo == TipoEndereco.LOCAL_ENTREGA){
 				//ENDERECO EDITOR [ENTREGA]
-				Endereco endEntrega = getEnderecoSaneado(input.getCepEntrega());
+
+				Endereco endEntrega = null;
+				try {
+					endEntrega = getEnderecoSaneado(input.getCepEntrega());
+				}catch (ValidacaoException ex ) {
+					ndsiLoggerFactory.getLogger().logError(
+							message, 
+							EventoExecucaoEnum.HIERARQUIA, 
+							"Editor: "+ input.getNumeroEditor() +", Endereco Não Encontrado para o Cep:"+input.getCepEntrega());
+				}	
+
 				if (null == endEntrega) {
 					endEntrega = new Endereco();
 					endEntrega.setTipoLogradouro(input.getTipoLogradouroEntrega());
