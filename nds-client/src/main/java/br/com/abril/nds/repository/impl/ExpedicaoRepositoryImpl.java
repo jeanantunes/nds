@@ -129,10 +129,10 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 			.append(" JOIN lancamento.expedicao expedicao ")
 
 			.append(" WHERE ")
-			.append(" lancamento.dataLancamentoDistribuidor =:dataLancamento ")
-			.append(" and lancamento.status =:status ")
-			.append(" and box.tipoBox =:tipoBox ")
-			.append(" and box.codigo =:codigoBox ");
+			.append(" lancamento.dataLancamentoDistribuidor = :dataLancamento ")
+			.append(" and lancamento.status = :status ")
+			.append(" and box.tipoBox = :tipoBox ")
+			.append(" and box.codigo = :codigoBox ");
 		
 		hql.append(" group by ")
 			.append("produto.codigo,")
