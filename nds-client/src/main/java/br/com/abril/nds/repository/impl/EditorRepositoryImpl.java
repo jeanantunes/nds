@@ -52,8 +52,16 @@ public class EditorRepositoryImpl extends AbstractRepositoryModel<Editor, Long> 
 		StringBuilder hql = new StringBuilder();
 
 		hql.append("SELECT new ").append(ResultadoCurvaABCEditor.class.getCanonicalName())
-		.append(" ( (sum(estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida)), ")
-		.append("   ( sum((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * (movimentos.valoresAplicados.precoComDesconto)) ) ) ");
+
+		   .append(" ( ")
+	       .append("   case when (lancamento.status = :statusLancamentoRecolhido) then ( ")
+		   .append("  		(sum(estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida)) ")
+		   .append(" ) else 0 end, ")
+		   
+  		   .append("   case when (lancamento.status = :statusLancamentoRecolhido) then ( ")
+		   .append("   ( sum((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * (movimentos.valoresAplicados.precoComDesconto)) )  ")
+		   .append(" ) else 0 end ")
+		   .append(" ) ");
 
 		hql.append(getWhereQueryObterCurvaABCEditor(filtro));
 
@@ -284,8 +292,7 @@ public class EditorRepositoryImpl extends AbstractRepositoryModel<Editor, Long> 
 		
 		hqlMargemCota.append(" ")
 		.append(" ((sum (( estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida )) * produtoEdicao.precoVenda)")
-		.append(" * ( movimentos.valoresAplicados.precoComDesconto ))");
-
+		.append(" * ( ").append("movimentos.valoresAplicados.valorDesconto").append(" / 100))");
 		String hqlFaturamento = "   case when (lancamento.status = :statusLancamentoRecolhido) then ( " 
 							  + " 		(sum ( (estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida )) * produtoEdicao.precoVenda )"
 							  + "	) else 0 end ";
@@ -356,9 +363,13 @@ public class EditorRepositoryImpl extends AbstractRepositoryModel<Editor, Long> 
 		    
 		    .append(" sum(estoqueProduto.QTDE_RECEBIDA) as reparte,  ")
 		    
-		    .append(" sum(estoqueProduto.QTDE_RECEBIDA-estoqueProduto.QTDE_DEVOLVIDA) as vendaExemplares,  ")
-		    
-		    .append(" sum((estoqueProduto.QTDE_RECEBIDA-estoqueProduto.QTDE_DEVOLVIDA)*(movimentos.PRECO_COM_DESCONTO))) as faturamentoCapa , ")
+   		    .append("   case when (lancamento.status = :statusLancamentoRecolhido) then ( ")
+		    .append(" 			sum(estoqueProduto.QTDE_RECEBIDA-estoqueProduto.QTDE_DEVOLVIDA)  ")
+			.append("		) else 0 end as vendaExemplares, ")
+
+   		    .append("   case when (lancamento.status = :statusLancamentoRecolhido) then ( ")
+		    .append(" 	sum((estoqueProduto.QTDE_RECEBIDA-estoqueProduto.QTDE_DEVOLVIDA)*(movimentos.PRECO_COM_DESCONTO)) ") 
+			.append("		) else 0 end as faturamentoCapa, ")
 		    
 		    .append( this.getSqlMargemDistribuidor()).append(" as valorMargemDistribuidor ")
 		    
@@ -472,9 +483,12 @@ public class EditorRepositoryImpl extends AbstractRepositoryModel<Editor, Long> 
 		sql.append("(select sum(sql_margem.margem) from (")
 	
 		.append("	 select ")
-		.append("        (sum(estoqueProdutoMargem.QTDE_RECEBIDA - estoqueProdutoMargem.QTDE_DEVOLVIDA) * movimentosMargem.PRECO_COM_DESCONTO) ")
-		.append("		   ((sum(estoqueProdutoMargem.QTDE_RECEBIDA - estoqueProdutoMargem.QTDE_DEVOLVIDA) * (movimentosMargem.PRECO_VENDA - ")
-		.append("					(movimentosMargem.PRECO_VENDA * (fornecedorMargem.MARGEM_DISTRIBUIDOR/100))))) ")
+
+		.append("       ((sum(estoqueProdutoMargem.QTDE_RECEBIDA-estoqueProdutoMargem.QTDE_DEVOLVIDA) * ")
+		.append("		movimentosMargem.PRECO_COM_DESCONTO)) ")
+		.append("		- ")
+		.append("		(sum(estoqueProdutoMargem.QTDE_RECEBIDA-estoqueProdutoMargem.QTDE_DEVOLVIDA) * produtoEdicaoMargem.PRECO_VENDA ")
+		.append("		* (fornecedorMargem.MARGEM_DISTRIBUIDOR/100)) ")
 		.append("			as margem ")
 		
 		.append("    from ")

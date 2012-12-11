@@ -37,7 +37,7 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		   .append("  			sum(estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida)) ")
 		   .append(" 		else 0 end, ")
 		   .append("   case when (lancamento.status = :statusLancamentoRecolhido) then ( ")
-		   .append("   			sum((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * (estoqueProdutoCota.produtoEdicao.precoVenda - ( "+this.obterSQLDesconto()+" ))) ) ")
+		   .append("   			sum((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * (movimentos.valoresAplicados.precoComDesconto)) ) ")
 		   .append(" 		else 0 end ")
 		   .append(" ) ");
 
@@ -79,7 +79,7 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		.append(" 		   sum(estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida)) ")
 		.append(" 		   else 0 end, ")
 		.append("   case when (lancamento.status = :statusLancamentoRecolhido) then ( ")
-		.append("          sum((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * (estoqueProdutoCota.produtoEdicao.precoVenda - ( "+this.obterSQLDesconto()+" ))) ) ")
+		.append("          sum((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * (movimentos.valoresAplicados.precoComDesconto)) ) ")
 		.append("          else 0 end , ")
 		.append("  estoqueProdutoCota.produtoEdicao.produto.id ,")
 		.append("  estoqueProdutoCota.cota.id )");
@@ -262,15 +262,5 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 
 		return lista;
 	}
-	
-	private String obterSQLDesconto(){
-		
-		StringBuilder hql = new StringBuilder("select view.desconto ");
-		hql.append(" from ViewDesconto view ")
-		   .append(" where view.cotaId = estoqueProdutoCota.cota.id ")
-		   .append(" and view.produtoEdicaoId = estoqueProdutoCota.produtoEdicao.id ")
-		   .append(" and view.fornecedorId = fornecedores.id ");
-		
-		return hql.toString();
-	}	
+
 }

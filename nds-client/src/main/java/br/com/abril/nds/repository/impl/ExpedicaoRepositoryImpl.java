@@ -101,7 +101,7 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 						.append("produto.nome,")
 						.append("produtoEd.numeroEdicao,")
 						.append("produtoEd.precoVenda,")
-						.append("("+ this.getHQLDesconto() +") as desconto,")
+						.append("(coalesce(produtoEd.descontoProdutoEdicao.valor, produtoEd.produto.descontoProduto.valor, 0)) as desconto,")
 						.append("sum(estudoCota.qtdeEfetiva) as qtdeReparte,")
 						.append(" SUM (( case ")
 							.append(" when (diferenca.tipoDiferenca = 'FALTA_DE') then (-(diferenca.qtde * produtoEd.pacotePadrao))")
@@ -110,7 +110,7 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 							.append(" when (diferenca.tipoDiferenca = 'SOBRA_EM') then (diferenca.qtde)")
 							.append(" else 0")
 						.append(" end )) as qntDiferenca, ")
-						.append(" sum(estudoCota.qtdeEfetiva)*sum(produtoEd.precoVenda), ")
+						.append(" sum(estudoCota.qtdeEfetiva) * sum(produtoEd.precoVenda), ")
 						.append(" juridica.razaoSocial ")
 						
 			.append(" ) ");
@@ -131,25 +131,14 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 			.append(" JOIN fornecedor.juridica juridica ")
 			
 			.append(" WHERE ")
-			.append(" lancamento.dataLancamentoDistribuidor =:dataLancamento ")
-			.append(" and lancamento.status =:status ")
-			.append(" and box.tipoBox =:tipoBox ")
-			.append(" and box.codigo =:codigoBox ");
+			.append(" lancamento.dataLancamentoDistribuidor = :dataLancamento ")
+			.append(" and lancamento.status = :status ")
+			.append(" and box.tipoBox = :tipoBox ")
+			.append(" and box.codigo = :codigoBox ");
 		
 		hql.append(" group by ")
 			.append("produtoEd.id ");
 
-		return hql.toString();
-	}
-	
-	private String getHQLDesconto(){
-		
-		StringBuilder hql = new StringBuilder("coalesce ((select view.desconto");
-		hql.append(" from ViewDesconto view ")
-		   .append(" where view.cotaId = cota.id ")
-		   .append(" and view.produtoEdicaoId = produtoEd.id ")
-		   .append(" and view.fornecedorId = fornecedor.id),0) ");
-		
 		return hql.toString();
 	}
 	

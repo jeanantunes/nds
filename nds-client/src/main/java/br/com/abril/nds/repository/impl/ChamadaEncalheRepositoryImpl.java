@@ -94,6 +94,7 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		return (ChamadaEncalhe) query.uniqueResult();
 	}
 	
+	@SuppressWarnings("unchecked")
 	public List<ChamadaEncalhe> obterChamadaEncalhePorProdutoEdicao(ProdutoEdicao produtoEdicao,
 			 												  TipoChamadaEncalhe tipoChamadaEncalhe) {
 
@@ -439,6 +440,7 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		hql.append(" 	    produto.nome as nomeProduto, 					");
 		hql.append(" 	    produtoEdicao.id as idProdutoEdicao, 			");
 		hql.append(" 	    produtoEdicao.numeroEdicao as edicao, 			");
+
 		hql.append(" 	    (movimentoCota.valoresAplciados.valorDesconto) as desconto, 	");
 		hql.append(" 	    movimentoCota.valoresAplciados.precoVenda as precoVenda, 		");
 		hql.append(" 	    produtoEdicao.parcial as tipoRecolhimento, 		");
@@ -497,7 +499,7 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 			param.put("dataAte", filtro.getDtRecolhimentoAte());
 		}
 	}
-	
+
 	@Override
 	public Date obterProximaDataEncalhe(Date base) {
 		StringBuilder sb = new StringBuilder();

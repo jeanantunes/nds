@@ -51,7 +51,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		hql.append(" , p.nome as produto ");
 		hql.append(" , pe.numeroEdicao as edicao");
 		hql.append(", (mec.valoresAplicados.precoComDesconto) as precoCapaDesconto ");
-		hql.append(" , pe.precoVenda as precoCapa ");
+		hql.append(" , mec.valoresAplicados.precoVenda as precoCapa ");
 		hql.append(" , pe.id as produtoEdicao ");
 		hql.append(" ,  case when  pe.parcial  = true  then 'P' else 'N' end  as tipo ");
 		hql.append(" , che.dataRecolhimento as dataRecolhimento ");

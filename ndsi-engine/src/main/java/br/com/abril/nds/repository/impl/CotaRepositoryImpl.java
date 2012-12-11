@@ -1012,7 +1012,6 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 		.append(" ( (sum(estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida)), ")
 		.append("   ( sum((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * (estoqueProdutoCota.produtoEdicao.precoVenda - ( movimentos.valoresAplicados.valorDesconto ))) ) ) ");
 
-
 		hql.append(getWhereQueryObterCurvaABCCota(filtro));
 
 		Query query = this.getSession().createQuery(hql.toString());
