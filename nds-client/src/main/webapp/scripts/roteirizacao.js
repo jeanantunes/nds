@@ -91,8 +91,6 @@ var roteirizacao = $.extend(true, {
 
         roteirizacao.limparCamposNovaInclusao();
 
-        $("#trNomeRoteiro").hide();
-
         var metodoObterOrdem = '';
 
         if (roteirizacao.tipoInclusao == TipoInclusao.ROTEIRO){
@@ -105,6 +103,8 @@ var roteirizacao = $.extend(true, {
             $("#nomeRoteiro").text(roteirizacao.nomeRoteiro);
         }
 
+        var _this = this;
+        
         $.postJSON(contextPath + '/cadastro/roteirizacao/' + metodoObterOrdem,
             [{name: 'idRoteiro', value: roteirizacao.idRoteiro}],
             function(result) {
@@ -113,37 +113,42 @@ var roteirizacao = $.extend(true, {
                 $('#inputOrdem', roteirizacao.workspace).numeric();
                 $("#inputOrdem", roteirizacao.workspace).val(result.int);
 
-                $("#dialog-novo-dado", roteirizacao.workspace ).dialog({
-                    resizable: false,
-                    height:240,
-                    width:420,
-                    modal: true,
-                    title: (roteirizacao.tipoInclusao == TipoInclusao.ROTEIRO ? "Novo Roteiro" : "Nova Rota"),
-                    buttons: {
-                        "Confirmar": function() {
-
-                            if (roteirizacao.tipoInclusao == TipoInclusao.ROTEIRO){
-
-                                roteirizacao.confirmarInclusaoRoteiro();
-                            } else {
-
-                                roteirizacao.confirmarInclusaoRota();
-                            }
-                        },
-                        "Cancelar": function() {
-                            $( this ).dialog( "close" );
-                        }
-                    },
-                    form: $("#dialog-novo-dado", this.workspace).parents("form")
-                });
+                _this.popupNovoRoteiroRota();
             },
             null,
-            true
-        );
+            true);
 
         this.init();
     },
+    
+    
+    
+    popupNovoRoteiroRota : function() {
+    	 $("#dialog-novo-dado", roteirizacao.workspace ).dialog({
+             resizable: false,
+             height:240,
+             width:420,
+             modal: true,
+             title: (roteirizacao.tipoInclusao == TipoInclusao.ROTEIRO ? "Novo Roteiro" : "Nova Rota"),
+             buttons: {
+                 "Confirmar": function() {
 
+                     if (roteirizacao.tipoInclusao == TipoInclusao.ROTEIRO){
+
+                         roteirizacao.confirmarInclusaoRoteiro();
+                     } else {
+
+                         roteirizacao.confirmarInclusaoRota();
+                     }
+                 },
+                 "Cancelar": function() {
+                     $( this ).dialog( "close" );
+                 }
+             },
+             form: $("#dialog-novo-dado", this.workspace).parents("form")
+         });
+    },
+    
     confirmarInclusaoRoteiro : function() {
         var tipoRoteiro = 'NORMAL';
         if ( $('input[name=tipoRoteiro]').is(':checked') ){
@@ -244,7 +249,6 @@ var roteirizacao = $.extend(true, {
 
                     var tipoMensagem = result.tipoMensagem;
                     var listaMensagens = result.listaMensagens;
-                    $('#dialog-rota', roteirizacao.workspace).dialog( "close" );
                     if (tipoMensagem && listaMensagens) {
                         exibirMensagemDialog(tipoMensagem, listaMensagens,'dialogRoteirizacao');
                         roteirizacao.prepararPopupRoteirizacao();
@@ -715,7 +719,6 @@ var roteirizacao = $.extend(true, {
             function(result) {
                 var tipoMensagem = result.tipoMensagem;
                 var listaMensagens = result.listaMensagens;
-                $('#dialog-rota', roteirizacao.workspace).dialog( "close" );
 
                 if (tipoMensagem && listaMensagens) {
                     exibirMensagemDialog(tipoMensagem, listaMensagens,'dialogRoteirizacao');
@@ -738,7 +741,6 @@ var roteirizacao = $.extend(true, {
             function(result) {
                 var tipoMensagem = result.tipoMensagem;
                 var listaMensagens = result.listaMensagens;
-                $('#dialog-rota', roteirizacao.workspace).dialog( "close" );
 
                 if (tipoMensagem && listaMensagens) {
                     exibirMensagemDialog(tipoMensagem, listaMensagens,'dialogRoteirizacao');
@@ -881,36 +883,6 @@ var roteirizacao = $.extend(true, {
         
     },
 
-//	    transferirRotas : function() {
-//	        $('#roteiroTranferenciaSelecionadoId', roteirizacao.workspace).val(roteiro.id);
-//	        
-//	        var roteiroId = null;
-//	        
-//	        if ( $('#roteiroTranferenciaSelecionadoId', roteirizacao.workspace).val() != null &&   $.trim( $('#roteiroTranferenciaNome', roteirizacao.workspace).val()) == $('#roteiroTranferenciaSelecionadoNome', roteirizacao.workspace).val()) {
-//	            roteiroId =  $('#roteiroTranferenciaSelecionadoId', roteirizacao.workspace).val();
-//	        }
-//	        
-//	        $.postJSON(contextPath + '/cadastro/roteirizacao/transferirRotas',
-//	                 {
-//	                    'rotasId' : roteirizacao.buscaRotasSelecionadas(),
-//	                    'roteiroId' : roteiroId,
-//	                    'roteiroNome' : $('#roteiroTranferenciaNome', roteirizacao.workspace).val()
-//	                    
-//	                 },
-//	                   function(result) {
-//	                        var tipoMensagem = result.tipoMensagem;
-//	                        var listaMensagens = result.listaMensagens;
-//	                        $('#dialog-rota', roteirizacao.workspace).dialog( "close" );
-//	                        if (tipoMensagem && listaMensagens) {
-//	                            exibirMensagemDialog(tipoMensagem, listaMensagens,'dialogRoteirizacao');
-//	                        }
-//	                        $(".rotasGrid").flexReload();
-//	                        
-//	                   },
-//	                   null,
-//	                   true
-//	        );
-//	    },
 
     transferirRotasComNovoRoteiro : function() {
         var tipoRoteiro = 'NORMAL';
@@ -931,7 +903,6 @@ var roteirizacao = $.extend(true, {
             function(result) {
                 var tipoMensagem = result.tipoMensagem;
                 var listaMensagens = result.listaMensagens;
-                $('#dialog-rota', roteirizacao.workspace).dialog( "close" );
                 if (tipoMensagem && listaMensagens) {
                     exibirMensagemDialog(tipoMensagem, listaMensagens,'dialogRoteirizacao');
                 }

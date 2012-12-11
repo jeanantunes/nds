@@ -110,23 +110,6 @@
 </div>
 </form>
 
-<form id="form-rota">
-<div id="dialog-rota" title="Rota" style="display:none;">
-	<fieldset>
-    	<legend>Nova Rota</legend>
-        <label>Ordem:</label>
-        <input name="ordemRotaInclusao"  id="ordemRotaInclusao"  type="text" style="width:200px; float:left; margin-bottom:5px;" />       
-        <br clear="all" />
-        
-        <label>Nome:</label>
-        <input name="nomeRotaInclusao" id="nomeRotaInclusao" type="text" style="width:200px; float:left;" />       
-        <br clear="all" />
-        
-
-    </fieldset>
-</div>
-</form>
-
 <form id="form-roteirizacao">
 
     <div id="dialog-roteirizacao" title="Nova Roteirização" style="display:none;">
@@ -348,24 +331,36 @@
 	
 	<form id="formNovoDado">
 		<div id="dialog-novo-dado" title="Novo" style="display:none;">
+			
 			<jsp:include page="../messagesDialog.jsp" /> 
+			
 			<fieldset style="width: 380px;">
+	    	
 	    		<legend>Novo</legend>
+	    	
 	    		<table width="347" border="0" cellspacing="1" cellpadding="1">
-	    			<tr style="display: none;" id="trNomeRoteiro">
-						<td width="85">Incluir em:</td>
+	    			<tr>
+						<td width="85">Novo:</td>
 						<td width="255">
-							<div id="nomeRoteiro"></div>
+							<select id="selectNovoRoteiroRota" style="width:220px;">
+								<option selected="selected">Roteiro</option>
+								<option>Rota</option>
+							</select>
+						</td>
+					</tr>
+	    			<tr>
+						<td width="85">Incluir:</td>
+						<td width="255">
+							<select id="selectIncluirEmRoteiro" style="width:220px; display:none;">
+								<option>Selecione...</option>
+							</select>
 						</td>
 					</tr>
 				</table>
+				
 	        	<table width="347" border="0" cellspacing="1" cellpadding="1" id="incluirRoteiro">
 	          		<tr>
-			            <td width="85">&nbsp;</td>
-			            <td width="255">&nbsp;</td>
-	          		</tr>
-	          		<tr>
-	            		<td>Ordem:</td>
+	            		<td width="85">Ordem:</td>
 	            		<td>
 	            			<input id="inputOrdem" style="width:220px;" />
 	            		</td>
