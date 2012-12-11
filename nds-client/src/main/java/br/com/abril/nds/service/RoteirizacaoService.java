@@ -228,5 +228,19 @@ public interface RoteirizacaoService {
      */
 	ValidacaoVO validarRoteirizacao(RoteirizacaoDTO dto);
 
+	/**
+	 * Carrega os entregadores em forma de rota no roteiro parametrizado
+	 * 
+	 * @param roteiroDTO
+	 */
+	void carregarRotasEntregadores(RoteiroRoteirizacaoDTO roteiroDTO);
+
+	/**
+	 * Carrega os entregadores em forma de rota em todos os roteiros da roteirização parametrizada
+	 * 
+	 * @param roteirizacaoDTO
+	 */
+	void carregarRotasEntregadores(RoteirizacaoDTO roteirizacao);
+
 }
 	

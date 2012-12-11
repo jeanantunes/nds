@@ -28,7 +28,7 @@ public interface ResumoEncalheFecharDiaService {
 	 * 
 	 * @return List<VendaFechamentoDiaDTO>
 	 */
-	List<VendaFechamentoDiaDTO> obterDadosVendaEncalhe(Date dataOperacao);
+	List<VendaFechamentoDiaDTO> obterDadosVendaEncalhe(Date dataOperacao, PaginacaoVO paginacao);
 	
 	/**
      * Conta o total de registros de {@link ProdutoEdicao} que tiveream o
@@ -40,5 +40,14 @@ public interface ResumoEncalheFecharDiaService {
      * @return total de {@link ProdutoEdicao} com encalhe conferido na data
      **/
     Long contarProdutoEdicaoEncalhe(Date data);
+    
+    /**
+     * Conta as vendas de encalhe na data
+     * 
+     * @param data
+     *            data para contagem das vendas de encalhe
+     * @return total de vendas de encalhe na data
+     */
+    Long contarVendasEncalhe(Date data);
 
 }

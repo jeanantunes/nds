@@ -746,7 +746,9 @@ public class EnderecoController {
 					
 			if (enderecoAssociacao.getId() == null) {
 
-				idCellModel = enderecoAssociacao.getEndereco().getId() == null ? (int) System.currentTimeMillis() * -1 : enderecoAssociacao.getEndereco().getId().intValue();
+				idCellModel = (int) System.currentTimeMillis() * -1;
+				
+				enderecoAssociacao.setEnderecoPessoa(false);
 				
 				enderecoAssociacao.setId(idCellModel);
 			}

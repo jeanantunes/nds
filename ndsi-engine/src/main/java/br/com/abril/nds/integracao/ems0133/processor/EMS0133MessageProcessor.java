@@ -58,15 +58,15 @@ public class EMS0133MessageProcessor extends AbstractRepository implements Messa
 		
 		Date data = new Date();
 		
-		StringBuilder sql = new StringBuilder();
-		sql.append("SELECT l ");
-		sql.append("FROM Lancamento l ");
-		sql.append("WHERE l.id ");
-		sql.append("IN (SELECT lc.id FROM Lancamento lc ");
-		sql.append("JOIN l.produtoEdicao pe ");
-		sql.append("JOIN pe.produto p ");
-		sql.append("JOIN p.fornecedores f ");
-		sql.append("WHERE l.dataRecolhimentoDistribuidor = :dataOperacao)");
+		StringBuilder sql = new StringBuilder()
+			.append("SELECT l ")
+			.append("FROM Lancamento l ")
+			.append("WHERE l.id ")
+			.append("IN (SELECT lc.id FROM Lancamento lc ")
+			.append("JOIN l.produtoEdicao pe ")
+			.append("JOIN pe.produto p ")
+			.append("JOIN p.fornecedores f ")
+			.append("WHERE l.dataRecolhimentoDistribuidor = :dataOperacao)");
 		
 		Query query = getSession().createQuery(sql.toString());
 

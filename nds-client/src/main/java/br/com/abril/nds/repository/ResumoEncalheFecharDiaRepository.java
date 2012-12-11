@@ -20,7 +20,7 @@ public interface ResumoEncalheFecharDiaRepository {
 
 	List<EncalheFecharDiaDTO> obterDadosGridEncalhe(Date data, PaginacaoVO paginacao);
 
-	List<VendaFechamentoDiaDTO> obterDadosVendaEncalhe(Date dataOperacao);
+	List<VendaFechamentoDiaDTO> obterDadosVendaEncalhe(Date dataOperacao, PaginacaoVO paginacao);
 	
     /**
      * Conta o total de registros de {@link ProdutoEdicao} que tiveream o
@@ -41,5 +41,14 @@ public interface ResumoEncalheFecharDiaRepository {
      * @return DTO com as informações do encalhe da data
      */
     ResumoEncalheFecharDiaDTO obterResumoEncalhe(Date data);
+    
+    /**
+     * Conta as vendas de encalhe na data
+     * 
+     * @param data
+     *            data para contagem das vendas de encalhe
+     * @return total de vendas de encalhe na data
+     */
+    Long contarVendasEncalhe(Date data);
 
 }
