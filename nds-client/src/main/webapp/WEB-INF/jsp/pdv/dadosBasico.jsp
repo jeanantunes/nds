@@ -1,21 +1,19 @@
 <input  TYPE="hidden" id="dataAtual" value="${dataAtual}">
+	
+<div id="dialog-img" title="Incluir Foto do PDV">
 
-<form action="<c:url value='/cadastro/pdv/uploadImagem' />" id="formUploadPDV"
-		  method="post" enctype="multipart/form-data" >
+<br />
+
+       <form action="<c:url value='/cadastro/pdv/uploadImagem' />" id="formUploadPDV"
+	      method="post" enctype="multipart/form-data" >
+	      
+	       <input type="hidden" name="formUploadAjax" value="true" />
 		
-	
-	<div id="dialog-img" title="Incluir Foto do PDV">
-	<br />
-	
-		
-			<input type="hidden" name="formUploadAjax" value="true" />
-			
-		<input name="uploadedFile" type="file" id="uploadedFile" size="40" />
-										
-	
-	
-	</div>
-</form>
+	       <input name="uploadedFile" type="file" id="uploadedFile" size="40" />
+	    
+       </form>
+       
+</div>
 
 <fieldset style="width:820px!important; margin:5px!important;">
 <legend>Dados Básicos</legend>

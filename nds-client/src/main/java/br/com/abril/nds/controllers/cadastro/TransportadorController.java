@@ -128,6 +128,9 @@ public class TransportadorController {
 		this.httpSession.removeAttribute(LISTA_ENDERECOS_EXIBICAO);
 		this.httpSession.removeAttribute(LISTA_ENDERECOS_REMOVER_SESSAO);
 		this.httpSession.removeAttribute(LISTA_ENDERECOS_SALVAR_SESSAO);
+		
+		this.httpSession.removeAttribute(EnderecoController.ENDERECO_PENDENTE);
+		
 		this.httpSession.removeAttribute(ID_TRANSPORTADORA_EDICAO);
 		this.httpSession.removeAttribute(LISTA_ASSOCIACOES_SALVAR_SESSAO);
 		this.httpSession.removeAttribute(LISTA_ASSOCIACOES_REMOVER_SESSAO);
@@ -201,28 +204,36 @@ public class TransportadorController {
 	@Post
 	public void cadastrarTransportador(Transportador transportador){
 		
+		
 		this.validarDadosEntrada(transportador);
 		
+		
+		//Processa Endereços
 		List<EnderecoAssociacaoDTO> listaEnderecosSalvar = (List<EnderecoAssociacaoDTO>) 
 				this.httpSession.getAttribute(LISTA_ENDERECOS_SALVAR_SESSAO);
 		
 		List<EnderecoAssociacaoDTO> lisEndRemover = (List<EnderecoAssociacaoDTO>) 
 				this.httpSession.getAttribute(LISTA_ENDERECOS_REMOVER_SESSAO);
 		
-		Set<Long> listaEnderecosRemover = new HashSet<Long>();
+		List<EnderecoAssociacaoDTO> listaEnderecosRemover = new ArrayList<EnderecoAssociacaoDTO>();
 		
 		if (lisEndRemover != null){
 			for (EnderecoAssociacaoDTO dto : lisEndRemover){
 				
 				if (dto.getEndereco() != null && dto.getEndereco().getId() != null){
 					
-					listaEnderecosRemover.add(dto.getEndereco().getId());
+					listaEnderecosRemover.add(dto);
 				}
 			}
 		}
 		
+		
+		//Processa Telefones
 		Map<Integer, TelefoneAssociacaoDTO> listTelSalvar = (Map<Integer, TelefoneAssociacaoDTO>) 
 				this.httpSession.getAttribute(LISTA_TELEFONES_SALVAR_SESSAO);
+		
+		Set<Long> listaTelefonesRemover = (Set<Long>) 
+				this.httpSession.getAttribute(LISTA_TELEFONES_REMOVER_SESSAO);
 		
 		List<TelefoneAssociacaoDTO> listaTelefonesSalvar = new ArrayList<TelefoneAssociacaoDTO>();
 		
@@ -233,9 +244,8 @@ public class TransportadorController {
 			}
 		}
 		
-		Set<Long> listaTelefonesRemover = (Set<Long>) 
-				this.httpSession.getAttribute(LISTA_TELEFONES_REMOVER_SESSAO);
 		
+		//Processa Veículos
 		List<AssociacaoVeiculoMotoristaRotaDTO> listaAssocAdd = this.obterAssociacoesSalvarSessao();
 		
 		List<Veiculo> listaVeiculosSalvar = this.obterVeiculosSessao();
@@ -254,6 +264,8 @@ public class TransportadorController {
 			}
 		}
 		
+		
+		//Processa Motoristas
 		List<Motorista> listaMotoristasSalvar = this.obterMotoristasSessao();
 		for (Motorista v : listaMotoristasSalvar){
 			
@@ -270,6 +282,8 @@ public class TransportadorController {
 			}
 		}
 				
+		
+		//Processa Transportadores
 		transportador.setId((Long) this.httpSession.getAttribute(ID_TRANSPORTADORA_EDICAO));
 
 		try {
@@ -292,6 +306,7 @@ public class TransportadorController {
 			
 			this.reatribuirIds();
 		}
+		
 		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."), "result").recursive().serialize();
 	}
@@ -414,9 +429,9 @@ public class TransportadorController {
 			}
 		}
 		
-		validarEndereco(msgs);
+		validarEnderecos(msgs);
 		
-		validarTelefone(msgs);
+		validarTelefones(msgs);
 		
 		if (!msgs.isEmpty()){
 			
@@ -424,12 +439,14 @@ public class TransportadorController {
 		}
 	}
 
-	private void validarEndereco(List<String> listaMensagens) {
+	private void validarEnderecos(List<String> listaMensagens) {
 		
+		@SuppressWarnings("unchecked")
 		List<EnderecoAssociacaoDTO> listaEnderecoAssociacaoSalvar = 
 				(List<EnderecoAssociacaoDTO>) this.httpSession.getAttribute(
 						LISTA_ENDERECOS_SALVAR_SESSAO);
 		
+		@SuppressWarnings("unchecked")
 		List<EnderecoAssociacaoDTO> listaEnderecoAssociacaoExibir = 
 				(List<EnderecoAssociacaoDTO>) this.httpSession.getAttribute(
 						LISTA_ENDERECOS_EXIBICAO);
@@ -468,31 +485,30 @@ public class TransportadorController {
 			}
 		}
 	}
-	
-	private void validarTelefone(List<String> listaMensagens) {
-	
-		Map<Integer, TelefoneAssociacaoDTO> map = this.obterTelefonesSalvarSessao();
+
+	private void validarTelefones(List<String> mensagensValidacao) {
+		@SuppressWarnings("unchecked")
+		Map<Integer, TelefoneAssociacaoDTO> mapaTelefones = (Map<Integer, TelefoneAssociacaoDTO>) this.httpSession.getAttribute(LISTA_TELEFONES_SALVAR_SESSAO);
+
+		@SuppressWarnings("unchecked")
+		List<TelefoneAssociacaoDTO> telefonesExibicao = (List<TelefoneAssociacaoDTO>) this.httpSession.getAttribute(LISTA_TELEFONES_EXIBICAO);
 		
-		List<TelefoneAssociacaoDTO> listaTelefoneAssociacaoExibicao =
-			(List<TelefoneAssociacaoDTO>) this.httpSession.getAttribute(LISTA_TELEFONES_EXIBICAO);
+		List<TelefoneAssociacaoDTO> listaTelefones = new ArrayList<TelefoneAssociacaoDTO>();
 		
-		List<TelefoneAssociacaoDTO> listaTelefoneAssociacao = new ArrayList<TelefoneAssociacaoDTO>(); 
-		
-		listaTelefoneAssociacao.addAll(map.values());
-		
-		if (listaTelefoneAssociacaoExibicao != null) {
-			listaTelefoneAssociacao.addAll(listaTelefoneAssociacaoExibicao);
+		if (mapaTelefones != null) {
+			listaTelefones.addAll(mapaTelefones.values());
 		}
 		
-		if (listaTelefoneAssociacao.isEmpty()) {
-			
-			listaMensagens.add("Pelo menos um telefone deve ser cadastrado para o entregador.");
+		if (telefonesExibicao != null && telefonesExibicao.size() > 0){
+			listaTelefones.addAll(telefonesExibicao);
+		}
 		
+ 		if (listaTelefones == null || listaTelefones.isEmpty()) {
+			mensagensValidacao.add("Pelo menos um telefone deve ser cadastrado para a cota.");
 		} else {
-			
 			boolean temPrincipal = false;
 			
-			for (TelefoneAssociacaoDTO telefoneAssociacao : listaTelefoneAssociacao){
+			for (TelefoneAssociacaoDTO telefoneAssociacao : listaTelefones){
 
 				if (telefoneAssociacao.isPrincipal()) {
 					
@@ -503,8 +519,7 @@ public class TransportadorController {
 			}
 			
 			if (!temPrincipal) {
-				
-				listaMensagens.add("Deve haver ao menos um telefone principal para o entregador.");
+				mensagensValidacao.add("Deve haver ao menos um telefone principal para a cota.");
 			}
 		}
 	}
@@ -1271,15 +1286,45 @@ public class TransportadorController {
 		this.result.use(Results.json()).from(dados == null ? "" : dados, "result").recursive().serialize();
 	}
 	
+	/**
+	 * Obtem os endereços da sessão referente ao transportador informado
+	 * 
+	 * @param idTransportador - identificador do transportador
+	 */
+	private void obterEndereco(Long idTransportador){
+		
+		Boolean enderecoPendente = (Boolean) this.httpSession.getAttribute(EnderecoController.ENDERECO_PENDENTE);
+		
+		if (enderecoPendente==null || !enderecoPendente){
+			
+			List<EnderecoAssociacaoDTO> listaEnderecoAssociacao = this.transportadorService.buscarEnderecosTransportador(idTransportador, null);
+		
+			this.httpSession.setAttribute(LISTA_ENDERECOS_EXIBICAO, listaEnderecoAssociacao);
+		}
+	}
+	
+	/**
+	 * Obtem os telefones da sessão referente ao transportador informado
+	 * 
+	 * @param idTransportador - identificador do transportador
+	 */
+	private void obterTelefones(Long idTransportador){
+		
+		List<TelefoneAssociacaoDTO> listaTelefoneAssociacao = this.transportadorService.buscarTelefonesTransportador(idTransportador, null);
+		
+		this.httpSession.setAttribute(LISTA_TELEFONES_EXIBICAO, listaTelefoneAssociacao);
+	}
+	
+	/**
+	 * Carrega telefones e endereços do transportador
+	 * 
+	 * @param id
+	 */
 	private void carregarTelefonesEnderecosPessoa(Long id) {
 		
-		List<TelefoneAssociacaoDTO> lista = this.transportadorService.buscarTelefonesTransportador(id, null);
+		this.obterTelefones(id);
 		
-		this.httpSession.setAttribute(LISTA_TELEFONES_EXIBICAO, lista);
-		
-		List<EnderecoAssociacaoDTO> listaEnderecos = this.transportadorService.buscarEnderecosTransportador(id, null);
-		
-		this.httpSession.setAttribute(LISTA_ENDERECOS_EXIBICAO, listaEnderecos);
+        this.obterEndereco(id);
 	}
 	
 	@Post

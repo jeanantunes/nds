@@ -446,8 +446,10 @@ public class PdvController {
 		
 		File file = new File((servletContext.getRealPath("") + pathPDV.getValor()).replace("\\", "/"),"pdv_" + dto.getId() + ".jpeg");
 		   		
-		if(file.exists()) 
+		if(file.exists()){ 
+		
 			dto.setPathImagem(pathPDV.getValor() + "pdv_" + dto.getId() + ".jpeg" );
+		}	
 	}
 	
 	private void limparDadosSessao() {
