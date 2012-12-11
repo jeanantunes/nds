@@ -1,14 +1,9 @@
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigInteger;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.hibernate.Query;
-import org.hibernate.criterion.Projection;
-import org.hibernate.criterion.ProjectionList;
-import org.hibernate.criterion.Projections;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,46 +44,21 @@ public class DescontoProdutoRepositoryImpl extends AbstractRepositoryModel<Desco
 
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append("select ")
+		hql.append("SELECT ")
 		.append("vdpe.desconto_id as idTipoDesconto ")
 		.append(", vdpe.codigo as codigoProduto ")
 		.append(", vdpe.nome_produto as nomeProduto ")
 		.append(", vdpe.numero_edicao as numeroEdicao ")
-		.append(", vdpe.valor as desconto ")
-		.append(", vdpe.data_alteracao as dataAlteracao ")
+		.append(", coalesce(d.valor, vdpe.valor, 0) as desconto ")
+		.append(", coalesce(d.data_alteracao, vdpe.data_alteracao, null) as dataAlteracao ")
 		.append(", vdpe.nome_usuario as nomeUsuario ")
-		.append("from VIEW_DESCONTO_PRODUTOS_EDICOES as vdpe ")
-		.append("where vdpe.codigo = :codigoProduto ");
+		.append("FROM VIEW_DESCONTO_PRODUTOS_EDICOES as vdpe ")
+		.append("LEFT OUTER JOIN HISTORICO_DESCONTO_PRODUTO_EDICOES hdpe ON vdpe.produto_edicao_id = hdpe.produto_edicao_id ") 
+		.append("LEFT OUTER JOIN DESCONTO d ON hdpe.desconto_id = d.id ")
+		.append("WHERE vdpe.codigo = :codigoProduto ");
 		
-		//Monta a ordenacao
-		if (filtro.getPaginacao() != null) {
-
-			Map<String, String> columnToSort = new HashMap<String, String>();
-			columnToSort.put("codigoProduto", "vdpe.codigo");
-			columnToSort.put("nomeProduto",   "vdpe.nome_produto");
-			columnToSort.put("numeroEdicao",  "vdpe.numero_edicao");
-			columnToSort.put("dataAlteracao", "vdpe.data_alteracao");
-			columnToSort.put("nomeUsuario",   "vdpe.nome_usuario");
-
-			//Verifica a entrada para evitar expressoes SQL
-			if (filtro.getPaginacao().getSortColumn() == null 
-					|| filtro.getPaginacao().getSortColumn() != null 
-					&& !filtro.getPaginacao().getSortColumn().matches("[a-zA-Z0-9\\._]*")) {
-				filtro.getPaginacao().setSortColumn("numeroEdicao");
-			}
-
-			hql.append("order by "+ columnToSort.get(filtro.getPaginacao().getSortColumn())+ " ");
-
-			String orderByColumn = "";
-
-			hql.append(orderByColumn);
-
-			if (filtro.getPaginacao().getOrdenacao() != null) {
-				hql.append(filtro.getPaginacao().getOrdenacao().toString());
-			}
-
-		}
-
+		hql.append("order by numeroEdicao, dataAlteracao desc");
+		
 		Query q = getSession().createSQLQuery(hql.toString());
 
 		q.setParameter("codigoProduto", filtro.getCodigoProduto());
@@ -102,27 +72,6 @@ public class DescontoProdutoRepositoryImpl extends AbstractRepositoryModel<Desco
 		
 		return (List<TipoDescontoProdutoDTO>) q.list();
 		
-	}
-
-	/*
-	 * Retorna uma projeção com os alias da consulta de Tipo Desconto Produto.
-	 * 
-	 * Esses alias serão utilizados para transformar o resultado da consulta em um objeto TipoDescontoProdutoDTO.
-	 * 
-	 */
-	private Projection getAliasProjectionTipoDescontoProduto() {
-
-		ProjectionList projectionList = Projections.projectionList().create();
-
-		projectionList.add(Projections.alias(Projections.property("id"), "idTipoDesconto"));
-		projectionList.add(Projections.alias(Projections.property("desconto"), "desconto"));
-		projectionList.add(Projections.alias(Projections.property("produto.nome"), "nomeProduto"));
-		projectionList.add(Projections.alias(Projections.property("usuario.nome"), "nomeUsuario"));
-		projectionList.add(Projections.alias(Projections.property("dataAlteracao"), "dataAlteracao"));
-		projectionList.add(Projections.alias(Projections.property("produto.codigo"), "codigoProduto"));
-		projectionList.add(Projections.alias(Projections.property("produtoEdicao.numeroEdicao"), "numeroEdicao"));
-
-		return projectionList;
 	}
 
 	/**

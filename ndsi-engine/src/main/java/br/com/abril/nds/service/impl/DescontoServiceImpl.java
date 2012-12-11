@@ -39,6 +39,7 @@ import br.com.abril.nds.model.cadastro.desconto.HistoricoDescontoProduto;
 import br.com.abril.nds.model.cadastro.desconto.HistoricoDescontoProdutoEdicao;
 import br.com.abril.nds.model.cadastro.desconto.TipoDesconto;
 import br.com.abril.nds.model.financeiro.DescontoProximosLancamentos;
+import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DescontoCotaRepository;
@@ -384,9 +385,9 @@ public class DescontoServiceImpl implements DescontoService {
 				/*
 				 * Se existir o desconto, a mesma é atualizada, senão, cria-se uma nova entrada na tabela
 				 */
-				for(Integer cotaId : descontoDTO.getCotas()) {
+				for(Integer numeroCota : descontoDTO.getCotas()) {
 					
-					Cota cota = cotaRepository.buscarPorId(cotaId.longValue());
+					Cota cota = cotaRepository.obterPorNumerDaCota(numeroCota.intValue());
 					
 					DescontoCotaProdutoExcessao dcpe = descontoProdutoEdicaoExcessaoRepository.buscarDescontoCotaProdutoExcessao(
 							TipoDesconto.PRODUTO, null, cota, produto, null);
@@ -452,9 +453,9 @@ public class DescontoServiceImpl implements DescontoService {
 				/*
 				 * Se existir o desconto, a mesma é atualizada, senão, cria-se uma nova entrada na tabela
 				 */
-				for(Integer cotaId : descontoDTO.getCotas()) {
+				for(Integer numeroCota : descontoDTO.getCotas()) {
 					
-					Cota cota = cotaRepository.buscarPorId(cotaId.longValue());
+					Cota cota = cotaRepository.obterPorNumerDaCota(numeroCota.intValue());
 					
 					DescontoCotaProdutoExcessao dpe = descontoProdutoEdicaoExcessaoRepository.buscarDescontoCotaProdutoExcessao(
 							TipoDesconto.PRODUTO, null, cota, produtoEdicao.getProduto(), produtoEdicao);
@@ -555,13 +556,13 @@ public class DescontoServiceImpl implements DescontoService {
 			return 4;
 		}
 		
-		if(!desconto.isIndProdutoEdicao() 
+		if(desconto.isIndProdutoEdicao() 
 				&& (desconto.getQuantidadeEdicoes() != null && desconto.getQuantidadeEdicoes() > 0) 
 				&& desconto.isTodasCotas() ) {
 			return 5;
 		}
 		
-		if(!desconto.isIndProdutoEdicao() 
+		if(desconto.isIndProdutoEdicao() 
 				&& (desconto.getQuantidadeEdicoes() != null && desconto.getQuantidadeEdicoes() > 0) 
 				&& desconto.isHasCotaEspecifica() ) {
 			return 6;
@@ -1070,23 +1071,27 @@ public class DescontoServiceImpl implements DescontoService {
 	 */
 	@Override
 	@Transactional
-    public BigDecimal obterDescontoPorCotaProdutoEdicao(Cota cota,
-            ProdutoEdicao produtoEdicao) {
+    public BigDecimal obterDescontoPorCotaProdutoEdicao(Lancamento lancamento,
+            Cota cota, ProdutoEdicao produtoEdicao) {
         Validate.notNull(cota, "Cota não deve ser nula!");
         Validate.notNull(produtoEdicao, "Edição do produto não deve ser nula!");
         BigDecimal percentual = null;
         if (produtoEdicao.getProduto().isPublicacao()) {
+        	
             //Neste caso, o produto possui apenas um fornecedor
             //Recuperar o desconto utilizando a cota, o produto edição e o fornecedor
-
-        	// TODO: Sergio, favor setar o valor de desconto correto neste ponto após a funcionalidade ficar disponível
-            percentual = descontoProdutoEdicaoRepository.obterDescontoPorCotaProdutoEdicao(cota, produtoEdicao);
+            percentual = descontoProdutoEdicaoRepository.obterDescontoPorCotaProdutoEdicao(lancamento, cota, produtoEdicao);
+            
         } else {
+        	
             //Produto possivelmente com mais de um fornecedor, seguindo
             // a instrução passada, utilizar o desconto do produto
             percentual = produtoEdicao.getProduto().getDesconto();
+            
         }
+        
         return Util.nvl(percentual, BigDecimal.ZERO);
+        
     }
 
 	@Override

@@ -348,7 +348,7 @@ public class VendaEncalheController {
 				ProdutoEdicao produtoEdicao = 
 						produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(venda.getCodigoProduto(),venda.getNumeroEdicao().toString());
 				
-				BigDecimal descontoProduto = descontoService.obterDescontoPorCotaProdutoEdicao(cota, produtoEdicao);
+				BigDecimal descontoProduto = descontoService.obterDescontoPorCotaProdutoEdicao(null, cota, produtoEdicao);
 				
 				BigDecimal precoVenda = produtoEdicao.getPrecoVenda();
 	    

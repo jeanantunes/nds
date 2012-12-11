@@ -152,7 +152,6 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 
 	@Override
 	@Transactional
-	//public void gerarMovimentoEstoqueDeExpedicao(Date dataLancamento, Long idProdutoEdicao, Long idUsuario) {
 	public void gerarMovimentoEstoqueDeExpedicao(Lancamento lancamento, Long idUsuario) {
 
 		Date dataLancamento = lancamento.getDataLancamentoPrevista();
@@ -179,11 +178,11 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 
 			movimentoEstoqueCota.setEstudoCota(estudoCota);
 
-			//TODO: Sérgio - Implementar lógica de desconto aqui
+			//Lógica de desconto
 			ProdutoEdicao produtoEdicao = produtoEdicaoService.obterProdutoEdicao(idProdutoEdicao, false);
 			BigDecimal precoVenda = produtoEdicao.getPrecoVenda();
 			
-			BigDecimal valorDesconto = descontoService.obterDescontoPorCotaProdutoEdicao(estudoCota.getCota(), produtoEdicao);
+			BigDecimal valorDesconto = descontoService.obterDescontoPorCotaProdutoEdicao(lancamento, estudoCota.getCota(), produtoEdicao);
 			BigDecimal precoComDesconto = precoVenda.subtract(precoVenda.multiply(valorDesconto.divide(new BigDecimal("100"))));
 			
 			ValoresAplicados valoresAplicados = new ValoresAplicados(produtoEdicao.getPrecoVenda(), precoComDesconto, valorDesconto);
@@ -196,30 +195,6 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 
 			total = total.add(estudoCota.getQtdeEfetiva());
 			
-/*
-			DescontoProximosLancamentos desconto = this.descontoProximosLancamentosRepository.
-					obterDescontoProximosLancamentosPor(lancamento.getProdutoEdicao().getProduto().getId(), 
-							lancamento.getDataLancamentoPrevista());
-
-			if (desconto != null) {	
-
-				Integer quantidade = desconto.getQuantidadeProximosLancamaentos();
-
-				DescontoProduto descontoProduto = new DescontoProduto();
-
-				descontoProduto.setCotas(desconto.getCotas());
-				descontoProduto.setDataAlteracao(new Date());
-				descontoProduto.setDesconto(desconto.getValorDesconto());
-				descontoProduto.setProdutoEdicao(lancamento.getProdutoEdicao());
-				descontoProduto.setDistribuidor(desconto.getDistribuidor());
-				descontoProduto.setUsuario(usuario);
-
-				this.descontoProdutoRepository.adicionar(descontoProduto);
-
-				desconto.setQuantidadeProximosLancamaentos(--quantidade);
-				this.descontoProximosLancamentosRepository.alterar(desconto);
-			}
-			*/
 		}
 
 		gerarMovimentoEstoque(dataLancamento, idProdutoEdicao, idUsuario, total, tipoMovimento);

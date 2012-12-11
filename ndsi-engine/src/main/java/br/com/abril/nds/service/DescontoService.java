@@ -14,6 +14,7 @@ import br.com.abril.nds.dto.filtro.FiltroTipoDescontoProdutoDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
@@ -115,12 +116,13 @@ public interface DescontoService {
 	/**
 	 * Recupera o percentual de desconto a ser aplicado para o produto edição de acordo com o 
 	 * tipo de produto
-	 * 
+	 * @param lancamento TODO
 	 * @param cota Cota para recuperação do percentual de desconto
 	 * @param produtoEdicao produto edição para recuperação do percentual de desconto
+	 * 
 	 * @return percentual de desconto a ser utilizado
 	 */
-	BigDecimal obterDescontoPorCotaProdutoEdicao(Cota cota, ProdutoEdicao produtoEdicao);
+	BigDecimal obterDescontoPorCotaProdutoEdicao(Lancamento lancamento, Cota cota, ProdutoEdicao produtoEdicao);
 
 	BigDecimal obterComissaoCota(Integer numeroCota);
 		

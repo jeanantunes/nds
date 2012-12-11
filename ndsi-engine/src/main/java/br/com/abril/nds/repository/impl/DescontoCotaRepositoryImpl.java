@@ -135,6 +135,7 @@ public class DescontoCotaRepositoryImpl extends AbstractRepositoryModel<Desconto
 		}
 		
 		hql.append("group by hdcpe.desconto, hdcpe.dataAlteracao ");
+		hql.append("order by hdcpe.dataAlteracao desc");
  
 		hql = ordenacaoDescontoCota(filtro,hql);
 		

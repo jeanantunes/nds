@@ -614,7 +614,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		BigDecimal precoVenda = produtoEdicao.getPrecoVenda();
         conferenciaEncalheDTO.setPrecoCapa(precoVenda);
 		
-		BigDecimal percentualDesconto = descontoService.obterDescontoPorCotaProdutoEdicao(cota, produtoEdicao);
+		BigDecimal percentualDesconto = descontoService.obterDescontoPorCotaProdutoEdicao(null, cota, produtoEdicao);
 		BigDecimal valorDesconto = MathUtil.calculatePercentageValue(precoVenda, percentualDesconto);
 
 		conferenciaEncalheDTO.setDesconto(valorDesconto);
@@ -698,7 +698,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			produtoEdicaoDTO.setNumeroEdicao(produtoEdicao.getNumeroEdicao());
 			BigDecimal precoVenda = produtoEdicao.getPrecoVenda();
             produtoEdicaoDTO.setPrecoVenda(precoVenda);
-			BigDecimal percentualDesconto = descontoService.obterDescontoPorCotaProdutoEdicao(cota, produtoEdicao);
+			BigDecimal percentualDesconto = descontoService.obterDescontoPorCotaProdutoEdicao(null, cota, produtoEdicao);
 			BigDecimal valorDesconto = MathUtil.calculatePercentageValue(precoVenda, percentualDesconto);
 			produtoEdicaoDTO.setDesconto(valorDesconto);
 			produtoEdicaoDTO.setPacotePadrao(produtoEdicao.getPacotePadrao());
@@ -761,7 +761,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			produtoEdicaoDTO.setNumeroEdicao(produtoEdicao.getNumeroEdicao());
 			BigDecimal precoVenda = produtoEdicao.getPrecoVenda();
             produtoEdicaoDTO.setPrecoVenda(precoVenda);
-			BigDecimal percentualDesconto = descontoService.obterDescontoPorCotaProdutoEdicao(cota, produtoEdicao);
+			BigDecimal percentualDesconto = descontoService.obterDescontoPorCotaProdutoEdicao(null, cota, produtoEdicao);
 			BigDecimal valorDesconto = MathUtil.calculatePercentageValue(precoVenda, percentualDesconto);
 			produtoEdicaoDTO.setDesconto(valorDesconto);
 			produtoEdicaoDTO.setPacotePadrao(produtoEdicao.getPacotePadrao());
@@ -824,7 +824,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			produtoEdicaoDTO.setNumeroEdicao(produtoEdicao.getNumeroEdicao());
 			BigDecimal precoVenda = produtoEdicao.getPrecoVenda();
             produtoEdicaoDTO.setPrecoVenda(precoVenda);
-			BigDecimal percentualDesconto = descontoService.obterDescontoPorCotaProdutoEdicao(cota, produtoEdicao);
+			BigDecimal percentualDesconto = descontoService.obterDescontoPorCotaProdutoEdicao(null, cota, produtoEdicao);
 			BigDecimal valorDesconto = MathUtil.calculatePercentageValue(precoVenda, percentualDesconto);
 			produtoEdicaoDTO.setDesconto(valorDesconto);
 			produtoEdicaoDTO.setPacotePadrao(produtoEdicao.getPacotePadrao());

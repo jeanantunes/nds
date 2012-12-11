@@ -9,6 +9,7 @@ import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.desconto.DescontoProdutoEdicao;
 import br.com.abril.nds.model.cadastro.desconto.TipoDesconto;
+import br.com.abril.nds.model.planejamento.Lancamento;
 
 /**
  * Interface que define as regras de acesso a dados
@@ -124,13 +125,14 @@ public interface DescontoProdutoEdicaoRepository extends Repository<DescontoProd
 	/**
      * Recupera o percentual de desconto a ser aplicado para o produto edição de acordo com a
      * cota, edição do produto e fornecedor 
-     * 
-     * 
-     * @param cota identificador da cota para recuperação do desconto
+	 * @param lancamento TODO
+	 * @param cota identificador da cota para recuperação do desconto
 	 * @param produtoEdicao identificador do produto edição para recuperação do desconto
-	 * @return peercentual de desconto a ser utilizado
+     * 
+     * 
+     * @return peercentual de desconto a ser utilizado
      */
-	BigDecimal obterDescontoPorCotaProdutoEdicao(Cota cota, ProdutoEdicao produtoEdicao);
+	BigDecimal obterDescontoPorCotaProdutoEdicao(Lancamento lancamento, Cota cota, ProdutoEdicao produtoEdicao);
 	
 	/**
 	 * Salva uma lista de descontosProdutoEdicao

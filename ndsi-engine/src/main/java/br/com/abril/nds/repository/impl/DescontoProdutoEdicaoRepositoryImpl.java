@@ -5,12 +5,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-
-
 import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
 import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.model.cadastro.Cota;
@@ -18,7 +17,10 @@ import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.desconto.DescontoProdutoEdicao;
 import br.com.abril.nds.model.cadastro.desconto.TipoDesconto;
+import br.com.abril.nds.model.financeiro.DescontoProximosLancamentos;
+import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.repository.DescontoProdutoEdicaoRepository;
+import br.com.abril.nds.repository.DescontoProximosLancamentosRepository;
 
 /**
  * Classe de implementação referente a acesso de dados
@@ -30,6 +32,10 @@ import br.com.abril.nds.repository.DescontoProdutoEdicaoRepository;
 @Repository
 public class DescontoProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<DescontoProdutoEdicao, Long> implements DescontoProdutoEdicaoRepository {
  
+	@Autowired
+	private DescontoProximosLancamentosRepository descontoProximosLancamentosRepository;
+	
+	
 	private static final int QUINHENTOS = 500;
 	
 	/**
@@ -200,11 +206,17 @@ public class DescontoProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel
      * {@inheritDoc}
      */
 	@Override
-    public BigDecimal obterDescontoPorCotaProdutoEdicao(Cota cota,
-            ProdutoEdicao produtoEdicao) {
+    public BigDecimal obterDescontoPorCotaProdutoEdicao(Lancamento lancamento,
+            Cota cota, ProdutoEdicao produtoEdicao) {
         
+		//TODO: Implementar a prioridade de desconto predoominante 
 		Query query = null;
 		BigDecimal desconto = BigDecimal.ZERO;
+		
+		//Obtem o desconto do ProdutoEdicao baseado em lancamento futuro
+		desconto = obterDescontoCotaProdutoEdicaoLancamentosFuturos(lancamento);		
+		
+		if(desconto != null) return desconto;
 		
 		//Obtem o desconto do ProdutoEdicao baseado em excessoes 
 		query = obterDescontoCotaProdutoEdicaoExcessoes(cota, produtoEdicao);
@@ -214,12 +226,6 @@ public class DescontoProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel
 				
 		//Obtem o desconto do Produto baseado em excessoes 
 		query = obterDescontoCotaProdutoExcessoes(cota, produtoEdicao);
-		desconto = (BigDecimal) query.uniqueResult();
-		
-		if(desconto != null) return desconto;
-		
-		//Obtem o desconto da Cota-Fornecedor baseado em excessoes 
-		query = obterDescontoCotaExcessoes(cota, produtoEdicao);
 		desconto = (BigDecimal) query.uniqueResult();
 		
 		if(desconto != null) return desconto;
@@ -234,9 +240,39 @@ public class DescontoProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel
 		query = obterDescontoProduto(produtoEdicao);
 		desconto = (BigDecimal) query.uniqueResult();
 		
+		//Obtem o desconto da Cota-Fornecedor 
+		query = obterDescontoCotaExcessoes(cota, produtoEdicao);
+		desconto = (BigDecimal) query.uniqueResult();
+		
+		if(desconto != null) return desconto;
+		
         return desconto;
         
     }
+
+	private BigDecimal obterDescontoCotaProdutoEdicaoLancamentosFuturos(Lancamento lancamento) {
+		
+		if(lancamento == null) {
+			return null;
+		}
+		
+		DescontoProximosLancamentos desconto = this.descontoProximosLancamentosRepository.
+				obterDescontoProximosLancamentosPor(lancamento.getProdutoEdicao().getProduto().getId(), 
+						lancamento.getDataLancamentoPrevista());
+
+		if (desconto != null) {	
+
+			Integer quantidade = desconto.getQuantidadeProximosLancamaentos();
+
+			desconto.setQuantidadeProximosLancamaentos(--quantidade);
+			
+			descontoProximosLancamentosRepository.alterar(desconto);
+			
+			return desconto.getValorDesconto();
+		}
+		
+		return null;
+	}
 
 	private Query obterDescontoCotaProdutoEdicaoExcessoes(Cota cota, ProdutoEdicao produtoEdicao) {
 		

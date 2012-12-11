@@ -277,7 +277,7 @@ public class DescontoProdutoEdicaoRepositoryImplTest extends AbstractRepositoryI
 		Cota cota = new Cota();
 		cota.setId(1L);
 		
-		descontoProdutoEdicaoRepository.obterDescontoPorCotaProdutoEdicao(cota, null);
+		descontoProdutoEdicaoRepository.obterDescontoPorCotaProdutoEdicao(null, cota, null);
 				
 	}
 	
@@ -287,7 +287,7 @@ public class DescontoProdutoEdicaoRepositoryImplTest extends AbstractRepositoryI
 		ProdutoEdicao produtoEdicao = new ProdutoEdicao();
 		produtoEdicao.setId(1L);
 		
-		descontoProdutoEdicaoRepository.obterDescontoPorCotaProdutoEdicao(null, produtoEdicao);
+		descontoProdutoEdicaoRepository.obterDescontoPorCotaProdutoEdicao(null, null, produtoEdicao);
 				
 	}
 	

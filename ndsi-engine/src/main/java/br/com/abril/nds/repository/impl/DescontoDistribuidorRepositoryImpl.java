@@ -34,7 +34,7 @@ public class DescontoDistribuidorRepositoryImpl extends AbstractRepositoryModel<
 		hql.append("select hdf.id as sequencial ");
 		hql.append(", hdf.desconto.id as idTipoDesconto ");
 		hql.append(", hdf.usuario.nome as usuario ");
-		hql.append(", hdf.valor as desconto ");
+		hql.append(", hdf.desconto.valor as desconto ");
 		hql.append(", hdf.dataAlteracao as dataAlteracao ");
 		hql.append(", (case ");
 		hql.append("when (select count(hdf1.desconto.id) from HistoricoDescontoFornecedor hdf1 ");
