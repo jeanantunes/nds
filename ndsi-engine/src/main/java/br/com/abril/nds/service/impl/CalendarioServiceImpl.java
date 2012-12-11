@@ -32,8 +32,6 @@ import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.EnderecoDistribuidor;
 import br.com.abril.nds.model.cadastro.Feriado;
 import br.com.abril.nds.model.cadastro.TipoFeriado;
-import br.com.abril.nds.model.dne.Localidade;
-import br.com.abril.nds.model.dne.UnidadeFederacao;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.FeriadoRepository;
 import br.com.abril.nds.service.CalendarioService;

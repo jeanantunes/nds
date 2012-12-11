@@ -14,7 +14,7 @@ import br.com.abril.nds.model.cadastro.TipoFeriado;
  * @author Discover Technology
  */
 public interface FeriadoRepository extends Repository<Feriado, Long> {
-	
+
 	/**
 	 * Obtém lista feriados de acordo parâmetros passados.
 	 * 
@@ -23,59 +23,58 @@ public interface FeriadoRepository extends Repository<Feriado, Long> {
 	 * @param uf
 	 * @param localidade
 	 * 
-	 * @return  {@link List<Feriado>}
+	 * @return {@link List<Feriado>}
 	 */
-	public List<Feriado> obterFeriados(Date data, TipoFeriado tipoFeriado, String uf, String localidade);
+	public List<Feriado> obterFeriados(Date data, TipoFeriado tipoFeriado,
+			String uf, String localidade);
 
-	
 	/**
-	 * Obtem lista de feriados relativos a uma data específica 
-	 * ou um feriado anual cujo dia e mês sejam compatíveis com os parêmetros 
-	 * de pesquisa.
+	 * Obtem lista de feriados relativos a uma data específica ou um feriado
+	 * anual cujo dia e mês sejam compatíveis com os parêmetros de pesquisa.
 	 * 
 	 * @param dataFeriado
 	 * 
 	 * @return {@link List<CalendarioFeriadoDTO>}
 	 */
-	public List<CalendarioFeriadoDTO> obterListaCalendarioFeriadoDataEspecifica(Date dataFeriado);
-	
-	
+	public List<CalendarioFeriadoDTO> obterListaCalendarioFeriadoDataEspecifica(
+			Date dataFeriado);
+
 	/**
 	 * Obtém lista de feriados referente ao mês e ano passados como parâmetros
-	 * assim com os feriados dos mêses de todos os anos (caso este esteja marcados
-	 * como feriados anuais).
+	 * assim com os feriados dos mêses de todos os anos (caso este esteja
+	 * marcados como feriados anuais).
 	 * 
 	 * @param mes
 	 * @param ano
 	 * 
 	 * @return {@link List<CalendarioFeriadoDTO>}
 	 */
-	public List<CalendarioFeriadoDTO> obterListaCalendarioFeriadoMensal(int mes, int ano);
+	public List<CalendarioFeriadoDTO> obterListaCalendarioFeriadoMensal(
+			int mes, int ano);
 
-	
 	/**
-	 * Obtém lista de datas de feriados relativos a um período específico assim como 
-	 * feriados flageados como anuais.
+	 * Obtém lista de datas de feriados relativos a um período específico assim
+	 * como feriados flageados como anuais.
 	 * 
 	 * @param dataInicial
 	 * @param dataFinal
 	 * 
 	 * @return {@link List<CalendarioFeriadoDTO>}
 	 */
-	public List<CalendarioFeriadoDTO> obterListaCalendarioFeriadoPeriodo(Date dataInicial, Date dataFinal);
-	
-	
+	public List<CalendarioFeriadoDTO> obterListaCalendarioFeriadoPeriodo(
+			Date dataInicial, Date dataFinal);
+
 	/**
 	 * Recupera um feriado anual com base na data recebida
-	 * @param data data base para a recuperação do feriado anual, serão
-	 * utilizados como base apenas o dia e mês da data
-	 * @param tipo tipo de feriado para pesquisa
+	 * 
+	 * @param data
+	 *            data base para a recuperação do feriado anual, serão
+	 *            utilizados como base apenas o dia e mês da data
+	 * @param tipo
+	 *            tipo de feriado para pesquisa
 	 * @return {@link Feriado} que corresponde ao feriado anual cadastrado ou
-	 * null caso não exista feriado correspondente cadastrado
+	 *         null caso não exista feriado correspondente cadastrado
 	 */
 	public Feriado obterFeriadoAnualTipo(Date data, TipoFeriado tipo);
-		
-	
 
-	
 }
