@@ -49,15 +49,12 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 		hql.append("			and lancamentoSupl.dataLancamentoDistribuidor <= lancamento.dataRecolhimentoDistribuidor) ");		
 		hql.append(" 		as suplementacao, ");
 		
-		// TODO columa a arrumar:
-		hql.append("		(select sum(movimento.qtde) from ConferenciaEncalhe conferencia ");
-		hql.append("		 	join conferencia.movimentoEstoqueCota movimento ");
-		hql.append("		 	join conferencia.chamadaEncalheCota chamadaEncalheCota ");
-		hql.append("		 	join chamadaEncalheCota.chamadaEncalhe chamadaEncalhe ");
-		hql.append("			where chamadaEncalhe.dataRecolhimento >= lancamento.dataLancamentoDistribuidor ");
-		hql.append("			and chamadaEncalhe.dataRecolhimento <= lancamento.dataRecolhimentoDistribuidor ");
-		hql.append("			and chamadaEncalhe.produtoEdicao.id = lancamento.produtoEdicao.id ");
-		hql.append("			group by chamadaEncalhe.id) ");
+		hql.append("		(select CASE");
+		hql.append("		        WHEN (count(eProduto) > 0) ");
+		hql.append("		        THEN SUM(eProduto.qtdeDevolucaoEncalhe) ");
+		hql.append("		        ELSE 0 END ");
+		hql.append("		   from EstoqueProduto eProduto left join eProduto.produtoEdicao pEdicao ");
+		hql.append("		  where eProduto.produtoEdicao.id = produtoEdicao.id)");
 		hql.append(" 		 as encalhe, ");
 		
 		hql.append("		(select CASE");
