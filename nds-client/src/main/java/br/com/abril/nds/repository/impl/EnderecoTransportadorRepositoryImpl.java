@@ -60,7 +60,7 @@ public class EnderecoTransportadorRepositoryImpl extends AbstractRepositoryModel
 		
 		StringBuilder hql = new StringBuilder("select new ");
 		hql.append(EnderecoAssociacaoDTO.class.getCanonicalName())
-		   .append(" (t.principal, t.endereco, t.tipoEndereco, enderecoPessoa) ")
+		   .append(" (t.id, t.principal, t.endereco, t.tipoEndereco, enderecoPessoa) ")
 		   .append(" from EnderecoTransportador t, Endereco enderecoPessoa ")
 		   .append(" where t.transportador.pessoaJuridica.id = :id ")
 		   .append("   and t.endereco.id = enderecoPessoa.id ");

@@ -195,12 +195,12 @@ public class CotaController {
         session.setAttribute(LISTA_TELEFONES_EXIBICAO, telefones);
     }
 
-	@SuppressWarnings("unchecked")
 	/**
 	 * Processa os dados de endereço, obtem os dados da sessão, grava os dados no banco de dados e atualiza os dados na sessão
 	 * 
 	 * @param idCota - identificador da cota
 	 */
+    @SuppressWarnings("unchecked")
 	private boolean processarEnderecosCota(Long idCota) {
 
 		List<EnderecoAssociacaoDTO> listaEnderecoAssociacaoSalvar = 

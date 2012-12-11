@@ -2421,8 +2421,11 @@ public class DataLoader {
 		TipoLicencaMunicipal tipoLicencaMunicipal6 = Fixture.criarTipoLicencaMunicipal(6L, "RECUO DE ALÇADA");
 		TipoLicencaMunicipal tipoLicencaMunicipal7 = Fixture.criarTipoLicencaMunicipal(7L, "CCM");
 		TipoLicencaMunicipal tipoLicencaMunicipal8 = Fixture.criarTipoLicencaMunicipal(8L, "ALVARÁ");
+		TipoLicencaMunicipal tipoLicencaMunicipal9 = Fixture.criarTipoLicencaMunicipal(9L, "OUTROS");
 
-		save(session,tipoLicencaMunicipal1,tipoLicencaMunicipal2,tipoLicencaMunicipal3,tipoLicencaMunicipal4,tipoLicencaMunicipal5,tipoLicencaMunicipal6,tipoLicencaMunicipal7,tipoLicencaMunicipal8);
+		save(session,tipoLicencaMunicipal1,tipoLicencaMunicipal2,tipoLicencaMunicipal3,
+				tipoLicencaMunicipal4,tipoLicencaMunicipal5,tipoLicencaMunicipal6,
+				tipoLicencaMunicipal7,tipoLicencaMunicipal8,tipoLicencaMunicipal9);
 	}
 
 	private static void gerarTipoEstabelecimentoAssociacaoPDV(Session session) {
@@ -2433,6 +2436,15 @@ public class DataLoader {
 		TipoEstabelecimentoAssociacaoPDV tipoEstabelecimentoAssociacaoPDV3 = Fixture.criarTipoEstabelecimentoAssociacaoPDV(13L, "Posto Serviço");
 
 		save(session,tipoEstabelecimentoAssociacaoPDV,tipoEstabelecimentoAssociacaoPDV1,tipoEstabelecimentoAssociacaoPDV2,tipoEstabelecimentoAssociacaoPDV3);
+	}
+	
+	private static void gerarAreaInfluenciaPDV(Session session) {
+
+		AreaInfluenciaPDV areaInfluenciaPDV = Fixture.criarAreaInfluenciaPDV(1L, "Residencial");
+		AreaInfluenciaPDV areaInfluenciaPDV1 = Fixture.criarAreaInfluenciaPDV(2L, "Residencial XX");
+		AreaInfluenciaPDV areaInfluenciaPDV2 = Fixture.criarAreaInfluenciaPDV(3L, "Estradas");
+
+		save(session,areaInfluenciaPDV,areaInfluenciaPDV1,areaInfluenciaPDV2);
 	}
 
 	private static void gerarMaterialPromocionalPDV(Session session) {
@@ -2457,16 +2469,6 @@ public class DataLoader {
 
 		save(session,tipoGeradorFluxoPDV,tipoGeradorFluxoPDV1,tipoGeradorFluxoPDV2,tipoGeradorFluxoPDV3,tipoGeradorFluxoPDV4);
 	}
-
-	private static void gerarAreaInfluenciaPDV(Session session) {
-
-		AreaInfluenciaPDV areaInfluenciaPDV = Fixture.criarAreaInfluenciaPDV(1L, "Residencial");
-		AreaInfluenciaPDV areaInfluenciaPDV1 = Fixture.criarAreaInfluenciaPDV(2L, "Residencial XX");
-		AreaInfluenciaPDV areaInfluenciaPDV2 = Fixture.criarAreaInfluenciaPDV(3L, "Estradas");
-
-		save(session,areaInfluenciaPDV,areaInfluenciaPDV1,areaInfluenciaPDV2);
-	}
-
 
 	private static void gerarTiposPontoPDV(Session session) {
 
