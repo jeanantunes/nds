@@ -21,6 +21,7 @@ import br.com.abril.nds.integracao.model.canonic.EMS0128InputItem;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
+import br.com.abril.nds.model.estoque.LancamentoDiferenca;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.integracao.StatusIntegracao;
@@ -88,10 +89,24 @@ public class EMS0128MessageProcessor extends AbstractRepository implements Messa
 						movimento.setNumeroDocumentoAcerto(eitem.getNumeroDocumentoAcerto());
 						movimento.setDataEmicaoDocumentoAcerto(eitem.getDataEmicaoDocumentoAcerto());
 						movimento.setCodigoOrigemMotivo(eitem.getCodigoOrigemMotivo());
-					
+						
+						if( StatusIntegracao.REJEITADO.equals(movimento.getStatusIntegracao())
+								|| StatusIntegracao.DESPREZADO.equals(movimento.getStatusIntegracao())){
+							
+							movimento.setStatus(StatusAprovacao.PERDA);
+							
+							LancamentoDiferenca lancamentoDiferenca  = recuperarLancamentoDiferenca(movimento.getId());
+							
+							if(lancamentoDiferenca!= null){
+
+								lancamentoDiferenca.setStatus(StatusAprovacao.PERDA);
+								
+								getSession().merge(lancamentoDiferenca);
+							}
+						}
+						
 						getSession().merge(movimento);
 						getSession().flush();
-						
 					}						
 					
 					if (doc.getSituacaoSolicitacao().equals("PROCESSADO")) {
@@ -102,14 +117,26 @@ public class EMS0128MessageProcessor extends AbstractRepository implements Messa
 		} catch (NoDocumentException ex) {
 			
 		}
-
-
 	}
 
 	private MovimentoEstoque recuperaMovimento(Long id) {
 		
 		return (MovimentoEstoque) getSession().get(MovimentoEstoque.class, id);		
 		
+	}
+	
+	private LancamentoDiferenca recuperarLancamentoDiferenca(Long idMovimentoEstoque){
+		
+		StringBuilder sql = new StringBuilder();
+		sql.append(" SELECT lancamentoDiferenca ");
+		sql.append(" FROM LancamentoDiferenca lancamentoDiferenca  ");
+		sql.append(" JOIN lancamentoDiferenca.movimentoEstoque me ");
+		sql.append(" where me.id =:idMovimentoEstoque ");
+		
+		Query query = getSession().createQuery(sql.toString());
+		query.setParameter("idMovimentoEstoque", idMovimentoEstoque);
+		
+		return (LancamentoDiferenca) query.uniqueResult();
 	}
 
 
@@ -173,13 +200,16 @@ public class EMS0128MessageProcessor extends AbstractRepository implements Messa
 	private Query queryMovimentoEstoque() {
 		StringBuilder sql = new StringBuilder();
 		sql.append("SELECT me ");
-		sql.append("FROM MovimentoEstoque me ");
+		sql.append("FROM LancamentoDiferenca lancamentoDiferenca  ");
+		sql.append("JOIN FETCH lancamentoDiferenca.movimentoEstoque me ");
 		sql.append("JOIN FETCH me.tipoMovimento tm ");
 		sql.append("JOIN FETCH me.produtoEdicao pe ");
 		sql.append("JOIN FETCH pe.produto pr ");
+		
 		sql.append("WHERE tm.grupoMovimentoEstoque in (:grupoMovimentoEstoque) ");
 		sql.append("	and me.statusIntegracao = :statusIntegracao ");
 		sql.append("	and me.status = :status ");
+		sql.append("	and lancamentoDiferenca.status = :status ");
 		
 		Query query = getSession().createQuery(sql.toString());
 
@@ -192,7 +222,8 @@ public class EMS0128MessageProcessor extends AbstractRepository implements Messa
 		
 		query.setParameter("statusIntegracao", StatusIntegracao.NAO_INTEGRADO);
 		query.setParameter("status", StatusAprovacao.APROVADO);
+		
 		return query;
-	}	
-
+	}
+	
 }

@@ -110,7 +110,7 @@ public class ConsultaEncalheController {
 	public void exportar(FileType fileType) throws IOException {
 
 		FiltroConsultaEncalheDTO filtroConsultaEncalhe = obterFiltroExportacao();
-
+		
 		InfoConsultaEncalheDTO infoConsultaEncalhe = consultaEncalheService.pesquisarEncalhe(filtroConsultaEncalhe);
 
 		List<ConsultaEncalheVO> listaConsultaEncalheVO =  getListaConsultaEncalheVO(infoConsultaEncalhe.getListaConsultaEncalhe());
@@ -455,6 +455,7 @@ public class ConsultaEncalheController {
 		
 		if(numeroCota != null) {
 			Cota cota  = cotaService.obterPorNumeroDaCota(numeroCota);
+			filtro.setNumCota(numeroCota);
 			if(cota!=null) {
 				filtro.setIdCota(cota.getId());
 			}
@@ -659,7 +660,7 @@ public class ConsultaEncalheController {
 				if(cota!=null) {
 					
 					String nomeResp = cotaService.obterNomeResponsavelPorNumeroDaCota(cota.getNumeroCota());
-
+					filtro.setNumCota(cota.getNumeroCota());
 					filtro.setNomeCota(nomeResp);
 					
 				}

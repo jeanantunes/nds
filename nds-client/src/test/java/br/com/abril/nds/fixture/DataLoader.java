@@ -338,6 +338,9 @@ public class DataLoader {
 	private static TipoMovimentoEstoque tipoMovimentoTransferenciaSaidaRecolhimento;
 	private static TipoMovimentoEstoque tipoMovimentoTransferenciaEntradaProdutosDanificados;
 	private static TipoMovimentoEstoque tipoMovimentoTransferenciaSaidaProdutosDanificados;
+	private static TipoMovimentoEstoque tipoMovimentoTransferenciaEntradaProdutosDevolucaoFornecedor;
+	private static TipoMovimentoEstoque tipoMovimentoTransferenciaSaidaProdutosDevolucaoFornecedor;
+	
 	
 	private static MovimentoEstoqueCota movimentoEstoqueCota1;
 	private static MovimentoEstoqueCota movimentoEstoqueCota2;
@@ -6028,6 +6031,8 @@ public class DataLoader {
 		tipoMovimentoTransferenciaSaidaRecolhimento = Fixture.tipoMovimentoTransferenciaSaidaRecolhimento();
 		tipoMovimentoTransferenciaEntradaProdutosDanificados = Fixture.tipoMovimentoTransferenciaEntradaProdutosDanificados();
 		tipoMovimentoTransferenciaSaidaProdutosDanificados = Fixture.tipoMovimentoTransferenciaSaidaProdutosDanificados();
+		tipoMovimentoTransferenciaEntradaProdutosDevolucaoFornecedor = Fixture.tipoMovimentoTransferenciaEntradaProdutosDevolucaoFornecedor();
+		tipoMovimentoTransferenciaSaidaProdutosDevolucaoFornecedor = Fixture.tipoMovimentoTransferenciaSaidaProdutosDevolucaoFornecedor();
 		
 		save(session, tipoMovimentoFaltaEm, tipoMovimentoFaltaDe, tipoMovimentoSuplementarCotaAusente,
 				tipoMovimentoSobraEm, tipoMovimentoSobraDe,
@@ -6042,7 +6047,9 @@ public class DataLoader {
 				tipoMovimentoTransferenciaEntradaLancamento, tipoMovimentoTransferenciaSaidaLancamento, 
 				tipoMovimentoTransferenciaEntradaSuplementar, tipoMovimentoTransferenciaSaidaSuplementar,
 				tipoMovimentoTransferenciaEntradaRecolhimento, tipoMovimentoTransferenciaSaidaRecolhimento,
-				tipoMovimentoTransferenciaEntradaProdutosDanificados, tipoMovimentoTransferenciaSaidaProdutosDanificados, tipoMovimentoEstornoCotaFuroPublicacao);
+				tipoMovimentoTransferenciaEntradaProdutosDanificados, tipoMovimentoTransferenciaSaidaProdutosDanificados,
+				tipoMovimentoEstornoCotaFuroPublicacao,tipoMovimentoTransferenciaEntradaProdutosDevolucaoFornecedor,
+				tipoMovimentoTransferenciaSaidaProdutosDevolucaoFornecedor);
 
 	}
 
