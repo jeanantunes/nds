@@ -110,19 +110,11 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 							.append(" when (diferenca.tipoDiferenca = 'SOBRA_EM') then (diferenca.qtde)")
 							.append(" else 0")
 						.append(" end )) as qntDiferenca, ")
-<<<<<<< HEAD
-						.append(" produtoEd.precoVenda * estudo.qtdeReparte, ")
-						.append(" juridica.razaoSocial ")
-						
-			.append(" ) ");
-		}	
-=======
 						.append(" sum(estudoCota.qtdeEfetiva)*sum(produtoEd.precoVenda), ")
 						.append(" juridica.razaoSocial ")
 						
 			.append(" ) ");
 		}
->>>>>>> DGBti/master
 		
 		hql.append( "FROM" )
 			.append(" Expedicao expedicao ")
