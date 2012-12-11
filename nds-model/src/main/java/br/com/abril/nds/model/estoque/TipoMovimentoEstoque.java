@@ -6,6 +6,7 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 
+import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.movimentacao.TipoMovimento;
 
 @Entity
@@ -25,7 +26,7 @@ public class TipoMovimentoEstoque extends TipoMovimento {
 	@Column(name = "OPERACAO_ESTOQUE")
 	@Enumerated(EnumType.STRING)
 	private OperacaoEstoque operacaoEstoque;
-
+	
 	public TipoMovimentoEstoque() {
 		
 	}
