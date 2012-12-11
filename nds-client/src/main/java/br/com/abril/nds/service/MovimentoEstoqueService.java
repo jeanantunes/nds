@@ -4,6 +4,7 @@ import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 
+import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
@@ -53,5 +54,7 @@ public interface MovimentoEstoqueService {
 	void devolucaoRecolhimentoNotaCancelada(NotaFiscal notaFiscalCancelada);
 	
 	void gerarMovimentoEstoqueFuroPublicacao(Lancamento lancamento, Long idUsuario);
+	
+	MovimentoEstoque gerarMovimentoEstoque(Long idProdutoEdicao, Long idUsuario, BigInteger quantidade,TipoMovimentoEstoque tipoMovimentoEstoque,Origem origem);
 	
 }
