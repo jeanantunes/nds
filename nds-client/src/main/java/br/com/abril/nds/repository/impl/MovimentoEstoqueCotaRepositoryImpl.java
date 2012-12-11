@@ -505,7 +505,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		sql.append("	where	");
 		
-		sql.append("	MOVIMENTO_ESTOQUE_COTA.DATA BETWEEN :dataRecolhimentoInicial AND :dataRecolhimentoFinal ");
+		sql.append("	CHAMADA_ENCALHE.DATA_RECOLHIMENTO BETWEEN :dataRecolhimentoInicial AND :dataRecolhimentoFinal ");
 		
 		if(filtro.getIdCota()!=null) {
 			sql.append(" and MOVIMENTO_ESTOQUE_COTA.COTA_ID = :idCota  ");
@@ -614,7 +614,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		sql.append("	where	");
 		
-		sql.append("	MOVIMENTO_ESTOQUE_COTA.DATA BETWEEN :dataRecolhimentoInicial AND :dataRecolhimentoFinal ");
+		sql.append("	CHAMADA_ENCALHE.DATA_RECOLHIMENTO BETWEEN :dataRecolhimentoInicial AND :dataRecolhimentoFinal ");
 		
 		if(filtro.getIdCota()!=null) {
 			sql.append(" and MOVIMENTO_ESTOQUE_COTA.COTA_ID = :idCota  ");
@@ -624,7 +624,6 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 			sql.append(" and FORNECEDOR.ID =  :idFornecedor ");
 		}
 		
-
 		sql.append("	group by	");
 		
 		sql.append("    MOVIMENTO_ESTOQUE_COTA.DATA,		");
@@ -752,9 +751,9 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 
 		sql.append("	select distinct	");
 
-		sql.append("	COTA.NUMERO_COTA				as numeroCota,  ");
-		sql.append("	PESSOA.RAZAO_SOCIAL				as nomeCota,    ");
-		sql.append(" 	CONFERENCIA_ENCALHE.OBSERVACAO	as observacao  ");
+		sql.append("	COTA.NUMERO_COTA						  as numeroCota,  ");
+		sql.append("	coalesce(PESSOA.NOME,PESSOA.RAZAO_SOCIAL) as nomeCota,    ");
+		sql.append(" 	CONFERENCIA_ENCALHE.OBSERVACAO			  as observacao  ");
 		
 		sql.append("	from	");
 		
@@ -994,7 +993,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		sql.append("	where	");
 		
-		sql.append("	MOVIMENTO_ESTOQUE_COTA.DATA BETWEEN :dataRecolhimentoInicial AND :dataRecolhimentoFinal ");
+		sql.append("	CHAMADA_ENCALHE.DATA_RECOLHIMENTO BETWEEN :dataRecolhimentoInicial AND :dataRecolhimentoFinal ");
 		
 		if(filtro.getIdCota()!=null) {
 			sql.append(" and MOVIMENTO_ESTOQUE_COTA.COTA_ID = :idCota  ");

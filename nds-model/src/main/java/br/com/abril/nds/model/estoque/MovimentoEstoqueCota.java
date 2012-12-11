@@ -66,6 +66,10 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque implements C
 	@Column(name = "STATUS_ESTOQUE_FINANCEIRO")
 	private StatusEstoqueFinanceiro statusEstoqueFinanceiro;
 	
+	@ManyToOne(optional = true)
+	@JoinColumn(name = "LANCAMENTO_DIFERENCA_ID")
+	private LancamentoDiferenca lancamentoDiferenca;
+	
 	public Object clone() {
 
 		MovimentoEstoqueCota mec = new MovimentoEstoqueCota();
@@ -221,6 +225,14 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque implements C
 	public void setMovimentoEstoqueCotaFuro(
 			MovimentoEstoqueCota movimentoEstoqueCotaFuro) {
 		this.movimentoEstoqueCotaFuro = movimentoEstoqueCotaFuro;
+	}
+
+	public LancamentoDiferenca getLancamentoDiferenca() {
+		return lancamentoDiferenca;
+	}
+
+	public void setLancamentoDiferenca(LancamentoDiferenca lancamentoDiferenca) {
+		this.lancamentoDiferenca = lancamentoDiferenca;
 	}
 
 }
