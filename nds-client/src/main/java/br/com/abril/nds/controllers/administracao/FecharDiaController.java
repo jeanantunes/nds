@@ -246,7 +246,7 @@ public class FecharDiaController {
 	@Path("obterResumoQuadroSuplementar")
 	public void obterResumoQuadroSuplementar(){
 		
-		ResumoSuplementarFecharDiaDTO dto = this.resumoSuplementarFecharDiaService.obterResumoGeralEncalhe(distribuidor.getDataOperacao());
+		ResumoSuplementarFecharDiaDTO dto = this.resumoSuplementarFecharDiaService.obterResumoGeralSuplementar(distribuidor.getDataOperacao());
 		
 		result.use(Results.json()).from(dto, "result").recursive().serialize();
 	}

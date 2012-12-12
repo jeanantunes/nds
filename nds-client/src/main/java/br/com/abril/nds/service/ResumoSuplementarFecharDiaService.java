@@ -22,7 +22,7 @@ public interface ResumoSuplementarFecharDiaService {
 
 	List<VendaFechamentoDiaDTO> obterVendasSuplementar(Date date);
 	
-	ResumoSuplementarFecharDiaDTO obterResumoGeralEncalhe(Date dataOperacional);
+	ResumoSuplementarFecharDiaDTO obterResumoGeralSuplementar(Date dataOperacional);
 
 	List<SuplementarFecharDiaDTO> obterDadosGridSuplementar(Date data);
 

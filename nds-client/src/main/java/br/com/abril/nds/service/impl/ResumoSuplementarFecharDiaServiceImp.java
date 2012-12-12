@@ -55,7 +55,7 @@ public class ResumoSuplementarFecharDiaServiceImp implements
 
 	@Override
 	@Transactional
-	public ResumoSuplementarFecharDiaDTO obterResumoGeralEncalhe(Date dataOperacional) {
+	public ResumoSuplementarFecharDiaDTO obterResumoGeralSuplementar(Date dataOperacional) {
 		 
 		ResumoSuplementarFecharDiaDTO dto = new ResumoSuplementarFecharDiaDTO();
 		List<BigDecimal> listaDeSuplementares = new ArrayList<BigDecimal>();
