@@ -44,6 +44,7 @@ import br.com.abril.nds.repository.RotaRepository;
 import br.com.abril.nds.repository.RoteirizacaoRepository;
 import br.com.abril.nds.repository.RoteiroRepository;
 import br.com.abril.nds.service.RoteirizacaoService;
+import br.com.abril.nds.util.OrdenacaoUtil;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 import br.com.abril.nds.vo.ValidacaoVO;
@@ -497,14 +498,8 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 		List<PdvRoteirizacaoDTO> listaPdvDTO = new ArrayList<PdvRoteirizacaoDTO>();
 		
 		List<PDV> listaPdv = new ArrayList<PDV>();
-		
-		if (pesquisaPorCota) {
 			
-			listaPdv.addAll(this.pdvRepository.obterPDVsPrincipaisPor(numCota, municipio, uf, bairro, cep));
-			
-		} else {
-			listaPdv.addAll(this.pdvRepository.obterPDVPorCotaEEndereco(numCota, municipio, uf, bairro, cep));
-		}
+		listaPdv.addAll(this.pdvRepository.obterPDVsDisponiveisPor(numCota, municipio, uf, bairro, cep, pesquisaPorCota));
 		
 		PdvRoteirizacaoDTO pdvDTO;
 		
@@ -694,11 +689,39 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 	    
 	    processarTransferenciaRoteiros(roteirizacaoDTO);
 	    
+	    processarTranfererenciaPDVs(roteirizacaoDTO.getRotasNovosPDVsTransferidos(), roteirizacaoDTO.getBox());
+	    
 	    return roteirizacao;
     }
 
 
     /**
+     * atualiza os pdvs transferidos para uma rota pertencente a outra roteirização
+     * 
+     * @param rotasNovosPDVsTransferidos
+     */
+    private void processarTranfererenciaPDVs(List<RotaRoteirizacaoDTO> rotasNovosPDVsTransferidos, BoxRoteirizacaoDTO boxRoteirizacaoDTO) {
+    	
+    	Box box = this.boxRepository.buscarPorId(boxRoteirizacaoDTO.getId());
+    	
+    	for(RotaRoteirizacaoDTO rotaDTO : rotasNovosPDVsTransferidos) {
+    		
+    		Rota rota = this.rotaRepository.buscarPorId(rotaDTO.getId());
+    		
+    		List<PdvRoteirizacaoDTO> pdvsExistentes = PdvRoteirizacaoDTO.getDTOFrom(rota.getRotaPDVs());
+    		
+    		OrdenacaoUtil.reordenarListas(pdvsExistentes,rotaDTO.getPdvs());
+    		
+    		for(PdvRoteirizacaoDTO pdvDTO : rotaDTO.getPdvs()) {
+    			
+                novoPDVRota(rota, pdvDTO, box);
+    		}
+    		
+    		this.rotaRepository.alterar(rota);
+    	}
+	}
+
+	/**
      * Salva as informações de uma nova roteirização
      * 
      * @param roteirizacaoDTO
@@ -915,11 +938,6 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
             	
             }
             
-//            OrdenacaoUtil.incluirListaOrdenada(roteirizacaoDTOTransferencia.getRoteiros(), 
-//            								new ArrayList<RoteiroRoteirizacaoDTO>(roteirosTransferidosDTO));
-//            
-//            roteirizacaoDTOTransferencia.addAllRoteiro(roteirosTransferidosDTO);
-            
             if (roteirizacaoDTOTransferencia.isNovo()) {
                 salvarNovaRoteirizacao(roteirizacaoDTOTransferencia);
             } else {
@@ -1078,6 +1096,28 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 		}
 		
 		return mensagensErro;
+	}
+
+	@Override
+	@Transactional
+	public List<RotaRoteirizacaoDTO> obterRotasNaoAssociadasAoRoteiro(Long roteiroID) {
+
+		List<Rota> rotas = this.rotaRepository.obterRotasNaoAssociadasAoRoteiro(roteiroID);
+		
+		List<RotaRoteirizacaoDTO> rotasDTO = RotaRoteirizacaoDTO.getDTOFrom(rotas);
+		
+		return rotasDTO;
+	}
+
+	/**
+	 * @see br.com.abril.nds.service.RoteirizacaoService#obterRoteiroPorRota(java.lang.Long)
+	 */
+	@Override
+	@Transactional
+	public Roteiro obterRoteiroPorRota(Long rotaID) {
+		
+		return this.roteiroRepository.obterRoteiroPorRota(rotaID);
+		
 	}
 	
 	

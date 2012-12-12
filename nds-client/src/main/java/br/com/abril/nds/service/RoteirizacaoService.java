@@ -105,6 +105,14 @@ public interface RoteirizacaoService {
 	Roteiro obterRoteiroDeBoxPorOrdem(Long idBox);
 	
 	/**
+	 * Obtém o Roteiro ao qual a rota parametrizada pertence
+	 * 
+	 * @param rotaID
+	 * @return
+	 */
+	Roteiro obterRoteiroPorRota(Long rotaID);
+	
+	/**
 	 * Obtém um Rota do Roteiro considerando a ordem
 	 * @param idRoteiro
 	 * @return Rota
@@ -241,6 +249,13 @@ public interface RoteirizacaoService {
 	 * @param roteirizacaoDTO
 	 */
 	void carregarRotasEntregadores(RoteirizacaoDTO roteirizacao);
-
+	
+	/**
+	 * Obtém as rotas que não pertencem ao roteiro parametrizado
+	 * 
+	 * @param roteiroID
+	 * @return
+	 */
+	List<RotaRoteirizacaoDTO> obterRotasNaoAssociadasAoRoteiro(Long roteiroID); 
 }
 	

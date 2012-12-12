@@ -30,5 +30,13 @@ public interface RoteiroRepository extends Repository<Roteiro, Long> {
     List<Roteiro> buscarRoteiroDeBox(Long idBox, String descricaoRoteiro);
 
 	List<Roteiro> obterRoteirosPorCota(Integer numeroCota);
+
+	/**
+	 * Obtém o roteiro ao qual a rota parametrizada pertence
+	 * 
+	 * @param rotaID
+	 * @return
+	 */
+	Roteiro obterRoteiroPorRota(Long rotaID);
 	
 }

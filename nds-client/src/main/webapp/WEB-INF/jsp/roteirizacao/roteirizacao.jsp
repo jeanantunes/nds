@@ -36,9 +36,7 @@
 	<div id="dialog-transfere-cotas" title="Transferir Cotas" style="display:none;">
 		<fieldset>
     		<legend>Transferir Cotas</legend>
-    			
-            <table id="cotasParaTransferenciaGrid" width="347" border="0" cellspacing="1" cellpadding="1"></table>
-            <br clear="all" />
+           
    			<table width="347" border="0" cellspacing="1" cellpadding="1">
          		<tr>
 			    	<td>Rota Atual:</td>
@@ -342,9 +340,9 @@
 	    			<tr>
 						<td width="85">Novo:</td>
 						<td width="255">
-							<select id="selectNovoRoteiroRota" style="width:220px;">
-								<option selected="selected">Roteiro</option>
-								<option>Rota</option>
+							<select id="selectNovoRoteiroRota" style="width:220px;" onchange="roteirizacao.switchNovoRoteiroRota();">
+								<option value="roteiro" selected="selected">Roteiro</option>
+								<option value="rota" >Rota</option>
 							</select>
 						</td>
 					</tr>
