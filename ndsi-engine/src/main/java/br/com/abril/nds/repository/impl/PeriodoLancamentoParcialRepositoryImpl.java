@@ -83,20 +83,17 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 		hql.append("			and lancamentoSupl.dataLancamentoDistribuidor <= lancamento.dataRecolhimentoDistribuidor) ");		
 		hql.append(" 		as reparteAcum, ");
 		
-		// TODO columa a arrumar:
-		hql.append("		((select sum(liMCota.qtde) from Lancamento lancamentoInicial ");
-		hql.append("			 left join lancamentoInicial.movimentoEstoqueCotas liMCota ");
-		hql.append("			where lancamentoInicial.dataLancamentoDistribuidor=lancamentoParcial.lancamentoInicial ");
-		hql.append("			and lancamentoInicial.produtoEdicao.id=produtoEdicao.id) ");
-		hql.append("		- (select sum(movimento.qtde) from ConferenciaEncalhe conferencia ");
-		hql.append("		 	join conferencia.movimentoEstoqueCota movimento ");
-		hql.append("		 	join conferencia.chamadaEncalheCota chamadaEncalheCota ");
-		hql.append("		 	join chamadaEncalheCota.chamadaEncalhe chamadaEncalhe ");
-		hql.append("			where chamadaEncalhe.dataRecolhimento >= lancamentoParcial.lancamentoInicial ");
-		hql.append("			and chamadaEncalhe.dataRecolhimento <= lancamentoParcial.recolhimentoFinal ");
-		hql.append("			and chamadaEncalhe.produtoEdicao.id = lancamento.produtoEdicao.id ");
-		hql.append("			group by chamadaEncalhe.id)) ");
-		hql.append(" 		 as vendaAcumulada, ");
+		hql.append("		(select CASE");
+		hql.append("		        WHEN (count(item) > 0) ");
+		hql.append("		        THEN (sum(item.qtdeVendaApurada)) ");
+		hql.append("		        ELSE 0 END ");
+		hql.append(" 		   from ItemChamadaEncalheFornecedor item ");
+		hql.append("           join item.produtoEdicao pEdicao ");
+		hql.append("      left join item.chamadaEncalheFornecedor chamada ");
+		hql.append("          where pEdicao.id = produtoEdicao.id ");
+		hql.append("		    and item.dataRecolhimento >= lancamento.dataLancamentoDistribuidor ");
+		hql.append("            and item.dataRecolhimento <= lancamento.dataRecolhimentoDistribuidor) ");
+		hql.append(" 		as vendaAcumulada, ");
 		
 		// TODO columa a arrumar:
 		hql.append("		round((((select sum(liMCota.qtde) from Lancamento lancamentoInicial ");
