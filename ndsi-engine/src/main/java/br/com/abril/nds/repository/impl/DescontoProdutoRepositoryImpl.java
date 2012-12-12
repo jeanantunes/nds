@@ -115,7 +115,10 @@ public class DescontoProdutoRepositoryImpl extends AbstractRepositoryModel<Desco
 			.append("WHERE vdpe.DESCONTO_ID = :idDesconto");
 		
 		Query q1 = getSession().createSQLQuery(hql.toString());
-		Long produtoId = (Long) q1.uniqueResult();
+		
+		q1.setParameter("idDesconto", idDescontoProduto);
+		
+		Long produtoId = ((BigInteger) q1.uniqueResult()).longValue();
 		
 		hql = new StringBuilder();
 		hql.append(" select cota.numeroCota as numeroCota, ");
