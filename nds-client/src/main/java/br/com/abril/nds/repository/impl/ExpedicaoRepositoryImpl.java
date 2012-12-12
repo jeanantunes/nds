@@ -368,15 +368,15 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append("SELECT COUNT(produtoEdicao.id)")
+		hql.append("SELECT COUNT(distinct produtoEdicao.id)")
 			.append( "FROM" )
-			.append( " Box box")
-			.append(" JOIN box.cotas cota")
-			.append(" JOIN cota.estudoCotas estudoCota ")
-			.append(" JOIN estudoCota.estudo estudo")
-			.append(" JOIN estudo.produtoEdicao produtoEdicao")
-			.append(" JOIN produtoEdicao.lancamentos lancamento ")
-			.append(" JOIN lancamento.expedicao expedicao ")
+			.append(" Expedicao expedicao ")
+			.append(" join expedicao.lancamentos lancamento ")
+			.append(" join lancamento.estudo estudo ")
+			.append(" join estudo.produtoEdicao produtoEdicao ")
+			.append(" join estudo.estudoCotas estudoCota ")
+			.append(" join estudoCota.cota cota ")
+			.append(" join cota.box box ")
 			.append(" WHERE ")
 			.append(" lancamento.dataLancamentoDistribuidor =:dataLancamento ")
 			.append(" and lancamento.status =:status ")

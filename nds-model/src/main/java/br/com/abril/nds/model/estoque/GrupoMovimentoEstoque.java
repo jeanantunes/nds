@@ -213,7 +213,17 @@ public enum GrupoMovimentoEstoque  {
 	/**
 	 * 
 	 */
-	TRANSFERENCIA_SAIDA_PRODUTOS_DANIFICADOS(OperacaoEstoque.SAIDA, Dominio.DISTRIBUIDOR, TipoEstoque.PRODUTOS_DANIFICADOS);
+	TRANSFERENCIA_SAIDA_PRODUTOS_DANIFICADOS(OperacaoEstoque.SAIDA, Dominio.DISTRIBUIDOR, TipoEstoque.PRODUTOS_DANIFICADOS),
+	
+	/**
+	 * 
+	 */
+	TRANSFERENCIA_ENTRADA_PRODUTOS_DEVOLUCAO_FORNECEDOR(OperacaoEstoque.ENTRADA, Dominio.DISTRIBUIDOR, TipoEstoque.DEVOLUCAO_FORNECEDOR),
+
+	/**
+	 * 
+	 */
+	TRANSFERENCIA_SAIDA_PRODUTOS_DEVOLUCAO_FORNECEDOR(OperacaoEstoque.SAIDA, Dominio.DISTRIBUIDOR, TipoEstoque.DEVOLUCAO_FORNECEDOR);
 
 	private OperacaoEstoque operacaoEstoque;
 	private Dominio dominio;

@@ -568,7 +568,7 @@ public class FecharDiaController {
 		try {
 		    Boolean hasPendenciaValidacao = (Boolean) this.session.getAttribute(ATRIBUTO_SESSAO_POSSUI_PENDENCIAS_VALIDACAO);
 		    
-		   if (hasPendenciaValidacao != null && !hasPendenciaValidacao) {
+		   if (hasPendenciaValidacao == null || !hasPendenciaValidacao) {
 		        
 		        FechamentoDiarioDTO dto = this.fecharDiaService.processarFechamentoDoDia(getUsuario(), getDataFechamento());
 		        setFechamentoDiarioDTO(dto);
