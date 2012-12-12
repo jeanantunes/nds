@@ -46,7 +46,7 @@ public class DescontoProdutoRepositoryImpl extends AbstractRepositoryModel<Desco
 		
 		hql.append("SELECT ")
 		.append("vdpe.desconto_id as idTipoDesconto ")
-		.append(", vdpe.codigo as codigoProduto ")
+		.append(", vdpe.codigo_produto as codigoProduto ")
 		.append(", vdpe.nome_produto as nomeProduto ")
 		.append(", vdpe.numero_edicao as numeroEdicao ")
 		.append(", coalesce(d.valor, vdpe.valor, 0) as desconto ")
@@ -55,7 +55,7 @@ public class DescontoProdutoRepositoryImpl extends AbstractRepositoryModel<Desco
 		.append("FROM VIEW_DESCONTO_PRODUTOS_EDICOES as vdpe ")
 		.append("LEFT OUTER JOIN HISTORICO_DESCONTO_PRODUTO_EDICOES hdpe ON vdpe.produto_edicao_id = hdpe.produto_edicao_id ") 
 		.append("LEFT OUTER JOIN DESCONTO d ON hdpe.desconto_id = d.id ")
-		.append("WHERE vdpe.codigo = :codigoProduto ");
+		.append("WHERE vdpe.codigo_produto = :codigoProduto ");
 		
 		hql.append("order by numeroEdicao, dataAlteracao desc");
 		
@@ -85,7 +85,7 @@ public class DescontoProdutoRepositoryImpl extends AbstractRepositoryModel<Desco
 		hql.append("select ")
 		.append("count(*) ")
 		.append("from VIEW_DESCONTO_PRODUTOS_EDICOES as vdpe ")
-		.append("where vdpe.codigo = :codigoProduto ");
+		.append("where vdpe.codigo_produto = :codigoProduto ");
 		
 		Query q = getSession().createSQLQuery(hql.toString());
 
@@ -109,7 +109,16 @@ public class DescontoProdutoRepositoryImpl extends AbstractRepositoryModel<Desco
 	public List<CotaDescontoProdutoDTO> obterCotasDoTipoDescontoProduto(Long idDescontoProduto, Ordenacao ordenacao) {
 
 		StringBuilder hql = new StringBuilder();
-
+		
+		hql.append("SELECT PRODUTO_ID ")
+			.append("FROM VIEW_DESCONTO_PRODUTOS_EDICOES AS vdpe ")
+			.append("WHERE vdpe.DESCONTO_ID = :idDesconto");
+		
+		Query q1 = getSession().createSQLQuery(hql.toString());
+		q1.setParameter("idDesconto", idDescontoProduto);
+		Long produtoId = (Long) q1.uniqueResult();
+		
+		hql = new StringBuilder();
 		hql.append(" select cota.numeroCota as numeroCota, ");
 		hql.append(" case when cota.pessoa.nome is not null then ");
 		hql.append(" cota.pessoa.nome ");
@@ -117,15 +126,16 @@ public class DescontoProdutoRepositoryImpl extends AbstractRepositoryModel<Desco
 		hql.append(" cota.pessoa.razaoSocial ");
 		hql.append(" end ");
 		hql.append(" as nome ");
-		hql.append(" from DescontoProduto as descontoProduto ");
-		hql.append(" inner join descontoProduto.cotas as cota ");
-		hql.append(" where descontoProduto.id = :idDescontoProduto ");
+		hql.append(" from Produto as p ");
+		hql.append(" inner join p.fornecedores as f ");
+		hql.append(" inner join f.cotas as cota ");
+		hql.append(" where p.id = :idProduto ");
 		hql.append(" order by cota.numeroCota ");
 		hql.append(ordenacao.getOrdenacao() == null ? "" : ordenacao.getOrdenacao());
 
 		Query query = getSession().createQuery(hql.toString());
 
-		query.setParameter("idDescontoProduto", idDescontoProduto);
+		query.setParameter("idProduto", produtoId);
 
 		query.setResultTransformer(new AliasToBeanResultTransformer(CotaDescontoProdutoDTO.class));
 
