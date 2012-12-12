@@ -54,7 +54,7 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 		hql.append("		        THEN SUM(eProduto.qtdeDevolucaoEncalhe) ");
 		hql.append("		        ELSE 0 END ");
 		hql.append("		   from EstoqueProduto eProduto left join eProduto.produtoEdicao pEdicao ");
-		hql.append("		  where eProduto.produtoEdicao.id = produtoEdicao.id)");
+		hql.append("		  where pEdicao.id = produtoEdicao.id)");
 		hql.append(" 		 as encalhe, ");
 		
 		hql.append("		(select CASE");
