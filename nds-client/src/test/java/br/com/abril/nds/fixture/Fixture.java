@@ -126,6 +126,7 @@ import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCotaJuramentado;
 import br.com.abril.nds.model.estoque.Expedicao;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
+import br.com.abril.nds.model.estoque.HistoricoEstoqueProduto;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
@@ -1933,6 +1934,14 @@ public class Fixture {
 		estoqueProduto.setQtdeDevolucaoEncalhe(qtde);
 		estoqueProduto.setQtdeDevolucaoFornecedor(qtde.add(BigInteger.TEN));
 		return estoqueProduto;
+	}
+	
+	public static HistoricoEstoqueProduto historicoEstoqueProduto(EstoqueProduto estoque, Date data, BigInteger qtdeJuramentada) {
+		
+		HistoricoEstoqueProduto hist = new HistoricoEstoqueProduto(data, estoque.getProdutoEdicao(), estoque.getQtde(), estoque.getQtdeSuplementar(), 
+				estoque.getQtdeDevolucaoEncalhe(), estoque.getQtdeDevolucaoFornecedor(), qtdeJuramentada , estoque.getQtdeDanificado());
+		
+		return hist;
 	}
 	
 	public static EstoqueProdutoCotaJuramentado estoqueProdutoCotaJuramentado(Date data, ProdutoEdicao produtoEdicao, Cota cota, BigInteger qtde) {

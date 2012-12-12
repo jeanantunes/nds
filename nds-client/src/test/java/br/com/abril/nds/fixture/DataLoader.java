@@ -2594,6 +2594,9 @@ public class DataLoader {
 		EstoqueProduto estoqueProduto = Fixture.estoqueProduto(produtoEdicaoBravo1, BigInteger.valueOf(45));
 		save(session,estoqueProduto);
 
+		save(session, Fixture.historicoEstoqueProduto(estoqueProduto, DateUtil.adicionarDias(new Date(), -2), null));
+		
+		
 		MovimentoEstoque movimentoEstoque = Fixture.movimentoEstoque(itemRecebimentoFisico, produtoEdicaoBravo1, tipoMovimentoEstoque, usuario, estoqueProduto, dataAtual, BigInteger.valueOf(12), StatusAprovacao.APROVADO , "MOTIVO B");
 		save(session,movimentoEstoque);
 
@@ -4345,32 +4348,56 @@ public class DataLoader {
 	}
 
 	private static void criarEstoquesProdutos(Session session) {
+		
 		estoqueProdutoVeja1 = Fixture.estoqueProduto(produtoEdicaoVeja1, BigInteger.TEN);
-
+		
+		save(session, Fixture.historicoEstoqueProduto(estoqueProdutoVeja1, DateUtil.adicionarDias(new Date(), -2), null));
+		
 		estoqueProdutoVeja2 = Fixture.estoqueProduto(produtoEdicaoVeja2, BigInteger.TEN);
+		
+		save(session, Fixture.historicoEstoqueProduto(estoqueProdutoVeja2, DateUtil.adicionarDias(new Date(), -2), null));
 
 		estoqueProdutoVeja3 = Fixture.estoqueProduto(produtoEdicaoVeja3, BigInteger.TEN);
+		
+		save(session, Fixture.historicoEstoqueProduto(estoqueProdutoVeja3, DateUtil.adicionarDias(new Date(), -2), null));
 
 		estoqueProdutoVeja4 = Fixture.estoqueProduto(produtoEdicaoVeja4, BigInteger.TEN);
+		
+		save(session, Fixture.historicoEstoqueProduto(estoqueProdutoVeja4, DateUtil.adicionarDias(new Date(), -2), null));
 
 		estoqueProdutoSuper1 = Fixture.estoqueProduto(produtoEdicaoSuper1, BigInteger.TEN);
 
+		save(session, Fixture.historicoEstoqueProduto(estoqueProdutoSuper1, DateUtil.adicionarDias(new Date(), -2), null));
+		
 		estoqueProdutoCapricho1 = Fixture.estoqueProduto(produtoEdicaoCapricho1, BigInteger.TEN);
+		
+		save(session, Fixture.historicoEstoqueProduto(estoqueProdutoCapricho1, DateUtil.adicionarDias(new Date(), -2), null));
 
 		estoqueProdutoInfoExame1 = Fixture.estoqueProduto(produtoEdicaoInfoExame1, BigInteger.TEN);
+		
+		save(session, Fixture.historicoEstoqueProduto(estoqueProdutoInfoExame1, DateUtil.adicionarDias(new Date(), -2), null));
 
 		estoqueProdutoVeja1EncalheAnt = Fixture.estoqueProduto(produtoEdicaoVeja1EncalheAnt, BigInteger.TEN);
+		
+		save(session, Fixture.historicoEstoqueProduto(estoqueProdutoVeja1EncalheAnt, DateUtil.adicionarDias(new Date(), -2), null));
 
 		estoqueProdutoVeja2EncalheAnt = Fixture.estoqueProduto(produtoEdicaoVeja2EncalheAnt, BigInteger.TEN);
+		
+		save(session, Fixture.historicoEstoqueProduto(estoqueProdutoVeja2EncalheAnt, DateUtil.adicionarDias(new Date(), -2), null));
 
 		estoqueProdutoSuper1EncalheAnt = Fixture.estoqueProduto(produtoEdicaoSuper1EncalheAnt, BigInteger.TEN);
+		
+		save(session, Fixture.historicoEstoqueProduto(estoqueProdutoSuper1EncalheAnt, DateUtil.adicionarDias(new Date(), -2), null));
 
 		estoqueProdutoSuper2EncalheAnt = Fixture.estoqueProduto(produtoEdicaoSuper2EncalheAnt, BigInteger.TEN);
-
+		
+		save(session, Fixture.historicoEstoqueProduto(estoqueProdutoSuper2EncalheAnt, DateUtil.adicionarDias(new Date(), -2), null));
+		
 		save(session, estoqueProdutoVeja1, estoqueProdutoVeja2, estoqueProdutoVeja3,
 			 estoqueProdutoVeja4, estoqueProdutoSuper1, estoqueProdutoCapricho1,
 			 estoqueProdutoInfoExame1,estoqueProdutoVeja1EncalheAnt,estoqueProdutoVeja2EncalheAnt,
 			 estoqueProdutoSuper1EncalheAnt,estoqueProdutoSuper2EncalheAnt);
+		
 	}
 	
 	private static void criarEstoquesProdutosCotaJuramentados(Session session) {
@@ -6223,6 +6250,9 @@ public class DataLoader {
 
 			EstoqueProduto estoque  =  Fixture.estoqueProduto(produtoEdicao, BigInteger.ZERO);
 			session.save(estoque);
+			
+			save(session, Fixture.historicoEstoqueProduto(estoque, DateUtil.adicionarDias(new Date(), -2), null));
+			
 
 			for(int x= 1; x< 3 ;x++){
 
