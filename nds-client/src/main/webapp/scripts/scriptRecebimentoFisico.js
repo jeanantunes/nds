@@ -91,9 +91,6 @@ var recebimentoFisicoController = $.extend(true, {
 		
 		$("#cnpj", this.workspace).mask("99.999.999/9999-99");
 		
-		
-		
-		
 		recebimentoFisicoController.ocultarBtns();
 		
 		this.formatItemNota();
@@ -1279,14 +1276,51 @@ var recebimentoFisicoController = $.extend(true, {
 			
 			function(result) {
 				
-				$("#novoCnpj", this.workspace).val(result);
-				
+				var cnpj = result;
+
+				if (cnpj.result != undefined) {
+					$("#novoCnpj", this.workspace).val("");
+				} else if (cnpj != "") {
+					$("#novoCnpj", this.workspace).val(recebimentoFisicoController.mascaraCNPJ(cnpj));
+				}
+					
 				$("#novoCnpj", this.workspace).attr('disabled', true);
 				
 			},
 			null,
 			true);
 		}
+	},
+	
+	mascaraCNPJ : function(cnpj) {
+        return recebimentoFisicoController.formataCampo(cnpj, '00.000.000/0000-00');
+	},
+	
+	//formata de forma generica os campos
+	formataCampo : function(campo, Mascara) { 
+	        var boleanoMascara; 
+
+	        exp = /\-|\.|\/|\(|\)| /g
+	        campoSoNumeros = campo.replace( exp, "" ); 
+
+	        var posicaoCampo = 0;    
+	        var NovoValorCampo="";
+	        var TamanhoMascara = campoSoNumeros.length;; 
+
+            for(i=0; i<= TamanhoMascara; i++) { 
+                    boleanoMascara  = ((Mascara.charAt(i) == "-") || (Mascara.charAt(i) == ".")
+                                                            || (Mascara.charAt(i) == "/")) 
+                    boleanoMascara  = boleanoMascara || ((Mascara.charAt(i) == "(") 
+                                                            || (Mascara.charAt(i) == ")") || (Mascara.charAt(i) == " ")) 
+                    if (boleanoMascara) { 
+                            NovoValorCampo += Mascara.charAt(i); 
+                              TamanhoMascara++;
+                    } else {
+                            NovoValorCampo += campoSoNumeros.charAt(posicaoCampo); 
+                            posicaoCampo++; 
+                    }              
+            }
+            return NovoValorCampo;
 	},
 	
 	obterDadosEdicao : function(index) {
