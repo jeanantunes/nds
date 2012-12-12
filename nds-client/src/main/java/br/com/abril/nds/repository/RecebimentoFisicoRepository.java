@@ -21,5 +21,7 @@ public interface RecebimentoFisicoRepository extends Repository<RecebimentoFisic
 	RecebimentoFisico obterRecebimentoFisicoPorNotaFiscal(Long idNotaFiscal);
 	
 	List<ItemRecebimentoFisico> obterItensRecebimentoFisicoDoProduto(Long idProdutoEdicao);
+
+	boolean existeNotaFiscal(Long numero, String serie, String cnpj);
 	 
 }

@@ -129,7 +129,7 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		
 		if(indValorTotalProdutos) {
 			
-			hql.append(" select sum( _chamEncCota.qtdePrevista * produtoEdicao.precoVenda ) ");
+			hql.append(" select sum( _chamEncCota.qtdePrevista * _produtoEdicao.precoVenda ) ");
 			
 		} else {
 			
@@ -139,6 +139,7 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		hql.append(" from ChamadaEncalheCota _chamEncCota 					")
 		.append(" join _chamEncCota.chamadaEncalhe  _chamadaEncalhe 	")
 		.append(" join _chamEncCota.cota _cota 							")
+		.append(" join _chamadaEncalhe.produtoEdicao _produtoEdicao")
 		.append(" where _cota.id = cota.id ");
 
 		if(filtro.getDtRecolhimentoDe() != null) {

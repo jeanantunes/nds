@@ -692,7 +692,7 @@ public class LancamentoRepositoryImpl extends
 													  .addScalar("expectativaEncalheAtendida")
 													  .addScalar("expectativaEncalheAlternativo")
 													  .addScalar("valorTotal")
-													  .addScalar("desconto")
+													  .addScalar("desconto",StandardBasicTypes.BIG_DECIMAL)
 													  .addScalar("parcial")
 													  .addScalar("peso", StandardBasicTypes.LONG)
 													  .addScalar("idEditor", StandardBasicTypes.LONG)

@@ -234,16 +234,16 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		StringBuilder hql = new StringBuilder();
 	
 		hql.append(" FROM MovimentoEstoqueCota movimento ");
-		hql.append(" join movimento.lancamento lancamento ");
-		hql.append(" LEFT JOIN movimento.cota as cota ");
-		hql.append(" LEFT JOIN movimento.tipoMovimento as tipoMovimento ");
-		hql.append(" LEFT JOIN movimento.produtoEdicao as pe ");
-		hql.append(" LEFT JOIN pe.produto as produto ");
-		hql.append(" LEFT JOIN cota.parametroCobranca parametroCobranca ");
-		hql.append(" LEFT JOIN produto.fornecedores as fornecedor ");
-		hql.append(" LEFT JOIN fornecedor.juridica as pessoa ");		
-		hql.append(" LEFT JOIN cota.pessoa as pessoaCota ");
-		hql.append(" LEFT JOIN movimento.movimentoEstoqueCotaFuro as movimentoEstoqueCotaFuro ");
+		hql.append(" LEFT join movimento.lancamento lancamento ");
+		hql.append("  JOIN movimento.cota as cota ");
+		hql.append("  JOIN movimento.tipoMovimento as tipoMovimento ");
+		hql.append("  JOIN movimento.produtoEdicao as pe ");
+		hql.append("  JOIN pe.produto as produto ");
+		hql.append("  JOIN cota.parametroCobranca parametroCobranca ");
+		hql.append("  JOIN produto.fornecedores as fornecedor ");
+		hql.append("  JOIN fornecedor.juridica as pessoa ");		
+		hql.append("  JOIN cota.pessoa as pessoaCota ");
+		hql.append("  LEFT JOIN movimento.movimentoEstoqueCotaFuro as movimentoEstoqueCotaFuro ");
 		
 		hql.append(" WHERE tipoMovimento.grupoMovimentoEstoque IN (:tipoMovimento) " );
 		hql.append("   AND parametroCobranca.tipoCota = :tipoCota  " );

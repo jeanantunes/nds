@@ -13,6 +13,7 @@ import br.com.abril.nds.dto.VisaoEstoqueDetalheJuramentadoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaVisaoEstoque;
 import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.repository.VisaoEstoqueRepository;
+import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.StringUtil;
 
 @Repository
@@ -77,7 +78,7 @@ public class VisaoEstoqueRepositoryImpl extends AbstractRepository implements
 		if (filtro.getIdFornecedor() != -1) {
 			hql.append("   JOIN pe.produto.fornecedores f ");
 		}
-		hql.append("  WHERE ep.data = :data ");
+		hql.append("  WHERE ep.data =:data ");
 		if (filtro.getIdFornecedor() != -1) {
 			hql.append("    AND f.id = :idFornecedor ");
 		}
