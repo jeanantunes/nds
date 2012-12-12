@@ -200,6 +200,9 @@ public class EntityInterceptor extends EmptyInterceptor {
 
 	private void validarAndamnetoFechamentoDiario() {
 		
+		getSession().flush();
+		getSession().clear();
+		
 		Query query = getSession().createQuery("from Distribuidor");
 		
 		query.setMaxResults(1);

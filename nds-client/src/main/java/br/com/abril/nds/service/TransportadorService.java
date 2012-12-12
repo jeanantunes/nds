@@ -26,9 +26,14 @@ public interface TransportadorService {
 	
 	List<Transportador> buscarTransportadores();
 	
+	public void processarEnderecos(Transportador transportador,
+								   List<EnderecoAssociacaoDTO> listaEnderecoAssociacaoSalvar,
+								   List<EnderecoAssociacaoDTO> listaEnderecoAssociacaoRemover
+								   );
+	
 	void cadastrarTransportador(Transportador transportador,
 			List<EnderecoAssociacaoDTO> listaEnderecosAdicionar,
-			Set<Long> listaEnderecosRemover,
+			List<EnderecoAssociacaoDTO> listaEnderecosRemover,
 			List<TelefoneAssociacaoDTO> listaTelefoneAdicionar,
 			Set<Long> listaTelefoneRemover,
 			List<Veiculo> listaVeiculosAdicionar,
