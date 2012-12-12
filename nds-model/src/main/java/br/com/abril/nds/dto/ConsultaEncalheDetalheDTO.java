@@ -1,6 +1,10 @@
 package br.com.abril.nds.dto;
 
-public class ConsultaEncalheDetalheDTO {
+import java.io.Serializable;
+
+public class ConsultaEncalheDetalheDTO implements Serializable {
+
+	private static final long serialVersionUID = 1403883941216986387L;
 
 	private Integer numeroCota;
 	
