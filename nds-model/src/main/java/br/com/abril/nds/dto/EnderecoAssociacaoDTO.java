@@ -20,6 +20,18 @@ public class EnderecoAssociacaoDTO implements Serializable {
 	 */
 	public EnderecoAssociacaoDTO() { }
 	
+    public EnderecoAssociacaoDTO(Long id, boolean enderecoPrincipal, Endereco endereco, TipoEndereco tipoEndereco, Endereco enderecoPessoa) {
+		
+		if (tipoEndereco != null){
+			this.id = id;
+			this.enderecoPrincipal = enderecoPrincipal;
+			this.endereco = EnderecoDTO.fromEndereco(endereco);
+			this.tipoEndereco = tipoEndereco;
+		} else {
+			this.endereco = EnderecoDTO.fromEndereco(enderecoPessoa);
+		}
+	}
+	
 	public EnderecoAssociacaoDTO(boolean enderecoPrincipal, Endereco endereco, TipoEndereco tipoEndereco, Endereco enderecoPessoa) {
 		
 		if (tipoEndereco != null){

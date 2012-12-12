@@ -109,4 +109,24 @@ public class RecebimentoFisicoRepositoryImpl extends AbstractRepositoryModel<Rec
 		return query.list();
 	}
 
+
+	@Override
+	public boolean existeNotaFiscal(Long numero, String serie, String cnpj) {
+		String hql = " select n "
+				   + " from NotaFiscalEntrada n "
+				   + " join n.emitente e "
+				   + " where n.numero = :numero "
+				   + " and n.serie = :serie "
+				   + " and replace(replace(replace(e.cnpj, '.', ''), '-', ''), '/', '') = :cnpj";
+
+		Query query = getSession().createQuery(hql);
+
+		query.setParameter("numero", numero);
+		query.setParameter("serie", serie);
+		query.setParameter("cnpj", cnpj);
+
+		// Caso não seja encontrado nenhum resultado para a nota, ela não existe
+		return query.uniqueResult() != null;
+	}
+
 }

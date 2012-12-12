@@ -705,6 +705,7 @@ public class CotaServiceImpl implements CotaService {
 		historico.setResponsavel(usuario);
 		historico.setMotivo(motivoAlteracaoSituacao);
 		historico.setTipoEdicao(TipoEdicao.ALTERACAO);
+		historico.setDataInicioValidade(new Date());
 		
 		historicoSituacaoCotaRepository.adicionar(historico);
 		
