@@ -105,7 +105,7 @@ $(function(){$('img.capaImg').load(function() {
   <tr>
     <td height="16" colspan="4" style="border-left:1px solid #000; border-right:1px solid #000; border-top:1px solid #000;"><span class="titulo">Cliente<br />
     </span></td>
-    <td width="144" style="border-top:1px solid #000;border-right:1px solid #000;"><span class="titulo">CNPJ</span></td>
+    <td width="144" style="border-top:1px solid #000;border-right:1px solid #000;"><span class="titulo">CPF/CNPJ</span></td>
   </tr>
   <tr>
     <td height="26" colspan="4" style="border-left:1px solid #000;border-right:1px solid #000;border-bottom:1px solid #000;"><span class="dadosNota">${cotaEmissao.numCota} - ${cotaEmissao.nomeCota.toUpperCase()}</span></td>
@@ -404,7 +404,7 @@ $(function(){$('img.capaImg').load(function() {
 	  <tr>
 	    <td height="16" colspan="4" style="border-left:1px solid #000; border-right:1px solid #000; border-top:1px solid #000;"><span class="titulo">Cliente<br />
 	    </span></td>
-	    <td width="144" style="border-top:1px solid #000;border-right:1px solid #000;"><span class="titulo">CNPJ</span></td>
+	    <td width="144" style="border-top:1px solid #000;border-right:1px solid #000;"><span class="titulo">CPF/CNPJ</span></td>
 	  </tr>
 	  <tr>
 	    <td height="26" colspan="4" style="border-left:1px solid #000;border-right:1px solid #000;border-bottom:1px solid #000;"><span class="dadosNota">${cotaEmissao.numCota} - ${cotaEmissao.nomeCota.toUpperCase()}</span></td>

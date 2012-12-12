@@ -8,6 +8,7 @@ import java.util.List;
 
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.Util;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
 
@@ -112,7 +113,7 @@ public class CotaEmissaoDTO implements Serializable{
 	 * @param cep the cep to set
 	 */
 	public void setCep(String cep) {
-		this.cep = cep;
+		this.cep = (cep!= null)? Util.adicionarMascaraCEP(cep) : cep;
 	}
 	/**
 	 * @return the inscricaoEstadual
@@ -186,7 +187,7 @@ public class CotaEmissaoDTO implements Serializable{
 	 * @param qtdeExemplares the qtdeExemplares to set
 	 */
 	public void setQtdeExemplares(BigInteger qtdeExemplares) {
-		this.qtdeExemplares = qtdeExemplares.intValue();
+		this.qtdeExemplares = (qtdeExemplares==null)?null:qtdeExemplares.intValue();
 	}
 	/**
 	 * @return the vlrTotalCe

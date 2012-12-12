@@ -4,6 +4,8 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
@@ -11,6 +13,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.envio.nota.ItemNotaEnvio;
 import br.com.abril.nds.model.fiscal.nota.ProdutoServico;
@@ -61,7 +64,11 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque implements C
 
 	@Column(name = "STATUS_ESTOQUE_FINANCEIRO")
 	private StatusEstoqueFinanceiro statusEstoqueFinanceiro;
-
+	
+	@ManyToOne(optional = true)
+	@JoinColumn(name = "LANCAMENTO_DIFERENCA_ID")
+	private LancamentoDiferenca lancamentoDiferenca;
+	
 	public Object clone() {
 
 		MovimentoEstoqueCota mec = new MovimentoEstoqueCota();
@@ -210,5 +217,13 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque implements C
 			MovimentoEstoqueCota movimentoEstoqueCotaFuro) {
 		this.movimentoEstoqueCotaFuro = movimentoEstoqueCotaFuro;
 	}
-	
+
+	public LancamentoDiferenca getLancamentoDiferenca() {
+		return lancamentoDiferenca;
+	}
+
+	public void setLancamentoDiferenca(LancamentoDiferenca lancamentoDiferenca) {
+		this.lancamentoDiferenca = lancamentoDiferenca;
+	}
+
 }

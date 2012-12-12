@@ -85,22 +85,19 @@ $(function(){$('img.capaImg').load(function() {
     <td style="border-left:1px solid #000;"><span class="titulo">Cidade</span></td>
     <td align="center"><span class="titulo">UF</span></td>
     <td align="center"><span class="titulo">CEP</span></td>
-    <td align="center"><span class="titulo">Inscrição Estadual</span></td>
-    <td style="border-left:1px solid #000;"><span class="titulo">Natureza da Operação</span></td>
   </tr>
   <tr>
     <td style="border-left:1px solid #000;border-bottom:1px solid #000;"><span  class="dadosNota">${dadosDistribuidor.cidade}</span></td>
     <td align="center" style="border-bottom:1px solid #000;"><span class="dadosNota">${dadosDistribuidor.uf}</span></td>
     <td align="center" style="border-bottom:1px solid #000;"><span class="dadosNota">${dadosDistribuidor.cep}</span></td>
     <td align="center" style="border-bottom:1px solid #000;"><span class="dadosNota">${dadosDistribuidor.inscricaoEstatual}</span></td>
-    <td align="center" style="border-left:1px solid #000;"><span class="dadosNota">5949 REMESSA P/ DISTRIBUIÇÃO</span></td>
   </tr>
 </table>
 <table width="850" border="0" align="center" cellpadding="0" cellspacing="0" >
   <tr>
     <td height="16" colspan="4" style="border-left:1px solid #000; border-right:1px solid #000; border-top:1px solid #000;"><span class="titulo">Cliente<br />
     </span></td>
-    <td width="144" style="border-top:1px solid #000;border-right:1px solid #000;"><span class="titulo">CNPJ</span></td>
+    <td width="144" style="border-top:1px solid #000;border-right:1px solid #000;"><span class="titulo">CPF/CNPJ</span></td>
   </tr>
   <tr>
     <td height="26" colspan="4" style="border-left:1px solid #000;border-right:1px solid #000;border-bottom:1px solid #000;"><span class="dadosNota">${cotaEmissao.numCota} - ${cotaEmissao.nomeCota.toUpperCase()}</span></td>
@@ -288,14 +285,13 @@ $(function(){$('img.capaImg').load(function() {
     <td align="center" style="border-bottom:1px solid #000;"><span class="dadosNota">${dadosDistribuidor.uf}</span></td>
     <td align="center" style="border-bottom:1px solid #000;"><span class="dadosNota">${dadosDistribuidor.cep}</span></td>
     <td align="center" style="border-bottom:1px solid #000;"><span class="dadosNota">${dadosDistribuidor.inscricaoEstatual}</span></td>
-    <td align="center" style="border-left:1px solid #000;"><span class="dadosNota">5949 REMESSA P/ DISTRIBUIÇÃO</span></td>
   </tr>
 </table>
 <table width="850" border="0" align="center" cellpadding="0" cellspacing="0" >
   <tr>
     <td height="16" colspan="4" style="border-left:1px solid #000; border-right:1px solid #000; border-top:1px solid #000;"><span class="titulo">Cliente<br />
     </span></td>
-    <td width="144" style="border-top:1px solid #000;border-right:1px solid #000;"><span class="titulo">CNPJ</span></td>
+    <td width="144" style="border-top:1px solid #000;border-right:1px solid #000;"><span class="titulo">CPF/CNPJ</span></td>
   </tr>
   <tr>
     <td height="26" colspan="4" style="border-left:1px solid #000;border-right:1px solid #000;border-bottom:1px solid #000;"><span class="dadosNota">${cotaEmissao.numCota} - ${cotaEmissao.nomeCota.toUpperCase()}</span></td>

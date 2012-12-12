@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.exception.ImportacaoException;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
@@ -222,7 +223,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 	
 	public MovimentoEstoque gerarMovimentoEstoqueJuramentado(Long idProdutoEdicao, Long idUsuario, BigInteger quantidade,TipoMovimentoEstoque tipoMovimentoEstoque) {
 		
-		MovimentoEstoque movimentoEstoque = this.criarMovimentoEstoque(null, idProdutoEdicao, idUsuario, quantidade, tipoMovimentoEstoque);
+		MovimentoEstoque movimentoEstoque = this.criarMovimentoEstoque(null, idProdutoEdicao, idUsuario, quantidade, tipoMovimentoEstoque,null);
 		
 		return movimentoEstoque;
 	}
@@ -231,7 +232,16 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 	@Transactional
 	public MovimentoEstoque gerarMovimentoEstoque(Date dataLancamento, Long idProdutoEdicao, Long idUsuario, BigInteger quantidade,TipoMovimentoEstoque tipoMovimentoEstoque) {
 
-		MovimentoEstoque movimentoEstoque = this.criarMovimentoEstoque(dataLancamento, idProdutoEdicao, idUsuario, quantidade, tipoMovimentoEstoque);
+		MovimentoEstoque movimentoEstoque = this.criarMovimentoEstoque(dataLancamento, idProdutoEdicao, idUsuario, quantidade, tipoMovimentoEstoque,null);
+		
+		return movimentoEstoque;
+	}
+	
+	@Override
+	@Transactional
+	public MovimentoEstoque gerarMovimentoEstoque(Long idProdutoEdicao, Long idUsuario, BigInteger quantidade,TipoMovimentoEstoque tipoMovimentoEstoque,Origem origem) {
+
+		MovimentoEstoque movimentoEstoque = this.criarMovimentoEstoque(null, idProdutoEdicao, idUsuario, quantidade, tipoMovimentoEstoque, origem);
 		
 		return movimentoEstoque;
 	}
@@ -240,12 +250,12 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 	@Transactional
 	public MovimentoEstoque gerarMovimentoEstoque(Long idProdutoEdicao, Long idUsuario, BigInteger quantidade,TipoMovimentoEstoque tipoMovimentoEstoque) {
 
-		MovimentoEstoque movimentoEstoque = this.criarMovimentoEstoque(null, idProdutoEdicao, idUsuario, quantidade, tipoMovimentoEstoque);
+		MovimentoEstoque movimentoEstoque = this.criarMovimentoEstoque(null, idProdutoEdicao, idUsuario, quantidade, tipoMovimentoEstoque,null);
 		
 		return movimentoEstoque;
 	}
 	
-	private MovimentoEstoque criarMovimentoEstoque(Date dataLancamento, Long idProdutoEdicao, Long idUsuario, BigInteger quantidade,TipoMovimentoEstoque tipoMovimentoEstoque){
+	private MovimentoEstoque criarMovimentoEstoque(Date dataLancamento, Long idProdutoEdicao, Long idUsuario, BigInteger quantidade,TipoMovimentoEstoque tipoMovimentoEstoque, Origem origem){
 		
 		MovimentoEstoque movimentoEstoque = new MovimentoEstoque();
 		
@@ -279,6 +289,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 		movimentoEstoque.setUsuario(usuario);
 		movimentoEstoque.setTipoMovimento(tipoMovimentoEstoque);
 		movimentoEstoque.setQtde(quantidade);
+		movimentoEstoque.setOrigem(origem);
 		
 		movimentoEstoqueRepository.adicionar(movimentoEstoque);
 		
@@ -684,7 +695,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 			
 			this.criarMovimentoEstoque(null, 
 					produtoServico.getProdutoEdicao().getId(), 
-					idUsuario, produtoServico.getQuantidade(), tipoMovimento);
+					idUsuario, produtoServico.getQuantidade(), tipoMovimento,null);
 		}
 	}
 }

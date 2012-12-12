@@ -197,6 +197,19 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 	}
 	
 	/**
+	 * Verifica se a nota fiscal já existe (combinação numero, serie e cnpj do emitente)
+	 * @param notaFiscal
+	 */
+	@Transactional(readOnly=true)
+	public void validarExisteNotaFiscal(NotaFiscalEntradaFornecedor notaFiscal) {
+		
+		if ( recebimentoFisicoRepository.existeNotaFiscal(notaFiscal.getNumero(), notaFiscal.getSerie(), notaFiscal.getFornecedor().getJuridica().getCnpj()) ) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Não é possível gerar a nota fiscal! Existe outra nota fiscal com o mesmo número, série e emitente (cnpj).");
+		}
+		
+	}
+	
+	/**
 	 * Insere os dados do recebimento físico.
 	 */
 	@Transactional

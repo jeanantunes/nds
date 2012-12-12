@@ -126,6 +126,7 @@ import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCotaJuramentado;
 import br.com.abril.nds.model.estoque.Expedicao;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
+import br.com.abril.nds.model.estoque.HistoricoEstoqueProduto;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
@@ -1219,6 +1220,24 @@ public class Fixture {
 		tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_PRODUTOS_DANIFICADOS);
 		return tipoMovimento;
 	}
+	
+	public static TipoMovimentoEstoque tipoMovimentoTransferenciaEntradaProdutosDevolucaoFornecedor() {
+		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
+		tipoMovimento.setAprovacaoAutomatica(true);
+		tipoMovimento.setDescricao("Entrada por transferência de estoque do tipo 'Devolução produto para Fornecedor', do distribuidor");
+		tipoMovimento.setIncideDivida(true);
+		tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_PRODUTOS_DEVOLUCAO_FORNECEDOR);
+		return tipoMovimento;
+	}
+
+	public static TipoMovimentoEstoque tipoMovimentoTransferenciaSaidaProdutosDevolucaoFornecedor() {
+		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
+		tipoMovimento.setAprovacaoAutomatica(true);
+		tipoMovimento.setDescricao("Saída por transferência de estoque do tipo 'Devolução produto para Fornecedor', do distribuidor");
+		tipoMovimento.setIncideDivida(true);
+		tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_PRODUTOS_DEVOLUCAO_FORNECEDOR);
+		return tipoMovimento;
+	}
 
 	public static TipoMovimentoEstoque tipoMovimentoCancelamentoNFDevolucaoConsignado() {
 		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
@@ -1933,6 +1952,14 @@ public class Fixture {
 		estoqueProduto.setQtdeDevolucaoEncalhe(qtde);
 		estoqueProduto.setQtdeDevolucaoFornecedor(qtde.add(BigInteger.TEN));
 		return estoqueProduto;
+	}
+	
+	public static HistoricoEstoqueProduto historicoEstoqueProduto(EstoqueProduto estoque, Date data, BigInteger qtdeJuramentada) {
+		
+		HistoricoEstoqueProduto hist = new HistoricoEstoqueProduto(data, estoque.getProdutoEdicao(), estoque.getQtde(), estoque.getQtdeSuplementar(), 
+				estoque.getQtdeDevolucaoEncalhe(), estoque.getQtdeDevolucaoFornecedor(), qtdeJuramentada , estoque.getQtdeDanificado());
+		
+		return hist;
 	}
 	
 	public static EstoqueProdutoCotaJuramentado estoqueProdutoCotaJuramentado(Date data, ProdutoEdicao produtoEdicao, Cota cota, BigInteger qtde) {

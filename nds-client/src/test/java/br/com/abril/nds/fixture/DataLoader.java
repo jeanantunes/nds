@@ -338,6 +338,9 @@ public class DataLoader {
 	private static TipoMovimentoEstoque tipoMovimentoTransferenciaSaidaRecolhimento;
 	private static TipoMovimentoEstoque tipoMovimentoTransferenciaEntradaProdutosDanificados;
 	private static TipoMovimentoEstoque tipoMovimentoTransferenciaSaidaProdutosDanificados;
+	private static TipoMovimentoEstoque tipoMovimentoTransferenciaEntradaProdutosDevolucaoFornecedor;
+	private static TipoMovimentoEstoque tipoMovimentoTransferenciaSaidaProdutosDevolucaoFornecedor;
+	
 	
 	private static MovimentoEstoqueCota movimentoEstoqueCota1;
 	private static MovimentoEstoqueCota movimentoEstoqueCota2;
@@ -2418,8 +2421,11 @@ public class DataLoader {
 		TipoLicencaMunicipal tipoLicencaMunicipal6 = Fixture.criarTipoLicencaMunicipal(6L, "RECUO DE ALÇADA");
 		TipoLicencaMunicipal tipoLicencaMunicipal7 = Fixture.criarTipoLicencaMunicipal(7L, "CCM");
 		TipoLicencaMunicipal tipoLicencaMunicipal8 = Fixture.criarTipoLicencaMunicipal(8L, "ALVARÁ");
+		TipoLicencaMunicipal tipoLicencaMunicipal9 = Fixture.criarTipoLicencaMunicipal(9L, "OUTROS");
 
-		save(session,tipoLicencaMunicipal1,tipoLicencaMunicipal2,tipoLicencaMunicipal3,tipoLicencaMunicipal4,tipoLicencaMunicipal5,tipoLicencaMunicipal6,tipoLicencaMunicipal7,tipoLicencaMunicipal8);
+		save(session,tipoLicencaMunicipal1,tipoLicencaMunicipal2,tipoLicencaMunicipal3,
+				tipoLicencaMunicipal4,tipoLicencaMunicipal5,tipoLicencaMunicipal6,
+				tipoLicencaMunicipal7,tipoLicencaMunicipal8,tipoLicencaMunicipal9);
 	}
 
 	private static void gerarTipoEstabelecimentoAssociacaoPDV(Session session) {
@@ -2430,6 +2436,15 @@ public class DataLoader {
 		TipoEstabelecimentoAssociacaoPDV tipoEstabelecimentoAssociacaoPDV3 = Fixture.criarTipoEstabelecimentoAssociacaoPDV(13L, "Posto Serviço");
 
 		save(session,tipoEstabelecimentoAssociacaoPDV,tipoEstabelecimentoAssociacaoPDV1,tipoEstabelecimentoAssociacaoPDV2,tipoEstabelecimentoAssociacaoPDV3);
+	}
+	
+	private static void gerarAreaInfluenciaPDV(Session session) {
+
+		AreaInfluenciaPDV areaInfluenciaPDV = Fixture.criarAreaInfluenciaPDV(1L, "Residencial");
+		AreaInfluenciaPDV areaInfluenciaPDV1 = Fixture.criarAreaInfluenciaPDV(2L, "Residencial XX");
+		AreaInfluenciaPDV areaInfluenciaPDV2 = Fixture.criarAreaInfluenciaPDV(3L, "Estradas");
+
+		save(session,areaInfluenciaPDV,areaInfluenciaPDV1,areaInfluenciaPDV2);
 	}
 
 	private static void gerarMaterialPromocionalPDV(Session session) {
@@ -2454,16 +2469,6 @@ public class DataLoader {
 
 		save(session,tipoGeradorFluxoPDV,tipoGeradorFluxoPDV1,tipoGeradorFluxoPDV2,tipoGeradorFluxoPDV3,tipoGeradorFluxoPDV4);
 	}
-
-	private static void gerarAreaInfluenciaPDV(Session session) {
-
-		AreaInfluenciaPDV areaInfluenciaPDV = Fixture.criarAreaInfluenciaPDV(1L, "Residencial");
-		AreaInfluenciaPDV areaInfluenciaPDV1 = Fixture.criarAreaInfluenciaPDV(2L, "Residencial XX");
-		AreaInfluenciaPDV areaInfluenciaPDV2 = Fixture.criarAreaInfluenciaPDV(3L, "Estradas");
-
-		save(session,areaInfluenciaPDV,areaInfluenciaPDV1,areaInfluenciaPDV2);
-	}
-
 
 	private static void gerarTiposPontoPDV(Session session) {
 
@@ -2594,6 +2599,9 @@ public class DataLoader {
 		EstoqueProduto estoqueProduto = Fixture.estoqueProduto(produtoEdicaoBravo1, BigInteger.valueOf(45));
 		save(session,estoqueProduto);
 
+		save(session, Fixture.historicoEstoqueProduto(estoqueProduto, DateUtil.adicionarDias(new Date(), -2), null));
+		
+		
 		MovimentoEstoque movimentoEstoque = Fixture.movimentoEstoque(itemRecebimentoFisico, produtoEdicaoBravo1, tipoMovimentoEstoque, usuario, estoqueProduto, dataAtual, BigInteger.valueOf(12), StatusAprovacao.APROVADO , "MOTIVO B");
 		save(session,movimentoEstoque);
 
@@ -4345,32 +4353,56 @@ public class DataLoader {
 	}
 
 	private static void criarEstoquesProdutos(Session session) {
+		
 		estoqueProdutoVeja1 = Fixture.estoqueProduto(produtoEdicaoVeja1, BigInteger.TEN);
-
+		
+		save(session, Fixture.historicoEstoqueProduto(estoqueProdutoVeja1, DateUtil.adicionarDias(new Date(), -2), null));
+		
 		estoqueProdutoVeja2 = Fixture.estoqueProduto(produtoEdicaoVeja2, BigInteger.TEN);
+		
+		save(session, Fixture.historicoEstoqueProduto(estoqueProdutoVeja2, DateUtil.adicionarDias(new Date(), -2), null));
 
 		estoqueProdutoVeja3 = Fixture.estoqueProduto(produtoEdicaoVeja3, BigInteger.TEN);
+		
+		save(session, Fixture.historicoEstoqueProduto(estoqueProdutoVeja3, DateUtil.adicionarDias(new Date(), -2), null));
 
 		estoqueProdutoVeja4 = Fixture.estoqueProduto(produtoEdicaoVeja4, BigInteger.TEN);
+		
+		save(session, Fixture.historicoEstoqueProduto(estoqueProdutoVeja4, DateUtil.adicionarDias(new Date(), -2), null));
 
 		estoqueProdutoSuper1 = Fixture.estoqueProduto(produtoEdicaoSuper1, BigInteger.TEN);
 
+		save(session, Fixture.historicoEstoqueProduto(estoqueProdutoSuper1, DateUtil.adicionarDias(new Date(), -2), null));
+		
 		estoqueProdutoCapricho1 = Fixture.estoqueProduto(produtoEdicaoCapricho1, BigInteger.TEN);
+		
+		save(session, Fixture.historicoEstoqueProduto(estoqueProdutoCapricho1, DateUtil.adicionarDias(new Date(), -2), null));
 
 		estoqueProdutoInfoExame1 = Fixture.estoqueProduto(produtoEdicaoInfoExame1, BigInteger.TEN);
+		
+		save(session, Fixture.historicoEstoqueProduto(estoqueProdutoInfoExame1, DateUtil.adicionarDias(new Date(), -2), null));
 
 		estoqueProdutoVeja1EncalheAnt = Fixture.estoqueProduto(produtoEdicaoVeja1EncalheAnt, BigInteger.TEN);
+		
+		save(session, Fixture.historicoEstoqueProduto(estoqueProdutoVeja1EncalheAnt, DateUtil.adicionarDias(new Date(), -2), null));
 
 		estoqueProdutoVeja2EncalheAnt = Fixture.estoqueProduto(produtoEdicaoVeja2EncalheAnt, BigInteger.TEN);
+		
+		save(session, Fixture.historicoEstoqueProduto(estoqueProdutoVeja2EncalheAnt, DateUtil.adicionarDias(new Date(), -2), null));
 
 		estoqueProdutoSuper1EncalheAnt = Fixture.estoqueProduto(produtoEdicaoSuper1EncalheAnt, BigInteger.TEN);
+		
+		save(session, Fixture.historicoEstoqueProduto(estoqueProdutoSuper1EncalheAnt, DateUtil.adicionarDias(new Date(), -2), null));
 
 		estoqueProdutoSuper2EncalheAnt = Fixture.estoqueProduto(produtoEdicaoSuper2EncalheAnt, BigInteger.TEN);
-
+		
+		save(session, Fixture.historicoEstoqueProduto(estoqueProdutoSuper2EncalheAnt, DateUtil.adicionarDias(new Date(), -2), null));
+		
 		save(session, estoqueProdutoVeja1, estoqueProdutoVeja2, estoqueProdutoVeja3,
 			 estoqueProdutoVeja4, estoqueProdutoSuper1, estoqueProdutoCapricho1,
 			 estoqueProdutoInfoExame1,estoqueProdutoVeja1EncalheAnt,estoqueProdutoVeja2EncalheAnt,
 			 estoqueProdutoSuper1EncalheAnt,estoqueProdutoSuper2EncalheAnt);
+		
 	}
 	
 	private static void criarEstoquesProdutosCotaJuramentados(Session session) {
@@ -6028,6 +6060,8 @@ public class DataLoader {
 		tipoMovimentoTransferenciaSaidaRecolhimento = Fixture.tipoMovimentoTransferenciaSaidaRecolhimento();
 		tipoMovimentoTransferenciaEntradaProdutosDanificados = Fixture.tipoMovimentoTransferenciaEntradaProdutosDanificados();
 		tipoMovimentoTransferenciaSaidaProdutosDanificados = Fixture.tipoMovimentoTransferenciaSaidaProdutosDanificados();
+		tipoMovimentoTransferenciaEntradaProdutosDevolucaoFornecedor = Fixture.tipoMovimentoTransferenciaEntradaProdutosDevolucaoFornecedor();
+		tipoMovimentoTransferenciaSaidaProdutosDevolucaoFornecedor = Fixture.tipoMovimentoTransferenciaSaidaProdutosDevolucaoFornecedor();
 		
 		save(session, tipoMovimentoFaltaEm, tipoMovimentoFaltaDe, tipoMovimentoSuplementarCotaAusente,
 				tipoMovimentoSobraEm, tipoMovimentoSobraDe,
@@ -6042,7 +6076,9 @@ public class DataLoader {
 				tipoMovimentoTransferenciaEntradaLancamento, tipoMovimentoTransferenciaSaidaLancamento, 
 				tipoMovimentoTransferenciaEntradaSuplementar, tipoMovimentoTransferenciaSaidaSuplementar,
 				tipoMovimentoTransferenciaEntradaRecolhimento, tipoMovimentoTransferenciaSaidaRecolhimento,
-				tipoMovimentoTransferenciaEntradaProdutosDanificados, tipoMovimentoTransferenciaSaidaProdutosDanificados, tipoMovimentoEstornoCotaFuroPublicacao);
+				tipoMovimentoTransferenciaEntradaProdutosDanificados, tipoMovimentoTransferenciaSaidaProdutosDanificados,
+				tipoMovimentoEstornoCotaFuroPublicacao,tipoMovimentoTransferenciaEntradaProdutosDevolucaoFornecedor,
+				tipoMovimentoTransferenciaSaidaProdutosDevolucaoFornecedor);
 
 	}
 
@@ -6223,6 +6259,9 @@ public class DataLoader {
 
 			EstoqueProduto estoque  =  Fixture.estoqueProduto(produtoEdicao, BigInteger.ZERO);
 			session.save(estoque);
+			
+			save(session, Fixture.historicoEstoqueProduto(estoque, DateUtil.adicionarDias(new Date(), -2), null));
+			
 
 			for(int x= 1; x< 3 ;x++){
 
