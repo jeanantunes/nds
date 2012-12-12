@@ -89,7 +89,6 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 		hql.append("		        ELSE 0 END ");
 		hql.append(" 		   from ItemChamadaEncalheFornecedor item ");
 		hql.append("           join item.produtoEdicao pEdicao ");
-		hql.append("      left join item.chamadaEncalheFornecedor chamada ");
 		hql.append("          where pEdicao.id = produtoEdicao.id ");
 		hql.append("		    and item.dataRecolhimento >= lancamento.dataLancamentoDistribuidor ");
 		hql.append("            and item.dataRecolhimento <= lancamento.dataRecolhimentoDistribuidor) ");
