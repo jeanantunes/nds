@@ -75,13 +75,6 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 		hql.append("			and chamadaEncalhe.produtoEdicao.id = lancamento.produtoEdicao.id ");
 		hql.append("			group by chamadaEncalhe.id) as vendaCE, ");
 		
-		// TODO columa a arrumar:
-//		hql.append(" 		(select sum(movCota.qtde) from Lancamento lancamentoSupl ");
-//		hql.append("		 	left join lancamentoSupl.movimentoEstoqueCotas movCota ");
-//		hql.append("			join lancamentoSupl.produtoEdicao pe ");
-//		hql.append("		 where pe.id = produtoEdicao.id ");
-//		hql.append("			and lancamentoSupl.dataLancamentoDistribuidor <= lancamento.dataRecolhimentoDistribuidor) ");		
-//		hql.append(" 		as reparteAcum, ");
 		hql.append("		(select CASE");
 		hql.append("		        WHEN (count(lanc) > 0) ");
 		hql.append("		        THEN sum(lanc.reparte + eProduto.qtdeSuplementar) ");
@@ -94,8 +87,6 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 		hql.append("			and pe.id = produtoEdicao.id) ");
 		hql.append("		    and lanc.dataLancamentoDistribuidor <= lancamento.dataRecolhimentoDistribuidor ");
 		hql.append(" 		as reparteAcum, ");
-		
-		
 		
 		hql.append("		(select CASE");
 		hql.append("		        WHEN (count(item) > 0) ");
