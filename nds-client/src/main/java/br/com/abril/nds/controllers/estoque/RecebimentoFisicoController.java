@@ -1430,14 +1430,13 @@ public class RecebimentoFisicoController {
 		notaFiscal.setValorLiquido(new BigDecimal(getValorSemMascara( nota.getValorTotal() )));
 		notaFiscal.setChaveAcesso(nota.getChaveAcesso());
 		
-		
 		notaFiscal.setFornecedor(fornecedor);
 		notaFiscal.setTipoNotaFiscal(tipoNotaService.obterPorId(3l));//RECEBIMENTO DE ENCALHE
 		notaFiscal.setValorBruto(CurrencyUtil.converterValor(nota.getValorTotal()));
         notaFiscal.setValorDesconto(notaFiscal.getValorBruto().subtract(notaFiscal.getValorLiquido()));
 		notaFiscal.setStatusNotaFiscal(StatusNotaFiscalEntrada.RECEBIDA);
 		notaFiscal.setOrigem(Origem.MANUAL);
-		
+		notaFiscal.setEmitente(fornecedor.getJuridica());
 		
 		//OBTEM CAMPOS OBRIGATORIOS PARA OS ITENS DA NOTA E TOTAL PARA VERIFICACAO COM O VALOR DA NOTA
 		BigDecimal totalItem = BigDecimal.ZERO;
@@ -1456,9 +1455,13 @@ public class RecebimentoFisicoController {
 		}
 
 		try{
+			recebimentoFisicoService.validarExisteNotaFiscal(notaFiscal);
 		    recebimentoFisicoService.inserirDadosRecebimentoFisico(getUsuarioLogado(), notaFiscal, itens, new Date());
 		}
 		catch(Exception e){
+			if (e instanceof ValidacaoException) {
+				throw e;
+			}
 			throw new ValidacaoException(TipoMensagem.ERROR, "Erro ao incluir nota: "+e.getMessage());
 		}
 		

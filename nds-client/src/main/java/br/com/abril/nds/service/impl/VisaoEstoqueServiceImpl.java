@@ -116,7 +116,12 @@ public class VisaoEstoqueServiceImpl implements VisaoEstoqueService {
 		if (filtro.getTipoEstoque().equals(TipoEstoque.LANCAMENTO_JURAMENTADO.toString())) {
 			list = visaoEstoqueRepository.obterVisaoEstoqueDetalheJuramentado(filtro);
 		} else {
-			if (DateUtil.isHoje(filtro.getDataMovimentacao())) {
+			
+			Distribuidor distribuidor = this.distribuidorService.obter();
+			
+			Date dataOperacao = distribuidor.getDataOperacao();
+			
+			if (filtro.getDataMovimentacao().compareTo(dataOperacao) == 0) {
 				list = visaoEstoqueRepository.obterVisaoEstoqueDetalhe(filtro);
 			} else {
 				list = visaoEstoqueRepository.obterVisaoEstoqueDetalheHistorico(filtro);

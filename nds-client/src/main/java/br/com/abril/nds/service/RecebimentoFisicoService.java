@@ -7,6 +7,7 @@ import br.com.abril.nds.dto.RecebimentoFisicoDTO;
 import br.com.abril.nds.model.estoque.RecebimentoFisico;
 import br.com.abril.nds.model.fiscal.CFOP;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntrada;
+import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.seguranca.Usuario;
@@ -28,5 +29,7 @@ public interface RecebimentoFisicoService {
 	 void apagarItemRecebimentoItemNota(RecebimentoFisicoDTO recebimento);
 	 
 	 RecebimentoFisico obterRecebimentoFisicoPorNotaFiscal(Long idNotaFiscal);
+	 
+	 public void validarExisteNotaFiscal(NotaFiscalEntradaFornecedor notaFiscal);
 	 
 }
