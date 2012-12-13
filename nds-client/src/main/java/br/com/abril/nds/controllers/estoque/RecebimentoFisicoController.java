@@ -955,7 +955,7 @@ public class RecebimentoFisicoController {
 			String qtdExemplar			 = (dto.getQtdExemplar()		== null)	? "0"	: dto.getQtdExemplar().toString();
 			String diferenca		 	 = (dto.getDiferenca() 			== null) 	? "0" : dto.getDiferenca().toString();
 			String valorTotal		 	 = (dto.getValorTotal() 		== null) 	? "0.0" : dto.getValorTotal().toString();
-			
+			String pacotePadrao		 	 = (dto.getValorTotal() 		== null) 	? "0"   : Integer.toString(dto.getPacotePadrao());
 			
 			String edicaoItemNotaPermitida 		= IND_SIM;
 			String edicaoItemRecFisicoPermitida = IND_SIM;
@@ -991,6 +991,7 @@ public class RecebimentoFisicoController {
 			recebFisico.setQtdExemplar(qtdExemplar);
 			recebFisico.setDiferenca(diferenca);
 			recebFisico.setValorTotal(valorTotal);
+			recebFisico.setPacotePadrao(pacotePadrao);
 			
 			recebFisico.setEdicaoItemNotaPermitida(edicaoItemNotaPermitida);
 			recebFisico.setEdicaoItemRecFisicoPermitida(edicaoItemRecFisicoPermitida);
