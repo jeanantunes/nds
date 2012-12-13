@@ -49,7 +49,7 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 		hql.append("			and lancamentoSupl.dataLancamentoDistribuidor <= lancamento.dataRecolhimentoDistribuidor) ");		
 		hql.append(" 		as suplementacao, ");
 		
-		hql.append("		(select CASE");
+		hql.append("		(select CASE ");
 		hql.append("		        WHEN (count(eProduto) > 0) ");
 		hql.append("		        THEN SUM(eProduto.qtdeDevolucaoEncalhe) ");
 		hql.append("		        ELSE 0 END ");
@@ -57,7 +57,7 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 		hql.append("		  where pEdicao.id = produtoEdicao.id)");
 		hql.append(" 		 as encalhe, ");
 		
-		hql.append("		(select CASE");
+		hql.append("		(select CASE ");
 		hql.append("		        WHEN (count(eProduto) > 0) ");
 		hql.append("		        THEN ((eProduto.qtde + eProduto.qtdeSuplementar) - eProduto.qtdeDevolucaoEncalhe) ");
 		hql.append("		        ELSE 0 END ");
@@ -65,7 +65,7 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 		hql.append("          where pEdicao.id = produtoEdicao.id) ");
 		hql.append("        as vendas, ");
 
-		hql.append("		(select CASE");
+		hql.append("		(select CASE ");
 		hql.append("		        WHEN (count(eProduto) > 0) ");
 		hql.append("		        THEN (eProduto.qtdeDevolucaoFornecedor) ");
 		hql.append("		        ELSE 0 END ");
@@ -73,7 +73,7 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 		hql.append("          where pEdicao.id = produtoEdicao.id) ");
 		hql.append("        as vendaCE, ");
 		
-		hql.append("		(select CASE");
+		hql.append("		(select CASE ");
 		hql.append("		        WHEN (count(lanc) > 0) ");
 		hql.append("		        THEN sum(lanc.reparte + eProduto.qtdeSuplementar) ");
 		hql.append("		        ELSE 0 END ");
@@ -86,7 +86,7 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 		hql.append("		    and lanc.dataLancamentoDistribuidor <= lancamento.dataRecolhimentoDistribuidor) ");
 		hql.append(" 		as reparteAcum, ");
 		
-		hql.append("		(select CASE");
+		hql.append("		(select CASE ");
 		hql.append("		        WHEN (count(item) > 0) ");
 		hql.append("		        THEN (sum(item.qtdeVendaApurada)) ");
 		hql.append("		        ELSE 0 END ");
@@ -97,28 +97,30 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 		hql.append("            and item.dataRecolhimento <= lancamento.dataRecolhimentoDistribuidor) ");
 		hql.append(" 		as vendaAcumulada, ");
 		
-		// TODO columa a arrumar:
-		hql.append("		round((((select sum(liMCota.qtde) from Lancamento lancamentoInicial ");
-		hql.append("			 left join lancamentoInicial.movimentoEstoqueCotas liMCota ");
-		hql.append("			where lancamentoInicial.dataLancamentoDistribuidor=lancamentoParcial.lancamentoInicial ");
-		hql.append("			and lancamentoInicial.produtoEdicao.id=produtoEdicao.id) ");
-		hql.append("		- (select sum(movimento.qtde) from ConferenciaEncalhe conferencia ");
-		hql.append("		 	join conferencia.movimentoEstoqueCota movimento ");
-		hql.append("		 	join conferencia.chamadaEncalheCota chamadaEncalheCota ");
-		hql.append("		 	join chamadaEncalheCota.chamadaEncalhe chamadaEncalhe ");
-		hql.append("			where chamadaEncalhe.dataRecolhimento >= lancamentoParcial.lancamentoInicial ");
-		hql.append("			and chamadaEncalhe.dataRecolhimento <= lancamentoParcial.recolhimentoFinal ");
-		hql.append("			and chamadaEncalhe.produtoEdicao.id = lancamento.produtoEdicao.id ");
-		hql.append("			group by chamadaEncalhe.id)) ");
-		
-		// TODO columa a arrumar:
-		hql.append(" 		/(select sum(movCota.qtde) from Lancamento lancamentoSupl ");
-		hql.append("		 	left join lancamentoSupl.movimentoEstoqueCotas movCota ");
-		hql.append("			join lancamentoSupl.produtoEdicao pe ");
-		hql.append("		 where pe.id = produtoEdicao.id ");
-		hql.append("			and lancamentoSupl.dataLancamentoDistribuidor <= lancamento.dataRecolhimentoDistribuidor)) ");
-		hql.append("		 * 100 )");
-		hql.append(" 		as percVendaAcumulada, ");
+		hql.append("		coalesce( ");
+		hql.append("                  (select CASE ");
+		hql.append("                          WHEN (count(item) > 0) ");
+		hql.append("                          THEN sum(item.qtdeVendaApurada) ");
+		hql.append("                          ELSE 0 END ");
+		hql.append("                     from ItemChamadaEncalheFornecedor item ");
+		hql.append("                          join item.produtoEdicao pEdicao ");
+		hql.append("                    where pEdicao.id = produtoEdicao.id ");
+		hql.append("                      and item.dataRecolhimento >= lancamento.dataLancamentoDistribuidor ");
+		hql.append("                      and item.dataRecolhimento <= lancamento.dataRecolhimentoDistribuidor) ");
+		hql.append("/");
+		hql.append("                  (select CASE ");
+		hql.append("                          WHEN (count(eProduto) > 0) ");
+		hql.append("                          THEN sum(lanc.reparte + eProduto.qtdeSuplementar) ");
+		hql.append("                          ELSE 0 END ");
+		hql.append("                     from Lancamento lanc ");
+		hql.append("                          join lanc.produtoEdicao pe, ");
+		hql.append("                          EstoqueProduto eProduto ");
+		hql.append("                          left join eProduto.produtoEdicao pEdicao ");
+		hql.append("                    where pe.id = pEdicao.id ");
+		hql.append("                      and pe.id = produtoEdicao.id ");
+		hql.append("                      and lanc.dataLancamentoDistribuidor <= lancamento.dataRecolhimentoDistribuidor) ");
+		hql.append("        * 100 , 0) ");
+		hql.append("        as percVendaAcumulada, ");
 		
 		hql.append("		(select CASE");
 		hql.append("		        WHEN (count(eProduto) > 0) ");
@@ -128,7 +130,7 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 		hql.append("          where pEdicao.id = produtoEdicao.id) ");
 		hql.append("        as percVenda, ");
 
-		hql.append("		 lancamento.id as idLancamento ");
+		hql.append("        lancamento.id as idLancamento ");
 		
 		hql.append(getSqlFromEWherePeriodosParciais(filtro));
 		
