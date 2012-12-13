@@ -294,21 +294,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 
 		query.setParameter("codigo", input.getCodProd());
 
-		Produto produto = (Produto) query.uniqueResult();
-		if (null != produto) {
-			return produto;
-
-		} else {
-
-			// Nao encontrou o Produto. Realiza Log
-			ndsiLoggerFactory.getLogger()
-					.logWarning(
-							message,
-							EventoExecucaoEnum.HIERARQUIA,
-							"Codigo PRODUTO " + input.getCodProd()
-									+ " nao cadastrado.");
-			throw new RuntimeException("Produto "+ input.getCodProd() +" nao encontrado.");
-		}
+		return (Produto) query.uniqueResult();
 	}
 	
 	
