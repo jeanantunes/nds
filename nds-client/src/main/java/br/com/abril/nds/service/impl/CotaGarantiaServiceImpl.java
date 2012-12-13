@@ -183,6 +183,8 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 		cotaGarantiaNota.setData(new Date());
 
 		cotaGarantiaNota.setNotaPromissoria(notaPromissoria);
+		
+		this.setFiadorCota(idCota, null);
 
 		return (CotaGarantiaNotaPromissoria) cotaGarantiaRepository
 				.merge(cotaGarantiaNota);
@@ -205,6 +207,8 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 		cotaGarantiaCheque.setData(new Date());
 		
 		cotaGarantiaCheque.setCheque(cheque);
+		
+		this.setFiadorCota(idCota, null);
 
 		return (CotaGarantiaChequeCaucao) cotaGarantiaRepository
 				.merge(cotaGarantiaCheque);
@@ -248,6 +252,8 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 		
 		cotaGarantiaImovel = (CotaGarantiaImovel) cotaGarantiaRepository
 				.merge(cotaGarantiaImovel);
+		
+		this.setFiadorCota(idCota, null);
 		
 		return cotaGarantiaImovel;
 	}
@@ -301,6 +307,18 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 		fiador.getPessoa().getEnderecos().size();
 		Hibernate.initialize(fiador.getEnderecoFiador());
 	}
+	
+	/**
+	 * Remove ou adiciona referencia de Fiador na Cota
+	 * @param idCota
+	 * @param fiador
+	 */
+	private void setFiadorCota(Long idCota, Fiador fiador){
+		
+		Cota cota = this.cotaRepository.buscarPorId(idCota);
+		cota.setFiador(fiador);
+		this.cotaRepository.alterar(cota);
+	}
 
 	@Transactional
 	@Override
@@ -317,7 +335,9 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 		}
 		cotaGarantiaFiador.setFiador(fiador);
 		cotaGarantiaFiador.setData(new Date());
-
+		
+		this.setFiadorCota(idCota, fiador);
+		
 		return (CotaGarantiaFiador) cotaGarantiaRepository
 				.merge(cotaGarantiaFiador);
 
@@ -500,6 +520,8 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 		
 		cotaGarantiaOutros = (CotaGarantiaOutros) cotaGarantiaRepository
 				.merge(cotaGarantiaOutros);
+		
+		this.setFiadorCota(idCota, null);
 		
 		return cotaGarantiaOutros;
 		
@@ -711,6 +733,7 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 		
 		cotaGarantiaCaucaoLiquida.setTipoCobranca(formaCobrancaDTO.getTipoCobranca());
 
+		this.setFiadorCota(idCota, null);
 		
 		return (CotaGarantiaCaucaoLiquida) this.cotaGarantiaRepository.merge(cotaGarantiaCaucaoLiquida);
 	}
