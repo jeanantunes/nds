@@ -55,7 +55,12 @@ public class ChamadaEncalheCota implements Serializable {
 
 	@OneToMany(mappedBy = "chamadaEncalheCota")
 	private Set<ConferenciaEncalhe> conferenciasEncalhe = new HashSet<ConferenciaEncalhe>();
-			
+	
+	
+	public ChamadaEncalheCota() {
+		super();
+	}
+
 	/**
 	 * @return the id
 	 */
