@@ -247,7 +247,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 		this.ndsiLoggerFactory.getLogger().logWarning(message,
 				EventoExecucaoEnum.SEM_DOMINIO,
 				"Produto "+ produto.getCodigo() +" Inserido com Periodicidade INDEFINIDA .");	
-		return produto;
+		return this.findProduto(message);
 	}
 
 	private boolean verificarDistribuidor(Message message) {
