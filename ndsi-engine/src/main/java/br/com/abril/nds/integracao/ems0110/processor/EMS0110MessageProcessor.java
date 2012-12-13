@@ -75,7 +75,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 				Produto produto = this.findProduto(message);
 				
 				if (produto == null) {
-					this.criarProdutoComInputDeEdicao(message);
+					produto = this.criarProdutoComInputDeEdicao(message);
 				}
 
 				this.criarProdutoEdicaoConformeInput(produto, message);
@@ -176,7 +176,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 		}
 	}
 	
-	private void criarProdutoComInputDeEdicao(Message message) {
+	private Produto criarProdutoComInputDeEdicao(Message message) {
 		EMS0110Input input = (EMS0110Input) message.getBody();
 
 		Produto produto = new Produto();
@@ -205,8 +205,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 
 			throw new RuntimeException("Tipo Produto nao encontrado.");
 		}
-		
-
+						
 		produto.setTipoProduto(tipoProduto);
 		produto.setNome(input.getNomeProd());
 		produto.setCodigoContexto(input.getContextoPublicacao());
@@ -247,7 +246,8 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 		
 		this.ndsiLoggerFactory.getLogger().logWarning(message,
 				EventoExecucaoEnum.SEM_DOMINIO,
-				"Produto "+ produto.getCodigo() +" Inserido com Periodicidade INDEFINIDA .");		
+				"Produto "+ produto.getCodigo() +" Inserido com Periodicidade INDEFINIDA .");	
+		return this.findProduto(message);
 	}
 
 	private boolean verificarDistribuidor(Message message) {
@@ -294,21 +294,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 
 		query.setParameter("codigo", input.getCodProd());
 
-		Produto produto = (Produto) query.uniqueResult();
-		if (null != produto) {
-			return produto;
-
-		} else {
-
-			// Nao encontrou o Produto. Realiza Log
-			ndsiLoggerFactory.getLogger()
-					.logWarning(
-							message,
-							EventoExecucaoEnum.HIERARQUIA,
-							"Codigo PRODUTO " + input.getCodProd()
-									+ " nao cadastrado.");
-			throw new RuntimeException("Produto "+ input.getCodProd() +" nao encontrado.");
-		}
+		return (Produto) query.uniqueResult();
 	}
 	
 	
