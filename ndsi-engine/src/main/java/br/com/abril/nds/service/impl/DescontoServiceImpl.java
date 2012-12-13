@@ -946,19 +946,14 @@ public class DescontoServiceImpl implements DescontoService {
 
 		for (Fornecedor fornecedor : fornecedores) {
 
-			Desconto ultimoDescontoValido = descontoRepository.buscarUltimoDescontoValido(idDesconto, fornecedor);
-
-			if (ultimoDescontoValido != null) {
-
-				if (ultimoDescontoValido.getDataAlteracao().before(desconto.getDataAlteracao())) {
-
-					fornecedor.setDesconto(null);
-					fornecedorRepository.merge(fornecedor);
-					
-				}
-
-			}
+			HistoricoDescontoFornecedor hdf = historicoDescontoFornecedorRepository.buscarHistoricoDescontoFornecedorPor(desconto, fornecedor);
 			
+			fornecedor.setDesconto(null);
+			fornecedorRepository.merge(fornecedor);
+			
+			if(hdf != null)
+				historicoDescontoFornecedorRepository.remover(hdf);
+					
 		}
 
 	}
@@ -1123,7 +1118,7 @@ public class DescontoServiceImpl implements DescontoService {
             
         }
         
-        return desconto.getValor();
+        return (desconto != null && desconto.getValor() != null) ? desconto.getValor() : BigDecimal.ZERO;
 	}
 
 	@Override

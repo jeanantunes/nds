@@ -179,8 +179,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 			ProdutoEdicao produtoEdicao = movimentoEstoqueCota
 					.getProdutoEdicao();
 			BigDecimal precoVenda = produtoEdicao.getPrecoVenda();
-			BigDecimal percentualDesconto = descontoService
-					.obterValorDescontoPorCotaProdutoEdicao(null, cota, produtoEdicao);
+			BigDecimal percentualDesconto = movimentoEstoqueCota.getValoresAplicados().getValorDesconto();
 
 			BigInteger quantidade = movimentoEstoqueCota.getQtde();
 
@@ -217,12 +216,8 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 		cotaExemplares.setNotaImpressa(false);
 
 		for (MovimentoEstoqueCota movimento : listaMovimentoEstoqueCota) {
-			ProdutoEdicao produtoEdicao = movimento.getProdutoEdicao();
-			BigDecimal precoVenda = produtoEdicao.getPrecoVenda();
-			BigDecimal percentualDesconto = descontoService
-					.obterValorDescontoPorCotaProdutoEdicao(null, cota, produtoEdicao);
-			BigDecimal valorDesconto = MathUtil.calculatePercentageValue(
-					precoVenda, percentualDesconto);			
+			BigDecimal precoVenda = movimento.getValoresAplicados().getPrecoVenda();
+			BigDecimal valorDesconto = movimento.getValoresAplicados().getPrecoComDesconto();			
 			quantidade = quantidade.add(movimento.getQtde());
 			preco = preco.add(precoVenda.multiply(new BigDecimal(movimento.getQtde())));
 			precoComDesconto = precoComDesconto.add(

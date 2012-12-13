@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository.impl;
 
+import java.math.BigInteger;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -214,43 +215,44 @@ public class DescontoProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel
         
 		//TODO: Implementar a prioridade de desconto predoominante 
 		Query query = null;
-		Long descontoId;
+		BigInteger descontoId;
 		Desconto desconto = null;
 		
 		//Obtem o desconto do ProdutoEdicao baseado em lancamento futuro
-		descontoId = obterDescontoCotaProdutoEdicaoLancamentosFuturos(lancamento);		
+		Long returnedId = obterDescontoCotaProdutoEdicaoLancamentosFuturos(lancamento);
+		descontoId = (returnedId != null) ? new BigInteger(returnedId.toString()) : null;		
 		
-		if(descontoId != null) return descontoRepository.buscarPorId(descontoId);
+		if(descontoId != null) return descontoRepository.buscarPorId(descontoId.longValue());
 		
 		//Obtem o desconto do ProdutoEdicao baseado em excessoes 
 		query = obterDescontoCotaProdutoEdicaoExcessoes(cota, produtoEdicao);
-		descontoId = (Long) query.uniqueResult();
+		descontoId = (BigInteger) query.uniqueResult();
 		
-		if(descontoId != null) return descontoRepository.buscarPorId(descontoId);
+		if(descontoId != null) return descontoRepository.buscarPorId(descontoId.longValue());
 				
 		//Obtem o desconto do Produto baseado em excessoes 
 		query = obterDescontoCotaProdutoExcessoes(cota, produtoEdicao);
-		descontoId = (Long) query.uniqueResult();
+		descontoId = (BigInteger) query.uniqueResult();
 		
-		if(descontoId != null) return descontoRepository.buscarPorId(descontoId);
+		if(descontoId != null) return descontoRepository.buscarPorId(descontoId.longValue());
 		
 		//Obtem o desconto do ProdutoEdicao 
 		query = obterDescontoProdutoEdicao(produtoEdicao);
-		descontoId = (Long) query.uniqueResult();
+		descontoId = (BigInteger) query.uniqueResult();
 		
-		if(descontoId != null) return descontoRepository.buscarPorId(descontoId);
+		if(descontoId != null) return descontoRepository.buscarPorId(descontoId.longValue());
 		
 		//Obtem o desconto do Produto 
 		query = obterDescontoProduto(produtoEdicao);
-		descontoId = (Long) query.uniqueResult();
+		descontoId = (BigInteger) query.uniqueResult();
 		
-		if(descontoId != null) return descontoRepository.buscarPorId(descontoId);
+		if(descontoId != null) return descontoRepository.buscarPorId(descontoId.longValue());
 		
 		//Obtem o desconto da Cota-Fornecedor 
 		query = obterDescontoCotaExcessoes(cota, produtoEdicao);
-		descontoId = (Long) query.uniqueResult();
+		descontoId = (BigInteger) query.uniqueResult();
 		
-		if(descontoId != null) return descontoRepository.buscarPorId(descontoId);
+		if(descontoId != null) return descontoRepository.buscarPorId(descontoId.longValue());
 		
         return desconto;
         
@@ -304,7 +306,7 @@ public class DescontoProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel
 	private Query obterDescontoCotaProdutoExcessoes(Cota cota, ProdutoEdicao produtoEdicao) {
 		
 		StringBuilder hql = new StringBuilder("select ")
-			.append(" vdcfpe.valor as desconto ")
+			.append(" vdcfpe.desconto_id as idDesconto ")
 		    .append("from VIEW_DESCONTO_COTA_FORNECEDOR_PRODUTOS_EDICOES as vdcfpe ") 
 		    .append("where 1 = 1 ")
 		    .append("and vdcfpe.fornecedor_id = :idFornecedor ")
@@ -323,7 +325,7 @@ public class DescontoProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel
 	private Query obterDescontoCotaExcessoes(Cota cota, ProdutoEdicao produtoEdicao) {
 		
 		StringBuilder hql = new StringBuilder("select ")
-			.append(" vdcfpe.valor as desconto ")
+			.append(" vdcfpe.desconto_id as idDesconto ")
 		    .append("from VIEW_DESCONTO_COTA_FORNECEDOR_PRODUTOS_EDICOES as vdcfpe ") 
 		    .append("where 1 = 1 ")
 		    .append("and vdcfpe.fornecedor_id = :idFornecedor ")
@@ -340,10 +342,10 @@ public class DescontoProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel
 	private Query obterDescontoProdutoEdicao(ProdutoEdicao produtoEdicao) {
 		
 		StringBuilder hql = new StringBuilder("select ")
-			.append(" vdpe.valor as desconto ")
+			.append(" vdpe.desconto_id as idDesconto ")
 		    .append("from VIEW_DESCONTO_PRODUTOS_EDICOES as vdpe ") 
 		    .append("where 1 = 1 ")
-		    .append("and vdpe.codigo = :codigoProduto ")
+		    .append("and vdpe.codigo_produto = :codigoProduto ")
 		    .append("and vdpe.numero_edicao = :numeroEdicao ");
 		
 		//TODO: Validar nulos
@@ -355,21 +357,12 @@ public class DescontoProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel
 	}
 	
 	private Query obterDescontoProduto(ProdutoEdicao produtoEdicao) {
-		/*
+		
 		StringBuilder hql = new StringBuilder("select ")
-		.append("vdcfpe.desconto_id as idTipoDesconto ")
-		.append(", vdcfpe.codigo_produto as codigoProduto ")
-		.append(", vdcfpe.nome_produto as nomeProduto ")
-		.append(", vdcfpe.numero_edicao as numeroEdicao ")
-		.append(", vdcfpe.valor as desconto ")
-		.append(", vdcfpe.data_alteracao as dataAlteracao ")
-		.append(", vdcfpe.nome_usuario as nomeUsuario ") 
-		*/
-		StringBuilder hql = new StringBuilder("select ")
-			.append(" vdpe.valor as desconto ")
+			.append(" vdpe.desconto_id as idDesconto ")
 		    .append("from VIEW_DESCONTO_PRODUTOS_EDICOES as vdpe ") 
 		    .append("where 1 = 1 ")
-		    .append("and vdpe.codigo = :codigoProduto ")
+		    .append("and vdpe.codigo_produto = :codigoProduto ")
 		    .append("and vdpe.numero_edicao is null ");
 		
 		//TODO: Validar nulos

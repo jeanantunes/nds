@@ -95,6 +95,7 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque implements C
 		mec.setStatusIntegracao(this.getStatusIntegracao());
 		mec.setTipoMovimento(this.getTipoMovimento());
 		mec.setUsuario(this.getUsuario());
+		mec.setValoresAplicados(this.getValoresAplicados());
 
         return mec;
     }

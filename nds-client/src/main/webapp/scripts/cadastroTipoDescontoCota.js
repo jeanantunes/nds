@@ -53,7 +53,6 @@ var descontoCotaController = $.extend(true,{
 						   else{
 							   tipoDescontoController.fecharDialogs();
 							   exibirMensagem(result.tipoMensagem, result.listaMensagens, "");
-							   tipoDescontoController.pesquisar();
 							   $(".tiposDescEspecificoGrid", this.workspace).flexReload();
 						   }
 	               },

@@ -51,8 +51,8 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		   .append("        movimento.valoresAplicados.valorDesconto as desconto, ")
 		   .append("        (pe.precoVenda - (pe.precoVenda * (movimento.valoresAplicados.valorDesconto) / 100)) as precoDesconto, ")
 		   .append("        CASE WHEN movimento.tipoMovimento.operacaoEstoque  = :tipoOperacaoEntrada THEN (movimento.qtde) ELSE (movimento.qtde*-1) END as reparte, ")		
-		   .append("        CASE WHEN movimento.tipoMovimento.operacaoEstoque  = :tipoOperacaoEntrada THEN (pe.precoVenda * movimento.qtde) ELSE (pe.precoVenda * movimento.qtde*-1) END as total, ")
-		   .append("        CASE WHEN movimento.tipoMovimento.operacaoEstoque  = :tipoOperacaoEntrada THEN ((pe.precoVenda - (pe.precoVenda * (movimento.valoresAplicados.valorDesconto) / 100)) * movimento.qtde) ELSE ((pe.precoVenda - (pe.precoVenda * (movimento.valoresAplicados.valorDesconto) / 100)) * movimento.qtde*-1) END as totalDesconto ");
+		   .append("        CASE WHEN movimento.tipoMovimento.operacaoEstoque  = :tipoOperacaoEntrada THEN (movimento.valoresAplicados.precoVenda * movimento.qtde) ELSE (movimento.valoresAplicados.precoVenda * movimento.qtde*-1) END as total, ")
+		   .append("        CASE WHEN movimento.tipoMovimento.operacaoEstoque  = :tipoOperacaoEntrada THEN ((movimento.valoresAplicados.precoVenda - (pe.precoVenda * (movimento.valoresAplicados.valorDesconto) / 100)) * movimento.qtde) ELSE ((pe.precoVenda - (pe.precoVenda * (movimento.valoresAplicados.valorDesconto) / 100)) * movimento.qtde*-1) END as totalDesconto ");
 		
 		hql.append(getHQLFromEWhereConsignadoCota(filtro));
 		

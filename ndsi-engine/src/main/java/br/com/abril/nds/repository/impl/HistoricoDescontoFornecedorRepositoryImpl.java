@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 import br.com.abril.nds.dto.TipoDescontoDTO;
 import br.com.abril.nds.dto.filtro.FiltroTipoDescontoDTO;
 import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.desconto.Desconto;
 import br.com.abril.nds.model.cadastro.desconto.HistoricoDescontoFornecedor;
 import br.com.abril.nds.repository.HistoricoDescontoFornecedorRepository;
 
@@ -47,8 +48,6 @@ public class HistoricoDescontoFornecedorRepositoryImpl extends AbstractRepositor
 		
 		Query query  = getSession().createQuery(hql.toString());
 		
-		//ResultTransformer resultTransformer = new AliasToBeanResultTransformer(TipoDescontoDTO.class);
-
 		query.setResultTransformer(Transformers.aliasToBean(TipoDescontoDTO.class));
 		
 		if(filtro.getIdFornecedores()!=null && !filtro.getIdFornecedores().isEmpty()) {
@@ -62,36 +61,7 @@ public class HistoricoDescontoFornecedorRepositoryImpl extends AbstractRepositor
 			query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
 		
 		return query.list();
-		
-		//hql.append(" group by desconto.id ");
-		
-		/*hql.append(" select desconto.id as sequencial, ")
-			.append(" desconto.id as idTipoDesconto ,")
-			.append(" desconto.usuario.nome as usuario ,")
-			.append(" desconto.desconto as desconto ,")
-			.append(" desconto.dataAlteracao as dataAlteracao , ")
-			.append("(case ")
-				.append("when (select count(fornecedor.id) from DescontoDistribuidor descontoFor JOIN descontoFor.fornecedores fornecedor  ")
-					.append(" where descontoFor.id = desconto.id ) > 1 ")
-				.append("then 'Diversos' ")
-				.append("when (select count(fornecedor.id) from DescontoDistribuidor descontoFor JOIN descontoFor.fornecedores fornecedor  ")
-					.append("where descontoFor.id = desconto.id ) = 1 then pessoa.razaoSocial ")
-			.append("else null end) as fornecedor, 	")
-		    .append(" 'Geral' as descTipoDesconto 	");
-		
-		hql.append(" from DescontoDistribuidor desconto		")
-			.append(" JOIN desconto.fornecedores fornecedor ")
-			.append(" JOIN fornecedor.juridica pessoa 		");
-			
-		
-		if(filtro.getIdFornecedores()!=null && !filtro.getIdFornecedores().isEmpty()) {
-			hql.append(" where fornecedor.id in (:idFornecedores) ");
-		}
-		
-		hql.append(" group by desconto.id ");*/
-		
-		//hql.append(getOrdenacao(filtro));
-		
+
 	}
 	
 
@@ -154,23 +124,27 @@ public class HistoricoDescontoFornecedorRepositoryImpl extends AbstractRepositor
 	
 	private HistoricoDescontoFornecedor obterUltimoDescontoValido(Fornecedor fornecedor){
 			
+		return null;
+	}
+
+	@Override
+	public HistoricoDescontoFornecedor buscarHistoricoDescontoFornecedorPor(Desconto desconto, Fornecedor fornecedor) {
+		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" select desconto from DescontoDistribuidor desconto JOIN desconto.fornecedores fornecedor  ")
-			.append("where desconto.dataAlteracao = ")
-			.append(" ( select max(descontoSub.dataAlteracao) from DescontoDistribuidor descontoSub  ")
-				.append(" JOIN descontoSub.fornecedores fornecedorSub ")
-				.append(" where fornecedorSub.id =:idFornecedor ");
-		hql.append(" ) ")
-			.append(" AND fornecedor.id =:idFornecedor ");
-	
-		Query query = getSession().createQuery(hql.toString());
+		hql.append("select hdf ")
+			.append("from HistoricoDescontoFornecedor hdf ")
+			.append("where hdf.desconto.id = :descontoId ")
+			.append("and hdf.fornecedor.id = :fornecedorId ");
 		
-		query.setParameter("idFornecedor",fornecedor.getId());
 		
-		query.setMaxResults(1);
+		Query query  = getSession().createQuery(hql.toString());
 		
-		return (HistoricoDescontoFornecedor)  query.uniqueResult();
+		query.setParameter("descontoId", desconto.getId());
+		query.setParameter("fornecedorId", fornecedor.getId());
+		
+		return (HistoricoDescontoFornecedor) query.uniqueResult();
+		
 	}
 
 }

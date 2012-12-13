@@ -141,6 +141,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 
 			// Implementando por Eduardo Punk Rock - Seta o lançamento que gerou os movimentos na movimentoEstoqueCota
 			movimento.setLancamento(lancamento);
+			movimento.setValoresAplicados(movimentoEstoqueCota.getValoresAplicados());
 
 			movimentoEstoqueCotaRepository.adicionar(movimento);
 

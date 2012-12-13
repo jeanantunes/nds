@@ -5,6 +5,7 @@ import java.util.List;
 import br.com.abril.nds.dto.TipoDescontoDTO;
 import br.com.abril.nds.dto.filtro.FiltroTipoDescontoDTO;
 import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.desconto.Desconto;
 import br.com.abril.nds.model.cadastro.desconto.HistoricoDescontoFornecedor;
 
 /**
@@ -38,5 +39,15 @@ public interface HistoricoDescontoFornecedorRepository extends Repository<Histor
 	 * @return DescontoDistribuidor
 	 */
 	HistoricoDescontoFornecedor buscarUltimoDescontoValido(Fornecedor fornecedor);
+	
+	
+	/**
+	 * Retorna o desconto do fornecedor
+	 * 
+	 * @param desconto
+	 * @param fornecedor
+	 * @return
+	 */
+	HistoricoDescontoFornecedor buscarHistoricoDescontoFornecedorPor(Desconto desconto, Fornecedor fornecedor);
 	
 }
