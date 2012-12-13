@@ -26,17 +26,19 @@
 				method="post">
 			<div class="areaBts">
 				<div class="area">
-					<span class="bt_novos">
-						<a href="javascript:impressaoBoletosController.imprimirDividas('BOLETO')" rel="tipsy" title="Imprimir Boletos">
-							<img src="${pageContext.request.contextPath}/images/ico_integrar.png" hspace="5" border="0" />
-						</a>
-					</span>
-					
-					<span class="bt_novos">
-						<a href="javascript:impressaoBoletosController.imprimirDividas('DIVIDA')" rel="tipsy" title="Imprimir Dividas">
-							<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
-						</a>
-					</span>
+					<div id="divImpressoes" style="display: none">
+						<span class="bt_novos">
+							<a href="javascript:impressaoBoletosController.imprimirDividas('BOLETO')" rel="tipsy" title="Imprimir Boletos">
+								<img src="${pageContext.request.contextPath}/images/ico_integrar.png" hspace="5" border="0" />
+							</a>
+						</span>
+						
+						<span class="bt_novos">
+							<a href="javascript:impressaoBoletosController.imprimirDividas('DIVIDA')" rel="tipsy" title="Imprimir Dividas">
+								<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
+							</a>
+						</span>
+					</div>
 				
 					<div id="divGerarDivida" style="display: none">
    						<span class="bt_novos" style="margin-left:20px;">
