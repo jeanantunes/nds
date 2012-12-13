@@ -36,6 +36,7 @@ import br.com.abril.nds.model.cadastro.TelefoneTransportador;
 import br.com.abril.nds.model.cadastro.Transportador;
 import br.com.abril.nds.model.cadastro.Veiculo;
 import br.com.abril.nds.repository.AssociacaoVeiculoMotoristaRotaRepository;
+import br.com.abril.nds.repository.EnderecoRepository;
 import br.com.abril.nds.repository.EnderecoTransportadorRepository;
 import br.com.abril.nds.repository.MotoristaRepository;
 import br.com.abril.nds.repository.MovimentoFinanceiroCotaRepository;
@@ -92,6 +93,9 @@ public class TransportadorServiceImpl implements TransportadorService {
 	@Autowired
 	private MovimentoFinanceiroCotaRepository movimentoFinanceiroCotaRepository;
 	
+	@Autowired
+	private EnderecoRepository enderecoRepository;
+	
 	@Override
 	@Transactional(readOnly = true)
 	public Transportador buscarTransportadorPorId(Long idTransportador) {
@@ -119,7 +123,7 @@ public class TransportadorServiceImpl implements TransportadorService {
 	@Transactional
 	public void cadastrarTransportador(Transportador transportador,
 			List<EnderecoAssociacaoDTO> listaEnderecosAdicionar,
-			Set<Long> listaEnderecosRemover,
+			List<EnderecoAssociacaoDTO> listaEnderecosRemover,
 			List<TelefoneAssociacaoDTO> listaTelefoneAdicionar,
 			Set<Long> listaTelefoneRemover,
 			List<Veiculo> listaVeiculosAdicionar,
@@ -128,13 +132,9 @@ public class TransportadorServiceImpl implements TransportadorService {
 			Set<Long> listaMotoristasRemover,
 			List<AssociacaoVeiculoMotoristaRotaDTO> listaAssociacaoAdicionar,
 			Set<Long> listaAssociacaoRemover) {
-		
+
 		this.validarDadosEntrada(transportador, listaVeiculosAdicionar, listaMotoristasAdicionar, listaAssociacaoAdicionar);
-		
-		this.validarDadosEntradaEnderecos(transportador, listaEnderecosAdicionar, listaEnderecosRemover);
-		
-		this.validarDadosEntradaTelefone(transportador, listaTelefoneAdicionar, listaTelefoneRemover);
-		
+
 		transportador.getPessoaJuridica().setCnpj(transportador.getPessoaJuridica().getCnpj().replace(".", "").replace("-", "").replace("/", ""));
 		
 		transportador.getPessoaJuridica().setId(
@@ -172,7 +172,7 @@ public class TransportadorServiceImpl implements TransportadorService {
 		this.processarEnderecos(transportador, listaEnderecosAdicionar, listaEnderecosRemover);
 		
 		this.processarTelefones(transportador, listaTelefoneAdicionar, listaTelefoneRemover);
-		
+
 		if (listaAssociacaoRemover != null && !listaAssociacaoRemover.isEmpty()){
 		
 			this.associacaoVeiculoMotoristaRotaRepository.removerAssociacaoPorId(listaAssociacaoRemover);
@@ -185,133 +185,6 @@ public class TransportadorServiceImpl implements TransportadorService {
 		this.processarAssocicoes(transportador, listaAssociacaoAdicionar);
 	}
 	
-	private void validarDadosEntradaTelefone(Transportador transportador,
-			List<TelefoneAssociacaoDTO> listaTelefoneAdicionar,
-			Set<Long> listaTelefoneRemover) {
-		
-		if (listaTelefoneAdicionar != null && !listaTelefoneAdicionar.isEmpty()){
-			
-			boolean existePrincipal = false;
-			
-			Set<Long> idsIgnorar = new HashSet<Long>();
-			
-			for (TelefoneAssociacaoDTO dto : listaTelefoneAdicionar){
-				
-				if (dto.getTelefone() != null && dto.getTelefone().getId() != null){
-					
-					idsIgnorar.add(dto.getTelefone().getId());
-				}
-				
-				if (dto.isPrincipal()){
-					
-					existePrincipal = true;
-					break;
-				}
-			}
-			
-			if (listaTelefoneRemover != null && !listaTelefoneRemover.isEmpty()){
-				
-				idsIgnorar.addAll(listaTelefoneRemover);
-			}
-			
-			if (existePrincipal){
-				
-				if (transportador.getId() != null){
-					
-					if (this.telefoneTransportadorRepositoty.verificarTelefonePrincipalTransportador(transportador.getId(), idsIgnorar)){
-						
-						throw new ValidacaoException(TipoMensagem.WARNING, "Apenas 1 telefone principal é permitido.");
-					}
-				}
-			} else {
-				
-				if (transportador.getId() != null){
-					
-					if (!this.telefoneTransportadorRepositoty.verificarTelefonePrincipalTransportador(transportador.getId(), idsIgnorar)){
-						
-						throw new ValidacaoException(TipoMensagem.WARNING, "Cadastre 1 telefone principal.");
-					}
-				} else {
-					
-					throw new ValidacaoException(TipoMensagem.WARNING, "Cadastre 1 telefone principal.");
-				}
-			}
-		} else {
-			
-			if (!this.telefoneTransportadorRepositoty.verificarTelefonePrincipalTransportador(transportador.getId(), listaTelefoneRemover)){
-				
-				throw new ValidacaoException(TipoMensagem.WARNING, "Cadastre 1 telefone principal.");
-			}
-		}
-	}
-
-	private void validarDadosEntradaEnderecos(Transportador transportador,
-			List<EnderecoAssociacaoDTO> listaEnderecosAdicionar,
-			Set<Long> listaEnderecosRemover) {
-		
-		if (listaEnderecosAdicionar != null && !listaEnderecosAdicionar.isEmpty()) {
-			
-			boolean existePrincipal = false;
-			
-			Set<Long> idsIgnorar = new HashSet<Long>();
-			
-			for (EnderecoAssociacaoDTO dto : listaEnderecosAdicionar){
-				
-				if (dto.getEndereco() != null && dto.getEndereco().getId() != null){
-					
-					idsIgnorar.add(dto.getEndereco().getId());
-				}
-				
-				if (dto.isEnderecoPrincipal()){
-					
-					existePrincipal = true;
-					break;
-				}
-			}
-			
-			if (listaEnderecosRemover != null && !listaEnderecosRemover.isEmpty()){
-				
-				idsIgnorar.addAll(listaEnderecosRemover);
-			}
-			
-			if (existePrincipal){
-				
-				if (transportador.getId() != null){
-					
-					if (this.enderecoTransportadorRepository.verificarEnderecoPrincipalTransportador(transportador.getId(), idsIgnorar)){
-						
-						throw new ValidacaoException(TipoMensagem.WARNING, "Apenas 1 endereço principal é permitido.");
-					}
-				}
-			} else {
-				
-				if (transportador.getId() != null){
-					
-					if (!this.enderecoTransportadorRepository.verificarEnderecoPrincipalTransportador(transportador.getId(), idsIgnorar)){
-						
-						throw new ValidacaoException(TipoMensagem.WARNING, "Cadastre 1 endereço principal.");
-					}
-				} else {
-					
-					throw new ValidacaoException(TipoMensagem.WARNING, "Cadastre 1 endereço principal.");
-				}
-			}
-		} else {
-			
-			Set<Long> idsEnderecosIgnorar = new HashSet<Long>();
-			
-			if (listaEnderecosRemover != null && !listaEnderecosRemover.isEmpty()){
-				
-				idsEnderecosIgnorar.addAll(listaEnderecosRemover);
-			}
-			
-			if (!this.enderecoTransportadorRepository.verificarEnderecoPrincipalTransportador(transportador.getId(), idsEnderecosIgnorar)){
-				
-				throw new ValidacaoException(TipoMensagem.WARNING, "Cadastre 1 endereço principal.");
-			}
-		}
-	}
-
 	private void processarMotoristas(Transportador transportador,
 			List<Motorista> listaMotoristasAdicionar,
 			Set<Long> listaMotoristasRemover) {
@@ -427,70 +300,154 @@ public class TransportadorServiceImpl implements TransportadorService {
 		}
 	}
 
-	private void processarEnderecos(Transportador transportador, List<EnderecoAssociacaoDTO> listaEnderecosAdicionar, 
-			Set<Long> listaEnderecosRemover) {
+	/**
+	 * ENDERECO
+	 * 
+	 * @see br.com.abril.nds.service.TransportadorService#processarEnderecos(br.com.abril.nds.model.cadastro.Transportador, java.util.List, java.util.List)
+	 */
+	@Override
+	@Transactional
+	public void processarEnderecos(Transportador transportador,
+								   List<EnderecoAssociacaoDTO> listaEnderecoAssociacaoSalvar,
+								   List<EnderecoAssociacaoDTO> listaEnderecoAssociacaoRemover
+								   ) {
 		
-		if (listaEnderecosAdicionar != null && !listaEnderecosAdicionar.isEmpty()){
+		if (transportador == null){
 			
-			PessoaJuridica pessoaJuridica = transportador.getPessoaJuridica();
+			throw new ValidacaoException(TipoMensagem.ERROR, "Transportador não encontrado.");
+		}
+		
+		if (listaEnderecoAssociacaoSalvar != null && !listaEnderecoAssociacaoSalvar.isEmpty()) {
+
+			this.salvarEnderecosTransportador(transportador, listaEnderecoAssociacaoSalvar);
+		}
+
+		if (listaEnderecoAssociacaoRemover != null && !listaEnderecoAssociacaoRemover.isEmpty()) {
 			
-			for (EnderecoAssociacaoDTO dto : listaEnderecosAdicionar){
+			this.removerEnderecosTransportador(transportador, listaEnderecoAssociacaoRemover);
+		}
+	}
+	
+	/**
+	 * ENDERECO
+	 * 
+	 * Retorna um Endereco à ser editado ou cadastrado
+	 * @param enderecoDTO
+	 * @param pessoa
+	 * @param novo
+	 * @return Endereco
+	 */
+	private Endereco obterEndereco(EnderecoDTO enderecoDTO, Pessoa pessoa, boolean novo){
+		
+		Endereco endereco = new Endereco();
+		
+		if (!novo){
+			
+			endereco = this.enderecoRepository.buscarPorId(enderecoDTO.getId());
+		}
+
+		endereco.setBairro(enderecoDTO.getBairro());
+		endereco.setCep(enderecoDTO.getCep());
+		endereco.setCodigoCidadeIBGE(enderecoDTO.getCodigoCidadeIBGE());
+		endereco.setCidade(enderecoDTO.getCidade());
+		endereco.setComplemento(enderecoDTO.getComplemento());
+		endereco.setTipoLogradouro(enderecoDTO.getTipoLogradouro());
+		endereco.setLogradouro(enderecoDTO.getLogradouro());
+		endereco.setNumero(enderecoDTO.getNumero());
+		endereco.setUf(enderecoDTO.getUf());
+		endereco.setCodigoUf(enderecoDTO.getCodigoUf());
+		endereco.setPessoa(pessoa);
+		
+	    return endereco;
+	}
+	
+	/**
+	 * ENDERECO
+	 * 
+	 * Persiste EnderecoTransportador e Endereco
+	 * Valida apenas endereços vinculados ao Transportador
+	 * @param transportador
+	 * @param listaEnderecoAssociacao
+	 */
+	private void salvarEnderecosTransportador(Transportador transportador, List<EnderecoAssociacaoDTO> listaEnderecoAssociacao) {
+		
+		Pessoa pessoa = transportador.getPessoaJuridica();
+		
+		for (EnderecoAssociacaoDTO enderecoAssociacao : listaEnderecoAssociacao) {
+			
+			if (enderecoAssociacao.getTipoEndereco() == null){
 				
-				EnderecoTransportador enderecoTransportador = 
-						this.enderecoTransportadorRepository.buscarEnderecoPorEnderecoTransportador(
-								dto.getId(), 
-								transportador.getId());
+				continue;
+			}
+            
+			EnderecoDTO enderecoDTO = enderecoAssociacao.getEndereco();
+			    
+			this.enderecoService.validarEndereco(enderecoDTO, enderecoAssociacao.getTipoEndereco());
+			
+			EnderecoTransportador enderecoTransportador = this.enderecoTransportadorRepository.buscarPorId(enderecoAssociacao.getId());
+			
+			Endereco endereco = null;
+			
+			boolean novoEnderecoTransportador = false;
+			
+			if (enderecoTransportador == null) {
+
+				novoEnderecoTransportador = true;
 				
-				EnderecoDTO enderecoDTO = dto.getEndereco();
+				enderecoTransportador = new EnderecoTransportador();
+
+				enderecoTransportador.setTransportador(transportador);
+			}
+			
+			
+			boolean novoEndereco = (novoEnderecoTransportador && !enderecoAssociacao.isEnderecoPessoa());
+			
+			endereco = this.obterEndereco(enderecoDTO, pessoa, novoEndereco);
+
+			enderecoTransportador.setEndereco(endereco);
+
+			enderecoTransportador.setPrincipal(enderecoAssociacao.isEnderecoPrincipal());
+
+			enderecoTransportador.setTipoEndereco(enderecoAssociacao.getTipoEndereco());
 				
-				this.enderecoService.validarEndereco(enderecoDTO, dto.getTipoEndereco());
+			this.enderecoTransportadorRepository.merge(enderecoTransportador);
+		}
+	}
+
+	/**
+	 * ENDERECO
+	 * 
+	 * Remove lista de EnderecoTransportador
+	 * @param transportador
+	 * @param listaEnderecoAssociacao
+	 */
+	private void removerEnderecosTransportador(Transportador transportador,
+									           List<EnderecoAssociacaoDTO> listaEnderecoAssociacao) {
+		
+		List<EnderecoDTO> listaEndereco = new ArrayList<EnderecoDTO>();
+		
+		List<Long> idsEndereco = new ArrayList<Long>();
+
+		for (EnderecoAssociacaoDTO enderecoAssociacao : listaEnderecoAssociacao) {
+			
+			if(enderecoAssociacao!= null){
 				
-				Endereco endereco = null;
+				listaEndereco.add(enderecoAssociacao.getEndereco());
+
+				EnderecoTransportador enderecoTransportador = this.enderecoTransportadorRepository.buscarPorId(enderecoAssociacao.getId());
 				
-				if (enderecoTransportador == null) {
-					
-					endereco = new Endereco();
-					
-					enderecoTransportador = new EnderecoTransportador();
-					enderecoTransportador.setTransportador(transportador);
-					
-				} else {
-					
-					endereco = enderecoTransportador.getEndereco();				
-				}
-				
-				endereco.setBairro(enderecoDTO.getBairro());
-				endereco.setCep(enderecoDTO.getCep());
-				endereco.setCodigoCidadeIBGE(enderecoDTO.getCodigoCidadeIBGE());
-				endereco.setCidade(enderecoDTO.getCidade());
-				endereco.setComplemento(enderecoDTO.getComplemento());
-				endereco.setTipoLogradouro(enderecoDTO.getTipoLogradouro());
-				endereco.setLogradouro(enderecoDTO.getLogradouro());
-				endereco.setNumero(enderecoDTO.getNumero());
-				endereco.setUf(enderecoDTO.getUf());
-				endereco.setCodigoUf(enderecoDTO.getCodigoUf());
-				endereco.setPessoa(pessoaJuridica);
-				
-				enderecoTransportador.setEndereco(endereco);
-				enderecoTransportador.setPrincipal(dto.isEnderecoPrincipal());
-				enderecoTransportador.setTipoEndereco(dto.getTipoEndereco());
-				
-				if (enderecoTransportador.getId() == null) {
-					
-					this.enderecoTransportadorRepository.adicionar(enderecoTransportador);
-					
-				} else {
-					
-					this.enderecoTransportadorRepository.alterar(enderecoTransportador);	
+				if(enderecoTransportador!= null){
+	
+					idsEndereco.add(enderecoAssociacao.getEndereco().getId());
+	
+					this.enderecoTransportadorRepository.remover(enderecoTransportador);
 				}
 			}
 		}
 		
-		if (listaEnderecosRemover != null && !listaEnderecosRemover.isEmpty()){
+		if(!idsEndereco.isEmpty()){
 			
-			this.enderecoTransportadorRepository.removerEnderecosTransportador(listaEnderecosRemover);
-			
-			this.enderecoService.removerEnderecos(listaEnderecosRemover);
+			this.enderecoService.removerEnderecos(idsEndereco);
 		}
 	}
 
