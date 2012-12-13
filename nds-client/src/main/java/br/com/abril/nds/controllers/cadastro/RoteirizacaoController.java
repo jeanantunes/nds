@@ -195,8 +195,8 @@ public class RoteirizacaoController {
     }
 	
 	
-	@Path("/iniciaTelaRoteiro")
-	public void iniciaTelaRoteiro() {
+	@Path("/obterProximaOrdemRoteiro")
+	public void obterProximaOrdemRoteiro() {
 		RoteirizacaoDTO roteirizacao = getRoteirizacaoDTOSessao();
 	    Integer ordem = roteirizacao.getMaiorOrdemRoteiro();
 		ordem++;
@@ -204,7 +204,7 @@ public class RoteirizacaoController {
 	}
 	
 	
-	@Path("/iniciaTelaRota")
+	@Path("/obterProximaOrdemRota")
 	public void iniciaTelaRota(Long idRoteiro) {
 		
 		RoteiroRoteirizacaoDTO roteiro = this.getRoteiroDTOSessao(idRoteiro);
@@ -334,9 +334,8 @@ public class RoteirizacaoController {
 	}
 	
 	
-	@Post("/buscaRoteiros")
-	public void buscaRoteiros() {
-		
+	@Post("/buscarRoteirosSessao")
+	public void buscarRoteirosSessao() {
 		result.use(Results.json()).from(this.getRoteirizacaoDTOSessao().getRoteiros(), "result").recursive().serialize();
 	}
 	
@@ -900,9 +899,9 @@ public class RoteirizacaoController {
 	 */
 	@Post
 	@Path("/obterPdvsDisponiveis")
-	public void obterPdvsDisponiveis(Integer numCota, String municipio, String uf, String bairro, String cep, boolean pesquisaPorCota, String sortname, String sortorder ){
+	public void obterPdvsDisponiveis(Integer numCota, String municipio, String uf, String bairro, String cep, boolean pesquisaPorCota, Long boxID ,String sortname, String sortorder ){
         
-		List<PdvRoteirizacaoDTO> lista = this.roteirizacaoService.obterPdvsDisponiveis(numCota, municipio, uf, bairro, cep, pesquisaPorCota);
+		List<PdvRoteirizacaoDTO> lista = this.roteirizacaoService.obterPdvsDisponiveis(numCota, municipio, uf, bairro, cep, pesquisaPorCota, boxID);
 		
 		Ordenacao ordenacao = Util.getEnumByStringValue(Ordenacao.values(), sortorder);
 		PaginacaoUtil.ordenarEmMemoria(lista, ordenacao, sortname);
@@ -917,7 +916,7 @@ public class RoteirizacaoController {
 	 * @param idRoteiro
 	 * @return
 	 */
-	public RotaRoteirizacaoDTO getRotaDTOSessaoPelaOrdem(Integer ordemRota, Long idRoteiro) {
+	private RotaRoteirizacaoDTO getRotaDTOSessaoPelaOrdem(Integer ordemRota, Long idRoteiro) {
 	
 		RoteiroRoteirizacaoDTO roteiroDTO = this.getRoteiroDTOSessao(idRoteiro);
 		RotaRoteirizacaoDTO rotaDTO = roteiroDTO.getRotaByOrdem(ordemRota);
@@ -937,7 +936,7 @@ public class RoteirizacaoController {
 	 * @param idRoteiro
 	 * @return
 	 */
-	public RotaRoteirizacaoDTO getRotaDTOSessaoPeloID(Long idRota, Long idRoteiro) {
+	private RotaRoteirizacaoDTO getRotaDTOSessaoPeloID(Long idRota, Long idRoteiro) {
 	
 		RoteiroRoteirizacaoDTO roteiroDTO = this.getRoteiroDTOSessao(idRoteiro);
 		RotaRoteirizacaoDTO rotaDTO = roteiroDTO.getRota(idRota);
@@ -955,7 +954,7 @@ public class RoteirizacaoController {
 	 * @param idRoteiro
 	 * @return 
 	 */
-	public RoteiroRoteirizacaoDTO getRoteiroDTOSessao(Long idRoteiro) {
+	private RoteiroRoteirizacaoDTO getRoteiroDTOSessao(Long idRoteiro) {
 		
 		RoteirizacaoDTO roteirizacaoDTOSessao = this.getRoteirizacaoDTOSessao();
 		
@@ -972,7 +971,7 @@ public class RoteirizacaoController {
 	 * Recupera o DTO de roteirização da sessão
 	 * @return DTO armazenado na sessão
 	 */
-	public RoteirizacaoDTO getRoteirizacaoDTOSessao() {
+	private RoteirizacaoDTO getRoteirizacaoDTOSessao() {
 		
 		RoteirizacaoDTO roteirizacao = (RoteirizacaoDTO) session.getAttribute(ROTEIRIZACAO_DTO_SESSION_KEY);
 		
@@ -987,7 +986,7 @@ public class RoteirizacaoController {
 	 * Armazena o DTO de roteirização na sessão
 	 * @param dto DTO com as informações da roteirização 
 	 */
-	public RoteirizacaoDTO setRoteirizacaoDTOSessao(RoteirizacaoDTO dto) {
+	private RoteirizacaoDTO setRoteirizacaoDTOSessao(RoteirizacaoDTO dto) {
 	    session.setAttribute(ROTEIRIZACAO_DTO_SESSION_KEY, dto);
 	    return dto;
 	}
@@ -995,7 +994,7 @@ public class RoteirizacaoController {
 	/**
 	 * Remove o DTO de roteirização da sessão da sessão
 	 */
-	public void limparRoteirizacaoDTOSessao() {
+	private void limparRoteirizacaoDTOSessao() {
 	    setRoteirizacaoDTOSessao(null);
 	}
 	

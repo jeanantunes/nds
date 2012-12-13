@@ -165,8 +165,11 @@
         <table width="100%" border="0" cellspacing="1" cellpadding="1">
         <tr>
             <td>
-                <span class="bt_novos" title="Novo"><a href="javascript:;" onclick="roteirizacao.abrirTelaNovoRoteiroRota();">
-                    <img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/>Novo</a>
+                <span class="bt_novos" title="Novo">
+                	<a href="javascript:;" onclick="roteirizacao.abrirTelaNovoRoteiroRota();">
+                    	<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/>
+                    	Novo
+                    </a>
                 </span>
 
                  <span class="bt_novos" title="Adicionar"><a href="javascript:;" onclick="roteirizacao.abrirTelaCotas();">

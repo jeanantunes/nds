@@ -123,7 +123,7 @@ var pesquisaCotaFiltroConsulta = new PesquisaCota(roteirizacao.workspace);
 		<fieldset>
 	    	<legend id="legendDetalhesCota"></legend>
 	        
-	        <table id="cotasGrid" width="347" border="0" cellspacing="1" cellpadding="1"> </table>
+	        <table id="cotasGrid" width="440" border="0" cellspacing="1" cellpadding="1"> </table>
 	
 	  </fieldset>
 	</div>

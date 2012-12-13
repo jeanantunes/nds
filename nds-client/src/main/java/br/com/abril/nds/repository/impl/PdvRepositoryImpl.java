@@ -10,7 +10,6 @@ import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.Subqueries;
-import org.hibernate.sql.JoinType;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
@@ -339,7 +338,7 @@ public class PdvRepositoryImpl extends AbstractRepositoryModel<PDV, Long> implem
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<PDV> obterPDVsDisponiveisPor(Integer numCota, String municipio, String uf, String bairro, String cep, boolean pesquisaPorCota) {
+	public List<PDV> obterPDVsDisponiveisPor(Integer numCota, String municipio, String uf, String bairro, String cep, boolean pesquisaPorCota, Long boxID) {
 
 		Criteria criteria  = getSession().createCriteria(PDV.class,"pdv" );
 		criteria.setFetchMode("cota", FetchMode.JOIN);
@@ -347,9 +346,10 @@ public class PdvRepositoryImpl extends AbstractRepositoryModel<PDV, Long> implem
 		criteria.createAlias("enderecos", "enderecos") ;
 		criteria.createAlias("enderecos.endereco", "endereco");
 		
-		criteria.add(Subqueries.propertyNotIn("pdv.id",
-				DetachedCriteria.forClass(RotaPDV.class, "rotaPdv").setProjection(Projections.property("rotaPdv.pdv.id")))
-				);
+		if(boxID > 0) {
+			DetachedCriteria subquery = DetachedCriteria.forClass(RotaPDV.class, "rotaPdv").setProjection(Projections.property("rotaPdv.pdv.id"));
+			criteria.add(Subqueries.propertyNotIn("pdv.id", subquery));
+		}
 		
 		if (pesquisaPorCota) {
 			criteria.add(Restrictions.eq("caracteristicas.pontoPrincipal", true));

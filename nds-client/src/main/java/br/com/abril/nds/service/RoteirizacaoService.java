@@ -184,9 +184,10 @@ public interface RoteirizacaoService {
 	
 	/**
 	 * Obtém PDVS's disponiveis
+	 * @param boxID 
 	 * @return List<PdvRoteirizacaoDTO>
 	 */
-	public List<PdvRoteirizacaoDTO> obterPdvsDisponiveis(Integer numCota, String municipio, String uf, String bairro, String cep, boolean pesquisaPorCota);
+	public List<PdvRoteirizacaoDTO> obterPdvsDisponiveis(Integer numCota, String municipio, String uf, String bairro, String cep, boolean pesquisaPorCota, Long boxID);
 	
 	/**
 	 * Verifica se pdv esta disponivel (não vinculado a um box roteirizado)

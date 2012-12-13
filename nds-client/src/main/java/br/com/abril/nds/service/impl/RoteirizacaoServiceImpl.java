@@ -493,13 +493,13 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 	 */
 	@Override
 	@Transactional
-	public List<PdvRoteirizacaoDTO> obterPdvsDisponiveis(Integer numCota, String municipio, String uf, String bairro, String cep, boolean pesquisaPorCota) {
+	public List<PdvRoteirizacaoDTO> obterPdvsDisponiveis(Integer numCota, String municipio, String uf, String bairro, String cep, boolean pesquisaPorCota, Long boxID) {
 		
 		List<PdvRoteirizacaoDTO> listaPdvDTO = new ArrayList<PdvRoteirizacaoDTO>();
 		
 		List<PDV> listaPdv = new ArrayList<PDV>();
 			
-		listaPdv.addAll(this.pdvRepository.obterPDVsDisponiveisPor(numCota, municipio, uf, bairro, cep, pesquisaPorCota));
+		listaPdv.addAll(this.pdvRepository.obterPDVsDisponiveisPor(numCota, municipio, uf, bairro, cep, pesquisaPorCota, boxID));
 		
 		PdvRoteirizacaoDTO pdvDTO;
 		
