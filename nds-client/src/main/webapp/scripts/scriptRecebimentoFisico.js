@@ -6,7 +6,7 @@ var recebimentoFisicoController = $.extend(true, {
 	
 	init: function() {
 		var _this = this;
-		
+
 		$("#datepickerLancto", this.workspace).datepicker({
 			showOn: "button",
 			buttonImage: contextPath + "/images/calendar.gif",
@@ -652,7 +652,8 @@ var recebimentoFisicoController = $.extend(true, {
     	
 		$(".itemNotaGrid", this.workspace).flexOptions({
 			url: contextPath + '/estoque/recebimentoFisico/obterListaItemRecebimentoFisico',
-			dataType : 'json'
+			dataType : 'json',
+			onSuccess : function() { $('.pacotePadrao').tipsy() }
 		});
 	
 		$(".itemNotaGrid", this.workspace).flexReload();
@@ -743,7 +744,7 @@ var recebimentoFisicoController = $.extend(true, {
 		function(result) {
 
 			$(".grids", this.workspace).hide();
-			
+			recebimentoFisicoController.limparCamposPesquisa();
 			recebimentoFisicoController.ocultarBtns();
 		});
 		
@@ -828,7 +829,7 @@ var recebimentoFisicoController = $.extend(true, {
 					
 				});
 				
-				
+				$('.pacotePadrao').tipsy();
 			});
 				
 		});
@@ -987,26 +988,49 @@ var recebimentoFisicoController = $.extend(true, {
 	},
 	
 	alterarValor : function(idLinha) {
-		alert("Reparte Previsto: " + $("#repartePrevisto_"+idLinha).text());
+		/*alert("Reparte Previsto: " + $("#repartePrevisto_"+idLinha).text());
 		alert("Qtd Pacote: " + $("#qtdPacote_"+idLinha).val());
 		alert("Pacote Padrao: " + $("#pacotePadrao_"+idLinha).val());
-		alert("Qtd Quebra: " + $("#qtdExemplar_"+idLinha).val());
-		alert("Diferença: " + $("#diferenca_"+idLinha).text());
-		
-		var repartePrevisto = $("#repartePrevisto_"+idLinha).text();
+		alert("Qtd Quebra: " + $("#qtdExemplar_"+idLinha).val());*/
+
 		var qtdPacote 		= $("#qtdPacote_"+idLinha).val();
-		var pacotePadrao 	= $("#pacotePadrao_"+idLinha).val();
 		var qtdQuebra 		= $("#qtdExemplar_"+idLinha).val();
+
+		if (qtdPacote == "") {
+			qtdPacote = 0;
+			$("#qtdPacote_"+idLinha).val(0);
+		}
+
+		if (qtdQuebra == "") {
+			qtdQuebra = 0;
+			$("#qtdExemplar_"+idLinha).val(0);
+		}
+
+		var qtdPacote 		= parseInt(qtdPacote);
+		var qtdQuebra 		= parseInt(qtdQuebra);
+		var repartePrevisto = parseInt($("#repartePrevisto_"+idLinha).text());
+		var pacotePadrao 	= parseInt($("#pacotePadrao_"+idLinha).val());
 		var diferenca 		= 0;
 
-		diferenca = repartePrevisto - ( (qtdPacote * pacotePadrao) + qtdQuebra); 
+		diferenca = ( (qtdPacote * pacotePadrao) + qtdQuebra) - repartePrevisto; 
+
+		if (diferenca < 0) {
+			$("#diferenca_"+idLinha)[0].style.color = "red";			
+		} else {
+			$("#diferenca_"+idLinha)[0].style.color = "black";			
+		}
+		
+		//alert("Diferença: " + diferenca);
 		
 		$("#diferenca_"+idLinha).text(diferenca);
 
-		/*var repartePrevisto = 'qtdPacote_'+ lineId;
-		var qtdPacote       = 'qtdExemplar_'+ lineId;
-		var qtdPadrao       = 'pacotePadrao_'+ lineId;
-		var qtdQuebra       =*/
+	},
+	
+	numericOnly : function(event) {
+          var num=event.keyCode;
+          if(num>=48 & num<=57)
+               return true;
+          return false; 
 	},
 	
 	/**
@@ -1050,11 +1074,11 @@ var recebimentoFisicoController = $.extend(true, {
 			value.cell.repartePrevisto = '<span id="repartePrevisto_'+lineId+'">'+repartePrevisto+'</span>'; 
 			
 			if(edicaoItemRecFisicoPermitida == "S") {
-				value.cell.qtdPacote 	=  '<input name="qtdPacote" id="qtdPacote_'+ lineId +'" style="width: 45px;" type="text" value="'+qtdPacote+'" onblur="recebimentoFisicoController.alterarValor('+ lineId +')"/>'+hiddenFields;
-				value.cell.qtdExemplar = '<input name="qtdExemplar" id="qtdExemplar_'+ lineId +'" style="width: 45px;" type="text" value="'+qtdExemplar+'" onblur="recebimentoFisicoController.alterarValor('+ lineId +')"/>';
+				value.cell.qtdPacote 	=  '<input name="qtdPacote" id="qtdPacote_'+ lineId +'" class="pacotePadrao" original-title="Pacote Padrão: '+pacotePadrao+'" onkeypress="return recebimentoFisicoController.numericOnly(event)" style="width: 45px;" type="text" value="'+qtdPacote+'" onblur="recebimentoFisicoController.alterarValor('+ lineId +')"/>'+hiddenFields;
+				value.cell.qtdExemplar = '<input name="qtdExemplar" id="qtdExemplar_'+ lineId +'" class="pacotePadrao" original-title="Pacote Padrão: '+pacotePadrao+'" onkeypress="return recebimentoFisicoController.numericOnly(event)"  style="width: 45px;" type="text" value="'+qtdExemplar+'" onblur="recebimentoFisicoController.alterarValor('+ lineId +')"/>';
 			} else {
-				value.cell.qtdPacote 	= '<input name="qtdPacote" disabled="disabled" style="width: 45px;" type="text" value="'+qtdPacote+'"/>'+hiddenFields;
-				value.cell.qtdExemplar 	=  '<input name="qtdExemplar" disabled="disabled" style="width: 45px;" type="text" value="'+qtdExemplar+'"/>';
+				value.cell.qtdPacote 	= '<input name="qtdPacote" class="pacotePadrao" original-title="Pacote Padrão: '+pacotePadrao+'" disabled="disabled" style="width: 45px;" type="text" value="'+qtdPacote+'"/>'+hiddenFields;
+				value.cell.qtdExemplar 	=  '<input name="qtdExemplar" class="pacotePadrao" original-title="Pacote Padrão: '+pacotePadrao+'" disabled="disabled" style="width: 45px;" type="text" value="'+qtdExemplar+'"/>';
 			}
 			
 			
@@ -1087,7 +1111,7 @@ var recebimentoFisicoController = $.extend(true, {
 		});
 		
 		$(".grids", this.workspace).show();
-		
+
 		if(!recebimentoFisicoController.indRecebimentoFisicoConfirmado){
 			
 			$('#botoesNormais', this.workspace).show();
@@ -1118,7 +1142,6 @@ var recebimentoFisicoController = $.extend(true, {
 			$('#botaoNovoProduto', this.workspace).hide();
 			
 		}	
-		
 		
 		return data;
 

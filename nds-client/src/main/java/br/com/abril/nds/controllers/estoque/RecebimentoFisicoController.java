@@ -618,15 +618,20 @@ public class RecebimentoFisicoController {
 			itemRecebimento.setRepartePrevisto(BigInteger.ZERO);
 		}
 
-		if(itemRecebimento.getQtdFisico() == null) {
+		// Realizado em conjunto com Cesar Punk Pop
+		/*if(itemRecebimento.getQtdFisico() == null) {
 			itemRecebimento.setQtdFisico(BigInteger.ZERO);
-		}
+		}*/
 
 		BigInteger qtdRepartePrevisto = itemRecebimento.getRepartePrevisto();
 		
 		BigInteger qtdFisico = itemRecebimento.getQtdFisico();
 		
-		BigInteger valorDiferenca = qtdRepartePrevisto.subtract( qtdFisico );
+		//BigInteger valorDiferenca = qtdFisico.subtract(qtdRepartePrevisto);
+		BigInteger valorDiferenca = BigInteger.ZERO;
+		if (itemRecebimento.getQtdFisico() != null) {
+			valorDiferenca = qtdFisico.subtract(qtdRepartePrevisto);
+		}
 		
 		itemRecebimento.setDiferenca(valorDiferenca);
 		
