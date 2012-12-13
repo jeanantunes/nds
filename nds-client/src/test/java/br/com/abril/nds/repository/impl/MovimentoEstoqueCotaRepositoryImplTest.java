@@ -1450,8 +1450,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		List<ContagemDevolucaoDTO> retorno = 
 				
 				movimentoEstoqueCotaRepository.obterListaContagemDevolucao(
-				obterFiltroDigitacaoContagemDevolucao(), 
-				obterTipoMovimento(),
+				obterFiltroDigitacaoContagemDevolucao(),
 				true);
 		
 		
@@ -1470,11 +1469,10 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		
 		FiltroDigitacaoContagemDevolucaoDTO filtro = new FiltroDigitacaoContagemDevolucaoDTO();
 		filtro.setPeriodo(new Intervalo<Date>(Fixture.criarData(27, Calendar.FEBRUARY, 2012), Fixture.criarData(1, Calendar.MARCH, 2012)));
-		TipoMovimentoEstoque tipoMovimentoEstoque = obterTipoMovimento(); 
 		boolean indBuscaTotalParcial = false;
 		
 		List<ContagemDevolucaoDTO> retorno = 
-				movimentoEstoqueCotaRepository.obterListaContagemDevolucao(filtro, tipoMovimentoEstoque, indBuscaTotalParcial);
+				movimentoEstoqueCotaRepository.obterListaContagemDevolucao(filtro, indBuscaTotalParcial);
 		
 		Assert.assertNotNull(retorno);
 		
@@ -1488,11 +1486,12 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		FiltroDigitacaoContagemDevolucaoDTO filtro = new FiltroDigitacaoContagemDevolucaoDTO();
 		filtro.setPeriodo(new Intervalo<Date>(Fixture.criarData(27, Calendar.FEBRUARY, 2012), Fixture.criarData(1, Calendar.MARCH, 2012)));
 		filtro.setIdFornecedor(1L);
-		TipoMovimentoEstoque tipoMovimentoEstoque = obterTipoMovimento(); 
+		
+		
 		boolean indBuscaTotalParcial = false;
 		
 		List<ContagemDevolucaoDTO> retorno = 
-				movimentoEstoqueCotaRepository.obterListaContagemDevolucao(filtro, tipoMovimentoEstoque, indBuscaTotalParcial);
+				movimentoEstoqueCotaRepository.obterListaContagemDevolucao(filtro, indBuscaTotalParcial);
 		
 		Assert.assertNotNull(retorno);
 		
@@ -1505,7 +1504,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		
 		FiltroDigitacaoContagemDevolucaoDTO filtro = new FiltroDigitacaoContagemDevolucaoDTO();
 		filtro.setPeriodo(new Intervalo<Date>(Fixture.criarData(27, Calendar.FEBRUARY, 2012), Fixture.criarData(1, Calendar.MARCH, 2012)));
-		TipoMovimentoEstoque tipoMovimentoEstoque = obterTipoMovimento(); 
+		
 		filtro.setPaginacao(new PaginacaoVO());
 		filtro.getPaginacao().setOrdenacao(PaginacaoVO.Ordenacao.ASC);
 		filtro.getPaginacao().setPaginaAtual(1);
@@ -1513,7 +1512,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		boolean indBuscaTotalParcial = false;
 		
 		List<ContagemDevolucaoDTO> retorno = 
-				movimentoEstoqueCotaRepository.obterListaContagemDevolucao(filtro, tipoMovimentoEstoque, indBuscaTotalParcial);
+				movimentoEstoqueCotaRepository.obterListaContagemDevolucao(filtro, indBuscaTotalParcial);
 		
 		Assert.assertNotNull(retorno);
 		
@@ -1528,11 +1527,11 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		filtro.setPeriodo(new Intervalo<Date>(Fixture.criarData(27, Calendar.FEBRUARY, 2012), Fixture.criarData(1, Calendar.MARCH, 2012)));
 		filtro.setOrdenacaoColuna(FiltroDigitacaoContagemDevolucaoDTO.OrdenacaoColuna.CODIGO_PRODUTO);
 		filtro.setPaginacao(new PaginacaoVO());
-		TipoMovimentoEstoque tipoMovimentoEstoque = obterTipoMovimento(); 
+		
 		boolean indBuscaTotalParcial = false;
 		
 		List<ContagemDevolucaoDTO> retorno = 
-				movimentoEstoqueCotaRepository.obterListaContagemDevolucao(filtro, tipoMovimentoEstoque, indBuscaTotalParcial);
+				movimentoEstoqueCotaRepository.obterListaContagemDevolucao(filtro, indBuscaTotalParcial);
 		
 		Assert.assertNotNull(retorno);
 		
@@ -1547,11 +1546,11 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		filtro.setPeriodo(new Intervalo<Date>(Fixture.criarData(27, Calendar.FEBRUARY, 2012), Fixture.criarData(1, Calendar.MARCH, 2012)));
 		filtro.setOrdenacaoColuna(FiltroDigitacaoContagemDevolucaoDTO.OrdenacaoColuna.NOME_PRODUTO);
 		filtro.setPaginacao(new PaginacaoVO());
-		TipoMovimentoEstoque tipoMovimentoEstoque = obterTipoMovimento(); 
+		
 		boolean indBuscaTotalParcial = false;
 		
 		List<ContagemDevolucaoDTO> retorno = 
-				movimentoEstoqueCotaRepository.obterListaContagemDevolucao(filtro, tipoMovimentoEstoque, indBuscaTotalParcial);
+				movimentoEstoqueCotaRepository.obterListaContagemDevolucao(filtro, indBuscaTotalParcial);
 		
 		Assert.assertNotNull(retorno);
 		
@@ -1566,11 +1565,11 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		filtro.setPeriodo(new Intervalo<Date>(Fixture.criarData(27, Calendar.FEBRUARY, 2012), Fixture.criarData(1, Calendar.MARCH, 2012)));
 		filtro.setOrdenacaoColuna(FiltroDigitacaoContagemDevolucaoDTO.OrdenacaoColuna.NUMERO_EDICAO);
 		filtro.setPaginacao(new PaginacaoVO());
-		TipoMovimentoEstoque tipoMovimentoEstoque = obterTipoMovimento(); 
+		
 		boolean indBuscaTotalParcial = false;
 		
 		List<ContagemDevolucaoDTO> retorno = 
-				movimentoEstoqueCotaRepository.obterListaContagemDevolucao(filtro, tipoMovimentoEstoque, indBuscaTotalParcial);
+				movimentoEstoqueCotaRepository.obterListaContagemDevolucao(filtro, indBuscaTotalParcial);
 		
 		Assert.assertNotNull(retorno);
 		
@@ -1585,11 +1584,13 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		filtro.setPeriodo(new Intervalo<Date>(Fixture.criarData(27, Calendar.FEBRUARY, 2012), Fixture.criarData(1, Calendar.MARCH, 2012)));
 		filtro.setOrdenacaoColuna(FiltroDigitacaoContagemDevolucaoDTO.OrdenacaoColuna.PRECO_CAPA);
 		filtro.setPaginacao(new PaginacaoVO());
-		TipoMovimentoEstoque tipoMovimentoEstoque = obterTipoMovimento(); 
+		
+		 
+		
 		boolean indBuscaTotalParcial = false;
 		
 		List<ContagemDevolucaoDTO> retorno = 
-				movimentoEstoqueCotaRepository.obterListaContagemDevolucao(filtro, tipoMovimentoEstoque, indBuscaTotalParcial);
+				movimentoEstoqueCotaRepository.obterListaContagemDevolucao(filtro, indBuscaTotalParcial);
 		
 		Assert.assertNotNull(retorno);
 		
@@ -1604,11 +1605,13 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		filtro.setPeriodo(new Intervalo<Date>(Fixture.criarData(27, Calendar.FEBRUARY, 2012), Fixture.criarData(1, Calendar.MARCH, 2012)));
 		filtro.setOrdenacaoColuna(FiltroDigitacaoContagemDevolucaoDTO.OrdenacaoColuna.QTD_DEVOLUCAO);
 		filtro.setPaginacao(new PaginacaoVO());
-		TipoMovimentoEstoque tipoMovimentoEstoque = obterTipoMovimento(); 
+		
+		 
+		
 		boolean indBuscaTotalParcial = false;
 		
 		List<ContagemDevolucaoDTO> retorno = 
-				movimentoEstoqueCotaRepository.obterListaContagemDevolucao(filtro, tipoMovimentoEstoque, indBuscaTotalParcial);
+				movimentoEstoqueCotaRepository.obterListaContagemDevolucao(filtro, indBuscaTotalParcial);
 		
 		Assert.assertNotNull(retorno);
 		
@@ -1623,11 +1626,11 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		filtro.setPeriodo(new Intervalo<Date>(Fixture.criarData(27, Calendar.FEBRUARY, 2012), Fixture.criarData(1, Calendar.MARCH, 2012)));
 		filtro.setOrdenacaoColuna(FiltroDigitacaoContagemDevolucaoDTO.OrdenacaoColuna.QTD_NOTA);
 		filtro.setPaginacao(new PaginacaoVO());
-		TipoMovimentoEstoque tipoMovimentoEstoque = obterTipoMovimento(); 
+		
 		boolean indBuscaTotalParcial = true;
 		
 		List<ContagemDevolucaoDTO> retorno = 
-				movimentoEstoqueCotaRepository.obterListaContagemDevolucao(filtro, tipoMovimentoEstoque, indBuscaTotalParcial);
+				movimentoEstoqueCotaRepository.obterListaContagemDevolucao(filtro, indBuscaTotalParcial);
 		
 		Assert.assertNotNull(retorno);
 		
@@ -1644,11 +1647,11 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		filtro.setOrdenacaoColuna(FiltroDigitacaoContagemDevolucaoDTO.OrdenacaoColuna.CODIGO_PRODUTO);
 		filtro.setPaginacao(new PaginacaoVO());
 		filtro.getPaginacao().setOrdenacao(PaginacaoVO.Ordenacao.ASC);
-		TipoMovimentoEstoque tipoMovimentoEstoque = obterTipoMovimento(); 
+		
 		boolean indBuscaTotalParcial = false;
 		
 		List<ContagemDevolucaoDTO> retorno = 
-				movimentoEstoqueCotaRepository.obterListaContagemDevolucao(filtro, tipoMovimentoEstoque, indBuscaTotalParcial);
+				movimentoEstoqueCotaRepository.obterListaContagemDevolucao(filtro, indBuscaTotalParcial);
 		
 		Assert.assertNotNull(retorno);
 		
@@ -1660,8 +1663,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		setUpForContagemDevolucao();
 		
 		BigDecimal total = movimentoEstoqueCotaRepository.obterValorTotalGeralContagemDevolucao(
-				obterFiltroDigitacaoContagemDevolucao(), 
-				obterTipoMovimento());
+				obterFiltroDigitacaoContagemDevolucao());
 		
 		Assert.assertEquals(475, total.intValue());
 	}
@@ -1676,8 +1678,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		filtro.setIdFornecedor(null);
 		
 		BigDecimal total = movimentoEstoqueCotaRepository.obterValorTotalGeralContagemDevolucao(
-				filtro, 
-				obterTipoMovimento());
+				filtro);
 		
 	}
 	
@@ -1687,8 +1688,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		setUpForContagemDevolucao();
 		
 		List<ContagemDevolucaoDTO> listaContagemDevolucao = movimentoEstoqueCotaRepository.obterListaContagemDevolucao(
-				obterFiltroDigitacaoContagemDevolucao(), 
-				obterTipoMovimento(),
+				obterFiltroDigitacaoContagemDevolucao(),
 				false);
 		
 		Assert.assertNotNull(listaContagemDevolucao);
@@ -1700,7 +1700,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		setUpForContagemDevolucao();
 		
 		Integer qtde = movimentoEstoqueCotaRepository.obterQuantidadeContagemDevolucao(
-				obterFiltroDigitacaoContagemDevolucao(), obterTipoMovimento());
+				obterFiltroDigitacaoContagemDevolucao());
 		
 		Assert.assertEquals(2, qtde.intValue());
 	}
@@ -1733,13 +1733,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 	}
 	
 	
-	private TipoMovimentoEstoque obterTipoMovimento() {
-		TipoMovimentoEstoque tipoMovimentoEstoque = 
-				tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(
-					GrupoMovimentoEstoque.ENVIO_ENCALHE);
-		
-		return tipoMovimentoEstoque;
-	}
+	
 	
 	@Test
 	public void obterMovimentoPorTipo(){
