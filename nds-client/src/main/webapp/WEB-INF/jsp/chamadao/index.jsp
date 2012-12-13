@@ -8,7 +8,7 @@
 
 <script>
 
-	var pesquisaCotaChamadao = new PesquisaCota();
+	var pesquisaCotaChamadao = new PesquisaCota(chamadaoController.workspace);
 
 	$(function(){
 		chamadaoController.init();
@@ -56,15 +56,15 @@
   			<tr>
 			    <td width="73">Cota:</td>
 			    <td width="175">
-			    	<input type="text" name="numeroCota" id="numeroCota" style="width:70px; float:left;
-						   margin-right:5px;" onchange="pesquisaCotaChamadao.pesquisarPorNumeroCota('#numeroCota', '#descricaoCota');" />
+			    	<input type="text" name="numeroCotaChamadao" id="numeroCotaChamadao" style="width:70px; float:left;
+						   margin-right:5px;" onchange="pesquisaCotaChamadao.pesquisarPorNumeroCota('#numeroCotaChamadao', '#descricaoCota');" />
 			    </td>
 			    <td width="37">Nome:</td>
 			    <td width="211">
 			    	<input name="descricaoCota" id="descricaoCota" type="text"
 		      		 	   class="nome_jornaleiro" maxlength="255" style="width:130px;"
 		      		 	   onkeyup="pesquisaCotaChamadao.autoCompletarPorNome('#descricaoCota');" 
-		      		 	   onblur="pesquisaCotaChamadao.pesquisarPorNomeCota('#numeroCota', '#descricaoCota');" />
+		      		 	   onblur="pesquisaCotaChamadao.pesquisarPorNomeCota('#numeroCotaChamadao', '#descricaoCota');" />
 		      	</td>
 			    <td width="94">Data Chamadão:</td>
 			    <td width="220">
