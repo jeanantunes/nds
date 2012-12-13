@@ -853,7 +853,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 
 		BigDecimal precoVenda = produtoEdicao.getPrecoVenda();
 		BigDecimal percentualDesconto = descontoService
-				.obterDescontoPorCotaProdutoEdicao(null, cota, produtoEdicao);
+				.obterValorDescontoPorCotaProdutoEdicao(null, cota, produtoEdicao);
 		BigDecimal valorDesconto = MathUtil.calculatePercentageValue(
 				precoVenda, percentualDesconto);
 		produtoServico.setValorDesconto(valorDesconto);
@@ -1387,7 +1387,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 					.getProdutoEdicao();
 			BigDecimal precoVenda = produtoEdicao.getPrecoVenda();
 			BigDecimal percentualDesconto = descontoService
-					.obterDescontoPorCotaProdutoEdicao(null, cota, produtoEdicao);
+					.obterValorDescontoPorCotaProdutoEdicao(null, cota, produtoEdicao);
 			BigDecimal valorDesconto = MathUtil.calculatePercentageValue(
 					precoVenda, percentualDesconto);
 
@@ -1465,7 +1465,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 					new BigDecimal(quantidade)));
 
 			BigDecimal desconto = this.descontoService
-					.obterDescontoPorCotaProdutoEdicao(null,
+					.obterValorDescontoPorCotaProdutoEdicao(null,
 							item
 									.getListaMovimentoEstoqueCota().get(0).getCota(), this.produtoEdicaoRepository.buscarPorId(item
 									.getIdProdutoEdicao()));

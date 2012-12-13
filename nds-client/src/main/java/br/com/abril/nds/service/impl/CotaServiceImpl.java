@@ -2142,7 +2142,7 @@ public class CotaServiceImpl implements CotaService {
         for (HistoricoTitularidadeCotaDescontoProduto desconto : historico.getDescontosProduto()) {
             dtos.add(new TipoDescontoProdutoDTO(desconto.getCodigo(), desconto
                     .getNome(), desconto.getNumeroEdicao(), desconto
-                    .getDesconto(), desconto.getAtualizacao(), null));
+                    .getDesconto(), desconto.getAtualizacao(), null, false));
         }
 	    return dtos;
 	}

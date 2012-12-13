@@ -10,6 +10,7 @@ import br.com.abril.nds.dto.TipoDescontoDTO;
 import br.com.abril.nds.dto.filtro.FiltroTipoDescontoDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.desconto.Desconto;
 import br.com.abril.nds.model.cadastro.desconto.HistoricoDescontoCotaProdutoExcessao;
 import br.com.abril.nds.repository.HistoricoDescontoCotaProdutoRepository;
 
@@ -103,9 +104,26 @@ public class HistoricoDescontoCotaProdutoRepositoryImpl extends AbstractReposito
 	}
 
 	@Override
-	public HistoricoDescontoCotaProdutoExcessao buscarUltimoDescontoValido(Cota cota, Fornecedor fornecedor) {
+	public HistoricoDescontoCotaProdutoExcessao buscarUltimoDescontoValido(Desconto desconto, Cota cota, Fornecedor fornecedor) {
 
-		return this.obterUltimoDescontoValido(null);
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select hdcpe ")
+			.append("from HistoricoDescontoCotaProdutoExcessao hdcpe ")
+			.append("where hdcpe.desconto.id = :idDesconto ")
+			.append("and hdcpe.cota.id = :idCota ")
+			.append("and hdcpe.fornecedor.id = :idFornecedor ");
+	
+		Query query = getSession().createQuery(hql.toString());
+		
+		query.setParameter("idDesconto", desconto.getId());
+		query.setParameter("idCota", cota.getId());
+		query.setParameter("idFornecedor", fornecedor.getId());
+		
+		query.setMaxResults(1);
+		
+		return (HistoricoDescontoCotaProdutoExcessao)  query.uniqueResult();
+		
 	}
 	
 	private String getOrdenacao(FiltroTipoDescontoDTO filtro){
@@ -153,25 +171,4 @@ public class HistoricoDescontoCotaProdutoRepositoryImpl extends AbstractReposito
 		return hql.toString();
 	}
 	
-	private HistoricoDescontoCotaProdutoExcessao obterUltimoDescontoValido(Fornecedor fornecedor){
-			
-		StringBuilder hql = new StringBuilder();
-		
-		hql.append(" select desconto from DescontoDistribuidor desconto JOIN desconto.fornecedores fornecedor  ")
-			.append("where desconto.dataAlteracao = ")
-			.append(" ( select max(descontoSub.dataAlteracao) from DescontoDistribuidor descontoSub  ")
-				.append(" JOIN descontoSub.fornecedores fornecedorSub ")
-				.append(" where fornecedorSub.id =:idFornecedor ");
-		hql.append(" ) ")
-			.append(" AND fornecedor.id =:idFornecedor ");
-	
-		Query query = getSession().createQuery(hql.toString());
-		
-		query.setParameter("idFornecedor",fornecedor.getId());
-		
-		query.setMaxResults(1);
-		
-		return (HistoricoDescontoCotaProdutoExcessao)  query.uniqueResult();
-	}
-
 }

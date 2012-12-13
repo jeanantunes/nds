@@ -33,17 +33,20 @@ public class TipoDescontoProdutoDTO implements Serializable {
 	
 	private Long idTipoDesconto;
 	
+	private boolean excluivel;
+	
 	public TipoDescontoProdutoDTO() {
     }
 	
 	public TipoDescontoProdutoDTO(String codigoProduto, String nomeProduto,
-            Long numeroEdicao, BigDecimal desconto, Date dataAlteracao, String nomeUsuario) {
+            Long numeroEdicao, BigDecimal desconto, Date dataAlteracao, String nomeUsuario, boolean excluivel) {
         this.codigoProduto = codigoProduto;
         this.nomeProduto = nomeProduto;
         this.numeroEdicao = numeroEdicao;
         this.desconto = desconto;
         this.dataAlteracao = dataAlteracao;
         this.nomeUsuario = nomeUsuario; 
+        this.excluivel = excluivel; 
     }
 
     /**
@@ -143,6 +146,14 @@ public class TipoDescontoProdutoDTO implements Serializable {
 	 */
 	public void setIdTipoDesconto(Number idTipoDesconto) {
 		this.idTipoDesconto = idTipoDesconto != null ? idTipoDesconto.longValue() : null;
+	}
+
+	public boolean isExcluivel() {
+		return excluivel;
+	}
+
+	public void setExcluivel(boolean excluivel) {
+		this.excluivel = excluivel;
 	}
 
 }

@@ -45,7 +45,7 @@ public class DescontoProdutoRepositoryImpl extends AbstractRepositoryModel<Desco
 		StringBuilder hql = new StringBuilder();
 		
 		hql.append("SELECT ")
-		.append("vdpe.desconto_id as idTipoDesconto ")
+		.append("coalesce(d.id, vdpe.desconto_id, 0) as idTipoDesconto ")
 		.append(", vdpe.codigo_produto as codigoProduto ")
 		.append(", vdpe.nome_produto as nomeProduto ")
 		.append(", vdpe.numero_edicao as numeroEdicao ")
@@ -154,11 +154,11 @@ public class DescontoProdutoRepositoryImpl extends AbstractRepositoryModel<Desco
 		StringBuilder hql = new StringBuilder();
 
 		hql.append(" select produtoEdicao.produto.codigo as codigoProduto, ");
-		hql.append(" produtoEdicao.produto.nome as nomeProduto, ");
-		hql.append(" produtoEdicao.numeroEdicao as numeroEdicao, ");
-		hql.append(" descontoProduto.desconto as desconto, ");
-		hql.append(" descontoProduto.dataAlteracao as dataAlteracao, ");
-		hql.append(" usuario.nome as nomeUsuario ");
+		hql.append(" 	produtoEdicao.produto.nome as nomeProduto, ");
+		hql.append(" 	produtoEdicao.numeroEdicao as numeroEdicao, ");
+		hql.append(" 	descontoProduto.desconto as desconto, ");
+		hql.append(" 	descontoProduto.dataAlteracao as dataAlteracao, ");
+		hql.append(" 	usuario.nome as nomeUsuario ");
 		hql.append(" from DescontoProduto as descontoProduto ");
 		hql.append(" join descontoProduto.cotas as cota ");
 		hql.append(" join descontoProduto.usuario as usuario ");

@@ -13,6 +13,7 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.cadastro.desconto.Desconto;
 import br.com.abril.nds.model.cadastro.desconto.DescontoCotaProdutoExcessao;
 import br.com.abril.nds.model.cadastro.desconto.TipoDesconto;
 import br.com.abril.nds.repository.DescontoProdutoEdicaoExcessaoRepository;
@@ -42,9 +43,9 @@ public class DescontoProdutoEdicaoExcessaoRepositoryImpl extends AbstractReposit
 	 */
 	@Override
 	public DescontoCotaProdutoExcessao buscarDescontoCotaProdutoExcessao(TipoDesconto tipoDesconto,
-															 Fornecedor fornecedor, 
-															 Cota cota,
-															 Produto produto, ProdutoEdicao produtoEdicao) {
+															 Desconto desconto, 
+															 Fornecedor fornecedor,
+															 Cota cota, Produto produto, ProdutoEdicao produtoEdicao) {
 		
 		Criteria criteria = getSession().createCriteria(DescontoCotaProdutoExcessao.class);
 
@@ -68,6 +69,12 @@ public class DescontoProdutoEdicaoExcessaoRepositoryImpl extends AbstractReposit
 			
 			criteria.add(Restrictions.eq("tipoDesconto", tipoDesconto));
 		}
+		
+		if (desconto != null) {
+			
+			criteria.add(Restrictions.eq("desconto", desconto));
+		}
+
 		
 		criteria.setMaxResults(1);
 		

@@ -133,7 +133,7 @@ public class TipoDescontoCotaController {
 	@Path("/pesquisarDescontoEspecifico")
 	public void pesquisarDescontoEspecifico(Integer cotaEspecifica, String nomeEspecifico, String sortorder, String sortname, int page, int rp) throws Exception {
 		
-		FiltroTipoDescontoCotaDTO filtro = carregarFiltroPesquisaDescontoEspecifico(cotaEspecifica,nomeEspecifico,sortorder, sortname, page, rp);
+		FiltroTipoDescontoCotaDTO filtro = carregarFiltroPesquisaDescontoEspecifico(cotaEspecifica, nomeEspecifico, sortorder, sortname, page, rp);
 		
 		List<TipoDescontoCotaDTO> listaDescontoCotaEspecifica = descontoService.buscarTipoDescontoCota(filtro);
 			

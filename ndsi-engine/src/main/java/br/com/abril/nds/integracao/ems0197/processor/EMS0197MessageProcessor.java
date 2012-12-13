@@ -115,7 +115,7 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 					outDetalhe.setPrecoCustoPE(pe.getProdutoEdicao().getPrecoCusto().toString());
 					outDetalhe.setPrecoVendaPE(pe.getProdutoEdicao().getPrecoVenda().toString());												
 					outDetalhe.setDescontoPE(
-							descontoService.obterDescontoPorCotaProdutoEdicao(
+							descontoService.obterValorDescontoPorCotaProdutoEdicao(
 									null,
 									jornaleiro.getCota(), pe.getProdutoEdicao()).toString());						
 					outDetalhe.setQtdeMEC(pe.getQtde().toString());

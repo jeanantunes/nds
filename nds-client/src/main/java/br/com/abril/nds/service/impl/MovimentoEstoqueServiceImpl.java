@@ -15,6 +15,7 @@ import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.cadastro.desconto.Desconto;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCotaJuramentado;
@@ -33,6 +34,7 @@ import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.CotaRepository;
+import br.com.abril.nds.repository.DescontoRepository;
 import br.com.abril.nds.repository.EstoqueProdutoCotaJuramentadoRepository;
 import br.com.abril.nds.repository.EstoqueProdutoCotaRepository;
 import br.com.abril.nds.repository.EstoqueProdutoRespository;
@@ -103,6 +105,9 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 	
 	@Autowired
 	private DescontoService descontoService;
+	
+	@Autowired
+	private DescontoRepository descontoRepository;
 
 	@Override
 	@Transactional
@@ -183,7 +188,8 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 			ProdutoEdicao produtoEdicao = produtoEdicaoService.obterProdutoEdicao(idProdutoEdicao, false);
 			BigDecimal precoVenda = produtoEdicao.getPrecoVenda();
 			
-			BigDecimal valorDesconto = descontoService.obterDescontoPorCotaProdutoEdicao(lancamento, estudoCota.getCota(), produtoEdicao);
+			Desconto desconto =	descontoService.obterDescontoPorCotaProdutoEdicao(lancamento, estudoCota.getCota(), produtoEdicao);
+			BigDecimal valorDesconto = desconto != null ? desconto.getValor() : BigDecimal.ZERO;
 			BigDecimal precoComDesconto = precoVenda.subtract(precoVenda.multiply(valorDesconto.divide(new BigDecimal("100"))));
 			
 			ValoresAplicados valoresAplicados = new ValoresAplicados(produtoEdicao.getPrecoVenda(), precoComDesconto, valorDesconto);
@@ -192,6 +198,10 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 			// Implementando por Eduardo Punk Rock - Seta o lançamento que gerou os movimentos na movimentoEstoqueCota
 			movimentoEstoqueCota.setLancamento(lancamento);
 
+			if(desconto != null) {
+				desconto.setUsado(true);
+				descontoRepository.merge(desconto);
+			}
 			movimentoEstoqueCotaRepository.alterar(movimentoEstoqueCota);
 
 			total = total.add(estudoCota.getQtdeEfetiva());

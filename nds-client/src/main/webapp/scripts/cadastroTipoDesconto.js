@@ -180,7 +180,7 @@ var tipoDescontoController = $.extend(true,  {
 							   	 '<img title="Excluir Desconto" src="'+contextPath+'/images/ico_excluir.gif" hspace="5" border="0px" />' +
 							   '</a>';
 			
-			row.cell.acao = linkExcluir;
+			row.cell.acao = (row.cell.excluivel == false) ? '' : linkExcluir;
 		});
 		
 		$(".grids",this.workspace).show();

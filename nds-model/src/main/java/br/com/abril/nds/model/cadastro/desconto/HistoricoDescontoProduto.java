@@ -15,6 +15,8 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.CascadeType;
+
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.Produto;
@@ -43,7 +45,7 @@ public class HistoricoDescontoProduto implements Serializable {
 	@JoinColumn(name = "USUARIO_ID")
 	private Usuario usuario;
 	
-	@ManyToOne(optional=false)
+	@ManyToOne(optional=false, cascade={javax.persistence.CascadeType.ALL})
 	@JoinColumn(name = "DESCONTO_ID")
 	private Desconto desconto;
 	

@@ -1,12 +1,12 @@
 package br.com.abril.nds.repository;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Set;
 
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.cadastro.desconto.Desconto;
 import br.com.abril.nds.model.cadastro.desconto.DescontoProdutoEdicao;
 import br.com.abril.nds.model.cadastro.desconto.TipoDesconto;
 import br.com.abril.nds.model.planejamento.Lancamento;
@@ -132,7 +132,7 @@ public interface DescontoProdutoEdicaoRepository extends Repository<DescontoProd
      * 
      * @return peercentual de desconto a ser utilizado
      */
-	BigDecimal obterDescontoPorCotaProdutoEdicao(Lancamento lancamento, Cota cota, ProdutoEdicao produtoEdicao);
+	Desconto obterDescontoPorCotaProdutoEdicao(Lancamento lancamento, Cota cota, ProdutoEdicao produtoEdicao);
 	
 	/**
 	 * Salva uma lista de descontosProdutoEdicao

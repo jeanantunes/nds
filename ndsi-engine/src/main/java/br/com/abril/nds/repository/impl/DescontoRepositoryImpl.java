@@ -5,7 +5,10 @@ import java.util.List;
 import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.Produto;
+import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.desconto.Desconto;
 import br.com.abril.nds.repository.DescontoRepository;
 
@@ -42,6 +45,24 @@ public class DescontoRepositoryImpl extends AbstractRepositoryModel<Desconto, Lo
 		
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Cota> buscarCotasQueUsamDescontoEspecifico(Desconto desconto) {
+
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append("select distinct c ");
+		hql.append("from Cota c, HistoricoDescontoCotaProdutoExcessao hdcpe ");
+		hql.append("where c.id = hdcpe.cota.id ");
+		hql.append("and hdcpe.desconto.id = :idDesconto ");
+		
+		Query q = getSession().createQuery(hql.toString());
+		
+		q.setParameter("idDesconto", desconto.getId());
+		
+		return q.list();
+		
+	}
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -94,6 +115,44 @@ public class DescontoRepositoryImpl extends AbstractRepositoryModel<Desconto, Lo
 		query.setMaxResults(1);
 		
 		return (Desconto) query.uniqueResult();
+		
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Produto> buscarProdutosQueUsamDescontoProduto(Desconto desconto) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append("select p ");
+		hql.append("from Produto p, HistoricoDescontoProduto hdp ");
+		hql.append("where p.id = hdp.produto.id ");
+		hql.append("and hdp.desconto.id = :idDesconto ");
+		
+		Query q = getSession().createQuery(hql.toString());
+		
+		q.setParameter("idDesconto", desconto.getId());
+		
+		return q.list();
+		
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ProdutoEdicao> buscarProdutosEdicoesQueUsamDescontoProduto(Desconto desconto) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append("select pe ");
+		hql.append("from ProdutoEdicao pe, HistoricoDescontoProdutoEdicao hdpe ");
+		hql.append("where pe.id = hdpe.produtoEdicao.id ");
+		hql.append("and hdpe.desconto.id = :idDesconto ");
+		
+		Query q = getSession().createQuery(hql.toString());
+		
+		q.setParameter("idDesconto", desconto.getId());
+		
+		return q.list();
 		
 	}
 

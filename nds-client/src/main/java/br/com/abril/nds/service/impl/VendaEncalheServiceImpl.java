@@ -222,7 +222,7 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 		BigDecimal precoVenda = itemVE.getProdutoEdicao().getPrecoVenda();
 		
 		BigDecimal percentualDesconto = 
-				descontoService.obterDescontoPorCotaProdutoEdicao(null,itemVE.getCota(), itemVE.getProdutoEdicao());
+				descontoService.obterValorDescontoPorCotaProdutoEdicao(null,itemVE.getCota(), itemVE.getProdutoEdicao());
 		
 		BigDecimal valorDesconto = MathUtil.calculatePercentageValue(precoVenda, percentualDesconto);
 
@@ -781,7 +781,7 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 		venda.setTipoVenda(vendaDTO.getTipoVendaEncalhe());
 
 		BigDecimal precoVenda = produtoEdicao.getPrecoVenda();
-		BigDecimal percentualDesconto = descontoService.obterDescontoPorCotaProdutoEdicao(null,venda.getCota(), produtoEdicao);
+		BigDecimal percentualDesconto = descontoService.obterValorDescontoPorCotaProdutoEdicao(null,venda.getCota(), produtoEdicao);
 		BigDecimal valorDesconto = MathUtil.calculatePercentageValue(precoVenda, percentualDesconto);
 
 		venda.setValorTotalVenda(precoVenda.subtract(valorDesconto).multiply(new BigDecimal(vendaDTO.getQntProduto())));
@@ -905,7 +905,7 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 		BigDecimal precoVenda = produtoEdicao.getPrecoVenda();
 		
 		BigDecimal percentualDesconto = 
-				descontoService.obterDescontoPorCotaProdutoEdicao(null,vendaProduto.getCota(), produtoEdicao);
+				descontoService.obterValorDescontoPorCotaProdutoEdicao(null,vendaProduto.getCota(), produtoEdicao);
 		
 		BigDecimal valorDesconto = 
 				MathUtil.calculatePercentageValue(precoVenda, percentualDesconto);
@@ -1153,7 +1153,7 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 				
 				Cota cota = cotaRepository.obterPorNumerDaCota(numeroCota.intValue());
 				
-				BigDecimal descontoProduto = descontoService.obterDescontoPorCotaProdutoEdicao(null, cota, produtoEdicao);
+				BigDecimal descontoProduto = descontoService.obterValorDescontoPorCotaProdutoEdicao(null, cota, produtoEdicao);
 		
 				BigDecimal precoVenda = produtoEdicao.getPrecoVenda();
         

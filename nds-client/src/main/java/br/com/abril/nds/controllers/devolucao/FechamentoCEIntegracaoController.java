@@ -173,7 +173,7 @@ public class FechamentoCEIntegracaoController {
 			totalBruto = totalBruto + valorDaVenda;
 			Cota cota = this.cotaService.obterPorId(dto.getIdCota());
 			ProdutoEdicao pe = this.produtoEdicaoService.obterProdutoEdicao(dto.getIdProdutoEdicao(), false);
-			desconto.add(this.descontoService.obterDescontoPorCotaProdutoEdicao(null, cota, pe));
+			desconto.add(this.descontoService.obterValorDescontoPorCotaProdutoEdicao(null, cota, pe));
 			
 		}		
 		
