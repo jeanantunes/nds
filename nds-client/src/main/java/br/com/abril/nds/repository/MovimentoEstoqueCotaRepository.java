@@ -66,27 +66,22 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 	 * Pesquisa uma lista de ContagemDevolucao.
 	 * 
 	 * @param filtro
-	 * @param tipoMovimentoEstoque
 	 * @param indBuscaTotalParcial
 	 * 
 	 * @return List - ContagemDevolucao
 	 */
 	public List<ContagemDevolucaoDTO> obterListaContagemDevolucao(
-			FiltroDigitacaoContagemDevolucaoDTO filtro, 
-			TipoMovimentoEstoque tipoMovimentoEstoque, 
-			boolean indBuscaTotalParcial);
+			FiltroDigitacaoContagemDevolucaoDTO filtro, boolean indBuscaTotalParcial);
 	
 	/**
 	 * Obtém a quantidade de registros da pesquisa de ContagemDevolucao.
 	 * 
 	 * @param filtro
-	 * @param tipoMovimentoEstoque
 	 * 
 	 * @return Qtde - Integer
 	 */
 	public Integer obterQuantidadeContagemDevolucao(
-			FiltroDigitacaoContagemDevolucaoDTO filtro, 
-			TipoMovimentoEstoque tipoMovimentoEstoque);
+			FiltroDigitacaoContagemDevolucaoDTO filtro);
 	
 	
 	/**
@@ -95,13 +90,11 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 	 * (qtdMovimentoEncalhe * precoVendoProdutoEdicao).
 	 * 
 	 * @param filtro
-	 * @param tipoMovimentoEstoque
 	 * 
 	 * @return valorTotalGeral - BigDecimal
 	 */
 	public BigDecimal obterValorTotalGeralContagemDevolucao(
-			FiltroDigitacaoContagemDevolucaoDTO filtro, 
-			TipoMovimentoEstoque tipoMovimentoEstoque);
+			FiltroDigitacaoContagemDevolucaoDTO filtro);
 	
 	/**
 	 * Obtém o Movimento de Estoque da cota pelo Tipo de Movimento.
