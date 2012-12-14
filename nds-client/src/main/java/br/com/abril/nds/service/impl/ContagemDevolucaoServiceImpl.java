@@ -766,12 +766,6 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 		NotaFiscalSaidaFornecedor nfSaidaFornecedor = new NotaFiscalSaidaFornecedor();
 		List<ItemNotaFiscalSaida> itensNotaFiscalSaida = new ArrayList<ItemNotaFiscalSaida>();
 		
-		
-		
-		if(itensNotaFiscalSaida.isEmpty()) {
-			return;
-		}
-		
 		Date dataAtual = new Date();
 		
 		StatusEmissaoNotaFiscal statusNF = StatusEmissaoNotaFiscal.AGUARDANDO_GERACAO_NFE;
@@ -791,8 +785,10 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 			throw new IllegalStateException("Informações do distribuidor não encontradas");
 		}
 
-		TipoNotaFiscal tipoNF = tipoNotaFiscalRepository.obterTipoNotaFiscal(GrupoNotaFiscal.DEVOLUCAO_MERCADORIA_FORNECEDOR);
-
+		// Desenvolvido por Cesar Pop Punk
+		TipoNotaFiscal tipoNF = tipoNotaFiscalRepository.obterTipoNotaFiscal(GrupoNotaFiscal.NF_DEVOLUCAO_MERCADORIA_RECEBIA_CONSIGNACAO);
+		//TipoNotaFiscal tipoNF = tipoNotaFiscalRepository.obterTipoNotaFiscal(GrupoNotaFiscal.DEVOLUCAO_MERCADORIA_FORNECEDOR);
+		
 		if(tipoNF == null) {
 			throw new IllegalStateException("TipoNotaFiscal não parametrizada");
 		}
@@ -808,6 +804,17 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 		nfSaidaFornecedor.setSerie(serieNF);
 		nfSaidaFornecedor.setStatusEmissao(statusNF);
 		nfSaidaFornecedor.setTipoNotaFiscal(tipoNF);
+		
+		// Realizado pelo Cesar Pop Punk
+		BigDecimal valorBruto = BigDecimal.ZERO;
+		for (ContagemDevolucaoDTO contagem : listaContagemDevolucaoAprovada) {
+			valorBruto = valorBruto.add( contagem.getPrecoVenda().multiply( new BigDecimal(contagem.getQtdNota()) ) );
+		}
+		nfSaidaFornecedor.setValorBruto(valorBruto);
+
+		// TODO: Corrigir estes dois valores abaixo:
+		nfSaidaFornecedor.setValorDesconto(BigDecimal.ZERO);
+		nfSaidaFornecedor.setValorLiquido(BigDecimal.ZERO);
 		
 		notaFiscalSaidaRepository.adicionar(nfSaidaFornecedor);
 		
@@ -892,7 +899,7 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 			if(contagemAgrupada == null || contagemAgrupada.isEmpty()) {
 				continue;
 			}
-			
+
 			listaAgrupadaContagemDevolucao.addAll(contagemAgrupada);
 			
 		}
