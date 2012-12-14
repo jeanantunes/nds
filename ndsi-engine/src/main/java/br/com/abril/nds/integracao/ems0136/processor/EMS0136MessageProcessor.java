@@ -91,8 +91,6 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 		// Novo Período Lançamento Parcial;
 		this.gerarNovoPeriodoLancamentoParcial(input, lancamentoParcial, 
 				lancamento);
-		
-		
 	}
 	
 	/**
