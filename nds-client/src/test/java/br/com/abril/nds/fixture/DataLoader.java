@@ -2457,12 +2457,19 @@ public class DataLoader {
 	}
 	
 	private static void gerarAreaInfluenciaPDV(Session session) {
+		
+		AreaInfluenciaPDV areaInfluenciaPDV1 = Fixture.criarAreaInfluenciaPDV(1L, "AREA COMERCIAL A/B"); 
+		AreaInfluenciaPDV areaInfluenciaPDV2 = Fixture.criarAreaInfluenciaPDV(2L, "AREA COMERCIAL C/D"); 
+		AreaInfluenciaPDV areaInfluenciaPDV3 = Fixture.criarAreaInfluenciaPDV(3L, "COMERCIAL"); 
+		AreaInfluenciaPDV areaInfluenciaPDV4 = Fixture.criarAreaInfluenciaPDV(4L, "CONVENIENCIA VIAGEM"); 
+		AreaInfluenciaPDV areaInfluenciaPDV5 = Fixture.criarAreaInfluenciaPDV(5L, "ESCRITORIO A/B"); 
+		AreaInfluenciaPDV areaInfluenciaPDV6 = Fixture.criarAreaInfluenciaPDV(6L, "ESCRITORIO E FABRICA C/D"); 
+		AreaInfluenciaPDV areaInfluenciaPDV7 = Fixture.criarAreaInfluenciaPDV(7L, "RESIDENCIAL A/B"); 
+		AreaInfluenciaPDV areaInfluenciaPDV8 = Fixture.criarAreaInfluenciaPDV(8L, "RESIDENCIAL C/D");
 
-		AreaInfluenciaPDV areaInfluenciaPDV = Fixture.criarAreaInfluenciaPDV(1L, "Residencial");
-		AreaInfluenciaPDV areaInfluenciaPDV1 = Fixture.criarAreaInfluenciaPDV(2L, "Residencial XX");
-		AreaInfluenciaPDV areaInfluenciaPDV2 = Fixture.criarAreaInfluenciaPDV(3L, "Estradas");
-
-		save(session,areaInfluenciaPDV,areaInfluenciaPDV1,areaInfluenciaPDV2);
+		save(session,areaInfluenciaPDV1,areaInfluenciaPDV2,areaInfluenciaPDV3,
+				     areaInfluenciaPDV4,areaInfluenciaPDV5,areaInfluenciaPDV6,
+				     areaInfluenciaPDV7,areaInfluenciaPDV8);
 	}
 
 	private static void gerarMaterialPromocionalPDV(Session session) {

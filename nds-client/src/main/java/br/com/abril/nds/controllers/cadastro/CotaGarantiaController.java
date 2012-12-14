@@ -142,7 +142,6 @@ public class CotaGarantiaController {
 	}
 	
 	@Post("/getByCota.json")
-	@Transactional(readOnly = true)
 	public void getByCota(Long idCota, ModoTela modoTela, Long idHistorico) {
 		
 	    if (ModoTela.CADASTRO_COTA == modoTela) {
@@ -151,7 +150,7 @@ public class CotaGarantiaController {
 	        
 	        if (cotaGarantia != null && cotaGarantia.getCotaGarantia() != null) {	
 	        	
-	            result.use(Results.json()).from(cotaGarantia).serialize();
+	            result.use(Results.json()).from(cotaGarantia,"result").serialize();
 	        }else{			
 	        	
 	            result.use(CustomJson.class).from("OK").serialize();
