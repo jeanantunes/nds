@@ -204,7 +204,7 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 	public void validarExisteNotaFiscal(NotaFiscalEntradaFornecedor notaFiscal) {
 		
 		if ( recebimentoFisicoRepository.existeNotaFiscal(notaFiscal.getNumero(), notaFiscal.getSerie(), notaFiscal.getFornecedor().getJuridica().getCnpj()) ) {
-			throw new ValidacaoException(TipoMensagem.WARNING, "Não é possível gerar a nota fiscal! Existe outra nota fiscal com o mesmo número, série e emitente (cnpj).");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Não é possível receber a nota fiscal! Existe outra nota fiscal com o mesmo número, série e emitente (cnpj).");
 		}
 		
 	}
