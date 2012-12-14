@@ -219,8 +219,7 @@ public class DescontoProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel
 		Desconto desconto = null;
 		
 		//Obtem o desconto do ProdutoEdicao baseado em lancamento futuro
-		Long returnedId = obterDescontoCotaProdutoEdicaoLancamentosFuturos(lancamento);
-		descontoId = (returnedId != null) ? new BigInteger(returnedId.toString()) : null;		
+		descontoId = obterDescontoCotaProdutoEdicaoLancamentosFuturos(cota, lancamento);
 		
 		if(descontoId != null) return descontoRepository.buscarPorId(descontoId.longValue());
 		
@@ -249,8 +248,15 @@ public class DescontoProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel
 		if(descontoId != null) return descontoRepository.buscarPorId(descontoId.longValue());
 		
 		//Obtem o desconto da Cota-Fornecedor 
-		query = obterDescontoCotaExcessoes(cota, produtoEdicao);
+		query = obterDescontoEspecifico(cota, produtoEdicao);
 		descontoId = (BigInteger) query.uniqueResult();
+		
+		if(descontoId != null) return descontoRepository.buscarPorId(descontoId.longValue());
+		
+		//Obtem o desconto do Fornecedor 
+		query = obterDescontoGeral(produtoEdicao.getProduto().getFornecedor());
+		Long descId = (Long) query.uniqueResult();
+		descontoId = descId != null ? new BigInteger(descId.toString()) : null;
 		
 		if(descontoId != null) return descontoRepository.buscarPorId(descontoId.longValue());
 		
@@ -258,9 +264,9 @@ public class DescontoProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel
         
     }
 
-	private Long obterDescontoCotaProdutoEdicaoLancamentosFuturos(Lancamento lancamento) {
+	private BigInteger obterDescontoCotaProdutoEdicaoLancamentosFuturos(Cota cota, Lancamento lancamento) {
 		
-		if(lancamento == null) {
+		if(lancamento == null || cota == null ) {
 			return null;
 		}
 		
@@ -270,13 +276,22 @@ public class DescontoProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel
 
 		if (descontoProximosLancamentos != null) {	
 
-			Integer quantidade = descontoProximosLancamentos.getQuantidadeProximosLancamaentos();
+			for(Cota c : descontoProximosLancamentos.getCotas()) {
+				
+				if(c.getId() == cota.getId()) {
+					
+					Integer quantidade = descontoProximosLancamentos.getQuantidadeProximosLancamaentos();
 
-			descontoProximosLancamentos.setQuantidadeProximosLancamaentos(--quantidade);
+					descontoProximosLancamentos.setQuantidadeProximosLancamaentos(--quantidade);
+					
+					descontoProximosLancamentosRepository.alterar(descontoProximosLancamentos);
+					
+					return new BigInteger(descontoProximosLancamentos.getDesconto().getId().toString());
+					
+				}
+				
+			}
 			
-			descontoProximosLancamentosRepository.alterar(descontoProximosLancamentos);
-			
-			return descontoProximosLancamentos.getDesconto().getId();
 		}
 		
 		return null;
@@ -322,19 +337,35 @@ public class DescontoProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel
 		return query;
 	}
 	
-	private Query obterDescontoCotaExcessoes(Cota cota, ProdutoEdicao produtoEdicao) {
+	private Query obterDescontoEspecifico(Cota cota, ProdutoEdicao produtoEdicao) {
 		
 		StringBuilder hql = new StringBuilder("select ")
 			.append(" vdcfpe.desconto_id as idDesconto ")
 		    .append("from VIEW_DESCONTO_COTA_FORNECEDOR_PRODUTOS_EDICOES as vdcfpe ") 
 		    .append("where 1 = 1 ")
 		    .append("and vdcfpe.fornecedor_id = :idFornecedor ")
-		    .append("and vdcfpe.cota_id = :idCota ");
+		    .append("and vdcfpe.cota_id = :idCota ")
+			.append("and vdcfpe.produto_id is null ")
+			.append("and vdcfpe.produto_edicao_id is null ");
 		
 		Query query = getSession().createSQLQuery(hql.toString());
 		//TODO: Validar nulos
 		query.setParameter("idFornecedor", produtoEdicao.getProduto().getFornecedor().getId());
 		query.setParameter("idCota", cota.getId());
+
+		return query;
+	}
+	
+	private Query obterDescontoGeral(Fornecedor fornecedor) {
+		
+		StringBuilder hql = new StringBuilder("select ")
+			.append(" d.id ")
+		    .append("from Fornecedor f join f.desconto d  ") 
+		    .append("where f.id = :idFornecedor ");
+		
+		Query query = getSession().createQuery(hql.toString());
+		//TODO: Validar nulos
+		query.setParameter("idFornecedor", fornecedor.getId());
 
 		return query;
 	}

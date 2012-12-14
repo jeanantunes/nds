@@ -451,6 +451,7 @@ public class DescontoServiceImpl implements DescontoService {
 					hdcp.setProduto(produto);
 					
 					historicoDescontoCotaProdutoRepository.merge(hdcp);
+					
 				}
 				
 				break;
@@ -511,18 +512,22 @@ public class DescontoServiceImpl implements DescontoService {
 					dpe.setTipoDesconto(TipoDesconto.PRODUTO);
 					descontoProdutoEdicaoExcessaoRepository.merge(dpe);	
 					
-					hdpe = new HistoricoDescontoProdutoEdicao();
-					hdpe.setDataAlteracao(dataAtual);
-					hdpe.setDesconto(desconto);
+					HistoricoDescontoCotaProdutoExcessao hdcp = new HistoricoDescontoCotaProdutoExcessao();
+					hdcp.setDataAlteracao(dataAtual);
+					hdcp.setDesconto(desconto);
+					hdcp.setDistribuidor(distribuidor);
 					if(produtoEdicao != null) {
-						hdpe.setProduto(produtoEdicao.getProduto());
+						hdcp.setFornecedor(produtoEdicao.getProduto().getFornecedor());
 					}
-					hdpe.setProdutoEdicao(produtoEdicao);
-					hdpe.setDistribuidor(distribuidor);
-					hdpe.setFornecedor(produtoEdicao.getProduto().getFornecedor());
-					hdpe.setUsuario(usuario);
+					hdcp.setCota(cota);
+					hdcp.setUsuario(usuario);
+					hdcp.setValor(desconto.getValor());
+					if(produtoEdicao != null) {
+						hdcp.setProduto(produtoEdicao.getProduto());
+					}
 					
-					historicoDescontoProdutoEdicaoRepository.merge(hdpe);
+					historicoDescontoCotaProdutoRepository.merge(hdcp);
+
 				}
 				
 				break;

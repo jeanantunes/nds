@@ -65,6 +65,9 @@ public class DescontoProximosLancamentos implements Serializable {
 	@JoinColumn(name = "DISTRIBUIDOR_ID")
 	private Distribuidor distribuidor;
 	
+	@Column(name = "APLICADO_A_TODAS_AS_COTAS", nullable = false)
+	private boolean aplicadoATodasAsCotas;
+	
 	/**
 	 * Desconto aplicado no cadastro de Tipo Desconto Cota
 	 */
