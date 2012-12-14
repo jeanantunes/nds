@@ -425,7 +425,7 @@ public class VendaEncalheController {
 			
 			vendaEncalheVO = getVendaEncalheVO(dto);
 			
-			if( distribuidor.getDataOperacao().compareTo(DateUtil.removerTimestamp(dto.getDataVenda())) == 0){
+			if( distribuidor.getDataOperacao().compareTo(DateUtil.removerTimestamp(dto.getDataVenda())) >= 0){
 				vendaEncalheVO.setEdicaoExclusaoItem(true);
 			}
 			else{
