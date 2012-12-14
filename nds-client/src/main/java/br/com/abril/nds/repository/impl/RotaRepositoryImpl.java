@@ -167,5 +167,19 @@ public class RotaRepositoryImpl extends AbstractRepositoryModel<Rota, Long>
 		
 		return (Rota) query.uniqueResult();
 	}
+
+	/**
+	 * @see br.com.abril.nds.repository.RotaRepository#obterRotasNaoAssociadasAoRoteiro(java.lang.Long)
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Rota> obterRotasNaoAssociadasAoRoteiro(Long roteiroID) {
+		
+		Criteria criteria = this.getSession().createCriteria(Rota.class);
+		
+		criteria.add(Restrictions.ne("roteiro.id", roteiroID));
+		
+		return criteria.list();
+	}
 	
 }

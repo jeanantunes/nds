@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -419,7 +420,7 @@ public class LancamentoRepositoryImpl extends
 	 */
 	@Override
 	@SuppressWarnings("unchecked")
-	public TreeMap<Date, BigDecimal> obterExpectativasEncalhePorData(Intervalo<Date> periodoRecolhimento, 
+	public TreeMap<Date, BigInteger> obterExpectativasEncalhePorData(Intervalo<Date> periodoRecolhimento, 
 																 	 List<Long> fornecedores,
 																 	 GrupoProduto grupoCromo) {
 
@@ -440,7 +441,7 @@ public class LancamentoRepositoryImpl extends
 
 		List<Object[]> expectativasEncalheDia = query.list();
 
-		TreeMap<Date, BigDecimal> mapaExpectativaEncalheDia = new TreeMap<Date, BigDecimal>();
+		TreeMap<Date, BigInteger> mapaExpectativaEncalheDia = new TreeMap<Date, BigInteger>();
 
 		for (Object[] expectativa : expectativasEncalheDia) {
 
@@ -448,7 +449,7 @@ public class LancamentoRepositoryImpl extends
 
 			BigDecimal expectativaEncalhe = (BigDecimal) expectativa[1];
 
-			mapaExpectativaEncalheDia.put(data, expectativaEncalhe);
+			mapaExpectativaEncalheDia.put(data, expectativaEncalhe.toBigInteger());
 		}
 
 		return mapaExpectativaEncalheDia;
@@ -687,7 +688,7 @@ public class LancamentoRepositoryImpl extends
 													  .addScalar("dataLancamento")
 													  .addScalar("dataRecolhimentoPrevista")
 													  .addScalar("dataRecolhimentoDistribuidor")
-													  .addScalar("expectativaEncalhe")
+													  .addScalar("expectativaEncalhe", StandardBasicTypes.BIG_INTEGER)
 													  .addScalar("expectativaEncalheSede")
 													  .addScalar("expectativaEncalheAtendida")
 													  .addScalar("expectativaEncalheAlternativo")
@@ -1086,7 +1087,9 @@ public class LancamentoRepositoryImpl extends
 		sql.append(" 	true ");
 		sql.append(" else ");
 		sql.append(" 	false ");
-		sql.append(" end as possuiFuro ");
+		sql.append(" end as possuiFuro, ");
+		
+		sql.append(" estudo.QTDE_REPARTE as reparteEstudo ");
 		
 		sql.append(montarClausulaFromConsultaBalanceamentoLancamento());
 		
@@ -1108,6 +1111,11 @@ public class LancamentoRepositoryImpl extends
 		sql.append(" inner join ");
 		sql.append(" TIPO_PRODUTO tipoProduto ");
 		sql.append(" on tipoProduto.ID = produto.TIPO_PRODUTO_ID ");
+		
+		sql.append(" left join ");
+		sql.append(" ESTUDO estudo ");
+		sql.append(" on (estudo.PRODUTO_EDICAO_ID = produtoEdicao.ID ");
+		sql.append(" AND estudo.DATA_LANCAMENTO = lancamento.DATA_LCTO_PREVISTA) ");
 		
 		sql.append(" left join ");
 		sql.append(" PERIODO_LANCAMENTO_PARCIAL periodoLancamentoParcial ");
@@ -1148,9 +1156,9 @@ public class LancamentoRepositoryImpl extends
 			.addScalar("dataLancamentoDistribuidor")
 			.addScalar("novaDataLancamento")
 			.addScalar("dataRecolhimentoPrevista")
-			.addScalar("repartePrevisto")
+			.addScalar("repartePrevisto", StandardBasicTypes.BIG_INTEGER)
 			.addScalar("numeroReprogramacoes", StandardBasicTypes.INTEGER)
-			.addScalar("reparteFisico")
+			.addScalar("reparteFisico", StandardBasicTypes.BIG_INTEGER)
 			.addScalar("valorTotal")
 			.addScalar("idProdutoEdicao", StandardBasicTypes.LONG)
 			.addScalar("numeroEdicao", StandardBasicTypes.LONG)
@@ -1161,7 +1169,8 @@ public class LancamentoRepositoryImpl extends
 			.addScalar("periodicidadeProduto")
 			.addScalar("possuiRecebimentoFisico", StandardBasicTypes.BOOLEAN)
 			.addScalar("possuiFuro", StandardBasicTypes.BOOLEAN)
-			.addScalar("alteradoInteface", StandardBasicTypes.BOOLEAN);		
+			.addScalar("alteradoInteface", StandardBasicTypes.BOOLEAN)
+			.addScalar("reparteEstudo", StandardBasicTypes.BIG_INTEGER);
 		
 		this.aplicarParametros(query, periodoDistribuicao, fornecedores);
 		
@@ -1177,11 +1186,11 @@ public class LancamentoRepositoryImpl extends
 		String[] arrayStatusLancamentoNoPeriodo = {StatusLancamento.PLANEJADO.name(),
 												   StatusLancamento.CONFIRMADO.name(),
 												   StatusLancamento.BALANCEADO.name(),
-												   StatusLancamento.ESTUDO_FECHADO.name(),
 												   StatusLancamento.FURO.toString()};
 		
 		String[] arrayStatusLancamentoDataMenorInicial = {StatusLancamento.PLANEJADO.name(),
-				  										  StatusLancamento.CONFIRMADO.name()};
+				  										  StatusLancamento.CONFIRMADO.name(),
+				  										  StatusLancamento.FURO.toString()};
 		
 		String[] arrayTipoProduto = {GrupoProduto.OUTROS.name(),
 									 GrupoProduto.REVISTA.name(),
@@ -1439,4 +1448,78 @@ public class LancamentoRepositoryImpl extends
 		
     	return query.list();
 	}
+	
+	@Override
+	public Boolean existeLancamentoNaoBalanceado(Date dataLancamento) {
+		 
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" SELECT CASE WHEN COUNT(lancamento) > 0 THEN true ELSE false END ");	
+		hql.append(" FROM Lancamento lancamento ");
+		hql.append(" WHERE lancamento.dataLancamentoDistribuidor = :dataLancamento ");
+		hql.append(" AND lancamento.status IN (:statusLancamentoNaoBalanceado) ");
+		
+		Query query = getSession().createQuery(hql.toString());
+		
+		query.setParameterList(
+			"statusLancamentoNaoBalanceado", Arrays.asList(StatusLancamento.PLANEJADO,
+														   StatusLancamento.CONFIRMADO,
+														   StatusLancamento.FURO));
+		
+		query.setParameter("dataLancamento", dataLancamento);
+		
+		return (Boolean) query.uniqueResult();
+		
+	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<Lancamento> obterLancamentosDistribuidorPorPeriodo(Intervalo<Date> periodoDistribuicao) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" SELECT lancamento ");	
+		hql.append(" FROM Lancamento lancamento ");
+		hql.append(" WHERE lancamento.dataLancamentoDistribuidor ");
+		hql.append(" BETWEEN :dataInicial AND :dataFinal ");
+		hql.append(" AND lancamento.dataLancamentoPrevista ");
+		hql.append(" NOT BETWEEN :dataInicial AND :dataFinal ");
+		hql.append(" AND lancamento.status in (:statusLancamento) ");
+		
+		Query query = getSession().createQuery(hql.toString());
+		
+		query.setParameter("dataInicial", periodoDistribuicao.getDe());
+		query.setParameter("dataFinal", periodoDistribuicao.getAte());
+		
+		query.setParameterList("statusLancamento",
+							   Arrays.asList(StatusLancamento.BALANCEADO,
+									   		 StatusLancamento.EXCLUIDO));
+		
+		return query.list();
+	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<Lancamento> obterLancamentosPrevistosPorPeriodo(Intervalo<Date> periodoDistribuicao) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" SELECT lancamento ");	
+		hql.append(" FROM Lancamento lancamento ");
+		hql.append(" WHERE lancamento.dataLancamentoPrevista ");
+		hql.append(" BETWEEN :dataInicial AND :dataFinal ");
+		hql.append(" AND lancamento.status in (:statusLancamento) ");
+		
+		Query query = getSession().createQuery(hql.toString());
+		
+		query.setParameter("dataInicial", periodoDistribuicao.getDe());
+		query.setParameter("dataFinal", periodoDistribuicao.getAte());
+		
+		query.setParameterList("statusLancamento",
+							   Arrays.asList(StatusLancamento.BALANCEADO,
+									   		 StatusLancamento.EXCLUIDO));
+		
+		return query.list();
+	}
+	
 }

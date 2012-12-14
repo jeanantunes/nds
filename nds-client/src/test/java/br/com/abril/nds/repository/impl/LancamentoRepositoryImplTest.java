@@ -731,7 +731,7 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 
 		GrupoProduto grupoCromo = GrupoProduto.CROMO;
 
-		Map<Date, BigDecimal> expectativaEncalhe = lancamentoRepository
+		Map<Date, BigInteger> expectativaEncalhe = lancamentoRepository
 				.obterExpectativasEncalhePorData(periodoRecolhimento,
 						fornecedores, grupoCromo);
 
@@ -970,7 +970,7 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 	@Test
 	public void obterConsignadoDia() {
 
-		StatusLancamento status = StatusLancamento.CALCULADO;
+		StatusLancamento status = StatusLancamento.EXPEDIDO;
 
 		lancamentoRepository.obterConsignadoDia(status);
 	}

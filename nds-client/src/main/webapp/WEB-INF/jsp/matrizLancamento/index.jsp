@@ -28,7 +28,6 @@ var lancamentosSelecionados = [];
 
 <style>
 
-.ui-datepicker { z-index: 1000 !important; }
 .ui-datepicker-today a { display:block !important; }
 .dialog-detalhe-produto { display:none; }
 .dialog-confirm-balanceamento { display:none; }
@@ -82,10 +81,10 @@ var lancamentosSelecionados = [];
 </div>
 </form>
 
-<form id="form-pagincao-confirmada">
-<div id="dialog-pagincao-confirmada" title="Balanceamento da Matriz de Lançamento" style="display:none">
+<form id="formVoltarConfiguracaoInicial">
+<div id="dialogVoltarConfiguracaoInicial" title="Balanceamento da Matriz de Lançamento" style="display:none">
 			
-			<p>As seleções de lançamentos não serão salvas, deseja continuar?</p>
+			<p>Ao voltar a configuração inicial, você perdará os dados confirmados. Deseja prosseguir?</p>
 			   
 </div>
 </form>
@@ -110,24 +109,6 @@ var lancamentosSelecionados = [];
 	<div id="flexiGridLancamentosProdutosCancelados" />			   
 </div>
 </form>
-
-	
-		<form id="form-reprogramar">
-		<div id="dialog-reprogramar" title="Reprogramar Lançamento">
-			<p><strong>Nova Data Matriz/Distrib:</strong> 
-		      <input name="datepickerDe_1" type="text" style="width:80px;" id="datepickerDe_1" />
-		    </p>
-		</div>
-		</form>
-		
-		<form id="form-novo">
-		<div id="dialog-novo" title="Consulta de Lançamentos Programados">
-		     <fieldset style="width:365px;">
-		     	<legend>988989 - Nome do Fornecedor</legend>
-		        <table class="lancamentoProgFornecedorGrid"></table>
-		     </fieldset>
-		</div>
-		</form>
 		
 		   	<jsp:include page="../messagesDialog.jsp">
 				<jsp:param value="dialog-novo" name="messageDialog"/>
