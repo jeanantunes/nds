@@ -159,17 +159,12 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 		
 		InfoContagemDevolucaoDTO info = new InfoContagemDevolucaoDTO();
 		
-		TipoMovimentoEstoque tipoMovimentoEstoque = 
-				tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(
-					GrupoMovimentoEstoque.ENVIO_ENCALHE);
 		
-		Integer qtdTotalRegistro = movimentoEstoqueCotaRepository.obterQuantidadeContagemDevolucao(filtroPesquisa, tipoMovimentoEstoque);
+		Integer qtdTotalRegistro = movimentoEstoqueCotaRepository.obterQuantidadeContagemDevolucao(filtroPesquisa);
 		info.setQtdTotalRegistro(qtdTotalRegistro);
 		
 		List<ContagemDevolucaoDTO> listaContagemDevolucao = movimentoEstoqueCotaRepository.obterListaContagemDevolucao(
-				filtroPesquisa, 
-				tipoMovimentoEstoque, 
-				indPerfilUsuarioEncarregado);
+				filtroPesquisa,	indPerfilUsuarioEncarregado);
 		
 		info.setListaContagemDevolucao(listaContagemDevolucao);
 		
@@ -188,14 +183,9 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 	@Transactional(readOnly=true)
 	public List<ContagemDevolucaoConferenciaCegaDTO> obterInfoContagemDevolucaoCega(FiltroDigitacaoContagemDevolucaoDTO filtroPesquisa, boolean indPerfilUsuarioEncarregado) {
 		
-		TipoMovimentoEstoque tipoMovimentoEstoque = 
-				tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(
-					GrupoMovimentoEstoque.ENVIO_ENCALHE);
 		
 		List<ContagemDevolucaoDTO> listaContagemDevolucao = movimentoEstoqueCotaRepository.obterListaContagemDevolucao(
-				filtroPesquisa, 
-				tipoMovimentoEstoque, 
-				indPerfilUsuarioEncarregado);
+				filtroPesquisa, indPerfilUsuarioEncarregado);
 		
 		List<ContagemDevolucaoConferenciaCegaDTO> cegaDTOs = new ArrayList<ContagemDevolucaoConferenciaCegaDTO>(listaContagemDevolucao.size());
 		for(ContagemDevolucaoDTO contagemDevolucaoDTO : listaContagemDevolucao){
