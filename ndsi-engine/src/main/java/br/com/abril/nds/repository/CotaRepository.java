@@ -339,4 +339,5 @@ public interface CotaRepository extends Repository<Cota, Long> {
 	
 	List<Cota> obterCotasAusentesNoRecolhimentoDeEncalheEm(Date dataRecolhimentoEncalhe);
 	
+	Cota obterPorPDV(Long idPDV);
 }

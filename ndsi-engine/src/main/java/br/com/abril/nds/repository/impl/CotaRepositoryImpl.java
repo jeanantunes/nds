@@ -110,6 +110,17 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 
 		return (Cota) criteria.uniqueResult();
 	}
+	
+	public Cota obterPorPDV(Long idPDV) {
+
+		Criteria criteria = super.getSession().createCriteria(Cota.class);
+		
+		criteria.createAlias("pdvs", "pdv");
+		
+		criteria.add(Restrictions.eq("pdv.id", idPDV));
+		
+		return (Cota) criteria.uniqueResult();
+	}
 
 	@SuppressWarnings("unchecked")
 	public List<Cota> obterCotasPorNomePessoa(String nome) {

@@ -1,6 +1,7 @@
 package br.com.abril.nds.model.cadastro;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -120,13 +121,13 @@ public class Distribuidor {
 	 * Capacidade de distribuição diária do distribuidor, em número de exemplares
 	 */
 	@Column(name = "CAPACIDADE_DISTRIBUICAO", nullable = false)
-	private BigDecimal capacidadeDistribuicao;
+	private BigInteger capacidadeDistribuicao;
 	
 	/**
 	 * Capacidade de recolhimento diária do distribuidor, em número de exemplares
 	 */
 	@Column(name = "CAPACIDADE_RECOLHIMENTO", nullable = false)
-	private BigDecimal capacidadeRecolhimento;
+	private BigInteger capacidadeRecolhimento;
 	
 	/**
 	 * Número de reprogramações permitidas no lançamento
@@ -350,19 +351,19 @@ public class Distribuidor {
 		this.telefones = telefones;
 	}
 
-	public BigDecimal getCapacidadeDistribuicao() {
+	public BigInteger getCapacidadeDistribuicao() {
 		return capacidadeDistribuicao;
 	}
 
-	public void setCapacidadeDistribuicao(BigDecimal capacidadeDistribuicao) {
+	public void setCapacidadeDistribuicao(BigInteger capacidadeDistribuicao) {
 		this.capacidadeDistribuicao = capacidadeDistribuicao;
 	}
 
-	public BigDecimal getCapacidadeRecolhimento() {
+	public BigInteger getCapacidadeRecolhimento() {
 		return capacidadeRecolhimento;
 	}
 
-	public void setCapacidadeRecolhimento(BigDecimal capacidadeRecolhimento) {
+	public void setCapacidadeRecolhimento(BigInteger capacidadeRecolhimento) {
 		this.capacidadeRecolhimento = capacidadeRecolhimento;
 	}
 	

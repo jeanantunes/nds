@@ -21,6 +21,7 @@ import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.TipoVendaEncalhe;
 import br.com.abril.nds.repository.ResumoSuplementarFecharDiaRepository;
 import br.com.abril.nds.util.Util;
+import br.com.abril.nds.vo.PaginacaoVO;
 
 @Repository
 public class ResumoSuplementarFecharDiaRepositoryImpl extends AbstractRepository implements
@@ -184,7 +185,7 @@ public class ResumoSuplementarFecharDiaRepositoryImpl extends AbstractRepository
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<SuplementarFecharDiaDTO> obterDadosGridSuplementar(Date data) {
+	public List<SuplementarFecharDiaDTO> obterDadosGridSuplementar(Date data, PaginacaoVO paginacao) {
 	    Objects.requireNonNull(data, "Data para consulta estoque suplementar não deve ser nula!");
 
 	    String templateHqlTransferencia =  new StringBuilder("(select sum(movimentoEstoque.qtde) from MovimentoEstoque movimentoEstoque ")
@@ -239,6 +240,11 @@ public class ResumoSuplementarFecharDiaRepositoryImpl extends AbstractRepository
         query.setParameterList("grupoSaidaSuplementar", Arrays.asList(
                 GrupoMovimentoEstoque.REPARTE_COTA_AUSENTE,
                 GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_SUPLEMENTAR));
+        
+        if (paginacao != null) {
+            query.setFirstResult(paginacao.getPosicaoInicial());
+            query.setMaxResults(paginacao.getQtdResultadosPorPagina());
+        }
 		
 	    List<Map<String, Object>> maps = query.list();
 	       
@@ -268,6 +274,32 @@ public class ResumoSuplementarFecharDiaRepositoryImpl extends AbstractRepository
             lista.add(dto);
         }
 		return lista;
+	}
+
+	@Override
+	public Long contarProdutoEdicaoSuplementar() {
+
+	    StringBuilder hql = new StringBuilder("select count(distinct produtoEdicao) ");
+	    hql.append("from EstoqueProduto as estoqueProduto ");
+        hql.append("join estoqueProduto.produtoEdicao produtoEdicao ");
+	   
+        Query query = getSession().createQuery(hql.toString());
+                
+        return (Long) query.uniqueResult();
+	}
+
+	@Override
+	public Long contarVendasSuplementar(Date dataOperacao) {
+		StringBuilder hql = new StringBuilder("select count(vendaEncalhe) from VendaProduto vendaEncalhe ");
+        hql.append("where vendaEncalhe.dataVenda = :data and vendaEncalhe.tipoVenda = :tipoVendaEncalhe ");
+        hql.append("and vendaEncalhe.tipoComercializacaoVenda = :tipoComercializacaoVista");
+        
+        Query query = getSession().createQuery(hql.toString());
+        query.setParameter("data", dataOperacao);
+        query.setParameter("tipoVendaEncalhe", TipoVendaEncalhe.SUPLEMENTAR);
+        query.setParameter("tipoComercializacaoVista", FormaComercializacao.CONTA_FIRME);        
+        
+        return (Long) query.uniqueResult();
 	}
 
 }

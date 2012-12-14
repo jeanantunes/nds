@@ -188,14 +188,14 @@ public class ConsultaInformeEncalheController {
 			if (tipoImpressao.getColunas().contains("codigoProduto")){
 				
 				colunas.add(new ColunaRelatorioInformeEncalhe("Código", 
-						this.calcularTamanhoColunaRelatorio(qtdColunas, 5), 
+						this.calcularTamanhoColunaRelatorio(qtdColunas, 4), 
 						"codigoProduto"));
 			}
 			
 			if (tipoImpressao.getColunas().contains("nomeProduto")){
 				
 				colunas.add(new ColunaRelatorioInformeEncalhe("Produto", 
-						this.calcularTamanhoColunaRelatorio(qtdColunas, 15), 
+						this.calcularTamanhoColunaRelatorio(qtdColunas, 13), 
 						"nomeProduto"));
 			}
 			
@@ -230,7 +230,7 @@ public class ConsultaInformeEncalheController {
 			if (tipoImpressao.getColunas().contains("nomeEditor")){
 				
 				colunas.add(new ColunaRelatorioInformeEncalhe("Editor", 
-						this.calcularTamanhoColunaRelatorio(qtdColunas, 15), 
+						this.calcularTamanhoColunaRelatorio(qtdColunas, 14), 
 						"nomeEditor"));
 			}
 			

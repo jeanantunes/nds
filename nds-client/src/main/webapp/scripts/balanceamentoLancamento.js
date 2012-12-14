@@ -77,7 +77,7 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 		
 		$(".lancamentosProgramadosGrid", _workspace).flexOptions({			
 			url : pathTela + "/matrizLancamento/obterGridMatrizLancamento",
-			dataType : 'json',		
+			dataType : 'json',
 			autoload: false,
 			singleSelect: true,
 			preProcess: T.processaRetornoPesquisa,
@@ -203,7 +203,8 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 			numeroEdicao:				row.cell.numeroEdicao,
 			nomeProduto:	    		row.cell.nomeProduto,
 			dataRecolhimentoPrevista:	row.cell.dataRecolhimentoPrevista,
-			novaData:					row.cell.novaData
+			novaData:					row.cell.novaData,
+			novaDataOriginal:			row.cell.novaData
 		});
 		
 		var colunaProduto = balanceamento.getColunaProduto(row.cell.idProdutoEdicao,
@@ -252,10 +253,20 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 		$.postJSON(
 				pathTela + "/matrizLancamento/reprogramarLancamentoUnico",
 				data,
-				function(){
+				function() {
 					
-					T.atualizarResumoBalanceamento(true);
+					T.atualizarResumoBalanceamento();
 					T.checkUncheckLancamentos(false);
+					
+					T.lancamentos[index].novaDataOriginal = T.lancamentos[index].novaData;
+				},
+				function() {
+					
+					var inputNovaData = $("#inputNovaData" + index, _workspace);
+					
+					$(inputNovaData).val(T.lancamentos[index].novaDataOriginal);
+					
+					T.lancamentos[index].novaData = inputNovaData.val();
 				}
 			);
 	},
@@ -287,7 +298,7 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 				pathTela + "/matrizLancamento/reprogramarLancamentosSelecionados",
 				data,
 				function(){
-					T.atualizarResumoBalanceamento(true);
+					T.atualizarResumoBalanceamento();
 					T.checkUncheckLancamentos(false);
 				}
 			);
@@ -376,7 +387,7 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 			       }
         	   }
 			   
-			   T.atualizarResumoBalanceamento(true);
+			   T.atualizarResumoBalanceamento();
 			   T.checkUncheckLancamentos(false);
             },
 			null,
@@ -450,15 +461,14 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 		});	
 	},
 	
-	this.atualizarResumoBalanceamento = function (atualizarGrid) {
+	this.atualizarResumoBalanceamento = function () {
 		
 		$.postJSON( pathTela + "/matrizLancamento/atualizarResumoBalanceamento",
 				   null,
 				   function(result) {
 						T.popularResumoPeriodo(result);
 						
-						if(atualizarGrid)
-							T.atualizarGrid();
+						T.atualizarGrid();
 				   }
 		);
 	},
@@ -474,8 +484,8 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 		T.isCliquePesquisar = true;
 		
 		$(".lancamentosProgramadosGrid", _workspace).flexOptions({			
-			url : pathTela + "/matrizLancamento/atualizarGridMatrizLancamento",
-			dataType : 'json',		
+			url : pathTela + "/matrizLancamento/obterGridMatrizLancamento",
+			dataType : 'json',
 			autoload: false,
 			singleSelect: true,
 			preProcess: T.processaRetornoPesquisa,
@@ -535,7 +545,7 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 	
 	this.abrirAlertaVoltarConfiguracaoInicial = function() {
 		
-		$("#dialogVoltarConfiguracaoOriginal", _workspace).dialog({
+		$("#dialogVoltarConfiguracaoInicial", _workspace).dialog({
 			resizable: false,
 			height:'auto',
 			width:600,
@@ -560,7 +570,7 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 			    	}
 				}
 			],
-			form: $("#dialogVoltarConfiguracaoOriginal", this.workspace).parents("form")
+			form: $("#dialogVoltarConfiguracaoInicial", this.workspace).parents("form")
 		});
 	};
 	
@@ -774,26 +784,8 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 				"Ok": function() {
 					$( this ).dialog( "close" );
 				}
-			}
-		});
-	},
-	
-	this.popup_reprogramar = function() {
-		$( "#dialog-reprogramar", _workspace ).dialog({
-			resizable: false,
-			height:160,
-			width:320,
-			modal: true,
-			buttons: {
-				"Confirmar": function() {
-					$( this ).dialog( "close" );
-					$("#effect").show("highlight", {}, 1000, callback);
-				},
-				"Cancelar": function() {
-					$( this ).dialog( "close" );
-				}
 			},
-			form: $("#dialog-reprogramar", this.workspace).parents("form")
+			form: $("#dialog-alerta-lancamentos-produtos-cancelados", _workspace).parents("form")
 		});
 	},
 	
@@ -828,7 +820,7 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 				
 				clearMessageDialogTimeout();
 			},
-			form: $("#dialogReprogramarBalanceamento", this.workspace).parents("form")			
+			form: $("#dialogReprogramarBalanceamento", _workspace).parents("form")			
 		});
 	},
 	

@@ -1,6 +1,6 @@
 package br.com.abril.nds.strategy.devolucao;
 
-import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -37,7 +37,7 @@ public class BalanceamentoRecolhimentoEditorStrategy extends AbstractBalanceamen
 		Map<Long, List<ProdutoRecolhimentoDTO>> mapaProdutosRecolhimentoEditor = 
 			this.obterMapaProdutosRecolhimentoEditor(produtosRecolhimento);
 		
-		Map<Long, TreeMap<Date, BigDecimal>> mapaExpectativaEncalheEditor =
+		Map<Long, TreeMap<Date, BigInteger>> mapaExpectativaEncalheEditor =
 			this.obterMapaExpectativaEncalheEditor(mapaProdutosRecolhimentoEditor);
 		
 		TreeSet<Date> datasRecolhimento = dadosRecolhimento.getDatasRecolhimentoFornecedor();
@@ -55,7 +55,7 @@ public class BalanceamentoRecolhimentoEditorStrategy extends AbstractBalanceamen
 	private void processarProdutosRecolhimentoNaoBalanceaveis(Map<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento,
 															  RecolhimentoDTO dadosRecolhimento) {
 		
-		for (Map.Entry<Date, BigDecimal> entryExpectativaEncalheTotalDiaria : 
+		for (Map.Entry<Date, BigInteger> entryExpectativaEncalheTotalDiaria : 
 				dadosRecolhimento.getMapaExpectativaEncalheTotalDiaria().entrySet()) {
 			
 			Date dataRecolhimentoPrevista = entryExpectativaEncalheTotalDiaria.getKey();
@@ -101,11 +101,11 @@ public class BalanceamentoRecolhimentoEditorStrategy extends AbstractBalanceamen
 	/*
 	 * Obtém o mapa de expectativa de encalhe por editor.
 	 */
-	private Map<Long, TreeMap<Date, BigDecimal>> obterMapaExpectativaEncalheEditor(
+	private Map<Long, TreeMap<Date, BigInteger>> obterMapaExpectativaEncalheEditor(
 											Map<Long, List<ProdutoRecolhimentoDTO>> mapaProdutosRecolhimentoEditor) {
 		
-		Map<Long, TreeMap<Date, BigDecimal>> mapaExpectativaEncalheEditor =
-			new HashMap<Long, TreeMap<Date,BigDecimal>>();
+		Map<Long, TreeMap<Date, BigInteger>> mapaExpectativaEncalheEditor =
+			new HashMap<Long, TreeMap<Date,BigInteger>>();
 		
 		for (Map.Entry<Long, List<ProdutoRecolhimentoDTO>> entryProdutosRecolhimentoEditor 
 				: mapaProdutosRecolhimentoEditor.entrySet()) {
@@ -114,21 +114,21 @@ public class BalanceamentoRecolhimentoEditorStrategy extends AbstractBalanceamen
 			
 			List<ProdutoRecolhimentoDTO> produtosRecolhimentoEditor = entryProdutosRecolhimentoEditor.getValue();
 			
-			Map<Date, BigDecimal> mapaExpectativaEncalheDiaria = new HashMap<Date, BigDecimal>();
+			Map<Date, BigInteger> mapaExpectativaEncalheDiaria = new HashMap<Date, BigInteger>();
 			
-			MapValueComparator<Date, BigDecimal> mapValueComparator =
-				new MapValueComparator<Date, BigDecimal>(mapaExpectativaEncalheDiaria, true);
+			MapValueComparator<Date, BigInteger> mapValueComparator =
+				new MapValueComparator<Date, BigInteger>(mapaExpectativaEncalheDiaria, true);
 			
-			TreeMap<Date, BigDecimal> mapaExpectativaEncalheDiariaOrdenado = 
-				new TreeMap<Date, BigDecimal>(mapValueComparator);
+			TreeMap<Date, BigInteger> mapaExpectativaEncalheDiariaOrdenado = 
+				new TreeMap<Date, BigInteger>(mapValueComparator);
 			
 			for (ProdutoRecolhimentoDTO produtoRecolhimento : produtosRecolhimentoEditor) {
 				
 				Date dataRecolhimento = produtoRecolhimento.getDataRecolhimentoPrevista();
 				
-				BigDecimal expectativaEncalheDiaria = mapaExpectativaEncalheDiaria.get(dataRecolhimento);
+				BigInteger expectativaEncalheDiaria = mapaExpectativaEncalheDiaria.get(dataRecolhimento);
 				
-				BigDecimal expectativaEncalheProduto = produtoRecolhimento.getExpectativaEncalhe();
+				BigInteger expectativaEncalheProduto = produtoRecolhimento.getExpectativaEncalhe();
 				
 				if (expectativaEncalheDiaria == null) {
 					
@@ -154,16 +154,16 @@ public class BalanceamentoRecolhimentoEditorStrategy extends AbstractBalanceamen
 	 * Aloca os produtos na matriz de recolhimento.
 	 */
 	private void alocarProdutosMatrizRecolhimento(Map<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento,
-												  Map<Long, TreeMap<Date, BigDecimal>> mapaExpectativaEncalheEditor,
+												  Map<Long, TreeMap<Date, BigInteger>> mapaExpectativaEncalheEditor,
 												  Map<Long, List<ProdutoRecolhimentoDTO>> mapaProdutosRecolhimentoEditor,
 												  TreeSet<Date> datasRecolhimento) {
 		
-		for (Map.Entry<Long, TreeMap<Date, BigDecimal>> entryExpectativaEncalheEditor 
+		for (Map.Entry<Long, TreeMap<Date, BigInteger>> entryExpectativaEncalheEditor 
 				: mapaExpectativaEncalheEditor.entrySet()) {
 			
 			Long idEditor = entryExpectativaEncalheEditor.getKey();
 			
-			TreeMap<Date, BigDecimal> mapaExpectativaEncalheDiariaEditor = entryExpectativaEncalheEditor.getValue();
+			TreeMap<Date, BigInteger> mapaExpectativaEncalheDiariaEditor = entryExpectativaEncalheEditor.getValue();
 			
 			Date dataRecolhimentoEditor = mapaExpectativaEncalheDiariaEditor.firstKey();
 			
