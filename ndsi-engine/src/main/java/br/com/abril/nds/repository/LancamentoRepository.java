@@ -309,4 +309,7 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	List<MovimentoEstoqueCota> buscarMovimentosEstoqueCotaParaFuro(
 			Lancamento lancamento, TipoMovimentoEstoque tipoMovimentoFuroCota);
 
+	List<Lancamento> obterLancamentosARecolherNaSemana(
+			Intervalo<Date> periodoRecolhimento, List<Long> fornecedores);
+
 }

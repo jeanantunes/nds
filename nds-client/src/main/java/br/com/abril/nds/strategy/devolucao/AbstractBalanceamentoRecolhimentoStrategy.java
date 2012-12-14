@@ -106,7 +106,7 @@ public abstract class AbstractBalanceamentoRecolhimentoStrategy implements Balan
 			
 			if (produtoRecolhimento.getDataRecolhimentoDistribuidor().equals(dataRecolhimentoDesejada)) {
 				
-				if (this.isProdutoNaoBalanceavel(dadosRecolhimento.isConfiguracaoInicial(), produtoRecolhimento)) {
+				if (this.isProdutoNaoBalanceavel(dadosRecolhimento.isForcarBalanceamento(), produtoRecolhimento)) {
 					
 					produtosRecolhimentoNaoBalanceaveis.add(produtosRecolhimento.remove(indice--));
 				}
@@ -254,7 +254,7 @@ public abstract class AbstractBalanceamentoRecolhimentoStrategy implements Balan
 		
 		for (ProdutoRecolhimentoDTO produtoRecolhimento : produtosRecolhimento) {
 			
-			if (this.isProdutoNaoBalanceavel(dadosRecolhimento.isConfiguracaoInicial(), produtoRecolhimento)) {
+			if (this.isProdutoNaoBalanceavel(dadosRecolhimento.isForcarBalanceamento(), produtoRecolhimento)) {
 				
 				continue;
 			}

@@ -39,6 +39,29 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 		);
 	},
 
+	confirmacaoConfiguracaoInicial : function(funcao) {
+		
+		$("#dialog-confirm-config-inicial", balanceamentoRecolhimentoController.workspace).dialog({
+			resizable: false,
+			height:'auto',
+			width:600,
+			modal: true,
+			buttons: {
+				"Confirmar": function() {
+					
+					funcao();
+					
+					$(this).dialog("close");
+				},
+				"Cancelar": function() {
+					
+					$(this).dialog("close");
+				}
+			},
+			form: $("#dialog-confirm-config-inicial", balanceamentoRecolhimentoController.workspace).parents("form")			
+		});
+	},
+	
 	pesquisar : function() {
 
 		balanceamentoRecolhimentoController.fecharGridBalanceamento();
@@ -166,7 +189,7 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 		balanceamentoRecolhimentoController.habilitarLink("linkEditor", function() { balanceamentoRecolhimentoController.verificarBalanceamentosAlterados(balanceamentoRecolhimentoController.balancearPorEditor); });
 		balanceamentoRecolhimentoController.habilitarLink("linkValor", function() { balanceamentoRecolhimentoController.verificarBalanceamentosAlterados(balanceamentoRecolhimentoController.balancearPorValor); });
 		balanceamentoRecolhimentoController.habilitarLink("linkSalvar", balanceamentoRecolhimentoController.salvar);
-		balanceamentoRecolhimentoController.habilitarLink("linkConfiguracaoInicial", function() { balanceamentoRecolhimentoController.verificarBalanceamentosAlterados(balanceamentoRecolhimentoController.voltarConfiguracaoInicial); });
+		balanceamentoRecolhimentoController.habilitarLink("linkConfiguracaoInicial", function() { balanceamentoRecolhimentoController.confirmacaoConfiguracaoInicial(balanceamentoRecolhimentoController.voltarConfiguracaoInicial); });
 		balanceamentoRecolhimentoController.habilitarLink("linkReprogramar", balanceamentoRecolhimentoController.reprogramarSelecionados);
 	},
 	
@@ -1009,9 +1032,14 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 		
 		var params = {"idLancamento":idLancamento};
 		
-		$.postJSON(contextPath + "/devolucao/balanceamentoMatriz/excluirBalanceamento", params, null);
-				
+		$.postJSON(contextPath + "/devolucao/balanceamentoMatriz/excluirBalanceamento", params, function() {
+			balanceamentoRecolhimentoController.atualizarResumoBalanceamento();	   		
+			balanceamentoRecolhimentoController.deselectCheckAll();
+		});
+		
 	}
+	
+	
 
 }, BaseController);
 

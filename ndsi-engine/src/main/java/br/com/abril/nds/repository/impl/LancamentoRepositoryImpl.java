@@ -1439,4 +1439,34 @@ public class LancamentoRepositoryImpl extends
 		
     	return query.list();
 	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<Lancamento> obterLancamentosARecolherNaSemana(Intervalo<Date> periodoRecolhimento, List<Long> fornecedores) {
+		
+		StringBuilder hql = new StringBuilder();	
+		
+		hql.append(" select lancamento from Lancamento lancamento ");
+		hql.append(" join lancamento.produtoEdicao produtoEdicao ");
+		hql.append(" join produtoEdicao.produto produto ");
+		hql.append(" join produto.fornecedores fornecedor ");
+		
+		hql.append(" where lancamento.dataRecolhimentoDistribuidor between :dataDe and :dataAte ");
+		hql.append(" and fornecedor.id in (:idFornecedores) ");			
+		hql.append(" and lancamento.status in (:status) ");
+		
+		Query query = super.getSession().createQuery(hql.toString());
+        
+		query.setParameter("dataDe", periodoRecolhimento.getDe());
+		query.setParameter("dataAte", periodoRecolhimento.getAte());
+		query.setParameterList("idFornecedores", fornecedores);
+		
+		List<StatusLancamento> status = new ArrayList<StatusLancamento>();
+		status.add(StatusLancamento.EM_BALANCEAMENTO_RECOLHIMENTO);
+		status.add(StatusLancamento.EXCLUIDO_RECOLHIMENTO);
+		
+		query.setParameterList("status", status);
+				
+		return query.list();	
+	}
 }
