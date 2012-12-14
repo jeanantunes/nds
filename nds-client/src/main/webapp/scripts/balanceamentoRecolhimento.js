@@ -933,6 +933,14 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 				   function(result) {
 				   
 				   		balanceamentoRecolhimentoController.atualizarResumoBalanceamento();
+				   },
+				   function() {
+					   
+					   var divNovaData = $("#divNovaData" + idRow, balanceamentoRecolhimentoController.workspace);
+					   
+					   var inputNovaData = $(divNovaData, balanceamentoRecolhimentoController.workspace).find("input[name='novaData']");
+					   
+					   $(inputNovaData).val(dataAntiga);
 				   }
 		);
 	},
