@@ -1,6 +1,7 @@
 package br.com.abril.nds.service.impl;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
@@ -29,6 +30,8 @@ import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.TelefoneFiador;
+import br.com.abril.nds.model.cadastro.garantia.CotaGarantia;
+import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaFiador;
 import br.com.abril.nds.repository.CotaGarantiaRepository;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.EnderecoFiadorRepository;
@@ -36,14 +39,15 @@ import br.com.abril.nds.repository.EnderecoRepository;
 import br.com.abril.nds.repository.FiadorRepository;
 import br.com.abril.nds.repository.PessoaRepository;
 import br.com.abril.nds.repository.TelefoneFiadorRepository;
+import br.com.abril.nds.service.CotaGarantiaService;
 import br.com.abril.nds.service.EnderecoService;
 import br.com.abril.nds.service.FiadorService;
 import br.com.abril.nds.service.GarantiaService;
 import br.com.abril.nds.service.TelefoneService;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.vo.PaginacaoVO;
-import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
+import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.stella.validation.CNPJValidator;
 import br.com.caelum.stella.validation.CPFValidator;
 import br.com.caelum.stella.validation.InvalidStateException;
@@ -68,6 +72,9 @@ public class FiadorServiceImpl implements FiadorService {
 	
 	@Autowired
 	private GarantiaService garantiaService;
+	
+	@Autowired
+	private CotaGarantiaService cotaGarantiaService;
 	
 	@Autowired
 	private PessoaRepository pessoaRepository;
@@ -590,15 +597,85 @@ public class FiadorServiceImpl implements FiadorService {
 		this.garantiaService.removerGarantias(idsGarantiasRemover);
 	}
 	
+	/**
+	 * Remove relacionamento de garantia entre cota e fiador da associacao
+	 * 
+	 * @param idFiador
+	 * 
+	 * @param idCota
+	 */
+	private void removerCotaGarantiaAssociacao(Long idFiador, Long idCota){
+		
+		CotaGarantia cotaGarantia = cotaGarantiaRepository.getByCota(idCota);
+		
+		if (cotaGarantia != null){
+			
+			if (cotaGarantia instanceof CotaGarantiaFiador) {
+			
+				Fiador f = ((CotaGarantiaFiador) cotaGarantia).getFiador();
+				
+				if (idFiador.equals(f.getId())){
+					
+					cotaGarantiaRepository.remover(cotaGarantia);
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Adiciona ou altera relacionamento de garantia entre cota e fiador da associacao.
+	 * 
+	 * Apenas adiciona ou altera caso a cota não tenha garantia ou tenha garantia Fiador
+	 * 
+	 * @param fiador
+	 * 
+	 * @param cota
+	 */
+	private void adicionarCotaGarantiaAssociacao(Fiador fiador, Cota cota){
+		
+		CotaGarantia cotaGarantia = cota.getCotaGarantia();
+		
+		if (cotaGarantia == null){
+			
+			CotaGarantiaFiador cotaGarantiaFiador = new CotaGarantiaFiador();
+			cotaGarantiaFiador.setData(Calendar.getInstance().getTime());
+			cotaGarantiaFiador.setCota(cota);
+			cotaGarantiaFiador.setFiador(fiador);
+			
+			cotaGarantiaRepository.adicionar(cotaGarantiaFiador);
+		}
+		
+		else{
+			
+			if (cotaGarantia instanceof CotaGarantiaFiador) {
+			
+				CotaGarantiaFiador cotaGarantiaFiador = (CotaGarantiaFiador) cotaGarantia;
+				cotaGarantiaFiador.setData(Calendar.getInstance().getTime());
+				cotaGarantiaFiador.setCota(cota);
+				cotaGarantiaFiador.setFiador(fiador);
+				
+				cotaGarantiaRepository.alterar(cotaGarantiaFiador);
+			}
+			else{
+				
+				throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,
+						"A cota ["+cota.getNumeroCota()+"] já possui uma garantia cadastrada. Dirija-se ao cadastro da cota caso queira alterar o tipo da garantia da cota para Fiador."));
+			}
+		}
+	}
+	
 	private void processarCotasAssociadas(Fiador fiador,
 			List<Cota> listaCotasAssociar, Set<Long> listaCotasDesassociar) {
 		
 		if (listaCotasDesassociar != null){
 			for (Long idCota : listaCotasDesassociar){
+				
 				Cota cota = this.cotaRepository.buscarPorId(idCota);
 				
 				if (cota != null){
 					cota.setFiador(null);
+					
+					this.removerCotaGarantiaAssociacao(fiador.getId(), idCota);
 					
 					this.cotaRepository.alterar(cota);
 				}
@@ -611,6 +688,9 @@ public class FiadorServiceImpl implements FiadorService {
 				if (cota != null){
 					
 					cota.setFiador(fiador);
+					
+					this.adicionarCotaGarantiaAssociacao(fiador, cota);
+					
 					this.cotaRepository.alterar(cota);
 				}
 			}

@@ -146,17 +146,26 @@ public class CotaGarantiaController {
 	public void getByCota(Long idCota, ModoTela modoTela, Long idHistorico) {
 		
 	    if (ModoTela.CADASTRO_COTA == modoTela) {
+	    	
 	        CotaGarantiaDTO<CotaGarantia> cotaGarantia = cotaGarantiaService.getByCota(idCota);
-	        if (cotaGarantia != null && cotaGarantia.getCotaGarantia() != null) {			
+	        
+	        if (cotaGarantia != null && cotaGarantia.getCotaGarantia() != null) {	
+	        	
 	            result.use(Results.json()).from(cotaGarantia).serialize();
 	        }else{			
+	        	
 	            result.use(CustomJson.class).from("OK").serialize();
 	        }	
-	    } else {
+	    } 
+	    else {
+	    	
 	        CotaGarantiaDTO<?> cotaGarantia = cotaGarantiaService.obterGarantiaHistoricoTitularidadeCota(idCota, idHistorico);
+	        
 	        if (cotaGarantia != null) {
+	        	
 	            result.use(CustomJson.class).from(cotaGarantia).serialize();  
 	        } else {
+	        	
 	            result.use(CustomJson.class).from("OK").serialize();      
 	        }
 	    }
