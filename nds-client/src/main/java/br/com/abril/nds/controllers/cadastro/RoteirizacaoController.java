@@ -889,7 +889,7 @@ public class RoteirizacaoController {
     @Path("/obterDadosComboUF")
 	public void obterDadosComboUF() {
 		
-		List<String> ufs = this.enderecoService.obterUnidadeFederacaoBrasil();
+		List<String> ufs = this.enderecoService.obterUnidadeFederativaAssociadaComEndereco();
 		
 		this.result.use(Results.json()).from(ufs, "result").serialize();
 	}

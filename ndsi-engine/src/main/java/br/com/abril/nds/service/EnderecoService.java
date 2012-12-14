@@ -59,4 +59,6 @@ public interface EnderecoService {
 
 	public abstract List<String> obterBairrosCotas();
 	
+	List<String> obterUnidadeFederativaAssociadaComEndereco();
+	
 }
