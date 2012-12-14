@@ -1244,7 +1244,8 @@ public class Fixture {
 		tipoMovimento.setAprovacaoAutomatica(true);
 		tipoMovimento.setDescricao("Estorno do reparte por furo de publicação");
 		tipoMovimento.setIncideDivida(true);
-		tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.DEVOLUCAO_ENCALHE);
+		tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.DEVOLUCAO_ENCALHE)
+		;
 		return tipoMovimento;
 	}
 
