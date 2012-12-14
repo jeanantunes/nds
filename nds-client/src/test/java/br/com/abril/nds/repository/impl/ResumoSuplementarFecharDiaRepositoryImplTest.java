@@ -60,7 +60,7 @@ public class ResumoSuplementarFecharDiaRepositoryImplTest extends AbstractDataUt
     
     @Test
     public void testObterDadosGridSuplementar() {
-        List<SuplementarFecharDiaDTO> resultado = repository.obterDadosGridSuplementar(distribuidor.getDataOperacao());
+        List<SuplementarFecharDiaDTO> resultado = repository.obterDadosGridSuplementar(distribuidor.getDataOperacao(), null);
         Assert.assertNotNull(resultado);
   
         Assert.assertEquals(6, resultado.size());
