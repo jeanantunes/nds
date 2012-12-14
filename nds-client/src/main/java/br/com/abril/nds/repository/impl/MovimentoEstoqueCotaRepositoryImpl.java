@@ -1043,7 +1043,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 
 		if(indBuscaQtd) {
 			
-			sql.append("	COUNT(PROD_EDICAO.ID)	");
+			sql.append("	COUNT(*)	");
 			
 		} else {
 		
@@ -1127,12 +1127,8 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 			sql.append(" AND PROD_FORNEC.FORNECEDORES_ID = :idFornecedor ");		
 		}
 
-		if(indBuscaQtd){
+		if(!indBuscaQtd){
     	
-			sql.append(" GROUP BY ");		
-    		sql.append(" PROD_EDICAO.ID	");		
-        
-		}else{
     		sql.append(" GROUP BY ");
     		sql.append(" PROD_EDICAO.ID,			");		
     		sql.append(" PROD.CODIGO,  				");		
@@ -1140,6 +1136,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
     		sql.append(" PROD_EDICAO.NUMERO_EDICAO, ");
     		sql.append(" PROD_EDICAO.PRECO_VENDA, 	");
     		sql.append(" PROD_EDICAO.DESCONTO       ");
+    		
         }
 		
 		
@@ -1218,15 +1215,9 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 					.addScalar("numeroEdicao", StandardBasicTypes.LONG)
 					.addScalar("precoVenda", StandardBasicTypes.BIG_DECIMAL)
 					.addScalar("desconto", StandardBasicTypes.BIG_DECIMAL)
-					.addScalar("qtdDevolucao", StandardBasicTypes.BIG_DECIMAL);
-
-					if(indBuscaTotalParcial) {
-						
-						((SQLQuery)query).addScalar("qtdNota", StandardBasicTypes.BIG_DECIMAL);
-						
-					}
-					
-					((SQLQuery)query).setResultTransformer(Transformers.aliasToBean(ContagemDevolucaoDTO.class));
+					.addScalar("qtdDevolucao", StandardBasicTypes.BIG_INTEGER)
+					.addScalar("qtdNota", StandardBasicTypes.BIG_INTEGER).
+					setResultTransformer(Transformers.aliasToBean(ContagemDevolucaoDTO.class));
 			
 		}
 		
@@ -1369,7 +1360,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		Query query = criarQueryComParametrosObterListaContagemDevolucao(hql, filtro, false, true);
 		
-		Long qtde = (Long) query.uniqueResult();
+		BigInteger qtde = (BigInteger) query.uniqueResult();
 		
 		return ((qtde == null) ? 0 : qtde.intValue());
 		
