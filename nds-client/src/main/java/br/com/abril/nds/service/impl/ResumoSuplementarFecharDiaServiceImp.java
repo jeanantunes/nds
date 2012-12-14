@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,6 +15,7 @@ import br.com.abril.nds.dto.SuplementarFecharDiaDTO;
 import br.com.abril.nds.dto.VendaFechamentoDiaDTO;
 import br.com.abril.nds.repository.ResumoSuplementarFecharDiaRepository;
 import br.com.abril.nds.service.ResumoSuplementarFecharDiaService;
+import br.com.abril.nds.vo.PaginacaoVO;
 
 @Service
 public class ResumoSuplementarFecharDiaServiceImp implements
@@ -78,8 +80,21 @@ public class ResumoSuplementarFecharDiaServiceImp implements
 
 	@Override
 	@Transactional
-	public List<SuplementarFecharDiaDTO> obterDadosGridSuplementar(Date data) {
-		return this.resumoSuplementarFecharDiaRepository.obterDadosGridSuplementar(data);
+	public List<SuplementarFecharDiaDTO> obterDadosGridSuplementar(Date data, PaginacaoVO paginacao) {
+		return this.resumoSuplementarFecharDiaRepository.obterDadosGridSuplementar(data, paginacao);
+	}
+
+	@Override
+	@Transactional
+	public Long contarProdutoEdicaoSuplementar() {
+		return this.resumoSuplementarFecharDiaRepository.contarProdutoEdicaoSuplementar();
+	}
+
+	@Override
+	@Transactional
+	public Long contarVendasSuplementar(Date data) {
+		 Objects.requireNonNull(data, "Data para contagem das vendas de encalhe não deve ser nula!");
+		return this.resumoSuplementarFecharDiaRepository.contarVendasSuplementar(data);
 	}
 
 }

@@ -763,7 +763,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		
 	    FechamentoDiario fechamentoDiario = consolidadoSuplementar.getFechamentoDiario();
 	    
-		List<SuplementarFecharDiaDTO> listaSuplementar = this.resumoSuplementarFecharDiaService.obterDadosGridSuplementar(fechamentoDiario.getDataFechamento());
+		List<SuplementarFecharDiaDTO> listaSuplementar = this.resumoSuplementarFecharDiaService.obterDadosGridSuplementar(fechamentoDiario.getDataFechamento(), null);
 		
 		if(listaSuplementar!= null && !listaSuplementar.isEmpty()){
 			
