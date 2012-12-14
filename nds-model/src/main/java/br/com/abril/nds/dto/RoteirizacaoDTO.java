@@ -469,6 +469,32 @@ public class RoteirizacaoDTO implements Serializable{
 		}
 	}
 
+	public void removerRoteiro(Integer ordemRoteiro) {
+		
+		for (RoteiroRoteirizacaoDTO roteiro : roteiros){
+			
+			if (roteiro.getOrdem().equals(ordemRoteiro)){
+				
+				roteiros.remove(roteiro);
+				break;
+			}
+		}
+		
+		for (RoteiroRoteirizacaoDTO roteiro : todosRoteiros){
+			
+			if (roteiro.getOrdem().equals(ordemRoteiro)){
+				
+				todosRoteiros.remove(roteiro);
+				
+				if(roteiro.getId() > 0) {
+					this.addRoteiroExclusao(roteiro.getId());
+				}
+				
+				break;
+			}
+		}
+	}
+	
 
 	public Map<Long, Set<RoteiroRoteirizacaoDTO>> getRoteirosTransferidos() {
 		return roteirosTransferidos;
