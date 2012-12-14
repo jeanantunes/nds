@@ -344,12 +344,15 @@ public class MatrizRecolhimentoController {
 		
 		FiltroPesquisaMatrizRecolhimentoVO filtro = obterFiltroSessao();
 		
+		recolhimentoService.voltarConfiguracaoOriginal(filtro.getNumeroSemana(), 
+				filtro.getDataPesquisa(), filtro.getListaIdsFornecedores());
+		
 		BalanceamentoRecolhimentoDTO balanceamentoRecolhimento = 
 			this.obterBalanceamentoRecolhimento(filtro.getDataPesquisa(),
 												filtro.getNumeroSemana(),
 												filtro.getListaIdsFornecedores(),
 												TipoBalanceamentoRecolhimento.AUTOMATICO,
-												true);
+												false);
 		
 		ResultadoResumoBalanceamentoVO resultadoResumoBalanceamento = 
 			this.obterResultadoResumoBalanceamento(balanceamentoRecolhimento);
@@ -1404,6 +1407,34 @@ public class MatrizRecolhimentoController {
 	public void excluirBalanceamento(Long idLancamento) {
 
 		this.recolhimentoService.excluiBalanceamento(idLancamento);
+		
+		BalanceamentoRecolhimentoDTO balanceamentoRecolhimentoSessao =
+				(BalanceamentoRecolhimentoDTO)
+					httpSession.getAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_RECOLHIMENTO);
+			
+		TreeMap<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimentoSessao =
+				balanceamentoRecolhimentoSessao.getMatrizRecolhimento();
+		
+
+		for (Map.Entry<Date, List<ProdutoRecolhimentoDTO>> entry : matrizRecolhimentoSessao.entrySet()) {
+			
+			ProdutoRecolhimentoDTO excluir = null;			
+			
+			for(ProdutoRecolhimentoDTO prodRecolhimento : entry.getValue()) {
+				
+				if(prodRecolhimento.getIdLancamento().equals(idLancamento)) {
+					
+					excluir = prodRecolhimento;
+					break;
+				}
+			}
+			
+			if(excluir!=null) {
+				
+				entry.getValue().remove(excluir);
+				break;
+			}
+		}
 		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS,
 			"Balanceamento excluído com sucesso!"), "result").recursive().serialize();

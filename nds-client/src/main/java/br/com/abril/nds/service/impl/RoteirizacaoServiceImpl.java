@@ -7,6 +7,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import net.sf.jasperreports.j2ee.servlets.OdsServlet;
+
 import org.hibernate.criterion.MatchMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -556,12 +558,19 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 		if (idBox == null) {
 		    return true;
 		}
-	    
+		
 		Box box = this.roteirizacaoRepository.obterBoxDoPDV(idPdv);
+		
+		if(box == null){
+			
+			Cota cota  = cotaRepository.obterPorPDV(idPdv);
+			
+			return (cota.getBox() == null);
+		}
 		
 		return box == null;
 	}
-	
+		
 	/**
 	 * Inclui Cota Pdv na Roteirização
 	 * @param List<Long> idPdvs

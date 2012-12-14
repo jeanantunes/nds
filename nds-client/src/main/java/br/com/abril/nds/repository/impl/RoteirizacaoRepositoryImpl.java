@@ -516,7 +516,7 @@ public class RoteirizacaoRepositoryImpl extends AbstractRepositoryModel<Roteiriz
 	 * @return
 	 */
 	@Override
-	public Box obterBoxDoPDV(Long idPdv) {
+	public Box obterBoxDoPDV(Long... idPdv) {
 		
         StringBuilder hql = new StringBuilder();
 		
@@ -527,11 +527,11 @@ public class RoteirizacaoRepositoryImpl extends AbstractRepositoryModel<Roteiriz
 		hql.append(" join rota.rotaPDVs rotaPdv ");
 		hql.append(" join rotaPdv.pdv pdv ");
 		hql.append(" where r.box = b ");
-		hql.append(" and   pdv.id = :idPdv ");
+		hql.append(" and   pdv.id IN ( :idPdv ) ");
 		
 		Query query  = getSession().createQuery(hql.toString());
 
-		query.setParameter("idPdv", idPdv);
+		query.setParameterList("idPdv",idPdv);
 		
 		query.setMaxResults(1);
 		

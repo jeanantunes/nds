@@ -27,7 +27,7 @@ public class RecolhimentoDTO implements Serializable {
 	
 	private boolean semanaRecolhimento;
 	
-	private boolean configuracaoInicial;
+	private boolean forcarBalanceamento;
 
 	/**
 	 * Construtor padrão.
@@ -111,17 +111,17 @@ public class RecolhimentoDTO implements Serializable {
 	}
 
 	/**
-	 * @return the configuracaoInicial
+	 * @return the forcarBalanceamento
 	 */
-	public boolean isConfiguracaoInicial() {
-		return configuracaoInicial;
+	public boolean isForcarBalanceamento() {
+		return forcarBalanceamento;
 	}
 
 	/**
-	 * @param configuracaoInicial the configuracaoInicial to set
+	 * @param forcarBalanceamento the forcarBalanceamento to set
 	 */
-	public void setConfiguracaoInicial(boolean configuracaoInicial) {
-		this.configuracaoInicial = configuracaoInicial;
+	public void setForcarBalanceamento(boolean forcarBalanceamento) {
+		this.forcarBalanceamento = forcarBalanceamento;
 	}
 	
 }
