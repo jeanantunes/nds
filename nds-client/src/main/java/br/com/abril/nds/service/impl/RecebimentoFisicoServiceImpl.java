@@ -810,10 +810,9 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 	private void inserirMovimentoEstoque(
 			Usuario usuarioLogado,
 			RecebimentoFisicoDTO recebimentoFisicoDTO) {
-	
 		
 		boolean indDiferenca = verificarDiferencaExistente(recebimentoFisicoDTO.getRepartePrevisto(), recebimentoFisicoDTO.getQtdFisico());
-		
+
 		if(indDiferenca) {
 			
 			Diferenca diferenca = obterDiferencaDeItemRecebimentoFisico(usuarioLogado, recebimentoFisicoDTO);
@@ -821,23 +820,21 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 			ItemRecebimentoFisico itemRecebimento = itemRecebimentoFisicoRepository.buscarPorId(recebimentoFisicoDTO.getIdItemRecebimentoFisico());
 			itemRecebimento.setDiferenca(diferenca);
 			itemRecebimentoFisicoRepository.alterar(itemRecebimento);
-			
-			
-			
-		} else {
-			
-			TipoMovimentoEstoque tipoMovimento = 
+
+		}
+
+		// Implementado por Cesar Punk Pop
+		// Retirado o Else, já que o movimento sempre deve ser gerado (independente de ocorrer diferença ou não)
+		TipoMovimentoEstoque tipoMovimento = 
 				tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(
 					GrupoMovimentoEstoque.RECEBIMENTO_FISICO);
-			
-			movimentoEstoqueService.gerarMovimentoEstoque(
-					recebimentoFisicoDTO.getDataLancamento(), 
-					recebimentoFisicoDTO.getIdProdutoEdicao(), 
-					usuarioLogado.getId(), 
-					recebimentoFisicoDTO.getRepartePrevisto(),
-					tipoMovimento);
-			
-		}
+
+		movimentoEstoqueService.gerarMovimentoEstoque(
+				recebimentoFisicoDTO.getDataLancamento(), 
+				recebimentoFisicoDTO.getIdProdutoEdicao(), 
+				usuarioLogado.getId(), 
+				recebimentoFisicoDTO.getRepartePrevisto(),
+				tipoMovimento);
 		
 	}
 	
