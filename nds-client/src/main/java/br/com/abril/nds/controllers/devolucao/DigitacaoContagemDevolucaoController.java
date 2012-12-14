@@ -506,7 +506,7 @@ public class DigitacaoContagemDevolucaoController  {
 			contagemDevolucaoDTO.setCodigoProduto(vo.getCodigoProduto());
 			contagemDevolucaoDTO.setNumeroEdicao(Long.parseLong(vo.getNumeroEdicao()));
 			contagemDevolucaoDTO.setQtdNota(new BigInteger(vo.getQtdNota()));
-			contagemDevolucaoDTO.setDataMovimento( ( vo.getDataRecolhimentoDistribuidor() == null ) ? null : DateUtil.parseData(vo.getDataRecolhimentoDistribuidor(),"dd/MM/yyyy"));
+			contagemDevolucaoDTO.setDataMovimento( ( vo.getDataRecolhimentoDistribuidor() == null ) ? distribuidorService.obter().getDataOperacao() : DateUtil.parseData(vo.getDataRecolhimentoDistribuidor(),"dd/MM/yyyy"));
 			contagemDevolucaoDTO.setDiferenca(StringUtil.isEmpty(vo.getDiferenca()) ? null : new BigInteger(vo.getDiferenca()));
 			listaResultadosDto.add(contagemDevolucaoDTO);
 		}
