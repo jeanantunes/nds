@@ -166,7 +166,7 @@
         <tr>
             <td>
                 <span class="bt_novos" title="Novo">
-                	<a href="javascript:;" onclick="roteirizacao.abrirTelaNovoRoteiroRota();">
+                	<a href="javascript:;" onclick="roteirizacao.popupNovoRoteiroRota();">
                     	<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/>
                     	Novo
                     </a>
@@ -223,7 +223,7 @@
 		        		<td>Tipo:</td>
 		        		<td>
 		        			<select name="tipoPesquisa" id="tipoPesquisa" style="width:100px;">
-		        				<option selected="selected" value="">Selecione...</option>   	
+		        				<option selected="selected" value="">PDV</option>   	
 		        				<option value="cota">Cota</option>   
 		                  	</select>
 		                </td>
