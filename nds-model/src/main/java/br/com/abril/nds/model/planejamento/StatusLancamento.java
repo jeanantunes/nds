@@ -14,16 +14,6 @@ public enum StatusLancamento {
 	EXCLUIDO_RECOLHIMENTO("Excluído Recolhimento"),
 	RECOLHIDO("Recolhido"),
 	CANCELADO("Cancelado"),
-
-	// EMS 217:
-	TRANSMITIDO("Transmitido"),
-	PREVISTO("Previsto"),
-	CALCULO_SOLICITADO("Cálculo Solicitado"),
-	CALCULADO("Calculado"),
-	EMITIDO("Emitido"),
-	LIBERAR_CALCULO("Liberar Cálculo"),
-	LANCADO("Lançado"),
-	EM_RECOLHIMENTO("Em Recolhimento"),
 	FECHADO("Fechado");
 	
 	/** Descrição do status. */
