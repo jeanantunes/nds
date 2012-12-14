@@ -2430,12 +2430,30 @@ public class DataLoader {
 
 	private static void gerarTipoEstabelecimentoAssociacaoPDV(Session session) {
 
-		TipoEstabelecimentoAssociacaoPDV tipoEstabelecimentoAssociacaoPDV = Fixture.criarTipoEstabelecimentoAssociacaoPDV(10L, "Galeria");
-		TipoEstabelecimentoAssociacaoPDV tipoEstabelecimentoAssociacaoPDV1 = Fixture.criarTipoEstabelecimentoAssociacaoPDV(11L, "Hiper / Supermercado");
-		TipoEstabelecimentoAssociacaoPDV tipoEstabelecimentoAssociacaoPDV2 = Fixture.criarTipoEstabelecimentoAssociacaoPDV(12L, "Shopping");
-		TipoEstabelecimentoAssociacaoPDV tipoEstabelecimentoAssociacaoPDV3 = Fixture.criarTipoEstabelecimentoAssociacaoPDV(13L, "Posto Serviço");
+		TipoEstabelecimentoAssociacaoPDV tipoEstabelecimentoAssociacaoPDV1 = Fixture.criarTipoEstabelecimentoAssociacaoPDV(1L, "Aeroporto");
+		TipoEstabelecimentoAssociacaoPDV tipoEstabelecimentoAssociacaoPDV2 = Fixture.criarTipoEstabelecimentoAssociacaoPDV(2L, "Clube");
+		TipoEstabelecimentoAssociacaoPDV tipoEstabelecimentoAssociacaoPDV3 = Fixture.criarTipoEstabelecimentoAssociacaoPDV(3L, "Colégio");
+	    TipoEstabelecimentoAssociacaoPDV tipoEstabelecimentoAssociacaoPDV4 = Fixture.criarTipoEstabelecimentoAssociacaoPDV(4L, "Condomínio");
+		TipoEstabelecimentoAssociacaoPDV tipoEstabelecimentoAssociacaoPDV5 = Fixture.criarTipoEstabelecimentoAssociacaoPDV(5L, "Empresa");
+		TipoEstabelecimentoAssociacaoPDV tipoEstabelecimentoAssociacaoPDV6 = Fixture.criarTipoEstabelecimentoAssociacaoPDV(6L, "Estacionamento");
+		TipoEstabelecimentoAssociacaoPDV tipoEstabelecimentoAssociacaoPDV7 = Fixture.criarTipoEstabelecimentoAssociacaoPDV(7L, "Faculdade");
+		TipoEstabelecimentoAssociacaoPDV tipoEstabelecimentoAssociacaoPDV8 = Fixture.criarTipoEstabelecimentoAssociacaoPDV(8L, "Hiper/Super");
+		TipoEstabelecimentoAssociacaoPDV tipoEstabelecimentoAssociacaoPDV9 = Fixture.criarTipoEstabelecimentoAssociacaoPDV(9L, "Hospital");
+		TipoEstabelecimentoAssociacaoPDV tipoEstabelecimentoAssociacaoPDV10 = Fixture.criarTipoEstabelecimentoAssociacaoPDV(10L, "Metrô");
+		TipoEstabelecimentoAssociacaoPDV tipoEstabelecimentoAssociacaoPDV11 = Fixture.criarTipoEstabelecimentoAssociacaoPDV(11L, "Outros");
+		TipoEstabelecimentoAssociacaoPDV tipoEstabelecimentoAssociacaoPDV12 = Fixture.criarTipoEstabelecimentoAssociacaoPDV(12L, "Parque");
+		TipoEstabelecimentoAssociacaoPDV tipoEstabelecimentoAssociacaoPDV13 = Fixture.criarTipoEstabelecimentoAssociacaoPDV(13L, "Posto");
+		TipoEstabelecimentoAssociacaoPDV tipoEstabelecimentoAssociacaoPDV14 = Fixture.criarTipoEstabelecimentoAssociacaoPDV(14L, "Repartição Pública");
+		TipoEstabelecimentoAssociacaoPDV tipoEstabelecimentoAssociacaoPDV15 = Fixture.criarTipoEstabelecimentoAssociacaoPDV(15L, "Rodoviária");
+		TipoEstabelecimentoAssociacaoPDV tipoEstabelecimentoAssociacaoPDV16 = Fixture.criarTipoEstabelecimentoAssociacaoPDV(16L, "Shopping");
+		TipoEstabelecimentoAssociacaoPDV tipoEstabelecimentoAssociacaoPDV17 = Fixture.criarTipoEstabelecimentoAssociacaoPDV(17L, "Terminal de Ônibus");
 
-		save(session,tipoEstabelecimentoAssociacaoPDV,tipoEstabelecimentoAssociacaoPDV1,tipoEstabelecimentoAssociacaoPDV2,tipoEstabelecimentoAssociacaoPDV3);
+		save(session,tipoEstabelecimentoAssociacaoPDV1,tipoEstabelecimentoAssociacaoPDV2,tipoEstabelecimentoAssociacaoPDV3,
+			         tipoEstabelecimentoAssociacaoPDV4,tipoEstabelecimentoAssociacaoPDV5,tipoEstabelecimentoAssociacaoPDV6,
+			         tipoEstabelecimentoAssociacaoPDV7,tipoEstabelecimentoAssociacaoPDV8,tipoEstabelecimentoAssociacaoPDV9,
+			         tipoEstabelecimentoAssociacaoPDV10,tipoEstabelecimentoAssociacaoPDV11,tipoEstabelecimentoAssociacaoPDV12,
+			         tipoEstabelecimentoAssociacaoPDV13,tipoEstabelecimentoAssociacaoPDV14,tipoEstabelecimentoAssociacaoPDV15,
+			         tipoEstabelecimentoAssociacaoPDV16,tipoEstabelecimentoAssociacaoPDV17);
 	}
 	
 	private static void gerarAreaInfluenciaPDV(Session session) {
@@ -2599,6 +2617,9 @@ public class DataLoader {
 		EstoqueProduto estoqueProduto = Fixture.estoqueProduto(produtoEdicaoBravo1, BigInteger.valueOf(45));
 		save(session,estoqueProduto);
 
+		save(session, Fixture.historicoEstoqueProduto(estoqueProduto, DateUtil.adicionarDias(new Date(), -2), null));
+		
+		
 		MovimentoEstoque movimentoEstoque = Fixture.movimentoEstoque(itemRecebimentoFisico, produtoEdicaoBravo1, tipoMovimentoEstoque, usuario, estoqueProduto, dataAtual, BigInteger.valueOf(12), StatusAprovacao.APROVADO , "MOTIVO B");
 		save(session,movimentoEstoque);
 
@@ -4350,32 +4371,56 @@ public class DataLoader {
 	}
 
 	private static void criarEstoquesProdutos(Session session) {
+		
 		estoqueProdutoVeja1 = Fixture.estoqueProduto(produtoEdicaoVeja1, BigInteger.TEN);
-
+		
+		save(session, Fixture.historicoEstoqueProduto(estoqueProdutoVeja1, DateUtil.adicionarDias(new Date(), -2), null));
+		
 		estoqueProdutoVeja2 = Fixture.estoqueProduto(produtoEdicaoVeja2, BigInteger.TEN);
+		
+		save(session, Fixture.historicoEstoqueProduto(estoqueProdutoVeja2, DateUtil.adicionarDias(new Date(), -2), null));
 
 		estoqueProdutoVeja3 = Fixture.estoqueProduto(produtoEdicaoVeja3, BigInteger.TEN);
+		
+		save(session, Fixture.historicoEstoqueProduto(estoqueProdutoVeja3, DateUtil.adicionarDias(new Date(), -2), null));
 
 		estoqueProdutoVeja4 = Fixture.estoqueProduto(produtoEdicaoVeja4, BigInteger.TEN);
+		
+		save(session, Fixture.historicoEstoqueProduto(estoqueProdutoVeja4, DateUtil.adicionarDias(new Date(), -2), null));
 
 		estoqueProdutoSuper1 = Fixture.estoqueProduto(produtoEdicaoSuper1, BigInteger.TEN);
 
+		save(session, Fixture.historicoEstoqueProduto(estoqueProdutoSuper1, DateUtil.adicionarDias(new Date(), -2), null));
+		
 		estoqueProdutoCapricho1 = Fixture.estoqueProduto(produtoEdicaoCapricho1, BigInteger.TEN);
+		
+		save(session, Fixture.historicoEstoqueProduto(estoqueProdutoCapricho1, DateUtil.adicionarDias(new Date(), -2), null));
 
 		estoqueProdutoInfoExame1 = Fixture.estoqueProduto(produtoEdicaoInfoExame1, BigInteger.TEN);
+		
+		save(session, Fixture.historicoEstoqueProduto(estoqueProdutoInfoExame1, DateUtil.adicionarDias(new Date(), -2), null));
 
 		estoqueProdutoVeja1EncalheAnt = Fixture.estoqueProduto(produtoEdicaoVeja1EncalheAnt, BigInteger.TEN);
+		
+		save(session, Fixture.historicoEstoqueProduto(estoqueProdutoVeja1EncalheAnt, DateUtil.adicionarDias(new Date(), -2), null));
 
 		estoqueProdutoVeja2EncalheAnt = Fixture.estoqueProduto(produtoEdicaoVeja2EncalheAnt, BigInteger.TEN);
+		
+		save(session, Fixture.historicoEstoqueProduto(estoqueProdutoVeja2EncalheAnt, DateUtil.adicionarDias(new Date(), -2), null));
 
 		estoqueProdutoSuper1EncalheAnt = Fixture.estoqueProduto(produtoEdicaoSuper1EncalheAnt, BigInteger.TEN);
+		
+		save(session, Fixture.historicoEstoqueProduto(estoqueProdutoSuper1EncalheAnt, DateUtil.adicionarDias(new Date(), -2), null));
 
 		estoqueProdutoSuper2EncalheAnt = Fixture.estoqueProduto(produtoEdicaoSuper2EncalheAnt, BigInteger.TEN);
-
+		
+		save(session, Fixture.historicoEstoqueProduto(estoqueProdutoSuper2EncalheAnt, DateUtil.adicionarDias(new Date(), -2), null));
+		
 		save(session, estoqueProdutoVeja1, estoqueProdutoVeja2, estoqueProdutoVeja3,
 			 estoqueProdutoVeja4, estoqueProdutoSuper1, estoqueProdutoCapricho1,
 			 estoqueProdutoInfoExame1,estoqueProdutoVeja1EncalheAnt,estoqueProdutoVeja2EncalheAnt,
 			 estoqueProdutoSuper1EncalheAnt,estoqueProdutoSuper2EncalheAnt);
+		
 	}
 	
 	private static void criarEstoquesProdutosCotaJuramentados(Session session) {
@@ -6232,6 +6277,9 @@ public class DataLoader {
 
 			EstoqueProduto estoque  =  Fixture.estoqueProduto(produtoEdicao, BigInteger.ZERO);
 			session.save(estoque);
+			
+			save(session, Fixture.historicoEstoqueProduto(estoque, DateUtil.adicionarDias(new Date(), -2), null));
+			
 
 			for(int x= 1; x< 3 ;x++){
 

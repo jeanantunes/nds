@@ -443,15 +443,19 @@ public class PoliticaCobrancaServiceImpl implements PoliticaCobrancaService {
         
 		formaCobranca.setFornecedores(null);
 		if ((parametroCobrancaDTO.getFornecedoresId()!=null)&&(parametroCobrancaDTO.getFornecedoresId().size()>0)){
+			
+			List<Long> idsFornecedor = parametroCobrancaDTO.getFornecedoresId();
 			Fornecedor fornecedor;
 		    Set<Fornecedor> fornecedores = new HashSet<Fornecedor>();
-		    for (Long idFornecedor:parametroCobrancaDTO.getFornecedoresId()){
+		    for (Long idFornecedor : idsFornecedor){
+		    	
 		    	fornecedor = fornecedorService.obterFornecedorPorId(idFornecedor);
 		    	if (fornecedor!=null){
 		    	    fornecedores.add(fornecedor);
 		    	}
 		    }
 		    if (fornecedores.size()>0){
+		    	
 			    formaCobranca.setFornecedores(fornecedores);
 		    }
 		}
@@ -533,8 +537,8 @@ public class PoliticaCobrancaServiceImpl implements PoliticaCobrancaService {
 		
 		List<FormaCobranca> formas = this.formaCobrancaRepository.obterPorDistribuidorETipoCobranca(distribuidor.getId(), tipoCobranca, idFormaCobrancaExcept);
 		for (FormaCobranca itemFormaCobranca:formas){
-			for (int i=0; i<idFornecedores.size();i++){
-				Fornecedor fornecedor= this.fornecedorService.obterFornecedorPorId(idFornecedores.get(i));
+			for (Long idFornecedor : idFornecedores){
+				Fornecedor fornecedor= this.fornecedorService.obterFornecedorPorId(idFornecedor);
 				if (itemFormaCobranca.getFornecedores().contains(fornecedor)){
 					
 					for(ConcentracaoCobrancaCota itemConcentracao:itemFormaCobranca.getConcentracaoCobrancaCota()){

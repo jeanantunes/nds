@@ -1,7 +1,6 @@
 package br.com.abril.nds.dto;
 
 import java.io.Serializable;
-import java.math.BigInteger;
 import java.util.Date;
 
 import br.com.abril.nds.model.Origem;
@@ -72,7 +71,7 @@ public class PeriodoParcialDTO implements Serializable {
 	public String getReparte() {
 		return reparte;
 	}
-	public void setReparte(BigInteger reparte) {
+	public void setReparte(Number reparte) {
 		if(reparte==null)
 			this.reparte = "";
 		else
@@ -81,7 +80,7 @@ public class PeriodoParcialDTO implements Serializable {
 	public String getEncalhe() {
 		return encalhe;
 	}
-	public void setEncalhe(BigInteger encalhe) {
+	public void setEncalhe(Number encalhe) {
 		if(encalhe==null)
 			this.encalhe = "";
 		else
@@ -90,7 +89,7 @@ public class PeriodoParcialDTO implements Serializable {
 	public String getVendas() {
 		return vendas;
 	}
-	public void setVendas(BigInteger vendas) {
+	public void setVendas(Number vendas) {
 		if(vendas==null)
 			this.vendas = "";
 		else
@@ -99,7 +98,7 @@ public class PeriodoParcialDTO implements Serializable {
 	public String getVendaAcumulada() {
 		return vendaAcumulada;
 	}
-	public void setVendaAcumulada(BigInteger vendaAcumulada) {
+	public void setVendaAcumulada(Number vendaAcumulada) {
 		if(vendaAcumulada==null || vendas==null || vendas.isEmpty())
 			this.vendaAcumulada = "";
 		else 
@@ -108,7 +107,7 @@ public class PeriodoParcialDTO implements Serializable {
 	public String getPercVenda() {
 		return percVenda;
 	}
-	public void setPercVenda(BigInteger percVenda) {
+	public void setPercVenda(Number percVenda) {
 		if(percVenda==null)
 			this.percVenda = "";
 		else
@@ -147,7 +146,7 @@ public class PeriodoParcialDTO implements Serializable {
 	/**
 	 * @param suplementacao the suplementacao to set
 	 */
-	public void setSuplementacao(BigInteger suplementacao) {
+	public void setSuplementacao(Number suplementacao) {
 		if(suplementacao==null)
 			this.suplementacao = "";
 		else
@@ -162,7 +161,7 @@ public class PeriodoParcialDTO implements Serializable {
 	/**
 	 * @param vendaCE the vendaCE to set
 	 */
-	public void setVendaCE(BigInteger vendaCE) {
+	public void setVendaCE(Number vendaCE) {
 		if(vendaCE==null)
 			this.vendaCE = "";
 		else
@@ -177,7 +176,7 @@ public class PeriodoParcialDTO implements Serializable {
 	/**
 	 * @param percVendaAcumulada the percVendaAcumulada to set
 	 */
-	public void setPercVendaAcumulada(BigInteger percVendaAcumulada) {
+	public void setPercVendaAcumulada(Number percVendaAcumulada) {
 		if(percVendaAcumulada==null)
 			this.percVendaAcumulada = "";
 		else
@@ -192,7 +191,7 @@ public class PeriodoParcialDTO implements Serializable {
 	/**
 	 * @param reparteAcum the reparteAcum to set
 	 */
-	public void setReparteAcum(BigInteger reparteAcum) {
+	public void setReparteAcum(Number reparteAcum) {
 		if(reparteAcum==null)
 			this.reparteAcum = "";
 		else

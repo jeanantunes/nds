@@ -1,6 +1,7 @@
 package br.com.abril.nds.dto;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 import br.com.abril.nds.model.cadastro.FormaCobrancaBoleto;
@@ -42,7 +43,7 @@ public class ParametroCobrancaDTO {
 	boolean sexta;
 	boolean sabado;
 	
-	List<Long> fornecedoresId;
+	private List<Long> fornecedoresId;
 	
 	private FormaCobrancaBoleto formaCobrancaBoleto;	
 

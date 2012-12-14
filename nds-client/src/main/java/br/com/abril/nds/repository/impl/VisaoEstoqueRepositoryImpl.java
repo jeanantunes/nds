@@ -77,7 +77,7 @@ public class VisaoEstoqueRepositoryImpl extends AbstractRepository implements
 		if (filtro.getIdFornecedor() != -1) {
 			hql.append("   JOIN pe.produto.fornecedores f ");
 		}
-		hql.append("  WHERE ep.data = :data ");
+		hql.append("  WHERE ep.data =:data ");
 		if (filtro.getIdFornecedor() != -1) {
 			hql.append("    AND f.id = :idFornecedor ");
 		}

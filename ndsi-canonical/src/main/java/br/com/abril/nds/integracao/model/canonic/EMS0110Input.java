@@ -60,21 +60,22 @@ public class EMS0110Input extends IntegracaoDocument implements Serializable {
 	private String segmentacaoLancamento;
 	private String segmentacaoTemaPrincipal;
 	private String segmentacaoTemaSecundario;
-	private String codCategoria;
+	private Long codCategoria;
 	private Integer contextoProdReferencia;
 	private Long codFornecProdReferencia;	
 	private String codProdReferencia;
-	private BigDecimal tipoDesconto;		
+	private String tipoDesconto;		
 	private Integer contextoEditor;			
 	private Long codEditor;					
 	private Integer contextoPublicacao;
-	private Long codFornecPublicacao;
+	private Integer codFornecPublicacao;
 	private String codColecao;
 	private String formaInclusao;
 	private String codPublicacao;
 	private String campoObscuro;
 	private String nomeComercial;
-	
+	private String formaComercializacao;
+
 	@Field(offset = 1, length = 7)
 	public String getCodDistrib() {
 		return codDistrib;
@@ -288,6 +289,15 @@ public class EMS0110Input extends IntegracaoDocument implements Serializable {
 		this.valorMaterialTroca = valorMaterialTroca;
 	}
 	
+	@Field(offset = 159, length = 3)
+	public String getFormaComercializacao() {
+		return formaComercializacao;
+	}
+	
+	public void setFormaComercializacao(String formaComercializacao) {
+		this.formaComercializacao = formaComercializacao;
+	}
+	
 	@Field(offset = 186, length = 1)
 	@FixedFormatBoolean(trueValue = "S", falseValue = "N")
 	public boolean isContemBrinde() {
@@ -445,11 +455,11 @@ public class EMS0110Input extends IntegracaoDocument implements Serializable {
 	}
 	
 	@Field(offset = 567, length = 3)
-	public String getCodCategoria() {
+	public Long getCodCategoria() {
 		return codCategoria;
 	}
 	
-	public void setCodCategoria(String codCategoria) {
+	public void setCodCategoria(Long codCategoria) {
 		this.codCategoria = codCategoria;
 	}
 	
@@ -481,11 +491,11 @@ public class EMS0110Input extends IntegracaoDocument implements Serializable {
 	}
 	
 	@Field(offset = 590, length = 2)
-	public BigDecimal getTipoDesconto() {
+	public String getTipoDesconto() {
 		return tipoDesconto;
 	}
 	
-	public void setTipoDesconto(BigDecimal tipoDesconto) {
+	public void setTipoDesconto(String tipoDesconto) {
 		this.tipoDesconto = tipoDesconto;
 	}
 	
@@ -517,11 +527,11 @@ public class EMS0110Input extends IntegracaoDocument implements Serializable {
 	}
 	
 	@Field(offset = 601, length = 7)
-	public Long getCodFornecPublicacao() {
+	public Integer getCodFornecPublicacao() {
 		return codFornecPublicacao;
 	}
 	
-	public void setCodFornecPublicacao(Long codFornecPublicacao) {
+	public void setCodFornecPublicacao(Integer codFornecPublicacao) {
 		this.codFornecPublicacao = codFornecPublicacao;
 	}
 	

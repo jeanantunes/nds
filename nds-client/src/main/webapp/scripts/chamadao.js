@@ -172,7 +172,7 @@ var chamadaoController = $.extend(true, {
 		
 		chamadaoController.iniciarData();
 		
-		$("#numeroCota", chamadaoController.workspace).focus();
+		$("#numeroCotaChamadao", chamadaoController.workspace).focus();
 		
 		$("#descricaoCota", chamadaoController.workspace).autocomplete({source: ""});
 
@@ -198,7 +198,7 @@ var chamadaoController = $.extend(true, {
 			numeroCota = $("#numeroCotaFollowUp", chamadaoController.workspace).val();
 			dataChamadaoFormatada = $("#dataCotaFollowUp", chamadaoController.workspace).val();
 		} else {
-			numeroCota = $("#numeroCota", chamadaoController.workspace).val();
+			numeroCota = $("#numeroCotaChamadao", chamadaoController.workspace).val();
 			dataChamadaoFormatada = $("#dataChamadao", chamadaoController.workspace).val();
 			idFornecedor = $("#idFornecedor", chamadaoController.workspace).val();
 			idEditor = $("#idEditor", chamadaoController.workspace).val();
