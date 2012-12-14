@@ -105,6 +105,14 @@ public interface RoteirizacaoService {
 	Roteiro obterRoteiroDeBoxPorOrdem(Long idBox);
 	
 	/**
+	 * Obtém o Roteiro ao qual a rota parametrizada pertence
+	 * 
+	 * @param rotaID
+	 * @return
+	 */
+	Roteiro obterRoteiroPorRota(Long rotaID);
+	
+	/**
 	 * Obtém um Rota do Roteiro considerando a ordem
 	 * @param idRoteiro
 	 * @return Rota
@@ -176,9 +184,10 @@ public interface RoteirizacaoService {
 	
 	/**
 	 * Obtém PDVS's disponiveis
+	 * @param boxID 
 	 * @return List<PdvRoteirizacaoDTO>
 	 */
-	public List<PdvRoteirizacaoDTO> obterPdvsDisponiveis(Integer numCota, String municipio, String uf, String bairro, String cep, boolean pesquisaPorCota);
+	public List<PdvRoteirizacaoDTO> obterPdvsDisponiveis(Integer numCota, String municipio, String uf, String bairro, String cep, boolean pesquisaPorCota, Long boxID);
 	
 	/**
 	 * Verifica se pdv esta disponivel (não vinculado a um box roteirizado)
@@ -241,6 +250,13 @@ public interface RoteirizacaoService {
 	 * @param roteirizacaoDTO
 	 */
 	void carregarRotasEntregadores(RoteirizacaoDTO roteirizacao);
-
+	
+	/**
+	 * Obtém as rotas que não pertencem ao roteiro parametrizado
+	 * 
+	 * @param roteiroID
+	 * @return
+	 */
+	List<RotaRoteirizacaoDTO> obterRotasNaoAssociadasAoRoteiro(Long roteiroID); 
 }
 	
