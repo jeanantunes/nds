@@ -273,6 +273,10 @@ public class DescontoProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel
 		DescontoProximosLancamentos descontoProximosLancamentos = this.descontoProximosLancamentosRepository.
 				obterDescontoProximosLancamentosPor(lancamento.getProdutoEdicao().getProduto().getId(), 
 						lancamento.getDataLancamentoPrevista());
+		
+		if(descontoProximosLancamentos != null && descontoProximosLancamentos.isAplicadoATodasAsCotas()) {
+			return new BigInteger(descontoProximosLancamentos.getDesconto().getId().toString());
+		}
 
 		if (descontoProximosLancamentos != null) {	
 

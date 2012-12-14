@@ -1,10 +1,7 @@
 package br.com.abril.nds.repository;
 
-import java.util.List;
-
-import br.com.abril.nds.dto.TipoDescontoDTO;
-import br.com.abril.nds.dto.filtro.FiltroTipoDescontoDTO;
 import br.com.abril.nds.model.cadastro.Produto;
+import br.com.abril.nds.model.cadastro.desconto.Desconto;
 import br.com.abril.nds.model.cadastro.desconto.HistoricoDescontoProduto;
 
 /**
@@ -16,24 +13,12 @@ import br.com.abril.nds.model.cadastro.desconto.HistoricoDescontoProduto;
 public interface HistoricoDescontoProdutoRepository extends Repository<HistoricoDescontoProduto, Long> {
 
 	/**
-	 * Retorna os descontos do Produto
-	 * @param filtro - filtro de cosnulta
-	 * @return List<TipoDescontoDTO> 
-	 */
-	List<TipoDescontoDTO> buscarDescontos(FiltroTipoDescontoDTO filtro);
-	
-	/**
-	 * Retorna a quantidade de descontos do Produto
-	 * @param filtro - filtro de cosnulta
-	 * @return Integer
-	 */
-	Integer buscarQuantidadeDescontos(FiltroTipoDescontoDTO filtro);
-		
-	/**
-	 * Retorna o ultimo desconto valido do Produto
+	 * Retorna o historico do desconto do Produto
 	 * 
-	 * @return HistoricoDescontoProduto
+	 * @param desconto
+	 * @param produto
+	 * @return
 	 */
-	HistoricoDescontoProduto buscarUltimoDescontoValido(Produto produto);
+	HistoricoDescontoProduto buscarHistoricoPorDescontoEProduto(Desconto desconto, Produto produto);
 	
 }

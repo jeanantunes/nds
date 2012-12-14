@@ -535,7 +535,7 @@ public class DescontoServiceImpl implements DescontoService {
 			case 5:
 			case 6:
 				
-				Set<Cota> cotas = obterCotas(descontoDTO.getCotas(), descontoDTO.isTodasCotas());
+				Set<Cota> cotas = obterCotas(descontoDTO.getCotas());
 				
 				produto = produtoRepository.obterProdutoPorCodigo(descontoDTO.getCodigoProduto());
 
@@ -546,7 +546,13 @@ public class DescontoServiceImpl implements DescontoService {
 				descontoProximosLancamentos.setQuantidadeProximosLancamaentos(descontoDTO.getQuantidadeEdicoes());
 				descontoProximosLancamentos.setValorDesconto(desconto.getValor());
 				descontoProximosLancamentos.setDesconto(desconto);
-				descontoProximosLancamentos.setCotas(cotas);
+				descontoProximosLancamentos.setAplicadoATodasAsCotas(descontoDTO.isTodasCotas());
+				
+				if(descontoDTO.isTodasCotas()) 
+					descontoProximosLancamentos.setCotas(null);
+				else
+					descontoProximosLancamentos.setCotas(cotas);
+				
 				descontoProximosLancamentos.setUsuario(usuario);
 				descontoProximosLancamentos.setDistribuidor(distribuidor);
 				this.descontoProximosLancamentosRepository.adicionar(descontoProximosLancamentos);
@@ -912,7 +918,7 @@ public class DescontoServiceImpl implements DescontoService {
 	 * 
 	 * @return {@link Set} de {@link Cota}
 	 */
-	private Set<Cota> obterCotas(List<Integer> idsCotas, boolean isTodasCotas) {
+	private Set<Cota> obterCotas(List<Integer> idsCotas) {
 
 		Set<Cota> cotas = null;
 
@@ -927,9 +933,6 @@ public class DescontoServiceImpl implements DescontoService {
 				cotas.add(cota);
 			}
 
-		} else if (isTodasCotas) {
-
-			cotas = new HashSet<Cota>(this.cotaRepository.buscarTodos());
 		}
 
 		return cotas;
@@ -1010,14 +1013,24 @@ public class DescontoServiceImpl implements DescontoService {
 		
 		List<Produto> produtos = descontoRepository.buscarProdutosQueUsamDescontoProduto(desconto);
 		
-		for(ProdutoEdicao pe : produtosEdicoes) {
-			pe.setDescontoProdutoEdicao(null);
+		for(ProdutoEdicao produtoEdicao : produtosEdicoes) {
+			
+			HistoricoDescontoProdutoEdicao hdpe = historicoDescontoProdutoEdicaoRepository.buscarHistoricoPorDescontoEProduto(desconto, produtoEdicao);
+			historicoDescontoProdutoEdicaoRepository.remover(hdpe);
+			
+			produtoEdicao.setDescontoProdutoEdicao(null);
+			
 		}
 		
-		for(Produto p : produtos) {
-			p.setDescontoProduto(null);
+		for(Produto produto : produtos) {
+			
+			HistoricoDescontoProduto hdp = historicoDescontoProdutoRepository.buscarHistoricoPorDescontoEProduto(desconto, produto);
+			historicoDescontoProdutoRepository.remover(hdp);
+			
+			produto.setDescontoProduto(null);
+			
 		}
-
+		
 	}
 
 	/*

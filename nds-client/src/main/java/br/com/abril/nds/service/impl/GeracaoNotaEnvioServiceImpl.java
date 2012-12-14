@@ -216,8 +216,8 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 		cotaExemplares.setNotaImpressa(false);
 
 		for (MovimentoEstoqueCota movimento : listaMovimentoEstoqueCota) {
-			BigDecimal precoVenda = movimento.getValoresAplicados().getPrecoVenda();
-			BigDecimal valorDesconto = movimento.getValoresAplicados().getPrecoComDesconto();			
+			BigDecimal precoVenda = new BigDecimal("20.90"); //movimento.getValoresAplicados().getPrecoVenda();
+			BigDecimal valorDesconto = new BigDecimal("10"); // movimento.getValoresAplicados().getPrecoComDesconto();			
 			quantidade = quantidade.add(movimento.getQtde());
 			preco = preco.add(precoVenda.multiply(new BigDecimal(movimento.getQtde())));
 			precoComDesconto = precoComDesconto.add(

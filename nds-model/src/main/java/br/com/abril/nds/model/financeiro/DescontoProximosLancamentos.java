@@ -202,5 +202,19 @@ public class DescontoProximosLancamentos implements Serializable {
 	public void setDesconto(Desconto desconto) {
 		this.desconto = desconto;
 	}
+
+	/**
+	 * @return
+	 */
+	public boolean isAplicadoATodasAsCotas() {
+		return aplicadoATodasAsCotas;
+	}
+
+	/**
+	 * @param aplicadoATodasAsCotas
+	 */
+	public void setAplicadoATodasAsCotas(boolean aplicadoATodasAsCotas) {
+		this.aplicadoATodasAsCotas = aplicadoATodasAsCotas;
+	}
 	
 }
