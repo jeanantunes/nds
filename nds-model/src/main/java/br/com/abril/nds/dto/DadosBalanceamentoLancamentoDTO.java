@@ -1,13 +1,11 @@
 package br.com.abril.nds.dto;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
-
-import br.com.abril.nds.vo.ConfirmacaoVO;
 
 /**
  * DTO que representa os dados referentes ao balanceamento do recolhimento. 
@@ -26,19 +24,15 @@ public class DadosBalanceamentoLancamentoDTO implements Serializable {
 	
 	private Set<Date> datasExpectativaReparte;
 	
-	private BigDecimal capacidadeDistribuicao;
+	private BigInteger capacidadeDistribuicao;
 	
 	private TreeSet<Date> datasDistribuicaoFornecedor;
 	
 	private Integer qtdDiasLimiteParaReprogLancamento;
 	
-	private boolean configuracaoInicial;
-	
 	private int numeroSemana;
 	
 	private Date dataLancamento;
-	
-	private List<ConfirmacaoVO> datasConfirmacao;
 
 	/**
 	 * Construtor padrão.
@@ -50,14 +44,14 @@ public class DadosBalanceamentoLancamentoDTO implements Serializable {
 	/**
 	 * @return the capacidadeDistribuicao
 	 */
-	public BigDecimal getCapacidadeDistribuicao() {
+	public BigInteger getCapacidadeDistribuicao() {
 		return capacidadeDistribuicao;
 	}
 
 	/**
 	 * @param capacidadeDistribuicao the capacidadeDistribuicao to set
 	 */
-	public void setCapacidadeDistribuicao(BigDecimal capacidadeDistribuicao) {
+	public void setCapacidadeDistribuicao(BigInteger capacidadeDistribuicao) {
 		this.capacidadeDistribuicao = capacidadeDistribuicao;
 	}
 
@@ -120,20 +114,6 @@ public class DadosBalanceamentoLancamentoDTO implements Serializable {
 	}
 
 	/**
-	 * @return the configuracaoInicial
-	 */
-	public boolean isConfiguracaoInicial() {
-		return configuracaoInicial;
-	}
-
-	/**
-	 * @param configuracaoInicial the configuracaoInicial to set
-	 */
-	public void setConfiguracaoInicial(boolean configuracaoInicial) {
-		this.configuracaoInicial = configuracaoInicial;
-	}
-
-	/**
 	 * @return the numeroSemana
 	 */
 	public int getNumeroSemana() {
@@ -159,20 +139,6 @@ public class DadosBalanceamentoLancamentoDTO implements Serializable {
 	 */
 	public void setDataLancamento(Date dataLancamento) {
 		this.dataLancamento = dataLancamento;
-	}
-
-	/**
-	 * @return the datasConfirmacao
-	 */
-	public List<ConfirmacaoVO> getDatasConfirmacao() {
-		return datasConfirmacao;
-	}
-
-	/**
-	 * @param datasConfirmacao the datasConfirmacao to set
-	 */
-	public void setDatasConfirmacao(List<ConfirmacaoVO> datasConfirmacao) {
-		this.datasConfirmacao = datasConfirmacao;
 	}
 	
 }

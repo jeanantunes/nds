@@ -205,6 +205,11 @@ public class EnderecoServiceImpl implements EnderecoService {
 		return enderecoRepository.obterMunicipiosCotas();
 	}
 	
+	@Override
+	@Transactional(readOnly = true)
+	public List<String> obterUnidadeFederativaAssociadaComEndereco() {
+		return enderecoRepository.obterUFs();
+	}
 	
 
 	/**

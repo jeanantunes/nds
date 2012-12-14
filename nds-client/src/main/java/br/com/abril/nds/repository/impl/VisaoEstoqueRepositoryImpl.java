@@ -13,7 +13,6 @@ import br.com.abril.nds.dto.VisaoEstoqueDetalheJuramentadoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaVisaoEstoque;
 import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.repository.VisaoEstoqueRepository;
-import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.StringUtil;
 
 @Repository

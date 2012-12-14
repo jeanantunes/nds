@@ -150,7 +150,7 @@ public class EMS0119MessageProcessor extends AbstractRepository implements
 			produto = new Produto();
 			produto.setCodigo(input.getCodigoDaPublicacao());
 			produto.setNome(input.getNomeDaPublicacao());
-			produto.setPeriodicidade(PeriodicidadeProduto.values()[input.getPeriodicidade()]);
+			produto.setPeriodicidade(PeriodicidadeProduto.getByOrdem(input.getPeriodicidade()));
 			produto.setPacotePadrao(input.getPacotePadrao());
 			produto.setNomeComercial(input.getNomeComercial());
 			produto.setAtivo(input.getStatusDaPublicacao());			

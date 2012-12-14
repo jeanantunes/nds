@@ -25,7 +25,7 @@
 
 <script language="javascript" type="text/javascript">
 	
-	var pesquisaCotaCadastroCota = new PesquisaCota();
+	var pesquisaCotaCadastroCota = new PesquisaCota(MANTER_COTA.workspace);
 	
 	$(function() {
 		MANTER_COTA.init();	

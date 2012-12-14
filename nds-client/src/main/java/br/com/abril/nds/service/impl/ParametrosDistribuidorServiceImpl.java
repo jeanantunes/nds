@@ -2,6 +2,7 @@ package br.com.abril.nds.service.impl;
 
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -485,8 +486,14 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		parametrosRecolhimentoDistribuidor.setConferenciaCegaRecebimento(parametrosDistribuidor.isConferenciaCegaRecebimento());
 		distribuidor.setParametrosRecolhimentoDistribuidor(parametrosRecolhimentoDistribuidor);
 		
-		distribuidor.setCapacidadeDistribuicao(new BigDecimal(parametrosDistribuidor.getCapacidadeManuseioHomemHoraLancamento()));
-		distribuidor.setCapacidadeRecolhimento(new BigDecimal(parametrosDistribuidor.getCapacidadeManuseioHomemHoraRecolhimento()));
+		distribuidor.setCapacidadeDistribuicao((parametrosDistribuidor.getCapacidadeManuseioHomemHoraLancamento() != null)
+												? new BigInteger(parametrosDistribuidor.getCapacidadeManuseioHomemHoraLancamento().toString())
+												: null);
+		
+		distribuidor.setCapacidadeRecolhimento((parametrosDistribuidor.getCapacidadeManuseioHomemHoraRecolhimento() != null)
+												? new BigInteger(parametrosDistribuidor.getCapacidadeManuseioHomemHoraRecolhimento().toString())
+												: null);
+		
 		distribuidor.setQntDiasReutilizacaoCodigoCota(parametrosDistribuidor.getReutilizacaoCodigoCotaInativa());
 		
 		distribuidor.setUtilizaSugestaoIncrementoCodigo(parametrosDistribuidor.isUtilizaSugestaoIncrementoCodigo());

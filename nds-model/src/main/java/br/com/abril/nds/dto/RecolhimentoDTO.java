@@ -1,7 +1,7 @@
 package br.com.abril.nds.dto;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 import java.util.TreeMap;
@@ -19,15 +19,15 @@ public class RecolhimentoDTO implements Serializable {
 
 	private List<ProdutoRecolhimentoDTO> produtosRecolhimento;
 	
-	private TreeMap<Date, BigDecimal> mapaExpectativaEncalheTotalDiaria;
+	private TreeMap<Date, BigInteger> mapaExpectativaEncalheTotalDiaria;
 	
-	private BigDecimal capacidadeRecolhimentoDistribuidor;
+	private BigInteger capacidadeRecolhimentoDistribuidor;
 	
 	private TreeSet<Date> datasRecolhimentoFornecedor;
 	
 	private boolean semanaRecolhimento;
 	
-	private boolean configuracaoInicial;
+	private boolean forcarBalanceamento;
 
 	/**
 	 * Construtor padrão.
@@ -39,7 +39,7 @@ public class RecolhimentoDTO implements Serializable {
 	/**
 	 * @return the capacidadeRecolhimentoDistribuidor
 	 */
-	public BigDecimal getCapacidadeRecolhimentoDistribuidor() {
+	public BigInteger getCapacidadeRecolhimentoDistribuidor() {
 		return capacidadeRecolhimentoDistribuidor;
 	}
 
@@ -47,14 +47,14 @@ public class RecolhimentoDTO implements Serializable {
 	 * @param capacidadeRecolhimentoDistribuidor the capacidadeRecolhimentoDistribuidor to set
 	 */
 	public void setCapacidadeRecolhimentoDistribuidor(
-			BigDecimal capacidadeRecolhimentoDistribuidor) {
+			BigInteger capacidadeRecolhimentoDistribuidor) {
 		this.capacidadeRecolhimentoDistribuidor = capacidadeRecolhimentoDistribuidor;
 	}
 
 	/**
 	 * @return the mapaExpectativaEncalheTotalDiaria
 	 */
-	public TreeMap<Date, BigDecimal> getMapaExpectativaEncalheTotalDiaria() {
+	public TreeMap<Date, BigInteger> getMapaExpectativaEncalheTotalDiaria() {
 		return mapaExpectativaEncalheTotalDiaria;
 	}
 
@@ -62,7 +62,7 @@ public class RecolhimentoDTO implements Serializable {
 	 * @param mapaExpectativaEncalheTotalDiaria the mapaExpectativaEncalheTotalDiaria to set
 	 */
 	public void setMapaExpectativaEncalheTotalDiaria(
-			TreeMap<Date, BigDecimal> mapaExpectativaEncalheTotalDiaria) {
+			TreeMap<Date, BigInteger> mapaExpectativaEncalheTotalDiaria) {
 		this.mapaExpectativaEncalheTotalDiaria = mapaExpectativaEncalheTotalDiaria;
 	}
 
@@ -111,17 +111,17 @@ public class RecolhimentoDTO implements Serializable {
 	}
 
 	/**
-	 * @return the configuracaoInicial
+	 * @return the forcarBalanceamento
 	 */
-	public boolean isConfiguracaoInicial() {
-		return configuracaoInicial;
+	public boolean isForcarBalanceamento() {
+		return forcarBalanceamento;
 	}
 
 	/**
-	 * @param configuracaoInicial the configuracaoInicial to set
+	 * @param forcarBalanceamento the forcarBalanceamento to set
 	 */
-	public void setConfiguracaoInicial(boolean configuracaoInicial) {
-		this.configuracaoInicial = configuracaoInicial;
+	public void setForcarBalanceamento(boolean forcarBalanceamento) {
+		this.forcarBalanceamento = forcarBalanceamento;
 	}
 	
 }

@@ -1,6 +1,6 @@
 package br.com.abril.nds.strategy.devolucao;
 
-import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -48,7 +48,7 @@ public class AbstractBalanceamentoRecolhimentoStrategyTest {
 		
 		RecolhimentoDTO dadosRecolhimento = new RecolhimentoDTO();
 		
-		dadosRecolhimento.setCapacidadeRecolhimentoDistribuidor(new BigDecimal("100"));
+		dadosRecolhimento.setCapacidadeRecolhimentoDistribuidor(new BigInteger("100"));
 		
 		BalanceamentoRecolhimentoDTO balanceamentoRecolhimento = 
 			balanceamentoRecolhimentoStrategy.balancear(dadosRecolhimento);
@@ -110,9 +110,9 @@ public class AbstractBalanceamentoRecolhimentoStrategyTest {
 		
 		RecolhimentoDTO dadosRecolhimento = new RecolhimentoDTO();
 		
-		TreeMap<Date, BigDecimal> mapaExpectativaEncalheTotalDiaria = new TreeMap<Date, BigDecimal>();
+		TreeMap<Date, BigInteger> mapaExpectativaEncalheTotalDiaria = new TreeMap<Date, BigInteger>();
 		
-		mapaExpectativaEncalheTotalDiaria.put(new Date(), BigDecimal.TEN);
+		mapaExpectativaEncalheTotalDiaria.put(new Date(), BigInteger.TEN);
 		
 		dadosRecolhimento.setMapaExpectativaEncalheTotalDiaria(mapaExpectativaEncalheTotalDiaria);
 		

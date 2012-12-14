@@ -2436,21 +2436,46 @@ public class DataLoader {
 
 	private static void gerarTipoEstabelecimentoAssociacaoPDV(Session session) {
 
-		TipoEstabelecimentoAssociacaoPDV tipoEstabelecimentoAssociacaoPDV = Fixture.criarTipoEstabelecimentoAssociacaoPDV(10L, "Galeria");
-		TipoEstabelecimentoAssociacaoPDV tipoEstabelecimentoAssociacaoPDV1 = Fixture.criarTipoEstabelecimentoAssociacaoPDV(11L, "Hiper / Supermercado");
-		TipoEstabelecimentoAssociacaoPDV tipoEstabelecimentoAssociacaoPDV2 = Fixture.criarTipoEstabelecimentoAssociacaoPDV(12L, "Shopping");
-		TipoEstabelecimentoAssociacaoPDV tipoEstabelecimentoAssociacaoPDV3 = Fixture.criarTipoEstabelecimentoAssociacaoPDV(13L, "Posto Serviço");
+		TipoEstabelecimentoAssociacaoPDV tipoEstabelecimentoAssociacaoPDV1 = Fixture.criarTipoEstabelecimentoAssociacaoPDV(1L, "Aeroporto");
+		TipoEstabelecimentoAssociacaoPDV tipoEstabelecimentoAssociacaoPDV2 = Fixture.criarTipoEstabelecimentoAssociacaoPDV(2L, "Clube");
+		TipoEstabelecimentoAssociacaoPDV tipoEstabelecimentoAssociacaoPDV3 = Fixture.criarTipoEstabelecimentoAssociacaoPDV(3L, "Colégio");
+	    TipoEstabelecimentoAssociacaoPDV tipoEstabelecimentoAssociacaoPDV4 = Fixture.criarTipoEstabelecimentoAssociacaoPDV(4L, "Condomínio");
+		TipoEstabelecimentoAssociacaoPDV tipoEstabelecimentoAssociacaoPDV5 = Fixture.criarTipoEstabelecimentoAssociacaoPDV(5L, "Empresa");
+		TipoEstabelecimentoAssociacaoPDV tipoEstabelecimentoAssociacaoPDV6 = Fixture.criarTipoEstabelecimentoAssociacaoPDV(6L, "Estacionamento");
+		TipoEstabelecimentoAssociacaoPDV tipoEstabelecimentoAssociacaoPDV7 = Fixture.criarTipoEstabelecimentoAssociacaoPDV(7L, "Faculdade");
+		TipoEstabelecimentoAssociacaoPDV tipoEstabelecimentoAssociacaoPDV8 = Fixture.criarTipoEstabelecimentoAssociacaoPDV(8L, "Hiper/Super");
+		TipoEstabelecimentoAssociacaoPDV tipoEstabelecimentoAssociacaoPDV9 = Fixture.criarTipoEstabelecimentoAssociacaoPDV(9L, "Hospital");
+		TipoEstabelecimentoAssociacaoPDV tipoEstabelecimentoAssociacaoPDV10 = Fixture.criarTipoEstabelecimentoAssociacaoPDV(10L, "Metrô");
+		TipoEstabelecimentoAssociacaoPDV tipoEstabelecimentoAssociacaoPDV11 = Fixture.criarTipoEstabelecimentoAssociacaoPDV(11L, "Outros");
+		TipoEstabelecimentoAssociacaoPDV tipoEstabelecimentoAssociacaoPDV12 = Fixture.criarTipoEstabelecimentoAssociacaoPDV(12L, "Parque");
+		TipoEstabelecimentoAssociacaoPDV tipoEstabelecimentoAssociacaoPDV13 = Fixture.criarTipoEstabelecimentoAssociacaoPDV(13L, "Posto");
+		TipoEstabelecimentoAssociacaoPDV tipoEstabelecimentoAssociacaoPDV14 = Fixture.criarTipoEstabelecimentoAssociacaoPDV(14L, "Repartição Pública");
+		TipoEstabelecimentoAssociacaoPDV tipoEstabelecimentoAssociacaoPDV15 = Fixture.criarTipoEstabelecimentoAssociacaoPDV(15L, "Rodoviária");
+		TipoEstabelecimentoAssociacaoPDV tipoEstabelecimentoAssociacaoPDV16 = Fixture.criarTipoEstabelecimentoAssociacaoPDV(16L, "Shopping");
+		TipoEstabelecimentoAssociacaoPDV tipoEstabelecimentoAssociacaoPDV17 = Fixture.criarTipoEstabelecimentoAssociacaoPDV(17L, "Terminal de Ônibus");
 
-		save(session,tipoEstabelecimentoAssociacaoPDV,tipoEstabelecimentoAssociacaoPDV1,tipoEstabelecimentoAssociacaoPDV2,tipoEstabelecimentoAssociacaoPDV3);
+		save(session,tipoEstabelecimentoAssociacaoPDV1,tipoEstabelecimentoAssociacaoPDV2,tipoEstabelecimentoAssociacaoPDV3,
+			         tipoEstabelecimentoAssociacaoPDV4,tipoEstabelecimentoAssociacaoPDV5,tipoEstabelecimentoAssociacaoPDV6,
+			         tipoEstabelecimentoAssociacaoPDV7,tipoEstabelecimentoAssociacaoPDV8,tipoEstabelecimentoAssociacaoPDV9,
+			         tipoEstabelecimentoAssociacaoPDV10,tipoEstabelecimentoAssociacaoPDV11,tipoEstabelecimentoAssociacaoPDV12,
+			         tipoEstabelecimentoAssociacaoPDV13,tipoEstabelecimentoAssociacaoPDV14,tipoEstabelecimentoAssociacaoPDV15,
+			         tipoEstabelecimentoAssociacaoPDV16,tipoEstabelecimentoAssociacaoPDV17);
 	}
 	
 	private static void gerarAreaInfluenciaPDV(Session session) {
+		
+		AreaInfluenciaPDV areaInfluenciaPDV1 = Fixture.criarAreaInfluenciaPDV(1L, "AREA COMERCIAL A/B"); 
+		AreaInfluenciaPDV areaInfluenciaPDV2 = Fixture.criarAreaInfluenciaPDV(2L, "AREA COMERCIAL C/D"); 
+		AreaInfluenciaPDV areaInfluenciaPDV3 = Fixture.criarAreaInfluenciaPDV(3L, "COMERCIAL"); 
+		AreaInfluenciaPDV areaInfluenciaPDV4 = Fixture.criarAreaInfluenciaPDV(4L, "CONVENIENCIA VIAGEM"); 
+		AreaInfluenciaPDV areaInfluenciaPDV5 = Fixture.criarAreaInfluenciaPDV(5L, "ESCRITORIO A/B"); 
+		AreaInfluenciaPDV areaInfluenciaPDV6 = Fixture.criarAreaInfluenciaPDV(6L, "ESCRITORIO E FABRICA C/D"); 
+		AreaInfluenciaPDV areaInfluenciaPDV7 = Fixture.criarAreaInfluenciaPDV(7L, "RESIDENCIAL A/B"); 
+		AreaInfluenciaPDV areaInfluenciaPDV8 = Fixture.criarAreaInfluenciaPDV(8L, "RESIDENCIAL C/D");
 
-		AreaInfluenciaPDV areaInfluenciaPDV = Fixture.criarAreaInfluenciaPDV(1L, "Residencial");
-		AreaInfluenciaPDV areaInfluenciaPDV1 = Fixture.criarAreaInfluenciaPDV(2L, "Residencial XX");
-		AreaInfluenciaPDV areaInfluenciaPDV2 = Fixture.criarAreaInfluenciaPDV(3L, "Estradas");
-
-		save(session,areaInfluenciaPDV,areaInfluenciaPDV1,areaInfluenciaPDV2);
+		save(session,areaInfluenciaPDV1,areaInfluenciaPDV2,areaInfluenciaPDV3,
+				     areaInfluenciaPDV4,areaInfluenciaPDV5,areaInfluenciaPDV6,
+				     areaInfluenciaPDV7,areaInfluenciaPDV8);
 	}
 
 	private static void gerarMaterialPromocionalPDV(Session session) {

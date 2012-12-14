@@ -166,7 +166,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 		
 		Distribuidor distribuidor = distribuidorService.obter();
 		
-		diferenca.setStatusConfirmacao(StatusConfirmacao.PENDENTE);
+		diferenca.setStatusConfirmacao(StatusConfirmacao.CONFIRMADO);
 		diferenca.setTipoDirecionamento(TipoDirecionamentoDiferenca.ESTOQUE);
 		diferenca.setTipoEstoque(TipoEstoque.LANCAMENTO);
 		diferenca.setAutomatica(true);

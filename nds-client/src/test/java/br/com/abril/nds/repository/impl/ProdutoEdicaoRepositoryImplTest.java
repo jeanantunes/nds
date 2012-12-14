@@ -322,7 +322,7 @@ public class ProdutoEdicaoRepositoryImplTest extends AbstractRepositoryImplTest 
 	@Test
 	public void pesquisarEdicoesStatusLancamento() {
 		
-		StatusLancamento status = StatusLancamento.CALCULADO;
+		StatusLancamento status = StatusLancamento.EXPEDIDO;
 		
 		List<ProdutoEdicaoDTO> produtoEdicaoDTOs =
 			produtoEdicaoRepository.pesquisarEdicoes(null, null, null, null, status, null, false, null, null, 0, 0);
