@@ -30,6 +30,16 @@
 		</div>
 		</form>
 		
+		<form id="form-confirm-config-inicial">
+		<div id="dialog-confirm-config-inicial" title="Balanceamento da Matriz de Recolhimento" style="display:none;">
+			
+			<jsp:include page="../messagesDialog.jsp" />
+			
+			<p>Ao voltar a configuração inicial, você perdará os dados salvos. Deseja prosseguir?</p>
+			   
+		</div>
+		</form>
+		
 		<form id="form-confirm-balanceamento">
 		<div id="dialog-confirm-balanceamento" title="Balanceamento" style="display:none;">
 		    

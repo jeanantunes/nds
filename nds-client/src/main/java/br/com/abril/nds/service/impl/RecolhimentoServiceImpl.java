@@ -638,7 +638,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		
 		dadosRecolhimento.setSemanaRecolhimento(semanaRecolhimento);
 		
-		dadosRecolhimento.setConfiguracaoInicial(forcarBalanceamento);
+		dadosRecolhimento.setForcarBalanceamento(forcarBalanceamento);
 		
 		return dadosRecolhimento;
 	}
@@ -727,6 +727,24 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 				periodoRecolhimento.getDe(), periodoRecolhimento.getAte(), diasRecolhimentoSemana);
 		
 		return datasRecolhimento;
+	}
+
+	@Override
+	@Transactional
+	public void voltarConfiguracaoOriginal(Integer numeroSemana, Date anoBase, List<Long> fornecedores) {
+		
+		Distribuidor distribuidor = this.distribuidorService.obter();
+		
+		Intervalo<Date> periodoRecolhimento =
+			getPeriodoRecolhimento(distribuidor, numeroSemana, anoBase);
+		
+		List<Lancamento> lancamentos =  lancamentoRepository.obterLancamentosARecolherNaSemana(periodoRecolhimento, fornecedores);
+		
+		for(Lancamento lancamento: lancamentos) {
+			lancamento.setStatus(StatusLancamento.EXPEDIDO);
+			lancamento.setDataRecolhimentoDistribuidor(lancamento.getDataRecolhimentoPrevista());
+			lancamentoRepository.alterar(lancamento);
+		}
 	}
 	
 }
