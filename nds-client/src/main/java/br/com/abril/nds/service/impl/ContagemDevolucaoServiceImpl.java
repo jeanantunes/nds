@@ -82,7 +82,9 @@ import br.com.abril.nds.service.ControleNumeracaoNotaFiscalService;
 import br.com.abril.nds.service.DiferencaEstoqueService;
 import br.com.abril.nds.service.EdicoesFechadasService;
 import br.com.abril.nds.service.FornecedorService;
+import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.service.NotaFiscalService;
+import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.vo.ValidacaoVO;
@@ -143,7 +145,13 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 	
 	@Autowired
 	private ChamadaEncalheFornecedorRepository chamadaEncalheFornecedorRepository;
-	
+
+	@Autowired
+	private MovimentoEstoqueService movimentoEstoqueService;
+
+	@Autowired
+	private UsuarioService usuarioService;
+
     private static final Logger LOG = LoggerFactory.getLogger(ContagemDevolucaoServiceImpl.class);
 	
 	@Transactional
@@ -828,6 +836,11 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 		Set<Processo> processos = new HashSet<Processo>(1);		
 		processos.add(Processo.DEVOLUCAO_AO_FORNECEDOR);
 		Long idNota = notaFiscalService.emitiNotaFiscal(tipoNotaFiscal.getId(), new Date(), fornecedor, listItemNotaFiscal, transporte, informacaoAdicional, null, processos, Condicao.DEVOLUCAO_ENCALHE);
+
+		// Gerado por Cesar Pop Punk
+		// Movimentação de estoque
+		this.gerarMovimentoEstoque(nfSaidaFornecedor, itensNotaFiscalSaida);
+		
 		try {
 			notaFiscalService.exportarNotasFiscais(idNota);
 		} catch (Exception e) {
@@ -835,8 +848,22 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 		}
 	}
 	
-	
-	
+	public void gerarMovimentoEstoque(NotaFiscalSaidaFornecedor nfSaidaFornecedor, List<ItemNotaFiscalSaida> itensNotaFiscalSaida) {
+		
+		for ( ItemNotaFiscalSaida item : itensNotaFiscalSaida ) {
+
+			TipoMovimentoEstoque tipoMovimento = tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.DEVOLUCAO_ENCALHE);
+
+			movimentoEstoqueService.gerarMovimentoEstoque(
+					distribuidorService.obter().getDataOperacao(), 
+					item.getProdutoEdicao().getId(), 
+					usuarioService.getUsuarioLogado().getId(), 
+					item.getQtde(),
+					tipoMovimento);
+
+		}
+		
+	}
 	
 	/**
 	 * Gera e retorna uma lista de ContagemDevolucao, 

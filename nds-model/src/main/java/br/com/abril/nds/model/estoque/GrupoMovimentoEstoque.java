@@ -107,6 +107,11 @@ public enum GrupoMovimentoEstoque  {
 	 * Venda de encalhe suplementar do distruibuidor para a cota.
 	 */
 	VENDA_ENCALHE_SUPLEMENTAR(OperacaoEstoque.SAIDA, Dominio.DISTRIBUIDOR, TipoEstoque.SUPLEMENTAR),
+
+	/**
+	 * Devolução de encalhe do distruibuidor para o fornecedor.
+	 */
+	DEVOLUCAO_ENCALHE(OperacaoEstoque.SAIDA, Dominio.DISTRIBUIDOR, TipoEstoque.DEVOLUCAO_ENCALHE),
 	
 	/**
 	 * Estorno de encalhe vendido, devido a um cancelamento da venda.
