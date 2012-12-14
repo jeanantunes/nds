@@ -71,5 +71,14 @@ public interface RecolhimentoService {
 
 	Intervalo<Date> getPeriodoRecolhimento(Distribuidor distribuidor,
 			Integer numeroSemana, Date dataBalanceamento);
+
+	/**
+	 * Desfaz alterações de recolhimento sobre os lançamentos da semana desejada.
+	 * 
+	 * @param numeroSemana - Número da semana
+	 * @param date - Data contendo o ano 
+	 * @param fornecedores 
+	 */
+	void voltarConfiguracaoOriginal(Integer numeroSemana, Date date, List<Long> fornecedores);
 	
 }

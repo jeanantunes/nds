@@ -67,6 +67,11 @@ public class RoteirizacaoDTO implements Serializable{
     
     private Map<Long, Set<RoteiroRoteirizacaoDTO>> roteirosTransferidos = new HashMap<Long, Set<RoteiroRoteirizacaoDTO>>();
     
+    /**
+     * Lista das rotas que tiveram novos PDVs adicionados pela transferencia
+     */
+    private List<RotaRoteirizacaoDTO> rotasNovosPDVsTransferidos = new ArrayList<RotaRoteirizacaoDTO>();
+    
     private RoteirizacaoDTO(TipoEdicaoRoteirizacao tipoEdicao, List<BoxRoteirizacaoDTO> boxDisponiveis, boolean addBoxEspecial) {
         this.tipoEdicao = tipoEdicao;
         this.boxDisponiveis = new ArrayList<BoxRoteirizacaoDTO>();
@@ -77,6 +82,7 @@ public class RoteirizacaoDTO implements Serializable{
         this.todosBox = new ArrayList<BoxRoteirizacaoDTO>(this.boxDisponiveis);
     }
 	
+    
 
     /**
 	 * @return the id
@@ -154,8 +160,45 @@ public class RoteirizacaoDTO implements Serializable{
         return roteirosExclusao;
     }
 
+    public List<RotaRoteirizacaoDTO> getRotasNovosPDVsTransferidos() {
+		return rotasNovosPDVsTransferidos;
+	}
 
-    /**
+	/**
+     * Adiciona uma rota que pertence a outra roteirização e teve PDVs adicionados pela transferencia
+     * 
+     * @param rotaDTO
+     */
+    private void addRotaPDVsTransferidos(RotaRoteirizacaoDTO rotaDTO) {
+    	
+    	if(this.rotasNovosPDVsTransferidos == null) {
+    		this.rotasNovosPDVsTransferidos = new ArrayList<RotaRoteirizacaoDTO>();
+    	}
+    	
+    	this.rotasNovosPDVsTransferidos.add(rotaDTO);
+    }
+
+    
+    public RotaRoteirizacaoDTO obterRotaPDVsTransferidos(Rota rota) {
+    	
+    	if (this.rotasNovosPDVsTransferidos == null) 
+    		this.rotasNovosPDVsTransferidos = new ArrayList<RotaRoteirizacaoDTO>();
+    	
+    	for (RotaRoteirizacaoDTO rotaDTO : this.rotasNovosPDVsTransferidos) {
+    		
+    		if (rotaDTO.equals(rota.getId())) {
+    			return rotaDTO;
+    		}
+    	}
+    	
+    	RotaRoteirizacaoDTO novaRotaDTO = RotaRoteirizacaoDTO.getDTOFrom(rota);
+    	
+    	this.addRotaPDVsTransferidos(novaRotaDTO);
+    	
+    	return novaRotaDTO;
+    }
+
+	/**
      * Adiciona o identificador do roteiro para exclusão
      * 
      * @param idRoteiro

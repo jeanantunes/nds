@@ -2,6 +2,7 @@ package br.com.abril.nds.client.vo;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Date;
 
 import br.com.abril.nds.util.CurrencyUtil;
@@ -14,7 +15,7 @@ public class ResumoPeriodoBalanceamentoVO implements Serializable {
 	private Date data;
 	private String dataFormatada;
 	private Long qtdeTitulos;
-	private BigDecimal qtdeExemplares;
+	private BigInteger qtdeExemplares;
 	private String qtdeExemplaresFormatada;
 	private Long pesoTotal;
 	private String pesoTotalFormatado;
@@ -47,11 +48,11 @@ public class ResumoPeriodoBalanceamentoVO implements Serializable {
 		this.qtdeTitulos = qtdeTitulos;
 	}
 	
-	public BigDecimal getQtdeExemplares() {
+	public BigInteger getQtdeExemplares() {
 		return qtdeExemplares;
 	}
 	
-	public void setQtdeExemplares(BigDecimal qtdeExemplares) {
+	public void setQtdeExemplares(BigInteger qtdeExemplares) {
 		this.qtdeExemplares = qtdeExemplares;
 		if (qtdeExemplares != null) {
 			qtdeExemplaresFormatada = qtdeExemplares.toString();
@@ -96,7 +97,7 @@ public class ResumoPeriodoBalanceamentoVO implements Serializable {
 		ResumoPeriodoBalanceamentoVO resumo = new ResumoPeriodoBalanceamentoVO();
 		resumo.setData(data);
 		resumo.setPesoTotal(0L);
-		resumo.setQtdeExemplares(BigDecimal.ZERO);
+		resumo.setQtdeExemplares(BigInteger.ZERO);
 		resumo.setQtdeTitulos(0L);
 		resumo.setValorTotal(BigDecimal.ZERO);
 		return resumo;

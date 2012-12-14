@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -91,7 +92,7 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	 * 
 	 * @return Map<Date, BigDecimal>
 	 */
-	TreeMap<Date, BigDecimal> obterExpectativasEncalhePorData(
+	TreeMap<Date, BigInteger> obterExpectativasEncalhePorData(
 			Intervalo<Date> periodoRecolhimento, List<Long> fornecedores,
 			GrupoProduto grupoCromo);
 
@@ -308,5 +309,14 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 
 	List<MovimentoEstoqueCota> buscarMovimentosEstoqueCotaParaFuro(
 			Lancamento lancamento, TipoMovimentoEstoque tipoMovimentoFuroCota);
+	
+	Boolean existeLancamentoNaoBalanceado(Date dataLancamento);
+
+	List<Lancamento> obterLancamentosDistribuidorPorPeriodo(Intervalo<Date> periodoDistribuicao);
+	
+	List<Lancamento> obterLancamentosPrevistosPorPeriodo(Intervalo<Date> periodoDistribuicao);
+	
+	List<Lancamento> obterLancamentosARecolherNaSemana(
+			Intervalo<Date> periodoRecolhimento, List<Long> fornecedores);
 
 }

@@ -1,6 +1,7 @@
 package br.com.abril.nds.strategy.devolucao;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -106,7 +107,7 @@ public abstract class AbstractBalanceamentoRecolhimentoStrategy implements Balan
 			
 			if (produtoRecolhimento.getDataRecolhimentoDistribuidor().equals(dataRecolhimentoDesejada)) {
 				
-				if (this.isProdutoNaoBalanceavel(dadosRecolhimento.isConfiguracaoInicial(), produtoRecolhimento)) {
+				if (this.isProdutoNaoBalanceavel(dadosRecolhimento.isForcarBalanceamento(), produtoRecolhimento)) {
 					
 					produtosRecolhimentoNaoBalanceaveis.add(produtosRecolhimento.remove(indice--));
 				}
@@ -131,14 +132,14 @@ public abstract class AbstractBalanceamentoRecolhimentoStrategy implements Balan
 	 * Efetua a ordenação do mapa de expectativa de encalhe de acordo com as datas
 	 * de recolhimento passadas como parâmetro.
 	 */
-	protected Map<Date, BigDecimal> ordenarMapaExpectativaEncalhePorDatasRecolhimento(Map<Date, BigDecimal> mapaExpectativaEncalhe, 
+	protected Map<Date, BigInteger> ordenarMapaExpectativaEncalhePorDatasRecolhimento(Map<Date, BigInteger> mapaExpectativaEncalhe, 
 											   					   					  TreeSet<Date> datasRecolhimento) {
 		
-		Map<Date, BigDecimal> mapaExpectativaEncalheOrdenado = new LinkedHashMap<Date, BigDecimal>();
+		Map<Date, BigInteger> mapaExpectativaEncalheOrdenado = new LinkedHashMap<Date, BigInteger>();
 		
 		for (Date dataRecolhimento : datasRecolhimento) {
 
-			BigDecimal expectativaEncalhe = mapaExpectativaEncalhe.get(dataRecolhimento);
+			BigInteger expectativaEncalhe = mapaExpectativaEncalhe.get(dataRecolhimento);
 			
 			if (expectativaEncalhe != null) {
 				
@@ -156,11 +157,11 @@ public abstract class AbstractBalanceamentoRecolhimentoStrategy implements Balan
 	 * Gera o mapa de expectativa de encalhe total diária ordenado pela maior data
 	 * de acordo com a matriz de recolhimento.
 	 */
-	protected Map<Date, BigDecimal> gerarMapaExpectativaEncalheTotalDiariaOrdenadoPelaMaiorData(
+	protected Map<Date, BigInteger> gerarMapaExpectativaEncalheTotalDiariaOrdenadoPelaMaiorData(
 														Map<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento) {
 		
-		Map<Date, BigDecimal> mapaExpectativaEncalheTotalDiaria = 
-			new TreeMap<Date, BigDecimal>(Collections.reverseOrder());
+		Map<Date, BigInteger> mapaExpectativaEncalheTotalDiaria = 
+			new TreeMap<Date, BigInteger>(Collections.reverseOrder());
 
 		if (matrizRecolhimento == null || matrizRecolhimento.isEmpty()) {
 			
@@ -172,7 +173,7 @@ public abstract class AbstractBalanceamentoRecolhimentoStrategy implements Balan
 			Date dataRecolhimento = entryMatrizRecolhimento.getKey();
 			List<ProdutoRecolhimentoDTO> produtosRecolhimento = entryMatrizRecolhimento.getValue();
 			
-			BigDecimal expectativaEncalheTotalDiaria = BigDecimal.ZERO;
+			BigInteger expectativaEncalheTotalDiaria = BigInteger.ZERO;
 			
 			for (ProdutoRecolhimentoDTO produtoRecolhimento : produtosRecolhimento) {
 				
@@ -254,7 +255,7 @@ public abstract class AbstractBalanceamentoRecolhimentoStrategy implements Balan
 		
 		for (ProdutoRecolhimentoDTO produtoRecolhimento : produtosRecolhimento) {
 			
-			if (this.isProdutoNaoBalanceavel(dadosRecolhimento.isConfiguracaoInicial(), produtoRecolhimento)) {
+			if (this.isProdutoNaoBalanceavel(dadosRecolhimento.isForcarBalanceamento(), produtoRecolhimento)) {
 				
 				continue;
 			}
@@ -271,9 +272,9 @@ public abstract class AbstractBalanceamentoRecolhimentoStrategy implements Balan
 	/*
 	 * Obtém a expectativa de encalhe total dos produtos para recolhimento.
 	 */
-	protected BigDecimal obterExpectativaEncalheTotal(List<ProdutoRecolhimentoDTO> produtosRecolhimento) {
+	protected BigInteger obterExpectativaEncalheTotal(List<ProdutoRecolhimentoDTO> produtosRecolhimento) {
 		
-		BigDecimal expectativaEncalheTotal = BigDecimal.ZERO;
+		BigInteger expectativaEncalheTotal = BigInteger.ZERO;
 		
 		if (produtosRecolhimento != null) {
 			
@@ -293,7 +294,7 @@ public abstract class AbstractBalanceamentoRecolhimentoStrategy implements Balan
 	/*
 	 * Valida se a capacidade de manuseio do distribuidor é excedida com o encalhe a ser balanceado.
 	 */
-	protected boolean validarLimiteCapacidadeRecolhimentoDistribuidor(BigDecimal excessoExpectativaEncalhe) {
+	protected boolean validarLimiteCapacidadeRecolhimentoDistribuidor(BigInteger excessoExpectativaEncalhe) {
 		
 		return excessoExpectativaEncalhe.equals(BigDecimal.ZERO);
 	}
@@ -301,11 +302,11 @@ public abstract class AbstractBalanceamentoRecolhimentoStrategy implements Balan
 	/*
 	 * Calcula o excesso de expectativa de encalhe na data de acordo com a capacidade de manuseio diária.
 	 */
-	protected BigDecimal calcularExcessoExpectativaEncalhe(BigDecimal expectativaEncalheTotalAtualNaData, 
-	  													   BigDecimal capacidadeManuseio,
-	  													   BigDecimal expectativaEncalheABalancear) {
+	protected BigInteger calcularExcessoExpectativaEncalhe(BigInteger expectativaEncalheTotalAtualNaData, 
+														   BigInteger capacidadeManuseio,
+														   BigInteger expectativaEncalheABalancear) {
 		
-		BigDecimal excessoExpectativaEncalhe = BigDecimal.ZERO;
+		BigInteger excessoExpectativaEncalhe = BigInteger.ZERO;
 		
 		if (expectativaEncalheTotalAtualNaData != null) {
 

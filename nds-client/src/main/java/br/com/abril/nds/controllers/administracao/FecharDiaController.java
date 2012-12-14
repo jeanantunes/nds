@@ -246,7 +246,7 @@ public class FecharDiaController {
 	@Path("obterResumoQuadroSuplementar")
 	public void obterResumoQuadroSuplementar(){
 		
-		ResumoSuplementarFecharDiaDTO dto = this.resumoSuplementarFecharDiaService.obterResumoGeralEncalhe(distribuidor.getDataOperacao());
+		ResumoSuplementarFecharDiaDTO dto = this.resumoSuplementarFecharDiaService.obterResumoGeralSuplementar(distribuidor.getDataOperacao());
 		
 		result.use(Results.json()).from(dto, "result").recursive().serialize();
 	}
@@ -273,18 +273,11 @@ public class FecharDiaController {
 	
 	@Post
 	@Path("/obterGridSuplementar")
-	public void obterGridSuplementar(){
-		
-		List<SuplementarFecharDiaDTO> listaSuplementar = this.resumoSuplementarFecharDiaService.obterDadosGridSuplementar(getDataFechamento());
-		
-		TableModel<CellModelKeyValue<SuplementarFecharDiaDTO>> tableModel = new TableModel<CellModelKeyValue<SuplementarFecharDiaDTO>>();
-		
-		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaSuplementar));
-		
-		tableModel.setTotal(listaSuplementar.size());
-		
-		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
-		
+	public void obterGridSuplementar(Integer page, Integer rp){		
+		PaginacaoVO paginacao = new PaginacaoVO(page, rp, null);		
+		List<SuplementarFecharDiaDTO> listaSuplementar = this.resumoSuplementarFecharDiaService.obterDadosGridSuplementar(getDataFechamento(), paginacao);		
+		Long countSuplementar = this.resumoSuplementarFecharDiaService.contarProdutoEdicaoSuplementar();		
+		result.use(FlexiGridJson.class).from(listaSuplementar).page(page).total(countSuplementar.intValue()).serialize();		
 	}
 	
 
@@ -298,7 +291,8 @@ public class FecharDiaController {
 			lista = resumoEncalheFecharDiaService.obterDadosVendaEncalhe(distribuidor.getDataOperacao(), paginacao);
 			total = resumoEncalheFecharDiaService.contarVendasEncalhe(getDataFechamento());
 		} else if(tipoVenda.equals("suplementar")){
-			lista = resumoSuplementarFecharDiaService.obterVendasSuplementar(distribuidor.getDataOperacao());			
+			lista = resumoSuplementarFecharDiaService.obterVendasSuplementar(distribuidor.getDataOperacao());
+			total = resumoSuplementarFecharDiaService.contarVendasSuplementar(getDataFechamento());
 		}
 		result.use(FlexiGridJson.class).from(lista).page(page).total(total.intValue()).serialize();    
 	}
@@ -358,7 +352,7 @@ public class FecharDiaController {
 		
 		try {
 		
-		List<SuplementarFecharDiaDTO> listaSuplementar = this.resumoSuplementarFecharDiaService.obterDadosGridSuplementar(getDataFechamento());
+		List<SuplementarFecharDiaDTO> listaSuplementar = this.resumoSuplementarFecharDiaService.obterDadosGridSuplementar(getDataFechamento(), null);
 		
 		if(listaSuplementar.isEmpty()) {
 			throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");

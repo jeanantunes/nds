@@ -1,6 +1,7 @@
 package br.com.abril.nds.strategy.devolucao;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -201,7 +202,7 @@ public class BalanceamentoRecolhimentoValorStrategy extends AbstractBalanceament
 	private void processarProdutosRecolhimentoNaoBalanceaveis(Map<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento,
 															  RecolhimentoDTO dadosRecolhimento) {
 		
-		for (Map.Entry<Date, BigDecimal> entryExpectativaEncalheTotalDiaria : 
+		for (Map.Entry<Date, BigInteger> entryExpectativaEncalheTotalDiaria : 
 				dadosRecolhimento.getMapaExpectativaEncalheTotalDiaria().entrySet()) {
 			
 			Date dataRecolhimentoPrevista = entryExpectativaEncalheTotalDiaria.getKey();
