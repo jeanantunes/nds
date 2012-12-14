@@ -1,6 +1,7 @@
 package br.com.abril.nds.controllers.devolucao;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
@@ -834,7 +835,7 @@ public class MatrizRecolhimentoController {
 				MathUtil.round(produtoRecolhimentoDTO.getExpectativaEncalheAlternativo(), 2));
 			
 			produtoRecolhimentoVO.setEncalhe(
-				MathUtil.round(produtoRecolhimentoDTO.getExpectativaEncalhe(), 2));
+				produtoRecolhimentoDTO.getExpectativaEncalhe());
 			
 			produtoRecolhimentoVO.setValorTotal(produtoRecolhimentoDTO.getValorTotal());
 			
@@ -1233,7 +1234,7 @@ public class MatrizRecolhimentoController {
 				Long qtdeTitulosParciais = 0L;
 				
 				Long pesoTotal = 0L;
-				BigDecimal qtdeExemplares = BigDecimal.ZERO;
+				BigInteger qtdeExemplares = BigInteger.ZERO;
 				BigDecimal valorTotal = BigDecimal.ZERO;
 				
 				for (ProdutoRecolhimentoDTO produtoRecolhimento : listaProdutosRecolhimento) {
@@ -1279,7 +1280,7 @@ public class MatrizRecolhimentoController {
 				
 				itemResumoPeriodoBalanceamento.setExibeDestaque(exibeDestaque);
 				itemResumoPeriodoBalanceamento.setPesoTotal(pesoTotal);
-				itemResumoPeriodoBalanceamento.setQtdeExemplares(MathUtil.round(qtdeExemplares, 2));
+				itemResumoPeriodoBalanceamento.setQtdeExemplares(qtdeExemplares);
 				itemResumoPeriodoBalanceamento.setQtdeTitulos(qtdeTitulos);
 				
 				itemResumoPeriodoBalanceamento.setQtdeTitulosParciais(qtdeTitulosParciais);

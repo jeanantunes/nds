@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Calendar;
 
 import org.junit.Before;
@@ -59,8 +60,8 @@ public class TipoGarantiaAceitaRepositoryImplTest extends
 		Distribuidor distribuidor = new Distribuidor();
 		distribuidor.setCodigo(1);
 		distribuidor.setParametroContratoCota(parametroContrato);
-		distribuidor.setCapacidadeDistribuicao(BigDecimal.TEN);
-		distribuidor.setCapacidadeRecolhimento(BigDecimal.TEN);
+		distribuidor.setCapacidadeDistribuicao(BigInteger.TEN);
+		distribuidor.setCapacidadeRecolhimento(BigInteger.TEN);
 		distribuidor.setFatorRelancamentoParcial(5);
 		distribuidor.setDataOperacao(Fixture.criarData(05, Calendar.SEPTEMBER, 2011));
 		distribuidor

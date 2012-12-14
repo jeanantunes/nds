@@ -115,7 +115,7 @@ public class RoteiroRoteirizacaoDTO implements Serializable, Ordenavel {
 			rotas = new ArrayList<RotaRoteirizacaoDTO>();
 		}
 		
-		OrdenacaoUtil.incluirItemOrdenado(rota, rotas);
+		OrdenacaoUtil.reordenarLista(rota, rotas);
 		
 		rotas.add(rota);
 		todasRotas.add(rota);

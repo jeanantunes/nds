@@ -733,7 +733,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 
 	private ResumoSuplementarFecharDiaDTO incluirResumoSuplementar(FechamentoDiario fechamento, Builder builder) throws FechamentoDiarioException {
 		
-		ResumoSuplementarFecharDiaDTO resumoSuplementar = resumoSuplementarFecharDiaService.obterResumoGeralEncalhe(fechamento.getDataFechamento());
+		ResumoSuplementarFecharDiaDTO resumoSuplementar = resumoSuplementarFecharDiaService.obterResumoGeralSuplementar(fechamento.getDataFechamento());
 		builder.resumoSuplementar(resumoSuplementar);
 		
 		validarDadosFechamentoDiario(resumoSuplementar, "Erro na obtenção dos dados de Resumo de Suplementar!");
@@ -763,7 +763,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		
 	    FechamentoDiario fechamentoDiario = consolidadoSuplementar.getFechamentoDiario();
 	    
-		List<SuplementarFecharDiaDTO> listaSuplementar = this.resumoSuplementarFecharDiaService.obterDadosGridSuplementar(fechamentoDiario.getDataFechamento());
+		List<SuplementarFecharDiaDTO> listaSuplementar = this.resumoSuplementarFecharDiaService.obterDadosGridSuplementar(fechamentoDiario.getDataFechamento(), null);
 		
 		if(listaSuplementar!= null && !listaSuplementar.isEmpty()){
 			

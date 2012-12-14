@@ -20,7 +20,6 @@
 
 #dialog-edit-produto, #dialog-detalhe-venda{display:none;}
 
-#dialog-detalhe-venda{display:none;}
 </style>
 
 <form id="idParciaisEditProduto">

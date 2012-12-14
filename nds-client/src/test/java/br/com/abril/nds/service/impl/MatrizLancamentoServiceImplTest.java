@@ -1,6 +1,7 @@
 package br.com.abril.nds.service.impl;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -127,7 +128,7 @@ public class MatrizLancamentoServiceImplTest extends AbstractRepositoryImplTest 
 		service.distribuidorRepository = distribuidorRepository;
 		
 		BalanceamentoLancamentoDTO balanceamentoLancamento =
-			service.obterMatrizLancamento(this.montarFiltro(), false);
+			service.obterMatrizLancamento(this.montarFiltro());
 		
 		Assert.assertNotNull(balanceamentoLancamento);
 		
@@ -233,8 +234,8 @@ public class MatrizLancamentoServiceImplTest extends AbstractRepositoryImplTest 
 			
 				ProdutoLancamentoDTO produtoLancamento = new ProdutoLancamentoDTO();
 				
-				BigDecimal repartePrevisto = new BigDecimal("100.0");
-				repartePrevisto = repartePrevisto.add(new BigDecimal(k));
+				BigInteger repartePrevisto = new BigInteger("100");
+				repartePrevisto = repartePrevisto.add(new BigInteger(String.valueOf(k)));
 				
 				produtoLancamento.setIdLancamento((long) k);
 				produtoLancamento.setIdProdutoEdicao((long) k);
@@ -244,7 +245,7 @@ public class MatrizLancamentoServiceImplTest extends AbstractRepositoryImplTest 
 				produtoLancamento.setDataRecolhimentoPrevista(dataRecolhimentoPrevista);
 				produtoLancamento.setPeso(10L);
 				produtoLancamento.setValorTotal(new BigDecimal(2));
-				produtoLancamento.setReparteFisico(new BigDecimal(5));
+				produtoLancamento.setReparteFisico(new BigInteger("5"));
 				produtoLancamento.setStatusLancamento(StatusLancamento.PLANEJADO.toString());
 				produtoLancamento.setPeriodicidadeProduto(PeriodicidadeProduto.ANUAL.toString());
 				
