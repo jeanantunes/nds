@@ -1240,6 +1240,16 @@ public class Fixture {
 		return tipoMovimento;
 	}
 
+	public static TipoMovimentoEstoque tipoMovimentoDevolucaoEncalheFornecedor() {
+		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
+		tipoMovimento.setAprovacaoAutomatica(true);
+		tipoMovimento.setDescricao("Estorno do reparte por furo de publicação");
+		tipoMovimento.setIncideDivida(true);
+		tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.DEVOLUCAO_ENCALHE)
+		;
+		return tipoMovimento;
+	}
+
 	public static TipoMovimentoEstoque tipoMovimentoCancelamentoNFDevolucaoConsignado() {
 		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
 		tipoMovimento.setAprovacaoAutomatica(true);

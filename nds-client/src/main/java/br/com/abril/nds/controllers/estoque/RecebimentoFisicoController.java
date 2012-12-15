@@ -44,6 +44,7 @@ import br.com.abril.nds.service.PessoaJuridicaService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.RecebimentoFisicoService;
 import br.com.abril.nds.service.TipoNotaFiscalService;
+import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.CurrencyUtil;
@@ -102,7 +103,10 @@ public class RecebimentoFisicoController {
 	
 	@Autowired
 	private DescontoService descontoService; 
-	
+
+	@Autowired
+	private UsuarioService usuarioService; 
+
 	public RecebimentoFisicoController(
 			Result result, 
 			HttpServletRequest request,
@@ -1402,12 +1406,7 @@ public class RecebimentoFisicoController {
 	
 	//TODO
 	private Usuario getUsuarioLogado(){
-			
-		Usuario usuario = new Usuario();
-		usuario.setId(1L);
-		
-		return usuario;
-	
+		return usuarioService.getUsuarioLogado();
 	}
 	
 	/**

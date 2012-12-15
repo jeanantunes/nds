@@ -1037,116 +1037,154 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 	 */
 	private String getConsultaListaContagemDevolucao(FiltroDigitacaoContagemDevolucaoDTO filtro, boolean indBuscaTotalParcial, boolean indBuscaQtd) {
 		
-		StringBuffer hqlEdicoes = getSubQueryEdicoesDeFornecedor();
+		StringBuffer sql = new StringBuffer("");
 		
-		StringBuffer hqlControleContagemDevolucaoConcluido = getSubQueryControleContagemDevolucaoConcluido();
-		
-		StringBuffer hqlConfEncParcial = getSubQueryConfEncParc();
-		
-		StringBuffer hql = new StringBuffer("");
-		
-		if (indBuscaQtd) {
+		sql.append(" SELECT "); 
 
-			hql.append(" select count(mov.id) from MovimentoEstoqueCota mov where mov.id in ( select max(movimento.id) " );		
+		if(indBuscaQtd) {
+			
+			sql.append("	COUNT(*)	");
 			
 		} else {
-
-			hql.append(" select ");		
-			
-			hql.append(" movimento.produtoEdicao.produto.codigo as codigoProduto,  	");		
-			hql.append(" movimento.produtoEdicao.produto.nome as nomeProduto, 		");
-			hql.append(" movimento.produtoEdicao.numeroEdicao as numeroEdicao, 		");
-			hql.append(" movimento.produtoEdicao.precoVenda as precoVenda, 			");
-			hql.append(" movimento.valoresAplicados.valorDesconto as desconto, 					");
-			hql.append(" sum(movimento.qtde) as qtdDevolucao, 						");
-			
-			if(indBuscaTotalParcial) {
-				hql.append( hqlConfEncParcial.toString() + "  as qtdNota, 			");
-			}
-			
-			hql.append(" movimento.data as dataMovimento  							");
+		
+			sql.append(" PROD_EDICAO.ID, 								");
+			sql.append(" CONFERENCIAS.QTDE_ENCALHE as qtdDevolucao,		");
+			sql.append(" CONFERENCIAS.QTDE_PARCIAL as qtdNota,			");
+			sql.append(" PROD.CODIGO as codigoProduto,  				");		
+			sql.append(" PROD.NOME as nomeProduto, 						");
+			sql.append(" PROD_EDICAO.NUMERO_EDICAO as numeroEdicao, 	");
+			sql.append(" MOV_ESTOQUE_COTA.PRECO_VENDA as precoVenda, 	");
+			sql.append(" MOV_ESTOQUE_COTA.VALOR_DESCONTO as desconto 	");
 			
 		}
-		
-		hql.append(" from ");		
-		
-		hql.append(" MovimentoEstoqueCota movimento ");		
-		
-		hql.append(" where ");	
-		
-		hql.append(" ( movimento.data between :dataInicial and :dataFinal ) and 		");		
 
-		hql.append( hqlControleContagemDevolucaoConcluido.toString() + " is null and 	");
-				
-		hql.append(" movimento.tipoMovimento = :tipoMovimentoEstoque ");		
+		sql.append(" FROM ");
+
+		sql.append(" ( ");
+
+		sql.append(" SELECT ");
+	
+		sql.append(" SUM(MOV_ESTOQUE_COTA.QTDE) AS QTDE_ENCALHE, ");
+	
+		sql.append(" SUM(PARCIAL.QTDE) AS QTDE_PARCIAL, ");
+	
+		sql.append(" MOV_ESTOQUE_COTA.PRODUTO_EDICAO_ID AS PRODUTO_EDICAO_ID ");
+	
+		sql.append(" FROM ");
+
+		sql.append(" MOVIMENTO_ESTOQUE_COTA MOV_ESTOQUE_COTA ");
+
+		sql.append(" INNER JOIN CONFERENCIA_ENCALHE ON (	");
+		sql.append(" CONFERENCIA_ENCALHE.movimento_estoque_cota_id = MOV_ESTOQUE_COTA.ID ");
+		sql.append(" )	"); 
+	
+		sql.append(" LEFT JOIN CONFERENCIA_ENC_PARCIAL PARCIAL ON ( ");
+		sql.append(" ( PARCIAL.DATA_MOVIMENTO BETWEEN :dataInicial AND :dataFinal ) AND ");
+		sql.append(" MOV_ESTOQUE_COTA.PRODUTO_EDICAO_ID = PARCIAL.PRODUTOEDICAO_ID  ");
 		
+		if(indBuscaTotalParcial && !indBuscaQtd) {
+			sql.append(" AND PARCIAL.STATUS_APROVACAO = :statusAprovacao	");
+		}
+		
+		sql.append(" ) ");
+		
+		sql.append(" LEFT JOIN CONTROLE_CONTAGEM_DEVOLUCAO ON ( ");
+		sql.append(" CONTROLE_CONTAGEM_DEVOLUCAO.PRODUTO_EDICAO_ID 	=  MOV_ESTOQUE_COTA.PRODUTO_EDICAO_ID AND ");
+	    sql.append(" CONTROLE_CONTAGEM_DEVOLUCAO.DATA     			=  MOV_ESTOQUE_COTA.DATA AND ");
+	    sql.append(" CONTROLE_CONTAGEM_DEVOLUCAO.STATUS = :statusOperacao ) ");
+	
+		sql.append(" WHERE ");
+
+		sql.append(" MOV_ESTOQUE_COTA.DATA BETWEEN :dataInicial AND :dataFinal AND	");
+	
+		sql.append(" CONTROLE_CONTAGEM_DEVOLUCAO.ID IS NULL  ");
+		
+		sql.append(" GROUP BY MOV_ESTOQUE_COTA.PRODUTO_EDICAO_ID	");
+
+		sql.append(" ) AS CONFERENCIAS 	");
+
+		sql.append(" RIGHT OUTER JOIN ITEM_CHAMADA_ENCALHE_FORNECEDOR ITEM_CH_ENC_FORNECEDOR ON ( ");
+		sql.append(" 	CONFERENCIAS.produto_edicao_id = ITEM_CH_ENC_FORNECEDOR.PRODUTO_EDICAO_ID ");
+		sql.append(" ) ");
+		
+		sql.append(" INNER JOIN PRODUTO_EDICAO PROD_EDICAO ON ( 					");
+		sql.append(" 	ITEM_CH_ENC_FORNECEDOR.PRODUTO_EDICAO_ID = PROD_EDICAO.ID 	");
+		sql.append(" ) 	");
+		
+		sql.append(" INNER JOIN PRODUTO PROD ON (			");
+		sql.append(" 	PROD_EDICAO.PRODUTO_ID = PROD.ID	");
+		sql.append(" ) 	");
+		
+		sql.append(" INNER JOIN PRODUTO_FORNECEDOR PROD_FORNEC ON (	");
+		sql.append(" 	PROD.ID = PROD_FORNEC.PRODUTO_ID 			");
+		sql.append(" ) ");
+		
+		sql.append(" WHERE ");
+
+		sql.append(" ITEM_CH_ENC_FORNECEDOR.DATA_RECOLHIMENTO BETWEEN :dataInicial AND :dataFinal ");
+
 		if( filtro.getIdFornecedor() != null ) {
-			hql.append(" and movimento.produtoEdicao.id in " + hqlEdicoes.toString() );		
+			sql.append(" AND PROD_FORNEC.FORNECEDORES_ID = :idFornecedor ");		
 		}
 
-		if(indBuscaQtd){
-    		hql.append(" group by 									");		
-    		hql.append(" movimento.data, 							");		
-    		hql.append(" movimento.produtoEdicao.id				  	");		
-        }else{
-    		hql.append(" group by 									");		
-    		hql.append(" movimento.data, 							");		
-    		hql.append(" movimento.produtoEdicao.produto.codigo,  	");		
-    		hql.append(" movimento.produtoEdicao.produto.nome, 		");
-    		hql.append(" movimento.produtoEdicao.numeroEdicao, 		");
-    		hql.append(" movimento.produtoEdicao.precoVenda 		");
+		if(!indBuscaQtd){
+    	
+    		sql.append(" GROUP BY ");
+    		sql.append(" PROD_EDICAO.ID,			");		
+    		sql.append(" PROD.CODIGO,  				");		
+    		sql.append(" PROD.NOME, 				");
+    		sql.append(" PROD_EDICAO.NUMERO_EDICAO, ");
+    		sql.append(" PROD_EDICAO.PRECO_VENDA, 	");
+    		sql.append(" PROD_EDICAO.DESCONTO       ");
+    		
         }
-
-
+		
 		
 		PaginacaoVO paginacao = filtro.getPaginacao();
 
 		if (!indBuscaQtd && filtro.getOrdenacaoColuna() != null) {
 
-			hql.append(" order by ");
+			sql.append(" order by ");
 			
 			String orderByColumn = "";
 			
 				switch (filtro.getOrdenacaoColuna()) {
 				
 					case CODIGO_PRODUTO:
-						orderByColumn = " movimento.produtoEdicao.produto.codigo ";
+						orderByColumn = " PROD.CODIGO ";
 						break;
 					case NOME_PRODUTO:
-						orderByColumn = " movimento.produtoEdicao.produto.nome ";
+						orderByColumn = " PROD.NOME  ";
 						break;
 					case NUMERO_EDICAO:
-						orderByColumn = " movimento.produtoEdicao.numeroEdicao ";
+						orderByColumn = " PROD_EDICAO.NUMERO_EDICAO  ";
 						break;
 					case PRECO_CAPA:
-						orderByColumn = " movimento.produtoEdicao.precoVenda ";
+						orderByColumn = " PROD_EDICAO.PRECO_VENDA ";
 						break;
 					case QTD_DEVOLUCAO:
-						orderByColumn = " sum(movimento.qtde) ";
+						orderByColumn = " CONFERENCIAS.QTDE_ENCALHE ";
 						break;
 					case QTD_NOTA:
-						orderByColumn = " qtdNota ";
+						orderByColumn = " CONFERENCIAS.QTDE_PARCIAL ";
 						break;
 						
 					default:
 						break;
 				}
 			
-			hql.append(orderByColumn);
+			sql.append(orderByColumn);
 			
 			if (paginacao.getOrdenacao() != null) {
 				
-				hql.append(paginacao.getOrdenacao().toString());
+				sql.append(paginacao.getOrdenacao().toString());
 				
 			}
 			
 		}
 		
-		if(indBuscaQtd){
-    		hql.append(" ) ");		
-        }
+		return sql.toString();
 		
-		return hql.toString();
 	}
 	
 	/**
@@ -1161,21 +1199,31 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 	 * 
 	 * @return Query
 	 */
-	private Query criarQueryComParametrosObterListaContagemDevolucao(String hql, FiltroDigitacaoContagemDevolucaoDTO filtro, TipoMovimentoEstoque tipoMovimentoEstoque, boolean indBuscaTotalParcial, boolean indBuscaQtd) {
+	private Query criarQueryComParametrosObterListaContagemDevolucao(String hql, FiltroDigitacaoContagemDevolucaoDTO filtro, boolean indBuscaTotalParcial, boolean indBuscaQtd) {
 		
 		Query query = null;
 		
 		if(indBuscaQtd) {
-			query = getSession().createQuery(hql.toString());
+		
+			query = getSession().createSQLQuery(hql.toString());
+		
 		} else {
-			query = getSession().createQuery(hql.toString()).setResultTransformer(Transformers.aliasToBean(ContagemDevolucaoDTO.class));
+			
+			query = getSession().createSQLQuery(hql.toString())
+					.addScalar("codigoProduto", StandardBasicTypes.STRING)
+					.addScalar("nomeProduto", StandardBasicTypes.STRING)
+					.addScalar("numeroEdicao", StandardBasicTypes.LONG)
+					.addScalar("precoVenda", StandardBasicTypes.BIG_DECIMAL)
+					.addScalar("desconto", StandardBasicTypes.BIG_DECIMAL)
+					.addScalar("qtdDevolucao", StandardBasicTypes.BIG_INTEGER)
+					.addScalar("qtdNota", StandardBasicTypes.BIG_INTEGER).
+					setResultTransformer(Transformers.aliasToBean(ContagemDevolucaoDTO.class));
+			
 		}
 		
 		query.setParameter("dataInicial", filtro.getPeriodo().getDe());
 		
 		query.setParameter("dataFinal", filtro.getPeriodo().getAte());
-		
-		query.setParameter("tipoMovimentoEstoque", tipoMovimentoEstoque);
 		
 		query.setParameter("statusOperacao", StatusOperacao.CONCLUIDO);
 		
@@ -1193,17 +1241,16 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 	
 	/*
 	 * (non-Javadoc)
-	 * @see br.com.abril.nds.repository.MovimentoEstoqueCotaRepository#obterListaContagemDevolucao(br.com.abril.nds.dto.filtro.FiltroDigitacaoContagemDevolucaoDTO, br.com.abril.nds.model.estoque.TipoMovimentoEstoque, boolean)
+	 * @see br.com.abril.nds.repository.MovimentoEstoqueCotaRepository#obterListaContagemDevolucao(br.com.abril.nds.dto.filtro.FiltroDigitacaoContagemDevolucaoDTO, boolean)
 	 */
 	@SuppressWarnings("unchecked")
 	public List<ContagemDevolucaoDTO> obterListaContagemDevolucao(
-			FiltroDigitacaoContagemDevolucaoDTO filtro, 
-			TipoMovimentoEstoque tipoMovimentoEstoque,
+			FiltroDigitacaoContagemDevolucaoDTO filtro,
 			boolean indBuscaTotalParcial) {
 		
 		String hql = getConsultaListaContagemDevolucao(filtro, indBuscaTotalParcial, false);
 		
-		Query query = criarQueryComParametrosObterListaContagemDevolucao(hql, filtro, tipoMovimentoEstoque, indBuscaTotalParcial, false);
+		Query query = criarQueryComParametrosObterListaContagemDevolucao(hql, filtro, indBuscaTotalParcial, false);
 		
 		if(filtro.getPaginacao()!=null) {
 			
@@ -1222,101 +1269,73 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 	}
 	
-	/**
-	 * Descreve subquery que retorna a somatórias das qtds de devolução parciais.
-	 * 
-	 * @return SubQuery
-	 */
-	private StringBuffer getSubQueryConfEncParc() {
-		
-		StringBuffer hqlConfEncParcial = new StringBuffer("")
-		.append(" ( select sum(parcial.qtde) 								")
-		.append(" from ConferenciaEncalheParcial parcial					")
-		.append(" where 													")
-		.append(" parcial.statusAprovacao = :statusAprovacao and			")
-		.append(" movimento.produtoEdicao.id = parcial.produtoEdicao.id and ")
-		.append(" movimento.data = parcial.dataMovimento )  	");
-		
-		return hqlConfEncParcial;
-		
-	}
-
-	
-	/**
-	 * Descreve subquery que retorna o id do registro de controleDevolucao caso encontra-lo 
-	 * com status CONCLUIDO
-	 * 
-	 * @return SubQuery
-	 */
-	private StringBuffer getSubQueryControleContagemDevolucaoConcluido() {
-		
-		StringBuffer hqlConfEncParcial = new StringBuffer("")
-		.append(" ( select													")
-		.append(" controleContagemDevolucao.id									")
-		.append(" from ControleContagemDevolucao controleContagemDevolucao 	")
-		.append(" where 													")
-		.append(" controleContagemDevolucao.status = :statusOperacao and	")
-		.append(" controleContagemDevolucao.produtoEdicao.id =  movimento.produtoEdicao.id and 	")
-		.append(" controleContagemDevolucao.data = movimento.data )  							");
-		
-		return hqlConfEncParcial;
-		
-	}
-
-	
-	
-	/**
-	 * Descreve subquery que retorna uma lista de idProdutoEdicao pertencentes a um fornecedor.
-	 * 
-	 * @return SubQuery
-	 */
-	private StringBuffer getSubQueryEdicoesDeFornecedor() {
-	
-		StringBuffer  hqlEdicoes = new StringBuffer()
-		.append(" ( select pe.id 																	")
-		.append(" from ProdutoEdicao pe join pe.produto.fornecedores as fornecedores   				")
-		.append(" where 																			")
-		.append(" ( select f from Fornecedor f where f.id = :idFornecedor ) in (fornecedores) ) 	");
-		
-		return hqlEdicoes;
-		
-	}
-	
 	/*
 	 * (non-Javadoc)
 	 * @see br.com.abril.nds.repository.MovimentoEstoqueCotaRepository#obterValorTotalGeralContagemDevolucao(br.com.abril.nds.dto.filtro.FiltroDigitacaoContagemDevolucaoDTO, br.com.abril.nds.model.estoque.TipoMovimentoEstoque)
 	 */
 	public BigDecimal obterValorTotalGeralContagemDevolucao(
-			FiltroDigitacaoContagemDevolucaoDTO filtro, 
-			TipoMovimentoEstoque tipoMovimentoEstoque) {
+			FiltroDigitacaoContagemDevolucaoDTO filtro) {
 		
-		StringBuffer hqlControleContagemDevolucaoConcluido = getSubQueryControleContagemDevolucaoConcluido();
-		
-		StringBuffer hql = new StringBuffer("");
-		
-		hql.append(" select sum( movimento.qtde * movimento.produtoEdicao.precoVenda ) ");		
-		
-		hql.append(" from MovimentoEstoqueCota movimento ");
-		
-		hql.append(" where ");
+		StringBuffer sql = new StringBuffer("");
 
+		sql.append(" SELECT ")
+		
+		.append(" SUM(MOV_ESTOQUE_COTA.QTDE * PRODUTO_EDICAO.PRECO_VENDA) ")
+		
+		.append(" FROM ")
+
+		.append(" MOVIMENTO_ESTOQUE_COTA MOV_ESTOQUE_COTA ")
+
+		.append(" INNER JOIN CONFERENCIA_ENCALHE ON ( ")
+		.append("	CONFERENCIA_ENCALHE.movimento_estoque_cota_id = MOV_ESTOQUE_COTA.ID ")
+		.append(" ) ")
+		
+		.append(" INNER JOIN PRODUTO_EDICAO ON (	")
+		.append("	PRODUTO_EDICAO.ID = MOV_ESTOQUE_COTA.PRODUTO_EDICAO_ID ")
+		.append(" ) ")
+		
+		.append(" INNER JOIN PRODUTO PROD ON (			")
+		.append(" 	PRODUTO_EDICAO.PRODUTO_ID = PROD.ID	")
+		.append(" ) 	")
+		
+		.append(" INNER JOIN PRODUTO_FORNECEDOR PROD_FORNEC ON (	")
+		.append(" 	PROD.ID = PROD_FORNEC.PRODUTO_ID 				")
+		.append(" ) ")
+		
+		.append(" LEFT JOIN CONTROLE_CONTAGEM_DEVOLUCAO ON ( 		")
+		.append(" 	CONTROLE_CONTAGEM_DEVOLUCAO.PRODUTO_EDICAO_ID  	=  MOV_ESTOQUE_COTA.PRODUTO_EDICAO_ID AND ")
+	    .append("   CONTROLE_CONTAGEM_DEVOLUCAO.DATA     			=  MOV_ESTOQUE_COTA.DATA AND ")
+	    .append("   CONTROLE_CONTAGEM_DEVOLUCAO.STATUS = :statusOperacao ) ")
+		
+		.append(" WHERE ")
+
+		.append(" MOV_ESTOQUE_COTA.DATA BETWEEN :dataInicial AND :dataFinal AND ")
+		
+		.append(" CONTROLE_CONTAGEM_DEVOLUCAO.ID IS NULL  ")
+		
+		.append(" AND MOV_ESTOQUE_COTA.PRODUTO_EDICAO_ID IN ( ")
+	    
+		.append("	SELECT ")
+		.append("	ITEM_CH_ENC_FORNECEDOR.PRODUTO_EDICAO_ID  ")
+	    	
+		.append("	from ")
+		.append("	ITEM_CHAMADA_ENCALHE_FORNECEDOR ITEM_CH_ENC_FORNECEDOR ")
+	    	
+		.append("	where ");
+		
 		if( filtro.getIdFornecedor() != null ) {
-			hql.append(" movimento.produtoEdicao.id in " + getSubQueryEdicoesDeFornecedor() + " and ");		
+			sql.append(" PROD_FORNEC.FORNECEDORES_ID = :idFornecedor AND ");		
 		}
 		
-		hql.append(" ( movimento.data between :dataInicial and :dataFinal ) and	");
+		sql.append(" ITEM_CH_ENC_FORNECEDOR.DATA_RECOLHIMENTO BETWEEN :dataInicial AND :dataFinal ")
+	    	
+		.append("	GROUP BY ITEM_CH_ENC_FORNECEDOR.PRODUTO_EDICAO_ID   ) ");
 		
-		hql.append(" movimento.tipoMovimento = :tipoMovimentoEstoque and ");
-		
-		hql.append( hqlControleContagemDevolucaoConcluido.toString() + " is null " );
-		
-		Query query = getSession().createQuery(hql.toString());
+		Query query = getSession().createSQLQuery(sql.toString());
 
 		query.setParameter("dataInicial", filtro.getPeriodo().getDe());
 		
 		query.setParameter("dataFinal", filtro.getPeriodo().getAte());
-
-		query.setParameter("tipoMovimentoEstoque", tipoMovimentoEstoque);
 		
 		query.setParameter("statusOperacao", StatusOperacao.CONCLUIDO);
 		
@@ -1332,15 +1351,15 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 	
 	/*
 	 * (non-Javadoc)
-	 * @see br.com.abril.nds.repository.MovimentoEstoqueCotaRepository#obterQuantidadeContagemDevolucao(br.com.abril.nds.dto.filtro.FiltroDigitacaoContagemDevolucaoDTO, br.com.abril.nds.model.estoque.TipoMovimentoEstoque)
+	 * @see br.com.abril.nds.repository.MovimentoEstoqueCotaRepository#obterQuantidadeContagemDevolucao(br.com.abril.nds.dto.filtro.FiltroDigitacaoContagemDevolucaoDTO)
 	 */
-	public Integer obterQuantidadeContagemDevolucao(FiltroDigitacaoContagemDevolucaoDTO filtro, TipoMovimentoEstoque tipoMovimentoEstoque) {
+	public Integer obterQuantidadeContagemDevolucao(FiltroDigitacaoContagemDevolucaoDTO filtro) {
 		
 		String hql = getConsultaListaContagemDevolucao(filtro, false, true);
 		
-		Query query = criarQueryComParametrosObterListaContagemDevolucao(hql, filtro, tipoMovimentoEstoque, false, true);
+		Query query = criarQueryComParametrosObterListaContagemDevolucao(hql, filtro, false, true);
 		
-		Long qtde = (Long) query.uniqueResult();
+		BigInteger qtde = (BigInteger) query.uniqueResult();
 		
 		return ((qtde == null) ? 0 : qtde.intValue());
 		
