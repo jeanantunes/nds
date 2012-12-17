@@ -205,7 +205,7 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 				.append(" rota.descricaoRota,")
 				.append(" roteiro.descricaoRoteiro,")
 				.append(" cota.numeroCota,")
-				.append(" pessoa.nome,")
+				.append(" coalesce(pessoa.nome, pessoa.razaoSocial),")
 				.append(" cobranca.dataVencimento,")
 				.append(" cobranca.dataEmissao,")
 				.append(" cobranca.valor,")
@@ -238,7 +238,8 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 		.append(" AND divida.acumulada =:acumulaDivida ")
 		.append(" AND cobranca.statusCobranca=:statusCobranca ")
 		.append(" AND pdv.caracteristicas.pontoPrincipal = true ")
-		.append(" AND (roteiro.tipoRoteiro is null OR roteiro.tipoRoteiro=:tipoRoteiro) ");
+		.append(" AND (roteiro.tipoRoteiro is null OR roteiro.tipoRoteiro=:tipoRoteiro) ")
+		.append(" and rotaPdv.ordem = (select max(rotaPdvAux.ordem) from RotaPDV rotaPdvAux where rotaPdvAux.pdv.cota.id = cota.id)");
 		
 		if(filtro.getNumeroCota()!= null  ){
 			hql.append(" AND cota.numeroCota =:numeroCota ");
