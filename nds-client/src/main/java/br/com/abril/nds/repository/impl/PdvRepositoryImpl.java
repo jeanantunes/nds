@@ -7,6 +7,7 @@ import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
 import org.hibernate.Query;
 import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.Subqueries;
@@ -346,8 +347,12 @@ public class PdvRepositoryImpl extends AbstractRepositoryModel<PDV, Long> implem
 		criteria.createAlias("enderecos", "enderecos") ;
 		criteria.createAlias("enderecos.endereco", "endereco");
 		
+		
 		if(boxID > 0) {
-			DetachedCriteria subquery = DetachedCriteria.forClass(RotaPDV.class, "rotaPdv").setProjection(Projections.property("rotaPdv.pdv.id"));
+			DetachedCriteria subquery = 
+					DetachedCriteria.forClass(RotaPDV.class, "rotaPdv")
+									.setProjection(Projections.property("rotaPdv.pdv.id"));
+			
 			criteria.add(Subqueries.propertyNotIn("pdv.id", subquery));
 		}
 		
@@ -376,6 +381,8 @@ public class PdvRepositoryImpl extends AbstractRepositoryModel<PDV, Long> implem
 			
 		}
 		
+		criteria.addOrder(Order.asc("cota.numeroCota"));
+		criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 		return  (List<PDV>)criteria.list();  
 	}
 }

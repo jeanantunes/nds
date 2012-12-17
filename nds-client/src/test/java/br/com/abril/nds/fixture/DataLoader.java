@@ -344,6 +344,7 @@ public class DataLoader {
 	private static TipoMovimentoEstoque tipoMovimentoTransferenciaSaidaProdutosDanificados;
 	private static TipoMovimentoEstoque tipoMovimentoTransferenciaEntradaProdutosDevolucaoFornecedor;
 	private static TipoMovimentoEstoque tipoMovimentoTransferenciaSaidaProdutosDevolucaoFornecedor;
+	private static TipoMovimentoEstoque tipoMovimentoDevolucaoEncalheFornecedor;
 	
 	
 	private static MovimentoEstoqueCota movimentoEstoqueCota1;
@@ -6093,6 +6094,7 @@ public class DataLoader {
 		tipoMovimentoTransferenciaSaidaProdutosDanificados = Fixture.tipoMovimentoTransferenciaSaidaProdutosDanificados();
 		tipoMovimentoTransferenciaEntradaProdutosDevolucaoFornecedor = Fixture.tipoMovimentoTransferenciaEntradaProdutosDevolucaoFornecedor();
 		tipoMovimentoTransferenciaSaidaProdutosDevolucaoFornecedor = Fixture.tipoMovimentoTransferenciaSaidaProdutosDevolucaoFornecedor();
+		tipoMovimentoDevolucaoEncalheFornecedor = Fixture.tipoMovimentoDevolucaoEncalheFornecedor();
 		
 		save(session, tipoMovimentoFaltaEm, tipoMovimentoFaltaDe, tipoMovimentoSuplementarCotaAusente,
 				tipoMovimentoSobraEm, tipoMovimentoSobraDe,
@@ -6109,7 +6111,7 @@ public class DataLoader {
 				tipoMovimentoTransferenciaEntradaRecolhimento, tipoMovimentoTransferenciaSaidaRecolhimento,
 				tipoMovimentoTransferenciaEntradaProdutosDanificados, tipoMovimentoTransferenciaSaidaProdutosDanificados,
 				tipoMovimentoEstornoCotaFuroPublicacao,tipoMovimentoTransferenciaEntradaProdutosDevolucaoFornecedor,
-				tipoMovimentoTransferenciaSaidaProdutosDevolucaoFornecedor);
+				tipoMovimentoTransferenciaSaidaProdutosDevolucaoFornecedor, tipoMovimentoDevolucaoEncalheFornecedor);
 
 	}
 
