@@ -154,34 +154,23 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 	
 	@Override
 	@Transactional(noRollbackFor = GerarCobrancaValidacaoException.class)
-	public void gerarCobranca(Long idCota, Long idUsuario, Set<String> setNossoNumero, boolean validarFechamentoEncalhe)
+	public void gerarCobranca(Long idCota, Long idUsuario, Set<String> setNossoNumero)
 		throws GerarCobrancaValidacaoException {
 		
-		this.processarCobranca(idCota, idUsuario, setNossoNumero, validarFechamentoEncalhe);
+		this.processarCobranca(idCota, idUsuario, setNossoNumero);
 		
 		this.geradorArquivoCobrancaBancoService.prepararGerarArquivoCobrancaCnab();
 	}
 
 
 	private void processarCobranca(Long idCota, Long idUsuario,
-			Set<String> setNossoNumero, boolean validarFechamentoEncalhe) throws GerarCobrancaValidacaoException {
+			Set<String> setNossoNumero) throws GerarCobrancaValidacaoException {
 		Distribuidor distribuidor = this.distribuidorRepository.obter();
 		
 		if (this.consolidadoFinanceiroRepository.obterQuantidadeDividasGeradasData(distribuidor.getDataOperacao(), idCota) > 0){
 			
 			throw new GerarCobrancaValidacaoException(
 					new ValidacaoException(TipoMensagem.WARNING, "Já foram geradas dívidas para esta data de operação."));
-		}
-		
-		//flag criada para não permitir a validação do fechamento de encalhe (data operação) no momento da conferência de encalhe.
-		if (validarFechamentoEncalhe) {
-		
-			//alteração na EMS 0028, agora deve verificar se o Fechamento do Encalhe(EMS 0181) tenha sido finalizado
-			if (!this.fechamentoEncalheRepository.buscaControleFechamentoEncalhe(distribuidor.getDataOperacao())){
-				
-				throw new GerarCobrancaValidacaoException(
-						new ValidacaoException(TipoMensagem.WARNING, "O fechamento de encalhe deve ser concluído antes de gerar dívidas."));
-			}
 		}
 	
 		this.gerarCobrancaCota(idCota, idUsuario, setNossoNumero);
@@ -271,11 +260,17 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 					}
 				}
 				
-				if (movimentoFinanceiroCota.getCota().equals(ultimaCota) &&
-						movimentoFinanceiroCota.getMovimentos() != null && 
+				Fornecedor fornecedorProdutoMovimento = (movimentoFinanceiroCota.getMovimentos() != null && 
 						!movimentoFinanceiroCota.getMovimentos().isEmpty() && 
 						movimentoFinanceiroCota.getMovimentos().get(0) != null &&
-						movimentoFinanceiroCota.getMovimentos().get(0).getProdutoEdicao().getProduto().getFornecedor().equals(ultimoFornecedor)){
+						movimentoFinanceiroCota.getMovimentos().get(0).getProdutoEdicao().getProduto().getFornecedor() != null 
+						? movimentoFinanceiroCota.getMovimentos().get(0).getProdutoEdicao().getProduto().getFornecedor()
+						: null);
+				
+				if (movimentoFinanceiroCota.getCota().equals(ultimaCota) &&
+						(fornecedorProdutoMovimento != null &&
+								fornecedorProdutoMovimento.equals(ultimoFornecedor) ||
+								fornecedorProdutoMovimento == ultimoFornecedor)){
 					
 					movimentos.add(movimentoFinanceiroCota);
 				} else {
@@ -599,6 +594,27 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 										movimentoFinanceiroCota.getValor().negate() : 
 											BigDecimal.ZERO);
 				break;
+				case COMPRA_ENCALHE:
+					vlMovFinanTotal = 
+						vlMovFinanTotal.add(
+							movimentoFinanceiroCota.getValor() != null ? 
+									movimentoFinanceiroCota.getValor().negate() : 
+										BigDecimal.ZERO);
+				break;
+				case DEBITO_SOBRE_FATURAMENTO:
+					vlMovFinanTotal = 
+						vlMovFinanTotal.add(
+							movimentoFinanceiroCota.getValor() != null ? 
+									movimentoFinanceiroCota.getValor().negate() : 
+										BigDecimal.ZERO);
+				break;
+				case POSTERGADO_NEGOCIACAO:
+					vlMovFinanTotal = 
+						vlMovFinanTotal.add(
+							movimentoFinanceiroCota.getValor() != null ? 
+									movimentoFinanceiroCota.getValor().negate() : 
+										BigDecimal.ZERO);
+				break;
 			}
 		}
 		
@@ -688,7 +704,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		//vlMovFinanTotal = vlMovFinanTotal.negate();
 		
 		//se existe divida
-		if (vlMovFinanTotal.compareTo(BigDecimal.ZERO) > 0){
+		//if (vlMovFinanTotal.compareTo(BigDecimal.ZERO) > 0){
 			
 			boolean cotaSuspensa = SituacaoCadastro.SUSPENSO.equals(this.obterSitiacaoCadastroCota(cota.getId()));
 
@@ -696,16 +712,15 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			= this.obterValorMinino(cota, valorMininoDistribuidor);
 			
 			//caso a cota não esteja suspensa e não tenha alcançado o valor minino de cobrança ou não seja um dia de concentração de cobrança
-			if ( (!cotaSuspensa)&&(vlMovFinanTotal.compareTo(valorMinino) < 0) || 
+			if ( (!cotaSuspensa) || (vlMovFinanTotal.compareTo(valorMinino) < 0) || 
 					((diasSemanaConcentracaoPagamento != null) && 
-					!diasSemanaConcentracaoPagamento.contains(Calendar.getInstance().get(Calendar.DAY_OF_MONTH))) ){
+					!diasSemanaConcentracaoPagamento.contains(Calendar.getInstance().get(Calendar.DAY_OF_WEEK))) ){
 
 				//gerar postergado
 				consolidadoFinanceiroCota.setValorPostergado(vlMovFinanTotal);
 				
 				//gera movimento financeiro cota
 				movimentoFinanceiroCota = new MovimentoFinanceiroCota();
-				movimentoFinanceiroCota.setMotivo("Valor mínimo para dívida não atingido.");
 				
 				Calendar diaPostergado = Calendar.getInstance();
 				diaPostergado.setTime(new Date());
@@ -732,15 +747,16 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 					descPostergado = "Valor mínimo para dívida não atingido";
 				}
 				
+				movimentoFinanceiroCota.setMotivo(descPostergado);
 				tipoMovimentoFinanceiro.setDescricao("Geração de dívida - " + descPostergado);
 				
 				movimentoFinanceiroCota.setTipoMovimento(tipoMovimentoFinanceiro);
-			} 
+			}
 			//Cota suspensa ou valor minimo atingido e dentro do dia de concentração de cobrança
 			else {
 
 				novaDivida = new Divida();
-				novaDivida.setValor(vlMovFinanTotal);
+				novaDivida.setValor(vlMovFinanTotal.abs());
 				novaDivida.setData(consolidadoFinanceiroCota.getDataConsolidado());
 				novaDivida.setConsolidado(consolidadoFinanceiroCota);
 				novaDivida.setCota(cota);
@@ -794,11 +810,11 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 						historicoAcumuloDivida.setResponsavel(usuario);
 						historicoAcumuloDivida.setStatus(StatusInadimplencia.ATIVA);
 						
-						novaDivida.setValor(valorCalculadoJuros);
+						novaDivida.setValor(valorCalculadoJuros.abs());
 					}
 				}
 			}
-		}
+		//}
 		
 		this.consolidadoFinanceiroRepository.adicionar(consolidadoFinanceiroCota);
 		
