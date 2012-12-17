@@ -2371,20 +2371,24 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 	@SuppressWarnings("unchecked")
 	public  List<MovimentoEstoqueCota> obterMovimentoEstoqueCotaPor(Distribuidor distribuidor, Long idCota, List<GrupoMovimentoEstoque> listaGrupoMovimentoEstoques, Intervalo<Date> periodo, List<Long> listaFornecedores){
 		StringBuffer sql = new StringBuffer("SELECT DISTINCT movimentoEstoqueCota ");		
-		sql.append(" FROM Lancamento lancamento ");
+		sql.append(" FROM MovimentoEstoqueCota movimentoEstoqueCota ");
 	
-		sql.append("   INNER JOIN lancamento.movimentoEstoqueCotas movimentoEstoqueCota ");
-		sql.append("   LEFT JOIN movimentoEstoqueCota.cota.fornecedores fornecedor ");
+		sql.append("   JOIN movimentoEstoqueCota.lancamento lancamento ");
+		sql.append("   JOIN movimentoEstoqueCota.cota cota ");
+		sql.append("   JOIN cota.fornecedores fornecedor");
+		sql.append("   JOIN movimentoEstoqueCota.tipoMovimento tipoMovimento ");
+		sql.append("   LEFT JOIN movimentoEstoqueCota.movimentoEstoqueCotaFuro movimentoEstoqueCotaFuro ");
 		
 		sql.append(" WHERE movimentoEstoqueCota.status = :status ")
-		   .append("   AND movimentoEstoqueCota.cota.id = :idCota ");
+		   .append("   AND cota.id = :idCota ")
+		   .append(" AND movimentoEstoqueCotaFuro.id is null ");
 		
 		if (periodo != null && periodo.getDe() != null && periodo.getAte() != null) {
 			sql.append("   AND lancamento.dataLancamentoDistribuidor BETWEEN :dataInicio AND :dataFim ");
 		}
 		
 		if (listaGrupoMovimentoEstoques != null && !listaGrupoMovimentoEstoques.isEmpty()) {
-			sql.append("   AND movimentoEstoqueCota.tipoMovimento.grupoMovimentoEstoque IN (:listaGrupoMoviementoEstoque) ");
+			sql.append("   AND tipoMovimento.grupoMovimentoEstoque IN (:listaGrupoMoviementoEstoque) ");
 		}		
 		
 		if (listaFornecedores != null && !listaFornecedores.isEmpty()) {
@@ -2394,7 +2398,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		Query query = getSession().createQuery(sql.toString());
 		query.setParameter("status", StatusAprovacao.APROVADO);
 		query.setParameter("idCota", idCota);
-	
+			
 	
 		if (listaFornecedores != null && !listaFornecedores.isEmpty()) {
 			query.setParameterList("listaFornecedores", listaFornecedores);
