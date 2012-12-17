@@ -189,25 +189,25 @@ var descontoProdutoController = $.extend(true,{
 				display : 'Código',
 				name : 'codigoProduto',
 				width : 70,
-				sortable : true,
+				sortable : false,
 				align : 'left'
 			},{
 				display : 'Produto',
 				name : 'nomeProduto',
 				width : 228,
-				sortable : true,
+				sortable : false,
 				align : 'left'
 			}, {
 				display : 'Edição',
 				name : 'numeroEdicao',
 				width : 100,
-				sortable : true,
+				sortable : false,
 				align : 'center'
 			}, {
 				display : 'Desconto %',
 				name : 'desconto',
 				width : 150,
-				sortable : true,
+				sortable : false,
 				align : 'center'
 			}, {
 				display : 'Data Alteração',
@@ -219,7 +219,7 @@ var descontoProdutoController = $.extend(true,{
 				display : 'Usuário',
 				name : 'nomeUsuario',
 				width : 150,
-				sortable : true,
+				sortable : false,
 				align : 'left'
 			}, {
 				display : 'Ação',
