@@ -24,6 +24,7 @@ import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 import br.com.abril.nds.model.planejamento.Estudo;
+import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.repository.impl.AbstractRepository;
 import br.com.abril.nds.util.DateUtil;
 
@@ -76,7 +77,7 @@ public class EMS0132MessageProcessor extends AbstractRepository implements Messa
 			throw new RuntimeException("Data de operacao invalida.");
 		}
 		
-		List<Estudo> listaEstudo = this.buscarLancamentosPorDataOperacao(message, dataOperacao);
+		List<Lancamento> listaEstudo = this.buscarLancamentosPorDataOperacao(message, dataOperacao);
 		
 		this.escreverArquivo(message, distribuidor, listaEstudo);
 	}
@@ -90,7 +91,7 @@ public class EMS0132MessageProcessor extends AbstractRepository implements Messa
 	 */
 	@SuppressWarnings("unchecked")
 	
-	private List<Estudo> buscarLancamentosPorDataOperacao(Message message, Date dataOperacao) {
+	private List<Lancamento> buscarLancamentosPorDataOperacao(Message message, Date dataOperacao) {
 		
 		
 		StringBuilder hql = new StringBuilder()
@@ -123,7 +124,7 @@ public class EMS0132MessageProcessor extends AbstractRepository implements Messa
 	 * @param distribuidor
 	 * @param listaEstudo
 	 */
-	private void escreverArquivo(Message message, Distribuidor distribuidor, List<Estudo> listaEstudo) {
+	private void escreverArquivo(Message message, Distribuidor distribuidor, List<Lancamento> listaEstudo) {
 		
 		try {
 						
@@ -141,13 +142,13 @@ public class EMS0132MessageProcessor extends AbstractRepository implements Messa
 				new PrintWriter(
 					new FileWriter(arquivo));
 				
-			for (Estudo estudo : listaEstudo) {
+			for (Lancamento lancamento : listaEstudo) {
 				
 				EMS0132Output output = new EMS0132Output();
 
-				if (estudo != null) {
+				if (lancamento != null) {
 
-					Produto produto = estudo.getProdutoEdicao().getProduto();
+					Produto produto = lancamento.getProdutoEdicao().getProduto();
 					
 					for (Fornecedor fornecedor : produto.getFornecedores()) {
 
@@ -157,11 +158,11 @@ public class EMS0132MessageProcessor extends AbstractRepository implements Messa
 						output.setMnemonicoTabela(CODIGO_LANP);
 						output.setCodigoContexto(produto.getCodigoContexto());
 						output.setCodigoFornecedor(fornecedor.getCodigoInterface());
-						output.setCodigoProduto( estudo.getProdutoEdicao().getProduto().getCodigo() );
-						output.setNumeroEdicao(estudo.getProdutoEdicao().getNumeroEdicao());
+						output.setCodigoProduto( lancamento.getProdutoEdicao().getProduto().getCodigo() );
+						output.setNumeroEdicao(lancamento.getProdutoEdicao().getNumeroEdicao());
 						output.setNumeroLancamento( 0L );
 						output.setNumeroFase(0);
-						output.setDataLancamento(estudo.getDataLancamento());
+						output.setDataLancamento(lancamento.getEstudo().getDataLancamento());
 					}
 				}
 				
