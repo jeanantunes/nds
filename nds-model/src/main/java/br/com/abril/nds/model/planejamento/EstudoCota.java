@@ -51,7 +51,8 @@ public class EstudoCota implements Serializable {
 	@OneToMany(mappedBy = "estudoCota")
 	private Set<RateioDiferenca> rateiosDiferenca = new HashSet<RateioDiferenca>();
 	
-	@OneToMany(mappedBy = "estudoCota", targetEntity=MovimentoEstoqueCota.class)
+	@OneToMany(mappedBy = "estudoCota")
+
 	private List<MovimentoEstoqueCota> movimentosEstoqueCota; 
 	
 	public Long getId() {

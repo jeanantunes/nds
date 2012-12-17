@@ -167,21 +167,26 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		
 		StringBuffer hql = new StringBuffer();
 		
-		hql.append("    SELECT cec.cota.id as idCota");
-		hql.append("          ,cec.cota.numeroCota as numeroCota");
-		hql.append("          ,cec.cota.pessoa.nome as colaboradorName");
-		hql.append("          ,cec.cota.box.nome as boxName");
+		hql.append("    SELECT cota.id as idCota");
+		hql.append("          ,cota.numeroCota as numeroCota");
+		hql.append("          ,coalesce(pessoa.nome, pessoa.razaoSocial) as colaboradorName");
+		hql.append("          ,box.nome as boxName");
 		//hql.append("          ,cec.cota.pdvs.rotas.rota.roteiro.descricaoRoteiro as roteiroName");
 		//hql.append("          ,cec.cota.pdvs.rotas.rota.descricaoRota as rotaName");
 		hql.append("          ,cec.fechado as fechado");
 		hql.append("          ,cec.postergado as postergado");
-		hql.append("          ,cec.chamadaEncalhe.dataRecolhimento as dataEncalhe");
+		hql.append("          ,chamadaEncalhe.dataRecolhimento as dataEncalhe");
 		hql.append("      FROM ChamadaEncalheCota cec");
+		hql.append("      join cec.cota cota ");
+		hql.append("      join cota.pessoa pessoa ");
+		hql.append("      join cota.box box ");
+		hql.append("      join cec.chamadaEncalhe chamadaEncalhe ");
 		hql.append("     WHERE cec.chamadaEncalhe.dataRecolhimento = :dataEncalhe");
-		hql.append("       AND cec NOT IN (");
-		hql.append("              SELECT ce.chamadaEncalheCota");
-		hql.append("                FROM ConferenciaEncalhe ce");
-		hql.append("               WHERE ce.data = :dataEncalhe");
+		hql.append("       AND cec.cota.id NOT IN (");
+		hql.append("           select cc.cota.id   ");
+		hql.append("		   from ConferenciaEncalhe ce, ChamadaEncalheCota cc ");
+		hql.append("            ");
+		hql.append("           where cc.chamadaEncalhe.dataRecolhimento = :dataEncalhe and ce.chamadaEncalheCota.id = cc.id ");
 		hql.append("       )");
 		if (sortname != null && sortorder != null) {
 			hql.append("  ORDER BY " + sortname + " " + sortorder);

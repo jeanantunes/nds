@@ -319,13 +319,11 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 	@Override
 	public List<Integer> obterDiasConcentracaoPagamentoCota(Long idCota) {
 		StringBuilder hql = new StringBuilder("select cc.codigoDiaSemana ");
-		hql.append(
-				" from ConcentracaoCobrancaCota cc, Cota cota, ParametroCobrancaCota p, FormaCobranca fc ")
-				.append(" where cota.id                     = p.cota.id ")
-				.append(" and   fc.parametroCobrancaCota.id = p.id ")
-				.append(" and   cc.formaCobranca.id = fc.id ")
-				.append(" and   fc.principal = true ")
-				.append(" and   cota.id                     = :idCota");
+		hql.append(" from ConcentracaoCobrancaCota cc ")
+		   .append(" join cc.formaCobranca fc ")
+		   .append(" join fc.parametroCobrancaCota p ")
+		   .append(" join p.cota cota ")
+		   .append(" where cota.id = :idCota ");
 
 		Query query = this.getSession().createQuery(hql.toString());
 		query.setParameter("idCota", idCota);

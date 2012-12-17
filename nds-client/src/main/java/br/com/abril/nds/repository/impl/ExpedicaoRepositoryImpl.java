@@ -110,7 +110,9 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 							.append(" when (diferenca.tipoDiferenca = 'SOBRA_EM') then (diferenca.qtde)")
 							.append(" else 0")
 						.append(" end )) as qntDiferenca, ")
-						.append(" sum(estudoCota.qtdeEfetiva) * sum(produtoEd.precoVenda), ")
+
+						.append(" produtoEd.precoVenda, ")
+
 						.append(" juridica.razaoSocial ")
 						
 			.append(" ) ");
@@ -298,7 +300,7 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 						.append(" box.id,")
 						.append("box.codigo || '-'|| box.nome,")
 						.append("box.nome,")
-						.append(" SUM (produtoEdicao.precoVenda ) as totalVendas,")
+						.append("  (produtoEdicao.precoVenda ) as totalVendas,")
 						.append(" SUM (estudoCota.qtdeEfetiva) as qntReparte,")
 						.append(" SUM (( case ")
 							.append(" when (diferenca.tipoDiferenca = 'FALTA_DE') then (-(diferenca.qtde * produtoEdicao.pacotePadrao))")
@@ -307,7 +309,7 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 							.append(" when (diferenca.tipoDiferenca = 'SOBRA_EM') then (diferenca.qtde)")
 							.append(" else 0")
 						.append(" end )) as qntDiferenca, ")
-						.append(" (SUM (estudoCota.qtdeEfetiva)*SUM (produtoEdicao.precoVenda )) as totalFaturado,")
+						.append(" (SUM (estudoCota.qtdeEfetiva)*produtoEdicao.precoVenda) as totalFaturado,")
 						.append("produto.codigo,")
 						.append("produto.nome,")
 						.append("produtoEdicao.numeroEdicao")

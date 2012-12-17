@@ -142,8 +142,7 @@ public class EMS0119MessageProcessor extends AbstractRepository implements
 								+ input.getPacotePadrao());
 
 			}
-			produto.setOrigem(Origem.INTERFACE);
-
+			this.getSession().merge(produto);
 
 		} else {
 			
@@ -156,7 +155,7 @@ public class EMS0119MessageProcessor extends AbstractRepository implements
 			produto.setAtivo(input.getStatusDaPublicacao());			
 			//Default data
 			produto.setPeso(0l);
-			produto.setOrigem(Origem.INTERFACE);
+			produto.setOrigem(Origem.MANUAL);
 
 			
 			TipoProduto tp =  this.getTipoProduto(input.getTipoDePublicacao());
