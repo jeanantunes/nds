@@ -59,7 +59,7 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 		
 		StringBuilder hql = new StringBuilder("select mfc ");
 		hql.append(" from MovimentoFinanceiroCota mfc, Distribuidor d ")
-		   .append(" where mfc.data <= d.dataOperacao ")
+		   .append(" where mfc.data = d.dataOperacao ")
 		   .append(" and mfc.status = :statusAprovado ");
 		
 		if (idCota != null){
@@ -68,7 +68,7 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 		
 		hql.append(" and mfc.cota.situacaoCadastro != :inativo and mfc.cota.situacaoCadastro != :pendente ")
 		   .append(" and mfc.id not in ")
-		   .append(" (select mov.id from ConsolidadoFinanceiroCota c join c.movimentos mov where c.dataConsolidado <= d.dataOperacao) ");
+		   .append(" (select mov.id from ConsolidadoFinanceiroCota c join c.movimentos mov) ");
 		
 		hql.append(" order by mfc.cota.id ");
 		

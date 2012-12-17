@@ -55,11 +55,17 @@ public class TipoNotaFiscalRepositoryImpl extends AbstractRepositoryModel<TipoNo
 	@Override
 	public TipoNotaFiscal obterTipoNotaFiscal(GrupoNotaFiscal grupoNotaFiscal) {
 		
-		String hql = " from TipoNotaFiscal tipoNotaFiscal where tipoNotaFiscal.grupoNotaFiscal = :grupoNotaFiscal group by tipoNotaFiscal.id  ";
+		String hql = " from TipoNotaFiscal tipoNotaFiscal " +
+				     " where tipoNotaFiscal.grupoNotaFiscal = :grupoNotaFiscal " +
+				     " and tipoNotaFiscal.destinatario = :destinatario " +
+				     " and tipoNotaFiscal.emitente = :emitente " +
+				     " group by tipoNotaFiscal.id  ";
 		
 		Query query = getSession().createQuery(hql);
 		
 		query.setParameter("grupoNotaFiscal", grupoNotaFiscal);
+		query.setParameter("destinatario", TipoUsuarioNotaFiscal.TREELOG);
+		query.setParameter("emitente", TipoUsuarioNotaFiscal.DISTRIBUIDOR);
 		
 		return (TipoNotaFiscal) query.uniqueResult();
 	}

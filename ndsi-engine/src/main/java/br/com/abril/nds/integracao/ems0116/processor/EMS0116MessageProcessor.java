@@ -164,8 +164,8 @@ public class EMS0116MessageProcessor extends AbstractRepository implements
 				ndsiLoggerFactory.getLogger().logWarning(
 						message,
 						EventoExecucaoEnum.RELACIONAMENTO,
-						"O arquivo nao contem dados de endereco para a cota "
-								+ cota.getNumeroCota());
+						"O arquivo nao contem dados de endereco para o pdv "
+								+ pdv.getId());
 			}
 
 			if (!input.getTelefone().isEmpty()) {
@@ -186,8 +186,8 @@ public class EMS0116MessageProcessor extends AbstractRepository implements
 				ndsiLoggerFactory.getLogger().logWarning(
 						message,
 						EventoExecucaoEnum.RELACIONAMENTO,
-						"O arquivo nao contem dados de telefone para a cota "
-								+ cota.getNumeroCota());
+						"O arquivo nao contem dados de telefone para o pdv "
+								+ pdv.getId());
 			}
 
 		} else {

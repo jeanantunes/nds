@@ -508,6 +508,7 @@ public class DigitacaoContagemDevolucaoController  {
 			contagemDevolucaoDTO.setQtdNota(new BigInteger(vo.getQtdNota()));
 			contagemDevolucaoDTO.setDataMovimento( ( vo.getDataRecolhimentoDistribuidor() == null ) ? distribuidorService.obter().getDataOperacao() : DateUtil.parseData(vo.getDataRecolhimentoDistribuidor(),"dd/MM/yyyy"));
 			contagemDevolucaoDTO.setDiferenca(StringUtil.isEmpty(vo.getDiferenca()) ? null : new BigInteger(vo.getDiferenca()));
+			contagemDevolucaoDTO.setPrecoVenda(vo.getPrecoVenda() == null || vo.getPrecoVenda().isEmpty() ? null : CurrencyUtil.getBigDecimal(vo.getPrecoVenda()));
 			listaResultadosDto.add(contagemDevolucaoDTO);
 		}
 		
