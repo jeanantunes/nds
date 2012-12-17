@@ -539,7 +539,7 @@ var transportadorController = $.extend(true, {
 		$("#cnpj", transportadorController.workspace).val("");
 		$("#inscEstadual", transportadorController.workspace).val("");
 		$("#responsavel", transportadorController.workspace).val("");
-		
+		$("#valorTaxaFixa", transportadorController.workspace).val("");
 		$("#checkPorEntrega", transportadorController.workspace).uncheck();
 		$("#radioPeridioDiario", transportadorController.workspace).check();
 		$(".checksDiasSemana", transportadorController.workspace).uncheck();
