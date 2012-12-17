@@ -162,7 +162,7 @@ public class EMS0132MessageProcessor extends AbstractRepository implements Messa
 						output.setNumeroEdicao(lancamento.getProdutoEdicao().getNumeroEdicao());
 						output.setNumeroLancamento( 0L );
 						output.setNumeroFase(0);
-						output.setDataLancamento(lancamento.getEstudo().getDataLancamento());
+						output.setDataLancamento(lancamento.getDataLancamentoDistribuidor());
 					}
 				}
 				
