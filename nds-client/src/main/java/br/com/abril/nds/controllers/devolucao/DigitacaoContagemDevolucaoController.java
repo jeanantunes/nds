@@ -105,7 +105,7 @@ public class DigitacaoContagemDevolucaoController  {
 		/**
 		 * FIXE Alterar o códgo abaixo quando, for definido a implementação de Perfil de Usuário
 		 */
-		result.include(USUARIO_PERFIL_OPERADOR, isPerfilUsuarioEncarregado());
+		result.include(USUARIO_PERFIL_OPERADOR, !isPerfilUsuarioEncarregado());
 		
 		carregarComboFornecedores();
 	}
