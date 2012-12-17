@@ -1,6 +1,7 @@
 package br.com.abril.nds.controllers.devolucao;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
@@ -343,12 +344,15 @@ public class MatrizRecolhimentoController {
 		
 		FiltroPesquisaMatrizRecolhimentoVO filtro = obterFiltroSessao();
 		
+		recolhimentoService.voltarConfiguracaoOriginal(filtro.getNumeroSemana(), 
+				filtro.getDataPesquisa(), filtro.getListaIdsFornecedores());
+		
 		BalanceamentoRecolhimentoDTO balanceamentoRecolhimento = 
 			this.obterBalanceamentoRecolhimento(filtro.getDataPesquisa(),
 												filtro.getNumeroSemana(),
 												filtro.getListaIdsFornecedores(),
 												TipoBalanceamentoRecolhimento.AUTOMATICO,
-												true);
+												false);
 		
 		ResultadoResumoBalanceamentoVO resultadoResumoBalanceamento = 
 			this.obterResultadoResumoBalanceamento(balanceamentoRecolhimento);
@@ -831,7 +835,7 @@ public class MatrizRecolhimentoController {
 				MathUtil.round(produtoRecolhimentoDTO.getExpectativaEncalheAlternativo(), 2));
 			
 			produtoRecolhimentoVO.setEncalhe(
-				MathUtil.round(produtoRecolhimentoDTO.getExpectativaEncalhe(), 2));
+				produtoRecolhimentoDTO.getExpectativaEncalhe());
 			
 			produtoRecolhimentoVO.setValorTotal(produtoRecolhimentoDTO.getValorTotal());
 			
@@ -1230,7 +1234,7 @@ public class MatrizRecolhimentoController {
 				Long qtdeTitulosParciais = 0L;
 				
 				Long pesoTotal = 0L;
-				BigDecimal qtdeExemplares = BigDecimal.ZERO;
+				BigInteger qtdeExemplares = BigInteger.ZERO;
 				BigDecimal valorTotal = BigDecimal.ZERO;
 				
 				for (ProdutoRecolhimentoDTO produtoRecolhimento : listaProdutosRecolhimento) {
@@ -1276,7 +1280,7 @@ public class MatrizRecolhimentoController {
 				
 				itemResumoPeriodoBalanceamento.setExibeDestaque(exibeDestaque);
 				itemResumoPeriodoBalanceamento.setPesoTotal(pesoTotal);
-				itemResumoPeriodoBalanceamento.setQtdeExemplares(MathUtil.round(qtdeExemplares, 2));
+				itemResumoPeriodoBalanceamento.setQtdeExemplares(qtdeExemplares);
 				itemResumoPeriodoBalanceamento.setQtdeTitulos(qtdeTitulos);
 				
 				itemResumoPeriodoBalanceamento.setQtdeTitulosParciais(qtdeTitulosParciais);
@@ -1403,6 +1407,34 @@ public class MatrizRecolhimentoController {
 	public void excluirBalanceamento(Long idLancamento) {
 
 		this.recolhimentoService.excluiBalanceamento(idLancamento);
+		
+		BalanceamentoRecolhimentoDTO balanceamentoRecolhimentoSessao =
+				(BalanceamentoRecolhimentoDTO)
+					httpSession.getAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_RECOLHIMENTO);
+			
+		TreeMap<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimentoSessao =
+				balanceamentoRecolhimentoSessao.getMatrizRecolhimento();
+		
+
+		for (Map.Entry<Date, List<ProdutoRecolhimentoDTO>> entry : matrizRecolhimentoSessao.entrySet()) {
+			
+			ProdutoRecolhimentoDTO excluir = null;			
+			
+			for(ProdutoRecolhimentoDTO prodRecolhimento : entry.getValue()) {
+				
+				if(prodRecolhimento.getIdLancamento().equals(idLancamento)) {
+					
+					excluir = prodRecolhimento;
+					break;
+				}
+			}
+			
+			if(excluir!=null) {
+				
+				entry.getValue().remove(excluir);
+				break;
+			}
+		}
 		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS,
 			"Balanceamento excluído com sucesso!"), "result").recursive().serialize();

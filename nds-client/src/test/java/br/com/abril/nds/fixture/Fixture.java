@@ -739,8 +739,8 @@ public class Fixture {
 		distribuidor.setDataOperacao(dataOperacao);
 		distribuidor.setJuridica(juridica);
 		distribuidor.setPoliticasCobranca(politicasCobranca);
-		distribuidor.setCapacidadeDistribuicao(new BigDecimal("3000"));
-		distribuidor.setCapacidadeRecolhimento(new BigDecimal("1000"));
+		distribuidor.setCapacidadeDistribuicao(new BigInteger("3000"));
+		distribuidor.setCapacidadeRecolhimento(new BigInteger("1000"));
 		distribuidor.setPreenchimentoAutomaticoPDV(true);
 		distribuidor.setExecutaRecolhimentoParcial(true);
 		distribuidor.setFatorRelancamentoParcial(7);
@@ -1236,6 +1236,16 @@ public class Fixture {
 		tipoMovimento.setDescricao("Saída por transferência de estoque do tipo 'Devolução produto para Fornecedor', do distribuidor");
 		tipoMovimento.setIncideDivida(true);
 		tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_PRODUTOS_DEVOLUCAO_FORNECEDOR);
+		return tipoMovimento;
+	}
+
+	public static TipoMovimentoEstoque tipoMovimentoDevolucaoEncalheFornecedor() {
+		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
+		tipoMovimento.setAprovacaoAutomatica(true);
+		tipoMovimento.setDescricao("Estorno do reparte por furo de publicação");
+		tipoMovimento.setIncideDivida(true);
+		tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.DEVOLUCAO_ENCALHE)
+		;
 		return tipoMovimento;
 	}
 

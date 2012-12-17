@@ -115,7 +115,7 @@ public class RoteiroRoteirizacaoDTO implements Serializable, Ordenavel {
 			rotas = new ArrayList<RotaRoteirizacaoDTO>();
 		}
 		
-		OrdenacaoUtil.incluirItemOrdenado(rota, rotas);
+		OrdenacaoUtil.reordenarLista(rota, rotas);
 		
 		rotas.add(rota);
 		todasRotas.add(rota);
@@ -214,6 +214,39 @@ public class RoteiroRoteirizacaoDTO implements Serializable, Ordenavel {
     		
     		this.adicionarRotaExclusao(idRota);
     	}
+    }
+    
+    public void removerRota(Integer ordemRota) {
+    	
+    	if (this.rotas != null){
+    		
+    		for (RotaRoteirizacaoDTO rota : this.rotas){
+    			
+    			if (rota.getOrdem().equals(ordemRota)){
+    				
+    				this.rotas.remove(rota);
+    				break;
+    			}
+    		}
+    	}
+    	
+    	if (this.todasRotas != null){
+    		
+    		for (RotaRoteirizacaoDTO rota : this.todasRotas){
+    			
+    			if (rota.getOrdem().equals(ordemRota)){
+    				
+    				this.todasRotas.remove(rota);
+    				
+    				if(rota.getId() > 0) {
+    					this.adicionarRotaExclusao(rota.getId());
+    				}
+    				
+    				break;
+    			}
+    		}
+    	}
+
     }
 
 	public Set<Long> getRotasExclusao() {

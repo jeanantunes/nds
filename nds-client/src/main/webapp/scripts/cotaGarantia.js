@@ -705,15 +705,20 @@ TipoCotaGarantia.prototype.tipo = {
 };
 
 TipoCotaGarantia.prototype.get = function() {
+	
     var _this = this;
+    
     $.getJSON(this.path + 'getTiposGarantia.json', null, function(data) {
-        var tipoMensagem = data.tipoMensagem;
+    
+    	var tipoMensagem = data.tipoMensagem;
         var listaMensagens = data.listaMensagens;
 
         if (tipoMensagem && listaMensagens) {
-            exibirMensagemDialog(tipoMensagem, listaMensagens,"");
+
+        	exibirMensagemDialog(tipoMensagem, listaMensagens,"");
         } else {
-            _this.bindData(data);
+            
+        	_this.bindData(data);
         }
 
     }, null, true);
@@ -721,33 +726,54 @@ TipoCotaGarantia.prototype.get = function() {
 
 TipoCotaGarantia.prototype.getData = function() {
     var _this = this;
-    var param = [{name: 'idCota', value: this.getIdCota()},
-        {name: 'modoTela', value: this.getModoTela().value},
-        {name: 'idHistorico', value: this.getIdHistorico()}]
-    $.postJSON(this.path + 'getByCota.json', param, function(data) {
-        var tipoMensagem = data.tipoMensagem;
-        var listaMensagens = data.listaMensagens;
-        if (tipoMensagem && listaMensagens) {
-            exibirMensagemDialog(tipoMensagem, listaMensagens,"");
-        } else if (data && data.cotaGarantia) {
-            _this.cotaGarantia = data.cotaGarantia;
-            _this.cotaGarantia.controllerType = data.tipo;
-            _this.changeController(data.tipo);
-            $("#tipoGarantiaSelect", _workspace).val(data.tipo).change();
+    
+    var params = [{name: 'idCota', value: _this.getIdCota()},
+			     {name: 'modoTela', value: _this.getModoTela().value},
+			     {name: 'idHistorico', value: _this.getIdHistorico()}];
+    
+    $.postJSON(this.path + 'getByCota.json', 
+		params, 
+    	function(result) {
+    	
+	        var tipoMensagem = result.tipoMensagem;
+	        var listaMensagens = result.listaMensagens;
+	        
+	        if (tipoMensagem && listaMensagens) {
+	        	
+	            exibirMensagemDialog(tipoMensagem, listaMensagens,"");
+	        } 
+	        else if (result) {
+	        	
+	            _this.cotaGarantia = result.cotaGarantia;
+	            _this.controllerType = result.tipo;
+	            _this.changeController(result.tipo);
+	            
+	            $("#tipoGarantiaSelect", _workspace).val(result.tipo).change();
+	
+	            _this.configTipoCotaGarantia(result.tipo,_this.getIdCota());
+	
+	        } 
+	        else{
+	        	
+	            _this.changeController(null);
+	        }
 
-            _this.configTipoCotaGarantia(data.tipo,_this.getIdCota());
-
-        } else if (!data || !data.cotaGarantia) {
-            _this.changeController(null);
-        }
-
-    }, null, true);
+        }, 
+        null, 
+        true
+    );
 };
 
 TipoCotaGarantia.prototype.configTipoCotaGarantia = function(tipo,idCota) {
-
+    
     if (tipo=="CAUCAO_LIQUIDA"){
+    	
         CaucaoLiquida.prototype.obterCaucaoLiquida(idCota);
+    }
+    
+    if (tipo=="FIADOR"){
+    	
+    	 Fiador.prototype.obterFiador(idCota);
     }
 };
 
@@ -953,7 +979,9 @@ Fiador.prototype.toggle = function() {
 };
 
 Fiador.prototype.bindEvents = function() {
-    var _this = this;
+    
+	var _this = this;
+    
     $("#cotaGarantiaFiadorSearchName", _workspace).autocomplete({
         source : function(request, response) {
             $.postJSON(_this.path + 'buscaFiador.json', {
@@ -1013,23 +1041,27 @@ Fiador.prototype.getFiador = function(idFiador, documento) {
     }
     ;
 
-    $.postJSON(this.path + "getFiador.json", param, function(data) {
-        if (data === "NotFound") {
-            _this.confirma();
-            _this.toggleDados(false);
-            _this.fiador = null;
-        } else if (data.tipoMensagem && data.listaMensagens) {
-            exibirMensagemDialog(data.tipoMensagem, data.listaMensagens,"");
-            _this.toggleDados(false);
-            _this.fiador = null;
-            _this.enderecoFiador = null;
-        } else {
-            _this.fiador = data.fiador;
-            _this.enderecoFiador =data.endereco;
-            _this.bindData();
-            _this.toggleDados(true);
-        }
-    }, null, true);
+    $.postJSON(this.path + "getFiador.json", param, 
+    	function(data) {
+	        if (data === "NotFound") {
+	            _this.confirma();
+	            _this.toggleDados(false);
+	            _this.fiador = null;
+	        } else if (data.tipoMensagem && data.listaMensagens) {
+	            exibirMensagemDialog(data.tipoMensagem, data.listaMensagens,"");
+	            _this.toggleDados(false);
+	            _this.fiador = null;
+	            _this.enderecoFiador = null;
+	        } else {
+	            _this.fiador = data.fiador;
+	            _this.enderecoFiador =data.endereco;
+	            _this.bindData();
+	            _this.toggleDados(true);
+	        }
+        }, 
+        null, 
+        true
+    );
 };
 
 Fiador.prototype.confirma = function() {
@@ -1038,6 +1070,20 @@ Fiador.prototype.confirma = function() {
 
 Fiador.prototype.toggleDados = function(showOrHide) {
     $('#cotaGarantiaFiadorDadosPanel', _workspace).toggle(showOrHide);
+};
+
+Fiador.prototype.obterFiador = function(idCota){
+	
+	var _this = this;
+
+    $.postJSON(this.path + 'getFiadorByCota.json',
+    	[{name:'idCota', value:idCota}],
+        function(result){
+    	
+    	    _this.getFiador(result.id,null);
+        },
+        null,
+        true);
 };
 
 Fiador.prototype.bindData = function() {
@@ -1158,21 +1204,28 @@ Fiador.prototype.salva = function(callBack) {
 };
 
 Fiador.prototype.get = function() {
+	
     var _this = this;
-    $.postJSON(this.path + 'getByCota.json', {
-        'idCota' : this._idCota
-    }, function(data) {
+    var params = [{name: 'idCota', value: this._idCota}, {name: 'modoTela', value: tipoCotaGarantia.getModoTela().value}];
+    
+    $.postJSON(this.path + 'getByCota.json', params, 
+        function(data) {
+    	
+	        var tipoMensagem = data.tipoMensagem;
+	        var listaMensagens = data.listaMensagens;
+	        
+	        if (tipoMensagem && listaMensagens) {
+	        	
+	            exibirMensagemDialog(tipoMensagem, listaMensagens,"");
+	        } else if (data && data.fiador) {
+	        	
+	            _this.getFiador(data.fiador.id, null);
+	        }
 
-        var tipoMensagem = data.tipoMensagem;
-        var listaMensagens = data.listaMensagens;
-        if (tipoMensagem && listaMensagens) {
-            exibirMensagemDialog(tipoMensagem, listaMensagens,"");
-        } else if (data && data.fiador) {
-            _this.getFiador(data.fiador.id, null);
-        }
-
-    }, null, true);
-
+        }, 
+        null, 
+        true
+    );
 };
 
 //**************** CAUCAO LIQUIDA PROTOTYPE ********************//

@@ -20,14 +20,10 @@ public interface MatrizLancamentoService {
 	 * 
 	 * @param filtro
 	 *            - filtro para realização do balanceamento
-	 * @param configuracaoInicial
-	 *            - indicada se a matriz de lançamento deve ser sugerida de
-	 *            acordo com configuração inicial
 	 * 
 	 * @return {@link BalanceamentoLancamentoDTO}
 	 */
-	BalanceamentoLancamentoDTO obterMatrizLancamento(
-			FiltroLancamentoDTO filtro, boolean configuracaoInicial);
+	BalanceamentoLancamentoDTO obterMatrizLancamento(FiltroLancamentoDTO filtro);
 
 	/**
 	 * Confirma as matriz de balanceamento de lançamento.
@@ -80,5 +76,7 @@ public interface MatrizLancamentoService {
 	 * @return {@link ConfirmacaoVO}
 	 */
 	public List<ConfirmacaoVO> obterDatasConfirmacao(List<ProdutoLancamentoDTO> produtosLancamento);
+	
+	void voltarConfiguracaoInicial(Date dataLancamento);
 
 }

@@ -95,6 +95,6 @@ public interface RoteirizacaoRepository extends Repository<Roteirizacao, Long> {
 	 * @param idPdv
 	 * @return
 	 */
-	Box obterBoxDoPDV(Long idPdv);
+	Box obterBoxDoPDV(Long... idPdv);
 }
 

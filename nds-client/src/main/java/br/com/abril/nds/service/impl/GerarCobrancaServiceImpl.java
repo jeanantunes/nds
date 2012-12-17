@@ -755,6 +755,11 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			//Cota suspensa ou valor minimo atingido e dentro do dia de concentração de cobrança
 			else {
 
+				if (formaCobrancaPrincipal.getBanco() == null) {
+					
+					return null;
+				}
+				
 				novaDivida = new Divida();
 				novaDivida.setValor(vlMovFinanTotal.abs());
 				novaDivida.setData(consolidadoFinanceiroCota.getDataConsolidado());
