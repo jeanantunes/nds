@@ -706,10 +706,10 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		BigDecimal valorMinino = 
 				this.obterValorMinino(cota, valorMininoDistribuidor);
 		
-		//caso a cota não esteja suspensa e não tenha alcançado o valor minino de cobrança ou não seja um dia de concentração de cobrança
-		if ( (!cotaSuspensa) || (vlMovFinanTotal.compareTo(valorMinino) < 0) || 
+		//caso a cota não esteja suspensa e tenha alcançado o valor minino de cobrança e seja um dia de concentração de cobrança
+		if ( (!cotaSuspensa) && (vlMovFinanTotal.compareTo(valorMinino) < 0) && 
 				((diasSemanaConcentracaoPagamento != null) && 
-				!diasSemanaConcentracaoPagamento.contains(Calendar.getInstance().get(Calendar.DAY_OF_WEEK))) ){
+				diasSemanaConcentracaoPagamento.contains(Calendar.getInstance().get(Calendar.DAY_OF_WEEK))) ){
 
 			//gerar postergado
 			consolidadoFinanceiroCota.setValorPostergado(vlMovFinanTotal);
