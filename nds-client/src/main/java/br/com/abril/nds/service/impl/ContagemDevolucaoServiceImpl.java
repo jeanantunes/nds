@@ -807,14 +807,17 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 		
 		// Realizado pelo Cesar Pop Punk
 		BigDecimal valorBruto = BigDecimal.ZERO;
+		BigDecimal valorDesconto = BigDecimal.ZERO;
+		BigDecimal valorLiquido = BigDecimal.ZERO;
 		for (ContagemDevolucaoDTO contagem : listaContagemDevolucaoAprovada) {
+			valorLiquido = valorLiquido.add(contagem.getTotalComDesconto());
 			valorBruto = valorBruto.add( contagem.getPrecoVenda().multiply( new BigDecimal(contagem.getQtdNota()) ) );
 		}
+		valorDesconto = valorBruto.subtract(valorLiquido);
+		
 		nfSaidaFornecedor.setValorBruto(valorBruto);
-
-		// TODO: Corrigir estes dois valores abaixo:
-		nfSaidaFornecedor.setValorDesconto(BigDecimal.ZERO);
-		nfSaidaFornecedor.setValorLiquido(BigDecimal.ZERO);
+		nfSaidaFornecedor.setValorDesconto(valorDesconto);
+		nfSaidaFornecedor.setValorLiquido(valorLiquido);
 		
 		notaFiscalSaidaRepository.adicionar(nfSaidaFornecedor);
 		
@@ -836,7 +839,7 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 
 		// Gerado por Cesar Pop Punk
 		// Movimentação de estoque
-		this.gerarMovimentoEstoque(nfSaidaFornecedor, itensNotaFiscalSaida);
+		this.gerarMovimentoEstoque(nfSaidaFornecedor, listItemNotaFiscal);
 		
 		try {
 			notaFiscalService.exportarNotasFiscais(idNota);
@@ -845,17 +848,17 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 		}
 	}
 	
-	public void gerarMovimentoEstoque(NotaFiscalSaidaFornecedor nfSaidaFornecedor, List<ItemNotaFiscalSaida> itensNotaFiscalSaida) {
+	public void gerarMovimentoEstoque(NotaFiscalSaidaFornecedor nfSaidaFornecedor, List<ItemNotaFiscal> listItemNotaFiscal) {
 		
-		for ( ItemNotaFiscalSaida item : itensNotaFiscalSaida ) {
+		for ( ItemNotaFiscal item : listItemNotaFiscal ) {
 
 			TipoMovimentoEstoque tipoMovimento = tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.DEVOLUCAO_ENCALHE);
 
 			movimentoEstoqueService.gerarMovimentoEstoque(
 					distribuidorService.obter().getDataOperacao(), 
-					item.getProdutoEdicao().getId(), 
+					item.getIdProdutoEdicao(), 
 					usuarioService.getUsuarioLogado().getId(), 
-					item.getQtde(),
+					item.getQuantidade(),
 					tipoMovimento);
 
 		}
