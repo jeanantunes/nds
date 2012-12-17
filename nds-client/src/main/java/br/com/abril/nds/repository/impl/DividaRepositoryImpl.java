@@ -205,7 +205,7 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 				.append(" rota.descricaoRota,")
 				.append(" roteiro.descricaoRoteiro,")
 				.append(" cota.numeroCota,")
-				.append(" pessoa.nome,")
+				.append(" coalesce(pessoa.nome, pessoa.razaoSocial),")
 				.append(" cobranca.dataVencimento,")
 				.append(" cobranca.dataEmissao,")
 				.append(" cobranca.valor,")
@@ -223,14 +223,13 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 		.append(" Divida divida ")
 		.append(" JOIN divida.cobranca cobranca ")
 		.append(" JOIN cobranca.cota cota ")
+		.append(" JOIN cota.box box ")
 		.append(" JOIN cota.pdvs pdv ")
 		.append(" JOIN cota.pessoa pessoa ")
 		.append(" JOIN cota.parametroCobranca parametroCobranca ")
 		.append(" LEFT JOIN pdv.rotas rotaPdv  ")
 		.append(" LEFT JOIN rotaPdv.rota rota  ")
 		.append(" LEFT JOIN rota.roteiro roteiro ")
-		.append(" LEFT JOIN roteiro.roteirizacao roteirizacao ")
-		.append(" LEFT JOIN roteirizacao.box box")
 		
 		.append(" WHERE ")
 		
@@ -238,7 +237,8 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 		.append(" AND divida.acumulada =:acumulaDivida ")
 		.append(" AND cobranca.statusCobranca=:statusCobranca ")
 		.append(" AND pdv.caracteristicas.pontoPrincipal = true ")
-		.append(" AND (roteiro.tipoRoteiro is null OR roteiro.tipoRoteiro=:tipoRoteiro) ");
+		.append(" AND (roteiro.tipoRoteiro is null OR roteiro.tipoRoteiro=:tipoRoteiro) ")
+		.append(" and rotaPdv.ordem = (select max(rotaPdvAux.ordem) from RotaPDV rotaPdvAux where rotaPdvAux.pdv.cota.id = cota.id)");
 		
 		if(filtro.getNumeroCota()!= null  ){
 			hql.append(" AND cota.numeroCota =:numeroCota ");
