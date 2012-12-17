@@ -15,8 +15,10 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -251,6 +253,8 @@ public class DataLoader {
     
     private static ThreadLocal<AtomicLong> GERADOR_CODIGO_PRODUTO_HOLDER = new ThreadLocal<AtomicLong>();
 
+    private static List<ProdutoEdicao> listaProdutoEdicaoConferenciaEncalhe;
+    
 	private static final String PARAM_SKIP_DATA = "skipData";
 	private static final String PARAM_CLEAN_DATA = "cleanData";
 	
@@ -340,6 +344,7 @@ public class DataLoader {
 	private static TipoMovimentoEstoque tipoMovimentoTransferenciaSaidaProdutosDanificados;
 	private static TipoMovimentoEstoque tipoMovimentoTransferenciaEntradaProdutosDevolucaoFornecedor;
 	private static TipoMovimentoEstoque tipoMovimentoTransferenciaSaidaProdutosDevolucaoFornecedor;
+	private static TipoMovimentoEstoque tipoMovimentoDevolucaoEncalheFornecedor;
 	
 	
 	private static MovimentoEstoqueCota movimentoEstoqueCota1;
@@ -1144,6 +1149,8 @@ public class DataLoader {
 		criarDadosBalanceamentoRecolhimento(session);
 
 		gerarCargaDadosConferenciaEncalhe(session);
+		
+		criarDadosChamadaEncalheFornecedor(session);
 
 		gerarLogExecucaoInterfaces(session);
 
@@ -2457,12 +2464,19 @@ public class DataLoader {
 	}
 	
 	private static void gerarAreaInfluenciaPDV(Session session) {
+		
+		AreaInfluenciaPDV areaInfluenciaPDV1 = Fixture.criarAreaInfluenciaPDV(1L, "AREA COMERCIAL A/B"); 
+		AreaInfluenciaPDV areaInfluenciaPDV2 = Fixture.criarAreaInfluenciaPDV(2L, "AREA COMERCIAL C/D"); 
+		AreaInfluenciaPDV areaInfluenciaPDV3 = Fixture.criarAreaInfluenciaPDV(3L, "COMERCIAL"); 
+		AreaInfluenciaPDV areaInfluenciaPDV4 = Fixture.criarAreaInfluenciaPDV(4L, "CONVENIENCIA VIAGEM"); 
+		AreaInfluenciaPDV areaInfluenciaPDV5 = Fixture.criarAreaInfluenciaPDV(5L, "ESCRITORIO A/B"); 
+		AreaInfluenciaPDV areaInfluenciaPDV6 = Fixture.criarAreaInfluenciaPDV(6L, "ESCRITORIO E FABRICA C/D"); 
+		AreaInfluenciaPDV areaInfluenciaPDV7 = Fixture.criarAreaInfluenciaPDV(7L, "RESIDENCIAL A/B"); 
+		AreaInfluenciaPDV areaInfluenciaPDV8 = Fixture.criarAreaInfluenciaPDV(8L, "RESIDENCIAL C/D");
 
-		AreaInfluenciaPDV areaInfluenciaPDV = Fixture.criarAreaInfluenciaPDV(1L, "Residencial");
-		AreaInfluenciaPDV areaInfluenciaPDV1 = Fixture.criarAreaInfluenciaPDV(2L, "Residencial XX");
-		AreaInfluenciaPDV areaInfluenciaPDV2 = Fixture.criarAreaInfluenciaPDV(3L, "Estradas");
-
-		save(session,areaInfluenciaPDV,areaInfluenciaPDV1,areaInfluenciaPDV2);
+		save(session,areaInfluenciaPDV1,areaInfluenciaPDV2,areaInfluenciaPDV3,
+				     areaInfluenciaPDV4,areaInfluenciaPDV5,areaInfluenciaPDV6,
+				     areaInfluenciaPDV7,areaInfluenciaPDV8);
 	}
 
 	private static void gerarMaterialPromocionalPDV(Session session) {
@@ -6080,6 +6094,7 @@ public class DataLoader {
 		tipoMovimentoTransferenciaSaidaProdutosDanificados = Fixture.tipoMovimentoTransferenciaSaidaProdutosDanificados();
 		tipoMovimentoTransferenciaEntradaProdutosDevolucaoFornecedor = Fixture.tipoMovimentoTransferenciaEntradaProdutosDevolucaoFornecedor();
 		tipoMovimentoTransferenciaSaidaProdutosDevolucaoFornecedor = Fixture.tipoMovimentoTransferenciaSaidaProdutosDevolucaoFornecedor();
+		tipoMovimentoDevolucaoEncalheFornecedor = Fixture.tipoMovimentoDevolucaoEncalheFornecedor();
 		
 		save(session, tipoMovimentoFaltaEm, tipoMovimentoFaltaDe, tipoMovimentoSuplementarCotaAusente,
 				tipoMovimentoSobraEm, tipoMovimentoSobraDe,
@@ -6096,7 +6111,7 @@ public class DataLoader {
 				tipoMovimentoTransferenciaEntradaRecolhimento, tipoMovimentoTransferenciaSaidaRecolhimento,
 				tipoMovimentoTransferenciaEntradaProdutosDanificados, tipoMovimentoTransferenciaSaidaProdutosDanificados,
 				tipoMovimentoEstornoCotaFuroPublicacao,tipoMovimentoTransferenciaEntradaProdutosDevolucaoFornecedor,
-				tipoMovimentoTransferenciaSaidaProdutosDevolucaoFornecedor);
+				tipoMovimentoTransferenciaSaidaProdutosDevolucaoFornecedor, tipoMovimentoDevolucaoEncalheFornecedor);
 
 	}
 
@@ -7632,7 +7647,11 @@ public class DataLoader {
 		BigInteger qtdePrevistaChamadaEncCota = BigInteger.valueOf(80);
 
 		int contador = 0;
-
+		
+		if(listaProdutoEdicaoConferenciaEncalhe == null) {
+			listaProdutoEdicaoConferenciaEncalhe = new LinkedList<ProdutoEdicao>();
+		}
+		
 		while(contador++ < 30) {
 
 			codigoProduto 		= "8611";
@@ -7744,7 +7763,13 @@ public class DataLoader {
 
 		produtoEdicaoCE = Fixture.produtoEdicao(codigoProdutoEdicao, numeroEdicao, pacotePadrao, peb,
 				peso, precoCusto, precoVenda, codigoDeBarras, produtoCE, expectativaVenda, parcial, descProduto + numeroEdicao);
+		
 		save(session, produtoEdicaoCE);
+		
+		/**
+		 * lista utilizada para criar registro de item_chamada_encalhe_fornecedor
+		 */
+		listaProdutoEdicaoConferenciaEncalhe.add(produtoEdicaoCE);
 
 		/**
 		 * RECEBIMENTO FISICO
@@ -7894,6 +7919,20 @@ public class DataLoader {
 				new Long(100), BigDecimal.TEN, new BigDecimal(90), "EZ8", produtoCE_3, null, false, "Produto CE 3");
 
 		save(session, produtoEdicaoCE, produtoEdicaoCE_2, produtoEdicaoCE_3);
+		
+		
+		/**
+		 * lista utilizada para criar registro de item_chamada_encalhe_fornecedor
+		 */
+		
+		if(listaProdutoEdicaoConferenciaEncalhe == null) {
+			listaProdutoEdicaoConferenciaEncalhe = new LinkedList<ProdutoEdicao>();
+		}
+		
+		listaProdutoEdicaoConferenciaEncalhe.add(produtoEdicaoCE);
+		listaProdutoEdicaoConferenciaEncalhe.add(produtoEdicaoCE_2);
+		listaProdutoEdicaoConferenciaEncalhe.add(produtoEdicaoCE_3);
+		
 
 		NotaFiscalEntradaFornecedor notaFiscalProdutoCE =
 				Fixture.notaFiscalEntradaFornecedor(
@@ -12554,6 +12593,23 @@ public class DataLoader {
 	    save(session,dl1,dl2,dl3,dl4,dl5,dl6,dl7,dl8,dl9,dl10);
 	}
 	
+
+	private static List<Date> getListaDataConferenciaEncalhe() {
+
+		List<Date> datasRecolhimento = new LinkedList<>();
+
+		datasRecolhimento.add(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
+		datasRecolhimento.add(Fixture.criarData(2, Calendar.MARCH, 2012));
+		datasRecolhimento.add(Fixture.criarData(3, Calendar.MARCH, 2012));
+		datasRecolhimento.add(Fixture.criarData(4, Calendar.MARCH, 2012));
+		datasRecolhimento.add(Fixture.criarData(5, Calendar.MARCH, 2012));
+		datasRecolhimento.add(Fixture.criarData(6, Calendar.MARCH, 2012));
+		datasRecolhimento.add(Fixture.criarData(7, Calendar.MARCH, 2012));
+
+		return datasRecolhimento;
+
+	}
+	
     private static void criarDadosChamadaEncalheFornecedor(Session session) {
         Map<Long, ChamadaEncalheFornecedor> chamadas = new HashMap<Long, ChamadaEncalheFornecedor>();
         
@@ -12595,12 +12651,20 @@ public class DataLoader {
             throw new RuntimeException("Erro processando arquivo: chamada_encalhe/chamada_encalhe.csv", ex);
         }
         
+        List<Date> listaDataConferenciaEncalhe = getListaDataConferenciaEncalhe(); 
+        
+        
         try {
+        	
             URL urlItemChamadaEncalhe = Thread.currentThread().getContextClassLoader().getResource("chamada_encalhe/item_chamada_encalhe.csv");
             File fileItemChamadaEncalhe = new File(urlItemChamadaEncalhe.toURI());
             List<String> linhasItemChamadaEncalhe = IOUtils.readLines(new FileInputStream(fileItemChamadaEncalhe));
             
+            int contador_item = 0;
+            int contador_data_conf = 0;
+            
             for (String linha : linhasItemChamadaEncalhe) {
+            	
                 String[] campos = linha.split(";");
                 Long numeroDocumento = Long.valueOf(campos[1]);
                 Long numeroChamada = Long.valueOf(campos[2]);
@@ -12620,40 +12684,39 @@ public class DataLoader {
                 String tipoProduto = campos[20];
                 String status = campos[22];
                 BigDecimal valorMargemApurado = CurrencyUtil.converterValor(campos[26]);
-                
+               
               ChamadaEncalheFornecedor ce = chamadas.get(numeroChamada);
-              Fixture.newItemChamadaEncalheFornecedor(ce, 
-                      criarProdutoEdicaoChamadaEncalheFornecedor(session, fornecedorDinap, precoUnitario, true), 
-                      controle, numeroDocumento, item, qtdeEnviada, precoUnitario, formaDevolucao,
+              
+              ProdutoEdicao produtoDaConferenciaEncalhe = listaProdutoEdicaoConferenciaEncalhe.get(++contador_item);
+              Date dataConferenciaEncalhe = listaDataConferenciaEncalhe.get(++contador_data_conf);
+              
+              
+              if(contador_item >= (listaProdutoEdicaoConferenciaEncalhe.size() - 1)) {
+            	  contador_item = 0;
+              }
+
+              if(contador_data_conf >= (listaDataConferenciaEncalhe.size() - 1)) {
+            	  contador_data_conf = 0;
+              }
+              
+              
+              Fixture.newItemChamadaEncalheFornecedor(
+            		  ce,            		  
+            		  produtoDaConferenciaEncalhe, controle, numeroDocumento, item, qtdeEnviada, precoUnitario, formaDevolucao,
                       regimeRecolhimento, valorMargemApurado, numeroNota, qtdeVendaApurada,
                       valorVendaInformado, valorVendaApurado, qtdeDevolucaoApurada,
-                      DateUtil.adicionarDias(new Date(), -3), status, tipoProduto, codigoNotaEnvioMultipla);
+                      dataConferenciaEncalhe, status, tipoProduto, codigoNotaEnvioMultipla);
             }
             
         } catch (Exception ex) {
             throw new RuntimeException("Erro processando arquivo: chamada_encalhe/item_chamada_encalhe.csv", ex);
         }
+        
         for (ChamadaEncalheFornecedor ce : chamadas.values()) {
             save(session, ce);
         }
     }
-    
-    private static ProdutoEdicao criarProdutoEdicaoChamadaEncalheFornecedor(
-            Session session, Fornecedor fornecedor, BigDecimal precoVenda,
-            boolean parcial) {
-       
-        String codigoProduto = getCodigoProduto();
-        Produto produto = Fixture.produto(codigoProduto,  "Descrição do Produto " + codigoProduto, "Nome do Produto " + codigoProduto,
-                PeriodicidadeProduto.SEMANAL, tipoProdutoRevista, 14, 20, 100L,
-                TributacaoFiscal.ISENTO);
-        produto.addFornecedor(fornecedor);
-        save(session, produto);
-        
-        ProdutoEdicao produtoEdicao = Fixture.produtoEdicao(1L, 20, 14,
-                100L, null, precoVenda, "1" + codigoProduto, produto, null, parcial);
-        save(session, produtoEdicao);
-        return produtoEdicao;
-    }
+    	
 
     private static String getCodigoProduto() {
         AtomicLong geradorCodigoProduto = GERADOR_CODIGO_PRODUTO_HOLDER.get();

@@ -219,7 +219,7 @@ public class RoteirizacaoController {
 	
 	@Path("/iniciaTelaCotas")
 	public void iniciaTelaCotas() {
-		List<String> uf = enderecoService.obterUnidadeFederacaoBrasil();
+		List<String> uf = enderecoService.obterUnidadeFederativaAssociadaComEndereco();
 		result.use(Results.json()).from(uf, "result").serialize();
 	}
 	
@@ -272,21 +272,24 @@ public class RoteirizacaoController {
 	 * @param roteiroId
 	 */
 	@Path("/excluirRota")
-	public void excluirRota(Long rotaId, Long roteiroId) {
+	public void excluirRota(Long rotaId, Long roteiroId, Integer ordemRota) {
 		
-		this.getRoteiroDTOSessao(roteiroId).removerRota(rotaId);
+		roteirizacaoService.validarAssociacaoRotaTransportador(rotaId, roteiroId);
+		
+		this.getRoteiroDTOSessao(roteiroId).removerRota(ordemRota);
 		
 		result.use(Results.json()).from("", "result").serialize();
 	}
-	
-	
+
 	/**
 	 * Remove um roteiro de uma roteirização
 	 * 
 	 * @param roteiroId
 	 */
 	@Path("/excluirRoteiro")
-	public void excluirRoteiro(Long roteiroId) {
+	public void excluirRoteiro(Long roteiroId, Integer ordemRoteiro) {
+		
+		roteirizacaoService.validarAssociacaoRoteiroTransportador(roteiroId);
 		
 		this.getRoteirizacaoDTOSessao().removerRoteiro(roteiroId);
 		
@@ -889,7 +892,7 @@ public class RoteirizacaoController {
     @Path("/obterDadosComboUF")
 	public void obterDadosComboUF() {
 		
-		List<String> ufs = this.enderecoService.obterUnidadeFederacaoBrasil();
+		List<String> ufs = this.enderecoService.obterUnidadeFederativaAssociadaComEndereco();
 		
 		this.result.use(Results.json()).from(ufs, "result").serialize();
 	}
@@ -1231,6 +1234,8 @@ public class RoteirizacaoController {
 	@Post("/transferirRoteiro")
 	public void transferirRoteiro(Long idBoxAnterior, Long idRoteiro, Long idBoxNovo){
 		
+		this.roteirizacaoService.validarAssociacaoRoteiroTransportador(idRoteiro);
+		
 		RoteirizacaoDTO roteirizacaoDTO = getRoteirizacaoDTOSessao();
 	    
 		Map<Long, Set<RoteiroRoteirizacaoDTO>> mapRoteirosTransferidos = roteirizacaoDTO.getRoteirosTransferidos();
@@ -1248,7 +1253,7 @@ public class RoteirizacaoController {
 		
 		roteirosTransferidos.add(roteiroDTO);
 				
-		this.excluirRoteiro(idRoteiro);
+		this.excluirRoteiro(idRoteiro, roteiroDTO.getOrdem());
 	
 	}
 	
@@ -1286,6 +1291,8 @@ public class RoteirizacaoController {
 	 */
 	@Post("/transferirRota")
 	public void transferirRota(Long idRoteiroAnterior, Long idRota,  Long idRoteiroNovo){
+		
+		this.roteirizacaoService.validarAssociacaoRotaTransportador(idRota, idRoteiroAnterior);
 		
 		RoteiroRoteirizacaoDTO roteiroDTOAnterior = this.getRoteirizacaoDTOSessao().getRoteiro(idRoteiroAnterior);
 		

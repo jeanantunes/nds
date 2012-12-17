@@ -63,7 +63,7 @@ public class OrdenacaoUtil  {
 			
 			for (Ordenavel itemNovo : listaItensOrdemFixa) {
 			
-				if (ordem == itemNovo.getOrdem()) {
+				if (ordem.equals(itemNovo.getOrdem())) {
 					
 					ordem++;
 					itemExistente.setOrdem(ordem);

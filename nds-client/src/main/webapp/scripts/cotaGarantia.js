@@ -727,32 +727,33 @@ TipoCotaGarantia.prototype.get = function() {
 TipoCotaGarantia.prototype.getData = function() {
     var _this = this;
     
-    var param = [{name: 'idCota', value: this.getIdCota()},
-			     {name: 'modoTela', value: this.getModoTela().value},
-			     {name: 'idHistorico', value: this.getIdHistorico()}]
+    var params = [{name: 'idCota', value: _this.getIdCota()},
+			     {name: 'modoTela', value: _this.getModoTela().value},
+			     {name: 'idHistorico', value: _this.getIdHistorico()}];
     
-    $.postJSON(this.path + 'getByCota.json', param, 
-    	function(data) {
+    $.postJSON(this.path + 'getByCota.json', 
+		params, 
+    	function(result) {
     	
-	        var tipoMensagem = data.tipoMensagem;
-	        var listaMensagens = data.listaMensagens;
+	        var tipoMensagem = result.tipoMensagem;
+	        var listaMensagens = result.listaMensagens;
 	        
 	        if (tipoMensagem && listaMensagens) {
 	        	
 	            exibirMensagemDialog(tipoMensagem, listaMensagens,"");
 	        } 
-	        else if (data && data.cotaGarantia) {
+	        else if (result) {
 	        	
-	            _this.cotaGarantia = data.cotaGarantia;
-	            _this.cotaGarantia.controllerType = data.tipo;
-	            _this.changeController(data.tipo);
+	            _this.cotaGarantia = result.cotaGarantia;
+	            _this.controllerType = result.tipo;
+	            _this.changeController(result.tipo);
 	            
-	            $("#tipoGarantiaSelect", _workspace).val(data.tipo).change();
+	            $("#tipoGarantiaSelect", _workspace).val(result.tipo).change();
 	
-	            _this.configTipoCotaGarantia(data.tipo,_this.getIdCota());
+	            _this.configTipoCotaGarantia(result.tipo,_this.getIdCota());
 	
 	        } 
-	        else if (!data || !data.cotaGarantia){
+	        else{
 	        	
 	            _this.changeController(null);
 	        }
@@ -772,7 +773,7 @@ TipoCotaGarantia.prototype.configTipoCotaGarantia = function(tipo,idCota) {
     
     if (tipo=="FIADOR"){
     	
-    	CaucaoLiquida.prototype.bindEvents();
+    	 Fiador.prototype.obterFiador(idCota);
     }
 };
 
@@ -1069,6 +1070,20 @@ Fiador.prototype.confirma = function() {
 
 Fiador.prototype.toggleDados = function(showOrHide) {
     $('#cotaGarantiaFiadorDadosPanel', _workspace).toggle(showOrHide);
+};
+
+Fiador.prototype.obterFiador = function(idCota){
+	
+	var _this = this;
+
+    $.postJSON(this.path + 'getFiadorByCota.json',
+    	[{name:'idCota', value:idCota}],
+        function(result){
+    	
+    	    _this.getFiador(result.id,null);
+        },
+        null,
+        true);
 };
 
 Fiador.prototype.bindData = function() {

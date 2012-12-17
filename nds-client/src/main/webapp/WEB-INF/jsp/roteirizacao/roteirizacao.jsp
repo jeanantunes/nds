@@ -166,7 +166,7 @@
         <tr>
             <td>
                 <span class="bt_novos" title="Novo">
-                	<a href="javascript:;" onclick="roteirizacao.popupNovoRoteiroRota();">
+                	<a href="javascript:;" onclick="roteirizacao.abrirTelaNovoRoteiroRota();">
                     	<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/>
                     	Novo
                     </a>

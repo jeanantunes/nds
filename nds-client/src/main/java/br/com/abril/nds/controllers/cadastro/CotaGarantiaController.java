@@ -1,15 +1,12 @@
 package br.com.abril.nds.controllers.cadastro;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.beanutils.BeanUtils;
 import org.apache.poi.util.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.CotaGarantiaDTO;
 import br.com.abril.nds.dto.FormaCobrancaCaucaoLiquidaDTO;
@@ -18,7 +15,7 @@ import br.com.abril.nds.dto.NotaPromissoriaDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.CaucaoLiquida;
 import br.com.abril.nds.model.cadastro.Cheque;
-import br.com.abril.nds.model.cadastro.EnderecoFiador;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Fiador;
 import br.com.abril.nds.model.cadastro.GarantiaCotaOutros;
 import br.com.abril.nds.model.cadastro.Imovel;
@@ -27,10 +24,11 @@ import br.com.abril.nds.model.cadastro.TipoCobrancaCotaGarantia;
 import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
 import br.com.abril.nds.model.cadastro.TipoGarantia;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantia;
+import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaFiador;
 import br.com.abril.nds.serialization.custom.CustomJson;
-import br.com.abril.nds.serialization.custom.CustomJson2;
 import br.com.abril.nds.serialization.custom.PlainJSONSerialization;
 import br.com.abril.nds.service.CotaGarantiaService;
+import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.util.StringUtil;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.vo.ValidacaoVO;
@@ -51,6 +49,9 @@ public class CotaGarantiaController {
 		
 	@Autowired
 	private CotaGarantiaService cotaGarantiaService;
+	
+	@Autowired
+	private CotaService cotaService;
 	
 	@Autowired
 	private Result result;
@@ -142,7 +143,6 @@ public class CotaGarantiaController {
 	}
 	
 	@Post("/getByCota.json")
-	@Transactional(readOnly = true)
 	public void getByCota(Long idCota, ModoTela modoTela, Long idHistorico) {
 		
 	    if (ModoTela.CADASTRO_COTA == modoTela) {
@@ -151,7 +151,7 @@ public class CotaGarantiaController {
 	        
 	        if (cotaGarantia != null && cotaGarantia.getCotaGarantia() != null) {	
 	        	
-	            result.use(Results.json()).from(cotaGarantia).serialize();
+	            result.use(Results.json()).from(cotaGarantia,"result").serialize();
 	        }else{			
 	        	
 	            result.use(CustomJson.class).from("OK").serialize();
@@ -189,6 +189,20 @@ public class CotaGarantiaController {
             FormaCobrancaCaucaoLiquidaDTO dto = cotaGarantiaService.obterCaucaoLiquidaHistoricoTitularidadeCota(idCota, idHistorico);
             result.use(CustomJson.class).from(dto).serialize();
         }
+	}
+	
+	/**
+	 * Obtem Cota garantia do tipo Fiador
+	 * @param idCota
+	 */
+	@Post("/getFiadorByCota.json")
+	public void getFiadorByCota(Long idCota) {
+	
+    	Cota cota = cotaService.obterPorId(idCota);
+        
+    	Fiador fiador = cota.getFiador();	
+
+        result.use(CustomJson.class).from(fiador).serialize();
 	}
 
 	@Post("/getTipoGarantiaCadastrada.json")

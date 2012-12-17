@@ -82,7 +82,9 @@ import br.com.abril.nds.service.ControleNumeracaoNotaFiscalService;
 import br.com.abril.nds.service.DiferencaEstoqueService;
 import br.com.abril.nds.service.EdicoesFechadasService;
 import br.com.abril.nds.service.FornecedorService;
+import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.service.NotaFiscalService;
+import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.vo.ValidacaoVO;
@@ -143,7 +145,13 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 	
 	@Autowired
 	private ChamadaEncalheFornecedorRepository chamadaEncalheFornecedorRepository;
-	
+
+	@Autowired
+	private MovimentoEstoqueService movimentoEstoqueService;
+
+	@Autowired
+	private UsuarioService usuarioService;
+
     private static final Logger LOG = LoggerFactory.getLogger(ContagemDevolucaoServiceImpl.class);
 	
 	@Transactional
@@ -151,17 +159,12 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 		
 		InfoContagemDevolucaoDTO info = new InfoContagemDevolucaoDTO();
 		
-		TipoMovimentoEstoque tipoMovimentoEstoque = 
-				tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(
-					GrupoMovimentoEstoque.ENVIO_ENCALHE);
 		
-		Integer qtdTotalRegistro = movimentoEstoqueCotaRepository.obterQuantidadeContagemDevolucao(filtroPesquisa, tipoMovimentoEstoque);
+		Integer qtdTotalRegistro = movimentoEstoqueCotaRepository.obterQuantidadeContagemDevolucao(filtroPesquisa);
 		info.setQtdTotalRegistro(qtdTotalRegistro);
 		
 		List<ContagemDevolucaoDTO> listaContagemDevolucao = movimentoEstoqueCotaRepository.obterListaContagemDevolucao(
-				filtroPesquisa, 
-				tipoMovimentoEstoque, 
-				indPerfilUsuarioEncarregado);
+				filtroPesquisa,	indPerfilUsuarioEncarregado);
 		
 		info.setListaContagemDevolucao(listaContagemDevolucao);
 		
@@ -180,14 +183,9 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 	@Transactional(readOnly=true)
 	public List<ContagemDevolucaoConferenciaCegaDTO> obterInfoContagemDevolucaoCega(FiltroDigitacaoContagemDevolucaoDTO filtroPesquisa, boolean indPerfilUsuarioEncarregado) {
 		
-		TipoMovimentoEstoque tipoMovimentoEstoque = 
-				tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(
-					GrupoMovimentoEstoque.ENVIO_ENCALHE);
 		
 		List<ContagemDevolucaoDTO> listaContagemDevolucao = movimentoEstoqueCotaRepository.obterListaContagemDevolucao(
-				filtroPesquisa, 
-				tipoMovimentoEstoque, 
-				indPerfilUsuarioEncarregado);
+				filtroPesquisa, indPerfilUsuarioEncarregado);
 		
 		List<ContagemDevolucaoConferenciaCegaDTO> cegaDTOs = new ArrayList<ContagemDevolucaoConferenciaCegaDTO>(listaContagemDevolucao.size());
 		for(ContagemDevolucaoDTO contagemDevolucaoDTO : listaContagemDevolucao){
@@ -768,12 +766,6 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 		NotaFiscalSaidaFornecedor nfSaidaFornecedor = new NotaFiscalSaidaFornecedor();
 		List<ItemNotaFiscalSaida> itensNotaFiscalSaida = new ArrayList<ItemNotaFiscalSaida>();
 		
-		
-		
-		if(itensNotaFiscalSaida.isEmpty()) {
-			return;
-		}
-		
 		Date dataAtual = new Date();
 		
 		StatusEmissaoNotaFiscal statusNF = StatusEmissaoNotaFiscal.AGUARDANDO_GERACAO_NFE;
@@ -793,8 +785,10 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 			throw new IllegalStateException("Informações do distribuidor não encontradas");
 		}
 
-		TipoNotaFiscal tipoNF = tipoNotaFiscalRepository.obterTipoNotaFiscal(GrupoNotaFiscal.DEVOLUCAO_MERCADORIA_FORNECEDOR);
-
+		// Desenvolvido por Cesar Pop Punk
+		TipoNotaFiscal tipoNF = tipoNotaFiscalRepository.obterTipoNotaFiscal(GrupoNotaFiscal.NF_DEVOLUCAO_MERCADORIA_RECEBIA_CONSIGNACAO);
+		//TipoNotaFiscal tipoNF = tipoNotaFiscalRepository.obterTipoNotaFiscal(GrupoNotaFiscal.DEVOLUCAO_MERCADORIA_FORNECEDOR);
+		
 		if(tipoNF == null) {
 			throw new IllegalStateException("TipoNotaFiscal não parametrizada");
 		}
@@ -810,6 +804,17 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 		nfSaidaFornecedor.setSerie(serieNF);
 		nfSaidaFornecedor.setStatusEmissao(statusNF);
 		nfSaidaFornecedor.setTipoNotaFiscal(tipoNF);
+		
+		// Realizado pelo Cesar Pop Punk
+		BigDecimal valorBruto = BigDecimal.ZERO;
+		for (ContagemDevolucaoDTO contagem : listaContagemDevolucaoAprovada) {
+			valorBruto = valorBruto.add( contagem.getPrecoVenda().multiply( new BigDecimal(contagem.getQtdNota()) ) );
+		}
+		nfSaidaFornecedor.setValorBruto(valorBruto);
+
+		// TODO: Corrigir estes dois valores abaixo:
+		nfSaidaFornecedor.setValorDesconto(BigDecimal.ZERO);
+		nfSaidaFornecedor.setValorLiquido(BigDecimal.ZERO);
 		
 		notaFiscalSaidaRepository.adicionar(nfSaidaFornecedor);
 		
@@ -828,6 +833,11 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 		Set<Processo> processos = new HashSet<Processo>(1);		
 		processos.add(Processo.DEVOLUCAO_AO_FORNECEDOR);
 		Long idNota = notaFiscalService.emitiNotaFiscal(tipoNotaFiscal.getId(), new Date(), fornecedor, listItemNotaFiscal, transporte, informacaoAdicional, null, processos, Condicao.DEVOLUCAO_ENCALHE);
+
+		// Gerado por Cesar Pop Punk
+		// Movimentação de estoque
+		this.gerarMovimentoEstoque(nfSaidaFornecedor, itensNotaFiscalSaida);
+		
 		try {
 			notaFiscalService.exportarNotasFiscais(idNota);
 		} catch (Exception e) {
@@ -835,8 +845,22 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 		}
 	}
 	
-	
-	
+	public void gerarMovimentoEstoque(NotaFiscalSaidaFornecedor nfSaidaFornecedor, List<ItemNotaFiscalSaida> itensNotaFiscalSaida) {
+		
+		for ( ItemNotaFiscalSaida item : itensNotaFiscalSaida ) {
+
+			TipoMovimentoEstoque tipoMovimento = tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.DEVOLUCAO_ENCALHE);
+
+			movimentoEstoqueService.gerarMovimentoEstoque(
+					distribuidorService.obter().getDataOperacao(), 
+					item.getProdutoEdicao().getId(), 
+					usuarioService.getUsuarioLogado().getId(), 
+					item.getQtde(),
+					tipoMovimento);
+
+		}
+		
+	}
 	
 	/**
 	 * Gera e retorna uma lista de ContagemDevolucao, 
@@ -875,7 +899,7 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 			if(contagemAgrupada == null || contagemAgrupada.isEmpty()) {
 				continue;
 			}
-			
+
 			listaAgrupadaContagemDevolucao.addAll(contagemAgrupada);
 			
 		}
