@@ -228,7 +228,9 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 			precoComDesconto = precoComDesconto.add(
 					precoVenda.subtract(valorDesconto, new MathContext(3)).multiply(new BigDecimal(quantidade)));	
 			
-			if(!movimento.getListaItemNotaEnvio().isEmpty()){
+			List<ItemNotaEnvio> itens = movimento.getListaItemNotaEnvio();
+			
+			if( itens!= null && !itens.isEmpty() ){
 				cotaExemplares.setNotaImpressa(true);
 			}
 			
