@@ -245,7 +245,7 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 		produtoEdicao.setAtivo(true);
 		produtoEdicao.setPacotePadrao(produto.getPacotePadrao());
 		produtoEdicao.setPeb(produto.getPeb());
-		produtoEdicao.setOrigem(Origem.INTERFACE);
+		produtoEdicao.setOrigem(Origem.MANUAL);
 
 		this.getSession().persist(produtoEdicao);
 		
