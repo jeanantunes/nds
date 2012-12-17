@@ -1131,7 +1131,7 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 		
 		if (rota.getAssociacoesVeiculoMotoristaRota() != null && !rota.getAssociacoesVeiculoMotoristaRota().isEmpty() ) {
 			throw new ValidacaoException(
-					new ValidacaoVO(TipoMensagem.WARNING, "Não é possível excluir uma rota que ja existe vinculo com um transportador"));
+					new ValidacaoVO(TipoMensagem.WARNING, "Não é possível modificar esta rota, pois ele esta associada a um transportador."));
 		}
 
 	}
@@ -1152,7 +1152,7 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 			
 			}catch(ValidacaoException ve) {
 				throw new ValidacaoException(
-						new ValidacaoVO(TipoMensagem.WARNING, "Não é possível excluir um roteiro que possui rotas associadas a um transportador"));
+						new ValidacaoVO(TipoMensagem.WARNING, "Não é possível modificar este roteiro, pois ele esta associado a um transportador. "));
 			}
 		}
 		
