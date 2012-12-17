@@ -257,6 +257,10 @@ public interface RoteirizacaoService {
 	 * @param roteiroID
 	 * @return
 	 */
-	List<RotaRoteirizacaoDTO> obterRotasNaoAssociadasAoRoteiro(Long roteiroID); 
+	List<RotaRoteirizacaoDTO> obterRotasNaoAssociadasAoRoteiro(Long roteiroID);
+
+	void validarAssociacaoRotaTransportador(Long rotaId, Long roteiroId);
+
+	void validarAssociacaoRoteiroTransportador(Long roteiroId); 
 }
 	

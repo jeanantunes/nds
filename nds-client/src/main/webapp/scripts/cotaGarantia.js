@@ -773,7 +773,7 @@ TipoCotaGarantia.prototype.configTipoCotaGarantia = function(tipo,idCota) {
     
     if (tipo=="FIADOR"){
     	
-    	Fiador.prototype.getFiador(null, removeSpecialCharacteres($("#cotaGarantiaFiadorSearchDoc", _workspace).val()));
+    	 Fiador.prototype.obterFiador(idCota);
     }
 };
 
@@ -1070,6 +1070,20 @@ Fiador.prototype.confirma = function() {
 
 Fiador.prototype.toggleDados = function(showOrHide) {
     $('#cotaGarantiaFiadorDadosPanel', _workspace).toggle(showOrHide);
+};
+
+Fiador.prototype.obterFiador = function(idCota){
+	
+	var _this = this;
+
+    $.postJSON(this.path + 'getFiadorByCota.json',
+    	[{name:'idCota', value:idCota}],
+        function(result){
+    	
+    	    _this.getFiador(result.id,null);
+        },
+        null,
+        true);
 };
 
 Fiador.prototype.bindData = function() {

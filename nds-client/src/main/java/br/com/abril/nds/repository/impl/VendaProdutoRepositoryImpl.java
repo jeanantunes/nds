@@ -12,6 +12,7 @@ import br.com.abril.nds.dto.VendaProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroVendaProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroVendaProdutoDTO.ColunaOrdenacao;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
+import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.repository.VendaProdutoRepository;
 
 @Repository
@@ -88,6 +89,7 @@ public class VendaProdutoRepositoryImpl extends AbstractRepositoryModel<Moviment
 			usarAnd = true;
 		}
 
+		hql.append("  AND lancamento.status <> :situacaoLancamento ");
 
 		return hql.toString();
 	}
@@ -134,6 +136,8 @@ public class VendaProdutoRepositoryImpl extends AbstractRepositoryModel<Moviment
 			param.put("idFornecedor", filtro.getIdFornecedor());
 		}
 	
+		param.put("situacaoLancamento", StatusLancamento.EXCLUIDO);
+		
 		return param;
 	}
 
@@ -191,6 +195,8 @@ public class VendaProdutoRepositoryImpl extends AbstractRepositoryModel<Moviment
 			hql.append( (usarAnd ? " and ":" where ") + " produtoEdicao.numeroEdicao = :edicao ");
 			usarAnd = true;
 		}
+		
+		hql.append("  AND lancamento.status <> :situacaoLancamento ");
 
 		return hql.toString();
 	}
@@ -205,6 +211,8 @@ public class VendaProdutoRepositoryImpl extends AbstractRepositoryModel<Moviment
 		if(filtro.getEdicao() != null){ 
 			param.put("edicao", filtro.getEdicao());
 		}		
+		
+		param.put("situacaoLancamento", StatusLancamento.EXCLUIDO);
 	
 		return param;
 	}
