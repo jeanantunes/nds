@@ -487,6 +487,9 @@ var parametroCobrancaController = $.extend(true,
 			
 			
 			var postObject = serializeObjectToPost("parametros", parametroCobranca);
+			
+			postObject = serializeArrayToPost("parametros.diasDoMes",[0] ,postObject);
+			
 			if(tipoFormaCobranca == 'MENSAL'){
 				postObject = serializeArrayToPost("parametros.diasDoMes",[$('#diaDoMes', this.workspace).val()] ,postObject);
 			}else if(tipoFormaCobranca == 'QUINZENAL'){
