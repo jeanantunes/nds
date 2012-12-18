@@ -298,8 +298,11 @@ public class EnderecoRepositoryImpl extends AbstractRepositoryModel<Endereco, Lo
 	@SuppressWarnings("unchecked")
 	public List<String>obterUFs(){
 		
-		Query query = this.getSession().createQuery("select distinct(e.uf) from Endereco e where e.uf is not null order by e.uf ");
-
+		Query query = this.getSession().createQuery("select distinct(e.uf) from Endereco e, EnderecoCota ec, " +
+				" EnderecoPDV ep where e.id = ec.endereco.id or e.id = ep.endereco.id and e.uf is not null order by e.uf ");
+		
+		
+		
 		return query.list();
 	}
 
