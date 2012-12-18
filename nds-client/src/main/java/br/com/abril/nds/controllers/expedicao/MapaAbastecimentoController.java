@@ -56,6 +56,8 @@ public class MapaAbastecimentoController {
 	
 	protected static final String MSG_MATRIZ_BALANCEAMENTO_NAO_CONFIRMADO = "Não há matriz de lancamento confirmada para esta data.";
 	
+	protected static final String MSG_MATRIZ_BALANCEAMENTO_NAO_BALANCEADO = "Não há matriz de lancamento balanceada para esta data.";
+	
 	@Autowired
 	private HttpSession session;
 	
@@ -207,7 +209,7 @@ public class MapaAbastecimentoController {
 	 */
 	private void validarExistenciaMatriz(Date dataLancamento) {
 		if(!lancamentoService.existeMatrizBalanceamentoConfirmado(dataLancamento)){
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,MSG_MATRIZ_BALANCEAMENTO_NAO_CONFIRMADO ));
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, MSG_MATRIZ_BALANCEAMENTO_NAO_BALANCEADO));
 		}
 	}	
 	
