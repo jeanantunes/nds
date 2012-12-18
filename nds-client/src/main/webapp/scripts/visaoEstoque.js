@@ -119,8 +119,9 @@ var visaoEstoqueController = $.extend(true, {
 				value.cell.precoCapa = "";
 			}
 			
-			value.cell.diferenca = value.cell.qtde;
+			value.cell.diferenca = '<div abbr="diferenca">' + value.cell.qtde + '</div>';
 			value.cell.estoque = '<input type="text" class="inputVisaoEstoqueInventario" id="inputVisaoEstoqueInventario_' + value.cell.produtoEdicaoId + '" style="width:80px; text-align:center;" onchange="visaoEstoqueController.ajustarDiferenca(this)"/>';
+			
 		});
 		
 		return data;
@@ -142,8 +143,8 @@ var visaoEstoqueController = $.extend(true, {
 		var tr = element.parentNode.parentNode.parentNode;
 		var qtdeInventario = parseInt($.trim(element.value) == "" ? 0 : element.value); 
 		var qtde = parseInt($('td[abbr="qtde"] >div', tr).html()); 
-		
-		$('td[abbr="diferenca"] >div', tr).html(qtde - qtdeInventario);
+		debugger;
+		$('div[abbr="diferenca"]', tr).html(qtde - qtdeInventario);
 	},
 	
 	
@@ -239,7 +240,7 @@ var visaoEstoqueController = $.extend(true, {
 				var produtoEdicaoId = element.id.substring(element.id.lastIndexOf("_")+1);
 
 				var tr = $(element).parent().parent().parent();
-				var qtde = $('td[abbr="diferenca"] >div', tr).html();
+				var qtde = $('div[abbr="diferenca"]', tr).html();
 				
 				dados+='{name:"filtro.listaTransferencia['+index+'].produtoEdicaoId",value:'+produtoEdicaoId+'}, {name:"filtro.listaTransferencia['+index+'].qtde",value:'+qtde+'}';
 				index++;
