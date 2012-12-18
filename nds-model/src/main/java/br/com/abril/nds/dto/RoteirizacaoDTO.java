@@ -463,7 +463,7 @@ public class RoteirizacaoDTO implements Serializable{
 			}
 		}
 		
-		if (roteiroId >= 0){
+		if (roteiroId != null  && roteiroId >= 0){
 			
 			this.addRoteiroExclusao(roteiroId);
 		}

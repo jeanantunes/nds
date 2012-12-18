@@ -1126,6 +1126,9 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 	@Override
 	@Transactional(readOnly=true)
 	public void validarAssociacaoRotaTransportador(Long rotaId, Long roteiroId) {
+		
+		if(rotaId == null || rotaId < 1) 
+			return;
 
 		Rota rota = this.buscarRotaPorId(rotaId);
 		
@@ -1140,7 +1143,7 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 	@Transactional(readOnly=true)
 	public void validarAssociacaoRoteiroTransportador(Long roteiroId) {
 		
-		if (roteiroId < 1) return;
+		if (roteiroId == null || roteiroId < 1) return;
 		
 		Roteiro roteiro = this.buscarRoteiroPorId(roteiroId);
 		
