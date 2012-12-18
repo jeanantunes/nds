@@ -125,6 +125,26 @@ public class DateUtil {
 		return cal.getTime();
 	}
 	
+	
+	/**
+	 * Subtrai o número de meses da data
+	 * 
+	 * @param data - data para subtração de meses
+	 * @param numMes - número de meses para subtrair
+	 * 
+	 * @return nova data com o número de meses subtraidos
+	 */
+	public static Date subtrairMeses(Date data, int numMes) {
+		if (data == null) {
+			return null;
+		}
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(data);
+		cal.add(Calendar.MONTH, -numMes);
+		return cal.getTime();
+	}
+	
+	
 	/**
 	 * Método que verifica se a data informada é sábado ou domingo
 	 * 

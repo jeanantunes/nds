@@ -92,6 +92,8 @@ public class DigitacaoContagemDevolucaoController  {
 	@Autowired
 	private HttpServletResponse httpResponse;
 	
+	private static final int NUMERO_MESES_PESQUISA_DESATIVACAO = 6;
+	
 	private static final String FILTRO_SESSION_ATTRIBUTE = "filtroPesquisaDigitacaoContagemDevolucao";
 	
 	private static final String USUARIO_PERFIL_OPERADOR = "userProfileOperador";
@@ -661,13 +663,17 @@ public class DigitacaoContagemDevolucaoController  {
 		
 		configurarPaginacaoPesquisa(filtro, sortorder, sortname, page, rp);
 		
-		Long quantidade = edicoesFechadasService.quantidadeResultadoEdicoesFechadas(filtro.getDataInicial(), filtro.getDataFinal(), filtro.getIdFornecedor());
+		Date dataInicial = DateUtil.subtrairMeses(filtro.getDataInicial(), NUMERO_MESES_PESQUISA_DESATIVACAO);
+		
+		Date dataFinal = DateUtil.subtrairDias(filtro.getDataInicial(), 1);
+		
+		Long quantidade = edicoesFechadasService.quantidadeResultadoEdicoesFechadas(dataInicial, dataFinal, filtro.getIdFornecedor());
 		if(quantidade == 0){
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
 		}
 		
 		
-		List<RegistroEdicoesFechadasVO> edicoesFechadasVOs = edicoesFechadasService.obterResultadoEdicoesFechadas(filtro.getDataInicial(), filtro.getDataFinal(), filtro.getIdFornecedor(), sortorder, sortname, page*rp - rp, rp);
+		List<RegistroEdicoesFechadasVO> edicoesFechadasVOs = edicoesFechadasService.obterResultadoEdicoesFechadas(dataInicial, dataFinal, filtro.getIdFornecedor(), sortorder, sortname, page*rp - rp, rp);
 		
 		
 		result.use(FlexiGridJson.class).from(edicoesFechadasVOs).total(quantidade.intValue()).page(page).serialize();
