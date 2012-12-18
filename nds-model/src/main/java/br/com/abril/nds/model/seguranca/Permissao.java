@@ -24,7 +24,7 @@ public enum Permissao
 	ROLE_CADASTRO_HELP("Help",                                                                     	 	   Permissao.ROLE_CADASTRO),
 
 	ROLE_LANCAMENTO("Lançamento",														  				   null),
-	ROLE_LANCAMENTO_BALANCEAMENTO_MATRIZ("Balanceamento da Matriz",									  	   Permissao.ROLE_LANCAMENTO), 
+	ROLE_LANCAMENTO_BALANCEAMENTO_MATRIZ("Bal. Matriz Lançamento",							   			   Permissao.ROLE_LANCAMENTO), 
 	ROLE_LANCAMENTO_FURO_PRODUTO("Furo de Lançamento",												  	   Permissao.ROLE_LANCAMENTO),
 	ROLE_LANCAMENTO_PARCIAIS("Parciais", 																   Permissao.ROLE_LANCAMENTO),
 	ROLE_LANCAMENTO_RELATORIO_VENDAS("Relatório de Vendas",											       Permissao.ROLE_LANCAMENTO),
@@ -52,7 +52,7 @@ public enum Permissao
 	ROLE_EXPEDICAO_HELP("Help", 																		   Permissao.ROLE_EXPEDICAO),
 
 	ROLE_RECOLHIMENTO("Recolhimento", 													  				   null),
-	ROLE_RECOLHIMENTO_BALANCEAMENTO_MATRIZ("Balanceamento da Matriz", 							      	   Permissao.ROLE_RECOLHIMENTO),
+	ROLE_RECOLHIMENTO_BALANCEAMENTO_MATRIZ("Bal. Matriz Recolhimento", 						   			   Permissao.ROLE_RECOLHIMENTO),
 	ROLE_RECOLHIMENTO_CONSULTA_INFORME_ENCALHE("Informe Recolhimento", 						  		   	   Permissao.ROLE_RECOLHIMENTO),
 	ROLE_RECOLHIMENTO_CE_ANTECIPADA_PRODUTO("CE Antecipada - Produto", 							  		   Permissao.ROLE_RECOLHIMENTO),
 	ROLE_RECOLHIMENTO_EMISSAO_CE("Emissão CE",															   Permissao.ROLE_RECOLHIMENTO),

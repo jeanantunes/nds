@@ -116,17 +116,17 @@ var lancamentosSelecionados = [];
 		     
 			  <div class="areaBts">
 			  		<div class="area">
-			  			<span class="bt_novos">
+			  			<span class="bt_novos" style="display: none;">
 		        			<!-- Voltar Configuração Inicial -->
 		        			<a id="linkVoltarConfiguracaoInicial" href="javascript:;" onclick="balanceamentoLancamento.abrirAlertaVoltarConfiguracaoInicial();" rel="tipsy" title="Clique para Voltar Configuração Inicial"><img src="<c:url value='images/bt_devolucao.png'/>" title="Voltar Configuração Inicial" border="0" hspace="5" /></a>
 		        		</span>
 			  			
-			  			<span class="bt_novos" >
+			  			<span class="bt_novos" style="display: none;">
 			  				<!-- Reprogramar -->
 			  				<a id="linkReprogramar" href="javascript:;" onclick="balanceamentoLancamento.reprogramarSelecionados();" rel="tipsy" title="Clique para Reprogramar"><img src="<c:url value='images/ico_reprogramar.gif'/>"  hspace="5" border="0" /></a>                    
 		                </span>
 		                
-		                <span class="bt_novos" style="border-width: 2px; border-color: #00CD00;">
+		                <span class="bt_novos" style="border-width: 2px; border-color: #00CD00; display: none;">
 		                    <!-- CONFIRMAR -->	
 		                    <a id="linkConfirmar" href="javascript:;" onclick="balanceamentoLancamento.obterConfirmacaoBalanceamento();" rel="tipsy" title="Confirmar Balanceamento">
 		                        <img src="<c:url value='images/ico_check.gif'/>"  hspace="5" border="0" />

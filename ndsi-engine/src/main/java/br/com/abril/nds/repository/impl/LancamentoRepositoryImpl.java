@@ -1362,7 +1362,7 @@ public class LancamentoRepositoryImpl extends
 		   .append(" join lancamento.produtoEdicao.produto produto ")
 		   .append(" join lancamento.produtoEdicao.produto.fornecedores fornecedores ")
 		   .append(" where lancamento.status = :statusLancamento ")
-		   .append(" and lancamento.dataLancamentoPrevista between :periodoInicial and :periodoFinal ")
+		   .append(" and lancamento.dataLancamentoDistribuidor between :periodoInicial and :periodoFinal ")
 		   .append(" and fornecedores.id in (:idFornecedores) ");
 		
 		Query query = this.getSession().createQuery(hql.toString());
