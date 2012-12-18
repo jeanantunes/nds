@@ -20,7 +20,7 @@ import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.Condicao;
 import br.com.abril.nds.model.fiscal.nota.InformacaoAdicional;
 import br.com.abril.nds.model.fiscal.nota.InformacaoTransporte;
-import br.com.abril.nds.model.fiscal.nota.ItemNotaFiscal;
+import br.com.abril.nds.model.fiscal.nota.ItemNotaFiscalSaida;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscalReferenciada;
 import br.com.abril.nds.util.Intervalo;
@@ -104,7 +104,7 @@ public interface NotaFiscalService {
 	 * @param Cota cota
 	 * @return lista de itens para nota fiscal
 	 */
-	List<ItemNotaFiscal> obterItensNotaFiscalPor(Distribuidor distribuidor, 
+	List<ItemNotaFiscalSaida> obterItensNotaFiscalPor(Distribuidor distribuidor, 
 			Cota cota, Intervalo<Date> periodo, List<Long> listaIdFornecedores, List<Long> listaIdProdutos, TipoNotaFiscal tipoNotaFiscal);
 	
 	/**
@@ -129,7 +129,7 @@ public interface NotaFiscalService {
 	 * @param listaItensNotaFiscal 
 	 * @return lista de notas referenciadas.
 	 */
-	List<NotaFiscalReferenciada> obterNotasReferenciadas(List<ItemNotaFiscal> listaItensNotaFiscal); 
+	List<NotaFiscalReferenciada> obterNotasReferenciadas(List<ItemNotaFiscalSaida> listaItensNotaFiscal); 
 
 	/**
 	 * Retorna um PDF com as Notas de Envio passadas como argumento
@@ -140,11 +140,11 @@ public interface NotaFiscalService {
 	byte[] imprimirNotasEnvio(List<NotaEnvio> notasEnvio);
 
 	public abstract Long emitiNotaFiscal(long idTipoNotaFiscal, Date dataEmissao,
-			Cota cota, List<ItemNotaFiscal> listItemNotaFiscal, InformacaoTransporte transporte, InformacaoAdicional informacaoAdicional, List<NotaFiscalReferenciada> listNotaFiscalReferenciada,
+			Cota cota, List<ItemNotaFiscalSaida> listItemNotaFiscal, InformacaoTransporte transporte, InformacaoAdicional informacaoAdicional, List<NotaFiscalReferenciada> listNotaFiscalReferenciada,
 			Set<Processo> processos, Condicao condicao);
 
 	public abstract Long emitiNotaFiscal(long idTipoNotaFiscal, Date dataEmissao,
-			Fornecedor fornecedor, List<ItemNotaFiscal> listItemNotaFiscal, InformacaoTransporte transporte, InformacaoAdicional informacaoAdicional, List<NotaFiscalReferenciada> listNotaFiscalReferenciada,
+			Fornecedor fornecedor, List<ItemNotaFiscalSaida> listItemNotaFiscal, InformacaoTransporte transporte, InformacaoAdicional informacaoAdicional, List<NotaFiscalReferenciada> listNotaFiscalReferenciada,
 			Set<Processo> processos, Condicao condicao);
 
 	public abstract void exportarNotasFiscais(Long... idNotaFiscals)

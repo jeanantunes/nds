@@ -10,7 +10,7 @@ import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
  * Item da Nota
  * @author Diego Fernandes
  */
-public class ItemNotaFiscal {
+public class ItemNotaFiscalSaida {
 	
 	private long idProdutoEdicao;
 	
@@ -22,10 +22,10 @@ public class ItemNotaFiscal {
 	
 	private List<MovimentoEstoqueCota> listaMovimentoEstoqueCota; 
 	
-	public ItemNotaFiscal() {
+	public ItemNotaFiscalSaida() {
 	}
 
-	public ItemNotaFiscal(long idProdutoEdicao, BigInteger quantidade,
+	public ItemNotaFiscalSaida(long idProdutoEdicao, BigInteger quantidade,
 			BigDecimal valorUnitario, String cstICMS) {
 		super();
 		this.idProdutoEdicao = idProdutoEdicao;
@@ -129,7 +129,7 @@ public class ItemNotaFiscal {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		ItemNotaFiscal other = (ItemNotaFiscal) obj;
+		ItemNotaFiscalSaida other = (ItemNotaFiscalSaida) obj;
 		if (idProdutoEdicao != other.idProdutoEdicao)
 			return false;
 		return true;
