@@ -196,6 +196,8 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 			cegaDTO.setNomeProduto(contagemDevolucaoDTO.getNomeProduto());
 			cegaDTO.setNumeroEdicao(contagemDevolucaoDTO.getNumeroEdicao());
 			cegaDTO.setPrecoVenda(contagemDevolucaoDTO.getPrecoVenda());
+			cegaDTO.setExemplarNota("   ");
+			
 			cegaDTOs.add(cegaDTO);
 			
 		}

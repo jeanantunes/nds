@@ -32,36 +32,14 @@ public class ResumoSuplementarFecharDiaRepositoryImpl extends AbstractRepository
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append("SELECT ");
-				hql.append("( ");
-				hql.append(" coalesce( (SELECT me2.qtde from MovimentoEstoque as me2 ");       
-				hql.append(" JOIN me2.tipoMovimento as tm2 ");       
-				hql.append(" WHERE tm2.grupoMovimentoEstoque = :entradaSuplementarEnvioReparte");
-				hql.append(" AND me2.data = :dataOperacao), 0)");
-			hql.append(" + ");
-				hql.append(" coalesce( (SELECT me2.qtde from MovimentoEstoque as me2");       
-				hql.append(" JOIN me2.tipoMovimento as tm2 ");       
-				hql.append(" WHERE tm2.grupoMovimentoEstoque = :suplementarCotaAusente");
-				hql.append(" AND me2.data = :dataOperacao),0) ");
-			hql.append(" - ");							
-				hql.append(" coalesce( (SELECT me2.qtde from MovimentoEstoque as me2");       
-				hql.append(" JOIN me2.tipoMovimento as tm2 ");       
-				hql.append(" WHERE tm2.grupoMovimentoEstoque = :reparteCotaAusente");
-				hql.append(" AND me2.data = :dataOperacao),0)");
-				hql.append(" ) ");
-		hql.append("  * pe.precoVenda");
-		hql.append(" FROM MovimentoEstoque as me ");
-		hql.append(" JOIN me.produtoEdicao as pe ");		
-		hql.append(" WHERE me.data = :dataOperacao");
-		hql.append(" GROUP BY me.data");
-		
+		hql.append("SELECT ");		     
+		hql.append(" SUM( ");		     
+		hql.append(" ep.qtdeSuplementar * pe.precoVenda");
+		hql.append(" ) ");
+		hql.append(" FROM EstoqueProduto as ep ");
+		hql.append(" JOIN ep.produtoEdicao as pe ");
+
 		Query query = super.getSession().createQuery(hql.toString());
-		
-		query.setParameter("dataOperacao", dataOperacao);
-		
-		query.setParameter("entradaSuplementarEnvioReparte", GrupoMovimentoEstoque.ENTRADA_SUPLEMENTAR_ENVIO_REPARTE);
-		query.setParameter("suplementarCotaAusente", GrupoMovimentoEstoque.SUPLEMENTAR_COTA_AUSENTE);
-		query.setParameter("reparteCotaAusente", GrupoMovimentoEstoque.REPARTE_COTA_AUSENTE);
 		
 		BigDecimal total =  (BigDecimal) query.uniqueResult();
 		
@@ -73,31 +51,31 @@ public class ResumoSuplementarFecharDiaRepositoryImpl extends AbstractRepository
 		
 		StringBuilder hql = new StringBuilder();
 		
-			hql.append("SELECT ");
-			hql.append("( ");
-				hql.append(" coalesce( (SELECT me2.qtde from MovimentoEstoque as me2 ");       
-				hql.append(" JOIN me2.tipoMovimento as tm2 ");       
-				hql.append(" WHERE tm2.grupoMovimentoEstoque = :transferenciaEntradaSuplementar");
-				hql.append(" AND me2.data = :dataOperacao), 0)");
-			hql.append(" - ");
-				hql.append(" coalesce( (SELECT me2.qtde from MovimentoEstoque as me2");       
-				hql.append(" JOIN me2.tipoMovimento as tm2 ");       
-				hql.append(" WHERE tm2.grupoMovimentoEstoque = :suplementarCotaAusente");
-				hql.append(" AND me2.data = :dataOperacao),0) ");			
-			hql.append(" ) ");
-			hql.append("  * pe.precoVenda");
-			hql.append(" FROM MovimentoEstoque as me ");
-			hql.append(" JOIN me.produtoEdicao as pe ");		
-			hql.append(" WHERE me.data = :dataOperacao");
-			hql.append(" GROUP BY me.data");
-		
-
+		hql.append("SELECT ");
+		hql.append("SUM( " +
+		  "  CASE WHEN tm.grupoMovimentoEstoque in (:grupoEntradaSuplementar) " +
+		  "  THEN COALESCE( me.qtde, 0) " +
+		  "  ELSE (CASE WHEN tm.grupoMovimentoEstoque in (:grupoSaidaSuplementar) THEN COALESCE( -(me.qtde), 0) ELSE 0 END)" +
+		  "  END) ");       
+		hql.append("  * pe.precoVenda");
+		hql.append(" FROM MovimentoEstoque as me ");
+		hql.append(" JOIN me.tipoMovimento as tm ");       
+		hql.append(" JOIN me.produtoEdicao as pe ");
+		hql.append(" WHERE me.data = :dataOperacao");
+		hql.append(" GROUP BY me.data");
 		Query query = super.getSession().createQuery(hql.toString());
-		
 		query.setParameter("dataOperacao", dataOperacao);
-		
-		query.setParameter("transferenciaEntradaSuplementar", GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_SUPLEMENTAR );
-		query.setParameter("suplementarCotaAusente", GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_SUPLEMENTAR);
+	
+        query.setParameterList("grupoEntradaSuplementar", Arrays.asList(
+                GrupoMovimentoEstoque.SUPLEMENTAR_COTA_AUSENTE,
+                GrupoMovimentoEstoque.SUPLEMENTAR_ENVIO_ENCALHE_ANTERIOR_PROGRAMACAO,
+                GrupoMovimentoEstoque.ESTORNO_VENDA_ENCALHE_SUPLEMENTAR,
+                GrupoMovimentoEstoque.ENTRADA_SUPLEMENTAR_ENVIO_REPARTE,
+                GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_SUPLEMENTAR));  
+	
+		query.setParameterList("grupoSaidaSuplementar", Arrays.asList(
+		       GrupoMovimentoEstoque.REPARTE_COTA_AUSENTE,
+		       GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_SUPLEMENTAR));
 		
 		BigDecimal total =  (BigDecimal) query.uniqueResult();
 		
