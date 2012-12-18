@@ -6,7 +6,7 @@ import java.util.List;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
-import br.com.abril.nds.model.fiscal.nota.ItemNotaFiscal;
+import br.com.abril.nds.model.fiscal.nota.ItemNotaFiscalSaida;
 import br.com.abril.nds.model.fiscal.nota.ProdutoServico;
 import br.com.abril.nds.model.fiscal.nota.pk.ProdutoServicoPK;
 import br.com.abril.nds.repository.ProdutoServicoRepository;
@@ -24,11 +24,11 @@ public class ProdutoServicoRepositoryImpl extends AbstractRepositoryModel<Produt
 	@Override
 	public void atualizarProdutosQuePossuemNota(
 			List<ProdutoServico> listaProdutoServico,
-			List<ItemNotaFiscal> listItemNotaFiscal) {
+			List<ItemNotaFiscalSaida> listItemNotaFiscal) {
 
 		for (ProdutoServico produtoServico : listaProdutoServico) {
 		
-			for (ItemNotaFiscal itemNotaFiscal : listItemNotaFiscal) {
+			for (ItemNotaFiscalSaida itemNotaFiscal : listItemNotaFiscal) {
 				
 				List<MovimentoEstoqueCota> movimentoEstoqueCotaProdutoServico = 
 						produtoServico.getListaMovimentoEstoqueCota();

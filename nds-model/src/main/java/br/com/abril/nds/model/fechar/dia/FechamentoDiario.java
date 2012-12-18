@@ -175,7 +175,7 @@ public class FechamentoDiario implements Serializable {
      */
     public void addDiferenca(FechamentoDiarioDiferenca diferenca) {
         if (diferencas == null) {
-            diferencas = new ArrayList<>();
+            diferencas = new ArrayList<FechamentoDiarioDiferenca>();
         }
         diferenca.setFechamentoDiario(this);
         diferencas.add(diferenca);

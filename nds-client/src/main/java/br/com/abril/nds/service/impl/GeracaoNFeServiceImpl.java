@@ -27,7 +27,7 @@ import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.Condicao;
 import br.com.abril.nds.model.fiscal.nota.InformacaoTransporte;
-import br.com.abril.nds.model.fiscal.nota.ItemNotaFiscal;
+import br.com.abril.nds.model.fiscal.nota.ItemNotaFiscalSaida;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscalReferenciada;
 import br.com.abril.nds.repository.CotaRepository;
@@ -148,7 +148,7 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 					}
 				}
 				
-				List<ItemNotaFiscal> listItemNotaFiscal = this.notaFiscalService.obterItensNotaFiscalPor(distribuidor, 
+				List<ItemNotaFiscalSaida> listItemNotaFiscal = this.notaFiscalService.obterItensNotaFiscalPor(distribuidor, 
 						cota, intervaloDateMovimento, listIdFornecedor, listIdProduto, tipoNotaFiscal);
 				
 				if (listItemNotaFiscal == null || listItemNotaFiscal.isEmpty()) 
