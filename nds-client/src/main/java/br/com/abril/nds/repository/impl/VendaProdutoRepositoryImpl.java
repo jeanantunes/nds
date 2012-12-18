@@ -11,6 +11,7 @@ import br.com.abril.nds.dto.LancamentoPorEdicaoDTO;
 import br.com.abril.nds.dto.VendaProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroVendaProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroVendaProdutoDTO.ColunaOrdenacao;
+import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.repository.VendaProdutoRepository;
@@ -22,6 +23,19 @@ public class VendaProdutoRepositoryImpl extends AbstractRepositoryModel<Moviment
 		super(MovimentoEstoque.class);
 	}
 
+	private StringBuilder getMovimentosReparte(){
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select COALESCE(sum(COALESCE(mec.qtde,0)),0) ");
+		hql.append(" from MovimentoEstoqueCota mec ");
+		hql.append(" join mec.tipoMovimento tipoMovimento ");
+		hql.append(" where mec.lancamento.id = lancamento.id ");
+		hql.append(" and tipoMovimento.grupoMovimentoEstoque = :grupoMovimentoEstoque ");
+		
+		return hql;
+	}
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<VendaProdutoDTO> buscarVendaPorProduto(FiltroVendaProdutoDTO filtro) {
@@ -32,7 +46,11 @@ public class VendaProdutoRepositoryImpl extends AbstractRepositoryModel<Moviment
 		hql.append(" estoqueProduto.produtoEdicao.numeroEdicao as numEdicao, ");
 		hql.append(" lancamento.dataLancamentoDistribuidor as dataLancamento, ");
 		hql.append(" lancamento.dataRecolhimentoDistribuidor as dataRecolhimento, ");
-		hql.append(" COALESCE((estoqueProduto.qtde + estoqueProduto.qtdeSuplementar), 0) as reparte, ");
+		
+		hql.append(" ( ");
+		hql.append( this.getMovimentosReparte() );
+		hql.append(" ) as reparte, ");				
+		
 		hql.append(" COALESCE(((estoqueProduto.qtde + estoqueProduto.qtdeSuplementar) - estoqueProduto.qtdeDevolucaoEncalhe), 0)  as venda, ");
 		hql.append(" COALESCE(ROUND(((estoqueProduto.qtde + estoqueProduto.qtdeSuplementar) - estoqueProduto.qtdeDevolucaoEncalhe) / (estoqueProduto.qtde + estoqueProduto.qtdeSuplementar)), 0) as percentagemVenda, ");
 		hql.append(" produtoEdicao.precoVenda  as precoCapa, ");
@@ -68,7 +86,6 @@ public class VendaProdutoRepositoryImpl extends AbstractRepositoryModel<Moviment
 		
 		StringBuilder hql = new StringBuilder();
 	
-
 		hql.append(" from EstoqueProduto estoqueProduto ");
 		hql.append(" LEFT JOIN estoqueProduto.produtoEdicao as produtoEdicao ");
 		hql.append(" LEFT JOIN estoqueProduto.produtoEdicao.lancamentos as lancamento ");		
@@ -90,6 +107,10 @@ public class VendaProdutoRepositoryImpl extends AbstractRepositoryModel<Moviment
 		}
 
 		hql.append("  AND lancamento.status <> :situacaoLancamento ");
+		
+		hql.append(" AND ( ");
+		hql.append( this.getMovimentosReparte() );
+		hql.append(" ) > 0 ");		
 
 		return hql.toString();
 	}
@@ -138,6 +159,8 @@ public class VendaProdutoRepositoryImpl extends AbstractRepositoryModel<Moviment
 	
 		param.put("situacaoLancamento", StatusLancamento.EXCLUIDO);
 		
+		param.put("grupoMovimentoEstoque", GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
+		
 		return param;
 	}
 
@@ -150,12 +173,15 @@ public class VendaProdutoRepositoryImpl extends AbstractRepositoryModel<Moviment
 		
 		hql.append(" SELECT DISTINCT lancamento.dataLancamentoDistribuidor as dataLancamento, ");
 		hql.append(" lancamento.dataRecolhimentoDistribuidor as dataRecolhimento, ");
-		hql.append(" (estoqueProduto.qtde + estoqueProduto.qtdeSuplementar) as reparte, ");
+		
+		hql.append(" ( ");
+		hql.append( this.getMovimentosReparte() );
+		hql.append(" ) as reparte, ");		
+		
 		hql.append(" estoqueProduto.qtdeDevolucaoEncalhe  as encalhe, ");
 		hql.append(" ((estoqueProduto.qtde + estoqueProduto.qtdeSuplementar) - estoqueProduto.qtdeDevolucaoEncalhe)  as venda, ");
 		hql.append(" ((estoqueProduto.qtde + estoqueProduto.qtdeSuplementar) - estoqueProduto.qtdeDevolucaoEncalhe)  as vendaAcumulada, ");
 		hql.append(" ROUND((((estoqueProduto.qtde + estoqueProduto.qtdeSuplementar) - estoqueProduto.qtdeDevolucaoEncalhe) / (estoqueProduto.qtde + estoqueProduto.qtdeSuplementar))) as percentualVenda ");
-		
 		
 		hql.append(getSqlFromEWhereLancamentoPorEdicao(filtro));
 		
@@ -171,14 +197,12 @@ public class VendaProdutoRepositoryImpl extends AbstractRepositoryModel<Moviment
 				LancamentoPorEdicaoDTO.class));
 		
 		return query.list();
-		
 	}
 	
 	private String getSqlFromEWhereLancamentoPorEdicao(FiltroVendaProdutoDTO filtro) {
 		
 		StringBuilder hql = new StringBuilder();
 	
-
 		hql.append(" from Lancamento lancamento ");
 		hql.append(" LEFT JOIN lancamento.produtoEdicao as produtoEdicao ");
 		hql.append(" LEFT JOIN lancamento.produtoEdicao.produto as produto ");
@@ -197,6 +221,10 @@ public class VendaProdutoRepositoryImpl extends AbstractRepositoryModel<Moviment
 		}
 		
 		hql.append("  AND lancamento.status <> :situacaoLancamento ");
+		
+		hql.append(" AND ( ");
+		hql.append( this.getMovimentosReparte() );
+		hql.append(" ) > 0 ");		
 
 		return hql.toString();
 	}
@@ -213,6 +241,8 @@ public class VendaProdutoRepositoryImpl extends AbstractRepositoryModel<Moviment
 		}		
 		
 		param.put("situacaoLancamento", StatusLancamento.EXCLUIDO);
+		
+		param.put("grupoMovimentoEstoque", GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
 	
 		return param;
 	}
