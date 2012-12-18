@@ -114,7 +114,7 @@ var ConsultaEncalhe = $.extend(true, {
 						           }
 					           }
 					      ],
-				form: $("#dialog-outros-valores", this.workspace).parents("form")
+				form: $("#dialog-outros-valores", ConsultaEncalhe.workspace).parents("form")
 			});
 
 		},
@@ -152,11 +152,11 @@ var ConsultaEncalhe = $.extend(true, {
 			
 			$(".grids", ConsultaEncalhe.workspace).show();
 			
-			$("#totalReparte").text(parseFloat(resultado.valorReparte).toFixed(2));
-			$("#totalEncalhe").text(parseFloat(resultado.valorEncalhe).toFixed(2));
-			$("#valorVendaDia").text(parseFloat(resultado.valorVendaDia).toFixed(2));
-			$("#totalOutrosValores").text(parseFloat(resultado.valorDebitoCredito).toFixed(2));
-			$("#valorAPagar").text(parseFloat(resultado.valorPagar).toFixed(2));
+			$("#totalReparte",ConsultaEncalhe.workspace).text(parseFloat(resultado.valorReparte).toFixed(2));
+			$("#totalEncalhe",ConsultaEncalhe.workspace).text(parseFloat(resultado.valorEncalhe).toFixed(2));
+			$("#valorVendaDia",ConsultaEncalhe.workspace).text(parseFloat(resultado.valorVendaDia).toFixed(2));
+			$("#totalOutrosValores",ConsultaEncalhe.workspace).text(parseFloat(resultado.valorDebitoCredito).toFixed(2));
+			$("#valorAPagar",ConsultaEncalhe.workspace).text(parseFloat(resultado.valorPagar).toFixed(2));
 			
 			return resultado.tableModel;
 			
@@ -176,10 +176,10 @@ var ConsultaEncalhe = $.extend(true, {
 				return resultado.tableModel;
 			}
 			
-			$("#dataOperacao").html(resultado.dataOperacao);
-			$("#codigoProduto").html(resultado.codigoProduto);
-			$("#nomeProduto").html(resultado.nomeProduto);
-			$("#edicaoProduto").html(resultado.numeroEdicao);
+			$("#dataOperacao", ConsultaEncalhe.workspace).html(resultado.dataOperacao);
+			$("#codigoProduto", ConsultaEncalhe.workspace).html(resultado.codigoProduto);
+			$("#nomeProduto", ConsultaEncalhe.workspace).html(resultado.nomeProduto);
+			$("#edicaoProduto", ConsultaEncalhe.workspace).html(resultado.numeroEdicao);
 
 			$(".grids", ConsultaEncalhe.workspace).show();
 			
@@ -206,7 +206,7 @@ var ConsultaEncalhe = $.extend(true, {
 					           }
 				           }
 		        ],
-				form: $("#dialog-detalhes-encalhe", this.workspace).parents("form")
+				form: $("#dialog-detalhes-encalhe", ConsultaEncalhe.workspace).parents("form")
 			});
 		},
 		
