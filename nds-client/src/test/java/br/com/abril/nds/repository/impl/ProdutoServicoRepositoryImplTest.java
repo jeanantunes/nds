@@ -46,7 +46,7 @@ import br.com.abril.nds.model.fiscal.nota.InformacaoAdicional;
 import br.com.abril.nds.model.fiscal.nota.InformacaoEletronica;
 import br.com.abril.nds.model.fiscal.nota.InformacaoTransporte;
 import br.com.abril.nds.model.fiscal.nota.InformacaoValoresTotais;
-import br.com.abril.nds.model.fiscal.nota.ItemNotaFiscal;
+import br.com.abril.nds.model.fiscal.nota.ItemNotaFiscalSaida;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscalReferenciada;
 import br.com.abril.nds.model.fiscal.nota.ProdutoServico;
@@ -64,7 +64,7 @@ public class ProdutoServicoRepositoryImplTest extends
 		AbstractRepositoryImplTest {
 
 	private ProdutoServico produtoServico;
-	private ItemNotaFiscal itemNotaFiscal = new ItemNotaFiscal();
+	private ItemNotaFiscalSaida itemNotaFiscal = new ItemNotaFiscalSaida();
 	private List<MovimentoEstoqueCota> listaMovimentoEstoqueCota;
 	
 	@Autowired
@@ -184,7 +184,7 @@ public class ProdutoServicoRepositoryImplTest extends
 	public void atualizarProdutosQuePossuemNota() {
 		List<ProdutoServico> listaProdutoServico = new ArrayList<ProdutoServico>();
 		listaProdutoServico.add(produtoServico);
-		List<ItemNotaFiscal> listItemNotaFiscal = new ArrayList<ItemNotaFiscal>();
+		List<ItemNotaFiscalSaida> listItemNotaFiscal = new ArrayList<ItemNotaFiscalSaida>();
 		listItemNotaFiscal.add(itemNotaFiscal);
 		
 		produtoServicoRepositoryImpl.atualizarProdutosQuePossuemNota(listaProdutoServico, listItemNotaFiscal);
@@ -196,7 +196,7 @@ public class ProdutoServicoRepositoryImplTest extends
 		List<ProdutoServico> listaProdutoServico = new ArrayList<ProdutoServico>();
 		listaProdutoServico.add(produtoServico);
 		produtoServico.setListaMovimentoEstoqueCota(listaMovimentoEstoqueCota);
-		List<ItemNotaFiscal> listItemNotaFiscal = new ArrayList<ItemNotaFiscal>();
+		List<ItemNotaFiscalSaida> listItemNotaFiscal = new ArrayList<ItemNotaFiscalSaida>();
 		listItemNotaFiscal.add(itemNotaFiscal);
 		
 		produtoServicoRepositoryImpl.atualizarProdutosQuePossuemNota(listaProdutoServico, listItemNotaFiscal);
