@@ -229,7 +229,11 @@ public class AlteracaoCotaController {
 			for (Long  id : filtroAlteracaoCotaDTO.getFiltroModalFornecedor().getListaFornecedoresSelecionados()){
 				fornecedoresCota.add(fornecedorService.obterFornecedorPorId(id));
 			}
-			cota.setFornecedores(fornecedoresCota);
+			
+			//Validaçao para nao apagar fornecedores quando for alterar
+			if(!fornecedoresCota.isEmpty()){
+				cota.setFornecedores(fornecedoresCota);				
+			}
 
 			//****FINANCEIRO****//
 			//Sugere Suspensao
