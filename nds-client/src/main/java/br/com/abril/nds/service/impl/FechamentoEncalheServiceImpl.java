@@ -36,7 +36,7 @@ import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.InformacaoTransporte;
-import br.com.abril.nds.model.fiscal.nota.ItemNotaFiscal;
+import br.com.abril.nds.model.fiscal.nota.ItemNotaFiscalSaida;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscalReferenciada;
 import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
@@ -417,7 +417,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 
 				TipoNotaFiscal tipoNotaFiscal = obterTipoNotaFiscal(listaTipoNotaFiscal, cota);
 				
-				List<ItemNotaFiscal> listItemNotaFiscal = this.notaFiscalService.obterItensNotaFiscalPor(distribuidor, 
+				List<ItemNotaFiscalSaida> listItemNotaFiscal = this.notaFiscalService.obterItensNotaFiscalPor(distribuidor, 
 						cota, null, null, null, tipoNotaFiscal);
 				
 				if (listItemNotaFiscal == null || listItemNotaFiscal.isEmpty()) 

@@ -62,7 +62,7 @@ import br.com.abril.nds.model.fiscal.nota.InformacaoAdicional;
 import br.com.abril.nds.model.fiscal.nota.InformacaoEletronica;
 import br.com.abril.nds.model.fiscal.nota.InformacaoTransporte;
 import br.com.abril.nds.model.fiscal.nota.InformacaoValoresTotais;
-import br.com.abril.nds.model.fiscal.nota.ItemNotaFiscal;
+import br.com.abril.nds.model.fiscal.nota.ItemNotaFiscalSaida;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscalReferenciada;
 import br.com.abril.nds.model.fiscal.nota.Origem;
@@ -459,10 +459,10 @@ public class NotaFiscalServiceImplTest extends AbstractRepositoryImplTest {
 	
 	@Test
 	public void emitiNotaFiscal(){
-		List<ItemNotaFiscal> listItemNotaFiscal = new ArrayList<ItemNotaFiscal>();
+		List<ItemNotaFiscalSaida> listItemNotaFiscal = new ArrayList<ItemNotaFiscalSaida>();
 		
 		
-		listItemNotaFiscal.add(new ItemNotaFiscal(produtoEdicaoComDesconto.getId(), BigInteger.TEN, BigDecimal.TEN, "091"));
+		listItemNotaFiscal.add(new ItemNotaFiscalSaida(produtoEdicaoComDesconto.getId(), BigInteger.TEN, BigDecimal.TEN, "091"));
 		
 		Endereco enderecoTransporte = Fixture.criarEndereco(
 				TipoEndereco.COMERCIAL, "10500250", "Rua Nova", "1000",
@@ -482,10 +482,10 @@ public class NotaFiscalServiceImplTest extends AbstractRepositoryImplTest {
 	
 	@Test
 	public void emitiNotaFiscalFornecedor(){
-		List<ItemNotaFiscal> listItemNotaFiscal = new ArrayList<ItemNotaFiscal>();
+		List<ItemNotaFiscalSaida> listItemNotaFiscal = new ArrayList<ItemNotaFiscalSaida>();
 		
 		
-		listItemNotaFiscal.add(new ItemNotaFiscal(produtoEdicaoComDesconto.getId(), BigInteger.TEN, BigDecimal.TEN, "091"));
+		listItemNotaFiscal.add(new ItemNotaFiscalSaida(produtoEdicaoComDesconto.getId(), BigInteger.TEN, BigDecimal.TEN, "091"));
 		
 		Endereco enderecoTransporte = Fixture.criarEndereco(
 				TipoEndereco.COMERCIAL, "10500250", "Rua Nova", "1000",

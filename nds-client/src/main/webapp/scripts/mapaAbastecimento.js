@@ -592,10 +592,10 @@ function MapaAbastecimento(pathTela, objName, workspace) {
 			$.postJSON(contextPath +'/mapaAbastecimento/buscarRoteiroPorBox',
 					{idBox:T.get("box")},
 					function(result) {
-						var comboRota =  montarComboBoxCustomJson(result.roteiros, true,'Selecione...');
+						var comboRota =  montarComboBoxCustomJson(result.rotas, true,'Selecione...');
 						$('#rota', _workspace).html(comboRota);
 						
-						var comboRoteiro =  montarComboBoxCustomJson(result.rotas, true,'Selecione...');
+						var comboRoteiro =  montarComboBoxCustomJson(result.roteiros, true,'Selecione...');
 						$('#roteiro', _workspace).html(comboRoteiro);
 					}
 				

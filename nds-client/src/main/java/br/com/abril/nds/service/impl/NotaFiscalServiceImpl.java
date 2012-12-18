@@ -72,7 +72,7 @@ import br.com.abril.nds.model.fiscal.nota.InformacaoAdicional;
 import br.com.abril.nds.model.fiscal.nota.InformacaoEletronica;
 import br.com.abril.nds.model.fiscal.nota.InformacaoTransporte;
 import br.com.abril.nds.model.fiscal.nota.InformacaoValoresTotais;
-import br.com.abril.nds.model.fiscal.nota.ItemNotaFiscal;
+import br.com.abril.nds.model.fiscal.nota.ItemNotaFiscalSaida;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscalReferenciada;
 import br.com.abril.nds.model.fiscal.nota.ProdutoServico;
@@ -220,7 +220,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 							.getEmiteNotaFiscalEletronica() == tipoNotaFiscal
 							.isContribuinte()) {
 
-						List<ItemNotaFiscal> itensNotaFiscal = obterItensNotaFiscalPor(
+						List<ItemNotaFiscalSaida> itensNotaFiscal = obterItensNotaFiscalPor(
 								distribuidor, cota, periodo,
 								listaIdFornecedores, null, tipoNotaFiscal);
 
@@ -877,7 +877,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	@Override
 	@Transactional
 	public Long emitiNotaFiscal(long idTipoNotaFiscal, Date dataEmissao,
-			Fornecedor fornecedor, List<ItemNotaFiscal> listItemNotaFiscal,
+			Fornecedor fornecedor, List<ItemNotaFiscalSaida> listItemNotaFiscal,
 			InformacaoTransporte transporte,
 			InformacaoAdicional informacaoAdicional,
 			List<NotaFiscalReferenciada> listNotaFiscalReferenciada,
@@ -944,7 +944,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		notaFiscalRepository.adicionar(notaFiscal);
 
 		int sequencia = 1;
-		for (ItemNotaFiscal itemNotaFiscal : listItemNotaFiscal) {
+		for (ItemNotaFiscalSaida itemNotaFiscal : listItemNotaFiscal) {
 
 			ProdutoServico produtoServico = carregaProdutoServico(fornecedor,
 					itemNotaFiscal.getIdProdutoEdicao(),
@@ -1005,7 +1005,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	@Override
 	@Transactional
 	public Long emitiNotaFiscal(long idTipoNotaFiscal, Date dataEmissao,
-			Cota cota, List<ItemNotaFiscal> listItemNotaFiscal,
+			Cota cota, List<ItemNotaFiscalSaida> listItemNotaFiscal,
 			InformacaoTransporte transporte,
 			InformacaoAdicional informacaoAdicional,
 			List<NotaFiscalReferenciada> listNotaFiscalReferenciada,
@@ -1072,7 +1072,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		notaFiscalRepository.adicionar(notaFiscal);
 
 		int sequencia = 1;
-		for (ItemNotaFiscal itemNotaFiscal : listItemNotaFiscal) {
+		for (ItemNotaFiscalSaida itemNotaFiscal : listItemNotaFiscal) {
 
 			ProdutoServico produtoServico = carregaProdutoServico(cota,
 					itemNotaFiscal.getIdProdutoEdicao(),
@@ -1138,12 +1138,12 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	 */
 	@Override
 	@Transactional
-	public List<ItemNotaFiscal> obterItensNotaFiscalPor(
+	public List<ItemNotaFiscalSaida> obterItensNotaFiscalPor(
 			Distribuidor distribuidor, Cota cota, Intervalo<Date> periodo,
 			List<Long> listaIdFornecedores, List<Long> listaIdProdutos,
 			TipoNotaFiscal tipoNotaFiscal) {
 
-		List<ItemNotaFiscal> itensNotaFiscal = new ArrayList<ItemNotaFiscal>();
+		List<ItemNotaFiscalSaida> itensNotaFiscal = new ArrayList<ItemNotaFiscalSaida>();
 
 		GrupoNotaFiscal grupoNotaFiscal = tipoNotaFiscal.getGrupoNotaFiscal();
 
@@ -1206,12 +1206,12 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	 * @param periodo
 	 *            intervalo do periodo de lançamento
 	 */
-	private List<ItemNotaFiscal> obterItensNFeRemessaEmConsignacao(
+	private List<ItemNotaFiscalSaida> obterItensNFeRemessaEmConsignacao(
 			Distribuidor distribuidor, Long idCota, Intervalo<Date> periodo,
 			List<Long> listaIdFornecedores, List<Long> listaIdProduto,
 			TipoNotaFiscal tipoNotaFiscal) {
 
-		List<ItemNotaFiscal> listaItemNotaFiscal = null;
+		List<ItemNotaFiscalSaida> listaItemNotaFiscal = null;
 
 		List<GrupoMovimentoEstoque> listaGrupoMovimentoEstoque = new ArrayList<GrupoMovimentoEstoque>();
 		listaGrupoMovimentoEstoque
@@ -1249,12 +1249,12 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	 * 
 	 * @return lista de itens nota fiscal
 	 */
-	private List<ItemNotaFiscal> obterItensNFeEntradaDevolucaoRemessaConsignacao(
+	private List<ItemNotaFiscalSaida> obterItensNFeEntradaDevolucaoRemessaConsignacao(
 			Distribuidor distribuidor, Long idCota, Intervalo<Date> periodo,
 			List<Long> listaIdFornecedores, List<Long> listaIdProduto,
 			TipoNotaFiscal tipoNotaFiscal) {
 
-		List<ItemNotaFiscal> listaItemNotaFiscal = null;
+		List<ItemNotaFiscalSaida> listaItemNotaFiscal = null;
 
 		List<GrupoMovimentoEstoque> listaGrupoMovimentoEstoque = new ArrayList<GrupoMovimentoEstoque>();
 		listaGrupoMovimentoEstoque
@@ -1285,12 +1285,12 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	 * 
 	 * @return lista de itens nota fiscal
 	 */
-	private List<ItemNotaFiscal> obterItensNFeSaisaDevolucaoMercadoriaRecebidaConsignacao(
+	private List<ItemNotaFiscalSaida> obterItensNFeSaisaDevolucaoMercadoriaRecebidaConsignacao(
 			Distribuidor distribuidor, Long idCota, Intervalo<Date> periodo,
 			List<Long> listaIdFornecedores, List<Long> listaIdProduto,
 			TipoNotaFiscal tipoNotaFiscal) {
 
-		List<ItemNotaFiscal> listaItemNotaFiscal = null;
+		List<ItemNotaFiscalSaida> listaItemNotaFiscal = null;
 
 		List<GrupoMovimentoEstoque> listaGrupoMovimentoEstoque = new ArrayList<GrupoMovimentoEstoque>();
 		listaGrupoMovimentoEstoque.add(GrupoMovimentoEstoque.ENVIO_ENCALHE);
@@ -1316,33 +1316,33 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	 * @param periodo
 	 *            intervalo do periodo de lançamento
 	 */
-	private List<ItemNotaFiscal> obterItensNFeVenda(Distribuidor distribuidor,
+	private List<ItemNotaFiscalSaida> obterItensNFeVenda(Distribuidor distribuidor,
 			Long idCota, Intervalo<Date> periodo,
 			List<Long> listaIdFornecedores, List<Long> listaIdProdutos,
 			TipoNotaFiscal tipoNotaFiscal) {
 
-		List<ItemNotaFiscal> itensNFeEnvioConsignado = this
+		List<ItemNotaFiscalSaida> itensNFeEnvioConsignado = this
 				.obterItensNFeRemessaEmConsignacao(distribuidor, idCota,
 						periodo, listaIdFornecedores, listaIdProdutos,
 						tipoNotaFiscal);
 
-		List<ItemNotaFiscal> itensNFeDevolucaoConsignado = this
+		List<ItemNotaFiscalSaida> itensNFeDevolucaoConsignado = this
 				.obterItensNFeEntradaDevolucaoRemessaConsignacao(distribuidor,
 						idCota, periodo, listaIdFornecedores, listaIdProdutos,
 						tipoNotaFiscal);
 
-		List<ItemNotaFiscal> itensNFeVenda = new ArrayList<ItemNotaFiscal>();
+		List<ItemNotaFiscalSaida> itensNFeVenda = new ArrayList<ItemNotaFiscalSaida>();
 
 		if (itensNFeEnvioConsignado != null) {
-			for (ItemNotaFiscal itemNFeEnvio : itensNFeEnvioConsignado) {
+			for (ItemNotaFiscalSaida itemNFeEnvio : itensNFeEnvioConsignado) {
 
-				ItemNotaFiscal itemNFeVenda = itemNFeEnvio;
+				ItemNotaFiscalSaida itemNFeVenda = itemNFeEnvio;
 
 				if (itensNFeDevolucaoConsignado != null
 						&& !itensNFeDevolucaoConsignado.isEmpty()) {
 
 					if (itensNFeDevolucaoConsignado.contains(itemNFeEnvio)) {
-						ItemNotaFiscal itemNFeDevolucao = itensNFeDevolucaoConsignado
+						ItemNotaFiscalSaida itemNFeDevolucao = itensNFeDevolucaoConsignado
 								.get(itensNFeDevolucaoConsignado
 										.indexOf(itemNFeEnvio));
 
@@ -1366,11 +1366,11 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	 * @param listaMovimentoEstoqueCota
 	 * @return
 	 */
-	private List<ItemNotaFiscal> gerarItensNotaFiscal(
+	private List<ItemNotaFiscalSaida> gerarItensNotaFiscal(
 			List<MovimentoEstoqueCota> listaMovimentoEstoqueCota,
 			TipoNotaFiscal tipoNotaFiscal, Long idCota) {
 
-		Map<Long, ItemNotaFiscal> mapItemNotaFiscal = new HashMap<Long, ItemNotaFiscal>();
+		Map<Long, ItemNotaFiscalSaida> mapItemNotaFiscal = new HashMap<Long, ItemNotaFiscalSaida>();
 
 		GrupoNotaFiscal grupoNotaFiscal = tipoNotaFiscal.getGrupoNotaFiscal();
 
@@ -1416,14 +1416,14 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 			}
 
 			if (mapItemNotaFiscal.containsKey(produtoEdicao.getId())) {
-				ItemNotaFiscal item = mapItemNotaFiscal.get(produtoEdicao
+				ItemNotaFiscalSaida item = mapItemNotaFiscal.get(produtoEdicao
 						.getId());
 				quantidade = quantidade.add(item.getQuantidade());
 				listaMovimentoEstoqueItem.addAll(item
 						.getListaMovimentoEstoqueCota());
 			}
 
-			ItemNotaFiscal itemNotaFiscal = new ItemNotaFiscal();
+			ItemNotaFiscalSaida itemNotaFiscal = new ItemNotaFiscalSaida();
 
 			itemNotaFiscal.setIdProdutoEdicao(produtoEdicao.getId());
 
@@ -1440,7 +1440,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 			mapItemNotaFiscal.put(produtoEdicao.getId(), itemNotaFiscal);
 		}
 
-		return new ArrayList<ItemNotaFiscal>(mapItemNotaFiscal.values());
+		return new ArrayList<ItemNotaFiscalSaida>(mapItemNotaFiscal.values());
 	}
 
 	/**
@@ -1451,7 +1451,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	 * @return somatoria total da quantidade de itens
 	 */
 	private QuantidadePrecoItemNotaDTO sumarizarTotalItensNota(
-			List<ItemNotaFiscal> listaItemNotaFiscal) {
+			List<ItemNotaFiscalSaida> listaItemNotaFiscal) {
 
 		QuantidadePrecoItemNotaDTO dto = new QuantidadePrecoItemNotaDTO();
 
@@ -1459,7 +1459,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		BigDecimal preco = BigDecimal.ZERO;
 		BigDecimal precoComDesconto = BigDecimal.ZERO;
 
-		for (ItemNotaFiscal item : listaItemNotaFiscal) {
+		for (ItemNotaFiscalSaida item : listaItemNotaFiscal) {
 			quantidade = quantidade.add(item.getQuantidade());
 			preco = preco.add(item.getValorUnitario().multiply(
 					new BigDecimal(quantidade)));
@@ -1547,14 +1547,14 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	 * @return
 	 */
 	public List<NotaFiscalReferenciada> obterNotasReferenciadas(
-			List<ItemNotaFiscal> listaItensNotaFiscal) {
+			List<ItemNotaFiscalSaida> listaItensNotaFiscal) {
 
 		if (listaItensNotaFiscal == null || listaItensNotaFiscal.isEmpty())
 			return null;
 
 		Set<NotaFiscalReferenciada> notaFiscalReferenciada = new HashSet<NotaFiscalReferenciada>();
 
-		for (ItemNotaFiscal itemNotaFiscal : listaItensNotaFiscal) {
+		for (ItemNotaFiscalSaida itemNotaFiscal : listaItensNotaFiscal) {
 
 			List<MovimentoEstoqueCota> listaMovimentoEstoqueCota = itemNotaFiscal
 					.getListaMovimentoEstoqueCota();

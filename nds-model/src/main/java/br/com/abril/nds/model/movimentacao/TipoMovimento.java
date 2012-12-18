@@ -22,8 +22,10 @@ public abstract class TipoMovimento {
 	@GeneratedValue(generator = "TP_MOVIMENTO_SEQ")
 	@Column(name = "ID")
 	private Long id;
+	
 	@Column(name = "DESCRICAO", nullable = false)
 	private String descricao;
+	
 	@Column(name = "APROVACAO_AUTOMATICA", nullable = false)
 	private boolean aprovacaoAutomatica;
 	
