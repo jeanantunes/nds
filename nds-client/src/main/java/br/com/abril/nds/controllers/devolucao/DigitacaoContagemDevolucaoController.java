@@ -35,6 +35,7 @@ import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.ContagemDevolucaoService;
 import br.com.abril.nds.service.EdicoesFechadasService;
 import br.com.abril.nds.service.FornecedorService;
+import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.CurrencyUtil;
@@ -84,6 +85,9 @@ public class DigitacaoContagemDevolucaoController  {
 	
 	@Autowired
 	private EdicoesFechadasService edicoesFechadasService;
+	
+	@Autowired
+	private UsuarioService usuarioService;
 	
 	@Autowired
 	private HttpServletResponse httpResponse;
@@ -297,14 +301,7 @@ public class DigitacaoContagemDevolucaoController  {
 	
 	//TODO: não há como reconhecer usuario, ainda
 	private Usuario getUsuario() {
-		
-		Usuario usuario = new Usuario();
-		
-		usuario.setId(1L);
-		
-		usuario.setNome("Jornaleiro da Silva");
-		
-		return usuario;
+		return usuarioService.getUsuarioLogado();
 	}
 	
 	//TODO: não há como reconhecer usuario, ainda

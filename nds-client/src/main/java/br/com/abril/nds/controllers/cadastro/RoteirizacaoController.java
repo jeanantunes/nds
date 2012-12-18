@@ -271,7 +271,7 @@ public class RoteirizacaoController {
 	 * @param rotaId
 	 * @param roteiroId
 	 */
-	@Path("/excluirRota")
+	@Post("/excluirRota")
 	public void excluirRota(Long rotaId, Long roteiroId, Integer ordemRota) {
 		
 		roteirizacaoService.validarAssociacaoRotaTransportador(rotaId, roteiroId);
@@ -286,7 +286,7 @@ public class RoteirizacaoController {
 	 * 
 	 * @param roteiroId
 	 */
-	@Path("/excluirRoteiro")
+	@Post("/excluirRoteiro")
 	public void excluirRoteiro(Long roteiroId, Integer ordemRoteiro) {
 		
 		roteirizacaoService.validarAssociacaoRoteiroTransportador(roteiroId);

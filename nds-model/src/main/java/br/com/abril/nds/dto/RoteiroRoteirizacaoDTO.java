@@ -238,7 +238,7 @@ public class RoteiroRoteirizacaoDTO implements Serializable, Ordenavel {
     				
     				this.todasRotas.remove(rota);
     				
-    				if(rota.getId() > 0) {
+    				if(rota.getId() != null && rota.getId() > 0) {
     					this.adicionarRotaExclusao(rota.getId());
     				}
     				
