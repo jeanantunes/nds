@@ -434,7 +434,8 @@ var visaoEstoqueController = $.extend(true, {
 				align : 'left'
 			}],
 			width : 960,
-			height : 200
+			height : 200,
+			
 		});
 	},
 	
@@ -636,7 +637,9 @@ var visaoEstoqueController = $.extend(true, {
 				align : 'center'
 			}],
 			width : 870,
-			height : 200
+			height : 200,
+			sortname : "codigo",
+			sortorder : "asc"
 		});
 	},
 	
@@ -690,17 +693,19 @@ var visaoEstoqueController = $.extend(true, {
 				display : 'Estoque',
 				name : 'estoque',
 				width : 100,
-				sortable : true,
+				sortable : false,
 				align : 'center'
 			}, {
 				display : 'Diferença',
 				name : 'diferenca',
 				width : 90,
-				sortable : true,
+				sortable : false,
 				align : 'center'
 			}],
 			width : 870,
-			height : 300
+			height : 300,
+			sortname : "codigo",
+			sortorder : "asc"
 		});
 	},
 	

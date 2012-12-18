@@ -1,6 +1,7 @@
 package br.com.abril.nds.service.impl;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.client.assembler.HistoricoTitularidadeCotaDTOAssembler;
+import br.com.abril.nds.dto.CaucaoLiquidaDTO;
 import br.com.abril.nds.dto.CotaGarantiaDTO;
 import br.com.abril.nds.dto.FormaCobrancaCaucaoLiquidaDTO;
 import br.com.abril.nds.dto.ItemDTO;
@@ -889,6 +891,16 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 				break;
 			}
 			
+			List<CaucaoLiquida> caucaoLiquidas = cotaGarantiaCaucaoLiquida.getCaucaoLiquidas();
+			
+			Collection<CaucaoLiquidaDTO> caucaoLiquidasDTO =  new ArrayList<CaucaoLiquidaDTO>();
+			
+			for (CaucaoLiquida caucaoLiquida : caucaoLiquidas){
+				
+				caucaoLiquidasDTO.add(new CaucaoLiquidaDTO(caucaoLiquida.getValor(),caucaoLiquida.getAtualizacao()));
+			}
+			
+			formaCobrancaDTO.setCaucoes(caucaoLiquidasDTO);
 		}
 		
 		return formaCobrancaDTO;
