@@ -27,11 +27,9 @@ public class VendaProdutoRepositoryImpl extends AbstractRepositoryModel<Moviment
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" select COALESCE(sum(COALESCE(mec.qtde,0)),0) ");
-		hql.append(" from MovimentoEstoqueCota mec ");
-		hql.append(" join mec.tipoMovimento tipoMovimento ");
-		hql.append(" where mec.lancamento.id = lancamento.id ");
-		hql.append(" and tipoMovimento.grupoMovimentoEstoque = :grupoMovimentoEstoque ");
+		hql.append(" SELECT COALESCE(sum(COALESCE(mec.qtde,0)),0) ");
+		hql.append(" FROM MovimentoEstoqueCota mec ");
+		hql.append(" WHERE mec = movEstCota ");
 		
 		return hql;
 	}
@@ -90,6 +88,8 @@ public class VendaProdutoRepositoryImpl extends AbstractRepositoryModel<Moviment
 		hql.append(" JOIN estoqueProduto.produtoEdicao as produtoEdicao ");
 		hql.append(" JOIN estoqueProduto.produtoEdicao.lancamentos as lancamento ");		
 		hql.append(" JOIN estoqueProduto.produtoEdicao.produto.fornecedores as fornecedor ");
+		hql.append(" JOIN lancamento.movimentoEstoqueCotas as movEstCota ");
+		hql.append(" JOIN movEstCota.tipoMovimento tipoMovimento ");
 		
 		boolean usarAnd = false;
 		
@@ -108,11 +108,9 @@ public class VendaProdutoRepositoryImpl extends AbstractRepositoryModel<Moviment
 
 		hql.append("  AND lancamento.status <> :situacaoLancamento ");
 		
-		hql.append(" AND (select mec.movimentoEstoqueCotaFuro ");
-		hql.append("      from MovimentoEstoqueCota mec ");
-		hql.append("      join mec.tipoMovimento tipoMovimento ");
-		hql.append("      where mec.lancamento.id = lancamento.id ");
-		hql.append("      and tipoMovimento.grupoMovimentoEstoque = :grupoMovimentoEstoque) is null ");
+		hql.append("  AND movEstCota.movimentoEstoqueCotaFuro is null ");
+		
+		hql.append("  AND tipoMovimento.grupoMovimentoEstoque = :grupoMovimentoEstoque ");
 		
 		return hql.toString();
 	}
@@ -126,6 +124,8 @@ public class VendaProdutoRepositoryImpl extends AbstractRepositoryModel<Moviment
 		ColunaOrdenacao coluna = ColunaOrdenacao.getPorDescricao(filtro.getPaginacao().getSortColumn());
 		
 		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" group by lancamento ");
 		
 		switch (coluna) {
 			case EDICAO:	
@@ -210,6 +210,8 @@ public class VendaProdutoRepositoryImpl extends AbstractRepositoryModel<Moviment
 		hql.append(" JOIN lancamento.produtoEdicao.produto as produto ");
 		hql.append(" JOIN lancamento.produtoEdicao.movimentoEstoques as movimentoEstoque ");
 		hql.append(" JOIN movimentoEstoque.estoqueProduto as estoqueProduto ");
+		hql.append(" JOIN lancamento.movimentoEstoqueCotas as movEstCota ");
+		hql.append(" JOIN movEstCota.tipoMovimento tipoMovimento ");
 		
 		boolean usarAnd = false;
 		
@@ -224,11 +226,9 @@ public class VendaProdutoRepositoryImpl extends AbstractRepositoryModel<Moviment
 		
 		hql.append("  AND lancamento.status <> :situacaoLancamento ");	
 		
-		hql.append(" AND (select mec.movimentoEstoqueCotaFuro ");
-		hql.append("      from MovimentoEstoqueCota mec ");
-		hql.append("      join mec.tipoMovimento tipoMovimento ");
-		hql.append("      where mec.lancamento.id = lancamento.id ");
-		hql.append("      and tipoMovimento.grupoMovimentoEstoque = :grupoMovimentoEstoque) is null ");
+        hql.append("  AND movEstCota.movimentoEstoqueCotaFuro is null ");
+		
+		hql.append("  AND tipoMovimento.grupoMovimentoEstoque = :grupoMovimentoEstoque ");
 
 		return hql.toString();
 	}
