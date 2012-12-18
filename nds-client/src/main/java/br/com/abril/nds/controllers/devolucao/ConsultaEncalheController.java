@@ -453,17 +453,12 @@ public class ConsultaEncalheController {
 		
 		filtro.setIdFornecedor(idFornecedor);
 		
-		if(numeroCota != null) {
-			Cota cota  = cotaService.obterPorNumeroDaCota(numeroCota);
-			filtro.setNumCota(numeroCota);
-			if(cota!=null) {
-				filtro.setIdCota(cota.getId());
-			}
-			
-		} else {
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "O preenchimento da cota é obrigatório."));
+		Cota cota  = cotaService.obterPorNumeroDaCota(numeroCota);
+		filtro.setNumCota(numeroCota);
+		if(cota!=null) {
+			filtro.setIdCota(cota.getId());
 		}
-		
+			
 		return filtro;
 	}
 

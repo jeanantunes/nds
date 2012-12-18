@@ -192,9 +192,9 @@ public class MapaAbastecimentoController {
 		
 		List<ItemDTO<Long, String>> listaRoteiros = new ArrayList<ItemDTO<Long,String>>();
 		
-		for(Roteiro rota : roteiros){
+		for(Roteiro item : roteiros){
 			
-			listaRoteiros.add(new ItemDTO<Long, String>(rota.getId(),rota.getId() + " " + rota.getDescricaoRoteiro()));
+			listaRoteiros.add(new ItemDTO<Long, String>(item.getId(),item.getDescricaoRoteiro()));
 		}
 		
 		return listaRoteiros;
