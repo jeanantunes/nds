@@ -51,5 +51,7 @@ public interface EnderecoRepository extends Repository<Endereco, Long> {
 	List<String> obterLocalidadesPorUF(String uf);
 
 	public abstract List<String> obterBairrosCotas();
+	
+	List<String>obterUFs();
 
 }

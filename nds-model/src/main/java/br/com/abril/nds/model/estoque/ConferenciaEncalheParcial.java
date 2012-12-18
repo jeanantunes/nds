@@ -5,6 +5,8 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
@@ -53,6 +55,7 @@ public class ConferenciaEncalheParcial {
 	@Column(name = "DATA_APROVACAO")
 	private Date dataAprovacao;
 	
+	@Enumerated(EnumType.STRING)
 	@Column(name="STATUS_APROVACAO", nullable=false)
 	private StatusAprovacao statusAprovacao;
 	

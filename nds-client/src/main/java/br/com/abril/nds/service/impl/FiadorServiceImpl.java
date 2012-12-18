@@ -659,7 +659,7 @@ public class FiadorServiceImpl implements FiadorService {
 			else{
 				
 				throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,
-						"A cota ["+cota.getNumeroCota()+"] já possui uma garantia cadastrada. Dirija-se ao cadastro da cota caso queira alterar o tipo da garantia da cota para Fiador."));
+						"A cota ["+cota.getNumeroCota()+"] já possui uma garantia diferente de [Fiador] cadastrada.\nDirija-se ao cadastro da [Cota] caso queira alterar o [Tipo] da garantia da cota para [Fiador]."));
 			}
 		}
 	}

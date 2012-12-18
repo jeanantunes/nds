@@ -29,7 +29,22 @@ public class ContagemDevolucaoConferenciaCegaDTO implements Serializable {
 	@Export(label = "Preço Capa R$")
 	private BigDecimal precoVenda;	
 
+	@Export(label = "Exemplar Nota")
+	private String exemplarNota;	
 	
+	/**
+	 * @return the exemplarNota
+	 */
+	public String getExemplarNota() {
+		return exemplarNota;
+	}
+
+	/**
+	 * @param exemplarNota the exemplarNota to set
+	 */
+	public void setExemplarNota(String exemplarNota) {
+		this.exemplarNota = exemplarNota;
+	}
 
 	/**
 	 * @return the idProdutoEdicao

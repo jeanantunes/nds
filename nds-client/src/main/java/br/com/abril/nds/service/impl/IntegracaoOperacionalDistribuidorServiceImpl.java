@@ -160,7 +160,7 @@ public class IntegracaoOperacionalDistribuidorServiceImpl implements IntegracaoO
 		indicador.setGrupoIndicador(GrupoIndicador.LANCAMENTO);
 		indicador.setTipoIndicador(TipoIndicador.TITULOS_LANCADOS);
 		indicador.setFormatoIndicador(FormatoIndicador.DECIMAL);
-		valorIndicador = this.lancamentoRepository.obterQuantidadeLancamentos(StatusLancamento.LANCADO);
+		valorIndicador = this.lancamentoRepository.obterQuantidadeLancamentos(StatusLancamento.EXPEDIDO);
 		indicador.setValor(valorIndicador == null ? null: valorIndicador.toString());
 		indicadores.add(indicador);
 		
@@ -182,7 +182,7 @@ public class IntegracaoOperacionalDistribuidorServiceImpl implements IntegracaoO
 		indicador.setGrupoIndicador(GrupoIndicador.LANCAMENTO);
 		indicador.setTipoIndicador(TipoIndicador.CONSIGNADO);
 		indicador.setFormatoIndicador(FormatoIndicador.MONETARIO);
-		valorIndicador = this.lancamentoRepository.obterConsignadoDia(StatusLancamento.CONFIRMADO);
+		valorIndicador = this.lancamentoRepository.obterConsignadoDia(StatusLancamento.EXPEDIDO);
 		indicador.setValor(valorIndicador == null ? null: valorIndicador.toString());
 		indicadores.add(indicador);
 		

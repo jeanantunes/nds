@@ -1,7 +1,7 @@
 package br.com.abril.nds.client.vo;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.List;
 
 import br.com.abril.nds.dto.ProdutoLancamentoCanceladoDTO;
@@ -17,7 +17,7 @@ public class ResultadoResumoBalanceamentoVO implements Serializable {
 	
 	private boolean bloquearBotoes;
 	
-	private BigDecimal capacidadeRecolhimentoDistribuidor;
+	private BigInteger capacidadeRecolhimentoDistribuidor;
 	
 	private List<ProdutoLancamentoCanceladoDTO> listaProdutosLancamentosCancelados;
 	
@@ -60,7 +60,7 @@ public class ResultadoResumoBalanceamentoVO implements Serializable {
 	/**
 	 * @return the capacidadeRecolhimentoDistribuidor
 	 */
-	public BigDecimal getCapacidadeRecolhimentoDistribuidor() {
+	public BigInteger getCapacidadeRecolhimentoDistribuidor() {
 		return capacidadeRecolhimentoDistribuidor;
 	}
 
@@ -68,7 +68,7 @@ public class ResultadoResumoBalanceamentoVO implements Serializable {
 	 * @param capacidadeRecolhimentoDistribuidor the capacidadeRecolhimentoDistribuidor to set
 	 */
 	public void setCapacidadeRecolhimentoDistribuidor(
-			BigDecimal capacidadeRecolhimentoDistribuidor) {
+			BigInteger capacidadeRecolhimentoDistribuidor) {
 		this.capacidadeRecolhimentoDistribuidor = capacidadeRecolhimentoDistribuidor;
 	}
 
