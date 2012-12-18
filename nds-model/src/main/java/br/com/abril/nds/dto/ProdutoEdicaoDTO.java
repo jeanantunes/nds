@@ -97,6 +97,26 @@ public class ProdutoEdicaoDTO implements Serializable {
 	private TemaProduto temaPrincipal;
 	private TemaProduto temaSecundario;
 
+	public ProdutoEdicaoDTO() {};
+	
+	public ProdutoEdicaoDTO(
+			Long id, 
+			String codigoProduto, 
+			String nomeComercial, 
+			Long numeroEdicao, 
+			String nomeFornecedor, 
+			String statusLancamento, 
+			String statusSituacao, 
+			String temBrinde) {
+		this.id = id;
+		this.codigoProduto  = codigoProduto;
+		this.nomeComercial  = nomeComercial;
+		this.numeroEdicao = numeroEdicao;
+		this.nomeFornecedor = nomeFornecedor;
+		this.statusLancamento  = statusLancamento;
+		this.statusSituacao = statusSituacao; 
+		this.temBrinde = temBrinde;		
+	};
 	
 	
 	/**
@@ -286,7 +306,10 @@ public class ProdutoEdicaoDTO implements Serializable {
 		return this.statusLancamento;
 	}
 	public void setStatusLancamento(TipoLancamento statusLancamento) {
-		this.statusLancamento = statusLancamento.getDescricao(); 
+		this.statusLancamento = "";
+		if (null != statusLancamento) {
+			this.statusLancamento = statusLancamento.getDescricao();
+		}
 	}
 	
 	/**
@@ -296,7 +319,10 @@ public class ProdutoEdicaoDTO implements Serializable {
 		return this.statusSituacao;
 	}
 	public void setStatusSituacao(StatusLancamento statusSituacao) {
-		this.statusSituacao = statusSituacao.getDescricao();
+		this.statusSituacao = "";
+		if (null != statusSituacao) {
+			this.statusSituacao = statusSituacao.getDescricao();
+		}
 	}
 	
 	/**

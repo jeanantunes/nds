@@ -85,6 +85,7 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 		NotaFiscalEntradaFornecedor notafiscalEntrada = obterNotaFiscal(
 				input.getNotaFiscal()
 				, input.getSerieNotaFiscal()
+				, input.getCnpjEmissor()
 				);		
 		
 		if(notafiscalEntrada == null){
@@ -297,11 +298,11 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 		
 	}
 
-	private NotaFiscalEntradaFornecedor obterNotaFiscal(Long numero, String serie) {
+	private NotaFiscalEntradaFornecedor obterNotaFiscal(Long numero, String serie, String cnpjEmissor) {
 		StringBuilder hql = new StringBuilder();
 
-		PessoaJuridica emitente = this.obterPessoaJuridica( parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.CNPJ_PJ_IMPORTACAO_NRE).getValor() );		
-		
+		PessoaJuridica emitente = this.obterPessoaJuridica( cnpjEmissor );		
+				
 		hql.append("from NotaFiscalEntradaFornecedor nf ")
 			.append("where nf.numero = :numero ")
 			.append("and nf.serie = :serie ")

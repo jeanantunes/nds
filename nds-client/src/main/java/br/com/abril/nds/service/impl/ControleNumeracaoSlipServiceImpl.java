@@ -21,7 +21,12 @@ public class ControleNumeracaoSlipServiceImpl implements ControleNumeracaoSlipSe
 		ControleNumeracaoSlip controleNumeracaoSlip = controleNumeracaoSlipRepository.obterControleNumeracaoSlip(tipoSlip);
 		
 		if(controleNumeracaoSlip == null) {
-			throw new IllegalStateException("Controle de Numeração de Slip não encontrado");
+			
+			controleNumeracaoSlip = new ControleNumeracaoSlip();
+			controleNumeracaoSlip.setTipoSlip(tipoSlip);
+			controleNumeracaoSlip.setProximoNumeroSlip(1L);
+			
+			controleNumeracaoSlipRepository.adicionar(controleNumeracaoSlip);
 		}
 		
 		Long numeroSlip = controleNumeracaoSlip.getProximoNumeroSlip();

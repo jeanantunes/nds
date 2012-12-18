@@ -5,68 +5,79 @@ import java.util.List;
 import java.util.Map;
 
 import br.com.abril.nds.dto.CalendarioFeriadoDTO;
-import br.com.abril.nds.model.dne.Localidade;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 
 /**
- * Interface que define serviços referentes a 
- * funcionalidades de calendário.
+ * Interface que define serviços referentes a funcionalidades de calendário.
  * 
  * @author Discover Technology
  */
 public interface CalendarioService {
-	
+
 	/**
 	 * Adiciona dias úteis a uma data.
 	 * 
-	 * @param data - data a ser adicionada
-	 * @param numDias - número de dias
+	 * @param data
+	 *            - data a ser adicionada
+	 * @param numDias
+	 *            - número de dias
 	 * 
 	 * @return nova data calculada
- 	 */
+	 */
 	Date adicionarDiasUteis(Date data, int numDias);
-	
+
 	/**
 	 * Adiciona dias a uma data e retorna a a data, caso a mesma seja válida,
 	 * caso contrário, retorna a próxima data válida.
 	 * 
-	 * @param data - data a ser adicionada
-	 * @param numDias - número de dias
+	 * @param data
+	 *            - data a ser adicionada
+	 * @param numDias
+	 *            - número de dias
 	 * 
 	 * @return nova data calculada
- 	 */
+	 */
 	Date adicionarDiasRetornarDiaUtil(Date data, int numDias);
-	
+
 	/**
 	 * Subtrai dias úteis a uma data.
 	 * 
-	 * @param data - data a ser subtraída
-	 * @param numDias - número de dias
+	 * @param data
+	 *            - data a ser subtraída
+	 * @param numDias
+	 *            - número de dias
 	 * 
 	 * @return nova data calculada
- 	 */
+	 */
 	Date subtrairDiasUteis(Date data, int numDias);
-	
+
 	/**
 	 * Verifica se a data informada é dia útil.
 	 * 
-	 * @param data - data para verificação
+	 * @param data
+	 *            - data para verificação
 	 * 
 	 * @return indicação se a data é dia útil
- 	 */
+	 */
 	boolean isDiaUtil(Date data);
-	
+
 	/**
 	 * Adiciona dias úteis a uma data.
 	 * 
-	 * @param data - data a ser adicionada
-	 * @param numDias - número de dias
-	 * @param diasSemanaConcentracaoCobranca - dias da semana onde a data deve cair
-	 * @param diaMesConcentracaoCobranca - dia do mes onde a data deve cair
+	 * @param data
+	 *            - data a ser adicionada
+	 * @param numDias
+	 *            - número de dias
+	 * @param diasSemanaConcentracaoCobranca
+	 *            - dias da semana onde a data deve cair
+	 * @param diaMesConcentracaoCobranca
+	 *            - dia do mes onde a data deve cair
 	 * 
 	 * @return nova data calculada
- 	 */
-	Date adicionarDiasUteis(Date data, int numDias, List<Integer> diasSemanaConcentracaoCobranca, List<Integer> diaMesConcentracaoCobranca);
+	 */
+	Date adicionarDiasUteis(Date data, int numDias,
+			List<Integer> diasSemanaConcentracaoCobranca,
+			List<Integer> diaMesConcentracaoCobranca);
 
 	/**
 	 * Cadastro novo feriado.
@@ -82,7 +93,8 @@ public interface CalendarioService {
 	 * 
 	 * @return {@link List<CalendarioFeriadoDTO>}
 	 */
-	List<CalendarioFeriadoDTO> obterListaCalendarioFeriadoDataEspecifica(Date dataFeriado);
+	List<CalendarioFeriadoDTO> obterListaCalendarioFeriadoDataEspecifica(
+			Date dataFeriado);
 
 	/**
 	 * Obtém mapa de datas com feriados cadastrados.
@@ -92,19 +104,20 @@ public interface CalendarioService {
 	 * @return Map<Date, String>
 	 */
 	public Map<Date, String> obterListaDataFeriado(int anoVigencia);
-	
+
 	public List<String> obterListaLocalidadeCotas();
 
 	public void excluirFeriado(CalendarioFeriadoDTO calendarioFeriado);
-	
-	public List<CalendarioFeriadoDTO> obterListaCalendarioFeriadoMensal(int mes, int ano);
 
-	public byte[] obterRelatorioCalendarioFeriado(FileType fileType, TipoPesquisaFeriado tipoPesquisaFeriado, int mes, int ano);
+	public List<CalendarioFeriadoDTO> obterListaCalendarioFeriadoMensal(
+			int mes, int ano);
+
+	public byte[] obterRelatorioCalendarioFeriado(FileType fileType,
+			TipoPesquisaFeriado tipoPesquisaFeriado, int mes, int ano);
+
 	
 	public enum TipoPesquisaFeriado {
-		FERIADO_MENSAL,
-		FERIADO_ANUAL;
+		FERIADO_MENSAL, FERIADO_ANUAL;
 	}
 
-	
 }

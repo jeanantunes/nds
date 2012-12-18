@@ -6,8 +6,11 @@ import org.apache.commons.lang.Validate;
 import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
 import org.hibernate.Query;
+import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.criterion.Subqueries;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
@@ -331,6 +334,55 @@ public class PdvRepositoryImpl extends AbstractRepositoryModel<PDV, Long> implem
 			
 		}
 
+		return  (List<PDV>)criteria.list();  
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<PDV> obterPDVsDisponiveisPor(Integer numCota, String municipio, String uf, String bairro, String cep, boolean pesquisaPorCota, Long boxID) {
+
+		Criteria criteria  = getSession().createCriteria(PDV.class,"pdv" );
+		criteria.setFetchMode("cota", FetchMode.JOIN);
+		criteria.createAlias("cota", "cota");
+		criteria.createAlias("enderecos", "enderecos") ;
+		criteria.createAlias("enderecos.endereco", "endereco");
+		
+		
+		if(boxID > 0) {
+			DetachedCriteria subquery = 
+					DetachedCriteria.forClass(RotaPDV.class, "rotaPdv")
+									.setProjection(Projections.property("rotaPdv.pdv.id"));
+			
+			criteria.add(Subqueries.propertyNotIn("pdv.id", subquery));
+		}
+		
+		if (pesquisaPorCota) {
+			criteria.add(Restrictions.eq("caracteristicas.pontoPrincipal", true));
+		}
+		
+		if (numCota != null && !numCota.equals("") ) {
+			criteria.add(Restrictions.eq("cota.numeroCota", numCota));
+		}
+		
+		if (cep != null && !cep.equals("") ) {
+			criteria.add(Restrictions.eq("endereco.cep", cep));
+		} else {
+			if (uf != null && !uf.equals("") ) {
+				criteria.add(Restrictions.eq("endereco.uf", uf));
+			}
+			
+			if (municipio != null && !municipio.equals("") ) {
+				criteria.add(Restrictions.eq("endereco.cidade", municipio));
+			}
+			
+			if (bairro != null && !bairro.equals("") ) {
+				criteria.add(Restrictions.eq("endereco.bairro", bairro));
+			}
+			
+		}
+		
+		criteria.addOrder(Order.asc("cota.numeroCota"));
+		criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 		return  (List<PDV>)criteria.list();  
 	}
 }

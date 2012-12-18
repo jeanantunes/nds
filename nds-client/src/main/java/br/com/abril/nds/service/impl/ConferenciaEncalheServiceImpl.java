@@ -25,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.client.util.BigDecimalUtil;
 import br.com.abril.nds.client.util.BigIntegerUtil;
+import br.com.abril.nds.client.vo.ParametrosDistribuidorVO;
 import br.com.abril.nds.dto.ComposicaoCobrancaSlipDTO;
 import br.com.abril.nds.dto.ConferenciaEncalheDTO;
 import br.com.abril.nds.dto.DadosDocumentacaoConfEncalheCotaDTO;
@@ -33,6 +34,7 @@ import br.com.abril.nds.dto.InfoConferenciaEncalheCota;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoSlipDTO;
 import br.com.abril.nds.dto.SlipDTO;
+import br.com.abril.nds.exception.GerarCobrancaValidacaoException;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.Origem;
@@ -119,7 +121,6 @@ import br.com.abril.nds.service.PoliticaCobrancaService;
 import br.com.abril.nds.service.exception.ChamadaEncalheCotaInexistenteException;
 import br.com.abril.nds.service.exception.ConferenciaEncalheExistenteException;
 import br.com.abril.nds.service.exception.ConferenciaEncalheFinalizadaException;
-import br.com.abril.nds.service.exception.EncalheExcedeReparteException;
 import br.com.abril.nds.service.exception.EncalheRecolhimentoParcialException;
 import br.com.abril.nds.service.exception.EncalheSemPermissaoSalvarException;
 import br.com.abril.nds.util.CurrencyUtil;
@@ -926,12 +927,12 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 	}
 	
-	@Transactional
+	@Transactional(rollbackFor=Exception.class)
 	public DadosDocumentacaoConfEncalheCotaDTO finalizarConferenciaEncalhe(
 			ControleConferenciaEncalheCota controleConfEncalheCota, 
 			List<ConferenciaEncalheDTO> listaConferenciaEncalhe, 
 			Set<Long> listaIdConferenciaEncalheParaExclusao,
-			Usuario usuario) throws EncalheExcedeReparteException {
+			Usuario usuario) {
 		
 		if(	controleConfEncalheCota.getId() != null) {
 			
@@ -979,7 +980,11 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		documentoConferenciaEncalhe.setIndGeraDocumentacaoConferenciaEncalhe(FormaEmissao.INDIVIDUAL_BOX.equals(formaEmissao));
 		
-		documentoConferenciaEncalhe.setUtilizaSlipBoleto(parametrosDistribuidorService.getParametrosDistribuidor().getBoletoSlipImpressao());
+		ParametrosDistribuidorVO parametrosDistribuidor = parametrosDistribuidorService.getParametrosDistribuidor();
+		
+		documentoConferenciaEncalhe.setUtilizaSlipBoleto(parametrosDistribuidor.getBoletoSlipImpressao());
+		
+		documentoConferenciaEncalhe.setUtilizaSlip(parametrosDistribuidor.getSlipImpressao());
 		
 		return documentoConferenciaEncalhe;
 		
@@ -1057,10 +1062,12 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 					controleConferenciaEncalheCota.getCota().getId(), 
 					controleConferenciaEncalheCota.getUsuario().getId(), 
 					nossoNumeroCollection);
-		} catch (Exception e) {
 			
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (GerarCobrancaValidacaoException e) {
+
+			ValidacaoException validacaoException = e.getValidacaoException();
+			
+			throw validacaoException;
 		}
 		
 		return nossoNumeroCollection;
@@ -1103,15 +1110,13 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	 * @param statusOperacao
 	 * 
 	 * @return ControleConferenciaEncalheCota
-	 * 
-	 * @throws EncalheExcedeReparteException
 	 */
 	private ControleConferenciaEncalheCota inserirDadosConferenciaEncalhe(
 			ControleConferenciaEncalheCota controleConfEncalheCota, 
 			List<ConferenciaEncalheDTO> listaConferenciaEncalhe, 
 			Set<Long> listaIdConferenciaEncalheParaExclusao,
 			Usuario usuario,
-			StatusOperacao statusOperacao) throws EncalheExcedeReparteException {
+			StatusOperacao statusOperacao) {
 		
 		if(listaConferenciaEncalhe == null || listaConferenciaEncalhe.isEmpty()) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum item conferido, não é possível realizar a conferência de encalhe.");
@@ -1634,7 +1639,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			ControleConferenciaEncalheCota controleConfEncalheCota, 
 			List<ConferenciaEncalheDTO> listaConferenciaEncalhe, 
 			Set<Long> listaIdConferenciaEncalheParaExclusao,
-			Usuario usuario) throws EncalheSemPermissaoSalvarException, ConferenciaEncalheFinalizadaException, EncalheExcedeReparteException {
+			Usuario usuario) throws EncalheSemPermissaoSalvarException, ConferenciaEncalheFinalizadaException {
 
 		validarConferenciaEncalheReaberta(controleConfEncalheCota.getId());
 		
@@ -1680,15 +1685,13 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	 * @param dataOperacao
 	 * @param dataRecolhimentoDistribuidor
 	 * @param qtdeExemplarEncalhe
-	 * 
-	 * @throws EncalheExcedeReparteException
 	 */
 	private void validarQtdeEncalheExcedeQtdeReparte(
 			Long idCota, 
 			Long idProdutoEdicao, 
 			Date dataOperacao,
 			Date dataRecolhimentoDistribuidor,
-			BigInteger qtdeExemplarEncalhe) throws EncalheExcedeReparteException {
+			BigInteger qtdeExemplarEncalhe) {
 		
 		BigInteger qtdeReparte = obterQtdeReparteParaProdutoEdicao(
 				idCota, 
@@ -1697,7 +1700,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				dataRecolhimentoDistribuidor);
 		
 		if(qtdeExemplarEncalhe.compareTo(qtdeReparte)>0) {
-			throw new EncalheExcedeReparteException();
+			throw new ValidacaoException(TipoMensagem.WARNING, "Conferência de encalhe está excedendo quantidade de reparte.");
 		}
 		
 	}
@@ -2341,19 +2344,14 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		default:
 			
 			return null;
-		
-		}
-		
+		}	
 	}
 	
 	public enum TipoDocumentoConferenciaEncalhe {
 		
 		SLIP, BOLETO_OU_RECIBO;
 		
-	}
-	
-	
-	
+	}	
 	
 	/**
 	 * Obtém o valor total de débito ou credito de uma cota na dataOperacao.	
@@ -2518,13 +2516,13 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		BigInteger qtdeTotalProdutosDia = null;
 		BigDecimal valorTotalEncalheDia = null;
-		long dAnt=0;
-		long d=0;
+		long diaAnt=0;
+		long dia=0;
 		boolean exibeSubtotalDia = false;
 		
 		for(ProdutoEdicaoSlipDTO produtoEdicaoSlip : listaProdutoEdicaoSlip) {
 				
- 			dAnt=d;
+ 			diaAnt=dia;
  			
 			BigInteger reparte = obterQtdeReparteParaProdutoEdicao(
 					idCota, 
@@ -2544,14 +2542,14 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			
 			valorDevido = BigDecimalUtil.soma(valorDevido,produtoEdicaoSlip.getPrecoVenda().multiply(new BigDecimal(produtoEdicaoSlip.getReparte().intValue())));
 			
-			d = this.obterDiasEntreDatas(produtoEdicaoSlip);
+			dia = this.obterDiasEntreDatas(produtoEdicaoSlip);
  
 			String numCE = formatter.format(produtoEdicaoSlip.getIdChamadaEncalhe());
 			
-			produtoEdicaoSlip.setOrdinalDiaConferenciaEncalhe(d==dAnt?"":this.getDiaMesOrdinal(d)+" DIA - CE NUM "+numCE);
+			produtoEdicaoSlip.setOrdinalDiaConferenciaEncalhe(dia==diaAnt?"":this.getDiaMesOrdinal(dia)+" DIA - CE NUM "+numCE);
 		
 		    exibeSubtotalDia = (listaProdutoEdicaoSlip.indexOf(produtoEdicaoSlip)==(listaProdutoEdicaoSlip.size()-1))||
-		    		           (d!=this.obterDiasEntreDatas(listaProdutoEdicaoSlip.get(listaProdutoEdicaoSlip.indexOf(produtoEdicaoSlip)+1)));	
+		    		           (dia!=this.obterDiasEntreDatas(listaProdutoEdicaoSlip.get(listaProdutoEdicaoSlip.indexOf(produtoEdicaoSlip)+1)));	
 			                     
 			produtoEdicaoSlip.setQtdeTotalProdutos(!exibeSubtotalDia?"":"Total de Produtos do dia:"+this.space(133 - (CurrencyUtil.formatarValor(qtdeTotalProdutosDia).length()))+CurrencyUtil.formatarValor(qtdeTotalProdutosDia));
  			produtoEdicaoSlip.setValorTotalEncalhe(!exibeSubtotalDia?"":"Total do Encalhe do dia:"+this.space(133 - (CurrencyUtil.formatarValor(valorTotalEncalheDia).length()))+CurrencyUtil.formatarValor(valorTotalEncalheDia));

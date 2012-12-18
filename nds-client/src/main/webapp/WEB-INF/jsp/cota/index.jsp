@@ -25,7 +25,7 @@
 
 <script language="javascript" type="text/javascript">
 	
-	var pesquisaCotaCadastroCota = new PesquisaCota();
+	var pesquisaCotaCadastroCota = new PesquisaCota(MANTER_COTA.workspace);
 	
 	$(function() {
 		MANTER_COTA.init();	
@@ -143,7 +143,7 @@
       
     <div class="linha_separa_fields">&nbsp;</div>
 	
-	<div class="grids" id="grids" style="display: none;">
+	<div class="grids" id="gridsCota" style="display: none;">
 		<fieldset class="fieldGrid">
 			<legend>Cotas Cadastradas</legend>
 				<table class="pessoasGrid"></table>

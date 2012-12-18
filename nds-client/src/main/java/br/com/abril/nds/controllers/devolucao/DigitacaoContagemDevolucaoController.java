@@ -105,7 +105,7 @@ public class DigitacaoContagemDevolucaoController  {
 		/**
 		 * FIXE Alterar o códgo abaixo quando, for definido a implementação de Perfil de Usuário
 		 */
-		result.include(USUARIO_PERFIL_OPERADOR, isPerfilUsuarioEncarregado());
+		result.include(USUARIO_PERFIL_OPERADOR, !isPerfilUsuarioEncarregado());
 		
 		carregarComboFornecedores();
 	}
@@ -506,8 +506,9 @@ public class DigitacaoContagemDevolucaoController  {
 			contagemDevolucaoDTO.setCodigoProduto(vo.getCodigoProduto());
 			contagemDevolucaoDTO.setNumeroEdicao(Long.parseLong(vo.getNumeroEdicao()));
 			contagemDevolucaoDTO.setQtdNota(new BigInteger(vo.getQtdNota()));
-			contagemDevolucaoDTO.setDataMovimento( ( vo.getDataRecolhimentoDistribuidor() == null ) ? null : DateUtil.parseData(vo.getDataRecolhimentoDistribuidor(),"dd/MM/yyyy"));
+			contagemDevolucaoDTO.setDataMovimento( ( vo.getDataRecolhimentoDistribuidor() == null ) ? distribuidorService.obter().getDataOperacao() : DateUtil.parseData(vo.getDataRecolhimentoDistribuidor(),"dd/MM/yyyy"));
 			contagemDevolucaoDTO.setDiferenca(StringUtil.isEmpty(vo.getDiferenca()) ? null : new BigInteger(vo.getDiferenca()));
+			contagemDevolucaoDTO.setPrecoVenda(vo.getPrecoVenda() == null || vo.getPrecoVenda().isEmpty() ? null : CurrencyUtil.getBigDecimal(vo.getPrecoVenda()));
 			listaResultadosDto.add(contagemDevolucaoDTO);
 		}
 		

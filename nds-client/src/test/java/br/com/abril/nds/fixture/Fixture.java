@@ -126,6 +126,7 @@ import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCotaJuramentado;
 import br.com.abril.nds.model.estoque.Expedicao;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
+import br.com.abril.nds.model.estoque.HistoricoEstoqueProduto;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
@@ -738,8 +739,8 @@ public class Fixture {
 		distribuidor.setDataOperacao(dataOperacao);
 		distribuidor.setJuridica(juridica);
 		distribuidor.setPoliticasCobranca(politicasCobranca);
-		distribuidor.setCapacidadeDistribuicao(new BigDecimal("3000"));
-		distribuidor.setCapacidadeRecolhimento(new BigDecimal("1000"));
+		distribuidor.setCapacidadeDistribuicao(new BigInteger("3000"));
+		distribuidor.setCapacidadeRecolhimento(new BigInteger("1000"));
 		distribuidor.setPreenchimentoAutomaticoPDV(true);
 		distribuidor.setExecutaRecolhimentoParcial(true);
 		distribuidor.setFatorRelancamentoParcial(7);
@@ -1217,6 +1218,34 @@ public class Fixture {
 		tipoMovimento.setDescricao("Saída por transferência de estoque do tipo 'Produtos danificados', do distribuidor");
 		tipoMovimento.setIncideDivida(true);
 		tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_PRODUTOS_DANIFICADOS);
+		return tipoMovimento;
+	}
+	
+	public static TipoMovimentoEstoque tipoMovimentoTransferenciaEntradaProdutosDevolucaoFornecedor() {
+		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
+		tipoMovimento.setAprovacaoAutomatica(true);
+		tipoMovimento.setDescricao("Entrada por transferência de estoque do tipo 'Devolução produto para Fornecedor', do distribuidor");
+		tipoMovimento.setIncideDivida(true);
+		tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_PRODUTOS_DEVOLUCAO_FORNECEDOR);
+		return tipoMovimento;
+	}
+
+	public static TipoMovimentoEstoque tipoMovimentoTransferenciaSaidaProdutosDevolucaoFornecedor() {
+		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
+		tipoMovimento.setAprovacaoAutomatica(true);
+		tipoMovimento.setDescricao("Saída por transferência de estoque do tipo 'Devolução produto para Fornecedor', do distribuidor");
+		tipoMovimento.setIncideDivida(true);
+		tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_PRODUTOS_DEVOLUCAO_FORNECEDOR);
+		return tipoMovimento;
+	}
+
+	public static TipoMovimentoEstoque tipoMovimentoDevolucaoEncalheFornecedor() {
+		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
+		tipoMovimento.setAprovacaoAutomatica(true);
+		tipoMovimento.setDescricao("Estorno do reparte por furo de publicação");
+		tipoMovimento.setIncideDivida(true);
+		tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.DEVOLUCAO_ENCALHE)
+		;
 		return tipoMovimento;
 	}
 
@@ -1933,6 +1962,14 @@ public class Fixture {
 		estoqueProduto.setQtdeDevolucaoEncalhe(qtde);
 		estoqueProduto.setQtdeDevolucaoFornecedor(qtde.add(BigInteger.TEN));
 		return estoqueProduto;
+	}
+	
+	public static HistoricoEstoqueProduto historicoEstoqueProduto(EstoqueProduto estoque, Date data, BigInteger qtdeJuramentada) {
+		
+		HistoricoEstoqueProduto hist = new HistoricoEstoqueProduto(data, estoque.getProdutoEdicao(), estoque.getQtde(), estoque.getQtdeSuplementar(), 
+				estoque.getQtdeDevolucaoEncalhe(), estoque.getQtdeDevolucaoFornecedor(), qtdeJuramentada , estoque.getQtdeDanificado());
+		
+		return hist;
 	}
 	
 	public static EstoqueProdutoCotaJuramentado estoqueProdutoCotaJuramentado(Date data, ProdutoEdicao produtoEdicao, Cota cota, BigInteger qtde) {
@@ -4106,15 +4143,13 @@ public class Fixture {
 	   return consolidadoEncalhe;
    }
    
-   public static FechamentoDiarioLancamentoSuplementar historicoFechamentoDiarioLancamentoSuplementar(ProdutoEdicao produtoEdicaoVeja,
-		   Integer quantidadeDiferenca, Integer quantidadeContabilizada, Integer quantidadeFisico ){
+   public static FechamentoDiarioLancamentoSuplementar historicoFechamentoDiarioLancamentoSuplementar(ProdutoEdicao produtoEdicaoVeja, Long quantidadeContabilizada){
 	   
 	   FechamentoDiarioLancamentoSuplementar historicoMovimentoSuplementar = new FechamentoDiarioLancamentoSuplementar();
 	   
 	   historicoMovimentoSuplementar.setProdutoEdicao(produtoEdicaoVeja);
-	   historicoMovimentoSuplementar.setQuantidadeDiferenca(quantidadeDiferenca);
 	   historicoMovimentoSuplementar.setQuantidadeContabilizada(quantidadeContabilizada);
-	   historicoMovimentoSuplementar.setQuantidadeFisico(quantidadeFisico);
+	   
 	   
 	   return historicoMovimentoSuplementar;
    }

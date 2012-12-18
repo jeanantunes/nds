@@ -4,16 +4,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.client.vo.BancoVO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaBancosDTO;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Moeda;
 import br.com.abril.nds.repository.BancoRepository;
 import br.com.abril.nds.service.BancoService;
+import br.com.abril.nds.util.TipoMensagem;
 
 /**
  * Classe de implementação de serviços referentes a entidade
@@ -153,6 +156,16 @@ public class BancoServiceImpl implements BancoService {
 		bancoRepository.desativarBanco(idBanco);
 	}
 	
+	/**
+	 * Método responsável por excluir banco
+	 * @param idbanco
+	 */
+	@Transactional
+	@Override
+	public void excluirBanco(long idBanco) throws DataIntegrityViolationException {
+		
+		bancoRepository.removerPorId(idBanco);
+	}	
 		
 	/**
 	 * Método responsável por obter moedas para preencher combo da camada view
@@ -169,13 +182,20 @@ public class BancoServiceImpl implements BancoService {
 		
 	/**
 	 * Método responsável por obter bancos para preencher combo da camada view
+	 * @param ativo - Define se a busca retornará Bancos ativos(true), inativos(false) ou todos (null).
 	 * @return comboBancos: bancos cadastrados
 	 */
 	@Transactional(readOnly=true)
 	@Override
-	public List<ItemDTO<Integer, String>> getComboBancos() {
+	public List<ItemDTO<Integer, String>> getComboBancos(Boolean ativo) {
 		List<ItemDTO<Integer,String>> comboBancos =  new ArrayList<ItemDTO<Integer,String>>();
-		List<Banco> bancos = bancoRepository.buscarTodos();
+		List<Banco> bancos;
+		
+		if(ativo == null)
+			bancos = bancoRepository.buscarTodos();
+		else
+			bancos = bancoRepository.obterBancosPorStatus(ativo);
+		
 		for (Banco itemBanco : bancos){
 			comboBancos.add(new ItemDTO<Integer,String>(itemBanco.getId().intValue(), itemBanco.getNumeroBanco()+"-"+itemBanco.getApelido()+" "+itemBanco.getConta()+"-"+itemBanco.getDvConta()));
 		}

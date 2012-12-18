@@ -110,7 +110,7 @@ public class ConsultaEncalheController {
 	public void exportar(FileType fileType) throws IOException {
 
 		FiltroConsultaEncalheDTO filtroConsultaEncalhe = obterFiltroExportacao();
-
+		
 		InfoConsultaEncalheDTO infoConsultaEncalhe = consultaEncalheService.pesquisarEncalhe(filtroConsultaEncalhe);
 
 		List<ConsultaEncalheVO> listaConsultaEncalheVO =  getListaConsultaEncalheVO(infoConsultaEncalhe.getListaConsultaEncalhe());
@@ -453,16 +453,12 @@ public class ConsultaEncalheController {
 		
 		filtro.setIdFornecedor(idFornecedor);
 		
-		if(numeroCota != null) {
-			Cota cota  = cotaService.obterPorNumeroDaCota(numeroCota);
-			if(cota!=null) {
-				filtro.setIdCota(cota.getId());
-			}
-			
-		} else {
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "O preenchimento da cota é obrigatório."));
+		Cota cota  = cotaService.obterPorNumeroDaCota(numeroCota);
+		filtro.setNumCota(numeroCota);
+		if(cota!=null) {
+			filtro.setIdCota(cota.getId());
 		}
-		
+			
 		return filtro;
 	}
 
@@ -659,7 +655,7 @@ public class ConsultaEncalheController {
 				if(cota!=null) {
 					
 					String nomeResp = cotaService.obterNomeResponsavelPorNumeroDaCota(cota.getNumeroCota());
-
+					filtro.setNumCota(cota.getNumeroCota());
 					filtro.setNomeCota(nomeResp);
 					
 				}

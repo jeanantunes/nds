@@ -56,5 +56,9 @@ public interface EnderecoService {
 	List<String> obterListaLocalidadeCotas();
 
 	List<String> obterLocalidadesPorUF(String uf);
+
+	public abstract List<String> obterBairrosCotas();
+	
+	List<String> obterUnidadeFederativaAssociadaComEndereco();
 	
 }

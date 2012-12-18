@@ -21,8 +21,8 @@ public class TestLightCouch {
 				"http",
 				"localhost",
 				5984,
-				"",
-				""
+				"admin",
+				"admin"
 		);
 	}
 	

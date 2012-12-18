@@ -67,6 +67,11 @@ public class RoteirizacaoDTO implements Serializable{
     
     private Map<Long, Set<RoteiroRoteirizacaoDTO>> roteirosTransferidos = new HashMap<Long, Set<RoteiroRoteirizacaoDTO>>();
     
+    /**
+     * Lista das rotas que tiveram novos PDVs adicionados pela transferencia
+     */
+    private List<RotaRoteirizacaoDTO> rotasNovosPDVsTransferidos = new ArrayList<RotaRoteirizacaoDTO>();
+    
     private RoteirizacaoDTO(TipoEdicaoRoteirizacao tipoEdicao, List<BoxRoteirizacaoDTO> boxDisponiveis, boolean addBoxEspecial) {
         this.tipoEdicao = tipoEdicao;
         this.boxDisponiveis = new ArrayList<BoxRoteirizacaoDTO>();
@@ -77,6 +82,7 @@ public class RoteirizacaoDTO implements Serializable{
         this.todosBox = new ArrayList<BoxRoteirizacaoDTO>(this.boxDisponiveis);
     }
 	
+    
 
     /**
 	 * @return the id
@@ -154,8 +160,45 @@ public class RoteirizacaoDTO implements Serializable{
         return roteirosExclusao;
     }
 
+    public List<RotaRoteirizacaoDTO> getRotasNovosPDVsTransferidos() {
+		return rotasNovosPDVsTransferidos;
+	}
 
-    /**
+	/**
+     * Adiciona uma rota que pertence a outra roteirização e teve PDVs adicionados pela transferencia
+     * 
+     * @param rotaDTO
+     */
+    private void addRotaPDVsTransferidos(RotaRoteirizacaoDTO rotaDTO) {
+    	
+    	if(this.rotasNovosPDVsTransferidos == null) {
+    		this.rotasNovosPDVsTransferidos = new ArrayList<RotaRoteirizacaoDTO>();
+    	}
+    	
+    	this.rotasNovosPDVsTransferidos.add(rotaDTO);
+    }
+
+    
+    public RotaRoteirizacaoDTO obterRotaPDVsTransferidos(Rota rota) {
+    	
+    	if (this.rotasNovosPDVsTransferidos == null) 
+    		this.rotasNovosPDVsTransferidos = new ArrayList<RotaRoteirizacaoDTO>();
+    	
+    	for (RotaRoteirizacaoDTO rotaDTO : this.rotasNovosPDVsTransferidos) {
+    		
+    		if (rotaDTO.equals(rota.getId())) {
+    			return rotaDTO;
+    		}
+    	}
+    	
+    	RotaRoteirizacaoDTO novaRotaDTO = RotaRoteirizacaoDTO.getDTOFrom(rota);
+    	
+    	this.addRotaPDVsTransferidos(novaRotaDTO);
+    	
+    	return novaRotaDTO;
+    }
+
+	/**
      * Adiciona o identificador do roteiro para exclusão
      * 
      * @param idRoteiro
@@ -217,29 +260,36 @@ public class RoteirizacaoDTO implements Serializable{
      * @return DTO com as informações da roteirização existente
      */
 	public static RoteirizacaoDTO toDTO(Roteirizacao roteirizacao, List<Box> disponiveis, boolean addBoxEspecial) {
-	    RoteirizacaoDTO dto = new RoteirizacaoDTO(TipoEdicaoRoteirizacao.ALTERACAO, BoxRoteirizacaoDTO.toDTOs(disponiveis), addBoxEspecial);
-	    dto.setId(roteirizacao.getId());
+	    
+		RoteirizacaoDTO dto = new RoteirizacaoDTO(TipoEdicaoRoteirizacao.ALTERACAO, BoxRoteirizacaoDTO.toDTOs(disponiveis), addBoxEspecial);
+	    
+		dto.setId(roteirizacao.getId());
 
         Box box = roteirizacao.getBox();
+        
         BoxRoteirizacaoDTO boxDTO = null;
+        
         if (box != null) {
             boxDTO = new BoxRoteirizacaoDTO(box.getId(), box.getNome());
         } else {
             boxDTO = BoxRoteirizacaoDTO.ESPECIAL;
         }
+        
         dto.setBox(boxDTO);
         
         for(Roteiro roteiro : roteirizacao.getRoteiros()){
-            RoteiroRoteirizacaoDTO roteiroDTO = new RoteiroRoteirizacaoDTO(
+            
+        	RoteiroRoteirizacaoDTO roteiroDTO = new RoteiroRoteirizacaoDTO(
                     roteiro.getId(), roteiro.getOrdem(),
                     roteiro.getDescricaoRoteiro());
-            dto.addRoteiro(roteiroDTO);
+            
+        	dto.addRoteiro(roteiroDTO);
 
             for (Rota rota : roteiro.getRotas()) {
             	
             	Entregador entregador = rota.getEntregador();
             	            			
-            	Long entregadorId = (entregador == null? null : entregador.getId());	
+            	Long entregadorId = (entregador == null ? null : entregador.getId());	
                 
             	RotaRoteirizacaoDTO rotaDTO = new RotaRoteirizacaoDTO(
                         rota.getId(), rota.getOrdem(), rota.getDescricaoRota(), entregadorId);
@@ -253,15 +303,20 @@ public class RoteirizacaoDTO implements Serializable{
 
                     Endereco endereco = null;
                     EnderecoPDV enderecoPdvEntrega  = pdv.getEnderecoEntrega();
+                    
                     if (enderecoPdvEntrega != null){
                         endereco = enderecoPdvEntrega .getEndereco();
                         origemEndereco = OrigemEndereco.PDV;
+                    
                     } else {
-                        EnderecoCota enderecoPrincipalCota = cota.getEnderecoPrincipal();
-                        if (enderecoPrincipalCota != null){
+                    
+                    	EnderecoCota enderecoPrincipalCota = cota.getEnderecoPrincipal();
+                        
+                    	if (enderecoPrincipalCota != null){
                             endereco = enderecoPrincipalCota.getEndereco();
                         }    
-                        origemEndereco = OrigemEndereco.COTA;
+                        
+                    	origemEndereco = OrigemEndereco.COTA;
                     }
                     PdvRoteirizacaoDTO pdvDTO = new PdvRoteirizacaoDTO(
                             pdv.getId(), pdv.getNome(), origemEndereco,
@@ -408,12 +463,38 @@ public class RoteirizacaoDTO implements Serializable{
 			}
 		}
 		
-		if (roteiroId >= 0){
+		if (roteiroId != null  && roteiroId >= 0){
 			
 			this.addRoteiroExclusao(roteiroId);
 		}
 	}
 
+	public void removerRoteiro(Integer ordemRoteiro) {
+		
+		for (RoteiroRoteirizacaoDTO roteiro : roteiros){
+			
+			if (roteiro.getOrdem().equals(ordemRoteiro)){
+				
+				roteiros.remove(roteiro);
+				break;
+			}
+		}
+		
+		for (RoteiroRoteirizacaoDTO roteiro : todosRoteiros){
+			
+			if (roteiro.getOrdem().equals(ordemRoteiro)){
+				
+				todosRoteiros.remove(roteiro);
+				
+				if(roteiro.getId() > 0) {
+					this.addRoteiroExclusao(roteiro.getId());
+				}
+				
+				break;
+			}
+		}
+	}
+	
 
 	public Map<Long, Set<RoteiroRoteirizacaoDTO>> getRoteirosTransferidos() {
 		return roteirosTransferidos;

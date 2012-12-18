@@ -30,6 +30,7 @@ public class FechamentoFisicoLogicoDTO {
 	private Date dataRecolhimento;
 	
 	private BigDecimal precoCapa;
+	private BigDecimal precoCapaDesconto;
 	private BigInteger exemplaresDevolucao;
 	private BigDecimal total;
 	
@@ -42,16 +43,20 @@ public class FechamentoFisicoLogicoDTO {
 	@Export(label = "Preço Capa R$", alignment = Alignment.RIGHT, exhibitionOrder = 4)
 	private String precoCapaFormatado;
 
-	@Export(label = "Exempl. Devolução", alignment = Alignment.CENTER, exhibitionOrder = 5)
+	@Export(label = "Preço Capa Desc R$", alignment = Alignment.RIGHT, exhibitionOrder = 5)
+	private String precoCapaDescFormatado;
+	
+	@Export(label = "Exempl. Devolução", alignment = Alignment.CENTER, exhibitionOrder = 6)
 	private String exemplaresDevolucaoFormatado;
 	
-	@Export(label = "Total R$", alignment = Alignment.RIGHT, exhibitionOrder = 6)
+	@Export(label = "Total R$", alignment = Alignment.RIGHT, exhibitionOrder = 7)
 	private String totalFormatado;
 	
 	private String replicar = "";
 	
 	private Boolean fechado;
 	
+	@Export(label = "Estoque", alignment = Alignment.CENTER, exhibitionOrder = 8)
 	private String estoque;
 	
 	
@@ -177,5 +182,20 @@ public class FechamentoFisicoLogicoDTO {
 		return estoque;
 	}
 
+	public BigDecimal getPrecoCapaDesconto() {
+		return precoCapaDesconto;
+	}
+
+	public void setPrecoCapaDesconto(BigDecimal precoCapaDesconto) {
+		this.precoCapaDesconto = precoCapaDesconto;
+		
+		this.precoCapaDescFormatado = (this.precoCapaDesconto!= null) 
+				? CurrencyUtil.formatarValor(this.precoCapaDesconto)
+				: CurrencyUtil.formatarValor(BigDecimal.ZERO);
+	}
+
+	public String getPrecoCapaDescFormatado() {
 	
+		return precoCapaDescFormatado;
+	}
 }

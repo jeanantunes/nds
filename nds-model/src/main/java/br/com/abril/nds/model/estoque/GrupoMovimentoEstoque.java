@@ -107,6 +107,11 @@ public enum GrupoMovimentoEstoque  {
 	 * Venda de encalhe suplementar do distruibuidor para a cota.
 	 */
 	VENDA_ENCALHE_SUPLEMENTAR(OperacaoEstoque.SAIDA, Dominio.DISTRIBUIDOR, TipoEstoque.SUPLEMENTAR),
+
+	/**
+	 * Devolução de encalhe do distruibuidor para o fornecedor.
+	 */
+	DEVOLUCAO_ENCALHE(OperacaoEstoque.SAIDA, Dominio.DISTRIBUIDOR, TipoEstoque.DEVOLUCAO_ENCALHE),
 	
 	/**
 	 * Estorno de encalhe vendido, devido a um cancelamento da venda.
@@ -213,7 +218,17 @@ public enum GrupoMovimentoEstoque  {
 	/**
 	 * 
 	 */
-	TRANSFERENCIA_SAIDA_PRODUTOS_DANIFICADOS(OperacaoEstoque.SAIDA, Dominio.DISTRIBUIDOR, TipoEstoque.PRODUTOS_DANIFICADOS);
+	TRANSFERENCIA_SAIDA_PRODUTOS_DANIFICADOS(OperacaoEstoque.SAIDA, Dominio.DISTRIBUIDOR, TipoEstoque.PRODUTOS_DANIFICADOS),
+	
+	/**
+	 * 
+	 */
+	TRANSFERENCIA_ENTRADA_PRODUTOS_DEVOLUCAO_FORNECEDOR(OperacaoEstoque.ENTRADA, Dominio.DISTRIBUIDOR, TipoEstoque.DEVOLUCAO_FORNECEDOR),
+
+	/**
+	 * 
+	 */
+	TRANSFERENCIA_SAIDA_PRODUTOS_DEVOLUCAO_FORNECEDOR(OperacaoEstoque.SAIDA, Dominio.DISTRIBUIDOR, TipoEstoque.DEVOLUCAO_FORNECEDOR);
 
 	private OperacaoEstoque operacaoEstoque;
 	private Dominio dominio;

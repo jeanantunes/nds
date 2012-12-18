@@ -4,6 +4,8 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
@@ -11,6 +13,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.envio.nota.ItemNotaEnvio;
 import br.com.abril.nds.model.fiscal.nota.ProdutoServico;
@@ -34,11 +37,15 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque implements C
 	@JoinColumn(name = "ESTOQUE_PROD_COTA_JURAMENTADO_ID")
 	private EstoqueProdutoCotaJuramentado estoqueProdutoCotaJuramentado;
 	
+	@OneToOne(optional = true)
+	@JoinColumn(name = "MOVIMENTO_ESTOQUE_COTA_FURO_ID")
+	MovimentoEstoqueCota movimentoEstoqueCotaFuro;
+	
 	/**
 	 * Estudo cota que originou o movimento, 
 	 * caso o movimento seja de reparte
 	 */
-	@OneToOne(optional = true)
+	@ManyToOne(optional = true)
 	@JoinColumn(name = "ESTUDO_COTA_ID")
 	private EstudoCota estudoCota;
 	
@@ -57,7 +64,11 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque implements C
 
 	@Column(name = "STATUS_ESTOQUE_FINANCEIRO")
 	private StatusEstoqueFinanceiro statusEstoqueFinanceiro;
-
+	
+	@ManyToOne(optional = true)
+	@JoinColumn(name = "LANCAMENTO_DIFERENCA_ID")
+	private LancamentoDiferenca lancamentoDiferenca;
+	
 	public Object clone() {
 
 		MovimentoEstoqueCota mec = new MovimentoEstoqueCota();
@@ -70,7 +81,7 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque implements C
 		mec.setDataIntegracao(this.getDataIntegracao());
 		mec.setEstoqueProdutoCota(this.getEstoqueProdutoCota());
 		mec.setEstoqueProdutoCotaJuramentado(this.getEstoqueProdutoCotaJuramentado());
-		mec.setEstudoCota(this.getEstudoCota());
+		//mec.setEstudoCota(this.getEstudoCota());
 		mec.setLancamento(this.getLancamento());
 		mec.setListaConferenciasEncalhe(this.getListaConferenciasEncalhe());
 		mec.setListaItemNotaEnvio(this.getListaItemNotaEnvio());
@@ -196,6 +207,23 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque implements C
 	public void setEstoqueProdutoCotaJuramentado(
 			EstoqueProdutoCotaJuramentado estoqueProdutoCotaJuramentado) {
 		this.estoqueProdutoCotaJuramentado = estoqueProdutoCotaJuramentado;
+	}
+
+	public MovimentoEstoqueCota getMovimentoEstoqueCotaFuro() {
+		return movimentoEstoqueCotaFuro;
+	}
+
+	public void setMovimentoEstoqueCotaFuro(
+			MovimentoEstoqueCota movimentoEstoqueCotaFuro) {
+		this.movimentoEstoqueCotaFuro = movimentoEstoqueCotaFuro;
+	}
+
+	public LancamentoDiferenca getLancamentoDiferenca() {
+		return lancamentoDiferenca;
+	}
+
+	public void setLancamentoDiferenca(LancamentoDiferenca lancamentoDiferenca) {
+		this.lancamentoDiferenca = lancamentoDiferenca;
 	}
 
 }

@@ -59,7 +59,11 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 					String.format( "Produto %1$s não encontrado.", input.getCodigoPublicacao() )
 				);
 			return ;
-		} 
+		} else {
+			if (!produto.getOrigem().equals(Origem.MANUAL)) {
+				return;
+			}
+		}
 		
 		
 		// regra para Registro de Lancamento 		
@@ -96,6 +100,7 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 							return ;
 						} else {							
 							lancamento.setDataRecolhimentoDistribuidor(input.getDataMovimento());
+							this.getSession().merge(lancamento);
 						}
 					}
 				} else {
@@ -149,6 +154,7 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 						return ;
 					} else {
 						lancamento.setDataLancamentoDistribuidor(input.getDataMovimento());
+						this.getSession().merge(lancamento);
 					}
 				}
 			}
@@ -239,7 +245,7 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 		produtoEdicao.setAtivo(true);
 		produtoEdicao.setPacotePadrao(produto.getPacotePadrao());
 		produtoEdicao.setPeb(produto.getPeb());
-		produtoEdicao.setOrigem(Origem.INTERFACE);
+		produtoEdicao.setOrigem(Origem.MANUAL);
 
 		this.getSession().persist(produtoEdicao);
 		
@@ -272,7 +278,7 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 		sql.append("SELECT p ");
 		sql.append("FROM   Produto p ");
 		sql.append("WHERE ");
-		sql.append("	   p.codigo    = :codigoProduto ");
+		sql.append("	  p.codigo    = :codigoProduto  ");
 
 		Query query = getSession().createQuery(sql.toString());
 

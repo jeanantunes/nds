@@ -1,7 +1,7 @@
 package br.com.abril.nds.dto;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 import java.util.TreeMap;
@@ -21,7 +21,7 @@ public class BalanceamentoLancamentoDTO implements Serializable {
 
 	private TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamento;
 	
-	private BigDecimal capacidadeDistribuicao;
+	private BigInteger capacidadeDistribuicao;
 	
 	private int numeroSemana;
 	
@@ -54,14 +54,14 @@ public class BalanceamentoLancamentoDTO implements Serializable {
 	/**
 	 * @return the capacidadeDistribuicao
 	 */
-	public BigDecimal getCapacidadeDistribuicao() {
+	public BigInteger getCapacidadeDistribuicao() {
 		return capacidadeDistribuicao;
 	}
 
 	/**
 	 * @param capacidadeDistribuicao the capacidadeDistribuicao to set
 	 */
-	public void setCapacidadeDistribuicao(BigDecimal capacidadeDistribuicao) {
+	public void setCapacidadeDistribuicao(BigInteger capacidadeDistribuicao) {
 		this.capacidadeDistribuicao = capacidadeDistribuicao;
 	}
 

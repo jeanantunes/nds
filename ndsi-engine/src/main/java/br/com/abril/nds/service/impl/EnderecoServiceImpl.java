@@ -204,6 +204,13 @@ public class EnderecoServiceImpl implements EnderecoService {
 	public List<String> obterMunicipiosCotas() {
 		return enderecoRepository.obterMunicipiosCotas();
 	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public List<String> obterUnidadeFederativaAssociadaComEndereco() {
+		return enderecoRepository.obterUFs();
+	}
+	
 
 	/**
 	 * {@inheritDoc} 
@@ -410,6 +417,17 @@ public class EnderecoServiceImpl implements EnderecoService {
 		}
 		
 		return this.enderecoRepository.obterLocalidadesPorUF(uf);
+	}
+
+
+	/**
+	 * @return
+	 * @see br.com.abril.nds.repository.EnderecoRepository#obterBairrosCotas()
+	 */
+	@Override
+	@Transactional(readOnly = true)	
+	public List<String> obterBairrosCotas() {
+		return enderecoRepository.obterBairrosCotas();
 	}
 	
 }

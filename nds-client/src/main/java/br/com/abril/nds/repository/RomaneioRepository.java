@@ -11,5 +11,14 @@ public interface RomaneioRepository extends Repository<Box, Long> {
 	List<RomaneioDTO> buscarRomaneios(FiltroRomaneioDTO filtro, boolean limitar);
 
 	Integer buscarTotal(FiltroRomaneioDTO filtro, boolean countCotas);
+	
+	/**
+	 * Busca os Romaneios para serem exportados em outros formatos além da
+	 * tela do usuário.
+	 * 
+	 * @param filtro
+	 * @return
+	 */
+	List<RomaneioDTO> buscarRomaneiosParaExportacao(FiltroRomaneioDTO filtro);
 
 }

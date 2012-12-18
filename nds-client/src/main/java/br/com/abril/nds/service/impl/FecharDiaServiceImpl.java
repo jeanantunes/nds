@@ -19,7 +19,6 @@ import br.com.abril.nds.dto.ResumoFechamentoDiarioConsignadoDTO;
 import br.com.abril.nds.dto.ResumoFechamentoDiarioConsignadoDTO.ResumoAVista;
 import br.com.abril.nds.dto.ResumoFechamentoDiarioConsignadoDTO.ResumoConsignado;
 import br.com.abril.nds.dto.ResumoFechamentoDiarioCotasDTO;
-import br.com.abril.nds.dto.ResumoReparteFecharDiaDTO;
 import br.com.abril.nds.dto.ResumoSuplementarFecharDiaDTO;
 import br.com.abril.nds.dto.SuplementarFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoConfirmacaoDeExpedicaoFecharDiaDTO;
@@ -37,6 +36,7 @@ import br.com.abril.nds.dto.fechamentodiario.ResumoEstoqueDTO.ResumoEstoqueExemp
 import br.com.abril.nds.dto.fechamentodiario.ResumoEstoqueDTO.ResumoEstoqueProduto;
 import br.com.abril.nds.dto.fechamentodiario.ResumoEstoqueDTO.ValorResumoEstoque;
 import br.com.abril.nds.dto.fechamentodiario.SumarizacaoDividasDTO;
+import br.com.abril.nds.dto.fechamentodiario.SumarizacaoReparteDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Cota;
@@ -472,10 +472,19 @@ public class FecharDiaServiceImpl implements FecharDiaService {
     	List<DiferencaDTO> diferencasDTO = incluirFaltasSobras(fechamento);
     	builder.faltasSobras(diferencasDTO);
     	
+    	liberarNovaDataOperacionalParaDistribuidor(dataFechamento);
+    	
     	return builder.build();
     }
 
-    /**
+    private void liberarNovaDataOperacionalParaDistribuidor(Date dataFechamento) {
+		Distribuidor distribuidor = distribuidorRepository.obter();		
+		distribuidor.setDataOperacao(DateUtil.adicionarDias(dataFechamento, 1));
+		distribuidorRepository.alterar(distribuidor);
+		
+	}
+
+	/**
      * Inclui as diferenças nas informações do fechamento diário
      * 
      * @param fechamento
@@ -724,7 +733,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 
 	private ResumoSuplementarFecharDiaDTO incluirResumoSuplementar(FechamentoDiario fechamento, Builder builder) throws FechamentoDiarioException {
 		
-		ResumoSuplementarFecharDiaDTO resumoSuplementar = resumoSuplementarFecharDiaService.obterResumoGeralEncalhe(fechamento.getDataFechamento());
+		ResumoSuplementarFecharDiaDTO resumoSuplementar = resumoSuplementarFecharDiaService.obterResumoGeralSuplementar(fechamento.getDataFechamento());
 		builder.resumoSuplementar(resumoSuplementar);
 		
 		validarDadosFechamentoDiario(resumoSuplementar, "Erro na obtenção dos dados de Resumo de Suplementar!");
@@ -752,7 +761,9 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 	private List<SuplementarFecharDiaDTO> incluirLancamentosSuplementar(FechamentoDiarioConsolidadoSuplementar consolidadoSuplementar)
 			throws FechamentoDiarioException {
 		
-		List<SuplementarFecharDiaDTO> listaSuplementar = this.resumoSuplementarFecharDiaService.obterDadosGridSuplementar();
+	    FechamentoDiario fechamentoDiario = consolidadoSuplementar.getFechamentoDiario();
+	    
+		List<SuplementarFecharDiaDTO> listaSuplementar = this.resumoSuplementarFecharDiaService.obterDadosGridSuplementar(fechamentoDiario.getDataFechamento(), null);
 		
 		if(listaSuplementar!= null && !listaSuplementar.isEmpty()){
 			
@@ -764,9 +775,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 				
 				lancamentoSuplementar.setProdutoEdicao(produtoEdicao);
 				lancamentoSuplementar.setFechamentoDiarioConsolidadoSuplementar(consolidadoSuplementar);
-				lancamentoSuplementar.setQuantidadeContabilizada(item.getQuantidadeContabil());
-				lancamentoSuplementar.setQuantidadeDiferenca(item.getDiferenca());
-				lancamentoSuplementar.setQuantidadeFisico(item.getQuantidadeFisico());
+				lancamentoSuplementar.setQuantidadeContabilizada(item.getQuantidadeContabil().longValue());
 				
 				fechamentoDiarioLancamentoSuplementarRepository.adicionar(lancamentoSuplementar);
 			}
@@ -830,7 +839,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 			throws FechamentoDiarioException {
 		
 		List<EncalheFecharDiaDTO> listaEncalhe = 
-		        this.resumoEncalheFecharDiaService.obterDadosGridEncalhe(fechamento.getDataFechamento());
+		        this.resumoEncalheFecharDiaService.obterDadosGridEncalhe(fechamento.getDataFechamento(), null);
 		
 		if(listaEncalhe!= null && !listaEncalhe.isEmpty()){
 			
@@ -841,9 +850,9 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 				ProdutoEdicao produtoEdicao = produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(item.getCodigo(), item.getNumeroEdicao());
 				
 				lancamentoEncalhe.setProdutoEdicao(produtoEdicao);
-				lancamentoEncalhe.setQuantidadeDiferenca(item.getDiferenca());
-				lancamentoEncalhe.setQuantidadeVendaEncalhe(Util.nvl(item.getQtde(),0).intValue());
-				lancamentoEncalhe.setQuantidade(Util.nvl(item.getQtde(),0).intValue());
+				lancamentoEncalhe.setQuantidadeDiferenca(item.getQtdeDiferenca().intValue());
+				lancamentoEncalhe.setQuantidadeVendaEncalhe(Util.nvl(item.getQtdeVendaEncalhe(),0).intValue());
+				lancamentoEncalhe.setQuantidade(Util.nvl(item.getQtdeLogico(),0).intValue());
 				lancamentoEncalhe.setFechamentoDiarioConsolidadoEncalhe(consolidadoEncalhe);
 				
 				fechamentoDiarioLancamentoEncalheRepository.adicionar(lancamentoEncalhe);
@@ -854,7 +863,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 
 	private void incluirVendaEncalhe(FechamentoDiario fechamento,FechamentoDiarioConsolidadoEncalhe consolidadoEncalhe) {
 		
-		List<VendaFechamentoDiaDTO> vendasEncalhe = resumoEncalheFecharDiaService.obterDadosVendaEncalhe(fechamento.getDataFechamento());
+		List<VendaFechamentoDiaDTO> vendasEncalhe = resumoEncalheFecharDiaService.obterDadosVendaEncalhe(fechamento.getDataFechamento(), null);
 
 		if(vendasEncalhe!= null && !vendasEncalhe.isEmpty() ){
 	
@@ -877,20 +886,20 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 	
 	private void incluirResumoReparte(FechamentoDiario fechamento, Builder builder) throws FechamentoDiarioException {
 		
-		ResumoReparteFecharDiaDTO resumoReparte = resumoReparteFecharDiaService.obterResumoGeralReparte(fechamento.getDataFechamento());
+	    SumarizacaoReparteDTO resumoReparte = resumoReparteFecharDiaService.obterSumarizacaoReparte(fechamento.getDataFechamento());
 		builder.resumoReparte(resumoReparte);
 		
 		validarDadosFechamentoDiario(resumoReparte,"Erro na obtenção dos dados de Resumo de Reparte!");
 		
 		FechamentoDiarioConsolidadoReparte consolidadoReparte = new FechamentoDiarioConsolidadoReparte();
 		
-		consolidadoReparte.setValorSobraDistribuida(resumoReparte.getTotalADistribuir());
-		consolidadoReparte.setValorDiferenca(resumoReparte.getDiferenca());
+		consolidadoReparte.setValorSobraDistribuida(resumoReparte.getTotalSobraDistribuicao());
+		consolidadoReparte.setValorDiferenca(resumoReparte.getTotalDiferenca());
 		consolidadoReparte.setValorDistribuido(resumoReparte.getTotalDistribuido());
 	    consolidadoReparte.setValorFaltas(resumoReparte.getTotalFaltas());
 	    consolidadoReparte.setValorReparte(resumoReparte.getTotalReparte());
 	    consolidadoReparte.setValorSobras(resumoReparte.getTotalSobras());
-	    consolidadoReparte.setValorTransferido(resumoReparte.getTotalTransferencia());
+	    consolidadoReparte.setValorTransferido(resumoReparte.getTotalTransferencias());
 	    consolidadoReparte.setFechamentoDiario(fechamento);
 	    
 	    consolidadoReparte = fechamentoConsolidadoReparteRepository.merge(consolidadoReparte);
@@ -995,6 +1004,17 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		}
 	}
 
+	@Override
+	@Transactional
+	public void setLockBancoDeDados(boolean lockBancoDeDados) {
+		Distribuidor distribuidor = this.distribuidorRepository.obter();
+		
+		distribuidor.setFechamentoDiarioEmAndamento(lockBancoDeDados);
+		
+		distribuidorRepository.alterar(distribuidor);
+		
+	}
+	
     /**
      * {@inheritDoc}
      */

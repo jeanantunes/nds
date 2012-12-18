@@ -93,6 +93,24 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		
 		return (ChamadaEncalhe) query.uniqueResult();
 	}
+	
+	public List<ChamadaEncalhe> obterChamadaEncalhePorProdutoEdicao(ProdutoEdicao produtoEdicao,
+			 												  TipoChamadaEncalhe tipoChamadaEncalhe) {
+
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select chamadaEncalhe from ChamadaEncalhe chamadaEncalhe ")
+		.append(" where  ")
+		.append(" chamadaEncalhe.tipoChamadaEncalhe = :tipoChamadaEncalhe ")
+		.append(" and chamadaEncalhe.produtoEdicao = :produtoEdicao ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		query.setParameter("tipoChamadaEncalhe", tipoChamadaEncalhe);
+		query.setParameter("produtoEdicao", produtoEdicao);
+		
+		return  query.list();
+	}
 
 	/**
 	 * SubHql que obtém a quantidade total prevista da chamada de encalhe ou  
@@ -110,7 +128,7 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		
 		if(indValorTotalProdutos) {
 			
-			hql.append(" select sum( _chamEncCota.qtdePrevista * produtoEdicao.precoVenda ) ");
+			hql.append(" select sum( _chamEncCota.qtdePrevista * _produtoEdicao.precoVenda ) ");
 			
 		} else {
 			
@@ -120,6 +138,7 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		hql.append(" from ChamadaEncalheCota _chamEncCota 					")
 		.append(" join _chamEncCota.chamadaEncalhe  _chamadaEncalhe 	")
 		.append(" join _chamEncCota.cota _cota 							")
+		.append(" join _chamadaEncalhe.produtoEdicao _produtoEdicao")
 		.append(" where _cota.id = cota.id ");
 
 		if(filtro.getDtRecolhimentoDe() != null) {

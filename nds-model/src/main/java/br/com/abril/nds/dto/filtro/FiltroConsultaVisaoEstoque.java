@@ -6,6 +6,7 @@ import java.util.List;
 
 import br.com.abril.nds.dto.VisaoEstoqueTransferenciaDTO;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
+import br.com.abril.nds.vo.PaginacaoVO;
 
 public class FiltroConsultaVisaoEstoque implements Serializable {
 
@@ -20,6 +21,8 @@ public class FiltroConsultaVisaoEstoque implements Serializable {
 	private GrupoMovimentoEstoque grupoMovimentoSaida;
 	
 	List<VisaoEstoqueTransferenciaDTO> listaTransferencia;
+	
+	private PaginacaoVO paginacao;
 
 
 	public Date getDataMovimentacao() {
@@ -109,5 +112,17 @@ public class FiltroConsultaVisaoEstoque implements Serializable {
 		} else if (!idFornecedor.equals(other.idFornecedor))
 			return false;
 		return true;
+	}
+	/**
+	 * @return the paginacao
+	 */
+	public PaginacaoVO getPaginacao() {
+		return paginacao;
+	}
+	/**
+	 * @param paginacao the paginacao to set
+	 */
+	public void setPaginacao(PaginacaoVO paginacao) {
+		this.paginacao = paginacao;
 	}
 }

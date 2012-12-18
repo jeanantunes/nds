@@ -11,7 +11,7 @@ function Telefone(paramTela,message) {
 		
 		$("#"+paramTela+"ddd", Telefone.workspace).numeric();
 		$("#"+paramTela+"numeroTelefone", Telefone.workspace).numeric();
-		$("#"+paramTela+"numeroTelefone", Telefone.workspace).mask("9999-9999");
+		$("#"+paramTela+"numeroTelefone", Telefone.workspace).mask("99999-9999");
 		$("#"+paramTela+"ramal", Telefone.workspace).numeric();
 		$("#"+paramTela+"radioID", Telefone.workspace).keyup(function(e) {
 			var valor = $("#"+paramTela+"radioID", Telefone.workspace).val().replace(/[^0-9\*]/g,"");

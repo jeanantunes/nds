@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -16,6 +17,8 @@ import br.com.abril.nds.dto.SumarioLancamentosDTO;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
+import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
@@ -24,7 +27,7 @@ import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 public interface LancamentoRepository extends Repository<Lancamento, Long> {
-	
+
 	SumarioLancamentosDTO sumarioBalanceamentoMatrizLancamentos(Date data,
 			List<Long> idsFornecedores);
 
@@ -89,7 +92,7 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	 * 
 	 * @return Map<Date, BigDecimal>
 	 */
-	TreeMap<Date, BigDecimal> obterExpectativasEncalhePorData(
+	TreeMap<Date, BigInteger> obterExpectativasEncalhePorData(
 			Intervalo<Date> periodoRecolhimento, List<Long> fornecedores,
 			GrupoProduto grupoCromo);
 
@@ -112,7 +115,6 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	 */
 	List<Lancamento> obterLancamentosPorIdOrdenados(Set<Long> idsLancamento);
 
-	
 	/**
 	 * Obtem a quantidade de registros de lançamentos respeitantdo os
 	 * paramentros.
@@ -157,7 +159,8 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	 * 
 	 * Obtém a ultima (mais atual) dataLancamentoDistribuidor de determinado
 	 * produtoEdicao, sendo esta dataLancamentoDistribuidor anterior a
-	 * dataOperacao passada como parâmetro. É feito inner join com lancamentoParcial.
+	 * dataOperacao passada como parâmetro. É feito inner join com
+	 * lancamentoParcial.
 	 * 
 	 * @param idProdutoEdicao
 	 * @param dataOperacao
@@ -177,9 +180,9 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	 * 
 	 * @return Date.
 	 */
-	public Date obterDataUltimoLancamento(Long idProdutoEdicao, Date dataOperacao);
+	public Date obterDataUltimoLancamento(Long idProdutoEdicao,
+			Date dataOperacao);
 
-	
 	/**
 	 * Obtem Dados de informe encalhe dos lançamentos respeitando os parametros.
 	 * 
@@ -194,95 +197,126 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	public abstract List<InformeEncalheDTO> obterLancamentoInformeRecolhimento(
 			Long idFornecedor, Calendar dataInicioRecolhimento,
 			Calendar dataFimRecolhimento);
-	
+
 	/**
-	 * Método que retorna os produtos do balanceamento do lançamento
-	 * referentes a um periodo e determinados fornecedores.
+	 * Método que retorna os produtos do balanceamento do lançamento referentes
+	 * a um periodo e determinados fornecedores.
 	 * 
-	 * @param periodoDistribuicao - período de distribuição
-	 * @param fornecedores - fornecedores
+	 * @param periodoDistribuicao
+	 *            - período de distribuição
+	 * @param fornecedores
+	 *            - fornecedores
 	 * 
 	 * @return lista de produtos do balanceamento do lançamento
 	 */
-	List<ProdutoLancamentoDTO> obterBalanceamentoLancamento(Intervalo<Date> periodoDistribuicao,
-			   												List<Long> fornecedores);
+	List<ProdutoLancamentoDTO> obterBalanceamentoLancamento(
+			Intervalo<Date> periodoDistribuicao, List<Long> fornecedores);
 
 	/**
 	 * Burca último balançeamento de lançamento realizado no dia
+	 * 
 	 * @param dataOperacao
 	 * @return Date
 	 */
-	public Date buscarUltimoBalanceamentoLancamentoRealizadoDia(Date dataOperacao);
+	public Date buscarUltimoBalanceamentoLancamentoRealizadoDia(
+			Date dataOperacao);
 
 	/**
 	 * Busca último balanceamento de lançamento realizado no sistema
+	 * 
 	 * @return Date
 	 */
 	public Date buscarDiaUltimoBalanceamentoLancamentoRealizado();
 
 	/**
 	 * Busca último balanceamento de recolhimento realizado no dia
+	 * 
 	 * @param dataOperacao
 	 * @return Date
 	 */
-	public Date buscarUltimoBalanceamentoRecolhimentoRealizadoDia(Date dataOperacao);
+	public Date buscarUltimoBalanceamentoRecolhimentoRealizadoDia(
+			Date dataOperacao);
 
 	/**
 	 * Busca último balanceamento de recolhimento realizado no sistema
+	 * 
 	 * @return Date
 	 */
 	public Date buscarDiaUltimoBalanceamentoRecolhimentoRealizado();
-	
+
 	/**
-	 * Retorna um lançamento de produto onde as datas de lançamento e recolhimento previstas forem iguais aos parâmetros informados.
+	 * Retorna um lançamento de produto onde as datas de lançamento e
+	 * recolhimento previstas forem iguais aos parâmetros informados.
 	 * 
-	 * @param produtoEdicao - produto edição
-	 * @param dataLancamentoPrevista - data a ser comparada com a data de lançamento prevista
-	 * @param dataRecolhimentoPrevista - data a ser comparada com a data de recolhimento prevista
+	 * @param produtoEdicao
+	 *            - produto edição
+	 * @param dataLancamentoPrevista
+	 *            - data a ser comparada com a data de lançamento prevista
+	 * @param dataRecolhimentoPrevista
+	 *            - data a ser comparada com a data de recolhimento prevista
 	 * @return Lancamento
 	 */
-	public Lancamento obterLancamentoProdutoPorDataLancamentoOuDataRecolhimento(ProdutoEdicao produtoEdicao, Date dataLancamentoPrevista, Date dataRecolhimentoPrevista);
+	public Lancamento obterLancamentoProdutoPorDataLancamentoOuDataRecolhimento(
+			ProdutoEdicao produtoEdicao, Date dataLancamentoPrevista,
+			Date dataRecolhimentoPrevista);
 
 	Long obterQuantidadeLancamentos(StatusLancamento statusLancamento);
 
 	BigDecimal obterConsignadoDia(StatusLancamento statusLancamento);
-	
-	Lancamento obterLancamentoProdutoPorDataLancamentoDataLancamentoDistribuidor(ProdutoEdicao produtoEdicao, 
-																				 Date dataLancamentoPrevista, 
-																				 Date dataLancamentoDistribuidor);
-	
+
+	Lancamento obterLancamentoProdutoPorDataLancamentoDataLancamentoDistribuidor(
+			ProdutoEdicao produtoEdicao, Date dataLancamentoPrevista,
+			Date dataLancamentoDistribuidor);
+
 	/**
-	 * Retorna os produtos dos lançamentos cancelados 
-	 * referentes a um periodo e determinados fornecedores. 
+	 * Retorna os produtos dos lançamentos cancelados referentes a um periodo e
+	 * determinados fornecedores.
 	 * 
-	 * @param periodo - periodo 
-	 * @param idFornecedores - fornecedores dos produtos
+	 * @param periodo
+	 *            - periodo
+	 * @param idFornecedores
+	 *            - fornecedores dos produtos
 	 * @return lista lancamentos cancelados
 	 */
-	public List<ProdutoLancamentoCanceladoDTO> obterLancamentosCanceladosPor(Intervalo<Date> periodo, List<Long> idFornecedores);
-	
+	public List<ProdutoLancamentoCanceladoDTO> obterLancamentosCanceladosPor(
+			Intervalo<Date> periodo, List<Long> idFornecedores);
+
 	/**
-	 * Verifica se existe Matriz de Balanciamento co status Planejado ou Confimado.
+	 * Verifica se existe Matriz de Balanciamento co status Planejado ou
+	 * Confimado.
 	 * 
-	 * @param data - Dia de Verificação.
-	 * @return - true se encontrar e false se não encontrar. 
+	 * @param data
+	 *            - Dia de Verificação.
+	 * @return - true se encontrar e false se não encontrar.
 	 */
 	public Boolean existeMatrizBalanceamentoConfirmado(Date data);
-	
+
 	/**
 	 * Retorna um lançamento logo após o que foi especificado por parâmetro.
 	 * 
-	 * @param lancamentoAtual - Lançamento atual.
+	 * @param lancamentoAtual
+	 *            - Lançamento atual.
 	 * 
 	 * @return {@link br.com.abril.nds.model.planejamento.Lancamento}
 	 */
 	Lancamento obterProximoLancamento(Lancamento lancamentoAtual);
 
-	Date obterDataMinimaProdutoEdicao(Long idProdutoEdicao, String propertyLancamentoDistribuidor);
+	Date obterDataMinimaProdutoEdicao(Long idProdutoEdicao,
+			String propertyLancamentoDistribuidor);
+
+	Date obterDataMaximaProdutoEdicao(Long idProdutoEdicao,
+			String propertyLancamentoDistribuidor);
+
+	List<MovimentoEstoqueCota> buscarMovimentosEstoqueCotaParaFuro(
+			Lancamento lancamento, TipoMovimentoEstoque tipoMovimentoFuroCota);
 	
-	Date obterDataMaximaProdutoEdicao(Long idProdutoEdicao, String propertyLancamentoDistribuidor);
+	Boolean existeLancamentoNaoBalanceado(Date dataLancamento);
+
+	List<Lancamento> obterLancamentosDistribuidorPorPeriodo(Intervalo<Date> periodoDistribuicao);
+	
+	List<Lancamento> obterLancamentosPrevistosPorPeriodo(Intervalo<Date> periodoDistribuicao);
+	
+	List<Lancamento> obterLancamentosARecolherNaSemana(
+			Intervalo<Date> periodoRecolhimento, List<Long> fornecedores);
 
 }
-	
-	
-	

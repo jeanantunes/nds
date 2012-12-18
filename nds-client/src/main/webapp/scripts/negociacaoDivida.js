@@ -215,6 +215,15 @@ var negociacaoDividaController = $.extend(true, {
 	},
 	
 	popup_formaPgto : function() {
+
+		if ($("#totalSelecionado", this.workspace).html() == "0,00") {
+			exibirMensagem("WARNING", ["Não foram selecionadas dívidas para negociação."], "")
+			return;
+		}
+
+		$("#formaPgtoForm")[0].reset();
+
+		negociacaoDividaController.comissaoCota();
 		
 		$('span[name$="botoes"]').hide();
 		
@@ -224,7 +233,7 @@ var negociacaoDividaController = $.extend(true, {
 			
 				$("#comissaoAtualCota",negociacaoDividaController.workspace).val(floatToPrice(result));
 				
-				$('#formaPgto_numEnomeCota',negociacaoDividaController.workspace).html('<strong>Cota:</strong> ' + $('#negociacaoDivida_numCota',negociacaoDividaController.workspace).val() +' - <strong>Nome: </strong>'+ $('#negociacaoDivida_nomeCota').html());
+				$('#formaPgto_numEnomeCota',negociacaoDividaController.workspace).html('<strong>Cota:</strong> ' + $('#negociacaoDivida_numCota',negociacaoDividaController.workspace).val() +' - <strong>Nome: </strong>'+ $('#negociacaoDivida_nomeCota').html()+' - <strong>Status: </strong>'+ $('#negociacaoDivida_statusCota').html());
 				$('#dividaSelecionada',negociacaoDividaController.workspace).html($('#totalSelecionado',negociacaoDividaController.workspace).html());
 				$('#valorSelecionado',negociacaoDividaController.workspace).val(priceToFloat($('#totalSelecionado',negociacaoDividaController.workspace).html()));
 				$('#numeroCota',negociacaoDividaController.workspace).val($('#negociacaoDivida_numCota',negociacaoDividaController.workspace).val());
@@ -249,6 +258,10 @@ var negociacaoDividaController = $.extend(true, {
 			} ,
 			null
 		);
+	},
+	
+	limparCampos : function() {
+		
 	},
 	
 	confirmarNegociacao : function(){
@@ -486,9 +499,9 @@ var negociacaoDividaController = $.extend(true, {
 
 				coluna1.innerHTML = result[i-1].numParcela+'&ordf;';
 				coluna2.innerHTML = '<input type="text" name="vencimentoParcela" id="vencimentoParcela'+i+'" style="width: 70px;" value="'+result[i-1].dataVencimento+'"/>';
-				coluna3.innerHTML = '<input type="text" name="valorParcela" id="parcela'+i+'" style="width: 60px; text-align: right;" value="'+result[i-1].parcela+'"/>';
-				coluna4.innerHTML = '<input type="text" name="encargoParcela" id="encargos'+i+'" style="width: 60px; text-align: right;" value="'+result[i-1].encargos+'"/>';
-				coluna5.innerHTML = '<input type="text" name="parcTotal" id="parcTotal'+i+'" style="width: 60px; text-align: right;" value="'+result[i-1].parcTotal+'"/>';
+				coluna3.innerHTML = '<input type="text" name="valorParcela" id="parcela'+i+'" style="width: 60px; text-align: right;" value="'+result[i-1].parcela+'" disabled="disabled" />';
+				coluna4.innerHTML = '<input type="text" name="encargoParcela" id="encargos'+i+'" style="width: 60px; text-align: right;" value="'+result[i-1].encargos+'" disabled="disabled"/>';
+				coluna5.innerHTML = '<input type="text" name="parcTotal" id="parcTotal'+i+'" style="width: 60px; text-align: right;" value="'+result[i-1].parcTotal+'"/ disabled="disabled">';
 				coluna6.innerHTML = '<input type="radio" name="radioAtivarApos" id="ativarAoPagar'+i+'" value="'+ i +'" />';
 				
 				totalParcela = sumPrice(result[i-1].parcela, totalParcela);

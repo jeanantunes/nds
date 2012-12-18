@@ -406,6 +406,23 @@ public class EntregadorController {
 		
 		this.result.use(Results.json()).from(pessoaJuridica, "result").serialize();
 	}
+	
+	/**
+	 * Obtem os endereços referentes ao entregador informado e salva em sessao
+	 * 
+	 * @param idEntregador - identificador do entregador
+	 */
+	private void obterEndereco(Long idEntregador){
+		
+		Boolean enderecoPendente = (Boolean) this.session.getAttribute(EnderecoController.ENDERECO_PENDENTE);
+		
+		if (enderecoPendente==null || !enderecoPendente){
+			
+			List<EnderecoAssociacaoDTO> listaEnderecoAssociacao = this.entregadorService.obterEnderecosPorIdEntregador(idEntregador);
+		
+			this.session.setAttribute(LISTA_ENDERECOS_EXIBICAO, listaEnderecoAssociacao);
+		}
+	}
 
 	/**
 	 * Método que prepara um Entregador para ser editado.
@@ -426,10 +443,7 @@ public class EntregadorController {
 		
 		Entregador entregador = procuracaoEntregador.getEntregador();
 
-		List<EnderecoAssociacaoDTO> listaEnderecoAssociacao = 
-				this.entregadorService.obterEnderecosPorIdEntregador(idEntregador);
-
-		this.session.setAttribute(LISTA_ENDERECOS_SALVAR_SESSAO, listaEnderecoAssociacao);
+		this.obterEndereco(idEntregador);
 
 		List<TelefoneAssociacaoDTO> listaTelefoneAssociacao = 
 				this.entregadorService.buscarTelefonesEntregador(idEntregador);
@@ -1045,6 +1059,7 @@ public class EntregadorController {
 												  listaEnderecoAssociacaoSalvar, 
 												  listaEnderecoAssociacaoRemover);
 
+		this.session.setAttribute(EnderecoController.ENDERECO_PENDENTE, Boolean.FALSE);
 		this.session.removeAttribute(LISTA_ENDERECOS_SALVAR_SESSAO);
 		this.session.removeAttribute(LISTA_ENDERECOS_REMOVER_SESSAO);
 	}

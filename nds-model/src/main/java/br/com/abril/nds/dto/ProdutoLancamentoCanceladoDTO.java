@@ -3,6 +3,8 @@ package br.com.abril.nds.dto;
 import java.math.BigInteger;
 import java.util.Date;
 
+import br.com.abril.nds.util.DateUtil;
+
 public class ProdutoLancamentoCanceladoDTO {
 
 	private String codigo;
@@ -13,7 +15,7 @@ public class ProdutoLancamentoCanceladoDTO {
 	
 	private BigInteger reparte;
 	
-	private Date dataLancamento;
+	private String dataLancamento;
 
 	public ProdutoLancamentoCanceladoDTO(){}
 	
@@ -24,7 +26,10 @@ public class ProdutoLancamentoCanceladoDTO {
 		this.produto = produto;
 		this.numeroEdicao = numeroEdicao;
 		this.reparte = reparte;
-		this.dataLancamento = dataLancamento;
+		
+		this.dataLancamento = (dataLancamento != null) 
+			  					? DateUtil.formatarDataPTBR(dataLancamento)
+			  					: null;
 	}
 
 	/**
@@ -86,7 +91,7 @@ public class ProdutoLancamentoCanceladoDTO {
 	/**
 	 * @return the dataLancamento
 	 */
-	public Date getDataLancamento() {
+	public String getDataLancamento() {
 		return dataLancamento;
 	}
 
@@ -94,7 +99,9 @@ public class ProdutoLancamentoCanceladoDTO {
 	 * @param dataLancamento the dataLancamento to set
 	 */
 	public void setDataLancamento(Date dataLancamento) {
-		this.dataLancamento = dataLancamento;
+		this.dataLancamento = (dataLancamento != null) 
+							  	? DateUtil.formatarDataPTBR(dataLancamento)
+							  	: null;
 	}
 	
 }

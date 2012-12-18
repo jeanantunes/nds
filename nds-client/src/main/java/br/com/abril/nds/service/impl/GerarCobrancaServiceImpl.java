@@ -1,6 +1,5 @@
 package br.com.abril.nds.service.impl;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -156,7 +155,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 	@Override
 	@Transactional(noRollbackFor = GerarCobrancaValidacaoException.class)
 	public void gerarCobranca(Long idCota, Long idUsuario, Set<String> setNossoNumero)
-		throws GerarCobrancaValidacaoException, IOException{
+		throws GerarCobrancaValidacaoException {
 		
 		this.processarCobranca(idCota, idUsuario, setNossoNumero);
 		
@@ -168,17 +167,10 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			Set<String> setNossoNumero) throws GerarCobrancaValidacaoException {
 		Distribuidor distribuidor = this.distribuidorRepository.obter();
 		
-		if (this.consolidadoFinanceiroRepository.obterQuantidadeDividasGeradasData((distribuidor.getDataOperacao())) > 0){
+		if (this.consolidadoFinanceiroRepository.obterQuantidadeDividasGeradasData(distribuidor.getDataOperacao(), idCota) > 0){
 			
 			throw new GerarCobrancaValidacaoException(
 					new ValidacaoException(TipoMensagem.WARNING, "Já foram geradas dívidas para esta data de operação."));
-		}
-		
-		//alteração na EMS 0028, agora deve verificar se o Fechamento do Encalhe(EMS 0181) tenha sido finalizado
-		if (!this.fechamentoEncalheRepository.buscaControleFechamentoEncalhe(distribuidor.getDataOperacao())){
-			
-			throw new GerarCobrancaValidacaoException(
-					new ValidacaoException(TipoMensagem.WARNING, "O fechamento de encalhe deve ser concluído antes de gerar dívidas."));
 		}
 	
 		this.gerarCobrancaCota(idCota, idUsuario, setNossoNumero);
@@ -268,11 +260,17 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 					}
 				}
 				
-				if (movimentoFinanceiroCota.getCota().equals(ultimaCota) &&
-						movimentoFinanceiroCota.getMovimentos() != null && 
+				Fornecedor fornecedorProdutoMovimento = (movimentoFinanceiroCota.getMovimentos() != null && 
 						!movimentoFinanceiroCota.getMovimentos().isEmpty() && 
 						movimentoFinanceiroCota.getMovimentos().get(0) != null &&
-						movimentoFinanceiroCota.getMovimentos().get(0).getProdutoEdicao().getProduto().getFornecedor().equals(ultimoFornecedor)){
+						movimentoFinanceiroCota.getMovimentos().get(0).getProdutoEdicao().getProduto().getFornecedor() != null 
+						? movimentoFinanceiroCota.getMovimentos().get(0).getProdutoEdicao().getProduto().getFornecedor()
+						: null);
+				
+				if (movimentoFinanceiroCota.getCota().equals(ultimaCota) &&
+						(fornecedorProdutoMovimento != null &&
+								fornecedorProdutoMovimento.equals(ultimoFornecedor) ||
+								fornecedorProdutoMovimento == ultimoFornecedor)){
 					
 					movimentos.add(movimentoFinanceiroCota);
 				} else {
@@ -596,6 +594,27 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 										movimentoFinanceiroCota.getValor().negate() : 
 											BigDecimal.ZERO);
 				break;
+				case COMPRA_ENCALHE:
+					vlMovFinanTotal = 
+						vlMovFinanTotal.add(
+							movimentoFinanceiroCota.getValor() != null ? 
+									movimentoFinanceiroCota.getValor().negate() : 
+										BigDecimal.ZERO);
+				break;
+				case DEBITO_SOBRE_FATURAMENTO:
+					vlMovFinanTotal = 
+						vlMovFinanTotal.add(
+							movimentoFinanceiroCota.getValor() != null ? 
+									movimentoFinanceiroCota.getValor().negate() : 
+										BigDecimal.ZERO);
+				break;
+				case POSTERGADO_NEGOCIACAO:
+					vlMovFinanTotal = 
+						vlMovFinanTotal.add(
+							movimentoFinanceiroCota.getValor() != null ? 
+									movimentoFinanceiroCota.getValor().negate() : 
+										BigDecimal.ZERO);
+				break;
 			}
 		}
 		
@@ -681,118 +700,117 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		MovimentoFinanceiroCota movimentoFinanceiroCota = null;
 		
 		TipoMovimentoFinanceiro tipoMovimentoFinanceiro = null;
+			
+		boolean cotaSuspensa = SituacaoCadastro.SUSPENSO.equals(this.obterSitiacaoCadastroCota(cota.getId()));
 
-		//vlMovFinanTotal = vlMovFinanTotal.negate();
+		BigDecimal valorMinino = 
+				this.obterValorMinino(cota, valorMininoDistribuidor);
 		
-		//se existe divida
-		if (vlMovFinanTotal.compareTo(BigDecimal.ZERO) > 0){
-			
-			boolean cotaSuspensa = SituacaoCadastro.SUSPENSO.equals(this.obterSitiacaoCadastroCota(cota.getId()));
+		//caso a cota não esteja suspensa e tenha alcançado o valor minino de cobrança e seja um dia de concentração de cobrança
+		if ( (!cotaSuspensa) && (vlMovFinanTotal.compareTo(valorMinino) < 0) && 
+				((diasSemanaConcentracaoPagamento != null) && 
+				diasSemanaConcentracaoPagamento.contains(Calendar.getInstance().get(Calendar.DAY_OF_WEEK))) ){
 
-			BigDecimal valorMinino
-			= this.obterValorMinino(cota, valorMininoDistribuidor);
+			//gerar postergado
+			consolidadoFinanceiroCota.setValorPostergado(vlMovFinanTotal);
 			
-			//caso a cota não esteja suspensa e não tenha alcançado o valor minino de cobrança ou não seja um dia de concentração de cobrança
-			if ( (!cotaSuspensa)&&(vlMovFinanTotal.compareTo(valorMinino) < 0) || 
-					((diasSemanaConcentracaoPagamento != null) && 
-					!diasSemanaConcentracaoPagamento.contains(Calendar.getInstance().get(Calendar.DAY_OF_MONTH))) ){
+			//gera movimento financeiro cota
+			movimentoFinanceiroCota = new MovimentoFinanceiroCota();
+			
+			Calendar diaPostergado = Calendar.getInstance();
+			diaPostergado.setTime(new Date());
+			diaPostergado.add(Calendar.DAY_OF_MONTH, qtdDiasNovaCobranca);
+			
+			movimentoFinanceiroCota.setData(diaPostergado.getTime());
+			movimentoFinanceiroCota.setDataCriacao(new Date());
+			movimentoFinanceiroCota.setUsuario(usuario);
+			movimentoFinanceiroCota.setValor(vlMovFinanTotal);
+			movimentoFinanceiroCota.setLancamentoManual(false);
+			movimentoFinanceiroCota.setCota(cota);
+			
+			tipoMovimentoFinanceiro = new TipoMovimentoFinanceiro();
+			tipoMovimentoFinanceiro.setAprovacaoAutomatica(false);
+			tipoMovimentoFinanceiro.setGrupoMovimentoFinaceiro(GrupoMovimentoFinaceiro.DEBITO);
+			
+			String descPostergado = null;
+			
+			if (diasSemanaConcentracaoPagamento != null && !diasSemanaConcentracaoPagamento.contains(Calendar.getInstance().get(Calendar.DAY_OF_MONTH))){
+				
+				descPostergado = "Não existe acúmulo de pagamento para este dia (" + new SimpleDateFormat("dd/MM/yyyy").format(Calendar.getInstance().getTime()) + ")";
+			} else {
+				
+				descPostergado = "Valor mínimo para dívida não atingido";
+			}
+			
+			movimentoFinanceiroCota.setMotivo(descPostergado);
+			tipoMovimentoFinanceiro.setDescricao("Geração de dívida - " + descPostergado);
+			
+			movimentoFinanceiroCota.setTipoMovimento(tipoMovimentoFinanceiro);
+		}
+		//Cota suspensa ou valor minimo atingido e dentro do dia de concentração de cobrança
+		else {
 
-				//gerar postergado
-				consolidadoFinanceiroCota.setValorPostergado(vlMovFinanTotal);
+			if (formaCobrancaPrincipal.getBanco() == null) {
 				
-				//gera movimento financeiro cota
-				movimentoFinanceiroCota = new MovimentoFinanceiroCota();
-				movimentoFinanceiroCota.setMotivo("Valor mínimo para dívida não atingido.");
+				return null;
+			}
+			
+			novaDivida = new Divida();
+			novaDivida.setValor(vlMovFinanTotal.abs());
+			novaDivida.setData(consolidadoFinanceiroCota.getDataConsolidado());
+			novaDivida.setConsolidado(consolidadoFinanceiroCota);
+			novaDivida.setCota(cota);
+			novaDivida.setStatus(StatusDivida.EM_ABERTO);
+			novaDivida.setResponsavel(usuario);
+			
+			BigDecimal valorCalculadoJuros = BigDecimal.ZERO;
+			
+			//se o distribuidor acumula divida
+			if (acumulaDivida){
+				Calendar diaDivida = Calendar.getInstance();
+				diaDivida.setTime(new Date());
+				diaDivida.add(Calendar.DAY_OF_MONTH, qtdDiasNovaCobranca * -1);
 				
-				Calendar diaPostergado = Calendar.getInstance();
-				diaPostergado.setTime(new Date());
-				diaPostergado.add(Calendar.DAY_OF_MONTH, qtdDiasNovaCobranca);
+				Divida divida = this.dividaRepository.obterDividaParaAcumuloPorCota(cota.getId(), diaDivida.getTime());
 				
-				movimentoFinanceiroCota.setData(diaPostergado.getTime());
-				movimentoFinanceiroCota.setDataCriacao(new Date());
-				movimentoFinanceiroCota.setUsuario(usuario);
-				movimentoFinanceiroCota.setValor(vlMovFinanTotal);
-				movimentoFinanceiroCota.setLancamentoManual(false);
-				movimentoFinanceiroCota.setCota(cota);
-				
-				tipoMovimentoFinanceiro = new TipoMovimentoFinanceiro();
-				tipoMovimentoFinanceiro.setAprovacaoAutomatica(false);
-				tipoMovimentoFinanceiro.setGrupoMovimentoFinaceiro(GrupoMovimentoFinaceiro.DEBITO);
-				
-				String descPostergado = null;
-				
-				if (diasSemanaConcentracaoPagamento != null && !diasSemanaConcentracaoPagamento.contains(Calendar.getInstance().get(Calendar.DAY_OF_MONTH))){
-					
-					descPostergado = "Não existe acúmulo de pagamento para este dia (" + new SimpleDateFormat("dd/MM/yyyy").format(Calendar.getInstance().getTime()) + ")";
+				//caso não tenha divida anterior, ou tenha sido quitada
+				if (divida == null || StatusDivida.QUITADA.equals(divida.getStatus())){
+					divida = novaDivida;
 				} else {
 					
-					descPostergado = "Valor mínimo para dívida não atingido";
-				}
-				
-				tipoMovimentoFinanceiro.setDescricao("Geração de dívida - " + descPostergado);
-				
-				movimentoFinanceiroCota.setTipoMovimento(tipoMovimentoFinanceiro);
-			} 
-			//Cota suspensa ou valor minimo atingido e dentro do dia de concentração de cobrança
-			else {
-
-				novaDivida = new Divida();
-				novaDivida.setValor(vlMovFinanTotal);
-				novaDivida.setData(consolidadoFinanceiroCota.getDataConsolidado());
-				novaDivida.setConsolidado(consolidadoFinanceiroCota);
-				novaDivida.setCota(cota);
-				novaDivida.setStatus(StatusDivida.EM_ABERTO);
-				novaDivida.setResponsavel(usuario);
-				
-				BigDecimal valorCalculadoJuros = BigDecimal.ZERO;
-				
-				//se o distribuidor acumula divida
-				if (acumulaDivida){
-					Calendar diaDivida = Calendar.getInstance();
-					diaDivida.setTime(new Date());
-					diaDivida.add(Calendar.DAY_OF_MONTH, qtdDiasNovaCobranca * -1);
+					ConsolidadoFinanceiroCota consolidadoDivida = divida.getConsolidado();
 					
-					Divida divida = this.dividaRepository.obterDividaParaAcumuloPorCota(cota.getId(), diaDivida.getTime());
+					BigDecimal valorMulta = BigDecimal.ZERO;
 					
-					//caso não tenha divida anterior, ou tenha sido quitada
-					if (divida == null || StatusDivida.QUITADA.equals(divida.getStatus())){
-						divida = novaDivida;
-					} else {
-						
-						ConsolidadoFinanceiroCota consolidadoDivida = divida.getConsolidado();
-						
-						BigDecimal valorMulta = BigDecimal.ZERO;
-						
-						if (consolidadoDivida != null){
-							List<MovimentoFinanceiroCota> movimentoFinanceiroDivida = consolidadoDivida.getMovimentos();
-							for (MovimentoFinanceiroCota m : movimentoFinanceiroDivida){
-								if (((TipoMovimentoFinanceiro) m.getTipoMovimento()).getGrupoMovimentoFinaceiro().equals(GrupoMovimentoFinaceiro.MULTA)){
-									valorMulta = m.getValor();
-									break;
-								}
+					if (consolidadoDivida != null){
+						List<MovimentoFinanceiroCota> movimentoFinanceiroDivida = consolidadoDivida.getMovimentos();
+						for (MovimentoFinanceiroCota m : movimentoFinanceiroDivida){
+							if (((TipoMovimentoFinanceiro) m.getTipoMovimento()).getGrupoMovimentoFinaceiro().equals(GrupoMovimentoFinaceiro.MULTA)){
+								valorMulta = m.getValor();
+								break;
 							}
 						}
-						
-						valorCalculadoJuros = 
-								this.cobrancaService.calcularJuros(
-										null,
-										cota,
-										distribuidor,
-										vlMovFinanTotal.add(novaDivida.getValor()).subtract(valorMulta), 
-										divida.getCobranca().getDataVencimento(),
-										new Date());
-						
-						divida.setAcumulada(true);
-						novaDivida.setDividaRaiz(divida);
-						
-						historicoAcumuloDivida = new HistoricoAcumuloDivida();
-						historicoAcumuloDivida.setDataInclusao(new Date());
-						historicoAcumuloDivida.setDivida(divida);
-						historicoAcumuloDivida.setResponsavel(usuario);
-						historicoAcumuloDivida.setStatus(StatusInadimplencia.ATIVA);
-						
-						novaDivida.setValor(valorCalculadoJuros);
 					}
+					
+					valorCalculadoJuros = 
+							this.cobrancaService.calcularJuros(
+									null,
+									cota,
+									distribuidor,
+									vlMovFinanTotal.add(novaDivida.getValor()).subtract(valorMulta), 
+									divida.getCobranca().getDataVencimento(),
+									new Date());
+					
+					divida.setAcumulada(true);
+					novaDivida.setDividaRaiz(divida);
+					
+					historicoAcumuloDivida = new HistoricoAcumuloDivida();
+					historicoAcumuloDivida.setDataInclusao(new Date());
+					historicoAcumuloDivida.setDivida(divida);
+					historicoAcumuloDivida.setResponsavel(usuario);
+					historicoAcumuloDivida.setStatus(StatusInadimplencia.ATIVA);
+					
+					novaDivida.setValor(valorCalculadoJuros.abs());
 				}
 			}
 		}

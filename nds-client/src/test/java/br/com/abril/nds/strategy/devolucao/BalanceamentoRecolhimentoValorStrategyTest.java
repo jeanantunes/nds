@@ -1,6 +1,7 @@
 package br.com.abril.nds.strategy.devolucao;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -151,7 +152,7 @@ public class BalanceamentoRecolhimentoValorStrategyTest {
 		
 		RecolhimentoDTO dadosRecolhimento = new RecolhimentoDTO();
 		
-		dadosRecolhimento.setCapacidadeRecolhimentoDistribuidor(new BigDecimal("100"));
+		dadosRecolhimento.setCapacidadeRecolhimentoDistribuidor(new BigInteger("100"));
 		
 		TreeSet<Date> datasRecolhimentoFornecedor = new TreeSet<Date>();
 		
@@ -162,13 +163,13 @@ public class BalanceamentoRecolhimentoValorStrategyTest {
 		
 		dadosRecolhimento.setDatasRecolhimentoFornecedor(datasRecolhimentoFornecedor);
 		
-		TreeMap<Date, BigDecimal> mapaExpectativaEncalheTotalDiaria = new TreeMap<Date, BigDecimal>();
+		TreeMap<Date, BigInteger> mapaExpectativaEncalheTotalDiaria = new TreeMap<Date, BigInteger>();
 		
-		mapaExpectativaEncalheTotalDiaria.put(DateUtil.parseDataPTBR("07/05/2012"), new BigDecimal("2"));
-		mapaExpectativaEncalheTotalDiaria.put(DateUtil.parseDataPTBR("08/05/2012"), new BigDecimal("2"));
-		mapaExpectativaEncalheTotalDiaria.put(DateUtil.parseDataPTBR("09/05/2012"), new BigDecimal("3"));
-		mapaExpectativaEncalheTotalDiaria.put(DateUtil.parseDataPTBR("10/05/2012"), new BigDecimal("5"));
-		mapaExpectativaEncalheTotalDiaria.put(DateUtil.parseDataPTBR("11/05/2012"), new BigDecimal("1"));
+		mapaExpectativaEncalheTotalDiaria.put(DateUtil.parseDataPTBR("07/05/2012"), new BigInteger("2"));
+		mapaExpectativaEncalheTotalDiaria.put(DateUtil.parseDataPTBR("08/05/2012"), new BigInteger("2"));
+		mapaExpectativaEncalheTotalDiaria.put(DateUtil.parseDataPTBR("09/05/2012"), new BigInteger("3"));
+		mapaExpectativaEncalheTotalDiaria.put(DateUtil.parseDataPTBR("10/05/2012"), new BigInteger("5"));
+		mapaExpectativaEncalheTotalDiaria.put(DateUtil.parseDataPTBR("11/05/2012"), new BigInteger("1"));
 		
 		dadosRecolhimento.setMapaExpectativaEncalheTotalDiaria(mapaExpectativaEncalheTotalDiaria);
 		
@@ -251,7 +252,7 @@ public class BalanceamentoRecolhimentoValorStrategyTest {
 		
 		RecolhimentoDTO dadosRecolhimento = new RecolhimentoDTO();
 		
-		dadosRecolhimento.setCapacidadeRecolhimentoDistribuidor(new BigDecimal("100"));
+		dadosRecolhimento.setCapacidadeRecolhimentoDistribuidor(new BigInteger("100"));
 		
 		TreeSet<Date> datasRecolhimentoFornecedor = new TreeSet<Date>();
 		
@@ -262,13 +263,13 @@ public class BalanceamentoRecolhimentoValorStrategyTest {
 		
 		dadosRecolhimento.setDatasRecolhimentoFornecedor(datasRecolhimentoFornecedor);
 		
-		TreeMap<Date, BigDecimal> mapaExpectativaEncalheTotalDiaria = new TreeMap<Date, BigDecimal>();
+		TreeMap<Date, BigInteger> mapaExpectativaEncalheTotalDiaria = new TreeMap<Date, BigInteger>();
 		
-		mapaExpectativaEncalheTotalDiaria.put(DateUtil.parseDataPTBR("07/05/2012"), new BigDecimal("80"));
-		mapaExpectativaEncalheTotalDiaria.put(DateUtil.parseDataPTBR("08/05/2012"), new BigDecimal("20"));
-		mapaExpectativaEncalheTotalDiaria.put(DateUtil.parseDataPTBR("09/05/2012"), new BigDecimal("50"));
-		mapaExpectativaEncalheTotalDiaria.put(DateUtil.parseDataPTBR("10/05/2012"), new BigDecimal("20"));
-		mapaExpectativaEncalheTotalDiaria.put(DateUtil.parseDataPTBR("11/05/2012"), new BigDecimal("30"));
+		mapaExpectativaEncalheTotalDiaria.put(DateUtil.parseDataPTBR("07/05/2012"), new BigInteger("80"));
+		mapaExpectativaEncalheTotalDiaria.put(DateUtil.parseDataPTBR("08/05/2012"), new BigInteger("20"));
+		mapaExpectativaEncalheTotalDiaria.put(DateUtil.parseDataPTBR("09/05/2012"), new BigInteger("50"));
+		mapaExpectativaEncalheTotalDiaria.put(DateUtil.parseDataPTBR("10/05/2012"), new BigInteger("20"));
+		mapaExpectativaEncalheTotalDiaria.put(DateUtil.parseDataPTBR("11/05/2012"), new BigInteger("30"));
 		
 		dadosRecolhimento.setMapaExpectativaEncalheTotalDiaria(mapaExpectativaEncalheTotalDiaria);
 		

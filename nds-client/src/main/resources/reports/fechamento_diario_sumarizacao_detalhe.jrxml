@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="fechamento_diario_sumarizacao_detalhe" pageWidth="800" pageHeight="525" orientation="Landscape" whenNoDataType="BlankPage" columnWidth="800" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" whenResourceMissingType="Empty">
 	<property name="ireport.zoom" value="1.5"/>
-	<property name="ireport.x" value="0"/>
+	<property name="ireport.x" value="546"/>
 	<property name="ireport.y" value="0"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA["C:\\workspace\\NDS\\nds-client\\src\\main\\resources\\reports\\"]]></defaultValueExpression>
@@ -12,11 +12,11 @@
 	<field name="resumoReparte.totalReparte" class="java.math.BigDecimal"/>
 	<field name="resumoReparte.totalSobras" class="java.math.BigDecimal"/>
 	<field name="resumoReparte.totalFaltas" class="java.math.BigDecimal"/>
-	<field name="resumoReparte.totalTransferencia" class="java.math.BigDecimal"/>
-	<field name="resumoReparte.totalADistribuir" class="java.math.BigDecimal"/>
+	<field name="resumoReparte.totalTransferencias" class="java.math.BigDecimal"/>
+	<field name="resumoReparte.totalDistribuir" class="java.math.BigDecimal"/>
 	<field name="resumoReparte.totalDistribuido" class="java.math.BigDecimal"/>
-	<field name="resumoReparte.sobraDistribuido" class="java.math.BigDecimal"/>
-	<field name="resumoReparte.diferenca" class="java.math.BigDecimal"/>
+	<field name="resumoReparte.totalSobraDistribuicao" class="java.math.BigDecimal"/>
+	<field name="resumoReparte.totalDiferenca" class="java.math.BigDecimal"/>
 	<field name="resumoEncalhe.totalLogico" class="java.math.BigDecimal"/>
 	<field name="resumoEncalhe.totalFisico" class="java.math.BigDecimal"/>
 	<field name="resumoEncalhe.totalJuramentado" class="java.math.BigDecimal"/>
@@ -586,7 +586,7 @@
 					</textElement>
 					<text><![CDATA[Diferença]]></text>
 				</staticText>
-				<textField>
+				<textField pattern="#,##0.00" isBlankWhenNull="false">
 					<reportElement x="113" y="34" width="119" height="15"/>
 					<box>
 						<pen lineStyle="Dashed"/>
@@ -600,7 +600,7 @@
 					</textElement>
 					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{resumoReparte.totalReparte}]]></textFieldExpression>
 				</textField>
-				<textField>
+				<textField pattern="#,##0.00">
 					<reportElement x="113" y="48" width="119" height="15"/>
 					<box>
 						<pen lineWidth="0.25" lineStyle="Dashed"/>
@@ -614,7 +614,7 @@
 					</textElement>
 					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{resumoReparte.totalSobras}]]></textFieldExpression>
 				</textField>
-				<textField>
+				<textField pattern="#,##0.00">
 					<reportElement x="113" y="61" width="119" height="15"/>
 					<box>
 						<pen lineWidth="0.25" lineStyle="Dashed"/>
@@ -628,7 +628,7 @@
 					</textElement>
 					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{resumoReparte.totalFaltas}]]></textFieldExpression>
 				</textField>
-				<textField>
+				<textField pattern="#,##0.00">
 					<reportElement x="113" y="76" width="119" height="15"/>
 					<box>
 						<pen lineWidth="0.25" lineStyle="Dashed"/>
@@ -640,9 +640,9 @@
 					<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
 						<font fontName="Arial"/>
 					</textElement>
-					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{resumoReparte.totalTransferencia}]]></textFieldExpression>
+					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{resumoReparte.totalTransferencias}]]></textFieldExpression>
 				</textField>
-				<textField>
+				<textField pattern="#,##0.00">
 					<reportElement x="113" y="90" width="119" height="15"/>
 					<box>
 						<pen lineWidth="0.25" lineStyle="Dashed"/>
@@ -654,9 +654,9 @@
 					<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
 						<font fontName="Arial"/>
 					</textElement>
-					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{resumoReparte.totalADistribuir}]]></textFieldExpression>
+					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{resumoReparte.totalDistribuir}]]></textFieldExpression>
 				</textField>
-				<textField>
+				<textField pattern="#,##0.00">
 					<reportElement x="113" y="103" width="119" height="15"/>
 					<box>
 						<pen lineWidth="0.25" lineStyle="Dashed"/>
@@ -670,7 +670,7 @@
 					</textElement>
 					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{resumoReparte.totalDistribuido}]]></textFieldExpression>
 				</textField>
-				<textField>
+				<textField pattern="#,##0.00">
 					<reportElement x="113" y="118" width="119" height="15"/>
 					<box>
 						<pen lineWidth="0.25" lineStyle="Dashed"/>
@@ -682,9 +682,9 @@
 					<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
 						<font fontName="Arial"/>
 					</textElement>
-					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{resumoReparte.sobraDistribuido}]]></textFieldExpression>
+					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{resumoReparte.totalSobraDistribuicao}]]></textFieldExpression>
 				</textField>
-				<textField>
+				<textField pattern="#,##0.00">
 					<reportElement x="113" y="132" width="119" height="15"/>
 					<box>
 						<pen lineWidth="0.25" lineStyle="Dashed"/>
@@ -696,7 +696,7 @@
 					<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
 						<font fontName="Arial"/>
 					</textElement>
-					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{resumoReparte.diferenca}]]></textFieldExpression>
+					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{resumoReparte.totalDiferenca}]]></textFieldExpression>
 				</textField>
 			</frame>
 			<frame>

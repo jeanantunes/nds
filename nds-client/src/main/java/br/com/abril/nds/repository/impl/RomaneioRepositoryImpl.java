@@ -1,6 +1,5 @@
 package br.com.abril.nds.repository.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.Query;
@@ -10,41 +9,80 @@ import org.springframework.stereotype.Repository;
 import br.com.abril.nds.dto.RomaneioDTO;
 import br.com.abril.nds.dto.filtro.FiltroRomaneioDTO;
 import br.com.abril.nds.model.cadastro.Box;
-import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.repository.RomaneioRepository;
 
 @Repository
 public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> implements RomaneioRepository {
 
+	/** Quantidade máxima de produtos exibidos no relatório.*/
+	private static final int QUANTIDADE_MAX_PRODUTOS_POR_RELATORIO = 6;
+	
 	public RomaneioRepositoryImpl() {
 		super(Box.class);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<RomaneioDTO> buscarRomaneios(FiltroRomaneioDTO filtro, boolean limitar) {
+	public List<RomaneioDTO> buscarRomaneios(FiltroRomaneioDTO filtro, 
+			boolean limitar) {
+		
+		Query query = this.createQueryBuscarRomaneio(filtro, true);
+		query.setResultTransformer(new AliasToBeanResultTransformer(
+				RomaneioDTO.class));
+		
+		// Realiza a paginação:
+		if (limitar) {
+			
+			if (filtro.getPaginacao().getPosicaoInicial() != null) {
+				query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
+			}
+			
+			if (filtro.getPaginacao().getQtdResultadosPorPagina() != null) {
+				query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
+			}
+		}
+		
+		return  query.list();
+		//return  popularEndereco(query.list());
+	}
+	
+	
+	/**
+	 * Gera a consulta que pesquisa os romaneios com os critérios definidos
+	 * pelo usuário.
+	 * 
+	 * @param filtro
+	 * @param ordenarConsulta
+	 * 
+	 * @return
+	 */
+	private Query createQueryBuscarRomaneio(FiltroRomaneioDTO filtro, 
+			boolean ordenarConsulta) {
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append("SELECT notaEnvio.destinatario.numeroCota as numeroCota, ");
-		hql.append("notaEnvio.destinatario.nome as nome, ");
-		//hql.append("cota.id as idCota, ");
-		hql.append("rotaPDV.id as idRota, ");
-		hql.append("notaEnvio.numero as numeroNotaEnvio, ");
-		hql.append("endereco.logradouro as logradouro, ");
-		hql.append("endereco.bairro as bairro, ");		
-		hql.append("endereco.cidade as cidade, ");
-		hql.append("endereco.uf as uf ");
-		
+		/*
+		 * Incluido a condição DISTINCT para retirar a repetição 
+		 * (plano cartesiano) pelos ProdutosEdição contido nas NotaEnvioItem,
+		 * RotaPDV e Cotas.
+		 */
+		hql.append("SELECT DISTINCT ");
+		hql.append("  notaEnvio.destinatario.numeroCota as numeroCota ");
+		hql.append(", notaEnvio.destinatario.nome as nome ");
+//		hql.append(", cota.id as idCota ");
+//		hql.append(", rotaPDV.id as idRota ");
+		hql.append(", notaEnvio.numero as numeroNotaEnvio ");
+		hql.append(", endereco.logradouro as logradouro ");
+//		hql.append(", endereco.bairro as bairro ");		
+//		hql.append(", endereco.cidade as cidade ");
+//		hql.append(", endereco.uf as uf ");
 		
 		//if (filtro.getProdutos() != null && filtro.getProdutos().size() == 1){
-		if (filtro.getProdutos() != null){
-		
-			hql.append(", round(itemNota.reparte / lancamento.produtoEdicao.pacotePadrao) as pacote ");
+			//hql.append(", round(itemNota.reparte / lancamento.produtoEdicao.pacotePadrao) as pacote ");
 			//hql.append(", lancDif.diferenca.qtde as quebra ");
-			hql.append(", itemNota.reparte as reparteTotal ");
-		}
+			//hql.append(", itemNota.reparte as reparteTotal ");
+		//}
 		
 		// Código comentado pelo Eduardo Punk Rock
 		/*if (filtro.getProdutos() != null && filtro.getProdutos().size() > 1){
@@ -54,26 +92,14 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 		
 		hql.append(getSqlFromEWhereRomaneio(filtro));
 		
-		hql.append(getOrderBy(filtro));
+		if (ordenarConsulta) {
+			hql.append(getOrderBy(filtro, false));
+		}
 		
 		Query query =  getSession().createQuery(hql.toString());
+		this.setarParametrosRomaneio(filtro, query);
 		
-		this.setarParametrosRomaneio(filtro, query, false);
-		
-		query.setResultTransformer(new AliasToBeanResultTransformer(RomaneioDTO.class));
-		
-		if(filtro.getPaginacao().getQtdResultadosPorPagina() != null){ 
-			
-			query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
-		}
-		
-		if(filtro.getPaginacao().getQtdResultadosPorPagina() != null && limitar){ 
-			
-			query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
-		}
-				
-		return  query.list();
-		//return  popularEndereco(query.list());
+		return query;
 	}
 	
 	private String getSqlFromEWhereRomaneio(FiltroRomaneioDTO filtro) {
@@ -137,61 +163,83 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 
 		return hql.toString();
 	}
-
-	private StringBuilder getOrderClause(StringBuilder hql) {
-		if (hql == null || hql.length() == 0) {
-			hql.append(" order by ");
-		} else {
+	
+	
+	/**
+	 * Incluir uma virgula (separador) para os critérios de order by.<br>
+	 * Caso não haja consulta HQL não incluirá nada, retornando o próprio
+	 * parâmetro.
+	 * 
+	 * @param hql
+	 * @return
+	 */
+	private StringBuilder addSeparadorOrderBy(StringBuilder hql) {
+		if (hql != null && hql.length() > 0) {
 			hql.append(", ");
 		}
+		
 		return hql;
 	}
 	
-	private String getOrderBy(FiltroRomaneioDTO filtro){
+	private String getOrderBy(FiltroRomaneioDTO filtro, boolean isImpressao) {
 		
-		if(filtro.getPaginacao() == null || filtro.getPaginacao().getSortColumn() == null){
+		if(filtro.getPaginacao() == null 
+				|| filtro.getPaginacao().getSortColumn() == null) {
 			return "";
 		}
 		
 		StringBuilder hql = new StringBuilder();
 		
-		//hql.append(" order by rotaPDV.id asc ");
-		
-		if(filtro.getIdRoteiro() == null && filtro.getIdRota() != null){
-			hql = getOrderClause(hql);
+		if (filtro.getIdRoteiro() == null && filtro.getIdRota() != null) {
+			hql = addSeparadorOrderBy(hql);
 			hql.append(" rotaPDV.ordem ");
 		}
 		
-		if(filtro.getIdRoteiro() != null && filtro.getIdRota() == null){
-			hql = getOrderClause(hql);
+		if (filtro.getIdRoteiro() != null && filtro.getIdRota() == null) {
+			hql = addSeparadorOrderBy(hql);
 			hql.append(" roteiro.ordem ");
 		}
 		
-		if(filtro.getIdRoteiro() != null && filtro.getIdRota() != null){
-			hql = getOrderClause(hql);
-			hql.append(" roteiro.ordem asc, rotaPDV.ordem asc ");
+		if (filtro.getIdRoteiro() != null && filtro.getIdRota() != null) {
+			hql = addSeparadorOrderBy(hql);
+			hql.append(" roteiro.ordem asc, rotaPDV.ordem ");
 		}
 		
-		if ("numeroCota".equals(filtro.getPaginacao().getSortColumn())){
-			hql = getOrderClause(hql);
+		if ("numeroCota".equals(filtro.getPaginacao().getSortColumn())) {
+			hql = addSeparadorOrderBy(hql);
 			hql.append(" cota.numeroCota ");
-		} else if ("nome".equals(filtro.getPaginacao().getSortColumn())){
-			hql = getOrderClause(hql);
+		} else if ("nome".equals(filtro.getPaginacao().getSortColumn())) {
+			hql = addSeparadorOrderBy(hql);
 			hql.append(" notaEnvio.destinatario.nome ");
 		} else {
-			hql = getOrderClause(hql);
+			hql = addSeparadorOrderBy(hql);
 			hql.append(" notaEnvio.numero ");
 		}
 		
-		if (filtro.getPaginacao().getOrdenacao() != null) {
+		
+		if (hql.length() > 0 && filtro.getPaginacao().getOrdenacao() != null) {
+			hql.append(filtro.getPaginacao().getOrdenacao().toString());
+		}
+
+		/* Quando for impressão, deve ordenar por [box / roteiro / rota]. */
+		if (isImpressao) {
 			
-			hql.append( filtro.getPaginacao().getOrdenacao().toString());
+			// Já contém parâmetros de ordenação/paginação:
+			if (hql.length() > 0) {
+				hql.insert(0, ", ");
+			}
+			
+			hql.insert(0, "box.codigo asc, roteiro.ordem asc, roteiro.descricaoRoteiro asc, rota.ordem asc, rota.descricaoRota asc");
+		}
+		
+		if (hql.length() > 0) {
+			hql.insert(0, " order by ");
 		}
 		
 		return hql.toString();
 	}
 	
-	private void setarParametrosRomaneio(FiltroRomaneioDTO filtro, Query query, boolean queryCount){
+	private void setarParametrosRomaneio(FiltroRomaneioDTO filtro, Query query) {
 		
 		query.setParameter("situacaoInativo", SituacaoCadastro.INATIVO);
 		query.setParameter("pontoPrincipal", true);
@@ -219,26 +267,138 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 		if (filtro.getProdutos() != null && !filtro.getProdutos().isEmpty()){
 		
 			query.setParameterList("produtos", filtro.getProdutos());
-
 		}
 	}
 
+	/**
+	 * Preenche os parâmetros para exibir os romaneios para exportação.
+	 * 
+	 * @param filtro
+	 * @param query
+	 * @param qtdProdutos
+	 */
+	private void setarParametrosRomaneioParaExportacao(FiltroRomaneioDTO filtro,
+			Query query, int qtdProdutos) {
+		
+		this.setarParametrosRomaneio(filtro, query);
+		
+		// Cenário em que o usuário selecionou dois ou mais produtos:
+		if (qtdProdutos > 1) {
+			for (int index = 0; index < qtdProdutos; index++) {
+				query.setParameter("idProdutoEdicao" + index, filtro.getProdutos().get(index));
+			}
+		}
+	}
+	
 	@Override
 	public Integer buscarTotal(FiltroRomaneioDTO filtro, boolean countCotas) {
+		
+		Number totalRegistros = null;
+		if (countCotas) {
+			
+			StringBuilder hql = new StringBuilder();
+			
+			hql.append("select count( "+ (countCotas ? "distinct" : "") +" cota.numeroCota) ");
+			hql.append(getSqlFromEWhereRomaneio(filtro));
+			hql.append(getOrderBy(filtro, false));
+			
+			Query query =  getSession().createQuery(hql.toString());
+			
+			this.setarParametrosRomaneio(filtro, query);
+			
+			totalRegistros = (Long) query.uniqueResult();
+		} else {
+			
+			Query query = createQueryBuscarRomaneio(filtro, false);
+			
+			@SuppressWarnings("rawtypes")
+			List lst = query.list();
+			
+			totalRegistros = (lst == null || lst.isEmpty()) ? 0 : lst.size();
+		}
+	
+		return totalRegistros.intValue();
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<RomaneioDTO> buscarRomaneiosParaExportacao(
+			FiltroRomaneioDTO filtro) {
+		
+		Query query = this.createQueryBuscarRomaneioParaExportacao(filtro);
+		query.setResultTransformer(new AliasToBeanResultTransformer(
+				RomaneioDTO.class));
+		
+		return query.list();
+	}
+	
+	/**
+	 * Gera a consulta que pesquisa os romaneios com os critérios definidos
+	 * pelo usuário.
+	 * 
+	 * @param filtro
+	 * @param ordenarConsulta
+	 * 
+	 * @return
+	 */
+	private Query createQueryBuscarRomaneioParaExportacao(
+			FiltroRomaneioDTO filtro) {
+		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append("select count( "+ (countCotas ? "distinct" : "") +" cota.numeroCota) ");
+		/*
+		 * Incluido a condição DISTINCT para retirar a repetição 
+		 * (plano cartesiano) pelos ProdutosEdição contido nas NotaEnvioItem,
+		 * RotaPDV e Cotas.
+		 */
+		hql.append("SELECT DISTINCT ");
+		hql.append("  notaEnvio.destinatario.numeroCota as numeroCota ");
+		hql.append(", notaEnvio.destinatario.nome as nome ");
+		hql.append(", cota.id as idCota ");
+		hql.append(", notaEnvio.numero as numeroNotaEnvio ");
+		hql.append(", box.id as idBox ");
+		hql.append(", box.nome as nomeBox ");
+		hql.append(", roteiro.id as idRoteiro ");
+		hql.append(", roteiro.descricaoRoteiro as nomeRoteiro ");
+		hql.append(", rota.id as idRota ");
+		hql.append(", rota.descricaoRota as nomeRota ");
+		hql.append(", endereco.logradouro as logradouro ");
+		hql.append(", endereco.bairro as bairro ");		
+		hql.append(", endereco.cidade as cidade ");
+		hql.append(", endereco.uf as uf ");
+		
+		int qtdProdutos = 0;
+		if (filtro.getProdutos() != null && !filtro.getProdutos().isEmpty()) {
+		
+			if (filtro.getProdutos().size() == 1) {
+				
+				// Exibir os detalhes de um produto:
+				hql.append(", round(itemNota.reparte / lancamento.produtoEdicao.pacotePadrao) as pacote ");
+				hql.append(", mod(itemNota.reparte, (itemNota.reparte / lancamento.produtoEdicao.pacotePadrao)) as quebra ");
+				hql.append(", itemNota.reparte as reparteTotal ");
+			} else {
+				
+				// Exibir a quantidade de reparte de 'n' produtos:
+				qtdProdutos = Math.min(filtro.getProdutos().size(), 
+						QUANTIDADE_MAX_PRODUTOS_POR_RELATORIO);
+				for (int index = 0; index < qtdProdutos; index++) {
+					
+					hql.append(", coalesce((select iNotaEnvio.reparte ");
+					hql.append("  from ItemNotaEnvio iNotaEnvio ");
+					hql.append(" where iNotaEnvio.produtoEdicao.id = :idProdutoEdicao").append(index);
+					hql.append("   and iNotaEnvio.itemNotaEnvioPK.notaEnvio = itemNota.itemNotaEnvioPK.notaEnvio )");
+					hql.append(", 0) as qtdProduto").append(index);
+					hql.append(" ");	// para evitar problemas de concatenação
+				}
+			}
+		}
 		
 		hql.append(getSqlFromEWhereRomaneio(filtro));
-		
-		hql.append(getOrderBy(filtro));
-		
+		hql.append(getOrderBy(filtro, true));
 		Query query =  getSession().createQuery(hql.toString());
+		this.setarParametrosRomaneioParaExportacao(filtro, query, qtdProdutos);
 		
-		this.setarParametrosRomaneio(filtro, query, true);
-		
-		Long totalRegistros = (Long) query.uniqueResult();
-		
-		return (totalRegistros == null) ? 0 : totalRegistros.intValue();
+		return query;
 	}
+		
 }

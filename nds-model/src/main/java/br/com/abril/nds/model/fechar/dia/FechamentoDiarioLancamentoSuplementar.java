@@ -34,13 +34,8 @@ public class FechamentoDiarioLancamentoSuplementar implements Serializable {
 	private ProdutoEdicao produtoEdicao;
 
 	@Column(name = "QNT_CONTABILIZADA")
-	private Integer quantidadeContabilizada;
+	private Long quantidadeContabilizada;
 
-	@Column(name = "QNT_FISICO")
-	private Integer quantidadeFisico;
-
-	@Column(name = "QNT_DIFERENCA")
-	private Integer quantidadeDiferenca;
 
 	public Long getId() {
 		return id;
@@ -67,28 +62,12 @@ public class FechamentoDiarioLancamentoSuplementar implements Serializable {
 		this.produtoEdicao = produtoEdicao;
 	}
 
-	public Integer getQuantidadeContabilizada() {
+	public Long getQuantidadeContabilizada() {
 		return quantidadeContabilizada;
 	}
 
-	public void setQuantidadeContabilizada(Integer quantidadeContabilizada) {
+	public void setQuantidadeContabilizada(Long quantidadeContabilizada) {
 		this.quantidadeContabilizada = quantidadeContabilizada;
-	}
-
-	public Integer getQuantidadeFisico() {
-		return quantidadeFisico;
-	}
-
-	public void setQuantidadeFisico(Integer quantidadeFisico) {
-		this.quantidadeFisico = quantidadeFisico;
-	}
-
-	public Integer getQuantidadeDiferenca() {
-		return quantidadeDiferenca;
-	}
-
-	public void setQuantidadeDiferenca(Integer quantidadeDiferenca) {
-		this.quantidadeDiferenca = quantidadeDiferenca;
 	}
 
 }

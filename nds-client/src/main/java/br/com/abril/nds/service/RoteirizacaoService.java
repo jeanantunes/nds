@@ -105,6 +105,14 @@ public interface RoteirizacaoService {
 	Roteiro obterRoteiroDeBoxPorOrdem(Long idBox);
 	
 	/**
+	 * Obtém o Roteiro ao qual a rota parametrizada pertence
+	 * 
+	 * @param rotaID
+	 * @return
+	 */
+	Roteiro obterRoteiroPorRota(Long rotaID);
+	
+	/**
 	 * Obtém um Rota do Roteiro considerando a ordem
 	 * @param idRoteiro
 	 * @return Rota
@@ -176,9 +184,10 @@ public interface RoteirizacaoService {
 	
 	/**
 	 * Obtém PDVS's disponiveis
+	 * @param boxID 
 	 * @return List<PdvRoteirizacaoDTO>
 	 */
-	public List<PdvRoteirizacaoDTO> obterPdvsDisponiveis(Integer numCota, String municipio, String uf, String bairro, String cep);
+	public List<PdvRoteirizacaoDTO> obterPdvsDisponiveis(Integer numCota, String municipio, String uf, String bairro, String cep, boolean pesquisaPorCota, Long boxID);
 	
 	/**
 	 * Verifica se pdv esta disponivel (não vinculado a um box roteirizado)
@@ -228,5 +237,30 @@ public interface RoteirizacaoService {
      */
 	ValidacaoVO validarRoteirizacao(RoteirizacaoDTO dto);
 
+	/**
+	 * Carrega os entregadores em forma de rota no roteiro parametrizado
+	 * 
+	 * @param roteiroDTO
+	 */
+	void carregarRotasEntregadores(RoteiroRoteirizacaoDTO roteiroDTO);
+
+	/**
+	 * Carrega os entregadores em forma de rota em todos os roteiros da roteirização parametrizada
+	 * 
+	 * @param roteirizacaoDTO
+	 */
+	void carregarRotasEntregadores(RoteirizacaoDTO roteirizacao);
+	
+	/**
+	 * Obtém as rotas que não pertencem ao roteiro parametrizado
+	 * 
+	 * @param roteiroID
+	 * @return
+	 */
+	List<RotaRoteirizacaoDTO> obterRotasNaoAssociadasAoRoteiro(Long roteiroID);
+
+	void validarAssociacaoRotaTransportador(Long rotaId, Long roteiroId);
+
+	void validarAssociacaoRoteiroTransportador(Long roteiroId); 
 }
 	

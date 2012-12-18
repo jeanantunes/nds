@@ -25,7 +25,6 @@ import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.repository.ChamadaEncalheRepository;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.service.ChamadaEncalheService;
-import br.com.abril.nds.service.ControleNumeracaoSlipService;
 import br.com.abril.nds.service.RecolhimentoService;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
@@ -93,7 +92,8 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 			}
 			
 			if( endereco!= null) {
-				dto.setEndereco(endereco.getLogradouro().toUpperCase()  + " " + endereco.getNumero());
+				dto.setEndereco( (endereco.getTipoLogradouro()!= null?endereco.getTipoLogradouro().toUpperCase():"")
+									+": "+ endereco.getLogradouro().toUpperCase()  + ", " + endereco.getNumero());
 				dto.setUf(endereco.getUf());
 				dto.setCidade(endereco.getCidade());
 				dto.setUf(endereco.getUf());

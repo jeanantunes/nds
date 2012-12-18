@@ -110,6 +110,17 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 
 		return (Cota) criteria.uniqueResult();
 	}
+	
+	public Cota obterPorPDV(Long idPDV) {
+
+		Criteria criteria = super.getSession().createCriteria(Cota.class);
+		
+		criteria.createAlias("pdvs", "pdv");
+		
+		criteria.add(Restrictions.eq("pdv.id", idPDV));
+		
+		return (Cota) criteria.uniqueResult();
+	}
 
 	@SuppressWarnings("unchecked")
 	public List<Cota> obterCotasPorNomePessoa(String nome) {
@@ -308,13 +319,11 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 	@Override
 	public List<Integer> obterDiasConcentracaoPagamentoCota(Long idCota) {
 		StringBuilder hql = new StringBuilder("select cc.codigoDiaSemana ");
-		hql.append(
-				" from ConcentracaoCobrancaCota cc, Cota cota, ParametroCobrancaCota p, FormaCobranca fc ")
-				.append(" where cota.id                     = p.cota.id ")
-				.append(" and   fc.parametroCobrancaCota.id = p.id ")
-				.append(" and   cc.formaCobranca.id = fc.id ")
-				.append(" and   fc.principal = true ")
-				.append(" and   cota.id                     = :idCota");
+		hql.append(" from ConcentracaoCobrancaCota cc ")
+		   .append(" join cc.formaCobranca fc ")
+		   .append(" join fc.parametroCobrancaCota p ")
+		   .append(" join p.cota cota ")
+		   .append(" where cota.id = :idCota ");
 
 		Query query = this.getSession().createQuery(hql.toString());
 		query.setParameter("idCota", idCota);
@@ -1008,8 +1017,16 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 		StringBuilder hql = new StringBuilder();
 
 		hql.append("SELECT new ").append(ResultadoCurvaABCCotaDTO.class.getCanonicalName())
-		.append(" ( (sum(estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida)), ")
-		.append("   ( sum((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * (estoqueProdutoCota.produtoEdicao.precoVenda - ( "+this.obterSQLDesconto()+" ))) ) ) ");
+
+		.append(" ( ")
+		.append("   case when (lancamento.status = :statusLancamentoRecolhido) then ( ")
+		.append("  (sum(estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida)) ")
+		.append(" 	) else 0 end,")
+
+	    .append("   case when (lancamento.status = :statusLancamentoRecolhido) then ( ")
+		.append("   ( sum((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * (estoqueProdutoCota.produtoEdicao.precoVenda - ( "+this.obterSQLDesconto()+" ))) )  ")
+		.append(" 	) else 0 end")
+		.append( ") ");
 
 		hql.append(getWhereQueryObterCurvaABCCota(filtro));
 
@@ -1020,6 +1037,8 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 		for(String key : param.keySet()){
 			query.setParameter(key, param.get(key));
 		}
+		
+		query.setParameter("statusLancamentoRecolhido", StatusLancamento.RECOLHIDO);
 		
 		if (filtro.getEdicaoProduto() != null && !filtro.getEdicaoProduto().isEmpty()) {
 			query.setParameterList("edicaoProduto", (filtro.getEdicaoProduto()));
@@ -1040,11 +1059,17 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 		.append(" ( estoqueProdutoCota.produtoEdicao.produto.codigo , ")
 		.append("   estoqueProdutoCota.produtoEdicao.produto.nome , ")
 		.append("   estoqueProdutoCota.produtoEdicao.numeroEdicao , ")
-		.append("   (sum(movimentos.qtde)) , ")
-		.append("   (sum(estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida)), ")
-		.append("   ( sum((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * (estoqueProdutoCota.produtoEdicao.precoVenda - ( "+this.obterSQLDesconto()+" ))) ) , ")
-		.append("     estoqueProdutoCota.cota.id , estoqueProdutoCota.produtoEdicao.produto.id ) ");
-
+		.append("   (sum(estoqueProdutoCota.qtdeRecebida)) , ")
+		
+	    .append("   case when (lancamento.status = :statusLancamentoRecolhido) then ( ")
+		.append("   	(sum(estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida)) ")
+		.append(" 	) else 0 end, ") 
+		
+	    .append("   case when (lancamento.status = :statusLancamentoRecolhido) then ( ")
+		.append("   	( sum((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * (estoqueProdutoCota.produtoEdicao.precoVenda - ( "+this.obterSQLDesconto()+" ))) ) ")
+		.append(" 	) else 0 end,")
+		.append(" 	estoqueProdutoCota.cota.id , estoqueProdutoCota.produtoEdicao.produto.id ) ");
+		
 		hql.append(getWhereQueryObterCurvaABCCota(filtro));
 		hql.append(getGroupQueryObterCurvaABCCota(filtro));
 
@@ -1055,6 +1080,8 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 		for(String key : param.keySet()){
 			query.setParameter(key, param.get(key));
 		}
+		
+		query.setParameter("statusLancamentoRecolhido", StatusLancamento.RECOLHIDO);
 		
 		if (filtro.getEdicaoProduto() != null && !filtro.getEdicaoProduto().isEmpty()) {
 			query.setParameterList("edicaoProduto", (filtro.getEdicaoProduto()));
@@ -1075,6 +1102,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 
 		hql.append(" FROM EstoqueProdutoCota AS estoqueProdutoCota ")
 		.append(" LEFT JOIN estoqueProdutoCota.movimentos AS movimentos ")
+		.append(" LEFT JOIN movimentos.lancamento as lancamento ")
 		.append(" LEFT JOIN estoqueProdutoCota.produtoEdicao.produto.fornecedores AS fornecedores ")
 		.append(" LEFT JOIN estoqueProdutoCota.cota.enderecos AS enderecos ")
 		.append(" LEFT JOIN enderecos.endereco AS endereco ")

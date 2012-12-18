@@ -20,6 +20,18 @@ public class EnderecoAssociacaoDTO implements Serializable {
 	 */
 	public EnderecoAssociacaoDTO() { }
 	
+    public EnderecoAssociacaoDTO(Long id, boolean enderecoPrincipal, Endereco endereco, TipoEndereco tipoEndereco, Endereco enderecoPessoa) {
+		
+		if (tipoEndereco != null){
+			this.id = id;
+			this.enderecoPrincipal = enderecoPrincipal;
+			this.endereco = EnderecoDTO.fromEndereco(endereco);
+			this.tipoEndereco = tipoEndereco;
+		} else {
+			this.endereco = EnderecoDTO.fromEndereco(enderecoPessoa);
+		}
+	}
+	
 	public EnderecoAssociacaoDTO(boolean enderecoPrincipal, Endereco endereco, TipoEndereco tipoEndereco, Endereco enderecoPessoa) {
 		
 		if (tipoEndereco != null){
@@ -45,6 +57,8 @@ public class EnderecoAssociacaoDTO implements Serializable {
 	private TipoEndereco tipoEndereco;
 	
 	private boolean enderecoPrincipal;
+	
+	private boolean enderecoPessoa;
 
 	private ColunaOrdenacao colunaOrdenacao;
 	
@@ -127,6 +141,20 @@ public class EnderecoAssociacaoDTO implements Serializable {
 	 */
 	public void setColunaOrdenacao(ColunaOrdenacao colunaOrdenacao) {
 		this.colunaOrdenacao = colunaOrdenacao;
+	}
+
+	/**
+	 * @return the enderecoPessoa
+	 */
+	public boolean isEnderecoPessoa() {
+		return enderecoPessoa;
+	}
+
+	/**
+	 * @param enderecoPessoa the enderecoPessoa to set
+	 */
+	public void setEnderecoPessoa(boolean enderecoPessoa) {
+		this.enderecoPessoa = enderecoPessoa;
 	}
 
 	/**

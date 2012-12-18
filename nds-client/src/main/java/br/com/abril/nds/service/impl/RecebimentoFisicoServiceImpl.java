@@ -197,6 +197,19 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 	}
 	
 	/**
+	 * Verifica se a nota fiscal já existe (combinação numero, serie e cnpj do emitente)
+	 * @param notaFiscal
+	 */
+	@Transactional(readOnly=true)
+	public void validarExisteNotaFiscal(NotaFiscalEntradaFornecedor notaFiscal) {
+		
+		if ( recebimentoFisicoRepository.existeNotaFiscal(notaFiscal.getNumero(), notaFiscal.getSerie(), notaFiscal.getFornecedor().getJuridica().getCnpj()) ) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Não é possível receber a nota fiscal! Existe outra nota fiscal com o mesmo número, série e emitente (cnpj).");
+		}
+		
+	}
+	
+	/**
 	 * Insere os dados do recebimento físico.
 	 */
 	@Transactional
@@ -233,7 +246,7 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 	@Transactional
 	public void confirmarRecebimentoFisico(Usuario usuarioLogado, NotaFiscalEntrada notaFiscal, List<RecebimentoFisicoDTO> listaItensNota, Date dataAtual){
 		
-		verificarValorDaNota(listaItensNota,notaFiscal.getValorBruto());
+		verificarValorDaNota(recebimentoFisicoRepository.obterListaItemRecebimentoFisico(notaFiscal.getId()),notaFiscal.getValorBruto());
 		
 		inserirDadosRecebimentoFisico(usuarioLogado, notaFiscal, listaItensNota, dataAtual);
 		
@@ -264,7 +277,7 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 		BigDecimal somaValorDosItens = new BigDecimal(0.0);
 		
 		for(RecebimentoFisicoDTO recebimentoFisicoDTO : listaItensNota) {
-			somaValorDosItens = somaValorDosItens.add(recebimentoFisicoDTO.getValorTotal());
+			somaValorDosItens = somaValorDosItens.add( recebimentoFisicoDTO.getPrecoItem().multiply( BigDecimal.valueOf( recebimentoFisicoDTO.getRepartePrevisto().doubleValue() ) ));
 		}
 		
 		if(valorBruto == null){
@@ -797,10 +810,9 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 	private void inserirMovimentoEstoque(
 			Usuario usuarioLogado,
 			RecebimentoFisicoDTO recebimentoFisicoDTO) {
-	
 		
 		boolean indDiferenca = verificarDiferencaExistente(recebimentoFisicoDTO.getRepartePrevisto(), recebimentoFisicoDTO.getQtdFisico());
-		
+
 		if(indDiferenca) {
 			
 			Diferenca diferenca = obterDiferencaDeItemRecebimentoFisico(usuarioLogado, recebimentoFisicoDTO);
@@ -808,23 +820,21 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 			ItemRecebimentoFisico itemRecebimento = itemRecebimentoFisicoRepository.buscarPorId(recebimentoFisicoDTO.getIdItemRecebimentoFisico());
 			itemRecebimento.setDiferenca(diferenca);
 			itemRecebimentoFisicoRepository.alterar(itemRecebimento);
-			
-			
-			
-		} else {
-			
-			TipoMovimentoEstoque tipoMovimento = 
+
+		}
+
+		// Implementado por Cesar Punk Pop
+		// Retirado o Else, já que o movimento sempre deve ser gerado (independente de ocorrer diferença ou não)
+		TipoMovimentoEstoque tipoMovimento = 
 				tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(
 					GrupoMovimentoEstoque.RECEBIMENTO_FISICO);
-			
-			movimentoEstoqueService.gerarMovimentoEstoque(
-					recebimentoFisicoDTO.getDataLancamento(), 
-					recebimentoFisicoDTO.getIdProdutoEdicao(), 
-					usuarioLogado.getId(), 
-					recebimentoFisicoDTO.getRepartePrevisto(),
-					tipoMovimento);
-			
-		}
+
+		movimentoEstoqueService.gerarMovimentoEstoque(
+				recebimentoFisicoDTO.getDataLancamento(), 
+				recebimentoFisicoDTO.getIdProdutoEdicao(), 
+				usuarioLogado.getId(), 
+				recebimentoFisicoDTO.getRepartePrevisto(),
+				tipoMovimento);
 		
 	}
 	

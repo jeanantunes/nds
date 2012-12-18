@@ -29,7 +29,7 @@ public class CapaController {
 	
 	private final static String JPEG_CONTENT_TYPE = "image/jpeg";
 	
-	private final static int TAMANHO_MAXIMO =  20 * 1024;
+	private final static int TAMANHO_MAXIMO =  500 * 1024;
 	
 	@Autowired
 	private Result result;

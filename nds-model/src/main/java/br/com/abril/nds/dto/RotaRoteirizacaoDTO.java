@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.util.Ordenavel;
 
 public class RotaRoteirizacaoDTO implements Serializable, Ordenavel {
@@ -45,73 +46,36 @@ public class RotaRoteirizacaoDTO implements Serializable, Ordenavel {
 	}
 	
 	/**
-	 * @return the ordem
+	 * Obtém uma lista de RotaRoteirizacaoDTO a partir de uma lista de entidades Rotas
+	 * 
+	 * @param rota
+	 * @return
 	 */
-	public Integer getOrdem() {
-		return ordem;
+	public static List<RotaRoteirizacaoDTO> getDTOFrom(List<Rota> rotas) {
+		
+		List<RotaRoteirizacaoDTO> rotaRoteirizacao = new ArrayList<RotaRoteirizacaoDTO>();
+		
+		for (Rota rota : rotas) {
+			
+			rotaRoteirizacao.add(RotaRoteirizacaoDTO.getDTOFrom(rota));
+		}
+		
+		return rotaRoteirizacao;
 	}
-
+	
 	/**
-	 * @param ordem the ordem to set
+	 * Obtém uma RotaRoteirizacaoDTO a partir de uma entidade Rota
+	 * 
+	 * @param rota
+	 * @return
 	 */
-	public void setOrdem(Integer ordem) {
-		this.ordem = ordem;
-	}
-
-	/**
-	 * @return the nome
-	 */
-	public String getNome() {
-		return nome;
-	}
-
-	/**
-	 * @param nome the nome to set
-	 */
-	public void setNome(String nome) {
-		this.nome = nome;
-	}
-
-	/**
-	 * @return the selecionado
-	 */
-	public Boolean getSelecionado() {
-		return selecionado;
-	}
-
-	/**
-	 * @param selecionado the selecionado to set
-	 */
-	public void setSelecionado(Boolean selecionado) {
-		this.selecionado = selecionado;
-	}
-
-	/**
-	 * @return the id
-	 */
-	public Long getId() {
-		return id;
-	}
-
-	/**
-	 * @param id the id to set
-	 */
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	/**
-	 * @return the listaPdv
-	 */
-	public List<PdvRoteirizacaoDTO> getPdvs() {
-		return pdvs;
-	}
-
-	/**
-	 * @param listaPdv the listaPdv to set
-	 */
-	public void setPdvs(List<PdvRoteirizacaoDTO> pdvs) {
-		this.pdvs = pdvs;
+	public static RotaRoteirizacaoDTO getDTOFrom(Rota rota) {
+		
+		Long entregadorID = (rota.getEntregador() != null) ? rota.getEntregador().getId() : null;
+		
+		RotaRoteirizacaoDTO rotaDTO = new RotaRoteirizacaoDTO(rota.getId(), rota.getOrdem(), rota.getDescricaoRota(), entregadorID);
+		
+		return rotaDTO;
 	}
 	
 	/**
@@ -214,9 +178,16 @@ public class RotaRoteirizacaoDTO implements Serializable, Ordenavel {
      *         rota já cadastrada
      */
 	public boolean isNovo() {
-	    return id != null && id < 0;
+	    return id == null || (id != null && id < 0);
 	}
 	
+	public boolean isEntregador() {
+		return this.entregadorId != null;
+	}
+	
+	public boolean hasPDVsAssociados() {
+		return (this.getPdvs() != null && !this.getPdvs().isEmpty());
+	}
 	
 	public Set<Long> getPdvsExclusao() {
         return pdvsExclusao;
@@ -231,6 +202,24 @@ public class RotaRoteirizacaoDTO implements Serializable, Ordenavel {
 	    
 	    this.pdvsExclusao.add(idPdv);
 	}
+	
+
+    /**
+     * Adiciona a coleção de pdvs ao final dos pdvs
+     * de acordo com a maior ordem existente
+     * @param pdvs coleção de pdvs para inclusão
+     */
+	public void addPdvsAposMaiorOrdem(Collection<PdvRoteirizacaoDTO> pdvs) {
+        for (PdvRoteirizacaoDTO pdv : pdvs) {
+            PdvRoteirizacaoDTO existente = getPdv(pdv.getId());
+            if (existente == null) {
+                int ordemFinal = getMaiorOrdem();
+                pdv.setOrdem(++ordemFinal);
+                addPdv(pdv);
+            }
+        }
+    }
+
 	
 	/**
 	 * Recupera a maior ordem dos pdvs da rota
@@ -247,9 +236,91 @@ public class RotaRoteirizacaoDTO implements Serializable, Ordenavel {
 	    return max;
 	}
 
+
+	/**
+	 * @return the id
+	 */
+	public Long getId() {
+		return id;
+	}
+
+	/**
+	 * @param id the id to set
+	 */
+	public void setId(Long id) {
+		this.id = id;
+	}
+	
+	/**
+	 * @return the ordem
+	 */
+	public Integer getOrdem() {
+		return ordem;
+	}
+
+	/**
+	 * @param ordem the ordem to set
+	 */
+	public void setOrdem(Integer ordem) {
+		this.ordem = ordem;
+	}
+
+	/**
+	 * @return the nome
+	 */
+	public String getNome() {
+		return nome;
+	}
+
+	/**
+	 * @param nome the nome to set
+	 */
+	public void setNome(String nome) {
+		this.nome = nome;
+	}
+
+	/**
+	 * @return the selecionado
+	 */
+	public Boolean getSelecionado() {
+		return selecionado;
+	}
+
+	/**
+	 * @param selecionado the selecionado to set
+	 */
+	public void setSelecionado(Boolean selecionado) {
+		this.selecionado = selecionado;
+	}
+
+	/**
+	 * @return the listaPdv
+	 */
+	public List<PdvRoteirizacaoDTO> getPdvs() {
+		return pdvs;
+	}
+
+	/**
+	 * @param listaPdv the listaPdv to set
+	 */
+	public void setPdvs(List<PdvRoteirizacaoDTO> pdvs) {
+		this.pdvs = pdvs;
+	}
+	
+	
 	public void setPdvsExclusao(Set<Long> pdvsExclusao) {
 		this.pdvsExclusao = pdvsExclusao;
 	}
+	
+	
+	public Long getEntregadorId() {
+		return entregadorId;
+	}
+
+	public void setEntregadorId(Long entregadorId) {
+		this.entregadorId = entregadorId;
+	}
+	
 	
 	@Override
 	public int hashCode() {
@@ -276,29 +347,5 @@ public class RotaRoteirizacaoDTO implements Serializable, Ordenavel {
 		return true;
 	}
 
-    /**
-     * Adiciona a coleção de pdvs ao final dos pdvs
-     * de acordo com a maior ordem existente
-     * @param pdvs coleção de pdvs para inclusão
-     */
-	public void addPdvsAposMaiorOrdem(Collection<PdvRoteirizacaoDTO> pdvs) {
-        for (PdvRoteirizacaoDTO pdv : pdvs) {
-            PdvRoteirizacaoDTO existente = getPdv(pdv.getId());
-            if (existente == null) {
-                int ordemFinal = getMaiorOrdem();
-                pdv.setOrdem(++ordemFinal);
-                addPdv(pdv);
-            }
-        }
-    }
-
-	public Long getEntregadorId() {
-		return entregadorId;
-	}
-
-	public void setEntregadorId(Long entregadorId) {
-		this.entregadorId = entregadorId;
-	}
-	
 	
 }

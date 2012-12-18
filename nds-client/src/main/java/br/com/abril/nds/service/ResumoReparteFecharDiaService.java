@@ -4,23 +4,18 @@ import java.util.Date;
 import java.util.List;
 
 import br.com.abril.nds.dto.ReparteFecharDiaDTO;
-import br.com.abril.nds.dto.ResumoReparteFecharDiaDTO;
+import br.com.abril.nds.dto.fechamentodiario.SumarizacaoReparteDTO;
 import br.com.abril.nds.vo.PaginacaoVO;
 
-
+/**
+ * @deprecated Mover os métodos para {@link FecharDiaService} e remover este service.
+ **/
+@Deprecated
 public interface ResumoReparteFecharDiaService {
 	
-	List<ReparteFecharDiaDTO> obterValorReparte(Date dataOperacaoDistribuidor, boolean soma);
-
-	List<ReparteFecharDiaDTO> obterValorDiferenca(Date dataOperacao, boolean soma, String tipoDiferenca);
-
-	List<ReparteFecharDiaDTO> obterValorTransferencia(Date dataOperacao, boolean soma);
-
-	List<ReparteFecharDiaDTO> obterValorDistribuido(Date dataOperacao, boolean soma);
-
-	List<ReparteFecharDiaDTO> obterResumoReparte(Date dataOperacao, PaginacaoVO paginacao);
+    SumarizacaoReparteDTO obterSumarizacaoReparte(Date data);
 	
-	ResumoReparteFecharDiaDTO obterResumoGeralReparte(Date dataOperacao);
+	List<ReparteFecharDiaDTO> obterResumoReparte(Date dataOperacao, PaginacaoVO paginacao);
 	
 	/**
      * Conta o total de registros de lançamentos expedidos na data

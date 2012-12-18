@@ -447,7 +447,7 @@ public class ExpectativaEncalheDataTest extends AbstractRepositoryImplTest {
 				Calendar.MARCH, 2012);
 		Intervalo<Date> periodo = new Intervalo<Date>(data22022012, data23032012);
 
-		Map<Date, BigDecimal> expectativas = lancamentoRepository
+		Map<Date, BigInteger> expectativas = lancamentoRepository
 				.obterExpectativasEncalhePorData(
 						periodo, Collections.singletonList(fornecedorDinap.getId()), GrupoProduto.CROMO);
 
@@ -456,11 +456,11 @@ public class ExpectativaEncalheDataTest extends AbstractRepositoryImplTest {
 		BigInteger qtdEstoque = qtdRecebida.subtract(qtdDevolvida);
 		
 		BigDecimal expectativaVenda =
-				new BigDecimal(qtdEstoque).multiply(MathUtil.divide(porcentagemExpectativaVenda, new BigDecimal("100.00")));
+				new BigDecimal(qtdEstoque).multiply(MathUtil.divide(porcentagemExpectativaVenda, new BigDecimal("100")));
 		
-		BigDecimal expectativaEsperada = new BigDecimal(qtdEstoque).subtract(expectativaVenda);
+		BigInteger expectativaEsperada = new BigInteger(qtdEstoque.toString()).subtract(new BigInteger(expectativaVenda.toString()));
 		
-		for (Map.Entry<Date, BigDecimal> entry : expectativas.entrySet()) {
+		for (Map.Entry<Date, BigInteger> entry : expectativas.entrySet()) {
 
 			boolean condition = expectativaEsperada.compareTo(entry.getValue()) == 0;
 			

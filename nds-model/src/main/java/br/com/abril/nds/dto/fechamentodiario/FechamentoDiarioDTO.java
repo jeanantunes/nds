@@ -10,7 +10,6 @@ import br.com.abril.nds.dto.ReparteFecharDiaDTO;
 import br.com.abril.nds.dto.ResumoEncalheFecharDiaDTO;
 import br.com.abril.nds.dto.ResumoFechamentoDiarioConsignadoDTO;
 import br.com.abril.nds.dto.ResumoFechamentoDiarioCotasDTO;
-import br.com.abril.nds.dto.ResumoReparteFecharDiaDTO;
 import br.com.abril.nds.dto.ResumoSuplementarFecharDiaDTO;
 import br.com.abril.nds.dto.SuplementarFecharDiaDTO;
 
@@ -106,7 +105,7 @@ public class FechamentoDiarioDTO implements Serializable {
         
         private Date dataFechamento;
         
-        private ResumoReparteFecharDiaDTO resumoReparte;
+        private SumarizacaoReparteDTO resumoReparte;
         
         private ResumoEncalheFecharDiaDTO resumoEncalhe;
         
@@ -134,7 +133,7 @@ public class FechamentoDiarioDTO implements Serializable {
             this.dataFechamento = dataFechamento;
         }
         
-        public Builder resumoReparte(ResumoReparteFecharDiaDTO resumoReparte) {
+        public Builder resumoReparte(SumarizacaoReparteDTO resumoReparte) {
             this.resumoReparte = resumoReparte;
             return this;
         }
@@ -208,7 +207,7 @@ public class FechamentoDiarioDTO implements Serializable {
      */
     public static class Sumarizacao {
         
-        private ResumoReparteFecharDiaDTO resumoReparte;
+        private SumarizacaoReparteDTO resumoReparte;
         
         private ResumoEncalheFecharDiaDTO resumoEncalhe;
         
@@ -227,7 +226,7 @@ public class FechamentoDiarioDTO implements Serializable {
         /**
          * @return the resumoReparte
          */
-        public ResumoReparteFecharDiaDTO getResumoReparte() {
+        public SumarizacaoReparteDTO getResumoReparte() {
             return resumoReparte;
         }
 

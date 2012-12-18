@@ -1,12 +1,14 @@
 package br.com.abril.nds.controllers.cadastro;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.web.DefaultSecurityFilterChain;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.BancoVO;
@@ -104,7 +106,7 @@ public class ParametroCobrancaController {
     	listaTiposCobranca.clear();
     	listaFornecedores.clear();
     	
-    	listaBancos = this.bancoService.getComboBancos();
+    	listaBancos = this.bancoService.getComboBancos(true);
     	listaTiposCobranca = this.parametroCobrancaCotaService.getComboTiposCobranca();
     	listaFornecedores = this.fornecedorService.obterFornecedoresIdNome(null, null);
     	
@@ -169,11 +171,13 @@ public class ParametroCobrancaController {
 	@Post
 	@Path("/postarParametroCobranca")
 	public void postarParametroCobranca(ParametroCobrancaDTO parametros){
+
 		PoliticaCobranca politica = politicaCobrancaService.obterPoliticaCobrancaPrincipal();
+		
 		if (politica==null && !parametros.isPrincipal()){
+			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Defina ao menos um [Parâmetro de Cobrança] como [Principal].");
 		}	
-		
 		
 		parametros = formatarParametros(parametros);
 		

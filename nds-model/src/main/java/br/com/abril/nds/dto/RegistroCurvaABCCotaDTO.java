@@ -191,7 +191,7 @@ public class RegistroCurvaABCCotaDTO extends RegistroCurvaABCDTO implements Seri
 
 	private void formatarCampos() {
 		reparteFormatado = CurrencyUtil.formatarValorTruncado(reparte);
-		vendaExemplaresFormatado = CurrencyUtil.formatarValorTruncado(vendaExemplares);
+		vendaExemplaresFormatado = String.valueOf(vendaExemplares);
 		porcentagemVendaFormatado = CurrencyUtil.formatarValorTruncado(porcentagemVenda);
 		faturamentoFormatado = CurrencyUtil.formatarValor( (faturamento==null)?BigInteger.ZERO:faturamento);
 	}

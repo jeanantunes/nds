@@ -52,7 +52,7 @@ public class FecharDiaRepositoryImpl extends AbstractRepository implements Fecha
 
 		hql.append(" SELECT notaFiscal from NotaFiscalEntradaFornecedor notaFiscal ");		
 		hql.append("WHERE notaFiscal.statusNotaFiscal != :statusNF  ");
-		hql.append("AND notaFiscal.dataEmissao = :dataOperacao  ");
+		hql.append("AND cast(notaFiscal.dataEmissao as date) = :dataOperacao  ");		
 		
 		Query query = super.getSession().createQuery(hql.toString());
 		
@@ -69,7 +69,8 @@ public class FecharDiaRepositoryImpl extends AbstractRepository implements Fecha
 
 		hql.append(" select numero as numeroNotaFiscal from NotaFiscalEntradaFornecedor notaFiscal ");		
 		hql.append("WHERE notaFiscal.statusNotaFiscal != :statusNF ");
-		hql.append("AND notaFiscal.dataEmissao = :dataOperacao ");
+		hql.append("AND cast(notaFiscal.dataEmissao as date) = :dataOperacao ");
+		hql.append("GROUP BY numero");
 		
 		Query query = super.getSession().createQuery(hql.toString());
 		
@@ -110,14 +111,15 @@ public class FecharDiaRepositoryImpl extends AbstractRepository implements Fecha
 		StringBuilder jpql = new StringBuilder();
 		
 		jpql.append(" SELECT produto.codigo AS codigo,");
-		jpql.append(" produto.nomeComercial AS nomeProduto,");
+		jpql.append(" produto.nome AS nomeProduto,");
 		jpql.append(" pe.numeroEdicao AS edicao ");
 		
-		jpql.append("FROM Lancamento AS lancamento ");
-		jpql.append("JOIN lancamento.produtoEdicao AS pe ");
-		jpql.append("JOIN pe.produto AS produto ");
-		jpql.append("WHERE  lancamento.dataLancamentoDistribuidor = :dataOperacaoDistribuidor ");
-		jpql.append("AND  lancamento.status NOT IN (:status) ");		
+		jpql.append(" FROM Lancamento AS lancamento ");
+		jpql.append(" JOIN lancamento.produtoEdicao AS pe ");
+		jpql.append(" JOIN pe.produto AS produto ");
+		jpql.append(" WHERE  lancamento.dataLancamentoDistribuidor = :dataOperacaoDistribuidor ");
+		jpql.append(" AND  lancamento.status NOT IN (:status) ");	
+		jpql.append(" GROUP BY produto.codigo, produto.nome, pe.numeroEdicao ");
 		
 		Query query = super.getSession().createQuery(jpql.toString());
 		

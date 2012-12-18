@@ -401,7 +401,7 @@ var ParciaisController = $.extend(true, {
 
 		$(".parciaisVendaGrid",this.workspace).flexReload();
 
-		pupup_detalheVendas();
+		this.popup_detalheVendas();
 	},
 		
 	/**
@@ -477,7 +477,7 @@ var ParciaisController = $.extend(true, {
 			});
 		},
 		
-		pupup_detalheVendas : function() {
+		popup_detalheVendas : function() {
 			
 			$( "#dialog-detalhe-venda", this.workspace).dialog({
 				resizable: false,

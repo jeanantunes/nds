@@ -3,6 +3,7 @@ package br.com.abril.nds.repository.impl;
 import java.util.List;
 
 import org.hibernate.Criteria;
+import org.hibernate.Query;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
@@ -135,6 +136,25 @@ public class RoteiroRepositoryImpl extends
 		criteria.addOrder(Order.asc("roteiro.descricaoRoteiro"));
 
 		return criteria.list();
+	}
+
+	/**
+	 * @see br.com.abril.nds.repository.RoteiroRepository#obterRoteiroPorRota(java.lang.Long)
+	 */
+	@Override
+	public Roteiro obterRoteiroPorRota(Long rotaID) {
+		
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append(" SELECT r FROM Roteiro r ");
+		sql.append(" JOIN r.rotas rota ");
+		sql.append(" WHERE rota.id = :rotaID ");
+		
+		Query query = this.getSession().createQuery(sql.toString());
+		query.setParameter("rotaID", rotaID);
+		query.setMaxResults(1);
+		
+		return (Roteiro) query.uniqueResult();
 	}
 
 }

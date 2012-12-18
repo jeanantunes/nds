@@ -37,7 +37,7 @@ var MANTER_COTA = $.extend(true, {
     
     initCotaGridPrincipal: function() {
 
-        $(".pessoasGrid", this.workspace).flexigrid({
+        $(".pessoasGrid", MANTER_COTA.workspace).flexigrid({
             preProcess: MANTER_COTA.executarPreProcessamento,
             dataType : 'json',
             colModel : [  {
@@ -217,7 +217,7 @@ var MANTER_COTA = $.extend(true, {
                 resultado.mensagens.listaMensagens
             );
 
-            $("#grids", this.workspace).hide();
+            $("#gridsCota", this.workspace).hide();
 
             return resultado.tableModel;
         }
@@ -238,19 +238,19 @@ var MANTER_COTA = $.extend(true, {
             row.cell.acao = linkEdicao + linkExclusao;
         });
 
-        $("#grids", this.workspace).show();
+        $("#gridsCota", this.workspace).show();
 
         return resultado;
     },
 
     pesquisar:function(){
 
-        $(".pessoasGrid", this.workspace).flexOptions({
+        $(".pessoasGrid", MANTER_COTA.workspace).flexOptions({
             url: contextPath + "/cadastro/cota/pesquisarCotas",
             params: MANTER_COTA.formDataPesquisa(),newp: 1
         });
 
-        $(".pessoasGrid", this.workspace).flexReload();
+        $(".pessoasGrid", MANTER_COTA.workspace).flexReload();
     },
 
     exibirDialogExclusao:function (idCota){
@@ -386,7 +386,7 @@ var MANTER_COTA = $.extend(true, {
 
     popupCota: function(novo) {
 
-        //Define a função salvar inicial ao abrir o dialog de cadastro de cota
+        //Define a funÃ§Ã£o salvar inicial ao abrir o dialog de cadastro de cota
         TAB_COTA.funcaoSalvar = MANTER_COTA.salvarDadosCadastrais;
         
         MANTER_COTA.confirmado = false;
@@ -602,12 +602,12 @@ var MANTER_COTA = $.extend(true, {
     },
 
     /**
-     * Flag que indica alterações no cadastro da cota.
+     * Flag que indica alteraÃ§Ãµes no cadastro da cota.
      */
     _indCadastroCotaAlterado : false,
     
     /**
-     * Detecta que se houveram quaisquer alterações no cadastro de cota.
+     * Detecta que se houveram quaisquer alteraÃ§Ãµes no cadastro de cota.
      */
     verificarAlteracoesCadastroCota : function() {
     	
@@ -918,7 +918,7 @@ var COTA_DESCONTO = $.extend(true,
 
             $(".descProdutosGrid", this.workspace).flexReload();
 
-            $(".grids", this.workspace).show();
+            $(".grids", MANTER_COTA.workspace).show();
         },
 
         obterDescontoCota : function(numCota){
@@ -933,7 +933,7 @@ var COTA_DESCONTO = $.extend(true,
 
             $(".descCotaGrid", this.workspace).flexReload();
 
-            $(".grids", this.workspace).show();
+            $(".grids", MANTER_COTA.workspace).show();
         },
 
 
@@ -944,11 +944,11 @@ var COTA_DESCONTO = $.extend(true,
                     resultado.mensagens.tipoMensagem,
                     resultado.mensagens.listaMensagens
                 );
-                $(".grids", this.workspace).hide();
+                $(".grids", MANTER_COTA.workspace).hide();
                 return resultado;
             }
 
-            $(".grids", this.workspace).show();
+            $(".grids", MANTER_COTA.workspace).show();
 
             return resultado;
         }
@@ -1576,7 +1576,7 @@ var SOCIO_COTA = $.extend(true, {
                 sortable : false,
                 align : 'center'
             }, {
-                display : 'Ação',
+                display : 'AÃ§Ã£o',
                 name : 'acao',
                 width : 60,
                 sortable : false,

@@ -161,7 +161,7 @@ public class RegistroCurvaABCDistribuidorVO extends RegistroCurvaABCDTO implemen
 	}
 
 	public void setVendaExemplares(BigInteger vendaExemplares) {
-		this.vendaExemplares = vendaExemplares;
+		this.vendaExemplares = vendaExemplares == null ? BigInteger.ZERO : vendaExemplares;
 	}
 
 	public BigDecimal getFaturamentoCapa() {
@@ -169,7 +169,7 @@ public class RegistroCurvaABCDistribuidorVO extends RegistroCurvaABCDTO implemen
 	}
 
 	public void setFaturamentoCapa(BigDecimal faturamentoCapa) {
-		this.faturamentoCapa = faturamentoCapa;
+		this.faturamentoCapa = faturamentoCapa == null ? BigDecimal.ZERO : faturamentoCapa;
 	}
 	public String getVendaExemplaresFormatado() {
 		return vendaExemplaresFormatado;
@@ -188,7 +188,9 @@ public class RegistroCurvaABCDistribuidorVO extends RegistroCurvaABCDTO implemen
 	}
 
 	private void formatarCampos() {
-		this.vendaExemplaresFormatado = CurrencyUtil.formatarValor(vendaExemplares);
+		
+		this.vendaExemplaresFormatado = String.valueOf(this.vendaExemplares);
+		
 		this.faturamentoCapaFormatado = CurrencyUtil.formatarValor(faturamentoCapa);
 	}
 

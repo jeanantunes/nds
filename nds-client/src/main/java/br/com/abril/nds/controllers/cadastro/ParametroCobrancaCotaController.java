@@ -151,7 +151,7 @@ public class ParametroCobrancaCotaController {
 	public void preCarregamento(){
 		listaTiposCobranca = this.parametroCobrancaCotaService.getComboTiposCobranca();
 		listaTiposCota = this.cotaService.getComboTiposCota();
-		result.include("listaBancos", bancoService.getComboBancos());
+		result.include("listaBancos", bancoService.getComboBancos(true));
 		result.include("listaTiposCobranca",listaTiposCobranca);
 		result.include("listaTiposCota",listaTiposCota);
 	}
@@ -183,7 +183,7 @@ public class ParametroCobrancaCotaController {
     @Post
     @Path("/carregarBancos")
     public void carregarBancos(){
-        result.use(Results.json()).from(bancoService.getComboBancos(), "result").recursive().serialize();
+        result.use(Results.json()).from(bancoService.getComboBancos(true), "result").recursive().serialize();
     }
 
 	

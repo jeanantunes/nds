@@ -10,6 +10,7 @@ import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.transform.AliasToBeanConstructorResultTransformer;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
@@ -288,17 +289,18 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 			Intervalo<Date> dataLancamento, Intervalo<BigDecimal> preco , StatusLancamento statusLancamento,
 			String codigoDeBarras, boolean brinde,
 			String sortorder, String sortname, int initialResult, int maxResults) {
-		
-		StringBuilder hql = new StringBuilder();
-		hql.append(" SELECT pe.id as id, pr.codigo as codigoProduto, pr.nomeComercial as nomeComercial, ");
-		hql.append("        pe.numeroEdicao as numeroEdicao, jr.razaoSocial as nomeFornecedor, ");
-		hql.append("        ln.tipoLancamento as statusLancamento, ln.status as statusSituacao, ");
-		hql.append("        pe.possuiBrinde as temBrinde ");
+			
+		StringBuilder hql = new StringBuilder()
+			.append(" SELECT pe.id as id, pr.codigo as codigoProduto, pr.nomeComercial as nomeComercial, ")
+			.append("        pe.numeroEdicao as numeroEdicao, jr.razaoSocial as nomeFornecedor, ")
+			.append("        ln.tipoLancamento as statusLancamento, ln.status as statusSituacao, ")
+			.append("        pe.possuiBrinde as temBrinde ");
 		
 		// Corpo da consulta com os filtros:
 		Query query = this.queryBodyPesquisarEdicoes(hql, codigoProduto, nome, dataLancamento, preco, statusLancamento, codigoDeBarras, brinde, sortname, sortorder);
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(ProdutoEdicaoDTO.class));
+		
 		query.setFirstResult(initialResult);
 		query.setMaxResults(maxResults);
 		
@@ -354,10 +356,14 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		hql.append("   FROM ProdutoEdicao pe ");
 		hql.append("        JOIN pe.produto pr ");
 		hql.append("        JOIN pr.fornecedores fr JOIN fr.juridica jr ");
-		hql.append("        JOIN pe.lancamentos ln ");
+		hql.append("        LEFT JOIN pe.lancamentos ln ");
 		hql.append("  WHERE pe.ativo = :indAtivo ");
 		
-		hql.append(" AND ln.id = (select max(ln.id) from ln where ln.produtoEdicao.id = pe.id) ");
+		
+		/**
+		 * Comentado por Eduardo "PunkRock" Castro em 05/12 devido a existencia de dados na tabela de ProdutoEdicao e não eh apresentado no grid
+		 */
+		//hql.append(" AND ln.id = (select max(ln.id) from ln where ln.produtoEdicao.id = pe.id) ");
 		
 		// Filtros opcionais da pesquisa:
 		if (dataLancamento != null) {
@@ -619,8 +625,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 	@Override
 	public String buscarNome(Long idProdutoEdicao) {
 		
-		Query query = 
-			this.getSession().createQuery(
+		Query query = this.getSession().createQuery(
 				"select produtoEdicao.nomeComercial from ProdutoEdicao produtoEdicao where produtoEdicao.id = :idProdutoEdicao");
 		
 		query.setParameter("idProdutoEdicao", idProdutoEdicao);

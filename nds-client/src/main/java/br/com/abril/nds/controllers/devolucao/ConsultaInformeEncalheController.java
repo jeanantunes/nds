@@ -7,8 +7,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-import javax.annotation.PostConstruct;
-
 import org.apache.commons.io.IOUtils;
 import org.lightcouch.NoDocumentException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +16,6 @@ import br.com.abril.nds.dto.ColunaRelatorioInformeEncalhe;
 import br.com.abril.nds.dto.InformeEncalheDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.TipoImpressaoInformeEncalheDTO;
-import br.com.abril.nds.dto.TipoImpressaoInformeEncalheDTO.Capas;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.DiaSemana;
@@ -30,15 +27,13 @@ import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TipoMensagem;
-import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
+import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
-import br.com.caelum.vraptor.interceptor.download.ByteArrayDownload;
-import br.com.caelum.vraptor.interceptor.download.Download;
 
 /**
  * 
@@ -63,6 +58,9 @@ public class ConsultaInformeEncalheController {
 	
 	@Autowired 
 	private CapaService capaService;	
+	
+	@Autowired
+	private DistribuidorService distribuidorService;
 	
 	
 	private DiaSemana inicioDaSemana;
@@ -190,80 +188,84 @@ public class ConsultaInformeEncalheController {
 			if (tipoImpressao.getColunas().contains("codigoProduto")){
 				
 				colunas.add(new ColunaRelatorioInformeEncalhe("Código", 
-						this.calcularTamanhoColunaRelatorio(qtdColunas, 5), 
+						this.calcularTamanhoColunaRelatorio(qtdColunas, 4), 
 						"codigoProduto"));
 			}
 			
 			if (tipoImpressao.getColunas().contains("nomeProduto")){
 				
 				colunas.add(new ColunaRelatorioInformeEncalhe("Produto", 
-						this.calcularTamanhoColunaRelatorio(qtdColunas, 10), 
+						this.calcularTamanhoColunaRelatorio(qtdColunas, 13), 
 						"nomeProduto"));
 			}
 			
 			if (tipoImpressao.getColunas().contains("numeroEdicao")){
 				
 				colunas.add(new ColunaRelatorioInformeEncalhe("ED.", 
-						this.calcularTamanhoColunaRelatorio(qtdColunas, 5),
+						this.calcularTamanhoColunaRelatorio(qtdColunas, 4),
 						"numeroEdicao"));
 			}
 			
 			if (tipoImpressao.getColunas().contains("chamadaCapa")){
 				
 				colunas.add(new ColunaRelatorioInformeEncalhe("Chamada de Capa", 
-						this.calcularTamanhoColunaRelatorio(qtdColunas, 5), 
+						this.calcularTamanhoColunaRelatorio(qtdColunas, 10), 
 						"chamadaCapa"));
 			}
 			
 			if (tipoImpressao.getColunas().contains("codigoDeBarras")){
 				
 				colunas.add(new ColunaRelatorioInformeEncalhe("Código de Barras", 
-						this.calcularTamanhoColunaRelatorio(qtdColunas, 5),
+						this.calcularTamanhoColunaRelatorio(qtdColunas, 9),
 						"codigoDeBarras"));
 			}
 			
 			if (tipoImpressao.getColunas().contains("precoVenda")){
 				
 				colunas.add(new ColunaRelatorioInformeEncalhe("R$ Capa", 
-						this.calcularTamanhoColunaRelatorio(qtdColunas, 5),
+						this.calcularTamanhoColunaRelatorio(qtdColunas, 4),
 						"precoVenda"));
 			}
 			
 			if (tipoImpressao.getColunas().contains("nomeEditor")){
 				
 				colunas.add(new ColunaRelatorioInformeEncalhe("Editor", 
-						this.calcularTamanhoColunaRelatorio(qtdColunas, 5), 
+						this.calcularTamanhoColunaRelatorio(qtdColunas, 14), 
 						"nomeEditor"));
 			}
 			
 			if (tipoImpressao.getColunas().contains("brinde")){
 				
 				colunas.add(new ColunaRelatorioInformeEncalhe("Brinde", 
-						this.calcularTamanhoColunaRelatorio(qtdColunas, 5), 
+						this.calcularTamanhoColunaRelatorio(qtdColunas, 4), 
 						"brinde"));
 			}
 			
 			if (tipoImpressao.getColunas().contains("dataLancamento")){
 				
 				colunas.add(new ColunaRelatorioInformeEncalhe("Lanc.", 
-						this.calcularTamanhoColunaRelatorio(qtdColunas, 5),
+						this.calcularTamanhoColunaRelatorio(qtdColunas, 4),
 						"dataLancamento"));
 			}
 			
 			if (tipoImpressao.getColunas().contains("dataRecolhimento")){
 				
 				colunas.add(new ColunaRelatorioInformeEncalhe("Rec.",
-						this.calcularTamanhoColunaRelatorio(qtdColunas, 5),
+						this.calcularTamanhoColunaRelatorio(qtdColunas, 4),
 						"dataRecolhimento"));
 			}
 			
-			if (tipoImpressao.getColunas().contains("dataRecolhimentoParcialFinal")){
+			if (tipoImpressao.getColunas().contains("tipoLancamentoParcial")){
 				
-				colunas.add(new ColunaRelatorioInformeEncalhe("Parcial / Final",
-						this.calcularTamanhoColunaRelatorio(qtdColunas, 5), 
-						"dataRecolhimentoParcialFinal"));
+				colunas.add(new ColunaRelatorioInformeEncalhe("TR",
+						this.calcularTamanhoColunaRelatorio(qtdColunas, 3), 
+						"tipoLancamentoParcial"));
 			}
 		}
+		
+		String nomeDistribuidor = this.distribuidorService.obter().getJuridica().getRazaoSocial();
+		
+		this.result.include("nomeDistribuidor", nomeDistribuidor);
 		
 		this.result.include("colunas", colunas);
 		
@@ -301,6 +303,7 @@ public class ConsultaInformeEncalheController {
 							
 							if (i < dados.size()){
 							
+								img.setSequenciaMatriz(info.getSequenciaMatriz());
 								img.setIdProdutoEdicao(dados.get(i).getIdProdutoEdicao());
 							}
 							
@@ -314,12 +317,14 @@ public class ConsultaInformeEncalheController {
 						
 						InformeEncalheDTO dt = new InformeEncalheDTO();
 						dt.setImagem(true);
+						dt.setSequenciaMatriz(info.getSequenciaMatriz());
 						listaResult.add(dt);
 					}
 				} else {
 					
 					InformeEncalheDTO dt = new InformeEncalheDTO();
 					dt.setImagem(true);
+					dt.setSequenciaMatriz(info.getSequenciaMatriz());
 					listaResult.add(dt);
 				}
 			}
@@ -344,6 +349,7 @@ public class ConsultaInformeEncalheController {
 					if (i < dados.size()){
 					
 						img.setIdProdutoEdicao(dados.get(i).getIdProdutoEdicao());
+						img.setSequenciaMatriz(dados.get(i).getSequenciaMatriz());
 					}
 					
 					listaResult.add(img);
@@ -387,6 +393,7 @@ public class ConsultaInformeEncalheController {
 					InformeEncalheDTO inDto = new InformeEncalheDTO();
 					inDto.setImagem(true);
 					inDto.setIdProdutoEdicao(listaResult.get(index).getIdProdutoEdicao());
+					inDto.setSequenciaMatriz(listaResult.get(index).getSequenciaMatriz());
 					listaResult.add(inDto);
 					
 					imgAdd++;
@@ -404,7 +411,7 @@ public class ConsultaInformeEncalheController {
 	
 	private int calcularTamanhoColunaRelatorio(int qtdColunas, int porcentual){
 		
-		int tamanhoTotalTable = 662;
+		int tamanhoTotalTable = 1000;
 		
 		return tamanhoTotalTable / qtdColunas * porcentual / 100;
 	}

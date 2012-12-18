@@ -140,6 +140,8 @@ var impressaoBoletosController = $.extend(true, {
 		
 		$("#grids", impressaoBoletosController.workspace).show();
 			
+		$("#divImpressoes").show();
+		
 		return resultado;
 	},
 	
@@ -147,7 +149,7 @@ var impressaoBoletosController = $.extend(true, {
 		var data = [{ name: 'nossoNumero', value: nossoNumero}];
 		
 		$.postJSON(contextPath + "/financeiro/impressaoBoletos/enviarDivida", data,function(){
-			impressaoBoletosController.pesquisar();	
+			impressaoBoletosController.pesquisar();
 		});
 	},
 	
@@ -177,7 +179,7 @@ var impressaoBoletosController = $.extend(true, {
 	},
 	
 	/**
-		Executa o m�todo de gera��o de dividas
+		Executa o método de geração de dividas
 	**/
 	gerarDivida : function (){
 		$("#aguarde", impressaoBoletosController.workspace).dialog({
@@ -240,6 +242,7 @@ var impressaoBoletosController = $.extend(true, {
 				impressaoBoletosController.dialogPesquisaInvalida();
 				$("#pesquisaInvalida", impressaoBoletosController.workspace).show();
 				$("#grids", impressaoBoletosController.workspace).hide();
+				$("#divImpressoes").hide();
 			}else{
 				impressaoBoletosController.pesquisar();
 			}	

@@ -487,16 +487,22 @@ var parametroCobrancaController = $.extend(true,
 			
 			
 			var postObject = serializeObjectToPost("parametros", parametroCobranca);
+			
+			postObject = serializeArrayToPost("parametros.diasDoMes",[0] ,postObject);
+			
 			if(tipoFormaCobranca == 'MENSAL'){
 				postObject = serializeArrayToPost("parametros.diasDoMes",[$('#diaDoMes', this.workspace).val()] ,postObject);
 			}else if(tipoFormaCobranca == 'QUINZENAL'){
 				postObject = serializeArrayToPost("parametros.diasDoMes",[$('#diaDoMes1', this.workspace).val(),$('#diaDoMes2', this.workspace).val()] ,postObject);
 			}
+			
 			var listaIdsFornecedores = new Array();
+			
+			listaIdsFornecedores.push(0);
+			
 			$("input[name='checkGroupFornecedores']:checked", this.workspace).each(function(i) {			
 				listaIdsFornecedores.push($(this, this.workspace).val());
 			});	
-			
 			
 			postObject = serializeArrayToPost("parametros.fornecedoresId",listaIdsFornecedores ,postObject);
 			
@@ -660,3 +666,5 @@ var parametroCobrancaController = $.extend(true,
 	, 
 	BaseController
 );
+
+//@ sourceURL=parametroCobranca.js

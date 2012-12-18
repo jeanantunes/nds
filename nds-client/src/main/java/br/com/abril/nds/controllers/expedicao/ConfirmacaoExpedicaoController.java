@@ -199,6 +199,7 @@ public class ConfirmacaoExpedicaoController {
 				grid = gerarGrid(
 						page, rp, sortname, sortorder, idFornecedor, dtLancamento, estudo);
 							
+				session.setAttribute("selecionados",null);
 				
 			} catch(ValidacaoException e) {
 				

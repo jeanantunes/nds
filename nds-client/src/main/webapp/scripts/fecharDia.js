@@ -184,37 +184,37 @@ var fecharDiaController =  $.extend(true, {
 				display : 'Código',
 				name : 'codigo',
 				width : 60,
-				sortable : true,
+				sortable : false,
 				align : 'left'
 			}, {
 				display : 'Produto',
 				name : 'nomeProduto',
 				width : 250,
-				sortable : true,
+				sortable : false,
 				align : 'left'
 			}, {
 				display : 'Edição',
 				name : 'numeroEdicao',
 				width : 130,
-				sortable : true,
+				sortable : false,
 				align : 'left'
 			}, {
 				display : 'Qtde',
 				name : 'qtde',
 				width : 110,
-				sortable : true,
+				sortable : false,
 				align : 'center'
 			}, {
 				display : 'Valor R$',
-				name : 'valor',
+				name : 'valorFormatado',
 				width : 100,
-				sortable : true,
+				sortable : false,
 				align : 'right'
 			}, {
 				display : 'Dt. Rclto',
 				name : 'dataRecolhimento',
 				width : 90,
-				sortable : true,
+				sortable : false,
 				align : 'center'
 			}],
 			sortname : "codigo",
@@ -385,46 +385,58 @@ var fecharDiaController =  $.extend(true, {
 			colModel : [ {
 				display : 'Código',
 				name : 'codigo',
-				width : 80,
-				sortable : true,
+				width : 60,
+				sortable : false,
 				align : 'left'
 			}, {
 				display : 'Produto',
 				name : 'nomeProduto',
 				width : 200,
-				sortable : true,
+				sortable : false,
 				align : 'left'
 			}, {
 				display : 'Edição',
 				name : 'numeroEdicao',
-				width : 100,
-				sortable : true,
+				width : 40,
+				sortable : false,
 				align : 'left'
 			}, {
 				display : 'Preço Capa R$',
-				name : 'precoVenda',
-				width : 100,
-				sortable : true,
+				name : 'precoVendaFormatado',
+				width : 80,
+				sortable : false,
 				align : 'right'
 			}, {
-				display : 'Qtde',
-				name : 'qtdeFormatado',
-				width : 90,
-				sortable : true,
+				display : 'Lógico',
+				name : 'qtdeLogico',
+				width : 80,
+				sortable : false,
 				align : 'center'
 			}, {
-				display : 'Venda Encalhe',
-				name : 'vendaEncalheFormatado',
-				width : 100,
-				sortable : true,
+				display : 'Físico',
+				name : 'qtdeFisico',
+				width : 80,
+				sortable : false,
 				align : 'center'
 			}, {
-				display : 'Diferença',
-				name : 'difencaFormatado',
+				display : 'Lógico Juramentado',
+				name : 'qtdeLogicoJuramentado',
 				width : 70,
-				sortable : true,
+				sortable : false,
 				align : 'center'
-			}],
+			}, {
+                display : 'Venda Encalhe',
+                name : 'qtdeVendaEncalhe',
+                width : 70,
+                sortable : false,
+                align : 'center'
+            }, {
+                display : 'Diferenças',
+                name : 'qtdeDiferenca',
+                width : 60,
+                sortable : false,
+                align : 'center'
+            }],
 			sortname : "codigo",
 			sortorder : "asc",
 			usepager : true,
@@ -463,21 +475,9 @@ var fecharDiaController =  $.extend(true, {
 				sortable : true,
 				align : 'right'
 			}, {
-				display : 'Qtde Contabil',
-				name : 'qtdeContabil',
+				display : 'Qtde',
+				name : 'quantidadeContabil',
 				width : 90,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Qtde Fisico',
-				name : 'qtdeFisico',
-				width : 80,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Dif.',
-				name : 'dif',
-				width : 40,
 				sortable : true,
 				align : 'center'
 			}],
@@ -543,6 +543,7 @@ var fecharDiaController =  $.extend(true, {
 		}
 		
 		$("#dialog-lancto-faltas-sobras", fecharDiaController.workspace).show();
+		fecharDiaController.redirecionarFaltasESobras();
 		
 		return resultado;
 		
@@ -881,7 +882,7 @@ var fecharDiaController =  $.extend(true, {
 			resizable: false,
 			height:'auto',
 			width:300,
-			modal: true,
+			modal: false,
 			buttons: {
 				"Fechar": function() {
 					$( this ).dialog( "close" );
@@ -910,6 +911,7 @@ var fecharDiaController =  $.extend(true, {
 		$('#confirmacaoDeExpedicao').remove();
 		$('#fechamentoDeEncalhe').remove();
 		$('#lancamentoDeFaltasESobras').remove();
+		$('#controleDeAplicacao').remove();
 		
 	},
 	
@@ -1072,10 +1074,10 @@ var fecharDiaController =  $.extend(true, {
 	
 	validacaoControleDeAprovacao : function(result){
 		if(result.controleDeAprovacao){
-			$.postJSON(contextPath + "/administracao/fecharDia/validacoesDoCotroleDeAprovacao", null,
+			$.postJSON(contextPath + "/administracao/fecharDia/validacoesDoControleDeAprovacao", null,
 					function(result){
 						if(result){							
-							var conferenciaDeAprovacao = "<tr class='class_linha_1'><td>Controle de Aprovações:</td>";
+							var conferenciaDeAprovacao = "<tr class='class_linha_1' id='controleDeAplicacao'><td>Controle de Aprovações:</td>";
 							var imagem = "<td align='center'><img src='"+ contextPath +"/images/ico_bloquear.gif' alt='Processo Efetuado' width='16' height='16' /></td></tr>";
 							$('#tabela-validacao').append(conferenciaDeAprovacao + imagem);
 						}
@@ -1089,14 +1091,14 @@ var fecharDiaController =  $.extend(true, {
 		
 		$.postJSON(contextPath + "/administracao/fecharDia/obterResumoQuadroReparte", null,
 				function(result){					
-					$("#totalReparte").html(result.totalReparte);
-					$("#totalSobras").html(result.totalSobras);
-					$("#totalFaltas").html(result.totalFaltas);
-					$("#totalTransferencia").html(result.totalTranferencia);
-					$("#totalADistribuir").html(result.totalADistribuir);
-					$("#totalDistribuido").html(result.totalDistribuido);
-					$("#totalSobraDistribuido").html(result.sobraDistribuido);
-					$("#totalDiferenca").html(result.diferenca);
+					$("#totalReparte").html(result.totalReparteFormatado);
+					$("#totalSobras").html(result.totalSobrasFormatado);
+					$("#totalFaltas").html(result.totalFaltasFormatado);
+					$("#totalTransferencia").html(result.totalsTranferenciasFormatado);
+					$("#totalADistribuir").html(result.totalDistribuirFormatado);
+					$("#totalDistribuido").html(result.totalDistribuidoFormatado);
+					$("#totalSobraDistribuido").html(result.totalSobraDistribuicaoFormatado);
+					$("#totalDiferenca").html(result.totalDiferencaFormatado);
 				}
 			);
 	},
@@ -1104,13 +1106,13 @@ var fecharDiaController =  $.extend(true, {
 	iniciarResumoEncalhe : function(){
 		$.postJSON(contextPath + "/administracao/fecharDia/obterResumoQuadroEncalhe", null,
 				function(result){
-					$("#totalEncalheLogico").html(result.totalLogico);
-					$("#totalEncalheFisico").html(result.totalFisico);
-					$("#totalEncalheJuramentada").html(result.totalJuramentado);
-					$("#vendaEncalhe").html(result.venda);
-					$("#totalSobraEncalhe").html(result.totalSobras);
-					$("#totalFaltaEncalhe").html(result.totalFaltas);
-					$("#saldoEncalhe").html(result.saldo);
+					$("#totalEncalheLogico").html(result.totalLogicoFormatado);
+					$("#totalEncalheFisico").html(result.totalFisicoFormatado);
+					$("#totalEncalheJuramentada").html(result.totalJuramentadoFormatado);
+					$("#vendaEncalhe").html(result.vendaFormatado);
+					$("#totalSobraEncalhe").html(result.totalSobrasFormatado);
+					$("#totalFaltaEncalhe").html(result.totalFaltasFormatado);
+					$("#saldoEncalhe").html(result.saldoFormatado);
 				}
 			);
 	},
@@ -1395,6 +1397,22 @@ var fecharDiaController =  $.extend(true, {
 					httpMethod : "POST",
 					data : params
 				});
+		
+	},
+	
+	redirecionarFaltasESobras : function(){
+		url = '\'estoque/diferenca/lancamento\'';
+		
+		var link = '<span class="bt_novos"> <a href="javascript:;" onclick="$(\'#workspace\').tabs(\'addTab\', \'Lançamento Faltas e Sobras\', ' + url + '),fecharDiaController.customizarDialogFaltasESobras(); "  style="cursor:pointer">' +
+						   	 '<img src="' + contextPath + '/images/ico_check.gif" hspace="5" border="0" />Sim' +
+						   '</a> </span>';
+		$("#linkParaFaltasESobra").html(link);
+		
+	},
+	customizarDialogFaltasESobras : function(){		
+		
+		parent.$('#dialog-lancto-faltas-sobras').dialog("option", "modal", false);
+		parent.$('#dialog-lancto-faltas-sobras').dialog('close');
 		
 	}
 

@@ -48,23 +48,13 @@
 	</head>
 	<body>
 		<header>
-			<table align="center" width="662" border="0" align="center" cellpadding="0" cellspacing="0">
-				<tr>
-					<td width="21" height="92" bgcolor="#F3F3F3">&nbsp;</td>
-					<td width="185" bgcolor="#F3F3F3">
-						<span class="logo">
-							<img src="${pageContext.request.contextPath}/images/logo_sistema.png" width="110" height="70"
-								alt="Novo Distrib" />
-						</span>
-					</td>
-					<td width="752" align="right" bgcolor="#F3F3F3"><h1>O JORNALEIRO</h1></td>
-					<td width="22" bgcolor="#F3F3F3">&nbsp;</td>
-				</tr>
+			<table align="center" width="1000" border="0" align="center" cellpadding="0" cellspacing="0">
+				
 				<tr>
 					<td>&nbsp;</td>
 					<td>
-						<span id="btImpressao" class="bt_novos" title="Imprimir">
-							<a href="javascript:;" onclick="$('#btImpressao').hide();window.print();$('#btImpressao').show();">
+						<span id="btImpressaoInforme" class="bt_novos" title="Imprimir">
+							<a href="javascript:;" onclick="$('#btImpressaoInforme').hide();window.print();$('#btImpressao').show();">
 								<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" 
 								hspace="5" border="0" />Imprimir</a>
 						</span>
@@ -78,40 +68,39 @@
 		<table align="center">
 			<tr>
 				<td>
-					<table width="662" border="0" align="center" cellpadding="0" cellspacing="0" style="border: 1px solid #000;">
+					<table width="1000" border="0" align="center" cellpadding="0" cellspacing="0" style="border: 1px solid #000;">
 						<tr>
-							<td width="794" align="center" valign="middle"></td>
+							<td width="794" align="center" valign="middle" rowspan="2"><h2>Informe de Recolhimento</h2></td>
 							<td height="23" colspan="2" align="center" style="border-left: 1px solid #000; border-bottom: 1px solid #000;">
 								<strong>Recolhimento</strong>
 							</td>
 						</tr>
 						<tr>
-							<td width="794" align="center" valign="middle"><h2>AGÊNCIAS	SÃO PAULO</h2></td>
-							<td width="98" align="center" style="border-left: 1px solid #000; border-bottom: 1px solid #000;">
+							<td width="98" align="center" style="border-left: 1px solid #000; border-bottom: 1px solid #000; font-size:14px!important;">
 								<strong>${diaMesInicioRecolhimento}º DIA</strong>
 							</td>
-							<td width="71" rowspan="2" align="center" style="border-left: 1px solid #000; border-bottom: 1px solid #000;">
+							<td width="71" rowspan="2" align="center" style="border-left: 1px solid #000; border-bottom: 1px solid #000;font-size:14px!important;">
 								<strong>${dataInicioRecolhimento}</strong>
 							</td>
 						</tr>
 						<tr>
-							<td width="794" align="center" valign="middle" style="border-bottom: 1px solid #000;">&nbsp;</td>
-							<td align="center" style="border-left: 1px solid #000; border-bottom: 1px solid #000;">${diaSemanaInicioRecolhimento}</td>
-						</tr>
-						<tr>
-							<td align="center" style="border-bottom: 1px solid #000;">
-								<p>Marca registrada Treelog - Distribuidora de Publicações</p>
+							<td width="794" align="center" valign="middle" rowspan="3">
+								<h2>${nomeDistribuidor}</h2>
 							</td>
-							<td align="center" style="border-left: 1px solid #000; border-bottom: 1px solid #000;">
+							<td align="center" style="border-left: 1px solid #000; border-bottom: 1px solid #000;font-size:14px!important;">${diaSemanaInicioRecolhimento}</td>
+						</tr>
+						
+						<tr>
+							<td align="center" style="border-left: 1px solid #000; border-bottom: 1px solid #000;font-size:14px!important;">
 								<strong>${diaMesFimRecolhimento}º DIA</strong>
 							</td>
-							<td rowspan="2" align="center" style="border-left: 1px solid #000;">
+							<td rowspan="2" align="center" style="border-left: 1px solid #000;font-size:14px!important;">
 								<strong>${dataFimRecolhimento}</strong>
 							</td>
 						</tr>
+		
 						<tr>
-							<td align="center"><p>Registro Nº 800310340</p></td>
-							<td align="center" style="border-left: 1px solid #000;">${diaSemanaFimRecolhimento}</td>
+							<td align="center" style="border-left: 1px solid #000;font-size:14px!important;">${diaSemanaFimRecolhimento}</td>
 						</tr>
 					</table>
 				</td>
@@ -120,7 +109,7 @@
 			<tr>
 				<td>
 		
-					<table align="center" width="662" border="0" align="center" cellpadding="2" cellspacing="0" 
+					<table align="center" width="1000" border="0" align="center" cellpadding="2" cellspacing="0" 
 						style="border:1px solid #000; margin-top:5px;" class="relatorio">
 					<tr>
 						<c:forEach items="${colunas}" var="coluna_">
@@ -145,7 +134,7 @@
 				           		
 				           		<c:if test="${dado != null && tableFechada}">
 				           			
-				           			<table align="left" width="662" border="0" align="center" cellpadding="2" cellspacing="0" 
+				           			<table align="left" width="1000" border="0" align="center" cellpadding="2" cellspacing="0" 
 					            		style="border:1px solid #000; margin-top:5px;" class="relatorio">
 									<tr>
 										<c:forEach items="${colunas}" var="coluna_">
@@ -191,8 +180,8 @@
 											
 											<c:if test="${contains}">
 												<td>
-													<div style="white-space:nowrap; overflow: hidden;">
-														${dado.nomeProduto}
+													<div style="white-space:nowrap; overflow: hidden;font-size:14px!important;">
+														<strong>${dado.nomeProduto}</strong>
 													</div>
 												</td>
 											</c:if>
@@ -206,8 +195,8 @@
 											</c:forEach>
 											
 											<c:if test="${contains}">
-												<td align="center">
-													${dado.numeroEdicao}
+												<td align="center" style="font-size:14px!important;">
+													<strong>${dado.numeroEdicao}</strong>
 												</td>
 											</c:if>
 											
@@ -220,7 +209,9 @@
 											
 											<c:if test="${contains}">
 												<td align="center">
-													${dado.chamadaCapa}
+													<div style="white-space:nowrap; overflow: hidden; font-size:14px!important">
+														<strong>${dado.chamadaCapa}</strong>
+													</div>
 												</td>
 											</c:if>
 											
@@ -293,7 +284,7 @@
 											
 											<c:if test="${contains}">
 												<td align="center">
-													<fmt:formatDate value="${dado.dataLancamento}" pattern="dd/MM/yyyy"/>
+													<fmt:formatDate value="${dado.dataLancamento}" pattern="dd/MM/yy"/>
 												</td>
 											</c:if>
 											
@@ -307,21 +298,21 @@
 											
 											<c:if test="${contains}">
 												<td align="center">
-													<fmt:formatDate value="${dado.dataRecolhimento}" pattern="dd/MM/yyyy"/>
+													<fmt:formatDate value="${dado.dataRecolhimento}" pattern="dd/MM/yy"/>
 												</td>
 											</c:if>
 											
 											
 											<c:set var="contains" value="false" />
 											<c:forEach var="coluna" items="${colunas}">
-											  <c:if test="${coluna.param eq 'dataRecolhimentoParcialFinal'}">
+											  <c:if test="${coluna.param eq 'tipoLancamentoParcial'}">
 											    <c:set var="contains" value="true" />
 											  </c:if>
 											</c:forEach>
 											
 											<c:if test="${contains}">
 												<td align="center">
-													<fmt:formatDate value="${dado.dataRecolhimentoParcialFinal}" pattern="dd/MM/yyyy"/>
+													${dado.tipoLancamentoParcial}
 												</td>
 											</c:if>
 										</tr>
@@ -344,7 +335,7 @@
 						           	<c:if test="${dado.idProdutoEdicao != null}">
 						           	
 							           	<table style="page-break-after: always; border:1px solid #000; margin-top:5px; border-left: 1px solid; border-right: 1px solid; border-bottom: 1px solid;" 
-							           			align="left" width="662" border="0" align="center" cellpadding="2" 
+							           			align="left" width="1000" border="0" align="center" cellpadding="2" 
 							           			cellspacing="0">
 							        	<tr>
 							        	
@@ -354,7 +345,7 @@
 						        
 				        		<c:if test="${dado.idProdutoEdicao != null}">
 									<td align="center">
-										<div align="center"><strong>${dado.seqCapa == null ? '-' : dado.seqCapa}</strong></div>
+										<div align="center"><strong>${dado.sequenciaMatriz == null ? '-' : dado.sequenciaMatriz}</strong></div>
 										<img src="<c:url value='/capa/${dado.idProdutoEdicao}'></c:url>" width="110" height="143"></img>
 									<td>
 								</c:if>
