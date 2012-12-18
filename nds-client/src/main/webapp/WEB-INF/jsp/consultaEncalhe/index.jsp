@@ -8,7 +8,7 @@
 
 <script language="javascript" type="text/javascript">
 
-var pesquisaCotaConsultaEncalhe = new PesquisaCota();
+var pesquisaCotaConsultaEncalhe = new PesquisaCota(ConsultaEncalhe.workspace);
 
 $(function(){
 	ConsultaEncalhe.init();

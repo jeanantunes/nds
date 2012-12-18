@@ -44,6 +44,10 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 			function() {
 
 				$("#resumoPeriodo", _workspace).hide();
+				
+				$(".grids", _workspace).hide();
+				
+				$(".areaBts").find(".bt_novos", _workspace).hide();				
 			}
 		);
 	},
@@ -66,8 +70,8 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 	},
 			
 	this.carregarGrid = function() {		
-				
-		$(".grids", _workspace).show();		
+		
+		T.mostrarGridEBotoesAcao();
 		
 		T.linhasDestacadas = [];		
 		lancamentosSelecionados = [];		
@@ -135,6 +139,7 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 	this.processaRetornoPesquisa = function(resultadoPesquisa) {
 		
 		if(resultadoPesquisa.mensagens) {
+			
 			exibirMensagem(resultadoPesquisa.mensagens.tipoMensagem, resultadoPesquisa.mensagens.listaMensagens);
 			return resultadoPesquisa.rows;
 		}
@@ -475,7 +480,7 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 	
 	this.atualizarGrid = function() {		
 		
-		$(".grids", _workspace).show();		
+		T.mostrarGridEBotoesAcao();
 		
 		T.linhasDestacadas = [];		
 		lancamentosSelecionados = [];		
@@ -495,7 +500,14 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 		
 		$(".lancamentosProgramadosGrid", _workspace).flexReload();
 	},
+	
+	this.mostrarGridEBotoesAcao = function () {
 		
+		$(".grids", _workspace).show();
+		
+		$(".areaBts").find(".bt_novos", _workspace).show();
+	},
+	
 	this.checkUncheckLancamentos = function(checked) {
 				
 		var todos = $('#selTodos', _workspace);
@@ -832,13 +844,25 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 			modal: true,
 			buttons: {
 				"Confirmar": function() {
+					
 					$( this ).dialog( "close" );
+					
+					var produtoLancamento = T.getProdutoLancamento(idLancamento);
+					
+					var data = [];
+					
+					data.push({name: "produtoLancamento.idLancamento",
+							   value: idLancamento});
+					
+					data.push({name: "produtoLancamento.novaDataLancamento",
+						       value: produtoLancamento.novaData});
+					
 					$.postJSON(
 							pathTela + "/matrizLancamento/excluirLancamento", 
-							{idLancamento:idLancamento},
+							data,
 							function(result) {
 								
-								T.pesquisar();
+								T.atualizarResumoBalanceamento();
 							}
 						);
 					
@@ -849,6 +873,21 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 			},
 			form: $("#dialog-excluir-lancamento", this.workspace).parents("form")
 		});
+	};
+	
+	this.getProdutoLancamento =  function(idLancamento){
+		
+		var lancamentoExcluir;
+		
+		$.each(T.lancamentos, function(index, lancamento) {
+			
+			if (lancamento.id == idLancamento) {
+				
+				lancamentoExcluir = lancamento;
+			}
+		});
+		
+		return lancamentoExcluir;
 	};
 	
 }

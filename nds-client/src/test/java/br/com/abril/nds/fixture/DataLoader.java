@@ -7605,7 +7605,7 @@ public class DataLoader {
 
 		BigDecimal precoCusto = new BigDecimal(16);
 		BigDecimal precoVenda = new BigDecimal(16);
-		String codigoDeBarras = "BYX8611";
+		String codigoDeBarras = "0000001";
 
 		BigDecimal expectativaVenda = BigDecimal.TEN;
 
@@ -7659,7 +7659,7 @@ public class DataLoader {
 			codigoProdutoEdicao = "8611";
 			numeroEdicao 		= 8611L;
 			codigoSM 			= 8611;
-			codigoDeBarras 		= "BYX8611";
+			codigoDeBarras 		= "0008611";
 
 			nomeProduto 		= nomeProduto 			+ contador;
 			codigoProduto 		= codigoProduto 		+ contador;

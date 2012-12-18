@@ -1126,12 +1126,15 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 	@Override
 	@Transactional(readOnly=true)
 	public void validarAssociacaoRotaTransportador(Long rotaId, Long roteiroId) {
+		
+		if(rotaId == null || rotaId < 1) 
+			return;
 
 		Rota rota = this.buscarRotaPorId(rotaId);
 		
 		if (rota.getAssociacoesVeiculoMotoristaRota() != null && !rota.getAssociacoesVeiculoMotoristaRota().isEmpty() ) {
 			throw new ValidacaoException(
-					new ValidacaoVO(TipoMensagem.WARNING, "Não é possível excluir uma rota que ja existe vinculo com um transportador"));
+					new ValidacaoVO(TipoMensagem.WARNING, "Não é possível modificar esta rota, pois ele esta associada a um transportador."));
 		}
 
 	}
@@ -1140,7 +1143,7 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 	@Transactional(readOnly=true)
 	public void validarAssociacaoRoteiroTransportador(Long roteiroId) {
 		
-		if (roteiroId < 1) return;
+		if (roteiroId == null || roteiroId < 1) return;
 		
 		Roteiro roteiro = this.buscarRoteiroPorId(roteiroId);
 		
@@ -1152,7 +1155,7 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 			
 			}catch(ValidacaoException ve) {
 				throw new ValidacaoException(
-						new ValidacaoVO(TipoMensagem.WARNING, "Não é possível excluir um roteiro que possui rotas associadas a um transportador"));
+						new ValidacaoVO(TipoMensagem.WARNING, "Não é possível modificar este roteiro, pois ele esta associado a um transportador. "));
 			}
 		}
 		
