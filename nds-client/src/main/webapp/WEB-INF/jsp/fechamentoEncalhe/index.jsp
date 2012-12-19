@@ -81,6 +81,15 @@
 		</fieldset>
 	</div>
 	</form>
+	
+	<form id="form-confirmar-regerar-cobranca">
+		<div id="dialog-confirmar-regerar-cobranca" title="Regerar Cobrança" style="display: none;">
+			<fieldset>
+				<legend>Regerar cobrança?</legend>
+				<p id="msgRegerarCobranca"></p>
+			</fieldset>
+		</div>
+	</form>
 	<div class="areaBts">
 		<div class="area">
 			<div id="divBotoesPrincipais" style="display:none; float:left;">

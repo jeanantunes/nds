@@ -928,7 +928,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	}
 	
 	@Transactional(rollbackFor=Exception.class)
-	public DadosDocumentacaoConfEncalheCotaDTO finalizarConferenciaEncalhe(
+	public List<DadosDocumentacaoConfEncalheCotaDTO> finalizarConferenciaEncalhe(
 			ControleConferenciaEncalheCota controleConfEncalheCota, 
 			List<ConferenciaEncalheDTO> listaConferenciaEncalhe, 
 			Set<Long> listaIdConferenciaEncalheParaExclusao,
@@ -958,36 +958,35 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		Set<String> nossoNumeroCollection = gerarCobranca(controleConfEncalheCota);
 		
-		String nossoNumero = "";
+		List<DadosDocumentacaoConfEncalheCotaDTO> dtosDoc = new ArrayList<DadosDocumentacaoConfEncalheCotaDTO>();
+		
+		PoliticaCobranca politicaCobranca = politicaCobrancaService.obterPoliticaCobrancaPrincipal();
+		FormaEmissao formaEmissao = politicaCobranca.getFormaEmissao();
+		ParametrosDistribuidorVO parametrosDistribuidor = parametrosDistribuidorService.getParametrosDistribuidor();
 		
 		if(nossoNumeroCollection!=null && !nossoNumeroCollection.isEmpty()) {
 			
-			nossoNumero = nossoNumeroCollection.iterator().next();
+			DadosDocumentacaoConfEncalheCotaDTO documentoConferenciaEncalhe = null;
 			
-			if(nossoNumero!=null && !nossoNumero.trim().isEmpty()) {
-				associarCobrancaConferenciaEncalheCota(controleConfEncalheCota.getId(), nossoNumero);
+			for (String nossoNumero : nossoNumeroCollection){
+				
+				if(nossoNumero!=null && !nossoNumero.trim().isEmpty()) {
+					associarCobrancaConferenciaEncalheCota(controleConfEncalheCota.getId(), nossoNumero);
+				}
+				
+				documentoConferenciaEncalhe = new DadosDocumentacaoConfEncalheCotaDTO();
+				
+				documentoConferenciaEncalhe.setIdControleConferenciaEncalheCota(controleConfEncalheCota.getId());
+				documentoConferenciaEncalhe.setNossoNumero(nossoNumero);
+				documentoConferenciaEncalhe.setIndGeraDocumentacaoConferenciaEncalhe(FormaEmissao.INDIVIDUAL_BOX.equals(formaEmissao));
+				documentoConferenciaEncalhe.setUtilizaSlipBoleto(parametrosDistribuidor.getBoletoSlipImpressao());
+				documentoConferenciaEncalhe.setUtilizaSlip(parametrosDistribuidor.getSlipImpressao());
+				
+				dtosDoc.add(documentoConferenciaEncalhe);
 			}
-			
 		}
 		
-		DadosDocumentacaoConfEncalheCotaDTO documentoConferenciaEncalhe = new DadosDocumentacaoConfEncalheCotaDTO();
-		
-		documentoConferenciaEncalhe.setIdControleConferenciaEncalheCota(controleConfEncalheCota.getId());
-		documentoConferenciaEncalhe.setNossoNumero(nossoNumero);
-
-		PoliticaCobranca politicaCobranca = politicaCobrancaService.obterPoliticaCobrancaPrincipal();
-		FormaEmissao formaEmissao = politicaCobranca.getFormaEmissao();
-		
-		documentoConferenciaEncalhe.setIndGeraDocumentacaoConferenciaEncalhe(FormaEmissao.INDIVIDUAL_BOX.equals(formaEmissao));
-		
-		ParametrosDistribuidorVO parametrosDistribuidor = parametrosDistribuidorService.getParametrosDistribuidor();
-		
-		documentoConferenciaEncalhe.setUtilizaSlipBoleto(parametrosDistribuidor.getBoletoSlipImpressao());
-		
-		documentoConferenciaEncalhe.setUtilizaSlip(parametrosDistribuidor.getSlipImpressao());
-		
-		return documentoConferenciaEncalhe;
-		
+		return dtosDoc;
 	}
 	
 	//caso haja negociação por comissão da cota será abatida aqui
@@ -1094,7 +1093,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				movimentoFinanceiroCotaRepository.obterMovimentoFinanceiroCotaParaMovimentoEstoqueCota(movimentoEstoqueCota.getId());
 		
 		if(movimentoFinanceiroCota!=null) {
-			gerarCobrancaService.cancelarDividaCobranca(movimentoFinanceiroCota.getId());
+			gerarCobrancaService.cancelarDividaCobranca(movimentoFinanceiroCota.getId(), null);
 			movimentoFinanceiroCotaRepository.remover(movimentoFinanceiroCota);
 		}
 		
