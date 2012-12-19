@@ -32,6 +32,7 @@ import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.ChamadaAntecipadaEncalheService;
 import br.com.abril.nds.service.FechamentoEncalheService;
 import br.com.abril.nds.service.FornecedorService;
+import br.com.abril.nds.service.GerarCobrancaService;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.export.FileExporter;
@@ -40,6 +41,7 @@ import br.com.abril.nds.util.export.NDSFileHeader;
 import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
+import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
@@ -77,6 +79,9 @@ public class FechamentoEncalheController {
 	
 	@Autowired
 	private ChamadaAntecipadaEncalheService chamadaAntecipadaEncalheService;
+	
+	@Autowired
+	private GerarCobrancaService gerarCobrancaService;
 	
 	@Path("/")
 	@Rules(Permissao.ROLE_RECOLHIMENTO_FECHAMENTO_ENCALHE)
@@ -201,6 +206,27 @@ public class FechamentoEncalheController {
 		Date resultado = chamadaAntecipadaEncalheService.obterProximaDataEncalhe(date);
 		
 		this.result.use(Results.json()).from(resultado, "resultado").serialize();
+	}
+	
+	@Post
+	public void veificarCobrancaGerada(List<Long> idsCotas){
+		
+		if (idsCotas == null || idsCotas.isEmpty()) {
+			this.result.use(Results.json()).from(
+				new ValidacaoVO(TipoMensagem.WARNING, "Selecine pelo menos uma Cota para cobrar!"), "result").recursive().serialize();
+			throw new ValidacaoException();
+		}
+		
+		if (this.gerarCobrancaService.verificarCobrancasGeradas(idsCotas)){
+			
+			this.result.use(Results.json()).from(
+					new ValidacaoVO(TipoMensagem.WARNING, 
+							"Já existe cobrança gerada para a data de operação atual, continuar irá sobrescreve-la. Deseja continuar?"), 
+							"result").recursive().serialize();
+			return;
+		}
+		
+		this.result.use(Results.json()).from("").serialize();
 	}
 
 	@Path("/cobrarCotas")
