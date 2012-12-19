@@ -17,6 +17,7 @@ public abstract class AbstractMovimentoEstoque extends Movimento {
 
 	@Column(name = "QTDE", nullable = false)
 	protected BigInteger qtde;
+	
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "PRODUTO_EDICAO_ID")
 	protected ProdutoEdicao produtoEdicao;

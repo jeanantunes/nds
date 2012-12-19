@@ -109,7 +109,7 @@ public class AlteracaoCotaRepositoryImpl extends
 		if (filtroAlteracaoCotaDTO.getIdBairro() != null
 				&& !filtroAlteracaoCotaDTO.getIdBairro().isEmpty()
 				&& !"-1".equals(filtroAlteracaoCotaDTO.getIdBairro())) {
-			sql.append(" endereco.BAIRRO = :idBairro ");
+			sql.append(" AND endereco.BAIRRO = :idBairro ");
 
 		}
 

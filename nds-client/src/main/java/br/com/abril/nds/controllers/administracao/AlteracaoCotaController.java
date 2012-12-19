@@ -140,6 +140,11 @@ public class AlteracaoCotaController {
 		filtroAlteracaoCotaDTO.setNomeCota(PessoaUtil.removerSufixoDeTipo(filtroAlteracaoCotaDTO.getNomeCota()));
 		
 		List<ConsultaAlteracaoCotaDTO> listaCotas = this.alteracaoCotaService.pesquisarAlteracaoCota(filtroAlteracaoCotaDTO);
+		
+		if (listaCotas == null || listaCotas.isEmpty()) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
+		}
+		
 		final int qtdCotas = this.alteracaoCotaService.contarAlteracaoCota(
 				filtroAlteracaoCotaDTO);		
 		
