@@ -25,6 +25,8 @@
 	<parameter name="VALOR_TOTAL_GERAL" class="java.lang.String"/>
 	<parameter name="NUM_SLIP" class="java.lang.String"/>
 	<parameter name="TITULO_RELATORIO" class="java.lang.String"/>
+	<parameter name="NOME_DISTRIBUIDOR" class="java.lang.String"/>
+	<parameter name="LOGO_DISTRIBUIDOR" class="java.awt.Image"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -39,29 +41,26 @@
 	</background>
 	<title>
 		<band height="90" splitType="Stretch">
-			<image>
+			<image scaleImage="RetainShape" isUsingCache="true">
 				<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="145" height="90"/>
 				<box>
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
 					<bottomPen lineWidth="1.0"/>
 				</box>
-				<imageExpression><![CDATA[Thread.currentThread().getContextClassLoader().getResource("/reports/logo_2.jpg").toURI().getPath()]]></imageExpression>
+				<imageExpression><![CDATA[$P{LOGO_DISTRIBUIDOR}]]></imageExpression>
 			</image>
-			<staticText>
+			<textField>
 				<reportElement x="145" y="0" width="126" height="90"/>
-				<box topPadding="0">
+				<box>
 					<topPen lineWidth="1.0"/>
 					<bottomPen lineWidth="1.0"/>
-					<rightPen lineWidth="1.0"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 					<font size="14" isBold="true"/>
 				</textElement>
-				<text><![CDATA[TREELOG S/A
-LOGÍSTICA E
-DISTRIBUIÇÃO]]></text>
-			</staticText>
+				<textFieldExpression><![CDATA[$P{NOME_DISTRIBUIDOR}]]></textFieldExpression>
+			</textField>
 			<textField>
 				<reportElement x="271" y="33" width="225" height="35"/>
 				<box leftPadding="3">
