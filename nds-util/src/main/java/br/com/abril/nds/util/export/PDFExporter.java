@@ -193,6 +193,7 @@ public class PDFExporter implements Exporter {
 	
 	private Image createLogotipoImage() throws IOException, BadElementException {
 		
+//		TODO: pegar do couch...
 		InputStream inputStream = 
 			Thread.currentThread().getContextClassLoader().getResourceAsStream("logo_sistema.png");
 
