@@ -1,6 +1,7 @@
 package br.com.abril.nds.service.impl;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -29,6 +30,8 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.ControleFechamentoEncalhe;
 import br.com.abril.nds.model.estoque.FechamentoEncalhe;
 import br.com.abril.nds.model.estoque.FechamentoEncalheBox;
+import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
+import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.pk.FechamentoEncalheBoxPK;
 import br.com.abril.nds.model.estoque.pk.FechamentoEncalhePK;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
@@ -49,10 +52,12 @@ import br.com.abril.nds.repository.FechamentoEncalheBoxRepository;
 import br.com.abril.nds.repository.FechamentoEncalheRepository;
 import br.com.abril.nds.repository.NotaFiscalRepository;
 import br.com.abril.nds.repository.ProdutoServicoRepository;
+import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
 import br.com.abril.nds.repository.TipoNotaFiscalRepository;
 import br.com.abril.nds.service.FechamentoEncalheService;
 import br.com.abril.nds.service.GerarCobrancaService;
+import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
 import br.com.abril.nds.service.NotaFiscalService;
 import br.com.abril.nds.util.DateUtil;
@@ -99,6 +104,12 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 	
 	@Autowired
 	private ProdutoServicoRepository produtoServicoRepository;
+	
+	@Autowired
+	private MovimentoEstoqueService movimentoEstoqueService;
+	
+	@Autowired
+	private TipoMovimentoEstoqueRepository tipoMovimentoEstoqueRepository;
 	
 	@Override
 	@Transactional
@@ -309,10 +320,10 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 	
 			for (Cota cota : listaCotas) {
 	
-				Distribuidor distribuidor = this.distribuidorService.obter();
+				Date dataOperacaoDistribuidor = this.distribuidorService.obterDatatOperacaoDistribuidor();
 				
 				TipoMovimentoFinanceiro tipoMovimentoFinanceiro = 
-					this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(GrupoMovimentoFinaceiro.ENVIO_ENCALHE);
+					this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(GrupoMovimentoFinaceiro.VENDA_TOTAL);
 				
 				MovimentoFinanceiroCotaDTO movimentoFinanceiroCotaDTO = new MovimentoFinanceiroCotaDTO();
 				
@@ -320,17 +331,15 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 				movimentoFinanceiroCotaDTO.setTipoMovimentoFinanceiro(tipoMovimentoFinanceiro);
 				movimentoFinanceiroCotaDTO.setUsuario(usuario);
 				movimentoFinanceiroCotaDTO.setValor(this.buscarValorTotalEncalhe(dataOperacao, cota.getId()));
-				movimentoFinanceiroCotaDTO.setDataOperacao(distribuidor.getDataOperacao());
+				movimentoFinanceiroCotaDTO.setDataOperacao(dataOperacaoDistribuidor);
 				movimentoFinanceiroCotaDTO.setBaixaCobranca(null);
-				movimentoFinanceiroCotaDTO.setDataVencimento(distribuidor.getDataOperacao());
-				movimentoFinanceiroCotaDTO.setDataAprovacao(distribuidor.getDataOperacao());
-				movimentoFinanceiroCotaDTO.setDataCriacao(distribuidor.getDataOperacao());
+				movimentoFinanceiroCotaDTO.setDataVencimento(dataOperacaoDistribuidor);
+				movimentoFinanceiroCotaDTO.setDataAprovacao(dataOperacaoDistribuidor);
+				movimentoFinanceiroCotaDTO.setDataCriacao(dataOperacaoDistribuidor);
 				movimentoFinanceiroCotaDTO.setObservacao(null);
 				movimentoFinanceiroCotaDTO.setTipoEdicao(TipoEdicao.INCLUSAO);
 				movimentoFinanceiroCotaDTO.setAprovacaoAutomatica(true);
 				movimentoFinanceiroCotaDTO.setLancamentoManual(false);
-				
-				//gerar movimento estoque cota
 				
 				this.movimentoFinanceiroCotaService.gerarMovimentosFinanceirosDebitoCredito(movimentoFinanceiroCotaDTO);
 	
@@ -338,15 +347,26 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 				
 				List<ChamadaEncalhe> listaChamadaEncalhe = 
 					this.chamadaEncalheRepository.obterChamadasEncalhePor(dataOperacao, cota.getId());
-			
+				
+				TipoMovimentoEstoque tipoMovimentoEstoque =
+						this.tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.RECEBIMENTO_ENCALHE);
+				
 				for (ChamadaEncalhe chamadaEncalhe : listaChamadaEncalhe) {
 					
-					chamadaEncalhe.setDataRecolhimento(distribuidor.getDataOperacao());
+					chamadaEncalhe.setDataRecolhimento(dataOperacaoDistribuidor);
 					
 					for (ChamadaEncalheCota chamadaEncalheCota : chamadaEncalhe.getChamadaEncalheCotas()) {
 						
 						chamadaEncalheCota.setFechado(true);
 					}
+					
+					this.movimentoEstoqueService.gerarMovimentoCota(
+							new Date(), 
+							chamadaEncalhe.getProdutoEdicao().getId(), 
+							cota.getId(), 
+							usuario.getId(), 
+							BigInteger.ZERO, 
+							tipoMovimentoEstoque);
 
 					this.chamadaEncalheRepository.merge(chamadaEncalhe);
 				}
