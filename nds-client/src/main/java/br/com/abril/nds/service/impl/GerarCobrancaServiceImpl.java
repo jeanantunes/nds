@@ -25,9 +25,11 @@ import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.financeiro.Boleto;
 import br.com.abril.nds.model.financeiro.Cobranca;
+import br.com.abril.nds.model.financeiro.CobrancaBoletoEmBranco;
 import br.com.abril.nds.model.financeiro.CobrancaCheque;
 import br.com.abril.nds.model.financeiro.CobrancaDeposito;
 import br.com.abril.nds.model.financeiro.CobrancaDinheiro;
+import br.com.abril.nds.model.financeiro.CobrancaOutros;
 import br.com.abril.nds.model.financeiro.CobrancaTransferenciaBancaria;
 import br.com.abril.nds.model.financeiro.ConsolidadoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.ControleBaixaBancaria;
@@ -586,6 +588,13 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 									movimentoFinanceiroCota.getValor().negate() : 
 										BigDecimal.ZERO);
 				break;
+				case VENDA_TOTAL:
+					vlMovFinanTotal = 
+						vlMovFinanTotal.add(
+							movimentoFinanceiroCota.getValor() != null ? 
+									movimentoFinanceiroCota.getValor().negate() : 
+										BigDecimal.ZERO);
+				break;
 			}
 		}
 		
@@ -772,22 +781,24 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			movimentoFinanceiroCota.setLancamentoManual(false);
 			movimentoFinanceiroCota.setCota(cota);
 			
-			tipoMovimentoFinanceiro = new TipoMovimentoFinanceiro();
-			tipoMovimentoFinanceiro.setAprovacaoAutomatica(false);
-			tipoMovimentoFinanceiro.setGrupoMovimentoFinaceiro(GrupoMovimentoFinaceiro.DEBITO);
+			tipoMovimentoFinanceiro = 
+					this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
+							GrupoMovimentoFinaceiro.POSTERGADO);
 			
 			String descPostergado = null;
 			
-			if (diasSemanaConcentracaoPagamento != null && !diasSemanaConcentracaoPagamento.contains(Calendar.getInstance().get(Calendar.DAY_OF_MONTH))){
+			if (diasSemanaConcentracaoPagamento != null && 
+					!diasSemanaConcentracaoPagamento.contains(Calendar.getInstance().get(Calendar.DAY_OF_MONTH))){
 				
-				descPostergado = "Não existe acúmulo de pagamento para este dia (" + new SimpleDateFormat("dd/MM/yyyy").format(Calendar.getInstance().getTime()) + ")";
+				descPostergado = "Não existe acúmulo de pagamento para este dia (" + 
+						new SimpleDateFormat("dd/MM/yyyy").format(Calendar.getInstance().getTime()) + ")";
 			} else {
 				
 				descPostergado = "Valor mínimo para dívida não atingido";
 			}
 			
 			movimentoFinanceiroCota.setMotivo(descPostergado);
-			tipoMovimentoFinanceiro.setDescricao("Geração de dívida - " + descPostergado);
+			
 			
 			movimentoFinanceiroCota.setTipoMovimento(tipoMovimentoFinanceiro);
 		}
@@ -821,6 +832,12 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 					cobranca = new CobrancaDeposito();
 				case TRANSFERENCIA_BANCARIA:
 					cobranca = new CobrancaTransferenciaBancaria();
+				break;
+				case BOLETO_EM_BRANCO:
+					cobranca = new CobrancaBoletoEmBranco();
+				break;
+				case OUTROS:
+					cobranca = new CobrancaOutros();
 				break;
 			}
 			
@@ -867,8 +884,13 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			}
 		}
 		
-		if (movimentoFinanceiroCota != null){
+		if (tipoMovimentoFinanceiro.getId() == null){
+			
 			this.tipoMovimentoFinanceiroRepository.adicionar(tipoMovimentoFinanceiro);
+		}
+		
+		if (movimentoFinanceiroCota != null){
+			
 			this.movimentoFinanceiroCotaRepository.adicionar(movimentoFinanceiroCota);
 		}
 		

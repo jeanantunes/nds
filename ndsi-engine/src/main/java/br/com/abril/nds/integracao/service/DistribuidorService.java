@@ -1,5 +1,6 @@
 package br.com.abril.nds.integracao.service;
 
+import java.util.Date;
 import java.util.List;
 
 import br.com.abril.nds.dto.DistribuidorDTO;
@@ -23,5 +24,7 @@ public interface DistribuidorService {
 	List<ItemDTO<TipoGarantia, String>> getComboTiposGarantia();
 	
 	List<ItemDTO<TipoStatusGarantia, String>> getComboTiposStatusGarantia();
+
+	Date obterDatatOperacaoDistribuidor();
 	
 }

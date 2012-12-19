@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 import br.com.abril.nds.model.DiaSemana;
@@ -46,4 +47,6 @@ public interface DistribuidorRepository extends Repository<Distribuidor, Long> {
 	String obterInformacoesComplementaresTermoAdesao();
 
 	DiaSemana buscarInicioSemana();
+	
+	Date obterDatatOperacaoDistribuidor();
 }
