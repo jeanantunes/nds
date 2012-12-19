@@ -42,6 +42,7 @@ import br.com.abril.nds.model.financeiro.StatusInadimplencia;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.ChamadaEncalheCotaRepository;
+import br.com.abril.nds.repository.CobrancaControleConferenciaEncalheCotaRepository;
 import br.com.abril.nds.repository.CobrancaRepository;
 import br.com.abril.nds.repository.ConsolidadoFinanceiroRepository;
 import br.com.abril.nds.repository.ControleBaixaBancariaRepository;
@@ -131,6 +132,9 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 	
 	@Autowired
 	private GeradorArquivoCobrancaBancoService geradorArquivoCobrancaBancoService;
+	
+	@Autowired
+	private CobrancaControleConferenciaEncalheCotaRepository cobrancaControleConferenciaEncalheCotaRepository;
 	
 	/**
 	 * Obtém a situação da cota
@@ -884,12 +888,13 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			}
 		}
 		
-		if (tipoMovimentoFinanceiro.getId() == null){
-			
-			this.tipoMovimentoFinanceiroRepository.adicionar(tipoMovimentoFinanceiro);
-		}
-		
 		if (movimentoFinanceiroCota != null){
+			
+			if (tipoMovimentoFinanceiro != null && 
+					tipoMovimentoFinanceiro.getId() == null){
+				
+				this.tipoMovimentoFinanceiroRepository.adicionar(tipoMovimentoFinanceiro);
+			}
 			
 			this.movimentoFinanceiroCotaRepository.adicionar(movimentoFinanceiroCota);
 		}
@@ -951,8 +956,9 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 				
 				if (divida != null){
 				
-					this.cobrancaRepository.excluirCobrancaPorIdDivida(divida.getId());
-					
+					this.cobrancaControleConferenciaEncalheCotaRepository.excluirPorCobranca(
+							divida.getCobranca().getId());
+					this.cobrancaRepository.remover(divida.getCobranca());
 					this.dividaRepository.remover(divida);
 				}
 				
