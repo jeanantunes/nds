@@ -457,7 +457,7 @@ var fechamentoEncalheController = $.extend(true, {
 					fechamentoEncalheController.postergarCotas();
 				},
 				"Cobrar": function() {
-					fechamentoEncalheController.cobrarCotas();
+					fechamentoEncalheController.veificarCobrancaGerada();
 				},
 				"Cancelar": function() {
 					$(this).dialog( "close" );
@@ -593,6 +593,45 @@ var fechamentoEncalheController = $.extend(true, {
 			   	'dialogMensagemPostergarCotas'
 		);
 
+	},
+	
+	veificarCobrancaGerada: function(){
+		
+		$.postJSON(contextPath + '/devolucao/fechamentoEncalhe/veificarCobrancaGerada',
+				{'idsCotas' : fechamentoEncalheController.obterCotasMarcadas() },
+		
+			function(conteudo){
+			
+				if(conteudo && conteudo.tipoMensagem == 'WARNING') {
+					
+					$("#msgRegerarCobranca", fechamentoEncalheController.workspace).text(conteudo.listaMensagens[0]);
+					
+					$("#dialog-confirmar-regerar-cobranca", fechamentoEncalheController.workspace).dialog({
+						resizable : false,
+						height : 'auto',
+						width : 680,
+						modal : true,
+						buttons : {
+							"Confirmar" : function() {
+								
+								$("#dialog-confirmar-regerar-cobranca", fechamentoEncalheController.workspace).dialog("close");
+								fechamentoEncalheController.cobrarCotas();
+							},
+							"Cancelar" : function(){
+							
+								$("#dialog-confirmar-regerar-cobranca", fechamentoEncalheController.workspace).dialog("close");
+							}
+						},
+						form: $("#dialog-confirmar-regerar-cobranca", this.workspace).parents("form")
+					});
+					
+				} else {
+					
+					fechamentoEncalheController.cobrarCotas();
+				}
+				
+			}, null, true, "dialog-confirmar-regerar-cobranca"
+		);
 	},
 	
 	cobrarCotas : function() {
