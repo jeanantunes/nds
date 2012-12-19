@@ -21,138 +21,146 @@
 			Não foi feita a Geração de Dívidas para esta data.
 		</div>	
 	</form>
-		<form id="pesquisaDividasForm"
-				name="pesquisaDividasForm" 
-				method="post">
-			<div class="areaBts">
-				<div class="area">
-					<div id="divImpressoes" style="display: none">
-						<span class="bt_novos">
-							<a href="javascript:impressaoBoletosController.imprimirDividas('BOLETO')" rel="tipsy" title="Imprimir Boletos">
-								<img src="${pageContext.request.contextPath}/images/ico_integrar.png" hspace="5" border="0" />
-							</a>
-						</span>
-						
-						<span class="bt_novos">
-							<a href="javascript:impressaoBoletosController.imprimirDividas('DIVIDA')" rel="tipsy" title="Imprimir Dividas">
-								<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
-							</a>
-						</span>
-					</div>
-				
-					<div id="divGerarDivida" style="display: none">
-   						<span class="bt_novos" style="margin-left:20px;">
-   							<a href="javascript:impressaoBoletosController.gerarDivida();" id="btnGerarDivida" rel="tipsy" title="Gerar Dívida">
-   								<img src="${pageContext.request.contextPath}/images/ico_redistribuicao_complementar.gif" hspace="5" border="0" />
-   							</a>
-   						</span>
-  					</div>
-  					
-  					<span class="bt_arq">
-          				<a href="${pageContext.request.contextPath}/financeiro/impressaoBoletos/exportar?fileType=XLS" rel="tipsy" title="Gerar Arquivo">
-          					<img src="${pageContext.request.contextPath}/images/ico_excel.png"  hspace="5" border="0" />
-          				</a>
-          			</span>
-					<span class="bt_arq">
-						<a href="${pageContext.request.contextPath}/financeiro/impressaoBoletos/exportar?fileType=PDF" rel="tipsy" title="Imprimir">
+	<form id="form-confirmar-regerar-cobranca">
+		<div id="dialog-confirmar-regerar-cobranca" title="Regerar Cobrança" style="display: none;">
+			<fieldset>
+				<legend>Regerar cobrança?</legend>
+				<p id="msgRegerarCobranca"></p>
+			</fieldset>
+		</div>
+	</form>
+	<form id="pesquisaDividasForm"
+			name="pesquisaDividasForm" 
+			method="post">
+		<div class="areaBts">
+			<div class="area">
+				<div id="divImpressoes" style="display: none">
+					<span class="bt_novos">
+						<a href="javascript:impressaoBoletosController.imprimirDividas('BOLETO')" rel="tipsy" title="Imprimir Boletos">
+							<img src="${pageContext.request.contextPath}/images/ico_integrar.png" hspace="5" border="0" />
+						</a>
+					</span>
+					
+					<span class="bt_novos">
+						<a href="javascript:impressaoBoletosController.imprimirDividas('DIVIDA')" rel="tipsy" title="Imprimir Dividas">
 							<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
 						</a>
 					</span>
 				</div>
+			
+				<div id="divGerarDivida" style="display: none">
+  						<span class="bt_novos" style="margin-left:20px;">
+  							<a href="javascript:impressaoBoletosController.veificarCobrancaGerada();" id="btnGerarDivida" rel="tipsy" title="Gerar Dívida">
+  								<img src="${pageContext.request.contextPath}/images/ico_redistribuicao_complementar.gif" hspace="5" border="0" />
+  							</a>
+  						</span>
+ 					</div>
+ 					
+ 					<span class="bt_arq">
+         				<a href="${pageContext.request.contextPath}/financeiro/impressaoBoletos/exportar?fileType=XLS" rel="tipsy" title="Gerar Arquivo">
+         					<img src="${pageContext.request.contextPath}/images/ico_excel.png"  hspace="5" border="0" />
+         				</a>
+         			</span>
+				<span class="bt_arq">
+					<a href="${pageContext.request.contextPath}/financeiro/impressaoBoletos/exportar?fileType=PDF" rel="tipsy" title="Imprimir">
+						<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
+					</a>
+				</span>
 			</div>
-			<div class="linha_separa_fields">&nbsp;</div>
-			<fieldset class="fieldFiltro">
-		   	    <legend> Gerar Dívida</legend>
-		   	    	<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
-	  					<tr>
-						    <td width="29">Data:</td>
-						    <td width="125"><input type="text" name="dataMovimento" id="dataMovimento" onchange="impressaoBoletosController.habilitarAcaoGeracaoDivida(this.value);" style="width:70px; float:left; margin-right:5px;" /></td>
-						    <td width="49">Box</td>
-						    <td width="169">
-						    	<select name="box" id="box" style="width:70px; float:left; margin-right:5px;" onchange="impressaoBoletosController.recarregarComboRoteiroRotas(this.value)">
-							      <option selected="selected" value="">Todos</option>
-							      <c:forEach var="box" items="${listaBoxes}">
-											<option value="${box.key}">${box.value}</option>
-								  </c:forEach>
-							    </select>
-						    </td>
-						    <td width="43">Roteiro</td>
-						    <td width="198">
-						    	<select name="roteiro" id="roteiro" style="width:160px; float:left; margin-right:5px;" onchange="impressaoBoletosController.recarregarComboRotas(this.value)" >
-							      <option selected="selected" value="">Todos</option>
-							      <c:forEach var="roteiro" items="${listaRoteiros}">
-											<option value="${roteiro.key}">${roteiro.value}</option>
-								  </c:forEach>
-							    </select>
-						    </td>
-						    <td width="54">Rota</td>
-						    <td width="242">
-						    	<select name="rota" id="rota" style="width:160px; float:left; margin-right:5px;"  >
-							      <option selected="selected" value="">Todos</option>
-							      <c:forEach var="rota" items="${listaRotas}">
-											<option value="${rota.key}">${rota.value}</option>
-								  </c:forEach>
-							    </select>
-						    </td>
-					    </tr>
-	 		 			<tr>
-	    					<td>Cota:</td>
-	    					<td>
-	    						<input name="numCota" 
-				              		   id="numCota" 
-				              		   type="text"
-				              		   maxlength="11"
-				              		   style="width:70px; 
-				              		   float:left; margin-right:5px;"
-				              		   onchange="pesquisaCotaImpressaoBoletos.pesquisarPorNumeroCota('#numCota', '#descricaoCota',false,
-				              	  											impressaoBoletosController.pesquisarCotaSuccessCallBack, 
-				              	  											impressaoBoletosController.pesquisarCotaErrorCallBack);" />
-	      					</td>
-	    					<td>Nome:</td>
-	    					<td>
-	    						 <input  name="descricaoCota" 
-							      		 id="descricaoCota" 
-							      		 type="text" 
-							      		 class="nome_jornaleiro" 
-							      		 maxlength="255"
-							      		 style="width:130px;"
-							      		 onkeyup="pesquisaCotaImpressaoBoletos.autoCompletarPorNome('#descricaoCota');" 
-							      		 onblur="pesquisaCotaImpressaoBoletos.pesquisarPorNomeCota('#numCota', '#descricaoCota',false,
-							      		 									impressaoBoletosController.pesquisarCotaSuccessCallBack,
-							      		 									impressaoBoletosController.pesquisarCotaErrorCallBack);" />
-	    					</td>
-						    <td>Tipo</td>
-						    <td>
-						    	<select name="tipoCobranca" id="tipoCobranca" style="width: 200px;">
-									<option selected="selected" value="">Todos</option>
-									<c:forEach var="tipo" items="${listaTipoCobranca}">
-										<option value="${tipo.key}">${tipo.value}</option>
-									</c:forEach>
-								</select>
-								
-						    </td>
-						    <td>&nbsp;</td>
-						    <td>
-						    	<span class="bt_novos">
-						    		<a href="javascript:impressaoBoletosController.validarPesquisa();"><img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" /></a>
-						    	</span>
-	    						
-	   						</td>
-	    				</tr>
-		  		</table>
-		    </fieldset>
-		 </form>
-		 
+		</div>
 		<div class="linha_separa_fields">&nbsp;</div>
-			
-		<fieldset class="fieldGrid">
-			<legend>Dividas Geradas</legend>
-				<div class="grids" id="grids" style="display:none;">
-					<table class="impressosGrid" id="impressosGrid"></table>
-          			
-					
-				</div>
-      	</fieldset>
-			
-		<div class="linha_separa_fields">&nbsp;</div>
+		<fieldset class="fieldFiltro">
+	   	    <legend> Gerar Dívida</legend>
+	   	    	<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
+  					<tr>
+					    <td width="29">Data:</td>
+					    <td width="125"><input type="text" name="dataMovimento" id="dataMovimento" onchange="impressaoBoletosController.habilitarAcaoGeracaoDivida(this.value);" style="width:70px; float:left; margin-right:5px;" /></td>
+					    <td width="49">Box</td>
+					    <td width="169">
+					    	<select name="box" id="box" style="width:70px; float:left; margin-right:5px;" onchange="impressaoBoletosController.recarregarComboRoteiroRotas(this.value)">
+						      <option selected="selected" value="">Todos</option>
+						      <c:forEach var="box" items="${listaBoxes}">
+										<option value="${box.key}">${box.value}</option>
+							  </c:forEach>
+						    </select>
+					    </td>
+					    <td width="43">Roteiro</td>
+					    <td width="198">
+					    	<select name="roteiro" id="roteiro" style="width:160px; float:left; margin-right:5px;" onchange="impressaoBoletosController.recarregarComboRotas(this.value)" >
+						      <option selected="selected" value="">Todos</option>
+						      <c:forEach var="roteiro" items="${listaRoteiros}">
+										<option value="${roteiro.key}">${roteiro.value}</option>
+							  </c:forEach>
+						    </select>
+					    </td>
+					    <td width="54">Rota</td>
+					    <td width="242">
+					    	<select name="rota" id="rota" style="width:160px; float:left; margin-right:5px;"  >
+						      <option selected="selected" value="">Todos</option>
+						      <c:forEach var="rota" items="${listaRotas}">
+										<option value="${rota.key}">${rota.value}</option>
+							  </c:forEach>
+						    </select>
+					    </td>
+				    </tr>
+ 		 			<tr>
+    					<td>Cota:</td>
+    					<td>
+    						<input name="numCota" 
+			              		   id="numCota" 
+			              		   type="text"
+			              		   maxlength="11"
+			              		   style="width:70px; 
+			              		   float:left; margin-right:5px;"
+			              		   onchange="pesquisaCotaImpressaoBoletos.pesquisarPorNumeroCota('#numCota', '#descricaoCota',false,
+			              	  											impressaoBoletosController.pesquisarCotaSuccessCallBack, 
+			              	  											impressaoBoletosController.pesquisarCotaErrorCallBack);" />
+      					</td>
+    					<td>Nome:</td>
+    					<td>
+    						 <input  name="descricaoCota" 
+						      		 id="descricaoCota" 
+						      		 type="text" 
+						      		 class="nome_jornaleiro" 
+						      		 maxlength="255"
+						      		 style="width:130px;"
+						      		 onkeyup="pesquisaCotaImpressaoBoletos.autoCompletarPorNome('#descricaoCota');" 
+						      		 onblur="pesquisaCotaImpressaoBoletos.pesquisarPorNomeCota('#numCota', '#descricaoCota',false,
+						      		 									impressaoBoletosController.pesquisarCotaSuccessCallBack,
+						      		 									impressaoBoletosController.pesquisarCotaErrorCallBack);" />
+    					</td>
+					    <td>Tipo</td>
+					    <td>
+					    	<select name="tipoCobranca" id="tipoCobranca" style="width: 200px;">
+								<option selected="selected" value="">Todos</option>
+								<c:forEach var="tipo" items="${listaTipoCobranca}">
+									<option value="${tipo.key}">${tipo.value}</option>
+								</c:forEach>
+							</select>
+							
+					    </td>
+					    <td>&nbsp;</td>
+					    <td>
+					    	<span class="bt_novos">
+					    		<a href="javascript:impressaoBoletosController.validarPesquisa();"><img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" /></a>
+					    	</span>
+    						
+   						</td>
+    				</tr>
+	  		</table>
+	    </fieldset>
+	 </form>
+	 
+	<div class="linha_separa_fields">&nbsp;</div>
+		
+	<fieldset class="fieldGrid">
+		<legend>Dividas Geradas</legend>
+			<div class="grids" id="grids" style="display:none;">
+				<table class="impressosGrid" id="impressosGrid"></table>
+         			
+				
+			</div>
+     	</fieldset>
+		
+	<div class="linha_separa_fields">&nbsp;</div>
 </body>

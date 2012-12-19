@@ -174,7 +174,7 @@ public interface ConferenciaEncalheService {
 	 * @param listaIdConferenciaEncalheParaExclusao
 	 * @param usuario
 	 */
-	public DadosDocumentacaoConfEncalheCotaDTO finalizarConferenciaEncalhe(
+	public List<DadosDocumentacaoConfEncalheCotaDTO> finalizarConferenciaEncalhe(
 			ControleConferenciaEncalheCota controleConfEncalheCota, 
 			List<ConferenciaEncalheDTO> listaConferenciaEncalhe, 
 			Set<Long> listaIdConferenciaEncalheParaExclusao,

@@ -59,18 +59,24 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 		
 		StringBuilder hql = new StringBuilder("select mfc ");
 		hql.append(" from MovimentoFinanceiroCota mfc, Distribuidor d ")
+		   .append(" join mfc.cota cota ")   
+		   .append(" left join mfc.movimentos movimentoEstoque ")
+		   .append(" left join movimentoEstoque.produtoEdicao pe ")
+		   .append(" left join pe.produto p ")
+		   .append(" left join p.fornecedores fornecedor ")
 		   .append(" where mfc.data = d.dataOperacao ")
 		   .append(" and mfc.status = :statusAprovado ");
 		
 		if (idCota != null){
-			hql.append(" and mfc.cota.id = :idCota ");
+			hql.append(" and cota.id = :idCota ");
 		}
 		
-		hql.append(" and mfc.cota.situacaoCadastro != :inativo and mfc.cota.situacaoCadastro != :pendente ")
+		hql.append(" and cota.situacaoCadastro != :inativo and cota.situacaoCadastro != :pendente ")
 		   .append(" and mfc.id not in ")
 		   .append(" (select mov.id from ConsolidadoFinanceiroCota c join c.movimentos mov) ");
 		
-		hql.append(" order by mfc.cota.id ");
+		hql.append(" group by mfc.id ")
+		   .append(" order by cota.id, fornecedor.id ");
 		
 		Query query = this.getSession().createQuery(hql.toString());
 		query.setParameter("statusAprovado", StatusAprovacao.APROVADO);

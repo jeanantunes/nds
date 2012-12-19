@@ -28,20 +28,6 @@ public class ConsolidadoFinanceiroRepositoryImplTest extends
 	private ConsolidadoFinanceiroRepository consolidadoFinanceiroRepository;
 
 	@Test
-	public void testarVerificarConsodidadoCotaPorDataoperacao() {
-
-		boolean verificaConsididado;
-
-		Long idCota = 1L;
-
-		verificaConsididado = consolidadoFinanceiroRepository
-				.verificarConsodidadoCotaPorDataOperacao(idCota);
-
-		Assert.assertFalse(verificaConsididado);
-
-	}
-
-	@Test
 	public void testarObterMovimentoEstoqueCotaEncalhe() {
 
 		List<EncalheCotaDTO> movimentosEstoque;
@@ -447,15 +433,14 @@ public class ConsolidadoFinanceiroRepositoryImplTest extends
 	@Test
 	public void testarObterConsolidadoPorIdMovimentoFinanceiro() {
 
-		ConsolidadoFinanceiroCota consolidadoFinanceirocota;
+		List<ConsolidadoFinanceiroCota> consolidadoFinanceirocota;
 
 		Long idMovimentoFinanceiro = 1L;
 
 		consolidadoFinanceirocota = consolidadoFinanceiroRepository
 				.obterConsolidadoPorIdMovimentoFinanceiro(idMovimentoFinanceiro);
 
-//		Assert.assertNull(consolidadoFinanceirocota);
-
+		Assert.assertNull(consolidadoFinanceirocota);
 	}
 	
 	@Test
@@ -488,10 +473,7 @@ public class ConsolidadoFinanceiroRepositoryImplTest extends
 		
 		Long quantidadeDividas;
 		
-		Calendar d = Calendar.getInstance();
-		Date data = d.getTime();
-		
-		quantidadeDividas = consolidadoFinanceiroRepository.obterQuantidadeDividasGeradasData(data, null);
+		quantidadeDividas = consolidadoFinanceiroRepository.obterQuantidadeDividasGeradasData(null);
 		
 		Assert.assertNotNull(quantidadeDividas);
 		

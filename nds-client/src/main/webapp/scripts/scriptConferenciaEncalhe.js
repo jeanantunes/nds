@@ -242,7 +242,7 @@ var ConferenciaEncalhe = $.extend(true, {
 			
 			if (!ConferenciaEncalhe.modalAberta){
 				
-				ConferenciaEncalhe.verificarValorTotalCE();
+				ConferenciaEncalhe.veificarCobrancaGerada();
 				
 			}
 		});
@@ -1190,6 +1190,44 @@ var ConferenciaEncalhe = $.extend(true, {
 	irParaContigencia: function(){
 		$('#workspace').tabs('addTab', "Conferência Encalhe Cota Contingência",
 				contextPath + "/devolucao/conferenciaEncalheContingencia" + "?random=" + Math.random());
+	},
+	
+	veificarCobrancaGerada: function(){
+		
+		$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/veificarCobrancaGerada', null,
+		
+			function(conteudo){
+			
+				if(conteudo && conteudo.tipoMensagem == 'WARNING') {
+					
+					$("#msgRegerarCobranca", ConferenciaEncalhe.workspace).text(conteudo.listaMensagens[0]);
+					
+					$("#dialog-confirmar-regerar-cobranca", ConferenciaEncalhe.workspace).dialog({
+						resizable : false,
+						height : 'auto',
+						width : 680,
+						modal : true,
+						buttons : {
+							"Confirmar" : function() {
+								
+								$("#dialog-confirmar-regerar-cobranca", ConferenciaEncalhe.workspace).dialog("close");
+								ConferenciaEncalhe.verificarValorTotalCE();
+							},
+							"Cancelar" : function(){
+							
+								$("#dialog-confirmar-regerar-cobranca", ConferenciaEncalhe.workspace).dialog("close");
+							}
+						},
+						form: $("#dialog-confirmar-regerar-cobranca", this.workspace).parents("form")
+					});
+					
+				} else {
+					
+					ConferenciaEncalhe.verificarValorTotalCE();
+				}
+				
+			}, null, true, "dialog-confirmar-regerar-cobranca"
+		);
 	}
 
 }, BaseController);
