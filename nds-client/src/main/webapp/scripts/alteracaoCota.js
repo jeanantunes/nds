@@ -205,6 +205,16 @@ var alteracaoCotaController = $.extend(true, {
 	},
 	
 	executarPreProcessamento : function(resultado) {
+		
+		if (resultado.mensagens) {
+
+			exibirMensagem(
+				resultado.mensagens.tipoMensagem, 
+				resultado.mensagens.listaMensagens
+			);
+			
+			return resultado;
+		}
 
 		$.each(resultado.rows, function(index, row) {
 			

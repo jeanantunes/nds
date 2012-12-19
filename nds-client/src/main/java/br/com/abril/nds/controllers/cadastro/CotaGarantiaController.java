@@ -179,14 +179,20 @@ public class CotaGarantiaController {
 	public void getCaucaoLiquidaByCota(Long idCota, ModoTela modoTela, Long idHistorico) {
 
         if (ModoTela.CADASTRO_COTA == modoTela) {
+        	
             FormaCobrancaCaucaoLiquidaDTO dadosCaucaoLiquida = cotaGarantiaService.obterDadosCaucaoLiquida(idCota);
+            
             if (dadosCaucaoLiquida != null) {
+            	
                 result.use(CustomJson.class).from(dadosCaucaoLiquida).serialize();
             } else {
+            	
                 result.use(CustomJson.class).from("OK").serialize();
             }
         } else {
+        	
             FormaCobrancaCaucaoLiquidaDTO dto = cotaGarantiaService.obterCaucaoLiquidaHistoricoTitularidadeCota(idCota, idHistorico);
+            
             result.use(CustomJson.class).from(dto).serialize();
         }
 	}
@@ -231,8 +237,11 @@ public class CotaGarantiaController {
 	 */
 	@Get("/getTiposCobrancaCotaGarantia.json")
 	public void getTiposCobrancaCotaGarantia() {
+		
 		List<ItemDTO<TipoCobrancaCotaGarantia,String>> listaTiposCobranca =  new ArrayList<ItemDTO<TipoCobrancaCotaGarantia,String>>();
+		
 		for (TipoCobrancaCotaGarantia itemTipoCobranca: TipoCobrancaCotaGarantia.values()){
+			
 			listaTiposCobranca.add(new ItemDTO<TipoCobrancaCotaGarantia,String>(itemTipoCobranca, itemTipoCobranca.getDescTipoCobranca()));
 		}
 		

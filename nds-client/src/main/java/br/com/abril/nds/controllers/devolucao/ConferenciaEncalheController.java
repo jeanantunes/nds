@@ -40,6 +40,7 @@ import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.serialization.custom.CustomMapJson;
 import br.com.abril.nds.service.ConferenciaEncalheService;
+import br.com.abril.nds.service.GerarCobrancaService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.exception.ChamadaEncalheCotaInexistenteException;
 import br.com.abril.nds.service.exception.ConferenciaEncalheExistenteException;
@@ -86,6 +87,9 @@ public class ConferenciaEncalheController {
 	
 	@Autowired
 	private ProdutoEdicaoService produtoEdicaoService;
+	
+	@Autowired
+	private GerarCobrancaService gerarCobrancaService;
 	
 	@Autowired
 	private Result result;
@@ -656,32 +660,66 @@ public class ConferenciaEncalheController {
 		
 	}
 
+	@SuppressWarnings("unchecked")
 	public void gerarDocumentoConferenciaEncalhe() throws IOException {
 		
-		DadosDocumentacaoConfEncalheCotaDTO dadosDocumentacaoConfEncalheCota = 
-				(DadosDocumentacaoConfEncalheCotaDTO) this.session.getAttribute(DADOS_DOCUMENTACAO_CONF_ENCALHE_COTA);
+		List<DadosDocumentacaoConfEncalheCotaDTO> dtosDoc = 
+				(List<DadosDocumentacaoConfEncalheCotaDTO>) this.session.getAttribute(DADOS_DOCUMENTACAO_CONF_ENCALHE_COTA);
 		
-		byte[] retorno = null; 
+		List<byte[]> arquivos = new ArrayList<byte[]>();
 		
-		if(dadosDocumentacaoConfEncalheCota.isUtilizaSlipBoleto() && 
-				dadosDocumentacaoConfEncalheCota.getNossoNumero()!= null && 
-				!dadosDocumentacaoConfEncalheCota.getNossoNumero().isEmpty()) {
-			
-			List<byte[]> arquivos = new ArrayList<byte[]>();
-			
-			arquivos.add(conferenciaEncalheService.gerarDocumentosConferenciaEncalhe(dadosDocumentacaoConfEncalheCota, TipoDocumentoConferenciaEncalhe.SLIP));
-			arquivos.add(conferenciaEncalheService.gerarDocumentosConferenciaEncalhe(dadosDocumentacaoConfEncalheCota, TipoDocumentoConferenciaEncalhe.BOLETO_OU_RECIBO));
-						
-			retorno = PDFUtil.mergePDFs(arquivos);
-			
-			escreverArquivoParaResponse(retorno, "slipBoleto");
-			
-		} else if (dadosDocumentacaoConfEncalheCota.isUtilizaSlip()) {
-			
-			byte[] slip =  conferenciaEncalheService.gerarDocumentosConferenciaEncalhe(dadosDocumentacaoConfEncalheCota, TipoDocumentoConferenciaEncalhe.SLIP);
-			
-			escreverArquivoParaResponse(slip, "slip");
+		for (DadosDocumentacaoConfEncalheCotaDTO dadosDocumentacaoConfEncalheCota : dtosDoc){
+		
+			if(dadosDocumentacaoConfEncalheCota.isUtilizaSlipBoleto() && 
+					dadosDocumentacaoConfEncalheCota.getNossoNumero()!= null && 
+					!dadosDocumentacaoConfEncalheCota.getNossoNumero().isEmpty()) {
+				
+				arquivos.add(
+						conferenciaEncalheService.gerarDocumentosConferenciaEncalhe(
+								dadosDocumentacaoConfEncalheCota, 
+								TipoDocumentoConferenciaEncalhe.SLIP));
+				
+				arquivos.add(
+						conferenciaEncalheService.gerarDocumentosConferenciaEncalhe(
+								dadosDocumentacaoConfEncalheCota, 
+								TipoDocumentoConferenciaEncalhe.BOLETO_OU_RECIBO));
+				
+			} else if (dadosDocumentacaoConfEncalheCota.isUtilizaSlip()) {
+				
+				arquivos.add(
+						conferenciaEncalheService.gerarDocumentosConferenciaEncalhe(
+								dadosDocumentacaoConfEncalheCota, 
+								TipoDocumentoConferenciaEncalhe.SLIP));
+			}
 		}
+		
+		byte[] retorno = PDFUtil.mergePDFs(arquivos);
+		
+		escreverArquivoParaResponse(retorno, "docsCobranca");
+	}
+	
+	@Post
+	public void veificarCobrancaGerada(){
+		
+		InfoConferenciaEncalheCota info = this.getInfoConferenciaSession();
+		
+		if (info == null){
+			throw new ValidacaoException(TipoMensagem.ERROR, "Sessão expirada.");
+		}
+		
+		List<Long> idsCota = new ArrayList<>();
+		idsCota.add(info.getCota().getId());
+		
+		if (this.gerarCobrancaService.verificarCobrancasGeradas(idsCota)){
+			
+			this.result.use(Results.json()).from(
+					new ValidacaoVO(TipoMensagem.WARNING, 
+							"Já existe cobrança gerada para a data de operação atual, continuar irá sobrescreve-la. Deseja continuar?"), 
+							"result").recursive().serialize();
+			return;
+		}
+		
+		this.result.use(Results.json()).from("").serialize();
 	}
 	
 	@Post
@@ -689,7 +727,7 @@ public class ConferenciaEncalheController {
 		
 		Date horaInicio = (Date) this.session.getAttribute(HORA_INICIO_CONFERENCIA);
 		
-		DadosDocumentacaoConfEncalheCotaDTO dadosDocumentacaoConfEncalheCota = null;
+		List<DadosDocumentacaoConfEncalheCotaDTO> dadosDocumentacaoConfEncalheCota = null;
 		
 		if (horaInicio != null){
 		
@@ -755,7 +793,7 @@ public class ConferenciaEncalheController {
 				
 				this.session.removeAttribute(SET_CONFERENCIA_ENCALHE_EXCLUIR);
 				
-				this.getInfoConferenciaSession().setIdControleConferenciaEncalheCota(dadosDocumentacaoConfEncalheCota.getIdControleConferenciaEncalheCota());
+				this.getInfoConferenciaSession().setIdControleConferenciaEncalheCota(dadosDocumentacaoConfEncalheCota.get(0).getIdControleConferenciaEncalheCota());
 				
 			} finally {
 				
@@ -768,7 +806,7 @@ public class ConferenciaEncalheController {
 			dados.put("tipoMensagem", TipoMensagem.SUCCESS);
 			dados.put("listaMensagens", 	new String[]{"Operação efetuada com sucesso."});
 
-			dados.put("indGeraDocumentoConfEncalheCota", dadosDocumentacaoConfEncalheCota.isIndGeraDocumentacaoConferenciaEncalhe());
+			dados.put("indGeraDocumentoConfEncalheCota", dadosDocumentacaoConfEncalheCota.get(0).isIndGeraDocumentacaoConferenciaEncalhe());
 			
 			this.result.use(CustomMapJson.class).put("result", dados).serialize();
 			

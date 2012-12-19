@@ -160,6 +160,7 @@ public class VisaoEstoqueRepositoryImpl extends AbstractRepository implements
 				.append("       ,pe.precoVenda as precoCapa")
 				.append("       ,lan.dataLancamentoDistribuidor as lcto")
 				.append("       ,lan.dataRecolhimentoDistribuidor as rclto")
+				.append("		,(pe.precoVenda * ep." + coluna + ") as valor ")
 				.append("       ,ep." + coluna + " as qtde")
 				.append("   FROM EstoqueProduto as ep ")
 				.append("   JOIN ep.produtoEdicao as pe ")

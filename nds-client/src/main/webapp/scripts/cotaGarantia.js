@@ -1637,9 +1637,13 @@ CaucaoLiquida.prototype.destroy = function() {
 };
 
 CaucaoLiquida.prototype.initGrid = function() {
+	
     $("#cotaGarantiaCaucaoLiquidaGrid", _workspace).empty();
+    
     this.grid = $("<div></div>");
+    
     $("#cotaGarantiaCaucaoLiquidaGrid", _workspace).append(this.grid);
+    
     this.grid.flexigrid({
         preProcess: CaucaoLiquida.prototype.getDataFromResultGrid,
         dataType : 'json',
@@ -1787,9 +1791,11 @@ CaucaoLiquida.prototype.opcaoTipoFormaCobranca = function(op){
 
 //OBTEM UM PARÂMETRO PARA ALTERAÇÃO
 CaucaoLiquida.prototype.obterCaucaoLiquida = function(idCota){
+	
     var data = [{name: 'idCota', value: idCota},
         {name: 'modoTela', value:  tipoCotaGarantia.getModoTela().value},
         {name: 'idHistorico', value:  tipoCotaGarantia.getIdHistorico()}];
+    
     $.postJSON(this.path + 'getCaucaoLiquidaByCota.json',
         data,
         this.sucessCallbackObterCaucaoLiquida,
@@ -1839,6 +1845,23 @@ CaucaoLiquida.prototype.sucessCallbackObterCaucaoLiquida = function(resultado) {
     CaucaoLiquida.prototype.setValorCaucaoLiquida(resultado.tipoCobranca, resultado.valor);
 
     CaucaoLiquida.prototype.opcaoPagto(resultado.tipoCobranca);
+    
+    
+    
+    
+    
+    var r = resultado.caucoes;
+   
+    $("#cotaGarantiaCaucaoLiquidaGrid", _workspace).flexAddData({
+        rows : toFlexiGridObject(r),
+        page : 1,
+        total : 1
+    });
+    
+    
+    
+
+    
 };
 
 

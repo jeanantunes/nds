@@ -51,7 +51,6 @@ import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.fiscal.CFOP;
 import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
-import br.com.abril.nds.model.fiscal.ItemNotaFiscalSaida;
 import br.com.abril.nds.model.fiscal.NotaFiscalSaidaFornecedor;
 import br.com.abril.nds.model.fiscal.ParametroEmissaoNotaFiscal;
 import br.com.abril.nds.model.fiscal.StatusEmissaoNotaFiscal;
@@ -59,7 +58,7 @@ import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.Condicao;
 import br.com.abril.nds.model.fiscal.nota.InformacaoAdicional;
 import br.com.abril.nds.model.fiscal.nota.InformacaoTransporte;
-import br.com.abril.nds.model.fiscal.nota.ItemNotaFiscal;
+import br.com.abril.nds.model.fiscal.nota.ItemNotaFiscalSaida;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalhe;
 import br.com.abril.nds.model.movimentacao.ControleContagemDevolucao;
 import br.com.abril.nds.model.movimentacao.StatusOperacao;
@@ -72,6 +71,7 @@ import br.com.abril.nds.repository.ControleContagemDevolucaoRepository;
 import br.com.abril.nds.repository.DiferencaEstoqueRepository;
 import br.com.abril.nds.repository.ItemNotaFiscalSaidaRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
+import br.com.abril.nds.repository.NotaFiscalRepository;
 import br.com.abril.nds.repository.NotaFiscalSaidaRepository;
 import br.com.abril.nds.repository.ParametroEmissaoNotaFiscalRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
@@ -151,6 +151,9 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 
 	@Autowired
 	private UsuarioService usuarioService;
+
+	@Autowired
+	private NotaFiscalRepository notaFiscalRepository;
 
     private static final Logger LOG = LoggerFactory.getLogger(ContagemDevolucaoServiceImpl.class);
 	
@@ -765,29 +768,19 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 			return;
 		}
 		
-		NotaFiscalSaidaFornecedor nfSaidaFornecedor = new NotaFiscalSaidaFornecedor();
-		List<ItemNotaFiscalSaida> itensNotaFiscalSaida = new ArrayList<ItemNotaFiscalSaida>();
-		
-		Date dataAtual = new Date();
-		
-		StatusEmissaoNotaFiscal statusNF = StatusEmissaoNotaFiscal.AGUARDANDO_GERACAO_NFE;
-		
 		ParametroEmissaoNotaFiscal parametroEmissaoNF = parametroEmissaoNotaFiscalRepository.obterParametroEmissaoNotaFiscal(GrupoNotaFiscal.DEVOLUCAO_MERCADORIA_FORNECEDOR);
 		
 		if(parametroEmissaoNF == null) {
 			throw new IllegalStateException("Nota Fiscal Saida não parametrizada no sistema");
 		}
 		
-		CFOP cfop = parametroEmissaoNF.getCfopDentroEstado();
-		String serieNF = parametroEmissaoNF.getSerieNF();
-
 		Distribuidor distribuidor = distribuidorService.obter();
 
 		if(distribuidor == null) {
 			throw new IllegalStateException("Informações do distribuidor não encontradas");
 		}
 
-		// Desenvolvido por Cesar Pop Punk
+		// Alterado por Pop Punk
 		TipoNotaFiscal tipoNF = tipoNotaFiscalRepository.obterTipoNotaFiscal(GrupoNotaFiscal.NF_DEVOLUCAO_MERCADORIA_RECEBIA_CONSIGNACAO);
 		//TipoNotaFiscal tipoNF = tipoNotaFiscalRepository.obterTipoNotaFiscal(GrupoNotaFiscal.DEVOLUCAO_MERCADORIA_FORNECEDOR);
 		
@@ -795,50 +788,24 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 			throw new IllegalStateException("TipoNotaFiscal não parametrizada");
 		}
 		
-		Long numeroNF = controleNumeracaoNotaFiscalService.obterProximoNumeroNotaFiscal(serieNF);
-		
-		nfSaidaFornecedor.setCfop(cfop);
-		nfSaidaFornecedor.setDataEmissao(dataAtual);
-		nfSaidaFornecedor.setDataExpedicao(dataAtual);
-		nfSaidaFornecedor.setFornecedor(fornecedor);
-
-		nfSaidaFornecedor.setNumero(numeroNF);
-		nfSaidaFornecedor.setSerie(serieNF);
-		nfSaidaFornecedor.setStatusEmissao(statusNF);
-		nfSaidaFornecedor.setTipoNotaFiscal(tipoNF);
-		
-		// Realizado pelo Cesar Pop Punk
-		BigDecimal valorBruto = BigDecimal.ZERO;
-		for (ContagemDevolucaoDTO contagem : listaContagemDevolucaoAprovada) {
-			valorBruto = valorBruto.add( contagem.getPrecoVenda().multiply( new BigDecimal(contagem.getQtdNota()) ) );
-		}
-		nfSaidaFornecedor.setValorBruto(valorBruto);
-
-		// TODO: Corrigir estes dois valores abaixo:
-		nfSaidaFornecedor.setValorDesconto(BigDecimal.ZERO);
-		nfSaidaFornecedor.setValorLiquido(BigDecimal.ZERO);
-		
-		notaFiscalSaidaRepository.adicionar(nfSaidaFornecedor);
-		
-		nfSaidaFornecedor.setNumero(nfSaidaFornecedor.getId());
-		nfSaidaFornecedor.setSerie(nfSaidaFornecedor.getId().toString());
-		notaFiscalSaidaRepository.alterar(nfSaidaFornecedor);
-		
-		inserirItensNotaFiscalSaida(nfSaidaFornecedor, itensNotaFiscalSaida);
-		
 		TipoNotaFiscal tipoNotaFiscal = this.tipoNotaFiscalRepository.obterTipoNotaFiscal(GrupoNotaFiscal.NF_DEVOLUCAO_MERCADORIA_RECEBIA_CONSIGNACAO);
-		
-		List<ItemNotaFiscal> listItemNotaFiscal = carregarDadosNFSaida(listaAgrupadaContagemDevolucao);
+
+		List<ItemNotaFiscalSaida> listItemNotaFiscal = carregarDadosNFSaida(listaAgrupadaContagemDevolucao);
 		InformacaoTransporte transporte = new InformacaoTransporte();
 		transporte.setModalidadeFrente(0);
 		InformacaoAdicional informacaoAdicional = new InformacaoAdicional();
 		Set<Processo> processos = new HashSet<Processo>(1);		
 		processos.add(Processo.DEVOLUCAO_AO_FORNECEDOR);
-		Long idNota = notaFiscalService.emitiNotaFiscal(tipoNotaFiscal.getId(), new Date(), fornecedor, listItemNotaFiscal, transporte, informacaoAdicional, null, processos, Condicao.DEVOLUCAO_ENCALHE);
 
 		// Gerado por Cesar Pop Punk
 		// Movimentação de estoque
-		this.gerarMovimentoEstoque(nfSaidaFornecedor, itensNotaFiscalSaida);
+		this.gerarMovimentoEstoque(listItemNotaFiscal);
+		
+		Long idNota = notaFiscalService.emitiNotaFiscal(tipoNotaFiscal.getId(), new Date(), fornecedor, listItemNotaFiscal, transporte, informacaoAdicional, null, processos, Condicao.DEVOLUCAO_ENCALHE);
+
+		List listaNotas = new ArrayList();
+		listaNotas.add(notaFiscalRepository.buscarPorId(idNota));
+		notaFiscalService.exportarNotasFiscais(listaNotas);
 		
 		try {
 			notaFiscalService.exportarNotasFiscais(idNota);
@@ -847,17 +814,17 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 		}
 	}
 	
-	public void gerarMovimentoEstoque(NotaFiscalSaidaFornecedor nfSaidaFornecedor, List<ItemNotaFiscalSaida> itensNotaFiscalSaida) {
-		
-		for ( ItemNotaFiscalSaida item : itensNotaFiscalSaida ) {
+	public void gerarMovimentoEstoque(List<ItemNotaFiscalSaida> itens) {
+
+		for ( ItemNotaFiscalSaida item : itens ) {
 
 			TipoMovimentoEstoque tipoMovimento = tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.DEVOLUCAO_ENCALHE);
 
 			movimentoEstoqueService.gerarMovimentoEstoque(
 					distribuidorService.obter().getDataOperacao(), 
-					item.getProdutoEdicao().getId(), 
+					item.getIdProdutoEdicao(), 
 					usuarioService.getUsuarioLogado().getId(), 
-					item.getQtde(),
+					item.getQuantidade(),
 					tipoMovimento);
 
 		}
@@ -915,36 +882,37 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 	 * @param listaContagemDevolucao
 	 * @return
 	 */
-	private List<ItemNotaFiscal> carregarDadosNFSaida(
+	private List<ItemNotaFiscalSaida> carregarDadosNFSaida(
 			List<ContagemDevolucaoDTO> listaContagemDevolucao) {
 		
 		
-		ItemNotaFiscal itemNotaFiscal = null;
+		ItemNotaFiscalSaida itemNotaFiscal = null;
 		ProdutoEdicao produtoEdicao  = null;
 		
-		List<ItemNotaFiscal> listItemNotaFiscal = new ArrayList<ItemNotaFiscal>(listaContagemDevolucao.size());;
+		List<ItemNotaFiscalSaida> listItemNotaFiscal = new ArrayList<ItemNotaFiscalSaida>(listaContagemDevolucao.size());;
 		
 		for(ContagemDevolucaoDTO contagem : listaContagemDevolucao) {
 			
 			if(contagem.getIdProdutoEdicao() != null && contagem.getQtdNota() != null && contagem.getQtdNota().doubleValue() > 0.0D) {
 				
-				itemNotaFiscal = new ItemNotaFiscal();		
+				produtoEdicao = produtoEdicaoRepository.buscarPorId(contagem.getIdProdutoEdicao());
 				
+				itemNotaFiscal = new ItemNotaFiscalSaida();		
 				
-
-				itemNotaFiscal.setIdProdutoEdicao(contagem.getIdProdutoEdicao());
-				produtoEdicao =  produtoEdicaoRepository.buscarPorId(contagem.getIdProdutoEdicao());
+				itemNotaFiscal.setIdProdutoEdicao(produtoEdicao.getId());
 				
 				if (produtoEdicao.getProduto().getTributacaoFiscal() != null) {
+					
 					itemNotaFiscal.setCstICMS(produtoEdicao.getProduto()
 							.getTributacaoFiscal().getCST());
+					
+					
 				}
 
 				itemNotaFiscal.setQuantidade(contagem.getQtdNota());
+				
 				itemNotaFiscal.setValorUnitario(produtoEdicao.getPrecoVenda());
 
-				
-				
 				listItemNotaFiscal.add(itemNotaFiscal);
 				
 				sinalizarItemNFParcialGerada(contagem);
@@ -957,20 +925,6 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 		
 	}
 	
-	/**
-	 * Insere os itens da Nota Fiscal Saida Fornecedor
-	 * 
-	 * @param nfSaidaFornecedor
-	 * @param itensNotaFiscalSaida
-	 */
-	private void inserirItensNotaFiscalSaida(NotaFiscalSaidaFornecedor nfSaidaFornecedor, List<ItemNotaFiscalSaida> itensNotaFiscalSaida) {
-		
-		for( ItemNotaFiscalSaida item : itensNotaFiscalSaida ) {
-			item.setNotaFiscal(nfSaidaFornecedor);
-			itemNotaFiscalSaidaRepository.adicionar(item);
-		}
-		
-	}
 
 	@Override
 	@Transactional

@@ -1,7 +1,6 @@
 package br.com.abril.nds.service.impl;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -37,7 +36,7 @@ import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.InformacaoTransporte;
-import br.com.abril.nds.model.fiscal.nota.ItemNotaFiscal;
+import br.com.abril.nds.model.fiscal.nota.ItemNotaFiscalSaida;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscalReferenciada;
 import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
@@ -331,9 +330,11 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 				movimentoFinanceiroCotaDTO.setAprovacaoAutomatica(true);
 				movimentoFinanceiroCotaDTO.setLancamentoManual(false);
 				
+				//gerar movimento estoque cota
+				
 				this.movimentoFinanceiroCotaService.gerarMovimentosFinanceirosDebitoCredito(movimentoFinanceiroCotaDTO);
 	
-				this.gerarCobrancaService.gerarCobrancaCota(cota.getId(), usuario.getId(), new HashSet<String>());
+				this.gerarCobrancaService.gerarCobranca(cota.getId(), usuario.getId(), new HashSet<String>());
 				
 				List<ChamadaEncalhe> listaChamadaEncalhe = 
 					this.chamadaEncalheRepository.obterChamadasEncalhePor(dataOperacao, cota.getId());
@@ -416,7 +417,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 
 				TipoNotaFiscal tipoNotaFiscal = obterTipoNotaFiscal(listaTipoNotaFiscal, cota);
 				
-				List<ItemNotaFiscal> listItemNotaFiscal = this.notaFiscalService.obterItensNotaFiscalPor(distribuidor, 
+				List<ItemNotaFiscalSaida> listItemNotaFiscal = this.notaFiscalService.obterItensNotaFiscalPor(distribuidor, 
 						cota, null, null, null, tipoNotaFiscal);
 				
 				if (listItemNotaFiscal == null || listItemNotaFiscal.isEmpty()) 

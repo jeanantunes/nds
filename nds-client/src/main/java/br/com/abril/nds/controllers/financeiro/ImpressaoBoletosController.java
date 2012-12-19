@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.DividaGeradaVO;
 import br.com.abril.nds.dto.GeraDividaDTO;
+import br.com.abril.nds.dto.InfoConferenciaEncalheCota;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.filtro.FiltroDividaGeradaDTO;
 import br.com.abril.nds.exception.GerarCobrancaValidacaoException;
@@ -52,6 +53,7 @@ import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.util.export.NDSFileHeader;
 import br.com.abril.nds.vo.PaginacaoVO;
+import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
@@ -725,6 +727,21 @@ public class ImpressaoBoletosController {
 		}
 
 		result.use(CustomJson.class).from(isAcaoGeraDivida).serialize();
+	}
+	
+	@Post
+	public void veificarCobrancaGerada(){
+		
+		if (this.gerarCobrancaService.verificarCobrancasGeradas(null)){
+			
+			this.result.use(Results.json()).from(
+					new ValidacaoVO(TipoMensagem.WARNING, 
+							"Já existe(m) cobrança(s) gerada(s) para a data de operação atual, continuar irá sobrescreve-la(s). Deseja continuar?"), 
+							"result").recursive().serialize();
+			return;
+		}
+		
+		this.result.use(Results.json()).from("").serialize();
 	}
 
 }
