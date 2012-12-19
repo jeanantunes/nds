@@ -234,6 +234,13 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 		if (fornecedor != null) {
 
 			produto.addFornecedor(fornecedor);
+		} else {
+			ndsiLoggerFactory.getLogger().logError(
+					message,
+					EventoExecucaoEnum.HIERARQUIA,
+					String.format( "Fornecedor nulo para o produto:  %1$s", input.getCodProd() )
+				);
+			return null;
 		}
 
 		if (descontoLogistica != null) {
