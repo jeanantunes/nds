@@ -166,8 +166,8 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 			
 			movimentoEstoqueCota = 
 					gerarMovimentoCota(dataLancamento,idProdutoEdicao,estudoCota.getCota().getId(),	
-					idUsuario, estudoCota.getQtdeEfetiva(),tipoMovimentoCota);
-			
+					idUsuario, estudoCota.getQtdeEfetiva(),tipoMovimentoCota, lancamento.getDataLancamentoDistribuidor());
+
 			movimentoEstoqueCota.setEstudoCota(estudoCota);
 			
 			// Implementando por Eduardo Punk Rock - Seta o lançamento que gerou os movimentos na movimentoEstoqueCota
@@ -391,10 +391,16 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 		}
 		
 	}
-	
+
 	@Override
 	@Transactional
 	public MovimentoEstoqueCota gerarMovimentoCota(Date dataLancamento, Long idProdutoEdicao, Long idCota, Long idUsuario, BigInteger quantidade, TipoMovimentoEstoque tipoMovimentoEstoque) {
+		return gerarMovimentoCota(dataLancamento, idProdutoEdicao, idCota, idUsuario, quantidade, tipoMovimentoEstoque, new Date());
+	}
+
+	@Override
+	@Transactional
+	public MovimentoEstoqueCota gerarMovimentoCota(Date dataLancamento, Long idProdutoEdicao, Long idCota, Long idUsuario, BigInteger quantidade, TipoMovimentoEstoque tipoMovimentoEstoque, Date dataMovimento) {
 						
 		EstoqueProdutoCota estoqueProdutoCota = 
 			estoqueProdutoCotaRepository.buscarEstoquePorProdutoECota(idProdutoEdicao, idCota);
@@ -420,7 +426,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 		
 		movimentoEstoqueCota.setTipoMovimento(tipoMovimentoEstoque);
 		movimentoEstoqueCota.setCota(estoqueProdutoCota.getCota());
-		movimentoEstoqueCota.setData(new Date());
+		movimentoEstoqueCota.setData(dataMovimento);
 		movimentoEstoqueCota.setDataCriacao(new Date());
 		movimentoEstoqueCota.setEstoqueProdutoCota(estoqueProdutoCota);
 		movimentoEstoqueCota.setProdutoEdicao(estoqueProdutoCota.getProdutoEdicao());
