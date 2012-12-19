@@ -10,9 +10,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.exception.ImportacaoException;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
@@ -93,6 +95,9 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 
 	@Autowired
 	private UsuarioService usuarioService;
+	
+	@Autowired
+	private DistribuidorService distribuidorService;
 	
 	@Override
 	@Transactional
@@ -420,7 +425,10 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 		
 		movimentoEstoqueCota.setTipoMovimento(tipoMovimentoEstoque);
 		movimentoEstoqueCota.setCota(estoqueProdutoCota.getCota());
-		movimentoEstoqueCota.setData(new Date());
+		// Alterado por Eduardo "PunkRock" Castro em virture de estar gravando a data do sistema operacional
+		// movimentoEstoqueCota.setData(new Date());
+		movimentoEstoqueCota.setData(distribuidorService.obter().getDataOperacao());
+		
 		movimentoEstoqueCota.setDataCriacao(new Date());
 		movimentoEstoqueCota.setEstoqueProdutoCota(estoqueProdutoCota);
 		movimentoEstoqueCota.setProdutoEdicao(estoqueProdutoCota.getProdutoEdicao());
