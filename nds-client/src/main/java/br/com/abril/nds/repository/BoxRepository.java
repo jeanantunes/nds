@@ -124,4 +124,13 @@ public interface BoxRepository extends Repository<Box,Long> {
 	 * @return Número de Cotas encontradas
 	 */
 	Long obterQuantidadeCotasPorBoxRoteiroRota(Long idBox, Long idRoteiro, Long idRota);
+
+
+	/**
+	 * Obtém Box associado a roteirização da rota parametrizada
+	 * 
+	 * @param rotaID
+	 * @return
+	 */
+	public Box obterBoxPorRota(Long rotaID);
 }
