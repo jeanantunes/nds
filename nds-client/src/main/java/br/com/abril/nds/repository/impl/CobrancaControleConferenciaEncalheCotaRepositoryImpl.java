@@ -17,6 +17,7 @@ public class CobrancaControleConferenciaEncalheCotaRepositoryImpl extends Abstra
 		super(CobrancaControleConferenciaEncalheCota.class);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<CobrancaControleConferenciaEncalheCota> obterCobrancaControleConferenciaEncalheCota(Long idControleConferenciaEncalheCota) {
 		
@@ -35,6 +36,16 @@ public class CobrancaControleConferenciaEncalheCotaRepositoryImpl extends Abstra
 		
 	}
 	
-	
+	@Override
+	public void excluirPorCobranca(Long idCobranca){
+		
+		Query query = 
+				this.getSession().createQuery(
+						"delete from CobrancaControleConferenciaEncalheCota c where c.cobranca.id = :idCobranca");
+		
+		query.setParameter("idCobranca", idCobranca);
+		
+		query.executeUpdate();
+	}
 	
 }
