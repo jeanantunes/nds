@@ -61,6 +61,26 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 		return (BigDecimal) query.uniqueResult();
 	}
 
+	public List<ChamadaEncalheCota> obterListaChamadaEncalheCota(Long idCota, Long idProdutoEdicao) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select cec from ChamadaEncalheCota cec ");
+		
+		hql.append(" where cec.cota.id = :idCota and ");
+		
+		hql.append(" cec.chamadaEncalhe.produtoEdicao.id = :idProdutoEdicao ");
+
+		Query query = getSession().createQuery(hql.toString());
+		
+		query.setParameter("idCota", idCota);
+		
+		query.setParameter("idProdutoEdicao", idProdutoEdicao);
+		
+		return query.list();
+		
+	}
+	
 	public Long obterQtdListaChamaEncalheCota(Integer numeroCota,
 			Date dataOperacao, Long idProdutoEdicao,
 			boolean indPesquisaCEFutura, boolean conferido, boolean postergado) {
