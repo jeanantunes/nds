@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
@@ -40,7 +41,9 @@ public class BalanceamentoRecolhimentoEditorStrategy extends AbstractBalanceamen
 		Map<Long, TreeMap<Date, BigInteger>> mapaExpectativaEncalheEditor =
 			this.obterMapaExpectativaEncalheEditor(mapaProdutosRecolhimentoEditor);
 		
-		TreeSet<Date> datasRecolhimento = dadosRecolhimento.getDatasRecolhimentoFornecedor();
+		Set<Date> obterDatasConfirmadas = super.obterDatasConfirmadas(dadosRecolhimento.getProdutosRecolhimento());
+		
+		TreeSet<Date> datasRecolhimento = super.obterDatasRecolhimento(dadosRecolhimento.getDatasRecolhimentoFornecedor(), obterDatasConfirmadas);
 		
 		this.alocarProdutosMatrizRecolhimento(
 			matrizRecolhimentoBalanceada, mapaExpectativaEncalheEditor, 
