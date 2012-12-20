@@ -33,6 +33,18 @@ public class ValidacaoException extends RuntimeException implements Serializable
 		
 		this.validacao = new ValidacaoVO(tipoMensagem, mensagem);
 	}
+	
+	/**
+	 * Construtor.
+	 * 
+	 * @param tipoMensagem - tipo de mensagem
+	 * @param mensagem - mensagem
+	 * @param tratarValidacao - para tratamento de mensagem na resposta do erro em javascript
+	 */
+	public ValidacaoException(TipoMensagem tipoMensagem, String mensagem, boolean tratarValidacao) {
+		
+		this.validacao = new ValidacaoVO(tipoMensagem, mensagem,tratarValidacao);
+	}
 
 	
 	/**
