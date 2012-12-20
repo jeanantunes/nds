@@ -124,6 +124,8 @@ public class SociosController {
 			PaginacaoUtil.ordenarEmMemoria(listaSocioSalvar, ordenacao, sortname);
 		}
 		
+		this.httpSession.setAttribute(LISTA_SOCIOS_SALVAR_SESSAO, listaSocioSalvar);
+		
 		this.result.use(Results.json()).from(this.getTableModelListaSocios(listaSocioSalvar), "result").recursive().serialize();
 	}
 	
