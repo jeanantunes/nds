@@ -294,6 +294,7 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 		return ((Long) query.uniqueResult()).intValue();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Long> obterIdsMovimentosFinanceiroCota(FiltroDebitoCreditoDTO filtroDebitoCreditoDTO) {
 		

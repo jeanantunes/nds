@@ -66,7 +66,12 @@ public enum GrupoMovimentoFinaceiro {
 	/**
 	 * Compra de Numeros Atrazados(NA)
 	 */
-	COMPRA_NUMEROS_ATRAZADOS(OperacaoFinaceira.DEBITO);
+	COMPRA_NUMEROS_ATRAZADOS(OperacaoFinaceira.DEBITO),
+	
+	/**
+	 * Venda total de reparte
+	 */
+	VENDA_TOTAL(OperacaoFinaceira.DEBITO);
 	
 	
 	private OperacaoFinaceira operacaoFinaceira;

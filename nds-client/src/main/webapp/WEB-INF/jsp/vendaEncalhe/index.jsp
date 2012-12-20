@@ -99,7 +99,6 @@ $(function(){
 				    
 				    <td width="180">
 				    	<select id="selectTipoVenda" name="tipoVendaSelecionado">
-				    		<option selected="selected" value="-1"> </option>
 				      		<option value="">Todas</option>
 				      		<option value="ENCALHE">Venda de Encalhe</option>
 				      		<option value="SUPLEMENTAR">Venda de Suplementar</option>

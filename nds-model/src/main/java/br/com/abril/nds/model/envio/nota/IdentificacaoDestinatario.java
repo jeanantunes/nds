@@ -70,7 +70,7 @@ public class IdentificacaoDestinatario implements Serializable {
 	private String descricaoRota;
 	
 	
-	@OneToOne(optional=false)
+	@ManyToOne(optional=false)
 	@JoinColumn(name="ENDERECO_ID_DESTINATARIO")
 	private Endereco endereco;
 	
