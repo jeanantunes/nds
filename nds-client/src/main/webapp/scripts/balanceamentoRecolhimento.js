@@ -807,9 +807,12 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 					[ 'Configuração reiniciada com sucesso.' ]
 				);
 			},
-			function() {
+			function(result) {
 				
-				$("#resumoPeriodo", balanceamentoRecolhimentoController.workspace).hide();
+				if(result.mensagem && result.mensagem.tratarValidacao == false){
+
+					$("#resumoPeriodo", balanceamentoRecolhimentoController.workspace).hide();
+				}
 			}
 		);
 	},
