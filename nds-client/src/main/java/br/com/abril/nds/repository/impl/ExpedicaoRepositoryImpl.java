@@ -273,8 +273,7 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 				valorFaturado = BigDecimal.ZERO;
 				diferenca = BigInteger.ZERO;
 			}
-			
-			qntProduto += obterQuantidadeResumoExpedicaoPorBox(dto.getIdBox(), filtro.getDataLancamento());
+			qntProduto ++;
 			reparte = reparte.add(dto.getQntReparte());
 			valorFaturado = valorFaturado.add(dto.getValorFaturado());
 			diferenca = diferenca.add(dto.getQntDiferenca());

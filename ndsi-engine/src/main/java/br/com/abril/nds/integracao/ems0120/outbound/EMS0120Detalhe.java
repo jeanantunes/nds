@@ -58,7 +58,7 @@ public class EMS0120Detalhe {
 		this.codPublicacao = codPublicacao;
 	}
 
-	@Field(offset=18, length=4, paddingChar='0')
+	@Field(offset=18, length=4, paddingChar='0', align=Align.RIGHT)
 	public Long getEdicao() {
 		return edicao;
 	}
@@ -67,7 +67,7 @@ public class EMS0120Detalhe {
 		this.edicao = edicao;
 	}
 	
-	@Field(offset=22, length=4, paddingChar='0')
+	@Field(offset=22, length=4, paddingChar='0', align=Align.RIGHT)
 	public Integer getCodigoCota() {
 		return codigoCota;
 	}
@@ -76,7 +76,7 @@ public class EMS0120Detalhe {
 		this.codigoCota = codigoCota;
 	}
 	
-	@Field(offset=26, length=8, paddingChar='0')
+	@Field(offset=26, length=8, paddingChar='0', align=Align.RIGHT)
 	public Long getQuantidadeReparte() {
 		return quantidadeReparte;
 	}
