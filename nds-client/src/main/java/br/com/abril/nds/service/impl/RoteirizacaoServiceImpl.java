@@ -38,6 +38,7 @@ import br.com.abril.nds.model.cadastro.TipoRoteiro;
 import br.com.abril.nds.model.cadastro.pdv.EnderecoPDV;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.model.cadastro.pdv.RotaPDV;
+import br.com.abril.nds.repository.AssociacaoVeiculoMotoristaRotaRepository;
 import br.com.abril.nds.repository.BoxRepository;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.EntregadorRepository;
@@ -74,6 +75,9 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 	
 	@Autowired
 	private CotaRepository cotaRepository;
+	
+	@Autowired
+	private AssociacaoVeiculoMotoristaRotaRepository associacaoVeiculoMotoristaRotaRepository;
 	
 	@Override
 	@Transactional(readOnly=true)
@@ -799,11 +803,7 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 			 cotaRepository.merge(cota);
 		 }
 	}
-	
-	private void atribuirBoxCota(PdvRoteirizacaoDTO pdvDTO, Long boxID) { 
-		Box box = this.boxRepository.buscarPorId(boxID);
-		this.atribuirBoxCota(pdvDTO, box);
-	}
+
 	
 	/**
      * Atualiza as informações de uma roteirização existente
@@ -861,7 +861,7 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 						continue;
 					
 					rota = novaRotaRoteiro(roteiro, rotaDTO);
-                
+					
 					if (rotaDTO.isEntregador() && rotaDTO.hasPDVsAssociados()) {
 					
 						Entregador entregador = this.entregadorRepository.buscarPorId(rotaDTO.getEntregadorId());
@@ -874,8 +874,10 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 					
 				} else {
                 
-					rota = roteiro.getRota(rotaDTO.getId());
+					rota = this.rotaRepository.buscarPorId(rotaDTO.getId());
                     
+					rota.setRoteiro(roteiro);
+					
 					if (rota != null) {
 						
 						rota.desassociarPDVs(rotaDTO.getPdvsExclusao());
@@ -897,11 +899,11 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
         }
 		
 		roteirizacaoRepository.alterar(roteirizacaoExistente);
-       		
+       	
 		return roteirizacaoExistente;
     }
 	
-    /**
+	/**
      * Processa as transferências de roteiro da roteirização
      * 
      * @param roteirizacaoDTO dto com as informações de transferência de roteiro

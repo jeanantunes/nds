@@ -785,7 +785,7 @@ public class RoteirizacaoController {
 	@Path("/boxSelecionado")
 	public void boxSelecionado(Long idBox, String nomeBox) {
 	   
-		RoteirizacaoDTO roteirizacaoDTOExistente = null; 
+	   RoteirizacaoDTO roteirizacaoDTOExistente = null; 
 	   
 	   RoteirizacaoDTO roteirizacaoDTO = getRoteirizacaoDTOSessao();
 	   
@@ -1234,8 +1234,6 @@ public class RoteirizacaoController {
 	@Post("/transferirRoteiro")
 	public void transferirRoteiro(Long idBoxAnterior, Long idRoteiro, Long idBoxNovo){
 		
-		this.roteirizacaoService.validarAssociacaoRoteiroTransportador(idRoteiro);
-		
 		RoteirizacaoDTO roteirizacaoDTO = getRoteirizacaoDTOSessao();
 	    
 		Map<Long, Set<RoteiroRoteirizacaoDTO>> mapRoteirosTransferidos = roteirizacaoDTO.getRoteirosTransferidos();
@@ -1291,21 +1289,17 @@ public class RoteirizacaoController {
 	 */
 	@Post("/transferirRota")
 	public void transferirRota(Long idRoteiroAnterior, Long idRota,  Long idRoteiroNovo){
-		
-		this.roteirizacaoService.validarAssociacaoRotaTransportador(idRota, idRoteiroAnterior);
-		
+					
 		RoteiroRoteirizacaoDTO roteiroDTOAnterior = this.getRoteirizacaoDTOSessao().getRoteiro(idRoteiroAnterior);
 		
 		RotaRoteirizacaoDTO rotaDTO = this.getRotaDTOSessaoPeloID(idRota, idRoteiroAnterior);
 		
-		roteiroDTOAnterior.removerRota(idRota);
+		roteiroDTOAnterior.transferirRota(rotaDTO.getOrdem());
 		
 		RoteiroRoteirizacaoDTO roteiroDTONovo = this.getRoteirizacaoDTOSessao().getRoteiro(idRoteiroNovo);
 				
 		OrdenacaoUtil.reordenarLista(rotaDTO, roteiroDTONovo.getRotas());
-		
-		rotaDTO.setId(null);
-		
+				
 		roteiroDTONovo.addRota(rotaDTO);
 		
 		this.result.use(Results.json()).from("").serialize();

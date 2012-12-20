@@ -218,7 +218,33 @@ public class RoteiroRoteirizacaoDTO implements Serializable, Ordenavel {
     
     public void removerRota(Integer ordemRota) {
     	
-    	if (this.rotas != null){
+    	removerRotaDeRotas(ordemRota);
+    	
+    	Long rotaID = removerRotaDeTodasRotas(ordemRota);
+    	    	
+    	if(rotaID != null && rotaID > 0) {
+			this.adicionarRotaExclusao(rotaID);
+		}
+    }
+
+	private Long removerRotaDeTodasRotas(Integer ordemRota) {
+		if (this.todasRotas != null){
+    		
+    		for (RotaRoteirizacaoDTO rota : this.todasRotas){
+    			
+    			if (rota.getOrdem().equals(ordemRota)){
+    				
+    				this.todasRotas.remove(rota);
+    				return rota.getId();
+    			}
+    		}
+    	}
+		
+		return null;
+	}
+
+	private void removerRotaDeRotas(Integer ordemRota) {
+		if (this.rotas != null){
     		
     		for (RotaRoteirizacaoDTO rota : this.rotas){
     			
@@ -229,25 +255,7 @@ public class RoteiroRoteirizacaoDTO implements Serializable, Ordenavel {
     			}
     		}
     	}
-    	
-    	if (this.todasRotas != null){
-    		
-    		for (RotaRoteirizacaoDTO rota : this.todasRotas){
-    			
-    			if (rota.getOrdem().equals(ordemRota)){
-    				
-    				this.todasRotas.remove(rota);
-    				
-    				if(rota.getId() != null && rota.getId() > 0) {
-    					this.adicionarRotaExclusao(rota.getId());
-    				}
-    				
-    				break;
-    			}
-    		}
-    	}
-
-    }
+	}
 
 	public Set<Long> getRotasExclusao() {
 		return rotasExclusao;
@@ -286,5 +294,10 @@ public class RoteiroRoteirizacaoDTO implements Serializable, Ordenavel {
 	            }
 	        }
 	        return max;
+	}
+
+	public void transferirRota(Integer ordemRota) {
+		removerRotaDeRotas(ordemRota);
+		removerRotaDeTodasRotas(ordemRota);
 	}
 }
