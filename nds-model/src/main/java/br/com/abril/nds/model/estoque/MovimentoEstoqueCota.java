@@ -1,5 +1,6 @@
 package br.com.abril.nds.model.estoque;
 
+import java.io.Serializable;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -20,8 +21,13 @@ import br.com.abril.nds.model.planejamento.Lancamento;
 
 @Entity
 @Table(name = "MOVIMENTO_ESTOQUE_COTA")
-public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque implements Cloneable {
+public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque implements Cloneable, Serializable {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "COTA_ID")
 	private Cota cota;
@@ -56,6 +62,11 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque implements C
 	@JoinColumn(name = "LANCAMENTO_ID")
 	private Lancamento lancamento;
 
+	@ManyToOne(optional = true)
+	@JoinColumn(name = "PRODUTO_EDICAO_ID", referencedColumnName = "PRODUTO_EDICAO_ID", insertable = false, updatable = false)
+	private Lancamento lancamentoProdutoEdicao;
+
+	
 	@ManyToMany(mappedBy="listaMovimentoEstoqueCota")
 	private List<ItemNotaEnvio> listaItemNotaEnvio;
 

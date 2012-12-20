@@ -13,9 +13,14 @@ public enum GrupoMovimentoFinaceiro {
 	ENVIO_ENCALHE(OperacaoFinaceira.CREDITO),
 	
 	/**
-	 * Postergado da cota
+	 * Postergado de débito da cota
 	 */
-	POSTERGADO(OperacaoFinaceira.DEBITO),
+	POSTERGADO_DEBITO(OperacaoFinaceira.DEBITO),
+	
+	/**
+	 * Postergado de crédito da cota
+	 */
+	POSTERGADO_CREDITO(OperacaoFinaceira.CREDITO),
 	
 	/**
 	 * Crédito cota
