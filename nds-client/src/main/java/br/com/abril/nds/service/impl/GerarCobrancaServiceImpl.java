@@ -543,7 +543,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 										BigDecimal.ZERO);
 				break;
 				
-				case POSTERGADO:
+				case POSTERGADO_DEBITO:
 					vlMovFinanTotal = 
 							vlMovFinanTotal.add(
 								movimentoFinanceiroCota.getValor() != null ? 
@@ -553,6 +553,19 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 					vlMovFinanEncargos = vlMovFinanEncargos.add(
 							movimentoFinanceiroCota.getValor() != null ? 
 									movimentoFinanceiroCota.getValor().negate() : 
+										BigDecimal.ZERO);
+				break;
+				
+				case POSTERGADO_CREDITO:
+					vlMovFinanTotal = 
+						vlMovFinanTotal.add(
+							movimentoFinanceiroCota.getValor() != null ? 
+									movimentoFinanceiroCota.getValor() : 
+										BigDecimal.ZERO);
+			
+					vlMovFinanEncargos = vlMovFinanEncargos.add(
+							movimentoFinanceiroCota.getValor() != null ? 
+									movimentoFinanceiroCota.getValor() : 
 										BigDecimal.ZERO);
 				break;
 				
@@ -785,9 +798,17 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			movimentoFinanceiroCota.setLancamentoManual(false);
 			movimentoFinanceiroCota.setCota(cota);
 			
-			tipoMovimentoFinanceiro = 
-					this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
-							GrupoMovimentoFinaceiro.POSTERGADO);
+			if (vlMovFinanTotal.compareTo(BigDecimal.ZERO) > 0){
+				
+				tipoMovimentoFinanceiro = 
+						this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
+								GrupoMovimentoFinaceiro.POSTERGADO_CREDITO);
+			} else {
+				
+				tipoMovimentoFinanceiro = 
+						this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
+								GrupoMovimentoFinaceiro.POSTERGADO_DEBITO);
+			}
 			
 			String descPostergado = null;
 			
