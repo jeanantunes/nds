@@ -965,7 +965,8 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		
 		grupos.add(GrupoMovimentoFinaceiro.CREDITO);
 		grupos.add(GrupoMovimentoFinaceiro.DEBITO);
-		grupos.add(GrupoMovimentoFinaceiro.POSTERGADO);
+		grupos.add(GrupoMovimentoFinaceiro.POSTERGADO_DEBITO);
+		grupos.add(GrupoMovimentoFinaceiro.POSTERGADO_CREDITO);
 		grupos.add(GrupoMovimentoFinaceiro.POSTERGADO_NEGOCIACAO);
 		
 		return grupos;

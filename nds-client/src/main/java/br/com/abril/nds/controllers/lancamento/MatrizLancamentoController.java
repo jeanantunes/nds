@@ -36,6 +36,7 @@ import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.MatrizLancamentoService;
 import br.com.abril.nds.util.CellModelKeyValue;
+import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TableModel;
@@ -1176,7 +1177,9 @@ public class MatrizLancamentoController {
 			
 			matrizLancamentoService.excluiLancamento(produtoLancamento.getIdLancamento());
 			
-			this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Lançamento excluído com sucesso!")).serialize();
+			this.result.use(Results.json())
+				.from(new ValidacaoVO(TipoMensagem.SUCCESS, "Lançamento excluído com sucesso!"), Constantes.PARAM_MSGS)
+					.recursive().serialize();
 		}
 	}
 
