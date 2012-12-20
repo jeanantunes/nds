@@ -108,6 +108,7 @@ public class EMS0120MessageProcessor extends AbstractRepository implements Messa
 			print.close();
 			
 		} catch (IOException e) {
+			message.getHeader().put(MessageHeaderProperties.FILE_NAME.getValue(), "REPARTE.NEW" );
 			ndsiLoggerFactory.getLogger().logError(message, EventoExecucaoEnum.GERACAO_DE_ARQUIVO, "Não foi possível gerar o arquivo");
 		}
 				
