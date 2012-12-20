@@ -353,4 +353,17 @@ public class EstoqueProdutoCotaRepositoryImplTest extends AbstractRepositoryImpl
 	}
 	
 	
+	@Test
+	public void testarObterTotalEmEstoqueProdutoCota() {
+		
+		Long idCota = cotaManoel1.getId();
+		
+		Long idProdutoEdicao = produtoEdicaoCaras1.getId();
+		
+		BigInteger qtde = estoqueProdutoCotaRepository.obterTotalEmEstoqueProdutoCota(idCota, idProdutoEdicao);
+		
+		Assert.assertTrue(qtde != null);
+		
+	}
+	
 }

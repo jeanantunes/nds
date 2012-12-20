@@ -1215,7 +1215,7 @@ public class ConferenciaEncalheController {
 		
 		if (info != null){
 			
-			if (info.getListaConferenciaEncalhe() != null){
+			if (info.getListaConferenciaEncalhe() != null) {
 			
 				for (ConferenciaEncalheDTO conferenciaEncalheDTO : info.getListaConferenciaEncalhe()){
 					
