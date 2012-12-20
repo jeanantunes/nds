@@ -55,13 +55,15 @@ public class EMS0120MessageProcessor extends AbstractRepository implements Messa
 		
 		StringBuilder sql = new  StringBuilder();
 		sql.append("SELECT mec ");
-		sql.append("FROM MovimentoEstoqueCota mec ");
+		sql.append("FROM MovimentoEstoqueCota mec ");		
+		sql.append("JOIN FETCH mec.lancamento lan ");
 		sql.append("JOIN FETCH mec.cota c ");
 		sql.append("JOIN FETCH mec.produtoEdicao pe ");
 		sql.append("JOIN FETCH pe.produto p ");
 		sql.append("JOIN FETCH p.fornecedores fs ");
-		sql.append("WHERE mec.data = :dataOperacao ");
+		sql.append("WHERE lan.dataLancamentoDistribuidor = :dataOperacao ");
 		sql.append("AND mec.tipoMovimento.grupoMovimentoEstoque = :recebimentoReparte ");
+		sql.append("ORDER BY c.numeroCota ");
 	
 		Query query = this.getSession().createQuery(sql.toString());		
 		query.setParameter("dataOperacao", dataOperacao);
@@ -108,6 +110,7 @@ public class EMS0120MessageProcessor extends AbstractRepository implements Messa
 			print.close();
 			
 		} catch (IOException e) {
+			message.getHeader().put(MessageHeaderProperties.FILE_NAME.getValue(), "REPARTE.NEW" );
 			ndsiLoggerFactory.getLogger().logError(message, EventoExecucaoEnum.GERACAO_DE_ARQUIVO, "Não foi possível gerar o arquivo");
 		}
 				

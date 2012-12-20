@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.List;
 
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
@@ -33,4 +34,9 @@ public interface EstoqueProdutoCotaRepository extends Repository<EstoqueProdutoC
 	BigDecimal obterConsignado(boolean cotaInadimplente);
 
 	Double obterFaturamentoCota(Long idCota);
+	
+	
+	BigInteger obterTotalEmEstoqueProdutoCota(Long idCota, Long idProdutoEdicao);
+	
+	
 }

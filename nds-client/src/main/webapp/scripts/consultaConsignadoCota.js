@@ -165,7 +165,7 @@ var consultaConsignadoCotaController = $.extend(true, {
 					sortable : true,
 					align : 'left'
 				}, {
-					display : 'Consignado Total',
+					display : 'Reparte Total',
 					name : 'consignado',
 					width : 140,
 					sortable : true,
@@ -177,7 +177,7 @@ var consultaConsignadoCotaController = $.extend(true, {
 					sortable : true,
 					align : 'right'
 				}, {
-					display : 'Consignado c/ Desc. R$',
+					display : 'Total Desc. R$',
 					name : 'totalDescontoFormatado',
 					width : 100,
 					sortable : true,
@@ -285,6 +285,7 @@ var consultaConsignadoCotaController = $.extend(true, {
 			function(result) {
 				var idFornecedor = $('#idFornecedor', consultaConsignadoCotaController.workspace).val();				
 				if( idFornecedor != "0"){
+					$("#totalGeralCota", consultaConsignadoCotaController.workspace).hide();
 					$('.tabelaGeralDetalhado', consultaConsignadoCotaController.workspace).hide();
 					$('.tabelaGeralPorFornecedor', consultaConsignadoCotaController.workspace).show();
 					$("#totalGeralPorFornecedor", consultaConsignadoCotaController.workspace).html(" <table width='190' border='0' cellspacing='1' cellpadding='1' align='right'>" +
@@ -292,9 +293,9 @@ var consultaConsignadoCotaController = $.extend(true, {
         						" <td>&nbsp;</td> "+
         						" <td align='right'><strong>"+result+"</strong></td></tr>");
 				}else{
-					
-					
-					
+					$("#totalGeralCota", consultaConsignadoCotaController.workspace).show();
+					$(".tabelaGeralDetalhado", consultaConsignadoCotaController.workspace).hide();
+					$(".tabelaGeralPorFornecedor", consultaConsignadoCotaController.workspace).hide();
 					$("#totalGeralCota", consultaConsignadoCotaController.workspace).html(" <table width='190' border='0' cellspacing='1' cellpadding='1' align='right' >" +
 												"<tr> <td><strong>Total Geral:</strong></td>" +
 			                						" <td>&nbsp;</td> "+
@@ -315,6 +316,7 @@ var consultaConsignadoCotaController = $.extend(true, {
 			[{name:'filtro.idCota', value:$('#codigoCota', consultaConsignadoCotaController.workspace).val()},
 			{name:'filtro.idFornecedor', value:$('#idFornecedor', consultaConsignadoCotaController.workspace).val()}],
 			function(result) {
+				$("#totalGeralCota", consultaConsignadoCotaController.workspace).hide();
 				$('.tabelaGeralDetalhado', consultaConsignadoCotaController.workspace).show();
 				$('.tabelaGeralPorFornecedor', consultaConsignadoCotaController.workspace).hide();
 				$("#totalGeralDetalhado", consultaConsignadoCotaController.workspace).html(result);
@@ -402,6 +404,8 @@ var consultaConsignadoCotaController = $.extend(true, {
 			row.cell.acao = linkAcao;			
 		});
 		
+		$(".grids", consultaConsignadoCotaController.workspace).show();
+
 		consultaConsignadoCotaController.mostrarGrid();
 		
 		return resultado;

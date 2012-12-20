@@ -41,7 +41,7 @@ public class ChamadaEncalheFornecedorDTOAssembler {
     private ChamadaEncalheFornecedorDTOAssembler() {
     }
     
-    public static Collection<ChamadasEncalheFornecedorDTO> criarChamadasEncalheFornecedorDTO(Collection<ChamadaEncalheFornecedor> chamadas,
+    public static List<ChamadasEncalheFornecedorDTO> criarChamadasEncalheFornecedorDTO(Collection<ChamadaEncalheFornecedor> chamadas,
             Distribuidor distribuidor) {
         PessoaJuridicaChamadaEncalheFornecedorDTO distribuidorDTO = criarDistribuidor(distribuidor);
         Map<Long, ChamadasEncalheFornecedorDTO> mapaChamadasDTO = new HashMap<Long, ChamadasEncalheFornecedorDTO>();
@@ -86,8 +86,17 @@ public class ChamadaEncalheFornecedorDTOAssembler {
                 processarResumo(chamadasDTO, cefDTO);
             }
         }
-        return mapaChamadasDTO.values();
+        
+        List<ChamadasEncalheFornecedorDTO> chamadasEncalhe = new ArrayList<ChamadasEncalheFornecedorDTO>();
+        
+        for(Long key : mapaChamadasDTO.keySet()) {
+        	chamadasEncalhe.add(mapaChamadasDTO.get(key));
+        }
+        
+        return chamadasEncalhe;
+        
     }
+    
 
     /**
      * Processa o item da chamada de encalhe do fornecedor

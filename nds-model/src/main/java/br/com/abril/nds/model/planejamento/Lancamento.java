@@ -125,6 +125,9 @@ public class Lancamento implements Serializable {
 	@OneToMany(mappedBy = "lancamento")
 	private List<MovimentoEstoqueCota> movimentoEstoqueCotas;
 	
+	@OneToMany(mappedBy = "lancamentoProdutoEdicao")
+	private List<MovimentoEstoqueCota> movimentoEstoqueCotasProdutoEdicao;
+	
 	@ManyToMany(mappedBy="lancamentos", targetEntity=ChamadaEncalhe.class)
 	private Set<ChamadaEncalhe> chamadaEncalhe;
 	

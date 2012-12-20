@@ -309,6 +309,17 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 	}
 	
+	/**
+	 * Obtém a quantidade de itens existentes no EstoqueProdutoEdicao
+	 * da Cota de determinado ProdutoEdicao que ainda não foram devolvidos.
+	 * 
+	 */
+	private BigInteger obterQtdItensEstoqueProdutoEdicaoDaCotaNaoDevolvidos(Long idCota, Long idProdutoEdicao) {
+		
+		return estoqueProdutoCotaRepository.obterTotalEmEstoqueProdutoCota(idCota, idProdutoEdicao);
+		
+	}
+	
 	
 	/**
 	 * Valida a existência de chamada de encalhe de acordo com a
@@ -344,7 +355,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 
 			if(listaChamadaEncalheCota == null || listaChamadaEncalheCota.isEmpty()) {
 				
-				validarProdutoEdicaoSemChamadaEncalheCota(cota.getId(), produtoEdicao.getId(), dataOperacao);
+				validarProdutoEdicaoSemChamadaEncalheCota(cota.getId(), produtoEdicao.getId());
+				
+				return null;
 				
 			}
 			
@@ -363,7 +376,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			
 			if(listaChamadaEncalheCota == null || listaChamadaEncalheCota.isEmpty()) {
 				
-				validarProdutoEdicaoSemChamadaEncalheCota(cota.getId(), produtoEdicao.getId(), dataOperacao);
+				validarProdutoEdicaoSemChamadaEncalheCota(cota.getId(), produtoEdicao.getId());
 				
 				return null;
 			}
@@ -375,17 +388,45 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	}
 	
 	/**
-	 * Caso não exista chamada encalhe cota para o produtoEdicao e cota em questão, 
-	 * serão feitas verificações para detectar se o este produtoEdição foi de fato expedido
-	 * para a cota.
+	 * Caso não exista chamada encalhe dentro do período de tempo que se permite o 
+	 * recolhimento da cota para o produtoEdicao e cota em questão, 
+	 * serão feitas verificações para detectar:
 	 * 
+	 * 1 - Se nunca existiu uma chamada de encalhe para o produto e cota em questão
+	 * sera permitido seu recolhimento. 
+	 * 
+	 * 2 - Se o produtoEdição foi de fato expedido
+	 * para a cota e ainda constam itens e a serem devolvidos sera permitido o seu recolhimento.
 	 */
-	private void validarProdutoEdicaoSemChamadaEncalheCota(Long idCota, Long idProdutoEdicao, Date dataOperacao) {
+	private void validarProdutoEdicaoSemChamadaEncalheCota(Long idCota, Long idProdutoEdicao) {
+
+		ProdutoEdicao produtoEdicao = produtoEdicaoRepository.buscarPorId(idProdutoEdicao);
 		
-		BigInteger qtdeReparte = obterQtdeReparteParaProdutoEdicao(idCota, idProdutoEdicao, dataOperacao, dataOperacao);
+		if(produtoEdicao == null){
+			throw new ValidacaoException(TipoMensagem.ERROR, "Produto edição não encontrado");
+		}
 		
-		if(qtdeReparte.compareTo(BigInteger.ZERO)<=0){
-			throw new ValidacaoException(TipoMensagem.WARNING, "Produto edição não foi expedido para a cota.");
+		String nomeProdutoEdicao = produtoEdicao.getProduto().getNome();
+		
+		List<ChamadaEncalheCota> listaChamadaEncalheCota = chamadaEncalheCotaRepository.obterListaChamadaEncalheCota(idCota, idProdutoEdicao);
+		
+		if(listaChamadaEncalheCota != null && !listaChamadaEncalheCota.isEmpty()){
+				
+			throw new ValidacaoException(
+					TipoMensagem.WARNING, 
+					"Já houve chamada de encalhe para o produto edição [" + nomeProdutoEdicao  + "] da cota. " +
+					" não é possível realizar a conferência de encalhe para o mesmo. "   );
+			
+		}
+		
+		BigInteger qtdItensEstoqueProdutoEdicaoDaCotaNaoDevolvidos = obterQtdItensEstoqueProdutoEdicaoDaCotaNaoDevolvidos(idCota, idProdutoEdicao);
+		
+		if(qtdItensEstoqueProdutoEdicaoDaCotaNaoDevolvidos == null || qtdItensEstoqueProdutoEdicaoDaCotaNaoDevolvidos.compareTo(BigInteger.ZERO) <= 0 ) {
+			
+			throw new ValidacaoException(
+					TipoMensagem.WARNING, 
+					"Não há itens do produto edição [" + nomeProdutoEdicao  + "] a serem devolvidos para a cota."   );
+		
 		}
 		
 	}
@@ -852,9 +893,20 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 
 	private String obterEditor(ProdutoEdicao produtoEdicao) {
 		
+		if(	produtoEdicao == null || 
+			produtoEdicao.getProduto() == null ||
+			produtoEdicao.getProduto().getEditor() == null ||
+			produtoEdicao.getProduto().getEditor().getPessoaJuridica() == null ||
+			produtoEdicao.getProduto().getEditor().getPessoaJuridica().getRazaoSocial() == null) {
+			
+			return "";
+			
+		}
+		
 		return produtoEdicao.getProduto().getEditor().getPessoaJuridica().getRazaoSocial();
 	}
 
+	
 	private String obterNomeFornecedor(ProdutoEdicao produtoEdicao) {
 		
 		Fornecedor fornecedor = produtoEdicao.getProduto().getFornecedor();
