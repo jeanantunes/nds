@@ -4,8 +4,6 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
@@ -13,7 +11,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.envio.nota.ItemNotaEnvio;
 import br.com.abril.nds.model.fiscal.nota.ProdutoServico;

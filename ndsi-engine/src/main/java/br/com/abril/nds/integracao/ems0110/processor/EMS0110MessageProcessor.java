@@ -234,6 +234,13 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 		if (fornecedor != null) {
 
 			produto.addFornecedor(fornecedor);
+		} else {
+			ndsiLoggerFactory.getLogger().logError(
+					message,
+					EventoExecucaoEnum.HIERARQUIA,
+					String.format( "Fornecedor nulo para o produto:  %1$s", input.getCodProd() )
+				);
+			return null;
 		}
 
 		if (descontoLogistica != null) {
@@ -307,7 +314,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 		Dimensao dimensao = new Dimensao();
 		Brinde brinde = new Brinde();
 
-		if (!produto.getCodigoContexto().equals(input.getContextoProd())) {
+		if (null != produto.getCodigoContexto() && !produto.getCodigoContexto().equals(input.getContextoProd())) {
 
 			produto.setCodigoContexto(input.getContextoProd());
 			this.ndsiLoggerFactory.getLogger().logInfo(
@@ -316,7 +323,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 					"Atualizacao do Codigo Contexto Produto para: "
 							+ input.getContextoProd());
 		}
-		if (!produto.getTipoProduto().getCodigoNBM().equals(input.getCodNBM())) {
+		if (null != produto.getTipoProduto() && null != produto.getTipoProduto().getCodigoNBM() && !produto.getTipoProduto().getCodigoNBM().equals(input.getCodNBM())) {
 
 			produto.getTipoProduto().setCodigoNBM(input.getCodNBM());
 			this.ndsiLoggerFactory.getLogger().logInfo(message,
@@ -324,7 +331,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 					"Atualizacao do Codigo NBM para: " + input.getCodNBM());
 		}
 
-		if (!produto.getNomeComercial().equals(input.getNomeComercial())) {
+		if (null != produto.getNomeComercial() && !produto.getNomeComercial().equals(input.getNomeComercial())) {
 
 			produto.setNomeComercial(input.getNomeComercial());
 			this.ndsiLoggerFactory.getLogger().logInfo(
