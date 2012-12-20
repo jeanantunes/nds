@@ -30,6 +30,7 @@ import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.ConsultaConsignadoCotaService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.FornecedorService;
+import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.TableModel;
@@ -68,7 +69,10 @@ public class ConsultaConsignadoCotaController {
 	
 	@Autowired
 	private DistribuidorService distribuidorService;
-	
+
+	@Autowired
+	private UsuarioService usuarioService;
+
 	@Autowired
 	private HttpServletResponse httpResponse;
 	
@@ -365,10 +369,7 @@ public class ConsultaConsignadoCotaController {
 	}
 	
 	public Usuario getUsuario() {
-		Usuario usuario = new Usuario();
-		usuario.setId(1L);
-		usuario.setNome("Lazaro Jornaleiro");
-		return usuario;
+		return usuarioService.getUsuarioLogado();
 	}
 
 }
