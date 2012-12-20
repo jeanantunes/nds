@@ -406,7 +406,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			throw new ValidacaoException(TipoMensagem.ERROR, "Produto edição não encontrado");
 		}
 		
-		String nomeProdutoEdicao = produtoEdicao.getNomeComercial();
+		String nomeProdutoEdicao = produtoEdicao.getProduto().getNome();
 		
 		List<ChamadaEncalheCota> listaChamadaEncalheCota = chamadaEncalheCotaRepository.obterListaChamadaEncalheCota(idCota, idProdutoEdicao);
 		
