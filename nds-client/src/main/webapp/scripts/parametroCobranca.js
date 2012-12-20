@@ -384,7 +384,7 @@ var parametroCobrancaController = $.extend(true,
 			
 			idPolitica  = resultado.idPolitica;
 			
-			$("#tipoCobranca", this.workspace).val(resultado.tipoCobranca);
+			$("#dTipoCobranca", this.workspace).val(resultado.tipoCobranca);
 			
 			$("#formaCobranca", this.workspace).val(resultado.formaCobranca);
 			$("#banco", this.workspace).val(resultado.idBanco);
@@ -420,13 +420,13 @@ var parametroCobrancaController = $.extend(true,
 				}
 			}		
 			$("#principal", this.workspace).attr('checked',resultado.principal);		
-			$("#PS", this.workspace).attr('checked',resultado.segunda);
-			$("#PT", this.workspace).attr('checked',resultado.terca);
-			$("#PQ", this.workspace).attr('checked',resultado.quarta);
-			$("#PQu", this.workspace).attr('checked',resultado.quinta);
-			$("#PSex", this.workspace).attr('checked',resultado.sexta);
-			$("#PSab", this.workspace).attr('checked',resultado.sabado);
-			$("#PDom", this.workspace).attr('checked',resultado.domingo);
+			$("#dPS", this.workspace).attr('checked',resultado.segunda);
+			$("#dPT", this.workspace).attr('checked',resultado.terca);
+			$("#dPQ", this.workspace).attr('checked',resultado.quarta);
+			$("#dPQu", this.workspace).attr('checked',resultado.quinta);
+			$("#dPSex", this.workspace).attr('checked',resultado.sexta);
+			$("#dPSab", this.workspace).attr('checked',resultado.sabado);
+			$("#dPDom", this.workspace).attr('checked',resultado.domingo);
 	
 	
 			parametroCobrancaController.opcaoPagto(resultado.tipoCobranca);
@@ -459,7 +459,7 @@ var parametroCobrancaController = $.extend(true,
 			var parametroCobranca = {
 					idPolitica: idPolitica,
 					tipoFormaCobranca: tipoFormaCobranca,
-					tipoCobranca : $("#tipoCobranca", this.worspace).val(),
+					tipoCobranca : $("#dTipoCobranca", this.worspace).val(),
 					formaEmissao : $("#formaEmissao", this.worspace).val(),
 					idBanco : $("#banco", this.worspace).val(),
 					valorMinimo : $("#valorMinimo", this.worspace).val(),
@@ -472,13 +472,13 @@ var parametroCobrancaController = $.extend(true,
 					unificada : $("#unificada", this.workspace).val() == 'S',
 					envioEmail : $("#envioEmail", this.workspace).val() == 'S',
 					principal : $("#principal", this.workspace).attr('checked')  == 'checked',
-					segunda : $("#PS", this.workspace).attr('checked')  == 'checked',		
-					terca : $("#PT", this.workspace).attr('checked')  == 'checked',
-					quarta : $("#PQ", this.workspace).attr('checked')  == 'checked',		
-					quinta : $("#PQu", this.workspace).attr('checked')  == 'checked',	
-					sexta : $("#PSex", this.workspace).attr('checked')  == 'checked',		
-					sabado : $("#PSab", this.workspace).attr('checked')  == 'checked',		
-					domingo : $("#PDom", this.workspace).attr('checked')  == 'checked'
+					segunda : $("#dPS", this.workspace).attr('checked')  == 'checked',		
+					terca : $("#dPT", this.workspace).attr('checked')  == 'checked',
+					quarta : $("#dPQ", this.workspace).attr('checked')  == 'checked',		
+					quinta : $("#dPQu", this.workspace).attr('checked')  == 'checked',	
+					sexta : $("#dPSex", this.workspace).attr('checked')  == 'checked',		
+					sabado : $("#dPSab", this.workspace).attr('checked')  == 'checked',		
+					domingo : $("#dPDom", this.workspace).attr('checked')  == 'checked'
 			};
 			
 			$("input[name='radioFormaCobrancaBoleto']:checked", this.workspace).each(function(i) {			
@@ -568,7 +568,7 @@ var parametroCobrancaController = $.extend(true,
 			
 			idPolitica  = null;
 			
-			$("#tipoCobranca", this.workspace).val('');
+			$("#dTipoCobranca", this.workspace).val('');
 			
 			$("#formaCobranca", this.workspace).val('');
 			$("#banco", this.workspace).val('');
