@@ -12,7 +12,8 @@ import org.apache.commons.lang.time.DateUtils;
 
 public class DateUtil {
     
-    public static final String PADRAO_HORA_MINUTO = "HH:mm";
+    private static final int QTD_MAXIMA_SEMANAS_POR_MES = 6;
+	public static final String PADRAO_HORA_MINUTO = "HH:mm";
 
 	public static boolean isValidDate(String valor, String pattern) {
 
@@ -217,24 +218,7 @@ public class DateUtil {
 	 */
 	public static int obterNumeroSemanaNoAno(Date data, Integer diaInicioSemana) {
 				
-		if (data == null) {
-			
-			throw new IllegalArgumentException("Data inválida!");
-		}
-		
-		if (diaInicioSemana == null) {
-			
-			throw new IllegalArgumentException("Dia de ínicio da semana inválido!");
-		}
-		
-		Calendar calendar = Calendar.getInstance();
-		
-		calendar.setTime(data);
-		
-		if (diaInicioSemana != null) {
-		
-			calendar.setFirstDayOfWeek(diaInicioSemana);
-		}
+		Calendar calendar = getCalendarioDistribuidor(diaInicioSemana, data);
 		
 		return calendar.get(Calendar.WEEK_OF_YEAR);
 	}
@@ -267,7 +251,7 @@ public class DateUtil {
 	 * 
 	 * @param numeroSemana - número da semana no ano
 	 * @param diaInicioSemana - dia de início da semana (Utilizar as constantes da classe java.util.Calendar)
-	 * @param dataBase TODO
+	 * @param dataBase
 	 * @return Data
 	 */
 	public static Date obterDataDaSemanaNoAno(Integer numeroSemana, Integer diaInicioSemana, Date dataBase) {
@@ -283,13 +267,17 @@ public class DateUtil {
 		}
 		
 		Calendar calendar = Calendar.getInstance();
-		if (dataBase != null) {
-			calendar.setTime(dataBase);
-		}
 		
 		int year = calendar.get(Calendar.YEAR);
 		
+		if (dataBase != null) {
+		
+			year = getBaseYear(numeroSemana, dataBase);
+		}
+		
 		calendar.clear();
+		
+		calendar.setMinimalDaysInFirstWeek(7);
 		
 		calendar.set(Calendar.YEAR, year);
 		
@@ -300,6 +288,53 @@ public class DateUtil {
 		Date data = calendar.getTime();
 		
 		return removerTimestamp(data);
+	}
+	
+	private static int getBaseYear(Integer numeroSemana, Date data) {
+		
+		Calendar calendar = Calendar.getInstance();
+		
+		calendar.setTime(data);
+		
+		int year = calendar.get(Calendar.YEAR);
+		
+		int month = calendar.get(Calendar.MONTH);
+		
+		if (month == Calendar.JANUARY) {
+			
+			if (numeroSemana > QTD_MAXIMA_SEMANAS_POR_MES) {
+				
+				year--;
+			}
+		}
+		
+		return year;
+	}
+
+	private static Calendar getCalendarioDistribuidor(Integer diaInicioSemana, Date data) {
+		
+		if (data == null) {
+			
+			throw new IllegalArgumentException("Data inválida!");
+		}
+		
+		if (diaInicioSemana == null) {
+			
+			throw new IllegalArgumentException("Dia de ínicio da semana inválido!");
+		}
+		
+		Calendar calendar = Calendar.getInstance();
+		
+		calendar.setMinimalDaysInFirstWeek(7);
+		
+		calendar.setTime(data);
+		
+		if (diaInicioSemana != null) {
+		
+			calendar.setFirstDayOfWeek(diaInicioSemana);
+		}
+		
+		return calendar;
 	}
 	
 	/**
