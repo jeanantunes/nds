@@ -154,7 +154,7 @@ var roteirizacao = $.extend(true, {
 
     confirmarInclusaoRota : function() {
     	
-    	var params = {'roteiroId' :  roteirizacao.idRoteiro,
+    	var params = {'roteiroId' :  $("#selectIncluirEmRoteiro", roteirizacao.worksapce).val(),
                 	  'ordem' 	  :  $("#inputOrdem", roteirizacao.worksapce).val(),
                 	  'nome' 	  :  $("#inputNome", roteirizacao.workspace).val()};
     	
@@ -167,7 +167,10 @@ var roteirizacao = $.extend(true, {
                 if (tipoMensagem && listaMensagens) {
                     exibirMensagemDialog(tipoMensagem, listaMensagens, 'dialog-novo-dado');
                 } else {
-                    roteirizacao.popularGridRotas(result.rotas);
+                	
+                	if (roteirizacao.idRoteiro == $("#selectIncluirEmRoteiro", roteirizacao.worksapce).val()) {
+                		roteirizacao.popularGridRotas(result.rotas);
+                    }
                     $('#dialog-novo-dado', roteirizacao.workspace).dialog("close");
                 }
             },
@@ -294,7 +297,7 @@ var roteirizacao = $.extend(true, {
 		        	exibirMensagem(tipoMensagem, listaMensagens);
 		        	return;
 		        } 
-	        	
+		        $("#selectIncluirEmRoteiro > option").remove();
                 $.each(result, function(index, row){
                         $('#roteiroPesquisa', roteirizacao.workspace)
                         	.append('<option value="'+row.id+'">'+row.descricaoRoteiro+'</option>');
@@ -321,7 +324,7 @@ var roteirizacao = $.extend(true, {
 		        	exibirMensagem(tipoMensagem, listaMensagens);
 		        	return;
 		        } 
-	           
+		       $("#selectIncluirEmRoteiro > option").remove();
 	           $.each(result, function(index, row){
 	               $('#selectIncluirEmRoteiro', roteirizacao.workspace)
 	               		.append('<option value="'+row.id+'">'+row.nome+'</option>');
@@ -341,6 +344,7 @@ var roteirizacao = $.extend(true, {
         
         $.postJSON(contextPath + '/cadastro/roteirizacao/carregarComboRoteiroEspecial',null ,
             function(result) {
+        	 		$("#selectIncluirEmRoteiro > option").remove();
                 $.each(result, function(index, row){
                         $('#roteiroPesquisa', roteirizacao.workspace)
                         	.append('<option value="'+row.id+'">'+row.descricaoRoteiro+'</option>');
