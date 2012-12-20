@@ -956,6 +956,7 @@ public class DataLoader {
 	private static InterfaceExecucao interfaceEMS0132;
 	private static InterfaceExecucao interfaceEMS0133;
 	private static InterfaceExecucao interfaceEMS0135;
+	private static InterfaceExecucao interfaceEMS0136;
 	private static InterfaceExecucao interfaceEMS0185;
 	private static InterfaceExecucao interfaceEMS0197;
 	private static InterfaceExecucao interfaceEMS0198;
@@ -12116,6 +12117,7 @@ public class DataLoader {
 		interfaceEMS0132 = Fixture.criarInterfaceExecucao(132L, "EMS0132");
 		interfaceEMS0133 = Fixture.criarInterfaceExecucao(133L, "EMS0133");
 		interfaceEMS0135 = Fixture.criarInterfaceExecucao(135L, "EMS0135");
+		interfaceEMS0136 = Fixture.criarInterfaceExecucao(136L, "EMS0136");
 		interfaceEMS0185 = Fixture.criarInterfaceExecucao(185L, "EMS0185");
 		interfaceEMS0197 = Fixture.criarInterfaceExecucao(197L, "EMS0197");
 		interfaceEMS0198 = Fixture.criarInterfaceExecucao(198L, "EMS0198");
@@ -12153,6 +12155,7 @@ public class DataLoader {
 		save(session, Fixture.criarInterfaceExecucao(197L, "EMS0197"));
 		save(session, Fixture.criarInterfaceExecucao(198L, "EMS0198"));
 		save(session, Fixture.criarInterfaceExecucao(135L, "EMS0135"));
+		save(session, Fixture.criarInterfaceExecucao(136L, "EMS0136"));
 	}
 
 	private static void criarEventoExecucao(Session session) {
