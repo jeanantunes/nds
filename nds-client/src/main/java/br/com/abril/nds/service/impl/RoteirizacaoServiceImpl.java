@@ -711,11 +711,11 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
      */
     private void processarTranfererenciaPDVs(List<RotaRoteirizacaoDTO> rotasNovosPDVsTransferidos, BoxRoteirizacaoDTO boxRoteirizacaoDTO) {
     	
-    	Box box = this.boxRepository.buscarPorId(boxRoteirizacaoDTO.getId());
-    	
     	for(RotaRoteirizacaoDTO rotaDTO : rotasNovosPDVsTransferidos) {
     		
     		Rota rota = this.rotaRepository.buscarPorId(rotaDTO.getId());
+    		
+    		Box box = this.boxRepository.obterBoxPorRota(rota.getId());
     		
     		List<PdvRoteirizacaoDTO> pdvsExistentes = PdvRoteirizacaoDTO.getDTOFrom(rota.getRotaPDVs());
     		
@@ -724,6 +724,7 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
     		for(PdvRoteirizacaoDTO pdvDTO : rotaDTO.getPdvs()) {
     			
                 novoPDVRota(rota, pdvDTO, box);
+                atribuirBoxCota(pdvDTO, box);
     		}
     		
     		this.rotaRepository.alterar(rota);
@@ -798,7 +799,12 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 			 cotaRepository.merge(cota);
 		 }
 	}
-
+	
+	private void atribuirBoxCota(PdvRoteirizacaoDTO pdvDTO, Long boxID) { 
+		Box box = this.boxRepository.buscarPorId(boxID);
+		this.atribuirBoxCota(pdvDTO, box);
+	}
+	
 	/**
      * Atualiza as informações de uma roteirização existente
      * 

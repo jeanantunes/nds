@@ -43,7 +43,7 @@ public class IdentificacaoEmitente implements Serializable {
 	private String inscricaoEstadual;
 	
 	
-	@OneToOne(optional=false)
+	@ManyToOne(optional=false)
 	@JoinColumn(name="ENDERECO_ID_EMITENTE")
 	private Endereco endereco;
 	

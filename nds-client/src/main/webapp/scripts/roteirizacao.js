@@ -1166,6 +1166,7 @@ var roteirizacao = $.extend(true, {
     selecionarTodosPdvs : function() {
         if ($('#selecionarTodosPdv', roteirizacao.workspace).is(':checked')) {
             $(".checkboxCotasRota", roteirizacao.workspace).prop('checked', true);
+            this.selecaoCota();
         } else {
             $(".checkboxCotasRota", roteirizacao.workspace).prop('checked', false);
         }

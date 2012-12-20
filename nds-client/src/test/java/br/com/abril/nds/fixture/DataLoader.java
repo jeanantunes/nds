@@ -18,7 +18,6 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -30,6 +29,7 @@ import org.hibernate.Transaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
 import br.com.abril.nds.integracao.model.canonic.InterfaceEnum;
 import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.Origem;
@@ -333,6 +333,7 @@ public class DataLoader {
 	private static TipoMovimentoFinanceiro tipoMovimentoFinanceiroJuros;
 	private static TipoMovimentoFinanceiro tipoMovimentoFinanceiroMulta;
 	private static TipoMovimentoFinanceiro tipoMovimentoFinanceiroEnvioEncalhe;
+	private static TipoMovimentoFinanceiro tipoMovimentoFinanceiroVendaTotal;
 
 	private static TipoMovimentoEstoque tipoMovimentoTransferenciaEntradaLancamento;
 	private static TipoMovimentoEstoque tipoMovimentoTransferenciaSaidaLancamento;
@@ -6075,7 +6076,8 @@ public class DataLoader {
 		tipoMovimentoEnvioJornaleiro = Fixture.tipoMovimentoEnvioJornaleiro();
 
 		save(session, tipoMovimentoEnvioJornaleiro,
-				tipoMovimentoEstornoCotaAusente,tipoMovimentoFinanceiroDebitoPostergadoNegociado);
+				tipoMovimentoEstornoCotaAusente,tipoMovimentoFinanceiroDebitoPostergadoNegociado,
+				tipoMovimentoFinanceiroDebitoPostergado);
 
 		tipoMovimentoFinanceiroCredito.setAprovacaoAutomatica(false);
 		tipoMovimentoFinanceiroDebito.setAprovacaoAutomatica(false);
@@ -6095,6 +6097,7 @@ public class DataLoader {
 		tipoMovimentoTransferenciaEntradaProdutosDevolucaoFornecedor = Fixture.tipoMovimentoTransferenciaEntradaProdutosDevolucaoFornecedor();
 		tipoMovimentoTransferenciaSaidaProdutosDevolucaoFornecedor = Fixture.tipoMovimentoTransferenciaSaidaProdutosDevolucaoFornecedor();
 		tipoMovimentoDevolucaoEncalheFornecedor = Fixture.tipoMovimentoDevolucaoEncalheFornecedor();
+		tipoMovimentoFinanceiroVendaTotal = Fixture.tipoMovimentoFinanceiroVendaTotal();
 		
 		save(session, tipoMovimentoFaltaEm, tipoMovimentoFaltaDe, tipoMovimentoSuplementarCotaAusente,
 				tipoMovimentoSobraEm, tipoMovimentoSobraDe,
@@ -6111,7 +6114,8 @@ public class DataLoader {
 				tipoMovimentoTransferenciaEntradaRecolhimento, tipoMovimentoTransferenciaSaidaRecolhimento,
 				tipoMovimentoTransferenciaEntradaProdutosDanificados, tipoMovimentoTransferenciaSaidaProdutosDanificados,
 				tipoMovimentoEstornoCotaFuroPublicacao,tipoMovimentoTransferenciaEntradaProdutosDevolucaoFornecedor,
-				tipoMovimentoTransferenciaSaidaProdutosDevolucaoFornecedor, tipoMovimentoDevolucaoEncalheFornecedor);
+				tipoMovimentoTransferenciaSaidaProdutosDevolucaoFornecedor, tipoMovimentoDevolucaoEncalheFornecedor,
+				tipoMovimentoFinanceiroVendaTotal);
 
 	}
 

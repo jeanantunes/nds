@@ -1,9 +1,15 @@
 package br.com.abril.nds.util;
 
+import java.awt.Image;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Map;
 import java.util.Objects;
+
+import javax.imageio.ImageIO;
 
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JREmptyDataSource;
@@ -29,6 +35,7 @@ public class JasperUtil {
     public static final String REPORTS_PATH = "/reports/%s";
     
     private static final Logger LOG = LoggerFactory.getLogger(JasperUtil.class);
+    
     
     private JasperUtil() {
     }
@@ -125,6 +132,30 @@ public class JasperUtil {
             throw new RuntimeException(msg, ex);
         }
 
+    }
+    
+    /**
+     * Retorna uma imagem para exibição nos relatorios
+     * 
+     * @param inputStream - stream da imagem
+     * 
+     * @return imagem - Image
+     */
+	public static Image getImagemRelatorio(InputStream inputStream){
+    	
+		if(inputStream == null){
+			
+			inputStream = new ByteArrayInputStream(new byte[0]);
+		}
+				
+		try {
+			
+			return ImageIO.read(inputStream);
+			
+		} catch (IOException e) {
+		
+			return null;
+		}
     }
 
 }

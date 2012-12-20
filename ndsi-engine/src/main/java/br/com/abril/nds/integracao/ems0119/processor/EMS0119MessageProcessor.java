@@ -12,6 +12,7 @@ import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
 import br.com.abril.nds.integracao.model.canonic.EMS0119Input;
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.Editor;
+import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
@@ -181,6 +182,14 @@ public class EMS0119MessageProcessor extends AbstractRepository implements
 				produto.setEditor(ed);	
 			}
 			
+			Fornecedor fornecedor = this
+					.findFornecedor(Integer.valueOf( input.getCodigoFornecedorPublic()));
+			if (fornecedor != null) {
+
+				produto.addFornecedor(fornecedor);
+			}
+
+			
 			if ((null != tp) && (null != ed)) {
 				this.getSession().persist(produto);
 			}						
@@ -188,6 +197,20 @@ public class EMS0119MessageProcessor extends AbstractRepository implements
 		}
 	}
 
+	private Fornecedor findFornecedor(Integer codigoInterface) {
+		StringBuilder sql = new StringBuilder();
+
+		sql.append("SELECT f FROM Fornecedor f ");
+		sql.append("WHERE  f.codigoInterface = :codigoInterface ");
+
+		Query query = this.getSession().createQuery(sql.toString());
+
+		query.setParameter("codigoInterface", codigoInterface);
+
+		return (Fornecedor) query.uniqueResult();
+
+	}
+	
 	private Editor getEditor(Long codigoDoEditor) {
 		StringBuilder sql = new StringBuilder();
 		sql.append("SELECT e ");
