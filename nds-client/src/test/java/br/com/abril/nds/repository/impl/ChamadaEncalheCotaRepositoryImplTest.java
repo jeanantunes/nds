@@ -723,5 +723,16 @@ public class ChamadaEncalheCotaRepositoryImplTest extends
 		Assert.assertNotNull(obterChamada);
 
 	}
+	
+	@Test
+	public void testarObterListaChamadaEncalheCota() {
+	
+		Long idCota = cotaManoel.getId();
+		
+		Long idProdutoEdicao = veja1.getId();
+		
+		chamadaEncalheCotaRepository.obterListaChamadaEncalheCota(idCota, idProdutoEdicao);
+		
+	}
 
 }
