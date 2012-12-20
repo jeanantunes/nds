@@ -342,6 +342,8 @@ public class MatrizRecolhimentoController {
 		
 		this.validarBloqueioMatrizFechada(null);
 		
+		this.validarDataConfirmacaoConfiguracaoInicial();
+		
 		FiltroPesquisaMatrizRecolhimentoVO filtro = obterFiltroSessao();
 		
 		recolhimentoService.voltarConfiguracaoOriginal(filtro.getNumeroSemana(), 
@@ -1333,6 +1335,27 @@ public class MatrizRecolhimentoController {
 		
 			result.use(Results.json()).from(confirmacoesVO, "result").serialize();
 		}		
+	}
+	
+	private void validarDataConfirmacaoConfiguracaoInicial(){
+		
+		List<ConfirmacaoVO> confirmacoesVO = this.montarListaDatasConfirmacao();
+		
+		boolean isItensConfirmado = true;
+		
+		for(ConfirmacaoVO item : confirmacoesVO){
+			if(!item.isConfirmado()){
+				isItensConfirmado = false;
+				break;
+			}
+		}
+		
+		if (isItensConfirmado) {
+		
+			String mensagem = " Operação não permitida! Matriz de recolhimento já foi fechada! Não existe itens disponíveis para voltar a configuração inicial."; 
+			
+			throw new ValidacaoException(TipoMensagem.WARNING,mensagem,true);
+		}	
 	}
 	
 	/**

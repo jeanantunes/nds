@@ -89,7 +89,7 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 				Lancamento lancamento = this.recuperarRecolhimento(produtoEdicaoRecolhimento, input.getDataLancamentoRecolhimentoProduto());
 				if (null != lancamento) {
 					
-					if (!lancamento.getDataRecolhimentoDistribuidor().equals(input.getDataMovimento() )) {
+					if (!lancamento.getDataRecolhimentoDistribuidor().equals(input.getDataLancamentoRecolhimentoProduto() )) {
 					
 						if (lancamento.getStatus().equals(StatusLancamento.BALANCEADO_RECOLHIMENTO)) {
 							ndsiLoggerFactory.getLogger().logWarning(
@@ -99,7 +99,7 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 								);
 							return ;
 						} else {							
-							lancamento.setDataRecolhimentoDistribuidor(input.getDataMovimento());
+							lancamento.setDataRecolhimentoDistribuidor(input.getDataLancamentoRecolhimentoProduto());
 							this.getSession().merge(lancamento);
 						}
 					}
@@ -107,7 +107,7 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 					ndsiLoggerFactory.getLogger().logError(
 							message,
 							EventoExecucaoEnum.RELACIONAMENTO,
-							String.format( "Não existe recolhimento para o Produto %1$s Edicao %2$s. Na data de lancamento %3$s", input.getCodigoPublicacao(), input.getEdicaoRecolhimento().toString(), input.getDataMovimento().toString() )
+							String.format( "Não existe recolhimento para o Produto %1$s Edicao %2$s. Na data de lancamento %3$s", input.getCodigoPublicacao(), input.getEdicaoRecolhimento().toString(), input.getDataLancamentoRecolhimentoProduto().toString() )
 						);
 				}
 
@@ -134,17 +134,17 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 					);
 			}
 			
-			Lancamento lancamento = this.recuperarLancamento(produtoEdicaoLancamento, input.getDataMovimento());
+			Lancamento lancamento = this.recuperarLancamento(produtoEdicaoLancamento, input.getDataLancamentoRecolhimentoProduto());
 			if (null == lancamento) {
 				lancamento = inserirLancamento(produtoEdicaoLancamento, input);
 				
 				ndsiLoggerFactory.getLogger().logWarning(
 						message,
 						EventoExecucaoEnum.INF_DADO_ALTERADO,
-						String.format( "Foi criado um lancamento para o Produto %1$s Edicao %2$s. Na data de lancamento %3$s", input.getCodigoPublicacao(), produtoEdicaoLancamento.getNumeroEdicao().toString(), input.getDataMovimento().toString() )
+						String.format( "Foi criado um lancamento para o Produto %1$s Edicao %2$s. Na data de lancamento %3$s", input.getCodigoPublicacao(), produtoEdicaoLancamento.getNumeroEdicao().toString(), input.getDataLancamentoRecolhimentoProduto().toString() )
 					);				
 			} else {
-				if (!lancamento.getDataLancamentoDistribuidor().equals(input.getDataMovimento())) {
+				if (!lancamento.getDataLancamentoDistribuidor().equals(input.getDataLancamentoRecolhimentoProduto())) {
 					if (lancamento.getStatus().equals(StatusLancamento.BALANCEADO)) {
 						ndsiLoggerFactory.getLogger().logWarning(
 								message,
@@ -153,7 +153,7 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 							);	
 						return ;
 					} else {
-						lancamento.setDataLancamentoDistribuidor(input.getDataMovimento());
+						lancamento.setDataLancamentoDistribuidor(input.getDataLancamentoRecolhimentoProduto());
 						this.getSession().merge(lancamento);
 					}
 				}
@@ -167,15 +167,15 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 		
 		lancamento.setProdutoEdicao(produtoEdicaoLancamento);
 		lancamento.setDataCriacao(new Date());
-		lancamento.setDataLancamentoDistribuidor(input.getDataMovimento());
-		lancamento.setDataLancamentoPrevista(input.getDataMovimento());
+		lancamento.setDataLancamentoDistribuidor(input.getDataLancamentoRecolhimentoProduto());
+		lancamento.setDataLancamentoPrevista(input.getDataLancamentoRecolhimentoProduto());
 		lancamento.setAlteradoInteface(true);
 		lancamento.setStatus(StatusLancamento.CONFIRMADO);
 		lancamento.setTipoLancamento(TipoLancamento.LANCAMENTO);
 
 				
 		Calendar cal = Calendar.getInstance();
-		cal.setTime(input.getDataMovimento());
+		cal.setTime(input.getDataLancamentoRecolhimentoProduto());
 		cal.add(Calendar.DATE, produtoEdicaoLancamento.getProduto().getPeb()); 		
 		lancamento.setDataRecolhimentoDistribuidor(cal.getTime());
 		lancamento.setDataRecolhimentoPrevista(cal.getTime());		

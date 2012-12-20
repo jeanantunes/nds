@@ -110,7 +110,7 @@ public class GarantiasController {
 			PaginacaoUtil.ordenarEmMemoria(listaGarantiasSessao, ordenacao, sortname).toArray();
 		}
 		
-		
+		this.httpSession.setAttribute(LISTA_GARANTIAS_SALVAR_SESSAO, listaGarantiasSessao);
 		
 		this.result.use(Results.json()).from(this.getTableModelListaGarantias(listaGarantiasSessao), "result").recursive().serialize();
 	}
