@@ -48,6 +48,17 @@ public interface ChamadaEncalheCotaRepository extends Repository<ChamadaEncalheC
 	 */
 	public Long obterQtdListaChamaEncalheCota(Integer numeroCota, Date dataOperacao, Long idProdutoEdicao, boolean indPesquisaCEFutura, boolean conferido, boolean postergado);
 
+	/**
+	 * Obtém uma lista de chamadaEncalheCota para a 
+	 * cota e produtoEdicao pesquisados.
+	 * 
+	 * @param idCota
+	 * @param idProdutoEdicao
+	 * 
+	 * @return List<ChamadaEncalheCota>
+	 */
+	public List<ChamadaEncalheCota> obterListaChamadaEncalheCota(Long idCota, Long idProdutoEdicao);
+	
 	
 	/**
 	 * Obtém lista de chamada encalhe cota a partir do 
