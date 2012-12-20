@@ -212,7 +212,7 @@
 <input id="excluirProdutoSemReparte" type="checkbox" name="checkbox"/>
 
 			</td>
-              <td width="156">Excluir Produtos s/Reparte</td>
+              <td width="156">Excluir Produtos s/ Reparte</td>
               <td><span class="bt_pesquisar">
 			  
 <!-- Pesquisar -->

@@ -503,29 +503,28 @@ public class VendaEncalheController {
 	
 	private void validarParametrosFiltro(FiltroVendaEncalheDTO filtro){
 		
+		if(filtro.getTipoVendaEncalhe() == null 
+				&& filtro.getNumeroCota() == null 
+				&& filtro.getPeriodoInicial()== null 
+				&& filtro.getPeriodoFinal() == null){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING,"Pelomenos um campo deve ser informado para pesquisa!");
+		}
+		
 		validarFormatoData();
 		
-		List<String> mensagensValidacao = new ArrayList<String>();
-		
-		if(filtro.getNumeroCota() == null){
-			mensagensValidacao.add("O preenchimento do campo [Cota] é obrigatório!");
+		if(filtro.getPeriodoInicial() != null && filtro.getPeriodoFinal() == null){
+			throw new ValidacaoException(TipoMensagem.WARNING,"O período preenchido no campo [Até] está inválido!");
 		}
 		
-		if(filtro.getPeriodoInicial() == null){
-			mensagensValidacao.add("O preenchimento do campo [Périodo] é obrigatório!");
-		}
-		
-		if(filtro.getPeriodoFinal() == null ){
-			mensagensValidacao.add("O preenchimento do campo [Até] é obrigatório!");
+		if(filtro.getPeriodoInicial() == null && filtro.getPeriodoFinal() != null){
+			throw new ValidacaoException(TipoMensagem.WARNING,"O período preenchido no campo [Período] está inválido!");
 		}
 		
 		if(DateUtil.isDataInicialMaiorDataFinal(filtro.getPeriodoInicial(), filtro.getPeriodoFinal())){
 			throw new ValidacaoException(TipoMensagem.WARNING,"O período preenchido nos campos [Período] [Até] está inválido!");
 		}
-		
-		if (!mensagensValidacao.isEmpty()){
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, mensagensValidacao));
-		}
+
 	}
 	
 	/**

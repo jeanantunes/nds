@@ -60,6 +60,8 @@ public class VendaEncalheDTO implements Serializable {
 	
 	private Usuario usuario;
 	
+	private Date horarioVenda;
+	
 	/**
 	 * @return the usuario
 	 */
@@ -311,5 +313,15 @@ public class VendaEncalheDTO implements Serializable {
 	public void setQntDisponivelProduto(BigInteger qntDisponivelProduto) {
 		this.qntDisponivelProduto = qntDisponivelProduto;
 	}
+
+	public Date getHorarioVenda() {
+		return horarioVenda;
+	}
+
+	public void setHorarioVenda(Date horarioVenda) {
+		this.horarioVenda = horarioVenda;
+	}
+	
+	
 	
 }

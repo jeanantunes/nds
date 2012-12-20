@@ -43,8 +43,8 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		   .append("        produto.nome as nomeProduto, ")	
 		   .append("        pe.numeroEdicao as numeroEdicao, ")
 		   .append("        pessoa.razaoSocial as nomeFornecedor, ")
-		   .append("        CASE WHEN movimentoEstoqueCotaFuro is not null THEN movimento.dataCriacao ")
-		   .append("			 ELSE (CASE WHEN tipoMovimento = :tipoMovimentoCotaFuro THEN movimento.dataCriacao ELSE lancamento.dataLancamentoDistribuidor END) END as dataLancamento, ")
+		   .append("        CASE WHEN movimentoEstoqueCotaFuro is not null THEN movimento.data ")
+		   .append("			 ELSE (CASE WHEN tipoMovimento = :tipoMovimentoCotaFuro THEN movimento.data ELSE lancamento.dataLancamentoDistribuidor END) END as dataLancamento, ")
 		   .append("        pe.precoVenda as precoCapa, ")
 		   .append("        ("+ this.getHQLDesconto() +") as desconto, ")
 		   .append("        (pe.precoVenda - (pe.precoVenda * ("+ this.getHQLDesconto() +") / 100)) as precoDesconto, ")
@@ -60,7 +60,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		
 		buscarParametrosConsignadoCota(query, filtro);
 		
-		query.setParameter("tipoMovimentoCotaFuro", tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.ESTORNO_REPARTE_FURO_PUBLICACAO));
+		query.setParameter("tipoMovimentoCotaFuro", tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_FURO_PUBLICACAO));
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(
 				ConsultaConsignadoCotaDTO.class));
@@ -341,7 +341,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 
 		} else {
 			listaGrupoMovimentoEstoquesEntrada.add(GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
-			listaGrupoMovimentoEstoques = listaGrupoMovimentoEstoquesEntrada;
+			listaGrupoMovimentoEstoques.addAll(listaGrupoMovimentoEstoquesEntrada);
 			
 			for(GrupoMovimentoEstoque grupoMovimentoEstoque: GrupoMovimentoEstoque.values()) {
 				if(Dominio.COTA.equals(grupoMovimentoEstoque.getDominio())) {

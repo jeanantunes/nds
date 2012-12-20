@@ -13,9 +13,14 @@ public enum GrupoMovimentoFinaceiro {
 	ENVIO_ENCALHE(OperacaoFinaceira.CREDITO),
 	
 	/**
-	 * Postergado da cota
+	 * Postergado de débito da cota
 	 */
-	POSTERGADO(OperacaoFinaceira.DEBITO),
+	POSTERGADO_DEBITO(OperacaoFinaceira.DEBITO),
+	
+	/**
+	 * Postergado de crédito da cota
+	 */
+	POSTERGADO_CREDITO(OperacaoFinaceira.CREDITO),
 	
 	/**
 	 * Crédito cota
@@ -66,7 +71,12 @@ public enum GrupoMovimentoFinaceiro {
 	/**
 	 * Compra de Numeros Atrazados(NA)
 	 */
-	COMPRA_NUMEROS_ATRAZADOS(OperacaoFinaceira.DEBITO);
+	COMPRA_NUMEROS_ATRAZADOS(OperacaoFinaceira.DEBITO),
+	
+	/**
+	 * Venda total de reparte
+	 */
+	VENDA_TOTAL(OperacaoFinaceira.DEBITO);
 	
 	
 	private OperacaoFinaceira operacaoFinaceira;

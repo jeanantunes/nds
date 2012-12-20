@@ -510,7 +510,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		if (pathNFEExportacao == null) {
 			throw new ValidacaoException(
 					new ValidacaoVO(TipoMensagem.WARNING,
-							"Informe o diretório de exportação das notas na tela de paramestros do sistema"));
+							"Informe o diretório de exportação das notas na tela de parametros do sistema"));
 		}
 
 		File diretorioExportacaoNFE = new File(pathNFEExportacao.getValor());

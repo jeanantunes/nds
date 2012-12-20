@@ -37,6 +37,8 @@ public class FiltroVendaEncalheDTO implements Serializable {
 	@Export(label="Até")
 	private Date periodoFinal;
 	
+	private Date horarioVenda;
+	
 	private PaginacaoVO paginacao;
 	
 	private OrdenacaoColuna ordenacaoColuna;
@@ -255,8 +257,12 @@ public class FiltroVendaEncalheDTO implements Serializable {
 			return false;
 		return true;
 	}
-	
-	
-	
-	
+
+	public Date getHorarioVenda() {
+		return horarioVenda;
+	}
+
+	public void setHorarioVenda(Date horarioVenda) {
+		this.horarioVenda = horarioVenda;
+	}
 }

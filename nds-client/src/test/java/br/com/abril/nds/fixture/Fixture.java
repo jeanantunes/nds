@@ -1268,10 +1268,20 @@ public class Fixture {
 	public static TipoMovimentoFinanceiro tipoMovimentoFinanceiroDebitoPostergado() {
 		TipoMovimentoFinanceiro tipoMovimento = new TipoMovimentoFinanceiro();
 		tipoMovimento.setAprovacaoAutomatica(true);
-		tipoMovimento.setDescricao("Postergado");
-		tipoMovimento.setGrupoMovimentoFinaceiro(GrupoMovimentoFinaceiro.DEBITO);
+		tipoMovimento.setDescricao("Postergado débito");
+		tipoMovimento.setGrupoMovimentoFinaceiro(GrupoMovimentoFinaceiro.POSTERGADO_DEBITO);
+		tipoMovimento.setOperacaoFinaceira(OperacaoFinaceira.DEBITO);
 		return tipoMovimento;
-	}	
+	}
+	
+	public static TipoMovimentoFinanceiro tipoMovimentoFinanceiroCreditoPostergado() {
+		TipoMovimentoFinanceiro tipoMovimento = new TipoMovimentoFinanceiro();
+		tipoMovimento.setAprovacaoAutomatica(true);
+		tipoMovimento.setDescricao("Postergado crédito");
+		tipoMovimento.setGrupoMovimentoFinaceiro(GrupoMovimentoFinaceiro.POSTERGADO_CREDITO);
+		tipoMovimento.setOperacaoFinaceira(OperacaoFinaceira.CREDITO);
+		return tipoMovimento;
+	}
 	
 	public static TipoMovimentoFinanceiro tipoMovimentoFinanceiroDebitoPostergadoNegociado() {
 		TipoMovimentoFinanceiro tipoMovimento = new TipoMovimentoFinanceiro();
@@ -1328,6 +1338,14 @@ public class Fixture {
 		tipoMovimento.setDescricao("Multa");
 		tipoMovimento.setGrupoMovimentoFinaceiro(GrupoMovimentoFinaceiro.MULTA);
 		return tipoMovimento;
+	}
+	
+	public static TipoMovimentoFinanceiro tipoMovimentoFinanceiroVendaTotal(){
+		TipoMovimentoFinanceiro tipoMovimento = new TipoMovimentoFinanceiro();
+		tipoMovimento.setAprovacaoAutomatica(true);
+		tipoMovimento.setDescricao("Venda Total");
+		tipoMovimento.setGrupoMovimentoFinaceiro(GrupoMovimentoFinaceiro.VENDA_TOTAL);
+		return tipoMovimento;		
 	}
 		
 	public static ItemNotaFiscalEntrada itemNotaFiscal(ProdutoEdicao produtoEdicao,

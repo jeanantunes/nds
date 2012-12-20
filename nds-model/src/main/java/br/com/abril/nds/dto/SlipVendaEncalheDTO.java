@@ -155,5 +155,4 @@ public class SlipVendaEncalheDTO {
 	public void setValorTotalGeral(String valorTotalGeral) {
 		this.valorTotalGeral = valorTotalGeral;
 	}
-	
 }

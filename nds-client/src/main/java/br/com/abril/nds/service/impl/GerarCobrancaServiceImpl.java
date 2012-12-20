@@ -25,9 +25,11 @@ import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.financeiro.Boleto;
 import br.com.abril.nds.model.financeiro.Cobranca;
+import br.com.abril.nds.model.financeiro.CobrancaBoletoEmBranco;
 import br.com.abril.nds.model.financeiro.CobrancaCheque;
 import br.com.abril.nds.model.financeiro.CobrancaDeposito;
 import br.com.abril.nds.model.financeiro.CobrancaDinheiro;
+import br.com.abril.nds.model.financeiro.CobrancaOutros;
 import br.com.abril.nds.model.financeiro.CobrancaTransferenciaBancaria;
 import br.com.abril.nds.model.financeiro.ConsolidadoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.ControleBaixaBancaria;
@@ -40,6 +42,7 @@ import br.com.abril.nds.model.financeiro.StatusInadimplencia;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.ChamadaEncalheCotaRepository;
+import br.com.abril.nds.repository.CobrancaControleConferenciaEncalheCotaRepository;
 import br.com.abril.nds.repository.CobrancaRepository;
 import br.com.abril.nds.repository.ConsolidadoFinanceiroRepository;
 import br.com.abril.nds.repository.ControleBaixaBancariaRepository;
@@ -129,6 +132,9 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 	
 	@Autowired
 	private GeradorArquivoCobrancaBancoService geradorArquivoCobrancaBancoService;
+	
+	@Autowired
+	private CobrancaControleConferenciaEncalheCotaRepository cobrancaControleConferenciaEncalheCotaRepository;
 	
 	/**
 	 * Obtém a situação da cota
@@ -537,7 +543,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 										BigDecimal.ZERO);
 				break;
 				
-				case POSTERGADO:
+				case POSTERGADO_DEBITO:
 					vlMovFinanTotal = 
 							vlMovFinanTotal.add(
 								movimentoFinanceiroCota.getValor() != null ? 
@@ -547,6 +553,19 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 					vlMovFinanEncargos = vlMovFinanEncargos.add(
 							movimentoFinanceiroCota.getValor() != null ? 
 									movimentoFinanceiroCota.getValor().negate() : 
+										BigDecimal.ZERO);
+				break;
+				
+				case POSTERGADO_CREDITO:
+					vlMovFinanTotal = 
+						vlMovFinanTotal.add(
+							movimentoFinanceiroCota.getValor() != null ? 
+									movimentoFinanceiroCota.getValor() : 
+										BigDecimal.ZERO);
+			
+					vlMovFinanEncargos = vlMovFinanEncargos.add(
+							movimentoFinanceiroCota.getValor() != null ? 
+									movimentoFinanceiroCota.getValor() : 
 										BigDecimal.ZERO);
 				break;
 				
@@ -580,6 +599,13 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 										BigDecimal.ZERO);
 				break;
 				case POSTERGADO_NEGOCIACAO:
+					vlMovFinanTotal = 
+						vlMovFinanTotal.add(
+							movimentoFinanceiroCota.getValor() != null ? 
+									movimentoFinanceiroCota.getValor().negate() : 
+										BigDecimal.ZERO);
+				break;
+				case VENDA_TOTAL:
 					vlMovFinanTotal = 
 						vlMovFinanTotal.add(
 							movimentoFinanceiroCota.getValor() != null ? 
@@ -772,22 +798,32 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			movimentoFinanceiroCota.setLancamentoManual(false);
 			movimentoFinanceiroCota.setCota(cota);
 			
-			tipoMovimentoFinanceiro = new TipoMovimentoFinanceiro();
-			tipoMovimentoFinanceiro.setAprovacaoAutomatica(false);
-			tipoMovimentoFinanceiro.setGrupoMovimentoFinaceiro(GrupoMovimentoFinaceiro.DEBITO);
+			if (vlMovFinanTotal.compareTo(BigDecimal.ZERO) > 0){
+				
+				tipoMovimentoFinanceiro = 
+						this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
+								GrupoMovimentoFinaceiro.POSTERGADO_CREDITO);
+			} else {
+				
+				tipoMovimentoFinanceiro = 
+						this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
+								GrupoMovimentoFinaceiro.POSTERGADO_DEBITO);
+			}
 			
 			String descPostergado = null;
 			
-			if (diasSemanaConcentracaoPagamento != null && !diasSemanaConcentracaoPagamento.contains(Calendar.getInstance().get(Calendar.DAY_OF_MONTH))){
+			if (diasSemanaConcentracaoPagamento != null && 
+					!diasSemanaConcentracaoPagamento.contains(Calendar.getInstance().get(Calendar.DAY_OF_MONTH))){
 				
-				descPostergado = "Não existe acúmulo de pagamento para este dia (" + new SimpleDateFormat("dd/MM/yyyy").format(Calendar.getInstance().getTime()) + ")";
+				descPostergado = "Não existe acúmulo de pagamento para este dia (" + 
+						new SimpleDateFormat("dd/MM/yyyy").format(Calendar.getInstance().getTime()) + ")";
 			} else {
 				
 				descPostergado = "Valor mínimo para dívida não atingido";
 			}
 			
 			movimentoFinanceiroCota.setMotivo(descPostergado);
-			tipoMovimentoFinanceiro.setDescricao("Geração de dívida - " + descPostergado);
+			
 			
 			movimentoFinanceiroCota.setTipoMovimento(tipoMovimentoFinanceiro);
 		}
@@ -821,6 +857,12 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 					cobranca = new CobrancaDeposito();
 				case TRANSFERENCIA_BANCARIA:
 					cobranca = new CobrancaTransferenciaBancaria();
+				break;
+				case BOLETO_EM_BRANCO:
+					cobranca = new CobrancaBoletoEmBranco();
+				break;
+				case OUTROS:
+					cobranca = new CobrancaOutros();
 				break;
 			}
 			
@@ -868,7 +910,13 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		}
 		
 		if (movimentoFinanceiroCota != null){
-			this.tipoMovimentoFinanceiroRepository.adicionar(tipoMovimentoFinanceiro);
+			
+			if (tipoMovimentoFinanceiro != null && 
+					tipoMovimentoFinanceiro.getId() == null){
+				
+				this.tipoMovimentoFinanceiroRepository.adicionar(tipoMovimentoFinanceiro);
+			}
+			
 			this.movimentoFinanceiroCotaRepository.adicionar(movimentoFinanceiroCota);
 		}
 		
@@ -929,8 +977,9 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 				
 				if (divida != null){
 				
-					this.cobrancaRepository.excluirCobrancaPorIdDivida(divida.getId());
-					
+					this.cobrancaControleConferenciaEncalheCotaRepository.excluirPorCobranca(
+							divida.getCobranca().getId());
+					this.cobrancaRepository.remover(divida.getCobranca());
 					this.dividaRepository.remover(divida);
 				}
 				
