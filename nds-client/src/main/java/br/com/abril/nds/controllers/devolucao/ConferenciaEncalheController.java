@@ -660,42 +660,59 @@ public class ConferenciaEncalheController {
 		
 	}
 
-	@SuppressWarnings("unchecked")
-	public void gerarDocumentoConferenciaEncalhe() throws IOException {
+	public void gerarDocumentoConferenciaEncalhe(List<DadosDocumentacaoConfEncalheCotaDTO> dtosDoc) throws Exception {
 		
-		List<DadosDocumentacaoConfEncalheCotaDTO> dtosDoc = 
-				(List<DadosDocumentacaoConfEncalheCotaDTO>) this.session.getAttribute(DADOS_DOCUMENTACAO_CONF_ENCALHE_COTA);
-		
-		List<byte[]> arquivos = new ArrayList<byte[]>();
-		
-		for (DadosDocumentacaoConfEncalheCotaDTO dadosDocumentacaoConfEncalheCota : dtosDoc){
-		
-			if(dadosDocumentacaoConfEncalheCota.isUtilizaSlipBoleto() && 
-					dadosDocumentacaoConfEncalheCota.getNossoNumero()!= null && 
-					!dadosDocumentacaoConfEncalheCota.getNossoNumero().isEmpty()) {
-				
-				arquivos.add(
-						conferenciaEncalheService.gerarDocumentosConferenciaEncalhe(
-								dadosDocumentacaoConfEncalheCota, 
-								TipoDocumentoConferenciaEncalhe.SLIP));
-				
-				arquivos.add(
-						conferenciaEncalheService.gerarDocumentosConferenciaEncalhe(
-								dadosDocumentacaoConfEncalheCota, 
-								TipoDocumentoConferenciaEncalhe.BOLETO_OU_RECIBO));
-				
-			} else if (dadosDocumentacaoConfEncalheCota.isUtilizaSlip()) {
-				
-				arquivos.add(
-						conferenciaEncalheService.gerarDocumentosConferenciaEncalhe(
-								dadosDocumentacaoConfEncalheCota, 
-								TipoDocumentoConferenciaEncalhe.SLIP));
+		try {
+			List<byte[]> arquivos = new ArrayList<byte[]>();
+			
+			for (DadosDocumentacaoConfEncalheCotaDTO dadosDocumentacaoConfEncalheCota : dtosDoc){
+			
+				if(dadosDocumentacaoConfEncalheCota.isUtilizaSlipBoleto() && 
+						dadosDocumentacaoConfEncalheCota.getNossoNumero()!= null && 
+						!dadosDocumentacaoConfEncalheCota.getNossoNumero().isEmpty()) {
+					
+					arquivos.add(
+							conferenciaEncalheService.gerarDocumentosConferenciaEncalhe(
+									dadosDocumentacaoConfEncalheCota, 
+									TipoDocumentoConferenciaEncalhe.SLIP));
+					
+					arquivos.add(
+							conferenciaEncalheService.gerarDocumentosConferenciaEncalhe(
+									dadosDocumentacaoConfEncalheCota, 
+									TipoDocumentoConferenciaEncalhe.BOLETO_OU_RECIBO));
+					
+				} else if (dadosDocumentacaoConfEncalheCota.isUtilizaSlip()) {
+					
+					arquivos.add(
+							conferenciaEncalheService.gerarDocumentosConferenciaEncalhe(
+									dadosDocumentacaoConfEncalheCota, 
+									TipoDocumentoConferenciaEncalhe.SLIP));
+				}
 			}
+			
+			byte[] retorno = PDFUtil.mergePDFs(arquivos);
+			
+			this.session.setAttribute(DADOS_DOCUMENTACAO_CONF_ENCALHE_COTA, retorno);
+		} catch (Exception e) {
+			
+			throw new Exception(
+					"Cobrança gerada. Erro ao gerar arquivo(s) de cobrança - " + e.getMessage(), 
+					e);
 		}
+	}
+	
+	public void imprimirDocumentosCobranca() throws IOException{
 		
-		byte[] retorno = PDFUtil.mergePDFs(arquivos);
+		Object docs = this.session.getAttribute(DADOS_DOCUMENTACAO_CONF_ENCALHE_COTA);
 		
-		escreverArquivoParaResponse(retorno, "docsCobranca");
+		if (docs instanceof byte[]){
+			
+			this.escreverArquivoParaResponse((byte[]) docs, "arquivosCobranca");
+			this.session.removeAttribute(DADOS_DOCUMENTACAO_CONF_ENCALHE_COTA);
+		} else {
+			
+			this.result.use(Results.nothing());
+		}
 	}
 	
 	@Post
@@ -723,7 +740,7 @@ public class ConferenciaEncalheController {
 	}
 	
 	@Post
-	public void finalizarConferencia() {
+	public void finalizarConferencia() throws Exception {
 		
 		Date horaInicio = (Date) this.session.getAttribute(HORA_INICIO_CONFERENCIA);
 		
@@ -789,17 +806,23 @@ public class ConferenciaEncalheController {
 								this.getSetConferenciaEncalheExcluirFromSession(), 
 								this.getUsuarioLogado());
 				
-				this.session.setAttribute(DADOS_DOCUMENTACAO_CONF_ENCALHE_COTA, dadosDocumentacaoConfEncalheCota);
-				
 				this.session.removeAttribute(SET_CONFERENCIA_ENCALHE_EXCLUIR);
 				
-				this.getInfoConferenciaSession().setIdControleConferenciaEncalheCota(dadosDocumentacaoConfEncalheCota.get(0).getIdControleConferenciaEncalheCota());
-				
+				this.getInfoConferenciaSession().setIdControleConferenciaEncalheCota(
+						dadosDocumentacaoConfEncalheCota.get(0).getIdControleConferenciaEncalheCota());
 			} finally {
 				
 				this.atribuirIds(lista);
 			}
 			
+			try {
+				
+				this.gerarDocumentoConferenciaEncalhe(dadosDocumentacaoConfEncalheCota);
+				
+			} catch (Exception e){
+				
+				throw new Exception("Cobrança efetuada, erro ao gerar arquivo(s) de cobrança - " + e.getMessage());
+			}
 			
 			Map<String, Object> dados = new HashMap<String, Object>();
 			
@@ -987,10 +1010,11 @@ public class ConferenciaEncalheController {
 	/**
 	 * Verifica se o valor total da nota fiscal informada é igual
 	 * ao valor de encalhe conferido na operação. 
+	 * @throws Exception 
 	 * 
 	 */
 	@Post
-	public void verificarValorTotalNotaFiscal() {
+	public void verificarValorTotalNotaFiscal() throws Exception {
 		
 		@SuppressWarnings({ "rawtypes", "unchecked" })
 		Map<String, Object> dadosNotaFiscal = (Map) this.session.getAttribute(NOTA_FISCAL_CONFERENCIA);
