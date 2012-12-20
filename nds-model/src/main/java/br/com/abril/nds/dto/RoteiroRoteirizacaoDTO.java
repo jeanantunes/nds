@@ -296,7 +296,7 @@ public class RoteiroRoteirizacaoDTO implements Serializable, Ordenavel {
 	        return max;
 	}
 
-	public void transferirRota(Integer ordemRota) {
+	public void removerRotaTransferida(Integer ordemRota) {
 		removerRotaDeRotas(ordemRota);
 		removerRotaDeTodasRotas(ordemRota);
 	}

@@ -1251,7 +1251,8 @@ public class RoteirizacaoController {
 		
 		roteirosTransferidos.add(roteiroDTO);
 				
-		this.excluirRoteiro(idRoteiro, roteiroDTO.getOrdem());
+		this.getRoteirizacaoDTOSessao().removerRoteiroTransferido(idRoteiro);
+		result.use(CustomJson.class).from("").serialize();
 	
 	}
 	
@@ -1294,7 +1295,7 @@ public class RoteirizacaoController {
 		
 		RotaRoteirizacaoDTO rotaDTO = this.getRotaDTOSessaoPeloID(idRota, idRoteiroAnterior);
 		
-		roteiroDTOAnterior.transferirRota(rotaDTO.getOrdem());
+		roteiroDTOAnterior.removerRotaTransferida(rotaDTO.getOrdem());
 		
 		RoteiroRoteirizacaoDTO roteiroDTONovo = this.getRoteirizacaoDTOSessao().getRoteiro(idRoteiroNovo);
 				

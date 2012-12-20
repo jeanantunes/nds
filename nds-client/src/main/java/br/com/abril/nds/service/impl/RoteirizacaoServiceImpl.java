@@ -7,8 +7,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import net.sf.jasperreports.j2ee.servlets.OdsServlet;
-
 import org.hibernate.criterion.MatchMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,7 +22,6 @@ import br.com.abril.nds.dto.RoteirizacaoDTO;
 import br.com.abril.nds.dto.RoteiroRoteirizacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaRoteirizacaoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.model.cadastro.AssociacaoVeiculoMotoristaRota;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Endereco;
@@ -832,8 +829,8 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
             
 			} else {
             
-            	roteiro = roteirizacaoExistente.getRoteiro(roteiroDTO.getId());
-            	
+            	roteiro = this.roteiroRepository.buscarPorId(roteiroDTO.getId());
+            	roteiro.setRoteirizacao(roteirizacaoExistente);
             	roteiro.setOrdem(roteiroDTO.getOrdem());
             	
             	for(Long idRotaDTO : roteiroDTO.getRotasExclusao()){
@@ -934,12 +931,12 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
             
             for (RoteiroRoteirizacaoDTO roteiro : roteirosTransferidosDTO) {
                
-            	RoteiroRoteirizacaoDTO roteiroTransferido = new RoteiroRoteirizacaoDTO(Long.valueOf(-1), roteiro.getOrdem(), roteiro.getNome());
+            	RoteiroRoteirizacaoDTO roteiroTransferido = new RoteiroRoteirizacaoDTO(roteiro.getId(), roteiro.getOrdem(), roteiro.getNome());
               
             
                 for (RotaRoteirizacaoDTO rota : roteiro.getTodasRotas()) {
                    
-                	RotaRoteirizacaoDTO rotaTransferida = new RotaRoteirizacaoDTO(Long.valueOf(-1), rota.getOrdem(), rota.getNome());
+                	RotaRoteirizacaoDTO rotaTransferida = new RotaRoteirizacaoDTO(rota.getId(), rota.getOrdem(), rota.getNome());
                     rotaTransferida.addAllPdv(rota.getPdvs());
                     rotaTransferida.setEntregadorId(rota.getEntregadorId());
                     roteiroTransferido.addRota(rotaTransferida);
