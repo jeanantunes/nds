@@ -3,6 +3,7 @@ package br.com.abril.nds.controllers.administracao;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
+import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.ParametroSistemaGeralDTO;
 import br.com.abril.nds.integracao.service.ParametroSistemaService;
 import br.com.abril.nds.model.seguranca.Permissao;
@@ -16,7 +17,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/administracao/parametrosSistema")
-public class ParametrosSistemaController {
+public class ParametrosSistemaController extends BaseController {
 
 	@Autowired
 	private Result result;

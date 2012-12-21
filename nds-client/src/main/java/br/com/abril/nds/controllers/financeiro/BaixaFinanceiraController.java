@@ -27,6 +27,7 @@ import br.com.abril.nds.client.vo.baixaboleto.BaixaBoletoCotaVO;
 import br.com.abril.nds.client.vo.baixaboleto.BaixaBoletoDivergenteVO;
 import br.com.abril.nds.client.vo.baixaboleto.BaixaBoletoRejeitadoVO;
 import br.com.abril.nds.client.vo.baixaboleto.BaixaTotalBancarioVO;
+import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.ArquivoPagamentoBancoDTO;
 import br.com.abril.nds.dto.DetalheBaixaBoletoDTO;
 import br.com.abril.nds.dto.ItemDTO;
@@ -50,7 +51,6 @@ import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.seguranca.Permissao;
-import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.BaixaCobrancaService;
 import br.com.abril.nds.serialization.custom.PlainJSONSerialization;
 import br.com.abril.nds.service.BancoService;
@@ -71,7 +71,6 @@ import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
-import br.com.abril.nds.util.export.NDSFileHeader;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Get;
@@ -86,7 +85,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/financeiro")
-public class BaixaFinanceiraController {
+public class BaixaFinanceiraController extends BaseController {
 
 	private Result result;
 	
@@ -198,7 +197,7 @@ public class BaixaFinanceiraController {
 																    uploadedFile.getFileName());
 			
 			this.boletoService.baixarBoletosAutomatico(
-				arquivoPagamento, valorFinanceiroConvertido, obterUsuario());
+				arquivoPagamento, valorFinanceiroConvertido, getUsuarioLogado());
 		
 		} finally {
 			
@@ -507,18 +506,6 @@ public class BaixaFinanceiraController {
 		}
 	}
 	
-	
-	/**
-	 * TO-DO: OBTER USUARIO LOGADO
-	 */
-	private Usuario obterUsuario() {
-		//TODO: obter usuário
-		Usuario usuario = new Usuario();
-		usuario.setNome("João");
-		usuario.setId(1L);
-		return usuario;
-	}
-	
 	/**
 	 * Método responsavel pela busca de boleto individual
 	 * @param nossoNumero
@@ -586,7 +573,7 @@ public class BaixaFinanceiraController {
 		
 		PoliticaCobranca politicaPrincipal = this.politicaCobrancaService.obterPoliticaCobrancaPrincipal();
 
-		boletoService.baixarBoleto(TipoBaixaCobranca.MANUAL, pagamento, obterUsuario(),
+		boletoService.baixarBoleto(TipoBaixaCobranca.MANUAL, pagamento, getUsuarioLogado(),
 								   null,politicaPrincipal , distribuidor,
 								   dataNovoMovimento, null, null);
 			
@@ -826,7 +813,7 @@ public class BaixaFinanceiraController {
 		pagamento.setTipoPagamento(tipoPagamento);
 		pagamento.setObservacoes(observacoes);
 		pagamento.setDataPagamento(this.distribuidorService.obter().getDataOperacao());
-		pagamento.setUsuario(this.obterUsuario());
+		pagamento.setUsuario(getUsuarioLogado());
 		pagamento.setBanco(idBanco!=null?bancoService.obterBancoPorId(idBanco):null);
 		
 		try{
@@ -975,26 +962,6 @@ public class BaixaFinanceiraController {
 		}
 		
 		return filtro;
-	}
-	
-	/**
-	 * Obtém os dados do cabeçalho de exportação.
-	 * @return NDSFileHeader
-	 */
-	private NDSFileHeader getNDSFileHeader() {
-		
-		NDSFileHeader ndsFileHeader = new NDSFileHeader();
-		Distribuidor distribuidor = this.distribuidorService.obter();
-		
-		if (distribuidor != null) {
-			
-			ndsFileHeader.setNomeDistribuidor(distribuidor.getJuridica().getRazaoSocial());
-			ndsFileHeader.setCnpjDistribuidor(distribuidor.getJuridica().getCnpj());
-		}
-		
-		ndsFileHeader.setData(new Date());
-		ndsFileHeader.setNomeUsuario(this.obterUsuario().getNome());
-		return ndsFileHeader;
 	}
 	
 	/**

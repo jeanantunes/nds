@@ -15,6 +15,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.BancoVO;
+import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.filtro.FiltroConsultaBancosDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaBancosDTO.OrdenacaoColunaBancos;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -44,7 +45,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/banco")
-public class BancoController {
+public class BancoController extends BaseController {
 	
 	@Autowired
 	private BancoService bancoService;

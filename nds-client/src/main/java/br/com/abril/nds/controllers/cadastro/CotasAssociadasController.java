@@ -12,6 +12,7 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.util.PaginacaoUtil;
+import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
@@ -31,7 +32,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/cadastro/fiador")
-public class CotasAssociadasController {
+public class CotasAssociadasController extends BaseController{
 
 	public static final String LISTA_COTAS_ASSOCIADAS_SALVAR_SESSAO = "cotasAssociadasSalvarSessao";
 	

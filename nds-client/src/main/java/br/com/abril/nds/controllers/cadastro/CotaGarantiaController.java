@@ -8,8 +8,10 @@ import java.util.List;
 import org.apache.poi.util.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.CotaGarantiaDTO;
 import br.com.abril.nds.dto.FormaCobrancaCaucaoLiquidaDTO;
+import br.com.abril.nds.dto.ImovelDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.NotaPromissoriaDTO;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -24,7 +26,6 @@ import br.com.abril.nds.model.cadastro.TipoCobrancaCotaGarantia;
 import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
 import br.com.abril.nds.model.cadastro.TipoGarantia;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantia;
-import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaFiador;
 import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.serialization.custom.PlainJSONSerialization;
 import br.com.abril.nds.service.CotaGarantiaService;
@@ -44,9 +45,8 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/cadastro/garantia")
-public class CotaGarantiaController {
+public class CotaGarantiaController extends BaseController {
 
-		
 	@Autowired
 	private CotaGarantiaService cotaGarantiaService;
 	
@@ -209,6 +209,66 @@ public class CotaGarantiaController {
     	Fiador fiador = cota.getFiador();	
 
         result.use(CustomJson.class).from(fiador).serialize();
+	}
+
+	/**
+	 * Obtem Cota garantia do tipo Imóvel
+	 * @param idCota
+	 */
+	@Post("/getImoveisGarantiaByCota.json")
+	public void getImoveisGarantiaByCota(Long idCota, ModoTela modoTela) {
+
+        if (ModoTela.CADASTRO_COTA == modoTela) {
+        	
+            List<ImovelDTO> dadosImoveis = cotaGarantiaService.obterDadosImoveisDTO(idCota);
+            
+            if (dadosImoveis != null) {
+
+            	result.use(Results.json()).withoutRoot().from(dadosImoveis).recursive().serialize();
+            } else {
+            	
+                result.use(CustomJson.class).from("OK").serialize();
+            }
+        }    
+	}
+	
+	/**
+	 * Obtem Cota garantia do tipo Cheque Caucao
+	 * @param idCota
+	 */
+	@Post("/getChequeCaucaoByCota.json")
+	public void getChequeCaucaoByCota(Long idCota, ModoTela modoTela) {
+
+        if (ModoTela.CADASTRO_COTA == modoTela) {
+            
+            Cheque dadosChequeCaucao= cotaGarantiaService.obterDadosChequeCaucao(idCota);
+            
+            if (dadosChequeCaucao != null) {
+
+            	result.use(Results.json()).from(dadosChequeCaucao,"cheque").serialize();
+            } else {
+            	
+                result.use(CustomJson.class).from("OK").serialize();
+            }
+        }    
+	}
+
+	/**
+	 * Obtem Cota garantia do tipo Imóvel
+	 * @param idCota
+	 */
+	@Post("/getCotaGarantiaByCota.json")
+	public void getCotaGarantiaByCota(Long idCota) {
+        	
+        CotaGarantia cg = cotaService.obterPorId(idCota).getCotaGarantia();
+        
+        if (cg != null) {
+
+        	result.use(Results.json()).from(cg, "cotaGarantia").serialize();
+        } else {
+        	
+            result.use(CustomJson.class).from("OK").serialize();
+        }    
 	}
 
 	@Post("/getTipoGarantiaCadastrada.json")
@@ -517,7 +577,6 @@ public class CotaGarantiaController {
 		}
 	}
 
-	
 	/**
 	 * @param imóvel para ser validado.
 	 */
@@ -576,7 +635,6 @@ public class CotaGarantiaController {
 						"Fiador salvo com Sucesso."), "result").recursive()
 				.serialize();
 	}
-
 	
 	public Download getImageCheque(long idCheque, ModoTela modoTela, Long idCota, Long idHistorico) {		
 	    byte[] buff = new byte[0];
@@ -610,6 +668,5 @@ public class CotaGarantiaController {
 		}
 		
 	}
-	
 	
 }

@@ -28,10 +28,17 @@ public class RelatorioGarantiasDTO implements Serializable{
 	public TipoGarantia getTipoGarantia() {
 		return tipoGarantia;
 	}
-
+	
 	/**
 	 * @param tipoGarantia the tipoGarantia to set
 	 */
+	public void setTipoGarantia(TipoGarantia tipoGarantia) {
+		this.tipoGarantia = tipoGarantia;
+	}
+
+	/**
+	 * @param tipoGarantia the tipoGarantia to set
+	 *
 	public void setTipoGarantia(Class<CotaGarantia> clazz) {
 
 		if (CotaGarantiaCaucaoLiquida.class.equals(clazz)) { 
@@ -59,6 +66,7 @@ public class RelatorioGarantiasDTO implements Serializable{
 			this.tipoGarantia = TipoGarantia.OUTROS;
 		}
 	}
+	*/
 
 	/**
 	 * @return the qtdCotas

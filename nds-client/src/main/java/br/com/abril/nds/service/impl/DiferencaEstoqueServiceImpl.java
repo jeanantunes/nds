@@ -177,6 +177,12 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 		return diferenca;
 	}
 	
+	@Override
+	@Transactional
+	public void gerarMovimentoEstoqueDiferenca(Diferenca diferenca, Long idUsuario) {
+		gerarMovimentoEstoque(diferenca, idUsuario);
+	}
+	
 	@Transactional
 	public void efetuarAlteracoes(Set<Diferenca> listaNovasDiferencas,
 			 					  Map<Long, List<RateioCotaVO>> mapaRateioCotas,
@@ -722,6 +728,8 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 		TipoMovimentoEstoque tipoMovimentoEstoque =
 			this.tipoMovimentoRepository.buscarTipoMovimentoEstoque(
 				diferenca.getTipoDiferenca().getTipoMovimentoEstoque());
+		
+		tipoMovimentoEstoque.setAprovacaoAutomatica(true);
 		
 		return this.movimentoEstoqueService.gerarMovimentoEstoque(
 			diferenca.getProdutoEdicao().getId(), idUsuario,

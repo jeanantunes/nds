@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.DetalheProdutoVO;
+import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -45,7 +46,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/cadastro/edicao")
-public class ProdutoEdicaoController {
+public class ProdutoEdicaoController extends BaseController {
 
 	@Autowired
 	private Result result;
@@ -336,9 +337,10 @@ public class ProdutoEdicaoController {
 			if (dto.getRepartePromocional() == null) {
 				listaMensagens.add("Por favor, digite um valor válido para o 'Reparte Promocional'!");
 			}
-			if (dto.getCodigoDeBarrasCorporativo() == null || dto.getCodigoDeBarrasCorporativo().trim().length() <= 0) {
-				listaMensagens.add("Campo 'Código de Barras Corporativo' deve ser preenchido!");
-			}
+			//Essa validação só será feita na terceira fase do projeto.
+//			if (dto.getCodigoDeBarrasCorporativo() == null || dto.getCodigoDeBarrasCorporativo().trim().length() <= 0) {
+//				listaMensagens.add("Campo 'Código de Barras Corporativo' deve ser preenchido!");
+//			}
 			
 		} else {
 			

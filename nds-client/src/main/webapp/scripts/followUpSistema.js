@@ -307,6 +307,10 @@ var followUpSistemaController = $.extend(true, {
 			 "<img src=\"" + contextPath + "/images/ico_negociar.png\" title=\"Reverter Pagamento Negociação\" hspace=\"5\" border=\"0\" /></a>";
 		});
 		
+		if(resultado.rows.length == 0){
+			$('#botoesArquivoNegociacao').hide();
+		}
+		
 		return resultado;
 	},
 	
@@ -337,6 +341,10 @@ var followUpSistemaController = $.extend(true, {
 			row.cell.acao = linkExcluir;
 		});
 		
+		if(resultado.rows.length == 0){
+			$('#botoesArquivoChamadao').hide();
+		}
+		
 		$(".grids", followUpSistemaController.workspace).show();
 		return resultado;
 	},
@@ -354,6 +362,10 @@ var followUpSistemaController = $.extend(true, {
 		});
 		
 		$(".grids", followUpSistemaController.workspace).show();
+		
+		if(resultado.rows.length == 0){
+			$('#botoesArquivoAlteracaoStatusCota').hide();
+		}
 		return resultado;
 	},
 	
@@ -365,18 +377,29 @@ var followUpSistemaController = $.extend(true, {
 		}
 			
 		});
+	
+	if(resultado.rows.length == 0){
+		$('#botoesArquivoAtualizacaoCadastral').hide();
+	}
 		return resultado;
 	},
 	
-	exPreProcFollowupPendenciasnfe : function(resultado) {        		
+	exPreProcFollowupPendenciasnfe : function(resultado) {
+		
+		if(resultado.rows.length == 0){
+			$('#botoesArquivoPendencia').hide();
+		}
    		return resultado;
 	},
 	exPreProcFollowupCadastroParcial : function (resultado) {
-		//alert("exefollowPreProcessamentoNegociacao");
+		
+		if(resultado.rows.length == 0){
+			$('#botoesArquivoCadastroParcial').hide();
+		}
 		return resultado;
 	}
 	
 }, BaseController);
 
 
-
+//@ sourceURL=followUpSistema.js

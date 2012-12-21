@@ -28,6 +28,7 @@ import br.com.abril.nds.client.vo.EntregadorCotaProcuracaoPaginacaoVO;
 import br.com.abril.nds.client.vo.EntregadorCotaProcuracaoVO;
 import br.com.abril.nds.client.vo.EntregadorPessoaFisicaVO;
 import br.com.abril.nds.client.vo.EntregadorPessoaJuridicaVO;
+import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.EntregadorDTO;
 import br.com.abril.nds.dto.ProcuracaoCotaDTO;
@@ -86,7 +87,7 @@ import br.com.caelum.vraptor.view.Results;
  */
 @Resource
 @Path("/cadastro/entregador")
-public class EntregadorController {
+public class EntregadorController extends BaseController {
 
 	@Autowired
 	private Result result;

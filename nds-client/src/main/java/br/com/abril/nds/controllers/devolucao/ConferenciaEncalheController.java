@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.util.PDFUtil;
+import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.ConferenciaEncalheDTO;
 import br.com.abril.nds.dto.DadosDocumentacaoConfEncalheCotaDTO;
 import br.com.abril.nds.dto.DebitoCreditoCotaDTO;
@@ -36,7 +37,6 @@ import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaCota;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
 import br.com.abril.nds.model.seguranca.Permissao;
-import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.serialization.custom.CustomMapJson;
 import br.com.abril.nds.service.ConferenciaEncalheService;
@@ -62,7 +62,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path(value="/devolucao/conferenciaEncalhe")
-public class ConferenciaEncalheController {
+public class ConferenciaEncalheController extends BaseController {
 	
 	private static final String DADOS_DOCUMENTACAO_CONF_ENCALHE_COTA = "dadosDocumentacaoConfEncalheCota";
 	
@@ -1516,12 +1516,4 @@ public class ConferenciaEncalheController {
 		return numeroCota;
 	}
 	
-	//TODO
-	private Usuario getUsuarioLogado(){
-		
-		Usuario usuario = new Usuario();
-		usuario.setId(1L);
-		
-		return usuario;
-	}
 }

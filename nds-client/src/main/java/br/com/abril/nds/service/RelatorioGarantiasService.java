@@ -6,9 +6,9 @@ import br.com.abril.nds.dto.RelatorioGarantiasDTO;
 import br.com.abril.nds.dto.filtro.FiltroRelatorioGarantiasDTO;
 
 public interface RelatorioGarantiasService {
-
 	
 	FlexiGridDTO<RelatorioGarantiasDTO> gerarTodasGarantias(FiltroRelatorioGarantiasDTO filtro);
 	
 	FlexiGridDTO<RelatorioDetalheGarantiaDTO> gerarPorTipoGarantia(FiltroRelatorioGarantiasDTO filtro);
+	
 }

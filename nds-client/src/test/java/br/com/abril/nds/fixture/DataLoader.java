@@ -5486,12 +5486,21 @@ public class DataLoader {
 		//FORMAS DE COBRANCA DO DISTRIBUIDOR
 		FormaCobranca formaBoletoDistribuidor = Fixture.formaCobrancaBoleto(true, new BigDecimal(200), true, bancoHSBC,
 				  															BigDecimal.ONE, BigDecimal.ONE, null);
+		
+		FormaCobranca formaBoletoDistribuidor2 = Fixture.formaCobrancaBoleto(true, new BigDecimal(200), true, bancoHSBC,
+					BigDecimal.ONE, BigDecimal.ONE, null);
+		
+		FormaCobranca formaBoletoDistribuidor3 = Fixture.formaCobrancaBoleto(true, new BigDecimal(200), true, bancoHSBC,
+					BigDecimal.ONE, BigDecimal.ONE, null);
 
 		FormaCobranca formaChequeDistribuidor = Fixture.formaCobrancaCheque(true, new BigDecimal(200), true, bancoITAU,
 						  													BigDecimal.ONE, BigDecimal.ONE, null);
 
 		FormaCobranca formaDepositoDistribuidor = Fixture.formaCobrancaDeposito(true, new BigDecimal(200), true, bancoBRADESCO,
 						  													BigDecimal.ONE, BigDecimal.ONE, null);
+		
+		FormaCobranca formaDepositoDistribuidor2 = Fixture.formaCobrancaDeposito(true, new BigDecimal(200), true, bancoBRADESCO,
+					BigDecimal.ONE, BigDecimal.ONE, null);
 
 		FormaCobranca formaDinheiroDistribuidor = Fixture.formaCobrancaDinheiro(true, new BigDecimal(200), true, bancoDOBRASIL,
 						  													BigDecimal.ONE, BigDecimal.ONE, null);
@@ -5500,7 +5509,9 @@ public class DataLoader {
 						  													BigDecimal.ONE, BigDecimal.ONE, null);
 
 
-		save(session, formaBoletoDistribuidor,formaChequeDistribuidor,formaDepositoDistribuidor,formaDinheiroDistribuidor,formaTransferenciBancariaDistribuidor);
+		save(session, formaBoletoDistribuidor,formaBoletoDistribuidor2,formaBoletoDistribuidor3,
+				      formaChequeDistribuidor,formaDepositoDistribuidor,formaDepositoDistribuidor2,
+				      formaDinheiroDistribuidor,formaTransferenciBancariaDistribuidor);
 
 
 
@@ -5509,7 +5520,7 @@ public class DataLoader {
 			save(session, politicaCobranca);
 
 		PoliticaCobranca politicaCobranca2 =
-				Fixture.criarPoliticaCobranca(null, formaBoletoDistribuidor, true, true, true, 1,"Assunto","Mansagem",false,FormaEmissao.INDIVIDUAL_AGREGADA);
+				Fixture.criarPoliticaCobranca(null, formaBoletoDistribuidor2, true, true, true, 1,"Assunto","Mansagem",false,FormaEmissao.INDIVIDUAL_AGREGADA);
 			save(session, politicaCobranca);
 
 		PoliticaCobranca politicaCobranca3 =
@@ -5525,11 +5536,11 @@ public class DataLoader {
 			save(session, politicaCobranca);
 
 		PoliticaCobranca politicaCobranca6 =
-				Fixture.criarPoliticaCobranca(null, formaBoletoDistribuidor, true, true, true, 1,"Assunto","Mansagem",false,FormaEmissao.INDIVIDUAL_AGREGADA);
+				Fixture.criarPoliticaCobranca(null, formaBoletoDistribuidor3, true, true, true, 1,"Assunto","Mansagem",false,FormaEmissao.INDIVIDUAL_AGREGADA);
 			save(session, politicaCobranca);
 
 		PoliticaCobranca politicaCobranca7 =
-				Fixture.criarPoliticaCobranca(null, formaDepositoDistribuidor, true, true, true, 1,"Assunto","Mansagem",false,FormaEmissao.NAO_IMPRIME);
+				Fixture.criarPoliticaCobranca(null, formaDepositoDistribuidor2, true, true, true, 1,"Assunto","Mansagem",false,FormaEmissao.NAO_IMPRIME);
 			save(session, politicaCobranca);
 
 		PoliticaCobranca politicaCobranca8 =
@@ -12816,12 +12827,14 @@ public class DataLoader {
 		garantiaCaucaoLiquida1.setData(data);
 		garantiaCaucaoLiquida1.setFormaPagamento(pagamentoCaucaoLiquida);
 		garantiaCaucaoLiquida1.setTipoCobranca(TipoCobrancaCotaGarantia.BOLETO);
+		garantiaCaucaoLiquida1.setTipoGarantia(TipoGarantia.CAUCAO_LIQUIDA);
 		
 		garantiaCaucaoLiquida2.setCaucaoLiquidas(caucoes2);
 		garantiaCaucaoLiquida2.setCota(cotaMariana);
 		garantiaCaucaoLiquida2.setData(data);
 		garantiaCaucaoLiquida2.setFormaPagamento(pagamentoCaucaoLiquida);
 		garantiaCaucaoLiquida2.setTipoCobranca(TipoCobrancaCotaGarantia.BOLETO);
+		garantiaCaucaoLiquida2.setTipoGarantia(TipoGarantia.CAUCAO_LIQUIDA);
 		
 		session.save(garantiaCaucaoLiquida1);
 		session.save(garantiaCaucaoLiquida2);
@@ -12863,10 +12876,12 @@ public class DataLoader {
 		garantiaChequeCaucao1.setData(data);
 		garantiaChequeCaucao1.setCota(cotaManoel);
 		garantiaChequeCaucao1.setCheque(cheque1);
+		garantiaChequeCaucao1.setTipoGarantia(TipoGarantia.CHEQUE_CAUCAO);
 		
 		garantiaChequeCaucao2.setData(data);
 		garantiaChequeCaucao2.setCota(cotaLuis);
 		garantiaChequeCaucao2.setCheque(cheque2);
+		garantiaChequeCaucao2.setTipoGarantia(TipoGarantia.CHEQUE_CAUCAO);
 		
 		session.save(garantiaChequeCaucao1);
 		session.save(garantiaChequeCaucao2);
@@ -12910,10 +12925,12 @@ public class DataLoader {
 		garantiaImovel1.setCota(cotaOrlando);
 		garantiaImovel1.setData(data);
 		garantiaImovel1.setImoveis(imoveis1);
+		garantiaImovel1.setTipoGarantia(TipoGarantia.IMOVEL);
 		
 		garantiaImovel2.setCota(cotaMaria);
 		garantiaImovel2.setData(data);
 		garantiaImovel2.setImoveis(imoveis2);
+		garantiaImovel2.setTipoGarantia(TipoGarantia.IMOVEL);
 		
 		session.save(garantiaImovel1);
 		session.save(garantiaImovel2);
@@ -12969,10 +12986,12 @@ public class DataLoader {
 		garantiaFiador1.setCota(cotaJoao);
 		garantiaFiador1.setData(data);
 		garantiaFiador1.setFiador(fiador1);
+		garantiaFiador1.setTipoGarantia(TipoGarantia.FIADOR);
 		
 		garantiaFiador2.setCota(cotaJose);
 		garantiaFiador2.setData(data);
 		garantiaFiador2.setFiador(fiador2);
+		garantiaFiador2.setTipoGarantia(TipoGarantia.FIADOR);
 		
 		session.save(garantiaFiador1);
 		session.save(garantiaFiador2);
@@ -13003,10 +13022,12 @@ public class DataLoader {
 		garantiaNotaPromissoria1.setCota(cotaJoana);
 		garantiaNotaPromissoria1.setData(data);
 		garantiaNotaPromissoria1.setNotaPromissoria(notaPromissoria1);
+		garantiaNotaPromissoria1.setTipoGarantia(TipoGarantia.NOTA_PROMISSORIA);
 		
 		garantiaNotaPromissoria2.setCota(cotaGuilherme);
 		garantiaNotaPromissoria2.setData(data);
 		garantiaNotaPromissoria2.setNotaPromissoria(notaPromissoria2);
+		garantiaNotaPromissoria2.setTipoGarantia(TipoGarantia.NOTA_PROMISSORIA);
 		
 		session.save(garantiaNotaPromissoria1);
 		session.save(garantiaNotaPromissoria2);
@@ -13046,10 +13067,12 @@ public class DataLoader {
 		garantiaOutros1.setCota(cotaAcme);
 		garantiaOutros1.setData(data);
 		garantiaOutros1.setOutros(outros1);
+		garantiaOutros1.setTipoGarantia(TipoGarantia.OUTROS);
 		
 		garantiaOutros2.setCota(cotaManoelCunha);
 		garantiaOutros2.setData(data);
 		garantiaOutros2.setOutros(outros2);
+		garantiaOutros2.setTipoGarantia(TipoGarantia.OUTROS);
 		
 		session.save(garantiaOutros1);
 		session.save(garantiaOutros2);
