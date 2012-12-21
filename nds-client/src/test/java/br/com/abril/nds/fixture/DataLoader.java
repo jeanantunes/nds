@@ -5486,12 +5486,21 @@ public class DataLoader {
 		//FORMAS DE COBRANCA DO DISTRIBUIDOR
 		FormaCobranca formaBoletoDistribuidor = Fixture.formaCobrancaBoleto(true, new BigDecimal(200), true, bancoHSBC,
 				  															BigDecimal.ONE, BigDecimal.ONE, null);
+		
+		FormaCobranca formaBoletoDistribuidor2 = Fixture.formaCobrancaBoleto(true, new BigDecimal(200), true, bancoHSBC,
+					BigDecimal.ONE, BigDecimal.ONE, null);
+		
+		FormaCobranca formaBoletoDistribuidor3 = Fixture.formaCobrancaBoleto(true, new BigDecimal(200), true, bancoHSBC,
+					BigDecimal.ONE, BigDecimal.ONE, null);
 
 		FormaCobranca formaChequeDistribuidor = Fixture.formaCobrancaCheque(true, new BigDecimal(200), true, bancoITAU,
 						  													BigDecimal.ONE, BigDecimal.ONE, null);
 
 		FormaCobranca formaDepositoDistribuidor = Fixture.formaCobrancaDeposito(true, new BigDecimal(200), true, bancoBRADESCO,
 						  													BigDecimal.ONE, BigDecimal.ONE, null);
+		
+		FormaCobranca formaDepositoDistribuidor2 = Fixture.formaCobrancaDeposito(true, new BigDecimal(200), true, bancoBRADESCO,
+					BigDecimal.ONE, BigDecimal.ONE, null);
 
 		FormaCobranca formaDinheiroDistribuidor = Fixture.formaCobrancaDinheiro(true, new BigDecimal(200), true, bancoDOBRASIL,
 						  													BigDecimal.ONE, BigDecimal.ONE, null);
@@ -5500,7 +5509,9 @@ public class DataLoader {
 						  													BigDecimal.ONE, BigDecimal.ONE, null);
 
 
-		save(session, formaBoletoDistribuidor,formaChequeDistribuidor,formaDepositoDistribuidor,formaDinheiroDistribuidor,formaTransferenciBancariaDistribuidor);
+		save(session, formaBoletoDistribuidor,formaBoletoDistribuidor2,formaBoletoDistribuidor3,
+				      formaChequeDistribuidor,formaDepositoDistribuidor,formaDepositoDistribuidor2,
+				      formaDinheiroDistribuidor,formaTransferenciBancariaDistribuidor);
 
 
 
@@ -5509,7 +5520,7 @@ public class DataLoader {
 			save(session, politicaCobranca);
 
 		PoliticaCobranca politicaCobranca2 =
-				Fixture.criarPoliticaCobranca(null, formaBoletoDistribuidor, true, true, true, 1,"Assunto","Mansagem",false,FormaEmissao.INDIVIDUAL_AGREGADA);
+				Fixture.criarPoliticaCobranca(null, formaBoletoDistribuidor2, true, true, true, 1,"Assunto","Mansagem",false,FormaEmissao.INDIVIDUAL_AGREGADA);
 			save(session, politicaCobranca);
 
 		PoliticaCobranca politicaCobranca3 =
@@ -5525,11 +5536,11 @@ public class DataLoader {
 			save(session, politicaCobranca);
 
 		PoliticaCobranca politicaCobranca6 =
-				Fixture.criarPoliticaCobranca(null, formaBoletoDistribuidor, true, true, true, 1,"Assunto","Mansagem",false,FormaEmissao.INDIVIDUAL_AGREGADA);
+				Fixture.criarPoliticaCobranca(null, formaBoletoDistribuidor3, true, true, true, 1,"Assunto","Mansagem",false,FormaEmissao.INDIVIDUAL_AGREGADA);
 			save(session, politicaCobranca);
 
 		PoliticaCobranca politicaCobranca7 =
-				Fixture.criarPoliticaCobranca(null, formaDepositoDistribuidor, true, true, true, 1,"Assunto","Mansagem",false,FormaEmissao.NAO_IMPRIME);
+				Fixture.criarPoliticaCobranca(null, formaDepositoDistribuidor2, true, true, true, 1,"Assunto","Mansagem",false,FormaEmissao.NAO_IMPRIME);
 			save(session, politicaCobranca);
 
 		PoliticaCobranca politicaCobranca8 =
