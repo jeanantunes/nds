@@ -23,7 +23,7 @@ public class PoliticaCobranca {
 	private Long id;
 	
 	@OneToOne
-	@JoinColumn(name = "FORMA_COBRANCA_ID")
+	@JoinColumn(name = "FORMA_COBRANCA_ID", unique = true)
 	private FormaCobranca formaCobranca;
 	
 	@Column(name = "NUM_INADIMPLENCIA_SUSP", nullable = false)
