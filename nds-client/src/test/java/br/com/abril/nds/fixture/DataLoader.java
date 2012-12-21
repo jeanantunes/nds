@@ -326,6 +326,7 @@ public class DataLoader {
 	private static TipoMovimentoFinanceiro tipoMovimentoFinanceiroDebitoNA;
 	private static TipoMovimentoFinanceiro tipoMovimentoFinanceiroDebitoPendente;	
 	private static TipoMovimentoFinanceiro tipoMovimentoFinanceiroDebitoPostergado;
+	private static TipoMovimentoFinanceiro tipoMovimentoFinanceiroCreditoPostergado;
 	private static TipoMovimentoFinanceiro tipoMovimentoFinanceiroDebitoPostergadoNegociado;
 	private static TipoMovimentoFinanceiro tipoMovimentoFinanceiroDebitoFaturamento;
 	private static TipoMovimentoFinanceiro tipoMovimentoFinanceiroRecebimentoReparte;
@@ -955,6 +956,7 @@ public class DataLoader {
 	private static InterfaceExecucao interfaceEMS0132;
 	private static InterfaceExecucao interfaceEMS0133;
 	private static InterfaceExecucao interfaceEMS0135;
+	private static InterfaceExecucao interfaceEMS0136;
 	private static InterfaceExecucao interfaceEMS0185;
 	private static InterfaceExecucao interfaceEMS0197;
 	private static InterfaceExecucao interfaceEMS0198;
@@ -5484,12 +5486,21 @@ public class DataLoader {
 		//FORMAS DE COBRANCA DO DISTRIBUIDOR
 		FormaCobranca formaBoletoDistribuidor = Fixture.formaCobrancaBoleto(true, new BigDecimal(200), true, bancoHSBC,
 				  															BigDecimal.ONE, BigDecimal.ONE, null);
+		
+		FormaCobranca formaBoletoDistribuidor2 = Fixture.formaCobrancaBoleto(true, new BigDecimal(200), true, bancoHSBC,
+					BigDecimal.ONE, BigDecimal.ONE, null);
+		
+		FormaCobranca formaBoletoDistribuidor3 = Fixture.formaCobrancaBoleto(true, new BigDecimal(200), true, bancoHSBC,
+					BigDecimal.ONE, BigDecimal.ONE, null);
 
 		FormaCobranca formaChequeDistribuidor = Fixture.formaCobrancaCheque(true, new BigDecimal(200), true, bancoITAU,
 						  													BigDecimal.ONE, BigDecimal.ONE, null);
 
 		FormaCobranca formaDepositoDistribuidor = Fixture.formaCobrancaDeposito(true, new BigDecimal(200), true, bancoBRADESCO,
 						  													BigDecimal.ONE, BigDecimal.ONE, null);
+		
+		FormaCobranca formaDepositoDistribuidor2 = Fixture.formaCobrancaDeposito(true, new BigDecimal(200), true, bancoBRADESCO,
+					BigDecimal.ONE, BigDecimal.ONE, null);
 
 		FormaCobranca formaDinheiroDistribuidor = Fixture.formaCobrancaDinheiro(true, new BigDecimal(200), true, bancoDOBRASIL,
 						  													BigDecimal.ONE, BigDecimal.ONE, null);
@@ -5498,7 +5509,9 @@ public class DataLoader {
 						  													BigDecimal.ONE, BigDecimal.ONE, null);
 
 
-		save(session, formaBoletoDistribuidor,formaChequeDistribuidor,formaDepositoDistribuidor,formaDinheiroDistribuidor,formaTransferenciBancariaDistribuidor);
+		save(session, formaBoletoDistribuidor,formaBoletoDistribuidor2,formaBoletoDistribuidor3,
+				      formaChequeDistribuidor,formaDepositoDistribuidor,formaDepositoDistribuidor2,
+				      formaDinheiroDistribuidor,formaTransferenciBancariaDistribuidor);
 
 
 
@@ -5507,7 +5520,7 @@ public class DataLoader {
 			save(session, politicaCobranca);
 
 		PoliticaCobranca politicaCobranca2 =
-				Fixture.criarPoliticaCobranca(null, formaBoletoDistribuidor, true, true, true, 1,"Assunto","Mansagem",false,FormaEmissao.INDIVIDUAL_AGREGADA);
+				Fixture.criarPoliticaCobranca(null, formaBoletoDistribuidor2, true, true, true, 1,"Assunto","Mansagem",false,FormaEmissao.INDIVIDUAL_AGREGADA);
 			save(session, politicaCobranca);
 
 		PoliticaCobranca politicaCobranca3 =
@@ -5523,11 +5536,11 @@ public class DataLoader {
 			save(session, politicaCobranca);
 
 		PoliticaCobranca politicaCobranca6 =
-				Fixture.criarPoliticaCobranca(null, formaBoletoDistribuidor, true, true, true, 1,"Assunto","Mansagem",false,FormaEmissao.INDIVIDUAL_AGREGADA);
+				Fixture.criarPoliticaCobranca(null, formaBoletoDistribuidor3, true, true, true, 1,"Assunto","Mansagem",false,FormaEmissao.INDIVIDUAL_AGREGADA);
 			save(session, politicaCobranca);
 
 		PoliticaCobranca politicaCobranca7 =
-				Fixture.criarPoliticaCobranca(null, formaDepositoDistribuidor, true, true, true, 1,"Assunto","Mansagem",false,FormaEmissao.NAO_IMPRIME);
+				Fixture.criarPoliticaCobranca(null, formaDepositoDistribuidor2, true, true, true, 1,"Assunto","Mansagem",false,FormaEmissao.NAO_IMPRIME);
 			save(session, politicaCobranca);
 
 		PoliticaCobranca politicaCobranca8 =
@@ -6070,6 +6083,7 @@ public class DataLoader {
 		tipoMovimentoFinanceiroEnvioEncalhe = Fixture.tipoMovimentoFinanceiroEnvioEncalhe();
 		tipoMovimentoFinanceiroDebitoPendente = Fixture.tipoMovimentoFinanceiroDebitoPendente();
 		tipoMovimentoFinanceiroDebitoPostergado = Fixture.tipoMovimentoFinanceiroDebitoPostergado();
+		tipoMovimentoFinanceiroCreditoPostergado = Fixture.tipoMovimentoFinanceiroCreditoPostergado();
 		tipoMovimentoFinanceiroDebitoPostergadoNegociado = Fixture.tipoMovimentoFinanceiroDebitoPostergadoNegociado();
 		
 
@@ -6077,7 +6091,8 @@ public class DataLoader {
 
 		save(session, tipoMovimentoEnvioJornaleiro,
 				tipoMovimentoEstornoCotaAusente,tipoMovimentoFinanceiroDebitoPostergadoNegociado,
-				tipoMovimentoFinanceiroDebitoPostergado);
+				tipoMovimentoFinanceiroDebitoPostergado,
+				tipoMovimentoFinanceiroCreditoPostergado);
 
 		tipoMovimentoFinanceiroCredito.setAprovacaoAutomatica(false);
 		tipoMovimentoFinanceiroDebito.setAprovacaoAutomatica(false);
@@ -12113,6 +12128,7 @@ public class DataLoader {
 		interfaceEMS0132 = Fixture.criarInterfaceExecucao(132L, "EMS0132");
 		interfaceEMS0133 = Fixture.criarInterfaceExecucao(133L, "EMS0133");
 		interfaceEMS0135 = Fixture.criarInterfaceExecucao(135L, "EMS0135");
+		interfaceEMS0136 = Fixture.criarInterfaceExecucao(136L, "EMS0136");
 		interfaceEMS0185 = Fixture.criarInterfaceExecucao(185L, "EMS0185");
 		interfaceEMS0197 = Fixture.criarInterfaceExecucao(197L, "EMS0197");
 		interfaceEMS0198 = Fixture.criarInterfaceExecucao(198L, "EMS0198");
@@ -12150,6 +12166,7 @@ public class DataLoader {
 		save(session, Fixture.criarInterfaceExecucao(197L, "EMS0197"));
 		save(session, Fixture.criarInterfaceExecucao(198L, "EMS0198"));
 		save(session, Fixture.criarInterfaceExecucao(135L, "EMS0135"));
+		save(session, Fixture.criarInterfaceExecucao(136L, "EMS0136"));
 	}
 
 	private static void criarEventoExecucao(Session session) {

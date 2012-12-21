@@ -35,8 +35,44 @@ public class ChequeCaucaoDTO implements Serializable {
 	private Date validade;
 	
 	private String correntista;
+	
+	public ChequeCaucaoDTO(){
+		
+	}
 
     /**
+	 * @param numeroBanco
+	 * @param nomeBanco
+	 * @param agencia
+	 * @param dvAgencia
+	 * @param conta
+	 * @param dvConta
+	 * @param valor
+	 * @param numeroCheque
+	 * @param emissao
+	 * @param validade
+	 * @param correntista
+	 */
+	public ChequeCaucaoDTO(String numeroBanco, String nomeBanco, Long agencia,
+			String dvAgencia, Long conta, String dvConta, BigDecimal valor,
+			String numeroCheque, Date emissao, Date validade, String correntista) {
+		
+		super();
+		
+		this.numeroBanco = numeroBanco;
+		this.nomeBanco = nomeBanco;
+		this.agencia = agencia;
+		this.dvAgencia = dvAgencia;
+		this.conta = conta;
+		this.dvConta = dvConta;
+		this.valor = valor;
+		this.numeroCheque = numeroCheque;
+		this.emissao = emissao;
+		this.validade = validade;
+		this.correntista = correntista;
+	}
+
+	/**
      * @return the numeroBanco
      */
     public String getNumeroBanco() {

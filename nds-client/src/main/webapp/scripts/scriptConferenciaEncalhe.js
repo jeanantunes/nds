@@ -505,7 +505,7 @@ var ConferenciaEncalhe = $.extend(true, {
 	
 	gerarDocumentosConferenciaEncalhe : function(tiposDocumento) {
 		
-		var file = contextPath + '/devolucao/conferenciaEncalhe/gerarDocumentoConferenciaEncalhe';
+		var file = contextPath + '/devolucao/conferenciaEncalhe/imprimirDocumentosCobranca';
 		
 		$('#download-iframe', ConferenciaEncalhe.workspace).attr('src', file);		
 	},

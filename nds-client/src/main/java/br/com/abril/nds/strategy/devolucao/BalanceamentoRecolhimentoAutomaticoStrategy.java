@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
@@ -37,7 +38,9 @@ public class BalanceamentoRecolhimentoAutomaticoStrategy extends AbstractBalance
 		Map<Date, BigInteger> mapaExpectativaEncalheTotalDiaria = 
 			dadosRecolhimento.getMapaExpectativaEncalheTotalDiaria();
 		
-		TreeSet<Date> datasRecolhimento = dadosRecolhimento.getDatasRecolhimentoFornecedor();
+		Set<Date> obterDatasConfirmadas = super.obterDatasConfirmadas(dadosRecolhimento.getProdutosRecolhimento());
+		
+		TreeSet<Date> datasRecolhimento = super.obterDatasRecolhimento(dadosRecolhimento.getDatasRecolhimentoFornecedor(), obterDatasConfirmadas);
 		
 		Map<Date, BigInteger> mapaExpectativaEncalheTotalDiariaOrdenado =
 			super.ordenarMapaExpectativaEncalhePorDatasRecolhimento(
@@ -173,14 +176,14 @@ public class BalanceamentoRecolhimentoAutomaticoStrategy extends AbstractBalance
 															 RecolhimentoDTO dadosRecolhimento) {
 		
 		Map<Date, BigInteger> mapaExpectativaEncalheTotalDiariaAtual = 
-			this.gerarMapaExpectativaEncalheTotalDiariaOrdenadoPelaMaiorData(matrizRecolhimento);
+			this.gerarMapaExpectativaEncalheTotalDiariaOrdenadoPelaMaiorData(matrizRecolhimento, dadosRecolhimento.getDatasRecolhimentoFornecedor());
 		
 		this.alocarSobrasMatrizRecolhimento(
 			matrizRecolhimento, mapaExpectativaEncalheTotalDiariaAtual, 
 				produtosRecolhimentoNaoBalanceados, dadosRecolhimento, false);
 		
 		mapaExpectativaEncalheTotalDiariaAtual = 
-			this.gerarMapaExpectativaEncalheTotalDiariaOrdenadoPelaMaiorData(matrizRecolhimento);
+			this.gerarMapaExpectativaEncalheTotalDiariaOrdenadoPelaMaiorData(matrizRecolhimento,dadosRecolhimento.getDatasRecolhimentoFornecedor());
 		
 		this.alocarSobrasMatrizRecolhimento(
 			matrizRecolhimento, mapaExpectativaEncalheTotalDiariaAtual, 
