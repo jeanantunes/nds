@@ -514,15 +514,10 @@ public class GeracaoNotaEnvioServiceImplTest extends AbstractRepositoryImplTest 
 
 		save(controleContagemDevolucao);		
 	}
-	
-	
-	
-	
-	
-	
+		
 	@Test
 	public void buscaTest(){
-		List<ConsultaNotaEnvioDTO>  lista = geracaoNotaEnvioService.busca(null, null, null, null, null, null, null, null, null, null, null);
+		List<ConsultaNotaEnvioDTO>  lista = geracaoNotaEnvioService.busca(null);
 		System.out.println(lista);
 	}
 	

@@ -8,6 +8,8 @@ import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
@@ -19,9 +21,8 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import org.codehaus.jackson.annotate.JsonIgnore;
-
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.TipoGarantia;
 
 
 /**
@@ -43,7 +44,6 @@ public abstract class CotaGarantia implements Serializable {
 	 */
 	private static final long serialVersionUID = 1885134367490899850L;
 
-
 	@Id
 	@GeneratedValue(generator="COTA_GARANTIA_SEQ")
 	@Column(name="ID")
@@ -58,7 +58,9 @@ public abstract class CotaGarantia implements Serializable {
 	@Column(name="DATA")
 	private Date data;
 	
-
+	@Enumerated(EnumType.STRING)
+	@Column(name="TIPO_GARANTIA")
+	private TipoGarantia tipoGarantia;
 
 	public Long getId() {
 		return id;
@@ -83,4 +85,13 @@ public abstract class CotaGarantia implements Serializable {
 	public void setData(Date data) {
 		this.data = data;
 	}
+
+	public TipoGarantia getTipoGarantia() {
+		return tipoGarantia;
+	}
+
+	public void setTipoGarantia(TipoGarantia tipoGarantia) {
+		this.tipoGarantia = tipoGarantia;
+	}
+	
 }
