@@ -183,6 +183,8 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 
 		CotaGarantiaNotaPromissoria cotaGarantiaNota = prepareCotaGarantia(
 				idCota, CotaGarantiaNotaPromissoria.class);
+		
+		cotaGarantiaNota.setTipoGarantia(TipoGarantia.NOTA_PROMISSORIA);
 
 		cotaGarantiaNota.setData(new Date());
 
@@ -207,6 +209,8 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 
 		CotaGarantiaChequeCaucao cotaGarantiaCheque = prepareCotaGarantia(
 				idCota, CotaGarantiaChequeCaucao.class);
+		
+		cotaGarantiaCheque.setTipoGarantia(TipoGarantia.CHEQUE_CAUCAO);
 
 		cotaGarantiaCheque.setData(new Date());
 		    
@@ -292,6 +296,8 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 
 		CotaGarantiaImovel cotaGarantiaImovel = prepareCotaGarantia(idCota,
 				CotaGarantiaImovel.class);
+		
+		cotaGarantiaImovel.setTipoGarantia(TipoGarantia.IMOVEL);
 	
 		if (cotaGarantiaImovel.getImoveis() != null
 				&& !cotaGarantiaImovel.getImoveis().isEmpty()) {
@@ -379,6 +385,8 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 			throws ValidacaoException, InstantiationException, IllegalAccessException {
 		CotaGarantiaFiador cotaGarantiaFiador = prepareCotaGarantia(idCota,
 				CotaGarantiaFiador.class);
+		
+		cotaGarantiaFiador.setTipoGarantia(TipoGarantia.FIADOR);
 	
 		Fiador fiador = fiadorRepository.buscarPorId(idFiador);
 
@@ -627,6 +635,8 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 		cotaGarantiaOutros = (CotaGarantiaOutros) cotaGarantiaRepository
 				.merge(cotaGarantiaOutros);
 		
+		cotaGarantiaOutros.setTipoGarantia(TipoGarantia.OUTROS);
+		
 		this.setFiadorCota(idCota, null);
 		
 		return cotaGarantiaOutros;
@@ -831,6 +841,8 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 		cotaGarantiaCaucaoLiquida.setFormaPagamento(pagamentoBoleto!=null?pagamentoBoleto:pagamentoDescontoCota!=null?pagamentoDescontoCota:pagamentoDepositoTransferencia!=null?pagamentoDepositoTransferencia:pagamentoDinheiro!=null?pagamentoDinheiro:pagamento);
 		
 		cotaGarantiaCaucaoLiquida.setTipoCobranca(formaCobrancaDTO.getTipoCobranca());
+		
+		cotaGarantiaCaucaoLiquida.setTipoGarantia(TipoGarantia.CAUCAO_LIQUIDA);
 
 		this.setFiadorCota(idCota, null);
 		
