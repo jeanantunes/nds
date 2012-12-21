@@ -1,6 +1,7 @@
 package br.com.abril.nds.integracao.service.impl;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -88,6 +89,11 @@ public class DistribuidorServiceImpl implements DistribuidorService {
 		}
 		return comboTiposStatusGarantia;
 	}
-
-
+	
+	@Override
+	@Transactional(readOnly = true)
+	public Date obterDatatOperacaoDistribuidor(){
+		
+		return this.distribuidorRepository.obterDatatOperacaoDistribuidor();
+	}
 }

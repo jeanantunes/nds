@@ -3,6 +3,7 @@ package br.com.abril.nds.dto.filtro;
 import java.util.Date;
 import java.util.List;
 
+import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.vo.PaginacaoVO;
@@ -23,6 +24,8 @@ public class FiltroConsultaNotaEnvioDTO {
 	private Intervalo<Integer> intervaloCota;
 	
 	private Intervalo<Integer> intervaloBox;
+	
+	private SituacaoCadastro cadastro;
 	
 	private PaginacaoVO paginacaoVO;
 	
@@ -136,6 +139,14 @@ public class FiltroConsultaNotaEnvioDTO {
 	 */
 	public void setPaginacaoVO(PaginacaoVO paginacaoVO) {
 		this.paginacaoVO = paginacaoVO;
+	}
+
+	public SituacaoCadastro getCadastro() {
+		return cadastro;
+	}
+
+	public void setCadastro(SituacaoCadastro cadastro) {
+		this.cadastro = cadastro;
 	}
 	
 }

@@ -140,6 +140,11 @@ public class AlteracaoCotaController {
 		filtroAlteracaoCotaDTO.setNomeCota(PessoaUtil.removerSufixoDeTipo(filtroAlteracaoCotaDTO.getNomeCota()));
 		
 		List<ConsultaAlteracaoCotaDTO> listaCotas = this.alteracaoCotaService.pesquisarAlteracaoCota(filtroAlteracaoCotaDTO);
+		
+		if (listaCotas == null || listaCotas.isEmpty()) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
+		}
+		
 		final int qtdCotas = this.alteracaoCotaService.contarAlteracaoCota(
 				filtroAlteracaoCotaDTO);		
 		
@@ -224,7 +229,11 @@ public class AlteracaoCotaController {
 			for (Long  id : filtroAlteracaoCotaDTO.getFiltroModalFornecedor().getListaFornecedoresSelecionados()){
 				fornecedoresCota.add(fornecedorService.obterFornecedorPorId(id));
 			}
-			cota.setFornecedores(fornecedoresCota);
+			
+			//Validaçao para nao apagar fornecedores quando for alterar
+			if(!fornecedoresCota.isEmpty()){
+				cota.setFornecedores(fornecedoresCota);				
+			}
 
 			//****FINANCEIRO****//
 			//Sugere Suspensao

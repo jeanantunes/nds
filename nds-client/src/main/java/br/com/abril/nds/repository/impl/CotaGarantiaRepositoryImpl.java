@@ -16,12 +16,7 @@ import br.com.abril.nds.model.cadastro.Cheque;
 import br.com.abril.nds.model.cadastro.TipoGarantia;
 import br.com.abril.nds.model.cadastro.TipoStatusGarantia;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantia;
-import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaCaucaoLiquida;
-import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaChequeCaucao;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaFiador;
-import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaImovel;
-import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaNotaPromissoria;
-import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaOutros;
 import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.repository.CotaGarantiaRepository;
 
@@ -109,29 +104,30 @@ public class CotaGarantiaRepositoryImpl extends AbstractRepositoryModel<CotaGara
 
 		StringBuilder hql = new StringBuilder();
 
-		hql.append(" select TYPE(garantia) as tipoGarantia, ")
+		hql.append(" select garantia.tipoGarantia as tipoGarantia, ")
 		   .append(" 		count(distinct garantia.cota.id) as qtdCotas, ")
 		   .append("  		sum( ")
-		   .append(" 			 case when garantia.class = " + CotaGarantiaFiador.class.getSimpleName())
-		   .append("			 	then garantiaFiador.valor ")
-		   .append(" 			 when garantia.class = " + CotaGarantiaCaucaoLiquida.class.getSimpleName())
-		   .append("			 	then garantiaCaucaoLiquida.valor ")
-		   .append(" 			 when garantia.class = " + CotaGarantiaChequeCaucao.class.getSimpleName())
-		   .append("			 	then garantiaChequeCaucao.valor ")
-		   .append(" 			 when garantia.class = " + CotaGarantiaImovel.class.getSimpleName())
-		   .append("			 	then garantiaImovel.valor ")
-		   .append(" 			 when garantia.class = " + CotaGarantiaNotaPromissoria.class.getSimpleName())
-		   .append("			 	then garantiaNotaPromissoria.valor ")
-		   .append(" 			 when garantia.class = " + CotaGarantiaOutros.class.getSimpleName())
-		   .append("			 	then garantiaOutros.valor ")
+		   .append(" 			 case when garantia.tipoGarantia = :tipoGarantiaFiador ")
+		   .append("			 	then coalesce(garantiaFiador.valor, 0) ")
+		   .append(" 			 when garantia.tipoGarantia = :tipoGarantiaCaucaoLiquida ")
+		   .append("			 	then coalesce(garantiaCaucaoLiquida.valor, 0) ")
+		   .append(" 			 when garantia.tipoGarantia = :tipoGarantiaChequeCaucao")
+		   .append("			 	then coalesce(garantiaChequeCaucao.valor, 0) ")
+		   .append(" 			 when garantia.tipoGarantia = :tipoGarantiaImovel")
+		   .append("			 	then coalesce(garantiaImovel.valor, 0) ")
+		   .append(" 			 when garantia.tipoGarantia = :tipoGarantiaNotaPromissoria")
+		   .append("			 	then coalesce(garantiaNotaPromissoria.valor, 0) ")
+		   .append(" 			 when garantia.tipoGarantia = :tipoGarantiaOutros")
+		   .append("			 	then coalesce(garantiaOutros.valor, 0) ")
 		   .append(" 		end ) as vlrTotal ")
 		   .append(" from CotaGarantia garantia ")
 		   .append(" left join garantia.caucaoLiquidas as garantiaCaucaoLiquida ")
 		   .append(" left join garantia.cheque as garantiaChequeCaucao ")
-		   .append(" left join garantia.fiador.garantias as garantiaFiador ")
+		   .append(" left join garantia.fiador.garantias as garantiaFiador with garantiaFiador is not null ")
 		   .append(" left join garantia.imoveis as garantiaImovel ")
 		   .append(" left join garantia.notaPromissoria as garantiaNotaPromissoria ")
-		   .append(" left join garantia.outros as garantiaOutros ");
+		   .append(" left join garantia.outros as garantiaOutros ")
+		   .append(" where garantia.tipoGarantia in (select tga.tipoGarantia from Distribuidor d join d.tiposGarantiasAceita tga) ");
 		   
 	   TipoStatusGarantia status = filtro.getStatusGarantiaEnum();	
 
@@ -139,15 +135,15 @@ public class CotaGarantiaRepositoryImpl extends AbstractRepositoryModel<CotaGara
 	   if (status!=null && data!=null){
 		   if (status.equals(TipoStatusGarantia.VENCIDA)){
 			   
-			   hql.append(" where garantia.data <= :data ");
+			   hql.append(" and garantia.data <= :data ");
 		   }
            if (status.equals(TipoStatusGarantia.A_VENCER)){
 			   
-        	   hql.append(" where garantia.data >= :data ");
+        	   hql.append(" and garantia.data >= :data ");
 		   } 
 	   }
 		   
-		hql.append(" group by garantia.class ");
+		hql.append(" group by garantia.tipoGarantia ");
 
 		if (filtro.getPaginacao()!=null){
 			hql.append(" order by ")
@@ -155,10 +151,28 @@ public class CotaGarantiaRepositoryImpl extends AbstractRepositoryModel<CotaGara
 		       .append(" ")
 		       .append(filtro.getPaginacao().getSortOrder()!=null && !filtro.getPaginacao().getSortOrder().equals("")?filtro.getPaginacao().getSortOrder():" desc ");
 	    }
-
+		
 		Query query = this.getSession().createQuery(hql.toString());
 		
-		if (status!=null && data!=null){
+		//Controla a paginação
+		if(filtro.getPaginacao() != null
+				&& (filtro.getPaginacao().getPaginaAtual() != null 
+				&& filtro.getPaginacao().getPaginaAtual() > 0) 
+				&& (filtro.getPaginacao().getQtdResultadosPorPagina() != null 
+				&& filtro.getPaginacao().getQtdResultadosPorPagina() > 0)) {
+			
+			query.setFirstResult((filtro.getPaginacao().getPaginaAtual() - 1) * filtro.getPaginacao().getQtdResultadosPorPagina());
+			query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
+		}
+		
+		query.setParameter("tipoGarantiaFiador", TipoGarantia.FIADOR);
+		query.setParameter("tipoGarantiaCaucaoLiquida", TipoGarantia.CAUCAO_LIQUIDA);
+		query.setParameter("tipoGarantiaChequeCaucao", TipoGarantia.CHEQUE_CAUCAO);
+		query.setParameter("tipoGarantiaImovel", TipoGarantia.IMOVEL);
+		query.setParameter("tipoGarantiaNotaPromissoria", TipoGarantia.NOTA_PROMISSORIA);
+		query.setParameter("tipoGarantiaOutros", TipoGarantia.OUTROS);
+		
+		if (status != null && data != null){
 		    query.setParameter("data", data);
 		}
 		
@@ -175,14 +189,15 @@ public class CotaGarantiaRepositoryImpl extends AbstractRepositoryModel<CotaGara
 
 		StringBuilder hql = new StringBuilder();
 
-		hql.append(" select count(distinct garantia) ")
-		   .append(" from CotaGarantia garantia ")
-		   .append(" left join garantia.caucaoLiquidas as garantiaCaucaoLiquida ")
-		   .append(" left join garantia.cheque as garantiaChequeCaucao ")
-		   .append(" left join garantia.fiador.garantias as garantiaFiador ")
-		   .append(" left join garantia.imoveis as garantiaImovel ")
-		   .append(" left join garantia.notaPromissoria as garantiaNotaPromissoria ")
-		   .append(" left join garantia.outros as garantiaOutros ");
+		hql	.append(" select count(distinct garantia.tipoGarantia) ")
+		   	.append(" from CotaGarantia garantia ")
+		   	.append(" left join garantia.caucaoLiquidas as garantiaCaucaoLiquida ")
+		   	.append(" left join garantia.cheque as garantiaChequeCaucao ")
+		   	.append(" left join garantia.fiador.garantias as garantiaFiador ")
+		   	.append(" left join garantia.imoveis as garantiaImovel ")
+		   	.append(" left join garantia.notaPromissoria as garantiaNotaPromissoria ")
+		   	.append(" left join garantia.outros as garantiaOutros ")
+			.append(" where garantia.tipoGarantia in (select tga.tipoGarantia from Distribuidor d join d.tiposGarantiasAceita tga) ");
 		
 		TipoStatusGarantia status = filtro.getStatusGarantiaEnum();	
 	
@@ -190,12 +205,12 @@ public class CotaGarantiaRepositoryImpl extends AbstractRepositoryModel<CotaGara
 		if (status!=null && data!=null){
 		   if (status.equals(TipoStatusGarantia.VENCIDA)){
 			   
-			   hql.append(" where garantia.data <= :data ");
+			   hql.append(" and garantia.data <= :data ");
 		   }
 		   
            if (status.equals(TipoStatusGarantia.A_VENCER)){
 			   
-        	   hql.append(" where garantia.data >= :data ");
+        	   hql.append(" and garantia.data >= :data ");
 		   } 
 	    }
 		
@@ -326,7 +341,7 @@ public class CotaGarantiaRepositoryImpl extends AbstractRepositoryModel<CotaGara
 		hql.append(" select ")
 		
 		   .append(" cota.numeroCota as cota, ")
-		   .append(" case when pessoa.nomeFantasia = null then pessoa.nome else pessoa.nomeFantasia end as nome, ")
+		   .append(" coalesce(pessoa.nomeFantasia, pessoa.razaoSocial, pessoa.nome, '') as nome, ")
 		   .append("'")
 		   .append(  tipoGarantia.getDescricao())
 		   .append("' as garantia, ")

@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.security.InvalidParameterException;
 import java.util.List;
 
@@ -52,6 +53,24 @@ public class EstoqueProdutoCotaRepositoryImpl extends AbstractRepositoryModel<Es
 		query.setMaxResults(1);
 		
 		return (EstoqueProdutoCota) query.uniqueResult();
+	}
+	
+	public BigInteger obterTotalEmEstoqueProdutoCota(Long idCota, Long idProdutoEdicao) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select sum(estoque.qtdeRecebida - estoque.qtdeDevolvida) 	");
+		hql.append(" from EstoqueProdutoCota estoque  							");
+		hql.append(" where estoque.cota.id = :idCota and 						");
+		hql.append(" estoque.produtoEdicao.id = :idProdutoEdicao  				");
+		
+		Query query = getSession().createQuery(hql.toString());
+		
+		query.setParameter("idCota", idCota);
+		query.setParameter("idProdutoEdicao", idProdutoEdicao);
+		
+		return (BigInteger) query.uniqueResult();
+		
 	}
 	
 	@Override

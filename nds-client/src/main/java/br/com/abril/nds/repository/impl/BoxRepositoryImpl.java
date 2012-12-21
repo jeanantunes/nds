@@ -410,6 +410,25 @@ public class BoxRepositoryImpl extends AbstractRepositoryModel<Box,Long> impleme
 		return (Long) query.uniqueResult();
 	}
 
+	@Override
+	public Box obterBoxPorRota(Long rotaID) {
+		
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append(" SELECT box FROM Box box ");
+		sql.append(" JOIN box.roteirizacao roteirizacao ");
+		sql.append(" JOIN roteirizacao.roteiros roteiro ");
+		sql.append(" JOIN roteiro.rotas rota ");
+		sql.append(" WHERE rota.id = :rotaID ");
+		
+		Query query = this.getSession().createQuery(sql.toString());
+		
+		query.setParameter("rotaID", rotaID);
+		query.setMaxResults(1);
+		
+		return (Box) query.uniqueResult();
+	}
+
 
 
 

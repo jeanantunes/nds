@@ -24,6 +24,9 @@ public class ImovelDTO implements Serializable {
 	
 	private String observacao;
 	
+	public ImovelDTO(){
+		
+	}
 
     public ImovelDTO(String proprietario, String endereco,
             String numeroRegistro, BigDecimal valor, String observacao) {

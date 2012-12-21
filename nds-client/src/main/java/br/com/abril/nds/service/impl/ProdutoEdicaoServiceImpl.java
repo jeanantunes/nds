@@ -816,5 +816,10 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		
 		return dto;
 	}
+
+	@Override
+	public ProdutoEdicao buscarPorID(Long idProdutoEdicao) {
+		return produtoEdicaoRepository.buscarPorId(idProdutoEdicao);
+	}
 	
 }

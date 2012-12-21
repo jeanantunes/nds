@@ -59,14 +59,14 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 		
 		sql.append("SELECT DISTINCT pdv FROM PDV pdv");
 		sql.append(" JOIN FETCH pdv.cota cotaPDV ");
-		sql.append(" LEFT JOIN FETCH cotaPDV.movimentoEstoqueCotas mec ");
+		sql.append(" JOIN FETCH cotaPDV.movimentoEstoqueCotas mec ");
 		sql.append(" LEFT JOIN FETCH mec.produtoEdicao pe ");
 		sql.append(" LEFT JOIN FETCH pe.produto pd ");
 		sql.append(" LEFT JOIN pe.lancamentos lan ");
 		sql.append(" LEFT JOIN mec.tipoMovimento tip ");
 		sql.append(" WHERE pdv.caracteristicas.pontoPrincipal = true ");
 		sql.append(" AND	lan.dataLancamentoDistribuidor = :dataInformada");
-		sql.append(" AND	tip.grupoMovimentoEstoque='ENVIO_JORNALEIRO'");
+		sql.append(" AND	tip.grupoMovimentoEstoque='RECEBIMENTO_REPARTE'");
 		sql.append(" ORDER BY cotaPDV.numeroCota");
 		
 		Query query = getSession().createQuery(sql.toString());

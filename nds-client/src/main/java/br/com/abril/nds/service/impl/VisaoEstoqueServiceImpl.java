@@ -128,9 +128,6 @@ public class VisaoEstoqueServiceImpl implements VisaoEstoqueService {
 			}
 		}
 		
-		BigDecimal precoCapa = BigDecimal.ZERO;
-		BigDecimal qtde = BigDecimal.ZERO;
-		
 		for (VisaoEstoqueDetalheDTO dto: list) {
 			
 			if (dto.getPrecoCapa() == null || dto.getQtde() == null) {
@@ -138,9 +135,6 @@ public class VisaoEstoqueServiceImpl implements VisaoEstoqueService {
 				continue;
 			}
 			
-			precoCapa = CurrencyUtil.converterValor(dto.getPrecoCapa());
-			qtde = CurrencyUtil.converterValor(dto.getQtde());
-			dto.setValor(precoCapa.multiply(qtde));
 		}
 		
 		return list;
@@ -153,7 +147,12 @@ public class VisaoEstoqueServiceImpl implements VisaoEstoqueService {
 		if (tipoEstoque.equals(TipoEstoque.LANCAMENTO_JURAMENTADO.toString())) {
 			qtd = visaoEstoqueRepository.obterQuantidadeEstoqueJuramentado(idProdutoEdicao);
 		} else {
-			if (DateUtil.isHoje(dataMovimentacao)) {
+		
+			Distribuidor distribuidor = this.distribuidorService.obter();
+			
+			Date dataOperacao = distribuidor.getDataOperacao();
+			
+			if (dataMovimentacao.compareTo(dataOperacao) == 0) {			
 				qtd = visaoEstoqueRepository.obterQuantidadeEstoque(idProdutoEdicao, tipoEstoque);
 			} else {
 				qtd = visaoEstoqueRepository.obterQuantidadeEstoqueHistorico(idProdutoEdicao, tipoEstoque);

@@ -445,15 +445,23 @@ public class RoteirizacaoDTO implements Serializable{
 
 	public void removerRoteiro(Long roteiroId) {
 		
-		for (RoteiroRoteirizacaoDTO roteiro : roteiros){
-			
-			if (roteiro.getId().equals(roteiroId)){
-				
-				roteiros.remove(roteiro);
-				break;
-			}
-		}
+		removerRoteiroDeRoteiros(roteiroId);
 		
+		removerRoteiroDeTodosRoteiros(roteiroId);
+		
+		if (roteiroId != null  && roteiroId >= 0){
+			
+			this.addRoteiroExclusao(roteiroId);
+		}
+	}
+
+	public void removerRoteiroTransferido(Long roteiroId) {
+		
+		removerRoteiroDeRoteiros(roteiroId);
+		removerRoteiroDeTodosRoteiros(roteiroId);
+	}
+
+	private void removerRoteiroDeTodosRoteiros(Long roteiroId) {
 		for (RoteiroRoteirizacaoDTO roteiro : todosRoteiros){
 			
 			if (roteiro.getId().equals(roteiroId)){
@@ -462,10 +470,18 @@ public class RoteirizacaoDTO implements Serializable{
 				break;
 			}
 		}
-		
-		if (roteiroId >= 0){
+	}
+
+
+
+	private void removerRoteiroDeRoteiros(Long roteiroId) {
+		for (RoteiroRoteirizacaoDTO roteiro : roteiros){
 			
-			this.addRoteiroExclusao(roteiroId);
+			if (roteiro.getId().equals(roteiroId)){
+				
+				roteiros.remove(roteiro);
+				break;
+			}
 		}
 	}
 

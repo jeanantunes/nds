@@ -27,6 +27,7 @@
                <fieldset style="width:880px!important;">
                	  <legend>Negociação</legend>
                     <table class="negociacaoGrid"></table>
+                    <div id="botoesArquivoNegociacao">
                      <span class="bt_novos" title="Gerar Arquivo">                      
 						<a href="${pageContext.request.contextPath}/followup/exportar?fileType=XLS&tipoExportacao=negociacao">
          					<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
@@ -38,13 +39,15 @@
          					<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
          				Imprimir
 						</a>
-                  </span>              
+                  </span>  
+                  </div>            
                </fieldset>
             </div>
             <div id="tabChamadao">
                 <fieldset style="width:880px!important;">
                	<legend>Chamadão</legend>
                 <table class="chamadaoGrid"></table>
+                 <div id="botoesArquivoChamadao">
                   <span class="bt_novos" title="Gerar Arquivo">                      
 						<a href="${pageContext.request.contextPath}/followup/exportar?fileType=XLS&tipoExportacao=chamadao">
          					<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
@@ -56,13 +59,15 @@
          					<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
          				Imprimir
 						</a>
-                  </span>                
+                  </span>  
+                  </div>              
                </fieldset>
             </div>
             <div id="tabAlteracao">
                 <fieldset style="width:880px!important;">
                	<legend>Alteração de Status Cota</legend>
                 <table class="alteracaoStatusGrid"></table>
+                <div id="botoesArquivoAlteracaoStatusCota">
                  <span class="bt_novos" title="Gerar Arquivo">                      
 						<a href="${pageContext.request.contextPath}/followup/exportar?fileType=XLS&tipoExportacao=alteracao">
          					<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
@@ -75,12 +80,14 @@
          				Imprimir
 						</a>
                   </span> 
+                  </div>
                </fieldset>
             </div>
             <div id="tabAtualizacao">
                <fieldset style="width:880px!important;">
                	<legend>Atualização Cadastral</legend>
                 <table class="atualizacaoCadastralGrid"></table>
+                <div id="botoesArquivoAtualizacaoCadastral">
                   <span class="bt_novos" title="Gerar Arquivo">                      
 						<a href="${pageContext.request.contextPath}/followup/exportar?fileType=XLS&tipoExportacao=atualizacao">
          					<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
@@ -93,12 +100,14 @@
          				Imprimir
 						</a>
                   </span>
+                  </div>
                </fieldset>
             </div>            
             <div id="tabPendencia">
                <fieldset style="width:880px!important;">
                	<legend>Pend&ecirc;ncias NF-e Encalhe</legend>
                 <table class="pendenciasGrid"></table>
+                <div id="botoesArquivoPendencia">
                   <span class="bt_novos" title="Gerar Arquivo">                      
 						<a href="${pageContext.request.contextPath}/followup/exportar?fileType=XLS&tipoExportacao=pendenciaNFE">
          					<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
@@ -118,6 +127,7 @@
                <fieldset style="width:880px!important;">
                	<legend>Cadastro Parcial</legend>
                 <table class="atualizacaoCadastralParcialGrid"></table>
+                <div id="botoesArquivoCadastroParcial">
                   <span class="bt_novos" title="Gerar Arquivo">                      
 						<a href="${pageContext.request.contextPath}/followup/exportar?fileType=XLS&tipoExportacao=cadastroParcial">
          					<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
@@ -129,7 +139,8 @@
          					<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
          				Imprimir
 						</a>
-                  </span>    
+                  </span> 
+                  </div>   
                </fieldset>
             </div>
             

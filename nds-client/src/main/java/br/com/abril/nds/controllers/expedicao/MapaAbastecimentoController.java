@@ -56,6 +56,8 @@ public class MapaAbastecimentoController {
 	
 	protected static final String MSG_MATRIZ_BALANCEAMENTO_NAO_CONFIRMADO = "Não há matriz de lancamento confirmada para esta data.";
 	
+	protected static final String MSG_MATRIZ_BALANCEAMENTO_NAO_BALANCEADO = "Não há matriz de lancamento balanceada para esta data.";
+	
 	@Autowired
 	private HttpSession session;
 	
@@ -192,9 +194,9 @@ public class MapaAbastecimentoController {
 		
 		List<ItemDTO<Long, String>> listaRoteiros = new ArrayList<ItemDTO<Long,String>>();
 		
-		for(Roteiro rota : roteiros){
+		for(Roteiro item : roteiros){
 			
-			listaRoteiros.add(new ItemDTO<Long, String>(rota.getId(),rota.getId() + " " + rota.getDescricaoRoteiro()));
+			listaRoteiros.add(new ItemDTO<Long, String>(item.getId(),item.getDescricaoRoteiro()));
 		}
 		
 		return listaRoteiros;
@@ -207,7 +209,7 @@ public class MapaAbastecimentoController {
 	 */
 	private void validarExistenciaMatriz(Date dataLancamento) {
 		if(!lancamentoService.existeMatrizBalanceamentoConfirmado(dataLancamento)){
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,MSG_MATRIZ_BALANCEAMENTO_NAO_CONFIRMADO ));
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, MSG_MATRIZ_BALANCEAMENTO_NAO_BALANCEADO));
 		}
 	}	
 	

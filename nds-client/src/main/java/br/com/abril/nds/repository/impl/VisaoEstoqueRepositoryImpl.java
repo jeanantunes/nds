@@ -160,6 +160,7 @@ public class VisaoEstoqueRepositoryImpl extends AbstractRepository implements
 				.append("       ,pe.precoVenda as precoCapa")
 				.append("       ,lan.dataLancamentoDistribuidor as lcto")
 				.append("       ,lan.dataRecolhimentoDistribuidor as rclto")
+				.append("		,(pe.precoVenda * ep." + coluna + ") as valor ")
 				.append("       ,ep." + coluna + " as qtde")
 				.append("   FROM EstoqueProduto as ep ")
 				.append("   JOIN ep.produtoEdicao as pe ")
@@ -174,6 +175,8 @@ public class VisaoEstoqueRepositoryImpl extends AbstractRepository implements
 		if (filtro.getIdFornecedor() != -1) {
 			hql.append("    AND f.id = :idFornecedor ");
 		}
+		
+		hql.append(" group by pe.id ");
 		
 		if (!StringUtil.isEmpty(filtro.getPaginacao().getSortColumn())) {
 			hql.append("order by ")

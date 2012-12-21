@@ -77,20 +77,6 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		return query.list();
 	}
 
-	public boolean verificarConsodidadoCotaPorDataOperacao(Long idCota) {
-		StringBuilder hql = new StringBuilder(
-				"select count (c.id) from ConsolidadoFinanceiroCota c, Distribuidor d ");
-		hql.append(" where c.cota.id = :idCota ")
-		   .append(" and c.dataConsolidado = d.dataOperacao ");
-
-		Query query = this.getSession().createQuery(hql.toString());
-		query.setParameter("idCota", idCota);
-
-		Long quant = (Long) query.uniqueResult();
-
-		return quant == null ? false : quant > 0;
-	}
-
 	/**
 	 * Método que obtém uma lista de encalhe por produto e cota
 	 */
@@ -404,8 +390,9 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		
  	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public ConsolidadoFinanceiroCota obterConsolidadoPorIdMovimentoFinanceiro(Long idMovimentoFinanceiro) {
+	public List<ConsolidadoFinanceiroCota> obterConsolidadoPorIdMovimentoFinanceiro(Long idMovimentoFinanceiro) {
 		
 		StringBuilder hql = new StringBuilder("select c from ConsolidadoFinanceiroCota c join c.movimentos mov ");
 		hql.append(" where mov.id = :idMovimentoFinanceiro ");
@@ -413,7 +400,7 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		Query query = this.getSession().createQuery(hql.toString());
 		query.setParameter("idMovimentoFinanceiro", idMovimentoFinanceiro);
 		
-		return (ConsolidadoFinanceiroCota) query.uniqueResult();
+		return query.list();
 	}
 
 	/* (non-Javadoc)
@@ -438,25 +425,23 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 	}
 
 	@Override
-	public Long obterQuantidadeDividasGeradasData(Date data, Long idCota) {
+	public Long obterQuantidadeDividasGeradasData(List<Long> idsCota) {
 		
-		StringBuilder hql = new StringBuilder();
+		StringBuilder hql = new StringBuilder("select count(c.id) ");
+		hql.append(" from ConsolidadoFinanceiroCota c, Distribuidor d ")
+		   .append(" where c.dataConsolidado = d.dataOperacao ");
 		
-		hql.append("select count(c.id) from ConsolidadoFinanceiroCota c where c.dataConsolidado = :data ");
-		
-		if (idCota != null) {
+		if (idsCota != null) {
 			
-			hql.append("and c.cota.id = :idCota");
+			hql.append("and c.cota.id in (:idsCota)");
 		}
 		
 		Query query = 
 				this.getSession().createQuery(hql.toString());
 		
-		query.setParameter("data", data);
-		
-		if (idCota != null) {
+		if (idsCota != null) {
 			
-			query.setParameter("idCota", idCota);
+			query.setParameterList("idsCota", idsCota);
 		}
 		
 		return (Long) query.uniqueResult();
@@ -474,5 +459,33 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		criteria.setMaxResults(1);
 		
 		return (ConsolidadoFinanceiroCota) criteria.uniqueResult();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ConsolidadoFinanceiroCota> obterConsolidadosDataOperacao(Long idCota) {
+		
+		StringBuilder hql = new StringBuilder("select c from ConsolidadoFinanceiroCota c, Distribuidor d ");
+		
+		if (idCota != null){
+			
+			hql.append(" join c.cota cota ");
+		}
+		
+		hql.append(" where c.dataConsolidado = d.dataOperacao ");
+		
+		if (idCota != null){
+			
+			hql.append(" and cota.id = :idCota ");
+		}
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		if (idCota != null){
+			
+			query.setParameter("idCota", idCota);
+		}
+		
+		return query.list();
 	}
 }

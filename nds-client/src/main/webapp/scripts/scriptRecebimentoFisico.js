@@ -7,89 +7,89 @@ var recebimentoFisicoController = $.extend(true, {
 	init: function() {
 		var _this = this;
 
-		$("#datepickerLancto", this.workspace).datepicker({
+		$("#datepickerLancto", recebimentoFisicoController.workspace).datepicker({
 			showOn: "button",
 			buttonImage: contextPath + "/images/calendar.gif",
 			buttonImageOnly: true,
 			dateFormat: "dd/mm/yy"
 		});
-		$("#datepickerRecolhimento", this.workspace).datepicker({
+		$("#datepickerRecolhimento", recebimentoFisicoController.workspace).datepicker({
 			showOn: "button",
 			buttonImage:  contextPath + "/images/calendar.gif",
 			buttonImageOnly: true,
 			dateFormat: "dd/mm/yy"
 		});
-		$("#dataEmissao", this.workspace).datepicker({
-			showOn: "button",
-			buttonImage:  contextPath + "/images/calendar.gif",
-			buttonImageOnly: true,
-			dateFormat: "dd/mm/yy"
-		});
-		
-		$("#novoDataEmissao", this.workspace).datepicker({
+		$("#dataEmissao", recebimentoFisicoController.workspace).datepicker({
 			showOn: "button",
 			buttonImage:  contextPath + "/images/calendar.gif",
 			buttonImageOnly: true,
 			dateFormat: "dd/mm/yy"
 		});
 		
-		$("#novoDataEntrada", this.workspace).datepicker({
+		$("#novoDataEmissao", recebimentoFisicoController.workspace).datepicker({
 			showOn: "button",
 			buttonImage:  contextPath + "/images/calendar.gif",
 			buttonImageOnly: true,
 			dateFormat: "dd/mm/yy"
 		});
 		
-		$("#datepickerLancto", this.workspace).mask("99/99/9999");
-		$("#datepickerRecolhimento", this.workspace).mask("99/99/9999");
-		$("#dataEmissao", this.workspace).mask("99/99/9999");
-		$("#novoDataEmissao", this.workspace).mask("99/99/9999");
-		$("#novoDataEntrada", this.workspace).mask("99/99/9999");
+		$("#novoDataEntrada", recebimentoFisicoController.workspace).datepicker({
+			showOn: "button",
+			buttonImage:  contextPath + "/images/calendar.gif",
+			buttonImageOnly: true,
+			dateFormat: "dd/mm/yy"
+		});
 		
-		$("#notaFiscal", this.workspace).numeric();
+		$("#datepickerLancto", recebimentoFisicoController.workspace).mask("99/99/9999");
+		$("#datepickerRecolhimento", recebimentoFisicoController.workspace).mask("99/99/9999");
+		$("#dataEmissao", recebimentoFisicoController.workspace).mask("99/99/9999");
+		$("#novoDataEmissao", recebimentoFisicoController.workspace).mask("99/99/9999");
+		$("#novoDataEntrada", recebimentoFisicoController.workspace).mask("99/99/9999");
 		
-		$("#chaveAcesso", this.workspace).numeric();
+		$("#notaFiscal", recebimentoFisicoController.workspace).numeric();
 		
-		$("#valorBruto", this.workspace).maskMoney({
+		$("#chaveAcesso", recebimentoFisicoController.workspace).numeric();
+		
+		$("#valorBruto", recebimentoFisicoController.workspace).maskMoney({
 			 thousands:'.', 
 			 decimal:',', 
 			 precision:2
 		});
 
-		$("#valorLiquido", this.workspace).maskMoney({
+		$("#valorLiquido", recebimentoFisicoController.workspace).maskMoney({
 			 thousands:'.', 
 			 decimal:',', 
 			 precision:2
 		});
 		
-		$("#valorDesconto", this.workspace).maskMoney({
+		$("#valorDesconto", recebimentoFisicoController.workspace).maskMoney({
 			 thousands:'.', 
 			 decimal:',', 
 			 precision:2
 		});
 		
-		$("#novoValorTotal", this.workspace).keyup(function(){
+		$("#novoValorTotal", recebimentoFisicoController.workspace).keyup(function(){
 			_this.novoValorTotalTyped = true;
 		});
 		
-		$("#novoValorTotal", this.workspace).maskMoney({
+		$("#novoValorTotal", recebimentoFisicoController.workspace).maskMoney({
 			 thousands:'.', 
 			 decimal:',', 
 			 precision:2
 		});
 			
-		$("#novoNumeroNota", this.workspace).numeric();
+		$("#novoNumeroNota", recebimentoFisicoController.workspace).numeric();
 		
-		$("#codigo", this.workspace).numeric();
-		$("#edicao", this.workspace).numeric();
-		$("#precoCapa", this.workspace).numeric();
-		$("#peso", this.workspace).numeric();
-		$("#pacotePadrao", this.workspace).numeric();
-		$("#repartePrevisto", this.workspace).numeric();
+		$("#codigo", recebimentoFisicoController.workspace).numeric();
+		$("#edicao", recebimentoFisicoController.workspace).numeric();
+		$("#precoCapa", recebimentoFisicoController.workspace).numeric();
+		$("#peso", recebimentoFisicoController.workspace).numeric();
+		$("#pacotePadrao", recebimentoFisicoController.workspace).numeric();
+		$("#repartePrevisto", recebimentoFisicoController.workspace).numeric();
 
-		$("#produto", this.workspace).autocomplete({source: ""});
+		$("#produto", recebimentoFisicoController.workspace).autocomplete({source: ""});
 		
-		$("#cnpj", this.workspace).mask("99.999.999/9999-99");
+		$("#cnpj", recebimentoFisicoController.workspace).mask("99.999.999/9999-99");
 		
 		recebimentoFisicoController.ocultarBtns();
 		
@@ -101,10 +101,10 @@ var recebimentoFisicoController = $.extend(true, {
 	
 	ocultarBtns : function() {
 
-		$('#botoesNormais', this.workspace).hide();
-		$('#botaoNovoProdutoOpaco', this.workspace).hide();
-		$('#botaoNovoProduto', this.workspace).hide();
-		$('#botoesOpacos', this.workspace).hide();
+		$('#botoesNormais', recebimentoFisicoController.workspace).hide();
+		$('#botaoNovoProdutoOpaco', recebimentoFisicoController.workspace).hide();
+		$('#botaoNovoProduto', recebimentoFisicoController.workspace).hide();
+		$('#botoesOpacos', recebimentoFisicoController.workspace).hide();
 		
 	},
 	
@@ -125,16 +125,16 @@ var recebimentoFisicoController = $.extend(true, {
 	 */
 	pesquisarPorCnpjFornecedor : function() {
 			
-		var cnpj = $("#cnpj", this.workspace).val();	
+		var cnpj = $("#cnpj", recebimentoFisicoController.workspace).val();	
 		
 		if(cnpj == "") {
-			$("#fornecedor", this.workspace).val("");
+			$("#fornecedor", recebimentoFisicoController.workspace).val("");
 			return;
 		}
 		
 		$.postJSON(this.path + 'buscaCnpj', {cnpj:removeSpecialCharacteres(cnpj)}, 
 		function(result) { 
-			$("#fornecedor", this.workspace).val(result.cnpj);
+			$("#fornecedor", recebimentoFisicoController.workspace).val(result.cnpj);
 		});	
 	
 	},
@@ -144,20 +144,20 @@ var recebimentoFisicoController = $.extend(true, {
 	 */
 	exibirCnpjDoFornecedor : function() {
 		
-		var cnpjDoFornecedor = $("#fornecedor", this.workspace).val();	
+		var cnpjDoFornecedor = $("#fornecedor", recebimentoFisicoController.workspace).val();	
 		
 		if(cnpjDoFornecedor == -1){
 			
-			$("#cnpj", this.workspace).val("");
+			$("#cnpj", recebimentoFisicoController.workspace).val("");
 			
-			$("#cnpj", this.workspace).attr("disabled", true);
+			$("#cnpj", recebimentoFisicoController.workspace).attr("disabled", true);
 			
 		}else{
 			
-			$("#cnpj", this.workspace).val(cnpjDoFornecedor);
-			$("#cnpj", this.workspace).mask("99.999.999/9999-99");
+			$("#cnpj", recebimentoFisicoController.workspace).val(cnpjDoFornecedor);
+			$("#cnpj", recebimentoFisicoController.workspace).mask("99.999.999/9999-99");
 			
-			$("#cnpj", this.workspace).attr("disabled", false);
+			$("#cnpj", recebimentoFisicoController.workspace).attr("disabled", false);
 			
 		}
 	
@@ -170,14 +170,14 @@ var recebimentoFisicoController = $.extend(true, {
 	 */
 	verificarNotaFiscalExistente : function() {
 
-		var cnpj 		= $("#cnpj", this.workspace).val();
-		var notaFiscal 	= $("#notaFiscal", this.workspace).val();
-		var serie 		= $("#serie", this.workspace).val();		
-		var chaveAcesso = $("#chaveAcesso", this.workspace).val();
-		var fornecedor  = $("#fornecedor", this.workspace).val();
+		var cnpj 		= $("#cnpj", recebimentoFisicoController.workspace).val();
+		var notaFiscal 	= $("#notaFiscal", recebimentoFisicoController.workspace).val();
+		var serie 		= $("#serie", recebimentoFisicoController.workspace).val();		
+		var chaveAcesso = $("#chaveAcesso", recebimentoFisicoController.workspace).val();
+		var fornecedor  = $("#fornecedor", recebimentoFisicoController.workspace).val();
         var indNFe      = "N";
         
-        if( $('#eNF', this.workspace).attr('checked') == 'checked' ) {
+        if( $('#eNF', recebimentoFisicoController.workspace).attr('checked') == 'checked' ) {
 			indNFe = "S";
 		}
         
@@ -214,11 +214,11 @@ var recebimentoFisicoController = $.extend(true, {
 		if(validacao.tipoMensagem == "SUCCESS") {
 		
 			if (recebimentoFisicoController.indNotaFiscalInterface){
-				$('#chBoxReplicaValorRepartePrevistoAll', this.workspace).attr('disabled', false);
+				$('#chBoxReplicaValorRepartePrevistoAll', recebimentoFisicoController.workspace).attr('disabled', false);
 				recebimentoFisicoController.carregarItemNotaGridNotaInterface();
 				
 	    	}else{
-				$('#chBoxReplicaValorRepartePrevistoAll', this.workspace).attr('disabled', true);
+				$('#chBoxReplicaValorRepartePrevistoAll', recebimentoFisicoController.workspace).attr('disabled', true);
 				recebimentoFisicoController.carregarItemNotaGridNotaManual();
 	    	}
 
@@ -230,14 +230,14 @@ var recebimentoFisicoController = $.extend(true, {
 
 			exibirMensagem(validacao.tipoMensagem, validacao.listaMensagens);
 			
-			$(".grids", this.workspace).hide();
+			$(".grids", recebimentoFisicoController.workspace).hide();
 			
 			recebimentoFisicoController.ocultarBtns();
 			
 			recebimentoFisicoController.popup_adicionar();
 			
-			$("#novoNumeroNota", this.workspace).val($("#notaFiscal", this.workspace).val());
-			$("#novoSerieNota", this.workspace).val($("#serie", this.workspace).val());		
+			$("#novoNumeroNota", recebimentoFisicoController.workspace).val($("#notaFiscal", recebimentoFisicoController.workspace).val());
+			$("#novoSerieNota", recebimentoFisicoController.workspace).val($("#serie", recebimentoFisicoController.workspace).val());		
 		}
 		
 	},
@@ -249,7 +249,7 @@ var recebimentoFisicoController = $.extend(true, {
 		
 		recebimentoFisicoController.lineIdItemNotaEmEdicao = null;
 		
-		var fornecedor = $("#fornecedor", this.workspace).val();
+		var fornecedor = $("#fornecedor", recebimentoFisicoController.workspace).val();
 		
 		if(fornecedor == "-1"){
 			exibirMensagem('WARNING', ['Não é possível Adicionar Novo Produto para opção TODOS em Fornecedor']);
@@ -259,7 +259,7 @@ var recebimentoFisicoController = $.extend(true, {
 		this.novoValorTotalTyped=false;
 		recebimentoFisicoController.limparCamposNovoItem();
 		
-		$("#dialog-novo-item", this.workspace).dialog({
+		$("#dialog-novo-item", recebimentoFisicoController.workspace).dialog({
 			resizable: false,
 			height:480,
 			width:500,
@@ -276,7 +276,7 @@ var recebimentoFisicoController = $.extend(true, {
 				clearMessageDialogTimeout();
 			},
 			
-			form: $("#dialog-novo-item", this.workspace).parents("form")
+			form: $("#dialog-novo-item", recebimentoFisicoController.workspace).parents("form")
 			
 		});
 	},
@@ -296,16 +296,16 @@ var recebimentoFisicoController = $.extend(true, {
 			
 		} 
 		
-		var peso				= $("#peso", this.workspace).val();
-		var pacotePadrao		= $("#pacotePadrao", this.workspace).val();
-		var codigo 				= $("#codigo", this.workspace).val();
-		var produto 			= $("#produto", this.workspace).val();
-		var precoCapa			= $("#precoCapa", this.workspace).val();
-		var edicao 				= $("#edicao", this.workspace).val();
-		var dataLancamento 		= $("#datepickerLancto", this.workspace).val();
-		var dataRecolhimento 	= $("#datepickerRecolhimento", this.workspace).val();
-		var repartePrevisto 	= $("#repartePrevisto", this.workspace).val();
-		var tipoLancamento 		= $("#tipoLancamento", this.workspace).val();
+		var peso				= $("#peso", recebimentoFisicoController.workspace).val();
+		var pacotePadrao		= $("#pacotePadrao", recebimentoFisicoController.workspace).val();
+		var codigo 				= $("#codigo", recebimentoFisicoController.workspace).val();
+		var produto 			= $("#produto", recebimentoFisicoController.workspace).val();
+		var precoCapa			= $("#precoCapa", recebimentoFisicoController.workspace).val();
+		var edicao 				= $("#edicao", recebimentoFisicoController.workspace).val();
+		var dataLancamento 		= $("#datepickerLancto", recebimentoFisicoController.workspace).val();
+		var dataRecolhimento 	= $("#datepickerRecolhimento", recebimentoFisicoController.workspace).val();
+		var repartePrevisto 	= $("#repartePrevisto", recebimentoFisicoController.workspace).val();
+		var tipoLancamento 		= $("#tipoLancamento", recebimentoFisicoController.workspace).val();
 		
 		var dadosCadastro = {
 				"itemRecebimento.lineId":lineId,
@@ -354,16 +354,16 @@ var recebimentoFisicoController = $.extend(true, {
 			
 		} 
 		
-		var peso				= $("#peso", this.workspace).val();
-		var pacotePadrao		= $("#pacotePadrao", this.workspace).val();
-		var codigo 				= $("#codigo", this.workspace).val();
-		var produto 			= $("#produto", this.workspace).val();
-		var precoCapa			= $("#precoCapa", this.workspace).val();
-		var edicao 				= $("#edicao", this.workspace).val();
-		var dataLancamento 		= $("#datepickerLancto", this.workspace).val();
-		var dataRecolhimento 	= $("#datepickerRecolhimento", this.workspace).val();
-		var repartePrevisto 	= $("#repartePrevisto", this.workspace).val();
-		var tipoLancamento 		= $("#tipoLancamento", this.workspace).val();
+		var peso				= $("#peso", recebimentoFisicoController.workspace).val();
+		var pacotePadrao		= $("#pacotePadrao", recebimentoFisicoController.workspace).val();
+		var codigo 				= $("#codigo", recebimentoFisicoController.workspace).val();
+		var produto 			= $("#produto", recebimentoFisicoController.workspace).val();
+		var precoCapa			= $("#precoCapa", recebimentoFisicoController.workspace).val();
+		var edicao 				= $("#edicao", recebimentoFisicoController.workspace).val();
+		var dataLancamento 		= $("#datepickerLancto", recebimentoFisicoController.workspace).val();
+		var dataRecolhimento 	= $("#datepickerRecolhimento", recebimentoFisicoController.workspace).val();
+		var repartePrevisto 	= $("#repartePrevisto", recebimentoFisicoController.workspace).val();
+		var tipoLancamento 		= $("#tipoLancamento", recebimentoFisicoController.workspace).val();
 		
 		var dadosCadastro = {"itemRecebimento.lineId":lineId,
 				"itemRecebimento.peso":peso,
@@ -389,7 +389,7 @@ var recebimentoFisicoController = $.extend(true, {
 			
 		if(result.tipoMensagem == "SUCCESS") {
 				
-			$("#dialog-novo-item", this.workspace).dialog( "close" );
+			$("#dialog-novo-item", recebimentoFisicoController.workspace).dialog( "close" );
 				
 		} 
 		
@@ -406,10 +406,10 @@ var recebimentoFisicoController = $.extend(true, {
 	*/
 	limparCamposPesquisa : function() {
 		
-		$("#cnpj", this.workspace).val("");
-		$("#notaFiscal", this.workspace).val("");
-		$("#serie", this.workspace).val("");
-		$("#chaveAcesso", this.workspace).val("");
+		$("#cnpj", recebimentoFisicoController.workspace).val("");
+		$("#notaFiscal", recebimentoFisicoController.workspace).val("");
+		$("#serie", recebimentoFisicoController.workspace).val("");
+		$("#chaveAcesso", recebimentoFisicoController.workspace).val("");
 		
 	},
 	
@@ -418,22 +418,23 @@ var recebimentoFisicoController = $.extend(true, {
 	*/
 	limparCampos : function() {
 		
-		$("#dataEmissao", this.workspace).val("");
-		$("#valorBruto", this.workspace).val("");
-		$("#valorLiquido", this.workspace).val("");
-		$("#valorDesconto", this.workspace).val("");
-		$("#cfop", this.workspace).val("");
-		$("#tipoNotaFiscal", this.workspace).val("");
+		$("#dataEmissao", recebimentoFisicoController.workspace).val("");
+		$("#valorBruto", recebimentoFisicoController.workspace).val("");
+		$("#valorLiquido", recebimentoFisicoController.workspace).val("");
+		$("#valorDesconto", recebimentoFisicoController.workspace).val("");
+		$("#cfop", recebimentoFisicoController.workspace).val("");
+		$("#tipoNotaFiscal", recebimentoFisicoController.workspace).val("");
 		
-		$("#codigo", this.workspace).val("");
-		$("#produto", this.workspace).val("");
-		$("#precoCapa", this.workspace).val("");
-		$("#edicao", this.workspace).val("");
-		$("#datepickerLancto", this.workspace).val("");
-		$("#datepickerRecolhimento", this.workspace).val("");
-		$("#repartePrevisto", this.workspace).val("");
-		$("#tipoLancamento", this.workspace).val("");		
-		$("#novoValorTotal", this.workspace).val("");
+		$("#codigo", recebimentoFisicoController.workspace).val("");
+		$("#produto", recebimentoFisicoController.workspace).val("");
+		$("#precoCapa", recebimentoFisicoController.workspace).val("");
+		$("#edicao", recebimentoFisicoController.workspace).val("");
+		$("#datepickerLancto", recebimentoFisicoController.workspace).val("");
+		$("#datepickerRecolhimento", recebimentoFisicoController.workspace).val("");
+		$("#repartePrevisto", recebimentoFisicoController.workspace).val("");
+		$("#tipoLancamento", recebimentoFisicoController.workspace).val("");		
+		$("#novoValorTotal", recebimentoFisicoController.workspace).val("");
+		$('#labelValorTotal', recebimentoFisicoController.workspace).text('0,00');
 	
 	},
 
@@ -442,17 +443,17 @@ var recebimentoFisicoController = $.extend(true, {
 	*/
 	limparCamposNovoItem : function() {
 		
-		$("#codigo", this.workspace).val("");
-		$("#produto", this.workspace).val("");
-		$("#precoCapa", this.workspace).val("");
-		$("#edicao", this.workspace).val("");
-		$("#datepickerLancto", this.workspace).val("");
-		$("#datepickerRecolhimento", this.workspace).val("");
-		$("#repartePrevisto", this.workspace).val("");
-		$("#tipoLancamento", this.workspace).val("");
-		$("#peso", this.workspace).val("");
-		$("#pacotePadrao", this.workspace).val("");
-		$("#novoValorTotal", this.workspace).val("");
+		$("#codigo", recebimentoFisicoController.workspace).val("");
+		$("#produto", recebimentoFisicoController.workspace).val("");
+		$("#precoCapa", recebimentoFisicoController.workspace).val("");
+		$("#edicao", recebimentoFisicoController.workspace).val("");
+		$("#datepickerLancto", recebimentoFisicoController.workspace).val("");
+		$("#datepickerRecolhimento", recebimentoFisicoController.workspace).val("");
+		$("#repartePrevisto", recebimentoFisicoController.workspace).val("");
+		$("#tipoLancamento", recebimentoFisicoController.workspace).val("");
+		$("#peso", recebimentoFisicoController.workspace).val("");
+		$("#pacotePadrao", recebimentoFisicoController.workspace).val("");
+		$("#novoValorTotal", recebimentoFisicoController.workspace).val("");
 		
 	
 	},
@@ -462,7 +463,7 @@ var recebimentoFisicoController = $.extend(true, {
 	 */
 	callback : function() {
 		setTimeout(function() {
-			$( "#effect:visible", this.workspace).removeAttr("style" ).fadeOut();
+			$( "#effect:visible", recebimentoFisicoController.workspace).removeAttr("style" ).fadeOut();
 	
 		}, 1000 );
 	},	
@@ -473,15 +474,15 @@ var recebimentoFisicoController = $.extend(true, {
 	 */
 	mostrar_nfes : function(){
 		
-		if( $("#eNF", this.workspace).attr('checked') == 'checked' ){
+		if( $("#eNF", recebimentoFisicoController.workspace).attr('checked') == 'checked' ){
 			
-			$(".nfes", this.workspace).show();
+			$(".nfes", recebimentoFisicoController.workspace).show();
 			
 		}else{
 			
-			$(".nfes", this.workspace).hide();
+			$(".nfes", recebimentoFisicoController.workspace).hide();
 			
-			$("#chaveAcesso", this.workspace).val("");
+			$("#chaveAcesso", recebimentoFisicoController.workspace).val("");
 			
 		}
 
@@ -492,11 +493,11 @@ var recebimentoFisicoController = $.extend(true, {
 	 */
 	carregarItemNotaGridNotaInterface : function() {
 						
-		$(".gridWrapper", this.workspace).empty();
+		$(".gridWrapper", recebimentoFisicoController.workspace).empty();
 		
-		$(".gridWrapper", this.workspace).append($("<table>").attr("class", "itemNotaGrid"));
+		$(".gridWrapper", recebimentoFisicoController.workspace).append($("<table>").attr("class", "itemNotaGrid"));
 		
-		$(".itemNotaGrid", this.workspace).flexigrid({
+		$(".itemNotaGrid", recebimentoFisicoController.workspace).flexigrid({
 			
 				preProcess: recebimentoFisicoController.getDataFromResultNotaInterface,
 				dataType : 'json',
@@ -584,11 +585,11 @@ var recebimentoFisicoController = $.extend(true, {
 	 */
 	carregarItemNotaGridNotaManual : function() {
 				
-		$(".gridWrapper", this.workspace).empty();
+		$(".gridWrapper", recebimentoFisicoController.workspace).empty();
 		
-		$(".gridWrapper", this.workspace).append($("<table>").attr("class", "itemNotaGrid"));
+		$(".gridWrapper", recebimentoFisicoController.workspace).append($("<table>").attr("class", "itemNotaGrid"));
 		
-		$(".itemNotaGrid", this.workspace).flexigrid({
+		$(".itemNotaGrid", recebimentoFisicoController.workspace).flexigrid({
 			
 				preProcess: recebimentoFisicoController.getDataFromResultNotaManual,
 				dataType : 'json',
@@ -650,13 +651,13 @@ var recebimentoFisicoController = $.extend(true, {
      */
 	pesquisarItemNotaGrid : function() {
     	
-		$(".itemNotaGrid", this.workspace).flexOptions({
+		$(".itemNotaGrid", recebimentoFisicoController.workspace).flexOptions({
 			url: contextPath + '/estoque/recebimentoFisico/obterListaItemRecebimentoFisico',
 			dataType : 'json',
 			onSuccess : function() { $('.pacotePadrao').tipsy() }
 		});
 	
-		$(".itemNotaGrid", this.workspace).flexReload();
+		$(".itemNotaGrid", recebimentoFisicoController.workspace).flexReload();
 	
 	},
 
@@ -665,13 +666,13 @@ var recebimentoFisicoController = $.extend(true, {
      */
 	refreshItemNotaGrid : function(onSuccessFunction) {
 	
-		$(".itemNotaGrid", this.workspace).flexOptions({
+		$(".itemNotaGrid", recebimentoFisicoController.workspace).flexOptions({
 			url: contextPath + '/estoque/recebimentoFisico/refreshListaItemRecebimentoFisico',
 			dataType : 'json',
 			onSuccess : onSuccessFunction	
 		});
 			
-		$(".itemNotaGrid", this.workspace).flexReload();
+		$(".itemNotaGrid", recebimentoFisicoController.workspace).flexReload();
 	
 	},
 
@@ -686,7 +687,7 @@ var recebimentoFisicoController = $.extend(true, {
 					
 	    	if(result.tipoMensagem == "SUCCESS") {
 				
-	    		$(".grids", this.workspace).hide();
+	    		$(".grids", recebimentoFisicoController.workspace).hide();
 	    		
 	    		recebimentoFisicoController.ocultarBtns();
 	    		
@@ -743,7 +744,7 @@ var recebimentoFisicoController = $.extend(true, {
 		$.postJSON(this.path + 'confirmarRecebimentoFisico', listaDeValores, 
 		function(result) {
 
-			$(".grids", this.workspace).hide();
+			$(".grids", recebimentoFisicoController.workspace).hide();
 			recebimentoFisicoController.limparCamposPesquisa();
 			recebimentoFisicoController.ocultarBtns();
 		});
@@ -755,7 +756,7 @@ var recebimentoFisicoController = $.extend(true, {
      */
 	obterListaValores : function() {
 		
-		var linhasDaGrid = $(".itemNotaGrid tr", this.workspace);
+		var linhasDaGrid = $(".itemNotaGrid tr", recebimentoFisicoController.workspace);
 		
 		var listaDeValores = new Array();
 		
@@ -787,9 +788,9 @@ var recebimentoFisicoController = $.extend(true, {
 
 		function(resultado) {
 
-			$("#qtdPacote_"+lineId, this.workspace).val(resultado.qtdPacote);
+			$("#qtdPacote_"+lineId, recebimentoFisicoController.workspace).val(resultado.qtdPacote);
 			
-			$("#qtdExemplar_"+lineId, this.workspace).val(resultado.qtdExemplar);
+			$("#qtdExemplar_"+lineId, recebimentoFisicoController.workspace).val(resultado.qtdExemplar);
 		
 		});
 		
@@ -805,7 +806,7 @@ var recebimentoFisicoController = $.extend(true, {
 		
 		if(selecionado == false) {
 			
-			var linhasDaGrid = $(".itemNotaGrid tr", this.workspace);
+			var linhasDaGrid = $(".itemNotaGrid tr", recebimentoFisicoController.workspace);
 			
 			$.each(linhasDaGrid, function(index, value) {
 				$(value).find('input[name="replicaQtde"]').attr('checked', false);
@@ -821,7 +822,7 @@ var recebimentoFisicoController = $.extend(true, {
 
 			recebimentoFisicoController.refreshItemNotaGrid(function(){
 
-				var linhasDaGrid = $(".itemNotaGrid tr", this.workspace);
+				var linhasDaGrid = $(".itemNotaGrid tr", recebimentoFisicoController.workspace);
 				
 				$.each(linhasDaGrid, function(index, value) {
 					
@@ -878,19 +879,19 @@ var recebimentoFisicoController = $.extend(true, {
 
 		function(resultado) {
 
-			$("#pacotePadrao", this.workspace).val(resultado.pacotePadrao);
-			$("#peso", this.workspace).val(resultado.peso);
-			$("#codigo", this.workspace).val(resultado.codigo);
-			$("#produto", this.workspace).val(resultado.nomeProduto);
-			$("#precoCapa", this.workspace).val(resultado.precoCapa);
-			$("#edicao", this.workspace).val(resultado.edicao);
-			$("#datepickerLancto", this.workspace).val(resultado.dataLancamento);
-			$("#datepickerRecolhimento", this.workspace).val(resultado.dataRecolhimento);
-			$("#repartePrevisto", this.workspace).val(resultado.repartePrevisto);
-			$("#tipoLancamento", this.workspace).val(resultado.tipoLancamento);
+			$("#pacotePadrao", recebimentoFisicoController.workspace).val(resultado.pacotePadrao);
+			$("#peso", recebimentoFisicoController.workspace).val(resultado.peso);
+			$("#codigo", recebimentoFisicoController.workspace).val(resultado.codigo);
+			$("#produto", recebimentoFisicoController.workspace).val(resultado.nomeProduto);
+			$("#precoCapa", recebimentoFisicoController.workspace).val(resultado.precoCapa);
+			$("#edicao", recebimentoFisicoController.workspace).val(resultado.edicao);
+			$("#datepickerLancto", recebimentoFisicoController.workspace).val(resultado.dataLancamento);
+			$("#datepickerRecolhimento", recebimentoFisicoController.workspace).val(resultado.dataRecolhimento);
+			$("#repartePrevisto", recebimentoFisicoController.workspace).val(resultado.repartePrevisto);
+			$("#tipoLancamento", recebimentoFisicoController.workspace).val(resultado.tipoLancamento);
 
 
-			$("#dialog-novo-item", this.workspace).dialog({
+			$("#dialog-novo-item", recebimentoFisicoController.workspace).dialog({
 				resizable: false,
 				height:480,
 				width:500,
@@ -907,7 +908,7 @@ var recebimentoFisicoController = $.extend(true, {
 					clearMessageDialogTimeout();
 				},
 				
-				form: $("#dialog-novo-item", this.workspace).parents("form")
+				form: $("#dialog-novo-item", recebimentoFisicoController.workspace).parents("form")
 				
 			});
 			
@@ -952,34 +953,34 @@ var recebimentoFisicoController = $.extend(true, {
 		
 		if(data.rows) {
 
-			$(".grids", this.workspace).show();
+			$(".grids", recebimentoFisicoController.workspace).show();
 			
 		}
 		
 		if(!recebimentoFisicoController.indRecebimentoFisicoConfirmado){
 			
-			$("#botoesNormais", this.workspace).show();
-			$("#botoesOpacos", this.workspace).hide();
-			$("#botaoNovoProdutoOpaco", this.workspace).hide();
+			$("#botoesNormais", recebimentoFisicoController.workspace).show();
+			$("#botoesOpacos", recebimentoFisicoController.workspace).hide();
+			$("#botaoNovoProdutoOpaco", recebimentoFisicoController.workspace).hide();
 			
 			if(recebimentoFisicoController.indNotaFiscalInterface){
-				$("#botaoNovoProduto", this.workspace).hide();
+				$("#botaoNovoProduto", recebimentoFisicoController.workspace).hide();
 			}else{
-				$("#botaoNovoProduto", this.workspace).show();
+				$("#botaoNovoProduto", recebimentoFisicoController.workspace).show();
 			}
 				
 			
 		}else{
 
-			$("#botoesOpacos", this.workspace).show();
-			$("#botoesNormais", this.workspace).hide();			
+			$("#botoesOpacos", recebimentoFisicoController.workspace).show();
+			$("#botoesNormais", recebimentoFisicoController.workspace).hide();			
 			
 			if(recebimentoFisicoController.indNotaFiscalInterface){
-				$("#botaoNovoProdutoOpaco", this.workspace).hide();
+				$("#botaoNovoProdutoOpaco", recebimentoFisicoController.workspace).hide();
 			}else{
-				$("#botaoNovoProdutoOpaco", this.workspace).show();
+				$("#botaoNovoProdutoOpaco", recebimentoFisicoController.workspace).show();
 			}
-			$("#botaoNovoProduto", this.workspace).hide();
+			$("#botaoNovoProduto", recebimentoFisicoController.workspace).hide();
 
 		}
 		
@@ -1110,36 +1111,36 @@ var recebimentoFisicoController = $.extend(true, {
 			
 		});
 		
-		$(".grids", this.workspace).show();
+		$(".grids", recebimentoFisicoController.workspace).show();
 
 		if(!recebimentoFisicoController.indRecebimentoFisicoConfirmado){
 			
-			$('#botoesNormais', this.workspace).show();
+			$('#botoesNormais', recebimentoFisicoController.workspace).show();
 			
-			$('#botaoNovoProdutoOpaco', this.workspace).hide();
+			$('#botaoNovoProdutoOpaco', recebimentoFisicoController.workspace).hide();
 			
 			if(recebimentoFisicoController.indNotaFiscalInterface){
-				$("#botaoNovoProduto", this.workspace).hide();
+				$("#botaoNovoProduto", recebimentoFisicoController.workspace).hide();
 			}else{
-				$("#botaoNovoProduto", this.workspace).show();
+				$("#botaoNovoProduto", recebimentoFisicoController.workspace).show();
 			}
 			
-			$('#botoesOpacos', this.workspace).hide();
+			$('#botoesOpacos', recebimentoFisicoController.workspace).hide();
 			
 			
 		} else {
 			
-			$('#botoesOpacos', this.workspace).show();
+			$('#botoesOpacos', recebimentoFisicoController.workspace).show();
 			
-			$('#botoesNormais', this.workspace).hide();
+			$('#botoesNormais', recebimentoFisicoController.workspace).hide();
 			
 			if(recebimentoFisicoController.indNotaFiscalInterface){
-				$("#botaoNovoProdutoOpaco", this.workspace).hide();
+				$("#botaoNovoProdutoOpaco", recebimentoFisicoController.workspace).hide();
 			}else{
-				$("#botaoNovoProdutoOpaco", this.workspace).show();
+				$("#botaoNovoProdutoOpaco", recebimentoFisicoController.workspace).show();
 			}
 			
-			$('#botaoNovoProduto', this.workspace).hide();
+			$('#botaoNovoProduto', recebimentoFisicoController.workspace).hide();
 			
 		}	
 		
@@ -1164,7 +1165,7 @@ var recebimentoFisicoController = $.extend(true, {
 	
 	inicializarGridPopUpNota : function() {
 	
-		$(".novoItemNotaGrid", this.workspace).flexigrid({
+		$(".novoItemNotaGrid", recebimentoFisicoController.workspace).flexigrid({
 			preProcess: recebimentoFisicoController.getDataFromResultItem,
 			onSuccess: recebimentoFisicoController.formatItemNota,
 			dataType : 'json',
@@ -1254,7 +1255,7 @@ var recebimentoFisicoController = $.extend(true, {
 		recebimentoFisicoController.montaGridItens();
 		
 		
-		$( "#dialog-adicionar", this.workspace ).dialog({
+		$( "#dialog-adicionar", recebimentoFisicoController.workspace ).dialog({
 			resizable: false,
 			height:530,
 			width:958,
@@ -1282,35 +1283,35 @@ var recebimentoFisicoController = $.extend(true, {
 			    clearMessageDialogTimeout();
 	        },
 	        
-	        form: $("#div-wrapper-dialog-adicionar", this.workspace)
+	        form: $("#div-wrapper-dialog-adicionar", recebimentoFisicoController.workspace)
 	        
 		});
 	},
 
 	pesquisarFornecedorCnpj : function() {
 		
-		var pCnpj = $("#novoCnpj", this.workspace).val();	
+		var pCnpj = $("#novoCnpj", recebimentoFisicoController.workspace).val();	
 
 		if(pCnpj == "") {
-			$("#novoFornecedor", this.workspace).val("");
+			$("#novoFornecedor", recebimentoFisicoController.workspace).val("");
 			return;
 		}
 		
 		$.postJSON(recebimentoFisicoController.path + 'buscaCnpj', {cnpj: pCnpj}, 
 		function(result) { 
-			$("#novoFornecedor", this.workspace).val(result.cnpj);
+			$("#novoFornecedor", recebimentoFisicoController.workspace).val(result.cnpj);
 		});	
 	},
 
 	pesquisarCnpjFornecedor : function() {
 	
-		var idFornecedor = $("#novoFornecedor", this.workspace).val();
+		var idFornecedor = $("#novoFornecedor", recebimentoFisicoController.workspace).val();
 		
 		if(idFornecedor == -1){
 
-			$("#novoCnpj", this.workspace).val("");
+			$("#novoCnpj", recebimentoFisicoController.workspace).val("");
 			
-			$("#novoCnpj", this.workspace).disabled(true);
+			$("#novoCnpj", recebimentoFisicoController.workspace).disabled(true);
 			
 		}else{
 			$.postJSON(recebimentoFisicoController.path + 'obterCnpjFornecedor', {idFornecedor:idFornecedor}, 
@@ -1320,12 +1321,12 @@ var recebimentoFisicoController = $.extend(true, {
 				var cnpj = result;
 
 				if (cnpj.result != undefined) {
-					$("#novoCnpj", this.workspace).val("");
+					$("#novoCnpj", recebimentoFisicoController.workspace).val("");
 				} else if (cnpj != "") {
-					$("#novoCnpj", this.workspace).val(recebimentoFisicoController.mascaraCNPJ(cnpj));
+					$("#novoCnpj", recebimentoFisicoController.workspace).val(recebimentoFisicoController.mascaraCNPJ(cnpj));
 				}
 					
-				$("#novoCnpj", this.workspace).attr('disabled', true);
+				$("#novoCnpj", recebimentoFisicoController.workspace).attr('disabled', true);
 				
 			},
 			null,
@@ -1366,26 +1367,27 @@ var recebimentoFisicoController = $.extend(true, {
 	
 	obterDadosEdicao : function(index) {
 		
-		var codigo = $("#codigoItem"+index, this.workspace).val();
+		var codigo = $("#codigoItem"+index, recebimentoFisicoController.workspace).val();
 		
-		var edicao = $("#edicaoItem"+index, this.workspace).val();	
+		var edicao = $("#edicaoItem"+index, recebimentoFisicoController.workspace).val();	
 
 		if((codigo == "")||(edicao == "")) {
-			$("#precoDescontoItem"+index, this.workspace).val("");
+			$("#precoDescontoItem"+index, recebimentoFisicoController.workspace).val("");
 			return;
 		}
 		
 		$.postJSON(this.path + 'obterDadosEdicao', {codigo:codigo,edicao:edicao}, 
 			function(result) { 
-				$("#precoDescontoItem"+index, this.workspace).val(result.precoDesconto);
-			    $("#precoDescontoItem"+index, this.workspace).priceFormat({
+				$("#precoDescontoItem"+index, recebimentoFisicoController.workspace).val(result.precoDesconto);
+				debugger;
+			    $("#precoDescontoItem"+index, recebimentoFisicoController.workspace).priceFormat({
 					allowNegative: true,
 					centsSeparator: ',',
 				    thousandsSeparator: '.'
 				});
 			},
 			function(result) {
-				$("#precoDescontoItem"+index, this.workspace).val("");	   
+				$("#precoDescontoItem"+index, recebimentoFisicoController.workspace).val("");	   
 			},
 			true
 		);	
@@ -1393,24 +1395,24 @@ var recebimentoFisicoController = $.extend(true, {
 	
 	calcularDiferencaEValorItem : function(index){
 		
-		var preco = removeMascaraPriceFormat($("#precoDescontoItem"+index, this.workspace).val());
-		var quantidade = removeMascaraPriceFormat($("#qtdNotaItem"+index, this.workspace).val());
-		var quantidadeExemp = removeMascaraPriceFormat($("#qtdExemplarItem"+index, this.workspace).val());
+		var preco = removeMascaraPriceFormat($("#precoDescontoItem"+index, recebimentoFisicoController.workspace).val());
+		var quantidade = removeMascaraPriceFormat($("#qtdNotaItem"+index, recebimentoFisicoController.workspace).val());
+		var quantidadeExemp = removeMascaraPriceFormat($("#qtdExemplarItem"+index, recebimentoFisicoController.workspace).val());
 		
 		if((preco == "")||(quantidade == "")) {
-			$("#valorItem"+index, this.workspace).val("");
+			$("#valorItem"+index, recebimentoFisicoController.workspace).val("");
 			return;
 		}
 		
 		if((quantidade == "")||(quantidadeExemp == "")) {
-			$("#diferencaItem"+index, this.workspace).val("");
+			$("#diferencaItem"+index, recebimentoFisicoController.workspace).val("");
 		}
 		
         var valor = intValue(preco) * intValue(quantidade);
 
-        $("#valorItem"+index, this.workspace).val(valor);
+        $("#valorItem"+index, recebimentoFisicoController.workspace).val(valor);
         
-        $("#valorItem"+index, this.workspace).priceFormat({
+        $("#valorItem"+index, recebimentoFisicoController.workspace).priceFormat({
 			allowNegative: true,
 			centsSeparator: ',',
 		    thousandsSeparator: '.'
@@ -1428,9 +1430,9 @@ var recebimentoFisicoController = $.extend(true, {
         	diferenca = 0;
         }
         
-        $("#diferencaItem"+index, this.workspace).val(diferenca);
+        $("#diferencaItem"+index, recebimentoFisicoController.workspace).val(diferenca);
         
-	    $("#diferencaItem"+index, this.workspace).numeric({
+	    $("#diferencaItem"+index, recebimentoFisicoController.workspace).numeric({
 			decimal:''
 		});
 	    
@@ -1440,20 +1442,20 @@ var recebimentoFisicoController = $.extend(true, {
 	obterCabecalho : function() {
 
 		var dadosCabecalho = {
-				'nota.fornecedor':$("#novoFornecedor",this.workspace).val(),
-				'nota.cnpj':$("#novoCnpj",this.workspace).val(),
-				'nota.numero':$("#novoNumeroNota",this.workspace).val(),
-				'nota.serie':$("#novoSerieNota",this.workspace).val(),
-				'nota.chaveAcesso':$("#novoChaveAcesso",this.workspace).val(),
-				'nota.dataEmissao':$("#novoDataEmissao",this.workspace).val(),
-				'nota.dataEntrada':$("#novoDataEntrada",this.workspace).val(),
-				'nota.valorTotal':$("#novoValorTotal",this.workspace).val()};
+				'nota.fornecedor':$("#novoFornecedor",recebimentoFisicoController.workspace).val(),
+				'nota.cnpj':$("#novoCnpj",recebimentoFisicoController.workspace).val(),
+				'nota.numero':$("#novoNumeroNota",recebimentoFisicoController.workspace).val(),
+				'nota.serie':$("#novoSerieNota",recebimentoFisicoController.workspace).val(),
+				'nota.chaveAcesso':$("#novoChaveAcesso",recebimentoFisicoController.workspace).val(),
+				'nota.dataEmissao':$("#novoDataEmissao",recebimentoFisicoController.workspace).val(),
+				'nota.dataEntrada':$("#novoDataEntrada",recebimentoFisicoController.workspace).val(),
+				'nota.valorTotal':$("#novoValorTotal",recebimentoFisicoController.workspace).val()};
 		return dadosCabecalho;
 	},
 
     montaGridItens : function() {
-		$(".novoItemNotaGrid", this.workspace).flexOptions({url: contextPath + '/estoque/recebimentoFisico/montaGridItemNota'});
-		$(".novoItemNotaGrid", this.workspace).flexReload();	
+		$(".novoItemNotaGrid", recebimentoFisicoController.workspace).flexOptions({url: contextPath + '/estoque/recebimentoFisico/montaGridItemNota'});
+		$(".novoItemNotaGrid", recebimentoFisicoController.workspace).flexReload();	
 	},	
 	
 	getDataFromResultItem : function(resultado) {
@@ -1464,7 +1466,7 @@ var recebimentoFisicoController = $.extend(true, {
 				resultado.mensagens.listaMensagens
 			);
 			
-			$(".grids", this.workspace).hide();
+			$(".grids", recebimentoFisicoController.workspace).hide();
 			
 			recebimentoFisicoController.ocultarBtns();
 			
@@ -1590,7 +1592,7 @@ var recebimentoFisicoController = $.extend(true, {
 	
 	obterListaItens : function() {
 
-		var linhasDaGrid = $(".novoItemNotaGrid tr", this.workspace);
+		var linhasDaGrid = $(".novoItemNotaGrid tr", recebimentoFisicoController.workspace);
 
 		var listaItens = new Array();
 
@@ -1639,9 +1641,9 @@ var recebimentoFisicoController = $.extend(true, {
 
 			if (!recebimentoFisicoController.isAtributosLancamentoVazios(codigo, produto, edicao, precoDesconto, qtdNota, qtdPacote, qtdExemplar)) {
 
-	            var dataLancamento = $("#novoDataEntrada", this.workspace).val();
+	            var dataLancamento = $("#novoDataEntrada", recebimentoFisicoController.workspace).val();
 				
-			    var dataRecolhimento = $("#novoDataEmissao", this.workspace).val();
+			    var dataRecolhimento = $("#novoDataEmissao", recebimentoFisicoController.workspace).val();
 	
 				var lancamento = {
 						codigoProduto:codigo,
@@ -1668,7 +1670,7 @@ var recebimentoFisicoController = $.extend(true, {
 
 	obterValorTotalItens : function() {
 
-		var linhasDaGrid = $(".novoItemNotaGrid tr", this.workspace);
+		var linhasDaGrid = $(".novoItemNotaGrid tr", recebimentoFisicoController.workspace);
 
 		var listaItens = "";
 		
@@ -1685,9 +1687,9 @@ var recebimentoFisicoController = $.extend(true, {
 		});
 		
 		if(!this.novoValorTotalTyped){
-			$("#novoValorTotal", this.workspace).val(valorTotal);
+			$("#novoValorTotal", recebimentoFisicoController.workspace).val(valorTotal);
 		        
-	        $("#novoValorTotal", this.workspace).priceFormat({
+	        $("#novoValorTotal", recebimentoFisicoController.workspace).priceFormat({
 				allowNegative: true,
 				centsSeparator: ',',
 			    thousandsSeparator: '.'
@@ -1695,15 +1697,15 @@ var recebimentoFisicoController = $.extend(true, {
 		}
        
         
-        $("#labelValorTotal", this.workspace).html($.formatNumber(valorTotal/100,{locale:'br'}));
+        $("#labelValorTotal", recebimentoFisicoController.workspace).html($.formatNumber(valorTotal/100,{locale:'br'}));
 	},
     
     replicarQuantidadeItem : function(index){
     	
-    	if ( $("#checkbox"+index, this.workspace).attr('checked') == 'checked' || 
-    		 $("#novoReplicarQtde", this.workspace).attr('checked') == 'checked' ) {
+    	if ( $("#checkbox"+index, recebimentoFisicoController.workspace).attr('checked') == 'checked' || 
+    		 $("#novoReplicarQtde", recebimentoFisicoController.workspace).attr('checked') == 'checked' ) {
     		
-    	    $("#qtdExemplarItem"+index, this.workspace).val($("#qtdNotaItem"+index, this.workspace).val());
+    	    $("#qtdExemplarItem"+index, recebimentoFisicoController.workspace).val($("#qtdNotaItem"+index, recebimentoFisicoController.workspace).val());
     	    
     	}    
     },
@@ -1759,7 +1761,7 @@ var recebimentoFisicoController = $.extend(true, {
     	
     	//OBTEM VALORES DIGITADOS
     	var nLinhas = 0;
-    	var linhasDaGrid = $(".novoItemNotaGrid tr", this.workspace);
+    	var linhasDaGrid = $(".novoItemNotaGrid tr", recebimentoFisicoController.workspace);
     	
     	$.each(linhasDaGrid, function(index, value) {
     		
@@ -1828,7 +1830,7 @@ var recebimentoFisicoController = $.extend(true, {
     	//CRIA NOVA LINHA
     	data.push({id:nLinhas+1, cell: recebimentoFisicoController.adicionarNovaLinha(nLinhas)});
 
-    	$(".novoItemNotaGrid", this.workspace).flexAddData({
+    	$(".novoItemNotaGrid", recebimentoFisicoController.workspace).flexAddData({
             rows : toFlexiGridObject(data),
             page : 1,
             total : nLinhas+1
@@ -1843,7 +1845,7 @@ var recebimentoFisicoController = $.extend(true, {
     //RECUPERA VALORES DIGITADOS ANTES DA INSERÇÃO DA NOVA LINHA
     recuperaValoresDigitados : function(dataValores) {
     	
-    	var linhasDaGrid = $(".novoItemNotaGrid tr", this.workspace);
+    	var linhasDaGrid = $(".novoItemNotaGrid tr", recebimentoFisicoController.workspace);
         
     	$.each(linhasDaGrid, function(index, value) {
         	
@@ -1898,15 +1900,15 @@ var recebimentoFisicoController = $.extend(true, {
     
 	limparCamposNovaNota : function(){
 		
-		$("#novoFornecedor", 	this.workspace).val(-1);
-		$("#novoCnpj", 			this.workspace).val("");
-		$("#novoNumeroNota", 	this.workspace).val("");
-        $("#novoSerieNota", 	this.workspace).val("");
-        $("#novoNfe", 			this.workspace).val("");
-        $("#novoChaveAcesso", 	this.workspace).val("");
-        $("#novoDataEmissao", 	this.workspace).val("");
-        $("#novoDataEntrada", 	this.workspace).val("");
-        $("#novoValorTotal", 	this.workspace).val("");
+		$("#novoFornecedor", 	recebimentoFisicoController.workspace).val(-1);
+		$("#novoCnpj", 			recebimentoFisicoController.workspace).val("");
+		$("#novoNumeroNota", 	recebimentoFisicoController.workspace).val("");
+        $("#novoSerieNota", 	recebimentoFisicoController.workspace).val("");
+        $("#novoNfe", 			recebimentoFisicoController.workspace).val("");
+        $("#novoChaveAcesso", 	recebimentoFisicoController.workspace).val("");
+        $("#novoDataEmissao", 	recebimentoFisicoController.workspace).val("");
+        $("#novoDataEntrada", 	recebimentoFisicoController.workspace).val("");
+        $("#novoValorTotal", 	recebimentoFisicoController.workspace).val("");
         
         recebimentoFisicoController.montaGridItens();
 	},
@@ -1926,7 +1928,7 @@ var recebimentoFisicoController = $.extend(true, {
 				recebimentoFisicoController.limparCamposNovaNota();
 				recebimentoFisicoController.limpar
 				
-				$("#dialog-adicionar", this.workspace).dialog( "close" );
+				$("#dialog-adicionar", recebimentoFisicoController.workspace).dialog( "close" );
 	
 				exibirMensagem(
 					result.tipoMensagem, 
@@ -1940,15 +1942,15 @@ var recebimentoFisicoController = $.extend(true, {
 		
 	exibirDetalhesProdutoEdicao : function() {
 		
-		var data = {codigo:$("#codigo", this.workspace).val(),edicao:$("#edicao", this.workspace).val()};
+		var data = {codigo:$("#codigo", recebimentoFisicoController.workspace).val(),edicao:$("#edicao", recebimentoFisicoController.workspace).val()};
 		
 		$.postJSON( recebimentoFisicoController.path + 'obterProdutoEdicao', data, function(result){
 			
 			if(typeof result != "undefined") {
 				
-				$("#precoCapa", this.workspace).val(result.precoVenda);			
-				$("#peso", this.workspace).val(result.peso);			
-				$("#pacotePadrao", this.workspace).val(result.pacotePadrao);			
+				$("#precoCapa", recebimentoFisicoController.workspace).val(result.precoVenda);			
+				$("#peso", recebimentoFisicoController.workspace).val(result.peso);			
+				$("#pacotePadrao", recebimentoFisicoController.workspace).val(result.pacotePadrao);			
 				
 			}
 			

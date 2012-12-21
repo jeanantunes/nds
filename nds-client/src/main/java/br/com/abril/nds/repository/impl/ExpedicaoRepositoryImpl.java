@@ -110,9 +110,7 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 							.append(" when (diferenca.tipoDiferenca = 'SOBRA_EM') then (diferenca.qtde)")
 							.append(" else 0")
 						.append(" end )) as qntDiferenca, ")
-
-						.append(" produtoEd.precoVenda, ")
-
+						.append(" sum(estudoCota.qtdeEfetiva) * produtoEd.precoVenda, ")
 						.append(" juridica.razaoSocial ")
 						
 			.append(" ) ");
@@ -264,8 +262,7 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 				valorFaturado = BigDecimal.ZERO;
 				diferenca = BigInteger.ZERO;
 			}
-			
-			qntProduto += obterQuantidadeResumoExpedicaoPorBox(dto.getIdBox(), filtro.getDataLancamento());
+			qntProduto ++;
 			reparte = reparte.add(dto.getQntReparte());
 			valorFaturado = valorFaturado.add(dto.getValorFaturado());
 			diferenca = diferenca.add(dto.getQntDiferenca());

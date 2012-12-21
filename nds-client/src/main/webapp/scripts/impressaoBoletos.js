@@ -351,6 +351,44 @@ recarregarComboRoteiroRotas:function(idBox){
 				$("#divGerarDivida", impressaoBoletosController.workspace).hide();
 			}
 		});
+	},
+	
+	veificarCobrancaGerada: function(){
+		
+		$.postJSON(contextPath + '/financeiro/impressaoBoletos/veificarCobrancaGerada', null,
+		
+			function(conteudo){
+			
+				if(conteudo && conteudo.tipoMensagem == 'WARNING') {
+					
+					$("#msgRegerarCobranca", impressaoBoletosController.workspace).text(conteudo.listaMensagens[0]);
+					
+					$("#dialog-confirmar-regerar-cobranca", impressaoBoletosController.workspace).dialog({
+						resizable : false,
+						height : 'auto',
+						width : 680,
+						modal : true,
+						buttons : {
+							"Confirmar" : function() {
+								
+								$("#dialog-confirmar-regerar-cobranca", impressaoBoletosController.workspace).dialog("close");
+								impressaoBoletosController.gerarDivida();
+							},
+							"Cancelar" : function(){
+							
+								$("#dialog-confirmar-regerar-cobranca", impressaoBoletosController.workspace).dialog("close");
+							}
+						},
+						form: $("#dialog-confirmar-regerar-cobranca", this.workspace).parents("form")
+					});
+					
+				} else {
+					
+					impressaoBoletosController.gerarDivida();
+				}
+				
+			}, null, true, "dialog-confirmar-regerar-cobranca"
+		);
 	}
 
 }, BaseController);

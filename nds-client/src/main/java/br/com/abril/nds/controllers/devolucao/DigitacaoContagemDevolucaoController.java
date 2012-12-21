@@ -35,6 +35,7 @@ import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.ContagemDevolucaoService;
 import br.com.abril.nds.service.EdicoesFechadasService;
 import br.com.abril.nds.service.FornecedorService;
+import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.CurrencyUtil;
@@ -86,7 +87,12 @@ public class DigitacaoContagemDevolucaoController  {
 	private EdicoesFechadasService edicoesFechadasService;
 	
 	@Autowired
+	private UsuarioService usuarioService;
+	
+	@Autowired
 	private HttpServletResponse httpResponse;
+	
+	private static final int NUMERO_MESES_PESQUISA_DESATIVACAO = 6;
 	
 	private static final String FILTRO_SESSION_ATTRIBUTE = "filtroPesquisaDigitacaoContagemDevolucao";
 	
@@ -297,14 +303,7 @@ public class DigitacaoContagemDevolucaoController  {
 	
 	//TODO: não há como reconhecer usuario, ainda
 	private Usuario getUsuario() {
-		
-		Usuario usuario = new Usuario();
-		
-		usuario.setId(1L);
-		
-		usuario.setNome("Jornaleiro da Silva");
-		
-		return usuario;
+		return usuarioService.getUsuarioLogado();
 	}
 	
 	//TODO: não há como reconhecer usuario, ainda
@@ -509,6 +508,7 @@ public class DigitacaoContagemDevolucaoController  {
 			contagemDevolucaoDTO.setDataMovimento( ( vo.getDataRecolhimentoDistribuidor() == null ) ? distribuidorService.obter().getDataOperacao() : DateUtil.parseData(vo.getDataRecolhimentoDistribuidor(),"dd/MM/yyyy"));
 			contagemDevolucaoDTO.setDiferenca(StringUtil.isEmpty(vo.getDiferenca()) ? null : new BigInteger(vo.getDiferenca()));
 			contagemDevolucaoDTO.setPrecoVenda(vo.getPrecoVenda() == null || vo.getPrecoVenda().isEmpty() ? null : CurrencyUtil.getBigDecimal(vo.getPrecoVenda()));
+			contagemDevolucaoDTO.setTotalComDesconto(vo.getValorTotalComDesconto() == null || vo.getValorTotalComDesconto().isEmpty() ? null : CurrencyUtil.getBigDecimal(vo.getValorTotalComDesconto()));
 			listaResultadosDto.add(contagemDevolucaoDTO);
 		}
 		
@@ -663,13 +663,17 @@ public class DigitacaoContagemDevolucaoController  {
 		
 		configurarPaginacaoPesquisa(filtro, sortorder, sortname, page, rp);
 		
-		Long quantidade = edicoesFechadasService.quantidadeResultadoEdicoesFechadas(filtro.getDataInicial(), filtro.getDataFinal(), filtro.getIdFornecedor());
+		Date dataInicial = DateUtil.subtrairMeses(filtro.getDataInicial(), NUMERO_MESES_PESQUISA_DESATIVACAO);
+		
+		Date dataFinal = DateUtil.subtrairDias(filtro.getDataInicial(), 1);
+		
+		Long quantidade = edicoesFechadasService.quantidadeResultadoEdicoesFechadas(dataInicial, dataFinal, filtro.getIdFornecedor());
 		if(quantidade == 0){
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
 		}
 		
 		
-		List<RegistroEdicoesFechadasVO> edicoesFechadasVOs = edicoesFechadasService.obterResultadoEdicoesFechadas(filtro.getDataInicial(), filtro.getDataFinal(), filtro.getIdFornecedor(), sortorder, sortname, page*rp - rp, rp);
+		List<RegistroEdicoesFechadasVO> edicoesFechadasVOs = edicoesFechadasService.obterResultadoEdicoesFechadas(dataInicial, dataFinal, filtro.getIdFornecedor(), sortorder, sortname, page*rp - rp, rp);
 		
 		
 		result.use(FlexiGridJson.class).from(edicoesFechadasVOs).total(quantidade.intValue()).page(page).serialize();

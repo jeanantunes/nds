@@ -35,4 +35,6 @@ public interface VendaProdutoEncalheRepository extends Repository<VendaProduto, 
 	 * @return  List<VendaProduto>
 	 */
 	List<VendaProduto> buscarVendasEncalhe(FiltroVendaEncalheDTO filtro);
+	
+	List<VendaProduto> buscarCotaPeriodoVenda(FiltroVendaEncalheDTO filtro);
 }

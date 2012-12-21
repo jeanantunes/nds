@@ -1,6 +1,7 @@
 package br.com.abril.nds.service.impl;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -15,8 +16,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.client.assembler.HistoricoTitularidadeCotaDTOAssembler;
+import br.com.abril.nds.dto.CaucaoLiquidaDTO;
+import br.com.abril.nds.dto.ChequeCaucaoDTO;
 import br.com.abril.nds.dto.CotaGarantiaDTO;
 import br.com.abril.nds.dto.FormaCobrancaCaucaoLiquidaDTO;
+import br.com.abril.nds.dto.ImovelDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.NotaPromissoriaDTO;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -205,13 +209,14 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 				idCota, CotaGarantiaChequeCaucao.class);
 
 		cotaGarantiaCheque.setData(new Date());
-		
+		    
 		cotaGarantiaCheque.setCheque(cheque);
-		
-		this.setFiadorCota(idCota, null);
 
-		return (CotaGarantiaChequeCaucao) cotaGarantiaRepository
-				.merge(cotaGarantiaCheque);
+		this.setFiadorCota(idCota, null);
+			
+		cotaGarantiaRepository.merge(cotaGarantiaCheque);
+
+		return (CotaGarantiaChequeCaucao) cotaGarantiaCheque;
 	}
 
 	/**
@@ -223,7 +228,57 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 	public List<TipoGarantia> obtemTiposGarantiasAceitas() {
 		return distribuidorRepository.obtemTiposGarantiasAceitas();
 	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public List<ImovelDTO> obterDadosImoveisDTO(Long idCota){
+		
+		List<ImovelDTO> imoveisDTO = new ArrayList<ImovelDTO>();
+		
+	    CotaGarantia cotaGarantia = cotaGarantiaRepository.getByCota(idCota);
+		
+		if (cotaGarantia instanceof CotaGarantiaImovel) {	
+			
+			CotaGarantiaImovel cotaGarantiaImovel = (CotaGarantiaImovel) cotaGarantia;			
+			
+			List<Imovel> imoveis = cotaGarantiaImovel.getImoveis();
+			for (Imovel item : imoveis){
+				
+				imoveisDTO.add(this.convertImovelToImovelDTO(item));
+			}
+		}
+		
+		return imoveisDTO;
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public List<Imovel> obterDadosImoveis(Long idCota){
+		
+		List<Imovel> imoveis = null;
+		
+	    CotaGarantia cotaGarantia = cotaGarantiaRepository.getByCota(idCota);
+		
+		if (cotaGarantia instanceof CotaGarantiaImovel) {	
+			
+			CotaGarantiaImovel cotaGarantiaImovel = (CotaGarantiaImovel) cotaGarantia;			
+			
+			imoveis = cotaGarantiaImovel.getImoveis();
+		}
+		
+		return imoveis;
+	}
 
+	private ImovelDTO convertImovelToImovelDTO(Imovel imovel){
+		
+		ImovelDTO imovelDTO = new ImovelDTO(imovel.getProprietario(),
+											imovel.getEndereco(),
+											imovel.getNumeroRegistro(),
+											imovel.getValor(),
+											imovel.getObservacao());
+		return imovelDTO;
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -238,7 +293,6 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 		CotaGarantiaImovel cotaGarantiaImovel = prepareCotaGarantia(idCota,
 				CotaGarantiaImovel.class);
 	
-
 		if (cotaGarantiaImovel.getImoveis() != null
 				&& !cotaGarantiaImovel.getImoveis().isEmpty()) {
 			this.cotaGarantiaRepository
@@ -246,7 +300,6 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 		}
 		
 		cotaGarantiaImovel.setData(new Date());
-		
 
 		cotaGarantiaImovel.setImoveis(listaImoveis);
 		
@@ -445,7 +498,60 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 		
 	}
 	
+	private ChequeCaucaoDTO convertChequeToChequeCaucaoDTO(Cheque cheque){
+		
+		ChequeCaucaoDTO chequeCaucaoDTO = new ChequeCaucaoDTO(cheque.getNumeroBanco(),
+															  cheque.getNomeBanco(),
+															  cheque.getAgencia(),
+															  cheque.getDvAgencia(),
+															  cheque.getConta(),
+															  cheque.getDvConta(),
+															  cheque.getValor(),
+															  cheque.getNumeroCheque(),
+															  cheque.getEmissao(),
+															  cheque.getValidade(),
+															  cheque.getCorrentista());
+		return chequeCaucaoDTO;
+	}
 	
+	@Override
+	@Transactional(readOnly = true)
+	public ChequeCaucaoDTO obterDadosChequeCaucaoDTO(Long idCota){
+		
+		ChequeCaucaoDTO chequeCaucaoDTO = new ChequeCaucaoDTO();
+		
+	    CotaGarantia cotaGarantia = cotaGarantiaRepository.getByCota(idCota);
+		
+		if (cotaGarantia instanceof CotaGarantiaChequeCaucao) {	
+			
+			CotaGarantiaChequeCaucao cotaGarantiaChequeCaucao = (CotaGarantiaChequeCaucao) cotaGarantia;			
+			
+			Cheque cheque = cotaGarantiaChequeCaucao.getCheque();
+			
+			chequeCaucaoDTO = this.convertChequeToChequeCaucaoDTO(cheque);
+		}
+		
+		return chequeCaucaoDTO;
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public Cheque obterDadosChequeCaucao(Long idCota){
+		
+		Cheque cheque = null;
+		
+	    CotaGarantia cotaGarantia = cotaGarantiaRepository.getByCota(idCota);
+		
+		if (cotaGarantia instanceof CotaGarantiaChequeCaucao) {	
+			
+			CotaGarantiaChequeCaucao cotaGarantiaChequeCaucao = (CotaGarantiaChequeCaucao) cotaGarantia;			
+			
+			cheque = cotaGarantiaChequeCaucao.getCheque();
+		}
+		
+		return cheque;
+	}
+
 	@Override
 	@Transactional(readOnly=true)
 	public NotaPromissoriaDTO getDadosImpressaoNotaPromissoria(long idCota){
@@ -527,7 +633,6 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 		
 	}
 	
-	
 	/**
 	 * Grava no banco Calção Liquida do tipo Boleto
 	 * @param listaCaucaoLiquida
@@ -542,19 +647,15 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 	@Transactional
 	public CotaGarantiaCaucaoLiquida salvarCaucaoLiquida(List<CaucaoLiquida> listaCaucaoLiquida, Long idCota, FormaCobrancaCaucaoLiquidaDTO formaCobrancaDTO) throws ValidacaoException, InstantiationException, IllegalAccessException {
 		
-	    
 	    CotaGarantiaCaucaoLiquida cotaGarantiaCaucaoLiquida = prepareCotaGarantia(idCota,
 	            CotaGarantiaCaucaoLiquida.class);
-
 		
 		FormaCobrancaCaucaoLiquida formaCobranca = null;
-		
           	
         if (TipoCobrancaCotaGarantia.BOLETO == cotaGarantiaCaucaoLiquida.getTipoCobranca()){
         	PagamentoBoleto pb = (PagamentoBoleto) cotaGarantiaCaucaoLiquida.getFormaPagamento(); 
         	formaCobranca = pb.getFormaCobrancaCaucaoLiquida();
         }
-      
         
         //FORMA DE PAGAMENTO
         PagamentoCaucaoLiquida pagamento = null;
@@ -581,7 +682,6 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 							this.concentracaoCobrancaRepository.remover(itemConcentracaoCobranca);
 						}
 					}  
-	        	
 	        	}
 	            else{
 	            	novaForma=true;
@@ -706,7 +806,6 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 			break;
         }
 
-		
     	//CONTA DEPOSITO
         ContaBancariaDeposito contaDeposito = cotaGarantiaCaucaoLiquida.getContaBancariaDeposito();
         if (cotaGarantiaCaucaoLiquida.getContaBancariaDeposito()==null){
@@ -774,7 +873,6 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 			    formaCobrancaDTO.setNomeBanco(contaDeposito.getNomeBanco());
 			    formaCobrancaDTO.setNomeCorrentista(contaDeposito.getNomeCorrentista());
 			}
-			
 			
 			switch (cotaGarantiaCaucaoLiquida.getTipoCobranca()){
 			
@@ -889,6 +987,16 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 				break;
 			}
 			
+			List<CaucaoLiquida> caucaoLiquidas = cotaGarantiaCaucaoLiquida.getCaucaoLiquidas();
+			
+			Collection<CaucaoLiquidaDTO> caucaoLiquidasDTO =  new ArrayList<CaucaoLiquidaDTO>();
+			
+			for (CaucaoLiquida caucaoLiquida : caucaoLiquidas){
+				
+				caucaoLiquidasDTO.add(new CaucaoLiquidaDTO(caucaoLiquida.getValor(),caucaoLiquida.getAtualizacao()));
+			}
+			
+			formaCobrancaDTO.setCaucoes(caucaoLiquidasDTO);
 		}
 		
 		return formaCobrancaDTO;
@@ -953,5 +1061,4 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
         HistoricoTitularidadeCotaCaucaoLiquida caucao = historico.getGarantiaCaucaoLiquida();
         return caucao == null ? null : HistoricoTitularidadeCotaDTOAssembler.toFormaCobrancaCaucaoLiquidaDTO(caucao);
     }
-
 }

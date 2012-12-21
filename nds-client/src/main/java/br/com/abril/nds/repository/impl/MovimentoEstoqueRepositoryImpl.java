@@ -57,7 +57,7 @@ implements MovimentoEstoqueRepository {
 		
 		hql.append(" group by m.id, m.data, m.tipoMovimento.id, m.tipoMovimento.descricao ");		
 		
-		hql.append(" order by m.data asc ");		
+		hql.append(" order by m.dataCriacao asc, m.id ");
 		
 		Query query = getSession().createQuery(hql.toString());
 		

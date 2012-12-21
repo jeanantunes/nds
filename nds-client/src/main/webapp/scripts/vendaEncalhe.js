@@ -198,11 +198,28 @@ var VENDA_PRODUTO = {
 		
 	params:function(){
 		
-		var param = [{name:"numeroCota",value:$("#numCota", VENDA_PRODUTO.workspace).val()},
-		             {name:"tipoVenda",value:$("#selectTipoVenda", VENDA_PRODUTO.workspace).val()},
-		             {name:"periodoInicial",value:$("#periodoDe", VENDA_PRODUTO.workspace).val()},
-		             {name:"periodoFinal",value:$("#periodoAte", VENDA_PRODUTO.workspace).val()}
-					];
+		var numeroCota = $("#numCota", VENDA_PRODUTO.workspace).val();
+		var tipoVenda = $("#selectTipoVenda", VENDA_PRODUTO.workspace).val();
+		var periodoInicial = $("#periodoDe", VENDA_PRODUTO.workspace).val();
+		var periodoFinal = $("#periodoAte", VENDA_PRODUTO.workspace).val();
+		
+		var param = [];
+		
+		if(numeroCota.length > 0 ){
+			param.push({name:"numeroCota",value:numeroCota});
+		}
+		
+		if(tipoVenda.length > 0 ){
+			param.push( {name:"tipoVenda",value:tipoVenda});
+		}
+		
+		if(periodoInicial.length > 0 ){
+			param.push({name:"periodoInicial",value:periodoInicial});
+		}
+		
+		if(periodoFinal.length > 0 ){
+			param.push({name:"periodoFinal",value:periodoFinal});
+		}
 		
 		return param;
 	},	
@@ -234,12 +251,7 @@ var VENDA_PRODUTO = {
 	},
 	
 	pesquisarVendas:function(){
-		
-		if($("#selectTipoVenda", VENDA_PRODUTO.workspace).val() == -1){
-			exibirMensagem('WARNING',['O preenchimento do campo [Tipo de Venda] é obrigatório!']);
-			return false;
-		}
-		
+			
 		$("#vendaEncalheGrid", VENDA_PRODUTO.workspace).flexOptions({
 			url: contextPath + "/devolucao/vendaEncalhe/pesquisarVendas",
 			params: VENDA_PRODUTO.params(),newp: 1
@@ -957,19 +969,7 @@ var VENDA_PRODUTO = {
 				
 				$("#dialog-venda-encalhe", VENDA_PRODUTO.workspace).dialog( "close" );
 				
-				if(VENDA_PRODUTO.validarParametrosConsulta()){
-					
-					$("#vendaEncalheGrid", VENDA_PRODUTO.workspace).flexOptions({
-						url: contextPath + "/devolucao/vendaEncalhe/pesquisarVendas",
-						params: VENDA_PRODUTO.params(),newp: 1,
-						onSuccess:VENDA_PRODUTO.imprimeSlipVendaEncalhe()
-					});
-					
-					$("#vendaEncalheGrid", VENDA_PRODUTO.workspace).flexReload();
-				}
-				else{
-					VENDA_PRODUTO.imprimeSlipVendaEncalhe();	
-				}
+				VENDA_PRODUTO.imprimeSlipVendaEncalhe();	
 			},
 			null, 
 			true
@@ -978,10 +978,10 @@ var VENDA_PRODUTO = {
 	
 	validarParametrosConsulta:function(){
 		
-		if($("#numCota", VENDA_PRODUTO.workspace).val().length > 0 
-				&& $("#selectTipoVenda", VENDA_PRODUTO.workspace).val()!= "-1"
-				&& $("#periodoDe", VENDA_PRODUTO.workspace).val().length > 0
-				&& $("#periodoAte", VENDA_PRODUTO.workspace).val().length > 0){
+		if( $("#selectTipoVenda", VENDA_PRODUTO.workspace).val().length > 0
+				|| $("#numCota", VENDA_PRODUTO.workspace).val().length > 0 
+				|| ( $("#periodoDe", VENDA_PRODUTO.workspace).val().length > 0
+						&& $("#periodoAte", VENDA_PRODUTO.workspace).val().length > 0)){
 			
 			return true;
 		}
@@ -990,7 +990,8 @@ var VENDA_PRODUTO = {
 	
 	imprimeSlipVendaEncalhe:function(){
 		
-		window.open(contextPath + "/devolucao/vendaEncalhe/imprimeSlipVendaEncalhe",'page','toolbar=no,location=no,status=no,menubar=no,scrollbars=no,resizable=no,width=1,height=1');
+		document.location.assign(contextPath + "/devolucao/vendaEncalhe/imprimeSlipVendaEncalhe");
+		
 	},
 	
 	imprimirSlipVenda:function(){

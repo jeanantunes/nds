@@ -27,6 +27,7 @@ import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
+import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
 import br.com.abril.nds.repository.impl.AbstractRepository;
 import br.com.abril.nds.service.DescontoService;
 
@@ -60,72 +61,57 @@ public class EMS0198MessageProcessor extends AbstractRepository implements Messa
 		// Reinicia a contagem dos arquivos gerados:
 		this.quantidadeArquivosGerados = 0;
 		
-		List<PDV> pdvs = findListPDV(message);
-		
-		int numeroCota = pdvs.get(0).getCota().getNumeroCota();
-
+		List<ChamadaEncalheCota> cecs = findListPDV(message);
+		Integer numerCota =  0;
 		int qtdeRegistros = 0;
-		
-		PrintWriter print =  geraArquivo(message, this.dataLctoDistrib, pdvs.get(0).getNome(), numeroCota);
-							
-		for (PDV pdv: pdvs) {
+		PrintWriter print =  null;
+		for (ChamadaEncalheCota cec: cecs) {
 			
-			if (numeroCota == pdv.getCota().getNumeroCota()) {
-				
-				qtdeRegistros += criaDetalhes(print, pdv.getCota(), pdv.getCota().getMovimentoEstoqueCotas());
-				
+			if (numerCota == cec.getCota().getNumeroCota()) {
+				qtdeRegistros++;
 			} else {
-				
-				criaTrailer(print, numeroCota, qtdeRegistros);
-				
-				print.flush();
-				print.close();
-				
-				numeroCota = pdv.getCota().getNumeroCota();
-				
-				print = geraArquivo(message, this.dataLctoDistrib, pdv.getNome(), numeroCota);
-				
+				if (!numerCota.equals(0)) {
+					criaTrailer(print, numerCota, qtdeRegistros);
+					print.flush();
+					print.close();					
+				}
+				numerCota = cec.getCota().getNumeroCota();
 				qtdeRegistros = 0;
-				
-			}
-			
+				print = geraArquivo(message, this.dataLctoDistrib, cec.getCota().getPessoa().getNome(), numerCota);
+			}			
+			criaDetalhes(print, cec);
 		}
-
-		criaTrailer(print, numeroCota, qtdeRegistros);
-		
-		print.flush();
-		print.close();
+		if (!numerCota.equals(0)) {
+			criaTrailer(print, numerCota, qtdeRegistros);
+			print.flush();
+			print.close();					
+		}
 		
 	}
 	
-	private List<PDV> findListPDV(Message message) {
+	private List<ChamadaEncalheCota> findListPDV(Message message) {
 
 		StringBuilder sql = new StringBuilder();
 
-		sql.append(" select pdv from PDV pdv ");
-		sql.append(" join fetch pdv.cota co ");
-		sql.append(" join fetch co.pessoa p ");
-		sql.append(" left join fetch co.movimentoEstoqueCotas mov ");
-		sql.append(" left join fetch mov.produtoEdicao pe ");
-		sql.append(" left join fetch pe.chamadaEncalhes ce");
-		sql.append(" left join fetch pe.produto pd ");
-		sql.append(" left join mov.tipoMovimento tme ");
-		sql.append(" left join pe.lancamentos lan ");
+		sql.append(" select cec from ");
+		sql.append(" ChamadaEncalhe ce ");
+		sql.append(" join ce.chamadaEncalheCotas cec ");
+		sql.append(" join cec.cota c ");
+		sql.append(" join c.pdvs pdv ");
+
 
 		sql.append(" where pdv.caracteristicas.pontoPrincipal = true ");
-		sql.append(" and lan.dataLancamentoDistribuidor = :dataLancDistrib ");
-		sql.append(" and tme.grupoMovimentoEstoque = :tipoMovimento ");
-		sql.append(" order by co.numeroCota");
+		sql.append(" and ce.dataRecolhimento = :dataRecolhimento ");
+		sql.append(" order by c.numeroCota");
 
 		Query query = this.getSession().createQuery(sql.toString());
-		query.setParameter("dataLancDistrib", this.dataLctoDistrib);
-		query.setParameter("tipoMovimento",
-				GrupoMovimentoEstoque.ENVIO_JORNALEIRO);
-
+		
+		query.setParameter("dataRecolhimento", this.dataLctoDistrib);
+		
 		@SuppressWarnings("unchecked")
-		List<PDV> pdvs = (List<PDV>) query.list();
+		List<ChamadaEncalheCota> chamadaEncalhe = (List<ChamadaEncalheCota>) query.list();
 
-		if (pdvs.isEmpty()) {
+		if (chamadaEncalhe.isEmpty()) {
 
 			message.getHeader().put(
 					MessageHeaderProperties.FILE_NAME.getValue(), "");
@@ -139,7 +125,7 @@ public class EMS0198MessageProcessor extends AbstractRepository implements Messa
 			throw new RuntimeException("Nenhum registro encontrado!");
 		} else {
 
-			return pdvs;
+			return chamadaEncalhe;
 		}
 	}
 	
@@ -196,49 +182,26 @@ public class EMS0198MessageProcessor extends AbstractRepository implements Messa
 		this.quantidadeArquivosGerados++;
 	}
 
-	private Integer criaDetalhes(PrintWriter print, Cota cota, Set<MovimentoEstoqueCota> movimentoEstoqueCotas) {
+	private void criaDetalhes(PrintWriter print, ChamadaEncalheCota cec) {
 		
 		EMS0198Detalhe outdetalhe = new EMS0198Detalhe();
-		
-		Integer qtdeRegistros = 0;
-		
-		for (MovimentoEstoqueCota moviEstCota : movimentoEstoqueCotas) {
 
-			outdetalhe.setCodigoCota(cota.getNumeroCota().toString());
-			outdetalhe.setCodigoProduto(moviEstCota.getProdutoEdicao().getProduto().getCodigo());
-			outdetalhe.setEdicao(moviEstCota.getProdutoEdicao().getNumeroEdicao().toString());
-			outdetalhe.setNomePublicacao(moviEstCota.getProdutoEdicao().getProduto().getNome());
-			outdetalhe.setCodigoDeBarras(moviEstCota.getProdutoEdicao().getCodigoDeBarras());
-			outdetalhe.setPrecoCusto(moviEstCota.getProdutoEdicao().getPrecoCusto().toString());
-			outdetalhe.setPrecoVenda(moviEstCota.getProdutoEdicao().getPrecoVenda().toString());			
-			outdetalhe.setDesconto(descontoService.obterValorDescontoPorCotaProdutoEdicao(null, cota, moviEstCota.getProdutoEdicao()).toString());												
-			outdetalhe.setQuantidade(moviEstCota.getQtde().toString());
-						
-			if (!moviEstCota.getProdutoEdicao().getChamadaEncalhes().isEmpty()) {
-
-				for (ChamadaEncalhe chamadaEncalhe : moviEstCota.getProdutoEdicao().getChamadaEncalhes()) {
-
-					outdetalhe.setDataEncalhe(sdf.format(chamadaEncalhe.getDataRecolhimento()));
-					outdetalhe.setDiaChamada("1");
+				
+		outdetalhe.setCodigoCota(cec.getCota().getNumeroCota().toString());
+		outdetalhe.setCodigoProduto(cec.getChamadaEncalhe().getProdutoEdicao().getProduto().getCodigo());
+		outdetalhe.setEdicao(cec.getChamadaEncalhe().getProdutoEdicao().getNumeroEdicao().toString());
+		outdetalhe.setNomePublicacao(cec.getChamadaEncalhe().getProdutoEdicao().getProduto().getNome());
+		outdetalhe.setCodigoDeBarras(cec.getChamadaEncalhe().getProdutoEdicao().getCodigoDeBarras());
+		outdetalhe.setPrecoCusto((cec.getChamadaEncalhe().getProdutoEdicao().getPrecoCusto() != null ? cec.getChamadaEncalhe().getProdutoEdicao().getPrecoCusto().toString():""));
+		outdetalhe.setPrecoVenda((cec.getChamadaEncalhe().getProdutoEdicao().getPrecoVenda() != null ? cec.getChamadaEncalhe().getProdutoEdicao().getPrecoVenda().toString():""));			
+		outdetalhe.setDesconto(descontoService.obterDescontoPorCotaProdutoEdicao(null, cec.getCota(), cec.getChamadaEncalhe().getProdutoEdicao()).toString());												
+		outdetalhe.setQuantidade(cec.getQtdePrevista().toString());
 					
-					print.println(fixedFormatManager.export(outdetalhe));
-					qtdeRegistros++;
+		outdetalhe.setDataEncalhe(sdf.format(cec.getChamadaEncalhe().getDataRecolhimento()));
+		outdetalhe.setDiaChamada("1");
+		
+		print.println(fixedFormatManager.export(outdetalhe));
 					
-				}
-
-			} else {
-				outdetalhe.setDataEncalhe("");
-				outdetalhe.setDiaChamada("");
-
-				print.println(fixedFormatManager.export(outdetalhe));
-				qtdeRegistros++;
-
-			}
-			
-		} 
-		
-		return qtdeRegistros;
-		
 	}
 
 	@Override

@@ -38,6 +38,41 @@ public class VendaProdutoEncalheRepositoryImpl extends AbstractRepositoryModel<V
 	}
 	
 	@SuppressWarnings("unchecked")
+	public List<VendaProduto> buscarCotaPeriodoVenda(FiltroVendaEncalheDTO filtro){
+		
+		StringBuilder hql = new StringBuilder();
+
+		hql.append(" select venda  ")
+		    .append(" from VendaProduto venda ")
+			.append(" where venda.tipoVenda=:tipoVenda ");
+		
+		if(filtro.getNomeCota()!= null){
+			
+			hql.append(" and venda.cota.numeroCota=:numeroCota "); 
+		}
+		
+		if(filtro.getPeriodoInicial()!= null && filtro.getPeriodoFinal()!= null){
+			
+			hql.append(" and venda.dataVenda between :periodoInicial and :periodoFinal  ");
+		}
+		
+		hql.append(" group by venda.cota, venda.dataVenda, venda.horarioVenda ");
+		
+		hql.append(" order by venda.dataVenda, venda.horarioVenda, ")
+			.append(" case venda.cota.pessoa.class when 'F' then venda.cota.pessoa.nome when 'J' then venda.cota.pessoa.razaoSocial end ");
+		
+		Query query = getSession().createQuery(hql.toString());
+		
+		HashMap<String, Object> param = getParametrosVendaProdutoEncalhe(filtro);
+		
+		for(String key : param.keySet()){
+			query.setParameter(key, param.get(key));
+		}
+		
+		return query.list();
+	}
+	
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<VendaProduto> buscarVendasEncalhe(FiltroVendaEncalheDTO filtro){
 		
@@ -45,18 +80,23 @@ public class VendaProdutoEncalheRepositoryImpl extends AbstractRepositoryModel<V
 
 		hql.append(" select venda  ")
 		    .append(" from VendaProduto venda ")
-			.append(" where venda.cota.numeroCota=:numeroCota ")
-			.append(" and venda.dataVenda between :periodoInicial and :periodoFinal ");
+			.append(" where ");
 		
-		if(filtro.getTipoVendaEncalhe()!= null){
-			hql.append(" and venda.tipoVenda=:tipoVenda ");
-		}
+		hql.append(" venda.cota.numeroCota=:numeroCota "); 
+			
+		hql.append(" and venda.dataVenda between :periodoInicial and :periodoFinal  ");
+		
+		hql.append(" and venda.tipoVenda=:tipoVenda ");
+		
+		hql.append(" and venda.horarioVenda =:horarioVenda ");
 		
 		hql.append(getOrderVendaEncalhe(filtro));
 		
 		Query query = getSession().createQuery(hql.toString());
 		
 		HashMap<String, Object> param = getParametrosVendaProdutoEncalhe(filtro);
+		
+		param.put("horarioVenda", filtro.getHorarioVenda());
 		
 		for(String key : param.keySet()){
 			query.setParameter(key, param.get(key));
@@ -128,8 +168,16 @@ public class VendaProdutoEncalheRepositoryImpl extends AbstractRepositoryModel<V
 		    .append(" join produtoEdicao.produto as produto ")
 		    .append(" join produto.fornecedores as fornecedores ")
 		    .append(" join venda.usuario as usuario ")
-			.append(" where venda.cota.numeroCota=:numeroCota ")
-			.append(" and venda.dataVenda between :periodoInicial and :periodoFinal ");
+			.append(" where 1=1  ");
+			
+		
+		if(filtro.getNumeroCota()!= null){
+			hql.append(" and venda.cota.numeroCota=:numeroCota ");
+		}
+		
+		if(filtro.getPeriodoInicial()!= null && filtro.getPeriodoFinal()!= null){
+			hql.append(" and venda.dataVenda between :periodoInicial and :periodoFinal ");
+		}
 		
 		if(filtro.getTipoVendaEncalhe()!= null){
 			hql.append(" and venda.tipoVenda=:tipoVenda ");
@@ -142,9 +190,14 @@ public class VendaProdutoEncalheRepositoryImpl extends AbstractRepositoryModel<V
 		
 		HashMap<String,Object> param = new HashMap<String, Object>();
 		
-		param.put("numeroCota", filtro.getNumeroCota());
-		param.put("periodoInicial", filtro.getPeriodoInicial());
-		param.put("periodoFinal", filtro.getPeriodoFinal());
+		if(filtro.getNumeroCota()!= null){
+			param.put("numeroCota", filtro.getNumeroCota());
+		}
+		
+		if(filtro.getPeriodoInicial()!= null && filtro.getPeriodoFinal()!= null){
+			param.put("periodoInicial", filtro.getPeriodoInicial());
+			param.put("periodoFinal", filtro.getPeriodoFinal());
+		}
 		
 		if(filtro.getTipoVendaEncalhe() != null ){ 
 			param.put("tipoVenda", filtro.getTipoVendaEncalhe());

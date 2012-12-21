@@ -129,6 +129,9 @@ public class GeracaoNotaEnvioController {
 			Date intervaloMovimentoDe, Date intervaloMovimentoAte, Date dataEmissao,
 			List<Long> listaIdFornecedores, Long idRoteiro, Long idRota,
 			String sortname, String sortorder, int rp, int page) {
+				
+		if(listaIdFornecedores==null || listaIdFornecedores.isEmpty())
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum fornecedor foi selecionado.");
 		
 		FiltroConsultaNotaEnvioDTO filtro = 
 				this.setFiltroNotaEnvioSessao(intervaloBoxDe, intervaloBoxAte, intervaloCotaDe, 
@@ -136,13 +139,11 @@ public class GeracaoNotaEnvioController {
 						listaIdFornecedores, idRoteiro, idRota, sortname, sortorder, rp, page);
 		
 		List<ConsultaNotaEnvioDTO> listaCotaExemplares = 
-				this.geracaoNotaEnvioService.busca(filtro.getIntervaloBox(), filtro.getIntervaloCota(), 
-						filtro.getIntervaloMovimento(), listaIdFornecedores, 
-						sortname, sortorder, rp, page, null, idRoteiro, idRota);
+				this.geracaoNotaEnvioService.busca(filtro);
 		
-		Integer qtdResult = geracaoNotaEnvioService.buscaCotasNotasDeEnvioQtd(filtro.getIntervaloBox(), filtro.getIntervaloCota(), 
-																			filtro.getIntervaloMovimento(), listaIdFornecedores, 
-																			null, idRoteiro, idRota);
+		filtro.setPaginacaoVO(new PaginacaoVO());
+		
+		Integer qtdResult = geracaoNotaEnvioService.buscaCotasNotasDeEnvioQtd(filtro);
 		
 		result.use(FlexiGridJson.class).from(listaCotaExemplares).page(page).total(qtdResult).serialize();
 	}
@@ -154,10 +155,11 @@ public class GeracaoNotaEnvioController {
 		
 		FiltroConsultaNotaEnvioDTO filtro = this.getFiltroNotaEnvioSessao();
 		
+		filtro.setCadastro(SituacaoCadastro.SUSPENSO);
+		filtro.setPaginacaoVO(new PaginacaoVO());
+		
 		List<ConsultaNotaEnvioDTO> cotasAusentes =
-				geracaoNotaEnvioService.busca(filtro.getIntervaloBox(), filtro.getIntervaloCota(), filtro.getIntervaloMovimento(), 
-						filtro.getIdFornecedores(), null, null, null, null, 
-						SituacaoCadastro.SUSPENSO, filtro.getIdRoteiro(), filtro.getIdRota());
+				geracaoNotaEnvioService.busca(filtro);
 		
 		if (cotasAusentes != null && !cotasAusentes.isEmpty())
 			hasCotasAusentes = true;
@@ -170,10 +172,10 @@ public class GeracaoNotaEnvioController {
 		
 		FiltroConsultaNotaEnvioDTO filtro = this.getFiltroNotaEnvioSessao();
 		
+		filtro.setPaginacaoVO(new PaginacaoVO());
+		
 		List<ConsultaNotaEnvioDTO> consultaNotaEnvioDTO =	
-				geracaoNotaEnvioService.busca(filtro.getIntervaloBox(), filtro.getIntervaloCota(), filtro.getIntervaloMovimento(), 
-						filtro.getIdFornecedores(), null, null, null, null, 
-						null, filtro.getIdRoteiro(), filtro.getIdRota());
+				geracaoNotaEnvioService.busca(filtro);
 		
 		FileExporter.to("consignado-encalhe", fileType).inHTTPResponse(
 				this.getNDSFileHeader(), filtro, null,
