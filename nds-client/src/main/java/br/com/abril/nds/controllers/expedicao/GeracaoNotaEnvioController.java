@@ -14,6 +14,7 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
+import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.ConsultaNotaEnvioDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaNotaEnvioDTO;
@@ -25,7 +26,6 @@ import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.envio.nota.NotaEnvio;
 import br.com.abril.nds.model.seguranca.Permissao;
-import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.CotaAusenteService;
@@ -40,7 +40,6 @@ import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
-import br.com.abril.nds.util.export.NDSFileHeader;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 import br.com.abril.nds.vo.ValidacaoVO;
@@ -53,7 +52,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/expedicao/geracaoNotaEnvio")
-public class GeracaoNotaEnvioController {
+public class GeracaoNotaEnvioController extends BaseController {
 
 	@Autowired
 	private Result result;
@@ -284,44 +283,6 @@ public class GeracaoNotaEnvioController {
 		session.setAttribute(FILTRO_CONSULTA_NOTA_ENVIO, filtroConsultaNotaEnvioDTO);
 		
 		return filtroConsultaNotaEnvioDTO;
-	}
-	
-	/*
-	 * Obtém os dados do cabeçalho de exportação.
-	 * 
-	 * @return NDSFileHeader
-	 */
-	private NDSFileHeader getNDSFileHeader() {
-
-		NDSFileHeader ndsFileHeader = new NDSFileHeader();
-
-		Distribuidor distribuidor = this.distribuidorService.obter();
-
-		if (distribuidor != null) {
-
-			ndsFileHeader.setNomeDistribuidor(distribuidor.getJuridica()
-					.getRazaoSocial());
-			ndsFileHeader.setCnpjDistribuidor(distribuidor.getJuridica()
-					.getCnpj());
-		}
-
-		ndsFileHeader.setData(new Date());
-
-		ndsFileHeader.setNomeUsuario(this.getUsuario().getNome());
-
-		return ndsFileHeader;
-	}
-
-	// TODO: não há como reconhecer usuario, ainda
-	private Usuario getUsuario() {
-
-		Usuario usuario = new Usuario();
-
-		usuario.setId(1L);
-
-		usuario.setNome("Jornaleiro da Silva");
-
-		return usuario;
 	}
 	
 	@Get

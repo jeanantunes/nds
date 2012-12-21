@@ -13,6 +13,7 @@ import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.util.PaginacaoUtil;
 import br.com.abril.nds.client.vo.ResultadoGrupoVO;
 import br.com.abril.nds.client.vo.ResultadoPermissaoVO;
+import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.ConsultaGrupoPermissaoDTO;
 import br.com.abril.nds.dto.GrupoPermissaoDTO;
 import br.com.abril.nds.dto.UsuarioDTO;
@@ -47,7 +48,7 @@ import br.com.caelum.vraptor.view.Results;
  */
 @Resource
 @Path("/administracao/gruposAcesso")
-public class GruposAcessoController {
+public class GruposAcessoController extends BaseController {
 
 	@Autowired
 	private Result result;

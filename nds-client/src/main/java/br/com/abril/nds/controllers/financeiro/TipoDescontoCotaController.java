@@ -3,7 +3,6 @@ package br.com.abril.nds.controllers.financeiro;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
@@ -13,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.util.PaginacaoUtil;
+import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.CotaDescontoProdutoDTO;
 import br.com.abril.nds.dto.DescontoProdutoDTO;
 import br.com.abril.nds.dto.ItemDTO;
@@ -26,11 +26,9 @@ import br.com.abril.nds.dto.filtro.FiltroTipoDescontoProdutoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Cota;
-import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.desconto.TipoDesconto;
 import br.com.abril.nds.model.seguranca.Permissao;
-import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DescontoService;
@@ -41,7 +39,6 @@ import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
-import br.com.abril.nds.util.export.NDSFileHeader;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 import br.com.abril.nds.vo.ValidacaoVO;
@@ -54,7 +51,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/financeiro/tipoDescontoCota")
-public class TipoDescontoCotaController {
+public class TipoDescontoCotaController extends BaseController {
 	
 	@Autowired
 	private Result result;
@@ -94,23 +91,26 @@ public class TipoDescontoCotaController {
 	@Path("/novoDescontoGeral")
 	public void novoDescontoGeral(BigDecimal desconto, List<Long> fornecedores){
 
-		descontoService.incluirDescontoDistribuidor(desconto, fornecedores, getUsuario());
+		descontoService.incluirDescontoDistribuidor(desconto, fornecedores, getUsuarioLogado());
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Cadastro de Tipo de Desconto realizado com sucesso"),"result").recursive().serialize();
+
 	}
 		
 	@Post("/novoDescontoEspecifico")
 	public void novoDescontoEspecifico(Integer numeroCota, BigDecimal desconto, List<Long> fornecedores) {
 		
-		descontoService.incluirDescontoCota(desconto, fornecedores, numeroCota, getUsuario());
+		descontoService.incluirDescontoCota(desconto, fornecedores, numeroCota, getUsuarioLogado());
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Cadastro de Tipo de Desconto realizado com sucesso"),"result").recursive().serialize();
+
 	}
 
 	@Post
 	@Path("/novoDescontoProduto")
 	public void novoDescontoProduto(DescontoProdutoDTO descontoDTO, List<Integer> cotas) {		
 
-		descontoService.incluirDescontoProduto(descontoDTO, getUsuario());
+		descontoService.incluirDescontoProduto(descontoDTO, getUsuarioLogado());
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Cadastro de Tipo de Desconto realizado com sucesso"),"result").recursive().serialize();
+
 	}
 	
 	@Path("/pesquisarDescontoGeral")
@@ -277,30 +277,6 @@ public class TipoDescontoCotaController {
 		return filtro;
 	}
 	
-	/*
-	 * Obtém os dados do cabeçalho de exportação.
-	 * 
-	 * @return NDSFileHeader
-	 */
-	private NDSFileHeader getNDSFileHeader() {
-		
-		NDSFileHeader ndsFileHeader = new NDSFileHeader();
-		
-		Distribuidor distribuidor = this.distribuidorService.obter();
-		
-		if (distribuidor != null) {
-			
-			ndsFileHeader.setNomeDistribuidor(distribuidor.getJuridica().getRazaoSocial());
-			ndsFileHeader.setCnpjDistribuidor(distribuidor.getJuridica().getCnpj());
-		}
-		
-		ndsFileHeader.setData(new Date());
-		
-		ndsFileHeader.setNomeUsuario(this.getUsuario().getNome());
-		
-		return ndsFileHeader;
-	}
-	
 	private FiltroTipoDescontoDTO carregarFiltroPesquisaDescontoGeral(String sortorder, String sortname, int page, int rp) {
 
 		FiltroTipoDescontoDTO filtro = new FiltroTipoDescontoDTO();
@@ -376,13 +352,6 @@ public class TipoDescontoCotaController {
 		
 		return filtro;
 	}
-	
-	private Usuario getUsuario() {
-		
-		return usuarioService.getUsuarioLogado();
-		
-	}
-	
 	
 	@Post
 	@Path("/obterFornecedores")

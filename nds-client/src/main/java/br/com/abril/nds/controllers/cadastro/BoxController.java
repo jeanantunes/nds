@@ -2,7 +2,6 @@ package br.com.abril.nds.controllers.cadastro;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
@@ -12,16 +11,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.BoxVO;
+import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.BoxDTO;
 import br.com.abril.nds.dto.CotaRotaRoteiroDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaBox;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Box;
-import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.seguranca.Permissao;
-import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.BoxService;
@@ -31,7 +29,6 @@ import br.com.abril.nds.util.StringUtil;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
-import br.com.abril.nds.util.export.NDSFileHeader;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Path;
@@ -42,7 +39,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/cadastro/box")
-public class BoxController {
+public class BoxController extends BaseController {
 
 	private static final String FILTRO_CONSULTA_BOX = "filtroConsultaBox";
 	
@@ -207,45 +204,6 @@ public class BoxController {
 		
 		result.use(Results.nothing());
 	}
-	
-	/*
-	 * Obtém os dados do cabeçalho de exportação.
-	 * 
-	 * @return NDSFileHeader
-	 */
-	private NDSFileHeader getNDSFileHeader() {
-
-		NDSFileHeader ndsFileHeader = new NDSFileHeader();
-
-		Distribuidor distribuidor = this.distribuidorService.obter();
-
-		if (distribuidor != null) {
-
-			ndsFileHeader.setNomeDistribuidor(distribuidor.getJuridica()
-					.getRazaoSocial());
-			ndsFileHeader.setCnpjDistribuidor(distribuidor.getJuridica()
-					.getCnpj());
-		}
-
-		ndsFileHeader.setData(new Date());
-
-		ndsFileHeader.setNomeUsuario(this.getUsuario().getNome());
-
-		return ndsFileHeader;
-	}
-
-	// TODO: não há como reconhecer usuario, ainda
-	private Usuario getUsuario() {
-
-		Usuario usuario = new Usuario();
-
-		usuario.setId(1L);
-
-		usuario.setNome("Jornaleiro da Silva");
-
-		return usuario;
-	}
-	
 	
 	private List<BoxDTO> convertBoxToBoxDTO(List<Box> listaBox) {
 		

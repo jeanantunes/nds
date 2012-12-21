@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.util.NFEImportUtil;
 import br.com.abril.nds.client.vo.SumarizacaoNotaRetornoVO;
+import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.RetornoNFEDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.ParametroSistemaService;
@@ -42,7 +43,7 @@ import br.com.caelum.vraptor.view.Results;
  */
 @Resource
 @Path(value="/nfe/retornoNFe")
-public class RetornoNFEController {
+public class RetornoNFEController extends BaseController {
 	
 	@Autowired
 	private Result result;

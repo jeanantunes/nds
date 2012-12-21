@@ -28,6 +28,7 @@ import br.com.abril.nds.client.util.PaginacaoUtil;
 import br.com.abril.nds.client.vo.DiferencaVO;
 import br.com.abril.nds.client.vo.RateioCotaVO;
 import br.com.abril.nds.client.vo.ResultadoDiferencaVO;
+import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.DetalheDiferencaCotaDTO;
 import br.com.abril.nds.dto.DetalheItemNotaFiscalDTO;
 import br.com.abril.nds.dto.EstoqueDTO;
@@ -54,7 +55,6 @@ import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.estoque.TipoDirecionamentoDiferenca;
 import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.model.seguranca.Permissao;
-import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.CotaService;
@@ -74,7 +74,6 @@ import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
-import br.com.abril.nds.util.export.NDSFileHeader;
 import br.com.abril.nds.vo.ConfirmacaoVO;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.PeriodoVO;
@@ -97,7 +96,7 @@ import br.com.caelum.vraptor.view.Results;
 @SuppressWarnings("deprecation")
 @Resource
 @Path("/estoque/diferenca")
-public class DiferencaEstoqueController {
+public class DiferencaEstoqueController extends BaseController {
 	
 	@Autowired
 	private Result result;
@@ -1238,7 +1237,7 @@ public class DiferencaEstoqueController {
 			(FiltroLancamentoDiferencaEstoqueDTO) this.httpSession.getAttribute(FILTRO_PESQUISA_LANCAMENTO_SESSION_ATTRIBUTE);
 		
 		this.diferencaEstoqueService.efetuarAlteracoes(
-			listaNovasDiferencas, mapaRateioCotas, filtroPesquisa, this.getUsuario().getId(), modoNovaDiferenca);
+			listaNovasDiferencas, mapaRateioCotas, filtroPesquisa, this.getUsuarioLogado().getId(), modoNovaDiferenca);
 		
 		result.use(Results.json()).from(
 			new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
@@ -1272,7 +1271,7 @@ public class DiferencaEstoqueController {
 		
 		if(listaNovasDiferencas != null){
 						
-			this.diferencaEstoqueService.salvarLancamentosDiferenca(listaNovasDiferencas, mapaRateioCotas, this.getUsuario().getId(),modoNovaDiferenca);
+			this.diferencaEstoqueService.salvarLancamentosDiferenca(listaNovasDiferencas, mapaRateioCotas, this.getUsuarioLogado().getId(),modoNovaDiferenca);
 		}
 		
 		result.use(Results.json()).from(
@@ -1295,7 +1294,7 @@ public class DiferencaEstoqueController {
 					FILTRO_PESQUISA_LANCAMENTO_SESSION_ATTRIBUTE);
 			
 			this.diferencaEstoqueService.cancelarDiferencas(
-				filtroPesquisa, this.getUsuario().getId());
+				filtroPesquisa, this.getUsuarioLogado().getId());
 			
 		} else {
 			
@@ -2318,41 +2317,6 @@ public class DiferencaEstoqueController {
 		this.httpSession.removeAttribute(MODO_NOVA_DIFERENCA_SESSION_ATTRIBUTE);
 	}
 	
-	/*
-	 * Obtém os dados do cabeçalho de exportação.
-	 * 
-	 * @return NDSFileHeader
-	 */
-	private NDSFileHeader getNDSFileHeader() {
-		
-		NDSFileHeader ndsFileHeader = new NDSFileHeader();
-		
-		Distribuidor distribuidor = this.distribuidorService.obter();
-		
-		if (distribuidor != null) {
-			
-			ndsFileHeader.setNomeDistribuidor(distribuidor.getJuridica().getRazaoSocial());
-			ndsFileHeader.setCnpjDistribuidor(distribuidor.getJuridica().getCnpj());
-		}
-		
-		ndsFileHeader.setData(new Date());
-		
-		ndsFileHeader.setNomeUsuario(this.getUsuario().getNome());
-		
-		return ndsFileHeader;
-	}
-	
-	//TODO: não há como reconhecer usuario, ainda
-	private Usuario getUsuario() {
-		
-		Usuario usuario = new Usuario();
-		
-		usuario.setId(1L);
-		
-		usuario.setNome("Jornaleiro da Silva");
-		
-		return usuario;
-	}
 	
 	@Post
 	@Path("/lancamento/rateio/buscarDiferenca")

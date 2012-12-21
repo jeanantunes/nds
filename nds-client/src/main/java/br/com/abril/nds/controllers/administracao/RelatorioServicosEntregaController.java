@@ -2,7 +2,6 @@ package br.com.abril.nds.controllers.administracao;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
@@ -13,22 +12,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.RelatorioServicosEntregaDetalheVO;
 import br.com.abril.nds.client.vo.RelatorioServicosEntregaVO;
+import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.CotaTransportadorDTO;
 import br.com.abril.nds.dto.FlexiGridDTO;
 import br.com.abril.nds.dto.MovimentoFinanceiroDTO;
 import br.com.abril.nds.dto.filtro.FiltroRelatorioServicosEntregaDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
-import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Transportador;
 import br.com.abril.nds.model.seguranca.Permissao;
-import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.TransportadorService;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
-import br.com.abril.nds.util.export.NDSFileHeader;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Path;
@@ -38,7 +35,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/administracao/relatorioServicosEntrega")
-public class RelatorioServicosEntregaController {
+public class RelatorioServicosEntregaController extends BaseController {
 	
 	@Autowired
 	private TransportadorService transportadorService;
@@ -124,32 +121,5 @@ public class RelatorioServicosEntregaController {
 				this.httpServletResponse);
 		
 		result.use(Results.nothing());
-	}
-	
-	
-	private NDSFileHeader getNDSFileHeader() {
-
-		NDSFileHeader ndsFileHeader = new NDSFileHeader();
-		Distribuidor distribuidor = distribuidorService.obter();
-
-		if (distribuidor != null) {
-			ndsFileHeader.setNomeDistribuidor(distribuidor.getJuridica().getRazaoSocial());
-			ndsFileHeader.setCnpjDistribuidor(distribuidor.getJuridica().getCnpj());
-		}
-
-		ndsFileHeader.setData(new Date());
-		ndsFileHeader.setNomeUsuario(getUsuario().getNome());
-		return ndsFileHeader;
-	}
-	
-	
-	// TODO: não há como reconhecer usuario, ainda
-	private Usuario getUsuario() {
-
-		Usuario usuario = new Usuario();
-		usuario.setId(1L);
-		usuario.setNome("Jornaleiro da Silva");
-
-		return usuario;
 	}
 }

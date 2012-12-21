@@ -12,6 +12,7 @@ import org.lightcouch.NoDocumentException;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
+import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.ColunaRelatorioInformeEncalhe;
 import br.com.abril.nds.dto.InformeEncalheDTO;
 import br.com.abril.nds.dto.ItemDTO;
@@ -45,7 +46,7 @@ import br.com.caelum.vraptor.Result;
  */
 @Resource
 @Path(value = "/devolucao/informeEncalhe")
-public class ConsultaInformeEncalheController {
+public class ConsultaInformeEncalheController extends BaseController {
 
 	@Autowired
 	private Result result;

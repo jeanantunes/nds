@@ -1,5 +1,6 @@
 package br.com.abril.nds.util.export;
 
+import java.io.InputStream;
 import java.util.Date;
 
 /**
@@ -18,6 +19,8 @@ public class NDSFileHeader {
 	private Date data;
 	
 	private String nomeUsuario;
+	
+	private InputStream logo;
 	
 	/**
 	 * Construtor padrão.
@@ -100,5 +103,15 @@ public class NDSFileHeader {
 	public void setNomeUsuario(String nomeUsuario) {
 		this.nomeUsuario = nomeUsuario;
 	}
+
+	public InputStream getLogo() {
+		return logo;
+	}
+
+	public void setLogo(InputStream logo) {
+		this.logo = logo;
+	}
+	
+	
 
 }

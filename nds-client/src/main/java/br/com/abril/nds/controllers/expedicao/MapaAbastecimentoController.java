@@ -11,6 +11,7 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
+import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.AbastecimentoDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.MapaCotaDTO;
@@ -38,7 +39,6 @@ import br.com.abril.nds.service.MapaAbastecimentoService;
 import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.service.RotaService;
 import br.com.abril.nds.service.RoteirizacaoService;
-import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.ValidacaoVO;
@@ -50,7 +50,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/mapaAbastecimento")
-public class MapaAbastecimentoController {
+public class MapaAbastecimentoController extends BaseController {
 
 	private static final String FILTRO_SESSION_ATTRIBUTE = "filtroMapaAbastecimento";
 	
@@ -405,14 +405,14 @@ public class MapaAbastecimentoController {
 	public void impressaoPorBox(FiltroMapaAbastecimentoDTO filtro) {
 		
 		HashMap<String, ProdutoMapaDTO> produtosMapa = mapaAbastecimentoService.obterMapaDeImpressaoPorBox(filtro);
-		
+		setaNomeParaImpressao();
 		result.include("produtosMapa",produtosMapa.values());
 	}
 	
 	public void impressaoPorRota(FiltroMapaAbastecimentoDTO filtro) {
 		
 		HashMap<Integer, HashMap<String, ProdutoMapaRotaDTO>> produtosMapa = mapaAbastecimentoService.obterMapaDeImpressaoPorBoxRota(filtro);
-		
+		setaNomeParaImpressao();
 		result.include("mapa",produtosMapa);
 		
 	}
@@ -420,7 +420,7 @@ public class MapaAbastecimentoController {
 	public void impressaoPorProduto(FiltroMapaAbastecimentoDTO filtro) {
 		
 		MapaCotaDTO mapaCota = mapaAbastecimentoService.obterMapaDeImpressaoPorCota(filtro);
-		
+		setaNomeParaImpressao();
 		result.include("mapa", mapaCota);
 		
 	}
@@ -446,7 +446,7 @@ public class MapaAbastecimentoController {
 	public void impressaoPorCota(FiltroMapaAbastecimentoDTO filtro) {
 				
 		MapaCotaDTO mapaCota = mapaAbastecimentoService.obterMapaDeImpressaoPorCota(filtro);
-		
+		setaNomeParaImpressao();
 		result.include("mapa", mapaCota);
 		
 	}
@@ -454,7 +454,7 @@ public class MapaAbastecimentoController {
 	public void impressaoPorProdutoEdicao(FiltroMapaAbastecimentoDTO filtro) {		
 
 		ProdutoEdicaoMapaDTO produtoEdicaoMapa = mapaAbastecimentoService.obterMapaDeImpressaoPorProdutoEdicao(filtro);
-		
+		setaNomeParaImpressao();
 		result.include("mapa",produtoEdicaoMapa);
 		
 	}
@@ -462,12 +462,17 @@ public class MapaAbastecimentoController {
 	public void impressaoPorProdutoQuebraCota(FiltroMapaAbastecimentoDTO filtro) {		
 
 		MapaProdutoCotasDTO produtoCotaMapa = mapaAbastecimentoService.obterMapaDeImpressaoPorProdutoQuebrandoPorCota(filtro);
-		
+		setaNomeParaImpressao();
 		result.include("mapa",produtoCotaMapa);
 		
 	}
 	
+	private void setaNomeParaImpressao() {
+		result.include("nomeDistribuidor", distribuidorService.obter().getJuridica().getRazaoSocial());
+	}
+	
 	public void impressaoFalha(String mensagemErro){
+		setaNomeParaImpressao();
 		result.include(mensagemErro);					
 	}
 

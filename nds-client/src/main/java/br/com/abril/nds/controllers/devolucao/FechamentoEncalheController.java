@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.AnaliticoEncalheVO;
+import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.AnaliticoEncalheDTO;
 import br.com.abril.nds.dto.CotaAusenteEncalheDTO;
 import br.com.abril.nds.dto.FechamentoFisicoLogicoDTO;
@@ -25,7 +26,6 @@ import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.seguranca.Permissao;
-import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.BoxService;
 import br.com.abril.nds.service.CalendarioService;
@@ -37,7 +37,6 @@ import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
-import br.com.abril.nds.util.export.NDSFileHeader;
 import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
@@ -54,7 +53,7 @@ import br.com.caelum.vraptor.view.Results;
  */
 @Resource
 @Path("devolucao/fechamentoEncalhe")
-public class FechamentoEncalheController {
+public class FechamentoEncalheController extends BaseController {
 
 	@Autowired
 	private Result result;
@@ -240,7 +239,7 @@ public class FechamentoEncalheController {
 		
 		try {
 			
-			this.fechamentoEncalheService.cobrarCotas(dataOperacao, obterUsuario(), idsCotas);
+			this.fechamentoEncalheService.cobrarCotas(dataOperacao, getUsuarioLogado(), idsCotas);
 
 		} catch (ValidacaoException e) {
 			this.result.use(Results.json()).from(e.getValidacao(), "result").recursive().serialize();
@@ -383,48 +382,6 @@ public class FechamentoEncalheController {
 		return formatter.format(dataEncalhe).equals(formatter.format(new Date()));
 	}
 
-	/**
-	 * Obtém os dados do cabeçalho de exportação.
-	 * 
-	 * @return NDSFileHeader
-	 */
-	private NDSFileHeader getNDSFileHeader() {
-		
-		NDSFileHeader ndsFileHeader = new NDSFileHeader();
-		
-		Distribuidor distribuidor = this.distribuidorService.obter();
-		
-		if (distribuidor != null) {
-			
-			ndsFileHeader.setNomeDistribuidor(distribuidor.getJuridica().getRazaoSocial());
-			ndsFileHeader.setCnpjDistribuidor(distribuidor.getJuridica().getCnpj());
-		}
-		
-		ndsFileHeader.setData(new Date());
-		
-		ndsFileHeader.setNomeUsuario(this.obterUsuario().getNome());
-		
-		return ndsFileHeader;
-	}
-	
-	/**
-	 * Obtém usuário logado.
-	 * 
-	 * @return usuário logado
-	 */
-	private Usuario obterUsuario() {
-		
-		//TODO: Aguardando definição de como será obtido o usuário logado
-		
-		Usuario usuario = new Usuario();
-		
-		usuario.setId(1L);
-		usuario.setNome("Usuário da Silva");
-		
-		return usuario;
-	}
-	
-	
 	private String resolveSort(String sortname) {
 		
 		if (sortname.endsWith("Formatado")) {

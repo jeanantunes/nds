@@ -23,15 +23,14 @@ import br.com.abril.nds.client.vo.ResumoExpedicaoBoxVO;
 import br.com.abril.nds.client.vo.ResumoExpedicaoDetalheVO;
 import br.com.abril.nds.client.vo.ResumoExpedicaoVO;
 import br.com.abril.nds.client.vo.RetornoExpedicaoVO;
+import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.ExpedicaoDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.filtro.FiltroResumoExpedicaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroResumoExpedicaoDTO.TipoPesquisaResumoExpedicao;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
-import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.seguranca.Permissao;
-import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.service.ExpedicaoService;
 import br.com.abril.nds.util.CellModelKeyValue;
@@ -42,7 +41,6 @@ import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
-import br.com.abril.nds.util.export.NDSFileHeader;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 import br.com.caelum.vraptor.Get;
@@ -61,7 +59,7 @@ import br.com.caelum.vraptor.view.Results;
  */
 @Resource
 @Path(value="/expedicao")
-public class ResumoExpedicaoController {
+public class ResumoExpedicaoController extends BaseController {
 	
 	@Autowired
 	private Result result;
@@ -315,30 +313,6 @@ public class ResumoExpedicaoController {
 		FileExporter.to("resumo-expedicao-box", fileType)
 			.inHTTPResponse(this.getNDSFileHeader(), filtro, resultadoResumoExpedicao, 
 				listaLancamentosExpedidos, ResumoExpedicaoBoxVO.class, this.httpServletResponse);
-	}
-	
-	/**
-	 * Obtém os dados do cabeçalho de exportação.
-	 * 
-	 * @return NDSFileHeader
-	 */
-	private NDSFileHeader getNDSFileHeader() {
-		
-		NDSFileHeader ndsFileHeader = new NDSFileHeader();
-		
-		Distribuidor distribuidor = this.distribuidorService.obter();
-		
-		if (distribuidor != null) {
-			
-			ndsFileHeader.setNomeDistribuidor(distribuidor.getJuridica().getRazaoSocial());
-			ndsFileHeader.setCnpjDistribuidor(distribuidor.getJuridica().getCnpj());
-		}
-		
-		ndsFileHeader.setData(new Date());
-		
-		ndsFileHeader.setNomeUsuario(this.getUsuario().getNome());
-		
-		return ndsFileHeader;
 	}
 	
 	/**
@@ -641,18 +615,6 @@ public class ResumoExpedicaoController {
 		listaTipoResumo.add( new ItemDTO<TipoPesquisaResumoExpedicao, String>(TipoPesquisaResumoExpedicao.PRODUTO,TipoPesquisaResumoExpedicao.PRODUTO.getNome()));
 		
 		result.include("listaTipoResumo",listaTipoResumo );
-	}
-	
-	//TODO: não há como reconhecer usuario, ainda
-	private Usuario getUsuario() {
-		
-		Usuario usuario = new Usuario();
-		
-		usuario.setId(1L);
-		
-		usuario.setNome("Jornaleiro da Silva");
-		
-		return usuario;
 	}
 	
 	@Get

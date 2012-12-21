@@ -20,6 +20,7 @@ import br.com.abril.nds.client.vo.RegistroCurvaABCExportacaoDistribuidorVO;
 import br.com.abril.nds.client.vo.RegistroHistoricoEditorVO;
 import br.com.abril.nds.client.vo.ResultadoCurvaABCDistribuidor;
 import br.com.abril.nds.client.vo.ResultadoCurvaABCEditor;
+import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.RegistroCurvaABCCotaDTO;
 import br.com.abril.nds.dto.ResultadoCurvaABCCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCCotaDTO;
@@ -29,10 +30,8 @@ import br.com.abril.nds.dto.filtro.FiltroCurvaABCEditorDTO;
 import br.com.abril.nds.dto.filtro.FiltroPesquisarHistoricoEditorDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
-import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.seguranca.Permissao;
-import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.EditorService;
 import br.com.abril.nds.service.EnderecoService;
@@ -46,7 +45,6 @@ import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
-import br.com.abril.nds.util.export.NDSFileHeader;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Get;
@@ -62,7 +60,7 @@ import br.com.caelum.vraptor.view.Results;
  */
 @Resource
 @Path("/lancamento/relatorioVendas")
-public class RelatorioVendasController {
+public class RelatorioVendasController extends BaseController {
 
 	@Autowired
 	private Result result;
@@ -940,44 +938,4 @@ public class RelatorioVendasController {
 			filtro.setOrdenacaoColuna(Util.getEnumByStringValue(FiltroPesquisarHistoricoEditorDTO.ColunaOrdenacaoPesquisarHistoricoEditorDTO.values(), sortname));
 		}
 	}
-
-	/**
-	 * Obtém os dados do cabeçalho de exportação.
-	 * @return
-	 */
-	private NDSFileHeader getNDSFileHeader() {
-		
-		NDSFileHeader ndsFileHeader = new NDSFileHeader();
-		
-		Distribuidor distribuidor = this.distribuidorService.obter();
-		
-		if (distribuidor != null) {
-			
-			ndsFileHeader.setNomeDistribuidor(distribuidor.getJuridica().getRazaoSocial());
-			ndsFileHeader.setCnpjDistribuidor(distribuidor.getJuridica().getCnpj());
-		}
-		
-		ndsFileHeader.setData(new Date());
-		
-		ndsFileHeader.setNomeUsuario(this.getUsuario().getNome());
-		
-		return ndsFileHeader;
-	}
-	
-	/**
-	 * Retorna o usuário logado
-	 * @return
-	 */
-	//TODO: Implementar quando a segurança for implementada
-	private Usuario getUsuario() {
-		
-		Usuario usuario = new Usuario();
-		
-		usuario.setId(1L);
-		
-		usuario.setNome("Jornaleiro da Silva");
-		
-		return usuario;
-	}
-	
 }

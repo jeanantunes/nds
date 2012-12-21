@@ -8,6 +8,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
+import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.FuroProdutoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Produto;
@@ -30,7 +31,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/lancamento/furoProduto")
-public class FuroProdutoController {
+public class FuroProdutoController extends BaseController {
 
 	@Autowired
 	private ProdutoEdicaoService produtoEdicaoService;
@@ -175,7 +176,7 @@ public class FuroProdutoController {
 
 		this.furoProdutoService.validarFuroProduto(codigoProduto, 
 				idProdutoEdicao, idLancamento, 
-				new SimpleDateFormat(Constantes.DATE_PATTERN_PT_BR).parse(novaData), this.getIdUsuario());
+				new SimpleDateFormat(Constantes.DATE_PATTERN_PT_BR).parse(novaData), getUsuarioLogado().getId());
 
 		boolean produtoExpedido = this.furoProdutoService.verificarProdutoExpedido(idLancamento);
 		
@@ -196,7 +197,7 @@ public class FuroProdutoController {
 		try {
 			this.furoProdutoService.efetuarFuroProduto(codigoProduto, 
 					idProdutoEdicao, idLancamento, 
-					new SimpleDateFormat(Constantes.DATE_PATTERN_PT_BR).parse(novaData), this.getIdUsuario());
+					new SimpleDateFormat(Constantes.DATE_PATTERN_PT_BR).parse(novaData), getUsuarioLogado().getId());
 			
 			result.use(Results.json()).from(
 					new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."), 
@@ -250,10 +251,5 @@ public class FuroProdutoController {
 			ValidacaoVO validacaoVO = new ValidacaoVO(TipoMensagem.ERROR, listaMensagemValidacao);
 			throw new ValidacaoException(validacaoVO);
 		}
-	}
-	
-	private Long getIdUsuario() {
-		// TODO pendente
-		return 1L;
 	}
 }

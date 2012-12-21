@@ -6,7 +6,6 @@ import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +20,7 @@ import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.util.PessoaUtil;
 import br.com.abril.nds.client.vo.ContaCorrenteCotaVO;
 import br.com.abril.nds.client.vo.FooterTotalFornecedorVO;
+import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.ConsignadoCotaDTO;
 import br.com.abril.nds.dto.ConsultaVendaEncalheDTO;
 import br.com.abril.nds.dto.EncalheCotaDTO;
@@ -34,14 +34,12 @@ import br.com.abril.nds.dto.filtro.FiltroViewContaCorrenteCotaDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Cota;
-import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.financeiro.ConsolidadoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.ViewContaCorrenteCota;
 import br.com.abril.nds.model.seguranca.Permissao;
-import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.ConsolidadoFinanceiroService;
 import br.com.abril.nds.service.ContaCorrenteCotaService;
@@ -57,7 +55,6 @@ import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
-import br.com.abril.nds.util.export.NDSFileHeader;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Path;
@@ -67,7 +64,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/financeiro/contaCorrenteCota")
-public class ContaCorrenteCotaController {
+public class ContaCorrenteCotaController extends BaseController {
 
 	@Autowired
 	private Result result;
@@ -522,44 +519,6 @@ public class ContaCorrenteCotaController {
 					listaMensagemValidacao);
 			throw new ValidacaoException(validacaoVO);
 		}
-	}
-
-	/*
-	 * Obtém os dados do cabeçalho de exportação.
-	 * 
-	 * @return NDSFileHeader
-	 */
-	private NDSFileHeader getNDSFileHeader() {
-
-		NDSFileHeader ndsFileHeader = new NDSFileHeader();
-
-		Distribuidor distribuidor = this.distribuidorService.obter();
-
-		if (distribuidor != null) {
-
-			ndsFileHeader.setNomeDistribuidor(distribuidor.getJuridica()
-					.getRazaoSocial());
-			ndsFileHeader.setCnpjDistribuidor(distribuidor.getJuridica()
-					.getCnpj());
-		}
-
-		ndsFileHeader.setData(new Date());
-
-		ndsFileHeader.setNomeUsuario(this.getUsuario().getNome());
-
-		return ndsFileHeader;
-	}
-
-	// TODO: não há como reconhecer usuario, ainda
-	private Usuario getUsuario() {
-
-		Usuario usuario = new Usuario();
-
-		usuario.setId(1L);
-
-		usuario.setNome("Jornaleiro da Silva");
-
-		return usuario;
 	}
 
 	public void obterMovimentoVendaEncalhe(Long idConsolidado, String sortname, String sortorder, int rp, int page) {

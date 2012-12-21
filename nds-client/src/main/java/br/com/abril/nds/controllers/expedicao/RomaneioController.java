@@ -16,6 +16,7 @@ import net.sf.jasperreports.engine.JRException;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
+import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.RomaneioDTO;
 import br.com.abril.nds.dto.filtro.FiltroRomaneioDTO;
@@ -44,7 +45,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/romaneio")
-public class RomaneioController {
+public class RomaneioController extends BaseController {
 	
 	private static final String FILTRO_SESSION_ATTRIBUTE_ROMANEIOS = "filtroRomaneio";
 	

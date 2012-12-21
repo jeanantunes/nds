@@ -2,7 +2,6 @@ package br.com.abril.nds.controllers.lancamento;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
@@ -11,16 +10,15 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
+import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.LancamentoPorEdicaoDTO;
 import br.com.abril.nds.dto.VendaProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroVendaProdutoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
-import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.seguranca.Permissao;
-import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.VendaProdutoService;
 import br.com.abril.nds.util.CellModelKeyValue;
@@ -28,7 +26,6 @@ import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
-import br.com.abril.nds.util.export.NDSFileHeader;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
@@ -39,7 +36,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/lancamento/vendaProduto")
-public class VendaProdutoController {
+public class VendaProdutoController extends BaseController {
 	
 	private static final String FILTRO_SESSION_ATTRIBUTE = "filtroVendaProduto";
 	
@@ -195,25 +192,6 @@ public class VendaProdutoController {
 		result.nothing();
 	}
 	
-	private NDSFileHeader getNDSFileHeader() {
-		
-		NDSFileHeader ndsFileHeader = new NDSFileHeader();
-		
-		Distribuidor distribuidor = this.distribuidorService.obter();
-		
-		if (distribuidor != null) {
-			
-			ndsFileHeader.setNomeDistribuidor(distribuidor.getJuridica().getRazaoSocial());
-			ndsFileHeader.setCnpjDistribuidor(distribuidor.getJuridica().getCnpj());
-		}
-		
-		ndsFileHeader.setData(new Date());
-		
-		ndsFileHeader.setNomeUsuario(this.getUsuario().getNome());
-		
-		return ndsFileHeader;
-	}
-	
 	private void carregarComboFornecedores() {
 		
 		List<Fornecedor> listaFornecedor = fornecedorService.obterFornecedoresAtivos();
@@ -225,13 +203,6 @@ public class VendaProdutoController {
 		}
 		
 		result.include("listaFornecedores",listaFornecedoresCombo );
-	}
-	
-	public Usuario getUsuario() {
-		Usuario usuario = new Usuario();
-		usuario.setId(1L);
-		usuario.setNome("Lazaro Jornaleiro");
-		return usuario;
 	}
 	
 	private void tratarFiltro(FiltroVendaProdutoDTO filtroAtual) {
