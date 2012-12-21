@@ -22,7 +22,7 @@ public interface RecebimentoFisicoService {
 	 
 	 List<TipoNotaFiscal> obterTiposNotasFiscais(TipoOperacao tipoOperacao);
 	 
-	 void confirmarRecebimentoFisico(Usuario usuarioLogado, NotaFiscalEntrada notaFiscal,  List<RecebimentoFisicoDTO> listaItensNota, Date dataAtual);
+	 void confirmarRecebimentoFisico(Usuario usuarioLogado, NotaFiscalEntrada notaFiscal,  List<RecebimentoFisicoDTO> listaItensNota, Date dataAtual, Boolean pularValidacao);
 	 
 	 void cancelarNotaFiscal(Long idNotaFiscal);
 	 

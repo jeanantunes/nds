@@ -1192,7 +1192,7 @@ public class RecebimentoFisicoController {
 			atualizarItensRecebimentoEmSession(itensRecebimento);
 		}
 		
-		recebimentoFisicoService.confirmarRecebimentoFisico(getUsuarioLogado(), getNotaFiscalFromSession(), getItensRecebimentoFisicoFromSession(), new Date());
+		recebimentoFisicoService.confirmarRecebimentoFisico(getUsuarioLogado(), getNotaFiscalFromSession(), getItensRecebimentoFisicoFromSession(), new Date(),false);
 		
 		List<String> msgs = new ArrayList<String>();
 		msgs.add("Itens Confirmados com Sucesso.");
@@ -1460,8 +1460,10 @@ public class RecebimentoFisicoController {
 		}
 
 		try{
+			
 			recebimentoFisicoService.validarExisteNotaFiscal(notaFiscal);
-		    recebimentoFisicoService.inserirDadosRecebimentoFisico(getUsuarioLogado(), notaFiscal, itens, new Date());
+		    
+			recebimentoFisicoService.confirmarRecebimentoFisico(getUsuarioLogado(), notaFiscal, itens, new Date(), true);
 		}
 		catch(Exception e){
 			if (e instanceof ValidacaoException) {

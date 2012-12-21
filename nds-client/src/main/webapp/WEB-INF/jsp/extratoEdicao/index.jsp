@@ -8,7 +8,7 @@
 
 <script type="text/javascript">
 
-var pesquisaProdutoExtratoEdicao = new PesquisaProduto();
+var pesquisaProdutoExtratoEdicao = new PesquisaProduto(jsExtratoEdicao.workspace);
 
 $(function(){
 	jsExtratoEdicao.init(pesquisaProdutoExtratoEdicao);
