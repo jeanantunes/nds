@@ -405,14 +405,14 @@ public class MapaAbastecimentoController {
 	public void impressaoPorBox(FiltroMapaAbastecimentoDTO filtro) {
 		
 		HashMap<String, ProdutoMapaDTO> produtosMapa = mapaAbastecimentoService.obterMapaDeImpressaoPorBox(filtro);
-		
+		setaNomeParaImpressao();
 		result.include("produtosMapa",produtosMapa.values());
 	}
 	
 	public void impressaoPorRota(FiltroMapaAbastecimentoDTO filtro) {
 		
 		HashMap<Integer, HashMap<String, ProdutoMapaRotaDTO>> produtosMapa = mapaAbastecimentoService.obterMapaDeImpressaoPorBoxRota(filtro);
-		
+		setaNomeParaImpressao();
 		result.include("mapa",produtosMapa);
 		
 	}
@@ -420,7 +420,7 @@ public class MapaAbastecimentoController {
 	public void impressaoPorProduto(FiltroMapaAbastecimentoDTO filtro) {
 		
 		MapaCotaDTO mapaCota = mapaAbastecimentoService.obterMapaDeImpressaoPorCota(filtro);
-		
+		setaNomeParaImpressao();
 		result.include("mapa", mapaCota);
 		
 	}
@@ -446,7 +446,7 @@ public class MapaAbastecimentoController {
 	public void impressaoPorCota(FiltroMapaAbastecimentoDTO filtro) {
 				
 		MapaCotaDTO mapaCota = mapaAbastecimentoService.obterMapaDeImpressaoPorCota(filtro);
-		
+		setaNomeParaImpressao();
 		result.include("mapa", mapaCota);
 		
 	}
@@ -454,7 +454,7 @@ public class MapaAbastecimentoController {
 	public void impressaoPorProdutoEdicao(FiltroMapaAbastecimentoDTO filtro) {		
 
 		ProdutoEdicaoMapaDTO produtoEdicaoMapa = mapaAbastecimentoService.obterMapaDeImpressaoPorProdutoEdicao(filtro);
-		
+		setaNomeParaImpressao();
 		result.include("mapa",produtoEdicaoMapa);
 		
 	}
@@ -462,12 +462,17 @@ public class MapaAbastecimentoController {
 	public void impressaoPorProdutoQuebraCota(FiltroMapaAbastecimentoDTO filtro) {		
 
 		MapaProdutoCotasDTO produtoCotaMapa = mapaAbastecimentoService.obterMapaDeImpressaoPorProdutoQuebrandoPorCota(filtro);
-		
+		setaNomeParaImpressao();
 		result.include("mapa",produtoCotaMapa);
 		
 	}
 	
+	private void setaNomeParaImpressao() {
+		result.include("nomeDistribuidor", distribuidorService.obter().getJuridica().getRazaoSocial());
+	}
+	
 	public void impressaoFalha(String mensagemErro){
+		setaNomeParaImpressao();
 		result.include(mensagemErro);					
 	}
 
