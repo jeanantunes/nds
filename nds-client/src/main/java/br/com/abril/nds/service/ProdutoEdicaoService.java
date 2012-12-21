@@ -156,4 +156,6 @@ public interface ProdutoEdicaoService {
 	 */
 	public ProdutoEdicaoDTO obterProdutoEdicaoDTO(String codigoProduto, String idProdutoEdicao);
 
+	public ProdutoEdicao buscarPorID(Long idProdutoEdicao);
+
 }

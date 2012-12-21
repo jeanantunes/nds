@@ -177,6 +177,12 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 		return diferenca;
 	}
 	
+	@Override
+	@Transactional
+	public void gerarMovimentoEstoqueDiferenca(Diferenca diferenca, Long idUsuario) {
+		gerarMovimentoEstoque(diferenca, idUsuario);
+	}
+	
 	@Transactional
 	public void efetuarAlteracoes(Set<Diferenca> listaNovasDiferencas,
 			 					  Map<Long, List<RateioCotaVO>> mapaRateioCotas,
