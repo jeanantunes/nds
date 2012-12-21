@@ -429,6 +429,7 @@ public class FollowupController {
 	}
 		
 	@Get
+	
 	public void exportar(FileType fileType, String tipoExportacao) throws IOException {
 		
 		if(tipoExportacao.equals("negociacao")){
