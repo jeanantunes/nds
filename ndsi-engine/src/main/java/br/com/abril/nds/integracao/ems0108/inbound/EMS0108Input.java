@@ -6,6 +6,7 @@ import java.util.Date;
 
 import com.ancientprogramming.fixedformat4j.annotation.Field;
 import com.ancientprogramming.fixedformat4j.annotation.FixedFormatDecimal;
+import com.ancientprogramming.fixedformat4j.annotation.FixedFormatPattern;
 import com.ancientprogramming.fixedformat4j.annotation.Record;
 
 @Record
@@ -67,6 +68,7 @@ public class EMS0108Input implements Serializable {
 	}
 
 	@Field(offset = 25, length = 8)
+	@FixedFormatPattern("yyyyMMdd")
 	public Date getDataLancamentoRecolhimentoProduto() {
 		return dataLancamentoRecolhimentoProduto;
 	}
