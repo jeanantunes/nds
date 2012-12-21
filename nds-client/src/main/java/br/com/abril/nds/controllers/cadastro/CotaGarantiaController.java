@@ -4,8 +4,11 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+
 import org.apache.poi.util.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.CotaGarantiaDTO;
 import br.com.abril.nds.dto.FormaCobrancaCaucaoLiquidaDTO;
 import br.com.abril.nds.dto.ImovelDTO;
@@ -42,7 +45,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/cadastro/garantia")
-public class CotaGarantiaController {
+public class CotaGarantiaController extends BaseController {
 
 	@Autowired
 	private CotaGarantiaService cotaGarantiaService;

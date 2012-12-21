@@ -14,9 +14,10 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.util.NFEImportUtil;
 import br.com.abril.nds.client.vo.RecebimentoFisicoVO;
-import br.com.abril.nds.client.annotation.Rules;
+import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.CabecalhoNotaDTO;
 import br.com.abril.nds.dto.RecebimentoFisicoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaNotaFiscalDTO;
@@ -36,7 +37,6 @@ import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Permissao;
-import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.CFOPService;
 import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.service.FornecedorService;
@@ -65,7 +65,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/estoque/recebimentoFisico")
-public class RecebimentoFisicoController {
+public class RecebimentoFisicoController extends BaseController {
 	
 	private Result result;
 
@@ -1406,11 +1406,6 @@ public class RecebimentoFisicoController {
 		else{
 			throw new ValidacaoException(TipoMensagem.WARNING, "Não há ítens na nota!");
 		}
-	}
-	
-	//TODO
-	private Usuario getUsuarioLogado(){
-		return usuarioService.getUsuarioLogado();
 	}
 	
 	/**

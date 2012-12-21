@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.VisaoEstoqueConferenciaCegaVO;
+import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.VisaoEstoqueDTO;
 import br.com.abril.nds.dto.VisaoEstoqueDetalheDTO;
 import br.com.abril.nds.dto.VisaoEstoqueDetalheJuramentadoDTO;
@@ -22,7 +23,6 @@ import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.model.seguranca.Permissao;
-import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.VisaoEstoqueService;
@@ -31,7 +31,6 @@ import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
-import br.com.abril.nds.util.export.NDSFileHeader;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Path;
@@ -41,7 +40,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("estoque/visaoEstoque")
-public class VisaoEstoqueController {
+public class VisaoEstoqueController extends BaseController {
 	
 	private static final String FILTRO_VISAO_ESTOQUE = "FILTRO_VISAO_ESTOQUE";
 	private static final String LISTA_CONFERENCIA_CEGA = "LISTA_CONFERENCIA_CEGA";
@@ -123,7 +122,7 @@ public class VisaoEstoqueController {
 		filtro.setGrupoMovimentoEntrada(this.getGrupoMovimentoTransferencia(entrada, true));
 		filtro.setGrupoMovimentoSaida(this.getGrupoMovimentoTransferencia(saida, false));
 
-		this.visaoEstoqueService.transferirEstoque(filtro, this.getUsuario());
+		this.visaoEstoqueService.transferirEstoque(filtro, this.getUsuarioLogado());
 		
 		this.pesquisar(filtro);
 	}
@@ -158,7 +157,7 @@ public class VisaoEstoqueController {
 		TipoEstoque tipoEstoque = Util.getEnumByStringValue(TipoEstoque.values(), filtro.getTipoEstoque());
 		
 		this.visaoEstoqueService.atualizarInventarioEstoque(
-			filtro.getListaTransferencia(), tipoEstoque, this.getUsuario()
+			filtro.getListaTransferencia(), tipoEstoque, this.getUsuarioLogado()
 		);
 
 		ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.SUCCESS, "Atualização de inventário concluída com sucesso.");
@@ -234,29 +233,13 @@ public class VisaoEstoqueController {
 		List<VisaoEstoqueConferenciaCegaVO> listaExport = (List<VisaoEstoqueConferenciaCegaVO>) this.session.getAttribute(LISTA_CONFERENCIA_CEGA);
 		
 		FileExporter.to("visao-estoque-conferencia-cega", fileType).inHTTPResponse(
-				this.getNDSFileHeader(new Date()), null, null,
+				getNDSFileHeader(), null, null,
 				listaExport, VisaoEstoqueConferenciaCegaVO.class,
 				this.httpServletResponse);
 		
 		result.use(Results.nothing());
 	}
-	
-	
-	private NDSFileHeader getNDSFileHeader(Date data) {
-
-		NDSFileHeader ndsFileHeader = new NDSFileHeader();
-		Distribuidor distribuidor = distribuidorService.obter();
-
-		if (distribuidor != null) {
-			ndsFileHeader.setNomeDistribuidor(distribuidor.getJuridica().getRazaoSocial());
-			ndsFileHeader.setCnpjDistribuidor(distribuidor.getJuridica().getCnpj());
-		}
-
-		ndsFileHeader.setData(data);
-		ndsFileHeader.setNomeUsuario(getUsuario().getNome());
-		return ndsFileHeader;
-	}
-	
+		
 	private void atualizarDataMovimentacao(FiltroConsultaVisaoEstoque filtro) {
 		
 		Distribuidor distribuidor = this.distribuidorService.obter();
@@ -270,13 +253,4 @@ public class VisaoEstoqueController {
 		}
 	}
 	
-	// TODO: não há como reconhecer usuario, ainda
-	private Usuario getUsuario() {
-
-		Usuario usuario = new Usuario();
-		usuario.setId(1L);
-		usuario.setNome("Jornaleiro da Silva");
-
-		return usuario;
-	}
 }

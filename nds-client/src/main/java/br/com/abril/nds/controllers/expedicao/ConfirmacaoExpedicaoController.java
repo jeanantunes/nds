@@ -12,11 +12,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import br.com.abril.nds.client.annotation.Rules;
+import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.LancamentoNaoExpedidoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.seguranca.Permissao;
-import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
@@ -35,7 +35,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/confirmacaoExpedicao")
-public class ConfirmacaoExpedicaoController {
+public class ConfirmacaoExpedicaoController extends BaseController{
 
 		private final Result result;
 		private final HttpSession session;
@@ -192,7 +192,7 @@ public class ConfirmacaoExpedicaoController {
 					throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, NENHUM_REGISTRO_SELECIONADO));
 				} 
 				
-				lancamentoService.confirmarExpedicoes(selecionados,getUsuario().getId());
+				lancamentoService.confirmarExpedicoes(selecionados,getUsuarioLogado().getId());
 			
 				mensagens.add(CONFIRMACAO_EXPEDICAO_SUCESSO);
 				
@@ -232,18 +232,7 @@ public class ConfirmacaoExpedicaoController {
 			result.use(Results.json()).withoutRoot().from(retorno).recursive().serialize();
 		}
 		
-		/**
-		 * Método que obtém o usuário logado
-		 * 
-		 * @return usuário logado
-		 */
-		public Usuario getUsuario() {
-			//TODO getUsuario
-			Usuario usuario = new Usuario();
-			usuario.setId(1L);
-			return usuario;
-		}
-		
+	
 		/**
 		 * Gera a data de lancamento como data atual
 		 */

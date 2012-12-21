@@ -24,6 +24,7 @@ import br.com.abril.nds.client.job.StatusCotaJob;
 import br.com.abril.nds.client.util.PessoaUtil;
 import br.com.abril.nds.client.vo.CotaVO;
 import br.com.abril.nds.client.vo.HistoricoSituacaoCotaVO;
+import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.CotaGarantiaDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.ItemDTO;
@@ -41,7 +42,6 @@ import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantia;
 import br.com.abril.nds.model.seguranca.Permissao;
-import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.CotaGarantiaService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DividaService;
@@ -72,7 +72,7 @@ import br.com.caelum.vraptor.view.Results;
 @SuppressWarnings("deprecation")
 @Resource
 @Path("/financeiro/manutencaoStatusCota")
-public class ManutencaoStatusCotaController {
+public class ManutencaoStatusCotaController extends BaseController {
 
 	@Autowired
 	private Result result;
@@ -153,7 +153,7 @@ public class ManutencaoStatusCotaController {
 		
 		novoHistoricoSituacaoCota.setTipoEdicao(TipoEdicao.INCLUSAO);
 		
-		novoHistoricoSituacaoCota.setResponsavel(this.getUsuario());
+		novoHistoricoSituacaoCota.setResponsavel(this.getUsuarioLogado());
 		
 		novoHistoricoSituacaoCota.setSituacaoAnterior(
 			novoHistoricoSituacaoCota.getCota().getSituacaoCadastro());
@@ -574,17 +574,4 @@ public class ManutencaoStatusCotaController {
 
 		result.use(Results.json()).from(validacao!=null?validacao:"", "result").recursive().serialize();
 	}	
-	
-	//TODO: não há como reconhecer usuario, ainda
-	private Usuario getUsuario() {
-		
-		Usuario usuario = new Usuario();
-		
-		usuario.setId(1L);
-		
-		usuario.setNome("Jornaleiro da Silva");
-		
-		return usuario;
-	}
-	
 }

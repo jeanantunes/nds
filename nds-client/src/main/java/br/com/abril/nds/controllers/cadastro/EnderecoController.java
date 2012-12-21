@@ -8,6 +8,7 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.util.PaginacaoUtil;
+import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.EnderecoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -36,7 +37,7 @@ import br.com.caelum.vraptor.view.Results;
  */
 @Resource
 @Path("/cadastro/endereco")
-public class EnderecoController {
+public class EnderecoController extends BaseController {
 
 	/**
 	 * Constante que representa o nome do atributo com a lista de endereços 

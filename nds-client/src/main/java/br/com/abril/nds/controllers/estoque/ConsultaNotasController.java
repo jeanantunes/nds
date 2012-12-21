@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.ConsultaNotaFiscalVO;
 import br.com.abril.nds.client.vo.ResultadoConsultaDetallheNFVO;
+import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.DetalheItemNotaFiscalDTO;
 import br.com.abril.nds.dto.DetalheNotaFiscalDTO;
 import br.com.abril.nds.dto.ItemDTO;
@@ -34,7 +35,6 @@ import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.seguranca.Permissao;
-import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.NotaFiscalEntradaService;
 import br.com.abril.nds.service.TipoNotaFiscalService;
@@ -46,7 +46,6 @@ import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
-import br.com.abril.nds.util.export.NDSFileHeader;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.PeriodoVO;
 import br.com.abril.nds.vo.ValidacaoVO;
@@ -64,7 +63,7 @@ import br.com.caelum.vraptor.view.Results;
  */
 @Resource
 @Path("/estoque/consultaNotas")
-public class ConsultaNotasController {
+public class ConsultaNotasController extends BaseController {
 	
 	/**
 	 * Indicador para nota recebida.
@@ -494,41 +493,5 @@ public class ConsultaNotasController {
 
 		return new PeriodoVO(DateUtil.parseData(dataInicial, "dd/MM/yyyy"), DateUtil.parseData(dataFinal, "dd/MM/yyyy"));
 	}
-	
-	/**
-	 * Obtém os dados do cabeçalho de exportação.
-	 * 
-	 * @return NDSFileHeader
-	 */
-	private NDSFileHeader getNDSFileHeader() {
-		
-		NDSFileHeader ndsFileHeader = new NDSFileHeader();
-		
-		Distribuidor distribuidor = this.distribuidorService.obter();
-		
-		if (distribuidor != null) {
-			
-			ndsFileHeader.setNomeDistribuidor(distribuidor.getJuridica().getRazaoSocial());
-			ndsFileHeader.setCnpjDistribuidor(distribuidor.getJuridica().getCnpj());
-		}
-		
-		ndsFileHeader.setData(new Date());
-		
-		ndsFileHeader.setNomeUsuario(this.getUsuario().getNome());
-		
-		return ndsFileHeader;
-	}
-	
-	//TODO: não há como reconhecer usuario, ainda
-	private Usuario getUsuario() {
-		
-		Usuario usuario = new Usuario();
-		
-		usuario.setId(1L);
-		
-		usuario.setNome("Jornaleiro da Silva");
-		
-		return usuario;
-	}
-	
+
 }

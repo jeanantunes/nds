@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.util.PessoaUtil;
+import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.service.EntregadorService;
 import br.com.abril.nds.service.FiadorService;
@@ -21,7 +22,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/pessoa")
-public class PessoaController {
+public class PessoaController extends BaseController {
 	
 	@Autowired
 	private Result result;

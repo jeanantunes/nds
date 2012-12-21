@@ -17,8 +17,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.DividaGeradaVO;
+import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.GeraDividaDTO;
-import br.com.abril.nds.dto.InfoConferenciaEncalheCota;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.filtro.FiltroDividaGeradaDTO;
 import br.com.abril.nds.exception.GerarCobrancaValidacaoException;
@@ -35,7 +35,6 @@ import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.seguranca.Permissao;
-import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.service.BoxService;
 import br.com.abril.nds.service.CotaService;
@@ -51,7 +50,6 @@ import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
-import br.com.abril.nds.util.export.NDSFileHeader;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Get;
@@ -63,7 +61,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/financeiro/impressaoBoletos")
-public class ImpressaoBoletosController {
+public class ImpressaoBoletosController extends BaseController {
 
 	private static final String FILTRO_SESSION_ATTRIBUTE = "pesquisaGeraDivida";
 
@@ -258,7 +256,7 @@ public class ImpressaoBoletosController {
 	public void gerarDivida() throws IOException {
 
 		try {
-			this.gerarCobrancaService.gerarCobranca(null, this.getUsuario()
+			this.gerarCobrancaService.gerarCobranca(null, this.getUsuarioLogado()
 					.getId(), new HashSet<String>());
 		} catch (GerarCobrancaValidacaoException e) {
 
@@ -673,44 +671,6 @@ public class ImpressaoBoletosController {
 		if (!DateUtil.isValidDate(dataMovimento, "dd/MM/yyyy")) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Data inválida.");
 		}
-	}
-
-	/*
-	 * Obtém os dados do cabeçalho de exportação.
-	 * 
-	 * @return NDSFileHeader
-	 */
-	private NDSFileHeader getNDSFileHeader() {
-
-		NDSFileHeader ndsFileHeader = new NDSFileHeader();
-
-		Distribuidor distribuidor = this.distribuidorService.obter();
-
-		if (distribuidor != null) {
-
-			ndsFileHeader.setNomeDistribuidor(distribuidor.getJuridica()
-					.getRazaoSocial());
-			ndsFileHeader.setCnpjDistribuidor(distribuidor.getJuridica()
-					.getCnpj());
-		}
-
-		ndsFileHeader.setData(new Date());
-
-		ndsFileHeader.setNomeUsuario(this.getUsuario().getNome());
-
-		return ndsFileHeader;
-	}
-
-	// TODO: não há como reconhecer usuario, ainda
-	private Usuario getUsuario() {
-
-		Usuario usuario = new Usuario();
-
-		usuario.setId(1L);
-
-		usuario.setNome("Jornaleiro da Silva");
-
-		return usuario;
 	}
 
 	@Post

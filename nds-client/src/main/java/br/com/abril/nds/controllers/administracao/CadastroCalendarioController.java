@@ -16,10 +16,10 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
+import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.CalendarioFeriadoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.TipoFeriado;
-import br.com.abril.nds.model.dne.Localidade;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
@@ -36,7 +36,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/administracao/cadastroCalendario")
-public class CadastroCalendarioController {
+public class CadastroCalendarioController extends BaseController {
 	
 	@Autowired
 	private CalendarioService calendarioService;

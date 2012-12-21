@@ -19,6 +19,7 @@ import br.com.abril.nds.client.vo.DigitacaoContagemDevolucaoVO;
 import br.com.abril.nds.client.vo.ProdutoEdicaoFechadaVO;
 import br.com.abril.nds.client.vo.RegistroEdicoesFechadasVO;
 import br.com.abril.nds.client.vo.ResultadoDigitacaoContagemDevolucaoVO;
+import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.ContagemDevolucaoConferenciaCegaDTO;
 import br.com.abril.nds.dto.ContagemDevolucaoDTO;
 import br.com.abril.nds.dto.InfoContagemDevolucaoDTO;
@@ -30,7 +31,6 @@ import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.seguranca.Permissao;
-import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.ContagemDevolucaoService;
 import br.com.abril.nds.service.EdicoesFechadasService;
@@ -47,7 +47,6 @@ import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
-import br.com.abril.nds.util.export.NDSFileHeader;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Get;
@@ -69,7 +68,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path(value="/devolucao/digitacao/contagem")
-public class DigitacaoContagemDevolucaoController  {
+public class DigitacaoContagemDevolucaoController extends BaseController {
 	
 	@Autowired
 	private FornecedorService fornecedorService;
@@ -277,35 +276,7 @@ public class DigitacaoContagemDevolucaoController  {
 		
 	}
 	
-	/*
-	 * Obtém os dados do cabeçalho de exportação.
-	 * 
-	 * @return NDSFileHeader
-	 */
-	private NDSFileHeader getNDSFileHeader() {
-		
-		NDSFileHeader ndsFileHeader = new NDSFileHeader();
-		
-		Distribuidor distribuidor = this.distribuidorService.obter();
-		
-		if (distribuidor != null) {
-			
-			ndsFileHeader.setNomeDistribuidor(distribuidor.getJuridica().getRazaoSocial());
-			ndsFileHeader.setCnpjDistribuidor(distribuidor.getJuridica().getCnpj());
-		}
-		
-		ndsFileHeader.setData(new Date());
-		
-		ndsFileHeader.setNomeUsuario(this.getUsuario().getNome());
-		
-		return ndsFileHeader;
-	}
-	
-	//TODO: não há como reconhecer usuario, ainda
-	private Usuario getUsuario() {
-		return usuarioService.getUsuarioLogado();
-	}
-	
+
 	//TODO: não há como reconhecer usuario, ainda
 	private boolean isPerfilUsuarioEncarregado() {
 		return true;
@@ -399,7 +370,7 @@ public class DigitacaoContagemDevolucaoController  {
 		
 		List<ContagemDevolucaoDTO> listaContagemDevolucaoDTO = getListaContagemDevolucaoDTO(listaDigitacaoContagemDevolucao);
 		
-		contagemDevolucaoService.inserirListaContagemDevolucao(listaContagemDevolucaoDTO, getUsuario(), isPerfilUsuarioEncarregado());
+		contagemDevolucaoService.inserirListaContagemDevolucao(listaContagemDevolucaoDTO, getUsuarioLogado(), isPerfilUsuarioEncarregado());
 		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
 										Constantes.PARAM_MSGS).recursive().serialize();
@@ -418,7 +389,7 @@ public class DigitacaoContagemDevolucaoController  {
 		
 		List<ContagemDevolucaoDTO> listaContagemDevolucaoDTO = getListaContagemDevolucaoDTO(listaDigitacaoContagemDevolucao);
 		
-		contagemDevolucaoService.confirmarContagemDevolucao(listaContagemDevolucaoDTO, getUsuario());
+		contagemDevolucaoService.confirmarContagemDevolucao(listaContagemDevolucaoDTO, getUsuarioLogado());
 		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
 										Constantes.PARAM_MSGS).recursive().serialize();

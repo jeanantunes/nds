@@ -12,6 +12,7 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
+import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.ConsultaFollowupCadastroDTO;
 import br.com.abril.nds.dto.ConsultaFollowupCadastroParcialDTO;
 import br.com.abril.nds.dto.ConsultaFollowupChamadaoDTO;
@@ -26,9 +27,7 @@ import br.com.abril.nds.dto.filtro.FiltroFollowupPendenciaNFeDTO;
 import br.com.abril.nds.dto.filtro.FiltroFollowupStatusCotaDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
-import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.seguranca.Permissao;
-import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.FollowupCadastroParcialService;
 import br.com.abril.nds.service.FollowupCadastroService;
 import br.com.abril.nds.service.FollowupChamadaoService;
@@ -43,7 +42,6 @@ import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
-import br.com.abril.nds.util.export.NDSFileHeader;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Get;
@@ -61,7 +59,7 @@ import br.com.caelum.vraptor.view.Results;
  */
 @Resource
 @Path("/followup")
-public class FollowupController {
+public class FollowupController extends BaseController {
 
 	@Autowired
 	private Result result;
@@ -528,32 +526,6 @@ public class FollowupController {
 		} 
 		
 		result.nothing();
-	}
-	
-	private NDSFileHeader getNDSFileHeader() {
-		
-		NDSFileHeader ndsFileHeader = new NDSFileHeader();
-		
-		Distribuidor distribuidor = this.distribuidorService.obter();
-		
-		if (distribuidor != null) {
-			
-			ndsFileHeader.setNomeDistribuidor(distribuidor.getJuridica().getRazaoSocial());
-			ndsFileHeader.setCnpjDistribuidor(distribuidor.getJuridica().getCnpj());
-		}
-		
-		ndsFileHeader.setData(new Date());
-		
-		ndsFileHeader.setNomeUsuario(this.getUsuario().getNome());
-		
-		return ndsFileHeader;
-	}
-	
-	public Usuario getUsuario() {
-		Usuario usuario = new Usuario();
-		usuario.setId(1L);
-		usuario.setNome("Lazaro Jornaleiro");
-		return usuario;
 	}
 	
 	public BigDecimal getValorConsignadoSuspensaoCotas() {

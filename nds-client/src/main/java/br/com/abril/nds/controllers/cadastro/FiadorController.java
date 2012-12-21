@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.util.PessoaUtil;
+import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.controllers.cadastro.CotasAssociadasController.AssociacaoCota;
 import br.com.abril.nds.controllers.cadastro.GarantiasController.GarantiaCadastrada;
 import br.com.abril.nds.controllers.cadastro.SociosController.SocioCadastrado;
@@ -37,7 +38,6 @@ import br.com.abril.nds.service.PessoaService;
 import br.com.abril.nds.service.TelefoneService;
 import br.com.abril.nds.util.CellModel;
 import br.com.abril.nds.util.DateUtil;
-import br.com.abril.nds.util.ItemAutoComplete;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
@@ -57,7 +57,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/cadastro/fiador")
-public class FiadorController {
+public class FiadorController extends BaseController {
 	
 	public static final String LISTA_TELEFONES_SALVAR_SESSAO = "listaTelefonesSalvarSessaoFiador";
 	

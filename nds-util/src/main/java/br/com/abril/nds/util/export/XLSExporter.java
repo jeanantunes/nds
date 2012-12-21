@@ -31,6 +31,8 @@ import org.apache.poi.ss.util.WorkbookUtil;
 import org.apache.poi.util.IOUtils;
 
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.ImageUtil;
+import br.com.abril.nds.util.ImageUtil.FormatoImagem;
 import br.com.abril.nds.util.export.Export.Alignment;
 
 /**
@@ -139,7 +141,7 @@ public class XLSExporter implements Exporter {
 
 		this.createHeaderBackground(sheet, creationHelper);
 		
-		this.createHeaderLogo(sheet, creationHelper);
+		this.createHeaderLogo(sheet, creationHelper, ndsFileHeader.getLogo());
 		
 		this.createHeaderTextBoxDadosDistribuidor(sheet, ndsFileHeader);
 		
@@ -497,17 +499,16 @@ public class XLSExporter implements Exporter {
 	}
 	
 	private void createHeaderLogo(Sheet sheet,
-								  CreationHelper creationHelper) throws IOException {
+								  CreationHelper creationHelper, InputStream logo){
 		
-		InputStream inputStream = 
-			Thread.currentThread().getContextClassLoader().getResourceAsStream("logo_sistema.png");
+		if(logo == null){
+			return;
+		}
 		
-	    byte[] bytes = IOUtils.toByteArray(inputStream);
-	    
+		byte[] bytes = ImageUtil.redimensionar(logo,80, 70,FormatoImagem.PNG);
+		
 	    int pictureIdx = sheet.getWorkbook().addPicture(bytes, Workbook.PICTURE_TYPE_PNG);
-	    
-	    inputStream.close();
-		
+	   
 	    Drawing drawing = sheet.createDrawingPatriarch();
 
 	    ClientAnchor anchor = creationHelper.createClientAnchor();
@@ -518,8 +519,8 @@ public class XLSExporter implements Exporter {
 		anchor.setRow1(0);
 		anchor.setRow2(0);
 		
-		anchor.setDx1(200);
-		anchor.setDy1(250);
+		anchor.setDx1(0);
+		anchor.setDy1(0);
 		
 		anchor.setDx2(0);
 		anchor.setDy2(0);
@@ -986,6 +987,7 @@ public class XLSExporter implements Exporter {
 	    palette.setColorAtIndex(HSSFColor.BLUE.index, (byte) 79, (byte) 129, (byte) 189);
 	}
 	
+	@SuppressWarnings("incomplete-switch")
 	private short getAlignment(Alignment alignment) {
 
 		short poiAlignment = CellStyle.ALIGN_LEFT;
@@ -1003,5 +1005,4 @@ public class XLSExporter implements Exporter {
 		
 		return poiAlignment;
 	}
-	
 }
