@@ -757,6 +757,16 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 					continue;
 				
 				Rota rota = novaRotaRoteiro(roteiro, rotaDTO);
+				
+				if (rotaDTO.isEntregador() && rotaDTO.hasPDVsAssociados()) {
+					
+					Entregador entregador = this.entregadorRepository.buscarPorId(rotaDTO.getEntregadorId());
+
+					rota.setEntregador(entregador);
+
+					entregador.setRota(rota);
+					this.entregadorRepository.merge(entregador);
+				}
                 
 				for (PdvRoteirizacaoDTO pdvDTO : rotaDTO.getPdvs()) {
                  
@@ -1026,7 +1036,7 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
      */
     private Rota novaRotaRoteiro(Roteiro roteiro, RotaRoteirizacaoDTO rotaDTO) {
         Rota rota = new Rota(rotaDTO.getNome(), rotaDTO.getOrdem());
-        
+               
         roteiro.addRota(rota);
         return rota;
     }
