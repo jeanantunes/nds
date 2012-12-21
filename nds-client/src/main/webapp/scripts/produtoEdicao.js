@@ -704,7 +704,7 @@ var produtoEdicaoController =$.extend(true,  {
 							$("#produtoEdicaoController-repartePromocional").attr("readonly", naoEditavel);
 							$("#produtoEdicaoController-codigoDeBarrasCorporativo").attr("readonly", naoEditavel);	
 							
-							$('.target_visible').css({'visibility': naoEditavel?'visible':'hidden', display: ''});							
+							$('.target_visible').css({'visibility':'hidden', display: ''});							
 							
 							$("#produtoEdicaoController-desconto").attr("readonly", naoEditavel);
 							$("#produtoEdicaoController-largura").attr("readonly", naoEditavel);
