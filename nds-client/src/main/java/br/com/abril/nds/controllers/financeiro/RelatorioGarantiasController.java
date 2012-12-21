@@ -29,6 +29,7 @@ import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.RelatorioGarantiasService;
+import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
@@ -55,6 +56,9 @@ public class RelatorioGarantiasController {
 	
 	@Autowired
 	private DistribuidorService distribuidorService;
+	
+	@Autowired
+	private UsuarioService usuarioService;
 	
 	@Autowired
 	private RelatorioGarantiasService relatorioGarantiasService;
@@ -119,13 +123,13 @@ public class RelatorioGarantiasController {
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "A busca não retornou resultados"));
 		}
 		
-		for(RelatorioGarantiasDTO dto : flexDTO.getGrid()){
+		for(RelatorioGarantiasDTO dto : flexDTO.getGrid()) {
 			
 			garantiasVO.add(new RelatorioGarantiasVO(dto));
 			
 		}
 		
-		result.use(FlexiGridJson.class).from(garantiasVO).total(garantiasVO.size()).serialize();
+		result.use(FlexiGridJson.class).from(garantiasVO).page(page).total(flexDTO.getTotalGrid()).serialize();
 		
 	}
 	
@@ -162,7 +166,7 @@ public class RelatorioGarantiasController {
 			garantiasVO.add(new RelatorioDetalheGarantiaVO(dto,data));
 		}
 		
-		result.use(FlexiGridJson.class).from(garantiasVO).total(garantiasVO.size()).serialize();
+		result.use(FlexiGridJson.class).from(garantiasVO).page(page).total(flexDTO.getTotalGrid()).serialize();
 
 	}
 	
@@ -224,13 +228,9 @@ public class RelatorioGarantiasController {
 		return ndsFileHeader;
 	}
 	
-	
-	// TODO: não há como reconhecer usuario, ainda
 	private Usuario getUsuario() {
 
-		Usuario usuario = new Usuario();
-		usuario.setId(1L);
-		usuario.setNome("Jornaleiro da Silva");
+		Usuario usuario = usuarioService.getUsuarioLogado();
 
 		return usuario;
 	}
