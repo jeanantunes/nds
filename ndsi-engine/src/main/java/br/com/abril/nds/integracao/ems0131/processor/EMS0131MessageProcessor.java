@@ -89,9 +89,7 @@ public class EMS0131MessageProcessor extends AbstractRepository implements Messa
 						output.setCondPrazoPagamento("1");
 						output.setCodigoDoBox(cota.getBox().getCodigo() + " - "+cota.getBox().getNome());
 						output.setCodigoTipoBox(cota.getBox().getTipoBox().toString());
-						if (null != cota.getParametroDistribuicao()) {
-							output.setRepartePorPdv(cota.getParametroDistribuicao().getRepartePorPontoVenda());
-						}
+						output.setRepartePorPdv(((null != cota.getParametroDistribuicao().getRepartePorPontoVenda()) ? cota.getParametroDistribuicao().getRepartePorPontoVenda() : false));
 						output.setCodigoDoCapataz(cota.getPessoa().getId());
 						output.setCpfCnpj(cota.getPessoa().getDocumento());
 						if(cota.getPessoa() instanceof PessoaFisica){
