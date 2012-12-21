@@ -852,7 +852,7 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 		if(indDiferenca) {
 			
 			Diferenca diferenca = obterDiferencaDeItemRecebimentoFisico(usuarioLogado, recebimentoFisicoDTO);
-			diferencaEstoqueService.lancarDiferencaAutomatica(diferenca);
+			diferenca = diferencaEstoqueService.lancarDiferencaAutomatica(diferenca);
 			diferencaEstoqueService.gerarMovimentoEstoqueDiferenca(diferenca, usuarioLogado.getId());
 			ItemRecebimentoFisico itemRecebimento = itemRecebimentoFisicoRepository.buscarPorId(recebimentoFisicoDTO.getIdItemRecebimentoFisico());
 			itemRecebimento.setDiferenca(diferenca);

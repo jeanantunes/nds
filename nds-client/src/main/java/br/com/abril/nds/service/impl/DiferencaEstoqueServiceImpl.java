@@ -729,6 +729,8 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 			this.tipoMovimentoRepository.buscarTipoMovimentoEstoque(
 				diferenca.getTipoDiferenca().getTipoMovimentoEstoque());
 		
+		tipoMovimentoEstoque.setAprovacaoAutomatica(true);
+		
 		return this.movimentoEstoqueService.gerarMovimentoEstoque(
 			diferenca.getProdutoEdicao().getId(), idUsuario,
 				diferenca.getQtde(), tipoMovimentoEstoque);
