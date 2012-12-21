@@ -27,6 +27,7 @@ import br.com.abril.nds.model.cadastro.TipoStatusGarantia;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.RelatorioGarantiasService;
+import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
@@ -52,6 +53,9 @@ public class RelatorioGarantiasController  extends BaseController {
 	
 	@Autowired
 	private DistribuidorService distribuidorService;
+	
+	@Autowired
+	private UsuarioService usuarioService;
 	
 	@Autowired
 	private RelatorioGarantiasService relatorioGarantiasService;
@@ -116,13 +120,13 @@ public class RelatorioGarantiasController  extends BaseController {
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "A busca não retornou resultados"));
 		}
 		
-		for(RelatorioGarantiasDTO dto : flexDTO.getGrid()){
+		for(RelatorioGarantiasDTO dto : flexDTO.getGrid()) {
 			
 			garantiasVO.add(new RelatorioGarantiasVO(dto));
 			
 		}
 		
-		result.use(FlexiGridJson.class).from(garantiasVO).total(garantiasVO.size()).serialize();
+		result.use(FlexiGridJson.class).from(garantiasVO).page(page).total(flexDTO.getTotalGrid()).serialize();
 		
 	}
 	
@@ -159,7 +163,7 @@ public class RelatorioGarantiasController  extends BaseController {
 			garantiasVO.add(new RelatorioDetalheGarantiaVO(dto,data));
 		}
 		
-		result.use(FlexiGridJson.class).from(garantiasVO).total(garantiasVO.size()).serialize();
+		result.use(FlexiGridJson.class).from(garantiasVO).page(page).total(flexDTO.getTotalGrid()).serialize();
 
 	}
 	

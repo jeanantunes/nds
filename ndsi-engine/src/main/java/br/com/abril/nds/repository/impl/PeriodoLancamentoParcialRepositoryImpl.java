@@ -40,7 +40,7 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 		
 		hql.append("		sum(lancamento.reparte) as reparte,  ");
 		
-		hql.append(" 		(select sum(lancamentoSupl.reparte) " );
+		hql.append(" 		(select coalesce(sum(lancamentoSupl.reparte),0) " );
 		hql.append("           from Lancamento lancamentoSupl ");
 		hql.append("		   join lancamentoSupl.produtoEdicao pe ");
 		hql.append("		  where pe.id = produtoEdicao.id ");

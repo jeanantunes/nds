@@ -9,6 +9,7 @@ import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanConstructorResultTransformer;
+import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.transform.ResultTransformer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -311,9 +312,9 @@ public class EntregadorRepositoryImpl extends AbstractRepositoryModel<Entregador
 		EntregadorCotaProcuracaoPaginacaoVO retorno = new EntregadorCotaProcuracaoPaginacaoVO();
 		
 		StringBuilder hql = new StringBuilder();
-		hql.append("select new ").append(EntregadorCotaProcuracaoVO.class.getCanonicalName()).append("(")
-		   .append(" cota.numeroCota, cota.pessoa.nome, cota.parametroDistribuicao.procuracaoRecebida ")
-		   .append(") ")
+		hql.append(" select ")
+		   .append(" cota.numeroCota as numeroCota, cota.pessoa.nome as nomeCota, ")
+		   .append(" coalesce(cota.parametroDistribuicao.procuracaoRecebida, false) as procuracaoAssinada ")
 		   .append(" from Entregador e join e.rota.roteiro.roteirizacao.box.cotas cota ")
 		   .append(" where e.id = :idEntregador ");
 		
@@ -323,10 +324,10 @@ public class EntregadorRepositoryImpl extends AbstractRepositoryModel<Entregador
 		
 		if ("numeroCota".equals(sortname)){
 			
-			hql.append(" cota.numeroCota ");
+			hql.append(" numeroCota ");
 		} else {
 			
-			hql.append(" cota.pessoa.nome ");
+			hql.append(" nomeCota ");
 		}
 		
 		if ("asc".equals(sortorder)){
@@ -342,8 +343,10 @@ public class EntregadorRepositoryImpl extends AbstractRepositoryModel<Entregador
 		
 		query.setFirstResult(pagina > 0 ? (pagina - 1) * resultadosPorPagina : pagina * resultadosPorPagina);
 		query.setMaxResults(resultadosPorPagina);
+		query.setResultTransformer(new AliasToBeanResultTransformer(EntregadorCotaProcuracaoVO.class));
+		List<EntregadorCotaProcuracaoVO> listaVO = query.list();
 		
-		retorno.setListaVO(query.list());
+		retorno.setListaVO(listaVO);
 		
 		return retorno;
 	}

@@ -1090,6 +1090,7 @@ public class TransportadorController extends BaseController {
 			if (idsRotasRemovidas != null && idsRotasRemovidas.contains(rota.getIdRota())){
 				
 				rota.setDisponivel(true);
+				
 			} else if (this.transportadorService.verificarAssociacaoRotaRoteiro(rota.getIdRota())) {
 				
 				rota.setDisponivel(false);
@@ -1439,8 +1440,10 @@ public class TransportadorController extends BaseController {
 				id,
 				rota
 			);
-
-			listaCellModel.add(cellModel);
+			
+			if(rota.isDisponivel()) {
+				listaCellModel.add(cellModel);
+			}
 		}
 
 		tableModel.setPage(1);
