@@ -1,8 +1,10 @@
 package br.com.abril.nds.service;
 import java.util.List;
 
+import br.com.abril.nds.dto.ChequeCaucaoDTO;
 import br.com.abril.nds.dto.CotaGarantiaDTO;
 import br.com.abril.nds.dto.FormaCobrancaCaucaoLiquidaDTO;
+import br.com.abril.nds.dto.ImovelDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.NotaPromissoriaDTO;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -61,6 +63,34 @@ public interface CotaGarantiaService {
 	 * @see br.com.abril.nds.repository.DistribuidorRepository#obtemTiposGarantiasAceitas()
 	 */
 	public abstract List<TipoGarantia> obtemTiposGarantiasAceitas();
+	
+	/**
+	 * Obtem Imoveis da Da Cota Garantia
+	 * @param idCota
+	 * @return List<ImovelDTO>
+	 */
+	public List<ImovelDTO> obterDadosImoveisDTO(Long idCota);
+	
+	/**
+	 * Obtem Imoveis da Da Cota Garantia
+	 * @param idCota
+	 * @return List<Imovel>
+	 */
+	public List<Imovel> obterDadosImoveis(Long idCota);
+	
+	/**
+	 * Obtem ChequeCaucao da Da Cota Garantia
+	 * @param idCota
+	 * @return ChequeCaucaoDTO
+	 */
+	public ChequeCaucaoDTO obterDadosChequeCaucaoDTO(Long idCota);
+	
+	/**
+	 * Obtem ChequeCaucao da Da Cota Garantia
+	 * @param idCota
+	 * @return Cheque
+	 */
+	public Cheque obterDadosChequeCaucao(Long idCota);
 
 	/**
 	 * Salva no repositorio de dados a garantia de imóvel.
