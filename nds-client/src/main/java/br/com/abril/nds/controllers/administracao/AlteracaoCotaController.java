@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.util.PessoaUtil;
+import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.ArquivoDTO;
 import br.com.abril.nds.dto.ConsultaAlteracaoCotaDTO;
 import br.com.abril.nds.dto.ItemDTO;
@@ -56,7 +57,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/administracao/alteracaoCota")
-public class AlteracaoCotaController {
+public class AlteracaoCotaController extends BaseController {
 
 	@Autowired
 	private FornecedorService fornecedorService;

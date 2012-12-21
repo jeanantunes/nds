@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.vo.ContratoVO;
 import br.com.abril.nds.client.vo.ParametrosDistribuidorVO;
+import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.FormaCobrancaDTO;
 import br.com.abril.nds.dto.FornecedorDTO;
 import br.com.abril.nds.dto.ItemDTO;
@@ -66,7 +67,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/cota/parametroCobrancaCota")
-public class ParametroCobrancaCotaController {
+public class ParametroCobrancaCotaController extends BaseController {
 	
 	private Result result;
 

@@ -9,11 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 
 import br.com.abril.nds.client.annotation.Rules;
+import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.integracao.ems0197.route.EMS0197Route;
 import br.com.abril.nds.integracao.ems0198.route.EMS0198Route;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.seguranca.Permissao;
-import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
@@ -26,7 +26,7 @@ import br.com.caelum.vraptor.view.Results;
  */
 @Resource
 @Path("/administracao/geracaoArquivos")
-public class GeracaoArquivosController {
+public class GeracaoArquivosController extends BaseController {
 
 	@Autowired
 	private ApplicationContext applicationContext;
@@ -63,10 +63,10 @@ public class GeracaoArquivosController {
 		int qtdArquivosGerados = 0;
 		try {
 			if (operacao.equals("REPARTE")) {
-				qtdArquivosGerados = route197.execute(getUsuario().getLogin(),
+				qtdArquivosGerados = route197.execute(getUsuarioLogado().getLogin(),
 						dataLctoPrevisto);
 			} else {
-				qtdArquivosGerados = route198.execute(getUsuario().getLogin(),
+				qtdArquivosGerados = route198.execute(getUsuarioLogado().getLogin(),
 						dataLctoPrevisto);
 			}
 		} catch	(RuntimeException e) {
@@ -78,16 +78,4 @@ public class GeracaoArquivosController {
 		result.use(Results.json()).from(Integer.valueOf(qtdArquivosGerados), "result").serialize();
 	}
 
-	/**
-	 * Retorna o usuário logado
-	 * @return
-	 */
-	// TODO: Implementar quando funcionar
-	private Usuario getUsuario() {
-		Usuario usuario = new Usuario();
-		usuario.setId(1L);
-		usuario.setNome("Jornaleiro da Silva");
-		usuario.setLogin("jorlaleiroLogin");
-		return usuario;
-	}	
 }

@@ -3,7 +3,6 @@ package br.com.abril.nds.controllers.financeiro;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -15,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.RelatorioDetalheGarantiaVO;
 import br.com.abril.nds.client.vo.RelatorioGarantiasVO;
+import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.FlexiGridDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.RelatorioDetalheGarantiaDTO;
@@ -22,18 +22,15 @@ import br.com.abril.nds.dto.RelatorioGarantiasDTO;
 import br.com.abril.nds.dto.filtro.FiltroRelatorioGarantiasDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
-import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.TipoGarantia;
 import br.com.abril.nds.model.cadastro.TipoStatusGarantia;
 import br.com.abril.nds.model.seguranca.Permissao;
-import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.RelatorioGarantiasService;
 import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
-import br.com.abril.nds.util.export.NDSFileHeader;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Path;
@@ -43,7 +40,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("financeiro/relatorioGarantias")
-public class RelatorioGarantiasController {
+public class RelatorioGarantiasController  extends BaseController {
 	
 	@Autowired
 	private Result result;
@@ -183,7 +180,7 @@ public class RelatorioGarantiasController {
 			garantiasVO.add(new RelatorioGarantiasVO(dto));
 		}
 		
-		FileExporter.to("relatorio-garantias", fileType).inHTTPResponse(this.getNDSFileHeader(new Date()), null, null,
+		FileExporter.to("relatorio-garantias", fileType).inHTTPResponse(getNDSFileHeader(), null, null,
 				garantiasVO, RelatorioGarantiasVO.class, this.httpServletResponse);
 		
 		result.use(Results.nothing());
@@ -206,33 +203,9 @@ public class RelatorioGarantiasController {
 			garantiasVO.add(new RelatorioDetalheGarantiaVO(dto,data));
 		}
 		
-		FileExporter.to("relatorio-garantias", fileType).inHTTPResponse(this.getNDSFileHeader(new Date()), null, null,
+		FileExporter.to("relatorio-garantias", fileType).inHTTPResponse(getNDSFileHeader(), null, null,
 				garantiasVO, RelatorioDetalheGarantiaVO.class, this.httpServletResponse);
 		
 		result.use(Results.nothing());
-
 	}
-
-	private NDSFileHeader getNDSFileHeader(Date data) {
-
-		NDSFileHeader ndsFileHeader = new NDSFileHeader();
-		Distribuidor distribuidor = distribuidorService.obter();
-
-		if (distribuidor != null) {
-			ndsFileHeader.setNomeDistribuidor(distribuidor.getJuridica().getRazaoSocial());
-			ndsFileHeader.setCnpjDistribuidor(distribuidor.getJuridica().getCnpj());
-		}
-
-		ndsFileHeader.setData(data);
-		ndsFileHeader.setNomeUsuario(getUsuario().getNome());
-		return ndsFileHeader;
-	}
-	
-	private Usuario getUsuario() {
-
-		Usuario usuario = usuarioService.getUsuarioLogado();
-
-		return usuario;
-	}
-	
 }
