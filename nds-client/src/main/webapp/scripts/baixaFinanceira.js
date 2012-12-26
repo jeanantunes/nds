@@ -322,21 +322,27 @@ var baixaFinanceiraController = $.extend(true, {
 			colModel : [ {
 				display : 'Banco',
 				name : 'nomeBanco',
-				width : 163,
+				width : 130,
 				sortable : true,
 				align : 'left'
 			},{
 				display : 'C.Corrente',
 				name : 'numeroConta',
-				width : 178,
+				width : 145,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Valor R$',
 				name : 'valorPago',
-				width : 134,
+				width : 100,
 				sortable : true,
 				align : 'right'
+			}, {
+				display : 'Data Vencimento',
+				name : 'dataVencimento',
+				width : 100,
+				sortable : true,
+				align : 'center'
 			}],
 			sortname : "nomeBanco",
 			sortorder : "asc",
