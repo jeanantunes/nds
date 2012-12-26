@@ -64,7 +64,7 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 		   .append(" left join movimentoEstoque.produtoEdicao pe ")
 		   .append(" left join pe.produto p ")
 		   .append(" left join p.fornecedores fornecedor ")
-		   .append(" where mfc.data = d.dataOperacao ")
+		   .append(" where mfc.data <= d.dataOperacao ")
 		   .append(" and mfc.status = :statusAprovado ");
 		
 		if (idCota != null){

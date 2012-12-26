@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -64,11 +65,10 @@ public interface ConferenciaEncalheRepository extends Repository<ConferenciaEnca
 	 * a que estes pertencem.
 	 * 
 	 * @param idControleConferenciaEncalheCota
-	 * @param idDistribuidor
 	 * 
 	 * @return List - ProdutoEdicaoSlipDTO
 	 */
-	public List<ProdutoEdicaoSlipDTO> obterDadosSlipConferenciaEncalhe(Long idControleConferenciaEncalheCota, Long idDistribuidor);
+	public List<ProdutoEdicaoSlipDTO> obterDadosSlipConferenciaEncalhe(Long idControleConferenciaEncalheCota);
 
     /**
      * Obtém composição de cobrança da cota na data de operação para a exibição no Slip
@@ -85,6 +85,7 @@ public interface ConferenciaEncalheRepository extends Repository<ConferenciaEnca
 	 * @param idMovimentoDevolucao
 	 * @return ChamadaEncalheCota
 	 */
-	public ChamadaEncalheCota obterChamadaEncalheDevolucao(Long idMovimentoDevolucao); 
-
+	public ChamadaEncalheCota obterChamadaEncalheDevolucao(Long idMovimentoDevolucao);
+	
+	public BigInteger obterReparteConferencia(Long idCota, Long idControleConferenciaEncCota, Long produtoEdicaoId);
 }
