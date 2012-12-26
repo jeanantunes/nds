@@ -106,10 +106,15 @@ var roteirizacao = $.extend(true, {
                 }, null, true);
     },
     
-    obterProximaOrdemRota : function() {
+    obterProximaOrdemRota : function(value) {
+    	
+    	var idRoteiro = value ? value :  $("#selectIncluirEmRoteiro", roteirizacao.worksapce).val();
+    
+    	var params = [{name: 'idRoteiro', 
+    				  value: idRoteiro}];
     	
     	$.postJSON(contextPath + '/cadastro/roteirizacao/obterProximaOrdemRota',
-                [{name: 'idRoteiro', value: roteirizacao.idRoteiro}],
+                params,
                 function(result) {
 
                     roteirizacao.limparTelaRoteiro();
@@ -190,7 +195,8 @@ var roteirizacao = $.extend(true, {
                form: $("#dialog-novo-dado", this.workspace).parents("form")
            });
       	 
-      	   this.switchNovoRoteiroRota();
+      	 this.limparCamposNovaInclusao();
+      	 this.switchNovoRoteiroRota();
       },
        
       switchNovoRoteiroRota : function(value) {
@@ -202,8 +208,6 @@ var roteirizacao = $.extend(true, {
        		roteirizacao.tipoInclusao == TipoInclusao.ROTA;
        		
        		this.atualizarPopupNovaRota();
-       		
-       		this.obterProximaOrdemRota();
        		
        		this.carregarComboRoteirosSessao();
        		
@@ -314,6 +318,8 @@ var roteirizacao = $.extend(true, {
 
 		var params = {"idBox": roteirizacao.idBox};
 		
+		var _this = this;
+		
 		$.postJSON(contextPath + '/cadastro/roteirizacao/buscarRoteirosSessao', params, 
 			function(result) {
 				
@@ -324,12 +330,25 @@ var roteirizacao = $.extend(true, {
 		        	exibirMensagem(tipoMensagem, listaMensagens);
 		        	return;
 		        } 
+		        		        
+		        if (!result.length > 0) {
+		        	exibirMensagem("WARNING",["É necessario ter pelo menos um roteiro para incluir uma nova Rota"]);
+		        	_this.limparCamposNovaInclusao();
+		        	return;
+		        }
+		        
+		        var idRoteiro = result[0].id;
+		        
+		        _this.obterProximaOrdemRota(idRoteiro);
+		        
 		       $("#selectIncluirEmRoteiro > option").remove();
 	           $.each(result, function(index, row){
+	        	   
 	               $('#selectIncluirEmRoteiro', roteirizacao.workspace)
 	               		.append('<option value="'+row.id+'">'+row.nome+'</option>');
 	           });
-	           
+
+		       
 			}, 
 			null, 
 			true
@@ -2562,7 +2581,7 @@ var roteirizacao = $.extend(true, {
     },
     
     limparCamposNovaInclusao : function(){
-
+    	this.switchNovoRoteiroRota("roteiro");
         $("#selectTipoNovoDado", roteirizacao.workspace).val("ROTEIRO");
         $("#inputOrdem", roteirizacao.workspace).val("");
         $("#inputNome", roteirizacao.workspace).val("");

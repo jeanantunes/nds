@@ -505,8 +505,16 @@ public class RoteirizacaoRepositoryImpl extends AbstractRepositoryModel<Roteiriz
 	@Override
 	public Roteirizacao obterRoteirizacaoPorBox(Long idBox) {
 		Criteria criteria  = getSession().createCriteria(Roteirizacao.class, "roteirizacao");
-		criteria.createAlias("roteirizacao.box","box");
-		criteria.add(Restrictions.eq("box.id", idBox));
+		
+		if (idBox != null && idBox > 0) {
+			criteria.createAlias("roteirizacao.box","box");
+			criteria.add(Restrictions.eq("box.id", idBox));
+		} else {
+			criteria.add(Restrictions.isNull("roteirizacao.box"));
+		}
+		
+		criteria.setMaxResults(1);
+		
 		return (Roteirizacao) criteria.uniqueResult();
 	}
 
