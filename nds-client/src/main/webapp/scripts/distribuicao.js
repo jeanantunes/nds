@@ -534,6 +534,8 @@ function Distribuicao(tela) {
 		
 		D.$("taxaFixaEntregaBanca").numeric();
 		
+		$("input[name='taxaFixa']").mask("99.99");
+		
 		$("input[name='percentualFaturamento']").mask("99.99");
 		
 		var options = {
