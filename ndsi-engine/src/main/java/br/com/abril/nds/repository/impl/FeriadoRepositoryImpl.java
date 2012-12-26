@@ -60,6 +60,27 @@ public class FeriadoRepositoryImpl extends
 
 		return criteria.list();
 	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<Feriado> obterFeriados(Date data, List<TipoFeriado> tiposFeriado, Boolean indOpera) {
+
+		Criteria criteria = super.getSession().createCriteria(Feriado.class);
+
+		if (data != null) {
+			criteria.add(Restrictions.eq("data", data));
+		}
+
+		if (tiposFeriado != null) {
+			criteria.add(Restrictions.in("tipoFeriado", tiposFeriado));
+		}
+		
+		if (indOpera != null) {
+			criteria.add(Restrictions.eq("indOpera", indOpera));
+		}
+
+		return criteria.list();
+	}
 
 	
 	@Override

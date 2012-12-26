@@ -208,8 +208,8 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 			numeroEdicao:				row.cell.numeroEdicao,
 			nomeProduto:	    		row.cell.nomeProduto,
 			dataRecolhimentoPrevista:	row.cell.dataRecolhimentoPrevista,
-			novaData:					row.cell.novaData,
-			novaDataOriginal:			row.cell.novaData
+			novaDataLancamento:			row.cell.novaDataLancamento,
+			novaDataOriginal:			row.cell.novaDataLancamento
 		});
 		
 		var colunaProduto = balanceamento.getColunaProduto(row.cell.idProdutoEdicao,
@@ -218,7 +218,7 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 		
 		row.cell.nomeProduto = colunaProduto;
 		
-		row.cell.novaData = T.gerarInputDataDistrib(row.cell.novaData, row.cell.bloquearData, i);
+		row.cell.novaDataLancamento = T.gerarInputDataDistrib(row.cell.novaDataLancamento, row.cell.bloquearData, i);
 		row.cell.reprogramar = T.gerarCheckReprogramar(row.cell.id.toString(), row.cell.bloquearData, i);
 		row.cell.acoes = T.gerarAcoes(row.cell.id.toString(), row.cell.bloquearExclusao);
 		
@@ -250,7 +250,7 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 		var data = [];
 		
 		data.push({name: 'produtoLancamento.id', 					   value: T.lancamentos[index].id});
-		data.push({name: 'produtoLancamento.novaData', 				   value: T.lancamentos[index].novaData});
+		data.push({name: 'produtoLancamento.novaDataLancamento', 	   value: T.lancamentos[index].novaDataLancamento});
 		data.push({name: 'produtoLancamento.nomeProduto', 			   value: T.lancamentos[index].nomeProduto});
 		data.push({name: 'produtoLancamento.numeroEdicao', 	           value: T.lancamentos[index].numeroEdicao});
 		data.push({name: 'produtoLancamento.dataRecolhimentoPrevista', value: T.lancamentos[index].dataRecolhimentoPrevista});
@@ -263,7 +263,7 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 					T.atualizarResumoBalanceamento();
 					T.checkUncheckLancamentos(false);
 					
-					T.lancamentos[index].novaDataOriginal = T.lancamentos[index].novaData;
+					T.lancamentos[index].novaDataOriginal = T.lancamentos[index].novaDataLancamento;
 				},
 				function() {
 					
@@ -271,7 +271,7 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 					
 					$(inputNovaData).val(T.lancamentos[index].novaDataOriginal);
 					
-					T.lancamentos[index].novaData = inputNovaData.val();
+					T.lancamentos[index].novaDataLancamento = inputNovaData.val();
 				}
 			);
 	},
@@ -312,7 +312,7 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 	},
 	
 	this.alterarData = function(input, index) {
-		T.lancamentos[index].novaData = input.value;
+		T.lancamentos[index].novaDataLancamento = input.value;
 	},
 	
 	this.gerarCheckReprogramar = function(id, bloquearData, index) { 
@@ -677,9 +677,9 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 				align : 'center'
 			}, {
 				display : 'Matriz/Distrib.',
-				name : 'novaData',
+				name : 'novaDataLancamento',
 				width : 97,
-				sortable : false,
+				sortable : true,
 				align : 'center'
 			},{
 				display : 'Reprogramar',
@@ -855,7 +855,7 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 							   value: idLancamento});
 					
 					data.push({name: "produtoLancamento.novaDataLancamento",
-						       value: produtoLancamento.novaData});
+						       value: produtoLancamento.novaDataLancamento});
 					
 					$.postJSON(
 							pathTela + "/matrizLancamento/excluirLancamento", 

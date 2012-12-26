@@ -115,6 +115,9 @@ public interface CalendarioService {
 	public byte[] obterRelatorioCalendarioFeriado(FileType fileType,
 			TipoPesquisaFeriado tipoPesquisaFeriado, int mes, int ano);
 
+	boolean isFeriadoSemOperacao(Date data);
+	
+	boolean isFeriadoMunicipalSemOperacao(Date data);
 	
 	public enum TipoPesquisaFeriado {
 		FERIADO_MENSAL, FERIADO_ANUAL;
