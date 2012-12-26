@@ -72,9 +72,11 @@ public class FormaCobrancaRepositoryImpl extends AbstractRepositoryModel<FormaCo
 		StringBuilder hql = new StringBuilder();
 		hql.append(" select f from FormaCobranca f ");		
 		hql.append(" where f.principal = :principal ");
+		hql.append(" and f.ativa = :indAtiva ");
 		hql.append(" and f.parametroCobrancaCota.cota.id = :idCota ");
 		Query query = super.getSession().createQuery(hql.toString());
         query.setParameter("principal", true);
+        query.setParameter("indAtiva", true);
         query.setParameter("idCota", idCota);
         query.setMaxResults(1);
         return (FormaCobranca) query.uniqueResult();
