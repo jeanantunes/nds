@@ -744,8 +744,6 @@ var ConferenciaEncalhe = $.extend(true, {
 				$("#brinde", ConferenciaEncalhe.workspace).text(result.possuiBrinde == "true" ? "Sim" : "Não");
 				$("#editor", ConferenciaEncalhe.workspace).text(result.nomeEditor);
 				$("#pacotePadrao", ConferenciaEncalhe.workspace).text(result.pacotePadrao);
-				//TODO ???
-				$("#imagemProduto", ConferenciaEncalhe.workspace).attr("src", "");
 				
 				$("#precoDesconto", ConferenciaEncalhe.workspace).text((parseFloat(result.precoCapa) - parseFloat(result.desconto)).toFixed(2));
 				
@@ -754,6 +752,18 @@ var ConferenciaEncalhe = $.extend(true, {
 				$("#observacaoReadOnly", ConferenciaEncalhe.workspace).show();
 				$("#observacao", ConferenciaEncalhe.workspace).show();
 				$("#btObs", ConferenciaEncalhe.workspace).show();
+				
+				var imgPath = (result.idProdutoEdicao == null || result.idProdutoEdicao == undefined)
+				? "" :  contextPath + '/capa/' + result.idProdutoEdicao + '?' + Math.random();
+				var img = $("<img />").attr('src', imgPath).attr('width', '117').attr('height', '145').attr('alt', 'Capa');
+				$("#imagemProduto", ConferenciaEncalhe.workspace).empty();
+				$("#imagemProduto", ConferenciaEncalhe.workspace).append(img);				
+				img.load(function() {
+					if (!(!this.complete || typeof this.naturalWidth == "undefined" || this.naturalWidth == 0)) {
+						$("#imagemProduto", ConferenciaEncalhe.workspace).empty();
+						$("#imagemProduto", ConferenciaEncalhe.workspace).append(img);
+					}
+				});
 				
 				ConferenciaEncalhe.popup_detalhe_publicacao();
 			}

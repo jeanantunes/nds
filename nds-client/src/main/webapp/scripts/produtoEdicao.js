@@ -754,7 +754,7 @@ var produtoEdicaoController =$.extend(true,  {
 	
 	popup:			function (id, codigo, nome) {
 
-		$("#produtoEdicaoController-codigoProduto",this.workspace).val($("#produtoEdicaoController-pCodigoProduto",this.workspace).val());
+		//$("#produtoEdicaoController-codigoProduto",this.workspace).val($("#produtoEdicaoController-pCodigoProduto",this.workspace).val());
 		
 		// if ($(".edicoesGrid > tbody").data() == null ||
 		// $(".edicoesGrid > tbody").data() == undefined) {
