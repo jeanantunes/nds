@@ -3,6 +3,7 @@ package br.com.abril.nds.service.impl;
 import java.io.ByteArrayOutputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -29,6 +30,7 @@ import br.com.abril.nds.dto.CalendarioFeriadoDTO;
 import br.com.abril.nds.dto.CalendarioFeriadoWrapper;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.Origem;
+import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.EnderecoDistribuidor;
 import br.com.abril.nds.model.cadastro.Feriado;
 import br.com.abril.nds.model.cadastro.TipoFeriado;
@@ -252,7 +254,7 @@ public class CalendarioServiceImpl implements CalendarioService {
 
 		return (feriado != null) ? true : false;
 	}
-
+	
 	private void tratarTipoFeriado(CalendarioFeriadoDTO calendarioFeriado) {
 
 		TipoFeriado tipoFeriado = calendarioFeriado.getTipoFeriado();
@@ -746,6 +748,63 @@ public class CalendarioServiceImpl implements CalendarioService {
 
 		return enderecoService.obterListaLocalidadeCotas();
 
+	}
+	
+	@Transactional(readOnly = true)
+	public boolean isFeriadoSemOperacao(Date data) {
+
+		if (data == null) { 
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Data inválida!");
+		}
+
+		List<TipoFeriado> tiposFeriado = Arrays.asList(TipoFeriado.ESTADUAL, TipoFeriado.FEDERAL);
+		
+		List<Feriado> feriados =
+			this.feriadoRepository.obterFeriados(data, tiposFeriado, false);
+		
+		return !feriados.isEmpty();
+	}
+	
+	@Transactional(readOnly = true)
+	public boolean isFeriadoMunicipalSemOperacao(Date data) {
+
+		if (data == null) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Data inválida!");
+		}
+
+		boolean feriadoMunicipalSemOperacao = false;
+		
+		List<TipoFeriado> tiposFeriado = Arrays.asList(TipoFeriado.MUNICIPAL);
+		
+		List<Feriado> feriados =
+			this.feriadoRepository.obterFeriados(data, tiposFeriado, false);
+		
+		if (!feriados.isEmpty()) {
+		
+			Distribuidor distribuidor = this.distribuidorRepository.obter();
+			
+			String localidadeDistribuidor = null;
+			
+			if (distribuidor != null && distribuidor.getEnderecoDistribuidor() != null
+					&& distribuidor.getEnderecoDistribuidor().getEndereco() != null) {
+				
+				localidadeDistribuidor = distribuidor.getEnderecoDistribuidor().getEndereco().getCidade();
+			}
+			
+			for (Feriado feriado : feriados) {
+				
+				if (localidadeDistribuidor != null && feriado.getLocalidade() != null
+						&& feriado.getLocalidade().equals(localidadeDistribuidor)) {
+					
+					feriadoMunicipalSemOperacao = true;
+					
+					break;
+				}
+			}
+		}
+		return feriadoMunicipalSemOperacao;
 	}
 
 }
