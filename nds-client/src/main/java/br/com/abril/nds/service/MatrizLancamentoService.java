@@ -78,5 +78,7 @@ public interface MatrizLancamentoService {
 	public List<ConfirmacaoVO> obterDatasConfirmacao(List<ProdutoLancamentoDTO> produtosLancamento);
 	
 	void voltarConfiguracaoInicial(Date dataLancamento);
+	
+	void verificaDataOperacao(Date data);
 
 }

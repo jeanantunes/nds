@@ -250,7 +250,7 @@ public class MatrizLancamentoController extends BaseController {
 	@Post
 	public void reprogramarLancamentoUnico(ProdutoLancamentoVO produtoLancamento) {
 		
-		String novaDataFormatada = produtoLancamento.getNovaData();
+		String novaDataFormatada = produtoLancamento.getNovaDataLancamento();
 		
 		this.validarDadosReprogramar(novaDataFormatada);
 
@@ -399,13 +399,7 @@ public class MatrizLancamentoController extends BaseController {
 				+ DateUtil.formatarDataPTBR(dataInicioSemana) + "]");
 		}
 		
-		boolean diaUtil = calendarioService.isDiaUtil(novaData);
-		
-		if (!diaUtil) {
-			
-			throw new ValidacaoException(TipoMensagem.WARNING,
-				"A nova data de lançamento deve ser um dia útil!");
-		}
+		this.matrizLancamentoService.verificaDataOperacao(novaData);
 		
 		List<String> listaMensagens = new ArrayList<String>();
 		
@@ -728,7 +722,7 @@ public class MatrizLancamentoController extends BaseController {
 		
 		produtoBalanceamentoVO.setCodigoProduto(produtoLancamentoDTO.getCodigoProduto());
 		
-		produtoBalanceamentoVO.setNovaData(
+		produtoBalanceamentoVO.setNovaDataLancamento(
 			DateUtil.formatarDataPTBR(produtoLancamentoDTO.getNovaDataLancamento()));
 		
 		produtoBalanceamentoVO.setDataLancamentoPrevista(
@@ -755,10 +749,10 @@ public class MatrizLancamentoController extends BaseController {
 		else
 			produtoBalanceamentoVO.setReparteFisico(produtoLancamentoDTO.getReparteFisico().toString());
 		
-		if(produtoLancamentoDTO.getReparteEstudo() == null) {
+		if(produtoLancamentoDTO.getDistribuicao() == null) {
 			produtoBalanceamentoVO.setDistribuicao("");
 		} else {
-			produtoBalanceamentoVO.setDistribuicao(produtoLancamentoDTO.getReparteEstudo().toString());
+			produtoBalanceamentoVO.setDistribuicao(produtoLancamentoDTO.getDistribuicao().toString());
 		}
 		
 		produtoBalanceamentoVO.setBloquearData(!produtoLancamentoDTO.permiteReprogramacao());

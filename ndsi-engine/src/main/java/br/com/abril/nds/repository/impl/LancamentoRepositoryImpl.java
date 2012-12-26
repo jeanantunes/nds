@@ -1071,7 +1071,7 @@ public class LancamentoRepositoryImpl extends
 		sql.append(" 	false ");
 		sql.append(" end as possuiFuro, ");
 		
-		sql.append(" estudo.QTDE_REPARTE as reparteEstudo ");
+		sql.append(" estudo.QTDE_REPARTE as distribuicao ");
 		
 		sql.append(montarClausulaFromConsultaBalanceamentoLancamento());
 		
@@ -1152,7 +1152,7 @@ public class LancamentoRepositoryImpl extends
 			.addScalar("possuiRecebimentoFisico", StandardBasicTypes.BOOLEAN)
 			.addScalar("possuiFuro", StandardBasicTypes.BOOLEAN)
 			.addScalar("alteradoInteface", StandardBasicTypes.BOOLEAN)
-			.addScalar("reparteEstudo", StandardBasicTypes.BIG_INTEGER);
+			.addScalar("distribuicao", StandardBasicTypes.BIG_INTEGER);
 		
 		this.aplicarParametros(query, periodoDistribuicao, fornecedores);
 		
