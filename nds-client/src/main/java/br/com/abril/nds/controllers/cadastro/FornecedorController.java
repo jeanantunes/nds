@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.util.PessoaUtil;
+import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.ComboTipoFornecedorDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.FornecedorDTO;
@@ -51,7 +52,6 @@ import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
-import br.com.caelum.vraptor.util.StringUtils;
 import br.com.caelum.vraptor.view.Results;
 
 /**
@@ -62,7 +62,7 @@ import br.com.caelum.vraptor.view.Results;
  */
 @Resource
 @Path("/cadastro/fornecedor")
-public class FornecedorController {
+public class FornecedorController extends BaseController {
 
 	@Autowired
 	private Result result;

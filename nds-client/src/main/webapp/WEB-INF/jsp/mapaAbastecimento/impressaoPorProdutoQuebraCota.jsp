@@ -39,8 +39,7 @@ function imprimir(){
     		</span>
     	</span>
     </td>
-    <td width="301" align="center" valign="middle"><h3>TREELOG S/A<br />
-      LOGÍSTICA E DISTRIBUIÇÃO</h3></td>
+    <td width="301" align="center" valign="middle"><h3>${nomeDistribuidor}</h3></td>
     <td width="359" align="right" valign="middle"><h1>Mapa de Abastecimento de Produto por Cota</h1></td>
     </tr>
   <tr>

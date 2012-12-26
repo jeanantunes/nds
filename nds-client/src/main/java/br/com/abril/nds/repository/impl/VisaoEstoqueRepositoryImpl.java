@@ -176,6 +176,8 @@ public class VisaoEstoqueRepositoryImpl extends AbstractRepository implements
 			hql.append("    AND f.id = :idFornecedor ");
 		}
 		
+		hql.append(" group by pe.id ");
+		
 		if (!StringUtil.isEmpty(filtro.getPaginacao().getSortColumn())) {
 			hql.append("order by ")
 					.append(filtro.getPaginacao().getSortColumn()).append(" ")

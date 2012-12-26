@@ -2,8 +2,11 @@ package br.com.abril.nds.client.vo;
 
 public class EntregadorCotaProcuracaoVO {
 
+	public EntregadorCotaProcuracaoVO() {
+		
+	}
 	
-	public EntregadorCotaProcuracaoVO(Integer numeroCota, String nomeCota, boolean procuracaoAssinada){
+	public EntregadorCotaProcuracaoVO(Integer numeroCota, String nomeCota, Boolean procuracaoAssinada){
 		
 		this.numeroCota = numeroCota;
 		this.nomeCota = nomeCota;

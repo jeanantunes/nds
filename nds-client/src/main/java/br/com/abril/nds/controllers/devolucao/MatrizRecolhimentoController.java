@@ -25,6 +25,7 @@ import br.com.abril.nds.client.vo.ProdutoRecolhimentoFormatadoVO;
 import br.com.abril.nds.client.vo.ProdutoRecolhimentoVO;
 import br.com.abril.nds.client.vo.ResultadoResumoBalanceamentoVO;
 import br.com.abril.nds.client.vo.ResumoPeriodoBalanceamentoVO;
+import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.BalanceamentoRecolhimentoDTO;
 import br.com.abril.nds.dto.ProdutoRecolhimentoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -35,7 +36,6 @@ import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.seguranca.Permissao;
-import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.DistribuicaoFornecedorService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.LancamentoService;
@@ -66,7 +66,7 @@ import br.com.caelum.vraptor.view.Results;
  */
 @Resource
 @Path("/devolucao/balanceamentoMatriz")
-public class MatrizRecolhimentoController {
+public class MatrizRecolhimentoController extends BaseController {
 
 	@Autowired
 	private HttpSession httpSession;
@@ -157,7 +157,7 @@ public class MatrizRecolhimentoController {
 													matrizRecolhimento,
 													filtro.getNumeroSemana(),
 													datasConfirmadas,
-													obterUsuario());
+													getUsuarioLogado());
 		
 		matrizRecolhimento =
 			this.atualizarMatizComProdutosConfirmados(matrizRecolhimento, matrizConfirmada);
@@ -274,7 +274,7 @@ public class MatrizRecolhimentoController {
 		this.validarBloqueioMatrizFechada(balanceamentoRecolhimento);
 		
 		recolhimentoService.salvarBalanceamentoRecolhimento(
-			balanceamentoRecolhimento.getMatrizRecolhimento(), obterUsuario());
+			balanceamentoRecolhimento.getMatrizRecolhimento(), getUsuarioLogado());
 		
 		removerAtributoAlteracaoSessao();
 		
@@ -1306,23 +1306,7 @@ public class MatrizRecolhimentoController {
 		return resultadoResumoBalanceamento;
 	}
 	
-	/**
-	 * Obtém usuário logado.
-	 * 
-	 * @return usuário logado
-	 */
-	private Usuario obterUsuario() {
-		
-		//TODO: Aguardando definição de como será obtido o usuário logado
-		
-		Usuario usuario = new Usuario();
-		
-		usuario.setId(1L);
-		usuario.setNome("Usuário da Silva");
-		
-		return usuario;
-	}
-	
+
 	/**
 	 * Obtem agrupamento diário para confirmação de Balanceamento
 	 */

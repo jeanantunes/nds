@@ -20,6 +20,7 @@ import br.com.abril.nds.client.util.PDFUtil;
 import br.com.abril.nds.client.vo.CalculaParcelasVO;
 import br.com.abril.nds.client.vo.NegociacaoDividaDetalheVO;
 import br.com.abril.nds.client.vo.NegociacaoDividaVO;
+import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.DiaSemanaDTO;
 import br.com.abril.nds.dto.NegociacaoDividaDTO;
 import br.com.abril.nds.dto.NegociacaoDividaPaginacaoDTO;
@@ -31,13 +32,11 @@ import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.ConcentracaoCobrancaCota;
-import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
 import br.com.abril.nds.model.financeiro.ParcelaNegociacao;
 import br.com.abril.nds.model.seguranca.Permissao;
-import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.BancoService;
 import br.com.abril.nds.service.CobrancaService;
@@ -49,7 +48,6 @@ import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
-import br.com.abril.nds.util.export.NDSFileHeader;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Path;
@@ -60,7 +58,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("financeiro/negociacaoDivida")
-public class NegociacaoDividaController {
+public class NegociacaoDividaController extends BaseController {
 	
 	private static final String FILTRO_NEGOCIACAO_DIVIDA = "FILTRO_NEGOCIACAO_DIVIDA";
 
@@ -327,7 +325,7 @@ public class NegociacaoDividaController {
 				parcelas, 
 				valorDividaComissao,
 				idsCobrancas, 
-				this.getUsuario(), 
+				this.getUsuarioLogado(), 
 				negociacaoAvulsa, 
 				ativarAposPagar, 
 				comissaoUtilizar, 
@@ -358,31 +356,6 @@ public class NegociacaoDividaController {
 		FiltroConsultaNegociacaoDivida filtro = (FiltroConsultaNegociacaoDivida) this.session.getAttribute(FILTRO_NEGOCIACAO_DIVIDA);
 		
 		this.result.use(Results.json()).from(this.descontoService.obterComissaoCota(filtro.getNumeroCota()), "result").serialize();
-	}
-	
-	private NDSFileHeader getNDSFileHeader() {
-
-		NDSFileHeader ndsFileHeader = new NDSFileHeader();
-		Distribuidor distribuidor = distribuidorService.obter();
-
-		if (distribuidor != null) {
-			ndsFileHeader.setNomeDistribuidor(distribuidor.getJuridica().getRazaoSocial());
-			ndsFileHeader.setCnpjDistribuidor(distribuidor.getJuridica().getCnpj());
-		}
-
-		ndsFileHeader.setData(new Date());
-		ndsFileHeader.setNomeUsuario(getUsuario().getNome());
-		return ndsFileHeader;
-	}
-	
-	// TODO: não há como reconhecer usuario, ainda
-	private Usuario getUsuario() {
-
-		Usuario usuario = new Usuario();
-		usuario.setId(1L);
-		usuario.setNome("Jornaleiro da Silva");
-
-		return usuario;
 	}
 	
 	public void imprimirNegociacao() throws Exception{

@@ -1,18 +1,17 @@
 package br.com.abril.nds.controllers.cadastro;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.web.DefaultSecurityFilterChain;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.BancoVO;
 import br.com.abril.nds.client.vo.ParametroCobrancaVO;
+import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.ParametroCobrancaDTO;
 import br.com.abril.nds.dto.filtro.FiltroParametrosCobrancaDTO;
@@ -50,7 +49,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/distribuidor/parametroCobranca")
-public class ParametroCobrancaController {
+public class ParametroCobrancaController extends BaseController {
 	
 	@Autowired
 	private PoliticaCobrancaService politicaCobrancaService;

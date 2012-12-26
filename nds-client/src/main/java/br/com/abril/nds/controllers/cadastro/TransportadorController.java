@@ -2,7 +2,6 @@ package br.com.abril.nds.controllers.cadastro;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -17,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.util.PessoaUtil;
 import br.com.abril.nds.client.vo.CotaAtendidaTransportadorVO;
+import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.AssociacaoVeiculoMotoristaRotaDTO;
 import br.com.abril.nds.dto.ConsultaTransportadorDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
@@ -36,7 +36,6 @@ import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.Transportador;
 import br.com.abril.nds.model.cadastro.Veiculo;
 import br.com.abril.nds.model.seguranca.Permissao;
-import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.PessoaService;
 import br.com.abril.nds.service.TransportadorService;
@@ -46,7 +45,6 @@ import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
-import br.com.abril.nds.util.export.NDSFileHeader;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 import br.com.abril.nds.vo.ValidacaoVO;
@@ -61,7 +59,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/cadastro/transportador")
-public class TransportadorController {
+public class TransportadorController extends BaseController {
 
 	public static final String LISTA_TELEFONES_SALVAR_SESSAO = "listaTelefonesSalvarSessaoTransportador";
 	
@@ -1092,6 +1090,7 @@ public class TransportadorController {
 			if (idsRotasRemovidas != null && idsRotasRemovidas.contains(rota.getIdRota())){
 				
 				rota.setDisponivel(true);
+				
 			} else if (this.transportadorService.verificarAssociacaoRotaRoteiro(rota.getIdRota())) {
 				
 				rota.setDisponivel(false);
@@ -1441,8 +1440,10 @@ public class TransportadorController {
 				id,
 				rota
 			);
-
-			listaCellModel.add(cellModel);
+			
+			if(rota.isDisponivel()) {
+				listaCellModel.add(cellModel);
+			}
 		}
 
 		tableModel.setPage(1);
@@ -1479,27 +1480,4 @@ public class TransportadorController {
 		return tableModel;
 	}
 	
-	private NDSFileHeader getNDSFileHeader() {
-		
-		NDSFileHeader ndsFileHeader = new NDSFileHeader();
-		List<String> dados = this.distribuidorService.obterNomeCNPJDistribuidor();
-		
-		if (dados.size() == 2) {
-			
-			ndsFileHeader.setNomeDistribuidor(dados.get(0));
-			ndsFileHeader.setCnpjDistribuidor(dados.get(1));
-		}
-		
-		ndsFileHeader.setData(new Date());
-		ndsFileHeader.setNomeUsuario(this.obterUsuario().getNome());
-		return ndsFileHeader;
-	}
-	
-	private Usuario obterUsuario() {
-		//TODO: obter usuário
-		Usuario usuario = new Usuario();
-		usuario.setNome("João");
-		usuario.setId(1L);
-		return usuario;
-	}
 }
