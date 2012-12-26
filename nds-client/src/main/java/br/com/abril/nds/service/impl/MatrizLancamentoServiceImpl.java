@@ -3,6 +3,7 @@ package br.com.abril.nds.service.impl;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedHashMap;
@@ -1169,9 +1170,12 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 	 */
 	private DadosBalanceamentoLancamentoDTO obterDadosLancamento(FiltroLancamentoDTO filtro) {
 		
-		Distribuidor distribuidor = distribuidorRepository.obter();
+		DadosBalanceamentoLancamentoDTO dadosBalanceamentoLancamento =
+			new DadosBalanceamentoLancamentoDTO();
 		
 		Date dataLancamento = filtro.getData();
+		
+		Distribuidor distribuidor = distribuidorRepository.obter();
 		
 		int numeroSemana =
 			DateUtil.obterNumeroSemanaNoAno(dataLancamento,
@@ -1182,9 +1186,6 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		
 		TreeSet<Date> datasDistribuicaoFornecedor = 
 			this.obterDatasDistribuicaoFornecedor(periodoDistribuicao, filtro.getIdsFornecedores());
-		
-		DadosBalanceamentoLancamentoDTO dadosBalanceamentoLancamento =
-			new DadosBalanceamentoLancamentoDTO();
 		
 		dadosBalanceamentoLancamento.setNumeroSemana(numeroSemana);
 		
@@ -1278,7 +1279,47 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 														 periodoRecolhimento.getAte(),
 														 codigosDiaSemana);
 		
-		return datasDistribuicao;
+		TreeSet<Date> datasDistribuicaoComOperacao = new TreeSet<>();
+		
+		for (Date data : datasDistribuicao) {
+			
+			try {
+				
+				this.verificaDataOperacao(data);
+				
+				datasDistribuicaoComOperacao.add(data);
+				
+			} catch (ValidacaoException e) {
+				
+				continue;
+			}
+		}
+		
+		return datasDistribuicaoComOperacao;
+	}
+	
+	public void verificaDataOperacao(Date data) {
+		
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(data);
+		
+		if (DateUtil.isSabadoDomingo(cal)) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING,
+				"A data de lançamento deve ser uma data em que o distribuidor realiza operação!");
+		}
+		
+		if (this.calendarioService.isFeriadoSemOperacao(data)) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING,
+				"A data de lançamento deve ser uma data em que o distribuidor realiza operação!");
+		}
+		
+		if (this.calendarioService.isFeriadoMunicipalSemOperacao(data)) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING,
+				"A data de lançamento deve ser uma data em que o distribuidor realiza operação!");
+		}
 	}
 	
 	@Override

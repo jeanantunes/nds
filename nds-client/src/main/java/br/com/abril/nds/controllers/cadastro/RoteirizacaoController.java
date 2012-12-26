@@ -28,7 +28,6 @@ import br.com.abril.nds.dto.RoteirizacaoDTO;
 import br.com.abril.nds.dto.RoteiroRoteirizacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaRoteirizacaoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
@@ -79,9 +78,6 @@ public class RoteirizacaoController extends BaseController {
 	
 	@Autowired
 	private HttpServletResponse response;
-		
-	@Autowired
-	private DistribuidorService distribuidorService;
 
 	@Autowired
 	private EnderecoService enderecoService;
@@ -746,9 +742,8 @@ public class RoteirizacaoController extends BaseController {
 	   
 	   RoteirizacaoDTO roteirizacaoDTO = getRoteirizacaoDTOSessao();
 	   
-	   if (!Box.ESPECIAL.getId().equals(idBox)) {
-	       roteirizacaoDTOExistente = roteirizacaoService.obterRoteirizacaoPorBox(idBox);
-	   }
+	   roteirizacaoDTOExistente = roteirizacaoService.obterRoteirizacaoPorBox(idBox);
+	   
 	   if (roteirizacaoDTOExistente != null) {
 	       roteirizacaoDTO = setRoteirizacaoDTOSessao(roteirizacaoDTOExistente);
 	       roteirizacaoDTO.filtarBox(nomeBox);

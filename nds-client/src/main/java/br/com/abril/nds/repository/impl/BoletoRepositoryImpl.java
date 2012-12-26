@@ -480,9 +480,10 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 
 		hql.append(" select banco.apelido as nomeBanco, ")
 		   .append(" 		concat(banco.conta, '-', banco.dvConta) as numeroConta, ")
-  		   .append(" 		sum(baixaCobranca.valorPago) as valorPago ")
+  		   .append(" 		sum(baixaCobranca.valorPago) as valorPago, ")
+  		   .append(" 		cobranca.dataVencimento as dataVencimento ")
   		   .append(this.obterFromWhereConsultaTotalBancario())
-  		   .append(" group by banco ");
+  		   .append(" group by banco, cobranca.dataVencimento ");
 
 		if (filtro.getOrdenacaoColuna() != null && filtro.getPaginacao() != null) {
 			
@@ -549,6 +550,7 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 		
 		hql.append(" from BaixaCobranca baixaCobranca ");
 		hql.append(" join baixaCobranca.banco banco ");
+		hql.append(" left join baixaCobranca.cobranca cobranca ");
 		hql.append(" where baixaCobranca.dataBaixa = :data ");
 		
 		return hql.toString();

@@ -76,7 +76,7 @@ public class ProdutoLancamentoDTO implements Serializable {
   	
   	private boolean alteradoInteface;
   	
-  	private BigInteger reparteEstudo;
+  	private BigInteger distribuicao;
 	
 	/**
 	 * Construtor padrão.
@@ -484,17 +484,17 @@ public class ProdutoLancamentoDTO implements Serializable {
 	}
 
 	/**
-	 * @return the reparteEstudo
+	 * @return the distribuicao
 	 */
-	public BigInteger getReparteEstudo() {
-		return reparteEstudo;
+	public BigInteger getDistribuicao() {
+		return distribuicao;
 	}
 
 	/**
-	 * @param reparteEstudo the reparteEstudo to set
+	 * @param distribuicao the distribuicao to set
 	 */
-	public void setReparteEstudo(BigInteger reparteEstudo) {
-		this.reparteEstudo = reparteEstudo;
+	public void setDistribuicao(BigInteger distribuicao) {
+		this.distribuicao = distribuicao;
 	}
 	
 }

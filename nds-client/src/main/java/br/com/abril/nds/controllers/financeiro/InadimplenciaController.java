@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
+import br.com.abril.nds.client.util.PessoaUtil;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.DividaComissaoDTO;
 import br.com.abril.nds.dto.DividaDTO;
@@ -119,11 +120,14 @@ public class InadimplenciaController extends BaseController {
 		
 		try {
 			
+			nomeCota = PessoaUtil.removerSufixoDeTipo(nomeCota);
+			
 			FiltroCotaInadimplenteDTO filtroAtual = new FiltroCotaInadimplenteDTO();
 			filtroAtual.setPaginacao(new PaginacaoVO(page,rp,sortorder,sortname));
 			filtroAtual.setColunaOrdenacao(Util.getEnumByStringValue(ColunaOrdenacao.values(), sortname));
+			
 			filtroAtual.setNumCota(numCota);
-			filtroAtual.setNomeCota(nomeCota.replace(" (PF)", "").replace(" (PJ)", ""));
+			filtroAtual.setNomeCota(nomeCota);
 			filtroAtual.setPeriodoDe(periodoDe);
 			filtroAtual.setPeriodoAte(periodoAte);
 			filtroAtual.setSituacaoEmAberto(situacaoEmAberto);

@@ -440,11 +440,9 @@ public class ConferenciaEncalheRepositoryImplTest extends
 		List<ProdutoEdicaoSlipDTO> dadosSlip;
 
 		Long idControleConferenciaEncalheCota = 1L;
-		Long idDistribuidor = 2L;
-
 		dadosSlip = conferenciaEncalheRepository
 				.obterDadosSlipConferenciaEncalhe(
-						idControleConferenciaEncalheCota, idDistribuidor);
+						idControleConferenciaEncalheCota);
 
 		Assert.assertNotNull(dadosSlip);
 
@@ -606,6 +604,12 @@ public class ConferenciaEncalheRepositoryImplTest extends
 		
 		valorTotal = conferenciaEncalheRepository.obterValorTotalEncalheOperacaoConferenciaEncalhe(idControleConferenciaEncalhe);
 		
+	}
+	
+	@Test
+	public void testarObterReparteConferencia() {
+		
+		this.conferenciaEncalheRepository.obterReparteConferencia(1L, 1L, 1L);
 	}
 
 }

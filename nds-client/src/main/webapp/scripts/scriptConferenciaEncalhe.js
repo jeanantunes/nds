@@ -73,10 +73,15 @@ var ConferenciaEncalhe = $.extend(true, {
 		});
 		
 		$("#numeroCota", ConferenciaEncalhe.workspace).numeric();
-		
+		                                           
 		$("#qtdeExemplar", ConferenciaEncalhe.workspace).numericE();
 		
-		$("#vlrCE", ConferenciaEncalhe.workspace).numeric();
+		
+		$("#vlrCE", this.workspace).maskMoney({
+			 thousands:'.', 
+			 decimal:',', 
+			 precision:2
+		});
 		
 		$("#dataNotaFiscal", ConferenciaEncalhe.workspace).mask("99/99/9999");
 		
@@ -344,9 +349,28 @@ var ConferenciaEncalhe = $.extend(true, {
 		
 	},
 	
+	replaceAll : function(string, token, newtoken) {
+		while (string.indexOf(token) != -1) {
+	 		string = string.replace(token, newtoken);
+		}
+		return string;
+	},
+	
+	preparaValor : function(vr){
+		
+		if(vr.substr(vr.length-3,1)==","){
+			vr = this.replaceAll(vr,".","");
+			vr = this.replaceAll(vr,",",".");
+		}
+		if(vr.substr(vr.length-3,1)=="."){
+			vr = this.replaceAll(vr,",","");
+		}
+		return vr;
+	},
+	
 	verificarValorTotalCE : function() {
 		
-		var data = [{name: "valorCEInformado", value: $("#vlrCE", ConferenciaEncalhe.workspace).val()}];
+		var data = [{name: "valorCEInformado", value: ConferenciaEncalhe.preparaValor($("#vlrCE", ConferenciaEncalhe.workspace).val())}];
 		
 		$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/verificarValorTotalCE', data, 
 		
