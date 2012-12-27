@@ -144,7 +144,7 @@ var CadastroCalendario = $.extend(true, {
 		
 		carregarPopUpFeriadosMes : function(mes) {
 			
-			if (CadastroCalendario.mesPesquisaFeriados == null) {
+			if (mes) {
 				CadastroCalendario.mesPesquisaFeriados = mes;
 			}
 			CadastroCalendario.recarregarMesFeriadoGrid();
@@ -170,7 +170,7 @@ var CadastroCalendario = $.extend(true, {
 		
 		carregarDadosFeriadoDefault: function(feriadoDefault) {
 			
-			if(typeof feriadoDefault == 'undefined') {
+			if(!feriadoDefault) {
 				return;
 			}
 			
@@ -239,13 +239,17 @@ var CadastroCalendario = $.extend(true, {
 				width:300,
 				modal: true,
 				buttons: {
+					
 					"Confirmar": function() {
 						$( this ).dialog( "close" );
 						var parametrosPesquisa = 
 							[ {name : "dtFeriado", value : dtFeriado},
 							  {name : "descTipoFeriado", value : tipoFeriado},
-							  {name : "idLocalidade", value : idLocalidade},
 							  {name : "indRepeteAnualmente", value : indRepeteAnualmente}];
+						
+						if (idLocalidade != -1) {
+							parametrosPesquisa.push({name : "idLocalidade", value : idLocalidade});
+						}
 						
 						$.postJSON(
 								
@@ -296,10 +300,6 @@ var CadastroCalendario = $.extend(true, {
 				
 				var cell = value.cell;
 
-				if(index == 0) {
-					CadastroCalendario.carregarDadosFeriadoDefault(cell);
-				}
-
 				cell.indOpera = (cell.indOpera == false) ?  'Não' : 'Sim';
 				cell.indRepeteAnualmente = (cell.indRepeteAnualmente  == false) ?  'Não' : 'Sim';
 				cell.indEfetuaCobranca = (cell.indEfetuaCobranca) == false ?  'Não' : 'Sim';
@@ -318,21 +318,17 @@ var CadastroCalendario = $.extend(true, {
 			$.each(result.rows, function(index, value) {
 				
 				var cell = value.cell;
-
-				if(index == 0) {
-					CadastroCalendario.carregarDadosFeriadoDefault(cell);
-				}
-
+				
 				var dtFeriado 	 			= CadastroCalendario.concatenarChar(cell.dataFeriado);
 				var tipoFeriado  			= CadastroCalendario.concatenarChar(cell.tipoFeriado);
-				var localidade 				= cell.localidade;
+				var localidade 				= cell.localidade ? CadastroCalendario.concatenarChar(cell.localidade) : -1;
 				var indRepeteAnualmente  	= cell.indRepeteAnualmente;
 				var indOpera 				= cell.indOpera;
 				var indEfetuaCobranca 		= cell.indEfetuaCobranca;
 				var descricaoFeriado		= CadastroCalendario.concatenarChar(cell.descricaoFeriado);
 
 				var parametros = [ dtFeriado, tipoFeriado, localidade, indRepeteAnualmente, indOpera, indEfetuaCobranca, descricaoFeriado ];
-				
+								
 				var imgDetalhar = '<img src="' + contextPath + '/images/ico_detalhes.png" border="0" hspace="3"/>';
 				cell.acao = '<a href="javascript:;" onclick="CadastroCalendario.editarFeriado('+ parametros +');" style="margin-right:10px;">' + imgDetalhar + '</a>';
 				
@@ -343,12 +339,9 @@ var CadastroCalendario = $.extend(true, {
 				cell.indRepeteAnualmente = (cell.indRepeteAnualmente  == false) ?  'N' : 'S';
 				cell.indEfetuaCobranca = (cell.indEfetuaCobranca) == false ?  'N' : 'S';
 				cell.localidade = (typeof cell.localidade == 'undefined') ? '-' : cell.localidade;
-
-				
 			});
 			
 			return result;
-			
 		},
 		
 		limparCamposEdicaoCadastroFeriado : function() {

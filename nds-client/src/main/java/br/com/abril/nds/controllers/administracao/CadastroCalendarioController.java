@@ -193,9 +193,7 @@ public class CadastroCalendarioController extends BaseController {
 		if (!DateUtil.isValidDate(dataRecolhimento, "dd/MM/yyyy")) {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Data inválida!");
-			
 		} 
-		
 	}
 	
 	public void obterFeriadosDoMes(int mes) {
