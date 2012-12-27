@@ -305,3 +305,11 @@
 	</fieldset>
 </div>
 </form>
+<form id="form-confirmar">
+	<div id="dialog-confirmar" title="Confirma">
+		<fieldset>
+			<legend>Confirma</legend>
+			<p id="msgConfirmar"></p>
+		</fieldset>
+	</div>
+</form>
