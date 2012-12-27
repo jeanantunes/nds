@@ -55,8 +55,8 @@
 			
 			<div id="divBotaoConfirmarChamadao" style="display: none">
 	    			
-   				<span class="bt_novos" title="Confirmar">
-   					<a onclick="chamadaoController.confirmar();" href="javascript:;" rel="tipsy">
+   				<span class="bt_novos">
+   					<a onclick="chamadaoController.confirmar();" href="javascript:;" rel="tipsy"  title="Confirmar" >
    						<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif">
    					</a>
 				</span>
@@ -65,28 +65,28 @@
 				
 			<div id="divBotoesChamadaEncalhe" style="display: none">
 							
-				<span class="bt_novos" title="Reprogramar">
-					<a onclick="chamadaoController.confirmar();" href="javascript:;" rel="tipsy">
+				<span class="bt_novos">
+					<a onclick="chamadaoController.confirmar();" href="javascript:;" rel="tipsy" title="Reprogramar">
 						<img src="${pageContext.request.contextPath}/images/ico_reprogramar.gif" hspace="5" border="0" />
 					</a>
 				</span>
 				
-				<span class="bt_novos" title="Cancelar">
-					<a href="javascript:;" onclick="chamadaoController.cancelarChamadao();" rel="tipsy">
+				<span class="bt_novos" >
+					<a href="javascript:;" onclick="chamadaoController.cancelarChamadao();" rel="tipsy" title="Cancelar">
 						<img src="${pageContext.request.contextPath}/images/ico_bloquear.gif" hspace="5" border="0" />
 					</a>
 				</span>
 				
 			</div>
 			
-    		<span class="bt_arq" title="Gerar Arquivo">
-  					<a href="${pageContext.request.contextPath}/devolucao/chamadao/exportar?fileType=XLS" rel="tipsy">
+    		<span class="bt_arq" >
+  					<a href="${pageContext.request.contextPath}/devolucao/chamadao/exportar?fileType=XLS" rel="tipsy" title="Gerar Arquivo">
 					<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
 				</a>
     		</span>
 
-			<span class="bt_arq" title="Imprimir">
-				<a href="${pageContext.request.contextPath}/devolucao/chamadao/exportar?fileType=PDF" rel="tipsy">
+			<span class="bt_arq" >
+				<a href="${pageContext.request.contextPath}/devolucao/chamadao/exportar?fileType=PDF" rel="tipsy" title="Imprimir">
 					<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0"/>
 				</a>
 			</span>
