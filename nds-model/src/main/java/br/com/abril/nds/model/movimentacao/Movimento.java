@@ -43,7 +43,7 @@ public abstract class Movimento extends Aprovacao {
 	@Temporal(TemporalType.DATE)
 	@Column(name = "DATA_CRIACAO", nullable = false)
 	private Date dataCriacao;
-	
+
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "TIPO_MOVIMENTO_ID")
 	private TipoMovimento tipoMovimento;
@@ -157,6 +157,5 @@ public abstract class Movimento extends Aprovacao {
 	public void setDataIntegracao(Date dataIntegracao) {
 		this.dataIntegracao = dataIntegracao;
 	}
-		
 
 }

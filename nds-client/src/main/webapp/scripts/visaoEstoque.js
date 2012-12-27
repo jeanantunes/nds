@@ -144,7 +144,7 @@ var visaoEstoqueController = $.extend(true, {
 		var qtdeInventario = parseInt($.trim(element.value) == "" ? 0 : element.value); 
 		var qtde = parseInt($('td[abbr="qtde"] >div', tr).html()); 
 		debugger;
-		$('div[abbr="diferenca"]', tr).html(qtde - qtdeInventario);
+		$('div[abbr="diferenca"]', tr).html(qtdeInventario - qtde);
 	},
 	
 	

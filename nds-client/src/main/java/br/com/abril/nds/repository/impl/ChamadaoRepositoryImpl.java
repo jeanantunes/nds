@@ -367,6 +367,8 @@ public class ChamadaoRepositoryImpl extends AbstractRepositoryModel<Cota,Long> i
     		.append("on produtoFornecedor.PRODUTO_ID = produto.ID ")
 	            
 	    	.append("where estoqueProdCota.PRODUTO_EDICAO_ID = produtoEdicao.ID ") 
+	    	
+	    	.append("and (lancamento.STATUS = :statusLancamentoExpedido or lancamento.STATUS = :statusLancamentoEmBalanceamentoRec ) ")
 
 //	        .append("and ( ")
 //	        .append("(lancamento.STATUS = :statusLancamentoBalanceadoRec ")
@@ -378,8 +380,6 @@ public class ChamadaoRepositoryImpl extends AbstractRepositoryModel<Cota,Long> i
 	    	
 	        .append("and lancamento.DATA_REC_PREVISTA >= :dataRecolhimento ")
 
-	    	
-	        .append("and lancamento.TIPO_LANCAMENTO = :tipoLancamento ")
 	        .append("and (estoqueProdCota.QTDE_RECEBIDA - estoqueProdCota.QTDE_DEVOLVIDA) > 0 ")
 	        
 	        .append("and not exists ( ")
@@ -478,16 +478,14 @@ public class ChamadaoRepositoryImpl extends AbstractRepositoryModel<Cota,Long> i
 //		query.setParameter("statusLancamentoBalanceadoRec",
 //						   StatusLancamento.BALANCEADO_RECOLHIMENTO.toString());
 //		
-//		query.setParameter("statusLancamentoEmBalanceamentoRec",
-//				   StatusLancamento.EM_BALANCEAMENTO_RECOLHIMENTO.toString());
-//		
-//		query.setParameter("statusLancamentoExpedido", StatusLancamento.EXPEDIDO.toString());
+		query.setParameter("statusLancamentoEmBalanceamentoRec",
+				   StatusLancamento.EM_BALANCEAMENTO_RECOLHIMENTO.toString());
+		
+		query.setParameter("statusLancamentoExpedido", StatusLancamento.EXPEDIDO.toString());
 		
 		query.setParameter("chamadaEncalheAntecipada", TipoChamadaEncalhe.ANTECIPADA.toString());
 		
 		query.setParameter("chamadaEncalheChamadao", TipoChamadaEncalhe.CHAMADAO.toString());
-		
-		query.setParameter("tipoLancamento", TipoLancamento.LANCAMENTO.toString());
 		
 		if (filtro == null) {
 			

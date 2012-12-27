@@ -1168,6 +1168,7 @@ public class BaixaFinanceiraController extends BaseController {
 			baixa.setNomeBanco(detalhe.getNomeBanco());
 			baixa.setNumeroConta(detalhe.getNumeroConta());
 			baixa.setValorPago(detalhe.getValorPago());
+			baixa.setDataVencimento(DateUtil.formatarDataPTBR(detalhe.getDataVencimento()));
 			
 			lista.add(baixa);
 		}
