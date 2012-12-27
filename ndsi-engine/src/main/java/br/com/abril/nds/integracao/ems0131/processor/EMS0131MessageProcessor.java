@@ -67,7 +67,7 @@ public class EMS0131MessageProcessor extends AbstractRepository implements Messa
 				return;
 			}
 
-			PrintWriter print = new PrintWriter(new FileWriter(message.getHeader().get(MessageHeaderProperties.OUTBOUND_FOLDER.getValue())+"/COTA.txt"));
+			PrintWriter print = new PrintWriter(new FileWriter(message.getHeader().get(MessageHeaderProperties.OUTBOUND_FOLDER.getValue())+"/COTA.NEP"));
 						
 			for(Cota cota : cotas){
 				
