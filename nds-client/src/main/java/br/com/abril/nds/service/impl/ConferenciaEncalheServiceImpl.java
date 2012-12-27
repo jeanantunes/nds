@@ -1707,7 +1707,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 
 		desfazerCobrancaConferenciaEncalheReaberta(controleConfEncalheCota.getId());
 		
-		validarPermissaoSalvarConferenciaEncalhe(listaConferenciaEncalhe);
+		//validarPermissaoSalvarConferenciaEncalhe(listaConferenciaEncalhe);
 		
 		ControleConferenciaEncalheCota controleConferenciaEncalheCota = 
 				inserirDadosConferenciaEncalhe(controleConfEncalheCota, listaConferenciaEncalhe, listaIdConferenciaEncalheParaExclusao, usuario, StatusOperacao.EM_ANDAMENTO);
@@ -1883,31 +1883,31 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 	}
 	
-	/**
-	 * Verifica se os itens da conferenciaEncalhe são todos referentes ao CHAMADÃO, do contrário,
-	 * não será permitido salvar a conferência.
-	 * 
-	 * @param listaConferenciaEncalhe
-	 */
-	private void validarPermissaoSalvarConferenciaEncalhe(List<ConferenciaEncalheDTO> listaConferenciaEncalhe) throws EncalheSemPermissaoSalvarException {
-		
-		if(listaConferenciaEncalhe == null || listaConferenciaEncalhe.isEmpty()) {
-			return;
-		}
-		
-		for(ConferenciaEncalheDTO conferencia : listaConferenciaEncalhe) {
-			
-			if(!TipoChamadaEncalhe.CHAMADAO.equals(conferencia.getTipoChamadaEncalhe()))  {
-				
-				throw new EncalheSemPermissaoSalvarException("Não é possível salvar conferência de encalhe, o produto \"" + 
-															 conferencia.getNomeProduto() +  
-															"\" não pertence a um \"CHAMADÃO\"");
-				
-			}
-			
-		}
-		
-	}
+//	/**
+//	 * Verifica se os itens da conferenciaEncalhe são todos referentes ao CHAMADÃO, do contrário,
+//	 * não será permitido salvar a conferência.
+//	 * 
+//	 * @param listaConferenciaEncalhe
+//	 */
+//	private void validarPermissaoSalvarConferenciaEncalhe(List<ConferenciaEncalheDTO> listaConferenciaEncalhe) throws EncalheSemPermissaoSalvarException {
+//		
+//		if(listaConferenciaEncalhe == null || listaConferenciaEncalhe.isEmpty()) {
+//			return;
+//		}
+//		
+//		for(ConferenciaEncalheDTO conferencia : listaConferenciaEncalhe) {
+//			
+//			if(!TipoChamadaEncalhe.CHAMADAO.equals(conferencia.getTipoChamadaEncalhe()))  {
+//				
+//				throw new EncalheSemPermissaoSalvarException("Não é possível salvar conferência de encalhe, o produto \"" + 
+//															 conferencia.getNomeProduto() +  
+//															"\" não pertence a um \"CHAMADÃO\"");
+//				
+//			}
+//			
+//		}
+//		
+//	}
 	
 	/**
 	 * Exclui um registros de ConferenciaEncalhe e movimentos relacionados como 
