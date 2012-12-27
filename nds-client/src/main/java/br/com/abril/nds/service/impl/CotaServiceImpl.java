@@ -63,6 +63,7 @@ import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
 import br.com.abril.nds.model.cadastro.ParametroDistribuicaoCota;
 import br.com.abril.nds.model.cadastro.ParametroSistema;
 import br.com.abril.nds.model.cadastro.ParametrosCotaNotaFiscalEletronica;
+import br.com.abril.nds.model.cadastro.ParametrosDistribuidorEmissaoDocumento;
 import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
@@ -74,6 +75,7 @@ import br.com.abril.nds.model.cadastro.TelefoneCota;
 import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.cadastro.TipoEndereco;
 import br.com.abril.nds.model.cadastro.TipoParametroSistema;
+import br.com.abril.nds.model.cadastro.TipoParametrosDistribuidorEmissaoDocumento;
 import br.com.abril.nds.model.cadastro.desconto.DescontoProdutoEdicao;
 import br.com.abril.nds.model.cadastro.pdv.CaracteristicasPDV;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
@@ -775,6 +777,71 @@ public class CotaServiceImpl implements CotaService {
 	public Cota obterCotaPDVPorNumeroDaCota(Integer numeroCota) {
 		return this.cotaRepository.obterCotaPDVPorNumeroDaCota(numeroCota);
 	}
+	
+	/**
+	 * Define parametros default com base em parametros do Distribuidor
+	 * @param distribuicao
+	 * @return DistribuicaoDTO
+	 */
+	private DistribuicaoDTO setDistribuicaoDefault(DistribuicaoDTO distribuicao){
+		
+		Distribuidor distribuidor = this.distribuidorRepository.obter();
+		
+		List<ParametrosDistribuidorEmissaoDocumento> listaParametrosDistribuidorEmissaoDocumentos = distribuidor.getParametrosDistribuidorEmissaoDocumentos();
+		
+		if (listaParametrosDistribuidorEmissaoDocumentos!=null && listaParametrosDistribuidorEmissaoDocumentos.size() > 0){
+		
+			for (ParametrosDistribuidorEmissaoDocumento item : listaParametrosDistribuidorEmissaoDocumentos){
+				
+				TipoParametrosDistribuidorEmissaoDocumento tipo = item.getTipoParametrosDistribuidorEmissaoDocumento();
+				
+				if (tipo!=null){
+					
+					switch (tipo){
+					
+						case SLIP:
+							
+							distribuicao.setSlipEmail(item.isUtilizaEmail());
+							distribuicao.setSlipImpresso(item.isUtilizaImpressao());
+							
+							break;
+						case BOLETO:
+							
+							distribuicao.setBoletoEmail(item.isUtilizaEmail());
+							distribuicao.setBoletoImpresso(item.isUtilizaImpressao());
+							
+							break;
+						case BOLETO_SLIP:
+							
+							distribuicao.setBoletoSlipEmail(item.isUtilizaEmail());
+							distribuicao.setBoletoSlipImpresso(item.isUtilizaImpressao());
+							
+							break;
+						case RECIBO:
+							
+							distribuicao.setReciboEmail(item.isUtilizaEmail());
+							distribuicao.setReciboImpresso(item.isUtilizaImpressao());
+							
+							break;
+						case NOTA_ENVIO:
+							
+							distribuicao.setNeEmail(item.isUtilizaEmail());
+							distribuicao.setNeImpresso(item.isUtilizaImpressao());
+							
+							break;
+						case CHAMADA_ENCALHE:
+							
+							distribuicao.setCeEmail(item.isUtilizaEmail());
+							distribuicao.setCeImpresso(item.isUtilizaImpressao());
+							
+							break;
+					}		
+				}
+			}
+		}
+		
+		return distribuicao;
+	}
 
 	@Override
 	@Transactional
@@ -808,8 +875,10 @@ public class CotaServiceImpl implements CotaService {
 		}
 		
 		if (parametro == null) {
-			
-			return dto;
+
+			dto = this.setDistribuicaoDefault(dto);
+
+			return dto;	
 		}
 		
 		if(!qtdePDVAutomatico) {

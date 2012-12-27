@@ -5,7 +5,7 @@ var resumoExpedicaoController = $.extend(true, {
 	
 	inicializar : function() {
 		
-		$("#dataLancamento", this.workspace).datepicker({
+		$("#dataLancamentoResumo", this.workspace).datepicker({
 			showOn : "button",
 			buttonImage: contextPath + "/images/calendar.gif",
 			buttonImageOnly : true,
@@ -13,8 +13,8 @@ var resumoExpedicaoController = $.extend(true, {
 			defaultDate: new Date()
 		});
 		
-		$("#dataLancamento", this.workspace).mask("99/99/9999");
-		$("#dataLancamento", this.workspace).focus();
+		$("#dataLancamentoResumo", this.workspace).mask("99/99/9999");
+		$("#dataLancamentoResumo", this.workspace).focus();
 		
 		this.inicializarGridResumoExpedicaoBox();
 		this.inicializarGridResumoExpedicaoProduto();
@@ -241,7 +241,7 @@ var resumoExpedicaoController = $.extend(true, {
 		
 		resumoExpedicaoController.mudarLegendaFielsSet('idFiledResultResumo','resumo');
 		
-		$("#dataLancamento", this.workspace).focus();
+		$("#dataLancamentoResumo", this.workspace).focus();
 		
 		$.each(resultado.tableModel.rows, function(index, row) {
 			
@@ -330,7 +330,7 @@ var resumoExpedicaoController = $.extend(true, {
 	 */
 	pesquisar : function() {
 		
-		var dataLancamento = $('#dataLancamento', this.workspace).val();
+		var dataLancamento = $('#dataLancamentoResumo', this.workspace).val();
 		var tipoPesquisa = $('#tipoPesquisa', this.workspace).val();
 		
 		var formData = [
@@ -349,7 +349,7 @@ var resumoExpedicaoController = $.extend(true, {
 			exibirMensagem('WARNING',mensagens);
 		}
 		
-		$("#dataLancamento", this.workspace).focus();
+		$("#dataLancamentoResumo", this.workspace).focus();
 	},
 	
 	/*

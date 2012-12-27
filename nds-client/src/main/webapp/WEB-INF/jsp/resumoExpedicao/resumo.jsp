@@ -36,7 +36,7 @@
 			  <tr>
 			    <td width="116">Data Lançamento:</td>
 			    <td width="145">
-			    	<input type="text" name="dataLancamento" id="dataLancamento" style="width:80px;"/>
+			    	<input type="text" name="dataLancamentoResumo" id="dataLancamentoResumo" style="width:80px;"/>
 			    </td>
 			    <td width="91">Tipo Consulta:</td>
 			    <td width="180">
