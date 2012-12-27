@@ -136,7 +136,7 @@ public class EMS0132MessageProcessor extends AbstractRepository implements Messa
 			
 			Calendar dataAtual = Calendar.getInstance();			
 			
-			File arquivo = new File(message.getHeader().get(MessageHeaderProperties.OUTBOUND_FOLDER.getValue()) + "/LANCAMENTO.NEW");
+			File arquivo = new File(message.getHeader().get(MessageHeaderProperties.OUTBOUND_FOLDER.getValue()) + "/LANCAMENTO.NEP");
 			
 			PrintWriter writer = 
 				new PrintWriter(
