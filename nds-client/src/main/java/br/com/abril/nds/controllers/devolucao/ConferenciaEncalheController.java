@@ -1078,7 +1078,7 @@ public class ConferenciaEncalheController extends BaseController {
 			
 			resultadoValidacao.put("valorCEInformadoValido", false);
 			
-			resultadoValidacao.put("mensagemConfirmacao", "Valor CE jornaleiro informado inválido, Deseja continuar?");
+			resultadoValidacao.put("mensagemConfirmacao", "Valor CE jornaleiro informado inválido. Deseja continuar?");
 			
 			this.result.use(CustomJson.class).from(resultadoValidacao).serialize();
 

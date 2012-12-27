@@ -394,17 +394,26 @@ var ConferenciaEncalhe = $.extend(true, {
 						
 					} else {
 						
-						var indConfirmacaoValorCE = confirm(conteudo.mensagemConfirmacao);
+						$("#msgConfirmar", ConferenciaEncalhe.wokspace).text(conteudo.mensagemConfirmacao);
 						
-						if(indConfirmacaoValorCE == true) {
-							
-							ConferenciaEncalhe.verificarValorTotalNotaFiscal();
-							
-						} else {
-							
-							return;
-							
-						}
+						$("#dialog-confirmar", ConferenciaEncalhe.workspace).dialog({
+							resizable : false,
+							height : 160,
+							width : 400,
+							modal : true,
+							buttons : {
+								"Sim" : function() {
+									
+									ConferenciaEncalhe.verificarValorTotalNotaFiscal();
+									$("#dialog-confirmar", ConferenciaEncalhe.workspace).dialog("close");
+								},
+								"Não" : function() {
+									
+									$("#dialog-confirmar", ConferenciaEncalhe.workpace).dialog("close");
+								}
+							},
+							form: $("#dialog-confirmar", this.workspace).parents("form")
+						});
 					}
 				}
 		);
