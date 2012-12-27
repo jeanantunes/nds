@@ -546,7 +546,15 @@ public class DiferencaEstoqueController extends BaseController {
 										 String pacotePadrao) {
 		
 		if (tipoDiferenca == null) {
-			throw new ValidacaoException(TipoMensagem.WARNING, "O preenchimento do campo [Tipo de Diferença] é obrigatório!");
+			throw new ValidacaoException(TipoMensagem.WARNING, "O preenchimento do campo [Tipo de Diferença] não foi informado!");
+		}
+		
+		if(edicaoProduto==null) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Campo [Edição] não foi informado!");
+		}
+		
+		if(diferenca==null) { 
+			throw new ValidacaoException(TipoMensagem.WARNING, "Campo [Diferença] é obrigatório!");
 		}
 		
 		if(idDiferenca == null){
@@ -2234,7 +2242,7 @@ public class DiferencaEstoqueController extends BaseController {
 		comparatorChain.addComparator(new BeanComparator("codigoProduto"));
 		comparatorChain.addComparator(new BeanComparator("numeroEdicao"));
 		comparatorChain.addComparator(new BeanComparator("tipoDirecionamento"));
-		
+				
 		Collections.sort(listaDiferencas, comparatorChain);
 		
 		List<Long> linhasComErro = new ArrayList<Long>();
