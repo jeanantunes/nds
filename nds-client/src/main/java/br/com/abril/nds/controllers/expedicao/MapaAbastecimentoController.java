@@ -41,7 +41,6 @@ import br.com.abril.nds.service.RotaService;
 import br.com.abril.nds.service.RoteirizacaoService;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.vo.PaginacaoVO;
-import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
@@ -53,10 +52,6 @@ import br.com.caelum.vraptor.view.Results;
 public class MapaAbastecimentoController extends BaseController {
 
 	private static final String FILTRO_SESSION_ATTRIBUTE = "filtroMapaAbastecimento";
-	
-	protected static final String MSG_MATRIZ_BALANCEAMENTO_NAO_CONFIRMADO = "Não há matriz de lancamento confirmada para esta data.";
-	
-	protected static final String MSG_MATRIZ_BALANCEAMENTO_NAO_BALANCEADO = "Não há matriz de lancamento balanceada para esta data.";
 	
 	@Autowired
 	private HttpSession session;
@@ -202,17 +197,6 @@ public class MapaAbastecimentoController extends BaseController {
 		return listaRoteiros;
 	}
 		
-	/**
-	 * Válida
-	 * 
-	 * @param dataLancamento
-	 */
-	private void validarExistenciaMatriz(Date dataLancamento) {
-		if(!lancamentoService.existeMatrizBalanceamentoConfirmado(dataLancamento)){
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, MSG_MATRIZ_BALANCEAMENTO_NAO_BALANCEADO));
-		}
-	}	
-	
 	@Post
 	public void pesquisar(FiltroMapaAbastecimentoDTO filtro, Integer page, Integer rp, String sortname, String sortorder) {
 		
@@ -224,9 +208,7 @@ public class MapaAbastecimentoController extends BaseController {
 		
 		if(filtro.getDataLancamento() == null || filtro.getDataLancamento().isEmpty())
 			throw new ValidacaoException(TipoMensagem.WARNING, "'Data de Lançamento' é obrigatória.");
-		
-		validarExistenciaMatriz(filtro.getDataDate());
-		
+			
 		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder,sortname));
 		
 		tratarFiltro(filtro);

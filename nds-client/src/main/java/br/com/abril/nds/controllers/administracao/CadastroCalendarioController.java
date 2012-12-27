@@ -193,9 +193,7 @@ public class CadastroCalendarioController extends BaseController {
 		if (!DateUtil.isValidDate(dataRecolhimento, "dd/MM/yyyy")) {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Data inválida!");
-			
 		} 
-		
 	}
 	
 	public void obterFeriadosDoMes(int mes) {
@@ -225,7 +223,8 @@ public class CadastroCalendarioController extends BaseController {
 			return;
 		}
 		
-		byte[] relatorio = calendarioService.obterRelatorioCalendarioFeriado(fileType, tipoPesquisaFeriado, filtroCalendario.getMesFeriado(), filtroCalendario.getAnoFeriado());
+		byte[] relatorio 
+			= calendarioService.obterRelatorioCalendarioFeriado(fileType, tipoPesquisaFeriado, filtroCalendario.getMesFeriado(), filtroCalendario.getAnoFeriado(),getLogoDistribuidor());
 		
 		escreverArquivoParaResponse(relatorio, "relatorio-feriado");
 		
