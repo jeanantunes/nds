@@ -67,8 +67,6 @@ public class ConferenciaEncalheController extends BaseController {
 	
 	private static final String DADOS_DOCUMENTACAO_CONF_ENCALHE_COTA = "dadosDocumentacaoConfEncalheCota";
 	
-	private static final String VALOR_ENCALHE_JORNALEIRO = "valorEncalheJornaleiro";
-	
 	private static final String ID_BOX_LOGADO = "idBoxLogado";
 	
 	private static final String INFO_CONFERENCIA = "infoCoferencia";
@@ -1131,7 +1129,7 @@ public class ConferenciaEncalheController extends BaseController {
 			
 			resultadoValidacao.put("valorCEInformadoValido", false);
 			
-			resultadoValidacao.put("mensagemConfirmacao", "Valor CE jornaleiro informado inválido, Deseja continuar?");
+			resultadoValidacao.put("mensagemConfirmacao", "Valor CE jornaleiro informado inválido. Deseja continuar?");
 			
 			this.result.use(CustomJson.class).from(resultadoValidacao).serialize();
 
@@ -1254,7 +1252,6 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		this.session.removeAttribute(ID_BOX_LOGADO);
 		this.session.removeAttribute(INFO_CONFERENCIA);
-		this.session.removeAttribute(VALOR_ENCALHE_JORNALEIRO);
 		this.session.removeAttribute(NOTA_FISCAL_CONFERENCIA);
 		this.session.removeAttribute(SET_CONFERENCIA_ENCALHE_EXCLUIR);
 		this.session.removeAttribute(HORA_INICIO_CONFERENCIA);

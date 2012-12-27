@@ -39,6 +39,7 @@ public class CotaEmissaoDTO implements Serializable{
 	private String dataRecolhimento;
 	private String dataEmissao;
 	private Integer box;
+	private String nomeBox;
 	private String codigoRota;
 	private String nomeRota;
 	private String codigoRoteiro;
@@ -54,6 +55,16 @@ public class CotaEmissaoDTO implements Serializable{
 	private String vlrTotalLiquido;
 
 	
+	
+	
+	public String getNomeBox() {
+		return nomeBox;
+	}
+
+	public void setNomeBox(String nomeBox) {
+		this.nomeBox = nomeBox;
+	}
+
 	/**
 	 * @return the cnpj
 	 */

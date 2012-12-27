@@ -1,6 +1,7 @@
 package br.com.abril.nds.service.impl;
 
 import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Arrays;
@@ -39,6 +40,7 @@ import br.com.abril.nds.repository.FeriadoRepository;
 import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.EnderecoService;
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.JasperUtil;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 
@@ -58,7 +60,7 @@ public class CalendarioServiceImpl implements CalendarioService {
 
 	@Autowired
 	private DistribuidorRepository distribuidorRepository;
-
+	
 	@Override
 	@Transactional(readOnly = true)
 	public Date adicionarDiasUteis(Date data, int numDias) {
@@ -294,25 +296,8 @@ public class CalendarioServiceImpl implements CalendarioService {
 
 		Feriado feriado = null;
 		String unidadeFederacao = null;
-
-		if (calendarioFeriado.isIndRepeteAnualmente()) {
-			feriado = feriadoRepository
-					.obterFeriadoAnualTipo(data, tipoFeriado);
-		} else {
-
-			String uf = null;
-
-			if (TipoFeriado.ESTADUAL.equals(tipoFeriado)) {
-				uf = obterUfDistribuidor();
-			}
-
-			List<Feriado> listaFeriado = feriadoRepository.obterFeriados(data,
-					tipoFeriado, uf, localidade);
-
-			if (listaFeriado != null && !listaFeriado.isEmpty()) {
-				feriado = listaFeriado.get(0);
-			}
-		}
+		
+		feriado = obterFeriadoExistente(data, tipoFeriado, localidade);
 		
 		if (feriado != null) {
 
@@ -333,8 +318,6 @@ public class CalendarioServiceImpl implements CalendarioService {
 
 		} else {
 
-			
-
 			feriado = new Feriado();
 
 			feriado.setData(data);
@@ -353,6 +336,32 @@ public class CalendarioServiceImpl implements CalendarioService {
 			feriadoRepository.adicionar(feriado);
 		}
 
+	}
+
+	private Feriado obterFeriadoExistente(Date data, TipoFeriado tipoFeriado,
+			String localidade) {
+		
+		Feriado feriado;
+		
+		feriado = feriadoRepository.obterFeriadoAnualTipo(data, tipoFeriado);
+		
+		if (feriado == null) {
+	
+			String uf = null;
+	
+			if (TipoFeriado.ESTADUAL.equals(tipoFeriado)) {
+				uf = obterUfDistribuidor();
+			}
+	
+			List<Feriado> listaFeriado = feriadoRepository.obterFeriados(data,
+					tipoFeriado, uf, localidade);
+	
+			if (listaFeriado != null && !listaFeriado.isEmpty()) {
+				feriado = listaFeriado.get(0);
+			}
+		}
+		
+		return feriado;
 	}
 	
 	/**
@@ -558,7 +567,7 @@ public class CalendarioServiceImpl implements CalendarioService {
 
 	private byte[] gerarDocumentoExcel(
 			List<CalendarioFeriadoWrapper> listaCalendarioFeriadoWrapper,
-			int anoFeriado) throws URISyntaxException, JRException {
+			int anoFeriado, InputStream logoDistribuidor) throws URISyntaxException, JRException {
 
 		JRDataSource jrDataSource = new JRBeanCollectionDataSource(
 				listaCalendarioFeriadoWrapper);
@@ -568,14 +577,20 @@ public class CalendarioServiceImpl implements CalendarioService {
 		String path = diretorioReports.toURI().getPath()
 				+ "/relatorio_calendario_feriado.jasper";
 
+		Distribuidor distribuidor = distribuidorRepository.obter();
+		
+		String nomeDistribuidor = ( distribuidor!= null && distribuidor.getJuridica()!= null)? distribuidor.getJuridica().getRazaoSocial():"";
+		
 		Map<String, Object> parameters = new HashMap<String, Object>();
 
 		parameters.put("SUBREPORT_DIR", diretorioReports.toURI().getPath());
 		parameters.put("ANO_FERIADO", String.valueOf(anoFeriado));
+		parameters.put("LOGO",JasperUtil.getImagemRelatorio(logoDistribuidor));
+		parameters.put("NOME_DISTRIBUIDOR",nomeDistribuidor);
 
 		JasperPrint jasperPrint = JasperFillManager.fillReport(path,
 				parameters, jrDataSource);
-
+		
 		JRXlsExporter exporter = new JRXlsExporter();
 
 		ByteArrayOutputStream xlsReport = new ByteArrayOutputStream();
@@ -594,7 +609,7 @@ public class CalendarioServiceImpl implements CalendarioService {
 
 	private byte[] gerarDocumentoPDF(
 			List<CalendarioFeriadoWrapper> listaCalendarioFeriadoWrapper,
-			int anoFeriado) throws JRException, URISyntaxException {
+			int anoFeriado,InputStream logoDistribuidor) throws JRException, URISyntaxException {
 
 		JRDataSource jrDataSource = new JRBeanCollectionDataSource(
 				listaCalendarioFeriadoWrapper);
@@ -603,12 +618,18 @@ public class CalendarioServiceImpl implements CalendarioService {
 
 		String path = diretorioReports.toURI().getPath()
 				+ "/relatorio_calendario_feriado.jasper";
-
+		
+		Distribuidor distribuidor = distribuidorRepository.obter();
+		
+		String nomeDistribuidor = ( distribuidor!= null && distribuidor.getJuridica()!= null)? distribuidor.getJuridica().getRazaoSocial():"";
+		
 		Map<String, Object> parameters = new HashMap<String, Object>();
 
 		parameters.put("SUBREPORT_DIR", diretorioReports.toURI().getPath());
 		parameters.put("ANO_FERIADO", String.valueOf(anoFeriado));
-
+		parameters.put("LOGO",JasperUtil.getImagemRelatorio(logoDistribuidor));
+		parameters.put("NOME_DISTRIBUIDOR",nomeDistribuidor);
+		
 		return JasperRunManager.runReportToPdf(path, parameters, jrDataSource);
 	}
 
@@ -714,7 +735,7 @@ public class CalendarioServiceImpl implements CalendarioService {
 
 	@Transactional
 	public byte[] obterRelatorioCalendarioFeriado(FileType fileType,
-			TipoPesquisaFeriado tipoPesquisaFeriado, int mes, int ano) {
+			TipoPesquisaFeriado tipoPesquisaFeriado, int mes, int ano,InputStream logoDistribuidor) {
 
 		try {
 
@@ -722,13 +743,13 @@ public class CalendarioServiceImpl implements CalendarioService {
 
 				return gerarDocumentoPDF(
 						obterListaCalendarioFeriadoWrapper(tipoPesquisaFeriado,
-								mes, ano), ano);
+								mes, ano), ano, logoDistribuidor);
 
 			} else if (FileType.XLS.equals(fileType)) {
 
 				return gerarDocumentoExcel(
 						obterListaCalendarioFeriadoWrapper(tipoPesquisaFeriado,
-								mes, ano), ano);
+								mes, ano), ano, logoDistribuidor);
 
 			}
 

@@ -256,7 +256,9 @@ public class ConsultaConsignadoCotaController extends BaseController {
 		
 		FiltroConsultaConsignadoCotaDTO filtro = (FiltroConsultaConsignadoCotaDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE_CONSIGNADO_COTA);
 		
-		if(filtro.getIdFornecedor() == null){
+		if(filtro.getIdCota() != null
+				&& filtro.getIdFornecedor() == null) { 
+				
 			List<ConsultaConsignadoCotaDTO> listaConsignadoCota = this.consultaConsignadoCota.buscarConsignadoCota(filtro, false);
 			
 			if(listaConsignadoCota.isEmpty()) {

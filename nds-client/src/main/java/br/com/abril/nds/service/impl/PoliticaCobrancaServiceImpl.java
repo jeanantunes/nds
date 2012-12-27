@@ -562,4 +562,13 @@ public class PoliticaCobrancaServiceImpl implements PoliticaCobrancaService {
 		}
 		return res;
 	}
+	
+	@Transactional
+	public List<TipoCobranca> obterTiposCobrancaDistribuidor() {
+		
+		List<TipoCobranca> tiposCobranca =
+			this.politicaCobrancaRepository.obterTiposCobrancaDistribuidor();
+		
+		return tiposCobranca;
+	}
 }

@@ -41,6 +41,7 @@ import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.GerarCobrancaService;
 import br.com.abril.nds.service.ImpressaoDividaService;
 import br.com.abril.nds.service.ParametroCobrancaCotaService;
+import br.com.abril.nds.service.PoliticaCobrancaService;
 import br.com.abril.nds.service.RoteirizacaoService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.CurrencyUtil;
@@ -96,6 +97,9 @@ public class ImpressaoBoletosController extends BaseController {
 	private BoxService boxService;
 
 	@Autowired
+	private PoliticaCobrancaService politicaCobrancaService;
+	
+	@Autowired
 	private HttpSession session;
 
 	@Autowired
@@ -117,6 +121,8 @@ public class ImpressaoBoletosController extends BaseController {
 		carregarBoxes();
 		carregarRota();
 		carregarRoteiro();
+		
+		result.include("dataOperacao", getDataOperacaoDistribuidor());
 	}
 
 	/**
@@ -124,9 +130,12 @@ public class ImpressaoBoletosController extends BaseController {
 	 */
 	private void carregarTiposCobranca() {
 
+		List<TipoCobranca> tiposCobranca =
+			this.politicaCobrancaService.obterTiposCobrancaDistribuidor();
+		
 		List<ItemDTO<TipoCobranca, String>> listaTipoCobranca = new ArrayList<ItemDTO<TipoCobranca, String>>();
 
-		for (TipoCobranca tipo : TipoCobranca.values()) {
+		for (TipoCobranca tipo : tiposCobranca) {
 
 			listaTipoCobranca.add(new ItemDTO<TipoCobranca, String>(tipo, tipo
 					.getDescTipoCobranca()));
@@ -264,7 +273,20 @@ public class ImpressaoBoletosController extends BaseController {
 		}
 
 		throw new ValidacaoException(TipoMensagem.SUCCESS,
-				"As dividas foram geradas com sucesso.");
+			"As dividas para a data de operação [" + this.getDataOperacaoDistribuidor()
+				+ "] foram geradas com sucesso!");
+	}
+	
+	private String getDataOperacaoDistribuidor() {
+
+		Distribuidor distribuidor = this.distribuidorService.obter();
+		
+		if (distribuidor != null) {
+
+			return DateUtil.formatarDataPTBR(distribuidor.getDataOperacao());
+		}
+
+		return null;
 	}
 
 	@Post
@@ -304,7 +326,7 @@ public class ImpressaoBoletosController extends BaseController {
 		List<GeraDividaDTO> listaDividasGeradas = dividaService
 				.obterDividasGeradas(filtro);
 
-		FileExporter.to("conta-corrente-cota", fileType).inHTTPResponse(
+		FileExporter.to("divida-cota", fileType).inHTTPResponse(
 				this.getNDSFileHeader(), filtro, null, listaDividasGeradas,
 				GeraDividaDTO.class, this.httpResponse);
 	}
@@ -453,27 +475,6 @@ public class ImpressaoBoletosController extends BaseController {
 		}
 
 		return listaDividasGeradasVO;
-	}
-
-	/**
-	 * Verifica se divididas foram geradas em uma determinada data de
-	 * vencimento.
-	 * 
-	 * @param dataMovimento
-	 * @return Boolean
-	 */
-	@Post
-	@Path("/validarPesquisaDivida")
-	public void validarPesquisaDivida(String dataMovimento) {
-
-		isDataMovimento(dataMovimento);
-
-		Boolean isPesquisa = dividaService.validarDividaGerada(DateUtil
-				.parseDataPTBR(dataMovimento));
-
-		result.use(Results.json()).from(isPesquisa.toString(), "result")
-				.serialize();
-
 	}
 
 	/**

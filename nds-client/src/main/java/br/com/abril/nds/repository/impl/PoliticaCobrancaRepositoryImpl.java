@@ -3,6 +3,7 @@ import java.util.List;
 
 import org.hibernate.Criteria;
 import org.hibernate.Query;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
@@ -189,7 +190,21 @@ public class PoliticaCobrancaRepositoryImpl extends AbstractRepositoryModel<Poli
 		query.executeUpdate();
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<TipoCobranca> obterTiposCobrancaDistribuidor() {
+		
+		Criteria criteria = super.getSession().createCriteria(PoliticaCobranca.class);
+		
+		criteria.createAlias("formaCobranca", "formaCobranca");
+		
+		criteria.add(Restrictions.eq("ativo", true));
+		
+		criteria.setProjection(Projections.property("formaCobranca.tipoCobranca"));
+		
+		criteria.setProjection(Projections.groupProperty("formaCobranca.tipoCobranca"));
+		
+		return criteria.list();
+	}
+	
 }
-
-
-
