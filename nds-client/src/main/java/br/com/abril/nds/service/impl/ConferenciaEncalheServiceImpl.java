@@ -1158,6 +1158,19 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 	}
 	
+	
+	private void removerItensConferenciaEncallhe(Set<Long> listaIdConferenciaEncalheParaExclusao) {
+		
+		if(listaIdConferenciaEncalheParaExclusao!=null && !listaIdConferenciaEncalheParaExclusao.isEmpty()) {
+			
+			for(Long idConferenciaEncalheExclusao : listaIdConferenciaEncalheParaExclusao) {
+				excluirRegistroConferenciaEncalhe(idConferenciaEncalheExclusao);
+			}
+			
+		}
+		
+	}
+	
 	/**
 	 * Insere os dados da conferência de encalhe.
 	 * 
@@ -1186,6 +1199,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		Date dataCriacao = new Date();
 		Integer numeroCota = controleConfEncalheCota.getCota().getNumeroCota();
 		
+		removerItensConferenciaEncallhe(listaIdConferenciaEncalheParaExclusao);
+		
 		NotaFiscalEntradaCota notaFiscalEntradaCota = atualizarCabecalhoNotaFiscalEntradaCota(
 				controleConfEncalheCota.getId(),
 				controleConfEncalheCota.getNotaFiscalEntradaCotaPricipal(), 
@@ -1201,7 +1216,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		List<NotaFiscalEntradaCota> notaFiscalEntradaCotas = new ArrayList<NotaFiscalEntradaCota>();
 		notaFiscalEntradaCotas.add(notaFiscalEntradaCota);
 		controleConfEncalheCota.setNotaFiscalEntradaCota(notaFiscalEntradaCotas);
-			
+		
 		
 		ControleConferenciaEncalheCota controleConferenciaEncalheCota = 
 				obterControleConferenciaEncalheCotaAtualizado(controleConfEncalheCota, statusOperacao, usuario);
@@ -1212,12 +1227,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		for(ConferenciaEncalheDTO conferenciaEncalheDTO : listaConferenciaEncalhe) {
 			
 			validarQtdeEncalheExcedeQtdeReparte(
+					conferenciaEncalheDTO,
 					controleConferenciaEncalheCota.getCota().getId(), 
-					conferenciaEncalheDTO.getIdProdutoEdicao(),
-					dataOperacao,
-					conferenciaEncalheDTO.getDataRecolhimento(),
-					conferenciaEncalheDTO.getQtdExemplar());
-
+					dataOperacao);
 			
 			if(conferenciaEncalheDTO.getIdConferenciaEncalhe()!=null) {
 
@@ -1247,13 +1259,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			
 		}
 		
-		if(listaIdConferenciaEncalheParaExclusao!=null && !listaIdConferenciaEncalheParaExclusao.isEmpty()) {
 		
-			for(Long idConferenciaEncalheExclusao : listaIdConferenciaEncalheParaExclusao) {
-				excluirRegistroConferenciaEncalhe(idConferenciaEncalheExclusao);
-			}
-			
-		}
 		
 		return controleConferenciaEncalheCota;
 		
@@ -1745,11 +1751,21 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	 * @param qtdeExemplarEncalhe
 	 */
 	private void validarQtdeEncalheExcedeQtdeReparte(
+			ConferenciaEncalheDTO conferenciaEncalhe,
 			Long idCota, 
-			Long idProdutoEdicao, 
-			Date dataOperacao,
-			Date dataRecolhimentoDistribuidor,
-			BigInteger qtdeExemplarEncalhe) {
+			Date dataOperacao) {
+		
+		Long idProdutoEdicao 				= conferenciaEncalhe.getIdProdutoEdicao();
+		BigInteger qtdeExemplarEncalhe 		= conferenciaEncalhe.getQtdExemplar();
+		Date dataRecolhimentoDistribuidor 	= conferenciaEncalhe.getDataRecolhimento();		
+		
+		ConferenciaEncalhe conferenciaEncalheFromDB = null;
+		
+		if(conferenciaEncalhe.getIdConferenciaEncalhe()!=null){
+
+			conferenciaEncalheFromDB = conferenciaEncalheRepository.buscarPorId(conferenciaEncalhe.getIdConferenciaEncalhe());
+			
+		}
 		
 		BigInteger qtdeReparte = obterQtdeReparteParaProdutoEdicao(
 				idCota, 
@@ -1757,8 +1773,40 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				dataOperacao, 
 				dataRecolhimentoDistribuidor);
 		
-		if(qtdeExemplarEncalhe.compareTo(qtdeReparte)>0) {
-			throw new ValidacaoException(TipoMensagem.WARNING, "Conferência de encalhe está excedendo quantidade de reparte.");
+		if( conferenciaEncalhe.getIdConferenciaEncalhe() == null ) {
+			
+			
+			if(qtdeExemplarEncalhe.compareTo(qtdeReparte)>0) {
+				throw new ValidacaoException(TipoMensagem.WARNING, "Conferência de encalhe está excedendo quantidade de reparte.");
+			}
+			
+			
+		} else {
+			
+			BigInteger qtdeOld = conferenciaEncalheFromDB.getQtde();
+			BigInteger qtdeNew = conferenciaEncalhe.getQtdExemplar();
+			
+			if(qtdeOld.compareTo(qtdeNew)>=0) {
+				
+				return;
+				
+			} else {
+				
+			      	
+				BigInteger qtdeAMais = qtdeNew.subtract(qtdeOld);
+				
+				if(qtdeAMais.compareTo(qtdeReparte) <= 0) {
+					
+					return;
+					
+				} else {
+					
+					throw new ValidacaoException(TipoMensagem.WARNING, "Conferência de encalhe está excedendo quantidade de reparte.");
+					
+				}
+				
+			}
+			
 		}
 		
 	}
@@ -2235,6 +2283,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			controleConferenciaEncalheCotaFromBD.setStatus(statusOperacao);
 			controleConferenciaEncalheCotaFromBD.setUsuario(usuario);
 			controleConferenciaEncalheCotaFromBD.setDataFim(dataFinalizacao);
+			
+			controleConferenciaEncalheCotaFromBD.setConferenciasEncalhe(null);
 			
 			return controleConferenciaEncalheCotaRepository.merge(controleConferenciaEncalheCotaFromBD);
 			
