@@ -224,7 +224,9 @@ public class CadastroCalendarioController extends BaseController {
 		}
 		
 		byte[] relatorio 
-			= calendarioService.obterRelatorioCalendarioFeriado(fileType, tipoPesquisaFeriado, filtroCalendario.getMesFeriado(), filtroCalendario.getAnoFeriado(),getLogoDistribuidor());
+			= calendarioService.obterRelatorioCalendarioFeriado(fileType, tipoPesquisaFeriado, 
+					filtroCalendario.getMesFeriado(), 
+					filtroCalendario.getAnoFeriado(),getLogoDistribuidor());
 		
 		escreverArquivoParaResponse(relatorio, "relatorio-feriado");
 		

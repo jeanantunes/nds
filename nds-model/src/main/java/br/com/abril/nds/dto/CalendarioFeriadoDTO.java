@@ -6,7 +6,14 @@ import java.util.Date;
 import br.com.abril.nds.model.cadastro.TipoFeriado;
 
 public class CalendarioFeriadoDTO implements Serializable, Comparable<CalendarioFeriadoDTO> {
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -1697469832961369870L;
 
+	private Long idFeriado;
+	
 	private Date dataFeriado;
 	
 	private TipoFeriado tipoFeriado;
@@ -28,6 +35,15 @@ public class CalendarioFeriadoDTO implements Serializable, Comparable<Calendario
 	private String descricaoFeriado;
 	
 	
+	
+	public Long getIdFeriado() {
+		return idFeriado;
+	}
+
+	public void setIdFeriado(Long idFeriado) {
+		this.idFeriado = idFeriado;
+	}
+
 	/**
 	 * Obtém diaSemana
 	 *
