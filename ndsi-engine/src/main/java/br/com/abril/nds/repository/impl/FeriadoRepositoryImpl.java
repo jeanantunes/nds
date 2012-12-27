@@ -146,7 +146,7 @@ public class FeriadoRepositoryImpl extends
 		StringBuffer sql = new StringBuffer("");
 
 		sql.append(" select ");
-
+		sql.append(" f.id as idFeriado 					");
 		sql.append(" f.data as dataFeriado, 			");
 		sql.append(" f.tipoFeriado as tipoFeriado,  	");
 		sql.append(" f.localidade as localidade,		");

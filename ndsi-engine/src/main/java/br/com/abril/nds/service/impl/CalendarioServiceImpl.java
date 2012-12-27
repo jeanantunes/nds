@@ -567,7 +567,7 @@ public class CalendarioServiceImpl implements CalendarioService {
 
 	private byte[] gerarDocumentoExcel(
 			List<CalendarioFeriadoWrapper> listaCalendarioFeriadoWrapper,
-			int anoFeriado) throws URISyntaxException, JRException {
+			int anoFeriado, InputStream logoDistribuidor) throws URISyntaxException, JRException {
 
 		JRDataSource jrDataSource = new JRBeanCollectionDataSource(
 				listaCalendarioFeriadoWrapper);
@@ -577,14 +577,20 @@ public class CalendarioServiceImpl implements CalendarioService {
 		String path = diretorioReports.toURI().getPath()
 				+ "/relatorio_calendario_feriado.jasper";
 
+		Distribuidor distribuidor = distribuidorRepository.obter();
+		
+		String nomeDistribuidor = ( distribuidor!= null && distribuidor.getJuridica()!= null)? distribuidor.getJuridica().getRazaoSocial():"";
+		
 		Map<String, Object> parameters = new HashMap<String, Object>();
 
 		parameters.put("SUBREPORT_DIR", diretorioReports.toURI().getPath());
 		parameters.put("ANO_FERIADO", String.valueOf(anoFeriado));
+		parameters.put("LOGO",JasperUtil.getImagemRelatorio(logoDistribuidor));
+		parameters.put("NOME_DISTRIBUIDOR",nomeDistribuidor);
 
 		JasperPrint jasperPrint = JasperFillManager.fillReport(path,
 				parameters, jrDataSource);
-
+		
 		JRXlsExporter exporter = new JRXlsExporter();
 
 		ByteArrayOutputStream xlsReport = new ByteArrayOutputStream();
@@ -613,19 +619,17 @@ public class CalendarioServiceImpl implements CalendarioService {
 		String path = diretorioReports.toURI().getPath()
 				+ "/relatorio_calendario_feriado.jasper";
 		
+		Distribuidor distribuidor = distribuidorRepository.obter();
+		
+		String nomeDistribuidor = ( distribuidor!= null && distribuidor.getJuridica()!= null)? distribuidor.getJuridica().getRazaoSocial():"";
+		
 		Map<String, Object> parameters = new HashMap<String, Object>();
 
 		parameters.put("SUBREPORT_DIR", diretorioReports.toURI().getPath());
 		parameters.put("ANO_FERIADO", String.valueOf(anoFeriado));
 		parameters.put("LOGO",JasperUtil.getImagemRelatorio(logoDistribuidor));
-		
-		Distribuidor distribuidor = distribuidorRepository.obter();
-		
-		String nomeDistribuidor = ( distribuidor!= null && distribuidor.getJuridica()!= null)? distribuidor.getJuridica().getRazaoSocial():"";
-		
 		parameters.put("NOME_DISTRIBUIDOR",nomeDistribuidor);
 		
-
 		return JasperRunManager.runReportToPdf(path, parameters, jrDataSource);
 	}
 
@@ -745,7 +749,7 @@ public class CalendarioServiceImpl implements CalendarioService {
 
 				return gerarDocumentoExcel(
 						obterListaCalendarioFeriadoWrapper(tipoPesquisaFeriado,
-								mes, ano), ano);
+								mes, ano), ano, logoDistribuidor);
 
 			}
 
