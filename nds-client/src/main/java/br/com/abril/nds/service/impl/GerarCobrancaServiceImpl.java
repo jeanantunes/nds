@@ -810,6 +810,13 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 								GrupoMovimentoFinaceiro.POSTERGADO_DEBITO);
 			}
 			
+			if (tipoMovimentoFinanceiro == null) {
+				
+				msgs.add("Tipo de movimento para postergação não encontrado!");
+				
+				return null;
+			}
+			
 			String descPostergado = null;
 			
 			if (diasSemanaConcentracaoPagamento != null && 
