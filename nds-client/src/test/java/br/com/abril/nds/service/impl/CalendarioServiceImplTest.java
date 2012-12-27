@@ -102,9 +102,12 @@ public class CalendarioServiceImplTest {
 		
 		when(calendarioServiceImpl.obterDiretorioReports()).thenReturn(urlReport);
 		
- 		when(calendarioServiceImpl.obterRelatorioCalendarioFeriado(FileType.PDF, TipoPesquisaFeriado.FERIADO_ANUAL, 0, 2012)).thenCallRealMethod();
+ 		when(calendarioServiceImpl.obterRelatorioCalendarioFeriado(
+ 				FileType.PDF, TipoPesquisaFeriado.FERIADO_ANUAL, 
+ 				0, 2012, null)).thenCallRealMethod();
 		
-		byte[] relatorio = calendarioServiceImpl.obterRelatorioCalendarioFeriado(FileType.PDF, TipoPesquisaFeriado.FERIADO_ANUAL, 0, 2012);
+		byte[] relatorio = calendarioServiceImpl.obterRelatorioCalendarioFeriado(
+				FileType.PDF, TipoPesquisaFeriado.FERIADO_ANUAL, 0, 2012, null);
 		
 		URL url = Thread.currentThread().getContextClassLoader().getResource("reports/");
 		
@@ -132,9 +135,11 @@ public class CalendarioServiceImplTest {
 		
 		when(calendarioServiceImpl.obterDiretorioReports()).thenReturn(urlReport);
 		
-		when(calendarioServiceImpl.obterRelatorioCalendarioFeriado(FileType.PDF, TipoPesquisaFeriado.FERIADO_MENSAL, 1, 2012)).thenCallRealMethod();
+		when(calendarioServiceImpl.obterRelatorioCalendarioFeriado(FileType.PDF, 
+				TipoPesquisaFeriado.FERIADO_MENSAL, 1, 2012, null)).thenCallRealMethod();
 		
-		byte[] relatorio = calendarioServiceImpl.obterRelatorioCalendarioFeriado(FileType.PDF, TipoPesquisaFeriado.FERIADO_MENSAL, 1, 2012);
+		byte[] relatorio = calendarioServiceImpl.obterRelatorioCalendarioFeriado(FileType.PDF, 
+				TipoPesquisaFeriado.FERIADO_MENSAL, 1, 2012, null);
 		
 		URL url = Thread.currentThread().getContextClassLoader().getResource("reports/");
 		
@@ -177,9 +182,11 @@ public class CalendarioServiceImplTest {
 		
 		when(calendarioServiceImpl.obterDiretorioReports()).thenReturn(urlReport);
 		
- 		when(calendarioServiceImpl.obterRelatorioCalendarioFeriado(FileType.XLS, TipoPesquisaFeriado.FERIADO_ANUAL, 0, 2012)).thenCallRealMethod();
+ 		when(calendarioServiceImpl.obterRelatorioCalendarioFeriado(FileType.XLS, 
+ 				TipoPesquisaFeriado.FERIADO_ANUAL, 0, 2012, null)).thenCallRealMethod();
 		
-		byte[] relatorio = calendarioServiceImpl.obterRelatorioCalendarioFeriado(FileType.XLS, TipoPesquisaFeriado.FERIADO_ANUAL, 0, 2012);
+		byte[] relatorio = calendarioServiceImpl.obterRelatorioCalendarioFeriado(FileType.XLS, 
+				TipoPesquisaFeriado.FERIADO_ANUAL, 0, 2012, null);
 		
 		URL url = Thread.currentThread().getContextClassLoader().getResource("reports/");
 		
@@ -207,9 +214,11 @@ public class CalendarioServiceImplTest {
 		
 		when(calendarioServiceImpl.obterDiretorioReports()).thenReturn(urlReport);
 		
-		when(calendarioServiceImpl.obterRelatorioCalendarioFeriado(FileType.XLS, TipoPesquisaFeriado.FERIADO_MENSAL, 1, 2012)).thenCallRealMethod();
+		when(calendarioServiceImpl.obterRelatorioCalendarioFeriado(FileType.XLS, 
+				TipoPesquisaFeriado.FERIADO_MENSAL, 1, 2012, null)).thenCallRealMethod();
 		
-		byte[] relatorio = calendarioServiceImpl.obterRelatorioCalendarioFeriado(FileType.XLS, TipoPesquisaFeriado.FERIADO_MENSAL, 1, 2012);
+		byte[] relatorio = calendarioServiceImpl.obterRelatorioCalendarioFeriado(FileType.XLS, 
+				TipoPesquisaFeriado.FERIADO_MENSAL, 1, 2012, null);
 		
 		URL url = Thread.currentThread().getContextClassLoader().getResource("reports/");
 		

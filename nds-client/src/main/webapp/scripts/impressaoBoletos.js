@@ -169,6 +169,8 @@ var impressaoBoletosController = $.extend(true, {
 	**/
 	pesquisar: function (){
 		
+		$("#divImpressoes").hide();
+		
 		$("#impressosGrid", impressaoBoletosController.workspace).flexOptions({
 			url: contextPath + "/financeiro/impressaoBoletos/consultar",
 			params: impressaoBoletosController.formData(),newp: 1
@@ -209,60 +211,12 @@ var impressaoBoletosController = $.extend(true, {
 			false
 		);
 	},
-	pesquisarCotaSuccessCallBack:function(){
-		
-		var data = {numeroCota: $("#numCota", impressaoBoletosController.workspace).val()};
-		
-		$.postJSON(impressaoBoletosController.workspace + "/financeiro/impressaoBoletos/pesquisarInfoCota",
-				   data, function(result){
-			
-			$("#box", impressaoBoletosController.workspace).val(result.box);
-			$("#rota", impressaoBoletosController.workspace).val(result.rota);
-			$("#roteiro", impressaoBoletosController.workspace).val(result.roteiro);
-			$("#tipoCobranca", impressaoBoletosController.workspace).val(result.tipoCobranca);
-		});
-		//Efetuar a pesquisa de box, rota roteiro
-	},
+	
 	pesquisarCotaErrorCallBack:function(){
 		$("#box", impressaoBoletosController.workspace).val("");
 		$("#rota", impressaoBoletosController.workspace).val("");
 		$("#roteiro", impressaoBoletosController.workspace).val("");
 		$("#tipoCobranca", impressaoBoletosController.workspace).val("");
-		
-		impressaoBoletosController.recarregarComboRoteiroRotas(null);
-	},
-	validarPesquisa:function(){
-		
-		var data = {dataMovimento:$("#dataMovimento", impressaoBoletosController.workspace).val()};
-		
-		$.postJSON(contextPath + "/financeiro/impressaoBoletos/validarPesquisaDivida",
-				data, function(result){
-			
-			if(result == "false"){
-				impressaoBoletosController.dialogPesquisaInvalida();
-				$("#pesquisaInvalida", impressaoBoletosController.workspace).show();
-				$("#grids", impressaoBoletosController.workspace).hide();
-				$("#divImpressoes").hide();
-			}else{
-				impressaoBoletosController.pesquisar();
-			}	
-		});
-	},
-	dialogPesquisaInvalida:function(){
-		
-		$("#pesquisaInvalida", impressaoBoletosController.workspace).dialog({
-			title: 'Atenção',
-			resizable: false,
-			height:120,
-			width:330,
-			modal: true,
-			buttons : {
-				"Fechar" : function() {
-					$(this).dialog("close");
-				}
-			},
-			form: $("#pesquisaInvalida", this.workspace).parents("form")			
-		});
 	},
 	
 	imprimirDividas:function(tipoImpressao){

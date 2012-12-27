@@ -1,5 +1,6 @@
 package br.com.abril.nds.service;
 
+import java.io.InputStream;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -113,7 +114,7 @@ public interface CalendarioService {
 			int mes, int ano);
 
 	public byte[] obterRelatorioCalendarioFeriado(FileType fileType,
-			TipoPesquisaFeriado tipoPesquisaFeriado, int mes, int ano);
+			TipoPesquisaFeriado tipoPesquisaFeriado, int mes, int ano,InputStream logoDistribuidor);
 
 	boolean isFeriadoSemOperacao(Date data);
 	

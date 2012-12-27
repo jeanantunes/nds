@@ -45,4 +45,6 @@ public interface PoliticaCobrancaRepository extends Repository<PoliticaCobranca,
 	 * @param idPolitica
 	 */
 	void desativarPoliticaCobranca(long idPolitica);
+	
+	List<TipoCobranca> obterTiposCobrancaDistribuidor();
 }
