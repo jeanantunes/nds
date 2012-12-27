@@ -7,6 +7,8 @@
 		<defaultValueExpression><![CDATA["C:\\relatorio_conf_encalhe\\"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="ANO_FERIADO" class="java.lang.String"/>
+	<parameter name="LOGO" class="java.awt.Image"/>
+	<parameter name="NOME_DISTRIBUIDOR" class="java.lang.String"/>
 	<field name="descricaoMes" class="java.lang.String"/>
 	<field name="listaCalendarioFeriado" class="java.util.List"/>
 	<title>
@@ -17,20 +19,13 @@
 			<rectangle>
 				<reportElement x="0" y="94" width="440" height="53"/>
 			</rectangle>
-			<staticText>
-				<reportElement x="240" y="31" width="100" height="21"/>
-				<textElement>
+			<textField>
+				<reportElement x="178" y="38" width="261" height="20"/>
+				<textElement textAlignment="Center" markup="none">
 					<font size="14" isBold="true"/>
 				</textElement>
-				<text><![CDATA[TREELOG S/A]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="178" y="52" width="261" height="20"/>
-				<textElement>
-					<font size="14" isBold="true"/>
-				</textElement>
-				<text><![CDATA[LOGÍSTICA E DISTRIBUIÇÃO]]></text>
-			</staticText>
+				<textFieldExpression><![CDATA[$P{NOME_DISTRIBUIDOR}]]></textFieldExpression>
+			</textField>
 			<staticText>
 				<reportElement x="139" y="101" width="152" height="33"/>
 				<textElement>
@@ -47,7 +42,7 @@
 			</textField>
 			<image>
 				<reportElement x="10" y="8" width="168" height="78"/>
-				<imageExpression><![CDATA[Thread.currentThread().getContextClassLoader().getResource("/reports/logo_2.jpg").toURI().getPath()]]></imageExpression>
+				<imageExpression><![CDATA[$P{LOGO}]]></imageExpression>
 			</image>
 			<line>
 				<reportElement x="0" y="157" width="440" height="1"/>
@@ -57,7 +52,7 @@
 	<detail>
 		<band height="85" splitType="Stretch">
 			<subreport>
-				<reportElement x="0" y="47" width="440" height="26"/>
+				<reportElement x="10" y="47" width="430" height="26"/>
 				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{listaCalendarioFeriado})]]></dataSourceExpression>
 				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "sub_relatorio_calendario_feriado.jasper"]]></subreportExpression>
 			</subreport>
