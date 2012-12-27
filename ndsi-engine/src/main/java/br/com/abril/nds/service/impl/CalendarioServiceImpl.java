@@ -294,25 +294,8 @@ public class CalendarioServiceImpl implements CalendarioService {
 
 		Feriado feriado = null;
 		String unidadeFederacao = null;
-
-		if (calendarioFeriado.isIndRepeteAnualmente()) {
-			feriado = feriadoRepository
-					.obterFeriadoAnualTipo(data, tipoFeriado);
-		} else {
-
-			String uf = null;
-
-			if (TipoFeriado.ESTADUAL.equals(tipoFeriado)) {
-				uf = obterUfDistribuidor();
-			}
-
-			List<Feriado> listaFeriado = feriadoRepository.obterFeriados(data,
-					tipoFeriado, uf, localidade);
-
-			if (listaFeriado != null && !listaFeriado.isEmpty()) {
-				feriado = listaFeriado.get(0);
-			}
-		}
+		
+		feriado = obterFeriadoExistente(data, tipoFeriado, localidade);
 		
 		if (feriado != null) {
 
@@ -333,8 +316,6 @@ public class CalendarioServiceImpl implements CalendarioService {
 
 		} else {
 
-			
-
 			feriado = new Feriado();
 
 			feriado.setData(data);
@@ -353,6 +334,32 @@ public class CalendarioServiceImpl implements CalendarioService {
 			feriadoRepository.adicionar(feriado);
 		}
 
+	}
+
+	private Feriado obterFeriadoExistente(Date data, TipoFeriado tipoFeriado,
+			String localidade) {
+		
+		Feriado feriado;
+		
+		feriado = feriadoRepository.obterFeriadoAnualTipo(data, tipoFeriado);
+		
+		if (feriado == null) {
+	
+			String uf = null;
+	
+			if (TipoFeriado.ESTADUAL.equals(tipoFeriado)) {
+				uf = obterUfDistribuidor();
+			}
+	
+			List<Feriado> listaFeriado = feriadoRepository.obterFeriados(data,
+					tipoFeriado, uf, localidade);
+	
+			if (listaFeriado != null && !listaFeriado.isEmpty()) {
+				feriado = listaFeriado.get(0);
+			}
+		}
+		
+		return feriado;
 	}
 	
 	/**
