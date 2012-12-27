@@ -4,8 +4,9 @@
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/impressaoBoletos.js"></script>
 	<script language="javascript" type="text/javascript">
 
+	var pesquisaCotaImpressaoBoletos = new PesquisaCota();
+	
 	$(function() {
-		var pesquisaCotaImpressaoBoletos = new PesquisaCota();
 		impressaoBoletosController.init();
 	});
 
@@ -16,11 +17,7 @@
 	<form id="formAguarde">
 		<div style="display: none;" id="aguarde">Aguarde...</div>
 	</form>
-	<form id="formPesquisaInvalida">
-		<div style="display: none;heigth:200px;  min-height:0px;" id="pesquisaInvalida">
-			Não foi feita a Geração de Dívidas para esta data.
-		</div>	
-	</form>
+	
 	<form id="form-confirmar-regerar-cobranca">
 		<div id="dialog-confirmar-regerar-cobranca" title="Regerar Cobrança" style="display: none;">
 			<fieldset>
@@ -48,7 +45,7 @@
 					</span>
 				</div>
 			
-				<div id="divGerarDivida" style="display: none">
+				<div id="divGerarDivida">
   						<span class="bt_novos" style="margin-left:20px;">
   							<a href="javascript:impressaoBoletosController.veificarCobrancaGerada();" id="btnGerarDivida" rel="tipsy" title="Gerar Dívida">
   								<img src="${pageContext.request.contextPath}/images/ico_redistribuicao_complementar.gif" hspace="5" border="0" />
@@ -74,7 +71,11 @@
 	   	    	<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
   					<tr>
 					    <td width="29">Data:</td>
-					    <td width="125"><input type="text" name="dataMovimento" id="dataMovimento" onchange="impressaoBoletosController.habilitarAcaoGeracaoDivida(this.value);" style="width:70px; float:left; margin-right:5px;" /></td>
+					    <td width="125">
+					    	<input value="${dataOperacao}" type="text" name="dataMovimento" id="dataMovimento"
+					    		   onchange="impressaoBoletosController.habilitarAcaoGeracaoDivida(this.value);"
+					    		   style="width:70px; float:left; margin-right:5px;" />
+					    </td>
 					    <td width="49">Box</td>
 					    <td width="169">
 					    	<select name="box" id="box" style="width:70px; float:left; margin-right:5px;" onchange="impressaoBoletosController.recarregarComboRoteiroRotas(this.value)">
@@ -113,7 +114,7 @@
 			              		   style="width:70px; 
 			              		   float:left; margin-right:5px;"
 			              		   onchange="pesquisaCotaImpressaoBoletos.pesquisarPorNumeroCota('#numCota', '#descricaoCota',false,
-			              	  											impressaoBoletosController.pesquisarCotaSuccessCallBack, 
+			              	  											null, 
 			              	  											impressaoBoletosController.pesquisarCotaErrorCallBack);" />
       					</td>
     					<td>Nome:</td>
@@ -126,7 +127,7 @@
 						      		 style="width:130px;"
 						      		 onkeyup="pesquisaCotaImpressaoBoletos.autoCompletarPorNome('#descricaoCota');" 
 						      		 onblur="pesquisaCotaImpressaoBoletos.pesquisarPorNomeCota('#numCota', '#descricaoCota',false,
-						      		 									impressaoBoletosController.pesquisarCotaSuccessCallBack,
+						      		 									null,
 						      		 									impressaoBoletosController.pesquisarCotaErrorCallBack);" />
     					</td>
 					    <td>Tipo</td>
@@ -142,7 +143,7 @@
 					    <td>&nbsp;</td>
 					    <td>
 					    	<span class="bt_novos">
-					    		<a href="javascript:impressaoBoletosController.validarPesquisa();"><img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" /></a>
+					    		<a href="javascript:impressaoBoletosController.pesquisar();"><img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" /></a>
 					    	</span>
     						
    						</td>
