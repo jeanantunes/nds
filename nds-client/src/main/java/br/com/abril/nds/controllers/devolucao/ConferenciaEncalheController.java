@@ -15,6 +15,7 @@ import java.util.Set;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
@@ -162,6 +163,11 @@ public class ConferenciaEncalheController extends BaseController {
 	@Post
 	public void verificarReabertura(Integer numeroCota){
 		
+		Long idBoxLogado = (Long) this.session.getAttribute(ID_BOX_LOGADO);
+		this.limparDadosSessao();
+		this.session.setAttribute(ID_BOX_LOGADO, idBoxLogado);
+		
+		
 		if (this.session.getAttribute(ID_BOX_LOGADO) == null){
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Box de recolhimento não informado.");
@@ -187,6 +193,17 @@ public class ConferenciaEncalheController extends BaseController {
 		this.result.use(Results.json()).from("").serialize();
 	}
 	
+	private void recarregarInfoConferenciaEncalheCotaEmSession(Integer numeroCota, boolean indConferenciaContingencia) {
+		
+		InfoConferenciaEncalheCota infoConfereciaEncalheCota = 
+				conferenciaEncalheService.obterInfoConferenciaEncalheCota(numeroCota, indConferenciaContingencia);
+	
+		this.session.setAttribute(INFO_CONFERENCIA, infoConfereciaEncalheCota);
+		
+		this.setListaConferenciaEncalheToSession(infoConfereciaEncalheCota.getListaConferenciaEncalhe());
+				
+	}
+	
 	@Post
 	public void carregarListaConferencia(Integer numeroCota, boolean indObtemDadosFromBD,  boolean indConferenciaContingencia){
 		
@@ -209,12 +226,10 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		if (infoConfereciaEncalheCota == null || indObtemDadosFromBD){
 			
-			infoConfereciaEncalheCota = 
-					conferenciaEncalheService.obterInfoConferenciaEncalheCota(numeroCota, indConferenciaContingencia);
+			recarregarInfoConferenciaEncalheCotaEmSession(numeroCota, indConferenciaContingencia);
 			
-			this.session.setAttribute(INFO_CONFERENCIA, infoConfereciaEncalheCota);
-			
-			this.setListaConferenciaEncalheToSession(infoConfereciaEncalheCota.getListaConferenciaEncalhe());
+			infoConfereciaEncalheCota = this.getInfoConferenciaSession();
+		
 		}
 		
 		carregarValorInformadoInicial(infoConfereciaEncalheCota.getListaConferenciaEncalhe());
@@ -549,7 +564,7 @@ public class ConferenciaEncalheController extends BaseController {
 	 * Salva os dados da conferência de encalhe.
 	 */
 	@Post
-	public void salvarConferencia(){
+	public void salvarConferencia(boolean indConferenciaContingencia){
 		
 		this.verificarInicioConferencia();
 		
@@ -591,23 +606,21 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		controleConfEncalheCota.setBox(boxEncalhe);
 		
-		List<ConferenciaEncalheDTO> lista = this.getListaConferenciaEncalheFromSession();
 		
-		for (ConferenciaEncalheDTO dto : lista){
-			
-			if (dto.getIdConferenciaEncalhe() < 0){
-				
-				dto.setIdConferenciaEncalhe(null);
-			}
-		}
+		List<ConferenciaEncalheDTO> listaConferenciaEncalheCotaToSave = 
+				obterCopiaListaConferenciaEncalheCota(this.getListaConferenciaEncalheFromSession());
+		
+		limparIdsTemporarios(listaConferenciaEncalheCotaToSave);
 		
 		try {
 			
 			Long idControleConferenciaEncalheCota = this.conferenciaEncalheService.salvarDadosConferenciaEncalhe(
 					controleConfEncalheCota, 
-					this.getListaConferenciaEncalheFromSession(), 
+					listaConferenciaEncalheCotaToSave, 
 					this.getSetConferenciaEncalheExcluirFromSession(), 
 					this.getUsuarioLogado());
+			
+			recarregarInfoConferenciaEncalheCotaEmSession(getNumeroCotaFromSession(), indConferenciaContingencia);
 			
 			this.session.removeAttribute(SET_CONFERENCIA_ENCALHE_EXCLUIR);
 			
@@ -621,34 +634,51 @@ public class ConferenciaEncalheController extends BaseController {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Conferência não pode ser salvar, finalize a operação para não perder os dados.");
 			
-		} finally {
-			
-			this.atribuirIds(lista);
 		}
 		
 		this.result.use(Results.json()).from(
 				new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."), "result").recursive().serialize();
 	}
 	
+	/**
+	 * Atribúi ids negativos aos itens que ainda não foram persistidos.
+	 * 
+	 * Necessario para possibilitar exclusão e alteração destes itens na 
+	 * grid apresentada para o usuario. 
+	 * 
+	 * @param lista
+	 */
 	private void atribuirIds(List<ConferenciaEncalheDTO> lista) {
 		
 		if (lista != null){
+			
 			for (ConferenciaEncalheDTO dto : lista){
 				
 				if (dto.getIdConferenciaEncalhe() == null){
-				
-					int id = (int) System.currentTimeMillis();
 					
-					if (id > 0){
-						id *= -1;
-					}
+					Long idTemporario = obterIdTemporario();
 						
-					dto.setIdConferenciaEncalhe(new Long(id));
+					dto.setIdConferenciaEncalhe(idTemporario);
+					
 				}
 			}
 		}
 	}
 
+	
+	private Long obterIdTemporario() {
+		
+		int id = (int) System.currentTimeMillis();
+		
+		if (id > 0){
+			id *= -1;
+		}
+		
+		return new Long(id);
+		
+	}
+	
+	
 	private void verificarInicioConferencia() {
 		
 		Date horaInicio = (Date) this.session.getAttribute(HORA_INICIO_CONFERENCIA);
@@ -747,8 +777,41 @@ public class ConferenciaEncalheController extends BaseController {
 		this.result.use(Results.json()).from("").serialize();
 	}
 	
+	private void limparIdsTemporarios(List<ConferenciaEncalheDTO> listaConferenciaEncalheDTO) {
+		
+		for (ConferenciaEncalheDTO dto : listaConferenciaEncalheDTO){
+			
+			if (dto.getIdConferenciaEncalhe() < 0){
+				
+				dto.setIdConferenciaEncalhe(null);
+			}
+		}		
+	}
+	
+	private List<ConferenciaEncalheDTO> obterCopiaListaConferenciaEncalheCota(List<ConferenciaEncalheDTO> oldListaConferenciaEncalheCota) {
+		
+		List<ConferenciaEncalheDTO> newListaConferenciaEncalheCota = new ArrayList<ConferenciaEncalheDTO>();
+		
+		for(ConferenciaEncalheDTO conf : oldListaConferenciaEncalheCota) {
+		
+			try {
+				
+				newListaConferenciaEncalheCota.add((ConferenciaEncalheDTO)BeanUtils.cloneBean(conf));
+			
+			} catch (Exception e) {
+			
+				throw new ValidacaoException(TipoMensagem.ERROR, "Falha na execução do sistema.");
+			
+			}
+			
+		}
+		
+		return newListaConferenciaEncalheCota;
+		
+	}
+	
 	@Post
-	public void finalizarConferencia() throws Exception {
+	public void finalizarConferencia(boolean indConferenciaContingencia) throws Exception {
 		
 		Date horaInicio = (Date) this.session.getAttribute(HORA_INICIO_CONFERENCIA);
 		
@@ -794,40 +857,28 @@ public class ConferenciaEncalheController extends BaseController {
 			
 			controleConfEncalheCota.setBox(boxEncalhe);
 			
-			List<ConferenciaEncalheDTO> lista = this.getListaConferenciaEncalheFromSession();
+			List<ConferenciaEncalheDTO> listaConferenciaEncalheCotaToSave = 
+					obterCopiaListaConferenciaEncalheCota(this.getListaConferenciaEncalheFromSession());
 			
-			for (ConferenciaEncalheDTO dto : lista){
-				
-				if (dto.getIdConferenciaEncalhe() < 0){
+			limparIdsTemporarios(listaConferenciaEncalheCotaToSave);
+			
+			dadosDocumentacaoConfEncalheCota = 
 					
-					dto.setIdConferenciaEncalhe(null);
-				}
-			}
+					this.conferenciaEncalheService.finalizarConferenciaEncalhe(
+							controleConfEncalheCota, 
+							listaConferenciaEncalheCotaToSave, 
+							this.getSetConferenciaEncalheExcluirFromSession(), 
+							this.getUsuarioLogado());
 			
-			try {
-				
-				dadosDocumentacaoConfEncalheCota = 
-						
-						this.conferenciaEncalheService.finalizarConferenciaEncalhe(
-								controleConfEncalheCota, 
-								this.getListaConferenciaEncalheFromSession(), 
-								this.getSetConferenciaEncalheExcluirFromSession(), 
-								this.getUsuarioLogado());
-				
-				this.session.removeAttribute(SET_CONFERENCIA_ENCALHE_EXCLUIR);
-				
-				
-				if(dadosDocumentacaoConfEncalheCota!=null ) {
-					Long idControleConferenciaEncalheCota = dadosDocumentacaoConfEncalheCota.getIdControleConferenciaEncalheCota();
-					this.getInfoConferenciaSession().setIdControleConferenciaEncalheCota(idControleConferenciaEncalheCota);
-				}
-				
-				
-			} finally {
-				
-				this.atribuirIds(lista);
-			}
+			recarregarInfoConferenciaEncalheCotaEmSession(getNumeroCotaFromSession(), indConferenciaContingencia);
 			
+			this.session.removeAttribute(SET_CONFERENCIA_ENCALHE_EXCLUIR);
+			
+			if(dadosDocumentacaoConfEncalheCota!=null ) {
+				Long idControleConferenciaEncalheCota = dadosDocumentacaoConfEncalheCota.getIdControleConferenciaEncalheCota();
+				this.getInfoConferenciaSession().setIdControleConferenciaEncalheCota(idControleConferenciaEncalheCota);
+			}
+				
 			
 			if(dadosDocumentacaoConfEncalheCota!=null) {
 				
@@ -1035,7 +1086,7 @@ public class ConferenciaEncalheController extends BaseController {
 	 * 
 	 */
 	@Post
-	public void verificarValorTotalNotaFiscal() throws Exception {
+	public void verificarValorTotalNotaFiscal(boolean indConferenciaContingencia) throws Exception {
 		
 		@SuppressWarnings({ "rawtypes", "unchecked" })
 		Map<String, Object> dadosNotaFiscal = (Map) this.session.getAttribute(NOTA_FISCAL_CONFERENCIA);
@@ -1060,7 +1111,7 @@ public class ConferenciaEncalheController extends BaseController {
 			
 		}  else {
 			
-			this.finalizarConferencia();
+			this.finalizarConferencia(indConferenciaContingencia);
 			
 		}
 	}
@@ -1400,13 +1451,9 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		ConferenciaEncalheDTO conferenciaEncalheDTO = new ConferenciaEncalheDTO();
 		
-		int id = (int) System.currentTimeMillis();
+		Long idTemporario = obterIdTemporario();
 		
-		if (id > 0){
-			id *= -1;
-		}
-		
-		conferenciaEncalheDTO.setIdConferenciaEncalhe(new Long(id));
+		conferenciaEncalheDTO.setIdConferenciaEncalhe(idTemporario);
 		conferenciaEncalheDTO.setCodigo(produtoEdicao.getCodigoProduto());
 		conferenciaEncalheDTO.setCodigoDeBarras(produtoEdicao.getCodigoDeBarras());
 		conferenciaEncalheDTO.setCodigoSM(produtoEdicao.getSequenciaMatriz());
