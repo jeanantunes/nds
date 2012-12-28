@@ -301,7 +301,7 @@ var roteirizacao = $.extend(true, {
 		        	exibirMensagem(tipoMensagem, listaMensagens);
 		        	return;
 		        } 
-		        $("#selectIncluirEmRoteiro > option").remove();
+		        $("#selectIncluirEmRoteiro > option", roteirizacao.workspace).remove();
                 $.each(result, function(index, row){
                         $('#roteiroPesquisa', roteirizacao.workspace)
                         	.append('<option value="'+row.id+'">'+row.descricaoRoteiro+'</option>');
@@ -341,7 +341,7 @@ var roteirizacao = $.extend(true, {
 		        
 		        _this.obterProximaOrdemRota(idRoteiro);
 		        
-		       $("#selectIncluirEmRoteiro > option").remove();
+		       $("#selectIncluirEmRoteiro > option", roteirizacao.workspace).remove();
 	           $.each(result, function(index, row){
 	        	   
 	               $('#selectIncluirEmRoteiro', roteirizacao.workspace)
@@ -363,10 +363,29 @@ var roteirizacao = $.extend(true, {
         
         $.postJSON(contextPath + '/cadastro/roteirizacao/carregarComboRoteiroEspecial',null ,
             function(result) {
-        	 		$("#selectIncluirEmRoteiro > option").remove();
+        	 		$("#selectIncluirEmRoteiro > option", roteirizacao.workspace).remove();
                 $.each(result, function(index, row){
                         $('#roteiroPesquisa', roteirizacao.workspace)
                         	.append('<option value="'+row.id+'">'+row.descricaoRoteiro+'</option>');
+                    }
+                );
+            },
+            null,
+            true
+        );
+    },
+    
+    carregarComboRotasEspeciais : function () {
+        
+        $.postJSON(contextPath + '/cadastro/roteirizacao/carregarRotasEspeciais',null ,
+            
+        		function(result) {
+        	 		
+        		$("#selectNovasRotas > option", roteirizacao.workspace).remove();
+        	 		
+        	 		$.each(result, function(index, row){
+                        $('#selectNovasRotas', roteirizacao.workspace)
+                        	.append('<option value="'+row.id+'">'+row.nome+'</option>');
                     }
                 );
             },
@@ -2972,7 +2991,7 @@ var roteirizacao = $.extend(true, {
             idRoteiro = $('#roteiroPesquisa', roteirizacao.workspace).val();
         }
 
-        roteirizacao.carregarComboTodasRotas("#selectNovasRotas");
+        roteirizacao.carregarComboRotasEspeciais();
 
     },
 

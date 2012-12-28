@@ -35,7 +35,6 @@ import br.com.abril.nds.model.cadastro.TipoRoteiro;
 import br.com.abril.nds.model.cadastro.pdv.EnderecoPDV;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.model.cadastro.pdv.RotaPDV;
-import br.com.abril.nds.repository.AssociacaoVeiculoMotoristaRotaRepository;
 import br.com.abril.nds.repository.BoxRepository;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.EntregadorRepository;
@@ -72,9 +71,6 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 	
 	@Autowired
 	private CotaRepository cotaRepository;
-	
-	@Autowired
-	private AssociacaoVeiculoMotoristaRotaRepository associacaoVeiculoMotoristaRotaRepository;
 	
 	@Override
 	@Transactional(readOnly=true)
@@ -319,6 +315,16 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 	public List<Roteiro> buscarRoteiroEspecial() {
 		return roteiroRepository.buscarRoteiroEspecial();
 	}
+	
+	@Override
+	@Transactional
+	public List<RotaRoteirizacaoDTO> buscarRotasEspeciais() {
+		
+		List<Rota> listaRotasEspeciais = this.rotaRepository.buscarRotaDeBox(null);
+		
+		return RotaRoteirizacaoDTO.getDTOFrom(listaRotasEspeciais);
+	}
+	
 	
 	@Override
 	@Transactional(readOnly=true)
@@ -1073,44 +1079,6 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
         }
     }
 
-	/**
-	 * Valida se o roteiro passado como parametro possui rotas associadas, além das 
-	 * 
-	 * @param roteiro
-	 * @return
-	 */
-	private boolean validarRoteiroSemRotasAssociadas(RoteiroRoteirizacaoDTO roteiro) {
-		
-		for (RotaRoteirizacaoDTO rotaDTO : roteiro.getRotas()) {
-			
-			if(!isRotaEntregadorSemPDVs(rotaDTO)) {
-				return false;
-			}
-		}
-		
-		return true;
-	}
-
-	/**
-	 * Valida Rotas que não possuem PDVs Associados
-	 * 
-	 * @param roteiro
-	 * @return mensagem de erro para as Rotas sem PDVs associados
-	 */
-	private List<String> validarRotasSemPDVsAssociados(RoteiroRoteirizacaoDTO roteiro) {
-		
-		List<String> mensagensErro = new ArrayList<String>();
-		
-		for (RotaRoteirizacaoDTO rota : roteiro.getTodasRotas()) {
-	
-			if (!rota.isEntregador() && rota.getPdvs().isEmpty()) {
-		    	mensagensErro.add(String.format("Rota [%s] sem PDV associado!", rota.getNome()));
-		    }
-		}
-		
-		return mensagensErro;
-	}
-
 	@Override
 	@Transactional
 	public List<RotaRoteirizacaoDTO> obterRotasNaoAssociadasAoRoteiro(Long roteiroID) {
@@ -1170,6 +1138,5 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 		}
 		
 	}
-	
-	
+
 }
