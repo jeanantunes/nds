@@ -320,7 +320,9 @@ var ConferenciaEncalhe = $.extend(true, {
 	
 	verificarValorTotalNotaFiscal : function() {
 		
-		$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/verificarValorTotalNotaFiscal',null,
+		var data = [{name: 'indConferenciaContingencia', value: false}];
+		
+		$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/verificarValorTotalNotaFiscal', data,
 				
 				function(result){
 				
@@ -631,7 +633,9 @@ var ConferenciaEncalhe = $.extend(true, {
 			buttons : {
 				"Confirmar" : function() {
 					
-					$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/finalizarConferencia', null,
+					var data = [{name: 'indConferenciaContingencia', value: false}];
+					
+					$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/finalizarConferencia', data,
 						
 						function(conteudo){
 						
@@ -656,7 +660,20 @@ var ConferenciaEncalhe = $.extend(true, {
 
 							exibirMensagem(conteudo.tipoMensagem, conteudo.listaMensagens);
 							
-						}, null, true, "idModalDadosNotaFiscal"
+						}, 
+
+						function(conteudo) {
+							
+							var data = [
+										  {name: 'numeroCota', 			value : $("#numeroCota", ConferenciaEncalhe.workspace).val()}, 
+										  {name: 'indObtemDadosFromBD', value : false},
+										  {name: 'indConferenciaContingencia', value: false}
+										 ];
+										
+							ConferenciaEncalhe.carregarListaConferencia(data);
+							
+							
+						}, true, "idModalDadosNotaFiscal"
 					);
 				},
 				"Cancelar" : function() {
@@ -1162,7 +1179,9 @@ var ConferenciaEncalhe = $.extend(true, {
 			buttons : {
 				"Confirmar" : function() {
 					
-					$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/salvarConferencia', null,
+					var data = [{name: 'indConferenciaContingencia', value: false}];
+					
+					$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/salvarConferencia', data,
 						
 						function(result){
 						
@@ -1181,8 +1200,18 @@ var ConferenciaEncalhe = $.extend(true, {
 							exibirMensagem(result.tipoMensagem, result.listaMensagens);
 							
 							$("#dialog-salvar", ConferenciaEncalhe.workspace).dialog("close");
-						},
-						null, true, "idModalConfirmarSalvarConf"
+						}, function(conteudo) {
+							
+							var data = [
+										  {name: 'numeroCota', 			value : $("#numeroCota", ConferenciaEncalhe.workspace).val()}, 
+										  {name: 'indObtemDadosFromBD', value : false},
+										  {name: 'indConferenciaContingencia', value: false}
+										 ];
+										
+							ConferenciaEncalhe.carregarListaConferencia(data);
+							
+							
+						}, true, "idModalConfirmarSalvarConf"
 					);
 				},
 				"Cancelar" : function() {
