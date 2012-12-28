@@ -43,9 +43,11 @@ import br.com.abril.nds.dto.filtro.FiltroTipoDescontoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.integracao.service.ParametroSistemaService;
+import br.com.abril.nds.model.cadastro.BaseCalculo;
 import br.com.abril.nds.model.cadastro.ClassificacaoEspectativaFaturamento;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.DescricaoTipoEntrega;
+import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.ParametroSistema;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
@@ -100,7 +102,7 @@ public class CotaController extends BaseController {
 	
 	public static final String TERMO_ADESAO = "imgTermoAdesao";
 	
-	public static final int[] vetor =  {1}; 
+	public static final int[] vetor =  {1};
 	
 	public static final FileType[] extensoesAceitas = 
 		{FileType.DOC, FileType.DOCX, FileType.BMP, FileType.GIF, FileType.PDF, FileType.JPEG, FileType.JPG, FileType.PNG};
@@ -1245,7 +1247,9 @@ public class CotaController extends BaseController {
 	    if (ModoTela.CADASTRO_COTA == modoTela) {
 		    dto = cotaService.obterDadosDistribuicaoCota(idCota);
 		    
-		    dto.setTiposEntrega(gerarTiposEntrega());
+		    dto.setTiposEntrega(this.gerarTiposEntrega());
+		    
+		    dto.setBasesCalculo(this.gerarBasesCalculo());
 		    
 		    this.tratarDocumentoTipoEntrega(dto);
 		} else {
@@ -1434,6 +1438,21 @@ public class CotaController extends BaseController {
 		}
 		
 		return itens;
+	}
+	
+	/**
+	 * Gera combos de Base de Calculo
+	 * 
+	 * @return List<ItemDTO<BaseCalculo, String>> 
+	 */
+	private List<ItemDTO<BaseCalculo,String>> gerarBasesCalculo(){
+		
+		List<ItemDTO<BaseCalculo,String>> comboBaseCalculo =  new ArrayList<ItemDTO<BaseCalculo,String>>();
+		for (BaseCalculo itemBaseCalculo: BaseCalculo.values()){
+			comboBaseCalculo.add(new ItemDTO<BaseCalculo,String>(itemBaseCalculo, itemBaseCalculo.getValue()));
+		}
+		
+		return comboBaseCalculo;
 	}
 	
 	/**
@@ -1674,6 +1693,30 @@ public class CotaController extends BaseController {
 		DistribuicaoDTO dto = cotaService.carregarValoresEntregaBanca(numCota);
 		
 		this.result.use(Results.json()).from(dto, "result").serialize();
+	}
+	
+	@Post
+	public void distribuidorUtilizaTermoAdesao(){
+		
+		Boolean utilizaTermo = false;
+		
+		Distribuidor distribuidor = this.distribuidorService.obter();
+		
+		utilizaTermo = distribuidor.getParametroEntregaBanca()!=null?distribuidor.getParametroEntregaBanca().isUtilizaTermoAdesao():false;
+	
+		this.result.use(Results.json()).from(utilizaTermo, "result").serialize();
+	}
+	
+	@Post
+	public void distribuidorUtilizaProcuracao(){
+		
+		Boolean utilizaTermo = false;
+		
+		Distribuidor distribuidor = this.distribuidorService.obter();
+		
+		utilizaTermo = distribuidor.getParametroEntregaBanca()!=null?distribuidor.isUtilizaProcuracaoEntregadores():false;
+	
+		this.result.use(Results.json()).from(utilizaTermo, "result").serialize();
 	}
 	
 }

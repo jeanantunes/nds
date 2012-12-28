@@ -34,6 +34,7 @@ import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.service.EnderecoService;
 import br.com.abril.nds.service.FiadorService;
+import br.com.abril.nds.service.GarantiaService;
 import br.com.abril.nds.service.PessoaService;
 import br.com.abril.nds.service.TelefoneService;
 import br.com.abril.nds.util.CellModel;
@@ -83,6 +84,9 @@ public class FiadorController extends BaseController {
 	
 	@Autowired
 	private FiadorService fiadorService;
+	
+	@Autowired
+	private GarantiaService garantiaService;
 	
 	@Autowired
 	private PessoaService pessoaService;
@@ -360,8 +364,40 @@ public class FiadorController extends BaseController {
 		this.result.use(Results.json()).from(dados == null ? "" : dados, "result").recursive().serialize();
 	}
 	
+	/**
+	 * Verifica se o Fiador possui garantias cadastradas
+	 * @return boolean
+	 */
+	private boolean existeGarantia(Long idFiador){
+	
+	    List<Garantia> garantias = this.garantiaService.obterGarantiasFiador(idFiador, null);
+	    
+	    @SuppressWarnings("unchecked")
+		Set<Long> listaGarantiaRemover = (Set<Long>) 
+				this.httpSession.getAttribute(GarantiasController.LISTA_GARANTIAS_REMOVER_SESSAO);
+	    
+	    if(listaGarantiaRemover!=null && (garantias!=null && garantias.size() > 0)){
+	    
+	    	List<Garantia> garantiasRemover = new ArrayList<Garantia>();
+	    	
+		    for (Garantia garantia : garantias){
+		    	
+		    	if (listaGarantiaRemover.contains(garantia.getId())){
+		    		
+		    		garantiasRemover.add(garantia);
+		    	}
+		    }
+		    
+		    garantias.removeAll(garantiasRemover);
+	    }
+	    
+	    return (garantias!=null && garantias.size() > 0);
+	}
+	
 	@SuppressWarnings("unchecked")
 	private void preencherDadosFiador(Pessoa pessoa) {
+		
+		Long idFiador = (Long) this.httpSession.getAttribute(ID_FIADOR_EDICAO);
 		
 		List<Pessoa> sociosAdicionar = null;
 		
@@ -504,7 +540,10 @@ public class FiadorController extends BaseController {
 		
 		if (listaGarantiaAdicionar == null || listaGarantiaAdicionar.isEmpty()) {
 			
-			mensagensValidacao.add("Cadastre ao menos 1 garantia.");
+			if (!this.existeGarantia(idFiador)){
+			
+			    mensagensValidacao.add("Cadastre ao menos 1 garantia.");
+			}
 		}
 		
 		if (mensagensValidacao != null && !mensagensValidacao.isEmpty()) {
@@ -529,7 +568,7 @@ public class FiadorController extends BaseController {
 				this.httpSession.getAttribute(CotasAssociadasController.LISTA_COTAS_ASSOCIADAS_REMOVER_SESSAO);
 		
 		Fiador fiador = new Fiador();
-		fiador.setId((Long) this.httpSession.getAttribute(ID_FIADOR_EDICAO));
+		fiador.setId(idFiador);
 		fiador.setPessoa(pessoa);
 		
 		this.fiadorService.cadastrarFiador(fiador, sociosAdicionar, sociosRemover, listaEnderecosAdicionar, 
