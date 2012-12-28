@@ -68,9 +68,9 @@ public class RoteirizacaoDTO implements Serializable{
     private Map<Long, Set<RoteiroRoteirizacaoDTO>> roteirosTransferidos = new HashMap<Long, Set<RoteiroRoteirizacaoDTO>>();
     
     /**
-     * Lista das rotas que tiveram novos PDVs adicionados pela transferencia
+     * Lista das rotas pertencentes a outra roteirizacao que tiveram novos pdvs adicionados
      */
-    private List<RotaRoteirizacaoDTO> rotasNovosPDVsTransferidos = new ArrayList<RotaRoteirizacaoDTO>();
+    private List<RotaRoteirizacaoDTO> rotasNovosPDVs = new ArrayList<RotaRoteirizacaoDTO>();
     
     private RoteirizacaoDTO(TipoEdicaoRoteirizacao tipoEdicao, List<BoxRoteirizacaoDTO> boxDisponiveis, boolean addBoxEspecial) {
         this.tipoEdicao = tipoEdicao;
@@ -161,30 +161,30 @@ public class RoteirizacaoDTO implements Serializable{
     }
 
     public List<RotaRoteirizacaoDTO> getRotasNovosPDVsTransferidos() {
-		return rotasNovosPDVsTransferidos;
+		return rotasNovosPDVs;
 	}
 
 	/**
-     * Adiciona uma rota que pertence a outra roteirização e teve PDVs adicionados pela transferencia
+     * Adiciona uma rota que pertence a outra roteirização e teve PDVs adicionados
      * 
      * @param rotaDTO
      */
-    private void addRotaPDVsTransferidos(RotaRoteirizacaoDTO rotaDTO) {
+    public void addRotaNovosPDVs(RotaRoteirizacaoDTO rotaDTO) {
     	
-    	if(this.rotasNovosPDVsTransferidos == null) {
-    		this.rotasNovosPDVsTransferidos = new ArrayList<RotaRoteirizacaoDTO>();
+    	if(this.rotasNovosPDVs == null) {
+    		this.rotasNovosPDVs = new ArrayList<RotaRoteirizacaoDTO>();
     	}
     	
-    	this.rotasNovosPDVsTransferidos.add(rotaDTO);
+    	this.rotasNovosPDVs.add(rotaDTO);
     }
 
     
-    public RotaRoteirizacaoDTO obterRotaPDVsTransferidos(Rota rota) {
+    public RotaRoteirizacaoDTO obterRotaNovosPDVs(Rota rota) {
     	
-    	if (this.rotasNovosPDVsTransferidos == null) 
-    		this.rotasNovosPDVsTransferidos = new ArrayList<RotaRoteirizacaoDTO>();
+    	if (this.rotasNovosPDVs == null) 
+    		this.rotasNovosPDVs = new ArrayList<RotaRoteirizacaoDTO>();
     	
-    	for (RotaRoteirizacaoDTO rotaDTO : this.rotasNovosPDVsTransferidos) {
+    	for (RotaRoteirizacaoDTO rotaDTO : this.rotasNovosPDVs) {
     		
     		if (rotaDTO.equals(rota.getId())) {
     			return rotaDTO;
@@ -193,7 +193,7 @@ public class RoteirizacaoDTO implements Serializable{
     	
     	RotaRoteirizacaoDTO novaRotaDTO = RotaRoteirizacaoDTO.getDTOFrom(rota);
     	
-    	this.addRotaPDVsTransferidos(novaRotaDTO);
+    	this.addRotaNovosPDVs(novaRotaDTO);
     	
     	return novaRotaDTO;
     }
