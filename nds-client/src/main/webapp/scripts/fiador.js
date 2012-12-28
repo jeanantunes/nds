@@ -1020,43 +1020,45 @@ var fiadorController = $.extend(true, {
 			);
 		}, 
 		
-		removerGarantia:function (referencia){
-			$("#fiadorController-dialog-excluir-garantia", fiadorController.workspace).dialog({
+		removerGarantia : function (referencia){
+			
+			$("#fiadorController-dialog-excluir-garantia"/*, fiadorController.workspace*/).dialog({
 				resizable: false,
 				height:'auto',
 				width:300,
 				modal: true,
 				buttons: {
 					"Confirmar": function() {
-						$(this).dialog("close");
-						
+									
 						$.postJSON(contextPath + '/cadastro/fiador/excluirGarantia', {referencia: referencia}, 
 							function(result) {
 								
-								$(".fiadorController-imoveisGrid", fiadorController.workspace).flexAddData({
+								$(".fiadorController-imoveisGrid"/*, fiadorController.workspace*/).flexAddData({
 									page: 1, total: 1, rows: result.rows
 								});
 								
-								$("#fiadorController-botaoAddEditarGarantia", fiadorController.workspace).text("Incluir Novo");
+								$("#fiadorController-botaoAddEditarGarantia"/*, fiadorController.workspace*/).text("Incluir Novo");
 								
-								$("#fiadorController-garantia-valorGarantia", fiadorController.workspace).val("");
-								$("#fiadorController-garantia-descricaoGarantia", fiadorController.workspace).val("");
-								$("#fiadorController-referenciaGarantia", fiadorController.workspace).val("");
+								$("#fiadorController-garantia-valorGarantia"/*, fiadorController.workspace*/).val("");
+								$("#fiadorController-garantia-descricaoGarantia"/*, fiadorController.workspace*/).val("");
+								$("#fiadorController-referenciaGarantia"/*, fiadorController.workspace*/).val("");
 							},
 							null,
 							true
 						);
+						
+						$(this).dialog("close");
 					},
 					"Cancelar": function() {
+						
 						$(this).dialog("close");
 					}
 				},
-				form: $("#fiadorController-dialog-excluir-garantia").parents("form")
+				
+				//form: $("#fiadorController-dialog-excluir-garantia", fiadorController.workspace).parents("form")
 			});
-			
-			$("#fiadorController-dialog-excluir-garantia", fiadorController.workspace).show();
 		},
-		
+
 		limparCamposGarantias:function (){
 			$("#fiadorController-garantia-valorGarantia", fiadorController.workspace).val("");
 			$("#fiadorController-garantia-descricaoGarantia", fiadorController.workspace).val("");

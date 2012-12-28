@@ -1,24 +1,28 @@
 <div class="divConteudoEntregaBanca">
-	<table width="399" border="0" cellspacing="1" cellpadding="1">
-	  <tr>
-	    <td width="130">Termo Adesão:</td>
-	    
-	    <td width="20">
-	    	<input type="checkbox" id="${param.tela}utilizaTermoAdesao"
-	    		   onclick="DISTRIB_COTA.mostrarEsconderDivUtilizaArquivo('divUtilizaTermoAdesao', 'divTermoAdesaoRecebido',
-											   							  'utilizaTermoAdesao', 'termoAdesaoRecebido')" />
-	    </td>
-	    <td width="245" height="39">
-	    	<div class="divUtilizaTermoAdesao">
-	    		<span class="bt_imprimir" style="display:block;">
-	    			<a href="javascript:;" onclick="DISTRIB_COTA.downloadTermoAdesao();">Termo</a>
-	    		</span>
-    		</div>
-	    </td>
-	  </tr>
-  	</table>
+
+    <div class="divImpressaoTermoAdesao">
+		<table width="415" border="0" cellspacing="1" cellpadding="1">
+		  <tr>
+		    <td width="130">Termo Adesão:</td>
+		    
+		    <td width="20">
+		    	<input type="checkbox" id="${param.tela}utilizaTermoAdesao"
+		    		   onclick="DISTRIB_COTA.mostrarEsconderDivUtilizaArquivo('divUtilizaTermoAdesao', 'divTermoAdesaoRecebido',
+												   							  'utilizaTermoAdesao', 'termoAdesaoRecebido')" />
+		    </td>
+		    <td width="245" height="39">
+		    	<div class="divUtilizaTermoAdesao">
+		    		<span class="bt_imprimir" style="display:block;">
+		    			<a href="javascript:;" onclick="DISTRIB_COTA.downloadTermoAdesao();">Termo</a>
+		    		</span>
+	    		</div>
+		    </td>
+		  </tr>
+	  	</table>
+  	</div>
+  	
   	<div class="divUtilizaTermoAdesao">
-	  	<table width="399" border="0" cellspacing="1" cellpadding="1">
+	  	<table width="415" border="0" cellspacing="1" cellpadding="1">
 		  <tr>
 		    <td width="130">Termo Adesão Recebido?</td>
 		    <td width="265">
@@ -29,7 +33,7 @@
 		</table>
 		
 		<div class="divTermoAdesaoRecebido">
-			<table width="399" border="0" cellspacing="1" cellpadding="1">
+			<table width="415" border="0" cellspacing="1" cellpadding="1">
 			  <tr>
 			    <td width="130">Arquivo:</td>
 			    <td width="265">
@@ -57,24 +61,47 @@
 			</table>
 		</div>
 	</div>
-	<table width="399" border="0" cellspacing="1" cellpadding="1">
-	  
+	
+	<table width="415" border="0" cellspacing="1" cellpadding="1">
+	
+	    <tr>
+	
+		    <td width="128">Percentual Faturamento:</td>
+		    <td width="50">
+		    	<input id="${param.tela}percentualFaturamentoEntregaBanca" name="percentualFaturamento"
+		    		   type="text" style="width: 40px; text-align: right;" />
+			</td>
+			
+			<td width="100">Base de Cálculo:</td>
+			<td>
+			
+				<!-- Base de Cálculo -->
+				<select id="${param.tela}baseCalculo" name="baseCalculo"  style="width:128px">
+					<option selected="selected">...</option>
+	
+					<c:forEach items="${listaBaseCalculo}" var="item">
+						<option value="${item.key}">${item.value}</option>
+					</c:forEach>
+				</select>
+					     
+			</td>
+	
+	    </tr>
+	
+	</table>    
+	
+	<table width="415" border="0" cellspacing="1" cellpadding="1">
+
 	  <tr>
-	    <td width="130">Percentual Faturamento:</td>
-	    <td width="265">
-	    	<input id="${param.tela}percentualFaturamentoEntregaBanca" name="percentualFaturamento"
-	    		   type="text" style="width: 70px; text-align: right;" />
-		</td>
-	  </tr>
-	  <tr>
-	    <td width="130">Taxa Fixa R$</td>
+	    <td width="120">Taxa Fixa R$</td>
 	    <td width="265">
 	    	<input id="${param.tela}taxaFixaEntregaBanca" name="taxaFixa"
-	    		   type="text" style="width: 70px; text-align: right;" />
+	    		   type="text" style="width: 40px; text-align: right;" />
 	    </td>
 	  </tr>
+	  
 	  <tr>
-	    <td width="130">Período Carência:</td>
+	    <td width="120">Período Carência:</td>
 	    <td width="265">
 	    	<table width="100%" border="0" cellspacing="0" cellpadding="0">
 		      <tr>
@@ -91,5 +118,6 @@
 	    	</table>
 	    </td>
 	  </tr>
+	  
 	</table>
 </div>
