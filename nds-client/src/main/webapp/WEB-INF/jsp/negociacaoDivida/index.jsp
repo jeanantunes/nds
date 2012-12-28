@@ -8,8 +8,35 @@
 </head>
 
 <body>
+
+	<div class="areaBts">
+		<div class="area">
+			
+    		<span class="bt_novos" style="display: none;">
+    			<a href="javascript:;" onclick="negociacaoDividaController.popup_formaPgto();" rel="tipsy"  title="Negociar" >
+    				<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif" />
+				</a>
+			</span>
+			
+			<span class="bt_arq" style="display: none;">
+				<a href="${pageContext.request.contextPath}/financeiro/negociacaoDivida/exportar?fileType=XLS" rel="tipsy" title="Gerar Arquivo">
+					<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
+				</a>
+			</span>
+			
+			<span class="bt_arq" style="display: none;">
+				<a href="${pageContext.request.contextPath}/financeiro/negociacaoDivida/exportar?fileType=PDF" rel="tipsy" title="Imprimir">
+					<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0"/>
+				</a>
+			</span>
+	
+		</div>
+	</div>
+
+	<div class="linha_separa_fields">&nbsp;</div>
+
 	<form id="negociacaoDividaForm">
-		<fieldset class="classFieldset">
+		<fieldset class="fieldFiltro">
 			<legend> Negociar D&iacute;vidas</legend>
 			<table width="950" border="0" cellpadding="2" cellspacing="1"
 				class="filtro">
@@ -44,26 +71,23 @@
 			<table class="negociacaoGrid"></table>
 			<table width="100%" border="0" cellspacing="2" cellpadding="2">
 				<tr>
-					<td width="19%"><span class="bt_arquivo"><a
-							href="${pageContext.request.contextPath}/financeiro/negociacaoDivida/exportar?fileType=XLS">Arquivo</a></span>
-						<span class="bt_imprimir"><a
-							href="${pageContext.request.contextPath}/financeiro/negociacaoDivida/exportar?fileType=PDF">Imprimir</a></span>
+					<td width="19%">
 					</td>
-					<td width="35%"><span class="bt_confirmar_novo"
-						title="Formas de Pagamento"><a href="javascript:;"
-							onclick="negociacaoDividaController.popup_formaPgto();"><img
-								border="0" hspace="5"
-								src="${pageContext.request.contextPath}/images/ico_check.gif">Negociar</a></span>
+					<td width="35%">
 					</td>
 					<td width="13%"><strong>Total Selecionado R$:</strong></td>
 					<td width="6%"><span id="totalSelecionado">0,00</span></td>
 					<td width="6%"><strong>Total R$:</strong></td>
 					<td width="6%"><span id="total"></span></td>
-					<td width="15%"><span class="bt_sellAll"><label
-							for="sel">Selecionar Todos</label><input type="checkbox"
+					<td width="10%" align="right">
+						<label for="selTodos">Selecionar Todos</label>
+					</td>
+					<td width="5%" align="left">
+						<input type="checkbox"
 							id="negociacaoCheckAll" name="Todos"
 							onclick="negociacaoDividaController.checkAll(this);"
-							style="float: left;" /></span></td>
+							style="float: left;" />
+					</td>
 				</tr>
 			</table>
 		</fieldset>
