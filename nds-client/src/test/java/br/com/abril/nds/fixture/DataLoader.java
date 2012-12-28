@@ -1019,7 +1019,7 @@ public class DataLoader {
 				} else {
 					carregarDados(session);
 				}
-
+				
 				commit = true;
 			} catch (Exception e) {
 				e.printStackTrace();

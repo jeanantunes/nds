@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import br.com.abril.nds.model.cadastro.BaseCalculo;
 import br.com.abril.nds.model.cadastro.DescricaoTipoEntrega;
 
 /**
@@ -23,6 +24,7 @@ public class DistribuicaoDTO implements Serializable  {
 	private String box;
 	private String assistComercial;
 	private DescricaoTipoEntrega descricaoTipoEntrega;
+	private BaseCalculo baseCalculo;
 	private String observacao;
 	private Boolean repPorPontoVenda;
 	private Boolean solNumAtras;
@@ -52,6 +54,8 @@ public class DistribuicaoDTO implements Serializable  {
 	private String nomeProcuracao;
 	
 	private List<ItemDTO<DescricaoTipoEntrega, String>> tiposEntrega;
+	
+	private List<ItemDTO<BaseCalculo, String>> basesCalculo;
 	
 	public DistribuicaoDTO(){
 		
@@ -125,6 +129,20 @@ public class DistribuicaoDTO implements Serializable  {
 	 */
 	public void setDescricaoTipoEntrega(DescricaoTipoEntrega descricaoTipoEntrega) {
 		this.descricaoTipoEntrega = descricaoTipoEntrega;
+	}
+
+	/**
+	 * @return the baseCalculo
+	 */
+	public BaseCalculo getBaseCalculo() {
+		return baseCalculo;
+	}
+
+	/**
+	 * @param baseCalculo the baseCalculo to set
+	 */
+	public void setBaseCalculo(BaseCalculo baseCalculo) {
+		this.baseCalculo = baseCalculo;
 	}
 
 	/**
@@ -504,5 +522,32 @@ public class DistribuicaoDTO implements Serializable  {
 	    }
 	    tiposEntrega.add(new ItemDTO<DescricaoTipoEntrega, String>(tipoEntrega, tipoEntrega.getValue()));
 	}
+
+	/**
+	 * @return the basesCalculo
+	 */
+	public List<ItemDTO<BaseCalculo, String>> getBasesCalculo() {
+		
+		return basesCalculo;
+	}
+
+	/**
+	 * @param basesCalculo the basesCalculo to set
+	 */
+	public void setBasesCalculo(List<ItemDTO<BaseCalculo, String>> basesCalculo) {
+		
+		this.basesCalculo = basesCalculo;
+	}
 	
+	/**
+     * Adiciona uma nova Base Calculo
+     * 
+     * @param baseCalculo
+     */
+	public void addBaseCalculo(BaseCalculo baseCalculo) {
+	    if (basesCalculo == null) {
+	    	basesCalculo = new ArrayList<ItemDTO<BaseCalculo,String>>();
+	    }
+	    basesCalculo.add(new ItemDTO<BaseCalculo, String>(baseCalculo, baseCalculo.getValue()));
+	}
 }

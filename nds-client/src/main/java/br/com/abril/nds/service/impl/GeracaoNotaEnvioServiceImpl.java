@@ -2,7 +2,6 @@ package br.com.abril.nds.service.impl;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.math.MathContext;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -215,8 +214,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 			BigDecimal valorDesconto = new BigDecimal("10"); // movimento.getValoresAplicados().getPrecoComDesconto();			
 			quantidade = quantidade.add(movimento.getQtde());
 			preco = preco.add(precoVenda.multiply(new BigDecimal(movimento.getQtde())));
-			precoComDesconto = precoComDesconto.add(
-					precoVenda.subtract(valorDesconto, new MathContext(3)).multiply(new BigDecimal(quantidade)));	
+			precoComDesconto = precoComDesconto.add(precoVenda.subtract(valorDesconto).multiply(new BigDecimal(movimento.getQtde())));	
 			
 			List<ItemNotaEnvio> itens = movimento.getListaItemNotaEnvio();
 			
@@ -227,7 +225,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 		}
 
 		cotaExemplares.setTotal(preco);
-		cotaExemplares.setTotalDesconto(precoComDesconto);
+		cotaExemplares.setTotalDesconto(precoComDesconto.setScale(2, BigDecimal.ROUND_HALF_UP));
 		cotaExemplares.setExemplares(quantidade.longValue());
 
 	}

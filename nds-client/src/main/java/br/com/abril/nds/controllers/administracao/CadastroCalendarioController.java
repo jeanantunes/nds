@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.CalendarioFeriadoDTO;
+import br.com.abril.nds.dto.CotaAusenteEncalheDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.TipoFeriado;
 import br.com.abril.nds.model.seguranca.Permissao;
@@ -27,6 +28,7 @@ import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.CalendarioService.TipoPesquisaFeriado;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TipoMensagem;
+import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Path;
@@ -122,32 +124,17 @@ public class CadastroCalendarioController extends BaseController {
 		if(!msgErro.isEmpty()) {
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, msgErro));
 		}
-		
 	}
 
-	public void excluirCadastroFeriado(
-			String dtFeriado, 
-			String descTipoFeriado, 
-			String idLocalidade,
-			boolean indRepeteAnualmente) {
-		
-		validarCadastroFeriado(dtFeriado, descTipoFeriado, "-", idLocalidade);
-		
-		CalendarioFeriadoDTO calendarioFeriado = new CalendarioFeriadoDTO();
-		
-		calendarioFeriado.setDataFeriado(DateUtil.parseDataPTBR(dtFeriado));
-		calendarioFeriado.setTipoFeriado(TipoFeriado.valueOf(descTipoFeriado));
-		calendarioFeriado.setLocalidade(idLocalidade);
-		calendarioFeriado.setIndRepeteAnualmente(indRepeteAnualmente);
-		
-		calendarioService.excluirFeriado(calendarioFeriado);
-		
+	public void excluirCadastroFeriado(Long idFeriado) {
+				
+		calendarioService.excluirFeriado(idFeriado);
 		result.use(Results.json()).from("Feriado excluído com sucesso").serialize();
-		
 	}
 
 	
-	public void cadastrarFeriado(			
+	public void cadastrarFeriado(
+			Long idFeriado,
 			String dtFeriado, 
 			String descTipoFeriado, 
 			String descricao,
@@ -161,6 +148,7 @@ public class CadastroCalendarioController extends BaseController {
 		
 		CalendarioFeriadoDTO calendarioFeriado = new CalendarioFeriadoDTO();
 		
+		calendarioFeriado.setIdFeriado(idFeriado);
 		calendarioFeriado.setDataFeriado(DateUtil.parseDataPTBR(dtFeriado));
 		calendarioFeriado.setTipoFeriado(TipoFeriado.valueOf(descTipoFeriado));
 		calendarioFeriado.setDescricaoFeriado(descricao);
@@ -193,9 +181,7 @@ public class CadastroCalendarioController extends BaseController {
 		if (!DateUtil.isValidDate(dataRecolhimento, "dd/MM/yyyy")) {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Data inválida!");
-			
 		} 
-		
 	}
 	
 	public void obterFeriadosDoMes(int mes) {
@@ -225,18 +211,20 @@ public class CadastroCalendarioController extends BaseController {
 			return;
 		}
 		
-		byte[] relatorio = calendarioService.obterRelatorioCalendarioFeriado(fileType, tipoPesquisaFeriado, filtroCalendario.getMesFeriado(), filtroCalendario.getAnoFeriado());
+		byte[] relatorio 
+			= calendarioService.obterRelatorioCalendarioFeriado(fileType, tipoPesquisaFeriado, 
+					filtroCalendario.getMesFeriado(), 
+					filtroCalendario.getAnoFeriado(),getLogoDistribuidor());
 		
-		escreverArquivoParaResponse(relatorio, "relatorio-feriado");
+		escreverArquivoParaResponse(relatorio, "relatorio-feriado", fileType);
 		
 	}
 	
-	private void escreverArquivoParaResponse(byte[] arquivo, String nomeArquivo) throws IOException {
+	private void escreverArquivoParaResponse(byte[] arquivo, String nomeArquivo, FileType fileType) throws IOException {
 		
-		this.response.setContentType("application/pdf");
+		this.response.setContentType(fileType.getContentType());
+		this.response.setHeader("Content-Disposition", "attachment; filename="+nomeArquivo +fileType.getExtension());
 		
-		this.response.setHeader("Content-Disposition", "attachment; filename="+nomeArquivo +".pdf");
-
 		OutputStream output = this.response.getOutputStream();
 		
 		output.write(arquivo);
@@ -245,6 +233,42 @@ public class CadastroCalendarioController extends BaseController {
 		
 		result.use(Results.nothing());
 		
+	}
+	
+	public void exportarArquivo(FileType fileType, TipoPesquisaFeriado tipoPesquisaFeriado) {
+			
+		FiltroCalendarioFeriado filtro = (FiltroCalendarioFeriado) this.session.getAttribute(FILTRO_PESQUISA);
+		
+		if (filtro == null) {
+			result.redirectTo("index");
+			return;
+		}
+		
+		List<CalendarioFeriadoDTO> listaFeriados;
+		
+		if (tipoPesquisaFeriado.equals(TipoPesquisaFeriado.FERIADO_MENSAL)) {
+			listaFeriados =
+				this.calendarioService.obterListaCalendarioFeriadoMensal(filtro.getMesFeriado(), 
+						filtro.getAnoFeriado());
+		} else {
+		
+			listaFeriados = this.calendarioService.obterFeriadosPorAno(filtro.getAnoFeriado());
+		}
+		
+		if (listaFeriados != null && !listaFeriados.isEmpty()) {
+		
+			try {
+					
+				FileExporter.to("relatorio-feriado", fileType).inHTTPResponse(
+					this.getNDSFileHeader(), null, null, listaFeriados, 
+				CalendarioFeriadoDTO.class, this.response);
+				
+			} catch (Exception e) {
+				throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Erro ao gerar o arquivo!"));
+			}
+		}
+	
+		this.result.use(Results.nothing());
 	}
 	
 	public void obterFeriados(int anoVigencia) {

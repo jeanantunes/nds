@@ -1,5 +1,6 @@
 package br.com.abril.nds.service;
 
+import java.io.InputStream;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -107,14 +108,60 @@ public interface CalendarioService {
 
 	public List<String> obterListaLocalidadeCotas();
 
-	public void excluirFeriado(CalendarioFeriadoDTO calendarioFeriado);
+	/**
+	 * Exclui o Feriado
+	 * 
+	 * @param idFeriado
+	 */
+	public void excluirFeriado(Long idFeriado);
 
+	/**
+	 * Obtém os feriados do mes de um determinado ano
+	 * 
+	 * @param mes
+	 * @param ano
+	 * @return
+	 */
 	public List<CalendarioFeriadoDTO> obterListaCalendarioFeriadoMensal(
 			int mes, int ano);
 
+	
+	/**
+	 * Obtém os Feriado de um determinado Ano.
+	 * 
+	 * @param ano
+	 * @return
+	 */
+	public List<CalendarioFeriadoDTO> obterFeriadosPorAno(int ano);
+	
+	/**
+	 * Obtém o relatorio jasper do calendario feriado
+	 * 
+	 * @param fileType
+	 * @param tipoPesquisaFeriado
+	 * @param mes
+	 * @param ano
+	 * @param logoDistribuidor
+	 * @return
+	 */
 	public byte[] obterRelatorioCalendarioFeriado(FileType fileType,
-			TipoPesquisaFeriado tipoPesquisaFeriado, int mes, int ano);
+			TipoPesquisaFeriado tipoPesquisaFeriado, int mes, int ano,InputStream logoDistribuidor);
 
+	/**
+	 * Verifica se a data possui feriados que não operam
+	 * 
+	 * @param data
+	 * @return
+	 */
+	boolean isFeriadoSemOperacao(Date data);
+	
+	/**
+	 * Verifica se a data possui feriados Municipais que não operam
+	 * 
+	 * @param data
+	 * @return
+	 */
+	boolean isFeriadoMunicipalSemOperacao(Date data);
 	
 	public enum TipoPesquisaFeriado {
 		FERIADO_MENSAL, FERIADO_ANUAL;

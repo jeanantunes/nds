@@ -261,6 +261,8 @@ public interface RoteirizacaoService {
 
 	void validarAssociacaoRotaTransportador(Long rotaId, Long roteiroId);
 
-	void validarAssociacaoRoteiroTransportador(Long roteiroId); 
+	void validarAssociacaoRoteiroTransportador(Long roteiroId);
+
+	List<RotaRoteirizacaoDTO> buscarRotasEspeciais(); 
 }
 	

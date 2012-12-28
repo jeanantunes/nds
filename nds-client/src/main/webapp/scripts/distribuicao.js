@@ -83,6 +83,7 @@ function Distribuicao(tela) {
 			data.push({name:'distribuicao.taxaFixa',				value: D.get("taxaFixaEntregaBanca")});
 			data.push({name:'distribuicao.inicioPeriodoCarencia',	value: D.get("inicioPeriodoCarenciaEntregaBanca")});
 			data.push({name:'distribuicao.fimPeriodoCarencia',		value: D.get("fimPeriodoCarenciaEntregaBanca")});
+			data.push({name:'distribuicao.baseCalculo',	            value: D.get("baseCalculo")});
 			
 		} else if (tipoEntrega == 'ENTREGADOR') {
 			
@@ -105,6 +106,9 @@ function Distribuicao(tela) {
 				
 		if(dto.tiposEntrega)
 			D.montarComboTipoEntrega(dto.tiposEntrega);
+		
+		if(dto.basesCalculo)
+			D.montarComboBaseCalculo(dto.basesCalculo);
 				
 		$("input[name='numCotaUpload']").val(dto.numCota);
 		
@@ -117,7 +121,7 @@ function Distribuicao(tela) {
 		D.set('tipoEntregaHidden',		dto.descricaoTipoEntrega);
 		D.set('arrendatario',			dto.arrendatario);
 		D.set('observacao',				dto.observacao);
-		D.set('repPorPontoVenda',		dto.repPorPontoVenda);
+		D.set('repPorPontoVenda',	    dto.repPorPontoVenda);
 		D.set('solNumAtras',			dto.solNumAtras);
 		D.set('recebeRecolhe',			dto.recebeRecolhe);
 		D.set('neImpresso',				dto.neImpresso);
@@ -143,6 +147,7 @@ function Distribuicao(tela) {
 			D.set('taxaFixaEntregaBanca',				dto.taxaFixa);
 			D.set('inicioPeriodoCarenciaEntregaBanca',	dto.inicioPeriodoCarencia);
 			D.set('fimPeriodoCarenciaEntregaBanca',		dto.fimPeriodoCarencia);
+			D.set('baseCalculo',			            dto.baseCalculo);
 			
 			D.setNomeTermoAdesao(dto.nomeTermoAdesao);
 			
@@ -210,6 +215,20 @@ function Distribuicao(tela) {
 		
 		D.$("tipoEntrega").html(combo);
 		D.$("tipoEntrega").sortOptions();
+	},
+	
+	/**
+	 * Gera combo de de Base de Calculo
+	 * @param itensDTO - objeto espelho de ItemDTO (br.com.abril.nds.dto)
+	 */
+	this.montarComboBaseCalculo = function(itensDTO) {
+		
+		itensDTO.splice(0,0,{"key": {"@class": "string","$": ""},"value": {"@class": "string","$": ""}});
+		
+		var combo =  montarComboBox(itensDTO, false);
+		
+		D.$("baseCalculo").html(combo);
+		D.$("baseCalculo").sortOptions();
 	},
 	
 	this.submitForm = function(idForm) {
@@ -410,11 +429,55 @@ function Distribuicao(tela) {
 			true);
 	};
 	
+    this.distribuidorUtilizaTermoAdesao = function() {
+		
+		$.postJSON(contextPath + "/cadastro/cota/distribuidorUtilizaTermoAdesao",
+			null,
+			function (result) {
+			
+				if (result.boolean){
+					
+					$(".divImpressaoTermoAdesao").show();
+					$(".divUtilizaTermoAdesao").show();
+					$(".divTermoAdesaoRecebido").show();
+				}
+				else{
+				
+				    $(".divImpressaoTermoAdesao").hide();
+				    $(".divUtilizaTermoAdesao").hide();
+					$(".divTermoAdesaoRecebido").hide();
+				}
+			},
+			null,
+			true);
+	};
+	
+    this.distribuidorUtilizaProcuracao = function() {
+		
+		$.postJSON(contextPath + "/cadastro/cota/distribuidorUtilizaProcuracao",
+			null,
+			function (result) {
+			
+				if (result.boolean){
+					
+					$("#cotaTemEntregador").show();
+				}
+				else{
+				
+				    $("#cotaTemEntregador").hide();
+				}
+			},
+			null,
+			true);
+	};
+	
 	this.mostrarEsconderConteudoEntregaBanca = function(exibirDiv, limparCampos) {
 		
 		D.mostrarEsconderConteudoTipoEntrega(exibirDiv, "divConteudoEntregaBanca",
 											 "divUtilizaTermoAdesao", "divTermoAdesaoRecebido",
 											 "utilizaTermoAdesao", "termoAdesaoRecebido", limparCampos);
+		
+		D.distribuidorUtilizaTermoAdesao();
 	};
 	
 	this.mostrarEsconderConteudoEntregador = function(exibirDiv, limparCampos) {
@@ -422,14 +485,16 @@ function Distribuicao(tela) {
 		D.mostrarEsconderConteudoTipoEntrega(exibirDiv, "divConteudoEntregador",
 											 "divUtilizaProcuracao", "divProcuracaoRecebida",
 											 "utilizaProcuracao", "procuracaoRecebida", limparCampos);
+		
+		D.distribuidorUtilizaProcuracao();
 	};
-	
+
 	this.mostrarEsconderConteudoTipoEntrega = function(exibirDiv, divConteudoTipoEntrega,
 													   divUtilizaArquivo, divArquivoRecebido,
 													   campoUtilizaArquivo, campoArquivoRecebido, limparCampos) {
 		
 		D.mostrarEsconderDiv(divConteudoTipoEntrega, exibirDiv);
-		
+
 		if (!exibirDiv && limparCampos) {
 			
 			D.set(campoUtilizaArquivo, false);
@@ -533,6 +598,8 @@ function Distribuicao(tela) {
 		$("input[name='fimPeriodoCarencia']").mask("99/99/9999");
 		
 		D.$("taxaFixaEntregaBanca").numeric();
+		
+		$("input[name='taxaFixa']").mask("99.99");
 		
 		$("input[name='percentualFaturamento']").mask("99.99");
 		

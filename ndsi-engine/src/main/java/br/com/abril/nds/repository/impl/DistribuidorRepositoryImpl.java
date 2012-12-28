@@ -137,10 +137,13 @@ public class DistribuidorRepositoryImpl extends
 	@Override
 	public String obterInformacoesComplementaresTermoAdesao() {
 		
-		return (String) 
+		String resultado = (String) 
 				this.getSession().
 				createQuery(
 						"select d.parametroEntregaBanca.complementoTermoAdesao from Distribuidor d").uniqueResult();
+
+		
+		return resultado; 	
 	}
 
 	@Override

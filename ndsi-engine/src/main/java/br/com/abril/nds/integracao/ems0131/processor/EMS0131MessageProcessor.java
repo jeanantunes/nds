@@ -49,10 +49,10 @@ public class EMS0131MessageProcessor extends AbstractRepository implements Messa
 		sql.append("SELECT c ");
 		sql.append("FROM Cota c ");
 		sql.append("JOIN FETCH c.pessoa p ");
-		sql.append("JOIN FETCH c.enderecos e ");
-		sql.append("JOIN FETCH e.endereco ender ");
-		sql.append("JOIN FETCH c.telefones t ");
-		sql.append("JOIN FETCH t.telefone tel ");
+		sql.append("LEFT JOIN c.enderecos e with e.principal = true ");
+		sql.append("LEFT JOIN e.endereco ender ");
+		sql.append("LEFT JOIN c.telefones t with t.principal = true ");
+		sql.append("LEFT JOIN t.telefone tel ");
 		
 		
 		Query query = getSession().createQuery(sql.toString());
@@ -67,48 +67,49 @@ public class EMS0131MessageProcessor extends AbstractRepository implements Messa
 				return;
 			}
 
-			PrintWriter print = new PrintWriter(new FileWriter(message.getHeader().get(MessageHeaderProperties.OUTBOUND_FOLDER.getValue())+"/COTA.txt"));
+			PrintWriter print = new PrintWriter(new FileWriter(message.getHeader().get(MessageHeaderProperties.OUTBOUND_FOLDER.getValue())+"/COTA.NEP"));
 						
 			for(Cota cota : cotas){
 				
 				EMS0131Output output = new EMS0131Output();
 				
-				for(EnderecoCota enderecoCota : cota.getEnderecos()){
-					for(TelefoneCota telefoneCota : cota.getTelefones()){
-					
-						output.setCodigoDaCota(cota.getNumeroCota());
-						output.setNomeDoJornaleiro(cota.getPessoa().getNome());
-						output.setQuantidadeDeCotas(cota.getParametroDistribuicao().getQtdePDV());
-						output.setEndereco(enderecoCota.getEndereco().getLogradouro());
-						output.setMunicipio(enderecoCota.getEndereco().getCidade());
-						output.setSiglaUf(enderecoCota.getEndereco().getUf());
-						output.setCep(enderecoCota.getEndereco().getCep());
-						output.setDdd(telefoneCota.getTelefone().getDdd());
-						output.setTelefone(telefoneCota.getTelefone().getNumero());
-						output.setSituacaoCota(cota.getSituacaoCadastro().toString());
-						output.setCondPrazoPagamento("1");
-						output.setCodigoDoBox(cota.getBox().getCodigo() + " - "+cota.getBox().getNome());
-						output.setCodigoTipoBox(cota.getBox().getTipoBox().toString());
-						if (null != cota.getParametroDistribuicao()) {
-							output.setRepartePorPdv(cota.getParametroDistribuicao().getRepartePorPontoVenda());
-						}
-						output.setCodigoDoCapataz(cota.getPessoa().getId());
-						output.setCpfCnpj(cota.getPessoa().getDocumento());
-						if(cota.getPessoa() instanceof PessoaFisica){
-							output.setTipoDePessoa("F");
-							output.setInscricaoEstadual("");
-							output.setInscricaoMunicipal("");
-						}else{
-							output.setTipoDePessoa("J");
-							output.setInscricaoEstadual("INSC ESTADUAL");
-							output.setInscricaoMunicipal("INSC MUNICIPAL");
-						}
-						output.setNumeroDoLogradouro(enderecoCota.getEndereco().getNumero());
-						output.setCodigoDaCidade(enderecoCota.getEndereco().getCodigoCidadeIBGE());
-						print.println(fixedFormatManager.export(output));
-						}						
-					}	
+				output.setCodigoDaCota(cota.getNumeroCota());
+				output.setNomeDoJornaleiro(cota.getPessoa().getNome());
+				output.setQuantidadeDeCotas(cota.getParametroDistribuicao().getQtdePDV());
+				if (!cota.getEnderecos().isEmpty()) {
+					EnderecoCota enderecoCota = cota.getEnderecos().iterator().next();
+					output.setEndereco(enderecoCota.getEndereco().getLogradouro());
+					output.setMunicipio(enderecoCota.getEndereco().getCidade());
+					output.setSiglaUf(enderecoCota.getEndereco().getUf());
+					output.setCep(enderecoCota.getEndereco().getCep());
+					output.setNumeroDoLogradouro(enderecoCota.getEndereco().getNumero());
+					output.setCodigoDaCidade(enderecoCota.getEndereco().getCodigoCidadeIBGE());
 				}
+				if (!cota.getTelefones().isEmpty()) {
+					TelefoneCota telefoneCota = cota.getTelefones().iterator().next();
+					output.setDdd(telefoneCota.getTelefone().getDdd());
+					output.setTelefone(telefoneCota.getTelefone().getNumero());
+				}				
+				output.setSituacaoCota(cota.getSituacaoCadastro().toString());
+				output.setCondPrazoPagamento("1");
+				if (null != cota.getBox()) {
+					output.setCodigoDoBox(cota.getBox().getCodigo() + " - "+cota.getBox().getNome());
+					output.setCodigoTipoBox(cota.getBox().getTipoBox().toString());
+				}
+				output.setRepartePorPdv(((null != cota.getParametroDistribuicao().getRepartePorPontoVenda()) ? cota.getParametroDistribuicao().getRepartePorPontoVenda() : false));
+				output.setCodigoDoCapataz(cota.getPessoa().getId());
+				output.setCpfCnpj(cota.getPessoa().getDocumento());
+				if(cota.getPessoa() instanceof PessoaFisica){
+					output.setTipoDePessoa("F");
+					output.setInscricaoEstadual("");
+					output.setInscricaoMunicipal("");
+				}else{
+					output.setTipoDePessoa("J");
+					output.setInscricaoEstadual("INSC ESTADUAL");
+					output.setInscricaoMunicipal("INSC MUNICIPAL");
+				}
+				print.println(fixedFormatManager.export(output));
+			}						
 			
 			print.flush();
 			print.close();

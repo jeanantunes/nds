@@ -138,7 +138,7 @@ public class ProdutoEmissaoDTO implements Serializable{
 	 * @param dataLancamento the dataLancamento to set
 	 */
 	public void setDataLancamento(Date dataLancamento) {
-		this.dataLancamento = DateUtil.formatarDataPTBR(dataLancamento);
+		this.dataLancamento = DateUtil.formatarData(dataLancamento,"dd/MM/yy");
 	}
 	/**
 	 * @return the precoComDesconto

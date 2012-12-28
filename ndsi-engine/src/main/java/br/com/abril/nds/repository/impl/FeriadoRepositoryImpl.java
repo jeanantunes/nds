@@ -60,6 +60,27 @@ public class FeriadoRepositoryImpl extends
 
 		return criteria.list();
 	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<Feriado> obterFeriados(Date data, List<TipoFeriado> tiposFeriado, Boolean indOpera) {
+
+		Criteria criteria = super.getSession().createCriteria(Feriado.class);
+
+		if (data != null) {
+			criteria.add(Restrictions.eq("data", data));
+		}
+
+		if (tiposFeriado != null) {
+			criteria.add(Restrictions.in("tipoFeriado", tiposFeriado));
+		}
+		
+		if (indOpera != null) {
+			criteria.add(Restrictions.eq("indOpera", indOpera));
+		}
+
+		return criteria.list();
+	}
 
 	
 	@Override
@@ -70,15 +91,8 @@ public class FeriadoRepositoryImpl extends
 		StringBuffer sql = new StringBuffer("");
 
 		sql.append(" select ");
-
-		sql.append(" f.data as dataFeriado, 			");
-		sql.append(" f.tipoFeriado as tipoFeriado,  	");
-		sql.append(" f.localidade as localidade,		");
-		sql.append(" f.unidadeFederacao as ufSigla, 				");		
-		sql.append(" f.indRepeteAnualmente as indRepeteAnualmente, 	");
-		sql.append(" f.indOpera as indOpera,	 					");
-		sql.append(" f.indEfetuaCobranca as indEfetuaCobranca, 		");
-		sql.append(" f.descricao as descricaoFeriado 				");
+		
+		sql.append(this.obterSelectCalendarioDTO());
 
 		sql.append(" from ");
 
@@ -125,16 +139,9 @@ public class FeriadoRepositoryImpl extends
 		StringBuffer sql = new StringBuffer("");
 
 		sql.append(" select ");
-
-		sql.append(" f.data as dataFeriado, 			");
-		sql.append(" f.tipoFeriado as tipoFeriado,  	");
-		sql.append(" f.localidade as localidade,		");
-		sql.append(" f.unidadeFederacao as ufSigla, 				");		
-		sql.append(" f.indRepeteAnualmente as indRepeteAnualmente, 	");
-		sql.append(" f.indOpera as indOpera,	 					");
-		sql.append(" f.indEfetuaCobranca as indEfetuaCobranca, 		");
-		sql.append(" f.descricao as descricaoFeriado 				");
-
+		
+		sql.append(this.obterSelectCalendarioDTO());
+		
 		sql.append(" from ");
 
 		sql.append(" Feriado f ");
@@ -182,15 +189,8 @@ public class FeriadoRepositoryImpl extends
 
 		sql.append(" select ");
 
-		sql.append(" f.data as dataFeriado, 			");
-		sql.append(" f.tipoFeriado as tipoFeriado,  	");
-		sql.append(" f.localidade as localidade,		");
-		sql.append(" f.unidadeFederacao as ufSigla, 				");		
-		sql.append(" f.indRepeteAnualmente as indRepeteAnualmente, 	");
-		sql.append(" f.indOpera as indOpera,	 					");
-		sql.append(" f.indEfetuaCobranca as indEfetuaCobranca, 		");
-		sql.append(" f.descricao as descricaoFeriado 				");
-
+		sql.append(this.obterSelectCalendarioDTO());
+		
 		sql.append(" from ");
 
 		sql.append(" Feriado f ");
@@ -237,7 +237,15 @@ public class FeriadoRepositoryImpl extends
 	protected void verificarFeriadoAnualExistente(Feriado feriado) {
 		Date data = feriado.getData();
 		TipoFeriado tipoFeriado = feriado.getTipoFeriado();
-		Feriado existente = obterFeriadoAnualTipo(data, tipoFeriado);
+		Feriado existente;
+		
+		if (tipoFeriado.equals(TipoFeriado.MUNICIPAL)) {
+			existente = obterFeriadoAnualLocalidade(data, feriado.getLocalidade());
+		
+		} else {
+			existente = obterFeriadoAnualTipo(data, tipoFeriado);
+		}
+		
 		if (existente != null && !feriado.equals(existente)) {
 			throw new DataIntegrityViolationException(
 					"Feriado anual com o tipo " + tipoFeriado
@@ -253,14 +261,61 @@ public class FeriadoRepositoryImpl extends
 
 		StringBuilder hql = new StringBuilder(
 				"from Feriado where tipoFeriado = :tipoFeriado ");
-		hql.append("and indRepeteAnualmente = :anual and day(data) = day(:dataPesquisa) ");
-		hql.append("and month(data) = month(:dataPesquisa)");
+		hql.append(" and indRepeteAnualmente = :anual and day(data) = day(:dataPesquisa) ");
+		hql.append(" and month(data) = month(:dataPesquisa)");
+		hql.append(" and year(data) = year(:dataPesquisa)");
 
 		Query query = getSession().createQuery(hql.toString());
 		query.setParameter("tipoFeriado", tipo);
 		query.setParameter("anual", true);
 		query.setParameter("dataPesquisa", data);
+		
+		query.setMaxResults(1);
+		
 		return (Feriado) query.uniqueResult();
 	}
+	
+	
+	private StringBuilder obterSelectCalendarioDTO() {
+		
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append(" f.id as idFeriado, 				");
+		sql.append(" f.data as dataFeriado, 			");
+		sql.append(" f.tipoFeriado as tipoFeriado,  	");
+		sql.append(" f.localidade as localidade,		");
+		sql.append(" f.unidadeFederacao as ufSigla, 	");		
+		sql.append(" f.indRepeteAnualmente as indRepeteAnualmente, 	");
+		sql.append(" f.indOpera as indOpera,	 					");
+		sql.append(" f.indEfetuaCobranca as indEfetuaCobranca, 		");
+		sql.append(" f.descricao as descricaoFeriado 				");
+		
+		return sql;
+	}
 
+	@Override
+	public Feriado obterFeriadoAnualLocalidade(Date data, String localidade) {
+
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" SELECT f FROM Feriado f WHERE f.tipoFeriado = :tipoFeriado ");
+		hql.append(" AND f.localidade = :localidade			  ");
+		hql.append(" AND f.indRepeteAnualmente = :anual       ");
+		hql.append(" AND day(f.data)   = day(:dataPesquisa)   ");
+		hql.append(" AND month(f.data) = month(:dataPesquisa) ");
+		hql.append(" AND year(f.data)  = year(:dataPesquisa)  ");
+
+		Query query = getSession().createQuery(hql.toString());
+		
+		query.setParameter("tipoFeriado", TipoFeriado.MUNICIPAL);
+		query.setParameter("anual", true);
+		query.setParameter("dataPesquisa", data);
+		query.setParameter("localidade", localidade);
+		
+		query.setMaxResults(1);
+		
+		return (Feriado) query.uniqueResult();
+		
+		
+	}
 }

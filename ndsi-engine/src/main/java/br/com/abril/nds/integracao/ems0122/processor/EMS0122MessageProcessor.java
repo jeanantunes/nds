@@ -77,7 +77,7 @@ public class EMS0122MessageProcessor extends AbstractRepository implements Messa
 		
 		try {
 			
-			PrintWriter print = new PrintWriter(new FileWriter(message.getHeader().get(MessageHeaderProperties.OUTBOUND_FOLDER.getValue())+"/SUPLEMEN.NEW"));	
+			PrintWriter print = new PrintWriter(new FileWriter(message.getHeader().get(MessageHeaderProperties.OUTBOUND_FOLDER.getValue())+"/SUPLEMEN.NEP"));	
 			
 			EMS0122Header outheader = new EMS0122Header();
 			

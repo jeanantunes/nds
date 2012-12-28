@@ -466,6 +466,8 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 		// movimentoEstoqueCota.setData(new Date());
 		movimentoEstoqueCota.setData(distribuidorService.obter().getDataOperacao());
 
+		movimentoEstoqueCota.setDataLancamentoOriginal(dataMovimento);
+		
 		movimentoEstoqueCota.setDataCriacao(new Date());
 		movimentoEstoqueCota.setEstoqueProdutoCota(estoqueProdutoCota);
 		movimentoEstoqueCota.setProdutoEdicao(estoqueProdutoCota.getProdutoEdicao());

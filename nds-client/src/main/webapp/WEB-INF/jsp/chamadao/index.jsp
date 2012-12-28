@@ -50,7 +50,52 @@
 		</div>
 	</form>
 	
-	<fieldset class="classFieldset">
+	<div class="areaBts">
+		<div class="area">
+			
+			<div id="divBotaoConfirmarChamadao" style="display: none">
+	    			
+   				<span class="bt_novos">
+   					<a onclick="chamadaoController.confirmar();" href="javascript:;" rel="tipsy"  title="Confirmar" >
+   						<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif">
+   					</a>
+				</span>
+						
+			</div>
+				
+			<div id="divBotoesChamadaEncalhe" style="display: none">
+							
+				<span class="bt_novos">
+					<a onclick="chamadaoController.confirmar();" href="javascript:;" rel="tipsy" title="Reprogramar">
+						<img src="${pageContext.request.contextPath}/images/ico_reprogramar.gif" hspace="5" border="0" />
+					</a>
+				</span>
+				
+				<span class="bt_novos" >
+					<a href="javascript:;" onclick="chamadaoController.cancelarChamadao();" rel="tipsy" title="Cancelar">
+						<img src="${pageContext.request.contextPath}/images/ico_bloquear.gif" hspace="5" border="0" />
+					</a>
+				</span>
+				
+			</div>
+			
+    		<span class="bt_arq" >
+  					<a href="${pageContext.request.contextPath}/devolucao/chamadao/exportar?fileType=XLS" rel="tipsy" title="Gerar Arquivo">
+					<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
+				</a>
+    		</span>
+
+			<span class="bt_arq" >
+				<a href="${pageContext.request.contextPath}/devolucao/chamadao/exportar?fileType=PDF" rel="tipsy" title="Imprimir">
+					<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0"/>
+				</a>
+			</span>
+	
+		</div>
+	</div>
+	<div class="linha_separa_fields">&nbsp;</div>
+
+	<fieldset class="fieldFiltro">
    	    <legend>Pesquisar</legend>
    	    <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
   			<tr>
@@ -114,53 +159,7 @@
 	        
 	        <table width="949" border="0" cellspacing="1" cellpadding="1">
 	   			<tr>
-	   				<td width="442" valign="top">
-	    			
-	    				<div id="divBotaoConfirmarChamadao">
-	    			
-		    				<span class="bt_confirmar_novo" title="Confirmar">
-		    					<a onclick="chamadaoController.confirmar();" href="javascript:;">
-		    						<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif">
-		    						Confirmar
-		    					</a>
-							</span>
-						
-						</div>
-						
-						<div id="divBotoesChamadaEncalhe">
-							
-							<span class="bt_novos" title="Reprogramar">
-								<a onclick="chamadaoController.confirmar();" href="javascript:;">
-									<img src="${pageContext.request.contextPath}/images/ico_reprogramar.gif" hspace="5" border="0" />
-									Reprogramar
-								</a>
-							</span>
-							
-							<span class="bt_novos" title="Cancelar">
-								<a href="javascript:;" onclick="chamadaoController.cancelarChamadao();">
-									<img src="${pageContext.request.contextPath}/images/ico_bloquear.gif" hspace="5" border="0" />
-									Cancelar
-								</a>
-							</span>
-							
-						</div>
-						
-						<br clear="all" />
-						
-	      				<span class="bt_novos" title="Gerar Arquivo">
-	      					<a href="${pageContext.request.contextPath}/devolucao/chamadao/exportar?fileType=XLS">
-								<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
-								Arquivo
-							</a>
-	      				</span>
-	
-						<span class="bt_novos" title="Imprimir">
-							<a href="${pageContext.request.contextPath}/devolucao/chamadao/exportar?fileType=PDF">
-								<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />
-								Imprimir
-							</a>
-						</span>
-					</td>
+	   				<td width="442" valign="top"></td>
 	      				
 	      			<td width="458">
 				        <fieldset class="box_field" style="width:320px;">

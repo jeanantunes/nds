@@ -23,6 +23,9 @@ public class BaixaTotalBancarioVO extends BaixaBoletoBaseVO {
 	@Export(label = "Pago R$", exhibitionOrder=1)
 	private BigDecimal valorPago;
 	
+	@Export(label="Data de Vencimento", exhibitionOrder=2)
+	private String dataVencimento;
+	
 	/**
 	 * @return the valorPago
 	 */
@@ -35,6 +38,20 @@ public class BaixaTotalBancarioVO extends BaixaBoletoBaseVO {
 	 */
 	public void setValorPago(BigDecimal valorPago) {
 		this.valorPago = valorPago;
+	}
+
+	/**
+	 * @return the dataVencimento
+	 */
+	public String getDataVencimento() {
+		return dataVencimento;
+	}
+
+	/**
+	 * @param dataVencimento the dataVencimento to set
+	 */
+	public void setDataVencimento(String dataVencimento) {
+		this.dataVencimento = dataVencimento;
 	}
 	
 }

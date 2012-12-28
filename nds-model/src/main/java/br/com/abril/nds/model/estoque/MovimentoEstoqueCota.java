@@ -1,6 +1,7 @@
 package br.com.abril.nds.model.estoque;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -12,6 +13,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.envio.nota.ItemNotaEnvio;
@@ -48,6 +51,12 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque implements C
 	@JoinColumn(name = "MOVIMENTO_ESTOQUE_COTA_FURO_ID")
 	MovimentoEstoqueCota movimentoEstoqueCotaFuro;
 	
+	// Esta data é utilizada para a data do lançamento do distribuidor aparecer corretamente na consulta consignado cota
+	// Implementado em conjunto com Cesar Pop Punk
+	@Temporal(TemporalType.DATE)
+	@Column(name = "DATA_LANCAMENTO_ORIGINAL")
+	private Date dataLancamentoOriginal;
+	
 	/**
 	 * Estudo cota que originou o movimento, 
 	 * caso o movimento seja de reparte
@@ -69,7 +78,6 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque implements C
 	@ManyToOne(optional = true)
 	@JoinColumn(name = "PRODUTO_EDICAO_ID", referencedColumnName = "PRODUTO_EDICAO_ID", insertable = false, updatable = false)
 	private Lancamento lancamentoProdutoEdicao;
-
 	
 	@ManyToMany(mappedBy="listaMovimentoEstoqueCota")
 	private List<ItemNotaEnvio> listaItemNotaEnvio;
@@ -247,4 +255,12 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque implements C
 		this.lancamentoDiferenca = lancamentoDiferenca;
 	}
 
+	public Date getDataLancamentoOriginal() {
+		return dataLancamentoOriginal;
+	}
+
+	public void setDataLancamentoOriginal(Date dataLancamentoOriginal) {
+		this.dataLancamentoOriginal = dataLancamentoOriginal;
+	}
+	
 }

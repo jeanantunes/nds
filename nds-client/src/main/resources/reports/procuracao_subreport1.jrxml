@@ -2,13 +2,14 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="procuracao_subreport1" pageWidth="555" pageHeight="802" columnWidth="515" leftMargin="20" rightMargin="20" topMargin="0" bottomMargin="0" whenResourceMissingType="Empty">
 	<property name="ireport.zoom" value="1.4641000000000008"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="220"/>
+	<property name="ireport.y" value="0"/>
 	<parameter name="cidade" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="data" class="java.util.Date" isForPrompting="false"/>
 	<parameter name="nomeDistribuidor" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="enderecoDistribuidor" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="telefoneDistribuidor" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="infoComp" class="java.lang.String"/>
+	<parameter name="LOGO" class="java.awt.Image"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -76,7 +77,7 @@
 		<band height="35" splitType="Stretch">
 			<image>
 				<reportElement x="0" y="0" width="68" height="35"/>
-				<imageExpression><![CDATA[Thread.currentThread().getContextClassLoader().getResource("/reports/logo_login.png").toURI().getPath()]]></imageExpression>
+				<imageExpression><![CDATA[$P{LOGO}]]></imageExpression>
 			</image>
 		</band>
 	</pageHeader>
@@ -100,12 +101,12 @@
 				</textElement>
 				<textFieldExpression><![CDATA[new String(
 new String(
-"Pelo presente instrumento particular de procuração, " + ("".equals($F{nomeJornaleiro}) ? "" : $F{nomeJornaleiro} + ",") + "\n" +
-"Box Cota: " + ("".equals($F{boxCota}) ? "" : $F{boxCota} + ", ") + ("".equals($F{nacionalidade}) ? "" : $F{nacionalidade} + "," ) + ("".equals($F{estadoCivil}) ? "" : $F{estadoCivil} + ",") + " jornaleiro estabelecido à " + ("".equals($F{enderecoPDV}) ? "" : $F{enderecoPDV} + ",") + ("".equals($F{bairroPDV}) ? "" : $F{bairroPDV} + ",") + ("".equals($F{cidadePDV}) ? "" : $F{cidadePDV} + ".") + "\n" +
-"TPU (Termo de Permissão de Uso da Prefeitura Municipal), sob o n° " + ("".equals($F{numeroPermissao}) ? "" : $F{numeroPermissao} + ",") + "\n" +
-"portador da cédula de identidade (RG) n° " + ("".equals($F{rgJornaleiro}) ? "" : $F{rgJornaleiro}) + " e inscrito no CPF sob o n° " + ("".equals($F{cpfJornaleiro}) ? "" : $F{cpfJornaleiro} + ",") + "\n" +
-"nomeia e constitui seu bastante procurador " + ("".equals($F{nomeProcurador}) ? "" : $F{nomeProcurador} + ",") + " portador da cédula de identidade (RG) n° " + ("".equals($F{rgProcurador}) ? "" : $F{rgProcurador} + ", ") + ("".equals($F{estadoCivilProcurador}) ? "" : $F{estadoCivilProcurador} + ", ") + ("".equals($F{nacionalidadeProcurador}) ? "" : $F{nacionalidadeProcurador} + ",") + " residente e domiciliado " + ("".equals($F{enderecoDoProcurado}) ? "" : $F{enderecoDoProcurado} + ",") + ("".equals($F{bairroProcurado}) ? "" : $F{bairroProcurado} + ",") + ("".equals($F{cidadeProcurado}) ? "" : $F{cidadeProcurado} + ",") + "\n" +
-"\npara o qual confere poderes de representa-lo perante a TREELOG SA - LOGISTICA E DISTRIBUICAO, exclusivamente para retirar e conferir o seu reparte, o material de numeros atrasados, compra de encalhe e zona azul, conferir e entregar o seu encalhe e retirar o boleto para pagamento das publicacoes vendidas e praticar todos os atos inerentes as atividades do titular da banca de jornais e revistas junto a distribuidora acima citada." +
+"Pelo presente instrumento particular de procuração, " + ($F{nomeJornaleiro}==null || "".equals($F{nomeJornaleiro}) ? "" : $F{nomeJornaleiro} + ",") + "\n" +
+"Box Cota: " + ($F{boxCota}==null || "".equals($F{boxCota}) ? "" : $F{boxCota} + ", ") + ($F{nacionalidade}==null || "".equals($F{nacionalidade}) ? "" : $F{nacionalidade} + "," ) + ($F{estadoCivil}==null || "".equals($F{estadoCivil}) ? "" : $F{estadoCivil} + ",") + " jornaleiro estabelecido à " + ($F{enderecoPDV}==null || "".equals($F{enderecoPDV}) ? "" : $F{enderecoPDV} + ",") + ($F{bairroPDV}==null || "".equals($F{bairroPDV}) ? "" : $F{bairroPDV} + ",") + ($F{cidadePDV}==null || "".equals($F{cidadePDV}) ? "" : $F{cidadePDV} + ".") + "\n" +
+"TPU (Termo de Permissão de Uso da Prefeitura Municipal), sob o n° " + ($F{numeroPermissao}==null || "".equals($F{numeroPermissao}) ? "" : $F{numeroPermissao} + ",") + "\n" +
+"portador da cédula de identidade (RG) n° " + ($F{rgJornaleiro}==null || "".equals($F{rgJornaleiro}) ? "" : $F{rgJornaleiro}) + " e inscrito no CPF sob o n° " + ($F{cpfJornaleiro}==null || "".equals($F{cpfJornaleiro}) ? "" : $F{cpfJornaleiro} + ",") + "\n" +
+"nomeia e constitui seu bastante procurador " + ($F{nomeProcurador}==null || "".equals($F{nomeProcurador}) ? "" : $F{nomeProcurador} + ",") + " portador da cédula de identidade (RG) n° " + ($F{rgProcurador}==null || "".equals($F{rgProcurador}) ? "" : $F{rgProcurador} + ", ") + ($F{estadoCivilProcurador}==null || "".equals($F{estadoCivilProcurador}) ? "" : $F{estadoCivilProcurador} + ", ") + ($F{nacionalidadeProcurador}==null || "".equals($F{nacionalidadeProcurador}) ? "" : $F{nacionalidadeProcurador} + ",") + " residente e domiciliado " + ($F{enderecoDoProcurado}==null || "".equals($F{enderecoDoProcurado}) ? "" : $F{enderecoDoProcurado} + ",") + ($F{bairroProcurado}==null || "".equals($F{bairroProcurado}) ? "" : $F{bairroProcurado} + ",") + ($F{cidadeProcurado}==null || "".equals($F{cidadeProcurado}) ? "" : $F{cidadeProcurado} + ",") + "\n" +
+"\npara o qual confere poderes de representa-lo perante a "+$P{nomeDistribuidor}+", exclusivamente para retirar e conferir o seu reparte, o material de numeros atrasados, compra de encalhe e zona azul, conferir e entregar o seu encalhe e retirar o boleto para pagamento das publicacoes vendidas e praticar todos os atos inerentes as atividades do titular da banca de jornais e revistas junto a distribuidora acima citada." +
 "\nEsta procuração terá vigência por prazo indeterminado ou até que seja substituída por outra."
 ).getBytes("ISO-8859-1"), "UTF-8")]]></textFieldExpression>
 			</textField>

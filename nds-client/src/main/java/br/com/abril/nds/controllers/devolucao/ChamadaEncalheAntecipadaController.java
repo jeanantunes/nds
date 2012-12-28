@@ -172,7 +172,7 @@ public class ChamadaEncalheAntecipadaController extends BaseController {
 	 */
 	@Post
 	@Path("/pesquisarDataProgramada")
-	public void pesquisarpesquisarDataProgramadaEdicao(String codigoProduto, Long numeroEdicao){
+	public void pesquisarDataProgramadaEdicao(String codigoProduto, Long numeroEdicao){
 		
 		Date date  = chamadaAntecipadaEncalheService.obterDataRecolhimentoPrevista(codigoProduto, numeroEdicao);
 		

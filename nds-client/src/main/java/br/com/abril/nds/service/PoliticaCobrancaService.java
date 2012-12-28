@@ -101,5 +101,7 @@ public interface PoliticaCobrancaService {
 			List<Long> idFornecedores, Boolean domingo, Boolean segunda,
 			Boolean terca, Boolean quarta, Boolean quinta, Boolean sexta,
 			Boolean sabado);
+	
+	List<TipoCobranca> obterTiposCobrancaDistribuidor();
 
 }

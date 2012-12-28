@@ -15,6 +15,11 @@
 			background: none repeat scroll 0 0 #D9EBF5;
 		}
 	</style>
+	<script>
+		$(function(){
+		ConferenciaEncalheCont.init();
+	});
+	</script>
 </head>
 
 <body>
@@ -62,7 +67,7 @@
 				<table class="conferenciaEncalheContGrid"></table>
 				
 				<div style="overflow: auto; height: 250px; border: 1px #EEEEEE solid;">
-					<table class="conferenciaEncalheGrid" style="width: 941px;" id="dadosGridConferenciaEncalhe">
+					<table class="conferenciaEncalheGrid" style="width: 941px;" id="dadosGridConferenciaEncalheContingencia">
 						<tr class="header_table">
 							<td style="width: 70px; text-align: left;">Código</td>
 							<td style="width: 150px; text-align: left;">Produto</td>

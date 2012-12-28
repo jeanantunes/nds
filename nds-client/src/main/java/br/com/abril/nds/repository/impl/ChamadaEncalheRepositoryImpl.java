@@ -329,6 +329,7 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		hql.append("(").append(getSubHqlTotalQtdeValorPrevistaDaEmissaoCE(filtro, false)).append(" ) as qtdeExemplares, ");	
 		hql.append("(").append(getSubHqlTotalQtdeValorPrevistaDaEmissaoCE(filtro, true)).append(" ) as vlrTotalCe, ");	
 		hql.append(" box.codigo as box, 						");
+		hql.append(" box.nome as nomeBox, 						");
 		hql.append(" cast (rota.id as string) as codigoRota, ");
 		hql.append(" rota.descricaoRota as nomeRota, 		");
 		hql.append(" cast (roteiro.id as string) as codigoRoteiro, ");

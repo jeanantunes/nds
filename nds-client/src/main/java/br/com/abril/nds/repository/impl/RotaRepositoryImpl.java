@@ -106,10 +106,20 @@ public class RotaRepositoryImpl extends AbstractRepositoryModel<Rota, Long>
 	@Override
 	public List<Rota> buscarRotaDeBox(Long idBox) {
 		
-		String hql  = "select rota from Rota rota join rota.roteiro roteiro join roteiro.roteirizacao.box box where box.id=:idBox group by rota ";
+		StringBuilder hql  = new StringBuilder();
+			
+		hql.append(" SELECT rota FROM Rota rota ");
+		hql.append(" JOIN rota.roteiro roteiro  ");
+		hql.append(" LEFT JOIN roteiro.roteirizacao.box box ");
+		hql.append(" WHERE box.id ");
+		hql.append( ( idBox != null ) ? " = :idBox " : " IS NULL " );
+		hql.append(" GROUP BY rota ");
+	
+		Query query = getSession().createQuery(hql.toString());
 		
-		Query query = getSession().createQuery(hql);
-		query.setParameter("idBox", idBox);
+		if (idBox != null) {
+			query.setParameter("idBox", idBox);
+		}
 		
 		return query.list();
 	}

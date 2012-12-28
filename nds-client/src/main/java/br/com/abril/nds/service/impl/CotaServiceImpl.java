@@ -63,6 +63,7 @@ import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
 import br.com.abril.nds.model.cadastro.ParametroDistribuicaoCota;
 import br.com.abril.nds.model.cadastro.ParametroSistema;
 import br.com.abril.nds.model.cadastro.ParametrosCotaNotaFiscalEletronica;
+import br.com.abril.nds.model.cadastro.ParametrosDistribuidorEmissaoDocumento;
 import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
@@ -74,6 +75,7 @@ import br.com.abril.nds.model.cadastro.TelefoneCota;
 import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.cadastro.TipoEndereco;
 import br.com.abril.nds.model.cadastro.TipoParametroSistema;
+import br.com.abril.nds.model.cadastro.TipoParametrosDistribuidorEmissaoDocumento;
 import br.com.abril.nds.model.cadastro.desconto.DescontoProdutoEdicao;
 import br.com.abril.nds.model.cadastro.pdv.CaracteristicasPDV;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
@@ -109,11 +111,13 @@ import br.com.abril.nds.service.DividaService;
 import br.com.abril.nds.service.EnderecoService;
 import br.com.abril.nds.service.FileService;
 import br.com.abril.nds.service.HistoricoTitularidadeService;
+import br.com.abril.nds.service.ParametrosDistribuidorService;
 import br.com.abril.nds.service.SituacaoCotaService;
 import br.com.abril.nds.service.TelefoneService;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.Intervalo;
+import br.com.abril.nds.util.JasperUtil;
 import br.com.abril.nds.util.MathUtil;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
@@ -215,6 +219,9 @@ public class CotaServiceImpl implements CotaService {
 	
 	@Autowired
 	private RankingRepository rankingRepository;
+	
+	@Autowired
+	private ParametrosDistribuidorService parametrosDistribuidorService;
 	
 	@Transactional(readOnly = true)
 	@Override
@@ -775,6 +782,71 @@ public class CotaServiceImpl implements CotaService {
 	public Cota obterCotaPDVPorNumeroDaCota(Integer numeroCota) {
 		return this.cotaRepository.obterCotaPDVPorNumeroDaCota(numeroCota);
 	}
+	
+	/**
+	 * Define parametros default com base em parametros do Distribuidor
+	 * @param distribuicao
+	 * @return DistribuicaoDTO
+	 */
+	private DistribuicaoDTO setDistribuicaoDefault(DistribuicaoDTO distribuicao){
+		
+		Distribuidor distribuidor = this.distribuidorRepository.obter();
+		
+		List<ParametrosDistribuidorEmissaoDocumento> listaParametrosDistribuidorEmissaoDocumentos = distribuidor.getParametrosDistribuidorEmissaoDocumentos();
+		
+		if (listaParametrosDistribuidorEmissaoDocumentos!=null && listaParametrosDistribuidorEmissaoDocumentos.size() > 0){
+		
+			for (ParametrosDistribuidorEmissaoDocumento item : listaParametrosDistribuidorEmissaoDocumentos){
+				
+				TipoParametrosDistribuidorEmissaoDocumento tipo = item.getTipoParametrosDistribuidorEmissaoDocumento();
+				
+				if (tipo!=null){
+					
+					switch (tipo){
+					
+						case SLIP:
+							
+							distribuicao.setSlipEmail(item.isUtilizaEmail());
+							distribuicao.setSlipImpresso(item.isUtilizaImpressao());
+							
+							break;
+						case BOLETO:
+							
+							distribuicao.setBoletoEmail(item.isUtilizaEmail());
+							distribuicao.setBoletoImpresso(item.isUtilizaImpressao());
+							
+							break;
+						case BOLETO_SLIP:
+							
+							distribuicao.setBoletoSlipEmail(item.isUtilizaEmail());
+							distribuicao.setBoletoSlipImpresso(item.isUtilizaImpressao());
+							
+							break;
+						case RECIBO:
+							
+							distribuicao.setReciboEmail(item.isUtilizaEmail());
+							distribuicao.setReciboImpresso(item.isUtilizaImpressao());
+							
+							break;
+						case NOTA_ENVIO:
+							
+							distribuicao.setNeEmail(item.isUtilizaEmail());
+							distribuicao.setNeImpresso(item.isUtilizaImpressao());
+							
+							break;
+						case CHAMADA_ENCALHE:
+							
+							distribuicao.setCeEmail(item.isUtilizaEmail());
+							distribuicao.setCeImpresso(item.isUtilizaImpressao());
+							
+							break;
+					}		
+				}
+			}
+		}
+		
+		return distribuicao;
+	}
 
 	@Override
 	@Transactional
@@ -808,8 +880,10 @@ public class CotaServiceImpl implements CotaService {
 		}
 		
 		if (parametro == null) {
-			
-			return dto;
+
+			dto = this.setDistribuicaoDefault(dto);
+
+			return dto;	
 		}
 		
 		if(!qtdePDVAutomatico) {
@@ -843,6 +917,7 @@ public class CotaServiceImpl implements CotaService {
 		dto.setProcuracaoRecebida(parametro.getProcuracaoRecebida());
 		dto.setTaxaFixa(MathUtil.round(parametro.getTaxaFixa(), 2));
 		dto.setPercentualFaturamento(MathUtil.round(parametro.getPercentualFaturamento(), 2));
+		dto.setBaseCalculo(parametro.getBaseCalculo());
 		dto.setInicioPeriodoCarencia(DateUtil.formatarDataPTBR(parametro.getInicioPeriodoCarencia()));
 		dto.setFimPeriodoCarencia(DateUtil.formatarDataPTBR(parametro.getFimPeriodoCarencia()));
 		
@@ -890,6 +965,7 @@ public class CotaServiceImpl implements CotaService {
 		parametros.setProcuracaoRecebida(dto.getProcuracaoRecebida());
 		parametros.setTaxaFixa(dto.getTaxaFixa());
 		parametros.setPercentualFaturamento(dto.getPercentualFaturamento());
+		parametros.setBaseCalculo(dto.getBaseCalculo());
 		
 		if (dto.getInicioPeriodoCarencia() != null) {
 			parametros.setInicioPeriodoCarencia(DateUtil.parseDataPTBR(dto.getInicioPeriodoCarencia()));
@@ -1953,7 +2029,10 @@ public class CotaServiceImpl implements CotaService {
 		Map<String, Object> parameters = new HashMap<String, Object>();
 		parameters.put("cidade", dto.getCidadePDV());
 		
-		parameters.put("infoComp", this.distribuidorRepository.obterInformacoesComplementaresProcuracao());
+		String informacoesComplementares = this.distribuidorRepository.obterInformacoesComplementaresTermoAdesao();
+		parameters.put("infoComp", informacoesComplementares!=null?informacoesComplementares:"");
+		parameters.put("LOGO",JasperUtil.getImagemRelatorio(parametrosDistribuidorService.getLogotipoDistribuidor()));
+		parameters.put("nomeDistribuidor", parametrosDistribuidorService.getParametrosDistribuidor()!=null?parametrosDistribuidorService.getParametrosDistribuidor().getNomeFantasia():"");
 		
 		JRDataSource jrDataSource = new JRBeanCollectionDataSource(listaDTO);
 		
@@ -1979,6 +2058,8 @@ public class CotaServiceImpl implements CotaService {
 		dto.setValorDebito(valorDebito);
 		dto.setPorcentagemDebito(percentualDebito);
 		
+		dto.setPeriodicidade("Semanal");
+		
 		EnderecoCota enderecoCota = 
 				this.enderecoCotaRepository.obterEnderecoPorTipoEndereco(
 						cota.getId(), TipoEndereco.LOCAL_ENTREGA);
@@ -1996,7 +2077,7 @@ public class CotaServiceImpl implements CotaService {
 			if (pdv != null){
 				
 				dto.setReferenciaEndereco(pdv.getPontoReferencia());
-				dto.setHorariosFuncionamento(pdv.getPeriodos());
+				dto.setHorariosFuncionamento(pdv.getPeriodos()!=null?pdv.getPeriodos().size()>0?pdv.getPeriodos():null:null);
 				
 				Endereco enderecoPDV = this.enderecoPDVRepository.buscarEnderecoPrincipal(pdv.getId());
 				
@@ -2014,7 +2095,9 @@ public class CotaServiceImpl implements CotaService {
 		parameters.put("SUBREPORT_DIR",
 				Thread.currentThread().getContextClassLoader().getResource("/reports/").getPath());
 		
-		parameters.put("infoComp", this.distribuidorRepository.obterInformacoesComplementaresTermoAdesao());
+		String informacoesComplementares = this.distribuidorRepository.obterInformacoesComplementaresTermoAdesao();
+		parameters.put("infoComp", informacoesComplementares!=null?informacoesComplementares:"");
+		parameters.put("LOGO",JasperUtil.getImagemRelatorio(parametrosDistribuidorService.getLogotipoDistribuidor()));
 		
 		List<TermoAdesaoDTO> listaDTO = new ArrayList<TermoAdesaoDTO>();
 		listaDTO.add(dto);
@@ -2042,6 +2125,10 @@ public class CotaServiceImpl implements CotaService {
 		}
 		
 		this.obterPercentualFaturamentoTaxaFixa(cota.getId(), dto);
+		
+		Distribuidor distribuidor = this.distribuidorRepository.obter();
+		
+		dto.setUtilizaTermoAdesao(distribuidor.getParametroEntregaBanca()!=null?distribuidor.getParametroEntregaBanca().isUtilizaTermoAdesao():false);
 		
 		return dto;
 	}

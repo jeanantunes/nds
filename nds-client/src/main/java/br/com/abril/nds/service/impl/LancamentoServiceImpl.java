@@ -150,6 +150,7 @@ public class LancamentoServiceImpl implements LancamentoService {
 		
 		lancamentoRepository.alterar(lancamento);
 		
+		
 		HistoricoLancamento historico = new HistoricoLancamento();
 		historico.setDataEdicao(new Date());
 		historico.setLancamento(lancamento);

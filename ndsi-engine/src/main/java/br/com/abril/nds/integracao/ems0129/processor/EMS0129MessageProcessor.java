@@ -105,7 +105,7 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 		try {
 
 			PrintWriter print = new PrintWriter(
-					new FileWriter(message.getHeader().get(MessageHeaderProperties.OUTBOUND_FOLDER.getValue()) + "/PICKING1.NEW"));
+					new FileWriter(message.getHeader().get(MessageHeaderProperties.OUTBOUND_FOLDER.getValue()) + "/PICKING1.NEP"));
 
 			for (PDV pdv : pdvs) {
 

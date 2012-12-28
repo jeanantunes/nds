@@ -31,7 +31,9 @@
 		<table width="703" border="0" cellspacing="0" cellpadding="2" >
 	  		<tr>
 			    <td width="117">
-			    	<img src="" id="imagemProduto" width="117" height="145" alt="" />
+			    	<div id="imagemProduto">
+			    		<img src="" id="img" width="117" height="145" alt="" />
+			    	</div>
 			    </td>
 			    <td width="1">&nbsp;</td>
 			    <td width="573" valign="top">
@@ -302,4 +304,12 @@
 		<p id="msgRegerarCobranca"></p>
 	</fieldset>
 </div>
+</form>
+<form id="form-confirmar">
+	<div id="dialog-confirmar" title="Confirma">
+		<fieldset>
+			<legend>Confirma</legend>
+			<p id="msgConfirmar"></p>
+		</fieldset>
+	</div>
 </form>

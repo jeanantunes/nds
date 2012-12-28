@@ -45,7 +45,7 @@ public class ProdutoLancamentoVO  implements Serializable {
 	@Export(label="Previsto", exhibitionOrder = 10)
 	private String dataLancamentoPrevista;
 	
-	private String novaData;
+	private String novaDataLancamento;
 	
 	private boolean bloquearData;
 	
@@ -212,17 +212,17 @@ public class ProdutoLancamentoVO  implements Serializable {
 	}
 
 	/**
-	 * @return the novaData
+	 * @return the novaDataLancamento
 	 */
-	public String getNovaData() {
-		return novaData;
+	public String getNovaDataLancamento() {
+		return novaDataLancamento;
 	}
 
 	/**
-	 * @param novaData the novaData to set
+	 * @param novaDataLancamento the novaDataLancamento to set
 	 */
-	public void setNovaData(String novaData) {
-		this.novaData = novaData;
+	public void setNovaDataLancamento(String novaDataLancamento) {
+		this.novaDataLancamento = novaDataLancamento;
 	}
 
 	@Override

@@ -364,7 +364,7 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 			hql.append(" order by  chamadaEncalheCota.qtdePrevista ");
 			break;
 		default:
-			hql.append(" order by  box.codigo ");
+			hql.append(" order by  box.codigo, cota.numeroCota ");
 		}
 
 		if (filtro.getPaginacao().getOrdenacao() != null) {

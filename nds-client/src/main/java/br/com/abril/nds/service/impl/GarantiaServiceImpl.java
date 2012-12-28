@@ -35,6 +35,7 @@ public class GarantiaServiceImpl implements GarantiaService {
 		return this.garantiaRepository.buscarPorId(idGarantia);
 	}
 	
+	@Transactional
 	public void salvarGarantias(List<Garantia> listaGarantias, Fiador fiador){
 		
 		if (listaGarantias != null && !listaGarantias.isEmpty()){
@@ -57,6 +58,7 @@ public class GarantiaServiceImpl implements GarantiaService {
 		}
 	}
 	
+	@Transactional
 	public void removerGarantias(Set<Long> idsGarantias){
 		
 		if (idsGarantias != null && !idsGarantias.isEmpty()){
