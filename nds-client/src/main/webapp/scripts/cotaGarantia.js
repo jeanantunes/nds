@@ -645,6 +645,7 @@ ChequeCaucao.prototype.loadImage = function(){
     } else {
         imgPath+= '&idCota=' + tipoCotaGarantia.getIdCota() + '&idHistorico=' + tipoCotaGarantia.getIdHistorico();
     }
+    imgPath+= '&random='+ Math.random();
     var img = null;
     img = $("<img />").attr('src', imgPath)
         .load(function() {
