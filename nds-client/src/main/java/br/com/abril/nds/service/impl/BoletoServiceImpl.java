@@ -889,7 +889,7 @@ public class BoletoServiceImpl implements BoletoService {
 			documentoSacado = ((PessoaFisica) pessoa).getCpf();
 		}
 		if (pessoa instanceof PessoaJuridica){
-			nomeSacado = ((PessoaJuridica) pessoa).getNomeFantasia();
+			nomeSacado = ((PessoaJuridica) pessoa).getRazaoSocial();
 			documentoSacado = ((PessoaJuridica) pessoa).getCnpj();
 		}
 		corpoBoleto.setSacadoNome(nomeSacado);          

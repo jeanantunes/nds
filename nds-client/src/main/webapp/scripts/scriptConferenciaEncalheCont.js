@@ -6,65 +6,65 @@ var ConferenciaEncalheCont = $.extend(true, {
 
 	init : function() {
 		
-		$(function() {
-			
-			$(".outrosVlrsGrid", ConferenciaEncalheCont.workspace).flexigrid({
-				dataType : 'json',
-				colModel : [ {
-					display : 'Data',
-					name : 'data',
-					width : 100,
-					sortable : false,
-					align : 'left'
-				}, {
-					display : 'Tipo de Lançamento',
-					name : 'tipoLancamentoDescricao',
-					width : 140,
-					sortable : false,
-					align : 'left'
-				},{
-					display : 'Observações',
-					name : 'observacoes',
-					width : 140,
-					sortable : true,
-					align : 'left'
-				}, {
-					display : 'Valor R$',
-					name : 'valor',
-					width : 100,
-					sortable : false,
-					align : 'right'
-				} ],
-				width : 540,
-				height : 250
-			});
-			
-			//hack para message dialog com tamanho fixo
-			$(".message-dialog-encalhe > div", ConferenciaEncalheCont.workspace).css('width', '93%');
-			
-			$("#numeroCota", ConferenciaEncalheCont.workspace).numeric();
-			$("#numeroCota", ConferenciaEncalheCont.workspace).focus();
-			$("#exemplaresNovoEncalhe", ConferenciaEncalheCont.workspace).numeric();
-			$("#vlrCE", ConferenciaEncalheCont.workspace).numeric();
-			$("#dataNotaFiscal", ConferenciaEncalheCont.workspace).mask("99/99/9999");
-			
-			$("#numeroCota", ConferenciaEncalheCont.workspace).keypress(function(e) {
-				
-				if (e.keyCode == 13) {
-					
-					ConferenciaEncalheCont.pesquisarCota();
-				}
-			});
-			
-			$("#lstProdutos", ConferenciaEncalheCont.workspace).keypress(function(e){
-				
-				ConferenciaEncalheCont.pesquisarProdutoPorCodigoNome();
-			});
-			
-			ConferenciaEncalheCont.criarComboBoxEncalhe();
-			
+		$(".outrosVlrsGrid", ConferenciaEncalheCont.workspace).flexigrid({
+			dataType : 'json',
+			colModel : [ {
+				display : 'Data',
+				name : 'data',
+				width : 100,
+				sortable : false,
+				align : 'left'
+			}, {
+				display : 'Tipo de Lançamento',
+				name : 'tipoLancamentoDescricao',
+				width : 140,
+				sortable : false,
+				align : 'left'
+			},{
+				display : 'Observações',
+				name : 'observacoes',
+				width : 140,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Valor R$',
+				name : 'valor',
+				width : 100,
+				sortable : false,
+				align : 'right'
+			} ],
+			width : 540,
+			height : 250
 		});
-
+		
+		//hack para message dialog com tamanho fixo
+		$(".message-dialog-encalhe > div", ConferenciaEncalheCont.workspace).css('width', '93%');
+		
+		$("#numeroCota", ConferenciaEncalheCont.workspace).numeric();
+		$("#numeroCota", ConferenciaEncalheCont.workspace).focus();
+		$("#exemplaresNovoEncalhe", ConferenciaEncalheCont.workspace).numeric();
+		$("#vlrCE", ConferenciaEncalheCont.workspace).maskMoney({
+			 thousands:'.', 
+			 decimal:',', 
+			 precision:2
+		});
+		$("#dataNotaFiscal", ConferenciaEncalheCont.workspace).mask("99/99/9999");
+		
+		$("#numeroCota", ConferenciaEncalheCont.workspace).keypress(function(e) {
+			
+			if (e.keyCode == 13) {
+				
+				ConferenciaEncalheCont.pesquisarCota();
+			}
+		});
+		
+		$("#lstProdutos", ConferenciaEncalheCont.workspace).keypress(function(e){
+			
+			ConferenciaEncalheCont.pesquisarProdutoPorCodigoNome();
+		});
+		
+		ConferenciaEncalheCont.criarComboBoxEncalhe();
+		
 		shortcut.add("F2", function() {
 			
 			if (!ConferenciaEncalheCont.modalAberta){
@@ -174,7 +174,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 				
 				var opcoesBox = '';
 				
-				$.each(result.boxes, function(key, value) {
+				$.each(result, function(key, value) {
 					opcoesBox = opcoesBox + "<option value="+key+">"+value+"</option>"; 
 				});
 				
@@ -440,7 +440,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 					
 					innerTable += "</tr>";
 					
-					$(innerTable).appendTo("#dadosGridConferenciaEncalhe");
+					$(innerTable).appendTo("#dadosGridConferenciaEncalheContingencia", ConferenciaEncalheCont.workspace);
 					
 					innerTable = '';
 				}
@@ -636,7 +636,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 					
 					innerTable += "</tr>";
 					
-					$(innerTable).appendTo("#dadosGridConferenciaEncalheFinalizar");
+					$(innerTable).appendTo("#dadosGridConferenciaEncalheFinalizar", ConferenciaEncalheCont.workspace);
 					
 					innerTable = '';
 				}
@@ -1022,3 +1022,5 @@ var ConferenciaEncalheCont = $.extend(true, {
 
 	}
 }, BaseController);
+
+//@ sourceURL=scriptConferenciaEncalheCont.js

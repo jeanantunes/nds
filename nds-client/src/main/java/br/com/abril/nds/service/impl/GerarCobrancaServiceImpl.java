@@ -714,7 +714,8 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 				this.obterValorMinino(cota, valorMininoDistribuidor);
 		
 		//caso tenha alcançado o valor minino de cobrança e seja um dia de concentração de cobrança, ou a cota esteja suspensa
-		if ( (vlMovFinanTotal.compareTo(valorMinino) < 0 && cobrarHoje) || (cotaSuspensa)){
+		if ( (vlMovFinanTotal.compareTo(valorMinino) < 0 && cobrarHoje) || 
+				(vlMovFinanTotal.compareTo(valorMinino) < 0 && cotaSuspensa)){
 
 			if (formaCobrancaPrincipal.getBanco() == null) {
 				
@@ -779,7 +780,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 					novaDivida.setValor(valorCalculadoJuros.abs());
 				}
 			}
-		} else {
+		} else if (vlMovFinanTotal.compareTo(valorMinino) != 0) {
 
 			//gerar postergado
 			consolidadoFinanceiroCota.setValorPostergado(vlMovFinanTotal);
