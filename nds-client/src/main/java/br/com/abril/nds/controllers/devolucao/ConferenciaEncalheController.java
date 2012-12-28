@@ -110,29 +110,20 @@ public class ConferenciaEncalheController extends BaseController {
 		List<Box> boxes = 
 				this.conferenciaEncalheService.obterListaBoxEncalhe(this.getUsuarioLogado().getId());
 		
-		
-		
 		if( boxes!=null ) {
 
 			Map<String, String> mapBox = new HashMap<String, String>();
 			
 			for(Box box : boxes) {
-				
 				mapBox.put(box.getId().toString(), box.getNome());
-				
 			}
 			
 			this.result.use(CustomJson.class).from(mapBox).serialize();
-
-			
 		} else {
 
 			this.result.use(Results.json()).from("").serialize();
-		
 		}
-		
 	}
-	
 	
 	private void carregarComboBoxEncalhe() {
 		

@@ -261,8 +261,8 @@ public class ConferenciaEncalheRepositoryImpl extends
 		((SQLQuery)query).addScalar("codigoDeBarras");
 		((SQLQuery)query).addScalar("codigoSM", StandardBasicTypes.INTEGER);
 		
-		((SQLQuery)query).addScalar("qtdExemplar", StandardBasicTypes.BIG_DECIMAL);
-		((SQLQuery)query).addScalar("qtdInformada", StandardBasicTypes.BIG_DECIMAL);
+		((SQLQuery)query).addScalar("qtdExemplar", StandardBasicTypes.BIG_INTEGER);
+		((SQLQuery)query).addScalar("qtdInformada", StandardBasicTypes.BIG_INTEGER);
 		((SQLQuery)query).addScalar("precoCapaInformado", StandardBasicTypes.BIG_DECIMAL);
 		((SQLQuery)query).addScalar("valorTotal", StandardBasicTypes.BIG_DECIMAL);
 		
