@@ -166,9 +166,13 @@
 			<a href="javascript:;" onclick="CadastroCalendario.popupNovoCadastroFeriado();" rel="tipsy" Title="Incluir Novo Feriado">
 			<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0" /></a>
 		</span>
-		
+		<span class="bt_novos" title="Gerar Arquivo">
+			<a href="${pageContext.request.contextPath}/administracao/cadastroCalendario/exportarArquivo?fileType=XLS&tipoPesquisaFeriado=FERIADO_MENSAL" title="Gerar Arquivo">
+				<img src="${pageContext.request.contextPath}/images/ico_excel.png" alt="Gerar Arquivo" hspace="5" border="0" />
+			</a>
+		</span>
 		<span class="bt_novos">
-			<a href="${pageContext.request.contextPath}/administracao/cadastroCalendario/gerarRelatorioCalendario?fileType=PDF&tipoPesquisaFeriado=FERIADO_MENSAL" rel="tipsy" Title="Imprimir">
+			<a href="${pageContext.request.contextPath}/administracao/cadastroCalendario/gerarRelatorioCalendario?fileType=PDF&tipoPesquisaFeriado=FERIADO_MENSAL" rel="tipsy" title="Imprimir">
 				<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />
 			</a>
 		</span>
@@ -220,7 +224,10 @@
 					
 					</td>
 					<td>Descrição:</td>
-					<td><input type="text" name="descricao" id="descricao" style="width: 230px;" /></td>
+					<td>
+						<input type="text" name="descricao" id="descricao" style="width: 230px;" />
+						<input type="hidden" name="idFeriado" id="idFeriado" />
+					</td>
 				</tr>
 				<tr>
 					<td align="right"><input name="indOpera" type="checkbox" value="" id="indOpera" /></td>
@@ -256,7 +263,11 @@
 							<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0" />
 						</a>
 					</span>
-					
+					<span class="bt_arq" title="Gerar Arquivo">
+						<a href="${pageContext.request.contextPath}/administracao/cadastroCalendario/exportarArquivo?fileType=XLS&tipoPesquisaFeriado=FERIADO_ANUAL" title="Gerar Arquivo">
+							<img src="${pageContext.request.contextPath}/images/ico_excel.png" alt="Gerar Arquivo" hspace="5" border="0" />
+						</a>
+					</span>
 					<span class="bt_arq">
 						<a href="${pageContext.request.contextPath}/administracao/cadastroCalendario/gerarRelatorioCalendario?fileType=PDF&tipoPesquisaFeriado=FERIADO_ANUAL" rel="tipsy" title="Imprimir">
 							<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />
