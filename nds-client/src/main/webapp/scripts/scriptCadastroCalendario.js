@@ -203,6 +203,7 @@ var CadastroCalendario = $.extend(true, {
 		},
 		
 		editarFeriado : function(
+				idFeriado,
 				dtFeriado, 
 				tipoFeriado, 
 				idLocalidade, 
@@ -210,7 +211,7 @@ var CadastroCalendario = $.extend(true, {
 				indOpera, 
 				indEfetuaCobranca, 
 				descricaoFeriado) {
-						
+			$("#idFeriado", CadastroCalendario.workspace).val(idFeriado);			
 			$("#dtFeriado", CadastroCalendario.workspace).val(dtFeriado);
 			$("#tipos_feriado_dialog_editar", CadastroCalendario.workspace).val(tipoFeriado);
 			$("#cidades_dialog_editar", CadastroCalendario.workspace).val(idLocalidade);
@@ -223,14 +224,7 @@ var CadastroCalendario = $.extend(true, {
 			
 		},
 		
-		excluirFeriado : function(
-				dtFeriado, 
-				tipoFeriado, 
-				idLocalidade, 
-				indRepeteAnualmente, 
-				indOpera, 
-				indEfetuaCobranca, 
-				descricaoFeriado) {
+		excluirFeriado : function(idFeriado, dtFeriado) {
 			
 			
 			$( "#dialog-excluir", CadastroCalendario.workspace ).dialog({
@@ -243,14 +237,8 @@ var CadastroCalendario = $.extend(true, {
 					"Confirmar": function() {
 						$( this ).dialog( "close" );
 						var parametrosPesquisa = 
-							[ {name : "dtFeriado", value : dtFeriado},
-							  {name : "descTipoFeriado", value : tipoFeriado},
-							  {name : "indRepeteAnualmente", value : indRepeteAnualmente}];
-						
-						if (idLocalidade != -1) {
-							parametrosPesquisa.push({name : "idLocalidade", value : idLocalidade});
-						}
-						
+							[ {name : "idFeriado", value : idFeriado}];
+																		
 						$.postJSON(
 								
 								contextPath + '/administracao/cadastroCalendario/excluirCadastroFeriado', 
@@ -318,7 +306,7 @@ var CadastroCalendario = $.extend(true, {
 			$.each(result.rows, function(index, value) {
 				
 				var cell = value.cell;
-				
+				var idFeriado				= cell.idFeriado;
 				var dtFeriado 	 			= CadastroCalendario.concatenarChar(cell.dataFeriado);
 				var tipoFeriado  			= CadastroCalendario.concatenarChar(cell.tipoFeriado);
 				var localidade 				= cell.localidade ? CadastroCalendario.concatenarChar(cell.localidade) : -1;
@@ -327,13 +315,13 @@ var CadastroCalendario = $.extend(true, {
 				var indEfetuaCobranca 		= cell.indEfetuaCobranca;
 				var descricaoFeriado		= CadastroCalendario.concatenarChar(cell.descricaoFeriado);
 
-				var parametros = [ dtFeriado, tipoFeriado, localidade, indRepeteAnualmente, indOpera, indEfetuaCobranca, descricaoFeriado ];
+				var parametros = [ idFeriado, dtFeriado, tipoFeriado, localidade, indRepeteAnualmente, indOpera, indEfetuaCobranca, descricaoFeriado ];
 								
 				var imgDetalhar = '<img src="' + contextPath + '/images/ico_detalhes.png" border="0" hspace="3"/>';
 				cell.acao = '<a href="javascript:;" onclick="CadastroCalendario.editarFeriado('+ parametros +');" style="margin-right:10px;">' + imgDetalhar + '</a>';
 				
 				var imgExclusao = '<img src="' + contextPath + '/images/ico_excluir.gif" width="15" height="15" alt="Salvar" hspace="5" border="0" />';
-				cell.acao += '<a href="javascript:;" onclick="CadastroCalendario.excluirFeriado(' + parametros + ');">' + imgExclusao + '</a>';
+				cell.acao += '<a href="javascript:;" onclick="CadastroCalendario.excluirFeriado(' + [ idFeriado, dtFeriado] + ');">' + imgExclusao + '</a>';
 
 				cell.indOpera = (cell.indOpera == false) ?  'N' : 'S';
 				cell.indRepeteAnualmente = (cell.indRepeteAnualmente  == false) ?  'N' : 'S';
@@ -348,7 +336,7 @@ var CadastroCalendario = $.extend(true, {
 			
 			$("#tipos_feriado_dialog_editar", CadastroCalendario.workspace).val('');
 			$("#descricao", CadastroCalendario.workspace).val('');
-			
+			$("#idFeriado", CadastroCalendario.workspace).val('');
 			$("#indOpera", CadastroCalendario.workspace).attr('checked', false);
 			$("#indRepeteAnualmente", CadastroCalendario.workspace).attr('checked', false);
 			$("#indEfetuaCobranca", CadastroCalendario.workspace).attr('checked', false);
@@ -433,10 +421,8 @@ var CadastroCalendario = $.extend(true, {
 				indEfetuaCobranca = $("#indEfetuaCobrancaNovo", CadastroCalendario.workspace).is(":checked");
 				indRepeteAnualmente = $("#indRepeteAnualmenteNovo", CadastroCalendario.workspace).is(":checked");
 				
-			
-				
 			} else {
-
+				idFeriado = $("#idFeriado", CadastroCalendario.workspace).val();
 				dtFeriado = $("#dtFeriado", CadastroCalendario.workspace).val();
 				tipoFeriado = $("#tipos_feriado_dialog_editar", CadastroCalendario.workspace).val();
 				idLocalidade = $("#cidades_dialog_editar", CadastroCalendario.workspace).val();
@@ -456,6 +442,9 @@ var CadastroCalendario = $.extend(true, {
 			                     {name: 'indEfetuaCobranca', 	value: indEfetuaCobranca},
 			                     {name: 'indRepeteAnualmente', 	value: indRepeteAnualmente}];
 			
+			if(idFeriado) {
+				parametrosCadastro.push({name:'idFeriado', value:idFeriado});
+			}
 			
 			var idDialog = fromPopUpNovoFeriado ? 'dialog-novo' : 'dialog-editar';
 			

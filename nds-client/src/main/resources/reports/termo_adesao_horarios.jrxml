@@ -33,8 +33,8 @@
 				<textElement markup="html">
 					<font fontName="Arial" size="14" isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA["<u>" + $F{tipoPeriodoFuncionamentoPDV}.getDescricao() + " das " + $F{horarioInicio}.getHours() + ":" + $F{horarioInicio}.getMinutes() +
-"h às " + $F{horarioFim}.getHours() + ":" + $F{horarioFim}.getMinutes() + "h</u>"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($F{tipoPeriodoFuncionamentoPDV}!=null?"<u>" + $F{tipoPeriodoFuncionamentoPDV}.getDescricao():"") + ($F{horarioInicio}!=null?" das " + $F{horarioInicio}.getHours() + ":" + $F{horarioInicio}.getMinutes() +
+"h ":"") + ($F{horarioFim}!=null?" às "+$F{horarioFim}.getHours() + ":" + $F{horarioFim}.getMinutes() + "h</u>":" em diante.")]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

@@ -94,6 +94,9 @@ public class ParametroDistribuicaoCota implements Serializable {
     
     @Column(name = "PERCENTUAL_FATURAMENTO", precision = 16, scale = 2)
     private BigDecimal percentualFaturamento;
+    
+    @Column(name = "BASE_CALCULO")
+    private BaseCalculo baseCalculo;
 
     @Column(name = "INICIO_PERIODO_CARENCIA")
     @Temporal(TemporalType.DATE)
@@ -438,6 +441,20 @@ public class ParametroDistribuicaoCota implements Serializable {
 	 */
 	public void setPercentualFaturamento(BigDecimal percentualFaturamento) {
 		this.percentualFaturamento = percentualFaturamento;
+	}
+	
+	/**
+	 * @return the baseCalculo
+	 */
+	public BaseCalculo getBaseCalculo() {
+		return baseCalculo;
+	}
+
+	/**
+	 * @param baseCalculo the baseCalculo to set
+	 */
+	public void setBaseCalculo(BaseCalculo baseCalculo) {
+		this.baseCalculo = baseCalculo;
 	}
 
 	/**
