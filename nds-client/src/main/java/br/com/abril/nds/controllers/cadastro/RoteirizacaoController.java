@@ -149,6 +149,13 @@ public class RoteirizacaoController extends BaseController {
 		result.use(Results.json()).from(roteiros, "result").serialize();
 	}
 	
+	@Post("/carregarRotasEspeciais")
+	public void carregarRotasEspeciais() {
+		
+		List<RotaRoteirizacaoDTO> rotasEspeciais = this.roteirizacaoService.buscarRotasEspeciais();
+		
+		result.use(Results.json()).from(rotasEspeciais, "result").serialize();
+	}
 	
 	@Post("/carregarBoxTransferenciaRoteiro")
 	public void carregarBoxTransferenciaRoteiro(Long idBox){
@@ -679,13 +686,7 @@ public class RoteirizacaoController extends BaseController {
 		
 		try {
 			
-			if (pesquisaRoteizicaoPorCota)	{
-				lista = roteirizacaoService.buscarRoteirizacaoPorNumeroCota(numeroCota, tipoRoteiro, sortname, Ordenacao.valueOf(sortorder.toUpperCase()), page*rp - rp , rp);
-			} else {
-				//FIXME alterar a consult
-				//lista = roteirizacaoService.buscarRoteirizacao( boxId,  roteiroId,  rotaId,  tipoRoteiro, sortname, Ordenacao.valueOf(sortorder.toUpperCase()), page*rp - rp , rp);
-				
-			}
+			lista = roteirizacaoService.buscarRoteirizacaoPorNumeroCota(numeroCota, tipoRoteiro, sortname, Ordenacao.valueOf(sortorder.toUpperCase()), page*rp - rp , rp);
 			
 			FileExporter.to("roteirizacao", fileType).inHTTPResponse(this.getNDSFileHeader(), null, null, lista,ConsultaRoteirizacaoDTO.class, this.response);
 			
@@ -1127,11 +1128,17 @@ public class RoteirizacaoController extends BaseController {
 	
 	@Post("/copiarCotasRota")
 	public void copiarCotasRota(Long idRoteiro, RotaRoteirizacaoDTO rotaCopia) {
-		RoteirizacaoDTO roteirizacao = getRoteirizacaoDTOSessao();
-		RoteiroRoteirizacaoDTO roteiro = roteirizacao.getRoteiro(idRoteiro);
-		RotaRoteirizacaoDTO rota = roteiro.getRota(rotaCopia.getId());
-		rota.addPdvsAposMaiorOrdem(rotaCopia.getPdvs());
+		
+		Rota rota = this.roteirizacaoService.buscarRotaPorId(rotaCopia.getId());
+		
+		RotaRoteirizacaoDTO rotaDTO = RotaRoteirizacaoDTO.getDTOFrom(rota);
+		
+		rotaDTO.addPdvsAposMaiorOrdem(rotaCopia.getPdvs());
+		
+		this.getRoteirizacaoDTOSessao().addRotaNovosPDVs(rotaDTO);
+		
 		ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.SUCCESS, "Cópia realizada com sucesso.");
+		
 		result.use(Results.json()).from(validacao, "result").recursive().serialize();
 	}
 	
@@ -1260,10 +1267,8 @@ public class RoteirizacaoController extends BaseController {
 	
 	@Post("/transferirPDVs")
     public void transferirPDVs(Long idRoteiro, Long idRotaAnterior, Long idRotaNova, Integer ordemRota, List<Long> pdvs){
-		
-		RoteiroRoteirizacaoDTO roteiroDTO =this.getRoteiroDTOSessao(idRoteiro); 
-		        
-        RotaRoteirizacaoDTO rotaAnterior = roteiroDTO.getRota(idRotaAnterior);
+						        
+        RotaRoteirizacaoDTO rotaAnterior = this.getRotaDTOSessaoPeloID(idRoteiro, idRotaAnterior);
         
         List<PdvRoteirizacaoDTO> pdvsTransferencia = new ArrayList<PdvRoteirizacaoDTO>(pdvs.size());
         
@@ -1273,7 +1278,7 @@ public class RoteirizacaoController extends BaseController {
             rotaAnterior.removerPdv(idPdv);
         }
         
-        RotaRoteirizacaoDTO rotaNovaDTO = roteiroDTO.getRota(idRotaNova);
+        RotaRoteirizacaoDTO rotaNovaDTO = this.getRotaDTOSessaoPeloID(idRotaNova, idRoteiro);
         
         if (rotaNovaDTO == null) {
         	
@@ -1281,7 +1286,7 @@ public class RoteirizacaoController extends BaseController {
 
         	RoteirizacaoDTO roteirizacaoDTO = this.getRoteirizacaoDTOSessao();
         	
-        	rotaNovaDTO = roteirizacaoDTO.obterRotaPDVsTransferidos(rota);
+        	rotaNovaDTO = roteirizacaoDTO.obterRotaNovosPDVs(rota);
         	
         }
         

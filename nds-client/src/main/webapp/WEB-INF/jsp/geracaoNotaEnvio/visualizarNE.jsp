@@ -9,14 +9,13 @@
 <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/NDS.css" />
 <style type="text/css">
 
-body{font-size:11px!important;}
-td{padding-left:3px;padding-right:3px;}
-.titulo{ color:#333; font-size:10px;!important;}
-.dadosNota{ color:#000;}
-
+body { font-size: 11px!important; }
+td { line-height: 20px!important; padding-left:3px; padding-right:3px; }
+.titulo{ color:#333; font-size:10px;!important; }
+.dadosNota{ color:#000; }
 .class_linha_3 {
-background: #CCC;
-line-height: 28px;
+	background: #ccc;
+	line-height: 28px;
 }
 </style>
 </head>
@@ -25,11 +24,10 @@ line-height: 28px;
 	<table width="760" border="0" align="center" cellpadding="0"
 		cellspacing="0" style="margin-bottom: 10px; margin-top: 10px;">
 		<tr>
-			<td width="124" rowspan="8" valign="top"><span
-				style="border-bottom: 1px solid #000;"><span><img
-						src="${pageContext.request.contextPath}/images/logo_sistema.png" width="110" height="70"
-						alt="Novo Distrib" /></span></span></td>
-			<td height="16" colspan="4"
+			<td width="124" rowspan="8" valign="top"><span>
+				<img src="${pageContext.request.contextPath}/administracao/parametrosDistribuidor/getLogo?number=${pageContext.request.requestedSessionId}" border="0" />
+				</span></td>
+			<td colspan="4"
 				style="border-left: 1px solid #000; border-top: 1px solid #000;"><span
 				class="titulo">Razão Social<br />
 			</span></td>
@@ -39,12 +37,12 @@ line-height: 28px;
 			<td width="20" align="right"><span class="titulo"
 				style="font-size: 13px !important;"><strong>N:</strong></span></td>
 			<td width="116" align="center"><span class="dadosNota"><strong
-					style="font-size: 13px !important;"><c:out value="${notaEnvio.numero}"/> </strong></span></td>
+					style="font-size: 14px !important;"><c:out value="${notaEnvio.numero}"/> </strong></span></td>
 		</tr>
 		<tr>
-			<td height="26" colspan="4"
+			<td colspan="4"
 				style="border-left: 1px solid #000; border-bottom: 1px solid #000;"><span
-				class="dadosNota"><c:out value="${notaEnvio.emitente.nome}"/> </span></td>
+				class="dadosNota"><c:out value="${notaEnvio.emitente.nome}"/></span></td>
 			<td rowspan="2" align="center"
 				style="border-left: 1px solid #000; border-bottom: 1px solid #000;">Nota
 				de Envio aprovada nos termos do Regime especial</td>
@@ -53,7 +51,7 @@ line-height: 28px;
 					de Transporte Rodoviário</span></td>
 		</tr>
 		<tr>
-			<td width="119" height="15" style="border-left: 1px solid #000;"><span
+			<td width="119" style="border-left: 1px solid #000;"><span
 				class="titulo">Endereço<br />
 			</span></td>
 			<th width="19">&nbsp;</th>
@@ -77,11 +75,10 @@ line-height: 28px;
 			<td style="border-left: 1px solid #000;"><span class="titulo">Cidade</span></td>
 			<td align="center"><span class="titulo">UF</span></td>
 			<td align="center"><span class="titulo">CEP</span></td>
-			<td align="center"><span class="titulo">Inscrição
-					Estadual</span></td>
-			<th style="border-left: 1px solid #000;">&nbsp;</th>
-			<th>&nbsp;</th>
-			<th style="border-right: 1px solid #000;">&nbsp;</th>
+			<td align="center"><span class="titulo">Inscrição Estadual</span></td>
+			<td style="border-left: 1px solid #000;"><c:if test="${notaEnvio.chaveAcesso != null}">Chave NF-e</c:if>&nbsp;</td>
+			<td>&nbsp;</td>
+			<td style="border-right: 1px solid #000;">&nbsp;</td>
 		</tr>
 		<tr>
 			<td
@@ -93,34 +90,19 @@ line-height: 28px;
 				class="dadosNota"><c:out value="${notaEnvio.emitente.endereco.cep}"/></span></td>
 			<td align="center" style="border-bottom: 1px solid #000;"><span
 				class="dadosNota"><c:out value="${notaEnvio.emitente.inscricaoEstadual}"/></span></td>
-			<td style="border-left: 1px solid #000;">&nbsp;</td>
-			<td>&nbsp;</td>
-			<td style="border-right: 1px solid #000;">&nbsp;</td>
-		</tr>
-		<tr>
-			<td colspan="4" style="border-left: 1px solid #000;"><span
-				class="titulo">Natureza da Operação</span></td>
-			<td colspan="3"
-				style="border-right: 1px solid #000; border-left: 1px solid #000;"><span
-				class="titulo">Chave NF-e</span></td>
-		</tr>
-		<tr>
-			<td colspan="4"
-				style="border-left: 1px solid #000; border-bottom: 1px solid #000;"><span
-				class="dadosNota"><c:out value="${notaEnvio.codigoNaturezaOperacao}"/>&nbsp;<c:out value="${notaEnvio.descricaoNaturezaOperacao}"/></span></td>
-			<td colspan="3"
-				style="border-right: 1px solid #000; border-bottom: 1px solid #000; border-left: 1px solid #000;"><span
-				class="dadosNota"><c:out value="${notaEnvio.chaveAcesso}"/></span></td>
+			<td style="border-left: 1px solid #000;  border-bottom: 1px solid #000;"><c:out value="${notaEnvio.chaveAcesso}"/>&nbsp;</td>
+			<td style="border-bottom: 1px solid #000;">&nbsp;</td>
+			<td style="border-right: 1px solid #000; border-bottom: 1px solid #000;">&nbsp;</td>
 		</tr>
 	</table>
 	<table width="760" border="0" align="center" cellpadding="0"
 		cellspacing="0" style="margin-bottom: 10px;">
 		<tr>
-			<td height="16" colspan="3"
+			<td colspan="3"
 				style="border-left: 1px solid #000; border-top: 1px solid #000;"><span
 				class="titulo">Destinatário<br />
 			</span></td>
-			<td height="16" colspan="3"
+			<td colspan="3"
 				style="border-left: 1px solid #000; border-top: 1px solid #000;"><span
 				class="titulo">Box / Rota</span></td>
 			<td width="124"
@@ -128,10 +110,10 @@ line-height: 28px;
 				class="titulo">Data de Emissão</span></td>
 		</tr>
 		<tr>
-			<td height="26" colspan="3"
-				style="border-left: 1px solid #000; border-bottom: 1px solid #000;"><span
-				class="dadosNota"><c:out value="${notaEnvio.destinatario.numeroCota}"/> - <c:out value="${notaEnvio.destinatario.nome}"/> </span></td>
-			<td height="26" colspan="3"
+			<td colspan="3"
+				style="border-left: 1px solid #000; border-bottom: 1px solid #000;"><span style="font-size: 14px;"
+				class="dadosNota"><strong><c:out value="${notaEnvio.destinatario.numeroCota}"/> - <c:out value="${notaEnvio.destinatario.nome}"/></strong></span></td>
+			<td colspan="3"
 				style="border-left: 1px solid #000; border-bottom: 1px solid #000;"><span
 				class="dadosNota">BOX:<c:out value="${notaEnvio.destinatario.codigoBox}"/> - ROTA:<c:out value="${notaEnvio.destinatario.codigoRota}"/> - <c:out value="${notaEnvio.destinatario.descricaoRota}"/></span></td>
 			<td
@@ -139,7 +121,7 @@ line-height: 28px;
 				class="dadosNota"><fmt:formatDate value="${notaEnvio.dataEmissao}" /></span></td>
 		</tr>
 		<tr>
-			<td width="232" height="15" style="border-left: 1px solid #000;"><span
+			<td width="232" style="border-left: 1px solid #000;"><span
 				class="titulo">Endereço </span></td>
 			<th width="36" style="border-left: 1px solid #000;">&nbsp;</th>
 			<td width="105"
@@ -173,7 +155,7 @@ line-height: 28px;
 				class="dadosNota"><c:out value="${notaEnvio.destinatario.endereco.cep}"/></span></td>
 			<td align="center"
 				style="border-bottom: 1px solid #000; border-right: 1px solid #000;"><span
-				class="dadosNota">61.438.248/0062-45</span></td>
+				class="dadosNota"><c:out value="${notaEnvio.destinatario.documento}" /></span></td>
 			<td align="center"
 				style="border-bottom: 1px solid #000; border-right: 1px solid #000;"><span
 				class="dadosNota"><c:out value="${notaEnvio.destinatario.inscricaoEstadual}"/></span></td>

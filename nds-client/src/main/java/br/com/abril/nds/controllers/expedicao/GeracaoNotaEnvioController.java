@@ -28,12 +28,10 @@ import br.com.abril.nds.model.envio.nota.NotaEnvio;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
-import br.com.abril.nds.service.CotaAusenteService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.GeracaoNotaEnvioService;
 import br.com.abril.nds.service.MovimentoEstoqueCotaService;
 import br.com.abril.nds.service.NFeService;
-import br.com.abril.nds.service.NotaFiscalService;
 import br.com.abril.nds.service.RoteirizacaoService;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.Intervalo;
@@ -72,12 +70,6 @@ public class GeracaoNotaEnvioController extends BaseController {
 	@Autowired
 	private MovimentoEstoqueCotaService movimentoEstoqueCotaService;
 	
-	@Autowired
-	private NotaFiscalService notaFiscalService;
-	
-	@Autowired
-	private CotaAusenteService cotaAusenteService;
-
 	@Autowired
 	private NFeService nfeService;
 
@@ -291,7 +283,7 @@ public class GeracaoNotaEnvioController extends BaseController {
 		FiltroConsultaNotaEnvioDTO filtro = this.getFiltroNotaEnvioSessao();
 		
 		NotaEnvio notaEnvio = geracaoNotaEnvioService.visualizar(filtro.getIntervaloCota().getDe(), 
-				null, null, null, null, filtro.getDataEmissao(), filtro.getIntervaloMovimento(), filtro.getIdFornecedores());
+				filtro.getIdRota(), null, null, null, filtro.getDataEmissao(), filtro.getIntervaloMovimento(), filtro.getIdFornecedores());
 		
 		result.include("notaEnvio",notaEnvio);
 		

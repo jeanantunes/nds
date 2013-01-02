@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="sub_relatorio_produtos_ne" pageWidth="595" pageHeight="842" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" whenResourceMissingType="Empty" uuid="dd044501-8256-4599-a76c-07ffc55cee02">
-	<property name="ireport.zoom" value="1.464100000000015"/>
-	<property name="ireport.x" value="124"/>
+	<property name="ireport.zoom" value="2.3579476910000268"/>
+	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<style name="campoPequeno" hAlign="Left" vAlign="Top" markup="styled" pattern="" fontName="Arial" fontSize="5" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Arial" isPdfEmbedded="true"/>
 	<style name="borda" mode="Transparent" forecolor="#000000" fill="Solid" scaleImage="Clip" hAlign="Left" vAlign="Top" markup="none" pattern="" fontName="Arial" fontSize="5" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="true" pdfFontName="Arial" isPdfEmbedded="true">
@@ -135,7 +135,7 @@
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font size="7"/>
+					<font size="7" isBold="false" isUnderline="false" isStrikeThrough="false"/>
 					<paragraph leftIndent="5"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{produtoEdicao}]]></textFieldExpression>
@@ -165,14 +165,14 @@
 				<textFieldExpression><![CDATA[$F{valorUnitarioProduto}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="6b68c627-b1a6-4e88-a877-d72b19f91bae" x="57" y="0" width="225" height="14"/>
+				<reportElement uuid="6b68c627-b1a6-4e88-a877-d72b19f91bae" positionType="FixRelativeToBottom" mode="Transparent" x="57" y="0" width="225" height="14"/>
 				<box topPadding="0" bottomPadding="5">
 					<leftPen lineWidth="0.25"/>
 					<rightPen lineWidth="0.25"/>
 				</box>
-				<textElement verticalAlignment="Middle">
+				<textElement verticalAlignment="Bottom">
 					<font size="7"/>
-					<paragraph leftIndent="5"/>
+					<paragraph lineSpacing="Fixed" leftIndent="5"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{descricaoProduto}]]></textFieldExpression>
 			</textField>
@@ -207,7 +207,7 @@
 		</band>
 	</detail>
 	<summary>
-		<band height="123">
+		<band height="97">
 			<staticText>
 				<reportElement uuid="c03e2294-ba90-4550-a50f-fccf6352f410" x="321" y="10" width="142" height="14"/>
 				<textElement textAlignment="Right">
@@ -262,6 +262,11 @@
 				<reportElement uuid="8bab077b-b57e-4b20-ab5e-b6128f019168" x="469" y="70" width="96" height="17"/>
 				<textElement/>
 				<textFieldExpression><![CDATA[$V{SUM_TOTAL_REPARTE_DIA}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00;-###0.00">
+				<reportElement uuid="77737569-015a-4f71-b647-b94cd742095a" x="469" y="50" width="96" height="16"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[($V{SUM_PRECO_CAPA}.doubleValue() - $V{SUM_PRECO_DESCONTO}.doubleValue()) * 100 / $V{SUM_PRECO_CAPA}.doubleValue()]]></textFieldExpression>
 			</textField>
 		</band>
 	</summary>

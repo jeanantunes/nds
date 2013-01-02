@@ -82,7 +82,7 @@ public class EMS0133MessageProcessor extends AbstractRepository implements Messa
 				ndsiLoggerFactory.getLogger().logError(message, EventoExecucaoEnum.RELACIONAMENTO, "Nenhum resultado encontrado para Data de Operação: "+ distribuidor.getDataOperacao());
 			}
 			
-			PrintWriter print = new PrintWriter(new FileWriter(message.getHeader().get(MessageHeaderProperties.OUTBOUND_FOLDER.getValue())+"/RECOLHIMENTO.NEW"));	
+			PrintWriter print = new PrintWriter(new FileWriter(message.getHeader().get(MessageHeaderProperties.OUTBOUND_FOLDER.getValue())+"/RECOLHIMENTO.NEP"));	
 			
 			
 			

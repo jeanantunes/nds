@@ -25,9 +25,9 @@
 
 	<fieldset style="width:880px!important; margin:5px!important;">
 <legend>Distribuição</legend>
-<table width="890" cellpadding="2" cellspacing="2" style="text-align:left;">
+<table width="870" cellpadding="2" cellspacing="2" style="text-align:left;">
     	<tr>
-    		<td width="418" valign="top">
+    		<td width="390" valign="top">
    			  <table>
 			    	<tr>
 			        	<td>Cota:</td>
@@ -77,7 +77,7 @@
 			        </tr>
     			</table>
     			<!-- Entrega de Reparte de Venda -->
-        		<input type="checkbox" id="${param.tela}entregaReparteVenda" style="margin-top:9px;" />
+        		<input id="${param.tela}repPorPontoVenda" name="repPorPontoVenda" type="checkbox"  value="" style="margin-top:9px;" />
         		<label for="${param.tela}entregaReparteVenda" style="width:190px;float:left;">Entrega de Reparte de Venda</label>
 
          		<br clear="all" />
@@ -97,7 +97,7 @@
 
     		</td>
     		<td width="440" valign="top">
-    		<fieldset style="width:390px;">
+    		<fieldset style="width:415px;">
 				<legend>Tipo de Entrega</legend>
     			<table width="326">
 	    			<tr>
@@ -181,7 +181,7 @@
 							</div>
 						</div>
 				  </div>
-					<table width="399" border="0" cellspacing="1" cellpadding="1">
+					<table width="415" border="0" cellspacing="1" cellpadding="1">
 						<tr>
 							<td width="124">Percentual Faturamento:</td>
 							<td width="268">
@@ -214,7 +214,7 @@
 
 				<br />
 
-				<fieldset style="width:390px;">
+				<fieldset style="width:415px;">
 					<legend>Emissão de Documentos</legend>
 					<table width="373" border="0" cellspacing="1" cellpadding="0">
 						<tr>

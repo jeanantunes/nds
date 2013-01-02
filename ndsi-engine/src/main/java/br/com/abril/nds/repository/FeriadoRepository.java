@@ -78,5 +78,13 @@ public interface FeriadoRepository extends Repository<Feriado, Long> {
 	 *         null caso não exista feriado correspondente cadastrado
 	 */
 	public Feriado obterFeriadoAnualTipo(Date data, TipoFeriado tipo);
-
+	
+	/**
+	 * Obtém feriado anual com base na data e na localidade
+	 * 
+	 * @param data
+	 * @param localidade
+	 * @return
+	 */
+	public Feriado obterFeriadoAnualLocalidade(Date data, String localidade);
 }

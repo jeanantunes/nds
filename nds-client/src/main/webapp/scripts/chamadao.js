@@ -172,6 +172,8 @@ var chamadaoController = $.extend(true, {
 		
 		chamadaoController.iniciarData();
 		
+		$(".area", chamadaoController.workspace).hide();
+		
 		$("#numeroCotaChamadao", chamadaoController.workspace).focus();
 		
 		$("#descricaoCota", chamadaoController.workspace).autocomplete({source: ""});
@@ -252,7 +254,8 @@ var chamadaoController = $.extend(true, {
 			);
 			
 			$(".grids", chamadaoController.workspace).hide();
-
+			$(".area", chamadaoController.workspace).hide();
+		
 			return resultado;
 		}
 		
@@ -295,6 +298,7 @@ var chamadaoController = $.extend(true, {
 		}
 		
 		$(".grids", chamadaoController.workspace).show();
+		$(".area", chamadaoController.workspace).show();
 		
 		return resultado.tableModel;
 	},

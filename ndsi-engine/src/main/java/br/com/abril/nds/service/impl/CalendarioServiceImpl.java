@@ -1,6 +1,7 @@
 package br.com.abril.nds.service.impl;
 
 import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Arrays;
@@ -39,6 +40,7 @@ import br.com.abril.nds.repository.FeriadoRepository;
 import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.EnderecoService;
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.JasperUtil;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 
@@ -58,7 +60,7 @@ public class CalendarioServiceImpl implements CalendarioService {
 
 	@Autowired
 	private DistribuidorRepository distribuidorRepository;
-
+	
 	@Override
 	@Transactional(readOnly = true)
 	public Date adicionarDiasUteis(Date data, int numDias) {
@@ -277,47 +279,34 @@ public class CalendarioServiceImpl implements CalendarioService {
 	/**
 	 * Cadastra ou atualiza registro de feriado.
 	 * 
-	 * @param calendarioFeriado
+	 * @param feriadoDTO
 	 */
 	@Transactional
-	public void cadastrarFeriado(CalendarioFeriadoDTO calendarioFeriado) {
+	public void cadastrarFeriado(CalendarioFeriadoDTO feriadoDTO) {
 
-		tratarTipoFeriado(calendarioFeriado);
-
-		Date data = calendarioFeriado.getDataFeriado();
-		String descricao = calendarioFeriado.getDescricaoFeriado();
-		TipoFeriado tipoFeriado = calendarioFeriado.getTipoFeriado();
-		boolean indOpera = calendarioFeriado.isIndOpera();
-		boolean indRepeteAnualmente = calendarioFeriado.isIndRepeteAnualmente();
-		boolean indEfetuaCobranca = calendarioFeriado.isIndEfetuaCobranca();
-		String localidade = calendarioFeriado.getLocalidade();
+		tratarTipoFeriado(feriadoDTO);
+		
+		Date data 					= feriadoDTO.getDataFeriado();
+		String descricao			= feriadoDTO.getDescricaoFeriado();
+		TipoFeriado tipoFeriado 	= feriadoDTO.getTipoFeriado();
+		boolean indOpera 			= feriadoDTO.isIndOpera();
+		boolean indRepeteAnualmente = feriadoDTO.isIndRepeteAnualmente();
+		boolean indEfetuaCobranca 	= feriadoDTO.isIndEfetuaCobranca();
+		String localidade 			= feriadoDTO.getLocalidade();
 
 		Feriado feriado = null;
-		String unidadeFederacao = null;
-
-		if (calendarioFeriado.isIndRepeteAnualmente()) {
-			feriado = feriadoRepository
-					.obterFeriadoAnualTipo(data, tipoFeriado);
-		} else {
-
-			String uf = null;
-
-			if (TipoFeriado.ESTADUAL.equals(tipoFeriado)) {
-				uf = obterUfDistribuidor();
-			}
-
-			List<Feriado> listaFeriado = feriadoRepository.obterFeriados(data,
-					tipoFeriado, uf, localidade);
-
-			if (listaFeriado != null && !listaFeriado.isEmpty()) {
-				feriado = listaFeriado.get(0);
-			}
+		String uf = null;
+		
+		if (TipoFeriado.ESTADUAL.equals(tipoFeriado)) {
+			uf = obterUfDistribuidor();
 		}
 		
-		if (feriado != null) {
-
+		if (feriadoDTO.getIdFeriado() != null) {
+			
+			feriado = feriadoRepository.buscarPorId(feriadoDTO.getIdFeriado());
+			
 			if (Origem.INTERFACE.equals(feriado.getOrigem())
-					&& !feriado.getDescricao().equals(descricao)) {
+					&& !feriado.getDescricao().equals(feriadoDTO.getDescricaoFeriado())) {
 
 				throw new ValidacaoException(TipoMensagem.WARNING,
 						"Não é permitido alterar descrição de feriado da Interface.");
@@ -325,15 +314,16 @@ public class CalendarioServiceImpl implements CalendarioService {
 			}
 
 			feriado.setDescricao(descricao);
+			feriado.setTipoFeriado(tipoFeriado);
+			feriado.setLocalidade(localidade);
 			feriado.setIndEfetuaCobranca(indEfetuaCobranca);
 			feriado.setIndOpera(indOpera);
 			feriado.setIndRepeteAnualmente(indRepeteAnualmente);
 			verificarFeriadoAnualExistente(feriado);
+			
 			feriadoRepository.alterar(feriado);
 
 		} else {
-
-			
 
 			feriado = new Feriado();
 
@@ -346,7 +336,7 @@ public class CalendarioServiceImpl implements CalendarioService {
 
 			feriado.setLocalidade(localidade);
 			feriado.setTipoFeriado(tipoFeriado);
-			feriado.setUnidadeFederacao(unidadeFederacao);
+			feriado.setUnidadeFederacao(uf);
 
 			feriado.setOrigem(Origem.MANUAL);
 			verificarFeriadoAnualExistente(feriado);
@@ -358,15 +348,28 @@ public class CalendarioServiceImpl implements CalendarioService {
 	/**
 	 * Verifica se já existe um feriado anual cadastrado com 
 	 * os mesmo dia e nmês e tipo do feriado recebido como parâmetro
+	 * 
 	 * @param feriado feriado para verificação de feriado com repetição anual 
 	 * já cadastrado com as caracteristicas do feriado recebido
+	 * 
 	 * @throws ValidacaoException caso já exista um feriado com repetição
 	 * anual com o mesmo tipo dia e mês já cadastrado 
 	 */
 	private void verificarFeriadoAnualExistente(Feriado feriado) {
+		
 		Date data = feriado.getData();
+		
 		TipoFeriado tipoFeriado = feriado.getTipoFeriado();
-		Feriado existente = feriadoRepository.obterFeriadoAnualTipo(data, tipoFeriado);
+		
+		Feriado existente;
+		
+		if (tipoFeriado.equals(TipoFeriado.MUNICIPAL)) {
+			existente = feriadoRepository.obterFeriadoAnualLocalidade(data, feriado.getLocalidade());
+		
+		} else {
+			existente = feriadoRepository.obterFeriadoAnualTipo(data, tipoFeriado);
+		}
+		
 		if (existente != null && !feriado.equals(existente)) {
 			throw new ValidacaoException(TipoMensagem.WARNING,
 					"Feriado anual com o tipo " + tipoFeriado
@@ -375,49 +378,27 @@ public class CalendarioServiceImpl implements CalendarioService {
 	}
 
 	@Transactional
-	public void excluirFeriado(CalendarioFeriadoDTO calendarioFeriado) {
+	public void excluirFeriado(Long idFeriado) {
 
-		Feriado feriado = validarExclusaoFeriado(calendarioFeriado);
+		Feriado feriado = this.feriadoRepository.buscarPorId(idFeriado);
+		
+		this.validarExclusaoFeriado(feriado);
 
 		feriadoRepository.remover(feriado);
 
 	}
 
-	private Feriado validarExclusaoFeriado(
-			CalendarioFeriadoDTO calendarioFeriado) {
+	private void validarExclusaoFeriado(Feriado feriado) {
 
-		Date dataFeriado = calendarioFeriado.getDataFeriado();
-		TipoFeriado tipoFeriado = calendarioFeriado.getTipoFeriado();
-		String idLocalidade = calendarioFeriado.getLocalidade();
-
-		Feriado feriado = null;
-
-		if (calendarioFeriado.isIndRepeteAnualmente()) {
-			feriado = feriadoRepository.obterFeriadoAnualTipo(dataFeriado,
-					tipoFeriado);
-		} else {
-			String uf = null;
-
-			if (TipoFeriado.ESTADUAL.equals(tipoFeriado)) {
-				uf = obterUfDistribuidor();
-			}
-
-			List<Feriado> feriados = feriadoRepository.obterFeriados(
-					dataFeriado, tipoFeriado, uf, idLocalidade);
-
-			if (feriados == null || feriados.isEmpty()) {
-				throw new ValidacaoException(TipoMensagem.WARNING,
-						"Nenhum feriado encontrado");
-			}
-
-			feriado = feriados.get(0);
-		}
+		if (feriado == null) {
+			throw new ValidacaoException(TipoMensagem.WARNING,
+					"Nenhum feriado encontrado");
+		}	
+		
 		if (Origem.INTERFACE.equals(feriado.getOrigem())) {
 			throw new ValidacaoException(TipoMensagem.WARNING,
 					"Feriado não pode ser excluido.");
 		}
-
-		return feriado;
 	}
 
 	private String obterUfDistribuidor() {
@@ -558,7 +539,7 @@ public class CalendarioServiceImpl implements CalendarioService {
 
 	private byte[] gerarDocumentoExcel(
 			List<CalendarioFeriadoWrapper> listaCalendarioFeriadoWrapper,
-			int anoFeriado) throws URISyntaxException, JRException {
+			int anoFeriado, InputStream logoDistribuidor) throws URISyntaxException, JRException {
 
 		JRDataSource jrDataSource = new JRBeanCollectionDataSource(
 				listaCalendarioFeriadoWrapper);
@@ -568,14 +549,20 @@ public class CalendarioServiceImpl implements CalendarioService {
 		String path = diretorioReports.toURI().getPath()
 				+ "/relatorio_calendario_feriado.jasper";
 
+		Distribuidor distribuidor = distribuidorRepository.obter();
+		
+		String nomeDistribuidor = ( distribuidor!= null && distribuidor.getJuridica()!= null)? distribuidor.getJuridica().getRazaoSocial():"";
+		
 		Map<String, Object> parameters = new HashMap<String, Object>();
 
 		parameters.put("SUBREPORT_DIR", diretorioReports.toURI().getPath());
 		parameters.put("ANO_FERIADO", String.valueOf(anoFeriado));
+		parameters.put("LOGO",JasperUtil.getImagemRelatorio(logoDistribuidor));
+		parameters.put("NOME_DISTRIBUIDOR",nomeDistribuidor);
 
 		JasperPrint jasperPrint = JasperFillManager.fillReport(path,
 				parameters, jrDataSource);
-
+		
 		JRXlsExporter exporter = new JRXlsExporter();
 
 		ByteArrayOutputStream xlsReport = new ByteArrayOutputStream();
@@ -594,7 +581,7 @@ public class CalendarioServiceImpl implements CalendarioService {
 
 	private byte[] gerarDocumentoPDF(
 			List<CalendarioFeriadoWrapper> listaCalendarioFeriadoWrapper,
-			int anoFeriado) throws JRException, URISyntaxException {
+			int anoFeriado,InputStream logoDistribuidor) throws JRException, URISyntaxException {
 
 		JRDataSource jrDataSource = new JRBeanCollectionDataSource(
 				listaCalendarioFeriadoWrapper);
@@ -603,12 +590,18 @@ public class CalendarioServiceImpl implements CalendarioService {
 
 		String path = diretorioReports.toURI().getPath()
 				+ "/relatorio_calendario_feriado.jasper";
-
+		
+		Distribuidor distribuidor = distribuidorRepository.obter();
+		
+		String nomeDistribuidor = ( distribuidor!= null && distribuidor.getJuridica()!= null)? distribuidor.getJuridica().getRazaoSocial():"";
+		
 		Map<String, Object> parameters = new HashMap<String, Object>();
 
 		parameters.put("SUBREPORT_DIR", diretorioReports.toURI().getPath());
 		parameters.put("ANO_FERIADO", String.valueOf(anoFeriado));
-
+		parameters.put("LOGO",JasperUtil.getImagemRelatorio(logoDistribuidor));
+		parameters.put("NOME_DISTRIBUIDOR",nomeDistribuidor);
+		
 		return JasperRunManager.runReportToPdf(path, parameters, jrDataSource);
 	}
 
@@ -619,20 +612,7 @@ public class CalendarioServiceImpl implements CalendarioService {
 
 		if (TipoPesquisaFeriado.FERIADO_ANUAL.equals(tipoPesquisaFeriado)) {
 
-			Calendar calendarInicial = Calendar.getInstance();
-			calendarInicial.clear();
-			calendarInicial.set(ano, Calendar.JANUARY, 1);
-
-			Calendar calendarFinal = Calendar.getInstance();
-			calendarFinal.clear();
-			calendarFinal.set(ano, Calendar.DECEMBER, 31);
-
-			Date dataInicial = calendarInicial.getTime();
-
-			Date dataFinal = calendarFinal.getTime();
-
-			listaCalendarioFeriado = feriadoRepository
-					.obterListaCalendarioFeriadoPeriodo(dataInicial, dataFinal);
+			listaCalendarioFeriado = obterFeriadosPorAno(ano);
 
 			if (listaCalendarioFeriado != null
 					&& !listaCalendarioFeriado.isEmpty()) {
@@ -713,8 +693,31 @@ public class CalendarioServiceImpl implements CalendarioService {
 	}
 
 	@Transactional
+	public List<CalendarioFeriadoDTO> obterFeriadosPorAno(int ano) {
+		
+		List<CalendarioFeriadoDTO> listaCalendarioFeriado;
+		
+		Calendar calendarInicial = Calendar.getInstance();
+		calendarInicial.clear();
+		calendarInicial.set(ano, Calendar.JANUARY, 1);
+
+		Calendar calendarFinal = Calendar.getInstance();
+		calendarFinal.clear();
+		calendarFinal.set(ano, Calendar.DECEMBER, 31);
+
+		Date dataInicial = calendarInicial.getTime();
+
+		Date dataFinal = calendarFinal.getTime();
+
+		listaCalendarioFeriado = feriadoRepository
+				.obterListaCalendarioFeriadoPeriodo(dataInicial, dataFinal);
+		
+		return listaCalendarioFeriado;
+	}
+
+	@Transactional
 	public byte[] obterRelatorioCalendarioFeriado(FileType fileType,
-			TipoPesquisaFeriado tipoPesquisaFeriado, int mes, int ano) {
+			TipoPesquisaFeriado tipoPesquisaFeriado, int mes, int ano,InputStream logoDistribuidor) {
 
 		try {
 
@@ -722,13 +725,13 @@ public class CalendarioServiceImpl implements CalendarioService {
 
 				return gerarDocumentoPDF(
 						obterListaCalendarioFeriadoWrapper(tipoPesquisaFeriado,
-								mes, ano), ano);
+								mes, ano), ano, logoDistribuidor);
 
 			} else if (FileType.XLS.equals(fileType)) {
 
 				return gerarDocumentoExcel(
 						obterListaCalendarioFeriadoWrapper(tipoPesquisaFeriado,
-								mes, ano), ano);
+								mes, ano), ano, logoDistribuidor);
 
 			}
 

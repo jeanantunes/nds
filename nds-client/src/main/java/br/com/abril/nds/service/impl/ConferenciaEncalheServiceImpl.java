@@ -297,9 +297,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	@Transactional(readOnly = true)
 	public void verificarChamadaEncalheCota(Integer numeroCota) throws ConferenciaEncalheExistenteException, ChamadaEncalheCotaInexistenteException {
 		
-		Distribuidor distribuidor = distribuidorService.obter();
-		
-		Date dataOperacao = distribuidor.getDataOperacao();
+		Date dataOperacao = this.distribuidorService.obterDatatOperacaoDistribuidor();
 		
 		ControleConferenciaEncalheCota controleConferenciaEncalheCota = 
 				controleConferenciaEncalheCotaRepository.obterControleConferenciaEncalheCota(numeroCota, dataOperacao);
@@ -1196,8 +1194,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		}
 		
 	    Date dataRecolhimentoReferencia = obterDataRecolhimentoReferencia();
-	    Distribuidor distribuidor = distribuidorService.obter();
-		Date dataOperacao = distribuidor.getDataOperacao();
+	    
+		Date dataOperacao = this.distribuidorService.obterDatatOperacaoDistribuidor();
 		Date dataCriacao = new Date();
 		Integer numeroCota = controleConfEncalheCota.getCota().getNumeroCota();
 		
@@ -1707,9 +1705,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			Set<Long> listaIdConferenciaEncalheParaExclusao,
 			Usuario usuario) throws EncalheSemPermissaoSalvarException, ConferenciaEncalheFinalizadaException {
 
-		validarConferenciaEncalheReaberta(controleConfEncalheCota.getId());
+		desfazerCobrancaConferenciaEncalheReaberta(controleConfEncalheCota.getId());
 		
-		validarPermissaoSalvarConferenciaEncalhe(listaConferenciaEncalhe);
+		//validarPermissaoSalvarConferenciaEncalhe(listaConferenciaEncalhe);
 		
 		ControleConferenciaEncalheCota controleConferenciaEncalheCota = 
 				inserirDadosConferenciaEncalhe(controleConfEncalheCota, listaConferenciaEncalhe, listaIdConferenciaEncalheParaExclusao, usuario, StatusOperacao.EM_ANDAMENTO);
@@ -1720,26 +1718,26 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	
 	/**
 	 * Se uma conferência de encalhe ja foi finalizada e depois reaberta, a mesma
-	 * não poderá ser somente salva após alterações. O usuário devera invocar a ação
-	 * finalizarConferencia para que os dados de cobrança sejam regerados.
+	 * terá que cancelar tudo o que for referente a cobrança da mesma
 	 * 
 	 * @param idControleConferenciaEncalheCota
+	 * @param conferenciaReaberta
 	 * @throws ConferenciaEncalheFinalizadaException
 	 */
-	private void validarConferenciaEncalheReaberta(Long idControleConferenciaEncalheCota) throws ConferenciaEncalheFinalizadaException {
+	private void desfazerCobrancaConferenciaEncalheReaberta(Long idControleConferenciaEncalheCota) {
 		
 		if(idControleConferenciaEncalheCota == null) {
 			return;
 		}
 		
-		ControleConferenciaEncalheCota controleConferenciaEncalheCota = controleConferenciaEncalheCotaRepository.buscarPorId(idControleConferenciaEncalheCota);
+		ControleConferenciaEncalheCota controleConferenciaEncalheCota = 
+				controleConferenciaEncalheCotaRepository.buscarPorId(idControleConferenciaEncalheCota);
 		
 		if(StatusOperacao.CONCLUIDO.equals(controleConferenciaEncalheCota.getStatus())){
 			
-			throw new ConferenciaEncalheFinalizadaException();
+			this.gerarCobrancaService.cancelarDividaCobranca(null, controleConferenciaEncalheCota.getCota().getId());
 			
 		}
-		
 	}
 	
 	/**
@@ -1885,31 +1883,31 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 	}
 	
-	/**
-	 * Verifica se os itens da conferenciaEncalhe são todos referentes ao CHAMADÃO, do contrário,
-	 * não será permitido salvar a conferência.
-	 * 
-	 * @param listaConferenciaEncalhe
-	 */
-	private void validarPermissaoSalvarConferenciaEncalhe(List<ConferenciaEncalheDTO> listaConferenciaEncalhe) throws EncalheSemPermissaoSalvarException {
-		
-		if(listaConferenciaEncalhe == null || listaConferenciaEncalhe.isEmpty()) {
-			return;
-		}
-		
-		for(ConferenciaEncalheDTO conferencia : listaConferenciaEncalhe) {
-			
-			if(!TipoChamadaEncalhe.CHAMADAO.equals(conferencia.getTipoChamadaEncalhe()))  {
-				
-				throw new EncalheSemPermissaoSalvarException("Não é possível salvar conferência de encalhe, o produto \"" + 
-															 conferencia.getNomeProduto() +  
-															"\" não pertence a um \"CHAMADÃO\"");
-				
-			}
-			
-		}
-		
-	}
+//	/**
+//	 * Verifica se os itens da conferenciaEncalhe são todos referentes ao CHAMADÃO, do contrário,
+//	 * não será permitido salvar a conferência.
+//	 * 
+//	 * @param listaConferenciaEncalhe
+//	 */
+//	private void validarPermissaoSalvarConferenciaEncalhe(List<ConferenciaEncalheDTO> listaConferenciaEncalhe) throws EncalheSemPermissaoSalvarException {
+//		
+//		if(listaConferenciaEncalhe == null || listaConferenciaEncalhe.isEmpty()) {
+//			return;
+//		}
+//		
+//		for(ConferenciaEncalheDTO conferencia : listaConferenciaEncalhe) {
+//			
+//			if(!TipoChamadaEncalhe.CHAMADAO.equals(conferencia.getTipoChamadaEncalhe()))  {
+//				
+//				throw new EncalheSemPermissaoSalvarException("Não é possível salvar conferência de encalhe, o produto \"" + 
+//															 conferencia.getNomeProduto() +  
+//															"\" não pertence a um \"CHAMADÃO\"");
+//				
+//			}
+//			
+//		}
+//		
+//	}
 	
 	/**
 	 * Exclui um registros de ConferenciaEncalhe e movimentos relacionados como 
