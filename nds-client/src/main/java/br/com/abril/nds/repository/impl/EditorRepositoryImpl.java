@@ -400,7 +400,7 @@ public class EditorRepositoryImpl extends AbstractRepositoryModel<Editor, Long> 
 		    
 		    .append(" left outer join  ")
 		    .append("    LANCAMENTO as lancamento  ")
-		    .append("        on estoqueProduto.ID=movimentos.ESTOQUE_PROD_COTA_ID  ")
+		    .append("        on lancamento.ID=movimentos.LANCAMENTO_ID ")
 		    
 		    .append(" inner join  ")
 		    .append("    PRODUTO_EDICAO as produtoEdicao  ")

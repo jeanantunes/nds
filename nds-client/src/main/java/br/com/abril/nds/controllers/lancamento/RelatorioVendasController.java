@@ -463,6 +463,7 @@ public class RelatorioVendasController extends BaseController {
 			if (e instanceof ValidacaoException) {
 				throw e;
 			} else {
+				e.printStackTrace();
 				throw new ValidacaoException(TipoMensagem.ERROR,
 						"Erro ao pesquisar registros: " + e.getMessage());
 			}
