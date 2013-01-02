@@ -290,4 +290,21 @@
 	    <p>Confirma a exclusão dessa conferência?</p>
 	</fieldset>
 </div>
-</id>
+</form>
+
+<form id="form-confirmar-regerar-cobranca">
+<div id="dialog-confirmar-regerar-cobranca" title="Regerar Cobrança" style="display: none;">
+	<fieldset>
+		<legend>Regerar cobrança?</legend>
+		<p id="msgRegerarCobranca"></p>
+	</fieldset>
+</div>
+</form>
+<form id="form-confirmar">
+	<div id="dialog-confirmar" title="Confirma">
+		<fieldset>
+			<legend>Confirma</legend>
+			<p id="msgConfirmar"></p>
+		</fieldset>
+	</div>
+</form>
