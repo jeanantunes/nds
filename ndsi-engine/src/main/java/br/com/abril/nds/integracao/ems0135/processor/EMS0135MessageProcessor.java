@@ -134,8 +134,10 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 // Comentado pelo Cesar "PunkPop" no dia de hoje :-)		
 //		PessoaJuridica emitente = this.obterPessoaJuridica( parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.CNPJ_PJ_IMPORTACAO_NRE).getValor() );
 		
-		notafiscalEntrada.setEmitente(emitente);		
-		notafiscalEntrada.setTipoNotaFiscal(obterTipoNotaFiscal(GrupoNotaFiscal.RECEBIMENTO_MERCADORIAS));		
+		notafiscalEntrada.setEmitente(emitente);
+		//Alteracao autorizada pelo Eduardo
+		//notafiscalEntrada.setTipoNotaFiscal(obterTipoNotaFiscal(GrupoNotaFiscal.RECEBIMENTO_MERCADORIAS));		
+		notafiscalEntrada.setTipoNotaFiscal(obterTipoNotaFiscal(GrupoNotaFiscal.NF_REMESSA_MERCADORIA_CONSIGNACAO));		
 		notafiscalEntrada.setEmitida(true);	
 				
 		return notafiscalEntrada;		
