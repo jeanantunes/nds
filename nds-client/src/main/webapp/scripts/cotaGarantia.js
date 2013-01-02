@@ -160,6 +160,11 @@ TipoCotaGarantia.prototype.configTipoCotaGarantia = function(result) {
     	
   	     ChequeCaucao.prototype.obterChequeCaucao(idCota);
     }
+    
+    if (tipo=="NOTA_PROMISSORIA"){
+    	
+ 	     NotaPromissoria.prototype.obterNotaPromissoria(idCota);
+    }
 };
 
 TipoCotaGarantia.prototype.bindData = function(data) {
@@ -366,9 +371,9 @@ NotaPromissoria.prototype.salva = function(callBack) {
             if(callBack){
                 callBack();
             }
-
-
-        }, null, true);
+        }, 
+        null, 
+        true);
     return false;
 };
 
@@ -386,25 +391,33 @@ NotaPromissoria.prototype.get = function() {
             _this.notaPromissoria = data.cotaGarantia.notaPromissoria;
             _this.dataBind();
         }
-    }, null, true);
+    }, 
+    null, 
+    true);
 };
 
 NotaPromissoria.prototype.toggle = function() {
     $('#cotaGarantiaNotaPromissoriaPanel').toggle();
 };
 
-NotaPromissoria.prototype.dataBind = function() {
+NotaPromissoria.prototype.dataBind = function(nota) {
+    
+    if (nota){
+		
+		this.notaPromissoria = nota;
+	}
+    
     $("#cotaGarantiaNotaPromissoriaId").html(this.notaPromissoria.id);
-    $("#cotaGarantiaNotaPromissoriaVencimento").val(
-        this.notaPromissoria.vencimento);
+    $("#cotaGarantiaNotaPromissoriaVencimento").val(nota?this.notaPromissoria.vencimento.$:this.notaPromissoria.vencimento);
+        
     $("#cotaGarantiaNotaPromissoriaValor").val(this.notaPromissoria.valor*100);
     $("#cotaGarantiaNotaPromissoriaValor").priceFormat({
         allowNegative : true,
         centsSeparator : ',',
         thousandsSeparator : '.'
     });
-    $("#cotaGarantiaNotaPromissoriavalorExtenso").val(
-        this.notaPromissoria.valorExtenso);
+    
+    $("#cotaGarantiaNotaPromissoriavalorExtenso").val(this.notaPromissoria.valorExtenso);
 };
 
 NotaPromissoria.prototype.dataUnBind = function() {
@@ -437,9 +450,37 @@ NotaPromissoria.prototype.destroy = function() {
     $("#cotaGarantiaNotaPromissoriaImprimir").unbind('click');
 };
 
-
 NotaPromissoria.prototype.imprimi = function() {
     window.open(this.path + 'impriNotaPromissoria/' + this.idCota);
+};
+
+NotaPromissoria.prototype.obterNotaPromissoria = function(idCota){
+	
+	var param = [{name:'idCota', value:idCota},
+		         {name:'modoTela', value:tipoCotaGarantia.getModoTela().value}];
+
+    var _this = this;
+
+    $.postJSON(this.path + 'getNotaPromissoriaByCota.json', 
+		   param, 
+           function(result) {
+
+	           var tipoMensagem = result.tipoMensagem;
+	           var listaMensagens = result.listaMensagens;
+	
+	           if (tipoMensagem && listaMensagens) {
+	               exibirMensagemDialog(tipoMensagem, listaMensagens,"");
+	
+	           } else {  
+	        	       
+	        	   tipoCotaGarantia.controller.notaPromissoria = result.notaPromissoria;
+	        	   
+	        	   NotaPromissoria.prototype.dataBind(result.notaPromissoria);
+	           }
+	       }, 
+	       null, 
+	       true
+     );
 };
 
 

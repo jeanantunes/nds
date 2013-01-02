@@ -564,6 +564,24 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 	}
 
 	@Override
+	@Transactional(readOnly = true)
+	public NotaPromissoria obterDadosNotaPromissoria(Long idCota){
+		
+		NotaPromissoria notaPromissoria = null;
+		
+	    CotaGarantia cotaGarantia = cotaGarantiaRepository.getByCota(idCota);
+		
+		if (cotaGarantia instanceof CotaGarantiaNotaPromissoria) {	
+			
+			CotaGarantiaNotaPromissoria cotaGarantiaNotaPromissoria = (CotaGarantiaNotaPromissoria) cotaGarantia;			
+			
+			notaPromissoria = cotaGarantiaNotaPromissoria.getNotaPromissoria();
+		}
+		
+		return notaPromissoria;
+	}
+
+	@Override
 	@Transactional(readOnly=true)
 	public NotaPromissoriaDTO getDadosImpressaoNotaPromissoria(long idCota){
 		NotaPromissoriaDTO dto = new NotaPromissoriaDTO();

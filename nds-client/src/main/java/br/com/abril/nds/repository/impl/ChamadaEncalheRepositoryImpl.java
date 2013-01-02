@@ -474,17 +474,18 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 	private void gerarFromWhereProdutosCE(FiltroEmissaoCE filtro, StringBuilder hql, HashMap<String, Object> param, 
 			Long idCota) {
 
-		hql.append(" from ChamadaEncalheCota chamEncCota ")
-		   .append(" join chamEncCota.chamadaEncalhe  chamadaEncalhe ")
-		   .append(" left join chamEncCota.conferenciasEncalhe confEnc ")
-		   .append(" left join confEnc.movimentoEstoqueCota  movimentoCota ")
-		   .append(" join chamEncCota.cota cota ")
-		   .append(" join cota.pessoa pessoa ")
-		   .append(" join chamadaEncalhe.produtoEdicao produtoEdicao ")
-		   .append(" join produtoEdicao.produto produto ")
-		   .append(" join produto.fornecedores fornecedores ")
-		   .append(" join chamadaEncalhe.lancamentos lancamentos ")
-		   .append(" where cota.id=:idCota ");
+		hql.append(" from ChamadaEncalheCota chamEncCota 					")
+		   .append(" join chamEncCota.chamadaEncalhe  chamadaEncalhe 		")
+		   .append(" left join chamEncCota.conferenciasEncalhe confEnc 		")
+		   .append(" left join confEnc.movimentoEstoqueCota  movimentoCota 	")
+		   .append(" join chamEncCota.cota cota 							")
+		   .append(" join cota.pessoa pessoa 								")
+		   .append(" join chamadaEncalhe.produtoEdicao produtoEdicao 		")
+		   .append(" join produtoEdicao.produto produto 					")
+		   .append(" join produto.fornecedores fornecedores 				")
+		   .append(" join chamadaEncalhe.lancamentos lancamentos 			")
+		   .append(" where cota.id=:idCota 									")
+		   .append(" and lancamentos.produtoEdicao.id = produtoEdicao.id  	");
 		
 		param.put("idCota", idCota);
 		
