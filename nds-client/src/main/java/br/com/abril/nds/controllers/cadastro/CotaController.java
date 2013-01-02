@@ -164,6 +164,13 @@ public class CotaController extends BaseController {
 		this.limparDadosSession();
 	}
 	
+	private boolean isNotEnderecoPendente(){
+		
+        Boolean enderecoPendente = (Boolean) this.session.getAttribute(EnderecoController.ENDERECO_PENDENTE);
+		
+		return (enderecoPendente==null || !enderecoPendente);
+	}
+	
 	/**
 	 * Obtem e seta os dados de endereço e telefone na sessão.
 	 * 
@@ -472,7 +479,7 @@ public class CotaController extends BaseController {
 		}
 
 	}
-	
+
 	/**
 	 * Retorna os dados default para inclusão de uma nova cota.
 	 * 
@@ -491,7 +498,7 @@ public class CotaController extends BaseController {
 		
 		return dadosCotaVO;
 	}
-	
+
 	/**
 	 * Prepara os dados default para inclusão de uma nova cota para CNPJ
 	 */
@@ -1502,9 +1509,7 @@ public class CotaController extends BaseController {
 	 */
 	private void obterEndereco(Long idCota){
 		
-		Boolean enderecoPendente = (Boolean) this.session.getAttribute(EnderecoController.ENDERECO_PENDENTE);
-		
-		if (enderecoPendente==null || !enderecoPendente){
+		if (this.isNotEnderecoPendente()){
 			
 			List<EnderecoAssociacaoDTO> listaEnderecoAssociacao = this.cotaService.obterEnderecosPorIdCota(idCota);
 		

@@ -10,7 +10,7 @@ package br.com.abril.nds.model.cadastro.pdv;
 public enum TipoPeriodoFuncionamentoPDV {
 
 	DIARIA("Diária"), 
-	SEGUNDA_SEXTA("Segunda-Feira"), 
+	SEGUNDA_SEXTA("Segunda à Sexta"), 
 	FINAIS_SEMANA("Finais de Semana"), 
 	FERIADOS("Feriados"), 
 	VINTE_QUATRO_HORAS("24 horas"), 
