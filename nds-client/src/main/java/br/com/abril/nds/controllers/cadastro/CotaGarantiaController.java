@@ -76,7 +76,7 @@ public class CotaGarantiaController extends BaseController {
 	}
 
 	@Post("/salvaChequeCaucao.json")
-	public void salvaChequeCaucao(Cheque chequeCaucao, Long idCota) throws Exception  {
+	public void salvaChequeCaucao(Cheque chequeCaucao, Long idCota, UploadedFile image) throws Exception  {
 
 		validaChequeCaucao(chequeCaucao);
 

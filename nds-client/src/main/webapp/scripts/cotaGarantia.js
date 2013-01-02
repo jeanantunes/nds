@@ -455,10 +455,13 @@ function ChequeCaucao(idCota, cotaGarantia) {
     this.cotaGarantia = cotaGarantia;
     this.bindEvents();
     if (tipoCotaGarantia.isModoTelaCadastroCota()) {
-        if(cotaGarantia && cotaGarantia.cheque){
+        if(cotaGarantia && cotaGarantia.cheque) {
+        	
             this.chequeCaucao = cotaGarantia.cheque;
-        }else{
-            this.chequeCaucao ={
+            
+        } else {
+        	
+            this.chequeCaucao = {
                 id : null,
                 numeroBanco : null,
                 nomeBanco : null,
@@ -470,7 +473,8 @@ function ChequeCaucao(idCota, cotaGarantia) {
                 numeroCheque : null,
                 emissao : null,
                 validade : null,
-                correntista : null
+                correntista : null,
+                image: null
             };
         }
     } else {
