@@ -186,7 +186,8 @@ public class RelatorioVendasController extends BaseController {
 		}
 
 		FileExporter.to(nomeArquivo, fileType).inHTTPResponse(this.getNDSFileHeader(), filtroSessao, resultadoTotal, exportacao, RegistroCurvaABCExportacaoDistribuidorVO.class, this.httpServletResponse);
-
+		
+		result.nothing();
 	}
 	
 	
@@ -208,6 +209,8 @@ public class RelatorioVendasController extends BaseController {
 		ResultadoCurvaABCEditor resultadoTotal = editorService.obterCurvaABCEditorTotal(filtroSessao);
 		
 		FileExporter.to("relatorio-vendas-curva-abc-editor", fileType).inHTTPResponse(this.getNDSFileHeader(), filtroSessao, resultadoTotal, lista, RegistroCurvaABCEditorVO.class, this.httpServletResponse);
+		
+		result.nothing();
 	}
 
 	/**
@@ -228,6 +231,8 @@ public class RelatorioVendasController extends BaseController {
 		ResultadoCurvaABCCotaDTO resultadoTotal = cotaService.obterCurvaABCCotaTotal(filtroSessao);
 		
 		FileExporter.to("relatorio-vendas-curva-abc-cota", fileType).inHTTPResponse(this.getNDSFileHeader(), filtroSessao, resultadoTotal, lista, RegistroCurvaABCCotaDTO.class, this.httpServletResponse);
+		
+		result.nothing();
 	}
 
 	/**
@@ -247,6 +252,8 @@ public class RelatorioVendasController extends BaseController {
 		List<RegistroHistoricoEditorVO> lista = editorService.obterHistoricoEditor(filtroSessao);
 		
 		FileExporter.to("consulta-historico-editor", fileType).inHTTPResponse(this.getNDSFileHeader(), filtroSessao, null, lista, RegistroHistoricoEditorVO.class, this.httpServletResponse);
+		
+		result.nothing();
 	}
 	
 	/**
