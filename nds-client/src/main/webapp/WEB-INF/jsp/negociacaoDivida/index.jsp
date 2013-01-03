@@ -3,8 +3,6 @@
 	src="${pageContext.request.contextPath}/scripts/negociacaoDivida.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.price_format.1.7.js"></script>
 
-
-
 </head>
 
 <body>
@@ -190,23 +188,23 @@
 					<tr>
 						<td width="3%"><input type="radio" name="filtro.periodicidade" id="radioDiario"
 							value="DIARIA" checked="yes"
-							onclick="negociacaoDividaController.mostraDiario();" /></td>
+							onclick="negociacaoDividaController.mostraDiario(); negociacaoDividaController.calcularParcelas();" /></td>
 							
 						<td width="5%">Di&aacute;rio</td>
 						
 						<td width="3%"><input type="radio" name="filtro.periodicidade" id="radioSemanal"
 							value="SEMANAL"
-							onclick="negociacaoDividaController.mostraSemanal();" /></td>
+							onclick="negociacaoDividaController.mostraSemanal(); negociacaoDividaController.calcularParcelasSemanal();" /></td>
 							
 						<td width="7%">Semanal</td>
 						<td width="3%"><input type="radio" name="filtro.periodicidade" id="radioQuinzenal"
 							value="QUINZENAL"
-							onclick="negociacaoDividaController.mostraQuinzenal();" /></td>
+							onclick="negociacaoDividaController.mostraQuinzenal(); negociacaoDividaController.calcularParcelasQuinzenal();" /></td>
 							
 						<td width="9%">Quinzenal</td>
 						<td width="3%"><input type="radio" name="filtro.periodicidade" id="radioMensal"
 							value="MENSAL"
-							onclick="negociacaoDividaController.mostraMensal();" /></td>
+							onclick="negociacaoDividaController.mostraMensal(); negociacaoDividaController.calcularParcelasMensal();" /></td>
 							
 						<td width="35%">Mensal</td>
 						
@@ -221,10 +219,10 @@
 					class="quinzenal">
 					<tr>
 						<td width="68">Todo dia:</td>
-						<td width="66"><input type="text" name="filtro.quinzenalDia1" style="width: 60px;" id="diaInputQuinzenal1" /></td>
+						<td width="66"><input type="text" name="filtro.quinzenalDia1" style="width: 60px;" id="diaInputQuinzenal1" onchange="negociacaoDividaController.calcularParcelasQuinzenal();" /></td>
 						<td id="textoDiaInputQuinzenal" width="21">&nbsp; e:</td>
 						<td width="522"><input type="text" name="filtro.quinzenalDia2"
-							id="diaInputQuinzenal2" style="width: 60px;" /></td>
+							id="diaInputQuinzenal2" style="width: 60px;" onchange="negociacaoDividaController.calcularParcelasQuinzenal();" /></td>
 					</tr>
 				</table>
 				
@@ -232,7 +230,7 @@
 					class="mensal">
 					<tr>
 						<td width="68">Todo dia:</td>
-						<td width="66"><input type="text" name="filtro.quinzenalDia1" style="width: 60px;" id="mensalDia" /></td>
+						<td width="66"><input type="text" name="filtro.quinzenalDia1" style="width: 60px;" id="mensalDia" onchange="negociacaoDividaController.calcularParcelasMensal();" /></td>
 						
 					</tr>
 				</table>
@@ -241,25 +239,25 @@
 				<table width="100%" border="0" cellspacing="1" cellpadding="1"
 					class="semanal">
 					<tr>
-						<td width="20"><input type="checkbox" name="semanalDias" onchange="negociacaoDividaController.opcaoFormasPagto($('#selectPagamento').val()); negociacaoDividaController.calcularParcelas()"
+						<td width="20"><input type="checkbox" name="semanalDias" onchange="negociacaoDividaController.opcaoFormasPagto($('#selectPagamento').val()); negociacaoDividaController.calcularParcelasSemanal()"
 							value="2" id="checkbSegunda" /></td>
 						<td width="86">Segunda-feira</td>
-						<td width="20"><input type="checkbox" name="semanalDias" onchange="negociacaoDividaController.opcaoFormasPagto($('#selectPagamento').val()); negociacaoDividaController.calcularParcelas()"
+						<td width="20"><input type="checkbox" name="semanalDias" onchange="negociacaoDividaController.opcaoFormasPagto($('#selectPagamento').val()); negociacaoDividaController.calcularParcelasSemanal()"
 							value="3"id="checkTerca" /></td>
 						<td width="70">Ter&ccedil;a-feira</td>
-						<td width="20"><input type="checkbox" name="semanalDias" onchange="negociacaoDividaController.opcaoFormasPagto($('#selectPagamento').val()); negociacaoDividaController.calcularParcelas()"
+						<td width="20"><input type="checkbox" name="semanalDias" onchange="negociacaoDividaController.opcaoFormasPagto($('#selectPagamento').val()); negociacaoDividaController.calcularParcelasSemanal()"
 							value="4"id="checkQuarta" /></td>
 						<td width="78">Quarta-feira</td>
-						<td width="20"><input type="checkbox" name="semanalDias" onchange="negociacaoDividaController.opcaoFormasPagto($('#selectPagamento').val()); negociacaoDividaController.calcularParcelas()"
+						<td width="20"><input type="checkbox" name="semanalDias" onchange="negociacaoDividaController.opcaoFormasPagto($('#selectPagamento').val()); negociacaoDividaController.calcularParcelasSemanal()"
 							value="5" id="checkQuinta" /></td>
 						<td width="78">Quinta-feira</td>
-						<td width="20"><input type="checkbox" name="semanalDias" onchange="negociacaoDividaController.opcaoFormasPagto($('#selectPagamento').val()); negociacaoDividaController.calcularParcelas()"
+						<td width="20"><input type="checkbox" name="semanalDias" onchange="negociacaoDividaController.opcaoFormasPagto($('#selectPagamento').val()); negociacaoDividaController.calcularParcelasSemanal()"
 							value="6" id="checkSexta" /></td>
 						<td width="70">Sexta-feira</td>
-						<td width="20"><input type="checkbox" name="semanalDias" onchange="negociacaoDividaController.opcaoFormasPagto($('#selectPagamento').val()); negociacaoDividaController.calcularParcelas()"
+						<td width="20"><input type="checkbox" name="semanalDias" onchange="negociacaoDividaController.opcaoFormasPagto($('#selectPagamento').val()); negociacaoDividaController.calcularParcelasSemanal()"
 							value="7"id="checkSabado" /></td>
 						<td width="53">S&aacute;bado</td>
-						<td width="20"><input type="checkbox" name="semanalDias" onchange="negociacaoDividaController.opcaoFormasPagto($('#selectPagamento').val()); negociacaoDividaController.calcularParcelas()"
+						<td width="20"><input type="checkbox" name="semanalDias" onchange="negociacaoDividaController.opcaoFormasPagto($('#selectPagamento').val()); negociacaoDividaController.calcularParcelasSemanal()"
 							value="1" id="checkDomingo" /></td>
 						<td width="72">Domingo</td>
 					</tr>

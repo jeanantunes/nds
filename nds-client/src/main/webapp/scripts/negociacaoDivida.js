@@ -13,6 +13,12 @@ var negociacaoDividaController = $.extend(true, {
 			centsSeparator: ',',
 		    thousandsSeparator: '.'
 		});
+		
+		$('#diaInputQuinzenal1', negociacaoDividaController.workspace).mask("99");
+		
+		$('#diaInputQuinzenal2', negociacaoDividaController.workspace).mask("99");
+		
+		$('#mensalDia', negociacaoDividaController.workspace).mask("99");
 	},
 
 	pesquisarCota : function(numeroCota) {
@@ -129,6 +135,38 @@ var negociacaoDividaController = $.extend(true, {
 		
 		
 		return data;
+	},
+	
+	calcularParcelasSemanal : function() {
+		
+		var semanalDias = $("[name=semanalDias]:checked", negociacaoDividaController.workspace);
+		
+		if (semanalDias.length > 0) {
+			
+			negociacaoDividaController.calcularParcelas();
+		}
+	},
+	
+	calcularParcelasQuinzenal : function() {
+		
+		var quinzenalDia1 = $('#diaInputQuinzenal1', negociacaoDividaController.workspace).val();
+		
+		var quinzenalDia2 = $('#diaInputQuinzenal2', negociacaoDividaController.workspace).val();
+		
+		if ($.trim(quinzenalDia1) && $.trim(quinzenalDia2)) {
+			
+			negociacaoDividaController.calcularParcelas();
+		}
+	},
+	
+	calcularParcelasMensal : function() {
+		
+		var mensalDia = $('#mensalDia', negociacaoDividaController.workspace).val();
+		
+		if ($.trim(mensalDia)) {
+			
+			negociacaoDividaController.calcularParcelas();
+		}
 	},
 	
 	calcularParcelas : function(){

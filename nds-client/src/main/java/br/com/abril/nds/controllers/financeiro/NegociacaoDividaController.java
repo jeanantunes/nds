@@ -220,17 +220,22 @@ public class NegociacaoDividaController extends BaseController {
 	private Date getDataParcela(Date dataBase, TipoFormaCobranca periodicidade, List<DiaSemanaDTO>semanalDias,
 								Integer quinzenalDia1, Integer quinzenalDia2, Integer diaMensal) {
 		
-		switch(periodicidade){
+		Calendar proximoDia = DateUtil.toCalendar(dataBase);
+		
+		int mesBase = proximoDia.get(Calendar.MONTH);
+		
+		switch(periodicidade) {
 			
 			case DIARIA:
-				return DateUtil.adicionarDias(dataBase, 1);	
-						
+				return DateUtil.adicionarDias(dataBase, 1);
+				
 			case SEMANAL:
 				
-				if(semanalDias == null || semanalDias.isEmpty())
-					throw new ValidacaoException(TipoMensagem.WARNING, "Dia(s) da semana não selecionado(s).");
-				
-				Calendar proximoDia = DateUtil.toCalendar(dataBase);
+				if(semanalDias == null || semanalDias.isEmpty()) {
+					
+					throw new ValidacaoException(TipoMensagem.WARNING,
+												 "Dia(s) da semana não selecionado(s).");
+				}
 				
 				while(true) {
 					
@@ -245,23 +250,76 @@ public class NegociacaoDividaController extends BaseController {
 				}
 			
 			case QUINZENAL:
-				return DateUtil.adicionarDias(dataBase, 15);
+				
+				if(quinzenalDia1 == null || quinzenalDia1.compareTo(0) == 0
+						|| quinzenalDia2 == null || quinzenalDia2.compareTo(0) == 0) {
+					
+					throw new ValidacaoException(TipoMensagem.WARNING,
+												 "Dia(s) quinzenal(ais) inválido(s).");
+				}
+				
+				if (quinzenalDia1.compareTo(30) == 1
+						|| quinzenalDia2.compareTo(30) == 1) {
+					
+					throw new ValidacaoException(TipoMensagem.WARNING,
+												 "Dia(s) quinzenal(ais) não deve(m) ser maior do que 30.");
+				}
+				
+				if (quinzenalDia1.compareTo(quinzenalDia2) >= 0) {
+					
+					throw new ValidacaoException(TipoMensagem.WARNING,
+						 "O 1º dia deve ser menor que o 2º.");
+				}
+				
+				while (true) {
+					
+					proximoDia.set(Calendar.DAY_OF_MONTH, quinzenalDia1);
+					
+					if (proximoDia.getTime().compareTo(dataBase) == 1) {
+						
+						return proximoDia.getTime();
+					}
+					
+					proximoDia.set(Calendar.DAY_OF_MONTH, quinzenalDia2);
+					
+					if (proximoDia.getTime().compareTo(dataBase) == 1) {
+						
+						return proximoDia.getTime();
+					}
+
+					mesBase++;
+					
+					proximoDia.set(Calendar.MONTH, mesBase);
+				}
 			
 			case MENSAL:
 				
-				if(diaMensal==null)
-					throw new ValidacaoException(TipoMensagem.WARNING, "Dia mensal não selecionado.");
-				
-				Calendar data = Calendar.getInstance();
-				data.setTime(dataBase);
-				
-				if(data.get(Calendar.DAY_OF_MONTH) > diaMensal){	
-					data.add(Calendar.MONTH, 1);	
+				if(diaMensal == null || diaMensal.compareTo(0) == 0) {
+					
+					throw new ValidacaoException(TipoMensagem.WARNING,
+												 "Dia do mês inválido.");
 				}
-				data.set(Calendar.DAY_OF_MONTH, diaMensal);
 				
-				return data.getTime();
-		}		
+				if (diaMensal.compareTo(30) == 1) {
+					
+					throw new ValidacaoException(TipoMensagem.WARNING,
+												 "Dia do mês não deve ser maior do que 30.");
+				}
+				
+				while (true) {
+					
+					proximoDia.set(Calendar.DAY_OF_MONTH, diaMensal);
+					
+					if (proximoDia.getTime().compareTo(dataBase) == 1) {
+						
+						return proximoDia.getTime();
+					}
+
+					mesBase++;
+					
+					proximoDia.set(Calendar.MONTH, mesBase);
+				}
+		}
 		
 		return null;
 	}
