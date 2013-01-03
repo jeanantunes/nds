@@ -25,20 +25,18 @@ import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.integracao.service.ParametroSistemaService;
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.Distribuidor;
-import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
-import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.model.fiscal.CFOP;
 import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
 import br.com.abril.nds.model.fiscal.ItemNotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
 import br.com.abril.nds.model.fiscal.StatusNotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
+import br.com.abril.nds.model.fiscal.TipoUsuarioNotaFiscal;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
-import br.com.abril.nds.repository.FornecedorRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.impl.AbstractRepository;
 
@@ -134,8 +132,10 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 // Comentado pelo Cesar "PunkPop" no dia de hoje :-)		
 //		PessoaJuridica emitente = this.obterPessoaJuridica( parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.CNPJ_PJ_IMPORTACAO_NRE).getValor() );
 		
-		notafiscalEntrada.setEmitente(emitente);		
-		notafiscalEntrada.setTipoNotaFiscal(obterTipoNotaFiscal(GrupoNotaFiscal.RECEBIMENTO_MERCADORIAS));		
+		notafiscalEntrada.setEmitente(emitente);
+		//Alteracao autorizada pelo Eduardo
+		//notafiscalEntrada.setTipoNotaFiscal(obterTipoNotaFiscal(GrupoNotaFiscal.RECEBIMENTO_MERCADORIAS));		
+		notafiscalEntrada.setTipoNotaFiscal(obterTipoNotaFiscal(GrupoNotaFiscal.NF_REMESSA_MERCADORIA_CONSIGNACAO, TipoUsuarioNotaFiscal.TREELOG, TipoUsuarioNotaFiscal.DISTRIBUIDOR));		
 		notafiscalEntrada.setEmitida(true);	
 				
 		return notafiscalEntrada;		
@@ -345,13 +345,17 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 		}
 	}
 
-	private TipoNotaFiscal obterTipoNotaFiscal(GrupoNotaFiscal grupoNotaFiscal) {
+	private TipoNotaFiscal obterTipoNotaFiscal(GrupoNotaFiscal grupoNotaFiscal, TipoUsuarioNotaFiscal emitente, TipoUsuarioNotaFiscal destinatario) {
 		
-		String hql = " from TipoNotaFiscal tipoNotaFiscal where tipoNotaFiscal.grupoNotaFiscal = :grupoNotaFiscal group by tipoNotaFiscal.id  ";
+		String hql = " from TipoNotaFiscal tipoNotaFiscal where tipoNotaFiscal.grupoNotaFiscal = :grupoNotaFiscal " +
+						"and tipoNotaFiscal.emitente = :emitente and tipoNotaFiscal.destinatario = :destinatario " +
+						" group by tipoNotaFiscal.id  ";
 		
 		Query query = getSession().createQuery(hql);
 		
 		query.setParameter("grupoNotaFiscal", grupoNotaFiscal);
+		query.setParameter("emitente", emitente);
+		query.setParameter("destinatario", destinatario);
 		
 		return (TipoNotaFiscal) query.uniqueResult();
 	}

@@ -252,6 +252,27 @@ public class CotaGarantiaController extends BaseController {
             }
         }    
 	}
+	
+	/**
+	 * Obtem Cota garantia do tipo Nota Promissória
+	 * @param idCota
+	 */
+	@Post("/getNotaPromissoriaByCota.json")
+	public void getNotaPromissoriaByCota(Long idCota, ModoTela modoTela) {
+    	
+		if (ModoTela.CADASTRO_COTA == modoTela) {
+            
+            NotaPromissoria dadosNotaPromissoria= cotaGarantiaService.obterDadosNotaPromissoria(idCota);
+            
+            if (dadosNotaPromissoria != null) {
+
+            	result.use(Results.json()).from(dadosNotaPromissoria,"notaPromissoria").serialize();
+            } else {
+            	
+                result.use(CustomJson.class).from("OK").serialize();
+            }
+        }    
+	}
 
 	/**
 	 * Obtem Cota garantia do tipo Imóvel

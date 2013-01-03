@@ -332,17 +332,19 @@ public class ConferenciaEncalheRepositoryImpl extends
 		hql.append(" ) 							");
 		hql.append(" /100)) AS valorTotal,  	");
 		
-		hql.append("         TO_DAYS(CONF_ENCALHE.DATA)-TO_DAYS(CH_ENCALHE.DATA_RECOLHIMENTO) + 1 AS dia,                ");
+		hql.append("         TO_DAYS(CONTROLE_CONF_ENC_COTA.DATA_OPERACAO)-TO_DAYS(CH_ENCALHE.DATA_RECOLHIMENTO) + 1 AS dia,                ");
 		hql.append("         CONF_ENCALHE.OBSERVACAO AS observacao,                                                      ");
 		hql.append("         CONF_ENCALHE.JURAMENTADA AS juramentada                                                     ");
 
 		hql.append("     FROM    ");
 
-		hql.append("         CONFERENCIA_ENCALHE CONF_ENCALHE,     ");
-		hql.append("         PRODUTO_EDICAO PROD_EDICAO,           ");
-		hql.append("         PRODUTO PROD,                         ");
-		hql.append("         CHAMADA_ENCALHE_COTA CH_ENCALHE_COTA, ");
-		hql.append("         CHAMADA_ENCALHE CH_ENCALHE            ");
+		hql.append("         CONFERENCIA_ENCALHE CONF_ENCALHE,     						");
+		hql.append("         PRODUTO_EDICAO PROD_EDICAO,           						");
+		hql.append("         PRODUTO PROD,                         						");
+		hql.append("         CHAMADA_ENCALHE_COTA CH_ENCALHE_COTA, 						");
+		hql.append("         CHAMADA_ENCALHE CH_ENCALHE,            					");
+		hql.append("         CONTROLE_CONFERENCIA_ENCALHE_COTA CONTROLE_CONF_ENC_COTA	");
+		
 
 		hql.append("     WHERE   ");
 		
@@ -351,6 +353,8 @@ public class ConferenciaEncalheRepositoryImpl extends
 		hql.append("         AND CONF_ENCALHE.CHAMADA_ENCALHE_COTA_ID=CH_ENCALHE_COTA.ID ");
 		hql.append("         AND CH_ENCALHE_COTA.CHAMADA_ENCALHE_ID=CH_ENCALHE.ID        ");
 		hql.append("         AND CONF_ENCALHE.CONTROLE_CONFERENCIA_ENCALHE_COTA_ID = :idControleConferenciaEncalheCota   ");
+		hql.append("         AND CONTROLE_CONF_ENC_COTA.ID = CONF_ENCALHE.CONTROLE_CONFERENCIA_ENCALHE_COTA_ID			 ");
+		
 		
 		hql.append("  ORDER BY codigoSM ");
 		

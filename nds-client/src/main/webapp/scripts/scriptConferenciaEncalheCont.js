@@ -65,6 +65,11 @@ var ConferenciaEncalheCont = $.extend(true, {
 		
 		ConferenciaEncalheCont.criarComboBoxEncalhe();
 		
+		ConferenciaEncalheCont.atribuirAtalhos();	
+	},
+	
+	atribuirAtalhos: function(){
+		
 		shortcut.add("F2", function() {
 			
 			if (!ConferenciaEncalheCont.modalAberta){
@@ -73,7 +78,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 				ConferenciaEncalheCont.popup_novo_encalhe();
 			}
 		});
-
+		
 		shortcut.add("F6", function() {
 			
 			if (!ConferenciaEncalheCont.modalAberta){
@@ -81,22 +86,22 @@ var ConferenciaEncalheCont = $.extend(true, {
 				ConferenciaEncalheCont.popup_notaFiscal();
 			}
 		});
-
+		
 		shortcut.add("F8", function() {
 			
 			if (!ConferenciaEncalheCont.modalAberta){
 			
-				ConferenciaEncalheCont.verificarValorTotalCE();
+				ConferenciaEncalheCont.veificarCobrancaGerada();
 			}
 		});
-
+		
 		shortcut.add("F9", function() {
 			
 			if (!ConferenciaEncalheCont.modalAberta){
 				
 				ConferenciaEncalheCont.popup_salvarInfos();
 			}
-		});		
+		});
 	},
 	
 	pesquisarCota : function(){
@@ -225,40 +230,9 @@ var ConferenciaEncalheCont = $.extend(true, {
 	
 	gerarDocumentosConferenciaEncalhe : function(tiposDocumento) {
 		
-		var fileArray = [];
+		var file = contextPath + '/devolucao/conferenciaEncalhe/imprimirDocumentosCobranca';
 		
-		 $.each(tiposDocumento, function(index, value){
-			 
-			 if(value == 'SLIP') {
-				 fileArray[index] = contextPath + '/devolucao/conferenciaEncalhe/gerarSlip';
-			 } 
-			 
-			 if(value == 'BOLETO_OU_RECIBO') {
-				 fileArray[index] = contextPath + '/devolucao/conferenciaEncalhe/gerarBoletoOuRecibo';
-			 }
-			 
-		 });
-		
-		 var fileIndex = 0;
-
-		 $('#download-iframe', ConferenciaEncalheCont.workspace).attr('src', fileArray[fileIndex]);
-		 
-		 fileIndex++;
-
-		 var interval = setInterval(function() {
-			 
-		        if(fileIndex < fileArray.length) {
-		            
-		        	$('#download-iframe', ConferenciaEncalheCont.workspace).attr('src', fileArray[fileIndex]);
-		            
-		        	fileIndex++;
-		            
-		        } else {
-		            clearInterval(interval);
-		        }
-		        
-		    }, 100 );
-		
+		$('#download-iframe', ConferenciaEncalhe.workspace).attr('src', file);		
 	},
 	
 	verificarValorTotalNotaFiscal : function() {
@@ -311,35 +285,38 @@ var ConferenciaEncalheCont = $.extend(true, {
 		
 		$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/verificarValorTotalCE', data, 
 		
-				function(conteudo) {
+			function(conteudo) {
+				
+				if(conteudo.valorCEInformadoValido == true) {
 					
-					if(conteudo.valorCEInformadoValido == true) {
-						
-						ConferenciaEncalheCont.verificarValorTotalNotaFiscal();
-						
-					} else {
-						
-						var indConfirmacaoValorCE = confirm(conteudo.mensagemConfirmacao);
-						
-						if(indConfirmacaoValorCE == true) {
-							
-							ConferenciaEncalheCont.verificarValorTotalNotaFiscal();
-							
-						} else {
-							
-							return;
-							
-						}
-						
-						
-						
-					}
-				
+					ConferenciaEncalheCont.verificarValorTotalNotaFiscal();
+					
+				} else {
+					
+					$("#msgConfirmar", ConferenciaEncalheCont.wokspace).text(conteudo.mensagemConfirmacao);
+					
+					$("#dialog-confirmar", ConferenciaEncalheCont.workspace).dialog({
+						resizable : false,
+						height : 160,
+						width : 400,
+						modal : true,
+						buttons : {
+							"Sim" : function() {
+								
+								ConferenciaEncalheCont.verificarValorTotalNotaFiscal();
+								$("#dialog-confirmar", ConferenciaEncalheCont.workspace).dialog("close");
+							},
+							"Não" : function() {
+								
+								$("#dialog-confirmar", ConferenciaEncalheCont.workpace).dialog("close");
+							}
+						},
+						form: $("#dialog-confirmar", ConferenciaEncalheCont.workspace).parents("form")
+					});
 				}
-				
+			
+			}
 		);
-
-		
 	},	
 	
 	carregarListaConferencia: function(data){
@@ -1020,6 +997,44 @@ var ConferenciaEncalheCont = $.extend(true, {
 			form: $("#dialog-salvar", this.workspace).parents("form")			
 		});
 
+	},
+	
+	veificarCobrancaGerada: function(){
+		
+		$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/veificarCobrancaGerada', null,
+		
+			function(conteudo){
+			
+				if(conteudo && conteudo.tipoMensagem == 'WARNING') {
+					
+					$("#msgRegerarCobranca", ConferenciaEncalheCont.workspace).text(conteudo.listaMensagens[0]);
+					
+					$("#dialog-confirmar-regerar-cobranca", ConferenciaEncalheCont.workspace).dialog({
+						resizable : false,
+						height : 'auto',
+						width : 680,
+						modal : true,
+						buttons : {
+							"Confirmar" : function() {
+								
+								$("#dialog-confirmar-regerar-cobranca", ConferenciaEncalheCont.workspace).dialog("close");
+								ConferenciaEncalheCont.verificarValorTotalCE();
+							},
+							"Cancelar" : function(){
+							
+								$("#dialog-confirmar-regerar-cobranca", ConferenciaEncalheCont.workspace).dialog("close");
+							}
+						},
+						form: $("#dialog-confirmar-regerar-cobranca", ConferenciaEncalheCont.workspace).parents("form")
+					});
+					
+				} else {
+					
+					ConferenciaEncalheCont.verificarValorTotalCE();
+				}
+				
+			}, null, true, "dialog-confirmar-regerar-cobranca"
+		);
 	}
 }, BaseController);
 
