@@ -168,12 +168,22 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 			params: [
 			         {name:'filtro.idFornecedor' , value:idFornecedor},
 			         {name:'filtro.semana' , value:semana}
-			         ]
+			         ],
+			preProcess: function(resultado) {
+				
+				if (resultado.mensagens) {
+					exibirMensagem(
+						resultado.mensagens.tipoMensagem, 
+						resultado.mensagens.listaMensagens
+					);
+					$(".grids", fechamentoCEIntegracaoController.workspace).hide();
+				}
+				fechamentoCEIntegracaoController.popularTotal($("#idFornecedor", fechamentoCEIntegracaoController.workspace).val(), $("#semana", fechamentoCEIntegracaoController.workspace).val());
+				fechamentoCEIntegracaoController.verificarDataFechamentoCE();
+			}			         
 		});
 		
 		$(".fechamentoCeGrid").flexReload();
-		fechamentoCEIntegracaoController.popularTotal(idFornecedor, semana);		
-		fechamentoCEIntegracaoController.verificarDataFechamentoCE();
 		
 	},
 	
@@ -226,6 +236,5 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 		
 	}
 	
-	
-	
 }, BaseController);
+//@ sourceURL=scriptFechamentoCEIntegracao.js
