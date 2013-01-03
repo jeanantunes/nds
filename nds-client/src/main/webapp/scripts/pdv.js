@@ -541,7 +541,7 @@ var PDV =  $.extend(true, {
 		
 		montartabelaDiasFuncionamento: function(){
 				 
-			 $('#listaDiasFuncionais tr', this.workspace).remove();;
+			 $('#listaDiasFuncionais tr', this.workspace).remove();
 			 
 			
 			$.each(PDV.diasFuncionamento, function(index, row) {
@@ -590,7 +590,7 @@ var PDV =  $.extend(true, {
 					linha.remove();}
 			);
 						
-			
+			PDV.montartabelaDiasFuncionamento();
 		},
 		
 		retornoObterPeriodosPossiveis: function(result) {
@@ -606,12 +606,8 @@ var PDV =  $.extend(true, {
 			var combo = $("#selectDiasFuncionamento", this.workspace);
 			combo.clear();
 			
-			var option = document.createElement("OPTION");
-			option.innerHTML = "Selecione";
-			option.value = "-1";
-					
-			combo.append(option);
-			
+			items.splice(0,0,{"key": {"@class": "string","$": "-1"},"value": {"@class": "string","$": "Selecione"}});
+
 			$.each(items, function(index, item) {
 				var option = document.createElement("OPTION");
 				option.innerHTML = item.value.$;

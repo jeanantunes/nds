@@ -316,8 +316,10 @@ public class PdvServiceImpl implements PdvService {
     @Override
     public void excluirPDV(Long idPdv) {
 
-        PDV pdv = pdvRepository.buscarPorId(idPdv);
+        PDV pdv = this.pdvRepository.buscarPorId(idPdv);
 
+        this.pdvRepository.removeCotaPDVbyPDV(idPdv);
+        
         if (pdv.getCaracteristicas() != null
                 && pdv.getCaracteristicas().isPontoPrincipal()) {
             throw new ValidacaoException(TipoMensagem.WARNING,
