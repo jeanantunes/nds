@@ -820,6 +820,7 @@ var PDV =  $.extend(true, {
 			$("#selecTipoGeradorFluxo", this.workspace).sortOptions();
 
 		}, 
+		
 		popup_img:function () {
 			
 			$( "#dialog-img", this.workspace ).dialog({
@@ -865,6 +866,7 @@ var PDV =  $.extend(true, {
 			});
 
 		},
+		
 		validarEmail : function (email)	{
 			er = /^[a-zA-Z0-9][a-zA-Z0-9\._-]+@([a-zA-Z0-9\._-]+\.)[a-zA-Z-0-9]{2}/;
 			if(!er.exec(email)) {
@@ -872,6 +874,7 @@ var PDV =  $.extend(true, {
 				$("#emailPDV", this.workspace).focus();
 			}
 		},
+		
 		carregarPeriodosFuncionamento:function(){
 			$.postJSON(contextPath + "/cadastro/pdv/carregarPeriodoFuncionamento",
 					   null, 
