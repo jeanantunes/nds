@@ -80,15 +80,22 @@ var relatorioGarantiasController = $.extend(true, {
 
 	pesquisarPorGarantia : function(params){
 
+		$(".relatorioGarantiaGrid").flexOptions({
+			url : this.path + 'pesquisarGarantia.json?' + params,
+			newp : 1
+		});
+		
 		$.postJSON(
 				this.path + 'pesquisarGarantia.json?' + params,
 				null,
 				function(result) {
 
 					if (result.mensagens) {
+						
 						exibirMensagem(result.mensagens.tipoMensagem, result.mensagens.listaMensagens);
 						relatorioGarantiasController.hideGrids();
 					}  else{
+						
 						$(".relatorioGarantiaGrid").flexAddData(result);
 						$("#garantiasEspecificas th[abbr='faturamento'] >div").html("Faturamento " + result.rows[0].cell.baseCalculo);
 						relatorioGarantiasController.showGridGarantiaEspecifica();
@@ -97,9 +104,6 @@ var relatorioGarantiasController = $.extend(true, {
 				null,
 				true
 		);
-
-
-
 	},
 
 
@@ -315,8 +319,9 @@ var relatorioGarantiasController = $.extend(true, {
 			}],
 			sortname : "cota",
 			sortorder : "asc",
-			usepager : false,
-			useRp : false,
+			usepager : true,
+			useRp : true,
+			rp : 15,
 			showTableToggleBtn : true,
 			width : 960,
 			height : 255
