@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository.impl;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -78,13 +79,14 @@ public class ProdutoRepositoryImpl extends AbstractRepositoryModel<Produto, Long
 				+ " from Lancamento lancamento "
 				+ " join lancamento.produtoEdicao produtoEdicao "
 				+ " join produtoEdicao.produto produto "
-				+ " where lancamento.status = :status "
+				+ " where lancamento.status in (:status) "
 				+ " and lancamento.dataLancamentoDistribuidor = :dataLancamentoDistribuidor "
 				+ " and produto.codigo = :codigoProduto ";
 		
 		Query query = super.getSession().createQuery(hql);
 		
-		query.setParameter("status", StatusLancamento.BALANCEADO);
+
+		query.setParameterList("status", Arrays.asList(StatusLancamento.BALANCEADO,StatusLancamento.EXPEDIDO));
 		query.setParameter("dataLancamentoDistribuidor", dataLancamento);
 		query.setParameter("codigoProduto", codigoProduto);
 		
@@ -319,14 +321,15 @@ public class ProdutoRepositoryImpl extends AbstractRepositoryModel<Produto, Long
 				+ " from Lancamento lancamento "
 				+ " join lancamento.produtoEdicao produtoEdicao "
 				+ " join produtoEdicao.produto produto "
-				+ " where lancamento.status = :status "
+				+ " where lancamento.status in (:status) "
 				+ " and lancamento.dataLancamentoDistribuidor = :dataLancamentoDistribuidor "
 				+ " group by produto.id "
 				+ " order by produto.nome ";
 		
 		Query query = super.getSession().createQuery(hql);
+	
+		query.setParameterList("status", Arrays.asList(StatusLancamento.BALANCEADO,StatusLancamento.EXPEDIDO));
 		
-		query.setParameter("status", StatusLancamento.BALANCEADO);
 		query.setParameter("dataLancamentoDistribuidor", dataLancamento);
 		
 		return query.list();
