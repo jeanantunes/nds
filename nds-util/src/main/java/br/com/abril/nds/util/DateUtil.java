@@ -108,6 +108,20 @@ public class DateUtil {
 		return cal.getTime();
 	}
 	
+	public static Calendar adicionarDias(Calendar data, int numDias) {
+		
+		return toCalendar(adicionarDias(data.getTime(), numDias));
+	}
+	
+	public static Calendar toCalendar(Date data) {
+		
+		Calendar calendar = Calendar.getInstance();
+		
+		calendar.setTime(data);
+		
+		return calendar;
+	}
+	
 	/**
 	 * Subtrai o número de dias da data
 	 * 
