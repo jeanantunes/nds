@@ -6,6 +6,7 @@
 	<script	src="${pageContext.request.contextPath}/scripts/jquery-upload/js/jquery.iframe-transport.js"	type="text/javascript"></script>
 	<script	src="${pageContext.request.contextPath}/scripts/jquery-upload/js/jquery.fileupload.js"	type="text/javascript"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.price_format.1.7.js"></script>
 	
 	<script type="text/javascript">
 

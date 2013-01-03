@@ -91,6 +91,13 @@ public interface CotaGarantiaService {
 	 * @return Cheque
 	 */
 	public Cheque obterDadosChequeCaucao(Long idCota);
+	
+	/**
+	 * Obtem NotaPromissoria da Da Cota Garantia
+	 * @param idCota
+	 * @return NotaPromissoria
+	 */
+	public NotaPromissoria obterDadosNotaPromissoria(Long idCota);
 
 	/**
 	 * Salva no repositorio de dados a garantia de imóvel.

@@ -70,6 +70,7 @@ import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.ReferenciaCota;
 import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.model.cadastro.SocioCota;
 import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.TelefoneCota;
 import br.com.abril.nds.model.cadastro.TipoCota;
@@ -77,6 +78,7 @@ import br.com.abril.nds.model.cadastro.TipoEndereco;
 import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.model.cadastro.TipoParametrosDistribuidorEmissaoDocumento;
 import br.com.abril.nds.model.cadastro.desconto.DescontoProdutoEdicao;
+import br.com.abril.nds.model.cadastro.garantia.CotaGarantia;
 import br.com.abril.nds.model.cadastro.pdv.CaracteristicasPDV;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.model.financeiro.Cobranca;
@@ -87,6 +89,7 @@ import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaDescontoProd
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaDistribuicao;
 import br.com.abril.nds.repository.BaseReferenciaCotaRepository;
 import br.com.abril.nds.repository.CobrancaRepository;
+import br.com.abril.nds.repository.CotaGarantiaRepository;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.EnderecoCotaRepository;
@@ -103,6 +106,7 @@ import br.com.abril.nds.repository.PessoaJuridicaRepository;
 import br.com.abril.nds.repository.RankingRepository;
 import br.com.abril.nds.repository.ReferenciaCotaRepository;
 import br.com.abril.nds.repository.RotaRepository;
+import br.com.abril.nds.repository.SocioCotaRepository;
 import br.com.abril.nds.repository.TelefoneCotaRepository;
 import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
 import br.com.abril.nds.repository.UsuarioRepository;
@@ -222,6 +226,12 @@ public class CotaServiceImpl implements CotaService {
 	
 	@Autowired
 	private ParametrosDistribuidorService parametrosDistribuidorService;
+	
+	@Autowired
+	private CotaGarantiaRepository cotaGarantiaRepository;
+	
+	@Autowired
+	private SocioCotaRepository socioCotaRepository;
 	
 	@Transactional(readOnly = true)
 	@Override
@@ -1922,6 +1932,57 @@ public class CotaServiceImpl implements CotaService {
 	}
 	
 	/**
+	 * Descarta Enderecos, Telefones, Garantias e Sócios da Cota na Troca de Titularidade
+	 * @param cota
+	 */
+	private void excluiEnderecosTelefonesGarantiasSociosCota(Cota cota){
+		
+		Set<EnderecoCota> enderecos = cota.getEnderecos();
+		
+		if (enderecos!=null && enderecos.size() > 0){
+			
+			List<Endereco> listaEnderecos = new ArrayList<Endereco>();
+			for (EnderecoCota endereco : enderecos){
+				
+				listaEnderecos.add(endereco.getEndereco());
+			}
+			
+			this.enderecoCotaRepository.removerEnderecosCota(cota.getId(), listaEnderecos);
+		}
+		
+		
+		Set<TelefoneCota> telefones = cota.getTelefones();
+		
+		if (telefones!=null && telefones.size() > 0){
+	
+			List<Long> idsTelefones = new ArrayList<Long>();
+			for (TelefoneCota telefoneCota : telefones){
+				
+				idsTelefones.add(telefoneCota.getTelefone().getId());
+			}
+			
+			this.telefoneCotaRepository.removerTelefonesCota(idsTelefones);
+		}
+
+		
+		CotaGarantia garantia = cota.getCotaGarantia();
+		
+		if (garantia!=null){
+	 
+			this.cotaGarantiaRepository.deleteByCota(cota.getId());
+		}
+		
+
+		Set<SocioCota> socios = cota.getSociosCota();
+		
+		if (socios!=null && socios.size() > 0){
+	
+			this.socioCotaRepository.removerSociosCota(cota.getId());
+		}
+		
+	}
+
+	/**
 	 * {@inheritDoc}
 	 */
 	@Override
@@ -1954,6 +2015,8 @@ public class CotaServiceImpl implements CotaService {
 
 		this.cotaRepository.merge(cotaNova);
 		processarTitularidadeCota(cotaAntiga, cotaDTO);
+		
+		this.excluiEnderecosTelefonesGarantiasSociosCota(cotaNova);
 		
 		return cotaDTO;
 	}

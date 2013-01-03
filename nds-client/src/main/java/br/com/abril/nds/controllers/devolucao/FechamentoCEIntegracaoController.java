@@ -1,10 +1,13 @@
 package br.com.abril.nds.controllers.devolucao;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -227,26 +230,23 @@ public class FechamentoCEIntegracaoController extends BaseController{
 	@Path("/imprimeBoleto")
 	public void imprimeBoleto() throws Exception{
 		
-//		try {
-//			this.gerarCobrancaService.gerarCobranca(null, this.getUsuario().getId(), new HashSet<String>());
-//		} catch (GerarCobrancaValidacaoException e) {
-//			
-//			throw e.getValidacaoException();
-//		}
-//
-//
-//		byte[] b = boletoService.gerarImpressaoBoleto(nossoNumero);
-//
-//		this.httpResponse.setContentType("application/pdf");
-//		this.httpResponse.setHeader("Content-Disposition", "attachment; filename=boleto.pdf");
-//
-//		OutputStream output = this.httpResponse.getOutputStream();
-//		output.write(b);
+		long idFornecedor = 0;
+		Set<String> nossoNumero = new HashSet<String>();
+		
+		this.gerarCobrancaService.gerarCobrancaFornecedor(idFornecedor, this.getUsuarioLogado().getId(), nossoNumero);
 
-//		//CONTROLE DE VIAS IMPRESSAS
-//		boletoService.incrementarVia(nossoNumero);
-//		
-//		httpResponse.flushBuffer();
+		byte[] b = boletoService.gerarImpressaoBoleto(nossoNumero.toString());
+
+		this.httpResponse.setContentType("application/pdf");
+		this.httpResponse.setHeader("Content-Disposition", "attachment; filename=boleto.pdf");
+
+		OutputStream output = this.httpResponse.getOutputStream();
+		output.write(b);
+
+		//CONTROLE DE VIAS IMPRESSAS
+		boletoService.incrementarVia(nossoNumero.toString());
+		
+		httpResponse.flushBuffer();
 		
 		result.nothing();
 	}

@@ -1576,7 +1576,7 @@ var SOCIO_COTA = $.extend(true, {
                 sortable : false,
                 align : 'center'
             }, {
-                display : 'AÃ§Ã£o',
+                display : 'Ação',
                 name : 'acao',
                 width : 60,
                 sortable : false,

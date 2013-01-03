@@ -13,6 +13,7 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.Subqueries;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.PdvDTO;
 import br.com.abril.nds.dto.filtro.FiltroPdvDTO;
@@ -385,4 +386,19 @@ public class PdvRepositoryImpl extends AbstractRepositoryModel<PDV, Long> implem
 		criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 		return  (List<PDV>)criteria.list();  
 	}
+
+	@Override
+	@Transactional
+	public void removeCotaPDVbyPDV(Long idPdv) {
+
+        StringBuilder hql = new StringBuilder();
+        hql.append(" Delete from RotaPDV where pdv.id = :idPdv ");
+        
+        Query q = getSession().createQuery(hql.toString());
+        
+        q.setParameter("idPdv", idPdv);
+        
+		q.executeUpdate();
+	}
+	
 }
