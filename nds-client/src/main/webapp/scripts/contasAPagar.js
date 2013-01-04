@@ -109,12 +109,12 @@ var contasAPagarController = $.extend(true, {
 	
 		var params = $("#contasAPagarForm", this.workspace).serializeObject();
 		
-		
 		if ($("#contasAPagarRadioDistribuidor").get(0).checked) {
 			this.pesquisarPorFornecedor(params);	
 		} 
 		
 		else if ($("#contasAPagarRadioProduto").get(0).checked) {
+			
 			this.pesquisarPorProduto(params);
 		}
 	},
@@ -227,6 +227,10 @@ var contasAPagarController = $.extend(true, {
 		
 		$.each(data.rows, function(index, value) {
 			
+			if(!value.cell.editor) {
+				value.cell.editor = "nenhum";
+			}
+			
 			var checkbox = '<input type="checkbox" value="'+ value.cell.produtoEdicaoID + '" name="checkProdutoContasAPagar" class="contasApagarCheck"  style="float:left;"/>';
 			value.cell.sel = checkbox;
 		});
@@ -239,17 +243,17 @@ var contasAPagarController = $.extend(true, {
 		
 		$.each(data.rows, function(index, value) {
 			
-			if (value.cell.consignado != "0,00") {
+			if (value.cell.consignado != "0,00" && value.cell.consignado != "0.00") {
 				var linkConsignado = '<a href="javascript:;" onclick="contasAPagarController.popup_consignado(\'' + value.cell.data + '\');" title="Detalhe Consignado">'+value.cell.consignado+'</a>';
 				value.cell.consignado = linkConsignado;
 			}
 		
-			if (value.cell.encalhe != "0,00") {
+			if (value.cell.encalhe != "0,00" && value.cell.encalhe != "0.00") {
 				var linkEncalhe = '<a href="javascript:;" onclick="contasAPagarController.popup_encalhe(\'' + value.cell.data + '\');" title="Detalhe Encalhe">'+value.cell.encalhe+'</a>';
 				value.cell.encalhe = linkEncalhe;
 			}
 			
-			if (value.cell.faltasSobras != "0,00") {
+			if (value.cell.faltasSobras != "0,00" && value.cell.faltasSobras != "0.00") {
 				var linkFS = '<a href="javascript:;" onclick="contasAPagarController.popup_faltasSobras(\'' + value.cell.data + '\');" title="Detalhe Faltas e Sobras">'+value.cell.faltasSobras+'</a>';
 				value.cell.faltasSobras = linkFS;
 			}
@@ -479,43 +483,43 @@ var contasAPagarController = $.extend(true, {
 				display : 'Código',
 				name : 'codigo',
 				width : 40,
-				sortable : false,
+				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Produto',
 				name : 'produto',
 				width : 60,
-				sortable : false,
+				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Edição',
 				name : 'edicao',
 				width : 40,
-				sortable : false,
+				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Preço Capa R$',
 				name : 'precoCapa',
 				width : 80,
-				sortable : false,
+				sortable : true,
 				align : 'right',
 			}, {
 				display : 'Fornecedor',
 				name : 'fornecedor',
 				width : 100,
-				sortable : false,
+				sortable : true,
 				align : 'left',
 			}, {
 				display : 'Editor',
 				name : 'editor',
 				width : 100,
-				sortable : false,
+				sortable : true,
 				align : 'left'
 			}, {
 				display : '',
 				name : 'sel',
 				width : 20,
-				sortable : false,
+				sortable : true,
 				align : 'center'
 			}],
 			sortname : "codigo",

@@ -474,7 +474,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		boolean indFechado = false;
 		boolean indPostergado = false;
 		
-		int idInicial = (int) System.currentTimeMillis();
+		long idInicial = System.currentTimeMillis();
 		idInicial = (idInicial - (1000000));
 		
 		
@@ -489,7 +489,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				listaIdProdutoEdicao);
 		
 		for(ConferenciaEncalheDTO conferencia : listaConferenciaEncalheContingencia) {
-			int id = (-1 * (idInicial++));
+			long id = (-1 * (idInicial++));
 			conferencia.setIdConferenciaEncalhe(new Long(id));
 		}
 		

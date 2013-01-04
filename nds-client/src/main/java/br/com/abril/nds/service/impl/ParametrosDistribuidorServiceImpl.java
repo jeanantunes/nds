@@ -4,6 +4,7 @@ import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -37,12 +38,18 @@ import br.com.abril.nds.model.cadastro.TipoImpressaoNENECADANFE;
 import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.model.cadastro.TipoParametrosDistribuidorEmissaoDocumento;
 import br.com.abril.nds.model.cadastro.TipoParametrosDistribuidorFaltasSobras;
+import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
+import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
+import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
+import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.repository.EnderecoDistribuidorRepository;
 import br.com.abril.nds.repository.ParametroContratoCotaRepository;
 import br.com.abril.nds.repository.ParametrosDistribuidorEmissaoDocumentoRepository;
 import br.com.abril.nds.repository.ParametrosDistribuidorFaltasSobrasRepository;
 import br.com.abril.nds.repository.PessoaRepository;
 import br.com.abril.nds.repository.TipoGarantiaAceitaRepository;
+import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
+import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
 import br.com.abril.nds.service.ParametrosDistribuidorService;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.vo.EnderecoVO;
@@ -84,6 +91,12 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 	
 	@Autowired
 	private PessoaRepository pessoaRepository;
+	
+	@Autowired
+	private TipoMovimentoEstoqueRepository tipoMovimentoEstoqueRepository;
+	
+	@Autowired
+	private TipoMovimentoFinanceiroRepository tipoMovimentoFinanceiroRepository;
 	
 	@Autowired
 	private CouchDbProperties couchDbProperties;
@@ -642,13 +655,43 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		distribuidor.setUtilizaControleAprovacao(parametrosDistribuidor.getUtilizaControleAprovacao());
 		
 		ParametrosAprovacaoDistribuidor parametrosAprovacaoDistribuidor = new ParametrosAprovacaoDistribuidor();
+		
 		parametrosAprovacaoDistribuidor.setDebitoCredito(parametrosDistribuidor.getParaDebitosCreditos());
-
+		
+		this.atualizarTiposMovimentoFinanceiro(parametrosDistribuidor,
+											   this.getGruposMovimentoFinanceiroDebitosCreditos(),
+											   !parametrosDistribuidor.getParaDebitosCreditos());
+		
 		parametrosAprovacaoDistribuidor.setNegociacao(parametrosDistribuidor.getNegociacao());
+		
+		this.atualizarTiposMovimentoFinanceiro(parametrosDistribuidor,
+				 					 		   this.getGruposMovimentoFinanceiroNegociacao(),
+				 					 		   !parametrosDistribuidor.getNegociacao());
+		
 		parametrosAprovacaoDistribuidor.setAjusteEstoque(parametrosDistribuidor.getAjusteEstoque());
+		
+		this.atualizarTiposMovimentoEstoque(parametrosDistribuidor,
+				 					 		this.getGruposMovimentoEstoqueAjusteEstoque(),
+				 					 		!parametrosDistribuidor.getAjusteEstoque());
+		
 		parametrosAprovacaoDistribuidor.setPostergacaoCobranca(parametrosDistribuidor.getPostergacaoCobranca());
+		
+		this.atualizarTiposMovimentoFinanceiro(parametrosDistribuidor,
+									 		   this.getGruposMovimentoFincanceiroPostergacaoCobranca(),
+									 		   !parametrosDistribuidor.getPostergacaoCobranca());
+		
 		parametrosAprovacaoDistribuidor.setDevolucaoFornecedor(parametrosDistribuidor.getDevolucaoFornecedor());
+		
+		this.atualizarTiposMovimentoEstoque(parametrosDistribuidor,
+				 					 		this.getGruposMovimentoEstoqueDevolucaoFornecedor(),
+				 					 		!parametrosDistribuidor.getDevolucaoFornecedor());
+		
 		parametrosAprovacaoDistribuidor.setFaltasSobras(parametrosDistribuidor.getFaltasSobras());
+		
+		this.atualizarTiposMovimentoEstoque(parametrosDistribuidor,
+						 					this.getGruposMovimentoEstoqueFaltasSobras(),
+						 					!parametrosDistribuidor.getFaltasSobras());
+		
 		distribuidor.setParametrosAprovacaoDistribuidor(parametrosAprovacaoDistribuidor);
 		
 		if (parametrosDistribuidor.getPrazoFollowUp() != null)
@@ -714,7 +757,99 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		
 		this.salvarLogo(imgLogotipo, imgContentType);
 	}
+	
+	private List<GrupoMovimentoFinaceiro> getGruposMovimentoFinanceiroDebitosCreditos() {
+		
+		List<GrupoMovimentoFinaceiro> gruposMovimentoFinanceiro = 
+			Arrays.asList(GrupoMovimentoFinaceiro.DEBITO, GrupoMovimentoFinaceiro.CREDITO);
+		
+		return gruposMovimentoFinanceiro;
+	}
+	
+	private List<GrupoMovimentoFinaceiro> getGruposMovimentoFinanceiroNegociacao() {
+		
+		List<GrupoMovimentoFinaceiro> gruposMovimentoFinanceiro = 
+			Arrays.asList(GrupoMovimentoFinaceiro.POSTERGADO_NEGOCIACAO);
+		
+		return gruposMovimentoFinanceiro;
+	}
+	
+	private List<GrupoMovimentoEstoque> getGruposMovimentoEstoqueAjusteEstoque() {
+		
+		List<GrupoMovimentoEstoque> gruposMovimentoEstoque = 
+			Arrays.asList(GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_LANCAMENTO,
+						  GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_LANCAMENTO,
+						  GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_PRODUTOS_DANIFICADOS,
+						  GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_PRODUTOS_DANIFICADOS,
+						  GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_PRODUTOS_DEVOLUCAO_FORNECEDOR,
+						  GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_PRODUTOS_DEVOLUCAO_FORNECEDOR,
+						  GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_RECOLHIMENTO,
+						  GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_RECOLHIMENTO,
+						  GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_SUPLEMENTAR,
+						  GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_SUPLEMENTAR);
+		
+		return gruposMovimentoEstoque;
+	}
+	
+	private List<GrupoMovimentoFinaceiro> getGruposMovimentoFincanceiroPostergacaoCobranca() {
+		
+		//TODO: verificar qual o grupo de movimento para postergacao cobrança
+		
+		List<GrupoMovimentoFinaceiro> gruposMovimentoFinanceiro = 
+			Arrays.asList(GrupoMovimentoFinaceiro.POSTERGADO_NEGOCIACAO);
+		
+		return gruposMovimentoFinanceiro;
+	}
+	
+	private List<GrupoMovimentoEstoque> getGruposMovimentoEstoqueDevolucaoFornecedor() {
+		
+		List<GrupoMovimentoEstoque> gruposMovimentoEstoque = 
+			Arrays.asList(GrupoMovimentoEstoque.DEVOLUCAO_ENCALHE);
+		
+		return gruposMovimentoEstoque;
+	}
+	
+	private List<GrupoMovimentoEstoque> getGruposMovimentoEstoqueFaltasSobras() {
+		
+		List<GrupoMovimentoEstoque> gruposMovimentoEstoque = 
+			Arrays.asList(GrupoMovimentoEstoque.FALTA_DE, GrupoMovimentoEstoque.FALTA_EM,
+						  GrupoMovimentoEstoque.SOBRA_DE, GrupoMovimentoEstoque.SOBRA_EM);
+		
+		return gruposMovimentoEstoque;
+	}
 
+	private void atualizarTiposMovimentoEstoque(ParametrosDistribuidorVO parametrosDistribuidor,
+										 		List<GrupoMovimentoEstoque> gruposMovimentoEstoque,
+										 		boolean aprovacaoAutomatica) {
+		
+		List<TipoMovimentoEstoque> tiposMovimentoEstoque = 
+			this.tipoMovimentoEstoqueRepository.buscarTiposMovimentoEstoque(gruposMovimentoEstoque);
+		
+		for (TipoMovimentoEstoque tipoMovimentoEstoque : tiposMovimentoEstoque) {
+			
+			tipoMovimentoEstoque.setAprovacaoAutomatica(aprovacaoAutomatica);
+			
+			this.tipoMovimentoEstoqueRepository.merge(tipoMovimentoEstoque);
+		}
+	}
+	
+	private void atualizarTiposMovimentoFinanceiro(ParametrosDistribuidorVO parametrosDistribuidor,
+										 		   List<GrupoMovimentoFinaceiro> gruposMovimentoFinanceiro,
+										 		   boolean aprovacaoAutomatica) {
+
+		List<TipoMovimentoFinanceiro> tiposMovimentoFinanceiro =
+			this.tipoMovimentoFinanceiroRepository.buscarTiposMovimentoFinanceiro(gruposMovimentoFinanceiro);
+
+		for (TipoMovimentoFinanceiro tipoMovimentoFinanceiro : tiposMovimentoFinanceiro) {
+
+			tipoMovimentoFinanceiro.setAprovacaoAutomatica(aprovacaoAutomatica);
+
+			this.tipoMovimentoFinanceiroRepository.merge(tipoMovimentoFinanceiro);
+		}
+	}
+
+	
+	
 	private void salvarLogo(InputStream imgLogotipo, String imgContentType) {
 		
 		if (imgLogotipo != null && imgContentType != null) {

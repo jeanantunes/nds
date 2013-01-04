@@ -2,12 +2,13 @@ package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
 import org.hibernate.Query;
 import org.hibernate.transform.AliasToBeanResultTransformer;
-import org.hibernate.type.StandardBasicTypes;
+import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.client.vo.RegistroCurvaABCEditorVO;
@@ -54,11 +55,10 @@ public class EditorRepositoryImpl extends AbstractRepositoryModel<Editor, Long> 
 		hql.append("SELECT new ").append(ResultadoCurvaABCEditor.class.getCanonicalName())
 
 		   .append(" ( ")
-	       .append("   case when (lancamento.status = :statusLancamentoRecolhido) then ( ")
+	       .append("   case when (lancamento.status in (:statusLancamentoRecolhido) ) then ( ")
 		   .append("  		(sum(estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida)) ")
 		   .append(" ) else 0 end, ")
-		   
-  		   .append("   case when (lancamento.status = :statusLancamentoRecolhido) then ( ")
+  		   .append("   case when (lancamento.status in (:statusLancamentoRecolhido) ) then ( ")
 		   .append("   ( sum((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * (movimentos.valoresAplicados.precoComDesconto)) )  ")
 		   .append(" ) else 0 end ")
 		   .append(" ) ");
@@ -67,14 +67,16 @@ public class EditorRepositoryImpl extends AbstractRepositoryModel<Editor, Long> 
 
 		Query query = this.getSession().createQuery(hql.toString());
 
+		
 		HashMap<String, Object> param = getParametrosObterCurvaABCEditor(filtro);
 
 		for(String key : param.keySet()){
 			query.setParameter(key, param.get(key));
 		}
 		
-		query.setParameter("statusLancamentoRecolhido", StatusLancamento.RECOLHIDO);
-		
+		query.setParameter("grupoMovimentoEstoque", GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
+		query.setParameterList("statusLancamentoRecolhido", Arrays.asList(StatusLancamento.RECOLHIDO,StatusLancamento.FECHADO));
+					
 		if (filtro.getEdicaoProduto() != null && !filtro.getEdicaoProduto().isEmpty()) {
 			query.setParameterList("edicaoProduto", (filtro.getEdicaoProduto()));
 		}
@@ -89,29 +91,23 @@ public class EditorRepositoryImpl extends AbstractRepositoryModel<Editor, Long> 
 	@SuppressWarnings("unchecked")
 	public List<RegistroCurvaABCEditorVO> obterCurvaABCEditor(FiltroCurvaABCEditorDTO filtro) {
 			
-		Query query = this.getSession().createSQLQuery(this.getSqlEditor(filtro).toString())
-							.addScalar("codigoEditor", StandardBasicTypes.LONG)
-							.addScalar("nomeEditor", StandardBasicTypes.STRING)
-							.addScalar("reparte", StandardBasicTypes.BIG_INTEGER)
-							.addScalar("vendaExemplares", StandardBasicTypes.BIG_INTEGER)
-							.addScalar("faturamentoCapa", StandardBasicTypes.BIG_DECIMAL)
-							.addScalar("valorMargemDistribuidor", StandardBasicTypes.BIG_DECIMAL);
+		Query query = this.getSession().createSQLQuery(this.getSqlEditor(filtro).toString());
 						
 		HashMap<String, Object> param = getParametrosObterCurvaABCEditor(filtro);
-
-		param.put("grupoMovimentoEstoque", GrupoMovimentoEstoque.RECEBIMENTO_REPARTE.toString());
 		
 		for(String key : param.keySet()){
 			query.setParameter(key, param.get(key));
 		}
 
-		query.setParameter("statusLancamentoRecolhido", StatusLancamento.RECOLHIDO);
+		query.setParameterList("statusLancamentoRecolhido", Arrays.asList(StatusLancamento.RECOLHIDO.toString(),StatusLancamento.FECHADO.toString()));
+		
+		query.setParameter("grupoMovimentoEstoque", GrupoMovimentoEstoque.RECEBIMENTO_REPARTE.toString());
 		
 		if (filtro.getEdicaoProduto() != null && !filtro.getEdicaoProduto().isEmpty()) {
 			query.setParameterList("edicaoProduto", (filtro.getEdicaoProduto()));
 		}
 		
-		query.setResultTransformer(new AliasToBeanResultTransformer(RegistroCurvaABCEditorVO.class));
+		query.setResultTransformer(Transformers.aliasToBean(RegistroCurvaABCEditorVO.class));
 		
 		return complementarCurvaABCEditor((List<RegistroCurvaABCEditorVO>) query.list(), filtro);
 	}
@@ -187,7 +183,6 @@ public class EditorRepositoryImpl extends AbstractRepositoryModel<Editor, Long> 
 		param.put("dataDe",  filtro.getDataDe());
 		param.put("dataAte", filtro.getDataAte());
 
-		param.put("grupoMovimentoEstoque", GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
 		
 		if (filtro.getCodigoCota() != null ) {
 			param.put("codigoCota", filtro.getCodigoCota());
@@ -293,7 +288,7 @@ public class EditorRepositoryImpl extends AbstractRepositoryModel<Editor, Long> 
 		hqlMargemCota.append(" ")
 		.append(" ((sum (( estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida )) * produtoEdicao.precoVenda)")
 		.append(" * ( ").append("movimentos.valoresAplicados.valorDesconto").append(" / 100))");
-		String hqlFaturamento = "   case when (lancamento.status = :statusLancamentoRecolhido) then ( " 
+		String hqlFaturamento = "   case when (lancamento.status in (:statusLancamentoRecolhido) ) then ( " 
 							  + " 		(sum ( (estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida )) * produtoEdicao.precoVenda )"
 							  + "	) else 0 end ";
 
@@ -309,7 +304,7 @@ public class EditorRepositoryImpl extends AbstractRepositoryModel<Editor, Long> 
 			
 			.append("   sum(estoqueProdutoCota.qtdeRecebida) as reparte,")
 			
-   		    .append("   case when (lancamento.status = :statusLancamentoRecolhido) then ( ")
+   		    .append("   case when (lancamento.status in (:statusLancamentoRecolhido) ) then ( ")
 			.append("   	sum(estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) ")
 			.append("	) else 0 end as vendaExemplares, ")
 
@@ -343,8 +338,10 @@ public class EditorRepositoryImpl extends AbstractRepositoryModel<Editor, Long> 
 
 		query.setParameter("codigoEditor", Long.parseLong(filtro.getNumeroEditor()));
 		query.setParameter("grupoMovimentoEstoque", GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
-		query.setParameter("statusLancamentoRecolhido", StatusLancamento.RECOLHIDO);
 		
+		
+		query.setParameterList("statusLancamentoRecolhido", Arrays.asList(StatusLancamento.RECOLHIDO,StatusLancamento.FECHADO));
+				
 		query.setResultTransformer(new AliasToBeanResultTransformer(RegistroHistoricoEditorVO.class));
 		
 		return complementarHistoricoEditor(query.list(), filtro);
@@ -363,11 +360,10 @@ public class EditorRepositoryImpl extends AbstractRepositoryModel<Editor, Long> 
 		    
 		    .append(" sum(estoqueProduto.QTDE_RECEBIDA) as reparte,  ")
 		    
-   		    .append("   case when (lancamento.status = :statusLancamentoRecolhido) then ( ")
+   		    .append("   case when (lancamento.status in (:statusLancamentoRecolhido) ) then ( ")
 		    .append(" 			sum(estoqueProduto.QTDE_RECEBIDA-estoqueProduto.QTDE_DEVOLVIDA)  ")
 			.append("		) else 0 end as vendaExemplares, ")
-
-   		    .append("   case when (lancamento.status = :statusLancamentoRecolhido) then ( ")
+   		    .append("   case when (lancamento.status in (:statusLancamentoRecolhido) ) then ( ")
 		    .append(" 	sum((estoqueProduto.QTDE_RECEBIDA-estoqueProduto.QTDE_DEVOLVIDA)*(movimentos.PRECO_COM_DESCONTO)) ") 
 			.append("		) else 0 end as faturamentoCapa, ")
 		    
@@ -381,7 +377,7 @@ public class EditorRepositoryImpl extends AbstractRepositoryModel<Editor, Long> 
 		    
 		    .append(" left outer join  ")
 		    .append("    LANCAMENTO as lancamento  ")
-		    .append("        on estoqueProduto.ID=movimentos.ESTOQUE_PROD_COTA_ID  ")
+		    .append("        on lancamento.ID=movimentos.LANCAMENTO_ID ")
 		    
 		    .append(" inner join  ")
 		    .append("    PRODUTO_EDICAO as produtoEdicao  ")
@@ -437,7 +433,7 @@ public class EditorRepositoryImpl extends AbstractRepositoryModel<Editor, Long> 
 		hql.append(" where  ")
 	    	.append("	movimentos.TIPO_MOVIMENTO_ID=tipoMovimento.ID  ")
 	    	.append("   and editor.JURIDICA_ID=pessoaJuridica.ID  ")
-	    	.append("   and movimentos.DATA between :dataDe and :dataAte  ")
+	     	.append("   and movimentos.DATA between :dataDe and :dataAte  ")
 	    	.append("   and tipoMovimento.GRUPO_MOVIMENTO_ESTOQUE= :grupoMovimentoEstoque  ");
 		
 		if (filtro.getCodigoProduto() != null && !filtro.getCodigoProduto().isEmpty()) {

@@ -3,7 +3,9 @@ package br.com.abril.nds.service.impl;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -193,38 +195,71 @@ public class ContasAPagarServiceImpl implements ContasAPagarService {
 	@Override
 	public ContasAPagarTotalDistribDTO<ContasAPagarConsignadoDTO> pesquisarDetalheConsignado(FiltroContasAPagarDTO filtro) {
 		
-		List<ContasAPagarConsignadoDTO> lista = 
+		List<ContasAPagarConsignadoDTO> listaConsignados = 
 				this.contasAPagarRepository.pesquisarDetalheConsignado(filtro);
 		
-		ContasAPagarTotalDistribDTO<ContasAPagarConsignadoDTO> dto = 
+		ContasAPagarTotalDistribDTO<ContasAPagarConsignadoDTO> resultadoDTO = 
 				new ContasAPagarTotalDistribDTO<ContasAPagarConsignadoDTO>();
 		
-		dto.setGrid(lista);
+		resultadoDTO.setGrid(listaConsignados);
 		
-		List<ContasAPagarDistribDTO> contas = new ArrayList<ContasAPagarDistribDTO>();
-		ContasAPagarDistribDTO conta = new ContasAPagarDistribDTO();
-		String fornecedor = null;
+		Map<String, BigDecimal> mapFornecedorTotal = sumarizarTotalPorFornecedor(listaConsignados);
 		
-		for (ContasAPagarConsignadoDTO consignado : lista){
-			
-			conta.setNome(consignado.getFornecedor());
-			conta.setTotal(conta.getTotal().add(consignado.getPrecoCapa()));
-			
-			if (!consignado.getFornecedor().equals(fornecedor)){
-				
-				contas.add(conta);
-				fornecedor = consignado.getFornecedor();
-				conta = new ContasAPagarDistribDTO();
-			}
-		}
+		resultadoDTO.setTotalDistrib(getListDTO(mapFornecedorTotal));
 		
-		contas.add(conta);
-		
-		dto.setTotalDistrib(contas);
-		
-		return dto;
+		return resultadoDTO;
 	}
 
+	/**
+	 * Sumariza o valor total com desconto por fornecedor
+	 * 
+	 * @param listaConsignados
+	 * @return
+	 */
+	private Map<String, BigDecimal> sumarizarTotalPorFornecedor(
+			List<ContasAPagarConsignadoDTO> listaConsignados) {
+		
+		Map<String, BigDecimal> mapFornecedorTotal = new HashMap<String, BigDecimal>();
+		
+		for (ContasAPagarConsignadoDTO consignado : listaConsignados){
+				
+			BigDecimal valorTotal = BigDecimal.ZERO; 
+			BigDecimal valorConsignado = consignado.getValorComDesconto();
+			
+			if (mapFornecedorTotal.containsKey(consignado.getFornecedor())) {
+				
+				valorTotal = mapFornecedorTotal.get(consignado.getFornecedor());
+			}
+			
+			valorTotal = valorTotal.add(valorConsignado);
+			
+			mapFornecedorTotal.put(consignado.getFornecedor(), valorTotal);
+		}
+		
+		return mapFornecedorTotal;
+	}
+
+	/**
+	 * Transforma o map de Fornecedor/ValorTotalComDesconto em uma lista de ContasAPagarDistribDTO
+	 * que está sendo utilizado para exibir as informações 
+	 * 
+	 * @param mapFornecedorTotal
+	 * @return
+	 */
+	private List<ContasAPagarDistribDTO> getListDTO(Map<String, BigDecimal> mapFornecedorTotal) {
+		
+		List<ContasAPagarDistribDTO> contas = new ArrayList<ContasAPagarDistribDTO>();
+		
+		for(Map.Entry<String, BigDecimal> fornecedorTotal : mapFornecedorTotal.entrySet()) {
+			
+			contas.add(
+					new ContasAPagarDistribDTO(fornecedorTotal.getKey(), 
+											   fornecedorTotal.getValue()));
+		}
+		
+		return contas;
+	}
+	
 	@Transactional
 	@Override
 	public ContasAPagarTotalDistribDTO<ContasAPagarEncalheDTO> pesquisarDetalheEncalhe(FiltroContasAPagarDTO filtro) {
