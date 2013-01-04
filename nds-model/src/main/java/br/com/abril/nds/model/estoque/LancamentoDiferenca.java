@@ -11,6 +11,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
@@ -47,8 +48,11 @@ public class LancamentoDiferenca implements Serializable {
 	@JoinColumn(name = "MOVIMENTO_ESTOQUE_ID")
 	private MovimentoEstoque movimentoEstoque;
 	
-	@OneToMany(mappedBy="lancamentoDiferenca")
-	private List<MovimentoEstoqueCota> movimentoEstoqueCota;
+	@OneToMany
+	@JoinTable(name = "LANCAMENTO_DIFERENCA_MOVIMENTO_ESTOQUE_COTA",
+			   joinColumns = {@JoinColumn(name = "LANCAMENTO_DIFERENCA_ID")}, 
+			   inverseJoinColumns = {@JoinColumn(name = "MOVIMENTO_ESTOQUE_COTA_ID")})
+	private List<MovimentoEstoqueCota> movimentosEstoqueCota;
 	
 	/**
 	 * Motivo do status de aprovação
@@ -104,12 +108,12 @@ public class LancamentoDiferenca implements Serializable {
         this.motivo = motivo;
     }
 
-	public List<MovimentoEstoqueCota> getMovimentoEstoqueCota() {
-		return movimentoEstoqueCota;
+	public List<MovimentoEstoqueCota> getMovimentosEstoqueCota() {
+		return movimentosEstoqueCota;
 	}
 
-	public void setMovimentoEstoqueCota(
-			List<MovimentoEstoqueCota> movimentoEstoqueCota) {
-		this.movimentoEstoqueCota = movimentoEstoqueCota;
+	public void setMovimentosEstoqueCota(
+			List<MovimentoEstoqueCota> movimentosEstoqueCota) {
+		this.movimentosEstoqueCota = movimentosEstoqueCota;
 	}
 }

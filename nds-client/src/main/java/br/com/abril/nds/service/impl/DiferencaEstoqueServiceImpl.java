@@ -180,7 +180,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 	@Override
 	@Transactional
 	public void gerarMovimentoEstoqueDiferenca(Diferenca diferenca, Long idUsuario) {
-		gerarMovimentoEstoque(diferenca, idUsuario);
+		gerarMovimentoEstoque(diferenca, idUsuario,true);
 	}
 	
 	@Transactional
@@ -327,7 +327,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 		
 		for (Diferenca diferenca : listaDiferencas) {
 			
-			MovimentoEstoque movimentoEstoque = this.gerarMovimentoEstoque(diferenca, idUsuario);
+			MovimentoEstoque movimentoEstoque = this.gerarMovimentoEstoque(diferenca, idUsuario,false);
 				
 			List<MovimentoEstoqueCota> listaMovimentosEstoqueCota = null;
 				
@@ -723,13 +723,15 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 	/*
 	 * Efetua a geração da movimentação de estoque para diferença.
 	 */
-	private MovimentoEstoque gerarMovimentoEstoque(Diferenca diferenca, Long idUsuario) {
+	private MovimentoEstoque gerarMovimentoEstoque(Diferenca diferenca, Long idUsuario, boolean isAprovacaoAutomatica) {
 		
 		TipoMovimentoEstoque tipoMovimentoEstoque =
 			this.tipoMovimentoRepository.buscarTipoMovimentoEstoque(
 				diferenca.getTipoDiferenca().getTipoMovimentoEstoque());
 		
-		tipoMovimentoEstoque.setAprovacaoAutomatica(true);
+		if(isAprovacaoAutomatica){
+			tipoMovimentoEstoque.setAprovacaoAutomatica(true);
+		}
 		
 		return this.movimentoEstoqueService.gerarMovimentoEstoque(
 			diferenca.getProdutoEdicao().getId(), idUsuario,
@@ -766,7 +768,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 		lancamentoDiferenca.setDataProcessamento(new Date());
 		lancamentoDiferenca.setDiferenca(diferenca);
 		lancamentoDiferenca.setMovimentoEstoque(movimentoEstoque);
-		lancamentoDiferenca.setMovimentoEstoqueCota(listaMovimentosEstoqueCota);
+		lancamentoDiferenca.setMovimentosEstoqueCota(listaMovimentosEstoqueCota);
 		lancamentoDiferenca.setStatus(statusAprovacao);
 		
 		return this.lancamentoDiferencaRepository.merge(lancamentoDiferenca);
