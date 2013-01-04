@@ -19,14 +19,23 @@ public class FiltroFechamentoCEIntegracaoDTO implements Serializable {
 	
 	private PaginacaoVO paginacao;
 	
-	private ColunaOrdenacaoRomaneio ordenacaoColuna;
+	private ColunaOrdenacaoFechamentoCEIntegracao ordenacaoColuna;
 	
 	private Intervalo<Date> periodoRecolhimento;
 	
 	public enum ColunaOrdenacaoFechamentoCEIntegracao {
 
-		COTA("cota");
-		
+		SEQUENCIAL("sequencial"),
+		CODIGO_PRODUTO("codigoProduto"),
+		NOME_PRODUTO("nomeProduto"),
+		NUMERO_EDICAO("numeroEdicao"),
+		REPARTE("reparte"),
+		VENDA("venda"),
+		PRECO_CAPA("precoCapa"),
+		VALOR_VENDA("valorVenda"),
+		TIPO("tipo"),
+		ENCALHE("encalhe");
+
 		private String nomeColuna;
 		
 		private ColunaOrdenacaoFechamentoCEIntegracao(String nomeColuna) {
@@ -71,11 +80,12 @@ public class FiltroFechamentoCEIntegracaoDTO implements Serializable {
 		this.paginacao = paginacao;
 	}
 
-	public ColunaOrdenacaoRomaneio getOrdenacaoColuna() {
+	public ColunaOrdenacaoFechamentoCEIntegracao getOrdenacaoColuna() {
 		return ordenacaoColuna;
 	}
 
-	public void setOrdenacaoColuna(ColunaOrdenacaoRomaneio ordenacaoColuna) {
+	public void setOrdenacaoColuna(
+			ColunaOrdenacaoFechamentoCEIntegracao ordenacaoColuna) {
 		this.ordenacaoColuna = ordenacaoColuna;
 	}
 
