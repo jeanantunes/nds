@@ -800,16 +800,16 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 			null,
 			function(result) {
 				
-				balanceamentoRecolhimentoController.montarResumoPeriodoBalanceamento(result);
-				
-				exibirMensagem(
-					'SUCCESS', 
-					[ 'Configuração reiniciada com sucesso.' ]
-				);
+				if (result){
+				    
+					balanceamentoRecolhimentoController.montarResumoPeriodoBalanceamento(result);	
+					
+					exibirMensagem('SUCCESS',[ 'Configuração reiniciada com sucesso.' ]);
+				}
 			},
 			function(result) {
 				
-				if(result.mensagem && result.mensagem.tratarValidacao == false){
+				if(result && result.mensagem && result.mensagem.tratarValidacao == false){
 
 					$("#resumoPeriodo", balanceamentoRecolhimentoController.workspace).hide();
 				}
