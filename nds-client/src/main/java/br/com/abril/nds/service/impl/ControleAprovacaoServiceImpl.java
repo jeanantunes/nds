@@ -1,5 +1,6 @@
 package br.com.abril.nds.service.impl;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,12 +9,18 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.MovimentoAprovacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroControleAprovacaoDTO;
+import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
+import br.com.abril.nds.model.estoque.Diferenca;
+import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
+import br.com.abril.nds.model.estoque.LancamentoDiferenca;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.movimentacao.Movimento;
 import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.repository.DiferencaEstoqueRepository;
+import br.com.abril.nds.repository.LancamentoDiferencaRepository;
 import br.com.abril.nds.repository.MovimentoRepository;
 import br.com.abril.nds.service.ControleAprovacaoService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
@@ -32,6 +39,12 @@ public class ControleAprovacaoServiceImpl implements ControleAprovacaoService {
 
 	@Autowired
 	private MovimentoEstoqueService movimentoEstoqueService;
+	
+	@Autowired
+	private LancamentoDiferencaRepository lancamentoDiferencaRepository;
+	
+	@Autowired
+	private DiferencaEstoqueRepository diferencaEstoqueRepository;
 	
 	@Override
 	@Transactional(readOnly = true)
@@ -72,7 +85,59 @@ public class ControleAprovacaoServiceImpl implements ControleAprovacaoService {
 			movimento.setMotivo(motivo);
 			
 			this.movimentoRepository.alterar(movimento);
+			
+			this.tratarRejeicaoMovimentoDiferenca(movimento);
 		}
+	}
+	
+	private void tratarRejeicaoMovimentoDiferenca(Movimento movimento) {
+		
+		List<GrupoMovimentoEstoque> gruposMovimentoEstoque = 
+			Arrays.asList(GrupoMovimentoEstoque.FALTA_DE, GrupoMovimentoEstoque.FALTA_EM,
+						  GrupoMovimentoEstoque.SOBRA_DE, GrupoMovimentoEstoque.SOBRA_EM);
+		
+		if (movimento instanceof MovimentoEstoque) {
+			
+			MovimentoEstoque movimentoEstoque = (MovimentoEstoque) movimento;
+			
+			TipoMovimentoEstoque tipoMovimentoEstoque = (TipoMovimentoEstoque) movimento.getTipoMovimento();
+			
+			if (gruposMovimentoEstoque.contains(tipoMovimentoEstoque.getGrupoMovimentoEstoque())) {
+				
+				LancamentoDiferenca lancamentoDiferenca =
+					this.lancamentoDiferencaRepository.obterLancamentoDiferencaEstoque(movimentoEstoque.getId());
+				
+				this.atualizarStatusDiferenca(lancamentoDiferenca);
+			}
+		}
+		
+		if (movimento instanceof MovimentoEstoqueCota) {
+			
+			MovimentoEstoqueCota movimentoEstoqueCota = (MovimentoEstoqueCota) movimento;
+			
+			TipoMovimentoEstoque tipoMovimentoEstoque = (TipoMovimentoEstoque) movimento.getTipoMovimento();
+			
+			if (gruposMovimentoEstoque.contains(tipoMovimentoEstoque.getGrupoMovimentoEstoque())) {
+				
+				LancamentoDiferenca lancamentoDiferenca =
+					this.lancamentoDiferencaRepository.obterLancamentoDiferencaEstoqueCota(movimentoEstoqueCota.getId());
+				
+				this.atualizarStatusDiferenca(lancamentoDiferenca);
+			}
+		}
+	}
+
+	private void atualizarStatusDiferenca(LancamentoDiferenca lancamentoDiferenca) {
+		
+		lancamentoDiferenca.setStatus(StatusAprovacao.REJEITADO);
+		
+		this.lancamentoDiferencaRepository.merge(lancamentoDiferenca);
+		
+		Diferenca diferenca = lancamentoDiferenca.getDiferenca();
+		
+		diferenca.setStatusConfirmacao(StatusConfirmacao.CANCELADO);
+		
+		this.diferencaEstoqueRepository.merge(diferenca);
 	}
 	
 	@Override
