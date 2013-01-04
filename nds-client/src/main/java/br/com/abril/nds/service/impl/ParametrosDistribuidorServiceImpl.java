@@ -793,10 +793,9 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 	
 	private List<GrupoMovimentoFinaceiro> getGruposMovimentoFincanceiroPostergacaoCobranca() {
 		
-		//TODO: verificar qual o grupo de movimento para postergacao cobrança
-		
 		List<GrupoMovimentoFinaceiro> gruposMovimentoFinanceiro = 
-			Arrays.asList(GrupoMovimentoFinaceiro.POSTERGADO_NEGOCIACAO);
+			Arrays.asList(GrupoMovimentoFinaceiro.POSTERGADO_CREDITO,
+						  GrupoMovimentoFinaceiro.POSTERGADO_DEBITO);
 		
 		return gruposMovimentoFinanceiro;
 	}
