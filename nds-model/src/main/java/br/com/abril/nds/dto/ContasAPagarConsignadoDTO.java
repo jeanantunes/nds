@@ -2,6 +2,7 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 
 public class ContasAPagarConsignadoDTO implements Serializable {
 
@@ -9,12 +10,12 @@ public class ContasAPagarConsignadoDTO implements Serializable {
 	
 	private String codigo;
 	private String produto;
-	private Integer edicao;
+	private Long edicao;
 	private BigDecimal precoCapa;
 	private BigDecimal precoComDesconto;
-	private Integer reparteSugerido;
-	private Integer reparteFinal;
-	private Integer diferenca;
+	private BigInteger reparteSugerido;
+	private BigInteger reparteFinal;
+	private BigInteger diferenca;
 	private String motivo;
 	private String fornecedor;
 	private BigDecimal valor;
@@ -33,10 +34,10 @@ public class ContasAPagarConsignadoDTO implements Serializable {
 	public void setProduto(String produto) {
 		this.produto = produto;
 	}
-	public Integer getEdicao() {
+	public Long getEdicao() {
 		return edicao;
 	}
-	public void setEdicao(Integer edicao) {
+	public void setEdicao(Long edicao) {
 		this.edicao = edicao;
 	}
 	public BigDecimal getPrecoCapa() {
@@ -51,22 +52,22 @@ public class ContasAPagarConsignadoDTO implements Serializable {
 	public void setPrecoComDesconto(BigDecimal precoComDesconto) {
 		this.precoComDesconto = precoComDesconto;
 	}
-	public Integer getReparteSugerido() {
+	public BigInteger getReparteSugerido() {
 		return reparteSugerido;
 	}
-	public void setReparteSugerido(Integer reparteSugerido) {
+	public void setReparteSugerido(BigInteger reparteSugerido) {
 		this.reparteSugerido = reparteSugerido;
 	}
-	public Integer getReparteFinal() {
+	public BigInteger getReparteFinal() {
 		return reparteFinal;
 	}
-	public void setReparteFinal(Integer reparteFinal) {
+	public void setReparteFinal(BigInteger reparteFinal) {
 		this.reparteFinal = reparteFinal;
 	}
-	public Integer getDiferenca() {
+	public BigInteger getDiferenca() {
 		return diferenca;
 	}
-	public void setDiferenca(Integer diferenca) {
+	public void setDiferenca(BigInteger diferenca) {
 		this.diferenca = diferenca;
 	}
 	public String getMotivo() {
