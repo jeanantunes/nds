@@ -32,6 +32,9 @@ public enum Permissao
 	ROLE_LANCAMENTO_RELATORIO_TIPOS_PRODUTOS("Relatório Tipos de Produtos",							  	   Permissao.ROLE_LANCAMENTO),
 	ROLE_LANCAMENTO_HELP("Help",																		   Permissao.ROLE_LANCAMENTO),
 	
+	ROLE_DISTRIBUICAO("Distribuição",																	   null),
+	ROLE_DISTRIBUICAO_AREAINFLUENCIA_GERADORFLUXO("Área de influência / Gerador de Fluxo", 				   Permissao.ROLE_DISTRIBUICAO),
+	
 	ROLE_ESTOQUE("Estoque",																	  			   null),
 	ROLE_ESTOQUE_RECEBIMENTO_FISICO("Recebimento Físico",												   Permissao.ROLE_ESTOQUE),
 	ROLE_ESTOQUE_LANCAMENTO_FALTAS_SOBRAS("Lançamento Faltas e Sobras",									   Permissao.ROLE_ESTOQUE),

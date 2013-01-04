@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.client.vo.ParametrosDistribuidorVO;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.couchdb.CouchDbProperties;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Distribuidor;
@@ -43,6 +44,7 @@ import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.repository.EnderecoDistribuidorRepository;
+import br.com.abril.nds.repository.MovimentoRepository;
 import br.com.abril.nds.repository.ParametroContratoCotaRepository;
 import br.com.abril.nds.repository.ParametrosDistribuidorEmissaoDocumentoRepository;
 import br.com.abril.nds.repository.ParametrosDistribuidorFaltasSobrasRepository;
@@ -52,6 +54,7 @@ import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
 import br.com.abril.nds.service.ParametrosDistribuidorService;
 import br.com.abril.nds.util.CurrencyUtil;
+import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.vo.EnderecoVO;
 
 import com.google.gson.JsonObject;
@@ -97,6 +100,9 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 	
 	@Autowired
 	private TipoMovimentoFinanceiroRepository tipoMovimentoFinanceiroRepository;
+	
+	@Autowired
+	private MovimentoRepository movimentoRepository ;
 	
 	@Autowired
 	private CouchDbProperties couchDbProperties;
@@ -654,6 +660,8 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		// Aprovação
 		distribuidor.setUtilizaControleAprovacao(parametrosDistribuidor.getUtilizaControleAprovacao());
 		
+		this.validarUtilizacaoControleAprovacao(parametrosDistribuidor);
+		
 		ParametrosAprovacaoDistribuidor parametrosAprovacaoDistribuidor = new ParametrosAprovacaoDistribuidor();
 		
 		parametrosAprovacaoDistribuidor.setDebitoCredito(parametrosDistribuidor.getParaDebitosCreditos());
@@ -677,7 +685,7 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		parametrosAprovacaoDistribuidor.setPostergacaoCobranca(parametrosDistribuidor.getPostergacaoCobranca());
 		
 		this.atualizarTiposMovimentoFinanceiro(parametrosDistribuidor,
-									 		   this.getGruposMovimentoFincanceiroPostergacaoCobranca(),
+									 		   this.getGruposMovimentoFinanceiroPostergacaoCobranca(),
 									 		   !parametrosDistribuidor.getPostergacaoCobranca());
 		
 		parametrosAprovacaoDistribuidor.setDevolucaoFornecedor(parametrosDistribuidor.getDevolucaoFornecedor());
@@ -758,6 +766,70 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		this.salvarLogo(imgLogotipo, imgContentType);
 	}
 	
+	private void validarUtilizacaoControleAprovacao(ParametrosDistribuidorVO parametrosDistribuidor) {
+		
+		List<String> mensagens = new ArrayList<>();
+		
+		if (!parametrosDistribuidor.getParaDebitosCreditos()) {
+			if (this.movimentoRepository
+					.existeMovimentoFinanceiroPendente(getGruposMovimentoFinanceiroDebitosCreditos())) {
+	
+				mensagens.add(
+					"Não é possível não utilizar controle de aprovação para débitos e créditos. Existem movimentos pendentes!");
+			}
+		}
+
+		if (!parametrosDistribuidor.getNegociacao()) {
+			if (this.movimentoRepository
+					.existeMovimentoFinanceiroPendente(getGruposMovimentoFinanceiroNegociacao())) {
+
+				mensagens.add(
+					"Não é possível não utilizar controle de aprovação para negociação. Existem movimentos pendentes!");
+			}
+		}
+
+		if (!parametrosDistribuidor.getAjusteEstoque()) {
+			if (this.movimentoRepository
+					.existeMovimentoEstoquePendente(getGruposMovimentoEstoqueAjusteEstoque())) {
+
+				mensagens.add(
+					"Não é possível não utilizar controle de aprovação para ajuste de estoque. Existem movimentos pendentes!");
+			}
+		}
+
+		if (!parametrosDistribuidor.getPostergacaoCobranca()) {
+			if (this.movimentoRepository
+					.existeMovimentoFinanceiroPendente(getGruposMovimentoFinanceiroPostergacaoCobranca())) {
+
+				mensagens.add(
+					"Não é possível não utilizar controle de aprovação para postergacao de cobranca. Existem movimentos pendentes!");
+			}
+		}
+
+		if (!parametrosDistribuidor.getDevolucaoFornecedor()) {
+			if (this.movimentoRepository
+					.existeMovimentoEstoquePendente(getGruposMovimentoEstoqueDevolucaoFornecedor())) {
+
+				mensagens.add(
+					"Não é possível não utilizar controle de aprovação para devolucao fornecedor. Existem movimentos pendentes!");
+			}
+		}
+
+		if (!parametrosDistribuidor.getFaltasSobras()) {
+			if (this.movimentoRepository
+					.existeMovimentoEstoquePendente(getGruposMovimentoEstoqueFaltasSobras())) {
+
+				mensagens.add(
+					"Não é possível não utilizar controle de aprovação para faltas e sobras. Existem movimentos pendentes!");
+			}
+		}
+		
+		if (!mensagens.isEmpty()) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, mensagens);
+		}
+	}
+	
 	private List<GrupoMovimentoFinaceiro> getGruposMovimentoFinanceiroDebitosCreditos() {
 		
 		List<GrupoMovimentoFinaceiro> gruposMovimentoFinanceiro = 
@@ -791,7 +863,7 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		return gruposMovimentoEstoque;
 	}
 	
-	private List<GrupoMovimentoFinaceiro> getGruposMovimentoFincanceiroPostergacaoCobranca() {
+	private List<GrupoMovimentoFinaceiro> getGruposMovimentoFinanceiroPostergacaoCobranca() {
 		
 		List<GrupoMovimentoFinaceiro> gruposMovimentoFinanceiro = 
 			Arrays.asList(GrupoMovimentoFinaceiro.POSTERGADO_CREDITO,
