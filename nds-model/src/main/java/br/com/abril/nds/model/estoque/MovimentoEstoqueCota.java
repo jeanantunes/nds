@@ -71,19 +71,15 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque implements C
 	@JoinColumn(name = "LANCAMENTO_ID")
 	private Lancamento lancamento;
 
-	@ManyToOne(optional = true)
-	@JoinColumn(name = "PRODUTO_EDICAO_ID", referencedColumnName = "PRODUTO_EDICAO_ID", insertable = false, updatable = false)
-	private Lancamento lancamentoProdutoEdicao;
+//	@ManyToOne(optional = true)
+//	@JoinColumn(name = "PRODUTO_EDICAO_ID", referencedColumnName = "PRODUTO_EDICAO_ID", insertable = false, updatable = false)
+//	private Lancamento lancamentoProdutoEdicao;
 	
 	@ManyToMany(mappedBy="listaMovimentoEstoqueCota")
 	private List<ItemNotaEnvio> listaItemNotaEnvio;
 
 	@Column(name = "STATUS_ESTOQUE_FINANCEIRO")
 	private StatusEstoqueFinanceiro statusEstoqueFinanceiro;
-	
-	@ManyToOne(optional = true)
-	@JoinColumn(name = "LANCAMENTO_DIFERENCA_ID")
-	private LancamentoDiferenca lancamentoDiferenca;
 	
 	public Object clone() {
 
@@ -232,14 +228,6 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque implements C
 	public void setMovimentoEstoqueCotaFuro(
 			MovimentoEstoqueCota movimentoEstoqueCotaFuro) {
 		this.movimentoEstoqueCotaFuro = movimentoEstoqueCotaFuro;
-	}
-
-	public LancamentoDiferenca getLancamentoDiferenca() {
-		return lancamentoDiferenca;
-	}
-
-	public void setLancamentoDiferenca(LancamentoDiferenca lancamentoDiferenca) {
-		this.lancamentoDiferenca = lancamentoDiferenca;
 	}
 
 	public Date getDataLancamentoOriginal() {
