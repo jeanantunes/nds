@@ -12,6 +12,7 @@ function TipoCotaGarantia(workspace) {
     this.controllerType = null;
     var _this = this;
     this.confirmDialog = new ConfirmDialog('Ao mudar de garantia, os dados da garantia anterior serão perdidos.</br>Deseja continuar?', function() {
+    	
         _this.changeController(_this.newControllerType);
         return true;
     }, function() {
@@ -120,7 +121,11 @@ TipoCotaGarantia.prototype.getData = function() {
 	            _this.controllerType = result.tipo;
 	            _this.changeController(result.tipo);
 	            
-	            $("#tipoGarantiaSelect", _workspace).val(result.tipo).change();
+	            if(result.tipo != undefined) {
+	            	$('#tipoGarantiaSelect option[value="'+ result.tipo +'"]').prop('selected', true);
+	            }
+	            
+	            $("#cotaGarantiaChequeCaucaoImagem").empty();
 	
 	            _this.configTipoCotaGarantia(result);
 	
@@ -249,24 +254,27 @@ TipoCotaGarantia.prototype.bindEvents = function() {
     $("#tipoGarantiaSelect", _workspace).change(function(eventObject) {
         var valor = $(this).val();
         if (valor.length > 0) {
+        	
             _this.changeController(valor);
         }
     }).change();
 };
 
 TipoCotaGarantia.prototype.onChange = function(newControllerType) {
-    if (this.cotaGarantia && this.cotaGarantia.id && this.cotaGarantia.controllerType == this.controllerType) {
+    if (this.cotaGarantia && this.cotaGarantia.id && this.cotaGarantia.tipoGarantia == this.controllerType) {
         this.newControllerType = newControllerType;
         if (this.newControllerType != this.controllerType) {
             this.confirmDialog.open();
         }
     } else {
         this.newControllerType = null;
+        
         this.changeController(newControllerType);
     }
 };
 
 TipoCotaGarantia.prototype.changeController = function(newControllerType) {
+	
     if (this.controller) {
         this.controller.toggle();
         if(this.controller.destroy){
@@ -492,7 +500,7 @@ NotaPromissoria.prototype.obterNotaPromissoria = function(idCota){
  * @returns {ChequeCaucao}
  */
 function ChequeCaucao(idCota, cotaGarantia) {
-    this.idCota = idCota;
+	this.idCota = idCota;
     this.cotaGarantia = cotaGarantia;
     this.bindEvents();
     if (tipoCotaGarantia.isModoTelaCadastroCota()) {
@@ -514,8 +522,7 @@ function ChequeCaucao(idCota, cotaGarantia) {
                 numeroCheque : null,
                 emissao : null,
                 validade : null,
-                correntista : null,
-                image: null
+                correntista : null
             };
         }
     } else {
@@ -580,40 +587,47 @@ ChequeCaucao.prototype.toggle = function() {
     }
 };
 
+ChequeCaucao.prototype.uploadFormOnSubmit = function() {
+	$('#idCheque').val(tipoCotaGarantia.controller.chequeCaucao.id);
+	
+	if(tipoCotaGarantia.controller.chequeCaucao.id) {
+        if (!$('#cotaGarantiaChequeCaucaoUpload').val()) {
+            exibirMensagemDialog('WARNING', ['Escolha um arquivo para ser enviado.'], "");
+            return false;
+        }
+
+        return true;
+    }
+    if(!tipoCotaGarantia.controller.chequeCaucao.id) {
+        exibirMensagemDialog('WARNING', ['Cheque deve estar salvo antes do envio.'], "");
+        return false;
+    }
+    
+};
+
 ChequeCaucao.prototype.initUploadForm = function() {
     var _this = this;
-    $('#cotaGarantiaChequeCaucaoFormUpload').bind('submit', function(e) {
-        e.preventDefault(); // <-- important
-        $(this).ajaxSubmit({
-            beforeSubmit: function(arr, formData, options) {
-                if(_this.chequeCaucao.id){
-                    if (!$('#cotaGarantiaChequeCaucaoUpload').val()) {
-                        exibirMensagemDialog('WARNING', ['Escolha um arquivo para ser enviado.'], "");
-                        return false;
-                    }
+    
+    $('#cotaGarantiaChequeCaucaoFormUpload').ajaxForm({
+        beforeSend: function() {
+        	
+        },
+    	complete: function(data) {
+    		
+    		var returnJSON = jQuery.parseJSON(data.responseText);
+    		
+    		var mensagens = returnJSON.result;
+    		
+            var tipoMensagem = mensagens.tipoMensagem;
+            var listaMensagens = mensagens.listaMensagens;
 
-                    return true;
-                }else{
-                    exibirMensagemDialog('WARNING', ['Cheque deve estar salvo antes do envio.'], "");
-                    return false;
-                }
-            },
-            success:function(responseText, statusText, xhr, $form)  {
-                var mensagens = (responseText.mensagens)?responseText.mensagens:responseText.result;
-                var tipoMensagem = mensagens.tipoMensagem;
-                var listaMensagens = mensagens.listaMensagens;
-
-                if (tipoMensagem && listaMensagens) {
-                    exibirMensagemDialog(tipoMensagem, listaMensagens,"");
-                }
-                _this.loadImage();
-            } ,
-            url:  _this.path + 'uploadCheque',
-            type: 'POST',
-            dataType:  'json',
-            data: {idCheque:_this.chequeCaucao.id}
-        });
-    });
+            if (tipoMensagem && listaMensagens) {
+                exibirMensagemDialog(tipoMensagem, listaMensagens,"");
+            }
+            _this.loadImage();
+    	}
+    }); 
+    
 };
 
 ChequeCaucao.prototype.obterChequeCaucao = function(idCota){
@@ -686,7 +700,7 @@ ChequeCaucao.prototype.loadImage = function(){
     $("#cotaGarantiaChequeCaucaoImagemPanel").toggle(false);
     var imgPath = this.path + 'getImageCheque?modoTela=' + tipoCotaGarantia.getModoTela().value;
     if (tipoCotaGarantia.isModoTelaCadastroCota()) {
-        imgPath+= '&idCheque=' + this.chequeCaucao.id;
+        imgPath+= '&idCheque=' + (this.chequeCaucao.id ? this.chequeCaucao.id : tipoCotaGarantia.controller.chequeCaucao.id);
     } else {
         imgPath+= '&idCota=' + tipoCotaGarantia.getIdCota() + '&idHistorico=' + tipoCotaGarantia.getIdHistorico();
     }
