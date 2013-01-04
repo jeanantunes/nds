@@ -95,4 +95,10 @@ public interface PdvRepository extends Repository<PDV, Long> {
      * @return List<PDV>
      */
 	List<PDV> obterPDVPorCotaEEndereco(Integer numCota, String municipio, String uf, String bairro, String cep);
+	
+	/**
+	 * Remove Relacionamentos do PDV com Rotas
+	 * @param idPdv
+	 */
+	void removeCotaPDVbyPDV(Long idPdv);
 }

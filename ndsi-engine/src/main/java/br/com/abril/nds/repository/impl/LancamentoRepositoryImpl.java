@@ -1389,9 +1389,9 @@ public class LancamentoRepositoryImpl extends
 		
 		criteria.add(Restrictions.eq("produtoEdicao.id", idProdutoEdicao));
 
-		criteria.add(Restrictions.ne("status", StatusLancamento.EXCLUIDO));
+		//criteria.add(Restrictions.ne("status", StatusLancamento.EXCLUIDO));
 		
-		criteria.add(Restrictions.ne("status", StatusLancamento.FURO));
+		//criteria.add(Restrictions.ne("status", StatusLancamento.FURO));
 		
 		return (Date) criteria.uniqueResult();
 	}
@@ -1404,9 +1404,9 @@ public class LancamentoRepositoryImpl extends
 		
 		criteria.add(Restrictions.eq("produtoEdicao.id", idProdutoEdicao));
 		
-		criteria.add(Restrictions.ne("status", StatusLancamento.EXCLUIDO));
+		//criteria.add(Restrictions.ne("status", StatusLancamento.EXCLUIDO));
 		
-		criteria.add(Restrictions.ne("status", StatusLancamento.FURO));
+		//criteria.add(Restrictions.ne("status", StatusLancamento.FURO));
 		
 		return (Date) criteria.uniqueResult();
 	}
