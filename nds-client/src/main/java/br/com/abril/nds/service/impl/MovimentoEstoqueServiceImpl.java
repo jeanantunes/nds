@@ -294,11 +294,12 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 		movimentoEstoque.setTipoMovimento(tipoMovimentoEstoque);
 		movimentoEstoque.setQtde(quantidade);
 		movimentoEstoque.setOrigem(origem);
-
+		movimentoEstoque.setAprovadoAutomaticamente(tipoMovimentoEstoque.isAprovacaoAutomatica());
+		
 		movimentoEstoqueRepository.adicionar(movimentoEstoque);
 
 		if (tipoMovimentoEstoque.isAprovacaoAutomatica()) {
-
+		
 			controleAprovacaoService.realizarAprovacaoMovimento(movimentoEstoque, usuario);
 		}
 
