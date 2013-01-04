@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
+import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Export.Alignment;
 import br.com.abril.nds.util.export.Exportable;
@@ -14,35 +15,35 @@ public class FechamentoCEIntegracaoDTO implements Serializable {
 	private static final long serialVersionUID = -6711767359292325571L;
 
 	@Export(label = "Sequencial", alignment = Alignment.LEFT, exhibitionOrder = 1)
-	private Integer sequencial;
+	private Long sequencial;
 	
 	@Export(label = "Código", alignment = Alignment.LEFT, exhibitionOrder = 2)
-	private String codigo;
+	private String codigoProduto;
 	
 	@Export(label = "Produto", alignment = Alignment.LEFT, exhibitionOrder = 3)
-	private String produto;
+	private String nomeProduto;
 	
 	@Export(label = "Edição", alignment = Alignment.CENTER, exhibitionOrder = 4)
-	private Long edicao;
+	private Long numeroEdicao;
 	
-	@Export(label = "Reparte", alignment = Alignment.CENTER, exhibitionOrder = 6)
+	@Export(label = "Reparte", alignment = Alignment.CENTER, exhibitionOrder = 5)
 	private BigInteger reparte;
-	
-	@Export(label = "Encalhe", alignment = Alignment.CENTER, exhibitionOrder = 7)
-	private BigInteger encalhe;
 
-	@Export(label = "Venda", alignment = Alignment.CENTER, exhibitionOrder = 8)
+	@Export(label = "Venda", alignment = Alignment.CENTER, exhibitionOrder = 6)
 	private BigInteger venda;
-	
-	@Export(label = "Preço Capa R$", alignment = Alignment.RIGHT, exhibitionOrder = 9)
+
+	@Export(label = "Preço Capa R$", alignment = Alignment.RIGHT, exhibitionOrder = 7)
 	private BigDecimal precoCapa;
+
+	private BigDecimal valorVenda;
+
+	@Export(label = "Encalhe", alignment = Alignment.CENTER, exhibitionOrder = 8)
+	private BigInteger encalhe;
 	
-	@Export(label = "Valor Venda R$", alignment = Alignment.RIGHT, exhibitionOrder = 10)
+	@Export(label = "Valor Venda R$", alignment = Alignment.RIGHT, exhibitionOrder = 9)
 	private String valorVendaFormatado;
 	
 	private Boolean tipo;
-	
-	private BigDecimal desconto;
 	
 	private String tipoFormatado;
 	
@@ -54,45 +55,50 @@ public class FechamentoCEIntegracaoDTO implements Serializable {
 	public String getTipoFormatado() {
 		return tipoFormatado;
 	}
-	
-	public String getCodigo() {
-		return codigo;
-	}
-	public void setCodigo(String codigo) {
-		this.codigo = codigo;
-	}
-	public String getProduto() {
-		return produto;
-	}
-	public void setProduto(String produto) {
-		this.produto = produto;
-	}
-	public Long getEdicao() {
-		return edicao;
-	}
-	public void setEdicao(Long edicao) {
-		this.edicao = edicao;
+
+	public Boolean getTipo() {
+		return tipo;
 	}
 	
-	public BigDecimal getPrecoCapa() {
-		return precoCapa;
+	public void setTipo(Boolean tipo) {
+		this.tipo = tipo;
+		if(tipo){
+			tipoFormatado = "Final";
+		}else{
+			tipoFormatado = "Parcial";
+		}
 	}
-	public void setPrecoCapa(BigDecimal precoCapa) {
-		this.precoCapa = precoCapa;
-	}
-	public BigInteger getEncalhe() {
-		return encalhe;
-	}
-	public void setEncalhe(BigInteger encalhe) {
-		this.encalhe = encalhe;
-	}
-	
-	public Integer getSequencial() {
+
+	public Long getSequencial() {
 		return sequencial;
 	}
 
-	public void setSequencial(Integer sequencial) {
+	public void setSequencial(Long sequencial) {
 		this.sequencial = sequencial;
+	}
+
+	public String getCodigoProduto() {
+		return codigoProduto;
+	}
+
+	public void setCodigoProduto(String codigoProduto) {
+		this.codigoProduto = codigoProduto;
+	}
+
+	public String getNomeProduto() {
+		return nomeProduto;
+	}
+
+	public void setNomeProduto(String nomeProduto) {
+		this.nomeProduto = nomeProduto;
+	}
+
+	public Long getNumeroEdicao() {
+		return numeroEdicao;
+	}
+
+	public void setNumeroEdicao(Long numeroEdicao) {
+		this.numeroEdicao = numeroEdicao;
 	}
 
 	public BigInteger getReparte() {
@@ -111,33 +117,33 @@ public class FechamentoCEIntegracaoDTO implements Serializable {
 		this.venda = venda;
 	}
 
-	public String getvalorVendaFormatado() {
+	public BigDecimal getPrecoCapa() {
+		return precoCapa;
+	}
+
+	public void setPrecoCapa(BigDecimal precoCapa) {
+		this.precoCapa = precoCapa;
+	}
+
+	public BigDecimal getValorVenda() {
+		return valorVenda;
+	}
+
+	public void setValorVenda(BigDecimal valorVenda) {
+		this.valorVenda = valorVenda;
+		this.valorVendaFormatado = CurrencyUtil.formatarValor(valorVenda);
+	}
+
+	public BigInteger getEncalhe() {
+		return encalhe;
+	}
+
+	public void setEncalhe(BigInteger encalhe) {
+		this.encalhe = encalhe;
+	}
+
+	public String getValorVendaFormatado() {
 		return valorVendaFormatado;
-	}
-
-	public void setvalorVendaFormatado(String valorVendaFormatado) {
-		this.valorVendaFormatado = valorVendaFormatado;
-	}
-
-	public Boolean getTipo() {
-		return tipo;
-	}
-	
-	public void setTipo(Boolean tipo) {
-		this.tipo = tipo;
-		if(tipo){
-			tipoFormatado = "Final";
-		}else{
-			tipoFormatado = "Parcial";
-		}
-	}
-
-	public BigDecimal getDesconto() {
-		return desconto;
-	}
-
-	public void setDesconto(BigDecimal desconto) {
-		this.desconto = desconto;
 	}
 
 	public Long getIdCota() {
@@ -155,5 +161,5 @@ public class FechamentoCEIntegracaoDTO implements Serializable {
 	public void setIdProdutoEdicao(Long idProdutoEdicao) {
 		this.idProdutoEdicao = idProdutoEdicao;
 	}
-	
+
 }
