@@ -84,6 +84,23 @@ public class PaginacaoVO implements Serializable {
 		}
 	
 	
+	public PaginacaoVO(String sortname, String sortorder) {
+		
+		this.sortOrder = sortorder;
+		
+		if (ASC.equalsIgnoreCase(sortOrder)) {
+			
+			this.ordenacao = Ordenacao.ASC;
+			
+		} else if (DESC.equalsIgnoreCase(sortOrder)) {
+			
+			this.ordenacao = Ordenacao.DESC;
+		}
+		
+		this.sortColumn = sortname;
+	}
+
+
 	public enum Ordenacao {
 		
 		ASC(PaginacaoVO.ASC),
