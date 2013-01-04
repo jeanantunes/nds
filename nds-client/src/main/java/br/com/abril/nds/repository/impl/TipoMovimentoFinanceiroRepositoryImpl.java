@@ -1,5 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
+import java.util.List;
+
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
@@ -26,6 +28,17 @@ public class TipoMovimentoFinanceiroRepositoryImpl extends AbstractRepositoryMod
 		criteria.setMaxResults(1);
 		
 		return (TipoMovimentoFinanceiro) criteria.uniqueResult();
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<TipoMovimentoFinanceiro> buscarTiposMovimentoFinanceiro(List<GrupoMovimentoFinaceiro> gruposMovimentoFinanceiro) {
+
+		Criteria criteria = super.getSession().createCriteria(TipoMovimentoFinanceiro.class);
+		
+		criteria.add(Restrictions.in("grupoMovimentoFinaceiro", gruposMovimentoFinanceiro));
+		
+		return criteria.list();
 	}
 
 	@Override

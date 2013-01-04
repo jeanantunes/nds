@@ -1,18 +1,21 @@
 package br.com.abril.nds.service.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.client.vo.FechamentoCEIntegracaoVO;
 import br.com.abril.nds.dto.FechamentoCEIntegracaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroFechamentoCEIntegracaoDTO;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.repository.FechamentoCEIntegracaoRepository;
 import br.com.abril.nds.service.FechamentoCEIntegracaoService;
-import br.com.abril.nds.util.CurrencyUtil;
+import br.com.abril.nds.util.CellModelKeyValue;
+import br.com.abril.nds.util.TableModel;
+import br.com.abril.nds.util.TipoMensagem;
 
 @Service
 public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracaoService {
@@ -22,11 +25,10 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 
 	@Transactional
 	public List<FechamentoCEIntegracaoDTO> buscarFechamentoEncalhe(FiltroFechamentoCEIntegracaoDTO filtro) {
-		
 		return this.fechamentoCEIntegracaoRepository.buscarConferenciaEncalhe(filtro);
 	}
 	
-	@Override
+	/*@Override
 	public List<FechamentoCEIntegracaoDTO> calcularVenda(List<FechamentoCEIntegracaoDTO> listaFechamento) {
 		List<FechamentoCEIntegracaoDTO> lista = new ArrayList<FechamentoCEIntegracaoDTO>();
 		int sequencial = 1;
@@ -39,7 +41,7 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 			lista.add(dto);
 		}
 		return lista;		
-	}
+	}*/
 
 	@Override
 	@Transactional
@@ -54,6 +56,31 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 		return this.fechamentoCEIntegracaoRepository.verificarStatusSemana(filtro);
 	}
 
-	
+	@Override
+	@Transactional(readOnly=true)
+	public FechamentoCEIntegracaoVO construirFechamentoCEIntegracaoVO(FiltroFechamentoCEIntegracaoDTO filtro) {
+		
+		List<FechamentoCEIntegracaoDTO> listaFechamento = this.buscarFechamentoEncalhe(filtro);
+		
+		if(listaFechamento.size() == 0){
+			throw new ValidacaoException(TipoMensagem.WARNING, "A pesquisa realizada não obteve resultado.");
+		}
+		
+		TableModel<CellModelKeyValue<FechamentoCEIntegracaoDTO>> tableModel = new TableModel<CellModelKeyValue<FechamentoCEIntegracaoDTO>>();
+
+		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaFechamento));
+		
+		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
+		
+		tableModel.setTotal(listaFechamento.size());
+		
+		FechamentoCEIntegracaoVO fechamentoCEIntegracaoVO = new FechamentoCEIntegracaoVO();
+		fechamentoCEIntegracaoVO.setListaFechamento(tableModel);
+		fechamentoCEIntegracaoVO.setSemanaFechada(this.verificarStatusSemana(filtro));
+
+		// TODO: TOTAIS AQUI
+		
+		return fechamentoCEIntegracaoVO;
+	}
 	
 }
