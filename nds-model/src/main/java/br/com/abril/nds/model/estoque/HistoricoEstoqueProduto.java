@@ -27,7 +27,7 @@ public class HistoricoEstoqueProduto {
 	@Column(name = "ID")
 	private Long id;
 	
-	@Temporal(TemporalType.TIMESTAMP)
+	@Temporal(TemporalType.DATE)
 	@Column(name = "DATA", nullable = false)
 	private Date data;
 
@@ -57,6 +57,25 @@ public class HistoricoEstoqueProduto {
 	@Column(name = "VERSAO")
 	private Long versao = 0L;
 	
+	public HistoricoEstoqueProduto() {
+	}
+	
+	public HistoricoEstoqueProduto(Date data, ProdutoEdicao produtoEdicao,
+			BigInteger qtde, BigInteger qtdeSuplementar,
+			BigInteger qtdeDevolucaoEncalhe,
+			BigInteger qtdeDevolucaoFornecedor, BigInteger qtdeJuramentado,
+			BigInteger qtdeDanificado) {
+		super();
+		this.data = data;
+		this.produtoEdicao = produtoEdicao;
+		this.qtde = qtde;
+		this.qtdeSuplementar = qtdeSuplementar;
+		this.qtdeDevolucaoEncalhe = qtdeDevolucaoEncalhe;
+		this.qtdeDevolucaoFornecedor = qtdeDevolucaoFornecedor;
+		this.qtdeJuramentado = qtdeJuramentado;
+		this.qtdeDanificado = qtdeDanificado;
+	}
+
 	public Long getId() {
 		return id;
 	}

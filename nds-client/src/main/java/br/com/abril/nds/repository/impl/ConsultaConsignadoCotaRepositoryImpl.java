@@ -43,7 +43,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		   .append("        produto.nome as nomeProduto, ")	
 		   .append("        pe.numeroEdicao as numeroEdicao, ")
 		   .append("        pessoa.razaoSocial as nomeFornecedor, ")
-		   .append("        CASE WHEN movimentoEstoqueCotaFuro is not null THEN movimento.dataCriacao ")
+		   .append("        CASE WHEN movimentoEstoqueCotaFuro is not null THEN movimento.dataLancamentoOriginal ")
 		   .append("			 ELSE (CASE WHEN tipoMovimento = :tipoMovimentoCotaFuro THEN movimento.dataCriacao ELSE lancamento.dataLancamentoDistribuidor END) END as dataLancamento, ")
 		   .append("        pe.precoVenda as precoCapa, ")
 		   .append("        ("+ this.getHQLDesconto() +") as desconto, ")
@@ -60,7 +60,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		
 		buscarParametrosConsignadoCota(query, filtro);
 		
-		query.setParameter("tipoMovimentoCotaFuro", tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.ESTORNO_REPARTE_FURO_PUBLICACAO));
+		query.setParameter("tipoMovimentoCotaFuro", tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_FURO_PUBLICACAO));
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(
 				ConsultaConsignadoCotaDTO.class));
@@ -231,16 +231,16 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		StringBuilder hql = new StringBuilder();
 	
 		hql.append(" FROM MovimentoEstoqueCota movimento ");
-		hql.append(" join movimento.lancamento lancamento ");
-		hql.append(" LEFT JOIN movimento.cota as cota ");
-		hql.append(" LEFT JOIN movimento.tipoMovimento as tipoMovimento ");
-		hql.append(" LEFT JOIN movimento.produtoEdicao as pe ");
-		hql.append(" LEFT JOIN pe.produto as produto ");
-		hql.append(" LEFT JOIN cota.parametroCobranca parametroCobranca ");
-		hql.append(" LEFT JOIN produto.fornecedores as fornecedor ");
-		hql.append(" LEFT JOIN fornecedor.juridica as pessoa ");		
-		hql.append(" LEFT JOIN cota.pessoa as pessoaCota ");
-		hql.append(" LEFT JOIN movimento.movimentoEstoqueCotaFuro as movimentoEstoqueCotaFuro ");
+		hql.append(" LEFT join movimento.lancamento lancamento ");
+		hql.append("  JOIN movimento.cota as cota ");
+		hql.append("  JOIN movimento.tipoMovimento as tipoMovimento ");
+		hql.append("  JOIN movimento.produtoEdicao as pe ");
+		hql.append("  JOIN pe.produto as produto ");
+		hql.append("  JOIN cota.parametroCobranca parametroCobranca ");
+		hql.append("  JOIN produto.fornecedores as fornecedor ");
+		hql.append("  JOIN fornecedor.juridica as pessoa ");		
+		hql.append("  JOIN cota.pessoa as pessoaCota ");
+		hql.append("  LEFT JOIN movimento.movimentoEstoqueCotaFuro as movimentoEstoqueCotaFuro ");
 		
 		hql.append(" WHERE tipoMovimento.grupoMovimentoEstoque IN (:tipoMovimento) " );
 		hql.append("   AND parametroCobranca.tipoCota = :tipoCota  " );
@@ -341,7 +341,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 
 		} else {
 			listaGrupoMovimentoEstoquesEntrada.add(GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
-			listaGrupoMovimentoEstoques = listaGrupoMovimentoEstoquesEntrada;
+			listaGrupoMovimentoEstoques.addAll(listaGrupoMovimentoEstoquesEntrada);
 			
 			for(GrupoMovimentoEstoque grupoMovimentoEstoque: GrupoMovimentoEstoque.values()) {
 				if(Dominio.COTA.equals(grupoMovimentoEstoque.getDominio())) {

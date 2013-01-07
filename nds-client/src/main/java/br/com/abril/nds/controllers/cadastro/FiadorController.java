@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.util.PessoaUtil;
+import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.controllers.cadastro.CotasAssociadasController.AssociacaoCota;
 import br.com.abril.nds.controllers.cadastro.GarantiasController.GarantiaCadastrada;
 import br.com.abril.nds.controllers.cadastro.SociosController.SocioCadastrado;
@@ -33,11 +34,11 @@ import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.service.EnderecoService;
 import br.com.abril.nds.service.FiadorService;
+import br.com.abril.nds.service.GarantiaService;
 import br.com.abril.nds.service.PessoaService;
 import br.com.abril.nds.service.TelefoneService;
 import br.com.abril.nds.util.CellModel;
 import br.com.abril.nds.util.DateUtil;
-import br.com.abril.nds.util.ItemAutoComplete;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
@@ -57,7 +58,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/cadastro/fiador")
-public class FiadorController {
+public class FiadorController extends BaseController {
 	
 	public static final String LISTA_TELEFONES_SALVAR_SESSAO = "listaTelefonesSalvarSessaoFiador";
 	
@@ -83,6 +84,9 @@ public class FiadorController {
 	
 	@Autowired
 	private FiadorService fiadorService;
+	
+	@Autowired
+	private GarantiaService garantiaService;
 	
 	@Autowired
 	private PessoaService pessoaService;
@@ -320,7 +324,7 @@ public class FiadorController {
 				}
 			}
 		}
-		
+
 		List<EnderecoAssociacaoDTO> listaExibir = this.enderecoService.buscarEnderecosPorIdPessoa(id, idsIgnorar);
 		
 		this.httpSession.setAttribute(LISTA_ENDERECOS_EXIBICAO, listaExibir);
@@ -360,8 +364,40 @@ public class FiadorController {
 		this.result.use(Results.json()).from(dados == null ? "" : dados, "result").recursive().serialize();
 	}
 	
+	/**
+	 * Verifica se o Fiador possui garantias cadastradas
+	 * @return boolean
+	 */
+	private boolean existeGarantia(Long idFiador){
+	
+	    List<Garantia> garantias = this.garantiaService.obterGarantiasFiador(idFiador, null);
+	    
+	    @SuppressWarnings("unchecked")
+		Set<Long> listaGarantiaRemover = (Set<Long>) 
+				this.httpSession.getAttribute(GarantiasController.LISTA_GARANTIAS_REMOVER_SESSAO);
+	    
+	    if(listaGarantiaRemover!=null && (garantias!=null && garantias.size() > 0)){
+	    
+	    	List<Garantia> garantiasRemover = new ArrayList<Garantia>();
+	    	
+		    for (Garantia garantia : garantias){
+		    	
+		    	if (listaGarantiaRemover.contains(garantia.getId())){
+		    		
+		    		garantiasRemover.add(garantia);
+		    	}
+		    }
+		    
+		    garantias.removeAll(garantiasRemover);
+	    }
+	    
+	    return (garantias!=null && garantias.size() > 0);
+	}
+	
 	@SuppressWarnings("unchecked")
 	private void preencherDadosFiador(Pessoa pessoa) {
+		
+		Long idFiador = (Long) this.httpSession.getAttribute(ID_FIADOR_EDICAO);
 		
 		List<Pessoa> sociosAdicionar = null;
 		
@@ -504,7 +540,10 @@ public class FiadorController {
 		
 		if (listaGarantiaAdicionar == null || listaGarantiaAdicionar.isEmpty()) {
 			
-			mensagensValidacao.add("Cadastre ao menos 1 garantia.");
+			if (!this.existeGarantia(idFiador)){
+			
+			    mensagensValidacao.add("Cadastre ao menos 1 garantia.");
+			}
 		}
 		
 		if (mensagensValidacao != null && !mensagensValidacao.isEmpty()) {
@@ -529,7 +568,7 @@ public class FiadorController {
 				this.httpSession.getAttribute(CotasAssociadasController.LISTA_COTAS_ASSOCIADAS_REMOVER_SESSAO);
 		
 		Fiador fiador = new Fiador();
-		fiador.setId((Long) this.httpSession.getAttribute(ID_FIADOR_EDICAO));
+		fiador.setId(idFiador);
 		fiador.setPessoa(pessoa);
 		
 		this.fiadorService.cadastrarFiador(fiador, sociosAdicionar, sociosRemover, listaEnderecosAdicionar, 
@@ -605,8 +644,8 @@ public class FiadorController {
 				dados.add(DateUtil.formatarDataPTBR(fisica.getDataNascimento()));
 				dados.add(fisica.getOrgaoEmissor());
 				dados.add(fisica.getUfOrgaoEmissor());
-				dados.add(fisica.getEstadoCivil().name());
-				dados.add(fisica.getSexo().name());
+				dados.add(fisica.getEstadoCivil()!=null?fisica.getEstadoCivil().name():null);
+				dados.add(fisica.getSexo()!=null?fisica.getSexo().name():null);
 				dados.add(fisica.getNacionalidade());
 				dados.add(fisica.getNatural());
 				

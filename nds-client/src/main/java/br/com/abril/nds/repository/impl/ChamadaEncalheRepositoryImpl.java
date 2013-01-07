@@ -128,7 +128,7 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		
 		if(indValorTotalProdutos) {
 			
-			hql.append(" select sum( _chamEncCota.qtdePrevista * produtoEdicao.precoVenda ) ");
+			hql.append(" select sum( _chamEncCota.qtdePrevista * _produtoEdicao.precoVenda ) ");
 			
 		} else {
 			
@@ -138,6 +138,7 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		hql.append(" from ChamadaEncalheCota _chamEncCota 					")
 		.append(" join _chamEncCota.chamadaEncalhe  _chamadaEncalhe 	")
 		.append(" join _chamEncCota.cota _cota 							")
+		.append(" join _chamadaEncalhe.produtoEdicao _produtoEdicao")
 		.append(" where _cota.id = cota.id ");
 
 		if(filtro.getDtRecolhimentoDe() != null) {
@@ -327,6 +328,7 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		hql.append("(").append(getSubHqlTotalQtdeValorPrevistaDaEmissaoCE(filtro, false)).append(" ) as qtdeExemplares, ");	
 		hql.append("(").append(getSubHqlTotalQtdeValorPrevistaDaEmissaoCE(filtro, true)).append(" ) as vlrTotalCe, ");	
 		hql.append(" box.codigo as box, 						");
+		hql.append(" box.nome as nomeBox, 						");
 		hql.append(" cast (rota.id as string) as codigoRota, ");
 		hql.append(" rota.descricaoRota as nomeRota, 		");
 		hql.append(" cast (roteiro.id as string) as codigoRoteiro, ");
@@ -472,17 +474,18 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 	private void gerarFromWhereProdutosCE(FiltroEmissaoCE filtro, StringBuilder hql, HashMap<String, Object> param, 
 			Long idCota) {
 
-		hql.append(" from ChamadaEncalheCota chamEncCota ")
-		   .append(" join chamEncCota.chamadaEncalhe  chamadaEncalhe ")
-		   .append(" left join chamEncCota.conferenciasEncalhe confEnc ")
-		   .append(" left join confEnc.movimentoEstoqueCota  movimentoCota ")
-		   .append(" join chamEncCota.cota cota ")
-		   .append(" join cota.pessoa pessoa ")
-		   .append(" join chamadaEncalhe.produtoEdicao produtoEdicao ")
-		   .append(" join produtoEdicao.produto produto ")
-		   .append(" join produto.fornecedores fornecedores ")
-		   .append(" join chamadaEncalhe.lancamentos lancamentos ")
-		   .append(" where cota.id=:idCota ");
+		hql.append(" from ChamadaEncalheCota chamEncCota 					")
+		   .append(" join chamEncCota.chamadaEncalhe  chamadaEncalhe 		")
+		   .append(" left join chamEncCota.conferenciasEncalhe confEnc 		")
+		   .append(" left join confEnc.movimentoEstoqueCota  movimentoCota 	")
+		   .append(" join chamEncCota.cota cota 							")
+		   .append(" join cota.pessoa pessoa 								")
+		   .append(" join chamadaEncalhe.produtoEdicao produtoEdicao 		")
+		   .append(" join produtoEdicao.produto produto 					")
+		   .append(" join produto.fornecedores fornecedores 				")
+		   .append(" join chamadaEncalhe.lancamentos lancamentos 			")
+		   .append(" where cota.id=:idCota 									")
+		   .append(" and lancamentos.produtoEdicao.id = produtoEdicao.id  	");
 		
 		param.put("idCota", idCota);
 		

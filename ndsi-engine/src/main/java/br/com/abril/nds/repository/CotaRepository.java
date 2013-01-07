@@ -15,6 +15,7 @@ import br.com.abril.nds.dto.ProdutoValorDTO;
 import br.com.abril.nds.dto.RegistroCurvaABCCotaDTO;
 import br.com.abril.nds.dto.ResultadoCurvaABCCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroChamadaAntecipadaEncalheDTO;
+import br.com.abril.nds.dto.filtro.FiltroConsultaNotaEnvioDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCCotaDTO;
 import br.com.abril.nds.model.cadastro.Cota;
@@ -251,8 +252,7 @@ public interface CotaRepository extends Repository<Cota, Long> {
      * @param page
      * @return
      */
-    Set<Long> obterIdsCotasComNotaEnvioEntre(Intervalo<Integer> intervaloCota,
-            Intervalo<Integer> intervaloBox, List<Long> listIdsFornecedores, SituacaoCadastro situacao, Long idRoteiro, Long idRota, String sortName, String sortOrder, Integer maxResults, Integer page);
+    Set<Long> obterIdsCotasComNotaEnvioEntre(FiltroConsultaNotaEnvioDTO filtro);
 
     Long obterQuantidadeCotas(SituacaoCadastro situacaoCadastro);
     
@@ -339,4 +339,6 @@ public interface CotaRepository extends Repository<Cota, Long> {
 	
 	List<Cota> obterCotasAusentesNoRecolhimentoDeEncalheEm(Date dataRecolhimentoEncalhe);
 	
+	Cota obterPorPDV(Long idPDV);
+
 }

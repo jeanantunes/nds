@@ -7,6 +7,7 @@ import java.util.List;
 import br.com.abril.nds.dto.ResumoSuplementarFecharDiaDTO;
 import br.com.abril.nds.dto.SuplementarFecharDiaDTO;
 import br.com.abril.nds.dto.VendaFechamentoDiaDTO;
+import br.com.abril.nds.vo.PaginacaoVO;
 
 
 
@@ -22,8 +23,12 @@ public interface ResumoSuplementarFecharDiaService {
 
 	List<VendaFechamentoDiaDTO> obterVendasSuplementar(Date date);
 	
-	ResumoSuplementarFecharDiaDTO obterResumoGeralEncalhe(Date dataOperacional);
+	ResumoSuplementarFecharDiaDTO obterResumoGeralSuplementar(Date dataOperacional);
 
-	List<SuplementarFecharDiaDTO> obterDadosGridSuplementar();
+	List<SuplementarFecharDiaDTO> obterDadosGridSuplementar(Date data, PaginacaoVO paginacao);
+	
+	Long contarProdutoEdicaoSuplementar();
+	
+    Long contarVendasSuplementar(Date data);
 
 }

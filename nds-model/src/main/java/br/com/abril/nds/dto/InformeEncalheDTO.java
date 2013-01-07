@@ -333,6 +333,7 @@ public class InformeEncalheDTO implements Serializable {
 	 * @param tipoLancamentoParcial the tipoLancamentoParcial to set
 	 */
 	public void setTipoLancamentoParcial(TipoLancamentoParcial tipoLancamentoParcial) {
-		this.tipoLancamentoParcial = tipoLancamentoParcial != null ? tipoLancamentoParcial.getDescricao() : "";
+		
+		this.tipoLancamentoParcial = tipoLancamentoParcial != null ? tipoLancamentoParcial.getDescricao().substring(0) : "N";
 	}
 }

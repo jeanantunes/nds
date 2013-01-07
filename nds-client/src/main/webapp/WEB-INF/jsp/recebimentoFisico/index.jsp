@@ -162,14 +162,6 @@
 							</span>
 					</div>
 
-					<div id="botaoAdicionarOpaco" style="float:left;">
-							<span class="bt_novos" id="bt_adicionarOpaco"> 
-								<a href="javascript:;" style="opacity:0.4; filter:alpha(opacity=40)" rel="tipsy" title="Adicionar Nota Fiscal"> 
-									<img src="${pageContext.request.contextPath}/images/ico_expedicao_box.gif" border="0" />
-								</a> 
-							</span>
-					</div>
-
 					<div id="botaoNovoProduto" style="float:left;">
 							<span class="bt_novos" id="bt_novo_produto"> 
 								<a href="javascript:;" onclick="recebimentoFisicoController.popup_novo_item();" rel="tipsy" title="Incluir Novo Produto"> 
@@ -360,8 +352,8 @@
 			        </td>
 
 			        <td width="95">CNPJ:</td>
-			        <td width="132">
-			            <input maxlength="200" type="text" style="width:100px " id="novoCnpj" name="novoCnpj" onchange="recebimentoFisicoController.pesquisarFornecedorCnpj();" />
+			        <td width="150">
+			            <input maxlength="200" type="text" style="width:132px " id="novoCnpj" disabled="true" name="novoCnpj" onchange="recebimentoFisicoController.pesquisarFornecedorCnpj();" />
 			        </td>
 
 			        <td width="102">Nota Fiscal:</td>

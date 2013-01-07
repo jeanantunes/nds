@@ -118,7 +118,12 @@ public class PDFExporter implements Exporter {
 		headerPdfCell.setBorder(0);
 		
 		headerPdfCell.addElement(new Chunk(this.createBackgroundImage(), -3F, -48F));
-		headerPdfCell.addElement(new Chunk(this.createLogotipoImage(), -3F, -30F));
+		
+		Image logo  = this.createLogotipoImage(ndsFileHeader.getLogo());
+		
+		if(logo!= null){
+			headerPdfCell.addElement(new Chunk(logo, -3F, -30F));
+		}
 		
 		headerPdfTable.addCell(headerPdfCell);
 		
@@ -191,16 +196,19 @@ public class PDFExporter implements Exporter {
 		return backgroundImage;
 	}
 	
-	private Image createLogotipoImage() throws IOException, BadElementException {
+	private Image createLogotipoImage(InputStream logo) throws IOException, BadElementException {
 		
-		InputStream inputStream = 
-			Thread.currentThread().getContextClassLoader().getResourceAsStream("logo_sistema.png");
-
-		Image logotipoImage = Image.getInstance(ImageIO.read(inputStream), null);
+		if(logo == null ){
+			return null;
+		}
+		
+		Image logotipoImage = Image.getInstance(ImageIO.read(logo), null);
 		
 		logotipoImage.scalePercent(100F);
 		
-		inputStream.close();
+		logotipoImage.scaleAbsolute(120f, 68f);
+		
+		logo.close();
 		
 		return logotipoImage;
 	}

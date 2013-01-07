@@ -1,5 +1,7 @@
 package br.com.abril.nds.service.impl;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -52,6 +54,7 @@ import br.com.abril.nds.repository.NotaEnvioRepository;
 import br.com.abril.nds.repository.NotaFiscalRepository;
 import br.com.abril.nds.service.MonitorNFEService;
 import br.com.abril.nds.service.NFeService;
+import br.com.abril.nds.service.ParametrosDistribuidorService;
 import br.com.abril.nds.util.TipoMensagem;
 
 @Service
@@ -64,7 +67,10 @@ public class NFeServiceImpl implements NFeService {
 	protected NotaEnvioRepository notaEnvioRepository;
 	
 	@Autowired
-	protected MonitorNFEService monitorNFEService;	
+	protected MonitorNFEService monitorNFEService;
+	
+	@Autowired
+	protected ParametrosDistribuidorService parametrosDistribuidorService;
 
 	@Autowired
 	protected ItemNotaFiscalEntradaRepository itemNotaFiscalEntradaRepository;
@@ -717,8 +723,15 @@ public class NFeServiceImpl implements NFeService {
 
 		Map<String, Object> parameters = new HashMap<String, Object>();
 
+		InputStream inputStream = parametrosDistribuidorService.getLogotipoDistribuidor();
+		
+		if(inputStream == null) {
+			inputStream = new ByteArrayInputStream(new byte[0]);
+		}
+		
 		parameters.put("SUBREPORT_DIR", diretorioReports.toURI().getPath());
 		parameters.put("IND_EMISSAO_DEPEC", indEmissaoDepec);
+		parameters.put("LOGO_DISTRIBUIDOR", inputStream);
 
 		return JasperRunManager.runReportToPdf(path, parameters, jrDataSource);
 	}

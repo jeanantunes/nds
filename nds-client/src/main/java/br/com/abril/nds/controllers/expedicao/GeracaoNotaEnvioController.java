@@ -14,6 +14,7 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
+import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.ConsultaNotaEnvioDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaNotaEnvioDTO;
@@ -25,22 +26,18 @@ import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.envio.nota.NotaEnvio;
 import br.com.abril.nds.model.seguranca.Permissao;
-import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
-import br.com.abril.nds.service.CotaAusenteService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.GeracaoNotaEnvioService;
 import br.com.abril.nds.service.MovimentoEstoqueCotaService;
 import br.com.abril.nds.service.NFeService;
-import br.com.abril.nds.service.NotaFiscalService;
 import br.com.abril.nds.service.RoteirizacaoService;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
-import br.com.abril.nds.util.export.NDSFileHeader;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 import br.com.abril.nds.vo.ValidacaoVO;
@@ -53,7 +50,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/expedicao/geracaoNotaEnvio")
-public class GeracaoNotaEnvioController {
+public class GeracaoNotaEnvioController extends BaseController {
 
 	@Autowired
 	private Result result;
@@ -73,12 +70,6 @@ public class GeracaoNotaEnvioController {
 	@Autowired
 	private MovimentoEstoqueCotaService movimentoEstoqueCotaService;
 	
-	@Autowired
-	private NotaFiscalService notaFiscalService;
-	
-	@Autowired
-	private CotaAusenteService cotaAusenteService;
-
 	@Autowired
 	private NFeService nfeService;
 
@@ -129,6 +120,9 @@ public class GeracaoNotaEnvioController {
 			Date intervaloMovimentoDe, Date intervaloMovimentoAte, Date dataEmissao,
 			List<Long> listaIdFornecedores, Long idRoteiro, Long idRota,
 			String sortname, String sortorder, int rp, int page) {
+				
+		if(listaIdFornecedores==null || listaIdFornecedores.isEmpty())
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum fornecedor foi selecionado.");
 		
 		FiltroConsultaNotaEnvioDTO filtro = 
 				this.setFiltroNotaEnvioSessao(intervaloBoxDe, intervaloBoxAte, intervaloCotaDe, 
@@ -136,13 +130,11 @@ public class GeracaoNotaEnvioController {
 						listaIdFornecedores, idRoteiro, idRota, sortname, sortorder, rp, page);
 		
 		List<ConsultaNotaEnvioDTO> listaCotaExemplares = 
-				this.geracaoNotaEnvioService.busca(filtro.getIntervaloBox(), filtro.getIntervaloCota(), 
-						filtro.getIntervaloMovimento(), listaIdFornecedores, 
-						sortname, sortorder, rp, page, null, idRoteiro, idRota);
+				this.geracaoNotaEnvioService.busca(filtro);
 		
-		Integer qtdResult = geracaoNotaEnvioService.buscaCotasNotasDeEnvioQtd(filtro.getIntervaloBox(), filtro.getIntervaloCota(), 
-																			filtro.getIntervaloMovimento(), listaIdFornecedores, 
-																			null, idRoteiro, idRota);
+		filtro.setPaginacaoVO(new PaginacaoVO());
+		
+		Integer qtdResult = geracaoNotaEnvioService.buscaCotasNotasDeEnvioQtd(filtro);
 		
 		result.use(FlexiGridJson.class).from(listaCotaExemplares).page(page).total(qtdResult).serialize();
 	}
@@ -154,10 +146,11 @@ public class GeracaoNotaEnvioController {
 		
 		FiltroConsultaNotaEnvioDTO filtro = this.getFiltroNotaEnvioSessao();
 		
+		filtro.setCadastro(SituacaoCadastro.SUSPENSO);
+		filtro.setPaginacaoVO(new PaginacaoVO());
+		
 		List<ConsultaNotaEnvioDTO> cotasAusentes =
-				geracaoNotaEnvioService.busca(filtro.getIntervaloBox(), filtro.getIntervaloCota(), filtro.getIntervaloMovimento(), 
-						filtro.getIdFornecedores(), null, null, null, null, 
-						SituacaoCadastro.SUSPENSO, filtro.getIdRoteiro(), filtro.getIdRota());
+				geracaoNotaEnvioService.busca(filtro);
 		
 		if (cotasAusentes != null && !cotasAusentes.isEmpty())
 			hasCotasAusentes = true;
@@ -170,10 +163,10 @@ public class GeracaoNotaEnvioController {
 		
 		FiltroConsultaNotaEnvioDTO filtro = this.getFiltroNotaEnvioSessao();
 		
+		filtro.setPaginacaoVO(new PaginacaoVO());
+		
 		List<ConsultaNotaEnvioDTO> consultaNotaEnvioDTO =	
-				geracaoNotaEnvioService.busca(filtro.getIntervaloBox(), filtro.getIntervaloCota(), filtro.getIntervaloMovimento(), 
-						filtro.getIdFornecedores(), null, null, null, null, 
-						null, filtro.getIdRoteiro(), filtro.getIdRota());
+				geracaoNotaEnvioService.busca(filtro);
 		
 		FileExporter.to("consignado-encalhe", fileType).inHTTPResponse(
 				this.getNDSFileHeader(), filtro, null,
@@ -284,51 +277,13 @@ public class GeracaoNotaEnvioController {
 		return filtroConsultaNotaEnvioDTO;
 	}
 	
-	/*
-	 * Obtém os dados do cabeçalho de exportação.
-	 * 
-	 * @return NDSFileHeader
-	 */
-	private NDSFileHeader getNDSFileHeader() {
-
-		NDSFileHeader ndsFileHeader = new NDSFileHeader();
-
-		Distribuidor distribuidor = this.distribuidorService.obter();
-
-		if (distribuidor != null) {
-
-			ndsFileHeader.setNomeDistribuidor(distribuidor.getJuridica()
-					.getRazaoSocial());
-			ndsFileHeader.setCnpjDistribuidor(distribuidor.getJuridica()
-					.getCnpj());
-		}
-
-		ndsFileHeader.setData(new Date());
-
-		ndsFileHeader.setNomeUsuario(this.getUsuario().getNome());
-
-		return ndsFileHeader;
-	}
-
-	// TODO: não há como reconhecer usuario, ainda
-	private Usuario getUsuario() {
-
-		Usuario usuario = new Usuario();
-
-		usuario.setId(1L);
-
-		usuario.setNome("Jornaleiro da Silva");
-
-		return usuario;
-	}
-	
 	@Get
 	public void visualizarNE(){
 		
 		FiltroConsultaNotaEnvioDTO filtro = this.getFiltroNotaEnvioSessao();
 		
 		NotaEnvio notaEnvio = geracaoNotaEnvioService.visualizar(filtro.getIntervaloCota().getDe(), 
-				null, null, null, null, filtro.getDataEmissao(), filtro.getIntervaloMovimento(), filtro.getIdFornecedores());
+				filtro.getIdRota(), null, null, null, filtro.getDataEmissao(), filtro.getIntervaloMovimento(), filtro.getIdFornecedores());
 		
 		result.include("notaEnvio",notaEnvio);
 		

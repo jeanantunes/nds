@@ -1,6 +1,7 @@
 package br.com.abril.nds.dto;
 
 import java.io.Serializable;
+import java.util.List;
 
 public class DadosDocumentacaoConfEncalheCotaDTO implements Serializable {
 
@@ -16,9 +17,9 @@ public class DadosDocumentacaoConfEncalheCotaDTO implements Serializable {
 	private Long idControleConferenciaEncalheCota;
 	
 	/**
-	 * Nosso numero gerado durante a geração de cobrança.
+	 * List de nosso numero gerado durante a geração de cobrança.
 	 */
-	private String nossoNumero;
+	private List<String> listaNossoNumero;
 	
 	/**
 	 * Flag que indica se os documentos de conferencia de encalhe deverão
@@ -30,6 +31,9 @@ public class DadosDocumentacaoConfEncalheCotaDTO implements Serializable {
 	 * Define se distribuidor utiliza  impressão de Boleto + Slip no mesmo documento
 	 */
 	private boolean utilizaSlipBoleto;
+	
+	private boolean utilizaSlip;
+	
 	/**
 	 * Obtém idControleConferenciaEncalheCota
 	 *
@@ -49,20 +53,17 @@ public class DadosDocumentacaoConfEncalheCotaDTO implements Serializable {
 	}
 
 	/**
-	 * Obtém nossoNumero
-	 *
-	 * @return String
+	 * @return the listaNossoNumero
 	 */
-	public String getNossoNumero() {
-		return nossoNumero;
+	public List<String> getListaNossoNumero() {
+		return listaNossoNumero;
 	}
 
 	/**
-	 * Atribuí nossoNumero
-	 * @param nossoNumero 
+	 * @param listaNossoNumero the listaNossoNumero to set
 	 */
-	public void setNossoNumero(String nossoNumero) {
-		this.nossoNumero = nossoNumero;
+	public void setListaNossoNumero(List<String> listaNossoNumero) {
+		this.listaNossoNumero = listaNossoNumero;
 	}
 
 	/**
@@ -96,6 +97,19 @@ public class DadosDocumentacaoConfEncalheCotaDTO implements Serializable {
 	public void setUtilizaSlipBoleto(boolean utilizaSlipBoleto) {
 		this.utilizaSlipBoleto = utilizaSlipBoleto;
 	}
-	
+
+	/**
+	 * @return the utilizaSlip
+	 */
+	public boolean isUtilizaSlip() {
+		return utilizaSlip;
+	}
+
+	/**
+	 * @param utilizaSlip the utilizaSlip to set
+	 */
+	public void setUtilizaSlip(boolean utilizaSlip) {
+		this.utilizaSlip = utilizaSlip;
+	}
 	
 }

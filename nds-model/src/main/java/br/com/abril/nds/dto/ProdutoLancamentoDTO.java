@@ -2,6 +2,7 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -39,9 +40,9 @@ public class ProdutoLancamentoDTO implements Serializable {
 
 	private String nomeProduto;
 	
-	private BigDecimal repartePrevisto;
+	private BigInteger repartePrevisto;
 	
-	private BigDecimal reparteFisico;
+	private BigInteger reparteFisico;
 	
 	private Long idLancamento;
 
@@ -67,8 +68,6 @@ public class ProdutoLancamentoDTO implements Serializable {
 	
 	private Integer ordemPeriodicidadeProduto;
   	
-  	private String distribuicao;
-  	
   	private boolean possuiFuro;
   	
   	private boolean lancamentoAgrupado;
@@ -76,6 +75,8 @@ public class ProdutoLancamentoDTO implements Serializable {
   	private List<ProdutoLancamentoDTO> produtosLancamentoAgrupados = new ArrayList<ProdutoLancamentoDTO>();
   	
   	private boolean alteradoInteface;
+  	
+  	private BigInteger distribuicao;
 	
 	/**
 	 * Construtor padrão.
@@ -215,28 +216,28 @@ public class ProdutoLancamentoDTO implements Serializable {
 	/**
 	 * @return the repartePrevisto
 	 */
-	public BigDecimal getRepartePrevisto() {
+	public BigInteger getRepartePrevisto() {
 		return repartePrevisto;
 	}
 
 	/**
 	 * @param repartePrevisto the repartePrevisto to set
 	 */
-	public void setRepartePrevisto(BigDecimal repartePrevisto) {
+	public void setRepartePrevisto(BigInteger repartePrevisto) {
 		this.repartePrevisto = repartePrevisto;
 	}
 
 	/**
 	 * @return the reparteFisico
 	 */
-	public BigDecimal getReparteFisico() {
+	public BigInteger getReparteFisico() {
 		return reparteFisico;
 	}
 
 	/**
 	 * @param reparteFisico the reparteFisico to set
 	 */
-	public void setReparteFisico(BigDecimal reparteFisico) {
+	public void setReparteFisico(BigInteger reparteFisico) {
 		this.reparteFisico = reparteFisico;
 	}
 
@@ -419,20 +420,6 @@ public class ProdutoLancamentoDTO implements Serializable {
 	}
 
 	/**
-	 * @return the distribuicao
-	 */
-	public String getDistribuicao() {
-		return distribuicao;
-	}
-
-	/**
-	 * @param distribuicao the distribuicao to set
-	 */
-	public void setDistribuicao(String distribuicao) {
-		this.distribuicao = distribuicao;
-	}
-
-	/**
 	 * @return the possuiFuro
 	 */
 	public boolean isPossuiFuro() {
@@ -494,6 +481,20 @@ public class ProdutoLancamentoDTO implements Serializable {
 	 */
 	public boolean isBalanceamentoConfirmado() {
 		return StatusLancamento.BALANCEADO.equals(statusLancamento);
+	}
+
+	/**
+	 * @return the distribuicao
+	 */
+	public BigInteger getDistribuicao() {
+		return distribuicao;
+	}
+
+	/**
+	 * @param distribuicao the distribuicao to set
+	 */
+	public void setDistribuicao(BigInteger distribuicao) {
+		this.distribuicao = distribuicao;
 	}
 	
 }

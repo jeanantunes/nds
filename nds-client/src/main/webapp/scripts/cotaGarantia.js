@@ -1,6 +1,339 @@
 var _workspace = "";
 
 
+
+
+// **************** TIPO GARANTIA PROTOTYPE ********************//
+function TipoCotaGarantia(workspace) {
+    _workspace = workspace;
+    this.get();
+    this.controller = null;
+    this.newControllerType = null;
+    this.controllerType = null;
+    var _this = this;
+    this.confirmDialog = new ConfirmDialog('Ao mudar de garantia, os dados da garantia anterior serão perdidos.</br>Deseja continuar?', function() {
+    	
+        _this.changeController(_this.newControllerType);
+        return true;
+    }, function() {
+        $("#tipoGarantiaSelect", _workspace).val(_this.controllerType);
+    });
+};
+
+TipoCotaGarantia.prototype.path = contextPath + "/cadastro/garantia/";
+TipoCotaGarantia.prototype.tipo = {
+
+    'FIADOR' : {
+        label : 'Fiador',
+        controller : Fiador
+    },
+    'CHEQUE_CAUCAO' : {
+        label : 'Cheque Caução',
+        controller : ChequeCaucao
+    },
+    'IMOVEL' : {
+        label : 'Imóvel',
+        controller : Imovel
+    },
+    'NOTA_PROMISSORIA' : {
+        label : 'Nota Promissória',
+        controller : NotaPromissoria
+    },
+    'CAUCAO_LIQUIDA' : {
+        label : 'Caução Liquida',
+        controller : CaucaoLiquida
+    },
+    'OUTROS' : {
+        label : 'Outros',
+        controller : Outros
+    }
+};
+
+TipoCotaGarantia.prototype.get = function() {
+	
+    var _this = this;
+    
+    $.getJSON(this.path + 'getTiposGarantia.json', null, function(data) {
+    
+    	var tipoMensagem = data.tipoMensagem;
+        var listaMensagens = data.listaMensagens;
+
+        if (tipoMensagem && listaMensagens) {
+
+        	exibirMensagemDialog(tipoMensagem, listaMensagens,"");
+        } else {
+            
+        	_this.bindData(data);
+        }
+
+    }, null, true);
+};
+
+//OBTEM COTAGARANTIA NÃO SERIALIZADA
+TipoCotaGarantia.prototype.obterCotaGarantia = function(idCota){
+	
+	var param = [{name:'idCota', value:idCota}];
+
+    var _this = this;
+
+    $.postJSON(this.path + 'getCotaGarantiaByCota.json', 
+		   param, 
+           function(data) {
+	           
+		       if (!_this.cotaGarantia){
+		            
+		           _this.cotaGarantia = data.cotaGarantia;
+		       }
+	       }, 
+	       null, 
+	       true
+    );
+};
+
+TipoCotaGarantia.prototype.getData = function() {
+    var _this = this;
+    
+    var params = [{name: 'idCota', value: _this.getIdCota()},
+			     {name: 'modoTela', value: _this.getModoTela().value},
+			     {name: 'idHistorico', value: _this.getIdHistorico()}];
+    
+    $.postJSON(this.path + 'getByCota.json', 
+		params, 
+    	function(result) {
+    	
+	        var tipoMensagem = result.tipoMensagem;
+	        var listaMensagens = result.listaMensagens;
+	        
+	        if (tipoMensagem && listaMensagens) {
+	        	
+	            exibirMensagemDialog(tipoMensagem, listaMensagens,"");
+	        } 
+	        else if (result) {
+	        	
+	            _this.cotaGarantia = result.cotaGarantia;
+	            
+	            //OBTEM COTAGARANTIA NÃO SERIALIZADA
+	            if (!_this.cotaGarantia){
+	                
+	                _this.obterCotaGarantia(_this.getIdCota());
+	            }
+
+	            _this.controllerType = result.tipo;
+	            _this.changeController(result.tipo);
+	            
+	            if(result.tipo != undefined) {
+	            	$('#tipoGarantiaSelect option[value="'+ result.tipo +'"]').prop('selected', true);
+	            }
+	            
+	            $("#cotaGarantiaChequeCaucaoImagem").empty();
+	
+	            _this.configTipoCotaGarantia(result);
+	
+	        } 
+	        else{
+	        	
+	            _this.changeController(null);
+	        }
+        }, 
+        null, 
+        true
+    );
+};
+
+TipoCotaGarantia.prototype.configTipoCotaGarantia = function(result) {
+    
+	var tipo = result.tipo;
+	
+	var idCota = this.getIdCota();
+	
+    if (tipo=="CAUCAO_LIQUIDA"){
+    	
+        CaucaoLiquida.prototype.obterCaucaoLiquida(idCota);
+    }
+    
+    if (tipo=="FIADOR"){
+    	
+    	 Fiador.prototype.obterFiador(idCota);
+    }
+    
+    if (tipo=="IMOVEL"){
+    	
+   	     Imovel.prototype.obterImoveis(idCota);
+    }
+    
+    if (tipo=="CHEQUE_CAUCAO"){
+    	
+  	     ChequeCaucao.prototype.obterChequeCaucao(idCota);
+    }
+    
+    if (tipo=="NOTA_PROMISSORIA"){
+    	
+ 	     NotaPromissoria.prototype.obterNotaPromissoria(idCota);
+    }
+};
+
+TipoCotaGarantia.prototype.bindData = function(data) {
+
+    var select = $("#tipoGarantiaSelect", _workspace);
+
+    for ( var index in data) {
+        var tipo = data[index];
+        if (this.tipo[tipo]) {
+            var option = document.createElement("option");
+
+            option.text = this.tipo[tipo].label;
+
+            option.value = tipo;
+
+            try {
+                $(select).append(option, select.options[null]);
+            } catch (e) {
+                $(select).append(option, null);
+            }
+        }
+    }
+
+};
+
+TipoCotaGarantia.prototype.bindTiposCobrancaCotaGarantia = function() {
+
+    $.getJSON(this.path + 'getTiposCobrancaCotaGarantia.json',
+        null,
+        function(data) {
+
+            var tipoMensagem = data.tipoMensagem;
+            var listaMensagens = data.listaMensagens;
+
+            if (tipoMensagem && listaMensagens) {
+                exibirMensagemDialog(tipoMensagem, listaMensagens,"");
+            } else {
+                var select = $("#tipoCobranca", _workspace);
+
+                $(select).find('option')
+                    .remove()
+                    .end()
+                    .append('<option value="">Selecione</option>')
+                    .val('Selecione');
+
+                for ( var index in data) {
+                    var tipo = data[index];
+                    var option = document.createElement("option");
+
+                    option.text = tipo.value.$;
+
+                    option.value = tipo.key.$;
+
+                    try {
+                        $(select).append(option, select.options[null]);
+                    } catch (e) {
+                        $(select).append(option, null);
+                    }
+                }
+            }
+        },
+        null,
+        true);
+};
+
+TipoCotaGarantia.prototype.onOpen = function(tipoCotaSelecionada) {
+
+    this.getData();   
+
+    this.bindTiposCobrancaCotaGarantia();
+
+    if (tipoCotaSelecionada == "JURIDICA"){
+        $("#cotaGarantiaClassificacaoCota", this.workspace).val($("#classificacaoSelecionada :selected", this.workspace).text());
+    }
+    else{
+        $("#cotaGarantiaClassificacaoCota", this.workspace).val($("#classificacaoSelecionadaCPF :selected", this.workspace).text());
+    }
+};
+
+TipoCotaGarantia.prototype.bindEvents = function() {
+    var _this = this;
+    $("#tipoGarantiaSelect", _workspace).change(function(eventObject) {
+        var valor = $(this).val();
+        if (valor.length > 0) {
+        	
+            _this.changeController(valor);
+        }
+    }).change();
+};
+
+TipoCotaGarantia.prototype.onChange = function(newControllerType) {
+    if (this.cotaGarantia && this.cotaGarantia.id && this.cotaGarantia.tipoGarantia == this.controllerType) {
+        this.newControllerType = newControllerType;
+        if (this.newControllerType != this.controllerType) {
+            this.confirmDialog.open();
+        }
+    } else {
+        this.newControllerType = null;
+        
+        this.changeController(newControllerType);
+    }
+};
+
+TipoCotaGarantia.prototype.changeController = function(newControllerType) {
+	
+    if (this.controller) {
+        this.controller.toggle();
+        if(this.controller.destroy){
+            this.controller.destroy();
+        }
+        delete this.controller;
+    }
+    if(newControllerType){
+
+        var obj = this.tipo[newControllerType].controller;
+        this.controller = new obj(this.getIdCota(), this.cotaGarantia);
+        this.controllerType = newControllerType;
+    }else{
+        //$("#tipoGarantiaSelect", _workspace)[0].selectedIndex;
+        //$("#tipoGarantiaSelect", _workspace).val("");
+        this.controller = null;
+        this.controllerType = null;
+        if (this.cotaGarantia) {
+            this.cotaGarantia = null;
+        }
+    }
+
+};
+
+TipoCotaGarantia.prototype.getIdCota = function() {
+    return MANTER_COTA.idCota;
+};
+
+TipoCotaGarantia.prototype.getModoTela = function() {
+    return MANTER_COTA.modoTela;
+};
+
+TipoCotaGarantia.prototype.getIdHistorico = function() {
+    return MANTER_COTA.idHistorico;
+};
+
+TipoCotaGarantia.prototype.isModoTelaCadastroCota = function() {
+    return MANTER_COTA.isModoTelaCadastroCota();
+};
+
+TipoCotaGarantia.prototype.salva = function(callBack) {
+    var retorno = false;
+    var _this = this;
+    if(this.controller){
+        retorno = this.controller.salva(function(){
+            _this.getData();
+            if(callBack){
+                callBack();
+            }
+        });
+    }
+
+    return retorno;
+};
+
+
+
+
+//**************** NOTA PROMISSORIA PROTOTYPE ********************//
 /**
  * @param idCota
  * @returns {NotaPromissoria}
@@ -46,9 +379,9 @@ NotaPromissoria.prototype.salva = function(callBack) {
             if(callBack){
                 callBack();
             }
-
-
-        }, null, true);
+        }, 
+        null, 
+        true);
     return false;
 };
 
@@ -66,25 +399,33 @@ NotaPromissoria.prototype.get = function() {
             _this.notaPromissoria = data.cotaGarantia.notaPromissoria;
             _this.dataBind();
         }
-    }, null, true);
+    }, 
+    null, 
+    true);
 };
 
 NotaPromissoria.prototype.toggle = function() {
     $('#cotaGarantiaNotaPromissoriaPanel').toggle();
 };
 
-NotaPromissoria.prototype.dataBind = function() {
+NotaPromissoria.prototype.dataBind = function(nota) {
+    
+    if (nota){
+		
+		this.notaPromissoria = nota;
+	}
+    
     $("#cotaGarantiaNotaPromissoriaId").html(this.notaPromissoria.id);
-    $("#cotaGarantiaNotaPromissoriaVencimento").val(
-        this.notaPromissoria.vencimento);
+    $("#cotaGarantiaNotaPromissoriaVencimento").val(nota?this.notaPromissoria.vencimento.$:this.notaPromissoria.vencimento);
+        
     $("#cotaGarantiaNotaPromissoriaValor").val(this.notaPromissoria.valor*100);
     $("#cotaGarantiaNotaPromissoriaValor").priceFormat({
         allowNegative : true,
         centsSeparator : ',',
         thousandsSeparator : '.'
     });
-    $("#cotaGarantiaNotaPromissoriavalorExtenso").val(
-        this.notaPromissoria.valorExtenso);
+    
+    $("#cotaGarantiaNotaPromissoriavalorExtenso").val(this.notaPromissoria.valorExtenso);
 };
 
 NotaPromissoria.prototype.dataUnBind = function() {
@@ -117,10 +458,41 @@ NotaPromissoria.prototype.destroy = function() {
     $("#cotaGarantiaNotaPromissoriaImprimir").unbind('click');
 };
 
-
 NotaPromissoria.prototype.imprimi = function() {
     window.open(this.path + 'impriNotaPromissoria/' + this.idCota);
 };
+
+NotaPromissoria.prototype.obterNotaPromissoria = function(idCota){
+	
+	var param = [{name:'idCota', value:idCota},
+		         {name:'modoTela', value:tipoCotaGarantia.getModoTela().value}];
+
+    var _this = this;
+
+    $.postJSON(this.path + 'getNotaPromissoriaByCota.json', 
+		   param, 
+           function(result) {
+
+	           var tipoMensagem = result.tipoMensagem;
+	           var listaMensagens = result.listaMensagens;
+	
+	           if (tipoMensagem && listaMensagens) {
+	               exibirMensagemDialog(tipoMensagem, listaMensagens,"");
+	
+	           } else {  
+	        	       
+	        	   tipoCotaGarantia.controller.notaPromissoria = result.notaPromissoria;
+	        	   
+	        	   NotaPromissoria.prototype.dataBind(result.notaPromissoria);
+	           }
+	       }, 
+	       null, 
+	       true
+     );
+};
+
+
+
 
 // **************** CHEQUE CAUCAO PROTOTYPE ********************//
 /**
@@ -128,14 +500,17 @@ NotaPromissoria.prototype.imprimi = function() {
  * @returns {ChequeCaucao}
  */
 function ChequeCaucao(idCota, cotaGarantia) {
-    this.idCota = idCota;
+	this.idCota = idCota;
     this.cotaGarantia = cotaGarantia;
     this.bindEvents();
     if (tipoCotaGarantia.isModoTelaCadastroCota()) {
-        if(cotaGarantia && cotaGarantia.cheque){
+        if(cotaGarantia && cotaGarantia.cheque) {
+        	
             this.chequeCaucao = cotaGarantia.cheque;
-        }else{
-            this.chequeCaucao ={
+            
+        } else {
+        	
+            this.chequeCaucao = {
                 id : null,
                 numeroBanco : null,
                 nomeBanco : null,
@@ -157,13 +532,16 @@ function ChequeCaucao(idCota, cotaGarantia) {
     this.toggle();
     this.initUploadForm();
 };
-ChequeCaucao.prototype.path = contextPath + "/cadastro/garantia/";
 
+ChequeCaucao.prototype.path = contextPath + "/cadastro/garantia/";
 
 ChequeCaucao.prototype.get = function() {
 
     var _this = this;
-    var param = [{name: 'idCota', value: this.idCota}, {name: 'modoTela', value: tipoCotaGarantia.getModoTela().value}];
+    
+    var param = [{name: 'idCota', value: this.idCota}, 
+                 {name: 'modoTela', value: tipoCotaGarantia.getModoTela().value}];
+    
     $.postJSON(this.path + 'getByCota.json', param, function(data) {
 
         var tipoMensagem = data.tipoMensagem;
@@ -171,7 +549,9 @@ ChequeCaucao.prototype.get = function() {
         if (tipoMensagem && listaMensagens) {
             exibirMensagemDialog(tipoMensagem, listaMensagens,"");
         } else if (data && data.cotaGarantia) {
+        	
             _this.chequeCaucao = data.cotaGarantia.cheque;
+            
             _this.dataBind();
         }
 
@@ -207,67 +587,103 @@ ChequeCaucao.prototype.toggle = function() {
     }
 };
 
+ChequeCaucao.prototype.uploadFormOnSubmit = function() {
+	$('#idCheque').val(tipoCotaGarantia.controller.chequeCaucao.id);
+	
+	if(tipoCotaGarantia.controller.chequeCaucao.id) {
+        if (!$('#cotaGarantiaChequeCaucaoUpload').val()) {
+            exibirMensagemDialog('WARNING', ['Escolha um arquivo para ser enviado.'], "");
+            return false;
+        }
+
+        return true;
+    }
+    if(!tipoCotaGarantia.controller.chequeCaucao.id) {
+        exibirMensagemDialog('WARNING', ['Cheque deve estar salvo antes do envio.'], "");
+        return false;
+    }
+    
+};
 
 ChequeCaucao.prototype.initUploadForm = function() {
     var _this = this;
-    $('#cotaGarantiaChequeCaucaoFormUpload').bind('submit', function(e) {
-        e.preventDefault(); // <-- important
-        $(this).ajaxSubmit({
-            beforeSubmit: function(arr, formData, options) {
-                if(_this.chequeCaucao.id){
-                    if (!$('#cotaGarantiaChequeCaucaoUpload').val()) {
-                        exibirMensagemDialog('WARNING', ['Escolha um arquivo para ser enviado.'], "");
-                        return false;
-                    }
+    
+    $('#cotaGarantiaChequeCaucaoFormUpload').ajaxForm({
+        beforeSend: function() {
+        	
+        },
+    	complete: function(data) {
+    		
+    		var returnJSON = jQuery.parseJSON(data.responseText);
+    		
+    		var mensagens = returnJSON.result;
+    		
+            var tipoMensagem = mensagens.tipoMensagem;
+            var listaMensagens = mensagens.listaMensagens;
 
-                    return true;
-                }else{
-                    exibirMensagemDialog('WARNING', ['Cheque deve estar salvo antes do envio.'], "");
-                    return false;
-                }
-            },
-            success:function(responseText, statusText, xhr, $form)  {
-                var mensagens = (responseText.mensagens)?responseText.mensagens:responseText.result;
-                var tipoMensagem = mensagens.tipoMensagem;
-                var listaMensagens = mensagens.listaMensagens;
-
-                if (tipoMensagem && listaMensagens) {
-                    exibirMensagemDialog(tipoMensagem, listaMensagens,"");
-                }
-                _this.loadImage();
-            } ,
-            url:  _this.path + 'uploadCheque',
-            type: 'POST',
-            dataType:  'json',
-            data: {idCheque:_this.chequeCaucao.id}
-        });
-    });
-
-
-
+            if (tipoMensagem && listaMensagens) {
+                exibirMensagemDialog(tipoMensagem, listaMensagens,"");
+            }
+            _this.loadImage();
+    	}
+    }); 
+    
 };
 
-ChequeCaucao.prototype.dataBind = function() {
+ChequeCaucao.prototype.obterChequeCaucao = function(idCota){
+	
+	var param = [{name:'idCota', value:idCota},
+		         {name:'modoTela', value:tipoCotaGarantia.getModoTela().value}];
 
-    $("#cotaGarantiaChequeCaucaoNumeroBanco")
-        .val(this.chequeCaucao.numeroBanco);
+    var _this = this;
+
+    $.postJSON(this.path + 'getChequeCaucaoByCota.json', 
+		   param, 
+           function(result) {
+
+	           var tipoMensagem = result.tipoMensagem;
+	           var listaMensagens = result.listaMensagens;
+	
+	           if (tipoMensagem && listaMensagens) {
+	               exibirMensagemDialog(tipoMensagem, listaMensagens,"");
+	
+	           } else {  
+	        	       
+	        	   tipoCotaGarantia.controller.chequeCaucao = result.cheque;
+	        	   
+	        	   ChequeCaucao.prototype.dataBind(result.cheque);
+	           }
+	       }, 
+	       null, 
+	       true
+     );
+};
+
+ChequeCaucao.prototype.dataBind = function(cheque) {
+
+	if (cheque){
+		
+		this.chequeCaucao = cheque;
+	}
+
+    $("#cotaGarantiaChequeCaucaoNumeroBanco").val(this.chequeCaucao.numeroBanco);
     $("#cotaGarantiaChequeCaucaoNomeBanco").val(this.chequeCaucao.nomeBanco);
     $("#cotaGarantiaChequeCaucaoAgencia").val(this.chequeCaucao.agencia);
     $("#cotaGarantiaChequeCaucaoDvAgencia").val(this.chequeCaucao.dvAgencia);
     $("#cotaGarantiaChequeCaucaoConta").val(this.chequeCaucao.conta);
     $("#cotaGarantiaChequeCaucaoDvConta").val(this.chequeCaucao.dvConta);
-    $("#cotaGarantiaChequeCaucaoNumeroCheque").val(
-        this.chequeCaucao.numeroCheque);
+    $("#cotaGarantiaChequeCaucaoNumeroCheque").val(this.chequeCaucao.numeroCheque);
     $("#cotaGarantiaChequeCaucaoValor").val(this.chequeCaucao.valor);
+    
     $("#cotaGarantiaChequeCaucaoValor").priceFormat({
-        allowNegative : true,
+        allowNegative : false,
         centsSeparator : ',',
         thousandsSeparator : '.'
     });
-    $("#cotaGarantiaChequeCaucaoEmissao").val(this.chequeCaucao.emissao);
-    $("#cotaGarantiaChequeCaucaoValidade").val(this.chequeCaucao.validade);
-    $("#cotaGarantiaChequeCaucaoCorrentista")
-        .val(this.chequeCaucao.correntista);
+    
+    $("#cotaGarantiaChequeCaucaoEmissao").val(cheque?this.chequeCaucao.emissao.$:this.chequeCaucao.emissao);
+    $("#cotaGarantiaChequeCaucaoValidade").val(cheque?this.chequeCaucao.validade.$:this.chequeCaucao.validade);
+    $("#cotaGarantiaChequeCaucaoCorrentista").val(this.chequeCaucao.correntista);
 
     if (tipoCotaGarantia.isModoTelaCadastroCota()) {
         if(this.chequeCaucao.id){
@@ -284,10 +700,11 @@ ChequeCaucao.prototype.loadImage = function(){
     $("#cotaGarantiaChequeCaucaoImagemPanel").toggle(false);
     var imgPath = this.path + 'getImageCheque?modoTela=' + tipoCotaGarantia.getModoTela().value;
     if (tipoCotaGarantia.isModoTelaCadastroCota()) {
-        imgPath+= '&idCheque=' + this.chequeCaucao.id;
+        imgPath+= '&idCheque=' + (this.chequeCaucao.id ? this.chequeCaucao.id : tipoCotaGarantia.controller.chequeCaucao.id);
     } else {
         imgPath+= '&idCota=' + tipoCotaGarantia.getIdCota() + '&idHistorico=' + tipoCotaGarantia.getIdHistorico();
     }
+    imgPath+= '&random='+ Math.random();
     var img = null;
     img = $("<img />").attr('src', imgPath)
         .load(function() {
@@ -344,6 +761,8 @@ ChequeCaucao.prototype.clear = function() {
 };
 
 
+
+
 // **************** IMOVEL PROTOTYPE ********************//
 /**
  * @param idCota
@@ -356,11 +775,13 @@ function Imovel(idCota, cotaGarantia) {
         cotaGarantia = new Object();
     }
     this.cotaGarantia = cotaGarantia;
+    
     this.bindEvents();
     this.toggle();
     this.initGrid();
     this.itemEdicao = null;
     this.popularGrid();
+    
     this.imovel = {
         id : null,
         proprietario : null,
@@ -370,6 +791,8 @@ function Imovel(idCota, cotaGarantia) {
         observacao : null
     };
 
+    this.cotaGarantia.imoveis = new Array();
+    
     if (tipoCotaGarantia.isModoTelaCadastroCota()) {
         $('#cotaGarantiaImovelIncluirNovo').show();
     } else {
@@ -391,7 +814,7 @@ Imovel.prototype.incluirImovel = function(callBack) {
     this.dataUnBind();
     var postData = serializeObjectToPost('imovel', this.imovel);
     var _this = this;
-
+    
     $.postJSON(this.path + 'incluirImovel.json', postData, function(data) {
 
         var tipoMensagem = data.tipoMensagem;
@@ -566,6 +989,46 @@ Imovel.prototype.remove = function(id) {
 
 };
 
+Imovel.prototype.obterImoveis = function(idCota){
+	
+	var param = [{name:'idCota', value:idCota},
+		         {name:'modoTela', value:tipoCotaGarantia.getModoTela().value}];
+
+    var _this = this;
+
+    $.postJSON(this.path + 'getImoveisGarantiaByCota.json', 
+		   param, 
+           function(data) {
+
+	           var tipoMensagem = data.tipoMensagem;
+	           var listaMensagens = data.listaMensagens;
+	
+	           if (tipoMensagem && listaMensagens) {
+	               exibirMensagemDialog(tipoMensagem, listaMensagens,"");
+	
+	           } else {  
+	        	       
+	        	   tipoCotaGarantia.controller.cotaGarantia.imoveis = new Array();
+	        	   
+	        	   for (var i = 0; i < data.length; i++){
+	        	   
+		               var imovel = data[i];
+		               
+		               tipoCotaGarantia.controller.cotaGarantia.imoveis.push(imovel); 
+	        	   }
+	  	        	
+	        	   tipoCotaGarantia.controller.grid.flexAddData({
+	        	        rows : toFlexiGridObject(tipoCotaGarantia.controller.cotaGarantia.imoveis),
+	        	        page : 1,
+	        	        total : 1
+	        	   });  
+	           }
+	       }, 
+	       null, 
+	       true
+     );
+};
+
 Imovel.prototype.initGrid = function() {
 
     $(".cotaGarantiaImovelGrid").empty();
@@ -659,255 +1122,6 @@ Imovel.prototype.initGrid = function() {
 
 
 
-// **************** TIPO GARANTIA PROTOTYPE ********************//
-function TipoCotaGarantia(workspace) {
-    _workspace = workspace;
-    this.get();
-    this.controller = null;
-    this.newControllerType = null;
-    this.controllerType = null;
-    var _this = this;
-    this.confirmDialog = new ConfirmDialog('Ao mudar de garantia, os dados da garantia anterior serão perdidos.</br>Deseja continuar?', function() {
-        _this.changeController(_this.newControllerType);
-        return true;
-    }, function() {
-        $("#tipoGarantiaSelect", _workspace).val(_this.controllerType);
-    });
-};
-
-TipoCotaGarantia.prototype.path = contextPath + "/cadastro/garantia/";
-TipoCotaGarantia.prototype.tipo = {
-
-    'FIADOR' : {
-        label : 'Fiador',
-        controller : Fiador
-    },
-    'CHEQUE_CAUCAO' : {
-        label : 'Cheque Caução',
-        controller : ChequeCaucao
-    },
-    'IMOVEL' : {
-        label : 'Imóvel',
-        controller : Imovel
-    },
-    'NOTA_PROMISSORIA' : {
-        label : 'Nota Promissória',
-        controller : NotaPromissoria
-    },
-    'CAUCAO_LIQUIDA' : {
-        label : 'Caução Liquida',
-        controller : CaucaoLiquida
-    },
-    'OUTROS' : {
-        label : 'Outros',
-        controller : Outros
-    }
-};
-
-TipoCotaGarantia.prototype.get = function() {
-    var _this = this;
-    $.getJSON(this.path + 'getTiposGarantia.json', null, function(data) {
-        var tipoMensagem = data.tipoMensagem;
-        var listaMensagens = data.listaMensagens;
-
-        if (tipoMensagem && listaMensagens) {
-            exibirMensagemDialog(tipoMensagem, listaMensagens,"");
-        } else {
-            _this.bindData(data);
-        }
-
-    }, null, true);
-};
-
-TipoCotaGarantia.prototype.getData = function() {
-    var _this = this;
-    var param = [{name: 'idCota', value: this.getIdCota()},
-        {name: 'modoTela', value: this.getModoTela().value},
-        {name: 'idHistorico', value: this.getIdHistorico()}]
-    $.postJSON(this.path + 'getByCota.json', param, function(data) {
-        var tipoMensagem = data.tipoMensagem;
-        var listaMensagens = data.listaMensagens;
-        if (tipoMensagem && listaMensagens) {
-            exibirMensagemDialog(tipoMensagem, listaMensagens,"");
-        } else if (data && data.cotaGarantia) {
-            _this.cotaGarantia = data.cotaGarantia;
-            _this.cotaGarantia.controllerType = data.tipo;
-            _this.changeController(data.tipo);
-            $("#tipoGarantiaSelect", _workspace).val(data.tipo).change();
-
-            _this.configTipoCotaGarantia(data.tipo,_this.getIdCota());
-
-        } else if (!data || !data.cotaGarantia) {
-            _this.changeController(null);
-        }
-
-    }, null, true);
-};
-
-TipoCotaGarantia.prototype.configTipoCotaGarantia = function(tipo,idCota) {
-
-    if (tipo=="CAUCAO_LIQUIDA"){
-        CaucaoLiquida.prototype.obterCaucaoLiquida(idCota);
-    }
-};
-
-TipoCotaGarantia.prototype.bindData = function(data) {
-
-    var select = $("#tipoGarantiaSelect", _workspace);
-
-    for ( var index in data) {
-        var tipo = data[index];
-        if (this.tipo[tipo]) {
-            var option = document.createElement("option");
-
-            option.text = this.tipo[tipo].label;
-
-            option.value = tipo;
-
-            try {
-                $(select).append(option, select.options[null]);
-            } catch (e) {
-                $(select).append(option, null);
-            }
-        }
-    }
-
-};
-
-TipoCotaGarantia.prototype.bindTiposCobrancaCotaGarantia = function() {
-
-    $.getJSON(this.path + 'getTiposCobrancaCotaGarantia.json',
-        null,
-        function(data) {
-
-            var tipoMensagem = data.tipoMensagem;
-            var listaMensagens = data.listaMensagens;
-
-            if (tipoMensagem && listaMensagens) {
-                exibirMensagemDialog(tipoMensagem, listaMensagens,"");
-            } else {
-                var select = $("#tipoCobranca", _workspace);
-
-                $(select).find('option')
-                    .remove()
-                    .end()
-                    .append('<option value="">Selecione</option>')
-                    .val('Selecione');
-
-                for ( var index in data) {
-                    var tipo = data[index];
-                    var option = document.createElement("option");
-
-                    option.text = tipo.value.$;
-
-                    option.value = tipo.key.$;
-
-                    try {
-                        $(select).append(option, select.options[null]);
-                    } catch (e) {
-                        $(select).append(option, null);
-                    }
-                }
-            }
-        },
-        null,
-        true);
-
-};
-
-TipoCotaGarantia.prototype.onOpen = function(tipoCotaSelecionada) {
-
-    this.getData();
-
-    this.bindTiposCobrancaCotaGarantia();
-
-    if (tipoCotaSelecionada == "JURIDICA"){
-        $("#cotaGarantiaClassificacaoCota", this.workspace).val($("#classificacaoSelecionada :selected", this.workspace).text());
-    }
-    else{
-        $("#cotaGarantiaClassificacaoCota", this.workspace).val($("#classificacaoSelecionadaCPF :selected", this.workspace).text());
-    }
-};
-
-TipoCotaGarantia.prototype.bindEvents = function() {
-    var _this = this;
-    $("#tipoGarantiaSelect", _workspace).change(function(eventObject) {
-        var valor = $(this).val();
-        if (valor.length > 0) {
-            _this.changeController(valor);
-        }
-    }).change();
-};
-
-TipoCotaGarantia.prototype.onChange = function(newControllerType) {
-    if (this.cotaGarantia && this.cotaGarantia.id && this.cotaGarantia.controllerType == this.controllerType) {
-        this.newControllerType = newControllerType;
-        if (this.newControllerType != this.controllerType) {
-            this.confirmDialog.open();
-        }
-    } else {
-        this.newControllerType = null;
-        this.changeController(newControllerType);
-    }
-};
-
-TipoCotaGarantia.prototype.changeController = function(newControllerType) {
-    if (this.controller) {
-        this.controller.toggle();
-        if(this.controller.destroy){
-            this.controller.destroy();
-        }
-        delete this.controller;
-    }
-    if(newControllerType){
-
-        var obj = this.tipo[newControllerType].controller;
-        this.controller = new obj(this.getIdCota(), this.cotaGarantia);
-        this.controllerType = newControllerType;
-    }else{
-        //$("#tipoGarantiaSelect", _workspace)[0].selectedIndex;
-        //$("#tipoGarantiaSelect", _workspace).val("");
-        this.controller = null;
-        this.controllerType = null;
-        if (this.cotaGarantia) {
-            this.cotaGarantia = null;
-        }
-    }
-
-};
-
-TipoCotaGarantia.prototype.getIdCota = function() {
-    return MANTER_COTA.idCota;
-};
-
-TipoCotaGarantia.prototype.getModoTela = function() {
-    return MANTER_COTA.modoTela;
-};
-
-TipoCotaGarantia.prototype.getIdHistorico = function() {
-    return MANTER_COTA.idHistorico;
-};
-
-TipoCotaGarantia.prototype.isModoTelaCadastroCota = function() {
-    return MANTER_COTA.isModoTelaCadastroCota();
-};
-
-
-
-TipoCotaGarantia.prototype.salva = function(callBack) {
-    var retorno = false;
-    var _this = this;
-    if(this.controller){
-        retorno = this.controller.salva(function(){
-            _this.getData();
-            if(callBack){
-                callBack();
-            }
-        });
-    }
-
-    return retorno;
-};
 
 // **************** FIADOR PROTOTYPE ********************//
 function Fiador(idCota, cotaGarantia) {
@@ -953,7 +1167,9 @@ Fiador.prototype.toggle = function() {
 };
 
 Fiador.prototype.bindEvents = function() {
-    var _this = this;
+    
+	var _this = this;
+    
     $("#cotaGarantiaFiadorSearchName", _workspace).autocomplete({
         source : function(request, response) {
             $.postJSON(_this.path + 'buscaFiador.json', {
@@ -984,7 +1200,6 @@ Fiador.prototype.bindEvents = function() {
         }
     });
 
-
     $("#cotaGarantiaFiadorSearchDoc", _workspace).keypress(function(e) {
         if ((e.which && e.which == 13) || (e.keyCode && e.keyCode == 13)) {
             $("#cotaGarantiaFiadorSearchName", _workspace).val("");
@@ -1013,23 +1228,27 @@ Fiador.prototype.getFiador = function(idFiador, documento) {
     }
     ;
 
-    $.postJSON(this.path + "getFiador.json", param, function(data) {
-        if (data === "NotFound") {
-            _this.confirma();
-            _this.toggleDados(false);
-            _this.fiador = null;
-        } else if (data.tipoMensagem && data.listaMensagens) {
-            exibirMensagemDialog(data.tipoMensagem, data.listaMensagens,"");
-            _this.toggleDados(false);
-            _this.fiador = null;
-            _this.enderecoFiador = null;
-        } else {
-            _this.fiador = data.fiador;
-            _this.enderecoFiador =data.endereco;
-            _this.bindData();
-            _this.toggleDados(true);
-        }
-    }, null, true);
+    $.postJSON(this.path + "getFiador.json", param, 
+    	function(data) {
+	        if (data === "NotFound") {
+	            _this.confirma();
+	            _this.toggleDados(false);
+	            _this.fiador = null;
+	        } else if (data.tipoMensagem && data.listaMensagens) {
+	            exibirMensagemDialog(data.tipoMensagem, data.listaMensagens,"");
+	            _this.toggleDados(false);
+	            _this.fiador = null;
+	            _this.enderecoFiador = null;
+	        } else {
+	            _this.fiador = data.fiador;
+	            _this.enderecoFiador =data.endereco;
+	            _this.bindData();
+	            _this.toggleDados(true);
+	        }
+        }, 
+        null, 
+        true
+    );
 };
 
 Fiador.prototype.confirma = function() {
@@ -1038,6 +1257,20 @@ Fiador.prototype.confirma = function() {
 
 Fiador.prototype.toggleDados = function(showOrHide) {
     $('#cotaGarantiaFiadorDadosPanel', _workspace).toggle(showOrHide);
+};
+
+Fiador.prototype.obterFiador = function(idCota){
+	
+	var _this = this;
+
+    $.postJSON(this.path + 'getFiadorByCota.json',
+    	[{name:'idCota', value:idCota}],
+        function(result){
+    	
+    	    _this.getFiador(result.id,null);
+        },
+        null,
+        true);
 };
 
 Fiador.prototype.bindData = function() {
@@ -1092,7 +1325,6 @@ Fiador.prototype.bindData = function() {
             }
         }
     }
-
 
     $("#cotaGarantiaFiadorTelefone", _workspace).html(
         '(' + telefone.ddd + ') ' + telefone.numero);
@@ -1158,22 +1390,32 @@ Fiador.prototype.salva = function(callBack) {
 };
 
 Fiador.prototype.get = function() {
+	
     var _this = this;
-    $.postJSON(this.path + 'getByCota.json', {
-        'idCota' : this._idCota
-    }, function(data) {
+    var params = [{name: 'idCota', value: this._idCota}, {name: 'modoTela', value: tipoCotaGarantia.getModoTela().value}];
+    
+    $.postJSON(this.path + 'getByCota.json', params, 
+        function(data) {
+    	
+	        var tipoMensagem = data.tipoMensagem;
+	        var listaMensagens = data.listaMensagens;
+	        
+	        if (tipoMensagem && listaMensagens) {
+	        	
+	            exibirMensagemDialog(tipoMensagem, listaMensagens,"");
+	        } else if (data && data.fiador) {
+	        	
+	            _this.getFiador(data.fiador.id, null);
+	        }
 
-        var tipoMensagem = data.tipoMensagem;
-        var listaMensagens = data.listaMensagens;
-        if (tipoMensagem && listaMensagens) {
-            exibirMensagemDialog(tipoMensagem, listaMensagens,"");
-        } else if (data && data.fiador) {
-            _this.getFiador(data.fiador.id, null);
-        }
-
-    }, null, true);
-
+        }, 
+        null, 
+        true
+    );
 };
+
+
+
 
 //**************** CAUCAO LIQUIDA PROTOTYPE ********************//
 function CaucaoLiquida(idCota, cotaGarantia) {
@@ -1198,6 +1440,7 @@ function CaucaoLiquida(idCota, cotaGarantia) {
         $(".bt_confirmar_novo", _workspace).hide();
     }
 }
+
 CaucaoLiquida.prototype.path = contextPath + "/cadastro/garantia/";
 
 CaucaoLiquida.prototype.toggle = function(showOrHide) {
@@ -1415,7 +1658,6 @@ CaucaoLiquida.prototype.salva = function(callBack) {
 
     var valor               = this.getValorCaucaoLiquida(tipoCobranca);
 
-
     postData['formaCobranca.tipoCobranca'] = tipoCobranca;
 
     //FORMA BOLETO
@@ -1510,7 +1752,6 @@ CaucaoLiquida.prototype.resgatarValorCaucao = function() {
         },
         form: $("#workspaceCota", _workspace)
     });
-
 };
 
 CaucaoLiquida.prototype.bindEvents = function() {
@@ -1576,7 +1817,6 @@ CaucaoLiquida.prototype.bindEvents = function() {
         centsSeparator : ',',
         thousandsSeparator : '.'
     });
-
 };
 
 CaucaoLiquida.prototype.destroy = function() {
@@ -1584,9 +1824,13 @@ CaucaoLiquida.prototype.destroy = function() {
 };
 
 CaucaoLiquida.prototype.initGrid = function() {
+	
     $("#cotaGarantiaCaucaoLiquidaGrid", _workspace).empty();
+    
     this.grid = $("<div></div>");
+    
     $("#cotaGarantiaCaucaoLiquidaGrid", _workspace).append(this.grid);
+    
     this.grid.flexigrid({
         preProcess: CaucaoLiquida.prototype.getDataFromResultGrid,
         dataType : 'json',
@@ -1731,19 +1975,19 @@ CaucaoLiquida.prototype.opcaoTipoFormaCobranca = function(op){
     }
 };
 
-
 //OBTEM UM PARÂMETRO PARA ALTERAÇÃO
 CaucaoLiquida.prototype.obterCaucaoLiquida = function(idCota){
+	
     var data = [{name: 'idCota', value: idCota},
         {name: 'modoTela', value:  tipoCotaGarantia.getModoTela().value},
         {name: 'idHistorico', value:  tipoCotaGarantia.getIdHistorico()}];
+    
     $.postJSON(this.path + 'getCaucaoLiquidaByCota.json',
         data,
         this.sucessCallbackObterCaucaoLiquida,
         null,
         true);
 };
-
 
 CaucaoLiquida.prototype.sucessCallbackObterCaucaoLiquida = function(resultado) {
 
@@ -1786,7 +2030,14 @@ CaucaoLiquida.prototype.sucessCallbackObterCaucaoLiquida = function(resultado) {
     CaucaoLiquida.prototype.setValorCaucaoLiquida(resultado.tipoCobranca, resultado.valor);
 
     CaucaoLiquida.prototype.opcaoPagto(resultado.tipoCobranca);
+   
+    tipoCotaGarantia.controller.grid.flexAddData({
+        rows : toFlexiGridObject(resultado.caucoes),
+        page : 1,
+        total : 1
+    });   
 };
+
 
 
 
@@ -1818,6 +2069,7 @@ function Outros(idCota, cotaGarantia) {
         $("#cotaGarantiaOutrosIncluirNovo").hide();
     }
 }
+
 Outros.prototype.path = contextPath + "/cadastro/garantia/";
 
 Outros.prototype.toggle = function(showOrHide) {
@@ -1913,7 +2165,6 @@ Outros.prototype.dataBind = function() {
     $("#validadeCotaGarantiaOutros").mask("99/99/9999");
 
 };
-
 
 Outros.prototype.popularGrid = function() {
 
@@ -2071,7 +2322,6 @@ Outros.prototype.initGrid = function() {
             }
         },
 
-
         dataType : 'json',
         colModel : [ {
             display : 'Descrição',
@@ -2103,8 +2353,8 @@ Outros.prototype.initGrid = function() {
         width : 740,
         height : 150
     });
-
 };
+
 
 
 

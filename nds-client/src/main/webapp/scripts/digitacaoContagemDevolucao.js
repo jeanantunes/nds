@@ -301,13 +301,19 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 			
 				var colunaCodigoProduto = linha.find("td")[0];
 				var colunaNumeroEdicao = linha.find("td")[2];
+				var colunaPrecoCapa = linha.find("td")[3];
 				var colunaExemplarNota = linha.find("td")[indexColunaExemplarNota];
+				var colunaTotalComDesconto = linha.find("td")[5];
 				var colunaDiferenca = linha.find("td")[8];
 				
 				var codigoProduto = $(colunaCodigoProduto, digitacaoContagemDevolucaoController.workspace).find("div").html();
 				
 				var numeroEdicao = $(colunaNumeroEdicao, digitacaoContagemDevolucaoController.workspace).find("div").html();
-				
+
+				var precoCapa = $(colunaPrecoCapa, digitacaoContagemDevolucaoController.workspace).find("div").html();
+
+				var totalComDesconto = $(colunaTotalComDesconto, digitacaoContagemDevolucaoController.workspace).find("div").html();
+
 				var diferenca = $(colunaDiferenca, digitacaoContagemDevolucaoController.workspace).find("span").html();
 				
 				var qtdNota = $(colunaExemplarNota, digitacaoContagemDevolucaoController.workspace).find("div").find('input[name="qtdNota"]').val();
@@ -321,8 +327,10 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 
 				var digitacaoContagemDevolucao = {codigoProduto:codigoProduto,
 												  numeroEdicao:numeroEdicao,
+												  precoVenda:precoCapa,
 												  dataRecolhimentoDistribuido:dataRecolhimentoDistribuidor,
-												  qtdNota:qtdNota};
+												  qtdNota:qtdNota,
+												  valorTotalComDesconto:totalComDesconto};
 				
 					if (diferenca) {
 						
@@ -627,3 +635,4 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 		}
 		
 }, BaseController);
+//@ sourceURL=digitacaoContagemDevolucao.js

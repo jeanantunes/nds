@@ -1,8 +1,11 @@
 package br.com.abril.nds.dto;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import br.com.abril.nds.model.cadastro.Endereco;
+import br.com.abril.nds.model.cadastro.pdv.RotaPDV;
 import br.com.abril.nds.util.Ordenavel;
 import br.com.abril.nds.util.Util;
 
@@ -53,6 +56,30 @@ public class PdvRoteirizacaoDTO implements Serializable, Ordenavel {
 		this.ordem = ordem;
 	}
 
+	public PdvRoteirizacaoDTO(Long id, String nomePDV, Integer numeroCota, Integer ordem) {
+		this.id = id;
+		this.cota = numeroCota;
+		this.nome = nomePDV;
+		this.ordem = ordem;
+	}
+	
+	public static List<PdvRoteirizacaoDTO> getDTOFrom(List<RotaPDV> rotasPDVs) {
+	
+		List<PdvRoteirizacaoDTO> pdvs = new ArrayList<PdvRoteirizacaoDTO>();
+		
+		for(RotaPDV rotaPDV : rotasPDVs) {
+			
+			PdvRoteirizacaoDTO pdvDTO = new PdvRoteirizacaoDTO(rotaPDV.getId(), 
+															   rotaPDV.getPdv().getNome(), 
+															   rotaPDV.getPdv().getCota().getNumeroCota(), 
+															   rotaPDV.getOrdem());
+			
+			pdvs.add(pdvDTO);
+		}
+		
+		return pdvs;
+	}
+	
 	public Long getId() {
 		return id;
 	}

@@ -15,7 +15,7 @@
 </style>
 
 
-<fieldset style="left: 10px">
+<fieldset style="margin-left: 20px">
 
 <legend>Características</legend>
 
@@ -40,7 +40,7 @@
 
 </fieldset>
 
-<fieldset style="left: 10px">
+<fieldset style="margin-left: 20px">
 
     <legend>Segmentação</legend>
  

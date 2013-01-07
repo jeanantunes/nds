@@ -12,6 +12,7 @@ import org.lightcouch.NoDocumentException;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
+import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.ColunaRelatorioInformeEncalhe;
 import br.com.abril.nds.dto.InformeEncalheDTO;
 import br.com.abril.nds.dto.ItemDTO;
@@ -45,7 +46,7 @@ import br.com.caelum.vraptor.Result;
  */
 @Resource
 @Path(value = "/devolucao/informeEncalhe")
-public class ConsultaInformeEncalheController {
+public class ConsultaInformeEncalheController extends BaseController {
 
 	@Autowired
 	private Result result;
@@ -188,77 +189,77 @@ public class ConsultaInformeEncalheController {
 			if (tipoImpressao.getColunas().contains("codigoProduto")){
 				
 				colunas.add(new ColunaRelatorioInformeEncalhe("Código", 
-						this.calcularTamanhoColunaRelatorio(qtdColunas, 5), 
+						this.calcularTamanhoColunaRelatorio(qtdColunas, 4), 
 						"codigoProduto"));
 			}
 			
 			if (tipoImpressao.getColunas().contains("nomeProduto")){
 				
 				colunas.add(new ColunaRelatorioInformeEncalhe("Produto", 
-						this.calcularTamanhoColunaRelatorio(qtdColunas, 10), 
+						this.calcularTamanhoColunaRelatorio(qtdColunas, 13), 
 						"nomeProduto"));
 			}
 			
 			if (tipoImpressao.getColunas().contains("numeroEdicao")){
 				
 				colunas.add(new ColunaRelatorioInformeEncalhe("ED.", 
-						this.calcularTamanhoColunaRelatorio(qtdColunas, 5),
+						this.calcularTamanhoColunaRelatorio(qtdColunas, 4),
 						"numeroEdicao"));
 			}
 			
 			if (tipoImpressao.getColunas().contains("chamadaCapa")){
 				
 				colunas.add(new ColunaRelatorioInformeEncalhe("Chamada de Capa", 
-						this.calcularTamanhoColunaRelatorio(qtdColunas, 5), 
+						this.calcularTamanhoColunaRelatorio(qtdColunas, 10), 
 						"chamadaCapa"));
 			}
 			
 			if (tipoImpressao.getColunas().contains("codigoDeBarras")){
 				
 				colunas.add(new ColunaRelatorioInformeEncalhe("Código de Barras", 
-						this.calcularTamanhoColunaRelatorio(qtdColunas, 5),
+						this.calcularTamanhoColunaRelatorio(qtdColunas, 9),
 						"codigoDeBarras"));
 			}
 			
 			if (tipoImpressao.getColunas().contains("precoVenda")){
 				
 				colunas.add(new ColunaRelatorioInformeEncalhe("R$ Capa", 
-						this.calcularTamanhoColunaRelatorio(qtdColunas, 5),
+						this.calcularTamanhoColunaRelatorio(qtdColunas, 4),
 						"precoVenda"));
 			}
 			
 			if (tipoImpressao.getColunas().contains("nomeEditor")){
 				
 				colunas.add(new ColunaRelatorioInformeEncalhe("Editor", 
-						this.calcularTamanhoColunaRelatorio(qtdColunas, 5), 
+						this.calcularTamanhoColunaRelatorio(qtdColunas, 14), 
 						"nomeEditor"));
 			}
 			
 			if (tipoImpressao.getColunas().contains("brinde")){
 				
 				colunas.add(new ColunaRelatorioInformeEncalhe("Brinde", 
-						this.calcularTamanhoColunaRelatorio(qtdColunas, 5), 
+						this.calcularTamanhoColunaRelatorio(qtdColunas, 4), 
 						"brinde"));
 			}
 			
 			if (tipoImpressao.getColunas().contains("dataLancamento")){
 				
 				colunas.add(new ColunaRelatorioInformeEncalhe("Lanc.", 
-						this.calcularTamanhoColunaRelatorio(qtdColunas, 5),
+						this.calcularTamanhoColunaRelatorio(qtdColunas, 4),
 						"dataLancamento"));
 			}
 			
 			if (tipoImpressao.getColunas().contains("dataRecolhimento")){
 				
 				colunas.add(new ColunaRelatorioInformeEncalhe("Rec.",
-						this.calcularTamanhoColunaRelatorio(qtdColunas, 5),
+						this.calcularTamanhoColunaRelatorio(qtdColunas, 4),
 						"dataRecolhimento"));
 			}
 			
 			if (tipoImpressao.getColunas().contains("tipoLancamentoParcial")){
 				
-				colunas.add(new ColunaRelatorioInformeEncalhe("P / F",
-						this.calcularTamanhoColunaRelatorio(qtdColunas, 5), 
+				colunas.add(new ColunaRelatorioInformeEncalhe("TR",
+						this.calcularTamanhoColunaRelatorio(qtdColunas, 3), 
 						"tipoLancamentoParcial"));
 			}
 		}
@@ -411,7 +412,7 @@ public class ConsultaInformeEncalheController {
 	
 	private int calcularTamanhoColunaRelatorio(int qtdColunas, int porcentual){
 		
-		int tamanhoTotalTable = 662;
+		int tamanhoTotalTable = 1000;
 		
 		return tamanhoTotalTable / qtdColunas * porcentual / 100;
 	}

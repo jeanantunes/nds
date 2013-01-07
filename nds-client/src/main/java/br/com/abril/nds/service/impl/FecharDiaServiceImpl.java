@@ -733,7 +733,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 
 	private ResumoSuplementarFecharDiaDTO incluirResumoSuplementar(FechamentoDiario fechamento, Builder builder) throws FechamentoDiarioException {
 		
-		ResumoSuplementarFecharDiaDTO resumoSuplementar = resumoSuplementarFecharDiaService.obterResumoGeralEncalhe(fechamento.getDataFechamento());
+		ResumoSuplementarFecharDiaDTO resumoSuplementar = resumoSuplementarFecharDiaService.obterResumoGeralSuplementar(fechamento.getDataFechamento());
 		builder.resumoSuplementar(resumoSuplementar);
 		
 		validarDadosFechamentoDiario(resumoSuplementar, "Erro na obtenção dos dados de Resumo de Suplementar!");
@@ -761,7 +761,9 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 	private List<SuplementarFecharDiaDTO> incluirLancamentosSuplementar(FechamentoDiarioConsolidadoSuplementar consolidadoSuplementar)
 			throws FechamentoDiarioException {
 		
-		List<SuplementarFecharDiaDTO> listaSuplementar = this.resumoSuplementarFecharDiaService.obterDadosGridSuplementar();
+	    FechamentoDiario fechamentoDiario = consolidadoSuplementar.getFechamentoDiario();
+	    
+		List<SuplementarFecharDiaDTO> listaSuplementar = this.resumoSuplementarFecharDiaService.obterDadosGridSuplementar(fechamentoDiario.getDataFechamento(), null);
 		
 		if(listaSuplementar!= null && !listaSuplementar.isEmpty()){
 			
@@ -773,7 +775,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 				
 				lancamentoSuplementar.setProdutoEdicao(produtoEdicao);
 				lancamentoSuplementar.setFechamentoDiarioConsolidadoSuplementar(consolidadoSuplementar);
-				lancamentoSuplementar.setQuantidadeContabilizada(item.getQuantidadeContabil());
+				lancamentoSuplementar.setQuantidadeContabilizada(item.getQuantidadeContabil().longValue());
 				
 				fechamentoDiarioLancamentoSuplementarRepository.adicionar(lancamentoSuplementar);
 			}
@@ -963,7 +965,8 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		
 		grupos.add(GrupoMovimentoFinaceiro.CREDITO);
 		grupos.add(GrupoMovimentoFinaceiro.DEBITO);
-		grupos.add(GrupoMovimentoFinaceiro.POSTERGADO);
+		grupos.add(GrupoMovimentoFinaceiro.POSTERGADO_DEBITO);
+		grupos.add(GrupoMovimentoFinaceiro.POSTERGADO_CREDITO);
 		grupos.add(GrupoMovimentoFinaceiro.POSTERGADO_NEGOCIACAO);
 		
 		return grupos;

@@ -14,6 +14,7 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.util.PaginacaoUtil;
+import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.dto.TelefoneDTO;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -34,7 +35,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/cadastro/telefone")
-public class TelefoneController {
+public class TelefoneController extends BaseController {
 
 	private static String LISTA_TELEFONES_SALVAR_SESSAO = "";
 	

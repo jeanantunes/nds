@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.DividaGeradaVO;
+import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.GeraDividaDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.filtro.FiltroDividaGeradaDTO;
@@ -34,13 +35,13 @@ import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.seguranca.Permissao;
-import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.service.BoxService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.GerarCobrancaService;
 import br.com.abril.nds.service.ImpressaoDividaService;
 import br.com.abril.nds.service.ParametroCobrancaCotaService;
+import br.com.abril.nds.service.PoliticaCobrancaService;
 import br.com.abril.nds.service.RoteirizacaoService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.CurrencyUtil;
@@ -50,8 +51,8 @@ import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
-import br.com.abril.nds.util.export.NDSFileHeader;
 import br.com.abril.nds.vo.PaginacaoVO;
+import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
@@ -61,7 +62,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/financeiro/impressaoBoletos")
-public class ImpressaoBoletosController {
+public class ImpressaoBoletosController extends BaseController {
 
 	private static final String FILTRO_SESSION_ATTRIBUTE = "pesquisaGeraDivida";
 
@@ -96,6 +97,9 @@ public class ImpressaoBoletosController {
 	private BoxService boxService;
 
 	@Autowired
+	private PoliticaCobrancaService politicaCobrancaService;
+	
+	@Autowired
 	private HttpSession session;
 
 	@Autowired
@@ -117,6 +121,8 @@ public class ImpressaoBoletosController {
 		carregarBoxes();
 		carregarRota();
 		carregarRoteiro();
+		
+		result.include("dataOperacao", getDataOperacaoDistribuidor());
 	}
 
 	/**
@@ -124,9 +130,12 @@ public class ImpressaoBoletosController {
 	 */
 	private void carregarTiposCobranca() {
 
+		List<TipoCobranca> tiposCobranca =
+			this.politicaCobrancaService.obterTiposCobrancaDistribuidor();
+		
 		List<ItemDTO<TipoCobranca, String>> listaTipoCobranca = new ArrayList<ItemDTO<TipoCobranca, String>>();
 
-		for (TipoCobranca tipo : TipoCobranca.values()) {
+		for (TipoCobranca tipo : tiposCobranca) {
 
 			listaTipoCobranca.add(new ItemDTO<TipoCobranca, String>(tipo, tipo
 					.getDescTipoCobranca()));
@@ -256,15 +265,28 @@ public class ImpressaoBoletosController {
 	public void gerarDivida() throws IOException {
 
 		try {
-			this.gerarCobrancaService.gerarCobranca(null, this.getUsuario()
-					.getId(), new HashSet<String>(), true);
+			this.gerarCobrancaService.gerarCobranca(null, this.getUsuarioLogado()
+					.getId(), new HashSet<String>());
 		} catch (GerarCobrancaValidacaoException e) {
 
 			throw e.getValidacaoException();
 		}
 
 		throw new ValidacaoException(TipoMensagem.SUCCESS,
-				"As dividas foram geradas com sucesso.");
+			"As dividas para a data de operação [" + this.getDataOperacaoDistribuidor()
+				+ "] foram geradas com sucesso!");
+	}
+	
+	private String getDataOperacaoDistribuidor() {
+
+		Distribuidor distribuidor = this.distribuidorService.obter();
+		
+		if (distribuidor != null) {
+
+			return DateUtil.formatarDataPTBR(distribuidor.getDataOperacao());
+		}
+
+		return null;
 	}
 
 	@Post
@@ -304,7 +326,7 @@ public class ImpressaoBoletosController {
 		List<GeraDividaDTO> listaDividasGeradas = dividaService
 				.obterDividasGeradas(filtro);
 
-		FileExporter.to("conta-corrente-cota", fileType).inHTTPResponse(
+		FileExporter.to("divida-cota", fileType).inHTTPResponse(
 				this.getNDSFileHeader(), filtro, null, listaDividasGeradas,
 				GeraDividaDTO.class, this.httpResponse);
 	}
@@ -453,27 +475,6 @@ public class ImpressaoBoletosController {
 		}
 
 		return listaDividasGeradasVO;
-	}
-
-	/**
-	 * Verifica se divididas foram geradas em uma determinada data de
-	 * vencimento.
-	 * 
-	 * @param dataMovimento
-	 * @return Boolean
-	 */
-	@Post
-	@Path("/validarPesquisaDivida")
-	public void validarPesquisaDivida(String dataMovimento) {
-
-		isDataMovimento(dataMovimento);
-
-		Boolean isPesquisa = dividaService.validarDividaGerada(DateUtil
-				.parseDataPTBR(dataMovimento));
-
-		result.use(Results.json()).from(isPesquisa.toString(), "result")
-				.serialize();
-
 	}
 
 	/**
@@ -673,44 +674,6 @@ public class ImpressaoBoletosController {
 		}
 	}
 
-	/*
-	 * Obtém os dados do cabeçalho de exportação.
-	 * 
-	 * @return NDSFileHeader
-	 */
-	private NDSFileHeader getNDSFileHeader() {
-
-		NDSFileHeader ndsFileHeader = new NDSFileHeader();
-
-		Distribuidor distribuidor = this.distribuidorService.obter();
-
-		if (distribuidor != null) {
-
-			ndsFileHeader.setNomeDistribuidor(distribuidor.getJuridica()
-					.getRazaoSocial());
-			ndsFileHeader.setCnpjDistribuidor(distribuidor.getJuridica()
-					.getCnpj());
-		}
-
-		ndsFileHeader.setData(new Date());
-
-		ndsFileHeader.setNomeUsuario(this.getUsuario().getNome());
-
-		return ndsFileHeader;
-	}
-
-	// TODO: não há como reconhecer usuario, ainda
-	private Usuario getUsuario() {
-
-		Usuario usuario = new Usuario();
-
-		usuario.setId(1L);
-
-		usuario.setNome("Jornaleiro da Silva");
-
-		return usuario;
-	}
-
 	@Post
 	public void habilitarAcaoGeracaoDivida(Date dataPesquisa) {
 
@@ -725,6 +688,21 @@ public class ImpressaoBoletosController {
 		}
 
 		result.use(CustomJson.class).from(isAcaoGeraDivida).serialize();
+	}
+	
+	@Post
+	public void veificarCobrancaGerada(){
+		
+		if (this.gerarCobrancaService.verificarCobrancasGeradas(null)){
+			
+			this.result.use(Results.json()).from(
+					new ValidacaoVO(TipoMensagem.WARNING, 
+							"Já existe(m) cobrança(s) gerada(s) para a data de operação atual, continuar irá sobrescreve-la(s). Deseja continuar?"), 
+							"result").recursive().serialize();
+			return;
+		}
+		
+		this.result.use(Results.json()).from("").serialize();
 	}
 
 }

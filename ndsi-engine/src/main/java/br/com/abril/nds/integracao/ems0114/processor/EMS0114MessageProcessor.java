@@ -41,24 +41,6 @@ public class EMS0114MessageProcessor extends AbstractRepository implements
 	public void processMessage(Message message) {
 
 		EMS0114Input input = (EMS0114Input) message.getBody();
-		if (input == null) {
-			this.ndsiLoggerFactory.getLogger().logError(
-					message, EventoExecucaoEnum.ERRO_INFRA, "NAO ENCONTROU o Arquivo");
-			return;
-		}
-
-		// Validar Distribuidor:
-		Integer codDistribuidorSistema = (Integer) message.getHeader().get(
-				MessageHeaderProperties.CODIGO_DISTRIBUIDOR);
-		Integer codigoDistribuidorArquivo = Integer.parseInt(
-				input.getCodDistrib());
-		if (codDistribuidorSistema.longValue() != codigoDistribuidorArquivo.longValue()) {
-			this.ndsiLoggerFactory.getLogger().logWarning(message,
-					EventoExecucaoEnum.RELACIONAMENTO,
-					"Distribuidor nao encontrato. Código: " 
-					+ codDistribuidorSistema);
-			return;
-		}
 
 		// Validar Produto/Edicao
 		final String codigoProduto = input.getCodProd();
@@ -106,6 +88,7 @@ public class EMS0114MessageProcessor extends AbstractRepository implements
 										dtRecolhimentoArquivo));
 				lancamento.setDataRecolhimentoPrevista(dtRecolhimentoArquivo);
 				lancamento.setAlteradoInteface(true);
+				this.getSession().merge(lancamento);
 			}
 			
 			
@@ -123,7 +106,7 @@ public class EMS0114MessageProcessor extends AbstractRepository implements
 										dtRecolhimentoArquivo));
 				lancamento.setDataRecolhimentoDistribuidor(dtRecolhimentoArquivo);
 				lancamento.setAlteradoInteface(true);
-				
+				this.getSession().merge(lancamento);
 			}
 		}
 		

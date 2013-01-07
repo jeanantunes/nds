@@ -3,6 +3,7 @@ package br.com.abril.nds.repository.impl;
 import java.util.List;
 
 import org.hibernate.Criteria;
+import org.hibernate.Query;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
@@ -31,6 +32,24 @@ public class SocioCotaRepositoryImpl extends AbstractRepositoryModel<SocioCota,L
 		criteria.add(Restrictions.eq("cota.id", idCota));
 		
 		return criteria.list();
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional
+	public void removerSociosCota(Long idCota){
+		
+		StringBuilder hql  = new StringBuilder();
+		
+		hql.append(" Delete from SocioCota where cota.id = :idCota ");
+		
+		Query q = getSession().createQuery(hql.toString());
+		
+		q.setParameter("idCota", idCota);
+		
+		q.executeUpdate();
 	}
 	
 	/**

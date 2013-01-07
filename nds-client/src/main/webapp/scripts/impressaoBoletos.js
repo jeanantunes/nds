@@ -140,6 +140,8 @@ var impressaoBoletosController = $.extend(true, {
 		
 		$("#grids", impressaoBoletosController.workspace).show();
 			
+		$("#divImpressoes").show();
+		
 		return resultado;
 	},
 	
@@ -147,7 +149,7 @@ var impressaoBoletosController = $.extend(true, {
 		var data = [{ name: 'nossoNumero', value: nossoNumero}];
 		
 		$.postJSON(contextPath + "/financeiro/impressaoBoletos/enviarDivida", data,function(){
-			impressaoBoletosController.pesquisar();	
+			impressaoBoletosController.pesquisar();
 		});
 	},
 	
@@ -167,6 +169,8 @@ var impressaoBoletosController = $.extend(true, {
 	**/
 	pesquisar: function (){
 		
+		$("#divImpressoes").hide();
+		
 		$("#impressosGrid", impressaoBoletosController.workspace).flexOptions({
 			url: contextPath + "/financeiro/impressaoBoletos/consultar",
 			params: impressaoBoletosController.formData(),newp: 1
@@ -177,7 +181,7 @@ var impressaoBoletosController = $.extend(true, {
 	},
 	
 	/**
-		Executa o m�todo de gera��o de dividas
+		Executa o método de geração de dividas
 	**/
 	gerarDivida : function (){
 		$("#aguarde", impressaoBoletosController.workspace).dialog({
@@ -207,59 +211,12 @@ var impressaoBoletosController = $.extend(true, {
 			false
 		);
 	},
-	pesquisarCotaSuccessCallBack:function(){
-		
-		var data = {numeroCota: $("#numCota", impressaoBoletosController.workspace).val()};
-		
-		$.postJSON(impressaoBoletosController.workspace + "/financeiro/impressaoBoletos/pesquisarInfoCota",
-				   data, function(result){
-			
-			$("#box", impressaoBoletosController.workspace).val(result.box);
-			$("#rota", impressaoBoletosController.workspace).val(result.rota);
-			$("#roteiro", impressaoBoletosController.workspace).val(result.roteiro);
-			$("#tipoCobranca", impressaoBoletosController.workspace).val(result.tipoCobranca);
-		});
-		//Efetuar a pesquisa de box, rota roteiro
-	},
+	
 	pesquisarCotaErrorCallBack:function(){
 		$("#box", impressaoBoletosController.workspace).val("");
 		$("#rota", impressaoBoletosController.workspace).val("");
 		$("#roteiro", impressaoBoletosController.workspace).val("");
 		$("#tipoCobranca", impressaoBoletosController.workspace).val("");
-		
-		impressaoBoletosController.recarregarComboRoteiroRotas(null);
-	},
-	validarPesquisa:function(){
-		
-		var data = {dataMovimento:$("#dataMovimento", impressaoBoletosController.workspace).val()};
-		
-		$.postJSON(contextPath + "/financeiro/impressaoBoletos/validarPesquisaDivida",
-				data, function(result){
-			
-			if(result == "false"){
-				impressaoBoletosController.dialogPesquisaInvalida();
-				$("#pesquisaInvalida", impressaoBoletosController.workspace).show();
-				$("#grids", impressaoBoletosController.workspace).hide();
-			}else{
-				impressaoBoletosController.pesquisar();
-			}	
-		});
-	},
-	dialogPesquisaInvalida:function(){
-		
-		$("#pesquisaInvalida", impressaoBoletosController.workspace).dialog({
-			title: 'Atenção',
-			resizable: false,
-			height:120,
-			width:330,
-			modal: true,
-			buttons : {
-				"Fechar" : function() {
-					$(this).dialog("close");
-				}
-			},
-			form: $("#pesquisaInvalida", this.workspace).parents("form")			
-		});
 	},
 	
 	imprimirDividas:function(tipoImpressao){
@@ -348,6 +305,44 @@ recarregarComboRoteiroRotas:function(idBox){
 				$("#divGerarDivida", impressaoBoletosController.workspace).hide();
 			}
 		});
+	},
+	
+	veificarCobrancaGerada: function(){
+		
+		$.postJSON(contextPath + '/financeiro/impressaoBoletos/veificarCobrancaGerada', null,
+		
+			function(conteudo){
+			
+				if(conteudo && conteudo.tipoMensagem == 'WARNING') {
+					
+					$("#msgRegerarCobranca", impressaoBoletosController.workspace).text(conteudo.listaMensagens[0]);
+					
+					$("#dialog-confirmar-regerar-cobranca", impressaoBoletosController.workspace).dialog({
+						resizable : false,
+						height : 'auto',
+						width : 680,
+						modal : true,
+						buttons : {
+							"Confirmar" : function() {
+								
+								$("#dialog-confirmar-regerar-cobranca", impressaoBoletosController.workspace).dialog("close");
+								impressaoBoletosController.gerarDivida();
+							},
+							"Cancelar" : function(){
+							
+								$("#dialog-confirmar-regerar-cobranca", impressaoBoletosController.workspace).dialog("close");
+							}
+						},
+						form: $("#dialog-confirmar-regerar-cobranca", this.workspace).parents("form")
+					});
+					
+				} else {
+					
+					impressaoBoletosController.gerarDivida();
+				}
+				
+			}, null, true, "dialog-confirmar-regerar-cobranca"
+		);
 	}
 
 }, BaseController);

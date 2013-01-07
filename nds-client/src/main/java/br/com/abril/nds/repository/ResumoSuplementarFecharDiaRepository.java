@@ -6,6 +6,7 @@ import java.util.List;
 
 import br.com.abril.nds.dto.SuplementarFecharDiaDTO;
 import br.com.abril.nds.dto.VendaFechamentoDiaDTO;
+import br.com.abril.nds.vo.PaginacaoVO;
 
 
 public interface ResumoSuplementarFecharDiaRepository {
@@ -19,11 +20,11 @@ public interface ResumoSuplementarFecharDiaRepository {
 	BigDecimal obterValorFisico(Date dataOperacao);
 
 	List<VendaFechamentoDiaDTO> obterVendasSuplementar(Date dataOperacao);
+	
+	List<SuplementarFecharDiaDTO> obterDadosGridSuplementar(Date data, PaginacaoVO paginacao);
 
-	/*
-	 * Obs: Não é necessário passar a data da operação nesse metodo pois a pesquisa é feita
-	 * em uma tabela que só tem os dados atuais.
-	 */
-	List<SuplementarFecharDiaDTO> obterDadosGridSuplementar();
+	Long contarProdutoEdicaoSuplementar();
+	
+	Long contarVendasSuplementar(Date dataOperacao);
 
 }

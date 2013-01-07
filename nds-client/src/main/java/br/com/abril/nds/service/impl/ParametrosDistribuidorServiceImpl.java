@@ -2,7 +2,9 @@ package br.com.abril.nds.service.impl;
 
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -14,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.client.vo.ParametrosDistribuidorVO;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.couchdb.CouchDbProperties;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Distribuidor;
@@ -36,14 +39,22 @@ import br.com.abril.nds.model.cadastro.TipoImpressaoNENECADANFE;
 import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.model.cadastro.TipoParametrosDistribuidorEmissaoDocumento;
 import br.com.abril.nds.model.cadastro.TipoParametrosDistribuidorFaltasSobras;
+import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
+import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
+import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
+import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.repository.EnderecoDistribuidorRepository;
+import br.com.abril.nds.repository.MovimentoRepository;
 import br.com.abril.nds.repository.ParametroContratoCotaRepository;
 import br.com.abril.nds.repository.ParametrosDistribuidorEmissaoDocumentoRepository;
 import br.com.abril.nds.repository.ParametrosDistribuidorFaltasSobrasRepository;
 import br.com.abril.nds.repository.PessoaRepository;
 import br.com.abril.nds.repository.TipoGarantiaAceitaRepository;
+import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
+import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
 import br.com.abril.nds.service.ParametrosDistribuidorService;
 import br.com.abril.nds.util.CurrencyUtil;
+import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.vo.EnderecoVO;
 
 import com.google.gson.JsonObject;
@@ -83,6 +94,15 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 	
 	@Autowired
 	private PessoaRepository pessoaRepository;
+	
+	@Autowired
+	private TipoMovimentoEstoqueRepository tipoMovimentoEstoqueRepository;
+	
+	@Autowired
+	private TipoMovimentoFinanceiroRepository tipoMovimentoFinanceiroRepository;
+	
+	@Autowired
+	private MovimentoRepository movimentoRepository ;
 	
 	@Autowired
 	private CouchDbProperties couchDbProperties;
@@ -485,8 +505,14 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		parametrosRecolhimentoDistribuidor.setConferenciaCegaRecebimento(parametrosDistribuidor.isConferenciaCegaRecebimento());
 		distribuidor.setParametrosRecolhimentoDistribuidor(parametrosRecolhimentoDistribuidor);
 		
-		distribuidor.setCapacidadeDistribuicao(new BigDecimal(parametrosDistribuidor.getCapacidadeManuseioHomemHoraLancamento()));
-		distribuidor.setCapacidadeRecolhimento(new BigDecimal(parametrosDistribuidor.getCapacidadeManuseioHomemHoraRecolhimento()));
+		distribuidor.setCapacidadeDistribuicao((parametrosDistribuidor.getCapacidadeManuseioHomemHoraLancamento() != null)
+												? new BigInteger(parametrosDistribuidor.getCapacidadeManuseioHomemHoraLancamento().toString())
+												: null);
+		
+		distribuidor.setCapacidadeRecolhimento((parametrosDistribuidor.getCapacidadeManuseioHomemHoraRecolhimento() != null)
+												? new BigInteger(parametrosDistribuidor.getCapacidadeManuseioHomemHoraRecolhimento().toString())
+												: null);
+		
 		distribuidor.setQntDiasReutilizacaoCodigoCota(parametrosDistribuidor.getReutilizacaoCodigoCotaInativa());
 		
 		distribuidor.setUtilizaSugestaoIncrementoCodigo(parametrosDistribuidor.isUtilizaSugestaoIncrementoCodigo());
@@ -634,14 +660,46 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		// Aprovação
 		distribuidor.setUtilizaControleAprovacao(parametrosDistribuidor.getUtilizaControleAprovacao());
 		
+		this.validarUtilizacaoControleAprovacao(parametrosDistribuidor);
+		
 		ParametrosAprovacaoDistribuidor parametrosAprovacaoDistribuidor = new ParametrosAprovacaoDistribuidor();
+		
 		parametrosAprovacaoDistribuidor.setDebitoCredito(parametrosDistribuidor.getParaDebitosCreditos());
-
+		
+		this.atualizarTiposMovimentoFinanceiro(parametrosDistribuidor,
+											   this.getGruposMovimentoFinanceiroDebitosCreditos(),
+											   !parametrosDistribuidor.getParaDebitosCreditos());
+		
 		parametrosAprovacaoDistribuidor.setNegociacao(parametrosDistribuidor.getNegociacao());
+		
+		this.atualizarTiposMovimentoFinanceiro(parametrosDistribuidor,
+				 					 		   this.getGruposMovimentoFinanceiroNegociacao(),
+				 					 		   !parametrosDistribuidor.getNegociacao());
+		
 		parametrosAprovacaoDistribuidor.setAjusteEstoque(parametrosDistribuidor.getAjusteEstoque());
+		
+		this.atualizarTiposMovimentoEstoque(parametrosDistribuidor,
+				 					 		this.getGruposMovimentoEstoqueAjusteEstoque(),
+				 					 		!parametrosDistribuidor.getAjusteEstoque());
+		
 		parametrosAprovacaoDistribuidor.setPostergacaoCobranca(parametrosDistribuidor.getPostergacaoCobranca());
+		
+		this.atualizarTiposMovimentoFinanceiro(parametrosDistribuidor,
+									 		   this.getGruposMovimentoFinanceiroPostergacaoCobranca(),
+									 		   !parametrosDistribuidor.getPostergacaoCobranca());
+		
 		parametrosAprovacaoDistribuidor.setDevolucaoFornecedor(parametrosDistribuidor.getDevolucaoFornecedor());
+		
+		this.atualizarTiposMovimentoEstoque(parametrosDistribuidor,
+				 					 		this.getGruposMovimentoEstoqueDevolucaoFornecedor(),
+				 					 		!parametrosDistribuidor.getDevolucaoFornecedor());
+		
 		parametrosAprovacaoDistribuidor.setFaltasSobras(parametrosDistribuidor.getFaltasSobras());
+		
+		this.atualizarTiposMovimentoEstoque(parametrosDistribuidor,
+						 					this.getGruposMovimentoEstoqueFaltasSobras(),
+						 					!parametrosDistribuidor.getFaltasSobras());
+		
 		distribuidor.setParametrosAprovacaoDistribuidor(parametrosAprovacaoDistribuidor);
 		
 		if (parametrosDistribuidor.getPrazoFollowUp() != null)
@@ -707,7 +765,162 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		
 		this.salvarLogo(imgLogotipo, imgContentType);
 	}
+	
+	private void validarUtilizacaoControleAprovacao(ParametrosDistribuidorVO parametrosDistribuidor) {
+		
+		List<String> mensagens = new ArrayList<>();
+		
+		if (!parametrosDistribuidor.getParaDebitosCreditos()) {
+			if (this.movimentoRepository
+					.existeMovimentoFinanceiroPendente(getGruposMovimentoFinanceiroDebitosCreditos())) {
+	
+				mensagens.add(
+					"Não é possível não utilizar controle de aprovação para débitos e créditos. Existem movimentos pendentes!");
+			}
+		}
 
+		if (!parametrosDistribuidor.getNegociacao()) {
+			if (this.movimentoRepository
+					.existeMovimentoFinanceiroPendente(getGruposMovimentoFinanceiroNegociacao())) {
+
+				mensagens.add(
+					"Não é possível não utilizar controle de aprovação para negociação. Existem movimentos pendentes!");
+			}
+		}
+
+		if (!parametrosDistribuidor.getAjusteEstoque()) {
+			if (this.movimentoRepository
+					.existeMovimentoEstoquePendente(getGruposMovimentoEstoqueAjusteEstoque())) {
+
+				mensagens.add(
+					"Não é possível não utilizar controle de aprovação para ajuste de estoque. Existem movimentos pendentes!");
+			}
+		}
+
+		if (!parametrosDistribuidor.getPostergacaoCobranca()) {
+			if (this.movimentoRepository
+					.existeMovimentoFinanceiroPendente(getGruposMovimentoFinanceiroPostergacaoCobranca())) {
+
+				mensagens.add(
+					"Não é possível não utilizar controle de aprovação para postergacao de cobranca. Existem movimentos pendentes!");
+			}
+		}
+
+		if (!parametrosDistribuidor.getDevolucaoFornecedor()) {
+			if (this.movimentoRepository
+					.existeMovimentoEstoquePendente(getGruposMovimentoEstoqueDevolucaoFornecedor())) {
+
+				mensagens.add(
+					"Não é possível não utilizar controle de aprovação para devolucao fornecedor. Existem movimentos pendentes!");
+			}
+		}
+
+		if (!parametrosDistribuidor.getFaltasSobras()) {
+			if (this.movimentoRepository
+					.existeMovimentoEstoquePendente(getGruposMovimentoEstoqueFaltasSobras())) {
+
+				mensagens.add(
+					"Não é possível não utilizar controle de aprovação para faltas e sobras. Existem movimentos pendentes!");
+			}
+		}
+		
+		if (!mensagens.isEmpty()) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, mensagens);
+		}
+	}
+	
+	private List<GrupoMovimentoFinaceiro> getGruposMovimentoFinanceiroDebitosCreditos() {
+		
+		List<GrupoMovimentoFinaceiro> gruposMovimentoFinanceiro = 
+			Arrays.asList(GrupoMovimentoFinaceiro.DEBITO, GrupoMovimentoFinaceiro.CREDITO);
+		
+		return gruposMovimentoFinanceiro;
+	}
+	
+	private List<GrupoMovimentoFinaceiro> getGruposMovimentoFinanceiroNegociacao() {
+		
+		List<GrupoMovimentoFinaceiro> gruposMovimentoFinanceiro = 
+			Arrays.asList(GrupoMovimentoFinaceiro.POSTERGADO_NEGOCIACAO);
+		
+		return gruposMovimentoFinanceiro;
+	}
+	
+	private List<GrupoMovimentoEstoque> getGruposMovimentoEstoqueAjusteEstoque() {
+		
+		List<GrupoMovimentoEstoque> gruposMovimentoEstoque = 
+			Arrays.asList(GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_LANCAMENTO,
+						  GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_LANCAMENTO,
+						  GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_PRODUTOS_DANIFICADOS,
+						  GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_PRODUTOS_DANIFICADOS,
+						  GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_PRODUTOS_DEVOLUCAO_FORNECEDOR,
+						  GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_PRODUTOS_DEVOLUCAO_FORNECEDOR,
+						  GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_RECOLHIMENTO,
+						  GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_RECOLHIMENTO,
+						  GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_SUPLEMENTAR,
+						  GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_SUPLEMENTAR);
+		
+		return gruposMovimentoEstoque;
+	}
+	
+	private List<GrupoMovimentoFinaceiro> getGruposMovimentoFinanceiroPostergacaoCobranca() {
+		
+		List<GrupoMovimentoFinaceiro> gruposMovimentoFinanceiro = 
+			Arrays.asList(GrupoMovimentoFinaceiro.POSTERGADO_CREDITO,
+						  GrupoMovimentoFinaceiro.POSTERGADO_DEBITO);
+		
+		return gruposMovimentoFinanceiro;
+	}
+	
+	private List<GrupoMovimentoEstoque> getGruposMovimentoEstoqueDevolucaoFornecedor() {
+		
+		List<GrupoMovimentoEstoque> gruposMovimentoEstoque = 
+			Arrays.asList(GrupoMovimentoEstoque.DEVOLUCAO_ENCALHE);
+		
+		return gruposMovimentoEstoque;
+	}
+	
+	private List<GrupoMovimentoEstoque> getGruposMovimentoEstoqueFaltasSobras() {
+		
+		List<GrupoMovimentoEstoque> gruposMovimentoEstoque = 
+			Arrays.asList(GrupoMovimentoEstoque.FALTA_DE, GrupoMovimentoEstoque.FALTA_EM,
+						  GrupoMovimentoEstoque.SOBRA_DE, GrupoMovimentoEstoque.SOBRA_EM);
+		
+		return gruposMovimentoEstoque;
+	}
+
+	private void atualizarTiposMovimentoEstoque(ParametrosDistribuidorVO parametrosDistribuidor,
+										 		List<GrupoMovimentoEstoque> gruposMovimentoEstoque,
+										 		boolean aprovacaoAutomatica) {
+		
+		List<TipoMovimentoEstoque> tiposMovimentoEstoque = 
+			this.tipoMovimentoEstoqueRepository.buscarTiposMovimentoEstoque(gruposMovimentoEstoque);
+		
+		for (TipoMovimentoEstoque tipoMovimentoEstoque : tiposMovimentoEstoque) {
+			
+			tipoMovimentoEstoque.setAprovacaoAutomatica(aprovacaoAutomatica);
+			
+			this.tipoMovimentoEstoqueRepository.merge(tipoMovimentoEstoque);
+		}
+	}
+	
+	private void atualizarTiposMovimentoFinanceiro(ParametrosDistribuidorVO parametrosDistribuidor,
+										 		   List<GrupoMovimentoFinaceiro> gruposMovimentoFinanceiro,
+										 		   boolean aprovacaoAutomatica) {
+
+		List<TipoMovimentoFinanceiro> tiposMovimentoFinanceiro =
+			this.tipoMovimentoFinanceiroRepository.buscarTiposMovimentoFinanceiro(gruposMovimentoFinanceiro);
+
+		for (TipoMovimentoFinanceiro tipoMovimentoFinanceiro : tiposMovimentoFinanceiro) {
+
+			tipoMovimentoFinanceiro.setAprovacaoAutomatica(aprovacaoAutomatica);
+
+			this.tipoMovimentoFinanceiroRepository.merge(tipoMovimentoFinanceiro);
+		}
+	}
+
+	
+	
 	private void salvarLogo(InputStream imgLogotipo, String imgContentType) {
 		
 		if (imgLogotipo != null && imgContentType != null) {

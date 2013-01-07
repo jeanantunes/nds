@@ -7,7 +7,11 @@ import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -23,6 +27,7 @@ import org.hibernate.annotations.CascadeType;
 
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.fiscal.CFOP;
+import br.com.abril.nds.model.seguranca.Permissao;
 
 /**
  * Chamada de Encalhe do Fornecedor para retorno
@@ -81,7 +86,14 @@ public class ChamadaEncalheFornecedor implements Serializable {
 
     @Column(name = "STATUS", nullable = false)
     private String status;
-
+    
+    /**
+     * Status da semana (fechada ou não) do sistema NDS (e não do Prodin)
+     */
+	@Enumerated(EnumType.STRING)
+	@Column(name = "STATUS_CE_NDS")
+    private StatusCeNDS statusCeNDS;
+    
     @Column(name = "CODIGO_PREENCHIMENTO", nullable = false)
     private String codigoPreenchimento;
 
@@ -417,8 +429,16 @@ public class ChamadaEncalheFornecedor implements Serializable {
     public void setItens(List<ItemChamadaEncalheFornecedor> itens) {
         this.itens = itens;
     }
+    
+	public StatusCeNDS getStatusCeNDS() {
+		return statusCeNDS;
+	}
 
-    /* (non-Javadoc)
+	public void setStatusCeNDS(StatusCeNDS statusCeNDS) {
+		this.statusCeNDS = statusCeNDS;
+	}
+
+	/* (non-Javadoc)
      * @see java.lang.Object#hashCode()
      */
     @Override
@@ -456,6 +476,5 @@ public class ChamadaEncalheFornecedor implements Serializable {
         }
         return true;
     }
-
   
 }

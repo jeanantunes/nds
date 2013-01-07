@@ -20,6 +20,7 @@ import br.com.abril.nds.client.util.PDFUtil;
 import br.com.abril.nds.client.vo.CalculaParcelasVO;
 import br.com.abril.nds.client.vo.NegociacaoDividaDetalheVO;
 import br.com.abril.nds.client.vo.NegociacaoDividaVO;
+import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.DiaSemanaDTO;
 import br.com.abril.nds.dto.NegociacaoDividaDTO;
 import br.com.abril.nds.dto.NegociacaoDividaPaginacaoDTO;
@@ -31,13 +32,11 @@ import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.ConcentracaoCobrancaCota;
-import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
 import br.com.abril.nds.model.financeiro.ParcelaNegociacao;
 import br.com.abril.nds.model.seguranca.Permissao;
-import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.BancoService;
 import br.com.abril.nds.service.CobrancaService;
@@ -49,7 +48,6 @@ import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
-import br.com.abril.nds.util.export.NDSFileHeader;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Path;
@@ -60,7 +58,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("financeiro/negociacaoDivida")
-public class NegociacaoDividaController {
+public class NegociacaoDividaController extends BaseController {
 	
 	private static final String FILTRO_NEGOCIACAO_DIVIDA = "FILTRO_NEGOCIACAO_DIVIDA";
 
@@ -133,9 +131,15 @@ public class NegociacaoDividaController {
 		
 		NegociacaoDividaPaginacaoDTO dto = this.negociacaoDividaService.obterDividasPorCotaPaginado(filtro);
 		
-		List<NegociacaoDividaDTO> list = dto.getListaNegociacaoDividaDTO();
+		List<NegociacaoDividaDTO> listaNegociacaoDivida = dto.getListaNegociacaoDividaDTO();
+		
+		if (listaNegociacaoDivida.isEmpty()) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
+		}
+		
 		List<NegociacaoDividaVO> listDividas = new ArrayList<NegociacaoDividaVO>();
-		for (NegociacaoDividaDTO negociacao : list) {
+		for (NegociacaoDividaDTO negociacao : listaNegociacaoDivida) {
 			listDividas.add(new NegociacaoDividaVO(negociacao));
 		}
 		
@@ -150,7 +154,7 @@ public class NegociacaoDividaController {
 	public void pesquisarDetalhes(Long idCobranca) {
 		
 		List<NegociacaoDividaDetalheVO> listDividas = negociacaoDividaService.obterDetalhesCobranca(idCobranca);//new ArrayList<NegociacaoDividaDetalheVO>();
-		System.out.println(listDividas.size());
+		
 		result.use(FlexiGridJson.class).from(listDividas).total(listDividas.size()).page(1).serialize();
 	}
 	
@@ -161,18 +165,24 @@ public class NegociacaoDividaController {
 		
 		Double valorParcela = filtro.getValorSelecionado() / filtro.getQntdParcelas();
 		
-		Date dataAnterior = new Date();
-			
+		Date dataBase = new Date();
+		
+		Date dataParcela = null;
+		
 		for (int i = 0; i < filtro.getQntdParcelas(); i++) {
 			CalculaParcelasVO parcela = new CalculaParcelasVO();
 			
 			parcela.setNumParcela(Integer.toString(i+1));
 			parcela.setParcela(CurrencyUtil.formatarValor(valorParcela));
 			
-			dataAnterior = getDataParcela(dataAnterior, filtro.getPeriodicidade(), filtro.getSemanalDias(), filtro.getMensalDia());
+			dataParcela =
+				getDataParcela(dataBase, filtro.getPeriodicidade(), filtro.getSemanalDias(),
+							   filtro.getQuinzenalDia1(), filtro.getQuinzenalDia2(), filtro.getMensalDia());
 			
-			parcela.setDataVencimento(DateUtil.formatarDataPTBR(dataAnterior));
-						
+			parcela.setDataVencimento(DateUtil.formatarDataPTBR(dataParcela));
+			
+			dataBase = dataParcela;
+			
 			Banco banco = bancoService.obterBancoPorId(filtro.getIdBanco());
 			
 			Double encargos = 0.0;
@@ -181,10 +191,8 @@ public class NegociacaoDividaController {
 				encargos = calcularEncargos(valorParcela, DateUtil.parseDataPTBR(parcela.getDataVencimento()),filtro.getNumeroCota(), banco);
 						
 			parcela.setEncargos(CurrencyUtil.formatarValor(encargos));
-							
-			valorParcela = valorParcela + encargos;
 			
-			parcela.setParcTotal(CurrencyUtil.formatarValor(valorParcela));
+			parcela.setParcTotal(CurrencyUtil.formatarValor(valorParcela + encargos));
 				
 			listParcelas.add(parcela);	
 		}
@@ -209,49 +217,109 @@ public class NegociacaoDividaController {
 	}
 
 
-	private Date getDataParcela(Date dataAnterior, TipoFormaCobranca periodicidade, List<DiaSemanaDTO>semanalDias, Integer diaMensal) {
+	private Date getDataParcela(Date dataBase, TipoFormaCobranca periodicidade, List<DiaSemanaDTO>semanalDias,
+								Integer quinzenalDia1, Integer quinzenalDia2, Integer diaMensal) {
 		
-		switch(periodicidade){
+		Calendar proximoDia = DateUtil.toCalendar(dataBase);
+		
+		int mesBase = proximoDia.get(Calendar.MONTH);
+		
+		switch(periodicidade) {
 			
 			case DIARIA:
-				return DateUtil.adicionarDias(dataAnterior, 1);	
-						
+				return DateUtil.adicionarDias(dataBase, 1);
+				
 			case SEMANAL:
 				
-				if(semanalDias == null || semanalDias.isEmpty())
-					throw new ValidacaoException(TipoMensagem.WARNING, "Dia(s) da semana não selecionado(s).");
-				
-				Calendar proximoDia = Calendar.getInstance();
+				if(semanalDias == null || semanalDias.isEmpty()) {
+					
+					throw new ValidacaoException(TipoMensagem.WARNING,
+												 "Dia(s) da semana não selecionado(s).");
+				}
 				
 				while(true) {
 					
-					proximoDia.setTime(DateUtil.adicionarDias(proximoDia.getTime(), 1));
-									
+					proximoDia = DateUtil.adicionarDias(proximoDia, 1);
+					
 					for(DiaSemanaDTO dia : semanalDias) {
-												
+						
 						if(proximoDia.get(Calendar.DAY_OF_WEEK) == dia.getNumDia()) 
+							
 							return proximoDia.getTime();												
 					}
 				}
 			
 			case QUINZENAL:
-				return DateUtil.adicionarDias(dataAnterior, 15);	
+				
+				if(quinzenalDia1 == null || quinzenalDia1.compareTo(0) == 0
+						|| quinzenalDia2 == null || quinzenalDia2.compareTo(0) == 0) {
+					
+					throw new ValidacaoException(TipoMensagem.WARNING,
+												 "Dia(s) quinzenal(ais) inválido(s).");
+				}
+				
+				if (quinzenalDia1.compareTo(30) == 1
+						|| quinzenalDia2.compareTo(30) == 1) {
+					
+					throw new ValidacaoException(TipoMensagem.WARNING,
+												 "Dia(s) quinzenal(ais) não deve(m) ser maior do que 30.");
+				}
+				
+				if (quinzenalDia1.compareTo(quinzenalDia2) >= 0) {
+					
+					throw new ValidacaoException(TipoMensagem.WARNING,
+						 "O 1º dia deve ser menor que o 2º.");
+				}
+				
+				while (true) {
+					
+					proximoDia.set(Calendar.DAY_OF_MONTH, quinzenalDia1);
+					
+					if (proximoDia.getTime().compareTo(dataBase) == 1) {
+						
+						return proximoDia.getTime();
+					}
+					
+					proximoDia.set(Calendar.DAY_OF_MONTH, quinzenalDia2);
+					
+					if (proximoDia.getTime().compareTo(dataBase) == 1) {
+						
+						return proximoDia.getTime();
+					}
+
+					mesBase++;
+					
+					proximoDia.set(Calendar.MONTH, mesBase);
+				}
 			
 			case MENSAL:
 				
-				if(diaMensal==null)
-					throw new ValidacaoException(TipoMensagem.WARNING, "Dia mensal não selecionado.");
-				
-				Calendar data = Calendar.getInstance();
-				data.setTime(dataAnterior);
-				
-				if(data.get(Calendar.DAY_OF_MONTH) > diaMensal){	
-					data.add(Calendar.MONTH, 1);	
+				if(diaMensal == null || diaMensal.compareTo(0) == 0) {
+					
+					throw new ValidacaoException(TipoMensagem.WARNING,
+												 "Dia do mês inválido.");
 				}
-				data.set(Calendar.DAY_OF_MONTH, diaMensal);
 				
-				return data.getTime();
-		}		
+				if (diaMensal.compareTo(30) == 1) {
+					
+					throw new ValidacaoException(TipoMensagem.WARNING,
+												 "Dia do mês não deve ser maior do que 30.");
+				}
+				
+				while (true) {
+					
+					proximoDia.set(Calendar.DAY_OF_MONTH, diaMensal);
+					
+					if (proximoDia.getTime().compareTo(dataBase) == 1) {
+						
+						return proximoDia.getTime();
+					}
+
+					mesBase++;
+					
+					proximoDia.set(Calendar.MONTH, mesBase);
+				}
+		}
 		
 		return null;
 	}
@@ -327,7 +395,7 @@ public class NegociacaoDividaController {
 				parcelas, 
 				valorDividaComissao,
 				idsCobrancas, 
-				this.getUsuario(), 
+				this.getUsuarioLogado(), 
 				negociacaoAvulsa, 
 				ativarAposPagar, 
 				comissaoUtilizar, 
@@ -358,31 +426,6 @@ public class NegociacaoDividaController {
 		FiltroConsultaNegociacaoDivida filtro = (FiltroConsultaNegociacaoDivida) this.session.getAttribute(FILTRO_NEGOCIACAO_DIVIDA);
 		
 		this.result.use(Results.json()).from(this.descontoService.obterComissaoCota(filtro.getNumeroCota()), "result").serialize();
-	}
-	
-	private NDSFileHeader getNDSFileHeader() {
-
-		NDSFileHeader ndsFileHeader = new NDSFileHeader();
-		Distribuidor distribuidor = distribuidorService.obter();
-
-		if (distribuidor != null) {
-			ndsFileHeader.setNomeDistribuidor(distribuidor.getJuridica().getRazaoSocial());
-			ndsFileHeader.setCnpjDistribuidor(distribuidor.getJuridica().getCnpj());
-		}
-
-		ndsFileHeader.setData(new Date());
-		ndsFileHeader.setNomeUsuario(getUsuario().getNome());
-		return ndsFileHeader;
-	}
-	
-	// TODO: não há como reconhecer usuario, ainda
-	private Usuario getUsuario() {
-
-		Usuario usuario = new Usuario();
-		usuario.setId(1L);
-		usuario.setNome("Jornaleiro da Silva");
-
-		return usuario;
 	}
 	
 	public void imprimirNegociacao() throws Exception{

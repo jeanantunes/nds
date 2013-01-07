@@ -14,9 +14,10 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.util.NFEImportUtil;
 import br.com.abril.nds.client.vo.RecebimentoFisicoVO;
-import br.com.abril.nds.client.annotation.Rules;
+import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.CabecalhoNotaDTO;
 import br.com.abril.nds.dto.RecebimentoFisicoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaNotaFiscalDTO;
@@ -36,7 +37,6 @@ import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Permissao;
-import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.CFOPService;
 import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.service.FornecedorService;
@@ -45,6 +45,7 @@ import br.com.abril.nds.service.PessoaJuridicaService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.RecebimentoFisicoService;
 import br.com.abril.nds.service.TipoNotaFiscalService;
+import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.CurrencyUtil;
@@ -64,7 +65,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/estoque/recebimentoFisico")
-public class RecebimentoFisicoController {
+public class RecebimentoFisicoController extends BaseController {
 	
 	private Result result;
 
@@ -106,7 +107,10 @@ public class RecebimentoFisicoController {
 	
 	@Autowired
 	private DescontoService descontoService; 
-	
+
+	@Autowired
+	private UsuarioService usuarioService; 
+
 	public RecebimentoFisicoController(
 			Result result, 
 			HttpServletRequest request,
@@ -618,15 +622,20 @@ public class RecebimentoFisicoController {
 			itemRecebimento.setRepartePrevisto(BigInteger.ZERO);
 		}
 
-		if(itemRecebimento.getQtdFisico() == null) {
+		// Realizado em conjunto com Cesar Punk Pop
+		/*if(itemRecebimento.getQtdFisico() == null) {
 			itemRecebimento.setQtdFisico(BigInteger.ZERO);
-		}
+		}*/
 
 		BigInteger qtdRepartePrevisto = itemRecebimento.getRepartePrevisto();
 		
 		BigInteger qtdFisico = itemRecebimento.getQtdFisico();
 		
-		BigInteger valorDiferenca = qtdRepartePrevisto.subtract( qtdFisico );
+		//BigInteger valorDiferenca = qtdFisico.subtract(qtdRepartePrevisto);
+		BigInteger valorDiferenca = BigInteger.ZERO;
+		if (itemRecebimento.getQtdFisico() != null) {
+			valorDiferenca = qtdFisico.subtract(qtdRepartePrevisto);
+		}
 		
 		itemRecebimento.setDiferenca(valorDiferenca);
 		
@@ -955,7 +964,7 @@ public class RecebimentoFisicoController {
 			String qtdExemplar			 = (dto.getQtdExemplar()		== null)	? "0"	: dto.getQtdExemplar().toString();
 			String diferenca		 	 = (dto.getDiferenca() 			== null) 	? "0" : dto.getDiferenca().toString();
 			String valorTotal		 	 = (dto.getValorTotal() 		== null) 	? "0.0" : dto.getValorTotal().toString();
-			
+			String pacotePadrao		 	 = (dto.getValorTotal() 		== null) 	? "0"   : Integer.toString(dto.getPacotePadrao());
 			
 			String edicaoItemNotaPermitida 		= IND_SIM;
 			String edicaoItemRecFisicoPermitida = IND_SIM;
@@ -991,6 +1000,7 @@ public class RecebimentoFisicoController {
 			recebFisico.setQtdExemplar(qtdExemplar);
 			recebFisico.setDiferenca(diferenca);
 			recebFisico.setValorTotal(valorTotal);
+			recebFisico.setPacotePadrao(pacotePadrao);
 			
 			recebFisico.setEdicaoItemNotaPermitida(edicaoItemNotaPermitida);
 			recebFisico.setEdicaoItemRecFisicoPermitida(edicaoItemRecFisicoPermitida);
@@ -1182,7 +1192,7 @@ public class RecebimentoFisicoController {
 			atualizarItensRecebimentoEmSession(itensRecebimento);
 		}
 		
-		recebimentoFisicoService.confirmarRecebimentoFisico(getUsuarioLogado(), getNotaFiscalFromSession(), getItensRecebimentoFisicoFromSession(), new Date());
+		recebimentoFisicoService.confirmarRecebimentoFisico(getUsuarioLogado(), getNotaFiscalFromSession(), getItensRecebimentoFisicoFromSession(), new Date(),false);
 		
 		List<String> msgs = new ArrayList<String>();
 		msgs.add("Itens Confirmados com Sucesso.");
@@ -1398,16 +1408,6 @@ public class RecebimentoFisicoController {
 		}
 	}
 	
-	//TODO
-	private Usuario getUsuarioLogado(){
-			
-		Usuario usuario = new Usuario();
-		usuario.setId(1L);
-		
-		return usuario;
-	
-	}
-	
 	/**
 	 * Inclui nota e itens
 	 * @param nota
@@ -1430,14 +1430,13 @@ public class RecebimentoFisicoController {
 		notaFiscal.setValorLiquido(new BigDecimal(getValorSemMascara( nota.getValorTotal() )));
 		notaFiscal.setChaveAcesso(nota.getChaveAcesso());
 		
-		
 		notaFiscal.setFornecedor(fornecedor);
 		notaFiscal.setTipoNotaFiscal(tipoNotaService.obterPorId(3l));//RECEBIMENTO DE ENCALHE
 		notaFiscal.setValorBruto(CurrencyUtil.converterValor(nota.getValorTotal()));
         notaFiscal.setValorDesconto(notaFiscal.getValorBruto().subtract(notaFiscal.getValorLiquido()));
 		notaFiscal.setStatusNotaFiscal(StatusNotaFiscalEntrada.RECEBIDA);
 		notaFiscal.setOrigem(Origem.MANUAL);
-		
+		notaFiscal.setEmitente(fornecedor.getJuridica());
 		
 		//OBTEM CAMPOS OBRIGATORIOS PARA OS ITENS DA NOTA E TOTAL PARA VERIFICACAO COM O VALOR DA NOTA
 		BigDecimal totalItem = BigDecimal.ZERO;
@@ -1456,9 +1455,15 @@ public class RecebimentoFisicoController {
 		}
 
 		try{
-		    recebimentoFisicoService.inserirDadosRecebimentoFisico(getUsuarioLogado(), notaFiscal, itens, new Date());
+			
+			recebimentoFisicoService.validarExisteNotaFiscal(notaFiscal);
+		    
+			recebimentoFisicoService.confirmarRecebimentoFisico(getUsuarioLogado(), notaFiscal, itens, new Date(), true);
 		}
 		catch(Exception e){
+			if (e instanceof ValidacaoException) {
+				throw e;
+			}
 			throw new ValidacaoException(TipoMensagem.ERROR, "Erro ao incluir nota: "+e.getMessage());
 		}
 		

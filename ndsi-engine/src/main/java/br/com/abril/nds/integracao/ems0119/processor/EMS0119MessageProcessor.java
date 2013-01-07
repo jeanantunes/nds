@@ -12,6 +12,7 @@ import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
 import br.com.abril.nds.integracao.model.canonic.EMS0119Input;
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.Editor;
+import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
@@ -142,21 +143,20 @@ public class EMS0119MessageProcessor extends AbstractRepository implements
 								+ input.getPacotePadrao());
 
 			}
-			produto.setOrigem(Origem.INTERFACE);
-
+			this.getSession().merge(produto);
 
 		} else {
 			
 			produto = new Produto();
 			produto.setCodigo(input.getCodigoDaPublicacao());
 			produto.setNome(input.getNomeDaPublicacao());
-			produto.setPeriodicidade(PeriodicidadeProduto.values()[input.getPeriodicidade()]);
+			produto.setPeriodicidade(PeriodicidadeProduto.getByOrdem(input.getPeriodicidade()));
 			produto.setPacotePadrao(input.getPacotePadrao());
 			produto.setNomeComercial(input.getNomeComercial());
 			produto.setAtivo(input.getStatusDaPublicacao());			
 			//Default data
 			produto.setPeso(0l);
-			produto.setOrigem(Origem.INTERFACE);
+			produto.setOrigem(Origem.MANUAL);
 
 			
 			TipoProduto tp =  this.getTipoProduto(input.getTipoDePublicacao());
@@ -182,6 +182,14 @@ public class EMS0119MessageProcessor extends AbstractRepository implements
 				produto.setEditor(ed);	
 			}
 			
+			Fornecedor fornecedor = this
+					.findFornecedor(Integer.valueOf( input.getCodigoFornecedorPublic()));
+			if (fornecedor != null) {
+
+				produto.addFornecedor(fornecedor);
+			}
+
+			
 			if ((null != tp) && (null != ed)) {
 				this.getSession().persist(produto);
 			}						
@@ -189,6 +197,20 @@ public class EMS0119MessageProcessor extends AbstractRepository implements
 		}
 	}
 
+	private Fornecedor findFornecedor(Integer codigoInterface) {
+		StringBuilder sql = new StringBuilder();
+
+		sql.append("SELECT f FROM Fornecedor f ");
+		sql.append("WHERE  f.codigoInterface = :codigoInterface ");
+
+		Query query = this.getSession().createQuery(sql.toString());
+
+		query.setParameter("codigoInterface", codigoInterface);
+
+		return (Fornecedor) query.uniqueResult();
+
+	}
+	
 	private Editor getEditor(Long codigoDoEditor) {
 		StringBuilder sql = new StringBuilder();
 		sql.append("SELECT e ");

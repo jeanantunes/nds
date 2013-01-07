@@ -119,8 +119,9 @@ var visaoEstoqueController = $.extend(true, {
 				value.cell.precoCapa = "";
 			}
 			
-			value.cell.diferenca = value.cell.qtde;
+			value.cell.diferenca = '<div abbr="diferenca">' + value.cell.qtde + '</div>';
 			value.cell.estoque = '<input type="text" class="inputVisaoEstoqueInventario" id="inputVisaoEstoqueInventario_' + value.cell.produtoEdicaoId + '" style="width:80px; text-align:center;" onchange="visaoEstoqueController.ajustarDiferenca(this)"/>';
+			
 		});
 		
 		return data;
@@ -142,8 +143,8 @@ var visaoEstoqueController = $.extend(true, {
 		var tr = element.parentNode.parentNode.parentNode;
 		var qtdeInventario = parseInt($.trim(element.value) == "" ? 0 : element.value); 
 		var qtde = parseInt($('td[abbr="qtde"] >div', tr).html()); 
-		
-		$('td[abbr="diferenca"] >div', tr).html(qtde - qtdeInventario);
+		debugger;
+		$('div[abbr="diferenca"]', tr).html(qtdeInventario - qtde);
 	},
 	
 	
@@ -239,7 +240,7 @@ var visaoEstoqueController = $.extend(true, {
 				var produtoEdicaoId = element.id.substring(element.id.lastIndexOf("_")+1);
 
 				var tr = $(element).parent().parent().parent();
-				var qtde = $('td[abbr="diferenca"] >div', tr).html();
+				var qtde = $('div[abbr="diferenca"]', tr).html();
 				
 				dados+='{name:"filtro.listaTransferencia['+index+'].produtoEdicaoId",value:'+produtoEdicaoId+'}, {name:"filtro.listaTransferencia['+index+'].qtde",value:'+qtde+'}';
 				index++;
@@ -434,7 +435,8 @@ var visaoEstoqueController = $.extend(true, {
 				align : 'left'
 			}],
 			width : 960,
-			height : 200
+			height : 200,
+			
 		});
 	},
 	
@@ -491,6 +493,8 @@ var visaoEstoqueController = $.extend(true, {
 				sortable : true,
 				align : 'right'
 			}],
+			sortname : "codigo",
+			sortorder : "asc",
 			width : 795,
 			height : 200
 		});
@@ -561,6 +565,8 @@ var visaoEstoqueController = $.extend(true, {
 				sortable : true,
 				align : 'right'
 			}],
+			sortname : "codigo",
+			sortorder : "asc",
 			width : 795,
 			height : 200
 		});
@@ -632,7 +638,9 @@ var visaoEstoqueController = $.extend(true, {
 				align : 'center'
 			}],
 			width : 870,
-			height : 200
+			height : 200,
+			sortname : "codigo",
+			sortorder : "asc"
 		});
 	},
 	
@@ -686,17 +694,19 @@ var visaoEstoqueController = $.extend(true, {
 				display : 'Estoque',
 				name : 'estoque',
 				width : 100,
-				sortable : true,
+				sortable : false,
 				align : 'center'
 			}, {
 				display : 'Diferença',
 				name : 'diferenca',
 				width : 90,
-				sortable : true,
+				sortable : false,
 				align : 'center'
 			}],
 			width : 870,
-			height : 300
+			height : 300,
+			sortname : "codigo",
+			sortorder : "asc"
 		});
 	},
 	

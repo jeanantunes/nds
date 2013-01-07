@@ -74,19 +74,6 @@ public class RegistroCurvaABCDistribuidorVO extends RegistroCurvaABCDTO implemen
 	
 	public RegistroCurvaABCDistribuidorVO() {
 	}
-
-	public RegistroCurvaABCDistribuidorVO(Integer numeroCota, String nomeCota,
-			Integer quantidadePdvs, String municipio, BigInteger vendaExemplares, BigDecimal faturamento,Long idProduto,Long idCota) {
-		this.numeroCota = numeroCota;
-		this.nomeCota = nomeCota;
-		this.quantidadePdvs = quantidadePdvs;
-		this.municipio = municipio;
-		this.vendaExemplares = vendaExemplares;
-		this.faturamentoCapa = faturamento;
-		this.idProduto = idProduto;
-		this.idCota = idCota;
-		this.formatarCampos();
-	}
 	
 	public static long getSerialversionuid() {
 		return serialVersionUID;
@@ -161,15 +148,18 @@ public class RegistroCurvaABCDistribuidorVO extends RegistroCurvaABCDTO implemen
 	}
 
 	public void setVendaExemplares(BigInteger vendaExemplares) {
-		this.vendaExemplares = vendaExemplares;
+		this.vendaExemplares = vendaExemplares == null ? BigInteger.ZERO : vendaExemplares;
+		this.vendaExemplaresFormatado = String.valueOf(this.vendaExemplares);
 	}
 
 	public BigDecimal getFaturamentoCapa() {
 		return faturamentoCapa;
+		
 	}
 
 	public void setFaturamentoCapa(BigDecimal faturamentoCapa) {
-		this.faturamentoCapa = faturamentoCapa;
+		this.faturamentoCapa = faturamentoCapa == null ? BigDecimal.ZERO : faturamentoCapa;
+		this.faturamentoCapaFormatado = CurrencyUtil.formatarValor(faturamentoCapa);
 	}
 	public String getVendaExemplaresFormatado() {
 		return vendaExemplaresFormatado;
@@ -185,11 +175,6 @@ public class RegistroCurvaABCDistribuidorVO extends RegistroCurvaABCDTO implemen
 
 	public void setFaturamentoCapaFormatado(String faturamentoCapaFormatado) {
 		this.faturamentoCapaFormatado = faturamentoCapaFormatado;
-	}
-
-	private void formatarCampos() {
-		this.vendaExemplaresFormatado = CurrencyUtil.formatarValor(vendaExemplares);
-		this.faturamentoCapaFormatado = CurrencyUtil.formatarValor(faturamentoCapa);
 	}
 
 }

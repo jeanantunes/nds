@@ -33,11 +33,46 @@ var alteracaoCotaController = $.extend(true, {
 
 	},
 	
+	carregarValorMinimo : function() {
+		
+		$("#idVrMinimo option", alteracaoCotaController.workspace).remove();
+		
+		$.postJSON(contextPath + '/administracao/alteracaoCota/buscarValorMinimo',null, 
+				function(data) {
+					$("#idVrMinimo", alteracaoCotaController.workspace).append($("<option/>", {value: "-1", text: ""}));
+					$(data).each(function() {
+						$("#idVrMinimo", alteracaoCotaController.workspace).append($("<option/>", {value: $(this)[0].toString(),
+																	 			   text: $(this)[0].toString() 
+																	 			  }));
+					});
+				});
+
+	},
+
+	
 	init : function(pesquisaCota) {
 		this.pesquisaCotaAlteracaoCota = pesquisaCota;
 		
 		this.iniciarGrid();
 		
+		$("#idVrMinimoModal", this.workspace).priceFormat({
+			centsSeparator: ',',
+		    thousandsSeparator: '.'
+		});
+		$("#idVrDividaEmAbertoModal", this.workspace).priceFormat({
+			centsSeparator: ',',
+		    thousandsSeparator: '.'
+		});
+		$("#taxaFixaEntregaBanca", this.workspace).priceFormat({
+			centsSeparator: ',',
+		    thousandsSeparator: '.'
+		});
+		$("#taxaFixaEntregador", this.workspace).priceFormat({
+			centsSeparator: ',',
+		    thousandsSeparator: '.'
+		});
+		
+		$("#idQtdDividaEmAbertoModal", this.workspace).numeric();
 		$("#percentualFaturamentoEntregaBanca", this.workspace).mask("99.99");
 		$("#taxaFixaEntregaBanca", this.workspace).numeric();
 		$("#carenciaInicioEntregaBanca", this.workspace).mask("99/99/9999");
@@ -205,6 +240,16 @@ var alteracaoCotaController = $.extend(true, {
 	},
 	
 	executarPreProcessamento : function(resultado) {
+		
+		if (resultado.mensagens) {
+
+			exibirMensagem(
+				resultado.mensagens.tipoMensagem, 
+				resultado.mensagens.listaMensagens
+			);
+			
+			return resultado;
+		}
 
 		$.each(resultado.rows, function(index, row) {
 			
@@ -283,6 +328,8 @@ var alteracaoCotaController = $.extend(true, {
 		
 		alteracaoCotaController.limparCamposAbas();
 		
+		$('#tabs',this.workspace ).tabs('select', '#tabs-1');
+		
 		var params = $("#gridForm", this.workspace).serializeArray();
 		
 		
@@ -330,16 +377,30 @@ var alteracaoCotaController = $.extend(true, {
 							$("#termoAdesaoRecebido").attr("checked", filtro.filtroModalDistribuicao.termoAdesaoRecebido);
 							$("#percentualFaturamentoEntregaBanca").val(filtro.filtroModalDistribuicao.percentualFaturamentoEntregaBanca);
 							$("#taxaFixaEntregaBanca").val(filtro.filtroModalDistribuicao.taxaFixaEntregaBanca);
-							$("#carenciaInicioEntregaBanca").val(filtro.filtroModalDistribuicao.carenciaInicioEntregaBanca);
-							$("#carenciaFimEntregaBanca").val(filtro.filtroModalDistribuicao.carenciaFimEntregaBanca);
+							
+							if(filtro.filtroModalDistribuicao.carenciaInicioEntregaBanca){
+								$("#carenciaInicioEntregaBanca").val(filtro.filtroModalDistribuicao.carenciaInicioEntregaBanca.$);
+							}
+							
+							if(filtro.filtroModalDistribuicao.carenciaFimEntregaBanca){
+								$("#carenciaFimEntregaBanca").val(filtro.filtroModalDistribuicao.carenciaFimEntregaBanca.$);
+							}
+						
 							alteracaoCotaController.mostrarEsconderDivUtilizaArquivoTermo();
 							alteracaoCotaController.mostrarEsconderDivArquivoUpLoadTermo();
 						}else if($("#idModalIdTipoEntrega").val() == 'ENTREGADOR'){
 							$("#procuracao").attr("checked", filtro.filtroModalDistribuicao.procuracao);
 							$("#procuracaoRecebida").attr("checked", filtro.filtroModalDistribuicao.procuracaoRecebida);
 							$("#percentualFaturamentoEntregador").val(filtro.filtroModalDistribuicao.percentualFaturamentoEntregador);
-							$("#carenciaInicioEntregador").val(filtro.filtroModalDistribuicao.carenciaInicioEntregador);
-							$("#carenciaFimEntregador").val(filtro.filtroModalDistribuicao.carenciaFimEntregador);
+							
+							if(filtro.filtroModalDistribuicao.carenciaInicioEntregador){
+								$("#carenciaInicioEntregador").val(filtro.filtroModalDistribuicao.carenciaInicioEntregador.$);
+							}
+							
+							if(filtro.filtroModalDistribuicao.carenciaFimEntregador){
+								$("#carenciaFimEntregador").val(filtro.filtroModalDistribuicao.carenciaFimEntregador.$);
+							}
+							
 							alteracaoCotaController.mostrarEsconderDivUtilizaArquivoProcuracao();
 							alteracaoCotaController.mostrarEsconderDivArquivoUpLoadProcuracao();
 						}
@@ -472,6 +533,7 @@ var alteracaoCotaController = $.extend(true, {
 				dataForm,  
 			   	function () {
 					$("#dialog-novo", this.workspace).dialog( "close" );
+					alteracaoCotaController.carregarValorMinimo();
 					alteracaoCotaController.pesquisar();
 					
 				},

@@ -20,6 +20,7 @@ import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.vo.PdvVO;
+import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.GeradorFluxoDTO;
 import br.com.abril.nds.dto.ItemDTO;
@@ -37,7 +38,6 @@ import br.com.abril.nds.model.cadastro.pdv.StatusPDV;
 import br.com.abril.nds.model.cadastro.pdv.TamanhoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoCaracteristicaSegmentacaoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoPeriodoFuncionamentoPDV;
-import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.serialization.custom.PlainJSONSerialization;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.PdvService;
@@ -62,7 +62,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/cadastro/pdv")
-public class PdvController {
+public class PdvController extends BaseController {
 	
 	public static final String LISTA_TELEFONES_SALVAR_SESSAO = "listaTelefonesSalvarSessaoPDV";
 	
@@ -446,8 +446,10 @@ public class PdvController {
 		
 		File file = new File((servletContext.getRealPath("") + pathPDV.getValor()).replace("\\", "/"),"pdv_" + dto.getId() + ".jpeg");
 		   		
-		if(file.exists()) 
+		if(file.exists()){ 
+		
 			dto.setPathImagem(pathPDV.getValor() + "pdv_" + dto.getId() + ".jpeg" );
+		}	
 	}
 	
 	private void limparDadosSessao() {
@@ -952,15 +954,6 @@ public class PdvController {
 		httpSession.setAttribute(CotaController.LISTA_TELEFONES_EXIBICAO, listaTelefoneAssociacao);
 		
 		result.use(Results.json()).withoutRoot().from("").serialize();
-	}
-	
-	//TODO getRealUsuario
-	public Usuario getUsuario() {
-		Usuario usuario = new Usuario();
-		usuario.setId(1L);
-		usuario.setLogin("fakeUsuario");
-		usuario.setNome("Fake Usuario");
-		return usuario;
 	}
 	
 	@Post

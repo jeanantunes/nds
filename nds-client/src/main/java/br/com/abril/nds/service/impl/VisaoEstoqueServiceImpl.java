@@ -1,6 +1,5 @@
 package br.com.abril.nds.service.impl;
 
-import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
@@ -16,23 +15,21 @@ import br.com.abril.nds.dto.VisaoEstoqueTransferenciaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaVisaoEstoque;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
-import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.Diferenca;
+import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
-import br.com.abril.nds.model.estoque.TipoDirecionamentoDiferenca;
 import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.seguranca.Usuario;
-import br.com.abril.nds.repository.DiferencaEstoqueRepository;
+import br.com.abril.nds.repository.EstoqueProdutoRespository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
 import br.com.abril.nds.repository.VisaoEstoqueRepository;
+import br.com.abril.nds.service.DiferencaEstoqueService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.service.VisaoEstoqueService;
-import br.com.abril.nds.util.CurrencyUtil;
-import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TipoMensagem;
 
 @Service
@@ -48,13 +45,16 @@ public class VisaoEstoqueServiceImpl implements VisaoEstoqueService {
 	private TipoMovimentoEstoqueRepository tipoMovimentoEstoqueRepository;
 	
 	@Autowired
-	private DiferencaEstoqueRepository diferencaEstoqueRepository;
+	private DiferencaEstoqueService diferencaEstoqueService;
 	
 	@Autowired
 	private ProdutoEdicaoRepository produtoEdicaoRepository;
 	
 	@Autowired
 	private DistribuidorService distribuidorService;
+	
+	@Autowired
+	private EstoqueProdutoRespository estoqueProdutoRepository;
 	
 	@Override
 	@Transactional
@@ -116,15 +116,17 @@ public class VisaoEstoqueServiceImpl implements VisaoEstoqueService {
 		if (filtro.getTipoEstoque().equals(TipoEstoque.LANCAMENTO_JURAMENTADO.toString())) {
 			list = visaoEstoqueRepository.obterVisaoEstoqueDetalheJuramentado(filtro);
 		} else {
-			if (DateUtil.isHoje(filtro.getDataMovimentacao())) {
+			
+			Distribuidor distribuidor = this.distribuidorService.obter();
+			
+			Date dataOperacao = distribuidor.getDataOperacao();
+			
+			if (filtro.getDataMovimentacao().compareTo(dataOperacao) == 0) {
 				list = visaoEstoqueRepository.obterVisaoEstoqueDetalhe(filtro);
 			} else {
 				list = visaoEstoqueRepository.obterVisaoEstoqueDetalheHistorico(filtro);
 			}
 		}
-		
-		BigDecimal precoCapa = BigDecimal.ZERO;
-		BigDecimal qtde = BigDecimal.ZERO;
 		
 		for (VisaoEstoqueDetalheDTO dto: list) {
 			
@@ -133,9 +135,6 @@ public class VisaoEstoqueServiceImpl implements VisaoEstoqueService {
 				continue;
 			}
 			
-			precoCapa = CurrencyUtil.converterValor(dto.getPrecoCapa());
-			qtde = CurrencyUtil.converterValor(dto.getQtde());
-			dto.setValor(precoCapa.multiply(qtde));
 		}
 		
 		return list;
@@ -148,7 +147,12 @@ public class VisaoEstoqueServiceImpl implements VisaoEstoqueService {
 		if (tipoEstoque.equals(TipoEstoque.LANCAMENTO_JURAMENTADO.toString())) {
 			qtd = visaoEstoqueRepository.obterQuantidadeEstoqueJuramentado(idProdutoEdicao);
 		} else {
-			if (DateUtil.isHoje(dataMovimentacao)) {
+		
+			Distribuidor distribuidor = this.distribuidorService.obter();
+			
+			Date dataOperacao = distribuidor.getDataOperacao();
+			
+			if (dataMovimentacao.compareTo(dataOperacao) == 0) {			
 				qtd = visaoEstoqueRepository.obterQuantidadeEstoque(idProdutoEdicao, tipoEstoque);
 			} else {
 				qtd = visaoEstoqueRepository.obterQuantidadeEstoqueHistorico(idProdutoEdicao, tipoEstoque);
@@ -202,6 +206,45 @@ public class VisaoEstoqueServiceImpl implements VisaoEstoqueService {
 					tipoMovimentoSaida);
 		}
 	}
+	
+	/**
+	 * Altera Quantidades em EstoqueProduto
+	 * @param tipoEstoque
+	 * @param idProdutoEdicao
+	 * @param quantidade
+	 */
+	private void alteraQuantidade(TipoEstoque tipoEstoque, Long idProdutoEdicao, Long quantidade){
+		
+		EstoqueProduto ep = null;
+		
+		ep = this.estoqueProdutoRepository.buscarEstoqueProdutoPorProdutoEdicao(idProdutoEdicao);
+		
+		if (ep!=null){
+			
+			switch (tipoEstoque){
+				case SUPLEMENTAR:
+					
+					ep.setQtdeSuplementar(ep.getQtdeSuplementar().subtract(BigInteger.valueOf(-1).multiply(BigInteger.valueOf(quantidade.intValue()))));
+				   
+					break;
+				case RECOLHIMENTO:
+					
+					ep.setQtdeDevolucaoEncalhe(ep.getQtdeDevolucaoEncalhe().subtract(BigInteger.valueOf(-1).multiply(BigInteger.valueOf(quantidade.intValue()))));
+					
+					break;
+				case LANCAMENTO:
+					 
+					ep.setQtde(ep.getQtde().subtract(BigInteger.valueOf(-1).multiply(BigInteger.valueOf(quantidade.intValue()))));
+					
+					break;
+				case PRODUTOS_DANIFICADOS:
+					 
+					ep.setQtdeDanificado(ep.getQtdeDanificado().subtract(BigInteger.valueOf(-1).multiply(BigInteger.valueOf(quantidade.intValue()))));
+					
+					break;	
+			}
+		}
+	}
 
 	@Override
 	@Transactional
@@ -227,6 +270,10 @@ public class VisaoEstoqueServiceImpl implements VisaoEstoqueService {
 			ProdutoEdicao produtoEdicao = 
 				this.produtoEdicaoRepository.buscarPorId(dto.getProdutoEdicaoId());
 			
+			
+			this.alteraQuantidade(tipoEstoque, produtoEdicao.getId(), dto.getQtde());
+			
+			
 			if (produtoEdicao == null) {
 				
 				throw new ValidacaoException(
@@ -237,7 +284,6 @@ public class VisaoEstoqueServiceImpl implements VisaoEstoqueService {
 			
 			diferenca.setProdutoEdicao(produtoEdicao);
 			diferenca.setQtde(qtdeDiferenca.abs());
-			diferenca.setResponsavel(usuario);
 			
 			if (BigInteger.ZERO.compareTo(qtdeDiferenca) < 0) {
 				
@@ -247,14 +293,8 @@ public class VisaoEstoqueServiceImpl implements VisaoEstoqueService {
 				
 				diferenca.setTipoDiferenca(TipoDiferenca.FALTA_EM);
 			}
-
-			diferenca.setStatusConfirmacao(StatusConfirmacao.PENDENTE);
-			diferenca.setTipoDirecionamento(TipoDirecionamentoDiferenca.ESTOQUE);
-			diferenca.setTipoEstoque(tipoEstoque);
-			diferenca.setAutomatica(true);
-			diferenca.setDataMovimento(distribuidor.getDataOperacao());
 			
-			this.diferencaEstoqueRepository.adicionar(diferenca);
+			diferencaEstoqueService.lancarDiferencaAutomatica(diferenca);
 		}
 	}
 }

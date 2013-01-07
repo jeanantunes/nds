@@ -11,6 +11,7 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
+import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.AbastecimentoDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.MapaCotaDTO;
@@ -38,10 +39,8 @@ import br.com.abril.nds.service.MapaAbastecimentoService;
 import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.service.RotaService;
 import br.com.abril.nds.service.RoteirizacaoService;
-import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.vo.PaginacaoVO;
-import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
@@ -50,11 +49,9 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/mapaAbastecimento")
-public class MapaAbastecimentoController {
+public class MapaAbastecimentoController extends BaseController {
 
 	private static final String FILTRO_SESSION_ATTRIBUTE = "filtroMapaAbastecimento";
-	
-	protected static final String MSG_MATRIZ_BALANCEAMENTO_NAO_CONFIRMADO = "Não há matriz de lancamento confirmada para esta data.";
 	
 	@Autowired
 	private HttpSession session;
@@ -192,25 +189,14 @@ public class MapaAbastecimentoController {
 		
 		List<ItemDTO<Long, String>> listaRoteiros = new ArrayList<ItemDTO<Long,String>>();
 		
-		for(Roteiro rota : roteiros){
+		for(Roteiro item : roteiros){
 			
-			listaRoteiros.add(new ItemDTO<Long, String>(rota.getId(),rota.getId() + " " + rota.getDescricaoRoteiro()));
+			listaRoteiros.add(new ItemDTO<Long, String>(item.getId(),item.getDescricaoRoteiro()));
 		}
 		
 		return listaRoteiros;
 	}
 		
-	/**
-	 * Válida
-	 * 
-	 * @param dataLancamento
-	 */
-	private void validarExistenciaMatriz(Date dataLancamento) {
-		if(!lancamentoService.existeMatrizBalanceamentoConfirmado(dataLancamento)){
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,MSG_MATRIZ_BALANCEAMENTO_NAO_CONFIRMADO ));
-		}
-	}	
-	
 	@Post
 	public void pesquisar(FiltroMapaAbastecimentoDTO filtro, Integer page, Integer rp, String sortname, String sortorder) {
 		
@@ -222,9 +208,7 @@ public class MapaAbastecimentoController {
 		
 		if(filtro.getDataLancamento() == null || filtro.getDataLancamento().isEmpty())
 			throw new ValidacaoException(TipoMensagem.WARNING, "'Data de Lançamento' é obrigatória.");
-		
-		validarExistenciaMatriz(filtro.getDataDate());
-		
+			
 		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder,sortname));
 		
 		tratarFiltro(filtro);
@@ -403,14 +387,14 @@ public class MapaAbastecimentoController {
 	public void impressaoPorBox(FiltroMapaAbastecimentoDTO filtro) {
 		
 		HashMap<String, ProdutoMapaDTO> produtosMapa = mapaAbastecimentoService.obterMapaDeImpressaoPorBox(filtro);
-		
+		setaNomeParaImpressao();
 		result.include("produtosMapa",produtosMapa.values());
 	}
 	
 	public void impressaoPorRota(FiltroMapaAbastecimentoDTO filtro) {
 		
 		HashMap<Integer, HashMap<String, ProdutoMapaRotaDTO>> produtosMapa = mapaAbastecimentoService.obterMapaDeImpressaoPorBoxRota(filtro);
-		
+		setaNomeParaImpressao();
 		result.include("mapa",produtosMapa);
 		
 	}
@@ -418,7 +402,7 @@ public class MapaAbastecimentoController {
 	public void impressaoPorProduto(FiltroMapaAbastecimentoDTO filtro) {
 		
 		MapaCotaDTO mapaCota = mapaAbastecimentoService.obterMapaDeImpressaoPorCota(filtro);
-		
+		setaNomeParaImpressao();
 		result.include("mapa", mapaCota);
 		
 	}
@@ -444,7 +428,7 @@ public class MapaAbastecimentoController {
 	public void impressaoPorCota(FiltroMapaAbastecimentoDTO filtro) {
 				
 		MapaCotaDTO mapaCota = mapaAbastecimentoService.obterMapaDeImpressaoPorCota(filtro);
-		
+		setaNomeParaImpressao();
 		result.include("mapa", mapaCota);
 		
 	}
@@ -452,7 +436,7 @@ public class MapaAbastecimentoController {
 	public void impressaoPorProdutoEdicao(FiltroMapaAbastecimentoDTO filtro) {		
 
 		ProdutoEdicaoMapaDTO produtoEdicaoMapa = mapaAbastecimentoService.obterMapaDeImpressaoPorProdutoEdicao(filtro);
-		
+		setaNomeParaImpressao();
 		result.include("mapa",produtoEdicaoMapa);
 		
 	}
@@ -460,12 +444,17 @@ public class MapaAbastecimentoController {
 	public void impressaoPorProdutoQuebraCota(FiltroMapaAbastecimentoDTO filtro) {		
 
 		MapaProdutoCotasDTO produtoCotaMapa = mapaAbastecimentoService.obterMapaDeImpressaoPorProdutoQuebrandoPorCota(filtro);
-		
+		setaNomeParaImpressao();
 		result.include("mapa",produtoCotaMapa);
 		
 	}
 	
+	private void setaNomeParaImpressao() {
+		result.include("nomeDistribuidor", distribuidorService.obter().getJuridica().getRazaoSocial());
+	}
+	
 	public void impressaoFalha(String mensagemErro){
+		setaNomeParaImpressao();
 		result.include(mensagemErro);					
 	}
 

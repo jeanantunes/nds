@@ -409,7 +409,6 @@ var transportadorController = $.extend(true, {
 			$("#gridCotasAtendidas", transportadorController.workspace).flexOptions({url: contextPath + "/cadastro/transportador/carregarCotasAtendidas"});
 			
 			$("#cnpj", transportadorController.workspace).mask("99.999.999/9999-99");
-			$("#cnpjPesquisa", transportadorController.workspace).mask("99.999.999/9999-99");
 			
 			$("#valorTaxaFixa", transportadorController.workspace).maskMoney({
 				 thousands:'.', 
@@ -540,7 +539,7 @@ var transportadorController = $.extend(true, {
 		$("#cnpj", transportadorController.workspace).val("");
 		$("#inscEstadual", transportadorController.workspace).val("");
 		$("#responsavel", transportadorController.workspace).val("");
-		
+		$("#valorTaxaFixa", transportadorController.workspace).val("");
 		$("#checkPorEntrega", transportadorController.workspace).uncheck();
 		$("#radioPeridioDiario", transportadorController.workspace).check();
 		$(".checksDiasSemana", transportadorController.workspace).uncheck();

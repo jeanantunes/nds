@@ -2,7 +2,6 @@ package br.com.abril.nds.service.impl;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.math.MathContext;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -88,20 +87,15 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 	@Autowired
 	private RotaRepository rotaRepository;
 
-	@Override
+	//@Override
+	@SuppressWarnings("unchecked")
 	@Transactional
-	public List<ConsultaNotaEnvioDTO> busca(Intervalo<Integer> intervaloBox,
-			Intervalo<Integer> intervalorCota,
-			Intervalo<Date> intervaloDateMovimento,
-			List<Long> listIdFornecedor, String sortname, String sortorder,
-			Integer resultsPage, Integer page,
-			SituacaoCadastro situacaoCadastro, Long idRoteiro, Long idRota) {
+	public List<ConsultaNotaEnvioDTO> busca(FiltroConsultaNotaEnvioDTO filtro) {
 		Distribuidor distribuidor = this.distribuidorRepository.obter();
 
 
 		Set<Long> idsCotasDestinatarias = this.cotaRepository
-				.obterIdsCotasComNotaEnvioEntre(intervalorCota, intervaloBox,
-						listIdFornecedor, situacaoCadastro, idRoteiro, idRota, sortname, sortorder, resultsPage, page);
+				.obterIdsCotasComNotaEnvioEntre(filtro);
 
 		List<ConsultaNotaEnvioDTO> listaCotaExemplares = new ArrayList<ConsultaNotaEnvioDTO>();
 
@@ -119,7 +113,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 			}
 
 			List<MovimentoEstoqueCota> listaMovimentoEstoqueCota = obterItensNotaVenda(
-					distribuidor, idCota, intervaloDateMovimento, listIdFornecedor);
+					distribuidor, idCota, filtro.getIntervaloMovimento(), filtro.getIdFornecedores());
 
 			if (listaMovimentoEstoqueCota!= null && !listaMovimentoEstoqueCota.isEmpty()) {
 				this.sumarizarTotalItensNota(listaMovimentoEstoqueCota, cotaExemplares,cota);
@@ -127,6 +121,9 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 			}
 		}
 		
+		String sortname = filtro.getPaginacaoVO().getSortColumn();
+		String sortorder= filtro.getPaginacaoVO().getSortOrder();
+				
 		if(sortname == null || "".equals(sortname)) 
 			sortname = "numeroCota";
 		
@@ -143,13 +140,10 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 	
 	@Override
 	@Transactional
-	public Integer buscaCotasNotasDeEnvioQtd(Intervalo<Integer> intervaloBox, Intervalo<Integer> intervalorCota,
-			Intervalo<Date> intervaloDateMovimento, List<Long> listIdFornecedor, SituacaoCadastro situacaoCadastro, Long idRoteiro,
-			Long idRota) {
+	public Integer buscaCotasNotasDeEnvioQtd(FiltroConsultaNotaEnvioDTO filtro) {
 		
 		Set<Long> idsCotasDestinatarias = this.cotaRepository
-				.obterIdsCotasComNotaEnvioEntre(intervalorCota, intervaloBox,
-						null, situacaoCadastro, idRoteiro, idRota, null, null, null, null);
+				.obterIdsCotasComNotaEnvioEntre(filtro);
 		return idsCotasDestinatarias.size();
 	}
 
@@ -225,17 +219,18 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 					precoVenda, percentualDesconto);			
 			quantidade = quantidade.add(movimento.getQtde());
 			preco = preco.add(precoVenda.multiply(new BigDecimal(movimento.getQtde())));
-			precoComDesconto = precoComDesconto.add(
-					precoVenda.subtract(valorDesconto, new MathContext(3)).multiply(new BigDecimal(quantidade)));	
+			precoComDesconto = precoComDesconto.add(precoVenda.subtract(valorDesconto).multiply(new BigDecimal(movimento.getQtde())));	
 			
-			if(!movimento.getListaItemNotaEnvio().isEmpty()){
+			List<ItemNotaEnvio> itens = movimento.getListaItemNotaEnvio();
+			
+			if( itens!= null && !itens.isEmpty() ){
 				cotaExemplares.setNotaImpressa(true);
 			}
 			
 		}
 
 		cotaExemplares.setTotal(preco);
-		cotaExemplares.setTotalDesconto(precoComDesconto);
+		cotaExemplares.setTotalDesconto(precoComDesconto.setScale(2, BigDecimal.ROUND_HALF_UP));
 		cotaExemplares.setExemplares(quantidade.longValue());
 
 	}

@@ -22,6 +22,9 @@ public class FiltroConsultaEncalheDTO {
 	@Export(label="Fornecedor")
 	private String nomeFornecedor;
 	
+	@Export(label="Nº Cota")
+	private Integer numCota;
+	
 	@Export(label="Cota")
 	private String nomeCota;
 	
@@ -217,6 +220,14 @@ public class FiltroConsultaEncalheDTO {
 	 */
 	public void setDataRecolhimentoFinal(Date dataRecolhimentoFinal) {
 		this.dataRecolhimentoFinal = dataRecolhimentoFinal;
+	}
+
+	public Integer getNumCota() {
+		return numCota;
+	}
+
+	public void setNumCota(Integer numCota) {
+		this.numCota = numCota;
 	}
 
 	/**

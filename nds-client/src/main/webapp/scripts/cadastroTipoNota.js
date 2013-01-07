@@ -29,7 +29,7 @@ var cadastroTipoNotaController = $.extend(true, {
 			colModel : [ {
 				display : 'Operacao',
 				name : 'tipoAtividade',
-				width : 100,
+				width : 138,
 				sortable : true,
 				align : 'left'
 			},{
@@ -47,13 +47,13 @@ var cadastroTipoNotaController = $.extend(true, {
 			},{
 				display : 'CFOP Dentro UF',
 				name : 'cfopEstado',
-				width : 90,
+				width : 80,
 				sortable : true,
 				align : 'center'
 			},{
 				display : 'CFOP Fora UF',
 				name : 'cfopOutrosEstados',
-				width : 90,
+				width : 80,
 				sortable : true,
 				align : 'center'
 			}],

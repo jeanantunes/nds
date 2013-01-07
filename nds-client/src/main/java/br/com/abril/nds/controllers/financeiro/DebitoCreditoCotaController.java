@@ -3,9 +3,7 @@ package br.com.abril.nds.controllers.financeiro;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
@@ -19,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.DebitoCreditoVO;
+import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.DebitoCreditoDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.MovimentoFinanceiroCotaDTO;
@@ -31,7 +30,6 @@ import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.BaseCalculo;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
-import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
@@ -41,7 +39,6 @@ import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.seguranca.Permissao;
-import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.BoxService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DebitoCreditoCotaService;
@@ -58,7 +55,6 @@ import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
-import br.com.abril.nds.util.export.NDSFileHeader;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Get;
@@ -76,7 +72,7 @@ import br.com.caelum.vraptor.view.Results;
  */
 @Resource
 @Path("/financeiro/debitoCreditoCota")
-public class DebitoCreditoCotaController {
+public class DebitoCreditoCotaController extends BaseController{
 
 	@Autowired
 	private Result result;
@@ -431,29 +427,7 @@ public class DebitoCreditoCotaController {
 		return listaExport;		
 	}
 	
-	/*
-	 * Obtém os dados do cabeçalho de exportação.
-	 * 
-	 * @return NDSFileHeader
-	 */
-	private NDSFileHeader getNDSFileHeader() {
-		
-		NDSFileHeader ndsFileHeader = new NDSFileHeader();
-		
-		Distribuidor distribuidor = this.distribuidorService.obter();
-		
-		if (distribuidor != null) {
-			
-			ndsFileHeader.setNomeDistribuidor(distribuidor.getJuridica().getRazaoSocial());
-			ndsFileHeader.setCnpjDistribuidor(distribuidor.getJuridica().getCnpj());
-		}
-		
-		ndsFileHeader.setData(new Date());
-		
-		ndsFileHeader.setNomeUsuario(this.getUsuario().getNome());
-		
-		return ndsFileHeader;
-	}	
+
 	/*
 	 * Obtém o filtro para exportação.
 	 */
@@ -513,10 +487,6 @@ public class DebitoCreditoCotaController {
 				filtro.setNomeCota(descricao);
 			}
 		}
-	}
-	
-	private Usuario getUsuario() {
-		return usuarioService.getUsuarioLogado();
 	}
 	
 	@Post
@@ -601,7 +571,7 @@ public class DebitoCreditoCotaController {
 
 			debitoCredito.setValor(getValorSemMascara(debitoCredito.getValor()));
 
-			debitoCredito.setIdUsuario(this.getUsuario().getId());
+			debitoCredito.setIdUsuario(this.getUsuarioLogado().getId());
 			
 			debitoCredito.setId(null);
 			

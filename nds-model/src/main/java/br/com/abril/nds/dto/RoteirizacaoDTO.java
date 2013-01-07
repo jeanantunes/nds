@@ -67,6 +67,11 @@ public class RoteirizacaoDTO implements Serializable{
     
     private Map<Long, Set<RoteiroRoteirizacaoDTO>> roteirosTransferidos = new HashMap<Long, Set<RoteiroRoteirizacaoDTO>>();
     
+    /**
+     * Lista das rotas pertencentes a outra roteirizacao que tiveram novos pdvs adicionados
+     */
+    private List<RotaRoteirizacaoDTO> rotasNovosPDVs = new ArrayList<RotaRoteirizacaoDTO>();
+    
     private RoteirizacaoDTO(TipoEdicaoRoteirizacao tipoEdicao, List<BoxRoteirizacaoDTO> boxDisponiveis, boolean addBoxEspecial) {
         this.tipoEdicao = tipoEdicao;
         this.boxDisponiveis = new ArrayList<BoxRoteirizacaoDTO>();
@@ -77,6 +82,7 @@ public class RoteirizacaoDTO implements Serializable{
         this.todosBox = new ArrayList<BoxRoteirizacaoDTO>(this.boxDisponiveis);
     }
 	
+    
 
     /**
 	 * @return the id
@@ -154,8 +160,45 @@ public class RoteirizacaoDTO implements Serializable{
         return roteirosExclusao;
     }
 
+    public List<RotaRoteirizacaoDTO> getRotasNovosPDVsTransferidos() {
+		return rotasNovosPDVs;
+	}
 
-    /**
+	/**
+     * Adiciona uma rota que pertence a outra roteirização e teve PDVs adicionados
+     * 
+     * @param rotaDTO
+     */
+    public void addRotaNovosPDVs(RotaRoteirizacaoDTO rotaDTO) {
+    	
+    	if(this.rotasNovosPDVs == null) {
+    		this.rotasNovosPDVs = new ArrayList<RotaRoteirizacaoDTO>();
+    	}
+    	
+    	this.rotasNovosPDVs.add(rotaDTO);
+    }
+
+    
+    public RotaRoteirizacaoDTO obterRotaNovosPDVs(Rota rota) {
+    	
+    	if (this.rotasNovosPDVs == null) 
+    		this.rotasNovosPDVs = new ArrayList<RotaRoteirizacaoDTO>();
+    	
+    	for (RotaRoteirizacaoDTO rotaDTO : this.rotasNovosPDVs) {
+    		
+    		if (rotaDTO.equals(rota.getId())) {
+    			return rotaDTO;
+    		}
+    	}
+    	
+    	RotaRoteirizacaoDTO novaRotaDTO = RotaRoteirizacaoDTO.getDTOFrom(rota);
+    	
+    	this.addRotaNovosPDVs(novaRotaDTO);
+    	
+    	return novaRotaDTO;
+    }
+
+	/**
      * Adiciona o identificador do roteiro para exclusão
      * 
      * @param idRoteiro
@@ -402,15 +445,23 @@ public class RoteirizacaoDTO implements Serializable{
 
 	public void removerRoteiro(Long roteiroId) {
 		
-		for (RoteiroRoteirizacaoDTO roteiro : roteiros){
-			
-			if (roteiro.getId().equals(roteiroId)){
-				
-				roteiros.remove(roteiro);
-				break;
-			}
-		}
+		removerRoteiroDeRoteiros(roteiroId);
 		
+		removerRoteiroDeTodosRoteiros(roteiroId);
+		
+		if (roteiroId != null  && roteiroId >= 0){
+			
+			this.addRoteiroExclusao(roteiroId);
+		}
+	}
+
+	public void removerRoteiroTransferido(Long roteiroId) {
+		
+		removerRoteiroDeRoteiros(roteiroId);
+		removerRoteiroDeTodosRoteiros(roteiroId);
+	}
+
+	private void removerRoteiroDeTodosRoteiros(Long roteiroId) {
 		for (RoteiroRoteirizacaoDTO roteiro : todosRoteiros){
 			
 			if (roteiro.getId().equals(roteiroId)){
@@ -419,13 +470,47 @@ public class RoteirizacaoDTO implements Serializable{
 				break;
 			}
 		}
-		
-		if (roteiroId >= 0){
+	}
+
+
+
+	private void removerRoteiroDeRoteiros(Long roteiroId) {
+		for (RoteiroRoteirizacaoDTO roteiro : roteiros){
 			
-			this.addRoteiroExclusao(roteiroId);
+			if (roteiro.getId().equals(roteiroId)){
+				
+				roteiros.remove(roteiro);
+				break;
+			}
 		}
 	}
 
+	public void removerRoteiro(Integer ordemRoteiro) {
+		
+		for (RoteiroRoteirizacaoDTO roteiro : roteiros){
+			
+			if (roteiro.getOrdem().equals(ordemRoteiro)){
+				
+				roteiros.remove(roteiro);
+				break;
+			}
+		}
+		
+		for (RoteiroRoteirizacaoDTO roteiro : todosRoteiros){
+			
+			if (roteiro.getOrdem().equals(ordemRoteiro)){
+				
+				todosRoteiros.remove(roteiro);
+				
+				if(roteiro.getId() > 0) {
+					this.addRoteiroExclusao(roteiro.getId());
+				}
+				
+				break;
+			}
+		}
+	}
+	
 
 	public Map<Long, Set<RoteiroRoteirizacaoDTO>> getRoteirosTransferidos() {
 		return roteirosTransferidos;

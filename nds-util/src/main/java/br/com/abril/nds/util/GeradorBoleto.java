@@ -126,6 +126,17 @@ public class GeradorBoleto {
         boleto.setInstrucao7(corpoBoleto.getBoletoInstrucao7());
         boleto.setInstrucao8(corpoBoleto.getBoletoInstrucao8());
         
+        //BOLETO COM CAMPOS DE VALOR EM BRANCO
+        if (corpoBoleto.isBoletoSemValor()){
+        	
+	        boleto.addTextosExtras("txtRsValorCobrado"," ");
+	        boleto.addTextosExtras("txtRsValorDocumento"," ");
+	        
+	        boleto.addTextosExtras("txtFcValor"," ");
+	        boleto.addTextosExtras("txtFcValorCobrado"," ");
+	        boleto.addTextosExtras("txtFcValorDocumento"," ");
+        }
+        
         return boleto;
 	}
 	

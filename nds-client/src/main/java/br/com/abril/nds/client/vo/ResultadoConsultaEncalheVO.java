@@ -2,7 +2,6 @@ package br.com.abril.nds.client.vo;
 
 import java.io.Serializable;
 
-import br.com.abril.nds.dto.DebitoCreditoCotaDTO;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.export.Exportable;

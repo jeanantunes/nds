@@ -2,7 +2,7 @@ package br.com.abril.nds.repository;
 
 import java.util.List;
 
-import br.com.abril.nds.model.fiscal.nota.ItemNotaFiscal;
+import br.com.abril.nds.model.fiscal.nota.ItemNotaFiscalSaida;
 import br.com.abril.nds.model.fiscal.nota.ProdutoServico;
 import br.com.abril.nds.model.fiscal.nota.pk.ProdutoServicoPK;
 
@@ -15,6 +15,6 @@ public interface ProdutoServicoRepository  extends Repository<ProdutoServico, Pr
 	 * @param listItemNotaFiscal
 	 */
 	public abstract void atualizarProdutosQuePossuemNota(List<ProdutoServico> listaProdutoServico, 
-			List<ItemNotaFiscal> listItemNotaFiscal);
+			List<ItemNotaFiscalSaida> listItemNotaFiscal);
 	
 }

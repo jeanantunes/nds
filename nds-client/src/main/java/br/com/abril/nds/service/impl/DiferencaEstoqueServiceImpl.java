@@ -3,9 +3,11 @@ package br.com.abril.nds.service.impl;
 import java.math.BigInteger;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -26,6 +28,7 @@ import br.com.abril.nds.dto.filtro.FiltroDetalheDiferencaCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDiferencaEstoqueDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
+import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Cota;
@@ -33,6 +36,7 @@ import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.ParametroSistema;
 import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.model.estoque.Diferenca;
+import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.estoque.LancamentoDiferenca;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
@@ -42,12 +46,14 @@ import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.estoque.TipoDirecionamentoDiferenca;
 import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
+import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DiferencaEstoqueRepository;
 import br.com.abril.nds.repository.EstudoCotaRepository;
 import br.com.abril.nds.repository.LancamentoDiferencaRepository;
+import br.com.abril.nds.repository.MovimentoEstoqueRepository;
 import br.com.abril.nds.repository.ParametroSistemaRepository;
 import br.com.abril.nds.repository.RateioDiferencaRepository;
 import br.com.abril.nds.repository.RecebimentoFisicoRepository;
@@ -57,6 +63,7 @@ import br.com.abril.nds.service.DiferencaEstoqueService;
 import br.com.abril.nds.service.MovimentoEstoqueCotaService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.service.UsuarioService;
+import br.com.abril.nds.service.VisaoEstoqueService;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TipoMensagem;
 
@@ -109,6 +116,13 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 	@Autowired
 	private DistribuidorService distribuidorService;
 	
+	@Autowired
+	private VisaoEstoqueService visaoEstoqueService;
+	
+	@Autowired
+	private MovimentoEstoqueRepository movimentoEstoqueRepository;
+	
+	
 	@Transactional(readOnly = true)
 	public List<Diferenca> obterDiferencasLancamento(FiltroLancamentoDiferencaEstoqueDTO filtro) {
 		
@@ -154,19 +168,52 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 	}
 	
 	@Transactional
+	public void lancarDiferencaAutomaticaContagemDevolucao(Diferenca diferenca) {
+		
+		processarDiferencaAutomatica(diferenca);
+		
+		StatusAprovacao statusAprovacao = StatusAprovacao.GANHO;
+		
+		if(TipoDiferenca.FALTA_DE.equals(diferenca.getTipoDiferenca())
+				||TipoDiferenca.FALTA_EM.equals(diferenca.getTipoDiferenca())){
+			
+			statusAprovacao = StatusAprovacao.PERDA;	
+		}
+		
+		Usuario usuario = usuarioService.getUsuarioLogado();
+		
+		MovimentoEstoque movimentoEstoque = this.gerarMovimentoEstoque(diferenca, usuario.getId(),true);
+		movimentoEstoque.setStatus(statusAprovacao);
+		movimentoEstoqueRepository.alterar(movimentoEstoque);
+	}
+	
+	@Transactional
 	public Diferenca lancarDiferencaAutomatica(Diferenca diferenca) {
+		
+		diferenca = processarDiferencaAutomatica(diferenca);
+		
+		this.confirmarLancamentosDiferenca(Arrays.asList(diferenca),true);
+		
+		return diferenca;
+	}
+
+	private Diferenca processarDiferencaAutomatica(Diferenca diferenca) {
 		
 		Distribuidor distribuidor = distribuidorService.obter();
 		
-		diferenca.setStatusConfirmacao(StatusConfirmacao.PENDENTE);
+		diferenca.setStatusConfirmacao(StatusConfirmacao.CONFIRMADO);
 		diferenca.setTipoDirecionamento(TipoDirecionamentoDiferenca.ESTOQUE);
 		diferenca.setTipoEstoque(TipoEstoque.LANCAMENTO);
 		diferenca.setAutomatica(true);
 		diferenca.setDataMovimento(distribuidor.getDataOperacao());
 		
-		this.diferencaEstoqueRepository.adicionar(diferenca);
-		
-		return diferenca;
+		return this.diferencaEstoqueRepository.merge(diferenca);
+	}
+	
+	@Override
+	@Transactional
+	public void gerarMovimentoEstoqueDiferenca(Diferenca diferenca, Long idUsuario) {
+		gerarMovimentoEstoque(diferenca, idUsuario,true);
 	}
 	
 	@Transactional
@@ -175,12 +222,23 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 								  FiltroLancamentoDiferencaEstoqueDTO filtroPesquisa,
 								  Long idUsuario,Boolean isDiferencaNova) {
 		
-		salvarDiferenca(listaNovasDiferencas, mapaRateioCotas, idUsuario, isDiferencaNova, StatusConfirmacao.CONFIRMADO);
+		listaNovasDiferencas = salvarDiferenca(listaNovasDiferencas, mapaRateioCotas, idUsuario, isDiferencaNova, StatusConfirmacao.PENDENTE);
+		
+		List<Diferenca> listaDiferencas = null;
 		
 		if (isDiferencaNova == null || !isDiferencaNova) {
 			
-			this.confirmarLancamentosDiferenca(filtroPesquisa, idUsuario);
+			filtroPesquisa.setPaginacao(null);
+			filtroPesquisa.setOrdenacaoColuna(null);
+			
+			listaDiferencas = this.diferencaEstoqueRepository.obterDiferencasLancamento(filtroPesquisa);
 		}
+		else{
+			
+			listaDiferencas = new ArrayList<>(listaNovasDiferencas);
+		}
+		
+		this.confirmarLancamentosDiferenca(listaDiferencas,false);
 	} 
 	
 	@Transactional
@@ -192,13 +250,15 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 		salvarDiferenca(listaNovasDiferencas, mapaRateioCotas, idUsuario,isDiferencaNova, StatusConfirmacao.PENDENTE);
 	}
 
-	private void salvarDiferenca(Set<Diferenca> listaNovasDiferencas,
+	private Set<Diferenca> salvarDiferenca(Set<Diferenca> listaNovasDiferencas,
 								Map<Long, List<RateioCotaVO>> mapaRateioCotas, 
 								Long idUsuario, 
 								Boolean isDiferencaNova,
 								StatusConfirmacao statusConfirmacao) {
 		
 		Usuario usuario = usuarioService.buscar(idUsuario);
+		
+		Set<Diferenca>diferencasAtualizadas = new HashSet<>();
 		
 		for (Diferenca diferenca : listaNovasDiferencas) {
 
@@ -239,7 +299,11 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 				
 				this.redirecionarDiferencaEstoque(listaRateioCotas, diferenca);
 			}
+			
+			diferencasAtualizadas.add(diferenca);
 		}
+		
+		return diferencasAtualizadas;
 	}
 	
 	private void redirecionarDiferencaEstoque(List<RateioCotaVO> rateiosDiferenca,Diferenca diferenca){
@@ -297,43 +361,153 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 		}
 	}
 
-	private void confirmarLancamentosDiferenca(FiltroLancamentoDiferencaEstoqueDTO filtroPesquisa,
-											   Long idUsuario) {
+	private void confirmarLancamentosDiferenca(List<Diferenca> listaDiferencas, boolean aprovacaoAutomatica) {
 		
-		filtroPesquisa.setPaginacao(null);
-		
-		filtroPesquisa.setOrdenacaoColuna(null);
-		
-		List<Diferenca> listaDiferencas =
-			this.diferencaEstoqueRepository.obterDiferencasLancamento(filtroPesquisa);
+		Usuario usuario = usuarioService.getUsuarioLogado();
 		
 		for (Diferenca diferenca : listaDiferencas) {
+			
+			MovimentoEstoque movimentoEstoque = this.gerarMovimentoEstoque(diferenca, usuario.getId(),aprovacaoAutomatica);
 
-			MovimentoEstoque movimentoEstoque = 
-				this.gerarMovimentoEstoque(diferenca, idUsuario);
-			
 			List<MovimentoEstoqueCota> listaMovimentosEstoqueCota = null;
-			
-			if (diferenca.getRateios() != null 
-					&& !diferenca.getRateios().isEmpty()) {
 				
-				listaMovimentosEstoqueCota = new ArrayList<MovimentoEstoqueCota>();
-				
-				for (RateioDiferenca rateioDiferenca : diferenca.getRateios()) {
+			if (diferenca.getRateios() != null && !diferenca.getRateios().isEmpty()) {
 					
+				listaMovimentosEstoqueCota = new ArrayList<MovimentoEstoqueCota>();
+					
+				for (RateioDiferenca rateioDiferenca : diferenca.getRateios()) {
+						
 					listaMovimentosEstoqueCota.add(
-						this.gerarMovimentoEstoqueCota(
-							diferenca, rateioDiferenca.getQtde(), rateioDiferenca.getCota(), idUsuario));
+							this.gerarMovimentoEstoqueCota(
+								diferenca, rateioDiferenca.getQtde(), rateioDiferenca.getCota(), usuario.getId()));
 				}
 			}
 
 			diferenca.setStatusConfirmacao(StatusConfirmacao.CONFIRMADO);
 			
-			this.diferencaEstoqueRepository.merge(diferenca);
+			StatusAprovacao statusAprovacao = obterStatusLancamento(diferenca);
 			
-			this.gerarLancamentoDiferenca(
-				diferenca, StatusAprovacao.PENDENTE, movimentoEstoque, listaMovimentosEstoqueCota);
+			LancamentoDiferenca lancamentoDiferenca =  
+					this.gerarLancamentoDiferenca(statusAprovacao, movimentoEstoque, listaMovimentosEstoqueCota);
+			
+			diferenca.setLancamentoDiferenca(lancamentoDiferenca);
+			
+			diferenca = this.diferencaEstoqueRepository.merge(diferenca);
+					
+			this.processarTransferenciaEstoque(diferenca,usuario.getId());
 		}
+	}
+	
+	private void processarTransferenciaEstoque(Diferenca diferenca, Long idUsuario) {
+		
+		if( TipoEstoque.LANCAMENTO.equals(diferenca.getTipoEstoque())){
+			return;
+		}
+		
+		TipoMovimentoEstoque tipoMovimentoEstoqueLancamento = null;
+		TipoMovimentoEstoque tipoMovimentoEstoqueAlvo = null;
+				
+		if(TipoDiferenca.FALTA_DE.equals(diferenca.getTipoDiferenca()) 
+				|| TipoDiferenca.FALTA_EM.equals(diferenca.getTipoDiferenca())){
+			
+			 tipoMovimentoEstoqueLancamento = 
+					this.tipoMovimentoRepository.buscarTipoMovimentoEstoque(
+							obterTipoMovimentoEstoqueTransferencia(TipoEstoque.LANCAMENTO, TipoOperacao.ENTRADA));
+			 
+			 tratarTipoMovimentoEstoque(tipoMovimentoEstoqueLancamento,"Tipo de movimento de entrada não encontrado!");
+			
+			 tipoMovimentoEstoqueAlvo = 
+					this.tipoMovimentoRepository.buscarTipoMovimentoEstoque(
+							obterTipoMovimentoEstoqueTransferencia(diferenca.getTipoEstoque(), TipoOperacao.SAIDA));
+			
+			 tratarTipoMovimentoEstoque(tipoMovimentoEstoqueLancamento,"Tipo de movimento de saida não encontrado!");
+		}
+		
+		if(TipoDiferenca.SOBRA_DE.equals(diferenca.getTipoDiferenca()) 
+				|| TipoDiferenca.SOBRA_EM.equals(diferenca.getTipoDiferenca())){
+			
+			 tipoMovimentoEstoqueLancamento = 
+					this.tipoMovimentoRepository.buscarTipoMovimentoEstoque(
+							obterTipoMovimentoEstoqueTransferencia(TipoEstoque.LANCAMENTO, TipoOperacao.SAIDA));
+			
+			 tratarTipoMovimentoEstoque(tipoMovimentoEstoqueLancamento,"Tipo de movimento de entrada não encontrado!");
+			
+			 tipoMovimentoEstoqueAlvo = 
+					this.tipoMovimentoRepository.buscarTipoMovimentoEstoque(
+							obterTipoMovimentoEstoqueTransferencia(diferenca.getTipoEstoque(), TipoOperacao.ENTRADA));
+			
+			 tratarTipoMovimentoEstoque(tipoMovimentoEstoqueLancamento,"Tipo de movimento de saida não encontrado!");
+		}
+		
+		movimentoEstoqueService.gerarMovimentoEstoque(
+				diferenca.getProdutoEdicao().getId(),idUsuario,diferenca.getQtde(),
+				tipoMovimentoEstoqueLancamento,Origem.TRANSFERENCIA_LANCAMENTO_FALTA_E_SOBRA);
+		
+		movimentoEstoqueService.gerarMovimentoEstoque(
+				diferenca.getProdutoEdicao().getId(),idUsuario,diferenca.getQtde(),
+				tipoMovimentoEstoqueAlvo,Origem.TRANSFERENCIA_LANCAMENTO_FALTA_E_SOBRA);
+	}
+	
+	private void tratarTipoMovimentoEstoque(TipoMovimentoEstoque tipoMovimento,String mensagem){
+		
+		if (tipoMovimento == null) {
+			throw new ValidacaoException(TipoMensagem.WARNING,mensagem);
+		}
+	}
+	
+	private GrupoMovimentoEstoque obterTipoMovimentoEstoqueTransferencia(TipoEstoque tipoEstoque, TipoOperacao tipoOperacao){
+		
+		switch(tipoEstoque) {
+		
+		case LANCAMENTO:
+			return isOperacaoEntrada(tipoOperacao) 
+					? GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_LANCAMENTO  
+							   :GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_LANCAMENTO;
+		case SUPLEMENTAR:
+			return isOperacaoEntrada(tipoOperacao) 
+					? GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_SUPLEMENTAR 
+							   :GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_SUPLEMENTAR;
+		case RECOLHIMENTO:
+			return isOperacaoEntrada(tipoOperacao) 
+					? GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_RECOLHIMENTO 
+							   :GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_RECOLHIMENTO;
+		case PRODUTOS_DANIFICADOS:
+			return isOperacaoEntrada(tipoOperacao) 
+					? GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_PRODUTOS_DANIFICADOS
+							   :GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_PRODUTOS_DANIFICADOS;
+		
+		case DEVOLUCAO_FORNECEDOR:
+			return isOperacaoEntrada(tipoOperacao) 
+					? GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_PRODUTOS_DEVOLUCAO_FORNECEDOR
+							   :GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_PRODUTOS_DEVOLUCAO_FORNECEDOR;
+		default:
+			throw new ValidacaoException(TipoMensagem.ERROR,"Erro para obter tipo de movimento estoque para lançamento de faltas e sobras!");
+		}
+		
+	}
+	
+	private boolean isOperacaoEntrada(TipoOperacao tipoOperacao){
+		return (TipoOperacao.ENTRADA.equals(tipoOperacao));
+	}
+
+	private StatusAprovacao obterStatusLancamento(Diferenca diferenca) {
+		
+		StatusAprovacao statusAprovacao  = StatusAprovacao.PENDENTE;
+		
+		if (!this.validarDataLancamentoDiferenca(
+				diferenca.getDataMovimento(), diferenca.getProdutoEdicao().getId(), diferenca.getTipoDiferenca())) {
+			
+			if( TipoDiferenca.FALTA_DE.equals(diferenca.getTipoDiferenca()) 
+					|| TipoDiferenca.FALTA_EM.equals(diferenca.getTipoDiferenca())){
+				
+				statusAprovacao = StatusAprovacao.PERDA; 
+				
+			}else{
+				
+				statusAprovacao = StatusAprovacao.GANHO;
+			}
+		}
+		return statusAprovacao;
 	}
 	
 	private void processarRateioCotas(Diferenca diferenca,
@@ -422,7 +596,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 			
 			if (itemRecebimentoFisico.getRecebimentoFisico().getDataConfirmacao() == null) {
 				
-				continue;
+				itemRecebimentoFisico.getRecebimentoFisico().setDataConfirmacao(Calendar.getInstance().getTime());
 			}
 			
 			dataConfirmacaoRecebimentoFisico.setTime(
@@ -591,11 +765,15 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 	/*
 	 * Efetua a geração da movimentação de estoque para diferença.
 	 */
-	private MovimentoEstoque gerarMovimentoEstoque(Diferenca diferenca, Long idUsuario) {
+	private MovimentoEstoque gerarMovimentoEstoque(Diferenca diferenca, Long idUsuario, boolean isAprovacaoAutomatica) {
 		
 		TipoMovimentoEstoque tipoMovimentoEstoque =
 			this.tipoMovimentoRepository.buscarTipoMovimentoEstoque(
 				diferenca.getTipoDiferenca().getTipoMovimentoEstoque());
+		
+		if(isAprovacaoAutomatica){
+			tipoMovimentoEstoque.setAprovacaoAutomatica(true);
+		}
 		
 		return this.movimentoEstoqueService.gerarMovimentoEstoque(
 			diferenca.getProdutoEdicao().getId(), idUsuario,
@@ -622,20 +800,15 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 	/*
 	 * Efetua a geração de lançamento de diferença.
 	 */
-	private LancamentoDiferenca gerarLancamentoDiferenca(Diferenca diferenca,
-														 StatusAprovacao statusAprovacao,
+	private LancamentoDiferenca gerarLancamentoDiferenca(StatusAprovacao statusAprovacao,
 														 MovimentoEstoque movimentoEstoque,
 														 List<MovimentoEstoqueCota> listaMovimentosEstoqueCota) {
 		
 		LancamentoDiferenca lancamentoDiferenca = new LancamentoDiferenca();
 		
 		lancamentoDiferenca.setDataProcessamento(new Date());
-		lancamentoDiferenca.setDiferenca(diferenca);
 		lancamentoDiferenca.setMovimentoEstoque(movimentoEstoque);
-		
-		//TODO: Alterar modelo para suportar mais de um movimento estoque cota
-		//lancamentoDiferenca.setMovimentosEstoqueCota(listaMovimentosEstoqueCota);
-		
+		lancamentoDiferenca.setMovimentosEstoqueCota(listaMovimentosEstoqueCota);
 		lancamentoDiferenca.setStatus(statusAprovacao);
 		
 		return this.lancamentoDiferencaRepository.merge(lancamentoDiferenca);

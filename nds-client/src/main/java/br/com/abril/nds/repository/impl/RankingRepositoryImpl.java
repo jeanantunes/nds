@@ -235,7 +235,7 @@ public class RankingRepositoryImpl extends AbstractRepository  implements Rankin
 			    	
 			.append("	   group by  editor.CODIGO , pessoaJuridica.RAZAO_SOCIAL ")
 				        
-			.append("	   order by faturamentoCapa ")
+			.append("	   order by faturamentoCapa desc ")
 			   
 			.append("	   ) as subSelect	") 
 	   

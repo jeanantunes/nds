@@ -1,5 +1,7 @@
 package br.com.abril.nds.model.estoque;
 
+import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -10,6 +12,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.envio.nota.ItemNotaEnvio;
@@ -20,8 +24,13 @@ import br.com.abril.nds.model.planejamento.Lancamento;
 
 @Entity
 @Table(name = "MOVIMENTO_ESTOQUE_COTA")
-public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque implements Cloneable {
+public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque implements Cloneable, Serializable {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "COTA_ID")
 	private Cota cota;
@@ -38,11 +47,17 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque implements C
 	@JoinColumn(name = "MOVIMENTO_ESTOQUE_COTA_FURO_ID")
 	MovimentoEstoqueCota movimentoEstoqueCotaFuro;
 	
+	// Esta data é utilizada para a data do lançamento do distribuidor aparecer corretamente na consulta consignado cota
+	// Implementado em conjunto com Cesar Pop Punk
+	@Temporal(TemporalType.DATE)
+	@Column(name = "DATA_LANCAMENTO_ORIGINAL")
+	private Date dataLancamentoOriginal;
+	
 	/**
 	 * Estudo cota que originou o movimento, 
 	 * caso o movimento seja de reparte
 	 */
-	@OneToOne(optional = true)
+	@ManyToOne(optional = true)
 	@JoinColumn(name = "ESTUDO_COTA_ID")
 	private EstudoCota estudoCota;
 	
@@ -55,13 +70,17 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque implements C
 	@ManyToOne(optional = true)
 	@JoinColumn(name = "LANCAMENTO_ID")
 	private Lancamento lancamento;
-
+    
+	@ManyToOne(optional = true)
+	@JoinColumn(name = "PRODUTO_EDICAO_ID", referencedColumnName = "PRODUTO_EDICAO_ID", insertable = false, updatable = false)
+	private Lancamento lancamentoProdutoEdicao;
+	
 	@ManyToMany(mappedBy="listaMovimentoEstoqueCota")
 	private List<ItemNotaEnvio> listaItemNotaEnvio;
 
 	@Column(name = "STATUS_ESTOQUE_FINANCEIRO")
 	private StatusEstoqueFinanceiro statusEstoqueFinanceiro;
-
+	
 	public Object clone() {
 
 		MovimentoEstoqueCota mec = new MovimentoEstoqueCota();
@@ -209,6 +228,14 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque implements C
 	public void setMovimentoEstoqueCotaFuro(
 			MovimentoEstoqueCota movimentoEstoqueCotaFuro) {
 		this.movimentoEstoqueCotaFuro = movimentoEstoqueCotaFuro;
+	}
+
+	public Date getDataLancamentoOriginal() {
+		return dataLancamentoOriginal;
+	}
+
+	public void setDataLancamentoOriginal(Date dataLancamentoOriginal) {
+		this.dataLancamentoOriginal = dataLancamentoOriginal;
 	}
 	
 }

@@ -1,10 +1,12 @@
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
 import org.hibernate.Query;
+import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.client.vo.RegistroCurvaABCDistribuidorVO;
@@ -12,6 +14,7 @@ import br.com.abril.nds.client.vo.ResultadoCurvaABCDistribuidor;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCDistribuidorDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.repository.RelatorioVendasRepository;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.vo.ValidacaoVO;
@@ -31,8 +34,14 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		StringBuilder hql = new StringBuilder();
 
 		hql.append("SELECT new ").append(ResultadoCurvaABCDistribuidor.class.getCanonicalName())
-		.append(" ( (sum(estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida)), ")
-		.append("   ( sum((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * (estoqueProdutoCota.produtoEdicao.precoVenda - ( "+this.obterSQLDesconto()+" ))) ) ) ");
+		   .append(" ( ")
+		   .append("   case when (lancamento.status in (:statusLancamentoRecolhido) ) then ( ")
+		   .append("  			sum(estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida)) ")
+		   .append(" 		else 0 end, ")
+		   .append("   case when (lancamento.status in (:statusLancamentoRecolhido) ) then ( ")
+		   .append("   			sum((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * (estoqueProdutoCota.produtoEdicao.precoVenda - "+this.obterSQLDesconto()+" )) ) ")
+		   .append(" 		else 0 end ")
+		   .append(" ) ");
 
 		hql.append(getWhereQueryObterCurvaABCDistribuidor(filtro));
 
@@ -43,6 +52,8 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		for(String key : param.keySet()){
 			query.setParameter(key, param.get(key));
 		}
+
+		query.setParameterList("statusLancamentoRecolhido", Arrays.asList(StatusLancamento.RECOLHIDO,StatusLancamento.FECHADO));
 		
 		if (filtro.getEdicaoProduto() != null && !filtro.getEdicaoProduto().isEmpty()) {
 			query.setParameterList("edicaoProduto", (filtro.getEdicaoProduto()));
@@ -58,22 +69,27 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 	@SuppressWarnings("unchecked")
 	public List<RegistroCurvaABCDistribuidorVO> obterCurvaABCDistribuidor(FiltroCurvaABCDistribuidorDTO filtro) {
 		StringBuilder hql = new StringBuilder();
-
-		hql.append("SELECT new ").append(RegistroCurvaABCDistribuidorVO.class.getCanonicalName())
-		.append(" ( estoqueProdutoCota.cota.numeroCota , ")
+		
+		hql.append("  SELECT cota.numeroCota as numeroCota, ")
 		.append("   case when (pessoa.nome is not null) then ( pessoa.nome ) ")
 		.append("     when (pessoa.razaoSocial is not null) then ( pessoa.razaoSocial ) ")
-		.append("     else null end , ")
-		.append("   case when sum(pdv) is null then 0 else sum(pdv) end, " )
-		.append("   endereco.cidade, " )
-		.append("   (sum(estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida)), ")
-		.append("   ( sum((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * (estoqueProdutoCota.produtoEdicao.precoVenda - ( "+this.obterSQLDesconto()+" ))) ) , ")
-		.append("  estoqueProdutoCota.produtoEdicao.produto.id ,")
-		.append("  estoqueProdutoCota.cota.id )");
-		
+		.append("     else null end as nomeCota, ")
+		.append("   case when pdv is null then 0 else count(distinct pdv.id) end as quantidadePdvs, " )
+		.append("   endereco.cidade as municipio, " )
+		.append("   case when (lancamento.status in (:statusLancamentoRecolhido) ) then ( ")
+		.append(" 		   sum(estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida)) ")
+		.append(" 		   else 0 end as vendaExemplares, ")
+		.append("   case when (lancamento.status in (:statusLancamentoRecolhido) ) then ( ")
+		.append("          sum((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * (produtoEdicao.precoVenda - "+this.obterSQLDesconto()+")) ) ")
+		.append("          else 0 end as faturamentoCapa, ")
+		.append("  produto.id as idProduto ,")
+		.append("  cota.id as idCota ");
+				
 		hql.append(getWhereQueryObterCurvaABCDistribuidor(filtro));
 		hql.append(getGroupQueryObterCurvaABCDistribuidor(filtro));
-
+		
+		hql.append(" order by faturamentoCapa, numeroCota ");
+		
 		Query query = this.getSession().createQuery(hql.toString());
 
 		HashMap<String, Object> param = getParametrosObterCurvaABCDistribuidor(filtro);
@@ -82,10 +98,14 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 			query.setParameter(key, param.get(key));
 		}
 		
+		query.setParameterList("statusLancamentoRecolhido", Arrays.asList(StatusLancamento.RECOLHIDO,StatusLancamento.FECHADO));
+		
 		if (filtro.getEdicaoProduto() != null && !filtro.getEdicaoProduto().isEmpty()) {
 			query.setParameterList("edicaoProduto", (filtro.getEdicaoProduto()));
 		}
-
+		
+		query.setResultTransformer(Transformers.aliasToBean(RegistroCurvaABCDistribuidorVO.class));
+		
 		return complementarCurvaABCDistribuidor((List<RegistroCurvaABCDistribuidorVO>) query.list());
 
 	}
@@ -99,13 +119,18 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 
 		StringBuilder hql = new StringBuilder();
 
-		hql.append(" FROM EstoqueProdutoCota AS estoqueProdutoCota ")
-		.append(" LEFT JOIN estoqueProdutoCota.movimentos AS movimentos ")
-		.append(" LEFT JOIN estoqueProdutoCota.produtoEdicao.produto.fornecedores AS fornecedores ")
-		.append(" LEFT JOIN estoqueProdutoCota.cota.enderecos AS enderecos ")
-		.append(" LEFT JOIN enderecos.endereco AS endereco ")
-		.append(" LEFT JOIN estoqueProdutoCota.cota.pdvs AS pdv ")
-		.append(" LEFT JOIN estoqueProdutoCota.cota.pessoa AS pessoa ");
+		hql.append(" FROM EstoqueProdutoCota estoqueProdutoCota ")
+		.append(" JOIN estoqueProdutoCota.cota cota ")
+		.append(" LEFT JOIN estoqueProdutoCota.movimentos movimentos ")
+		.append(" LEFT JOIN movimentos.lancamento lancamento ")
+		.append(" JOIN estoqueProdutoCota.produtoEdicao produtoEdicao ")
+		.append(" JOIN produtoEdicao.produto produto ")
+		.append(" JOIN produto.editor editor ")
+		.append(" JOIN produto.fornecedores fornecedores ")
+		.append(" LEFT JOIN cota.enderecos enderecos ")
+		.append(" LEFT JOIN enderecos.endereco endereco ")
+		.append(" LEFT JOIN cota.pdvs pdv ")
+		.append(" JOIN cota.pessoa pessoa ");
 
 		hql.append("WHERE movimentos.data BETWEEN :dataDe AND :dataAte ");
 		hql.append(" AND enderecos.principal IS TRUE ");
@@ -115,23 +140,23 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		}
 
 		if (filtro.getCodigoProduto() != null && !filtro.getCodigoProduto().isEmpty()) {
-			hql.append("AND estoqueProdutoCota.produtoEdicao.produto.codigo = :codigoProduto ");
+			hql.append("AND produto.codigo = :codigoProduto ");
 		}
 
 		if (filtro.getNomeProduto() != null && !filtro.getNomeProduto().isEmpty()) {
-			hql.append("AND upper(estoqueProdutoCota.produtoEdicao.produto.nome) like upper( :nomeProduto )");
+			hql.append("AND upper(produto.nome) like upper( :nomeProduto )");
 		}
 
 		if (filtro.getEdicaoProduto() != null && !filtro.getEdicaoProduto().isEmpty()) {
-			hql.append("AND estoqueProdutoCota.produtoEdicao.numeroEdicao in( :edicaoProduto )");
+			hql.append("AND produtoEdicao.numeroEdicao in( :edicaoProduto )");
 		}
 
 		if (filtro.getCodigoEditor() != null && !filtro.getCodigoEditor().isEmpty() && !filtro.getCodigoEditor().equals("0")) {
-			hql.append("AND estoqueProdutoCota.produtoEdicao.produto.editor.codigo = :codigoEditor ");
+			hql.append("AND editor.codigo = :codigoEditor ");
 		}
 
 		if (filtro.getCodigoCota() != null) {
-			hql.append("AND estoqueProdutoCota.cota.numeroCota = :codigoCota ");
+			hql.append("AND cota.numeroCota = :codigoCota ");
 		}
 
 		if (filtro.getNomeCota() != null && !filtro.getNomeCota().isEmpty()) {
@@ -156,7 +181,7 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 
 		StringBuilder hql = new StringBuilder();
 
-		hql.append(" GROUP BY estoqueProdutoCota.cota.numeroCota, ")
+		hql.append(" GROUP BY cota.numeroCota, ")
 			.append("   CASE WHEN (pessoa.nome is not null) THEN ( pessoa.nome ) ")
 			.append("     WHEN (pessoa.razaoSocial is not null) THEN ( pessoa.razaoSocial ) ")
 			.append("     ELSE null END ");
@@ -249,11 +274,11 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 	
 	private String obterSQLDesconto(){
 		
-		StringBuilder hql = new StringBuilder("select view.desconto ");
+		StringBuilder hql = new StringBuilder("coalesce ((select view.desconto ");
 		hql.append(" from ViewDesconto view ")
 		   .append(" where view.cotaId = estoqueProdutoCota.cota.id ")
-		   .append(" and view.produtoEdicaoId = estoqueProdutoCota.produtoEdicao.id ")
-		   .append(" and view.fornecedorId = fornecedores.id ");
+		   .append(" and view.produtoEdicaoId = produtoEdicao.id ")
+		   .append(" and view.fornecedorId = fornecedores.id),0) ");
 		
 		return hql.toString();
 	}	

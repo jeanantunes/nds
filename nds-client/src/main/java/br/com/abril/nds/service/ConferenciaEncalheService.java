@@ -87,9 +87,12 @@ public interface ConferenciaEncalheService {
 	 * 
 	 * @return byte
 	 */
-	public byte[] gerarDocumentosConferenciaEncalhe(
-			DadosDocumentacaoConfEncalheCotaDTO dadosDocumentacaoConfEncalheCotaDTO, 
-			TipoDocumentoConferenciaEncalhe tipoDocumentoConferenciaEncalhe);
+	
+	public byte[] gerarDocumentosConferenciaEncalhe(			
+			Long idControleConferenciaEncalheCota,
+			String nossoNumero,
+			TipoDocumentoConferenciaEncalhe tipoDocumentoConferenciaEncalhe			
+			);
 
 	
 	/**

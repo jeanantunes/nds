@@ -66,5 +66,15 @@ public interface RotaRepository extends Repository<Rota, Long> {
 	List<Rota> obterRotasPorCota(Integer numeroCota);
 	
 	Rota obterRotaPorPDV(Long idPDV, Long idCota);
+	
+	
+	
+	/**
+	 * Obtem todas rotas que não estão associadas ao roteiro parametrizado
+	 * 
+	 * @param roteiroID
+	 * @return
+	 */
+	List<Rota> obterRotasNaoAssociadasAoRoteiro(Long roteiroID);
 
 }

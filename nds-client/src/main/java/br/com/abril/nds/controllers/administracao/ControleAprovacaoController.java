@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.util.PaginacaoUtil;
 import br.com.abril.nds.client.vo.ControleAprovacaoVO;
+import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.MovimentoAprovacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroControleAprovacaoDTO;
@@ -46,7 +47,7 @@ import br.com.caelum.vraptor.view.Results;
  */
 @Resource
 @Path("/administracao/controleAprovacao")
-public class ControleAprovacaoController {
+public class ControleAprovacaoController extends BaseController {
 
 	@Autowired
 	private Result result;

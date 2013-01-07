@@ -19,6 +19,8 @@ public class ValidacaoVO {
 	private List<String> listaMensagens;
 	
 	private List<? extends Serializable> dados;
+	
+	private boolean tratarValidacao;
 
 	/**
 	 * Construtor.
@@ -33,6 +35,23 @@ public class ValidacaoVO {
 		this.listaMensagens = new ArrayList<String>();
 		
 		this.listaMensagens.add(mensagem);
+	}
+	
+	/**
+	 * Construtor.
+	 * 
+	 * @param tipoMensagem
+	 * @param mensagem
+	 */
+	public ValidacaoVO(TipoMensagem tipoMensagem, String mensagem, boolean tratarValidacao) {
+		
+		this.tipoMensagem = tipoMensagem;
+		
+		this.listaMensagens = new ArrayList<String>();
+		
+		this.listaMensagens.add(mensagem);
+		
+		this.tratarValidacao = tratarValidacao;
 	}
 	
 	/**
@@ -95,5 +114,15 @@ public class ValidacaoVO {
 	public void setDados(List<? extends Serializable> dados) {
 		this.dados = dados;
 	}
+
+	public boolean isTratarValidacao() {
+		return tratarValidacao;
+	}
+
+	public void setTratarValidacao(boolean tratarValidacao) {
+		this.tratarValidacao = tratarValidacao;
+	}
+	
+	
 	
 }

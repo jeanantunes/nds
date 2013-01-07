@@ -106,5 +106,15 @@ public interface DiferencaEstoqueService {
 	boolean existeDiferencaPorNota(Long idProdutoEdicao, Date dataNotaEnvio, Integer numeroCota);
 	
 	byte[] imprimirRelatorioFaltasSobras(Date dataMovimento) throws Exception;
+
+	/**
+	 * Gera Movimentos e atualiza estoque da diferença passada como parametro
+	 * 
+	 * @param diferenca
+	 * @param idUsuario
+	 */
+	void gerarMovimentoEstoqueDiferenca(Diferenca diferenca, Long idUsuario);
+	
+	void lancarDiferencaAutomaticaContagemDevolucao(Diferenca diferenca);
 	
 }

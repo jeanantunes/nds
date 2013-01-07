@@ -17,21 +17,21 @@ public interface ConsolidadoFinanceiroRepository extends Repository<ConsolidadoF
 	
 	List<ViewContaCorrenteCotaDTO> buscarListaDeConsolidado(Integer idCota);
 	
-	boolean verificarConsodidadoCotaPorDataOperacao(Long idCota);
-	
 	List<EncalheCotaDTO> obterMovimentoEstoqueCotaEncalhe(FiltroConsolidadoEncalheCotaDTO filtro);
 	
 	public abstract List<ConsultaVendaEncalheDTO> obterMovimentoVendaEncalhe(FiltroConsolidadoVendaCotaDTO filtro);
 	
 	List<ConsignadoCotaDTO> obterMovimentoEstoqueCotaConsignado(FiltroConsolidadoConsignadoCotaDTO filtro);
 	
-	ConsolidadoFinanceiroCota obterConsolidadoPorIdMovimentoFinanceiro(Long idMovimentoFinanceiro);
+	List<ConsolidadoFinanceiroCota> obterConsolidadoPorIdMovimentoFinanceiro(Long idMovimentoFinanceiro);
 	
 	Date buscarUltimaDividaGeradaDia(Date dataOperacao);
 	
 	Date buscarDiaUltimaDividaGerada();
 
-	Long obterQuantidadeDividasGeradasData(Date data);
+	Long obterQuantidadeDividasGeradasData(List<Long> idsCota);
 
 	ConsolidadoFinanceiroCota buscarPorCotaEData(Cota cota, java.sql.Date data);
+
+	List<ConsolidadoFinanceiroCota> obterConsolidadosDataOperacao(Long idCota);
 }

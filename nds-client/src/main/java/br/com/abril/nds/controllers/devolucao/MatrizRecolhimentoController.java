@@ -1,6 +1,7 @@
 package br.com.abril.nds.controllers.devolucao;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
@@ -24,6 +25,7 @@ import br.com.abril.nds.client.vo.ProdutoRecolhimentoFormatadoVO;
 import br.com.abril.nds.client.vo.ProdutoRecolhimentoVO;
 import br.com.abril.nds.client.vo.ResultadoResumoBalanceamentoVO;
 import br.com.abril.nds.client.vo.ResumoPeriodoBalanceamentoVO;
+import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.BalanceamentoRecolhimentoDTO;
 import br.com.abril.nds.dto.ProdutoRecolhimentoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -34,7 +36,6 @@ import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.seguranca.Permissao;
-import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.DistribuicaoFornecedorService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.LancamentoService;
@@ -65,7 +66,7 @@ import br.com.caelum.vraptor.view.Results;
  */
 @Resource
 @Path("/devolucao/balanceamentoMatriz")
-public class MatrizRecolhimentoController {
+public class MatrizRecolhimentoController extends BaseController {
 
 	@Autowired
 	private HttpSession httpSession;
@@ -156,7 +157,7 @@ public class MatrizRecolhimentoController {
 													matrizRecolhimento,
 													filtro.getNumeroSemana(),
 													datasConfirmadas,
-													obterUsuario());
+													getUsuarioLogado());
 		
 		matrizRecolhimento =
 			this.atualizarMatizComProdutosConfirmados(matrizRecolhimento, matrizConfirmada);
@@ -273,7 +274,7 @@ public class MatrizRecolhimentoController {
 		this.validarBloqueioMatrizFechada(balanceamentoRecolhimento);
 		
 		recolhimentoService.salvarBalanceamentoRecolhimento(
-			balanceamentoRecolhimento.getMatrizRecolhimento(), obterUsuario());
+			balanceamentoRecolhimento.getMatrizRecolhimento(), getUsuarioLogado());
 		
 		removerAtributoAlteracaoSessao();
 		
@@ -341,14 +342,19 @@ public class MatrizRecolhimentoController {
 		
 		this.validarBloqueioMatrizFechada(null);
 		
+		this.validarDataConfirmacaoConfiguracaoInicial();
+		
 		FiltroPesquisaMatrizRecolhimentoVO filtro = obterFiltroSessao();
+		
+		recolhimentoService.voltarConfiguracaoOriginal(filtro.getNumeroSemana(), 
+				filtro.getDataPesquisa(), filtro.getListaIdsFornecedores());
 		
 		BalanceamentoRecolhimentoDTO balanceamentoRecolhimento = 
 			this.obterBalanceamentoRecolhimento(filtro.getDataPesquisa(),
 												filtro.getNumeroSemana(),
 												filtro.getListaIdsFornecedores(),
 												TipoBalanceamentoRecolhimento.AUTOMATICO,
-												true);
+												false);
 		
 		ResultadoResumoBalanceamentoVO resultadoResumoBalanceamento = 
 			this.obterResultadoResumoBalanceamento(balanceamentoRecolhimento);
@@ -831,7 +837,7 @@ public class MatrizRecolhimentoController {
 				MathUtil.round(produtoRecolhimentoDTO.getExpectativaEncalheAlternativo(), 2));
 			
 			produtoRecolhimentoVO.setEncalhe(
-				MathUtil.round(produtoRecolhimentoDTO.getExpectativaEncalhe(), 2));
+				produtoRecolhimentoDTO.getExpectativaEncalhe());
 			
 			produtoRecolhimentoVO.setValorTotal(produtoRecolhimentoDTO.getValorTotal());
 			
@@ -1230,7 +1236,7 @@ public class MatrizRecolhimentoController {
 				Long qtdeTitulosParciais = 0L;
 				
 				Long pesoTotal = 0L;
-				BigDecimal qtdeExemplares = BigDecimal.ZERO;
+				BigInteger qtdeExemplares = BigInteger.ZERO;
 				BigDecimal valorTotal = BigDecimal.ZERO;
 				
 				for (ProdutoRecolhimentoDTO produtoRecolhimento : listaProdutosRecolhimento) {
@@ -1276,7 +1282,7 @@ public class MatrizRecolhimentoController {
 				
 				itemResumoPeriodoBalanceamento.setExibeDestaque(exibeDestaque);
 				itemResumoPeriodoBalanceamento.setPesoTotal(pesoTotal);
-				itemResumoPeriodoBalanceamento.setQtdeExemplares(MathUtil.round(qtdeExemplares, 2));
+				itemResumoPeriodoBalanceamento.setQtdeExemplares(qtdeExemplares);
 				itemResumoPeriodoBalanceamento.setQtdeTitulos(qtdeTitulos);
 				
 				itemResumoPeriodoBalanceamento.setQtdeTitulosParciais(qtdeTitulosParciais);
@@ -1300,23 +1306,7 @@ public class MatrizRecolhimentoController {
 		return resultadoResumoBalanceamento;
 	}
 	
-	/**
-	 * Obtém usuário logado.
-	 * 
-	 * @return usuário logado
-	 */
-	private Usuario obterUsuario() {
-		
-		//TODO: Aguardando definição de como será obtido o usuário logado
-		
-		Usuario usuario = new Usuario();
-		
-		usuario.setId(1L);
-		usuario.setNome("Usuário da Silva");
-		
-		return usuario;
-	}
-	
+
 	/**
 	 * Obtem agrupamento diário para confirmação de Balanceamento
 	 */
@@ -1329,6 +1319,27 @@ public class MatrizRecolhimentoController {
 		
 			result.use(Results.json()).from(confirmacoesVO, "result").serialize();
 		}		
+	}
+	
+	private void validarDataConfirmacaoConfiguracaoInicial(){
+		
+		List<ConfirmacaoVO> confirmacoesVO = this.montarListaDatasConfirmacao();
+		
+		boolean isItensConfirmado = true;
+		
+		for(ConfirmacaoVO item : confirmacoesVO){
+			if(!item.isConfirmado()){
+				isItensConfirmado = false;
+				break;
+			}
+		}
+		
+		if (isItensConfirmado) {
+		
+			String mensagem = " Operação não permitida! Matriz de recolhimento já foi fechada! Não existe itens disponíveis para voltar a configuração inicial."; 
+			
+			throw new ValidacaoException(TipoMensagem.WARNING,mensagem,true);
+		}	
 	}
 	
 	/**
@@ -1403,6 +1414,34 @@ public class MatrizRecolhimentoController {
 	public void excluirBalanceamento(Long idLancamento) {
 
 		this.recolhimentoService.excluiBalanceamento(idLancamento);
+		
+		BalanceamentoRecolhimentoDTO balanceamentoRecolhimentoSessao =
+				(BalanceamentoRecolhimentoDTO)
+					httpSession.getAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_RECOLHIMENTO);
+			
+		TreeMap<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimentoSessao =
+				balanceamentoRecolhimentoSessao.getMatrizRecolhimento();
+		
+
+		for (Map.Entry<Date, List<ProdutoRecolhimentoDTO>> entry : matrizRecolhimentoSessao.entrySet()) {
+			
+			ProdutoRecolhimentoDTO excluir = null;			
+			
+			for(ProdutoRecolhimentoDTO prodRecolhimento : entry.getValue()) {
+				
+				if(prodRecolhimento.getIdLancamento().equals(idLancamento)) {
+					
+					excluir = prodRecolhimento;
+					break;
+				}
+			}
+			
+			if(excluir!=null) {
+				
+				entry.getValue().remove(excluir);
+				break;
+			}
+		}
 		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS,
 			"Balanceamento excluído com sucesso!"), "result").recursive().serialize();

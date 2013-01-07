@@ -13,15 +13,22 @@ import br.com.abril.nds.integracao.engine.MessageHeaderProperties;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.engine.data.Message;
 import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
+import br.com.abril.nds.integracao.model.canonic.EMS0109Input;
 import br.com.abril.nds.integracao.model.canonic.EMS0110Input;
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.Brinde;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.DescontoLogistica;
 import br.com.abril.nds.model.cadastro.Dimensao;
+import br.com.abril.nds.model.cadastro.Editor;
+import br.com.abril.nds.model.cadastro.FormaComercializacao;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
+import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.cadastro.TipoProduto;
+import br.com.abril.nds.model.cadastro.TributacaoFiscal;
 import br.com.abril.nds.model.cadastro.desconto.DescontoProdutoEdicao;
 import br.com.abril.nds.model.cadastro.desconto.TipoDesconto;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
@@ -66,6 +73,10 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 			if (edicao == null) {
 
 				Produto produto = this.findProduto(message);
+				
+				if (produto == null) {
+					produto = this.criarProdutoComInputDeEdicao(message);
+				}
 
 				this.criarProdutoEdicaoConformeInput(produto, message);
 
@@ -81,6 +92,169 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 					"Distribuidor nao encontrato.");
 			throw new RuntimeException("Distribuidor nao encontrado.");
 		}
+	}
+	
+	private DescontoLogistica findDescontoLogisticaByTipoDesconto(
+			Integer codigoTipoDesconto) {
+		StringBuilder sql = new StringBuilder();
+
+		sql.append("select d from DescontoLogistica d ");
+		sql.append(" where d.tipoDesconto = :codigoTipoDesconto ");
+
+		Query query = this.getSession().createQuery(sql.toString());
+
+		query.setParameter("codigoTipoDesconto", codigoTipoDesconto);
+
+		return (DescontoLogistica) query.uniqueResult();
+
+	}
+
+	private Fornecedor findFornecedor(Integer codigoInterface) {
+		StringBuilder sql = new StringBuilder();
+
+		sql.append("SELECT f FROM Fornecedor f ");
+		sql.append("WHERE  f.codigoInterface = :codigoInterface ");
+
+		Query query = this.getSession().createQuery(sql.toString());
+
+		query.setParameter("codigoInterface", codigoInterface);
+
+		return (Fornecedor) query.uniqueResult();
+
+	}
+	
+	private Editor findEditorByID(Long codigoEditor) {
+
+		StringBuilder sql = new StringBuilder();
+
+		sql.append("select editor from Editor editor ");
+		sql.append(" where editor.codigo = :codigoEditor ");
+
+		Query query = this.getSession().createQuery(sql.toString());
+
+		query.setParameter("codigoEditor", codigoEditor);
+
+		return (Editor) query.uniqueResult();		
+	}
+	
+	private TipoProduto findTipoProduto(Long codigoCategoria) {
+
+		StringBuilder sql = new StringBuilder();
+
+		sql.append("SELECT tp FROM TipoProduto tp ");
+		sql.append("WHERE  tp.codigo = :codigo ");
+
+		Query query = this.getSession().createQuery(sql.toString());
+		query.setParameter("codigo", codigoCategoria);
+
+		@SuppressWarnings("unchecked")
+		List<TipoProduto> tiposProduto = (List<TipoProduto>) query.list();
+
+		TipoProduto tipoProduto = null;
+
+		if (!tiposProduto.isEmpty()) {
+
+			tipoProduto = tiposProduto.get(0);
+
+			
+
+		} 
+		return tipoProduto;
+	}
+	
+	/**
+	 * Retorna o enum TributacaoFiscal (codigoSituacaoTributaria) baseado na posição 220 retornada na EMS0109Input.java
+	 * @return
+	 */
+	private TributacaoFiscal getTributacaoFiscal(String codigoSituacaoTributaria) {
+		if ("A".equalsIgnoreCase(codigoSituacaoTributaria)) {
+			return TributacaoFiscal.TRIBUTADO;
+		} else if ("B".equalsIgnoreCase(codigoSituacaoTributaria)) {
+			return TributacaoFiscal.ISENTO;
+		} else {
+			return TributacaoFiscal.OUTROS;
+		}
+	}
+	
+	private Produto criarProdutoComInputDeEdicao(Message message) {
+		EMS0110Input input = (EMS0110Input) message.getBody();
+
+		Produto produto = new Produto();
+
+		Fornecedor fornecedor = this
+				.findFornecedor(input.getCodFornecPublicacao());
+		DescontoLogistica descontoLogistica = this
+				.findDescontoLogisticaByTipoDesconto( Integer.parseInt( input.getTipoDesconto()) );
+		
+		Editor editor = this.findEditorByID(input.getCodEditor());
+
+		if (null == editor) {
+			this.ndsiLoggerFactory.getLogger().logWarning(message,
+					EventoExecucaoEnum.SEM_DOMINIO,
+					"Editor " + input.getCodEditor() + " nao encontrado.");
+
+			throw new RuntimeException("Editor " + input.getCodEditor() + " nao encontrado.");
+		}
+		
+		TipoProduto tipoProduto = this.findTipoProduto(input.getCodCategoria());
+
+		if (null == tipoProduto) {
+			this.ndsiLoggerFactory.getLogger().logWarning(message,
+					EventoExecucaoEnum.SEM_DOMINIO,
+					"Tipo Produto REVISTA nao encontrado.");
+
+			throw new RuntimeException("Tipo Produto nao encontrado.");
+		}
+						
+		produto.setTipoProduto(tipoProduto);
+		produto.setNome(input.getNomeProd());
+		produto.setCodigoContexto(input.getContextoPublicacao());
+		produto.setNomeComercial(input.getNomeComercial());
+		produto.setEditor(editor);
+		produto.setPeriodicidade(PeriodicidadeProduto.INDEFINIDO); 	// default definito por Eduardo e Paulo em 13/12/2012
+		produto.setSlogan("");										// default definito por Eduardo e Paulo em 13/12/2012
+		produto.setPeb(input.getPeb());
+		produto.setPeso(input.getPesoUni());
+		produto.setPacotePadrao(input.getPactPadrao());
+		produto.setCodigo(input.getCodProd());
+		produto.setAtivo(input.getStatusProd());
+		produto.setDataDesativacao(input.getDataDesativacao());
+		produto.setFormaComercializacao(
+				(input.getFormaComercializacao().equals("CON") 
+						? FormaComercializacao.CONSIGNADO 
+						: FormaComercializacao.CONTA_FIRME
+				) 
+		);
+
+		String codigoSituacaoTributaria = input.getCodSitTributaria();
+		produto.setTributacaoFiscal(this.getTributacaoFiscal(codigoSituacaoTributaria));
+
+		produto.setOrigem(Origem.INTERFACE);
+		
+		if (fornecedor != null) {
+
+			produto.addFornecedor(fornecedor);
+		} else {
+			ndsiLoggerFactory.getLogger().logError(
+					message,
+					EventoExecucaoEnum.HIERARQUIA,
+					String.format( "Fornecedor nulo para o produto:  %1$s", input.getCodProd() )
+				);
+			return null;
+		}
+
+		if (descontoLogistica != null) {
+
+			produto.setDescontoLogistica(descontoLogistica);
+
+		}
+
+		this.getSession().persist(produto);
+		
+		this.ndsiLoggerFactory.getLogger().logWarning(message,
+				EventoExecucaoEnum.SEM_DOMINIO,
+				"Produto "+ produto.getCodigo() +" Inserido com Periodicidade INDEFINIDA .");	
+		return this.findProduto(message);
 	}
 
 	private boolean verificarDistribuidor(Message message) {
@@ -127,21 +301,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 
 		query.setParameter("codigo", input.getCodProd());
 
-		Produto produto = (Produto) query.uniqueResult();
-		if (null != produto) {
-			return produto;
-
-		} else {
-
-			// Nao encontrou o Produto. Realiza Log
-			ndsiLoggerFactory.getLogger()
-					.logWarning(
-							message,
-							EventoExecucaoEnum.HIERARQUIA,
-							"Codigo PRODUTO " + input.getCodProd()
-									+ " nao cadastrado.");
-			throw new RuntimeException("Produto "+ input.getCodProd() +" nao encontrado.");
-		}
+		return (Produto) query.uniqueResult();
 	}
 	
 	
@@ -154,7 +314,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 		Dimensao dimensao = new Dimensao();
 		Brinde brinde = new Brinde();
 
-		if (!produto.getCodigoContexto().equals(input.getContextoProd())) {
+		if (null != produto.getCodigoContexto() && !produto.getCodigoContexto().equals(input.getContextoProd())) {
 
 			produto.setCodigoContexto(input.getContextoProd());
 			this.ndsiLoggerFactory.getLogger().logInfo(
@@ -163,7 +323,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 					"Atualizacao do Codigo Contexto Produto para: "
 							+ input.getContextoProd());
 		}
-		if (!produto.getTipoProduto().getCodigoNBM().equals(input.getCodNBM())) {
+		if (null != produto.getTipoProduto() && null != produto.getTipoProduto().getCodigoNBM() && !produto.getTipoProduto().getCodigoNBM().equals(input.getCodNBM())) {
 
 			produto.getTipoProduto().setCodigoNBM(input.getCodNBM());
 			this.ndsiLoggerFactory.getLogger().logInfo(message,
@@ -171,7 +331,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 					"Atualizacao do Codigo NBM para: " + input.getCodNBM());
 		}
 
-		if (!produto.getNomeComercial().equals(input.getNomeComercial())) {
+		if (null != produto.getNomeComercial() && !produto.getNomeComercial().equals(input.getNomeComercial())) {
 
 			produto.setNomeComercial(input.getNomeComercial());
 			this.ndsiLoggerFactory.getLogger().logInfo(

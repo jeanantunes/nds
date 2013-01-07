@@ -91,8 +91,8 @@ public class RegistroCurvaABCEditorVO extends RegistroCurvaABCDTO implements
 		return vendaExemplares;
 	}
 
-	public void setVendaExemplares(BigInteger vendaExemplares) {
-		this.vendaExemplares = vendaExemplares;
+	public void setVendaExemplares(BigDecimal vendaExemplares) {
+		this.vendaExemplares = vendaExemplares.toBigInteger();
 		vendaExemplaresFormatado = CurrencyUtil.formatarValorTruncado(vendaExemplares);
 	}
 
@@ -118,16 +118,16 @@ public class RegistroCurvaABCEditorVO extends RegistroCurvaABCDTO implements
 		return codigoEditor;
 	}
 
-	public void setCodigoEditor(Long codigoEditor) {
-		this.codigoEditor = codigoEditor;
+	public void setCodigoEditor(BigInteger codigoEditor) {
+		this.codigoEditor = codigoEditor.longValue();
 	}
 
 	public BigInteger getReparte() {
 		return reparte;
 	}
 
-	public void setReparte(BigInteger reparte) {
-		this.reparte = reparte;
+	public void setReparte(BigDecimal reparte) {
+		this.reparte = reparte.toBigInteger();
 		this.reparteFormatado = CurrencyUtil.formatarValorTruncado(reparte);
 	}
 
@@ -200,7 +200,7 @@ public class RegistroCurvaABCEditorVO extends RegistroCurvaABCDTO implements
 
 	private void formatarCampos() {
 		reparteFormatado = CurrencyUtil.formatarValorTruncado(reparte);
-		vendaExemplaresFormatado = CurrencyUtil.formatarValorTruncado(vendaExemplares);
+		vendaExemplaresFormatado = String.valueOf(vendaExemplares);
 		porcentagemVendaExemplaresFormatado = CurrencyUtil.formatarValor(porcentagemVendaExemplares);
 		faturamentoCapaFormatado = CurrencyUtil.formatarValor(faturamentoCapa);
 	}

@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.util.PaginacaoUtil;
 import br.com.abril.nds.client.util.PessoaUtil;
+import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.service.FiadorService;
@@ -35,7 +36,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/cadastro/fiador")
-public class SociosController {
+public class SociosController extends BaseController {
 
 	public static final String LISTA_SOCIOS_SALVAR_SESSAO = "listaSociosSalvarSessao";
 	
@@ -123,6 +124,8 @@ public class SociosController {
 			
 			PaginacaoUtil.ordenarEmMemoria(listaSocioSalvar, ordenacao, sortname);
 		}
+		
+		this.httpSession.setAttribute(LISTA_SOCIOS_SALVAR_SESSAO, listaSocioSalvar);
 		
 		this.result.use(Results.json()).from(this.getTableModelListaSocios(listaSocioSalvar), "result").recursive().serialize();
 	}

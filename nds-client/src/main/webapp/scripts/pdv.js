@@ -76,7 +76,7 @@ var PDV =  $.extend(true, {
 					success: PDV.tratarRetornoUploadImagem
 				};
 				
-				$('#formBaixaAutomatica', this.workspace).ajaxForm(options);	
+				$('#formUploadPDV', this.workspace).ajaxForm(options);	
 		},
 		
 		pesquisarPdvs: function (){
@@ -134,12 +134,14 @@ var PDV =  $.extend(true, {
                     $("#idImagem", this.workspace).attr("src",contextPath + "/" + result.pdvDTO.pathImagem);
                 } else {
                     $("#idImagem", this.workspace).attr("src",contextPath + "/images/pdv/no_image.jpeg");
+                    $("#uploadedFile", this.workspace).val('');
                 }
             } else {
                 if (result.pdvDTO.possuiImagem) {
                 	$("#idImagem", this.workspace).attr("src",contextPath + "/cadastro/pdv/imagemPdvHistoricoTitularidade?idPdv=" + PDV.idPdv);
                 } else {
                 	$("#idImagem", this.workspace).attr("src",contextPath + "/images/pdv/no_image.jpeg");
+                	$("#uploadedFile", this.workspace).val('');
                 }
             }
 
@@ -539,7 +541,7 @@ var PDV =  $.extend(true, {
 		
 		montartabelaDiasFuncionamento: function(){
 				 
-			 $('#listaDiasFuncionais tr', this.workspace).remove();;
+			 $('#listaDiasFuncionais tr', this.workspace).remove();
 			 
 			
 			$.each(PDV.diasFuncionamento, function(index, row) {
@@ -588,7 +590,7 @@ var PDV =  $.extend(true, {
 					linha.remove();}
 			);
 						
-			
+			PDV.montartabelaDiasFuncionamento();
 		},
 		
 		retornoObterPeriodosPossiveis: function(result) {
@@ -604,12 +606,8 @@ var PDV =  $.extend(true, {
 			var combo = $("#selectDiasFuncionamento", this.workspace);
 			combo.clear();
 			
-			var option = document.createElement("OPTION");
-			option.innerHTML = "Selecione";
-			option.value = "-1";
-					
-			combo.append(option);
-			
+			items.splice(0,0,{"key": {"@class": "string","$": "-1"},"value": {"@class": "string","$": "Selecione"}});
+
 			$.each(items, function(index, item) {
 				var option = document.createElement("OPTION");
 				option.innerHTML = item.value.$;
@@ -822,6 +820,7 @@ var PDV =  $.extend(true, {
 			$("#selecTipoGeradorFluxo", this.workspace).sortOptions();
 
 		}, 
+		
 		popup_img:function () {
 			
 			$( "#dialog-img", this.workspace ).dialog({
@@ -832,7 +831,7 @@ var PDV =  $.extend(true, {
 				buttons: {
 					"Confirmar": function() {
 						
-						$('#formBaixaAutomatica').submit();
+						$('#formUploadPDV').submit();
 						
 						$( this ).dialog( "close" );
 					},
@@ -858,6 +857,8 @@ var PDV =  $.extend(true, {
 				var status = result[1];
 				
 				$("#idImagem", this.workspace).attr("src", contextPath + "/images/pdv/no_image.jpeg");
+				
+				$("#uploadedFile", this.workspace).val('');
 							
 				if(mensagens!=null && mensagens.length!=0) {
 					exibirMensagem(status,mensagens);
@@ -865,13 +866,15 @@ var PDV =  $.extend(true, {
 			});
 
 		},
+		
 		validarEmail : function (email)	{
 			er = /^[a-zA-Z0-9][a-zA-Z0-9\._-]+@([a-zA-Z0-9\._-]+\.)[a-zA-Z-0-9]{2}/;
 			if(!er.exec(email)) {
-				exibirMensagemDialog("WARNING",["N&atildeo &eacute um email v&aacutelido."],'idModalPDV');	
+				exibirMensagemDialog("WARNING",["Endereço de email ["+email+" é inválido."],'idModalPDV');	
 				$("#emailPDV", this.workspace).focus();
 			}
 		},
+		
 		carregarPeriodosFuncionamento:function(){
 			$.postJSON(contextPath + "/cadastro/pdv/carregarPeriodoFuncionamento",
 					   null, 
@@ -1012,6 +1015,7 @@ var PDV =  $.extend(true, {
 		limparCamposTela:function(){
 			
 			$("#idImagem", this.workspace).attr("src",  contextPath + "/images/pdv/no_image.jpeg");
+			$("#uploadedFile", this.workspace).val('');
 			$("#selectStatus", this.workspace).val(""); 
 			$("#nomePDV", this.workspace).val("");
 			$("#dataInicio", this.workspace).val( $('#dataAtual',this.workspace).val() );

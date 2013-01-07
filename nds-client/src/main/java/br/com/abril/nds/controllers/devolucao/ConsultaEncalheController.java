@@ -16,6 +16,7 @@ import br.com.abril.nds.client.vo.ConsultaEncalheDetalheVO;
 import br.com.abril.nds.client.vo.ConsultaEncalheVO;
 import br.com.abril.nds.client.vo.ResultadoConsultaEncalheDetalheVO;
 import br.com.abril.nds.client.vo.ResultadoConsultaEncalheVO;
+import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.ConsultaEncalheDTO;
 import br.com.abril.nds.dto.ConsultaEncalheDetalheDTO;
 import br.com.abril.nds.dto.InfoConsultaEncalheDTO;
@@ -26,11 +27,9 @@ import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDetalheDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Cota;
-import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.seguranca.Permissao;
-import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.ConsultaEncalheService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.FornecedorService;
@@ -42,7 +41,6 @@ import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
-import br.com.abril.nds.util.export.NDSFileHeader;
 import br.com.abril.nds.vo.DebitoCreditoCotaVO;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.ValidacaoVO;
@@ -62,7 +60,7 @@ import br.com.caelum.vraptor.view.Results;
  */
 @Resource
 @Path(value="/devolucao/consultaEncalhe")
-public class ConsultaEncalheController {
+public class ConsultaEncalheController extends BaseController {
 
 	@Autowired
 	private FornecedorService fornecedorService;
@@ -110,7 +108,7 @@ public class ConsultaEncalheController {
 	public void exportar(FileType fileType) throws IOException {
 
 		FiltroConsultaEncalheDTO filtroConsultaEncalhe = obterFiltroExportacao();
-
+		
 		InfoConsultaEncalheDTO infoConsultaEncalhe = consultaEncalheService.pesquisarEncalhe(filtroConsultaEncalhe);
 
 		List<ConsultaEncalheVO> listaConsultaEncalheVO =  getListaConsultaEncalheVO(infoConsultaEncalhe.getListaConsultaEncalhe());
@@ -128,42 +126,7 @@ public class ConsultaEncalheController {
 		
 	}
 	
-	/*
-	 * Obtém os dados do cabeçalho de exportação.
-	 * 
-	 * @return NDSFileHeader
-	 */
-	private NDSFileHeader getNDSFileHeader() {
-		
-		NDSFileHeader ndsFileHeader = new NDSFileHeader();
-		
-		Distribuidor distribuidor = this.distribuidorService.obter();
-		
-		if (distribuidor != null) {
-			
-			ndsFileHeader.setNomeDistribuidor(distribuidor.getJuridica().getRazaoSocial());
-			ndsFileHeader.setCnpjDistribuidor(distribuidor.getJuridica().getCnpj());
-		}
-		
-		ndsFileHeader.setData(new Date());
-		
-		ndsFileHeader.setNomeUsuario(this.getUsuario().getNome());
-		
-		return ndsFileHeader;
-	}
-	
-	//TODO: não há como reconhecer usuario, ainda
-	private Usuario getUsuario() {
-		
-		Usuario usuario = new Usuario();
-		
-		usuario.setId(1L);
-		
-		usuario.setNome("Jornaleiro da Silva");
-		
-		return usuario;
-	}
-	
+
 	/**
 	 * Método responsável por carregar o combo de fornecedores.
 	 */
@@ -453,16 +416,12 @@ public class ConsultaEncalheController {
 		
 		filtro.setIdFornecedor(idFornecedor);
 		
-		if(numeroCota != null) {
-			Cota cota  = cotaService.obterPorNumeroDaCota(numeroCota);
-			if(cota!=null) {
-				filtro.setIdCota(cota.getId());
-			}
-			
-		} else {
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "O preenchimento da cota é obrigatório."));
+		Cota cota  = cotaService.obterPorNumeroDaCota(numeroCota);
+		filtro.setNumCota(numeroCota);
+		if(cota!=null) {
+			filtro.setIdCota(cota.getId());
 		}
-		
+			
 		return filtro;
 	}
 
@@ -659,7 +618,7 @@ public class ConsultaEncalheController {
 				if(cota!=null) {
 					
 					String nomeResp = cotaService.obterNomeResponsavelPorNumeroDaCota(cota.getNumeroCota());
-
+					filtro.setNumCota(cota.getNumeroCota());
 					filtro.setNomeCota(nomeResp);
 					
 				}

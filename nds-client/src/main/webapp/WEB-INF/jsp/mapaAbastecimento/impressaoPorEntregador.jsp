@@ -35,9 +35,14 @@ function imprimir(){
 
 <table width="800" border="0" align="center" cellpadding="3" cellspacing="0" style="border:1px solid #000; margin-bottom:5px;">
   <tr>
-    <td width="120" height="21" align="center"><span style="border-bottom:1px solid #000;"><span class=""><img src="${pageContext.request.contextPath}/images/logo_sistema.png" width="110" height="70" alt="Novo Distrib"  /></span></span></td>
-    <td width="301" align="center" valign="middle"><h3>TREELOG S/A<br />
-      LOGÍSTICA E DISTRIBUIÇÃO</h3></td>
+    <td width="121" height="21" align="center">
+    	<span>
+    		<span class="">
+    		<img src="${pageContext.request.contextPath}/administracao/parametrosDistribuidor/getLogo?number=${pageContext.request.requestedSessionId}" border="0" />
+    		</span>
+    	</span>
+    </td>
+    <td width="301" align="center" valign="middle"><h3>${nomeDistribuidor}</h3></td>
     <td width="359" align="right" valign="middle"><h1>Mapa de Abastecimento</h1>
      <strong>Distribuidor:</strong> ${distribuidor}</td>
   </tr>

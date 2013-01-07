@@ -505,8 +505,16 @@ public class RoteirizacaoRepositoryImpl extends AbstractRepositoryModel<Roteiriz
 	@Override
 	public Roteirizacao obterRoteirizacaoPorBox(Long idBox) {
 		Criteria criteria  = getSession().createCriteria(Roteirizacao.class, "roteirizacao");
-		criteria.createAlias("roteirizacao.box","box");
-		criteria.add(Restrictions.eq("box.id", idBox));
+		
+		if (idBox != null && idBox > 0) {
+			criteria.createAlias("roteirizacao.box","box");
+			criteria.add(Restrictions.eq("box.id", idBox));
+		} else {
+			criteria.add(Restrictions.isNull("roteirizacao.box"));
+		}
+		
+		criteria.setMaxResults(1);
+		
 		return (Roteirizacao) criteria.uniqueResult();
 	}
 
@@ -516,7 +524,7 @@ public class RoteirizacaoRepositoryImpl extends AbstractRepositoryModel<Roteiriz
 	 * @return
 	 */
 	@Override
-	public Box obterBoxDoPDV(Long idPdv) {
+	public Box obterBoxDoPDV(Long... idPdv) {
 		
         StringBuilder hql = new StringBuilder();
 		
@@ -527,11 +535,11 @@ public class RoteirizacaoRepositoryImpl extends AbstractRepositoryModel<Roteiriz
 		hql.append(" join rota.rotaPDVs rotaPdv ");
 		hql.append(" join rotaPdv.pdv pdv ");
 		hql.append(" where r.box = b ");
-		hql.append(" and   pdv.id = :idPdv ");
+		hql.append(" and   pdv.id IN ( :idPdv ) ");
 		
 		Query query  = getSession().createQuery(hql.toString());
 
-		query.setParameter("idPdv", idPdv);
+		query.setParameterList("idPdv",idPdv);
 		
 		query.setMaxResults(1);
 		

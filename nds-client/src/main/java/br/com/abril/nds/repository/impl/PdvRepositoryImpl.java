@@ -6,10 +6,14 @@ import org.apache.commons.lang.Validate;
 import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
 import org.hibernate.Query;
+import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.criterion.Subqueries;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.PdvDTO;
 import br.com.abril.nds.dto.filtro.FiltroPdvDTO;
@@ -336,8 +340,7 @@ public class PdvRepositoryImpl extends AbstractRepositoryModel<PDV, Long> implem
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<PDV> obterPDVsPrincipaisPor(Integer numCota, String municipio,
-			String uf, String bairro, String cep) {
+	public List<PDV> obterPDVsDisponiveisPor(Integer numCota, String municipio, String uf, String bairro, String cep, boolean pesquisaPorCota, Long boxID) {
 
 		Criteria criteria  = getSession().createCriteria(PDV.class,"pdv" );
 		criteria.setFetchMode("cota", FetchMode.JOIN);
@@ -345,7 +348,18 @@ public class PdvRepositoryImpl extends AbstractRepositoryModel<PDV, Long> implem
 		criteria.createAlias("enderecos", "enderecos") ;
 		criteria.createAlias("enderecos.endereco", "endereco");
 		
-		criteria.add(Restrictions.eq("caracteristicas.pontoPrincipal", true));
+		
+		if(boxID > 0) {
+			DetachedCriteria subquery = 
+					DetachedCriteria.forClass(RotaPDV.class, "rotaPdv")
+									.setProjection(Projections.property("rotaPdv.pdv.id"));
+			
+			criteria.add(Subqueries.propertyNotIn("pdv.id", subquery));
+		}
+		
+		if (pesquisaPorCota) {
+			criteria.add(Restrictions.eq("caracteristicas.pontoPrincipal", true));
+		}
 		
 		if (numCota != null && !numCota.equals("") ) {
 			criteria.add(Restrictions.eq("cota.numeroCota", numCota));
@@ -368,6 +382,23 @@ public class PdvRepositoryImpl extends AbstractRepositoryModel<PDV, Long> implem
 			
 		}
 		
+		criteria.addOrder(Order.asc("cota.numeroCota"));
+		criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 		return  (List<PDV>)criteria.list();  
 	}
+
+	@Override
+	@Transactional
+	public void removeCotaPDVbyPDV(Long idPdv) {
+
+        StringBuilder hql = new StringBuilder();
+        hql.append(" Delete from RotaPDV where pdv.id = :idPdv ");
+        
+        Query q = getSession().createQuery(hql.toString());
+        
+        q.setParameter("idPdv", idPdv);
+        
+		q.executeUpdate();
+	}
+	
 }

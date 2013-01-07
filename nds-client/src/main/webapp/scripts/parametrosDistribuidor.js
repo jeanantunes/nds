@@ -93,7 +93,8 @@ var parametrosDistribuidorController = $.extend(true, {
 			{name:'parametrosDistribuidor.endereco.complemento', value: $('#complemento', this.workspace).val()},
 			{name:'parametrosDistribuidor.endereco.bairro', value: $('#bairro', this.workspace).val()},
 			{name:'parametrosDistribuidor.endereco.localidade', value: $('#cidade', this.workspace).val()},
-			{name:'parametrosDistribuidor.endereco.uf', value: $('#uf', this.workspace).val()},
+			//{name:'parametrosDistribuidor.endereco.uf', value: $('#uf', this.workspace).val()}, 
+			{name:'parametrosDistribuidor.endereco.uf', value: "SP"}, 
 			{name:'parametrosDistribuidor.endereco.codigoCidadeIBGE', value: $('#codigoCidadeIBGE', this.workspace).val()},
 			{name:'parametrosDistribuidor.endereco.codigoBairro', value: $('#codigoBairro', this.workspace).val()},
 			

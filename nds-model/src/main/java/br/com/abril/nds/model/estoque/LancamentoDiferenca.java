@@ -2,6 +2,7 @@ package br.com.abril.nds.model.estoque;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -10,6 +11,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -45,9 +48,11 @@ public class LancamentoDiferenca implements Serializable {
 	@JoinColumn(name = "MOVIMENTO_ESTOQUE_ID")
 	private MovimentoEstoque movimentoEstoque;
 	
-	@OneToOne(optional = true)
-	@JoinColumn(name = "MOVIMENTO_ESTOQUE_COTA_ID")
-	private MovimentoEstoqueCota movimentoEstoqueCota;
+	@OneToMany
+	@JoinTable(name = "LANCAMENTO_DIFERENCA_MOVIMENTO_ESTOQUE_COTA",
+			   joinColumns = {@JoinColumn(name = "LANCAMENTO_DIFERENCA_ID")}, 
+			   inverseJoinColumns = {@JoinColumn(name = "MOVIMENTO_ESTOQUE_COTA_ID")})
+	private List<MovimentoEstoqueCota> movimentosEstoqueCota;
 	
 	/**
 	 * Motivo do status de aprovação
@@ -103,12 +108,12 @@ public class LancamentoDiferenca implements Serializable {
         this.motivo = motivo;
     }
 
-	public MovimentoEstoqueCota getMovimentoEstoqueCota() {
-		return movimentoEstoqueCota;
+	public List<MovimentoEstoqueCota> getMovimentosEstoqueCota() {
+		return movimentosEstoqueCota;
 	}
 
-	public void setMovimentoEstoqueCota(MovimentoEstoqueCota movimentoEstoqueCota) {
-		this.movimentoEstoqueCota = movimentoEstoqueCota;
+	public void setMovimentosEstoqueCota(
+			List<MovimentoEstoqueCota> movimentosEstoqueCota) {
+		this.movimentosEstoqueCota = movimentosEstoqueCota;
 	}
-	
 }

@@ -203,7 +203,16 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 		produto.setCodigoContexto(input.getContextoPublicacao());
 		produto.setNomeComercial(input.getNomePublicacao());
 		produto.setEditor(editor);
-		produto.setPeriodicidade(PeriodicidadeProduto.getByOrdem(input.getPeriodicidade()));
+		if (null != PeriodicidadeProduto.getByOrdem(input.getPeriodicidade())) {
+			produto.setPeriodicidade(PeriodicidadeProduto.getByOrdem(input.getPeriodicidade()));
+		} else {
+			ndsiLoggerFactory.getLogger().logError(
+					message,
+					EventoExecucaoEnum.SEM_DOMINIO,
+					String.format( "Produto %1$s com periodicidade nao conhecida %2$s", input.getCodigoPublicacao(), input.getPeriodicidade() )
+				);
+			return;
+		}
 		produto.setSlogan(input.getSlogan());
 		produto.setPeb(input.getPeb());
 		produto.setPeso(input.getPeso());
@@ -226,6 +235,13 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 		if (fornecedor != null) {
 
 			produto.addFornecedor(fornecedor);
+		} else {
+			ndsiLoggerFactory.getLogger().logError(
+					message,
+					EventoExecucaoEnum.HIERARQUIA,
+					String.format( "Fornecedor nulo para o produto: %1$s .", input.getCodigoPublicacao() )
+				);
+			return ;
 		}
 
 		if (descontoLogistica != null) {

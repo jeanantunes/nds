@@ -103,7 +103,7 @@ public class RoteiroRoteirizacaoDTO implements Serializable, Ordenavel {
      *         roteiro já cadastrado
      */
 	public boolean isNovo() {
-	    return id != null && id < 0;
+	    return id == null || (id != null && id < 0);
 	}
 	
 	/**
@@ -115,13 +115,7 @@ public class RoteiroRoteirizacaoDTO implements Serializable, Ordenavel {
 			rotas = new ArrayList<RotaRoteirizacaoDTO>();
 		}
 		
-		for (RotaRoteirizacaoDTO dto : todasRotas){
-			
-			if (dto.getOrdem() <= rota.getOrdem()){
-				
-				rota.setOrdem(dto.getOrdem() + 1);
-			}
-		}
+		OrdenacaoUtil.reordenarLista(rota, rotas);
 		
 		rotas.add(rota);
 		todasRotas.add(rota);
@@ -221,6 +215,47 @@ public class RoteiroRoteirizacaoDTO implements Serializable, Ordenavel {
     		this.adicionarRotaExclusao(idRota);
     	}
     }
+    
+    public void removerRota(Integer ordemRota) {
+    	
+    	removerRotaDeRotas(ordemRota);
+    	
+    	Long rotaID = removerRotaDeTodasRotas(ordemRota);
+    	    	
+    	if(rotaID != null && rotaID > 0) {
+			this.adicionarRotaExclusao(rotaID);
+		}
+    }
+
+	private Long removerRotaDeTodasRotas(Integer ordemRota) {
+		if (this.todasRotas != null){
+    		
+    		for (RotaRoteirizacaoDTO rota : this.todasRotas){
+    			
+    			if (rota.getOrdem().equals(ordemRota)){
+    				
+    				this.todasRotas.remove(rota);
+    				return rota.getId();
+    			}
+    		}
+    	}
+		
+		return null;
+	}
+
+	private void removerRotaDeRotas(Integer ordemRota) {
+		if (this.rotas != null){
+    		
+    		for (RotaRoteirizacaoDTO rota : this.rotas){
+    			
+    			if (rota.getOrdem().equals(ordemRota)){
+    				
+    				this.rotas.remove(rota);
+    				break;
+    			}
+    		}
+    	}
+	}
 
 	public Set<Long> getRotasExclusao() {
 		return rotasExclusao;
@@ -259,5 +294,10 @@ public class RoteiroRoteirizacaoDTO implements Serializable, Ordenavel {
 	            }
 	        }
 	        return max;
+	}
+
+	public void removerRotaTransferida(Integer ordemRota) {
+		removerRotaDeRotas(ordemRota);
+		removerRotaDeTodasRotas(ordemRota);
 	}
 }

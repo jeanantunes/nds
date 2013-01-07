@@ -7,13 +7,17 @@
 <script language="javascript" type="text/javascript" src='scripts/jquery.numeric.js'></script>
 <script language="javascript" type="text/javascript" src='scripts/relatorioVendas.js'></script>
 <script language="javascript" type="text/javascript" src='scripts/jquery.justInput.js'></script>
-
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/produtoEdicao.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaCota.js"></script>
 
 <script language="javascript" type="text/javascript">
 
 $(function(){
 	relatorioVendasController.init();
+
 });
+
+var pesquisaCotaFiltroConsulta = new PesquisaCota(relatorioVendasController.workspace);
 
 </script>
 </head>
@@ -34,13 +38,13 @@ $(function(){
 			<legend> Relatório de Vendas</legend>
 			<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 				<tr>
-					<td width="20"><input type="radio" name="filtro" id="filtro_distrib" onclick="relatorioVendasController.mostra_distrib();" value="radio" /></td>
+					<td width="20"><input type="radio" name="filtro" id="filtro_distrib" onclick="relatorioVendasController.mostra_distrib();relatorioVendasController.limparFiltros();" value="radio" /></td>
 					<td colspan="3"><label for="filtro_distrib">Curva ABC Distribuidor</label></td>
-					<td width="20"><input type="radio" name="filtro" id="filtro_editor" value="radio" onclick="relatorioVendasController.mostra_editor();" /></td>
+					<td width="20"><input type="radio" name="filtro" id="filtro_editor" value="radio" onclick="relatorioVendasController.mostra_editor();relatorioVendasController.limparFiltros();" /></td>
 					<td width="94"><label for="filtro_editor">Curva ABC Editor</label></td>
-					<td width="20"><input type="radio" name="filtro" id="filtro_produto" onclick="relatorioVendasController.mostra_produto();" value="radio" /></td>
+					<td width="20"><input type="radio" name="filtro" id="filtro_produto" onclick="relatorioVendasController.mostra_produto();relatorioVendasController.limparFiltros();" value="radio" /></td>
 					<td width="114"><label for="filtro_produto">Curva ABC Produto</label></td>
-					<td width="21" align="right"><input type="radio" name="filtro" id="filtro_cota" value="radio" onclick="relatorioVendasController.mostra_cota();" /></td>
+					<td width="21" align="right"><input type="radio" name="filtro" id="filtro_cota" value="radio" onclick="relatorioVendasController.mostra_cota();relatorioVendasController.limparFiltros();" /></td>
 					<td width="90"><label for="filtro_cota">Curva ABC Cota</label></td>
 					<td width="47">Período:</td>
 					<td width="86"><input type="text" name="datepickerDe" id="datepickerDe" style="width: 60px;" /></td>
@@ -58,7 +62,10 @@ $(function(){
 					<td>&nbsp;</td>
 					<td>&nbsp;</td>
 					<td colspan="6">
-						<label>Cota:</label> <input type="text" style="width: 80px; float: left; margin: 5px;" name="numeroCotaListaCota" id="numeroCotaListaCota" /> 
+						<label>Cota:</label> 
+							<input type="text" style="width: 80px; float: left; margin: 5px;" 
+								   name="numeroCotaListaCota" id="numeroCotaListaCota"
+								   onchange="pesquisaCotaFiltroConsulta.pesquisarPorNumeroCota('#numeroCotaListaCota', '#nomeCotaListaCota',false,null,null);" /> 
 						<label>Nome:</label> <input type="text" style="width: 180px; float: left; margin: 5px;" name="nomeCotaListaCota" id="nomeCotaListaCota" />
 					</td>
 				</tr>
@@ -68,7 +75,12 @@ $(function(){
 					<td>&nbsp;</td>
 					<td>&nbsp;</td>
 					<td colspan="8">
-						<label>Código:</label> <input type="text" style="width: 80px; float: left; margin: 5px;" id="codigoProdutoListaProduto" name="codigoProdutoListaProduto" /> 
+						<label>Código:</label> 
+							<input type="text" style="width: 80px; float: left; margin: 5px;" 
+								   id="codigoProdutoListaProduto" name="codigoProdutoListaProduto"
+								   onchange="produtoEdicaoController.pesquisarPorCodigoProduto('#codigoProdutoListaProduto', '#nomeProdutoListaProduto', false,
+											undefined,
+											undefined);" /> 
 						<label>Produto:</label> <input type="text" style="width: 200px; float: left; margin: 5px;" id="nomeProdutoListaProduto" name="nomeProdutoListaProduto" />
 					</td>
 				</tr>
@@ -89,7 +101,12 @@ $(function(){
                    			</c:forEach> 
 					</select></td>
 					<td width="47" colspan="-1">Código:</td>
-					<td width="108"><input type="text" style="width: 80px;" name="codigoProduto" id="codigoProduto" /></td>
+					<td width="108">
+						<input type="text" style="width: 80px;" name="codigoProduto" id="codigoProduto"
+							   onchange="produtoEdicaoController.pesquisarPorCodigoProduto('#codigoProduto', '#nomeProduto', false,
+											undefined,
+											undefined);" />
+					</td>
 					<td width="52">Produto:</td>
 					<td width="213"><input type="text" style="width: 200px;" name="nomeProduto" id="nomeProduto" /></td>
 					<td width="41">Edição:</td>
@@ -105,7 +122,10 @@ $(function(){
                    			</c:forEach> 
 					</select></td>
 					<td colspan="-1">Cota:</td>
-					<td><input type="text" name="numeroCota" id="numeroCota" style="width: 80px;" /></td>
+					<td>
+						<input type="text" name="numeroCota" id="numeroCota" style="width: 80px;"
+							   onchange="pesquisaCotaFiltroConsulta.pesquisarPorNumeroCota('#numeroCota', '#nomeCota',false,null,null);" />
+					</td>
 					<td>Nome:</td>
 					<td><input type="text" style="width: 200px;" id="nomeCota" name="nomeCota" /></td>
 					<td>&nbsp;</td>

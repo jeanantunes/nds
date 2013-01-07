@@ -2,7 +2,6 @@ package br.com.abril.nds.controllers.financeiro;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
@@ -21,6 +20,7 @@ import br.com.abril.nds.client.vo.ContasAPagarGridPrincipalProdutoVO;
 import br.com.abril.nds.client.vo.ContasAPagarParcialVO;
 import br.com.abril.nds.client.vo.ContasAPagarTotalDistribVO;
 import br.com.abril.nds.client.vo.ContasApagarConsultaPorDistribuidorVO;
+import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.ContasAPagarConsignadoDTO;
 import br.com.abril.nds.dto.ContasAPagarConsultaProdutoDTO;
 import br.com.abril.nds.dto.ContasAPagarEncalheDTO;
@@ -35,18 +35,15 @@ import br.com.abril.nds.dto.FlexiGridDTO;
 import br.com.abril.nds.dto.filtro.FiltroContasAPagarDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
-import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.seguranca.Permissao;
-import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.ContasAPagarService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
-import br.com.abril.nds.util.export.NDSFileHeader;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Path;
@@ -56,7 +53,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("financeiro/contasAPagar")
-public class ContasAPagarController {
+public class ContasAPagarController extends BaseController {
 	private static final String FILTRO_CONTAS_A_PAGAR = "FILTRO_CONTAS_A_PAGAR";
 
 	private static final String FILTRO_DETALHE_PARCIAL = "FILTRO_DETALHE_PARCIAL";
@@ -102,8 +99,8 @@ public class ContasAPagarController {
 
 
 	@Path("/pesquisarProduto.json")
-	public void pesquisarProduto(FiltroContasAPagarDTO filtro) {
-
+	public void pesquisarProduto(FiltroContasAPagarDTO filtro, String sortname, String sortorder) {
+		filtro.setPaginacaoVO(new PaginacaoVO(sortname, sortorder));
 		List<ContasAPagarConsultaProdutoDTO> produtos = contasAPagarService.pesquisarProdutos(filtro);
 		List<ContasAPagarConsultaProdutoVO> produtosVO = new ArrayList<ContasAPagarConsultaProdutoVO>();
 
@@ -117,7 +114,7 @@ public class ContasAPagarController {
 
 	@Path("/pesquisarPorProduto.json")
 	public void pesquisarPorProduto(FiltroContasAPagarDTO filtro, String sortname, String sortorder, int rp, int page) {
-		
+		filtro.setIdsFornecedores(null);
 		this.session.setAttribute(FILTRO_CONTAS_A_PAGAR, filtro);
 
 		ContasAPagarGridPrincipalProdutoDTO dto = contasAPagarService.pesquisarPorProduto(filtro, sortname, sortorder, rp, page);
@@ -256,7 +253,7 @@ public class ContasAPagarController {
 			listVO.add(new ContasAPagarConsultaPorProdutoVO(dto));
 		}
 		
-		FileExporter.to("contas-a-pagar", fileType).inHTTPResponse(this.getNDSFileHeader(new Date()), null, null,
+		FileExporter.to("contas-a-pagar", fileType).inHTTPResponse(getNDSFileHeader(), null, null,
 						listVO, ContasAPagarConsultaPorProdutoVO.class,
 						this.httpServletResponse);
 		
@@ -276,7 +273,7 @@ public class ContasAPagarController {
 			listVO.add(new ContasApagarConsultaPorDistribuidorVO(dto));
 		}
 		
-		FileExporter.to("contas-a-pagar",fileType).inHTTPResponse(this.getNDSFileHeader(new Date()), null, null, 
+		FileExporter.to("contas-a-pagar",fileType).inHTTPResponse(getNDSFileHeader(), null, null, 
 						listVO, ContasApagarConsultaPorDistribuidorVO.class, 
 						this.httpServletResponse);
 		
@@ -298,7 +295,7 @@ public class ContasAPagarController {
 			listVO.add(new ContasAPagarParcialVO(dto));
 		}
 		
-		FileExporter.to("detalhe-parcial", fileType).inHTTPResponse(this.getNDSFileHeader(new Date()), null, null,
+		FileExporter.to("detalhe-parcial", fileType).inHTTPResponse(getNDSFileHeader(), null, null,
 						listVO, ContasAPagarParcialVO.class, 
 						this.httpServletResponse);
 		
@@ -320,7 +317,7 @@ public class ContasAPagarController {
 			listVO.add(new ContasAPagarConsignadoVO(dt));
 		}
 		
-		FileExporter.to("detalhe-consignado", fileType).inHTTPResponse(this.getNDSFileHeader(new Date()), null, null,
+		FileExporter.to("detalhe-consignado", fileType).inHTTPResponse(getNDSFileHeader(), null, null,
 						listVO, ContasAPagarConsignadoVO.class,
 						this.httpServletResponse);
 		result.use(Results.nothing());
@@ -342,14 +339,13 @@ public class ContasAPagarController {
 			listVO.add(new ContasAPagarEncalheVO(dt));
 		}
 		
-		FileExporter.to("detalhe-encalhe", fileType).inHTTPResponse(this.getNDSFileHeader(new Date()), null, null,
+		FileExporter.to("detalhe-encalhe", fileType).inHTTPResponse(getNDSFileHeader(), null, null,
 						listVO, ContasAPagarEncalheVO.class, 
 						this.httpServletResponse);
 		
 		result.use(Results.nothing());
 
 	}
-	
 	
 	@Path("/exportPesquisarDetalheFaltasSobras")
 	public void exportPesquisarDetalheFaltasSobras(FileType fileType) throws IOException {
@@ -365,37 +361,10 @@ public class ContasAPagarController {
 			listVO.add(new ContasAPagarFaltasSobrasVO(to));
 		}
 		
-		FileExporter.to("detalhe-faltas-sobras", fileType).inHTTPResponse(this.getNDSFileHeader(new Date()), null, null,
+		FileExporter.to("detalhe-faltas-sobras", fileType).inHTTPResponse(getNDSFileHeader(), null, null,
 				listVO, ContasAPagarFaltasSobrasVO.class, this.httpServletResponse);
 		
 		result.use(Results.nothing());
-	}
-	
-	
-	private NDSFileHeader getNDSFileHeader(Date data) {
-
-		NDSFileHeader ndsFileHeader = new NDSFileHeader();
-		Distribuidor distribuidor = distribuidorService.obter();
-
-		if (distribuidor != null) {
-			ndsFileHeader.setNomeDistribuidor(distribuidor.getJuridica().getRazaoSocial());
-			ndsFileHeader.setCnpjDistribuidor(distribuidor.getJuridica().getCnpj());
-		}
-
-		ndsFileHeader.setData(data);
-		ndsFileHeader.setNomeUsuario(getUsuario().getNome());
-		return ndsFileHeader;
-	}
-	
-	
-	// TODO: não há como reconhecer usuario, ainda
-	private Usuario getUsuario() {
-
-		Usuario usuario = new Usuario();
-		usuario.setId(1L);
-		usuario.setNome("Jornaleiro da Silva");
-
-		return usuario;
 	}
 	
 }

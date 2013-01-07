@@ -162,6 +162,7 @@ public class LancamentoServiceImpl implements LancamentoService {
 		
 		lancamentoRepository.alterar(lancamento);
 		
+		
 		HistoricoLancamento historico = new HistoricoLancamento();
 		historico.setDataEdicao(new Date());
 		historico.setLancamento(lancamento);
@@ -179,8 +180,8 @@ public class LancamentoServiceImpl implements LancamentoService {
 				lancamento,
 				idUsuario);
 		
-		
-		DescontoProximosLancamentos desconto = this.descontoProximosLancamentosRepository.
+		// TODO: Sergio, vc poderia corrigir este trecho após finalizar a implementação do DescontoCota fzd favor? Obrigado.
+		/*DescontoProximosLancamentos desconto = this.descontoProximosLancamentosRepository.
 		obterDescontoProximosLancamentosPor(lancamento.getProdutoEdicao().getProduto().getId(), 
 				lancamento.getDataLancamentoPrevista());
 				
@@ -201,7 +202,7 @@ public class LancamentoServiceImpl implements LancamentoService {
 			
 			desconto.setQuantidadeProximosLancamaentos(--quantidade);
 			this.descontoProximosLancamentosRepository.alterar(desconto);
-		}
+		}*/
 	}
 
 	@Override

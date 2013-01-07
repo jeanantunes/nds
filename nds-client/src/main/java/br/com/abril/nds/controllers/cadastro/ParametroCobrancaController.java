@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.BancoVO;
 import br.com.abril.nds.client.vo.ParametroCobrancaVO;
+import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.ParametroCobrancaDTO;
 import br.com.abril.nds.dto.filtro.FiltroParametrosCobrancaDTO;
@@ -48,7 +49,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/distribuidor/parametroCobranca")
-public class ParametroCobrancaController {
+public class ParametroCobrancaController extends BaseController {
 	
 	@Autowired
 	private PoliticaCobrancaService politicaCobrancaService;
@@ -169,11 +170,13 @@ public class ParametroCobrancaController {
 	@Post
 	@Path("/postarParametroCobranca")
 	public void postarParametroCobranca(ParametroCobrancaDTO parametros){
+
 		PoliticaCobranca politica = politicaCobrancaService.obterPoliticaCobrancaPrincipal();
+		
 		if (politica==null && !parametros.isPrincipal()){
+			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Defina ao menos um [Parâmetro de Cobrança] como [Principal].");
 		}	
-		
 		
 		parametros = formatarParametros(parametros);
 		

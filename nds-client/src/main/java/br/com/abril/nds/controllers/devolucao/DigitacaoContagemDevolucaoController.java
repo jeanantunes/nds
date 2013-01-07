@@ -19,6 +19,7 @@ import br.com.abril.nds.client.vo.DigitacaoContagemDevolucaoVO;
 import br.com.abril.nds.client.vo.ProdutoEdicaoFechadaVO;
 import br.com.abril.nds.client.vo.RegistroEdicoesFechadasVO;
 import br.com.abril.nds.client.vo.ResultadoDigitacaoContagemDevolucaoVO;
+import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.ContagemDevolucaoConferenciaCegaDTO;
 import br.com.abril.nds.dto.ContagemDevolucaoDTO;
 import br.com.abril.nds.dto.InfoContagemDevolucaoDTO;
@@ -30,11 +31,11 @@ import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.seguranca.Permissao;
-import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.ContagemDevolucaoService;
 import br.com.abril.nds.service.EdicoesFechadasService;
 import br.com.abril.nds.service.FornecedorService;
+import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.CurrencyUtil;
@@ -46,7 +47,6 @@ import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
-import br.com.abril.nds.util.export.NDSFileHeader;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Get;
@@ -68,7 +68,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path(value="/devolucao/digitacao/contagem")
-public class DigitacaoContagemDevolucaoController  {
+public class DigitacaoContagemDevolucaoController extends BaseController {
 	
 	@Autowired
 	private FornecedorService fornecedorService;
@@ -86,7 +86,12 @@ public class DigitacaoContagemDevolucaoController  {
 	private EdicoesFechadasService edicoesFechadasService;
 	
 	@Autowired
+	private UsuarioService usuarioService;
+	
+	@Autowired
 	private HttpServletResponse httpResponse;
+	
+	private static final int NUMERO_MESES_PESQUISA_DESATIVACAO = 6;
 	
 	private static final String FILTRO_SESSION_ATTRIBUTE = "filtroPesquisaDigitacaoContagemDevolucao";
 	
@@ -105,7 +110,7 @@ public class DigitacaoContagemDevolucaoController  {
 		/**
 		 * FIXE Alterar o códgo abaixo quando, for definido a implementação de Perfil de Usuário
 		 */
-		result.include(USUARIO_PERFIL_OPERADOR, isPerfilUsuarioEncarregado());
+		result.include(USUARIO_PERFIL_OPERADOR, !isPerfilUsuarioEncarregado());
 		
 		carregarComboFornecedores();
 	}
@@ -271,42 +276,7 @@ public class DigitacaoContagemDevolucaoController  {
 		
 	}
 	
-	/*
-	 * Obtém os dados do cabeçalho de exportação.
-	 * 
-	 * @return NDSFileHeader
-	 */
-	private NDSFileHeader getNDSFileHeader() {
-		
-		NDSFileHeader ndsFileHeader = new NDSFileHeader();
-		
-		Distribuidor distribuidor = this.distribuidorService.obter();
-		
-		if (distribuidor != null) {
-			
-			ndsFileHeader.setNomeDistribuidor(distribuidor.getJuridica().getRazaoSocial());
-			ndsFileHeader.setCnpjDistribuidor(distribuidor.getJuridica().getCnpj());
-		}
-		
-		ndsFileHeader.setData(new Date());
-		
-		ndsFileHeader.setNomeUsuario(this.getUsuario().getNome());
-		
-		return ndsFileHeader;
-	}
-	
-	//TODO: não há como reconhecer usuario, ainda
-	private Usuario getUsuario() {
-		
-		Usuario usuario = new Usuario();
-		
-		usuario.setId(1L);
-		
-		usuario.setNome("Jornaleiro da Silva");
-		
-		return usuario;
-	}
-	
+
 	//TODO: não há como reconhecer usuario, ainda
 	private boolean isPerfilUsuarioEncarregado() {
 		return true;
@@ -400,7 +370,7 @@ public class DigitacaoContagemDevolucaoController  {
 		
 		List<ContagemDevolucaoDTO> listaContagemDevolucaoDTO = getListaContagemDevolucaoDTO(listaDigitacaoContagemDevolucao);
 		
-		contagemDevolucaoService.inserirListaContagemDevolucao(listaContagemDevolucaoDTO, getUsuario(), isPerfilUsuarioEncarregado());
+		contagemDevolucaoService.inserirListaContagemDevolucao(listaContagemDevolucaoDTO, getUsuarioLogado(), isPerfilUsuarioEncarregado());
 		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
 										Constantes.PARAM_MSGS).recursive().serialize();
@@ -419,7 +389,7 @@ public class DigitacaoContagemDevolucaoController  {
 		
 		List<ContagemDevolucaoDTO> listaContagemDevolucaoDTO = getListaContagemDevolucaoDTO(listaDigitacaoContagemDevolucao);
 		
-		contagemDevolucaoService.confirmarContagemDevolucao(listaContagemDevolucaoDTO, getUsuario());
+		contagemDevolucaoService.confirmarContagemDevolucao(listaContagemDevolucaoDTO, getUsuarioLogado());
 		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
 										Constantes.PARAM_MSGS).recursive().serialize();
@@ -506,8 +476,10 @@ public class DigitacaoContagemDevolucaoController  {
 			contagemDevolucaoDTO.setCodigoProduto(vo.getCodigoProduto());
 			contagemDevolucaoDTO.setNumeroEdicao(Long.parseLong(vo.getNumeroEdicao()));
 			contagemDevolucaoDTO.setQtdNota(new BigInteger(vo.getQtdNota()));
-			contagemDevolucaoDTO.setDataMovimento( ( vo.getDataRecolhimentoDistribuidor() == null ) ? null : DateUtil.parseData(vo.getDataRecolhimentoDistribuidor(),"dd/MM/yyyy"));
+			contagemDevolucaoDTO.setDataMovimento( ( vo.getDataRecolhimentoDistribuidor() == null ) ? distribuidorService.obter().getDataOperacao() : DateUtil.parseData(vo.getDataRecolhimentoDistribuidor(),"dd/MM/yyyy"));
 			contagemDevolucaoDTO.setDiferenca(StringUtil.isEmpty(vo.getDiferenca()) ? null : new BigInteger(vo.getDiferenca()));
+			contagemDevolucaoDTO.setPrecoVenda(vo.getPrecoVenda() == null || vo.getPrecoVenda().isEmpty() ? null : CurrencyUtil.getBigDecimal(vo.getPrecoVenda()));
+			contagemDevolucaoDTO.setTotalComDesconto(vo.getValorTotalComDesconto() == null || vo.getValorTotalComDesconto().isEmpty() ? null : CurrencyUtil.getBigDecimal(vo.getValorTotalComDesconto()));
 			listaResultadosDto.add(contagemDevolucaoDTO);
 		}
 		
@@ -662,13 +634,17 @@ public class DigitacaoContagemDevolucaoController  {
 		
 		configurarPaginacaoPesquisa(filtro, sortorder, sortname, page, rp);
 		
-		Long quantidade = edicoesFechadasService.quantidadeResultadoEdicoesFechadas(filtro.getDataInicial(), filtro.getDataFinal(), filtro.getIdFornecedor());
+		Date dataInicial = DateUtil.subtrairMeses(filtro.getDataInicial(), NUMERO_MESES_PESQUISA_DESATIVACAO);
+		
+		Date dataFinal = DateUtil.subtrairDias(filtro.getDataInicial(), 1);
+		
+		Long quantidade = edicoesFechadasService.quantidadeResultadoEdicoesFechadas(dataInicial, dataFinal, filtro.getIdFornecedor());
 		if(quantidade == 0){
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
 		}
 		
 		
-		List<RegistroEdicoesFechadasVO> edicoesFechadasVOs = edicoesFechadasService.obterResultadoEdicoesFechadas(filtro.getDataInicial(), filtro.getDataFinal(), filtro.getIdFornecedor(), sortorder, sortname, page*rp - rp, rp);
+		List<RegistroEdicoesFechadasVO> edicoesFechadasVOs = edicoesFechadasService.obterResultadoEdicoesFechadas(dataInicial, dataFinal, filtro.getIdFornecedor(), sortorder, sortname, page*rp - rp, rp);
 		
 		
 		result.use(FlexiGridJson.class).from(edicoesFechadasVOs).total(quantidade.intValue()).page(page).serialize();

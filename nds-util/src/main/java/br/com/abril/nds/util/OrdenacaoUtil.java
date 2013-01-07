@@ -7,22 +7,52 @@ import java.util.List;
 
 public class OrdenacaoUtil  {
 
-	public static <T extends Ordenavel> void incluirItemOrdenado(T itemIncluido, List<T> listaItensExistentes) {
+	/**
+	 * Reordena a lista a partir da ordem do novo item.
+	 * 
+	 * Ex: novoItem       = 5
+	 * 	   listaOrdenavel = [1,2,4,5,6,8]
+	 * 	
+	 * 	   reordenar(novoItem, listaOrdenavel)
+	 * 	   
+	 * 	   result { novoItem = 5, listaOrdenavel = [1,2,4,6,7,8] }
+	 * 
+	 * @param novoItemOrdemFixa 
+	 * @param listaItensReordenados
+	 */
+	public static <T extends Ordenavel> void reordenarLista(T novoItemOrdemFixa, List<T> listaItensReordenados) {
 
 		List<T> listaItensNovos = new ArrayList<T>();
-		listaItensNovos.add(itemIncluido);
+		listaItensNovos.add(novoItemOrdemFixa);
 		
-		incluirListaOrdenada(listaItensNovos, listaItensExistentes);
+		reordenarListas(listaItensNovos, listaItensReordenados);
 	}
 	
-	public static <T extends Ordenavel> void incluirListaOrdenada(List<T> listaItensNovos, List<T> listaItensExistentes) {
+	/**
+	 * Reordena a lista a partir da ordem de outra lista.
+	 * 
+	 * Ex: listaFixa      = [1,3,5,7]
+	 * 	   listaOrdenavel = [1,2,4,5,6,8]
+	 * 	
+	 * 	   reordenar(listaFixa, listaOrdenavel)
+	 * 	   
+	 * 	   result { listaFixa = [1,3,5,7], listaOrdenavel = [2,4,6,8,9,10] }
+	 * 
+	 * 
+	 * @param listaItensOrdemFixa
+	 * @param listaItensReordenados
+	 */
+	public static <T extends Ordenavel> void reordenarListas(List<T> listaItensOrdemFixa, List<T> listaItensReordenados) {
+		
+		if (listaItensOrdemFixa == null || listaItensReordenados == null)
+			return;
 		
 		Integer ordemItemAnterior = 0;
 		
-		OrdenacaoUtil.sortList(listaItensExistentes);
-		OrdenacaoUtil.sortList(listaItensNovos);
+		OrdenacaoUtil.sortList(listaItensReordenados);
+		OrdenacaoUtil.sortList(listaItensOrdemFixa);
 		
-		for (Ordenavel itemExistente : listaItensExistentes) {
+		for (Ordenavel itemExistente : listaItensReordenados) {
 			
 			Integer ordem = itemExistente.getOrdem();
 			
@@ -31,9 +61,9 @@ public class OrdenacaoUtil  {
 				itemExistente.setOrdem(ordem);
 			}
 			
-			for (Ordenavel itemNovo : listaItensNovos) {
+			for (Ordenavel itemNovo : listaItensOrdemFixa) {
 			
-				if (ordem == itemNovo.getOrdem()) {
+				if (ordem.equals(itemNovo.getOrdem())) {
 					
 					ordem++;
 					itemExistente.setOrdem(ordem);

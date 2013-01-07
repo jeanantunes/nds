@@ -4,6 +4,8 @@ import java.util.List;
 
 import br.com.abril.nds.dto.MovimentoAprovacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroControleAprovacaoDTO;
+import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
+import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.movimentacao.Movimento;
 
 /**
@@ -31,5 +33,9 @@ public interface MovimentoRepository extends Repository<Movimento, Long> {
 	 * @return total de movimentos para aprovação
 	 */
 	Long obterTotalMovimentosAprovacao(FiltroControleAprovacaoDTO filtro);
+	
+	boolean existeMovimentoEstoquePendente(List<GrupoMovimentoEstoque> gruposMovimento);
+	
+	boolean existeMovimentoFinanceiroPendente(List<GrupoMovimentoFinaceiro> gruposMovimento);
 	
 }

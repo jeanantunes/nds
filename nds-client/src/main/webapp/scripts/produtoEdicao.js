@@ -466,6 +466,18 @@ var produtoEdicaoController =$.extend(true,  {
 				}else{
 					row.cell.nomeComercial = '';
 				}
+				
+				//
+				if(row.cell.statusLancamento == ''){
+					row.cell.statusLancamento = '-';
+				}
+				
+				//
+				if(row.cell.statusSituacao == ''){
+					row.cell.statusSituacao = '-';
+				}
+				
+				
 				cProduto = row.cell.codigoProduto;
 			});
 
@@ -692,7 +704,7 @@ var produtoEdicaoController =$.extend(true,  {
 							$("#produtoEdicaoController-repartePromocional").attr("readonly", naoEditavel);
 							$("#produtoEdicaoController-codigoDeBarrasCorporativo").attr("readonly", naoEditavel);	
 							
-							$('.target_visible').css({'visibility': naoEditavel?'visible':'hidden', display: ''});							
+							$('.target_visible').css({'visibility':'hidden', display: ''});							
 							
 							$("#produtoEdicaoController-desconto").attr("readonly", naoEditavel);
 							$("#produtoEdicaoController-largura").attr("readonly", naoEditavel);
@@ -742,7 +754,7 @@ var produtoEdicaoController =$.extend(true,  {
 	
 	popup:			function (id, codigo, nome) {
 
-		$("#produtoEdicaoController-codigoProduto",this.workspace).val($("#produtoEdicaoController-pCodigoProduto",this.workspace).val());
+		//$("#produtoEdicaoController-codigoProduto",this.workspace).val($("#produtoEdicaoController-pCodigoProduto",this.workspace).val());
 		
 		// if ($(".edicoesGrid > tbody").data() == null ||
 		// $(".edicoesGrid > tbody").data() == undefined) {

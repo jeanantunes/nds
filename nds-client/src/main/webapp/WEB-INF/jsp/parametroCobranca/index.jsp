@@ -39,8 +39,8 @@
 				<table width="823" border="0" cellspacing="2" cellpadding="2">
     
                         <tr>
-                            <td width="133">Forma de Pagamento:</td>
-                            <td><select name="tipoCobranca" id="tipoCobranca"
+                            <td width="133">Tipo de Pagamento:</td>
+                            <td><select name="dTipoCobranca" id="dTipoCobranca"
                                 style="width: 200px;"
                                 onchange="parametroCobrancaController.opcaoPagto(this.value);parametroCobrancaController.carregarFormasEmissao(this.value,'');">
                                     <option value="">Selecione</option>
@@ -150,8 +150,8 @@
                                     </tr>
                                 </table>
                             </td>
-                            <td align="right"><input type="checkbox" name="principal"
-                                id="principal" /></td>
+                            <td align="right">
+                            <input type="checkbox" name="principal" id="principal" /></td>
                             <td><label for="principal">Principal</label></td>
                         </tr>
     
@@ -219,6 +219,7 @@
                             <td valign="top">&nbsp;</td>
                             <td>&nbsp;</td>
                             <td valign="top">
+                            
                                 <table width="100%" border="0" cellspacing="1" cellpadding="1"
                                     class="quinzenal">
                                     <tr>
@@ -230,6 +231,7 @@
                                             id="diaDoMes2" style="width: 60px; text-align:center;" /></td>
                                     </tr>
                                 </table>
+                                
                                 <table width="100%" border="0" cellspacing="1" cellpadding="1"
                                     class="mensal">
                                     <tr>
@@ -238,33 +240,35 @@
                                             id="diaDoMes" style="width: 60px; text-align:center;" /></td>
                                     </tr>
                                 </table>
+                                
                                 <table width="100%" border="0" cellspacing="0" cellpadding="1"
                                     class="semanal">
                                     <tr>
-                                        <td width="20"><input type="checkbox" name="PS" id="PS" /></td>
-                                        <td width="91"><label for="PS">Segunda-feira</label></td>
-                                        <td width="20"><input type="checkbox" name="PT" id="PT" /></td>
-                                        <td width="131"><label for="PT">Ter&ccedil;a-feira</label></td>
+                                        <td width="20"><input type="checkbox" name="dPS" id="dPS" /></td>
+                                        <td width="91"><label for="dPS">Segunda-feira</label></td>
+                                        <td width="20"><input type="checkbox" name="dPT" id="dPT" /></td>
+                                        <td width="131"><label for="dPT">Ter&ccedil;a-feira</label></td>
                                     </tr>
                                     <tr>
-                                        <td><input type="checkbox" name="PQ" id="PQ" /></td>
-                                        <td><label for="PQ">Quarta-feira</label></td>
-                                        <td><input type="checkbox" name="PQu" id="PQu" /></td>
-                                        <td><label for="PQu">Quinta-feira</label></td>
+                                        <td><input type="checkbox" name="dPQ" id="dPQ" /></td>
+                                        <td><label for="dPQ">Quarta-feira</label></td>
+                                        <td><input type="checkbox" name="dPQu" id="dPQu" /></td>
+                                        <td><label for="dPQu">Quinta-feira</label></td>
                                     </tr>
                                     <tr>
-                                        <td><input type="checkbox" name="PSex" id="PSex" /></td>
-                                        <td><label for="PSex">Sexta-feira</label></td>
-                                        <td><input type="checkbox" name="PSab" id="PSab" /></td>
-                                        <td><label for="PSab">S&aacute;bado</label></td>
+                                        <td><input type="checkbox" name="dPSex" id="dPSex" /></td>
+                                        <td><label for="dPSex">Sexta-feira</label></td>
+                                        <td><input type="checkbox" name="dPSab" id="dPSab" /></td>
+                                        <td><label for="dPSab">S&aacute;bado</label></td>
                                     </tr>
                                     <tr>
-                                        <td><input type="checkbox" name="PDom" id="PDom" /></td>
-                                        <td><label for="PDom">Domingo</label></td>
+                                        <td><input type="checkbox" name="dPDom" id="dPDom" /></td>
+                                        <td><label for="dPDom">Domingo</label></td>
                                         <td>&nbsp;</td>
                                         <td>&nbsp;</td>
                                     </tr>
                                 </table>
+                                
                             </td>
                         </tr>
     

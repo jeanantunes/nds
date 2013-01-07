@@ -889,7 +889,7 @@ public class BoletoServiceImpl implements BoletoService {
 			documentoSacado = ((PessoaFisica) pessoa).getCpf();
 		}
 		if (pessoa instanceof PessoaJuridica){
-			nomeSacado = ((PessoaJuridica) pessoa).getNomeFantasia();
+			nomeSacado = ((PessoaJuridica) pessoa).getRazaoSocial();
 			documentoSacado = ((PessoaJuridica) pessoa).getCnpj();
 		}
 		corpoBoleto.setSacadoNome(nomeSacado);          
@@ -985,6 +985,9 @@ public class BoletoServiceImpl implements BoletoService {
         corpoBoleto.setBoletoInstrucao6("");
         corpoBoleto.setBoletoInstrucao7("");
         corpoBoleto.setBoletoInstrucao8("");
+        
+        //BOLETO EM BRANCO
+        corpoBoleto.setBoletoSemValor(boleto.getTipoCobranca().equals(TipoCobranca.BOLETO_EM_BRANCO));
         
         return corpoBoleto;
 	}

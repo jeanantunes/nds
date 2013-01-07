@@ -18,6 +18,7 @@ import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.ResultadoVendaEncalheVO;
 import br.com.abril.nds.client.vo.VendaEncalheVO;
 import br.com.abril.nds.client.vo.VendaProdutoVO;
+import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.VendaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroVendaEncalheDTO;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -30,7 +31,6 @@ import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.TipoVendaEncalhe;
 import br.com.abril.nds.model.seguranca.Permissao;
-import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DescontoService;
@@ -45,7 +45,6 @@ import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
-import br.com.abril.nds.util.export.NDSFileHeader;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Get;
@@ -70,7 +69,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/devolucao/vendaEncalhe")
-public class VendaEncalheController {
+public class VendaEncalheController extends BaseController {
 	
 
 	private static final String FILTRO_SESSION_ATTRIBUTE = "filtroVendasencalhe";
@@ -154,10 +153,10 @@ public class VendaEncalheController {
 		
 		if(novaVenda){
 
-			comprovanteVenda = vendaEncalheService.efetivarVendaEncalhe(listaVendas,numeroCota,dataDebito,getUsuario());
+			comprovanteVenda = vendaEncalheService.efetivarVendaEncalhe(listaVendas,numeroCota,dataDebito,getUsuarioLogado());
 		}
 		else{
-			comprovanteVenda = vendaEncalheService.alterarVendaEncalhe(listaVendas.get(0),dataDebito,getUsuario());
+			comprovanteVenda = vendaEncalheService.alterarVendaEncalhe(listaVendas.get(0),dataDebito,getUsuarioLogado());
 		}
 		
 		session.setAttribute("COMPROVANTE_VENDA",comprovanteVenda);
@@ -425,7 +424,7 @@ public class VendaEncalheController {
 			
 			vendaEncalheVO = getVendaEncalheVO(dto);
 			
-			if( distribuidor.getDataOperacao().compareTo(DateUtil.removerTimestamp(dto.getDataVenda())) == 0){
+			if( distribuidor.getDataOperacao().compareTo(DateUtil.removerTimestamp(dto.getDataVenda())) <= 0){
 				vendaEncalheVO.setEdicaoExclusaoItem(true);
 			}
 			else{
@@ -503,29 +502,28 @@ public class VendaEncalheController {
 	
 	private void validarParametrosFiltro(FiltroVendaEncalheDTO filtro){
 		
+		if(filtro.getTipoVendaEncalhe() == null 
+				&& filtro.getNumeroCota() == null 
+				&& filtro.getPeriodoInicial()== null 
+				&& filtro.getPeriodoFinal() == null){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING,"Pelomenos um campo deve ser informado para pesquisa!");
+		}
+		
 		validarFormatoData();
 		
-		List<String> mensagensValidacao = new ArrayList<String>();
-		
-		if(filtro.getNumeroCota() == null){
-			mensagensValidacao.add("O preenchimento do campo [Cota] é obrigatório!");
+		if(filtro.getPeriodoInicial() != null && filtro.getPeriodoFinal() == null){
+			throw new ValidacaoException(TipoMensagem.WARNING,"O período preenchido no campo [Até] está inválido!");
 		}
 		
-		if(filtro.getPeriodoInicial() == null){
-			mensagensValidacao.add("O preenchimento do campo [Périodo] é obrigatório!");
-		}
-		
-		if(filtro.getPeriodoFinal() == null ){
-			mensagensValidacao.add("O preenchimento do campo [Até] é obrigatório!");
+		if(filtro.getPeriodoInicial() == null && filtro.getPeriodoFinal() != null){
+			throw new ValidacaoException(TipoMensagem.WARNING,"O período preenchido no campo [Período] está inválido!");
 		}
 		
 		if(DateUtil.isDataInicialMaiorDataFinal(filtro.getPeriodoInicial(), filtro.getPeriodoFinal())){
 			throw new ValidacaoException(TipoMensagem.WARNING,"O período preenchido nos campos [Período] [Até] está inválido!");
 		}
-		
-		if (!mensagensValidacao.isEmpty()){
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, mensagensValidacao));
-		}
+
 	}
 	
 	/**
@@ -618,30 +616,6 @@ public class VendaEncalheController {
 				listaExibicaoGrid, VendaEncalheVO.class, this.httpServletResponse);
 	}
 	
-	/*
-	 * Obtém os dados do cabeçalho de exportação.
-	 * 
-	 * @return NDSFileHeader
-	 */
-	private NDSFileHeader getNDSFileHeader() {
-		
-		NDSFileHeader ndsFileHeader = new NDSFileHeader();
-		
-		Distribuidor distribuidor = this.distribuidorService.obter();
-		
-		if (distribuidor != null) {
-			
-			ndsFileHeader.setNomeDistribuidor(distribuidor.getJuridica().getRazaoSocial());
-			ndsFileHeader.setCnpjDistribuidor(distribuidor.getJuridica().getCnpj());
-		}
-		
-		ndsFileHeader.setData(new Date());
-		
-		ndsFileHeader.setNomeUsuario(this.getUsuario().getNome());
-		
-		return ndsFileHeader;
-	}
-	
 	private FiltroVendaEncalheDTO obterFiltroExportacao() {
 		
 		FiltroVendaEncalheDTO filtro = 
@@ -673,19 +647,6 @@ public class VendaEncalheController {
 		
 		return filtro;
 	}
-	
-	//TODO: não há como reconhecer usuario, ainda
-	private Usuario getUsuario() {
-			
-		Usuario usuario = new Usuario();
-			
-		usuario.setId(1L);
-			
-		usuario.setNome("Jornaleiro da Silva");
-			
-		return usuario;
-	}
-	
 	
 	@Get("/reimprimirComprovanteVenda/{idVenda}")
 	public Download reimprimirComprovanteVenda(Long idVenda){		

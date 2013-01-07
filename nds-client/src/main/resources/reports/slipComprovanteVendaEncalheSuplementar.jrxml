@@ -38,6 +38,7 @@
 	<parameter name="QNT_TOTAL_GERAL" class="java.lang.String"/>
 	<parameter name="VALOR_TOTAL_GERAL" class="java.lang.String"/>
 	<parameter name="TITULO_RELATORIO_COMPROVANTE" class="java.lang.String"/>
+	<parameter name="NOME_DISTRIBUIDOR" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -64,13 +65,13 @@
 	</background>
 	<title>
 		<band height="72" splitType="Stretch">
-			<staticText>
+			<textField>
 				<reportElement x="0" y="0" width="554" height="29"/>
-				<textElement textAlignment="Center">
+				<textElement textAlignment="Center" markup="none">
 					<font size="18"/>
 				</textElement>
-				<text><![CDATA[Treelog S/A Logística e Distribuição]]></text>
-			</staticText>
+				<textFieldExpression><![CDATA[$P{NOME_DISTRIBUIDOR}]]></textFieldExpression>
+			</textField>
 			<textField>
 				<reportElement x="0" y="29" width="554" height="28"/>
 				<textElement textAlignment="Center" markup="none">

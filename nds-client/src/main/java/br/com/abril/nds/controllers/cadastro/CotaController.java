@@ -13,15 +13,19 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.util.PaginacaoUtil;
 import br.com.abril.nds.client.util.PessoaUtil;
 import br.com.abril.nds.client.vo.CotaVO;
 import br.com.abril.nds.client.vo.DadosCotaVO;
+import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.ArquivoDTO;
 import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.CotaDTO.TipoPessoa;
@@ -39,6 +43,7 @@ import br.com.abril.nds.dto.filtro.FiltroTipoDescontoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.integracao.service.ParametroSistemaService;
+import br.com.abril.nds.model.cadastro.BaseCalculo;
 import br.com.abril.nds.model.cadastro.ClassificacaoEspectativaFaturamento;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.DescricaoTipoEntrega;
@@ -50,7 +55,6 @@ import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.model.seguranca.Permissao;
-import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.serialization.custom.PlainJSONSerialization;
 import br.com.abril.nds.service.CotaService;
@@ -68,7 +72,6 @@ import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
-import br.com.abril.nds.util.export.NDSFileHeader;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 import br.com.abril.nds.vo.ValidacaoVO;
@@ -83,7 +86,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/cadastro/cota")
-public class CotaController {
+public class CotaController extends BaseController {
 	
 	public static final String LISTA_TELEFONES_SALVAR_SESSAO = "listaTelefonesSalvarSessaoCota";
 	
@@ -99,7 +102,7 @@ public class CotaController {
 	
 	public static final String TERMO_ADESAO = "imgTermoAdesao";
 	
-	public static final int[] vetor =  {1}; 
+	public static final int[] vetor =  {1};
 	
 	public static final FileType[] extensoesAceitas = 
 		{FileType.DOC, FileType.DOCX, FileType.BMP, FileType.GIF, FileType.PDF, FileType.JPEG, FileType.JPG, FileType.PNG};
@@ -161,6 +164,13 @@ public class CotaController {
 		this.limparDadosSession();
 	}
 	
+	private boolean isNotEnderecoPendente(){
+		
+        Boolean enderecoPendente = (Boolean) this.session.getAttribute(EnderecoController.ENDERECO_PENDENTE);
+		
+		return (enderecoPendente==null || !enderecoPendente);
+	}
+	
 	/**
 	 * Obtem e seta os dados de endereço e telefone na sessão.
 	 * 
@@ -195,19 +205,24 @@ public class CotaController {
         session.setAttribute(LISTA_TELEFONES_EXIBICAO, telefones);
     }
 
-	@SuppressWarnings("unchecked")
 	/**
 	 * Processa os dados de endereço, obtem os dados da sessão, grava os dados no banco de dados e atualiza os dados na sessão
 	 * 
 	 * @param idCota - identificador da cota
 	 */
-	private void processarEnderecosCota(Long idCota) {
+    @SuppressWarnings("unchecked")
+	private boolean processarEnderecosCota(Long idCota) {
 
 		List<EnderecoAssociacaoDTO> listaEnderecoAssociacaoSalvar = 
 				(List<EnderecoAssociacaoDTO>) this.session.getAttribute(LISTA_ENDERECOS_SALVAR_SESSAO);
 		
 		List<EnderecoAssociacaoDTO> listaEnderecoAssociacaoRemover = 
 				(List<EnderecoAssociacaoDTO>) this.session.getAttribute(LISTA_ENDERECOS_REMOVER_SESSAO);
+		
+		if ((listaEnderecoAssociacaoSalvar == null || listaEnderecoAssociacaoSalvar.size()<=0)&&(listaEnderecoAssociacaoRemover == null || listaEnderecoAssociacaoRemover.size()<=0)){
+			
+			return false;
+		}
 		
 		this.cotaService.processarEnderecos(idCota, listaEnderecoAssociacaoSalvar, listaEnderecoAssociacaoRemover);
 		
@@ -216,6 +231,8 @@ public class CotaController {
 		this.session.removeAttribute(LISTA_ENDERECOS_REMOVER_SESSAO);
 		
 		obterEndereco(idCota);
+		
+		return true;
 	}
 
 	/**
@@ -223,8 +240,7 @@ public class CotaController {
 	 * 
 	 * @param idCota - identificador da cota
 	 */
-	private void processarTelefonesCota(Long idCota){
-		
+	private boolean processarTelefonesCota(Long idCota){
 		
 		Map<Integer, TelefoneAssociacaoDTO> map = this.obterTelefonesSalvarSessao();
 		
@@ -238,12 +254,20 @@ public class CotaController {
 		}
 		
 		Set<Long> telefonesRemover = this.obterTelefonesRemoverSessao();
+		
+		if ((map == null || map.size() <= 0)&&(telefonesRemover == null || telefonesRemover.size() <=0 )){
+			
+			return false;
+		}
+		
 		this.cotaService.processarTelefones(idCota, lista, telefonesRemover);
 		
 		this.session.removeAttribute(LISTA_TELEFONES_SALVAR_SESSAO);
 		this.session.removeAttribute(LISTA_TELEFONES_REMOVER_SESSAO);
 		
 		obterTelefones(idCota);
+		
+		return true;
 	}
 	
 	/**
@@ -455,7 +479,7 @@ public class CotaController {
 		}
 
 	}
-	
+
 	/**
 	 * Retorna os dados default para inclusão de uma nova cota.
 	 * 
@@ -474,7 +498,7 @@ public class CotaController {
 		
 		return dadosCotaVO;
 	}
-	
+
 	/**
 	 * Prepara os dados default para inclusão de uma nova cota para CNPJ
 	 */
@@ -543,7 +567,7 @@ public class CotaController {
 		validarFormatoData(mensagensValidacao);
 
 	}
-
+	
 	private void validarEnderecos(List<String> mensagensValidacao) {
 		
 		@SuppressWarnings("unchecked")
@@ -751,10 +775,19 @@ public class CotaController {
 	
 		validar();
 		
-		processarEnderecosCota(idCota);
+		boolean alteracoesEndereco = processarEnderecosCota(idCota);
+		
+		boolean alteracoesTelefone = processarTelefonesCota(idCota);
+		
+		if (alteracoesEndereco || alteracoesTelefone){
 	
-		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação realizada com sucesso."),
-				Constantes.PARAM_MSGS).recursive().serialize();
+		    result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação realizada com sucesso."),
+			    	Constantes.PARAM_MSGS).recursive().serialize();
+		}
+		else{
+			
+			result.nothing();
+		}
 	}
 	
 	/**
@@ -768,10 +801,19 @@ public class CotaController {
 		
 		validar();
 		
-		processarTelefonesCota(idCota);
+		boolean alteracoesTelefone = processarTelefonesCota(idCota);
 		
-		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação realizada com sucesso."),
-				Constantes.PARAM_MSGS).recursive().serialize();
+		boolean alteracoesEndereco = processarEnderecosCota(idCota);
+		
+		if (alteracoesEndereco || alteracoesTelefone){
+			
+		    result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação realizada com sucesso."),
+			    	Constantes.PARAM_MSGS).recursive().serialize();
+		}
+		else{
+			
+			result.nothing();
+		}
 	}
 	
 	/**
@@ -1067,32 +1109,6 @@ public class CotaController {
 		result.nothing();
 	}
 	
-	private NDSFileHeader getNDSFileHeader() {
-		
-		NDSFileHeader ndsFileHeader = new NDSFileHeader();
-		
-		Distribuidor distribuidor = this.distribuidorService.obter();
-		
-		if (distribuidor != null) {
-			
-			ndsFileHeader.setNomeDistribuidor(distribuidor.getJuridica().getRazaoSocial());
-			ndsFileHeader.setCnpjDistribuidor(distribuidor.getJuridica().getCnpj());
-		}
-		
-		ndsFileHeader.setData(new Date());
-		
-		ndsFileHeader.setNomeUsuario(this.getUsuario().getNome());
-		
-		return ndsFileHeader;
-	}
-	
-	private Usuario getUsuario() {
-		//TODO getUsuario
-		Usuario usuario = new Usuario();
-		usuario.setId(1L);
-		return usuario;
-	}
-	
 	/**
 	 * Efetua a consulta e monta a estrutura do grid de dividas geradas.
 	 * @param filtro
@@ -1238,7 +1254,9 @@ public class CotaController {
 	    if (ModoTela.CADASTRO_COTA == modoTela) {
 		    dto = cotaService.obterDadosDistribuicaoCota(idCota);
 		    
-		    dto.setTiposEntrega(gerarTiposEntrega());
+		    dto.setTiposEntrega(this.gerarTiposEntrega());
+		    
+		    dto.setBasesCalculo(this.gerarBasesCalculo());
 		    
 		    this.tratarDocumentoTipoEntrega(dto);
 		} else {
@@ -1430,6 +1448,21 @@ public class CotaController {
 	}
 	
 	/**
+	 * Gera combos de Base de Calculo
+	 * 
+	 * @return List<ItemDTO<BaseCalculo, String>> 
+	 */
+	private List<ItemDTO<BaseCalculo,String>> gerarBasesCalculo(){
+		
+		List<ItemDTO<BaseCalculo,String>> comboBaseCalculo =  new ArrayList<ItemDTO<BaseCalculo,String>>();
+		for (BaseCalculo itemBaseCalculo: BaseCalculo.values()){
+			comboBaseCalculo.add(new ItemDTO<BaseCalculo,String>(itemBaseCalculo, itemBaseCalculo.getValue()));
+		}
+		
+		return comboBaseCalculo;
+	}
+	
+	/**
 	 * Recarrega os dados de endereço referente a cota.
 	 * 
 	 * @param idCota - identificador da cota
@@ -1476,9 +1509,7 @@ public class CotaController {
 	 */
 	private void obterEndereco(Long idCota){
 		
-		Boolean enderecoPendente = (Boolean) this.session.getAttribute(EnderecoController.ENDERECO_PENDENTE);
-		
-		if (enderecoPendente==null || !enderecoPendente){
+		if (this.isNotEnderecoPendente()){
 			
 			List<EnderecoAssociacaoDTO> listaEnderecoAssociacao = this.cotaService.obterEnderecosPorIdCota(idCota);
 		
@@ -1667,6 +1698,30 @@ public class CotaController {
 		DistribuicaoDTO dto = cotaService.carregarValoresEntregaBanca(numCota);
 		
 		this.result.use(Results.json()).from(dto, "result").serialize();
+	}
+	
+	@Post
+	public void distribuidorUtilizaTermoAdesao(){
+		
+		Boolean utilizaTermo = false;
+		
+		Distribuidor distribuidor = this.distribuidorService.obter();
+		
+		utilizaTermo = distribuidor.getParametroEntregaBanca()!=null?distribuidor.getParametroEntregaBanca().isUtilizaTermoAdesao():false;
+	
+		this.result.use(Results.json()).from(utilizaTermo, "result").serialize();
+	}
+	
+	@Post
+	public void distribuidorUtilizaProcuracao(){
+		
+		Boolean utilizaTermo = false;
+		
+		Distribuidor distribuidor = this.distribuidorService.obter();
+		
+		utilizaTermo = distribuidor.getParametroEntregaBanca()!=null?distribuidor.isUtilizaProcuracaoEntregadores():false;
+	
+		this.result.use(Results.json()).from(utilizaTermo, "result").serialize();
 	}
 	
 }

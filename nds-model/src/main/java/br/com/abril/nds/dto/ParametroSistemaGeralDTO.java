@@ -21,7 +21,7 @@ public class ParametroSistemaGeralDTO implements Serializable {
 	/** */
 	private static final long serialVersionUID = -7477289076396360578L;
 	
-	
+
 	private Map<TipoParametroSistema, String> params = 
 			new HashMap<TipoParametroSistema, String>();
 	
@@ -32,7 +32,7 @@ public class ParametroSistemaGeralDTO implements Serializable {
 	public ParametroSistemaGeralDTO() {
 	}
 	
-	
+
 	/**
 	 * Trata o valor do parâmetro para que não retorne 'null':
 	 * @param tps

@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -16,6 +17,7 @@ import br.com.abril.nds.dto.ConferenciaEncalheDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoSlipDTO;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.estoque.ConferenciaEncalhe;
+import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
 import br.com.abril.nds.repository.ConferenciaEncalheRepository;
@@ -31,10 +33,10 @@ public class ConferenciaEncalheRepositoryImpl extends
 	
 	/*
 	 * (non-Javadoc)
-	 * @see br.com.abril.nds.repository.ConferenciaEncalheRepository#obterDadosSlipConferenciaEncalhe(java.lang.Long, java.lang.Long)
+	 * @see br.com.abril.nds.repository.ConferenciaEncalheRepository#obterDadosSlipConferenciaEncalhe(java.lang.Long)
 	 */
 	@SuppressWarnings("unchecked")
-	public List<ProdutoEdicaoSlipDTO> obterDadosSlipConferenciaEncalhe(Long idControleConferenciaEncalheCota, Long idDistribuidor) {
+	public List<ProdutoEdicaoSlipDTO> obterDadosSlipConferenciaEncalhe(Long idControleConferenciaEncalheCota) {
 
 		StringBuilder hql = new StringBuilder();
 		
@@ -259,8 +261,8 @@ public class ConferenciaEncalheRepositoryImpl extends
 		((SQLQuery)query).addScalar("codigoDeBarras");
 		((SQLQuery)query).addScalar("codigoSM", StandardBasicTypes.INTEGER);
 		
-		((SQLQuery)query).addScalar("qtdExemplar", StandardBasicTypes.BIG_DECIMAL);
-		((SQLQuery)query).addScalar("qtdInformada", StandardBasicTypes.BIG_DECIMAL);
+		((SQLQuery)query).addScalar("qtdExemplar", StandardBasicTypes.BIG_INTEGER);
+		((SQLQuery)query).addScalar("qtdInformada", StandardBasicTypes.BIG_INTEGER);
 		((SQLQuery)query).addScalar("precoCapaInformado", StandardBasicTypes.BIG_DECIMAL);
 		((SQLQuery)query).addScalar("valorTotal", StandardBasicTypes.BIG_DECIMAL);
 		
@@ -317,6 +319,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 		hql.append(" PROD_EDICAO.NUMERO_EDICAO AS numeroEdicao,              ");
 		hql.append(" PROD_EDICAO.PRECO_VENDA AS precoCapa,                   ");
 		hql.append(" PROD_EDICAO.PARCIAL AS parcial, 						 ");
+		hql.append(" PROD_EDICAO.PACOTE_PADRAO AS pacotePadrao,              ");
 		
 		hql.append("        ( PROD_EDICAO.PRECO_VENDA *  ( ");
 		hql.append("          coalesce ((SELECT DESCONTO FROM VIEW_DESCONTO WHERE COTA_ID = CH_ENCALHE_COTA.COTA_ID AND PRODUTO_ID = PROD_EDICAO.ID AND FORNECEDOR_ID = (SELECT F.ID FROM FORNECEDOR F, PRODUTO_FORNECEDOR PF WHERE F.ID = PF.FORNECEDORES_ID AND PF.PRODUTO_ID = PROD.ID)),0)"	);		
@@ -329,17 +332,19 @@ public class ConferenciaEncalheRepositoryImpl extends
 		hql.append(" ) 							");
 		hql.append(" /100)) AS valorTotal,  	");
 		
-		hql.append("         TO_DAYS(CONF_ENCALHE.DATA)-TO_DAYS(CH_ENCALHE.DATA_RECOLHIMENTO) + 1 AS dia,                ");
+		hql.append("         TO_DAYS(CONTROLE_CONF_ENC_COTA.DATA_OPERACAO)-TO_DAYS(CH_ENCALHE.DATA_RECOLHIMENTO) + 1 AS dia,                ");
 		hql.append("         CONF_ENCALHE.OBSERVACAO AS observacao,                                                      ");
 		hql.append("         CONF_ENCALHE.JURAMENTADA AS juramentada                                                     ");
 
 		hql.append("     FROM    ");
 
-		hql.append("         CONFERENCIA_ENCALHE CONF_ENCALHE,     ");
-		hql.append("         PRODUTO_EDICAO PROD_EDICAO,           ");
-		hql.append("         PRODUTO PROD,                         ");
-		hql.append("         CHAMADA_ENCALHE_COTA CH_ENCALHE_COTA, ");
-		hql.append("         CHAMADA_ENCALHE CH_ENCALHE            ");
+		hql.append("         CONFERENCIA_ENCALHE CONF_ENCALHE,     						");
+		hql.append("         PRODUTO_EDICAO PROD_EDICAO,           						");
+		hql.append("         PRODUTO PROD,                         						");
+		hql.append("         CHAMADA_ENCALHE_COTA CH_ENCALHE_COTA, 						");
+		hql.append("         CHAMADA_ENCALHE CH_ENCALHE,            					");
+		hql.append("         CONTROLE_CONFERENCIA_ENCALHE_COTA CONTROLE_CONF_ENC_COTA	");
+		
 
 		hql.append("     WHERE   ");
 		
@@ -348,6 +353,8 @@ public class ConferenciaEncalheRepositoryImpl extends
 		hql.append("         AND CONF_ENCALHE.CHAMADA_ENCALHE_COTA_ID=CH_ENCALHE_COTA.ID ");
 		hql.append("         AND CH_ENCALHE_COTA.CHAMADA_ENCALHE_ID=CH_ENCALHE.ID        ");
 		hql.append("         AND CONF_ENCALHE.CONTROLE_CONFERENCIA_ENCALHE_COTA_ID = :idControleConferenciaEncalheCota   ");
+		hql.append("         AND CONTROLE_CONF_ENC_COTA.ID = CONF_ENCALHE.CONTROLE_CONFERENCIA_ENCALHE_COTA_ID			 ");
+		
 		
 		hql.append("  ORDER BY codigoSM ");
 		
@@ -369,6 +376,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 		((SQLQuery)query).addScalar("numeroEdicao", StandardBasicTypes.LONG);
 		((SQLQuery)query).addScalar("precoCapa");
 		((SQLQuery)query).addScalar("parcial");
+		((SQLQuery)query).addScalar("pacotePadrao");
 		((SQLQuery)query).addScalar("desconto");
 		((SQLQuery)query).addScalar("valorTotal");
 		((SQLQuery)query).addScalar("dia", StandardBasicTypes.INTEGER);
@@ -505,5 +513,30 @@ public class ConferenciaEncalheRepositoryImpl extends
 
 		return hql.toString();
 	}
-    
+
+	@Override
+	public BigInteger obterReparteConferencia(Long idCota, Long idControleConferenciaEncCota, Long produtoEdicaoId) {
+		
+		StringBuilder hql = new StringBuilder("select sum(movEst.qtde) ");
+		hql.append(" from ControleConferenciaEncalheCota contConfEncCota ")
+		   .append(" join contConfEncCota.conferenciasEncalhe confEnc ")
+		   .append(" join confEnc.produtoEdicao produtoEdicao ")
+		   .append(" join confEnc.chamadaEncalheCota chamEncCota ")
+		   .append(" join chamEncCota.chamadaEncalhe chamEnc ")
+		   .append(" join chamEnc.lancamentos lanc ")
+		   .append(" join lanc.movimentoEstoqueCotas movEst ")
+		   .append(" join movEst.cota cota ")
+		   .append(" where cota.id = :idCota ")
+		   .append(" and contConfEncCota.id = :idControleConferenciaEncCota ")
+		   .append(" and produtoEdicao.id = :produtoEdicaoId ")
+		   .append(" and movEst.tipoMovimento.grupoMovimentoEstoque = :grupoMovimento");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("idCota", idCota);
+		query.setParameter("idControleConferenciaEncCota", idControleConferenciaEncCota);
+		query.setParameter("produtoEdicaoId", produtoEdicaoId);
+		query.setParameter("grupoMovimento", GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
+		
+		return (BigInteger) query.uniqueResult();
+	}
 }

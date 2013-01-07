@@ -2,6 +2,7 @@ package br.com.abril.nds.repository.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Criteria;
@@ -136,10 +137,13 @@ public class DistribuidorRepositoryImpl extends
 	@Override
 	public String obterInformacoesComplementaresTermoAdesao() {
 		
-		return (String) 
+		String resultado = (String) 
 				this.getSession().
 				createQuery(
 						"select d.parametroEntregaBanca.complementoTermoAdesao from Distribuidor d").uniqueResult();
+
+		
+		return resultado; 	
 	}
 
 	@Override
@@ -147,5 +151,11 @@ public class DistribuidorRepositoryImpl extends
 		
 		return (DiaSemana) 
 				this.getSession().createQuery("select inicioSemana from Distribuidor").uniqueResult();
+	}
+
+	@Override
+	public Date obterDatatOperacaoDistribuidor() {
+		
+		return (Date) this.getSession().createQuery("select dataOperacao from Distribuidor").uniqueResult();
 	}
 }

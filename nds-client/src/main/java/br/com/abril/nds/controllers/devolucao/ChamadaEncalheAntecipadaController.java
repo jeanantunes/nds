@@ -21,6 +21,7 @@ import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.ChamadaEncalheAntecipadaPesCotaVO;
 import br.com.abril.nds.client.vo.ChamadaEncalheAntecipadaVO;
 import br.com.abril.nds.client.vo.ResultadoChamadaEncalheAntecipadaVO;
+import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.ChamadaAntecipadaEncalheDTO;
 import br.com.abril.nds.dto.InfoChamdaAntecipadaEncalheDTO;
 import br.com.abril.nds.dto.ItemDTO;
@@ -28,7 +29,6 @@ import br.com.abril.nds.dto.filtro.FiltroChamadaAntecipadaEncalheDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Box;
-import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoFornecedor;
@@ -36,7 +36,6 @@ import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.pdv.TipoPontoPDV;
 import br.com.abril.nds.model.seguranca.Permissao;
-import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.service.BoxService;
 import br.com.abril.nds.service.ChamadaAntecipadaEncalheService;
@@ -51,7 +50,6 @@ import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
-import br.com.abril.nds.util.export.NDSFileHeader;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Get;
@@ -69,7 +67,7 @@ import br.com.caelum.vraptor.view.Results;
  */
 @Resource
 @Path(value="/devolucao/chamadaEncalheAntecipada")
-public class ChamadaEncalheAntecipadaController {
+public class ChamadaEncalheAntecipadaController extends BaseController {
 	
 	private static final String FILTRO_SESSION_ATTRIBUTE = "filtroChamadaAntecipadaEncalhe";
 	
@@ -174,7 +172,7 @@ public class ChamadaEncalheAntecipadaController {
 	 */
 	@Post
 	@Path("/pesquisarDataProgramada")
-	public void pesquisarpesquisarDataProgramadaEdicao(String codigoProduto, Long numeroEdicao){
+	public void pesquisarDataProgramadaEdicao(String codigoProduto, Long numeroEdicao){
 		
 		Date date  = chamadaAntecipadaEncalheService.obterDataRecolhimentoPrevista(codigoProduto, numeroEdicao);
 		
@@ -1008,42 +1006,6 @@ public class ChamadaEncalheAntecipadaController {
 				filtro.setDescTipoPontoPDV(tipoPontoPDV.getDescricao());
 			}
 		}
-	}
-	
-	/*
-	 * Obtém os dados do cabeçalho de exportação.
-	 * 
-	 * @return NDSFileHeader
-	 */
-	private NDSFileHeader getNDSFileHeader() {
-		
-		NDSFileHeader ndsFileHeader = new NDSFileHeader();
-		
-		Distribuidor distribuidor = this.distribuidorService.obter();
-		
-		if (distribuidor != null) {
-			
-			ndsFileHeader.setNomeDistribuidor(distribuidor.getJuridica().getRazaoSocial());
-			ndsFileHeader.setCnpjDistribuidor(distribuidor.getJuridica().getCnpj());
-		}
-		
-		ndsFileHeader.setData(new Date());
-		
-		ndsFileHeader.setNomeUsuario(this.getUsuario().getNome());
-		
-		return ndsFileHeader;
-	}
-	
-	//TODO: não há como reconhecer usuario, ainda
-	private Usuario getUsuario() {
-		
-		Usuario usuario = new Usuario();
-		
-		usuario.setId(1L);
-		
-		usuario.setNome("Jornaleiro da Silva");
-		
-		return usuario;
 	}
 	
 	@Post

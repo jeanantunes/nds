@@ -32,17 +32,20 @@ public class ContasAPagarRepositoryImplTest extends AbstractRepositoryImplTest {
 		idsFornecedores.add(1L);
 		idsFornecedores.add(2L);
 		
-		Calendar cal = Calendar.getInstance();
-		cal.set(2000, 1, 1);
+		Calendar data = Calendar.getInstance();
+		data.set(2000, 1, 1);
 		
 		FiltroContasAPagarDTO filtro = new FiltroContasAPagarDTO();
 		filtro.setCe(1);
-		filtro.setDataDe(cal.getTime());
-		cal.clear();
-		cal.set(2099, 1, 1);
-		filtro.setDataAte(cal.getTime());
+		filtro.setDataDe(data.getTime());
+		data.clear();
+		data.set(2099, 1, 1);
+		filtro.setDataAte(data.getTime());
 		filtro.setEdicao(1L);
 		filtro.setIdsFornecedores(idsFornecedores);
+		
+		PaginacaoVO paginacaoVO = new PaginacaoVO(1, 10, PaginacaoVO.Ordenacao.ASC.getOrdenacao(), "codigo");
+		filtro.setPaginacaoVO(paginacaoVO);
 		
 		return filtro;
 	}
@@ -82,14 +85,9 @@ public class ContasAPagarRepositoryImplTest extends AbstractRepositoryImplTest {
 	
 	@Test
 	public void testPesquisarPorDistribuidor(){
-		
-		PaginacaoVO paginacaoVO = new PaginacaoVO(1, 10, PaginacaoVO.Ordenacao.ASC.getOrdenacao(), "suplementacao");
-		
-		FiltroContasAPagarDTO filtroContasAPagarDTO = this.getFiltroPesquisaPorDistribuidor();
-		filtroContasAPagarDTO.setPaginacaoVO(paginacaoVO);
-		
+				
 		List<ContasApagarConsultaPorDistribuidorDTO> lista = 
-				this.contasAPagarRepository.pesquisarPorDistribuidor(filtroContasAPagarDTO);
+				this.contasAPagarRepository.pesquisarPorDistribuidor(this.getFiltroPesquisaPorDistribuidor());
 		
 		Assert.assertNotNull(lista);
 	}
@@ -113,7 +111,8 @@ public class ContasAPagarRepositoryImplTest extends AbstractRepositoryImplTest {
 	@Test
 	public void testPesquisarTotaisPorProduto(){
 		
-		ContasAPagarGridPrincipalProdutoDTO contasAPagarGridPrincipalProdutoDTO = this.contasAPagarRepository.pesquisarTotaisPorProduto(this.getFiltroPesquisaPorProduto());
+		ContasAPagarGridPrincipalProdutoDTO contasAPagarGridPrincipalProdutoDTO = 
+				this.contasAPagarRepository.pesquisarTotaisPorProduto(this.getFiltroPesquisaPorProduto());
 	    
 		Assert.assertNotNull(contasAPagarGridPrincipalProdutoDTO);
 	}
@@ -121,12 +120,8 @@ public class ContasAPagarRepositoryImplTest extends AbstractRepositoryImplTest {
 	@Test
 	public void testPesquisarPorProduto(){
 		
-		PaginacaoVO paginacaoVO = new PaginacaoVO(1, 10, PaginacaoVO.Ordenacao.ASC.getOrdenacao(), "suplementacao");
-		
-		FiltroContasAPagarDTO filtroContasAPagarDTO = this.getFiltroPesquisaPorProduto();
-		filtroContasAPagarDTO.setPaginacaoVO(paginacaoVO);
-		
-		List<ContasApagarConsultaPorProdutoDTO> lista = this.contasAPagarRepository.pesquisarPorProduto(filtroContasAPagarDTO);
+		List<ContasApagarConsultaPorProdutoDTO> lista = 
+				this.contasAPagarRepository.pesquisarPorProduto(this.getFiltroPesquisaPorProduto());
 		
 		Assert.assertNotNull(lista);
 	}
@@ -163,6 +158,7 @@ public class ContasAPagarRepositoryImplTest extends AbstractRepositoryImplTest {
 		FiltroContasAPagarDTO filtro = this.getFiltroPesquisaPorDistribuidor();
 		filtro.setDataDetalhe(new Date());
 		filtro.setEdicao(null);
+		filtro.setPaginacaoVO(null);
 		
 		List<ContasAPagarFaltasSobrasDTO> lista = 
 				this.contasAPagarRepository.pesquisarDetalheFaltasSobras(filtro);
