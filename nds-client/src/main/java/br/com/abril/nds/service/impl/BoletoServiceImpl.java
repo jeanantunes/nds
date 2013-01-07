@@ -986,6 +986,9 @@ public class BoletoServiceImpl implements BoletoService {
         corpoBoleto.setBoletoInstrucao7("");
         corpoBoleto.setBoletoInstrucao8("");
         
+        //BOLETO EM BRANCO
+        corpoBoleto.setBoletoSemValor(boleto.getTipoCobranca().equals(TipoCobranca.BOLETO_EM_BRANCO));
+        
         return corpoBoleto;
 	}
 	
