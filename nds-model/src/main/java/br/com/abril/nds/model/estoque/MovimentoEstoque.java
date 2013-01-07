@@ -31,7 +31,7 @@ public class MovimentoEstoque extends AbstractMovimentoEstoque {
 
 	@Column(name = "COD_ORIGEM_MOTIVO", nullable = true)
 	private String codigoOrigemMotivo;
-
+	
 	/**
 	 * @return the itemRecebimentoFisico
 	 */
@@ -101,6 +101,4 @@ public class MovimentoEstoque extends AbstractMovimentoEstoque {
 	public void setCodigoOrigemMotivo(String codigoOrigemMotivo) {
 		this.codigoOrigemMotivo = codigoOrigemMotivo;
 	}
-		
-
 }

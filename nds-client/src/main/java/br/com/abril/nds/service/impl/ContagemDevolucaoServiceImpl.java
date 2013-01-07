@@ -565,7 +565,7 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 		diferenca.setResponsavel(usuario);
 		diferenca.setProdutoEdicao(produtoEdicao);
 		
-		diferencaEstoqueService.lancarDiferencaAutomatica(diferenca);
+		diferencaEstoqueService.lancarDiferencaAutomaticaContagemDevolucao(diferenca);
 		
 		sinalizarDiferencaApurada(contagem);
 		

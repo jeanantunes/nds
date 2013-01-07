@@ -6,6 +6,7 @@ import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
@@ -29,6 +30,8 @@ public class TipoMovimentoRepositoryImpl extends AbstractRepositoryModel<TipoMov
 	public List<TipoMovimento> obterTiposMovimento() {
 		
 		Criteria criteria = super.getSession().createCriteria(TipoMovimento.class);
+		
+		criteria.add(Restrictions.eq("aprovacaoAutomatica", false));
 		
 		criteria.addOrder(Order.asc("descricao"));
 		

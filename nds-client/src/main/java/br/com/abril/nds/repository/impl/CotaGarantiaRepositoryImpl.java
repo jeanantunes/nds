@@ -380,7 +380,7 @@ public class CotaGarantiaRepositoryImpl extends AbstractRepositoryModel<CotaGara
 	    hql.append(this.obterHqlTipoGarantia(filtro))
 
 	       .append(" group by cota ");
-	
+	    
 	    if (filtro.getPaginacao()!=null){
 			hql.append(" order by ")
 		       .append(filtro.getPaginacao().getSortColumn()!=null && !filtro.getPaginacao().getSortColumn().equals("")?filtro.getPaginacao().getSortColumn():" vencto ")
@@ -389,6 +389,17 @@ public class CotaGarantiaRepositoryImpl extends AbstractRepositoryModel<CotaGara
 	    }
 		
 		Query query = this.getSession().createQuery(hql.toString());
+		
+		//Controla a paginação
+		if(filtro.getPaginacao() != null
+				&& (filtro.getPaginacao().getPaginaAtual() != null 
+				&& filtro.getPaginacao().getPaginaAtual() > 0) 
+				&& (filtro.getPaginacao().getQtdResultadosPorPagina() != null 
+				&& filtro.getPaginacao().getQtdResultadosPorPagina() > 0)) {
+			
+			query.setFirstResult((filtro.getPaginacao().getPaginaAtual() - 1) * filtro.getPaginacao().getQtdResultadosPorPagina());
+			query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
+		}
 		
 		query.setParameter("data", data);
 		query.setParameter("movimentoEntrada", OperacaoEstoque.ENTRADA);

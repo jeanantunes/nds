@@ -1269,7 +1269,6 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 			
 		}
 		
-		
 		return query.list();
 		
 	}

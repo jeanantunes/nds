@@ -123,6 +123,8 @@ public class MovimentoRepositoryImpl extends AbstractRepositoryModel<Movimento, 
 	private void aplicarParametrosParaPesquisaMovimentoAprovacao(FiltroControleAprovacaoDTO filtro, 
 													 	 		 Query query) {
 		
+		query.setParameter("aprovacaoAutomatica", false);
+		
 		if (filtro == null) {
 			
 			return;
@@ -175,28 +177,23 @@ public class MovimentoRepositoryImpl extends AbstractRepositoryModel<Movimento, 
 			+ " left join movimento.cota cota "
 			+ " left join cota.pessoa pessoa ";
 		
+		hql += " where movimento.tipoMovimento.aprovacaoAutomatica = :aprovacaoAutomatica ";
 		
 		if (filtro != null) {
 		
 			if (filtro.getIdTipoMovimento() != null) {
 				
-				hql += (!hql.contains("where")) ? "where" : "and";
-				
-				hql += " movimento.tipoMovimento.id = :idTipoMovimento ";
+				hql += " and movimento.tipoMovimento.id = :idTipoMovimento ";
 			}
 			
 			if (filtro.getDataMovimento() != null) {
 				
-				hql += (!hql.contains("where")) ? "where" : "and";
-				
-				hql += " movimento.dataCriacao = :dataMovimento ";
+				hql += "  and movimento.dataCriacao = :dataMovimento ";
 			}
 			
 			if (filtro.getStatusAprovacao() != null) {
 				
-				hql += (!hql.contains("where")) ? "where" : "and";
-				
-				hql += " movimento.status = :statusAprovacao ";
+				hql += "  and movimento.status = :statusAprovacao ";
 				
 			}
 		}

@@ -13,11 +13,17 @@ var negociacaoDividaController = $.extend(true, {
 			centsSeparator: ',',
 		    thousandsSeparator: '.'
 		});
+		
+		$('#diaInputQuinzenal1', negociacaoDividaController.workspace).mask("99");
+		
+		$('#diaInputQuinzenal2', negociacaoDividaController.workspace).mask("99");
+		
+		$('#mensalDia', negociacaoDividaController.workspace).mask("99");
 	},
 
 	pesquisarCota : function(numeroCota) {
 
-		$(".grids", this.workspace).hide();
+		negociacaoDividaController.esconderGridEBotoes();
 		
 		$.postJSON(contextPath + '/cadastro/cota/pesquisarPorNumero',
 				{numeroCota:numeroCota}, 
@@ -33,9 +39,17 @@ var negociacaoDividaController = $.extend(true, {
 		);
 	},
 	
+	esconderGridEBotoes : function() {
+		
+		$(".grids", this.workspace).hide();
+		
+		$(".areaBts", this.workspace).find("span").hide();		
+	},
+	
 	pesquisar : function() {
 		
-		$("#totalSelecionado", this.workspace).html('0,00');
+		$("#negociacaoCheckAll", negociacaoDividaController.workspace).uncheck();
+		$("#totalSelecionado", negociacaoDividaController.workspace).html('0,00');
 		$('#negociacaoDivida_numEnomeCota').html($('#negociacaoDivida_numCota').val() +' - '+ $('#negociacaoDivida_nomeCota').html());
 		
 		var params = $("#negociacaoDividaForm", this.workspace).serialize();
@@ -50,7 +64,7 @@ var negociacaoDividaController = $.extend(true, {
 		
 		$(".grids", this.workspace).show();
 				
-		
+		$(".areaBts", this.workspace).find("span").show();
 	},
 	
 	pesquisarDetalhes : function(idCobranca) {
@@ -95,6 +109,16 @@ var negociacaoDividaController = $.extend(true, {
 	
 	montaColunaDetalhesAcao : function(data) {
 		
+		if (data.mensagens) {
+			
+			exibirMensagem(data.mensagens.tipoMensagem, 
+						   data.mensagens.listaMensagens);
+			
+			negociacaoDividaController.esconderGridEBotoes();
+			
+			return data;
+		}
+		
 		var total = '0,00';
 		
 		$.each(data.rows, function(index, value) {
@@ -111,6 +135,38 @@ var negociacaoDividaController = $.extend(true, {
 		
 		
 		return data;
+	},
+	
+	calcularParcelasSemanal : function() {
+		
+		var semanalDias = $("[name=semanalDias]:checked", negociacaoDividaController.workspace);
+		
+		if (semanalDias.length > 0) {
+			
+			negociacaoDividaController.calcularParcelas();
+		}
+	},
+	
+	calcularParcelasQuinzenal : function() {
+		
+		var quinzenalDia1 = $('#diaInputQuinzenal1', negociacaoDividaController.workspace).val();
+		
+		var quinzenalDia2 = $('#diaInputQuinzenal2', negociacaoDividaController.workspace).val();
+		
+		if ($.trim(quinzenalDia1) && $.trim(quinzenalDia2)) {
+			
+			negociacaoDividaController.calcularParcelas();
+		}
+	},
+	
+	calcularParcelasMensal : function() {
+		
+		var mensalDia = $('#mensalDia', negociacaoDividaController.workspace).val();
+		
+		if ($.trim(mensalDia)) {
+			
+			negociacaoDividaController.calcularParcelas();
+		}
 	},
 	
 	calcularParcelas : function(){
@@ -223,7 +279,7 @@ var negociacaoDividaController = $.extend(true, {
 
 		$("#formaPgtoForm")[0].reset();
 
-		negociacaoDividaController.comissaoCota();
+		negociacaoDividaController.limparPopupFormaPgto();
 		
 		$('span[name$="botoes"]').hide();
 		
@@ -528,8 +584,15 @@ var negociacaoDividaController = $.extend(true, {
 		}
 	},
 
-	comissaoCota : function() {
-		$('.comissaoAtual', negociacaoDividaController.workspace).show();
+	limparPopupFormaPgto : function() {
+	
+		$('.comissaoAtual', negociacaoDividaController.workspace).hide();
+		
+		negociacaoDividaController.esconderPagamentoParcelas();
+	},
+	
+	esconderPagamentoParcelas : function() {
+		
 		$('.pgtos', negociacaoDividaController.workspace).hide();
 		$('.semanal', negociacaoDividaController.workspace).hide();
 		$('.quinzenal', negociacaoDividaController.workspace).hide();
@@ -538,7 +601,12 @@ var negociacaoDividaController = $.extend(true, {
 		$('#gridCheque', negociacaoDividaController.workspace).hide();
 		$('#divChequeDeposito', negociacaoDividaController.workspace).hide();
 		$('#divBanco', negociacaoDividaController.workspace).hide();
-		
+	},
+	
+	comissaoCota : function() {
+		$('.comissaoAtual', negociacaoDividaController.workspace).show();
+
+		negociacaoDividaController.esconderPagamentoParcelas();		
 	},
 	
 	mostraPgto : function() {

@@ -99,8 +99,8 @@ public class ContasAPagarController extends BaseController {
 
 
 	@Path("/pesquisarProduto.json")
-	public void pesquisarProduto(FiltroContasAPagarDTO filtro) {
-
+	public void pesquisarProduto(FiltroContasAPagarDTO filtro, String sortname, String sortorder) {
+		filtro.setPaginacaoVO(new PaginacaoVO(sortname, sortorder));
 		List<ContasAPagarConsultaProdutoDTO> produtos = contasAPagarService.pesquisarProdutos(filtro);
 		List<ContasAPagarConsultaProdutoVO> produtosVO = new ArrayList<ContasAPagarConsultaProdutoVO>();
 
@@ -114,7 +114,7 @@ public class ContasAPagarController extends BaseController {
 
 	@Path("/pesquisarPorProduto.json")
 	public void pesquisarPorProduto(FiltroContasAPagarDTO filtro, String sortname, String sortorder, int rp, int page) {
-		
+		filtro.setIdsFornecedores(null);
 		this.session.setAttribute(FILTRO_CONTAS_A_PAGAR, filtro);
 
 		ContasAPagarGridPrincipalProdutoDTO dto = contasAPagarService.pesquisarPorProduto(filtro, sortname, sortorder, rp, page);

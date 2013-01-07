@@ -45,10 +45,13 @@ import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.service.ParciaisService;
 import br.com.abril.nds.service.RecolhimentoService;
 import br.com.abril.nds.strategy.devolucao.BalanceamentoRecolhimentoStrategy;
+import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.TipoBalanceamentoRecolhimento;
 import br.com.abril.nds.util.TipoMensagem;
+import br.com.abril.nds.vo.ValidacaoVO;
+import br.com.caelum.vraptor.view.Results;
 
 /**
  * Implementação de serviços referentes ao recolhimento.
@@ -740,7 +743,13 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		
 		List<Lancamento> lancamentos =  lancamentoRepository.obterLancamentosARecolherNaSemana(periodoRecolhimento, fornecedores);
 		
+		if (lancamentos == null || lancamentos.size() <= 0){
+		
+			throw new ValidacaoException(TipoMensagem.WARNING ,"Não existem lançamentos à serem reiniciados.");
+		}	
+			
 		for(Lancamento lancamento: lancamentos) {
+			
 			lancamento.setStatus(StatusLancamento.EXPEDIDO);
 			lancamento.setDataRecolhimentoDistribuidor(lancamento.getDataRecolhimentoPrevista());
 			lancamentoRepository.alterar(lancamento);

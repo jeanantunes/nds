@@ -1,5 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
+import java.util.List;
+
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
@@ -28,4 +30,16 @@ public class TipoMovimentoEstoqueRepositoryImpl extends AbstractRepositoryModel<
 		
 		return (TipoMovimentoEstoque) criteria.uniqueResult();
 	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<TipoMovimentoEstoque> buscarTiposMovimentoEstoque(List<GrupoMovimentoEstoque> gruposMovimentoEstoque) {
+
+		Criteria criteria = super.getSession().createCriteria(TipoMovimentoEstoque.class);
+		
+		criteria.add(Restrictions.in("grupoMovimentoEstoque", gruposMovimentoEstoque));
+		
+		return criteria.list();
+	}
+	
 }

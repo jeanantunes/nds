@@ -26,21 +26,21 @@ import br.com.abril.nds.model.fiscal.NotaFiscalEntradaCota;
 import br.com.abril.nds.model.seguranca.Usuario;
 
 /**
- * Entidade que abstrai a sinalização do status da 
- * conferência de encalhe da cota.
+ * Entidade que abstrai a sinalização do status da conferência de encalhe da
+ * cota.
  * 
- * @author Discover Technology 
+ * @author Discover Technology
  */
 @Entity
 @Table(name = "CONTROLE_CONFERENCIA_ENCALHE_COTA")
-@SequenceGenerator(name="CTRL_CONF_ENCALHE_COTA_SEQ", initialValue = 1, allocationSize = 1)
+@SequenceGenerator(name = "CTRL_CONF_ENCALHE_COTA_SEQ", initialValue = 1, allocationSize = 1)
 public class ControleConferenciaEncalheCota {
-	
+
 	@Id
 	@GeneratedValue(generator = "CTRL_CONF_ENCALHE_COTA_SEQ")
 	@Column(name = "ID")
 	private Long id;
-	
+
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "DATA_INICIO", nullable = false)
 	private Date dataInicio;
@@ -52,10 +52,10 @@ public class ControleConferenciaEncalheCota {
 	@Temporal(TemporalType.DATE)
 	@Column(name = "DATA_OPERACAO", nullable = false)
 	private Date dataOperacao;
-	
+
 	@Column(name = "NUMERO_SLIP")
-	private Long numeroSlip; 
-	
+	private Long numeroSlip;
+
 	@Enumerated(EnumType.STRING)
 	@Column(name = "STATUS")
 	private StatusOperacao status;
@@ -63,12 +63,12 @@ public class ControleConferenciaEncalheCota {
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "COTA_ID")
 	private Cota cota;
-	
+
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "CTRL_CONF_ENCALHE_ID")
 	private ControleConferenciaEncalhe controleConferenciaEncalhe;
-	
-	@OneToMany(mappedBy="controleConferenciaEncalheCota")
+
+	@OneToMany(mappedBy = "controleConferenciaEncalheCota")
 	private List<NotaFiscalEntradaCota> notaFiscalEntradaCota = new ArrayList<NotaFiscalEntradaCota>();
 
 	@OneToMany(mappedBy = "controleConferenciaEncalheCota")
@@ -84,10 +84,10 @@ public class ControleConferenciaEncalheCota {
 
 	@Column(name = "NOSSO_NUMERO")
 	private String nossoNumero;
-	
+
 	/**
 	 * Obtém id
-	 *
+	 * 
 	 * @return Long
 	 */
 	public Long getId() {
@@ -96,7 +96,8 @@ public class ControleConferenciaEncalheCota {
 
 	/**
 	 * Atribuí id
-	 * @param id 
+	 * 
+	 * @param id
 	 */
 	public void setId(Long id) {
 		this.id = id;
@@ -104,7 +105,7 @@ public class ControleConferenciaEncalheCota {
 
 	/**
 	 * Obtém dataInicio
-	 *
+	 * 
 	 * @return Date
 	 */
 	public Date getDataInicio() {
@@ -113,7 +114,8 @@ public class ControleConferenciaEncalheCota {
 
 	/**
 	 * Atribuí dataInicio
-	 * @param dataInicio 
+	 * 
+	 * @param dataInicio
 	 */
 	public void setDataInicio(Date dataInicio) {
 		this.dataInicio = dataInicio;
@@ -121,7 +123,7 @@ public class ControleConferenciaEncalheCota {
 
 	/**
 	 * Obtém dataFim
-	 *
+	 * 
 	 * @return Date
 	 */
 	public Date getDataFim() {
@@ -130,7 +132,8 @@ public class ControleConferenciaEncalheCota {
 
 	/**
 	 * Atribuí dataFim
-	 * @param dataFim 
+	 * 
+	 * @param dataFim
 	 */
 	public void setDataFim(Date dataFim) {
 		this.dataFim = dataFim;
@@ -138,7 +141,7 @@ public class ControleConferenciaEncalheCota {
 
 	/**
 	 * Obtém dataOperacao
-	 *
+	 * 
 	 * @return Date
 	 */
 	public Date getDataOperacao() {
@@ -147,7 +150,8 @@ public class ControleConferenciaEncalheCota {
 
 	/**
 	 * Atribuí dataOperacao
-	 * @param dataOperacao 
+	 * 
+	 * @param dataOperacao
 	 */
 	public void setDataOperacao(Date dataOperacao) {
 		this.dataOperacao = dataOperacao;
@@ -155,7 +159,7 @@ public class ControleConferenciaEncalheCota {
 
 	/**
 	 * Obtém status
-	 *
+	 * 
 	 * @return StatusOperacao
 	 */
 	public StatusOperacao getStatus() {
@@ -164,15 +168,16 @@ public class ControleConferenciaEncalheCota {
 
 	/**
 	 * Atribuí status
-	 * @param status 
+	 * 
+	 * @param status
 	 */
 	public void setStatus(StatusOperacao status) {
 		this.status = status;
 	}
-	
+
 	/**
 	 * Obtém cota
-	 *
+	 * 
 	 * @return Cota
 	 */
 	public Cota getCota() {
@@ -181,7 +186,8 @@ public class ControleConferenciaEncalheCota {
 
 	/**
 	 * Atribuí cota
-	 * @param cota 
+	 * 
+	 * @param cota
 	 */
 	public void setCota(Cota cota) {
 		this.cota = cota;
@@ -189,7 +195,7 @@ public class ControleConferenciaEncalheCota {
 
 	/**
 	 * Obtém controleConferenciaEncalhe
-	 *
+	 * 
 	 * @return ControleConferenciaEncalhe
 	 */
 	public ControleConferenciaEncalhe getControleConferenciaEncalhe() {
@@ -198,7 +204,8 @@ public class ControleConferenciaEncalheCota {
 
 	/**
 	 * Atribuí controleConferenciaEncalhe
-	 * @param controleConferenciaEncalhe 
+	 * 
+	 * @param controleConferenciaEncalhe
 	 */
 	public void setControleConferenciaEncalhe(
 			ControleConferenciaEncalhe controleConferenciaEncalhe) {
@@ -207,7 +214,7 @@ public class ControleConferenciaEncalheCota {
 
 	/**
 	 * Obtém conferenciasEncalhe
-	 *
+	 * 
 	 * @return List<ConferenciaEncalhe>
 	 */
 	public List<ConferenciaEncalhe> getConferenciasEncalhe() {
@@ -216,15 +223,17 @@ public class ControleConferenciaEncalheCota {
 
 	/**
 	 * Atribuí conferenciasEncalhe
-	 * @param conferenciasEncalhe 
+	 * 
+	 * @param conferenciasEncalhe
 	 */
-	public void setConferenciasEncalhe(List<ConferenciaEncalhe> conferenciasEncalhe) {
+	public void setConferenciasEncalhe(
+			List<ConferenciaEncalhe> conferenciasEncalhe) {
 		this.conferenciasEncalhe = conferenciasEncalhe;
 	}
 
 	/**
 	 * Obtém usuario
-	 *
+	 * 
 	 * @return Usuario
 	 */
 	public Usuario getUsuario() {
@@ -233,7 +242,8 @@ public class ControleConferenciaEncalheCota {
 
 	/**
 	 * Atribuí usuario
-	 * @param usuario 
+	 * 
+	 * @param usuario
 	 */
 	public void setUsuario(Usuario usuario) {
 		this.usuario = usuario;
@@ -241,7 +251,7 @@ public class ControleConferenciaEncalheCota {
 
 	/**
 	 * Obtém box
-	 *
+	 * 
 	 * @return Box
 	 */
 	public Box getBox() {
@@ -250,7 +260,8 @@ public class ControleConferenciaEncalheCota {
 
 	/**
 	 * Atribuí box
-	 * @param box 
+	 * 
+	 * @param box
 	 */
 	public void setBox(Box box) {
 		this.box = box;
@@ -264,7 +275,8 @@ public class ControleConferenciaEncalheCota {
 	}
 
 	/**
-	 * @param numeroSlip the numeroSlip to set
+	 * @param numeroSlip
+	 *            the numeroSlip to set
 	 */
 	public void setNumeroSlip(Long numeroSlip) {
 		this.numeroSlip = numeroSlip;
@@ -278,26 +290,27 @@ public class ControleConferenciaEncalheCota {
 	}
 
 	/**
-	 * @param notaFiscalEntradaCota the notaFiscalEntradaCota to set
+	 * @param notaFiscalEntradaCota
+	 *            the notaFiscalEntradaCota to set
 	 */
 	public void setNotaFiscalEntradaCota(
 			List<NotaFiscalEntradaCota> notaFiscalEntradaCota) {
 		this.notaFiscalEntradaCota = notaFiscalEntradaCota;
 	}
-	
+
 	/**
 	 * @return the notaFiscalEntradaCota
 	 */
 	public NotaFiscalEntradaCota getNotaFiscalEntradaCotaPricipal() {
 		if (notaFiscalEntradaCota != null && !notaFiscalEntradaCota.isEmpty()) {
-			for (NotaFiscalEntradaCota notaFiscal: notaFiscalEntradaCota) {
+			for (NotaFiscalEntradaCota notaFiscal : notaFiscalEntradaCota) {
 				if (notaFiscal != null
 						&& notaFiscal.getTipoNotaFiscal() != null
 						&& notaFiscal.getTipoNotaFiscal().getGrupoNotaFiscal() != null
 						&& notaFiscal.getTipoNotaFiscal().getGrupoNotaFiscal() != GrupoNotaFiscal.NF_TERCEIRO_COMPLEMENTAR) {
-					
+
 					return notaFiscal;
-					
+
 				}
 			}
 		}

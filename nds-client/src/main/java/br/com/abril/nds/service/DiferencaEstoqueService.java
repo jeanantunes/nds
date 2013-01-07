@@ -115,4 +115,6 @@ public interface DiferencaEstoqueService {
 	 */
 	void gerarMovimentoEstoqueDiferenca(Diferenca diferenca, Long idUsuario);
 	
+	void lancarDiferencaAutomaticaContagemDevolucao(Diferenca diferenca);
+	
 }

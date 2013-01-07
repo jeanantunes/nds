@@ -6,26 +6,19 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 		fechamentoCEIntegracaoController.buscarNumeroSemana();		
 	},
 	
-	verificarDataFechamentoCE : function(){
+	verificarDataFechamentoCE : function(fechada) {
 		
-		$.postJSON(contextPath + '/devolucao/fechamentoCEIntegracao/verificarStatusSemana', 
-			null,
-			function(result) {				
-				if (result.boolean) {					
-					$("#btnFechamento", fechamentoCEIntegracaoController.workspace).unbind("click");
-					$("#imagemFechamento", fechamentoCEIntegracaoController.workspace).css("opacity", "0.5");
-					$("#btnReabertura", fechamentoCEIntegracaoController.workspace).unbind("click");
-					$("#imagemReabertura", fechamentoCEIntegracaoController.workspace).css("opacity", "0.5");
-				}else{
-					$("#imagemFechamento", fechamentoCEIntegracaoController.workspace).css("opacity", "1.0");
-					$("#btnFechamento", fechamentoCEIntegracaoController.workspace).click(function() {
-						fechamentoCEIntegracaoController.fecharCE();
-						fechamentoCEIntegracaoController.verificarDataFechamentoCE();
-					});
-				}
+			if (fechada) {					
+				$("#btnFechamento", fechamentoCEIntegracaoController.workspace).unbind("click");
+				$("#imagemFechamento", fechamentoCEIntegracaoController.workspace).css("opacity", "0.2");
+				$("#btnReabertura", fechamentoCEIntegracaoController.workspace).unbind("click");
+				$("#imagemReabertura", fechamentoCEIntegracaoController.workspace).css("opacity", "0.2");
+			} else {
+				$("#imagemFechamento", fechamentoCEIntegracaoController.workspace).css("opacity", "1.0");
+				$("#btnFechamento", fechamentoCEIntegracaoController.workspace).click(function() {
+					fechamentoCEIntegracaoController.fecharCE();
+				});
 			}
-		);
-		
 	},
 	
 	buscarNumeroSemana : function(){
@@ -61,29 +54,25 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 					exibirMensagem(resultado.mensagens.tipoMensagem, resultado.mensagens.listaMensagens);
 					$(".grids", fechamentoCEIntegracaoController.workspace).hide();
 					return resultado;
-				}else{
+				} else {
 					
-					$.postJSON(contextPath + '/devolucao/fechamentoCEIntegracao/verificarStatusSemana', 
-							null,
-							function(result) {				
-								if (!result.boolean) {	
-									$.each(resultado.rows, function(index, value) {
-										var encalhe = value.cell.encalhe;
-										var idProdutoEdicao = value.cell.idProdutoEdicao;
-										var inputEncalhe = '<input type="text" id="inputEncalhe" name="inputEncalhe" value='+encalhe+' /> <input type="hidden" id="codigoProdutoEdicao" name="codigoProdutoEdicao" value='+idProdutoEdicao+' /> '
-										value.cell.encalhe = inputEncalhe;				
-													
-									});							
-								}
-							}
-						);
+					if (!resultado.semanaFechada) {	
+
+						$.each(resultado.listaFechamento.rows, function(index, row) {
+							var linhaEncalhe = '<input type="text" id="inputEncalhe' + row.cell.sequencial + '" value="' + row.cell.encalhe + '" size="5px" />';
+							row.cell.encalhe = linhaEncalhe;
+						});
+						
+					};
 					
+					fechamentoCEIntegracaoController.popularTotal($("#idFornecedor", fechamentoCEIntegracaoController.workspace).val(), $("#semana", fechamentoCEIntegracaoController.workspace).val());
+					fechamentoCEIntegracaoController.verificarDataFechamentoCE(resultado.semanaFechada);
 					
+					$(".grids", fechamentoCEIntegracaoController.workspace).show();
+					return resultado.listaFechamento;
 					
-				}
+				};
 				
-				$(".grids", fechamentoCEIntegracaoController.workspace).show();
-				return resultado;
 			  },
 			dataType : 'json',
 			colModel : [ {
@@ -94,19 +83,19 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 				align : 'left'
 			},  {
 				display : 'Código',
-				name : 'codigo',
+				name : 'codigoProduto',
 				width : 80,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Produto',
-				name : 'produto',
+				name : 'nomeProduto',
 				width : 200,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Edição',
-				name : 'edicao',
+				name : 'numeroEdicao',
 				width : 60,
 				sortable : true,
 				align : 'center'
@@ -147,7 +136,7 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 				sortable : true,
 				align : 'right'
 			}],
-			sortname : "qtde",
+			sortname : "sequencial",
 			sortorder : "asc",
 			usepager : true,
 			useRp : true,
@@ -168,37 +157,7 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 			params: [
 			         {name:'filtro.idFornecedor' , value:idFornecedor},
 			         {name:'filtro.semana' , value:semana}
-			         ],
-			preProcess: function(resultado) {
-				
-				if (resultado.mensagens) {
-					
-					exibirMensagem(
-						resultado.mensagens.tipoMensagem, 
-						resultado.mensagens.listaMensagens
-					);
-					
-					$(".grids", fechamentoCEIntegracaoController.workspace).hide();
-				
-				} else {
-					
-					return resultado;
-
-				}
-				
-			},
-			
-			onSuccess : function() {
-				
-				fechamentoCEIntegracaoController.popularTotal(
-						$("#idFornecedor", fechamentoCEIntegracaoController.workspace).val(), 
-						$("#semana", fechamentoCEIntegracaoController.workspace).val());
-				
-				fechamentoCEIntegracaoController.verificarDataFechamentoCE();
-				
-			}
-		
-		
+			         ]		         
 		});
 		
 		$(".fechamentoCeGrid").flexReload();
@@ -249,8 +208,6 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 				null,
 				true
 			);
-
-		
 		
 	}
 	
