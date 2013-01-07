@@ -26,7 +26,7 @@ public class FechamentoCEIntegracaoRepositoryImpl extends AbstractRepositoryMode
 	public FechamentoCEIntegracaoRepositoryImpl() {
 		super(FechamentoEncalhe.class);
 	}
-
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<FechamentoCEIntegracaoDTO> buscarConferenciaEncalhe(FiltroFechamentoCEIntegracaoDTO filtro) {

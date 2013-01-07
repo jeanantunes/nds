@@ -6,16 +6,19 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.dto.FechamentoCEIntegracaoDTO;
 import br.com.abril.nds.exception.GerarCobrancaValidacaoException;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.StatusControle;
+import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
@@ -24,6 +27,7 @@ import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.financeiro.Boleto;
+import br.com.abril.nds.model.financeiro.BoletoDistribuidor;
 import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.financeiro.CobrancaBoletoEmBranco;
 import br.com.abril.nds.model.financeiro.CobrancaCheque;
@@ -40,8 +44,11 @@ import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.StatusDivida;
 import br.com.abril.nds.model.financeiro.StatusInadimplencia;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
+import br.com.abril.nds.model.planejamento.fornecedor.ChamadaEncalheFornecedor;
 import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.repository.BoletoDistribuidorRepository;
 import br.com.abril.nds.repository.ChamadaEncalheCotaRepository;
+import br.com.abril.nds.repository.ChamadaEncalheFornecedorRepository;
 import br.com.abril.nds.repository.CobrancaControleConferenciaEncalheCotaRepository;
 import br.com.abril.nds.repository.CobrancaRepository;
 import br.com.abril.nds.repository.ConsolidadoFinanceiroRepository;
@@ -66,6 +73,7 @@ import br.com.abril.nds.service.PoliticaCobrancaService;
 import br.com.abril.nds.service.exception.AutenticacaoEmailException;
 import br.com.abril.nds.util.AnexoEmail;
 import br.com.abril.nds.util.AnexoEmail.TipoAnexo;
+import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.ValidacaoVO;
@@ -135,6 +143,12 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 	
 	@Autowired
 	private CobrancaControleConferenciaEncalheCotaRepository cobrancaControleConferenciaEncalheCotaRepository;
+	
+	@Autowired
+	private BoletoDistribuidorRepository boletoDistribuidorRepository;
+	
+	@Autowired
+	private ChamadaEncalheFornecedorRepository chamadaEncalheFornecedorRepository;
 	
 	/**
 	 * Obtém a situação da cota
@@ -312,132 +326,115 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		}
 	}
 	
-	@Override
-	@Transactional(noRollbackFor = GerarCobrancaValidacaoException.class)
-	public void gerarCobrancaFornecedor(Long idFornecedor, Long idUsuario, Set<String> setNossoNumero) throws GerarCobrancaValidacaoException{
+	/*
+	 * . O vencimento desta deverá ser sempre D+2 pós fechamento da semana;
+	 * exemplo: a semana 30 vai de 11/07/12 (quarta-feira) à 17/07/12
+	 * (terça-feira), na quarta-feira dia 18/07/12 o Distribuidor fará o
+	 * fechamento da semana de encalhe/recolhimento, informando ao Fornecedor o
+	 * valor da sua semana de pagamento via Integração da CE onde o boleto para
+	 * pagamento ficará disponibilizado com o valor desta. Caso o usuário
+	 * consulte uma semana de recolhimento ainda não fechada, ou seja, que sua
+	 * CE não foi enviada ao Fornecedor, a funcionalidade deve permitir apenas o
+	 * boleto em branco (onde este deve ficar disponível para qualquer semana de
+	 * recolhimento, independente da integração de informações). Podemos ter as
+	 * duas opções de boletos cadastrados para cada fornecedor DGB, onde as duas
+	 * formas de pagamento devem ser alteradas de acordo com o Fornecedor
+	 * escolhido no filtro de pesquisa.
+	 */
+	
+	private Date obterDataVencimentoBoletoDistribuidor(Date dataFechamentoSemana) {
 		
-//		Distribuidor distribuidor = this.distribuidorRepository.obter();
-//		
-//		//Buscar politica de cobrança e forma de cobrança do distribuidor
-//		PoliticaCobranca politicaPrincipal = this.politicaCobrancaService.obterPoliticaCobrancaPrincipal();
-//		
-//		if (politicaPrincipal == null){
-//			throw new GerarCobrancaValidacaoException(
-//					new ValidacaoException(TipoMensagem.ERROR, "Politica de cobrança não encontrada."));
-//		} else if (politicaPrincipal.getFormaCobranca() == null){
-//			throw new GerarCobrancaValidacaoException(
-//					new ValidacaoException(TipoMensagem.ERROR, "Forma de cobrança não encontrada."));
-//		}
-//		
-//		//Caso o principal modo de cobrança seja boleto a baixa automática deve ter sido executada
-////		if (TipoCobranca.BOLETO.equals(politicaPrincipal.getFormaCobranca().getTipoCobranca())){
-////			ControleBaixaBancaria controleBaixaBancaria = this.controleBaixaBancariaRepository.obterPorData(new Date());
-////			
-////			if (controleBaixaBancaria == null || StatusControle.INICIADO.equals(controleBaixaBancaria.getStatus())){
-////				throw new GerarCobrancaValidacaoException(
-////						new ValidacaoException(TipoMensagem.ERROR, "Baixa Automática ainda não executada."));
-////			}
-////		}
-//		
-//		List<String> msgs = new ArrayList<String>();
-//		
-//		// buscar movimentos financeiros da cota, se informada, caso contrario de todas as cotas
-//		List<MovimentoFinanceiroCota> listaMovimentoFinanceiroCota = 
-//				this.movimentoFinanceiroCotaRepository.obterMovimentoFinanceiroCota(idCota);
-//		
-//		if (listaMovimentoFinanceiroCota != null && !listaMovimentoFinanceiroCota.isEmpty()){
-//			
-//			//Varre todos os movimentos encontrados, agrupando por cota e por fornecedor
-//			//Cota ultimaCota = listaMovimentoFinanceiroCota.get(0).getCota();
-//			
-//			Fornecedor ultimoFornecedor = this.fornecedorService.obterFornecedorPorId(idFornecedor);			
-//			
-//			TipoCobranca tipoCobranca = politicaPrincipal.getFormaCobranca().getTipoCobranca();
-//			
-//			List<MovimentoFinanceiroFornecedor> movimentos = new ArrayList<MovimentoFinanceiroFornecedor>();
-//			
-//			String nossoNumero = null;
-//			
-//			for (MovimentoFinanceiroCota movimentoFinanceiroCota : listaMovimentoFinanceiroCota){
-//				
-//				//verifica se cota esta suspensa, se estiver verifica se existe chamada de encalhe na data de operação
-////				if (SituacaoCadastro.SUSPENSO.equals(ultimaCota.getSituacaoCadastro())){
-////					
-////					if (!movimentoFinanceiroCota.getCota().equals(ultimaCota)){
-////						
-////						if (this.chamadaEncalheCotaRepository.obterQtdListaChamaEncalheCota(ultimaCota.getNumeroCota(), 
-////								distribuidor.getDataOperacao(), null, false, false, false) <= 0){
-////							
-////							continue;
-////						}
-////					}
-////				}
-//				
-//				if (movimentoFinanceiroCota.getCota().equals(ultimaCota) &&
-//						movimentoFinanceiroCota.getMovimentos() != null && 
-//						!movimentoFinanceiroCota.getMovimentos().isEmpty() && 
-//						movimentoFinanceiroCota.getMovimentos().get(0) != null &&
-//						movimentoFinanceiroCota.getMovimentos().get(0).getProdutoEdicao().getProduto().getFornecedor().equals(ultimoFornecedor)){
-//					
-//					movimentos.add(movimentoFinanceiroCota);
-//				} else {
-//					
-//					if (TipoCobranca.BOLETO.equals(politicaPrincipal.getFormaCobranca().getTipoCobranca())){
-//						this.verificarCotaTemBanco(ultimaCota, msgs);
-//					}
-//					
-//					//Decide se gera movimento consolidado ou postergado para a cota
-//					nossoNumero = this.inserirConsolidadoFinanceiro(ultimaCota, movimentos,
-//							politicaPrincipal.getFormaCobranca().getValorMinimoEmissao(), politicaPrincipal.isAcumulaDivida(), idUsuario, 
-//							tipoCobranca != null ? tipoCobranca : politicaPrincipal.getFormaCobranca().getTipoCobranca(),
-//							politicaPrincipal.getNumeroDiasNovaCobranca(),
-//							distribuidor, msgs, ultimoFornecedor);
-//					
-//					if (nossoNumero != null){
-//						
-//						setNossoNumero.add(nossoNumero);
-//					}
-//					
-//					//Limpa dados para contabilizar próxima cota
-//					ultimaCota = movimentoFinanceiroCota.getCota();
-//					
-//					if (movimentoFinanceiroCota.getMovimentos() != null && 
-//							!movimentoFinanceiroCota.getMovimentos().isEmpty() &&
-//							movimentoFinanceiroCota.getMovimentos().get(0) != null){
-//						
-//						ultimoFornecedor = movimentoFinanceiroCota.getMovimentos().get(0).getProdutoEdicao().getProduto().getFornecedor();
-//					} else {
-//						
-//						ultimoFornecedor = null;
-//					}
-//					
-//					movimentos = new ArrayList<MovimentoFinanceiroCota>();
-//					
-//					movimentos.add(movimentoFinanceiroCota);
-//				}
-//			}
-//			
-//			if (TipoCobranca.BOLETO.equals(tipoCobranca)){
-//				this.verificarCotaTemBanco(ultimaCota, msgs);
-//			}
-//			
-//			//Decide se gera movimento consolidado ou postergado para a ultima cota
-//			nossoNumero = this.inserirConsolidadoFinanceiro(ultimaCota, movimentos, politicaPrincipal.getFormaCobranca().getValorMinimoEmissao(),
-//					politicaPrincipal.isAcumulaDivida(), idUsuario, 
-//					tipoCobranca != null ? tipoCobranca : politicaPrincipal.getFormaCobranca().getTipoCobranca(),
-//					politicaPrincipal.getNumeroDiasNovaCobranca(), distribuidor, msgs, ultimoFornecedor);
-//			
-//			if (nossoNumero != null){
-//				
-//				setNossoNumero.add(nossoNumero);
-//			}
-//		}
-//		
-//		if (!msgs.isEmpty()){
-//			
-//			throw new GerarCobrancaValidacaoException(
-//					new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, msgs)));
-//		}
+		Date dataVencimento = DateUtil.adicionarDias(dataFechamentoSemana, 2);
+		
+		return dataVencimento;
+	}
+	
+	@Transactional
+	public List<BoletoDistribuidor> gerarCobrancaBoletoDistribuidor(
+			List<ChamadaEncalheFornecedor> listaChamadaEncalheFornecedor, 
+			TipoCobranca tipoCobranca){
+		
+		List<BoletoDistribuidor> listaBoletoDistribuidor = new ArrayList<BoletoDistribuidor>();
+		
+		Distribuidor distribuidor = distribuidorRepository.obter();
+		
+		Date dataOperacao = distribuidor.getDataOperacao();
+		
+		Date dataAtual = new Date();
+		
+		Integer codigoDistribuidor = distribuidor.getCodigo();
+		
+		for(ChamadaEncalheFornecedor chamadaEncalheFornecedor : listaChamadaEncalheFornecedor) {
+			
+			BoletoDistribuidor boletoDistribuidor = 
+					boletoDistribuidorRepository.obterBoletoDistribuidorPorChamadaEncalheFornecedor(chamadaEncalheFornecedor.getId());
+			
+			if(boletoDistribuidor!=null) {
+				
+				Integer vias = boletoDistribuidor.getVias();
+				
+				vias+=1;
+				
+				boletoDistribuidor.setVias(vias);
+				
+				if(TipoCobranca.BOLETO.equals(tipoCobranca)) {
+					
+					boletoDistribuidor.setValor(chamadaEncalheFornecedor.getTotalVendaInformada());
+					
+					boletoDistribuidorRepository.alterar(boletoDistribuidor);
+					
+				}
+				
+			} else {
+				
+				//FIXME de qual campo obtemos o valor total do boleto?
+				BigDecimal valor = chamadaEncalheFornecedor.getTotalVendaInformada();
+				
+				Fornecedor fornecedor = chamadaEncalheFornecedor.getFornecedor();
+				
+				Banco banco = chamadaEncalheFornecedor.getFornecedor().getBanco();
+				
+				String nossoNumeroDistribuidor = Util.gerarNossoNumeroDistribuidor(
+						codigoDistribuidor, 
+						dataOperacao, 
+						banco.getNumeroBanco(), 
+						fornecedor.getId(), 
+						chamadaEncalheFornecedor.getId());
+				
+				boletoDistribuidor = new BoletoDistribuidor();
+				
+				boletoDistribuidor.setBanco(banco);
+				boletoDistribuidor.setChamadaEncalheFornecedor(chamadaEncalheFornecedor);
+				
+				boletoDistribuidor.setDataEmissao(dataAtual);
+				
+				
+				//FIXME obter a data de fechamento da semana
+				boletoDistribuidor.setDataVencimento(obterDataVencimentoBoletoDistribuidor(dataAtual));
+				
+				boletoDistribuidor.setNossoNumeroDistribuidor(nossoNumeroDistribuidor);
+				boletoDistribuidor.setStatus(null);
+				
+				boletoDistribuidor.setFornecedor(chamadaEncalheFornecedor.getFornecedor());
+				
+				if(TipoCobranca.BOLETO.equals(tipoCobranca)) {
+					boletoDistribuidor.setValor(valor);
+				}
+				
+				boletoDistribuidor.setVias(1);
+				
+				boletoDistribuidorRepository.adicionar(boletoDistribuidor);
+				
+			}
+			
+			listaBoletoDistribuidor.add(boletoDistribuidor);
+			
+		}
+		
+		
+		return listaBoletoDistribuidor;
+		
+
 	}
 	
 	

@@ -172,15 +172,33 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 			preProcess: function(resultado) {
 				
 				if (resultado.mensagens) {
+					
 					exibirMensagem(
 						resultado.mensagens.tipoMensagem, 
 						resultado.mensagens.listaMensagens
 					);
+					
 					$(".grids", fechamentoCEIntegracaoController.workspace).hide();
+				
+				} else {
+					
+					return resultado;
+
 				}
-				fechamentoCEIntegracaoController.popularTotal($("#idFornecedor", fechamentoCEIntegracaoController.workspace).val(), $("#semana", fechamentoCEIntegracaoController.workspace).val());
+				
+			},
+			
+			onSuccess : function() {
+				
+				fechamentoCEIntegracaoController.popularTotal(
+						$("#idFornecedor", fechamentoCEIntegracaoController.workspace).val(), 
+						$("#semana", fechamentoCEIntegracaoController.workspace).val());
+				
 				fechamentoCEIntegracaoController.verificarDataFechamentoCE();
-			}			         
+				
+			}
+		
+		
 		});
 		
 		$(".fechamentoCeGrid").flexReload();

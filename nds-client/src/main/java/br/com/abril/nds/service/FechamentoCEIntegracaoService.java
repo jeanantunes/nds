@@ -5,6 +5,7 @@ import java.util.List;
 import br.com.abril.nds.dto.FechamentoCEIntegracaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroFechamentoCEIntegracaoDTO;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.cadastro.TipoCobranca;
 
 public interface FechamentoCEIntegracaoService {
 	
@@ -15,5 +16,7 @@ public interface FechamentoCEIntegracaoService {
 	void fecharCE(Long encalhe, ProdutoEdicao produtoEdicao);
 
 	boolean verificarStatusSemana(FiltroFechamentoCEIntegracaoDTO filtro);
+	
+	byte[] gerarCobrancaBoletoDistribuidor(FiltroFechamentoCEIntegracaoDTO filtro, TipoCobranca tipoCobranca);
 
 }

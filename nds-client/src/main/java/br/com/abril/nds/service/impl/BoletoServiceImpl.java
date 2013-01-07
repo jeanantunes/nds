@@ -30,6 +30,7 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
+import br.com.abril.nds.model.cadastro.EnderecoFornecedor;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
@@ -41,6 +42,7 @@ import br.com.abril.nds.model.financeiro.BaixaAutomatica;
 import br.com.abril.nds.model.financeiro.BaixaCobranca;
 import br.com.abril.nds.model.financeiro.BaixaManual;
 import br.com.abril.nds.model.financeiro.Boleto;
+import br.com.abril.nds.model.financeiro.BoletoDistribuidor;
 import br.com.abril.nds.model.financeiro.ControleBaixaBancaria;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.financeiro.StatusBaixa;
@@ -864,54 +866,153 @@ public class BoletoServiceImpl implements BoletoService {
 		return movimentoFinanceiroCotaDTO;
 	}
 	
+	
+	private CorpoBoleto gerarCorpoBoletoCota(Boleto boleto){
+		
+		String nossoNumero = boleto.getNossoNumero();
+		String digitoNossoNumero = boleto.getDigitoNossoNumero();
+		BigDecimal valor = boleto.getValor();
+		Banco banco = boleto.getBanco();
+		Date dataEmissao = boleto.getDataEmissao();
+		Date dataVencimento = boleto.getDataVencimento();
+		Pessoa pessoaCedente = distribuidorService.obter().getJuridica(); 
+		Pessoa pessoaSacado = boleto.getCota().getPessoa();
+		
+		Endereco endereco = null;
+		
+		Set<EnderecoCota> enderecosCota = boleto.getCota().getEnderecos();
+		
+		for(EnderecoCota enderecoCota : enderecosCota){
+			
+			endereco = enderecoCota.getEndereco();
+			
+			if (enderecoCota.getTipoEndereco() == TipoEndereco.COBRANCA){
+				break;
+			}
+		
+		}
+		
+		return geraCorpoBoleto(
+				nossoNumero, 
+				digitoNossoNumero, 
+				valor, 
+				banco, 
+				dataEmissao, 
+				dataVencimento, 
+				pessoaCedente, 
+				pessoaSacado, 
+				endereco);
+		
+	}
+	
+	private CorpoBoleto gerarCorpoBoletoDistribuidor(BoletoDistribuidor boleto) {
+		
+		String nossoNumero = boleto.getNossoNumeroDistribuidor();
+		String digitoNossoNumero = boleto.getDigitoNossoNumeroDistribuidor();
+		BigDecimal valor = boleto.getValor();
+		Banco banco = boleto.getBanco();
+		Date dataEmissao = boleto.getDataEmissao();
+		Date dataVencimento = boleto.getDataVencimento();
+		Pessoa pessoaCedente = distribuidorService.obter().getJuridica(); 
+		Pessoa pessoaSacado = boleto.getFornecedor().getJuridica();
+		
+		Endereco endereco = null;
+		
+		Set<EnderecoFornecedor> enderecosFornecedor = boleto.getFornecedor().getEnderecos();
+		
+		for(EnderecoFornecedor enderecoFornecedor : enderecosFornecedor){
+			
+			endereco = enderecoFornecedor.getEndereco();
+			
+			if (enderecoFornecedor.getTipoEndereco() == TipoEndereco.COBRANCA){
+				break;
+			}
+		
+		}
+		
+		return geraCorpoBoleto(
+				nossoNumero, 
+				digitoNossoNumero, 
+				valor, 
+				banco, 
+				dataEmissao, 
+				dataVencimento, 
+				pessoaCedente, 
+				pessoaSacado, 
+				endereco);
+		
+	}
+	
+	
 	/**
 	 * Método responsável por gerar corpo do boleto com os atributos definidos
 	 * @param boleto
 	 * @return GeradorBoleto: corpo do boleto carregado
 	 */
-	private CorpoBoleto geraCorpoBoleto(Boleto boleto){
+	private CorpoBoleto geraCorpoBoleto(
+			String nossoNumero,
+			String digitoNossoNumero,
+			BigDecimal valor,
+			Banco banco,
+			Date dataEmissao,
+			Date dataVencimento,
+			Pessoa pessoaCedente, 
+			Pessoa pessoaSacado,
+			Endereco enderecoSacado
+			
+			){
 
 		CorpoBoleto corpoBoleto = new CorpoBoleto();
-		PessoaJuridica distribuidor = distribuidorService.obter().getJuridica();
+		
+		String nomeCedente = "";
+		String documentoCedente = "";
+		
+		if(pessoaCedente instanceof PessoaJuridica) {
+			
+			nomeCedente = ((PessoaJuridica)pessoaCedente).getRazaoSocial();
+			documentoCedente = ((PessoaJuridica)pessoaCedente).getCnpj();
+			
+			
+		} else {
+			
+			nomeCedente = ((PessoaFisica)pessoaCedente).getNome();
+			documentoCedente = ((PessoaFisica)pessoaCedente).getCpf();
+			
+		}
 		
 		
 		//DADOS DO CEDENTE
-		corpoBoleto.setCedenteNome(distribuidor.getRazaoSocial());         
-		corpoBoleto.setCedenteDocumento(distribuidor.getCnpj());
+		corpoBoleto.setCedenteNome(nomeCedente);         
+		corpoBoleto.setCedenteDocumento(documentoCedente);
 
 		
 		//DADOS DO SACADO
-		Pessoa pessoa = boleto.getCota().getPessoa();
+		
 		String nomeSacado="";
+		
 		String documentoSacado="";
-		if (pessoa instanceof PessoaFisica){
-			nomeSacado = ((PessoaFisica) pessoa).getNome();
-			documentoSacado = ((PessoaFisica) pessoa).getCpf();
+		
+		if (pessoaSacado instanceof PessoaFisica){
+			nomeSacado = ((PessoaFisica) pessoaSacado).getNome();
+			documentoSacado = ((PessoaFisica) pessoaSacado).getCpf();
 		}
-		if (pessoa instanceof PessoaJuridica){
-			nomeSacado = ((PessoaJuridica) pessoa).getRazaoSocial();
-			documentoSacado = ((PessoaJuridica) pessoa).getCnpj();
+		if (pessoaSacado instanceof PessoaJuridica){
+			nomeSacado = ((PessoaJuridica) pessoaSacado).getRazaoSocial();
+			documentoSacado = ((PessoaJuridica) pessoaSacado).getCnpj();
 		}
 		corpoBoleto.setSacadoNome(nomeSacado);          
 		corpoBoleto.setSacadoDocumento(documentoSacado); 
 
 		
 		//ENDERECO DO SACADO
-		Endereco endereco = null;
-		Set<EnderecoCota> enderecosCota = boleto.getCota().getEnderecos();
-		for(EnderecoCota enderecoCota : enderecosCota){
-			endereco = enderecoCota.getEndereco();
-			if (enderecoCota.getTipoEndereco() == TipoEndereco.COBRANCA){
-			    break;
-			}
-		}
-		if (endereco!=null){
-			corpoBoleto.setEnderecoSacadoUf(endereco.getUf());            
-			corpoBoleto.setEnderecoSacadoLocalidade(endereco.getCidade());     
-			corpoBoleto.setEnderecoSacadoCep(endereco.getCep());         
-			corpoBoleto.setEnderecoSacadoBairro(endereco.getBairro()); 
-			corpoBoleto.setEnderecoSacadoLogradouro(endereco.getLogradouro()); 
-			corpoBoleto.setEnderecoSacadoNumero(endereco.getNumero()); 
+		
+		if (enderecoSacado!=null){
+			corpoBoleto.setEnderecoSacadoUf(enderecoSacado.getUf());            
+			corpoBoleto.setEnderecoSacadoLocalidade(enderecoSacado.getCidade());     
+			corpoBoleto.setEnderecoSacadoCep(enderecoSacado.getCep());         
+			corpoBoleto.setEnderecoSacadoBairro(enderecoSacado.getBairro()); 
+			corpoBoleto.setEnderecoSacadoLogradouro(enderecoSacado.getLogradouro()); 
+			corpoBoleto.setEnderecoSacadoNumero(enderecoSacado.getNumero()); 
 		}
 		else{
 			corpoBoleto.setEnderecoSacadoUf("SP");
@@ -924,10 +1025,11 @@ public class BoletoServiceImpl implements BoletoService {
 
 		
 		//INFORMACOES DA CONTA(BANCO)
-        String contaNumero=boleto.getBanco().getConta().toString();
-        String contaNumeroDocumento=boleto.getNossoNumero();
-        corpoBoleto.setContaNumeroBanco(boleto.getBanco().getNumeroBanco());                  
-        corpoBoleto.setContaCarteira(boleto.getBanco().getCarteira());
+        String contaNumero=banco.getConta().toString();
+        
+        corpoBoleto.setContaNumeroBanco(banco.getNumeroBanco());                  
+        
+        corpoBoleto.setContaCarteira(banco.getCarteira());
        
         List<TipoCobranca> tiposCobranca = Arrays.asList(TipoCobranca.BOLETO, TipoCobranca.BOLETO_EM_BRANCO);
         
@@ -937,7 +1039,7 @@ public class BoletoServiceImpl implements BoletoService {
         	
         	FormaCobranca formaCobranca = politicaCobranca.getFormaCobranca();
         	
-        	if (formaCobranca.getBanco().getApelido().equals(boleto.getBanco().getApelido())) {
+        	if (formaCobranca.getBanco().getApelido().equals(banco.getApelido())) {
         		
         		if (formaCobranca.getFormaCobrancaBoleto() != null) {
         		
@@ -948,24 +1050,24 @@ public class BoletoServiceImpl implements BoletoService {
         	}
         }
         
-        corpoBoleto.setContaAgencia(boleto.getBanco().getAgencia().intValue());    
+        corpoBoleto.setContaAgencia(banco.getAgencia().intValue());    
         corpoBoleto.setContaNumero(Integer.parseInt(contaNumero));   
         
          
         //INFORMACOES DO TITULO
-        corpoBoleto.setTituloNumeroDoDocumento(contaNumeroDocumento);                      
-        corpoBoleto.setTituloNossoNumero(boleto.getNossoNumero());                    
+        corpoBoleto.setTituloNumeroDoDocumento(nossoNumero);                      
+        corpoBoleto.setTituloNossoNumero(nossoNumero);                    
         
         
         //PARAMETROS ?
-        corpoBoleto.setTituloDigitoDoNossoNumero(boleto.getDigitoNossoNumero());  
+        corpoBoleto.setTituloDigitoDoNossoNumero(digitoNossoNumero);  
         corpoBoleto.setTituloTipoDeDocumento("DM_DUPLICATA_MERCANTIL");
         corpoBoleto.setTituloAceite("A");
         corpoBoleto.setTituloTipoIdentificadorCNR("COM_VENCIMENTO");
         
-        corpoBoleto.setTituloValor(boleto.getValor());   
-        corpoBoleto.setTituloDataDoDocumento(boleto.getDataEmissao());   
-        corpoBoleto.setTituloDataDoVencimento(boleto.getDataVencimento());  
+        corpoBoleto.setTituloValor(valor);   
+        corpoBoleto.setTituloDataDoDocumento(dataEmissao);   
+        corpoBoleto.setTituloDataDoVencimento(dataVencimento);  
         corpoBoleto.setTituloDesconto(BigDecimal.ZERO);
         corpoBoleto.setTituloDeducao(BigDecimal.ZERO);
         corpoBoleto.setTituloMora(BigDecimal.ZERO);
@@ -977,7 +1079,7 @@ public class BoletoServiceImpl implements BoletoService {
         //PARAMETROS ?
         corpoBoleto.setBoletoLocalPagamento("Local do pagamento.");
         corpoBoleto.setBoletoInstrucaoAoSacado("Instrução so Sacado");
-        corpoBoleto.setBoletoInstrucao1(boleto.getBanco().getInstrucoes());
+        corpoBoleto.setBoletoInstrucao1(banco.getInstrucoes());
         corpoBoleto.setBoletoInstrucao2("");
         corpoBoleto.setBoletoInstrucao3("");
         corpoBoleto.setBoletoInstrucao4("");
@@ -989,6 +1091,8 @@ public class BoletoServiceImpl implements BoletoService {
         return corpoBoleto;
 	}
 	
+	
+	
 	/**
 	 * 
 	 * @param boleto
@@ -996,9 +1100,12 @@ public class BoletoServiceImpl implements BoletoService {
 	 * @throws IOException
 	 */
 	private byte[]  gerarAnexoBoleto(Boleto boleto) throws IOException {
-		GeradorBoleto geradorBoleto = new GeradorBoleto(this.geraCorpoBoleto(boleto));
+		
+		GeradorBoleto geradorBoleto = new GeradorBoleto(this.gerarCorpoBoletoCota(boleto));
+		
 		byte[] b = geradorBoleto.getBytePdf();
-        return b;
+        
+		return b;
 	}
 	
 	/**
@@ -1041,9 +1148,13 @@ public class BoletoServiceImpl implements BoletoService {
 	public byte[] gerarImpressaoBoleto(String nossoNumero) throws IOException {
 		
 		Boleto boleto = boletoRepository.obterPorNossoNumero(nossoNumero,null);
-		GeradorBoleto geradorBoleto = new GeradorBoleto(this.geraCorpoBoleto(boleto)) ;
+		
+		GeradorBoleto geradorBoleto = new GeradorBoleto(this.gerarCorpoBoletoCota(boleto));
+		
 		byte[] b = geradorBoleto.getBytePdf();
-		cobrancaRepository.atualizarVias(boleto); 
+		
+		cobrancaRepository.atualizarVias(boleto);
+		
         return b;
 	}
 	
@@ -1064,8 +1175,10 @@ public class BoletoServiceImpl implements BoletoService {
 			
 			boleto = boletoRepository.obterPorNossoNumero(nossoNumero,null);
 			
+			
+			
 			if(boleto!= null){
-				corpos.add(this.geraCorpoBoleto(boleto));
+				corpos.add(this.gerarCorpoBoletoCota(boleto));
 			}
 		}
 		
@@ -1077,6 +1190,25 @@ public class BoletoServiceImpl implements BoletoService {
 		return null;
 	}
 
+	@Override
+	@Transactional(readOnly=true)
+	public byte[] gerarImpressaoBoletosDistribuidor(List<BoletoDistribuidor> listaBoletoDistribuidor) throws IOException {
+		
+		List<CorpoBoleto> corpos = new ArrayList<CorpoBoleto>();
+		
+		for(BoletoDistribuidor boletoDistribuidor  : listaBoletoDistribuidor){
+				corpos.add(this.gerarCorpoBoletoDistribuidor(boletoDistribuidor));
+		}
+		
+		if(!corpos.isEmpty()){
+			GeradorBoleto geradorBoleto = new GeradorBoleto(corpos) ;
+			byte[] b = geradorBoleto.getByteGroupPdf();
+	        return b;
+		}
+		return null;
+	}
+	
+	
 	/**
 	 * Método responsável por obter os dados de uma cobrança
 	 * @param nossoNumero

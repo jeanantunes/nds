@@ -25,6 +25,7 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.BoletoService;
 import br.com.abril.nds.service.CotaService;
@@ -32,6 +33,7 @@ import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.service.FechamentoCEIntegracaoService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.GerarCobrancaService;
+import br.com.abril.nds.service.PoliticaCobrancaService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.CurrencyUtil;
@@ -88,6 +90,8 @@ public class FechamentoCEIntegracaoController extends BaseController{
 	@Autowired
 	private GerarCobrancaService gerarCobrancaService;
 	
+	@Autowired
+	private PoliticaCobrancaService politicaCobrancaService;
 	
 	public FechamentoCEIntegracaoController(Result result) {
 		 this.result = result;
@@ -96,7 +100,33 @@ public class FechamentoCEIntegracaoController extends BaseController{
 	@Path("/")
 	@Rules(Permissao.ROLE_RECOLHIMENTO_FECHAMENTO_INTEGRACAO)
 	public void index(){
+		
 		this.carregarComboFornecedores();
+		
+		this.setUpTiposCobranca();
+	}
+	
+	private void setUpTiposCobranca() {
+		
+		List<TipoCobranca> listaTipoCobranca = politicaCobrancaService.obterTiposCobrancaDistribuidor();
+
+		result.include(TipoCobranca.BOLETO.name(), false);
+		
+		result.include(TipoCobranca.BOLETO_EM_BRANCO.name(), false);
+		
+		for(TipoCobranca tipoCobranca : listaTipoCobranca) {
+			
+			if(TipoCobranca.BOLETO.equals(tipoCobranca)) {
+			
+				result.include(TipoCobranca.BOLETO.name(), true);
+			
+			} else if(TipoCobranca.BOLETO_EM_BRANCO.equals(tipoCobranca)) {
+				
+				result.include(TipoCobranca.BOLETO_EM_BRANCO.name(), true);
+			
+			}
+			
+		}
 		
 	}
 	
@@ -147,7 +177,7 @@ public class FechamentoCEIntegracaoController extends BaseController{
 		Distribuidor distribuidor = this.distribuidorService.obter();
 		Date dataInicioSemana = 
 				DateUtil.obterDataDaSemanaNoAno(
-					filtro.getSemana().intValue(), distribuidor.getInicioSemana().getCodigoDiaSemana(), null);
+					filtro.getSemana().intValue(), distribuidor.getInicioSemana().getCodigoDiaSemana(), distribuidor.getDataOperacao());
 			
 		Date dataFimSemana = DateUtil.adicionarDias(dataInicioSemana, 6);
 		
@@ -228,28 +258,37 @@ public class FechamentoCEIntegracaoController extends BaseController{
 	
 	@Get
 	@Path("/imprimeBoleto")
-	public void imprimeBoleto() throws Exception{
+	public void imprimeBoleto(TipoCobranca tipoCobranca) throws Exception {
 		
-		long idFornecedor = 0;
-		Set<String> nossoNumero = new HashSet<String>();
+		FiltroFechamentoCEIntegracaoDTO filtro = (FiltroFechamentoCEIntegracaoDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE_FECHAMENTO_CE_INTEGRACAO);
 		
-		this.gerarCobrancaService.gerarCobrancaFornecedor(idFornecedor, this.getUsuarioLogado().getId(), nossoNumero);
+		byte[] boleto = fechamentoCEIntegracaoService.gerarCobrancaBoletoDistribuidor(filtro, tipoCobranca);
 
-		byte[] b = boletoService.gerarImpressaoBoleto(nossoNumero.toString());
+		escreverArquivoParaResponse(boleto, "boleto");
+		
+	}
 
+	
+	
+	private void escreverArquivoParaResponse(byte[] arquivo, String nomeArquivo) throws IOException {
+		
 		this.httpResponse.setContentType("application/pdf");
-		this.httpResponse.setHeader("Content-Disposition", "attachment; filename=boleto.pdf");
+		
+		this.httpResponse.setHeader("Content-Disposition", "attachment; filename="+nomeArquivo +".pdf");
 
 		OutputStream output = this.httpResponse.getOutputStream();
-		output.write(b);
+		
+		output.write(arquivo);
 
-		//CONTROLE DE VIAS IMPRESSAS
-		boletoService.incrementarVia(nossoNumero.toString());
+		httpResponse.getOutputStream().close();
 		
-		httpResponse.flushBuffer();
+		result.use(Results.nothing());
 		
-		result.nothing();
 	}
+	
+	
+	
+	
 	
 	@Get
 	public void exportar(FileType fileType) throws IOException {
