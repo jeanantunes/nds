@@ -1,6 +1,12 @@
 var fiadorController = $.extend(true, {
 		fecharModalCadastroFiador: false,
 		addConjuge : false,
+		alteracaoDadosBasicos : false,
+		
+		dadosBasicosAlterados:function (){
+			
+			fiadorController.alteracaoDadosBasicos = true;
+		},
 		
 		popupCadastroFiadorCPF:function () {
 			
@@ -64,7 +70,19 @@ var fiadorController = $.extend(true, {
 		},
 		
 		cancelarCadastro:function (){
+			
 			var _this =  this;
+			
+			if (!_this.alteracaoDadosBasicos){
+				
+				_this.fecharModalCadastroFiador = true;
+				$("#fiadorController-dialog-close", fiadorController.workspace).dialog("close");
+				$("#fiadorController-dialog-fiador", fiadorController.workspace).dialog("close");
+				_this.limparCamposCadastroFiador();
+				
+				return;
+			}
+			
 			$("#fiadorController-dialog-cancelar-cadastro-fiador", fiadorController.workspace).dialog({
 				resizable: false,
 				height:150,
