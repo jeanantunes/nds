@@ -1126,7 +1126,7 @@ var COTA_CNPJ = $.extend(true, {
         
         COTA_CNPJ.gridAntigosProprietarios.init(result);
 
-        if (result.status == "ATIVO") {
+        if (result.status == "ATIVO" || result.status == "SUSPENSO") {
 
             var linkTitularidade = $("#btnAlterarTitularidadeCNPJ", this.workspace).find("a");
 
@@ -1332,7 +1332,7 @@ var COTA_CPF = $.extend(true, {
 
         COTA_CPF.gridAntigosProprietarios.init(result);
 
-        if (result.status == "ATIVO") {
+        if (result.status == "ATIVO" || result.status == "SUSPENSO") {
 
             var linkTitularidade = $("#btnAlterarTitularidadeCPF", this.workspace).find("a");
 
