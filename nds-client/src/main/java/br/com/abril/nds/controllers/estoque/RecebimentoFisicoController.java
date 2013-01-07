@@ -1462,7 +1462,7 @@ public class RecebimentoFisicoController extends BaseController {
 		}
 		catch(Exception e){
 			if (e instanceof ValidacaoException) {
-				throw e;
+				//throw e;
 			}
 			throw new ValidacaoException(TipoMensagem.ERROR, "Erro ao incluir nota: "+e.getMessage());
 		}
