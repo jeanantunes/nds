@@ -236,7 +236,12 @@ var ConferenciaEncalhe = $.extend(true, {
 		});
 		
 		ConferenciaEncalhe.popup_logado();
+		
+		ConferenciaEncalhe.atribuirAtalhos();
+	},
 	
+	atribuirAtalhos: function(){
+		
 		shortcut.add("F2", function() {
 			
 			if (!ConferenciaEncalhe.modalAberta){
@@ -269,7 +274,6 @@ var ConferenciaEncalhe = $.extend(true, {
 				ConferenciaEncalhe.popup_salvarInfos();
 			}
 		});
-	
 	},
 	
 	pesquisarCota : function() {
@@ -414,7 +418,7 @@ var ConferenciaEncalhe = $.extend(true, {
 									$("#dialog-confirmar", ConferenciaEncalhe.workpace).dialog("close");
 								}
 							},
-							form: $("#dialog-confirmar", this.workspace).parents("form")
+							form: $("#dialog-confirmar", ConferenciaEncalhe.workspace).parents("form")
 						});
 					}
 				}
@@ -1273,6 +1277,8 @@ var ConferenciaEncalhe = $.extend(true, {
 	},
 	
 	irParaContigencia: function(){
+		$('#workspace').tabs('remove', $('#workspace').tabs('option','selected'));
+		$(".tipsy").hide();
 		$('#workspace').tabs('addTab', "Conferência Encalhe Cota Contingência",
 				contextPath + "/devolucao/conferenciaEncalheContingencia" + "?random=" + Math.random());
 	},
@@ -1303,7 +1309,7 @@ var ConferenciaEncalhe = $.extend(true, {
 								$("#dialog-confirmar-regerar-cobranca", ConferenciaEncalhe.workspace).dialog("close");
 							}
 						},
-						form: $("#dialog-confirmar-regerar-cobranca", this.workspace).parents("form")
+						form: $("#dialog-confirmar-regerar-cobranca", ConferenciaEncalhe.workspace).parents("form")
 					});
 					
 				} else {

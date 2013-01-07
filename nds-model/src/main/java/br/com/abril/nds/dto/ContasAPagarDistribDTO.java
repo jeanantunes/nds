@@ -15,6 +15,11 @@ public class ContasAPagarDistribDTO implements Serializable {
 		this.total = BigDecimal.ZERO;
 	}
 	
+	public ContasAPagarDistribDTO(String nome, BigDecimal total) {
+		this.nome = nome;
+		this.total = total;
+	}
+
 	public String getNome() {
 		return nome;
 	}

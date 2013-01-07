@@ -395,8 +395,11 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
 			hql.append(" where l.reparte is not null ");
 		}
 		
-		hql.append(" and l.produtoEdicao.precoVenda is not null ")
-		   .append(" and l.status = :statusLancamento ");
+		hql.append(" and l.produtoEdicao.precoVenda is not null ");
+		
+		if (filtro.getDataDe() != null){
+		   hql.append(" and l.status = :statusLancamento ");
+		}
 		
 		if (filtro.getIdsFornecedores() != null && !filtro.getIdsFornecedores().isEmpty()){
 			
@@ -408,11 +411,11 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
 			if (filtro.getDataDe() == null){
 				
 				hql.append(" group by l.dataRecolhimentoPrevista ")
-				   .append(" order by l.dataRecolhimentoPrevista asc ");
+				   .append(" order by l.dataRecolhimentoPrevista desc ");
 			} else {
 				
 				hql.append(" group by l.dataCriacao ")
-				   .append(" order by l.dataCriacao asc ");
+				   .append(" order by l.dataCriacao desc ");
 			}
 		}
 		
@@ -438,6 +441,7 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
 		if (filtro.getDataDe() != null){
 			
 			query.setParameter("inicio", filtro.getDataDe());
+			query.setParameter("statusLancamento", StatusLancamento.RECOLHIDO);
         }
         
         if (filtro.getDataAte() != null){
@@ -471,7 +475,7 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
 			query.setParameter("statusGanho", StatusAprovacao.GANHO);
 		}
 		
-		query.setParameter("statusLancamento", StatusLancamento.CONFIRMADO);
+		
 		
 		if (filtro.getIdsFornecedores() != null && !filtro.getIdsFornecedores().isEmpty()){
 			
@@ -742,6 +746,7 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
         if (filtro.getDataDe() != null){
             hql.append(j+" l.dataCriacao >= :inicio ");
             j = " AND ";
+            hql.append(" and l.status = :statusLancamento ");
         }
         
         if (filtro.getDataAte() != null){
@@ -750,8 +755,8 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
         }
 	       
 	    hql.append(j+" l.reparte is not null ")
-	       .append(" and produtoEdicao.precoVenda is not null ")	      
-	       .append(" and l.status = :statusLancamento ");
+	       .append(" and produtoEdicao.precoVenda is not null ");	      
+	       
     	
     	if (filtro.getProdutoEdicaoIDs() != null && !filtro.getProdutoEdicaoIDs().isEmpty()){
 		    hql.append(" and produtoEdicao.id in (:idsProdutoEdicao) ");
@@ -766,7 +771,7 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
 		
 		StringBuilder hql = new StringBuilder();
 		hql.append("select ")
-		   .append("    produto2.codigo, ")
+		   .append("    produto2.codigo as codigo, ")
 		   .append("    produto2.nomeComercial as produto, ")
 		   .append("    produtoEdicao.numeroEdicao as edicao, ")
 		   .append(" 	produtoEdicao.precoVenda as precoCapa, ")
@@ -774,23 +779,33 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
 		   .append(" 	l.reparte as reparteSugerido, ")
 		   .append(" 	l.reparte - coalesce(dif.qtde,0) as reparteFinal, ")
 		   .append(" 	l.reparte - (l.reparte - coalesce(dif.qtde,0)) as diferenca, ")
-		   .append(" 	coalesce(dif.tipoDiferenca, '') as motivo, ")
+		   .append(" 	coalesce(mec.motivo, '') as motivo, ")
 		   .append(" 	coalesce(pessoa.razaoSocial, '') as fornecedor, ")
 		   .append(" 	produtoEdicao.precoVenda * (l.reparte - coalesce(dif.qtde,0)) as valor, ")
-		   .append(" 	(produtoEdicao.precoVenda - (produtoEdicao.precoVenda * coalesce(fo.margemDistribuidor,0) / 100)) * (l.reparte - coalesce(dif.qtde,0)) as valorDesconto ")
+		   .append(" 	(produtoEdicao.precoVenda - (produtoEdicao.precoVenda * coalesce(fo.margemDistribuidor,0) / 100)) * (l.reparte - coalesce(dif.qtde,0)) as valorComDesconto, ")
+		   .append("    coalesce(ne.chaveAcesso, '') as nfe ")
 		   .append(" from ")
 		   .append(" 	Lancamento l ")
 		   .append(" 	join l.produtoEdicao produtoEdicao ")
 		   .append("	join produtoEdicao.produto produto2 ")
 		   .append("	join produto2.fornecedores fo ")
 		   .append("	join fo.juridica pessoa ")
+		   .append("    left join l.movimentoEstoqueCotas mec ")
+		   .append("    left join mec.listaItemNotaEnvio ine ")
+		   .append("  	left join ine.itemNotaEnvioPK.notaEnvio ne ")
 		   .append(" 	left join produtoEdicao.diferencas dif ")
 		   .append("    left join dif.lancamentoDiferenca ld ")
-		   .append(" where l.dataCriacao = :data ")
-		   .append(" 	and l.reparte is not null ")
-		   .append(" 	and produtoEdicao.precoVenda is not null ")
-		   .append(" 	and l.status = :statusLancamento ")
-		   .append("	and ld.status is not null and ld.status= :statusLancamentoDif ");
+		   .append(" where l.reparte is not null ");
+		   
+		if (filtro.getDataDe() == null) {
+		   hql.append(" 	and l.dataRecolhimentoPrevista = :data ");
+		
+		} else {
+		   hql.append(" 	and l.dataCriacao = :data ")
+		   	  .append(" 	and l.status = :statusLancamento ");
+		}
+		
+		hql.append(" 	and produtoEdicao.precoVenda is not null ");
 		
 		if (filtro.getProduto() != null && !filtro.getProduto().isEmpty()){
 			
@@ -817,8 +832,11 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
 		
 		Query query = this.getSession().createQuery(hql.toString());
 		query.setParameter("data", filtro.getDataDetalhe());
-		query.setParameter("statusLancamento", StatusLancamento.CONFIRMADO);
-		query.setParameter("statusLancamentoDif", StatusAprovacao.APROVADO);
+		
+		if(filtro.getDataDe() != null) {
+			query.setParameter("statusLancamento", StatusLancamento.RECOLHIDO);
+		}
+		
 		
 		if (filtro.getProduto() != null && !filtro.getProduto().isEmpty()){
 			
@@ -829,6 +847,8 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
 			
 			query.setParameter("numeroEdicao", filtro.getEdicao());
 		}
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(ContasAPagarConsignadoDTO.class));
 		
 		return query.list();
 	}
@@ -968,7 +988,7 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<ContasAPagarConsultaProdutoDTO> obterProdutos(FiltroContasAPagarDTO Filtro) {
+	public List<ContasAPagarConsultaProdutoDTO> obterProdutos(FiltroContasAPagarDTO filtro) {
 		StringBuilder sql = new StringBuilder();
 
 
@@ -982,21 +1002,26 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
         sql.append(" JOIN  f.juridica fornec");
         sql.append(" JOIN  e.pessoaJuridica edi");
         
-        if(	Filtro.getProduto()!=null || Filtro.getEdicao()!=null ){
+        if(	filtro.getProduto()!=null || filtro.getEdicao()!=null ){
         	sql.append(" WHERE ");
-	        if(	Filtro.getProduto()!=null	)
+	        if(	filtro.getProduto()!=null	)
 	        	sql.append("        p.codigo = :codigoProduto ");
-	        if(	Filtro.getEdicao()!=null	)
+	        if(	filtro.getEdicao()!=null	)
 	        	sql.append(" AND    pe.numeroEdicao = :numeroEdicao ");
         }
-        sql.append(" order by  codigo");
+        
+        
+        sql.append(" order by "+filtro.getPaginacaoVO().getSortColumn());
+        sql.append(" "+filtro.getPaginacaoVO().getOrdenacao());
+        
+        
         Query query = getSession().createQuery(sql.toString());
-        if(Filtro.getProduto() != null){
-        	query.setParameter("codigoProduto", Filtro.getProduto());
+        if(filtro.getProduto() != null){
+        	query.setParameter("codigoProduto", filtro.getProduto());
         }
         
-        if(Filtro.getEdicao()!=null){
-        	query.setParameter("numeroEdicao", Filtro.getEdicao());            
+        if(filtro.getEdicao()!=null){
+        	query.setParameter("numeroEdicao", filtro.getEdicao());            
         }
         query.setResultTransformer(new AliasToBeanResultTransformer(ContasAPagarConsultaProdutoDTO.class));
         return query.list();
@@ -1212,4 +1237,6 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
 		
 		return hql.toString();
 	}
+
+	
 }

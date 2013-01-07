@@ -30,21 +30,13 @@ public class RelatorioVendasServiceImpl implements RelatorioVendasService {
 		
 		if(!lista.isEmpty()){
 			
+			Long i = 1L;
+			
 			for(RegistroCurvaABCDistribuidorVO item : lista){
 				
-				if(TipoConsultaCurvaABC.PRODUTO.equals(filtroCurvaABCDistribuidorDTO.getTipoConsultaCurvaABC())){
-					
-					//Obtem o ranking do produto 
-					item.setRkProduto(rankingRepository.obterRankingProduto(item.getIdProduto()));
-					
-					//Obtem o ranking da cota em relação ao produto 
-					item.setRkCota(rankingRepository.obterRankingCota(item.getIdProduto(), item.getIdCota()));
-				}
-				else{
-					
-					//Obtem o ranking da cota no distribuidor
-					item.setRkCota(rankingRepository.obterRankingCotaDistribuidor(item.getIdCota()));
-				}
+				item.setRkCota(i);
+				
+				i++;
 			}
 		}
 	

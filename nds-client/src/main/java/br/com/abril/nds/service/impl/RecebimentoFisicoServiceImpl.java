@@ -596,11 +596,7 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 		historicoLancamento.setTipoEdicao(TipoEdicao.INCLUSAO);
 		
 		historicoLancamentoRepository.adicionar(historicoLancamento);
-		
-		
 	}
-	
-	
 	
 	private Diferenca obterDiferencaDeItemRecebimentoFisico(
 			Usuario usuarioLogado,
@@ -853,7 +849,7 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 			
 			Diferenca diferenca = obterDiferencaDeItemRecebimentoFisico(usuarioLogado, recebimentoFisicoDTO);
 			diferenca = diferencaEstoqueService.lancarDiferencaAutomatica(diferenca);
-			diferencaEstoqueService.gerarMovimentoEstoqueDiferenca(diferenca, usuarioLogado.getId());
+			
 			ItemRecebimentoFisico itemRecebimento = itemRecebimentoFisicoRepository.buscarPorId(recebimentoFisicoDTO.getIdItemRecebimentoFisico());
 			itemRecebimento.setDiferenca(diferenca);
 			itemRecebimentoFisicoRepository.alterar(itemRecebimento);

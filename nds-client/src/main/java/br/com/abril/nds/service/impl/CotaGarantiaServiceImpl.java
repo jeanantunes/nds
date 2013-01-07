@@ -211,7 +211,10 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 				idCota, CotaGarantiaChequeCaucao.class);
 		
 		cotaGarantiaCheque.setTipoGarantia(TipoGarantia.CHEQUE_CAUCAO);
-
+		
+		if(cheque != null && cheque.getChequeImage() == null && cotaGarantiaCheque != null && cotaGarantiaCheque.getCheque() != null)
+			cheque.setChequeImage(cotaGarantiaCheque.getCheque().getChequeImage());
+		
 		cotaGarantiaCheque.setData(new Date());
 		    
 		cotaGarantiaCheque.setCheque(cheque);
@@ -558,6 +561,24 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 		}
 		
 		return cheque;
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public NotaPromissoria obterDadosNotaPromissoria(Long idCota){
+		
+		NotaPromissoria notaPromissoria = null;
+		
+	    CotaGarantia cotaGarantia = cotaGarantiaRepository.getByCota(idCota);
+		
+		if (cotaGarantia instanceof CotaGarantiaNotaPromissoria) {	
+			
+			CotaGarantiaNotaPromissoria cotaGarantiaNotaPromissoria = (CotaGarantiaNotaPromissoria) cotaGarantia;			
+			
+			notaPromissoria = cotaGarantiaNotaPromissoria.getNotaPromissoria();
+		}
+		
+		return notaPromissoria;
 	}
 
 	@Override
