@@ -172,7 +172,7 @@ var consultaBoletosController = $.extend(true, {
 	   					   name: 'nossoNumero', value: nossoNumero
 	   				   }
 	   			   ];
-		$.postJSON(contextPath + "/financeiro/boletos/verificaBoleto", data, imprimirBoleto );
+		$.postJSON(contextPath + "/financeiro/boletos/verificaBoleto", data, consultaBoletosController.imprimirBoleto );
 	},
 	
 	imprimirBoleto : function(result){

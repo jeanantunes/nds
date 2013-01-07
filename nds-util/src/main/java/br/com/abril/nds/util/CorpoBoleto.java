@@ -67,6 +67,9 @@ public class CorpoBoleto implements Serializable {
     private String boletoInstrucao6;
     private String boletoInstrucao7;
     private String boletoInstrucao8;
+    
+    private Boolean boletoSemValor;
+    
 	/**
 	 * @return the cedenteNome
 	 */
@@ -635,7 +638,17 @@ public class CorpoBoleto implements Serializable {
 	public void setBoletoInstrucao8(String boletoInstrucao8) {
 		this.boletoInstrucao8 = boletoInstrucao8;
 	}
-	
-    
+	/**
+	 * @return the boletoSemValor
+	 */
+	public Boolean isBoletoSemValor() {
+		return boletoSemValor==null?false:boletoSemValor;
+	}
+	/**
+	 * @param boletoSemValor the boletoSemValor to set
+	 */
+	public void setBoletoSemValor(Boolean boletoSemValor) {
+		this.boletoSemValor = boletoSemValor==null?false:boletoSemValor;
+	}
 		
 }
