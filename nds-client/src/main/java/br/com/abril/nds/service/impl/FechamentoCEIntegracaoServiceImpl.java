@@ -21,7 +21,8 @@ import br.com.abril.nds.repository.FechamentoCEIntegracaoRepository;
 import br.com.abril.nds.service.BoletoService;
 import br.com.abril.nds.service.FechamentoCEIntegracaoService;
 import br.com.abril.nds.service.GerarCobrancaService;
-import br.com.abril.nds.util.CurrencyUtil;
+import br.com.abril.nds.util.CellModelKeyValue;
+import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
 
 @Service
@@ -86,7 +87,7 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 			
 		} catch(Exception e) {
 			
-			throw new ValidacaoException(TipoMensagem.ERROR, "Falha ao gerar cobranÁa em boleto para o Distribuidor");
+			throw new ValidacaoException(TipoMensagem.ERROR, "Falha ao gerar cobran√ßa em boleto para o Distribuidor");
 			
 		}
 		
@@ -112,7 +113,7 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 		List<FechamentoCEIntegracaoDTO> listaFechamento = this.buscarFechamentoEncalhe(filtro);
 		
 		if(listaFechamento.size() == 0){
-			throw new ValidacaoException(TipoMensagem.WARNING, "A pesquisa realizada n„o obteve resultado.");
+			throw new ValidacaoException(TipoMensagem.WARNING, "A pesquisa realizada n√£o obteve resultado.");
 		}
 		
 		TableModel<CellModelKeyValue<FechamentoCEIntegracaoDTO>> tableModel = new TableModel<CellModelKeyValue<FechamentoCEIntegracaoDTO>>();
