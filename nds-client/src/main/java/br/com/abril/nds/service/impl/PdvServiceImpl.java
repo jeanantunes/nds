@@ -957,8 +957,10 @@ public class PdvServiceImpl implements PdvService {
 
         if (listaTipos.contains(TipoPeriodoFuncionamentoPDV.DIARIA)) {
 
-            if (listaTipos.size() > 1) {
-
+        	
+        	if (listaTipos.size() == 2 && listaTipos.contains(TipoPeriodoFuncionamentoPDV.FERIADOS)) {
+        		
+        	} else if (listaTipos.size() > 1) {
                 throw new ValidacaoException(TipoMensagem.WARNING,
                         "Ao selecionar "
                                 + TipoPeriodoFuncionamentoPDV.DIARIA
