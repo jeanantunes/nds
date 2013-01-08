@@ -17,6 +17,7 @@ import javax.persistence.Table;
 
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.planejamento.fornecedor.ChamadaEncalheFornecedor;
 
 @Entity
@@ -63,6 +64,10 @@ public class BoletoDistribuidor {
 	@Column(name="VIAS")
 	private Integer vias;
 
+	@Enumerated(EnumType.STRING)
+	@Column(name = "TIPO_COBRANCA", nullable = false)
+	protected TipoCobranca tipoCobranca;
+	
 	public Long getId() {
 		return id;
 	}
@@ -152,6 +157,13 @@ public class BoletoDistribuidor {
 	public void setFornecedor(Fornecedor fornecedor) {
 		this.fornecedor = fornecedor;
 	}
-	
+
+	public TipoCobranca getTipoCobranca() {
+		return tipoCobranca;
+	}
+
+	public void setTipoCobranca(TipoCobranca tipoCobranca) {
+		this.tipoCobranca = tipoCobranca;
+	}
 	
 }

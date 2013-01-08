@@ -901,7 +901,8 @@ public class BoletoServiceImpl implements BoletoService {
 				dataVencimento, 
 				pessoaCedente, 
 				pessoaSacado, 
-				endereco);
+				endereco, 
+				boleto.getTipoCobranca());
 		
 	}
 	
@@ -939,7 +940,9 @@ public class BoletoServiceImpl implements BoletoService {
 				dataVencimento, 
 				pessoaCedente, 
 				pessoaSacado, 
-				endereco);
+				endereco,
+				boleto.getTipoCobranca()
+				);
 		
 	}
 	
@@ -958,7 +961,8 @@ public class BoletoServiceImpl implements BoletoService {
 			Date dataVencimento,
 			Pessoa pessoaCedente, 
 			Pessoa pessoaSacado,
-			Endereco enderecoSacado
+			Endereco enderecoSacado,
+			TipoCobranca tipoCobranca
 			
 			){
 
@@ -1089,7 +1093,7 @@ public class BoletoServiceImpl implements BoletoService {
         corpoBoleto.setBoletoInstrucao8("");
         
         //BOLETO EM BRANCO
-        corpoBoleto.setBoletoSemValor(boleto.getTipoCobranca().equals(TipoCobranca.BOLETO_EM_BRANCO));
+        corpoBoleto.setBoletoSemValor(tipoCobranca.equals(TipoCobranca.BOLETO_EM_BRANCO));
         
         return corpoBoleto;
 	}

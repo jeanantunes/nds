@@ -59,6 +59,8 @@ public class FechamentoCEIntegracaoController extends BaseController{
 	
 	private static final String FILTRO_SESSION_ATTRIBUTE_FECHAMENTO_CE_INTEGRACAO = "filtroFechamentoCEIntegracao";
 	
+	private static final String BOLETO_GERADO = "boletoDistribuidorGerado";
+	
 	private Result result;
 	
 	@Autowired
@@ -226,14 +228,42 @@ public class FechamentoCEIntegracaoController extends BaseController{
 		
 	}
 	
-	@Get
-	@Path("/imprimeBoleto")
-	public void imprimeBoleto(TipoCobranca tipoCobranca) throws Exception {
+	@Post
+	@Path("/geraBoleto")
+	public void geraBoleto(TipoCobranca tipoCobranca) {
+		
+		session.setAttribute(BOLETO_GERADO, null);
 		
 		FiltroFechamentoCEIntegracaoDTO filtro = (FiltroFechamentoCEIntegracaoDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE_FECHAMENTO_CE_INTEGRACAO);
 		
-		byte[] boleto = fechamentoCEIntegracaoService.gerarCobrancaBoletoDistribuidor(filtro, tipoCobranca);
+		if(filtro == null || filtro.getSemana() == null) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhuma pesquisa realizada.");
+		}
+		
+		try {
+			
+			byte[] boleto = fechamentoCEIntegracaoService.gerarCobrancaBoletoDistribuidor(filtro, tipoCobranca);
 
+			session.setAttribute(BOLETO_GERADO, boleto);
+			
+			result.use(Results.json()).from("").serialize();
+			
+		} catch(Exception e) {
+			
+			throw new ValidacaoException(TipoMensagem.ERROR, "Falha na geração do boleto.");
+			
+		}
+		
+	}
+	
+	@Get
+	@Path("/imprimeBoleto")
+	public void imprimeBoleto() throws Exception {
+		
+		byte[] boleto = (byte[]) session.getAttribute(BOLETO_GERADO);
+		
+		session.setAttribute(BOLETO_GERADO, null);
+		
 		escreverArquivoParaResponse(boleto, "boleto");
 		
 	}

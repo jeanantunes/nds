@@ -17,6 +17,9 @@
 </head>
 
 <body>
+
+	<iframe src="" id="download-iframe-fechamento" style="display:none;"></iframe>
+
     <div class="areaBts">
     	<div class="area">
     		<span class="bt_novos" id="btnFechamento" >
@@ -36,7 +39,9 @@
 		    
 		    	<c:if test="${BOLETO}">
 		    	
-			    	<a href="${pageContext.request.contextPath}/devolucao/fechamentoCEIntegracao/imprimeBoleto?tipoCobranca=BOLETO" rel="tipsy" title="Imprimir Boleto">
+			    	<a 	href="javascript:;"
+			    		onclick="fechamentoCEIntegracaoController.geraBoleto('BOLETO');"
+			    		rel="tipsy" title="Imprimir Boleto">
 			    		<img src="${pageContext.request.contextPath}/images/ico_negociar.png" hspace="5" border="0" />
 			    	</a>
 		    	
@@ -46,7 +51,9 @@
 	       <span class="bt_novos">
 				
 				<c:if test="${BOLETO_EM_BRANCO}">
-			       	<a href="${pageContext.request.contextPath}/devolucao/fechamentoCEIntegracao/imprimeBoleto?tipoCobranca=BOLETO_EM_BRANCO" rel="tipsy" title="Imprimir Boleto em Branco">
+			       	<a href="javascript:;"
+			       	onclick="fechamentoCEIntegracaoController.geraBoleto('BOLETO_EM_BRANCO');"			       	
+			       	rel="tipsy" title="Imprimir Boleto em Branco">
 			       		<img src="${pageContext.request.contextPath}/images/ico_detalhes.png" hspace="5" border="0" />
 			       	</a>
 				</c:if>					       

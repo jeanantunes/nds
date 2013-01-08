@@ -410,7 +410,11 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 				
 				if(TipoCobranca.BOLETO.equals(tipoCobranca)) {
 					
-					boletoDistribuidor.setValor(chamadaEncalheFornecedor.getTotalVendaInformada());
+					BigDecimal valorLiquidoBoleto = obterValorBoleto(chamadaEncalheFornecedor.getId(), chamadaEncalheFornecedor.getTotalVendaApurada());
+					
+					boletoDistribuidor.setValor(valorLiquidoBoleto);
+					
+					boletoDistribuidor.setTipoCobranca(tipoCobranca);
 					
 					boletoDistribuidorRepository.alterar(boletoDistribuidor);
 					
@@ -438,13 +442,14 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 				
 				boletoDistribuidor.setDataEmissao(dataAtual);
 				
-				
 				boletoDistribuidor.setDataVencimento(obterDataVencimentoBoletoDistribuidor(semana));
 				
 				boletoDistribuidor.setNossoNumeroDistribuidor(nossoNumeroDistribuidor);
 				boletoDistribuidor.setStatus(null);
 				
 				boletoDistribuidor.setFornecedor(chamadaEncalheFornecedor.getFornecedor());
+				
+				boletoDistribuidor.setTipoCobranca(tipoCobranca);
 				
 				if(TipoCobranca.BOLETO.equals(tipoCobranca)) {
 					boletoDistribuidor.setValor(valorLiquidoBoleto);
