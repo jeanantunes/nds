@@ -16,6 +16,8 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.abril.nds.dto.FechamentoCEIntegracaoDTO;
 import br.com.abril.nds.exception.GerarCobrancaValidacaoException;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.integracao.service.DistribuidorService;
+import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.StatusControle;
 import br.com.abril.nds.model.cadastro.Banco;
@@ -45,6 +47,7 @@ import br.com.abril.nds.model.financeiro.StatusDivida;
 import br.com.abril.nds.model.financeiro.StatusInadimplencia;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.planejamento.fornecedor.ChamadaEncalheFornecedor;
+import br.com.abril.nds.model.planejamento.fornecedor.ItemChamadaEncalheFornecedor;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.BoletoDistribuidorRepository;
 import br.com.abril.nds.repository.ChamadaEncalheCotaRepository;
@@ -58,6 +61,7 @@ import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.DividaRepository;
 import br.com.abril.nds.repository.FechamentoEncalheRepository;
 import br.com.abril.nds.repository.HistoricoAcumuloDividaRepository;
+import br.com.abril.nds.repository.ItemChamadaEncalheFornecedorRepository;
 import br.com.abril.nds.repository.MovimentoFinanceiroCotaRepository;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
 import br.com.abril.nds.repository.UsuarioRepository;
@@ -149,6 +153,12 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 	
 	@Autowired
 	private ChamadaEncalheFornecedorRepository chamadaEncalheFornecedorRepository;
+	
+	@Autowired
+	private DistribuidorService distribuidorService;
+	
+	@Autowired
+	private ItemChamadaEncalheFornecedorRepository itemChamadaEncalheFornecedorRepository;
 	
 	/**
 	 * Obtém a situação da cota
@@ -326,33 +336,54 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		}
 	}
 	
-	/*
-	 * . O vencimento desta deverá ser sempre D+2 pós fechamento da semana;
-	 * exemplo: a semana 30 vai de 11/07/12 (quarta-feira) à 17/07/12
-	 * (terça-feira), na quarta-feira dia 18/07/12 o Distribuidor fará o
-	 * fechamento da semana de encalhe/recolhimento, informando ao Fornecedor o
-	 * valor da sua semana de pagamento via Integração da CE onde o boleto para
-	 * pagamento ficará disponibilizado com o valor desta. Caso o usuário
-	 * consulte uma semana de recolhimento ainda não fechada, ou seja, que sua
-	 * CE não foi enviada ao Fornecedor, a funcionalidade deve permitir apenas o
-	 * boleto em branco (onde este deve ficar disponível para qualquer semana de
-	 * recolhimento, independente da integração de informações). Podemos ter as
-	 * duas opções de boletos cadastrados para cada fornecedor DGB, onde as duas
-	 * formas de pagamento devem ser alteradas de acordo com o Fornecedor
-	 * escolhido no filtro de pesquisa.
+	/**
+	 * Retorna a data de vencimento para o boleto, sendo esta calculada 
+	 * da seguinte forma:
+	 * 
+	 * É recuperada a data da Terça-feira dentro da semana utilizada na pesquisa 
+	 * principal do fechamentoCEIntegração. A esta data são adicionados 2 dias
+	 * úteis.
+	 * 
+	 * @param semana
+	 * 
+	 * @return Date
 	 */
-	
-	private Date obterDataVencimentoBoletoDistribuidor(Date dataFechamentoSemana) {
+	private Date obterDataVencimentoBoletoDistribuidor(int semana) {
 		
-		Date dataVencimento = DateUtil.adicionarDias(dataFechamentoSemana, 2);
+		Distribuidor distribuidor = this.distribuidorService.obter();
 		
+		Date dataFechamentoSemana = DateUtil.obterDataDaSemanaNoAno(semana, DiaSemana.TERCA_FEIRA.getCodigoDiaSemana(), distribuidor.getDataOperacao());
+		
+		Date dataVencimento = this.calendarioService.adicionarDiasUteis(dataFechamentoSemana, 2);
+				
 		return dataVencimento;
+	}
+	
+	/**
+	 * Retorna o valor total do boleto com desconto.
+	 * 
+	 * @param idChamadaEncalheFornecedor
+	 * @param valorBrutoBoleto
+	 * 
+	 * @return BigDecimal
+	 */
+	private BigDecimal obterValorBoleto(Long idChamadaEncalheFornecedor, BigDecimal valorBrutoBoleto) {
+		
+		BigDecimal valorTotalDesconto = 
+				itemChamadaEncalheFornecedorRepository.obterTotalDoDescontoItensChamadaEncalheFornecedor(idChamadaEncalheFornecedor);
+		
+		if(valorTotalDesconto == null) {
+			valorTotalDesconto = BigDecimal.ZERO;
+		}
+		
+		return valorBrutoBoleto.subtract(valorTotalDesconto);
+		
 	}
 	
 	@Transactional
 	public List<BoletoDistribuidor> gerarCobrancaBoletoDistribuidor(
 			List<ChamadaEncalheFornecedor> listaChamadaEncalheFornecedor, 
-			TipoCobranca tipoCobranca){
+			TipoCobranca tipoCobranca, int semana){
 		
 		List<BoletoDistribuidor> listaBoletoDistribuidor = new ArrayList<BoletoDistribuidor>();
 		
@@ -387,8 +418,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 				
 			} else {
 				
-				//FIXME de qual campo obtemos o valor total do boleto?
-				BigDecimal valor = chamadaEncalheFornecedor.getTotalVendaInformada();
+				BigDecimal valorLiquidoBoleto = obterValorBoleto(chamadaEncalheFornecedor.getId(), chamadaEncalheFornecedor.getTotalVendaApurada());
 				
 				Fornecedor fornecedor = chamadaEncalheFornecedor.getFornecedor();
 				
@@ -409,8 +439,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 				boletoDistribuidor.setDataEmissao(dataAtual);
 				
 				
-				//FIXME obter a data de fechamento da semana
-				boletoDistribuidor.setDataVencimento(obterDataVencimentoBoletoDistribuidor(dataAtual));
+				boletoDistribuidor.setDataVencimento(obterDataVencimentoBoletoDistribuidor(semana));
 				
 				boletoDistribuidor.setNossoNumeroDistribuidor(nossoNumeroDistribuidor);
 				boletoDistribuidor.setStatus(null);
@@ -418,7 +447,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 				boletoDistribuidor.setFornecedor(chamadaEncalheFornecedor.getFornecedor());
 				
 				if(TipoCobranca.BOLETO.equals(tipoCobranca)) {
-					boletoDistribuidor.setValor(valor);
+					boletoDistribuidor.setValor(valorLiquidoBoleto);
 				}
 				
 				boletoDistribuidor.setVias(1);

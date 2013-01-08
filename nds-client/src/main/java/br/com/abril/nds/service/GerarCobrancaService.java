@@ -25,6 +25,6 @@ public interface GerarCobrancaService {
 	
 	List<BoletoDistribuidor> gerarCobrancaBoletoDistribuidor(
 			List<ChamadaEncalheFornecedor> listaChamadaEncalheFornecedor, 
-			TipoCobranca tipoCobranca);
+			TipoCobranca tipoCobranca, int semana);
 	
 }
