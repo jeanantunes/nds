@@ -211,7 +211,10 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 				idCota, CotaGarantiaChequeCaucao.class);
 		
 		cotaGarantiaCheque.setTipoGarantia(TipoGarantia.CHEQUE_CAUCAO);
-
+		
+		if(cheque != null && cheque.getChequeImage() == null && cotaGarantiaCheque != null && cotaGarantiaCheque.getCheque() != null)
+			cheque.setChequeImage(cotaGarantiaCheque.getCheque().getChequeImage());
+		
 		cotaGarantiaCheque.setData(new Date());
 		    
 		cotaGarantiaCheque.setCheque(cheque);

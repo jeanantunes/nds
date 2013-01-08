@@ -69,7 +69,7 @@
 				<td>&nbsp;</td>
 				<td colspan="3"><span class="bt_novos"><a
 						href="javascript:;"
-						id="cotaGarantiaNotaPromissoriaImprimir" target="_blank" rel="tipsy" title="Imprimir Nota Promissória"><img
+						id="cotaGarantiaNotaPromissoriaImprimir" rel="tipsy" title="Imprimir Nota Promissória"><img
 							src="${pageContext.request.contextPath}/images/ico_impressora.gif"
 							hspace="5" border="0" /></a></span></td>
 			</tr>
@@ -203,8 +203,9 @@
 			<tr>
 				<td>Imagem Cheque:</td>
 				<td colspan="3">
-					<form id="cotaGarantiaChequeCaucaoFormUpload" enctype="multipart/form-data">
-						<input name="image" type="file" id="cotaGarantiaChequeCaucaoUpload" size="58" />
+					<form action="/nds-client/cadastro/garantia/uploadCheque" id="cotaGarantiaChequeCaucaoFormUpload" method="post" enctype="multipart/form-data" onsubmit="ChequeCaucao.prototype.uploadFormOnSubmit()">
+						<input type="hidden" id="idCheque" name="idCheque" size="58" />
+						<input type="file" id="cotaGarantiaChequeCaucaoUpload" name="image" size="58" />
 						<input type="submit" value="Enviar"/> 
 					</form>
 				</td>

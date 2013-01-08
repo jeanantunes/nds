@@ -2012,11 +2012,14 @@ public class CotaServiceImpl implements CotaService {
 		cotaNova.setParametroCobranca(parametrosCobrancaCota);
 		cotaNova.setParametroDistribuicao(parametroDistribuicaoCota);
 		cotaNova.setTitularesCota(titularesCota);
+		cotaNova.setSituacaoCadastro(SituacaoCadastro.ATIVO);
 
 		this.cotaRepository.merge(cotaNova);
 		processarTitularidadeCota(cotaAntiga, cotaDTO);
 		
 		this.excluiEnderecosTelefonesGarantiasSociosCota(cotaNova);
+		
+		cotaDTO.setStatus(SituacaoCadastro.ATIVO);
 		
 		return cotaDTO;
 	}

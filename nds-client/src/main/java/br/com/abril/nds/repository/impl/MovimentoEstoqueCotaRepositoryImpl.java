@@ -1269,7 +1269,6 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 			
 		}
 		
-		
 		return query.list();
 		
 	}
@@ -2432,7 +2431,13 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 	
 		sql.append("   JOIN movimentoEstoqueCota.lancamento lancamento ");
 		sql.append("   JOIN movimentoEstoqueCota.cota cota ");
-		sql.append("   JOIN cota.fornecedores fornecedor");
+		
+		
+		sql.append("   JOIN movimentoEstoqueCota.produtoEdicao produtoEdicao ");
+		sql.append("   JOIN produtoEdicao.produto produto ");
+		sql.append("   JOIN produto.fornecedores fornecedor ");
+		
+		
 		sql.append("   JOIN movimentoEstoqueCota.tipoMovimento tipoMovimento ");
 		sql.append("   LEFT JOIN movimentoEstoqueCota.movimentoEstoqueCotaFuro movimentoEstoqueCotaFuro ");
 		
