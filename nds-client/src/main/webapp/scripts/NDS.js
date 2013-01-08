@@ -171,6 +171,21 @@ function adicionarMascaraCEP(cep) {
 	return cep;
 }
 
+function floatValue(value) {
+	
+	var val = value;
+        	
+    if (!val) return; 
+    
+    
+    val = val.replace(".", "");
+    
+    val = val.replace(",", ".");
+    		
+    val = parseFloat(val);
+            
+    return val;
+}
 
 function serializeParamsToFlexiGridPost(params){
 	return $.map(params,function(value,key){ return {name:key,value:value};});
