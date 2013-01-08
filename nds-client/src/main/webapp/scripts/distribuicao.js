@@ -597,9 +597,8 @@ function Distribuicao(tela) {
 		
 		$("input[name='fimPeriodoCarencia']").mask("99/99/9999");
 		
-		D.$("taxaFixaEntregaBanca").numeric();
+		D.$("taxaFixaEntregaBanca").maskMoney({decimal:",", thousands:"."});
 		
-		$("input[name='taxaFixa']").mask("99.99");
 		
 		$("input[name='percentualFaturamento']").mask("99.99");
 		
