@@ -58,11 +58,11 @@
 						<jsp:include page="dadosCadastraisCnpj.jsp"></jsp:include>
 					</div>
 				
-				<div id="fiadorController-cadastroCpf" style="display: none;">
-					<jsp:include page="dadosCadastraisCpf.jsp">
-						<jsp:param value="fiadorController-" name="prefix"/>
-					</jsp:include>
-				</div>
+					<div id="fiadorController-cadastroCpf" style="display: none;">
+						<jsp:include page="dadosCadastraisCpf.jsp">
+							<jsp:param value="fiadorController-" name="prefix"/>
+						</jsp:include>
+					</div>
 				</fieldset>
 	        </div>
 	        
