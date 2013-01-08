@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="termo_adesao" pageWidth="555" pageHeight="802" columnWidth="515" leftMargin="20" rightMargin="20" topMargin="0" bottomMargin="0" whenResourceMissingType="Empty">
 	<property name="ireport.zoom" value="1.4641000000000008"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="111"/>
 	<parameter name="infoComp" class="java.lang.String"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA["C:\\Projetos\\Abril\\NDS\\nds-client\\src\\main\\resources\\reports\\"]]></defaultValueExpression>
@@ -75,19 +75,19 @@
 	<detail>
 		<band height="410" splitType="Stretch">
 			<textField>
-				<reportElement x="0" y="0" width="515" height="240"/>
+				<reportElement x="2" y="0" width="515" height="240"/>
 				<textElement textAlignment="Justified" verticalAlignment="Middle" markup="html">
-					<font fontName="Arial" size="14" isBold="false"/>
+					<font fontName="Arial" size="14" isBold="false" isPdfEmbedded="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[new String(
 new String(
 "Cota: "+ $F{numeroCota} + " - " + $F{nomeCota} +"<br/><br/><br/>"+
-"Eu, <b>" + $F{nomeCota}.toUpperCase() + "</b>, proprietário da cota acima na Distribuidora "+ $F{nomeDistribuidor} +", concordo em receber meu " +
-"reparte e devolver meu encalhe diretamente na banca - Serviço de Entrega da Distribuidora - e autorizo o lançamento do débito <u>"+ $F{periodicidade} +"</u> "+
-"em minha conta " + ($F{valorDebito} != null ? " no valor <b><u>R$ " + new java.text.DecimalFormat( "#,##0.00" ).format($F{valorDebito}) + "</u></b> referente à ": "<b><u>" +
+"Eu, <b>" + $F{nomeCota}.toUpperCase() + "</b>, propriet&aacute;rio da cota acima na Distribuidora "+ $F{nomeDistribuidor} +", concordo em receber meu " +
+"reparte e devolver meu encalhe diretamente na banca - Servi&ccedil;o de Entrega da Distribuidora - e autorizo o lan&ccedil;amento do d&eacute;bito <u>"+ $F{periodicidade} +"</u> "+
+"em minha conta " + ($F{valorDebito} != null ? " no valor <b><u>R$ " + new java.text.DecimalFormat( "#,##0.00" ).format($F{valorDebito}) + "</u></b> referente &agrave; ": "<b><u>" +
 String.format("%.2f", $F{porcentagemDebito}) +
-"%</u></b>") + " do meu faturamento <u>com base em cálculo no faturamento preço capa</u>.<br/><br/><br/>"+
-"O Serviço de Entrega contrato será realizado no endereço abaixo:<br/> "+
+"%</u></b>") + " do meu faturamento <u>com base em c&aacute;lculo no faturamento pre&ccedil;o capa</u>.<br/><br/><br/>"+
+"O Servi&ccedil;o de Entrega contrato ser&aacute; realizado no endere&ccedil;o abaixo:<br/> "+
 $F{logradouroEntrega} + "," + $F{bairroEntrega} + " - " + $F{cidadeEntrega} + " - CEP: " + $F{CEPEntrega} + ".<br/>" +
 ($F{referenciaEndereco} != null ? "Referência de Entrega: " + $F{referenciaEndereco} + "." : "")
 ).getBytes("ISO-8859-1"), "UTF-8")]]></textFieldExpression>

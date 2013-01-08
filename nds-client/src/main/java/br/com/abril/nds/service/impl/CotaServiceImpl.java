@@ -295,7 +295,7 @@ public class CotaServiceImpl implements CotaService {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Id da cota não pode ser nulo.");
 		}
 		
-		return this.cotaRepository.buscarPorId(idCota);
+		return this.cotaRepository.buscarCotaPorID(idCota);
 	}
 	
 	/**
@@ -458,7 +458,6 @@ public class CotaServiceImpl implements CotaService {
 
 				enderecoCota.setCota(cota);
 			}
-			
 			
 			boolean novoEndereco = (novoEnderecoCota && !enderecoAssociacao.isEnderecoPessoa());
 			
@@ -2012,11 +2011,14 @@ public class CotaServiceImpl implements CotaService {
 		cotaNova.setParametroCobranca(parametrosCobrancaCota);
 		cotaNova.setParametroDistribuicao(parametroDistribuicaoCota);
 		cotaNova.setTitularesCota(titularesCota);
+		cotaNova.setSituacaoCadastro(SituacaoCadastro.ATIVO);
 
 		this.cotaRepository.merge(cotaNova);
 		processarTitularidadeCota(cotaAntiga, cotaDTO);
 		
 		this.excluiEnderecosTelefonesGarantiasSociosCota(cotaNova);
+		
+		cotaDTO.setStatus(SituacaoCadastro.ATIVO);
 		
 		return cotaDTO;
 	}
@@ -2129,7 +2131,9 @@ public class CotaServiceImpl implements CotaService {
 		
 		if (enderecoCota != null){
 			
-			dto.setLogradouroEntrega(enderecoCota.getEndereco().getLogradouro() + ", nº " + enderecoCota.getEndereco().getNumero());
+			String numeroEndereco = (enderecoCota.getEndereco().getNumero()!= null)?enderecoCota.getEndereco().getNumero():"";
+			
+			dto.setLogradouroEntrega(enderecoCota.getEndereco().getLogradouro() + ", N&deg; " + numeroEndereco);
 			dto.setBairroEntrega(enderecoCota.getEndereco().getBairro());
 			dto.setCEPEntrega(enderecoCota.getEndereco().getCep());
 			dto.setCidadeEntrega(enderecoCota.getEndereco().getCidade());
@@ -2146,7 +2150,9 @@ public class CotaServiceImpl implements CotaService {
 				
 				if (enderecoPDV != null){
 					
-					dto.setLogradouroEntrega(enderecoPDV.getLogradouro() + ", nº " + enderecoPDV.getNumero());
+					String numeroEndereco =  enderecoPDV.getNumero()!=null ? enderecoPDV.getNumero():"";
+					
+					dto.setLogradouroEntrega(enderecoPDV.getLogradouro() + ", N&deg; " + numeroEndereco);
 					dto.setBairroEntrega(enderecoPDV.getBairro());
 					dto.setCEPEntrega(enderecoPDV.getCep());
 					dto.setCidadeEntrega(enderecoPDV.getCidade());

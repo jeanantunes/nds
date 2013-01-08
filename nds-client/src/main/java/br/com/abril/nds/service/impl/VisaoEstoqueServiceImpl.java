@@ -4,30 +4,30 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import br.com.abril.nds.dto.VisaoEstoqueDTO;
 import br.com.abril.nds.dto.VisaoEstoqueDetalheDTO;
 import br.com.abril.nds.dto.VisaoEstoqueTransferenciaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaVisaoEstoque;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
-import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
-import br.com.abril.nds.model.estoque.TipoDirecionamentoDiferenca;
 import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.seguranca.Usuario;
-import br.com.abril.nds.repository.DiferencaEstoqueRepository;
+import br.com.abril.nds.repository.EstoqueProdutoRespository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
-import br.com.abril.nds.repository.EstoqueProdutoRespository;
 import br.com.abril.nds.repository.VisaoEstoqueRepository;
+import br.com.abril.nds.service.DiferencaEstoqueService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.service.VisaoEstoqueService;
 import br.com.abril.nds.util.TipoMensagem;
@@ -45,7 +45,7 @@ public class VisaoEstoqueServiceImpl implements VisaoEstoqueService {
 	private TipoMovimentoEstoqueRepository tipoMovimentoEstoqueRepository;
 	
 	@Autowired
-	private DiferencaEstoqueRepository diferencaEstoqueRepository;
+	private DiferencaEstoqueService diferencaEstoqueService;
 	
 	@Autowired
 	private ProdutoEdicaoRepository produtoEdicaoRepository;
@@ -284,7 +284,6 @@ public class VisaoEstoqueServiceImpl implements VisaoEstoqueService {
 			
 			diferenca.setProdutoEdicao(produtoEdicao);
 			diferenca.setQtde(qtdeDiferenca.abs());
-			diferenca.setResponsavel(usuario);
 			
 			if (BigInteger.ZERO.compareTo(qtdeDiferenca) < 0) {
 				
@@ -294,14 +293,8 @@ public class VisaoEstoqueServiceImpl implements VisaoEstoqueService {
 				
 				diferenca.setTipoDiferenca(TipoDiferenca.FALTA_EM);
 			}
-
-			diferenca.setStatusConfirmacao(StatusConfirmacao.PENDENTE);
-			diferenca.setTipoDirecionamento(TipoDirecionamentoDiferenca.ESTOQUE);
-			diferenca.setTipoEstoque(tipoEstoque);
-			diferenca.setAutomatica(true);
-			diferenca.setDataMovimento(distribuidor.getDataOperacao());
 			
-			this.diferencaEstoqueRepository.adicionar(diferenca);
+			diferencaEstoqueService.lancarDiferencaAutomatica(diferenca);
 		}
 	}
 }

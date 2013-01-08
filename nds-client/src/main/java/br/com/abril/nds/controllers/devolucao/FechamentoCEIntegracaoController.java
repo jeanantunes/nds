@@ -15,6 +15,7 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
+import br.com.abril.nds.client.vo.FechamentoCEIntegracaoVO;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.FechamentoCEIntegracaoDTO;
 import br.com.abril.nds.dto.ItemDTO;
@@ -109,38 +110,25 @@ public class FechamentoCEIntegracaoController extends BaseController{
 		//this.validarEntrada(filtro);
 		
 		this.tratarFiltro(filtro);
-		
-		TableModel<CellModelKeyValue<FechamentoCEIntegracaoDTO>> tableModel = efetuarConsultaFechamentoCEIntegracao(filtro);
-		
-		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
-		
-	}
-	
-	
-	private TableModel<CellModelKeyValue<FechamentoCEIntegracaoDTO>> efetuarConsultaFechamentoCEIntegracao(FiltroFechamentoCEIntegracaoDTO filtro) {
-		
+
 		if(filtro.getSemana() != null){
 			filtro.setPeriodoRecolhimento(obterDataDaSemana(filtro));
 		}
+
+		FechamentoCEIntegracaoVO fechamentoCEIntegracaoVO = fechamentoCEIntegracaoService.construirFechamentoCEIntegracaoVO(filtro); 
+		
+		result.use(Results.json()).withoutRoot().from(fechamentoCEIntegracaoVO).recursive().serialize();
+		
+	}
+	
+	
+	private FechamentoCEIntegracaoVO efetuarConsultaFechamentoCEIntegracao(FiltroFechamentoCEIntegracaoDTO filtro) {
 		
 		List<FechamentoCEIntegracaoDTO> listaFechamento = this.fechamentoCEIntegracaoService.buscarFechamentoEncalhe(filtro);
 		
-		if(listaFechamento.size() == 0){
-			throw new ValidacaoException(TipoMensagem.WARNING, "A pesquisa realizada não obteve resultado.");
-		}
-		
-		listaFechamento = this.fechamentoCEIntegracaoService.calcularVenda(listaFechamento);
-		
-		TableModel<CellModelKeyValue<FechamentoCEIntegracaoDTO>> tableModel = new TableModel<CellModelKeyValue<FechamentoCEIntegracaoDTO>>();
-
-		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaFechamento));
-		
-		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
-		
-		tableModel.setTotal(listaFechamento.size());
-		
-		return tableModel;
+		return fechamentoCEIntegracaoService.construirFechamentoCEIntegracaoVO(filtro);
 	}
+
 	
 	private Intervalo<Date> obterDataDaSemana(FiltroFechamentoCEIntegracaoDTO filtro) {
 		
@@ -164,17 +152,17 @@ public class FechamentoCEIntegracaoController extends BaseController{
 		
 		List<FechamentoCEIntegracaoDTO> listaFechamento = this.fechamentoCEIntegracaoService.buscarFechamentoEncalhe(filtro);
 		
-		listaFechamento = this.fechamentoCEIntegracaoService.calcularVenda(listaFechamento);
+		//listaFechamento = this.fechamentoCEIntegracaoService.calcularVenda(listaFechamento);
 		double totalBruto = 0;
 		BigDecimal desconto = new BigDecimal(0);
-		for(FechamentoCEIntegracaoDTO dto: listaFechamento){
+		/*for(FechamentoCEIntegracaoDTO dto: listaFechamento){
 			double valorDaVenda =  dto.getVenda().doubleValue() * dto.getPrecoCapa().doubleValue();
 			totalBruto = totalBruto + valorDaVenda;
 			Cota cota = this.cotaService.obterPorId(dto.getIdCota());
 			ProdutoEdicao pe = this.produtoEdicaoService.obterProdutoEdicao(dto.getIdProdutoEdicao(), false);
 			desconto.add(this.descontoService.obterValorDescontoPorCotaProdutoEdicao(null, cota, pe));
 			
-		}		
+		}		*/
 		
 		StringBuilder html = new StringBuilder();
 		html.append("<td width='88' valign='top'><strong>Total Bruto R$:</strong></td>");
@@ -205,24 +193,6 @@ public class FechamentoCEIntegracaoController extends BaseController{
 		}
 		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS,"Fechamento realizado com sucesso."),"result").recursive().serialize();
-		
-	}
-	/*
-	 * Esse metodo verifica se a semana está aberta ou fechada.
-	 * Se a semana estiver fechada e a data de fechamento não for a data atual, o botão de reabertura e fechamento deve estar desabilitado.
-	 */	
-	@Post
-	@Path("verificarStatusSemana")
-	public void verificarStatusSemana(){
-		
-		FiltroFechamentoCEIntegracaoDTO filtro = (FiltroFechamentoCEIntegracaoDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE_FECHAMENTO_CE_INTEGRACAO);
-		if(filtro.getSemana() != null){
-			filtro.setPeriodoRecolhimento(this.obterDataDaSemana(filtro));
-		}
-		
-		boolean fechada = this.fechamentoCEIntegracaoService.verificarStatusSemana(filtro);
-		
-		result.use(Results.json()).from(fechada).serialize();
 		
 	}
 	
@@ -258,7 +228,7 @@ public class FechamentoCEIntegracaoController extends BaseController{
 		
 		List<FechamentoCEIntegracaoDTO> listaFechamento = this.fechamentoCEIntegracaoService.buscarFechamentoEncalhe(filtro);
 		
-		listaFechamento = this.fechamentoCEIntegracaoService.calcularVenda(listaFechamento);
+		//listaFechamento = this.fechamentoCEIntegracaoService.calcularVenda(listaFechamento);
 		
 		if(listaFechamento.isEmpty()) {
 			throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");

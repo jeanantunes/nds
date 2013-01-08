@@ -17,12 +17,12 @@ table {
 
 	<table width="700" border="0" cellspacing="2" cellpadding="2">
 		<tr>
-			<td width="690" align="right"><strong>Vencímento <fmt:formatDate value="${nota.notaPromissoria.vencimento.time}" pattern="dd', de' MMMM 'de' yyyy"/></strong></td>
+			<td width="690" align="right"><strong>Vencimento <fmt:formatDate value="${nota.notaPromissoria.vencimento}" pattern="dd', de' MMMM 'de' yyyy"/></strong></td>
 		</tr>
 		<tr>
 			<td>
 				<div style="float: left">
-					<strong>Número:</strong> ${nota.notaPromissoria.id }
+					<strong>Número: </strong> ${nota.notaPromissoria.id }
 				</div>
 
 				<div style="float: right">
@@ -34,7 +34,7 @@ table {
 			<td>&nbsp;</td>
 		</tr>
 		<tr>
-			<td>Ao(s)  <fmt:formatDate value="${nota.notaPromissoria.vencimento.time}" pattern="dd', de' MMMM 'de' yyyy"/> pagar(emos) por
+			<td>Ao(s)  <fmt:formatDate value="${nota.notaPromissoria.vencimento}" pattern="dd', de' MMMM 'de' yyyy"/> pagar(emos) por
 				esta única via de <strong>NOTA PROMISSÓRIA</strong> a  ${nota.nomeBeneficiario} CPF ou CNPJ ${nota.documentoBeneficiario} ou à sua
 				ordem, a quantia de <strong>R$ ${nota.notaPromissoria.valorExtenso}</strong> em moeda
 				corrente deste país, pagável em <strong>${nota.pracaPagamento}</strong>
@@ -46,11 +46,11 @@ table {
 		<tr>
 			<td>
 				<div align="left">
-					<strong>EMITENTE:</strong>${nota.nomeEmitente}
+					<strong>EMITENTE: </strong>${nota.nomeEmitente}
 				</div>
 
 				<div align="right">
-					<strong>Data / Local:</strong><fmt:formatDate value="<%= new java.util.Date() %>" pattern="dd', de' MMMM 'de' yyyy"/>, ${nota.pracaPagamento}
+					<strong>Data / Local: </strong><fmt:formatDate value="<%= new java.util.Date() %>" pattern="dd', de' MMMM 'de' yyyy"/>, ${nota.pracaPagamento}
 				</div>
 
 			</td>
@@ -60,7 +60,7 @@ table {
 		<tr>
 
 			<td><p>
-					<strong>CPF / CNPJ:</strong>${nota.documentoEmitente}
+					<strong>CPF / CNPJ: </strong>${nota.documentoEmitente}
 				</p></td>
 
 		</tr>
@@ -70,7 +70,7 @@ table {
 			<td>
 
 				<div align="left">
-					<strong>ENDEREÇO:</strong> ${nota.enderecoEmitente.tipoLogradouro}: ${nota.enderecoEmitente.logradouro}, ${nota.enderecoEmitente.numero} - ${nota.enderecoEmitente.bairro}, ${nota.enderecoEmitente.cidade} - ${nota.enderecoEmitente.uf} ${nota.enderecoEmitente.cep}
+					<strong>ENDEREÇO: </strong> ${nota.enderecoEmitente.tipoLogradouro}: ${nota.enderecoEmitente.logradouro}, ${nota.enderecoEmitente.numero} - ${nota.enderecoEmitente.bairro}, ${nota.enderecoEmitente.cidade} - ${nota.enderecoEmitente.uf} ${nota.enderecoEmitente.cep}
 				</div>
 
 				<div align="right">

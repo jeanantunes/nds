@@ -1071,6 +1071,9 @@ var PDV =  $.extend(true, {
 				$("#inicioHorario", this.workspace).attr('disabled', 'desabled');
 				$("#fimHorario", this.workspace).attr('disabled', 'desabled');
 				
+				$("#inicioHorario", this.workspace).attr('value','');
+				$("#fimHorario", this.workspace).attr('value','');
+				
 			} else {
 				$("#inicioHorario", this.workspace).attr('disabled', null);
 				$("#fimHorario", this.workspace).attr('disabled', null);
