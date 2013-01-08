@@ -295,7 +295,7 @@ public class CotaServiceImpl implements CotaService {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Id da cota não pode ser nulo.");
 		}
 		
-		return this.cotaRepository.buscarCotaPorID(idCota);
+		return this.cotaRepository.buscarPorId(idCota);
 	}
 	
 	/**
