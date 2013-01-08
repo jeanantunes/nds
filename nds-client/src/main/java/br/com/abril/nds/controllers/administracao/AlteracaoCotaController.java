@@ -261,7 +261,7 @@ public class AlteracaoCotaController extends BaseController {
 		}
 		//Validaçao para nao apagar fornecedores quando for alterar
 		if(!fornecedoresCota.isEmpty()){
-			cota.setFornecedores(fornecedoresCota);				
+			cota.getFornecedores().addAll(fornecedoresCota);				
 		}
 	}
 	
