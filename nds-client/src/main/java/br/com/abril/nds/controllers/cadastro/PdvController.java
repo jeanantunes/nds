@@ -612,6 +612,11 @@ public class PdvController extends BaseController {
 			}
 			
 			validarHorario(novoPeriodo);
+		} else {
+			if(novoPeriodo!=null) {
+				novoPeriodo.setInicio(null);
+				novoPeriodo.setFim(null);
+			}
 		}
 		
 		pdvService.validarPeriodos(periodos);
