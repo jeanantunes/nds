@@ -93,17 +93,23 @@ var fiadorController = $.extend(true, {
 						
 						$.postJSON(contextPath + '/cadastro/fiador/cancelarCadastro', null, 
 							function(result){
+							
 								_this.fecharModalCadastroFiador = true;
+								
 								$("#fiadorController-dialog-close", fiadorController.workspace).dialog("close");
 								$("#fiadorController-dialog-fiador", fiadorController.workspace).dialog("close");
 								$("#fiadorController-dialog-cancelar-cadastro-fiador", fiadorController.workspace).dialog("close");					
 								
 								_this.limparCamposCadastroFiador();
+								
+								fiadorController.alteracaoDadosBasicos = false;
 							}
 						);
 					},
 					"Cancelar": function() {
+						
 						$(this).dialog("close");
+						
 						_this.fecharModalCadastroFiador = false;
 					}
 				},
