@@ -3,7 +3,6 @@ package br.com.abril.nds.repository.impl;
 import java.util.Date;
 import java.util.List;
 
-import org.aspectj.apache.bcel.generic.NEW;
 import org.hibernate.Query;
 import org.hibernate.transform.Transformers;
 import org.hibernate.type.StandardBasicTypes;
@@ -288,7 +287,9 @@ public class FechamentoCEIntegracaoRepositoryImpl extends AbstractRepositoryMode
 		
 		query.setParameter("tipoVendaEncalhe", TipoVendaEncalhe.ENCALHE.name());
 		
-		query.setParameter("statusAprovacao", StatusAprovacao.PENDENTE.name());
+		if (!indBuscaQtd) {
+			query.setParameter("statusAprovacao", StatusAprovacao.PENDENTE.name());
+		}
 		
 		if(filtro.getIdFornecedor() != -1L) {
 			query.setParameter("idFornecedor", filtro.getIdFornecedor());
