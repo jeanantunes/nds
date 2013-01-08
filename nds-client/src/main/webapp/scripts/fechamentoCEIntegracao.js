@@ -83,10 +83,11 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 						
 					};
 					
-					fechamentoCEIntegracaoController.popularTotal($("#idFornecedor", fechamentoCEIntegracaoController.workspace).val(), $("#semana", fechamentoCEIntegracaoController.workspace).val());
+					fechamentoCEIntegracaoController.popularTotal(resultado);
 					fechamentoCEIntegracaoController.verificarDataFechamentoCE(resultado.semanaFechada);
 					
 					$(".grids", fechamentoCEIntegracaoController.workspace).show();
+					
 					return resultado.listaFechamento;
 					
 				};
@@ -182,20 +183,11 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 		
 	},
 	
-	popularTotal : function(idFornecedor, semana){
- 		$.postJSON(
-			contextPath + '/devolucao/fechamentoCEIntegracao/buscarTotalDaPesquisa',
-			[
-	         {name:'filtro.idFornecedor' , value:idFornecedor},
-	         {name:'filtro.semana' , value:semana}
-	         ],
-			function(result) {
-				$('.tabelaTotal', fechamentoCEIntegracaoController.workspace).show();
-				$("#total", fechamentoCEIntegracaoController.workspace).html(result);
-			},
-			null,
-			true
-		);
+	popularTotal : function(resultado){
+		$("#totalBruto", fechamentoCEIntegracaoController.workspace).html(resultado.totalBruto);
+		$("#totalDesconto", fechamentoCEIntegracaoController.workspace).html(resultado.totalDesconto);
+		$("#totalLiquido", fechamentoCEIntegracaoController.workspace).html(resultado.totalLiquido);
+		$(".tabelaTotal").show();
 	},
 	
 	fecharCE : function(){
