@@ -123,8 +123,7 @@
 							<select id="selectTiposDiferenca" 
 									name="tipoDiferenca"
 									 style="width: 220px;">
-									 
-								<option selected="selected"></option>
+								<option selected="selected" value="">Todos</option>
 								<c:forEach var="tipoDiferenca" items="${listaTiposDiferenca}">
 									<option value="${tipoDiferenca.key}">${tipoDiferenca.value}</option>
 								</c:forEach>
