@@ -92,7 +92,7 @@ public class ChamadaEncalheFornecedor implements Serializable {
      */
 	@Enumerated(EnumType.STRING)
 	@Column(name = "STATUS_CE_NDS")
-    private StatusCeNDS statusCeNDS;
+    private StatusCeNDS statusCeNDS = StatusCeNDS.ABERTO;
     
     @Column(name = "CODIGO_PREENCHIMENTO", nullable = false)
     private String codigoPreenchimento;
