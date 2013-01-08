@@ -459,7 +459,6 @@ public class CotaServiceImpl implements CotaService {
 				enderecoCota.setCota(cota);
 			}
 			
-			
 			boolean novoEndereco = (novoEnderecoCota && !enderecoAssociacao.isEnderecoPessoa());
 			
 			endereco = this.obterEndereco(enderecoDTO, pessoa, novoEndereco);
