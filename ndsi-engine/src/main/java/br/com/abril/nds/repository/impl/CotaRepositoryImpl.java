@@ -1793,5 +1793,19 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 		
 		query.executeUpdate();
 	}	
+    
+    @Override
+    public Cota buscarCotaPorID(Long idCota) {
+    	
+    	String queryString = " select cota from Cota cota "
+				   + " join fetch cota.fornecedores fornecedores "
+				   + " where cota.id = :idCota ";
+
+		Query query = this.getSession().createQuery(queryString);
+		
+		query.setParameter("idCota", idCota);
+		
+		return (Cota) query.uniqueResult();
+    }
 
 }
