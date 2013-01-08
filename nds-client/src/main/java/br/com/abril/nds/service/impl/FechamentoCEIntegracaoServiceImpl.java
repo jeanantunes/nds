@@ -10,9 +10,17 @@ import br.com.abril.nds.client.vo.FechamentoCEIntegracaoVO;
 import br.com.abril.nds.dto.FechamentoCEIntegracaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroFechamentoCEIntegracaoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.cadastro.TipoCobranca;
+import br.com.abril.nds.model.financeiro.BoletoDistribuidor;
+import br.com.abril.nds.model.planejamento.fornecedor.ChamadaEncalheFornecedor;
+import br.com.abril.nds.repository.BoletoDistribuidorRepository;
+import br.com.abril.nds.repository.ChamadaEncalheFornecedorRepository;
 import br.com.abril.nds.repository.FechamentoCEIntegracaoRepository;
+import br.com.abril.nds.service.BoletoService;
 import br.com.abril.nds.service.FechamentoCEIntegracaoService;
+import br.com.abril.nds.service.GerarCobrancaService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
@@ -23,6 +31,21 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 	@Autowired
 	private FechamentoCEIntegracaoRepository fechamentoCEIntegracaoRepository;
 
+	@Autowired
+	private GerarCobrancaService gerarCobrancaService;
+	
+	@Autowired
+	private DistribuidorService distribuidorService;
+	
+	@Autowired
+	private BoletoDistribuidorRepository boletoDistribuidorRepository;
+	
+	@Autowired
+	private ChamadaEncalheFornecedorRepository chamadaEncalheFornecedorRepository;
+	
+	@Autowired
+	private BoletoService boletoService;
+	
 	@Transactional
 	public List<FechamentoCEIntegracaoDTO> buscarFechamentoEncalhe(FiltroFechamentoCEIntegracaoDTO filtro) {
 		return this.fechamentoCEIntegracaoRepository.buscarConferenciaEncalhe(filtro);
@@ -42,7 +65,34 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 		}
 		return lista;		
 	}*/
-
+	
+	@Transactional
+	public byte[] gerarCobrancaBoletoDistribuidor(FiltroFechamentoCEIntegracaoDTO filtro, TipoCobranca tipoCobranca) {
+		
+		Long numeroSemana = filtro.getSemana();
+		
+		List<ChamadaEncalheFornecedor> listaChamadaEncalheFornecedor = chamadaEncalheFornecedorRepository.obterChamadasEncalheFornecedor(null, numeroSemana.intValue(), null);
+		
+		if(listaChamadaEncalheFornecedor==null) {
+			
+			throw new ValidacaoException(TipoMensagem.ERROR, "Falha ao gerar boleto.");
+			
+		}
+		
+		List<BoletoDistribuidor> listaBoletoDistribuidor = gerarCobrancaService.gerarCobrancaBoletoDistribuidor(listaChamadaEncalheFornecedor, tipoCobranca, numeroSemana.intValue());
+		
+		try {
+			
+			return boletoService.gerarImpressaoBoletosDistribuidor(listaBoletoDistribuidor);
+			
+		} catch(Exception e) {
+			
+			throw new ValidacaoException(TipoMensagem.ERROR, "Falha ao gerar cobrança em boleto para o Distribuidor");
+			
+		}
+		
+	}
+	
 	@Override
 	@Transactional
 	public void fecharCE(Long encalhe, ProdutoEdicao produtoEdicao) {

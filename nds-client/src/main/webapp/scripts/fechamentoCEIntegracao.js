@@ -21,6 +21,24 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 			}
 	},
 	
+	geraBoleto : function(tipoCobranca) {
+		
+		var parametros = [{
+			name:'tipoCobranca', value: tipoCobranca
+		}];
+		
+		$.postJSON(contextPath + '/devolucao/fechamentoCEIntegracao/geraBoleto', parametros,
+				
+		function(result) {
+			
+			var file = contextPath + '/devolucao/fechamentoCEIntegracao/imprimeBoleto';
+	
+			$('#download-iframe-fechamento', fechamentoCEIntegracaoController.workspace).attr('src', file);
+	
+		});
+		
+	},
+	
 	buscarNumeroSemana : function(){
 		var dataAtual = $.format.date(new Date(), "dd/MM/yyyy");
 		var data = [

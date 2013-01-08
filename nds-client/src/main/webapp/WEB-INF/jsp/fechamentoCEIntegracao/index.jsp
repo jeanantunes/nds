@@ -17,31 +17,48 @@
 </head>
 
 <body>
+
+	<iframe src="" id="download-iframe-fechamento" style="display:none;"></iframe>
+
     <div class="areaBts">
     	<div class="area">
     		<span class="bt_novos" id="btnFechamento" >
 		      	<a href="javascript:;" title="Fechamento" rel="tipsy" title="Fechamento">
 		      		<img src="${pageContext.request.contextPath}/images/ico_check.gif" hspace="5" border="0" id="imagemFechamento" />
 		      	</a>
-		      </span>
+		    </span>
 		      
-		      <span class="bt_novos" id="btnReabertura">
+		    <span class="bt_novos" id="btnReabertura">
 		      	<a href="javascript:;" title="Reabertura" rel="tipsy">
-		      		<img src="${pageContext.request.contextPath}/images/ico_expedicao_box.gif" hspace="5" border="0" id="imagemReabertura" /></a>
-		      </span>
+		      		<img src="${pageContext.request.contextPath}/images/ico_expedicao_box.gif" hspace="5" border="0" id="imagemReabertura" />
+		      	</a>
+		    </span>
 		
 			
 		    <span class="bt_novos">
-		    	<a href="javascript:;" rel="tipsy" title="Imprimir Boleto">
-		    		<img src="${pageContext.request.contextPath}/images/ico_negociar.png" hspace="5" border="0" />
-		    	</a>
+		    
+		    	<c:if test="${BOLETO}">
+		    	
+			    	<a 	href="javascript:;"
+			    		onclick="fechamentoCEIntegracaoController.geraBoleto('BOLETO');"
+			    		rel="tipsy" title="Imprimir Boleto">
+			    		<img src="${pageContext.request.contextPath}/images/ico_negociar.png" hspace="5" border="0" />
+			    	</a>
+		    	
+		    	</c:if>	
 		    </span>
 		       
-		       <span class="bt_novos">
-		       	<a href="javascript:;" rel="tipsy" title="Imprimir Boleto em Branco">
-		       		<img src="${pageContext.request.contextPath}/images/ico_detalhes.png" hspace="5" border="0" />
-		       	</a>
-		       </span>
+	       <span class="bt_novos">
+				
+				<c:if test="${BOLETO_EM_BRANCO}">
+			       	<a href="javascript:;"
+			       	onclick="fechamentoCEIntegracaoController.geraBoleto('BOLETO_EM_BRANCO');"			       	
+			       	rel="tipsy" title="Imprimir Boleto em Branco">
+			       		<img src="${pageContext.request.contextPath}/images/ico_detalhes.png" hspace="5" border="0" />
+			       	</a>
+				</c:if>					       
+	       
+	       </span>
 		       
 		       
 		       <span class="bt_arq">
