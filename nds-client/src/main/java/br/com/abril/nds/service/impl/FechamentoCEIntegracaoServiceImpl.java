@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.client.vo.FechamentoCEIntegracaoVO;
+import br.com.abril.nds.dto.FechamentoCEIntegracaoConsolidadoDTO;
 import br.com.abril.nds.dto.FechamentoCEIntegracaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroFechamentoCEIntegracaoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -75,12 +76,24 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 		tableModel.setTotal(listaFechamento.size());
 		
 		FechamentoCEIntegracaoVO fechamentoCEIntegracaoVO = new FechamentoCEIntegracaoVO();
+
+		FechamentoCEIntegracaoConsolidadoDTO totalFechamento = this.buscarFechamentoEncalheTotal(filtro);
+		fechamentoCEIntegracaoVO.setTotalBruto(totalFechamento.getTotalBruto());
+		fechamentoCEIntegracaoVO.setTotalDesconto(totalFechamento.getTotalDesconto());
+		fechamentoCEIntegracaoVO.setTotalLiquido(totalFechamento.getTotalLiquido());
+
 		fechamentoCEIntegracaoVO.setListaFechamento(tableModel);
 		fechamentoCEIntegracaoVO.setSemanaFechada(this.verificarStatusSemana(filtro));
 
 		// TODO: TOTAIS AQUI
 		
 		return fechamentoCEIntegracaoVO;
+	}
+
+	@Override
+	@Transactional(readOnly=true)
+	public FechamentoCEIntegracaoConsolidadoDTO buscarFechamentoEncalheTotal(FiltroFechamentoCEIntegracaoDTO filtro) {
+		return this.fechamentoCEIntegracaoRepository.buscarConferenciaEncalheTotal(filtro);
 	}
 	
 }
