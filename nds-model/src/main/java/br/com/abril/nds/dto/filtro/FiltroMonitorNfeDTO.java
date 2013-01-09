@@ -30,6 +30,9 @@ public class FiltroMonitorNfeDTO implements Serializable {
 	@Export(label="Destinatário / Remetente")
 	private String documentoPessoa;
 	
+	@Export(label="Emitente")
+	private String documentoEmitente;
+	
 	@Export(label="Tipo de Nf-e")
 	private String tipoNfe;
 	
@@ -147,6 +150,22 @@ public class FiltroMonitorNfeDTO implements Serializable {
 	public void setDocumentoPessoa(String documentoPessoa) {
 		this.documentoPessoa = documentoPessoa;
 	}
+	
+	
+	/**
+	 * @return the documentoEmitente
+	 */
+	public String getDocumentoEmitente() {
+		return documentoEmitente;
+	}
+	
+	/**
+	 * @param documentoEmitente the documentoEmitente to set
+	 */
+	public void setDocumentoEmitente(String documentoEmitente) {
+		this.documentoEmitente = documentoEmitente;
+	}
+	
 	/**
 	 * Obtém tipoNfe
 	 *

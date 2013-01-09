@@ -38,6 +38,7 @@ import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
+import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
@@ -496,6 +497,7 @@ public class PainelMonitorNFEController extends BaseController {
 		
 	}
 	
+	@Post
 	@Path("/pesquisar")
 	public void pesquisar(
 			String tipoDocumento,
@@ -503,6 +505,7 @@ public class PainelMonitorNFEController extends BaseController {
 			String dataInicial,
 			String dataFinal,
 			String documento,
+			String documentoEmitente,
 			String tipoNfe,
 			Long numeroInicial,
 			Long numeroFinal,
@@ -526,7 +529,8 @@ public class PainelMonitorNFEController extends BaseController {
 		filtroMonitorNfeDTO.setDataInicial(DateUtil.parseData(dataInicial, "dd/MM/yyyy"));
 		filtroMonitorNfeDTO.setDataFinal(DateUtil.parseData(dataFinal, "dd/MM/yyyy"));
 		filtroMonitorNfeDTO.setDocumentoPessoa(documento);
-
+		filtroMonitorNfeDTO.setDocumentoEmitente(documentoEmitente);
+		
 		filtroMonitorNfeDTO.setNumeroNotaInicial(numeroInicial);
 		
 		filtroMonitorNfeDTO.setNumeroNotaFinal(numeroFinal);
