@@ -15,6 +15,7 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.repository.FechamentoCEIntegracaoRepository;
 import br.com.abril.nds.service.FechamentoCEIntegracaoService;
 import br.com.abril.nds.util.CellModelKeyValue;
+import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
 
@@ -78,9 +79,9 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 		FechamentoCEIntegracaoVO fechamentoCEIntegracaoVO = new FechamentoCEIntegracaoVO();
 
 		FechamentoCEIntegracaoConsolidadoDTO totalFechamento = this.buscarFechamentoEncalheTotal(filtro);
-		fechamentoCEIntegracaoVO.setTotalBruto(totalFechamento.getTotalBruto());
-		fechamentoCEIntegracaoVO.setTotalDesconto(totalFechamento.getTotalDesconto());
-		fechamentoCEIntegracaoVO.setTotalLiquido(totalFechamento.getTotalLiquido());
+		fechamentoCEIntegracaoVO.setTotalBruto(CurrencyUtil.formatarValor(totalFechamento.getTotalBruto()));
+		fechamentoCEIntegracaoVO.setTotalDesconto(CurrencyUtil.formatarValor(totalFechamento.getTotalDesconto()));
+		fechamentoCEIntegracaoVO.setTotalLiquido(CurrencyUtil.formatarValor(totalFechamento.getTotalLiquido()));
 
 		fechamentoCEIntegracaoVO.setListaFechamento(tableModel);
 		fechamentoCEIntegracaoVO.setSemanaFechada(this.verificarStatusSemana(filtro));

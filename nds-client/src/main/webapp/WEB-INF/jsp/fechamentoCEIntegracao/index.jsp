@@ -91,16 +91,14 @@
 	       		<div class="linha_separa_fields">&nbsp;</div>
 				<br clear="all" />
 				<div class="tabelaTotal" style="display:none;">
-					<span name="total" id="total" >
-						<table>
-							<td width="88"  valign="top"><strong>Total Bruto R$:</strong></td>
-							<td width="50"  valign="top" id="totalBruto"></td>
-							<td width="106" valign="top"><strong>Total Desconto R$:</strong></td>
-							<td width="49"  valign="top" id="totalDesconto"></td>
-							<td width="93"  valign="top"><strong>Total Líquido R$:</strong></td>
-							<td width="70"  valign="top" id="totalLiquido"></td>					
-						</table>
-					</span>
+					<table name="total" id="total" >
+						<td width="88" valign="top"><strong>Total Bruto R$:</strong></td>
+						<td width="50" valign="top" id="totalBruto"></td>
+						<td width="106" valign="top"><strong>Total Desconto R$:</strong></td>
+						<td width="49" valign="top" id="totalDesconto"></td>
+						<td width="93" valign="top"><strong>Total Líquido R$:</strong></td>
+						<td width="70" valign="top" id="totalLiquido"></td>					
+					</table>
 				</div>
 			</div>
 
