@@ -78,7 +78,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 				filtro.getNumeroNotaFinal()!=null		||
 				( filtro.getChaveAcesso() != null && !filtro.getChaveAcesso().isEmpty() ) ||
 				( filtro.getSituacaoNfe() != null && !filtro.getSituacaoNfe().isEmpty() ) ||
-				filtro.getSerie() != null ) {
+				filtro.getSerie() != null || (filtro.getDocumentoEmitente()!=null && !filtro.getDocumentoEmitente().isEmpty()) ) {
 
 			sql.append(" WHERE ");
 
@@ -189,7 +189,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 
 			indAnd = true;
 		}
-
+		
 		if(filtro.getSerie()!=null) {
 
 			if(indAnd) {
@@ -198,6 +198,17 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 
 			sql.append(" NOTA_FISCAL_NOVO.SERIE = :serie ");
 
+			indAnd = true;
+		}
+
+		if (filtro.getDocumentoEmitente()!=null){
+			
+			if(indAnd) {
+				sql.append(" AND ");
+			}
+			
+			sql.append(" NOTA_FISCAL_NOVO.DOCUMENTO_EMITENTE = :documentoEmitente ");
+			
 			indAnd = true;
 		}
 
@@ -243,7 +254,13 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		}		
 
 		if(filtro.getSerie()!=null) {
+			
 			sqlQuery.setParameter("serie", filtro.getSerie());
+		}
+		
+		if(filtro.getDocumentoEmitente()!=null) {
+		    
+			sqlQuery.setParameter("documentoEmitente", filtro.getDocumentoEmitente());
 		}
 
 		BigInteger qtde = (BigInteger) sqlQuery.uniqueResult();
@@ -312,7 +329,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 				filtro.getNumeroNotaFinal()!=null		||
 				( filtro.getChaveAcesso() != null && !filtro.getChaveAcesso().isEmpty() ) ||
 				( filtro.getSituacaoNfe() != null && !filtro.getSituacaoNfe().isEmpty() ) ||
-				filtro.getSerie() != null ) {
+				filtro.getSerie() != null || (filtro.getDocumentoEmitente()!=null && !filtro.getDocumentoEmitente().isEmpty()) ) {
 
 			sql.append(" where ");
 
@@ -434,6 +451,17 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 
 			indAnd = true;
 		}
+		
+        if (filtro.getDocumentoEmitente()!=null && !filtro.getDocumentoEmitente().isEmpty()){
+			
+			if(indAnd) {
+				sql.append(" AND ");
+			}
+			
+			sql.append(" NOTA_FISCAL_NOVO.DOCUMENTO_EMITENTE = :documentoEmitente ");
+			
+			indAnd = true;
+		}
 
 		PaginacaoVO paginacao = filtro.getPaginacao();
 
@@ -542,6 +570,10 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 
 		if(filtro.getSerie()!=null) {
 			sqlQuery.setParameter("serie", filtro.getSerie());
+		}
+		
+		if (filtro.getDocumentoEmitente()!=null && !filtro.getDocumentoEmitente().isEmpty()) {
+			sqlQuery.setParameter("documentoEmitente", filtro.getDocumentoEmitente());
 		}
 
 		if (paginacao != null) {

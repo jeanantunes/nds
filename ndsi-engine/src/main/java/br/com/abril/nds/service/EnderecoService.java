@@ -8,9 +8,6 @@ import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.EnderecoDTO;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.TipoEndereco;
-import br.com.abril.nds.model.dne.Bairro;
-import br.com.abril.nds.model.dne.Localidade;
-import br.com.abril.nds.model.dne.Logradouro;
 import br.com.abril.nds.vo.EnderecoVO;
 
 public interface EnderecoService {
@@ -53,7 +50,7 @@ public interface EnderecoService {
 
 	String buscarLocalidadePorIbge(String codigoIbge);
 
-	List<String> obterListaLocalidadeCotas();
+	List<String> obterListaLocalidadePdv();
 
 	List<String> obterLocalidadesPorUF(String uf);
 

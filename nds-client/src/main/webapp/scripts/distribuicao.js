@@ -80,7 +80,7 @@ function Distribuicao(tela) {
 			data.push({name:'distribuicao.utilizaTermoAdesao',		value: D.get("utilizaTermoAdesao")});
 			data.push({name:'distribuicao.termoAdesaoRecebido',		value: D.get("termoAdesaoRecebido")});
 			data.push({name:'distribuicao.percentualFaturamento',	value: D.get("percentualFaturamentoEntregaBanca")});
-			data.push({name:'distribuicao.taxaFixa',				value: D.get("taxaFixaEntregaBanca")});
+			data.push({name:'distribuicao.taxaFixa',				value: floatValue(D.get("taxaFixaEntregaBanca"))});
 			data.push({name:'distribuicao.inicioPeriodoCarencia',	value: D.get("inicioPeriodoCarenciaEntregaBanca")});
 			data.push({name:'distribuicao.fimPeriodoCarencia',		value: D.get("fimPeriodoCarenciaEntregaBanca")});
 			data.push({name:'distribuicao.baseCalculo',	            value: D.get("baseCalculo")});
@@ -148,6 +148,12 @@ function Distribuicao(tela) {
 			D.set('inicioPeriodoCarenciaEntregaBanca',	dto.inicioPeriodoCarencia);
 			D.set('fimPeriodoCarenciaEntregaBanca',		dto.fimPeriodoCarencia);
 			D.set('baseCalculo',			            dto.baseCalculo);
+			
+			D.$('taxaFixaEntregaBanca').priceFormat({
+		        allowNegative : false,
+		        centsSeparator : ',',
+		        thousandsSeparator : '.'
+		    });
 			
 			D.setNomeTermoAdesao(dto.nomeTermoAdesao);
 			

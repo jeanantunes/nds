@@ -402,6 +402,9 @@ var produtoEdicaoController =$.extend(true,  {
 		if (codigoProduto == "" || codigoProduto == undefined) {
 			codigoProduto = $("#produtoEdicaoController-pCodigoProduto",this.workspace).val();
 		}
+		
+		$("#produtoEdicaoController-codigoProduto",this.workspace).val(codigoProduto);
+		
 		if (nomeProduto == "" || nomeProduto == undefined) {
 			nomeProduto = $("#produtoEdicaoController-pNome",this.workspace).val();
 		}
@@ -996,9 +999,10 @@ var produtoEdicaoController =$.extend(true,  {
 				},
 				"Cancelar": function() {
 					$( "#produtoEdicaoController-dialog-excluir-capa" ,this.workspace).dialog( "close" );
-				},
-				form: $("#produtoEdicaoController-dialog-excluir-capa", this.workspace).parents("form")
-			}
+				}
+			},
+			form: $("#produtoEdicaoController-dialog-excluir-capa", this.workspace).parents("form")
+			
 		});
 	},
 	
