@@ -2300,7 +2300,8 @@ public class Fixture {
 			String descricao,
 			boolean indEfetuaCobranca,
 			boolean indOpera,
-			boolean indRepeteAnualmente) {
+			boolean indRepeteAnualmente,
+			Origem origem) {
 		
 		Feriado feriado = new Feriado();
 		
@@ -2313,6 +2314,8 @@ public class Fixture {
 		feriado.setIndEfetuaCobranca(indEfetuaCobranca);
 		feriado.setIndOpera(indOpera);
 		feriado.setIndRepeteAnualmente(indRepeteAnualmente);
+		
+		feriado.setOrigem(origem);
 		
 		return feriado;
 		

@@ -39,6 +39,7 @@ import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.fechar.dia.FechamentoDiarioLancamentoReparte;
 import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.Lancamento;
+import br.com.abril.nds.model.planejamento.LancamentoParcial;
 
 /**
  * @author T30541
@@ -193,6 +194,9 @@ public class ProdutoEdicao implements Serializable {
 	
 	@Column(name="DESCRICAO_DESCONTO")
 	private String descricaoDesconto;
+	
+	@OneToOne(mappedBy = "produtoEdicao", optional=true,fetch=FetchType.LAZY)
+	private LancamentoParcial lancamentoParcial;
 	
 	public Long getId() {
 		return id;
@@ -582,6 +586,15 @@ public class ProdutoEdicao implements Serializable {
 	 */
 	public void setDescricaoDesconto(String descricaoDesconto) {
 		this.descricaoDesconto = descricaoDesconto;
+	}
+
+	
+	public LancamentoParcial getLancamentoParcial() {
+		return lancamentoParcial;
+	}
+
+	public void setLancamentoParcial(LancamentoParcial lancamentoParcial) {
+		this.lancamentoParcial = lancamentoParcial;
 	}
 
 	@Override

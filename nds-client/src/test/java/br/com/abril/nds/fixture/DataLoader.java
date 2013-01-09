@@ -6774,7 +6774,8 @@ public class DataLoader {
 				"Confraternização Universal",
 				false,
 				false,
-				true));
+				true,
+				Origem.CARGA_INICIAL));
 
 		save(session, Fixture.feriado(
 				DateUtil.parseDataPTBR("21/04/2012"), 
@@ -6784,7 +6785,8 @@ public class DataLoader {
 				"Tiradentes",
 				false,
 				false,
-				true));		
+				true,
+				Origem.CARGA_INICIAL));		
 		
 		save(session, Fixture.feriado(
 				DateUtil.parseDataPTBR("01/05/2012"), 
@@ -6794,7 +6796,8 @@ public class DataLoader {
 				"Dia Mundial do Trabalho",
 				false,
 				false,
-				true));	
+				true,
+				Origem.CARGA_INICIAL));	
 		
 		save(session, Fixture.feriado(
 				DateUtil.parseDataPTBR("07/09/2012"), 
@@ -6804,7 +6807,8 @@ public class DataLoader {
 				"Independência do Brasil",
 				false,
 				false,
-				true));		
+				true,
+				Origem.CARGA_INICIAL));		
 		
 		save(session, Fixture.feriado(
 				DateUtil.parseDataPTBR("12/10/2012"), 
@@ -6814,7 +6818,8 @@ public class DataLoader {
 				"Nossa Senhora Aparecida",
 				false,
 				false,
-				true));				
+				true,
+				Origem.CARGA_INICIAL));				
 		
 		save(session, Fixture.feriado(
 				DateUtil.parseDataPTBR("02/11/2012"), 
@@ -6824,7 +6829,8 @@ public class DataLoader {
 				"Finados",
 				false,
 				false,
-				true));				
+				true,
+				Origem.CARGA_INICIAL));				
 
 		save(session, Fixture.feriado(
 				DateUtil.parseDataPTBR("15/11/2012"), 
@@ -6834,7 +6840,8 @@ public class DataLoader {
 				"Proclamação da República",
 				false,
 				false,
-				true));	
+				true,
+				Origem.CARGA_INICIAL));	
 		
 		save(session, Fixture.feriado(
 				DateUtil.parseDataPTBR("25/12/2012"), 
@@ -6844,7 +6851,8 @@ public class DataLoader {
 				"Natal",
 				false,
 				false,
-				true));	
+				true,
+				Origem.CARGA_INICIAL));	
 		
 //Moveis		
 		
@@ -6856,7 +6864,8 @@ public class DataLoader {
 				"Paixão de Cristo",
 				false,
 				false,
-				false));
+				false,
+				Origem.CARGA_INICIAL));
 		
 		save(session, Fixture.feriado(
 				DateUtil.parseDataPTBR("07/06/2012"), 
@@ -6866,7 +6875,8 @@ public class DataLoader {
 				"Corpus Christi",
 				false,
 				false,
-				false));
+				false,
+				Origem.CARGA_INICIAL));
 		
 	}
 	
