@@ -1463,12 +1463,15 @@ var SOCIO_COTA = $.extend(true, {
         SOCIO_COTA.enderecoSocio.preencherComboUF();
 
         SOCIO_COTA.limparCamposSocio();
-
+        $("input[name='socioCota.telefone.ddd']", this.workspace).numeric();
+		$("input[name='socioCota.telefone.numero']", this.workspace).numeric();
+		$("input[name='socioCota.telefone.numero']", this.workspace).mask("9999-9999");
+    	
         $("#cep", this.workspace).mask("99999-999");
     },
 
     popup_novo_socio: function() {
-
+    	
         if (MANTER_COTA.isModoTelaCadastroCota()) {
             $( "#dialog-socio", SOCIO_COTA._workspace ).dialog({
                 resizable: false,
@@ -1537,6 +1540,11 @@ var SOCIO_COTA = $.extend(true, {
         $("#logradouro", SOCIO_COTA._workspace).blur(function() {
 
             SOCIO_COTA.enderecoSocio.autoCompletarLogradouros(true);
+        });
+
+        $("#cep", SOCIO_COTA._workspace).keyup(function() {
+
+            SOCIO_COTA.enderecoSocio.autoCompletarCep();
         });
     },
 
