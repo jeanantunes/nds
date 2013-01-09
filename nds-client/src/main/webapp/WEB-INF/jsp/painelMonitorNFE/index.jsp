@@ -65,26 +65,14 @@ $(function() {
 	<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 	
 		<tr>
-		
-		    
-		    <!-- 
+    
 			<td width="94">Série:</td>
 
 			<td width="129">
 			
-				<input type="text" id="serieNfe" style="width: 80px;" />
+				<input type="text" id="serieNfe" style="width: 120px;" />
 
 			</td>
-            -->
-            
-            <td width="94">Distribuidor:</td>
-
-			<td width="129">
-			
-				<input type="text" id="documentoEmitente" style="width: 120px;" />
-
-			</td>
-			
             
 			<td width="68">Período de:</td>
 
@@ -128,7 +116,7 @@ $(function() {
 			<td>Tipo:</td>
 			<td>	
 				<select name="tipoNfe" id="tipoNfe" style="width: 120px;">
-					<option selected="selected"></option>
+					<option value="" selected="selected">Todos</option>
 				    <c:forEach items="${comboTipoNfe}" var="comboTipoNfe">
 				      		<option value="${comboTipoNfe.key}">${comboTipoNfe.value}</option>	
 				    </c:forEach>

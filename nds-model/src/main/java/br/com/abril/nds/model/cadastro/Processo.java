@@ -10,6 +10,7 @@ public enum Processo {
 	FALTA_ENCALHE("Faltas do encalhe"),
 	SOBRA_ENCALHE("Sobras do encalhe"),
 	DEVOLUCAO_FORNECEDOR("Devolução fornecedor"),
+	CALCELADA("Cancelada"),
 
 	GERACAO_NF_E("Geração NF-e"),
 	LANCAMENTO_FALTA_SOBRA("Lançamento faltas e sobra"),
@@ -18,8 +19,8 @@ public enum Processo {
 	DEVOLUCAO_AO_FORNECEDOR("Devolução ao Fornecedor"), 
 	DEVOLUCAO_ENCALHE("Nota da Devolução do Encalhe"),
 	CONSIGNACAO_REPARTE_NORMAL("Consignação do Reparte Normal"),
-	NOTA_LANCAMENTO("Nota de Lançamento (NE/NECA)")
-	;
+	NOTA_LANCAMENTO("Nota de Lançamento (NE/NECA)");
+	
 	private String processo;
 	
 	Processo(String processo) {
