@@ -40,7 +40,7 @@ public abstract class Movimento extends Aprovacao {
 	@Column(name = "DATA", nullable = false)
 	private Date data;
 
-	@Temporal(TemporalType.DATE)
+	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "DATA_CRIACAO", nullable = false)
 	private Date dataCriacao;
 

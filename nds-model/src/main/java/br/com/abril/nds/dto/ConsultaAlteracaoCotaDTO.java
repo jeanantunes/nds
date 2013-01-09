@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 
 import br.com.abril.nds.model.cadastro.DescricaoTipoEntrega;
+import br.com.abril.nds.util.CurrencyUtil;
 
 public class ConsultaAlteracaoCotaDTO implements Serializable {
 
@@ -41,9 +42,9 @@ public class ConsultaAlteracaoCotaDTO implements Serializable {
 		this.nomeRazaoSocial = (clazz.equals("J") ? nomeRazaoSocial : nome) ;
 		this.vencimento = vencimento;
 		if(financeiro != null){
-			this.valorMinimo = financeiro.toString();
+			this.valorMinimo = CurrencyUtil.formatarValor(financeiro);
 		} else {
-			this.valorMinimo = BigDecimal.ZERO.toString();
+			this.valorMinimo = "0,00";
 		}	
 		if(tipoEntrega != null) {
 			this.tipoEntrega = tipoEntrega.getValue();
@@ -101,7 +102,8 @@ public class ConsultaAlteracaoCotaDTO implements Serializable {
 	}
 
 	public void setValorMinimo(String valorMinimo) {
-		this.valorMinimo = valorMinimo;
+		
+		this.valorMinimo = CurrencyUtil.convertValor(valorMinimo);
 	}
 
 	public String getBox() {

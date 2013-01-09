@@ -55,6 +55,10 @@ public class Fornecedor implements Serializable {
 	@Column(name = "INICIO_ATIVIDADE", nullable = false)
 	@Temporal(TemporalType.DATE)
 	private Date inicioAtividade;
+	
+	@ManyToOne(optional = true)
+	@JoinColumn(name = "BANCO_ID")
+	private Banco banco;
 
 	@Column(name = "PERMITE_BALANCEAMENTO", nullable = false)
 	private boolean permiteBalanceamento;
@@ -278,6 +282,13 @@ public class Fornecedor implements Serializable {
 	    return null;
 	}
 	
+	public Banco getBanco() {
+		return banco;
+	}
+
+	public void setBanco(Banco banco) {
+		this.banco = banco;
+	}
 
 	@Override
 	public int hashCode() {
