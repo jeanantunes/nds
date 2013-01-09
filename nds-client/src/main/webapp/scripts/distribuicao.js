@@ -149,6 +149,12 @@ function Distribuicao(tela) {
 			D.set('fimPeriodoCarenciaEntregaBanca',		dto.fimPeriodoCarencia);
 			D.set('baseCalculo',			            dto.baseCalculo);
 			
+			D.$('taxaFixaEntregaBanca').priceFormat({
+		        allowNegative : false,
+		        centsSeparator : ',',
+		        thousandsSeparator : '.'
+		    });
+			
 			D.setNomeTermoAdesao(dto.nomeTermoAdesao);
 			
 		} else if (tipoEntrega == 'ENTREGADOR') {
