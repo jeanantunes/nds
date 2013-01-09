@@ -230,26 +230,31 @@ public class EnderecoRepositoryImpl extends AbstractRepositoryModel<Endereco, Lo
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<String> obterListaLocalidadeCotas() {
+	public List<String> obterListaLocalidadePdv() {
 		
 		StringBuffer hql = new StringBuffer();
 		
 		hql.append(" select distinct(endereco.cidade) ");
 		
-		hql.append(" from Cota cota 				");
+		hql.append(" from Cota cota ");
 		
-		hql.append(" inner join cota.enderecos as enderecoCota			");
+		hql.append(" inner join cota.pdvs as pdv ");
 		
-		hql.append(" inner join enderecoCota.endereco as endereco		");
+		hql.append(" inner join pdv.enderecos as enderecoPdv ");
 		
-		hql.append(" where enderecoCota.principal = :indPrincipal  	");
+		hql.append(" inner join enderecoPdv.endereco as endereco ");
+		
+		hql.append(" where pdv.caracteristicas.pontoPrincipal = :pontoPrincipal ");
+		
+		hql.append(" and enderecoPdv.principal = :indPrincipal ");
 						
 		Query query = getSession().createQuery(hql.toString());
+		
+		query.setParameter("pontoPrincipal", true);
 		
 		query.setParameter("indPrincipal", true);
 		
 		return query.list();
-		
 	}
 	
 	@SuppressWarnings("unchecked")

@@ -1356,7 +1356,7 @@ public class MatrizRecolhimentoController extends BaseController {
 				|| balanceamentoRecolhimento.getMatrizRecolhimento() == null
 				|| balanceamentoRecolhimento.getMatrizRecolhimento().isEmpty()) {
 			
-			return null;
+			throw new ValidacaoException(TipoMensagem.WARNING, "Sessão expirada!");
 		}
     	
 		List<ConfirmacaoVO> confirmacoesVO = this.obterDatasConfirmacao(balanceamentoRecolhimento.getMatrizRecolhimento());
@@ -1405,6 +1405,11 @@ public class MatrizRecolhimentoController extends BaseController {
 			
 			confirmacoesVO.add(
 				new ConfirmacaoVO(DateUtil.formatarDataPTBR(item.getKey()), item.getValue()));
+		}
+		
+		if (confirmacoesVO.isEmpty()) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhuma data a ser confirmada!");
 		}
 		
 		return confirmacoesVO;
