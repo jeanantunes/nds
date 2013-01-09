@@ -226,7 +226,7 @@ public class PainelMonitorNFEController extends BaseController {
 		FiltroMonitorNfeDTO filtroMonitorNfeDTO = obterFiltroExportacao();
 
 		InfoNfeDTO infoNfe = monitorNFEService.pesquisarNFe(filtroMonitorNfeDTO);
-
+		
 		List<NfeVO> listaNfeVO =  getListaNfeVO(infoNfe.getListaNfeDTO());
 		
 		FileExporter.to("nfe", fileType).inHTTPResponse(
@@ -488,13 +488,18 @@ public class PainelMonitorNFEController extends BaseController {
 	private void carregarComboTipoNfe() {
 		
 		List<ItemDTO<String, String>> comboTipoNfe = new ArrayList<ItemDTO<String, String>>();
-		
-		for(Processo processo: Processo.values()) {
-			comboTipoNfe.add(new ItemDTO(processo.name(), processo.getDescricao()));
-		}
+
+		comboTipoNfe.add(new ItemDTO(Processo.ENVIO.name(), Processo.ENVIO.getDescricao()));
+		comboTipoNfe.add(new ItemDTO(Processo.ENTRADA_ENCALHE.name(), Processo.ENTRADA_ENCALHE.getDescricao()));
+		comboTipoNfe.add(new ItemDTO(Processo.FALTA_REPARTE.name(), Processo.FALTA_REPARTE.getDescricao()));
+		comboTipoNfe.add(new ItemDTO(Processo.FALTA_ENCALHE.name(), Processo.FALTA_ENCALHE.getDescricao()));
+		comboTipoNfe.add(new ItemDTO(Processo.SOBRA_REPARTE.name(), Processo.SOBRA_REPARTE.getDescricao()));
+		comboTipoNfe.add(new ItemDTO(Processo.SOBRA_ENCALHE.name(), Processo.SOBRA_ENCALHE.getDescricao()));
+		comboTipoNfe.add(new ItemDTO(Processo.VENDA.name(), Processo.VENDA.getDescricao()));
+		comboTipoNfe.add(new ItemDTO(Processo.DEVOLUCAO_FORNECEDOR.name(), Processo.DEVOLUCAO_FORNECEDOR.getDescricao()));
+		comboTipoNfe.add(new ItemDTO(Processo.CALCELADA.name(), Processo.CALCELADA.getDescricao()));
 
 		result.include("comboTipoNfe", comboTipoNfe);
-		
 	}
 	
 	@Post
@@ -505,7 +510,6 @@ public class PainelMonitorNFEController extends BaseController {
 			String dataInicial,
 			String dataFinal,
 			String documento,
-			String documentoEmitente,
 			String tipoNfe,
 			Long numeroInicial,
 			Long numeroFinal,
@@ -529,8 +533,7 @@ public class PainelMonitorNFEController extends BaseController {
 		filtroMonitorNfeDTO.setDataInicial(DateUtil.parseData(dataInicial, "dd/MM/yyyy"));
 		filtroMonitorNfeDTO.setDataFinal(DateUtil.parseData(dataFinal, "dd/MM/yyyy"));
 		filtroMonitorNfeDTO.setDocumentoPessoa(documento);
-		filtroMonitorNfeDTO.setDocumentoEmitente(documentoEmitente);
-		
+
 		filtroMonitorNfeDTO.setNumeroNotaInicial(numeroInicial);
 		
 		filtroMonitorNfeDTO.setNumeroNotaFinal(numeroFinal);
