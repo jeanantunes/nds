@@ -311,7 +311,7 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 		
 		filtro.setPaginacao(paginacao);
 		
-		List<Diferenca> lista = diferencaEstoqueRepository.obterDiferencas(filtro, null);
+		List<Diferenca> lista = diferencaEstoqueRepository.obterDiferencas(filtro);
 		
 		Assert.assertNotNull(lista);
 		
@@ -647,7 +647,7 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 		Calendar d = Calendar.getInstance();
 		Date dataLimiteLancamentoPesquisa = d.getTime();
 		
-		diferencas = diferencaEstoqueRepository.obterDiferencas(filtro, dataLimiteLancamentoPesquisa);
+		diferencas = diferencaEstoqueRepository.obterDiferencas(filtro);
 		
 		Assert.assertNotNull(diferencas);
 		
@@ -668,7 +668,7 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 		Calendar d = Calendar.getInstance();
 		Date dataLimiteLancamentoPesquisa = d.getTime();
 		
-		diferencas = diferencaEstoqueRepository.obterDiferencas(filtro, dataLimiteLancamentoPesquisa);
+		diferencas = diferencaEstoqueRepository.obterDiferencas(filtro);
 		
 		Assert.assertNotNull(diferencas);
 		
@@ -689,7 +689,7 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 		Calendar d = Calendar.getInstance();
 		Date dataLimiteLancamentoPesquisa = d.getTime();
 		
-		diferencas = diferencaEstoqueRepository.obterDiferencas(filtro, dataLimiteLancamentoPesquisa);
+		diferencas = diferencaEstoqueRepository.obterDiferencas(filtro);
 		
 		Assert.assertNotNull(diferencas);
 		
@@ -710,7 +710,7 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 		Calendar d = Calendar.getInstance();
 		Date dataLimiteLancamentoPesquisa = d.getTime();
 		
-		diferencas = diferencaEstoqueRepository.obterDiferencas(filtro, dataLimiteLancamentoPesquisa);
+		diferencas = diferencaEstoqueRepository.obterDiferencas(filtro);
 		
 		Assert.assertNotNull(diferencas);
 		
@@ -731,7 +731,7 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 		Calendar d = Calendar.getInstance();
 		Date dataLimiteLancamentoPesquisa = d.getTime();
 		
-		diferencas = diferencaEstoqueRepository.obterDiferencas(filtro, dataLimiteLancamentoPesquisa);
+		diferencas = diferencaEstoqueRepository.obterDiferencas(filtro);
 		
 		Assert.assertNotNull(diferencas);
 		
@@ -752,7 +752,7 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 		Calendar d = Calendar.getInstance();
 		Date dataLimiteLancamentoPesquisa = d.getTime();
 		
-		diferencas = diferencaEstoqueRepository.obterDiferencas(filtro, dataLimiteLancamentoPesquisa);
+		diferencas = diferencaEstoqueRepository.obterDiferencas(filtro);
 		
 		Assert.assertNotNull(diferencas);
 		
@@ -773,7 +773,7 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 		Calendar d = Calendar.getInstance();
 		Date dataLimiteLancamentoPesquisa = d.getTime();
 		
-		diferencas = diferencaEstoqueRepository.obterDiferencas(filtro, dataLimiteLancamentoPesquisa);
+		diferencas = diferencaEstoqueRepository.obterDiferencas(filtro);
 		
 		Assert.assertNotNull(diferencas);
 		
@@ -794,7 +794,7 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 		Calendar d = Calendar.getInstance();
 		Date dataLimiteLancamentoPesquisa = d.getTime();
 		
-		diferencas = diferencaEstoqueRepository.obterDiferencas(filtro, dataLimiteLancamentoPesquisa);
+		diferencas = diferencaEstoqueRepository.obterDiferencas(filtro);
 		
 		Assert.assertNotNull(diferencas);
 		
@@ -815,7 +815,7 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 		Calendar d = Calendar.getInstance();
 		Date dataLimiteLancamentoPesquisa = d.getTime();
 		
-		diferencas = diferencaEstoqueRepository.obterDiferencas(filtro, dataLimiteLancamentoPesquisa);
+		diferencas = diferencaEstoqueRepository.obterDiferencas(filtro);
 		
 		Assert.assertNotNull(diferencas);
 		
@@ -836,7 +836,7 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 		Calendar d = Calendar.getInstance();
 		Date dataLimiteLancamentoPesquisa = d.getTime();
 		
-		diferencas = diferencaEstoqueRepository.obterDiferencas(filtro, dataLimiteLancamentoPesquisa);
+		diferencas = diferencaEstoqueRepository.obterDiferencas(filtro);
 		
 		Assert.assertNotNull(diferencas);
 		
@@ -857,7 +857,7 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 		Calendar d = Calendar.getInstance();
 		Date dataLimiteLancamentoPesquisa = d.getTime();
 		
-		diferencas = diferencaEstoqueRepository.obterDiferencas(filtro, dataLimiteLancamentoPesquisa);
+		diferencas = diferencaEstoqueRepository.obterDiferencas(filtro);
 		
 		Assert.assertNotNull(diferencas);
 		
@@ -878,7 +878,7 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 		Calendar d = Calendar.getInstance();
 		Date dataLimiteLancamentoPesquisa = d.getTime();
 		
-		diferencas = diferencaEstoqueRepository.obterDiferencas(filtro, dataLimiteLancamentoPesquisa);
+		diferencas = diferencaEstoqueRepository.obterDiferencas(filtro);
 		
 		Assert.assertNotNull(diferencas);
 		
@@ -899,7 +899,7 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 		Calendar d = Calendar.getInstance();
 		Date dataLimiteLancamentoPesquisa = d.getTime();
 		
-		diferencas = diferencaEstoqueRepository.obterDiferencas(filtro, dataLimiteLancamentoPesquisa);
+		diferencas = diferencaEstoqueRepository.obterDiferencas(filtro);
 		
 		Assert.assertNotNull(diferencas);
 		
@@ -915,7 +915,7 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 		Calendar d = Calendar.getInstance();
 		Date dataLimiteLancamentoPesquisa = d.getTime();
 		
-		totalDiferencas = diferencaEstoqueRepository.obterTotalDiferencas(filtro, dataLimiteLancamentoPesquisa);
+		totalDiferencas = diferencaEstoqueRepository.obterTotalDiferencas(filtro,dataLimiteLancamentoPesquisa);
 		
 		Assert.assertNotNull(totalDiferencas);
 		
