@@ -274,7 +274,7 @@ public class XLSExporter implements Exporter {
 		
 		return startRowNum + 1;
 	}
-	
+
 	private int createSheetMainDataRows(Sheet sheet,
 									    List<ExportRow> rows,
 									    int lastRowNum) {
@@ -301,7 +301,9 @@ public class XLSExporter implements Exporter {
 				Cell cell = row.createCell(cellNum++);
 				
 				cell.setCellValue(columnString);
-
+				
+				//TODO Definir tipo da coluna, assim como é feito com alinhamento - cell.setCellType(Cell.CELL_TYPE_NUMERIC);
+				
 				CellStyle cellStyle = this.getRowColumnCellStyle(
 					sheet, ((rowNum % 2) != 0), (exportRow.getColumns().size() == cellNum),
 						exportColumn.getAlignment());
