@@ -76,15 +76,21 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 		
 		LancamentoParcial lancamentoParcial = this.obterLancalmentoParcial(
 				produtoEdicao);
-		if (lancamentoParcial == null) {
+		
+		/*
+		 * Caso já exista um lançamento Parcial irá remover o LançamentoParcial
+		 * e os PeriodoLancamentoParcial:
+		 */
+		if (lancamentoParcial != null) {
+			for (PeriodoLancamentoParcial periodo : lancamentoParcial.getPeriodos()) {
+				this.getSession().delete(periodo);
+			}
 			
-			// Novo Lançamento Parcial:
-			lancamentoParcial = this.gerarNovoLancamentoParcial(input, 
-					produtoEdicao);			
-		} else {		
-			
-			this.atualizarLancamentoParcial(input, lancamentoParcial);			
+			this.getSession().delete(lancamentoParcial);
 		}
+		
+		lancamentoParcial = this.gerarNovoLancamentoParcial(input, 
+				produtoEdicao);
 		
 		// Novo Lançamento:
 		Lancamento lancamento = this.gerarNovoLancamento(input, produtoEdicao);
@@ -203,7 +209,6 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 		 * Em caso positivo, irá apenas alterar alguns status.
 		 * Em caso negativo, irá gerar um novo lançamento.
 		 */
-		
 		Criteria criteria = getSession().createCriteria(Lancamento.class);
 		
 		Date dtLancamento = input.getDataLancamento();
@@ -277,56 +282,6 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 		return "F".equalsIgnoreCase(input.getTipoRecolhimento()) 
 					? TipoLancamentoParcial.FINAL 
 					: TipoLancamentoParcial.PARCIAL;
-	}
-	
-	/**
-	 * Atualiza os dados do Lançamento Parcial, além do Período Lançamento 
-	 * Parcial e Lançamento.
-	 * 
-	 * @param input
-	 * @param lancamentoParcial
-	 */
-	private void atualizarLancamentoParcial(EMS0136Input input,
-			LancamentoParcial lancamentoParcial) {
-		boolean hasAlteracao = false;
-
-		// Update da Data Inicial de lançamento:
-		Date dtLancamento = input.getDataLancamento();
-		if (dtLancamento.before(lancamentoParcial.getLancamentoInicial())) {
-			lancamentoParcial.setLancamentoInicial(dtLancamento);
-			hasAlteracao = true;
-		}
-		
-		// Update da Data Final de recolhimento:
-		Date dtRecolhimento = input.getDataRecolhimento();
-		if (dtRecolhimento.after(lancamentoParcial.getRecolhimentoFinal())) {
-			lancamentoParcial.setRecolhimentoFinal(dtRecolhimento);
-			hasAlteracao = true;
-		}
-		
-		if (hasAlteracao) {
-			this.getSession().update(lancamentoParcial);
-		}
-		
-		// Update do Período:
-		Integer numeroPeriodo = input.getNumeroPeriodo();
-		for (PeriodoLancamentoParcial periodo : lancamentoParcial.getPeriodos()) {
-			if (numeroPeriodo.equals(periodo.getNumeroPeriodo())) {
-				
-				periodo.setStatus(this.obterStatusLancamentoParcial(input));
-				periodo.setTipo(this.obterTipoLancamentoParcial(input));
-				
-				Lancamento lancamento = periodo.getLancamento();
-				lancamento.setDataLancamentoPrevista(input.getDataLancamento());
-				lancamento.setDataRecolhimentoPrevista(input.getDataRecolhimento());
-				
-				this.getSession().update(periodo);
-				this.getSession().update(lancamento);
-				
-				return;
-			}
-		}
-			
 	}
 	
 	
