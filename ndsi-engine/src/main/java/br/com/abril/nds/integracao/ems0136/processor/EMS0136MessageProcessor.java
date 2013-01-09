@@ -6,6 +6,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
+import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -196,21 +197,45 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 	private Lancamento gerarNovoLancamento(EMS0136Input input,
 			ProdutoEdicao produtoEdicao) {
 		
-		Date dtAgora = new Date();
-		Lancamento lancamento = new Lancamento();
-		lancamento.setDataCriacao(dtAgora);
-		lancamento.setDataLancamentoPrevista(input.getDataLancamento());
-		lancamento.setDataLancamentoDistribuidor(input.getDataLancamento());
-		lancamento.setDataRecolhimentoDistribuidor(input.getDataRecolhimento());
-		lancamento.setDataRecolhimentoPrevista(input.getDataRecolhimento());
-		lancamento.setProdutoEdicao(produtoEdicao);
-		lancamento.setTipoLancamento(TipoLancamento.PARCIAL);
-		lancamento.setDataStatus(dtAgora);
-		lancamento.setReparte(BigInteger.ZERO);
-		lancamento.setRepartePromocional(BigInteger.ZERO);
-		lancamento.setSequenciaMatriz(Integer.valueOf(0));
-		lancamento.setStatus(StatusLancamento.CONFIRMADO);
+		/*
+		 * Verifica se existe um lançamento já criado anteriormente (via outra
+		 * EMS).
+		 * Em caso positivo, irá apenas alterar alguns status.
+		 * Em caso negativo, irá gerar um novo lançamento.
+		 */
 		
+		Criteria criteria = getSession().createCriteria(Lancamento.class);
+		
+		Date dtLancamento = input.getDataLancamento();
+		Criterion criDataPrevista = Restrictions.eq(
+				"dataLancamentoPrevista", dtLancamento);
+		Criterion criDataDistribuidor = Restrictions.eq(
+				"dataLancamentoDistribuidor", dtLancamento);
+		criteria.add(Restrictions.or(criDataPrevista, criDataDistribuidor));
+		criteria.add(Restrictions.eq("produtoEdicao", produtoEdicao));
+		
+		criteria.setMaxResults(1);
+		Lancamento lancamento = (Lancamento) criteria.uniqueResult();
+		if (lancamento == null) {
+			lancamento = new Lancamento();
+			
+			Date dtAgora = new Date();
+			Date dtRecolhimento = input.getDataRecolhimento();
+			
+			lancamento.setDataCriacao(dtAgora);
+			lancamento.setDataLancamentoPrevista(dtLancamento);
+			lancamento.setDataLancamentoDistribuidor(dtLancamento);
+			lancamento.setDataRecolhimentoDistribuidor(dtRecolhimento);
+			lancamento.setDataRecolhimentoPrevista(dtRecolhimento);
+			lancamento.setProdutoEdicao(produtoEdicao);
+			lancamento.setDataStatus(dtAgora);
+			lancamento.setReparte(BigInteger.ZERO);
+			lancamento.setRepartePromocional(BigInteger.ZERO);
+			lancamento.setSequenciaMatriz(Integer.valueOf(0));
+			lancamento.setStatus(StatusLancamento.CONFIRMADO);
+		}
+		
+		lancamento.setTipoLancamento(TipoLancamento.PARCIAL);
 		this.getSession().persist(lancamento);
 		
 		return lancamento;
