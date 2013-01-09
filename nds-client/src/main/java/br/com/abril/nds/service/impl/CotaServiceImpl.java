@@ -2135,7 +2135,7 @@ public class CotaServiceImpl implements CotaService {
 			
 			dto.setLogradouroEntrega(enderecoCota.getEndereco().getLogradouro() + ", N&deg; " + numeroEndereco);
 			dto.setBairroEntrega(enderecoCota.getEndereco().getBairro());
-			dto.setCEPEntrega(enderecoCota.getEndereco().getCep());
+			dto.setCEPEntrega(Util.adicionarMascaraCEP(enderecoCota.getEndereco().getCep()));
 			dto.setCidadeEntrega(enderecoCota.getEndereco().getCidade());
 		} else {
 			
@@ -2154,7 +2154,7 @@ public class CotaServiceImpl implements CotaService {
 					
 					dto.setLogradouroEntrega(enderecoPDV.getLogradouro() + ", N&deg; " + numeroEndereco);
 					dto.setBairroEntrega(enderecoPDV.getBairro());
-					dto.setCEPEntrega(enderecoPDV.getCep());
+					dto.setCEPEntrega(Util.adicionarMascaraCEP(enderecoPDV.getCep()));
 					dto.setCidadeEntrega(enderecoPDV.getCidade());
 				}
 			}
