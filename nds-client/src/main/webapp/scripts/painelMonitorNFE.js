@@ -31,8 +31,9 @@ var PainelMonitorNFE = $.extend(true, {
 			dateFormat: "dd/mm/yy"
 		});
 		
-		$('#dataInicial', PainelMonitorNFE.workspace).mask("99/99/9999");	
-	
+		$('#dataInicial', PainelMonitorNFE.workspace).mask("99/99/9999");
+		
+		$('#documentoEmitente', PainelMonitorNFE.workspace).mask("99.999.999/9999-99");
 		
 		$('#dataFinal', PainelMonitorNFE.workspace).datepicker({
 			showOn: "button",
@@ -45,6 +46,13 @@ var PainelMonitorNFE = $.extend(true, {
 		
 	},
 	
+	replaceAll : function(string, token, newtoken) {
+		while (string.indexOf(token) != -1) {
+	 		string = string.replace(token, newtoken);
+		}
+		return string;
+	},
+	
 	pesquisar: function() {
 		
 		var box = $("#box", PainelMonitorNFE.workspace).val();
@@ -52,12 +60,16 @@ var PainelMonitorNFE = $.extend(true, {
 		var dataFinal = $("#dataFinal", PainelMonitorNFE.workspace).val();
 		var tipoDocumento = $('input:radio[name=radioTipoDoc]:checked', PainelMonitorNFE.workspace).val();
 		var documento = $("#documento", PainelMonitorNFE.workspace).val();
+		var documentoEmitente = $("#documentoEmitente", PainelMonitorNFE.workspace).val();
 		var tipoNfe = $("#tipoNfe", PainelMonitorNFE.workspace).val();
 		var numeroInicial = $("#numeroInicial", PainelMonitorNFE.workspace).val();
 		var numeroFinal = $("#numeroFinal", PainelMonitorNFE.workspace).val();
 		var chaveAcesso = $("#chaveAcesso", PainelMonitorNFE.workspace).val();
 		var situacaoNfe = $("#situacaoNfe", PainelMonitorNFE.workspace).val();
-		var serieNfe	= $("#serieNfe", PainelMonitorNFE.workspace).val();	
+		
+		documentoEmitente = PainelMonitorNFE.replaceAll(documentoEmitente,".","");
+		documentoEmitente = PainelMonitorNFE.replaceAll(documentoEmitente,"/","");
+		documentoEmitente = PainelMonitorNFE.replaceAll(documentoEmitente,"-","");
 		
 		var formData = [
 		        {name:'box', value: box },
@@ -65,12 +77,12 @@ var PainelMonitorNFE = $.extend(true, {
 		        {name:'dataFinal', value: dataFinal },
 		        {name:'tipoDocumento', value: tipoDocumento },
 		        {name:'documento', value: documento },
+		        {name:'documentoEmitente', value: documentoEmitente },
 		        {name:'tipoNfe', value: tipoNfe },
 		        {name:'numeroInicial', value: numeroInicial },
 		        {name:'numeroFinal', value: numeroFinal },
 		        {name:'chaveAcesso', value: chaveAcesso },
-		        {name:'situacaoNfe', value: situacaoNfe },
-		        {name:'serieNfe',    value: serieNfe}
+		        {name:'situacaoNfe', value: situacaoNfe }
 		];
 		
 		
@@ -308,3 +320,5 @@ var PainelMonitorNFE = $.extend(true, {
 	}
 	
 }, BaseController);
+
+//@ sourceURL=painelMonitorNFE.js

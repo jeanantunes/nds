@@ -37,7 +37,7 @@
 	<tr>
 		<td>Estado Civil:</td>
 		<td>
-			<select name="estadoCivilFiadorCpf" style="width: 155px;" onchange="fiadorController.opcaoCivilPf(this.value,'${param.prefix}');" id="${param.prefix}estadoCivilFiadorCpf;fiadorController.dadosBasicosAlterados();">
+			<select name="estadoCivilFiadorCpf" style="width: 155px;" onchange="fiadorController.opcaoCivilPf(this.value,'${param.prefix}');fiadorController.dadosBasicosAlterados();" id="${param.prefix}estadoCivilFiadorCpf">
 				<option selected="selected">Selecione...</option>
 				<option value="SOLTEIRO">Solteiro</option>
 				<option value="CASADO">Casado</option>

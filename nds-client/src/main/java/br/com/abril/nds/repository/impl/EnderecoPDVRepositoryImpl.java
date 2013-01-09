@@ -28,7 +28,7 @@ public class EnderecoPDVRepositoryImpl extends AbstractRepositoryModel<EnderecoP
 		
 		StringBuilder hql = new StringBuilder("select new ");
 		hql.append(EnderecoAssociacaoDTO.class.getCanonicalName())
-		   .append(" (t.principal, t.endereco, t.tipoEndereco, enderecoPessoa) ")
+		   .append(" (t.id as id, t.principal, t.endereco, t.tipoEndereco, enderecoPessoa) ")
 		   .append(" from EnderecoPDV t, Endereco enderecoPessoa ")
 		   .append(" where t.pdv.id = :idPDV ")
 		   .append("   and t.endereco.id = enderecoPessoa.id ");

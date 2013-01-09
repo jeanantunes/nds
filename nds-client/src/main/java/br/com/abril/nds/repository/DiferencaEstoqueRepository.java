@@ -44,12 +44,10 @@ public interface DiferencaEstoqueRepository extends Repository<Diferenca, Long> 
 	 * de acordo com o filtro.
 	 * 
 	 * @param filtro - filtro de pesquisa
-	 * @param dataLimiteLancamentoPesquisa - Data limite de lançamento para realizar a pesquisa
 	 * 
 	 * @return {@link List<Diferenca>}
 	 */
-	List<Diferenca> obterDiferencas(FiltroConsultaDiferencaEstoqueDTO filtro,
-									Date dataLimiteLancamentoPesquisa);
+	List<Diferenca> obterDiferencas(FiltroConsultaDiferencaEstoqueDTO filtro);
 	
 	/**
 	 * Obtém a quantidade total de registros de diferenças para consulta.
