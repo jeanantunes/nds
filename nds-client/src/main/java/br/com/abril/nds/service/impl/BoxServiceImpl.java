@@ -100,8 +100,8 @@ public class BoxServiceImpl implements BoxService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<CotaRotaRoteiroDTO> obtemCotaRotaRoteiro(long id) {
-		return boxRepository.obtemCotaRotaRoteiro(id);
+	public List<CotaRotaRoteiroDTO> obtemCotaRotaRoteiro(long id, String sortname, String sortorder) {
+		return boxRepository.obtemCotaRotaRoteiro(id,sortname,sortorder);
 	}
 
 	@Override
