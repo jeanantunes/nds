@@ -244,7 +244,11 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 		}
 		
 		lancamento.setTipoLancamento(TipoLancamento.PARCIAL);
-		this.getSession().merge(lancamento);
+		if (lancamento.getId() == null) {
+			this.getSession().persist(lancamento);
+		} else {
+			this.getSession().update(lancamento);
+		}
 		
 		return lancamento;
 	}
