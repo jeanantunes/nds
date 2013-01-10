@@ -131,7 +131,7 @@ public class BoxRepositoryImplTest extends AbstractRepositoryImplTest {
 
 	@Test
 	public void testObtemCotaRotaRoteiro() {
-		List<CotaRotaRoteiroDTO> list = boxRepository.obtemCotaRotaRoteiro(box.getId());
+		List<CotaRotaRoteiroDTO> list = boxRepository.obtemCotaRotaRoteiro(box.getId(),null,null);
 		
 		Assert.assertNotNull(list);
 	}
