@@ -166,7 +166,7 @@ $(function(){$('img.capaImg').load(function() {
   
   <tr class="class_linha_${status.index%2==0?1:2}">
   
-    <td width="58" style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; height:45px ">${produto.codigoProduto}</td>
+    <td width="58" style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; height:30px ">${produto.codigoProduto}</td>
     <td width="230" style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; "><strong>${produto.nomeProduto}</strong></td>
     <td width="34" style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; "><strong>${produto.edicao}</strong></td>
     <td width="34" align="center" style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px;border-right:1px solid #000;  "><strong>${status.index+1}</strong></td>
