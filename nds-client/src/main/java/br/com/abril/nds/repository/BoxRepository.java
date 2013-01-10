@@ -87,9 +87,11 @@ public interface BoxRepository extends Repository<Box,Long> {
 	/**
 	 * Recupera as {@link Cota} relacionadas suas {@link Rota} e roteiros relacionadas ao {@link Box}
 	 * @param id Id do {@link Box}
-	 * @return
+	 * @param sortorder
+	 * @param sortname
+	 * @return List<CotaRotaRoteiroDTO>
 	 */
-	public abstract List<CotaRotaRoteiroDTO> obtemCotaRotaRoteiro(long idBox);
+	public abstract List<CotaRotaRoteiroDTO> obtemCotaRotaRoteiro(long idBox, String sortname, String sortorder);
 	
 	Integer obterCodigoBoxPadraoUsuario(Long idUsuario);
 
