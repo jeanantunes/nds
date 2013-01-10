@@ -13,7 +13,10 @@ var parametroCobrancaController = $.extend(true,
 		
 	   
 		formatarCampos : function() {
-			$("#valorMinimo", this.workspace).numeric();
+			$("#valorMinimo", this.workspace).priceFormat({
+				centsSeparator: ',',
+			    thousandsSeparator: '.'
+			});
 			$("#diasDoMes", this.workspace).numeric();
 			$("#diasDoMes1", this.workspace).numeric();
 			$("#diasDoMes2", this.workspace).numeric();
@@ -102,7 +105,7 @@ var parametroCobrancaController = $.extend(true,
 				rp : 15,
 				showTableToggleBtn : true,
 				width : 960,
-				height : 'auto'
+				height : '255'
 			});
 		},		
 		
@@ -150,6 +153,9 @@ var parametroCobrancaController = $.extend(true,
 								   '</a>';
 				
 				row.cell.acao = linkEditar + linkExcluir;
+				
+				
+				row.cell.valorMinimoEmissao = $.formatNumber(row.cell.valorMinimoEmissao, {format:"#,##0.00", locale:"br"});
 				
 				
 				if(row.cell.principal){
@@ -203,7 +209,7 @@ var parametroCobrancaController = $.extend(true,
 				buttons:[ 
 				          {
 					           id:"bt_confirmar",
-					           text:"Con4firmar", 
+					           text:"Confirmar", 
 					           click: function() {
 					        	   parametroCobrancaController.postarParametro();
 					           }
@@ -462,7 +468,7 @@ var parametroCobrancaController = $.extend(true,
 					tipoCobranca : $("#dTipoCobranca", this.worspace).val(),
 					formaEmissao : $("#formaEmissao", this.worspace).val(),
 					idBanco : $("#banco", this.worspace).val(),
-					valorMinimo : $("#valorMinimo", this.worspace).val(),
+					valorMinimo : $("#valorMinimo", this.worspace).unmask()/100,
 					taxaMulta : $("#taxaMulta", this.worspace).val(),
 					valorMulta : $("#valorMulta", this.worspace).val(),
 					taxaJuros : $("#taxaJuros", this.worspace).val(),
@@ -602,6 +608,7 @@ var parametroCobrancaController = $.extend(true,
 			$("input[name='checkGroupFornecedores']", this.workspace).each(function(i) {			
 				$(this, this.workspace).attr('checked',false);
 			});	
+			$('[name=concentracaoPagamento]', this.workspace).attr('checked',false);
 	
 		},	
 		
