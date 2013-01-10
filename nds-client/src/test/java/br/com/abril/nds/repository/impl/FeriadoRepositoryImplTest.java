@@ -12,6 +12,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 
 import br.com.abril.nds.dto.CalendarioFeriadoDTO;
 import br.com.abril.nds.fixture.Fixture;
+import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.Feriado;
 import br.com.abril.nds.model.cadastro.TipoFeriado;
 import br.com.abril.nds.model.dne.UnidadeFederacao;
@@ -46,32 +47,32 @@ public class FeriadoRepositoryImplTest extends AbstractRepositoryImplTest {
 		
 		Feriado feriado = Fixture.feriado(FERIADO_SETE_SETEMBRO,
 				TipoFeriado.FEDERAL, null, null, "Independência do Brasil",
-				false, false, true);
+				false, false, true, Origem.MANUAL);
 		save(feriado);
 
 		feriado = Fixture.feriado(FERIADO_ANUAL_FEDERAL, TipoFeriado.FEDERAL,
-				null, null, "Dia de São Thomé", false, false, true);
+				null, null, "Dia de São Thomé", false, false, true, Origem.MANUAL);
 		save(feriado);
 
 		feriado = Fixture.feriado(FERIADO_ANUAL_ESTADUAL, TipoFeriado.ESTADUAL,
-				UF_SP, null, "Dia de São Thomé", false, false, true);
+				UF_SP, null, "Dia de São Thomé", false, false, true, Origem.MANUAL);
 		save(feriado);
 
 		feriado = Fixture.feriado(FERIADO_ANUAL_MUNICIPAL,
 				TipoFeriado.MUNICIPAL, null, null, "Dia de São Thomé", false,
-				false, true);
+				false, true, Origem.MANUAL);
 		save(feriado);
 
 		feriado = Fixture.feriado(FERIADO_FEDERAL, TipoFeriado.FEDERAL, null,
-				null, "Dia de São Thomé", false, false, false);
+				null, "Dia de São Thomé", false, false, false, Origem.MANUAL);
 		save(feriado);
 
 		feriado = Fixture.feriado(FERIADO_ESTADUAL, TipoFeriado.ESTADUAL, UF_SP,
-				null, "Dia de São Thomé", false, false, false);
+				null, "Dia de São Thomé", false, false, false, Origem.MANUAL);
 		save(feriado);
 
 		feriado = Fixture.feriado(FERIADO_MUNICIPAL, TipoFeriado.MUNICIPAL,
-				null, null, "Dia de São Thomé", false, false, false);
+				null, null, "Dia de São Thomé", false, false, false, Origem.MANUAL);
 		save(feriado);
 
 	}
@@ -137,7 +138,7 @@ public class FeriadoRepositoryImplTest extends AbstractRepositoryImplTest {
 	public void salvarFeriadoAnualDuplicado() {
 		Feriado duplicado = Fixture.feriado(FERIADO_SETE_SETEMBRO,
 				TipoFeriado.FEDERAL, null, null, "Independência do Brasil",
-				false, false, true);
+				false, false, true, Origem.MANUAL);
 		feriadoRepository.adicionar(duplicado);
 	}
 	
@@ -145,7 +146,7 @@ public class FeriadoRepositoryImplTest extends AbstractRepositoryImplTest {
 	public void salvarFeriadoAnualMunicipalDuplicado() {
 		Feriado estadual = Fixture.feriado(FERIADO_SETE_SETEMBRO,
 				TipoFeriado.ESTADUAL, UF_SP, null, "Apenas para testes",
-				false, false, true);
+				false, false, true, Origem.MANUAL);
 		feriadoRepository.adicionar(estadual);
 		flushClear();
 		
@@ -158,7 +159,7 @@ public class FeriadoRepositoryImplTest extends AbstractRepositoryImplTest {
 	public void alterarFeriadoAnualDuplicado() {
 		Feriado feriado = Fixture.feriado(DateUtil.parseDataPTBR("12/10/2012"),
 				TipoFeriado.FEDERAL, null, null, "Nossa Senhora Aparecida",
-				false, false, true);
+				false, false, true, Origem.MANUAL);
 		save(feriado);
 		flushClear();
 		
@@ -171,7 +172,7 @@ public class FeriadoRepositoryImplTest extends AbstractRepositoryImplTest {
 	public void alterarFeriadoAnual() {
 		Feriado feriado = Fixture.feriado(DateUtil.parseDataPTBR("12/10/2012"),
 				TipoFeriado.FEDERAL, null, null, "Nossa Senhora Aparecida",
-				false, false, true);
+				false, false, true, Origem.MANUAL);
 		save(feriado);
 		flushClear();
 		

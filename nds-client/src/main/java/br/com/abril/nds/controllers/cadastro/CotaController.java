@@ -1366,7 +1366,8 @@ public class CotaController extends BaseController {
 	 */
 	private void validarPercentualTaxa(BigDecimal percentualFaturamento, BigDecimal taxaFixa) {
 		
-		if (percentualFaturamento == null && taxaFixa == null) {
+		if ((percentualFaturamento == null && taxaFixa == null)
+				|| (percentualFaturamento != null && taxaFixa != null)) {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING,
 				"O Percentual de Faturamento ou a Taxa Fixa devem ser preenchidos!");

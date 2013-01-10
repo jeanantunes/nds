@@ -212,6 +212,9 @@ var fornecedorController = $.extend(true,{
 						buttons : {},
 						beforeClose: function(event, ui) {
 							
+							if(indEdicaoBloqueada==true)
+								return true;
+							
 							if (!fecharModalCadastroFornecedor){
 								
 								fornecedorController.cancelarCadastro();
