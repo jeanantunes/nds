@@ -82,6 +82,9 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 		 * e os PeriodoLancamentoParcial:
 		 */
 		if (lancamentoParcial != null) {
+			this.ndsiLoggerFactory.getLogger().logInfo(message,
+					EventoExecucaoEnum.REGISTRO_JA_EXISTENTE,
+					"Lançamento Parcial já cadastrado! Inicialdo a exclusão!");
 			for (PeriodoLancamentoParcial periodo : lancamentoParcial.getPeriodos()) {
 				this.getSession().delete(periodo);
 			}
@@ -241,7 +244,7 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 		}
 		
 		lancamento.setTipoLancamento(TipoLancamento.PARCIAL);
-		this.getSession().persist(lancamento);
+		this.getSession().merge(lancamento);
 		
 		return lancamento;
 	}
