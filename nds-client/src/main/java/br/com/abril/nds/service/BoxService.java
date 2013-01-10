@@ -72,7 +72,7 @@ public interface BoxService {
 	/**
 	 * @see BoxRepository#obtemCotaRotaRoteiro(long)
 	 */
-	public abstract List<CotaRotaRoteiroDTO> obtemCotaRotaRoteiro(long id);
+	public abstract List<CotaRotaRoteiroDTO> obtemCotaRotaRoteiro(long id, String sortname, String sortorder);
 	
 	/**
 	 * Busca lista de Box por tipo;

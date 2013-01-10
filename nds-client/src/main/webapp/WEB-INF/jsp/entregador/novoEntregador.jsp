@@ -30,22 +30,15 @@
 			</div>
 			
 			<div id="manutencaoEnderecos">
-				<fieldset style="width:765px; margin:5px;">
-						<jsp:include page="../endereco/index.jsp">
-						<jsp:param value="ENDERECO_ENTREGADOR" name="telaEndereco"/>
-						</jsp:include>
-				</fieldset>
-				<br clear="all"/>
+				<jsp:include page="../endereco/index.jsp">
+				<jsp:param value="ENDERECO_ENTREGADOR" name="telaEndereco"/>
+				</jsp:include>
 			</div>
 			
 			<div id="manutencaoTelefones">
-				<br clear="all"/>
-					<fieldset style="width:765px; margin:5px;">
-						<jsp:include page="../telefone/index.jsp">
-						<jsp:param value="ENTREGADOR" name="tela"/>
-						</jsp:include>
-					</fieldset>
-				<br clear="all"/>
+				<jsp:include page="../telefone/index.jsp">
+				<jsp:param value="ENTREGADOR" name="tela"/>
+				</jsp:include>
 			</div>
 			
 			<div id="cotas">

@@ -502,14 +502,6 @@ public class VendaEncalheController extends BaseController {
 	
 	private void validarParametrosFiltro(FiltroVendaEncalheDTO filtro){
 		
-		if(filtro.getTipoVendaEncalhe() == null 
-				&& filtro.getNumeroCota() == null 
-				&& filtro.getPeriodoInicial()== null 
-				&& filtro.getPeriodoFinal() == null){
-			
-			throw new ValidacaoException(TipoMensagem.WARNING,"Pelomenos um campo deve ser informado para pesquisa!");
-		}
-		
 		validarFormatoData();
 		
 		if(filtro.getPeriodoInicial() != null && filtro.getPeriodoFinal() == null){
