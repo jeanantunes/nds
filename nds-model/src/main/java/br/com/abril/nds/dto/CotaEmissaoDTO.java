@@ -124,7 +124,8 @@ public class CotaEmissaoDTO implements Serializable{
 	 * @param cep the cep to set
 	 */
 	public void setCep(String cep) {
-		this.cep = (cep!= null)? Util.adicionarMascaraCEP(cep) : cep;
+		System.out.println("CEP: "+cep);
+		this.cep = (cep!= null && !cep.isEmpty())? Util.adicionarMascaraCEP(cep) : cep;
 	}
 	/**
 	 * @return the inscricaoEstadual
