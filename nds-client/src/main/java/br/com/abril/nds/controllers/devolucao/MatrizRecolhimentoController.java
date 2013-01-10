@@ -825,7 +825,7 @@ public class MatrizRecolhimentoController extends BaseController {
 			produtoRecolhimentoVO.setDataLancamento(produtoRecolhimentoDTO.getDataLancamento());
 
 			produtoRecolhimentoVO.setDataRecolhimento(
-				produtoRecolhimentoDTO.getDataRecolhimentoDistribuidor());
+				produtoRecolhimentoDTO.getDataRecolhimentoPrevista());
 			
 			produtoRecolhimentoVO.setEncalheSede(
 				MathUtil.round(produtoRecolhimentoDTO.getExpectativaEncalheSede(), 2));
@@ -1079,6 +1079,8 @@ public class MatrizRecolhimentoController extends BaseController {
 	 * @param dataBalanceamento - data de balanceamento
 	 */
 	private void validarDataReprogramacao(Integer numeroSemana, Date novaData, Date dataBalanceamento) {
+		
+		this.recolhimentoService.verificaDataOperacao(novaData);
 		
 		List<ConfirmacaoVO> confirmacoes = this.montarListaDatasConfirmacao();
 		
