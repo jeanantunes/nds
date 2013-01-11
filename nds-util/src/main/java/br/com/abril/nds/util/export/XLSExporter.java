@@ -300,9 +300,14 @@ public class XLSExporter implements Exporter {
 				
 				Cell cell = row.createCell(cellNum++);
 				
-				cell.setCellValue(columnString);
 				
-				//TODO Definir tipo da coluna, assim como é feito com alinhamento - cell.setCellType(Cell.CELL_TYPE_NUMERIC);
+				
+				if(Cell.CELL_TYPE_NUMERIC == exportColumn.getColumnType()) {
+					cell.setCellType(Cell.CELL_TYPE_NUMERIC);
+					cell.setCellValue(Double.parseDouble(columnString));
+				} else {
+					cell.setCellValue(columnString);
+				}
 				
 				CellStyle cellStyle = this.getRowColumnCellStyle(
 					sheet, ((rowNum % 2) != 0), (exportRow.getColumns().size() == cellNum),

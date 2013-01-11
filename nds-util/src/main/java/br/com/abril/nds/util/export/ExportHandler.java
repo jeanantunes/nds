@@ -10,6 +10,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.poi.ss.usermodel.Cell;
+
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.export.Export.Alignment;
 
@@ -393,7 +395,7 @@ public class ExportHandler {
 			Object methodReturn = method.invoke(exportable, new Object[]{});
 
 			return new ExportColumn(
-				getExportValue(methodReturn), exportAnnotation.alignment(), exportAnnotation.exhibitionOrder());
+				getExportValue(methodReturn), exportAnnotation.alignment(), exportAnnotation.exhibitionOrder(),getExportValueType(methodReturn));
 		}
 		
 		return null;
@@ -417,7 +419,7 @@ public class ExportHandler {
 			Object fieldValue = field.get(exportable);
 
 			return new ExportColumn(
-				getExportValue(fieldValue), exportAnnotation.alignment(), exportAnnotation.exhibitionOrder());
+				getExportValue(fieldValue), exportAnnotation.alignment(), exportAnnotation.exhibitionOrder(), getExportValueType(fieldValue));
 		}
 		
 		return null;
@@ -444,6 +446,15 @@ public class ExportHandler {
 		}
 		
 		return exportValue;
+	}
+	
+	private static int getExportValueType(Object value) {
+				
+		if (value != null && (value instanceof Number)) {
+				return Cell.CELL_TYPE_NUMERIC;
+		}
+		
+		return Cell.CELL_TYPE_STRING;
 	}
 	
 	private static void processHeader(Export exportAnnotation, 
