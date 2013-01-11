@@ -1,7 +1,6 @@
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -420,7 +419,7 @@ public class LancamentoRepositoryImpl extends
 	 */
 	@Override
 	@SuppressWarnings("unchecked")
-	public TreeMap<Date, BigInteger> obterExpectativasEncalhePorData(Intervalo<Date> periodoRecolhimento, 
+	public TreeMap<Date, BigDecimal> obterExpectativasEncalhePorData(Intervalo<Date> periodoRecolhimento, 
 																 	 List<Long> fornecedores,
 																 	 GrupoProduto grupoCromo) {
 
@@ -441,7 +440,7 @@ public class LancamentoRepositoryImpl extends
 
 		List<Object[]> expectativasEncalheDia = query.list();
 
-		TreeMap<Date, BigInteger> mapaExpectativaEncalheDia = new TreeMap<Date, BigInteger>();
+		TreeMap<Date, BigDecimal> mapaExpectativaEncalheDia = new TreeMap<Date, BigDecimal>();
 
 		for (Object[] expectativa : expectativasEncalheDia) {
 
@@ -449,7 +448,7 @@ public class LancamentoRepositoryImpl extends
 
 			BigDecimal expectativaEncalhe = (BigDecimal) expectativa[1];
 
-			mapaExpectativaEncalheDia.put(data, expectativaEncalhe.toBigInteger());
+			mapaExpectativaEncalheDia.put(data, expectativaEncalhe);
 		}
 
 		return mapaExpectativaEncalheDia;
@@ -673,7 +672,7 @@ public class LancamentoRepositoryImpl extends
 													  .addScalar("dataLancamento")
 													  .addScalar("dataRecolhimentoPrevista")
 													  .addScalar("dataRecolhimentoDistribuidor")
-													  .addScalar("expectativaEncalhe", StandardBasicTypes.BIG_INTEGER)
+													  .addScalar("expectativaEncalhe")
 													  .addScalar("expectativaEncalheSede")
 													  .addScalar("expectativaEncalheAtendida")
 													  .addScalar("expectativaEncalheAlternativo")
