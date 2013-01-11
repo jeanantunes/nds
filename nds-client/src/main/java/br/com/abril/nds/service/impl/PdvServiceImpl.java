@@ -160,6 +160,13 @@ public class PdvServiceImpl implements PdvService {
 
     @Transactional(readOnly = true)
     @Override
+	public List<TipoGeradorFluxoPDV> obterTipoGeradorDeFluxo() {
+		// TODO Auto-generated method stub
+    	return tipoGeradorFluxoPDVRepsitory.buscarTodos();
+	}
+    
+    @Transactional(readOnly = true)
+    @Override
     public List<TipoGeradorFluxoPDV> obterTiposGeradorFluxo(Long... codigos) {
 
         if (codigos.length == 0) {
