@@ -36,4 +36,9 @@ public class TipoGeradorFluxoPDVRepositoryImpl extends AbstractRepositoryModel<T
 		
 		return criteria.list();
 	}
+	
+	// Inserindo dados falsos
+	public static void main(String[] args) {
+		
+	}
 }
