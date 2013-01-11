@@ -136,8 +136,9 @@ public class GeradorBoleto {
 	        boleto.addTextosExtras("txtFcValorCobrado"," ");
 	        boleto.addTextosExtras("txtFcValorDocumento"," ");
         }
-        
+
         return boleto;
+
 	}
 	
 	
