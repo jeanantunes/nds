@@ -186,6 +186,9 @@ var fornecedorController = $.extend(true,{
 							$("#fornecedorController-codigoInterface", fornecedorController.workspace).val(result.nextCodigo);
 							
 							fornecedorController.showPopupFornecedor();
+							fornecedorController.bloquearCamposEdicaoFornecedor(false);
+							ENDERECO_FORNECEDOR.bloquearCamposFormEndereco(false);
+							FORNECEDOR.bloquearCamposFormTelefone(false);
 						},
 						null,
 						true

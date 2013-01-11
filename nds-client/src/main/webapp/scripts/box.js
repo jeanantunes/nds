@@ -255,27 +255,29 @@ var boxController = $.extend(true, {
 				display : 'Cota',
 				name : 'numeroCota',
 				width : 60,
-				sortable : false,
+				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Nome',
 				name : 'nomeCota',
 				width : 200,
-				sortable : false,
+				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Rota',
 				name : 'rota',
 				width : 120,
-				sortable : false,
+				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Roteiro',
 				name : 'roteiro',
 				width : 120,
-				sortable : false,
+				sortable : true,
 				align : 'left'
 			}],
+			sortname : "numeroCota",
+			sortorder : "asc",
 			width : 570,
 			height : 210
 		});
