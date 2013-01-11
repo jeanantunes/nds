@@ -302,7 +302,7 @@ public class XLSExporter implements Exporter {
 				
 				
 				
-				if(Cell.CELL_TYPE_NUMERIC == exportColumn.getColumnType()) {
+				if(ColumType.NUMBER == exportColumn.getColumnType()) {
 					cell.setCellType(Cell.CELL_TYPE_NUMERIC);
 					cell.setCellValue(Double.parseDouble(columnString));
 				} else {

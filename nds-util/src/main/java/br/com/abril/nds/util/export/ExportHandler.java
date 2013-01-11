@@ -10,8 +10,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.poi.ss.usermodel.Cell;
-
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.export.Export.Alignment;
 
@@ -448,13 +446,13 @@ public class ExportHandler {
 		return exportValue;
 	}
 	
-	private static int getExportValueType(Object value) {
+	private static ColumType getExportValueType(Object value) {
 				
 		if (value != null && (value instanceof Number)) {
-				return Cell.CELL_TYPE_NUMERIC;
+				return ColumType.NUMBER;
 		}
 		
-		return Cell.CELL_TYPE_STRING;
+		return ColumType.STRING;
 	}
 	
 	private static void processHeader(Export exportAnnotation, 
