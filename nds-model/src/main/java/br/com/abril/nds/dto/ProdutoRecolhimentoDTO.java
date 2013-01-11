@@ -2,7 +2,6 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.Date;
 
 import br.com.abril.nds.model.planejamento.StatusLancamento;
@@ -66,7 +65,7 @@ public class ProdutoRecolhimentoDTO implements Serializable {
 	
 	private BigDecimal expectativaEncalheAlternativo;
 	
-	private BigInteger expectativaEncalhe;
+	private BigDecimal expectativaEncalhe;
 
 	private BigDecimal valorTotal;
 
@@ -372,14 +371,14 @@ public class ProdutoRecolhimentoDTO implements Serializable {
 	/**
 	 * @return the expectativaEncalhe
 	 */
-	public BigInteger getExpectativaEncalhe() {
+	public BigDecimal getExpectativaEncalhe() {
 		return expectativaEncalhe;
 	}
 
 	/**
 	 * @param expectativaEncalhe the expectativaEncalhe to set
 	 */
-	public void setExpectativaEncalhe(BigInteger expectativaEncalhe) {
+	public void setExpectativaEncalhe(BigDecimal expectativaEncalhe) {
 		this.expectativaEncalhe = expectativaEncalhe;
 	}
 

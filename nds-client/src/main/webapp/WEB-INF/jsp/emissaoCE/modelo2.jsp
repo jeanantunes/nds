@@ -61,7 +61,7 @@ $(function(){$('img.capaImg').load(function() {
 
 <table width="850" border="0" align="center" cellpadding="0" cellspacing="0" style="margin-bottom:10px; margin-top:10px;">
   <tr>
-    <td width="121" rowspan="6" valign="top"><span class="logo">
+    <td width="121" rowspan="6" valign="top"><span>
     	<img src="${pageContext.request.contextPath}/cadastro/distribuidor/logo" width="110" height="115" alt="Novo Distrib"  /></span>
     </td>
     <td colspan="4" style="border-left:1px solid #000; border-top:1px solid #000;"><span class="cabecalho">Razão Social<br />
@@ -166,7 +166,7 @@ $(function(){$('img.capaImg').load(function() {
   
   <tr class="class_linha_${status.index%2==0?1:2}">
   
-    <td width="58" style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; height:45px ">${produto.codigoProduto}</td>
+    <td width="58" style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; height:30px ">${produto.codigoProduto}</td>
     <td width="230" style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; "><strong>${produto.nomeProduto}</strong></td>
     <td width="34" style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; "><strong>${produto.edicao}</strong></td>
     <td width="34" align="center" style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px;border-right:1px solid #000;  "><strong>${status.index+1}</strong></td>
@@ -257,7 +257,7 @@ $(function(){$('img.capaImg').load(function() {
 	
 <table width="850" border="0" align="center" cellpadding="0" cellspacing="0" style="margin-bottom:10px; margin-top:10px;">
   <tr>
-    <td width="121" rowspan="6" valign="top"><span class="logo">
+    <td width="121" rowspan="6" valign="top"><span>
     	<img src="${pageContext.request.contextPath}/cadastro/distribuidor/logo" width="110" height="115" alt="Novo Distrib"  /></span>
     </td>
     <td colspan="4" style="border-left:1px solid #000; border-top:1px solid #000;"><span class="cabecalho">Razão Social<br />

@@ -1,5 +1,6 @@
 package br.com.abril.nds.service.impl;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -627,7 +628,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 																		 GrupoProduto.CROMO);
 		}
 
-		TreeMap<Date, BigInteger> mapaExpectativaEncalheTotalDiaria =
+		TreeMap<Date, BigDecimal> mapaExpectativaEncalheTotalDiaria =
 			this.lancamentoRepository.obterExpectativasEncalhePorData(periodoRecolhimento, 
 																	  listaIdsFornecedores, 
 																	  GrupoProduto.CROMO);
