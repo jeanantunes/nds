@@ -133,17 +133,50 @@ public class PoliticaCobrancaServiceImpl implements PoliticaCobrancaService {
 						
 					}					
 					parametroCobranca.setFornecedores(fornecedores.toString());
-					
-					i = 0;
 					StringBuilder concentracaoPagamentos= new StringBuilder();
-					for (ConcentracaoCobrancaCota cobranca: forma.getConcentracaoCobrancaCota()) {
-						concentracaoPagamentos.append(cobranca.getDiaSemana().getDescricaoDiaSemana().substring(0, 3));
-						i++;
-						if(i < forma.getConcentracaoCobrancaCota().size()){
-							concentracaoPagamentos.append(", ");
+					switch (forma.getTipoFormaCobranca()) {
+					case DIARIA:
+						concentracaoPagamentos.append(forma.getTipoFormaCobranca().getDescricao());
+						break;
+						
+					case MENSAL:
+						if (!forma.getDiasDoMes().isEmpty()) {
+							concentracaoPagamentos.append("Dia ");
+							concentracaoPagamentos.append(forma.getDiasDoMes()
+									.get(0));
+						}
+						break;
+					case QUINZENAL:
+						if (!forma.getDiasDoMes().isEmpty()) {
+							concentracaoPagamentos.append("Dias ");							
+							i = 0;						
+							for (Integer dia: forma.getDiasDoMes()) {
+								if(i > 0){
+									concentracaoPagamentos.append(" e ");
+								}
+								concentracaoPagamentos.append(dia);
+								i++;
+							}	
 						}
 						
-					}					
+						break;
+					case SEMANAL:
+						i = 0;						
+						for (ConcentracaoCobrancaCota cobranca: forma.getConcentracaoCobrancaCota()) {
+							concentracaoPagamentos.append(cobranca.getDiaSemana().getDescricaoDiaSemana().substring(0, 3));
+							i++;
+							if(i < forma.getConcentracaoCobrancaCota().size()){
+								concentracaoPagamentos.append(", ");
+							}
+							
+						}			
+						break;
+
+					default:
+						break;
+					}
+					
+							
 					parametroCobranca.setConcentracaoPagamentos(concentracaoPagamentos.toString());
 				}
 				
@@ -498,7 +531,6 @@ public class PoliticaCobrancaServiceImpl implements PoliticaCobrancaService {
 	public boolean validarFormaCobrancaMensal(Long idPoliticaCobranca, Distribuidor distribuidor,TipoCobranca tipoCobranca,
 			List<Long> idFornecedores, Integer diaDoMes) {
 		
-		boolean res=true;
 		Long idFormaCobrancaExcept = null;
 		
 		if (idPoliticaCobranca!=null){
@@ -511,13 +543,13 @@ public class PoliticaCobrancaServiceImpl implements PoliticaCobrancaService {
 			for (int i=0; i<idFornecedores.size();i++){
 				Fornecedor fornecedor= this.fornecedorService.obterFornecedorPorId(idFornecedores.get(i));
 				if (itemFormaCobranca.getFornecedores().contains(fornecedor)){
-					if (diaDoMes==itemFormaCobranca.getDiasDoMes().get(0)){
-						res=false;
+					if (!itemFormaCobranca.getDiasDoMes().isEmpty() && diaDoMes==itemFormaCobranca.getDiasDoMes().get(0)){
+						return false;
 					}
 				}
 			}
 		}
-		return res;
+		return true;
 	}
 
 

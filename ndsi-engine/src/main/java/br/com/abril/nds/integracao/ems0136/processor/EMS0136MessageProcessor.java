@@ -6,6 +6,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
+import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -75,15 +76,24 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 		
 		LancamentoParcial lancamentoParcial = this.obterLancalmentoParcial(
 				produtoEdicao);
-		if (lancamentoParcial == null) {
+		
+		/*
+		 * Caso já exista um lançamento Parcial irá remover o LançamentoParcial
+		 * e os PeriodoLancamentoParcial:
+		 */
+		if (lancamentoParcial != null) {
+			this.ndsiLoggerFactory.getLogger().logInfo(message,
+					EventoExecucaoEnum.REGISTRO_JA_EXISTENTE,
+					"Lançamento Parcial já cadastrado! Inicialdo a exclusão!");
+			for (PeriodoLancamentoParcial periodo : lancamentoParcial.getPeriodos()) {
+				this.getSession().delete(periodo);
+			}
 			
-			// Novo Lançamento Parcial:
-			lancamentoParcial = this.gerarNovoLancamentoParcial(input, 
-					produtoEdicao);			
-		} else {		
-			
-			this.atualizarLancamentoParcial(input, lancamentoParcial);			
+			this.getSession().delete(lancamentoParcial);
 		}
+		
+		lancamentoParcial = this.gerarNovoLancamentoParcial(input, 
+				produtoEdicao);
 		
 		// Novo Lançamento:
 		Lancamento lancamento = this.gerarNovoLancamento(input, produtoEdicao);
@@ -196,22 +206,49 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 	private Lancamento gerarNovoLancamento(EMS0136Input input,
 			ProdutoEdicao produtoEdicao) {
 		
-		Date dtAgora = new Date();
-		Lancamento lancamento = new Lancamento();
-		lancamento.setDataCriacao(dtAgora);
-		lancamento.setDataLancamentoPrevista(input.getDataLancamento());
-		lancamento.setDataLancamentoDistribuidor(input.getDataLancamento());
-		lancamento.setDataRecolhimentoDistribuidor(input.getDataRecolhimento());
-		lancamento.setDataRecolhimentoPrevista(input.getDataRecolhimento());
-		lancamento.setProdutoEdicao(produtoEdicao);
-		lancamento.setTipoLancamento(TipoLancamento.PARCIAL);
-		lancamento.setDataStatus(dtAgora);
-		lancamento.setReparte(BigInteger.ZERO);
-		lancamento.setRepartePromocional(BigInteger.ZERO);
-		lancamento.setSequenciaMatriz(Integer.valueOf(0));
-		lancamento.setStatus(StatusLancamento.CONFIRMADO);
+		/*
+		 * Verifica se existe um lançamento já criado anteriormente (via outra
+		 * EMS).
+		 * Em caso positivo, irá apenas alterar alguns status.
+		 * Em caso negativo, irá gerar um novo lançamento.
+		 */
+		Criteria criteria = getSession().createCriteria(Lancamento.class);
 		
-		this.getSession().persist(lancamento);
+		Date dtLancamento = input.getDataLancamento();
+		Criterion criDataPrevista = Restrictions.eq(
+				"dataLancamentoPrevista", dtLancamento);
+		Criterion criDataDistribuidor = Restrictions.eq(
+				"dataLancamentoDistribuidor", dtLancamento);
+		criteria.add(Restrictions.or(criDataPrevista, criDataDistribuidor));
+		criteria.add(Restrictions.eq("produtoEdicao", produtoEdicao));
+		
+		criteria.setMaxResults(1);
+		Lancamento lancamento = (Lancamento) criteria.uniqueResult();
+		if (lancamento == null) {
+			lancamento = new Lancamento();
+			
+			Date dtAgora = new Date();
+			Date dtRecolhimento = input.getDataRecolhimento();
+			
+			lancamento.setDataCriacao(dtAgora);
+			lancamento.setDataLancamentoPrevista(dtLancamento);
+			lancamento.setDataLancamentoDistribuidor(dtLancamento);
+			lancamento.setDataRecolhimentoDistribuidor(dtRecolhimento);
+			lancamento.setDataRecolhimentoPrevista(dtRecolhimento);
+			lancamento.setProdutoEdicao(produtoEdicao);
+			lancamento.setDataStatus(dtAgora);
+			lancamento.setReparte(BigInteger.ZERO);
+			lancamento.setRepartePromocional(BigInteger.ZERO);
+			lancamento.setSequenciaMatriz(Integer.valueOf(0));
+			lancamento.setStatus(StatusLancamento.CONFIRMADO);
+		}
+		
+		lancamento.setTipoLancamento(TipoLancamento.PARCIAL);
+		if (lancamento.getId() == null) {
+			this.getSession().persist(lancamento);
+		} else {
+			this.getSession().update(lancamento);
+		}
 		
 		return lancamento;
 	}
@@ -252,56 +289,6 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 		return "F".equalsIgnoreCase(input.getTipoRecolhimento()) 
 					? TipoLancamentoParcial.FINAL 
 					: TipoLancamentoParcial.PARCIAL;
-	}
-	
-	/**
-	 * Atualiza os dados do Lançamento Parcial, além do Período Lançamento 
-	 * Parcial e Lançamento.
-	 * 
-	 * @param input
-	 * @param lancamentoParcial
-	 */
-	private void atualizarLancamentoParcial(EMS0136Input input,
-			LancamentoParcial lancamentoParcial) {
-		boolean hasAlteracao = false;
-
-		// Update da Data Inicial de lançamento:
-		Date dtLancamento = input.getDataLancamento();
-		if (dtLancamento.before(lancamentoParcial.getLancamentoInicial())) {
-			lancamentoParcial.setLancamentoInicial(dtLancamento);
-			hasAlteracao = true;
-		}
-		
-		// Update da Data Final de recolhimento:
-		Date dtRecolhimento = input.getDataRecolhimento();
-		if (dtRecolhimento.after(lancamentoParcial.getRecolhimentoFinal())) {
-			lancamentoParcial.setRecolhimentoFinal(dtRecolhimento);
-			hasAlteracao = true;
-		}
-		
-		if (hasAlteracao) {
-			this.getSession().update(lancamentoParcial);
-		}
-		
-		// Update do Período:
-		Integer numeroPeriodo = input.getNumeroPeriodo();
-		for (PeriodoLancamentoParcial periodo : lancamentoParcial.getPeriodos()) {
-			if (numeroPeriodo.equals(periodo.getNumeroPeriodo())) {
-				
-				periodo.setStatus(this.obterStatusLancamentoParcial(input));
-				periodo.setTipo(this.obterTipoLancamentoParcial(input));
-				
-				Lancamento lancamento = periodo.getLancamento();
-				lancamento.setDataLancamentoPrevista(input.getDataLancamento());
-				lancamento.setDataRecolhimentoPrevista(input.getDataRecolhimento());
-				
-				this.getSession().update(periodo);
-				this.getSession().update(lancamento);
-				
-				return;
-			}
-		}
-			
 	}
 	
 	

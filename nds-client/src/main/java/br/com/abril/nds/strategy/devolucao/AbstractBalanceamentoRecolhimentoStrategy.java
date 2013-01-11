@@ -165,14 +165,14 @@ public abstract class AbstractBalanceamentoRecolhimentoStrategy implements Balan
 	 * Efetua a ordenação do mapa de expectativa de encalhe de acordo com as datas
 	 * de recolhimento passadas como parâmetro.
 	 */
-	protected Map<Date, BigInteger> ordenarMapaExpectativaEncalhePorDatasRecolhimento(Map<Date, BigInteger> mapaExpectativaEncalhe, 
+	protected Map<Date, BigDecimal> ordenarMapaExpectativaEncalhePorDatasRecolhimento(Map<Date, BigDecimal> mapaExpectativaEncalhe, 
 											   					   					  TreeSet<Date> datasRecolhimento) {
 		
-		Map<Date, BigInteger> mapaExpectativaEncalheOrdenado = new LinkedHashMap<Date, BigInteger>();
+		Map<Date, BigDecimal> mapaExpectativaEncalheOrdenado = new LinkedHashMap<Date, BigDecimal>();
 		
 		for (Date dataRecolhimento : datasRecolhimento) {
 
-			BigInteger expectativaEncalhe = mapaExpectativaEncalhe.get(dataRecolhimento);
+			BigDecimal expectativaEncalhe = mapaExpectativaEncalhe.get(dataRecolhimento);
 			
 			if (expectativaEncalhe != null) {
 				
@@ -190,12 +190,12 @@ public abstract class AbstractBalanceamentoRecolhimentoStrategy implements Balan
 	 * Gera o mapa de expectativa de encalhe total diária ordenado pela maior data
 	 * de acordo com a matriz de recolhimento.
 	 */
-	protected Map<Date, BigInteger> gerarMapaExpectativaEncalheTotalDiariaOrdenadoPelaMaiorData(
+	protected Map<Date, BigDecimal> gerarMapaExpectativaEncalheTotalDiariaOrdenadoPelaMaiorData(
 														Map<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento,
 														TreeSet<Date> datasRecolhimentoFornecedor) {
 		
-		Map<Date, BigInteger> mapaExpectativaEncalheTotalDiaria = 
-			new TreeMap<Date, BigInteger>(Collections.reverseOrder());
+		Map<Date, BigDecimal> mapaExpectativaEncalheTotalDiaria = 
+			new TreeMap<Date, BigDecimal>(Collections.reverseOrder());
 
 		if (matrizRecolhimento == null || matrizRecolhimento.isEmpty()) {
 			
@@ -210,7 +210,7 @@ public abstract class AbstractBalanceamentoRecolhimentoStrategy implements Balan
 			Date dataRecolhimento = entryMatrizRecolhimento.getKey();
 			List<ProdutoRecolhimentoDTO> produtosRecolhimento = entryMatrizRecolhimento.getValue();
 			
-			BigInteger expectativaEncalheTotalDiaria = BigInteger.ZERO;
+			BigDecimal expectativaEncalheTotalDiaria = BigDecimal.ZERO;
 			
 			for (ProdutoRecolhimentoDTO produtoRecolhimento : produtosRecolhimento) {
 				
@@ -235,7 +235,7 @@ public abstract class AbstractBalanceamentoRecolhimentoStrategy implements Balan
 			if (!mapaExpectativaEncalheTotalDiaria.containsKey(item)
 					&& !recolhimentosConfirmado.contains(item)){
 				
-				mapaExpectativaEncalheTotalDiaria.put(item,BigInteger.ZERO);
+				mapaExpectativaEncalheTotalDiaria.put(item,BigDecimal.ZERO);
 			}
 		}
 		
@@ -324,9 +324,9 @@ public abstract class AbstractBalanceamentoRecolhimentoStrategy implements Balan
 	/*
 	 * Obtém a expectativa de encalhe total dos produtos para recolhimento.
 	 */
-	protected BigInteger obterExpectativaEncalheTotal(List<ProdutoRecolhimentoDTO> produtosRecolhimento) {
+	protected BigDecimal obterExpectativaEncalheTotal(List<ProdutoRecolhimentoDTO> produtosRecolhimento) {
 		
-		BigInteger expectativaEncalheTotal = BigInteger.ZERO;
+		BigDecimal expectativaEncalheTotal = BigDecimal.ZERO;
 		
 		if (produtosRecolhimento != null) {
 			
@@ -346,7 +346,7 @@ public abstract class AbstractBalanceamentoRecolhimentoStrategy implements Balan
 	/*
 	 * Valida se a capacidade de manuseio do distribuidor é excedida com o encalhe a ser balanceado.
 	 */
-	protected boolean validarLimiteCapacidadeRecolhimentoDistribuidor(BigInteger excessoExpectativaEncalhe) {
+	protected boolean validarLimiteCapacidadeRecolhimentoDistribuidor(BigDecimal excessoExpectativaEncalhe) {
 		
 		return excessoExpectativaEncalhe.equals(BigDecimal.ZERO);
 	}
@@ -354,20 +354,20 @@ public abstract class AbstractBalanceamentoRecolhimentoStrategy implements Balan
 	/*
 	 * Calcula o excesso de expectativa de encalhe na data de acordo com a capacidade de manuseio diária.
 	 */
-	protected BigInteger calcularExcessoExpectativaEncalhe(BigInteger expectativaEncalheTotalAtualNaData, 
+	protected BigDecimal calcularExcessoExpectativaEncalhe(BigDecimal expectativaEncalheTotalAtualNaData, 
 														   BigInteger capacidadeManuseio,
-														   BigInteger expectativaEncalheABalancear) {
+														   BigDecimal expectativaEncalheABalancear) {
 		
-		BigInteger excessoExpectativaEncalhe = BigInteger.ZERO;
+		BigDecimal excessoExpectativaEncalhe = BigDecimal.ZERO;
 		
 		if (expectativaEncalheTotalAtualNaData != null) {
 
 			expectativaEncalheABalancear = expectativaEncalheTotalAtualNaData.add(expectativaEncalheABalancear);
 		}
 		
-		if (expectativaEncalheABalancear.compareTo(capacidadeManuseio) > 0) {
+		if (expectativaEncalheABalancear.compareTo(new BigDecimal(capacidadeManuseio)) > 0) {
 			
-			excessoExpectativaEncalhe = expectativaEncalheABalancear.subtract(capacidadeManuseio);
+			excessoExpectativaEncalhe = expectativaEncalheABalancear.subtract(new BigDecimal(capacidadeManuseio));
 		}
 		
 		return excessoExpectativaEncalhe;
