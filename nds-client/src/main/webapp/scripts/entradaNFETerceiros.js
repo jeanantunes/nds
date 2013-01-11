@@ -228,7 +228,7 @@ var entradaNFETerceirosController = $.extend(true, {
 			resizable: 
 				 false,
 			height:'auto',
-			width:200,
+			width:'auto',
 			modal: true,
 			buttons: {
 				"Confirmar": function() {
@@ -346,6 +346,7 @@ var entradaNFETerceirosController = $.extend(true, {
 		$('#serieNotaCadastroNota', this.workspace).val('');
 		$('#chaveAcessoCadastroNota', this.workspace).val('');
 		$('#valorNotaCadastroNota', this.workspace).val('');
+		$('#numeroNotaCadastroNota', this.workspace).val('');
 		
 		if(numeroCota != '0'){
 			$('#cotaCadastroNota', this.workspace).val(numeroCota);
@@ -365,8 +366,8 @@ var entradaNFETerceirosController = $.extend(true, {
 
 		$( "#dialog-nfe", this.workspace ).dialog({
 			resizable: false,
-			height:280,
-			width:350,
+			height:'auto',
+			width:'auto',
 			modal: true,
 			buttons: {
 				"Confirmar": function() {

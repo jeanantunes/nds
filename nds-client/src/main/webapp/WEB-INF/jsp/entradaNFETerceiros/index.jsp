@@ -180,7 +180,7 @@ fieldset label {
 				class="filtro">
 				<tr>
 					<td width="75">Fornecedor:</td>
-					<td width="216"><select name="filtro.fornecedor.id" id="fornecedor" type="text" style="width: 150px;">
+					<td width="250"><select name="filtro.fornecedor.id" id="fornecedor" type="text" style="width: 150px;">
 							<option selected="selected" value="-1"></option>
 								<c:forEach items="${listFornecedores}" var="fornecedor">
 									<option value="${fornecedor.id}">${fornecedor.juridica.razaoSocial}</option>
@@ -188,7 +188,7 @@ fieldset label {
 						</select>
 					</td>
 					<td width="50">Cota:</td>
-					<td width="155"><input type="text" id="numeroCota"
+					<td width="180"><input type="text" id="numeroCota"
 						name="filtro.cota.numeroCota"
 						style="width: 80px; float: left; margin-right: 5px;"
 						onchange="entradaNFETerceirosController.pesquisarCota();" /></td>
@@ -196,9 +196,14 @@ fieldset label {
 				</tr>
 				<tr>
 					<td>Per&iacute;odo:</td>
-					<td><input name="filtro.dataInicial" type="text" id="dataInicial"
-						style="width: 70px;" /> At&eacute;: <input name="filtro.dataFinal"
-						type="text" id="dataFinal" style="width: 70px;" /></td>
+					<td>
+						
+						<input name="filtro.dataInicial" type="text" id="dataInicial"
+						style="width: 70px; " /> 
+						At&eacute;: 
+						<input name="filtro.dataFinal"
+						type="text" id="dataFinal" style="width: 70px;" />
+					</td>
 					<td width="34">Status:</td>
 					<td width="165"><select name="filtro.statusNotaFiscalEntrada" id="situacaoNfe"
 						style="width: 160px;" onchange="mostra_status(this.value); entradaNFETerceirosController.pesquisarEncalhe();">
