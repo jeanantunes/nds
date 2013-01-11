@@ -65,15 +65,15 @@ $(function() {
 	<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 	
 		<tr>
-		
-			<td width="94">Box:</td>
+    
+			<td width="94">Série:</td>
 
 			<td width="129">
 			
-				<input type="text" id="box" style="width: 80px;" />
+				<input type="text" id="serieNfe" style="width: 120px;" />
 
 			</td>
-
+            
 			<td width="68">Período de:</td>
 
 			<td width="107"><input type="text"
@@ -113,10 +113,10 @@ $(function() {
 			
 		</tr>
 		<tr>
-			<td>Tipo de Nf-e:</td>
+			<td>Tipo:</td>
 			<td>	
 				<select name="tipoNfe" id="tipoNfe" style="width: 120px;">
-					<option selected="selected"></option>
+					<option value="" selected="selected">Todos</option>
 				    <c:forEach items="${comboTipoNfe}" var="comboTipoNfe">
 				      		<option value="${comboTipoNfe.key}">${comboTipoNfe.value}</option>	
 				    </c:forEach>
@@ -138,7 +138,7 @@ $(function() {
 				<input type="text" id="chaveAcesso" style="width: 160px;" />
 		</tr>
 		<tr>
-			<td>Situação NF-e:</td>
+			<td>Status:</td>
 			<td colspan="3">
 			
 			
@@ -149,13 +149,22 @@ $(function() {
 				    </c:forEach>
 			    </select>
 			</td>
-			<td>Série</td>
-			<td><input type="text" id="serieNfe" style="width: 80px;" /></td>
+			
+			<td width="94">Box:</td>
+
+			<td width="129">
+			
+				<input type="text" id="box" style="width: 80px;" />
+
+			</td>
+			
 			<td colspan="3">&nbsp;</td>
+			
 			<td>&nbsp;</td>
+			
 			<td>
 				<span class="bt_pesquisar">
-					<a href="javascript:;" onclick="PainelMonitorNFE.pesquisar();"><img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" /></a>
+					<a href="javascript:;" onclick="PainelMonitorNFE.pesquisar();"><b> Pesquisar </b></a>
 				</span>
 			</td>
 		</tr>

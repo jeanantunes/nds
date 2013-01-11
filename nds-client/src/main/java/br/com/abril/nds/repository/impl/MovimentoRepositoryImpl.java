@@ -8,6 +8,9 @@ import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.MovimentoAprovacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroControleAprovacaoDTO;
+import br.com.abril.nds.model.aprovacao.StatusAprovacao;
+import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
+import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.movimentacao.Movimento;
 import br.com.abril.nds.repository.MovimentoRepository;
 
@@ -199,6 +202,42 @@ public class MovimentoRepositoryImpl extends AbstractRepositoryModel<Movimento, 
 		}
 		
 		return hql;
+	}
+	
+	public boolean existeMovimentoEstoquePendente(List<GrupoMovimentoEstoque> gruposMovimento) {
+		
+		String hql = " select count(movimento) "
+			+ " from Movimento movimento "
+			+ " where movimento.tipoMovimento.grupoMovimentoEstoque in (:gruposMovimento)"
+			+ " and status = :status ";
+		
+		Query query = getSession().createQuery(hql);
+		
+		query.setParameterList("gruposMovimento", gruposMovimento);
+		
+		query.setParameter("status", StatusAprovacao.PENDENTE);
+		
+		long resultado = (Long) query.uniqueResult();
+		
+		return resultado > 0;
+	}
+	
+	public boolean existeMovimentoFinanceiroPendente(List<GrupoMovimentoFinaceiro> gruposMovimento) {
+		
+		String hql = " select count(movimento) "
+			+ " from Movimento movimento "
+			+ " where movimento.tipoMovimento.grupoMovimentoFinaceiro in (:gruposMovimento)"
+			+ " and status = :status ";
+		
+		Query query = getSession().createQuery(hql);
+		
+		query.setParameterList("gruposMovimento", gruposMovimento);
+		
+		query.setParameter("status", StatusAprovacao.PENDENTE);
+		
+		long resultado = (Long) query.uniqueResult();
+		
+		return resultado > 0;
 	}
 	
 }

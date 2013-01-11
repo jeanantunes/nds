@@ -91,7 +91,7 @@
 					
 				  <td>Tel: </td>
 				  <td>
-				  <input type="text" name="socioCota.telefone.ddd" id="ddd" style="width:50px" /> 
+				  <input type="text" name="socioCota.telefone.ddd" id="ddd" maxlength="2" style="width:50px" /> 
 				    - 
 			      <input type="text" name="socioCota.telefone.numero" id="numeroTelefone" style="width:100px" /></td>
 	  			</tr>

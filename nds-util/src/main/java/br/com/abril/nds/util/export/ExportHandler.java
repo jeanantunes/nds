@@ -393,7 +393,7 @@ public class ExportHandler {
 			Object methodReturn = method.invoke(exportable, new Object[]{});
 
 			return new ExportColumn(
-				getExportValue(methodReturn), exportAnnotation.alignment(), exportAnnotation.exhibitionOrder());
+				getExportValue(methodReturn), exportAnnotation.alignment(), exportAnnotation.exhibitionOrder(),getExportValueType(methodReturn));
 		}
 		
 		return null;
@@ -417,7 +417,7 @@ public class ExportHandler {
 			Object fieldValue = field.get(exportable);
 
 			return new ExportColumn(
-				getExportValue(fieldValue), exportAnnotation.alignment(), exportAnnotation.exhibitionOrder());
+				getExportValue(fieldValue), exportAnnotation.alignment(), exportAnnotation.exhibitionOrder(), getExportValueType(fieldValue));
 		}
 		
 		return null;
@@ -446,6 +446,15 @@ public class ExportHandler {
 		return exportValue;
 	}
 	
+	private static ColumType getExportValueType(Object value) {
+				
+		if (value != null && (value instanceof Number)) {
+				return ColumType.NUMBER;
+		}
+		
+		return ColumType.STRING;
+	}
+	
 	private static void processHeader(Export exportAnnotation, 
 									  List<ExportHeader> exportHeaders,
 									  Object object,
@@ -459,6 +468,8 @@ public class ExportHandler {
 			exportHeader.setAlignment(exportAnnotation.alignment());
 			
 			exportHeader.setExhibitionOrder(exportAnnotation.exhibitionOrder());
+			
+			exportHeader.setColumnWidth(exportAnnotation.widthPercent() == 0f ? null : exportAnnotation.widthPercent());
 			
 			exportHeaders.add(exportHeader);
 		}

@@ -2484,25 +2484,114 @@ public class DataLoader {
 
 	private static void gerarMaterialPromocionalPDV(Session session) {
 
-		MaterialPromocional materialPromocional = Fixture.criarMaterialPromocional(1L, "Adesivo");
-		MaterialPromocional materialPromocional1 = Fixture.criarMaterialPromocional(2L, "Brindes");
-		MaterialPromocional materialPromocional2 = Fixture.criarMaterialPromocional(3L, "Poster");
-		MaterialPromocional materialPromocional3 = Fixture.criarMaterialPromocional(4L, "Bandeirola");
-		MaterialPromocional materialPromocional4 = Fixture.criarMaterialPromocional(5L, "Sapataria");
-		MaterialPromocional materialPromocional5 = Fixture.criarMaterialPromocional(6L, "Cartaz Grande");
+		List<MaterialPromocional> listaMaterialPromocional = new ArrayList<MaterialPromocional>();
+		
+		listaMaterialPromocional.add(Fixture.criarMaterialPromocional(null, "Adesivo"));
+		listaMaterialPromocional.add(Fixture.criarMaterialPromocional(null, "Bandeirola"));
+		listaMaterialPromocional.add(Fixture.criarMaterialPromocional(null, "Banner"));
+		listaMaterialPromocional.add(Fixture.criarMaterialPromocional(null, "Cartaz Grande"));
+		listaMaterialPromocional.add(Fixture.criarMaterialPromocional(null, "Display Acrílico / PVC de Ba"));
+		listaMaterialPromocional.add(Fixture.criarMaterialPromocional(null, "Display Aramado de Chão"));
+		listaMaterialPromocional.add(Fixture.criarMaterialPromocional(null, "Display de Papelão de Chão"));
+		listaMaterialPromocional.add(Fixture.criarMaterialPromocional(null, "Faixa de Banca"));
+		listaMaterialPromocional.add(Fixture.criarMaterialPromocional(null, "Móbile"));
+		listaMaterialPromocional.add(Fixture.criarMaterialPromocional(null, "Reprint Capa"));
+		listaMaterialPromocional.add(Fixture.criarMaterialPromocional(null, "Sapateira"));
+		listaMaterialPromocional.add(Fixture.criarMaterialPromocional(null, "Totem"));
+		
 
-		save(session,materialPromocional,materialPromocional1,materialPromocional2,materialPromocional3,materialPromocional4,materialPromocional5);
+		Long contador = 0L;
+		
+		for(MaterialPromocional materialPromocional : listaMaterialPromocional) {
+			
+			contador++;
+			
+			materialPromocional.setCodigo(contador);
+			
+			session.save(materialPromocional);
+			
+		}
+		
 	}
 
 	private static void gerarTipoGeradorFluxoPDV(Session session) {
 
-		TipoGeradorFluxoPDV tipoGeradorFluxoPDV = Fixture.criarTipoGeradorFluxoPDV(1L, "Cursinho");
-		TipoGeradorFluxoPDV tipoGeradorFluxoPDV1 = Fixture.criarTipoGeradorFluxoPDV(2L, "Superior");
-		TipoGeradorFluxoPDV tipoGeradorFluxoPDV2 = Fixture.criarTipoGeradorFluxoPDV(3L, "Padarias");
-		TipoGeradorFluxoPDV tipoGeradorFluxoPDV3 = Fixture.criarTipoGeradorFluxoPDV(4L, "Restaurantes");
-		TipoGeradorFluxoPDV tipoGeradorFluxoPDV4 = Fixture.criarTipoGeradorFluxoPDV(5L, "Pre-Escola");
+		List<TipoGeradorFluxoPDV> listaTipoGeradorFluxoPDV = new ArrayList<TipoGeradorFluxoPDV>();
 
-		save(session,tipoGeradorFluxoPDV,tipoGeradorFluxoPDV1,tipoGeradorFluxoPDV2,tipoGeradorFluxoPDV3,tipoGeradorFluxoPDV4);
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Pre-Escola"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Escola 1 e 2 Grau Particular"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Escola 1 e 2 Grau Publica"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Cursinho"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Superior"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Curso de Lingua"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Curso de Informatica"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Escola de Arte"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Faculdades/Universidades"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Estação de Metro"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Ferroviaria"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Rodoviaria"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Pontos de Onibus"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Terminais de Onibus"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Corredores de Transito"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Padarias"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Lanchonete e Bares"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Restaurantes"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Shopping Center"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Centro Comercial"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Supermercado e Hipermercado"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Loja de Convivencia"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Feira Livre"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Mercado Municipal"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Varejão/Sacola"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Parques"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Praia"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Estadio"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Biblioteca"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Clube"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Livraria"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Teatro"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Cinema"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Video Locadora"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Motel"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Centro de Convenções"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Hotel"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Agencia de Turismo"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Aeroporto"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Banco"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Repartição Publica"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Posto de Gasolina"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Igreja"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Empresa/Industria/Escritorio"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Loja de Material Esportivo"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Academia de Ginastica/Esportes"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Loja de Decoração"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Loja de Material de Construção"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Bazares"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Loja de Armarinhos"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Farmacias e Drogarias"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Lab. Clinicos/Consultorios"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Hospital"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Loja p/ Materias de Jardinagem"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Loja de Plantas/Floriculturas"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Lojas de Animais"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Clinica Veterinaria"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Loja de Disco"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Loja de Instrumentos Musicais"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Escola de Musica"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Casas, Aptos e Condominios"));
+
+		Long contador = 0L;
+		
+		for(TipoGeradorFluxoPDV tipo : listaTipoGeradorFluxoPDV) {
+			
+			contador++;
+			
+			tipo.setId(contador);
+			
+			save(session, tipo);
+		}
+
+		
 	}
 
 	private static void gerarTiposPontoPDV(Session session) {
@@ -6765,7 +6854,8 @@ public class DataLoader {
 				"Confraternização Universal",
 				false,
 				false,
-				true));
+				true,
+				Origem.CARGA_INICIAL));
 
 		save(session, Fixture.feriado(
 				DateUtil.parseDataPTBR("21/04/2012"), 
@@ -6775,7 +6865,8 @@ public class DataLoader {
 				"Tiradentes",
 				false,
 				false,
-				true));		
+				true,
+				Origem.CARGA_INICIAL));		
 		
 		save(session, Fixture.feriado(
 				DateUtil.parseDataPTBR("01/05/2012"), 
@@ -6785,7 +6876,8 @@ public class DataLoader {
 				"Dia Mundial do Trabalho",
 				false,
 				false,
-				true));	
+				true,
+				Origem.CARGA_INICIAL));	
 		
 		save(session, Fixture.feriado(
 				DateUtil.parseDataPTBR("07/09/2012"), 
@@ -6795,7 +6887,8 @@ public class DataLoader {
 				"Independência do Brasil",
 				false,
 				false,
-				true));		
+				true,
+				Origem.CARGA_INICIAL));		
 		
 		save(session, Fixture.feriado(
 				DateUtil.parseDataPTBR("12/10/2012"), 
@@ -6805,7 +6898,8 @@ public class DataLoader {
 				"Nossa Senhora Aparecida",
 				false,
 				false,
-				true));				
+				true,
+				Origem.CARGA_INICIAL));				
 		
 		save(session, Fixture.feriado(
 				DateUtil.parseDataPTBR("02/11/2012"), 
@@ -6815,7 +6909,8 @@ public class DataLoader {
 				"Finados",
 				false,
 				false,
-				true));				
+				true,
+				Origem.CARGA_INICIAL));				
 
 		save(session, Fixture.feriado(
 				DateUtil.parseDataPTBR("15/11/2012"), 
@@ -6825,7 +6920,8 @@ public class DataLoader {
 				"Proclamação da República",
 				false,
 				false,
-				true));	
+				true,
+				Origem.CARGA_INICIAL));	
 		
 		save(session, Fixture.feriado(
 				DateUtil.parseDataPTBR("25/12/2012"), 
@@ -6835,7 +6931,8 @@ public class DataLoader {
 				"Natal",
 				false,
 				false,
-				true));	
+				true,
+				Origem.CARGA_INICIAL));	
 		
 //Moveis		
 		
@@ -6847,7 +6944,8 @@ public class DataLoader {
 				"Paixão de Cristo",
 				false,
 				false,
-				false));
+				false,
+				Origem.CARGA_INICIAL));
 		
 		save(session, Fixture.feriado(
 				DateUtil.parseDataPTBR("07/06/2012"), 
@@ -6857,7 +6955,8 @@ public class DataLoader {
 				"Corpus Christi",
 				false,
 				false,
-				false));
+				false,
+				Origem.CARGA_INICIAL));
 		
 	}
 	

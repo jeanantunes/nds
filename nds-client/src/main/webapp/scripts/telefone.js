@@ -11,7 +11,7 @@ function Telefone(paramTela,message) {
 		
 		$("#"+paramTela+"ddd", Telefone.workspace).numeric();
 		$("#"+paramTela+"numeroTelefone", Telefone.workspace).numeric();
-		$("#"+paramTela+"numeroTelefone", Telefone.workspace).mask("99999-9999");
+		$("#"+paramTela+"numeroTelefone", Telefone.workspace).mask("9999-9999");
 		$("#"+paramTela+"ramal", Telefone.workspace).numeric();
 		$("#"+paramTela+"radioID", Telefone.workspace).keyup(function(e) {
 			var valor = $("#"+paramTela+"radioID", Telefone.workspace).val().replace(/[^0-9\*]/g,"");
@@ -310,6 +310,8 @@ function Telefone(paramTela,message) {
 		var ramal = $("#"+paramTela + "ramalTD");
 		var radioID = $("#"+paramTela + "radioIDTD");
 		
+		$("#"+paramTela+"numeroTelefone", Telefone.workspace).mask("9999-9999");
+		
 		switch (opcao) {
 		case 'COMERCIAL':
 		case 'FAX':
@@ -325,6 +327,9 @@ function Telefone(paramTela,message) {
 			campo.css('width', 167);
 			ramal.hide();
 			radioID.show();
+			break;
+		case 'CELULAR':
+			$("#"+paramTela+"numeroTelefone", Telefone.workspace).mask("99999-9999");
 			break;
 		default:
 			div1.hide();

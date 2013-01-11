@@ -21,6 +21,24 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 			}
 	},
 	
+	geraBoleto : function(tipoCobranca) {
+		
+		var parametros = [{
+			name:'tipoCobranca', value: tipoCobranca
+		}];
+		
+		$.postJSON(contextPath + '/devolucao/fechamentoCEIntegracao/geraBoleto', parametros,
+				
+		function(result) {
+			
+			var file = contextPath + '/devolucao/fechamentoCEIntegracao/imprimeBoleto';
+	
+			$('#download-iframe-fechamento', fechamentoCEIntegracaoController.workspace).attr('src', file);
+	
+		});
+		
+	},
+	
 	buscarNumeroSemana : function(){
 		var dataAtual = $.format.date(new Date(), "dd/MM/yyyy");
 		var data = [
@@ -65,10 +83,11 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 						
 					};
 					
-					fechamentoCEIntegracaoController.popularTotal($("#idFornecedor", fechamentoCEIntegracaoController.workspace).val(), $("#semana", fechamentoCEIntegracaoController.workspace).val());
+					fechamentoCEIntegracaoController.popularTotal(resultado);
 					fechamentoCEIntegracaoController.verificarDataFechamentoCE(resultado.semanaFechada);
 					
 					$(".grids", fechamentoCEIntegracaoController.workspace).show();
+					
 					return resultado.listaFechamento;
 					
 				};
@@ -164,20 +183,11 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 		
 	},
 	
-	popularTotal : function(idFornecedor, semana){
- 		$.postJSON(
-			contextPath + '/devolucao/fechamentoCEIntegracao/buscarTotalDaPesquisa',
-			[
-	         {name:'filtro.idFornecedor' , value:idFornecedor},
-	         {name:'filtro.semana' , value:semana}
-	         ],
-			function(result) {
-				$('.tabelaTotal', fechamentoCEIntegracaoController.workspace).show();
-				$("#total", fechamentoCEIntegracaoController.workspace).html(result);
-			},
-			null,
-			true
-		);
+	popularTotal : function(resultado){
+		$("#totalBruto", fechamentoCEIntegracaoController.workspace).html(resultado.totalBruto);
+		$("#totalDesconto", fechamentoCEIntegracaoController.workspace).html(resultado.totalDesconto);
+		$("#totalLiquido", fechamentoCEIntegracaoController.workspace).html(resultado.totalLiquido);
+		$(".tabelaTotal").show();
 	},
 	
 	fecharCE : function(){

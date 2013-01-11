@@ -1,7 +1,9 @@
 package br.com.abril.nds.service.impl;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -42,16 +44,14 @@ import br.com.abril.nds.repository.EstoqueProdutoCotaRepository;
 import br.com.abril.nds.repository.HistoricoLancamentoRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
+import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.ParciaisService;
 import br.com.abril.nds.service.RecolhimentoService;
 import br.com.abril.nds.strategy.devolucao.BalanceamentoRecolhimentoStrategy;
-import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.TipoBalanceamentoRecolhimento;
 import br.com.abril.nds.util.TipoMensagem;
-import br.com.abril.nds.vo.ValidacaoVO;
-import br.com.caelum.vraptor.view.Results;
 
 /**
  * Implementação de serviços referentes ao recolhimento.
@@ -88,6 +88,9 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 	
 	@Autowired
 	private ParciaisService parciaisService;
+	
+	@Autowired
+	protected CalendarioService calendarioService;
 	
 	private static final Integer QTDE_PERIODOS_PARCIAIS = 1;
 	
@@ -625,7 +628,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 																		 GrupoProduto.CROMO);
 		}
 
-		TreeMap<Date, BigInteger> mapaExpectativaEncalheTotalDiaria =
+		TreeMap<Date, BigDecimal> mapaExpectativaEncalheTotalDiaria =
 			this.lancamentoRepository.obterExpectativasEncalhePorData(periodoRecolhimento, 
 																	  listaIdsFornecedores, 
 																	  GrupoProduto.CROMO);
@@ -729,7 +732,23 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 			DateUtil.obterPeriodoDeAcordoComDiasDaSemana(
 				periodoRecolhimento.getDe(), periodoRecolhimento.getAte(), diasRecolhimentoSemana);
 		
-		return datasRecolhimento;
+		TreeSet<Date> datasRecolhimentoComOperacao = new TreeSet<>();
+		
+		for (Date data : datasRecolhimento) {
+			
+			try {
+				
+				this.verificaDataOperacao(data);
+				
+				datasRecolhimentoComOperacao.add(data);
+				
+			} catch (ValidacaoException e) {
+				
+				continue;
+			}
+		}
+		
+		return datasRecolhimentoComOperacao;
 	}
 
 	@Override
@@ -753,6 +772,30 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 			lancamento.setStatus(StatusLancamento.EXPEDIDO);
 			lancamento.setDataRecolhimentoDistribuidor(lancamento.getDataRecolhimentoPrevista());
 			lancamentoRepository.alterar(lancamento);
+		}
+	}
+	
+	public void verificaDataOperacao(Date data) {
+		
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(data);
+		
+		if (DateUtil.isSabadoDomingo(cal)) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING,
+				"A data de recolhimento deve ser uma data em que o distribuidor realiza operação!");
+		}
+		
+		if (this.calendarioService.isFeriadoSemOperacao(data)) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING,
+				"A data de recolhimento deve ser uma data em que o distribuidor realiza operação!");
+		}
+		
+		if (this.calendarioService.isFeriadoMunicipalSemOperacao(data)) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING,
+				"A data de recolhimento deve ser uma data em que o distribuidor realiza operação!");
 		}
 	}
 	
