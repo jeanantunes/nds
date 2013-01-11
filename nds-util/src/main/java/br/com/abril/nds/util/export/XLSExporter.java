@@ -256,10 +256,17 @@ public class XLSExporter implements Exporter {
 			CellStyle cellStyle = this.getHeaderColumnCellStyle(sheet, exportHeader.getAlignment());
 			
 			cell.setCellStyle(cellStyle);
-			
+
 			lastCell = cell;
-		
-			sheet.setColumnWidth(cellNum, 4000);
+
+			int totalUniversal = 4000 * headers.size();
+			
+			float patternPercentage = 400000 / totalUniversal;
+			
+			int width = exportHeader.getWidthPercent() == null ? 4000 
+						: Math.round(exportHeader.getWidthPercent() * 4000 / patternPercentage);
+			
+			sheet.setColumnWidth(cellNum, width);
 			
 			cellNum++;
 		}
@@ -274,7 +281,7 @@ public class XLSExporter implements Exporter {
 		
 		return startRowNum + 1;
 	}
-	
+
 	private int createSheetMainDataRows(Sheet sheet,
 									    List<ExportRow> rows,
 									    int lastRowNum) {
@@ -300,8 +307,15 @@ public class XLSExporter implements Exporter {
 				
 				Cell cell = row.createCell(cellNum++);
 				
-				cell.setCellValue(columnString);
-
+				
+				
+				if(ColumType.NUMBER == exportColumn.getColumnType()) {
+					cell.setCellType(Cell.CELL_TYPE_NUMERIC);
+					cell.setCellValue(Double.parseDouble(columnString));
+				} else {
+					cell.setCellValue(columnString);
+				}
+				
 				CellStyle cellStyle = this.getRowColumnCellStyle(
 					sheet, ((rowNum % 2) != 0), (exportRow.getColumns().size() == cellNum),
 						exportColumn.getAlignment());
