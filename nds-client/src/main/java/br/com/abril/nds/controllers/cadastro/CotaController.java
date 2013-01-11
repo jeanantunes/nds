@@ -1090,6 +1090,8 @@ public class CotaController extends BaseController {
 		FiltroCotaDTO filtro = (FiltroCotaDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
 		filtro.setPaginacao(null);
 		
+		filtro.getPaginacao().setQtdResultadosPorPagina(null);
+		
 		List<CotaDTO> listaCotas = null;
 		
 		if (filtro != null){
