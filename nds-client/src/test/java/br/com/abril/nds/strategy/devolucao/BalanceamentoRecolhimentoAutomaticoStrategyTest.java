@@ -64,7 +64,7 @@ public class BalanceamentoRecolhimentoAutomaticoStrategyTest {
 		Assert.assertEquals(qtdeProdutosRecolhimentoEsperada08052012, matrizRecolhimento.get(data08052012).size());
 		Assert.assertEquals(qtdeProdutosRecolhimentoEsperada10052012, matrizRecolhimento.get(data10052012).size());
 		
-		Map<Date, BigInteger> mapaExpectativaEncalheTotalDiaria =
+		Map<Date, BigDecimal> mapaExpectativaEncalheTotalDiaria =
 			this.gerarMapaExpectativaEncalheTotalDiaria(matrizRecolhimento);
 		
 		BigDecimal expectativaEncalheEsperada08052012 = new BigDecimal("100");
@@ -111,7 +111,7 @@ public class BalanceamentoRecolhimentoAutomaticoStrategyTest {
 		Assert.assertEquals(qtdeProdutosRecolhimentoEsperada08052012, matrizRecolhimento.get(data08052012).size());
 		Assert.assertEquals(qtdeProdutosRecolhimentoEsperada10052012, matrizRecolhimento.get(data10052012).size());
 		
-		Map<Date, BigInteger> mapaExpectativaEncalheTotalDiaria =
+		Map<Date, BigDecimal> mapaExpectativaEncalheTotalDiaria =
 			this.gerarMapaExpectativaEncalheTotalDiaria(matrizRecolhimento);
 		
 		BigDecimal expectativaEncalheEsperada08052012 = new BigDecimal("100");
@@ -147,13 +147,13 @@ public class BalanceamentoRecolhimentoAutomaticoStrategyTest {
 		
 		dadosRecolhimento.setDatasRecolhimentoFornecedor(datasRecolhimentoFornecedor);
 		
-		TreeMap<Date, BigInteger> mapaExpectativaEncalheTotalDiaria = new TreeMap<Date, BigInteger>();
+		TreeMap<Date, BigDecimal> mapaExpectativaEncalheTotalDiaria = new TreeMap<Date, BigDecimal>();
 		
-		mapaExpectativaEncalheTotalDiaria.put(DateUtil.parseDataPTBR("07/05/2012"), new BigInteger("80"));
-		mapaExpectativaEncalheTotalDiaria.put(DateUtil.parseDataPTBR("08/05/2012"), new BigInteger("20"));
-		mapaExpectativaEncalheTotalDiaria.put(DateUtil.parseDataPTBR("09/05/2012"), new BigInteger("50"));
-		mapaExpectativaEncalheTotalDiaria.put(DateUtil.parseDataPTBR("10/05/2012"), new BigInteger("20"));
-		mapaExpectativaEncalheTotalDiaria.put(DateUtil.parseDataPTBR("11/05/2012"), new BigInteger("30"));
+		mapaExpectativaEncalheTotalDiaria.put(DateUtil.parseDataPTBR("07/05/2012"), new BigDecimal("80"));
+		mapaExpectativaEncalheTotalDiaria.put(DateUtil.parseDataPTBR("08/05/2012"), new BigDecimal("20"));
+		mapaExpectativaEncalheTotalDiaria.put(DateUtil.parseDataPTBR("09/05/2012"), new BigDecimal("50"));
+		mapaExpectativaEncalheTotalDiaria.put(DateUtil.parseDataPTBR("10/05/2012"), new BigDecimal("20"));
+		mapaExpectativaEncalheTotalDiaria.put(DateUtil.parseDataPTBR("11/05/2012"), new BigDecimal("30"));
 		
 		dadosRecolhimento.setMapaExpectativaEncalheTotalDiaria(mapaExpectativaEncalheTotalDiaria);
 		
@@ -167,7 +167,7 @@ public class BalanceamentoRecolhimentoAutomaticoStrategyTest {
 			
 			produtoRecolhimento.setDataRecolhimentoDistribuidor(dataRecolhimento);
 			produtoRecolhimento.setDataRecolhimentoPrevista(dataRecolhimento);
-			produtoRecolhimento.setExpectativaEncalhe(new BigInteger("1"));
+			produtoRecolhimento.setExpectativaEncalhe(new BigDecimal("1"));
 			
 			produtosRecolhimento.add(produtoRecolhimento);
 		}
@@ -180,7 +180,7 @@ public class BalanceamentoRecolhimentoAutomaticoStrategyTest {
 			
 			produtoRecolhimento.setDataRecolhimentoDistribuidor(dataRecolhimento);
 			produtoRecolhimento.setDataRecolhimentoPrevista(dataRecolhimento);
-			produtoRecolhimento.setExpectativaEncalhe(new BigInteger("1"));
+			produtoRecolhimento.setExpectativaEncalhe(new BigDecimal("1"));
 			
 			produtosRecolhimento.add(produtoRecolhimento);
 		}
@@ -193,7 +193,7 @@ public class BalanceamentoRecolhimentoAutomaticoStrategyTest {
 			
 			produtoRecolhimento.setDataRecolhimentoDistribuidor(dataRecolhimento);
 			produtoRecolhimento.setDataRecolhimentoPrevista(dataRecolhimento);
-			produtoRecolhimento.setExpectativaEncalhe(new BigInteger("1"));
+			produtoRecolhimento.setExpectativaEncalhe(new BigDecimal("1"));
 			
 			produtosRecolhimento.add(produtoRecolhimento);
 		}
@@ -206,7 +206,7 @@ public class BalanceamentoRecolhimentoAutomaticoStrategyTest {
 			
 			produtoRecolhimento.setDataRecolhimentoDistribuidor(dataRecolhimento);
 			produtoRecolhimento.setDataRecolhimentoPrevista(dataRecolhimento);
-			produtoRecolhimento.setExpectativaEncalhe(new BigInteger("1"));
+			produtoRecolhimento.setExpectativaEncalhe(new BigDecimal("1"));
 			
 			produtosRecolhimento.add(produtoRecolhimento);
 		}
@@ -219,7 +219,7 @@ public class BalanceamentoRecolhimentoAutomaticoStrategyTest {
 			
 			produtoRecolhimento.setDataRecolhimentoDistribuidor(dataRecolhimento);
 			produtoRecolhimento.setDataRecolhimentoPrevista(dataRecolhimento);
-			produtoRecolhimento.setExpectativaEncalhe(new BigInteger("1"));
+			produtoRecolhimento.setExpectativaEncalhe(new BigDecimal("1"));
 			
 			produtosRecolhimento.add(produtoRecolhimento);
 		}
@@ -245,13 +245,13 @@ public class BalanceamentoRecolhimentoAutomaticoStrategyTest {
 		
 		dadosRecolhimento.setDatasRecolhimentoFornecedor(datasRecolhimentoFornecedor);
 		
-		TreeMap<Date, BigInteger> mapaExpectativaEncalheTotalDiaria = new TreeMap<Date, BigInteger>();
+		TreeMap<Date, BigDecimal> mapaExpectativaEncalheTotalDiaria = new TreeMap<Date, BigDecimal>();
 		
-		mapaExpectativaEncalheTotalDiaria.put(DateUtil.parseDataPTBR("07/05/2012"), new BigInteger("80"));
-		mapaExpectativaEncalheTotalDiaria.put(DateUtil.parseDataPTBR("08/05/2012"), new BigInteger("30"));
-		mapaExpectativaEncalheTotalDiaria.put(DateUtil.parseDataPTBR("09/05/2012"), new BigInteger("50"));
-		mapaExpectativaEncalheTotalDiaria.put(DateUtil.parseDataPTBR("10/05/2012"), new BigInteger("30"));
-		mapaExpectativaEncalheTotalDiaria.put(DateUtil.parseDataPTBR("11/05/2012"), new BigInteger("30"));
+		mapaExpectativaEncalheTotalDiaria.put(DateUtil.parseDataPTBR("07/05/2012"), new BigDecimal("80"));
+		mapaExpectativaEncalheTotalDiaria.put(DateUtil.parseDataPTBR("08/05/2012"), new BigDecimal("30"));
+		mapaExpectativaEncalheTotalDiaria.put(DateUtil.parseDataPTBR("09/05/2012"), new BigDecimal("50"));
+		mapaExpectativaEncalheTotalDiaria.put(DateUtil.parseDataPTBR("10/05/2012"), new BigDecimal("30"));
+		mapaExpectativaEncalheTotalDiaria.put(DateUtil.parseDataPTBR("11/05/2012"), new BigDecimal("30"));
 		
 		dadosRecolhimento.setMapaExpectativaEncalheTotalDiaria(mapaExpectativaEncalheTotalDiaria);
 		
@@ -265,7 +265,7 @@ public class BalanceamentoRecolhimentoAutomaticoStrategyTest {
 			
 			produtoRecolhimento.setDataRecolhimentoDistribuidor(dataRecolhimento);
 			produtoRecolhimento.setDataRecolhimentoPrevista(dataRecolhimento);
-			produtoRecolhimento.setExpectativaEncalhe(new BigInteger("2"));
+			produtoRecolhimento.setExpectativaEncalhe(new BigDecimal("2"));
 			
 			produtosRecolhimento.add(produtoRecolhimento);
 		}
@@ -278,7 +278,7 @@ public class BalanceamentoRecolhimentoAutomaticoStrategyTest {
 			
 			produtoRecolhimento.setDataRecolhimentoDistribuidor(dataRecolhimento);
 			produtoRecolhimento.setDataRecolhimentoPrevista(dataRecolhimento);
-			produtoRecolhimento.setExpectativaEncalhe(new BigInteger("1"));
+			produtoRecolhimento.setExpectativaEncalhe(new BigDecimal("1"));
 			
 			produtosRecolhimento.add(produtoRecolhimento);
 		}
@@ -291,7 +291,7 @@ public class BalanceamentoRecolhimentoAutomaticoStrategyTest {
 			
 			produtoRecolhimento.setDataRecolhimentoDistribuidor(dataRecolhimento);
 			produtoRecolhimento.setDataRecolhimentoPrevista(dataRecolhimento);
-			produtoRecolhimento.setExpectativaEncalhe(new BigInteger("1"));
+			produtoRecolhimento.setExpectativaEncalhe(new BigDecimal("1"));
 			
 			produtosRecolhimento.add(produtoRecolhimento);
 		}
@@ -304,7 +304,7 @@ public class BalanceamentoRecolhimentoAutomaticoStrategyTest {
 			
 			produtoRecolhimento.setDataRecolhimentoDistribuidor(dataRecolhimento);
 			produtoRecolhimento.setDataRecolhimentoPrevista(dataRecolhimento);
-			produtoRecolhimento.setExpectativaEncalhe(new BigInteger("1"));
+			produtoRecolhimento.setExpectativaEncalhe(new BigDecimal("1"));
 			
 			produtosRecolhimento.add(produtoRecolhimento);
 		}
@@ -317,7 +317,7 @@ public class BalanceamentoRecolhimentoAutomaticoStrategyTest {
 			
 			produtoRecolhimento.setDataRecolhimentoDistribuidor(dataRecolhimento);
 			produtoRecolhimento.setDataRecolhimentoPrevista(dataRecolhimento);
-			produtoRecolhimento.setExpectativaEncalhe(new BigInteger("1"));
+			produtoRecolhimento.setExpectativaEncalhe(new BigDecimal("1"));
 			
 			produtosRecolhimento.add(produtoRecolhimento);
 		}
@@ -330,7 +330,7 @@ public class BalanceamentoRecolhimentoAutomaticoStrategyTest {
 			
 			produtoRecolhimento.setDataRecolhimentoDistribuidor(dataRecolhimento);
 			produtoRecolhimento.setDataRecolhimentoPrevista(dataRecolhimento);
-			produtoRecolhimento.setExpectativaEncalhe(new BigInteger("2"));
+			produtoRecolhimento.setExpectativaEncalhe(new BigDecimal("2"));
 			
 			produtosRecolhimento.add(produtoRecolhimento);
 		}
@@ -343,7 +343,7 @@ public class BalanceamentoRecolhimentoAutomaticoStrategyTest {
 			
 			produtoRecolhimento.setDataRecolhimentoDistribuidor(dataRecolhimento);
 			produtoRecolhimento.setDataRecolhimentoPrevista(dataRecolhimento);
-			produtoRecolhimento.setExpectativaEncalhe(new BigInteger("1"));
+			produtoRecolhimento.setExpectativaEncalhe(new BigDecimal("1"));
 			
 			produtosRecolhimento.add(produtoRecolhimento);
 		}
@@ -357,10 +357,10 @@ public class BalanceamentoRecolhimentoAutomaticoStrategyTest {
 	 * Gera o mapa de expectativa de encalhe total diária ordenado pela maior data
 	 * de acordo com a matriz de recolhimento.
 	 */
-	private Map<Date, BigInteger> gerarMapaExpectativaEncalheTotalDiaria(
+	private Map<Date, BigDecimal> gerarMapaExpectativaEncalheTotalDiaria(
 														Map<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento) {
 		
-		Map<Date, BigInteger> mapaExpectativaEncalheTotalDiaria = new TreeMap<Date, BigInteger>();
+		Map<Date, BigDecimal> mapaExpectativaEncalheTotalDiaria = new TreeMap<Date, BigDecimal>();
 
 		if (matrizRecolhimento == null || matrizRecolhimento.isEmpty()) {
 			
@@ -372,7 +372,7 @@ public class BalanceamentoRecolhimentoAutomaticoStrategyTest {
 			Date dataRecolhimento = entryMatrizRecolhimento.getKey();
 			List<ProdutoRecolhimentoDTO> produtosRecolhimento = entryMatrizRecolhimento.getValue();
 			
-			BigInteger expectativaEncalheTotalDiaria = BigInteger.ZERO;
+			BigDecimal expectativaEncalheTotalDiaria = BigDecimal.ZERO;
 			
 			for (ProdutoRecolhimentoDTO produtoRecolhimento : produtosRecolhimento) {
 				

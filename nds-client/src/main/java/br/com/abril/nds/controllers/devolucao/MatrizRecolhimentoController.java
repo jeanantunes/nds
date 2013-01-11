@@ -1,7 +1,6 @@
 package br.com.abril.nds.controllers.devolucao;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
@@ -825,7 +824,7 @@ public class MatrizRecolhimentoController extends BaseController {
 			produtoRecolhimentoVO.setDataLancamento(produtoRecolhimentoDTO.getDataLancamento());
 
 			produtoRecolhimentoVO.setDataRecolhimento(
-				produtoRecolhimentoDTO.getDataRecolhimentoDistribuidor());
+				produtoRecolhimentoDTO.getDataRecolhimentoPrevista());
 			
 			produtoRecolhimentoVO.setEncalheSede(
 				MathUtil.round(produtoRecolhimentoDTO.getExpectativaEncalheSede(), 2));
@@ -1080,6 +1079,8 @@ public class MatrizRecolhimentoController extends BaseController {
 	 */
 	private void validarDataReprogramacao(Integer numeroSemana, Date novaData, Date dataBalanceamento) {
 		
+		this.recolhimentoService.verificaDataOperacao(novaData);
+		
 		List<ConfirmacaoVO> confirmacoes = this.montarListaDatasConfirmacao();
 		
 		for (ConfirmacaoVO confirmacao : confirmacoes) {
@@ -1236,7 +1237,7 @@ public class MatrizRecolhimentoController extends BaseController {
 				Long qtdeTitulosParciais = 0L;
 				
 				Long pesoTotal = 0L;
-				BigInteger qtdeExemplares = BigInteger.ZERO;
+				BigDecimal qtdeExemplares = BigDecimal.ZERO;
 				BigDecimal valorTotal = BigDecimal.ZERO;
 				
 				for (ProdutoRecolhimentoDTO produtoRecolhimento : listaProdutosRecolhimento) {
@@ -1273,7 +1274,7 @@ public class MatrizRecolhimentoController extends BaseController {
 				if (balanceamentoRecolhimento.getCapacidadeRecolhimentoDistribuidor() != null) {
 				
 					excedeCapacidadeDistribuidor =
-						(balanceamentoRecolhimento.getCapacidadeRecolhimentoDistribuidor()
+						(new BigDecimal(balanceamentoRecolhimento.getCapacidadeRecolhimentoDistribuidor())
 							.compareTo(qtdeExemplares) == -1);
 				}
 				
@@ -1282,7 +1283,7 @@ public class MatrizRecolhimentoController extends BaseController {
 				
 				itemResumoPeriodoBalanceamento.setExibeDestaque(exibeDestaque);
 				itemResumoPeriodoBalanceamento.setPesoTotal(pesoTotal);
-				itemResumoPeriodoBalanceamento.setQtdeExemplares(qtdeExemplares);
+				itemResumoPeriodoBalanceamento.setQtdeExemplares(qtdeExemplares.toBigInteger());
 				itemResumoPeriodoBalanceamento.setQtdeTitulos(qtdeTitulos);
 				
 				itemResumoPeriodoBalanceamento.setQtdeTitulosParciais(qtdeTitulosParciais);

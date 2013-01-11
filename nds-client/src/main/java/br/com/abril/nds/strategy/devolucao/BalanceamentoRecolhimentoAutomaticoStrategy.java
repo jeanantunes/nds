@@ -1,5 +1,6 @@
 package br.com.abril.nds.strategy.devolucao;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -35,23 +36,23 @@ public class BalanceamentoRecolhimentoAutomaticoStrategy extends AbstractBalance
 		
 		List<ProdutoRecolhimentoDTO> todosProdutosRecolhimentoNaoBalanceados = new ArrayList<ProdutoRecolhimentoDTO>();
 		
-		Map<Date, BigInteger> mapaExpectativaEncalheTotalDiaria = 
+		Map<Date, BigDecimal> mapaExpectativaEncalheTotalDiaria = 
 			dadosRecolhimento.getMapaExpectativaEncalheTotalDiaria();
 		
 		Set<Date> obterDatasConfirmadas = super.obterDatasConfirmadas(dadosRecolhimento.getProdutosRecolhimento());
 		
 		TreeSet<Date> datasRecolhimento = super.obterDatasRecolhimento(dadosRecolhimento.getDatasRecolhimentoFornecedor(), obterDatasConfirmadas);
 		
-		Map<Date, BigInteger> mapaExpectativaEncalheTotalDiariaOrdenado =
+		Map<Date, BigDecimal> mapaExpectativaEncalheTotalDiariaOrdenado =
 			super.ordenarMapaExpectativaEncalhePorDatasRecolhimento(
 				mapaExpectativaEncalheTotalDiaria, datasRecolhimento);
 		
-		for (Map.Entry<Date, BigInteger> entryExpectativaEncalheTotalDiaria : 
+		for (Map.Entry<Date, BigDecimal> entryExpectativaEncalheTotalDiaria : 
 				mapaExpectativaEncalheTotalDiariaOrdenado.entrySet()) {
 			
 			Date dataRecolhimentoPrevista = entryExpectativaEncalheTotalDiaria.getKey();
 			
-			BigInteger expectativaEncalheABalancear = entryExpectativaEncalheTotalDiaria.getValue();
+			BigDecimal expectativaEncalheABalancear = entryExpectativaEncalheTotalDiaria.getValue();
 
 			super.processarProdutosRecolhimentoNaoBalanceaveis(
 				matrizRecolhimentoBalanceada, dadosRecolhimento, dataRecolhimentoPrevista);
@@ -81,7 +82,7 @@ public class BalanceamentoRecolhimentoAutomaticoStrategy extends AbstractBalance
 																			BigInteger capacidadeManuseio,
 																		    List<ProdutoRecolhimentoDTO> produtosRecolhimentoBalanceaveis,
 																		    List<ProdutoRecolhimentoDTO> produtosRecolhimentoNaData,
-																		    BigInteger expectativaEncalheTotalAtualNaData,
+																		    BigDecimal expectativaEncalheTotalAtualNaData,
 																		    Date dataBalanceamento,
 																		    boolean permiteExcederCapacidadeManuseio) {
 		
@@ -92,10 +93,10 @@ public class BalanceamentoRecolhimentoAutomaticoStrategy extends AbstractBalance
 		
 		Collections.sort(produtosRecolhimentoBalanceaveis, comparatorChain);
 		
-		BigInteger expectativaEncalheASerPreenchida = 
-			capacidadeManuseio.subtract(expectativaEncalheTotalAtualNaData);
+		BigDecimal expectativaEncalheASerPreenchida = 
+			new BigDecimal(capacidadeManuseio).subtract(expectativaEncalheTotalAtualNaData);
 		
-		BigInteger expectativaEncalheElegivel = BigInteger.ZERO;
+		BigDecimal expectativaEncalheElegivel = BigDecimal.ZERO;
 		
 		List<ProdutoRecolhimentoDTO> produtosRecolhimentoElegiveis = 
 			new ArrayList<ProdutoRecolhimentoDTO>();
@@ -131,7 +132,7 @@ public class BalanceamentoRecolhimentoAutomaticoStrategy extends AbstractBalance
 												Map<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimentoBalanceada,
 												Date dataRecolhimentoPrevista, TreeSet<Date> datasRecolhimento,
 												RecolhimentoDTO dadosRecolhimento,
-												BigInteger expectativaEncalheABalancear) {
+												BigDecimal expectativaEncalheABalancear) {
 
 		Date dataBalanceamento = super.obterDataRecolhimentoPermitida(datasRecolhimento, dataRecolhimentoPrevista);
 
@@ -145,9 +146,9 @@ public class BalanceamentoRecolhimentoAutomaticoStrategy extends AbstractBalance
 			super.obterProdutosRecolhimentoBalanceaveisPorData(
 				dadosRecolhimento, dataRecolhimentoPrevista);
 
-		BigInteger expectativaEncalheTotalAtualNaData = super.obterExpectativaEncalheTotal(produtosRecolhimentoNaData);
+		BigDecimal expectativaEncalheTotalAtualNaData = super.obterExpectativaEncalheTotal(produtosRecolhimentoNaData);
 
-		BigInteger excessoExpectativaEncalhe = 
+		BigDecimal excessoExpectativaEncalhe = 
 			super.calcularExcessoExpectativaEncalhe(
 				expectativaEncalheTotalAtualNaData, capacidadeManuseio, expectativaEncalheABalancear);
 
@@ -175,7 +176,7 @@ public class BalanceamentoRecolhimentoAutomaticoStrategy extends AbstractBalance
 															 List<ProdutoRecolhimentoDTO> produtosRecolhimentoNaoBalanceados,
 															 RecolhimentoDTO dadosRecolhimento) {
 		
-		Map<Date, BigInteger> mapaExpectativaEncalheTotalDiariaAtual = 
+		Map<Date, BigDecimal> mapaExpectativaEncalheTotalDiariaAtual = 
 			this.gerarMapaExpectativaEncalheTotalDiariaOrdenadoPelaMaiorData(matrizRecolhimento, dadosRecolhimento.getDatasRecolhimentoFornecedor());
 		
 		this.alocarSobrasMatrizRecolhimento(
@@ -196,7 +197,7 @@ public class BalanceamentoRecolhimentoAutomaticoStrategy extends AbstractBalance
 	 */
 	private List<ProdutoRecolhimentoDTO> alocarSobrasMatrizRecolhimento(
 											    Map<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento,
-												Map<Date, BigInteger> mapaExpectativaEncalheTotalDiariaAtual,
+												Map<Date, BigDecimal> mapaExpectativaEncalheTotalDiariaAtual,
 											    List<ProdutoRecolhimentoDTO> produtosRecolhimentoNaoBalanceados,
 											    RecolhimentoDTO dadosRecolhimento,
 											    boolean permiteExcederCapacidadeManuseioDistribuidor) {
@@ -206,7 +207,7 @@ public class BalanceamentoRecolhimentoAutomaticoStrategy extends AbstractBalance
 			return produtosRecolhimentoNaoBalanceados;
 		}
 		
-		for (Map.Entry<Date, BigInteger> entryExpectativaEncalheTotalDiariaAtual :
+		for (Map.Entry<Date, BigDecimal> entryExpectativaEncalheTotalDiariaAtual :
 				mapaExpectativaEncalheTotalDiariaAtual.entrySet()) {
 			
 			if (produtosRecolhimentoNaoBalanceados.isEmpty()) {
@@ -221,7 +222,7 @@ public class BalanceamentoRecolhimentoAutomaticoStrategy extends AbstractBalance
 				continue;
 			}
 			
-			BigInteger expectativaEncalheTotalAtualNaData = entryExpectativaEncalheTotalDiariaAtual.getValue();
+			BigDecimal expectativaEncalheTotalAtualNaData = entryExpectativaEncalheTotalDiariaAtual.getValue();
 			
 			List<ProdutoRecolhimentoDTO> produtosRecolhimentoNaData = matrizRecolhimento.get(dataBalanceamento);
 			

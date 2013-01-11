@@ -1,7 +1,6 @@
 package br.com.abril.nds.repository;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -92,7 +91,7 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	 * 
 	 * @return Map<Date, BigDecimal>
 	 */
-	TreeMap<Date, BigInteger> obterExpectativasEncalhePorData(
+	TreeMap<Date, BigDecimal> obterExpectativasEncalhePorData(
 			Intervalo<Date> periodoRecolhimento, List<Long> fornecedores,
 			GrupoProduto grupoCromo);
 

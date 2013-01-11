@@ -608,7 +608,8 @@ var produtoEdicaoController =$.extend(true,  {
 			         {name:'situacaoLancamento', value: situacaoLancamento },
 			         {name:'codigoDeBarras', value: codigoDeBarras },
 			         {name:'brinde', value : brinde }],
-			         newp: 1,
+			         newp: 1, 
+			         rp: 99999
 		});
 
 		$(".prodsPesqGrid",this.workspace).flexReload();	
