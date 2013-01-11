@@ -61,7 +61,7 @@ $(function(){$('img.capaImg').load(function() {
 
 <table width="850" border="0" align="center" cellpadding="0" cellspacing="0" style="margin-bottom:10px; margin-top:10px;">
   <tr>
-    <td width="121" rowspan="6" valign="top"><span class="logo">
+    <td width="121" rowspan="6" valign="top"><span>
     	<img src="${pageContext.request.contextPath}/cadastro/distribuidor/logo" width="110" height="115" alt="Novo Distrib"  /></span>
     </td>
     <td colspan="4" style="border-left:1px solid #000; border-top:1px solid #000;"><span class="cabecalho">Razão Social<br />
@@ -257,7 +257,7 @@ $(function(){$('img.capaImg').load(function() {
 	
 <table width="850" border="0" align="center" cellpadding="0" cellspacing="0" style="margin-bottom:10px; margin-top:10px;">
   <tr>
-    <td width="121" rowspan="6" valign="top"><span class="logo">
+    <td width="121" rowspan="6" valign="top"><span>
     	<img src="${pageContext.request.contextPath}/cadastro/distribuidor/logo" width="110" height="115" alt="Novo Distrib"  /></span>
     </td>
     <td colspan="4" style="border-left:1px solid #000; border-top:1px solid #000;"><span class="cabecalho">Razão Social<br />
