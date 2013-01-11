@@ -84,12 +84,17 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 		if (lancamentoParcial != null) {
 			this.ndsiLoggerFactory.getLogger().logInfo(message,
 					EventoExecucaoEnum.REGISTRO_JA_EXISTENTE,
-					"Lançamento Parcial já cadastrado! Inicialdo a exclusão!");
+					"Lançamento Parcial já cadastrado para ProdutoEdição!"
+						+ " Código: " + produtoEdicao.getProduto().getCodigo()
+						+ " Edição: " + produtoEdicao.getNumeroEdicao());
 			for (PeriodoLancamentoParcial periodo : lancamentoParcial.getPeriodos()) {
 				this.getSession().delete(periodo);
 			}
 			
 			this.getSession().delete(lancamentoParcial);
+			
+			this.getSession().flush();
+			this.getSession().clear();
 		}
 		
 		lancamentoParcial = this.gerarNovoLancamentoParcial(input, 
@@ -165,7 +170,7 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 		lancamentoParcial.setProdutoEdicao(produtoEdicao);
 		lancamentoParcial.setLancamentoInicial(input.getDataLancamento());
 		lancamentoParcial.setRecolhimentoFinal(input.getDataRecolhimento());
-		lancamentoParcial.setStatus(status);		
+		lancamentoParcial.setStatus(status);
 		
 		// Persistir:
 		this.getSession().persist(lancamentoParcial);
