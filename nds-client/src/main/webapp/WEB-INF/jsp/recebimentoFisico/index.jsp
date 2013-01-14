@@ -240,6 +240,8 @@
 							
 								<select id="fornecedor" name="fornecedor" onblur="recebimentoFisicoController.exibirCnpjDoFornecedor()" style="width: 250px;">
 									
+									<option value="-2" selected="selected">Selecione</option>
+									
 									<option value="-1">Todos</option>
 									
 									<c:forEach var="fornecedor" items="${listafornecedores}">
@@ -252,7 +254,7 @@
 
 							<td width="43" align="right">CNPJ:</td>
 							<td width="136"><input id="cnpj"
-								onblur="recebimentoFisicoController.pesquisarPorCnpjFornecedor();" disabled="disabled" name="cnpj"
+								onblur="recebimentoFisicoController.pesquisarPorCnpjFornecedor();" name="cnpj"
 								style="width: 130px;" />
 							</td>
 
