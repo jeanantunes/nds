@@ -11,7 +11,7 @@ public interface FechamentoCEIntegracaoRepository {
 	
 	List<FechamentoCEIntegracaoDTO> buscarConferenciaEncalhe(FiltroFechamentoCEIntegracaoDTO filtro);
 	
-	void fecharCE(Long encalhe, ProdutoEdicao produtoEdicao);
+	void fecharCE(Long encalhe, ProdutoEdicao produtoEdicao, Long idFornecedor, Integer numeroSemana);
 
 	boolean verificarStatusSemana(FiltroFechamentoCEIntegracaoDTO filtro);
 

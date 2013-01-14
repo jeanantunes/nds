@@ -7,11 +7,9 @@ import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Column;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -27,7 +25,6 @@ import org.hibernate.annotations.CascadeType;
 
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.fiscal.CFOP;
-import br.com.abril.nds.model.seguranca.Permissao;
 
 /**
  * Chamada de Encalhe do Fornecedor para retorno
