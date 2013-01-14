@@ -227,6 +227,7 @@ var produtoController = $.extend(true, {
 			height:550,
 			width:850,
 			modal: true,
+			title:"Edição de Produto",
 			buttons: {
 				"Confirmar": function() {
 
@@ -391,6 +392,7 @@ var produtoController = $.extend(true, {
 			height:550,
 			width:850,
 			modal: true,
+			title:"Novo Produto",
 			buttons: {
 				"Confirmar": function() {
 
@@ -529,6 +531,10 @@ var produtoController = $.extend(true, {
 		}
 		
 		$.each(resultado.rows, function(index, row) {
+			
+			if(!row.cell.tipoContratoFornecedor){
+				row.cell.tipoContratoFornecedor = '';
+			}
 			
 			var linkAprovar = '<a href="javascript:;" onclick="produtoController.editarProduto(' + row.cell.id + ');" style="cursor:pointer">' +
 					     	  	'<img title="Editar" src="' + contextPath +'/images/ico_editar.gif" style="margin-right:10px" border="0px" />' +

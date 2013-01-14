@@ -2,12 +2,9 @@ package br.com.abril.nds.controllers.devolucao;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -22,25 +19,15 @@ import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.filtro.FiltroFechamentoCEIntegracaoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
-import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
-import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.seguranca.Permissao;
-import br.com.abril.nds.service.BoletoService;
-import br.com.abril.nds.service.CotaService;
-import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.service.FechamentoCEIntegracaoService;
 import br.com.abril.nds.service.FornecedorService;
-import br.com.abril.nds.service.GerarCobrancaService;
 import br.com.abril.nds.service.PoliticaCobrancaService;
-import br.com.abril.nds.service.ProdutoEdicaoService;
-import br.com.abril.nds.util.CellModelKeyValue;
-import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.Intervalo;
-import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
@@ -57,9 +44,9 @@ import br.com.caelum.vraptor.view.Results;
 @Path("devolucao/fechamentoCEIntegracao")
 public class FechamentoCEIntegracaoController extends BaseController{
 	
-	private static final String FILTRO_SESSION_ATTRIBUTE_FECHAMENTO_CE_INTEGRACAO = "filtroFechamentoCEIntegracao";
-	
 	private static final String BOLETO_GERADO = "boletoDistribuidorGerado";
+	
+	private static final String FILTRO_SESSION_ATTRIBUTE_FECHAMENTO_CE_INTEGRACAO = "filtroFechamentoCEIntegracao";
 	
 	private Result result;
 	
@@ -77,22 +64,7 @@ public class FechamentoCEIntegracaoController extends BaseController{
 	
 	@Autowired
 	private HttpServletResponse httpResponse;
-	
-	@Autowired
-	private BoletoService boletoService;
-	
-	@Autowired
-	private DescontoService descontoService;
-	
-	@Autowired
-	private CotaService cotaService;
-	
-	@Autowired
-	private ProdutoEdicaoService produtoEdicaoService;
-	
-	@Autowired
-	private GerarCobrancaService gerarCobrancaService;
-	
+		
 	@Autowired
 	private PoliticaCobrancaService politicaCobrancaService;
 	
@@ -139,12 +111,10 @@ public class FechamentoCEIntegracaoController extends BaseController{
 		
 		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder, sortname));
 		
-		//this.validarEntrada(filtro);
-		
 		this.tratarFiltro(filtro);
 
 		if(filtro.getSemana() != null){
-			filtro.setPeriodoRecolhimento(obterDataDaSemana(filtro));
+			filtro.setPeriodoRecolhimento(obterDataDaSemana(filtro.getSemana().intValue()));
 		}
 
 		FechamentoCEIntegracaoVO fechamentoCEIntegracaoVO = fechamentoCEIntegracaoService.construirFechamentoCEIntegracaoVO(filtro); 
@@ -153,21 +123,12 @@ public class FechamentoCEIntegracaoController extends BaseController{
 		
 	}
 	
-	
-	private FechamentoCEIntegracaoVO efetuarConsultaFechamentoCEIntegracao(FiltroFechamentoCEIntegracaoDTO filtro) {
-		
-		List<FechamentoCEIntegracaoDTO> listaFechamento = this.fechamentoCEIntegracaoService.buscarFechamentoEncalhe(filtro);
-		
-		return fechamentoCEIntegracaoService.construirFechamentoCEIntegracaoVO(filtro);
-	}
-
-	
-	private Intervalo<Date> obterDataDaSemana(FiltroFechamentoCEIntegracaoDTO filtro) {
+	private Intervalo<Date> obterDataDaSemana(int semana) {
 		
 		Distribuidor distribuidor = this.distribuidorService.obter();
 		Date dataInicioSemana = 
 				DateUtil.obterDataDaSemanaNoAno(
-					filtro.getSemana().intValue(), distribuidor.getInicioSemana().getCodigoDiaSemana(), distribuidor.getDataOperacao());
+					semana, distribuidor.getInicioSemana().getCodigoDiaSemana(), distribuidor.getDataOperacao());
 			
 		Date dataFimSemana = DateUtil.adicionarDias(dataInicioSemana, 6);
 		
@@ -178,56 +139,17 @@ public class FechamentoCEIntegracaoController extends BaseController{
 	}
 
 	@Post
-	public void buscarTotalDaPesquisa(){
-		
-		FiltroFechamentoCEIntegracaoDTO filtro = (FiltroFechamentoCEIntegracaoDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE_FECHAMENTO_CE_INTEGRACAO);
-		
-		List<FechamentoCEIntegracaoDTO> listaFechamento = this.fechamentoCEIntegracaoService.buscarFechamentoEncalhe(filtro);
-		
-		//listaFechamento = this.fechamentoCEIntegracaoService.calcularVenda(listaFechamento);
-		double totalBruto = 0;
-		BigDecimal desconto = new BigDecimal(0);
-		/*for(FechamentoCEIntegracaoDTO dto: listaFechamento){
-			double valorDaVenda =  dto.getVenda().doubleValue() * dto.getPrecoCapa().doubleValue();
-			totalBruto = totalBruto + valorDaVenda;
-			Cota cota = this.cotaService.obterPorId(dto.getIdCota());
-			ProdutoEdicao pe = this.produtoEdicaoService.obterProdutoEdicao(dto.getIdProdutoEdicao(), false);
-			desconto.add(this.descontoService.obterValorDescontoPorCotaProdutoEdicao(null, cota, pe));
-			
-		}		*/
-		
-		StringBuilder html = new StringBuilder();
-		html.append("<td width='88' valign='top'><strong>Total Bruto R$:</strong></td>");
-		html.append("<td width='50 valign='top'>"+  (CurrencyUtil.formatarValor(totalBruto)) +"</td>");
-		html.append(" <td width='106' valign='top'><strong>Total Desconto R$:</strong></td>");
-		html.append(" <td width='49' valign='top'>"+(CurrencyUtil.formatarValor(desconto))+"</td>");
-		html.append(" <td width='93' valign='top'><strong>Total Líquido R$:</strong></td>");
-		html.append(" <td width='70' valign='top'>"+(CurrencyUtil.formatarValor(totalBruto - desconto.doubleValue()))+"</td>");
-		
-		this.result.use(Results.json()).from(html.toString(), "result").recursive().serialize();
-		
-	}
-	
-	@Post
 	@Path("fecharCE")
-	public void fecharCE(String[] listaEncalhe, String[] listaIdProdutoEdicao){
+	public void fecharCE(String[] listaEncalhe, String[] listaIdProdutoEdicao, String idFornecedor, String semana){
 		String listaEncalhePronta[] = listaEncalhe[0].split(",");		
 		String listaIdProdutoEdicaoPronta[] = listaIdProdutoEdicao[0].split(",");		
 		
-		Long encalhePronto = null;
-		ProdutoEdicao pe = null;
-		
-		for(int cont = 0; cont < listaEncalhePronta.length; cont++){
-			encalhePronto = Long.parseLong(listaEncalhePronta[cont]);			
-			pe = this.produtoEdicaoService.obterProdutoEdicao(Long.parseLong(listaIdProdutoEdicaoPronta[cont]), false);
-			
-			this.fechamentoCEIntegracaoService.fecharCE(encalhePronto, pe);
-		}
+		fechamentoCEIntegracaoService.fecharCE(listaEncalhePronta, listaIdProdutoEdicaoPronta, idFornecedor, new Integer(semana));
 		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS,"Fechamento realizado com sucesso."),"result").recursive().serialize();
 		
 	}
-	
+
 	@Post
 	@Path("/geraBoleto")
 	public void geraBoleto(TipoCobranca tipoCobranca) {
@@ -248,10 +170,10 @@ public class FechamentoCEIntegracaoController extends BaseController{
 			
 			result.use(Results.json()).from("").serialize();
 			
+		} catch(ValidacaoException e) { 
+			throw e;
 		} catch(Exception e) {
-			
 			throw new ValidacaoException(TipoMensagem.ERROR, "Falha na geração do boleto.");
-			
 		}
 		
 	}
@@ -267,8 +189,6 @@ public class FechamentoCEIntegracaoController extends BaseController{
 		escreverArquivoParaResponse(boleto, "boleto");
 		
 	}
-
-	
 	
 	private void escreverArquivoParaResponse(byte[] arquivo, String nomeArquivo) throws IOException {
 		
@@ -286,18 +206,12 @@ public class FechamentoCEIntegracaoController extends BaseController{
 		
 	}
 	
-	
-	
-	
-	
 	@Get
 	public void exportar(FileType fileType) throws IOException {
 		
 		FiltroFechamentoCEIntegracaoDTO filtro = (FiltroFechamentoCEIntegracaoDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE_FECHAMENTO_CE_INTEGRACAO);
 		
 		List<FechamentoCEIntegracaoDTO> listaFechamento = this.fechamentoCEIntegracaoService.buscarFechamentoEncalhe(filtro);
-		
-		//listaFechamento = this.fechamentoCEIntegracaoService.calcularVenda(listaFechamento);
 		
 		if(listaFechamento.isEmpty()) {
 			throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");
@@ -308,16 +222,6 @@ public class FechamentoCEIntegracaoController extends BaseController{
 			
 		
 		result.nothing();
-	}
-	
-
-	private void validarEntrada(FiltroFechamentoCEIntegracaoDTO filtro) {
-		
-		if(filtro.getSemana() == null || filtro.getSemana() == 0){
-			throw new ValidacaoException(TipoMensagem.WARNING, "Todos os filtros devem ser preenchidos!");
-		}		
-		
-		
 	}
 	
 	private void tratarFiltro(FiltroFechamentoCEIntegracaoDTO filtroAtual) {

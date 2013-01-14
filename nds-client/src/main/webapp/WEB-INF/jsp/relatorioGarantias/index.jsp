@@ -41,7 +41,6 @@
 	              <td width="98">Tipo de Garantia:</td>
 	                <td width="203">
 	                	<select name="filtro.tipoGarantia" id="selectTipoGarantia" onchange="relatorioGarantiasController.hideGrids()" style="width:180px;">
-		                	<option>Selecione...</option>
 		                	<option value="TODAS">Todas</option>
 		                	<c:forEach varStatus="counter" var="tipoGarantia"
 	                                        items="${listaTiposGarantia}">
@@ -52,7 +51,7 @@
 	                <td width="39">Status:</td>
 	                <td width="478">
 	                	<select name="filtro.statusGarantia" id="selectStatusGarantia" style="width:180px;">
-			                <option selected="selected">Selecionar...</option>
+			                
 			                <option value="TODAS">Todas</option>
 		                	<c:forEach varStatus="counter" var="tipoStatusGarantia"
 	                                        items="${listaTiposStatusGarantia}">

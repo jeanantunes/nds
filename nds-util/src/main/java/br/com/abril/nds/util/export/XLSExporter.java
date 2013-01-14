@@ -256,10 +256,17 @@ public class XLSExporter implements Exporter {
 			CellStyle cellStyle = this.getHeaderColumnCellStyle(sheet, exportHeader.getAlignment());
 			
 			cell.setCellStyle(cellStyle);
-			
+
 			lastCell = cell;
-		
-			sheet.setColumnWidth(cellNum, 4000);
+
+			int totalUniversal = 4000 * headers.size();
+			
+			float patternPercentage = 400000 / totalUniversal;
+			
+			int width = exportHeader.getWidthPercent() == null ? 4000 
+						: Math.round(exportHeader.getWidthPercent() * 4000 / patternPercentage);
+			
+			sheet.setColumnWidth(cellNum, width);
 			
 			cellNum++;
 		}
