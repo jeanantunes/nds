@@ -10,7 +10,7 @@ var areaInfluenciaGeradorFluxoController = $
 					// intervalo : null,
 
 					init : function() {
-
+        
 						$(".areaInfluenciaGrid", areaInfluenciaGeradorFluxoController.workspace).flexigrid(	{
 											preProcess : areaInfluenciaGeradorFluxoController.executarPreProcessamento,
 											dataType : 'json',

@@ -195,7 +195,9 @@ public class AreaInfluenciaGeradorFluxoRepositoryImpl extends
 		
 		hql.append(" areaInfluenciaPDV.descricao as areaInfluencia, "); // AREA DE INFLUÊNCIA
 		hql.append(" tipoGeradorFluxoPrincipal.descricao as geradorFluxoPrincipal "); // GERADOR DE FLUXO PRINCIPAL
-		hql.append(" tipoGeradorFluxoSecundarioPDV.descricao as geradorFluxoPrincipal "); // GERADOR DE FLUXO SECUNDARIO
+		
+		// TODO
+		//hql.append(" tipoGeradorFluxoSecundarioPDV.descricao as geradorFluxoPrincipal "); // GERADOR DE FLUXO SECUNDARIO
 		
 		// FROM
 		
@@ -207,7 +209,7 @@ public class AreaInfluenciaGeradorFluxoRepositoryImpl extends
 		hql.append(" left join pdv.segmentacao as segmento ");
 		hql.append(" left join pdv.geradorFluxoPDV as geradorFluxoPrincipalPDV ");
 		hql.append(" left join geradorFluxoPrincipalPDV.principal as tipoGeradorFluxoPrincipal ");
-		hql.append(" left join geradorFluxoPrincipalPDV.secundarios as tipoGeradorFluxoSecundarioPDV ");
+		//hql.append(" left join geradorFluxoPrincipalPDV.secundarios as tipoGeradorFluxoSecundarioPDV ");
 		hql.append(" left join segmento.tipoPontoPDV as tipoPontoPDV ");
 		hql.append(" left join segmento.areaInfluenciaPDV as areaInfluenciaPDV ");		
 		hql.append(" where pdv.caracteristicas.pontoPrincipal = true ");
