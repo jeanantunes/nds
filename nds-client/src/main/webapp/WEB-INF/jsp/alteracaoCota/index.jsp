@@ -385,12 +385,24 @@
 </form>
 <form id="pesquisarForm">
 
+		<div class="areaBts">
+		<div class="area">
+		
+			<span class="bt_novos">
+				<a href="javascript:;" onclick="alteracaoCotaController.carregarAlteracao();" rel="tipsy" title="Alterar">
+					<img src="${pageContext.request.contextPath}/images/ico_editar.gif" hspace="5" border="0"/>
+				</a>
+			</span>
+		</div>  		  		
+	</div>
+  	<div class="linha_separa_fields">&nbsp;</div>
+
 		<fieldset class="classFieldset">
    		<legend> Pesquisar         </legend>
    	    <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
         	<tr>
             	<td>Cota:</td>
-				<td colspan="3">
+				<td width="120">
 					<input name="filtroAlteracaoCotaDTO.numeroCota"  class="campoDePesquisa"
 						   type="text"
 						   id="numeroCota"
@@ -422,7 +434,7 @@
             </tr>
             <tr>
               	<td width="74">Fornecedor:</td>
-              	<td colspan="3">
+              	<td>
               		<select name="filtroAlteracaoCotaDTO.idFornecedor" id="idFornecedor" style="width:100px;">
               			<option selected="selected" value="-1"></option>
 						<c:forEach items="${listFornecedores}" var="fornecedor">
@@ -461,7 +473,7 @@
             </tr>
             <tr>
               	<td>Desconto:</td>
-              	<td colspan="3">
+              	<td>
 					<select name="filtroAlteracaoCotaDTO.tipoDesconto" id="idTpDesconto" style="width:100px;">
               			<option selected="selected" value="-1"></option>
 						<c:forEach items="${listTipoDesconto}" var="tipoDesconto">
@@ -493,7 +505,7 @@
        		<table class="alteracaoGrid"></table>
             <table width="950" border="0" cellspacing="0" cellpadding="0">
   				<tr>
-    				<td width="502"><span class="bt_novos" title="Alterar"><a href="javascript:;" onclick="alteracaoCotaController.carregarAlteracao();"><img src="${pageContext.request.contextPath}/images/ico_editar.gif" hspace="5" border="0"/>Alterar</a></span></td>
+    				<td width="502"></td>
     				<td width="168"><strong>Total de Cotas Selecionadas:</strong></td>
     				<td width="141"><span id="totalCotasSelecionadas"></span></td>
     				<td width="91">Selecionar Todos</td>

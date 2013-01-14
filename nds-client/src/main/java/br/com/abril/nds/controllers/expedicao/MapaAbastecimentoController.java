@@ -288,8 +288,7 @@ public class MapaAbastecimentoController extends BaseController {
 					throw new ValidacaoException(TipoMensagem.WARNING, "'Produto' não foi preenchido.");
 				break;
 			case ROTA:
-				if(filtroAtual.getRota()==null)
-					throw new ValidacaoException(TipoMensagem.WARNING, "'Rota' não foi preenchida.");
+				
 				break;
 			case ENTREGADOR:
 				if(filtroAtual.getIdEntregador()==null)

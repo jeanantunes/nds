@@ -45,6 +45,10 @@ public class BoxController extends BaseController {
 	
 	private static final String ID_BOX_DETALHE = "idBoxDetalhe";
 	
+	private static final String SORTNAME_BOX_DETALHE = "sortnameBoxDetalhe";
+	
+	private static final String SORTORDER_BOX_DETALHE = "sortorderBoxDetalhe";
+	
 	@Autowired
 	private BoxService boxService;
 
@@ -157,9 +161,16 @@ public class BoxController extends BaseController {
 	
 	@Post
 	@Path("/detalhe.json")
-	public void detalhe(long id){
+	public void detalhe(long id, String sortname, String sortorder){
+		
 		this.session.setAttribute(ID_BOX_DETALHE, id);
-		List<CotaRotaRoteiroDTO> rotaRoteiroDTOs = boxService.obtemCotaRotaRoteiro(id);		
+		
+		this.session.setAttribute(SORTNAME_BOX_DETALHE, sortname);
+		
+		this.session.setAttribute(SORTORDER_BOX_DETALHE, sortorder);
+		
+		List<CotaRotaRoteiroDTO> rotaRoteiroDTOs = boxService.obtemCotaRotaRoteiro(id,sortname,sortorder);		
+		
 		result.use(FlexiGridJson.class).from(rotaRoteiroDTOs).total(rotaRoteiroDTOs.size()).page(1).serialize();
 	}	
 
@@ -167,7 +178,11 @@ public class BoxController extends BaseController {
 		
 		Long id = (Long) this.session.getAttribute(ID_BOX_DETALHE);
 		
-		List<CotaRotaRoteiroDTO> rotaRoteiroDTOs = boxService.obtemCotaRotaRoteiro(id);		
+		String sortname = (String) this.session.getAttribute(SORTNAME_BOX_DETALHE);
+				
+		String sortorder = (String) this.session.getAttribute(SORTORDER_BOX_DETALHE);	
+		
+		List<CotaRotaRoteiroDTO> rotaRoteiroDTOs = boxService.obtemCotaRotaRoteiro(id, sortname, sortorder);		
 		
 		FileExporter.to("detalhes-box", fileType).inHTTPResponse(
 				this.getNDSFileHeader(), null, null,

@@ -138,14 +138,12 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 	@Transactional(readOnly = true)
 	public List<Diferenca> obterDiferencas(FiltroConsultaDiferencaEstoqueDTO filtro) {
 		
-		Date dataInicialLancamento = calendarioService.subtrairDiasUteis(new Date(), 7);
-		
 		if(filtro.getNumeroCota() != null) {
 			Cota cota = this.cotaRepository.obterPorNumerDaCota(filtro.getNumeroCota());
 			filtro.setIdCota(cota.getId());
 		}
 		
-		return this.diferencaEstoqueRepository.obterDiferencas(filtro, dataInicialLancamento);
+		return this.diferencaEstoqueRepository.obterDiferencas(filtro);
 	}
 	
 	@Transactional(readOnly = true)

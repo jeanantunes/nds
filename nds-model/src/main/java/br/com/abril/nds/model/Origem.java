@@ -8,5 +8,6 @@ package br.com.abril.nds.model;
 public enum Origem {
 	MANUAL,
 	INTERFACE,
+	CARGA_INICIAL,
 	TRANSFERENCIA_LANCAMENTO_FALTA_E_SOBRA
 }

@@ -459,7 +459,6 @@ public class CotaServiceImpl implements CotaService {
 				enderecoCota.setCota(cota);
 			}
 			
-			
 			boolean novoEndereco = (novoEnderecoCota && !enderecoAssociacao.isEnderecoPessoa());
 			
 			endereco = this.obterEndereco(enderecoDTO, pessoa, novoEndereco);
@@ -2133,9 +2132,11 @@ public class CotaServiceImpl implements CotaService {
 		
 		if (enderecoCota != null){
 			
-			dto.setLogradouroEntrega(enderecoCota.getEndereco().getLogradouro() + ", nº " + enderecoCota.getEndereco().getNumero());
+			String numeroEndereco = (enderecoCota.getEndereco().getNumero()!= null)?enderecoCota.getEndereco().getNumero():"";
+			
+			dto.setLogradouroEntrega(enderecoCota.getEndereco().getLogradouro() + ", N&deg; " + numeroEndereco);
 			dto.setBairroEntrega(enderecoCota.getEndereco().getBairro());
-			dto.setCEPEntrega(enderecoCota.getEndereco().getCep());
+			dto.setCEPEntrega(Util.adicionarMascaraCEP(enderecoCota.getEndereco().getCep()));
 			dto.setCidadeEntrega(enderecoCota.getEndereco().getCidade());
 		} else {
 			
@@ -2150,9 +2151,11 @@ public class CotaServiceImpl implements CotaService {
 				
 				if (enderecoPDV != null){
 					
-					dto.setLogradouroEntrega(enderecoPDV.getLogradouro() + ", nº " + enderecoPDV.getNumero());
+					String numeroEndereco =  enderecoPDV.getNumero()!=null ? enderecoPDV.getNumero():"";
+					
+					dto.setLogradouroEntrega(enderecoPDV.getLogradouro() + ", N&deg; " + numeroEndereco);
 					dto.setBairroEntrega(enderecoPDV.getBairro());
-					dto.setCEPEntrega(enderecoPDV.getCep());
+					dto.setCEPEntrega(Util.adicionarMascaraCEP(enderecoPDV.getCep()));
 					dto.setCidadeEntrega(enderecoPDV.getCidade());
 				}
 			}

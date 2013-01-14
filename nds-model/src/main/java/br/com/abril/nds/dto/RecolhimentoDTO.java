@@ -1,6 +1,7 @@
 package br.com.abril.nds.dto;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
@@ -19,7 +20,7 @@ public class RecolhimentoDTO implements Serializable {
 
 	private List<ProdutoRecolhimentoDTO> produtosRecolhimento;
 	
-	private TreeMap<Date, BigInteger> mapaExpectativaEncalheTotalDiaria;
+	private TreeMap<Date, BigDecimal> mapaExpectativaEncalheTotalDiaria;
 	
 	private BigInteger capacidadeRecolhimentoDistribuidor;
 	
@@ -54,7 +55,7 @@ public class RecolhimentoDTO implements Serializable {
 	/**
 	 * @return the mapaExpectativaEncalheTotalDiaria
 	 */
-	public TreeMap<Date, BigInteger> getMapaExpectativaEncalheTotalDiaria() {
+	public TreeMap<Date, BigDecimal> getMapaExpectativaEncalheTotalDiaria() {
 		return mapaExpectativaEncalheTotalDiaria;
 	}
 
@@ -62,7 +63,7 @@ public class RecolhimentoDTO implements Serializable {
 	 * @param mapaExpectativaEncalheTotalDiaria the mapaExpectativaEncalheTotalDiaria to set
 	 */
 	public void setMapaExpectativaEncalheTotalDiaria(
-			TreeMap<Date, BigInteger> mapaExpectativaEncalheTotalDiaria) {
+			TreeMap<Date, BigDecimal> mapaExpectativaEncalheTotalDiaria) {
 		this.mapaExpectativaEncalheTotalDiaria = mapaExpectativaEncalheTotalDiaria;
 	}
 

@@ -43,6 +43,9 @@ var PainelMonitorNFE = $.extend(true, {
 		
 		$('#dataFinal', PainelMonitorNFE.workspace).mask("99/99/9999");	
 		
+		$(".grids", PainelMonitorNFE.workspace).hide();
+		
+	    $(".bt_arq", PainelMonitorNFE.workspace).hide();
 	},
 	
 	pesquisar: function() {
@@ -73,17 +76,13 @@ var PainelMonitorNFE = $.extend(true, {
 		        {name:'serieNfe',    value: serieNfe}
 		];
 		
-		
 		$("#nfeGrid", PainelMonitorNFE.workspace).flexOptions({
 			url: contextPath + "/nfe/painelMonitorNFe/pesquisar",
 			params: formData
 		});
 		
-		$("#nfeGrid", PainelMonitorNFE.workspace).flexReload();
-		
-
+		$("#nfeGrid", PainelMonitorNFE.workspace).flexReload();;
 	},
-
 	
 	limparCheck:function (id){
 		
@@ -142,6 +141,8 @@ var PainelMonitorNFE = $.extend(true, {
 			);
 			
 			$(".grids", PainelMonitorNFE.workspace).hide();
+				
+		    $(".bt_arq", PainelMonitorNFE.workspace).hide();
 
 			return {total: 0, rows: {}};
 		}
@@ -171,6 +172,8 @@ var PainelMonitorNFE = $.extend(true, {
 		});
 		
 		$('.grids', PainelMonitorNFE.workspace).show();
+		
+	    $(".bt_arq", PainelMonitorNFE.workspace).show();
 		
 		return resultado;
 		
@@ -308,3 +311,5 @@ var PainelMonitorNFE = $.extend(true, {
 	}
 	
 }, BaseController);
+
+//@ sourceURL=PainelNFE.js

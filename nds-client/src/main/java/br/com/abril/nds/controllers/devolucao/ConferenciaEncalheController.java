@@ -748,7 +748,13 @@ public class ConferenciaEncalheController extends BaseController {
 		InfoConferenciaEncalheCota info = this.getInfoConferenciaSession();
 		
 		if (info == null){
+			
 			throw new ValidacaoException(TipoMensagem.ERROR, "Sessão expirada.");
+		}
+		
+		if (info.getCota() == null){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Informe a Cota.");
 		}
 		
 		List<Long> idsCota = new ArrayList<>();

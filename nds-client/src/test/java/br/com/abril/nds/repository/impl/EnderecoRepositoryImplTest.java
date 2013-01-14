@@ -105,7 +105,7 @@ public class EnderecoRepositoryImplTest extends AbstractRepositoryImplTest {
 	@Test
 	public void teste() {
 		
-		List<String> listaLocalidade = enderecoRepository.obterListaLocalidadeCotas();
+		List<String> listaLocalidade = enderecoRepository.obterListaLocalidadePdv();
 		
 		Assert.assertNotNull(listaLocalidade);
 				

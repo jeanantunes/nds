@@ -16,6 +16,7 @@ import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.financeiro.Boleto;
+import br.com.abril.nds.model.financeiro.BoletoDistribuidor;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.util.TipoBaixaCobranca;
 
@@ -28,6 +29,8 @@ import br.com.abril.nds.util.TipoBaixaCobranca;
  */
 public interface BoletoService {
     
+	byte[] gerarImpressaoBoletosDistribuidor(List<BoletoDistribuidor> listaBoletoDistribuidor) throws IOException;
+	
 	List<Boleto> obterBoletosPorCota(FiltroConsultaBoletosCotaDTO filtro);
 	
 	Boleto obterBoletoPorNossoNumero(String nossoNumero, Boolean dividaAcumulada);
