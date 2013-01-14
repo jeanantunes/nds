@@ -1207,6 +1207,7 @@ public class CotaServiceImpl implements CotaService {
 		    Integer novoNumeroCota = cotaDto.getNumeroCota();
 		    mudancaNumero = !numeroCota.equals(novoNumeroCota);
 		}
+		
 		//Se é uma nova cota ou alteração de número, processa o novo número
 		if (newCota || mudancaNumero) {
 		    processarNovoNumeroCota(cotaDto.getNumeroCota(),cota.getId());
