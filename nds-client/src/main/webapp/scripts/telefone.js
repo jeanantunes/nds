@@ -310,8 +310,6 @@ function Telefone(paramTela,message) {
 		var ramal = $("#"+paramTela + "ramalTD");
 		var radioID = $("#"+paramTela + "radioIDTD");
 		
-		$("#"+paramTela+"numeroTelefone", Telefone.workspace).mask("9999-9999");
-		
 		switch (opcao) {
 		case 'COMERCIAL':
 		case 'FAX':
@@ -320,6 +318,7 @@ function Telefone(paramTela,message) {
 			div1.show();
 			lbl.text('Ramal:');
 			campo.css('width', 40);
+			$("#"+paramTela+"numeroTelefone", Telefone.workspace).mask("9999-9999");
 			break;
 		case 'RADIO':
 			div1.show();

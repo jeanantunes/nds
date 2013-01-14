@@ -23,7 +23,6 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.seguranca.GrupoPermissao;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
-import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.GrupoPermissaoService;
 import br.com.abril.nds.service.PermissaoService;
@@ -367,10 +366,11 @@ public class GruposAcessoController extends BaseController {
 		Usuario usuario = getUsuarioEntity(usuarioDTO);
 		
 		Set<Permissao> permissoes = new HashSet<Permissao>();
-		for (String p : usuarioDTO.getPermissoesSelecionadas().split(",")) {
-			if ( p != null && !p.isEmpty() ) {
-				//permissoes.add(Permissao.valueOf(p));
-				permissoes = adicionarPermissoes(permissoes, Permissao.valueOf(p));
+		if(usuarioDTO.getPermissoesSelecionadas() != null) {
+			for (String p : usuarioDTO.getPermissoesSelecionadas().split(",")) {
+				if ( p != null && !p.isEmpty() ) {
+					permissoes = adicionarPermissoes(permissoes, Permissao.valueOf(p));
+				}
 			}
 		}
 		usuario.setPermissoes(permissoes);
@@ -426,7 +426,7 @@ public class GruposAcessoController extends BaseController {
 		usuario.setPais(usuarioDTO.getPais());
 		usuario.setSobrenome(usuarioDTO.getSobrenome());
 		usuario.setTelefone(usuarioDTO.getTelefone());
-		if (usuarioDTO.getContaAtiva().equals(UsuarioDTO.ATIVA)) {
+		if ("true".equals(usuarioDTO.getContaAtiva()) || usuarioDTO.getContaAtiva().equals(UsuarioDTO.ATIVA)) {
 			usuario.setContaAtiva(true);
 		} else {
 			usuario.setContaAtiva(false);
@@ -531,7 +531,7 @@ public class GruposAcessoController extends BaseController {
 		dto.setGrupos(grupos);
 		
 		
-		result.use(CustomJson.class).from(dto).serialize();
+		result.use(Results.json()).from(dto, "usuarioDTO").recursive().serialize();
 	}
 
 	
