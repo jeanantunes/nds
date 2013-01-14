@@ -6,6 +6,7 @@ import java.util.List;
 import org.hibernate.Query;
 import org.hibernate.transform.Transformers;
 import org.hibernate.type.StandardBasicTypes;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.FechamentoCEIntegracaoConsolidadoDTO;
@@ -17,13 +18,18 @@ import br.com.abril.nds.model.estoque.FechamentoEncalhe;
 import br.com.abril.nds.model.estoque.TipoVendaEncalhe;
 import br.com.abril.nds.model.estoque.pk.FechamentoEncalhePK;
 import br.com.abril.nds.model.movimentacao.StatusOperacao;
+import br.com.abril.nds.model.planejamento.fornecedor.ChamadaEncalheFornecedor;
 import br.com.abril.nds.model.planejamento.fornecedor.StatusCeNDS;
+import br.com.abril.nds.repository.ChamadaEncalheFornecedorRepository;
 import br.com.abril.nds.repository.FechamentoCEIntegracaoRepository;
 import br.com.abril.nds.vo.PaginacaoVO;
 
 @Repository
 public class FechamentoCEIntegracaoRepositoryImpl extends AbstractRepositoryModel<FechamentoEncalhe, FechamentoEncalhePK> implements
 		FechamentoCEIntegracaoRepository {
+	
+	@Autowired
+	private ChamadaEncalheFornecedorRepository chamadaEncalheFornecedorRepository;
 	
 	public FechamentoCEIntegracaoRepositoryImpl() {
 		super(FechamentoEncalhe.class);
@@ -81,6 +87,7 @@ public class FechamentoCEIntegracaoRepositoryImpl extends AbstractRepositoryMode
 			
 		} else {
 
+			sql.append(" PROD_EDICAO.ID AS idProdutoEdicao, ");
 			sql.append(" ITEM_CH_ENC_FORNECEDOR.NUEMRO_ITEM AS sequencial, ");
 			sql.append(" PROD.CODIGO as codigoProduto,  				");		
 			sql.append(" PROD.NOME as nomeProduto, 						");
@@ -265,6 +272,7 @@ public class FechamentoCEIntegracaoRepositoryImpl extends AbstractRepositoryMode
 		} else {
 			
 			query = getSession().createSQLQuery(hql.toString())
+					.addScalar("idProdutoEdicao", StandardBasicTypes.LONG)
 					.addScalar("sequencial", StandardBasicTypes.LONG)
 					.addScalar("codigoProduto", StandardBasicTypes.STRING)
 					.addScalar("nomeProduto", StandardBasicTypes.STRING)
@@ -300,7 +308,7 @@ public class FechamentoCEIntegracaoRepositoryImpl extends AbstractRepositoryMode
 	}
 	
 	@Override
-	public void fecharCE(Long encalhe, ProdutoEdicao produtoEdicao) {
+	public void fecharCE(Long encalhe, ProdutoEdicao produtoEdicao, Long idFornecedor, Integer numeroSemana) {
 		 FechamentoEncalhe fe = new FechamentoEncalhe();
 		 fe.setQuantidade(encalhe);
 		 FechamentoEncalhePK pk = new FechamentoEncalhePK();
@@ -308,11 +316,15 @@ public class FechamentoCEIntegracaoRepositoryImpl extends AbstractRepositoryMode
 		 pk.setDataEncalhe(new Date());
 		 fe.setFechamentoEncalhePK(pk);
 		 
+		 for (ChamadaEncalheFornecedor chamadaEncalheFornecedor : chamadaEncalheFornecedorRepository.obterChamadasEncalheFornecedor(idFornecedor, numeroSemana, null)) {
+			 chamadaEncalheFornecedor.setStatusCeNDS(StatusCeNDS.FECHADO);
+			 this.getSession().save(chamadaEncalheFornecedor);
+		 }
+		 
 		 this.getSession().save(fe);
 		
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public boolean verificarStatusSemana(FiltroFechamentoCEIntegracaoDTO filtro) {
 		 
