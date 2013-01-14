@@ -42,7 +42,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/suspensaoCota")
-public class SuspensaoCotaController  extends BaseController {
+public class SuspensaoCotaController extends BaseController {
 
 	protected static final String WARNING_SUSPENSAO_COTA_SUSPENSA = "Não foi possível realizar a suspensão pois a cota já estava suspensa.";
 	protected static final String MSG_PESQUISA_SEM_RESULTADO = "Não há sugestões para suspensão de cota.";

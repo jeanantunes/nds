@@ -40,7 +40,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("financeiro/relatorioGarantias")
-public class RelatorioGarantiasController  extends BaseController {
+public class RelatorioGarantiasController extends BaseController {
 	
 	@Autowired
 	private Result result;
@@ -53,9 +53,6 @@ public class RelatorioGarantiasController  extends BaseController {
 	
 	@Autowired
 	private DistribuidorService distribuidorService;
-	
-	@Autowired
-	private UsuarioService usuarioService;
 	
 	@Autowired
 	private RelatorioGarantiasService relatorioGarantiasService;
