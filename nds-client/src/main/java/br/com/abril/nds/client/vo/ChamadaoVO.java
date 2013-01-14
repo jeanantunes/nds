@@ -16,13 +16,13 @@ public class ChamadaoVO {
 	@Export(label = "Código", alignment = Alignment.CENTER, exhibitionOrder = 1)
 	private String codigo;
 	
-	@Export(label = "Produto", alignment = Alignment.LEFT, exhibitionOrder = 2)
+	@Export(label = "Produto", alignment = Alignment.LEFT, exhibitionOrder = 2, widthPercent = 25)
 	private String produto;
 	
-	@Export(label = "Edição", alignment = Alignment.CENTER, exhibitionOrder = 3)
+	@Export(label = "Edição", alignment = Alignment.CENTER, exhibitionOrder = 3, widthPercent = 5)
 	private String edicao;
 	
-	@Export(label = "Brinde", alignment = Alignment.RIGHT, exhibitionOrder = 4)
+	@Export(label = "Brinde", alignment = Alignment.RIGHT, exhibitionOrder = 4, widthPercent = 5)
 	private String brinde;
 	
 	@Export(label = "Preço Venda R$", alignment = Alignment.RIGHT, exhibitionOrder = 5)
@@ -31,7 +31,7 @@ public class ChamadaoVO {
 	@Export(label = "Preço Desconto R$", alignment = Alignment.RIGHT, exhibitionOrder = 6)
 	private String precoDesconto;
 	
-	@Export(label = "Reparte", alignment = Alignment.CENTER, exhibitionOrder = 7)
+	@Export(label = "Reparte", alignment = Alignment.CENTER, exhibitionOrder = 7, widthPercent = 5)
 	private String reparte;
 	
 	@Export(label = "Fornecedor", alignment = Alignment.LEFT, exhibitionOrder = 8)

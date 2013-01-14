@@ -1,8 +1,6 @@
 package br.com.abril.nds.client.vo;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
-import java.util.List;
 
 import br.com.abril.nds.dto.FechamentoCEIntegracaoDTO;
 import br.com.abril.nds.util.CellModelKeyValue;
@@ -16,11 +14,11 @@ public class FechamentoCEIntegracaoVO implements Serializable {
 
 	private boolean semanaFechada;
 
-	private BigDecimal totalBruto;
+	private String totalBruto;
 
-	private BigDecimal totalDesconto;
+	private String totalDesconto;
 
-	private BigDecimal totalLiquido;
+	private String totalLiquido;
 
 	public TableModel<CellModelKeyValue<FechamentoCEIntegracaoDTO>> getListaFechamento() {
 		return listaFechamento;
@@ -39,27 +37,27 @@ public class FechamentoCEIntegracaoVO implements Serializable {
 		this.semanaFechada = semanaFechada;
 	}
 
-	public BigDecimal getTotalBruto() {
+	public String getTotalBruto() {
 		return totalBruto;
 	}
 
-	public void setTotalBruto(BigDecimal totalBruto) {
+	public void setTotalBruto(String totalBruto) {
 		this.totalBruto = totalBruto;
 	}
 
-	public BigDecimal getTotalDesconto() {
+	public String getTotalDesconto() {
 		return totalDesconto;
 	}
 
-	public void setTotalDesconto(BigDecimal totalDesconto) {
+	public void setTotalDesconto(String totalDesconto) {
 		this.totalDesconto = totalDesconto;
 	}
 
-	public BigDecimal getTotalLiquido() {
+	public String getTotalLiquido() {
 		return totalLiquido;
 	}
 
-	public void setTotalLiquido(BigDecimal totalLiquido) {
+	public void setTotalLiquido(String totalLiquido) {
 		this.totalLiquido = totalLiquido;
 	}
 

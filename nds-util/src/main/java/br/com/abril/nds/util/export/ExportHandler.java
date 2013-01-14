@@ -469,6 +469,8 @@ public class ExportHandler {
 			
 			exportHeader.setExhibitionOrder(exportAnnotation.exhibitionOrder());
 			
+			exportHeader.setColumnWidth(exportAnnotation.widthPercent() == 0f ? null : exportAnnotation.widthPercent());
+			
 			exportHeaders.add(exportHeader);
 		}
 	}

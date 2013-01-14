@@ -25,12 +25,12 @@ public class RegistroCurvaABCExportacaoDistribuidorVO {
 		return registroCurvaABCDistribuidorVO.getNumeroCotaString();
 	}
 	
-	@Export(label = "Cota", exhibitionOrder = 4)
+	@Export(label = "Cota", exhibitionOrder = 4, widthPercent = 30)
 	public String getNomeCota(){
 		return registroCurvaABCDistribuidorVO.getNomeCota();
 	}
 
-	@Export(label = "Municipio", exhibitionOrder = 5)
+	@Export(label = "Municipio", exhibitionOrder = 5, widthPercent = 15)
 	public String getMunicipio(){
 		return registroCurvaABCDistribuidorVO.getMunicipio();
 	}

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.imageio.ImageIO;
@@ -274,15 +275,13 @@ public class PDFExporter implements Exporter {
 
 		pdfTable.setWidthPercentage(100F);
 		
-		pdfTable.setSpacingBefore(10F);
-		
-		pdfTable.setSpacingAfter(10F);
-		
         pdfTable.setHeaderRows(1);
         
         int headerSize = 0;
         
-        for (ExportHeader exportHeader : exportModel.getHeaders()) {
+        Float[] exportWidths = new Float[exportModel.getHeaders().size()];
+
+		for (ExportHeader exportHeader : exportModel.getHeaders()) {
         	
         	PdfPCell pdfCell = new PdfPCell();
         	
@@ -296,7 +295,9 @@ public class PDFExporter implements Exporter {
     		pdfCell.addElement(paragraph);
     		
     		pdfTable.addCell(pdfCell);
-    		
+
+    		exportWidths[headerSize] = exportHeader.getWidthPercent();
+
     		headerSize++;
     		
     		if (headerSize == exportModel.getHeaders().size()) {
@@ -305,7 +306,18 @@ public class PDFExporter implements Exporter {
     		}
         }
         
-        int rowNum = 0;
+		float[] widths = calculateWidths(exportWidths);
+
+        if (widths != null) {
+
+        	pdfTable.setWidths(widths);
+        }
+
+        pdfTable.setSpacingBefore(10F);
+		
+		pdfTable.setSpacingAfter(10F);
+
+		int rowNum = 0;
 
         for (ExportRow exportRow : exportModel.getRows()) {
         	
@@ -599,5 +611,59 @@ public class PDFExporter implements Exporter {
                     (rect.getLeft() + rect.getRight()) / 2, rect.getBottom() - 18, 0);
         }
     }
+    
+    private float[] calculateWidths(Float[] widths) {
+    	
+    	//É usado o valor "80", devido às margens utilizadas na criação do relatório.
 
+    	List<Integer> nullWidths = new ArrayList<Integer>();
+
+    	int indexNullWidths = 0;
+    	
+    	float total = 0f;
+
+    	float[] newWidths = new float[widths.length];
+
+    	for (Float width : widths) {
+
+    		if (width == null) {
+
+    			nullWidths.add(indexNullWidths);
+
+    		} else {
+
+    			width = widths[indexNullWidths] = width * 80 / 100;
+
+    			total += width;
+    		}
+
+    		indexNullWidths ++;
+    	}
+    	
+    	if (nullWidths.size() == widths.length) {
+    		
+    		return null;
+    	}
+
+    	if (((!nullWidths.isEmpty()) && total == 80f) || total > 80f) {
+    		
+    		throw new RuntimeException("A largura total das colunas ultrapassa o valor de 100%.");
+    	}
+
+    	float patternValue = (80f - total) / nullWidths.size();
+
+    	for (int index = 0; index < widths.length; index ++) {
+    		
+    		if (nullWidths.contains(index)) {
+
+    			newWidths[index] = patternValue;
+    		
+    		} else {
+    			
+    			newWidths[index] = widths[index];
+    		}
+    	}
+
+    	return newWidths;
+    }
 }
