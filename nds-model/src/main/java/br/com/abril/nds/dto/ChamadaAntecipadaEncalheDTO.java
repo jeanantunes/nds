@@ -47,6 +47,31 @@ public class ChamadaAntecipadaEncalheDTO implements Serializable {
 		this.nomeBox = nomeBox;
 	}
 	
+	/**
+	 * Construtor utilizado em ChamadaEncalheCotaRepositoryImpl nos métodos:
+	 * 
+	 * 		List<ChamadaAntecipadaEncalheDTO> obterCotasProgramadaParaAntecipacoEncalhe(FiltroChamadaAntecipadaEncalheDTO filtro);
+	 * 
+	 * 
+	 * @param codBox
+	 * @param nomeBox
+	 * @param numeroCota
+	 * @param qntExemplares
+	 * @param idLancamento
+	 * @param nomeCota
+	 * @param codigoChamadaEncalhe
+	 */
+	public ChamadaAntecipadaEncalheDTO(Integer codBox,String nomeBox, Integer numeroCota,BigInteger qntExemplares, Long idLancamento, String nomeCota, Long codigoChamadaEncalhe) {
+		
+		this.codBox = codBox;
+		this.numeroCota = numeroCota;
+		this.nomeCota = nomeCota;
+		this.qntExemplares = qntExemplares;
+		this.idLancamento = idLancamento;
+		this.codigoChamadaEncalhe = codigoChamadaEncalhe;
+		this.nomeBox = nomeBox;
+	}
+	
 	public ChamadaAntecipadaEncalheDTO(Integer numeroCota,BigInteger qntExemplares,Long codigoChamadaEncalhe, Long idLancamento) {
 		
 		this.numeroCota = numeroCota;
