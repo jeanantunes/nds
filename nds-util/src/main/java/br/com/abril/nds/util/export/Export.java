@@ -21,6 +21,8 @@ public @interface Export {
 	
 	String propertyToDynamicLabel() default "";
 	
+	float widthPercent() default 0f;
+	
 	public enum Alignment {
 		
 		LEFT(0),

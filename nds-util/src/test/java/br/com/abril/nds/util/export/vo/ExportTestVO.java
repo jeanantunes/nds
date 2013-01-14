@@ -7,7 +7,7 @@ import br.com.abril.nds.util.export.Export.Alignment;
 @Exportable
 public class ExportTestVO {
 
-	@Export(label = "Column1 ", alignment = Alignment.CENTER, exhibitionOrder = 1, propertyToDynamicLabel = "dynamicProperty")
+	@Export(label = "Column1 ", alignment = Alignment.CENTER, widthPercent = 20, exhibitionOrder = 1, propertyToDynamicLabel = "dynamicProperty")
 	private String Column1;
 	
 	@Export(label = "Column2", alignment = Alignment.RIGHT, exhibitionOrder = 2)

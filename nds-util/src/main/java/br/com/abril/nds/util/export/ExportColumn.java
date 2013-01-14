@@ -8,6 +8,8 @@ public class ExportColumn implements Comparable<ExportColumn> {
 	
 	private Integer exhibitionOrder;
 	
+	private ColumType columnType;
+	
 	public ExportColumn() {
 		
 	}
@@ -17,11 +19,12 @@ public class ExportColumn implements Comparable<ExportColumn> {
 		this.value = value;
 	}
 	
-	public ExportColumn(String value, Export.Alignment alignment, Integer exhibitionOrder) {
+	public ExportColumn(String value, Export.Alignment alignment, Integer exhibitionOrder, ColumType columnType) {
 		
 		this.value = value;
 		this.alignment = alignment;
 		this.exhibitionOrder = exhibitionOrder;
+		this.columnType = columnType;
 	}
 
 	/**
@@ -70,6 +73,14 @@ public class ExportColumn implements Comparable<ExportColumn> {
 	public int compareTo(ExportColumn exportColumn) {
 		
 		return this.exhibitionOrder.compareTo(exportColumn.exhibitionOrder);
+	}
+
+	public ColumType getColumnType() {
+		return columnType;
+	}
+
+	public void setColumnType(ColumType columnType) {
+		this.columnType = columnType;
 	}
 	
 }

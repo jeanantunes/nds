@@ -123,7 +123,7 @@ public class AlteracaoCotaRepositoryImpl extends
 		if (filtroAlteracaoCotaDTO.getIdVrMinimo() != null
 				&& !filtroAlteracaoCotaDTO.getIdVrMinimo().toString().isEmpty()
 				&& filtroAlteracaoCotaDTO.getIdVrMinimo().doubleValue() > 0) {
-			sql.append("AND parametroCobranca.VALOR_MINIMO_COBRANCA >= :idVrMinimo ");
+			sql.append("AND parametroCobranca.VALOR_MINIMO_COBRANCA = :idVrMinimo ");
 		}
 
 		if (filtroAlteracaoCotaDTO.getDescricaoTipoEntrega() != null) {
