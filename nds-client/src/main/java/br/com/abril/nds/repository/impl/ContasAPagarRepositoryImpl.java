@@ -994,7 +994,7 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
 
         sql.append(" SELECT  p.codigo as codigo, p.nome as produto, ");
         sql.append("	 pe.numeroEdicao as edicao, pe.precoVenda as precoCapa, pe.id as produtoEdicaoID, ");
-        sql.append(" 	 fornec.nomeFantasia as fornecedor, edi.nomeFantasia as editor ");
+        sql.append(" 	 fornec.nomeFantasia as fornecedor, edi.razaoSocial as editor ");
         sql.append(" FROM ProdutoEdicao pe ");
         sql.append(" JOIN  pe.produto p");
         sql.append(" JOIN  p.editor e");
