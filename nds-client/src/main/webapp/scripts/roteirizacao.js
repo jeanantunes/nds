@@ -2416,7 +2416,7 @@ var roteirizacao = $.extend(true, {
                 }
                 $( "#dialog-roteirizacao", roteirizacao.workspace ).dialog({
                     resizable: false,
-                    height:610,
+                    height:630,
                     width:955,
                     modal: true,
                     title : roteirizacao.isNovo() ? 'Nova Roteirização' : 'Editar Roteirização',
@@ -2582,7 +2582,7 @@ var roteirizacao = $.extend(true, {
             colModel : [ {
                 display : 'Cota',
                 name : 'numeroCota',
-                width : 100,
+                width : 120,
                 sortable : true,
                 align : 'left'
             }, {
@@ -2593,8 +2593,8 @@ var roteirizacao = $.extend(true, {
                 align : 'left'
             }],
             sortname : "numeroCota",
-            width : 380,
-            height : 140
+            width : 'auto',
+            height : 200
         });
         
     },
