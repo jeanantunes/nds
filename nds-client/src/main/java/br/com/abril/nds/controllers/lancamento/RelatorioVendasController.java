@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.util.PaginacaoUtil;
+import br.com.abril.nds.client.util.PessoaUtil;
 import br.com.abril.nds.client.vo.RegistroCurvaABCDistribuidorVO;
 import br.com.abril.nds.client.vo.RegistroCurvaABCEditorVO;
 import br.com.abril.nds.client.vo.RegistroCurvaABCExportacaoDistribuidorVO;
@@ -837,7 +838,11 @@ public class RelatorioVendasController extends BaseController {
 			String codigoProduto, String nomeProduto, List<Long> edicaoProduto, Long codigoEditor,
 			Integer codigoCota, String nomeCota, String municipio,
 			String sortorder, String sortname, int page, int rp) {
-
+		
+		if(nomeCota!= null){
+			nomeCota = PessoaUtil.removerSufixoDeTipo(nomeCota);
+		}
+		
 		FiltroCurvaABCCotaDTO filtro = new FiltroCurvaABCCotaDTO(dataDe, dataAte, (codigoFornecedor == null ? "" : codigoFornecedor.toString()),
 				codigoProduto, nomeProduto, edicaoProduto, (codigoEditor == null ? "" : codigoEditor.toString()),
 				codigoCota, nomeCota, municipio);
