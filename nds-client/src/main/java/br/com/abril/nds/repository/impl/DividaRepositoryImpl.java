@@ -222,6 +222,7 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 		hql.append(" FROM ")
 		.append(" Divida divida ")
 		.append(" JOIN divida.cobranca cobranca ")
+		.append(" JOIN divida.consolidado consolidado ")
 		.append(" JOIN cobranca.cota cota ")
 		.append(" JOIN cota.box box ")
 		.append(" JOIN cota.pdvs pdv ")
