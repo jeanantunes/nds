@@ -1,5 +1,9 @@
 package br.com.abril.nds.controllers.administracao;
 
+import java.io.UnsupportedEncodingException;
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -408,9 +412,33 @@ public class GruposAcessoController extends BaseController {
 	private Usuario getUsuarioEntity(UsuarioDTO usuarioDTO) {
 		
 		Usuario usuario = null;
+		String senhaEncriptada = null;
 		if (usuarioDTO.getId() == null || usuarioDTO.getId() == 0) {
+			
+			try {
+				
+				byte[] bytesSenha = usuarioDTO.getSenha().getBytes("UTF-8");
+
+				MessageDigest md = MessageDigest.getInstance("MD5");
+				
+				//Converte o valor da mensagem digest em base 16 (hex) 
+				senhaEncriptada = new BigInteger(1, md.digest(bytesSenha)).toString(16);
+				
+			} catch (NoSuchAlgorithmException e) {
+				ValidacaoVO validacaoVO = new ValidacaoVO(TipoMensagem.ERROR, "Houve problema com a senha informada. Tente novamente.");
+				throw new ValidacaoException(validacaoVO);
+			} catch (UnsupportedEncodingException e) {
+				ValidacaoVO validacaoVO = new ValidacaoVO(TipoMensagem.ERROR, "Houve problema com a senha informada. Tente novamente.");
+				throw new ValidacaoException(validacaoVO);
+			}
+			 
 			usuario = new Usuario();
-			usuario.setSenha(usuarioDTO.getSenha());
+			
+			if(senhaEncriptada == null) {
+				ValidacaoVO validacaoVO = new ValidacaoVO(TipoMensagem.ERROR, "Houve problema com a senha informada. Tente novamente.");
+				throw new ValidacaoException(validacaoVO);
+			}
+			usuario.setSenha(senhaEncriptada);
 			usuario.setLembreteSenha(usuarioDTO.getLembreteSenha());
 		} else {
 			usuario = usuarioService.buscar(usuarioDTO.getId());
