@@ -208,7 +208,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		hql.append("           where cc.chamadaEncalhe.dataRecolhimento = :dataEncalhe and ce.chamadaEncalheCota.id = cc.id ");
 		hql.append("       )");
 		hql.append("	   AND pdvs.caracteristicas.pontoPrincipal = :principal");
-		hql.append(" GROUP BY cota.id");
+		hql.append(" GROUP BY cota.id ");
 		
 		if (sortname != null && sortorder != null) {
 			hql.append("  ORDER BY " + sortname + " " + sortorder);
