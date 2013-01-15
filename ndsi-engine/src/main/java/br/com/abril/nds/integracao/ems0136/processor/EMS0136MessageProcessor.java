@@ -144,8 +144,30 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 		StatusLancamentoParcial status = this.obterStatusLancamentoParcial(
 				input);	
 		parcial.setStatus(status);
-		parcial.setLancamentoInicial(input.getDataLancamento());
-		parcial.setRecolhimentoFinal(input.getDataRecolhimento());
+		
+		/*
+		 * Alterar a Data de Lançamento Inicial se:
+		 * - Data de Lançamento for null/vazia;
+		 * - Data vinda da Interface é MENOR que a do LançamentoParcial;
+		 */
+		if (parcial.getLancamentoInicial() == null 
+				|| input.getDataLancamento().before(
+						parcial.getLancamentoInicial())) {
+			parcial.setLancamentoInicial(input.getDataLancamento());
+		}
+		
+		/*
+		 * Alterar a Data de Recolhimento Final se:
+		 * - Data de Recolhimento for null/vazia;
+		 * - Data vinda da Interface é MAIOR que a do LançamentoParcial;
+		 */
+		if (parcial.getRecolhimentoFinal() == null
+				|| input.getDataRecolhimento().after(
+						parcial.getRecolhimentoFinal())) {
+			parcial.setRecolhimentoFinal(parcial.getRecolhimentoFinal());
+		}
+		
+		
 		if (parcial.getId() == null) {
 			this.getSession().persist(parcial);
 		} else {
@@ -254,6 +276,9 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 			EMS0136Input input, LancamentoParcial lancamentoParcial, 
 			Lancamento lancamento) {
 		
+		// FIXME: Usar as datas de inicio e fim (intervalo) para validar/excluir
+		// FIXME: 01) não excluir periodos que a data de inicio e/ou fim já tenham passado.
+		
 		// Pesquisa se já existe algum PeríodoLançamentoParcial já cadastrado:
 		PeriodoLancamentoParcial pParcial = null;
 		Integer numeroPeriodo = input.getNumeroPeriodo();
@@ -267,11 +292,17 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 		if (pParcial == null) {
 			pParcial = new PeriodoLancamentoParcial();
 			pParcial.setNumeroPeriodo(input.getNumeroPeriodo());
+			
+			// FIXME: CHAMAR O LANCAMENTO AQUI!
 			pParcial.setLancamento(lancamento);
 			pParcial.setLancamentoParcial(lancamentoParcial);
 		}
 
-		pParcial.setStatus(this.obterStatusLancamentoParcial(input));
+		
+		// FIXME: CHAMAR O LANCAMENTO AQUI!
+		pParcial.getLancamento().setTipoLancamento(TipoLancamento.PARCIAL);
+
+		
 		pParcial.setTipo(this.obterTipoLancamentoParcial(input));
 		pParcial.setStatus((input.getDataRecolhimento().compareTo(new Date()) < 0 
 				? StatusLancamentoParcial.RECOLHIDO
