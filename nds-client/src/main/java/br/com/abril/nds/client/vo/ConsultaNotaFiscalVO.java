@@ -30,7 +30,7 @@ public class ConsultaNotaFiscalVO implements Serializable {
 	@Export(label = "Data de Expedição", alignment = Alignment.CENTER)
 	private Date dataExpedicao;
 	
-	@Export(label = "Tipo")
+	@Export(label = "Tipo", widthPercent=30)
 	private String tipoNotaFiscal;
 	
 	@Export(label = "Fornecedor")
