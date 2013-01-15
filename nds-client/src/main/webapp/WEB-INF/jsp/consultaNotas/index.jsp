@@ -13,6 +13,27 @@ fieldset label
 </head>
 
 <body>
+	
+	
+	<div class="areaBts" style="display: none">
+		<div class="area">
+		
+			<span class="bt_arq">
+				<a href="${pageContext.request.contextPath}/estoque/consultaNotas/exportar?fileType=XLS" rel="tipsy" title="Gerar Arquivo">
+					<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
+				</a>
+			</span>
+			
+			<span class="bt_arq">
+				<a href="${pageContext.request.contextPath}/estoque/consultaNotas/exportar?fileType=PDF" rel="tipsy" title="Imprimir">
+					<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
+				</a>
+			</span>
+		</div>
+	</div>
+
+	<div class="linha_separa_fields">&nbsp;</div>
+		
 	<form id="detalhe-nota-sem-fisico-form">
 	<div id="dialog-novo" title="Detalhes da Nota">
 	    <table id="notasSemFisicoDetalheGrid" class="notasSemFisicoDetalheGrid"></table>
@@ -32,7 +53,6 @@ fieldset label
 	</div>
 	</form>
 	
-	<div class="container">
 
 		<div id="effect" style="padding: 0 .7em;"
 			class="ui-state-highlight ui-corner-all">
@@ -45,7 +65,7 @@ fieldset label
 
 		<form name="formPesquisaNotas" id="formPesquisaNotas">
 			
-			<fieldset class="classFieldset">
+			<fieldset class="fieldFiltro" style="margin-top: 0px">
 				<legend> Pesquisar Nota </legend>
 				<table width="950" border="0" cellpadding="2" cellspacing="1"
 					   class="filtro">
@@ -106,20 +126,10 @@ fieldset label
 			<legend>Notas Cadastradas</legend>
 			<div class="grids" style="display: none;">
 				<table class="notasSemFisicoGrid" id="notasSemFisicoGrid"></table>
-				<span class="bt_arquivo">
-					<a href="${pageContext.request.contextPath}/estoque/consultaNotas/exportar?fileType=XLS">
-						Arquivo
-					</a>
-				</span>
-				<span class="bt_imprimir">
-					<a href="${pageContext.request.contextPath}/estoque/consultaNotas/exportar?fileType=PDF">
-						Imprimir
-					</a>
-				</span>
 			</div>
 		</fieldset>
 		<div class="linha_separa_fields">&nbsp;</div>
-	</div>
+
 	
 <script language="javascript" type="text/javascript">
 

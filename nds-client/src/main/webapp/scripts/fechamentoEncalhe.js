@@ -333,7 +333,7 @@ var fechamentoEncalheController = $.extend(true, {
 				}
 
 				if (result == 'NAO_ENCERRAR') {
-					popup_encerrarEncalhe();
+					fechamentoEncalheController.popup_encerrarEncalhe();
 				} else if (result == 'ENCERRAR'){
 					fechamentoEncalheController.popup_encerrar();
 				}			

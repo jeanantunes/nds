@@ -1,9 +1,13 @@
 package br.com.abril.nds.controllers;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
 import javax.persistence.NoResultException;
+import javax.servlet.ServletContext;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -37,6 +41,8 @@ public class CapaController {
 	@Autowired
 	private CapaService capaService;
 	
+	@Autowired
+	private ServletContext servletContext;
 	
 	
 	@Get("/{idProdutoEdicao}")
@@ -44,12 +50,40 @@ public class CapaController {
 		try {
 			InputStream inputStream = capaService.getCapaInputStream(idProdutoEdicao);
 			return new InputStreamDownload(inputStream, null,null);
+		
 		} catch (Exception e) {			
-			
+				
 			return null;
 		}
 		
 	}	
+	
+	@Get("tratarNoImage/{idProdutoEdicao}")
+	public Download obtemCapaProdutoEdicaoTratarNoImage(Long idProdutoEdicao){		
+		
+		try {
+			InputStream inputStream = capaService.getCapaInputStream(idProdutoEdicao);
+			return new InputStreamDownload(inputStream, null,null);
+			
+		} catch (Exception e) {			
+			
+			try {
+				return new InputStreamDownload(getNoImage(), null,null);
+			} catch (FileNotFoundException e1) {
+				return null;
+			}
+		}
+		
+	}
+	
+	public InputStream getNoImage() throws FileNotFoundException {
+
+		File fileDir = new File((servletContext.getRealPath("") + "/images/no_image.jpeg"));
+
+		InputStream inputStream = new FileInputStream(fileDir);
+		
+		return inputStream;
+	}
 	
 	@Post("salvaCapa")
 	public void salvaCapa(Long idProdutoEdicao, UploadedFile image) throws IOException{

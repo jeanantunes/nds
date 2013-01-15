@@ -167,7 +167,7 @@ var relatorioVendasController = $.extend(true, {
 				sortable : false,
 				align : 'center'
 			} ],
-			sortname : "codigoEditor",
+			sortname : "rkEditor",
 			sortorder : "asc",
 			usepager : true,
 			useRp : true,
@@ -235,7 +235,7 @@ var relatorioVendasController = $.extend(true, {
 				sortable : true,
 				align : 'right'
 			} ],
-			sortname : "numeroCota",
+			sortname : "rkCota",
 			sortorder : "asc",
 			usepager : true,
 			useRp : true,
@@ -309,7 +309,7 @@ var relatorioVendasController = $.extend(true, {
 				sortable : true,
 				align : 'right'
 			} ],
-			sortname : "numeroCota",
+			sortname : "rkProduto",
 			sortorder : "asc",
 			usepager : true,
 			useRp : true,
@@ -383,7 +383,7 @@ var relatorioVendasController = $.extend(true, {
 				sortable : true,
 				align : 'right'
 			} ],
-			sortname : "codigoProduto",
+			sortname : "rkProduto",
 			sortorder : "asc",
 			usepager : true,
 			useRp : true,

@@ -75,37 +75,11 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 		}
 		
 		LancamentoParcial lancamentoParcial = this.obterLancalmentoParcial(
-				produtoEdicao);
+				input, produtoEdicao);
 		
-		/*
-		 * Caso já exista um lançamento Parcial irá remover o LançamentoParcial
-		 * e os PeriodoLancamentoParcial:
-		 */
-		if (lancamentoParcial != null) {
-			this.ndsiLoggerFactory.getLogger().logInfo(message,
-					EventoExecucaoEnum.REGISTRO_JA_EXISTENTE,
-					"Lançamento Parcial já cadastrado para ProdutoEdição!"
-						+ " Código: " + produtoEdicao.getProduto().getCodigo()
-						+ " Edição: " + produtoEdicao.getNumeroEdicao());
-			for (PeriodoLancamentoParcial periodo : lancamentoParcial.getPeriodos()) {
-				this.getSession().delete(periodo);
-			}
-			
-			this.getSession().delete(lancamentoParcial);
-			
-			this.getSession().flush();
-			this.getSession().clear();
-		}
+		Lancamento lancamento = this.obterLancamento(input, produtoEdicao);
 		
-		lancamentoParcial = this.gerarNovoLancamentoParcial(input, 
-				produtoEdicao);
-		
-		// Novo Lançamento:
-		Lancamento lancamento = this.gerarNovoLancamento(input, produtoEdicao);
-		
-		// Novo Período Lançamento Parcial;
-		this.gerarNovoPeriodoLancamentoParcial(input, lancamentoParcial, 
-				lancamento);
+		this.obterPeriodoLancamentoParcial(input, lancamentoParcial, lancamento);
 	}
 	
 	/**
@@ -138,44 +112,47 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 	}
 
 	/**
-	 * Obtém o Lançamento Parcial já cadastrado para o ProdutoEdição informado.
+	 * Retorna um Lançamento Parcial para o ProdutoEdição informado.<br>
+	 * Irá pesquisar no sistema se existe um Lançamento Parcial já cadastrado
+	 * anteriormente e irá atualiza-lo com os dados vindo da Interface.<br>
+	 * Caso não haja, irá gerar um novo Lançamento Parcial.
 	 * 
+	 * @param input
 	 * @param produtoEdicao
 	 * 
 	 * @return
 	 */
-	private LancamentoParcial obterLancalmentoParcial(
+	private LancamentoParcial obterLancalmentoParcial(EMS0136Input input,
 			ProdutoEdicao produtoEdicao) {
 		
+		/* 
+		 * Obtém o Lançamento Parcial já cadastrado.
+		 * Caso não exista, irá criar um novo Lançamento Parcial.
+		 */
 		Criteria criteria = getSession().createCriteria(LancamentoParcial.class);
 		criteria.add(Restrictions.eq("produtoEdicao", produtoEdicao));
+		LancamentoParcial parcial = (LancamentoParcial) criteria.uniqueResult();
+		if (parcial == null) {
+			parcial = new LancamentoParcial();
+			parcial.setProdutoEdicao(produtoEdicao);
+		}
 		
-		return (LancamentoParcial) criteria.uniqueResult();
-	}
-	
-	/**
-	 * Gera um novo Lançamento Parcial.
-	 * 
-	 * @param input
-	 * @param produtoEdicao
-	 */
-	private LancamentoParcial gerarNovoLancamentoParcial(EMS0136Input input, 
-			ProdutoEdicao produtoEdicao) {
-		
+		/*
+		 * Insere/Atualiza o restante dos dados do Lançamento Parcial vindo
+		 * da Interface. 
+		 */
 		StatusLancamentoParcial status = this.obterStatusLancamentoParcial(
 				input);	
+		parcial.setStatus(status);
+		parcial.setLancamentoInicial(input.getDataLancamento());
+		parcial.setRecolhimentoFinal(input.getDataRecolhimento());
+		if (parcial.getId() == null) {
+			this.getSession().persist(parcial);
+		} else {
+			this.getSession().update(parcial);
+		}
 		
-		// Novo Lançamento Parcial:
-		LancamentoParcial lancamentoParcial = new LancamentoParcial();
-		lancamentoParcial.setProdutoEdicao(produtoEdicao);
-		lancamentoParcial.setLancamentoInicial(input.getDataLancamento());
-		lancamentoParcial.setRecolhimentoFinal(input.getDataRecolhimento());
-		lancamentoParcial.setStatus(status);
-		
-		// Persistir:
-		this.getSession().persist(lancamentoParcial);
-		
-		return lancamentoParcial;
+		return parcial;
 	}
 
 	/**
@@ -201,14 +178,17 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 	}
 	
 	/**
-	 * Gera um novo Lançamento.
+	 * Retorna um Lançamento para o ProdutoEdição informado.<br>
+	 * Irá pesquisar no sistema se existe um Lançamento já cadastrado
+	 * anteriormente e irá atualiza-lo com os dados vindo da Interface.<br>
+	 * Caso não haja, irá gerar um novo Lançamento.
 	 * 
 	 * @param input
 	 * @param produtoEdicao
 	 * 
 	 * @return
 	 */
-	private Lancamento gerarNovoLancamento(EMS0136Input input,
+	private Lancamento obterLancamento(EMS0136Input input,
 			ProdutoEdicao produtoEdicao) {
 		
 		/*
@@ -248,6 +228,10 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 			lancamento.setStatus(StatusLancamento.CONFIRMADO);
 		}
 		
+		/*
+		 * Insere/Atualiza o restante dos dados do Lançamento vindo da 
+		 * Interface. 
+		 */
 		lancamento.setTipoLancamento(TipoLancamento.PARCIAL);
 		if (lancamento.getId() == null) {
 			this.getSession().persist(lancamento);
@@ -266,27 +250,47 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 	 * @param lancamento
 	 * @return
 	 */
-	private PeriodoLancamentoParcial gerarNovoPeriodoLancamentoParcial(
+	private PeriodoLancamentoParcial obterPeriodoLancamentoParcial(
 			EMS0136Input input, LancamentoParcial lancamentoParcial, 
 			Lancamento lancamento) {
 		
-		PeriodoLancamentoParcial pLancamentoParcial = new PeriodoLancamentoParcial();
-		pLancamentoParcial.setLancamentoParcial(lancamentoParcial);
-		pLancamentoParcial.setLancamento(lancamento);
-		pLancamentoParcial.setStatus(this.obterStatusLancamentoParcial(input));
-		pLancamentoParcial.setNumeroPeriodo(input.getNumeroPeriodo());
-		pLancamentoParcial.setTipo(this.obterTipoLancamentoParcial(input));
-		pLancamentoParcial.setStatus((input.getDataRecolhimento().compareTo(new Date()) < 0 ? StatusLancamentoParcial.RECOLHIDO :  StatusLancamentoParcial.PROJETADO ));
+		// Pesquisa se já existe algum PeríodoLançamentoParcial já cadastrado:
+		PeriodoLancamentoParcial pParcial = null;
+		Integer numeroPeriodo = input.getNumeroPeriodo();
+		for (PeriodoLancamentoParcial periodo : lancamentoParcial.getPeriodos()) {
+			if (numeroPeriodo.equals(periodo.getNumeroPeriodo())) {
+				pParcial = periodo;
+				break;
+			}
+		}
 		
-		this.getSession().persist(pLancamentoParcial);
+		if (pParcial == null) {
+			pParcial = new PeriodoLancamentoParcial();
+			pParcial.setNumeroPeriodo(input.getNumeroPeriodo());
+			pParcial.setLancamento(lancamento);
+			pParcial.setLancamentoParcial(lancamentoParcial);
+		}
+
+		pParcial.setStatus(this.obterStatusLancamentoParcial(input));
+		pParcial.setTipo(this.obterTipoLancamentoParcial(input));
+		pParcial.setStatus((input.getDataRecolhimento().compareTo(new Date()) < 0 
+				? StatusLancamentoParcial.RECOLHIDO
+				: StatusLancamentoParcial.PROJETADO));
 		
-		return pLancamentoParcial;
+		if (pParcial.getId() == null) {
+			this.getSession().persist(pParcial);
+		} else {
+			this.getSession().update(pParcial);
+		}
+		
+		return pParcial;
 	}
 
 	/**
 	 * Retorna o Tipo de Lançamento Parcial que esta definido no arquivo.
 	 * 
 	 * @param input
+	 * 
 	 * @return
 	 */
 	private TipoLancamentoParcial obterTipoLancamentoParcial(EMS0136Input input) {
