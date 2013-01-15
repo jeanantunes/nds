@@ -33,6 +33,7 @@ import br.com.abril.nds.service.GeradorArquivoCobrancaBancoService;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TipoMensagem;
+import br.com.abril.nds.util.Util;
 
 import com.ancientprogramming.fixedformat4j.format.FixedFormatManager;
 import com.ancientprogramming.fixedformat4j.format.impl.FixedFormatManagerImpl;
@@ -225,7 +226,7 @@ public class GeradorArquivoCobrancaBancoServiceImpl implements GeradorArquivoCob
 		
 		//Empresa
 		header.setTipoInscicao(2L);  //Opção CNPJ
-		header.setNumeroInscricao(Long.parseLong(distribuidor.getJuridica().getCnpj()));
+		header.setNumeroInscricao(Long.parseLong(Util.removerMascaraCnpj(distribuidor.getJuridica().getCnpj())));
 		header.setConvenio(null);//Código que identifica o contato entre o distribuidor e o banco
 		
 		header.setCodigoAgencia(banco.getAgencia());
