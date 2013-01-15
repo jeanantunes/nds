@@ -131,6 +131,7 @@ public class NotaFiscalEntradaRepositoryImpl extends AbstractRepositoryModel<Not
 			hql.append("select DISTINCT new ").append(NotaFiscalEntradaFornecedorDTO.class.getCanonicalName())
 				.append(" (notaFiscal.id, ")
 				.append("  notaFiscal.numero, ")
+				.append("  notaFiscal.serie, ")
 				.append("  notaFiscal.dataEmissao, ")
 				.append("  notaFiscal.dataExpedicao, ")
 				.append("  tipoNotaFiscal.descricao, ")
