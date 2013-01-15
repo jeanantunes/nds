@@ -288,7 +288,7 @@ public class RoteirizacaoRepositoryImpl extends AbstractRepositoryModel<Roteiriz
 		}
 	}
 
-private StringBuilder getHqlWhere(FiltroConsultaRoteirizacaoDTO filtro) {
+	private StringBuilder getHqlWhere(FiltroConsultaRoteirizacaoDTO filtro) {
 		
 		StringBuilder hql = new StringBuilder();
 		boolean indWhere = false;
