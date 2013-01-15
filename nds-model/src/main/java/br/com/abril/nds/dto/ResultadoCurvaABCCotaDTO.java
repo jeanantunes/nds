@@ -21,10 +21,10 @@ public class ResultadoCurvaABCCotaDTO implements Serializable {
 	
 	private BigDecimal totalFaturamento;
 
-	@Export(label = "Total de Venda de Exemplares", exhibitionOrder = 1)
+	@Export(label = "Total", alignWithHeader="Venda de Exemplares")
 	private String totalVendaExemplaresFormatado;
 	
-	@Export(label = "Faturamento Total", exhibitionOrder = 2)
+	@Export(label = "", alignWithHeader="Faturamento R$")
 	private String totalFaturamentoFormatado;
 	
 	public ResultadoCurvaABCCotaDTO(BigInteger totalVendaExemplares, BigDecimal totalFaturamento) {

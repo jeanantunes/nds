@@ -39,18 +39,18 @@ var pesquisaCotaFiltroConsulta = new PesquisaCota(relatorioVendasController.work
 			<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 				<tr>
 					<td width="20"><input type="radio" name="filtro" id="filtro_distrib" onclick="relatorioVendasController.mostra_distrib();relatorioVendasController.limparFiltros();" value="radio" /></td>
-					<td colspan="3"><label for="filtro_distrib">Curva ABC Distribuidor</label></td>
+					<td><label for="filtro_distrib">Curva ABC Distribuidor</label></td>
 					<td width="20"><input type="radio" name="filtro" id="filtro_editor" value="radio" onclick="relatorioVendasController.mostra_editor();relatorioVendasController.limparFiltros();" /></td>
-					<td width="94"><label for="filtro_editor">Curva ABC Editor</label></td>
+					<td><label for="filtro_editor">Curva ABC Editor</label></td>
 					<td width="20"><input type="radio" name="filtro" id="filtro_produto" onclick="relatorioVendasController.mostra_produto();relatorioVendasController.limparFiltros();" value="radio" /></td>
-					<td width="114"><label for="filtro_produto">Curva ABC Produto</label></td>
-					<td width="21" align="right"><input type="radio" name="filtro" id="filtro_cota" value="radio" onclick="relatorioVendasController.mostra_cota();relatorioVendasController.limparFiltros();" /></td>
-					<td width="90"><label for="filtro_cota">Curva ABC Cota</label></td>
-					<td width="47">Período:</td>
-					<td width="86"><input type="text" name="datepickerDe" id="datepickerDe" style="width: 60px;" /></td>
-					<td width="24">Até:</td>
-					<td width="87"><input type="text" name="datepickerAte" id="datepickerAte" style="width: 60px;" /></td>
-					<td width="104" rowspan="3" valign="top"><span class="bt_pesquisar"><a href="javascript:;" onclick="relatorioVendasController.pesquisar();">Pesquisar</a></span></td>
+					<td><label for="filtro_produto">Curva ABC Produto</label></td>
+					<td width="20" align="right"><input type="radio" name="filtro" id="filtro_cota" value="radio" onclick="relatorioVendasController.mostra_cota();relatorioVendasController.limparFiltros();" /></td>
+					<td><label for="filtro_cota">Curva ABC Cota</label></td>
+					<td width="45">Período:</td>
+					<td><input type="text" name="datepickerDe" id="datepickerDe" style="width: 60px;" /></td>
+					<td width="25">Até:</td>
+					<td><input type="text" name="datepickerAte" id="datepickerAte" style="width: 60px;" /></td>
+					<td width="95" rowspan="3" valign="top"><span class="bt_pesquisar"><a href="javascript:;" onclick="relatorioVendasController.pesquisar();">Pesquisar</a></span></td>
 					<td width="20" rowspan="3" align="center" valign="top"><a
 						href="javascript:;" onclick="relatorioVendasController.mostra_pesq_avancada();"><img src="${pageContext.request.contextPath}/images/ico_pesq_avancada.jpg" alt="Pesquisa Avançada" width="20" height="20" vspace="10" border="0" /></a></td>
 				</tr>

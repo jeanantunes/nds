@@ -42,10 +42,10 @@ public class RegistroCurvaABCDistribuidorVO extends RegistroCurvaABCDTO implemen
 	@Export(label = "Faturamento da Capa", exhibitionOrder = 8)
 	private String faturamentoCapaFormatado;
 	
-	@Export(label = "RK.Produto", exhibitionOrder = 1)
+	@Export(label = "RK.Produto", exhibitionOrder = 1, widthPercent = 5)
 	private Long rkProduto;
 	
-	@Export(label = "RK. Cota", exhibitionOrder = 2)
+	@Export(label = "RK. Cota", exhibitionOrder = 2, widthPercent = 5)
 	private Long rkCota;
 	
 	private Long idProduto;
