@@ -4,8 +4,10 @@ import java.math.BigInteger;
 import java.util.Date;
 import java.util.concurrent.atomic.AtomicReference;
 
+
 import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
+import org.hibernate.Query;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,9 +79,7 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 		LancamentoParcial lancamentoParcial = this.obterLancalmentoParcial(
 				input, produtoEdicao);
 		
-		Lancamento lancamento = this.obterLancamento(input, produtoEdicao);
-		
-		this.obterPeriodoLancamentoParcial(input, lancamentoParcial, lancamento);
+		this.gerarPeriodoLancamentoParcial(input, lancamentoParcial);
 	}
 	
 	/**
@@ -198,6 +198,55 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 				: StatusLancamentoParcial.PROJETADO;
 		return status;
 	}
+
+	/**
+	 * Gerar novo Período Lançamento Parcial.
+	 * 
+	 * @param input
+	 * @param lancamentoParcial
+	 * 
+	 * @return
+	 */
+	private PeriodoLancamentoParcial gerarPeriodoLancamentoParcial(
+			EMS0136Input input, LancamentoParcial lancamentoParcial) {
+		
+		Date dataOperacao = distribuidorService.obter().getDataOperacao();
+		
+		/* 
+		 * Exclui todos os Períodos que não foram gerados hoje (== DataOperacao)
+		 */
+		StringBuilder hql = new StringBuilder();
+		hql.append("DELETE FROM PeriodoLancamentoParcial p ");
+		hql.append(" WHERE p.lancamentoParcial = :lancamentoParcial ");
+		hql.append("   AND (p.dataCriacao <> :dataOperacao ");
+		hql.append("    OR p.dataCriacao IS NULL)");
+		
+		Query query = getSession().createQuery(hql.toString());
+		query.setDate("dataOperacao", dataOperacao);
+		query.setParameter("lancamentoParcial", lancamentoParcial);
+		query.executeUpdate();
+		
+		// Executa as exclusões e limpa a sessão.
+		getSession().flush();
+		getSession().clear();
+		
+		
+		Lancamento lancamento = this.obterLancamento(input, 
+				lancamentoParcial.getProdutoEdicao());
+		
+		PeriodoLancamentoParcial pParcial = new PeriodoLancamentoParcial();
+		pParcial.setDataCriacao(dataOperacao);
+		pParcial.setNumeroPeriodo(input.getNumeroPeriodo());
+		pParcial.setLancamento(lancamento);
+		pParcial.setLancamentoParcial(lancamentoParcial);
+		pParcial.setTipo(this.obterTipoLancamentoParcial(input));
+		pParcial.setStatus((input.getDataRecolhimento().compareTo(new Date()) < 0 
+				? StatusLancamentoParcial.RECOLHIDO
+				: StatusLancamentoParcial.PROJETADO));
+		this.getSession().persist(pParcial);
+		
+		return pParcial;
+	}
 	
 	/**
 	 * Retorna um Lançamento para o ProdutoEdição informado.<br>
@@ -262,59 +311,6 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 		}
 		
 		return lancamento;
-	}
-
-	/**
-	 * Gerar novo Período Lançamento Parcial.
-	 * 
-	 * @param input
-	 * @param lancamentoParcial
-	 * @param lancamento
-	 * @return
-	 */
-	private PeriodoLancamentoParcial obterPeriodoLancamentoParcial(
-			EMS0136Input input, LancamentoParcial lancamentoParcial, 
-			Lancamento lancamento) {
-		
-		// FIXME: Usar as datas de inicio e fim (intervalo) para validar/excluir
-		// FIXME: 01) não excluir periodos que a data de inicio e/ou fim já tenham passado.
-		
-		// Pesquisa se já existe algum PeríodoLançamentoParcial já cadastrado:
-		PeriodoLancamentoParcial pParcial = null;
-		Integer numeroPeriodo = input.getNumeroPeriodo();
-		for (PeriodoLancamentoParcial periodo : lancamentoParcial.getPeriodos()) {
-			if (numeroPeriodo.equals(periodo.getNumeroPeriodo())) {
-				pParcial = periodo;
-				break;
-			}
-		}
-		
-		if (pParcial == null) {
-			pParcial = new PeriodoLancamentoParcial();
-			pParcial.setNumeroPeriodo(input.getNumeroPeriodo());
-			
-			// FIXME: CHAMAR O LANCAMENTO AQUI!
-			pParcial.setLancamento(lancamento);
-			pParcial.setLancamentoParcial(lancamentoParcial);
-		}
-
-		
-		// FIXME: CHAMAR O LANCAMENTO AQUI!
-		pParcial.getLancamento().setTipoLancamento(TipoLancamento.PARCIAL);
-
-		
-		pParcial.setTipo(this.obterTipoLancamentoParcial(input));
-		pParcial.setStatus((input.getDataRecolhimento().compareTo(new Date()) < 0 
-				? StatusLancamentoParcial.RECOLHIDO
-				: StatusLancamentoParcial.PROJETADO));
-		
-		if (pParcial.getId() == null) {
-			this.getSession().persist(pParcial);
-		} else {
-			this.getSession().update(pParcial);
-		}
-		
-		return pParcial;
 	}
 
 	/**
