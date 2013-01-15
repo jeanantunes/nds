@@ -9,13 +9,16 @@ import java.io.InputStream;
 import javax.persistence.NoResultException;
 import javax.servlet.ServletContext;
 
+import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.serialization.custom.PlainJSONSerialization;
 import br.com.abril.nds.service.CapaService;
+import br.com.abril.nds.service.FileService;
 import br.com.abril.nds.util.TipoMensagem;
+import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
@@ -25,13 +28,12 @@ import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.interceptor.download.Download;
 import br.com.caelum.vraptor.interceptor.download.InputStreamDownload;
 import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
+import br.com.caelum.vraptor.view.Results;
 
 
 @Resource
 @Path("/capa")
 public class CapaController {
-	
-	private final static String JPEG_CONTENT_TYPE = "image/jpeg";
 	
 	private final static int TAMANHO_MAXIMO =  500 * 1024;
 	
@@ -43,7 +45,9 @@ public class CapaController {
 	
 	@Autowired
 	private ServletContext servletContext;
-	
+
+	@Autowired
+	private FileService fileService;
 	
 	@Get("/{idProdutoEdicao}")
 	public Download obtemCapaProdutoEdicao(Long idProdutoEdicao){		
@@ -76,6 +80,26 @@ public class CapaController {
 		
 	}
 	
+	@Post
+	public void carregarCapaTemp(UploadedFile imagemCapa) throws IOException {
+		
+		try {		
+			fileService.validarArquivo(500, imagemCapa, FileType.JPEG, FileType.PNG, FileType.GIF);
+		} catch (Exception e) {
+			
+			if(e instanceof ValidacaoException) {
+				throw e;
+			} else {
+				throw new ValidacaoException(TipoMensagem.WARNING, "Falha ao carregar o arquivo");
+			}
+		}
+		
+		
+		String filePath = fileService.uploadTempFile(imagemCapa, servletContext.getRealPath(""));
+		
+		this.result.use(Results.json()).from(filePath, "result").serialize();
+	}
+	
 	public InputStream getNoImage() throws FileNotFoundException {
 
 		File fileDir = new File((servletContext.getRealPath("") + "/images/no_image.jpeg"));
@@ -90,7 +114,10 @@ public class CapaController {
 		
 		String contentType = image.getContentType();
 		
-		if(!JPEG_CONTENT_TYPE.equalsIgnoreCase(contentType)){
+		if(!FileType.JPEG.getContentType().equalsIgnoreCase(contentType) && 
+		   !FileType.GIF.getContentType().equalsIgnoreCase(contentType)  && 
+		   !FileType.PNG.getContentType().equalsIgnoreCase(contentType)) {
+			
 			result.use(CustomJson.class).from(new ValidacaoVO(TipoMensagem.WARNING, "Apenas Imagens do tipo JPEG")).serialize();
 			return;
 		}
@@ -139,5 +166,5 @@ public class CapaController {
 		
 		
 	}
-
+	
 }
