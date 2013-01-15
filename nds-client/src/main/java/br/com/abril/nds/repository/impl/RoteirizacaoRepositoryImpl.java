@@ -23,7 +23,6 @@ import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.Roteirizacao;
 import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.TipoRoteiro;
-import br.com.abril.nds.model.cadastro.pdv.EnderecoPDV;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.repository.RoteirizacaoRepository;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
@@ -84,6 +83,7 @@ public class RoteirizacaoRepositoryImpl extends AbstractRepositoryModel<Roteiriz
 	}
 	
 	
+	@SuppressWarnings("unchecked")
 	public List<PDV> buscarPdvRoteirizacaoNumeroCota(Integer numeroCota, Long rotaId , Roteiro roteiro ){
 		Boolean exibirPontoPrincipal =  Boolean.FALSE;
 		DetachedCriteria subquery = DetachedCriteria.forClass(Roteiro.class);
@@ -100,13 +100,13 @@ public class RoteirizacaoRepositoryImpl extends AbstractRepositoryModel<Roteiriz
 	}
 	
 	
+	@SuppressWarnings("unchecked")
 	public List<PDV> buscarRoteirizacaoPorEndereco(String CEP, String uf, String cidade, String bairro,  Long rotaId , Roteiro roteiro ){
 		Boolean exibirPontoPrincipal =  Boolean.FALSE;
 		DetachedCriteria subquery = DetachedCriteria.forClass(Roteiro.class);
 		exibirPontoPrincipal = getSubqueyCotasDisponiveis(rotaId, roteiro,
 				exibirPontoPrincipal, subquery);
 		
-		EnderecoPDV pdv = new EnderecoPDV();
 		Criteria criteria  = getSession().createCriteria(PDV.class,"pdv" );
 		criteria.setFetchMode("cota", FetchMode.JOIN);
 		criteria.createAlias("cota", "cota") ;
@@ -153,6 +153,7 @@ public class RoteirizacaoRepositoryImpl extends AbstractRepositoryModel<Roteiriz
 	}
 		
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<ConsultaRoteirizacaoDTO> buscarRoteirizacaoPorNumeroCota(Integer numeroCota, TipoRoteiro tipoRoteiro, String  orderBy, Ordenacao ordenacao, int initialResult, int maxResults) {
 		Criteria criteria  = getSession().createCriteria(Roteiro.class);
@@ -290,6 +291,7 @@ public class RoteirizacaoRepositoryImpl extends AbstractRepositoryModel<Roteiriz
 	private StringBuilder getHqlWhere(FiltroConsultaRoteirizacaoDTO filtro) {
 		
 		StringBuilder hql = new StringBuilder();
+		boolean indWhere = false;
 		
 		hql.append("from Roteirizacao roteirizacao ")
 			.append(" left join roteirizacao.roteiros roteiro " )
@@ -298,32 +300,74 @@ public class RoteirizacaoRepositoryImpl extends AbstractRepositoryModel<Roteiriz
 			.append(" Join rota.rotaPDVs rotaPdv ")
 			.append(" Join rotaPdv.pdv pdv ")
 			.append(" Join pdv.cota cota ")
-			.append(" join cota.pessoa pessoa ")
-			.append(" where 1 = 1 "); 
+			.append(" join cota.pessoa pessoa ");
 			
-		if(filtro.getIdBox()!= null) {
-					
-			hql.append( (filtro.getIdBox() < 1) ? "and roteirizacao.box IS NULL" : " and box.id =:idBox ");
+		if(filtro.getIdBox() != null) {
+			
+			hql.append(" where ");
+			indWhere = true;
+			
+			if (filtro.getIdBox() < 1){
+				
+				hql.append(" roteirizacao.box IS NULL ");
+			} else {
+				
+				hql.append(" box.id = :idBox ");
+			}
 		}
 		
-		if(filtro.getIdRoteiro()!= null){
-			hql.append(" and roteiro.id =:idRoteiro ");
+		if(filtro.getIdRoteiro() != null){
+			
+			if (indWhere){
+				
+				hql.append(" and ");
+			} else {
+				
+				hql.append(" where ");
+				indWhere = true;
+			}
+			
+			hql.append(" roteiro.id = :idRoteiro ");
 		}
 		
-		if(filtro.getIdRota()!= null){
-			hql.append(" and rota.id =:idRota ");
+		if(filtro.getIdRota() != null){
+			
+			if (indWhere){
+				
+				hql.append(" and ");
+			} else {
+				
+				hql.append(" where ");
+				indWhere = true;
+			}
+			
+			hql.append(" rota.id = :idRota ");
 		}
 		
-		if(filtro.getNumeroCota()!= null){
-			hql.append(" and cota.numeroCota =:numeroCota ");
+		if(filtro.getNumeroCota() != null){
+			
+			if (indWhere){
+				
+				hql.append(" and ");
+			} else {
+				
+				hql.append(" where ");
+				indWhere = true;
+			}
+			
+			hql.append(" cota.numeroCota = :numeroCota ");
 		}
+		
 		return hql;
 	}
 	
 	
-	public List<ConsultaRoteirizacaoDTO> obterCotasParaBoxRotaRoteiro(Long idBox, Long idRota, Long idRoteiro) {
+	@SuppressWarnings("unchecked")
+	public List<ConsultaRoteirizacaoDTO> obterCotasParaBoxRotaRoteiro(Long idBox, Long idRota, Long idRoteiro,
+			String sortname, String sortorder) {
 		
 		StringBuilder hql = new StringBuilder();
+		boolean indWhere = false;
 		
 		hql.append("select cota.numeroCota as numeroCota, ")
 		.append("case pessoa.class when 'F' then pessoa.nome when 'J' then pessoa.razaoSocial end as nome ")
@@ -335,20 +379,55 @@ public class RoteirizacaoRepositoryImpl extends AbstractRepositoryModel<Roteiriz
 		.append("join rota.rotaPDVs rotaPdv ")
 		.append("join rotaPdv.pdv pdv ")
 		.append("join pdv.cota cota ")
-		.append("join cota.pessoa pessoa ")
-		
-		.append(" where 1 = 1 "); 
+		.append("join cota.pessoa pessoa ");
 			
 		if(idBox!= null){
-			hql.append(" and box.id = :idBox ");
+			
+			hql.append(" where box.id = :idBox ");
+			indWhere = true;
 		}
 		
 		if(idRoteiro!= null){
-			hql.append(" and roteiro.id = :idRoteiro ");
+			
+			if (indWhere){
+				
+				hql.append(" and ");
+			} else {
+				
+				hql.append(" where ");
+				indWhere = true;
+			}
+			
+			hql.append(" roteiro.id = :idRoteiro ");
 		}
 		
 		if(idRota!= null){
-			hql.append(" and rota.id = :idRota ");
+			
+			if (indWhere){
+				
+				hql.append(" and ");
+			} else {
+				
+				hql.append(" where ");
+				indWhere = true;
+			}
+			
+			hql.append(" rota.id = :idRota ");
+		}
+		
+		hql.append(" order by ");
+		
+		if (sortname != null && !sortname.isEmpty()){
+			
+			hql.append(sortname);
+		} else {
+			
+			hql.append(" rotaPdv.ordem ");
+		}
+		
+		if (sortorder != null && !sortorder.isEmpty()){
+			
+			hql.append(" ").append(sortorder);
 		}
 
 		Query query = getSession().createQuery(hql.toString());
@@ -369,8 +448,6 @@ public class RoteirizacaoRepositoryImpl extends AbstractRepositoryModel<Roteiriz
 		}
 		
 		return query.list();
-		
-		
 	}
 	
 	@SuppressWarnings("unchecked")
