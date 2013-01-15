@@ -2593,6 +2593,7 @@ var roteirizacao = $.extend(true, {
                 align : 'left'
             }],
             sortname : "numeroCota",
+            sortorder : "asc",
             width : 380,
             height : 140
         });

@@ -727,9 +727,11 @@ public class RoteirizacaoController extends BaseController {
 	 * @param idRota
 	 * @param idRoteiro
 	 */
-	public void obterCotasSumarizadas(Long idBox, Long idRota, Long idRoteiro) {
+	public void obterCotasSumarizadas(Long idBox, Long idRota, Long idRoteiro,
+			String sortname, String sortorder) {
 		
-		List<ConsultaRoteirizacaoDTO> lista = roteirizacaoService.obterCotasParaBoxRotaRoteiro(idBox,idRota,idRoteiro);
+		List<ConsultaRoteirizacaoDTO> lista = roteirizacaoService.obterCotasParaBoxRotaRoteiro(idBox,idRota,idRoteiro,
+				sortname, sortorder);
 		
 		result.use(FlexiGridJson.class).from(lista).total(lista.size()).page(1).serialize();
 	}

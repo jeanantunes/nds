@@ -486,7 +486,7 @@ public class RoteirizacaoRepositoryImplTest extends AbstractRepositoryImplTest {
 	public void obterCotasParaBoxRotaRoteiro() {
 
 		List<ConsultaRoteirizacaoDTO> lista = roteirizacaoRepository
-				.obterCotasParaBoxRotaRoteiro(null, null, null);
+				.obterCotasParaBoxRotaRoteiro(null, null, null, null, null);
 
 		Assert.assertNotNull(lista);
 
@@ -496,7 +496,7 @@ public class RoteirizacaoRepositoryImplTest extends AbstractRepositoryImplTest {
 	public void obterCotasParaBoxRotaRoteiroPorIdBox() {
 
 		List<ConsultaRoteirizacaoDTO> lista = roteirizacaoRepository
-				.obterCotasParaBoxRotaRoteiro(1L, null, null);
+				.obterCotasParaBoxRotaRoteiro(1L, null, null, null, null);
 
 		Assert.assertNotNull(lista);
 
@@ -506,7 +506,7 @@ public class RoteirizacaoRepositoryImplTest extends AbstractRepositoryImplTest {
 	public void obterCotasParaBoxRotaRoteiroPorIdRoteiro() {
 
 		List<ConsultaRoteirizacaoDTO> lista = roteirizacaoRepository
-				.obterCotasParaBoxRotaRoteiro(null, 1L, null);
+				.obterCotasParaBoxRotaRoteiro(null, 1L, null, null, null);
 
 		Assert.assertNotNull(lista);
 
@@ -516,7 +516,7 @@ public class RoteirizacaoRepositoryImplTest extends AbstractRepositoryImplTest {
 	public void obterCotasParaBoxRotaRoteiroPorIdRota() {
 
 		List<ConsultaRoteirizacaoDTO> lista = roteirizacaoRepository
-				.obterCotasParaBoxRotaRoteiro(null, null, 1L);
+				.obterCotasParaBoxRotaRoteiro(null, null, 1L, null, null);
 
 		Assert.assertNotNull(lista);
 

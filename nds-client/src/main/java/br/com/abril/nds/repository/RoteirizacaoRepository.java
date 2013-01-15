@@ -54,7 +54,7 @@ public interface RoteirizacaoRepository extends Repository<Roteirizacao, Long> {
 	 * 
 	 * @return List<ConsultaRoteirizacaoDTO>
 	 */
-	List<ConsultaRoteirizacaoDTO> obterCotasParaBoxRotaRoteiro(Long idBox, Long idRota, Long idRoteiro);
+	List<ConsultaRoteirizacaoDTO> obterCotasParaBoxRotaRoteiro(Long idBox, Long idRota, Long idRoteiro, String sortname, String sortorder);
 
 	/**
 	 * Obtém Boxes por nome
