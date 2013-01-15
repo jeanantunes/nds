@@ -745,9 +745,9 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		BigDecimal valorMinino = 
 				this.obterValorMinino(cota, valorMininoDistribuidor);
 		
-		//caso tenha alcançado o valor minino de cobrança e seja um dia de concentração de cobrança, ou a cota esteja suspensa TODO
-		if ( (vlMovFinanTotal.compareTo(valorMinino) > 0 && cobrarHoje) || 
-				(vlMovFinanTotal.compareTo(valorMinino) > 0 && cotaSuspensa)){
+		//caso tenha alcançado o valor minino de cobrança e seja um dia de concentração de cobrança, ou a cota esteja suspensa
+		if ( (vlMovFinanTotal.compareTo(valorMinino) >= 0 && cobrarHoje) || 
+				(vlMovFinanTotal.compareTo(valorMinino) >= 0 && cotaSuspensa)){
 
 			if (formaCobrancaPrincipal.getBanco() == null) {
 				
