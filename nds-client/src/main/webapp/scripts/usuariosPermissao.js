@@ -330,7 +330,7 @@ var usuariosPermissaoController = $.extend(true, {
 
 							// Ativa
 							var ativa = "N";
-							if (value.cell.ativa == "true") {
+							if (value.cell.contaAtiva == true) {
 								ativa = "S";
 							}
 							value.cell[5] = ativa;
@@ -398,3 +398,5 @@ var usuariosPermissaoController = $.extend(true, {
 			});
 		}
 }, BaseController);
+
+//@ sourceURL=usuariosPermissao.js

@@ -203,7 +203,7 @@
 			<tr>
 				<td>Imagem Cheque:</td>
 				<td colspan="3">
-					<form action="/nds-client/cadastro/garantia/uploadCheque" id="cotaGarantiaChequeCaucaoFormUpload" method="post" enctype="multipart/form-data" onsubmit="ChequeCaucao.prototype.uploadFormOnSubmit()">
+					<form action="${pageContext.request.contextPath}/cadastro/garantia/uploadCheque" id="cotaGarantiaChequeCaucaoFormUpload" method="post" enctype="multipart/form-data" onsubmit="ChequeCaucao.prototype.uploadFormOnSubmit()">
 						<input type="hidden" id="idCheque" name="idCheque" size="58" />
 						<input type="file" id="cotaGarantiaChequeCaucaoUpload" name="image" size="58" />
 						<input type="submit" value="Enviar"/> 
