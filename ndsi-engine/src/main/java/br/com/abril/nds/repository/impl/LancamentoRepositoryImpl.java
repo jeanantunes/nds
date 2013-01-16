@@ -619,9 +619,6 @@ public class LancamentoRepositoryImpl extends
 		sql.append(" and ( ");
 		sql.append(" fornecedor.ID in (:idsFornecedores) ");
 		sql.append(" )  ");
-		sql.append(" and ( ");
-		sql.append(" lancamento.DATA_REC_DISTRIB between :periodoInicial and :periodoFinal ");
-		sql.append(" ) ");
 
 		sql.append("and ( ");
 		sql.append(" chamadaEncalhe.ID is null or ");

@@ -62,6 +62,7 @@ import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
+import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.vo.ValidacaoVO;
 
 /**
@@ -382,9 +383,11 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		// 02) Salvar imagem:
 		if (imgInputStream != null) {
 			
-			// Verifica se o tipo do arquivo é imagem JPEG:
-			if (!contentType.toLowerCase().matches("image/[p]?jpeg")) {
-				throw new ValidacaoException(TipoMensagem.ERROR, 
+			// Verifica se o tipo do arquivo é imagem JPEG, PNG ou GIF:
+			if(!FileType.JPEG.getContentType().equalsIgnoreCase(contentType) && 
+					   !FileType.GIF.getContentType().equalsIgnoreCase(contentType)  && 
+					   !FileType.PNG.getContentType().equalsIgnoreCase(contentType)) {
+				throw new ValidacaoException(TipoMensagem.WARNING, 
 						"O formato da imagem da capa não é válido!");
 			}
 			

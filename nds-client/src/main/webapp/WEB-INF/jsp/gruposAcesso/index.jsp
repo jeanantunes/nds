@@ -91,31 +91,31 @@
           <table width="700" border="0" cellpadding="2" cellspacing="1" class="filtro">
             <tr>
               <td width="95">Primeiro Nome:</td>
-              <td width="241"><input type="text" name="usuarioDTO.nome" id="usuarioNome" style="width:220px;"/></td>
+              <td width="241"><input type="text" name="usuarioDTO.nome" id="nome" style="width:220px;"/></td>
               <td width="120">Último  Nome:</td>
-              <td width="223"><input type="text" name="usuarioDTO.sobrenome" id="usuarioSobreNome" style="width:220px;"/></td>
+              <td width="223"><input type="text" name="usuarioDTO.sobrenome" id="sobrenome" style="width:220px;"/></td>
             </tr>
             <tr>
               <td>Username:</td>
-              <td><input type="text" name="usuarioDTO.login" id="usuarioLogin" style="width:220px;"/></td>
+              <td><input type="text" name="usuarioDTO.login" id="login" style="width:220px;"/></td>
               <td>E-mail:</td>
-              <td><input type="text" name="usuarioDTO.email" id="usuarioEmail" style="width:220px;"/></td>
+              <td><input type="text" name="usuarioDTO.email" id="email" style="width:220px;"/></td>
             </tr>
             <tr id="trInsercaoSenhas">
               <td>Nova Senha:</td>
-              <td><input type="password" name="usuarioDTO.senha" id="usuariosenha" style="width:220px;"/></td>
+              <td><input type="password" name="usuarioDTO.senha" id="senha" style="width:220px;"/></td>
               <td>Confirma nova Senha:</td>
               <td><input type="password" name="usuarioDTO.confirmaSenha" id="usuarioSenhaConfirma" style="width:220px;"/></td>
             </tr>
             <tr id="trLembreteSenha">
               <td>Lembrete Senha:</td>
-              <td><input type="text" name="usuarioDTO.lembreteSenha" id="usuarioLembreteSenha" style="width:220px;"/></td>
+              <td><input type="text" name="usuarioDTO.lembreteSenha" id="lembreteSenha" style="width:220px;"/></td>
               <td>Status:</td>
               <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
                 <tr>
-                  <td width="9%"><input type="radio" name="usuarioDTOContaAtiva" id="usuarioAtivaTrue" checked="checked" value="ativa"/></td>
+                  <td width="9%"><input type="radio" name="usuarioDTO.contaAtiva" id="usuarioAtivaTrue" checked="checked" value="ativa" /></td>
                   <td width="28%">Ativa</td>
-                  <td width="6%"><input type="radio" name="usuarioDTOContaAtiva" id="usuarioAtivaFalse" value=""/></td>
+                  <td width="6%"><input type="radio" name="usuarioDTO.contaAtiva" id="usuarioAtivaFalse" value="" /></td>
                   <td width="57%">Bloqueada</td>
                 </tr>
               </table></td>

@@ -38,7 +38,7 @@ var fiadorController = $.extend(true, {
 			
 			$("#fiadorController-dialog-fiador", fiadorController.workspace).dialog({
 				resizable: false,
-				height:560,
+				height:'auto',
 				width:950,
 				modal: true,
 				buttons: {
@@ -796,40 +796,55 @@ var fiadorController = $.extend(true, {
 		},
 		
 		adicionarSocio: function (){
-			var data = {
-					"referencia" : $("#fiadorController-socio-idSocioEdicao", fiadorController.workspace).val(),
-					"pessoa.socioPrincipal" : ("" + $("#fiadorController-isSocioPrincipal", fiadorController.workspace).attr("checked") == 'checked'),
-					"pessoa.nome" : $('#fiadorController-socio-nomeFiadorCpf', fiadorController.workspace).val(),
-					"pessoa.email" : $('#fiadorController-socio-emailFiadorCpf', fiadorController.workspace).val(),
-					"pessoa.cpf" : $('#fiadorController-socio-cpfFiador', fiadorController.workspace).val(),
-					"pessoa.rg" : $('#fiadorController-socio-rgFiador', fiadorController.workspace).val(),
-					"pessoa.dataNascimento" : $('#fiadorController-socio-dataNascimentoFiadorCpf', fiadorController.workspace).val(),
-					"pessoa.orgaoEmissor" : $('#fiadorController-socio-orgaoEmissorFiadorCpf', fiadorController.workspace).val(),
-					"pessoa.ufOrgaoEmissor" : $('#fiadorController-socio-selectUfOrgaoEmiCpf', fiadorController.workspace).val(),
-					"pessoa.estadoCivil" : $('#fiadorController-socio-estadoCivilFiadorCpf', fiadorController.workspace).val(),
-					"pessoa.sexo" : $('#fiadorController-socio-selectSexoFiador', fiadorController.workspace).val(),
-					"pessoa.nacionalidade" : $('#fiadorController-socio-nacionalidadeFiadorCpf', fiadorController.workspace).val(),
-					"pessoa.natural" : $('#fiadorController-socio-naturalFiadorCpf', fiadorController.workspace).val()};
-		    
-		    if (this.addConjuge){ 
+			
+			var ref = $('#fiadorController-idSocioEdicao', fiadorController.workspace).val();
+			
+			var data = {"referencia" : ref};
+			
+			var pessoa = {
+					
+					"socioPrincipal" : ("" + $("#fiadorController-isSocioPrincipal", fiadorController.workspace).attr("checked") == 'checked'),
+					"nome" : $('#fiadorController-socio-nomeFiadorCpf', fiadorController.workspace).val(),
+					"email" : $('#fiadorController-socio-emailFiadorCpf', fiadorController.workspace).val(),
+					"cpf" : $('#fiadorController-socio-cpfFiador', fiadorController.workspace).val(),
+					"rg" : $('#fiadorController-socio-rgFiador', fiadorController.workspace).val(),
+					"dataNascimento" : $('#fiadorController-socio-dataNascimentoFiadorCpf', fiadorController.workspace).val(),
+					"orgaoEmissor" : $('#fiadorController-socio-orgaoEmissorFiadorCpf', fiadorController.workspace).val(),
+					"ufOrgaoEmissor" : $('#fiadorController-socio-selectUfOrgaoEmiCpf', fiadorController.workspace).val(),
+					"estadoCivil" : $('#fiadorController-socio-estadoCivilFiadorCpf', fiadorController.workspace).val(),
+					"sexo" : $('#fiadorController-socio-selectSexoFiador', fiadorController.workspace).val(),
+					"nacionalidade" : $('#fiadorController-socio-nacionalidadeFiadorCpf', fiadorController.workspace).val(),
+					"natural" : $('#fiadorController-socio-naturalFiadorCpf', fiadorController.workspace).val()
+					};
+			
+			if (this.addConjuge){ 
+		    	
 		        var conjuge ={"nome" : $('#fiadorController-socio-nomeConjugeCpf', fiadorController.workspace).val(),
-		        		"email" : $('#fiadorController-socio-emailConjugeCpf', fiadorController.workspace).val(),
-		        		"cpf" : $('#fiadorController-socio-cpfConjuge', fiadorController.workspace).val(),
-		        		"rg" : $('#fiadorController-socio-rgConjuge', fiadorController.workspace).val(),
-		        		"dataNascimento" : $('#fiadorController-socio-dataNascimentoConjugeCpf', fiadorController.workspace).val(),
-		        		"orgaoEmissor" : $('#fiadorController-socio-orgaoEmissorConjugeCpf', fiadorController.workspace).val(),
-		        		"ufOrgaoEmissor" : $('#fiadorController-socio-selectUfOrgaoEmiConjugeCpf', fiadorController.workspace).val(),
-		        		"sexo" : $('#fiadorController-socio-selectSexoConjuge', fiadorController.workspace).val(),
-		        		"nacionalidade" : $('#fiadorController-socio-nacionalidadeConjugeCpf', fiadorController.workspace).val(),
-		        		"natural" : $('#fiadorController-socio-naturalConjugeCpf', fiadorController.workspace).val()};
-		        data =  serializeObjectToPost('pessoa.conjuge', conjuge, data);
+		        		      "email" : $('#fiadorController-socio-emailConjugeCpf', fiadorController.workspace).val(),
+		        		      "cpf" : $('#fiadorController-socio-cpfConjuge', fiadorController.workspace).val(),
+		        		      "rg" : $('#fiadorController-socio-rgConjuge', fiadorController.workspace).val(),
+		        		      "dataNascimento" : $('#fiadorController-socio-dataNascimentoConjugeCpf', fiadorController.workspace).val(),
+		        		      "orgaoEmissor" : $('#fiadorController-socio-orgaoEmissorConjugeCpf', fiadorController.workspace).val(),
+		        		      "ufOrgaoEmissor" : $('#fiadorController-socio-selectUfOrgaoEmiConjugeCpf', fiadorController.workspace).val(),
+		        		      "sexo" : $('#fiadorController-socio-selectSexoConjuge', fiadorController.workspace).val(),
+		        		      "nacionalidade" : $('#fiadorController-socio-nacionalidadeConjugeCpf', fiadorController.workspace).val(),
+		        		      "natural" : $('#fiadorController-socio-naturalConjugeCpf', fiadorController.workspace).val()
+		        		      };
+		        
+		        pessoa =  serializeObjectToPost('conjuge', conjuge, pessoa);
 		    }
+			
+			data =  serializeObjectToPost('pessoa', pessoa, data);
+		    
 		    var _this =this;
+		    
 			$.postJSON(contextPath +'/cadastro/fiador/adicionarSocio', data, 
 				function(result){
 			
 					if (result != ""){
+						
 						$(".fiadorController-sociosGrid", fiadorController.workspace).flexAddData({
+							
 							page: result.page, total: result.total, rows: result.rows
 						});
 						
@@ -840,9 +855,10 @@ var fiadorController = $.extend(true, {
 						$("#fiadorController-btnAddEditarSocio", fiadorController.workspace).text("Incluir Novo");
 						
 						$('#fiadorController-socio-cpfFiador', fiadorController.workspace).removeAttr("disabled");
+						
 						$('#fiadorController-socio-cpfConjuge', fiadorController.workspace).removeAttr("disabled");
 						
-						$("#fiadorController-socio-idSocioEdicao", fiadorController.workspace).val("");
+						$("#fiadorController-idSocioEdicao", fiadorController.workspace).val("");
 					}
 				},
 				null,
@@ -851,11 +867,15 @@ var fiadorController = $.extend(true, {
 		},
 		
 		editarSocio : function (referencia){
+			
 			var _this = this;
-			$.postJSON(contextPath + '/cadastro/fiador/editarSocio', {referencia:referencia}, 
-				function(result) {
-					
-				_this.limparDadosCadastraisCPFSocio();
+			
+			var data = {"referencia" : referencia};
+			
+			$.postJSON(contextPath + '/cadastro/fiador/editarSocio', data, 
+				function(result){
+				
+				    _this.limparDadosCadastraisCPFSocio();
 				
 					if (result){
 						
@@ -887,50 +907,61 @@ var fiadorController = $.extend(true, {
 							$('#fiadorController-socio-naturalConjugeCpf', fiadorController.workspace).val(result[20]);
 							
 							if (result[21] == "true"){
+								
 								$('#fiadorController-isSocioPrincipal', fiadorController.workspace).check();
 							} else {
+								
 								$('#fiadorController-isSocioPrincipal', fiadorController.workspace).uncheck();
 							}
 						} else {
 							
 							if (result[11] == "true"){
+								
 								$('#fiadorController-isSocioPrincipal', fiadorController.workspace).check();
 							} else {
+								
 								$('#fiadorController-isSocioPrincipal', fiadorController.workspace).uncheck();
 							}
 						}
 						
-						
-						
 						$("#fiadorController-idSocioEdicao", fiadorController.workspace).val(referencia);
 					}
-					
+				
 					$('#fiadorController-socio-cpfFiador', fiadorController.workspace).attr("disabled", true);
+					
 					$('#fiadorController-socio-cpfConjuge', fiadorController.workspace).attr("disabled", true);
 					
 					$("#fiadorController-btnAddEditarSocio", fiadorController.workspace).text("Editar");
-				}
+				},
+				null,
+				true
 			);
 		},
 		
 		removerSocio:function (referencia){
+			
 			var _this = this;
-			$("#fiadorController-dialog-excluir-socio", fiadorController.workspace).dialog({
+			
+			$("#fiadorController-dialog-excluir-socio").dialog({
 				resizable: false,
 				height:'auto',
 				width:300,
 				modal: true,
 				buttons: {
 					"Confirmar": function() {
+						
 						$(this).dialog("close");
 						
 						$.postJSON(contextPath + '/cadastro/fiador/removerSocio', {referencia : referencia}, 
 							function(result) {
-								$(".sociosGrid", fiadorController.workspace).flexAddData({
+								
+							    $(".fiadorController-sociosGrid").flexAddData({
+							    	
 									page: 1, total: 1, rows: result.rows
 								});
 								
-								$("#fiadorController-btnAddEditarSocio", fiadorController.workspace).text("Incluir Novo");
+								$("#fiadorController-btnAddEditarSocio").text("Incluir Novo");
+								
 								_this.limparDadosCadastraisCPFSocio();
 							},
 							null,
@@ -938,13 +969,14 @@ var fiadorController = $.extend(true, {
 						);
 					},
 					"Cancelar": function() {
+						
 						$(this).dialog("close");
 					}
 				},
 				form: $("#fiadorController-dialog-excluir-socio").parents("form")
 			});
 			
-			$("#fiadorController-dialog-excluir-socio", fiadorController.workspace).show();
+			$("#fiadorController-dialog-excluir-socio").show();
 		},
 		
 		carregarGarantias:function (){

@@ -129,6 +129,11 @@ var recebimentoFisicoController = $.extend(true, {
 			
 		var cnpj = $("#cnpj", recebimentoFisicoController.workspace).val();	
 		
+		var cnpjUnmask = removeSpecialCharacteres(cnpj, "_").toString();
+		
+		if(!cnpjUnmask || cnpjUnmask.length <= 14)
+			return;
+		
 		if(cnpj == "") {
 			$("#fornecedor", recebimentoFisicoController.workspace).val("");
 			return;

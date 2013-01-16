@@ -1315,7 +1315,7 @@ public class DataLoader {
 
 		Usuario admin = new Usuario();
 		admin.setLogin("admin");
-		admin.setSenha("81dc9bdb52d04dc20036dbd8313ed055"); // Senha: 1234
+		admin.setSenha("4f1b0d137e4eb331e85f9baa3c5e4ec6"); // Senha: D68
 		admin.setNome("Administrador");
 		admin.setContaAtiva(true);
 		admin.setEmail("adminteste@abril.com.br");
