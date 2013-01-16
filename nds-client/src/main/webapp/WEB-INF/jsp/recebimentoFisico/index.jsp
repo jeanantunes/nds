@@ -238,7 +238,7 @@
 
 							<td width="254">
 							
-								<select id="fornecedor" name="fornecedor" onblur="recebimentoFisicoController.exibirCnpjDoFornecedor()" style="width: 250px;">
+								<select id="fornecedor" name="fornecedor" onchange="recebimentoFisicoController.exibirCnpjDoFornecedor()" style="width: 250px;">
 									
 									<option value="-2" selected="selected">Selecione</option>
 									
@@ -253,8 +253,8 @@
 							</td>
 
 							<td width="43" align="right">CNPJ:</td>
-							<td width="136"><input id="cnpj"
-								onblur="recebimentoFisicoController.pesquisarPorCnpjFornecedor();" name="cnpj"
+							<td width="136">
+								<input id="cnpj" onkeyup="recebimentoFisicoController.pesquisarPorCnpjFornecedor();" name="cnpj"
 								style="width: 130px;" />
 							</td>
 
