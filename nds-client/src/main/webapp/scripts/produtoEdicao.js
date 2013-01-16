@@ -766,9 +766,10 @@ var produtoEdicaoController =$.extend(true,  {
 			exibirMensagem('WARNING', ['Por favor, escolha um produto para adicionar a Edi&ccedil;&atilde;o!'], "");
 			return;
 		}
-
+		var title = (id)?"Editar Edição":"Incluir Nova Edição";
 		if (codigo == "" || codigo == undefined) {
 			codigo = $("#produtoEdicaoController-codigoProduto",this.workspace).val();
+			
 		}
 		
 		if (nome == undefined) {
@@ -780,6 +781,7 @@ var produtoEdicaoController =$.extend(true,  {
 			height:540,
 			width:960,
 			modal: true,
+			title: title,
 			buttons: {
 				"Confirmar": function() {
 
@@ -841,12 +843,13 @@ var produtoEdicaoController =$.extend(true,  {
 	carregarImagemCapa:			function (idProdutoEdicao) {
 
 		var imgPath = (idProdutoEdicao == null || idProdutoEdicao == undefined)
-		? "" :  contextPath + '/capa/' + idProdutoEdicao + '?' + Math.random();
+		? "" :  contextPath + '/capa/tratarNoImage/' + idProdutoEdicao + '?' + Math.random();
 		var img = $("<img />").attr('src', imgPath).attr('width', '144').attr('height', '185').attr('alt', 'Capa');
 		$("#produtoEdicaoController-div_imagem_capa",this.workspace).empty();
 		$("#produtoEdicaoController-div_imagem_capa",this.workspace).append(img);
 		
 		img.load(function() {
+			console.log("load");
 			if (!(!this.complete || typeof this.naturalWidth == "undefined" || this.naturalWidth == 0)) {
 				$("#produtoEdicaoController-div_imagem_capa",this.workspace).empty();
 				$("#produtoEdicaoController-div_imagem_capa",this.workspace).append(img);

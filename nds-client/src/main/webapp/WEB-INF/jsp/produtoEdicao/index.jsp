@@ -227,7 +227,7 @@ fieldset {
 				
 				<div class="ldForm">
 					<fieldset style="width:350px!important; margin-bottom:5px;">
-						<legend>Caracter&iacute;sticas do L&ccedil;amento</legend>
+						<legend>Caracter&iacute;sticas do La&ccedil;amento</legend>
 						<table width="345" border="0" cellspacing="1" cellpadding="1">
 							<thead />
 							<tbody>
