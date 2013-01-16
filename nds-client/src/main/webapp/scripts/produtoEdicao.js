@@ -887,11 +887,11 @@ var produtoEdicaoController =$.extend(true,  {
 				var mensagens = (responseText.mensagens) ? responseText.mensagens : responseText.result;   
 				var tipoMensagem = mensagens.tipoMensagem;
 				var listaMensagens = mensagens.listaMensagens;
-
+				
 				if (tipoMensagem && listaMensagens) {
 					exibirMensagem(tipoMensagem, listaMensagens);	
 				}
-				if (tipoMensagem != "SUCCESS") {
+				if (tipoMensagem == "WARNING" || tipoMensagem == "ERROR") {
 					$("#produtoEdicaoController-imagemCapa").val("");
 					return;
 				}
