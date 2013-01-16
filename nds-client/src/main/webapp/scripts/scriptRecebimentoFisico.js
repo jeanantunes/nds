@@ -72,6 +72,13 @@ var recebimentoFisicoController = $.extend(true, {
 			_this.novoValorTotalTyped = true;
 		});
 		
+		 $("#cnpj", recebimentoFisicoController.workspace).keyup(function(e) {
+			
+			if((e.keyCode >= 48 && e.keyCode <= 57) || e.keyCode == 13){		 
+				_this.pesquisarPorCnpjFornecedor();
+			}
+		});
+		
 		$("#novoValorTotal", recebimentoFisicoController.workspace).maskMoney({
 			 thousands:'.', 
 			 decimal:',', 
@@ -129,9 +136,9 @@ var recebimentoFisicoController = $.extend(true, {
 			
 		var cnpj = $("#cnpj", recebimentoFisicoController.workspace).val();	
 		
-		var cnpjUnmask = removeSpecialCharacteres(cnpj, "_").toString();
+		cnpj = removeSpecialCharacteres(cnpj, "_").toString();
 		
-		if(!cnpjUnmask || cnpjUnmask.length <= 14)
+		if(!cnpj || cnpj.length < 14)
 			return;
 		
 		if(cnpj == "") {
@@ -139,8 +146,9 @@ var recebimentoFisicoController = $.extend(true, {
 			return;
 		}
 		
-		$.postJSON(this.path + 'buscaCnpj', {cnpj:removeSpecialCharacteres(cnpj)}, 
+		$.postJSON(this.path + 'buscaCnpj', {cnpj:cnpj}, 
 		function(result) { 
+			
 			$("#fornecedor", recebimentoFisicoController.workspace).val(result.cnpj);
 		});	
 	
@@ -153,7 +161,7 @@ var recebimentoFisicoController = $.extend(true, {
 		
 		var cnpjDoFornecedor = $("#fornecedor", recebimentoFisicoController.workspace).val();	
 		
-		if (cnpjDoFornecedor == -2) {
+		if (cnpjDoFornecedor == -1) {
 		
 			$("#cnpj", recebimentoFisicoController.workspace).val("");
 			
