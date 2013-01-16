@@ -37,6 +37,8 @@ public class ConsultaEncalheDTO {
 	
 	private Long idCota;
 	
+	private String indPossuiObservacaoConferenciaEncalhe;
+	
 	public ConsultaEncalheDTO() {}
 
 	/**
@@ -300,7 +302,13 @@ public class ConsultaEncalheDTO {
 		this.idCota = idCota;
 	}
 
-	
-	
+	public String getIndPossuiObservacaoConferenciaEncalhe() {
+		return indPossuiObservacaoConferenciaEncalhe;
+	}
+
+	public void setIndPossuiObservacaoConferenciaEncalhe(
+			String indPossuiObservacaoConferenciaEncalhe) {
+		this.indPossuiObservacaoConferenciaEncalhe = indPossuiObservacaoConferenciaEncalhe;
+	}
 	
 }
