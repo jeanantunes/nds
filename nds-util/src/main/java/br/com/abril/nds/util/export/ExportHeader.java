@@ -8,6 +8,8 @@ public class ExportHeader implements Comparable<ExportHeader> {
 	
 	private Integer exhibitionOrder;
 	
+	private Float widthPercent;
+	
 	public ExportHeader() {
 		
 	}
@@ -63,6 +65,20 @@ public class ExportHeader implements Comparable<ExportHeader> {
 	 */
 	public void setExhibitionOrder(Integer exhibitionOrder) {
 		this.exhibitionOrder = exhibitionOrder;
+	}
+
+	/**
+	 * @return the columnWidth
+	 */
+	public Float getWidthPercent() {
+		return widthPercent;
+	}
+
+	/**
+	 * @param widthPercent the columnWidth to set
+	 */
+	public void setColumnWidth(Float widthPercent) {
+		this.widthPercent = widthPercent;
 	}
 
 	/* (non-Javadoc)

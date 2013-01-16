@@ -22,7 +22,10 @@ import javax.persistence.TemporalType;
 @SequenceGenerator(name="PERIODO_FUNCIONAMENTO_PDV_SEQ", initialValue = 1, allocationSize = 1)
 public class PeriodoFuncionamentoPDV implements Serializable {
 	
-	private static final long serialVersionUID = 1L;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8100864998462332482L;
 
 	@Id
 	@GeneratedValue(generator = "PERIODO_FUNCIONAMENTO_PDV_SEQ")

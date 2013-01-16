@@ -2,6 +2,7 @@ package br.com.abril.nds.client.util;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -62,7 +63,7 @@ public class AuditoriaUtil {
 
 		List<AtributoDTO> result = new ArrayList<AtributoDTO>();
 
-		if (clazz.getSuperclass() != null && clazz.getSuperclass() != Object.class) {
+		if (clazz.getSuperclass() != null && (Modifier.isAbstract( clazz.getModifiers() ) || clazz.getSuperclass() != Object.class)) {
 
 			result.addAll(entityToDTO(entity, clazz.getSuperclass()));
 		}

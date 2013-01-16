@@ -30,6 +30,7 @@ import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.TipoMensagem;
+import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.PaginacaoVO;
 
 /**
@@ -92,8 +93,8 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 			}
 			
 			if( endereco!= null) {
-				dto.setEndereco( (endereco.getTipoLogradouro()!= null?endereco.getTipoLogradouro().toUpperCase():"")
-									+": "+ endereco.getLogradouro().toUpperCase()  + ", " + endereco.getNumero());
+				dto.setEndereco( (endereco.getTipoLogradouro()!= null?endereco.getTipoLogradouro().toUpperCase() + ": " :"")
+									+ endereco.getLogradouro().toUpperCase()  + ", " + endereco.getNumero());
 				dto.setUf(endereco.getUf());
 				dto.setCidade(endereco.getCidade());
 				dto.setUf(endereco.getUf());
@@ -105,8 +106,13 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 			
 			
 			dto.setNumeroNome(dto.getNumCota()+ " " + ((dto.getNomeCota()!= null)?dto.getNomeCota().toUpperCase():""));
-			dto.setCnpj(cota.getPessoa().getDocumento());
-									
+		
+			if(cota.getPessoa() instanceof PessoaJuridica){
+				dto.setCnpj(Util.adicionarMascaraCNPJ(cota.getPessoa().getDocumento()));
+			}else{
+				dto.setCnpj(Util.adicionarMascaraCPF(cota.getPessoa().getDocumento()));
+			}
+												
 			dto.setDataEmissao(DateUtil.formatarDataPTBR(new Date()));
 			
 			dto.setProdutos(chamadaEncalheRepository.obterProdutosEmissaoCE(filtro,dto.getIdCota()));

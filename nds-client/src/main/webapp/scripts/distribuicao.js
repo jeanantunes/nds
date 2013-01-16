@@ -80,7 +80,7 @@ function Distribuicao(tela) {
 			data.push({name:'distribuicao.utilizaTermoAdesao',		value: D.get("utilizaTermoAdesao")});
 			data.push({name:'distribuicao.termoAdesaoRecebido',		value: D.get("termoAdesaoRecebido")});
 			data.push({name:'distribuicao.percentualFaturamento',	value: D.get("percentualFaturamentoEntregaBanca")});
-			data.push({name:'distribuicao.taxaFixa',				value: D.get("taxaFixaEntregaBanca")});
+			data.push({name:'distribuicao.taxaFixa',				value: floatValue(D.get("taxaFixaEntregaBanca"))});
 			data.push({name:'distribuicao.inicioPeriodoCarencia',	value: D.get("inicioPeriodoCarenciaEntregaBanca")});
 			data.push({name:'distribuicao.fimPeriodoCarencia',		value: D.get("fimPeriodoCarenciaEntregaBanca")});
 			data.push({name:'distribuicao.baseCalculo',	            value: D.get("baseCalculo")});
@@ -148,6 +148,12 @@ function Distribuicao(tela) {
 			D.set('inicioPeriodoCarenciaEntregaBanca',	dto.inicioPeriodoCarencia);
 			D.set('fimPeriodoCarenciaEntregaBanca',		dto.fimPeriodoCarencia);
 			D.set('baseCalculo',			            dto.baseCalculo);
+			
+			D.$('taxaFixaEntregaBanca').priceFormat({
+		        allowNegative : false,
+		        centsSeparator : ',',
+		        thousandsSeparator : '.'
+		    });
 			
 			D.setNomeTermoAdesao(dto.nomeTermoAdesao);
 			
@@ -238,10 +244,14 @@ function Distribuicao(tela) {
 		
 	this.downloadTermoAdesao = function() {
 		
+		var valorTaxa = floatValue(D.get("taxaFixaEntregaBanca"));
+
+		var params = {taxa:valorTaxa, percentual:D.get("percentualFaturamentoEntregaBanca")};
+		
 		$.postJSON(contextPath + "/cadastro/cota/validarValoresParaDownload",
-				{taxa:D.get("taxaFixaEntregaBanca"),percentual:D.get("percentualFaturamentoEntregaBanca")},
+				params,
 				function() {
-					document.location.assign(contextPath + "/cadastro/cota/downloadTermoAdesao?termoAdesaoRecebido="+D.get("termoAdesaoRecebido")+"&numeroCota="+D.get("numCota")+"&taxa="+D.get("taxaFixaEntregaBanca")+"&percentual="+D.get("percentualFaturamentoEntregaBanca"));
+					document.location.assign(contextPath + "/cadastro/cota/downloadTermoAdesao?termoAdesaoRecebido="+D.get("termoAdesaoRecebido")+"&numeroCota="+D.get("numCota")+"&taxa="+valorTaxa+"&percentual="+D.get("percentualFaturamentoEntregaBanca"));
 				},
 				null,
 				true,
@@ -597,9 +607,8 @@ function Distribuicao(tela) {
 		
 		$("input[name='fimPeriodoCarencia']").mask("99/99/9999");
 		
-		D.$("taxaFixaEntregaBanca").numeric();
+		D.$("taxaFixaEntregaBanca").maskMoney({decimal:",", thousands:"."});
 		
-		$("input[name='taxaFixa']").mask("99.99");
 		
 		$("input[name='percentualFaturamento']").mask("99.99");
 		

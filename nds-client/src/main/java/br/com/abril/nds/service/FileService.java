@@ -73,4 +73,12 @@ public interface FileService {
 	 */
 	void validarArquivo(int maxSize, UploadedFile file, FileType... extensoes) throws IOException;
 	
+	/**
+	 * faz upload de arquivo em um diretorio temporario
+	 * 
+	 * @param file
+	 * 
+	 * @return String - filePath
+	 */
+	String uploadTempFile(UploadedFile file, String tempPath);
 }

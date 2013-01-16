@@ -80,6 +80,111 @@ public abstract class Util {
 		return isUploadAjax;
 	}
 	
+	public static String gerarNossoNumeroDistribuidor(
+			Integer codigoDistribuidor, 
+			Date dtGeracao, 
+			String numeroBanco, 
+			Long idFornecedor, 
+			Long idChamadaEncalheFornecedor){
+		
+		long n1;
+		long n2 = 4;
+		long n3;
+		
+		int[] pesos = {9, 8, 7, 6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2};
+		long x = 0;
+		
+		String codSacado = Util.padLeft(codigoDistribuidor.toString(), "0", 4);
+		
+		for (int i = codSacado.length(); i > 0; i--){
+			x += Double.parseDouble(codSacado.substring(i - 1, i)) * pesos[codSacado.length() - i];
+		}
+		
+		n1 = (x % 11);
+		if ((n1 == 0) || (n1 == 10)){
+			n1 = 0;
+		}
+		
+		String auxData = DateUtil.formatarData(dtGeracao, "ddMMyy");
+		
+		n3 = (x % 11);
+		if ((n3 == 0) || (n3 == 10)){
+			n3 = 0;
+		}
+		
+		NomeBanco nomeBanco = NomeBanco.getByNumeroBanco(numeroBanco);
+		
+		switch (nomeBanco) {
+			case BANCO_ABN_AMRO_REAL:
+				return codSacado + auxData + n1 + n2 + n3 + idChamadaEncalheFornecedor + (idFornecedor == null ? "0" : idFornecedor);
+				
+			case BANCO_BRADESCO:
+				return codSacado + auxData + n1 + n2 + n3 + idChamadaEncalheFornecedor + (idFornecedor == null ? "0" : idFornecedor);
+			
+			case BANCO_DO_BRASIL:
+				return codSacado + auxData + n1 + n2 + n3 + idChamadaEncalheFornecedor + (idFornecedor == null ? "0" : idFornecedor);
+				
+			case BANCO_DO_ESTADO_DO_ESPIRITO_SANTO:
+				return codSacado + auxData + n1 + n2 + n3 + idChamadaEncalheFornecedor + (idFornecedor == null ? "0" : idFornecedor);
+			
+			case BANCO_DO_ESTADO_DO_RIO_GRANDE_DO_SUL:
+				return codSacado + auxData + n1 + n2 + n3 + idChamadaEncalheFornecedor + (idFornecedor == null ? "0" : idFornecedor);
+				
+			case BANCO_DO_NORDESTE_DO_BRASIL:
+				return codSacado + auxData + n1 + n2 + n3 + idChamadaEncalheFornecedor + (idFornecedor == null ? "0" : idFornecedor);
+				
+			case BANCO_INTEMEDIUM:
+				return codSacado + auxData + n1 + n2 + n3 + idChamadaEncalheFornecedor + (idFornecedor == null ? "0" : idFornecedor);
+				
+			case BANCO_ITAU:
+				return codSacado + auxData + n1 + n2 + n3 + idChamadaEncalheFornecedor + (idFornecedor == null ? "0" : idFornecedor);
+				
+			case BANCO_RURAL:
+				return codSacado + auxData + n1 + n2 + n3 + idChamadaEncalheFornecedor + (idFornecedor == null ? "0" : idFornecedor);
+				
+			case BANCO_SAFRA:
+				return codSacado + auxData + n1 + n2 + n3 + idChamadaEncalheFornecedor + (idFornecedor == null ? "0" : idFornecedor);
+				
+			case BANCO_SANTANDER:
+				return codSacado + auxData + n1 + n2 + n3 + idChamadaEncalheFornecedor + (idFornecedor == null ? "0" : idFornecedor);
+				
+			case BANCO_SICREDI:
+				return codSacado + auxData + n1 + n2 + n3 + idChamadaEncalheFornecedor + (idFornecedor == null ? "0" : idFornecedor);
+				
+			case BANCOOB:
+				return codSacado + auxData + n1 + n2 + n3 + idChamadaEncalheFornecedor + (idFornecedor == null ? "0" : idFornecedor);
+				
+			case CAIXA_ECONOMICA_FEDERAL:
+				return codSacado + auxData + n1 + n2 + n3 + idChamadaEncalheFornecedor + (idFornecedor == null ? "0" : idFornecedor);
+				
+			case HSBC:
+				
+				// return Util.padLeft(codSacado + auxData + idMovimentoFinanceiro, "0", 13);
+				
+				// Foi alterada a forma para composição do nosso número conforme foi pedido.
+				// De [número cota + dd/MM/yyyy + id movimento financeiro] para [número cota + id movimento financeiro].
+				// A forma antiga estava estourando o limite máximo de 13 caracteres.
+				return Util.padLeft(codSacado + idChamadaEncalheFornecedor, "0", 13);
+				
+			case MERCANTIL_DO_BRASIL:
+				return codSacado + auxData + n1 + n2 + n3 + idChamadaEncalheFornecedor + (idFornecedor == null ? "0" : idFornecedor);
+				
+			case NOSSA_CAIXA:
+				return codSacado + auxData + n1 + n2 + n3 + idChamadaEncalheFornecedor + (idFornecedor == null ? "0" : idFornecedor);
+				
+			case UNIBANCO:
+				return codSacado + auxData + n1 + n2 + n3 + idChamadaEncalheFornecedor + (idFornecedor == null ? "0" : idFornecedor);
+	
+			default:
+				return codSacado + auxData + n1 + n2 + n3 + idChamadaEncalheFornecedor + (idFornecedor == null ? "0" : idFornecedor);
+		}
+	
+		
+		
+		
+		
+	}
+	
 	public static String gerarNossoNumero(Integer numeroCota, Date dtGeracao, String numeroBanco, Long idFornecedor, Long idMovimentoFinanceiro){
 		long n1;
 		long n2 = 4;
@@ -88,7 +193,7 @@ public abstract class Util {
 		int[] pesos = {9, 8, 7, 6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2};
 		long x = 0;
 		
-		String codSacado = Util.padLeft(numeroCota.toString(), "0", 5);
+		String codSacado = Util.padLeft(numeroCota.toString(), "0", 4);
 		
 		for (int i = codSacado.length(); i > 0; i--){
 			x += Double.parseDouble(codSacado.substring(i - 1, i)) * pesos[codSacado.length() - i];
@@ -158,7 +263,7 @@ public abstract class Util {
 				// Foi alterada a forma para composição do nosso número conforme foi pedido.
 				// De [número cota + dd/MM/yyyy + id movimento financeiro] para [número cota + id movimento financeiro].
 				// A forma antiga estava estourando o limite máximo de 13 caracteres.
-				return Util.padLeft(codSacado + idMovimentoFinanceiro, "0", 14);
+				return Util.padLeft(codSacado + idMovimentoFinanceiro, "0", 13);
 				
 			case MERCANTIL_DO_BRASIL:
 				return codSacado + auxData + n1 + n2 + n3 + idMovimentoFinanceiro + (idFornecedor == null ? "0" : idFornecedor);
@@ -175,7 +280,7 @@ public abstract class Util {
 	}
 	
 	private static String padLeft(String valor, String caractere, int tamanho){
-		while (valor.length() < tamanho - 1){
+		while (valor.length() < tamanho){
 			valor = caractere + valor;
 		}
 		
@@ -190,8 +295,8 @@ public abstract class Util {
 		
 		cnpj = cnpj.replace("-", "").replace(".", "").replace("/", "");
 		
-		if (cnpj.length() < 12){
-			cnpj = Util.padLeft(cnpj, "0", 12);
+		if (cnpj.length() < 14){
+			cnpj = Util.padLeft(cnpj, "0", 14);
 		}
 		
 		StringBuilder formatado = new StringBuilder();

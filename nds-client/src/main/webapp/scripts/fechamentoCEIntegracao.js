@@ -1,5 +1,7 @@
 var fechamentoCEIntegracaoController = $.extend(true, {
 	
+	idsProdEdicao : [],
+	
 	init : function(){
 		fechamentoCEIntegracaoController.initGrid();
 		fechamentoCEIntegracaoController.bindButtons();
@@ -19,6 +21,24 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 					fechamentoCEIntegracaoController.fecharCE();
 				});
 			}
+	},
+	
+	geraBoleto : function(tipoCobranca) {
+		
+		var parametros = [{
+			name:'tipoCobranca', value: tipoCobranca
+		}];
+		
+		$.postJSON(contextPath + '/devolucao/fechamentoCEIntegracao/geraBoleto', parametros,
+				
+		function(result) {
+			
+			var file = contextPath + '/devolucao/fechamentoCEIntegracao/imprimeBoleto';
+	
+			$('#download-iframe-fechamento', fechamentoCEIntegracaoController.workspace).attr('src', file);
+	
+		});
+		
 	},
 	
 	buscarNumeroSemana : function(){
@@ -46,34 +66,10 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 			$(".grids", fechamentoCEIntegracaoController.worspace).show();
 		});		
 	},
+	
 	initGrid : function(){	
 		$(".fechamentoCeGrid", fechamentoCEIntegracaoController.workspace).flexigrid({
-			preProcess : function(resultado) {
-				
-				if (resultado.mensagens) {
-					exibirMensagem(resultado.mensagens.tipoMensagem, resultado.mensagens.listaMensagens);
-					$(".grids", fechamentoCEIntegracaoController.workspace).hide();
-					return resultado;
-				} else {
-					
-					if (!resultado.semanaFechada) {	
-
-						$.each(resultado.listaFechamento.rows, function(index, row) {
-							var linhaEncalhe = '<input type="text" id="inputEncalhe' + row.cell.sequencial + '" value="' + row.cell.encalhe + '" size="5px" />';
-							row.cell.encalhe = linhaEncalhe;
-						});
-						
-					};
-					
-					fechamentoCEIntegracaoController.popularTotal($("#idFornecedor", fechamentoCEIntegracaoController.workspace).val(), $("#semana", fechamentoCEIntegracaoController.workspace).val());
-					fechamentoCEIntegracaoController.verificarDataFechamentoCE(resultado.semanaFechada);
-					
-					$(".grids", fechamentoCEIntegracaoController.workspace).show();
-					return resultado.listaFechamento;
-					
-				};
-				
-			  },
+			preProcess : fechamentoCEIntegracaoController.fechamentoCeGridPreProcess,
 			dataType : 'json',
 			colModel : [ {
 				display : 'Seq',
@@ -148,6 +144,45 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 		
 	},
 	
+	alteraValorEncalhe : function(idProdEdicao, valor) {
+		
+		for(var id in fechamentoCEIntegracaoController.idsProdEdicao) {
+			if(fechamentoCEIntegracaoController.idsProdEdicao[id].name == idProdEdicao) {
+				fechamentoCEIntegracaoController.idsProdEdicao[id].value = valor;
+			}
+		}
+	},
+	
+	fechamentoCeGridPreProcess : function(resultado) {
+		if (resultado.mensagens) {
+			exibirMensagem(resultado.mensagens.tipoMensagem, resultado.mensagens.listaMensagens);
+			$(".grids", fechamentoCEIntegracaoController.workspace).hide();
+			return resultado;
+		} else {
+			
+			if (!resultado.semanaFechada) {
+
+				$.each(resultado.listaFechamento.rows, function(index, row) {
+					
+					fechamentoCEIntegracaoController.idsProdEdicao = [];
+					fechamentoCEIntegracaoController.idsProdEdicao.push({name: row.cell.idProdutoEdicao, value: row.cell.encalhe});
+					var linhaEncalhe = '<input type="text" name="inputEncalhe" id="inputEncalhe' + row.cell.sequencial + '" value="' + row.cell.encalhe + '" size="5px" onchange="fechamentoCEIntegracaoController.alteraValorEncalhe('+ row.cell.idProdutoEdicao +', this.value)"/>';
+					row.cell.encalhe = linhaEncalhe;
+				});
+				
+			};
+			
+			fechamentoCEIntegracaoController.popularTotal(resultado);
+			fechamentoCEIntegracaoController.verificarDataFechamentoCE(resultado.semanaFechada);
+			
+			$(".grids", fechamentoCEIntegracaoController.workspace).show();
+			
+			return resultado.listaFechamento;
+			
+		};
+
+	},
+	
 	pesquisaPrincipal : function(){
 		var idFornecedor = $("#idFornecedor", fechamentoCEIntegracaoController.workspace).val();
 		var semana = $("#semana", fechamentoCEIntegracaoController.workspace).val();
@@ -164,47 +199,33 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 		
 	},
 	
-	popularTotal : function(idFornecedor, semana){
- 		$.postJSON(
-			contextPath + '/devolucao/fechamentoCEIntegracao/buscarTotalDaPesquisa',
-			[
-	         {name:'filtro.idFornecedor' , value:idFornecedor},
-	         {name:'filtro.semana' , value:semana}
-	         ],
-			function(result) {
-				$('.tabelaTotal', fechamentoCEIntegracaoController.workspace).show();
-				$("#total", fechamentoCEIntegracaoController.workspace).html(result);
-			},
-			null,
-			true
-		);
+	popularTotal : function(resultado){
+		$("#totalBruto", fechamentoCEIntegracaoController.workspace).html(resultado.totalBruto);
+		$("#totalDesconto", fechamentoCEIntegracaoController.workspace).html(resultado.totalDesconto);
+		$("#totalLiquido", fechamentoCEIntegracaoController.workspace).html(resultado.totalLiquido);
+		$(".tabelaTotal").show();
 	},
 	
 	fecharCE : function(){
 		var listaEncalhe = new Array();
 		var listaIdProdutoEdicao = new Array();
-		var cont = 0;
-		var cont2 = 0;
-		$(".fechamentoCeGrid tr", fechamentoCEIntegracaoController.workspace).each(function(){			
-			$("td", this).each(function() {				
-				$("input[name='inputEncalhe']", this).each(function() {
-					listaEncalhe[cont] = $(this).val();
-					cont++;
-				})
-				
-				$("input[name='codigoProdutoEdicao']", this).each(function() {
-					listaIdProdutoEdicao[cont2] = $(this).val();
-					cont2++;
-				})
-			})
-		});
-		
+		for(var id in fechamentoCEIntegracaoController.idsProdEdicao) {
+			listaEncalhe[id] = fechamentoCEIntegracaoController.idsProdEdicao[id].value;
+			listaIdProdutoEdicao[id] = fechamentoCEIntegracaoController.idsProdEdicao[id].name;
+		}
+	
 		$.postJSON(contextPath + '/devolucao/fechamentoCEIntegracao/fecharCE',
 				[
 				 {name:'listaEncalhe' , value:listaEncalhe},
 				 {name:'listaIdProdutoEdicao' , value:listaIdProdutoEdicao},
+				 {name:'idFornecedor', value: $("#idFornecedor", fechamentoCEIntegracaoController.workspace).val()},
+				 {name:'semana', value: $("#semana", fechamentoCEIntegracaoController.workspace).val()}
 				 ],
-				null,
+				 function(resultado) {
+				 	exibirMensagem(resultado.mensagens.tipoMensagem, resultado.mensagens.listaMensagens);
+					$(".grids", fechamentoCEIntegracaoController.workspace).hide();
+					return resultado;
+				 },
 				null,
 				true
 			);

@@ -30,15 +30,21 @@ init : function() {
 			sortable : true,
 			align : 'left'
 		}, {
+			display : 'Série',
+			name : 'serie',
+			width : 50,
+			sortable : true,
+			align : 'left'
+		}, {
 			display : 'Data de Emissão',
 			name : 'dataEmissao',
-			width : 120,
+			width : 100,
 			sortable : true,
 			align : 'center'
 		}, {
 			display : 'Data de Expedição',
 			name : 'dataExpedicao',
-			width : 120,
+			width : 100,
 			sortable : true,
 			align : 'center'
 		}, {
@@ -55,14 +61,14 @@ init : function() {
 			align : 'left'
 		}, {
 			display : 'Valor R$',
-			name : 'valor',
+			name : 'valorTotalNota',
 			width : 80,
 			sortable : true,
 			align : 'right'
 		}, {
 			display : 'Nota Recebida',
-			name : 'dataRecebimento',
-			width : 110,
+			name : 'notaRecebida',
+			width : 90,
 			sortable : true,
 			align : 'center'
 		}, {
@@ -119,8 +125,10 @@ processarResultadoConsultaNF : function (data) {
 
 		exibirMensagem(data.mensagens.tipoMensagem,
 				data.mensagens.listaMensagens);
-
+		
+		$(".areaBts", consultaNotasController.workspace).hide();
 		$(".grids", consultaNotasController.workspace).hide();
+		$(".fieldFiltro", consultaNotasController.workspace).css('margin-top','0px');
 
 		return;
 	}
@@ -128,11 +136,9 @@ processarResultadoConsultaNF : function (data) {
 	var i;
 
 	for (i = 0; i < data.rows.length; i++) {
-
-		var lastIndex = data.rows[i].cell.length - 1;
-
-		data.rows[i].cell[lastIndex - 1] = '<a href="javascript:;" onclick="consultaNotasController.pesquisarDetalhesNota('
-				+ data.rows[i].cell[lastIndex]
+		
+		data.rows[i].cell.acao = '<a href="javascript:;" onclick="consultaNotasController.pesquisarDetalhesNota('
+				+ data.rows[i].cell.id
 				+ ')" '
 				+ ' style="cursor:pointer;border:0px" title="Visualizar Detalhes">'
 				+ '<img src="' + contextPath + '/images/ico_detalhes.png" border="0px"/>'
@@ -142,6 +148,8 @@ processarResultadoConsultaNF : function (data) {
 	if ($(".grids", consultaNotasController.workspace).css('display') == 'none') {
 
 		$(".grids", consultaNotasController.workspace).show();
+		$(".areaBts", consultaNotasController.workspace).show();
+		$(".fieldFiltro", consultaNotasController.workspace).css('margin-top','27px');
 	}
 
 	return data;
@@ -170,13 +178,13 @@ pesquisarDetalhesNota : function(idNota) {
 				colModel : [ {
 					display : 'Código',
 					name : 'codigoItem',
-					width : 40,
+					width : 70,
 					sortable : true,
 					align : 'left'
 				}, {
 					display : 'Produto',
 					name : 'nomeProduto',
-					width : 100,
+					width : 150,
 					sortable : true,
 					align : 'left'
 				}, {
@@ -206,12 +214,12 @@ pesquisarDetalhesNota : function(idNota) {
 				}, {
 					display : 'Total R$',
 					name : 'total',
-					width : 60,
+					width : 80,
 					sortable : true,
 					align : 'right'
 				} ],
-				width : 600,
-				height : 200,
+				width : 715,
+				height : 230,
 				params : [ {
 					name : 'idNota',
 					value : idNota
@@ -257,8 +265,8 @@ popup : function() {
 
 	$("#dialog-novo", consultaNotasController.workspace).dialog({
 		resizable : false,
-		height : 370,
-		width : 630,
+		height : 400,
+		width : 750,
 		modal : true,
 		buttons : {
 			"Fechar" : function() {

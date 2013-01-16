@@ -106,7 +106,7 @@ public interface CalendarioService {
 	 */
 	public Map<Date, String> obterListaDataFeriado(int anoVigencia);
 
-	public List<String> obterListaLocalidadeCotas();
+	public List<String> obterListaLocalidadePdv();
 
 	/**
 	 * Exclui o Feriado

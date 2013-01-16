@@ -264,7 +264,6 @@ public class EnderecoController extends BaseController {
 			enderecoAssociacao.getEndereco().setCep(retirarFormatacaoCep(enderecoAssociacao.getEndereco().getCep()));
 		}
 		
-		
 		List<EnderecoAssociacaoDTO> listaEnderecoAssociacao = this.obterEnderecosSessaoSalvar();
 		
 		List<EnderecoAssociacaoDTO> listaExibir = this.obterEnderecosSessaoExibir();
@@ -314,8 +313,10 @@ public class EnderecoController extends BaseController {
 
 			if (tela.equals(Tela.ENDERECO_PDV)) {
 			
-				validarDuplicidadeEnderecoPDV();
+				validarUnicoEnderecoPDV(enderecoAssociacao);
 			}
+			
+			validarDuplicidadeEndereco(enderecoAssociacao);
 			
 			listaEnderecoAssociacao.add(enderecoAssociacao);
 			
@@ -461,38 +462,26 @@ public class EnderecoController extends BaseController {
 		this.result.use(Results.json()).from(ufs, "result").serialize();
 	}
 
-	private void validarDuplicidadeEnderecoPDV() {
-		
-		List<EnderecoAssociacaoDTO> listaSalvar = this.obterEnderecosSessaoSalvar();
-		
-		for (int index = 0 ; index < listaSalvar.size() ; index++){
-			
-			if (listaSalvar.get(index).getTipoEndereco() != null){
-				throw new ValidacaoException(TipoMensagem.WARNING,"Já existe associação de endereço para este PDV.");
-			}
-		}
+	private void validarUnicoEnderecoPDV(EnderecoAssociacaoDTO enderecoAssociacao) {
 		
 		List<EnderecoAssociacaoDTO> listaExibir = this.obterEnderecosSessaoExibir();
 			
-		for (int index = 0 ; index < listaExibir.size() ; index++){
+		if (listaExibir!=null && listaExibir.size() > 0){
 			
-			if (listaExibir.get(index).getTipoEndereco() != null){
+			throw new ValidacaoException(TipoMensagem.WARNING,"Já existe associação de endereço para este PDV.");
+		}
+	}
+	
+    private void validarDuplicidadeEndereco(EnderecoAssociacaoDTO enderecoAssociacao) {
+		
+		List<EnderecoAssociacaoDTO> listaExibir = this.obterEnderecosSessaoExibir();
+		for (EnderecoAssociacaoDTO item : listaExibir){
+			
+			if (item.getEndereco().getCep().equals(enderecoAssociacao.getEndereco().getCep())&&(item.getEndereco().getNumero().equals(enderecoAssociacao.getEndereco().getNumero()))){
 				
-				List<EnderecoAssociacaoDTO> listaExclusao = this.obterEnderecosSessaoRemover();
-				
-				for (int i = 0 ; i < listaExclusao.size() ; i++){
-					
-					boolean encontrado = false;
-					
-					if (listaExclusao.get(index).getTipoEndereco() != null){
-						encontrado = true;						
-					}
-					
-					if(encontrado == false) 
-						throw new ValidacaoException(TipoMensagem.WARNING,"Já existe associação de endereço para este PDV.");
-				}	
+				throw new ValidacaoException(TipoMensagem.WARNING,"Endereço já cadastrado.");
 			}
-		}			
+		}
 	}
 
 	/**
@@ -741,13 +730,17 @@ public class EnderecoController extends BaseController {
 
 		long idCellModel = 0;
 		
+		long inc = 0;
+		
 		for (EnderecoAssociacaoDTO enderecoAssociacao : listaEnderecoAssociacao) {
 
 			enderecoAssociacao.setEnderecoPessoa((enderecoAssociacao.isEnderecoPessoa()) || enderecoAssociacao.getTipoEndereco() == null);
 					
 			if (enderecoAssociacao.getId() == null) {
 
-				idCellModel = (int) System.currentTimeMillis() * -1;
+				idCellModel = (inc + (int) System.currentTimeMillis()) * -1;
+				
+				inc ++;
 				
 				enderecoAssociacao.setEnderecoPessoa(false);
 				

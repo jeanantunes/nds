@@ -6,9 +6,11 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 
 import javax.activation.MimetypesFileTypeMap;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.springframework.stereotype.Service;
 
@@ -201,4 +203,37 @@ public class FileServiceImpl implements FileService {
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,"Formato de arquivo inválido"));
 	}
 	
+	@Override
+	public String uploadTempFile(UploadedFile uploadedFile, String tempPath) {
+		
+		String tmpPath = "/images/tmp";
+		
+		File file = new File(tempPath, tmpPath);
+		
+		if(!file.exists()) {
+			file.mkdirs();
+		}
+		
+		String fileName = uploadedFile.getFileName();
+		
+		file = new File(file, fileName);
+		
+		FileOutputStream fos = null;
+		
+		InputStream is = uploadedFile.getFile();
+		
+		try {
+			
+			fos = new FileOutputStream(file);
+			
+			IOUtils.copyLarge(is, fos);
+			
+			fos.close();
+			
+		} catch (IOException e) {
+			throw new ValidacaoException(TipoMensagem.ERROR, " Falha ao fazer upload de arquivo temporario ");
+		}
+		
+		return new File(tmpPath, fileName).getPath();
+	}
 }

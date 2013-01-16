@@ -36,6 +36,11 @@ public class RelatorioVendasServiceImpl implements RelatorioVendasService {
 				
 				item.setRkCota(i);
 				
+				if (item.getRkProduto() == null) {
+					
+					item.setRkProduto(i);
+				}
+				
 				i++;
 			}
 		}

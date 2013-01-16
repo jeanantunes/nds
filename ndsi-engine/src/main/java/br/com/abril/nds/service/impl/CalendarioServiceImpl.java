@@ -395,9 +395,9 @@ public class CalendarioServiceImpl implements CalendarioService {
 					"Nenhum feriado encontrado");
 		}	
 		
-		if (Origem.INTERFACE.equals(feriado.getOrigem())) {
+		if (Origem.CARGA_INICIAL.equals(feriado.getOrigem())) {
 			throw new ValidacaoException(TipoMensagem.WARNING,
-					"Feriado não pode ser excluido.");
+				"Feriados cadastrados automaticamente não podem ser excluidos!");
 		}
 	}
 
@@ -747,9 +747,9 @@ public class CalendarioServiceImpl implements CalendarioService {
 	}
 
 	@Transactional
-	public List<String> obterListaLocalidadeCotas() {
+	public List<String> obterListaLocalidadePdv() {
 
-		return enderecoService.obterListaLocalidadeCotas();
+		return enderecoService.obterListaLocalidadePdv();
 
 	}
 	

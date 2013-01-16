@@ -740,12 +740,10 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 			this.obterExpectativaReparteTotal(produtosLancamentoDataEscolhida);
 		
 		produtosLancamentoNaoBalanceados =
-			this.balancearProdutosLancamento(matrizLancamento,
-											 produtosLancamentoBalanceaveisDataPrevista,
-											 dadosBalanceamentoLancamento,
-											 expectativaReparteDataEscolhida,
-											 dataLancamentoEscolhida,
-											 false);
+			this.balancearProdutosLancamento(
+				matrizLancamento, produtosLancamentoBalanceaveisDataPrevista, dadosBalanceamentoLancamento,
+				expectativaReparteDataEscolhida, dataLancamentoEscolhida,
+				dadosBalanceamentoLancamento.getCapacidadeDistribuicao(), false);
 		
 		return produtosLancamentoNaoBalanceados;
 	}
@@ -881,9 +879,8 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 											DadosBalanceamentoLancamentoDTO dadosBalanceamentoLancamento,
 											BigInteger expectativaReparteDataAtual,
 											Date dataLancamento,
+											BigInteger capacidadeDistribuicao,
 											boolean permiteExcederCapacidadeDistribuicao) {
-		
-		BigInteger capacidadeDistribuicao = dadosBalanceamentoLancamento.getCapacidadeDistribuicao();
 		
 		Integer qtdDiasLimiteParaReprogLancamento =
 			dadosBalanceamentoLancamento.getQtdDiasLimiteParaReprogLancamento();
@@ -947,34 +944,75 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 	 * pois estes excederam a capacidade de distribuição.
 	 */
 	private void processarProdutosLancamentoNaoBalanceados(TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamento,
-														   List<ProdutoLancamentoDTO> produtosLancamentoNaoBalanceados,
+														   List<ProdutoLancamentoDTO> produtosLancamentoBalancear,
 														   TreeSet<Date> datasDistribuicao,
 														   DadosBalanceamentoLancamentoDTO dadosBalanceamentoLancamento) {
 		
-		Map<Date, BigInteger> mapaExpectativaReparteTotalDiariaAtual = 
-			this.gerarMapaExpectativaReparteDiarioOrdenadoPelaMaiorData(matrizLancamento,
-																		datasDistribuicao);
+		BigInteger capacidadeDistribuicaoExcedente = 
+			this.obterCapacidadeDistribuicaoExcedente(
+				produtosLancamentoBalancear, datasDistribuicao, dadosBalanceamentoLancamento);
 		
-		this.ordenarProdutosLancamentoPorPeriodicidadeExpectativaReparte(produtosLancamentoNaoBalanceados);
+		Map<Date, BigInteger> mapaExpectativaReparteTotalDiariaAtual = null;
 		
-		produtosLancamentoNaoBalanceados =
-			alocarSobrasMatrizLancamento(matrizLancamento,
-										 produtosLancamentoNaoBalanceados,
-										 mapaExpectativaReparteTotalDiariaAtual,
-										 dadosBalanceamentoLancamento,
-										 false);
+		long quantidadeProdutosBalancear = produtosLancamentoBalancear.size();
+		
+		long quantidadeProdutosNaoBalanceados = 0;
+		
+		while (!produtosLancamentoBalancear.isEmpty()
+					&& quantidadeProdutosBalancear != quantidadeProdutosNaoBalanceados) {
+		
+			quantidadeProdutosBalancear = produtosLancamentoBalancear.size();
+			
+			mapaExpectativaReparteTotalDiariaAtual = 
+				this.gerarMapaExpectativaReparteDiarioOrdenadoPelaMaiorData(matrizLancamento,
+																			datasDistribuicao);
+			
+			this.ordenarProdutosLancamentoPorPeriodicidadeExpectativaReparte(produtosLancamentoBalancear);
+			
+			produtosLancamentoBalancear =
+				this.alocarSobrasMatrizLancamento(matrizLancamento,
+											 	  produtosLancamentoBalancear,
+											 	  mapaExpectativaReparteTotalDiariaAtual,
+											 	  dadosBalanceamentoLancamento,
+											 	  capacidadeDistribuicaoExcedente,
+											 	  false);
+			
+			quantidadeProdutosNaoBalanceados = produtosLancamentoBalancear.size();
+		}
 		
 		mapaExpectativaReparteTotalDiariaAtual = 
 			this.gerarMapaExpectativaReparteDiarioOrdenadoPelaMaiorData(matrizLancamento,
 																		datasDistribuicao);
 		
-		this.ordenarProdutosLancamentoPorPeriodicidadeExpectativaReparte(produtosLancamentoNaoBalanceados);
+		this.ordenarProdutosLancamentoPorPeriodicidadeExpectativaReparte(produtosLancamentoBalancear);
 		
-		alocarSobrasMatrizLancamento(matrizLancamento,
-									 produtosLancamentoNaoBalanceados,
-									 mapaExpectativaReparteTotalDiariaAtual,
-									 dadosBalanceamentoLancamento,
-									 true);
+		this.alocarSobrasMatrizLancamento(matrizLancamento,
+									 	  produtosLancamentoBalancear,
+									 	  mapaExpectativaReparteTotalDiariaAtual,
+									 	  dadosBalanceamentoLancamento,
+									 	  capacidadeDistribuicaoExcedente,
+									 	  true);
+	}
+
+	private BigInteger obterCapacidadeDistribuicaoExcedente(
+										List<ProdutoLancamentoDTO> produtosLancamentoBalancear,
+										TreeSet<Date> datasDistribuicao,
+										DadosBalanceamentoLancamentoDTO dadosBalanceamentoLancamento) {
+		
+		BigInteger reparteTotalBalancear =
+			this.obterExpectativaReparteTotal(produtosLancamentoBalancear);
+		
+		BigInteger capacidadeDistribuicaoExcedente = null;
+		
+		BigInteger capacidadeDistribuicao = dadosBalanceamentoLancamento.getCapacidadeDistribuicao();
+		
+		BigInteger totalDiasDistribuicao = BigInteger.valueOf(datasDistribuicao.size());
+		
+		BigInteger mediaReparteExcedente = reparteTotalBalancear.divide(totalDiasDistribuicao);
+		
+		capacidadeDistribuicaoExcedente = capacidadeDistribuicao.add(mediaReparteExcedente);
+		
+		return capacidadeDistribuicaoExcedente;
 	}
 	
 	/**
@@ -988,7 +1026,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		ComparatorChain comparatorChain = new ComparatorChain();
 		
 		comparatorChain.addComparator(new BeanComparator("ordemPeriodicidadeProduto"));
-		comparatorChain.addComparator(new BeanComparator("repartePrevisto"));
+		comparatorChain.addComparator(new BeanComparator("repartePrevisto"), true);
 		
 		Collections.sort(produtosLancamento, comparatorChain);
 	}
@@ -1025,6 +1063,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 											List<ProdutoLancamentoDTO> produtosLancamentoBalanceaveis,
 											Map<Date, BigInteger> mapaExpectativaReparteTotalDiariaAtual,
 											DadosBalanceamentoLancamentoDTO dadosBalanceamentoLancamento,
+											BigInteger capacidadeDistribuicao,
 											boolean permiteExcederCapacidadeDistribuicao) {
 		
 		for (Map.Entry<Date, BigInteger> entry : mapaExpectativaReparteTotalDiariaAtual.entrySet()) {
@@ -1040,9 +1079,10 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 			BigInteger expectativaReparteDataAtual = entry.getValue();
 			
 			produtosLancamentoBalanceaveis =
-				balancearProdutosLancamento(matrizLancamento, produtosLancamentoBalanceaveis,
-											dadosBalanceamentoLancamento, expectativaReparteDataAtual,
-											dataLancamento, permiteExcederCapacidadeDistribuicao);
+				this.balancearProdutosLancamento(
+					matrizLancamento, produtosLancamentoBalanceaveis, dadosBalanceamentoLancamento,
+					expectativaReparteDataAtual, dataLancamento, capacidadeDistribuicao,
+					permiteExcederCapacidadeDistribuicao);
 		}
 		
 		return produtosLancamentoBalanceaveis;

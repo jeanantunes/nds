@@ -18,6 +18,7 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.sql.JoinType;
 import org.hibernate.transform.AliasToBeanConstructorResultTransformer;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.transform.ResultTransformer;
@@ -1457,6 +1458,11 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 		criteria.createAlias("box", "box");
 		criteria.createAlias("pdvs", "pdvs");
 		criteria.createAlias("movimentoEstoqueCotas", "mec");
+
+		criteria.createAlias("mec.lancamento", "lancamento");
+		
+		criteria.createAlias("mec.movimentoEstoqueCotaFuro", "movimentoEstoqueCotaFuro",JoinType.LEFT_OUTER_JOIN);
+				
 		criteria.createAlias("mec.tipoMovimento", "tipoMovimento");
 		criteria.createAlias("pessoa", "pessoa");
 		criteria.setProjection(Projections.distinct(Projections.property("id")));
@@ -1468,8 +1474,15 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 		
 		criteria.add(Restrictions.in("tipoMovimento.grupoMovimentoEstoque", listaGrupoMovimentoEstoques));
 		
+		criteria.add(Restrictions.isNull("movimentoEstoqueCotaFuro.id"));
+		
 		if (filtro.getIdFornecedores() != null && !filtro.getIdFornecedores().isEmpty()) {
-			criteria.createAlias("fornecedores", "fornecedor");
+			
+			//TODO VALIDAR
+			criteria.createAlias("movimentoEstoqueCotas.produtoEdicao", "produtoEdicao");
+			criteria.createAlias("produtoEdicao.produto", "produto");
+			criteria.createAlias("produto.fornecedores", "fornecedor");
+			
 			criteria.add(Restrictions.or(Restrictions.isNull("fornecedor.id"), Restrictions.in("fornecedor.id", filtro.getIdFornecedores())));
 		}		
 		
@@ -1505,6 +1518,10 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 			
 			criteria.add(Restrictions.eq("rota.id", filtro.getIdRota()));
 		}
+		
+		if (filtro.getIntervaloMovimento() != null && filtro.getIntervaloMovimento().getDe() != null && filtro.getIntervaloMovimento().getAte() != null) {
+			criteria.add(Restrictions.between("lancamento.dataLancamentoDistribuidor", filtro.getIntervaloMovimento().getDe(), filtro.getIntervaloMovimento().getAte()));
+		}
 				
 		//Controla a ordenação
 		Map<String, String> columnToSort = new HashMap<String, String>();
@@ -1524,12 +1541,16 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 			criteria.addOrder(paginacaoVO.getSortOrder().equals("asc") ? Order.asc(sortName) : Order.desc(sortName));
 		}
 		
-		//Controla a paginação
-		if((paginacaoVO.getPaginaAtual() != null && paginacaoVO.getPaginaAtual() > 0) && (paginacaoVO.getQtdResultadosPorPagina() != null && paginacaoVO.getQtdResultadosPorPagina() > 0)) {
-			criteria.setFirstResult((paginacaoVO.getPaginaAtual() - 1) * paginacaoVO.getQtdResultadosPorPagina());
-			criteria.setMaxResults(paginacaoVO.getQtdResultadosPorPagina());
+		if(filtro.getPaginacaoVO().getPosicaoInicial()!= null){
+
+			criteria.setFirstResult(filtro.getPaginacaoVO().getPosicaoInicial());
 		}
-				
+		
+		if(filtro.getPaginacaoVO().getQtdResultadosPorPagina()!= null){				
+
+			criteria.setMaxResults(filtro.getPaginacaoVO().getQtdResultadosPorPagina());
+
+		}	
 		listaIdCotas.addAll(criteria.list());
 		
 		return listaIdCotas;
@@ -1772,5 +1793,19 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 		
 		query.executeUpdate();
 	}	
+    
+    @Override
+    public Cota buscarCotaPorID(Long idCota) {
+    	
+    	String queryString = " select cota from Cota cota "
+				   + " join fetch cota.fornecedores fornecedores "
+				   + " where cota.id = :idCota ";
+
+		Query query = this.getSession().createQuery(queryString);
+		
+		query.setParameter("idCota", idCota);
+		
+		return (Cota) query.uniqueResult();
+    }
 
 }

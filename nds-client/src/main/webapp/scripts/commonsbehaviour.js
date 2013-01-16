@@ -15,7 +15,6 @@
 				
 				for (property in element) {
 					for (item in element[property]) {
-//						console.log("[name='" + property + "."+item+"']" + element[property][item])
 						$("#" + form.attr("id") + " [name='" + property + "."+item+"']").val(element[property][item]);
 					}
 				}

@@ -133,7 +133,7 @@ public class NotaFiscalEntradaServiceImpl implements NotaFiscalEntradaService {
 
 		if (tipoNotaFiscal == null) {
 			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Tipo da nota fiscal não foi encontrado.");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Tipo de nota fiscal não foi encontrado.");
 		}
 		
 		notaFiscal.setTipoNotaFiscal(tipoNotaFiscal);

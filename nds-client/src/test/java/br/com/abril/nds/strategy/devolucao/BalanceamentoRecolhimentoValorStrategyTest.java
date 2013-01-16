@@ -163,13 +163,13 @@ public class BalanceamentoRecolhimentoValorStrategyTest {
 		
 		dadosRecolhimento.setDatasRecolhimentoFornecedor(datasRecolhimentoFornecedor);
 		
-		TreeMap<Date, BigInteger> mapaExpectativaEncalheTotalDiaria = new TreeMap<Date, BigInteger>();
+		TreeMap<Date, BigDecimal> mapaExpectativaEncalheTotalDiaria = new TreeMap<Date, BigDecimal>();
 		
-		mapaExpectativaEncalheTotalDiaria.put(DateUtil.parseDataPTBR("07/05/2012"), new BigInteger("2"));
-		mapaExpectativaEncalheTotalDiaria.put(DateUtil.parseDataPTBR("08/05/2012"), new BigInteger("2"));
-		mapaExpectativaEncalheTotalDiaria.put(DateUtil.parseDataPTBR("09/05/2012"), new BigInteger("3"));
-		mapaExpectativaEncalheTotalDiaria.put(DateUtil.parseDataPTBR("10/05/2012"), new BigInteger("5"));
-		mapaExpectativaEncalheTotalDiaria.put(DateUtil.parseDataPTBR("11/05/2012"), new BigInteger("1"));
+		mapaExpectativaEncalheTotalDiaria.put(DateUtil.parseDataPTBR("07/05/2012"), new BigDecimal("2"));
+		mapaExpectativaEncalheTotalDiaria.put(DateUtil.parseDataPTBR("08/05/2012"), new BigDecimal("2"));
+		mapaExpectativaEncalheTotalDiaria.put(DateUtil.parseDataPTBR("09/05/2012"), new BigDecimal("3"));
+		mapaExpectativaEncalheTotalDiaria.put(DateUtil.parseDataPTBR("10/05/2012"), new BigDecimal("5"));
+		mapaExpectativaEncalheTotalDiaria.put(DateUtil.parseDataPTBR("11/05/2012"), new BigDecimal("1"));
 		
 		dadosRecolhimento.setMapaExpectativaEncalheTotalDiaria(mapaExpectativaEncalheTotalDiaria);
 		
@@ -263,13 +263,13 @@ public class BalanceamentoRecolhimentoValorStrategyTest {
 		
 		dadosRecolhimento.setDatasRecolhimentoFornecedor(datasRecolhimentoFornecedor);
 		
-		TreeMap<Date, BigInteger> mapaExpectativaEncalheTotalDiaria = new TreeMap<Date, BigInteger>();
+		TreeMap<Date, BigDecimal> mapaExpectativaEncalheTotalDiaria = new TreeMap<Date, BigDecimal>();
 		
-		mapaExpectativaEncalheTotalDiaria.put(DateUtil.parseDataPTBR("07/05/2012"), new BigInteger("80"));
-		mapaExpectativaEncalheTotalDiaria.put(DateUtil.parseDataPTBR("08/05/2012"), new BigInteger("20"));
-		mapaExpectativaEncalheTotalDiaria.put(DateUtil.parseDataPTBR("09/05/2012"), new BigInteger("50"));
-		mapaExpectativaEncalheTotalDiaria.put(DateUtil.parseDataPTBR("10/05/2012"), new BigInteger("20"));
-		mapaExpectativaEncalheTotalDiaria.put(DateUtil.parseDataPTBR("11/05/2012"), new BigInteger("30"));
+		mapaExpectativaEncalheTotalDiaria.put(DateUtil.parseDataPTBR("07/05/2012"), new BigDecimal("80"));
+		mapaExpectativaEncalheTotalDiaria.put(DateUtil.parseDataPTBR("08/05/2012"), new BigDecimal("20"));
+		mapaExpectativaEncalheTotalDiaria.put(DateUtil.parseDataPTBR("09/05/2012"), new BigDecimal("50"));
+		mapaExpectativaEncalheTotalDiaria.put(DateUtil.parseDataPTBR("10/05/2012"), new BigDecimal("20"));
+		mapaExpectativaEncalheTotalDiaria.put(DateUtil.parseDataPTBR("11/05/2012"), new BigDecimal("30"));
 		
 		dadosRecolhimento.setMapaExpectativaEncalheTotalDiaria(mapaExpectativaEncalheTotalDiaria);
 		

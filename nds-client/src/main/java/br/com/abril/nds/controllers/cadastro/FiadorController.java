@@ -695,9 +695,11 @@ public class FiadorController extends BaseController {
 	}
 
 	private void limparDadosSessao(){
+		
 		this.httpSession.removeAttribute(LISTA_ENDERECOS_SALVAR_SESSAO);
 		this.httpSession.removeAttribute(LISTA_ENDERECOS_REMOVER_SESSAO);
 		this.httpSession.removeAttribute(LISTA_ENDERECOS_EXIBICAO);
+		this.httpSession.removeAttribute(SociosController.LISTA_SOCIOS_EXIBIR_SESSAO);
 		this.httpSession.removeAttribute(SociosController.LISTA_SOCIOS_SALVAR_SESSAO);
 		this.httpSession.removeAttribute(SociosController.LISTA_SOCIOS_REMOVER_SESSAO);
 		this.httpSession.removeAttribute(LISTA_TELEFONES_SALVAR_SESSAO);

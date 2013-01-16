@@ -61,7 +61,7 @@ $(function(){$('img.capaImg').load(function() {
 
 <table width="850" border="0" align="center" cellpadding="0" cellspacing="0" style="margin-bottom:10px; margin-top:10px;">
   <tr>
-    <td width="121" rowspan="6" valign="top"><span class="logo">
+    <td width="121" rowspan="6" valign="top"><span>
     	<img src="${pageContext.request.contextPath}/cadastro/distribuidor/logo" width="110" height="115" alt="Novo Distrib"  /></span>
     </td>
     <td colspan="4" style="border-left:1px solid #000; border-top:1px solid #000;"><span class="cabecalho">Razão Social<br />
@@ -166,7 +166,7 @@ $(function(){$('img.capaImg').load(function() {
   
   <tr class="class_linha_${status.index%2==0?1:2}">
   
-    <td width="58" style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; height:45px ">${produto.codigoProduto}</td>
+    <td width="58" style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; height:30px ">${produto.codigoProduto}</td>
     <td width="230" style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; "><strong>${produto.nomeProduto}</strong></td>
     <td width="34" style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; "><strong>${produto.edicao}</strong></td>
     <td width="34" align="center" style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px;border-right:1px solid #000;  "><strong>${status.index+1}</strong></td>
@@ -254,84 +254,7 @@ $(function(){$('img.capaImg').load(function() {
 </div>
 <c:if test="${withCapa}">
 <div class="quebraPaginaEmissao" id=paginaCapas>	
-	
-<table width="850" border="0" align="center" cellpadding="0" cellspacing="0" style="margin-bottom:10px; margin-top:10px;">
-  <tr>
-    <td width="121" rowspan="6" valign="top"><span class="logo">
-    	<img src="${pageContext.request.contextPath}/cadastro/distribuidor/logo" width="110" height="115" alt="Novo Distrib"  /></span>
-    </td>
-    <td colspan="4" style="border-left:1px solid #000; border-top:1px solid #000;"><span class="cabecalho">Razão Social<br />
-    </span></td>
-    <td width="237" rowspan="2" align="center" style="border-left:1px solid #000;"><span class="cabecalho" style="font-size:13px!important;"><strong>CHAMADA DE ENCALHE</strong></span></td>
-  </tr>
-  <tr>
-    <td  colspan="4" style="border-left:1px solid #000; border-bottom:1px solid #000;"><span class="dadosNota">${dadosDistribuidor.razaoSocial}</span></td>
-  </tr>
-  <tr>
-    <td width="172" style="border-left:1px solid #000;"><span class="cabecalho">Endereço<br />
-    </span></td>
-    <th width="25">&nbsp;</th>
-    <th width="75">&nbsp;</th>
-    <td width="130" align="center"><span class="cabecalho">CNPJ</span></td>
-    <td rowspan="4" align="center" style="border-left:1px solid #000;vertical-align: top;"><h2>Documento Número: ${cotaEmissao.idChamEncCota}</h2></td>
-  </tr>
-  <tr>
-    <td colspan="2" style="border-left:1px solid #000;border-bottom:1px solid #000;">
-    	<span class="dadosNota">${dadosDistribuidor.endereco}<br /></span>
-    </td>
-    <td style="border-bottom:1px solid #000;"><span class="dadosNota"></span></td>
-    <td align="center" style="border-bottom:1px solid #000;"><span class="dadosNota">${dadosDistribuidor.cnpj}</span></td>
-  </tr>
-  <tr height="18" style="vertical-align: middle;">
-    <td style="border-left:1px solid #000;"><span class="cabecalho">Cidade</span></td>
-    <td align="center"><span class="cabecalho">UF</span></td>
-    <td align="center"><span class="cabecalho">CEP</span></td>
-    <td align="center"><span class="cabecalho">Inscrição Estadual</span></td>
-  </tr>
-  <tr>
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;"><span  class="dadosNota">${dadosDistribuidor.cidade}</span></td>
-    <td align="center" style="border-bottom:1px solid #000;"><span class="dadosNota">${dadosDistribuidor.uf}</span></td>
-    <td align="center" style="border-bottom:1px solid #000;"><span class="dadosNota">${dadosDistribuidor.cep}</span></td>
-    <td align="center" style="border-bottom:1px solid #000;"><span class="dadosNota">${dadosDistribuidor.inscricaoEstatual}</span></td>
-  </tr>
-</table>
-<table width="850" border="0" align="center" cellpadding="0" cellspacing="0" >
-  <tr>
-    <td height="16" colspan="4" style="border-left:1px solid #000; border-right:1px solid #000; border-top:1px solid #000;"><span class="titulo">Cliente<br />
-    </span></td>
-    <td width="144" style="border-top:1px solid #000;border-right:1px solid #000;"><span class="titulo">CPF/CNPJ</span></td>
-  </tr>
-  <tr>
-    <td height="26" colspan="4" style="border-left:1px solid #000;border-right:1px solid #000;border-bottom:1px solid #000;"><span class="dadosNota" style="font-size:13px!important;"><strong>${cotaEmissao.numCota}</strong> - ${cotaEmissao.nomeCota.toUpperCase()}</span></td>
-    <td style=" border-bottom:1px solid #000;border-right:1px solid #000;"><span class="dadosNota">${cotaEmissao.cnpj}</span></td>
-  </tr>
-  <tr>
-    <td width="376" height="15" style="border-left:1px solid #000;"><span class="titulo">Endereço </span></td>
-    <td width="109" style="border-right:1px solid #000;border-left:1px solid #000;"><span class="titulo">Cidade</span></td>
-    <td width="50" align="center" style="border-right:1px solid #000;"><span class="titulo">UF</span></td>
-    <td width="81" align="center" style="border-right:1px solid #000;"><span class="titulo">CEP</span></td>
-    <td style="border-right:1px solid #000;"><span class="titulo">Inscrição Estadual</span></td>
-  </tr>
-  <tr>
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;"><span class="dadosNota">${cotaEmissao.endereco}</span></td>
-    <td style="border-bottom:1px solid #000;border-right:1px solid #000;border-left:1px solid #000;"><span class="dadosNota">${cotaEmissao.cidade}</span></td>
-    <td align="center" style="border-bottom:1px solid #000;border-right:1px solid #000;"><span class="dadosNota">${cotaEmissao.uf}</span></td>
-    <td align="center" style="border-bottom:1px solid #000;border-right:1px solid #000;"><span class="dadosNota">${cotaEmissao.cep}</span></td>
-    <td style="border-bottom:1px solid #000;border-right:1px solid #000;"><span class="dadosNota">${cotaEmissao.inscricaoEstadual}</span></td>
-  </tr>
-</table>
-<table width="850" border="0" align="center" cellpadding="0" cellspacing="0" style="margin-bottom:10px;">
-  <tr>
-    <td width="196" align="center" style="border-left:1px solid #000;"><span class="titulo">Data de Recolhimento</span></td>
-    <td width="196" align="center" style="border-right:1px solid #000;border-left:1px solid #000;"><span class="titulo">Data de Emissão</span></td>
-    <td width="458" style="border-right:1px solid #000;"><span class="titulo">Box / Roteiro / Rota</span></td>
-  </tr>
-  <tr>
-    <td align="center" style="border-left:1px solid #000;border-bottom:1px solid #000;"><span class="dadosNota">${cotaEmissao.dataRecolhimento}</span></td>
-    <td align="center" style="border-bottom:1px solid #000;border-right:1px solid #000;border-left:1px solid #000;"><span class="dadosNota">${cotaEmissao.dataEmissao}</span></td>
-    <td style="border-bottom:1px solid #000;border-right:1px solid #000;"><span class="dadosNota">Box: ${cotaEmissao.nomeBox} / Roteiro: ${cotaEmissao.nomeRoteiro} / Rota: ${cotaEmissao.nomeRota}</span></td>
-  </tr>
-</table>
+
 
 	<div id="painelCapas">	
 		<div style="width: inherit; text-align: center;">
@@ -348,7 +271,7 @@ $(function(){$('img.capaImg').load(function() {
 					<strong>${status.index+1}</strong>				
 				</div>			
 				<div style="width: inherit; text-align: center;">
-					<img class="capaImg" src="<c:url value='/capa/${capa.id}'></c:url>"/>
+					<img class="capaImg" src="<c:url value='/capa/tratarNoImage/${capa.id}'></c:url>"/>
 				</div>
 			</div>	
 			
@@ -366,7 +289,7 @@ $(function(){$('img.capaImg').load(function() {
 					<strong>${status.index+1}</strong>				
 				</div>			
 				<div style="width: inherit; text-align: center;">
-					<img class="capaImg" src="<c:url value='/capa/${produto.idProdutoEdicao}'></c:url>"/>
+					<img class="capaImg" src="<c:url value='/capa/tratarNoImage/${produto.idProdutoEdicao}'></c:url>"/>
 				</div>
 			</div>	
 			

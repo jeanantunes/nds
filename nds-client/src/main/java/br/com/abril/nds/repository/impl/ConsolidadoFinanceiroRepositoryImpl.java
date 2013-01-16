@@ -461,8 +461,10 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 	public Long obterQuantidadeDividasGeradasData(List<Long> idsCota) {
 		
 		StringBuilder hql = new StringBuilder("select count(c.id) ");
-		hql.append(" from ConsolidadoFinanceiroCota c, Distribuidor d ")
-		   .append(" where c.dataConsolidado = d.dataOperacao ");
+		hql.append(" from ConsolidadoFinanceiroCota c, Distribuidor d, Divida divida ")
+		   .append(" where c.dataConsolidado = d.dataOperacao ")
+		   .append(" and c.id = divida.consolidado.id ")
+		   .append(" and divida.data = d.dataOperacao ");
 		
 		if (idsCota != null) {
 			

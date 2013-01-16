@@ -1,5 +1,7 @@
 package br.com.abril.nds.model.planejamento;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -11,6 +13,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 /**
  * Cadastro de período de lançamento parcial,
@@ -50,6 +54,11 @@ public class PeriodoLancamentoParcial {
 	/** Número do Período do lançamento parcial. */
 	@Column(name = "NUMERO_PERIODO", nullable = false)
 	private Integer numeroPeriodo;
+	
+	@Temporal(value=TemporalType.DATE)
+	@Column(name = "DATA_CRIACAO")
+	private Date dataCriacao;
+
 	
 
 	/**
@@ -127,6 +136,14 @@ public class PeriodoLancamentoParcial {
 
 	public void setNumeroPeriodo(Integer numeroPeriodo) {
 		this.numeroPeriodo = numeroPeriodo;
+	}
+
+	public Date getDataCriacao() {
+		return dataCriacao;
+	}
+
+	public void setDataCriacao(Date dataCriacao) {
+		this.dataCriacao = dataCriacao;
 	}
 	
 }

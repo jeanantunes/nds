@@ -1,5 +1,6 @@
 package br.com.abril.nds.strategy.devolucao;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -35,23 +36,23 @@ public class BalanceamentoRecolhimentoAutomaticoStrategy extends AbstractBalance
 		
 		List<ProdutoRecolhimentoDTO> todosProdutosRecolhimentoNaoBalanceados = new ArrayList<ProdutoRecolhimentoDTO>();
 		
-		Map<Date, BigInteger> mapaExpectativaEncalheTotalDiaria = 
+		Map<Date, BigDecimal> mapaExpectativaEncalheTotalDiaria = 
 			dadosRecolhimento.getMapaExpectativaEncalheTotalDiaria();
 		
 		Set<Date> obterDatasConfirmadas = super.obterDatasConfirmadas(dadosRecolhimento.getProdutosRecolhimento());
 		
 		TreeSet<Date> datasRecolhimento = super.obterDatasRecolhimento(dadosRecolhimento.getDatasRecolhimentoFornecedor(), obterDatasConfirmadas);
 		
-		Map<Date, BigInteger> mapaExpectativaEncalheTotalDiariaOrdenado =
+		Map<Date, BigDecimal> mapaExpectativaEncalheTotalDiariaOrdenado =
 			super.ordenarMapaExpectativaEncalhePorDatasRecolhimento(
 				mapaExpectativaEncalheTotalDiaria, datasRecolhimento);
 		
-		for (Map.Entry<Date, BigInteger> entryExpectativaEncalheTotalDiaria : 
+		for (Map.Entry<Date, BigDecimal> entryExpectativaEncalheTotalDiaria : 
 				mapaExpectativaEncalheTotalDiariaOrdenado.entrySet()) {
 			
 			Date dataRecolhimentoPrevista = entryExpectativaEncalheTotalDiaria.getKey();
 			
-			BigInteger expectativaEncalheABalancear = entryExpectativaEncalheTotalDiaria.getValue();
+			BigDecimal expectativaEncalheABalancear = entryExpectativaEncalheTotalDiaria.getValue();
 
 			super.processarProdutosRecolhimentoNaoBalanceaveis(
 				matrizRecolhimentoBalanceada, dadosRecolhimento, dataRecolhimentoPrevista);
@@ -68,7 +69,8 @@ public class BalanceamentoRecolhimentoAutomaticoStrategy extends AbstractBalance
 		}
 		
 		this.gerenciarProdutosRecolhimentoNaoBalanceados(
-			matrizRecolhimentoBalanceada, todosProdutosRecolhimentoNaoBalanceados, dadosRecolhimento);
+			matrizRecolhimentoBalanceada, todosProdutosRecolhimentoNaoBalanceados,
+			datasRecolhimento, dadosRecolhimento);
 		
 		return matrizRecolhimentoBalanceada;
 	}
@@ -81,21 +83,21 @@ public class BalanceamentoRecolhimentoAutomaticoStrategy extends AbstractBalance
 																			BigInteger capacidadeManuseio,
 																		    List<ProdutoRecolhimentoDTO> produtosRecolhimentoBalanceaveis,
 																		    List<ProdutoRecolhimentoDTO> produtosRecolhimentoNaData,
-																		    BigInteger expectativaEncalheTotalAtualNaData,
+																		    BigDecimal expectativaEncalheTotalAtualNaData,
 																		    Date dataBalanceamento,
 																		    boolean permiteExcederCapacidadeManuseio) {
 		
 		ComparatorChain comparatorChain = new ComparatorChain();
 		
 		comparatorChain.addComparator(new BeanComparator("dataRecolhimentoDistribuidor"), true);
-		comparatorChain.addComparator(new BeanComparator("expectativaEncalhe"));
+		comparatorChain.addComparator(new BeanComparator("expectativaEncalhe"), true);
 		
 		Collections.sort(produtosRecolhimentoBalanceaveis, comparatorChain);
 		
-		BigInteger expectativaEncalheASerPreenchida = 
-			capacidadeManuseio.subtract(expectativaEncalheTotalAtualNaData);
+		BigDecimal expectativaEncalheASerPreenchida = 
+			new BigDecimal(capacidadeManuseio).subtract(expectativaEncalheTotalAtualNaData);
 		
-		BigInteger expectativaEncalheElegivel = BigInteger.ZERO;
+		BigDecimal expectativaEncalheElegivel = BigDecimal.ZERO;
 		
 		List<ProdutoRecolhimentoDTO> produtosRecolhimentoElegiveis = 
 			new ArrayList<ProdutoRecolhimentoDTO>();
@@ -131,7 +133,7 @@ public class BalanceamentoRecolhimentoAutomaticoStrategy extends AbstractBalance
 												Map<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimentoBalanceada,
 												Date dataRecolhimentoPrevista, TreeSet<Date> datasRecolhimento,
 												RecolhimentoDTO dadosRecolhimento,
-												BigInteger expectativaEncalheABalancear) {
+												BigDecimal expectativaEncalheABalancear) {
 
 		Date dataBalanceamento = super.obterDataRecolhimentoPermitida(datasRecolhimento, dataRecolhimentoPrevista);
 
@@ -145,9 +147,9 @@ public class BalanceamentoRecolhimentoAutomaticoStrategy extends AbstractBalance
 			super.obterProdutosRecolhimentoBalanceaveisPorData(
 				dadosRecolhimento, dataRecolhimentoPrevista);
 
-		BigInteger expectativaEncalheTotalAtualNaData = super.obterExpectativaEncalheTotal(produtosRecolhimentoNaData);
+		BigDecimal expectativaEncalheTotalAtualNaData = super.obterExpectativaEncalheTotal(produtosRecolhimentoNaData);
 
-		BigInteger excessoExpectativaEncalhe = 
+		BigDecimal excessoExpectativaEncalhe = 
 			super.calcularExcessoExpectativaEncalhe(
 				expectativaEncalheTotalAtualNaData, capacidadeManuseio, expectativaEncalheABalancear);
 
@@ -172,22 +174,64 @@ public class BalanceamentoRecolhimentoAutomaticoStrategy extends AbstractBalance
 	 * Gerencia os produtos do recolhimento que não foram balanceados por excederem a capacidade de manuseio.
 	 */
 	private void gerenciarProdutosRecolhimentoNaoBalanceados(Map<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento,
-															 List<ProdutoRecolhimentoDTO> produtosRecolhimentoNaoBalanceados,
+															 List<ProdutoRecolhimentoDTO> produtosRecolhimentoBalanceaveis,
+															 TreeSet<Date> datasRecolhimento,
 															 RecolhimentoDTO dadosRecolhimento) {
 		
-		Map<Date, BigInteger> mapaExpectativaEncalheTotalDiariaAtual = 
-			this.gerarMapaExpectativaEncalheTotalDiariaOrdenadoPelaMaiorData(matrizRecolhimento, dadosRecolhimento.getDatasRecolhimentoFornecedor());
+		BigInteger capacidadeRecolhimentoExcedente =
+			this.obterCapacidadeRecolhimentoExcedente(
+				produtosRecolhimentoBalanceaveis, datasRecolhimento, dadosRecolhimento);
 		
-		this.alocarSobrasMatrizRecolhimento(
-			matrizRecolhimento, mapaExpectativaEncalheTotalDiariaAtual, 
-				produtosRecolhimentoNaoBalanceados, dadosRecolhimento, false);
+		Map<Date, BigDecimal> mapaExpectativaEncalheTotalDiariaAtual = null;
+		
+		long quantidadeProdutosBalancear = produtosRecolhimentoBalanceaveis.size();
+		
+		long quantidadeProdutosNaoBalanceados = 0;
+		
+		while (!produtosRecolhimentoBalanceaveis.isEmpty()
+					&& quantidadeProdutosBalancear != quantidadeProdutosNaoBalanceados) {
+			
+			quantidadeProdutosBalancear = produtosRecolhimentoBalanceaveis.size();
+			
+			mapaExpectativaEncalheTotalDiariaAtual = 
+				this.gerarMapaExpectativaEncalheTotalDiariaOrdenadoPelaMaiorData(matrizRecolhimento, dadosRecolhimento.getDatasRecolhimentoFornecedor());
+			
+			this.alocarSobrasMatrizRecolhimento(
+				matrizRecolhimento, mapaExpectativaEncalheTotalDiariaAtual, 
+				produtosRecolhimentoBalanceaveis, dadosRecolhimento,
+				capacidadeRecolhimentoExcedente, false);
+			
+			quantidadeProdutosNaoBalanceados = produtosRecolhimentoBalanceaveis.size();
+		}
 		
 		mapaExpectativaEncalheTotalDiariaAtual = 
 			this.gerarMapaExpectativaEncalheTotalDiariaOrdenadoPelaMaiorData(matrizRecolhimento,dadosRecolhimento.getDatasRecolhimentoFornecedor());
 		
 		this.alocarSobrasMatrizRecolhimento(
 			matrizRecolhimento, mapaExpectativaEncalheTotalDiariaAtual, 
-				produtosRecolhimentoNaoBalanceados, dadosRecolhimento, true);
+			produtosRecolhimentoBalanceaveis, dadosRecolhimento,
+			capacidadeRecolhimentoExcedente, true);
+	}
+	
+	private BigInteger obterCapacidadeRecolhimentoExcedente(
+									List<ProdutoRecolhimentoDTO> produtosRecolhimento,
+									TreeSet<Date> datasRecolhimento,
+									RecolhimentoDTO dadosRecolhimento) {
+
+		BigDecimal encalheTotalBalancear = this.obterExpectativaEncalheTotal(produtosRecolhimento);
+
+		BigInteger capacidadeRecolhimentoExcedente = null;
+
+		BigInteger capacidadeRecolhimento = dadosRecolhimento.getCapacidadeRecolhimentoDistribuidor();
+
+		BigInteger totalDiasRecolhimento = BigInteger.valueOf(datasRecolhimento.size());
+
+		BigInteger mediaEncalheExcedente =
+			encalheTotalBalancear.toBigInteger().divide(totalDiasRecolhimento);
+
+		capacidadeRecolhimentoExcedente = capacidadeRecolhimento.add(mediaEncalheExcedente);
+
+		return capacidadeRecolhimentoExcedente;
 	}
 	
 	/*
@@ -196,20 +240,21 @@ public class BalanceamentoRecolhimentoAutomaticoStrategy extends AbstractBalance
 	 */
 	private List<ProdutoRecolhimentoDTO> alocarSobrasMatrizRecolhimento(
 											    Map<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento,
-												Map<Date, BigInteger> mapaExpectativaEncalheTotalDiariaAtual,
-											    List<ProdutoRecolhimentoDTO> produtosRecolhimentoNaoBalanceados,
+												Map<Date, BigDecimal> mapaExpectativaEncalheTotalDiariaAtual,
+											    List<ProdutoRecolhimentoDTO> produtosRecolhimentoBalanceaveis,
 											    RecolhimentoDTO dadosRecolhimento,
+											    BigInteger capacidadeRecolhimento,
 											    boolean permiteExcederCapacidadeManuseioDistribuidor) {
 		
-		if (produtosRecolhimentoNaoBalanceados.isEmpty()) {
+		if (produtosRecolhimentoBalanceaveis.isEmpty()) {
 			
-			return produtosRecolhimentoNaoBalanceados;
+			return produtosRecolhimentoBalanceaveis;
 		}
 		
-		for (Map.Entry<Date, BigInteger> entryExpectativaEncalheTotalDiariaAtual :
+		for (Map.Entry<Date, BigDecimal> entryExpectativaEncalheTotalDiariaAtual :
 				mapaExpectativaEncalheTotalDiariaAtual.entrySet()) {
 			
-			if (produtosRecolhimentoNaoBalanceados.isEmpty()) {
+			if (produtosRecolhimentoBalanceaveis.isEmpty()) {
 				
 				break;
 			}
@@ -221,19 +266,19 @@ public class BalanceamentoRecolhimentoAutomaticoStrategy extends AbstractBalance
 				continue;
 			}
 			
-			BigInteger expectativaEncalheTotalAtualNaData = entryExpectativaEncalheTotalDiariaAtual.getValue();
+			BigDecimal expectativaEncalheTotalAtualNaData = entryExpectativaEncalheTotalDiariaAtual.getValue();
 			
 			List<ProdutoRecolhimentoDTO> produtosRecolhimentoNaData = matrizRecolhimento.get(dataBalanceamento);
 			
-			produtosRecolhimentoNaoBalanceados =
+			produtosRecolhimentoBalanceaveis =
 				this.alocarProdutosMatrizRecolhimento(
-					matrizRecolhimento, dadosRecolhimento.getCapacidadeRecolhimentoDistribuidor(),
-						produtosRecolhimentoNaoBalanceados, produtosRecolhimentoNaData, 
+					matrizRecolhimento, capacidadeRecolhimento,
+						produtosRecolhimentoBalanceaveis, produtosRecolhimentoNaData, 
 							expectativaEncalheTotalAtualNaData, dataBalanceamento, 
 								permiteExcederCapacidadeManuseioDistribuidor);
 		}
 		
-		return produtosRecolhimentoNaoBalanceados;
+		return produtosRecolhimentoBalanceaveis;
 	}
 
 }

@@ -217,7 +217,7 @@ var EmissaoCEController = $.extend(true, {
 				align : 'right'
 			}],
 				width : 960,
-				height : 'auto',
+				height : 400,
 				sortname : "nomeCota",
 				sortorder : "asc"
 			});

@@ -403,8 +403,8 @@ public class EnderecoServiceImpl implements EnderecoService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<String> obterListaLocalidadeCotas() {
-		return this.enderecoRepository.obterListaLocalidadeCotas();
+	public List<String> obterListaLocalidadePdv() {
+		return this.enderecoRepository.obterListaLocalidadePdv();
 	}
 
 

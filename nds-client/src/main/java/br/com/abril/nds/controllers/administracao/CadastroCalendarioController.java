@@ -18,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.CalendarioFeriadoDTO;
-import br.com.abril.nds.dto.CotaAusenteEncalheDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.TipoFeriado;
 import br.com.abril.nds.model.seguranca.Permissao;
@@ -85,7 +84,7 @@ public class CadastroCalendarioController extends BaseController {
 	
 	private void carregarComboMunicipio() {
 		
-		List<String> listaLocalidade = calendarioService.obterListaLocalidadeCotas();
+		List<String> listaLocalidade = calendarioService.obterListaLocalidadePdv();
 		
 		this.result.include("listaLocalidade", listaLocalidade);
 		

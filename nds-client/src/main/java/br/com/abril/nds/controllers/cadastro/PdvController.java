@@ -462,6 +462,8 @@ public class PdvController extends BaseController {
 		this.httpSession.removeAttribute(LISTA_TELEFONES_REMOVER_SESSAO);
 		this.httpSession.removeAttribute(LISTA_TELEFONES_EXIBICAO);
 		
+		this.httpSession.removeAttribute(EnderecoController.ENDERECO_PENDENTE);
+		
 		httpSession.setAttribute(IMAGEM_PDV, null);
 	}
 
@@ -498,6 +500,8 @@ public class PdvController extends BaseController {
 		try{
 		
 			pdvService.salvar(pdvDTO);
+			
+			this.httpSession.setAttribute(EnderecoController.ENDERECO_PENDENTE, Boolean.FALSE);
 		
 			result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
 					"result").recursive().serialize();
@@ -612,6 +616,11 @@ public class PdvController extends BaseController {
 			}
 			
 			validarHorario(novoPeriodo);
+		} else {
+			if(novoPeriodo!=null) {
+				novoPeriodo.setInicio(null);
+				novoPeriodo.setFim(null);
+			}
 		}
 		
 		pdvService.validarPeriodos(periodos);
@@ -870,6 +879,13 @@ public class PdvController extends BaseController {
 		httpSession.setAttribute(LISTA_TELEFONES_REMOVER_SESSAO, null);
 		httpSession.setAttribute(LISTA_TELEFONES_SALVAR_SESSAO, null);
     }
+    
+    private boolean isNotEnderecoPendente(){
+		
+        Boolean enderecoPendente = (Boolean) this.httpSession.getAttribute(EnderecoController.ENDERECO_PENDENTE);
+		
+		return (enderecoPendente==null || !enderecoPendente);
+	}
 	
 	/**
 	 * Carrega endereços ligados ao PDV e Cota
@@ -880,9 +896,12 @@ public class PdvController extends BaseController {
 	 */
 	private void carregarEnderecosPDV(Long idPdv, Long idCota) {
 		
-		List<EnderecoAssociacaoDTO> listaEnderecos = this.pdvService.buscarEnderecosPDV(idPdv,idCota);
+		if (this.isNotEnderecoPendente()){
 		
-		armazenarEnderecosSessao(listaEnderecos);
+			List<EnderecoAssociacaoDTO> listaEnderecos = this.pdvService.buscarEnderecosPDV(idPdv,idCota);
+			
+			armazenarEnderecosSessao(listaEnderecos);
+		}
 	}
 
     private void armazenarEnderecosSessao(
@@ -946,6 +965,8 @@ public class PdvController extends BaseController {
 		httpSession.removeAttribute(CotaController.LISTA_TELEFONES_EXIBICAO);
 		httpSession.removeAttribute(CotaController.LISTA_TELEFONES_REMOVER_SESSAO);
 		httpSession.removeAttribute(CotaController.LISTA_TELEFONES_SALVAR_SESSAO);
+		
+		httpSession.removeAttribute(EnderecoController.ENDERECO_PENDENTE);
 		
 		List<EnderecoAssociacaoDTO> listaEnderecoAssociacao = cotaService.obterEnderecosPorIdCota(idCota);
 		httpSession.setAttribute(CotaController.LISTA_ENDERECOS_EXIBICAO, listaEnderecoAssociacao);

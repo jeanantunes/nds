@@ -186,6 +186,9 @@ var fornecedorController = $.extend(true,{
 							$("#fornecedorController-codigoInterface", fornecedorController.workspace).val(result.nextCodigo);
 							
 							fornecedorController.showPopupFornecedor();
+							fornecedorController.bloquearCamposEdicaoFornecedor(false);
+							ENDERECO_FORNECEDOR.bloquearCamposFormEndereco(false);
+							FORNECEDOR.bloquearCamposFormTelefone(false);
 						},
 						null,
 						true
@@ -211,6 +214,9 @@ var fornecedorController = $.extend(true,{
 						form: $("#fornecedorController-dialogNovoFornecedor", this.workspace).parents("form"),
 						buttons : {},
 						beforeClose: function(event, ui) {
+							
+							if(indEdicaoBloqueada==true)
+								return true;
 							
 							if (!fecharModalCadastroFornecedor){
 								

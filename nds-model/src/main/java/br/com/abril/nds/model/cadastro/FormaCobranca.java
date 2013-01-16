@@ -20,6 +20,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
+import javax.persistence.OrderColumn;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -90,6 +91,7 @@ public class FormaCobranca implements Serializable {
 	private ParametroCobrancaCota parametroCobrancaCota;
 			
 	@ElementCollection
+	@OrderBy
 	private List<Integer> diasDoMes; 
 	
 	@OneToMany(mappedBy="formaCobranca")

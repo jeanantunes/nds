@@ -12,15 +12,15 @@
                   <td align="center">Recolhimento</td>
                 </tr>
                 <tr class="class_linha_1">
-                  <td width="141">
-                    <select name="selectFornecedoresLancamento[]" size="5" multiple="multiple" id="selectFornecedoresLancamento" style="width:130px; height:100px">
+                  <td width="160">
+                    <select name="selectFornecedoresLancamento[]" size="5" multiple="multiple" id="selectFornecedoresLancamento" style="width:160px; height:110px">
                         <c:forEach items="${fornecedores}" var="fornecedor">
                           <option value="${fornecedor.id}">${fornecedor.juridica.nomeFantasia}</option>
                         </c:forEach>
                     </select>
                   </td>
-                  <td width="157" align="center">
-                    <select name="selectDiasLancamento[]" size="5" multiple="multiple" id="selectDiasLancamento" style="width:130px; height:100px">
+                  <td width="140" align="center">
+                    <select name="selectDiasLancamento[]" size="5" multiple="multiple" id="selectDiasLancamento" style="width:130px; height:110px">
                       <option value="1">Domingo</option>
                       <option value="2">Segunda-feira</option>
                       <option value="3">Terça-feira</option>
@@ -30,8 +30,8 @@
                       <option value="7">Sábado</option>
                     </select>
                   </td>
-                  <td width="139" align="center">
-                    <select name="selectDiasRecolhimento[]" size="5" multiple="multiple" id="selectDiasRecolhimento" style="width:130px; height:100px">
+                  <td width="140" align="center">
+                    <select name="selectDiasRecolhimento[]" size="5" multiple="multiple" id="selectDiasRecolhimento" style="width:130px; height:110px">
                       <option value="1">Domingo</option>
                       <option value="2">Segunda-feira</option>
                       <option value="3">Terça-feira</option>

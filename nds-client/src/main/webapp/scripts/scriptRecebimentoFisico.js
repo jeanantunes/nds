@@ -91,6 +91,8 @@ var recebimentoFisicoController = $.extend(true, {
 		
 		$("#cnpj", recebimentoFisicoController.workspace).mask("99.999.999/9999-99");
 		
+		$("#fornecedor", recebimentoFisicoController.workspace).focus();
+		
 		recebimentoFisicoController.ocultarBtns();
 		
 		this.formatItemNota();
@@ -127,6 +129,11 @@ var recebimentoFisicoController = $.extend(true, {
 			
 		var cnpj = $("#cnpj", recebimentoFisicoController.workspace).val();	
 		
+		var cnpjUnmask = removeSpecialCharacteres(cnpj, "_").toString();
+		
+		if(!cnpjUnmask || cnpjUnmask.length <= 14)
+			return;
+		
 		if(cnpj == "") {
 			$("#fornecedor", recebimentoFisicoController.workspace).val("");
 			return;
@@ -146,21 +153,22 @@ var recebimentoFisicoController = $.extend(true, {
 		
 		var cnpjDoFornecedor = $("#fornecedor", recebimentoFisicoController.workspace).val();	
 		
-		if(cnpjDoFornecedor == -1){
-			
+		if (cnpjDoFornecedor == -2) {
+		
 			$("#cnpj", recebimentoFisicoController.workspace).val("");
-			
-			$("#cnpj", recebimentoFisicoController.workspace).attr("disabled", true);
-			
-		}else{
-			
-			$("#cnpj", recebimentoFisicoController.workspace).val(cnpjDoFornecedor);
-			$("#cnpj", recebimentoFisicoController.workspace).mask("99.999.999/9999-99");
 			
 			$("#cnpj", recebimentoFisicoController.workspace).attr("disabled", false);
 			
+			$("#fornecedor", recebimentoFisicoController.workspace).focus();
+			
+		} else {
+			
+			$("#cnpj", recebimentoFisicoController.workspace).val(cnpjDoFornecedor);
+			
+			$("#cnpj", recebimentoFisicoController.workspace).mask("99.999.999/9999-99");
+			
+			$("#cnpj", recebimentoFisicoController.workspace).attr("disabled", true);
 		}
-	
 	},
 	
 	
@@ -989,10 +997,6 @@ var recebimentoFisicoController = $.extend(true, {
 	},
 	
 	alterarValor : function(idLinha) {
-		/*alert("Reparte Previsto: " + $("#repartePrevisto_"+idLinha).text());
-		alert("Qtd Pacote: " + $("#qtdPacote_"+idLinha).val());
-		alert("Pacote Padrao: " + $("#pacotePadrao_"+idLinha).val());
-		alert("Qtd Quebra: " + $("#qtdExemplar_"+idLinha).val());*/
 
 		var qtdPacote 		= $("#qtdPacote_"+idLinha).val();
 		var qtdQuebra 		= $("#qtdExemplar_"+idLinha).val();
@@ -1020,11 +1024,8 @@ var recebimentoFisicoController = $.extend(true, {
 		} else {
 			$("#diferenca_"+idLinha)[0].style.color = "black";			
 		}
-		
-		//alert("Diferença: " + diferenca);
-		
-		$("#diferenca_"+idLinha).text(diferenca);
 
+		$("#diferenca_"+idLinha).text(diferenca);
 	},
 	
 	numericOnly : function(event) {
@@ -1038,7 +1039,7 @@ var recebimentoFisicoController = $.extend(true, {
 	 * PREPARA OS DADOS DA NOTA INTERFACE A SEREM APRESENTADOS NA GRID.
 	 */
 	getDataFromResultNotaInterface : function(data) {		
-				
+		
 		$.each(data.rows, function(index, value) {
 			
 			var edicaoItemRecFisicoPermitida 	= value.cell.edicaoItemRecFisicoPermitida;
@@ -1075,13 +1076,12 @@ var recebimentoFisicoController = $.extend(true, {
 			value.cell.repartePrevisto = '<span id="repartePrevisto_'+lineId+'">'+repartePrevisto+'</span>'; 
 			
 			if(edicaoItemRecFisicoPermitida == "S") {
-				value.cell.qtdPacote 	=  '<input name="qtdPacote" id="qtdPacote_'+ lineId +'" class="pacotePadrao" original-title="Pacote Padrão: '+pacotePadrao+'" onkeypress="return recebimentoFisicoController.numericOnly(event)" style="width: 45px;" type="text" value="'+qtdPacote+'" onblur="recebimentoFisicoController.alterarValor('+ lineId +')"/>'+hiddenFields;
-				value.cell.qtdExemplar = '<input name="qtdExemplar" id="qtdExemplar_'+ lineId +'" class="pacotePadrao" original-title="Pacote Padrão: '+pacotePadrao+'" onkeypress="return recebimentoFisicoController.numericOnly(event)"  style="width: 45px;" type="text" value="'+qtdExemplar+'" onblur="recebimentoFisicoController.alterarValor('+ lineId +')"/>';
+				value.cell.qtdPacote 	=  '<input name="qtdPacote" id="qtdPacote_'+ lineId +'" class="pacotePadrao" original-title="Pacote Padrão: '+pacotePadrao+'" onkeypress="return recebimentoFisicoController.numericOnly(event)" style="width: 45px;" type="text" value="'+qtdPacote+'" onblur="recebimentoFisicoController.alterarValor('+ lineId +')" onfocus="recebimentoFisicoController.tratarFocoInputQuantidade(this)" />'+hiddenFields;
+				value.cell.qtdExemplar = '<input name="qtdExemplar" id="qtdExemplar_'+ lineId +'" class="pacotePadrao" original-title="Pacote Padrão: '+pacotePadrao+'" onkeypress="return recebimentoFisicoController.numericOnly(event)"  style="width: 45px;" type="text" value="'+qtdExemplar+'" onblur="recebimentoFisicoController.alterarValor('+ lineId +')" onfocus="recebimentoFisicoController.tratarFocoInputQuantidade(this)" />';
 			} else {
 				value.cell.qtdPacote 	= '<input name="qtdPacote" class="pacotePadrao" original-title="Pacote Padrão: '+pacotePadrao+'" disabled="disabled" style="width: 45px;" type="text" value="'+qtdPacote+'"/>'+hiddenFields;
 				value.cell.qtdExemplar 	=  '<input name="qtdExemplar" class="pacotePadrao" original-title="Pacote Padrão: '+pacotePadrao+'" disabled="disabled" style="width: 45px;" type="text" value="'+qtdExemplar+'"/>';
 			}
-			
 			
 			value.cell.precoCapa = $.formatNumber(value.cell.precoCapa, {format:"#,##0.00", locale:"br"}); 
 			value.cell.valorTotal = $.formatNumber(value.cell.valorTotal, {format:"#,##0.00", locale:"br"}); 
@@ -1146,6 +1146,14 @@ var recebimentoFisicoController = $.extend(true, {
 		
 		return data;
 
+	},
+	
+	tratarFocoInputQuantidade : function(input) {
+
+		if (0 == input.value) {
+		
+			input.value = "";
+		}
 	},
 	
 	//------------------------- NOVO POPUP DE NOTA ---------------------------
