@@ -39,6 +39,7 @@ import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Permissao;
+import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.service.CFOPService;
 import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.service.FornecedorService;
@@ -283,22 +284,32 @@ public class RecebimentoFisicoController extends BaseController {
 		tableModel.setRows(rows);
 		tableModel.setTotal(rows.size());
 		tableModel.setPage(1);
+
+		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
 		
-		NotaFiscalEntradaFornecedor notaFiscalFornecedor = (NotaFiscalEntradaFornecedor) notaFiscal;
+	}
+	
+	@Post
+	public void obterInformacoesNota() {
+		
+		NotaFiscalEntradaFornecedor notaFiscalFornecedor = (NotaFiscalEntradaFornecedor) getNotaFiscalFromSession();
 		
 		String fornecedor = null;
+		String cnpj = null;
+		
 		if( notaFiscalFornecedor.getFornecedor() != null) {
-			 fornecedor = notaFiscalFornecedor.getFornecedor().getJuridica().getRazaoSocial();
+			 fornecedor = notaFiscalFornecedor.getFornecedor().getId().toString();
+			 cnpj = notaFiscalFornecedor.getFornecedor().getJuridica().getCnpj();
 		}
 		
 		Map<String, String> infoNota = new HashMap<String, String>();
-		infoNota.put("fornecedor", fornecedor);
+		infoNota.put("idFornecedor", fornecedor);
 		infoNota.put("numero", notaFiscalFornecedor.getNumero().toString());
 		infoNota.put("serie", notaFiscalFornecedor.getSerie());
 		infoNota.put("chaveAcesso", notaFiscalFornecedor.getChaveAcesso());
+		infoNota.put("cnpj", cnpj);
 		
-		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
-		//result.use(CustomMapJson.class).put("result", tableModel).put("notaFiscal", infoNota).serialize();
+		result.use(CustomJson.class).put("nota", infoNota).serialize();
 	}
 	
 	private boolean verificarRecebimentoFisicoConfirmado(Long idNotaFiscal) {
