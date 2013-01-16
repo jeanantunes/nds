@@ -231,19 +231,33 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 		getSession().clear();
 		
 		
+		Integer numeroPeriodo = input.getNumeroPeriodo();
+		Criteria criteria = getSession().createCriteria(
+				PeriodoLancamentoParcial.class);
+		criteria.add(Restrictions.eq("lancamentoParcial", lancamentoParcial));
+		criteria.add(Restrictions.eq("numeroPeriodo", numeroPeriodo));
+		PeriodoLancamentoParcial pParcial = (PeriodoLancamentoParcial) criteria.uniqueResult();
+		
+		if (pParcial == null) {
+			pParcial = new PeriodoLancamentoParcial();
+			pParcial.setNumeroPeriodo(numeroPeriodo);
+			pParcial.setLancamentoParcial(lancamentoParcial);
+		}
+		
 		Lancamento lancamento = this.obterLancamento(input, 
 				lancamentoParcial.getProdutoEdicao());
-		
-		PeriodoLancamentoParcial pParcial = new PeriodoLancamentoParcial();
-		pParcial.setDataCriacao(dataOperacao);
-		pParcial.setNumeroPeriodo(input.getNumeroPeriodo());
 		pParcial.setLancamento(lancamento);
-		pParcial.setLancamentoParcial(lancamentoParcial);
+		pParcial.setDataCriacao(dataOperacao);
 		pParcial.setTipo(this.obterTipoLancamentoParcial(input));
 		pParcial.setStatus((input.getDataRecolhimento().compareTo(new Date()) < 0 
 				? StatusLancamentoParcial.RECOLHIDO
 				: StatusLancamentoParcial.PROJETADO));
-		this.getSession().persist(pParcial);
+		
+		if (pParcial.getId() == null) {
+			this.getSession().persist(pParcial);
+		} else {
+			this.getSession().update(pParcial);
+		}
 		
 		return pParcial;
 	}
