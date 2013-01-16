@@ -25,7 +25,7 @@ public class EntityInterceptor extends EmptyInterceptor {
 
 	private static final long serialVersionUID = -1965590377590000239L;
 	
-	private static final String DB_NAME = "db_logs";
+	private static final String DB_NAME = "db_auditoria";
 
 	private Set<AuditoriaDTO> audit = new HashSet<AuditoriaDTO>();
 
