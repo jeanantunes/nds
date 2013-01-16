@@ -79,7 +79,7 @@ public class PdvRepositoryImpl extends AbstractRepositoryModel<PDV, Long> implem
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append("SELECT pdv.nome as nomePDV, " )
+		hql.append("SELECT pdv.id as id, pdv.nome as nomePDV, " )
 				.append("  tipoPontoPDV.descricao as descricaoTipoPontoPDV ,")
 				.append("  pdv.contato as contato,")
 				.append("  endereco.logradouro || ',' || endereco.numero || '-' || endereco.bairro || '-' || endereco.cidade as  endereco , ")
@@ -87,7 +87,6 @@ public class PdvRepositoryImpl extends AbstractRepositoryModel<PDV, Long> implem
 				.append("  pdv.caracteristicas.pontoPrincipal as principal,")
 				.append("  pdv.status as statusPDV ,")
 				.append("  pdv.porcentagemFaturamento as porcentagemFaturamento ,")
-				.append("  pdv.id as id , ")
 				.append("  cota.id as idCota ")
 		.append(" FROM PDV pdv ")
 		.append(" JOIN pdv.cota cota ")
@@ -98,7 +97,9 @@ public class PdvRepositoryImpl extends AbstractRepositoryModel<PDV, Long> implem
 		.append(" LEFT JOIN pdv.segmentacao.tipoPontoPDV tipoPontoPDV ")
 		.append(" WHERE cota.id = :idCota ")
 		.append(" and (enderecoPdv is null or enderecoPdv.principal =:principal )")
-		.append(" and (telefonePdv is null or telefonePdv.principal =:principal) ");
+		.append(" and (telefonePdv is null or telefonePdv.principal =:principal) ")
+		
+		.append(" group by pdv.id");
 		
 		hql.append(getOrdenacaoPDV(filtro));
 		
