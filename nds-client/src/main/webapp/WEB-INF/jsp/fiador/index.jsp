@@ -35,13 +35,13 @@
 	</form>
 	
 	<div id="workspaceFiador">
-	<div id="fiadorController-dialog-fiador" title="Novo Fiador" style="display: none;">
+	<div id="fiadorController-dialog-fiador" title="Novo Fiador" style="display: none; overflow: hidden;">
 	
 		<jsp:include page="../messagesDialog.jsp">
 			<jsp:param value="dialog-fiador" name="messageDialog"/>
 		</jsp:include>
 	
-		<div id="fiadorController-tabs">
+		<div id="fiadorController-tabs" style="height:550px;">
 			<ul>
 				<li><a href="#fiadorController-tab-1">Dados Cadastrais</a></li>
 				<li id="fiadorController-tabSocio"><a href="#fiadorController-tab-2" onclick="$('.fiadorController-trSocioPrincipal').show();fiadorController.carregarSocios();" >Sócios</a></li>
