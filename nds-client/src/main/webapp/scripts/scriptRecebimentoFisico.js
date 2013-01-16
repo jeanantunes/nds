@@ -670,13 +670,31 @@ var recebimentoFisicoController = $.extend(true, {
 		$(".itemNotaGrid", recebimentoFisicoController.workspace).flexOptions({
 			url: contextPath + '/estoque/recebimentoFisico/obterListaItemRecebimentoFisico',
 			dataType : 'json',
-			onSuccess : function() { $('.pacotePadrao').tipsy() }
+			onSuccess : function() { $('.pacotePadrao').tipsy(); recebimentoFisicoController.obterInformacoesNota(); }
 		});
 	
 		$(".itemNotaGrid", recebimentoFisicoController.workspace).flexReload();
 	
 	},
-
+	
+	obterInformacoesNota : function() {
+		
+		$.postJSON(this.path + 'obterInformacoesNota', null, 
+				function(result) {
+					
+				console.log(result);
+				debugger;
+				
+				$("#cnpj", recebimentoFisicoController.workspace).val(result.cnpj);
+				$("#notaFiscal", recebimentoFisicoController.workspace).val(result.numero);
+				$("#serie", recebimentoFisicoController.workspace).val(result.serie);
+				$("#chaveAcesso", recebimentoFisicoController.workspace).val(result.chaveAcesso);
+				$("#fornecedor", recebimentoFisicoController.workspace).val(result.cnpj);
+				
+		});
+		
+	},
+	
     /**
      * REFRESH DOS ITENS REFERENTES A NOTA ENCONTRADA.
      */
