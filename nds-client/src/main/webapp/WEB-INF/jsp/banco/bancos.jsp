@@ -59,7 +59,7 @@ label {
 				<tr>
 					<td>Conta / Digito:</td>
 					<td><input maxlength="17" type="text" name="newConta" id="newConta"
-						style="width: 80px;" /> - <input maxlength="1" type="text" name="newDigito"
+						style="width: 80px;" /> - <input maxlength="2" type="text" name="newDigito"
 						id="newDigito" style="width: 30px;" />
 					</td>
 					<td>Apelido:</td>

@@ -141,7 +141,10 @@ fieldset {
 								</tr>
 								<tr>
 									<td>Capa da Edi&ccedil;&atilde;o:</td>
-									<td colspan="5"><input type="file" name="imagemCapa" id="produtoEdicaoController-imagemCapa" style="width:340px;" /></td>
+									<td colspan="5">
+										<input type="file" name="imagemCapa" id="produtoEdicaoController-imagemCapa" 
+											   style="width:340px;"  onchange="produtoEdicaoController.carregarCapaTemporaria();" />
+									</td>
 								</tr>
 							</tbody>
 						</table>
