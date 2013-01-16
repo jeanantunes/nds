@@ -849,7 +849,7 @@ var produtoEdicaoController =$.extend(true,  {
 		$("#produtoEdicaoController-div_imagem_capa",this.workspace).append(img);
 		
 		img.load(function() {
-			console.log("load");
+			
 			if (!(!this.complete || typeof this.naturalWidth == "undefined" || this.naturalWidth == 0)) {
 				$("#produtoEdicaoController-div_imagem_capa",this.workspace).empty();
 				$("#produtoEdicaoController-div_imagem_capa",this.workspace).append(img);

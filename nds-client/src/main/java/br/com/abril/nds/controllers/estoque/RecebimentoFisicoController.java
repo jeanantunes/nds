@@ -7,8 +7,10 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -154,15 +156,13 @@ public class RecebimentoFisicoController extends BaseController {
 		
 		PessoaJuridica pessoaJuridica = pessoaJuridicaService.buscarPorCnpj(cnpj);
 		
-		if(pessoaJuridica != null){
-			
-			result.use(Results.json()).from(pessoaJuridica, "result").serialize();
-			
-		}else{
-			
-			throw new ValidacaoException(TipoMensagem.ERROR,"CNPJ não encontrado!");
-			
+		if(pessoaJuridica == null){
+
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "CNPJ não foi encontrado!"));
 		}
+		
+		result.use(Results.json()).from(pessoaJuridica, "result").serialize();
+		
 	}
 	
 	/**
@@ -283,9 +283,22 @@ public class RecebimentoFisicoController extends BaseController {
 		tableModel.setRows(rows);
 		tableModel.setTotal(rows.size());
 		tableModel.setPage(1);
-
+		
+		NotaFiscalEntradaFornecedor notaFiscalFornecedor = (NotaFiscalEntradaFornecedor) notaFiscal;
+		
+		String fornecedor = null;
+		if( notaFiscalFornecedor.getFornecedor() != null) {
+			 fornecedor = notaFiscalFornecedor.getFornecedor().getJuridica().getRazaoSocial();
+		}
+		
+		Map<String, String> infoNota = new HashMap<String, String>();
+		infoNota.put("fornecedor", fornecedor);
+		infoNota.put("numero", notaFiscalFornecedor.getNumero().toString());
+		infoNota.put("serie", notaFiscalFornecedor.getSerie());
+		infoNota.put("chaveAcesso", notaFiscalFornecedor.getChaveAcesso());
+		
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
-				
+		//result.use(CustomMapJson.class).put("result", tableModel).put("notaFiscal", infoNota).serialize();
 	}
 	
 	private boolean verificarRecebimentoFisicoConfirmado(Long idNotaFiscal) {
