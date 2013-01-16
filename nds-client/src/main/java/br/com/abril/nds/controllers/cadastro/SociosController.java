@@ -37,6 +37,8 @@ import br.com.caelum.vraptor.view.Results;
 @Resource
 @Path("/cadastro/fiador")
 public class SociosController extends BaseController {
+	
+	public static final String LISTA_SOCIOS_EXIBIR_SESSAO = "listaSociosExibirSessao";
 
 	public static final String LISTA_SOCIOS_SALVAR_SESSAO = "listaSociosSalvarSessao";
 	
@@ -77,168 +79,10 @@ public class SociosController extends BaseController {
 	}
 	
 	public SociosController(Result result, HttpSession httpSession, Validator validator){
+		
 		this.result = result;
 		this.httpSession = httpSession;
 		this.validator = validator;
-	}
-	
-	@Post
-	public void pesquisarSociosFiador(String sortname, String sortorder){
-		List<SocioCadastrado> listaSocioSalvar = this.obterListaSociosSalvarSessao();
-		
-		Long idFiador = (Long) this.httpSession.getAttribute(FiadorController.ID_FIADOR_EDICAO);
-		
-		if (idFiador != null){
-			
-			Set<Long> idsIgnorar = new HashSet<Long>();
-			Set<String> cpfsIgnorar = new HashSet<String>();
-			
-			for (SocioCadastrado sc : listaSocioSalvar){
-				
-				if (sc.getPessoa().getId() != null){
-					
-					idsIgnorar.add(sc.getPessoa().getId());
-				}
-				
-				cpfsIgnorar.add(sc.getPessoa().getCpf().replace(".", "").replace("-", ""));
-			}
-			
-			idsIgnorar.addAll(this.obterListaSociosRemoverSessao());
-			
-			List<PessoaFisica> listaSocios = 
-					this.pessoaService.obterSociosPorFiador(idFiador, idsIgnorar, cpfsIgnorar);
-			
-			for (PessoaFisica p : listaSocios){
-				SocioCadastrado socioCadastrado = new SocioCadastrado();
-				socioCadastrado.setPessoa(p);
-				socioCadastrado.setReferencia(p.getId().intValue());
-				listaSocioSalvar.add(socioCadastrado);
-			}
-		}
-		
-		if (sortname != null) {
-
-			sortorder = sortorder == null ? "asc" : sortorder;
-
-			Ordenacao ordenacao = Util.getEnumByStringValue(Ordenacao.values(), sortorder);
-			
-			PaginacaoUtil.ordenarEmMemoria(listaSocioSalvar, ordenacao, sortname);
-		}
-		
-		this.httpSession.setAttribute(LISTA_SOCIOS_SALVAR_SESSAO, listaSocioSalvar);
-		
-		this.result.use(Results.json()).from(this.getTableModelListaSocios(listaSocioSalvar), "result").recursive().serialize();
-	}
-	
-	@Post
-	public void adicionarSocio(PessoaFisica pessoa, Integer referencia){
-		
-		this.validarDadosEntrada(pessoa, referencia == null ? null : referencia.longValue());
-		
-		List<SocioCadastrado> listaSociosSessao = this.obterListaSociosSalvarSessao();
-		
-		boolean novoSocio = true;
-		
-		for (int index = 0 ; index < listaSociosSessao.size() ; index++){
-			if (listaSociosSessao.get(index).getReferencia().equals(referencia)){
-				pessoa.setId(referencia.longValue());
-				listaSociosSessao.get(index).setPessoa(pessoa);
-				novoSocio = false;
-				break;
-			}
-		}
-		
-		if (novoSocio){
-			SocioCadastrado novoSocioCadastrado = new SocioCadastrado();
-			novoSocioCadastrado.setPessoa(pessoa);
-			pessoa.setId(referencia == null ? null : referencia.longValue());
-			novoSocioCadastrado.setReferencia(referencia == null ? (int) new Date().getTime() : referencia);
-			listaSociosSessao.add(novoSocioCadastrado);
-			
-			this.httpSession.setAttribute(LISTA_SOCIOS_SALVAR_SESSAO, listaSociosSessao);
-		}
-		
-		this.pesquisarSociosFiador(null, null);
-	}
-	
-	private void validarConjugeDoSocio(PessoaFisica pessoa, CPFValidator cpfValidator, List<String> msgsValidacao) {
-		
-		if (validator.hasErrors()) {
-			
-			for (Message message : validator.getErrors()) {
-				
-				if (message.getCategory().equals("conjuge.dataNascimento")){
-					msgsValidacao.add("Data de nascimento do conjuge do sócio inválida.");
-				}
-				
-			}
-		}
-		
-		if (pessoa.getCpf().equals(pessoa.getConjuge().getCpf())){
-			msgsValidacao.add("Fiador e conjuge devem ser pessoas diferentes.");
-		}
-		
-		pessoa = pessoa.getConjuge();
-		
-		if (pessoa.getNome() == null || pessoa.getNome().trim().isEmpty()){
-			msgsValidacao.add("Nome do conjuge é obrigatório.");
-		}
-		
-		if (pessoa.getEmail() == null || pessoa.getEmail().trim().isEmpty()){
-			msgsValidacao.add("E-mail do conjuge é obrigatório.");
-		}
-		
-		if (pessoa.getCpf() == null || pessoa.getCpf().trim().isEmpty()){
-			msgsValidacao.add("CPF do conjuge é obrigatório.");
-		} else {
-			
-			try {
-				
-				cpfValidator.assertValid(pessoa.getCpf());
-			
-			} catch(InvalidStateException e) {
-				
-				//Tenta validar CPF não formatado.
-				cpfValidator = new CPFValidator(false);
-
-				try {
-					
-					cpfValidator.assertValid(pessoa.getCpf());
-				
-				} catch(InvalidStateException ie) {
-					
-					msgsValidacao.add("CPF do conjuge inválido."); 
-					
-				}
-			}
-			
-		}
-		
-		
-		if (pessoa.getRg() == null || pessoa.getRg().trim().isEmpty()){
-			msgsValidacao.add("R.G. do conjuge é obrigatório.");
-		} else if (pessoa.getRg().length() >  PessoaUtil.RG_QUANTIDADE_DIGITOS) {
-			
-			msgsValidacao.add("Quantidade de caracteres do campo [RG] do conjuge excede o maximo de " + PessoaUtil.RG_QUANTIDADE_DIGITOS + " dígitos");
-			
-		}
-		
-		if(pessoa.getOrgaoEmissor() == null || pessoa.getOrgaoEmissor().isEmpty()) {
-			msgsValidacao.add("[Orgão Emissor] do RG do conjuge é obrigatório.");
-		}
-		
-		if(pessoa.getUfOrgaoEmissor() == null || pessoa.getUfOrgaoEmissor().isEmpty()) {
-			msgsValidacao.add("[UF do Orgão Emissor] do RG do conjuge é obrigatório.");
-		}
-		
-		if (pessoa.getDataNascimento() == null){
-			msgsValidacao.add("Data Nascimento do conjuge é obrigatório.");
-		}
-		
-		if (pessoa.getSexo() == null){
-			msgsValidacao.add("Sexo do conjuge é obrigatório.");
-		}
-		
 	}
 	
 	private void validarDadosEntrada(PessoaFisica pessoa, Long ref) {
@@ -382,23 +226,162 @@ public class SociosController extends BaseController {
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, msgsValidacao));
 		}
 	}
-
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	@Post
-	public void removerSocio(Integer referencia){
-		List<SocioCadastrado> sociosSalvar = this.obterListaSociosSalvarSessao();
+	public void pesquisarSociosFiador(String sortname, String sortorder){
 		
-		SocioCadastrado socioCadastradoRemover = null;
+		List<SocioCadastrado> listaSocioExibir = this.obterListaSociosExibirSessao();
 		
-		for (int index = 0 ; index < sociosSalvar.size() ; index++){
-			if (sociosSalvar.get(index).getReferencia().equals(referencia)){
-				socioCadastradoRemover = sociosSalvar.remove(index);
+		if (listaSocioExibir!=null && listaSocioExibir.size()<=0){
+		
+			Long idFiador = (Long) this.httpSession.getAttribute(FiadorController.ID_FIADOR_EDICAO);
+			
+			if (idFiador != null){
 				
-				this.httpSession.setAttribute(LISTA_SOCIOS_SALVAR_SESSAO, sociosSalvar);
+				
+				/*
+				Set<Long> idsIgnorar = new HashSet<Long>();
+				
+				Set<String> cpfsIgnorar = new HashSet<String>();
+				
+				for (SocioCadastrado sc : listaSocioSalvar){
+					
+					if (sc.getPessoa().getId() != null){
+						
+						idsIgnorar.add(sc.getPessoa().getId());
+					}
+					
+					cpfsIgnorar.add(sc.getPessoa().getCpf().replace(".", "").replace("-", ""));
+				}
+			
+				idsIgnorar.addAll(this.obterListaSociosRemoverSessao());
+				*/
+				
+				List<PessoaFisica> listaSocios = this.pessoaService.obterSociosPorFiador(idFiador, null, null/*idsIgnorar, cpfsIgnorar*/);
+				
+				for (PessoaFisica p : listaSocios){
+					
+					SocioCadastrado socioCadastrado = new SocioCadastrado();
+					
+					socioCadastrado.setPessoa(p);
+					
+					socioCadastrado.setReferencia(p.getId().intValue());
+					
+					listaSocioExibir.add(socioCadastrado);
+				}
+			}
+		}	
+		
+		if (sortname != null) {
+
+			sortorder = sortorder == null ? "asc" : sortorder;
+
+			Ordenacao ordenacao = Util.getEnumByStringValue(Ordenacao.values(), sortorder);
+			
+			PaginacaoUtil.ordenarEmMemoria(listaSocioExibir, ordenacao, sortname);
+		}
+		
+		this.httpSession.setAttribute(LISTA_SOCIOS_EXIBIR_SESSAO, listaSocioExibir);
+		
+		this.result.use(Results.json()).from(this.getTableModelListaSocios(listaSocioExibir), "result").recursive().serialize();
+	}
+	
+	
+	
+	@Post
+	public void adicionarSocio(PessoaFisica pessoa, Integer referencia){
+		
+		this.validarDadosEntrada(pessoa, referencia == null ? null : referencia.longValue());
+		
+		List<SocioCadastrado> listaSociosSalvar = this.obterListaSociosSalvarSessao();
+		
+		List<SocioCadastrado> listaSociosExibir = this.obterListaSociosExibirSessao();
+		
+		if (pessoa.isSocioPrincipal()){
+			
+			for(SocioCadastrado item : listaSociosExibir){
+
+				item.getPessoa().setSocioPrincipal(false);
+			}
+			
+            for(SocioCadastrado item : listaSociosSalvar){
+					
+				item.getPessoa().setSocioPrincipal(false);
+			}
+		}
+		
+		boolean novoSocio = true;
+		
+		for (int index = 0 ; index < listaSociosSalvar.size() ; index++){
+			
+			if (listaSociosSalvar.get(index).getReferencia().equals(referencia)){
+				
+				pessoa.setId(referencia.longValue());
+				
+				listaSociosSalvar.get(index).setPessoa(pessoa);
+				
+				novoSocio = false;
+				
 				break;
 			}
 		}
 		
-		Set<Long> sociosRemover = this.obterListaSociosRemoverSessao();
+		if (novoSocio){
+			
+			SocioCadastrado novoSocioCadastrado = new SocioCadastrado();
+			
+			pessoa.setId(referencia == null ? null : referencia.longValue());
+			
+			novoSocioCadastrado.setPessoa(pessoa);
+			
+			novoSocioCadastrado.setReferencia(referencia == null ? (int) new Date().getTime() : referencia);
+
+			listaSociosSalvar.add(novoSocioCadastrado);
+			
+			listaSociosExibir.add(novoSocioCadastrado);
+		}
+		
+		this.pesquisarSociosFiador(null, null);
+	}
+	
+	
+	
+	@Post
+	public void removerSocio(Integer referencia){
+		
+		List<SocioCadastrado> sociosExibir = this.obterListaSociosExibirSessao();
+		
+		Set<Long> sociosRemover = new HashSet<Long>();
+		
+		SocioCadastrado socioCadastradoRemover = null;
+		
+		for (int index = 0 ; index < sociosExibir.size() ; index++){
+			
+			if (sociosExibir.get(index).getReferencia().equals(referencia)){
+				
+				socioCadastradoRemover = sociosExibir.get(index);
+				
+				sociosExibir.remove(socioCadastradoRemover);
+				
+				break;
+			}
+		}
+		
+		this.httpSession.setAttribute(LISTA_SOCIOS_EXIBIR_SESSAO, sociosExibir);
+		
+		sociosRemover = this.obterListaSociosRemoverSessao();
 		
 		if (socioCadastradoRemover != null && socioCadastradoRemover.getPessoa() != null && 
 				socioCadastradoRemover.getPessoa().getId() != null){
@@ -414,51 +397,60 @@ public class SociosController extends BaseController {
 		this.pesquisarSociosFiador(null, null);
 	}
 	
+	
+	
 	@Post
 	public void editarSocio(Integer referencia){
+		
 		PessoaFisica socio = null;
 		
 		for (SocioCadastrado socioCadastrado : this.obterListaSociosSalvarSessao()){
+			
 			if (socioCadastrado.getReferencia().equals(referencia)){
+				
 				socio = socioCadastrado.getPessoa();
+				
 				break;
 			}
 		}
 		
 		if (socio == null){
+			
 			socio = this.pessoaService.buscarPessoaFisicaPorId(referencia.longValue());
 		}
 		
 		List<String> dados = null;
+		
 		if (socio != null){
 			
 			dados = new ArrayList<String>();
 			
-			dados.add(socio.getNome());
-			dados.add(socio.getEmail());
-			dados.add(Util.adicionarMascaraCPF(socio.getCpf()));
-			dados.add(socio.getRg());
-			dados.add(DateUtil.formatarDataPTBR(socio.getDataNascimento()));
-			dados.add(socio.getOrgaoEmissor());
-			dados.add(socio.getUfOrgaoEmissor());
-			dados.add(socio.getEstadoCivil().name());
-			dados.add(socio.getSexo().name());
-			dados.add(socio.getNacionalidade());
-			dados.add(socio.getNatural());
+			dados.add(socio.getNome()!=null?socio.getNome():"");
+			dados.add(socio.getEmail()!=null?socio.getEmail():"");
+			dados.add(socio.getCpf()!=null?Util.adicionarMascaraCPF(socio.getCpf()):"");
+			dados.add(socio.getRg()!=null?socio.getRg():"");
+			dados.add(socio.getDataNascimento()!=null?DateUtil.formatarDataPTBR(socio.getDataNascimento()):"");
+			dados.add(socio.getOrgaoEmissor()!=null?socio.getOrgaoEmissor():"");
+			dados.add(socio.getUfOrgaoEmissor()!=null?socio.getUfOrgaoEmissor():"");
+			dados.add(socio.getEstadoCivil()!=null?socio.getEstadoCivil().name():"");
+			dados.add(socio.getSexo()!=null?socio.getSexo().name():"");
+			dados.add(socio.getNacionalidade()!=null?socio.getNacionalidade():"");
+			dados.add(socio.getNatural()!=null?socio.getNatural():"");
 			
 			PessoaFisica conjuge = socio.getConjuge();
 			
 			if (conjuge != null){
-				dados.add(conjuge.getNome());
-				dados.add(conjuge.getEmail());
-				dados.add(Util.adicionarMascaraCPF(conjuge.getCpf()));
-				dados.add(conjuge.getRg());
-				dados.add(DateUtil.formatarDataPTBR(conjuge.getDataNascimento()));
-				dados.add(conjuge.getOrgaoEmissor());
-				dados.add(conjuge.getUfOrgaoEmissor());
-				dados.add(conjuge.getSexo().name());
-				dados.add(conjuge.getNacionalidade());
-				dados.add(conjuge.getNatural());
+				
+				dados.add(conjuge.getNome()!=null?conjuge.getNome():"");
+				dados.add(conjuge.getEmail()!=null?conjuge.getEmail():"");
+				dados.add(conjuge.getCpf()!=null?Util.adicionarMascaraCPF(conjuge.getCpf()):"");
+				dados.add(conjuge.getRg()!=null?conjuge.getRg():"");
+				dados.add(conjuge.getDataNascimento()!=null?DateUtil.formatarDataPTBR(conjuge.getDataNascimento()):"");
+				dados.add(conjuge.getOrgaoEmissor()!=null?conjuge.getOrgaoEmissor():"");
+				dados.add(conjuge.getUfOrgaoEmissor()!=null?conjuge.getUfOrgaoEmissor():"");
+				dados.add(conjuge.getSexo()!=null?conjuge.getSexo().name():"");
+				dados.add(conjuge.getNacionalidade()!=null?conjuge.getNacionalidade():"");
+				dados.add(conjuge.getNatural()!=null?conjuge.getNatural():"");
 			}
 			
 			dados.add(String.valueOf(socio.isSocioPrincipal()));
@@ -467,12 +459,117 @@ public class SociosController extends BaseController {
 		this.result.use(Results.json()).from(dados != null ? dados : "", "result").recursive().serialize();
 	}
 	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	private void validarConjugeDoSocio(PessoaFisica pessoa, CPFValidator cpfValidator, List<String> msgsValidacao) {
+		
+		if (validator.hasErrors()) {
+			
+			for (Message message : validator.getErrors()) {
+				
+				if (message.getCategory().equals("conjuge.dataNascimento")){
+					msgsValidacao.add("Data de nascimento do conjuge do sócio inválida.");
+				}
+				
+			}
+		}
+		
+		if (pessoa.getCpf().equals(pessoa.getConjuge().getCpf())){
+			msgsValidacao.add("Fiador e conjuge devem ser pessoas diferentes.");
+		}
+		
+		pessoa = pessoa.getConjuge();
+		
+		if (pessoa.getNome() == null || pessoa.getNome().trim().isEmpty()){
+			msgsValidacao.add("Nome do conjuge é obrigatório.");
+		}
+		
+		if (pessoa.getEmail() == null || pessoa.getEmail().trim().isEmpty()){
+			msgsValidacao.add("E-mail do conjuge é obrigatório.");
+		}
+		
+		if (pessoa.getCpf() == null || pessoa.getCpf().trim().isEmpty()){
+			msgsValidacao.add("CPF do conjuge é obrigatório.");
+		} else {
+			
+			try {
+				
+				cpfValidator.assertValid(pessoa.getCpf());
+			
+			} catch(InvalidStateException e) {
+				
+				//Tenta validar CPF não formatado.
+				cpfValidator = new CPFValidator(false);
+
+				try {
+					
+					cpfValidator.assertValid(pessoa.getCpf());
+				
+				} catch(InvalidStateException ie) {
+					
+					msgsValidacao.add("CPF do conjuge inválido."); 
+					
+				}
+			}
+			
+		}
+		
+		if (pessoa.getRg() == null || pessoa.getRg().trim().isEmpty()){
+			msgsValidacao.add("R.G. do conjuge é obrigatório.");
+		} else if (pessoa.getRg().length() >  PessoaUtil.RG_QUANTIDADE_DIGITOS) {
+			
+			msgsValidacao.add("Quantidade de caracteres do campo [RG] do conjuge excede o maximo de " + PessoaUtil.RG_QUANTIDADE_DIGITOS + " dígitos");
+			
+		}
+		
+		if(pessoa.getOrgaoEmissor() == null || pessoa.getOrgaoEmissor().isEmpty()) {
+			msgsValidacao.add("[Orgão Emissor] do RG do conjuge é obrigatório.");
+		}
+		
+		if(pessoa.getUfOrgaoEmissor() == null || pessoa.getUfOrgaoEmissor().isEmpty()) {
+			msgsValidacao.add("[UF do Orgão Emissor] do RG do conjuge é obrigatório.");
+		}
+		
+		if (pessoa.getDataNascimento() == null){
+			msgsValidacao.add("Data Nascimento do conjuge é obrigatório.");
+		}
+		
+		if (pessoa.getSexo() == null){
+			msgsValidacao.add("Sexo do conjuge é obrigatório.");
+		}
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+	private List<SocioCadastrado> obterListaSociosExibirSessao(){
+		List<SocioCadastrado> lista = 
+				(List<SocioCadastrado>) this.httpSession.getAttribute(LISTA_SOCIOS_EXIBIR_SESSAO);
+		
+		if (lista == null){
+			
+			lista = new ArrayList<SociosController.SocioCadastrado>();
+		}
+		
+		return lista;
+	}
+	
 	@SuppressWarnings("unchecked")
 	private List<SocioCadastrado> obterListaSociosSalvarSessao(){
 		List<SocioCadastrado> lista = 
 				(List<SocioCadastrado>) this.httpSession.getAttribute(LISTA_SOCIOS_SALVAR_SESSAO);
 		
 		if (lista == null){
+			
 			lista = new ArrayList<SociosController.SocioCadastrado>();
 		}
 		
@@ -481,11 +578,13 @@ public class SociosController extends BaseController {
 	
 	@SuppressWarnings("unchecked")
 	private Set<Long> obterListaSociosRemoverSessao(){
+		
 		Set<Long> lista = (Set<Long>) this.httpSession.getAttribute(LISTA_SOCIOS_REMOVER_SESSAO);
 		
-		if (lista == null){
+		if(lista==null){
+			
 			lista = new HashSet<Long>();
-		}
+		}	
 		
 		return lista;
 	}

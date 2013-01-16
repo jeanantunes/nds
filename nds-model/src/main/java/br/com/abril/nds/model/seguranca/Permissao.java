@@ -108,7 +108,8 @@ public enum Permissao
 	ROLE_ADMINISTRACAO_TIPO_NOTA("Tipos de NF-e",													  	   Permissao.ROLE_ADMINISTRACAO),
 	ROLE_ADMINISTRACAO_PARAMETROS_SISTEMA("Parâmetros de Sistema",	          					 		   Permissao.ROLE_ADMINISTRACAO),
 	ROLE_ADMINISTRACAO_PARAMETROS_DISTRIBUIDOR("Parâmetros Distribuidor",	 						 	   Permissao.ROLE_ADMINISTRACAO),
-	ROLE_ADMINISTRACAO_HELP("Help",									          					 		   Permissao.ROLE_ADMINISTRACAO);
+	ROLE_ADMINISTRACAO_HELP("Help",									          					 		   Permissao.ROLE_ADMINISTRACAO),
+ 	ROLE_ADMINISTRACAO_ALTERACAO_COTA("Alteração Cota",				          					 		   Permissao.ROLE_ADMINISTRACAO);
 
 	private String descricao;
 	private Permissao permissaoPai;

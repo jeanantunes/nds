@@ -96,6 +96,12 @@ public class PoliticaCobrancaServiceImpl implements PoliticaCobrancaService {
 		return comboFormasEmissao;
 	}
 	
+	public List<PoliticaCobranca> obterPoliticasCobranca(){
+		
+		List<PoliticaCobranca> pc = this.politicaCobrancaRepository.buscarTodos();
+		
+		return pc;
+	}
 
 	@Override
 	@Transactional(readOnly=true)

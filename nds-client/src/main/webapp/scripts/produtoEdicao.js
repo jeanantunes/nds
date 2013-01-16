@@ -882,6 +882,35 @@ var produtoEdicaoController =$.extend(true,  {
 		);
 	},
 	
+	carregarCapaTemporaria : function() {
+		
+		$("#produtoEdicaoController-formUpload").ajaxSubmit({ 
+			
+			success: function(responseText, statusText, xhr, $form)  { 
+				var mensagens = (responseText.mensagens) ? responseText.mensagens : responseText.result;   
+				var tipoMensagem = mensagens.tipoMensagem;
+				var listaMensagens = mensagens.listaMensagens;
+				
+				if (tipoMensagem && listaMensagens) {
+					exibirMensagem(tipoMensagem, listaMensagens);	
+				}
+				if (tipoMensagem == "WARNING" || tipoMensagem == "ERROR") {
+					$("#produtoEdicaoController-imagemCapa").val("");
+					return;
+				}
+				
+				$("#produtoEdicaoController-div_imagem_capa > img").attr("src", contextPath + responseText.result);
+				
+			},
+			
+			url:  contextPath + '/capa/carregarCapaTemp',
+			type: 'POST',
+			dataType: 'json',
+			data : $("#produtoEdicaoController-imagemCapa").val()
+		});
+		
+	},
+	
 	popup_alterar:			function () {
 		// $( "#produtoEdicaoController-dialog:ui-dialog" ).dialog( "destroy" );
 

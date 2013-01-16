@@ -28,9 +28,9 @@ import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.serialization.custom.PlainJSONSerialization;
 import br.com.abril.nds.service.BrindeService;
-import br.com.abril.nds.service.CapaService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.util.CurrencyUtil;
+import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.MathUtil;
 import br.com.abril.nds.util.TipoMensagem;
@@ -56,10 +56,7 @@ public class ProdutoEdicaoController extends BaseController {
 	
 	@Autowired
 	private ProdutoEdicaoService produtoEdicaoService;
-	
-	@Autowired
-	private CapaService capaService;
-	
+		
 	private static List<ItemDTO<ClasseSocial,String>> listaClasseSocial =  new ArrayList<ItemDTO<ClasseSocial,String>>();
 	  
 	private static List<ItemDTO<Sexo,String>> listaSexo =  new ArrayList<ItemDTO<Sexo,String>>();
@@ -325,12 +322,18 @@ public class ProdutoEdicaoController extends BaseController {
 			if (dto.getPrecoPrevisto() == null) {
 				listaMensagens.add("Por favor, digite um valor válido para o 'Preço Previsto'!");
 			}
+			
 			if (dto.getDataLancamentoPrevisto() == null) {
 				listaMensagens.add("Campo 'Data de Lançamento Previsto' deve ser preenchido!");
 			}
 			if (dto.getDataRecolhimentoPrevisto() == null) {
 				listaMensagens.add("Campo 'Data de Recolhimento Previsto' deve ser preenchido!");
 			}
+			
+			if(!validarDataLancamentoMenorRecolhimento(dto)) {
+				listaMensagens.add(" Campo 'Data de Lançamento Previsto' deve ser menor do que o campo 'Data de Recolhimento Previsto' ");
+			}
+			
 			if (dto.getRepartePrevisto() == null) {
 				listaMensagens.add("Por favor, digite um valor válido para o 'Reparte Previsto'!");
 			}
@@ -370,6 +373,10 @@ public class ProdutoEdicaoController extends BaseController {
 		}
 	}
 	
+	private boolean validarDataLancamentoMenorRecolhimento(ProdutoEdicaoDTO dto) {
+		return DateUtil.isDataInicialMaiorDataFinal(dto.getDataRecolhimentoPrevisto(), dto.getDataLancamentoPrevisto());
+	}
+
 	/**
 	 * Remove uma Edição.
 	 * 

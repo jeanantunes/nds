@@ -130,9 +130,9 @@ function removeSpecialCharacteres(value, extraCharacteres) {
 	
 	//add default special characteres to remove;
 	var specialCharacteres = ["-", ".", "/"];
-	
+
 	if (extraCharacteres) {
-		specialCharacteres = specialCharacteres.concat(extraCharacteres);
+		specialCharacteres.push(extraCharacteres);
 	}
 	
 	for (var index in specialCharacteres) {
