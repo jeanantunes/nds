@@ -192,7 +192,7 @@ public class AreaInfluenciaGeradorFluxoController extends BaseController {
 
 	private void carregarComboAreaInfluencia() {
 
-		List<AreaInfluenciaPDV> listaAreaInfluenciaPDV = pdfService.obterAreasInfluenciaPDV();
+		List<AreaInfluenciaPDV> listaAreaInfluenciaPDV = pdfService.obterTipoAreaInfluencia();
 
 		List<ItemDTO<Long, String>> listaAreaInfluenciaPDVCombo = new ArrayList<ItemDTO<Long, String>>();
 
@@ -200,9 +200,7 @@ public class AreaInfluenciaGeradorFluxoController extends BaseController {
 
 			// Preenchendo a lista que irá representar o combobox de área de
 			// influência na view
-			listaAreaInfluenciaPDVCombo.add(new ItemDTO<Long, String>(
-					areaInfluenciaPDV.getCodigo(), areaInfluenciaPDV
-							.getDescricao()));
+			listaAreaInfluenciaPDVCombo.add(new ItemDTO<Long, String>(areaInfluenciaPDV.getCodigo(), areaInfluenciaPDV.getDescricao()));
 		}
 
 		result.include("listaAreaInfluenciaPDV", listaAreaInfluenciaPDVCombo);

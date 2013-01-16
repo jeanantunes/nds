@@ -160,7 +160,7 @@ public class PdvServiceImpl implements PdvService {
 
     @Transactional(readOnly = true)
     @Override
-    public List<AreaInfluenciaPDV> obterAreasInfluenciaPDV() {
+    public List<AreaInfluenciaPDV> obterTipoAreaInfluencia() {
 
         return areaInfluenciaPDVRepository.buscarTodos();
     }

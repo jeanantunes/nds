@@ -19,15 +19,6 @@
 
 		<div class="container">
 
-			<div id="effect" style="padding: 0 .7em;"
-				class="ui-state-highlight ui-corner-all">
-				<p>
-					<span style="float: left; margin-right: .3em;"
-						class="ui-icon ui-icon-info"></span> <b>Segmenta��o N�o
-						Recebida < evento > com < status >.</b>
-				</p>
-			</div>
-
 			<fieldset class="classFieldset">
 				<legend> Pesquisar Área de Influência</legend>
 				<table width="950" border="0" cellpadding="2" cellspacing="1"
@@ -69,7 +60,7 @@
 						      			<option value="${areaInfluenciaPDV.key}">${areaInfluenciaPDV.value}</option>	
 						    		</c:forEach>
 						</select></td>
-						<td width="162">Geradores de Fluxo Primário:</td>
+						<td width="162">Geradores de Fluxo Principal:</td>
 						<td width="209">
 							<select name="geradorFluxoPrincipal" id="geradorFluxoPrincipal" style="width: 180px;">
 								<option selected="selected" value="0">Selecione...</option>

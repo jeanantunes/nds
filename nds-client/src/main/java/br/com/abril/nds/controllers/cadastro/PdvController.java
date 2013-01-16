@@ -122,7 +122,7 @@ public class PdvController extends BaseController {
 		
 		result.include("listaTipoPontoPDV",getListaDescricao(pdvService.obterTiposPontoPDV()));
 		result.include("listaCaracteristicaPDV",getListaCaracteristica());
-		result.include("listaAreaInfluenciaPDV",getListaDescricao(pdvService.obterAreasInfluenciaPDV()));
+		result.include("listaAreaInfluenciaPDV",getListaDescricao(pdvService.obterTipoAreaInfluencia()));
 		
 	}
 	
@@ -219,7 +219,7 @@ public class PdvController extends BaseController {
 	@Post
     @Path("/carregarAreasInfluenciaPdv")
     public void carregarAreasInfluenciaPdv() {
-        result.use(Results.json()).from(getListaDescricao(pdvService.obterAreasInfluenciaPDV()), "result").recursive().serialize();
+        result.use(Results.json()).from(getListaDescricao(pdvService.obterTipoAreaInfluencia()), "result").recursive().serialize();
     }
 
 	/**
