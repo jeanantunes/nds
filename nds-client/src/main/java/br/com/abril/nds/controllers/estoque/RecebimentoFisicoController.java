@@ -14,7 +14,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
@@ -40,7 +39,6 @@ import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Permissao;
-import br.com.abril.nds.serialization.custom.CustomMapJson;
 import br.com.abril.nds.service.CFOPService;
 import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.service.FornecedorService;
@@ -299,9 +297,8 @@ public class RecebimentoFisicoController extends BaseController {
 		infoNota.put("serie", notaFiscalFornecedor.getSerie());
 		infoNota.put("chaveAcesso", notaFiscalFornecedor.getChaveAcesso());
 		
-		
-		//result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
-		result.use(CustomMapJson.class).put("result", tableModel).put("notaFiscal", infoNota).serialize();
+		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+		//result.use(CustomMapJson.class).put("result", tableModel).put("notaFiscal", infoNota).serialize();
 	}
 	
 	private boolean verificarRecebimentoFisicoConfirmado(Long idNotaFiscal) {
