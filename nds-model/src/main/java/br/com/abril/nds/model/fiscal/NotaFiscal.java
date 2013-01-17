@@ -166,6 +166,9 @@ public abstract class NotaFiscal implements Serializable {
 	@JoinColumn(name = "TIPO_NF_ID")
 	protected TipoNotaFiscal tipoNotaFiscal;
 	
+	@Column(name = "VALOR_INFORMADO", nullable = true)
+	protected BigDecimal valorInformado;
+	
 	/**
 	 * Status de emissão da nota fiscal, deve ser
 	 * preenchido qdo a nota for emitida pelo distribuidor
@@ -1036,5 +1039,15 @@ public abstract class NotaFiscal implements Serializable {
 	public void setEmitente(PessoaJuridica emitente) {
 		this.emitente = emitente;
 	}
+
+	public BigDecimal getValorInformado() {
+		return valorInformado;
+	}
+
+	public void setValorInformado(BigDecimal valorInformado) {
+		this.valorInformado = valorInformado;
+	}
+	
+	
 	
 }
