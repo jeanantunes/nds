@@ -1,9 +1,6 @@
 package br.com.abril.nds.client.vo;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
 
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.FormaComercializacao;
@@ -63,6 +60,8 @@ public class ProdutoCadastroVO implements Serializable {
 	private Origem origem;
 	
 	private String desconto;
+	
+	private String descricaoDescontoManual;
 	
 	/**
 	 * 
@@ -481,8 +480,18 @@ public class ProdutoCadastroVO implements Serializable {
 			if(produto.getDesconto()!= null){
 				produtoCadastroVO.setDesconto(CurrencyUtil.formatarValor(produto.getDesconto()).replace(",","."));
 			}
+			
+			produtoCadastroVO.setDescricaoDescontoManual(produto.getDescricaoDesconto());
 		}
 		
 		return produtoCadastroVO;
+	}
+
+	public String getDescricaoDescontoManual() {
+		return descricaoDescontoManual;
+	}
+
+	public void setDescricaoDescontoManual(String descricaoDescontoManual) {
+		this.descricaoDescontoManual = descricaoDescontoManual;
 	}
 }

@@ -356,11 +356,12 @@ public class PdvRepositoryImpl extends AbstractRepositoryModel<PDV, Long> implem
 									.setProjection(Projections.property("rotaPdv.pdv.id"));
 			
 			criteria.add(Subqueries.propertyNotIn("pdv.id", subquery));
+			criteria.add(Restrictions.isNull("cota.box"));
 		}
 		
 		if (pesquisaPorCota) {
 			criteria.add(Restrictions.eq("caracteristicas.pontoPrincipal", true));
-		}
+		} 
 		
 		if (numCota != null && !numCota.equals("") ) {
 			criteria.add(Restrictions.eq("cota.numeroCota", numCota));
