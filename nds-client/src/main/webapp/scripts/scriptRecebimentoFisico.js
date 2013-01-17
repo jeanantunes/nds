@@ -232,8 +232,9 @@ var recebimentoFisicoController = $.extend(true, {
 				$('#chBoxReplicaValorRepartePrevistoAll', recebimentoFisicoController.workspace).attr('disabled', true);
 				recebimentoFisicoController.carregarItemNotaGridNotaManual();
 	    	}
-
-			exibirMensagem(validacao.tipoMensagem, validacao.listaMensagens);
+			
+			if(result.validacao.listaMensagens.length>0)
+				exibirMensagem(validacao.tipoMensagem, validacao.listaMensagens);
 			
 			recebimentoFisicoController.pesquisarItemNotaGrid();
 
@@ -244,6 +245,8 @@ var recebimentoFisicoController = $.extend(true, {
 			$(".grids", recebimentoFisicoController.workspace).hide();
 			
 			recebimentoFisicoController.ocultarBtns();
+			
+			$('#selTodos',recebimentoFisicoController.workspace).uncheck();
 			
 			recebimentoFisicoController.popup_adicionar();
 			
