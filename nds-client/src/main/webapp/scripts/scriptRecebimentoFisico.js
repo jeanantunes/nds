@@ -1273,7 +1273,7 @@ var recebimentoFisicoController = $.extend(true, {
 				           id:"bt_confirmar",
 				           text:"Confirmar", 
 				           click: function() {
-				        	   recebimentoFisicoController.incluirNota();
+				        	   recebimentoFisicoController.validarValorTotalNotaFiscal();
 				        	   recebimentoFisicoController.limparCamposPesquisa();
 				        	   $(".grids", recebimentoFisicoController.workspace).hide();
 				           }
@@ -1921,6 +1921,52 @@ var recebimentoFisicoController = $.extend(true, {
         recebimentoFisicoController.montaGridItens();
 	},
 	
+	
+	showConfirmacaoValorTotalNotaFiscalDivergente : function() {
+		
+		$("#dialog-valor-nota-divergente", this.workspace).dialog({
+			
+			resizable : false,
+			height : 'auto',
+			width : 450,
+			modal : true,
+			buttons : {
+				
+				"Confirmar" : function() {
+					$(this).dialog("close");
+					recebimentoFisicoController.incluirNota();
+				},
+
+				"Cancelar" : function() {
+					$(this).dialog("close");
+				}
+			},
+			
+			form: $("#dialog-valor-nota-divergente", this.workspace).parents("form")
+		
+		});	
+		
+	},
+	
+	validarValorTotalNotaFiscal : function() {
+		
+		var url;
+		
+		var formData = recebimentoFisicoController.obterCabecalho();				
+		
+		formData = serializeArrayToPost('itens', recebimentoFisicoController.obterListaItens(), formData);
+		
+		url = this.path + 'validarValorTotalNotaFiscal';
+		
+		$.postJSON(url, formData, 
+				function(result) {
+				if(result.validacao) {
+						recebimentoFisicoController.showConfirmacaoValorTotalNotaFiscalDivergente();
+				}
+		});		
+		
+	},
+	
 	incluirNota : function() {
 
 		var url;
@@ -1934,7 +1980,6 @@ var recebimentoFisicoController = $.extend(true, {
 			function(result) {
 				
 				recebimentoFisicoController.limparCamposNovaNota();
-				recebimentoFisicoController.limpar
 				
 				$("#dialog-adicionar", recebimentoFisicoController.workspace).dialog( "close" );
 	

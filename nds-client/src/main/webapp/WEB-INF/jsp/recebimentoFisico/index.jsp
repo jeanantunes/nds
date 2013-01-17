@@ -28,7 +28,14 @@
 <body>
 
 
+	
+	
+
 	<form action="/recebimentoFisico" id="form_novo_item">
+
+		<div id="dialog-valor-nota-divergente" title="Valor Total Nota Fiscal Divergente" style="display: none;">
+			<p>Valor total da [Nota] n&atilde;o confere com o valor total dos [Itens], Deseja prosseguir?</p>
+		</div>
 
 		<div id="dialog-novo-item" style="display: none;" title="Recebimento Físico">
 

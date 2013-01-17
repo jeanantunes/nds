@@ -37,6 +37,7 @@ import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Permissao;
+import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.service.CFOPService;
 import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.service.FornecedorService;
@@ -353,6 +354,7 @@ public class RecebimentoFisicoController extends BaseController {
 		
 		return false;
 	}
+	
 	
 	/**
 	 * Valida os dados da nova Nota Fiscal.
@@ -809,7 +811,9 @@ public class RecebimentoFisicoController extends BaseController {
 		
 		FiltroConsultaNotaFiscalDTO filtro = new FiltroConsultaNotaFiscalDTO();
 		
-		filtro.setCnpj(cnpj);
+		String cnpjSemMascara = Util.removerMascaraCnpj(cnpj);
+		
+		filtro.setCnpj(cnpjSemMascara);
 		filtro.setNumeroNota(numeroNotaFiscal);
 		filtro.setSerie(serie);
 		filtro.setChave(chaveAcesso);
@@ -1408,6 +1412,30 @@ public class RecebimentoFisicoController extends BaseController {
 		}
 	}
 	
+	@Post
+	@Path("/validarValorTotalNotaFiscal")
+	public void validarValorTotalNotaFiscal(CabecalhoNotaDTO nota, List<RecebimentoFisicoDTO> itens) {
+		
+		BigDecimal valorInformadoNotaFiscal = new BigDecimal(getValorSemMascara(nota.getValorTotal()));
+		
+		BigDecimal totalItem = BigDecimal.ZERO;
+		
+		for ( RecebimentoFisicoDTO recebimento : itens ){
+		    totalItem = totalItem.add(recebimento.getValorTotal());
+	    }
+		
+		if (valorInformadoNotaFiscal.compareTo(totalItem)!=0){
+			
+			result.use(CustomJson.class).from(
+					new ValidacaoException(TipoMensagem.WARNING, "Valor total da [Nota] não confere com o valor total dos [Itens], Deseja prosseguir?")
+			).serialize();
+			
+		} else {
+			result.use(Results.json()).from("").serialize();
+		}
+		
+	}
+	
 	/**
 	 * Inclui nota e itens
 	 * @param nota
@@ -1427,7 +1455,7 @@ public class RecebimentoFisicoController extends BaseController {
 		notaFiscal.setSerie(nota.getSerie());
 		notaFiscal.setDataEmissao(nota.getDataEmissao());
 		notaFiscal.setDataExpedicao(nota.getDataEntrada());
-		notaFiscal.setValorLiquido(new BigDecimal(getValorSemMascara( nota.getValorTotal() )));
+		notaFiscal.setValorLiquido(CurrencyUtil.converterValor(nota.getValorTotal()));
 		notaFiscal.setChaveAcesso(nota.getChaveAcesso());
 		
 		notaFiscal.setFornecedor(fornecedor);
@@ -1438,22 +1466,25 @@ public class RecebimentoFisicoController extends BaseController {
 		notaFiscal.setOrigem(Origem.MANUAL);
 		notaFiscal.setEmitente(fornecedor.getJuridica());
 		
-		//OBTEM CAMPOS OBRIGATORIOS PARA OS ITENS DA NOTA E TOTAL PARA VERIFICACAO COM O VALOR DA NOTA
 		BigDecimal totalItem = BigDecimal.ZERO;
+		
 		ProdutoEdicao pe = null;
-		for (int i = 0; i<itens.size(); i++){
-		    pe = produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(itens.get(i).getCodigoProduto(), Long.toString(itens.get(i).getEdicao()));
-		    itens.get(i).setIdProdutoEdicao(pe.getId());
-		    itens.get(i).setOrigemItemNota(Origem.MANUAL);
-		    itens.get(i).setTipoLancamento(TipoLancamento.LANCAMENTO); 
+		
+		for (RecebimentoFisicoDTO item : itens){
+		    
+			pe = produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(item.getCodigoProduto(), Long.toString(item.getEdicao()));
+		    
+			item.setIdProdutoEdicao(pe.getId());
+		    
+			item.setOrigemItemNota(Origem.MANUAL);
+		    
+			item.setTipoLancamento(TipoLancamento.LANCAMENTO); 
             
-		    totalItem = totalItem.add(itens.get(i).getValorTotal());
+		    totalItem = totalItem.add(item.getValorTotal());
+		    
 	    }
 		
-		if (notaFiscal.getValorLiquido().compareTo(totalItem)!=0){
-			throw new ValidacaoException(TipoMensagem.WARNING, "Valor total da [Nota] não confere com o valor total dos [Itens]!");
-		}
-
+		
 		try{
 			
 			recebimentoFisicoService.validarExisteNotaFiscal(notaFiscal);
