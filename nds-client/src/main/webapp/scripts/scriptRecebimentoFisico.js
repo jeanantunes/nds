@@ -71,9 +71,7 @@ var recebimentoFisicoController = $.extend(true, {
 		$("#novoValorTotal", recebimentoFisicoController.workspace).keyup(function(){
 			_this.novoValorTotalTyped = true;
 		});
-				
-		$("#cnpj", recebimentoFisicoController.workspace).attr("disabled", true);
-		 
+		
 		$("#novoValorTotal", recebimentoFisicoController.workspace).maskMoney({
 			 thousands:'.', 
 			 decimal:',', 
@@ -131,9 +129,9 @@ var recebimentoFisicoController = $.extend(true, {
 			
 		var cnpj = $("#cnpj", recebimentoFisicoController.workspace).val();	
 		
-		cnpj = removeSpecialCharacteres(cnpj, "_").toString();
+		var cnpjUnmask = removeSpecialCharacteres(cnpj, "_").toString();
 		
-		if(!cnpj || cnpj.length < 14)
+		if(!cnpjUnmask || cnpjUnmask.length <= 14)
 			return;
 		
 		if(cnpj == "") {
@@ -141,9 +139,8 @@ var recebimentoFisicoController = $.extend(true, {
 			return;
 		}
 		
-		$.postJSON(this.path + 'buscaCnpj', {cnpj:cnpj}, 
+		$.postJSON(this.path + 'buscaCnpj', {cnpj:removeSpecialCharacteres(cnpj)}, 
 		function(result) { 
-			
 			$("#fornecedor", recebimentoFisicoController.workspace).val(result.cnpj);
 		});	
 	
@@ -156,11 +153,11 @@ var recebimentoFisicoController = $.extend(true, {
 		
 		var cnpjDoFornecedor = $("#fornecedor", recebimentoFisicoController.workspace).val();	
 		
-		if (cnpjDoFornecedor == -1) {
+		if (cnpjDoFornecedor == -2) {
 		
 			$("#cnpj", recebimentoFisicoController.workspace).val("");
 			
-			$("#cnpj", recebimentoFisicoController.workspace).attr("disabled", true);
+			$("#cnpj", recebimentoFisicoController.workspace).attr("disabled", false);
 			
 			$("#fornecedor", recebimentoFisicoController.workspace).focus();
 			
@@ -555,6 +552,12 @@ var recebimentoFisicoController = $.extend(true, {
 				width : 60,
 				sortable : false,
 				align : 'center'
+			}, {
+				display : 'Pacote Padrão',
+				name : 'pacotePadrao',
+				width : 60,
+				sortable : false,
+				align : 'center'
 			}, {				
 				display : 'Diferença',
 				name : 'diferenca',
@@ -664,32 +667,13 @@ var recebimentoFisicoController = $.extend(true, {
     	
 		$(".itemNotaGrid", recebimentoFisicoController.workspace).flexOptions({
 			url: contextPath + '/estoque/recebimentoFisico/obterListaItemRecebimentoFisico',
-			dataType : 'json',
-			onSuccess : function() { $('.pacotePadrao').tipsy(); recebimentoFisicoController.obterInformacoesNota(); }
+			dataType : 'json'
 		});
 	
 		$(".itemNotaGrid", recebimentoFisicoController.workspace).flexReload();
 	
 	},
-	
-	obterInformacoesNota : function() {
-		
-		$.postJSON(this.path + 'obterInformacoesNota', null, 
-				function(result) {
-					
-				console.log(result);
-				debugger;
-				
-				var cnpj = removeSpecialCharacteres(result.cnpj);
-				
-				$("#cnpj", recebimentoFisicoController.workspace).val(cnpj);
-				$("#notaFiscal", recebimentoFisicoController.workspace).val(result.numero);
-				$("#serie", recebimentoFisicoController.workspace).val(result.serie);
-				$("#chaveAcesso", recebimentoFisicoController.workspace).val(result.chaveAcesso);
-				$("#fornecedor", recebimentoFisicoController.workspace).val(cnpj);
-		});
-	},
-	
+
     /**
      * REFRESH DOS ITENS REFERENTES A NOTA ENCONTRADA.
      */
@@ -859,7 +843,6 @@ var recebimentoFisicoController = $.extend(true, {
 					
 				});
 				
-				$('.pacotePadrao').tipsy();
 			});
 				
 		});
@@ -1075,8 +1058,6 @@ var recebimentoFisicoController = $.extend(true, {
 			
 			var diferenca = value.cell.diferenca;
 
-			var pacotePadrao = value.cell.pacotePadrao;
-
 			var repartePrevisto = value.cell.repartePrevisto;
 
 			var lineId = value.cell.lineId;
@@ -1086,6 +1067,8 @@ var recebimentoFisicoController = $.extend(true, {
 			var imgExclusao = '<img src="'+contextPath+'/images/ico_excluir.gif" width="15" height="15" alt="Salvar" hspace="5" border="0" />'; 
 			
 			var imgEdicao = '<img src="'+contextPath+'/images/ico_editar.gif" width="15" height="15" alt="Salvar" hspace="5" border="0" />'; 
+			
+			var pacotePadrao = value.cell.pacotePadrao;
 			
 			
 			if(destacarValorNegativo == "S") {
@@ -1097,11 +1080,11 @@ var recebimentoFisicoController = $.extend(true, {
 			value.cell.repartePrevisto = '<span id="repartePrevisto_'+lineId+'">'+repartePrevisto+'</span>'; 
 			
 			if(edicaoItemRecFisicoPermitida == "S") {
-				value.cell.qtdPacote 	=  '<input name="qtdPacote" id="qtdPacote_'+ lineId +'" class="pacotePadrao" original-title="Pacote Padrão: '+pacotePadrao+'" onkeypress="return recebimentoFisicoController.numericOnly(event)" style="width: 45px;" type="text" value="'+qtdPacote+'" onblur="recebimentoFisicoController.alterarValor('+ lineId +')" onfocus="recebimentoFisicoController.tratarFocoInputQuantidade(this)" />'+hiddenFields;
-				value.cell.qtdExemplar = '<input name="qtdExemplar" id="qtdExemplar_'+ lineId +'" class="pacotePadrao" original-title="Pacote Padrão: '+pacotePadrao+'" onkeypress="return recebimentoFisicoController.numericOnly(event)"  style="width: 45px;" type="text" value="'+qtdExemplar+'" onblur="recebimentoFisicoController.alterarValor('+ lineId +')" onfocus="recebimentoFisicoController.tratarFocoInputQuantidade(this)" />';
+				value.cell.qtdPacote 	=  '<input name="qtdPacote" id="qtdPacote_'+ lineId +'" onkeypress="return recebimentoFisicoController.numericOnly(event)" style="width: 45px;" type="text" value="'+qtdPacote+'" onblur="recebimentoFisicoController.alterarValor('+ lineId +')" onfocus="recebimentoFisicoController.tratarFocoInputQuantidade(this)" />'+hiddenFields;
+				value.cell.qtdExemplar = '<input name="qtdExemplar" id="qtdExemplar_'+ lineId +'" onkeypress="return recebimentoFisicoController.numericOnly(event)"  style="width: 45px;" type="text" value="'+qtdExemplar+'" onblur="recebimentoFisicoController.alterarValor('+ lineId +')" onfocus="recebimentoFisicoController.tratarFocoInputQuantidade(this)" />';
 			} else {
-				value.cell.qtdPacote 	= '<input name="qtdPacote" class="pacotePadrao" original-title="Pacote Padrão: '+pacotePadrao+'" disabled="disabled" style="width: 45px;" type="text" value="'+qtdPacote+'"/>'+hiddenFields;
-				value.cell.qtdExemplar 	=  '<input name="qtdExemplar" class="pacotePadrao" original-title="Pacote Padrão: '+pacotePadrao+'" disabled="disabled" style="width: 45px;" type="text" value="'+qtdExemplar+'"/>';
+				value.cell.qtdPacote 	= '<input name="qtdPacote" disabled="disabled" style="width: 45px;" type="text" value="'+qtdPacote+'"/>'+hiddenFields;
+				value.cell.qtdExemplar 	=  '<input name="qtdExemplar" disabled="disabled" style="width: 45px;" type="text" value="'+qtdExemplar+'"/>';
 			}
 			
 			value.cell.precoCapa = $.formatNumber(value.cell.precoCapa, {format:"#,##0.00", locale:"br"}); 
@@ -1111,7 +1094,7 @@ var recebimentoFisicoController = $.extend(true, {
 				
 				value.cell.acao =  '<a href="javascript:;" onclick="recebimentoFisicoController.editarItemNotaFiscal('+[lineId]+');">' + imgEdicao + '</a>' +
 								   '<a href="javascript:;" onclick="recebimentoFisicoController.excluirItemNotaFiscal('+[lineId]+');">' + imgExclusao + '</a>' +
-								   '<input type="hidden" id="pacotePadrao_'+[lineId]+'" value='+pacotePadrao+' />';;
+								   '<input type="hidden" id="pacotePadrao_'+[lineId]+'" value='+pacotePadrao+' />';
 				
 			} else{
 				
