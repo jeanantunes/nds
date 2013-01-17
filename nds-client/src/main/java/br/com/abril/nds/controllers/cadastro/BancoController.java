@@ -322,7 +322,7 @@ public class BancoController extends BaseController {
 				multa, 
 				vrMulta);
 		
-		if (ativo){
+		if (!ativo){
 			if (this.bancoService.verificarPendencias(idBanco)){
 				throw new ValidacaoException(TipoMensagem.WARNING, "O banco "+nome+" possui pendências e não pode ser desativado.");
 			}

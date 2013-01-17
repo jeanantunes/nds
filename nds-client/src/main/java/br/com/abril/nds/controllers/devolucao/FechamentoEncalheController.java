@@ -183,7 +183,6 @@ public class FechamentoEncalheController extends BaseController {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Postergação deve ter como limite, a data final da semana de recolhimento em vigência!");
 		}
 		
-		
 		try {
 			
 			this.fechamentoEncalheService.postergarCotas(dataEncalhe, dataPostergacao, idsCotas);

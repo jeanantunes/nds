@@ -1485,7 +1485,7 @@ var roteirizacao = $.extend(true, {
                 sortable : false,
                 align : 'center'
             }],
-            sortname : "ordem",
+            sortname : "cota",
             sortorder : "asc",
             width : 800,
             height : 250
@@ -2323,6 +2323,8 @@ var roteirizacao = $.extend(true, {
         roteirizacao.definirTipoEdicao(TipoEdicao.NOVO);
         roteirizacao.prepararPopupRoteirizacao();
         roteirizacao.modificada = false;
+        
+        $('#cotaPesquisa', roteirizacao.workspace).numeric();
     },
 
     limparCamposPesquisaGrids : function() {
