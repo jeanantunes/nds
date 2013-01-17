@@ -693,6 +693,7 @@ var baixaFinanceiraController = $.extend(true, {
 				resultado.mensagens.tipoMensagem, 
 				resultado.mensagens.listaMensagens
 			);
+			$(".area", baixaFinanceiraController.workspace).hide();
 			$(".grids", baixaFinanceiraController.workspace).hide();
 			return resultado;
 		}
@@ -731,6 +732,7 @@ var baixaFinanceiraController = $.extend(true, {
 		});
 		$("#totalDividas", baixaFinanceiraController.workspace).html($("#totalDividasHidden", baixaFinanceiraController.workspace).val());
 		
+		$(".area", baixaFinanceiraController.workspace).show();
 		$(".grids", baixaFinanceiraController.workspace).show();
 		
 		return resultado;
@@ -1166,6 +1168,8 @@ var baixaFinanceiraController = $.extend(true, {
 	mostrarBaixaAuto : function() {
 		
 		baixaFinanceiraController.resetarCamposBaixaAutomatica();
+
+		$(".area", baixaFinanceiraController.workspace).hide();
 		
 		$('#tableBaixaManual', baixaFinanceiraController.workspace).hide();
 		$('#extratoBaixaManual', baixaFinanceiraController.workspace).hide();

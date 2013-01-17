@@ -504,14 +504,15 @@ var fechamentoEncalheController = $.extend(true, {
 	},
 	
 	postergarCotas : function() {
+		
 		var dataEncalhe = $("#datepickerDe", fechamentoEncalheController.workspace).val();
+		
 		$.postJSON(contextPath + "/devolucao/fechamentoEncalhe/dataSugestaoPostergarCota",
 				{ 'dataEncalhe' : dataEncalhe},
 				function (result) {
 					$("#dtPostergada", fechamentoEncalheController.workspace).val(result.resultado);
 				}
 		);
-		
 		
 		var cotasSelecionadas = fechamentoEncalheController.obterCotasMarcadas();
 
@@ -523,7 +524,9 @@ var fechamentoEncalheController = $.extend(true, {
 				width:300,
 				modal: true,
 				buttons: {
+					
 					"Confirmar": function() {
+						
 						var dataPostergacao = $("#dtPostergada", fechamentoEncalheController.workspace).val();
 						var dataEncalhe = $("#datepickerDe", fechamentoEncalheController.workspace).val();
 						
@@ -551,11 +554,14 @@ var fechamentoEncalheController = $.extend(true, {
 					},
 					
 					"Cancelar": function() {
+						
 						$( this ).dialog( "close" );
 					}
 				},
 				beforeClose: function() {
+					
 					$("#dtPostergada", fechamentoEncalheController.workspace).val("");
+					
 					clearMessageDialogTimeout('dialogMensagemEncerrarEncalhe');
 				},
 				form: $("#dialog-postergar", this.workspace).parents("form")
@@ -564,7 +570,9 @@ var fechamentoEncalheController = $.extend(true, {
 			carregarDataPostergacao();
 			
 		} else {
+			
 			var listaMensagens = new Array();
+			
 			listaMensagens.push('Selecione pelo menos uma cota para postergar!');
 			exibirMensagemDialog('WARNING', listaMensagens, 'dialogMensagemEncerrarEncalhe');
 		}

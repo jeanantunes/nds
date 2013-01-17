@@ -181,6 +181,7 @@ function Endereco(paramTela, paramMessage) {
 	this.editarEndereco = function(idEndereco) {
 		
 		$("#"+paramTela+"linkIncluirNovoEndereco", Endereco.workspace).html("");
+		$("#"+paramTela+"linkIncluirNovoEndereco", Endereco.workspace).attr('title', 'Editar Endereço');
 		$("#"+paramTela+"linkIncluirNovoEndereco", Endereco.workspace).html("<img src='"+contextPath+"/images/ico_salvar.gif' hspace='5' border='0' /> ");
 		$("#"+paramTela+"btnIncluirNovoEndereco", Endereco.workspace).removeClass("bt_add");
 		$("#"+paramTela+"btnIncluirNovoEndereco", Endereco.workspace).addClass("bt_novos");
@@ -255,6 +256,7 @@ function Endereco(paramTela, paramMessage) {
 	this.limparFormEndereco = function () {
 
 		$("#"+paramTela+"linkIncluirNovoEndereco", Endereco.workspace).html("Incluir Novo");
+		$("#"+paramTela+"linkIncluirNovoEndereco", Endereco.workspace).attr('title', 'Incluir Novo Endereço');
 		$("#"+paramTela+"btnIncluirNovoEndereco", Endereco.workspace).removeClass();
 		$("#"+paramTela+"btnIncluirNovoEndereco", Endereco.workspace).addClass("bt_add");
 
