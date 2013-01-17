@@ -95,11 +95,16 @@
 				<tr>
 					<td><strong>Tipo de Desconto:</strong></td>
 					<td>
-						<select name="comboTipoDesconto"  id="comboTipoDesconto" class="habilitarCampoInterface" style="width:200px;" onchange="produtoController.carregarPercentualDesconto();" >
+						<select name="comboTipoDesconto"  id="comboTipoDesconto" class="habilitarCampoInterface" 
+						        style="width:200px; display: none;" onchange="produtoController.carregarPercentualDesconto();" >
 						</select>
+						<input type="text" id="tipoDescontoManual" style="width:200px; display: none;" />
 					</td>
 					<td><strong>% Desconto:</strong></td>
-					<td><input type="text" name="percentualDesconto" id="percentualDesconto" style="width:80px;" readonly="readonly" disabled="disabled" maxlength="4" /></td>
+					<td>
+						<input type="text" name="percentualDesconto" id="percentualDesconto" 
+						style="width:80px;" maxlength="4" />
+					</td>
 				</tr>
 			</table>
 		</fieldset>

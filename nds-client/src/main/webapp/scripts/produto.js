@@ -316,14 +316,16 @@ var produtoController = $.extend(true, {
 						if (!(result.origem == "INTERFACE")){
 							
 							produtoController.carregarComboDesconto("MANUAL",result.tipoDesconto);
-							$("#percentualDesconto", produtoController.workspace).removeAttr('disabled');
-							$("#percentualDesconto", produtoController.workspace).removeAttr('readonly');
-							$("#comboTipoDesconto", produtoController.workspace).attr("disabled","disabled");
+							$("#comboTipoDesconto", produtoController.workspace).hide();
+							$("#tipoDescontoManual", produtoController.workspace).show();
+							$("#tipoDescontoManual", produtoController.workspace).val(result.descricaoDescontoManual);
 						}
 						else{
 							
 							produtoController.carregarComboDesconto("INTERFACE",result.tipoDesconto);
 							$("#percentualDesconto", produtoController.workspace).attr('disabled','disabled');
+							$("#comboTipoDesconto", produtoController.workspace).show();
+							$("#tipoDescontoManual", produtoController.workspace).hide();
 						}	
 					},
 					null,
@@ -416,9 +418,9 @@ var produtoController = $.extend(true, {
 		this.carregarNovoProduto(this.limparModalCadastro);
 		
 		$("#codigoProdutoCadastro", this.workspace).enable();
+		$("#comboTipoDesconto", produtoController.workspace).hide();
+		$("#tipoDescontoManual", produtoController.workspace).show();
 		$("#percentualDesconto", produtoController.workspace).removeAttr('disabled');
-		$("#percentualDesconto", produtoController.workspace).removeAttr('readonly');
-		$("#comboTipoDesconto", produtoController.workspace).attr('disabled','disabled');
 	},
 
 	carregarNovoProduto : function(callback) {
@@ -486,7 +488,8 @@ var produtoController = $.extend(true, {
         			   {name:"codigoFornecedor",value:$("#comboFornecedoresCadastro", produtoController.workspace).val()},
         			   {name:"codigoTipoDesconto",value:$("#comboTipoDesconto", produtoController.workspace).val()},
         			   {name:"codigoTipoProduto",value:$("#comboTipoProdutoCadastro", produtoController.workspace).val()},
-        			   {name:"produto.desconto",value:$("#percentualDesconto", produtoController.workspace).val()}];
+        			   {name:"produto.desconto",value:$("#percentualDesconto", produtoController.workspace).val()},
+        			   {name:"produto.descricaoDesconto",value:$("#tipoDescontoManual", produtoController.workspace).val()}];
  
 		$.postJSON(contextPath + "/produto/salvarProduto",  
 			   	params,

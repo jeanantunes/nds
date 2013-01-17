@@ -1231,7 +1231,7 @@ var PDV =  $.extend(true, {
 			var pathArquivo = responseJson.result[2];
 				
 			if(pathArquivo) {
-				$("#idImagem", this.workspace).attr("src", contextPath + "/" + pathArquivo);
+				$("#idImagem", this.workspace).attr("src", contextPath + pathArquivo);
 			} else {
 				$("#idImagem", this.workspace).attr("src", contextPath +  "/images/pdv/no_image.jpeg");
 			}	
