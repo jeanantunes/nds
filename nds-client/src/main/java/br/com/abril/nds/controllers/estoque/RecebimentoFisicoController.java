@@ -292,22 +292,19 @@ public class RecebimentoFisicoController extends BaseController {
 	@Post
 	public void obterInformacoesNota() {
 		
-		NotaFiscalEntradaFornecedor notaFiscalFornecedor = (NotaFiscalEntradaFornecedor) getNotaFiscalFromSession();
+		NotaFiscalEntrada notaFiscal = getNotaFiscalFromSession();
 		
-		String fornecedor = null;
-		String cnpj = null;
+		String cnpjFornecedor = null;
 		
-		if( notaFiscalFornecedor.getFornecedor() != null) {
-			 fornecedor = notaFiscalFornecedor.getFornecedor().getId().toString();
-			 cnpj = notaFiscalFornecedor.getFornecedor().getJuridica().getCnpj();
+		if( notaFiscal.getEmitente() != null) {
+			 cnpjFornecedor = notaFiscal.getEmitente().getCnpj();
 		}
 		
 		Map<String, String> infoNota = new HashMap<String, String>();
-		infoNota.put("idFornecedor", fornecedor);
-		infoNota.put("numero", notaFiscalFornecedor.getNumero().toString());
-		infoNota.put("serie", notaFiscalFornecedor.getSerie());
-		infoNota.put("chaveAcesso", notaFiscalFornecedor.getChaveAcesso());
-		infoNota.put("cnpj", cnpj);
+		infoNota.put("numero", notaFiscal.getNumero().toString());
+		infoNota.put("serie", notaFiscal.getSerie());
+		infoNota.put("chaveAcesso", notaFiscal.getChaveAcesso());
+		infoNota.put("cnpj", cnpjFornecedor);
 		
 		result.use(CustomJson.class).put("nota", infoNota).serialize();
 	}
