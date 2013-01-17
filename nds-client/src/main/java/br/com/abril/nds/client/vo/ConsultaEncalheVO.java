@@ -49,6 +49,8 @@ public class ConsultaEncalheVO {
 	@Export(label="Recolhimento")
 	private String recolhimento;
 
+	private String indPossuiObservacaoConferenciaEncalhe;
+	
 	/**
 	 * Obtém idProdutoEdicao
 	 *
@@ -301,6 +303,15 @@ public class ConsultaEncalheVO {
 	 */
 	public void setIdCota(String idCota) {
 		this.idCota = idCota;
+	}
+
+	public String getIndPossuiObservacaoConferenciaEncalhe() {
+		return indPossuiObservacaoConferenciaEncalhe;
+	}
+
+	public void setIndPossuiObservacaoConferenciaEncalhe(
+			String indPossuiObservacaoConferenciaEncalhe) {
+		this.indPossuiObservacaoConferenciaEncalhe = indPossuiObservacaoConferenciaEncalhe;
 	}
 
 	
