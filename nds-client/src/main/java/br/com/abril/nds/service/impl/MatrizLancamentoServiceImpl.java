@@ -1362,22 +1362,6 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		}
 	}
 	
-	@Override
-	@Transactional
-	public void excluiLancamento(long idLancamento){
-		Lancamento lancamento =  lancamentoRepository.buscarPorId(idLancamento);
-		if(lancamento == null){
-			throw new ValidacaoException(TipoMensagem.ERROR, "Lançamento não encontrado!");
-		}
-		if(lancamento.getStatus() != StatusLancamento.PLANEJADO && lancamento.getStatus() != StatusLancamento.CONFIRMADO){
-			throw new ValidacaoException(TipoMensagem.ERROR, "Lançamento " + lancamento.getStatus().getDescricao() +" não pode ser excluido!");
-		}
-		
-		lancamento.setStatus(StatusLancamento.EXCLUIDO);
-		
-		
-	}
-	
 	@Transactional(readOnly=true)
 	public List<ConfirmacaoVO> obterDatasConfirmacao(List<ProdutoLancamentoDTO> produtosLancamento) {
 		
