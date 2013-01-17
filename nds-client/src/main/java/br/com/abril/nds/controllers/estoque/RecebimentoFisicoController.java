@@ -1475,13 +1475,13 @@ public class RecebimentoFisicoController extends BaseController {
 		notaFiscal.setSerie(nota.getSerie());
 		notaFiscal.setDataEmissao(nota.getDataEmissao());
 		notaFiscal.setDataExpedicao(nota.getDataEntrada());
-		notaFiscal.setValorLiquido(CurrencyUtil.converterValor(nota.getValorTotal()));
+		notaFiscal.setValorInformado(CurrencyUtil.converterValor(nota.getValorTotal()));
 		notaFiscal.setChaveAcesso(nota.getChaveAcesso());
+		
 		
 		notaFiscal.setFornecedor(fornecedor);
 		notaFiscal.setTipoNotaFiscal(tipoNotaService.obterPorId(3l));//RECEBIMENTO DE ENCALHE
-		notaFiscal.setValorBruto(CurrencyUtil.converterValor(nota.getValorTotal()));
-        notaFiscal.setValorDesconto(notaFiscal.getValorBruto().subtract(notaFiscal.getValorLiquido()));
+        notaFiscal.setValorDesconto(BigDecimal.ZERO);
 		notaFiscal.setStatusNotaFiscal(StatusNotaFiscalEntrada.RECEBIDA);
 		notaFiscal.setOrigem(Origem.MANUAL);
 		notaFiscal.setEmitente(fornecedor.getJuridica());
@@ -1504,6 +1504,9 @@ public class RecebimentoFisicoController extends BaseController {
 		    
 	    }
 		
+		notaFiscal.setValorLiquido(totalItem);
+		
+		notaFiscal.setValorBruto(totalItem);
 		
 		try{
 			

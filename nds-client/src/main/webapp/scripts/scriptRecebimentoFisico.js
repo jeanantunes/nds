@@ -246,6 +246,7 @@ var recebimentoFisicoController = $.extend(true, {
 			
 			$("#novoNumeroNota", recebimentoFisicoController.workspace).val($("#notaFiscal", recebimentoFisicoController.workspace).val());
 			$("#novoSerieNota", recebimentoFisicoController.workspace).val($("#serie", recebimentoFisicoController.workspace).val());		
+			$("#novoChaveAcesso", recebimentoFisicoController.workspace).val($("#chaveAcesso", recebimentoFisicoController.workspace).val());		
 		}
 		
 	},
