@@ -193,7 +193,7 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 			setSituacaoCadastro(input, cota);
 
 			cota.setSugereSuspensao(true);
-			cota.setBox(box);
+			//cota.setBox(box);
 			cota.setPessoa(pessoa);
 			getSession().persist(cota);
 
