@@ -7,8 +7,6 @@ import java.util.TreeMap;
 import br.com.abril.nds.dto.BalanceamentoLancamentoDTO;
 import br.com.abril.nds.dto.ProdutoLancamentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO;
-import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.vo.ConfirmacaoVO;
 
@@ -55,18 +53,6 @@ public interface MatrizLancamentoService {
 	void tratarAgrupamentoPorProdutoDataLcto(
 			ProdutoLancamentoDTO produtoLancamentoAdicionar,
 			List<ProdutoLancamentoDTO> produtosLancamento);
-
-	/**
-	 * Exclui o Lancamento(Produto) da matriz de lançamentos independente se o
-	 * produto tenha sido cadastrado via interface ou manualmente. Quando um
-	 * produto é excluído, a funcionalidade atualiza o {@link Lancamento}, retirando a data prevista de lançamento do Produto(Data Lancamento Distribuidor)
-	 * 
-	 * @param idLancamento
-	 * 
-	 * @throws ValidacaoException Lançamento não encontrado ou Laçamento está com status diferante de PLANEJADO e CONFIRMADO.
-	 * @throws ValidacaoException Laçamento está com status diferante de PLANEJADO e CONFIRMADO.
-	 */
-	public abstract void excluiLancamento(long idLancamento);
 	
 	/**
 	 * Obtém as datas dos lançamento e se estão confirmadas ou não.

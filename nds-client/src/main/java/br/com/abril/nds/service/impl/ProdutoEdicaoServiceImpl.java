@@ -698,9 +698,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			lancamentoRepository.adicionar(lancamento);
 			produtoEdicao.getLancamentos().add(lancamento);
 		} else {			
-			if(lancamento.getStatus() == StatusLancamento.EXCLUIDO){
-				lancamento.setStatus(StatusLancamento.PLANEJADO);
-			}
+			
 			lancamentoRepository.alterar(lancamento);
 		}
 		
