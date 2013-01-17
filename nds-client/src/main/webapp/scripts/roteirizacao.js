@@ -1291,6 +1291,7 @@ var roteirizacao = $.extend(true, {
 
         $("#cepPesquisa", roteirizacao.workspace).mask("99999-999");
         $("#cotaPesquisaPdv", roteirizacao.workspace).val('');
+        $("#cotaPesquisaPdv", roteirizacao.workspace).numeric();
         $("#nomeCotaPesquisaPdv", roteirizacao.workspace).val('');
 
         $.postJSON(contextPath + '/cadastro/roteirizacao/iniciaTelaCotas',null,
