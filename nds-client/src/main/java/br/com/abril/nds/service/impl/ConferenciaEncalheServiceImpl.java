@@ -2641,6 +2641,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				
 			valorTotalEncalheDia = BigDecimalUtil.soma(valorTotalEncalheDia, produtoEdicaoSlip.getValorTotal());
 			
+			if(produtoEdicaoSlip.getReparte() == null)
+				produtoEdicaoSlip.setReparte(BigInteger.ZERO);
+			
 			valorDevido = BigDecimalUtil.soma(valorDevido,produtoEdicaoSlip.getPrecoVenda().multiply(new BigDecimal(produtoEdicaoSlip.getReparte().intValue())));
 			
 			dia = this.obterDiasEntreDatas(produtoEdicaoSlip);
