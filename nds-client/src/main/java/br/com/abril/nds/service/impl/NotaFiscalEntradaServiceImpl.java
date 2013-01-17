@@ -48,7 +48,7 @@ import br.com.abril.nds.vo.ValidacaoVO;
 public class NotaFiscalEntradaServiceImpl implements NotaFiscalEntradaService {
 
 	@Autowired
-	private NotaFiscalEntradaRepository notaFiscalDAO;
+	private NotaFiscalEntradaRepository notaFiscalEntradaRepository;
 	
 	@Autowired
 	private CFOPRepository cfopRepository;
@@ -80,7 +80,7 @@ public class NotaFiscalEntradaServiceImpl implements NotaFiscalEntradaService {
 	@Override
 	@Transactional
 	public Integer obterQuantidadeNotasFicaisCadastradas(FiltroConsultaNotaFiscalDTO filtroConsultaNotaFiscal) {
-		return notaFiscalDAO.obterQuantidadeNotasFicaisCadastradas(filtroConsultaNotaFiscal);
+		return notaFiscalEntradaRepository.obterQuantidadeNotasFicaisCadastradas(filtroConsultaNotaFiscal);
 	}
 
 	@Autowired
@@ -204,7 +204,7 @@ public class NotaFiscalEntradaServiceImpl implements NotaFiscalEntradaService {
 	@Transactional
 	public List<ItemDTO<Long, String>> obterFornecedorNotaFiscal(List<Long> listaIdNotaFiscal) {
 
-		return notaFiscalDAO.obterListaFornecedorNotaFiscal(listaIdNotaFiscal);
+		return notaFiscalEntradaRepository.obterListaFornecedorNotaFiscal(listaIdNotaFiscal);
 
 	}
 	
@@ -215,7 +215,7 @@ public class NotaFiscalEntradaServiceImpl implements NotaFiscalEntradaService {
 		
 		validarPeriodo(filtroConsultaNotaFiscal);
 
-		return notaFiscalDAO.obterNotasFiscaisCadastradas(filtroConsultaNotaFiscal);
+		return notaFiscalEntradaRepository.obterNotasFiscaisCadastradas(filtroConsultaNotaFiscal);
 	}
 
 	@Override
@@ -224,7 +224,7 @@ public class NotaFiscalEntradaServiceImpl implements NotaFiscalEntradaService {
 		
 		validarPeriodo(filtroConsultaNotaFiscal);
 
-		return notaFiscalDAO.obterNotasFiscaisCadastradasDTO(filtroConsultaNotaFiscal);
+		return notaFiscalEntradaRepository.obterNotasFiscaisCadastradasDTO(filtroConsultaNotaFiscal);
 	}
 	
 
@@ -236,7 +236,7 @@ public class NotaFiscalEntradaServiceImpl implements NotaFiscalEntradaService {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Erro inesperado. ID da nota fiscal não pode ser nulo.");
 		}
 
-		List<DetalheItemNotaFiscalDTO> itensDetalhados = notaFiscalDAO.obterDetalhesNotaFical(idNotaFiscal);
+		List<DetalheItemNotaFiscalDTO> itensDetalhados = notaFiscalEntradaRepository.obterDetalhesNotaFical(idNotaFiscal);
 
 		DetalheNotaFiscalDTO detalheNotaFiscalDTO = new DetalheNotaFiscalDTO();
 		
