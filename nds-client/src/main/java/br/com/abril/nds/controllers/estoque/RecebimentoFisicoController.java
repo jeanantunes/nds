@@ -39,6 +39,7 @@ import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Permissao;
+import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.service.CFOPService;
 import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.service.FornecedorService;
@@ -283,22 +284,29 @@ public class RecebimentoFisicoController extends BaseController {
 		tableModel.setRows(rows);
 		tableModel.setTotal(rows.size());
 		tableModel.setPage(1);
+
+		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
 		
-		NotaFiscalEntradaFornecedor notaFiscalFornecedor = (NotaFiscalEntradaFornecedor) notaFiscal;
+	}
+	
+	@Post
+	public void obterInformacoesNota() {
 		
-		String fornecedor = null;
-		if( notaFiscalFornecedor.getFornecedor() != null) {
-			 fornecedor = notaFiscalFornecedor.getFornecedor().getJuridica().getRazaoSocial();
+		NotaFiscalEntrada notaFiscal = getNotaFiscalFromSession();
+		
+		String cnpjFornecedor = null;
+		
+		if( notaFiscal.getEmitente() != null) {
+			 cnpjFornecedor = notaFiscal.getEmitente().getCnpj();
 		}
 		
 		Map<String, String> infoNota = new HashMap<String, String>();
-		infoNota.put("fornecedor", fornecedor);
-		infoNota.put("numero", notaFiscalFornecedor.getNumero().toString());
-		infoNota.put("serie", notaFiscalFornecedor.getSerie());
-		infoNota.put("chaveAcesso", notaFiscalFornecedor.getChaveAcesso());
+		infoNota.put("numero", notaFiscal.getNumero().toString());
+		infoNota.put("serie", notaFiscal.getSerie());
+		infoNota.put("chaveAcesso", notaFiscal.getChaveAcesso());
+		infoNota.put("cnpj", cnpjFornecedor);
 		
-		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
-		//result.use(CustomMapJson.class).put("result", tableModel).put("notaFiscal", infoNota).serialize();
+		result.use(CustomJson.class).put("nota", infoNota).serialize();
 	}
 	
 	private boolean verificarRecebimentoFisicoConfirmado(Long idNotaFiscal) {

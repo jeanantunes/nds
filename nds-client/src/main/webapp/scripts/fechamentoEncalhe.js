@@ -511,9 +511,7 @@ var fechamentoEncalheController = $.extend(true, {
 				{ 'dataEncalhe' : dataEncalhe},
 				function (result) {
 					$("#dtPostergada", fechamentoEncalheController.workspace).val(result.resultado);
-				},
-				null,
-				true
+				}
 		);
 		
 		var cotasSelecionadas = fechamentoEncalheController.obterCotasMarcadas();

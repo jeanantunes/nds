@@ -71,14 +71,9 @@ var recebimentoFisicoController = $.extend(true, {
 		$("#novoValorTotal", recebimentoFisicoController.workspace).keyup(function(){
 			_this.novoValorTotalTyped = true;
 		});
-		
-		 $("#cnpj", recebimentoFisicoController.workspace).keyup(function(e) {
-			
-			if((e.keyCode >= 48 && e.keyCode <= 57) || e.keyCode == 13){		 
-				_this.pesquisarPorCnpjFornecedor();
-			}
-		});
-		
+				
+		$("#cnpj", recebimentoFisicoController.workspace).attr("disabled", true);
+		 
 		$("#novoValorTotal", recebimentoFisicoController.workspace).maskMoney({
 			 thousands:'.', 
 			 decimal:',', 
@@ -165,7 +160,7 @@ var recebimentoFisicoController = $.extend(true, {
 		
 			$("#cnpj", recebimentoFisicoController.workspace).val("");
 			
-			$("#cnpj", recebimentoFisicoController.workspace).attr("disabled", false);
+			$("#cnpj", recebimentoFisicoController.workspace).attr("disabled", true);
 			
 			$("#fornecedor", recebimentoFisicoController.workspace).focus();
 			
@@ -670,13 +665,31 @@ var recebimentoFisicoController = $.extend(true, {
 		$(".itemNotaGrid", recebimentoFisicoController.workspace).flexOptions({
 			url: contextPath + '/estoque/recebimentoFisico/obterListaItemRecebimentoFisico',
 			dataType : 'json',
-			onSuccess : function() { $('.pacotePadrao').tipsy() }
+			onSuccess : function() { $('.pacotePadrao').tipsy(); recebimentoFisicoController.obterInformacoesNota(); }
 		});
 	
 		$(".itemNotaGrid", recebimentoFisicoController.workspace).flexReload();
 	
 	},
-
+	
+	obterInformacoesNota : function() {
+		
+		$.postJSON(this.path + 'obterInformacoesNota', null, 
+				function(result) {
+					
+				console.log(result);
+				debugger;
+				
+				var cnpj = removeSpecialCharacteres(result.cnpj);
+				
+				$("#cnpj", recebimentoFisicoController.workspace).val(cnpj);
+				$("#notaFiscal", recebimentoFisicoController.workspace).val(result.numero);
+				$("#serie", recebimentoFisicoController.workspace).val(result.serie);
+				$("#chaveAcesso", recebimentoFisicoController.workspace).val(result.chaveAcesso);
+				$("#fornecedor", recebimentoFisicoController.workspace).val(cnpj);
+		});
+	},
+	
     /**
      * REFRESH DOS ITENS REFERENTES A NOTA ENCONTRADA.
      */
