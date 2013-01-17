@@ -872,7 +872,8 @@ public class RecebimentoFisicoController extends BaseController {
 			
 			List<String> msgs = new ArrayList<String>();
 			
-			msgs.add("Nota fiscal encontrada com sucesso");
+			if(StatusNotaFiscalEntrada.RECEBIDA.equals(notaFiscal.getStatusNotaFiscal()))
+				msgs.add("Nota fiscal encontrada com sucesso");
 			
 			ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.SUCCESS, msgs);	
 			
