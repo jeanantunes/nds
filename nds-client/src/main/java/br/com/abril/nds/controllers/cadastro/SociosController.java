@@ -228,17 +228,6 @@ public class SociosController extends BaseController {
 	}
 	
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	@Post
 	public void pesquisarSociosFiador(String sortname, String sortorder){
 		
@@ -249,27 +238,8 @@ public class SociosController extends BaseController {
 			Long idFiador = (Long) this.httpSession.getAttribute(FiadorController.ID_FIADOR_EDICAO);
 			
 			if (idFiador != null){
-				
-				
-				/*
-				Set<Long> idsIgnorar = new HashSet<Long>();
-				
-				Set<String> cpfsIgnorar = new HashSet<String>();
-				
-				for (SocioCadastrado sc : listaSocioSalvar){
-					
-					if (sc.getPessoa().getId() != null){
-						
-						idsIgnorar.add(sc.getPessoa().getId());
-					}
-					
-					cpfsIgnorar.add(sc.getPessoa().getCpf().replace(".", "").replace("-", ""));
-				}
 			
-				idsIgnorar.addAll(this.obterListaSociosRemoverSessao());
-				*/
-				
-				List<PessoaFisica> listaSocios = this.pessoaService.obterSociosPorFiador(idFiador, null, null/*idsIgnorar, cpfsIgnorar*/);
+				List<PessoaFisica> listaSocios = this.pessoaService.obterSociosPorFiador(idFiador, null, null);
 				
 				for (PessoaFisica p : listaSocios){
 					
@@ -321,24 +291,8 @@ public class SociosController extends BaseController {
 				item.getPessoa().setSocioPrincipal(false);
 			}
 		}
-		
-		boolean novoSocio = true;
-		
-		for (int index = 0 ; index < listaSociosSalvar.size() ; index++){
 			
-			if (listaSociosSalvar.get(index).getReferencia().equals(referencia)){
-				
-				pessoa.setId(referencia.longValue());
-				
-				listaSociosSalvar.get(index).setPessoa(pessoa);
-				
-				novoSocio = false;
-				
-				break;
-			}
-		}
-		
-		if (novoSocio){
+		if (referencia == null){
 			
 			SocioCadastrado novoSocioCadastrado = new SocioCadastrado();
 			
@@ -352,11 +306,48 @@ public class SociosController extends BaseController {
 			
 			listaSociosExibir.add(novoSocioCadastrado);
 		}
+		else{
+			
+			//Procura na lista salvar, se nao achar procura na lista de exibição alterar a pessoa e o staus da lista
+			
+			SocioCadastrado socioCadastrado = obterSocio(listaSociosSalvar, referencia);
+			
+			if(socioCadastrado!= null){
+				socioCadastrado.setPessoa(pessoa);
+			}
+			else{
+				
+				socioCadastrado = obterSocio(listaSociosExibir, referencia);
+				
+				listaSociosSalvar.add(socioCadastrado);
+			}
+			
+			for(SocioCadastrado item : listaSociosExibir){
+				if(item.getReferencia().equals(referencia)){
+					item.setPessoa(pessoa);
+				}
+			}
+		}
+		
+		this.httpSession.setAttribute(LISTA_SOCIOS_SALVAR_SESSAO,listaSociosSalvar);
 		
 		this.pesquisarSociosFiador(null, null);
 	}
 	
-	
+	private SocioCadastrado obterSocio(List<SocioCadastrado> listaSocios, Integer referencia){
+		
+		if(listaSocios == null ){
+			return null;
+		}
+		
+		for(SocioCadastrado item : listaSocios){
+			if(item.getReferencia().equals(referencia)){
+				return item;
+			}
+		}
+		
+		return null;
+	} 
 	
 	@Post
 	public void removerSocio(Integer referencia){
@@ -394,7 +385,7 @@ public class SociosController extends BaseController {
 		
 		this.httpSession.setAttribute(LISTA_SOCIOS_REMOVER_SESSAO, sociosRemover);
 		
-		this.pesquisarSociosFiador(null, null);
+		this.result.use(Results.json()).from(this.getTableModelListaSocios(sociosExibir), "result").recursive().serialize();
 	}
 	
 	
@@ -458,18 +449,6 @@ public class SociosController extends BaseController {
 		
 		this.result.use(Results.json()).from(dados != null ? dados : "", "result").recursive().serialize();
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	
 	private void validarConjugeDoSocio(PessoaFisica pessoa, CPFValidator cpfValidator, List<String> msgsValidacao) {
 		
