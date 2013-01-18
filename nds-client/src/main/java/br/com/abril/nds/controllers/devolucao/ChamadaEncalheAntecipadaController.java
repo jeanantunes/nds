@@ -1013,7 +1013,7 @@ public class ChamadaEncalheAntecipadaController extends BaseController {
 		
 		if(roteiro!= null){
 
-			rotas = roteirizacaoService.buscarRotaPorRoteiro(roteiro);
+			rotas = roteirizacaoService.buscarRotasPorRoteiro(roteiro);
 		}
 		else{
 			

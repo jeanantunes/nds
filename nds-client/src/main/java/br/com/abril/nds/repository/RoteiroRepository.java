@@ -38,5 +38,7 @@ public interface RoteiroRepository extends Repository<Roteiro, Long> {
 	 * @return
 	 */
 	Roteiro obterRoteiroPorRota(Long rotaID);
+
+	List<Roteiro> obterRoteirosNaoAssociadosAoBox(Long idBox);
 	
 }

@@ -46,6 +46,8 @@ var roteirizacao = $.extend(true, {
     boxReadonly : false,
     modificada: false,
 
+    
+    
     definirTransferenciaCota : function() {
         if (!roteirizacao.isTransferenciaCota()) {
             roteirizacao.tipoTransferencia = TipoTransferencia.COTA;
@@ -2577,8 +2579,8 @@ var roteirizacao = $.extend(true, {
     },
 
     init : function() {
-
-        $("#cotasGrid",roteirizacao.workspace).flexigrid({
+    	
+    	$("#cotasGrid",roteirizacao.workspace).flexigrid({
             autoload : false,
             url : contextPath + '/cadastro/roteirizacao/obterCotasSumarizadas',
             dataType : 'json',
@@ -2595,12 +2597,12 @@ var roteirizacao = $.extend(true, {
                 sortable : true,
                 align : 'left'
             }],
-            sortname : "numeroCota",
+            sortname : "",
             sortorder : "asc",
             width : 'auto',
             height : 200
         });
-        
+    	
     },
     
     limparCamposNovaInclusao : function(){
@@ -2637,7 +2639,7 @@ var roteirizacao = $.extend(true, {
             $.postJSON(
                 contextPath + '/cadastro/roteirizacao/carregarRoteirosTransferenciaRota',
                 [
-                    {name: 'idRoteiro', value: roteirizacao.idRoteiro}
+                    {name: 'idBox', value: roteirizacao.idBox}
                 ],
                 function(result) {
 
@@ -3079,6 +3081,7 @@ var roteirizacao = $.extend(true, {
 
 $(function() {
     roteirizacao.init();
+  
 });
 
 //@ sourceURL=roteirizacao.js

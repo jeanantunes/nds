@@ -30,7 +30,7 @@ public interface RoteirizacaoService {
 	
 	List<Roteiro> buscarRoteiroPorDescricao(String descricao, MatchMode matchMode);
 	
-	List<Rota> buscarRotaPorRoteiro(Long idRoteiro);
+	List<Rota> buscarRotasPorRoteiro(Long idRoteiro);
 	
 	void incluirRota(Rota rota);
 	
@@ -264,6 +264,8 @@ public interface RoteirizacaoService {
 
 	void validarAssociacaoRoteiroTransportador(Long roteiroId);
 
-	List<RotaRoteirizacaoDTO> buscarRotasEspeciais(); 
+	List<RotaRoteirizacaoDTO> buscarRotasEspeciais();
+
+	List<RoteiroRoteirizacaoDTO> buscarRoteirosNaoAssociadosAoBox(Long idBox); 
 }
 	
