@@ -55,13 +55,6 @@ var lancamentosSelecionados = [];
 </head>
 
 <body>
-<form id="form-excluir-lancamento">
-<div id="dialog-excluir-lancamento" title="Balanceamento da Matriz de Lançamento" style="display:none">
-	
-	<p>Confirma a exclus&atilde;o deste lançamento?</p>
-			   
-</div>
-</form>
 
 <form id="form-confirm">
 <div id="dialog-confirm" title="Balanceamento da Matriz de Lançamento">

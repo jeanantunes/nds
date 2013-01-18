@@ -414,6 +414,17 @@ public class FiadorServiceImpl implements FiadorService {
 			if (sociosAdicionar != null && !sociosAdicionar.isEmpty()){
 				
 				for (Pessoa socio : sociosAdicionar){
+					
+					if(((PessoaFisica)socio).isSocioPrincipal()){
+						for(Pessoa item : sociosBanco){
+							if(((PessoaFisica)item).isSocioPrincipal()){
+								if(!item.getId().equals(socio.getId())){
+									((PessoaFisica)item).setSocioPrincipal(false);
+								}
+							}
+						}
+					}
+					
 					if (!sociosBanco.contains(socio)){
 						sociosBanco.add(socio);
 					}
@@ -433,7 +444,7 @@ public class FiadorServiceImpl implements FiadorService {
 				}
 			}
 			
-			fiador.setSocios(sociosAdicionar);
+			fiador.setSocios(sociosBanco);
 		} else {
 			
 			fiador.setSocios(sociosAdicionar);
