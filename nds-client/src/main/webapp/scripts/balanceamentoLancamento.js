@@ -356,7 +356,7 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 			pathTela + "/matrizLancamento/obterAgrupamentoDiarioBalanceamento", 
 			null,
 			function(result) {
-				balanceamento.popularConfirmacaoBalanceamento(result);
+				balanceamento.popularConfirmacaoBalanceamento(result,_workspace);
 				T.popup_confirmar_balanceamento();
 			},
 			function() {

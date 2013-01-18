@@ -998,7 +998,7 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 			contextPath + "/devolucao/balanceamentoMatriz/obterAgrupamentoDiarioBalanceamento", 
 			null,
 			function(result) {
-				this.balanceamento.popularConfirmacaoBalanceamento(result);
+				this.balanceamento.popularConfirmacaoBalanceamento(result,balanceamentoRecolhimentoController.workspace);
 				balanceamentoRecolhimentoController.abrirPopupConfirmarBalanceamento();
 			},
 			function() {

@@ -256,19 +256,19 @@ fieldset {
 					<fieldset style="width:250px!important; margin-bottom:5px; float:right;">
 						<legend>Tipos de Desconto</legend>
 						<table width="250" border="0" cellspacing="1" cellpadding="1">
-							<thead />
-							<tbody>
-
-								<tr>
-									<td colspan="2"><input type="text" name="descricaoDesconto" id="produtoEdicaoController-descricaoDesconto" style="width:235px;" /></td>
-								</tr>
-								
-								<tr>
-									<td>Desconto %:</td>
-									<td><input type="text" name="desconto" id="produtoEdicaoController-desconto" style="width:113px;" /></td>
-								</tr>
-								
-							</tbody>
+							<tr>
+								<td colspan="2">
+									<input type="text" name="descricaoDesconto" 
+										   id="produtoEdicaoController-descricaoDesconto" style="width:235px;" />
+								</td>
+							</tr>
+							<tr>
+								<td>Desconto %:</td>
+								<td>
+									<input type="text" name="desconto" 
+										   id="produtoEdicaoController-desconto" style="width:113px;" />
+								</td>
+							</tr>
 						</table>
 					</fieldset>
 					<fieldset style="width:250px!important; float:right; margin-bottom:5px;">

@@ -203,16 +203,22 @@ public class FechamentoEncalheController extends BaseController {
 				
 		Date resultado = chamadaAntecipadaEncalheService.obterProximaDataEncalhe(date);
 		
-		this.result.use(Results.json()).from(resultado, "resultado").serialize();
+		if (resultado != null){
+
+		    this.result.use(Results.json()).from(resultado, "resultado").serialize();
+		}
+		else{
+			
+			this.result.use(Results.nothing());
+		}
 	}
 	
 	@Post
 	public void veificarCobrancaGerada(List<Long> idsCotas){
 		
 		if (idsCotas == null || idsCotas.isEmpty()) {
-			this.result.use(Results.json()).from(
-				new ValidacaoVO(TipoMensagem.WARNING, "Selecine pelo menos uma Cota para cobrar!"), "result").recursive().serialize();
-			throw new ValidacaoException();
+			
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Selecine pelo menos uma Cota para cobrar!"));
 		}
 		
 		if (this.gerarCobrancaService.verificarCobrancasGeradas(idsCotas)){
@@ -299,6 +305,7 @@ public class FechamentoEncalheController extends BaseController {
 					FechamentoFisicoLogicoDTO.class, this.response);
 				
 			} catch (Exception e) {
+				
 				throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Erro ao gerar o arquivo!"));
 			}
 		}
@@ -312,66 +319,52 @@ public class FechamentoEncalheController extends BaseController {
 		try {
 		
 			if (dataEncalhe == null || Calendar.getInstance().getTime().before(dataEncalhe)) {
-				this.result.use(Results.json()).from(
-					new ValidacaoVO(TipoMensagem.WARNING, "Data de encalhe inválida!"), "result").recursive().serialize();
-				throw new ValidacaoException();
+				
+				throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Data de encalhe inválida!"));
 			}
 			
 			this.fechamentoEncalheService.encerrarOperacaoEncalhe(dataEncalhe);
 			
-		} catch (ValidacaoException e) {
-			this.result.use(Results.json()).from(e.getValidacao(), "result").recursive().serialize();
-			throw new ValidacaoException();
 		} catch (Exception e) {
-			this.result.use(
-				Results.json()).from(
-					new ValidacaoVO(TipoMensagem.ERROR, "Erro ao tentar encerrar a operação de encalhe!"), "result").recursive().serialize();
-			throw new ValidacaoException();
+			
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Erro ao tentar encerrar a operação de encalhe!"));
 		}
 		
-		this.result.use(Results.json()).from(
-			new ValidacaoVO(TipoMensagem.SUCCESS, "Operação de encalhe encerrada com sucesso!"), "result").recursive().serialize();
+		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação de encalhe encerrada com sucesso!"), "result").recursive().serialize();
 	}
 	
 	@Path("/verificarEncerrarOperacaoEncalhe")
 	public void verificarEncerrarOperacaoEncalhe(Date dataEncalhe, String operacao) {
+		
 		if (dataEncalhe == null) {
 			
 			if(verificarDataEncalhe(dataEncalhe)) {
-				this.result.use(Results.json()).from(
-					new ValidacaoVO(TipoMensagem.WARNING, "Data de encalhe inválida!"), "result").recursive().serialize();
 				
-				throw new ValidacaoException();
+				throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Data de encalhe inválida!"));
 			}
 		}
 		
-		int totalCotasAusentes =
-			this.fechamentoEncalheService.buscarQuantidadeCotasAusentes(dataEncalhe);
+		int totalCotasAusentes = this.fechamentoEncalheService.buscarQuantidadeCotasAusentes(dataEncalhe);
 		
 		if (totalCotasAusentes > 0 && ("VERIFICACAO").equalsIgnoreCase(operacao)) {
-			this.result.use(Results.json()).from("NAO_ENCERRAR", "result").recursive().serialize();
-			throw new ValidacaoException();
-		} else if (totalCotasAusentes <= 0 && ("VERIFICACAO").equalsIgnoreCase(operacao)) {
-			this.result.use(Results.json()).from("ENCERRAR", "result").recursive().serialize();
-			throw new ValidacaoException();
+			
+			this.result.use(Results.json()).from(Boolean.FALSE, "result").recursive().serialize();			
+		} 
+		else if (totalCotasAusentes <= 0 && ("VERIFICACAO").equalsIgnoreCase(operacao)) {
+			
+			this.result.use(Results.json()).from(Boolean.TRUE, "result").recursive().serialize();			
 		}
 			
 		try {
 			
 			this.fechamentoEncalheService.encerrarOperacaoEncalhe(dataEncalhe);
-			
-		} catch (ValidacaoException e) {
-			this.result.use(Results.json()).from(e.getValidacao(), "result").recursive().serialize();
-			throw new ValidacaoException();
-		} catch (Exception e) {
-			this.result.use(
-				Results.json()).from(
-					new ValidacaoVO(TipoMensagem.ERROR, "Erro ao tentar encerrar a operação de encalhe!" + e.getMessage()), "result").recursive().serialize();
-			throw new ValidacaoException();
+		} 
+		catch (Exception e) {
+
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Erro ao tentar encerrar a operação de encalhe!" + e.getMessage()));
 		}
 
-		this.result.use(Results.json()).from(
-			new ValidacaoVO(TipoMensagem.SUCCESS, "Operação de encalhe encerrada com sucesso!"), "result").recursive().serialize();
+		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação de encalhe encerrada com sucesso!"), "result").recursive().serialize();
 	}
 
 	private boolean verificarDataEncalhe(Date dataEncalhe) {
@@ -389,7 +382,6 @@ public class FechamentoEncalheController extends BaseController {
 			return sortname;
 		}
 	}
-	
 	
 	@Path("/verificarMensagemConsistenciaDados")
 	public void verificarMensagemConsistenciaDados(String dataEncalhe, Long fornecedorId, Long boxId) {
@@ -412,12 +404,13 @@ public class FechamentoEncalheController extends BaseController {
 	
 	@Path("/salvarNoEncerrementoOperacao")
 	public void salvarNoEncerrementoOperacao(List<FechamentoFisicoLogicoDTO> listaFechamento, String dataEncalhe, Long fornecedorId, Long boxId) {
+		
 		if (listaFechamento !=null && !listaFechamento.isEmpty()){
-			gravaFechamentoEncalhe(listaFechamento, dataEncalhe, fornecedorId,
-					boxId);
+			
+			gravaFechamentoEncalhe(listaFechamento, dataEncalhe, fornecedorId, boxId);
 		}
 		
-		this.result.use(Results.json()).from("", "result").serialize();
+		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação de encalhe encerrada com sucesso!"), "result").recursive().serialize();
 	}
 
 	private void gravaFechamentoEncalhe(
@@ -434,7 +427,6 @@ public class FechamentoEncalheController extends BaseController {
 		}
 	}
 	
-	
 	//------------------
 	// Analítico Encalhe
 	//------------------
@@ -444,11 +436,9 @@ public class FechamentoEncalheController extends BaseController {
 		this.index();
 	}
 	
-	
 	@Path("/pesquisarAnalitico.json")
 	public void pesquisarAnaliticoEncalhe(FiltroFechamentoEncalheDTO filtro, String sortname, String sortorder, int rp, int page) {
 	
-		
 		List<AnaliticoEncalheDTO> listDTO = fechamentoEncalheService.buscarAnaliticoEncalhe(filtro, sortorder, this.resolveSort(sortname), page, rp);
 		
 		Integer totalRegistro = fechamentoEncalheService.buscarTotalAnaliticoEncalhe(filtro);
@@ -459,23 +449,19 @@ public class FechamentoEncalheController extends BaseController {
 			listVO.add(new AnaliticoEncalheVO(dto));
 		}
 		
-		
 		this.result.use(FlexiGridJson.class).from(listVO).total(totalRegistro).page(page).serialize();
 	}
 	
-
 	@Get
 	@Path("/imprimirArquivoAnaliticoEncalhe")
 	public void imprimirArquivoAnaliticoEncalhe(FiltroFechamentoEncalheDTO filtro,
 			String sortname, String sortorder, int rp, int page, FileType fileType) {
-		
 		
 		List<AnaliticoEncalheDTO> listDTO = fechamentoEncalheService.buscarAnaliticoEncalhe(filtro, sortorder, this.resolveSort(sortname), page, rp);
 		List<AnaliticoEncalheVO> listVO = new ArrayList<AnaliticoEncalheVO>();
 		for (AnaliticoEncalheDTO dto : listDTO) {
 			listVO.add(new AnaliticoEncalheVO(dto));
 		}
-		
 		
 		if (listVO != null && !listVO.isEmpty()) {
 		
@@ -492,7 +478,5 @@ public class FechamentoEncalheController extends BaseController {
 		
 		this.result.use(Results.nothing());
 	}
-	
-	
 		
 }

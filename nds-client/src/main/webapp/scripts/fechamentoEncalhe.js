@@ -329,12 +329,16 @@ var fechamentoEncalheController = $.extend(true, {
 				var listaMensagens = result.listaMensagens;
 				
 				if (tipoMensagem && listaMensagens) {
+					
 					exibirMensagem(tipoMensagem, listaMensagens);
 				}
 
-				if (result == 'NAO_ENCERRAR') {
+				if (!result) {
+					
 					fechamentoEncalheController.popup_encerrarEncalhe();
-				} else if (result == 'ENCERRAR'){
+				} 
+				else{
+					
 					fechamentoEncalheController.popup_encerrar();
 				}			
 			},
@@ -510,7 +514,8 @@ var fechamentoEncalheController = $.extend(true, {
 		$.postJSON(contextPath + "/devolucao/fechamentoEncalhe/dataSugestaoPostergarCota",
 				{ 'dataEncalhe' : dataEncalhe},
 				function (result) {
-					$("#dtPostergada", fechamentoEncalheController.workspace).val(result.resultado);
+						
+			        $("#dtPostergada", fechamentoEncalheController.workspace).val(result.resultado);   
 				}
 		);
 		
@@ -783,21 +788,27 @@ var fechamentoEncalheController = $.extend(true, {
 	},
 
 	 limpaGridPesquisa : function() {
+		 
 		 $(".fechamentoGrid", fechamentoEncalheController.workspace).clear();
 		 $('#divFechamentoGrid', fechamentoEncalheController.workspace).css("display", "none");
-		 
 	},
 
 	 salvarNoEncerrementoOperacao : function() {
+		 
 			$.postJSON(
 				contextPath + "/devolucao/fechamentoEncalhe/salvarNoEncerrementoOperacao",
 				fechamentoEncalheController.populaParamentrosFechamentoEncalheInformados(),
 				function (result) {
+					
 					var tipoMensagem = result.tipoMensagem;
+					
 					var listaMensagens = result.listaMensagens;
+					
 					if (tipoMensagem && listaMensagens) {
+						
 						exibirMensagem(tipoMensagem, listaMensagens);
 					} else {
+						
 						fechamentoEncalheController.verificarEncerrarOperacaoEncalhe();
 					}
 				},
