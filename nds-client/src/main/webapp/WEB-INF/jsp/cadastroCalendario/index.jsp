@@ -24,29 +24,34 @@
 	
 
 	.ui-state-default {
-		font-size: 13px !important;
+		font-size: .9em !important;
+	}
+	
+	.ui-datepicker td {
+		border: 0;
+		padding: 1px;
+		line-height: 12px!important;
 	}
 	
 	.ui-datepicker-group {
-	    height: 220px;
+	    height: 170;
 		margin-left: 4px;
 		margin: 0 !important;
 		padding: 5px !important;
 	}
-	.ui-datepicker-inline{height: 740px;}
 
     td.highlight { 
     		border: none !important;
     		padding: 1px 0 1px 1px !important;
     		background: none !important;
     		overflow:hidden;
-    		line-height:22px!important;
     }
     
 	td.highlight a {
 			background: #fff !important;  
 			border: 2px #0F0 solid !important;
 			color:#060 !important;
+			line-height: 10px;
 	}
 
 </style>
@@ -59,7 +64,7 @@
 
 	<form id="form-excluir">
 	<div id="dialog-excluir" title="Excluir Feriado">
-		<p>Confirma a exclusÃ£o deste Feriado?</p>
+		<p>Confirma a exclusão deste Feriado?</p>
 	</div>
 	</form>
 
@@ -122,7 +127,7 @@
 					</td>
 				</tr>
 				<tr>
-					<td>DescriÃ§Ã£o:</td>
+					<td>Descrição:</td>
 					<td>
 						<input type="text" name="descricaoNovo" id="descricaoNovo" style="width: 230px;" />
 					</td>
@@ -135,7 +140,7 @@
 					</td>
 				</tr>
 				<tr>
-					<td>Efetua CobranÃ§a?</td>
+					<td>Efetua Cobrança?</td>
 					<td>
 						<input name="indEfetuaCobrancaNovo" type="checkbox" value="" id="indEfetuaCobrancaNovo" />
 					</td>
@@ -152,11 +157,11 @@
 	</form>
 
 	<form id="form-feriado-mes">
-	<div id="dialog-feriado-mes" title="Feriado do mÃªs">
+	<div id="dialog-feriado-mes" title="Feriado do mês">
 	
 		<fieldset style="width: 650px; margin-top: 10px;">
 		
-			<legend>Feriados do mÃªs</legend>
+			<legend>Feriados do mês</legend>
 	
 			<table class="mesFeriadoGrid"></table>
 		
@@ -223,7 +228,7 @@
 	    			</select>					
 					
 					</td>
-					<td>DescriÃ§Ã£o:</td>
+					<td>Descrição:</td>
 					<td>
 						<input type="text" name="descricao" id="descricao" style="width: 230px;" />
 						<input type="hidden" name="idFeriado" id="idFeriado" />
@@ -233,7 +238,7 @@
 					<td align="right"><input name="indOpera" type="checkbox" value="" id="indOpera" /></td>
 					<td>Opera? </td>
 					<td align="right"><input name="indEfetuaCobranca" type="checkbox" value="" id="indEfetuaCobranca" /></td>
-					<td>Efetua CobranÃ§a?</td>
+					<td>Efetua Cobrança?</td>
 				</tr>
 				<tr>
 					<td align="right"><input name="indRepeteAnualmente" type="checkbox" value="" id="indRepeteAnualmente" /></td>
@@ -302,7 +307,7 @@
 
 			<fieldset class="fieldGrid">
 			
-				<legend>CalendÃ¡rio de Feriados</legend>
+				<legend>Calendário de Feriados</legend>
 				
 				<div id="feriadosWrapper">
 					
