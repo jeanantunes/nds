@@ -396,25 +396,25 @@ var cotaBaseController = $.extend(true, {
 		dataType : 'json',
 			colModel : [ {
 				display : 'Cota',
-				name : 'cota',
+				name : 'numeroCota',
 				width : 90,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Nome',
-				name : 'Nome',
+				name : 'nomeCota',
 				width : 135,
 				sortable : true,
 				align : 'left'
 			},  {
 				display : 'Tipo PDV',
-				name : 'tipoPdv',
+				name : 'tipoPDV',
 				width : 90,
 				sortable : true,
 				align : 'left'
 			},  {
 				display : 'Bairro',
-				name : 'Bairro',
+				name : 'bairro',
 				width : 100,
 				sortable : true,
 				align : 'left'
@@ -426,7 +426,7 @@ var cotaBaseController = $.extend(true, {
 				align : 'left'
 			},  {
 				display : 'Gerador de Fluxo',
-				name : 'geradorFluxo',
+				name : 'geradorDeFluxo',
 				width : 90,
 				sortable : true,
 				align : 'left'
@@ -438,7 +438,7 @@ var cotaBaseController = $.extend(true, {
 				align : 'left'
 			},  {
 				display : 'Faturamento Médio R$',
-				name : 'faturamentoMedio',
+				name : 'faturamentoFormatado',
 				width : 120,
 				sortable : true,
 				align : 'right'
@@ -470,8 +470,24 @@ var cotaBaseController = $.extend(true, {
 			return resultado;
 		}
 		
-//		$(".grids", vendaProdutoController.workspace).show();
+		return cotaBaseController.prepararGridPrincipal(resultado);
+	},
+	
+	prepararGridPrincipal : function(resultado){
 		
+		$.each(resultado.rows, function(index, row) {
+			
+			if(row.cell.numeroCota == null ){
+				var inputNumeroCota ='<input type="text" id="numeroCotaGrid0" name="numeroCotaGrid" style="width:55px; float:left; margin-right:10px;"  />';
+				
+				var inputNomeCota='<input type="text" id="nomeCotaGrid0" name="nomeCotaGrid" style="width:120px; float:left; margin-right:10px;"/>';				
+				
+				row.cell.numeroCota = inputNumeroCota;
+				row.cell.nomeCota = inputNomeCota;
+			}
+		
+		});
+			
 		return resultado;
 	},
 	
@@ -508,46 +524,19 @@ var cotaBaseController = $.extend(true, {
 		$('.pesqGeralGrid', cotaBaseController.workspace).hide();
 		$('.pesqCotasGrid' , cotaBaseController.workspace).show();
 		
-//		data = {"total": 3, page : 1,  "rows" : [
-//		                              	{cota: '|', nome: '|', tipoPdv : '|', Bairro : '|', cidade : '|', geradorFluxo : '|' , areaInfluencia : '|' , faturamentoMedio : '|'}, 
-//		                              	{cota: '|', nome: '|', tipoPdv : '|', Bairro : '|', cidade : '|', geradorFluxo : '|' , areaInfluencia : '|' , faturamentoMedio : '|'},
-//		                              	{cota: '|', nome: '|', tipoPdv : '|', Bairro : '|', cidade : '|', geradorFluxo : '|' , areaInfluencia : '|' , faturamentoMedio : '|'}]};
-//
-//		$(".cotasEquivalentesGrid").flexAddData(data);
+		var numeroCota = $('#idCota').val();
 		
-//		$(".cotasEquivalentesGrid", cotaBaseController.workspace).flexOptions({
-//			url: contextPath + "/cadastro/cotaBase/pesquisarCotaBase",
-//			dataType : 'json',
-//			params: cotaBaseController.getDados()
-//		});
-//		
-//		$(".cotasEquivalentesGrid", cotaBaseController.workspace).flexReload();
+		$("#cotasEquivalentesGrid", cotaBaseController.workspace).flexOptions({
+			url: contextPath + "/cadastro/cotaBase/pesquisarCotasBase",
+			dataType : 'json',
+			params: [{name: 'numeroCota' , value: numeroCota}]
+		});
+		
+		$("#cotasEquivalentesGrid", cotaBaseController.workspace).flexReload();
+
 	},
 	
-	getDados : function() {
-		
-		var data = [];
-		
-		data.push({name:'filtro.codigo',		value: vendaProdutoController.get("codigo")});
-		data.push({name:'filtro.nomeProduto',		value: vendaProdutoController.get("produto")});
-		data.push({name:'filtro.edicao',		value: vendaProdutoController.get("edicoes")});
-		data.push({name:'filtro.idFornecedor',		value: vendaProdutoController.get("idFornecedor")});		
-		data.push({name:'filtro.nomeFornecedor',	value: $('#idFornecedor option:selected', vendaProdutoController.workspace).text()});
-		
-		return data;
-	},
 	
-	get : function(campo) {
-		
-		var elemento = $("#" + campo, vendaProdutoController.workspace);
-		
-		if(elemento.attr('type') == 'checkbox') {
-			return (elemento.attr('checked') == 'checked') ;
-		} else {
-			return elemento.val();
-		}
-		
-	},
 	
 	popup_novoEquivalente : function() {
 		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
@@ -748,7 +737,7 @@ var cotaBaseController = $.extend(true, {
 		
 		if (numeroCota && numeroCota.length > 0) {
 			
-			$.postJSON(contextPath + "/cadastro/cotaBase/pesquisarCotaBase",
+			$.postJSON(contextPath + "/cadastro/cotaBase/pesquisarCotaNova",
 					{numeroCota:numeroCota},
 				function(result) { 
 						cotaBaseController.pesquisarPorNumeroSuccessCallBack(result, idCampoNomeCota, successCallBack); 
