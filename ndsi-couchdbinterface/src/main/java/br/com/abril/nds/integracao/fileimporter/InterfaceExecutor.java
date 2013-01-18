@@ -25,7 +25,6 @@ import org.ektorp.http.HttpClient;
 import org.ektorp.http.StdHttpClient;
 import org.ektorp.impl.StdCouchDbInstance;
 import org.lightcouch.CouchDbClient;
-import org.lightcouch.CouchDbException;
 import org.lightcouch.NoDocumentException;
 import org.lightcouch.View;
 import org.lightcouch.ViewResult;
@@ -338,6 +337,7 @@ public class InterfaceExecutor {
 					in = new FileInputStream(imagem);					
 					couchDbClient.saveAttachment(in, imagem.getName().replace(".jpeg", ".jpg"), "image/jpeg", doc.get_id(), doc.get_rev());
 				} catch (FileNotFoundException e1) {
+					//TODO: remover o printStackTrace e trocar por log
 					e1.printStackTrace();
 				} finally {
 					if (null != in) {
@@ -350,6 +350,7 @@ public class InterfaceExecutor {
 				}
 				
 			} catch (Exception e) {
+				//TODO: remover o printStackTrace e trocar por log
 				e.printStackTrace();
 			}
 			

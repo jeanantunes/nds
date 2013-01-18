@@ -1106,9 +1106,8 @@ public class LancamentoRepositoryImpl extends
 		sql.append(" on lancamentoParcial.ID = periodoLancamentoParcial.LANCAMENTO_PARCIAL_ID ");
 		
 		sql.append(" where ");
-		sql.append("  UPPER(tipoProduto.GRUPO_PRODUTO) in ( :tiposProduto ) ");
 		
-		sql.append(" and ( ");
+		sql.append(" ( ");
 		sql.append(" 	select fornecedor.ID from PRODUTO_FORNECEDOR produtoFornecedor, FORNECEDOR fornecedor ");
 		sql.append(" 		where produtoFornecedor.PRODUTO_ID = produto.ID ");
 		sql.append(" 		and produtoFornecedor.FORNECEDORES_ID = fornecedor.ID ");
@@ -1173,25 +1172,15 @@ public class LancamentoRepositoryImpl extends
 				  										  StatusLancamento.CONFIRMADO.name(),
 				  										  StatusLancamento.FURO.name()};
 		
-		String[] arrayTipoProduto = {GrupoProduto.OUTROS.name(),
-									 GrupoProduto.REVISTA.name(),
-									 GrupoProduto.CROMO.name(),
-									 GrupoProduto.CARTELA.name(),
-									 GrupoProduto.LIVRO.name(),
-									 GrupoProduto.COLECIONAVEL.name()};
-		
 		List<String> statusLancamentoNoPeriodo = Arrays.asList(arrayStatusLancamentoNoPeriodo);
 		
 		List<String> statusLancamentoDataMenorInicial = Arrays.asList(arrayStatusLancamentoDataMenorInicial);
-		
-		List<String> tiposProduto = Arrays.asList(arrayTipoProduto);
 		
 		query.setParameterList("idsFornecedores", fornecedores);
 		query.setParameter("periodoInicial", periodoDistribuicao.getDe());
 		query.setParameter("periodoFinal", periodoDistribuicao.getAte());
 		query.setParameterList("statusLancamentoNoPeriodo", statusLancamentoNoPeriodo);
 		query.setParameterList("statusLancamentoDataMenorInicial", statusLancamentoDataMenorInicial);
-		query.setParameterList("tiposProduto", tiposProduto);
 		query.setParameter("grupoCromo", GrupoProduto.CROMO.toString());
 	}
 
@@ -1473,8 +1462,7 @@ public class LancamentoRepositoryImpl extends
 		query.setParameter("dataFinal", periodoDistribuicao.getAte());
 		
 		query.setParameterList("statusLancamento",
-							   Arrays.asList(StatusLancamento.BALANCEADO,
-									   		 StatusLancamento.EXCLUIDO));
+							   Arrays.asList(StatusLancamento.BALANCEADO));
 		
 		return query.list();
 	}
@@ -1497,8 +1485,7 @@ public class LancamentoRepositoryImpl extends
 		query.setParameter("dataFinal", periodoDistribuicao.getAte());
 		
 		query.setParameterList("statusLancamento",
-							   Arrays.asList(StatusLancamento.BALANCEADO,
-									   		 StatusLancamento.EXCLUIDO));
+							   Arrays.asList(StatusLancamento.BALANCEADO));
 		
 		return query.list();
 	}

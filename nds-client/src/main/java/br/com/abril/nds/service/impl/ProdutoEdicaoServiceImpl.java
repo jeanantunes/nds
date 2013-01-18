@@ -3,6 +3,7 @@ package br.com.abril.nds.service.impl;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.RoundingMode;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -698,9 +699,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			lancamentoRepository.adicionar(lancamento);
 			produtoEdicao.getLancamentos().add(lancamento);
 		} else {			
-			if(lancamento.getStatus() == StatusLancamento.EXCLUIDO){
-				lancamento.setStatus(StatusLancamento.PLANEJADO);
-			}
+			
 			lancamentoRepository.alterar(lancamento);
 		}
 		
@@ -776,10 +775,12 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			nomeFornecedor = produto.getFornecedor().getJuridica().getNomeFantasia();
 		}
 		dto.setNomeFornecedor(nomeFornecedor);
-
-		dto.setDesconto(produto.getDescontoLogistica() == null 
-				? BigDecimal.ZERO : BigDecimal.valueOf(
-						produto.getDescontoLogistica().getPercentualDesconto()));
+		
+		dto.setDesconto(produto.getDescontoLogistica() == null
+				? BigDecimal.ZERO 
+				: BigDecimal.valueOf(produto.getDescontoLogistica().getPercentualDesconto()).setScale(2, RoundingMode.HALF_EVEN));
+		
+		dto.setDescricaoDesconto(produto.getDescontoLogistica().getDescricao());
 
 		if (idProdutoEdicao != null && Util.isLong(idProdutoEdicao)) {
 
@@ -806,6 +807,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			//Desconto Fornecedor x Distribuidor
 			dto.setDescricaoDesconto(pe.getDescricaoDesconto()!=null?pe.getDescricaoDesconto():produto.getDescricaoDesconto());
 			BigDecimal percentualDesconto = Util.nvl(pe.getDescontoProdutoEdicao()!=null?pe.getDescontoProdutoEdicao().getValor():produto.getDesconto()!=null?produto.getDesconto():BigDecimal.ZERO, BigDecimal.ZERO);
+
 			dto.setDesconto(percentualDesconto);
 
 			dto.setPeso(pe.getPeso());

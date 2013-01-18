@@ -223,6 +223,10 @@ public class NotaFiscalEntradaRepositoryImpl extends AbstractRepositoryModel<Not
 						orderByColumn += orderByColumn.equals("") ? "" : ",";
 						orderByColumn += " notaFiscal.dataEmissao ";
 						break;
+					case SERIE:
+						orderByColumn += orderByColumn.equals("") ? "" : ",";
+						orderByColumn += " notaFiscal.serie ";
+						break;	
 					case DATA_EXPEDICAO:
 						orderByColumn += orderByColumn.equals("") ? "" : ",";
 						orderByColumn += " notaFiscal.dataExpedicao ";

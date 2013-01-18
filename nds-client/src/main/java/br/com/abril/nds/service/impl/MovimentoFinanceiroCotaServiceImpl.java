@@ -718,7 +718,7 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 		}
 		
 		// Se existe apenas um objeto e o id não é o mesmo
-		if ( !ids.get(0).equals(idMovimentoFinanceiroAtual) ) {
+		if (ids.size() == 1 && !ids.get(0).equals(idMovimentoFinanceiroAtual) ) {
 			return true;
 		}
 		
