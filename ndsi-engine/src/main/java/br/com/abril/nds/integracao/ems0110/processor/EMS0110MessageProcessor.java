@@ -386,11 +386,11 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 		List<Fornecedor> fornecedores = fornecedorRepository.obterFornecedoresDeProduto(produto.getCodigo(), null);
 		
 		if(fornecedores == null || fornecedores.isEmpty()) {
-			throw new IllegalStateException("Não há fornecedor associado ao produto.");
+			throw new IllegalStateException("Não há fornecedor associado ao produto de codigo: " + produto.getCodigo() + " / edicao: " + produtoEdicao.getNumeroEdicao());
 		}
 
 		if(fornecedores.size()!=1) {
-			throw new IllegalStateException("Mais de um fornecedor associado ao produto.");
+			throw new IllegalStateException("Mais de um fornecedor associado ao produto de codigo: " + produto.getCodigo() + " / edicao: " + produtoEdicao.getNumeroEdicao());
 		}
 		
 		Set<Fornecedor> conjuntoFornecedor = new HashSet<Fornecedor>();
