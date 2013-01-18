@@ -340,6 +340,13 @@ public class ProdutoEdicaoController extends BaseController {
 			if (dto.getRepartePromocional() == null) {
 				listaMensagens.add("Por favor, digite um valor válido para o 'Reparte Promocional'!");
 			}
+			if (dto.getDescricaoDesconto() == null || dto.getDescricaoDesconto().trim().isEmpty()){
+				listaMensagens.add("Por favor, digite um valor válido para o 'Tipo de Desconto'!");
+			}
+			if (dto.getDesconto() == null){
+				listaMensagens.add("Por favor, digite um valor válido para o 'Desconto %'!");
+			}
+			
 			//Essa validação só será feita na terceira fase do projeto.
 //			if (dto.getCodigoDeBarrasCorporativo() == null || dto.getCodigoDeBarrasCorporativo().trim().length() <= 0) {
 //				listaMensagens.add("Campo 'Código de Barras Corporativo' deve ser preenchido!");
