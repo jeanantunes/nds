@@ -442,9 +442,6 @@ public class FiadorController extends BaseController {
 					p.setRg(p.getRg().replace("-", "").replace(".", ""));
 				}
 			
-			} else {
-				
-				mensagensValidacao.add("Cadastre ao menos 1 sócio.");
 			}
 		}
 		
