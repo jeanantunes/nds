@@ -760,7 +760,7 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 				sortable : true,
 				align : 'center'
 			}],
-			width : 570
+			width : 600
 		});
 	},
 
@@ -780,7 +780,7 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 	this.popupLancamentosCancelados = function() {
 		$( "#dialog-alerta-lancamentos-produtos-cancelados", _workspace ).dialog({
 			resizable: false,
-			width:600,
+			width:630,
 			modal: true,
 			buttons: {
 				"Ok": function() {
