@@ -235,11 +235,7 @@ $(function(){
         <div class="pesqCotasGrid" style="display:none;">
         	<fieldset class="classFieldset">
                 <legend>Cotas Base Cadastradas</legend>
-        		<table class="cotasEquivalentesGrid">
-        			<c:forEach items="" var="">
-        			
-        			</c:forEach>
-        		</table>
+        		<table class="cotasEquivalentesGrid" id="cotasEquivalentesGrid"></table>
             
             <span style="float:left; margin-top:5px; margin-bottom:5px; margin-left:10px;"><strong>Informe o Indíce de Ajuste do Histórico:</strong> 
             <input name="" type="text" style="width:40px; text-align:center;" value="1.0" />
