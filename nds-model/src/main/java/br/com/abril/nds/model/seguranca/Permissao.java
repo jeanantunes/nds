@@ -13,6 +13,7 @@ public enum Permissao
 	ROLE_CADASTRO_PRODUTO("Produto", 										 						  	   Permissao.ROLE_CADASTRO),
 	ROLE_CADASTRO_EDICAO("Edição", 											 						  	   Permissao.ROLE_CADASTRO),
 	ROLE_CADASTRO_COTA("Cota", 																		  	   Permissao.ROLE_CADASTRO),
+	ROLE_CADASTRO_COTA_BASE("Cota Base",															  	   Permissao.ROLE_CADASTRO),
 	ROLE_CADASTRO_FIADOR("Fiador", 																	  	   Permissao.ROLE_CADASTRO),
 	ROLE_CADASTRO_ENTREGADOR("Entregador", 															  	   Permissao.ROLE_CADASTRO),
 	ROLE_CADASTRO_TRANSPORTADOR("Transportador", 						                        	 	   Permissao.ROLE_CADASTRO),
