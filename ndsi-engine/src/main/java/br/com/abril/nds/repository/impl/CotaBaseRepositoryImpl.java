@@ -20,11 +20,11 @@ public class CotaBaseRepositoryImpl extends AbstractRepositoryModel<CotaBase, Lo
 	}
 
 	@Override
-	public FiltroCotaBaseDTO obterDadosFiltro(Integer numeroCota) {
+	public FiltroCotaBaseDTO obterDadosFiltro(Integer numeroCota, boolean obterFaturamento) {
 		StringBuilder hql = new StringBuilder();
         
         // RETURNING FIELDS
-        hql.append(" select ");
+        hql.append(" select ");        
         hql.append(" cota.numeroCota as numeroCota, "); // NÚMERO DA COTA        
         hql.append(" coalesce(pessoa.nomeFantasia, pessoa.razaoSocial, pessoa.nome, '') as nomeCota,"); // NOME DA PESSOA
         hql.append(" tipoPontoPDV.descricao as tipoPDV, "); // TIPO PDV
@@ -33,8 +33,16 @@ public class CotaBaseRepositoryImpl extends AbstractRepositoryModel<CotaBase, Lo
         hql.append(" tipoGeradorFluxoPrincipal.descricao as geradorDeFluxo, "); // GERADOR DE FLUXO PRINCIPAL
         hql.append(" areaInfluenciaPDV.descricao as areaInfluencia "); // AREA DE INFLUÊNCIA
         
+        if(obterFaturamento){
+        	hql.append(" , sum((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * produtoEdicao.precoVenda) as faturamentoMedio "); // FATURAMENTO MENSAL
+        	hql.append(" FROM EstoqueProdutoCota as estoqueProdutoCota ");
+        	hql.append(" LEFT JOIN estoqueProdutoCota.produtoEdicao as produtoEdicao ");
+        	hql.append(" LEFT JOIN estoqueProdutoCota.cota as cota ");
+        }else{
+        	hql.append(" FROM Cota as cota ");       	
+        }
+        
         // FROM
-        hql.append(" FROM Cota as cota ");
         hql.append(" left join cota.enderecos as cotaEndereco ");
         hql.append(" left join cota.pessoa as pessoa ");
         hql.append(" left join cotaEndereco.endereco as endereco ");
@@ -69,6 +77,7 @@ public class CotaBaseRepositoryImpl extends AbstractRepositoryModel<CotaBase, Lo
 		
 		// RETURNING FIELDS
         hql.append(" select ");
+        hql.append(" cota.id as idCota, "); // NÚMERO DA COTA
         hql.append(" cota.numeroCota as numeroCota, "); // NÚMERO DA COTA        
         hql.append(" coalesce(pessoa.nomeFantasia, pessoa.razaoSocial, pessoa.nome, '') as nomeCota,"); // NOME DA PESSOA
         hql.append(" tipoPontoPDV.descricao as tipoPDV, "); // TIPO PDV

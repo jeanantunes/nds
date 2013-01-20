@@ -8,6 +8,7 @@ import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.dto.CotaBaseDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaBaseDTO;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.CotaBaseService;
 import br.com.abril.nds.service.CotaService;
@@ -42,13 +43,25 @@ public class CotaBaseController {
 	@Post
 	@Path("/pesquisarCotaNova")
 	public void pesquisarCotaNova(Integer numeroCota){
+		tratarFiltroPesquisaCota(numeroCota);
+		
+		FiltroCotaBaseDTO filtro = this.cotaBaseService.obterDadosFiltro(numeroCota, false);		
+		
+		this.result.use(Results.json()).from(filtro, "result").recursive().serialize();		
+	}
+
+	private void tratarFiltroPesquisaCota(Integer numeroCota) {
 		if(numeroCota == null) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Número da cota inválido!");
 		}
 		
-		FiltroCotaBaseDTO filtro = this.cotaBaseService.obterDadosFiltro(numeroCota);		
+		Cota cota = this.cotaService.obterPorNumeroDaCota(numeroCota);
 		
-		this.result.use(Results.json()).from(filtro, "result").recursive().serialize();		
+		if (cota == null) {
+
+			throw new ValidacaoException(TipoMensagem.WARNING, "Cota \"" + numeroCota + "\" não encontrada!");
+			
+		}
 	}
 	
 	@Post
@@ -79,11 +92,23 @@ public class CotaBaseController {
 		
 	}
 	
-	
-	
+	@Post
+	@Path("/obterCota")
+	public void obterCota(Integer numeroCota){
 		
-
+		FiltroCotaBaseDTO filtro = this.cotaBaseService.obterDadosFiltro(numeroCota, true);		
+		
+		this.result.use(Results.json()).from(filtro, "result").recursive().serialize();
+		
+	}
+	@Post
+	@Path("/excluirCotaBase")
+	public void excluirCotaBase(Integer numeroCotaNova, Long idCotaBase){
+		
+		System.out.println(numeroCotaNova + idCotaBase);
+		
+		
+		
+	}
 	
-	
-
 }
