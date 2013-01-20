@@ -184,7 +184,7 @@ $(function(){
 	               </td>
 	               <td width="36">Nome:</td>
 	               <td>
-	               	<input type="text" name="nomeCota" id="nomeCota" style="width:130px;"/>
+	               	<input type="text" name="nomeCota" id="nomeCota" disabled="disabled" style="width:130px;"/>
 	               </td>
 	               <td>Tipo PDV:</td>
 	               <td><input type="text" name="tipoPDV" id="tipoPDV" disabled="disabled" style="width:110px;"/></td>
@@ -201,10 +201,10 @@ $(function(){
 	             <td width="65">Área Iinfluencia: </td>
 	             <td width="117"><input type="text" name="areaInfluencia" id="areaInfluencia" disabled="disabled" style="width:110px;"/></td>
 	             <td>Período:</td>
-	             <td><input type="text" name="periodoDe" id="periodoDe" style="width:60px;"/></td>
+	             <td><input type="text" name="periodoDe" disabled="disabled" id="periodoDe" style="width:60px;"/></td>
 	             <td>Até:
 	             </td>
-	             <td width="85"><input type="text" name="periodoAte" id="periodoAte" style="width:60px;"/></td>
+	             <td width="85"><input type="text" name="periodoAte" id="periodoAte" disabled="disabled" style="width:60px;"/></td>
 	             <td width="20"><input type="checkbox" name="isGeral" id="isGeral" onclick="mostraPesqGeral();" /></td>
 	             <td width="63">Pesquisa Geral?</td>
 	             <td colspan="2">

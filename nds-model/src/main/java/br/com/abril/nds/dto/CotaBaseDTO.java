@@ -72,7 +72,7 @@ public class CotaBaseDTO implements Serializable {
 	public void setFaturamentoMedio(BigDecimal faturamentoMedio) {
 		this.faturamentoMedio = faturamentoMedio;
 		if(faturamentoMedio != null){
-			this.faturamentoFormatado = CurrencyUtil.formatarValor(faturamentoMedio);			
+			this.faturamentoFormatado = CurrencyUtil.formatarValor(faturamentoMedio);
 		}
 	}
 	public Integer getNumeroCota() {

@@ -10,7 +10,7 @@ import br.com.abril.nds.model.cadastro.CotaBase;
 
 public interface CotaBaseRepository extends Repository<CotaBase, Long> {
 
-	FiltroCotaBaseDTO obterDadosFiltro(Integer numeroCota);
+	FiltroCotaBaseDTO obterDadosFiltro(Integer numeroCota, boolean obterFaturamento);
 	
 	List<CotaBaseDTO> obterCotasBases(Cota cotaNova);
 

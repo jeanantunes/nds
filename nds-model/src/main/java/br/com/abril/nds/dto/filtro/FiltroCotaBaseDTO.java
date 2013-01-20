@@ -1,7 +1,9 @@
 package br.com.abril.nds.dto.filtro;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
+import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.export.Exportable;
 
 @Exportable
@@ -9,6 +11,7 @@ public class FiltroCotaBaseDTO implements Serializable {
 
 	private static final long serialVersionUID = 2433782322485644813L;
 	
+	private Long idCota;
 	private Integer numeroCota;	
 	private String nomeCota;
 	private String tipoPDV;
@@ -16,7 +19,17 @@ public class FiltroCotaBaseDTO implements Serializable {
 	private String cidade;
 	private String geradorDeFluxo;
 	private String areaInfluencia;
+	private String faturamentoMedio;
 	
+	public Long getIdCota() {
+		return idCota;
+	}
+
+
+	public void setIdCota(Long idCota) {
+		this.idCota = idCota;
+	}
+
 
 	public Integer getNumeroCota() {
 		return numeroCota;
@@ -86,5 +99,19 @@ public class FiltroCotaBaseDTO implements Serializable {
 	public void setAreaInfluencia(String areaInfluencia) {
 		this.areaInfluencia = areaInfluencia;
 	}
+
+
+	public String getFaturamentoMedio() {
+		return faturamentoMedio;
+	}
+
+
+	public void setFaturamentoMedio(BigDecimal faturamentoMedio) {
+		if(faturamentoMedio != null){
+			this.faturamentoMedio = CurrencyUtil.formatarValor(faturamentoMedio);			
+		}
+	}
+	
+	
 	
 }
