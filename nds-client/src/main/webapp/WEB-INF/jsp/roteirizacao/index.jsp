@@ -14,7 +14,7 @@ label{ vertical-align:super;}
 <script type="text/javascript">
 
 var pesquisaCotaFiltroConsulta = new PesquisaCota(roteirizacao.workspace);
-
+$("#cotaPesquisa",roteirizacao.workspace).numeric();
 </script>
 
 </head>

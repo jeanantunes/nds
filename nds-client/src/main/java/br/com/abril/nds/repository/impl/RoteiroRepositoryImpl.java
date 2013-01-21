@@ -157,4 +157,15 @@ public class RoteiroRepositoryImpl extends
 		return (Roteiro) query.uniqueResult();
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Roteiro> obterRoteirosNaoAssociadosAoBox(Long idBox) {
+		
+		Criteria criteria = this.getSession().createCriteria(Roteiro.class);
+		criteria.createAlias("roteirizacao", "roteirizacao");
+		criteria.add(Restrictions.ne("roteirizacao.box.id", idBox));
+		
+		return criteria.list();
+	}
+
 }

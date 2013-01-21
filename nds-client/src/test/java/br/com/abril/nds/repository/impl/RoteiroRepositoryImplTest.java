@@ -102,4 +102,11 @@ public class RoteiroRepositoryImplTest extends AbstractRepositoryImplTest {
 		Assert.assertNotNull(lista);
 	}
 	
+	@Test
+	public void obterRoteirosNaoAssociadosAoBox() {
+		List<Roteiro> lista = roteiroRepository.obterRoteirosNaoAssociadosAoBox(1L);
+		
+		Assert.assertNotNull(lista);
+	}
+	
 }

@@ -56,13 +56,16 @@ public class EMS0106MessageProcessor extends AbstractRepository implements Messa
 			return;
 		}
 			
-		Lancamento lancamento = this.getLancamentoPrevistoMaisProximo(
-				produtoEdicao);
+		Lancamento lancamento = this.getLancamentoPrevistoMaisProximo(produtoEdicao);
 		if (lancamento == null) {
-			this.ndsiLoggerFactory.getLogger().logError(message,
-					EventoExecucaoEnum.RELACIONAMENTO, 
-					"NAO ENCONTROU Lancamento para o Produto de codigo: " + codigoPublicacao + "/ edicao: " + edicao);
-			return;
+			lancamento = getLancamentoPrevistoAnteriorMaisProximo(produtoEdicao);
+			
+			if (lancamento == null) {
+				this.ndsiLoggerFactory.getLogger().logError(message,
+						EventoExecucaoEnum.RELACIONAMENTO, 
+						"NAO ENCONTROU Lancamento para o Produto de codigo: " + codigoPublicacao + "/ edicao: " + edicao);
+				return;
+			}
 		}
 		
 		Estudo estudo = lancamento.getEstudo();
@@ -168,6 +171,30 @@ public class EMS0106MessageProcessor extends AbstractRepository implements Messa
 		return (Lancamento) query.uniqueResult();
 	}
 
+	private Lancamento getLancamentoPrevistoAnteriorMaisProximo(
+			ProdutoEdicao produtoEdicao) {
+		
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append("SELECT lcto FROM Lancamento lcto ");
+		sql.append("      JOIN FETCH lcto.produtoEdicao pe ");
+		sql.append("    WHERE pe = :produtoEdicao ");
+		sql.append("      AND lcto.dataLancamentoPrevista < :dataOperacao ");
+		sql.append(" ORDER BY lcto.dataLancamentoPrevista DESC");
+		
+		Query query = getSession().createQuery(sql.toString());
+		
+		Date dataOperacao = distribuidorService.obter().getDataOperacao();
+		query.setParameter("produtoEdicao", produtoEdicao);
+		query.setDate("dataOperacao", dataOperacao);
+		
+		query.setMaxResults(1);
+		query.setFetchSize(1);
+		
+		return (Lancamento) query.uniqueResult();
+	}
+	
+	
 	@Override
 	public void posProcess(Object tempVar) {
 		// TODO Auto-generated method stub

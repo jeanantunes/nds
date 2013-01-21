@@ -424,7 +424,7 @@ public class ConsultaNotasController extends BaseController {
 		
 		filtroConsultaNotaFiscal.setIdDistribuidor(distribuidor.getId());
 		
-		PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortorder);
+		PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortorder,sortname);
 
 		filtroConsultaNotaFiscal.setPaginacao(paginacao);
 

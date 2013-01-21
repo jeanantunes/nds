@@ -442,9 +442,6 @@ public class FiadorController extends BaseController {
 					p.setRg(p.getRg().replace("-", "").replace(".", ""));
 				}
 			
-			} else {
-				
-				mensagensValidacao.add("Cadastre ao menos 1 sócio.");
 			}
 		}
 		
@@ -577,11 +574,35 @@ public class FiadorController extends BaseController {
 		
 		this.limparDadosSessao();
 	}
+	
+	private boolean isSocioPrincipalExcluido(){
+		
+		List<SocioCadastrado> socios = (List<SocioCadastrado>)
+				this.httpSession.getAttribute(SociosController.LISTA_SOCIOS_EXIBIR_SESSAO);
+		
+		if(socios == null || socios.isEmpty()){
+			return false;
+		}
+		
+		if(socios!= null && !socios.isEmpty()){
+			
+			for(SocioCadastrado item : socios){
+				if(item.getPessoa().isSocioPrincipal()){
+					return false;
+				}
+			}
+		}
+		return true;
+	}
 
 	@Post
 	public void cadastrarFiadorCnpj(PessoaJuridica fiador){
 		
 		this.validarDadosEntradaPessoJuridica(fiador);
+		
+		if(isSocioPrincipalExcluido()){
+			throw new ValidacaoException(TipoMensagem.WARNING,"Deve ser informado um sócio principal!");
+		}
 		
 		this.preencherDadosFiador(fiador);
 		

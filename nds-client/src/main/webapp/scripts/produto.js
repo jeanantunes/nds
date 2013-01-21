@@ -347,7 +347,7 @@ var produtoController = $.extend(true, {
 	},
 	
 	removerProduto : function(id) {
-		
+
 		$("#dialog-excluir", this.workspace).dialog( {
 			resizable : false,
 			height : 'auto',
@@ -369,7 +369,11 @@ var produtoController = $.extend(true, {
 										
 										exibirMensagem(tipoMensagem, listaMensagens);
 									}
-											
+
+									$(".filtro", this.workspace).each(function() {  
+										$("input[type='text'], select", this.workspace).val(""); 
+									});
+									
 									$(".produtosGrid", this.workspace).flexReload();
 							   },
 							   null,
@@ -399,8 +403,6 @@ var produtoController = $.extend(true, {
 				"Confirmar": function() {
 
 					produtoController.salvarProduto();
-					
-			   		$(".produtosGrid", this.workspace).flexReload();
 				},
 				"Cancelar": function() {
 					$( this ).dialog( "close" );
@@ -451,6 +453,7 @@ var produtoController = $.extend(true, {
 		$("#peb", this.workspace).val("");
 		$("#pacotePadrao", this.workspace).val("");
 		$("#comboPeriodicidade", this.workspace).val("");
+		$("#tipoDescontoManual", this.workspace).val("");
 
 		$("#formaComercializacaoContaFirme", this.workspace).attr('checked', false);
 		$("#formaComercializacaoConsignado", this.workspace).attr('checked', false);
@@ -505,11 +508,10 @@ var produtoController = $.extend(true, {
 					} 
 
 					if (tipoMensagem == 'SUCCESS') {
-						
+
 						$("#dialog-novo", this.workspace).dialog( "close" );
-						
-						produtoController.pesquisar();
-						
+
+						$(".produtosGrid", this.workspace).flexReload();
 					}
 					
 				},

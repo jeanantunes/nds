@@ -174,7 +174,7 @@ public class DebitoCreditoCotaController extends BaseController{
 	public void obterRotasRoteiro(Long idRoteiro){
 		listaRotas.clear();
 		if (idRoteiro!=null){
-			List<Rota> rotas = this.roteirizacaoService.buscarRotaPorRoteiro(idRoteiro);
+			List<Rota> rotas = this.roteirizacaoService.buscarRotasPorRoteiro(idRoteiro);
 			for(Rota item:rotas){
 				listaRotas.add(new ItemDTO<Long,String>(item.getId(), item.getDescricaoRota()));
 			} 
@@ -655,9 +655,8 @@ public class DebitoCreditoCotaController extends BaseController{
 				this.movimentoFinanceiroCotaService.obterMovimentoFinanceiroCotaPorId(idMovimento);
 
 		DebitoCreditoDTO debitoCredito = new DebitoCreditoDTO();
-
-		// Caso esteja aprovado ou a data de vencimento (campo data) seja menor que a data atual
-		debitoCredito.setPermiteAlteracao( !(movimentoFinanceiroCota.getStatus() == StatusAprovacao.APROVADO || movimentoFinanceiroCota.getData().before(new Date()) ) );
+		
+		debitoCredito.setPermiteAlteracao(this.isMovimentoEditavel(movimentoFinanceiroCota));
 
 		Pessoa pessoa = movimentoFinanceiroCota.getCota().getPessoa();
 
@@ -726,15 +725,7 @@ public class DebitoCreditoCotaController extends BaseController{
 
 		for (MovimentoFinanceiroCota movimentoFinanceiroCota : listaDebitoCredito) {
 
-			String isEditavel =
-					movimentoFinanceiroCota.isLancamentoManual() ?
-							"true" : "false";
-
-			if ("true".equals(isEditavel) && StatusAprovacao.APROVADO == movimentoFinanceiroCota.getStatus()
-					|| DateUtil.isDataInicialMaiorDataFinal(DateUtil.removerTimestamp(this.distribuidorService.obter().getDataOperacao()), movimentoFinanceiroCota.getData())) {
-
-				isEditavel = "false"; 
-			}
+			boolean isEditavel = this.isMovimentoEditavel(movimentoFinanceiroCota);
 
 			String dataLancamento = 
 					formatField(movimentoFinanceiroCota.getDataCriacao());
@@ -777,6 +768,37 @@ public class DebitoCreditoCotaController extends BaseController{
 		tableModel.setTotal(listaCellModel.size());
 
 		return tableModel;
+	}
+	
+	private boolean isMovimentoEditavel(MovimentoFinanceiroCota movimentoFinanceiroCota) {
+		
+		boolean movimentoEditavel = true;
+		
+		if (!movimentoFinanceiroCota.getConsolidadoFinanceiroCota().isEmpty()) {
+			
+			movimentoEditavel = false;
+		}
+		
+		if (!movimentoFinanceiroCota.isLancamentoManual()) {
+			
+			movimentoEditavel = false;
+		}
+		
+		if (StatusAprovacao.APROVADO.equals(movimentoFinanceiroCota.getStatus())) {
+			
+			movimentoEditavel = false;
+		}
+		
+		Date dataOperacao = this.distribuidorService.obter().getDataOperacao();
+		
+		dataOperacao = DateUtil.removerTimestamp(dataOperacao);
+		
+		if (dataOperacao.compareTo(movimentoFinanceiroCota.getData()) >= 0) {
+			
+			movimentoEditavel = false;
+		}
+		
+		return movimentoEditavel;
 	}
 
 	private String formatField(Object field) {
