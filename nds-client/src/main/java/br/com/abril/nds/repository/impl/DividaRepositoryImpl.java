@@ -197,7 +197,7 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 		StringBuilder hql = new StringBuilder();
 		
 		if(count){
-			hql.append(" SELECT distinct count(divida.id )");
+			hql.append(" SELECT count(distinct divida.id )");
 		}else{
 			hql.append(" SELECT distinct new ").append(GeraDividaDTO.class.getCanonicalName())
 			.append("(")
