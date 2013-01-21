@@ -185,7 +185,16 @@ public abstract class Util {
 		
 	}
 	
-	public static String gerarNossoNumero(Integer numeroCota, Date dtGeracao, String numeroBanco, Long idFornecedor, Long idMovimentoFinanceiro){
+	public static String gerarNossoNumero(
+			Integer numeroCota, 
+			Date dtGeracao, 
+			String numeroBanco, 
+			Long idFornecedor, 
+			Long idMovimentoFinanceiro,
+			Long agencia,
+			Long contaCorrente,
+			Integer carteira){
+		
 		long n1;
 		long n2 = 4;
 		long n3;
@@ -236,7 +245,44 @@ public abstract class Util {
 				return codSacado + auxData + n1 + n2 + n3 + idMovimentoFinanceiro + (idFornecedor == null ? "0" : idFornecedor);
 				
 			case BANCO_ITAU:
-				return codSacado + auxData + n1 + n2 + n3 + idMovimentoFinanceiro + (idFornecedor == null ? "0" : idFornecedor);
+				
+				//String nossoNumero = "" + numeroCota + idMovimentoFinanceiro;
+				String nossoNumero = idMovimentoFinanceiro.toString();
+				
+				StringBuilder composto = new StringBuilder();
+				composto.append(agencia)
+						.append(contaCorrente)
+						.append(carteira)
+						.append(nossoNumero);
+				
+				composto.reverse();
+				
+				int multiplicador = 2;
+				
+				StringBuilder compostoAux = new StringBuilder();
+				
+				for (int index = 0 ; index < composto.length() ; index++){
+					
+					compostoAux.insert(0, Character.getNumericValue(composto.charAt(index)) * multiplicador);
+					
+					if (multiplicador == 2){
+						
+						multiplicador = 1;
+					} else {
+						
+						multiplicador = 2;
+					}
+				}
+				
+				int somatorio = 0;
+				for (int index = 0 ; index < compostoAux.length() ; index++){
+					
+					somatorio += Character.getNumericValue(compostoAux.charAt(index));
+				}
+				
+				somatorio = somatorio % 10;
+				
+				return Util.padLeft("" + carteira + nossoNumero + (10 - somatorio), "0", 8);
 				
 			case BANCO_RURAL:
 				return codSacado + auxData + n1 + n2 + n3 + idMovimentoFinanceiro + (idFornecedor == null ? "0" : idFornecedor);
