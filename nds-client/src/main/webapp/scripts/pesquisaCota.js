@@ -70,7 +70,7 @@ function PesquisaCota(workspace) {
 		nomeCota = $.trim(nomeCota);
 		
 		$(idCampoNomeCota, pesquisaCota.workspace).autocomplete({source: [""]});
-		console.log('nomeCota.length'+ nomeCota.length)
+		
 		if (nomeCota && nomeCota.length > 2) {
 			
 			$.postJSON(
