@@ -69,8 +69,8 @@ function PesquisaCota(workspace) {
 		
 		nomeCota = $.trim(nomeCota);
 		
-		$(idCampoNomeCota, pesquisaCota.workspace).autocomplete({source: ""});
-		
+		$(idCampoNomeCota, pesquisaCota.workspace).autocomplete({source: [""]});
+		console.log('nomeCota.length'+ nomeCota.length)
 		if (nomeCota && nomeCota.length > 2) {
 			
 			$.postJSON(
@@ -104,7 +104,7 @@ function PesquisaCota(workspace) {
 			select : function(event, ui) {
 				pesquisaCota.descricaoAtribuida = true;
 			},
-			minLength: 4,
+			minLength: 3,
 			delay : 0,
 		});
 	},
