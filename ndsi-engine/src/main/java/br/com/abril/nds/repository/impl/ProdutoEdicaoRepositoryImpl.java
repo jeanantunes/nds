@@ -359,6 +359,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		hql.append("        JOIN pr.fornecedores fr JOIN fr.juridica jr ");
 		hql.append("        LEFT JOIN pe.lancamentos ln ");
 		hql.append("  WHERE pe.ativo = :indAtivo ");
+		hql.append("  AND   ln.dataLancamentoPrevista = (SELECT MIN(ln2.dataLancamentoPrevista) from Lancamento ln2 WHERE ln2.produtoEdicao.id = pe.id) ");
 		
 		
 		/**

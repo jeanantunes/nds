@@ -174,7 +174,7 @@ public class DebitoCreditoCotaController extends BaseController{
 	public void obterRotasRoteiro(Long idRoteiro){
 		listaRotas.clear();
 		if (idRoteiro!=null){
-			List<Rota> rotas = this.roteirizacaoService.buscarRotaPorRoteiro(idRoteiro);
+			List<Rota> rotas = this.roteirizacaoService.buscarRotasPorRoteiro(idRoteiro);
 			for(Rota item:rotas){
 				listaRotas.add(new ItemDTO<Long,String>(item.getId(), item.getDescricaoRota()));
 			} 

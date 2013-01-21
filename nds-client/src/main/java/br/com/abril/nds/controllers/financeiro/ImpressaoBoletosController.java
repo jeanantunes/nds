@@ -227,7 +227,7 @@ public class ImpressaoBoletosController extends BaseController {
 
 		if (roteiro != null) {
 
-			rotas = roteirizacaoService.buscarRotaPorRoteiro(roteiro);
+			rotas = roteirizacaoService.buscarRotasPorRoteiro(roteiro);
 		} else {
 
 			rotas = roteirizacaoService.buscarRotas();

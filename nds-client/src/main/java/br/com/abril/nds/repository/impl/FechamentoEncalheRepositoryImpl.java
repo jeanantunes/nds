@@ -76,7 +76,14 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 			hql.append("  and pf.id = :fornecedorId ");
 		}
 		
-		hql.append(" group by p.codigo,  p.nome, pe.numeroEdicao, pe.precoVenda, pe.id , pe.parcial, che.dataRecolhimento");
+		hql.append(" group by 			")
+		.append(" p.codigo,  			")
+		.append(" p.nome, 				")
+		.append(" pe.numeroEdicao, 		")
+		.append(" pe.precoVenda,  		")
+		.append(" pe.id, 				")
+		.append(" pe.parcial,  			")
+		.append(" che.dataRecolhimento 	");
 		
 		if (sortname != null) {
 			hql.append(" order by ");
