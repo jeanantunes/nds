@@ -3335,5 +3335,15 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
         Assert.assertEquals(0,total.compareTo(new BigDecimal(300)));
 	}
 	
+	
+	@Test
+	public void testObterListaMovimentoEstoqueCotaDevolucaoJuramentada() {
+		
+		Date dataOperacao = Fixture.criarData(10, Calendar.JANUARY, 2012);
+		
+		movimentoEstoqueCotaRepository.obterListaMovimentoEstoqueCotaDevolucaoJuramentada(dataOperacao);
+		
+	}
+	
 
 }
