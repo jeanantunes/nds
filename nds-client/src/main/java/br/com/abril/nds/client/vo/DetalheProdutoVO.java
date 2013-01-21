@@ -1,6 +1,7 @@
 package br.com.abril.nds.client.vo;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * @author Discover Technology
@@ -34,7 +35,7 @@ public class DetalheProdutoVO implements Serializable {
     private String possuiBrinde;
 
   	private String pacotePadrao;
-	
+
 	/**
 	 * Construtor padrão.
 	 */
@@ -226,5 +227,5 @@ public class DetalheProdutoVO implements Serializable {
 	public void setCodigoProduto(String codigoProduto) {
 		this.codigoProduto = codigoProduto;
 	}
-
+	
 }

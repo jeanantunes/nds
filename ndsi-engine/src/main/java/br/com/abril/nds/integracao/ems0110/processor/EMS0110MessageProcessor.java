@@ -331,7 +331,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 					"Atualizacao do Codigo NBM para: " + input.getCodNBM());
 		}
 
-		if (null != produto.getNomeComercial() && !produto.getNomeComercial().equals(input.getNomeComercial())) {
+		if (null != produto.getNomeComercial() && !produto.getNomeComercial().equals(input.getNomeComercial()) && !input.getNomeComercial().isEmpty()) {
 
 			produto.setNomeComercial(input.getNomeComercial());
 			this.ndsiLoggerFactory.getLogger().logInfo(
@@ -452,7 +452,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 		}
 		
 		if (null != edicao.getProduto() && null != edicao.getProduto().getNomeComercial() && !edicao.getProduto().getNomeComercial()
-				.equals(input.getNomeComercial())) {
+				.equals(input.getNomeComercial()) && !input.getNomeComercial().isEmpty()) {
 
 			edicao.getProduto().setNomeComercial(input.getNomeComercial());
 			this.ndsiLoggerFactory.getLogger().logInfo(
@@ -472,7 +472,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 					"Atualizacao do Codigo NBM para: " + input.getCodNBM());
 		}
 
-		if (null != edicao.getNomeComercial() && !edicao.getNomeComercial().equals(input.getNomeComercial())) {
+		if (null != edicao.getNomeComercial() && !edicao.getNomeComercial().equals(input.getNomeComercial()) && !input.getNomeComercial().isEmpty()) {
 
 			edicao.setNomeComercial(input.getNomeComercial());
 			this.ndsiLoggerFactory.getLogger().logInfo(message,

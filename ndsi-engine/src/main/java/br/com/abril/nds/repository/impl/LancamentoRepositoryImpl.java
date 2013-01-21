@@ -730,7 +730,24 @@ public class LancamentoRepositoryImpl extends
 		
 		return (lancamento!=null) ? (Lancamento) lancamento : null ;		
 	}
-	
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Lancamento> obterLancamentosEdicao(Long idProdutoEdicao) {
+		StringBuilder hql = new StringBuilder();
+
+		hql.append(" select lancamento ")
+		   .append(" from Lancamento lancamento ")
+		   .append(" where lancamento.produtoEdicao.id = :idProdutoEdicao ")
+		   .append(" order by lancamento.dataLancamentoPrevista ");
+		
+		Query query = getSession().createQuery(hql.toString());
+		
+		query.setParameter("idProdutoEdicao", idProdutoEdicao);
+		
+		return (List<Lancamento>) query.list();		
+	}
+
 	/**
 	 * {@inheritDoc}
 	 */
