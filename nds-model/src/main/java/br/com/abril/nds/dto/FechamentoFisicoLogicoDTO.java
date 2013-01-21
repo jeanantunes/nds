@@ -198,4 +198,5 @@ public class FechamentoFisicoLogicoDTO {
 	
 		return precoCapaDescFormatado;
 	}
+	
 }
