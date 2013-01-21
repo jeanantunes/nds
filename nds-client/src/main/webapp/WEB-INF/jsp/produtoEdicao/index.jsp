@@ -57,6 +57,10 @@ fieldset {
 		<jsp:param value="dialogMensagemNovo" name="messageDialog"/>
 	</jsp:include> 
 	
+	<div id="dialog-produto-edicao-periodos-lancamentos" title="Períodos de Lançamentos" style="display:none">
+		<table class="produtoEdicaoPeriodosLancamentosGrid"></table>
+	</div>
+	
 		<div id="produtoEdicaoController-tabEdicoes">
 			<ul>
 				<li><a id="produtoEdicaoController-tabIdentificacao" href="#produtoEdicaoController-tabEdicoes-1">Identifica&ccedil;&atilde;o</a></li>
@@ -185,7 +189,7 @@ fieldset {
 					</fieldset>
 					<fieldset style="width:350px!important; margin-bottom:2px; float:left;">
 						<legend>Data Lan&ccedil;amento</legend>
-						<table width="300" border="0" cellspacing="1" cellpadding="1">
+						<table width="350" border="0" cellspacing="1" cellpadding="1">
 							<thead />
 							<tbody>
 								<tr>
@@ -193,6 +197,7 @@ fieldset {
 									<td width="90"><input type="text" name="dataLancamentoPrevisto" id="produtoEdicaoController-dataLancamentoPrevisto" style="width:70px;" /></td>
 									<td width="30">Real:</td>
 									<td width="120"><input type="text" name="dataLancamento" id="produtoEdicaoController-dataLancamento" style="width:70px; text-align:center;" disabled="disabled" /></td>
+									<td width="50"><a href="javascript:;" onclick="produtoEdicaoController.mostrarPeriodosLancamento();" ><img src="${pageContext.request.contextPath}/images/ico_detalhes.png" border="0" /></a></td>
 								</tr>
 							</tbody>
 						</table>

@@ -279,5 +279,11 @@ public class LancamentoServiceImpl implements LancamentoService {
 	public Date buscarDiaUltimoBalanceamentoRecolhimentoRealizado() {
 		return lancamentoRepository.buscarDiaUltimoBalanceamentoRecolhimentoRealizado();
 	}
-	
+
+	@Override
+	@Transactional(readOnly=true)
+	public List<Lancamento> obterLancamentosEdicao(Long idProdutoEdicao) {
+		return lancamentoRepository.obterLancamentosEdicao(idProdutoEdicao);
+	}
+
 }
