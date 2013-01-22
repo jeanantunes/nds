@@ -370,8 +370,8 @@ fieldset legend{font-weight:bold; margin-left:5px; color:#5C9CCC; padding-left:5
 .area{width:960px;}
 .areaBts{
 	background: none repeat scroll 0 0 #FAFCFC;
-    border-bottom: 1px solid #CCCCCC;
-    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+    border-bottom: 1px solid rgb(207, 207, 207);
+    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.09);
     left: 0;
     line-height: 28px;
     margin-top: 0px;
@@ -379,7 +379,6 @@ fieldset legend{font-weight:bold; margin-left:5px; color:#5C9CCC; padding-left:5
     padding-left: 0;
     padding-right: 0;
     right: 0;
-    width: 98.6%;
     position:absolute;
     z-index:1;
 }
@@ -432,11 +431,11 @@ fieldset legend{font-weight:bold; margin-left:5px; color:#5C9CCC; padding-left:5
   color: #000;	
 }
 
-
-
-
-
-
+input[type='text'], input[type='password'], textarea {
+	border: 1px solid #BBB;
+	padding: 2px 4px;
+	box-shadow: inset 2px 2px 1px #EEE;
+}
 
 .nav ul {
 
@@ -561,6 +560,11 @@ fieldset legend{font-weight:bold; margin-left:5px; color:#5C9CCC; padding-left:5
 	background-color: #FA8072;
 }
 
+#conteudo {
+	margin: 0 auto;
+	width: 980px;
+}
+
 .linha_borda {
     border-bottom: 1px solid #F0F0F0;
     line-height: 18px;
@@ -601,12 +605,24 @@ fieldset legend{font-weight:bold; margin-left:5px; color:#5C9CCC; padding-left:5
 #effectError, #effectWarning, #effectSuccess{ 
 	line-height:30px; 
 	position:absolute; 
-	left:10px; 
-	right:10px; 
-	box-shadow: 0 5px 10px rgba(0, 0, 0, 0.33); 
-	top:45px;
+	left:5px; 
+	right:6px; 
+	top:5px;
 	z-index:1;
-}	
+}
+
+#effectSuccess{
+	box-shadow: 0 0px 10px rgb(137, 213, 248);
+}
+
+#effectError {
+	box-shadow: 0 0px 10px rgb(255, 128, 143);
+}
+
+#effectWarning {
+	box-shadow: 0 0px 10px rgb(255, 194, 0);;
+}
+
 #effectError .ui-icon-info, #effectSuccess .ui-icon-info, #effectWarning .ui-icon-info{
     margin-top: 5px;
     margin-left:10px;
