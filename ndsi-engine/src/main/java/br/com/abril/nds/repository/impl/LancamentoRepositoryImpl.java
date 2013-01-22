@@ -733,13 +733,13 @@ public class LancamentoRepositoryImpl extends
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Lancamento> obterLancamentosEdicao(Long idProdutoEdicao) {
+	public List<Lancamento> obterLancamentosEdicao(Long idProdutoEdicao, String sortorder, String sortname) {
 		StringBuilder hql = new StringBuilder();
 
 		hql.append(" select lancamento ")
 		   .append(" from Lancamento lancamento ")
 		   .append(" where lancamento.produtoEdicao.id = :idProdutoEdicao ")
-		   .append(" order by lancamento.dataLancamentoPrevista ");
+		   .append(" order by " + sortname + " " + sortorder);
 		
 		Query query = getSession().createQuery(hql.toString());
 		
