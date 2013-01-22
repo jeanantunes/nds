@@ -6,7 +6,7 @@
  * @date: 25/10/2012
  * 
  * Exemple:
- * $(". input-just-input").justInput();
+ * $(". input-just-input").justInput(/[0-9]/);
  */
 (function($) {
 

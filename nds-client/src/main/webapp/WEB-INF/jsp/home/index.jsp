@@ -157,6 +157,7 @@
 									$('a:contains(' + title + ')', ulTabs).parent().prepend($span);
 									
 								}
+								
 							},
 							addCloseTab : function() {
 								var self = this.element, o = this.options;
@@ -169,6 +170,7 @@
 												$(self).tabs("remove", index);
 										});
 							}
+							
 						});
 		$.fn.serializeObject = function(){
 		    var o = {};
@@ -190,7 +192,7 @@
 	$(function() {
 
 		$('#workspace').tabs();
-
+		
 		// Dinamicaly add tabs from menu
 		$("#menu_principal ul li ul li").click(function() {
 			//S2
@@ -199,6 +201,7 @@
 					, $("a", this).prop("href") + "?random=" + Math.random()
 					, $("span", $(this).parents("li")).attr('class')
 			);
+			
 			return false;
 		});
 
@@ -209,6 +212,7 @@
 		});
 
 		$('#linkHome').click();
+		
 	});
 	
 	$(document).ready(function() {
@@ -222,7 +226,7 @@
 		});
 		
 		redimensionarWorkspace();
-
+		
 		window.addEventListener('blur', function() {
 			
 			$().clearAllInterval();
@@ -300,7 +304,6 @@
 			.dialog( "option" ,  "title", "Changelog" )
 			.dialog( "open" );
 		});
-		
 		
 	});
 	
@@ -391,7 +394,9 @@
 		<div id="changes" title="Changelog"><div style="padding: 10px">${changes}</div></div>
 		
 		<div id="workspace">
+			
 			<ul></ul>
+			
 		</div>
 
 	</div>
