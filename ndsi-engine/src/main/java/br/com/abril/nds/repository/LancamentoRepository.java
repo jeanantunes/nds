@@ -318,4 +318,6 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	List<Lancamento> obterLancamentosARecolherNaSemana(
 			Intervalo<Date> periodoRecolhimento, List<Long> fornecedores);
 
+	List<Lancamento> obterLancamentosEdicao(Long idEdicao);
+
 }

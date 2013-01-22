@@ -32,6 +32,7 @@ import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.EnderecoFornecedor;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
+import br.com.abril.nds.model.cadastro.FormaCobrancaBoleto;
 import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
@@ -1052,6 +1053,11 @@ public class BoletoServiceImpl implements BoletoService {
         			break;
         		}
         	}
+        }
+        
+        if (corpoBoleto.getContaTipoDeCobranca() == null || corpoBoleto.getContaTipoDeCobranca().isEmpty()){
+        	
+        	corpoBoleto.setContaTipoDeCobranca(FormaCobrancaBoleto.SEM_REGISTRO.name());
         }
         
         corpoBoleto.setContaAgencia(banco.getAgencia().intValue());    

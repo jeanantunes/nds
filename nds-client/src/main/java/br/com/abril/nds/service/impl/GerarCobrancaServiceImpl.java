@@ -915,13 +915,18 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			cobranca.setDataVencimento(dataVencimento);
 			cobranca.setVias(0);
 			
+			Banco banco = formaCobrancaPrincipal.getBanco();
+			
 			cobranca.setNossoNumero(
 					Util.gerarNossoNumero(
 							cota.getNumeroCota(), 
 							cobranca.getDataEmissao(), 
-							formaCobrancaPrincipal.getBanco().getNumeroBanco(),
+							banco.getNumeroBanco(),
 							fornecedor != null ? fornecedor.getId() : null,
-							movimentos.get(0).getId()
+							movimentos.get(0).getId(),
+							banco.getAgencia(),
+							banco.getConta(),
+							banco.getCarteira()
 							));
 			
 			cobranca.setValor(novaDivida.getValor());

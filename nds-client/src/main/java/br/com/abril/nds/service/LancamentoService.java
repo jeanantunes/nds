@@ -115,6 +115,8 @@ public interface LancamentoService {
 	 * @return - true se encontrar e false se não encontrar. 
 	 */
 	public Boolean existeMatrizBalanceamentoConfirmado(Date data);
+
+	public List<Lancamento> obterLancamentosEdicao(Long idEdicao);
 	
 }
  

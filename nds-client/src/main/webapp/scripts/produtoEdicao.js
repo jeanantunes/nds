@@ -395,6 +395,32 @@ var produtoEdicaoController =$.extend(true,  {
 			singleSelect : true
 		});
 		
+		$(".produtoEdicaoPeriodosLancamentosGrid", produtoEdicaoController.workspace).flexigrid({
+			preProcess: produtoEdicaoController.executarPreProcessamentoLancamentosPeriodo,
+			dataType : 'json',
+			colModel : [ { 
+				display : 'Data Lançamento Prevista',
+				name : 'dataLancamentoPrevista',
+				width : 50,
+				sortable : true,
+				align : 'left'
+			},{
+				display : 'Data Recolhimento Prevista',
+				name : 'dataRecolhimentoPrevista',
+				width : 50,
+				sortable : true,
+				align : 'left'
+			} ],
+			sortname : "dataLancamentoPrevista",
+			sortorder : "asc",
+			usepager : false,
+			useRp : false,
+			showTableToggleBtn : false,
+			width : 960,
+			height : 255
+		});
+		
+		
 	},
 		
 	pesquisarEdicoes : function(codigoProduto, nomeProduto) {
@@ -732,6 +758,9 @@ var produtoEdicaoController =$.extend(true,  {
 							$("#produtoEdicaoController-possuiBrinde").attr("readonly", false);
 							$("#produtoEdicaoController-descricaoBrinde").attr("readonly", false);
 							$("#produtoEdicaoController-peso").attr("readonly", false);
+							
+							produtoEdicaoController.carregarLancamentosPeriodo(result.id);
+							
 						}
 					},
 					function(result) { 
@@ -749,6 +778,22 @@ var produtoEdicaoController =$.extend(true,  {
 					true
 		);
 
+	},
+	
+	carregarLancamentosPeriodo : function (produtoEdicaoId) {
+
+		$(".produtoEdicaoPeriodosLancamentosGrid", produtoEdicaoController.workspace).flexOptions({
+			url: contextPath + "/cadastro/edicao/carregarLancamentosPeriodo",
+			params: [{name: "produtoEdicaoId", value: produtoEdicaoId}]
+		});
+		
+		$(".produtoEdicaoPeriodosLancamentosGrid", produtoEdicaoController.workspace).flexReload();
+		
+	},
+	
+	executarPreProcessamentoLancamentosPeriodo : function (result) {
+		debugger;
+		return result;
 	},
 	
 	iniciaTab: function(){
@@ -798,6 +843,23 @@ var produtoEdicaoController =$.extend(true,  {
 
 		produtoEdicaoController.prepararTela(id, codigo);
 		produtoEdicaoController.carregarDialog(id, codigo);
+	},
+	
+	mostrarPeriodosLancamento : function() {
+
+		$( "#dialog-produto-edicao-periodos-lancamentos" ).dialog({
+			resizable: true,
+			height:440,
+			width:260,
+			modal: true,
+			buttons: {
+				"Fechar": function() {
+					$( "#dialog-produto-edicao-periodos-lancamentos" ).dialog("close");
+				}
+			},
+			form: $("#produtoEdicaoController-dialog-novo", this.workspace).parents("form")
+		});
+		
 	},
 	
 	salvarProdutoEdicao : function(closePopUp) {
