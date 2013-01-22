@@ -139,7 +139,7 @@ label {
 				<tr>
 					<td>Conta / Digito:</td>
 					<td><input maxlength="17" type="text" name="alterConta" id="alterConta"
-						style="width: 97px;" /> - <input maxlength="1" type="text" name="alterDigito"
+						style="width: 97px;" /> - <input maxlength="2" type="text" name="alterDigito"
 						id="alterDigito" style="width: 30px;" />
 					</td>
 					<td>Apelido:</td>
