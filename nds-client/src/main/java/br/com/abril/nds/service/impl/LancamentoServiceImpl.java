@@ -282,8 +282,8 @@ public class LancamentoServiceImpl implements LancamentoService {
 
 	@Override
 	@Transactional(readOnly=true)
-	public List<Lancamento> obterLancamentosEdicao(Long idProdutoEdicao) {
-		return lancamentoRepository.obterLancamentosEdicao(idProdutoEdicao);
+	public List<Lancamento> obterLancamentosEdicao(Long idProdutoEdicao, String sortorder, String sortname) {
+		return lancamentoRepository.obterLancamentosEdicao(idProdutoEdicao, sortorder, sortname);
 	}
 
 }
