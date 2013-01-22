@@ -407,15 +407,15 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 	 * ao distribuidor de forma juramentada.
 	 * 
 	 */
-	private void gerarMovimentosDeEstoqueProdutosJuramentados(Date dataEncalhe){
+	private void gerarMovimentosDeEstoqueProdutosJuramentados(Date dataEncalhe, Usuario usuario){
 		
 		List<MovimentoEstoqueCotaGenericoDTO> listaMovimentoEstoqueCota = 
 				movimentoEstoqueCotaRepository.obterListaMovimentoEstoqueCotaDevolucaoJuramentada(dataEncalhe);
 		
 		
-		TipoMovimentoEstoque tipoMovEstoqueRecebEncalheJuramentado = tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.RECEBIMENTO_ENCALHE_JURAMENTADO);
+		TipoMovimentoEstoque tipoMovEstoqueRecebJornaleiroJuramentado = tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.RECEBIMENTO_JORNALEIRO_JURAMENTADO);
 		
-		TipoMovimentoEstoque tipoMovEstoqueEnvioJornalerJuramentado = tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.ENVIO_JORNALEIRO_JURAMENTADO);
+		TipoMovimentoEstoque tipoMovEstoqueEnvioJornaleiroJuramentado = tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.ENVIO_JORNALEIRO_JURAMENTADO);
 		
 		for(MovimentoEstoqueCotaGenericoDTO movimentoEstoqueCota : listaMovimentoEstoqueCota) {
 			
@@ -423,16 +423,16 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 					null, 
 					movimentoEstoqueCota.getIdProdutoEdicao(), 
 					movimentoEstoqueCota.getIdCota(), 
-					null, 
+					usuario.getId(), 
 					movimentoEstoqueCota.getQtde(), 
-					tipoMovEstoqueRecebEncalheJuramentado);
+					tipoMovEstoqueRecebJornaleiroJuramentado);
 			
 			movimentoEstoqueService.gerarMovimentoEstoque(
 					null, 
 					movimentoEstoqueCota.getIdProdutoEdicao(), 
-					null, 
+					usuario.getId(), 
 					movimentoEstoqueCota.getQtde(), 
-					tipoMovEstoqueEnvioJornalerJuramentado);
+					tipoMovEstoqueEnvioJornaleiroJuramentado);
 			
 		}
 		
@@ -440,7 +440,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 	
 	@Override
 	@Transactional
-	public void encerrarOperacaoEncalhe(Date dataEncalhe) throws Exception {
+	public void encerrarOperacaoEncalhe(Date dataEncalhe, Usuario usuario) throws Exception {
 
 		Integer totalCotasAusentes = this.buscarQuantidadeCotasAusentes(dataEncalhe);
 		
@@ -459,7 +459,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 			
 			this.fechamentoEncalheRepository.salvarControleFechamentoEncalhe(controleFechamentoEncalhe);
 			
-			gerarMovimentosDeEstoqueProdutosJuramentados(dataEncalhe);
+			gerarMovimentosDeEstoqueProdutosJuramentados(dataEncalhe, usuario);
 			
 			this.gerarNotaFiscal(dataEncalhe);
 			
