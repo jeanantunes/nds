@@ -323,7 +323,7 @@ public class FechamentoEncalheController extends BaseController {
 				throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Data de encalhe inválida!"));
 			}
 			
-			this.fechamentoEncalheService.encerrarOperacaoEncalhe(dataEncalhe);
+			this.fechamentoEncalheService.encerrarOperacaoEncalhe(dataEncalhe, getUsuarioLogado());
 			
 		} catch (Exception e) {
 			
@@ -357,7 +357,7 @@ public class FechamentoEncalheController extends BaseController {
 			
 		try {
 			
-			this.fechamentoEncalheService.encerrarOperacaoEncalhe(dataEncalhe);
+			this.fechamentoEncalheService.encerrarOperacaoEncalhe(dataEncalhe, getUsuarioLogado());
 		} 
 		catch (Exception e) {
 
@@ -405,12 +405,12 @@ public class FechamentoEncalheController extends BaseController {
 	@Path("/salvarNoEncerrementoOperacao")
 	public void salvarNoEncerrementoOperacao(List<FechamentoFisicoLogicoDTO> listaFechamento, String dataEncalhe, Long fornecedorId, Long boxId) {
 		
-		if (listaFechamento !=null && !listaFechamento.isEmpty()){
+		if (listaFechamento !=null && !listaFechamento.isEmpty()) {
 			
 			gravaFechamentoEncalhe(listaFechamento, dataEncalhe, fornecedorId, boxId);
 		}
 		
-		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação de encalhe encerrada com sucesso!"), "result").recursive().serialize();
+		this.result.use(Results.json()).from("", "result").serialize();
 	}
 
 	private void gravaFechamentoEncalhe(

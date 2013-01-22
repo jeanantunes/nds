@@ -321,6 +321,9 @@ public class DataLoader {
 	private static TipoMovimentoEstoque tipoMovimentoCancelamentoNFDevolucaoConsignado;
 	private static TipoMovimentoEstoque tipoMovimentoCancelamentoNFEnvioConsignado;
 	
+	private static TipoMovimentoEstoque tipoMovimentoEstoqueRecebimentoJornaleiroJuramentado;
+	private static TipoMovimentoEstoque tipoMovimentoEstoqueEnvioJornaleiroJuramentado;
+	
 	private static TipoMovimentoFinanceiro tipoMovimentoFinanceiroCredito;
 	private static TipoMovimentoFinanceiro tipoMovimentoFinanceiroDebito;
 	private static TipoMovimentoFinanceiro tipoMovimentoFinanceiroDebitoNA;
@@ -6136,11 +6139,15 @@ public class DataLoader {
 		tipoMovimentoEstoqueEstornoCompraSuplementar = Fixture.tipoMovimentoEstornoCompraSuplementar();
 
 		tipoMovimentoFinanceiroCompraEncalhe = Fixture.tipoMovimentoFinanceiroCompraEncalhe();
+		
+		tipoMovimentoEstoqueRecebimentoJornaleiroJuramentado = Fixture.tipoMovimentoRecebimentoJornaleiroJuramentado();
+		tipoMovimentoEstoqueEnvioJornaleiroJuramentado = Fixture.tipoMovimentoEnvioJornaleiroJuramentado();
+
 
 		save(session, tipoMovimentoVendaEncalhe,tipoMovimentoFinanceiroCompraEncalhe,tipoMovimentoEstornoVendaEncalhe,tipoMovimentoVendaEncalheSuplementar,
 					  tipoMovimentoEstornoVendaEncalheSuplementar,tipoMovimentoEstoqueCompraSuplementar,tipoMovimentoEstoqueEstornoCompraSuplementar, 
-					  tipoMovimentoEncalheAntecipado,tipoMovimentoCompraEncalhe,tipoMovimentoEstornoCompraEncalhe, tipoMovimentoEstornoCotaFuroPublicacao, tipoMovimentoEstornoFuroPublicacao);
-
+					  tipoMovimentoEncalheAntecipado,tipoMovimentoCompraEncalhe,tipoMovimentoEstornoCompraEncalhe, tipoMovimentoEstornoCotaFuroPublicacao, tipoMovimentoEstornoFuroPublicacao,
+					  tipoMovimentoEstoqueRecebimentoJornaleiroJuramentado, tipoMovimentoEstoqueEnvioJornaleiroJuramentado);
 
 		tipoMovimentoSuplementarCotaAusente = Fixture.tipoMovimentoSuplementarCotaAusente();
 		
@@ -6174,9 +6181,8 @@ public class DataLoader {
 		tipoMovimentoFinanceiroDebitoPostergado = Fixture.tipoMovimentoFinanceiroDebitoPostergado();
 		tipoMovimentoFinanceiroCreditoPostergado = Fixture.tipoMovimentoFinanceiroCreditoPostergado();
 		tipoMovimentoFinanceiroDebitoPostergadoNegociado = Fixture.tipoMovimentoFinanceiroDebitoPostergadoNegociado();
-		
-
 		tipoMovimentoEnvioJornaleiro = Fixture.tipoMovimentoEnvioJornaleiro();
+		
 
 		save(session, tipoMovimentoEnvioJornaleiro,
 				tipoMovimentoEstornoCotaAusente,tipoMovimentoFinanceiroDebitoPostergadoNegociado,
@@ -6202,6 +6208,7 @@ public class DataLoader {
 		tipoMovimentoTransferenciaSaidaProdutosDevolucaoFornecedor = Fixture.tipoMovimentoTransferenciaSaidaProdutosDevolucaoFornecedor();
 		tipoMovimentoDevolucaoEncalheFornecedor = Fixture.tipoMovimentoDevolucaoEncalheFornecedor();
 		tipoMovimentoFinanceiroVendaTotal = Fixture.tipoMovimentoFinanceiroVendaTotal();
+		
 		
 		save(session, tipoMovimentoFaltaEm, tipoMovimentoFaltaDe, tipoMovimentoSuplementarCotaAusente,
 				tipoMovimentoSobraEm, tipoMovimentoSobraDe,
