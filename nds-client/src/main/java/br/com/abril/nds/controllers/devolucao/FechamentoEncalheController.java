@@ -6,7 +6,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -348,11 +350,15 @@ public class FechamentoEncalheController extends BaseController {
 		
 		if (totalCotasAusentes > 0 && ("VERIFICACAO").equalsIgnoreCase(operacao)) {
 			
-			this.result.use(Results.json()).from(Boolean.FALSE, "result").recursive().serialize();			
+			this.result.use(Results.json()).from(Boolean.FALSE, "result").recursive().serialize();
+			
+			return;
 		} 
 		else if (totalCotasAusentes <= 0 && ("VERIFICACAO").equalsIgnoreCase(operacao)) {
 			
-			this.result.use(Results.json()).from(Boolean.TRUE, "result").recursive().serialize();			
+			this.result.use(Results.json()).from(Boolean.TRUE, "result").recursive().serialize();
+			
+			return;
 		}
 			
 		try {
@@ -363,8 +369,8 @@ public class FechamentoEncalheController extends BaseController {
 
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Erro ao tentar encerrar a operação de encalhe!" + e.getMessage()));
 		}
-
-		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação de encalhe encerrada com sucesso!"), "result").recursive().serialize();
+		
+		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação de encalhe encerrada com sucesso!"),"result").recursive().serialize();
 	}
 
 	private boolean verificarDataEncalhe(Date dataEncalhe) {
