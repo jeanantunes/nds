@@ -21,11 +21,15 @@ public class FixacaoReparteController extends BaseController {
 	
 	@Autowired
 	TipoProdutoService tipoProdutoService;
+	
+	
+	
 
 	@Rules(Permissao.ROLE_DISTRIBUICAO_FIXACAOREPARTE)
 	public void index(){
 		result.include("listaTiposProduto", getListaTipoProduto());
 	}
+	
 	
 	public List<TipoProduto> getListaTipoProduto(){
 		return tipoProdutoService.obterTodosTiposProduto();
