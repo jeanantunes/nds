@@ -91,7 +91,7 @@ public class CobrancaServiceImpl implements CobrancaService {
 
 	@Override
 	@Transactional(propagation=Propagation.SUPPORTS)
-	public BigDecimal calcularJuros(Banco banco, Cota cota, Distribuidor distribuidor,
+	public BigDecimal calcularJuros(Banco banco, Cota cota,
 									BigDecimal valor, Date dataVencimento, Date dataCalculoJuros) {
 
 		BigDecimal taxaJurosMensal = BigDecimal.ZERO;
@@ -295,7 +295,7 @@ public class CobrancaServiceImpl implements CobrancaService {
 				
 				//CALCULA JUROS
 				valorJurosCalculado =
-					this.calcularJuros(cob.getBanco(), cob.getCota(), distribuidor,
+					this.calcularJuros(cob.getBanco(), cob.getCota(),
 							           cob.getValor().subtract(saldoDivida), cob.getDataVencimento(),
 									   dataOperacao);
 				//CALCULA MULTA

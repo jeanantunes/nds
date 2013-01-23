@@ -125,35 +125,39 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<MovimentoEstoqueCota> obterMovimentosPendentesGerarFinanceiro(Long idCota) {
+	public List<MovimentoEstoqueCota> obterMovimentosPendentesGerarFinanceiro(Long idCota, Long idControleConferencia) {
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" select mec  ");			
-		
-		hql.append(" from MovimentoEstoqueCota mec ");
-		
-		hql.append(" join mec.tipoMovimento tipoMovimento ");
-		
-		hql.append(" join mec.cota cota ");
-		
-		hql.append(" where tipoMovimento.grupoMovimentoEstoque in (:gruposMovimento) ");
-		
-		hql.append(" and ((mec.statusEstoqueFinanceiro is null) or (mec.statusEstoqueFinanceiro = :statusFinanceiro )) ");
-		
-		hql.append(" and mec.status = :statusAprovacao ");
-
-		hql.append(" and cota.id = :idCota ");
+		hql.append(" select mec ")			
+		   .append(" from MovimentoEstoqueCota mec ")
+		   .append(" join mec.tipoMovimento tipoMovimento ")
+		   .append(" join mec.cota cota ")
+		   .append(" join mec.produtoEdicao produtoEdicao ")
+		   .append(" where tipoMovimento.grupoMovimentoEstoque in (:gruposMovimento) ")
+		   .append(" and ((mec.statusEstoqueFinanceiro is null) or (mec.statusEstoqueFinanceiro = :statusFinanceiro )) ")
+		   .append(" and mec.status = :statusAprovacao ")
+		   .append(" and cota.id = :idCota ")
+		   .append(" and produtoEdicao.id in (")
+		   .append("     select pe.id ")
+		   .append("     from ControleConferenciaEncalheCota cont ")
+		   .append("     join cont.conferenciasEncalhe confe ")
+		   .append("     join confe.chamadaEncalheCota chamadaEncalheCota ")
+		   .append("     join chamadaEncalheCota.chamadaEncalhe chamadaEncalhe ")
+		   .append("     join chamadaEncalhe.produtoEdicao pe ")
+		   .append("     where cont.id = :idControleConferencia ")
+		   .append(")");
 		
 		Query query = getSession().createQuery(hql.toString());
 		
 		query.setParameterList("gruposMovimento", Arrays.asList(GrupoMovimentoEstoque.COMPRA_SUPLEMENTAR, 
 				                                                GrupoMovimentoEstoque.COMPRA_ENCALHE, 
-				                                                GrupoMovimentoEstoque.ENVIO_JORNALEIRO));
+				                                                GrupoMovimentoEstoque.RECEBIMENTO_REPARTE));
 		
 		query.setParameter("statusFinanceiro", StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO);
 		query.setParameter("statusAprovacao", StatusAprovacao.APROVADO);
 		query.setParameter("idCota", idCota);
+		query.setParameter("idControleConferencia", idControleConferencia);
 		
 		return query.list();
 		

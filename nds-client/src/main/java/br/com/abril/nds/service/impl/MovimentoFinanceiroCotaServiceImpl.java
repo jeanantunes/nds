@@ -34,7 +34,6 @@ import br.com.abril.nds.model.financeiro.HistoricoMovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
-import br.com.abril.nds.model.movimentacao.TipoMovimento;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.ConsolidadoFinanceiroRepository;
 import br.com.abril.nds.repository.HistoricoMovimentoFinanceiroCotaRepository;
@@ -395,7 +394,8 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 			                                         List<MovimentoEstoqueCota> movimentosEstoqueCota,
 			                                         List<MovimentoEstoqueCota> movimentosEstorno,
 										             Date dataOperacao,
-										             Usuario usuario){
+										             Usuario usuario,
+										             FormaComercializacao formaComercializacaoProduto){
 		
         BigDecimal precoVendaItem = BigDecimal.ZERO;
 		BigInteger quantidadeItem = BigInteger.ZERO;
@@ -431,7 +431,7 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 					
 			totalGeral = totalGeral.add(totalItem);
 			
-			if ((formaComercializacao == null ) || formaComercializacao.equals(FormaComercializacao.CONTA_FIRME)){
+			if ((formaComercializacao == null ) || formaComercializacao.equals(formaComercializacaoProduto)){
 
 				totalContaFirme = totalContaFirme.add(totalItem);
 				
@@ -479,10 +479,12 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 	/**
 	 * Gera movimento financeiro para cota na Conferencia de Encalhe
 	 * @param controleConferenciaEncalheCota
+	 * @param formaComercializacaoProduto
 	 */
 	@Transactional
 	@Override
-    public void gerarMovimentoFinanceiroCotaRecolhimento(ControleConferenciaEncalheCota controleConferenciaEncalheCota){
+    public void gerarMovimentoFinanceiroCotaRecolhimento(ControleConferenciaEncalheCota controleConferenciaEncalheCota,
+    		FormaComercializacao formaComercializacaoProduto){
 
 		Cota  cota = controleConferenciaEncalheCota.getCota();
 		ParametroCobrancaCota parametro = cota.getParametroCobranca();
@@ -490,8 +492,14 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 		Long idControleConferenciaEncalheCota = controleConferenciaEncalheCota.getId();
 		
 		List<MovimentoEstoqueCota> movimentosEstoqueCotaOperacaoConferenciaEncalhe;
-		List<MovimentoEstoqueCota> movimentosEstoqueCotaOperacaoEnvioReparte = movimentoEstoqueCotaRepository.obterMovimentosPendentesGerarFinanceiro(cota.getId());
-		List<MovimentoEstoqueCota> movimentosEstoqueCotaOperacaoEstorno = movimentoEstoqueCotaRepository.obterMovimentosEstornados(cota.getId());
+		
+		List<MovimentoEstoqueCota> movimentosEstoqueCotaOperacaoEnvioReparte = 
+				movimentoEstoqueCotaRepository.obterMovimentosPendentesGerarFinanceiro(
+						cota.getId(), 
+						controleConferenciaEncalheCota.getId());
+		
+		List<MovimentoEstoqueCota> movimentosEstoqueCotaOperacaoEstorno = 
+				movimentoEstoqueCotaRepository.obterMovimentosEstornados(cota.getId());
 
 		
 		//GERA MOVIMENTOS FINANCEIROS PARA A COTA A VISTA E PRODUTOS CONTA FIRME
@@ -501,7 +509,8 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 					                                 movimentosEstoqueCotaOperacaoEnvioReparte, 
 					                                 movimentosEstoqueCotaOperacaoEstorno,
 					                                 controleConferenciaEncalheCota.getDataOperacao(),
-					                                 controleConferenciaEncalheCota.getUsuario());
+					                                 controleConferenciaEncalheCota.getUsuario(),
+					                                 formaComercializacaoProduto);
 		}
 		
 		BigDecimal valorTotalEncalheOperacaoConferenciaEncalhe;
@@ -540,9 +549,13 @@ public class MovimentoFinanceiroCotaServiceImpl implements
             
             valorTotalEstorno = this.movimentoEstoqueCotaRepository.obterValorTotalMovimentosEstornados(cota.getId()); 
             
-            valorTotalEncalheOperacaoConferenciaEncalhe = this.conferenciaEncalheService.obterValorTotalConferenciaEncalhe(idControleConferenciaEncalheCota);
+            valorTotalEncalheOperacaoConferenciaEncalhe = 
+            		this.conferenciaEncalheService.obterValorTotalConferenciaEncalhe(idControleConferenciaEncalheCota);
 			
-            movimentosEstoqueCotaOperacaoEnvioReparte = movimentoEstoqueCotaRepository.obterMovimentosPendentesGerarFinanceiro(cota.getId());
+            movimentosEstoqueCotaOperacaoEnvioReparte = 
+            		movimentoEstoqueCotaRepository.obterMovimentosPendentesGerarFinanceiro(
+            				cota.getId(),
+            				controleConferenciaEncalheCota.getId());
             
             BigDecimal valorTotalEnvioReparte = this.movimentoEstoqueCotaRepository.obterValorTotalMovimentosPendentesGerarFinanceiro(cota.getId()); 
 
