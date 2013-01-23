@@ -496,7 +496,7 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 		List<MovimentoEstoqueCota> movimentosEstoqueCotaOperacaoEnvioReparte = 
 				movimentoEstoqueCotaRepository.obterMovimentosPendentesGerarFinanceiro(
 						cota.getId(), 
-						controleConferenciaEncalheCota.getId());
+						controleConferenciaEncalheCota.getDataOperacao());
 		
 		List<MovimentoEstoqueCota> movimentosEstoqueCotaOperacaoEstorno = 
 				movimentoEstoqueCotaRepository.obterMovimentosEstornados(cota.getId());
@@ -555,7 +555,7 @@ public class MovimentoFinanceiroCotaServiceImpl implements
             movimentosEstoqueCotaOperacaoEnvioReparte = 
             		movimentoEstoqueCotaRepository.obterMovimentosPendentesGerarFinanceiro(
             				cota.getId(),
-            				controleConferenciaEncalheCota.getId());
+            				controleConferenciaEncalheCota.getDataOperacao());
             
             BigDecimal valorTotalEnvioReparte = this.movimentoEstoqueCotaRepository.obterValorTotalMovimentosPendentesGerarFinanceiro(cota.getId()); 
 

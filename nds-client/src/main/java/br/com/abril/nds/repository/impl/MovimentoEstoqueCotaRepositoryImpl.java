@@ -129,7 +129,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<MovimentoEstoqueCota> obterMovimentosPendentesGerarFinanceiro(Long idCota, Long idControleConferencia) {
+	public List<MovimentoEstoqueCota> obterMovimentosPendentesGerarFinanceiro(Long idCota, Date dataControleConferencia) {
 		
 		StringBuilder hql = new StringBuilder();
 		
@@ -144,12 +144,12 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		   .append(" and cota.id = :idCota ")
 		   .append(" and produtoEdicao.id in (")
 		   .append("     select pe.id ")
-		   .append("     from ControleConferenciaEncalheCota cont ")
-		   .append("     join cont.conferenciasEncalhe confe ")
-		   .append("     join confe.chamadaEncalheCota chamadaEncalheCota ")
-		   .append("     join chamadaEncalheCota.chamadaEncalhe chamadaEncalhe ")
-		   .append("     join chamadaEncalhe.produtoEdicao pe ")
-		   .append("     where cont.id = :idControleConferencia ")
+		   .append("     from ChamadaEncalhe c ")
+		   .append("     join c.chamadaEncalheCotas cc ")
+		   .append("     join cc.cota cota ")
+		   .append("     join c.produtoEdicao pe ")
+		   .append("     where c.dataRecolhimento = :dataControleConferencia ")
+		   .append("     and cota.id = :idCota ")
 		   .append(")");
 		
 		Query query = getSession().createQuery(hql.toString());
@@ -161,7 +161,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		query.setParameter("statusFinanceiro", StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO);
 		query.setParameter("statusAprovacao", StatusAprovacao.APROVADO);
 		query.setParameter("idCota", idCota);
-		query.setParameter("idControleConferencia", idControleConferencia);
+		query.setParameter("dataControleConferencia", dataControleConferencia);
 		
 		return query.list();
 		

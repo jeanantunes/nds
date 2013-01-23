@@ -366,10 +366,10 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 	 * Obtém movimentos de estoque da cota que ainda não geraram movimento financeiro
 	 * Considera movimentos de estoque provenientes dos fluxos de Expedição e Conferência de Encalhe
 	 * @param idCota
-	 * @param idControleConferencia
+	 * @param dataControleConferencia
 	 * @return List<MovimentoEstoqueCota>
 	 */
-	public List<MovimentoEstoqueCota> obterMovimentosPendentesGerarFinanceiro(Long idCota, Long idControleConferencia);
+	public List<MovimentoEstoqueCota> obterMovimentosPendentesGerarFinanceiro(Long idCota, Date dataControleConferencia);
 	
 	/**
 	 * Obtém movimentos de estoque da cota que forão estornados
