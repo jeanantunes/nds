@@ -57,7 +57,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 	@Autowired
 	private DescontoService descontoService;
 
-	private static final String ZEROS_NBM = "0000000000";
+	private static final String ZEROS_NBM = "000000000";
 	
 	@Override
 	public void preProcess(AtomicReference<Object> tempVar) {
