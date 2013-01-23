@@ -304,8 +304,14 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 		
 		for (MovimentoEstoqueCota movimentoEstoqueCota : movimentosEstoqueCota) {
 			
-			Fornecedor fornecedor =
-				movimentoEstoqueCota.getProdutoEdicao().getProduto().getFornecedor();
+			Fornecedor fornecedor = null;
+			
+			if (movimentoEstoqueCota != null &&
+					movimentoEstoqueCota.getProdutoEdicao() != null &&
+					movimentoEstoqueCota.getProdutoEdicao().getProduto() != null){
+				
+				fornecedor = movimentoEstoqueCota.getProdutoEdicao().getProduto().getFornecedor();
+			}
 			
 			if (fornecedor != null) {
 				
@@ -380,7 +386,7 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 		}
 
 		this.gerarMovimentosFinanceirosDebitoCredito(movimentoFinanceiroCotaDTO);
-    };
+    }
     
     /**
 	 * Gera Financeiro para Movimentos de Estoque da Cota.

@@ -2589,7 +2589,7 @@ public class DataLoader {
 			
 			contador++;
 			
-			tipo.setId(contador);
+			tipo.setCodigo(contador);
 			
 			save(session, tipo);
 		}
