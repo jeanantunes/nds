@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.abril.nds.dto.AnaliticoEncalheDTO;
 import br.com.abril.nds.dto.CotaAusenteEncalheDTO;
 import br.com.abril.nds.dto.FechamentoFisicoLogicoDTO;
+import br.com.abril.nds.dto.MovimentoEstoqueCotaGenericoDTO;
 import br.com.abril.nds.dto.MovimentoFinanceiroCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroFechamentoEncalheDTO;
 import br.com.abril.nds.exception.GerarCobrancaValidacaoException;
@@ -31,6 +32,7 @@ import br.com.abril.nds.model.estoque.ControleFechamentoEncalhe;
 import br.com.abril.nds.model.estoque.FechamentoEncalhe;
 import br.com.abril.nds.model.estoque.FechamentoEncalheBox;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
+import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.pk.FechamentoEncalheBoxPK;
 import br.com.abril.nds.model.estoque.pk.FechamentoEncalhePK;
@@ -50,6 +52,7 @@ import br.com.abril.nds.repository.ChamadaEncalheRepository;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.FechamentoEncalheBoxRepository;
 import br.com.abril.nds.repository.FechamentoEncalheRepository;
+import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.repository.NotaFiscalRepository;
 import br.com.abril.nds.repository.ProdutoServicoRepository;
 import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
@@ -107,6 +110,9 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 	
 	@Autowired
 	private MovimentoEstoqueService movimentoEstoqueService;
+	
+	@Autowired
+	private MovimentoEstoqueCotaRepository movimentoEstoqueCotaRepository;
 	
 	@Autowired
 	private TipoMovimentoEstoqueRepository tipoMovimentoEstoqueRepository;
@@ -394,9 +400,47 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 	}
 	
 
+	/**
+	 * Ao realizar o encerramento do encalhe serão gerados
+	 * registros em MovimentoEstoqueCota e MovimentoEstoque
+	 * que correspondem ao produtos que as cotas devolveram
+	 * ao distribuidor de forma juramentada.
+	 * 
+	 */
+	private void gerarMovimentosDeEstoqueProdutosJuramentados(Date dataEncalhe, Usuario usuario){
+		
+		List<MovimentoEstoqueCotaGenericoDTO> listaMovimentoEstoqueCota = 
+				movimentoEstoqueCotaRepository.obterListaMovimentoEstoqueCotaDevolucaoJuramentada(dataEncalhe);
+		
+		
+		TipoMovimentoEstoque tipoMovEstoqueRecebJornaleiroJuramentado = tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.RECEBIMENTO_JORNALEIRO_JURAMENTADO);
+		
+		TipoMovimentoEstoque tipoMovEstoqueEnvioJornaleiroJuramentado = tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.ENVIO_JORNALEIRO_JURAMENTADO);
+		
+		for(MovimentoEstoqueCotaGenericoDTO movimentoEstoqueCota : listaMovimentoEstoqueCota) {
+			
+			movimentoEstoqueService.gerarMovimentoCota(
+					null, 
+					movimentoEstoqueCota.getIdProdutoEdicao(), 
+					movimentoEstoqueCota.getIdCota(), 
+					usuario.getId(), 
+					movimentoEstoqueCota.getQtde(), 
+					tipoMovEstoqueRecebJornaleiroJuramentado);
+			
+			movimentoEstoqueService.gerarMovimentoEstoque(
+					null, 
+					movimentoEstoqueCota.getIdProdutoEdicao(), 
+					usuario.getId(), 
+					movimentoEstoqueCota.getQtde(), 
+					tipoMovEstoqueEnvioJornaleiroJuramentado);
+			
+		}
+		
+	}
+	
 	@Override
 	@Transactional
-	public void encerrarOperacaoEncalhe(Date dataEncalhe) throws Exception {
+	public void encerrarOperacaoEncalhe(Date dataEncalhe, Usuario usuario) throws Exception {
 
 		Integer totalCotasAusentes = this.buscarQuantidadeCotasAusentes(dataEncalhe);
 		
@@ -414,6 +458,8 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 			controleFechamentoEncalhe.setDataEncalhe(dataEncalhe);
 			
 			this.fechamentoEncalheRepository.salvarControleFechamentoEncalhe(controleFechamentoEncalhe);
+			
+			gerarMovimentosDeEstoqueProdutosJuramentados(dataEncalhe, usuario);
 			
 			this.gerarNotaFiscal(dataEncalhe);
 			

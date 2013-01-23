@@ -159,7 +159,7 @@ var resumoExpedicaoController = $.extend(true, {
 			}, {
 				display : 'Produto',
 				name : 'descricaoProduto',
-				width : 180,
+				width : 160,
 				sortable : true,
 				align : 'left'
 			}, {
@@ -258,11 +258,11 @@ var resumoExpedicaoController = $.extend(true, {
 				dataLan = row.cell.dataLancamento;
 			}
 			
-			row.cell.dataLancamento = "<div id='dataLanc"+ index +"'>"+ dataLan +"</div>";
+			row.cell.dataLancamento = "<span id='dataLanc"+ index +"'>"+ dataLan +"</span>";
 			
-			row.cell.acao = "<div style='text-align: center;'>" +
+			row.cell.acao = "<span style='text-align: center;'>" +
 				"<a href='javascript:;' onclick='resumoExpedicaoController.detalharResumoExpedicao("+ index +");'>" +
-				"<img border='0' alt='Detalhes' src=\'" + contextPath + "/images/ico_detalhes.png\'></a></div>";
+				"<img border='0' alt='Detalhes' src=\'" + contextPath + "/images/ico_detalhes.png\'></a></span>";
 		});
 		
 		return resultado.tableModel;

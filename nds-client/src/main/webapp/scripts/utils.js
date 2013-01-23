@@ -85,7 +85,7 @@ function montarExibicaoMensagem(isFromDialog, tipoMensagem, mensagens,
 
 		$(divSuccess).show(0);
 
-		//$(divSuccess).show(0, esconde(isFromDialog, divSuccess));
+		$(divSuccess).show(0, esconde(isFromDialog, divSuccess));
 		
 	} else if (tipoMensagem == "WARNING") {
 		

@@ -49,8 +49,6 @@ public class ProdutoLancamentoVO  implements Serializable {
 	
 	private boolean bloquearData;
 	
-	private boolean bloquearExclusao;
-	
 	private Long idProdutoEdicao;
 	
 	private boolean destacarLinha;
@@ -264,14 +262,6 @@ public class ProdutoLancamentoVO  implements Serializable {
 
 	public void setBloquearData(boolean bloquearData) {
 		this.bloquearData = bloquearData;
-	}
-	
-	public boolean isBloquearExclusao() {
-		return bloquearExclusao;
-	}
-	
-	public void setBloquearExclusao(boolean bloquearExclusao) {
-		this.bloquearExclusao = bloquearExclusao;
 	}
 
 	public Long getIdProdutoEdicao() {

@@ -51,7 +51,7 @@ public class PessoaRepositoryImpl extends AbstractRepositoryModel<Pessoa, Long> 
 	@SuppressWarnings("unchecked")
 	public List<PessoaFisica> obterSociosPorFiador(Long idFiador, Set<Long> idsIgnorar, Set<String> cpfsIgnorar){
 		
-		StringBuilder hql = new StringBuilder("select f.socios from Fiador f left join f.socios socios ");
+		StringBuilder hql = new StringBuilder("select distinct(f.socios) from Fiador f left join f.socios socios ");
 		hql.append(" where f.id = :idFiador ");
 		
 		if (idsIgnorar != null && !idsIgnorar.isEmpty()){

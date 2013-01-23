@@ -879,11 +879,18 @@ public class DiferencaEstoqueController extends BaseController {
 		
 		if(diferenca instanceof DiferencaVO){
 			
-			identificador = ((DiferencaVO) diferenca).getId() +1 ;
+			DiferencaVO diferebcaVO = ((DiferencaVO) diferenca); 
+			
+			identificador = (Long) Util.nvl(diferebcaVO.getId(), 0) + 1;
 		}
 		else if ( diferenca instanceof Diferenca ){
-
-			identificador = ((Diferenca) diferenca).getId() +1 ;
+			
+			Diferenca difer = ((Diferenca)diferenca);
+			
+			Long valor = difer.getId();
+			
+			identificador = (valor == null)?0L:valor + 1;
+			
 		}
 		
 		return identificador;
@@ -2543,7 +2550,7 @@ public class DiferencaEstoqueController extends BaseController {
 		
 		Date dataOperacao = distribuidor.getDataOperacao();
 		
-		if(estoque.getQtde() != null && estoque.getQtde().intValue() > 0) {
+		if(estoque.getQtde() != null ) {
 			
 			estoques.add(
 					new EstoqueDTO(
@@ -2554,7 +2561,7 @@ public class DiferencaEstoqueController extends BaseController {
 					); 
 		}
 		
-		if(estoque.getQtdeSuplementar() != null && estoque.getQtdeSuplementar().intValue() > 0) {
+		if(estoque.getQtdeSuplementar() != null ) {
 				
 			estoques.add(
 					new EstoqueDTO(
@@ -2565,7 +2572,7 @@ public class DiferencaEstoqueController extends BaseController {
 					);
 		}
 		
-		if(estoque.getQtdeDevolucaoEncalhe() != null && estoque.getQtdeDevolucaoEncalhe().intValue() > 0) {
+		if(estoque.getQtdeDevolucaoEncalhe() != null ) {
 			
 			estoques.add(
 					new EstoqueDTO(
@@ -2576,7 +2583,7 @@ public class DiferencaEstoqueController extends BaseController {
 					); 
 		}
 		
-		if(estoque.getQtdeDevolucaoFornecedor() != null && estoque.getQtdeDevolucaoFornecedor().intValue() > 0) {
+		if(estoque.getQtdeDevolucaoFornecedor() != null ) {
 		
 			estoques.add(
 					new EstoqueDTO(
@@ -2587,7 +2594,7 @@ public class DiferencaEstoqueController extends BaseController {
 					); 
 		}
 		
-		if(estoque.getQtdeDanificado() != null && estoque.getQtdeDanificado().intValue() > 0) {
+		if(estoque.getQtdeDanificado() != null ) {
 		
 			estoques.add(
 					new EstoqueDTO(

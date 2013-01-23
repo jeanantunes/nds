@@ -1,6 +1,7 @@
 var confirmaExpedicaoController = $.extend(true, {
 
 	change : false,
+	verificacaoExpedicao : null,
 
 	init : function() {
 		definirAcaoPesquisaTeclaEnter();
@@ -210,6 +211,8 @@ var confirmaExpedicaoController = $.extend(true, {
 			buttons : {
 				"Confirmar" : function() {
 					
+					confirmaExpedicaoController.verificacaoExpedicao = setInterval(confirmaExpedicaoController.atualizarStatusExpedicao,5000);
+					
 					$("#selecionarTodosID", confirmaExpedicaoController.workspace).attr("checked",false);
 					$(".confirmaExpedicaoGrid", confirmaExpedicaoController.workspace).flexOptions({			
 						url : contextPath + '/confirmacaoExpedicao/confirmarExpedicao',
@@ -218,7 +221,7 @@ var confirmaExpedicaoController = $.extend(true, {
 					});
 					
 					$(".confirmaExpedicaoGrid", confirmaExpedicaoController.workspace).flexReload();
-										
+					
 					$(this).dialog("close");
 				},
 				"Cancelar" : function() {
@@ -227,7 +230,21 @@ var confirmaExpedicaoController = $.extend(true, {
 			},
 			form: $("#dialog-confirmar", this.workspace).parents("form")
 		});
-	}
+	} ,
+	
+	atualizarStatusExpedicao : function() {
+		
+		$.postJSON(contextPath + "/confirmacaoExpedicao/verificarExpedicao", 
+			null,
+			function(result) {
+				$('#mensagemLoading').text(result)
+				
+				if(result=='FINALIZADO') {
+					$('#mensagemLoading').text('Aguarde, carregando ...');
+					window.clearInterval(confirmaExpedicaoController.verificacaoExpedicao);
+				}
+			});	
+	} 
 
 }, BaseController);
 //@ sourceURL=confirmaExpedicao.js

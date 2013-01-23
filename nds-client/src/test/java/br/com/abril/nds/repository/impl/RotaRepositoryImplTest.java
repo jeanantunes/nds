@@ -212,7 +212,7 @@ public class RotaRepositoryImplTest extends AbstractRepositoryImplTest {
 	public void obterCotasPorBoxRotaRoteiro() {
 		List<ConsultaRoteirizacaoDTO> rotas = roteirizacaoRepository
 				.obterCotasParaBoxRotaRoteiro(box1.getId(), rota10.getId(),
-						roteiroTCD.getId());
+						roteiroTCD.getId(), null, null);
 
 		Assert.assertEquals(1, rotas.size());
 		ConsultaRoteirizacaoDTO dto = rotas.get(0);

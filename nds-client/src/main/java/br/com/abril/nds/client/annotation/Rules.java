@@ -15,6 +15,6 @@ import br.com.abril.nds.model.seguranca.Permissao;
 @Target({ElementType.METHOD})
 public @interface Rules {
 
-	Permissao value();
+	public Permissao value();
 	
 }

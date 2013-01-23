@@ -131,6 +131,7 @@ public class NotaFiscalEntradaRepositoryImpl extends AbstractRepositoryModel<Not
 			hql.append("select DISTINCT new ").append(NotaFiscalEntradaFornecedorDTO.class.getCanonicalName())
 				.append(" (notaFiscal.id, ")
 				.append("  notaFiscal.numero, ")
+				.append("  notaFiscal.serie, ")
 				.append("  notaFiscal.dataEmissao, ")
 				.append("  notaFiscal.dataExpedicao, ")
 				.append("  tipoNotaFiscal.descricao, ")
@@ -222,6 +223,10 @@ public class NotaFiscalEntradaRepositoryImpl extends AbstractRepositoryModel<Not
 						orderByColumn += orderByColumn.equals("") ? "" : ",";
 						orderByColumn += " notaFiscal.dataEmissao ";
 						break;
+					case SERIE:
+						orderByColumn += orderByColumn.equals("") ? "" : ",";
+						orderByColumn += " notaFiscal.serie ";
+						break;	
 					case DATA_EXPEDICAO:
 						orderByColumn += orderByColumn.equals("") ? "" : ",";
 						orderByColumn += " notaFiscal.dataExpedicao ";

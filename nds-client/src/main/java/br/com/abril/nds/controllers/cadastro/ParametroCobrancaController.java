@@ -173,7 +173,7 @@ public class ParametroCobrancaController extends BaseController {
 
 		PoliticaCobranca politica = politicaCobrancaService.obterPoliticaCobrancaPrincipal();
 		
-		if (politica==null && !parametros.isPrincipal()){
+		if ((politica==null || politica.getId().equals(parametros.getIdPolitica())) && !parametros.isPrincipal()){
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Defina ao menos um [Parâmetro de Cobrança] como [Principal].");
 		}	

@@ -76,7 +76,14 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 			hql.append("  and pf.id = :fornecedorId ");
 		}
 		
-		hql.append(" group by p.codigo,  p.nome, pe.numeroEdicao, pe.precoVenda, pe.id , pe.parcial, che.dataRecolhimento");
+		hql.append(" group by 			")
+		.append(" p.codigo,  			")
+		.append(" p.nome, 				")
+		.append(" pe.numeroEdicao, 		")
+		.append(" pe.precoVenda,  		")
+		.append(" pe.id, 				")
+		.append(" pe.parcial,  			")
+		.append(" che.dataRecolhimento 	");
 		
 		if (sortname != null) {
 			hql.append(" order by ");
@@ -189,16 +196,17 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		hql.append("          ,cota.numeroCota as numeroCota");
 		hql.append("          ,coalesce(pessoa.nome, pessoa.razaoSocial) as colaboradorName");
 		hql.append("          ,box.nome as boxName");
-		//hql.append("          ,cec.cota.pdvs.rotas.rota.roteiro.descricaoRoteiro as roteiroName");
-		//hql.append("          ,cec.cota.pdvs.rotas.rota.descricaoRota as rotaName");
+		hql.append("          ,rotas.rota.roteiro.descricaoRoteiro as roteiroName");
+		hql.append("          ,rotas.rota.descricaoRota as rotaName");
 		hql.append("          ,cec.fechado as fechado");
 		hql.append("          ,cec.postergado as postergado");
-		hql.append("          ,chamadaEncalhe.dataRecolhimento as dataEncalhe");
+		hql.append("          ,cec.chamadaEncalhe.dataRecolhimento as dataEncalhe");
 		hql.append("      FROM ChamadaEncalheCota cec");
 		hql.append("      join cec.cota cota ");
 		hql.append("      join cota.pessoa pessoa ");
 		hql.append("      join cota.box box ");
-		hql.append("      join cec.chamadaEncalhe chamadaEncalhe ");
+		hql.append("      join cota.pdvs pdvs ");
+		hql.append("      join pdvs.rotas rotas ");
 		hql.append("     WHERE cec.chamadaEncalhe.dataRecolhimento = :dataEncalhe");
 		hql.append("       AND cec.cota.id NOT IN (");
 		hql.append("           select cc.cota.id   ");
@@ -206,14 +214,20 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		hql.append("            ");
 		hql.append("           where cc.chamadaEncalhe.dataRecolhimento = :dataEncalhe and ce.chamadaEncalheCota.id = cc.id ");
 		hql.append("       )");
+		hql.append("	   AND pdvs.caracteristicas.pontoPrincipal = :principal");
+		hql.append(" GROUP BY cota.id ");
+		
 		if (sortname != null && sortorder != null) {
 			hql.append("  ORDER BY " + sortname + " " + sortorder);
 		}
+		
+		
 		
 		Query query = this.getSession().createQuery(hql.toString());
 		query.setResultTransformer(Transformers.aliasToBean(CotaAusenteEncalheDTO.class));
 		
 		query.setDate("dataEncalhe", dataEncalhe);
+		query.setBoolean("principal", true);
 		
 		return query;
 	}

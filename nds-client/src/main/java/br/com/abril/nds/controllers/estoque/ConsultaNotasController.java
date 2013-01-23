@@ -35,6 +35,7 @@ import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.seguranca.Permissao;
+import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.NotaFiscalEntradaService;
 import br.com.abril.nds.service.TipoNotaFiscalService;
@@ -141,16 +142,10 @@ public class ConsultaNotasController extends BaseController {
 			if (quantidadeRegistros <= 0) {
 				throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
 			} 
+						
+			this.result.use(FlexiGridJson.class).noReference().from(listaNotasFiscais)
+			.total(quantidadeRegistros.intValue()).page(page).serialize();
 			
-			List<CellModel> listaCellModel = getTableModelNotasFiscais(listaNotasFiscais);
-		
-			TableModel<CellModel> tableModel = new TableModel();
-			tableModel.setRows(listaCellModel);
-			
-			tableModel.setTotal(quantidadeRegistros);
-			tableModel.setPage(filtroConsultaNotaFiscal.getPaginacao().getPaginaAtual());
-
-			result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
 			
 
 		} catch (IllegalArgumentException e) {
@@ -429,7 +424,7 @@ public class ConsultaNotasController extends BaseController {
 		
 		filtroConsultaNotaFiscal.setIdDistribuidor(distribuidor.getId());
 		
-		PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortorder);
+		PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortorder,sortname);
 
 		filtroConsultaNotaFiscal.setPaginacao(paginacao);
 

@@ -1,4 +1,17 @@
 // JavaScript Document
+$(document).ajaxComplete(function(event, jqXHR, ajaxOptions) {
+	 if (jqXHR.status == 601) {
+		 window.alert("Sua sessão expirou.\nVocê será redirecionado para a página de login.");
+		 window.location.reload();
+    }
+});
+
+$(document).ajaxError(function(event, jqXHR, ajaxOptions) {
+	 if (jqXHR.status != 601) {
+    	 alert("Ocorreu um erro na requisição.\nConsulte o log do Servidor para mais informações" );
+     }
+});
+
 $(document).ready(function(){
 	$("#nav-one li").hover(
 		function(){ $("ul", this).fadeIn("fast"); }, 
@@ -130,9 +143,9 @@ function removeSpecialCharacteres(value, extraCharacteres) {
 	
 	//add default special characteres to remove;
 	var specialCharacteres = ["-", ".", "/"];
-	
+
 	if (extraCharacteres) {
-		specialCharacteres = specialCharacteres.concat(extraCharacteres);
+		specialCharacteres.push(extraCharacteres);
 	}
 	
 	for (var index in specialCharacteres) {
@@ -395,7 +408,7 @@ function ajaxRequest(url, data, sucessCallBackFunction, errorCallBackFunction, d
 		type: method,
 		url: url,
 		data: data,
-		dataType: dataType, 
+		dataType: dataType,
 		success: function(json) {
 			
 			var tipoMensagem = null;
@@ -481,9 +494,6 @@ function ajaxRequest(url, data, sucessCallBackFunction, errorCallBackFunction, d
 					}
 				}
 			}
-		},
-		error: function(error, type, msg) {
-			alert("Erro: " + msg);
 		}
 	});		
 }

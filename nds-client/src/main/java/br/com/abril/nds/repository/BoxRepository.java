@@ -135,4 +135,12 @@ public interface BoxRepository extends Repository<Box,Long> {
 	 * @return
 	 */
 	public Box obterBoxPorRota(Long rotaID);
+
+	/**
+	 * Obtém Box associado a roteirização do roteiro parametrizado
+	 * 
+	 * @param rotaID
+	 * @return
+	 */
+	public Box obterBoxPorRoteiro(Long roteiroID);
 }

@@ -137,19 +137,7 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 
 	    $("span[name='qtdeExemplares']", balanceamentoRecolhimentoController.workspace).tooltip();
 	    
-	    var bloquearBotoes = result.bloquearBotoes;
-	    
-	    if (bloquearBotoes) {
-	    	
-	    	balanceamentoRecolhimentoController.bloquearLinks();
-	    	
-	    	balanceamentoRecolhimentoController.bloquearCheckAll();
-	    	
-	    	$(".balanceamentoGrid", balanceamentoRecolhimentoController.workspace).flexOptions({
-	    		disableSelect : true
-	    	});
-	    	
-	    } else {
+	   
 	    	
 	    	balanceamentoRecolhimentoController.habilitarLinks();
 	    	
@@ -158,7 +146,7 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 	    	$(".balanceamentoGrid", balanceamentoRecolhimentoController.workspace).flexOptions({
 	    		disableSelect : false
 	    	});
-	    }
+	   
 	    
 	    $("#resumoPeriodo", balanceamentoRecolhimentoController.workspace).show();
 	},
@@ -998,7 +986,7 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 			contextPath + "/devolucao/balanceamentoMatriz/obterAgrupamentoDiarioBalanceamento", 
 			null,
 			function(result) {
-				this.balanceamento.popularConfirmacaoBalanceamento(result);
+				this.balanceamento.popularConfirmacaoBalanceamento(result,balanceamentoRecolhimentoController.workspace);
 				balanceamentoRecolhimentoController.abrirPopupConfirmarBalanceamento();
 			},
 			function() {

@@ -12,7 +12,7 @@ public class FiltroFechamentoEncalheDTO implements Serializable {
 	private Long fornecedorId;
 	private Long boxId;
 	private List<Long> fisico;
-	
+	private boolean indAgrupaPorCota;
 	
 	public Date getDataEncalhe() {
 		return dataEncalhe;
@@ -38,4 +38,11 @@ public class FiltroFechamentoEncalheDTO implements Serializable {
 	public void setFisico(List<Long> fisico) {
 		this.fisico = fisico;
 	}
+	public boolean isIndAgrupaPorCota() {
+		return indAgrupaPorCota;
+	}
+	public void setIndAgrupaPorCota(boolean indAgrupaPorCota) {
+		this.indAgrupaPorCota = indAgrupaPorCota;
+	}
+	
 }

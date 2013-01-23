@@ -1,9 +1,10 @@
 <head>
-<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/roteirizacao.js"></script>
+
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaCota.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/confirmDialog.js"></script>
-
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.justInput.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/roteirizacao.js"></script>
 <style>
 label{ vertical-align:super;}
 .linha_separa_fields{width:880px!important;}
@@ -14,7 +15,7 @@ label{ vertical-align:super;}
 <script type="text/javascript">
 
 var pesquisaCotaFiltroConsulta = new PesquisaCota(roteirizacao.workspace);
-
+$("#cotaPesquisa",roteirizacao.workspace).justInput(/[0-9]/);
 </script>
 
 </head>

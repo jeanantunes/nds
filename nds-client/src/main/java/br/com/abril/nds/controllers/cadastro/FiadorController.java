@@ -48,6 +48,7 @@ import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.stella.validation.CNPJValidator;
 import br.com.caelum.stella.validation.CPFValidator;
 import br.com.caelum.stella.validation.InvalidStateException;
+import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
@@ -112,6 +113,14 @@ public class FiadorController extends BaseController {
 		this.limparDadosSessao();
 	}
 	
+	@Get
+	@Path("/novoFiador")
+	public void novoFiador(){
+		
+		this.limparDadosSessao();
+		
+		result.nothing();
+	}
 	
 	@Post
 	public void pesquisarFiador(FiltroConsultaFiadorDTO filtro, String sortorder, 
@@ -442,9 +451,6 @@ public class FiadorController extends BaseController {
 					p.setRg(p.getRg().replace("-", "").replace(".", ""));
 				}
 			
-			} else {
-				
-				mensagensValidacao.add("Cadastre ao menos 1 sócio.");
 			}
 		}
 		
@@ -577,11 +583,35 @@ public class FiadorController extends BaseController {
 		
 		this.limparDadosSessao();
 	}
+	
+	private boolean isSocioPrincipalExcluido(){
+		
+		List<SocioCadastrado> socios = (List<SocioCadastrado>)
+				this.httpSession.getAttribute(SociosController.LISTA_SOCIOS_EXIBIR_SESSAO);
+		
+		if(socios == null || socios.isEmpty()){
+			return false;
+		}
+		
+		if(socios!= null && !socios.isEmpty()){
+			
+			for(SocioCadastrado item : socios){
+				if(item.getPessoa().isSocioPrincipal()){
+					return false;
+				}
+			}
+		}
+		return true;
+	}
 
 	@Post
 	public void cadastrarFiadorCnpj(PessoaJuridica fiador){
 		
 		this.validarDadosEntradaPessoJuridica(fiador);
+		
+		if(isSocioPrincipalExcluido()){
+			throw new ValidacaoException(TipoMensagem.WARNING,"Deve ser informado um sócio principal!");
+		}
 		
 		this.preencherDadosFiador(fiador);
 		
@@ -695,9 +725,11 @@ public class FiadorController extends BaseController {
 	}
 
 	private void limparDadosSessao(){
+		
 		this.httpSession.removeAttribute(LISTA_ENDERECOS_SALVAR_SESSAO);
 		this.httpSession.removeAttribute(LISTA_ENDERECOS_REMOVER_SESSAO);
 		this.httpSession.removeAttribute(LISTA_ENDERECOS_EXIBICAO);
+		this.httpSession.removeAttribute(SociosController.LISTA_SOCIOS_EXIBIR_SESSAO);
 		this.httpSession.removeAttribute(SociosController.LISTA_SOCIOS_SALVAR_SESSAO);
 		this.httpSession.removeAttribute(SociosController.LISTA_SOCIOS_REMOVER_SESSAO);
 		this.httpSession.removeAttribute(LISTA_TELEFONES_SALVAR_SESSAO);

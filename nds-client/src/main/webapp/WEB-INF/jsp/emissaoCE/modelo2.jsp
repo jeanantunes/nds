@@ -18,7 +18,7 @@ td{padding-left:3px;padding-right:3px;}
 			table-layout: fixed;
 		}
 .capaImgBox {
-	display: none;
+	display: block;
 	width: 115px;
 	float: left;
 	border: solid 1px #000; 
@@ -44,9 +44,7 @@ function imprimir(){
 	$( "#btImpressao" ).hide();
 	window.print();
 }
-$(function(){$('img.capaImg').load(function() {
-	$(this).parent().parent().show();
-});});
+
 </script>
 </head>
 
@@ -271,7 +269,7 @@ $(function(){$('img.capaImg').load(function() {
 					<strong>${status.index+1}</strong>				
 				</div>			
 				<div style="width: inherit; text-align: center;">
-					<img class="capaImg" src="<c:url value='/capa/${capa.id}'></c:url>"/>
+					<img class="capaImg" src="<c:url value='/capa/tratarNoImage/${capa.id}'></c:url>"/>
 				</div>
 			</div>	
 			
@@ -289,7 +287,7 @@ $(function(){$('img.capaImg').load(function() {
 					<strong>${status.index+1}</strong>				
 				</div>			
 				<div style="width: inherit; text-align: center;">
-					<img class="capaImg" src="<c:url value='/capa/${produto.idProdutoEdicao}'></c:url>"/>
+					<img class="capaImg" src="<c:url value='/capa/tratarNoImage/${produto.idProdutoEdicao}'></c:url>"/>
 				</div>
 			</div>	
 			

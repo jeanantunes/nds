@@ -395,6 +395,32 @@ var produtoEdicaoController =$.extend(true,  {
 			singleSelect : true
 		});
 		
+		$(".produtoEdicaoPeriodosLancamentosGrid", produtoEdicaoController.workspace).flexigrid({
+			preProcess: produtoEdicaoController.executarPreProcessamentoLancamentosPeriodo,
+			dataType : 'json',
+			colModel : [ { 
+				display : 'Lançamento',
+				name : 'dataLancamentoPrevista',
+				width : 80,
+				sortable : true,
+				align : 'center'
+			},{
+				display : 'Recolhimento',
+				name : 'dataRecolhimentoPrevista',
+				width : 80,
+				sortable : true,
+				align : 'center'
+			} ],
+			sortname : "dataLancamentoPrevista",
+			sortorder : "asc",
+			usepager : false,
+			useRp : false,
+			showTableToggleBtn : false,
+			width : 200,
+			height : 250
+		});
+		
+		
 	},
 		
 	pesquisarEdicoes : function(codigoProduto, nomeProduto) {
@@ -732,6 +758,9 @@ var produtoEdicaoController =$.extend(true,  {
 							$("#produtoEdicaoController-possuiBrinde").attr("readonly", false);
 							$("#produtoEdicaoController-descricaoBrinde").attr("readonly", false);
 							$("#produtoEdicaoController-peso").attr("readonly", false);
+							
+							produtoEdicaoController.carregarLancamentosPeriodo(result.id);
+							
 						}
 					},
 					function(result) { 
@@ -751,6 +780,22 @@ var produtoEdicaoController =$.extend(true,  {
 
 	},
 	
+	carregarLancamentosPeriodo : function (produtoEdicaoId) {
+
+		$(".produtoEdicaoPeriodosLancamentosGrid", produtoEdicaoController.workspace).flexOptions({
+			url: contextPath + "/cadastro/edicao/carregarLancamentosPeriodo",
+			params: [{name: "produtoEdicaoId", value: produtoEdicaoId}]
+		});
+		
+		$(".produtoEdicaoPeriodosLancamentosGrid", produtoEdicaoController.workspace).flexReload();
+		
+	},
+	
+	executarPreProcessamentoLancamentosPeriodo : function (result) {
+		debugger;
+		return result;
+	},
+	
 	iniciaTab: function(){
 		
 		$("#produtoEdicaoController-tabIdentificacao",this.workspace).click();
@@ -766,9 +811,10 @@ var produtoEdicaoController =$.extend(true,  {
 			exibirMensagem('WARNING', ['Por favor, escolha um produto para adicionar a Edi&ccedil;&atilde;o!'], "");
 			return;
 		}
-
+		var title = (id)?"Editar Edição":"Incluir Nova Edição";
 		if (codigo == "" || codigo == undefined) {
 			codigo = $("#produtoEdicaoController-codigoProduto",this.workspace).val();
+			
 		}
 		
 		if (nome == undefined) {
@@ -780,6 +826,7 @@ var produtoEdicaoController =$.extend(true,  {
 			height:540,
 			width:960,
 			modal: true,
+			title: title,
 			buttons: {
 				"Confirmar": function() {
 
@@ -796,6 +843,23 @@ var produtoEdicaoController =$.extend(true,  {
 
 		produtoEdicaoController.prepararTela(id, codigo);
 		produtoEdicaoController.carregarDialog(id, codigo);
+	},
+	
+	mostrarPeriodosLancamento : function() {
+
+		$( "#dialog-produto-edicao-periodos-lancamentos" ).dialog({
+			resizable: true,
+			height:380,
+			width:225,
+			modal: true,
+			buttons: {
+				"Fechar": function() {
+					$( "#dialog-produto-edicao-periodos-lancamentos" ).dialog("close");
+				}
+			},
+			form: $("#produtoEdicaoController-dialog-novo", this.workspace).parents("form")
+		});
+		
 	},
 	
 	salvarProdutoEdicao : function(closePopUp) {
@@ -841,12 +905,13 @@ var produtoEdicaoController =$.extend(true,  {
 	carregarImagemCapa:			function (idProdutoEdicao) {
 
 		var imgPath = (idProdutoEdicao == null || idProdutoEdicao == undefined)
-		? "" :  contextPath + '/capa/' + idProdutoEdicao + '?' + Math.random();
+		? "" :  contextPath + '/capa/tratarNoImage/' + idProdutoEdicao + '?' + Math.random();
 		var img = $("<img />").attr('src', imgPath).attr('width', '144').attr('height', '185').attr('alt', 'Capa');
 		$("#produtoEdicaoController-div_imagem_capa",this.workspace).empty();
 		$("#produtoEdicaoController-div_imagem_capa",this.workspace).append(img);
 		
 		img.load(function() {
+			
 			if (!(!this.complete || typeof this.naturalWidth == "undefined" || this.naturalWidth == 0)) {
 				$("#produtoEdicaoController-div_imagem_capa",this.workspace).empty();
 				$("#produtoEdicaoController-div_imagem_capa",this.workspace).append(img);
@@ -877,6 +942,35 @@ var produtoEdicaoController =$.extend(true,  {
 					}
 				}
 		);
+	},
+	
+	carregarCapaTemporaria : function() {
+		
+		$("#produtoEdicaoController-formUpload").ajaxSubmit({ 
+			
+			success: function(responseText, statusText, xhr, $form)  { 
+				var mensagens = (responseText.mensagens) ? responseText.mensagens : responseText.result;   
+				var tipoMensagem = mensagens.tipoMensagem;
+				var listaMensagens = mensagens.listaMensagens;
+				
+				if (tipoMensagem && listaMensagens) {
+					exibirMensagem(tipoMensagem, listaMensagens);	
+				}
+				if (tipoMensagem == "WARNING" || tipoMensagem == "ERROR") {
+					$("#produtoEdicaoController-imagemCapa").val("");
+					return;
+				}
+				
+				$("#produtoEdicaoController-div_imagem_capa > img").attr("src", contextPath + responseText.result);
+				
+			},
+			
+			url:  contextPath + '/capa/carregarCapaTemp',
+			type: 'POST',
+			dataType: 'json',
+			data : $("#produtoEdicaoController-imagemCapa").val()
+		});
+		
 	},
 	
 	popup_alterar:			function () {

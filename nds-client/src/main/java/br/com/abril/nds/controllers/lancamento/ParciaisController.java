@@ -48,7 +48,9 @@ import br.com.caelum.vraptor.view.Results;
 @Path("/parciais")
 public class ParciaisController extends BaseController {
 
-	private static final String FILTRO_SESSION_ATTRIBUTE = "filtroParcial";
+	private static final String FILTRO_SESSION = "filtroParcial";
+	
+	private static final String FILTRO_SESSION_DETALHE = "filtroParcialDetalhe";
 	
 	private static String FILTRO_DATA_LANCAMENTO = "filtroDataLancamento";
 	
@@ -100,7 +102,8 @@ public class ParciaisController extends BaseController {
 	@Rules(Permissao.ROLE_LANCAMENTO_PARCIAIS)
 	public void index() {
 		
-		session.setAttribute(FILTRO_SESSION_ATTRIBUTE, null);	
+		session.removeAttribute(FILTRO_SESSION);
+		session.removeAttribute(FILTRO_SESSION_DETALHE);
 		
 		carregarComboFornecedores();
 		
@@ -147,9 +150,8 @@ public class ParciaisController extends BaseController {
 		
 		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder,sortname));
 		
-		validarEntrada(filtro);
-		
-		tratarFiltro(filtro);
+		this.validarEntrada(filtro);
+		this.tratarFiltro(filtro, false);
 		
 		TableModel<CellModelKeyValue<ParcialDTO>> tableModel = efetuarConsulta(filtro);
 		
@@ -164,9 +166,8 @@ public class ParciaisController extends BaseController {
 		
 		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder,sortname));
 		
-		validarEntrada(filtro);
-		
-		tratarFiltro(filtro);
+		this.validarEntrada(filtro);
+		this.tratarFiltro(filtro, true);
 		
 		TableModel<CellModelKeyValue<PeriodoParcialDTO>> tableModel = efetuarConsultaPeriodos(filtro);
 		
@@ -190,17 +191,17 @@ public class ParciaisController extends BaseController {
 	 * 
 	 * @param filtroResumoExpedicao
 	 */
-	private void tratarFiltro(FiltroParciaisDTO filtroAtual) {
+	private void tratarFiltro(FiltroParciaisDTO filtroAtual, boolean detalhes) {
 
 		FiltroParciaisDTO filtroSession = (FiltroParciaisDTO) session
-				.getAttribute(FILTRO_SESSION_ATTRIBUTE);
+				.getAttribute(detalhes ? FILTRO_SESSION_DETALHE : FILTRO_SESSION);
 		
 		if (filtroSession != null && !filtroSession.equals(filtroAtual)) {
 
 			filtroAtual.getPaginacao().setPaginaAtual(1);
 		}
 		
-		session.setAttribute(FILTRO_SESSION_ATTRIBUTE, filtroAtual);
+		session.setAttribute(detalhes ? FILTRO_SESSION_DETALHE : FILTRO_SESSION, filtroAtual);
 	}
 
 	/**
@@ -369,9 +370,7 @@ public class ParciaisController extends BaseController {
 	@Get
 	public void exportar(FileType fileType) throws IOException {
 		
-		FiltroParciaisDTO filtro = (FiltroParciaisDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
-		
-		filtro.getPaginacao().setSortColumn("codigoProduto");
+		FiltroParciaisDTO filtro = (FiltroParciaisDTO) session.getAttribute(FILTRO_SESSION);
 		
 		List<ParcialDTO> listaParciais = lancamentoParcialService.buscarLancamentosParciais(filtro);
 		
@@ -379,9 +378,6 @@ public class ParciaisController extends BaseController {
 			throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");
 		}
 		
-		if(filtro.getStatus()!=null && !filtro.getStatus().trim().isEmpty()) {
-			filtro.setStatus(StatusLancamentoParcial.valueOf(filtro.getStatus()).toString());
-		}
 		FileExporter.to("lancamentos_parciais", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, null, 
 				listaParciais, ParcialDTO.class, this.httpResponse);
 		
@@ -398,7 +394,7 @@ public class ParciaisController extends BaseController {
 	@Get
 	public void exportarPeriodos(FileType fileType) throws IOException {
 		
-		FiltroParciaisDTO filtro = (FiltroParciaisDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
+		FiltroParciaisDTO filtro = (FiltroParciaisDTO) session.getAttribute(FILTRO_SESSION_DETALHE);
 				
 		List<PeriodoParcialDTO> listaPeriodos = periodoLancamentoParcialService.obterPeriodosParciais(filtro);
 		
