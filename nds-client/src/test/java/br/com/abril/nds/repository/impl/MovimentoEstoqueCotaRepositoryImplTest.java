@@ -3292,7 +3292,10 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		
 		this.setupFinanceiroReparteEncalhe();
 		
-		List<MovimentoEstoqueCota> movimentos = this.movimentoEstoqueCotaRepository.obterMovimentosPendentesGerarFinanceiro(cotaValdomiro.getId());
+		List<MovimentoEstoqueCota> movimentos = 
+				this.movimentoEstoqueCotaRepository.obterMovimentosPendentesGerarFinanceiro(
+						cotaValdomiro.getId(),
+						Fixture.criarData(28, Calendar.FEBRUARY, 2012));
 		
         Assert.assertNotNull(movimentos);
 		
