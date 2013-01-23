@@ -9,8 +9,8 @@ import br.com.abril.nds.vo.PaginacaoVO;
 /**
  * @author Infoa2 - Samuel Mendes
  * 
- *         <h1>Classe que contém todos os filtros de pesquisa do menu
- *         Distribuição > Segmento Não Recebido</h1>
+ *         <h1>Classe que contém todos os filtros do menu Distribuição >
+ *         Segmento Não Recebido</h1>
  * 
  */
 
@@ -20,12 +20,13 @@ public class FiltroSegmentoNaoRecebidoDTO implements Serializable {
 	private static final long serialVersionUID = 7114342659677545114L;
 
 	private Long tipoSegmentoProdutoId;
-	private Long numeroCota;
+	private Integer numeroCota;
 	private String nomeCota;
+	private Long usuarioId;
 	private boolean cotasAtivas;
 
 	private PaginacaoVO paginacao;
-	
+
 	@Override
 	public boolean equals(Object object) {
 		if (this == object)
@@ -69,11 +70,11 @@ public class FiltroSegmentoNaoRecebidoDTO implements Serializable {
 		this.tipoSegmentoProdutoId = tipoSegmentoProdutoId;
 	}
 
-	public Long getNumeroCota() {
+	public Integer getNumeroCota() {
 		return numeroCota;
 	}
 
-	public void setNumeroCota(Long numeroCota) {
+	public void setNumeroCota(Integer numeroCota) {
 		this.numeroCota = numeroCota;
 	}
 
@@ -83,6 +84,14 @@ public class FiltroSegmentoNaoRecebidoDTO implements Serializable {
 
 	public void setNomeCota(String nomeCota) {
 		this.nomeCota = nomeCota;
+	}
+
+	public Long getUsuarioId() {
+		return usuarioId;
+	}
+
+	public void setUsuarioId(Long usuarioId) {
+		this.usuarioId = usuarioId;
 	}
 
 	public boolean isCotasAtivas() {

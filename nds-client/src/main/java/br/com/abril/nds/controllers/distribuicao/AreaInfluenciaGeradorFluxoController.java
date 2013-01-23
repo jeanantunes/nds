@@ -40,7 +40,7 @@ public class AreaInfluenciaGeradorFluxoController extends BaseController {
 	private static final String FILTRO_SESSION_ATTRIBUTE = "filtroAreaInfluenciaGeradorFluxo";
 	
 	@Autowired
-	private PdvService pdfService;
+	private PdvService pdvService;
 
 	@Autowired
 	private HttpSession session;
@@ -172,7 +172,7 @@ public class AreaInfluenciaGeradorFluxoController extends BaseController {
 	
 	private void carregarGeradorFluxo() {
 
-		List<TipoGeradorFluxoPDV> listaTipoGeradorFluxoPDV = pdfService.obterTipoGeradorDeFluxo();
+		List<TipoGeradorFluxoPDV> listaTipoGeradorFluxoPDV = pdvService.obterTipoGeradorDeFluxo();
 
 		List<ItemDTO<Long, String>> listaTipoGeradorFluxoPDVCombo = new ArrayList<ItemDTO<Long, String>>();
 
@@ -192,7 +192,7 @@ public class AreaInfluenciaGeradorFluxoController extends BaseController {
 
 	private void carregarComboAreaInfluencia() {
 
-		List<AreaInfluenciaPDV> listaAreaInfluenciaPDV = pdfService.obterTipoAreaInfluencia();
+		List<AreaInfluenciaPDV> listaAreaInfluenciaPDV = pdvService.obterTipoAreaInfluencia();
 
 		List<ItemDTO<Long, String>> listaAreaInfluenciaPDVCombo = new ArrayList<ItemDTO<Long, String>>();
 

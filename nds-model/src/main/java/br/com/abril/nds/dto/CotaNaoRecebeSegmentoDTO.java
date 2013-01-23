@@ -16,6 +16,7 @@ import br.com.abril.nds.util.DateUtil;
 
 public class CotaNaoRecebeSegmentoDTO {
 
+	private Long segmentoNaoRecebidoId;
 	private Integer numeroCota;
 	private SituacaoCadastro statusCota;
 	private String nomeCota;
@@ -24,6 +25,14 @@ public class CotaNaoRecebeSegmentoDTO {
 	private Date dataAlteracao;
 	private String dataAlteracaoFormatada;
 	private String horaAlteracaoFormatada;
+
+	public Long getSegmentoNaoRecebidoId() {
+		return segmentoNaoRecebidoId;
+	}
+
+	public void setSegmentoNaoRecebidoId(Long segmentoNaoRecebidoId) {
+		this.segmentoNaoRecebidoId = segmentoNaoRecebidoId;
+	}
 
 	public Integer getNumeroCota() {
 		return numeroCota;
@@ -64,8 +73,8 @@ public class CotaNaoRecebeSegmentoDTO {
 	public void setDataAlteracao(Date dataAlteracao) {
 		this.dataAlteracao = dataAlteracao;
 		
-		dataAlteracaoFormatada = DateUtil.formatarDataPTBR(dataAlteracao);
-		horaAlteracaoFormatada = DateUtil.formatarHoraMinuto(dataAlteracao);
+		this.dataAlteracaoFormatada = DateUtil.formatarDataPTBR(dataAlteracao);
+		this.horaAlteracaoFormatada = DateUtil.formatarHoraMinuto(dataAlteracao);
 	}
 
 	public String getDataAlteracaoFormatada() {

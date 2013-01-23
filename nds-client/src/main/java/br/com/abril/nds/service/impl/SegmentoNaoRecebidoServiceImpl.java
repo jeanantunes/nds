@@ -6,8 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.CotaNaoRecebeSegmentoDTO;
+import br.com.abril.nds.dto.SegmentoNaoRecebeCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroSegmentoNaoRecebidoDTO;
+import br.com.abril.nds.model.distribuicao.SegmentoNaoRecebido;
 import br.com.abril.nds.model.distribuicao.TipoSegmentoProduto;
 import br.com.abril.nds.repository.SegmentoNaoRecebidoRepository;
 import br.com.abril.nds.repository.TipoSegmentoProdutoRepository;
@@ -32,7 +35,43 @@ public class SegmentoNaoRecebidoServiceImpl implements SegmentoNaoRecebidoServic
 	@Transactional(readOnly = true)
 	@Override
 	public List<CotaNaoRecebeSegmentoDTO> obterCotasNaoRecebemSegmento(FiltroSegmentoNaoRecebidoDTO filtro) {
-		return segmentoNaoRecebidoRepo.buscarCotasNaoRecebemSegmento(filtro);
+		return segmentoNaoRecebidoRepo.obterCotasNaoRecebemSegmento(filtro);
 	}
 
+	@Transactional
+	@Override
+	public void excluirSegmentoNaoRecebido(Long segmentoNaoRecebidoId) {
+		segmentoNaoRecebidoRepo.removerPorId(segmentoNaoRecebidoId);	
+	}
+
+	@Transactional
+	@Override
+	public TipoSegmentoProduto obterTipoProdutoPorId(Long id) {
+		// TODO Auto-generated method stub
+		return tipoSegmentoProdutoRepo.buscarPorId(id);
+	}
+
+	@Transactional
+	@Override
+	public void inserirCotasSegmentoNaoRecebido(List<SegmentoNaoRecebido> segmentosNaoRecebido) {
+		for (SegmentoNaoRecebido segmentoNaoRecebido : segmentosNaoRecebido) {
+			segmentoNaoRecebidoRepo.adicionar(segmentoNaoRecebido);
+		}
+	}
+
+	@Transactional
+	@Override
+	public List<CotaDTO> obterCotasNaoEstaoNoSegmento(FiltroSegmentoNaoRecebidoDTO filtro) {
+		return  segmentoNaoRecebidoRepo.obterCotasNaoEstaoNoSegmento(filtro);
+	}
+
+	@Override
+	public List<SegmentoNaoRecebeCotaDTO> obterSegmentosNaoRecebemCota(
+			FiltroSegmentoNaoRecebidoDTO filtro) {
+		// TODO Auto-generated method stub
+		return segmentoNaoRecebidoRepo.obterSegmentosNaoRecebemCota(filtro);
+	}
+
+	
+	
 }

@@ -145,9 +145,6 @@ public class AreaInfluenciaGeradorFluxoRepositoryImpl extends AbstractRepository
 		
 		return hql;
 	}
-	
-	
-	
 
 	private void setGroupBy(StringBuilder hql) {
 		hql.append(" group by cota.id ");
