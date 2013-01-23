@@ -29,7 +29,7 @@ public interface FechamentoEncalheService {
 	
 	void salvarFechamentoEncalheBox(FiltroFechamentoEncalheDTO filtro, List<FechamentoFisicoLogicoDTO> listaFechamento);
 	
-	void encerrarOperacaoEncalhe(Date dataEncalhe) throws Exception;
+	void encerrarOperacaoEncalhe(Date dataEncalhe, Usuario usuario) throws Exception;
 	
 	Boolean existeFechamentoEncalheDetalhado(FiltroFechamentoEncalheDTO filtro);
 	

@@ -82,9 +82,13 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		Query query = getSession().createQuery(hql.toString());
 		
+		query.setResultTransformer(new AliasToBeanResultTransformer(MovimentoEstoqueCotaGenericoDTO.class));
+		
 		query.setParameter("dataOperacao", dataOperacao);
 		
 		query.setParameter("juramentada", true);
+		
+		
 		
 		return query.list();
 		

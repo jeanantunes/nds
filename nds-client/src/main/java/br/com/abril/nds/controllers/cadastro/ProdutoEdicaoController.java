@@ -446,11 +446,11 @@ public class ProdutoEdicaoController extends BaseController {
 	 * @param produtoEdicaoId
 	 */
 	@Post
-	public void carregarLancamentosPeriodo(Long produtoEdicaoId) {
+	public void carregarLancamentosPeriodo(Long produtoEdicaoId, String sortorder, String sortname) {
 
 		List<PeriodoLancamentosProdutoEdicaoVO> listaPeriodosLancamentos = new ArrayList<>();
 		
-		for (Lancamento lancamento : lancamentoService.obterLancamentosEdicao(produtoEdicaoId)) {
+		for (Lancamento lancamento : lancamentoService.obterLancamentosEdicao(produtoEdicaoId, sortorder, sortname)) {
 			PeriodoLancamentosProdutoEdicaoVO periodoLancamento = new PeriodoLancamentosProdutoEdicaoVO();
 			periodoLancamento.setDataLancamentoPrevista(lancamento.getDataLancamentoPrevista());
 			periodoLancamento.setDataRecolhimentoPrevista(lancamento.getDataRecolhimentoPrevista());
@@ -458,7 +458,7 @@ public class ProdutoEdicaoController extends BaseController {
 		}
 		
 		if (!listaPeriodosLancamentos.isEmpty()) {
-			this.result.use(Results.json()).from(listaPeriodosLancamentos).serialize();
+			this.result.use(FlexiGridJson.class).from(listaPeriodosLancamentos).total(listaPeriodosLancamentos.size()).serialize();
 		} else {
 			result.nothing();
 		}

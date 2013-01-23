@@ -130,12 +130,14 @@ import br.com.abril.nds.model.estoque.HistoricoEstoqueProduto;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
+import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.model.estoque.RateioDiferenca;
 import br.com.abril.nds.model.estoque.RecebimentoFisico;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.estoque.TipoDirecionamentoDiferenca;
 import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
+import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque.Dominio;
 import br.com.abril.nds.model.fechar.dia.FechamentoDiario;
 import br.com.abril.nds.model.fechar.dia.FechamentoDiarioConsolidadoCota;
 import br.com.abril.nds.model.fechar.dia.FechamentoDiarioConsolidadoDivida;
@@ -852,6 +854,32 @@ public class Fixture {
 	}
 
 	
+	public static TipoMovimentoEstoque tipoMovimentoRecebimentoJornaleiroJuramentado() {
+		
+		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
+		
+		tipoMovimento.setAprovacaoAutomatica(false);
+		tipoMovimento.setDescricao("Recebimento Jornaleiro Juramentado");
+		tipoMovimento.setIncideDivida(false);
+		tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.RECEBIMENTO_JORNALEIRO_JURAMENTADO);
+		
+		return tipoMovimento;
+		
+	}
+	
+
+	public static TipoMovimentoEstoque tipoMovimentoEnvioJornaleiroJuramentado() {
+		
+		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
+		
+		tipoMovimento.setAprovacaoAutomatica(false);
+		tipoMovimento.setDescricao("Envio Jornaleiro Juramentado");
+		tipoMovimento.setIncideDivida(false);
+		tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.ENVIO_JORNALEIRO_JURAMENTADO);
+		
+		return tipoMovimento;
+		
+	}
 	
 	public static TipoMovimentoEstoque tipoMovimentoFaltaEm() {
 		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
@@ -1347,7 +1375,8 @@ public class Fixture {
 		tipoMovimento.setGrupoMovimentoFinaceiro(GrupoMovimentoFinaceiro.VENDA_TOTAL);
 		return tipoMovimento;		
 	}
-		
+	
+	
 	public static ItemNotaFiscalEntrada itemNotaFiscal(ProdutoEdicao produtoEdicao,
 			Usuario usuario, NotaFiscalEntrada notaFiscal, Date dataLancamento, Date dataRecolhimento, TipoLancamento tipoLancamento, BigInteger qtde) {
 		ItemNotaFiscalEntrada itemNotaFiscal = new ItemNotaFiscalEntrada();
