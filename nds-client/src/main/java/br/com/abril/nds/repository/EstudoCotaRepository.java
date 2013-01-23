@@ -3,7 +3,9 @@ package br.com.abril.nds.repository;
 import java.util.Date;
 import java.util.List;
 
+import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.planejamento.EstudoCota;
+import br.com.abril.nds.util.Intervalo;
 
 /**
  * Interface que define as regras de acesso a dados referentes a entidade
@@ -30,5 +32,10 @@ public interface EstudoCotaRepository extends Repository<EstudoCota, Long> {
 	EstudoCota obterEstudoCota(Date dataLancamento, Long idProdutoEdicao, Long idCota);
 	
 	EstudoCota obterEstudoCotaDeLancamentoComEstudoFechado(Date dataLancamentoDistribuidor, Long idProdutoEdicao, Integer numeroCota);
+	
+	List<EstudoCota> obterEstudosCotaParaNotaEnvio(Distribuidor distribuidor, 
+												   Long idCota, 
+												   Intervalo<Date> periodo, 
+												   List<Long> listaIdsFornecedores);
 	
 }

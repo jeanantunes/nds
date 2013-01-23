@@ -6,8 +6,11 @@ import java.util.List;
 import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.model.aprovacao.StatusAprovacao;
+import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.repository.EstudoCotaRepository;
+import br.com.abril.nds.util.Intervalo;
 
 /**
  * Classe de implementação referente ao acesso a dados da entidade 
@@ -106,6 +109,70 @@ public class EstudoCotaRepositoryImpl extends AbstractRepositoryModel<EstudoCota
 		query.setMaxResults(1);
 		
 		return (EstudoCota) query.uniqueResult();
+	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<EstudoCota> obterEstudosCotaParaNotaEnvio(Distribuidor distribuidor, 
+														  Long idCota, 
+														  Intervalo<Date> periodo, 
+														  List<Long> listaIdsFornecedores) {
+		
+		StringBuffer sql = new StringBuffer("SELECT DISTINCT movimentoEstoqueCota ");	
+		
+		sql.append(" FROM MovimentoEstoqueCota movimentoEstoqueCota ");
+
+		sql.append(" JOIN movimentoEstoqueCota.lancamento lancamento ");
+		sql.append(" JOIN movimentoEstoqueCota.cota cota ");
+		sql.append(" JOIN movimentoEstoqueCota.produtoEdicao produtoEdicao ");
+		
+		sql.append(" JOIN produtoEdicao.produto produto ");
+		sql.append(" JOIN produto.fornecedores fornecedor ");
+		
+//		sql.append(" JOIN movimentoEstoqueCota.tipoMovimento tipoMovimento ");
+		sql.append(" LEFT JOIN movimentoEstoqueCota.movimentoEstoqueCotaFuro movimentoEstoqueCotaFuro ");
+		
+		sql.append(" WHERE movimentoEstoqueCota.status = :status ");
+		sql.append(" AND cota.id = :idCota ");
+		sql.append(" AND movimentoEstoqueCotaFuro.id is null ");
+		
+		if (periodo != null && periodo.getDe() != null && periodo.getAte() != null) {
+			
+			sql.append(" AND lancamento.dataLancamentoDistribuidor BETWEEN :dataInicio AND :dataFim ");
+		}
+		
+//		if (listaGrupoMovimentoEstoques != null && !listaGrupoMovimentoEstoques.isEmpty()) {
+//			
+//			sql.append(" AND tipoMovimento.grupoMovimentoEstoque IN (:listaGrupoMoviementoEstoque) ");
+//		}		
+		
+		if (listaIdsFornecedores != null && !listaIdsFornecedores.isEmpty()) {
+			
+			sql.append(" AND (fornecedor IS NULL OR fornecedor.id IN (:listaFornecedores)) ");
+		}		
+		
+		Query query = getSession().createQuery(sql.toString());
+		
+		query.setParameter("status", StatusAprovacao.APROVADO);
+		query.setParameter("idCota", idCota);
+	
+		if (listaIdsFornecedores != null && !listaIdsFornecedores.isEmpty()) {
+			
+			query.setParameterList("listaFornecedores", listaIdsFornecedores);
+		}
+		
+		if (periodo != null && periodo.getDe() != null && periodo.getAte() != null) {
+			
+			query.setParameter("dataInicio", periodo.getDe());
+			query.setParameter("dataFim", periodo.getAte());
+		}
+		
+//		if (listaGrupoMovimentoEstoques != null && !listaGrupoMovimentoEstoques.isEmpty()) {
+//			
+//			query.setParameterList("listaGrupoMoviementoEstoque", listaGrupoMovimentoEstoques);
+//		}		
+		
+		return query.list();
 	}
 	
 }
