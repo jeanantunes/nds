@@ -189,7 +189,14 @@ public class ProdutoEdicao implements Serializable {
 	
 	@OneToOne(mappedBy = "produtoEdicao", optional=true,fetch=FetchType.LAZY)
 	private LancamentoParcial lancamentoParcial;
+
+	public ProdutoEdicao() {
+	}
 	
+	public ProdutoEdicao(Long id) {
+		this.id = id;
+	}
+
 	public Long getId() {
 		return id;
 	}

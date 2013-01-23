@@ -137,19 +137,7 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 
 	    $("span[name='qtdeExemplares']", balanceamentoRecolhimentoController.workspace).tooltip();
 	    
-	    var bloquearBotoes = result.bloquearBotoes;
-	    
-	    if (bloquearBotoes) {
-	    	
-	    	balanceamentoRecolhimentoController.bloquearLinks();
-	    	
-	    	balanceamentoRecolhimentoController.bloquearCheckAll();
-	    	
-	    	$(".balanceamentoGrid", balanceamentoRecolhimentoController.workspace).flexOptions({
-	    		disableSelect : true
-	    	});
-	    	
-	    } else {
+	   
 	    	
 	    	balanceamentoRecolhimentoController.habilitarLinks();
 	    	
@@ -158,7 +146,7 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 	    	$(".balanceamentoGrid", balanceamentoRecolhimentoController.workspace).flexOptions({
 	    		disableSelect : false
 	    	});
-	    }
+	   
 	    
 	    $("#resumoPeriodo", balanceamentoRecolhimentoController.workspace).show();
 	},
