@@ -108,13 +108,13 @@ public class FechamentoEncalheRepositoryImplTest extends AbstractRepositoryImplT
 		
 		List<CotaAusenteEncalheDTO> listaCotasAusentes = 
 			this.fechamentoEncalheRepository.buscarCotasAusentes(
-				dataEncalhe.getTime(), "asc", "numeroCota", 0, 20);
+				dataEncalhe.getTime(), false, "asc", "numeroCota", 0, 20);
 		
 		Assert.assertNotNull(listaCotasAusentes);
 		
 		listaCotasAusentes = 
 			this.fechamentoEncalheRepository.buscarCotasAusentes(
-				dataEncalhe.getTime(), "desc", "numeroCota", 20, 20);
+				dataEncalhe.getTime(), false, "desc", "numeroCota", 20, 20);
 
 		Assert.assertNotNull(listaCotasAusentes);
 	}
@@ -127,7 +127,7 @@ public class FechamentoEncalheRepositoryImplTest extends AbstractRepositoryImplT
 		dataEncalhe.set(2012, 5, 20);
 		
 		int total = 
-			this.fechamentoEncalheRepository.buscarTotalCotasAusentes(dataEncalhe.getTime());
+			this.fechamentoEncalheRepository.buscarTotalCotasAusentes(dataEncalhe.getTime(), false);
 		
 		Assert.assertNotNull(total);
 		

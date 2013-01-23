@@ -262,7 +262,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 	@Override
 	@Transactional(readOnly=true)
 	public List<CotaAusenteEncalheDTO> buscarCotasAusentes(Date dataEncalhe,
-			String sortorder, String sortname, int page, int rp) {
+			boolean isSomenteCotasSemAcao, String sortorder, String sortname, int page, int rp) {
 		
 		int startSearch = 0;
 		
@@ -271,7 +271,12 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 		} 
 		
 		List<CotaAusenteEncalheDTO> listaCotaAusenteEncalhe = 
-			this.fechamentoEncalheRepository.buscarCotasAusentes(dataEncalhe, sortorder, sortname, startSearch, rp);
+			this.fechamentoEncalheRepository.buscarCotasAusentes(dataEncalhe, isSomenteCotasSemAcao, sortorder, sortname, startSearch, rp);
+		
+		if (isSomenteCotasSemAcao) {
+			
+			return listaCotaAusenteEncalhe;
+		}
 		
 		for (CotaAusenteEncalheDTO cotaAusenteEncalheDTO : listaCotaAusenteEncalhe) {
 			
@@ -294,9 +299,9 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 
 	@Override
 	@Transactional(readOnly=true)
-	public Integer buscarTotalCotasAusentes(Date dataEncalhe) {
+	public Integer buscarTotalCotasAusentes(Date dataEncalhe, boolean isSomenteCotasSemAcao) {
 		
-		return this.fechamentoEncalheRepository.buscarTotalCotasAusentes(dataEncalhe);
+		return this.fechamentoEncalheRepository.buscarTotalCotasAusentes(dataEncalhe, isSomenteCotasSemAcao);
 	}
 
 	@Override
@@ -304,7 +309,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 	public int buscarQuantidadeCotasAusentes(Date dataEncalhe) {
 		
 		List<CotaAusenteEncalheDTO> listaCotaAusenteEncalhe = 
-			this.fechamentoEncalheRepository.buscarCotasAusentes(dataEncalhe, "asc", "numeroCota", 0, 0);
+			this.fechamentoEncalheRepository.buscarCotasAusentes(dataEncalhe, false, "asc", "numeroCota", 0, 0);
 		
 		int total = 0;
 		
@@ -479,7 +484,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 	@Transactional
 	public void encerrarOperacaoEncalhe(Date dataEncalhe, Usuario usuario) throws Exception {
 
-		Integer totalCotasAusentes = this.buscarQuantidadeCotasAusentes(dataEncalhe);
+		Integer totalCotasAusentes = this.buscarTotalCotasAusentes(dataEncalhe, true);
 		
 		if (totalCotasAusentes > 0) {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Cotas ausentes existentes!");
