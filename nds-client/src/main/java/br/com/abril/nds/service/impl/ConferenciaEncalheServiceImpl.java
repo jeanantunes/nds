@@ -1146,8 +1146,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			throw new IllegalStateException("Nenhum registro de conferencia de encalhe, não foi possível fazer reabertura.");
 		}
 		
-		//TODO achar o movimento financeiro ae
-		
 		MovimentoEstoqueCota movimentoEstoqueCota = listaConferenciaEncalhe.get(0).getMovimentoEstoqueCota();
 
 		MovimentoFinanceiroCota movimentoFinanceiroCota = 
