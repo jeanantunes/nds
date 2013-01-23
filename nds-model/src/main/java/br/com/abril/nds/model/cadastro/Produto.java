@@ -1,3 +1,4 @@
+
 package br.com.abril.nds.model.cadastro;
 
 import java.io.Serializable;
