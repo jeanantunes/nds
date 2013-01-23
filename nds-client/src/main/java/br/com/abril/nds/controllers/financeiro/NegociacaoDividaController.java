@@ -206,7 +206,7 @@ public class NegociacaoDividaController extends BaseController {
 		Double encargos = 0.0;
 		
 		BigDecimal juros = cobrancaService.calcularJuros(banco, cotaService.obterPorNumeroDaCota(numeroCota), 
-				distribuidorService.obter(), BigDecimal.valueOf(valorParcela), dataVencimento, new Date());
+				BigDecimal.valueOf(valorParcela), dataVencimento, new Date());
 		
 		BigDecimal multas = cobrancaService.calcularMulta(banco, cotaService.obterPorNumeroDaCota(numeroCota), 
 					distribuidorService.obter(), BigDecimal.valueOf(valorParcela));
