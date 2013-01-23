@@ -413,6 +413,14 @@ public class FechamentoEncalheController extends BaseController {
 		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação de encalhe encerrada com sucesso!"), "result").recursive().serialize();
 	}
 
+	@Post("/hasCotasAusentes")
+	public void hasCotasAusentes(Date dataEncalhe) {
+
+		boolean hasCotasAusentes = this.fechamentoEncalheService.buscarTotalCotasAusentes(DateUtil.removerTimestamp(dataEncalhe)) > 0;
+		
+		this.result.use(Results.json()).from(hasCotasAusentes, "result").serialize();
+	}
+	
 	private void gravaFechamentoEncalhe(
 			List<FechamentoFisicoLogicoDTO> listaFechamento,
 			String dataEncalhe, Long fornecedorId, Long boxId) {

@@ -27,6 +27,12 @@
 		<p id="mensagemConsistenciaDados" ></p>
 	</div>
 	</form>
+	
+	<form id="form-warning-cotas-ausentes">
+		<div id="dialog-warning-cotas-ausentes" title="Cotas Ausentes" style="display:none;">
+			<p> Há cotas ausentes nesta data. Clique em confirmar para postergar ou cobrar as mesmas.</p>
+		</div>
+	</form>
 
 	<form id="form-postergar">
 	<div id="dialog-postergar" title="Postergar Encalhe" style="display:none;">

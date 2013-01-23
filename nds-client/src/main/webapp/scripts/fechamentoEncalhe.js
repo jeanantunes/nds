@@ -792,10 +792,29 @@ var fechamentoEncalheController = $.extend(true, {
 		 $(".fechamentoGrid", fechamentoEncalheController.workspace).clear();
 		 $('#divFechamentoGrid', fechamentoEncalheController.workspace).css("display", "none");
 	},
+	
+	salvarNoEncerrementoOperacao : function() {
 
-	 salvarNoEncerrementoOperacao : function() {
-		 
-			$.postJSON(
+		 $.postJSON(
+			contextPath + "/devolucao/fechamentoEncalhe/hasCotasAusentes",
+			$("#datepickerDe", fechamentoEncalheController.workspace).datepicker("getDate"),
+			function (result) {
+
+				if (result == true) {
+
+					fechamentoEncalheController.popupHasCotasAusentes();
+					
+				} else {
+					
+					fechamentoEncalheController.confirmarEncerramentoOperacao();
+				}
+			}
+		);
+	},
+	
+	confirmarEncerramentoOperacao : function() {
+		
+		$.postJSON(
 				contextPath + "/devolucao/fechamentoEncalhe/salvarNoEncerrementoOperacao",
 				fechamentoEncalheController.populaParamentrosFechamentoEncalheInformados(),
 				function (result) {
@@ -815,7 +834,27 @@ var fechamentoEncalheController = $.extend(true, {
 			  	null,
 			   	false
 			);
-			
+	},
+	
+	popupHasCotasAusentes : function() {
+		
+		$( "#dialog-warning-cotas-ausentes", fechamentoEncalheController.workspace ).dialog({
+			resizable: false,
+			height:'auto',
+			width:400,
+			modal: true,
+			buttons: {
+				"Confirmar": function() {
+					fechamentoEncalheController.popup_encerrarEncalhe();
+					$(this).dialog( "close" );
+				},
+				
+				"Cancelar": function() {
+					$(this).dialog( "close" );
+				}
+			},
+			form: $("#form-warning-cotas-ausentes", this.workspace).parents("form")
+		});
 	},
 	
 	analiticoEncalhe : function() {
