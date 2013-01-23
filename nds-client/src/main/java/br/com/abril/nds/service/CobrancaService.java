@@ -23,14 +23,13 @@ public interface CobrancaService {
 	 * 
 	 * @param banco - banco
 	 * @param cota - cota
-	 * @param distribuidor - distribuidor
 	 * @param valor - valor a ser calculado
 	 * @param dataVencimento - data de vencimento
 	 * @param dataCalculoJuros - data a ser calculado o juros
 	 * 
 	 * @return valor calculado com o juros
 	 */	
-	public BigDecimal calcularJuros(Banco banco, Cota cota, Distribuidor distribuidor,
+	public BigDecimal calcularJuros(Banco banco, Cota cota,
 									BigDecimal valor, Date dataVencimento, Date dataCalculoJuros);
 	
 	/**

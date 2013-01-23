@@ -48,6 +48,7 @@ import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.stella.validation.CNPJValidator;
 import br.com.caelum.stella.validation.CPFValidator;
 import br.com.caelum.stella.validation.InvalidStateException;
+import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
@@ -112,6 +113,14 @@ public class FiadorController extends BaseController {
 		this.limparDadosSessao();
 	}
 	
+	@Get
+	@Path("/novoFiador")
+	public void novoFiador(){
+		
+		this.limparDadosSessao();
+		
+		result.nothing();
+	}
 	
 	@Post
 	public void pesquisarFiador(FiltroConsultaFiadorDTO filtro, String sortorder, 

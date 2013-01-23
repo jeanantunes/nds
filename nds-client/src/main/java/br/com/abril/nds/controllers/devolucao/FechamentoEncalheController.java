@@ -253,7 +253,7 @@ public class FechamentoEncalheController extends BaseController {
 		if (idsCotas == null || idsCotas.isEmpty()) {
 			this.result.use(Results.json()).from(
 				new ValidacaoVO(TipoMensagem.WARNING, "Selecine pelo menos uma Cota para cobrar!"), "result").recursive().serialize();
-			throw new ValidacaoException();
+			return;
 		}
 		
 		try {
@@ -262,11 +262,11 @@ public class FechamentoEncalheController extends BaseController {
 
 		} catch (ValidacaoException e) {
 			this.result.use(Results.json()).from(e.getValidacao(), "result").recursive().serialize();
-			throw new ValidacaoException();
+			return;
 		} catch (Exception e) {
 			this.result.use(Results.json()).from(
-				new ValidacaoVO(TipoMensagem.ERROR, "Erro ao tentar cobrar!"), "result").recursive().serialize();
-			throw new ValidacaoException();
+				new ValidacaoVO(TipoMensagem.ERROR, "Erro ao tentar cobrar: " + e.getMessage()), "result").recursive().serialize();
+			return;
 		}
 		
 		this.result.use(Results.json()).from(
