@@ -2689,6 +2689,21 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 			query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
 		
 		return query.list();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<MovimentoEstoqueCota> obterPorLancamento(Long idLancamento) {
+		
+		String hql = " select movimento from MovimentoEstoqueCota movimento "
+				   + " join movimento.lancamento lancamento "
+				   + " where lancamento.id = :idLancamento "; 
+		
+		Query query = super.getSession().createQuery(hql);
+		
+		query.setParameter("idLancamento", idLancamento);
+		
+		return query.list();
 	}  
 		
 }

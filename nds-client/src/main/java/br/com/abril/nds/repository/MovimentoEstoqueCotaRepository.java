@@ -394,5 +394,7 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 	 * @return List<MovimentoEstoqueCota>
 	 */
 	public BigDecimal obterValorTotalMovimentosEstornados(Long idCota);
+
+	public List<MovimentoEstoqueCota> obterPorLancamento(Long idLancamento);
 	
 }

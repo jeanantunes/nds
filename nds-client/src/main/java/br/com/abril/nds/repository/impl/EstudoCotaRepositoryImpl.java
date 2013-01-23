@@ -49,9 +49,11 @@ public class EstudoCotaRepositoryImpl extends AbstractRepositoryModel<EstudoCota
 	@Override
 	public List<EstudoCota> obterEstudoCotaPorDataProdutoEdicao(Date dataLancamento, Long idProdutoEdicao) {
 			
-		String hql = " from EstudoCota estudoCota "
-				   + " where estudoCota.estudo.dataLancamento = :dataLancamento " 
-				   + " and estudoCota.estudo.produtoEdicao.id = :idProdutoEdicao";
+		String hql = " select estudoCota from EstudoCota estudoCota "
+				   + " join estudoCota.estudo estudo "
+				   + " join estudo.produtoEdicao produtoEdicao "
+				   + " where estudo.dataLancamento = :dataLancamento " 
+				   + " and produtoEdicao.id = :idProdutoEdicao";
 		
 		Query query = super.getSession().createQuery(hql);
 		
