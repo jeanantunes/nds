@@ -732,6 +732,15 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 				
 				lancamento.setStatus(StatusLancamento.CANCELADO);
 				
+				if(lancamento.getPeriodoLancamentoParcial()!= null){
+					
+					lancamento.getPeriodoLancamentoParcial().setStatus(StatusLancamentoParcial.CANCELADO);
+					periodoLancamentoParcialRepository.alterar(lancamento.getPeriodoLancamentoParcial());
+					
+					lancamento.getPeriodoLancamentoParcial().getLancamentoParcial().setStatus(StatusLancamentoParcial.CANCELADO);
+					lancamentoParcialRepository.alterar(lancamento.getPeriodoLancamentoParcial().getLancamentoParcial());
+				}
+				
 				this.lancamentoRepository.alterar(lancamento);
 			}
 			
