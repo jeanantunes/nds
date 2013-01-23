@@ -1537,4 +1537,22 @@ public class LancamentoRepositoryImpl extends
 				
 		return query.list();	
 	}
+	
+	@Override
+	public boolean existeCobrancaParaLancamento(Long idLancamento) {
+		
+		String hql = " select case when (count(lancamento) > 0) then true else false end "
+			+ " from Lancamento lancamento "
+			+ " join lancamento.movimentoEstoqueCotas movimentoEstoqueCota "
+			+ " join movimentoEstoqueCota.movimentoFinanceiroCota movimentoFinanceiroCota "
+			+ " join movimentoFinanceiroCota.consolidadoFinanceiroCota consolidadoFinanceiroCota "
+			+ " where lancamento.id = :idLancamento ";
+		
+		Query query = this.getSession().createQuery(hql);
+
+		query.setParameter("idLancamento", idLancamento);
+		
+		return (boolean) query.uniqueResult();
+	}
+	
 }
