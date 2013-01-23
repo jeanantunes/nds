@@ -48,8 +48,10 @@ public interface PdvService {
 	
 	List<TipoPontoPDV> obterTiposPontoPDV();
 	
-	List<AreaInfluenciaPDV> obterAreasInfluenciaPDV();
-		
+	List<AreaInfluenciaPDV> obterTipoAreaInfluencia();
+	
+	List<TipoGeradorFluxoPDV> obterTipoGeradorDeFluxo();
+	
 	List<TipoGeradorFluxoPDV> obterTiposGeradorFluxo(Long... codigos);
 	
 	List<TipoGeradorFluxoPDV> obterTiposGeradorFluxoNotIn(Long... codigos);
