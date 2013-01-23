@@ -118,7 +118,7 @@ public interface LancamentoService {
 	 */
 	public Boolean existeMatrizBalanceamentoConfirmado(Date data);
 
-	public List<Lancamento> obterLancamentosEdicao(Long idEdicao);
+	public List<Lancamento> obterLancamentosEdicao(Long idEdicao, String sortorder, String sortname);
 	
 }
  

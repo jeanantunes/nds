@@ -336,8 +336,7 @@ var fechamentoEncalheController = $.extend(true, {
 				if (!result) {
 					
 					fechamentoEncalheController.popup_encerrarEncalhe();
-				} 
-				else{
+				} else{
 					
 					fechamentoEncalheController.popup_encerrar();
 				}			
@@ -374,9 +373,9 @@ var fechamentoEncalheController = $.extend(true, {
 								exibirMensagem(tipoMensagem, listaMensagens);
 							}
 
-							if (result == 'NAO_ENCERRAR') {
+							if (!result) {
 								fechamentoEncalheController.popup_encerrarEncalhe();
-							} else if (result == 'ENCERRAR'){
+							} else {
 								fechamentoEncalheController.popup_encerrar();
 							}
 						},

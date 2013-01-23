@@ -376,6 +376,18 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 
 				break;
 
+			case JURAMENTADO:
+				
+				BigInteger qtde = estoqueProduto.getQtde() == null ? BigInteger.ZERO : estoqueProduto.getQtde();
+
+				novaQuantidade = isOperacaoEntrada ? 	qtde.add(movimentoEstoque.getQtde()) :
+														qtde.subtract(movimentoEstoque.getQtde());
+
+				estoqueProduto.setQtde(novaQuantidade);
+
+				break;
+				
+				
 			default:
 
 				 throw new ValidacaoException(TipoMensagem.WARNING, "Estoque inválido para a operação.");

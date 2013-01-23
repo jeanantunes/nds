@@ -18,7 +18,7 @@ td{padding-left:3px;padding-right:3px;}
 			table-layout: fixed;
 		}
 .capaImgBox {
-	display: none;
+	display: block;
 	width: 115px;
 	float: left;
 	border: solid 1px #000; 
@@ -44,9 +44,7 @@ function imprimir(){
 	$( "#btImpressao" ).hide();
 	window.print();
 }
-$(function(){$('img.capaImg').load(function() {
-	$(this).parent().parent().show();
-});});
+
 </script>
 </head>
 
