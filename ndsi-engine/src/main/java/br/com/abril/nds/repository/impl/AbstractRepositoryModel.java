@@ -65,7 +65,7 @@ public abstract class AbstractRepositoryModel<T, K extends Serializable> extends
 		
 		return getSession().createCriteria(this.clazz).list();
 	}
-
+	
 	public void flush() {
 		this.getSession().flush();
 	}

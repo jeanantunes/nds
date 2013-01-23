@@ -3,6 +3,9 @@ package br.com.abril.nds.repository;
 import java.io.Serializable;
 import java.util.List;
 
+import br.com.abril.nds.dto.RegiaoDTO;
+import br.com.abril.nds.model.distribuicao.Regiao;
+
 /**
  * Interface com operações básicas de repositório
  * 

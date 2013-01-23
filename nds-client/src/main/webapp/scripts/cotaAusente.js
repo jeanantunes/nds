@@ -868,3 +868,4 @@ var cotaAusenteController = $.extend(true, {
 	}
 	
 }, BaseController);
+//@ sourceURL=cotaAusente.js

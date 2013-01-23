@@ -337,8 +337,16 @@ public class Cota implements Serializable {
     public void setInicioTitularidade(Date inicioTitularidade) {
         this.inicioTitularidade = inicioTitularidade;
     }
+    
+	public List<ChamadaEncalheCota> getChamadaEncalheCotas() {
+		return chamadaEncalheCotas;
+	}
 
-    public Set<Fornecedor> getFornecedores() {
+	public void setChamadaEncalheCotas(List<ChamadaEncalheCota> chamadaEncalheCotas) {
+		this.chamadaEncalheCotas = chamadaEncalheCotas;
+	}
+	
+	public Set<Fornecedor> getFornecedores() {
 		return fornecedores;
 	}
 	
