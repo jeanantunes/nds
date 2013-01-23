@@ -153,7 +153,7 @@ public class LancamentoServiceImpl implements LancamentoService {
 		
 		lancamentoRepository.alterar(lancamento);
 		
-		List<MovimentoEstoqueCota> movimentos = lancamento.getMovimentoEstoqueCotas();
+		List<MovimentoEstoqueCota> movimentos = movimentoEstoqueCotaRepository.obterPorLancamento(idLancamento);
 		for (MovimentoEstoqueCota movimento : movimentos) {
 			movimento.setEstudoCota(null);
 			movimentoEstoqueCotaRepository.alterar(movimento);

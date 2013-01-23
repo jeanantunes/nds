@@ -293,7 +293,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 
 			Long idProdutoEd = movimentoEstoque.getProdutoEdicao().getId();
 			
-			EstoqueProduto estoqueProduto = estoqueProdutoRespository.buscarEstoquePorProduto(idProdutoEd);
+			EstoqueProduto estoqueProduto = estoqueProdutoRespository.buscarEstoqueProdutoPorProdutoEdicao(idProdutoEd);
 
 			if (estoqueProduto == null) {
 
