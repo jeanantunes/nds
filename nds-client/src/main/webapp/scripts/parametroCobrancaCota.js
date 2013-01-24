@@ -951,7 +951,6 @@ var parametroCobrancaCotaController = $.extend(true, {
 
 	//IMPRESSÃO DO CONTRATO
 	imprimeContrato : function(){
-		debugger;
 		
 		
 		var idCota = $("#_idCota", this.workspace).val();

@@ -1400,7 +1400,6 @@ var recebimentoFisicoController = $.extend(true, {
 		$.postJSON(this.path + 'obterDadosEdicao', {codigo:codigo,edicao:edicao}, 
 			function(result) { 
 				$("#precoDescontoItem"+index, recebimentoFisicoController.workspace).val(result.precoDesconto);
-				debugger;
 			    $("#precoDescontoItem"+index, recebimentoFisicoController.workspace).priceFormat({
 					allowNegative: true,
 					centsSeparator: ',',
