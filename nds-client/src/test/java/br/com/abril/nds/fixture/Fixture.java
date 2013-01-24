@@ -130,14 +130,12 @@ import br.com.abril.nds.model.estoque.HistoricoEstoqueProduto;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
-import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.model.estoque.RateioDiferenca;
 import br.com.abril.nds.model.estoque.RecebimentoFisico;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.estoque.TipoDirecionamentoDiferenca;
 import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
-import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque.Dominio;
 import br.com.abril.nds.model.fechar.dia.FechamentoDiario;
 import br.com.abril.nds.model.fechar.dia.FechamentoDiarioConsolidadoCota;
 import br.com.abril.nds.model.fechar.dia.FechamentoDiarioConsolidadoDivida;
@@ -2301,16 +2299,14 @@ public class Fixture {
 	public static PoliticaCobranca criarPoliticaCobranca(
 			Distribuidor distribuidor, FormaCobranca formaCobranca, 
 			boolean aceitaBaixaPagamentoMaior, boolean aceitaBaixaPagamentoMenor,
-			boolean aceitaBaixaPagamentoVencido, int inadimplenciasSuspencao,
-			String assuntoEmailCobranca, String mensagemEmailCobranca, 
-			boolean principal,FormaEmissao formaEmissao) {
+			boolean aceitaBaixaPagamentoVencido, String assuntoEmailCobranca, 
+			String mensagemEmailCobranca, boolean principal, FormaEmissao formaEmissao) {
 		
 		PoliticaCobranca politicaCobranca = new PoliticaCobranca();
 		politicaCobranca.setAceitaBaixaPagamentoMaior(aceitaBaixaPagamentoMaior);
 		politicaCobranca.setAceitaBaixaPagamentoMenor(aceitaBaixaPagamentoMenor);
 		politicaCobranca.setAceitaBaixaPagamentoVencido(aceitaBaixaPagamentoVencido);
 		politicaCobranca.setDistribuidor(distribuidor);
-		politicaCobranca.setInadimplenciasSuspencao(inadimplenciasSuspencao);
 		politicaCobranca.setFormaCobranca(formaCobranca);
 		politicaCobranca.setAssuntoEmailCobranca(assuntoEmailCobranca);
 		politicaCobranca.setMensagemEmailCobranca(mensagemEmailCobranca);
