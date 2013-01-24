@@ -17,6 +17,7 @@ import br.com.abril.nds.dto.filtro.FiltroParciaisDTO;
 import br.com.abril.nds.dto.filtro.FiltroParciaisDTO.ColunaOrdenacaoPeriodo;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.PeriodoLancamentoParcial;
+import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.repository.PeriodoLancamentoParcialRepository;
 
 @Repository
@@ -173,41 +174,34 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 		hql.append(" join produto.fornecedores fornecedor ");
 		hql.append(" join fornecedor.juridica juridica ");
 		
-		boolean usarAnd = false;
+		hql.append(" where lancamento.status <> :statusCancelado ");
 		
 		if(filtro.getCodigoProduto() != null) { 
-			hql.append( (usarAnd ? " and ":" where ") + " produto.codigo =:codProduto ");
-			usarAnd = true;
+			hql.append( " and  produto.codigo =:codProduto ");
 		}
 		
 		if(filtro.getNomeProduto() != null) { 
-			hql.append( (usarAnd ? " and ":" where ") + " lower(produto.nome)like:nomeProduto ");
-			usarAnd = true;
+			hql.append(" and  lower(produto.nome)like:nomeProduto ");
 		}
 		
 		if(filtro.getEdicaoProduto() != null){ 
-			hql.append( (usarAnd ? " and ":" where ") + " produtoEdicao.numeroEdicao=:edProduto ");
-			usarAnd = true;
+			hql.append(" and  produtoEdicao.numeroEdicao=:edProduto ");
 		}
 		
 		if(filtro.getIdFornecedor() != null) { 
-			hql.append( (usarAnd ? " and ":" where ") + " fornecedor.id=:idFornecedor ");
-			usarAnd = true;
+			hql.append(" and  fornecedor.id=:idFornecedor ");
 		}
 		
 		if(filtro.getDataInicialDate() != null) { 
-			hql.append( (usarAnd ? " and ":" where ") + " periodo.lancamento.dataLancamentoDistribuidor>=:dtInicial ");
-			usarAnd = true;
+			hql.append( " and  periodo.lancamento.dataLancamentoDistribuidor>=:dtInicial ");
 		}
 		
 		if(filtro.getDataFinalDate() != null) { 
-			hql.append( (usarAnd ? " and ":" where ") + " periodo.lancamento.dataRecolhimentoDistribuidor<=:dtFinal ");
-			usarAnd = true;
+			hql.append( " and  periodo.lancamento.dataRecolhimentoDistribuidor<=:dtFinal ");
 		}
 		
 		if(filtro.getStatus() != null) { 
-			hql.append( (usarAnd ? " and ":" where ") + " periodo.status=:status ");
-			usarAnd = true;
+			hql.append(" and  periodo.status=:status ");
 		}
 		
 		return hql.toString();
@@ -289,6 +283,8 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 		
 		if(filtro.getStatus() != null) 
 			param.put("status", filtro.getStatusEnum());
+		
+		param.put("statusCancelado", StatusLancamento.CANCELADO);
 	
 		return param;
 	}
@@ -337,11 +333,17 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 		
 		hql.append(" from PeriodoLancamentoParcial periodo ");
 		
+		hql.append(" join periodo.lancamento lancamento ");
+		
 		hql.append(" join periodo.lancamentoParcial lancamentoParcial ");
 		
 		hql.append(" join lancamentoParcial.periodos periodos ");
 		
-		hql.append(" where periodos.lancamento.id !=:idLancamento ");
+		hql.append(" join periodos.lancamento lancamentoPeriodo ");
+		
+		hql.append(" where lancamentoPeriodo.id !=:idLancamento "); 
+		
+		hql.append(" and lancamento.id =:idLancamento ");
 		
 		hql.append(" and ( (periodos.lancamento.dataLancamentoDistribuidor>=:dataLancamento ");
 		

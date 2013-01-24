@@ -317,6 +317,8 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	
 	List<Lancamento> obterLancamentosARecolherNaSemana(
 			Intervalo<Date> periodoRecolhimento, List<Long> fornecedores);
+	
+	boolean existeCobrancaParaLancamento(Long idLancamento);
 
 	List<Lancamento> obterLancamentosEdicao(Long idEdicao, String sortorder, String sortname);
 

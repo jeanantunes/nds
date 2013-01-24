@@ -11,7 +11,6 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.estoque.ControleFechamentoEncalhe;
 import br.com.abril.nds.model.estoque.FechamentoEncalhe;
 import br.com.abril.nds.model.estoque.pk.FechamentoEncalhePK;
-import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalhe;
 import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
 
 public interface FechamentoEncalheRepository extends Repository<FechamentoEncalhe, FechamentoEncalhePK> {
@@ -20,9 +19,9 @@ public interface FechamentoEncalheRepository extends Repository<FechamentoEncalh
 	
 	List<FechamentoEncalhe> buscarFechamentoEncalhe(Date dataEncalhe);
 
-	List<CotaAusenteEncalheDTO> buscarCotasAusentes(Date dataEncalhe, String sortorder, String sortname, int page, int rp);
+	List<CotaAusenteEncalheDTO> buscarCotasAusentes(Date dataEncalhe, boolean isSomenteCotasSemAcao, String sortorder, String sortname, int page, int rp);
 	
-	Integer buscarTotalCotasAusentes(Date dataEncalhe);
+	Integer buscarTotalCotasAusentes(Date dataEncalhe, boolean isSomenteCotasSemAcao);
 	
 	Boolean buscaControleFechamentoEncalhe(Date dataEncalhe);
 	

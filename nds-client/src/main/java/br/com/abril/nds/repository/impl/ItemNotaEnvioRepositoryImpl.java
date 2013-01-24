@@ -81,4 +81,22 @@ public class ItemNotaEnvioRepositoryImpl extends AbstractRepositoryModel<ItemNot
 		return (DetalheItemNotaFiscalDTO) query.uniqueResult();
 	}
 	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ItemNotaEnvio> obterItemNotaEnvio(Long idLancamento) {
+		
+		String hql = " select itemNotaEnvio "
+			+ " from Lancamento lancamento "
+			+ " join lancamento.estudo estudo "
+			+ " join estudo.estudoCotas estudoCotas "
+			+ " join estudoCotas.itemNotaEnvio itemNotaEnvio "
+			+ " where lancamento.id = :idLancamento ";
+
+		Query query = this.getSession().createQuery(hql);
+
+		query.setParameter("idLancamento", idLancamento);
+
+		return query.list();
+	}
+	
 }
