@@ -88,7 +88,7 @@ var fixacaoReparteController = $.extend(true, {
 			dataType : 'xml',
 			colModel : [ {
 				display : 'Cota',
-				name : 'cota',
+				name : 'cotaFixada',
 				width : 50,
 				sortable : true,
 				align : 'left'
@@ -124,7 +124,7 @@ var fixacaoReparteController = $.extend(true, {
 				align : 'center'
 			}, {
 				display : 'Exemplares',
-				name : 'exemplares',
+				name : 'qtdeExemplares',
 				width : 70,
 				sortable : true,
 				align : 'center'
@@ -153,7 +153,7 @@ var fixacaoReparteController = $.extend(true, {
 				sortable : true,
 				align : 'center'
 			}],
-			sortname : "cota",
+			sortname : "cotaFixada",
 			sortorder : "asc",
 			usepager : true,
 			useRp : true,

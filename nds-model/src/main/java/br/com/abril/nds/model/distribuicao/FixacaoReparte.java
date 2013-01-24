@@ -1,5 +1,7 @@
 package br.com.abril.nds.model.distribuicao;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -11,6 +13,7 @@ import javax.persistence.Table;
 
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Produto;
+import br.com.abril.nds.model.seguranca.Usuario;
 
 @Entity
 @Table(name = "FIXACAO_REPARTE")
@@ -29,7 +32,19 @@ public class FixacaoReparte {
 	@ManyToOne
 	@JoinColumn(name = "ID_PRODUTO")
 	private Produto produtoFixado;
-
+	
+	@ManyToOne
+	@JoinColumn(name = "ID_USUARIO")
+	private Usuario usuario;
+	
+	@Column(name="QTDE_EDICOES")
+	private Integer qtdeEdicoes;
+	
+	@Column(name="QTDE_EXEMPLARES")
+	private Integer qtdeExemplares;
+	
+	@Column(name="DATA_HORA")
+	private Date dataHora;
 
 	public Long getId() {
 		return id;
@@ -55,4 +70,41 @@ public class FixacaoReparte {
 		this.produtoFixado = produtoFixado;
 	}
 
+
+	public Integer getQtdeEdicoes() {
+		return qtdeEdicoes;
+	}
+
+	public void setQtdeEdicoes(Integer qtdeEdicoes) {
+		this.qtdeEdicoes = qtdeEdicoes;
+	}
+
+	public Integer getQtdeExemplares() {
+		return qtdeExemplares;
+	}
+
+	public void setQtdeExemplares(Integer qtdeExemplares) {
+		this.qtdeExemplares = qtdeExemplares;
+	}
+
+	public Date getDataHora() {
+		return dataHora;
+	}
+
+	public void setDataHora(Date dataHora) {
+		this.dataHora = dataHora;
+	}
+
+	public Usuario getUsuario() {
+		return usuario;
+	}
+
+	public void setUsuario(Usuario usuario) {
+		this.usuario = usuario;
+	}
+
+
+	
+
 }
+

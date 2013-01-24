@@ -6,15 +6,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.controllers.BaseController;
-import br.com.abril.nds.dto.ProdutoDTO;
-import br.com.abril.nds.dto.VendaProdutoDTO;
+import br.com.abril.nds.dto.FixacaoReparteDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaFixacaoCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaFixacaoProdutoDTO;
-import br.com.abril.nds.dto.filtro.FiltroVendaProdutoDTO;
 import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.nds.model.seguranca.Permissao;
+import br.com.abril.nds.service.FixacaoReparteService;
 import br.com.abril.nds.service.TipoProdutoService;
-import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.TableModel;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
@@ -30,6 +28,9 @@ public class FixacaoReparteController extends BaseController {
 	
 	@Autowired
 	TipoProdutoService tipoProdutoService;
+	
+	@Autowired
+	FixacaoReparteService fixacaoReparteService;
 	
 	FiltroConsultaFixacaoCotaDTO filtroPorCota;
 	
@@ -49,8 +50,11 @@ public class FixacaoReparteController extends BaseController {
 	@Post
 	@Path("/fixacaoReparte/pesquisar")
 	public void pesquisar(FiltroConsultaFixacaoProdutoDTO filtro){
-//	TableModel<CellModelKeyValue<ProdutoDTO>> tableModel = efetuarConsultaVendaProduto(filtro);
-		
-//		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+		List<FixacaoReparteDTO>	resutadoPesquisa = fixacaoReparteService.obterFixacoesRepartePorProduto(filtro);
+		TableModel<FixacaoReparteDTO> tableModel = new TableModel<FixacaoReparteDTO>();
+		tableModel.setRows(resutadoPesquisa);
+		tableModel.setPage(filtro.getPaginacao().getPosicaoInicial());
+		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
 	}
+
 }

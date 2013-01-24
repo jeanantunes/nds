@@ -1,6 +1,7 @@
 package br.com.abril.nds.dto.filtro;
 
-public class FiltroConsultaFixacaoProdutoDTO {
+@SuppressWarnings("serial")
+public class FiltroConsultaFixacaoProdutoDTO extends FiltroDTO{
  
 	private String codigoProduto;
 	private String nomeProduto;
