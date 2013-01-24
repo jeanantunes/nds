@@ -277,8 +277,8 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 			EstoqueProduto estoque = this.atualizarEstoqueProduto(tipoMovimentoEstoque,movimentoEstoque);			
 			
 			movimentoEstoque.setEstoqueProduto(estoque);
-		}
 		
+		}
 		movimentoEstoqueRepository.adicionar(movimentoEstoque);
 		
 		return movimentoEstoque;
