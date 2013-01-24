@@ -801,35 +801,22 @@ var fechamentoEncalheController = $.extend(true, {
 			form: $("#dialog-mensagem-consistencia-dados", this.workspace).parents("form")
 		});
 	},
-
+	
 	 populaParamentrosFechamentoEncalheInformados : function(){
-		var dados ="";
-		var index = 0;
-		$("input[type=text][name='fisico']").each(function(){
-			if (dados != ""){
-				dados+=",";
-			}
+		 
+		 var data = new Array();
+		 
+		 data.push({name:"dataEncalhe", value: $('#datepickerDe', fechamentoEncalheController.workspace).val()});
+		 data.push({name:"fornecedorId", value: $('#selectFornecedor', fechamentoEncalheController.workspace).val()});
+		 data.push({name:"boxId", value: $('#selectBoxEncalhe', fechamentoEncalheController.workspace).val()});
 
-		    if ( $(this).val() != null &&  $(this).val() !=  "" ){
-				  var  qtd = parseInt($(this).val());
-		     	  dados+='{name:"listaFechamento['+index+'].produtoEdicao",value:'+$(this).attr('id')+'}, {name:"listaFechamento['+index+'].fisico",value:'+qtd+'}';
-		     	  index++;
-		    }
+		 $("input[type=text][name='fisico']").each(function(index, value){
 			
-		});
-		var fornecedorId = null;
-		if ($('#selectFornecedor', fechamentoEncalheController.workspace).val() !=""){
-		    fornecedorId = $('#selectFornecedor', fechamentoEncalheController.workspace).val();
-		}
-		
-		var boxId = null;
-		if ($('#selectBoxEncalhe', fechamentoEncalheController.workspace).val() !=""){
-		    boxId = $('#selectBoxEncalhe', fechamentoEncalheController.workspace).val();
-		}
-		
-		dados+=',{name:"dataEncalhe",value:"'+$('#datepickerDe', fechamentoEncalheController.workspace).val()+'"},{name:"fornecedorId",value:'+fornecedorId+'},{name:"boxId",value:'+boxId+'}';
-		var params = '['+dados+ ']';
-		return eval(params);
+			 data.push({name: 'listaFechamento[' + index + '].produtoEdicao', value: $(value).attr('id')});
+			 data.push({name: 'listaFechamento[' + index + '].fisico', value: $(value).val()});
+		 });
+		 
+		return data;
 	},
 
 	 limpaGridPesquisa : function() {
