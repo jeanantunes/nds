@@ -28,7 +28,6 @@ public class FixacaoReparteRepositoryImplTest extends AbstractRepositoryImplTest
 	private FixacaoReparte fixacaoReparte;
 	private Cota cota;
 	private Produto produto;
-	private Editor abril;
 	private Box box;
 	private Pessoa pessoa;
 	private TipoProduto tipoProduto;
@@ -55,21 +54,19 @@ public class FixacaoReparteRepositoryImplTest extends AbstractRepositoryImplTest
 
 	@Test
 	public void fixacaoReparteCota(){
-	
 		fixacaoReparte = new FixacaoReparte();
 		fixacaoReparte.setCotaFixada(cota);
+		save(fixacaoReparte);
 		Assert.assertNotNull(fixacaoReparte);
 		Assert.assertNotNull(fixacaoReparte.getId());
 	}
 	
-	
+	@Test
 	public void fixacaoReparteProduto(){
-	
 		fixacaoReparte = new FixacaoReparte();
 		fixacaoReparte.setProdutoFixado(produto);
+		save(fixacaoReparte);
 		Assert.assertNotNull(fixacaoReparte);
 		Assert.assertNotNull(fixacaoReparte.getId());
 	}
-	
-
 } 
