@@ -25,9 +25,6 @@ public class PoliticaCobranca {
 	@OneToOne
 	@JoinColumn(name = "FORMA_COBRANCA_ID", unique = true)
 	private FormaCobranca formaCobranca;
-	
-	@Column(name = "NUM_INADIMPLENCIA_SUSP", nullable = false)
-	private int inadimplenciasSuspencao;
 
 	@ManyToOne
 	@JoinColumn(name = "DISTRIBUIDOR_ID")
@@ -47,9 +44,6 @@ public class PoliticaCobranca {
 	
 	@Column(name = "NUM_DIAS_NOVA_COBRANCA")
 	private int numeroDiasNovaCobranca;
-	
-	@Column(name = "NUM_DIAS_POSTERGADO")
-	private int numeroDiasPostergado;
 	
 	@Column(name = "ASSUNTO_EMAIL_COBRANCA")
 	private String assuntoEmailCobranca;
@@ -76,14 +70,6 @@ public class PoliticaCobranca {
 	
 	public void setId(Long id) {
 		this.id = id;
-	}
-	
-	public int getInadimplenciasSuspencao() {
-		return inadimplenciasSuspencao;
-	}
-	
-	public void setInadimplenciasSuspencao(int inadimplenciasSuspencao) {
-		this.inadimplenciasSuspencao = inadimplenciasSuspencao;
 	}
 	
 	public Distribuidor getDistribuidor() {
@@ -140,14 +126,6 @@ public class PoliticaCobranca {
 	
 	public void setNumeroDiasNovaCobranca(int numeroDiasNovaCobranca) {
 		this.numeroDiasNovaCobranca = numeroDiasNovaCobranca;
-	}
-	
-	public int getNumeroDiasPostergado() {
-		return numeroDiasPostergado;
-	}
-	
-	public void setNumeroDiasPostergado(int numeroDiasPostergado) {
-		this.numeroDiasPostergado = numeroDiasPostergado;
 	}
 
 	public String getAssuntoEmailCobranca() {

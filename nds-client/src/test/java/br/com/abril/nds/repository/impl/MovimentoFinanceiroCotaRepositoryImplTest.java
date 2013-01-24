@@ -78,7 +78,7 @@ public class MovimentoFinanceiroCotaRepositoryImplTest extends AbstractRepositor
 		save(formaBoleto);
 		
 		PoliticaCobranca politicaCobranca =
-			Fixture.criarPoliticaCobranca(null, formaBoleto, true, true, true, 1,"Assunto","Mensagem",true,FormaEmissao.INDIVIDUAL_BOX);
+			Fixture.criarPoliticaCobranca(null, formaBoleto, true, true, true, "Assunto","Mensagem",true,FormaEmissao.INDIVIDUAL_BOX);
 		
 		Set<PoliticaCobranca> politicasCobranca = new HashSet<PoliticaCobranca>();
 		politicasCobranca.add(politicaCobranca);

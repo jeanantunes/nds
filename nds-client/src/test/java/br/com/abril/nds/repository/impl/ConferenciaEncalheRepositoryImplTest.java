@@ -349,7 +349,7 @@ public class ConferenciaEncalheRepositoryImplTest extends
 		distribuidor = null;
 
 		PoliticaCobranca politicaCobranca = Fixture.criarPoliticaCobranca(
-				distribuidor, formaBoleto, true, true, true, 1, "Assunto",
+				distribuidor, formaBoleto, true, true, true, "Assunto",
 				"Mansagem", true, FormaEmissao.INDIVIDUAL_BOX);
 
 		Set<PoliticaCobranca> politicasCobranca = new HashSet<PoliticaCobranca>();

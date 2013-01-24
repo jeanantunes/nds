@@ -16,6 +16,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.fiscal.nota.ProdutoServico;
 import br.com.abril.nds.model.movimentacao.AbstractMovimentoEstoque;
 import br.com.abril.nds.model.planejamento.EstudoCota;
@@ -72,6 +73,9 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque implements C
 
 	@Column(name = "STATUS_ESTOQUE_FINANCEIRO")
 	private StatusEstoqueFinanceiro statusEstoqueFinanceiro;
+	
+	@ManyToMany(mappedBy="movimentos")
+	private List<MovimentoFinanceiroCota> movimentoFinanceiroCota;
 	
 	public Object clone() {
 
@@ -212,6 +216,21 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque implements C
 
 	public void setDataLancamentoOriginal(Date dataLancamentoOriginal) {
 		this.dataLancamentoOriginal = dataLancamentoOriginal;
+	}
+
+	/**
+	 * @return the movimentoFinanceiroCota
+	 */
+	public List<MovimentoFinanceiroCota> getMovimentoFinanceiroCota() {
+		return movimentoFinanceiroCota;
+	}
+
+	/**
+	 * @param movimentoFinanceiroCota the movimentoFinanceiroCota to set
+	 */
+	public void setMovimentoFinanceiroCota(
+		List<MovimentoFinanceiroCota> movimentoFinanceiroCota) {
+		this.movimentoFinanceiroCota = movimentoFinanceiroCota;
 	}
 	
 }

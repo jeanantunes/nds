@@ -27,9 +27,10 @@ public class MovimentoFinanceiroCota extends AbstractMovimentoFinanceiro {
 	@JoinColumn(name = "COTA_ID")
 	private Cota cota;
 	
-	@OneToMany
-	@JoinTable(name = "MVTO_FINANCEIRO_ESTOQUE_COTA", joinColumns = {@JoinColumn(name = "MVTO_FINANCEIRO_COTA_ID")}, 
-	inverseJoinColumns = {@JoinColumn(name = "MVTO_ESTOQUE_COTA_ID")})
+	@ManyToMany
+	@JoinTable(name = "MVTO_FINANCEIRO_ESTOQUE_COTA",
+			   joinColumns = {@JoinColumn(name = "MVTO_FINANCEIRO_COTA_ID")}, 
+			   inverseJoinColumns = {@JoinColumn(name = "MVTO_ESTOQUE_COTA_ID", unique = true)})
 	private List<MovimentoEstoqueCota> movimentos = new ArrayList<MovimentoEstoqueCota>();
 	
 	@Column(name = "OBSERVACAO")
