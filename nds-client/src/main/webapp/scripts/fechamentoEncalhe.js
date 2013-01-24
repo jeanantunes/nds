@@ -219,17 +219,35 @@ var fechamentoEncalheController = $.extend(true, {
 		return resultado;
 	},
 	
-	replicarTodos : function() {
+	replicarTodos : function(replicar) {
 	
 		var tabela = $('.fechamentoGrid', fechamentoEncalheController.workspace).get(0);
 		for (i=0; i<tabela.rows.length; i++) {
-			fechamentoEncalheController.replicarItem(i);
+			if (replicar){
+			
+				fechamentoEncalheController.replicarItem(i);
+			
+			} else {
+				
+				fechamentoEncalheController.limparInputsFisico(i);
+			}
 		}
 	},
 	
 	replicar:function(index){
 		$("#sel",this.workspace).attr("checked",false);
 		fechamentoEncalheController.replicarItem(index);
+	},
+	
+	limparInputsFisico: function(index) {
+		
+		var tabela = $('.fechamentoGrid', fechamentoEncalheController.workspace).get(0);
+		var campo = tabela.rows[index].cells[7].firstChild.firstChild;
+		
+		if (!campo.disabled) {
+
+			campo.val("");
+		}
 	},
 	
 	replicarItem : function(index) {
@@ -251,9 +269,7 @@ var fechamentoEncalheController = $.extend(true, {
 			
 		checkAll(input,"checkgroupFechamento");
 		
-		if(input.checked == true){
-			fechamentoEncalheController.replicarTodos();
-		}
+		fechamentoEncalheController.replicarTodos(input.checked);
 	},
 	
 	onChangeFisico : function(campo, index) {

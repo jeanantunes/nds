@@ -178,9 +178,19 @@ var visaoEstoqueController = $.extend(true, {
 		$.postJSON(
 			this.path + 'transferir?' + $('#pesquisarVisaoEstoqueForm').serialize(),
 			params,
-			function() {
+			function(result) {
+
 				$('#dialog-visaoEstoque-transferencia').dialog('close');
-				visaoEstoqueController.pesquisar();
+				
+				if (result.listaMensagens) {
+				
+					exibirMensagem(
+						result.tipoMensagem, 
+						result.listaMensagens
+					);
+				}
+				
+				$(".visaoEstoqueGrid", this.workspace).flexReload();
 			}
 		);
 	},
