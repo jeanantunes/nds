@@ -39,6 +39,7 @@
 </head>
 
 <body>
+
 	
 <form id="idEmissaoCEfornecedor">
 	<div id="dialog-pesq-produtos" title="Selecionar Produtos" style="display: none;">
@@ -51,7 +52,8 @@
 		</fieldset>
 	</div>
 </form>
-	
+
+
 <form id="form-detalhesAbastecimento">
 <div id="dialog-detalhesAbastecimento" title="Produtos do Box" style="display:none;">
 	<fieldset>
@@ -62,16 +64,14 @@
 </div>
 </form>
 
-<div class="corpo">
-  
-    <div class="container">
-    	
-      <fieldset class="classFieldset">
-   	    <legend> Pesquisar Mapa de Abastecimento</legend>
-        <table width="980" border="0" cellpadding="2" cellspacing="1" class="filtro">
-            <tr>
-              <td>Data Lançamento:</td>
-              <td>
+<div class="linha_separa_fields">&nbsp;</div>
+ 	
+<fieldset class="classFieldset">
+  <legend> Pesquisar Mapa de Abastecimento</legend>
+  <table width="980" border="0" cellpadding="2" cellspacing="1" class="filtro">
+      <tr>
+        <td>Data Lançamento:</td>
+        <td>
 			  
 			  
 <!-- Data Lançamento -->              
@@ -270,26 +270,17 @@
             </div>
 			
           <br />
-   		  <span class="bt_novos" id="map_1" title="Imprimir">
-
-<!-- IMPRIMIR MAPA -->   		  
-<a href="${pageContext.request.contextPath}/mapaAbastecimento/imprimirMapaAbastecimento" target="_blank">
-
-		
-		<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir Mapa</a>
-		
-		</span>          
-       
+       		<!-- IMPRIMIR MAPA --> 
+			<span class="bt_novos" id="map_1" title="Imprimir">
+				<a href="${pageContext.request.contextPath}/mapaAbastecimento/imprimirMapaAbastecimento" target="_blank">
+					<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
+					Imprimir
+				</a>
+			</span>  
         </div>
         
       </fieldset>
       <div class="linha_separa_fields">&nbsp;</div>
-       
 
-        
-
-    
-    </div>
-</div> 
 </body>
 
