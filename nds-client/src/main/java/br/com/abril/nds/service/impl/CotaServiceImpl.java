@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.client.assembler.HistoricoTitularidadeCotaDTOAssembler;
+import br.com.abril.nds.client.util.PessoaUtil;
 import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.CotaDTO.TipoPessoa;
 import br.com.abril.nds.dto.CotaSuspensaoDTO;
@@ -1303,24 +1304,12 @@ public class CotaServiceImpl implements CotaService {
 		
 		if(TipoPessoa.JURIDICA.equals(cotaDto.getTipoPessoa())){
 			
-			CNPJValidator cnpjValidator = new CNPJValidator(true);
-			try{
-				cnpjValidator.assertValid(cotaDto.getNumeroCnpj());
-				
-			}catch(InvalidStateException e){
-				throw new ValidacaoException(TipoMensagem.WARNING,"O preenchimento do campo [Número CNPJ] está inválido!");
-			}
+			PessoaUtil.validarCNPJ(cotaDto.getNumeroCnpj());
 		}
 		
 		if(TipoPessoa.FISICA.equals(cotaDto.getTipoPessoa())){
 			
-			CPFValidator cpfValidator = new CPFValidator(true);
-			try{
-				cpfValidator.assertValid(cotaDto.getNumeroCPF());
-				
-			}catch(InvalidStateException e){
-				throw new ValidacaoException(TipoMensagem.WARNING,"O preenchimento do campo [Número CPF] está inválido!");
-			}
+			PessoaUtil.validarCPF(cotaDto.getNumeroCPF());
 		}
 		
 		if( cotaDto.getEmail()!= null && !cotaDto.getEmail().isEmpty() && !Util.validarEmail(cotaDto.getEmail())){
@@ -2012,7 +2001,7 @@ public class CotaServiceImpl implements CotaService {
 		cotaNova.setParametroDistribuicao(parametroDistribuicaoCota);
 		cotaNova.setTitularesCota(titularesCota);
 		cotaNova.setSituacaoCadastro(SituacaoCadastro.ATIVO);
-
+		
 		this.cotaRepository.merge(cotaNova);
 		processarTitularidadeCota(cotaAntiga, cotaDTO);
 		
