@@ -3,6 +3,7 @@ var fechamentoEncalheController = $.extend(true, {
 	vDataEncalhe : '',
 	vFornecedorId : '',
 	vBoxId : '',
+	isFechamento : false,
 
 	init : function() {
 		$("#datepickerDe", fechamentoEncalheController.workspace).datepicker({
@@ -303,13 +304,13 @@ var fechamentoEncalheController = $.extend(true, {
 			
 	},
 	
-	popup_encerrarEncalhe : function() {
+	popup_encerrarEncalhe : function(isSomenteCotasSemAcao) {
 
 		var dataEncalhe = $("#datepickerDe", fechamentoEncalheController.workspace).val();
 		
 		$(".cotasGrid", fechamentoEncalheController.workspace).flexOptions({
 			url: contextPath + "/devolucao/fechamentoEncalhe/cotasAusentes",
-			params: [{name:'dataEncalhe', value: dataEncalhe }],
+			params: [{name:'dataEncalhe', value: dataEncalhe }, {name:'isSomenteCotasSemAcao', value: isSomenteCotasSemAcao}],
 			newp: 1,
 		});
 		
@@ -318,11 +319,16 @@ var fechamentoEncalheController = $.extend(true, {
 	
 	verificarEncerrarOperacaoEncalhe : function() {
 
+		var dataEncalhe = $('#datepickerDe', fechamentoEncalheController.workspace).val();
+
+		var params = [
+			{name:"dataEncalhe", value:dataEncalhe}, 
+			{name:"operacao", value: "VERIFICACAO"}
+		];
+		
 		$.postJSON(
 			contextPath + "/devolucao/fechamentoEncalhe/verificarEncerrarOperacaoEncalhe",
-			{ 'dataEncalhe' : $('#datepickerDe', fechamentoEncalheController.workspace).val() , 
-			  'operacao' : 'VERIFICACAO' 
-		},
+			params,
 			function (result) {
 
 				var tipoMensagem = result.tipoMensagem;
@@ -332,12 +338,20 @@ var fechamentoEncalheController = $.extend(true, {
 					
 					exibirMensagem(tipoMensagem, listaMensagens);
 				}
-
+				
 				if (!result) {
 					
-					fechamentoEncalheController.popup_encerrarEncalhe();
-				} else{
+					fechamentoEncalheController.isFechamento = true;
 					
+					fechamentoEncalheController.popup_encerrarEncalhe(true);
+					
+				} else {
+					
+					if ($( "#dialog-encerrarEncalhe", fechamentoEncalheController.workspace).dialog("isOpen")) {
+
+						$( "#dialog-encerrarEncalhe", fechamentoEncalheController.workspace).dialog("destroy");
+					}
+
 					fechamentoEncalheController.popup_encerrar();
 				}			
 			},
@@ -358,14 +372,18 @@ var fechamentoEncalheController = $.extend(true, {
 			buttons: {
 				"Confirmar": function() {
 
+					var params = [
+					      {name: 'dataEncalhe', value: $('#datepickerDe', fechamentoEncalheController.workspace).val()}, 
+					      {name: 'operacao', value: 'CONFIRMACAO'}
+					];
+					
+					var _this = $(this);
+
 					$.postJSON(
 						contextPath + "/devolucao/fechamentoEncalhe/verificarEncerrarOperacaoEncalhe",
-						{ 'dataEncalhe' : $('#datepickerDe', fechamentoEncalheController.workspace).val() , 
-						  'operacao' : 'CONFIRMACAO' },
+						params,
 						function (result) {
 
-							$("#dialog-confirm", fechamentoEncalheController.workspace).dialog("close");
-							
 							var tipoMensagem = result.tipoMensagem;
 							var listaMensagens = result.listaMensagens;
 							
@@ -374,10 +392,15 @@ var fechamentoEncalheController = $.extend(true, {
 							}
 
 							if (!result) {
-								fechamentoEncalheController.popup_encerrarEncalhe();
+								fechamentoEncalheController.isFechamento = true;
+								fechamentoEncalheController.popup_encerrarEncalhe(true);
 							} else {
 								fechamentoEncalheController.popup_encerrar();
 							}
+							
+							fechamentoEncalheController.pesquisar();
+							
+							_this.dialog("destroy");
 						},
 					  	null,
 					   	false
@@ -514,7 +537,7 @@ var fechamentoEncalheController = $.extend(true, {
 				{ 'dataEncalhe' : dataEncalhe},
 				function (result) {
 						
-			        $("#dtPostergada", fechamentoEncalheController.workspace).val(result.resultado);   
+			        $("#dtPostergada", fechamentoEncalheController.workspace).val(result.resultado);
 				}
 		);
 		
@@ -550,6 +573,13 @@ var fechamentoEncalheController = $.extend(true, {
 										}
 
 										$(".cotasGrid", fechamentoEncalheController.workspace).flexReload();
+										
+								        if (fechamentoEncalheController.isFechamento) {
+
+								        	fechamentoEncalheController.isFechamento = false;
+								        	
+								        	fechamentoEncalheController.verificarEncerrarOperacaoEncalhe();
+								        }
 									},
 								  	null,
 								   	true,
@@ -720,7 +750,7 @@ var fechamentoEncalheController = $.extend(true, {
 						exibirMensagem(tipoMensagem, listaMensagens);
 					//	fechamentoEncalheController.pesquisar(false);
 					} else {
-						$('#mensagemConsistenciaDados', fechamentoEncalheController.workspace).html(listaMensagens[0])
+						$('#mensagemConsistenciaDados', fechamentoEncalheController.workspace).html(listaMensagens[0]);
 						fechamentoEncalheController.popup_mensagem_consistencia_dados();
 					}
 				} else {
@@ -791,30 +821,29 @@ var fechamentoEncalheController = $.extend(true, {
 		 $(".fechamentoGrid", fechamentoEncalheController.workspace).clear();
 		 $('#divFechamentoGrid', fechamentoEncalheController.workspace).css("display", "none");
 	},
-
-	 salvarNoEncerrementoOperacao : function() {
-		 
-			$.postJSON(
-				contextPath + "/devolucao/fechamentoEncalhe/salvarNoEncerrementoOperacao",
-				fechamentoEncalheController.populaParamentrosFechamentoEncalheInformados(),
-				function (result) {
+	
+	salvarNoEncerrementoOperacao : function() {
+		
+		$.postJSON(
+			contextPath + "/devolucao/fechamentoEncalhe/salvarNoEncerrementoOperacao",
+			fechamentoEncalheController.populaParamentrosFechamentoEncalheInformados(),
+			function (result) {
+				
+				var tipoMensagem = result.tipoMensagem;
+				
+				var listaMensagens = result.listaMensagens;
+				
+				if (tipoMensagem && listaMensagens) {
 					
-					var tipoMensagem = result.tipoMensagem;
+					exibirMensagem(tipoMensagem, listaMensagens);
+				} else {
 					
-					var listaMensagens = result.listaMensagens;
-					
-					if (tipoMensagem && listaMensagens) {
-						
-						exibirMensagem(tipoMensagem, listaMensagens);
-					} else {
-						
-						fechamentoEncalheController.verificarEncerrarOperacaoEncalhe();
-					}
-				},
-			  	null,
-			   	false
-			);
-			
+					fechamentoEncalheController.verificarEncerrarOperacaoEncalhe();
+				}
+			},
+		  	null,
+		   	false
+		);
 	},
 	
 	analiticoEncalhe : function() {

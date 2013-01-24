@@ -189,7 +189,11 @@ public class ParciaisServiceImpl implements ParciaisService{
 	@Transactional
 	public void alterarPeriodo(Long idLancamento, Date dataLancamento,
 			Date dataRecolhimento) {
-
+		
+		if(dataLancamento.compareTo(dataRecolhimento) >= 0 ){
+			throw new ValidacaoException(TipoMensagem.WARNING,"Data de recolhimeno não pode ser menor ou igual a data de lançamento");
+		}
+		
 		if(idLancamento == null) 
 			throw new ValidacaoException(TipoMensagem.WARNING, "Id do Lancamento não deve ser nulo.");
 			
@@ -207,7 +211,7 @@ public class ParciaisServiceImpl implements ParciaisService{
 			throw new ValidacaoException(TipoMensagem.WARNING, "A data de Lançamento é inferior ao lançamento inicial da parcial.");
 		
 		if(DateUtil.isDataInicialMaiorDataFinal(dataRecolhimento, periodo.getLancamentoParcial().getRecolhimentoFinal()))
-			throw new ValidacaoException(TipoMensagem.WARNING, "A de Recolhimento ultrapassa  o recolhimento final da parcial.");
+			throw new ValidacaoException(TipoMensagem.WARNING, "A data de Recolhimento ultrapassa  o recolhimento final da parcial.");
 				
 		Boolean idMudancaPeriodoValida = periodoLancamentoParcialRepository.
 				verificarValidadeNovoPeriodoParcial(idLancamento, dataLancamento, dataRecolhimento);
@@ -282,9 +286,16 @@ public class ParciaisServiceImpl implements ParciaisService{
 		
 		if( !lancamento.getStatus().equals(StatusLancamento.PLANEJADO)) 
 			throw new ValidacaoException(TipoMensagem.WARNING, "Lancamento já foi realizado, não pode ser excluido.");
-		
+
 		PeriodoLancamentoParcial periodo = periodoLancamentoParcialRepository.obterPeriodoPorIdLancamento(idLancamento);
-				
+		
+		if ( periodo.getLancamentoParcial()!= null 
+				&&  periodo.getLancamentoParcial().getPeriodos()!= null 
+				&& periodo.getLancamentoParcial().getPeriodos().size() == 1 ){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING,"Para excluir todos os lançamentos parciais deve ser alterado o tipo de lançamento no cadastro de edição");
+		}
+		
 		periodoLancamentoParcialRepository.remover(periodo);
 		
 		lancamentoRepository.remover(lancamento);

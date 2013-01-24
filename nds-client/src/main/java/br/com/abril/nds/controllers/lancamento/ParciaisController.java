@@ -136,7 +136,9 @@ public class ParciaisController extends BaseController {
 		List<ItemDTO<String, String>> listaComboStatus = new ArrayList<ItemDTO<String,String>>();
 		
 		for (StatusLancamentoParcial status : StatusLancamentoParcial.values()) {
-			listaComboStatus.add(new ItemDTO<String, String>( status.name(), status.toString() ));
+			if(!StatusLancamentoParcial.CANCELADO.equals(status)){
+				listaComboStatus.add(new ItemDTO<String, String>( status.name(), status.toString() ));
+			}
 		}
 		
 		result.include("listaStatus",listaComboStatus );
