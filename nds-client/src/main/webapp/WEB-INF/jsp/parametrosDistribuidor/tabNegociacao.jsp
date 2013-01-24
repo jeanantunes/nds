@@ -32,7 +32,6 @@
   
 <script type="text/javascript">
 function checkDescontoSelecionado() {
-	//debugger;
 	if( $('#utilizaDesconto').is(":checked") )
 		$('.percentualDesconto').show();
 	else
