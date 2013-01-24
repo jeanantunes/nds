@@ -338,14 +338,7 @@ var ConferenciaEncalhe = $.extend(true, {
 							
 						}
 						
-						var data = [
-						     
-						     {name: 'numeroCota', value : $("#numeroCota", ConferenciaEncalhe.workspace).val()}, 
-						     {name: 'indObtemDadosFromBD', value : true},
-						     {name: 'indConferenciaContingencia', value: false}
-						];
-						
-						ConferenciaEncalhe.carregarListaConferencia(data);
+						ConferenciaEncalhe.limparDadosConferenciaEncalheCotaFinalizada();
 						
 					} else if(result.tipoMensagem == 'WARNING') {
 						
@@ -436,12 +429,40 @@ var ConferenciaEncalhe = $.extend(true, {
 		);
 	},
 
+	limparDadosConferenciaEncalheCotaFinalizada : function() {
+		
+		$("._dadosConfEncalhe", ConferenciaEncalhe.workspace).remove();
+		
+		$(".outrosVlrsGrid", ConferenciaEncalhe.workspace).flexAddData({
+			page: 0, total: 0, rows: {}
+		});
+		
+		$("#totalReparte", ConferenciaEncalhe.workspace).text("");
+		
+		$("#totalEncalhe", ConferenciaEncalhe.workspace).text("");
+		
+		$("#valorVendaDia", ConferenciaEncalhe.workspace).text("");
+		
+		$("#totalOutrosValores", ConferenciaEncalhe.workspace).text("");
+		
+		$("#valorAPagar", ConferenciaEncalhe.workspace).text("");
+		
+		$(".dadosFiltro", ConferenciaEncalhe.workspace).hide();
+		
+		$("#nomeCota", ConferenciaEncalhe.workspace).text("");
+		
+		$("#statusCota", ConferenciaEncalhe.workspace).text("");
+		
+	},
+	
 	preProcessarConsultaConferenciaEncalhe : function(result) {
 		
 		if (result.mensagens){
 			
 			exibirMensagem(result.mensagens.tipoMensagem, result.mensagens.listaMensagens);
+			
 			return;
+			
 		}
 		
 		var innerTable = '';
@@ -652,13 +673,7 @@ var ConferenciaEncalhe = $.extend(true, {
 									ConferenciaEncalhe.gerarDocumentosConferenciaEncalhe(conteudo.tiposDocumento);
 								}
 								
-								var data = [
-								  {name: 'numeroCota', 			value : $("#numeroCota", ConferenciaEncalhe.workspace).val()}, 
-								  {name: 'indObtemDadosFromBD', value : true},
-								  {name: 'indConferenciaContingencia', value: false}
-								 ];
-								
-								ConferenciaEncalhe.carregarListaConferencia(data);
+								ConferenciaEncalhe.limparDadosConferenciaEncalheCotaFinalizada();
 								
 							}
 

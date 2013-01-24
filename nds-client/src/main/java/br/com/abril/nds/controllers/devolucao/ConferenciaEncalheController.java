@@ -735,7 +735,9 @@ public class ConferenciaEncalheController extends BaseController {
 		if (docs instanceof byte[]){
 			
 			this.escreverArquivoParaResponse((byte[]) docs, "arquivosCobranca");
+			
 			this.session.removeAttribute(DADOS_DOCUMENTACAO_CONF_ENCALHE_COTA);
+			
 		} else {
 			
 			this.result.use(Results.nothing());
@@ -865,8 +867,6 @@ public class ConferenciaEncalheController extends BaseController {
 							this.getSetConferenciaEncalheExcluirFromSession(), 
 							this.getUsuarioLogado());
 			
-			recarregarInfoConferenciaEncalheCotaEmSession(getNumeroCotaFromSession(), indConferenciaContingencia);
-			
 			this.session.removeAttribute(SET_CONFERENCIA_ENCALHE_EXCLUIR);
 			
 			if(dadosDocumentacaoConfEncalheCota!=null ) {
@@ -897,6 +897,8 @@ public class ConferenciaEncalheController extends BaseController {
 			dados.put("listaMensagens", 	new String[]{"Operação efetuada com sucesso."});
 
 			dados.put("indGeraDocumentoConfEncalheCota", dadosDocumentacaoConfEncalheCota.isIndGeraDocumentacaoConferenciaEncalhe());
+			
+			limparDadosSessaoConferenciaEncalheCotaFinalizada();
 			
 			this.result.use(CustomMapJson.class).put("result", dados).serialize();
 			
@@ -1253,6 +1255,15 @@ public class ConferenciaEncalheController extends BaseController {
 		this.session.removeAttribute(SET_CONFERENCIA_ENCALHE_EXCLUIR);
 		this.session.removeAttribute(HORA_INICIO_CONFERENCIA);
 		this.session.removeAttribute(DADOS_DOCUMENTACAO_CONF_ENCALHE_COTA);
+	}
+	
+	private void limparDadosSessaoConferenciaEncalheCotaFinalizada() {
+		
+		this.session.removeAttribute(INFO_CONFERENCIA);
+		this.session.removeAttribute(NOTA_FISCAL_CONFERENCIA);
+		this.session.removeAttribute(SET_CONFERENCIA_ENCALHE_EXCLUIR);
+		this.session.removeAttribute(HORA_INICIO_CONFERENCIA);
+		
 	}
 	
 	private InfoConferenciaEncalheCota getInfoConferenciaSession() {
