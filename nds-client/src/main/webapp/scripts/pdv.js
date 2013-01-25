@@ -69,8 +69,7 @@ var PDV =  $.extend(true, {
 			$('#inicioHorario', this.workspace).mask('99:99'); 
 			$('#fimHorario', this.workspace).mask('99:99'); 
 			$("#porcentagemFaturamento", this.workspace).numeric();
-			$("#qntFuncionarios", this.workspace).numeric();
-			$("#numerolicenca", this.workspace).numeric();	
+			$("#qntFuncionarios", this.workspace).numeric();	
 			
 			var options = {
 					success: PDV.tratarRetornoUploadImagem
@@ -1231,7 +1230,7 @@ var PDV =  $.extend(true, {
 			var pathArquivo = responseJson.result[2];
 				
 			if(pathArquivo) {
-				$("#idImagem", this.workspace).attr("src", contextPath + "/" + pathArquivo);
+				$("#idImagem", this.workspace).attr("src", contextPath + pathArquivo);
 			} else {
 				$("#idImagem", this.workspace).attr("src", contextPath +  "/images/pdv/no_image.jpeg");
 			}	

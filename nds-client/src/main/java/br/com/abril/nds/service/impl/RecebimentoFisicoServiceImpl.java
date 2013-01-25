@@ -22,6 +22,7 @@ import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.estoque.RecebimentoFisico;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
+import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.fiscal.CFOP;
 import br.com.abril.nds.model.fiscal.ItemNotaFiscalEntrada;
@@ -848,7 +849,7 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 		if(indDiferenca) {
 			
 			Diferenca diferenca = obterDiferencaDeItemRecebimentoFisico(usuarioLogado, recebimentoFisicoDTO);
-			diferenca = diferencaEstoqueService.lancarDiferencaAutomatica(diferenca);
+			diferenca = diferencaEstoqueService.lancarDiferencaAutomatica(diferenca, TipoEstoque.LANCAMENTO);
 			
 			ItemRecebimentoFisico itemRecebimento = itemRecebimentoFisicoRepository.buscarPorId(recebimentoFisicoDTO.getIdItemRecebimentoFisico());
 			itemRecebimento.setDiferenca(diferenca);

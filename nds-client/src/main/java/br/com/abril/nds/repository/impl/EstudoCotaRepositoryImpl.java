@@ -7,7 +7,9 @@ import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.model.planejamento.EstudoCota;
+import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.repository.EstudoCotaRepository;
+import br.com.abril.nds.util.Intervalo;
 
 /**
  * Classe de implementação referente ao acesso a dados da entidade 
@@ -49,9 +51,11 @@ public class EstudoCotaRepositoryImpl extends AbstractRepositoryModel<EstudoCota
 	@Override
 	public List<EstudoCota> obterEstudoCotaPorDataProdutoEdicao(Date dataLancamento, Long idProdutoEdicao) {
 			
-		String hql = " from EstudoCota estudoCota "
-				   + " where estudoCota.estudo.dataLancamento = :dataLancamento " 
-				   + " and estudoCota.estudo.produtoEdicao.id = :idProdutoEdicao";
+		String hql = " select estudoCota from EstudoCota estudoCota "
+				   + " join estudoCota.estudo estudo "
+				   + " join estudo.produtoEdicao produtoEdicao "
+				   + " where estudo.dataLancamento = :dataLancamento " 
+				   + " and produtoEdicao.id = :idProdutoEdicao";
 		
 		Query query = super.getSession().createQuery(hql);
 		
@@ -104,6 +108,60 @@ public class EstudoCotaRepositoryImpl extends AbstractRepositoryModel<EstudoCota
 		query.setMaxResults(1);
 		
 		return (EstudoCota) query.uniqueResult();
+	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<EstudoCota> obterEstudosCotaParaNotaEnvio(Long idCota, 
+														  Intervalo<Date> periodo, 
+														  List<Long> listaIdsFornecedores) {
+		
+		StringBuffer sql = new StringBuffer("SELECT DISTINCT estudoCota ");	
+		
+		sql.append(" FROM EstudoCota estudoCota ");
+
+		sql.append(" JOIN estudoCota.estudo estudo ");
+		sql.append(" JOIN estudo.lancamentos lancamento ");
+		sql.append(" JOIN estudoCota.cota cota ");
+		sql.append(" JOIN estudo.produtoEdicao produtoEdicao ");
+		
+		sql.append(" JOIN produtoEdicao.produto produto ");
+		sql.append(" JOIN produto.fornecedores fornecedor ");
+		
+		sql.append(" WHERE cota.id = :idCota ");
+		
+		sql.append(" AND lancamento.status IN (:listaStatusLancamento) ");
+		
+		if (periodo != null && periodo.getDe() != null && periodo.getAte() != null) {
+			
+			sql.append(" AND lancamento.dataLancamentoDistribuidor BETWEEN :dataInicio AND :dataFim ");
+		}	
+		
+		if (listaIdsFornecedores != null && !listaIdsFornecedores.isEmpty()) {
+			
+			sql.append(" AND (fornecedor IS NULL OR fornecedor.id IN (:listaFornecedores)) ");
+		}		
+		
+		Query query = getSession().createQuery(sql.toString());
+		
+		query.setParameter("idCota", idCota);
+	
+		if (listaIdsFornecedores != null && !listaIdsFornecedores.isEmpty()) {
+			
+			query.setParameterList("listaFornecedores", listaIdsFornecedores);
+		}
+		
+		if (periodo != null && periodo.getDe() != null && periodo.getAte() != null) {
+			
+			query.setParameter("dataInicio", periodo.getDe());
+			query.setParameter("dataFim", periodo.getAte());
+		}
+
+		query.setParameterList(
+			"listaStatusLancamento", 
+				new StatusLancamento[] {StatusLancamento.BALANCEADO, StatusLancamento.EXPEDIDO});
+		
+		return query.list();
 	}
 	
 }

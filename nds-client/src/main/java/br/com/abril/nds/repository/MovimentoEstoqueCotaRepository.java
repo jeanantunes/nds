@@ -11,6 +11,7 @@ import br.com.abril.nds.dto.ConsultaEncalheDetalheDTO;
 import br.com.abril.nds.dto.ConsultaEncalheRodapeDTO;
 import br.com.abril.nds.dto.ContagemDevolucaoDTO;
 import br.com.abril.nds.dto.MovimentoEstoqueCotaDTO;
+import br.com.abril.nds.dto.MovimentoEstoqueCotaGenericoDTO;
 import br.com.abril.nds.dto.ProdutoAbastecimentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDetalheDTO;
@@ -20,12 +21,21 @@ import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.OperacaoEstoque;
-import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
 import br.com.abril.nds.util.Intervalo;
 
 
 public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEstoqueCota, Long> {
+	
+	/**
+	 * Obtém as qtdes de devolução de encalhe juramentado
+	 * agrupados por cota relativos a uma data de operação.
+	 * 
+	 * @param dataOperacao
+	 * 
+	 * @return List<MovimentoEstoqueCotaGenericoDTO>
+	 */
+	public List<MovimentoEstoqueCotaGenericoDTO> obterListaMovimentoEstoqueCotaDevolucaoJuramentada(Date dataOperacao);
 	
 	/**
 	 * Obtém lista de MovimentoEstoqueCota relativa a uma operação de
@@ -356,9 +366,10 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 	 * Obtém movimentos de estoque da cota que ainda não geraram movimento financeiro
 	 * Considera movimentos de estoque provenientes dos fluxos de Expedição e Conferência de Encalhe
 	 * @param idCota
+	 * @param dataControleConferencia
 	 * @return List<MovimentoEstoqueCota>
 	 */
-	public List<MovimentoEstoqueCota> obterMovimentosPendentesGerarFinanceiro(Long idCota);
+	public List<MovimentoEstoqueCota> obterMovimentosPendentesGerarFinanceiro(Long idCota, Date dataControleConferencia);
 	
 	/**
 	 * Obtém movimentos de estoque da cota que forão estornados
@@ -383,5 +394,7 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 	 * @return List<MovimentoEstoqueCota>
 	 */
 	public BigDecimal obterValorTotalMovimentosEstornados(Long idCota);
+
+	public List<MovimentoEstoqueCota> obterPorLancamento(Long idLancamento);
 	
 }

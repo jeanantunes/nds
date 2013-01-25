@@ -221,11 +221,8 @@ public class EmissaoCEController extends BaseController {
 		List<CotaEmissaoDTO> cotasEmissao = chamadaEncalheService.obterDadosImpressaoEmissaoChamadasEncalhe(filtro);	
 				
 		DistribuidorDTO dadosDistribuidor = distribuidorService.obterDadosEmissao();
-		
-		if(filtro.getDtRecolhimentoAte()!=null && filtro.getDtRecolhimentoAte()!=null)
-			filtro.setPersonalizada(false);
-		
-		if(filtro.getPersonalizada()) {
+				
+		if(!filtro.getPersonalizada()) {
 			
 			List<CapaDTO> capas =  chamadaEncalheService.obterIdsCapasChamadaEncalhe(filtro.getDtRecolhimentoDe(), filtro.getDtRecolhimentoAte());
 			

@@ -322,7 +322,7 @@ public class BancoController extends BaseController {
 				multa, 
 				vrMulta);
 		
-		if (ativo){
+		if (!ativo){
 			if (this.bancoService.verificarPendencias(idBanco)){
 				throw new ValidacaoException(TipoMensagem.WARNING, "O banco "+nome+" possui pendências e não pode ser desativado.");
 			}
@@ -431,10 +431,6 @@ public class BancoController extends BaseController {
 		
 		if ((apelido==null)||("".equals(apelido))){
 			errorMsgs.add("Preencha o campo apelido.");
-		}
-		
-		if(carteira == null) {
-			errorMsgs.add("Valor inválido para o campo cateira.");
 		}
 		
 		if(juros==null){

@@ -55,12 +55,13 @@ public class FiltroConsultaNotaFiscalDTO implements Serializable {
 	public enum ColunaOrdenacao {
 
 		NUMERO_NOTA("numero"),
+		SERIE("serie"),
 		DATA_EMISSAO("dataEmissao"),
 		DATA_EXPEDICAO("dataExpedicao"),
 		TIPO_NOTA("descricao"),
 		FORNECEDOR("razaoSocial"),
-		VALOR("valor"),
-		NOTA_RECEBIDA("dataRecebimento");		
+		VALOR("valorTotalNota"),
+		NOTA_RECEBIDA("notaRecebida");		
 
 		private String nomeColuna;
 		

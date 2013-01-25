@@ -1,8 +1,17 @@
 package br.com.abril.nds.client.util;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
+import br.com.abril.nds.util.TipoMensagem;
+import br.com.abril.nds.util.Util;
+import br.com.caelum.stella.validation.CNPJValidator;
+import br.com.caelum.stella.validation.CPFValidator;
+import br.com.caelum.stella.validation.InvalidStateException;
 
 /**
  * Classe utilitária para complexidades envolvendo a entidade Pessoa.

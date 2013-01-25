@@ -97,7 +97,7 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 	}
 	
 	@Transactional(readOnly=true)
-	public List<Rota> buscarRotaPorRoteiro(Long idRoteiro){
+	public List<Rota> buscarRotasPorRoteiro(Long idRoteiro){
 		return  rotaRepository.buscarRotaPorRoteiro(idRoteiro, "ordem", Ordenacao.ASC);
 	}
 	
@@ -706,7 +706,9 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 	    
 	    processarTransferenciaRoteiros(roteirizacaoDTO);
 	    
-	    processarTranfererenciaPDVs(roteirizacaoDTO.getRotasNovosPDVsTransferidos(), roteirizacaoDTO.getBox());
+	    processarTransferenciaRotas(roteirizacaoDTO.getRoteirosNovasRotasTransferidas());
+	    
+	    processarTranfererenciaPDVs(roteirizacaoDTO.getRotasNovosPDVsTransferidos());
 	    
 	    return roteirizacao;
     }
@@ -717,7 +719,7 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
      * 
      * @param rotasNovosPDVsTransferidos
      */
-    private void processarTranfererenciaPDVs(List<RotaRoteirizacaoDTO> rotasNovosPDVsTransferidos, BoxRoteirizacaoDTO boxRoteirizacaoDTO) {
+    private void processarTranfererenciaPDVs(List<RotaRoteirizacaoDTO> rotasNovosPDVsTransferidos) {
     	
     	for(RotaRoteirizacaoDTO rotaDTO : rotasNovosPDVsTransferidos) {
     		
@@ -738,7 +740,71 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
     		this.rotaRepository.alterar(rota);
     	}
 	}
+    
+    /**
+     * atualiza as rotas transferidas para um roteiro pertencente a outra roteirização
+     * 
+     * @param roteirosNovasRotasTransferidas
+     */
+    private void processarTransferenciaRotas(List<RoteiroRoteirizacaoDTO> roteirosNovasRotasTransferidas) {
+    	
+    	for (RoteiroRoteirizacaoDTO roteiroDTO : roteirosNovasRotasTransferidas) {
 
+    		Roteiro roteiro = this.roteiroRepository.buscarPorId(roteiroDTO.getId());
+    		
+    		Box box = this.boxRepository.obterBoxPorRoteiro(roteiroDTO.getId());
+    		
+    		for(RotaRoteirizacaoDTO rotaDTO : roteiroDTO.getRotas()) {
+    			
+    			Rota rota;
+                
+				if (rotaDTO.isNovo()) {
+					
+					if(isRotaEntregadorSemPDVs(rotaDTO))
+						continue;
+					
+					rota = novaRotaRoteiro(roteiro, rotaDTO);
+					
+					if (rotaDTO.isEntregador() && rotaDTO.hasPDVsAssociados()) {
+					
+						Entregador entregador = this.entregadorRepository.buscarPorId(rotaDTO.getEntregadorId());
+
+						rota.setEntregador(entregador);
+
+						entregador.setRota(rota);
+						this.entregadorRepository.merge(entregador);
+					}
+					
+				} else {
+                
+					rota = this.rotaRepository.buscarPorId(rotaDTO.getId());
+                    
+					rota.setRoteiro(roteiro);
+					
+					if (rota != null) {
+						
+						rota.desassociarPDVs(rotaDTO.getPdvsExclusao());
+					}
+                }
+                
+				for (PdvRoteirizacaoDTO pdvDTO : rotaDTO.getPdvs()) {
+                    
+                	RotaPDV rotaPDVExistente = rota.getRotaPDVPorPDV(pdvDTO.getId());
+                    
+                	if (rotaPDVExistente == null) {
+                        novoPDVRota(rota, pdvDTO, box);
+                       
+                    } else {
+                        rota.alterarOrdemPdv(pdvDTO.getId(), pdvDTO.getOrdem());
+                    }
+                	
+                	atribuirBoxCota(pdvDTO, box);
+                	this.rotaRepository.alterar(rota);
+                }
+            }
+    	}
+    }
+    
 	/**
      * Salva as informações de uma nova roteirização
      * 
@@ -1138,6 +1204,17 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 			}
 		}
 		
+	}
+
+	@Override
+	@Transactional
+	public List<RoteiroRoteirizacaoDTO> buscarRoteirosNaoAssociadosAoBox(Long idBox) {
+		
+		List<Roteiro> roteiros = this.roteiroRepository.obterRoteirosNaoAssociadosAoBox(idBox);
+		
+		List<RoteiroRoteirizacaoDTO> roteirosDTO = RoteiroRoteirizacaoDTO.getDTOFrom(roteiros);
+		
+		return roteirosDTO;
 	}
 
 }

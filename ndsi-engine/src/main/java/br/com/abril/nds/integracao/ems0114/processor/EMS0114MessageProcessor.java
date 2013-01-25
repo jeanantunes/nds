@@ -61,11 +61,16 @@ public class EMS0114MessageProcessor extends AbstractRepository implements
 		Lancamento lancamento = this.getLancamentoRecolhimentoMaisProximo(
 				produtoEdicao, dataGeracaoArquivo);
 		if (lancamento == null) {
-			this.ndsiLoggerFactory.getLogger().logError(message,
-					EventoExecucaoEnum.RELACIONAMENTO,
-					"SEM LANCAMENTOS com RECOLHIMENTO para Produto: "
-							+ codigoProduto + " e Edicao: " + edicao);
-			return;
+			
+			lancamento = this.getLancamentoAnteriorRecolhimentoMaisProximo(produtoEdicao, dataGeracaoArquivo);
+			
+			if (lancamento == null) {
+				this.ndsiLoggerFactory.getLogger().logError(message,
+						EventoExecucaoEnum.RELACIONAMENTO,
+						"SEM LANCAMENTOS com RECOLHIMENTO para Produto: "
+								+ codigoProduto + " e Edicao: " + edicao);
+				return;
+			}
 		}
 		
 		
@@ -172,7 +177,22 @@ public class EMS0114MessageProcessor extends AbstractRepository implements
 		
 		return (Lancamento) criteria.uniqueResult();
 	}
-	
+
+	private Lancamento getLancamentoAnteriorRecolhimentoMaisProximo(
+			ProdutoEdicao produtoEdicao, Date dataGeracaoArquivo) {
+		
+		Criteria criteria = this.getSession().createCriteria(Lancamento.class);
+
+		criteria.add(Restrictions.le("dataRecolhimentoPrevista", dataGeracaoArquivo));
+		criteria.add(Restrictions.eq("produtoEdicao", produtoEdicao));
+		criteria.addOrder(Order.desc("dataRecolhimentoPrevista"));
+		
+		criteria.setFetchSize(1);
+		criteria.setMaxResults(1);
+		
+		return (Lancamento) criteria.uniqueResult();
+	}
+
 	/**
 	 * Normaliza uma data, para comparações, zerando os valores de hora (hora,
 	 * minuto, segundo e milissendo).

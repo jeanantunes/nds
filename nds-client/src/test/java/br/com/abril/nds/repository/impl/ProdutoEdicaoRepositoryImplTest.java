@@ -61,6 +61,8 @@ public class ProdutoEdicaoRepositoryImplTest extends AbstractRepositoryImplTest 
 	
 	private ProdutoEdicao produtoEdicaoComDesconto;
 	
+	private Lancamento lancamento;
+	
 	
 	@Before
 	public void setUp() {
@@ -152,7 +154,7 @@ public class ProdutoEdicaoRepositoryImplTest extends AbstractRepositoryImplTest 
 		//////
 		
 		
-		Lancamento lancamento = 
+		lancamento = 
 				Fixture.lancamento(TipoLancamento.LANCAMENTO, produtoEdicaoVeja, 
 						new Date(), new Date(), new Date(), new Date(), BigInteger.TEN, StatusLancamento.CONFIRMADO, null, 1);
 		save(lancamento);
@@ -569,13 +571,6 @@ public class ProdutoEdicaoRepositoryImplTest extends AbstractRepositoryImplTest 
 		Set<ProdutoEdicao> produtoEdicao =  produtoEdicaoRepository.filtrarDescontoProdutoEdicaoPorCota(cota, fornecedores);
 		
 		Assert.assertNotNull(produtoEdicao);
-				
-	}
-
-	@SuppressWarnings("unused")
-	@Test
-	public void validarExpedicaoFisicaProdutoEdicao(){
-		boolean validar = produtoEdicaoRepository.validarExpedicaoFisicaProdutoEdicao(produtoEdicaoVeja);
 	}
 
 }

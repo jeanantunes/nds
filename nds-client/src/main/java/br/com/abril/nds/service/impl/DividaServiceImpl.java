@@ -211,7 +211,7 @@ public class DividaServiceImpl implements DividaService {
 					Distribuidor distribuidor = this.distribuidorService.obter();
 					
 					BigDecimal juros = this.cobrancaService.calcularJuros(
-						cobrancaAtualizada.getBanco(), cobrancaAtualizada.getCota(), distribuidor, 
+						cobrancaAtualizada.getBanco(), cobrancaAtualizada.getCota(), 
 						cobrancaAtualizada.getValor(), backupDataVencimento, dataPostergacao);
 						
 					movimentoFinanceiro =
@@ -261,7 +261,7 @@ public class DividaServiceImpl implements DividaService {
 			
 			BigDecimal juros = 
 				this.cobrancaService.calcularJuros(
-					cobranca.getBanco(), cobranca.getCota(), distribuidor, 
+					cobranca.getBanco(), cobranca.getCota(), 
 					cobranca.getValor(), cobranca.getDataVencimento(), dataPostergacao);
 			
 			BigDecimal multa = 

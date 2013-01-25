@@ -13,7 +13,6 @@ import br.com.abril.nds.dto.filtro.FiltroVendaProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroVendaProdutoDTO.ColunaOrdenacao;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
-import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.repository.VendaProdutoRepository;
 
 @Repository
@@ -105,8 +104,6 @@ public class VendaProdutoRepositoryImpl extends AbstractRepositoryModel<Moviment
 			hql.append( (usarAnd ? " and ":" where ") + " fornecedor.id = :idFornecedor ");
 			usarAnd = true;
 		}
-
-		hql.append("  AND lancamento.status <> :situacaoLancamento ");
 		
 		hql.append("  AND movEstCota.movimentoEstoqueCotaFuro is null ");
 		
@@ -158,8 +155,6 @@ public class VendaProdutoRepositoryImpl extends AbstractRepositoryModel<Moviment
 		if(filtro.getIdFornecedor() != null && filtro.getIdFornecedor() != -1){ 
 			param.put("idFornecedor", filtro.getIdFornecedor());
 		}
-	
-		param.put("situacaoLancamento", StatusLancamento.EXCLUIDO);
 		
 		param.put("grupoMovimentoEstoque", GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
 		
@@ -224,8 +219,6 @@ public class VendaProdutoRepositoryImpl extends AbstractRepositoryModel<Moviment
 			usarAnd = true;
 		}
 		
-		hql.append("  AND lancamento.status <> :situacaoLancamento ");	
-		
         hql.append("  AND movEstCota.movimentoEstoqueCotaFuro is null ");
 		
 		hql.append("  AND tipoMovimento.grupoMovimentoEstoque = :grupoMovimentoEstoque ");
@@ -243,8 +236,6 @@ public class VendaProdutoRepositoryImpl extends AbstractRepositoryModel<Moviment
 		if(filtro.getEdicao() != null){ 
 			param.put("edicao", filtro.getEdicao());
 		}		
-		
-		param.put("situacaoLancamento", StatusLancamento.EXCLUIDO);
 		
 		param.put("grupoMovimentoEstoque", GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
 	

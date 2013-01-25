@@ -211,12 +211,14 @@ public class RotaRoteirizacaoDTO implements Serializable, Ordenavel {
      */
 	public void addPdvsAposMaiorOrdem(Collection<PdvRoteirizacaoDTO> pdvs) {
         for (PdvRoteirizacaoDTO pdv : pdvs) {
-            PdvRoteirizacaoDTO existente = getPdv(pdv.getId());
-            if (existente == null) {
-                int ordemFinal = getMaiorOrdem();
-                pdv.setOrdem(++ordemFinal);
-                addPdv(pdv);
-            }
+        	if (pdv != null){
+	            PdvRoteirizacaoDTO existente = getPdv(pdv.getId());
+	            if (existente == null) {
+	                int ordemFinal = getMaiorOrdem();
+	                pdv.setOrdem(++ordemFinal);
+	                addPdv(pdv);
+	            }
+        	}
         }
     }
 

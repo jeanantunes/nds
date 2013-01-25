@@ -555,7 +555,7 @@ public class MapaAbastecimentoController extends BaseController {
 
 	@Post
 	public void buscarRotaPorRoteiro(Long idRoteiro) {
-		List<Rota> rotas = roteirizacaoService.buscarRotaPorRoteiro(idRoteiro);		
+		List<Rota> rotas = roteirizacaoService.buscarRotasPorRoteiro(idRoteiro);		
 		result.use(CustomMapJson.class).put("rotas", carregarRota(rotas)).serialize();
 	}
 

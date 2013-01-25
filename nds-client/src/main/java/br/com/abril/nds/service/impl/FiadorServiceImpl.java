@@ -168,6 +168,30 @@ public class FiadorServiceImpl implements FiadorService {
 			}
 		}
 		
+		try{
+			
+			processarFiador(fiador, sociosAdicionar, sociosRemover);
+			
+		}catch(org.springframework.dao.DataIntegrityViolationException e ){
+			
+			if (fiador.getPessoa() instanceof PessoaFisica){
+				throw new ValidacaoException(TipoMensagem.WARNING,"CPF já está sendo utilizado por outro fiador.");
+			}
+			
+			throw new ValidacaoException(TipoMensagem.WARNING,"CNPJ já está sendo utilizado por outro fiador.");
+		}
+	
+		this.processarEnderecos(fiador, listaEnderecosAdicionar, listaEnderecosRemover);
+		
+		this.processarTelefones(fiador, listaTelefoneAdicionar, listaTelefoneRemover);
+		
+		this.processarGarantias(fiador, listaGarantiaAdicionar, listaGarantiaRemover);
+		
+		this.processarCotasAssociadas(fiador, listaCotas, listaCotasDesassociar);
+	}
+
+	private void processarFiador(Fiador fiador, List<Pessoa> sociosAdicionar,
+			Set<Long> sociosRemover) {
 		if (fiador.getPessoa() instanceof PessoaFisica){
 			PessoaFisica conjuge = ((PessoaFisica)fiador.getPessoa()).getConjuge();
 			
@@ -224,14 +248,6 @@ public class FiadorServiceImpl implements FiadorService {
 			fiador.setInicioAtividade(this.fiadorRepository.buscarDataInicioAtividadeFiadorPorId(fiador.getId()));
 			this.fiadorRepository.merge(fiador);
 		}
-		
-		this.processarEnderecos(fiador, listaEnderecosAdicionar, listaEnderecosRemover);
-		
-		this.processarTelefones(fiador, listaTelefoneAdicionar, listaTelefoneRemover);
-		
-		this.processarGarantias(fiador, listaGarantiaAdicionar, listaGarantiaRemover);
-		
-		this.processarCotasAssociadas(fiador, listaCotas, listaCotasDesassociar);
 	}
 
 	private void validarDadosEntradaTelefone(Fiador fiador,
@@ -414,6 +430,17 @@ public class FiadorServiceImpl implements FiadorService {
 			if (sociosAdicionar != null && !sociosAdicionar.isEmpty()){
 				
 				for (Pessoa socio : sociosAdicionar){
+					
+					if(((PessoaFisica)socio).isSocioPrincipal()){
+						for(Pessoa item : sociosBanco){
+							if(((PessoaFisica)item).isSocioPrincipal()){
+								if(!item.getId().equals(socio.getId())){
+									((PessoaFisica)item).setSocioPrincipal(false);
+								}
+							}
+						}
+					}
+					
 					if (!sociosBanco.contains(socio)){
 						sociosBanco.add(socio);
 					}
@@ -433,7 +460,7 @@ public class FiadorServiceImpl implements FiadorService {
 				}
 			}
 			
-			fiador.setSocios(sociosAdicionar);
+			fiador.setSocios(sociosBanco);
 		} else {
 			
 			fiador.setSocios(sociosAdicionar);

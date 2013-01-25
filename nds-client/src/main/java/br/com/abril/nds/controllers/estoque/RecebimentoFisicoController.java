@@ -7,8 +7,10 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -37,6 +39,7 @@ import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Permissao;
+import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.service.CFOPService;
 import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.service.FornecedorService;
@@ -154,15 +157,13 @@ public class RecebimentoFisicoController extends BaseController {
 		
 		PessoaJuridica pessoaJuridica = pessoaJuridicaService.buscarPorCnpj(cnpj);
 		
-		if(pessoaJuridica != null){
-			
-			result.use(Results.json()).from(pessoaJuridica, "result").serialize();
-			
-		}else{
-			
-			throw new ValidacaoException(TipoMensagem.ERROR,"CNPJ não encontrado!");
-			
+		if(pessoaJuridica == null){
+
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "CNPJ não foi encontrado!"));
 		}
+		
+		result.use(Results.json()).from(pessoaJuridica, "result").serialize();
+		
 	}
 	
 	/**
@@ -285,7 +286,27 @@ public class RecebimentoFisicoController extends BaseController {
 		tableModel.setPage(1);
 
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
-				
+		
+	}
+	
+	@Post
+	public void obterInformacoesNota() {
+		
+		NotaFiscalEntrada notaFiscal = getNotaFiscalFromSession();
+		
+		String cnpjFornecedor = null;
+		
+		if( notaFiscal.getEmitente() != null) {
+			 cnpjFornecedor = notaFiscal.getEmitente().getCnpj();
+		}
+		
+		Map<String, String> infoNota = new HashMap<String, String>();
+		infoNota.put("numero", notaFiscal.getNumero().toString());
+		infoNota.put("serie", notaFiscal.getSerie());
+		infoNota.put("chaveAcesso", notaFiscal.getChaveAcesso());
+		infoNota.put("cnpj", cnpjFornecedor);
+		
+		result.use(CustomJson.class).put("nota", infoNota).serialize();
 	}
 	
 	private boolean verificarRecebimentoFisicoConfirmado(Long idNotaFiscal) {
@@ -353,6 +374,7 @@ public class RecebimentoFisicoController extends BaseController {
 		
 		return false;
 	}
+	
 	
 	/**
 	 * Valida os dados da nova Nota Fiscal.
@@ -809,7 +831,9 @@ public class RecebimentoFisicoController extends BaseController {
 		
 		FiltroConsultaNotaFiscalDTO filtro = new FiltroConsultaNotaFiscalDTO();
 		
-		filtro.setCnpj(cnpj);
+		String cnpjSemMascara = Util.removerMascaraCnpj(cnpj);
+		
+		filtro.setCnpj(cnpjSemMascara);
 		filtro.setNumeroNota(numeroNotaFiscal);
 		filtro.setSerie(serie);
 		filtro.setChave(chaveAcesso);
@@ -848,7 +872,8 @@ public class RecebimentoFisicoController extends BaseController {
 			
 			List<String> msgs = new ArrayList<String>();
 			
-			msgs.add("Nota fiscal encontrada com sucesso");
+			if(StatusNotaFiscalEntrada.RECEBIDA.equals(notaFiscal.getStatusNotaFiscal()))
+				msgs.add("Nota fiscal encontrada com sucesso");
 			
 			ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.SUCCESS, msgs);	
 			
@@ -1408,6 +1433,30 @@ public class RecebimentoFisicoController extends BaseController {
 		}
 	}
 	
+	@Post
+	@Path("/validarValorTotalNotaFiscal")
+	public void validarValorTotalNotaFiscal(CabecalhoNotaDTO nota, List<RecebimentoFisicoDTO> itens) {
+		
+		BigDecimal valorInformadoNotaFiscal = new BigDecimal(getValorSemMascara(nota.getValorTotal()));
+		
+		BigDecimal totalItem = BigDecimal.ZERO;
+		
+		for ( RecebimentoFisicoDTO recebimento : itens ){
+		    totalItem = totalItem.add(recebimento.getValorTotal());
+	    }
+		
+		if (valorInformadoNotaFiscal.compareTo(totalItem)!=0){
+			
+			result.use(CustomJson.class).from(
+					new ValidacaoException(TipoMensagem.WARNING, "Valor total da [Nota] não confere com o valor total dos [Itens], Deseja prosseguir?")
+			).serialize();
+			
+		} else {
+			result.use(Results.json()).from("").serialize();
+		}
+		
+	}
+	
 	/**
 	 * Inclui nota e itens
 	 * @param nota
@@ -1427,33 +1476,39 @@ public class RecebimentoFisicoController extends BaseController {
 		notaFiscal.setSerie(nota.getSerie());
 		notaFiscal.setDataEmissao(nota.getDataEmissao());
 		notaFiscal.setDataExpedicao(nota.getDataEntrada());
-		notaFiscal.setValorLiquido(new BigDecimal(getValorSemMascara( nota.getValorTotal() )));
+		notaFiscal.setValorInformado(CurrencyUtil.converterValor(nota.getValorTotal()));
 		notaFiscal.setChaveAcesso(nota.getChaveAcesso());
+		
 		
 		notaFiscal.setFornecedor(fornecedor);
 		notaFiscal.setTipoNotaFiscal(tipoNotaService.obterPorId(3l));//RECEBIMENTO DE ENCALHE
-		notaFiscal.setValorBruto(CurrencyUtil.converterValor(nota.getValorTotal()));
-        notaFiscal.setValorDesconto(notaFiscal.getValorBruto().subtract(notaFiscal.getValorLiquido()));
+        notaFiscal.setValorDesconto(BigDecimal.ZERO);
 		notaFiscal.setStatusNotaFiscal(StatusNotaFiscalEntrada.RECEBIDA);
 		notaFiscal.setOrigem(Origem.MANUAL);
 		notaFiscal.setEmitente(fornecedor.getJuridica());
 		
-		//OBTEM CAMPOS OBRIGATORIOS PARA OS ITENS DA NOTA E TOTAL PARA VERIFICACAO COM O VALOR DA NOTA
 		BigDecimal totalItem = BigDecimal.ZERO;
+		
 		ProdutoEdicao pe = null;
-		for (int i = 0; i<itens.size(); i++){
-		    pe = produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(itens.get(i).getCodigoProduto(), Long.toString(itens.get(i).getEdicao()));
-		    itens.get(i).setIdProdutoEdicao(pe.getId());
-		    itens.get(i).setOrigemItemNota(Origem.MANUAL);
-		    itens.get(i).setTipoLancamento(TipoLancamento.LANCAMENTO); 
+		
+		for (RecebimentoFisicoDTO item : itens){
+		    
+			pe = produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(item.getCodigoProduto(), Long.toString(item.getEdicao()));
+		    
+			item.setIdProdutoEdicao(pe.getId());
+		    
+			item.setOrigemItemNota(Origem.MANUAL);
+		    
+			item.setTipoLancamento(TipoLancamento.LANCAMENTO); 
             
-		    totalItem = totalItem.add(itens.get(i).getValorTotal());
+		    totalItem = totalItem.add(item.getValorTotal());
+		    
 	    }
 		
-		if (notaFiscal.getValorLiquido().compareTo(totalItem)!=0){
-			throw new ValidacaoException(TipoMensagem.WARNING, "Valor total da [Nota] não confere com o valor total dos [Itens]!");
-		}
-
+		notaFiscal.setValorLiquido(totalItem);
+		
+		notaFiscal.setValorBruto(totalItem);
+		
 		try{
 			
 			recebimentoFisicoService.validarExisteNotaFiscal(notaFiscal);

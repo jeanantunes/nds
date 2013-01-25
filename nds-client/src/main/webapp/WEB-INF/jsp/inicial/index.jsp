@@ -31,6 +31,7 @@ $(function() {
 		    <h1>Bom Dia Treelog, seja bem-vindo ao NOVO DISTRIB</h1>
 		    
 			<div class="linha_separa_fields">&nbsp;</div>
+			<br clear="all">
 		    <img src="${pageContext.request.contextPath}/images/img_home.jpg" align="center" />
 			<div class="linha_separa_fields">&nbsp;</div>
 		</div>

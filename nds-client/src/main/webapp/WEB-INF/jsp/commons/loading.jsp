@@ -6,7 +6,7 @@
 		</div>
 		
 		<div style="white-space: nowrap; margin-top: 10px">
-			<b>
+			<b id="mensagemLoading">
 				Aguarde, carregando ...
 			</b>
 		</div>

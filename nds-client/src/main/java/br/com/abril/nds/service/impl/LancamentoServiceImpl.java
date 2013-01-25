@@ -15,11 +15,10 @@ import br.com.abril.nds.dto.InformeEncalheDTO;
 import br.com.abril.nds.dto.LancamentoNaoExpedidoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.TipoEdicao;
-import br.com.abril.nds.model.cadastro.desconto.DescontoProduto;
+import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.Expedicao;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
-import br.com.abril.nds.model.financeiro.DescontoProximosLancamentos;
 import br.com.abril.nds.model.planejamento.HistoricoLancamento;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
@@ -142,11 +141,9 @@ public class LancamentoServiceImpl implements LancamentoService {
 	@Transactional
 	public void confirmarExpedicao(Long idLancamento, Long idUsuario) {
 		
-		Usuario usuario = usuarioRepository.buscarPorId(idUsuario);
-		
 		Expedicao expedicao = new Expedicao();
 		expedicao.setDataExpedicao(new Date());
-		expedicao.setResponsavel(usuario);
+		expedicao.setResponsavel(new Usuario(idUsuario));
 		expedicaoRepository.adicionar(expedicao);
 		
 		Lancamento lancamento = lancamentoRepository.buscarPorId(idLancamento);
@@ -154,20 +151,19 @@ public class LancamentoServiceImpl implements LancamentoService {
 		lancamento.setStatus(StatusLancamento.EXPEDIDO);
 		lancamento.setExpedicao(expedicao);
 		
-		List<MovimentoEstoqueCota> movimentos = lancamento.getMovimentoEstoqueCotas();
+		lancamentoRepository.alterar(lancamento);
+		
+		List<MovimentoEstoqueCota> movimentos = movimentoEstoqueCotaRepository.obterPorLancamento(idLancamento);
 		for (MovimentoEstoqueCota movimento : movimentos) {
 			movimento.setEstudoCota(null);
 			movimentoEstoqueCotaRepository.alterar(movimento);
 		}
 		
-		lancamentoRepository.alterar(lancamento);
-		
-		
 		HistoricoLancamento historico = new HistoricoLancamento();
 		historico.setDataEdicao(new Date());
 		historico.setLancamento(lancamento);
 		
-		historico.setResponsavel(usuario);
+		historico.setResponsavel(new Usuario(idUsuario));
 		historico.setStatus(lancamento.getStatus());
 		historico.setTipoEdicao(TipoEdicao.ALTERACAO);
 		historicoLancamentoRepository.adicionar(historico);
@@ -176,6 +172,7 @@ public class LancamentoServiceImpl implements LancamentoService {
 				lancamento.getDataLancamentoPrevista(), 
 				lancamento.getProdutoEdicao().getId(),
 				idUsuario);*/
+		
 		movimentoEstoqueService.gerarMovimentoEstoqueDeExpedicao(
 				lancamento,
 				idUsuario);
@@ -203,6 +200,7 @@ public class LancamentoServiceImpl implements LancamentoService {
 			desconto.setQuantidadeProximosLancamaentos(--quantidade);
 			this.descontoProximosLancamentosRepository.alterar(desconto);
 		}*/
+		
 	}
 
 	@Override
@@ -279,5 +277,11 @@ public class LancamentoServiceImpl implements LancamentoService {
 	public Date buscarDiaUltimoBalanceamentoRecolhimentoRealizado() {
 		return lancamentoRepository.buscarDiaUltimoBalanceamentoRecolhimentoRealizado();
 	}
-	
+
+	@Override
+	@Transactional(readOnly=true)
+	public List<Lancamento> obterLancamentosEdicao(Long idProdutoEdicao, String sortorder, String sortname) {
+		return lancamentoRepository.obterLancamentosEdicao(idProdutoEdicao, sortorder, sortname);
+	}
+
 }
