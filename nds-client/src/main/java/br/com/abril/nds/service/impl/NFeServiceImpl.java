@@ -928,6 +928,7 @@ public class NFeServiceImpl implements NFeService {
 		nfeImpressao.setDestinatarioNomeBox(nomeBox);
 		nfeImpressao.setDestinatarioCodigoRota(codigoRota);
 		nfeImpressao.setDestinatarioDescricaoRota(descricaoRota);
+		nfeImpressao.setNumeroCota(notaEnvio.getDestinatario().getNumeroCota());
 		
 	}
 	

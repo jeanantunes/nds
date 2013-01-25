@@ -789,8 +789,12 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 				? BigDecimal.ZERO 
 				: BigDecimal.valueOf(produto.getDescontoLogistica().getPercentualDesconto()).setScale(2, RoundingMode.HALF_EVEN));
 		
-		dto.setDescricaoDesconto(produto.getDescontoLogistica().getDescricao());
-
+		if(produto.getDescontoLogistica()!= null){
+			dto.setDescricaoDesconto(produto.getDescontoLogistica().getDescricao());
+		}else{
+			dto.setDescricaoDesconto(produto.getDescricaoDesconto());
+		}
+		
 		if (idProdutoEdicao != null && Util.isLong(idProdutoEdicao)) {
 
 			Long id = Long.valueOf(idProdutoEdicao);
