@@ -22,4 +22,8 @@ public interface PessoaService {
 	PessoaJuridica buscarPessoaPorCNPJ(String cnpj);
 	
 	List<Pessoa> obterPessoasPorNome(String nomePessoa);
+	
+	void validarCPF(String cpf);
+	
+	void validarCNPJ(String cnpj);
 }

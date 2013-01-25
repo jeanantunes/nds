@@ -25,7 +25,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.client.assembler.HistoricoTitularidadeCotaDTOAssembler;
-import br.com.abril.nds.client.util.PessoaUtil;
 import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.CotaDTO.TipoPessoa;
 import br.com.abril.nds.dto.CotaSuspensaoDTO;
@@ -117,6 +116,7 @@ import br.com.abril.nds.service.EnderecoService;
 import br.com.abril.nds.service.FileService;
 import br.com.abril.nds.service.HistoricoTitularidadeService;
 import br.com.abril.nds.service.ParametrosDistribuidorService;
+import br.com.abril.nds.service.PessoaService;
 import br.com.abril.nds.service.SituacaoCotaService;
 import br.com.abril.nds.service.TelefoneService;
 import br.com.abril.nds.util.CurrencyUtil;
@@ -127,9 +127,6 @@ import br.com.abril.nds.util.MathUtil;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.ValidacaoVO;
-import br.com.caelum.stella.validation.CNPJValidator;
-import br.com.caelum.stella.validation.CPFValidator;
-import br.com.caelum.stella.validation.InvalidStateException;
 
 /**
  * Classe de implementação de serviços referentes a entidade
@@ -233,6 +230,9 @@ public class CotaServiceImpl implements CotaService {
 	
 	@Autowired
 	private SocioCotaRepository socioCotaRepository;
+	
+	@Autowired
+	private PessoaService pessoaService;
 	
 	@Transactional(readOnly = true)
 	@Override
@@ -1296,6 +1296,8 @@ public class CotaServiceImpl implements CotaService {
 		}
 	}
 	
+	
+	
 	/**
 	 * Valida o formato das inforamções referente ao cadastro de uma cota
 	 * @param cotaDto
@@ -1304,12 +1306,12 @@ public class CotaServiceImpl implements CotaService {
 		
 		if(TipoPessoa.JURIDICA.equals(cotaDto.getTipoPessoa())){
 			
-			PessoaUtil.validarCNPJ(cotaDto.getNumeroCnpj());
+			this.pessoaService.validarCNPJ(cotaDto.getNumeroCnpj());
 		}
 		
 		if(TipoPessoa.FISICA.equals(cotaDto.getTipoPessoa())){
 			
-			PessoaUtil.validarCPF(cotaDto.getNumeroCPF());
+			this.pessoaService.validarCPF(cotaDto.getNumeroCPF());
 		}
 		
 		if( cotaDto.getEmail()!= null && !cotaDto.getEmail().isEmpty() && !Util.validarEmail(cotaDto.getEmail())){
