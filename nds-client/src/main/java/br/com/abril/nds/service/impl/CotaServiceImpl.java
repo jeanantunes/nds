@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -1273,9 +1274,9 @@ public class CotaServiceImpl implements CotaService {
 		
 		if(cotaDto.getInicioPeriodo() != null && cotaDto.getFimPeriodo() != null ){
 			
-			if(DateUtil.removerTimestamp(cotaDto.getInicioPeriodo()).compareTo(DateUtil.removerTimestamp(cotaDto.getDataInclusao()))!=0){
+			if(DateUtil.removerTimestamp(cotaDto.getInicioPeriodo()).compareTo(DateUtil.removerTimestamp(Calendar.getInstance().getTime()))!=0){
 
-				throw new ValidacaoException(TipoMensagem.WARNING,"Campo [Período] referente à cota base deve ser igual ao campo [Início de Atividade]!");
+				throw new ValidacaoException(TipoMensagem.WARNING,"Campo [Período] referente à cota base deve ser igual a data da alteração!");
 			}
 		}
 		

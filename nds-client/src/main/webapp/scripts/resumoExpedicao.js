@@ -444,3 +444,5 @@ var resumoExpedicaoController = $.extend(true, {
 	}
 	
 }, BaseController);
+
+//@ sourceURL=resumoExpedicao.js
