@@ -1,5 +1,7 @@
 package br.com.abril.nds.controllers.cadastro;
 
+import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,10 +11,14 @@ import br.com.abril.nds.dto.CotaBaseDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaBaseDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.CotaBase;
+import br.com.abril.nds.model.cadastro.CotaBaseCota;
 import br.com.abril.nds.model.seguranca.Permissao;
+import br.com.abril.nds.service.CotaBaseCotaService;
 import br.com.abril.nds.service.CotaBaseService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.util.CellModelKeyValue;
+import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.caelum.vraptor.Path;
@@ -34,6 +40,9 @@ public class CotaBaseController {
 	@Autowired
 	private Result result;
 	
+	@Autowired
+	private CotaBaseCotaService cotaBaseCotaService; 
+	
 	@Path("/")
 	@Rules(Permissao.ROLE_CADASTRO_COTA_BASE)
 	public void index(){
@@ -45,7 +54,11 @@ public class CotaBaseController {
 	public void pesquisarCotaNova(Integer numeroCota){
 		tratarFiltroPesquisaCota(numeroCota);
 		
-		FiltroCotaBaseDTO filtro = this.cotaBaseService.obterDadosFiltro(numeroCota, false);		
+		Long existeCotaBaseCota = cotaBaseCotaService.verificarExistenciaCotaBaseCota(this.cotaService.obterPorNumeroDaCota(numeroCota));
+		FiltroCotaBaseDTO filtro = null;
+		if(existeCotaBaseCota != null){
+			filtro = this.cotaBaseService.obterDadosFiltro(numeroCota, false);			
+		}
 		
 		this.result.use(Results.json()).from(filtro, "result").recursive().serialize();		
 	}
@@ -103,12 +116,54 @@ public class CotaBaseController {
 	}
 	@Post
 	@Path("/excluirCotaBase")
-	public void excluirCotaBase(Integer numeroCotaNova, Long idCotaBase){
+	public void excluirCotaBase(Integer numeroCotaNova, Long idCotaBase){		
+		System.out.println(numeroCotaNova + idCotaBase);		
+	}
+	
+	@Post
+	@Path("/confirmarCotasBase")
+	public void confirmarCotasBase(Integer[] numerosDeCotasBase, Integer idCotaNova, BigDecimal indiceAjuste){
+		List<CotaBaseDTO> listaCotaBase = this.cotaBaseService.obterCotasBases(this.cotaService.obterPorNumeroDaCota(idCotaNova));
 		
-		System.out.println(numeroCotaNova + idCotaBase);
+		validarCotasDigitadas(numerosDeCotasBase, listaCotaBase, idCotaNova);
 		
+		salvar(numerosDeCotasBase, idCotaNova, indiceAjuste);
 		
+	}
+
+	private void salvar(Integer[] numerosDeCotasBase, Integer idCotaNova, BigDecimal indiceAjuste) {
+		CotaBase cotaBase = new CotaBase();
+		cotaBase.setDataInicio(new Date());
+		cotaBase.setDataFim(DateUtil.adicionarDias(new Date(), 180));
+		cotaBase.setIndiceAjuste(indiceAjuste);
+		this.cotaBaseService.salvar(cotaBase);
+		for(Integer cotabBase: numerosDeCotasBase){
+			CotaBaseCota cotaBaseCota = new CotaBaseCota();
+			Cota cotaBaseParaSalvar = this.cotaService.obterPorNumeroDaCota(cotabBase);
+			cotaBaseCota.setCota(cotaBaseParaSalvar);
+			cotaBaseCota.setCotaBase(cotaBase);
+			cotaBaseCota.setAtivo(true);
+			this.cotaBaseCotaService.salvar(cotaBaseCota);
+		}
 		
+	}
+
+	private void validarCotasDigitadas(Integer[] numerosDeCotasBase, List<CotaBaseDTO> listaCotaBase, Integer idCotaNova) {
+		if(listaCotaBase.size() != 0){
+			for(CotaBaseDTO dto : listaCotaBase){
+				for(Integer cotaDigitada: numerosDeCotasBase){
+					if(dto.getNumeroCota().equals(cotaDigitada)){
+						throw new ValidacaoException(TipoMensagem.WARNING, "Cota já cadastrada.");
+					}
+				}
+			}			
+		}else{
+			for(Integer cotaDigitada: numerosDeCotasBase){
+				if(cotaDigitada.equals(idCotaNova)){
+					throw new ValidacaoException(TipoMensagem.WARNING, "Cota já cadastrada.");
+				}
+			}
+		}
 	}
 	
 }
