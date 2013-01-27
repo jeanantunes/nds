@@ -181,6 +181,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 			itemNotaEnvio.setDesconto(percentualDesconto);
 			itemNotaEnvio.setReparte(quantidade);
 			itemNotaEnvio.setPrecoCapa(precoVenda);
+			itemNotaEnvio.setEstudoCota(estudoCota);
 
 			listItemNotaEnvio.add(itemNotaEnvio);
 		}
