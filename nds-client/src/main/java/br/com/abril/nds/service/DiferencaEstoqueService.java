@@ -73,7 +73,7 @@ public interface DiferencaEstoqueService {
 	
 	Diferenca obterDiferenca(Long id);
 	
-	Diferenca lancarDiferencaAutomatica(Diferenca diferenca);
+	Diferenca lancarDiferencaAutomatica(Diferenca diferenca, TipoEstoque tipoEstoque);
 
 	/**
 	 * Método que retorna os detalhes de diferença por cota.

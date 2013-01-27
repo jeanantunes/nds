@@ -20,13 +20,13 @@ public class RegistroCurvaABCEditorVO extends RegistroCurvaABCDTO implements
 	 */
 	private static final long serialVersionUID = 3849170873913801404L;
 	
-	@Export(label="Ranking", exhibitionOrder = 1)
+	@Export(label="Ranking", exhibitionOrder = 1, widthPercent = 6)
 	private Long rkEditor;
 	
-	@Export(label = "Número", exhibitionOrder = 2)
+	@Export(label = "Número", exhibitionOrder = 2, widthPercent = 6)
 	private Long codigoEditor;
 
-	@Export(label = "Cota", exhibitionOrder = 3)
+	@Export(label = "Cota", exhibitionOrder = 3, widthPercent = 20)
 	private String nomeEditor;
 
 	@Export(label = "Reparte", exhibitionOrder = 4)

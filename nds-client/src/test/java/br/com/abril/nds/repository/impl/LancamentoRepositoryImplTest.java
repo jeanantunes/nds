@@ -731,7 +731,7 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 
 		GrupoProduto grupoCromo = GrupoProduto.CROMO;
 
-		Map<Date, BigInteger> expectativaEncalhe = lancamentoRepository
+		Map<Date, BigDecimal> expectativaEncalhe = lancamentoRepository
 				.obterExpectativasEncalhePorData(periodoRecolhimento,
 						fornecedores, grupoCromo);
 

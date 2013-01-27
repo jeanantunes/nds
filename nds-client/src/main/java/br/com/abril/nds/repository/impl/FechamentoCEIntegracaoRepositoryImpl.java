@@ -3,12 +3,13 @@ package br.com.abril.nds.repository.impl;
 import java.util.Date;
 import java.util.List;
 
-import org.aspectj.apache.bcel.generic.NEW;
 import org.hibernate.Query;
 import org.hibernate.transform.Transformers;
 import org.hibernate.type.StandardBasicTypes;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.dto.FechamentoCEIntegracaoConsolidadoDTO;
 import br.com.abril.nds.dto.FechamentoCEIntegracaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroFechamentoCEIntegracaoDTO;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
@@ -17,7 +18,9 @@ import br.com.abril.nds.model.estoque.FechamentoEncalhe;
 import br.com.abril.nds.model.estoque.TipoVendaEncalhe;
 import br.com.abril.nds.model.estoque.pk.FechamentoEncalhePK;
 import br.com.abril.nds.model.movimentacao.StatusOperacao;
+import br.com.abril.nds.model.planejamento.fornecedor.ChamadaEncalheFornecedor;
 import br.com.abril.nds.model.planejamento.fornecedor.StatusCeNDS;
+import br.com.abril.nds.repository.ChamadaEncalheFornecedorRepository;
 import br.com.abril.nds.repository.FechamentoCEIntegracaoRepository;
 import br.com.abril.nds.vo.PaginacaoVO;
 
@@ -25,10 +28,13 @@ import br.com.abril.nds.vo.PaginacaoVO;
 public class FechamentoCEIntegracaoRepositoryImpl extends AbstractRepositoryModel<FechamentoEncalhe, FechamentoEncalhePK> implements
 		FechamentoCEIntegracaoRepository {
 	
+	@Autowired
+	private ChamadaEncalheFornecedorRepository chamadaEncalheFornecedorRepository;
+	
 	public FechamentoCEIntegracaoRepositoryImpl() {
 		super(FechamentoEncalhe.class);
 	}
-
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<FechamentoCEIntegracaoDTO> buscarConferenciaEncalhe(FiltroFechamentoCEIntegracaoDTO filtro) {
@@ -51,6 +57,13 @@ public class FechamentoCEIntegracaoRepositoryImpl extends AbstractRepositoryMode
 		return query.list();
 	}
 
+	@Override
+	public FechamentoCEIntegracaoConsolidadoDTO buscarConferenciaEncalheTotal(FiltroFechamentoCEIntegracaoDTO filtro) {
+		String sql = this.getConsultaListaContagemDevolucao(filtro, true);
+		Query query = this.criarQueryComParametrosObterListaContagemDevolucao(sql, filtro, true);
+		return (FechamentoCEIntegracaoConsolidadoDTO) query.uniqueResult();
+	}
+	
 	/**
 	 * Obtém hql para pesquisa de ContagemDevolucao.
 	 * 
@@ -67,11 +80,14 @@ public class FechamentoCEIntegracaoRepositoryImpl extends AbstractRepositoryMode
 		sql.append(" SELECT "); 
 
 		if(indBuscaQtd) {
-			
-			sql.append("	COUNT(*)	");
+
+			sql.append("SUM(PROD_EDICAO.PRECO_VENDA*VENDA_PRODUTO.QNT_PRODUTO) AS totalBruto,");
+			sql.append("SUM((PROD_EDICAO.PRECO_VENDA*VENDA_PRODUTO.QNT_PRODUTO)-VENDA_PRODUTO.VALOR_TOTAL_VENDA) AS totalDesconto,");
+			sql.append("SUM(VENDA_PRODUTO.VALOR_TOTAL_VENDA) AS totalLiquido");
 			
 		} else {
 
+			sql.append(" PROD_EDICAO.ID AS idProdutoEdicao, ");
 			sql.append(" ITEM_CH_ENC_FORNECEDOR.NUEMRO_ITEM AS sequencial, ");
 			sql.append(" PROD.CODIGO as codigoProduto,  				");		
 			sql.append(" PROD.NOME as nomeProduto, 						");
@@ -247,11 +263,16 @@ public class FechamentoCEIntegracaoRepositoryImpl extends AbstractRepositoryMode
 		
 		if(indBuscaQtd) {
 		
-			query = getSession().createSQLQuery(hql.toString());
+			query = getSession().createSQLQuery(hql.toString())
+								.addScalar("totalBruto", StandardBasicTypes.BIG_DECIMAL)
+								.addScalar("totalDesconto", StandardBasicTypes.BIG_DECIMAL)
+								.addScalar("totalLiquido", StandardBasicTypes.BIG_DECIMAL)
+								.setResultTransformer(Transformers.aliasToBean(FechamentoCEIntegracaoConsolidadoDTO.class));
 		
 		} else {
 			
 			query = getSession().createSQLQuery(hql.toString())
+					.addScalar("idProdutoEdicao", StandardBasicTypes.LONG)
 					.addScalar("sequencial", StandardBasicTypes.LONG)
 					.addScalar("codigoProduto", StandardBasicTypes.STRING)
 					.addScalar("nomeProduto", StandardBasicTypes.STRING)
@@ -274,7 +295,9 @@ public class FechamentoCEIntegracaoRepositoryImpl extends AbstractRepositoryMode
 		
 		query.setParameter("tipoVendaEncalhe", TipoVendaEncalhe.ENCALHE.name());
 		
-		query.setParameter("statusAprovacao", StatusAprovacao.PENDENTE.name());
+		if (!indBuscaQtd) {
+			query.setParameter("statusAprovacao", StatusAprovacao.PENDENTE.name());
+		}
 		
 		if(filtro.getIdFornecedor() != -1L) {
 			query.setParameter("idFornecedor", filtro.getIdFornecedor());
@@ -285,7 +308,7 @@ public class FechamentoCEIntegracaoRepositoryImpl extends AbstractRepositoryMode
 	}
 	
 	@Override
-	public void fecharCE(Long encalhe, ProdutoEdicao produtoEdicao) {
+	public void fecharCE(Long encalhe, ProdutoEdicao produtoEdicao, Long idFornecedor, Integer numeroSemana) {
 		 FechamentoEncalhe fe = new FechamentoEncalhe();
 		 fe.setQuantidade(encalhe);
 		 FechamentoEncalhePK pk = new FechamentoEncalhePK();
@@ -293,11 +316,15 @@ public class FechamentoCEIntegracaoRepositoryImpl extends AbstractRepositoryMode
 		 pk.setDataEncalhe(new Date());
 		 fe.setFechamentoEncalhePK(pk);
 		 
+		 for (ChamadaEncalheFornecedor chamadaEncalheFornecedor : chamadaEncalheFornecedorRepository.obterChamadasEncalheFornecedor(idFornecedor, numeroSemana, null)) {
+			 chamadaEncalheFornecedor.setStatusCeNDS(StatusCeNDS.FECHADO);
+			 this.getSession().save(chamadaEncalheFornecedor);
+		 }
+		 
 		 this.getSession().save(fe);
 		
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public boolean verificarStatusSemana(FiltroFechamentoCEIntegracaoDTO filtro) {
 		 

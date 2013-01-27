@@ -280,24 +280,22 @@ public class ChamadaEncalheAntecipadaController extends BaseController {
 		filtro.setCodTipoPontoPDV(tipoPontoPDV);
 		
 		BigInteger quantidade = BigInteger.ZERO;
+		Map<String, Object> mapa = new TreeMap<String, Object>();
 		
 		if(!programacaoRealizada){
 			
 			quantidade = chamadaAntecipadaEncalheService.obterQntExemplaresCotasSujeitasAntecipacoEncalhe(filtro);
-			
-			result.use(CustomJson.class).from(quantidade.intValue()).serialize();
 		}
 		else{
 			
 			ChamadaAntecipadaEncalheDTO chamada = chamadaAntecipadaEncalheService.obterChamadaEncalheAntecipada(filtro);
 			quantidade = chamada.getQntExemplares();	
 			
-			Map<String, Object> mapa = new TreeMap<String, Object>();
-			mapa.put("quantidade", quantidade.intValue());
 			mapa.put("idChamadaEncalhe", chamada.getCodigoChamadaEncalhe());
-			
-			result.use(CustomJson.class).from(mapa).serialize();
 		}
+		
+		mapa.put("quantidade", quantidade.intValue());
+		result.use(CustomJson.class).from(mapa).serialize();
 	}
 	
 	/**
@@ -1015,7 +1013,7 @@ public class ChamadaEncalheAntecipadaController extends BaseController {
 		
 		if(roteiro!= null){
 
-			rotas = roteirizacaoService.buscarRotaPorRoteiro(roteiro);
+			rotas = roteirizacaoService.buscarRotasPorRoteiro(roteiro);
 		}
 		else{
 			

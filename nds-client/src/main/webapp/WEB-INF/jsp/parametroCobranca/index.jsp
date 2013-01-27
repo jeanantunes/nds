@@ -2,6 +2,8 @@
 
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/parametroCobranca.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.price_format.1.7.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numberformatter-1.2.3.min.js"></script>
 
 <script language="javascript" type="text/javascript">
 
@@ -163,33 +165,26 @@
                         </tr>
     
                         <tr>
-                            <td>Fornecedores:</td>
-                          <td valign="top">
+                            <td style="vertical-align: text-top;">Fornecedores:</td>
+                          <td valign="top" rowspan="2">
                                 <table width="100%" border="0" cellspacing="1" cellpadding="0">
                                     <c:set var="qauntidadeFornecedores"
                                         value="${fn:length(listaFornecedores)}" />
-                                    <c:forEach step="2" items="${listaFornecedores}"
+                                    <c:forEach step="1" items="${listaFornecedores}"
                                         varStatus="status">
                                         <tr>
-                                            <td width="11%"><input type="checkbox"
+                                            <td><input type="checkbox"
                                                 name="checkGroupFornecedores"
                                                 id="fornecedor_<c:out value="${listaFornecedores[status.index].key}" />"
                                                 value='<c:out value="${listaFornecedores[status.index].key}" />' /></td>
-                                            <td width="41%"><c:out
+                                            <td><c:out
                                                     value="${listaFornecedores[status.index].value}" /></td>
-                                            <c:if test="${qauntidadeFornecedores gt (status.index+1)}">
-                                                <td width="11%"><input type="checkbox"
-                                                    name="checkGroupFornecedores"
-                                                    id="fornecedor_<c:out value="${listaFornecedores[status.index+1].key}" />"
-                                                    value='<c:out value="${listaFornecedores[status.index+1].key}" />' /></td>
-                                                <td width="41%"><c:out
-                                                        value="${listaFornecedores[status.index+1].value}" /></td>
-                                            </c:if>
+                                            
                                         </tr>
                                     </c:forEach>
                                 </table>
                             </td>
-                            <td>Concentra&ccedil;&atilde;o de Pagamentos:</td>
+                            <td style="vertical-align: text-top;">Concentra&ccedil;&atilde;o de Pagamentos:</td>
                             <td valign="top"><table width="100%" border="0" cellspacing="0"
                                     cellpadding="0">
                                     <tr>
@@ -215,7 +210,6 @@
                           </table></td>
                         </tr>
                         <tr>
-                            <td valign="top">&nbsp;</td>
                             <td valign="top">&nbsp;</td>
                             <td>&nbsp;</td>
                             <td valign="top">

@@ -188,9 +188,9 @@ function Balanceamento(pathTela, descInstancia) {
 	 * OBS: Específico para matrizLancamento\index.jsp
 	 * @param result
 	 */
-	this.popularConfirmacaoBalanceamento = function(result) {
+	this.popularConfirmacaoBalanceamento = function(result,workspace) {
 		
-		$("#tableConfirmaBalanceamento").clear();
+		$("#tableConfirmaBalanceamento",workspace).clear();
 		
 		var conteudo = '';
 		
@@ -217,7 +217,7 @@ function Balanceamento(pathTela, descInstancia) {
 			
 		});
 		
-		$("#tableConfirmaBalanceamento").append(conteudo);
+		$("#tableConfirmaBalanceamento",workspace).append(conteudo);
 	};
 	
 }

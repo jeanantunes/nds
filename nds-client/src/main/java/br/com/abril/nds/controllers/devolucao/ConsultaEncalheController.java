@@ -535,6 +535,7 @@ public class ConsultaEncalheController extends BaseController {
 			dataRecolhimento	= (consultaEncalheDTO.getDataDoRecolhimentoDistribuidor() != null) ? DateUtil.formatarDataPTBR(consultaEncalheDTO.getDataDoRecolhimentoDistribuidor()) : "" ;
 			dataMovimento		= (consultaEncalheDTO.getDataMovimento() != null) ? DateUtil.formatarDataPTBR(consultaEncalheDTO.getDataMovimento()) : "" ;
 			
+			
 			if(consultaEncalheDTO.getRecolhimento()<=0) {
 				recolhimento = DateUtil.formatarDataPTBR(consultaEncalheDTO.getDataDoRecolhimentoDistribuidor());
 			} else {
@@ -560,7 +561,7 @@ public class ConsultaEncalheController extends BaseController {
 			consultaEncalheVO.setRecolhimento(recolhimento);
 			consultaEncalheVO.setDataMovimento(dataMovimento);
 			consultaEncalheVO.setDataRecolhimento(dataRecolhimento);
-			
+			consultaEncalheVO.setIndPossuiObservacaoConferenciaEncalhe(consultaEncalheDTO.getIndPossuiObservacaoConferenciaEncalhe());
 			listaResultadosVO.add(consultaEncalheVO);
 		}
 		

@@ -1,5 +1,9 @@
 package br.com.abril.nds.controllers.administracao;
 
+import java.io.UnsupportedEncodingException;
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -23,7 +27,6 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.seguranca.GrupoPermissao;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
-import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.GrupoPermissaoService;
 import br.com.abril.nds.service.PermissaoService;
@@ -367,10 +370,11 @@ public class GruposAcessoController extends BaseController {
 		Usuario usuario = getUsuarioEntity(usuarioDTO);
 		
 		Set<Permissao> permissoes = new HashSet<Permissao>();
-		for (String p : usuarioDTO.getPermissoesSelecionadas().split(",")) {
-			if ( p != null && !p.isEmpty() ) {
-				//permissoes.add(Permissao.valueOf(p));
-				permissoes = adicionarPermissoes(permissoes, Permissao.valueOf(p));
+		if(usuarioDTO.getPermissoesSelecionadas() != null) {
+			for (String p : usuarioDTO.getPermissoesSelecionadas().split(",")) {
+				if ( p != null && !p.isEmpty() ) {
+					permissoes = adicionarPermissoes(permissoes, Permissao.valueOf(p));
+				}
 			}
 		}
 		usuario.setPermissoes(permissoes);
@@ -408,9 +412,33 @@ public class GruposAcessoController extends BaseController {
 	private Usuario getUsuarioEntity(UsuarioDTO usuarioDTO) {
 		
 		Usuario usuario = null;
+		String senhaEncriptada = null;
 		if (usuarioDTO.getId() == null || usuarioDTO.getId() == 0) {
+			
+			try {
+				
+				byte[] bytesSenha = usuarioDTO.getSenha().getBytes("UTF-8");
+
+				MessageDigest md = MessageDigest.getInstance("MD5");
+				
+				//Converte o valor da mensagem digest em base 16 (hex) 
+				senhaEncriptada = new BigInteger(1, md.digest(bytesSenha)).toString(16);
+				
+			} catch (NoSuchAlgorithmException e) {
+				ValidacaoVO validacaoVO = new ValidacaoVO(TipoMensagem.ERROR, "Houve problema com a senha informada. Tente novamente.");
+				throw new ValidacaoException(validacaoVO);
+			} catch (UnsupportedEncodingException e) {
+				ValidacaoVO validacaoVO = new ValidacaoVO(TipoMensagem.ERROR, "Houve problema com a senha informada. Tente novamente.");
+				throw new ValidacaoException(validacaoVO);
+			}
+			 
 			usuario = new Usuario();
-			usuario.setSenha(usuarioDTO.getSenha());
+			
+			if(senhaEncriptada == null) {
+				ValidacaoVO validacaoVO = new ValidacaoVO(TipoMensagem.ERROR, "Houve problema com a senha informada. Tente novamente.");
+				throw new ValidacaoException(validacaoVO);
+			}
+			usuario.setSenha(senhaEncriptada);
 			usuario.setLembreteSenha(usuarioDTO.getLembreteSenha());
 		} else {
 			usuario = usuarioService.buscar(usuarioDTO.getId());
@@ -426,7 +454,7 @@ public class GruposAcessoController extends BaseController {
 		usuario.setPais(usuarioDTO.getPais());
 		usuario.setSobrenome(usuarioDTO.getSobrenome());
 		usuario.setTelefone(usuarioDTO.getTelefone());
-		if (usuarioDTO.getContaAtiva().equals(UsuarioDTO.ATIVA)) {
+		if ("true".equals(usuarioDTO.getContaAtiva()) || usuarioDTO.getContaAtiva().equals(UsuarioDTO.ATIVA)) {
 			usuario.setContaAtiva(true);
 		} else {
 			usuario.setContaAtiva(false);
@@ -531,7 +559,7 @@ public class GruposAcessoController extends BaseController {
 		dto.setGrupos(grupos);
 		
 		
-		result.use(CustomJson.class).from(dto).serialize();
+		result.use(Results.json()).from(dto, "usuarioDTO").recursive().serialize();
 	}
 
 	

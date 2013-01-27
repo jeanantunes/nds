@@ -1,7 +1,6 @@
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -40,6 +39,7 @@ import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
+import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.vo.PaginacaoVO;
@@ -419,7 +419,7 @@ public class LancamentoRepositoryImpl extends
 	 */
 	@Override
 	@SuppressWarnings("unchecked")
-	public TreeMap<Date, BigInteger> obterExpectativasEncalhePorData(Intervalo<Date> periodoRecolhimento, 
+	public TreeMap<Date, BigDecimal> obterExpectativasEncalhePorData(Intervalo<Date> periodoRecolhimento, 
 																 	 List<Long> fornecedores,
 																 	 GrupoProduto grupoCromo) {
 
@@ -434,12 +434,13 @@ public class LancamentoRepositoryImpl extends
 		query.setParameter("periodoInicial", periodoRecolhimento.getDe());
 		query.setParameter("periodoFinal", periodoRecolhimento.getAte());
 		query.setParameter("grupoCromo", grupoCromo);
+		query.setParameter("tipoParcial", TipoLancamentoParcial.PARCIAL);
 		
 		query.setParameterList("statusParaBalanceamentoRecolhimento", statusParaBalanceamentoRecolhimento);
 
 		List<Object[]> expectativasEncalheDia = query.list();
 
-		TreeMap<Date, BigInteger> mapaExpectativaEncalheDia = new TreeMap<Date, BigInteger>();
+		TreeMap<Date, BigDecimal> mapaExpectativaEncalheDia = new TreeMap<Date, BigDecimal>();
 
 		for (Object[] expectativa : expectativasEncalheDia) {
 
@@ -447,7 +448,7 @@ public class LancamentoRepositoryImpl extends
 
 			BigDecimal expectativaEncalhe = (BigDecimal) expectativa[1];
 
-			mapaExpectativaEncalheDia.put(data, expectativaEncalhe.toBigInteger());
+			mapaExpectativaEncalheDia.put(data, expectativaEncalhe);
 		}
 
 		return mapaExpectativaEncalheDia;
@@ -485,7 +486,7 @@ public class LancamentoRepositoryImpl extends
 		sql.append(" pessoa.RAZAO_SOCIAL as nomeEditor, ");
 				
 		sql.append(" (select ");
-		sql.append(" case when tipoProduto.GRUPO_PRODUTO = :grupoCromo then ");
+		sql.append(" case when tipoProduto.GRUPO_PRODUTO = :grupoCromo and periodoLancamentoParcial.TIPO <> :tipoParcial then ");
 		sql.append(" sum(((epc.QTDE_RECEBIDA - epc.QTDE_DEVOLVIDA) - ((epc.QTDE_RECEBIDA - epc.QTDE_DEVOLVIDA) * (coalesce(produtoEdicao.EXPECTATIVA_VENDA, 0) / 100))) / produtoEdicao.PACOTE_PADRAO) ");
 		sql.append(" else ");
 		sql.append(" sum((epc.QTDE_RECEBIDA - epc.QTDE_DEVOLVIDA) - ((epc.QTDE_RECEBIDA - epc.QTDE_DEVOLVIDA) * (coalesce(produtoEdicao.EXPECTATIVA_VENDA, 0) / 100))) ");
@@ -497,7 +498,7 @@ public class LancamentoRepositoryImpl extends
 		sql.append(" as expectativaEncalheAtendida, ");
 		
 		sql.append(" (select ");
-		sql.append(" case when tipoProduto.GRUPO_PRODUTO = :grupoCromo then ");
+		sql.append(" case when tipoProduto.GRUPO_PRODUTO = :grupoCromo and periodoLancamentoParcial.TIPO <> :tipoParcial then ");
 		sql.append(" sum(((epc.QTDE_RECEBIDA - epc.QTDE_DEVOLVIDA) - ((epc.QTDE_RECEBIDA - epc.QTDE_DEVOLVIDA) * (coalesce(produtoEdicao.EXPECTATIVA_VENDA, 0) / 100))) / produtoEdicao.PACOTE_PADRAO) ");
 		sql.append(" else ");
 		sql.append(" sum((epc.QTDE_RECEBIDA - epc.QTDE_DEVOLVIDA) - ((epc.QTDE_RECEBIDA - epc.QTDE_DEVOLVIDA) * (coalesce(produtoEdicao.EXPECTATIVA_VENDA, 0) / 100))) ");
@@ -509,7 +510,7 @@ public class LancamentoRepositoryImpl extends
 		sql.append(" as expectativaEncalheSede, ");
 		
 		sql.append(" (select ");
-		sql.append(" case when tipoProduto.GRUPO_PRODUTO = :grupoCromo then ");
+		sql.append(" case when tipoProduto.GRUPO_PRODUTO = :grupoCromo and periodoLancamentoParcial.TIPO <> :tipoParcial then ");
 		sql.append(" sum(((epc.QTDE_RECEBIDA - epc.QTDE_DEVOLVIDA) - ((epc.QTDE_RECEBIDA - epc.QTDE_DEVOLVIDA) * (coalesce(produtoEdicao.EXPECTATIVA_VENDA, 0) / 100))) / produtoEdicao.PACOTE_PADRAO) ");
 		sql.append(" else ");
 		sql.append(" sum((epc.QTDE_RECEBIDA - epc.QTDE_DEVOLVIDA) - ((epc.QTDE_RECEBIDA - epc.QTDE_DEVOLVIDA) * (coalesce(produtoEdicao.EXPECTATIVA_VENDA, 0) / 100))) ");
@@ -521,7 +522,7 @@ public class LancamentoRepositoryImpl extends
 		sql.append(" as expectativaEncalheAlternativo, ");
 		
 		sql.append(" (select ");
-		sql.append(" case when tipoProduto.GRUPO_PRODUTO = :grupoCromo then ");
+		sql.append(" case when tipoProduto.GRUPO_PRODUTO = :grupoCromo and periodoLancamentoParcial.TIPO <> :tipoParcial then ");
 		sql.append(" sum(((epc.QTDE_RECEBIDA - epc.QTDE_DEVOLVIDA) - ((epc.QTDE_RECEBIDA - epc.QTDE_DEVOLVIDA) * (coalesce(produtoEdicao.EXPECTATIVA_VENDA, 0) / 100))) / produtoEdicao.PACOTE_PADRAO) ");
 		sql.append(" else ");
 		sql.append(" sum((epc.QTDE_RECEBIDA - epc.QTDE_DEVOLVIDA) - ((epc.QTDE_RECEBIDA - epc.QTDE_DEVOLVIDA) * (coalesce(produtoEdicao.EXPECTATIVA_VENDA, 0) / 100))) ");
@@ -618,9 +619,6 @@ public class LancamentoRepositoryImpl extends
 		sql.append(" and ( ");
 		sql.append(" fornecedor.ID in (:idsFornecedores) ");
 		sql.append(" )  ");
-		sql.append(" and ( ");
-		sql.append(" lancamento.DATA_REC_DISTRIB between :periodoInicial and :periodoFinal ");
-		sql.append(" ) ");
 
 		sql.append("and ( ");
 		sql.append(" chamadaEncalhe.ID is null or ");
@@ -639,7 +637,7 @@ public class LancamentoRepositoryImpl extends
 				   + " select "
 				   + " lancamento.DATA_REC_DISTRIB as dataRecolhimentoDistribuidor, "
 				   + " case "
-				   + " when tipoProduto.GRUPO_PRODUTO = :grupoCromo then "
+				   + " when tipoProduto.GRUPO_PRODUTO = :grupoCromo and periodoLancamentoParcial.TIPO <> :tipoParcial then "
 				   + " sum(((estoqueProdutoCota.QTDE_RECEBIDA - estoqueProdutoCota.QTDE_DEVOLVIDA) - ((estoqueProdutoCota.QTDE_RECEBIDA - estoqueProdutoCota.QTDE_DEVOLVIDA) * (coalesce(produtoEdicao.EXPECTATIVA_VENDA, 0) / 100))) / produtoEdicao.PACOTE_PADRAO) "
 				   + " else "
 				   + " sum((estoqueProdutoCota.QTDE_RECEBIDA - estoqueProdutoCota.QTDE_DEVOLVIDA) - ((estoqueProdutoCota.QTDE_RECEBIDA - estoqueProdutoCota.QTDE_DEVOLVIDA) * (coalesce(produtoEdicao.EXPECTATIVA_VENDA, 0) / 100))) "
@@ -671,7 +669,7 @@ public class LancamentoRepositoryImpl extends
 													  .addScalar("dataLancamento")
 													  .addScalar("dataRecolhimentoPrevista")
 													  .addScalar("dataRecolhimentoDistribuidor")
-													  .addScalar("expectativaEncalhe", StandardBasicTypes.BIG_INTEGER)
+													  .addScalar("expectativaEncalhe")
 													  .addScalar("expectativaEncalheSede")
 													  .addScalar("expectativaEncalheAtendida")
 													  .addScalar("expectativaEncalheAlternativo")
@@ -696,6 +694,7 @@ public class LancamentoRepositoryImpl extends
 		query.setParameter("periodoInicial", periodoRecolhimento.getDe());
 		query.setParameter("periodoFinal", periodoRecolhimento.getAte());
 		query.setParameter("grupoCromo", grupoCromo);
+		query.setParameter("tipoParcial", TipoLancamentoParcial.PARCIAL.toString());
 		query.setParameter("tipoChamadaEncalhe", TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO.toString());
 		query.setParameter("tipoBoxPostoAvancado", TipoBox.POSTO_AVANCADO.toString());
 		query.setParameter("pontoPrincipal", true);
@@ -731,7 +730,24 @@ public class LancamentoRepositoryImpl extends
 		
 		return (lancamento!=null) ? (Lancamento) lancamento : null ;		
 	}
-	
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Lancamento> obterLancamentosEdicao(Long idProdutoEdicao, String sortorder, String sortname) {
+		StringBuilder hql = new StringBuilder();
+
+		hql.append(" select lancamento ")
+		   .append(" from Lancamento lancamento ")
+		   .append(" where lancamento.produtoEdicao.id = :idProdutoEdicao ")
+		   .append(" order by " + sortname + " " + sortorder);
+		
+		Query query = getSession().createQuery(hql.toString());
+		
+		query.setParameter("idProdutoEdicao", idProdutoEdicao);
+		
+		return (List<Lancamento>) query.list();		
+	}
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -1107,9 +1123,8 @@ public class LancamentoRepositoryImpl extends
 		sql.append(" on lancamentoParcial.ID = periodoLancamentoParcial.LANCAMENTO_PARCIAL_ID ");
 		
 		sql.append(" where ");
-		sql.append("  UPPER(tipoProduto.GRUPO_PRODUTO) in ( :tiposProduto ) ");
 		
-		sql.append(" and ( ");
+		sql.append(" ( ");
 		sql.append(" 	select fornecedor.ID from PRODUTO_FORNECEDOR produtoFornecedor, FORNECEDOR fornecedor ");
 		sql.append(" 		where produtoFornecedor.PRODUTO_ID = produto.ID ");
 		sql.append(" 		and produtoFornecedor.FORNECEDORES_ID = fornecedor.ID ");
@@ -1174,25 +1189,15 @@ public class LancamentoRepositoryImpl extends
 				  										  StatusLancamento.CONFIRMADO.name(),
 				  										  StatusLancamento.FURO.name()};
 		
-		String[] arrayTipoProduto = {GrupoProduto.OUTROS.name(),
-									 GrupoProduto.REVISTA.name(),
-									 GrupoProduto.CROMO.name(),
-									 GrupoProduto.CARTELA.name(),
-									 GrupoProduto.LIVRO.name(),
-									 GrupoProduto.COLECIONAVEL.name()};
-		
 		List<String> statusLancamentoNoPeriodo = Arrays.asList(arrayStatusLancamentoNoPeriodo);
 		
 		List<String> statusLancamentoDataMenorInicial = Arrays.asList(arrayStatusLancamentoDataMenorInicial);
-		
-		List<String> tiposProduto = Arrays.asList(arrayTipoProduto);
 		
 		query.setParameterList("idsFornecedores", fornecedores);
 		query.setParameter("periodoInicial", periodoDistribuicao.getDe());
 		query.setParameter("periodoFinal", periodoDistribuicao.getAte());
 		query.setParameterList("statusLancamentoNoPeriodo", statusLancamentoNoPeriodo);
 		query.setParameterList("statusLancamentoDataMenorInicial", statusLancamentoDataMenorInicial);
-		query.setParameterList("tiposProduto", tiposProduto);
 		query.setParameter("grupoCromo", GrupoProduto.CROMO.toString());
 	}
 
@@ -1474,8 +1479,7 @@ public class LancamentoRepositoryImpl extends
 		query.setParameter("dataFinal", periodoDistribuicao.getAte());
 		
 		query.setParameterList("statusLancamento",
-							   Arrays.asList(StatusLancamento.BALANCEADO,
-									   		 StatusLancamento.EXCLUIDO));
+							   Arrays.asList(StatusLancamento.BALANCEADO));
 		
 		return query.list();
 	}
@@ -1498,8 +1502,7 @@ public class LancamentoRepositoryImpl extends
 		query.setParameter("dataFinal", periodoDistribuicao.getAte());
 		
 		query.setParameterList("statusLancamento",
-							   Arrays.asList(StatusLancamento.BALANCEADO,
-									   		 StatusLancamento.EXCLUIDO));
+							   Arrays.asList(StatusLancamento.BALANCEADO));
 		
 		return query.list();
 	}
@@ -1534,4 +1537,22 @@ public class LancamentoRepositoryImpl extends
 				
 		return query.list();	
 	}
+	
+	@Override
+	public boolean existeCobrancaParaLancamento(Long idLancamento) {
+		
+		String hql = " select case when (count(lancamento) > 0) then true else false end "
+			+ " from Lancamento lancamento "
+			+ " join lancamento.movimentoEstoqueCotas movimentoEstoqueCota "
+			+ " join movimentoEstoqueCota.movimentoFinanceiroCota movimentoFinanceiroCota "
+			+ " join movimentoFinanceiroCota.consolidadoFinanceiroCota consolidadoFinanceiroCota "
+			+ " where lancamento.id = :idLancamento ";
+		
+		Query query = this.getSession().createQuery(hql);
+
+		query.setParameter("idLancamento", idLancamento);
+		
+		return (boolean) query.uniqueResult();
+	}
+	
 }

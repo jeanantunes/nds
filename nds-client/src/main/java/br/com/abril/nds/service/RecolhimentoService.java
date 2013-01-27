@@ -81,4 +81,6 @@ public interface RecolhimentoService {
 	 */
 	void voltarConfiguracaoOriginal(Integer numeroSemana, Date date, List<Long> fornecedores);
 	
+	void verificaDataOperacao(Date data);
+	
 }

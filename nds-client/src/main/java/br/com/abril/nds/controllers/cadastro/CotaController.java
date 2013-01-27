@@ -7,6 +7,7 @@ import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -532,6 +533,8 @@ public class CotaController extends BaseController {
 			
 			listaClassificacao.add(new ItemDTO<String, String>(clazz.toString(), clazz.getDescricao()));
 		}
+		
+		Collections.reverse(listaClassificacao);
 		
 		return listaClassificacao;
 	}
@@ -1088,6 +1091,9 @@ public class CotaController extends BaseController {
 	public void exportar(FileType fileType) throws IOException {
 		
 		FiltroCotaDTO filtro = (FiltroCotaDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
+		filtro.setPaginacao(null);
+		
+		filtro.getPaginacao().setQtdResultadosPorPagina(null);
 		
 		List<CotaDTO> listaCotas = null;
 		
@@ -1366,7 +1372,8 @@ public class CotaController extends BaseController {
 	 */
 	private void validarPercentualTaxa(BigDecimal percentualFaturamento, BigDecimal taxaFixa) {
 		
-		if (percentualFaturamento == null && taxaFixa == null) {
+		if ((percentualFaturamento == null && taxaFixa == null)
+				|| (percentualFaturamento != null && taxaFixa != null)) {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING,
 				"O Percentual de Faturamento ou a Taxa Fixa devem ser preenchidos!");

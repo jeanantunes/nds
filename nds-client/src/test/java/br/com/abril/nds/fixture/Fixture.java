@@ -852,6 +852,32 @@ public class Fixture {
 	}
 
 	
+	public static TipoMovimentoEstoque tipoMovimentoRecebimentoJornaleiroJuramentado() {
+		
+		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
+		
+		tipoMovimento.setAprovacaoAutomatica(false);
+		tipoMovimento.setDescricao("Recebimento Jornaleiro Juramentado");
+		tipoMovimento.setIncideDivida(false);
+		tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.RECEBIMENTO_JORNALEIRO_JURAMENTADO);
+		
+		return tipoMovimento;
+		
+	}
+	
+
+	public static TipoMovimentoEstoque tipoMovimentoEnvioJornaleiroJuramentado() {
+		
+		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
+		
+		tipoMovimento.setAprovacaoAutomatica(false);
+		tipoMovimento.setDescricao("Envio Jornaleiro Juramentado");
+		tipoMovimento.setIncideDivida(false);
+		tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.ENVIO_JORNALEIRO_JURAMENTADO);
+		
+		return tipoMovimento;
+		
+	}
 	
 	public static TipoMovimentoEstoque tipoMovimentoFaltaEm() {
 		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
@@ -1347,7 +1373,8 @@ public class Fixture {
 		tipoMovimento.setGrupoMovimentoFinaceiro(GrupoMovimentoFinaceiro.VENDA_TOTAL);
 		return tipoMovimento;		
 	}
-		
+	
+	
 	public static ItemNotaFiscalEntrada itemNotaFiscal(ProdutoEdicao produtoEdicao,
 			Usuario usuario, NotaFiscalEntrada notaFiscal, Date dataLancamento, Date dataRecolhimento, TipoLancamento tipoLancamento, BigInteger qtde) {
 		ItemNotaFiscalEntrada itemNotaFiscal = new ItemNotaFiscalEntrada();
@@ -2272,16 +2299,14 @@ public class Fixture {
 	public static PoliticaCobranca criarPoliticaCobranca(
 			Distribuidor distribuidor, FormaCobranca formaCobranca, 
 			boolean aceitaBaixaPagamentoMaior, boolean aceitaBaixaPagamentoMenor,
-			boolean aceitaBaixaPagamentoVencido, int inadimplenciasSuspencao,
-			String assuntoEmailCobranca, String mensagemEmailCobranca, 
-			boolean principal,FormaEmissao formaEmissao) {
+			boolean aceitaBaixaPagamentoVencido, String assuntoEmailCobranca, 
+			String mensagemEmailCobranca, boolean principal, FormaEmissao formaEmissao) {
 		
 		PoliticaCobranca politicaCobranca = new PoliticaCobranca();
 		politicaCobranca.setAceitaBaixaPagamentoMaior(aceitaBaixaPagamentoMaior);
 		politicaCobranca.setAceitaBaixaPagamentoMenor(aceitaBaixaPagamentoMenor);
 		politicaCobranca.setAceitaBaixaPagamentoVencido(aceitaBaixaPagamentoVencido);
 		politicaCobranca.setDistribuidor(distribuidor);
-		politicaCobranca.setInadimplenciasSuspencao(inadimplenciasSuspencao);
 		politicaCobranca.setFormaCobranca(formaCobranca);
 		politicaCobranca.setAssuntoEmailCobranca(assuntoEmailCobranca);
 		politicaCobranca.setMensagemEmailCobranca(mensagemEmailCobranca);
@@ -2299,7 +2324,8 @@ public class Fixture {
 			String descricao,
 			boolean indEfetuaCobranca,
 			boolean indOpera,
-			boolean indRepeteAnualmente) {
+			boolean indRepeteAnualmente,
+			Origem origem) {
 		
 		Feriado feriado = new Feriado();
 		
@@ -2312,6 +2338,8 @@ public class Fixture {
 		feriado.setIndEfetuaCobranca(indEfetuaCobranca);
 		feriado.setIndOpera(indOpera);
 		feriado.setIndRepeteAnualmente(indRepeteAnualmente);
+		
+		feriado.setOrigem(origem);
 		
 		return feriado;
 		

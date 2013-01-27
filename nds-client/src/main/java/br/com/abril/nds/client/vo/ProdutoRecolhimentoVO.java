@@ -1,7 +1,6 @@
 package br.com.abril.nds.client.vo;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.Date;
 
 /**
@@ -47,7 +46,7 @@ public class ProdutoRecolhimentoVO {
 	
 	private BigDecimal encalheAlternativo;
 	
-	private BigInteger encalhe;
+	private BigDecimal encalhe;
 	
 	private BigDecimal valorTotal;
 	
@@ -296,14 +295,14 @@ public class ProdutoRecolhimentoVO {
 	/**
 	 * @return the encalhe
 	 */
-	public BigInteger getEncalhe() {
+	public BigDecimal getEncalhe() {
 		return encalhe;
 	}
 
 	/**
 	 * @param encalhe the encalhe to set
 	 */
-	public void setEncalhe(BigInteger encalhe) {
+	public void setEncalhe(BigDecimal encalhe) {
 		this.encalhe = encalhe;
 	}
 

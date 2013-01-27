@@ -3,6 +3,7 @@ package br.com.abril.nds.service.impl;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.RoundingMode;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -20,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.abril.nds.dto.FuroProdutoDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.Brinde;
 import br.com.abril.nds.model.cadastro.Cota;
@@ -34,25 +36,34 @@ import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.model.cadastro.desconto.DescontoProdutoEdicao;
 import br.com.abril.nds.model.cadastro.desconto.TipoDesconto;
 import br.com.abril.nds.model.planejamento.Lancamento;
+import br.com.abril.nds.model.planejamento.LancamentoParcial;
+import br.com.abril.nds.model.planejamento.PeriodoLancamentoParcial;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
+import br.com.abril.nds.model.planejamento.StatusLancamentoParcial;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
+import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.BrindeRepository;
 import br.com.abril.nds.repository.DescontoProdutoEdicaoRepository;
 import br.com.abril.nds.repository.DistribuicaoFornecedorRepository;
+import br.com.abril.nds.repository.LancamentoParcialRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.ParametroSistemaRepository;
+import br.com.abril.nds.repository.PeriodoLancamentoParcialRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.ProdutoRepository;
 import br.com.abril.nds.service.CapaService;
 import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.service.LancamentoService;
+import br.com.abril.nds.service.ParciaisService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.ProdutoService;
+import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.service.exception.UniqueConstraintViolationException;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
+import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.vo.ValidacaoVO;
 
 /**
@@ -96,6 +107,21 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 	
 	@Autowired
 	private LancamentoService lService;	
+	
+	@Autowired
+	private UsuarioService usuarioService;	
+	
+	@Autowired
+	private DistribuidorService distribuidorService;	
+	
+	@Autowired
+	private ParciaisService parciaisService;
+	
+	@Autowired
+	private LancamentoParcialRepository lancamentoParcialRepository;
+
+	@Autowired
+	private PeriodoLancamentoParcialRepository periodoLancamentoParcialRepository;
 	
 	@Override
 	@Transactional(readOnly = true)
@@ -350,6 +376,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		}		
 		
 		
+		
 		// 01 ) Salvar/Atualizar o ProdutoEdicao:
 		this.salvarProdutoEdicao(dto, produtoEdicao);
 		
@@ -357,22 +384,66 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		// 02) Salvar imagem:
 		if (imgInputStream != null) {
 			
-			// Verifica se o tipo do arquivo é imagem JPEG:
-			if (!contentType.toLowerCase().matches("image/[p]?jpeg")) {
-				throw new ValidacaoException(TipoMensagem.ERROR, 
+			// Verifica se o tipo do arquivo é imagem JPEG, PNG ou GIF:
+			if(!FileType.JPEG.getContentType().equalsIgnoreCase(contentType) && 
+					   !FileType.GIF.getContentType().equalsIgnoreCase(contentType)  && 
+					   !FileType.PNG.getContentType().equalsIgnoreCase(contentType)) {
+				throw new ValidacaoException(TipoMensagem.WARNING, 
 						"O formato da imagem da capa não é válido!");
 			}
 			
 			capaService.saveCapa(produtoEdicao.getId(), contentType, imgInputStream);
 		}
 		
-		// 03) Salvar/Atualizar o lancamento:
-		this.salvarLancamento(dto, produtoEdicao);
+		if ( ! produtoEdicao.getOrigem().equals(br.com.abril.nds.model.Origem.INTERFACE)) {
+				
+			if(TipoLancamento.PARCIAL.equals(dto.getTipoLancamento())) {							
+				this.salvarLancamentoParcial(dto, produtoEdicao,indNovoProdutoEdicao);
+			} else {
+				this.salvarLancamento(dto, produtoEdicao,indNovoProdutoEdicao);
+			}
+		}
 		
 		this.inserirDescontoProdutoEdicao(produtoEdicao, indNovoProdutoEdicao);
 		
 	}
 	
+	private void salvarLancamentoParcial(ProdutoEdicaoDTO dto,
+			ProdutoEdicao produtoEdicao, boolean indNovoProdutoEdicao) {
+		
+		if(!indNovoProdutoEdicao) {
+			for(Lancamento lancamento : produtoEdicao.getLancamentos() ) {
+				if(!TipoLancamento.PARCIAL.equals(lancamento.getTipoLancamento()))
+					lancamentoRepository.remover(lancamento);
+			}
+		}
+		
+		LancamentoParcial lancamentoParcial  = produtoEdicao.getLancamentoParcial();
+		
+		if ( lancamentoParcial == null ) {
+			lancamentoParcial = new LancamentoParcial();
+			lancamentoParcial.setProdutoEdicao(produtoEdicao);
+			lancamentoParcial.setStatus(StatusLancamentoParcial.PROJETADO);		
+		}
+		
+		lancamentoParcial.setLancamentoInicial(dto.getDataLancamentoPrevisto());
+		lancamentoParcial.setRecolhimentoFinal(dto.getDataRecolhimentoPrevisto());
+		
+		lancamentoParcialRepository.merge(lancamentoParcial);
+		
+		Usuario usuario = usuarioService.getUsuarioLogado();
+		
+		if(lancamentoParcial.getPeriodos().isEmpty())
+			parciaisService.gerarPeriodosParcias(produtoEdicao, 1, usuario , produtoEdicao.getPeb(), distribuidorService.obter());
+		
+		Lancamento periodo = lancamentoRepository.obterUltimoLancamentoDaEdicao(produtoEdicao.getId());
+		
+		periodo.setReparte(dto.getRepartePrevisto());
+		periodo.setRepartePromocional(dto.getRepartePromocional());
+		
+		lancamentoRepository.merge(periodo);
+	}
+
 	/**
 	 * Aplica todas as regras de validação para o cadastro de uma Edição.
 	 * 
@@ -513,7 +584,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			produtoEdicao.setCodigoDeBarraCorporativo(dto.getCodigoDeBarrasCorporativo());
 				
 			// Outros:
-			produtoEdicao.setParcial(dto.isParcial());	// Regime de Recolhimento;
+			produtoEdicao.setParcial(TipoLancamento.PARCIAL.equals(dto.getTipoLancamento()));	// Regime de Recolhimento;
 				
 			// Característica Física:
 			produtoEdicao.setPeso(dto.getPeso());
@@ -573,13 +644,18 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 	 * 
 	 * @param dto
 	 * @param produtoEdicao
+	 * @param indNovoProdutoEdicao 
 	 */
-	private void salvarLancamento(ProdutoEdicaoDTO dto, ProdutoEdicao produtoEdicao) {
+	private void salvarLancamento(ProdutoEdicaoDTO dto, ProdutoEdicao produtoEdicao, boolean indNovoProdutoEdicao) {
 		
-		// Só pode alterar quando o ProdutoEdicao for criado pelo Distribuidor:
+		if(!indNovoProdutoEdicao && produtoEdicao.getLancamentoParcial() != null) {
 			
-		if ((produtoEdicao.getOrigem().equals(br.com.abril.nds.model.Origem.INTERFACE))) {
-			return;
+			for(PeriodoLancamentoParcial periodo :produtoEdicao.getLancamentoParcial().getPeriodos()) {
+				periodoLancamentoParcialRepository.remover(periodo);
+				lancamentoRepository.remover(periodo.getLancamento());				
+			}
+			
+			lancamentoParcialRepository.remover(produtoEdicao.getLancamentoParcial());			
 		}
 		
 		Lancamento lancamento = null;
@@ -623,9 +699,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			lancamentoRepository.adicionar(lancamento);
 			produtoEdicao.getLancamentos().add(lancamento);
 		} else {			
-			if(lancamento.getStatus() == StatusLancamento.EXCLUIDO){
-				lancamento.setStatus(StatusLancamento.PLANEJADO);
-			}
+			
 			lancamentoRepository.alterar(lancamento);
 		}
 		
@@ -657,6 +731,15 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			for (Lancamento lancamento : lancamentos){
 				
 				lancamento.setStatus(StatusLancamento.CANCELADO);
+				
+				if(lancamento.getPeriodoLancamentoParcial()!= null){
+					
+					lancamento.getPeriodoLancamentoParcial().setStatus(StatusLancamentoParcial.CANCELADO);
+					periodoLancamentoParcialRepository.alterar(lancamento.getPeriodoLancamentoParcial());
+					
+					lancamento.getPeriodoLancamentoParcial().getLancamentoParcial().setStatus(StatusLancamentoParcial.CANCELADO);
+					lancamentoParcialRepository.alterar(lancamento.getPeriodoLancamentoParcial().getLancamentoParcial());
+				}
 				
 				this.lancamentoRepository.alterar(lancamento);
 			}
@@ -701,11 +784,17 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			nomeFornecedor = produto.getFornecedor().getJuridica().getNomeFantasia();
 		}
 		dto.setNomeFornecedor(nomeFornecedor);
-
-		dto.setDesconto(produto.getDescontoLogistica() == null 
-				? BigDecimal.ZERO : BigDecimal.valueOf(
-						produto.getDescontoLogistica().getPercentualDesconto()));
-
+		
+		dto.setDesconto(produto.getDescontoLogistica() == null
+				? BigDecimal.ZERO 
+				: BigDecimal.valueOf(produto.getDescontoLogistica().getPercentualDesconto()).setScale(2, RoundingMode.HALF_EVEN));
+		
+		if(produto.getDescontoLogistica()!= null){
+			dto.setDescricaoDesconto(produto.getDescontoLogistica().getDescricao());
+		}else{
+			dto.setDescricaoDesconto(produto.getDescricaoDesconto());
+		}
+		
 		if (idProdutoEdicao != null && Util.isLong(idProdutoEdicao)) {
 
 			Long id = Long.valueOf(idProdutoEdicao);
@@ -729,7 +818,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			dto.setPossuiBrinde(pe.isPossuiBrinde());
 		
 			//Desconto Fornecedor x Distribuidor
-			dto.setDescricaoDesconto(pe.getDescricaoDesconto()!=null?pe.getDescricaoDesconto():produto.getDescricaoDesconto());
+			dto.setDescricaoDesconto(pe.getDescricaoDesconto()!=null?pe.getDescricaoDesconto():produto.getDescontoLogistica().getDescricao());
 			BigDecimal percentualDesconto = Util.nvl(pe.getDesconto()!=null?pe.getDesconto():produto.getDesconto()!=null?produto.getDesconto():BigDecimal.ZERO, BigDecimal.ZERO);
 			dto.setDesconto(percentualDesconto);
 

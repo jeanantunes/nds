@@ -1,9 +1,6 @@
 package br.com.abril.nds.client.vo;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
 
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.FormaComercializacao;
@@ -449,7 +446,7 @@ public class ProdutoCadastroVO implements Serializable {
 			produto.getId(), 
 			produto.getCodigo(), 
 			produto.getNome(), 
-			produto.getFornecedor().getId(), 
+			(produto.getFornecedor()!=null)?produto.getFornecedor().getId():null, 
 			produto.getEditor()!=null?produto.getEditor().getId():0, 
 			produto.getSlogan(), 
 			produto.getTipoProduto().getId(), 
@@ -466,21 +463,12 @@ public class ProdutoCadastroVO implements Serializable {
 			produto.getSegmentacao()!=null?(produto.getSegmentacao().getTemaSecundario()!=null?produto.getSegmentacao().getTemaSecundario().name():""):"",
 			produto.getOrigem());
 		
-		if(Origem.INTERFACE.equals(produto.getOrigem())){
+		if(Origem.INTERFACE.equals(produto.getOrigem()) && produto.getDescontoLogistica()!= null){
+			produtoCadastroVO.setDesconto(CurrencyUtil.formatarValor( produto.getDescontoLogistica().getPercentualDesconto()).replace(",","."));
 			
-			if(produto.getDescontoLogistica()!= null){
-
-				produtoCadastroVO.setDesconto(CurrencyUtil.formatarValor( produto.getDescontoLogistica().getPercentualDesconto()).replace(",","."));
-			}
-			else{
-				produtoCadastroVO.setDesconto(CurrencyUtil.formatarValor(produto.getDesconto()).replace(",","."));
-			}
-		}
-		else{
+		}else if(produto.getDesconto()!= null){
+			produtoCadastroVO.setDesconto(CurrencyUtil.formatarValor(produto.getDesconto()).replace(",","."));
 			
-			if(produto.getDesconto()!= null){
-				produtoCadastroVO.setDesconto(CurrencyUtil.formatarValor(produto.getDesconto()).replace(",","."));
-			}
 		}
 		
 		return produtoCadastroVO;

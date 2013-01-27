@@ -201,8 +201,7 @@ public class BoxRepositoryImpl extends AbstractRepositoryModel<Box,Long> impleme
 	 * @see br.com.abril.nds.repository.BoxRepository#obtemCotaRotaRoteiro(long)
 	 */
 	@Override
-	public List<CotaRotaRoteiroDTO> obtemCotaRotaRoteiro(long idBox){
-		
+	public List<CotaRotaRoteiroDTO> obtemCotaRotaRoteiro(long idBox, String sortname, String sortorder){
 		
 		StringBuilder hql = new StringBuilder();
 		
@@ -227,21 +226,32 @@ public class BoxRepositoryImpl extends AbstractRepositoryModel<Box,Long> impleme
 		hql.append(" join roteirizacao.roteiros roteiro ");
 		
 		hql.append(" join roteiro.rotas rota ");
+
+		hql.append(" join rota.rotaPDVs rotaPDV ");
+
+		hql.append(" join rotaPDV.pdv pdv ");
 		
-		hql.append(" join box.cotas cota ");
+		hql.append(" join pdv.cota cota ");
 		
 		hql.append(" join cota.pessoa pessoa ");
 
-		hql.append(" where box.id = :id");
+		hql.append(" where box.id = :id ");
 		
-		hql.append(" order by roteiro asc, rota asc, numeroCota asc");
+		hql.append(" group by roteiro.id, rota.id, cota.id ");
+		
+		sortorder = sortorder!=null && !sortorder.isEmpty()?sortorder:"asc";
+		
+		sortname = sortname!=null && !sortname.isEmpty()?sortname:"numeroCota";
+		
+		hql.append(" order by ");
+		
+		hql.append(sortname + " " + sortorder);
 		
 		Query query =  getSession().createQuery(hql.toString());
 		
 		query.setLong("id", idBox);
 		query.setResultTransformer(new AliasToBeanResultTransformer(
 				CotaRotaRoteiroDTO.class));
-		
 		
 		return query.list();
 	}
@@ -424,6 +434,23 @@ public class BoxRepositoryImpl extends AbstractRepositoryModel<Box,Long> impleme
 		Query query = this.getSession().createQuery(sql.toString());
 		
 		query.setParameter("rotaID", rotaID);
+		query.setMaxResults(1);
+		
+		return (Box) query.uniqueResult();
+	}
+
+	@Override
+	public Box obterBoxPorRoteiro(Long roteiroID) {
+
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append(" SELECT box FROM Box box ");
+		sql.append(" JOIN box.roteirizacao roteirizacao ");
+		sql.append(" JOIN roteirizacao.roteiros roteiro ");
+		sql.append(" WHERE roteiro.id = :roteiroID ");
+		
+		Query query = this.getSession().createQuery(sql.toString());
+		query.setParameter("roteiroID", roteiroID);
 		query.setMaxResults(1);
 		
 		return (Box) query.uniqueResult();

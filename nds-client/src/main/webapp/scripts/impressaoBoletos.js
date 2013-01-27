@@ -26,16 +26,16 @@ var impressaoBoletosController = $.extend(true, {
 				width : 60,
 				sortable : true,
 				align : 'left'
-			}, {
-				display : 'Rota',
-				name : 'rota',
-				width : 60,
-				sortable : true,
-				align : 'left'
 			},{
 				display : 'Roteiro',
 				name : 'roteiro',
 				width : 80,
+				sortable : true,
+				align : 'left'
+			},{
+				display : 'Rota',
+				name : 'rota',
+				width : 60,
 				sortable : true,
 				align : 'left'
 			},{

@@ -29,7 +29,56 @@
 
 	<jsp:include page="dialogsResumoBaixaAutomatica.jsp"></jsp:include>
 
-	<fieldset class="classFieldset">
+	<div class="areaBts">
+	
+		<div class="area" style="display:none">
+		
+            <div id="botoesDividasPagas">
+                <span class="bt_novos">
+	             	<a onclick="baixaFinanceiraController.confirmarBaixa();"
+	             	   href="javascript:;" rel="tipsy" title="Confirmar">
+	             	   	<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif">
+	             	</a>
+                </span>
+             	<span class="bt_novos">
+	             	<a onclick="baixaFinanceiraController.cancelarBaixa();"
+	             	    href="javascript:;" rel="tipsy" title="Cancelar">
+	             	   	<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_bloquear.gif">
+	             	</a>
+            	</span>
+            </div>
+			
+			<div id="botoesDividasNaoPagas">
+				<span class="bt_novos">
+					<a onclick="baixaFinanceiraController.obterPagamentoDividas();" href="javascript:;" rel="tipsy" title="À Vista">
+						<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif">
+					</a>
+				</span>
+				
+				<span class="bt_novos">
+					<a onclick="baixaFinanceiraController.obterPostergacao();" href="javascript:;" rel="tipsy" title="Postergar">
+						<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_reprogramar.gif">
+					</a>
+				</span>
+			</div>
+			
+			<span class="bt_arq">
+				<a href="${pageContext.request.contextPath}/financeiro/exportar?fileType=XLS" rel="tipsy" title="Gerar Arquivo">
+					<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
+				</a>
+			</span>
+			
+			<span class="bt_arq">
+				<a href="${pageContext.request.contextPath}/financeiro/exportar?fileType=PDF" rel="tipsy" title="Imprimir">
+					<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
+				</a>
+			</span>
+		</div>
+	</div>
+
+	<div class="linha_separa_fields">&nbsp;</div>
+
+	<fieldset class="fieldFiltro">
 		
 		<legend> Baixa Financeira</legend>
 		
@@ -261,43 +310,13 @@
 		            <tr>
 		            
 		                <td width="20%">
-		                    <span class="bt_novos" title="Gerar Arquivo">
-								<a href="${pageContext.request.contextPath}/financeiro/exportar?fileType=XLS">
-									<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
-									Arquivo
-								</a>
-							</span>
-							
-							<span class="bt_novos" title="Imprimir">
-								<a href="${pageContext.request.contextPath}/financeiro/exportar?fileType=PDF">
-									<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
-									Imprimir
-								</a>
-							</span>
+		                	
+		                	
+	
 		                </td>
 						
 						<td width="30%">   
-		                    <div id="botoesDividasNaoPagas" style="display: none;">
-			                    <span id="bt_aVista" class="bt_confirmar_novo" title="Pagar Dívida"><a onclick="baixaFinanceiraController.obterPagamentoDividas();" href="javascript:;"><img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif">À Vista</a></span>
-			                    <span id="bt_postergar" class="bt_confirmar_novo" title="Postergar Dívida"><a onclick="baixaFinanceiraController.obterPostergacao();" href="javascript:;"><img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif">Postergar</a></span>
-		                    </div>
 
-		                    <div id="botoesDividasPagas">
-			                    <span id="bt_aVista" class="bt_confirmar_novo" title="Confirmar Baixa">
-			                    	<a onclick="baixaFinanceiraController.confirmarBaixa();"
-			                    	   href="javascript:;">
-			                    	   	<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif">
-			                    	   		Confirmar
-			                    	</a>
-			                    </span>
-			                    <span id="bt_negociar" class="bt_confirmar_novo" title="Cancelar Baixa">
-			                    	<a onclick="baixaFinanceiraController.cancelarBaixa();"
-			                    	   href="javascript:;">
-			                    	   	<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif">
-			                    	   		Cancelar
-			                    	</a>
-			                    </span>
-		                    </div>
 		                </td>
 		                
 		                <td width="14%">

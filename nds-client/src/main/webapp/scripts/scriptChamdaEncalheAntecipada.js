@@ -359,7 +359,10 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 		},
 		
 		montarComboBoxs:function(result) {
-			var comboBoxes = montarComboBox(result, true);
+			
+			var comboBoxes = "<option selected='selected'  value='-1'>Selecione</option>"; 
+			comboBoxes = comboBoxes + "<option value=''>Todos</option>";
+			comboBoxes = comboBoxes + montarComboBox(result, false);
 			
 			$("#box",chamdaEncalheAnteipadaController.workspace).html(comboBoxes);
 		}, 
@@ -497,7 +500,7 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 					param, 
 					function (result){
 				
-						$(idInputExemplares).val(result.quantidade);
+						$(idInputExemplares,chamdaEncalheAnteipadaController.workspace).val(result.quantidade);
 						$("#codigoChamadaAntecipada" + indexLinha,chamdaEncalheAnteipadaController.workspace).val(result.idChamadaEncalhe);
 						
 						var check  = document.getElementById("sel",chamdaEncalheAnteipadaController.workspace).checked ; 

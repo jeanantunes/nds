@@ -321,6 +321,9 @@ public class DataLoader {
 	private static TipoMovimentoEstoque tipoMovimentoCancelamentoNFDevolucaoConsignado;
 	private static TipoMovimentoEstoque tipoMovimentoCancelamentoNFEnvioConsignado;
 	
+	private static TipoMovimentoEstoque tipoMovimentoEstoqueRecebimentoJornaleiroJuramentado;
+	private static TipoMovimentoEstoque tipoMovimentoEstoqueEnvioJornaleiroJuramentado;
+	
 	private static TipoMovimentoFinanceiro tipoMovimentoFinanceiroCredito;
 	private static TipoMovimentoFinanceiro tipoMovimentoFinanceiroDebito;
 	private static TipoMovimentoFinanceiro tipoMovimentoFinanceiroDebitoNA;
@@ -1314,7 +1317,7 @@ public class DataLoader {
 
 		Usuario admin = new Usuario();
 		admin.setLogin("admin");
-		admin.setSenha("81dc9bdb52d04dc20036dbd8313ed055"); // Senha: 1234
+		admin.setSenha("4f1b0d137e4eb331e85f9baa3c5e4ec6"); // Senha: D68
 		admin.setNome("Administrador");
 		admin.setContaAtiva(true);
 		admin.setEmail("adminteste@abril.com.br");
@@ -1606,11 +1609,11 @@ public class DataLoader {
 		tipoNotaFiscalDevolucao = new TipoNotaFiscal();
 		tipoNotaFiscalDevolucao.setCfopEstado(cfop1918);
 		tipoNotaFiscalDevolucao.setCfopOutrosEstados(cfop2918);
-		tipoNotaFiscalDevolucao.setNopDescricao("NF-e Entrada em Devolução de Remessa em Consignação ");
+		tipoNotaFiscalDevolucao.setNopDescricao("Devolução de mercadoria remetida em consignação.");
 		tipoNotaFiscalDevolucao.setEmitente(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
 		tipoNotaFiscalDevolucao.setDestinatario(TipoUsuarioNotaFiscal.COTA);
 		tipoNotaFiscalDevolucao.setContribuinte(false);
-		tipoNotaFiscalDevolucao.setDescricao("NF-e Entrada em Devolução de Remessa em Consignação ");
+		tipoNotaFiscalDevolucao.setDescricao("Devolução de mercadoria remetida em consignação.");
 		tipoNotaFiscalDevolucao.setNopCodigo(0L);
 		tipoNotaFiscalDevolucao.setTipoOperacao(TipoOperacao.ENTRADA);
 		tipoNotaFiscalDevolucao.setGrupoNotaFiscal(GrupoNotaFiscal.NF_DEVOLUCAO_REMESSA_CONSIGNACAO);
@@ -1623,11 +1626,11 @@ public class DataLoader {
 		TipoNotaFiscal entradaDevolucaoSimbolicaMercadoriaVendida = new TipoNotaFiscal();
 		entradaDevolucaoSimbolicaMercadoriaVendida.setCfopEstado(cfop1919);
 		entradaDevolucaoSimbolicaMercadoriaVendida.setCfopOutrosEstados(cfop2919);
-		entradaDevolucaoSimbolicaMercadoriaVendida.setNopDescricao("Entrada de Devolução Simbólica de Mercadoria Vendida Remetida anteriormente em consignação");
+		entradaDevolucaoSimbolicaMercadoriaVendida.setNopDescricao("Devolução Simbólica de Mercadoria Vendida ou utilizada em processo industrial, remetida anteriormente em consignação mercantil ou industrial.");
 		entradaDevolucaoSimbolicaMercadoriaVendida.setEmitente(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
 		entradaDevolucaoSimbolicaMercadoriaVendida.setDestinatario(TipoUsuarioNotaFiscal.COTA);
 		entradaDevolucaoSimbolicaMercadoriaVendida.setContribuinte(false);
-		entradaDevolucaoSimbolicaMercadoriaVendida.setDescricao("Entrada de Devolução Simbólica de Mercadoria Vendida Remetida anteriormente em consignação");
+		entradaDevolucaoSimbolicaMercadoriaVendida.setDescricao("Devolução Simbólica de Mercadoria Vendida ou utilizada em processo industrial, remetida anteriormente em consignação mercantil ou industrial.");
 		entradaDevolucaoSimbolicaMercadoriaVendida.setNopCodigo(0L);
 		entradaDevolucaoSimbolicaMercadoriaVendida.setTipoOperacao(TipoOperacao.ENTRADA);
 		entradaDevolucaoSimbolicaMercadoriaVendida.setGrupoNotaFiscal(GrupoNotaFiscal.NF_DEVOLUCAO_SIMBOLICA);
@@ -1640,11 +1643,11 @@ public class DataLoader {
 		TipoNotaFiscal vendaMercadoriaRemetidaAnteriormenteConsignacaoDistribuidorCota = new TipoNotaFiscal();
 		vendaMercadoriaRemetidaAnteriormenteConsignacaoDistribuidorCota.setCfopEstado(cfop5114);
 		vendaMercadoriaRemetidaAnteriormenteConsignacaoDistribuidorCota.setCfopOutrosEstados(cfop6114);
-		vendaMercadoriaRemetidaAnteriormenteConsignacaoDistribuidorCota.setNopDescricao("Venda de Mercadoria remetida anteriormente em Consignação");
+		vendaMercadoriaRemetidaAnteriormenteConsignacaoDistribuidorCota.setNopDescricao("Venda de Mercadoria adquirida ou recebida de terceiros remetida anteriormente em consignação mercantil.");
 		vendaMercadoriaRemetidaAnteriormenteConsignacaoDistribuidorCota.setEmitente(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
 		vendaMercadoriaRemetidaAnteriormenteConsignacaoDistribuidorCota.setDestinatario(TipoUsuarioNotaFiscal.COTA);
 		vendaMercadoriaRemetidaAnteriormenteConsignacaoDistribuidorCota.setContribuinte(false);
-		vendaMercadoriaRemetidaAnteriormenteConsignacaoDistribuidorCota.setDescricao("Venda de Mercadoria remetida anteriormente em Consignação");
+		vendaMercadoriaRemetidaAnteriormenteConsignacaoDistribuidorCota.setDescricao("Venda de Mercadoria adquirida ou recebida de terceiros remetida anteriormente em consignação mercantil.");
 		vendaMercadoriaRemetidaAnteriormenteConsignacaoDistribuidorCota.setNopCodigo(0L);
 		vendaMercadoriaRemetidaAnteriormenteConsignacaoDistribuidorCota.setTipoOperacao(TipoOperacao.SAIDA);
 		vendaMercadoriaRemetidaAnteriormenteConsignacaoDistribuidorCota.setGrupoNotaFiscal(GrupoNotaFiscal.NF_VENDA);
@@ -1657,11 +1660,11 @@ public class DataLoader {
 		TipoNotaFiscal vendaMercadoriaRemetidaAnteriormenteConsignacaoTreeLogDistribuidor = new TipoNotaFiscal();
 		vendaMercadoriaRemetidaAnteriormenteConsignacaoTreeLogDistribuidor.setCfopEstado(cfop5114);
 		vendaMercadoriaRemetidaAnteriormenteConsignacaoTreeLogDistribuidor.setCfopOutrosEstados(cfop6114);
-		vendaMercadoriaRemetidaAnteriormenteConsignacaoTreeLogDistribuidor.setNopDescricao("Venda de Mercadoria remetida anteriormente em Consignação");
+		vendaMercadoriaRemetidaAnteriormenteConsignacaoTreeLogDistribuidor.setNopDescricao("Venda de Mercadoria adquirida ou recebida de terceiros remetida anteriormente em consignação mercantil.");
 		vendaMercadoriaRemetidaAnteriormenteConsignacaoTreeLogDistribuidor.setEmitente(TipoUsuarioNotaFiscal.TREELOG);
 		vendaMercadoriaRemetidaAnteriormenteConsignacaoTreeLogDistribuidor.setDestinatario(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
 		vendaMercadoriaRemetidaAnteriormenteConsignacaoTreeLogDistribuidor.setContribuinte(false);
-		vendaMercadoriaRemetidaAnteriormenteConsignacaoTreeLogDistribuidor.setDescricao("Venda de Mercadoria remetida anteriormente em Consignação");
+		vendaMercadoriaRemetidaAnteriormenteConsignacaoTreeLogDistribuidor.setDescricao("Venda de Mercadoria adquirida ou recebida de terceiros remetida anteriormente em consignação mercantil.");
 		vendaMercadoriaRemetidaAnteriormenteConsignacaoTreeLogDistribuidor.setNopCodigo(0L);
 		vendaMercadoriaRemetidaAnteriormenteConsignacaoTreeLogDistribuidor.setTipoOperacao(TipoOperacao.ENTRADA);
 		vendaMercadoriaRemetidaAnteriormenteConsignacaoTreeLogDistribuidor.setGrupoNotaFiscal(GrupoNotaFiscal.NF_VENDA);
@@ -1674,11 +1677,11 @@ public class DataLoader {
 		TipoNotaFiscal remessaMercadoriaConsignacao = new TipoNotaFiscal();
 		remessaMercadoriaConsignacao.setCfopEstado(cfop5917);
 		remessaMercadoriaConsignacao.setCfopOutrosEstados(cfop6917);
-		remessaMercadoriaConsignacao.setNopDescricao("Remessa de Mercadoria em Consignação");
+		remessaMercadoriaConsignacao.setNopDescricao("Remessa de Mercadoria em Consignação mercantil.");
 		remessaMercadoriaConsignacao.setEmitente(TipoUsuarioNotaFiscal.TREELOG);
 		remessaMercadoriaConsignacao.setDestinatario(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
 		remessaMercadoriaConsignacao.setContribuinte(false);
-		remessaMercadoriaConsignacao.setDescricao("Remessa de Mercadoria em Consignação");
+		remessaMercadoriaConsignacao.setDescricao("Remessa de Mercadoria em Consignação mercantil");
 		remessaMercadoriaConsignacao.setNopCodigo(0L);
 		remessaMercadoriaConsignacao.setTipoOperacao(TipoOperacao.ENTRADA);
 		remessaMercadoriaConsignacao.setGrupoNotaFiscal(GrupoNotaFiscal.NF_REMESSA_MERCADORIA_CONSIGNACAO);
@@ -1693,11 +1696,11 @@ public class DataLoader {
 		TipoNotaFiscal remessaMercadoriaConsignacaoDistribuidorCota = new TipoNotaFiscal();
 		remessaMercadoriaConsignacaoDistribuidorCota.setCfopEstado(cfop5917);
 		remessaMercadoriaConsignacaoDistribuidorCota.setCfopOutrosEstados(cfop6917);
-		remessaMercadoriaConsignacaoDistribuidorCota.setNopDescricao("Remessa de Mercadoria em Consignação");
+		remessaMercadoriaConsignacaoDistribuidorCota.setNopDescricao("Remessa de Mercadoria em Consignação mercantil.");
 		remessaMercadoriaConsignacaoDistribuidorCota.setEmitente(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
 		remessaMercadoriaConsignacaoDistribuidorCota.setDestinatario(TipoUsuarioNotaFiscal.COTA);
 		remessaMercadoriaConsignacaoDistribuidorCota.setContribuinte(false);
-		remessaMercadoriaConsignacaoDistribuidorCota.setDescricao("Remessa de Mercadoria em Consignação");
+		remessaMercadoriaConsignacaoDistribuidorCota.setDescricao("Remessa de Mercadoria em Consignação mercantil.");
 		remessaMercadoriaConsignacaoDistribuidorCota.setNopCodigo(0L);
 		remessaMercadoriaConsignacaoDistribuidorCota.setTipoOperacao(TipoOperacao.SAIDA);
 		remessaMercadoriaConsignacaoDistribuidorCota.setGrupoNotaFiscal(GrupoNotaFiscal.NF_REMESSA_MERCADORIA_CONSIGNACAO);
@@ -1712,11 +1715,11 @@ public class DataLoader {
 		TipoNotaFiscal devolucaoMercadoriaRecebidaConsignacao = new TipoNotaFiscal();
 		devolucaoMercadoriaRecebidaConsignacao.setCfopEstado(cfop5918);
 		devolucaoMercadoriaRecebidaConsignacao.setCfopOutrosEstados(cfop6918);
-		devolucaoMercadoriaRecebidaConsignacao.setNopDescricao("Devolução de Mercadoria Recebida em Consignação");
+		devolucaoMercadoriaRecebidaConsignacao.setNopDescricao("Devolução de Mercadoria Recebida em Consignação mercantil.");
 		devolucaoMercadoriaRecebidaConsignacao.setEmitente(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
 		devolucaoMercadoriaRecebidaConsignacao.setDestinatario(TipoUsuarioNotaFiscal.TREELOG);
 		devolucaoMercadoriaRecebidaConsignacao.setContribuinte(false);
-		devolucaoMercadoriaRecebidaConsignacao.setDescricao("Devolução de Mercadoria Recebida em Consignação");
+		devolucaoMercadoriaRecebidaConsignacao.setDescricao("Devolução de Mercadoria Recebida em Consignação mercantil.");
 		devolucaoMercadoriaRecebidaConsignacao.setNopCodigo(0L);
 		devolucaoMercadoriaRecebidaConsignacao.setTipoOperacao(TipoOperacao.SAIDA);
 		devolucaoMercadoriaRecebidaConsignacao.setGrupoNotaFiscal(GrupoNotaFiscal.NF_DEVOLUCAO_MERCADORIA_RECEBIA_CONSIGNACAO);
@@ -1731,11 +1734,11 @@ public class DataLoader {
 		TipoNotaFiscal devolucaoMercadoriaRecebidaConsignacaoCota = new TipoNotaFiscal();
 		devolucaoMercadoriaRecebidaConsignacaoCota.setCfopEstado(cfop5918);
 		devolucaoMercadoriaRecebidaConsignacaoCota.setCfopOutrosEstados(cfop6918);
-		devolucaoMercadoriaRecebidaConsignacaoCota.setNopDescricao("Devolução de Mercadoria Recebida em Consignação");
+		devolucaoMercadoriaRecebidaConsignacaoCota.setNopDescricao("Devolução de Mercadoria Recebida em Consignação mercantil.");
 		devolucaoMercadoriaRecebidaConsignacaoCota.setEmitente(TipoUsuarioNotaFiscal.COTA);
 		devolucaoMercadoriaRecebidaConsignacaoCota.setDestinatario(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
 		devolucaoMercadoriaRecebidaConsignacaoCota.setContribuinte(false);
-		devolucaoMercadoriaRecebidaConsignacaoCota.setDescricao("Devolução de Mercadoria Recebida em Consignação");
+		devolucaoMercadoriaRecebidaConsignacaoCota.setDescricao("Devolução de Mercadoria Recebida em Consignação mercantil.");
 		devolucaoMercadoriaRecebidaConsignacaoCota.setNopCodigo(0L);
 		devolucaoMercadoriaRecebidaConsignacaoCota.setTipoOperacao(TipoOperacao.ENTRADA);
 		devolucaoMercadoriaRecebidaConsignacaoCota.setGrupoNotaFiscal(GrupoNotaFiscal.NF_DEVOLUCAO_MERCADORIA_RECEBIA_CONSIGNACAO);
@@ -1750,11 +1753,11 @@ public class DataLoader {
 		TipoNotaFiscal devolucaoSimbolicaMErcadoriaVendida = new TipoNotaFiscal();
 		devolucaoSimbolicaMErcadoriaVendida.setCfopEstado(cfop5919);
 		devolucaoSimbolicaMErcadoriaVendida.setCfopOutrosEstados(cfop6919);
-		devolucaoSimbolicaMErcadoriaVendida.setNopDescricao("Devolução Simbólica de Mercadoria Vendida recebida anteriormente em Consignação");
+		devolucaoSimbolicaMErcadoriaVendida.setNopDescricao("Devolução Simbólica de Mercadoria Vendida ou utilizada em processo industrial, recebida anteriormente em consignação mercantil ou industrial.");
 		devolucaoSimbolicaMErcadoriaVendida.setEmitente(TipoUsuarioNotaFiscal.COTA);
 		devolucaoSimbolicaMErcadoriaVendida.setDestinatario(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
 		devolucaoSimbolicaMErcadoriaVendida.setContribuinte(false);
-		devolucaoSimbolicaMErcadoriaVendida.setDescricao("Devolução Simbólica de Mercadoria Vendida recebida anteriormente em Consignação");
+		devolucaoSimbolicaMErcadoriaVendida.setDescricao("Devolução Simbólica de Mercadoria Vendida ou utilizada em processo industrial, recebida anteriormente em consignação mercantil ou industrial.");
 		devolucaoSimbolicaMErcadoriaVendida.setNopCodigo(0L);
 		devolucaoSimbolicaMErcadoriaVendida.setTipoOperacao(TipoOperacao.ENTRADA);
 		devolucaoSimbolicaMErcadoriaVendida.setGrupoNotaFiscal(GrupoNotaFiscal.NF_DEVOLUCAO_SIMBOLICA);
@@ -1767,11 +1770,11 @@ public class DataLoader {
 		TipoNotaFiscal devolucaoSimbolicaMErcadoriaVendidaDistri = new TipoNotaFiscal();
 		devolucaoSimbolicaMErcadoriaVendidaDistri.setCfopEstado(cfop5919);
 		devolucaoSimbolicaMErcadoriaVendidaDistri.setCfopOutrosEstados(cfop6919);
-		devolucaoSimbolicaMErcadoriaVendidaDistri.setNopDescricao("Devolução Simbólica de Mercadoria Vendida recebida anteriormente em Consignação");
+		devolucaoSimbolicaMErcadoriaVendidaDistri.setNopDescricao("Devolução Simbólica de Mercadoria Vendida ou utilizada em processo industrial, recebida anteriormente em consignação mercantil ou industrial.");
 		devolucaoSimbolicaMErcadoriaVendidaDistri.setEmitente(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
 		devolucaoSimbolicaMErcadoriaVendidaDistri.setDestinatario(TipoUsuarioNotaFiscal.TREELOG);
 		devolucaoSimbolicaMErcadoriaVendidaDistri.setContribuinte(false);
-		devolucaoSimbolicaMErcadoriaVendidaDistri.setDescricao("Devolução Simbólica de Mercadoria Vendida recebida anteriormente em Consignação");
+		devolucaoSimbolicaMErcadoriaVendidaDistri.setDescricao("Devolução Simbólica de Mercadoria Vendida ou utilizada em processo industrial, recebida anteriormente em consignação mercantil ou industrial.");
 		devolucaoSimbolicaMErcadoriaVendidaDistri.setNopCodigo(0L);
 		devolucaoSimbolicaMErcadoriaVendidaDistri.setTipoOperacao(TipoOperacao.SAIDA);
 		devolucaoSimbolicaMErcadoriaVendidaDistri.setGrupoNotaFiscal(GrupoNotaFiscal.NF_DEVOLUCAO_SIMBOLICA);
@@ -1790,11 +1793,11 @@ public class DataLoader {
 		tipoNotaFiscalRecebimento = new TipoNotaFiscal();
 		tipoNotaFiscalRecebimento.setCfopEstado(cfop5115);
 		tipoNotaFiscalRecebimento.setCfopOutrosEstados(cfop6115);
-		tipoNotaFiscalRecebimento.setNopDescricao("Venda de Mercadoria recebida anteriormente em Consignação");
+		tipoNotaFiscalRecebimento.setNopDescricao("Venda de Mercadoria adquirida ou recebida de terceiros, recebida anteriormente em consignação mercantil.");
 		tipoNotaFiscalRecebimento.setEmitente(TipoUsuarioNotaFiscal.TREELOG);
 		tipoNotaFiscalRecebimento.setDestinatario(TipoUsuarioNotaFiscal.COTA);
 		tipoNotaFiscalRecebimento.setContribuinte(false);
-		tipoNotaFiscalRecebimento.setDescricao("Venda de Mercadoria recebida anteriormente em Consignação");
+		tipoNotaFiscalRecebimento.setDescricao("Venda de Mercadoria adquirida ou recebida de terceiros, recebida anteriormente em consignação mercantil.");
 		tipoNotaFiscalRecebimento.setNopCodigo(0L);
 		tipoNotaFiscalRecebimento.setTipoOperacao(TipoOperacao.SAIDA);
 		tipoNotaFiscalRecebimento.setGrupoNotaFiscal(GrupoNotaFiscal.NF_VENDA);
@@ -1807,11 +1810,11 @@ public class DataLoader {
 		TipoNotaFiscal entradaRetornoRemessaDistribuicao = new TipoNotaFiscal();
 		entradaRetornoRemessaDistribuicao.setCfopEstado(cfop1949);
 		entradaRetornoRemessaDistribuicao.setCfopOutrosEstados(cfop2949);
-		entradaRetornoRemessaDistribuicao.setNopDescricao("NF-e de Entrada de Retorno de Remessa para Distribuição");
+		entradaRetornoRemessaDistribuicao.setNopDescricao("NF-e Retorno de Remessa para Distribuição");
 		entradaRetornoRemessaDistribuicao.setEmitente(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
 		entradaRetornoRemessaDistribuicao.setDestinatario(TipoUsuarioNotaFiscal.COTA);
 		entradaRetornoRemessaDistribuicao.setContribuinte(false);
-		entradaRetornoRemessaDistribuicao.setDescricao("NF-e de Entrada de Retorno de Remessa para Distribuição");
+		entradaRetornoRemessaDistribuicao.setDescricao("NF-e Retorno de Remessa para Distribuição");
 		entradaRetornoRemessaDistribuicao.setNopCodigo(0L);
 		entradaRetornoRemessaDistribuicao.setTipoOperacao(TipoOperacao.ENTRADA);
 		entradaRetornoRemessaDistribuicao.setGrupoNotaFiscal(GrupoNotaFiscal.NF_ENTRADA_RETORNO_REMESSA_DISTRIBUICAO);
@@ -1923,11 +1926,11 @@ public class DataLoader {
 		TipoNotaFiscal tipoNotaFiscalPrestadorFilial = new TipoNotaFiscal();
 		tipoNotaFiscalPrestadorFilial.setCfopEstado(cfop5949);
 		tipoNotaFiscalPrestadorFilial.setCfopOutrosEstados(cfop6949);
-		tipoNotaFiscalPrestadorFilial.setNopDescricao("NF-E Transferência de Remessa para Distribuição");
+		tipoNotaFiscalPrestadorFilial.setNopDescricao("NF-E Remessa para Distribuição.");
 		tipoNotaFiscalPrestadorFilial.setEmitente(TipoUsuarioNotaFiscal.TREELOG);
 		tipoNotaFiscalPrestadorFilial.setDestinatario(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
 		tipoNotaFiscalPrestadorFilial.setContribuinte(true);
-		tipoNotaFiscalPrestadorFilial.setDescricao("NF-E Transferência de Remessa para Distribuição");
+		tipoNotaFiscalPrestadorFilial.setDescricao("NF-E Remessa para Distribuição.");
 		tipoNotaFiscalPrestadorFilial.setNopCodigo(0L);
 		tipoNotaFiscalPrestadorFilial.setTipoOperacao(TipoOperacao.ENTRADA);
 		tipoNotaFiscalPrestadorFilial.setGrupoNotaFiscal(GrupoNotaFiscal.NF_REMESSA_CONSIGNACAO);
@@ -1940,11 +1943,11 @@ public class DataLoader {
 		tipoNotaFiscalPrestadorFilial = new TipoNotaFiscal();
 		tipoNotaFiscalPrestadorFilial.setCfopEstado(cfop5949);
 		tipoNotaFiscalPrestadorFilial.setCfopOutrosEstados(cfop6949);
-		tipoNotaFiscalPrestadorFilial.setNopDescricao("NF-E Transferência de Remessa para Distribuição");
+		tipoNotaFiscalPrestadorFilial.setNopDescricao("NF-E Remessa para Distribuição.");
 		tipoNotaFiscalPrestadorFilial.setEmitente(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
 		tipoNotaFiscalPrestadorFilial.setDestinatario(TipoUsuarioNotaFiscal.COTA);
 		tipoNotaFiscalPrestadorFilial.setContribuinte(true);
-		tipoNotaFiscalPrestadorFilial.setDescricao("NF-E Transferência de Remessa para Distribuição");
+		tipoNotaFiscalPrestadorFilial.setDescricao("NF-E Remessa para Distribuição.");
 		tipoNotaFiscalPrestadorFilial.setNopCodigo(0L);
 		tipoNotaFiscalPrestadorFilial.setTipoOperacao(TipoOperacao.SAIDA);
 		tipoNotaFiscalPrestadorFilial.setGrupoNotaFiscal(GrupoNotaFiscal.NF_REMESSA_CONSIGNACAO);
@@ -2098,11 +2101,11 @@ public class DataLoader {
 		tipoNotaFiscalPrestadorFilial = new TipoNotaFiscal();
 		tipoNotaFiscalPrestadorFilial.setCfopEstado(cfop5115);
 		tipoNotaFiscalPrestadorFilial.setCfopOutrosEstados(cfop6115);
-		tipoNotaFiscalPrestadorFilial.setNopDescricao("Venda de Mercadoria recebida anteriormente em Consignação");
+		tipoNotaFiscalPrestadorFilial.setNopDescricao("Venda de Mercadoria adquirida ou recebida de terceiros, recebida anteriormente em consignação mercantil.");
 		tipoNotaFiscalPrestadorFilial.setEmitente(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
 		tipoNotaFiscalPrestadorFilial.setDestinatario(TipoUsuarioNotaFiscal.COTA);
 		tipoNotaFiscalPrestadorFilial.setContribuinte(true);
-		tipoNotaFiscalPrestadorFilial.setDescricao("Venda de Mercadoria recebida anteriormente em Consignação");
+		tipoNotaFiscalPrestadorFilial.setDescricao("Venda de Mercadoria adquirida ou recebida de terceiros, recebida anteriormente em consignação mercantil.");
 		tipoNotaFiscalPrestadorFilial.setNopCodigo(0L);
 		tipoNotaFiscalPrestadorFilial.setTipoOperacao(TipoOperacao.SAIDA);
 		tipoNotaFiscalPrestadorFilial.setGrupoNotaFiscal(GrupoNotaFiscal.NF_VENDA);
@@ -2115,11 +2118,11 @@ public class DataLoader {
 		tipoNotaFiscalPrestadorFilial = new TipoNotaFiscal();
 		tipoNotaFiscalPrestadorFilial.setCfopEstado(cfop5115);
 		tipoNotaFiscalPrestadorFilial.setCfopOutrosEstados(cfop6115);
-		tipoNotaFiscalPrestadorFilial.setNopDescricao("Venda de Mercadoria recebida anteriormente em Consignação");
+		tipoNotaFiscalPrestadorFilial.setNopDescricao("Venda de Mercadoria adquirida ou recebida de terceiros, recebida anteriormente em consignação mercantil.");
 		tipoNotaFiscalPrestadorFilial.setEmitente(TipoUsuarioNotaFiscal.TREELOG);
 		tipoNotaFiscalPrestadorFilial.setDestinatario(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
 		tipoNotaFiscalPrestadorFilial.setContribuinte(true);
-		tipoNotaFiscalPrestadorFilial.setDescricao("Venda de Mercadoria recebida anteriormente em Consignação");
+		tipoNotaFiscalPrestadorFilial.setDescricao("Venda de Mercadoria adquirida ou recebida de terceiros, recebida anteriormente em consignação mercantil.");
 		tipoNotaFiscalPrestadorFilial.setNopCodigo(0L);
 		tipoNotaFiscalPrestadorFilial.setTipoOperacao(TipoOperacao.ENTRADA);
 		tipoNotaFiscalPrestadorFilial.setGrupoNotaFiscal(GrupoNotaFiscal.NF_VENDA);
@@ -2484,25 +2487,114 @@ public class DataLoader {
 
 	private static void gerarMaterialPromocionalPDV(Session session) {
 
-		MaterialPromocional materialPromocional = Fixture.criarMaterialPromocional(1L, "Adesivo");
-		MaterialPromocional materialPromocional1 = Fixture.criarMaterialPromocional(2L, "Brindes");
-		MaterialPromocional materialPromocional2 = Fixture.criarMaterialPromocional(3L, "Poster");
-		MaterialPromocional materialPromocional3 = Fixture.criarMaterialPromocional(4L, "Bandeirola");
-		MaterialPromocional materialPromocional4 = Fixture.criarMaterialPromocional(5L, "Sapataria");
-		MaterialPromocional materialPromocional5 = Fixture.criarMaterialPromocional(6L, "Cartaz Grande");
+		List<MaterialPromocional> listaMaterialPromocional = new ArrayList<MaterialPromocional>();
+		
+		listaMaterialPromocional.add(Fixture.criarMaterialPromocional(null, "Adesivo"));
+		listaMaterialPromocional.add(Fixture.criarMaterialPromocional(null, "Bandeirola"));
+		listaMaterialPromocional.add(Fixture.criarMaterialPromocional(null, "Banner"));
+		listaMaterialPromocional.add(Fixture.criarMaterialPromocional(null, "Cartaz Grande"));
+		listaMaterialPromocional.add(Fixture.criarMaterialPromocional(null, "Display Acrílico / PVC de Ba"));
+		listaMaterialPromocional.add(Fixture.criarMaterialPromocional(null, "Display Aramado de Chão"));
+		listaMaterialPromocional.add(Fixture.criarMaterialPromocional(null, "Display de Papelão de Chão"));
+		listaMaterialPromocional.add(Fixture.criarMaterialPromocional(null, "Faixa de Banca"));
+		listaMaterialPromocional.add(Fixture.criarMaterialPromocional(null, "Móbile"));
+		listaMaterialPromocional.add(Fixture.criarMaterialPromocional(null, "Reprint Capa"));
+		listaMaterialPromocional.add(Fixture.criarMaterialPromocional(null, "Sapateira"));
+		listaMaterialPromocional.add(Fixture.criarMaterialPromocional(null, "Totem"));
+		
 
-		save(session,materialPromocional,materialPromocional1,materialPromocional2,materialPromocional3,materialPromocional4,materialPromocional5);
+		Long contador = 0L;
+		
+		for(MaterialPromocional materialPromocional : listaMaterialPromocional) {
+			
+			contador++;
+			
+			materialPromocional.setCodigo(contador);
+			
+			session.save(materialPromocional);
+			
+		}
+		
 	}
 
 	private static void gerarTipoGeradorFluxoPDV(Session session) {
 
-		TipoGeradorFluxoPDV tipoGeradorFluxoPDV = Fixture.criarTipoGeradorFluxoPDV(1L, "Cursinho");
-		TipoGeradorFluxoPDV tipoGeradorFluxoPDV1 = Fixture.criarTipoGeradorFluxoPDV(2L, "Superior");
-		TipoGeradorFluxoPDV tipoGeradorFluxoPDV2 = Fixture.criarTipoGeradorFluxoPDV(3L, "Padarias");
-		TipoGeradorFluxoPDV tipoGeradorFluxoPDV3 = Fixture.criarTipoGeradorFluxoPDV(4L, "Restaurantes");
-		TipoGeradorFluxoPDV tipoGeradorFluxoPDV4 = Fixture.criarTipoGeradorFluxoPDV(5L, "Pre-Escola");
+		List<TipoGeradorFluxoPDV> listaTipoGeradorFluxoPDV = new ArrayList<TipoGeradorFluxoPDV>();
 
-		save(session,tipoGeradorFluxoPDV,tipoGeradorFluxoPDV1,tipoGeradorFluxoPDV2,tipoGeradorFluxoPDV3,tipoGeradorFluxoPDV4);
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(1l, "Pre-Escola"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(2l, "Escola 1 e 2 Grau Particular"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(3l, "Escola 1 e 2 Grau Publica"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(4l, "Cursinho"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(5l, "Superior"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(6l, "Curso de Lingua"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(7l, "Curso de Informatica"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(8l, "Escola de Arte"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(9l, "Faculdades/Universidades"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(10l, "Estação de Metro"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(11l, "Ferroviaria"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(12l, "Rodoviaria"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(13l, "Pontos de Onibus"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(14l, "Terminais de Onibus"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(15l, "Corredores de Transito"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(16l, "Padarias"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(17l, "Lanchonete e Bares"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(18l, "Restaurantes"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(19l, "Shopping Center"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(20l, "Centro Comercial"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(21l, "Supermercado e Hipermercado"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(22l, "Loja de Convivencia"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(23l, "Feira Livre"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(24l, "Mercado Municipal"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(25l, "Varejão/Sacola"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(26l, "Parques"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(27l, "Praia"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(28l, "Estadio"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(29l, "Biblioteca"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(30l, "Clube"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(31l, "Livraria"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(32l, "Teatro"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(33l, "Cinema"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(34l, "Video Locadora"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(35l, "Motel"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(36l, "Centro de Convenções"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(37l, "Hotel"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(38l, "Agencia de Turismo"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(39l, "Aeroporto"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(40l, "Banco"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(41l, "Repartição Publica"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(42l, "Posto de Gasolina"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(43l, "Igreja"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(44l, "Empresa/Industria/Escritorio"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(45l, "Loja de Material Esportivo"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(46l, "Academia de Ginastica/Esportes"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(47l, "Loja de Decoração"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(48l, "Loja de Material de Construção"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(49l, "Bazares"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(50l, "Loja de Armarinhos"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(51l, "Farmacias e Drogarias"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(52l, "Lab. Clinicos/Consultorios"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(53l, "Hospital"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(54l, "Loja p/ Materias de Jardinagem"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(55l, "Loja de Plantas/Floriculturas"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(56l, "Lojas de Animais"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(57l, "Clinica Veterinaria"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(58l, "Loja de Disco"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(59l, "Loja de Instrumentos Musicais"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(60l, "Escola de Musica"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(61l, "Casas, Aptos e Condominios"));
+
+		Long contador = 0L;
+		
+		for(TipoGeradorFluxoPDV tipo : listaTipoGeradorFluxoPDV) {
+			
+			contador++;
+			
+			tipo.setCodigo(contador);
+			
+			save(session, tipo);
+		}
+
+		
 	}
 
 	private static void gerarTiposPontoPDV(Session session) {
@@ -5516,35 +5608,35 @@ public class DataLoader {
 
 
 		PoliticaCobranca politicaCobranca =
-				Fixture.criarPoliticaCobranca(distribuidor, formaBoletoDistribuidor, true, true, true, 1,"Assunto","Mansagem",true,FormaEmissao.NAO_IMPRIME);
+				Fixture.criarPoliticaCobranca(distribuidor, formaBoletoDistribuidor, true, true, true, "Assunto","Mansagem",true,FormaEmissao.NAO_IMPRIME);
 			save(session, politicaCobranca);
 
 		PoliticaCobranca politicaCobranca2 =
-				Fixture.criarPoliticaCobranca(null, formaBoletoDistribuidor2, true, true, true, 1,"Assunto","Mansagem",false,FormaEmissao.INDIVIDUAL_AGREGADA);
+				Fixture.criarPoliticaCobranca(null, formaBoletoDistribuidor2, true, true, true, "Assunto","Mansagem",false,FormaEmissao.INDIVIDUAL_AGREGADA);
 			save(session, politicaCobranca);
 
 		PoliticaCobranca politicaCobranca3 =
-				Fixture.criarPoliticaCobranca(null, formaDinheiroDistribuidor, true, true, true, 1,"Assunto","Mansagem",false,FormaEmissao.NAO_IMPRIME);
+				Fixture.criarPoliticaCobranca(null, formaDinheiroDistribuidor, true, true, true, "Assunto","Mansagem",false,FormaEmissao.NAO_IMPRIME);
 			save(session, politicaCobranca);
 
 		PoliticaCobranca politicaCobranca4 =
-				Fixture.criarPoliticaCobranca(null, formaTransferenciBancariaDistribuidor, true, true, true, 1,"Assunto","Mansagem",false,FormaEmissao.NAO_IMPRIME);
+				Fixture.criarPoliticaCobranca(null, formaTransferenciBancariaDistribuidor, true, true, true, "Assunto","Mansagem",false,FormaEmissao.NAO_IMPRIME);
 			save(session, politicaCobranca);
 
 		PoliticaCobranca politicaCobranca5 =
-				Fixture.criarPoliticaCobranca(null, formaDepositoDistribuidor, true, true, true, 1,"Assunto","Mansagem",false,FormaEmissao.INDIVIDUAL_BOX);
+				Fixture.criarPoliticaCobranca(null, formaDepositoDistribuidor, true, true, true, "Assunto","Mansagem",false,FormaEmissao.INDIVIDUAL_BOX);
 			save(session, politicaCobranca);
 
 		PoliticaCobranca politicaCobranca6 =
-				Fixture.criarPoliticaCobranca(null, formaBoletoDistribuidor3, true, true, true, 1,"Assunto","Mansagem",false,FormaEmissao.INDIVIDUAL_AGREGADA);
+				Fixture.criarPoliticaCobranca(null, formaBoletoDistribuidor3, true, true, true, "Assunto","Mansagem",false,FormaEmissao.INDIVIDUAL_AGREGADA);
 			save(session, politicaCobranca);
 
 		PoliticaCobranca politicaCobranca7 =
-				Fixture.criarPoliticaCobranca(null, formaDepositoDistribuidor2, true, true, true, 1,"Assunto","Mansagem",false,FormaEmissao.NAO_IMPRIME);
+				Fixture.criarPoliticaCobranca(null, formaDepositoDistribuidor2, true, true, true, "Assunto","Mansagem",false,FormaEmissao.NAO_IMPRIME);
 			save(session, politicaCobranca);
 
 		PoliticaCobranca politicaCobranca8 =
-				Fixture.criarPoliticaCobranca(null, formaChequeDistribuidor, true, true, true, 1,"Assunto","Mansagem",false,FormaEmissao.NAO_IMPRIME);
+				Fixture.criarPoliticaCobranca(null, formaChequeDistribuidor, true, true, true, "Assunto","Mansagem",false,FormaEmissao.NAO_IMPRIME);
 			save(session, politicaCobranca);
 
 		PoliticaSuspensao politicaSuspensao = new PoliticaSuspensao();
@@ -6047,11 +6139,15 @@ public class DataLoader {
 		tipoMovimentoEstoqueEstornoCompraSuplementar = Fixture.tipoMovimentoEstornoCompraSuplementar();
 
 		tipoMovimentoFinanceiroCompraEncalhe = Fixture.tipoMovimentoFinanceiroCompraEncalhe();
+		
+		tipoMovimentoEstoqueRecebimentoJornaleiroJuramentado = Fixture.tipoMovimentoRecebimentoJornaleiroJuramentado();
+		tipoMovimentoEstoqueEnvioJornaleiroJuramentado = Fixture.tipoMovimentoEnvioJornaleiroJuramentado();
+
 
 		save(session, tipoMovimentoVendaEncalhe,tipoMovimentoFinanceiroCompraEncalhe,tipoMovimentoEstornoVendaEncalhe,tipoMovimentoVendaEncalheSuplementar,
 					  tipoMovimentoEstornoVendaEncalheSuplementar,tipoMovimentoEstoqueCompraSuplementar,tipoMovimentoEstoqueEstornoCompraSuplementar, 
-					  tipoMovimentoEncalheAntecipado,tipoMovimentoCompraEncalhe,tipoMovimentoEstornoCompraEncalhe, tipoMovimentoEstornoCotaFuroPublicacao, tipoMovimentoEstornoFuroPublicacao);
-
+					  tipoMovimentoEncalheAntecipado,tipoMovimentoCompraEncalhe,tipoMovimentoEstornoCompraEncalhe, tipoMovimentoEstornoCotaFuroPublicacao, tipoMovimentoEstornoFuroPublicacao,
+					  tipoMovimentoEstoqueRecebimentoJornaleiroJuramentado, tipoMovimentoEstoqueEnvioJornaleiroJuramentado);
 
 		tipoMovimentoSuplementarCotaAusente = Fixture.tipoMovimentoSuplementarCotaAusente();
 		
@@ -6085,9 +6181,8 @@ public class DataLoader {
 		tipoMovimentoFinanceiroDebitoPostergado = Fixture.tipoMovimentoFinanceiroDebitoPostergado();
 		tipoMovimentoFinanceiroCreditoPostergado = Fixture.tipoMovimentoFinanceiroCreditoPostergado();
 		tipoMovimentoFinanceiroDebitoPostergadoNegociado = Fixture.tipoMovimentoFinanceiroDebitoPostergadoNegociado();
-		
-
 		tipoMovimentoEnvioJornaleiro = Fixture.tipoMovimentoEnvioJornaleiro();
+		
 
 		save(session, tipoMovimentoEnvioJornaleiro,
 				tipoMovimentoEstornoCotaAusente,tipoMovimentoFinanceiroDebitoPostergadoNegociado,
@@ -6113,6 +6208,7 @@ public class DataLoader {
 		tipoMovimentoTransferenciaSaidaProdutosDevolucaoFornecedor = Fixture.tipoMovimentoTransferenciaSaidaProdutosDevolucaoFornecedor();
 		tipoMovimentoDevolucaoEncalheFornecedor = Fixture.tipoMovimentoDevolucaoEncalheFornecedor();
 		tipoMovimentoFinanceiroVendaTotal = Fixture.tipoMovimentoFinanceiroVendaTotal();
+		
 		
 		save(session, tipoMovimentoFaltaEm, tipoMovimentoFaltaDe, tipoMovimentoSuplementarCotaAusente,
 				tipoMovimentoSobraEm, tipoMovimentoSobraDe,
@@ -6765,7 +6861,8 @@ public class DataLoader {
 				"Confraternização Universal",
 				false,
 				false,
-				true));
+				true,
+				Origem.CARGA_INICIAL));
 
 		save(session, Fixture.feriado(
 				DateUtil.parseDataPTBR("21/04/2012"), 
@@ -6775,7 +6872,8 @@ public class DataLoader {
 				"Tiradentes",
 				false,
 				false,
-				true));		
+				true,
+				Origem.CARGA_INICIAL));		
 		
 		save(session, Fixture.feriado(
 				DateUtil.parseDataPTBR("01/05/2012"), 
@@ -6785,7 +6883,8 @@ public class DataLoader {
 				"Dia Mundial do Trabalho",
 				false,
 				false,
-				true));	
+				true,
+				Origem.CARGA_INICIAL));	
 		
 		save(session, Fixture.feriado(
 				DateUtil.parseDataPTBR("07/09/2012"), 
@@ -6795,7 +6894,8 @@ public class DataLoader {
 				"Independência do Brasil",
 				false,
 				false,
-				true));		
+				true,
+				Origem.CARGA_INICIAL));		
 		
 		save(session, Fixture.feriado(
 				DateUtil.parseDataPTBR("12/10/2012"), 
@@ -6805,7 +6905,8 @@ public class DataLoader {
 				"Nossa Senhora Aparecida",
 				false,
 				false,
-				true));				
+				true,
+				Origem.CARGA_INICIAL));				
 		
 		save(session, Fixture.feriado(
 				DateUtil.parseDataPTBR("02/11/2012"), 
@@ -6815,7 +6916,8 @@ public class DataLoader {
 				"Finados",
 				false,
 				false,
-				true));				
+				true,
+				Origem.CARGA_INICIAL));				
 
 		save(session, Fixture.feriado(
 				DateUtil.parseDataPTBR("15/11/2012"), 
@@ -6825,7 +6927,8 @@ public class DataLoader {
 				"Proclamação da República",
 				false,
 				false,
-				true));	
+				true,
+				Origem.CARGA_INICIAL));	
 		
 		save(session, Fixture.feriado(
 				DateUtil.parseDataPTBR("25/12/2012"), 
@@ -6835,7 +6938,8 @@ public class DataLoader {
 				"Natal",
 				false,
 				false,
-				true));	
+				true,
+				Origem.CARGA_INICIAL));	
 		
 //Moveis		
 		
@@ -6847,7 +6951,8 @@ public class DataLoader {
 				"Paixão de Cristo",
 				false,
 				false,
-				false));
+				false,
+				Origem.CARGA_INICIAL));
 		
 		save(session, Fixture.feriado(
 				DateUtil.parseDataPTBR("07/06/2012"), 
@@ -6857,7 +6962,8 @@ public class DataLoader {
 				"Corpus Christi",
 				false,
 				false,
-				false));
+				false,
+				Origem.CARGA_INICIAL));
 		
 	}
 	

@@ -23,6 +23,7 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.couchdb.CouchDbProperties;
 import br.com.abril.nds.integracao.engine.data.CouchDBImportRouteTemplate;
 import br.com.abril.nds.integracao.engine.data.Message;
@@ -32,6 +33,7 @@ import br.com.abril.nds.integracao.model.canonic.IntegracaoDocument;
 import br.com.abril.nds.integracao.model.canonic.TipoInterfaceEnum;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 import br.com.abril.nds.repository.impl.AbstractRepository;
+import br.com.abril.nds.util.TipoMensagem;
 
 @Component
 

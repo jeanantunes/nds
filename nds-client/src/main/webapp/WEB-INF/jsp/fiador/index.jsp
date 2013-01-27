@@ -35,13 +35,13 @@
 	</form>
 	
 	<div id="workspaceFiador">
-	<div id="fiadorController-dialog-fiador" title="Novo Fiador" style="display: none;">
+	<div id="fiadorController-dialog-fiador" title="Novo Fiador" style="display: none; overflow: hidden;">
 	
 		<jsp:include page="../messagesDialog.jsp">
 			<jsp:param value="dialog-fiador" name="messageDialog"/>
 		</jsp:include>
 	
-		<div id="fiadorController-tabs">
+		<div id="fiadorController-tabs" style="height:550px;">
 			<ul>
 				<li><a href="#fiadorController-tab-1">Dados Cadastrais</a></li>
 				<li id="fiadorController-tabSocio"><a href="#fiadorController-tab-2" onclick="$('.fiadorController-trSocioPrincipal').show();fiadorController.carregarSocios();" >Sócios</a></li>
@@ -100,15 +100,17 @@
 	<div class="areaBts">
 		<div class="area">
             <span class="bt_novos">
-            	<a href="javascript:;" onclick='$(".fiadorController-inicioAtividadeNovo").show();$(".fiadorController-inicioAtividadeEdicao").hide();fiadorController.popupCadastroFiadorCPF();' rel="tipsy" title="Incluir Novo Fiador Pessoa Física"><img src="${pageContext.request.contextPath}/images/ico_jornaleiro.gif" hspace="5" border="0"/></a>
+            	<a href="javascript:;" onclick='fiadorController.novoFiadorCPF();' rel="tipsy" title="Incluir Novo Fiador Pessoa Física"><img src="${pageContext.request.contextPath}/images/ico_jornaleiro.gif" hspace="5" border="0"/></a>
             </span>
         	
         	<span class="bt_novos">
-        		<a href="javascript:;" onclick="fiadorController.popupCadastroFiadorCNPJ();" rel="tipsy" title="Incluir Novo Fiador Pessoa Jurídica"><img src="${pageContext.request.contextPath}/images/ico_usuarios1.gif" hspace="5" border="0"/></a>
+        		<a href="javascript:;" onclick="fiadorController.novoFiadorCNPJ();" rel="tipsy" title="Incluir Novo Fiador Pessoa Jurídica"><img src="${pageContext.request.contextPath}/images/ico_usuarios1.gif" hspace="5" border="0"/></a>
         	</span>
 		</div>
 	</div>
+	
 	<div class="linha_separa_fields">&nbsp;</div>
+	
 	<fieldset class="fieldFiltro">
    		<legend> Pesquisar Fiador</legend>
         	<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
@@ -116,7 +118,7 @@
 					<td width="41">Nome:</td>
               		<td colspan="3">
               			<input type="text" name="textfield2" id="fiadorController-nomeFiadorPesquisa" style="width:180px;" maxlength="255" 
-              			onkeyup='PESSOA.autoCompletarPorNomeFiador("#fiadorController-nomeFiadorPesquisa",fiadorController.workspace)'/>
+              			onkeyup='PESSOA.autoCompletarPorNomeFiador("#fiadorController-nomeFiadorPesquisa",fiadorController.workspace);'/>
               		</td>
                 	<td width="74">CPF/CNPJ:</td>
                 	<td width="139">

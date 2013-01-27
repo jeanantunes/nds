@@ -138,14 +138,12 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 	@Transactional(readOnly = true)
 	public List<Diferenca> obterDiferencas(FiltroConsultaDiferencaEstoqueDTO filtro) {
 		
-		Date dataInicialLancamento = calendarioService.subtrairDiasUteis(new Date(), 7);
-		
 		if(filtro.getNumeroCota() != null) {
 			Cota cota = this.cotaRepository.obterPorNumerDaCota(filtro.getNumeroCota());
 			filtro.setIdCota(cota.getId());
 		}
 		
-		return this.diferencaEstoqueRepository.obterDiferencas(filtro, dataInicialLancamento);
+		return this.diferencaEstoqueRepository.obterDiferencas(filtro);
 	}
 	
 	@Transactional(readOnly = true)
@@ -170,7 +168,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 	@Transactional
 	public void lancarDiferencaAutomaticaContagemDevolucao(Diferenca diferenca) {
 		
-		processarDiferencaAutomatica(diferenca);
+		processarDiferencaAutomatica(diferenca, TipoEstoque.LANCAMENTO);
 		
 		StatusAprovacao statusAprovacao = StatusAprovacao.GANHO;
 		
@@ -188,24 +186,24 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 	}
 	
 	@Transactional
-	public Diferenca lancarDiferencaAutomatica(Diferenca diferenca) {
+	public Diferenca lancarDiferencaAutomatica(Diferenca diferenca, TipoEstoque tipoEstoque) {
 		
-		diferenca = processarDiferencaAutomatica(diferenca);
+		diferenca = processarDiferencaAutomatica(diferenca, tipoEstoque);
 		
 		this.confirmarLancamentosDiferenca(Arrays.asList(diferenca),true);
 		
 		return diferenca;
 	}
 
-	private Diferenca processarDiferencaAutomatica(Diferenca diferenca) {
+	private Diferenca processarDiferencaAutomatica(Diferenca diferenca, TipoEstoque tipoEstoque) {
 		
 		Distribuidor distribuidor = distribuidorService.obter();
 		
 		diferenca.setStatusConfirmacao(StatusConfirmacao.CONFIRMADO);
 		diferenca.setTipoDirecionamento(TipoDirecionamentoDiferenca.ESTOQUE);
-		diferenca.setTipoEstoque(TipoEstoque.LANCAMENTO);
 		diferenca.setAutomatica(true);
 		diferenca.setDataMovimento(distribuidor.getDataOperacao());
+		diferenca.setTipoEstoque(tipoEstoque);
 		
 		return this.diferencaEstoqueRepository.merge(diferenca);
 	}

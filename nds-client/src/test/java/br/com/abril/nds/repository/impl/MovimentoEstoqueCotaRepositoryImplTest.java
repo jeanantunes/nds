@@ -395,9 +395,14 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 				estoqueProdutoCota,
 				BigInteger.valueOf(12), cotaManoel, StatusAprovacao.APROVADO, "Aprovado");
 		save(mec);
+		
+		
 		ConferenciaEncalhe conferenciaEncalhe = Fixture.conferenciaEncalhe(
 				mec, chamadaEncalheCota, controleConferenciaEncalheCota,
 				Fixture.criarData(28, Calendar.FEBRUARY, 2012),BigInteger.valueOf(12),BigInteger.valueOf(12), veja1);
+		
+		
+		
 		save(conferenciaEncalhe);
 		
 
@@ -655,6 +660,9 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		
 		ConferenciaEncalhe conferenciaEncalhe = Fixture.conferenciaEncalhe(mec, chamadaEncalheCota, controleConferenciaEncalheCota,
 				Fixture.criarData(28, Calendar.FEBRUARY, 2012),BigInteger.valueOf(8),BigInteger.valueOf(8), veja1);
+		
+		conferenciaEncalhe.setObservacao("Nova observ");
+		
 		save(conferenciaEncalhe);
 		
 		mec = Fixture.movimentoEstoqueCotaEnvioEncalhe( 
@@ -915,7 +923,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		
 		Integer qtde = movimentoEstoqueCotaRepository.obterQtdConsultaEncalhe(filtro);
 		
-		Assert.assertEquals(1, qtde.intValue());
+		Assert.assertEquals(3, qtde.intValue());
 	}
 	
 	@Test
@@ -929,7 +937,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		
 		Integer qtde = movimentoEstoqueCotaRepository.obterQtdConsultaEncalhe(filtro);
 		
-		Assert.assertEquals(1, qtde.intValue());
+		Assert.assertEquals(3, qtde.intValue());
 	}
 	
 	@Test
@@ -3284,7 +3292,10 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		
 		this.setupFinanceiroReparteEncalhe();
 		
-		List<MovimentoEstoqueCota> movimentos = this.movimentoEstoqueCotaRepository.obterMovimentosPendentesGerarFinanceiro(cotaValdomiro.getId());
+		List<MovimentoEstoqueCota> movimentos = 
+				this.movimentoEstoqueCotaRepository.obterMovimentosPendentesGerarFinanceiro(
+						cotaValdomiro.getId(),
+						Fixture.criarData(28, Calendar.FEBRUARY, 2012));
 		
         Assert.assertNotNull(movimentos);
 		
@@ -3325,6 +3336,16 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
         Assert.assertNotNull(total);
 		
         Assert.assertEquals(0,total.compareTo(new BigDecimal(300)));
+	}
+	
+	
+	@Test
+	public void testObterListaMovimentoEstoqueCotaDevolucaoJuramentada() {
+		
+		Date dataOperacao = Fixture.criarData(10, Calendar.JANUARY, 2012);
+		
+		movimentoEstoqueCotaRepository.obterListaMovimentoEstoqueCotaDevolucaoJuramentada(dataOperacao);
+		
 	}
 	
 

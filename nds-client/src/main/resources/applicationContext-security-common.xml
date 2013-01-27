@@ -6,9 +6,13 @@
 	http://www.springframework.org/schema/security
 	http://www.springframework.org/schema/security/spring-security-3.1.xsd">
 	
-	<http auto-config="true">
-
-		<form-login login-page="/login.jsp" authentication-failure-url="/login.jsp?error=1" />
+	
+	<beans:bean id="ajaxAwareAuthenticationEntryPoint" class="br.com.abril.nds.authentication.AjaxAwareAuthenticationEntryPoint">
+		<beans:constructor-arg name="loginFormUrl" value="/login.jsp"/>
+	</beans:bean>
+	
+	<http entry-point-ref="ajaxAwareAuthenticationEntryPoint">
+		<form-login login-page="/login.jsp" authentication-failure-url="/login.jsp?error=1"  />
 
 		<intercept-url pattern="/images/**" access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<intercept-url pattern="/scripts/**" access="IS_AUTHENTICATED_ANONYMOUSLY" />
@@ -19,6 +23,8 @@
 	
 	
 	<global-method-security pre-post-annotations="enabled" />
+	
+	
 	
 	<beans:bean class="org.springframework.security.web.access.expression.DefaultWebSecurityExpressionHandler"/>
 	

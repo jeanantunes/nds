@@ -55,22 +55,7 @@ var alteracaoCotaController = $.extend(true, {
 		
 		this.iniciarGrid();
 		
-		$("#idVrMinimoModal", this.workspace).priceFormat({
-			centsSeparator: ',',
-		    thousandsSeparator: '.'
-		});
-		$("#idVrDividaEmAbertoModal", this.workspace).priceFormat({
-			centsSeparator: ',',
-		    thousandsSeparator: '.'
-		});
-		$("#taxaFixaEntregaBanca", this.workspace).priceFormat({
-			centsSeparator: ',',
-		    thousandsSeparator: '.'
-		});
-		$("#taxaFixaEntregador", this.workspace).priceFormat({
-			centsSeparator: ',',
-		    thousandsSeparator: '.'
-		});
+		this.formatarCampos();
 		
 		$("#idQtdDividaEmAbertoModal", this.workspace).numeric();
 		$("#percentualFaturamentoEntregaBanca", this.workspace).mask("99.99");
@@ -141,6 +126,26 @@ var alteracaoCotaController = $.extend(true, {
 					 
 				});
 			
+	},
+	
+	formatarCampos: function() {
+	
+		$("#idVrMinimoModal", this.workspace).priceFormat({
+			centsSeparator: ',',
+		    thousandsSeparator: '.'
+		});
+		$("#idVrDividaEmAbertoModal", this.workspace).priceFormat({
+			centsSeparator: ',',
+		    thousandsSeparator: '.'
+		});
+		$("#taxaFixaEntregaBanca", this.workspace).priceFormat({
+			centsSeparator: ',',
+		    thousandsSeparator: '.'
+		});
+		$("#taxaFixaEntregador", this.workspace).priceFormat({
+			centsSeparator: ',',
+		    thousandsSeparator: '.'
+		});
 	},
 	
 	iniciarGrid : function() {
@@ -428,6 +433,7 @@ var alteracaoCotaController = $.extend(true, {
 						alteracaoCotaController.limparCamposAbas();
 					}
 					
+					alteracaoCotaController.formatarCampos();
 				},
 			  	null
 		);
@@ -522,8 +528,12 @@ var alteracaoCotaController = $.extend(true, {
 	salvarAlteracao : function() {
 		
 		var  dataForm = $("#alteracaoForm :input[value][value!=''][value!='-1']", this.workspace).serializeArray();
+		
+		dataForm[0].value = floatValue(dataForm[0].value);
+		
 		$("#idListaFornecedorAssociado option", this.workspace).each(function (index) {
-			 dataForm.push({name: 'filtroAlteracaoCotaDTO.filtroModalFornecedor.listaFornecedoresSelecionados['+index+']', value:$(this, this.workspace).val() } );
+			 dataForm.push({name: 'filtroAlteracaoCotaDTO.filtroModalFornecedor.listaFornecedoresSelecionados['+index+']', 
+				 			value:$(this, this.workspace).val() } );
 		});
 		
 		dataForm =  dataForm.concat(this.listListaLinhaSelecao);

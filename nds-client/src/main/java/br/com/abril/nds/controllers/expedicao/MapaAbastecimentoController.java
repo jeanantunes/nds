@@ -288,8 +288,7 @@ public class MapaAbastecimentoController extends BaseController {
 					throw new ValidacaoException(TipoMensagem.WARNING, "'Produto' não foi preenchido.");
 				break;
 			case ROTA:
-				if(filtroAtual.getRota()==null)
-					throw new ValidacaoException(TipoMensagem.WARNING, "'Rota' não foi preenchida.");
+				
 				break;
 			case ENTREGADOR:
 				if(filtroAtual.getIdEntregador()==null)
@@ -556,7 +555,7 @@ public class MapaAbastecimentoController extends BaseController {
 
 	@Post
 	public void buscarRotaPorRoteiro(Long idRoteiro) {
-		List<Rota> rotas = roteirizacaoService.buscarRotaPorRoteiro(idRoteiro);		
+		List<Rota> rotas = roteirizacaoService.buscarRotasPorRoteiro(idRoteiro);		
 		result.use(CustomMapJson.class).put("rotas", carregarRota(rotas)).serialize();
 	}
 

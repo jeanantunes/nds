@@ -12,8 +12,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -70,9 +70,10 @@ public class ConsolidadoFinanceiroCota implements Serializable {
 	@JoinColumn(name = "COTA_ID")
 	private Cota cota;
 	
-	@OneToMany
-	@JoinTable(name = "CONSOLIDADO_MVTO_FINANCEIRO_COTA", joinColumns = {@JoinColumn(name = "CONSOLIDADO_FINANCEIRO_ID")}, 
-	inverseJoinColumns = {@JoinColumn(name = "MVTO_FINANCEIRO_COTA_ID")})
+	@ManyToMany
+	@JoinTable(name = "CONSOLIDADO_MVTO_FINANCEIRO_COTA",
+			   joinColumns = {@JoinColumn(name = "CONSOLIDADO_FINANCEIRO_ID")}, 
+			   inverseJoinColumns = {@JoinColumn(name = "MVTO_FINANCEIRO_COTA_ID", unique = true)})
 	private List<MovimentoFinanceiroCota> movimentos = new ArrayList<MovimentoFinanceiroCota>();
 
 	public Long getId() {

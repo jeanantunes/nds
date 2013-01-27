@@ -206,45 +206,6 @@ public class VisaoEstoqueServiceImpl implements VisaoEstoqueService {
 					tipoMovimentoSaida);
 		}
 	}
-	
-	/**
-	 * Altera Quantidades em EstoqueProduto
-	 * @param tipoEstoque
-	 * @param idProdutoEdicao
-	 * @param quantidade
-	 */
-	private void alteraQuantidade(TipoEstoque tipoEstoque, Long idProdutoEdicao, Long quantidade){
-		
-		EstoqueProduto ep = null;
-		
-		ep = this.estoqueProdutoRepository.buscarEstoqueProdutoPorProdutoEdicao(idProdutoEdicao);
-		
-		if (ep!=null){
-			
-			switch (tipoEstoque){
-				case SUPLEMENTAR:
-					
-					ep.setQtdeSuplementar(ep.getQtdeSuplementar().subtract(BigInteger.valueOf(-1).multiply(BigInteger.valueOf(quantidade.intValue()))));
-				   
-					break;
-				case RECOLHIMENTO:
-					
-					ep.setQtdeDevolucaoEncalhe(ep.getQtdeDevolucaoEncalhe().subtract(BigInteger.valueOf(-1).multiply(BigInteger.valueOf(quantidade.intValue()))));
-					
-					break;
-				case LANCAMENTO:
-					 
-					ep.setQtde(ep.getQtde().subtract(BigInteger.valueOf(-1).multiply(BigInteger.valueOf(quantidade.intValue()))));
-					
-					break;
-				case PRODUTOS_DANIFICADOS:
-					 
-					ep.setQtdeDanificado(ep.getQtdeDanificado().subtract(BigInteger.valueOf(-1).multiply(BigInteger.valueOf(quantidade.intValue()))));
-					
-					break;	
-			}
-		}
-	}
 
 	@Override
 	@Transactional
@@ -256,8 +217,6 @@ public class VisaoEstoqueServiceImpl implements VisaoEstoqueService {
 			return;
 		}
 
-		Distribuidor distribuidor = distribuidorService.obter();
-		
 		for (VisaoEstoqueTransferenciaDTO dto : invetarioAtualizar) {
 			
 			if (dto.getQtde() == null) {
@@ -270,16 +229,12 @@ public class VisaoEstoqueServiceImpl implements VisaoEstoqueService {
 			ProdutoEdicao produtoEdicao = 
 				this.produtoEdicaoRepository.buscarPorId(dto.getProdutoEdicaoId());
 			
-			
-			this.alteraQuantidade(tipoEstoque, produtoEdicao.getId(), dto.getQtde());
-			
-			
 			if (produtoEdicao == null) {
 				
 				throw new ValidacaoException(
 					TipoMensagem.ERROR, "Não foi encontrado o produto/edição para inventário de estoque!");
 			}
-
+			
 			BigInteger qtdeDiferenca = new BigInteger(dto.getQtde().toString());
 			
 			diferenca.setProdutoEdicao(produtoEdicao);
@@ -294,7 +249,7 @@ public class VisaoEstoqueServiceImpl implements VisaoEstoqueService {
 				diferenca.setTipoDiferenca(TipoDiferenca.FALTA_EM);
 			}
 			
-			diferencaEstoqueService.lancarDiferencaAutomatica(diferenca);
+			diferencaEstoqueService.lancarDiferencaAutomatica(diferenca, tipoEstoque);
 		}
 	}
 }

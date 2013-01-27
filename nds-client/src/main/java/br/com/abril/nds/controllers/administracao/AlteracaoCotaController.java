@@ -223,13 +223,15 @@ public class AlteracaoCotaController extends BaseController {
 	@Post
 	public void salvarAlteracao(FiltroAlteracaoCotaDTO filtroAlteracaoCotaDTO, String sortname, int page, int rp) {
 		
+		boolean isCotasSelecionadas = filtroAlteracaoCotaDTO.getListaLinhaSelecao().size() > 1;
+		
 		for(Long idCota : filtroAlteracaoCotaDTO.getListaLinhaSelecao()){
 			
 			//Encontra Cota a Ser Alterada
 			Cota cota = cotaService.obterPorId(idCota);
 			
 			//****FORNECEDORES****//
-			atribuirValoresFornecedor(filtroAlteracaoCotaDTO,cota);
+			atribuirValoresFornecedor(filtroAlteracaoCotaDTO,cota,isCotasSelecionadas);
 			
 			//****FINANCEIRO****//
 			atribuirValoresFinanceiro(filtroAlteracaoCotaDTO, cota);
@@ -252,17 +254,24 @@ public class AlteracaoCotaController extends BaseController {
 		
 	}
 
-	private void atribuirValoresFornecedor(FiltroAlteracaoCotaDTO filtroAlteracaoCotaDTO, Cota cota) {
+	private void atribuirValoresFornecedor(FiltroAlteracaoCotaDTO filtroAlteracaoCotaDTO, Cota cota, boolean isCotasSelecionadas) {
 		
 		//Altera Fornecedores da Cota
 		Set<Fornecedor> fornecedoresCota = new HashSet<Fornecedor>();
 		for (Long  id : filtroAlteracaoCotaDTO.getFiltroModalFornecedor().getListaFornecedoresSelecionados()){
 			fornecedoresCota.add(fornecedorService.obterFornecedorPorId(id));
 		}
-		//Validaçao para nao apagar fornecedores quando for alterar
-		if(!fornecedoresCota.isEmpty()){
-			cota.setFornecedores(fornecedoresCota);				
+		
+		if(isCotasSelecionadas){
+			if(!fornecedoresCota.isEmpty()){
+				cota.getFornecedores().addAll(fornecedoresCota);				
+			}
 		}
+		else{
+			cota.setFornecedores(fornecedoresCota);
+		}
+		
+		
 	}
 	
 	/**
@@ -715,5 +724,6 @@ public class AlteracaoCotaController extends BaseController {
 		
 		this.result.use(Results.json()).from(valores, "result").serialize();
 	} 
-
+	 
+	
 }
