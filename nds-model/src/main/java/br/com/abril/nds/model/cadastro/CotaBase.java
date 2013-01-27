@@ -1,17 +1,13 @@
 package br.com.abril.nds.model.cadastro;
 
 import java.io.Serializable;
-import java.util.ArrayList;
+import java.math.BigDecimal;
 import java.util.Date;
-import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -29,13 +25,6 @@ public class CotaBase implements Serializable {
 	@Column(name = "ID")
 	private Long id;
 	
-	@OneToMany
-	@JoinTable(name = "COTA_BASE_COTA",
-		joinColumns = {@JoinColumn(name="COTA_BASE_ID")},
-		inverseJoinColumns = {@JoinColumn(name="COTA_ID", unique = true)}
-	)
-	private List<Cota> cotas = new ArrayList<Cota>();
-	
 	@Column(name = "DATA_INICIO")
 	@Temporal(TemporalType.DATE)
 	private Date dataInicio;
@@ -44,23 +33,14 @@ public class CotaBase implements Serializable {
 	@Temporal(TemporalType.DATE)
 	private Date dataFim;
 	
-	@Column(name = "ATIVA")
-	private Boolean ativa;
-
+	private BigDecimal indiceAjuste;
+	
 	public Long getId() {
 		return id;
 	}
 
 	public void setId(Long id) {
 		this.id = id;
-	}
-
-	public List<Cota> getCotas() {
-		return cotas;
-	}
-
-	public void setCotas(List<Cota> cotas) {
-		this.cotas = cotas;
 	}
 
 	public Date getDataInicio() {
@@ -79,12 +59,13 @@ public class CotaBase implements Serializable {
 		this.dataFim = dataFim;
 	}
 
-	public Boolean getAtiva() {
-		return ativa;
+	public BigDecimal getIndiceAjuste() {
+		return indiceAjuste;
 	}
 
-	public void setAtiva(Boolean ativa) {
-		this.ativa = ativa;
+	public void setIndiceAjuste(BigDecimal indiceAjuste) {
+		this.indiceAjuste = indiceAjuste;
 	}
 	
+
 }

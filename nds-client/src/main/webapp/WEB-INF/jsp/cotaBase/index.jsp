@@ -237,14 +237,19 @@ $(function(){
                 <legend>Cotas Base Cadastradas</legend>
         		<table class="cotasEquivalentesGrid" id="cotasEquivalentesGrid"></table>
             
-            <span style="float:left; margin-top:5px; margin-bottom:5px; margin-left:10px;"><strong>Informe o Indíce de Ajuste do Histórico:</strong> 
-            <input name="" type="text" style="width:40px; text-align:center;" value="1.0" />
+            <span style="float:left; margin-top:5px; margin-bottom:5px; margin-left:10px;">
+            	<strong>Informe o Indíce de Ajuste do Histórico:</strong> 
+            	<input name="indiceAjuste" id="indiceAjuste" type="text" style="width:40px; text-align:center;" value="1.0" />
             </span>
             <br clear="all" />
 
 			<!--<span class="bt_novos" title="Informar Peso"><a href="javascript:;" onclick="informarPeso();"><img src="../images/bt_cadastros.png" hspace="5" border="0" />Peso por Segmento</a></span>-->
             
-            <span class="bt_novos" title="Confirmar"><a href="javascript:;" onclick="confirmarPeso();"><img src="${pageContext.request.contextPath}/images/ico_check.gif" hspace="5" border="0" />Confirmar</a></span>
+            <span class="bt_novos" title="Confirmar">
+            	<a href="javascript:;" onclick="cotaBaseController.confirmarPeso();">
+            		<img src="${pageContext.request.contextPath}/images/ico_check.gif" hspace="5" border="0" />
+            	Confirmar</a>
+            </span>
 
 			<span class="bt_novos" title="Cancelar"><a href="javascript:;" onclick="cancelarPeso();"><img src="${pageContext.request.contextPath}/images/ico_excluir.gif" hspace="5" border="0" />Cancelar</a></span>
             

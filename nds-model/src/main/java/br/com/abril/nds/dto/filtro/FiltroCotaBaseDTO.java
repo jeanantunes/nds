@@ -2,8 +2,10 @@ package br.com.abril.nds.dto.filtro;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Date;
 
 import br.com.abril.nds.util.CurrencyUtil;
+import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.export.Exportable;
 
 @Exportable
@@ -20,6 +22,11 @@ public class FiltroCotaBaseDTO implements Serializable {
 	private String geradorDeFluxo;
 	private String areaInfluencia;
 	private String faturamentoMedio;
+	
+//	private String diasRestantes;
+//	
+	private String dataInicial;
+	private String dataFinal;
 	
 	public Long getIdCota() {
 		return idCota;
@@ -111,7 +118,46 @@ public class FiltroCotaBaseDTO implements Serializable {
 			this.faturamentoMedio = CurrencyUtil.formatarValor(faturamentoMedio);			
 		}
 	}
+
+
+	public String getDataInicial() {
+		return dataInicial;
+	}
+
+
+	public void setDataInicial(Date dataInicial) {
+		this.dataInicial =  DateUtil.formatarDataPTBR(dataInicial);
+	}
+
+
+	public String getDataFinal() {
+		return dataFinal;
+	}
+
+
+	public void setDataFinal(Date dataFinal) {
+		this.dataFinal = DateUtil.formatarDataPTBR(dataFinal);
+	}
 	
+	
+
+//	public Date getDataFinal() {
+//		return dataFinal;
+//	}
+//
+//
+//	public void setDataFinal(Date dataFinal) {
+//		this.dataFinal = dataFinal;
+//		if(dataFinal != null){
+//			Long dias = DateUtil.obterDiferencaDias(new Date(), dataFinal);
+//			diasRestantes = dias.toString();
+//		}
+//	}
+//
+//
+//	public String getDiasRestantes() {
+//		return diasRestantes;
+//	}
 	
 	
 }
